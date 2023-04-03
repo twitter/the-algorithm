@@ -1,66 +1,66 @@
-package com.twitter.product_mixer.core.service.pipeline_executor
+packagelon com.twittelonr.product_mixelonr.corelon.selonrvicelon.pipelonlinelon_elonxeloncutor
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
-import com.twitter.product_mixer.core.pipeline.Pipeline
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.InvalidPipelineSelected
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.quality_factor.QualityFactorObserver
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.stitch.Arrow
-import com.twitter.util.logging.Logging
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.ComponelonntIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.Pipelonlinelon
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.InvalidPipelonlinelonSelonlelonctelond
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.PipelonlinelonFailurelon
+import com.twittelonr.product_mixelonr.corelon.quality_factor.QualityFactorObselonrvelonr
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.elonxeloncutor
+import com.twittelonr.stitch.Arrow
+import com.twittelonr.util.logging.Logging
 
-import javax.inject.Inject
-import javax.inject.Singleton
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
 /**
- * PipelineExecutor executes a single pipeline (of any type)
- * It does not currently support fail open/closed policies like CandidatePipelineExecutor does
- * In the future, maybe they can be merged.
+ * Pipelonlinelonelonxeloncutor elonxeloncutelons a singlelon pipelonlinelon (of any typelon)
+ * It doelons not currelonntly support fail opelonn/closelond policielons likelon CandidatelonPipelonlinelonelonxeloncutor doelons
+ * In thelon futurelon, maybelon thelony can belon melonrgelond.
  */
 
-case class PipelineExecutorRequest[Query](query: Query, pipelineIdentifier: ComponentIdentifier)
+caselon class PipelonlinelonelonxeloncutorRelonquelonst[Quelonry](quelonry: Quelonry, pipelonlinelonIdelonntifielonr: ComponelonntIdelonntifielonr)
 
-@Singleton
-class PipelineExecutor @Inject() (override val statsReceiver: StatsReceiver)
-    extends Executor
+@Singlelonton
+class Pipelonlinelonelonxeloncutor @Injelonct() (ovelonrridelon val statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds elonxeloncutor
     with Logging {
 
-  def arrow[Query, ResultType](
-    pipelineByIdentifier: Map[ComponentIdentifier, Pipeline[Query, ResultType]],
-    qualityFactorObserverByPipeline: Map[ComponentIdentifier, QualityFactorObserver],
-    context: Executor.Context
-  ): Arrow[PipelineExecutorRequest[Query], PipelineExecutorResult[ResultType]] = {
+  delonf arrow[Quelonry, RelonsultTypelon](
+    pipelonlinelonByIdelonntifielonr: Map[ComponelonntIdelonntifielonr, Pipelonlinelon[Quelonry, RelonsultTypelon]],
+    qualityFactorObselonrvelonrByPipelonlinelon: Map[ComponelonntIdelonntifielonr, QualityFactorObselonrvelonr],
+    contelonxt: elonxeloncutor.Contelonxt
+  ): Arrow[PipelonlinelonelonxeloncutorRelonquelonst[Quelonry], PipelonlinelonelonxeloncutorRelonsult[RelonsultTypelon]] = {
 
-    val wrappedPipelineArrowsByIdentifier = pipelineByIdentifier.mapValues { pipeline =>
-      wrapPipelineWithExecutorBookkeeping(
-        context,
-        pipeline.identifier,
-        qualityFactorObserverByPipeline.get(pipeline.identifier))(pipeline.arrow)
+    val wrappelondPipelonlinelonArrowsByIdelonntifielonr = pipelonlinelonByIdelonntifielonr.mapValuelons { pipelonlinelon =>
+      wrapPipelonlinelonWithelonxeloncutorBookkelonelonping(
+        contelonxt,
+        pipelonlinelon.idelonntifielonr,
+        qualityFactorObselonrvelonrByPipelonlinelon.gelont(pipelonlinelon.idelonntifielonr))(pipelonlinelon.arrow)
     }
 
-    val appliedPipelineArrow = Arrow
-      .identity[PipelineExecutorRequest[Query]]
+    val applielondPipelonlinelonArrow = Arrow
+      .idelonntity[PipelonlinelonelonxeloncutorRelonquelonst[Quelonry]]
       .map {
-        case PipelineExecutorRequest(query, pipelineIdentifier) =>
-          val pipeline = wrappedPipelineArrowsByIdentifier.getOrElse(
-            pipelineIdentifier,
-            // throwing instead of returning a `Throw(_)` and then `.lowerFromTry` because this is an exceptional case and we want to emphasize that by explicitly throwing
-            // this case should never happen since this is checked in the `PipelineSelectorExecutor` but we check it anyway
-            throw PipelineFailure(
-              InvalidPipelineSelected,
-              s"${context.componentStack.peek} attempted to execute $pipelineIdentifier",
-              // the `componentStack` includes the missing pipeline so it can show up in metrics easier
-              componentStack = Some(context.componentStack.push(pipelineIdentifier))
+        caselon PipelonlinelonelonxeloncutorRelonquelonst(quelonry, pipelonlinelonIdelonntifielonr) =>
+          val pipelonlinelon = wrappelondPipelonlinelonArrowsByIdelonntifielonr.gelontOrelonlselon(
+            pipelonlinelonIdelonntifielonr,
+            // throwing instelonad of relonturning a `Throw(_)` and thelonn `.lowelonrFromTry` beloncauselon this is an elonxcelonptional caselon and welon want to elonmphasizelon that by elonxplicitly throwing
+            // this caselon should nelonvelonr happelonn sincelon this is chelonckelond in thelon `PipelonlinelonSelonlelonctorelonxeloncutor` but welon chelonck it anyway
+            throw PipelonlinelonFailurelon(
+              InvalidPipelonlinelonSelonlelonctelond,
+              s"${contelonxt.componelonntStack.pelonelonk} attelonmptelond to elonxeloncutelon $pipelonlinelonIdelonntifielonr",
+              // thelon `componelonntStack` includelons thelon missing pipelonlinelon so it can show up in melontrics elonasielonr
+              componelonntStack = Somelon(contelonxt.componelonntStack.push(pipelonlinelonIdelonntifielonr))
             )
           )
-          (pipeline, query)
+          (pipelonlinelon, quelonry)
       }
-      // less efficient than an `andThen` but since we dispatch this dynamically we need to use either `applyArrow` or `flatMap` and this is the better of those options
+      // lelonss elonfficielonnt than an `andThelonn` but sincelon welon dispatch this dynamically welon nelonelond to uselon elonithelonr `applyArrow` or `flatMap` and this is thelon belonttelonr of thoselon options
       .applyArrow
-      .map(PipelineExecutorResult(_))
+      .map(PipelonlinelonelonxeloncutorRelonsult(_))
 
-    // no additional error handling needed since we populate the component stack above already
-    appliedPipelineArrow
+    // no additional elonrror handling nelonelondelond sincelon welon populatelon thelon componelonnt stack abovelon alrelonady
+    applielondPipelonlinelonArrow
   }
 }

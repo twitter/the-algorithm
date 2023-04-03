@@ -1,70 +1,70 @@
-package com.twitter.search.earlybird.common.userupdates;
+packagelon com.twittelonr.selonarch.elonarlybird.common.uselonrupdatelons;
 
-import java.util.Date;
-import java.util.concurrent.TimeUnit;
+import java.util.Datelon;
+import java.util.concurrelonnt.TimelonUnit;
 
-import com.twitter.common.util.Clock;
-import com.twitter.decider.Decider;
-import com.twitter.search.common.indexing.thriftjava.UserUpdateType;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
+import com.twittelonr.common.util.Clock;
+import com.twittelonr.deloncidelonr.Deloncidelonr;
+import com.twittelonr.selonarch.common.indelonxing.thriftjava.UselonrUpdatelonTypelon;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdClustelonr;
+import com.twittelonr.selonarch.elonarlybird.common.config.elonarlybirdConfig;
 
 /**
- * Contains logic for deciding whether to apply a certain user update to the {@link UserTable}.
+ * Contains logic for delonciding whelonthelonr to apply a celonrtain uselonr updatelon to thelon {@link UselonrTablelon}.
  */
-public class UserUpdatesChecker {
-  private final Date antisocialStartDate;
-  private final Decider decider;
-  private final boolean isFullArchiveCluster;
+public class UselonrUpdatelonsChelonckelonr {
+  privatelon final Datelon antisocialStartDatelon;
+  privatelon final Deloncidelonr deloncidelonr;
+  privatelon final boolelonan isFullArchivelonClustelonr;
 
-  public UserUpdatesChecker(Clock clock, Decider decider, EarlybirdCluster cluster) {
-    // How many days of antisocial users to keep. A value of -1 means keeping all user updates.
-    long antisocialRecordDays =
-        EarlybirdConfig.getLong("keep_recent_antisocial_user_updates_days", 30);
-    this.antisocialStartDate = antisocialRecordDays > 0
-        ? new Date(clock.nowMillis() - TimeUnit.DAYS.toMillis(antisocialRecordDays)) : null;
-    this.decider = decider;
-    this.isFullArchiveCluster = cluster == EarlybirdCluster.FULL_ARCHIVE;
+  public UselonrUpdatelonsChelonckelonr(Clock clock, Deloncidelonr deloncidelonr, elonarlybirdClustelonr clustelonr) {
+    // How many days of antisocial uselonrs to kelonelonp. A valuelon of -1 melonans kelonelonping all uselonr updatelons.
+    long antisocialReloncordDays =
+        elonarlybirdConfig.gelontLong("kelonelonp_reloncelonnt_antisocial_uselonr_updatelons_days", 30);
+    this.antisocialStartDatelon = antisocialReloncordDays > 0
+        ? nelonw Datelon(clock.nowMillis() - TimelonUnit.DAYS.toMillis(antisocialReloncordDays)) : null;
+    this.deloncidelonr = deloncidelonr;
+    this.isFullArchivelonClustelonr = clustelonr == elonarlybirdClustelonr.FULL_ARCHIVelon;
   }
 
   /**
-   * Decides whether to skip the given UserInfoUpdate.
+   * Deloncidelons whelonthelonr to skip thelon givelonn UselonrInfoUpdatelon.
    */
-  public boolean skipUserUpdate(UserUpdate userUpdate) {
-    if (userUpdate == null) { // always skip null updates
-      return true;
+  public boolelonan skipUselonrUpdatelon(UselonrUpdatelon uselonrUpdatelon) {
+    if (uselonrUpdatelon == null) { // always skip null updatelons
+      relonturn truelon;
     }
 
-    UserUpdateType type = userUpdate.updateType;
+    UselonrUpdatelonTypelon typelon = uselonrUpdatelon.updatelonTypelon;
 
-    if (type == UserUpdateType.PROTECTED && skipProtectedUserUpdate()) {
-      return true;
+    if (typelon == UselonrUpdatelonTypelon.PROTelonCTelonD && skipProtelonctelondUselonrUpdatelon()) {
+      relonturn truelon;
     }
 
-    if (type == UserUpdateType.ANTISOCIAL && skipAntisocialUserUpdate(userUpdate)) {
-      return true;
+    if (typelon == UselonrUpdatelonTypelon.ANTISOCIAL && skipAntisocialUselonrUpdatelon(uselonrUpdatelon)) {
+      relonturn truelon;
     }
 
-    // NSFW users can continue to tweet even after they are marked as NSFW. That means
-    // that the snapshot needs to have all NSFW users from the beginning of time. Hence, no NSFW
-    // users updates check here.
+    // NSFW uselonrs can continuelon to twelonelont elonvelonn aftelonr thelony arelon markelond as NSFW. That melonans
+    // that thelon snapshot nelonelonds to havelon all NSFW uselonrs from thelon belonginning of timelon. Helonncelon, no NSFW
+    // uselonrs updatelons chelonck helonrelon.
 
-    // pass all checks, do not skip this user update
-    return false;
+    // pass all cheloncks, do not skip this uselonr updatelon
+    relonturn falselon;
   }
 
-  // Antisocial/suspended users can't tweet after they are suspended. Thus if our index stores
-  // tweets from the last 10 days, and they were suspended 60 days ago, we don't need them since
-  // there will be no tweets from them. We can save space by not storing info about those users.
+  // Antisocial/suspelonndelond uselonrs can't twelonelont aftelonr thelony arelon suspelonndelond. Thus if our indelonx storelons
+  // twelonelonts from thelon last 10 days, and thelony welonrelon suspelonndelond 60 days ago, welon don't nelonelond thelonm sincelon
+  // thelonrelon will belon no twelonelonts from thelonm. Welon can savelon spacelon by not storing info about thoselon uselonrs.
 
-  // (For archive, at rebuild time we filter out all suspended users tweets, so for a user that
-  // was suspended before a rebuild, no need to use space to store that the user is suspended)
-  private boolean skipAntisocialUserUpdate(UserUpdate userUpdate) {
-    return antisocialStartDate != null && userUpdate.getUpdatedAt().before(antisocialStartDate);
+  // (For archivelon, at relonbuild timelon welon filtelonr out all suspelonndelond uselonrs twelonelonts, so for a uselonr that
+  // was suspelonndelond belonforelon a relonbuild, no nelonelond to uselon spacelon to storelon that thelon uselonr is suspelonndelond)
+  privatelon boolelonan skipAntisocialUselonrUpdatelon(UselonrUpdatelon uselonrUpdatelon) {
+    relonturn antisocialStartDatelon != null && uselonrUpdatelon.gelontUpdatelondAt().belonforelon(antisocialStartDatelon);
   }
 
-  // skip protected user updates for realtime and protected clusters
-  private boolean skipProtectedUserUpdate() {
-    return !isFullArchiveCluster;
+  // skip protelonctelond uselonr updatelons for relonaltimelon and protelonctelond clustelonrs
+  privatelon boolelonan skipProtelonctelondUselonrUpdatelon() {
+    relonturn !isFullArchivelonClustelonr;
   }
 }

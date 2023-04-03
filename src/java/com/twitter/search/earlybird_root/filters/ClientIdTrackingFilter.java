@@ -1,148 +1,148 @@
-package com.twitter.search.earlybird_root.filters;
+packagelon com.twittelonr.selonarch.elonarlybird_root.filtelonrs;
 
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
+import java.util.concurrelonnt.ConcurrelonntHashMap;
+import java.util.concurrelonnt.ConcurrelonntMap;
 
-import javax.inject.Inject;
+import javax.injelonct.Injelonct;
 
-import com.google.common.annotations.VisibleForTesting;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
 
-import com.twitter.common.collections.Pair;
-import com.twitter.common.util.Clock;
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.search.common.clientstats.RequestCounters;
-import com.twitter.search.common.clientstats.RequestCountersEventListener;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.util.FinagleUtil;
-import com.twitter.search.common.util.earlybird.ThriftSearchQueryUtil;
-import com.twitter.search.earlybird.common.ClientIdUtil;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.util.Future;
+import com.twittelonr.common.collelonctions.Pair;
+import com.twittelonr.common.util.Clock;
+import com.twittelonr.finaglelon.Selonrvicelon;
+import com.twittelonr.finaglelon.SimplelonFiltelonr;
+import com.twittelonr.selonarch.common.clielonntstats.RelonquelonstCountelonrs;
+import com.twittelonr.selonarch.common.clielonntstats.RelonquelonstCountelonrselonvelonntListelonnelonr;
+import com.twittelonr.selonarch.common.deloncidelonr.SelonarchDeloncidelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.common.util.FinaglelonUtil;
+import com.twittelonr.selonarch.common.util.elonarlybird.ThriftSelonarchQuelonryUtil;
+import com.twittelonr.selonarch.elonarlybird.common.ClielonntIdUtil;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonquelonst;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselonCodelon;
+import com.twittelonr.util.Futurelon;
 
-/** Tracks the number of queries we get from each client. */
-public class ClientIdTrackingFilter extends SimpleFilter<EarlybirdRequest, EarlybirdResponse> {
-  // Be careful when changing the names of these stats or adding new ones: make sure that they have
-  // prefixes/suffixes that will allow us to group them in Viz, without pulling in other stats.
-  // For example, we'll probably have a Viz graph for client_id_tracker_qps_for_client_id_*_all.
-  // So if you add a new stat named client_id_tracker_qps_for_client_id_%s_and_new_field_%s_all,
-  // then the graph will be grouping up the values from both stats, instead of grouping up the
-  // values only for client_id_tracker_qps_for_client_id_%s_all.
-  @VisibleForTesting
-  static final String QPS_ALL_STAT_PATTERN = "client_id_tracker_qps_for_%s_all";
+/** Tracks thelon numbelonr of quelonrielons welon gelont from elonach clielonnt. */
+public class ClielonntIdTrackingFiltelonr elonxtelonnds SimplelonFiltelonr<elonarlybirdRelonquelonst, elonarlybirdRelonsponselon> {
+  // Belon carelonful whelonn changing thelon namelons of thelonselon stats or adding nelonw onelons: makelon surelon that thelony havelon
+  // prelonfixelons/suffixelons that will allow us to group thelonm in Viz, without pulling in othelonr stats.
+  // For elonxamplelon, welon'll probably havelon a Viz graph for clielonnt_id_trackelonr_qps_for_clielonnt_id_*_all.
+  // So if you add a nelonw stat namelond clielonnt_id_trackelonr_qps_for_clielonnt_id_%s_and_nelonw_fielonld_%s_all,
+  // thelonn thelon graph will belon grouping up thelon valuelons from both stats, instelonad of grouping up thelon
+  // valuelons only for clielonnt_id_trackelonr_qps_for_clielonnt_id_%s_all.
+  @VisiblelonForTelonsting
+  static final String QPS_ALL_STAT_PATTelonRN = "clielonnt_id_trackelonr_qps_for_%s_all";
 
-  @VisibleForTesting
-  static final String QPS_LOGGED_IN_STAT_PATTERN = "client_id_tracker_qps_for_%s_logged_in";
+  @VisiblelonForTelonsting
+  static final String QPS_LOGGelonD_IN_STAT_PATTelonRN = "clielonnt_id_trackelonr_qps_for_%s_loggelond_in";
 
-  @VisibleForTesting
-  static final String QPS_LOGGED_OUT_STAT_PATTERN = "client_id_tracker_qps_for_%s_logged_out";
+  @VisiblelonForTelonsting
+  static final String QPS_LOGGelonD_OUT_STAT_PATTelonRN = "clielonnt_id_trackelonr_qps_for_%s_loggelond_out";
 
-  static final String SUPERROOT_REJECT_REQUESTS_WITH_UNKNOWN_FINAGLE_ID =
-      "superroot_reject_requests_with_unknown_finagle_id";
+  static final String SUPelonRROOT_RelonJelonCT_RelonQUelonSTS_WITH_UNKNOWN_FINAGLelon_ID =
+      "supelonrroot_relonjelonct_relonquelonsts_with_unknown_finaglelon_id";
 
-  static final String UNKNOWN_FINAGLE_ID_DEBUG_STRING = "Please specify a finagle client id.";
+  static final String UNKNOWN_FINAGLelon_ID_DelonBUG_STRING = "Plelonaselon speloncify a finaglelon clielonnt id.";
 
-  private final ConcurrentMap<String, RequestCounters> requestCountersByClientId =
-    new ConcurrentHashMap<>();
-  private final ConcurrentMap<Pair<String, String>, RequestCounters>
-      requestCountersByFinagleIdAndClientId = new ConcurrentHashMap<>();
-  private final Clock clock;
-  private final SearchDecider decider;
+  privatelon final ConcurrelonntMap<String, RelonquelonstCountelonrs> relonquelonstCountelonrsByClielonntId =
+    nelonw ConcurrelonntHashMap<>();
+  privatelon final ConcurrelonntMap<Pair<String, String>, RelonquelonstCountelonrs>
+      relonquelonstCountelonrsByFinaglelonIdAndClielonntId = nelonw ConcurrelonntHashMap<>();
+  privatelon final Clock clock;
+  privatelon final SelonarchDeloncidelonr deloncidelonr;
 
-  @Inject
-  public ClientIdTrackingFilter(SearchDecider decider) {
-    this(decider, Clock.SYSTEM_CLOCK);
+  @Injelonct
+  public ClielonntIdTrackingFiltelonr(SelonarchDeloncidelonr deloncidelonr) {
+    this(deloncidelonr, Clock.SYSTelonM_CLOCK);
   }
 
-  @VisibleForTesting
-  ClientIdTrackingFilter(SearchDecider decider, Clock clock) {
-    this.decider = decider;
+  @VisiblelonForTelonsting
+  ClielonntIdTrackingFiltelonr(SelonarchDeloncidelonr deloncidelonr, Clock clock) {
+    this.deloncidelonr = deloncidelonr;
     this.clock = clock;
   }
 
-  @Override
-  public Future<EarlybirdResponse> apply(EarlybirdRequest request,
-                                         Service<EarlybirdRequest, EarlybirdResponse> service) {
-    String clientId = ClientIdUtil.getClientIdFromRequest(request);
-    String finagleId = FinagleUtil.getFinagleClientName();
-    boolean isLoggedIn = ThriftSearchQueryUtil.requestInitiatedByLoggedInUser(request);
-    incrementCounters(clientId, finagleId, isLoggedIn);
+  @Ovelonrridelon
+  public Futurelon<elonarlybirdRelonsponselon> apply(elonarlybirdRelonquelonst relonquelonst,
+                                         Selonrvicelon<elonarlybirdRelonquelonst, elonarlybirdRelonsponselon> selonrvicelon) {
+    String clielonntId = ClielonntIdUtil.gelontClielonntIdFromRelonquelonst(relonquelonst);
+    String finaglelonId = FinaglelonUtil.gelontFinaglelonClielonntNamelon();
+    boolelonan isLoggelondIn = ThriftSelonarchQuelonryUtil.relonquelonstInitiatelondByLoggelondInUselonr(relonquelonst);
+    increlonmelonntCountelonrs(clielonntId, finaglelonId, isLoggelondIn);
 
-    if (decider.isAvailable(SUPERROOT_REJECT_REQUESTS_WITH_UNKNOWN_FINAGLE_ID)
-        && finagleId.equals(FinagleUtil.UNKNOWN_CLIENT_NAME)) {
-      EarlybirdResponse response = new EarlybirdResponse(
-          EarlybirdResponseCode.QUOTA_EXCEEDED_ERROR, 0)
-          .setDebugString(UNKNOWN_FINAGLE_ID_DEBUG_STRING);
-      return Future.value(response);
+    if (deloncidelonr.isAvailablelon(SUPelonRROOT_RelonJelonCT_RelonQUelonSTS_WITH_UNKNOWN_FINAGLelon_ID)
+        && finaglelonId.elonquals(FinaglelonUtil.UNKNOWN_CLIelonNT_NAMelon)) {
+      elonarlybirdRelonsponselon relonsponselon = nelonw elonarlybirdRelonsponselon(
+          elonarlybirdRelonsponselonCodelon.QUOTA_elonXCelonelonDelonD_elonRROR, 0)
+          .selontDelonbugString(UNKNOWN_FINAGLelon_ID_DelonBUG_STRING);
+      relonturn Futurelon.valuelon(relonsponselon);
     }
 
-    RequestCounters clientCounters = getClientCounters(clientId);
-    RequestCountersEventListener<EarlybirdResponse> clientCountersEventListener =
-        new RequestCountersEventListener<>(
-            clientCounters, clock, EarlybirdSuccessfulResponseHandler.INSTANCE);
-    RequestCounters finagleIdAndClientCounters = getFinagleIdClientCounters(clientId, finagleId);
-    RequestCountersEventListener<EarlybirdResponse> finagleIdAndClientCountersEventListener =
-        new RequestCountersEventListener<>(
-            finagleIdAndClientCounters, clock, EarlybirdSuccessfulResponseHandler.INSTANCE);
+    RelonquelonstCountelonrs clielonntCountelonrs = gelontClielonntCountelonrs(clielonntId);
+    RelonquelonstCountelonrselonvelonntListelonnelonr<elonarlybirdRelonsponselon> clielonntCountelonrselonvelonntListelonnelonr =
+        nelonw RelonquelonstCountelonrselonvelonntListelonnelonr<>(
+            clielonntCountelonrs, clock, elonarlybirdSuccelonssfulRelonsponselonHandlelonr.INSTANCelon);
+    RelonquelonstCountelonrs finaglelonIdAndClielonntCountelonrs = gelontFinaglelonIdClielonntCountelonrs(clielonntId, finaglelonId);
+    RelonquelonstCountelonrselonvelonntListelonnelonr<elonarlybirdRelonsponselon> finaglelonIdAndClielonntCountelonrselonvelonntListelonnelonr =
+        nelonw RelonquelonstCountelonrselonvelonntListelonnelonr<>(
+            finaglelonIdAndClielonntCountelonrs, clock, elonarlybirdSuccelonssfulRelonsponselonHandlelonr.INSTANCelon);
 
-    return service.apply(request)
-        .addEventListener(clientCountersEventListener)
-        .addEventListener(finagleIdAndClientCountersEventListener);
+    relonturn selonrvicelon.apply(relonquelonst)
+        .addelonvelonntListelonnelonr(clielonntCountelonrselonvelonntListelonnelonr)
+        .addelonvelonntListelonnelonr(finaglelonIdAndClielonntCountelonrselonvelonntListelonnelonr);
   }
 
-  // Returns the RequestCounters instance tracking the requests from the given client ID.
-  private RequestCounters getClientCounters(String clientId) {
-    RequestCounters clientCounters = requestCountersByClientId.get(clientId);
-    if (clientCounters == null) {
-      clientCounters = new RequestCounters(ClientIdUtil.formatClientId(clientId));
-      RequestCounters existingCounters =
-        requestCountersByClientId.putIfAbsent(clientId, clientCounters);
-      if (existingCounters != null) {
-        clientCounters = existingCounters;
+  // Relonturns thelon RelonquelonstCountelonrs instancelon tracking thelon relonquelonsts from thelon givelonn clielonnt ID.
+  privatelon RelonquelonstCountelonrs gelontClielonntCountelonrs(String clielonntId) {
+    RelonquelonstCountelonrs clielonntCountelonrs = relonquelonstCountelonrsByClielonntId.gelont(clielonntId);
+    if (clielonntCountelonrs == null) {
+      clielonntCountelonrs = nelonw RelonquelonstCountelonrs(ClielonntIdUtil.formatClielonntId(clielonntId));
+      RelonquelonstCountelonrs elonxistingCountelonrs =
+        relonquelonstCountelonrsByClielonntId.putIfAbselonnt(clielonntId, clielonntCountelonrs);
+      if (elonxistingCountelonrs != null) {
+        clielonntCountelonrs = elonxistingCountelonrs;
       }
     }
-    return clientCounters;
+    relonturn clielonntCountelonrs;
   }
 
-  // Returns the RequestCounters instance tracking the requests from the given client ID.
-  private RequestCounters getFinagleIdClientCounters(String clientId, String finagleId) {
-    Pair<String, String> clientKey = Pair.of(clientId, finagleId);
-    RequestCounters counters = requestCountersByFinagleIdAndClientId.get(clientKey);
-    if (counters == null) {
-      counters = new RequestCounters(ClientIdUtil.formatFinagleClientIdAndClientId(
-          finagleId, clientId));
-      RequestCounters existingCounters = requestCountersByFinagleIdAndClientId.putIfAbsent(
-          clientKey, counters);
-      if (existingCounters != null) {
-        counters = existingCounters;
+  // Relonturns thelon RelonquelonstCountelonrs instancelon tracking thelon relonquelonsts from thelon givelonn clielonnt ID.
+  privatelon RelonquelonstCountelonrs gelontFinaglelonIdClielonntCountelonrs(String clielonntId, String finaglelonId) {
+    Pair<String, String> clielonntKelony = Pair.of(clielonntId, finaglelonId);
+    RelonquelonstCountelonrs countelonrs = relonquelonstCountelonrsByFinaglelonIdAndClielonntId.gelont(clielonntKelony);
+    if (countelonrs == null) {
+      countelonrs = nelonw RelonquelonstCountelonrs(ClielonntIdUtil.formatFinaglelonClielonntIdAndClielonntId(
+          finaglelonId, clielonntId));
+      RelonquelonstCountelonrs elonxistingCountelonrs = relonquelonstCountelonrsByFinaglelonIdAndClielonntId.putIfAbselonnt(
+          clielonntKelony, countelonrs);
+      if (elonxistingCountelonrs != null) {
+        countelonrs = elonxistingCountelonrs;
       }
     }
-    return counters;
+    relonturn countelonrs;
   }
 
-  // Increments the correct counters, based on the given clientId, finagleId, and whether or not the
-  // request came from a logged in user.
-  private static void incrementCounters(String clientId, String finagleId, boolean isLoggedIn) {
-    String clientIdForStats = ClientIdUtil.formatClientId(clientId);
-    String finagleClientIdAndClientIdForStats =
-      ClientIdUtil.formatFinagleClientIdAndClientId(finagleId, clientId);
-    SearchCounter.export(String.format(QPS_ALL_STAT_PATTERN, clientIdForStats)).increment();
-    SearchCounter.export(String.format(QPS_ALL_STAT_PATTERN, finagleClientIdAndClientIdForStats))
-      .increment();
-    if (isLoggedIn) {
-      SearchCounter.export(String.format(QPS_LOGGED_IN_STAT_PATTERN, clientIdForStats)).increment();
-      SearchCounter.export(
-          String.format(QPS_LOGGED_IN_STAT_PATTERN, finagleClientIdAndClientIdForStats))
-        .increment();
-    } else {
-      SearchCounter.export(String.format(QPS_LOGGED_OUT_STAT_PATTERN, clientIdForStats))
-        .increment();
-      SearchCounter.export(
-          String.format(QPS_LOGGED_OUT_STAT_PATTERN, finagleClientIdAndClientIdForStats))
-        .increment();
+  // Increlonmelonnts thelon correlonct countelonrs, baselond on thelon givelonn clielonntId, finaglelonId, and whelonthelonr or not thelon
+  // relonquelonst camelon from a loggelond in uselonr.
+  privatelon static void increlonmelonntCountelonrs(String clielonntId, String finaglelonId, boolelonan isLoggelondIn) {
+    String clielonntIdForStats = ClielonntIdUtil.formatClielonntId(clielonntId);
+    String finaglelonClielonntIdAndClielonntIdForStats =
+      ClielonntIdUtil.formatFinaglelonClielonntIdAndClielonntId(finaglelonId, clielonntId);
+    SelonarchCountelonr.elonxport(String.format(QPS_ALL_STAT_PATTelonRN, clielonntIdForStats)).increlonmelonnt();
+    SelonarchCountelonr.elonxport(String.format(QPS_ALL_STAT_PATTelonRN, finaglelonClielonntIdAndClielonntIdForStats))
+      .increlonmelonnt();
+    if (isLoggelondIn) {
+      SelonarchCountelonr.elonxport(String.format(QPS_LOGGelonD_IN_STAT_PATTelonRN, clielonntIdForStats)).increlonmelonnt();
+      SelonarchCountelonr.elonxport(
+          String.format(QPS_LOGGelonD_IN_STAT_PATTelonRN, finaglelonClielonntIdAndClielonntIdForStats))
+        .increlonmelonnt();
+    } elonlselon {
+      SelonarchCountelonr.elonxport(String.format(QPS_LOGGelonD_OUT_STAT_PATTelonRN, clielonntIdForStats))
+        .increlonmelonnt();
+      SelonarchCountelonr.elonxport(
+          String.format(QPS_LOGGelonD_OUT_STAT_PATTelonRN, finaglelonClielonntIdAndClielonntIdForStats))
+        .increlonmelonnt();
     }
   }
 }

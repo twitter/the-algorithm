@@ -1,60 +1,60 @@
-package com.twitter.home_mixer.functional_component.decorator
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.deloncorator
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ChildFeedbackAction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.SeeFewer
-import com.twitter.stringcenter.client.StringCenter
-import com.twitter.stringcenter.client.core.ExternalString
-import com.twitter.timelines.common.{thriftscala => tlc}
-import com.twitter.timelines.service.{thriftscala => t}
-import com.twitter.timelineservice.model.FeedbackInfo
-import com.twitter.timelineservice.model.FeedbackMetadata
-import com.twitter.timelineservice.suggests.{thriftscala => st}
-import com.twitter.timelineservice.{thriftscala => tlst}
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.ChildFelonelondbackAction
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.SelonelonFelonwelonr
+import com.twittelonr.stringcelonntelonr.clielonnt.StringCelonntelonr
+import com.twittelonr.stringcelonntelonr.clielonnt.corelon.elonxtelonrnalString
+import com.twittelonr.timelonlinelons.common.{thriftscala => tlc}
+import com.twittelonr.timelonlinelons.selonrvicelon.{thriftscala => t}
+import com.twittelonr.timelonlinelonselonrvicelon.modelonl.FelonelondbackInfo
+import com.twittelonr.timelonlinelonselonrvicelon.modelonl.FelonelondbackMelontadata
+import com.twittelonr.timelonlinelonselonrvicelon.suggelonsts.{thriftscala => st}
+import com.twittelonr.timelonlinelonselonrvicelon.{thriftscala => tlst}
 
-object FeedbackUtil {
+objelonct FelonelondbackUtil {
 
-  val FeedbackTtl = 30.days
+  val FelonelondbackTtl = 30.days
 
-  def buildUserSeeFewerChildFeedbackAction(
-    userId: Long,
-    namesByUserId: Map[Long, String],
-    promptExternalString: ExternalString,
-    confirmationExternalString: ExternalString,
-    engagementType: t.FeedbackEngagementType,
-    stringCenter: StringCenter,
-    injectionType: Option[st.SuggestType]
-  ): Option[ChildFeedbackAction] = {
-    namesByUserId.get(userId).map { userScreenName =>
-      val prompt = stringCenter.prepare(
-        promptExternalString,
-        Map("user" -> userScreenName)
+  delonf buildUselonrSelonelonFelonwelonrChildFelonelondbackAction(
+    uselonrId: Long,
+    namelonsByUselonrId: Map[Long, String],
+    promptelonxtelonrnalString: elonxtelonrnalString,
+    confirmationelonxtelonrnalString: elonxtelonrnalString,
+    elonngagelonmelonntTypelon: t.FelonelondbackelonngagelonmelonntTypelon,
+    stringCelonntelonr: StringCelonntelonr,
+    injelonctionTypelon: Option[st.SuggelonstTypelon]
+  ): Option[ChildFelonelondbackAction] = {
+    namelonsByUselonrId.gelont(uselonrId).map { uselonrScrelonelonnNamelon =>
+      val prompt = stringCelonntelonr.prelonparelon(
+        promptelonxtelonrnalString,
+        Map("uselonr" -> uselonrScrelonelonnNamelon)
       )
-      val confirmation = stringCenter.prepare(
-        confirmationExternalString,
-        Map("user" -> userScreenName)
+      val confirmation = stringCelonntelonr.prelonparelon(
+        confirmationelonxtelonrnalString,
+        Map("uselonr" -> uselonrScrelonelonnNamelon)
       )
-      val feedbackMetadata = FeedbackMetadata(
-        engagementType = Some(engagementType),
-        entityIds = Seq(tlc.FeedbackEntity.UserId(userId)),
-        ttl = Some(FeedbackTtl))
-      val feedbackUrl = FeedbackInfo.feedbackUrl(
-        feedbackType = tlst.FeedbackType.SeeFewer,
-        feedbackMetadata = feedbackMetadata,
-        injectionType = injectionType
+      val felonelondbackMelontadata = FelonelondbackMelontadata(
+        elonngagelonmelonntTypelon = Somelon(elonngagelonmelonntTypelon),
+        elonntityIds = Selonq(tlc.Felonelondbackelonntity.UselonrId(uselonrId)),
+        ttl = Somelon(FelonelondbackTtl))
+      val felonelondbackUrl = FelonelondbackInfo.felonelondbackUrl(
+        felonelondbackTypelon = tlst.FelonelondbackTypelon.SelonelonFelonwelonr,
+        felonelondbackMelontadata = felonelondbackMelontadata,
+        injelonctionTypelon = injelonctionTypelon
       )
 
-      ChildFeedbackAction(
-        feedbackType = SeeFewer,
-        prompt = Some(prompt),
-        confirmation = Some(confirmation),
-        feedbackUrl = Some(feedbackUrl),
-        hasUndoAction = Some(true),
-        confirmationDisplayType = None,
-        clientEventInfo = None,
-        icon = None,
-        richBehavior = None,
-        subprompt = None
+      ChildFelonelondbackAction(
+        felonelondbackTypelon = SelonelonFelonwelonr,
+        prompt = Somelon(prompt),
+        confirmation = Somelon(confirmation),
+        felonelondbackUrl = Somelon(felonelondbackUrl),
+        hasUndoAction = Somelon(truelon),
+        confirmationDisplayTypelon = Nonelon,
+        clielonntelonvelonntInfo = Nonelon,
+        icon = Nonelon,
+        richBelonhavior = Nonelon,
+        subprompt = Nonelon
       )
     }
   }

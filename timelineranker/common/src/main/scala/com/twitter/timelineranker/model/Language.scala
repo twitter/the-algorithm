@@ -1,31 +1,31 @@
-package com.twitter.timelineranker.model
+packagelon com.twittelonr.timelonlinelonrankelonr.modelonl
 
-import com.twitter.common.text.language.LocaleUtil
-import com.twitter.timelineranker.{thriftscala => thrift}
+import com.twittelonr.common.telonxt.languagelon.LocalelonUtil
+import com.twittelonr.timelonlinelonrankelonr.{thriftscala => thrift}
 
-object Language {
+objelonct Languagelon {
 
-  def fromThrift(lang: thrift.Language): Language = {
-    require(lang.language.isDefined, "language can't be None")
-    require(lang.scope.isDefined, "scope can't be None")
-    Language(lang.language.get, LanguageScope.fromThrift(lang.scope.get))
+  delonf fromThrift(lang: thrift.Languagelon): Languagelon = {
+    relonquirelon(lang.languagelon.isDelonfinelond, "languagelon can't belon Nonelon")
+    relonquirelon(lang.scopelon.isDelonfinelond, "scopelon can't belon Nonelon")
+    Languagelon(lang.languagelon.gelont, LanguagelonScopelon.fromThrift(lang.scopelon.gelont))
   }
 }
 
 /**
- * Represents a language and the scope that it relates to.
+ * Relonprelonselonnts a languagelon and thelon scopelon that it relonlatelons to.
  */
-case class Language(language: String, scope: LanguageScope.Value) {
+caselon class Languagelon(languagelon: String, scopelon: LanguagelonScopelon.Valuelon) {
 
   throwIfInvalid()
 
-  def toThrift: thrift.Language = {
-    val scopeOption = Some(LanguageScope.toThrift(scope))
-    thrift.Language(Some(language), scopeOption)
+  delonf toThrift: thrift.Languagelon = {
+    val scopelonOption = Somelon(LanguagelonScopelon.toThrift(scopelon))
+    thrift.Languagelon(Somelon(languagelon), scopelonOption)
   }
 
-  def throwIfInvalid(): Unit = {
-    val result = LocaleUtil.getLocaleOf(language)
-    require(result != LocaleUtil.UNKNOWN, s"Language ${language} is unsupported")
+  delonf throwIfInvalid(): Unit = {
+    val relonsult = LocalelonUtil.gelontLocalelonOf(languagelon)
+    relonquirelon(relonsult != LocalelonUtil.UNKNOWN, s"Languagelon ${languagelon} is unsupportelond")
   }
 }

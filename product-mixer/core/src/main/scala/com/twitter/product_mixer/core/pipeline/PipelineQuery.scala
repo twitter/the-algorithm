@@ -1,32 +1,32 @@
-package com.twitter.product_mixer.core.pipeline
+packagelon com.twittelonr.product_mixelonr.corelon.pipelonlinelon
 
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.product_mixer.core.model.marshalling.request.HasDebugOptions
-import com.twitter.product_mixer.core.model.marshalling.request.HasProduct
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.timelines.configapi.Param
-import com.twitter.util.Time
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.HasClielonntContelonxt
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.HasDelonbugOptions
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.HasProduct
+import com.twittelonr.timelonlinelons.configapi.HasParams
+import com.twittelonr.timelonlinelons.configapi.Param
+import com.twittelonr.util.Timelon
 
-trait PipelineQuery extends HasParams with HasClientContext with HasProduct with HasDebugOptions {
-  self =>
+trait PipelonlinelonQuelonry elonxtelonnds HasParams with HasClielonntContelonxt with HasProduct with HasDelonbugOptions {
+  selonlf =>
 
-  /** Set a query time val that is constant for the duration of the query lifecycle */
-  val queryTime: Time = self.debugOptions.flatMap(_.requestTimeOverride).getOrElse(Time.now)
+  /** Selont a quelonry timelon val that is constant for thelon duration of thelon quelonry lifeloncyclelon */
+  val quelonryTimelon: Timelon = selonlf.delonbugOptions.flatMap(_.relonquelonstTimelonOvelonrridelon).gelontOrelonlselon(Timelon.now)
 
-  /** The requested max results is specified, or not specified, by the thrift client */
-  def requestedMaxResults: Option[Int]
+  /** Thelon relonquelonstelond max relonsults is speloncifielond, or not speloncifielond, by thelon thrift clielonnt */
+  delonf relonquelonstelondMaxRelonsults: Option[Int]
 
-  /** Retrieves the max results with a default Param, if not specified by the thrift client */
-  def maxResults(defaultRequestedMaxResultParam: Param[Int]): Int =
-    requestedMaxResults.getOrElse(params(defaultRequestedMaxResultParam))
+  /** Relontrielonvelons thelon max relonsults with a delonfault Param, if not speloncifielond by thelon thrift clielonnt */
+  delonf maxRelonsults(delonfaultRelonquelonstelondMaxRelonsultParam: Param[Int]): Int =
+    relonquelonstelondMaxRelonsults.gelontOrelonlselon(params(delonfaultRelonquelonstelondMaxRelonsultParam))
 
-  /** Optional [[FeatureMap]], this may be updated later using [[withFeatureMap]] */
-  def features: Option[FeatureMap]
+  /** Optional [[FelonaturelonMap]], this may belon updatelond latelonr using [[withFelonaturelonMap]] */
+  delonf felonaturelons: Option[FelonaturelonMap]
 
   /**
-   * Since Query-Level features can be hydrated later, we need this method to update the PipelineQuery
-   * usually this will be implemented via `copy(features = Some(features))`
+   * Sincelon Quelonry-Lelonvelonl felonaturelons can belon hydratelond latelonr, welon nelonelond this melonthod to updatelon thelon PipelonlinelonQuelonry
+   * usually this will belon implelonmelonntelond via `copy(felonaturelons = Somelon(felonaturelons))`
    */
-  def withFeatureMap(features: FeatureMap): PipelineQuery
+  delonf withFelonaturelonMap(felonaturelons: FelonaturelonMap): PipelonlinelonQuelonry
 }

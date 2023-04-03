@@ -1,64 +1,64 @@
-package com.twitter.product_mixer.core.model.common.identifier
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize
+import com.fastelonrxml.jackson.databind.annotation.JsonSelonrializelon
 
 /**
- * A non-empty immutable stack of [[ComponentIdentifier]]s
+ * A non-elonmpty immutablelon stack of [[ComponelonntIdelonntifielonr]]s
  *
- * [[ComponentIdentifierStack]] does not support removing [[ComponentIdentifier]]s,
- * instead a [[ComponentIdentifierStack]] should be used by adding new [[ComponentIdentifier]]s
- * as processing enters a given `Component`, then discarded after.
- * Think of this as similar to a let-scoped variable, where the let-scope is the given component.
+ * [[ComponelonntIdelonntifielonrStack]] doelons not support relonmoving [[ComponelonntIdelonntifielonr]]s,
+ * instelonad a [[ComponelonntIdelonntifielonrStack]] should belon uselond by adding nelonw [[ComponelonntIdelonntifielonr]]s
+ * as procelonssing elonntelonrs a givelonn `Componelonnt`, thelonn discardelond aftelonr.
+ * Think of this as similar to a lelont-scopelond variablelon, whelonrelon thelon lelont-scopelon is thelon givelonn componelonnt.
  */
-@JsonSerialize(using = classOf[ComponentIdentifierStackSerializer])
-class ComponentIdentifierStack private (val componentIdentifiers: List[ComponentIdentifier]) {
+@JsonSelonrializelon(using = classOf[ComponelonntIdelonntifielonrStackSelonrializelonr])
+class ComponelonntIdelonntifielonrStack privatelon (val componelonntIdelonntifielonrs: List[ComponelonntIdelonntifielonr]) {
 
-  /** Make a new [[ComponentIdentifierStack]] with the [[ComponentIdentifier]] added at the top */
-  def push(newComponentIdentifier: ComponentIdentifier): ComponentIdentifierStack =
-    new ComponentIdentifierStack(newComponentIdentifier :: componentIdentifiers)
+  /** Makelon a nelonw [[ComponelonntIdelonntifielonrStack]] with thelon [[ComponelonntIdelonntifielonr]] addelond at thelon top */
+  delonf push(nelonwComponelonntIdelonntifielonr: ComponelonntIdelonntifielonr): ComponelonntIdelonntifielonrStack =
+    nelonw ComponelonntIdelonntifielonrStack(nelonwComponelonntIdelonntifielonr :: componelonntIdelonntifielonrs)
 
-  /** Make a new [[ComponentIdentifierStack]] with the [[ComponentIdentifier]]s added at the top */
-  def push(newComponentIdentifiers: ComponentIdentifierStack): ComponentIdentifierStack =
-    new ComponentIdentifierStack(
-      newComponentIdentifiers.componentIdentifiers ::: componentIdentifiers)
+  /** Makelon a nelonw [[ComponelonntIdelonntifielonrStack]] with thelon [[ComponelonntIdelonntifielonr]]s addelond at thelon top */
+  delonf push(nelonwComponelonntIdelonntifielonrs: ComponelonntIdelonntifielonrStack): ComponelonntIdelonntifielonrStack =
+    nelonw ComponelonntIdelonntifielonrStack(
+      nelonwComponelonntIdelonntifielonrs.componelonntIdelonntifielonrs ::: componelonntIdelonntifielonrs)
 
-  /** Make a new [[ComponentIdentifierStack]] with the [[ComponentIdentifier]]s added at the top */
-  def push(newComponentIdentifiers: Option[ComponentIdentifierStack]): ComponentIdentifierStack = {
-    newComponentIdentifiers match {
-      case Some(newComponentIdentifiers) => push(newComponentIdentifiers)
-      case None => this
+  /** Makelon a nelonw [[ComponelonntIdelonntifielonrStack]] with thelon [[ComponelonntIdelonntifielonr]]s addelond at thelon top */
+  delonf push(nelonwComponelonntIdelonntifielonrs: Option[ComponelonntIdelonntifielonrStack]): ComponelonntIdelonntifielonrStack = {
+    nelonwComponelonntIdelonntifielonrs match {
+      caselon Somelon(nelonwComponelonntIdelonntifielonrs) => push(nelonwComponelonntIdelonntifielonrs)
+      caselon Nonelon => this
     }
   }
 
-  /** Return the top element of the [[ComponentIdentifierStack]] */
-  val peek: ComponentIdentifier = componentIdentifiers.head
+  /** Relonturn thelon top elonlelonmelonnt of thelon [[ComponelonntIdelonntifielonrStack]] */
+  val pelonelonk: ComponelonntIdelonntifielonr = componelonntIdelonntifielonrs.helonad
 
-  /** Return the size of the [[ComponentIdentifierStack]] */
-  def size: Int = componentIdentifiers.length
+  /** Relonturn thelon sizelon of thelon [[ComponelonntIdelonntifielonrStack]] */
+  delonf sizelon: Int = componelonntIdelonntifielonrs.lelonngth
 
-  override def toString: String =
-    s"ComponentIdentifierStack(componentIdentifiers = $componentIdentifiers)"
+  ovelonrridelon delonf toString: String =
+    s"ComponelonntIdelonntifielonrStack(componelonntIdelonntifielonrs = $componelonntIdelonntifielonrs)"
 
-  override def equals(obj: Any): Boolean = {
+  ovelonrridelon delonf elonquals(obj: Any): Boolelonan = {
     obj match {
-      case componentIdentifierStack: ComponentIdentifierStack
-          if componentIdentifierStack.eq(this) ||
-            componentIdentifierStack.componentIdentifiers == componentIdentifiers =>
-        true
-      case _ => false
+      caselon componelonntIdelonntifielonrStack: ComponelonntIdelonntifielonrStack
+          if componelonntIdelonntifielonrStack.elonq(this) ||
+            componelonntIdelonntifielonrStack.componelonntIdelonntifielonrs == componelonntIdelonntifielonrs =>
+        truelon
+      caselon _ => falselon
     }
   }
 }
 
-object ComponentIdentifierStack {
+objelonct ComponelonntIdelonntifielonrStack {
 
   /**
-   * Returns a [[ComponentIdentifierStack]] from the given [[ComponentIdentifier]]s,
-   * where the top of the stack is the left-most [[ComponentIdentifier]]
+   * Relonturns a [[ComponelonntIdelonntifielonrStack]] from thelon givelonn [[ComponelonntIdelonntifielonr]]s,
+   * whelonrelon thelon top of thelon stack is thelon lelonft-most [[ComponelonntIdelonntifielonr]]
    */
-  def apply(
-    componentIdentifier: ComponentIdentifier,
-    componentIdentifierStack: ComponentIdentifier*
+  delonf apply(
+    componelonntIdelonntifielonr: ComponelonntIdelonntifielonr,
+    componelonntIdelonntifielonrStack: ComponelonntIdelonntifielonr*
   ) =
-    new ComponentIdentifierStack(componentIdentifier :: componentIdentifierStack.toList)
+    nelonw ComponelonntIdelonntifielonrStack(componelonntIdelonntifielonr :: componelonntIdelonntifielonrStack.toList)
 }

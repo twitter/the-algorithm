@@ -1,148 +1,148 @@
-package com.twitter.follow_recommendations.common.feature_hydration.sources
+packagelon com.twittelonr.follow_reloncommelonndations.common.felonaturelon_hydration.sourcelons
 
-import com.twitter.timelines.configapi.DurationConversion
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.HasDurationConversion
-import com.twitter.util.Duration
-import com.twitter.conversions.DurationOps._
+import com.twittelonr.timelonlinelons.configapi.DurationConvelonrsion
+import com.twittelonr.timelonlinelons.configapi.FSBoundelondParam
+import com.twittelonr.timelonlinelons.configapi.FSParam
+import com.twittelonr.timelonlinelons.configapi.HasDurationConvelonrsion
+import com.twittelonr.util.Duration
+import com.twittelonr.convelonrsions.DurationOps._
 
-object FeatureStoreSourceParams {
-  case object EnableTopicAggregateFeatures
-      extends FSParam[Boolean](
-        name = FeatureHydrationSourcesFeatureSwitchKeys.EnableTopicAggregateFeatures,
-        default = true
+objelonct FelonaturelonStorelonSourcelonParams {
+  caselon objelonct elonnablelonTopicAggrelongatelonFelonaturelons
+      elonxtelonnds FSParam[Boolelonan](
+        namelon = FelonaturelonHydrationSourcelonsFelonaturelonSwitchKelonys.elonnablelonTopicAggrelongatelonFelonaturelons,
+        delonfault = truelon
       )
-  case object EnableAlgorithmAggregateFeatures
-      extends FSParam[Boolean](
-        name = FeatureHydrationSourcesFeatureSwitchKeys.EnableAlgorithmAggregateFeatures,
-        default = false
+  caselon objelonct elonnablelonAlgorithmAggrelongatelonFelonaturelons
+      elonxtelonnds FSParam[Boolelonan](
+        namelon = FelonaturelonHydrationSourcelonsFelonaturelonSwitchKelonys.elonnablelonAlgorithmAggrelongatelonFelonaturelons,
+        delonfault = falselon
       )
-  case object EnableAuthorTopicAggregateFeatures
-      extends FSParam[Boolean](
-        name = FeatureHydrationSourcesFeatureSwitchKeys.EnableAuthorTopicAggregateFeatures,
-        default = true
+  caselon objelonct elonnablelonAuthorTopicAggrelongatelonFelonaturelons
+      elonxtelonnds FSParam[Boolelonan](
+        namelon = FelonaturelonHydrationSourcelonsFelonaturelonSwitchKelonys.elonnablelonAuthorTopicAggrelongatelonFelonaturelons,
+        delonfault = truelon
       )
-  case object EnableUserTopicFeatures
-      extends FSParam[Boolean](
-        name = FeatureHydrationSourcesFeatureSwitchKeys.EnableUserTopicFeatures,
-        default = false
+  caselon objelonct elonnablelonUselonrTopicFelonaturelons
+      elonxtelonnds FSParam[Boolelonan](
+        namelon = FelonaturelonHydrationSourcelonsFelonaturelonSwitchKelonys.elonnablelonUselonrTopicFelonaturelons,
+        delonfault = falselon
       )
-  case object EnableTargetUserFeatures
-      extends FSParam[Boolean](
-        name = FeatureHydrationSourcesFeatureSwitchKeys.EnableTargetUserFeatures,
-        default = true
+  caselon objelonct elonnablelonTargelontUselonrFelonaturelons
+      elonxtelonnds FSParam[Boolelonan](
+        namelon = FelonaturelonHydrationSourcelonsFelonaturelonSwitchKelonys.elonnablelonTargelontUselonrFelonaturelons,
+        delonfault = truelon
       )
-  case object EnableTargetUserUserAuthorUserStateRealTimeAggregatesFeature
-      extends FSParam[Boolean](
-        name =
-          FeatureHydrationSourcesFeatureSwitchKeys.EnableTargetUserUserAuthorUserStateRealTimeAggregatesFeature,
-        default = true
+  caselon objelonct elonnablelonTargelontUselonrUselonrAuthorUselonrStatelonRelonalTimelonAggrelongatelonsFelonaturelon
+      elonxtelonnds FSParam[Boolelonan](
+        namelon =
+          FelonaturelonHydrationSourcelonsFelonaturelonSwitchKelonys.elonnablelonTargelontUselonrUselonrAuthorUselonrStatelonRelonalTimelonAggrelongatelonsFelonaturelon,
+        delonfault = truelon
       )
-  case object EnableTargetUserResurrectionFeatures
-      extends FSParam[Boolean](
-        name = FeatureHydrationSourcesFeatureSwitchKeys.EnableTargetUserResurrectionFeatures,
-        default = true
+  caselon objelonct elonnablelonTargelontUselonrRelonsurrelonctionFelonaturelons
+      elonxtelonnds FSParam[Boolelonan](
+        namelon = FelonaturelonHydrationSourcelonsFelonaturelonSwitchKelonys.elonnablelonTargelontUselonrRelonsurrelonctionFelonaturelons,
+        delonfault = truelon
       )
-  case object EnableTargetUserWtfImpressionFeatures
-      extends FSParam[Boolean](
-        name = FeatureHydrationSourcesFeatureSwitchKeys.EnableTargetUserWtfImpressionFeatures,
-        default = true
+  caselon objelonct elonnablelonTargelontUselonrWtfImprelonssionFelonaturelons
+      elonxtelonnds FSParam[Boolelonan](
+        namelon = FelonaturelonHydrationSourcelonsFelonaturelonSwitchKelonys.elonnablelonTargelontUselonrWtfImprelonssionFelonaturelons,
+        delonfault = truelon
       )
-  case object EnableCandidateUserFeatures
-      extends FSParam[Boolean](
-        name = FeatureHydrationSourcesFeatureSwitchKeys.EnableCandidateUserFeatures,
-        default = true
+  caselon objelonct elonnablelonCandidatelonUselonrFelonaturelons
+      elonxtelonnds FSParam[Boolelonan](
+        namelon = FelonaturelonHydrationSourcelonsFelonaturelonSwitchKelonys.elonnablelonCandidatelonUselonrFelonaturelons,
+        delonfault = truelon
       )
-  case object EnableCandidateUserAuthorRealTimeAggregateFeatures
-      extends FSParam[Boolean](
-        name =
-          FeatureHydrationSourcesFeatureSwitchKeys.EnableCandidateUserAuthorRealTimeAggregateFeatures,
-        default = true
+  caselon objelonct elonnablelonCandidatelonUselonrAuthorRelonalTimelonAggrelongatelonFelonaturelons
+      elonxtelonnds FSParam[Boolelonan](
+        namelon =
+          FelonaturelonHydrationSourcelonsFelonaturelonSwitchKelonys.elonnablelonCandidatelonUselonrAuthorRelonalTimelonAggrelongatelonFelonaturelons,
+        delonfault = truelon
       )
-  case object EnableCandidateUserResurrectionFeatures
-      extends FSParam[Boolean](
-        name = FeatureHydrationSourcesFeatureSwitchKeys.EnableCandidateUserResurrectionFeatures,
-        default = true
+  caselon objelonct elonnablelonCandidatelonUselonrRelonsurrelonctionFelonaturelons
+      elonxtelonnds FSParam[Boolelonan](
+        namelon = FelonaturelonHydrationSourcelonsFelonaturelonSwitchKelonys.elonnablelonCandidatelonUselonrRelonsurrelonctionFelonaturelons,
+        delonfault = truelon
       )
-  case object EnableCandidateUserTimelinesAuthorAggregateFeatures
-      extends FSParam[Boolean](
-        name =
-          FeatureHydrationSourcesFeatureSwitchKeys.EnableCandidateUserTimelinesAuthorAggregateFeatures,
-        default = true
+  caselon objelonct elonnablelonCandidatelonUselonrTimelonlinelonsAuthorAggrelongatelonFelonaturelons
+      elonxtelonnds FSParam[Boolelonan](
+        namelon =
+          FelonaturelonHydrationSourcelonsFelonaturelonSwitchKelonys.elonnablelonCandidatelonUselonrTimelonlinelonsAuthorAggrelongatelonFelonaturelons,
+        delonfault = truelon
       )
-  case object EnableUserCandidateEdgeFeatures
-      extends FSParam[Boolean](
-        name = FeatureHydrationSourcesFeatureSwitchKeys.EnableUserCandidateEdgeFeatures,
-        default = true
+  caselon objelonct elonnablelonUselonrCandidatelonelondgelonFelonaturelons
+      elonxtelonnds FSParam[Boolelonan](
+        namelon = FelonaturelonHydrationSourcelonsFelonaturelonSwitchKelonys.elonnablelonUselonrCandidatelonelondgelonFelonaturelons,
+        delonfault = truelon
       )
-  case object EnableUserCandidateWtfImpressionCandidateFeatures
-      extends FSParam[Boolean](
-        name =
-          FeatureHydrationSourcesFeatureSwitchKeys.EnableUserCandidateWtfImpressionCandidateFeatures,
-        default = true
+  caselon objelonct elonnablelonUselonrCandidatelonWtfImprelonssionCandidatelonFelonaturelons
+      elonxtelonnds FSParam[Boolelonan](
+        namelon =
+          FelonaturelonHydrationSourcelonsFelonaturelonSwitchKelonys.elonnablelonUselonrCandidatelonWtfImprelonssionCandidatelonFelonaturelons,
+        delonfault = truelon
       )
-  case object EnableUserWtfAlgEdgeFeatures
-      extends FSParam[Boolean](
-        name = FeatureHydrationSourcesFeatureSwitchKeys.EnableUserWtfAlgEdgeFeatures,
-        default = false
+  caselon objelonct elonnablelonUselonrWtfAlgelondgelonFelonaturelons
+      elonxtelonnds FSParam[Boolelonan](
+        namelon = FelonaturelonHydrationSourcelonsFelonaturelonSwitchKelonys.elonnablelonUselonrWtfAlgelondgelonFelonaturelons,
+        delonfault = falselon
       )
-  case object EnableSimilarToUserFeatures
-      extends FSParam[Boolean](
-        name = FeatureHydrationSourcesFeatureSwitchKeys.EnableSimilarToUserFeatures,
-        default = true
-      )
-
-  case object EnableCandidatePrecomputedNotificationFeatures
-      extends FSParam[Boolean](
-        name =
-          FeatureHydrationSourcesFeatureSwitchKeys.EnableCandidatePrecomputedNotificationFeatures,
-        default = false
+  caselon objelonct elonnablelonSimilarToUselonrFelonaturelons
+      elonxtelonnds FSParam[Boolelonan](
+        namelon = FelonaturelonHydrationSourcelonsFelonaturelonSwitchKelonys.elonnablelonSimilarToUselonrFelonaturelons,
+        delonfault = truelon
       )
 
-  case object EnableCandidateClientFeatures
-      extends FSParam[Boolean](
-        name = FeatureHydrationSourcesFeatureSwitchKeys.EnableCandidateClientFeatures,
-        default = false
+  caselon objelonct elonnablelonCandidatelonPreloncomputelondNotificationFelonaturelons
+      elonxtelonnds FSParam[Boolelonan](
+        namelon =
+          FelonaturelonHydrationSourcelonsFelonaturelonSwitchKelonys.elonnablelonCandidatelonPreloncomputelondNotificationFelonaturelons,
+        delonfault = falselon
       )
 
-  case object EnableUserClientFeatures
-      extends FSParam[Boolean](
-        name = FeatureHydrationSourcesFeatureSwitchKeys.EnableUserClientFeatures,
-        default = false
+  caselon objelonct elonnablelonCandidatelonClielonntFelonaturelons
+      elonxtelonnds FSParam[Boolelonan](
+        namelon = FelonaturelonHydrationSourcelonsFelonaturelonSwitchKelonys.elonnablelonCandidatelonClielonntFelonaturelons,
+        delonfault = falselon
       )
 
-  case object EnableSeparateClientForTimelinesAuthors
-      extends FSParam[Boolean](
-        name = FeatureHydrationSourcesFeatureSwitchKeys.UseSeparateClientForTimelinesAuthor,
-        default = false
+  caselon objelonct elonnablelonUselonrClielonntFelonaturelons
+      elonxtelonnds FSParam[Boolelonan](
+        namelon = FelonaturelonHydrationSourcelonsFelonaturelonSwitchKelonys.elonnablelonUselonrClielonntFelonaturelons,
+        delonfault = falselon
       )
 
-  case object EnableSeparateClientForMetricCenterUserCounting
-      extends FSParam[Boolean](
-        name = FeatureHydrationSourcesFeatureSwitchKeys.UseSeparateClientMetricCenterUserCounting,
-        default = false
+  caselon objelonct elonnablelonSelonparatelonClielonntForTimelonlinelonsAuthors
+      elonxtelonnds FSParam[Boolelonan](
+        namelon = FelonaturelonHydrationSourcelonsFelonaturelonSwitchKelonys.UselonSelonparatelonClielonntForTimelonlinelonsAuthor,
+        delonfault = falselon
       )
 
-  case object EnableSeparateClientForNotifications
-      extends FSParam[Boolean](
-        name = FeatureHydrationSourcesFeatureSwitchKeys.UseSeparateClientForNotifications,
-        default = false
+  caselon objelonct elonnablelonSelonparatelonClielonntForMelontricCelonntelonrUselonrCounting
+      elonxtelonnds FSParam[Boolelonan](
+        namelon = FelonaturelonHydrationSourcelonsFelonaturelonSwitchKelonys.UselonSelonparatelonClielonntMelontricCelonntelonrUselonrCounting,
+        delonfault = falselon
       )
 
-  case object EnableSeparateClientForGizmoduck
-      extends FSParam[Boolean](
-        name = FeatureHydrationSourcesFeatureSwitchKeys.UseSeparateClientForGizmoduck,
-        default = false
+  caselon objelonct elonnablelonSelonparatelonClielonntForNotifications
+      elonxtelonnds FSParam[Boolelonan](
+        namelon = FelonaturelonHydrationSourcelonsFelonaturelonSwitchKelonys.UselonSelonparatelonClielonntForNotifications,
+        delonfault = falselon
       )
 
-  case object GlobalFetchTimeout
-      extends FSBoundedParam[Duration](
-        name = FeatureHydrationSourcesFeatureSwitchKeys.FeatureHydrationTimeout,
-        default = 240.millisecond,
-        min = 100.millisecond,
-        max = 400.millisecond)
-      with HasDurationConversion {
-    override def durationConversion: DurationConversion = DurationConversion.FromMillis
+  caselon objelonct elonnablelonSelonparatelonClielonntForGizmoduck
+      elonxtelonnds FSParam[Boolelonan](
+        namelon = FelonaturelonHydrationSourcelonsFelonaturelonSwitchKelonys.UselonSelonparatelonClielonntForGizmoduck,
+        delonfault = falselon
+      )
+
+  caselon objelonct GlobalFelontchTimelonout
+      elonxtelonnds FSBoundelondParam[Duration](
+        namelon = FelonaturelonHydrationSourcelonsFelonaturelonSwitchKelonys.FelonaturelonHydrationTimelonout,
+        delonfault = 240.milliseloncond,
+        min = 100.milliseloncond,
+        max = 400.milliseloncond)
+      with HasDurationConvelonrsion {
+    ovelonrridelon delonf durationConvelonrsion: DurationConvelonrsion = DurationConvelonrsion.FromMillis
   }
 }

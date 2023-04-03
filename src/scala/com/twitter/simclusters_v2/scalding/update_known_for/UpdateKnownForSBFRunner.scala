@@ -1,685 +1,685 @@
-package com.twitter.simclusters_v2.scalding.update_known_for
+packagelon com.twittelonr.simclustelonrs_v2.scalding.updatelon_known_for
 
-import com.twitter.algebird.Max
-import com.twitter.hermit.candidate.thriftscala.Candidates
-import com.twitter.sbf.core.AlgorithmConfig
-import com.twitter.sbf.core.MHAlgorithm
-import com.twitter.sbf.core.SparseBinaryMatrix
-import com.twitter.sbf.core.SparseRealMatrix
-import com.twitter.sbf.graph.Graph
-import com.twitter.scalding.Days
-import com.twitter.scalding.Execution
-import com.twitter.scalding.Hdfs
-import com.twitter.scalding.Mode
-import com.twitter.scalding.Stat
-import com.twitter.scalding.TypedTsv
-import com.twitter.scalding.UniqueID
-import com.twitter.scalding.commons.source.VersionedKeyValSource
-import com.twitter.scalding.typed.TypedPipe
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.remote_access.ExplicitLocation
-import com.twitter.scalding_internal.dalv2.remote_access.ProcAtla
-import com.twitter.simclusters_v2.common.ClusterId
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.hdfs_sources.AdhocKeyValSources
-import com.twitter.simclusters_v2.scalding.CompareClusters
-import com.twitter.simclusters_v2.scalding.KnownForSources
-import com.twitter.simclusters_v2.scalding.TopUser
-import com.twitter.simclusters_v2.scalding.TopUserWithMappedId
-import com.twitter.simclusters_v2.scalding.TopUsersSimilarityGraph
-import com.twitter.simclusters_v2.scalding.common.Util
-import com.twitter.usersource.snapshot.flat.UsersourceFlatScalaDataset
-import java.io.PrintWriter
-import java.util.TimeZone
-import org.apache.commons.math3.random.JDKRandomGenerator
-import org.apache.commons.math3.random.RandomAdaptor
-import org.apache.hadoop.fs.FileSystem
-import org.apache.hadoop.fs.Path
-import scala.collection.mutable
+import com.twittelonr.algelonbird.Max
+import com.twittelonr.helonrmit.candidatelon.thriftscala.Candidatelons
+import com.twittelonr.sbf.corelon.AlgorithmConfig
+import com.twittelonr.sbf.corelon.MHAlgorithm
+import com.twittelonr.sbf.corelon.SparselonBinaryMatrix
+import com.twittelonr.sbf.corelon.SparselonRelonalMatrix
+import com.twittelonr.sbf.graph.Graph
+import com.twittelonr.scalding.Days
+import com.twittelonr.scalding.elonxeloncution
+import com.twittelonr.scalding.Hdfs
+import com.twittelonr.scalding.Modelon
+import com.twittelonr.scalding.Stat
+import com.twittelonr.scalding.TypelondTsv
+import com.twittelonr.scalding.UniquelonID
+import com.twittelonr.scalding.commons.sourcelon.VelonrsionelondKelonyValSourcelon
+import com.twittelonr.scalding.typelond.TypelondPipelon
+import com.twittelonr.scalding_intelonrnal.dalv2.DAL
+import com.twittelonr.scalding_intelonrnal.dalv2.relonmotelon_accelonss.elonxplicitLocation
+import com.twittelonr.scalding_intelonrnal.dalv2.relonmotelon_accelonss.ProcAtla
+import com.twittelonr.simclustelonrs_v2.common.ClustelonrId
+import com.twittelonr.simclustelonrs_v2.common.UselonrId
+import com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.AdhocKelonyValSourcelons
+import com.twittelonr.simclustelonrs_v2.scalding.ComparelonClustelonrs
+import com.twittelonr.simclustelonrs_v2.scalding.KnownForSourcelons
+import com.twittelonr.simclustelonrs_v2.scalding.TopUselonr
+import com.twittelonr.simclustelonrs_v2.scalding.TopUselonrWithMappelondId
+import com.twittelonr.simclustelonrs_v2.scalding.TopUselonrsSimilarityGraph
+import com.twittelonr.simclustelonrs_v2.scalding.common.Util
+import com.twittelonr.uselonrsourcelon.snapshot.flat.UselonrsourcelonFlatScalaDataselont
+import java.io.PrintWritelonr
+import java.util.TimelonZonelon
+import org.apachelon.commons.math3.random.JDKRandomGelonnelonrator
+import org.apachelon.commons.math3.random.RandomAdaptor
+import org.apachelon.hadoop.fs.FilelonSystelonm
+import org.apachelon.hadoop.fs.Path
+import scala.collelonction.mutablelon
 
-object UpdateKnownForSBFRunner {
+objelonct UpdatelonKnownForSBFRunnelonr {
 
   /**
-   * The main logic of the job. It works as follows:
+   * Thelon main logic of thelon job. It works as follows:
    *
-   *  1. read the top 20M users, and convert their UserIds to an integer Id from 0 to 20M in order to use the clustering library
-   *  2. read the user similarity graph from Sims, and convert their UserIds to the same mapped integer Id
-   *  3. read the previous known_for data set for initialization of the clustering algorithm;
-   *     for users without previous assignments, we randomly assign them to some unused clusters (if there are any).
-   *  4. run the clustering algorithm for x iterations (x = 4 in the prod setting)
-   *  5. output of the clustering result as the new known_for.
+   *  1. relonad thelon top 20M uselonrs, and convelonrt thelonir UselonrIds to an intelongelonr Id from 0 to 20M in ordelonr to uselon thelon clustelonring library
+   *  2. relonad thelon uselonr similarity graph from Sims, and convelonrt thelonir UselonrIds to thelon samelon mappelond intelongelonr Id
+   *  3. relonad thelon prelonvious known_for data selont for initialization of thelon clustelonring algorithm;
+   *     for uselonrs without prelonvious assignmelonnts, welon randomly assign thelonm to somelon unuselond clustelonrs (if thelonrelon arelon any).
+   *  4. run thelon clustelonring algorithm for x itelonrations (x = 4 in thelon prod selontting)
+   *  5. output of thelon clustelonring relonsult as thelon nelonw known_for.
    *
    */
-  def runUpdateKnownFor(
-    simsGraph: TypedPipe[Candidates],
-    minActiveFollowers: Int,
+  delonf runUpdatelonKnownFor(
+    simsGraph: TypelondPipelon[Candidatelons],
+    minActivelonFollowelonrs: Int,
     topK: Int,
-    maxNeighbors: Int,
-    tempLocationPath: String,
-    previousKnownFor: TypedPipe[(UserId, Array[(ClusterId, Float)])],
-    maxEpochsForClustering: Int,
-    squareWeightsEnable: Boolean,
-    wtCoeff: Double,
-    mode: Mode
+    maxNelonighbors: Int,
+    telonmpLocationPath: String,
+    prelonviousKnownFor: TypelondPipelon[(UselonrId, Array[(ClustelonrId, Float)])],
+    maxelonpochsForClustelonring: Int,
+    squarelonWelonightselonnablelon: Boolelonan,
+    wtCoelonff: Doublelon,
+    modelon: Modelon
   )(
     implicit
-    uniqueId: UniqueID,
-    tz: TimeZone
-  ): Execution[TypedPipe[(UserId, Array[(ClusterId, Float)])]] = {
+    uniquelonId: UniquelonID,
+    tz: TimelonZonelon
+  ): elonxeloncution[TypelondPipelon[(UselonrId, Array[(ClustelonrId, Float)])]] = {
 
-    val tempLocationPathSimsGraph = tempLocationPath + "/sims_graph"
-    val tempLocationPathMappedIds = tempLocationPath + "/mapped_user_ids"
-    val tempLocationPathClustering = tempLocationPath + "/clustering_output"
+    val telonmpLocationPathSimsGraph = telonmpLocationPath + "/sims_graph"
+    val telonmpLocationPathMappelondIds = telonmpLocationPath + "/mappelond_uselonr_ids"
+    val telonmpLocationPathClustelonring = telonmpLocationPath + "/clustelonring_output"
 
-    val mappedIdsToUserIds: TypedPipe[(Int, UserId)] =
-      getTopFollowedUsersWithMappedIds(minActiveFollowers, topK)
+    val mappelondIdsToUselonrIds: TypelondPipelon[(Int, UselonrId)] =
+      gelontTopFollowelondUselonrsWithMappelondIds(minActivelonFollowelonrs, topK)
         .map {
-          case (id, mappedId) =>
-            (mappedId, id)
+          caselon (id, mappelondId) =>
+            (mappelondId, id)
         }
-        .shard(partitions = topK / 1e5.toInt)
+        .shard(partitions = topK / 1elon5.toInt)
 
-    val mappedSimsGraphInput: TypedPipe[(Int, List[(Int, Float)])] =
-      getMappedSimsGraph(
-        mappedIdsToUserIds,
+    val mappelondSimsGraphInput: TypelondPipelon[(Int, List[(Int, Float)])] =
+      gelontMappelondSimsGraph(
+        mappelondIdsToUselonrIds,
         simsGraph,
-        maxNeighbors
-      ) // The simsGraph here consists of the mapped Ids and mapped ngbr Ids and not the original userIds
+        maxNelonighbors
+      ) // Thelon simsGraph helonrelon consists of thelon mappelond Ids and mappelond ngbr Ids and not thelon original uselonrIds
 
-    val mappedSimsGraphVersionedKeyVal: VersionedKeyValSource[Int, List[(Int, Float)]] =
-      AdhocKeyValSources.intermediateSBFResultsDevelSource(tempLocationPathSimsGraph)
-    val mappedIdsToUserIdsVersionedKeyVal: VersionedKeyValSource[Int, UserId] =
-      AdhocKeyValSources.mappedIndicesDevelSource(tempLocationPathMappedIds)
+    val mappelondSimsGraphVelonrsionelondKelonyVal: VelonrsionelondKelonyValSourcelon[Int, List[(Int, Float)]] =
+      AdhocKelonyValSourcelons.intelonrmelondiatelonSBFRelonsultsDelonvelonlSourcelon(telonmpLocationPathSimsGraph)
+    val mappelondIdsToUselonrIdsVelonrsionelondKelonyVal: VelonrsionelondKelonyValSourcelon[Int, UselonrId] =
+      AdhocKelonyValSourcelons.mappelondIndicelonsDelonvelonlSourcelon(telonmpLocationPathMappelondIds)
 
-    // exec to write intermediate results for mapped Sims Graph and mappedIds
-    val mappedSimsGraphAndMappedIdsWriteExec: Execution[Unit] = Execution
+    // elonxelonc to writelon intelonrmelondiatelon relonsults for mappelond Sims Graph and mappelondIds
+    val mappelondSimsGraphAndMappelondIdsWritelonelonxelonc: elonxeloncution[Unit] = elonxeloncution
       .zip(
-        mappedSimsGraphInput.writeExecution(mappedSimsGraphVersionedKeyVal),
-        mappedIdsToUserIds.writeExecution(mappedIdsToUserIdsVersionedKeyVal)
+        mappelondSimsGraphInput.writelonelonxeloncution(mappelondSimsGraphVelonrsionelondKelonyVal),
+        mappelondIdsToUselonrIds.writelonelonxeloncution(mappelondIdsToUselonrIdsVelonrsionelondKelonyVal)
       ).unit
 
-    mappedSimsGraphAndMappedIdsWriteExec.flatMap { _ =>
-      // The simsGraph and the mappedIds from userId(long) -> mappedIds are
-      // having to be written to a temporary location and read again before running
-      // the clustering algorithm.
+    mappelondSimsGraphAndMappelondIdsWritelonelonxelonc.flatMap { _ =>
+      // Thelon simsGraph and thelon mappelondIds from uselonrId(long) -> mappelondIds arelon
+      // having to belon writtelonn to a telonmporary location and relonad again belonforelon running
+      // thelon clustelonring algorithm.
 
-      Execution
+      elonxeloncution
         .zip(
-          readIntermediateExec(
-            TypedPipe.from(mappedSimsGraphVersionedKeyVal),
-            mode,
-            tempLocationPathSimsGraph),
-          readIntermediateExec(
-            TypedPipe.from(mappedIdsToUserIdsVersionedKeyVal),
-            mode,
-            tempLocationPathMappedIds)
+          relonadIntelonrmelondiatelonelonxelonc(
+            TypelondPipelon.from(mappelondSimsGraphVelonrsionelondKelonyVal),
+            modelon,
+            telonmpLocationPathSimsGraph),
+          relonadIntelonrmelondiatelonelonxelonc(
+            TypelondPipelon.from(mappelondIdsToUselonrIdsVelonrsionelondKelonyVal),
+            modelon,
+            telonmpLocationPathMappelondIds)
         )
         .flatMap {
-          case (mappedSimsGraphInputReadAgain, mappedIdsToUserIdsReadAgain) =>
-            val previousKnownForMappedIdsAssignments: TypedPipe[(Int, List[(ClusterId, Float)])] =
-              getKnownForWithMappedIds(
-                previousKnownFor,
-                mappedIdsToUserIdsReadAgain,
+          caselon (mappelondSimsGraphInputRelonadAgain, mappelondIdsToUselonrIdsRelonadAgain) =>
+            val prelonviousKnownForMappelondIdsAssignmelonnts: TypelondPipelon[(Int, List[(ClustelonrId, Float)])] =
+              gelontKnownForWithMappelondIds(
+                prelonviousKnownFor,
+                mappelondIdsToUselonrIdsRelonadAgain,
               )
 
-            val clusteringResults = getClusteringAssignments(
-              mappedSimsGraphInputReadAgain,
-              previousKnownForMappedIdsAssignments,
-              maxEpochsForClustering,
-              squareWeightsEnable,
-              wtCoeff
+            val clustelonringRelonsults = gelontClustelonringAssignmelonnts(
+              mappelondSimsGraphInputRelonadAgain,
+              prelonviousKnownForMappelondIdsAssignmelonnts,
+              maxelonpochsForClustelonring,
+              squarelonWelonightselonnablelon,
+              wtCoelonff
             )
-            clusteringResults
-              .flatMap { updatedKnownFor =>
-                // convert the list of updated KnownFor to a TypedPipe
-                convertKnownForListToTypedPipe(
-                  updatedKnownFor,
-                  mode,
-                  tempLocationPathClustering
+            clustelonringRelonsults
+              .flatMap { updatelondKnownFor =>
+                // convelonrt thelon list of updatelond KnownFor to a TypelondPipelon
+                convelonrtKnownForListToTypelondPipelon(
+                  updatelondKnownFor,
+                  modelon,
+                  telonmpLocationPathClustelonring
                 )
               }
-              .flatMap { updatedKnownForTypedPipe =>
-                // convert the mapped integer id to raw user ids
-                val updatedKnownFor =
-                  updatedKnownForTypedPipe
-                    .join(mappedIdsToUserIdsReadAgain)
-                    .values
+              .flatMap { updatelondKnownForTypelondPipelon =>
+                // convelonrt thelon mappelond intelongelonr id to raw uselonr ids
+                val updatelondKnownFor =
+                  updatelondKnownForTypelondPipelon
+                    .join(mappelondIdsToUselonrIdsRelonadAgain)
+                    .valuelons
                     .swap
-                    .mapValues(_.toArray)
+                    .mapValuelons(_.toArray)
 
-                Execution.from(updatedKnownFor)
+                elonxeloncution.from(updatelondKnownFor)
               }
         }
     }
   }
 
   /**
-   * Helper function to compare newKnownFor with the previous week knownFor assignments
+   * Helonlpelonr function to comparelon nelonwKnownFor with thelon prelonvious welonelonk knownFor assignmelonnts
    */
-  def evaluateUpdatedKnownFor(
-    newKnownFor: TypedPipe[(UserId, Array[(ClusterId, Float)])],
-    inputKnownFor: TypedPipe[(UserId, Array[(ClusterId, Float)])]
+  delonf elonvaluatelonUpdatelondKnownFor(
+    nelonwKnownFor: TypelondPipelon[(UselonrId, Array[(ClustelonrId, Float)])],
+    inputKnownFor: TypelondPipelon[(UselonrId, Array[(ClustelonrId, Float)])]
   )(
-    implicit uniqueId: UniqueID
-  ): Execution[String] = {
+    implicit uniquelonId: UniquelonID
+  ): elonxeloncution[String] = {
 
-    val minSizeOfBiggerClusterForComparison = 10
+    val minSizelonOfBiggelonrClustelonrForComparison = 10
 
-    val compareClusterExec = CompareClusters.summarize(
-      CompareClusters.compare(
-        KnownForSources.transpose(inputKnownFor),
-        KnownForSources.transpose(newKnownFor),
-        minSizeOfBiggerCluster = minSizeOfBiggerClusterForComparison
+    val comparelonClustelonrelonxelonc = ComparelonClustelonrs.summarizelon(
+      ComparelonClustelonrs.comparelon(
+        KnownForSourcelons.transposelon(inputKnownFor),
+        KnownForSourcelons.transposelon(nelonwKnownFor),
+        minSizelonOfBiggelonrClustelonr = minSizelonOfBiggelonrClustelonrForComparison
       ))
 
-    val compareProducerExec = CompareClusters.compareClusterAssignments(
-      newKnownFor.mapValues(_.toList),
-      inputKnownFor.mapValues(_.toList)
+    val comparelonProducelonrelonxelonc = ComparelonClustelonrs.comparelonClustelonrAssignmelonnts(
+      nelonwKnownFor.mapValuelons(_.toList),
+      inputKnownFor.mapValuelons(_.toList)
     )
 
-    Execution
-      .zip(compareClusterExec, compareProducerExec)
+    elonxeloncution
+      .zip(comparelonClustelonrelonxelonc, comparelonProducelonrelonxelonc)
       .map {
-        case (compareClusterResults, compareProducerResult) =>
-          s"Cosine similarity distribution between cluster membership vectors for " +
-            s"clusters with at least $minSizeOfBiggerClusterForComparison members\n" +
-            Util.prettyJsonMapper
-              .writeValueAsString(compareClusterResults) +
+        caselon (comparelonClustelonrRelonsults, comparelonProducelonrRelonsult) =>
+          s"Cosinelon similarity distribution belontwelonelonn clustelonr melonmbelonrship velonctors for " +
+            s"clustelonrs with at lelonast $minSizelonOfBiggelonrClustelonrForComparison melonmbelonrs\n" +
+            Util.prelonttyJsonMappelonr
+              .writelonValuelonAsString(comparelonClustelonrRelonsults) +
             "\n\n-------------------\n\n" +
-            "Custom counters:\n" + compareProducerResult +
+            "Custom countelonrs:\n" + comparelonProducelonrRelonsult +
             "\n\n-------------------\n\n"
       }
   }
 
   /**
    *
-   * Convert the list of updated KnownFor to a TypedPipe
+   * Convelonrt thelon list of updatelond KnownFor to a TypelondPipelon
    *
-   * This step should have been done using TypedPipe.from(updatedKnownForList), however, due to the
-   * large size of the list, TypedPipe would throw out-of-memory exceptions. So we have to first
-   * dump it to a temp file on HDFS and using a customized read function to load to TypedPipe
+   * This stelonp should havelon belonelonn donelon using TypelondPipelon.from(updatelondKnownForList), howelonvelonr, duelon to thelon
+   * largelon sizelon of thelon list, TypelondPipelon would throw out-of-melonmory elonxcelonptions. So welon havelon to first
+   * dump it to a telonmp filelon on HDFS and using a customizelond relonad function to load to TypelondPipelon
    *
    */
-  def convertKnownForListToTypedPipe(
-    updatedKnownForList: List[(Int, List[(ClusterId, Float)])],
-    mode: Mode,
-    temporaryOutputStringPath: String
-  ): Execution[TypedPipe[(Int, List[(ClusterId, Float)])]] = {
+  delonf convelonrtKnownForListToTypelondPipelon(
+    updatelondKnownForList: List[(Int, List[(ClustelonrId, Float)])],
+    modelon: Modelon,
+    telonmporaryOutputStringPath: String
+  ): elonxeloncution[TypelondPipelon[(Int, List[(ClustelonrId, Float)])]] = {
 
-    val stringOutput = updatedKnownForList.map {
-      case (mappedUserId, clusterArray) =>
-        assert(clusterArray.isEmpty || clusterArray.length == 1)
-        val str = if (clusterArray.nonEmpty) {
-          clusterArray.head._1 + " " + clusterArray.head._2 // each user is known for at most 1 cluster
-        } else {
+    val stringOutput = updatelondKnownForList.map {
+      caselon (mappelondUselonrId, clustelonrArray) =>
+        asselonrt(clustelonrArray.iselonmpty || clustelonrArray.lelonngth == 1)
+        val str = if (clustelonrArray.nonelonmpty) {
+          clustelonrArray.helonad._1 + " " + clustelonrArray.helonad._2 // elonach uselonr is known for at most 1 clustelonr
+        } elonlselon {
           ""
         }
-        if (mappedUserId % 100000 == 0)
-          println(s"MappedIds:$mappedUserId  ClusterAssigned$str")
-        s"$mappedUserId $str"
+        if (mappelondUselonrId % 100000 == 0)
+          println(s"MappelondIds:$mappelondUselonrId  ClustelonrAssignelond$str")
+        s"$mappelondUselonrId $str"
     }
 
-    // using Execution to enforce the order of the following 3 steps:
-    // 1. write the list of strings to a temp file on HDFS
-    // 2. read the strings to TypedPipe
-    // 3. delete the temp file
-    Execution
+    // using elonxeloncution to elonnforcelon thelon ordelonr of thelon following 3 stelonps:
+    // 1. writelon thelon list of strings to a telonmp filelon on HDFS
+    // 2. relonad thelon strings to TypelondPipelon
+    // 3. delonlelontelon thelon telonmp filelon
+    elonxeloncution
       .from(
-        // write the output to HDFS; the data will be loaded to Typedpipe later;
-        // the reason of doing this is that we can not just do TypePipe.from(stringOutput) which
-        // results in OOM.
-        TopUsersSimilarityGraph.writeToHDFSIfHDFS(
-          stringOutput.toIterator,
-          mode,
-          temporaryOutputStringPath
+        // writelon thelon output to HDFS; thelon data will belon loadelond to Typelondpipelon latelonr;
+        // thelon relonason of doing this is that welon can not just do TypelonPipelon.from(stringOutput) which
+        // relonsults in OOM.
+        TopUselonrsSimilarityGraph.writelonToHDFSIfHDFS(
+          stringOutput.toItelonrator,
+          modelon,
+          telonmporaryOutputStringPath
         )
       )
       .flatMap { _ =>
-        println(s"Start loading the data from $temporaryOutputStringPath")
-        val clustersWithScores = TypedPipe.from(TypedTsv[String](temporaryOutputStringPath)).map {
-          mappedIdsWithArrays =>
-            val strArray = mappedIdsWithArrays.trim().split("\\s+")
-            assert(strArray.length == 3 || strArray.length == 1)
+        println(s"Start loading thelon data from $telonmporaryOutputStringPath")
+        val clustelonrsWithScorelons = TypelondPipelon.from(TypelondTsv[String](telonmporaryOutputStringPath)).map {
+          mappelondIdsWithArrays =>
+            val strArray = mappelondIdsWithArrays.trim().split("\\s+")
+            asselonrt(strArray.lelonngth == 3 || strArray.lelonngth == 1)
             val rowId = strArray(0).toInt
-            val clusterAssignment: List[(ClusterId, Float)] =
-              if (strArray.length > 1) {
+            val clustelonrAssignmelonnt: List[(ClustelonrId, Float)] =
+              if (strArray.lelonngth > 1) {
                 List((strArray(1).toInt, strArray(2).toFloat))
-              } else {
-                // the knownFors will have users with Array.empty as their assignment if
-                // the clustering step have empty results for that user.
+              } elonlselon {
+                // thelon knownFors will havelon uselonrs with Array.elonmpty as thelonir assignmelonnt if
+                // thelon clustelonring stelonp havelon elonmpty relonsults for that uselonr.
                 Nil
               }
 
             if (rowId % 100000 == 0)
-              println(s"rowId:$rowId  ClusterAssigned: $clusterAssignment")
-            (rowId, clusterAssignment)
+              println(s"rowId:$rowId  ClustelonrAssignelond: $clustelonrAssignmelonnt")
+            (rowId, clustelonrAssignmelonnt)
         }
-        // return the dataset as an execution and delete the temp location
-        readIntermediateExec(clustersWithScores, mode, temporaryOutputStringPath)
+        // relonturn thelon dataselont as an elonxeloncution and delonlelontelon thelon telonmp location
+        relonadIntelonrmelondiatelonelonxelonc(clustelonrsWithScorelons, modelon, telonmporaryOutputStringPath)
       }
   }
 
   /**
-   * Helper function to read the dataset as execution and delete the temporary
-   * location on HDFS for PDP compliance
+   * Helonlpelonr function to relonad thelon dataselont as elonxeloncution and delonlelontelon thelon telonmporary
+   * location on HDFS for PDP compliancelon
    */
-  def readIntermediateExec[K, V](
-    dataset: TypedPipe[(K, V)],
-    mode: Mode,
-    tempLocationPath: String
-  ): Execution[TypedPipe[(K, V)]] = {
-    Execution
-      .from(dataset)
+  delonf relonadIntelonrmelondiatelonelonxelonc[K, V](
+    dataselont: TypelondPipelon[(K, V)],
+    modelon: Modelon,
+    telonmpLocationPath: String
+  ): elonxeloncution[TypelondPipelon[(K, V)]] = {
+    elonxeloncution
+      .from(dataselont)
       .flatMap { output =>
-        // delete the temporary outputs for PDP compliance
-        mode match {
-          case Hdfs(_, conf) =>
-            val fs = FileSystem.newInstance(conf)
-            if (fs.deleteOnExit(new Path(tempLocationPath))) {
-              println(s"Successfully deleted the temporary folder $tempLocationPath!")
-            } else {
-              println(s"Failed to delete the temporary folder $tempLocationPath!")
+        // delonlelontelon thelon telonmporary outputs for PDP compliancelon
+        modelon match {
+          caselon Hdfs(_, conf) =>
+            val fs = FilelonSystelonm.nelonwInstancelon(conf)
+            if (fs.delonlelontelonOnelonxit(nelonw Path(telonmpLocationPath))) {
+              println(s"Succelonssfully delonlelontelond thelon telonmporary foldelonr $telonmpLocationPath!")
+            } elonlselon {
+              println(s"Failelond to delonlelontelon thelon telonmporary foldelonr $telonmpLocationPath!")
             }
-          case _ => ()
+          caselon _ => ()
         }
-        Execution.from(output)
+        elonxeloncution.from(output)
       }
   }
 
   /**
-   * Converts the userIDs in the sims graph to their mapped integer indices.
-   * All the users who donot have a mapping are filtered out from the sims graph input
+   * Convelonrts thelon uselonrIDs in thelon sims graph to thelonir mappelond intelongelonr indicelons.
+   * All thelon uselonrs who donot havelon a mapping arelon filtelonrelond out from thelon sims graph input
    *
-   * @param mappedUsers mapping of long userIDs to their integer indices
-   * @param allEdges sims graph
-   * @param maxNeighborsPerNode number of neighbors for each user
+   * @param mappelondUselonrs mapping of long uselonrIDs to thelonir intelongelonr indicelons
+   * @param allelondgelons sims graph
+   * @param maxNelonighborsPelonrNodelon numbelonr of nelonighbors for elonach uselonr
    *
-   * @return simsGraph of users and neighbors with their mapped interger ids
+   * @relonturn simsGraph of uselonrs and nelonighbors with thelonir mappelond intelonrgelonr ids
    */
-  def getMappedSimsGraph(
-    mappedUsers: TypedPipe[(Int, UserId)],
-    allEdges: TypedPipe[Candidates],
-    maxNeighborsPerNode: Int
+  delonf gelontMappelondSimsGraph(
+    mappelondUselonrs: TypelondPipelon[(Int, UselonrId)],
+    allelondgelons: TypelondPipelon[Candidatelons],
+    maxNelonighborsPelonrNodelon: Int
   )(
-    implicit uniqueId: UniqueID
-  ): TypedPipe[(Int, List[(Int, Float)])] = {
+    implicit uniquelonId: UniquelonID
+  ): TypelondPipelon[(Int, List[(Int, Float)])] = {
 
-    val numEdgesAfterFirstJoin = Stat("num_edges_after_first_join")
-    val numEdgesAfterSecondJoin = Stat("num_edges_after_second_join")
-    val numEdgesLostTopKTruncated = Stat("num_edges_lost_topk_truncated")
-    val finalNumEdges = Stat("final_num_edges")
+    val numelondgelonsAftelonrFirstJoin = Stat("num_elondgelons_aftelonr_first_join")
+    val numelondgelonsAftelonrSeloncondJoin = Stat("num_elondgelons_aftelonr_seloncond_join")
+    val numelondgelonsLostTopKTruncatelond = Stat("num_elondgelons_lost_topk_truncatelond")
+    val finalNumelondgelons = Stat("final_num_elondgelons")
 
-    val mappedUserIdsToIds: TypedPipe[(UserId, Int)] = mappedUsers.swap
-    allEdges
-      .map { cs => (cs.userId, cs.candidates) }
-      // filter the users not present in the mapped userIDs list
-      .join(mappedUserIdsToIds)
-      .withReducers(6000)
+    val mappelondUselonrIdsToIds: TypelondPipelon[(UselonrId, Int)] = mappelondUselonrs.swap
+    allelondgelons
+      .map { cs => (cs.uselonrId, cs.candidatelons) }
+      // filtelonr thelon uselonrs not prelonselonnt in thelon mappelond uselonrIDs list
+      .join(mappelondUselonrIdsToIds)
+      .withRelonducelonrs(6000)
       .flatMap {
-        case (id, (neighbors, mappedId)) =>
-          val before = neighbors.size
-          val topKNeighbors = neighbors.sortBy(-_.score).take(maxNeighborsPerNode)
-          val after = topKNeighbors.size
-          numEdgesLostTopKTruncated.incBy(before - after)
-          topKNeighbors.map { candidate =>
-            numEdgesAfterFirstJoin.inc()
-            (candidate.userId, (mappedId, candidate.score.toFloat))
+        caselon (id, (nelonighbors, mappelondId)) =>
+          val belonforelon = nelonighbors.sizelon
+          val topKNelonighbors = nelonighbors.sortBy(-_.scorelon).takelon(maxNelonighborsPelonrNodelon)
+          val aftelonr = topKNelonighbors.sizelon
+          numelondgelonsLostTopKTruncatelond.incBy(belonforelon - aftelonr)
+          topKNelonighbors.map { candidatelon =>
+            numelondgelonsAftelonrFirstJoin.inc()
+            (candidatelon.uselonrId, (mappelondId, candidatelon.scorelon.toFloat))
           }
       }
-      .join(mappedUserIdsToIds)
-      .withReducers(9000)
+      .join(mappelondUselonrIdsToIds)
+      .withRelonducelonrs(9000)
       .flatMap {
-        case (id, ((mappedNeighborId, score), mappedId)) =>
-          numEdgesAfterSecondJoin.inc()
-          // to make the graph symmetric, add those edges back that might have been filtered
-          // due to maxNeighborsPerNodefor a user but not for its neighbors
+        caselon (id, ((mappelondNelonighborId, scorelon), mappelondId)) =>
+          numelondgelonsAftelonrSeloncondJoin.inc()
+          // to makelon thelon graph symmelontric, add thoselon elondgelons back that might havelon belonelonn filtelonrelond
+          // duelon to maxNelonighborsPelonrNodelonfor a uselonr but not for its nelonighbors
           List(
-            (mappedId, Map(mappedNeighborId -> Max(score))),
-            (mappedNeighborId, Map(mappedId -> Max(score)))
+            (mappelondId, Map(mappelondNelonighborId -> Max(scorelon))),
+            (mappelondNelonighborId, Map(mappelondId -> Max(scorelon)))
           )
       }
-      .sumByKey
-      .withReducers(9100)
+      .sumByKelony
+      .withRelonducelonrs(9100)
       .map {
-        case (id, nbrMap) =>
-          // Graph initialization expects neighbors to be sorted in ascending order of ids
-          val sorted = nbrMap.mapValues(_.get).toList.sortBy(_._1)
-          finalNumEdges.incBy(sorted.size)
-          (id, sorted)
+        caselon (id, nbrMap) =>
+          // Graph initialization elonxpeloncts nelonighbors to belon sortelond in ascelonnding ordelonr of ids
+          val sortelond = nbrMap.mapValuelons(_.gelont).toList.sortBy(_._1)
+          finalNumelondgelons.incBy(sortelond.sizelon)
+          (id, sortelond)
       }
   }
 
-  def getTopFollowedUsersWithMappedIds(
-    minActiveFollowers: Int,
+  delonf gelontTopFollowelondUselonrsWithMappelondIds(
+    minActivelonFollowelonrs: Int,
     topK: Int
   )(
-    implicit uniqueId: UniqueID,
-    timeZone: TimeZone
-  ): TypedPipe[(Long, Int)] = {
-    val numTopUsersMappings = Stat("num_top_users_with_mapped_ids")
-    println("Going to include mappedIds in output")
-    TopUsersSimilarityGraph
-      .topUsersWithMappedIdsTopK(
+    implicit uniquelonId: UniquelonID,
+    timelonZonelon: TimelonZonelon
+  ): TypelondPipelon[(Long, Int)] = {
+    val numTopUselonrsMappings = Stat("num_top_uselonrs_with_mappelond_ids")
+    println("Going to includelon mappelondIds in output")
+    TopUselonrsSimilarityGraph
+      .topUselonrsWithMappelondIdsTopK(
         DAL
-          .readMostRecentSnapshotNoOlderThan(
-            UsersourceFlatScalaDataset,
-            Days(30)).withRemoteReadPolicy(ExplicitLocation(ProcAtla)).toTypedPipe,
-        minActiveFollowers,
+          .relonadMostReloncelonntSnapshotNoOldelonrThan(
+            UselonrsourcelonFlatScalaDataselont,
+            Days(30)).withRelonmotelonRelonadPolicy(elonxplicitLocation(ProcAtla)).toTypelondPipelon,
+        minActivelonFollowelonrs,
         topK
       )
       .map {
-        case TopUserWithMappedId(TopUser(id, activeFollowerCount, screenName), mappedId) =>
-          numTopUsersMappings.inc()
-          (id, mappedId)
+        caselon TopUselonrWithMappelondId(TopUselonr(id, activelonFollowelonrCount, screlonelonnNamelon), mappelondId) =>
+          numTopUselonrsMappings.inc()
+          (id, mappelondId)
       }
   }
 
   /**
-   * Map the userIds in the knownFor dataset to their integer Ids   .
+   * Map thelon uselonrIds in thelon knownFor dataselont to thelonir intelongelonr Ids   .
    */
-  def getKnownForWithMappedIds(
-    knownForDataset: TypedPipe[(UserId, Array[(ClusterId, Float)])], //original userId as the key
-    mappedIdsWithUserId: TypedPipe[(Int, UserId)] //mapped userId as the key
-  ): TypedPipe[(Int, List[(ClusterId, Float)])] = {
-    val userIdsAndTheirMappedIndices = mappedIdsWithUserId.map {
-      case (mappedId, originalId) => (originalId, mappedId)
+  delonf gelontKnownForWithMappelondIds(
+    knownForDataselont: TypelondPipelon[(UselonrId, Array[(ClustelonrId, Float)])], //original uselonrId as thelon kelony
+    mappelondIdsWithUselonrId: TypelondPipelon[(Int, UselonrId)] //mappelond uselonrId as thelon kelony
+  ): TypelondPipelon[(Int, List[(ClustelonrId, Float)])] = {
+    val uselonrIdsAndThelonirMappelondIndicelons = mappelondIdsWithUselonrId.map {
+      caselon (mappelondId, originalId) => (originalId, mappelondId)
     }
-    knownForDataset.join(userIdsAndTheirMappedIndices).map {
-      case (userId, (userClusterArray, mappedUserId)) =>
-        (mappedUserId, userClusterArray.toList)
+    knownForDataselont.join(uselonrIdsAndThelonirMappelondIndicelons).map {
+      caselon (uselonrId, (uselonrClustelonrArray, mappelondUselonrId)) =>
+        (mappelondUselonrId, uselonrClustelonrArray.toList)
     }
   }
 
   /**
-   * Attach the cluster assignments from knownFor dataset to the users in mapped Sims graph  .
+   * Attach thelon clustelonr assignmelonnts from knownFor dataselont to thelon uselonrs in mappelond Sims graph  .
    */
-  def attachClusterAssignments(
-    mappedSimsGraph: TypedPipe[(Int, List[(Int, Float)])],
-    knownForAssignments: TypedPipe[(Int, List[(ClusterId, Float)])],
-    squareWeights: Boolean
+  delonf attachClustelonrAssignmelonnts(
+    mappelondSimsGraph: TypelondPipelon[(Int, List[(Int, Float)])],
+    knownForAssignmelonnts: TypelondPipelon[(Int, List[(ClustelonrId, Float)])],
+    squarelonWelonights: Boolelonan
   )(
-    implicit uniqueId: UniqueID
-  ): TypedPipe[(Int, Array[Int], Array[Float], List[(ClusterId, Float)])] = {
-    val numPopularUsersWithNoKnownForBefore = Stat(
-      "num_popular_users_with_no_knownfor_before_but_popular_now")
+    implicit uniquelonId: UniquelonID
+  ): TypelondPipelon[(Int, Array[Int], Array[Float], List[(ClustelonrId, Float)])] = {
+    val numPopularUselonrsWithNoKnownForBelonforelon = Stat(
+      "num_popular_uselonrs_with_no_knownfor_belonforelon_but_popular_now")
 
-    val input = mappedSimsGraph.map {
-      case (id, nbrsList) =>
+    val input = mappelondSimsGraph.map {
+      caselon (id, nbrsList) =>
         val ngbrIds = nbrsList.map(_._1).toArray
-        val ngbrWts = if (squareWeights) {
+        val ngbrWts = if (squarelonWelonights) {
           nbrsList.map(_._2).map(currWt => currWt * currWt * 10).toArray
-        } else {
+        } elonlselon {
           nbrsList.map(_._2).toArray
         }
         (id, ngbrIds, ngbrWts)
     }
 
-    // input simsGraph consists of popular ppl with most followed users, who might not have been
-    // a knownFor user in the previous week. So left join with the knownFor dataset, and these
-    // new popular users will not have any prior cluster assignments while clustering this time
+    // input simsGraph consists of popular ppl with most followelond uselonrs, who might not havelon belonelonn
+    // a knownFor uselonr in thelon prelonvious welonelonk. So lelonft join with thelon knownFor dataselont, and thelonselon
+    // nelonw popular uselonrs will not havelon any prior clustelonr assignmelonnts whilelon clustelonring this timelon
     input
       .groupBy(_._1)
-      .leftJoin(knownForAssignments.groupBy(_._1))
-      .toTypedPipe
+      .lelonftJoin(knownForAssignmelonnts.groupBy(_._1))
+      .toTypelondPipelon
       .map {
-        case (mappedUserId, ((mappedId, ngbrIds, ngbrWts), knownForResult)) =>
-          val clustersList: List[(Int, Float)] = knownForResult match {
-            case Some(values) => values._2
-            case None =>
-              numPopularUsersWithNoKnownForBefore.inc()
-              List.empty
+        caselon (mappelondUselonrId, ((mappelondId, ngbrIds, ngbrWts), knownForRelonsult)) =>
+          val clustelonrsList: List[(Int, Float)] = knownForRelonsult match {
+            caselon Somelon(valuelons) => valuelons._2
+            caselon Nonelon =>
+              numPopularUselonrsWithNoKnownForBelonforelon.inc()
+              List.elonmpty
           }
-          (mappedUserId, ngbrIds, ngbrWts, clustersList)
+          (mappelondUselonrId, ngbrIds, ngbrWts, clustelonrsList)
       }
   }
 
   /**
-   * Initialize graph with users and neighbors with edge weights  .
+   * Initializelon graph with uselonrs and nelonighbors with elondgelon welonights  .
    */
-  def getGraphFromSimsInput(
-    mappedSimsIter: Iterable[
-      (Int, Array[Int], Array[Float], List[(ClusterId, Float)])
+  delonf gelontGraphFromSimsInput(
+    mappelondSimsItelonr: Itelonrablelon[
+      (Int, Array[Int], Array[Float], List[(ClustelonrId, Float)])
     ],
-    numUsers: Int
+    numUselonrs: Int
   ): Graph = {
-    val nbrsIds: Array[Array[Int]] = new Array[Array[Int]](numUsers)
-    val nbrsWts: Array[Array[Float]] = new Array[Array[Float]](numUsers)
-    var numEdges = 0L
-    var numVertices = 0
-    var numVerticesWithNoNgbrs = 0
-    mappedSimsIter.foreach {
-      case (id, nbrArrayIds, nbArrayScores, _) =>
+    val nbrsIds: Array[Array[Int]] = nelonw Array[Array[Int]](numUselonrs)
+    val nbrsWts: Array[Array[Float]] = nelonw Array[Array[Float]](numUselonrs)
+    var numelondgelons = 0L
+    var numVelonrticelons = 0
+    var numVelonrticelonsWithNoNgbrs = 0
+    mappelondSimsItelonr.forelonach {
+      caselon (id, nbrArrayIds, nbArrayScorelons, _) =>
         nbrsIds(id) = nbrArrayIds
-        nbrsWts(id) = nbArrayScores
-        numEdges += nbrArrayIds.length
-        numVertices += 1
-        if (numVertices % 100000 == 0) {
-          println(s"Done loading $numVertices many vertices. Edges so far: $numEdges")
+        nbrsWts(id) = nbArrayScorelons
+        numelondgelons += nbrArrayIds.lelonngth
+        numVelonrticelons += 1
+        if (numVelonrticelons % 100000 == 0) {
+          println(s"Donelon loading $numVelonrticelons many velonrticelons. elondgelons so far: $numelondgelons")
         }
     }
 
-    (0 until numUsers).foreach { i =>
+    (0 until numUselonrs).forelonach { i =>
       if (nbrsIds(i) == null) {
-        numVerticesWithNoNgbrs += 1
+        numVelonrticelonsWithNoNgbrs += 1
         nbrsIds(i) = Array[Int]()
         nbrsWts(i) = Array[Float]()
       }
     }
 
     println(
-      s"Done loading graph with $numUsers nodes and $numEdges edges (counting each edge twice)")
-    println("Number of nodes with at least one neighbor is " + numVertices)
-    println("Number of nodes with at no neighbors is " + numVerticesWithNoNgbrs)
-    new Graph(numUsers, numEdges / 2, nbrsIds, nbrsWts)
+      s"Donelon loading graph with $numUselonrs nodelons and $numelondgelons elondgelons (counting elonach elondgelon twicelon)")
+    println("Numbelonr of nodelons with at lelonast onelon nelonighbor is " + numVelonrticelons)
+    println("Numbelonr of nodelons with at no nelonighbors is " + numVelonrticelonsWithNoNgbrs)
+    nelonw Graph(numUselonrs, numelondgelons / 2, nbrsIds, nbrsWts)
   }
 
   /**
-   * Helper function that initializes users to clusters based on previous knownFor assignments
-   * and for users with no previous assignments, assign them randomly to any of the empty clusters
+   * Helonlpelonr function that initializelons uselonrs to clustelonrs baselond on prelonvious knownFor assignmelonnts
+   * and for uselonrs with no prelonvious assignmelonnts, assign thelonm randomly to any of thelon elonmpty clustelonrs
    */
-  def initializeSparseBinaryMatrix(
+  delonf initializelonSparselonBinaryMatrix(
     graph: Graph,
-    mappedSimsGraphIter: Iterable[
-      (Int, Array[Int], Array[Float], List[(ClusterId, Float)])
-    ], // user with neighbors, neighbor wts and previous knownfor assignments
-    numUsers: Int,
-    numClusters: Int,
+    mappelondSimsGraphItelonr: Itelonrablelon[
+      (Int, Array[Int], Array[Float], List[(ClustelonrId, Float)])
+    ], // uselonr with nelonighbors, nelonighbor wts and prelonvious knownfor assignmelonnts
+    numUselonrs: Int,
+    numClustelonrs: Int,
     algoConfig: AlgorithmConfig,
-  ): SparseBinaryMatrix = {
-    var clustersSeenFromPreviousWeek: Set[Int] = Set.empty
-    var emptyClustersFromPreviousWeek: Set[Int] = Set.empty
-    var usersWithNoAssignmentsFromPreviousWeek: Set[Int] = Set.empty
-    mappedSimsGraphIter.foreach {
-      case (id, _, _, knownFor) =>
-        if (knownFor.isEmpty) {
-          usersWithNoAssignmentsFromPreviousWeek += id
+  ): SparselonBinaryMatrix = {
+    var clustelonrsSelonelonnFromPrelonviousWelonelonk: Selont[Int] = Selont.elonmpty
+    var elonmptyClustelonrsFromPrelonviousWelonelonk: Selont[Int] = Selont.elonmpty
+    var uselonrsWithNoAssignmelonntsFromPrelonviousWelonelonk: Selont[Int] = Selont.elonmpty
+    mappelondSimsGraphItelonr.forelonach {
+      caselon (id, _, _, knownFor) =>
+        if (knownFor.iselonmpty) {
+          uselonrsWithNoAssignmelonntsFromPrelonviousWelonelonk += id
         }
-        knownFor.foreach {
-          case (clusterId, _) =>
-            clustersSeenFromPreviousWeek += clusterId
+        knownFor.forelonach {
+          caselon (clustelonrId, _) =>
+            clustelonrsSelonelonnFromPrelonviousWelonelonk += clustelonrId
         }
     }
-    (1 to numClusters).foreach { i =>
-      if (!clustersSeenFromPreviousWeek.contains(i)) emptyClustersFromPreviousWeek += i
+    (1 to numClustelonrs).forelonach { i =>
+      if (!clustelonrsSelonelonnFromPrelonviousWelonelonk.contains(i)) elonmptyClustelonrsFromPrelonviousWelonelonk += i
     }
-    var z = new SparseBinaryMatrix(numUsers, numClusters)
-    println("Going to initialize from previous KnownFor")
-    var zeroIndexedClusterIdsFromPreviousWeek: Set[Int] = Set.empty
-    for (clusterIdOneIndexed <- emptyClustersFromPreviousWeek) {
-      zeroIndexedClusterIdsFromPreviousWeek += (clusterIdOneIndexed - 1)
+    var z = nelonw SparselonBinaryMatrix(numUselonrs, numClustelonrs)
+    println("Going to initializelon from prelonvious KnownFor")
+    var zelonroIndelonxelondClustelonrIdsFromPrelonviousWelonelonk: Selont[Int] = Selont.elonmpty
+    for (clustelonrIdOnelonIndelonxelond <- elonmptyClustelonrsFromPrelonviousWelonelonk) {
+      zelonroIndelonxelondClustelonrIdsFromPrelonviousWelonelonk += (clustelonrIdOnelonIndelonxelond - 1)
     }
-    // Initialize z - users with no previous assignments are assigned to empty clusters
-    z.initFromSubsetOfRowsForSpecifiedColumns(
+    // Initializelon z - uselonrs with no prelonvious assignmelonnts arelon assignelond to elonmpty clustelonrs
+    z.initFromSubselontOfRowsForSpeloncifielondColumns(
       graph,
-      (gr: Graph, i: Integer) => algoConfig.rng.nextDouble,
-      zeroIndexedClusterIdsFromPreviousWeek.toArray,
-      usersWithNoAssignmentsFromPreviousWeek.toArray,
-      new PrintWriter(System.err)
+      (gr: Graph, i: Intelongelonr) => algoConfig.rng.nelonxtDoublelon,
+      zelonroIndelonxelondClustelonrIdsFromPrelonviousWelonelonk.toArray,
+      uselonrsWithNoAssignmelonntsFromPrelonviousWelonelonk.toArray,
+      nelonw PrintWritelonr(Systelonm.elonrr)
     )
-    println("Initialized the empty clusters")
-    mappedSimsGraphIter.foreach {
-      case (id, _, _, knownFor) =>
-        val currClustersForUserZeroIndexed = knownFor.map(_._1).map(x => x - 1)
-        // Users who have a previous cluster assignment are initialized with the same cluster
-        if (currClustersForUserZeroIndexed.nonEmpty) {
-          z.updateRow(id, currClustersForUserZeroIndexed.sorted.toArray)
+    println("Initializelond thelon elonmpty clustelonrs")
+    mappelondSimsGraphItelonr.forelonach {
+      caselon (id, _, _, knownFor) =>
+        val currClustelonrsForUselonrZelonroIndelonxelond = knownFor.map(_._1).map(x => x - 1)
+        // Uselonrs who havelon a prelonvious clustelonr assignmelonnt arelon initializelond with thelon samelon clustelonr
+        if (currClustelonrsForUselonrZelonroIndelonxelond.nonelonmpty) {
+          z.updatelonRow(id, currClustelonrsForUselonrZelonroIndelonxelond.sortelond.toArray)
         }
     }
-    println("Done initializing from previous knownFor assignment")
+    println("Donelon initializing from prelonvious knownFor assignmelonnt")
     z
   }
 
   /**
-   * Optimize the sparseBinaryMatrix. This function runs the clustering epochs and computes the
-   * cluster assignments for the next week, based on the underlying user-user graph
+   * Optimizelon thelon sparselonBinaryMatrix. This function runs thelon clustelonring elonpochs and computelons thelon
+   * clustelonr assignmelonnts for thelon nelonxt welonelonk, baselond on thelon undelonrlying uselonr-uselonr graph
    */
-  def optimizeSparseBinaryMatrix(
+  delonf optimizelonSparselonBinaryMatrix(
     algoConfig: AlgorithmConfig,
     graph: Graph,
-    z: SparseBinaryMatrix
-  ): SparseBinaryMatrix = {
-    val prec0 = MHAlgorithm.clusterPrecision(graph, z, 0, 1000, algoConfig.rng)
-    println("Precision of cluster 0:" + prec0.precision)
-    val prec1 = MHAlgorithm.clusterPrecision(graph, z, 1, 1000, algoConfig.rng)
-    println("Precision of cluster 1:" + prec1.precision)
-    val algo = new MHAlgorithm(algoConfig, graph, z, new PrintWriter(System.err))
-    val optimizedZ = algo.optimize
-    optimizedZ
+    z: SparselonBinaryMatrix
+  ): SparselonBinaryMatrix = {
+    val prelonc0 = MHAlgorithm.clustelonrPreloncision(graph, z, 0, 1000, algoConfig.rng)
+    println("Preloncision of clustelonr 0:" + prelonc0.preloncision)
+    val prelonc1 = MHAlgorithm.clustelonrPreloncision(graph, z, 1, 1000, algoConfig.rng)
+    println("Preloncision of clustelonr 1:" + prelonc1.preloncision)
+    val algo = nelonw MHAlgorithm(algoConfig, graph, z, nelonw PrintWritelonr(Systelonm.elonrr))
+    val optimizelondZ = algo.optimizelon
+    optimizelondZ
   }
 
   /**
-   * Helper function that takes the heuristically scored association of user to a cluster
-   * and returns the knownFor result
-   * @param srm SparseRealMatrix with (row, col) score denoting the membership score of user in the cluster
-   * @return assignments of users (mapped integer indices) to clusters with knownFor scores.
+   * Helonlpelonr function that takelons thelon helonuristically scorelond association of uselonr to a clustelonr
+   * and relonturns thelon knownFor relonsult
+   * @param srm SparselonRelonalMatrix with (row, col) scorelon delonnoting thelon melonmbelonrship scorelon of uselonr in thelon clustelonr
+   * @relonturn assignmelonnts of uselonrs (mappelond intelongelonr indicelons) to clustelonrs with knownFor scorelons.
    */
-  def getKnownForHeuristicScores(srm: SparseRealMatrix): List[(Int, List[(ClusterId, Float)])] = {
-    val knownForAssignmentsFromClusterScores = (0 until srm.getNumRows).map { rowId =>
-      val rowWithIndices = srm.getColIdsForRow(rowId)
-      val rowWithScores = srm.getValuesForRow(rowId)
-      val allClustersWithScores: Array[(ClusterId, Float)] =
-        rowWithIndices.zip(rowWithScores).map {
-          case (colId, score) => (colId + 1, score.toFloat)
+  delonf gelontKnownForHelonuristicScorelons(srm: SparselonRelonalMatrix): List[(Int, List[(ClustelonrId, Float)])] = {
+    val knownForAssignmelonntsFromClustelonrScorelons = (0 until srm.gelontNumRows).map { rowId =>
+      val rowWithIndicelons = srm.gelontColIdsForRow(rowId)
+      val rowWithScorelons = srm.gelontValuelonsForRow(rowId)
+      val allClustelonrsWithScorelons: Array[(ClustelonrId, Float)] =
+        rowWithIndicelons.zip(rowWithScorelons).map {
+          caselon (colId, scorelon) => (colId + 1, scorelon.toFloat)
         }
       if (rowId % 100000 == 0) {
-        println("Inside outputIter:" + rowId + " " + srm.getNumRows)
+        println("Insidelon outputItelonr:" + rowId + " " + srm.gelontNumRows)
       }
 
-      val clusterAssignmentWithMaxScore: List[(ClusterId, Float)] =
-        if (allClustersWithScores.length > 1) {
-          // if sparseBinaryMatrix z has rows with more than one non-zero column (i.e a user
-          // initialized with more than one cluster), and the clustering algorithm doesnot find
-          // a better proposal for cluster assignment, the user's multi-cluster membership
-          // from the initialization step can continue.
-          // We found that this happens in ~0.1% of the knownFor users. Hence choose the
-          // cluster with the highest score to deal with such edge cases.
-          val result: (ClusterId, Float) = allClustersWithScores.maxBy(_._2)
+      val clustelonrAssignmelonntWithMaxScorelon: List[(ClustelonrId, Float)] =
+        if (allClustelonrsWithScorelons.lelonngth > 1) {
+          // if sparselonBinaryMatrix z has rows with morelon than onelon non-zelonro column (i.elon a uselonr
+          // initializelond with morelon than onelon clustelonr), and thelon clustelonring algorithm doelonsnot find
+          // a belonttelonr proposal for clustelonr assignmelonnt, thelon uselonr's multi-clustelonr melonmbelonrship
+          // from thelon initialization stelonp can continuelon.
+          // Welon found that this happelonns in ~0.1% of thelon knownFor uselonrs. Helonncelon chooselon thelon
+          // clustelonr with thelon highelonst scorelon to delonal with such elondgelon caselons.
+          val relonsult: (ClustelonrId, Float) = allClustelonrsWithScorelons.maxBy(_._2)
           println(
-            "Found a user with mappedId: %s with more than 1 cluster assignment:%s; Assigned to the best cluster: %s"
+            "Found a uselonr with mappelondId: %s with morelon than 1 clustelonr assignmelonnt:%s; Assignelond to thelon belonst clustelonr: %s"
               .format(
                 rowId.toString,
-                allClustersWithScores.mkString("Array(", ", ", ")"),
-                result
+                allClustelonrsWithScorelons.mkString("Array(", ", ", ")"),
+                relonsult
                   .toString()))
-          List(result)
-        } else {
-          allClustersWithScores.toList
+          List(relonsult)
+        } elonlselon {
+          allClustelonrsWithScorelons.toList
         }
-      (rowId, clusterAssignmentWithMaxScore)
+      (rowId, clustelonrAssignmelonntWithMaxScorelon)
     }
-    knownForAssignmentsFromClusterScores.toList
+    knownForAssignmelonntsFromClustelonrScorelons.toList
   }
 
   /**
-   * Function that computes the clustering assignments to users
+   * Function that computelons thelon clustelonring assignmelonnts to uselonrs
    *
-   * @param mappedSimsGraph user-user graph as input to clustering
-   * @param previousKnownForAssignments previous week clustering assignments
-   * @param maxEpochsForClustering number of neighbors for each user
-   * @param squareWeights boolean flag for the edge weights in the sims graph
-   * @param wtCoeff wtCoeff
+   * @param mappelondSimsGraph uselonr-uselonr graph as input to clustelonring
+   * @param prelonviousKnownForAssignmelonnts prelonvious welonelonk clustelonring assignmelonnts
+   * @param maxelonpochsForClustelonring numbelonr of nelonighbors for elonach uselonr
+   * @param squarelonWelonights boolelonan flag for thelon elondgelon welonights in thelon sims graph
+   * @param wtCoelonff wtCoelonff
    *
-   * @return users with clusters assigned
+   * @relonturn uselonrs with clustelonrs assignelond
    */
-  def getClusteringAssignments(
-    mappedSimsGraph: TypedPipe[(Int, List[(Int, Float)])],
-    previousKnownForAssignments: TypedPipe[(Int, List[(ClusterId, Float)])],
-    maxEpochsForClustering: Int,
-    squareWeights: Boolean,
-    wtCoeff: Double
+  delonf gelontClustelonringAssignmelonnts(
+    mappelondSimsGraph: TypelondPipelon[(Int, List[(Int, Float)])],
+    prelonviousKnownForAssignmelonnts: TypelondPipelon[(Int, List[(ClustelonrId, Float)])],
+    maxelonpochsForClustelonring: Int,
+    squarelonWelonights: Boolelonan,
+    wtCoelonff: Doublelon
   )(
-    implicit uniqueId: UniqueID
-  ): Execution[List[(Int, List[(ClusterId, Float)])]] = {
+    implicit uniquelonId: UniquelonID
+  ): elonxeloncution[List[(Int, List[(ClustelonrId, Float)])]] = {
 
-    attachClusterAssignments(
-      mappedSimsGraph,
-      previousKnownForAssignments,
-      squareWeights).toIterableExecution.flatMap { mappedSimsGraphWithClustersIter =>
-      val tic = System.currentTimeMillis
-      var maxVertexId = 0
-      var maxClusterIdInPreviousAssignment = 0
-      mappedSimsGraphWithClustersIter.foreach {
-        case (id, _, _, knownFor) =>
-          maxVertexId = Math.max(id, maxVertexId)
-          knownFor.foreach {
-            case (clusterId, _) =>
-              maxClusterIdInPreviousAssignment =
-                Math.max(clusterId, maxClusterIdInPreviousAssignment)
+    attachClustelonrAssignmelonnts(
+      mappelondSimsGraph,
+      prelonviousKnownForAssignmelonnts,
+      squarelonWelonights).toItelonrablelonelonxeloncution.flatMap { mappelondSimsGraphWithClustelonrsItelonr =>
+      val tic = Systelonm.currelonntTimelonMillis
+      var maxVelonrtelonxId = 0
+      var maxClustelonrIdInPrelonviousAssignmelonnt = 0
+      mappelondSimsGraphWithClustelonrsItelonr.forelonach {
+        caselon (id, _, _, knownFor) =>
+          maxVelonrtelonxId = Math.max(id, maxVelonrtelonxId)
+          knownFor.forelonach {
+            caselon (clustelonrId, _) =>
+              maxClustelonrIdInPrelonviousAssignmelonnt =
+                Math.max(clustelonrId, maxClustelonrIdInPrelonviousAssignmelonnt)
           }
       }
 
-      val numUsersToCluster =
-        maxVertexId + 1 //since users were mapped with index starting from 0, using zipWithIndex
-      println("Total number of topK users to be clustered this time:" + numUsersToCluster)
+      val numUselonrsToClustelonr =
+        maxVelonrtelonxId + 1 //sincelon uselonrs welonrelon mappelond with indelonx starting from 0, using zipWithIndelonx
+      println("Total numbelonr of topK uselonrs to belon clustelonrelond this timelon:" + numUselonrsToClustelonr)
       println(
-        "Total number of clusters in the previous knownFor assignment:" + maxClusterIdInPreviousAssignment)
-      println("Will set number of communities to " + maxClusterIdInPreviousAssignment)
+        "Total numbelonr of clustelonrs in thelon prelonvious knownFor assignmelonnt:" + maxClustelonrIdInPrelonviousAssignmelonnt)
+      println("Will selont numbelonr of communitielons to " + maxClustelonrIdInPrelonviousAssignmelonnt)
 
-      // Initialize the graph with users, neighbors and the corresponding edge weights
-      val graph = getGraphFromSimsInput(mappedSimsGraphWithClustersIter, numUsersToCluster)
-      val toc = System.currentTimeMillis()
-      println("Time to load the graph " + (toc - tic) / 1000.0 / 60.0 + " minutes")
+      // Initializelon thelon graph with uselonrs, nelonighbors and thelon correlonsponding elondgelon welonights
+      val graph = gelontGraphFromSimsInput(mappelondSimsGraphWithClustelonrsItelonr, numUselonrsToClustelonr)
+      val toc = Systelonm.currelonntTimelonMillis()
+      println("Timelon to load thelon graph " + (toc - tic) / 1000.0 / 60.0 + " minutelons")
 
-      // define the algoConfig parameters
-      val algoConfig = new AlgorithmConfig()
-        .withCpu(16).withK(maxClusterIdInPreviousAssignment)
-        .withWtCoeff(wtCoeff.toDouble)
-        .withMaxEpoch(maxEpochsForClustering)
-      algoConfig.divideResultIntoConnectedComponents = false
-      algoConfig.minClusterSize = 1
-      algoConfig.updateImmediately = true
-      algoConfig.rng = new RandomAdaptor(new JDKRandomGenerator(1))
+      // delonfinelon thelon algoConfig paramelontelonrs
+      val algoConfig = nelonw AlgorithmConfig()
+        .withCpu(16).withK(maxClustelonrIdInPrelonviousAssignmelonnt)
+        .withWtCoelonff(wtCoelonff.toDoublelon)
+        .withMaxelonpoch(maxelonpochsForClustelonring)
+      algoConfig.dividelonRelonsultIntoConnelonctelondComponelonnts = falselon
+      algoConfig.minClustelonrSizelon = 1
+      algoConfig.updatelonImmelondiatelonly = truelon
+      algoConfig.rng = nelonw RandomAdaptor(nelonw JDKRandomGelonnelonrator(1))
 
-      // Initialize a sparseBinaryMatrix with users assigned to their previous week knownFor
-      // assignments. For those users who do not a prior assignment, we assign
-      // the (user + the neighbors from the graph) to the empty clusters.
-      // Please note that this neighborhood-based initialization to empty clusters can
-      // have a few cases where the same user was assigned to more than one cluster
-      val z = initializeSparseBinaryMatrix(
+      // Initializelon a sparselonBinaryMatrix with uselonrs assignelond to thelonir prelonvious welonelonk knownFor
+      // assignmelonnts. For thoselon uselonrs who do not a prior assignmelonnt, welon assign
+      // thelon (uselonr + thelon nelonighbors from thelon graph) to thelon elonmpty clustelonrs.
+      // Plelonaselon notelon that this nelonighborhood-baselond initialization to elonmpty clustelonrs can
+      // havelon a felonw caselons whelonrelon thelon samelon uselonr was assignelond to morelon than onelon clustelonr
+      val z = initializelonSparselonBinaryMatrix(
         graph,
-        mappedSimsGraphWithClustersIter,
-        numUsersToCluster,
-        maxClusterIdInPreviousAssignment,
+        mappelondSimsGraphWithClustelonrsItelonr,
+        numUselonrsToClustelonr,
+        maxClustelonrIdInPrelonviousAssignmelonnt,
         algoConfig
       )
 
-      // Run the epochs of the clustering algorithm to find the new cluster assignments
-      val tic2 = System.currentTimeMillis
-      val optimizedZ = optimizeSparseBinaryMatrix(algoConfig, graph, z)
-      val toc2 = System.currentTimeMillis
-      println("Time to optimize: %.2f seconds\n".format((toc2 - tic2) / 1000.0))
-      println("Time to initialize & optimize: %.2f seconds\n".format((toc2 - toc) / 1000.0))
+      // Run thelon elonpochs of thelon clustelonring algorithm to find thelon nelonw clustelonr assignmelonnts
+      val tic2 = Systelonm.currelonntTimelonMillis
+      val optimizelondZ = optimizelonSparselonBinaryMatrix(algoConfig, graph, z)
+      val toc2 = Systelonm.currelonntTimelonMillis
+      println("Timelon to optimizelon: %.2f selonconds\n".format((toc2 - tic2) / 1000.0))
+      println("Timelon to initializelon & optimizelon: %.2f selonconds\n".format((toc2 - toc) / 1000.0))
 
-      // Attach scores to the cluster assignments
-      val srm = MHAlgorithm.heuristicallyScoreClusterAssignments(graph, optimizedZ)
+      // Attach scorelons to thelon clustelonr assignmelonnts
+      val srm = MHAlgorithm.helonuristicallyScorelonClustelonrAssignmelonnts(graph, optimizelondZ)
 
-      // Get the knownfor assignments of users from the heuristic scores
-      // assigned based on neigbhorhood of the user and their cluster assignments
-      // The returned result has userIDs in the mapped integer indices
-      val knownForAssignmentsFromClusterScores: List[(Int, List[(ClusterId, Float)])] =
-        getKnownForHeuristicScores(srm)
+      // Gelont thelon knownfor assignmelonnts of uselonrs from thelon helonuristic scorelons
+      // assignelond baselond on nelonigbhorhood of thelon uselonr and thelonir clustelonr assignmelonnts
+      // Thelon relonturnelond relonsult has uselonrIDs in thelon mappelond intelongelonr indicelons
+      val knownForAssignmelonntsFromClustelonrScorelons: List[(Int, List[(ClustelonrId, Float)])] =
+        gelontKnownForHelonuristicScorelons(srm)
 
-      Execution.from(knownForAssignmentsFromClusterScores)
+      elonxeloncution.from(knownForAssignmelonntsFromClustelonrScorelons)
     }
   }
 }

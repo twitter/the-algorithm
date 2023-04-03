@@ -1,54 +1,54 @@
-package com.twitter.search.earlybird.common;
+packagelon com.twittelonr.selonarch.elonarlybird.common;
 
 
-import org.apache.thrift.TException;
-import org.apache.thrift.TSerializer;
-import org.apache.thrift.protocol.TSimpleJSONProtocol;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apachelon.thrift.Telonxcelonption;
+import org.apachelon.thrift.TSelonrializelonr;
+import org.apachelon.thrift.protocol.TSimplelonJSONProtocol;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonquelonst;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
 
-public class RequestResponseForLogging {
-  private static final Logger LOG = LoggerFactory.getLogger(
-      RequestResponseForLogging.class);
+public class RelonquelonstRelonsponselonForLogging {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(
+      RelonquelonstRelonsponselonForLogging.class);
 
-  private static final Logger FAILED_REQUEST_LOG = LoggerFactory.getLogger(
-      RequestResponseForLogging.class.getName() + ".FailedRequests");
+  privatelon static final Loggelonr FAILelonD_RelonQUelonST_LOG = LoggelonrFactory.gelontLoggelonr(
+      RelonquelonstRelonsponselonForLogging.class.gelontNamelon() + ".FailelondRelonquelonsts");
 
-  private final EarlybirdRequest request;
-  private final EarlybirdResponse response;
+  privatelon final elonarlybirdRelonquelonst relonquelonst;
+  privatelon final elonarlybirdRelonsponselon relonsponselon;
 
-  public RequestResponseForLogging(EarlybirdRequest request,
-                                   EarlybirdResponse response) {
-    this.request = request;
-    this.response = response;
+  public RelonquelonstRelonsponselonForLogging(elonarlybirdRelonquelonst relonquelonst,
+                                   elonarlybirdRelonsponselon relonsponselon) {
+    this.relonquelonst = relonquelonst;
+    this.relonsponselon = relonsponselon;
   }
 
-  private String serialize(EarlybirdRequest clearedRequest, EarlybirdResponse theResponse) {
-    TSerializer serializer = new TSerializer(new TSimpleJSONProtocol.Factory());
+  privatelon String selonrializelon(elonarlybirdRelonquelonst clelonarelondRelonquelonst, elonarlybirdRelonsponselon thelonRelonsponselon) {
+    TSelonrializelonr selonrializelonr = nelonw TSelonrializelonr(nelonw TSimplelonJSONProtocol.Factory());
     try {
-      String requestJson = serializer.toString(clearedRequest);
-      String responseJson = serializer.toString(theResponse);
-      return "{\"request\":" + requestJson + ", \"response\":" + responseJson + "}";
-    } catch (TException e) {
-      LOG.error("Failed to serialize request/response for logging.", e);
-      return "";
+      String relonquelonstJson = selonrializelonr.toString(clelonarelondRelonquelonst);
+      String relonsponselonJson = selonrializelonr.toString(thelonRelonsponselon);
+      relonturn "{\"relonquelonst\":" + relonquelonstJson + ", \"relonsponselon\":" + relonsponselonJson + "}";
+    } catch (Telonxcelonption elon) {
+      LOG.elonrror("Failelond to selonrializelon relonquelonst/relonsponselon for logging.", elon);
+      relonturn "";
     }
   }
 
   /**
-   * Logs the request and response stored in this instance to the failure log file.
+   * Logs thelon relonquelonst and relonsponselon storelond in this instancelon to thelon failurelon log filelon.
    */
-  public void logFailedRequest() {
-    // Do the serializing/concatting this way so it happens on the background thread for
+  public void logFailelondRelonquelonst() {
+    // Do thelon selonrializing/concatting this way so it happelonns on thelon background threlonad for
     // async logging
-    FAILED_REQUEST_LOG.info("{}", new Object() {
-      @Override
+    FAILelonD_RelonQUelonST_LOG.info("{}", nelonw Objelonct() {
+      @Ovelonrridelon
       public String toString() {
-        return serialize(
-            EarlybirdRequestUtil.copyAndClearUnnecessaryValuesForLogging(request), response);
+        relonturn selonrializelon(
+            elonarlybirdRelonquelonstUtil.copyAndClelonarUnneloncelonssaryValuelonsForLogging(relonquelonst), relonsponselon);
       }
     });
   }

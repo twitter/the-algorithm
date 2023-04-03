@@ -1,5 +1,5 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.color
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.color
 
-case class ColorPalette(
+caselon class ColorPalelonttelon(
   rgb: Color,
-  percentage: Double)
+  pelonrcelonntagelon: Doublelon)

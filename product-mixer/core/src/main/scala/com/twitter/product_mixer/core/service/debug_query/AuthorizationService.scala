@@ -1,82 +1,82 @@
-package com.twitter.product_mixer.core.service.debug_query
+packagelon com.twittelonr.product_mixelonr.corelon.selonrvicelon.delonbug_quelonry
 
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.inject.annotations.Flag
-import com.twitter.product_mixer.core.functional_component.common.access_policy.AccessPolicy
-import com.twitter.product_mixer.core.functional_component.common.access_policy.AccessPolicyEvaluator
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifierStack
-import com.twitter.product_mixer.core.module.product_mixer_flags.ProductMixerFlagModule.ServiceLocal
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.Authentication
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.BadRequest
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.turntable.{thriftscala => t}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.finaglelon.mtls.authelonntication.SelonrvicelonIdelonntifielonr
+import com.twittelonr.injelonct.annotations.Flag
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.accelonss_policy.AccelonssPolicy
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.accelonss_policy.AccelonssPolicyelonvaluator
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.ComponelonntIdelonntifielonrStack
+import com.twittelonr.product_mixelonr.corelon.modulelon.product_mixelonr_flags.ProductMixelonrFlagModulelon.SelonrvicelonLocal
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.Authelonntication
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.BadRelonquelonst
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.PipelonlinelonFailurelon
+import com.twittelonr.turntablelon.{thriftscala => t}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
 /**
- * Basic class that provides a verification method for checking if a call to our debugging
- * features is allowed/authorized to make said call.
- * @param isServiceLocal Whether the service is being run locally.
+ * Basic class that providelons a velonrification melonthod for cheloncking if a call to our delonbugging
+ * felonaturelons is allowelond/authorizelond to makelon said call.
+ * @param isSelonrvicelonLocal Whelonthelonr thelon selonrvicelon is beloning run locally.
  */
-@Singleton
-class AuthorizationService @Inject() (@Flag(ServiceLocal) isServiceLocal: Boolean) {
-  import AuthorizationService._
+@Singlelonton
+class AuthorizationSelonrvicelon @Injelonct() (@Flag(SelonrvicelonLocal) isSelonrvicelonLocal: Boolelonan) {
+  import AuthorizationSelonrvicelon._
 
   /**
-   * Check whether a call to a given product is authorized. Throws an [[UnauthorizedServiceCallException]]
+   * Chelonck whelonthelonr a call to a givelonn product is authorizelond. Throws an [[UnauthorizelondSelonrvicelonCallelonxcelonption]]
    * if not.
-   * @param requestingServiceIdentifier The Service Identifier of the calling service
-   * @param productAccessPolicies The access policies of the product being called.
-   * @param requestContext The request context of the caller.
+   * @param relonquelonstingSelonrvicelonIdelonntifielonr Thelon Selonrvicelon Idelonntifielonr of thelon calling selonrvicelon
+   * @param productAccelonssPolicielons Thelon accelonss policielons of thelon product beloning callelond.
+   * @param relonquelonstContelonxt Thelon relonquelonst contelonxt of thelon callelonr.
    */
-  def verifyRequestAuthorization(
-    componentIdentifierStack: ComponentIdentifierStack,
-    requestingServiceIdentifier: ServiceIdentifier,
-    productAccessPolicies: Set[AccessPolicy],
-    requestContext: t.TurntableRequestContext
+  delonf velonrifyRelonquelonstAuthorization(
+    componelonntIdelonntifielonrStack: ComponelonntIdelonntifielonrStack,
+    relonquelonstingSelonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr,
+    productAccelonssPolicielons: Selont[AccelonssPolicy],
+    relonquelonstContelonxt: t.TurntablelonRelonquelonstContelonxt
   ): Unit = {
-    val isServiceCallAuthorized =
-      requestingServiceIdentifier.role == AllowedServiceIdentifierRole && requestingServiceIdentifier.service == AllowedServiceIdentifierName
-    val userLdapGroups = requestContext.ldapGroups.map(_.toSet)
+    val isSelonrvicelonCallAuthorizelond =
+      relonquelonstingSelonrvicelonIdelonntifielonr.rolelon == AllowelondSelonrvicelonIdelonntifielonrRolelon && relonquelonstingSelonrvicelonIdelonntifielonr.selonrvicelon == AllowelondSelonrvicelonIdelonntifielonrNamelon
+    val uselonrLdapGroups = relonquelonstContelonxt.ldapGroups.map(_.toSelont)
 
-    val accessPolicyAllowed = AccessPolicyEvaluator.evaluate(
-      productAccessPolicies = productAccessPolicies,
-      userLdapGroups = userLdapGroups.getOrElse(Set.empty)
+    val accelonssPolicyAllowelond = AccelonssPolicyelonvaluator.elonvaluatelon(
+      productAccelonssPolicielons = productAccelonssPolicielons,
+      uselonrLdapGroups = uselonrLdapGroups.gelontOrelonlselon(Selont.elonmpty)
     )
 
-    if (!isServiceLocal && !isServiceCallAuthorized) {
-      throw new UnauthorizedServiceCallException(
-        requestingServiceIdentifier,
-        componentIdentifierStack)
+    if (!isSelonrvicelonLocal && !isSelonrvicelonCallAuthorizelond) {
+      throw nelonw UnauthorizelondSelonrvicelonCallelonxcelonption(
+        relonquelonstingSelonrvicelonIdelonntifielonr,
+        componelonntIdelonntifielonrStack)
     }
 
-    if (!isServiceLocal && !accessPolicyAllowed) {
-      throw new InsufficientAccessException(
-        userLdapGroups,
-        productAccessPolicies,
-        componentIdentifierStack)
+    if (!isSelonrvicelonLocal && !accelonssPolicyAllowelond) {
+      throw nelonw InsufficielonntAccelonsselonxcelonption(
+        uselonrLdapGroups,
+        productAccelonssPolicielons,
+        componelonntIdelonntifielonrStack)
     }
   }
 }
 
-object AuthorizationService {
-  final val AllowedServiceIdentifierRole = "turntable"
-  final val AllowedServiceIdentifierName = "turntable"
+objelonct AuthorizationSelonrvicelon {
+  final val AllowelondSelonrvicelonIdelonntifielonrRolelon = "turntablelon"
+  final val AllowelondSelonrvicelonIdelonntifielonrNamelon = "turntablelon"
 }
 
-class UnauthorizedServiceCallException(
-  serviceIdentifier: ServiceIdentifier,
-  componentIdentifierStack: ComponentIdentifierStack)
-    extends PipelineFailure(
-      BadRequest,
-      s"Unexpected Service tried to call Turntable Debug endpoint: ${ServiceIdentifier.asString(serviceIdentifier)}",
-      componentStack = Some(componentIdentifierStack))
+class UnauthorizelondSelonrvicelonCallelonxcelonption(
+  selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr,
+  componelonntIdelonntifielonrStack: ComponelonntIdelonntifielonrStack)
+    elonxtelonnds PipelonlinelonFailurelon(
+      BadRelonquelonst,
+      s"Unelonxpelonctelond Selonrvicelon trielond to call Turntablelon Delonbug elonndpoint: ${SelonrvicelonIdelonntifielonr.asString(selonrvicelonIdelonntifielonr)}",
+      componelonntStack = Somelon(componelonntIdelonntifielonrStack))
 
-class InsufficientAccessException(
-  ldapGroups: Option[Set[String]],
-  desiredAccessPolicies: Set[AccessPolicy],
-  componentIdentifierStack: ComponentIdentifierStack)
-    extends PipelineFailure(
-      Authentication,
-      s"Request did not satisfy access policies: $desiredAccessPolicies with ldapGroups = $ldapGroups",
-      componentStack = Some(componentIdentifierStack))
+class InsufficielonntAccelonsselonxcelonption(
+  ldapGroups: Option[Selont[String]],
+  delonsirelondAccelonssPolicielons: Selont[AccelonssPolicy],
+  componelonntIdelonntifielonrStack: ComponelonntIdelonntifielonrStack)
+    elonxtelonnds PipelonlinelonFailurelon(
+      Authelonntication,
+      s"Relonquelonst did not satisfy accelonss policielons: $delonsirelondAccelonssPolicielons with ldapGroups = $ldapGroups",
+      componelonntStack = Somelon(componelonntIdelonntifielonrStack))

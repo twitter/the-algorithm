@@ -1,137 +1,137 @@
-namespace java com.twitter.simclusters_v2.thriftjava
-namespace py gen.twitter.simclusters_v2.embedding
-#@namespace scala com.twitter.simclusters_v2.thriftscala
-#@namespace strato com.twitter.simclusters_v2
+namelonspacelon java com.twittelonr.simclustelonrs_v2.thriftjava
+namelonspacelon py gelonn.twittelonr.simclustelonrs_v2.elonmbelondding
+#@namelonspacelon scala com.twittelonr.simclustelonrs_v2.thriftscala
+#@namelonspacelon strato com.twittelonr.simclustelonrs_v2
 
-include "com/twitter/simclusters_v2/identifier.thrift"
-include "com/twitter/simclusters_v2/online_store.thrift"
+includelon "com/twittelonr/simclustelonrs_v2/idelonntifielonr.thrift"
+includelon "com/twittelonr/simclustelonrs_v2/onlinelon_storelon.thrift"
 
-struct SimClusterWithScore {
-  1: required i32 clusterId(personalDataType = 'InferredInterests')
-  2: required double score(personalDataType = 'EngagementScore')
-}(persisted = 'true', hasPersonalData = 'true')
+struct SimClustelonrWithScorelon {
+  1: relonquirelond i32 clustelonrId(pelonrsonalDataTypelon = 'InfelonrrelondIntelonrelonsts')
+  2: relonquirelond doublelon scorelon(pelonrsonalDataTypelon = 'elonngagelonmelonntScorelon')
+}(pelonrsistelond = 'truelon', hasPelonrsonalData = 'truelon')
 
-struct TopSimClustersWithScore {
-  1: required list<SimClusterWithScore> topClusters
-  2: required online_store.ModelVersion modelVersion
-}(persisted = 'true', hasPersonalData = 'true')
+struct TopSimClustelonrsWithScorelon {
+  1: relonquirelond list<SimClustelonrWithScorelon> topClustelonrs
+  2: relonquirelond onlinelon_storelon.ModelonlVelonrsion modelonlVelonrsion
+}(pelonrsistelond = 'truelon', hasPelonrsonalData = 'truelon')
 
-struct InternalIdWithScore {
-  1: required identifier.InternalId internalId
-  2: required double score(personalDataType = 'EngagementScore')
-}(persisted = 'true', hasPersonalData = 'true')
+struct IntelonrnalIdWithScorelon {
+  1: relonquirelond idelonntifielonr.IntelonrnalId intelonrnalId
+  2: relonquirelond doublelon scorelon(pelonrsonalDataTypelon = 'elonngagelonmelonntScorelon')
+}(pelonrsistelond = 'truelon', hasPelonrsonalData = 'truelon')
 
-struct InternalIdEmbedding {
-  1: required list<InternalIdWithScore> embedding
-}(persisted = 'true', hasPersonalData = 'true')
+struct IntelonrnalIdelonmbelondding {
+  1: relonquirelond list<IntelonrnalIdWithScorelon> elonmbelondding
+}(pelonrsistelond = 'truelon', hasPelonrsonalData = 'truelon')
 
-struct SemanticCoreEntityWithScore {
-  1: required i64 entityId(personalDataType = 'SemanticcoreClassification')
-  2: required double score(personalDataType = 'EngagementScore')
-}(persisted = 'true', hasPersonalData = 'true')
+struct SelonmanticCorelonelonntityWithScorelon {
+  1: relonquirelond i64 elonntityId(pelonrsonalDataTypelon = 'SelonmanticcorelonClassification')
+  2: relonquirelond doublelon scorelon(pelonrsonalDataTypelon = 'elonngagelonmelonntScorelon')
+}(pelonrsistelond = 'truelon', hasPelonrsonalData = 'truelon')
 
-struct TopSemanticCoreEntitiesWithScore {
-  1: required list<SemanticCoreEntityWithScore> topEntities
-}(persisted = 'true', hasPersonalData = 'true')
+struct TopSelonmanticCorelonelonntitielonsWithScorelon {
+  1: relonquirelond list<SelonmanticCorelonelonntityWithScorelon> topelonntitielons
+}(pelonrsistelond = 'truelon', hasPelonrsonalData = 'truelon')
 
-struct PersistedFullClusterId {
-  1: required online_store.ModelVersion modelVersion
-  2: required i32 clusterId(personalDataType = 'InferredInterests')
-}(persisted = 'true', hasPersonalData = 'true')
+struct PelonrsistelondFullClustelonrId {
+  1: relonquirelond onlinelon_storelon.ModelonlVelonrsion modelonlVelonrsion
+  2: relonquirelond i32 clustelonrId(pelonrsonalDataTypelon = 'InfelonrrelondIntelonrelonsts')
+}(pelonrsistelond = 'truelon', hasPelonrsonalData = 'truelon')
 
-struct DayPartitionedClusterId {
-  1: required i32 clusterId(personalDataType = 'InferredInterests')
-  2: required string dayPartition // format: yyyy-MM-dd
+struct DayPartitionelondClustelonrId {
+  1: relonquirelond i32 clustelonrId(pelonrsonalDataTypelon = 'InfelonrrelondIntelonrelonsts')
+  2: relonquirelond string dayPartition // format: yyyy-MM-dd
 }
 
-struct TopProducerWithScore {
-  1: required i64 userId(personalDataType = 'UserId')
-  2: required double score(personalDataType = 'EngagementScore')
-}(persisted = 'true', hasPersonalData = 'true')
+struct TopProducelonrWithScorelon {
+  1: relonquirelond i64 uselonrId(pelonrsonalDataTypelon = 'UselonrId')
+  2: relonquirelond doublelon scorelon(pelonrsonalDataTypelon = 'elonngagelonmelonntScorelon')
+}(pelonrsistelond = 'truelon', hasPelonrsonalData = 'truelon')
 
-struct TopProducersWithScore {
-  1: required list<TopProducerWithScore> topProducers
-}(persisted = 'true', hasPersonalData = 'true')
+struct TopProducelonrsWithScorelon {
+  1: relonquirelond list<TopProducelonrWithScorelon> topProducelonrs
+}(pelonrsistelond = 'truelon', hasPelonrsonalData = 'truelon')
 
-struct TweetWithScore {
-  1: required i64 tweetId(personalDataType = 'TweetId')
-  2: required double score(personalDataType = 'EngagementScore')
-}(persisted = 'true', hasPersonalData = 'true')
+struct TwelonelontWithScorelon {
+  1: relonquirelond i64 twelonelontId(pelonrsonalDataTypelon = 'TwelonelontId')
+  2: relonquirelond doublelon scorelon(pelonrsonalDataTypelon = 'elonngagelonmelonntScorelon')
+}(pelonrsistelond = 'truelon', hasPelonrsonalData = 'truelon')
 
-struct TweetsWithScore {
-  1: required list<TweetWithScore> tweets
-}(persisted = 'true', hasPersonalData = 'true')
+struct TwelonelontsWithScorelon {
+  1: relonquirelond list<TwelonelontWithScorelon> twelonelonts
+}(pelonrsistelond = 'truelon', hasPelonrsonalData = 'truelon')
 
-struct TweetTopKTweetsWithScore {
-  1: required i64 tweetId(personalDataType = 'TweetId')
-  2: required TweetsWithScore topkTweetsWithScore
-}(persisted = 'true', hasPersonalData = 'true')
+struct TwelonelontTopKTwelonelontsWithScorelon {
+  1: relonquirelond i64 twelonelontId(pelonrsonalDataTypelon = 'TwelonelontId')
+  2: relonquirelond TwelonelontsWithScorelon topkTwelonelontsWithScorelon
+}(pelonrsistelond = 'truelon', hasPelonrsonalData = 'truelon')
 
 /**
-  * The generic SimClustersEmbedding for online long-term storage and real-time calculation.
-  * Use SimClustersEmbeddingId as the only identifier.
-  * Warning: Doesn't include modelversion and embedding type in the value struct.
+  * Thelon gelonnelonric SimClustelonrselonmbelondding for onlinelon long-telonrm storagelon and relonal-timelon calculation.
+  * Uselon SimClustelonrselonmbelonddingId as thelon only idelonntifielonr.
+  * Warning: Doelonsn't includelon modelonlvelonrsion and elonmbelondding typelon in thelon valuelon struct.
   **/
-struct SimClustersEmbedding {
-  1: required list<SimClusterWithScore> embedding
-}(persisted = 'true', hasPersonalData = 'true')
+struct SimClustelonrselonmbelondding {
+  1: relonquirelond list<SimClustelonrWithScorelon> elonmbelondding
+}(pelonrsistelond = 'truelon', hasPelonrsonalData = 'truelon')
 
-struct SimClustersEmbeddingWithScore {
-  1: required SimClustersEmbedding embedding
-  2: required double score
-}(persisted = 'true', hasPersonalData = 'false')
+struct SimClustelonrselonmbelonddingWithScorelon {
+  1: relonquirelond SimClustelonrselonmbelondding elonmbelondding
+  2: relonquirelond doublelon scorelon
+}(pelonrsistelond = 'truelon', hasPelonrsonalData = 'falselon')
 
 /**
-  * This is the recommended structure for aggregating embeddings with time decay - the metadata
-  * stores the information needed for decayed aggregation.
+  * This is thelon reloncommelonndelond structurelon for aggrelongating elonmbelonddings with timelon deloncay - thelon melontadata
+  * storelons thelon information nelonelondelond for deloncayelond aggrelongation.
   **/
-struct SimClustersEmbeddingWithMetadata {
-  1: required SimClustersEmbedding embedding
-  2: required SimClustersEmbeddingMetadata metadata
-}(hasPersonalData = 'true')
+struct SimClustelonrselonmbelonddingWithMelontadata {
+  1: relonquirelond SimClustelonrselonmbelondding elonmbelondding
+  2: relonquirelond SimClustelonrselonmbelonddingMelontadata melontadata
+}(hasPelonrsonalData = 'truelon')
 
-struct SimClustersEmbeddingIdWithScore {
-  1: required identifier.SimClustersEmbeddingId id
-  2: required double score
-}(persisted = 'true', hasPersonalData = 'false')
+struct SimClustelonrselonmbelonddingIdWithScorelon {
+  1: relonquirelond idelonntifielonr.SimClustelonrselonmbelonddingId id
+  2: relonquirelond doublelon scorelon
+}(pelonrsistelond = 'truelon', hasPelonrsonalData = 'falselon')
 
-struct SimClustersMultiEmbeddingByValues {
-  1: required list<SimClustersEmbeddingWithScore> embeddings
-}(persisted = 'true', hasPersonalData = 'false')
+struct SimClustelonrsMultielonmbelonddingByValuelons {
+  1: relonquirelond list<SimClustelonrselonmbelonddingWithScorelon> elonmbelonddings
+}(pelonrsistelond = 'truelon', hasPelonrsonalData = 'falselon')
 
-struct SimClustersMultiEmbeddingByIds {
-  1: required list<SimClustersEmbeddingIdWithScore> ids
-}(persisted = 'true', hasPersonalData = 'false')
+struct SimClustelonrsMultielonmbelonddingByIds {
+  1: relonquirelond list<SimClustelonrselonmbelonddingIdWithScorelon> ids
+}(pelonrsistelond = 'truelon', hasPelonrsonalData = 'falselon')
 
 /**
- * Generic SimClusters Multiple Embeddings. The identifier.SimClustersMultiEmbeddingId is the key of
- * the multiple embedding.
+ * Gelonnelonric SimClustelonrs Multiplelon elonmbelonddings. Thelon idelonntifielonr.SimClustelonrsMultielonmbelonddingId is thelon kelony of
+ * thelon multiplelon elonmbelondding.
  **/
-union SimClustersMultiEmbedding {
-  1: SimClustersMultiEmbeddingByValues values
-  2: SimClustersMultiEmbeddingByIds ids
-}(persisted = 'true', hasPersonalData = 'false')
+union SimClustelonrsMultielonmbelondding {
+  1: SimClustelonrsMultielonmbelonddingByValuelons valuelons
+  2: SimClustelonrsMultielonmbelonddingByIds ids
+}(pelonrsistelond = 'truelon', hasPelonrsonalData = 'falselon')
 
 /**
-  * The metadata of a SimClustersEmbedding. The updatedCount represent the version of the Embedding.
-  * For tweet embedding, the updatedCount is same/close to the favorite count.
+  * Thelon melontadata of a SimClustelonrselonmbelondding. Thelon updatelondCount relonprelonselonnt thelon velonrsion of thelon elonmbelondding.
+  * For twelonelont elonmbelondding, thelon updatelondCount is samelon/closelon to thelon favoritelon count.
   **/
-struct SimClustersEmbeddingMetadata {
-  1: optional i64 updatedAtMs
-  2: optional i64 updatedCount
-}(persisted = 'true', hasPersonalData = 'true')
+struct SimClustelonrselonmbelonddingMelontadata {
+  1: optional i64 updatelondAtMs
+  2: optional i64 updatelondCount
+}(pelonrsistelond = 'truelon', hasPelonrsonalData = 'truelon')
 
 /**
-  * The data structure for PersistentSimClustersEmbedding Store
+  * Thelon data structurelon for PelonrsistelonntSimClustelonrselonmbelondding Storelon
   **/
-struct PersistentSimClustersEmbedding {
-  1: required SimClustersEmbedding embedding
-  2: required SimClustersEmbeddingMetadata metadata
-}(persisted = 'true', hasPersonalData = 'true')
+struct PelonrsistelonntSimClustelonrselonmbelondding {
+  1: relonquirelond SimClustelonrselonmbelondding elonmbelondding
+  2: relonquirelond SimClustelonrselonmbelonddingMelontadata melontadata
+}(pelonrsistelond = 'truelon', hasPelonrsonalData = 'truelon')
 
 /**
-  * The data structure for the Multi Model PersistentSimClustersEmbedding Store
+  * Thelon data structurelon for thelon Multi Modelonl PelonrsistelonntSimClustelonrselonmbelondding Storelon
   **/
-struct MultiModelPersistentSimClustersEmbedding {
-  1: required map<online_store.ModelVersion, PersistentSimClustersEmbedding> multiModelPersistentSimClustersEmbedding
-}(persisted = 'true', hasPersonalData = 'true')
+struct MultiModelonlPelonrsistelonntSimClustelonrselonmbelondding {
+  1: relonquirelond map<onlinelon_storelon.ModelonlVelonrsion, PelonrsistelonntSimClustelonrselonmbelondding> multiModelonlPelonrsistelonntSimClustelonrselonmbelondding
+}(pelonrsistelond = 'truelon', hasPelonrsonalData = 'truelon')

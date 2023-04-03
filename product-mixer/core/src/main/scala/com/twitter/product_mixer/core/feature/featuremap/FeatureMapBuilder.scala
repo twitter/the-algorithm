@@ -1,110 +1,110 @@
-package com.twitter.product_mixer.core.feature.featuremap
+packagelon com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap
 
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import com.twitter.util.Try
-import scala.collection.mutable
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.util.Relonturn
+import com.twittelonr.util.Throw
+import com.twittelonr.util.Try
+import scala.collelonction.mutablelon
 
 /**
- * [[FeatureMapBuilder]] is a typesafe way (it checks types vs the [[Feature]]s on `.add`) to build a [[FeatureMap]].
+ * [[FelonaturelonMapBuildelonr]] is a typelonsafelon way (it cheloncks typelons vs thelon [[Felonaturelon]]s on `.add`) to build a [[FelonaturelonMap]].
  *
- * Throws a [[DuplicateFeatureException]] if you try to add the same [[Feature]] more than once.
+ * Throws a [[DuplicatelonFelonaturelonelonxcelonption]] if you try to add thelon samelon [[Felonaturelon]] morelon than oncelon.
  *
- * These builders are __not__ reusable.
+ * Thelonselon buildelonrs arelon __not__ relonusablelon.
  */
 
-class FeatureMapBuilder {
-  private val underlying = Map.newBuilder[Feature[_, _], Try[Any]]
-  private val keys = mutable.HashSet.empty[Feature[_, _]]
-  private var built = false
+class FelonaturelonMapBuildelonr {
+  privatelon val undelonrlying = Map.nelonwBuildelonr[Felonaturelon[_, _], Try[Any]]
+  privatelon val kelonys = mutablelon.HashSelont.elonmpty[Felonaturelon[_, _]]
+  privatelon var built = falselon
 
   /**
-   * Add a [[Try]] of a [[Feature]] `value` to the map,
-   * handling both the [[Return]] and [[Throw]] cases.
+   * Add a [[Try]] of a [[Felonaturelon]] `valuelon` to thelon map,
+   * handling both thelon [[Relonturn]] and [[Throw]] caselons.
    *
-   * Throws a [[DuplicateFeatureException]] if it's already present.
+   * Throws a [[DuplicatelonFelonaturelonelonxcelonption]] if it's alrelonady prelonselonnt.
    *
-   * @note If you have a [[Feature]] with a non-optional value type `Feature[_, V]`
-   *       but have an `Option[V]` you can use [[Try.orThrow]] to convert the [[Option]]
-   *       to a [[Try]], which will store the successful or failed [[Feature]] in the map.
+   * @notelon If you havelon a [[Felonaturelon]] with a non-optional valuelon typelon `Felonaturelon[_, V]`
+   *       but havelon an `Option[V]` you can uselon [[Try.orThrow]] to convelonrt thelon [[Option]]
+   *       to a [[Try]], which will storelon thelon succelonssful or failelond [[Felonaturelon]] in thelon map.
    */
-  def add[V](feature: Feature[_, V], value: Try[V]): FeatureMapBuilder = addTry(feature, value)
+  delonf add[V](felonaturelon: Felonaturelon[_, V], valuelon: Try[V]): FelonaturelonMapBuildelonr = addTry(felonaturelon, valuelon)
 
   /**
-   * Add a successful [[Feature]] `value` to the map
+   * Add a succelonssful [[Felonaturelon]] `valuelon` to thelon map
    *
-   * Throws a [[DuplicateFeatureException]] if it's already present.
+   * Throws a [[DuplicatelonFelonaturelonelonxcelonption]] if it's alrelonady prelonselonnt.
    *
-   * @note If you have a [[Feature]] with a non-optional value type `Feature[_, V]`
-   *       but have an `Option[V]` you can use [[Option.get]] or [[Option.getOrElse]]
-   *       to convert the [[Option]] to extract the underlying value,
-   *       which will throw immediately if it's [[None]] or add the successful [[Feature]] in the map.
+   * @notelon If you havelon a [[Felonaturelon]] with a non-optional valuelon typelon `Felonaturelon[_, V]`
+   *       but havelon an `Option[V]` you can uselon [[Option.gelont]] or [[Option.gelontOrelonlselon]]
+   *       to convelonrt thelon [[Option]] to elonxtract thelon undelonrlying valuelon,
+   *       which will throw immelondiatelonly if it's [[Nonelon]] or add thelon succelonssful [[Felonaturelon]] in thelon map.
    */
-  def add[V](feature: Feature[_, V], value: V): FeatureMapBuilder =
-    addTry(feature, Return(value))
+  delonf add[V](felonaturelon: Felonaturelon[_, V], valuelon: V): FelonaturelonMapBuildelonr =
+    addTry(felonaturelon, Relonturn(valuelon))
 
   /**
-   * Add a failed [[Feature]] `value` to the map
+   * Add a failelond [[Felonaturelon]] `valuelon` to thelon map
    *
-   * Throws a [[DuplicateFeatureException]] if it's already present.
+   * Throws a [[DuplicatelonFelonaturelonelonxcelonption]] if it's alrelonady prelonselonnt.
    */
-  def addFailure(feature: Feature[_, _], throwable: Throwable): FeatureMapBuilder =
-    addTry(feature, Throw(throwable))
+  delonf addFailurelon(felonaturelon: Felonaturelon[_, _], throwablelon: Throwablelon): FelonaturelonMapBuildelonr =
+    addTry(felonaturelon, Throw(throwablelon))
 
   /**
-   * [[add]] but for when the [[Feature]] types aren't known
+   * [[add]] but for whelonn thelon [[Felonaturelon]] typelons arelonn't known
    *
-   * Add a [[Try]] of a [[Feature]] `value` to the map,
-   * handling both the [[Return]] and [[Throw]] cases.
+   * Add a [[Try]] of a [[Felonaturelon]] `valuelon` to thelon map,
+   * handling both thelon [[Relonturn]] and [[Throw]] caselons.
    *
-   * Throws a [[DuplicateFeatureException]] if it's already present.
+   * Throws a [[DuplicatelonFelonaturelonelonxcelonption]] if it's alrelonady prelonselonnt.
    *
-   * @note If you have a [[Feature]] with a non-optional value type `Feature[_, V]`
-   *       but have an `Option[V]` you can use [[Try.orThrow]] to convert the [[Option]]
-   *       to a [[Try]], which will store the successful or failed [[Feature]] in the map.
+   * @notelon If you havelon a [[Felonaturelon]] with a non-optional valuelon typelon `Felonaturelon[_, V]`
+   *       but havelon an `Option[V]` you can uselon [[Try.orThrow]] to convelonrt thelon [[Option]]
+   *       to a [[Try]], which will storelon thelon succelonssful or failelond [[Felonaturelon]] in thelon map.
    */
-  def addTry(feature: Feature[_, _], value: Try[_]): FeatureMapBuilder = {
-    if (keys.contains(feature)) {
-      throw new DuplicateFeatureException(feature)
+  delonf addTry(felonaturelon: Felonaturelon[_, _], valuelon: Try[_]): FelonaturelonMapBuildelonr = {
+    if (kelonys.contains(felonaturelon)) {
+      throw nelonw DuplicatelonFelonaturelonelonxcelonption(felonaturelon)
     }
-    addWithoutValidation(feature, value)
+    addWithoutValidation(felonaturelon, valuelon)
   }
 
   /**
-   * [[addTry]] but without a [[DuplicateFeatureException]] check
+   * [[addTry]] but without a [[DuplicatelonFelonaturelonelonxcelonption]] chelonck
    *
-   * @note Only for use internally within [[FeatureMap.merge]]
+   * @notelon Only for uselon intelonrnally within [[FelonaturelonMap.melonrgelon]]
    */
-  private[featuremap] def addWithoutValidation(
-    feature: Feature[_, _],
-    value: Try[_]
-  ): FeatureMapBuilder = {
-    keys += feature
-    underlying += ((feature, value))
+  privatelon[felonaturelonmap] delonf addWithoutValidation(
+    felonaturelon: Felonaturelon[_, _],
+    valuelon: Try[_]
+  ): FelonaturelonMapBuildelonr = {
+    kelonys += felonaturelon
+    undelonrlying += ((felonaturelon, valuelon))
     this
   }
 
-  /** Builds the FeatureMap */
-  def build(): FeatureMap = {
+  /** Builds thelon FelonaturelonMap */
+  delonf build(): FelonaturelonMap = {
     if (built) {
-      throw ReusedFeatureMapBuilderException
+      throw RelonuselondFelonaturelonMapBuildelonrelonxcelonption
     }
 
-    built = true
-    new FeatureMap(underlying.result())
+    built = truelon
+    nelonw FelonaturelonMap(undelonrlying.relonsult())
   }
 }
 
-object FeatureMapBuilder {
+objelonct FelonaturelonMapBuildelonr {
 
-  /** Returns a new [[FeatureMapBuilder]] for making [[FeatureMap]]s */
-  def apply(): FeatureMapBuilder = new FeatureMapBuilder
+  /** Relonturns a nelonw [[FelonaturelonMapBuildelonr]] for making [[FelonaturelonMap]]s */
+  delonf apply(): FelonaturelonMapBuildelonr = nelonw FelonaturelonMapBuildelonr
 }
 
-class DuplicateFeatureException(feature: Feature[_, _])
-    extends UnsupportedOperationException(s"Feature $feature already exists in FeatureMap")
+class DuplicatelonFelonaturelonelonxcelonption(felonaturelon: Felonaturelon[_, _])
+    elonxtelonnds UnsupportelondOpelonrationelonxcelonption(s"Felonaturelon $felonaturelon alrelonady elonxists in FelonaturelonMap")
 
-object ReusedFeatureMapBuilderException
-    extends UnsupportedOperationException(
-      "build() cannot be called more than once since FeatureMapBuilders are not reusable")
+objelonct RelonuselondFelonaturelonMapBuildelonrelonxcelonption
+    elonxtelonnds UnsupportelondOpelonrationelonxcelonption(
+      "build() cannot belon callelond morelon than oncelon sincelon FelonaturelonMapBuildelonrs arelon not relonusablelon")

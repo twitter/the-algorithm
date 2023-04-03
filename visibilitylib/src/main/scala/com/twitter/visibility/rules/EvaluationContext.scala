@@ -1,68 +1,68 @@
-package com.twitter.visibility.rules
+packagelon com.twittelonr.visibility.rulelons
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.servo.util.Gate
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.timelines.configapi.Params
-import com.twitter.visibility.configapi.VisibilityParams
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.models.UnitOfDiversion
-import com.twitter.visibility.models.ViewerContext
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.selonrvo.util.Gatelon
+import com.twittelonr.timelonlinelons.configapi.HasParams
+import com.twittelonr.timelonlinelons.configapi.Params
+import com.twittelonr.visibility.configapi.VisibilityParams
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl
+import com.twittelonr.visibility.modelonls.UnitOfDivelonrsion
+import com.twittelonr.visibility.modelonls.VielonwelonrContelonxt
 
-case class EvaluationContext(
+caselon class elonvaluationContelonxt(
   visibilityPolicy: VisibilityPolicy,
   params: Params,
-  statsReceiver: StatsReceiver)
-    extends HasParams {
+  statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds HasParams {
 
-  def ruleEnabledInContext(rule: Rule): Boolean = {
-    visibilityPolicy.policyRuleParams
-      .get(rule)
-      .filter(_.ruleParams.nonEmpty)
-      .map(policyRuleParams => {
-        (policyRuleParams.force || rule.enabled.forall(params(_))) &&
-          policyRuleParams.ruleParams.forall(params(_))
+  delonf rulelonelonnablelondInContelonxt(rulelon: Rulelon): Boolelonan = {
+    visibilityPolicy.policyRulelonParams
+      .gelont(rulelon)
+      .filtelonr(_.rulelonParams.nonelonmpty)
+      .map(policyRulelonParams => {
+        (policyRulelonParams.forcelon || rulelon.elonnablelond.forall(params(_))) &&
+          policyRulelonParams.rulelonParams.forall(params(_))
       })
-      .getOrElse(rule.isEnabled(params))
+      .gelontOrelonlselon(rulelon.iselonnablelond(params))
   }
 }
 
-object EvaluationContext {
+objelonct elonvaluationContelonxt {
 
-  def apply(
-    safetyLevel: SafetyLevel,
+  delonf apply(
+    safelontyLelonvelonl: SafelontyLelonvelonl,
     params: Params,
-    statsReceiver: StatsReceiver
-  ): EvaluationContext = {
-    val visibilityPolicy = RuleBase.RuleMap(safetyLevel)
-    new EvaluationContext(visibilityPolicy, params, statsReceiver)
+    statsReloncelonivelonr: StatsReloncelonivelonr
+  ): elonvaluationContelonxt = {
+    val visibilityPolicy = RulelonBaselon.RulelonMap(safelontyLelonvelonl)
+    nelonw elonvaluationContelonxt(visibilityPolicy, params, statsReloncelonivelonr)
   }
 
-  case class Builder(
-    statsReceiver: StatsReceiver,
+  caselon class Buildelonr(
+    statsReloncelonivelonr: StatsReloncelonivelonr,
     visibilityParams: VisibilityParams,
-    viewerContext: ViewerContext,
-    unitsOfDiversion: Seq[UnitOfDiversion] = Seq.empty,
-    memoizeParams: Gate[Unit] = Gate.False,
+    vielonwelonrContelonxt: VielonwelonrContelonxt,
+    unitsOfDivelonrsion: Selonq[UnitOfDivelonrsion] = Selonq.elonmpty,
+    melonmoizelonParams: Gatelon[Unit] = Gatelon.Falselon,
   ) {
 
-    private[this] val emptyContentToUoDCounter =
-      statsReceiver.counter("empty_content_id_to_unit_of_diversion")
+    privatelon[this] val elonmptyContelonntToUoDCountelonr =
+      statsReloncelonivelonr.countelonr("elonmpty_contelonnt_id_to_unit_of_divelonrsion")
 
-    def build(safetyLevel: SafetyLevel): EvaluationContext = {
-      val policy = RuleBase.RuleMap(safetyLevel)
-      val params = if (memoizeParams()) {
-        visibilityParams.memoized(viewerContext, safetyLevel, unitsOfDiversion)
-      } else {
-        visibilityParams(viewerContext, safetyLevel, unitsOfDiversion)
+    delonf build(safelontyLelonvelonl: SafelontyLelonvelonl): elonvaluationContelonxt = {
+      val policy = RulelonBaselon.RulelonMap(safelontyLelonvelonl)
+      val params = if (melonmoizelonParams()) {
+        visibilityParams.melonmoizelond(vielonwelonrContelonxt, safelontyLelonvelonl, unitsOfDivelonrsion)
+      } elonlselon {
+        visibilityParams(vielonwelonrContelonxt, safelontyLelonvelonl, unitsOfDivelonrsion)
       }
-      new EvaluationContext(policy, params, statsReceiver)
+      nelonw elonvaluationContelonxt(policy, params, statsReloncelonivelonr)
     }
 
-    def withUnitOfDiversion(unitOfDiversion: UnitOfDiversion*): Builder =
-      this.copy(unitsOfDiversion = unitOfDiversion)
+    delonf withUnitOfDivelonrsion(unitOfDivelonrsion: UnitOfDivelonrsion*): Buildelonr =
+      this.copy(unitsOfDivelonrsion = unitOfDivelonrsion)
 
-    def withMemoizedParams(memoizeParams: Gate[Unit]) = this.copy(memoizeParams = memoizeParams)
+    delonf withMelonmoizelondParams(melonmoizelonParams: Gatelon[Unit]) = this.copy(melonmoizelonParams = melonmoizelonParams)
   }
 
 }

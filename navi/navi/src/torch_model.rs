@@ -1,183 +1,183 @@
-#[cfg(feature = "torch")]
+#[cfg(felonaturelon = "torch")]
 pub mod torch {
-    use std::fmt;
-    use std::fmt::Display;
-    use std::string::String;
+    uselon std::fmt;
+    uselon std::fmt::Display;
+    uselon std::string::String;
 
-    use crate::TensorReturnEnum;
-    use crate::SerializedInput;
-    use crate::bootstrap::TensorInput;
-    use crate::cli_args::{Args, ARGS, MODEL_SPECS};
-    use crate::metrics;
-    use crate::metrics::{
-        INFERENCE_FAILED_REQUESTS_BY_MODEL, NUM_REQUESTS_FAILED, NUM_REQUESTS_FAILED_BY_MODEL,
+    uselon cratelon::TelonnsorRelonturnelonnum;
+    uselon cratelon::SelonrializelondInput;
+    uselon cratelon::bootstrap::TelonnsorInput;
+    uselon cratelon::cli_args::{Args, ARGS, MODelonL_SPelonCS};
+    uselon cratelon::melontrics;
+    uselon cratelon::melontrics::{
+        INFelonRelonNCelon_FAILelonD_RelonQUelonSTS_BY_MODelonL, NUM_RelonQUelonSTS_FAILelonD, NUM_RelonQUelonSTS_FAILelonD_BY_MODelonL,
     };
-    use crate::predict_service::Model;
-    use anyhow::Result;
-    use dr_transform::converter::BatchPredictionRequestToTorchTensorConverter;
-    use dr_transform::converter::Converter;
-    use serde_json::Value;
-    use tch::Tensor;
-    use tch::{kind, CModule, IValue};
+    uselon cratelon::prelondict_selonrvicelon::Modelonl;
+    uselon anyhow::Relonsult;
+    uselon dr_transform::convelonrtelonr::BatchPrelondictionRelonquelonstToTorchTelonnsorConvelonrtelonr;
+    uselon dr_transform::convelonrtelonr::Convelonrtelonr;
+    uselon selonrdelon_json::Valuelon;
+    uselon tch::Telonnsor;
+    uselon tch::{kind, CModulelon, IValuelon};
 
-    #[derive(Debug)]
-    pub struct TorchModel {
-        pub model_idx: usize,
-        pub version: i64,
-        pub module: CModule,
-        pub export_dir: String,
-        // FIXME: make this Box<Option<..>> so input converter can be optional.
-        // Also consider adding output_converter.
-        pub input_converter: Box<dyn Converter>,
+    #[delonrivelon(Delonbug)]
+    pub struct TorchModelonl {
+        pub modelonl_idx: usizelon,
+        pub velonrsion: i64,
+        pub modulelon: CModulelon,
+        pub elonxport_dir: String,
+        // FIXMelon: makelon this Box<Option<..>> so input convelonrtelonr can belon optional.
+        // Also considelonr adding output_convelonrtelonr.
+        pub input_convelonrtelonr: Box<dyn Convelonrtelonr>,
     }
 
-    impl Display for TorchModel {
-        fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-            write!(
+    impl Display for TorchModelonl {
+        fn fmt(&selonlf, f: &mut fmt::Formattelonr) -> fmt::Relonsult {
+            writelon!(
                 f,
-                "idx: {}, torch model_name:{}, version:{}",
-                self.model_idx, MODEL_SPECS[self.model_idx], self.version
+                "idx: {}, torch modelonl_namelon:{}, velonrsion:{}",
+                selonlf.modelonl_idx, MODelonL_SPelonCS[selonlf.modelonl_idx], selonlf.velonrsion
             )
         }
     }
 
-    impl TorchModel {
-        pub fn new(idx: usize, version: String, _model_config: &Value) -> Result<TorchModel> {
-            let export_dir = format!("{}/{}/model.pt", ARGS.model_dir[idx], version);
-            let model = CModule::load(&export_dir).unwrap();
-            let torch_model = TorchModel {
-                model_idx: idx,
-                version: Args::version_str_to_epoch(&version)?,
-                module: model,
-                export_dir,
-                //TODO: move converter lookup in a registry.
-                input_converter: Box::new(BatchPredictionRequestToTorchTensorConverter::new(
-                    &ARGS.model_dir[idx].as_str(),
-                    version.as_str(),
-                    vec![],
-                    Some(&metrics::register_dynamic_metrics),
+    impl TorchModelonl {
+        pub fn nelonw(idx: usizelon, velonrsion: String, _modelonl_config: &Valuelon) -> Relonsult<TorchModelonl> {
+            lelont elonxport_dir = format!("{}/{}/modelonl.pt", ARGS.modelonl_dir[idx], velonrsion);
+            lelont modelonl = CModulelon::load(&elonxport_dir).unwrap();
+            lelont torch_modelonl = TorchModelonl {
+                modelonl_idx: idx,
+                velonrsion: Args::velonrsion_str_to_elonpoch(&velonrsion)?,
+                modulelon: modelonl,
+                elonxport_dir,
+                //TODO: movelon convelonrtelonr lookup in a relongistry.
+                input_convelonrtelonr: Box::nelonw(BatchPrelondictionRelonquelonstToTorchTelonnsorConvelonrtelonr::nelonw(
+                    &ARGS.modelonl_dir[idx].as_str(),
+                    velonrsion.as_str(),
+                    velonc![],
+                    Somelon(&melontrics::relongistelonr_dynamic_melontrics),
                 )),
             };
 
-            torch_model.warmup()?;
-            Ok(torch_model)
+            torch_modelonl.warmup()?;
+            Ok(torch_modelonl)
         }
-        #[inline(always)]
-        pub fn decode_to_inputs(bytes: SerializedInput) -> Vec<Tensor> {
-            //FIXME: for now we generate 4 random tensors as inputs to unblock end to end testing
-            //when Shajan's decoder is ready we will swap
-            let row = bytes.len() as i64;
-            let t1 = Tensor::randn(&[row, 5293], kind::FLOAT_CPU); //continuous
-            let t2 = Tensor::randint(10, &[row, 149], kind::INT64_CPU); //binary
-            let t3 = Tensor::randint(10, &[row, 320], kind::INT64_CPU); //discrete
-            let t4 = Tensor::randn(&[row, 200], kind::FLOAT_CPU); //user_embedding
-            let t5 = Tensor::randn(&[row, 200], kind::FLOAT_CPU); //user_eng_embedding
-            let t6 = Tensor::randn(&[row, 200], kind::FLOAT_CPU); //author_embedding
+        #[inlinelon(always)]
+        pub fn deloncodelon_to_inputs(bytelons: SelonrializelondInput) -> Velonc<Telonnsor> {
+            //FIXMelon: for now welon gelonnelonratelon 4 random telonnsors as inputs to unblock elonnd to elonnd telonsting
+            //whelonn Shajan's deloncodelonr is relonady welon will swap
+            lelont row = bytelons.lelonn() as i64;
+            lelont t1 = Telonnsor::randn(&[row, 5293], kind::FLOAT_CPU); //continuous
+            lelont t2 = Telonnsor::randint(10, &[row, 149], kind::INT64_CPU); //binary
+            lelont t3 = Telonnsor::randint(10, &[row, 320], kind::INT64_CPU); //discrelontelon
+            lelont t4 = Telonnsor::randn(&[row, 200], kind::FLOAT_CPU); //uselonr_elonmbelondding
+            lelont t5 = Telonnsor::randn(&[row, 200], kind::FLOAT_CPU); //uselonr_elonng_elonmbelondding
+            lelont t6 = Telonnsor::randn(&[row, 200], kind::FLOAT_CPU); //author_elonmbelondding
 
-            vec![t1, t2, t3, t4, t5, t6]
+            velonc![t1, t2, t3, t4, t5, t6]
         }
-        #[inline(always)]
-        pub fn output_to_vec(res: IValue, dst: &mut Vec<f32>) {
-            match res {
-                IValue::Tensor(tensor) => TorchModel::tensors_to_vec(&[tensor], dst),
-                IValue::Tuple(ivalues) => {
-                    TorchModel::tensors_to_vec(&TorchModel::ivalues_to_tensors(ivalues), dst)
+        #[inlinelon(always)]
+        pub fn output_to_velonc(relons: IValuelon, dst: &mut Velonc<f32>) {
+            match relons {
+                IValuelon::Telonnsor(telonnsor) => TorchModelonl::telonnsors_to_velonc(&[telonnsor], dst),
+                IValuelon::Tuplelon(ivaluelons) => {
+                    TorchModelonl::telonnsors_to_velonc(&TorchModelonl::ivaluelons_to_telonnsors(ivaluelons), dst)
                 }
-                _ => panic!("we only support output as a single tensor or a vec of tensors"),
+                _ => panic!("welon only support output as a singlelon telonnsor or a velonc of telonnsors"),
             }
         }
-        #[inline(always)]
-        pub fn tensor_flatten_size(t: &Tensor) -> usize {
-            t.size().into_iter().fold(1, |acc, x| acc * x) as usize
+        #[inlinelon(always)]
+        pub fn telonnsor_flattelonn_sizelon(t: &Telonnsor) -> usizelon {
+            t.sizelon().into_itelonr().fold(1, |acc, x| acc * x) as usizelon
         }
-        #[inline(always)]
-        pub fn tensor_to_vec<T: kind::Element>(res: &Tensor) -> Vec<T> {
-            let size = TorchModel::tensor_flatten_size(res);
-            let mut res_f32: Vec<T> = Vec::with_capacity(size);
-            unsafe {
-                res_f32.set_len(size);
+        #[inlinelon(always)]
+        pub fn telonnsor_to_velonc<T: kind::elonlelonmelonnt>(relons: &Telonnsor) -> Velonc<T> {
+            lelont sizelon = TorchModelonl::telonnsor_flattelonn_sizelon(relons);
+            lelont mut relons_f32: Velonc<T> = Velonc::with_capacity(sizelon);
+            unsafelon {
+                relons_f32.selont_lelonn(sizelon);
             }
-            res.copy_data(res_f32.as_mut_slice(), size);
-            // println!("Copied tensor:{}, {:?}", res_f32.len(), res_f32);
-            res_f32
+            relons.copy_data(relons_f32.as_mut_slicelon(), sizelon);
+            // println!("Copielond telonnsor:{}, {:?}", relons_f32.lelonn(), relons_f32);
+            relons_f32
         }
-        #[inline(always)]
-        pub fn tensors_to_vec(tensors: &[Tensor], dst: &mut Vec<f32>) {
-            let mut offset = dst.len();
-            tensors.iter().for_each(|t| {
-                let size = TorchModel::tensor_flatten_size(t);
-                let next_size = offset + size;
-                unsafe {
-                    dst.set_len(next_size);
+        #[inlinelon(always)]
+        pub fn telonnsors_to_velonc(telonnsors: &[Telonnsor], dst: &mut Velonc<f32>) {
+            lelont mut offselont = dst.lelonn();
+            telonnsors.itelonr().for_elonach(|t| {
+                lelont sizelon = TorchModelonl::telonnsor_flattelonn_sizelon(t);
+                lelont nelonxt_sizelon = offselont + sizelon;
+                unsafelon {
+                    dst.selont_lelonn(nelonxt_sizelon);
                 }
-                t.copy_data(&mut dst[offset..], size);
-                offset = next_size;
+                t.copy_data(&mut dst[offselont..], sizelon);
+                offselont = nelonxt_sizelon;
             });
         }
-        pub fn ivalues_to_tensors(ivalues: Vec<IValue>) -> Vec<Tensor> {
-            ivalues
-                .into_iter()
+        pub fn ivaluelons_to_telonnsors(ivaluelons: Velonc<IValuelon>) -> Velonc<Telonnsor> {
+            ivaluelons
+                .into_itelonr()
                 .map(|t| {
-                    if let IValue::Tensor(vanilla_t) = t {
+                    if lelont IValuelon::Telonnsor(vanilla_t) = t {
                         vanilla_t
-                    } else {
-                        panic!("not a tensor")
+                    } elonlselon {
+                        panic!("not a telonnsor")
                     }
                 })
-                .collect::<Vec<Tensor>>()
+                .collelonct::<Velonc<Telonnsor>>()
         }
     }
 
-    impl Model for TorchModel {
-        fn warmup(&self) -> Result<()> {
+    impl Modelonl for TorchModelonl {
+        fn warmup(&selonlf) -> Relonsult<()> {
             Ok(())
         }
-        //TODO: torch runtime needs some refactor to make it a generic interface
-        #[inline(always)]
-        fn do_predict(
-            &self,
-            input_tensors: Vec<Vec<TensorInput>>,
-            total_len: u64,
-        ) -> (Vec<TensorReturnEnum>, Vec<Vec<usize>>) {
-            let mut buf: Vec<f32> = Vec::with_capacity(10_000);
-            let mut batch_ends = vec![0usize; input_tensors.len()];
-            for (i, batch_bytes_in_request) in input_tensors.into_iter().enumerate() {
-                for _ in batch_bytes_in_request.into_iter() {
-                    //FIXME: for now use some hack
-                    let model_input = TorchModel::decode_to_inputs(vec![0u8; 30]); //self.input_converter.convert(bytes);
-                    let input_batch_tensors = model_input
-                        .into_iter()
-                        .map(|t| IValue::Tensor(t))
-                        .collect::<Vec<IValue>>();
-                    // match self.module.forward_is(&input_batch_tensors) {
-                    match self.module.method_is("forward_serve", &input_batch_tensors) {
-                        Ok(res) => TorchModel::output_to_vec(res, &mut buf),
-                        Err(e) => {
-                            NUM_REQUESTS_FAILED.inc_by(total_len);
-                            NUM_REQUESTS_FAILED_BY_MODEL
-                                .with_label_values(&[&MODEL_SPECS[self.model_idx]])
-                                .inc_by(total_len);
-                            INFERENCE_FAILED_REQUESTS_BY_MODEL
-                                .with_label_values(&[&MODEL_SPECS[self.model_idx]])
-                                .inc_by(total_len);
-                            panic!("{model}: {e:?}", model = MODEL_SPECS[self.model_idx], e = e);
+        //TODO: torch runtimelon nelonelonds somelon relonfactor to makelon it a gelonnelonric intelonrfacelon
+        #[inlinelon(always)]
+        fn do_prelondict(
+            &selonlf,
+            input_telonnsors: Velonc<Velonc<TelonnsorInput>>,
+            total_lelonn: u64,
+        ) -> (Velonc<TelonnsorRelonturnelonnum>, Velonc<Velonc<usizelon>>) {
+            lelont mut buf: Velonc<f32> = Velonc::with_capacity(10_000);
+            lelont mut batch_elonnds = velonc![0usizelon; input_telonnsors.lelonn()];
+            for (i, batch_bytelons_in_relonquelonst) in input_telonnsors.into_itelonr().elonnumelonratelon() {
+                for _ in batch_bytelons_in_relonquelonst.into_itelonr() {
+                    //FIXMelon: for now uselon somelon hack
+                    lelont modelonl_input = TorchModelonl::deloncodelon_to_inputs(velonc![0u8; 30]); //selonlf.input_convelonrtelonr.convelonrt(bytelons);
+                    lelont input_batch_telonnsors = modelonl_input
+                        .into_itelonr()
+                        .map(|t| IValuelon::Telonnsor(t))
+                        .collelonct::<Velonc<IValuelon>>();
+                    // match selonlf.modulelon.forward_is(&input_batch_telonnsors) {
+                    match selonlf.modulelon.melonthod_is("forward_selonrvelon", &input_batch_telonnsors) {
+                        Ok(relons) => TorchModelonl::output_to_velonc(relons, &mut buf),
+                        elonrr(elon) => {
+                            NUM_RelonQUelonSTS_FAILelonD.inc_by(total_lelonn);
+                            NUM_RelonQUelonSTS_FAILelonD_BY_MODelonL
+                                .with_labelonl_valuelons(&[&MODelonL_SPelonCS[selonlf.modelonl_idx]])
+                                .inc_by(total_lelonn);
+                            INFelonRelonNCelon_FAILelonD_RelonQUelonSTS_BY_MODelonL
+                                .with_labelonl_valuelons(&[&MODelonL_SPelonCS[selonlf.modelonl_idx]])
+                                .inc_by(total_lelonn);
+                            panic!("{modelonl}: {elon:?}", modelonl = MODelonL_SPelonCS[selonlf.modelonl_idx], elon = elon);
                         }
                     }
                 }
-                batch_ends[i] = buf.len();
+                batch_elonnds[i] = buf.lelonn();
             }
             (
-                vec![TensorReturnEnum::FloatTensorReturn(Box::new(buf))],
-                vec![batch_ends],
+                velonc![TelonnsorRelonturnelonnum::FloatTelonnsorRelonturn(Box::nelonw(buf))],
+                velonc![batch_elonnds],
             )
         }
-        #[inline(always)]
-        fn model_idx(&self) -> usize {
-            self.model_idx
+        #[inlinelon(always)]
+        fn modelonl_idx(&selonlf) -> usizelon {
+            selonlf.modelonl_idx
         }
-        #[inline(always)]
-        fn version(&self) -> i64 {
-            self.version
+        #[inlinelon(always)]
+        fn velonrsion(&selonlf) -> i64 {
+            selonlf.velonrsion
         }
     }
 }

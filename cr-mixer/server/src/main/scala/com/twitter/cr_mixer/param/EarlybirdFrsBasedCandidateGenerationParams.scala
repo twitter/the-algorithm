@@ -1,117 +1,117 @@
-package com.twitter.cr_mixer.param
+packagelon com.twittelonr.cr_mixelonr.param
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.cr_mixer.model.EarlybirdSimilarityEngineType
-import com.twitter.cr_mixer.model.EarlybirdSimilarityEngineType_ModelBased
-import com.twitter.cr_mixer.model.EarlybirdSimilarityEngineType_RecencyBased
-import com.twitter.cr_mixer.model.EarlybirdSimilarityEngineType_TensorflowBased
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.logging.Logger
-import com.twitter.timelines.configapi.BaseConfig
-import com.twitter.timelines.configapi.BaseConfigBuilder
-import com.twitter.timelines.configapi.DurationConversion
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSEnumParam
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil
-import com.twitter.timelines.configapi.HasDurationConversion
-import com.twitter.timelines.configapi.Param
-import com.twitter.util.Duration
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.cr_mixelonr.modelonl.elonarlybirdSimilarityelonnginelonTypelon
+import com.twittelonr.cr_mixelonr.modelonl.elonarlybirdSimilarityelonnginelonTypelon_ModelonlBaselond
+import com.twittelonr.cr_mixelonr.modelonl.elonarlybirdSimilarityelonnginelonTypelon_ReloncelonncyBaselond
+import com.twittelonr.cr_mixelonr.modelonl.elonarlybirdSimilarityelonnginelonTypelon_TelonnsorflowBaselond
+import com.twittelonr.finaglelon.stats.NullStatsReloncelonivelonr
+import com.twittelonr.logging.Loggelonr
+import com.twittelonr.timelonlinelons.configapi.BaselonConfig
+import com.twittelonr.timelonlinelons.configapi.BaselonConfigBuildelonr
+import com.twittelonr.timelonlinelons.configapi.DurationConvelonrsion
+import com.twittelonr.timelonlinelons.configapi.FSBoundelondParam
+import com.twittelonr.timelonlinelons.configapi.FSelonnumParam
+import com.twittelonr.timelonlinelons.configapi.FSNamelon
+import com.twittelonr.timelonlinelons.configapi.FSParam
+import com.twittelonr.timelonlinelons.configapi.FelonaturelonSwitchOvelonrridelonUtil
+import com.twittelonr.timelonlinelons.configapi.HasDurationConvelonrsion
+import com.twittelonr.timelonlinelons.configapi.Param
+import com.twittelonr.util.Duration
 
-object EarlybirdFrsBasedCandidateGenerationParams {
-  object CandidateGenerationEarlybirdSimilarityEngineType extends Enumeration {
-    protected case class SimilarityEngineType(rankingMode: EarlybirdSimilarityEngineType)
-        extends super.Val
-    import scala.language.implicitConversions
-    implicit def valueToEarlybirdRankingMode(x: Value): SimilarityEngineType =
-      x.asInstanceOf[SimilarityEngineType]
+objelonct elonarlybirdFrsBaselondCandidatelonGelonnelonrationParams {
+  objelonct CandidatelonGelonnelonrationelonarlybirdSimilarityelonnginelonTypelon elonxtelonnds elonnumelonration {
+    protelonctelond caselon class SimilarityelonnginelonTypelon(rankingModelon: elonarlybirdSimilarityelonnginelonTypelon)
+        elonxtelonnds supelonr.Val
+    import scala.languagelon.implicitConvelonrsions
+    implicit delonf valuelonToelonarlybirdRankingModelon(x: Valuelon): SimilarityelonnginelonTypelon =
+      x.asInstancelonOf[SimilarityelonnginelonTypelon]
 
-    val EarlybirdRankingMode_RecencyBased: SimilarityEngineType = SimilarityEngineType(
-      EarlybirdSimilarityEngineType_RecencyBased)
-    val EarlybirdRankingMode_ModelBased: SimilarityEngineType = SimilarityEngineType(
-      EarlybirdSimilarityEngineType_ModelBased)
-    val EarlybirdRankingMode_TensorflowBased: SimilarityEngineType = SimilarityEngineType(
-      EarlybirdSimilarityEngineType_TensorflowBased)
+    val elonarlybirdRankingModelon_ReloncelonncyBaselond: SimilarityelonnginelonTypelon = SimilarityelonnginelonTypelon(
+      elonarlybirdSimilarityelonnginelonTypelon_ReloncelonncyBaselond)
+    val elonarlybirdRankingModelon_ModelonlBaselond: SimilarityelonnginelonTypelon = SimilarityelonnginelonTypelon(
+      elonarlybirdSimilarityelonnginelonTypelon_ModelonlBaselond)
+    val elonarlybirdRankingModelon_TelonnsorflowBaselond: SimilarityelonnginelonTypelon = SimilarityelonnginelonTypelon(
+      elonarlybirdSimilarityelonnginelonTypelon_TelonnsorflowBaselond)
   }
 
-  object FrsBasedCandidateGenerationEarlybirdSimilarityEngineTypeParam
-      extends FSEnumParam[CandidateGenerationEarlybirdSimilarityEngineType.type](
-        name = "frs_based_candidate_generation_earlybird_ranking_mode_id",
-        default =
-          CandidateGenerationEarlybirdSimilarityEngineType.EarlybirdRankingMode_RecencyBased,
-        enum = CandidateGenerationEarlybirdSimilarityEngineType
+  objelonct FrsBaselondCandidatelonGelonnelonrationelonarlybirdSimilarityelonnginelonTypelonParam
+      elonxtelonnds FSelonnumParam[CandidatelonGelonnelonrationelonarlybirdSimilarityelonnginelonTypelon.typelon](
+        namelon = "frs_baselond_candidatelon_gelonnelonration_elonarlybird_ranking_modelon_id",
+        delonfault =
+          CandidatelonGelonnelonrationelonarlybirdSimilarityelonnginelonTypelon.elonarlybirdRankingModelon_ReloncelonncyBaselond,
+        elonnum = CandidatelonGelonnelonrationelonarlybirdSimilarityelonnginelonTypelon
       )
 
-  object FrsBasedCandidateGenerationRecencyBasedEarlybirdMaxTweetsPerUser
-      extends FSBoundedParam[Int](
-        name = "frs_based_candidate_generation_earlybird_max_tweets_per_user",
-        default = 100,
+  objelonct FrsBaselondCandidatelonGelonnelonrationReloncelonncyBaselondelonarlybirdMaxTwelonelontsPelonrUselonr
+      elonxtelonnds FSBoundelondParam[Int](
+        namelon = "frs_baselond_candidatelon_gelonnelonration_elonarlybird_max_twelonelonts_pelonr_uselonr",
+        delonfault = 100,
         min = 0,
         /**
-         * Note max should be equal to EarlybirdRecencyBasedCandidateStoreModule.DefaultMaxNumTweetPerUser.
-         * Which is the size of the memcached result list.
+         * Notelon max should belon elonqual to elonarlybirdReloncelonncyBaselondCandidatelonStorelonModulelon.DelonfaultMaxNumTwelonelontPelonrUselonr.
+         * Which is thelon sizelon of thelon melonmcachelond relonsult list.
          */
         max = 100
       )
 
-  object FrsBasedCandidateGenerationEarlybirdMaxTweetAge
-      extends FSBoundedParam[Duration](
-        name = "frs_based_candidate_generation_earlybird_max_tweet_age_hours",
-        default = 24.hours,
+  objelonct FrsBaselondCandidatelonGelonnelonrationelonarlybirdMaxTwelonelontAgelon
+      elonxtelonnds FSBoundelondParam[Duration](
+        namelon = "frs_baselond_candidatelon_gelonnelonration_elonarlybird_max_twelonelont_agelon_hours",
+        delonfault = 24.hours,
         min = 12.hours,
         /**
-         * Note max could be related to EarlybirdRecencyBasedCandidateStoreModule.DefaultMaxNumTweetPerUser.
-         * Which is the size of the memcached result list for recency based earlybird candidate source.
-         * E.g. if max = 720.hours, we may want to increase the DefaultMaxNumTweetPerUser.
+         * Notelon max could belon relonlatelond to elonarlybirdReloncelonncyBaselondCandidatelonStorelonModulelon.DelonfaultMaxNumTwelonelontPelonrUselonr.
+         * Which is thelon sizelon of thelon melonmcachelond relonsult list for reloncelonncy baselond elonarlybird candidatelon sourcelon.
+         * elon.g. if max = 720.hours, welon may want to increlonaselon thelon DelonfaultMaxNumTwelonelontPelonrUselonr.
          */
         max = 96.hours
       )
-      with HasDurationConversion {
-    override val durationConversion: DurationConversion = DurationConversion.FromHours
+      with HasDurationConvelonrsion {
+    ovelonrridelon val durationConvelonrsion: DurationConvelonrsion = DurationConvelonrsion.FromHours
   }
 
-  object FrsBasedCandidateGenerationEarlybirdFilterOutRetweetsAndReplies
-      extends FSParam[Boolean](
-        name = "frs_based_candidate_generation_earlybird_filter_out_retweets_and_replies",
-        default = true
+  objelonct FrsBaselondCandidatelonGelonnelonrationelonarlybirdFiltelonrOutRelontwelonelontsAndRelonplielons
+      elonxtelonnds FSParam[Boolelonan](
+        namelon = "frs_baselond_candidatelon_gelonnelonration_elonarlybird_filtelonr_out_relontwelonelonts_and_relonplielons",
+        delonfault = truelon
       )
 
-  val AllParams: Seq[Param[_] with FSName] = Seq(
-    FrsBasedCandidateGenerationEarlybirdSimilarityEngineTypeParam,
-    FrsBasedCandidateGenerationRecencyBasedEarlybirdMaxTweetsPerUser,
-    FrsBasedCandidateGenerationEarlybirdMaxTweetAge,
-    FrsBasedCandidateGenerationEarlybirdFilterOutRetweetsAndReplies,
+  val AllParams: Selonq[Param[_] with FSNamelon] = Selonq(
+    FrsBaselondCandidatelonGelonnelonrationelonarlybirdSimilarityelonnginelonTypelonParam,
+    FrsBaselondCandidatelonGelonnelonrationReloncelonncyBaselondelonarlybirdMaxTwelonelontsPelonrUselonr,
+    FrsBaselondCandidatelonGelonnelonrationelonarlybirdMaxTwelonelontAgelon,
+    FrsBaselondCandidatelonGelonnelonrationelonarlybirdFiltelonrOutRelontwelonelontsAndRelonplielons,
   )
 
-  lazy val config: BaseConfig = {
-    val booleanOverrides = FeatureSwitchOverrideUtil.getBooleanFSOverrides(
-      FrsBasedCandidateGenerationEarlybirdFilterOutRetweetsAndReplies,
+  lazy val config: BaselonConfig = {
+    val boolelonanOvelonrridelons = FelonaturelonSwitchOvelonrridelonUtil.gelontBoolelonanFSOvelonrridelons(
+      FrsBaselondCandidatelonGelonnelonrationelonarlybirdFiltelonrOutRelontwelonelontsAndRelonplielons,
     )
 
-    val doubleOverrides = FeatureSwitchOverrideUtil.getBoundedDoubleFSOverrides()
+    val doublelonOvelonrridelons = FelonaturelonSwitchOvelonrridelonUtil.gelontBoundelondDoublelonFSOvelonrridelons()
 
-    val intOverrides = FeatureSwitchOverrideUtil.getBoundedIntFSOverrides(
-      FrsBasedCandidateGenerationRecencyBasedEarlybirdMaxTweetsPerUser
+    val intOvelonrridelons = FelonaturelonSwitchOvelonrridelonUtil.gelontBoundelondIntFSOvelonrridelons(
+      FrsBaselondCandidatelonGelonnelonrationReloncelonncyBaselondelonarlybirdMaxTwelonelontsPelonrUselonr
     )
 
-    val durationFSOverrides =
-      FeatureSwitchOverrideUtil.getDurationFSOverrides(
-        FrsBasedCandidateGenerationEarlybirdMaxTweetAge
+    val durationFSOvelonrridelons =
+      FelonaturelonSwitchOvelonrridelonUtil.gelontDurationFSOvelonrridelons(
+        FrsBaselondCandidatelonGelonnelonrationelonarlybirdMaxTwelonelontAgelon
       )
 
-    val enumOverrides = FeatureSwitchOverrideUtil.getEnumFSOverrides(
-      NullStatsReceiver,
-      Logger(getClass),
-      FrsBasedCandidateGenerationEarlybirdSimilarityEngineTypeParam,
+    val elonnumOvelonrridelons = FelonaturelonSwitchOvelonrridelonUtil.gelontelonnumFSOvelonrridelons(
+      NullStatsReloncelonivelonr,
+      Loggelonr(gelontClass),
+      FrsBaselondCandidatelonGelonnelonrationelonarlybirdSimilarityelonnginelonTypelonParam,
     )
 
-    BaseConfigBuilder()
-      .set(booleanOverrides: _*)
-      .set(doubleOverrides: _*)
-      .set(intOverrides: _*)
-      .set(enumOverrides: _*)
-      .set(durationFSOverrides: _*)
+    BaselonConfigBuildelonr()
+      .selont(boolelonanOvelonrridelons: _*)
+      .selont(doublelonOvelonrridelons: _*)
+      .selont(intOvelonrridelons: _*)
+      .selont(elonnumOvelonrridelons: _*)
+      .selont(durationFSOvelonrridelons: _*)
       .build()
   }
 }

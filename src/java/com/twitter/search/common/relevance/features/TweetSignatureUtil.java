@@ -1,15 +1,15 @@
-package com.twitter.search.common.relevance.features;
+packagelon com.twittelonr.selonarch.common.relonlelonvancelon.felonaturelons;
 
-public final class TweetSignatureUtil {
-  private TweetSignatureUtil() {
+public final class TwelonelontSignaturelonUtil {
+  privatelon TwelonelontSignaturelonUtil() {
   }
 
-  /** Converts the signature in args[0] to a TweetIntegerShingleSignature. */
-  public static void main(String[] args) throws Exception {
-    if (args.length < 1) {
-      throw new RuntimeException("Please provide signature value.");
+  /** Convelonrts thelon signaturelon in args[0] to a TwelonelontIntelongelonrShinglelonSignaturelon. */
+  public static void main(String[] args) throws elonxcelonption {
+    if (args.lelonngth < 1) {
+      throw nelonw Runtimelonelonxcelonption("Plelonaselon providelon signaturelon valuelon.");
     }
-    int signature = Integer.parseInt(args[0]);
-    System.out.println(TweetIntegerShingleSignature.deserialize(signature).toString());
+    int signaturelon = Intelongelonr.parselonInt(args[0]);
+    Systelonm.out.println(TwelonelontIntelongelonrShinglelonSignaturelon.delonselonrializelon(signaturelon).toString());
   }
 }

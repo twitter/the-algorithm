@@ -1,138 +1,138 @@
-package com.twitter.follow_recommendations.common.transforms.weighted_sampling
-import com.twitter.follow_recommendations.common.base.GatedTransform
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.HasDebugOptions
-import com.twitter.follow_recommendations.common.models.Score
-import com.twitter.follow_recommendations.common.models.Scores
-import com.twitter.follow_recommendations.common.rankers.common.RankerId
-import com.twitter.follow_recommendations.common.rankers.utils.Utils
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import javax.inject.Inject
-import javax.inject.Singleton
+packagelon com.twittelonr.follow_reloncommelonndations.common.transforms.welonightelond_sampling
+import com.twittelonr.follow_reloncommelonndations.common.baselon.GatelondTransform
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.timelonlinelons.configapi.HasParams
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.CandidatelonUselonr
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.HasDelonbugOptions
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.Scorelon
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.Scorelons
+import com.twittelonr.follow_reloncommelonndations.common.rankelonrs.common.RankelonrId
+import com.twittelonr.follow_reloncommelonndations.common.rankelonrs.utils.Utils
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.HasClielonntContelonxt
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class SamplingTransform @Inject() ()
-    extends GatedTransform[HasClientContext with HasParams with HasDebugOptions, CandidateUser] {
+@Singlelonton
+class SamplingTransform @Injelonct() ()
+    elonxtelonnds GatelondTransform[HasClielonntContelonxt with HasParams with HasDelonbugOptions, CandidatelonUselonr] {
 
-  val name: String = this.getClass.getSimpleName
+  val namelon: String = this.gelontClass.gelontSimplelonNamelon
 
   /*
-  Description: This function takes in a set of candidate users and ranks them for a who-to-follow
-  request by sampling from the Placket-Luce distribution
-  (https://cran.rstudio.com/web/packages/PlackettLuce/vignettes/Overview.html) with a three
-  variations. The first variation is that the scores of the candidates are multiplied by
-  multiplicativeFactor before sampling. The second variation is that the scores are
-  exponentiated before sampling. The third variation is that depending on how many who-to-follow
-  positions are being requested, the first k positions are reserved for the candidates with the
-  highest scores (and they are sorted in decreasing order of score) and the remaining positions
-  are sampled from a Placket-Luce. We use the efficient algorithm proposed in this blog
-  https://medium.com/swlh/going-old-school-designing-algorithms-for-fast-weighted-sampling-in-production-c48fc1f40051
-  to sample from a Plackett-Luce. Because of numerical stability reasons, before sampling from this
-  distribution, (1) we subtract off the maximum score from all the scores and (2) if after
-  this subtraction and multiplication by the multiplicative factor the resulting score is <= -10,
-  we force the candidate's transformed score under the above algorithm to be 0 (so r^(1/w) = 0)
-  where r is a random number and w is the transformed score.
+  Delonscription: This function takelons in a selont of candidatelon uselonrs and ranks thelonm for a who-to-follow
+  relonquelonst by sampling from thelon Plackelont-Lucelon distribution
+  (https://cran.rstudio.com/welonb/packagelons/PlackelonttLucelon/vignelonttelons/Ovelonrvielonw.html) with a threlonelon
+  variations. Thelon first variation is that thelon scorelons of thelon candidatelons arelon multiplielond by
+  multiplicativelonFactor belonforelon sampling. Thelon seloncond variation is that thelon scorelons arelon
+  elonxponelonntiatelond belonforelon sampling. Thelon third variation is that delonpelonnding on how many who-to-follow
+  positions arelon beloning relonquelonstelond, thelon first k positions arelon relonselonrvelond for thelon candidatelons with thelon
+  highelonst scorelons (and thelony arelon sortelond in deloncrelonasing ordelonr of scorelon) and thelon relonmaining positions
+  arelon samplelond from a Plackelont-Lucelon. Welon uselon thelon elonfficielonnt algorithm proposelond in this blog
+  https://melondium.com/swlh/going-old-school-delonsigning-algorithms-for-fast-welonightelond-sampling-in-production-c48fc1f40051
+  to samplelon from a Plackelontt-Lucelon. Beloncauselon of numelonrical stability relonasons, belonforelon sampling from this
+  distribution, (1) welon subtract off thelon maximum scorelon from all thelon scorelons and (2) if aftelonr
+  this subtraction and multiplication by thelon multiplicativelon factor thelon relonsulting scorelon is <= -10,
+  welon forcelon thelon candidatelon's transformelond scorelon undelonr thelon abovelon algorithm to belon 0 (so r^(1/w) = 0)
+  whelonrelon r is a random numbelonr and w is thelon transformelond scorelon.
 
   inputs:
-  - target: HasClientContext (WTF request)
-  - candidates: sequence of CandidateUsers (users that need to be ranked from a who-to-follow
-                request) each of which has a score
+  - targelont: HasClielonntContelonxt (WTF relonquelonst)
+  - candidatelons: selonquelonncelon of CandidatelonUselonrs (uselonrs that nelonelond to belon rankelond from a who-to-follow
+                relonquelonst) elonach of which has a scorelon
 
-  inputs accessed through feature switches, i.e. through target.params (see the following file:
-  "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/
-  transforms/weighted_sampling/SamplingTransformParams.scala"):
-  - topKFixed: the first k positions of the who-to-follow ranking correspond to the users with the k
-               highest scores and are not sampled from the Placket-Luce distribution
-  - multiplicativeFactor: multiplicativeFactor is used to transform the scores of each candidate by
-                          multiplying that user's score by multiplicativeFactor
+  inputs accelonsselond through felonaturelon switchelons, i.elon. through targelont.params (selonelon thelon following filelon:
+  "follow-reloncommelonndations-selonrvicelon/common/src/main/scala/com/twittelonr/follow_reloncommelonndations/common/
+  transforms/welonightelond_sampling/SamplingTransformParams.scala"):
+  - topKFixelond: thelon first k positions of thelon who-to-follow ranking correlonspond to thelon uselonrs with thelon k
+               highelonst scorelons and arelon not samplelond from thelon Plackelont-Lucelon distribution
+  - multiplicativelonFactor: multiplicativelonFactor is uselond to transform thelon scorelons of elonach candidatelon by
+                          multiplying that uselonr's scorelon by multiplicativelonFactor
 
   output:
-  - Sequence of CandidateUser whose order represents the ranking of users in a who-to-follow request
-    This ranking is sampled from a Placket-Luce distribution.
+  - Selonquelonncelon of CandidatelonUselonr whoselon ordelonr relonprelonselonnts thelon ranking of uselonrs in a who-to-follow relonquelonst
+    This ranking is samplelond from a Plackelont-Lucelon distribution.
    */
-  override def transform(
-    target: HasClientContext with HasParams with HasDebugOptions,
-    candidates: Seq[CandidateUser]
-  ): Stitch[Seq[CandidateUser]] = {
+  ovelonrridelon delonf transform(
+    targelont: HasClielonntContelonxt with HasParams with HasDelonbugOptions,
+    candidatelons: Selonq[CandidatelonUselonr]
+  ): Stitch[Selonq[CandidatelonUselonr]] = {
 
-    // the first k positions of the who-to-follow ranking correspond to the users with the k
-    // highest scores and are not sampled from the Placket-Luce distribution
-    val topKFixed = target.params(SamplingTransformParams.TopKFixed)
+    // thelon first k positions of thelon who-to-follow ranking correlonspond to thelon uselonrs with thelon k
+    // highelonst scorelons and arelon not samplelond from thelon Plackelont-Lucelon distribution
+    val topKFixelond = targelont.params(SamplingTransformParams.TopKFixelond)
 
-    // multiplicativeFactor is used to transform the scores of each candidate by
-    // multiplying that user's score by multiplicativeFactor
-    val multiplicativeFactor = target.params(SamplingTransformParams.MultiplicativeFactor)
+    // multiplicativelonFactor is uselond to transform thelon scorelons of elonach candidatelon by
+    // multiplying that uselonr's scorelon by multiplicativelonFactor
+    val multiplicativelonFactor = targelont.params(SamplingTransformParams.MultiplicativelonFactor)
 
-    // sort candidates by their score
-    val candidatesSorted = candidates.sortBy(-1 * _.score.getOrElse(0.0))
+    // sort candidatelons by thelonir scorelon
+    val candidatelonsSortelond = candidatelons.sortBy(-1 * _.scorelon.gelontOrelonlselon(0.0))
 
-    // pick the top K candidates by score and the remaining candidates
-    val (topKFixedCandidates, candidatesOutsideOfTopK) =
-      candidatesSorted.zipWithIndex.partition { case (value, index) => index < topKFixed }
+    // pick thelon top K candidatelons by scorelon and thelon relonmaining candidatelons
+    val (topKFixelondCandidatelons, candidatelonsOutsidelonOfTopK) =
+      candidatelonsSortelond.zipWithIndelonx.partition { caselon (valuelon, indelonx) => indelonx < topKFixelond }
 
-    val randomNumGenerator =
-      new scala.util.Random(target.getRandomizationSeed.getOrElse(System.currentTimeMillis))
+    val randomNumGelonnelonrator =
+      nelonw scala.util.Random(targelont.gelontRandomizationSelonelond.gelontOrelonlselon(Systelonm.currelonntTimelonMillis))
 
-    // we need to subtract the maximum score off the scores for numerical stability reasons
-    // subtracting the max score off does not effect the underlying distribution we are sampling
-    // the candidates from
-    // we need the if statement since you cannot take the max of an empty sequence
-    val maximum_score = if (candidatesOutsideOfTopK.nonEmpty) {
-      candidatesOutsideOfTopK.map(x => x._1.score.getOrElse(0.0)).max
-    } else {
+    // welon nelonelond to subtract thelon maximum scorelon off thelon scorelons for numelonrical stability relonasons
+    // subtracting thelon max scorelon off doelons not elonffelonct thelon undelonrlying distribution welon arelon sampling
+    // thelon candidatelons from
+    // welon nelonelond thelon if statelonmelonnt sincelon you cannot takelon thelon max of an elonmpty selonquelonncelon
+    val maximum_scorelon = if (candidatelonsOutsidelonOfTopK.nonelonmpty) {
+      candidatelonsOutsidelonOfTopK.map(x => x._1.scorelon.gelontOrelonlselon(0.0)).max
+    } elonlselon {
       0.0
     }
 
-    // for candidates in candidatesOutsideOfTopK, we transform their score by subtracting off
-    // maximum_score and then multiply by multiplicativeFactor
-    val candidatesOutsideOfTopKTransformedScore = candidatesOutsideOfTopK.map(x =>
-      (x._1, multiplicativeFactor * (x._1.score.getOrElse(0.0) - maximum_score)))
+    // for candidatelons in candidatelonsOutsidelonOfTopK, welon transform thelonir scorelon by subtracting off
+    // maximum_scorelon and thelonn multiply by multiplicativelonFactor
+    val candidatelonsOutsidelonOfTopKTransformelondScorelon = candidatelonsOutsidelonOfTopK.map(x =>
+      (x._1, multiplicativelonFactor * (x._1.scorelon.gelontOrelonlselon(0.0) - maximum_scorelon)))
 
-    // for each candidate with score transformed and clip score w, sample a random number r,
-    // create a new score r^(1/w) and sort the candidates to get the final ranking.
-    // for numerical stability reasons if the score is <=-10, we force r^(1/w) = 0.
-    // this samples the candidates from the modified Plackett-Luce distribution. See
-    // https://medium.com/swlh/going-old-school-designing-algorithms-for-fast-weighted-sampling-in-production-c48fc1f40051
+    // for elonach candidatelon with scorelon transformelond and clip scorelon w, samplelon a random numbelonr r,
+    // crelonatelon a nelonw scorelon r^(1/w) and sort thelon candidatelons to gelont thelon final ranking.
+    // for numelonrical stability relonasons if thelon scorelon is <=-10, welon forcelon r^(1/w) = 0.
+    // this samplelons thelon candidatelons from thelon modifielond Plackelontt-Lucelon distribution. Selonelon
+    // https://melondium.com/swlh/going-old-school-delonsigning-algorithms-for-fast-welonightelond-sampling-in-production-c48fc1f40051
 
-    val candidatesOutsideOfTopKSampled = candidatesOutsideOfTopKTransformedScore
+    val candidatelonsOutsidelonOfTopKSamplelond = candidatelonsOutsidelonOfTopKTransformelondScorelon
       .map(x =>
         (
           x._1,
           if (x._2 <= -10.0)
             0.0
-          else
+          elonlselon
             scala.math.pow(
-              randomNumGenerator.nextFloat(),
+              randomNumGelonnelonrator.nelonxtFloat(),
               1 / (scala.math
-                .exp(x._2))))).sortBy(-1 * _._2)
+                .elonxp(x._2))))).sortBy(-1 * _._2)
 
-    val topKCandidates: Seq[CandidateUser] = topKFixedCandidates.map(_._1)
+    val topKCandidatelons: Selonq[CandidatelonUselonr] = topKFixelondCandidatelons.map(_._1)
 
-    val scribeRankingInfo: Boolean =
-      target.params(SamplingTransformParams.ScribeRankingInfoInSamplingTransform)
+    val scribelonRankingInfo: Boolelonan =
+      targelont.params(SamplingTransformParams.ScribelonRankingInfoInSamplingTransform)
 
-    val transformedCandidates: Seq[CandidateUser] = if (scribeRankingInfo) {
-      val topKCandidatesWithRankingInfo: Seq[CandidateUser] =
-        Utils.addRankingInfo(topKCandidates, name)
-      val candidatesOutsideOfTopKSampledWithRankingInfo: Seq[CandidateUser] =
-        candidatesOutsideOfTopKSampled.zipWithIndex.map {
-          case ((candidate, score), rank) =>
-            val newScore = Seq(Score(score, Some(RankerId.PlacketLuceSamplingTransformer)))
-            val newScores: Option[Scores] = candidate.scores
-              .map { scores =>
-                scores.copy(scores = scores.scores ++ newScore)
-              }.orElse(Some(Scores(newScore, Some(RankerId.PlacketLuceSamplingTransformer))))
-            val globalRank = rank + topKFixed + 1
-            candidate.addInfoPerRankingStage(name, newScores, globalRank)
+    val transformelondCandidatelons: Selonq[CandidatelonUselonr] = if (scribelonRankingInfo) {
+      val topKCandidatelonsWithRankingInfo: Selonq[CandidatelonUselonr] =
+        Utils.addRankingInfo(topKCandidatelons, namelon)
+      val candidatelonsOutsidelonOfTopKSamplelondWithRankingInfo: Selonq[CandidatelonUselonr] =
+        candidatelonsOutsidelonOfTopKSamplelond.zipWithIndelonx.map {
+          caselon ((candidatelon, scorelon), rank) =>
+            val nelonwScorelon = Selonq(Scorelon(scorelon, Somelon(RankelonrId.PlackelontLucelonSamplingTransformelonr)))
+            val nelonwScorelons: Option[Scorelons] = candidatelon.scorelons
+              .map { scorelons =>
+                scorelons.copy(scorelons = scorelons.scorelons ++ nelonwScorelon)
+              }.orelonlselon(Somelon(Scorelons(nelonwScorelon, Somelon(RankelonrId.PlackelontLucelonSamplingTransformelonr))))
+            val globalRank = rank + topKFixelond + 1
+            candidatelon.addInfoPelonrRankingStagelon(namelon, nelonwScorelons, globalRank)
         }
 
-      topKCandidatesWithRankingInfo ++ candidatesOutsideOfTopKSampledWithRankingInfo
-    } else {
-      topKCandidates ++ candidatesOutsideOfTopKSampled.map(_._1)
+      topKCandidatelonsWithRankingInfo ++ candidatelonsOutsidelonOfTopKSamplelondWithRankingInfo
+    } elonlselon {
+      topKCandidatelons ++ candidatelonsOutsidelonOfTopKSamplelond.map(_._1)
     }
 
-    Stitch.value(transformedCandidates)
+    Stitch.valuelon(transformelondCandidatelons)
   }
 }

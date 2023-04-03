@@ -1,70 +1,70 @@
 scala_library(
-    sources = ["*.scala"],
+    sourcelons = ["*.scala"],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        ":topic_recommendations_test_datarecords-java",
-        ":topic_recommendations_train_datarecords-java",
-        "escherbird/src/scala/com/twitter/escherbird/scalding/jobs/exportentities:entities-scala",
-        "interests-ds/src/main/scala/com/twitter/interests_ds/jobs/interests_service",
-        "interests-ds/src/main/scala/com/twitter/interests_ds/jobs/interests_service:user_topic_relation_snapshot-scala",
-        "src/java/com/twitter/ml/api/constant",
-        "src/scala/com/twitter/scalding_internal/dalv2",
-        "src/scala/com/twitter/scalding_internal/dalv2/dataset",
-        "src/scala/com/twitter/scalding_internal/job",
-        "src/scala/com/twitter/scalding_internal/job/analytics_batch",
-        "src/scala/com/twitter/scalding_internal/source",
-        "src/scala/com/twitter/scalding_internal/source/lzo_scrooge",
-        "src/scala/com/twitter/simclusters_v2/candidate_source",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources",
-        "src/scala/com/twitter/simclusters_v2/scalding/common",
-        "timelines/data_processing/jobs/metrics/per_topic_metrics:per_topic_aggregate_engagement-scala",
-        "twml/runtime/src/main/scala/com/twitter/twml/runtime/scalding",
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        ":topic_reloncommelonndations_telonst_datareloncords-java",
+        ":topic_reloncommelonndations_train_datareloncords-java",
+        "elonschelonrbird/src/scala/com/twittelonr/elonschelonrbird/scalding/jobs/elonxportelonntitielons:elonntitielons-scala",
+        "intelonrelonsts-ds/src/main/scala/com/twittelonr/intelonrelonsts_ds/jobs/intelonrelonsts_selonrvicelon",
+        "intelonrelonsts-ds/src/main/scala/com/twittelonr/intelonrelonsts_ds/jobs/intelonrelonsts_selonrvicelon:uselonr_topic_relonlation_snapshot-scala",
+        "src/java/com/twittelonr/ml/api/constant",
+        "src/scala/com/twittelonr/scalding_intelonrnal/dalv2",
+        "src/scala/com/twittelonr/scalding_intelonrnal/dalv2/dataselont",
+        "src/scala/com/twittelonr/scalding_intelonrnal/job",
+        "src/scala/com/twittelonr/scalding_intelonrnal/job/analytics_batch",
+        "src/scala/com/twittelonr/scalding_intelonrnal/sourcelon",
+        "src/scala/com/twittelonr/scalding_intelonrnal/sourcelon/lzo_scroogelon",
+        "src/scala/com/twittelonr/simclustelonrs_v2/candidatelon_sourcelon",
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons",
+        "src/scala/com/twittelonr/simclustelonrs_v2/scalding/common",
+        "timelonlinelons/data_procelonssing/jobs/melontrics/pelonr_topic_melontrics:pelonr_topic_aggrelongatelon_elonngagelonmelonnt-scala",
+        "twml/runtimelon/src/main/scala/com/twittelonr/twml/runtimelon/scalding",
     ],
 )
 
 hadoop_binary(
-    name = "training_data_for_topic_recommendations-adhoc",
-    main = "com.twitter.simclusters_v2.scalding.topic_recommendations.model_based_topic_recommendations.UserTopicFeatureHydrationAdhocApp",
+    namelon = "training_data_for_topic_reloncommelonndations-adhoc",
+    main = "com.twittelonr.simclustelonrs_v2.scalding.topic_reloncommelonndations.modelonl_baselond_topic_reloncommelonndations.UselonrTopicFelonaturelonHydrationAdhocApp",
     platform = "java8",
-    runtime_platform = "java8",
+    runtimelon_platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
+        "bazelonl-compatiblelon",
+        "bazelonl-compatiblelon:migratelond",
+        "bazelonl-only",
     ],
-    dependencies = [
-        ":model_based_topic_recommendations",
+    delonpelonndelonncielons = [
+        ":modelonl_baselond_topic_reloncommelonndations",
     ],
 )
 
 hadoop_binary(
-    name = "training_data_for_topic_recommendations",
-    main = "com.twitter.simclusters_v2.scalding.topic_recommendations.model_based_topic_recommendations.UserTopicFeatureHydrationScheduledApp",
+    namelon = "training_data_for_topic_reloncommelonndations",
+    main = "com.twittelonr.simclustelonrs_v2.scalding.topic_reloncommelonndations.modelonl_baselond_topic_reloncommelonndations.UselonrTopicFelonaturelonHydrationSchelondulelondApp",
     platform = "java8",
-    runtime_platform = "java8",
+    runtimelon_platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
+        "bazelonl-compatiblelon",
+        "bazelonl-compatiblelon:migratelond",
+        "bazelonl-only",
     ],
-    dependencies = [
-        ":model_based_topic_recommendations",
+    delonpelonndelonncielons = [
+        ":modelonl_baselond_topic_reloncommelonndations",
     ],
 )
 
-create_datarecord_datasets(
-    base_name = "topic_recommendations_train_datarecords",
+crelonatelon_datareloncord_dataselonts(
+    baselon_namelon = "topic_reloncommelonndations_train_datareloncords",
     platform = "java8",
-    role = "cassowary",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
+    rolelon = "cassowary",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
 )
 
-create_datarecord_datasets(
-    base_name = "topic_recommendations_test_datarecords",
+crelonatelon_datareloncord_dataselonts(
+    baselon_namelon = "topic_reloncommelonndations_telonst_datareloncords",
     platform = "java8",
-    role = "cassowary",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
+    rolelon = "cassowary",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
 )

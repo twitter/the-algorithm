@@ -1,164 +1,164 @@
-package com.twitter.follow_recommendations.logging
+packagelon com.twittelonr.follow_reloncommelonndations.logging
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.constants.GuiceNamedConstants
-import com.twitter.follow_recommendations.common.models.HasIsSoftUser
-import com.twitter.follow_recommendations.configapi.params.GlobalParams
-import com.twitter.follow_recommendations.logging.thriftscala.RecommendationLog
-import com.twitter.follow_recommendations.models.DebugParams
-import com.twitter.follow_recommendations.models.RecommendationFlowData
-import com.twitter.follow_recommendations.models.RecommendationRequest
-import com.twitter.follow_recommendations.models.RecommendationResponse
-import com.twitter.follow_recommendations.models.ScoringUserRequest
-import com.twitter.follow_recommendations.models.ScoringUserResponse
-import com.twitter.inject.annotations.Flag
-import com.twitter.logging.LoggerFactory
-import com.twitter.product_mixer.core.model.marshalling.request.ClientContext
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.scribelib.marshallers.ClientDataProvider
-import com.twitter.scribelib.marshallers.ExternalRefererDataProvider
-import com.twitter.scribelib.marshallers.ScribeSerialization
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.util.Time
-import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Singleton
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.follow_reloncommelonndations.common.constants.GuicelonNamelondConstants
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.HasIsSoftUselonr
+import com.twittelonr.follow_reloncommelonndations.configapi.params.GlobalParams
+import com.twittelonr.follow_reloncommelonndations.logging.thriftscala.ReloncommelonndationLog
+import com.twittelonr.follow_reloncommelonndations.modelonls.DelonbugParams
+import com.twittelonr.follow_reloncommelonndations.modelonls.ReloncommelonndationFlowData
+import com.twittelonr.follow_reloncommelonndations.modelonls.ReloncommelonndationRelonquelonst
+import com.twittelonr.follow_reloncommelonndations.modelonls.ReloncommelonndationRelonsponselon
+import com.twittelonr.follow_reloncommelonndations.modelonls.ScoringUselonrRelonquelonst
+import com.twittelonr.follow_reloncommelonndations.modelonls.ScoringUselonrRelonsponselon
+import com.twittelonr.injelonct.annotations.Flag
+import com.twittelonr.logging.LoggelonrFactory
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.ClielonntContelonxt
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.HasClielonntContelonxt
+import com.twittelonr.scribelonlib.marshallelonrs.ClielonntDataProvidelonr
+import com.twittelonr.scribelonlib.marshallelonrs.elonxtelonrnalRelonfelonrelonrDataProvidelonr
+import com.twittelonr.scribelonlib.marshallelonrs.ScribelonSelonrialization
+import com.twittelonr.timelonlinelons.configapi.HasParams
+import com.twittelonr.util.Timelon
+import javax.injelonct.Injelonct
+import javax.injelonct.Namelond
+import javax.injelonct.Singlelonton
 
 /**
- * This is the standard logging class we use to log data into:
- * 1) logs.follow_recommendations_logs
+ * This is thelon standard logging class welon uselon to log data into:
+ * 1) logs.follow_reloncommelonndations_logs
  *
- * This logger logs data for 2 endpoints: getRecommendations, scoreUserCandidates
- * All data scribed via this logger have to be converted into the same thrift type: RecommendationLog
+ * This loggelonr logs data for 2 elonndpoints: gelontReloncommelonndations, scorelonUselonrCandidatelons
+ * All data scribelond via this loggelonr havelon to belon convelonrtelond into thelon samelon thrift typelon: ReloncommelonndationLog
  *
- * 2) logs.frs_recommendation_flow_logs
+ * 2) logs.frs_reloncommelonndation_flow_logs
  *
- * This logger logs recommendation flow data for getRecommendations requests
- * All data scribed via this logger have to be converted into the same thrift type: FrsRecommendationFlowLog
+ * This loggelonr logs reloncommelonndation flow data for gelontReloncommelonndations relonquelonsts
+ * All data scribelond via this loggelonr havelon to belon convelonrtelond into thelon samelon thrift typelon: FrsReloncommelonndationFlowLog
  */
-@Singleton
-class FrsLogger @Inject() (
-  @Named(GuiceNamedConstants.REQUEST_LOGGER) loggerFactory: LoggerFactory,
-  @Named(GuiceNamedConstants.FLOW_LOGGER) flowLoggerFactory: LoggerFactory,
-  stats: StatsReceiver,
-  @Flag("log_results") serviceShouldLogResults: Boolean)
-    extends ScribeSerialization {
-  private val logger = loggerFactory.apply()
-  private val flowLogger = flowLoggerFactory.apply()
-  private val logRecommendationCounter = stats.counter("scribe_recommendation")
-  private val logScoringCounter = stats.counter("scribe_scoring")
-  private val logRecommendationFlowCounter = stats.counter("scribe_recommendation_flow")
+@Singlelonton
+class FrsLoggelonr @Injelonct() (
+  @Namelond(GuicelonNamelondConstants.RelonQUelonST_LOGGelonR) loggelonrFactory: LoggelonrFactory,
+  @Namelond(GuicelonNamelondConstants.FLOW_LOGGelonR) flowLoggelonrFactory: LoggelonrFactory,
+  stats: StatsReloncelonivelonr,
+  @Flag("log_relonsults") selonrvicelonShouldLogRelonsults: Boolelonan)
+    elonxtelonnds ScribelonSelonrialization {
+  privatelon val loggelonr = loggelonrFactory.apply()
+  privatelon val flowLoggelonr = flowLoggelonrFactory.apply()
+  privatelon val logReloncommelonndationCountelonr = stats.countelonr("scribelon_reloncommelonndation")
+  privatelon val logScoringCountelonr = stats.countelonr("scribelon_scoring")
+  privatelon val logReloncommelonndationFlowCountelonr = stats.countelonr("scribelon_reloncommelonndation_flow")
 
-  def logRecommendationResult(
-    request: RecommendationRequest,
-    response: RecommendationResponse
+  delonf logReloncommelonndationRelonsult(
+    relonquelonst: ReloncommelonndationRelonquelonst,
+    relonsponselon: ReloncommelonndationRelonsponselon
   ): Unit = {
-    if (!request.isSoftUser) {
+    if (!relonquelonst.isSoftUselonr) {
       val log =
-        RecommendationLog(request.toOfflineThrift, response.toOfflineThrift, Time.now.inMillis)
-      logRecommendationCounter.incr()
-      logger.info(
-        serializeThrift(
+        ReloncommelonndationLog(relonquelonst.toOfflinelonThrift, relonsponselon.toOfflinelonThrift, Timelon.now.inMillis)
+      logReloncommelonndationCountelonr.incr()
+      loggelonr.info(
+        selonrializelonThrift(
           log,
-          FrsLogger.LogCategory,
-          FrsLogger.mkProvider(request.clientContext)
+          FrsLoggelonr.LogCatelongory,
+          FrsLoggelonr.mkProvidelonr(relonquelonst.clielonntContelonxt)
         ))
     }
   }
 
-  def logScoringResult(request: ScoringUserRequest, response: ScoringUserResponse): Unit = {
-    if (!request.isSoftUser) {
+  delonf logScoringRelonsult(relonquelonst: ScoringUselonrRelonquelonst, relonsponselon: ScoringUselonrRelonsponselon): Unit = {
+    if (!relonquelonst.isSoftUselonr) {
       val log =
-        RecommendationLog(
-          request.toRecommendationRequest.toOfflineThrift,
-          response.toRecommendationResponse.toOfflineThrift,
-          Time.now.inMillis)
-      logScoringCounter.incr()
-      logger.info(
-        serializeThrift(
+        ReloncommelonndationLog(
+          relonquelonst.toReloncommelonndationRelonquelonst.toOfflinelonThrift,
+          relonsponselon.toReloncommelonndationRelonsponselon.toOfflinelonThrift,
+          Timelon.now.inMillis)
+      logScoringCountelonr.incr()
+      loggelonr.info(
+        selonrializelonThrift(
           log,
-          FrsLogger.LogCategory,
-          FrsLogger.mkProvider(request.toRecommendationRequest.clientContext)
+          FrsLoggelonr.LogCatelongory,
+          FrsLoggelonr.mkProvidelonr(relonquelonst.toReloncommelonndationRelonquelonst.clielonntContelonxt)
         ))
     }
   }
 
-  def logRecommendationFlowData[Target <: HasClientContext with HasIsSoftUser with HasParams](
-    request: Target,
-    flowData: RecommendationFlowData[Target]
+  delonf logReloncommelonndationFlowData[Targelont <: HasClielonntContelonxt with HasIsSoftUselonr with HasParams](
+    relonquelonst: Targelont,
+    flowData: ReloncommelonndationFlowData[Targelont]
   ): Unit = {
-    if (!request.isSoftUser && request.params(GlobalParams.EnableRecommendationFlowLogs)) {
-      val log = flowData.toRecommendationFlowLogOfflineThrift
-      logRecommendationFlowCounter.incr()
-      flowLogger.info(
-        serializeThrift(
+    if (!relonquelonst.isSoftUselonr && relonquelonst.params(GlobalParams.elonnablelonReloncommelonndationFlowLogs)) {
+      val log = flowData.toReloncommelonndationFlowLogOfflinelonThrift
+      logReloncommelonndationFlowCountelonr.incr()
+      flowLoggelonr.info(
+        selonrializelonThrift(
           log,
-          FrsLogger.FlowLogCategory,
-          FrsLogger.mkProvider(request.clientContext)
+          FrsLoggelonr.FlowLogCatelongory,
+          FrsLoggelonr.mkProvidelonr(relonquelonst.clielonntContelonxt)
         ))
     }
   }
 
-  // We prefer the settings given in the user request, and if none provided we default to the
-  // aurora service configuration.
-  def shouldLog(debugParamsOpt: Option[DebugParams]): Boolean =
-    debugParamsOpt match {
-      case Some(debugParams) =>
-        debugParams.debugOptions match {
-          case Some(debugOptions) =>
-            !debugOptions.doNotLog
-          case None =>
-            serviceShouldLogResults
+  // Welon prelonfelonr thelon selonttings givelonn in thelon uselonr relonquelonst, and if nonelon providelond welon delonfault to thelon
+  // aurora selonrvicelon configuration.
+  delonf shouldLog(delonbugParamsOpt: Option[DelonbugParams]): Boolelonan =
+    delonbugParamsOpt match {
+      caselon Somelon(delonbugParams) =>
+        delonbugParams.delonbugOptions match {
+          caselon Somelon(delonbugOptions) =>
+            !delonbugOptions.doNotLog
+          caselon Nonelon =>
+            selonrvicelonShouldLogRelonsults
         }
-      case None =>
-        serviceShouldLogResults
+      caselon Nonelon =>
+        selonrvicelonShouldLogRelonsults
     }
 
 }
 
-object FrsLogger {
-  val LogCategory = "follow_recommendations_logs"
-  val FlowLogCategory = "frs_recommendation_flow_logs"
+objelonct FrsLoggelonr {
+  val LogCatelongory = "follow_reloncommelonndations_logs"
+  val FlowLogCatelongory = "frs_reloncommelonndation_flow_logs"
 
-  def mkProvider(clientContext: ClientContext) = new ClientDataProvider {
+  delonf mkProvidelonr(clielonntContelonxt: ClielonntContelonxt) = nelonw ClielonntDataProvidelonr {
 
-    /** The id of the current user. When the user is logged out, this method should return None. */
-    override val userId: Option[Long] = clientContext.userId
+    /** Thelon id of thelon currelonnt uselonr. Whelonn thelon uselonr is loggelond out, this melonthod should relonturn Nonelon. */
+    ovelonrridelon val uselonrId: Option[Long] = clielonntContelonxt.uselonrId
 
-    /** The id of the guest, which is present in logged-in or loged-out states */
-    override val guestId: Option[Long] = clientContext.guestId
+    /** Thelon id of thelon guelonst, which is prelonselonnt in loggelond-in or logelond-out statelons */
+    ovelonrridelon val guelonstId: Option[Long] = clielonntContelonxt.guelonstId
 
-    /** The personalization id (pid) of the user, used to personalize Twitter services */
-    override val personalizationId: Option[String] = None
+    /** Thelon pelonrsonalization id (pid) of thelon uselonr, uselond to pelonrsonalizelon Twittelonr selonrvicelons */
+    ovelonrridelon val pelonrsonalizationId: Option[String] = Nonelon
 
-    /** The id of the individual device the user is currently using. This id will be unique for different users' devices. */
-    override val deviceId: Option[String] = clientContext.deviceId
+    /** Thelon id of thelon individual delonvicelon thelon uselonr is currelonntly using. This id will belon uniquelon for diffelonrelonnt uselonrs' delonvicelons. */
+    ovelonrridelon val delonvicelonId: Option[String] = clielonntContelonxt.delonvicelonId
 
-    /** The OAuth application id of the application the user is currently using */
-    override val clientApplicationId: Option[Long] = clientContext.appId
+    /** Thelon OAuth application id of thelon application thelon uselonr is currelonntly using */
+    ovelonrridelon val clielonntApplicationId: Option[Long] = clielonntContelonxt.appId
 
-    /** The OAuth parent application id of the application the user is currently using */
-    override val parentApplicationId: Option[Long] = None
+    /** Thelon OAuth parelonnt application id of thelon application thelon uselonr is currelonntly using */
+    ovelonrridelon val parelonntApplicationId: Option[Long] = Nonelon
 
-    /** The two-letter, upper-case country code used to designate the country from which the scribe event occurred */
-    override val countryCode: Option[String] = clientContext.countryCode
+    /** Thelon two-lelonttelonr, uppelonr-caselon country codelon uselond to delonsignatelon thelon country from which thelon scribelon elonvelonnt occurrelond */
+    ovelonrridelon val countryCodelon: Option[String] = clielonntContelonxt.countryCodelon
 
-    /** The two-letter, lower-case language code used to designate the probably language spoken by the scribe event initiator */
-    override val languageCode: Option[String] = clientContext.languageCode
+    /** Thelon two-lelonttelonr, lowelonr-caselon languagelon codelon uselond to delonsignatelon thelon probably languagelon spokelonn by thelon scribelon elonvelonnt initiator */
+    ovelonrridelon val languagelonCodelon: Option[String] = clielonntContelonxt.languagelonCodelon
 
-    /** The user-agent header used to identify the client browser or device that the user is currently active on */
-    override val userAgent: Option[String] = clientContext.userAgent
+    /** Thelon uselonr-agelonnt helonadelonr uselond to idelonntify thelon clielonnt browselonr or delonvicelon that thelon uselonr is currelonntly activelon on */
+    ovelonrridelon val uselonrAgelonnt: Option[String] = clielonntContelonxt.uselonrAgelonnt
 
-    /** Whether the user is accessing Twitter via a secured connection */
-    override val isSsl: Option[Boolean] = Some(true)
+    /** Whelonthelonr thelon uselonr is accelonssing Twittelonr via a seloncurelond connelonction */
+    ovelonrridelon val isSsl: Option[Boolelonan] = Somelon(truelon)
 
-    /** The referring URL to the current page for web-based clients, if applicable */
-    override val referer: Option[String] = None
+    /** Thelon relonfelonrring URL to thelon currelonnt pagelon for welonb-baselond clielonnts, if applicablelon */
+    ovelonrridelon val relonfelonrelonr: Option[String] = Nonelon
 
     /**
-     * The external site, partner, or email that lead to the current Twitter application. Returned value consists of a
-     * tuple including the encrypted referral data and the type of referral
+     * Thelon elonxtelonrnal sitelon, partnelonr, or elonmail that lelonad to thelon currelonnt Twittelonr application. Relonturnelond valuelon consists of a
+     * tuplelon including thelon elonncryptelond relonfelonrral data and thelon typelon of relonfelonrral
      */
-    override val externalReferer: Option[ExternalRefererDataProvider] = None
+    ovelonrridelon val elonxtelonrnalRelonfelonrelonr: Option[elonxtelonrnalRelonfelonrelonrDataProvidelonr] = Nonelon
   }
 }

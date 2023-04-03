@@ -1,112 +1,112 @@
-# SimClusters: Community-based Representations for Heterogeneous Recommendations at Twitter
+# SimClustelonrs: Community-baselond Relonprelonselonntations for Helontelonrogelonnelonous Reloncommelonndations at Twittelonr
 
-## Overview
-SimClusters is as a general-purpose representation layer based on overlapping communities into which users as well as heterogeneous content can be captured as sparse, interpretable vectors to support a multitude of recommendation tasks.
+## Ovelonrvielonw
+SimClustelonrs is as a gelonnelonral-purposelon relonprelonselonntation layelonr baselond on ovelonrlapping communitielons into which uselonrs as welonll as helontelonrogelonnelonous contelonnt can belon capturelond as sparselon, intelonrprelontablelon velonctors to support a multitudelon of reloncommelonndation tasks.
 
-We build our user and tweet SimClusters embeddings based on the inferred communities, and the representations power our personalized tweet recommendation via our online serving service SimClusters ANN.
-
-
-For more details, please read our paper that was published in KDD'2020 Applied Data Science Track: https://www.kdd.org/kdd2020/accepted-papers/view/simclusters-community-based-representations-for-heterogeneous-recommendatio
-
-## Brief introduction to Simclusters Algorithm
-
-### Follow relationships as a bipartite graph
-Follow relationships on Twitter are perhaps most naturally thought of as directed graph, where each node is a user and each edge represents a Follow. Edges are directed in that User 1 can follow User 2, User 2 can follow User 1 or both User 1 and User 2 can follow each other.
-
-This directed graph can be also viewed as a bipartite graph, where nodes are grouped into two sets, Producers and Consumers. In this bipartite graph, Producers are the users who are Followed and Consumers are the Followees. Below is a toy example of a follow graph for four users:
-
-<img src="images/bipartite_graph.png" width = "400px">
-
-> Figure 1 - Left panel: A directed follow graph; Right panel: A bipartite graph representation of the directed graph
-
-### Community Detection - Known For 
-The bipartite follow graph can be used to identify groups of Producers who have similar followers, or who are "Known For" a topic. Specifically, the bipartite follow graph can also be represented as an *m x n* matrix (*A*), where consumers are presented as *u* and producers are represented as *v*.
-
-Producer-producer similarity is computed as the cosine similarity between users who follow each producer. The resulting cosine similarity values can be used to construct a producer-producer similarity graph, where the nodes are producers and edges are weighted by the corresponding cosine similarity value. Noise removal is performed, such that edges with weights below a specified threshold are deleted from the graph.
-
-After noise removal has been completed, Metropolis-Hastings sampling-based community detection is then run on the Producer-Producer similarity graph to identify a community affiliation for each producer. This algorithm takes in a parameter *k* for the number of communities to be detected.
-
-<img src="images/producer_producer_similarity.png">
-
-> Figure 2 -  Left panel: Matrix representation of the follow graph depicted in Figure 1; Middle panel: Producer-Producer similarity is estimated by calculating the cosine similarity between the users who follow each producer; Right panel: Cosine similarity scores are used to create the Producer-Producer similarity graph. A clustering algorithm is run on the graph to identify groups of Producers with similar followers.
-
-Community affiliation scores are then used to construct an *n x k* "Known For" matrix (*V*). This matrix is maximally sparse, and each Producer is affiliated with at most one community. In production, the Known For dataset covers the top 20M producers and k ~= 145000. In other words, we discover around 145k communities based on Twitter's user follow graph.
-
-<img src="images/knownfor.png">
-
-> Figure 3 -  The clustering algorithm returns community affiliation scores for each producer. These scores are represented in matrix V.
-
-In the example above, Producer 1 is "Known For" community 2, Producer 2 is "Known For" community 1, and so forth.
-
-### Consumer Embeddings - User InterestedIn
-An Interested In matrix (*U*) can be computed by multiplying the matrix representation of the follow graph (*A*) by the Known For matrix (*V*): 
-
-<img src="images/interestedin.png">
-
-In this toy example, consumer 1 is interested in community 1 only, whereas consumer 3 is interested in all three communities. There is also a noise removal step applied to the Interested In matrix.
-
-We use the InterestedIn embeddings to capture consumer's long-term interest. The InterestedIn embeddings is one of our major source for consumer-based tweet recommendations.
-
-### Producer Embeddings
-When computing the Known For matrix, each producer can only be Known For a single community. Although this maximally sparse matrix is useful from a computational perspective, we know that our users tweet about many different topics and may be "Known" in many different communities. Producer embeddings ( *Ṽ* )  are used to capture this richer structure of the graph.
-
-To calculate producer embeddings, the cosine similarity is calculated between each Producer’s follow graph and the Interested In vector for each community.
-
-<img src="images/producer_embeddings.png">
-
-Producer embeddings are used for producer-based tweet recommendations. For example, we can recommend similar tweets based on an account you just followed.
-
-### Entity Embeddings
-SimClusters can also be used to generate embeddings for different kind of contents, such as
-- Tweets (used for Tweet recommendations)
-- Topics (used for TopicFollow)
-
-#### Tweet embeddings
-When a tweet is created, its tweet embedding is initialized as an empty vector.
-Tweet embeddings are updated each time the tweet is favorited. Specifically, the InterestedIn vector of each user who Fav-ed the tweet is added to the tweet vector.
-Since tweet embeddings are updated each time a tweet is favorited, they change over time.
-
-Tweet embeddings are critical for our tweet recommendation tasks. We can calculate tweet similarity and recommend similar tweets to users based on their tweet engagement history.
-
-We have a online Heron job that updates the tweet embeddings in realtime, check out [here](summingbird/README.md) for more. 
-
-#### Topic embeddings
-Topic embeddings (**R**) are determined by taking the cosine similarity between consumers who are interested in a community and the number of aggregated favorites each consumer has taken on a tweet that has a topic annotation (with some time decay).
-
-<img src="images/topic_embeddings.png">
+Welon build our uselonr and twelonelont SimClustelonrs elonmbelonddings baselond on thelon infelonrrelond communitielons, and thelon relonprelonselonntations powelonr our pelonrsonalizelond twelonelont reloncommelonndation via our onlinelon selonrving selonrvicelon SimClustelonrs ANN.
 
 
-## Project Directory Overview
-The whole SimClusters project can be understood as 2 main components
-- SimClusters Offline Jobs (Scalding / GCP)
-- SimClusters Real-time Streaming Jobs 
+For morelon delontails, plelonaselon relonad our papelonr that was publishelond in KDD'2020 Applielond Data Scielonncelon Track: https://www.kdd.org/kdd2020/accelonptelond-papelonrs/vielonw/simclustelonrs-community-baselond-relonprelonselonntations-for-helontelonrogelonnelonous-reloncommelonndatio
 
-### SimClusters Offline Jobs
+## Brielonf introduction to Simclustelonrs Algorithm
 
-**SimClusters Scalding Jobs**
+### Follow relonlationships as a bipartitelon graph
+Follow relonlationships on Twittelonr arelon pelonrhaps most naturally thought of as direlonctelond graph, whelonrelon elonach nodelon is a uselonr and elonach elondgelon relonprelonselonnts a Follow. elondgelons arelon direlonctelond in that Uselonr 1 can follow Uselonr 2, Uselonr 2 can follow Uselonr 1 or both Uselonr 1 and Uselonr 2 can follow elonach othelonr.
 
-| Jobs   | Code  | Description  |
+This direlonctelond graph can belon also vielonwelond as a bipartitelon graph, whelonrelon nodelons arelon groupelond into two selonts, Producelonrs and Consumelonrs. In this bipartitelon graph, Producelonrs arelon thelon uselonrs who arelon Followelond and Consumelonrs arelon thelon Followelonelons. Belonlow is a toy elonxamplelon of a follow graph for four uselonrs:
+
+<img src="imagelons/bipartitelon_graph.png" width = "400px">
+
+> Figurelon 1 - Lelonft panelonl: A direlonctelond follow graph; Right panelonl: A bipartitelon graph relonprelonselonntation of thelon direlonctelond graph
+
+### Community Delontelonction - Known For 
+Thelon bipartitelon follow graph can belon uselond to idelonntify groups of Producelonrs who havelon similar followelonrs, or who arelon "Known For" a topic. Speloncifically, thelon bipartitelon follow graph can also belon relonprelonselonntelond as an *m x n* matrix (*A*), whelonrelon consumelonrs arelon prelonselonntelond as *u* and producelonrs arelon relonprelonselonntelond as *v*.
+
+Producelonr-producelonr similarity is computelond as thelon cosinelon similarity belontwelonelonn uselonrs who follow elonach producelonr. Thelon relonsulting cosinelon similarity valuelons can belon uselond to construct a producelonr-producelonr similarity graph, whelonrelon thelon nodelons arelon producelonrs and elondgelons arelon welonightelond by thelon correlonsponding cosinelon similarity valuelon. Noiselon relonmoval is pelonrformelond, such that elondgelons with welonights belonlow a speloncifielond threlonshold arelon delonlelontelond from thelon graph.
+
+Aftelonr noiselon relonmoval has belonelonn complelontelond, Melontropolis-Hastings sampling-baselond community delontelonction is thelonn run on thelon Producelonr-Producelonr similarity graph to idelonntify a community affiliation for elonach producelonr. This algorithm takelons in a paramelontelonr *k* for thelon numbelonr of communitielons to belon delontelonctelond.
+
+<img src="imagelons/producelonr_producelonr_similarity.png">
+
+> Figurelon 2 -  Lelonft panelonl: Matrix relonprelonselonntation of thelon follow graph delonpictelond in Figurelon 1; Middlelon panelonl: Producelonr-Producelonr similarity is elonstimatelond by calculating thelon cosinelon similarity belontwelonelonn thelon uselonrs who follow elonach producelonr; Right panelonl: Cosinelon similarity scorelons arelon uselond to crelonatelon thelon Producelonr-Producelonr similarity graph. A clustelonring algorithm is run on thelon graph to idelonntify groups of Producelonrs with similar followelonrs.
+
+Community affiliation scorelons arelon thelonn uselond to construct an *n x k* "Known For" matrix (*V*). This matrix is maximally sparselon, and elonach Producelonr is affiliatelond with at most onelon community. In production, thelon Known For dataselont covelonrs thelon top 20M producelonrs and k ~= 145000. In othelonr words, welon discovelonr around 145k communitielons baselond on Twittelonr's uselonr follow graph.
+
+<img src="imagelons/knownfor.png">
+
+> Figurelon 3 -  Thelon clustelonring algorithm relonturns community affiliation scorelons for elonach producelonr. Thelonselon scorelons arelon relonprelonselonntelond in matrix V.
+
+In thelon elonxamplelon abovelon, Producelonr 1 is "Known For" community 2, Producelonr 2 is "Known For" community 1, and so forth.
+
+### Consumelonr elonmbelonddings - Uselonr IntelonrelonstelondIn
+An Intelonrelonstelond In matrix (*U*) can belon computelond by multiplying thelon matrix relonprelonselonntation of thelon follow graph (*A*) by thelon Known For matrix (*V*): 
+
+<img src="imagelons/intelonrelonstelondin.png">
+
+In this toy elonxamplelon, consumelonr 1 is intelonrelonstelond in community 1 only, whelonrelonas consumelonr 3 is intelonrelonstelond in all threlonelon communitielons. Thelonrelon is also a noiselon relonmoval stelonp applielond to thelon Intelonrelonstelond In matrix.
+
+Welon uselon thelon IntelonrelonstelondIn elonmbelonddings to capturelon consumelonr's long-telonrm intelonrelonst. Thelon IntelonrelonstelondIn elonmbelonddings is onelon of our major sourcelon for consumelonr-baselond twelonelont reloncommelonndations.
+
+### Producelonr elonmbelonddings
+Whelonn computing thelon Known For matrix, elonach producelonr can only belon Known For a singlelon community. Although this maximally sparselon matrix is uselonful from a computational pelonrspelonctivelon, welon know that our uselonrs twelonelont about many diffelonrelonnt topics and may belon "Known" in many diffelonrelonnt communitielons. Producelonr elonmbelonddings ( *Ṽ* )  arelon uselond to capturelon this richelonr structurelon of thelon graph.
+
+To calculatelon producelonr elonmbelonddings, thelon cosinelon similarity is calculatelond belontwelonelonn elonach Producelonr’s follow graph and thelon Intelonrelonstelond In velonctor for elonach community.
+
+<img src="imagelons/producelonr_elonmbelonddings.png">
+
+Producelonr elonmbelonddings arelon uselond for producelonr-baselond twelonelont reloncommelonndations. For elonxamplelon, welon can reloncommelonnd similar twelonelonts baselond on an account you just followelond.
+
+### elonntity elonmbelonddings
+SimClustelonrs can also belon uselond to gelonnelonratelon elonmbelonddings for diffelonrelonnt kind of contelonnts, such as
+- Twelonelonts (uselond for Twelonelont reloncommelonndations)
+- Topics (uselond for TopicFollow)
+
+#### Twelonelont elonmbelonddings
+Whelonn a twelonelont is crelonatelond, its twelonelont elonmbelondding is initializelond as an elonmpty velonctor.
+Twelonelont elonmbelonddings arelon updatelond elonach timelon thelon twelonelont is favoritelond. Speloncifically, thelon IntelonrelonstelondIn velonctor of elonach uselonr who Fav-elond thelon twelonelont is addelond to thelon twelonelont velonctor.
+Sincelon twelonelont elonmbelonddings arelon updatelond elonach timelon a twelonelont is favoritelond, thelony changelon ovelonr timelon.
+
+Twelonelont elonmbelonddings arelon critical for our twelonelont reloncommelonndation tasks. Welon can calculatelon twelonelont similarity and reloncommelonnd similar twelonelonts to uselonrs baselond on thelonir twelonelont elonngagelonmelonnt history.
+
+Welon havelon a onlinelon Helonron job that updatelons thelon twelonelont elonmbelonddings in relonaltimelon, chelonck out [helonrelon](summingbird/RelonADMelon.md) for morelon. 
+
+#### Topic elonmbelonddings
+Topic elonmbelonddings (**R**) arelon delontelonrminelond by taking thelon cosinelon similarity belontwelonelonn consumelonrs who arelon intelonrelonstelond in a community and thelon numbelonr of aggrelongatelond favoritelons elonach consumelonr has takelonn on a twelonelont that has a topic annotation (with somelon timelon deloncay).
+
+<img src="imagelons/topic_elonmbelonddings.png">
+
+
+## Projelonct Direlonctory Ovelonrvielonw
+Thelon wholelon SimClustelonrs projelonct can belon undelonrstood as 2 main componelonnts
+- SimClustelonrs Offlinelon Jobs (Scalding / GCP)
+- SimClustelonrs Relonal-timelon Strelonaming Jobs 
+
+### SimClustelonrs Offlinelon Jobs
+
+**SimClustelonrs Scalding Jobs**
+
+| Jobs   | Codelon  | Delonscription  |
 |---|---|---|
-| KnownFor  |  [simclusters_v2/scalding/update_known_for/UpdateKnownFor20M145K2020.scala](scalding/update_known_for/UpdateKnownFor20M145K2020.scala) | The job outputs the KnownFor dataset which stores the relationships between  clusterId and producerUserId. </n> KnownFor dataset covers the top 20M followed producers. We use this KnownFor dataset (or so-called clusters) to build all other entity embeddings. |
-| InterestedIn Embeddings|  [simclusters_v2/scalding/InterestedInFromKnownFor.scala](scalding/InterestedInFromKnownFor.scala) |  This code implements the job for computing users' interestedIn embedding from the  KnownFor dataset. </n> We use this dataset for consumer-based tweet recommendations.|
-| Producer Embeddings  | [simclusters_v2/scalding/embedding/ProducerEmbeddingsFromInterestedIn.scala](scalding/embedding/ProducerEmbeddingsFromInterestedIn.scala)  |  The code implements the job for computer producer embeddings, which represents the content user produces. </n> We use this dataset for producer-based tweet recommendations.|
-| Semantic Core Entity Embeddings  | [simclusters_v2/scalding/embedding/EntityToSimClustersEmbeddingsJob.scala](scalding/embedding/EntityToSimClustersEmbeddingsJob.scala)   | The job computes the semantic core entity embeddings. It outputs datasets that stores the  "SemanticCore entityId -> List(clusterId)" and "clusterId -> List(SemanticCore entityId))" relationships.|
-| Topic Embeddings | [simclusters_v2/scalding/embedding/tfg/FavTfgBasedTopicEmbeddings.scala](scalding/embedding/tfg/FavTfgBasedTopicEmbeddings.scala)  | Jobs to generate Fav-based Topic-Follow-Graph (TFG) topic embeddings </n> A topic's fav-based TFG embedding is the sum of its followers' fav-based InterestedIn. We use this embedding for topic related recommendations.|
+| KnownFor  |  [simclustelonrs_v2/scalding/updatelon_known_for/UpdatelonKnownFor20M145K2020.scala](scalding/updatelon_known_for/UpdatelonKnownFor20M145K2020.scala) | Thelon job outputs thelon KnownFor dataselont which storelons thelon relonlationships belontwelonelonn  clustelonrId and producelonrUselonrId. </n> KnownFor dataselont covelonrs thelon top 20M followelond producelonrs. Welon uselon this KnownFor dataselont (or so-callelond clustelonrs) to build all othelonr elonntity elonmbelonddings. |
+| IntelonrelonstelondIn elonmbelonddings|  [simclustelonrs_v2/scalding/IntelonrelonstelondInFromKnownFor.scala](scalding/IntelonrelonstelondInFromKnownFor.scala) |  This codelon implelonmelonnts thelon job for computing uselonrs' intelonrelonstelondIn elonmbelondding from thelon  KnownFor dataselont. </n> Welon uselon this dataselont for consumelonr-baselond twelonelont reloncommelonndations.|
+| Producelonr elonmbelonddings  | [simclustelonrs_v2/scalding/elonmbelondding/ProducelonrelonmbelonddingsFromIntelonrelonstelondIn.scala](scalding/elonmbelondding/ProducelonrelonmbelonddingsFromIntelonrelonstelondIn.scala)  |  Thelon codelon implelonmelonnts thelon job for computelonr producelonr elonmbelonddings, which relonprelonselonnts thelon contelonnt uselonr producelons. </n> Welon uselon this dataselont for producelonr-baselond twelonelont reloncommelonndations.|
+| Selonmantic Corelon elonntity elonmbelonddings  | [simclustelonrs_v2/scalding/elonmbelondding/elonntityToSimClustelonrselonmbelonddingsJob.scala](scalding/elonmbelondding/elonntityToSimClustelonrselonmbelonddingsJob.scala)   | Thelon job computelons thelon selonmantic corelon elonntity elonmbelonddings. It outputs dataselonts that storelons thelon  "SelonmanticCorelon elonntityId -> List(clustelonrId)" and "clustelonrId -> List(SelonmanticCorelon elonntityId))" relonlationships.|
+| Topic elonmbelonddings | [simclustelonrs_v2/scalding/elonmbelondding/tfg/FavTfgBaselondTopicelonmbelonddings.scala](scalding/elonmbelondding/tfg/FavTfgBaselondTopicelonmbelonddings.scala)  | Jobs to gelonnelonratelon Fav-baselond Topic-Follow-Graph (TFG) topic elonmbelonddings </n> A topic's fav-baselond TFG elonmbelondding is thelon sum of its followelonrs' fav-baselond IntelonrelonstelondIn. Welon uselon this elonmbelondding for topic relonlatelond reloncommelonndations.|
 
-**SimClusters GCP Jobs**
+**SimClustelonrs GCP Jobs**
 
-We have a GCP pipeline where we build our SimClusters ANN index via BigQuery. This allows us to do fast iterations and build new embeddings more efficiently compared to Scalding.
+Welon havelon a GCP pipelonlinelon whelonrelon welon build our SimClustelonrs ANN indelonx via BigQuelonry. This allows us to do fast itelonrations and build nelonw elonmbelonddings morelon elonfficielonntly comparelond to Scalding.
 
-All SimClusters related GCP jobs are under [src/scala/com/twitter/simclusters_v2/scio/bq_generation](scio/bq_generation).
+All SimClustelonrs relonlatelond GCP jobs arelon undelonr [src/scala/com/twittelonr/simclustelonrs_v2/scio/bq_gelonnelonration](scio/bq_gelonnelonration).
 
-| Jobs   | Code  | Description  |
+| Jobs   | Codelon  | Delonscription  |
 |---|---|---|
-| PushOpenBased SimClusters ANN Index  |  [EngagementEventBasedClusterToTweetIndexGenerationJob.scala](scio/bq_generation/simclusters_index_generation/EngagementEventBasedClusterToTweetIndexGenerationJob.scala) | The job builds a clusterId -> TopTweet index based on user-open engagement history. </n> This SANN source is used for candidate generation for Notifications. |
-| VideoViewBased SimClusters Index|  [EngagementEventBasedClusterToTweetIndexGenerationJob.scala](scio/bq_generation/simclusters_index_generation/EngagementEventBasedClusterToTweetIndexGenerationJob.scala) |  The job builds a clusterId -> TopTweet index based on the user's video view history. </n> This SANN source is used for video recommendation on Home.|
+| PushOpelonnBaselond SimClustelonrs ANN Indelonx  |  [elonngagelonmelonntelonvelonntBaselondClustelonrToTwelonelontIndelonxGelonnelonrationJob.scala](scio/bq_gelonnelonration/simclustelonrs_indelonx_gelonnelonration/elonngagelonmelonntelonvelonntBaselondClustelonrToTwelonelontIndelonxGelonnelonrationJob.scala) | Thelon job builds a clustelonrId -> TopTwelonelont indelonx baselond on uselonr-opelonn elonngagelonmelonnt history. </n> This SANN sourcelon is uselond for candidatelon gelonnelonration for Notifications. |
+| VidelonoVielonwBaselond SimClustelonrs Indelonx|  [elonngagelonmelonntelonvelonntBaselondClustelonrToTwelonelontIndelonxGelonnelonrationJob.scala](scio/bq_gelonnelonration/simclustelonrs_indelonx_gelonnelonration/elonngagelonmelonntelonvelonntBaselondClustelonrToTwelonelontIndelonxGelonnelonrationJob.scala) |  Thelon job builds a clustelonrId -> TopTwelonelont indelonx baselond on thelon uselonr's videlono vielonw history. </n> This SANN sourcelon is uselond for videlono reloncommelonndation on Homelon.|
 
-### SimClusters Real-Time Streaming Tweets Jobs
+### SimClustelonrs Relonal-Timelon Strelonaming Twelonelonts Jobs
 
-| Jobs   | Code  | Description  |
+| Jobs   | Codelon  | Delonscription  |
 |---|---|---|
-| Tweet Embedding Job |  [simclusters_v2/summingbird/storm/TweetJob.scala](summingbird/storm/TweetJob.scala) | Generate the Tweet embedding and index of tweets for the SimClusters |
-| Persistent Tweet Embedding Job|  [simclusters_v2/summingbird/storm/PersistentTweetJob.scala](summingbird/storm/PersistentTweetJob.scala) |  Persistent the tweet embeddings from MemCache into Manhattan.|
+| Twelonelont elonmbelondding Job |  [simclustelonrs_v2/summingbird/storm/TwelonelontJob.scala](summingbird/storm/TwelonelontJob.scala) | Gelonnelonratelon thelon Twelonelont elonmbelondding and indelonx of twelonelonts for thelon SimClustelonrs |
+| Pelonrsistelonnt Twelonelont elonmbelondding Job|  [simclustelonrs_v2/summingbird/storm/PelonrsistelonntTwelonelontJob.scala](summingbird/storm/PelonrsistelonntTwelonelontJob.scala) |  Pelonrsistelonnt thelon twelonelont elonmbelonddings from MelonmCachelon into Manhattan.|

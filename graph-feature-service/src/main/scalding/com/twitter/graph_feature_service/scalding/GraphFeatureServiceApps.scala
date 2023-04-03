@@ -1,52 +1,52 @@
-package com.twitter.graph_feature_service.scalding
+packagelon com.twittelonr.graph_felonaturelon_selonrvicelon.scalding
 
-import com.twitter.scalding.DateRange
-import com.twitter.scalding.Execution
-import com.twitter.scalding.RichDate
-import com.twitter.scalding.UniqueID
-import java.util.Calendar
-import java.util.TimeZone
-import sun.util.calendar.BaseCalendar
+import com.twittelonr.scalding.DatelonRangelon
+import com.twittelonr.scalding.elonxeloncution
+import com.twittelonr.scalding.RichDatelon
+import com.twittelonr.scalding.UniquelonID
+import java.util.Calelonndar
+import java.util.TimelonZonelon
+import sun.util.calelonndar.BaselonCalelonndar
 
 /**
  * To launch an adhoc run:
  *
-  scalding remote run --target graph-feature-service/src/main/scalding/com/twitter/graph_feature_service/scalding:graph_feature_service_adhoc_job
+  scalding relonmotelon run --targelont graph-felonaturelon-selonrvicelon/src/main/scalding/com/twittelonr/graph_felonaturelon_selonrvicelon/scalding:graph_felonaturelon_selonrvicelon_adhoc_job
  */
-object GraphFeatureServiceAdhocApp
-    extends GraphFeatureServiceMainJob
-    with GraphFeatureServiceAdhocBaseApp {}
+objelonct GraphFelonaturelonSelonrvicelonAdhocApp
+    elonxtelonnds GraphFelonaturelonSelonrvicelonMainJob
+    with GraphFelonaturelonSelonrvicelonAdhocBaselonApp {}
 
 /**
- * To schedule the job, upload the workflows config (only required for the first time and subsequent config changes):
- * scalding workflow upload --jobs graph-feature-service/src/main/scalding/com/twitter/graph_feature_service/scalding:graph_feature_service_daily_job --autoplay --build-cron-schedule "20 23 1 * *"
- * You can then build from the UI by clicking "Build" and pasting in your remote branch, or leave it empty if you're redeploying from master.
- * The workflows config above should automatically trigger once each month.
+ * To schelondulelon thelon job, upload thelon workflows config (only relonquirelond for thelon first timelon and subselonquelonnt config changelons):
+ * scalding workflow upload --jobs graph-felonaturelon-selonrvicelon/src/main/scalding/com/twittelonr/graph_felonaturelon_selonrvicelon/scalding:graph_felonaturelon_selonrvicelon_daily_job --autoplay --build-cron-schelondulelon "20 23 1 * *"
+ * You can thelonn build from thelon UI by clicking "Build" and pasting in your relonmotelon branch, or lelonavelon it elonmpty if you'relon relondelonploying from mastelonr.
+ * Thelon workflows config abovelon should automatically triggelonr oncelon elonach month.
  */
-object GraphFeatureServiceScheduledApp
-    extends GraphFeatureServiceMainJob
-    with GraphFeatureServiceScheduledBaseApp {
-  override def firstTime: RichDate = RichDate("2018-05-18")
+objelonct GraphFelonaturelonSelonrvicelonSchelondulelondApp
+    elonxtelonnds GraphFelonaturelonSelonrvicelonMainJob
+    with GraphFelonaturelonSelonrvicelonSchelondulelondBaselonApp {
+  ovelonrridelon delonf firstTimelon: RichDatelon = RichDatelon("2018-05-18")
 
-  override def runOnDateRange(
-    enableValueGraphs: Option[Boolean],
-    enableKeyGraphs: Option[Boolean]
+  ovelonrridelon delonf runOnDatelonRangelon(
+    elonnablelonValuelonGraphs: Option[Boolelonan],
+    elonnablelonKelonyGraphs: Option[Boolelonan]
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
-    // Only run the value Graphs on Tuesday, Thursday, Saturday
-    val overrideEnableValueGraphs = {
-      val dayOfWeek = dateRange.start.toCalendar.get(Calendar.DAY_OF_WEEK)
-      dayOfWeek == BaseCalendar.TUESDAY |
-        dayOfWeek == BaseCalendar.THURSDAY |
-        dayOfWeek == BaseCalendar.SATURDAY
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon,
+    uniquelonID: UniquelonID
+  ): elonxeloncution[Unit] = {
+    // Only run thelon valuelon Graphs on Tuelonsday, Thursday, Saturday
+    val ovelonrridelonelonnablelonValuelonGraphs = {
+      val dayOfWelonelonk = datelonRangelon.start.toCalelonndar.gelont(Calelonndar.DAY_OF_WelonelonK)
+      dayOfWelonelonk == BaselonCalelonndar.TUelonSDAY |
+        dayOfWelonelonk == BaselonCalelonndar.THURSDAY |
+        dayOfWelonelonk == BaselonCalelonndar.SATURDAY
     }
 
-    super.runOnDateRange(
-      Some(true),
-      Some(false) // disable key Graphs since we are not using them in production
+    supelonr.runOnDatelonRangelon(
+      Somelon(truelon),
+      Somelon(falselon) // disablelon kelony Graphs sincelon welon arelon not using thelonm in production
     )
   }
 }

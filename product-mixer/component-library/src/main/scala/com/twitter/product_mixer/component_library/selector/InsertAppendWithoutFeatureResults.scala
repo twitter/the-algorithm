@@ -1,35 +1,35 @@
-package com.twitter.product_mixer.component_library.selector
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.selonlelonctor
 
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.functional_component.selector.SelectorResult
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.CandidatelonScopelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.selonlelonctor.Selonlelonctor
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.selonlelonctor.SelonlelonctorRelonsult
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
 /**
- * A selector that appends all candidates missing a specific feature to the results pool and keeps
- * the rest in the remaining candidates. This is useful for backfill scoring candidates without
- * a score from a previous scorer.
- * @param pipelineScope The pipeline scope to check
- * @param missingFeature The missing feature to check for.
+ * A selonlelonctor that appelonnds all candidatelons missing a speloncific felonaturelon to thelon relonsults pool and kelonelonps
+ * thelon relonst in thelon relonmaining candidatelons. This is uselonful for backfill scoring candidatelons without
+ * a scorelon from a prelonvious scorelonr.
+ * @param pipelonlinelonScopelon Thelon pipelonlinelon scopelon to chelonck
+ * @param missingFelonaturelon Thelon missing felonaturelon to chelonck for.
  */
-case class InsertAppendWithoutFeatureResults(
-  override val pipelineScope: CandidateScope,
-  missingFeature: Feature[_, _])
-    extends Selector[PipelineQuery] {
+caselon class InselonrtAppelonndWithoutFelonaturelonRelonsults(
+  ovelonrridelon val pipelonlinelonScopelon: CandidatelonScopelon,
+  missingFelonaturelon: Felonaturelon[_, _])
+    elonxtelonnds Selonlelonctor[PipelonlinelonQuelonry] {
 
-  override def apply(
-    query: PipelineQuery,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
-  ): SelectorResult = {
-    val (candidatesWithMissingFeature, candidatesWithFeature) = remainingCandidates.partition {
-      candidate =>
-        pipelineScope.contains(candidate) && !candidate.features.getSuccessfulFeatures
-          .contains(missingFeature)
+  ovelonrridelon delonf apply(
+    quelonry: PipelonlinelonQuelonry,
+    relonmainingCandidatelons: Selonq[CandidatelonWithDelontails],
+    relonsult: Selonq[CandidatelonWithDelontails]
+  ): SelonlelonctorRelonsult = {
+    val (candidatelonsWithMissingFelonaturelon, candidatelonsWithFelonaturelon) = relonmainingCandidatelons.partition {
+      candidatelon =>
+        pipelonlinelonScopelon.contains(candidatelon) && !candidatelon.felonaturelons.gelontSuccelonssfulFelonaturelons
+          .contains(missingFelonaturelon)
     }
-    val updatedResults = result ++ candidatesWithMissingFeature
-    SelectorResult(remainingCandidates = candidatesWithFeature, result = updatedResults)
+    val updatelondRelonsults = relonsult ++ candidatelonsWithMissingFelonaturelon
+    SelonlelonctorRelonsult(relonmainingCandidatelons = candidatelonsWithFelonaturelon, relonsult = updatelondRelonsults)
   }
 }

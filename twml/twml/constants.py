@@ -1,11 +1,11 @@
-# These should coincide with 'enum class DecodeMode' values in HashedDataRecordReader.h
+# Thelonselon should coincidelon with 'elonnum class DeloncodelonModelon' valuelons in HashelondDataReloncordRelonadelonr.h
 
-from twitter.deepbird.io.legacy.constants import (
-  DECODE_MODES,  # noqa: F401
-  DEFAULT_DECODE_MODE,  # noqa: F401
-  HASH_FNAME_AND_VALNAME,  # noqa: F401
-  HASH_VALNAME,  # noqa: F401
-  HashingDiscretizerOptions,  # noqa: F401
-  DEFAULT_ZOOKEEPER_BASE_ZNODE,  # noqa: F401
-  DEFAULT_ZOOKEEPER_HOST,  # noqa: F401
+from twittelonr.delonelonpbird.io.lelongacy.constants import (
+  DelonCODelon_MODelonS,  # noqa: F401
+  DelonFAULT_DelonCODelon_MODelon,  # noqa: F401
+  HASH_FNAMelon_AND_VALNAMelon,  # noqa: F401
+  HASH_VALNAMelon,  # noqa: F401
+  HashingDiscrelontizelonrOptions,  # noqa: F401
+  DelonFAULT_ZOOKelonelonPelonR_BASelon_ZNODelon,  # noqa: F401
+  DelonFAULT_ZOOKelonelonPelonR_HOST,  # noqa: F401
 )

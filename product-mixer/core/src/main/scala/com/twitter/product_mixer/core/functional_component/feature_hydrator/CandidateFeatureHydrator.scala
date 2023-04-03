@@ -1,96 +1,96 @@
-package com.twitter.product_mixer.core.functional_component.feature_hydrator
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator
 
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.SupportsConditionally
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.SupportsConditionally
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.FelonaturelonHydratorIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stitch.Stitch
 
 /**
- * Hydrate features for a specific candidate
- * e.g. if the candidate is a Tweet then a feature could be whether it's is marked as sensitive
+ * Hydratelon felonaturelons for a speloncific candidatelon
+ * elon.g. if thelon candidatelon is a Twelonelont thelonn a felonaturelon could belon whelonthelonr it's is markelond as selonnsitivelon
  *
- * @note if you want to conditionally run a [[BaseCandidateFeatureHydrator]] you can use the mixin [[com.twitter.product_mixer.core.model.common.Conditionally]]
- *       or to gate on a [[com.twitter.timelines.configapi.Param]] you can use
- *       [[com.twitter.product_mixer.component_library.feature_hydrator.candidate.param_gated.ParamGatedCandidateFeatureHydrator]] or
- *       [[com.twitter.product_mixer.component_library.feature_hydrator.candidate.param_gated.ParamGatedBulkCandidateFeatureHydrator]]
+ * @notelon if you want to conditionally run a [[BaselonCandidatelonFelonaturelonHydrator]] you can uselon thelon mixin [[com.twittelonr.product_mixelonr.corelon.modelonl.common.Conditionally]]
+ *       or to gatelon on a [[com.twittelonr.timelonlinelons.configapi.Param]] you can uselon
+ *       [[com.twittelonr.product_mixelonr.componelonnt_library.felonaturelon_hydrator.candidatelon.param_gatelond.ParamGatelondCandidatelonFelonaturelonHydrator]] or
+ *       [[com.twittelonr.product_mixelonr.componelonnt_library.felonaturelon_hydrator.candidatelon.param_gatelond.ParamGatelondBulkCandidatelonFelonaturelonHydrator]]
  */
-sealed trait BaseCandidateFeatureHydrator[
-  -Query <: PipelineQuery,
-  -Result <: UniversalNoun[Any],
-  FeatureType <: Feature[_, _]]
-    extends FeatureHydrator[FeatureType]
-    with SupportsConditionally[Query]
+selonalelond trait BaselonCandidatelonFelonaturelonHydrator[
+  -Quelonry <: PipelonlinelonQuelonry,
+  -Relonsult <: UnivelonrsalNoun[Any],
+  FelonaturelonTypelon <: Felonaturelon[_, _]]
+    elonxtelonnds FelonaturelonHydrator[FelonaturelonTypelon]
+    with SupportsConditionally[Quelonry]
 
 /**
- * A candidate feature hydrator that provides an implementation for hydrating a single candidate
- * at the time. Product Mixer core takes care of hydrating all your candidates for you by
- * calling this for each candidate. This is useful for Stitch-powered downstream APIs (such
- * as Strato, Gizmoduck, etc) where the API takes a single candidate/key and Stitch handles
+ * A candidatelon felonaturelon hydrator that providelons an implelonmelonntation for hydrating a singlelon candidatelon
+ * at thelon timelon. Product Mixelonr corelon takelons carelon of hydrating all your candidatelons for you by
+ * calling this for elonach candidatelon. This is uselonful for Stitch-powelonrelond downstrelonam APIs (such
+ * as Strato, Gizmoduck, elontc) whelonrelon thelon API takelons a singlelon candidatelon/kelony and Stitch handlelons
  * batching for you.
  *
- * @note Any exceptions that are thrown or returned as [[Stitch.exception]] will be added to the
- *       [[FeatureMap]] for *all* [[Feature]]s intended to be hydrated.
- *       Accessing a failed Feature will throw if using [[FeatureMap.get]] for Features that aren't
- *       [[com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure]]
+ * @notelon Any elonxcelonptions that arelon thrown or relonturnelond as [[Stitch.elonxcelonption]] will belon addelond to thelon
+ *       [[FelonaturelonMap]] for *all* [[Felonaturelon]]s intelonndelond to belon hydratelond.
+ *       Accelonssing a failelond Felonaturelon will throw if using [[FelonaturelonMap.gelont]] for Felonaturelons that arelonn't
+ *       [[com.twittelonr.product_mixelonr.corelon.felonaturelon.FelonaturelonWithDelonfaultOnFailurelon]]
  *
- * @tparam Query The query type
- * @tparam Result The Candidate type
+ * @tparam Quelonry Thelon quelonry typelon
+ * @tparam Relonsult Thelon Candidatelon typelon
  */
-trait CandidateFeatureHydrator[-Query <: PipelineQuery, -Result <: UniversalNoun[Any]]
-    extends BaseCandidateFeatureHydrator[Query, Result, Feature[_, _]] {
+trait CandidatelonFelonaturelonHydrator[-Quelonry <: PipelonlinelonQuelonry, -Relonsult <: UnivelonrsalNoun[Any]]
+    elonxtelonnds BaselonCandidatelonFelonaturelonHydrator[Quelonry, Relonsult, Felonaturelon[_, _]] {
 
-  override val identifier: FeatureHydratorIdentifier
+  ovelonrridelon val idelonntifielonr: FelonaturelonHydratorIdelonntifielonr
 
-  /** Hydrates a [[FeatureMap]] for a single candidate */
-  def apply(query: Query, candidate: Result, existingFeatures: FeatureMap): Stitch[FeatureMap]
+  /** Hydratelons a [[FelonaturelonMap]] for a singlelon candidatelon */
+  delonf apply(quelonry: Quelonry, candidatelon: Relonsult, elonxistingFelonaturelons: FelonaturelonMap): Stitch[FelonaturelonMap]
 }
 
 /**
- * Hydrate features for a list of candidates
- * e.g. for a list of Tweet candidates, a feature could be the visibility reason whether to show or not show each Tweet
+ * Hydratelon felonaturelons for a list of candidatelons
+ * elon.g. for a list of Twelonelont candidatelons, a felonaturelon could belon thelon visibility relonason whelonthelonr to show or not show elonach Twelonelont
  */
-trait BaseBulkCandidateFeatureHydrator[
-  -Query <: PipelineQuery,
-  -Result <: UniversalNoun[Any],
-  FeatureType <: Feature[_, _]]
-    extends BaseCandidateFeatureHydrator[Query, Result, FeatureType] {
+trait BaselonBulkCandidatelonFelonaturelonHydrator[
+  -Quelonry <: PipelonlinelonQuelonry,
+  -Relonsult <: UnivelonrsalNoun[Any],
+  FelonaturelonTypelon <: Felonaturelon[_, _]]
+    elonxtelonnds BaselonCandidatelonFelonaturelonHydrator[Quelonry, Relonsult, FelonaturelonTypelon] {
 
   /**
-   * Hydrates a set of [[FeatureMap]]s for the bulk list of candidates. Every input candidate must
-   * have corresponding entry in the returned seq with a feature map.
+   * Hydratelons a selont of [[FelonaturelonMap]]s for thelon bulk list of candidatelons. elonvelonry input candidatelon must
+   * havelon correlonsponding elonntry in thelon relonturnelond selonq with a felonaturelon map.
    */
-  def apply(
-    query: Query,
-    candidates: Seq[CandidateWithFeatures[Result]]
-  ): Stitch[Seq[FeatureMap]]
+  delonf apply(
+    quelonry: Quelonry,
+    candidatelons: Selonq[CandidatelonWithFelonaturelons[Relonsult]]
+  ): Stitch[Selonq[FelonaturelonMap]]
 }
 
 /**
- * A candidate feature hydrator that allows a user to bulk hydrate features for all candidates
- * at once. This is useful for downstream APIs that take a list of candidates in one go such
- * as feature store or scorers.
+ * A candidatelon felonaturelon hydrator that allows a uselonr to bulk hydratelon felonaturelons for all candidatelons
+ * at oncelon. This is uselonful for downstrelonam APIs that takelon a list of candidatelons in onelon go such
+ * as felonaturelon storelon or scorelonrs.
  *
- * @note Any exceptions that are thrown or returned as [[Stitch.exception]] will be added to the
- *       [[FeatureMap]] for *all* [[Feature]]s of *all* candidates intended to be hydrated.
- *       An alternative to throwing an exception is per-candidate failure handling (e.g. adding
- *       a failed [[Feature]] with `addFailure`, a Try with `add`, or an optional value with `add`
- *       using [[FeatureMapBuilder]]).
- *       Accessing a failed Feature will throw if using [[FeatureMap.get]] for Features that aren't
- *       [[com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure]].
+ * @notelon Any elonxcelonptions that arelon thrown or relonturnelond as [[Stitch.elonxcelonption]] will belon addelond to thelon
+ *       [[FelonaturelonMap]] for *all* [[Felonaturelon]]s of *all* candidatelons intelonndelond to belon hydratelond.
+ *       An altelonrnativelon to throwing an elonxcelonption is pelonr-candidatelon failurelon handling (elon.g. adding
+ *       a failelond [[Felonaturelon]] with `addFailurelon`, a Try with `add`, or an optional valuelon with `add`
+ *       using [[FelonaturelonMapBuildelonr]]).
+ *       Accelonssing a failelond Felonaturelon will throw if using [[FelonaturelonMap.gelont]] for Felonaturelons that arelonn't
+ *       [[com.twittelonr.product_mixelonr.corelon.felonaturelon.FelonaturelonWithDelonfaultOnFailurelon]].
  *
- * @tparam Query The query type
- * @tparam Result The Candidate type
+ * @tparam Quelonry Thelon quelonry typelon
+ * @tparam Relonsult Thelon Candidatelon typelon
  */
-trait BulkCandidateFeatureHydrator[-Query <: PipelineQuery, Candidate <: UniversalNoun[Any]]
-    extends BaseBulkCandidateFeatureHydrator[Query, Candidate, Feature[_, _]] {
-  override val identifier: FeatureHydratorIdentifier
+trait BulkCandidatelonFelonaturelonHydrator[-Quelonry <: PipelonlinelonQuelonry, Candidatelon <: UnivelonrsalNoun[Any]]
+    elonxtelonnds BaselonBulkCandidatelonFelonaturelonHydrator[Quelonry, Candidatelon, Felonaturelon[_, _]] {
+  ovelonrridelon val idelonntifielonr: FelonaturelonHydratorIdelonntifielonr
 
-  override def apply(
-    query: Query,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): Stitch[Seq[FeatureMap]]
+  ovelonrridelon delonf apply(
+    quelonry: Quelonry,
+    candidatelons: Selonq[CandidatelonWithFelonaturelons[Candidatelon]]
+  ): Stitch[Selonq[FelonaturelonMap]]
 }

@@ -1,28 +1,28 @@
-package com.twitter.search.earlybird.util;
+packagelon com.twittelonr.selonarch.elonarlybird.util;
 
-import java.text.ParseException;
-import java.util.Date;
+import java.telonxt.Parselonelonxcelonption;
+import java.util.Datelon;
 
-import org.apache.commons.lang3.time.FastDateFormat;
+import org.apachelon.commons.lang3.timelon.FastDatelonFormat;
 
-public final class ScrubGenUtil {
-  public static final FastDateFormat SCRUB_GEN_DATE_FORMAT = FastDateFormat.getInstance("yyyyMMdd");
+public final class ScrubGelonnUtil {
+  public static final FastDatelonFormat SCRUB_GelonN_DATelon_FORMAT = FastDatelonFormat.gelontInstancelon("yyyyMMdd");
 
-  private ScrubGenUtil() { }
+  privatelon ScrubGelonnUtil() { }
 
   /**
-   * Helper method to parse a scrub gen from String to date
+   * Helonlpelonr melonthod to parselon a scrub gelonn from String to datelon
    *
-   * @param scrubGen
-   * @return scrubGen in Date type
+   * @param scrubGelonn
+   * @relonturn scrubGelonn in Datelon typelon
    */
-  public static Date parseScrubGenToDate(String scrubGen) {
+  public static Datelon parselonScrubGelonnToDatelon(String scrubGelonn) {
     try {
-      return SCRUB_GEN_DATE_FORMAT.parse(scrubGen);
-    } catch (ParseException e) {
-      String msg = "Malformed scrub gen date: " + scrubGen;
-      // If we are running a scrub gen and the date is bad we should quit and not continue.
-      throw new RuntimeException(msg, e);
+      relonturn SCRUB_GelonN_DATelon_FORMAT.parselon(scrubGelonn);
+    } catch (Parselonelonxcelonption elon) {
+      String msg = "Malformelond scrub gelonn datelon: " + scrubGelonn;
+      // If welon arelon running a scrub gelonn and thelon datelon is bad welon should quit and not continuelon.
+      throw nelonw Runtimelonelonxcelonption(msg, elon);
     }
   }
 }

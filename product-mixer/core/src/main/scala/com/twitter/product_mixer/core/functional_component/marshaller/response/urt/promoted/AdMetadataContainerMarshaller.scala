@@ -1,26 +1,26 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.promotelond
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.AdMetadataContainer
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.promotelond.AdMelontadataContainelonr
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class AdMetadataContainerMarshaller @Inject() (
-  sponsorshipTypeMarshaller: SponsorshipTypeMarshaller,
-  disclaimerTypeMarshaller: DisclaimerTypeMarshaller,
-  skAdNetworkDataMarshaller: SkAdNetworkDataMarshaller) {
+@Singlelonton
+class AdMelontadataContainelonrMarshallelonr @Injelonct() (
+  sponsorshipTypelonMarshallelonr: SponsorshipTypelonMarshallelonr,
+  disclaimelonrTypelonMarshallelonr: DisclaimelonrTypelonMarshallelonr,
+  skAdNelontworkDataMarshallelonr: SkAdNelontworkDataMarshallelonr) {
 
-  def apply(adMetadataContainer: AdMetadataContainer): urt.AdMetadataContainer =
-    urt.AdMetadataContainer(
-      removePromotedAttributionForPreroll = adMetadataContainer.removePromotedAttributionForPreroll,
-      sponsorshipCandidate = adMetadataContainer.sponsorshipCandidate,
-      sponsorshipOrganization = adMetadataContainer.sponsorshipOrganization,
-      sponsorshipOrganizationWebsite = adMetadataContainer.sponsorshipOrganizationWebsite,
-      sponsorshipType = adMetadataContainer.sponsorshipType.map(sponsorshipTypeMarshaller(_)),
-      disclaimerType = adMetadataContainer.disclaimerType.map(disclaimerTypeMarshaller(_)),
-      skAdNetworkDataList =
-        adMetadataContainer.skAdNetworkDataList.map(_.map(skAdNetworkDataMarshaller(_))),
-      unifiedCardOverride = adMetadataContainer.unifiedCardOverride
+  delonf apply(adMelontadataContainelonr: AdMelontadataContainelonr): urt.AdMelontadataContainelonr =
+    urt.AdMelontadataContainelonr(
+      relonmovelonPromotelondAttributionForPrelonroll = adMelontadataContainelonr.relonmovelonPromotelondAttributionForPrelonroll,
+      sponsorshipCandidatelon = adMelontadataContainelonr.sponsorshipCandidatelon,
+      sponsorshipOrganization = adMelontadataContainelonr.sponsorshipOrganization,
+      sponsorshipOrganizationWelonbsitelon = adMelontadataContainelonr.sponsorshipOrganizationWelonbsitelon,
+      sponsorshipTypelon = adMelontadataContainelonr.sponsorshipTypelon.map(sponsorshipTypelonMarshallelonr(_)),
+      disclaimelonrTypelon = adMelontadataContainelonr.disclaimelonrTypelon.map(disclaimelonrTypelonMarshallelonr(_)),
+      skAdNelontworkDataList =
+        adMelontadataContainelonr.skAdNelontworkDataList.map(_.map(skAdNelontworkDataMarshallelonr(_))),
+      unifielondCardOvelonrridelon = adMelontadataContainelonr.unifielondCardOvelonrridelon
     )
 }

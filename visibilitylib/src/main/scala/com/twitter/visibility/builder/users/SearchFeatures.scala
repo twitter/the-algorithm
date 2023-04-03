@@ -1,26 +1,26 @@
-package com.twitter.visibility.builder.users
+packagelon com.twittelonr.visibility.buildelonr.uselonrs
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.features._
-import com.twitter.visibility.context.thriftscala.SearchContext
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.visibility.buildelonr.FelonaturelonMapBuildelonr
+import com.twittelonr.visibility.felonaturelons._
+import com.twittelonr.visibility.contelonxt.thriftscala.SelonarchContelonxt
 
-class SearchFeatures(statsReceiver: StatsReceiver) {
-  private[this] val scopedStatsReceiver = statsReceiver.scope("search_features")
-  private[this] val requests = scopedStatsReceiver.counter("requests")
-  private[this] val rawQueryCounter =
-    scopedStatsReceiver.scope(RawQuery.name).counter("requests")
+class SelonarchFelonaturelons(statsReloncelonivelonr: StatsReloncelonivelonr) {
+  privatelon[this] val scopelondStatsReloncelonivelonr = statsReloncelonivelonr.scopelon("selonarch_felonaturelons")
+  privatelon[this] val relonquelonsts = scopelondStatsReloncelonivelonr.countelonr("relonquelonsts")
+  privatelon[this] val rawQuelonryCountelonr =
+    scopelondStatsReloncelonivelonr.scopelon(RawQuelonry.namelon).countelonr("relonquelonsts")
 
-  def forSearchContext(
-    searchContext: Option[SearchContext]
-  ): FeatureMapBuilder => FeatureMapBuilder = { builder =>
-    requests.incr()
-    searchContext match {
-      case Some(context: SearchContext) =>
-        rawQueryCounter.incr()
-        builder
-          .withConstantFeature(RawQuery, context.rawQuery)
-      case _ => builder
+  delonf forSelonarchContelonxt(
+    selonarchContelonxt: Option[SelonarchContelonxt]
+  ): FelonaturelonMapBuildelonr => FelonaturelonMapBuildelonr = { buildelonr =>
+    relonquelonsts.incr()
+    selonarchContelonxt match {
+      caselon Somelon(contelonxt: SelonarchContelonxt) =>
+        rawQuelonryCountelonr.incr()
+        buildelonr
+          .withConstantFelonaturelon(RawQuelonry, contelonxt.rawQuelonry)
+      caselon _ => buildelonr
     }
   }
 }

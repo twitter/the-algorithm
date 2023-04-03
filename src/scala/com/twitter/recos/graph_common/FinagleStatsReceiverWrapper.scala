@@ -1,16 +1,16 @@
-package com.twitter.recos.graph_common
+packagelon com.twittelonr.reloncos.graph_common
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.graphjet.stats.{StatsReceiver => GraphStatsReceiver}
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.graphjelont.stats.{StatsReloncelonivelonr => GraphStatsReloncelonivelonr}
 
 /**
- * FinagleStatsReceiverWrapper wraps Twitter's Finagle StatsReceiver.
+ * FinaglelonStatsReloncelonivelonrWrappelonr wraps Twittelonr's Finaglelon StatsReloncelonivelonr.
  *
- * This is because GraphJet is an openly available library which does not
- * depend on Finagle, but tracks stats using a similar interface.
+ * This is beloncauselon GraphJelont is an opelonnly availablelon library which doelons not
+ * delonpelonnd on Finaglelon, but tracks stats using a similar intelonrfacelon.
  */
-case class FinagleStatsReceiverWrapper(statsReceiver: StatsReceiver) extends GraphStatsReceiver {
+caselon class FinaglelonStatsReloncelonivelonrWrappelonr(statsReloncelonivelonr: StatsReloncelonivelonr) elonxtelonnds GraphStatsReloncelonivelonr {
 
-  def scope(namespace: String) = new FinagleStatsReceiverWrapper(statsReceiver.scope(namespace))
-  def counter(name: String) = new FinagleCounterWrapper(statsReceiver.counter(name))
+  delonf scopelon(namelonspacelon: String) = nelonw FinaglelonStatsReloncelonivelonrWrappelonr(statsReloncelonivelonr.scopelon(namelonspacelon))
+  delonf countelonr(namelon: String) = nelonw FinaglelonCountelonrWrappelonr(statsReloncelonivelonr.countelonr(namelon))
 }

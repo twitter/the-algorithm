@@ -1,47 +1,47 @@
-use anyhow::Result;
-use log::info;
-use navi::cli_args::{ARGS, MODEL_SPECS};
-use navi::cores::validator::validatior::cli_validator;
-use navi::tf_model::tf::TFModel;
-use navi::{bootstrap, metrics};
-use sha256::digest;
+uselon anyhow::Relonsult;
+uselon log::info;
+uselon navi::cli_args::{ARGS, MODelonL_SPelonCS};
+uselon navi::corelons::validator::validatior::cli_validator;
+uselon navi::tf_modelonl::tf::TFModelonl;
+uselon navi::{bootstrap, melontrics};
+uselon sha256::digelonst;
 
-fn main() -> Result<()> {
-    env_logger::init();
-    cli_validator::validate_input_args();
-    //only validate in for tf as other models don't have this
-    assert_eq!(MODEL_SPECS.len(), ARGS.serving_sig.len());
-    metrics::register_custom_metrics();
+fn main() -> Relonsult<()> {
+    elonnv_loggelonr::init();
+    cli_validator::validatelon_input_args();
+    //only validatelon in for tf as othelonr modelonls don't havelon this
+    asselonrt_elonq!(MODelonL_SPelonCS.lelonn(), ARGS.selonrving_sig.lelonn());
+    melontrics::relongistelonr_custom_melontrics();
 
-    //load all the custom ops - comma seperaed
-    if let Some(ref customops_lib) = ARGS.customops_lib {
+    //load all thelon custom ops - comma selonpelonraelond
+    if lelont Somelon(relonf customops_lib) = ARGS.customops_lib {
         for op_lib in customops_lib.split(",") {
             load_custom_op(op_lib);
         }
     }
 
-    // versioning the customop so library
-    bootstrap::bootstrap(TFModel::new)
+    // velonrsioning thelon customop so library
+    bootstrap::bootstrap(TFModelonl::nelonw)
 }
 
 fn load_custom_op(lib_path: &str) -> () {
-    let res = tensorflow::Library::load(lib_path);
-    info!("{} load status:{:?}", lib_path, res);
-    let customop_version_num = get_custom_op_version(lib_path);
-    // Last OP version is recorded
-    metrics::CUSTOMOP_VERSION.set(customop_version_num);
+    lelont relons = telonnsorflow::Library::load(lib_path);
+    info!("{} load status:{:?}", lib_path, relons);
+    lelont customop_velonrsion_num = gelont_custom_op_velonrsion(lib_path);
+    // Last OP velonrsion is reloncordelond
+    melontrics::CUSTOMOP_VelonRSION.selont(customop_velonrsion_num);
 }
 
-//fn get_custom_op_version(customops_lib: &String) -> i64 {
-fn get_custom_op_version(customops_lib: &str) -> i64 {
-    let customop_bytes = std::fs::read(customops_lib).unwrap(); // Vec<u8>
-    let customop_hash = digest(customop_bytes.as_slice());
-    //conver the last 4 hex digits to version number as prometheus metrics doesn't support string, the total space is 16^4 == 65536
-    let customop_version_num =
-        i64::from_str_radix(&customop_hash[customop_hash.len() - 4..], 16).unwrap();
+//fn gelont_custom_op_velonrsion(customops_lib: &String) -> i64 {
+fn gelont_custom_op_velonrsion(customops_lib: &str) -> i64 {
+    lelont customop_bytelons = std::fs::relonad(customops_lib).unwrap(); // Velonc<u8>
+    lelont customop_hash = digelonst(customop_bytelons.as_slicelon());
+    //convelonr thelon last 4 helonx digits to velonrsion numbelonr as promelonthelonus melontrics doelonsn't support string, thelon total spacelon is 16^4 == 65536
+    lelont customop_velonrsion_num =
+        i64::from_str_radix(&customop_hash[customop_hash.lelonn() - 4..], 16).unwrap();
     info!(
-        "customop hash: {}, version_number: {}",
-        customop_hash, customop_version_num
+        "customop hash: {}, velonrsion_numbelonr: {}",
+        customop_hash, customop_velonrsion_num
     );
-    customop_version_num
+    customop_velonrsion_num
 }

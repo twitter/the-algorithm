@@ -1,19 +1,19 @@
 scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
+    sourcelons = ["*.scala"],
+    compilelonr_option_selonts = ["fatal_warnings"],
     platform = "java8",
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/marshalling/response/slice",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/marshalling/response/urt/operation",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline",
-        "src/scala/com/twitter/search/common/util/bloomfilter",
+    strict_delonps = Truelon,
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        "product-mixelonr/corelon/src/main/scala/com/twittelonr/product_mixelonr/corelon/modelonl/marshalling/relonsponselon/slicelon",
+        "product-mixelonr/corelon/src/main/scala/com/twittelonr/product_mixelonr/corelon/modelonl/marshalling/relonsponselon/urt/opelonration",
+        "product-mixelonr/corelon/src/main/scala/com/twittelonr/product_mixelonr/corelon/pipelonlinelon",
+        "src/scala/com/twittelonr/selonarch/common/util/bloomfiltelonr",
     ],
-    exports = [
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/marshalling/response/slice",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/marshalling/response/urt/operation",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline",
-        "src/scala/com/twitter/search/common/util/bloomfilter",
+    elonxports = [
+        "product-mixelonr/corelon/src/main/scala/com/twittelonr/product_mixelonr/corelon/modelonl/marshalling/relonsponselon/slicelon",
+        "product-mixelonr/corelon/src/main/scala/com/twittelonr/product_mixelonr/corelon/modelonl/marshalling/relonsponselon/urt/opelonration",
+        "product-mixelonr/corelon/src/main/scala/com/twittelonr/product_mixelonr/corelon/pipelonlinelon",
+        "src/scala/com/twittelonr/selonarch/common/util/bloomfiltelonr",
     ],
 )

@@ -1,86 +1,86 @@
-package com.twitter.product_mixer.component_library.selector
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.selonlelonctor
 
-import com.twitter.product_mixer.component_library.selector.sorter.SorterFromOrdering
-import com.twitter.product_mixer.component_library.selector.sorter.SorterProvider
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope.PartitionedCandidates
-import com.twitter.product_mixer.core.functional_component.common.SpecificPipeline
-import com.twitter.product_mixer.core.functional_component.common.SpecificPipelines
-import com.twitter.product_mixer.core.functional_component.selector._
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.product_mixelonr.componelonnt_library.selonlelonctor.sortelonr.SortelonrFromOrdelonring
+import com.twittelonr.product_mixelonr.componelonnt_library.selonlelonctor.sortelonr.SortelonrProvidelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.CandidatelonScopelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.CandidatelonScopelon.PartitionelondCandidatelons
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.SpeloncificPipelonlinelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.SpeloncificPipelonlinelons
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.selonlelonctor._
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonPipelonlinelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
-object UpdateSortCandidates {
-  def apply(
-    candidatePipeline: CandidatePipelineIdentifier,
-    sorterProvider: SorterProvider,
-  ) = new UpdateSortCandidates(SpecificPipeline(candidatePipeline), sorterProvider)
+objelonct UpdatelonSortCandidatelons {
+  delonf apply(
+    candidatelonPipelonlinelon: CandidatelonPipelonlinelonIdelonntifielonr,
+    sortelonrProvidelonr: SortelonrProvidelonr,
+  ) = nelonw UpdatelonSortCandidatelons(SpeloncificPipelonlinelon(candidatelonPipelonlinelon), sortelonrProvidelonr)
 
-  def apply(
-    candidatePipeline: CandidatePipelineIdentifier,
-    ordering: Ordering[CandidateWithDetails]
+  delonf apply(
+    candidatelonPipelonlinelon: CandidatelonPipelonlinelonIdelonntifielonr,
+    ordelonring: Ordelonring[CandidatelonWithDelontails]
   ) =
-    new UpdateSortCandidates(SpecificPipeline(candidatePipeline), SorterFromOrdering(ordering))
+    nelonw UpdatelonSortCandidatelons(SpeloncificPipelonlinelon(candidatelonPipelonlinelon), SortelonrFromOrdelonring(ordelonring))
 
-  def apply(
-    candidatePipelines: Set[CandidatePipelineIdentifier],
-    ordering: Ordering[CandidateWithDetails]
+  delonf apply(
+    candidatelonPipelonlinelons: Selont[CandidatelonPipelonlinelonIdelonntifielonr],
+    ordelonring: Ordelonring[CandidatelonWithDelontails]
   ) =
-    new UpdateSortCandidates(SpecificPipelines(candidatePipelines), SorterFromOrdering(ordering))
+    nelonw UpdatelonSortCandidatelons(SpeloncificPipelonlinelons(candidatelonPipelonlinelons), SortelonrFromOrdelonring(ordelonring))
 
-  def apply(
-    candidatePipelines: Set[CandidatePipelineIdentifier],
-    sorterProvider: SorterProvider,
-  ) = new UpdateSortCandidates(SpecificPipelines(candidatePipelines), sorterProvider)
+  delonf apply(
+    candidatelonPipelonlinelons: Selont[CandidatelonPipelonlinelonIdelonntifielonr],
+    sortelonrProvidelonr: SortelonrProvidelonr,
+  ) = nelonw UpdatelonSortCandidatelons(SpeloncificPipelonlinelons(candidatelonPipelonlinelons), sortelonrProvidelonr)
 
-  def apply(
-    pipelineScope: CandidateScope,
-    ordering: Ordering[CandidateWithDetails]
-  ) = new UpdateSortCandidates(pipelineScope, SorterFromOrdering(ordering))
+  delonf apply(
+    pipelonlinelonScopelon: CandidatelonScopelon,
+    ordelonring: Ordelonring[CandidatelonWithDelontails]
+  ) = nelonw UpdatelonSortCandidatelons(pipelonlinelonScopelon, SortelonrFromOrdelonring(ordelonring))
 }
 
 /**
- * Sort item and module (not items inside modules) candidates in a pipeline scope.
- * Note that if sorting across multiple candidate sources, the candidates will be grouped together
- * in sorted order, starting from the position of the first candidate.
+ * Sort itelonm and modulelon (not itelonms insidelon modulelons) candidatelons in a pipelonlinelon scopelon.
+ * Notelon that if sorting across multiplelon candidatelon sourcelons, thelon candidatelons will belon groupelond togelonthelonr
+ * in sortelond ordelonr, starting from thelon position of thelon first candidatelon.
  *
- * For example, we could specify the following ordering to sort by score descending:
- * Ordering
- *   .by[CandidateWithDetails, Double](_.features.get(ScoreFeature) match {
- *     case Scored(score) => score
- *     case _ => Double.MinValue
- *   }).reverse
+ * For elonxamplelon, welon could speloncify thelon following ordelonring to sort by scorelon delonscelonnding:
+ * Ordelonring
+ *   .by[CandidatelonWithDelontails, Doublelon](_.felonaturelons.gelont(ScorelonFelonaturelon) match {
+ *     caselon Scorelond(scorelon) => scorelon
+ *     caselon _ => Doublelon.MinValuelon
+ *   }).relonvelonrselon
  */
-case class UpdateSortCandidates(
-  override val pipelineScope: CandidateScope,
-  sorterProvider: SorterProvider)
-    extends Selector[PipelineQuery] {
+caselon class UpdatelonSortCandidatelons(
+  ovelonrridelon val pipelonlinelonScopelon: CandidatelonScopelon,
+  sortelonrProvidelonr: SortelonrProvidelonr)
+    elonxtelonnds Selonlelonctor[PipelonlinelonQuelonry] {
 
-  override def apply(
-    query: PipelineQuery,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
-  ): SelectorResult = {
-    val PartitionedCandidates(selectedCandidates, otherCandidates) =
-      pipelineScope.partition(remainingCandidates)
+  ovelonrridelon delonf apply(
+    quelonry: PipelonlinelonQuelonry,
+    relonmainingCandidatelons: Selonq[CandidatelonWithDelontails],
+    relonsult: Selonq[CandidatelonWithDelontails]
+  ): SelonlelonctorRelonsult = {
+    val PartitionelondCandidatelons(selonlelonctelondCandidatelons, othelonrCandidatelons) =
+      pipelonlinelonScopelon.partition(relonmainingCandidatelons)
 
-    val updatedRemainingCandidates = if (selectedCandidates.nonEmpty) {
-      // Safe .head due to nonEmpty check
-      val position = remainingCandidates.indexOf(selectedCandidates.head)
-      val orderedSelectedCandidates =
-        sorterProvider.sorter(query, remainingCandidates, result).sort(selectedCandidates)
+    val updatelondRelonmainingCandidatelons = if (selonlelonctelondCandidatelons.nonelonmpty) {
+      // Safelon .helonad duelon to nonelonmpty chelonck
+      val position = relonmainingCandidatelons.indelonxOf(selonlelonctelondCandidatelons.helonad)
+      val ordelonrelondSelonlelonctelondCandidatelons =
+        sortelonrProvidelonr.sortelonr(quelonry, relonmainingCandidatelons, relonsult).sort(selonlelonctelondCandidatelons)
 
-      if (position < otherCandidates.length) {
-        val (left, right) = otherCandidates.splitAt(position)
-        left ++ orderedSelectedCandidates ++ right
-      } else {
-        otherCandidates ++ orderedSelectedCandidates
+      if (position < othelonrCandidatelons.lelonngth) {
+        val (lelonft, right) = othelonrCandidatelons.splitAt(position)
+        lelonft ++ ordelonrelondSelonlelonctelondCandidatelons ++ right
+      } elonlselon {
+        othelonrCandidatelons ++ ordelonrelondSelonlelonctelondCandidatelons
       }
-    } else {
-      remainingCandidates
+    } elonlselon {
+      relonmainingCandidatelons
     }
 
-    SelectorResult(remainingCandidates = updatedRemainingCandidates, result = result)
+    SelonlelonctorRelonsult(relonmainingCandidatelons = updatelondRelonmainingCandidatelons, relonsult = relonsult)
   }
 }

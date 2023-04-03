@@ -1,29 +1,29 @@
 scala_library(
-    name = "server",
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
+    namelon = "selonrvelonr",
+    sourcelons = ["*.scala"],
+    compilelonr_option_selonts = ["fatal_warnings"],
     platform = "java8",
-    tags = ["bazel-only"],
-    dependencies = [
-        "ann/src/main/scala/com/twitter/ann/annoy",
-        "ann/src/main/scala/com/twitter/ann/brute_force",
-        "ann/src/main/scala/com/twitter/ann/common",
-        "ann/src/main/scala/com/twitter/ann/hnsw",
+    tags = ["bazelonl-only"],
+    delonpelonndelonncielons = [
+        "ann/src/main/scala/com/twittelonr/ann/annoy",
+        "ann/src/main/scala/com/twittelonr/ann/brutelon_forcelon",
+        "ann/src/main/scala/com/twittelonr/ann/common",
+        "ann/src/main/scala/com/twittelonr/ann/hnsw",
     ],
 )
 
 hadoop_binary(
-    name = "benchmarking",
-    basename = "benchmarking",
-    main = "com.twitter.ann.experimental.Runner",
+    namelon = "belonnchmarking",
+    baselonnamelon = "belonnchmarking",
+    main = "com.twittelonr.ann.elonxpelonrimelonntal.Runnelonr",
     platform = "java8",
-    runtime_platform = "java8",
+    runtimelon_platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
+        "bazelonl-compatiblelon",
+        "bazelonl-compatiblelon:migratelond",
+        "bazelonl-only",
     ],
-    dependencies = [
-        ":server",
+    delonpelonndelonncielons = [
+        ":selonrvelonr",
     ],
 )

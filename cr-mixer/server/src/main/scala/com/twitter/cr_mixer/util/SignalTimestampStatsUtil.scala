@@ -1,66 +1,66 @@
-package com.twitter.cr_mixer.util
+packagelon com.twittelonr.cr_mixelonr.util
 
-import com.twitter.cr_mixer.model.CandidateGenerationInfo
-import com.twitter.cr_mixer.model.RankedCandidate
-import com.twitter.cr_mixer.model.SourceInfo
-import com.twitter.cr_mixer.thriftscala.SourceType
-import com.twitter.cr_mixer.thriftscala.TweetRecommendation
-import javax.inject.Inject
-import com.twitter.finagle.stats.StatsReceiver
-import javax.inject.Singleton
-import com.twitter.relevance_platform.common.stats.BucketTimestampStats
+import com.twittelonr.cr_mixelonr.modelonl.CandidatelonGelonnelonrationInfo
+import com.twittelonr.cr_mixelonr.modelonl.RankelondCandidatelon
+import com.twittelonr.cr_mixelonr.modelonl.SourcelonInfo
+import com.twittelonr.cr_mixelonr.thriftscala.SourcelonTypelon
+import com.twittelonr.cr_mixelonr.thriftscala.TwelonelontReloncommelonndation
+import javax.injelonct.Injelonct
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import javax.injelonct.Singlelonton
+import com.twittelonr.relonlelonvancelon_platform.common.stats.BuckelontTimelonstampStats
 
-@Singleton
-class SignalTimestampStatsUtil @Inject() (statsReceiver: StatsReceiver) {
-  import SignalTimestampStatsUtil._
+@Singlelonton
+class SignalTimelonstampStatsUtil @Injelonct() (statsReloncelonivelonr: StatsReloncelonivelonr) {
+  import SignalTimelonstampStatsUtil._
 
-  private val signalDelayAgePerDayStats =
-    new BucketTimestampStats[TweetRecommendation](
-      BucketTimestampStats.MillisecondsPerDay,
-      _.latestSourceSignalTimestampInMillis.getOrElse(0),
-      Some(SignalTimestampMaxDays))(
-      statsReceiver.scope("signal_timestamp_per_day")
+  privatelon val signalDelonlayAgelonPelonrDayStats =
+    nelonw BuckelontTimelonstampStats[TwelonelontReloncommelonndation](
+      BuckelontTimelonstampStats.MilliseloncondsPelonrDay,
+      _.latelonstSourcelonSignalTimelonstampInMillis.gelontOrelonlselon(0),
+      Somelon(SignalTimelonstampMaxDays))(
+      statsReloncelonivelonr.scopelon("signal_timelonstamp_pelonr_day")
     ) // only stats past 90 days
-  private val signalDelayAgePerHourStats =
-    new BucketTimestampStats[TweetRecommendation](
-      BucketTimestampStats.MillisecondsPerHour,
-      _.latestSourceSignalTimestampInMillis.getOrElse(0),
-      Some(SignalTimestampMaxHours))(
-      statsReceiver.scope("signal_timestamp_per_hour")
+  privatelon val signalDelonlayAgelonPelonrHourStats =
+    nelonw BuckelontTimelonstampStats[TwelonelontReloncommelonndation](
+      BuckelontTimelonstampStats.MilliseloncondsPelonrHour,
+      _.latelonstSourcelonSignalTimelonstampInMillis.gelontOrelonlselon(0),
+      Somelon(SignalTimelonstampMaxHours))(
+      statsReloncelonivelonr.scopelon("signal_timelonstamp_pelonr_hour")
     ) // only stats past 24 hours
-  private val signalDelayAgePerMinStats =
-    new BucketTimestampStats[TweetRecommendation](
-      BucketTimestampStats.MillisecondsPerMinute,
-      _.latestSourceSignalTimestampInMillis.getOrElse(0),
-      Some(SignalTimestampMaxMins))(
-      statsReceiver.scope("signal_timestamp_per_min")
-    ) // only stats past 60 minutes
+  privatelon val signalDelonlayAgelonPelonrMinStats =
+    nelonw BuckelontTimelonstampStats[TwelonelontReloncommelonndation](
+      BuckelontTimelonstampStats.MilliseloncondsPelonrMinutelon,
+      _.latelonstSourcelonSignalTimelonstampInMillis.gelontOrelonlselon(0),
+      Somelon(SignalTimelonstampMaxMins))(
+      statsReloncelonivelonr.scopelon("signal_timelonstamp_pelonr_min")
+    ) // only stats past 60 minutelons
 
-  def statsSignalTimestamp(
-    tweets: Seq[TweetRecommendation],
-  ): Seq[TweetRecommendation] = {
-    signalDelayAgePerMinStats.count(tweets)
-    signalDelayAgePerHourStats.count(tweets)
-    signalDelayAgePerDayStats.count(tweets)
+  delonf statsSignalTimelonstamp(
+    twelonelonts: Selonq[TwelonelontReloncommelonndation],
+  ): Selonq[TwelonelontReloncommelonndation] = {
+    signalDelonlayAgelonPelonrMinStats.count(twelonelonts)
+    signalDelonlayAgelonPelonrHourStats.count(twelonelonts)
+    signalDelonlayAgelonPelonrDayStats.count(twelonelonts)
   }
 }
 
-object SignalTimestampStatsUtil {
-  val SignalTimestampMaxMins = 60 // stats at most 60 mins
-  val SignalTimestampMaxHours = 24 // stats at most 24 hours
-  val SignalTimestampMaxDays = 90 // stats at most 90 days
+objelonct SignalTimelonstampStatsUtil {
+  val SignalTimelonstampMaxMins = 60 // stats at most 60 mins
+  val SignalTimelonstampMaxHours = 24 // stats at most 24 hours
+  val SignalTimelonstampMaxDays = 90 // stats at most 90 days
 
-  def buildLatestSourceSignalTimestamp(candidate: RankedCandidate): Option[Long] = {
-    val timestampSeq = candidate.potentialReasons
-      .collect {
-        case CandidateGenerationInfo(Some(SourceInfo(sourceType, _, Some(sourceEventTime))), _, _)
-            if sourceType == SourceType.TweetFavorite =>
-          sourceEventTime.inMilliseconds
+  delonf buildLatelonstSourcelonSignalTimelonstamp(candidatelon: RankelondCandidatelon): Option[Long] = {
+    val timelonstampSelonq = candidatelon.potelonntialRelonasons
+      .collelonct {
+        caselon CandidatelonGelonnelonrationInfo(Somelon(SourcelonInfo(sourcelonTypelon, _, Somelon(sourcelonelonvelonntTimelon))), _, _)
+            if sourcelonTypelon == SourcelonTypelon.TwelonelontFavoritelon =>
+          sourcelonelonvelonntTimelon.inMilliselonconds
       }
-    if (timestampSeq.nonEmpty) {
-      Some(timestampSeq.max(Ordering.Long))
-    } else {
-      None
+    if (timelonstampSelonq.nonelonmpty) {
+      Somelon(timelonstampSelonq.max(Ordelonring.Long))
+    } elonlselon {
+      Nonelon
     }
   }
 }

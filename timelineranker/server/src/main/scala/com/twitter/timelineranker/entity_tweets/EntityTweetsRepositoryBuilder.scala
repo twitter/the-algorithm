@@ -1,60 +1,60 @@
-package com.twitter.timelineranker.entity_tweets
+packagelon com.twittelonr.timelonlinelonrankelonr.elonntity_twelonelonts
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.timelineranker.config.RequestScopes
-import com.twitter.timelineranker.config.RuntimeConfiguration
-import com.twitter.timelineranker.parameters.ConfigBuilder
-import com.twitter.timelineranker.repository.CandidatesRepositoryBuilder
-import com.twitter.timelineranker.visibility.SgsFollowGraphDataFields
-import com.twitter.search.earlybird.thriftscala.EarlybirdService
-import com.twitter.timelines.util.stats.RequestScope
-import com.twitter.util.Duration
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.timelonlinelonrankelonr.config.RelonquelonstScopelons
+import com.twittelonr.timelonlinelonrankelonr.config.RuntimelonConfiguration
+import com.twittelonr.timelonlinelonrankelonr.paramelontelonrs.ConfigBuildelonr
+import com.twittelonr.timelonlinelonrankelonr.relonpository.CandidatelonsRelonpositoryBuildelonr
+import com.twittelonr.timelonlinelonrankelonr.visibility.SgsFollowGraphDataFielonlds
+import com.twittelonr.selonarch.elonarlybird.thriftscala.elonarlybirdSelonrvicelon
+import com.twittelonr.timelonlinelons.util.stats.RelonquelonstScopelon
+import com.twittelonr.util.Duration
 
-class EntityTweetsRepositoryBuilder(config: RuntimeConfiguration, configBuilder: ConfigBuilder)
-    extends CandidatesRepositoryBuilder(config) {
+class elonntityTwelonelontsRelonpositoryBuildelonr(config: RuntimelonConfiguration, configBuildelonr: ConfigBuildelonr)
+    elonxtelonnds CandidatelonsRelonpositoryBuildelonr(config) {
 
-  // Default client id for this repository if the upstream requests doesn't indicate one.
-  override val clientSubId = "community"
-  override val requestScope: RequestScope = RequestScopes.EntityTweetsSource
-  override val followGraphDataFieldsToFetch: SgsFollowGraphDataFields.ValueSet =
-    SgsFollowGraphDataFields.ValueSet(
-      SgsFollowGraphDataFields.FollowedUserIds,
-      SgsFollowGraphDataFields.MutuallyFollowingUserIds,
-      SgsFollowGraphDataFields.MutedUserIds
+  // Delonfault clielonnt id for this relonpository if thelon upstrelonam relonquelonsts doelonsn't indicatelon onelon.
+  ovelonrridelon val clielonntSubId = "community"
+  ovelonrridelon val relonquelonstScopelon: RelonquelonstScopelon = RelonquelonstScopelons.elonntityTwelonelontsSourcelon
+  ovelonrridelon val followGraphDataFielonldsToFelontch: SgsFollowGraphDataFielonlds.ValuelonSelont =
+    SgsFollowGraphDataFielonlds.ValuelonSelont(
+      SgsFollowGraphDataFielonlds.FollowelondUselonrIds,
+      SgsFollowGraphDataFielonlds.MutuallyFollowingUselonrIds,
+      SgsFollowGraphDataFielonlds.MutelondUselonrIds
     )
 
   /**
-   * [1] timeout is derived from p9999 TLR <-> Earlybird latency and shall be less than
-   *     request timeout of timelineranker client within downstream timelinemixer, which is
+   * [1] timelonout is delonrivelond from p9999 TLR <-> elonarlybird latelonncy and shall belon lelonss than
+   *     relonquelonst timelonout of timelonlinelonrankelonr clielonnt within downstrelonam timelonlinelonmixelonr, which is
    *     1s now
    *
-   * [2] processing timeout is less than request timeout [1] with 100ms space for networking and
-   *     other times such as gc
+   * [2] procelonssing timelonout is lelonss than relonquelonst timelonout [1] with 100ms spacelon for nelontworking and
+   *     othelonr timelons such as gc
    */
-  override val searchProcessingTimeout: Duration = 550.milliseconds // [2]
-  override def earlybirdClient(scope: String): EarlybirdService.MethodPerEndpoint =
-    config.underlyingClients.createEarlybirdClient(
-      scope = scope,
-      requestTimeout = 650.milliseconds, // [1]
-      timeout = 900.milliseconds, // [1]
-      retryPolicy = config.underlyingClients.DefaultRetryPolicy
+  ovelonrridelon val selonarchProcelonssingTimelonout: Duration = 550.milliselonconds // [2]
+  ovelonrridelon delonf elonarlybirdClielonnt(scopelon: String): elonarlybirdSelonrvicelon.MelonthodPelonrelonndpoint =
+    config.undelonrlyingClielonnts.crelonatelonelonarlybirdClielonnt(
+      scopelon = scopelon,
+      relonquelonstTimelonout = 650.milliselonconds, // [1]
+      timelonout = 900.milliselonconds, // [1]
+      relontryPolicy = config.undelonrlyingClielonnts.DelonfaultRelontryPolicy
     )
 
-  def apply(): EntityTweetsRepository = {
-    val entityTweetsSource = new EntityTweetsSource(
-      gizmoduckClient,
-      searchClient,
-      tweetyPieHighQoSClient,
-      userMetadataClient,
-      followGraphDataProvider,
-      clientFactories.visibilityEnforcerFactory.apply(
-        VisibilityRules,
-        RequestScopes.EntityTweetsSource
+  delonf apply(): elonntityTwelonelontsRelonpository = {
+    val elonntityTwelonelontsSourcelon = nelonw elonntityTwelonelontsSourcelon(
+      gizmoduckClielonnt,
+      selonarchClielonnt,
+      twelonelontyPielonHighQoSClielonnt,
+      uselonrMelontadataClielonnt,
+      followGraphDataProvidelonr,
+      clielonntFactorielons.visibilityelonnforcelonrFactory.apply(
+        VisibilityRulelons,
+        RelonquelonstScopelons.elonntityTwelonelontsSourcelon
       ),
-      config.underlyingClients.contentFeaturesCache,
-      config.statsReceiver
+      config.undelonrlyingClielonnts.contelonntFelonaturelonsCachelon,
+      config.statsReloncelonivelonr
     )
 
-    new EntityTweetsRepository(entityTweetsSource)
+    nelonw elonntityTwelonelontsRelonpository(elonntityTwelonelontsSourcelon)
   }
 }

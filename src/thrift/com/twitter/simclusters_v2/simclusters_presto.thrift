@@ -1,59 +1,59 @@
-namespace java com.twitter.simclusters_v2.thriftjava
-namespace py gen.twitter.simclusters_v2.simclusters_presto
-#@namespace scala com.twitter.simclusters_v2.thriftscala
-#@namespace strato com.twitter.simclusters_v2
+namelonspacelon java com.twittelonr.simclustelonrs_v2.thriftjava
+namelonspacelon py gelonn.twittelonr.simclustelonrs_v2.simclustelonrs_prelonsto
+#@namelonspacelon scala com.twittelonr.simclustelonrs_v2.thriftscala
+#@namelonspacelon strato com.twittelonr.simclustelonrs_v2
 
-include "embedding.thrift"
-include "identifier.thrift"
-include "interests.thrift"
-include "online_store.thrift"
+includelon "elonmbelondding.thrift"
+includelon "idelonntifielonr.thrift"
+includelon "intelonrelonsts.thrift"
+includelon "onlinelon_storelon.thrift"
 
 /**
-  * This struct is the presto-compatible "lite" version of the ClusterDetails thrift
+  * This struct is thelon prelonsto-compatiblelon "litelon" velonrsion of thelon ClustelonrDelontails thrift
   */
-struct ClusterDetailsLite {
-  1: required online_store.FullClusterId fullClusterId
-  2: required i32 numUsersWithAnyNonZeroScore
-  3: required i32 numUsersWithNonZeroFollowScore
-  4: required i32 numUsersWithNonZeroFavScore
-  5: required list<interests.UserWithScore> knownForUsersAndScores
-}(persisted="true", hasPersonalData = 'true')
+struct ClustelonrDelontailsLitelon {
+  1: relonquirelond onlinelon_storelon.FullClustelonrId fullClustelonrId
+  2: relonquirelond i32 numUselonrsWithAnyNonZelonroScorelon
+  3: relonquirelond i32 numUselonrsWithNonZelonroFollowScorelon
+  4: relonquirelond i32 numUselonrsWithNonZelonroFavScorelon
+  5: relonquirelond list<intelonrelonsts.UselonrWithScorelon> knownForUselonrsAndScorelons
+}(pelonrsistelond="truelon", hasPelonrsonalData = 'truelon')
 
-struct EmbeddingsLite {
-  1: required i64 entityId
-  2: required i32 clusterId
-  3: required double score
-}(persisted="true", hasPersonalData = 'true')
+struct elonmbelonddingsLitelon {
+  1: relonquirelond i64 elonntityId
+  2: relonquirelond i32 clustelonrId
+  3: relonquirelond doublelon scorelon
+}(pelonrsistelond="truelon", hasPelonrsonalData = 'truelon')
 
-struct SimClustersEmbeddingWithId {
-  1: required identifier.SimClustersEmbeddingId embeddingId
-  2: required embedding.SimClustersEmbedding embedding
-}(persisted="true", hasPersonalData = 'true')
+struct SimClustelonrselonmbelonddingWithId {
+  1: relonquirelond idelonntifielonr.SimClustelonrselonmbelonddingId elonmbelonddingId
+  2: relonquirelond elonmbelondding.SimClustelonrselonmbelondding elonmbelondding
+}(pelonrsistelond="truelon", hasPelonrsonalData = 'truelon')
 
-struct InternalIdEmbeddingWithId {
-  1: required identifier.SimClustersEmbeddingId embeddingId
-  2: required embedding.InternalIdEmbedding embedding
-}(persisted="true", hasPersonalData = 'true')
+struct IntelonrnalIdelonmbelonddingWithId {
+  1: relonquirelond idelonntifielonr.SimClustelonrselonmbelonddingId elonmbelonddingId
+  2: relonquirelond elonmbelondding.IntelonrnalIdelonmbelondding elonmbelondding
+}(pelonrsistelond="truelon", hasPelonrsonalData = 'truelon')
 
 /**
-* This struct is the presto-compatible version of the fav_tfg_topic_embeddings
+* This struct is thelon prelonsto-compatiblelon velonrsion of thelon fav_tfg_topic_elonmbelonddings
 */
-struct ClustersScore {
-  1: required i64 clusterId(personalDataType = 'SemanticcoreClassification')
-  2: required double score(personalDataType = 'EngagementScore')
-}(persisted="true", hasPersonalData = 'true')
+struct ClustelonrsScorelon {
+  1: relonquirelond i64 clustelonrId(pelonrsonalDataTypelon = 'SelonmanticcorelonClassification')
+  2: relonquirelond doublelon scorelon(pelonrsonalDataTypelon = 'elonngagelonmelonntScorelon')
+}(pelonrsistelond="truelon", hasPelonrsonalData = 'truelon')
 
-struct FavTfgTopicEmbeddings {
-  1: required identifier.TopicId topicId
-  2: required list<ClustersScore> clusterScore
-}(persisted="true", hasPersonalData = 'true')
+struct FavTfgTopicelonmbelonddings {
+  1: relonquirelond idelonntifielonr.TopicId topicId
+  2: relonquirelond list<ClustelonrsScorelon> clustelonrScorelon
+}(pelonrsistelond="truelon", hasPelonrsonalData = 'truelon')
 
-struct TfgTopicEmbeddings {
-  1: required identifier.TopicId topicId
-  2: required list<ClustersScore> clusterScore
-}(persisted="true", hasPersonalData = 'true')
+struct TfgTopicelonmbelonddings {
+  1: relonquirelond idelonntifielonr.TopicId topicId
+  2: relonquirelond list<ClustelonrsScorelon> clustelonrScorelon
+}(pelonrsistelond="truelon", hasPelonrsonalData = 'truelon')
 
-struct UserTopicWeightedEmbedding {
-  1: required i64 userId(personalDataType = 'UserId')
-  2: required list<ClustersScore> clusterScore
-}(persisted="true", hasPersonalData = 'true')
+struct UselonrTopicWelonightelondelonmbelondding {
+  1: relonquirelond i64 uselonrId(pelonrsonalDataTypelon = 'UselonrId')
+  2: relonquirelond list<ClustelonrsScorelon> clustelonrScorelon
+}(pelonrsistelond="truelon", hasPelonrsonalData = 'truelon')

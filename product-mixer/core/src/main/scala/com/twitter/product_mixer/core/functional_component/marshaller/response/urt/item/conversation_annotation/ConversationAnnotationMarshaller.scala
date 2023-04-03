@@ -1,22 +1,22 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.conversation_annotation
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.itelonm.convelonrsation_annotation
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.conversation_annotation.ConversationAnnotation
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.richtext.RichTextMarshaller
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.convelonrsation_annotation.ConvelonrsationAnnotation
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.richtelonxt.RichTelonxtMarshallelonr
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class ConversationAnnotationMarshaller @Inject() (
-  conversationAnnotationTypeMarshaller: ConversationAnnotationTypeMarshaller,
-  richTextMarshaller: RichTextMarshaller) {
+@Singlelonton
+class ConvelonrsationAnnotationMarshallelonr @Injelonct() (
+  convelonrsationAnnotationTypelonMarshallelonr: ConvelonrsationAnnotationTypelonMarshallelonr,
+  richTelonxtMarshallelonr: RichTelonxtMarshallelonr) {
 
-  def apply(conversationAnnotation: ConversationAnnotation): urt.ConversationAnnotation = {
-    urt.ConversationAnnotation(
-      conversationAnnotationType =
-        conversationAnnotationTypeMarshaller(conversationAnnotation.conversationAnnotationType),
-      header = conversationAnnotation.header.map(richTextMarshaller(_)),
-      description = conversationAnnotation.description.map(richTextMarshaller(_))
+  delonf apply(convelonrsationAnnotation: ConvelonrsationAnnotation): urt.ConvelonrsationAnnotation = {
+    urt.ConvelonrsationAnnotation(
+      convelonrsationAnnotationTypelon =
+        convelonrsationAnnotationTypelonMarshallelonr(convelonrsationAnnotation.convelonrsationAnnotationTypelon),
+      helonadelonr = convelonrsationAnnotation.helonadelonr.map(richTelonxtMarshallelonr(_)),
+      delonscription = convelonrsationAnnotation.delonscription.map(richTelonxtMarshallelonr(_))
     )
   }
 }

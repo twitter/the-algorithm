@@ -1,13 +1,13 @@
-package com.twitter.visibility.interfaces.cards
+packagelon com.twittelonr.visibility.intelonrfacelons.cards
 
-import com.twitter.tweetypie.{thriftscala => tweetypiethrift}
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.models.ViewerContext
+import com.twittelonr.twelonelontypielon.{thriftscala => twelonelontypielonthrift}
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl
+import com.twittelonr.visibility.modelonls.VielonwelonrContelonxt
 
-case class CardVisibilityRequest(
+caselon class CardVisibilityRelonquelonst(
   cardUri: String,
   authorId: Option[Long],
-  tweetOpt: Option[tweetypiethrift.Tweet],
-  isPollCardType: Boolean,
-  safetyLevel: SafetyLevel,
-  viewerContext: ViewerContext)
+  twelonelontOpt: Option[twelonelontypielonthrift.Twelonelont],
+  isPollCardTypelon: Boolelonan,
+  safelontyLelonvelonl: SafelontyLelonvelonl,
+  vielonwelonrContelonxt: VielonwelonrContelonxt)

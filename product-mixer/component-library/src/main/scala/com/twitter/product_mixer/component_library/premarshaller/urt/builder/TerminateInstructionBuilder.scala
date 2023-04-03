@@ -1,44 +1,44 @@
-package com.twitter.product_mixer.component_library.premarshaller.urt.builder
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.prelonmarshallelonr.urt.buildelonr
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.BottomTermination
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TerminateTimelineInstruction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineTerminationDirection
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TopAndBottomTermination
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TopTermination
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.BottomTelonrmination
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.TelonrminatelonTimelonlinelonInstruction
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.Timelonlinelonelonntry
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.TimelonlinelonTelonrminationDirelonction
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.TopAndBottomTelonrmination
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.TopTelonrmination
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
-sealed trait TerminateInstructionBuilder[Query <: PipelineQuery]
-    extends UrtInstructionBuilder[Query, TerminateTimelineInstruction] {
+selonalelond trait TelonrminatelonInstructionBuildelonr[Quelonry <: PipelonlinelonQuelonry]
+    elonxtelonnds UrtInstructionBuildelonr[Quelonry, TelonrminatelonTimelonlinelonInstruction] {
 
-  def direction: TimelineTerminationDirection
+  delonf direlonction: TimelonlinelonTelonrminationDirelonction
 
-  override def build(
-    query: Query,
-    entries: Seq[TimelineEntry]
-  ): Seq[TerminateTimelineInstruction] =
-    if (includeInstruction(query, entries))
-      Seq(TerminateTimelineInstruction(terminateTimelineDirection = direction))
-    else Seq.empty
+  ovelonrridelon delonf build(
+    quelonry: Quelonry,
+    elonntrielons: Selonq[Timelonlinelonelonntry]
+  ): Selonq[TelonrminatelonTimelonlinelonInstruction] =
+    if (includelonInstruction(quelonry, elonntrielons))
+      Selonq(TelonrminatelonTimelonlinelonInstruction(telonrminatelonTimelonlinelonDirelonction = direlonction))
+    elonlselon Selonq.elonmpty
 }
 
-case class TerminateTopInstructionBuilder[Query <: PipelineQuery](
-  override val includeInstruction: IncludeInstruction[Query] = AlwaysInclude)
-    extends TerminateInstructionBuilder[Query] {
+caselon class TelonrminatelonTopInstructionBuildelonr[Quelonry <: PipelonlinelonQuelonry](
+  ovelonrridelon val includelonInstruction: IncludelonInstruction[Quelonry] = AlwaysIncludelon)
+    elonxtelonnds TelonrminatelonInstructionBuildelonr[Quelonry] {
 
-  override val direction = TopTermination
+  ovelonrridelon val direlonction = TopTelonrmination
 }
 
-case class TerminateBottomInstructionBuilder[Query <: PipelineQuery](
-  override val includeInstruction: IncludeInstruction[Query] = AlwaysInclude)
-    extends TerminateInstructionBuilder[Query] {
+caselon class TelonrminatelonBottomInstructionBuildelonr[Quelonry <: PipelonlinelonQuelonry](
+  ovelonrridelon val includelonInstruction: IncludelonInstruction[Quelonry] = AlwaysIncludelon)
+    elonxtelonnds TelonrminatelonInstructionBuildelonr[Quelonry] {
 
-  override val direction = BottomTermination
+  ovelonrridelon val direlonction = BottomTelonrmination
 }
 
-case class TerminateTopAndBottomInstructionBuilder[Query <: PipelineQuery](
-  override val includeInstruction: IncludeInstruction[Query] = AlwaysInclude)
-    extends TerminateInstructionBuilder[Query] {
+caselon class TelonrminatelonTopAndBottomInstructionBuildelonr[Quelonry <: PipelonlinelonQuelonry](
+  ovelonrridelon val includelonInstruction: IncludelonInstruction[Quelonry] = AlwaysIncludelon)
+    elonxtelonnds TelonrminatelonInstructionBuildelonr[Quelonry] {
 
-  override val direction = TopAndBottomTermination
+  ovelonrridelon val direlonction = TopAndBottomTelonrmination
 }

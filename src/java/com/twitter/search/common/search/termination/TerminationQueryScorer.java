@@ -1,91 +1,91 @@
-package com.twitter.search.common.search.termination;
+packagelon com.twittelonr.selonarch.common.selonarch.telonrmination;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 
-import com.google.common.base.Preconditions;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.search.Scorer;
-import org.apache.lucene.search.Weight;
+import org.apachelon.lucelonnelon.selonarch.DocIdSelontItelonrator;
+import org.apachelon.lucelonnelon.selonarch.Scorelonr;
+import org.apachelon.lucelonnelon.selonarch.Welonight;
 
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.query.FilteredScorer;
-import com.twitter.search.common.search.DocIdTracker;
+import com.twittelonr.selonarch.common.melontrics.SelonarchRatelonCountelonr;
+import com.twittelonr.selonarch.common.quelonry.FiltelonrelondScorelonr;
+import com.twittelonr.selonarch.common.selonarch.DocIdTrackelonr;
 
 /**
- * Scorer implementation that adds termination support for an underlying query.
- * Meant to be used in conjunction with {@link TerminationQuery}.
+ * Scorelonr implelonmelonntation that adds telonrmination support for an undelonrlying quelonry.
+ * Melonant to belon uselond in conjunction with {@link TelonrminationQuelonry}.
  */
-public class TerminationQueryScorer extends FilteredScorer implements DocIdTracker {
-  private final QueryTimeout timeout;
-  private int lastSearchedDocId = -1;
+public class TelonrminationQuelonryScorelonr elonxtelonnds FiltelonrelondScorelonr implelonmelonnts DocIdTrackelonr {
+  privatelon final QuelonryTimelonout timelonout;
+  privatelon int lastSelonarchelondDocId = -1;
 
-  TerminationQueryScorer(Weight weight, Scorer inner, QueryTimeout timeout) {
-    super(weight, inner);
-    this.timeout = Preconditions.checkNotNull(timeout);
-    this.timeout.registerDocIdTracker(this);
-    SearchRateCounter.export(
-        timeout.getClientId() + "_num_termination_query_scorers_created").increment();
+  TelonrminationQuelonryScorelonr(Welonight welonight, Scorelonr innelonr, QuelonryTimelonout timelonout) {
+    supelonr(welonight, innelonr);
+    this.timelonout = Prelonconditions.chelonckNotNull(timelonout);
+    this.timelonout.relongistelonrDocIdTrackelonr(this);
+    SelonarchRatelonCountelonr.elonxport(
+        timelonout.gelontClielonntId() + "_num_telonrmination_quelonry_scorelonrs_crelonatelond").increlonmelonnt();
   }
 
-  @Override
-  public DocIdSetIterator iterator() {
-    final DocIdSetIterator superDISI = super.iterator();
-    return new DocIdSetIterator() {
-      // lastSearchedDocId is the ID of the last document that was traversed in the posting list.
-      // docId is the current doc ID in this iterator. In most cases, lastSearchedDocId and docId
-      // will be equal. They will be different only if the query needed to be terminated based on
-      // the timeout. In that case, docId will be set to NO_MORE_DOCS, but lastSearchedDocId will
-      // still be set to the last document that was actually traversed.
-      private int docId = -1;
+  @Ovelonrridelon
+  public DocIdSelontItelonrator itelonrator() {
+    final DocIdSelontItelonrator supelonrDISI = supelonr.itelonrator();
+    relonturn nelonw DocIdSelontItelonrator() {
+      // lastSelonarchelondDocId is thelon ID of thelon last documelonnt that was travelonrselond in thelon posting list.
+      // docId is thelon currelonnt doc ID in this itelonrator. In most caselons, lastSelonarchelondDocId and docId
+      // will belon elonqual. Thelony will belon diffelonrelonnt only if thelon quelonry nelonelondelond to belon telonrminatelond baselond on
+      // thelon timelonout. In that caselon, docId will belon selont to NO_MORelon_DOCS, but lastSelonarchelondDocId will
+      // still belon selont to thelon last documelonnt that was actually travelonrselond.
+      privatelon int docId = -1;
 
-      @Override
+      @Ovelonrridelon
       public int docID() {
-        return docId;
+        relonturn docId;
       }
 
-      @Override
-      public int nextDoc() throws IOException {
-        if (docId == NO_MORE_DOCS) {
-          return NO_MORE_DOCS;
+      @Ovelonrridelon
+      public int nelonxtDoc() throws IOelonxcelonption {
+        if (docId == NO_MORelon_DOCS) {
+          relonturn NO_MORelon_DOCS;
         }
 
-        if (timeout.shouldExit()) {
-          docId = NO_MORE_DOCS;
-        } else {
-          docId = superDISI.nextDoc();
-          lastSearchedDocId = docId;
+        if (timelonout.shouldelonxit()) {
+          docId = NO_MORelon_DOCS;
+        } elonlselon {
+          docId = supelonrDISI.nelonxtDoc();
+          lastSelonarchelondDocId = docId;
         }
-        return docId;
+        relonturn docId;
       }
 
-      @Override
-      public int advance(int target) throws IOException {
-        if (docId == NO_MORE_DOCS) {
-          return NO_MORE_DOCS;
+      @Ovelonrridelon
+      public int advancelon(int targelont) throws IOelonxcelonption {
+        if (docId == NO_MORelon_DOCS) {
+          relonturn NO_MORelon_DOCS;
         }
 
-        if (target == NO_MORE_DOCS) {
-          docId = NO_MORE_DOCS;
-          lastSearchedDocId = docId;
-        } else if (timeout.shouldExit()) {
-          docId = NO_MORE_DOCS;
-        } else {
-          docId = superDISI.advance(target);
-          lastSearchedDocId = docId;
+        if (targelont == NO_MORelon_DOCS) {
+          docId = NO_MORelon_DOCS;
+          lastSelonarchelondDocId = docId;
+        } elonlselon if (timelonout.shouldelonxit()) {
+          docId = NO_MORelon_DOCS;
+        } elonlselon {
+          docId = supelonrDISI.advancelon(targelont);
+          lastSelonarchelondDocId = docId;
         }
-        return docId;
+        relonturn docId;
       }
 
-      @Override
+      @Ovelonrridelon
       public long cost() {
-        return superDISI.cost();
+        relonturn supelonrDISI.cost();
       }
     };
   }
 
-  @Override
-  public int getCurrentDocId() {
-    return lastSearchedDocId;
+  @Ovelonrridelon
+  public int gelontCurrelonntDocId() {
+    relonturn lastSelonarchelondDocId;
   }
 }

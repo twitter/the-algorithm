@@ -1,65 +1,65 @@
-package com.twitter.search.earlybird_root.quota;
+packagelon com.twittelonr.selonarch.elonarlybird_root.quota;
 
 import java.util.Optional;
 
-import javax.inject.Inject;
+import javax.injelonct.Injelonct;
 
-import com.google.common.base.Preconditions;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import com.twitter.search.common.dark.ServerSetResolver.SelfServerSetResolver;
+import com.twittelonr.selonarch.common.dark.SelonrvelonrSelontRelonsolvelonr.SelonlfSelonrvelonrSelontRelonsolvelonr;
 
 /**
- * A config based implementation of the {@code ClientIdQuotaManager} interface.
- * It uses a ConfigBasedQuotaConfig object to load the contents of the config.
+ * A config baselond implelonmelonntation of thelon {@codelon ClielonntIdQuotaManagelonr} intelonrfacelon.
+ * It uselons a ConfigBaselondQuotaConfig objelonct to load thelon contelonnts of thelon config.
  */
-public class ConfigRepoBasedQuotaManager implements ClientIdQuotaManager {
+public class ConfigRelonpoBaselondQuotaManagelonr implelonmelonnts ClielonntIdQuotaManagelonr {
 
-  public static final String COMMON_POOL_CLIENT_ID = "common_pool";
+  public static final String COMMON_POOL_CLIelonNT_ID = "common_pool";
 
-  private final ConfigBasedQuotaConfig quotaConfig;
-  private final SelfServerSetResolver serverSetResolver;
+  privatelon final ConfigBaselondQuotaConfig quotaConfig;
+  privatelon final SelonlfSelonrvelonrSelontRelonsolvelonr selonrvelonrSelontRelonsolvelonr;
 
-  /** Creates a new ConfigRepoBasedQuotaManager instance. */
-  @Inject
-  public ConfigRepoBasedQuotaManager(
-      SelfServerSetResolver serverSetResolver,
-      ConfigBasedQuotaConfig quotaConfig) {
-    Preconditions.checkNotNull(quotaConfig);
+  /** Crelonatelons a nelonw ConfigRelonpoBaselondQuotaManagelonr instancelon. */
+  @Injelonct
+  public ConfigRelonpoBaselondQuotaManagelonr(
+      SelonlfSelonrvelonrSelontRelonsolvelonr selonrvelonrSelontRelonsolvelonr,
+      ConfigBaselondQuotaConfig quotaConfig) {
+    Prelonconditions.chelonckNotNull(quotaConfig);
 
     this.quotaConfig = quotaConfig;
-    this.serverSetResolver = serverSetResolver;
+    this.selonrvelonrSelontRelonsolvelonr = selonrvelonrSelontRelonsolvelonr;
   }
 
-  @Override
-  public Optional<QuotaInfo> getQuotaForClient(String clientId) {
-    Optional<QuotaInfo> quotaForClient = quotaConfig.getQuotaForClient(clientId);
+  @Ovelonrridelon
+  public Optional<QuotaInfo> gelontQuotaForClielonnt(String clielonntId) {
+    Optional<QuotaInfo> quotaForClielonnt = quotaConfig.gelontQuotaForClielonnt(clielonntId);
 
-    if (!quotaForClient.isPresent()) {
-      return Optional.empty();
+    if (!quotaForClielonnt.isPrelonselonnt()) {
+      relonturn Optional.elonmpty();
     }
 
-    QuotaInfo quota = quotaForClient.get();
+    QuotaInfo quota = quotaForClielonnt.gelont();
 
-    int quotaValue = quota.getQuota();
-    int rootInstanceCount = serverSetResolver.getServerSetSize();
-    if (rootInstanceCount > 0) {
-      quotaValue = (int) Math.ceil((double) quotaValue / rootInstanceCount);
+    int quotaValuelon = quota.gelontQuota();
+    int rootInstancelonCount = selonrvelonrSelontRelonsolvelonr.gelontSelonrvelonrSelontSizelon();
+    if (rootInstancelonCount > 0) {
+      quotaValuelon = (int) Math.celonil((doublelon) quotaValuelon / rootInstancelonCount);
     }
 
-    return Optional.of(
-        new QuotaInfo(
-            quota.getQuotaClientId(),
-            quota.getQuotaEmail(),
-            quotaValue,
-            quota.shouldEnforceQuota(),
-            quota.getClientTier(),
-            quota.hasArchiveAccess()));
+    relonturn Optional.of(
+        nelonw QuotaInfo(
+            quota.gelontQuotaClielonntId(),
+            quota.gelontQuotaelonmail(),
+            quotaValuelon,
+            quota.shouldelonnforcelonQuota(),
+            quota.gelontClielonntTielonr(),
+            quota.hasArchivelonAccelonss()));
   }
 
-  @Override
-  public QuotaInfo getCommonPoolQuota() {
-    Optional<QuotaInfo> commonPoolQuota = getQuotaForClient(COMMON_POOL_CLIENT_ID);
-    Preconditions.checkState(commonPoolQuota.isPresent());
-    return commonPoolQuota.get();
+  @Ovelonrridelon
+  public QuotaInfo gelontCommonPoolQuota() {
+    Optional<QuotaInfo> commonPoolQuota = gelontQuotaForClielonnt(COMMON_POOL_CLIelonNT_ID);
+    Prelonconditions.chelonckStatelon(commonPoolQuota.isPrelonselonnt());
+    relonturn commonPoolQuota.gelont();
   }
 }

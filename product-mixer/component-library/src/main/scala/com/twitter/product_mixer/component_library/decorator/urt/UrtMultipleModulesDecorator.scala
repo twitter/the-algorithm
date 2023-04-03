@@ -1,107 +1,107 @@
-package com.twitter.product_mixer.component_library.decorator.urt
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt
 
-import com.twitter.product_mixer.component_library.model.presentation.urt.UrtItemPresentation
-import com.twitter.product_mixer.component_library.model.presentation.urt.UrtModulePresentation
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.DecoratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.functional_component.decorator.CandidateDecorator
-import com.twitter.product_mixer.core.functional_component.decorator.Decoration
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.stitch.Stitch
-import com.twitter.product_mixer.component_library.decorator.urt.builder.timeline_module.ModuleIdGeneration
-import com.twitter.product_mixer.component_library.decorator.urt.builder.timeline_module.AutomaticUniqueModuleId
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.timeline_module.BaseTimelineModuleBuilder
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.prelonselonntation.urt.UrtItelonmPrelonselonntation
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.prelonselonntation.urt.UrtModulelonPrelonselonntation
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.DeloncoratorIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.CandidatelonDeloncorator
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.Deloncoration
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.timelonlinelon_modulelon.ModulelonIdGelonnelonration
+import com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.timelonlinelon_modulelon.AutomaticUniquelonModulelonId
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.timelonlinelon_modulelon.BaselonTimelonlinelonModulelonBuildelonr
 
 /**
- * Given a [[CandidateWithFeatures]] return the corresponding group with which it should be
- * associated. Returning none will result in the candidate not being assigned to any module.
+ * Givelonn a [[CandidatelonWithFelonaturelons]] relonturn thelon correlonsponding group with which it should belon
+ * associatelond. Relonturning nonelon will relonsult in thelon candidatelon not beloning assignelond to any modulelon.
  */
-trait GroupByKey[-Query <: PipelineQuery, -BuilderInput <: UniversalNoun[Any], Key] {
-  def apply(query: Query, candidate: BuilderInput, candidateFeatures: FeatureMap): Option[Key]
+trait GroupByKelony[-Quelonry <: PipelonlinelonQuelonry, -BuildelonrInput <: UnivelonrsalNoun[Any], Kelony] {
+  delonf apply(quelonry: Quelonry, candidatelon: BuildelonrInput, candidatelonFelonaturelons: FelonaturelonMap): Option[Kelony]
 }
 
 /**
- * Similar to [[UrtItemInModuleDecorator]] except that this decorator can assign items to different
- * modules based on the provided [[GroupByKey]].
+ * Similar to [[UrtItelonmInModulelonDeloncorator]] elonxcelonpt that this deloncorator can assign itelonms to diffelonrelonnt
+ * modulelons baselond on thelon providelond [[GroupByKelony]].
  *
- * @param urtItemCandidateDecorator decorates individual item candidates
- * @param moduleBuilder builds a module from a particular candidate group
- * @param groupByKey assigns each candidate a module group. Returning [[None]] will result in the
- *                   candidate not being assigned to a module
+ * @param urtItelonmCandidatelonDeloncorator deloncoratelons individual itelonm candidatelons
+ * @param modulelonBuildelonr builds a modulelon from a particular candidatelon group
+ * @param groupByKelony assigns elonach candidatelon a modulelon group. Relonturning [[Nonelon]] will relonsult in thelon
+ *                   candidatelon not beloning assignelond to a modulelon
  */
-case class UrtMultipleModulesDecorator[
-  -Query <: PipelineQuery,
-  -BuilderInput <: UniversalNoun[Any],
-  GroupKey
+caselon class UrtMultiplelonModulelonsDeloncorator[
+  -Quelonry <: PipelonlinelonQuelonry,
+  -BuildelonrInput <: UnivelonrsalNoun[Any],
+  GroupKelony
 ](
-  urtItemCandidateDecorator: CandidateDecorator[Query, BuilderInput],
-  moduleBuilder: BaseTimelineModuleBuilder[Query, BuilderInput],
-  groupByKey: GroupByKey[Query, BuilderInput, GroupKey],
-  override val identifier: DecoratorIdentifier = DecoratorIdentifier("UrtMultipleModules"))
-    extends CandidateDecorator[Query, BuilderInput] {
+  urtItelonmCandidatelonDeloncorator: CandidatelonDeloncorator[Quelonry, BuildelonrInput],
+  modulelonBuildelonr: BaselonTimelonlinelonModulelonBuildelonr[Quelonry, BuildelonrInput],
+  groupByKelony: GroupByKelony[Quelonry, BuildelonrInput, GroupKelony],
+  ovelonrridelon val idelonntifielonr: DeloncoratorIdelonntifielonr = DeloncoratorIdelonntifielonr("UrtMultiplelonModulelons"))
+    elonxtelonnds CandidatelonDeloncorator[Quelonry, BuildelonrInput] {
 
-  override def apply(
-    query: Query,
-    candidates: Seq[CandidateWithFeatures[BuilderInput]]
-  ): Stitch[Seq[Decoration]] = {
-    if (candidates.nonEmpty) {
+  ovelonrridelon delonf apply(
+    quelonry: Quelonry,
+    candidatelons: Selonq[CandidatelonWithFelonaturelons[BuildelonrInput]]
+  ): Stitch[Selonq[Deloncoration]] = {
+    if (candidatelons.nonelonmpty) {
 
-      /** Individual candidates with [[UrtItemPresentation]]s */
-      val decoratedCandidatesStitch: Stitch[
-        Seq[(CandidateWithFeatures[BuilderInput], Decoration)]
-      ] = urtItemCandidateDecorator(query, candidates).map(candidates.zip(_))
+      /** Individual candidatelons with [[UrtItelonmPrelonselonntation]]s */
+      val deloncoratelondCandidatelonsStitch: Stitch[
+        Selonq[(CandidatelonWithFelonaturelons[BuildelonrInput], Deloncoration)]
+      ] = urtItelonmCandidatelonDeloncorator(quelonry, candidatelons).map(candidatelons.zip(_))
 
-      decoratedCandidatesStitch.map { decoratedCandidates =>
-        // Group candidates into modules
-        val candidatesByModule: Map[Option[GroupKey], Seq[
-          (CandidateWithFeatures[BuilderInput], Decoration)
+      deloncoratelondCandidatelonsStitch.map { deloncoratelondCandidatelons =>
+        // Group candidatelons into modulelons
+        val candidatelonsByModulelon: Map[Option[GroupKelony], Selonq[
+          (CandidatelonWithFelonaturelons[BuildelonrInput], Deloncoration)
         ]] =
-          decoratedCandidates.groupBy {
-            case (CandidateWithFeatures(candidate, features), _) =>
-              groupByKey(query, candidate, features)
+          deloncoratelondCandidatelons.groupBy {
+            caselon (CandidatelonWithFelonaturelons(candidatelon, felonaturelons), _) =>
+              groupByKelony(quelonry, candidatelon, felonaturelons)
           }
 
-        candidatesByModule.iterator.zipWithIndex.flatMap {
+        candidatelonsByModulelon.itelonrator.zipWithIndelonx.flatMap {
 
-          // A None group key indicates these candidates should not be put into a module. Return
-          // the decorated candidates.
-          case ((None, candidateGroup), _) =>
-            candidateGroup.map {
-              case (_, decoration) => decoration
+          // A Nonelon group kelony indicatelons thelonselon candidatelons should not belon put into a modulelon. Relonturn
+          // thelon deloncoratelond candidatelons.
+          caselon ((Nonelon, candidatelonGroup), _) =>
+            candidatelonGroup.map {
+              caselon (_, deloncoration) => deloncoration
             }
 
-          // Build a UrtModulePresentation and add it to each candidate's decoration.
-          case ((_, candidateGroup), index) =>
-            val (candidatesWithFeatures, decorations) = candidateGroup.unzip
+          // Build a UrtModulelonPrelonselonntation and add it to elonach candidatelon's deloncoration.
+          caselon ((_, candidatelonGroup), indelonx) =>
+            val (candidatelonsWithFelonaturelons, deloncorations) = candidatelonGroup.unzip
 
             /**
-             * Build the module and update its ID if [[AutomaticUniqueModuleId]]s are being used.
-             * Forcing IDs to be different ensures that modules are never accidentally grouped
-             * together, since all other fields might otherwise be equal (candidates aren't added
-             * to modules until the domain marshalling phase).
+             * Build thelon modulelon and updatelon its ID if [[AutomaticUniquelonModulelonId]]s arelon beloning uselond.
+             * Forcing IDs to belon diffelonrelonnt elonnsurelons that modulelons arelon nelonvelonr accidelonntally groupelond
+             * togelonthelonr, sincelon all othelonr fielonlds might othelonrwiselon belon elonqual (candidatelons arelonn't addelond
+             * to modulelons until thelon domain marshalling phaselon).
              */
-            val timelineModule = {
-              val module = moduleBuilder(query, candidatesWithFeatures)
+            val timelonlinelonModulelon = {
+              val modulelon = modulelonBuildelonr(quelonry, candidatelonsWithFelonaturelons)
 
-              ModuleIdGeneration(module.id) match {
-                case id: AutomaticUniqueModuleId => module.copy(id = id.withOffset(index).moduleId)
-                case _ => module
+              ModulelonIdGelonnelonration(modulelon.id) match {
+                caselon id: AutomaticUniquelonModulelonId => modulelon.copy(id = id.withOffselont(indelonx).modulelonId)
+                caselon _ => modulelon
               }
             }
 
-            val modulePresentation = UrtModulePresentation(timelineModule)
+            val modulelonPrelonselonntation = UrtModulelonPrelonselonntation(timelonlinelonModulelon)
 
-            decorations.collect {
-              case Decoration(candidate, urtItemPresentation: UrtItemPresentation) =>
-                Decoration(
-                  candidate,
-                  urtItemPresentation.copy(modulePresentation = Some(modulePresentation)))
+            deloncorations.collelonct {
+              caselon Deloncoration(candidatelon, urtItelonmPrelonselonntation: UrtItelonmPrelonselonntation) =>
+                Deloncoration(
+                  candidatelon,
+                  urtItelonmPrelonselonntation.copy(modulelonPrelonselonntation = Somelon(modulelonPrelonselonntation)))
             }
-        }.toSeq
+        }.toSelonq
       }
-    } else {
+    } elonlselon {
       Stitch.Nil
     }
   }

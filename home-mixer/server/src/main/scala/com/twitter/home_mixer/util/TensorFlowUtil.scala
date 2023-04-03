@@ -1,32 +1,32 @@
-package com.twitter.home_mixer.util
+packagelon com.twittelonr.homelon_mixelonr.util
 
-import com.twitter.ml.api.thriftscala.FloatTensor
-import com.twitter.ml.api.util.BufferToIterators.RichFloatBuffer
-import java.nio.ByteBuffer
-import java.nio.ByteOrder
+import com.twittelonr.ml.api.thriftscala.FloatTelonnsor
+import com.twittelonr.ml.api.util.BuffelonrToItelonrators.RichFloatBuffelonr
+import java.nio.BytelonBuffelonr
+import java.nio.BytelonOrdelonr
 
 /**
- * Contains functionality to transform data records and Tensors
+ * Contains functionality to transform data reloncords and Telonnsors
  */
 
-object TensorFlowUtil {
+objelonct TelonnsorFlowUtil {
 
-  private def skipEmbeddingBBHeader(bb: ByteBuffer): ByteBuffer = {
-    val bb_copy = bb.duplicate()
-    bb_copy.getLong()
+  privatelon delonf skipelonmbelonddingBBHelonadelonr(bb: BytelonBuffelonr): BytelonBuffelonr = {
+    val bb_copy = bb.duplicatelon()
+    bb_copy.gelontLong()
     bb_copy
   }
 
-  private def byteBufferToFloatIterator(
-    bb: ByteBuffer
-  ): Iterator[Float] = {
-    bb.order(ByteOrder.LITTLE_ENDIAN).asFloatBuffer.iterator
+  privatelon delonf bytelonBuffelonrToFloatItelonrator(
+    bb: BytelonBuffelonr
+  ): Itelonrator[Float] = {
+    bb.ordelonr(BytelonOrdelonr.LITTLelon_elonNDIAN).asFloatBuffelonr.itelonrator
   }
 
-  def embeddingByteBufferToFloatTensor(
-    bb: ByteBuffer
-  ): FloatTensor = {
-    val bb_content = skipEmbeddingBBHeader(bb)
-    FloatTensor(byteBufferToFloatIterator(bb_content).map(_.toDouble).toList)
+  delonf elonmbelonddingBytelonBuffelonrToFloatTelonnsor(
+    bb: BytelonBuffelonr
+  ): FloatTelonnsor = {
+    val bb_contelonnt = skipelonmbelonddingBBHelonadelonr(bb)
+    FloatTelonnsor(bytelonBuffelonrToFloatItelonrator(bb_contelonnt).map(_.toDoublelon).toList)
   }
 }

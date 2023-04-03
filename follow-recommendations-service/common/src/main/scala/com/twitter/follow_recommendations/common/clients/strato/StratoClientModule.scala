@@ -1,249 +1,249 @@
-package com.twitter.follow_recommendations.common.clients.strato
+packagelon com.twittelonr.follow_reloncommelonndations.common.clielonnts.strato
 
-import com.google.inject.name.Named
-import com.google.inject.Provides
-import com.google.inject.Singleton
-import com.twitter.conversions.DurationOps._
-import com.twitter.core_workflows.user_model.thriftscala.CondensedUserState
-import com.twitter.search.account_search.extended_network.thriftscala.ExtendedNetworkUserKey
-import com.twitter.search.account_search.extended_network.thriftscala.ExtendedNetworkUserVal
-import com.twitter.finagle.ThriftMux
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.thrift.Protocols
-import com.twitter.follow_recommendations.common.constants.GuiceNamedConstants
-import com.twitter.follow_recommendations.common.constants.ServiceConstants._
-import com.twitter.frigate.data_pipeline.candidate_generation.thriftscala.LatestEvents
-import com.twitter.hermit.candidate.thriftscala.{Candidates => HermitCandidates}
-import com.twitter.hermit.pop_geo.thriftscala.PopUsersInPlace
-import com.twitter.onboarding.relevance.relatable_accounts.thriftscala.RelatableAccounts
-import com.twitter.inject.TwitterModule
-import com.twitter.onboarding.relevance.candidates.thriftscala.InterestBasedUserRecommendations
-import com.twitter.onboarding.relevance.candidates.thriftscala.UTTInterest
-import com.twitter.onboarding.relevance.store.thriftscala.WhoToFollowDismissEventDetails
-import com.twitter.recos.user_user_graph.thriftscala.RecommendUserRequest
-import com.twitter.recos.user_user_graph.thriftscala.RecommendUserResponse
-import com.twitter.service.metastore.gen.thriftscala.UserRecommendabilityFeatures
-import com.twitter.strato.catalog.Scan.Slice
-import com.twitter.strato.client.Strato.{Client => StratoClient}
-import com.twitter.strato.client.Client
-import com.twitter.strato.client.Fetcher
-import com.twitter.strato.client.Scanner
-import com.twitter.strato.thrift.ScroogeConvImplicits._
-import com.twitter.wtf.candidate.thriftscala.CandidateSeq
-import com.twitter.wtf.ml.thriftscala.CandidateFeatures
-import com.twitter.wtf.real_time_interaction_graph.thriftscala.Interaction
-import com.twitter.wtf.triangular_loop.thriftscala.{Candidates => TriangularLoopCandidates}
-import com.twitter.strato.opcontext.Attribution._
+import com.googlelon.injelonct.namelon.Namelond
+import com.googlelon.injelonct.Providelons
+import com.googlelon.injelonct.Singlelonton
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.corelon_workflows.uselonr_modelonl.thriftscala.CondelonnselondUselonrStatelon
+import com.twittelonr.selonarch.account_selonarch.elonxtelonndelond_nelontwork.thriftscala.elonxtelonndelondNelontworkUselonrKelony
+import com.twittelonr.selonarch.account_selonarch.elonxtelonndelond_nelontwork.thriftscala.elonxtelonndelondNelontworkUselonrVal
+import com.twittelonr.finaglelon.ThriftMux
+import com.twittelonr.finaglelon.mtls.authelonntication.SelonrvicelonIdelonntifielonr
+import com.twittelonr.finaglelon.thrift.Protocols
+import com.twittelonr.follow_reloncommelonndations.common.constants.GuicelonNamelondConstants
+import com.twittelonr.follow_reloncommelonndations.common.constants.SelonrvicelonConstants._
+import com.twittelonr.frigatelon.data_pipelonlinelon.candidatelon_gelonnelonration.thriftscala.Latelonstelonvelonnts
+import com.twittelonr.helonrmit.candidatelon.thriftscala.{Candidatelons => HelonrmitCandidatelons}
+import com.twittelonr.helonrmit.pop_gelono.thriftscala.PopUselonrsInPlacelon
+import com.twittelonr.onboarding.relonlelonvancelon.relonlatablelon_accounts.thriftscala.RelonlatablelonAccounts
+import com.twittelonr.injelonct.TwittelonrModulelon
+import com.twittelonr.onboarding.relonlelonvancelon.candidatelons.thriftscala.IntelonrelonstBaselondUselonrReloncommelonndations
+import com.twittelonr.onboarding.relonlelonvancelon.candidatelons.thriftscala.UTTIntelonrelonst
+import com.twittelonr.onboarding.relonlelonvancelon.storelon.thriftscala.WhoToFollowDismisselonvelonntDelontails
+import com.twittelonr.reloncos.uselonr_uselonr_graph.thriftscala.ReloncommelonndUselonrRelonquelonst
+import com.twittelonr.reloncos.uselonr_uselonr_graph.thriftscala.ReloncommelonndUselonrRelonsponselon
+import com.twittelonr.selonrvicelon.melontastorelon.gelonn.thriftscala.UselonrReloncommelonndabilityFelonaturelons
+import com.twittelonr.strato.catalog.Scan.Slicelon
+import com.twittelonr.strato.clielonnt.Strato.{Clielonnt => StratoClielonnt}
+import com.twittelonr.strato.clielonnt.Clielonnt
+import com.twittelonr.strato.clielonnt.Felontchelonr
+import com.twittelonr.strato.clielonnt.Scannelonr
+import com.twittelonr.strato.thrift.ScroogelonConvImplicits._
+import com.twittelonr.wtf.candidatelon.thriftscala.CandidatelonSelonq
+import com.twittelonr.wtf.ml.thriftscala.CandidatelonFelonaturelons
+import com.twittelonr.wtf.relonal_timelon_intelonraction_graph.thriftscala.Intelonraction
+import com.twittelonr.wtf.triangular_loop.thriftscala.{Candidatelons => TriangularLoopCandidatelons}
+import com.twittelonr.strato.opcontelonxt.Attribution._
 
-object StratoClientModule extends TwitterModule {
+objelonct StratoClielonntModulelon elonxtelonnds TwittelonrModulelon {
 
   // column paths
-  val CosineFollowPath = "recommendations/similarity/similarUsersByFollowGraph.User"
-  val CosineListPath = "recommendations/similarity/similarUsersByListGraph.User"
-  val CuratedCandidatesPath = "onboarding/curatedAccounts"
-  val CuratedFilteredAccountsPath = "onboarding/filteredAccountsFromRecommendations"
-  val PopUsersInPlacePath = "onboarding/userrecs/popUsersInPlace"
-  val ProfileSidebarBlacklistPath = "recommendations/hermit/profile-sidebar-blacklist"
-  val RealTimeInteractionsPath = "hmli/realTimeInteractions"
-  val SimsPath = "recommendations/similarity/similarUsersBySims.User"
-  val DBV2SimsPath = "onboarding/userrecs/newSims.User"
-  val TriangularLoopsPath = "onboarding/userrecs/triangularLoops.User"
-  val TwoHopRandomWalkPath = "onboarding/userrecs/twoHopRandomWalk.User"
-  val UserRecommendabilityPath = "onboarding/userRecommendabilityWithLongKeys.User"
-  val UTTAccountRecommendationsPath = "onboarding/userrecs/utt_account_recommendations"
-  val UttSeedAccountsRecommendationPath = "onboarding/userrecs/utt_seed_accounts"
-  val UserStatePath = "onboarding/userState.User"
-  val WTFPostNuxFeaturesPath = "ml/featureStore/onboarding/wtfPostNuxFeatures.User"
-  val ElectionCandidatesPath = "onboarding/electionAccounts"
-  val UserUserGraphPath = "recommendations/userUserGraph"
-  val WtfDissmissEventsPath = "onboarding/wtfDismissEvents"
-  val RelatableAccountsPath = "onboarding/userrecs/relatableAccounts"
-  val ExtendedNetworkCandidatesPath = "search/account_search/extendedNetworkCandidatesMH"
-  val LabeledNotificationPath = "frigate/magicrecs/labeledPushRecsAggregated.User"
+  val CosinelonFollowPath = "reloncommelonndations/similarity/similarUselonrsByFollowGraph.Uselonr"
+  val CosinelonListPath = "reloncommelonndations/similarity/similarUselonrsByListGraph.Uselonr"
+  val CuratelondCandidatelonsPath = "onboarding/curatelondAccounts"
+  val CuratelondFiltelonrelondAccountsPath = "onboarding/filtelonrelondAccountsFromReloncommelonndations"
+  val PopUselonrsInPlacelonPath = "onboarding/uselonrreloncs/popUselonrsInPlacelon"
+  val ProfilelonSidelonbarBlacklistPath = "reloncommelonndations/helonrmit/profilelon-sidelonbar-blacklist"
+  val RelonalTimelonIntelonractionsPath = "hmli/relonalTimelonIntelonractions"
+  val SimsPath = "reloncommelonndations/similarity/similarUselonrsBySims.Uselonr"
+  val DBV2SimsPath = "onboarding/uselonrreloncs/nelonwSims.Uselonr"
+  val TriangularLoopsPath = "onboarding/uselonrreloncs/triangularLoops.Uselonr"
+  val TwoHopRandomWalkPath = "onboarding/uselonrreloncs/twoHopRandomWalk.Uselonr"
+  val UselonrReloncommelonndabilityPath = "onboarding/uselonrReloncommelonndabilityWithLongKelonys.Uselonr"
+  val UTTAccountReloncommelonndationsPath = "onboarding/uselonrreloncs/utt_account_reloncommelonndations"
+  val UttSelonelondAccountsReloncommelonndationPath = "onboarding/uselonrreloncs/utt_selonelond_accounts"
+  val UselonrStatelonPath = "onboarding/uselonrStatelon.Uselonr"
+  val WTFPostNuxFelonaturelonsPath = "ml/felonaturelonStorelon/onboarding/wtfPostNuxFelonaturelons.Uselonr"
+  val elonlelonctionCandidatelonsPath = "onboarding/elonlelonctionAccounts"
+  val UselonrUselonrGraphPath = "reloncommelonndations/uselonrUselonrGraph"
+  val WtfDissmisselonvelonntsPath = "onboarding/wtfDismisselonvelonnts"
+  val RelonlatablelonAccountsPath = "onboarding/uselonrreloncs/relonlatablelonAccounts"
+  val elonxtelonndelondNelontworkCandidatelonsPath = "selonarch/account_selonarch/elonxtelonndelondNelontworkCandidatelonsMH"
+  val LabelonlelondNotificationPath = "frigatelon/magicreloncs/labelonlelondPushReloncsAggrelongatelond.Uselonr"
 
-  @Provides
-  @Singleton
-  def stratoClient(serviceIdentifier: ServiceIdentifier): Client = {
-    val timeoutBudget = 500.milliseconds
-    StratoClient(
-      ThriftMux.client
-        .withRequestTimeout(timeoutBudget)
+  @Providelons
+  @Singlelonton
+  delonf stratoClielonnt(selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr): Clielonnt = {
+    val timelonoutBudgelont = 500.milliselonconds
+    StratoClielonnt(
+      ThriftMux.clielonnt
+        .withRelonquelonstTimelonout(timelonoutBudgelont)
         .withProtocolFactory(Protocols.binaryFactory(
-          stringLengthLimit = StringLengthLimit,
-          containerLengthLimit = ContainerLengthLimit)))
-      .withMutualTls(serviceIdentifier)
+          stringLelonngthLimit = StringLelonngthLimit,
+          containelonrLelonngthLimit = ContainelonrLelonngthLimit)))
+      .withMutualTls(selonrvicelonIdelonntifielonr)
       .build()
   }
 
-  // add strato putters, fetchers, scanners below:
-  @Provides
-  @Singleton
-  @Named(GuiceNamedConstants.COSINE_FOLLOW_FETCHER)
-  def cosineFollowFetcher(stratoClient: Client): Fetcher[Long, Unit, HermitCandidates] =
-    stratoClient.fetcher[Long, Unit, HermitCandidates](CosineFollowPath)
+  // add strato puttelonrs, felontchelonrs, scannelonrs belonlow:
+  @Providelons
+  @Singlelonton
+  @Namelond(GuicelonNamelondConstants.COSINelon_FOLLOW_FelonTCHelonR)
+  delonf cosinelonFollowFelontchelonr(stratoClielonnt: Clielonnt): Felontchelonr[Long, Unit, HelonrmitCandidatelons] =
+    stratoClielonnt.felontchelonr[Long, Unit, HelonrmitCandidatelons](CosinelonFollowPath)
 
-  @Provides
-  @Singleton
-  @Named(GuiceNamedConstants.COSINE_LIST_FETCHER)
-  def cosineListFetcher(stratoClient: Client): Fetcher[Long, Unit, HermitCandidates] =
-    stratoClient.fetcher[Long, Unit, HermitCandidates](CosineListPath)
+  @Providelons
+  @Singlelonton
+  @Namelond(GuicelonNamelondConstants.COSINelon_LIST_FelonTCHelonR)
+  delonf cosinelonListFelontchelonr(stratoClielonnt: Clielonnt): Felontchelonr[Long, Unit, HelonrmitCandidatelons] =
+    stratoClielonnt.felontchelonr[Long, Unit, HelonrmitCandidatelons](CosinelonListPath)
 
-  @Provides
-  @Singleton
-  @Named(GuiceNamedConstants.CURATED_COMPETITOR_ACCOUNTS_FETCHER)
-  def curatedBlacklistedAccountsFetcher(stratoClient: Client): Fetcher[String, Unit, Seq[Long]] =
-    stratoClient.fetcher[String, Unit, Seq[Long]](CuratedFilteredAccountsPath)
+  @Providelons
+  @Singlelonton
+  @Namelond(GuicelonNamelondConstants.CURATelonD_COMPelonTITOR_ACCOUNTS_FelonTCHelonR)
+  delonf curatelondBlacklistelondAccountsFelontchelonr(stratoClielonnt: Clielonnt): Felontchelonr[String, Unit, Selonq[Long]] =
+    stratoClielonnt.felontchelonr[String, Unit, Selonq[Long]](CuratelondFiltelonrelondAccountsPath)
 
-  @Provides
-  @Singleton
-  @Named(GuiceNamedConstants.CURATED_CANDIDATES_FETCHER)
-  def curatedCandidatesFetcher(stratoClient: Client): Fetcher[String, Unit, Seq[Long]] =
-    stratoClient.fetcher[String, Unit, Seq[Long]](CuratedCandidatesPath)
+  @Providelons
+  @Singlelonton
+  @Namelond(GuicelonNamelondConstants.CURATelonD_CANDIDATelonS_FelonTCHelonR)
+  delonf curatelondCandidatelonsFelontchelonr(stratoClielonnt: Clielonnt): Felontchelonr[String, Unit, Selonq[Long]] =
+    stratoClielonnt.felontchelonr[String, Unit, Selonq[Long]](CuratelondCandidatelonsPath)
 
-  @Provides
-  @Singleton
-  @Named(GuiceNamedConstants.POP_USERS_IN_PLACE_FETCHER)
-  def popUsersInPlaceFetcher(stratoClient: Client): Fetcher[String, Unit, PopUsersInPlace] =
-    stratoClient.fetcher[String, Unit, PopUsersInPlace](PopUsersInPlacePath)
+  @Providelons
+  @Singlelonton
+  @Namelond(GuicelonNamelondConstants.POP_USelonRS_IN_PLACelon_FelonTCHelonR)
+  delonf popUselonrsInPlacelonFelontchelonr(stratoClielonnt: Clielonnt): Felontchelonr[String, Unit, PopUselonrsInPlacelon] =
+    stratoClielonnt.felontchelonr[String, Unit, PopUselonrsInPlacelon](PopUselonrsInPlacelonPath)
 
-  @Provides
-  @Singleton
-  @Named(GuiceNamedConstants.RELATABLE_ACCOUNTS_FETCHER)
-  def relatableAccountsFetcher(stratoClient: Client): Fetcher[String, Unit, RelatableAccounts] =
-    stratoClient.fetcher[String, Unit, RelatableAccounts](RelatableAccountsPath)
+  @Providelons
+  @Singlelonton
+  @Namelond(GuicelonNamelondConstants.RelonLATABLelon_ACCOUNTS_FelonTCHelonR)
+  delonf relonlatablelonAccountsFelontchelonr(stratoClielonnt: Clielonnt): Felontchelonr[String, Unit, RelonlatablelonAccounts] =
+    stratoClielonnt.felontchelonr[String, Unit, RelonlatablelonAccounts](RelonlatablelonAccountsPath)
 
-  @Provides
-  @Singleton
-  @Named(GuiceNamedConstants.PROFILE_SIDEBAR_BLACKLIST_SCANNER)
-  def profileSidebarBlacklistScanner(
-    stratoClient: Client
-  ): Scanner[(Long, Slice[Long]), Unit, (Long, Long), Unit] =
-    stratoClient.scanner[(Long, Slice[Long]), Unit, (Long, Long), Unit](ProfileSidebarBlacklistPath)
+  @Providelons
+  @Singlelonton
+  @Namelond(GuicelonNamelondConstants.PROFILelon_SIDelonBAR_BLACKLIST_SCANNelonR)
+  delonf profilelonSidelonbarBlacklistScannelonr(
+    stratoClielonnt: Clielonnt
+  ): Scannelonr[(Long, Slicelon[Long]), Unit, (Long, Long), Unit] =
+    stratoClielonnt.scannelonr[(Long, Slicelon[Long]), Unit, (Long, Long), Unit](ProfilelonSidelonbarBlacklistPath)
 
-  @Provides
-  @Singleton
-  @Named(GuiceNamedConstants.REAL_TIME_INTERACTIONS_FETCHER)
-  def realTimeInteractionsFetcher(
-    stratoClient: Client
-  ): Fetcher[(Long, Long), Unit, Seq[Interaction]] =
-    stratoClient.fetcher[(Long, Long), Unit, Seq[Interaction]](RealTimeInteractionsPath)
+  @Providelons
+  @Singlelonton
+  @Namelond(GuicelonNamelondConstants.RelonAL_TIMelon_INTelonRACTIONS_FelonTCHelonR)
+  delonf relonalTimelonIntelonractionsFelontchelonr(
+    stratoClielonnt: Clielonnt
+  ): Felontchelonr[(Long, Long), Unit, Selonq[Intelonraction]] =
+    stratoClielonnt.felontchelonr[(Long, Long), Unit, Selonq[Intelonraction]](RelonalTimelonIntelonractionsPath)
 
-  @Provides
-  @Singleton
-  @Named(GuiceNamedConstants.SIMS_FETCHER)
-  def simsFetcher(stratoClient: Client): Fetcher[Long, Unit, HermitCandidates] =
-    stratoClient.fetcher[Long, Unit, HermitCandidates](SimsPath)
+  @Providelons
+  @Singlelonton
+  @Namelond(GuicelonNamelondConstants.SIMS_FelonTCHelonR)
+  delonf simsFelontchelonr(stratoClielonnt: Clielonnt): Felontchelonr[Long, Unit, HelonrmitCandidatelons] =
+    stratoClielonnt.felontchelonr[Long, Unit, HelonrmitCandidatelons](SimsPath)
 
-  @Provides
-  @Singleton
-  @Named(GuiceNamedConstants.DBV2_SIMS_FETCHER)
-  def dbv2SimsFetcher(stratoClient: Client): Fetcher[Long, Unit, HermitCandidates] =
-    stratoClient.fetcher[Long, Unit, HermitCandidates](DBV2SimsPath)
+  @Providelons
+  @Singlelonton
+  @Namelond(GuicelonNamelondConstants.DBV2_SIMS_FelonTCHelonR)
+  delonf dbv2SimsFelontchelonr(stratoClielonnt: Clielonnt): Felontchelonr[Long, Unit, HelonrmitCandidatelons] =
+    stratoClielonnt.felontchelonr[Long, Unit, HelonrmitCandidatelons](DBV2SimsPath)
 
-  @Provides
-  @Singleton
-  @Named(GuiceNamedConstants.TRIANGULAR_LOOPS_FETCHER)
-  def triangularLoopsFetcher(stratoClient: Client): Fetcher[Long, Unit, TriangularLoopCandidates] =
-    stratoClient.fetcher[Long, Unit, TriangularLoopCandidates](TriangularLoopsPath)
+  @Providelons
+  @Singlelonton
+  @Namelond(GuicelonNamelondConstants.TRIANGULAR_LOOPS_FelonTCHelonR)
+  delonf triangularLoopsFelontchelonr(stratoClielonnt: Clielonnt): Felontchelonr[Long, Unit, TriangularLoopCandidatelons] =
+    stratoClielonnt.felontchelonr[Long, Unit, TriangularLoopCandidatelons](TriangularLoopsPath)
 
-  @Provides
-  @Singleton
-  @Named(GuiceNamedConstants.TWO_HOP_RANDOM_WALK_FETCHER)
-  def twoHopRandomWalkFetcher(stratoClient: Client): Fetcher[Long, Unit, CandidateSeq] =
-    stratoClient.fetcher[Long, Unit, CandidateSeq](TwoHopRandomWalkPath)
+  @Providelons
+  @Singlelonton
+  @Namelond(GuicelonNamelondConstants.TWO_HOP_RANDOM_WALK_FelonTCHelonR)
+  delonf twoHopRandomWalkFelontchelonr(stratoClielonnt: Clielonnt): Felontchelonr[Long, Unit, CandidatelonSelonq] =
+    stratoClielonnt.felontchelonr[Long, Unit, CandidatelonSelonq](TwoHopRandomWalkPath)
 
-  @Provides
-  @Singleton
-  @Named(GuiceNamedConstants.USER_RECOMMENDABILITY_FETCHER)
-  def userRecommendabilityFetcher(
-    stratoClient: Client
-  ): Fetcher[Long, Unit, UserRecommendabilityFeatures] =
-    stratoClient.fetcher[Long, Unit, UserRecommendabilityFeatures](UserRecommendabilityPath)
+  @Providelons
+  @Singlelonton
+  @Namelond(GuicelonNamelondConstants.USelonR_RelonCOMMelonNDABILITY_FelonTCHelonR)
+  delonf uselonrReloncommelonndabilityFelontchelonr(
+    stratoClielonnt: Clielonnt
+  ): Felontchelonr[Long, Unit, UselonrReloncommelonndabilityFelonaturelons] =
+    stratoClielonnt.felontchelonr[Long, Unit, UselonrReloncommelonndabilityFelonaturelons](UselonrReloncommelonndabilityPath)
 
-  @Provides
-  @Singleton
-  @Named(GuiceNamedConstants.USER_STATE_FETCHER)
-  def userStateFetcher(stratoClient: Client): Fetcher[Long, Unit, CondensedUserState] =
-    stratoClient.fetcher[Long, Unit, CondensedUserState](UserStatePath)
+  @Providelons
+  @Singlelonton
+  @Namelond(GuicelonNamelondConstants.USelonR_STATelon_FelonTCHelonR)
+  delonf uselonrStatelonFelontchelonr(stratoClielonnt: Clielonnt): Felontchelonr[Long, Unit, CondelonnselondUselonrStatelon] =
+    stratoClielonnt.felontchelonr[Long, Unit, CondelonnselondUselonrStatelon](UselonrStatelonPath)
 
-  @Provides
-  @Singleton
-  @Named(GuiceNamedConstants.UTT_ACCOUNT_RECOMMENDATIONS_FETCHER)
-  def uttAccountRecommendationsFetcher(
-    stratoClient: Client
-  ): Fetcher[UTTInterest, Unit, InterestBasedUserRecommendations] =
-    stratoClient.fetcher[UTTInterest, Unit, InterestBasedUserRecommendations](
-      UTTAccountRecommendationsPath)
+  @Providelons
+  @Singlelonton
+  @Namelond(GuicelonNamelondConstants.UTT_ACCOUNT_RelonCOMMelonNDATIONS_FelonTCHelonR)
+  delonf uttAccountReloncommelonndationsFelontchelonr(
+    stratoClielonnt: Clielonnt
+  ): Felontchelonr[UTTIntelonrelonst, Unit, IntelonrelonstBaselondUselonrReloncommelonndations] =
+    stratoClielonnt.felontchelonr[UTTIntelonrelonst, Unit, IntelonrelonstBaselondUselonrReloncommelonndations](
+      UTTAccountReloncommelonndationsPath)
 
-  @Provides
-  @Singleton
-  @Named(GuiceNamedConstants.UTT_SEED_ACCOUNTS_FETCHER)
-  def uttSeedAccountRecommendationsFetcher(
-    stratoClient: Client
-  ): Fetcher[UTTInterest, Unit, InterestBasedUserRecommendations] =
-    stratoClient.fetcher[UTTInterest, Unit, InterestBasedUserRecommendations](
-      UttSeedAccountsRecommendationPath)
+  @Providelons
+  @Singlelonton
+  @Namelond(GuicelonNamelondConstants.UTT_SelonelonD_ACCOUNTS_FelonTCHelonR)
+  delonf uttSelonelondAccountReloncommelonndationsFelontchelonr(
+    stratoClielonnt: Clielonnt
+  ): Felontchelonr[UTTIntelonrelonst, Unit, IntelonrelonstBaselondUselonrReloncommelonndations] =
+    stratoClielonnt.felontchelonr[UTTIntelonrelonst, Unit, IntelonrelonstBaselondUselonrReloncommelonndations](
+      UttSelonelondAccountsReloncommelonndationPath)
 
-  @Provides
-  @Singleton
-  @Named(GuiceNamedConstants.ELECTION_CANDIDATES_FETCHER)
-  def electionCandidatesFetcher(stratoClient: Client): Fetcher[String, Unit, Seq[Long]] =
-    stratoClient.fetcher[String, Unit, Seq[Long]](ElectionCandidatesPath)
+  @Providelons
+  @Singlelonton
+  @Namelond(GuicelonNamelondConstants.elonLelonCTION_CANDIDATelonS_FelonTCHelonR)
+  delonf elonlelonctionCandidatelonsFelontchelonr(stratoClielonnt: Clielonnt): Felontchelonr[String, Unit, Selonq[Long]] =
+    stratoClielonnt.felontchelonr[String, Unit, Selonq[Long]](elonlelonctionCandidatelonsPath)
 
-  @Provides
-  @Singleton
-  @Named(GuiceNamedConstants.USER_USER_GRAPH_FETCHER)
-  def userUserGraphFetcher(
-    stratoClient: Client
-  ): Fetcher[RecommendUserRequest, Unit, RecommendUserResponse] =
-    stratoClient.fetcher[RecommendUserRequest, Unit, RecommendUserResponse](UserUserGraphPath)
+  @Providelons
+  @Singlelonton
+  @Namelond(GuicelonNamelondConstants.USelonR_USelonR_GRAPH_FelonTCHelonR)
+  delonf uselonrUselonrGraphFelontchelonr(
+    stratoClielonnt: Clielonnt
+  ): Felontchelonr[ReloncommelonndUselonrRelonquelonst, Unit, ReloncommelonndUselonrRelonsponselon] =
+    stratoClielonnt.felontchelonr[ReloncommelonndUselonrRelonquelonst, Unit, ReloncommelonndUselonrRelonsponselon](UselonrUselonrGraphPath)
 
-  @Provides
-  @Singleton
-  @Named(GuiceNamedConstants.POST_NUX_WTF_FEATURES_FETCHER)
-  def wtfPostNuxFeaturesFetcher(stratoClient: Client): Fetcher[Long, Unit, CandidateFeatures] = {
+  @Providelons
+  @Singlelonton
+  @Namelond(GuicelonNamelondConstants.POST_NUX_WTF_FelonATURelonS_FelonTCHelonR)
+  delonf wtfPostNuxFelonaturelonsFelontchelonr(stratoClielonnt: Clielonnt): Felontchelonr[Long, Unit, CandidatelonFelonaturelons] = {
     val attribution = ManhattanAppId("starbuck", "wtf_starbuck")
-    stratoClient
-      .fetcher[Long, Unit, CandidateFeatures](WTFPostNuxFeaturesPath)
+    stratoClielonnt
+      .felontchelonr[Long, Unit, CandidatelonFelonaturelons](WTFPostNuxFelonaturelonsPath)
       .withAttribution(attribution)
   }
 
-  @Provides
-  @Singleton
-  @Named(GuiceNamedConstants.EXTENDED_NETWORK)
-  def extendedNetworkFetcher(
-    stratoClient: Client
-  ): Fetcher[ExtendedNetworkUserKey, Unit, ExtendedNetworkUserVal] = {
-    stratoClient
-      .fetcher[ExtendedNetworkUserKey, Unit, ExtendedNetworkUserVal](ExtendedNetworkCandidatesPath)
+  @Providelons
+  @Singlelonton
+  @Namelond(GuicelonNamelondConstants.elonXTelonNDelonD_NelonTWORK)
+  delonf elonxtelonndelondNelontworkFelontchelonr(
+    stratoClielonnt: Clielonnt
+  ): Felontchelonr[elonxtelonndelondNelontworkUselonrKelony, Unit, elonxtelonndelondNelontworkUselonrVal] = {
+    stratoClielonnt
+      .felontchelonr[elonxtelonndelondNelontworkUselonrKelony, Unit, elonxtelonndelondNelontworkUselonrVal](elonxtelonndelondNelontworkCandidatelonsPath)
   }
 
-  @Provides
-  @Singleton
-  @Named(GuiceNamedConstants.DISMISS_STORE_SCANNER)
-  def dismissStoreScanner(
-    stratoClient: Client
-  ): Scanner[
-    (Long, Slice[(Long, Long)]),
+  @Providelons
+  @Singlelonton
+  @Namelond(GuicelonNamelondConstants.DISMISS_STORelon_SCANNelonR)
+  delonf dismissStorelonScannelonr(
+    stratoClielonnt: Clielonnt
+  ): Scannelonr[
+    (Long, Slicelon[(Long, Long)]),
     Unit,
     (Long, (Long, Long)),
-    WhoToFollowDismissEventDetails
+    WhoToFollowDismisselonvelonntDelontails
   ] =
-    stratoClient.scanner[
-      (Long, Slice[(Long, Long)]), // PKEY: userId, LKEY: (-ts, candidateId)
+    stratoClielonnt.scannelonr[
+      (Long, Slicelon[(Long, Long)]), // PKelonY: uselonrId, LKelonY: (-ts, candidatelonId)
       Unit,
       (Long, (Long, Long)),
-      WhoToFollowDismissEventDetails
-    ](WtfDissmissEventsPath)
+      WhoToFollowDismisselonvelonntDelontails
+    ](WtfDissmisselonvelonntsPath)
 
-  @Provides
-  @Singleton
-  @Named(GuiceNamedConstants.LABELED_NOTIFICATION_FETCHER)
-  def labeledNotificationFetcher(
-    stratoClient: Client
-  ): Fetcher[Long, Unit, LatestEvents] = {
-    stratoClient
-      .fetcher[Long, Unit, LatestEvents](LabeledNotificationPath)
+  @Providelons
+  @Singlelonton
+  @Namelond(GuicelonNamelondConstants.LABelonLelonD_NOTIFICATION_FelonTCHelonR)
+  delonf labelonlelondNotificationFelontchelonr(
+    stratoClielonnt: Clielonnt
+  ): Felontchelonr[Long, Unit, Latelonstelonvelonnts] = {
+    stratoClielonnt
+      .felontchelonr[Long, Unit, Latelonstelonvelonnts](LabelonlelondNotificationPath)
   }
 
 }

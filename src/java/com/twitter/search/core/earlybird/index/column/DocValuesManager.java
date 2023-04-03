@@ -1,248 +1,248 @@
-package com.twitter.search.core.earlybird.index.column;
+packagelon com.twittelonr.selonarch.corelon.elonarlybird.indelonx.column;
 
-import java.io.IOException;
-import java.util.Iterator;
+import java.io.IOelonxcelonption;
+import java.util.Itelonrator;
 import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Selont;
+import java.util.concurrelonnt.ConcurrelonntHashMap;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
+import com.googlelon.common.baselon.Prelonconditions;
+import com.googlelon.common.collelonct.Maps;
+import com.googlelon.common.collelonct.Selonts;
 
-import com.twitter.search.common.schema.base.EarlybirdFieldType;
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.common.util.io.flushable.DataDeserializer;
-import com.twitter.search.common.util.io.flushable.DataSerializer;
-import com.twitter.search.common.util.io.flushable.FlushInfo;
-import com.twitter.search.common.util.io.flushable.Flushable;
-import com.twitter.search.core.earlybird.index.DocIDToTweetIDMapper;
+import com.twittelonr.selonarch.common.schelonma.baselon.elonarlybirdFielonldTypelon;
+import com.twittelonr.selonarch.common.schelonma.baselon.Schelonma;
+import com.twittelonr.selonarch.common.util.io.flushablelon.DataDelonselonrializelonr;
+import com.twittelonr.selonarch.common.util.io.flushablelon.DataSelonrializelonr;
+import com.twittelonr.selonarch.common.util.io.flushablelon.FlushInfo;
+import com.twittelonr.selonarch.common.util.io.flushablelon.Flushablelon;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.DocIDToTwelonelontIDMappelonr;
 
-public abstract class DocValuesManager implements Flushable {
-  protected final Schema schema;
-  protected final int segmentSize;
-  protected final ConcurrentHashMap<String, ColumnStrideFieldIndex> columnStrideFields;
+public abstract class DocValuelonsManagelonr implelonmelonnts Flushablelon {
+  protelonctelond final Schelonma schelonma;
+  protelonctelond final int selongmelonntSizelon;
+  protelonctelond final ConcurrelonntHashMap<String, ColumnStridelonFielonldIndelonx> columnStridelonFielonlds;
 
-  public DocValuesManager(Schema schema, int segmentSize) {
-    this(schema, segmentSize, new ConcurrentHashMap<>());
+  public DocValuelonsManagelonr(Schelonma schelonma, int selongmelonntSizelon) {
+    this(schelonma, selongmelonntSizelon, nelonw ConcurrelonntHashMap<>());
   }
 
-  protected DocValuesManager(Schema schema,
-                             int segmentSize,
-                             ConcurrentHashMap<String, ColumnStrideFieldIndex> columnStrideFields) {
-    this.schema = Preconditions.checkNotNull(schema);
-    this.segmentSize = segmentSize;
-    this.columnStrideFields = columnStrideFields;
+  protelonctelond DocValuelonsManagelonr(Schelonma schelonma,
+                             int selongmelonntSizelon,
+                             ConcurrelonntHashMap<String, ColumnStridelonFielonldIndelonx> columnStridelonFielonlds) {
+    this.schelonma = Prelonconditions.chelonckNotNull(schelonma);
+    this.selongmelonntSizelon = selongmelonntSizelon;
+    this.columnStridelonFielonlds = columnStridelonFielonlds;
   }
 
-  protected abstract ColumnStrideFieldIndex newByteCSF(String field);
-  protected abstract ColumnStrideFieldIndex newIntCSF(String field);
-  protected abstract ColumnStrideFieldIndex newLongCSF(String field);
-  protected abstract ColumnStrideFieldIndex newMultiIntCSF(String field, int numIntsPerField);
+  protelonctelond abstract ColumnStridelonFielonldIndelonx nelonwBytelonCSF(String fielonld);
+  protelonctelond abstract ColumnStridelonFielonldIndelonx nelonwIntCSF(String fielonld);
+  protelonctelond abstract ColumnStridelonFielonldIndelonx nelonwLongCSF(String fielonld);
+  protelonctelond abstract ColumnStridelonFielonldIndelonx nelonwMultiIntCSF(String fielonld, int numIntsPelonrFielonld);
 
   /**
-   * Optimize this doc values manager, and return a doc values manager a more compact and fast
-   * encoding for doc values (but that we can't add new doc IDs to).
+   * Optimizelon this doc valuelons managelonr, and relonturn a doc valuelons managelonr a morelon compact and fast
+   * elonncoding for doc valuelons (but that welon can't add nelonw doc IDs to).
    */
-  public abstract DocValuesManager optimize(
-      DocIDToTweetIDMapper originalTweetIdMapper,
-      DocIDToTweetIDMapper optimizedTweetIdMapper) throws IOException;
+  public abstract DocValuelonsManagelonr optimizelon(
+      DocIDToTwelonelontIDMappelonr originalTwelonelontIdMappelonr,
+      DocIDToTwelonelontIDMappelonr optimizelondTwelonelontIdMappelonr) throws IOelonxcelonption;
 
-  public Set<String> getDocValueNames() {
-    return columnStrideFields.keySet();
+  public Selont<String> gelontDocValuelonNamelons() {
+    relonturn columnStridelonFielonlds.kelonySelont();
   }
 
   /**
-   * Creates a new {@link ColumnStrideFieldIndex} for the given field and returns it.
+   * Crelonatelons a nelonw {@link ColumnStridelonFielonldIndelonx} for thelon givelonn fielonld and relonturns it.
    */
-  public ColumnStrideFieldIndex addColumnStrideField(String field, EarlybirdFieldType fieldType) {
-    // For CSF view fields, we will perform the same check on the base field when we try to create
-    // a ColumnStrideFieldIndex for them in newIntViewCSF().
-    if (!fieldType.isCsfViewField()) {
-      Preconditions.checkState(
-          fieldType.isCsfLoadIntoRam(), "Field %s is not loaded in RAM", field);
+  public ColumnStridelonFielonldIndelonx addColumnStridelonFielonld(String fielonld, elonarlybirdFielonldTypelon fielonldTypelon) {
+    // For CSF vielonw fielonlds, welon will pelonrform thelon samelon chelonck on thelon baselon fielonld whelonn welon try to crelonatelon
+    // a ColumnStridelonFielonldIndelonx for thelonm in nelonwIntVielonwCSF().
+    if (!fielonldTypelon.isCsfVielonwFielonld()) {
+      Prelonconditions.chelonckStatelon(
+          fielonldTypelon.isCsfLoadIntoRam(), "Fielonld %s is not loadelond in RAM", fielonld);
     }
 
-    if (columnStrideFields.containsKey(field)) {
-      return columnStrideFields.get(field);
+    if (columnStridelonFielonlds.containsKelony(fielonld)) {
+      relonturn columnStridelonFielonlds.gelont(fielonld);
     }
 
-    final ColumnStrideFieldIndex index;
-    switch (fieldType.getCsfType()) {
-      case BYTE:
-        index = newByteCSF(field);
-        break;
-      case INT:
-        if (fieldType.getCsfFixedLengthNumValuesPerDoc() > 1) {
-          index = newMultiIntCSF(field, fieldType.getCsfFixedLengthNumValuesPerDoc());
-        } else if (fieldType.isCsfViewField()) {
-          index = newIntViewCSF(field);
-        } else {
-          index = newIntCSF(field);
+    final ColumnStridelonFielonldIndelonx indelonx;
+    switch (fielonldTypelon.gelontCsfTypelon()) {
+      caselon BYTelon:
+        indelonx = nelonwBytelonCSF(fielonld);
+        brelonak;
+      caselon INT:
+        if (fielonldTypelon.gelontCsfFixelondLelonngthNumValuelonsPelonrDoc() > 1) {
+          indelonx = nelonwMultiIntCSF(fielonld, fielonldTypelon.gelontCsfFixelondLelonngthNumValuelonsPelonrDoc());
+        } elonlselon if (fielonldTypelon.isCsfVielonwFielonld()) {
+          indelonx = nelonwIntVielonwCSF(fielonld);
+        } elonlselon {
+          indelonx = nelonwIntCSF(fielonld);
         }
-        break;
-      case LONG:
-        index = newLongCSF(field);
-        break;
-      default:
-        throw new RuntimeException("Invalid CsfType.");
+        brelonak;
+      caselon LONG:
+        indelonx = nelonwLongCSF(fielonld);
+        brelonak;
+      delonfault:
+        throw nelonw Runtimelonelonxcelonption("Invalid CsfTypelon.");
     }
 
-    columnStrideFields.put(field, index);
-    return index;
+    columnStridelonFielonlds.put(fielonld, indelonx);
+    relonturn indelonx;
   }
 
-  protected ColumnStrideFieldIndex newIntViewCSF(String field) {
-    Schema.FieldInfo info = Preconditions.checkNotNull(schema.getFieldInfo(field));
-    Schema.FieldInfo baseFieldInfo = Preconditions.checkNotNull(
-        schema.getFieldInfo(info.getFieldType().getCsfViewBaseFieldId()));
+  protelonctelond ColumnStridelonFielonldIndelonx nelonwIntVielonwCSF(String fielonld) {
+    Schelonma.FielonldInfo info = Prelonconditions.chelonckNotNull(schelonma.gelontFielonldInfo(fielonld));
+    Schelonma.FielonldInfo baselonFielonldInfo = Prelonconditions.chelonckNotNull(
+        schelonma.gelontFielonldInfo(info.gelontFielonldTypelon().gelontCsfVielonwBaselonFielonldId()));
 
-    Preconditions.checkState(
-        baseFieldInfo.getFieldType().isCsfLoadIntoRam(),
-        "Field %s has a base field (%s) that is not loaded in RAM",
-        field, baseFieldInfo.getName());
+    Prelonconditions.chelonckStatelon(
+        baselonFielonldInfo.gelontFielonldTypelon().isCsfLoadIntoRam(),
+        "Fielonld %s has a baselon fielonld (%s) that is not loadelond in RAM",
+        fielonld, baselonFielonldInfo.gelontNamelon());
 
-    // We might not have a CSF for the base field yet.
-    ColumnStrideFieldIndex baseFieldIndex =
-        addColumnStrideField(baseFieldInfo.getName(), baseFieldInfo.getFieldType());
-    Preconditions.checkNotNull(baseFieldIndex);
-    Preconditions.checkState(baseFieldIndex instanceof AbstractColumnStrideMultiIntIndex);
-    return new ColumnStrideIntViewIndex(info, (AbstractColumnStrideMultiIntIndex) baseFieldIndex);
+    // Welon might not havelon a CSF for thelon baselon fielonld yelont.
+    ColumnStridelonFielonldIndelonx baselonFielonldIndelonx =
+        addColumnStridelonFielonld(baselonFielonldInfo.gelontNamelon(), baselonFielonldInfo.gelontFielonldTypelon());
+    Prelonconditions.chelonckNotNull(baselonFielonldIndelonx);
+    Prelonconditions.chelonckStatelon(baselonFielonldIndelonx instancelonof AbstractColumnStridelonMultiIntIndelonx);
+    relonturn nelonw ColumnStridelonIntVielonwIndelonx(info, (AbstractColumnStridelonMultiIntIndelonx) baselonFielonldIndelonx);
   }
 
   /**
-   * Returns the ColumnStrideFieldIndex instance for the given field.
+   * Relonturns thelon ColumnStridelonFielonldIndelonx instancelon for thelon givelonn fielonld.
    */
-  public ColumnStrideFieldIndex getColumnStrideFieldIndex(String field) {
-    ColumnStrideFieldIndex docValues = columnStrideFields.get(field);
-    if (docValues == null) {
-      Schema.FieldInfo info = schema.getFieldInfo(field);
-      if (info != null && info.getFieldType().isCsfDefaultValueSet()) {
-        return new ConstantColumnStrideFieldIndex(field, info.getFieldType().getCsfDefaultValue());
+  public ColumnStridelonFielonldIndelonx gelontColumnStridelonFielonldIndelonx(String fielonld) {
+    ColumnStridelonFielonldIndelonx docValuelons = columnStridelonFielonlds.gelont(fielonld);
+    if (docValuelons == null) {
+      Schelonma.FielonldInfo info = schelonma.gelontFielonldInfo(fielonld);
+      if (info != null && info.gelontFielonldTypelon().isCsfDelonfaultValuelonSelont()) {
+        relonturn nelonw ConstantColumnStridelonFielonldIndelonx(fielonld, info.gelontFielonldTypelon().gelontCsfDelonfaultValuelon());
       }
     }
 
-    return docValues;
+    relonturn docValuelons;
   }
 
-  private static final String CSF_INDEX_CLASS_NAME_PROP_NAME = "csfIndexClassName";
-  private static final String CSF_PROP_NAME = "column_stride_fields";
-  protected static final String MAX_SEGMENT_SIZE_PROP_NAME = "maxSegmentSize";
+  privatelon static final String CSF_INDelonX_CLASS_NAMelon_PROP_NAMelon = "csfIndelonxClassNamelon";
+  privatelon static final String CSF_PROP_NAMelon = "column_stridelon_fielonlds";
+  protelonctelond static final String MAX_SelonGMelonNT_SIZelon_PROP_NAMelon = "maxSelongmelonntSizelon";
 
-  private static Map<String, Set<Schema.FieldInfo>> getIntViewFields(Schema schema) {
-    Map<String, Set<Schema.FieldInfo>> intViewFields = Maps.newHashMap();
-    for (Schema.FieldInfo fieldInfo : schema.getFieldInfos()) {
-      if (fieldInfo.getFieldType().isCsfViewField()) {
-        Schema.FieldInfo baseFieldInfo = Preconditions.checkNotNull(
-            schema.getFieldInfo(fieldInfo.getFieldType().getCsfViewBaseFieldId()));
-        String baseFieldName = baseFieldInfo.getName();
-        Set<Schema.FieldInfo> intViewFieldsForBaseField =
-            intViewFields.computeIfAbsent(baseFieldName, k -> Sets.newHashSet());
-        intViewFieldsForBaseField.add(fieldInfo);
+  privatelon static Map<String, Selont<Schelonma.FielonldInfo>> gelontIntVielonwFielonlds(Schelonma schelonma) {
+    Map<String, Selont<Schelonma.FielonldInfo>> intVielonwFielonlds = Maps.nelonwHashMap();
+    for (Schelonma.FielonldInfo fielonldInfo : schelonma.gelontFielonldInfos()) {
+      if (fielonldInfo.gelontFielonldTypelon().isCsfVielonwFielonld()) {
+        Schelonma.FielonldInfo baselonFielonldInfo = Prelonconditions.chelonckNotNull(
+            schelonma.gelontFielonldInfo(fielonldInfo.gelontFielonldTypelon().gelontCsfVielonwBaselonFielonldId()));
+        String baselonFielonldNamelon = baselonFielonldInfo.gelontNamelon();
+        Selont<Schelonma.FielonldInfo> intVielonwFielonldsForBaselonFielonld =
+            intVielonwFielonlds.computelonIfAbselonnt(baselonFielonldNamelon, k -> Selonts.nelonwHashSelont());
+        intVielonwFielonldsForBaselonFielonld.add(fielonldInfo);
       }
     }
-    return intViewFields;
+    relonturn intVielonwFielonlds;
   }
 
-  public abstract static class FlushHandler extends Handler<DocValuesManager> {
-    private final Schema schema;
+  public abstract static class FlushHandlelonr elonxtelonnds Handlelonr<DocValuelonsManagelonr> {
+    privatelon final Schelonma schelonma;
 
-    public FlushHandler(Schema schema) {
-      this.schema = schema;
+    public FlushHandlelonr(Schelonma schelonma) {
+      this.schelonma = schelonma;
     }
 
-    public FlushHandler(DocValuesManager docValuesManager) {
-      super(docValuesManager);
-      this.schema = docValuesManager.schema;
+    public FlushHandlelonr(DocValuelonsManagelonr docValuelonsManagelonr) {
+      supelonr(docValuelonsManagelonr);
+      this.schelonma = docValuelonsManagelonr.schelonma;
     }
 
-    @Override
-    public void doFlush(FlushInfo flushInfo, DataSerializer out) throws IOException {
-      long startTime = getClock().nowMillis();
+    @Ovelonrridelon
+    public void doFlush(FlushInfo flushInfo, DataSelonrializelonr out) throws IOelonxcelonption {
+      long startTimelon = gelontClock().nowMillis();
 
-      DocValuesManager docValuesManager = getObjectToFlush();
-      flushInfo.addIntProperty(MAX_SEGMENT_SIZE_PROP_NAME, docValuesManager.segmentSize);
-      long sizeBeforeFlush = out.length();
-      FlushInfo csfProps = flushInfo.newSubProperties(CSF_PROP_NAME);
-      for (ColumnStrideFieldIndex csf : docValuesManager.columnStrideFields.values()) {
-      if (!(csf instanceof ColumnStrideIntViewIndex)) {
-        Preconditions.checkState(
-            csf instanceof Flushable,
-            "Cannot flush column stride field {} of type {}",
-            csf.getName(), csf.getClass().getCanonicalName());
-        FlushInfo info = csfProps.newSubProperties(csf.getName());
-        info.addStringProperty(CSF_INDEX_CLASS_NAME_PROP_NAME, csf.getClass().getCanonicalName());
-        ((Flushable) csf).getFlushHandler().flush(info, out);
+      DocValuelonsManagelonr docValuelonsManagelonr = gelontObjelonctToFlush();
+      flushInfo.addIntPropelonrty(MAX_SelonGMelonNT_SIZelon_PROP_NAMelon, docValuelonsManagelonr.selongmelonntSizelon);
+      long sizelonBelonforelonFlush = out.lelonngth();
+      FlushInfo csfProps = flushInfo.nelonwSubPropelonrtielons(CSF_PROP_NAMelon);
+      for (ColumnStridelonFielonldIndelonx csf : docValuelonsManagelonr.columnStridelonFielonlds.valuelons()) {
+      if (!(csf instancelonof ColumnStridelonIntVielonwIndelonx)) {
+        Prelonconditions.chelonckStatelon(
+            csf instancelonof Flushablelon,
+            "Cannot flush column stridelon fielonld {} of typelon {}",
+            csf.gelontNamelon(), csf.gelontClass().gelontCanonicalNamelon());
+        FlushInfo info = csfProps.nelonwSubPropelonrtielons(csf.gelontNamelon());
+        info.addStringPropelonrty(CSF_INDelonX_CLASS_NAMelon_PROP_NAMelon, csf.gelontClass().gelontCanonicalNamelon());
+        ((Flushablelon) csf).gelontFlushHandlelonr().flush(info, out);
       }
     }
-      csfProps.setSizeInBytes(out.length() - sizeBeforeFlush);
-      getFlushTimerStats().timerIncrement(getClock().nowMillis() - startTime);
+      csfProps.selontSizelonInBytelons(out.lelonngth() - sizelonBelonforelonFlush);
+      gelontFlushTimelonrStats().timelonrIncrelonmelonnt(gelontClock().nowMillis() - startTimelon);
     }
 
-    @Override
-    public DocValuesManager doLoad(FlushInfo flushInfo, DataDeserializer in)
-        throws IOException {
-      long startTime = getClock().nowMillis();
-      Map<String, Set<Schema.FieldInfo>> intViewFields = getIntViewFields(schema);
+    @Ovelonrridelon
+    public DocValuelonsManagelonr doLoad(FlushInfo flushInfo, DataDelonselonrializelonr in)
+        throws IOelonxcelonption {
+      long startTimelon = gelontClock().nowMillis();
+      Map<String, Selont<Schelonma.FielonldInfo>> intVielonwFielonlds = gelontIntVielonwFielonlds(schelonma);
 
-      FlushInfo csfProps = flushInfo.getSubProperties(CSF_PROP_NAME);
-      ConcurrentHashMap<String, ColumnStrideFieldIndex> columnStrideFields =
-          new ConcurrentHashMap<>();
+      FlushInfo csfProps = flushInfo.gelontSubPropelonrtielons(CSF_PROP_NAMelon);
+      ConcurrelonntHashMap<String, ColumnStridelonFielonldIndelonx> columnStridelonFielonlds =
+          nelonw ConcurrelonntHashMap<>();
 
-      Iterator<String> csfPropIter = csfProps.getKeyIterator();
-      while (csfPropIter.hasNext()) {
-        String fieldName = csfPropIter.next();
+      Itelonrator<String> csfPropItelonr = csfProps.gelontKelonyItelonrator();
+      whilelon (csfPropItelonr.hasNelonxt()) {
+        String fielonldNamelon = csfPropItelonr.nelonxt();
         try {
-          FlushInfo info = csfProps.getSubProperties(fieldName);
-          String className = info.getStringProperty(CSF_INDEX_CLASS_NAME_PROP_NAME);
-          Class<? extends ColumnStrideFieldIndex> fieldIndexType =
-              (Class<? extends ColumnStrideFieldIndex>) Class.forName(className);
-          Preconditions.checkNotNull(
-              fieldIndexType,
-              "Invalid field configuration: field " + fieldName + " not found in config.");
+          FlushInfo info = csfProps.gelontSubPropelonrtielons(fielonldNamelon);
+          String classNamelon = info.gelontStringPropelonrty(CSF_INDelonX_CLASS_NAMelon_PROP_NAMelon);
+          Class<? elonxtelonnds ColumnStridelonFielonldIndelonx> fielonldIndelonxTypelon =
+              (Class<? elonxtelonnds ColumnStridelonFielonldIndelonx>) Class.forNamelon(classNamelon);
+          Prelonconditions.chelonckNotNull(
+              fielonldIndelonxTypelon,
+              "Invalid fielonld configuration: fielonld " + fielonldNamelon + " not found in config.");
 
-          for (Class<?> c : fieldIndexType.getDeclaredClasses()) {
-            if (Handler.class.isAssignableFrom(c)) {
-              @SuppressWarnings("rawtypes")
-              Handler handler = (Handler) c.newInstance();
-              ColumnStrideFieldIndex index = (ColumnStrideFieldIndex) handler.load(
-                  csfProps.getSubProperties(fieldName), in);
-              columnStrideFields.put(fieldName, index);
+          for (Class<?> c : fielonldIndelonxTypelon.gelontDelonclarelondClasselons()) {
+            if (Handlelonr.class.isAssignablelonFrom(c)) {
+              @SupprelonssWarnings("rawtypelons")
+              Handlelonr handlelonr = (Handlelonr) c.nelonwInstancelon();
+              ColumnStridelonFielonldIndelonx indelonx = (ColumnStridelonFielonldIndelonx) handlelonr.load(
+                  csfProps.gelontSubPropelonrtielons(fielonldNamelon), in);
+              columnStridelonFielonlds.put(fielonldNamelon, indelonx);
 
-              // If this is a base field, create ColumnStrideIntViewIndex instances for all the
-              // view fields based on it.
-              if (index instanceof AbstractColumnStrideMultiIntIndex) {
-                AbstractColumnStrideMultiIntIndex multiIntIndex =
-                    (AbstractColumnStrideMultiIntIndex) index;
+              // If this is a baselon fielonld, crelonatelon ColumnStridelonIntVielonwIndelonx instancelons for all thelon
+              // vielonw fielonlds baselond on it.
+              if (indelonx instancelonof AbstractColumnStridelonMultiIntIndelonx) {
+                AbstractColumnStridelonMultiIntIndelonx multiIntIndelonx =
+                    (AbstractColumnStridelonMultiIntIndelonx) indelonx;
 
-                // We should have AbstractColumnStrideMultiIntIndex instances only for base fields
-                // and all our base fields have views defined on top of them.
-                for (Schema.FieldInfo intViewFieldInfo : intViewFields.get(fieldName)) {
-                  columnStrideFields.put(
-                      intViewFieldInfo.getName(),
-                      new ColumnStrideIntViewIndex(intViewFieldInfo, multiIntIndex));
+                // Welon should havelon AbstractColumnStridelonMultiIntIndelonx instancelons only for baselon fielonlds
+                // and all our baselon fielonlds havelon vielonws delonfinelond on top of thelonm.
+                for (Schelonma.FielonldInfo intVielonwFielonldInfo : intVielonwFielonlds.gelont(fielonldNamelon)) {
+                  columnStridelonFielonlds.put(
+                      intVielonwFielonldInfo.gelontNamelon(),
+                      nelonw ColumnStridelonIntVielonwIndelonx(intVielonwFielonldInfo, multiIntIndelonx));
                 }
               }
 
-              break;
+              brelonak;
             }
           }
-        } catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {
-          throw new IOException(
-              "Invalid field configuration for column stride field: " + fieldName, e);
+        } catch (ClassNotFoundelonxcelonption | IllelongalAccelonsselonxcelonption | Instantiationelonxcelonption elon) {
+          throw nelonw IOelonxcelonption(
+              "Invalid fielonld configuration for column stridelon fielonld: " + fielonldNamelon, elon);
         }
       }
-      getLoadTimerStats().timerIncrement(getClock().nowMillis() - startTime);
+      gelontLoadTimelonrStats().timelonrIncrelonmelonnt(gelontClock().nowMillis() - startTimelon);
 
-      return createDocValuesManager(
-          schema,
-          flushInfo.getIntProperty(MAX_SEGMENT_SIZE_PROP_NAME),
-          columnStrideFields);
+      relonturn crelonatelonDocValuelonsManagelonr(
+          schelonma,
+          flushInfo.gelontIntPropelonrty(MAX_SelonGMelonNT_SIZelon_PROP_NAMelon),
+          columnStridelonFielonlds);
     }
 
-    protected abstract DocValuesManager createDocValuesManager(
-        Schema docValuesSchema,
-        int maxSegmentSize,
-        ConcurrentHashMap<String, ColumnStrideFieldIndex> columnStrideFields);
+    protelonctelond abstract DocValuelonsManagelonr crelonatelonDocValuelonsManagelonr(
+        Schelonma docValuelonsSchelonma,
+        int maxSelongmelonntSizelon,
+        ConcurrelonntHashMap<String, ColumnStridelonFielonldIndelonx> columnStridelonFielonlds);
   }
 }

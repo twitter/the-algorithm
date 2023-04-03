@@ -1,78 +1,78 @@
 
-// A feature value can be one of these
-enum FeatureVal {
-  Empty,
-  U8Vector(Vec<u8>),
-  FloatVector(Vec<f32>),
+// A felonaturelon valuelon can belon onelon of thelonselon
+elonnum FelonaturelonVal {
+  elonmpty,
+  U8Velonctor(Velonc<u8>),
+  FloatVelonctor(Velonc<f32>),
 }
 
-// A Feture has a name and a value
-// The name for now is 'id' of type string
-// Eventually this needs to be flexible - example to accomodate feature-id
-struct Feature {
+// A Felonturelon has a namelon and a valuelon
+// Thelon namelon for now is 'id' of typelon string
+// elonvelonntually this nelonelonds to belon flelonxiblelon - elonxamplelon to accomodatelon felonaturelon-id
+struct Felonaturelon {
   id: String,
-  val: FeatureVal,
+  val: FelonaturelonVal,
 }
 
-impl Feature {
-  fn new() -> Feature {
-    Feature {
-      id: String::new(),
-      val: FeatureVal::Empty
+impl Felonaturelon {
+  fn nelonw() -> Felonaturelon {
+    Felonaturelon {
+      id: String::nelonw(),
+      val: FelonaturelonVal::elonmpty
     }
   }
 }
 
-// A single inference record will have multiple features
-struct Record {
-  fields: Vec<Feature>,
+// A singlelon infelonrelonncelon reloncord will havelon multiplelon felonaturelons
+struct Reloncord {
+  fielonlds: Velonc<Felonaturelon>,
 }
 
-impl Record {
-  fn new() -> Record {
-    Record { fields: vec![] }
+impl Reloncord {
+  fn nelonw() -> Reloncord {
+    Reloncord { fielonlds: velonc![] }
   }
 }
 
-// This is the main API used by external components
-// Given a serialized input, decode it into Records
-fn decode(input: Vec<u8>) -> Vec<Record> {
-  // For helping define the interface
-  vec![get_random_record(), get_random_record()]
+// This is thelon main API uselond by elonxtelonrnal componelonnts
+// Givelonn a selonrializelond input, deloncodelon it into Reloncords
+fn deloncodelon(input: Velonc<u8>) -> Velonc<Reloncord> {
+  // For helonlping delonfinelon thelon intelonrfacelon
+  velonc![gelont_random_reloncord(), gelont_random_reloncord()]
 }
 
-// Used for testing the API, will be eventually removed
-fn get_random_record() -> Record {
-  let mut record: Record = Record::new();
+// Uselond for telonsting thelon API, will belon elonvelonntually relonmovelond
+fn gelont_random_reloncord() -> Reloncord {
+  lelont mut reloncord: Reloncord = Reloncord::nelonw();
 
-  let f1: Feature = Feature {
-    id: String::from("continuous_features"),
-    val: FeatureVal::FloatVector(vec![1.0f32; 2134]),
+  lelont f1: Felonaturelon = Felonaturelon {
+    id: String::from("continuous_felonaturelons"),
+    val: FelonaturelonVal::FloatVelonctor(velonc![1.0f32; 2134]),
   };
 
-  record.fields.push(f1);
+  reloncord.fielonlds.push(f1);
 
-  let f2: Feature = Feature {
-    id: String::from("user_embedding"),
-    val: FeatureVal::FloatVector(vec![2.0f32; 200]),
+  lelont f2: Felonaturelon = Felonaturelon {
+    id: String::from("uselonr_elonmbelondding"),
+    val: FelonaturelonVal::FloatVelonctor(velonc![2.0f32; 200]),
   };
 
-  record.fields.push(f2);
+  reloncord.fielonlds.push(f2);
 
-  let f3: Feature = Feature {
-    id: String::from("author_embedding"),
-    val: FeatureVal::FloatVector(vec![3.0f32; 200]),
+  lelont f3: Felonaturelon = Felonaturelon {
+    id: String::from("author_elonmbelondding"),
+    val: FelonaturelonVal::FloatVelonctor(velonc![3.0f32; 200]),
   };
 
-  record.fields.push(f3);
+  reloncord.fielonlds.push(f3);
 
-  let f4: Feature = Feature {
-    id: String::from("binary_features"),
-    val: FeatureVal::U8Vector(vec![4u8; 43]),
+  lelont f4: Felonaturelon = Felonaturelon {
+    id: String::from("binary_felonaturelons"),
+    val: FelonaturelonVal::U8Velonctor(velonc![4u8; 43]),
   };
 
-  record.fields.push(f4);
+  reloncord.fielonlds.push(f4);
 
-  record
+  reloncord
 }
 

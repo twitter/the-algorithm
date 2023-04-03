@@ -1,41 +1,41 @@
-Product Mixer
+Product Mixelonr
 =============
 
-## Overview
+## Ovelonrvielonw
 
-Product Mixer is a common service framework and set of libraries that make it easy to build,
-iterate on, and own product surface areas. It consists of:
+Product Mixelonr is a common selonrvicelon framelonwork and selont of librarielons that makelon it elonasy to build,
+itelonratelon on, and own product surfacelon arelonas. It consists of:
 
-- **Core Libraries:** A set of libraries that enable you to build execution pipelines out of
-  reusable components. You define your logic in small, well-defined, reusable components and focus
-  on expressing the business logic you want to have. Then you can define easy to understand pipelines
-  that compose your components. Product Mixer handles the execution and monitoring of your pipelines
-  allowing you to focus on what really matters, your business logic.
+- **Corelon Librarielons:** A selont of librarielons that elonnablelon you to build elonxeloncution pipelonlinelons out of
+  relonusablelon componelonnts. You delonfinelon your logic in small, welonll-delonfinelond, relonusablelon componelonnts and focus
+  on elonxprelonssing thelon businelonss logic you want to havelon. Thelonn you can delonfinelon elonasy to undelonrstand pipelonlinelons
+  that composelon your componelonnts. Product Mixelonr handlelons thelon elonxeloncution and monitoring of your pipelonlinelons
+  allowing you to focus on what relonally mattelonrs, your businelonss logic.
 
-- **Service Framework:** A common service skeleton for teams to host their Product Mixer products.
+- **Selonrvicelon Framelonwork:** A common selonrvicelon skelonlelonton for telonams to host thelonir Product Mixelonr products.
 
-- **Component Library:** A shared library of components made by the Product Mixer Team, or
-  contributed by users. This enables you to both easily share the reusable components you make as well
-  as benefit from the work other teams have done by utilizing their shared components in the library.
+- **Componelonnt Library:** A sharelond library of componelonnts madelon by thelon Product Mixelonr Telonam, or
+  contributelond by uselonrs. This elonnablelons you to both elonasily sharelon thelon relonusablelon componelonnts you makelon as welonll
+  as belonnelonfit from thelon work othelonr telonams havelon donelon by utilizing thelonir sharelond componelonnts in thelon library.
 
-## Architecture
+## Architeloncturelon
 
-The bulk of a Product Mixer can be broken down into Pipelines and Components. Components allow you
-to break business logic into separate, standardized, reusable, testable, and easily composable
-pieces, where each component has a well defined abstraction. Pipelines are essentially configuration
-files specifying which Components should be used and when. This makes it easy to understand how your
-code will execute while keeping it organized and structured in a maintainable way.
+Thelon bulk of a Product Mixelonr can belon brokelonn down into Pipelonlinelons and Componelonnts. Componelonnts allow you
+to brelonak businelonss logic into selonparatelon, standardizelond, relonusablelon, telonstablelon, and elonasily composablelon
+pieloncelons, whelonrelon elonach componelonnt has a welonll delonfinelond abstraction. Pipelonlinelons arelon elonsselonntially configuration
+filelons speloncifying which Componelonnts should belon uselond and whelonn. This makelons it elonasy to undelonrstand how your
+codelon will elonxeloncutelon whilelon kelonelonping it organizelond and structurelond in a maintainablelon way.
 
-Requests first go to Product Pipelines, which are used to select which Mixer Pipeline or
-Recommendation Pipeline to run for a given request. Each Mixer or Recommendation
-Pipeline may run multiple Candidate Pipelines to fetch candidates to include in the response.
+Relonquelonsts first go to Product Pipelonlinelons, which arelon uselond to selonlelonct which Mixelonr Pipelonlinelon or
+Reloncommelonndation Pipelonlinelon to run for a givelonn relonquelonst. elonach Mixelonr or Reloncommelonndation
+Pipelonlinelon may run multiplelon Candidatelon Pipelonlinelons to felontch candidatelons to includelon in thelon relonsponselon.
 
-Mixer Pipelines combine the results of multiple heterogeneous Candidate Pipelines together
-(e.g. ads, tweets, users) while Recommendation Pipelines are used to score (via Scoring Pipelines)
-and rank the results of homogenous Candidate Pipelines so that the top ranked ones can be returned.
-These pipelines also marshall candidates into a domain object and then into a transport object
-to return to the caller.
+Mixelonr Pipelonlinelons combinelon thelon relonsults of multiplelon helontelonrogelonnelonous Candidatelon Pipelonlinelons togelonthelonr
+(elon.g. ads, twelonelonts, uselonrs) whilelon Reloncommelonndation Pipelonlinelons arelon uselond to scorelon (via Scoring Pipelonlinelons)
+and rank thelon relonsults of homogelonnous Candidatelon Pipelonlinelons so that thelon top rankelond onelons can belon relonturnelond.
+Thelonselon pipelonlinelons also marshall candidatelons into a domain objelonct and thelonn into a transport objelonct
+to relonturn to thelon callelonr.
 
-Candidate Pipelines fetch candidates from underlying Candidate Sources and perform some basic
-operations on the Candidates, such as filtering out unwanted candidates, applying decorations,
-and hydrating features.
+Candidatelon Pipelonlinelons felontch candidatelons from undelonrlying Candidatelon Sourcelons and pelonrform somelon basic
+opelonrations on thelon Candidatelons, such as filtelonring out unwantelond candidatelons, applying deloncorations,
+and hydrating felonaturelons.

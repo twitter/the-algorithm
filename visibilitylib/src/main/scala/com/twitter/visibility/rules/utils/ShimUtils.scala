@@ -1,60 +1,60 @@
-package com.twitter.visibility.rules.utils
+packagelon com.twittelonr.visibility.rulelons.utils
 
-import com.twitter.visibility.features.Feature
-import com.twitter.visibility.features.FeatureMap
-import com.twitter.visibility.models.ContentId
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.rules.Filtered
-import com.twitter.visibility.rules.Rule
-import com.twitter.visibility.rules.RuleBase
-import com.twitter.visibility.rules.RuleBase.RuleMap
-import com.twitter.visibility.rules.providers.ProvidedEvaluationContext
-import com.twitter.visibility.rules.providers.PolicyProvider
+import com.twittelonr.visibility.felonaturelons.Felonaturelon
+import com.twittelonr.visibility.felonaturelons.FelonaturelonMap
+import com.twittelonr.visibility.modelonls.ContelonntId
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl
+import com.twittelonr.visibility.rulelons.Filtelonrelond
+import com.twittelonr.visibility.rulelons.Rulelon
+import com.twittelonr.visibility.rulelons.RulelonBaselon
+import com.twittelonr.visibility.rulelons.RulelonBaselon.RulelonMap
+import com.twittelonr.visibility.rulelons.providelonrs.ProvidelondelonvaluationContelonxt
+import com.twittelonr.visibility.rulelons.providelonrs.PolicyProvidelonr
 
-object ShimUtils {
+objelonct ShimUtils {
 
-  def preFilterFeatureMap(
-    featureMap: FeatureMap,
-    safetyLevel: SafetyLevel,
-    contentId: ContentId,
-    evaluationContext: ProvidedEvaluationContext,
-    policyProviderOpt: Option[PolicyProvider] = None,
-  ): FeatureMap = {
-    val safetyLevelRules: Seq[Rule] = policyProviderOpt match {
-      case Some(policyProvider) =>
-        policyProvider
-          .policyForSurface(safetyLevel)
-          .forContentId(contentId)
-      case _ => RuleMap(safetyLevel).forContentId(contentId)
+  delonf prelonFiltelonrFelonaturelonMap(
+    felonaturelonMap: FelonaturelonMap,
+    safelontyLelonvelonl: SafelontyLelonvelonl,
+    contelonntId: ContelonntId,
+    elonvaluationContelonxt: ProvidelondelonvaluationContelonxt,
+    policyProvidelonrOpt: Option[PolicyProvidelonr] = Nonelon,
+  ): FelonaturelonMap = {
+    val safelontyLelonvelonlRulelons: Selonq[Rulelon] = policyProvidelonrOpt match {
+      caselon Somelon(policyProvidelonr) =>
+        policyProvidelonr
+          .policyForSurfacelon(safelontyLelonvelonl)
+          .forContelonntId(contelonntId)
+      caselon _ => RulelonMap(safelontyLelonvelonl).forContelonntId(contelonntId)
     }
 
-    val afterDisabledRules =
-      safetyLevelRules.filter(evaluationContext.ruleEnabledInContext)
+    val aftelonrDisablelondRulelons =
+      safelontyLelonvelonlRulelons.filtelonr(elonvaluationContelonxt.rulelonelonnablelondInContelonxt)
 
-    val afterMissingFeatureRules =
-      afterDisabledRules.filter(rule => {
-        val missingFeatures: Set[Feature[_]] = rule.featureDependencies.collect {
-          case feature: Feature[_] if !featureMap.contains(feature) => feature
+    val aftelonrMissingFelonaturelonRulelons =
+      aftelonrDisablelondRulelons.filtelonr(rulelon => {
+        val missingFelonaturelons: Selont[Felonaturelon[_]] = rulelon.felonaturelonDelonpelonndelonncielons.collelonct {
+          caselon felonaturelon: Felonaturelon[_] if !felonaturelonMap.contains(felonaturelon) => felonaturelon
         }
-        if (missingFeatures.isEmpty) {
-          true
-        } else {
-          false
+        if (missingFelonaturelons.iselonmpty) {
+          truelon
+        } elonlselon {
+          falselon
         }
       })
 
-    val afterPreFilterRules = afterMissingFeatureRules.filter(rule => {
-      rule.preFilter(evaluationContext, featureMap.constantMap, null) match {
-        case Filtered =>
-          false
-        case _ =>
-          true
+    val aftelonrPrelonFiltelonrRulelons = aftelonrMissingFelonaturelonRulelons.filtelonr(rulelon => {
+      rulelon.prelonFiltelonr(elonvaluationContelonxt, felonaturelonMap.constantMap, null) match {
+        caselon Filtelonrelond =>
+          falselon
+        caselon _ =>
+          truelon
       }
     })
 
-    val filteredFeatureMap =
-      RuleBase.removeUnusedFeaturesFromFeatureMap(featureMap, afterPreFilterRules)
+    val filtelonrelondFelonaturelonMap =
+      RulelonBaselon.relonmovelonUnuselondFelonaturelonsFromFelonaturelonMap(felonaturelonMap, aftelonrPrelonFiltelonrRulelons)
 
-    filteredFeatureMap
+    filtelonrelondFelonaturelonMap
   }
 }

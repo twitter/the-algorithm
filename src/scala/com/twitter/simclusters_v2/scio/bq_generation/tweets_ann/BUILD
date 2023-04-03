@@ -1,110 +1,110 @@
 scala_library(
-    name = "bq_generation",
-    sources = [
+    namelon = "bq_gelonnelonration",
+    sourcelons = [
         "**/*.scala",
     ],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "beam-internal/src/main/scala/com/twitter/beam/io/dal",
-        "beam-internal/src/main/scala/com/twitter/scio_internal/job",
-        "beam-internal/src/main/scala/com/twitter/scio_internal/runner/dataflow",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources:offline_tweet_recommendations_from_interested_in_20M_145K_2020-scala",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources:offline_tweet_recommendations_from_interested_in_20M_145K_2020_HL_0_EL_15-scala",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources:offline_tweet_recommendations_from_interested_in_20M_145K_2020_HL_2_EL_15-scala",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources:offline_tweet_recommendations_from_interested_in_20M_145K_2020_HL_2_EL_50-scala",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources:offline_tweet_recommendations_from_interested_in_20M_145K_2020_HL_8_EL_50-scala",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources:offline_tweet_recommendations_from_mts_consumer_embeddings-scala",
-        "src/scala/com/twitter/simclusters_v2/scio/bq_generation/common",
-        "src/scala/com/twitter/simclusters_v2/scio/bq_generation/sql",
-        "src/scala/com/twitter/wtf/beam/bq_embedding_export:bq_embedding_export_lib",
-        "tcdc/bq_blaster/src/main/scala/com/twitter/tcdc/bqblaster/beam",
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        "belonam-intelonrnal/src/main/scala/com/twittelonr/belonam/io/dal",
+        "belonam-intelonrnal/src/main/scala/com/twittelonr/scio_intelonrnal/job",
+        "belonam-intelonrnal/src/main/scala/com/twittelonr/scio_intelonrnal/runnelonr/dataflow",
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons:offlinelon_twelonelont_reloncommelonndations_from_intelonrelonstelond_in_20M_145K_2020-scala",
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons:offlinelon_twelonelont_reloncommelonndations_from_intelonrelonstelond_in_20M_145K_2020_HL_0_elonL_15-scala",
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons:offlinelon_twelonelont_reloncommelonndations_from_intelonrelonstelond_in_20M_145K_2020_HL_2_elonL_15-scala",
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons:offlinelon_twelonelont_reloncommelonndations_from_intelonrelonstelond_in_20M_145K_2020_HL_2_elonL_50-scala",
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons:offlinelon_twelonelont_reloncommelonndations_from_intelonrelonstelond_in_20M_145K_2020_HL_8_elonL_50-scala",
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons:offlinelon_twelonelont_reloncommelonndations_from_mts_consumelonr_elonmbelonddings-scala",
+        "src/scala/com/twittelonr/simclustelonrs_v2/scio/bq_gelonnelonration/common",
+        "src/scala/com/twittelonr/simclustelonrs_v2/scio/bq_gelonnelonration/sql",
+        "src/scala/com/twittelonr/wtf/belonam/bq_elonmbelondding_elonxport:bq_elonmbelondding_elonxport_lib",
+        "tcdc/bq_blastelonr/src/main/scala/com/twittelonr/tcdc/bqblastelonr/belonam",
     ],
 )
 
 jvm_binary(
-    name = "iikf-tweets-ann-adhoc-job",
-    main = "com.twitter.simclusters_v2.scio.bq_generation.tweets_ann.IIKF2020TweetsANNBQAdhocJob",
+    namelon = "iikf-twelonelonts-ann-adhoc-job",
+    main = "com.twittelonr.simclustelonrs_v2.scio.bq_gelonnelonration.twelonelonts_ann.IIKF2020TwelonelontsANNBQAdhocJob",
     platform = "java8",
-    dependencies = [
-        ":bq_generation",
+    delonpelonndelonncielons = [
+        ":bq_gelonnelonration",
     ],
 )
 
 jvm_binary(
-    name = "iikf-hl-8-el-50-tweets-ann-adhoc-job",
-    main = "com.twitter.simclusters_v2.scio.bq_generation.tweets_ann.IIKF2020Hl8El50TweetsANNBQAdhocJob",
+    namelon = "iikf-hl-8-elonl-50-twelonelonts-ann-adhoc-job",
+    main = "com.twittelonr.simclustelonrs_v2.scio.bq_gelonnelonration.twelonelonts_ann.IIKF2020Hl8elonl50TwelonelontsANNBQAdhocJob",
     platform = "java8",
-    dependencies = [
-        ":bq_generation",
+    delonpelonndelonncielons = [
+        ":bq_gelonnelonration",
     ],
 )
 
 jvm_binary(
-    name = "iikf-tweets-ann-batch-job",
-    main = "com.twitter.simclusters_v2.scio.bq_generation.tweets_ann.IIKF2020TweetsANNBQBatchJob",
+    namelon = "iikf-twelonelonts-ann-batch-job",
+    main = "com.twittelonr.simclustelonrs_v2.scio.bq_gelonnelonration.twelonelonts_ann.IIKF2020TwelonelontsANNBQBatchJob",
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        ":bq_generation",
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        ":bq_gelonnelonration",
     ],
 )
 
 jvm_binary(
-    name = "iikf-hl-0-el-15-tweets-ann-batch-job",
-    main = "com.twitter.simclusters_v2.scio.bq_generation.tweets_ann.IIKF2020Hl0El15TweetsANNBQBatchJob",
+    namelon = "iikf-hl-0-elonl-15-twelonelonts-ann-batch-job",
+    main = "com.twittelonr.simclustelonrs_v2.scio.bq_gelonnelonration.twelonelonts_ann.IIKF2020Hl0elonl15TwelonelontsANNBQBatchJob",
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        ":bq_generation",
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        ":bq_gelonnelonration",
     ],
 )
 
 jvm_binary(
-    name = "iikf-hl-2-el-15-tweets-ann-batch-job",
-    main = "com.twitter.simclusters_v2.scio.bq_generation.tweets_ann.IIKF2020Hl2El15TweetsANNBQBatchJob",
+    namelon = "iikf-hl-2-elonl-15-twelonelonts-ann-batch-job",
+    main = "com.twittelonr.simclustelonrs_v2.scio.bq_gelonnelonration.twelonelonts_ann.IIKF2020Hl2elonl15TwelonelontsANNBQBatchJob",
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        ":bq_generation",
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        ":bq_gelonnelonration",
     ],
 )
 
 jvm_binary(
-    name = "iikf-hl-2-el-50-tweets-ann-batch-job",
-    main = "com.twitter.simclusters_v2.scio.bq_generation.tweets_ann.IIKF2020Hl2El50TweetsANNBQBatchJob",
+    namelon = "iikf-hl-2-elonl-50-twelonelonts-ann-batch-job",
+    main = "com.twittelonr.simclustelonrs_v2.scio.bq_gelonnelonration.twelonelonts_ann.IIKF2020Hl2elonl50TwelonelontsANNBQBatchJob",
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        ":bq_generation",
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        ":bq_gelonnelonration",
     ],
 )
 
 jvm_binary(
-    name = "iikf-hl-8-el-50-tweets-ann-batch-job",
-    main = "com.twitter.simclusters_v2.scio.bq_generation.tweets_ann.IIKF2020Hl8El50TweetsANNBQBatchJob",
+    namelon = "iikf-hl-8-elonl-50-twelonelonts-ann-batch-job",
+    main = "com.twittelonr.simclustelonrs_v2.scio.bq_gelonnelonration.twelonelonts_ann.IIKF2020Hl8elonl50TwelonelontsANNBQBatchJob",
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        ":bq_generation",
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        ":bq_gelonnelonration",
     ],
 )
 
 jvm_binary(
-    name = "mts-consumer-embeddings-tweets-ann-adhoc-job",
-    main = "com.twitter.simclusters_v2.scio.bq_generation.tweets_ann.MTSConsumerEmbeddingsTweetsANNBQAdhocJob",
+    namelon = "mts-consumelonr-elonmbelonddings-twelonelonts-ann-adhoc-job",
+    main = "com.twittelonr.simclustelonrs_v2.scio.bq_gelonnelonration.twelonelonts_ann.MTSConsumelonrelonmbelonddingsTwelonelontsANNBQAdhocJob",
     platform = "java8",
-    dependencies = [
-        ":bq_generation",
+    delonpelonndelonncielons = [
+        ":bq_gelonnelonration",
     ],
 )
 
 jvm_binary(
-    name = "mts-consumer-embeddings-tweets-ann-batch-job",
-    main = "com.twitter.simclusters_v2.scio.bq_generation.tweets_ann.MTSConsumerEmbeddingsTweetsANNBQBatchJob",
+    namelon = "mts-consumelonr-elonmbelonddings-twelonelonts-ann-batch-job",
+    main = "com.twittelonr.simclustelonrs_v2.scio.bq_gelonnelonration.twelonelonts_ann.MTSConsumelonrelonmbelonddingsTwelonelontsANNBQBatchJob",
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        ":bq_generation",
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        ":bq_gelonnelonration",
     ],
 )

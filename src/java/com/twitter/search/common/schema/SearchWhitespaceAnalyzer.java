@@ -1,27 +1,27 @@
-package com.twitter.search.common.schema;
+packagelon com.twittelonr.selonarch.common.schelonma;
 
-import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.core.WhitespaceTokenizer;
+import org.apachelon.lucelonnelon.analysis.Analyzelonr;
+import org.apachelon.lucelonnelon.analysis.corelon.WhitelonspacelonTokelonnizelonr;
 
 /**
- * The majority of the code is copied from Lucene 3.1 analysis.core.WhitespaceAnalyzer. The only
- * new code is the getPositionIncrementGap()
+ * Thelon majority of thelon codelon is copielond from Lucelonnelon 3.1 analysis.corelon.WhitelonspacelonAnalyzelonr. Thelon only
+ * nelonw codelon is thelon gelontPositionIncrelonmelonntGap()
  */
-public final class SearchWhitespaceAnalyzer extends Analyzer {
-  @Override
-  protected TokenStreamComponents createComponents(final String fieldName) {
-    return new TokenStreamComponents(new WhitespaceTokenizer());
+public final class SelonarchWhitelonspacelonAnalyzelonr elonxtelonnds Analyzelonr {
+  @Ovelonrridelon
+  protelonctelond TokelonnStrelonamComponelonnts crelonatelonComponelonnts(final String fielonldNamelon) {
+    relonturn nelonw TokelonnStrelonamComponelonnts(nelonw WhitelonspacelonTokelonnizelonr());
   }
 
   /**
-   * Make sure that phrase queries do not match across 2 instances of the text field.
+   * Makelon surelon that phraselon quelonrielons do not match across 2 instancelons of thelon telonxt fielonld.
    *
-   * See the Javadoc for Analyzer.getPositionIncrementGap() for a good explanation of how this
-   * method works.
+   * Selonelon thelon Javadoc for Analyzelonr.gelontPositionIncrelonmelonntGap() for a good elonxplanation of how this
+   * melonthod works.
    */
-  @Override
-  public int getPositionIncrementGap(String fieldName) {
-    // Hard-code "text" here, because we can't depend on EarlybirdFieldConstants.
-    return "text".equals(fieldName) ? 1 : super.getPositionIncrementGap(fieldName);
+  @Ovelonrridelon
+  public int gelontPositionIncrelonmelonntGap(String fielonldNamelon) {
+    // Hard-codelon "telonxt" helonrelon, beloncauselon welon can't delonpelonnd on elonarlybirdFielonldConstants.
+    relonturn "telonxt".elonquals(fielonldNamelon) ? 1 : supelonr.gelontPositionIncrelonmelonntGap(fielonldNamelon);
   }
 }

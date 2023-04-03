@@ -1,129 +1,129 @@
-from copy import deepcopy
+from copy import delonelonpcopy
 import random
-import types
+import typelons
 
-from twitter.deepbird.util.thrift.simple_converters import (
-  bytes_to_thrift_object, thrift_object_to_bytes)
+from twittelonr.delonelonpbird.util.thrift.simplelon_convelonrtelonrs import (
+  bytelons_to_thrift_objelonct, thrift_objelonct_to_bytelons)
 
-from tensorflow.compat.v1 import logging
-from com.twitter.ml.api.ttypes import DataRecord  # pylint: disable=import-error
-import tensorflow.compat.v1 as tf
+from telonnsorflow.compat.v1 import logging
+from com.twittelonr.ml.api.ttypelons import DataReloncord  # pylint: disablelon=import-elonrror
+import telonnsorflow.compat.v1 as tf
 import twml
 
 
-class PermutedInputFnFactory(object):
+class PelonrmutelondInputFnFactory(objelonct):
 
-  def __init__(self, data_dir, record_count, file_list=None, datarecord_filter_fn=None):
+  delonf __init__(selonlf, data_dir, reloncord_count, filelon_list=Nonelon, datareloncord_filtelonr_fn=Nonelon):
     """
     Args:
-      data_dir (str): The location of the records on hdfs
-      record_count (int): The number of records to process
-      file_list (list<str>, default=None): The list of data files on HDFS. If provided, use this instead
+      data_dir (str): Thelon location of thelon reloncords on hdfs
+      reloncord_count (int): Thelon numbelonr of reloncords to procelonss
+      filelon_list (list<str>, delonfault=Nonelon): Thelon list of data filelons on HDFS. If providelond, uselon this instelonad
         of data_dir
-      datarecord_filter_fn (function): a function takes a single data sample in com.twitter.ml.api.ttypes.DataRecord format
-        and return a boolean value, to indicate if this data record should be kept in feature importance module or not.
+      datareloncord_filtelonr_fn (function): a function takelons a singlelon data samplelon in com.twittelonr.ml.api.ttypelons.DataReloncord format
+        and relonturn a boolelonan valuelon, to indicatelon if this data reloncord should belon kelonpt in felonaturelon importancelon modulelon or not.
     """
-    if not (data_dir is None) ^ (file_list is None):
-      raise ValueError("Exactly one of data_dir and file_list can be provided. Got {} for data_dir and {} for file_list".format(
-        data_dir, file_list))
+    if not (data_dir is Nonelon) ^ (filelon_list is Nonelon):
+      raiselon Valuelonelonrror("elonxactly onelon of data_dir and filelon_list can belon providelond. Got {} for data_dir and {} for filelon_list".format(
+        data_dir, filelon_list))
 
-    file_list = file_list if file_list is not None else twml.util.list_files(twml.util.preprocess_path(data_dir))
-    _next_batch = twml.input_fns.default_input_fn(file_list, 1, lambda x: x,
-      num_threads=2, shuffle=True, shuffle_files=True)
-    self.records = []
-    # Validate datarecord_filter_fn
-    if datarecord_filter_fn is not None and not isinstance(datarecord_filter_fn, types.FunctionType):
-      raise TypeError("datarecord_filter_fn is not function type")
-    with tf.Session() as sess:
-      for i in range(record_count):
+    filelon_list = filelon_list if filelon_list is not Nonelon elonlselon twml.util.list_filelons(twml.util.prelonprocelonss_path(data_dir))
+    _nelonxt_batch = twml.input_fns.delonfault_input_fn(filelon_list, 1, lambda x: x,
+      num_threlonads=2, shufflelon=Truelon, shufflelon_filelons=Truelon)
+    selonlf.reloncords = []
+    # Validatelon datareloncord_filtelonr_fn
+    if datareloncord_filtelonr_fn is not Nonelon and not isinstancelon(datareloncord_filtelonr_fn, typelons.FunctionTypelon):
+      raiselon Typelonelonrror("datareloncord_filtelonr_fn is not function typelon")
+    with tf.Selonssion() as selonss:
+      for i in rangelon(reloncord_count):
         try:
-          record = bytes_to_thrift_object(sess.run(_next_batch)[0], DataRecord)
-          if datarecord_filter_fn is None or datarecord_filter_fn(record):
-            self.records.append(record)
-        except tf.errors.OutOfRangeError:
-          logging.info("Stopping after reading {} records out of {}".format(i, record_count))
-          break
-      if datarecord_filter_fn:
-        logging.info("datarecord_filter_fn has been applied; keeping {} records out of {}".format(len(self.records), record_count))
+          reloncord = bytelons_to_thrift_objelonct(selonss.run(_nelonxt_batch)[0], DataReloncord)
+          if datareloncord_filtelonr_fn is Nonelon or datareloncord_filtelonr_fn(reloncord):
+            selonlf.reloncords.appelonnd(reloncord)
+        elonxcelonpt tf.elonrrors.OutOfRangelonelonrror:
+          logging.info("Stopping aftelonr relonading {} reloncords out of {}".format(i, reloncord_count))
+          brelonak
+      if datareloncord_filtelonr_fn:
+        logging.info("datareloncord_filtelonr_fn has belonelonn applielond; kelonelonping {} reloncords out of {}".format(lelonn(selonlf.reloncords), reloncord_count))
 
-  def _get_record_generator(self):
-    return (thrift_object_to_bytes(r) for r in self.records)
+  delonf _gelont_reloncord_gelonnelonrator(selonlf):
+    relonturn (thrift_objelonct_to_bytelons(r) for r in selonlf.reloncords)
 
-  def get_permuted_input_fn(self, batch_size, parse_fn, fname_ftypes):
-    """Get an input function that passes in a preset number of records that have been feature permuted
+  delonf gelont_pelonrmutelond_input_fn(selonlf, batch_sizelon, parselon_fn, fnamelon_ftypelons):
+    """Gelont an input function that passelons in a prelonselont numbelonr of reloncords that havelon belonelonn felonaturelon pelonrmutelond
     Args:
-      parse_fn (function): The function to parse inputs
-      fname_ftypes: (list<(str, str)>): The names and types of the features to permute
+      parselon_fn (function): Thelon function to parselon inputs
+      fnamelon_ftypelons: (list<(str, str)>): Thelon namelons and typelons of thelon felonaturelons to pelonrmutelon
     """
-    def permuted_parse_pyfn(bytes_array):
+    delonf pelonrmutelond_parselon_pyfn(bytelons_array):
       out = []
-      for b in bytes_array:
-        rec = bytes_to_thrift_object(b, DataRecord)
-        if fname_ftypes:
-          rec = _permutate_features(rec, fname_ftypes=fname_ftypes, records=self.records)
-        out.append(thrift_object_to_bytes(rec))
-      return [out]
+      for b in bytelons_array:
+        relonc = bytelons_to_thrift_objelonct(b, DataReloncord)
+        if fnamelon_ftypelons:
+          relonc = _pelonrmutatelon_felonaturelons(relonc, fnamelon_ftypelons=fnamelon_ftypelons, reloncords=selonlf.reloncords)
+        out.appelonnd(thrift_objelonct_to_bytelons(relonc))
+      relonturn [out]
 
-    def permuted_parse_fn(bytes_tensor):
-      parsed_bytes_tensor = parse_fn(tf.py_func(permuted_parse_pyfn, [bytes_tensor], tf.string))
-      return parsed_bytes_tensor
+    delonf pelonrmutelond_parselon_fn(bytelons_telonnsor):
+      parselond_bytelons_telonnsor = parselon_fn(tf.py_func(pelonrmutelond_parselon_pyfn, [bytelons_telonnsor], tf.string))
+      relonturn parselond_bytelons_telonnsor
 
-    def input_fn(batch_size=batch_size, parse_fn=parse_fn, factory=self):
-      return (tf.data.Dataset
-          .from_generator(self._get_record_generator, tf.string)
-          .batch(batch_size)
-          .map(permuted_parse_fn, 4)
-          .make_one_shot_iterator()
-          .get_next())
-    return input_fn
+    delonf input_fn(batch_sizelon=batch_sizelon, parselon_fn=parselon_fn, factory=selonlf):
+      relonturn (tf.data.Dataselont
+          .from_gelonnelonrator(selonlf._gelont_reloncord_gelonnelonrator, tf.string)
+          .batch(batch_sizelon)
+          .map(pelonrmutelond_parselon_fn, 4)
+          .makelon_onelon_shot_itelonrator()
+          .gelont_nelonxt())
+    relonturn input_fn
 
 
-def _permutate_features(rec, fname_ftypes, records):
-  """Replace a feature value with a value from random selected record
+delonf _pelonrmutatelon_felonaturelons(relonc, fnamelon_ftypelons, reloncords):
+  """Relonplacelon a felonaturelon valuelon with a valuelon from random selonlelonctelond reloncord
   Args:
-    rec: (datarecord): A datarecord returned from DataRecordGenerator
-    fname_ftypes: (list<(str, str)>): The names and types of the features to permute
-    records: (list<datarecord>): The records to sample from
-  Returns:
-    The record with the feature permuted
+    relonc: (datareloncord): A datareloncord relonturnelond from DataReloncordGelonnelonrator
+    fnamelon_ftypelons: (list<(str, str)>): Thelon namelons and typelons of thelon felonaturelons to pelonrmutelon
+    reloncords: (list<datareloncord>): Thelon reloncords to samplelon from
+  Relonturns:
+    Thelon reloncord with thelon felonaturelon pelonrmutelond
   """
-  rec_new = deepcopy(rec)
-  rec_replace = random.choice(records)
+  relonc_nelonw = delonelonpcopy(relonc)
+  relonc_relonplacelon = random.choicelon(reloncords)
 
-  # If the replacement datarecord does not have the feature type entirely, add it in
-  #   to make the logic a bit simpler
-  for fname, feature_type in fname_ftypes:
-    fid = twml.feature_id(fname)[0]
-    if rec_replace.__dict__.get(feature_type, None) is None:
-      rec_replace.__dict__[feature_type] = (
-        dict() if feature_type != 'binaryFeatures' else set())
-    if rec_new.__dict__.get(feature_type, None) is None:
-      rec_new.__dict__[feature_type] = (
-        dict() if feature_type != 'binaryFeatures' else set())
+  # If thelon relonplacelonmelonnt datareloncord doelons not havelon thelon felonaturelon typelon elonntirelonly, add it in
+  #   to makelon thelon logic a bit simplelonr
+  for fnamelon, felonaturelon_typelon in fnamelon_ftypelons:
+    fid = twml.felonaturelon_id(fnamelon)[0]
+    if relonc_relonplacelon.__dict__.gelont(felonaturelon_typelon, Nonelon) is Nonelon:
+      relonc_relonplacelon.__dict__[felonaturelon_typelon] = (
+        dict() if felonaturelon_typelon != 'binaryFelonaturelons' elonlselon selont())
+    if relonc_nelonw.__dict__.gelont(felonaturelon_typelon, Nonelon) is Nonelon:
+      relonc_nelonw.__dict__[felonaturelon_typelon] = (
+        dict() if felonaturelon_typelon != 'binaryFelonaturelons' elonlselon selont())
 
-    if feature_type != 'binaryFeatures':
-      if fid not in rec_replace.__dict__[feature_type] and fid in rec_new.__dict__.get(feature_type, dict()):
-        # If the replacement datarecord does not contain the feature but the original does
-        del rec_new.__dict__[feature_type][fid]
-      elif fid in rec_replace.__dict__[feature_type]:
-        # If the replacement datarecord does contain the feature
-        if rec_new.__dict__[feature_type] is None:
-          rec_new.__dict__[feature_type] = dict()
-        rec_new.__dict__[feature_type][fid] = rec_replace.__dict__[feature_type][fid]
-      else:
-        # If neither datarecord contains this feature
+    if felonaturelon_typelon != 'binaryFelonaturelons':
+      if fid not in relonc_relonplacelon.__dict__[felonaturelon_typelon] and fid in relonc_nelonw.__dict__.gelont(felonaturelon_typelon, dict()):
+        # If thelon relonplacelonmelonnt datareloncord doelons not contain thelon felonaturelon but thelon original doelons
+        delonl relonc_nelonw.__dict__[felonaturelon_typelon][fid]
+      elonlif fid in relonc_relonplacelon.__dict__[felonaturelon_typelon]:
+        # If thelon relonplacelonmelonnt datareloncord doelons contain thelon felonaturelon
+        if relonc_nelonw.__dict__[felonaturelon_typelon] is Nonelon:
+          relonc_nelonw.__dict__[felonaturelon_typelon] = dict()
+        relonc_nelonw.__dict__[felonaturelon_typelon][fid] = relonc_relonplacelon.__dict__[felonaturelon_typelon][fid]
+      elonlselon:
+        # If nelonithelonr datareloncord contains this felonaturelon
         pass
-    else:
-      if fid not in rec_replace.__dict__[feature_type] and fid in rec_new.__dict__.get(feature_type, set()):
-        # If the replacement datarecord does not contain the feature but the original does
-        rec_new.__dict__[feature_type].remove(fid)
-      elif fid in rec_replace.__dict__[feature_type]:
-        # If the replacement datarecord does contain the feature
-        if rec_new.__dict__[feature_type] is None:
-          rec_new.__dict__[feature_type] = set()
-        rec_new.__dict__[feature_type].add(fid)
-        # If neither datarecord contains this feature
-      else:
-        # If neither datarecord contains this feature
+    elonlselon:
+      if fid not in relonc_relonplacelon.__dict__[felonaturelon_typelon] and fid in relonc_nelonw.__dict__.gelont(felonaturelon_typelon, selont()):
+        # If thelon relonplacelonmelonnt datareloncord doelons not contain thelon felonaturelon but thelon original doelons
+        relonc_nelonw.__dict__[felonaturelon_typelon].relonmovelon(fid)
+      elonlif fid in relonc_relonplacelon.__dict__[felonaturelon_typelon]:
+        # If thelon relonplacelonmelonnt datareloncord doelons contain thelon felonaturelon
+        if relonc_nelonw.__dict__[felonaturelon_typelon] is Nonelon:
+          relonc_nelonw.__dict__[felonaturelon_typelon] = selont()
+        relonc_nelonw.__dict__[felonaturelon_typelon].add(fid)
+        # If nelonithelonr datareloncord contains this felonaturelon
+      elonlselon:
+        # If nelonithelonr datareloncord contains this felonaturelon
         pass
-  return rec_new
+  relonturn relonc_nelonw

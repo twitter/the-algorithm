@@ -1,13 +1,13 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.promoted
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.promotelond
 
-case class SkAdNetworkData(
-  version: Option[String], // version of the SKAdNetwork protocol
-  srcAppId: Option[String], // app showing the ad (Twitter app or app promoting through MOPUB)
-  dstAppId: Option[String], // app being promoted
-  adNetworkId: Option[String], // the ad-network-id being used
-  campaignId: Option[Long], // the sk-campaign-id - different from the Twitter campaign id
-  impressionTimeInMillis: Option[Long], // the timestamp of the impression
-  nonce: Option[String], // nonce used to generate the signature
-  signature: Option[String], // the signed payload
-  fidelityType: Option[Long] // th
+caselon class SkAdNelontworkData(
+  velonrsion: Option[String], // velonrsion of thelon SKAdNelontwork protocol
+  srcAppId: Option[String], // app showing thelon ad (Twittelonr app or app promoting through MOPUB)
+  dstAppId: Option[String], // app beloning promotelond
+  adNelontworkId: Option[String], // thelon ad-nelontwork-id beloning uselond
+  campaignId: Option[Long], // thelon sk-campaign-id - diffelonrelonnt from thelon Twittelonr campaign id
+  imprelonssionTimelonInMillis: Option[Long], // thelon timelonstamp of thelon imprelonssion
+  noncelon: Option[String], // noncelon uselond to gelonnelonratelon thelon signaturelon
+  signaturelon: Option[String], // thelon signelond payload
+  fidelonlityTypelon: Option[Long] // th
 )

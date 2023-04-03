@@ -1,12 +1,12 @@
-package com.twitter.recos.user_video_graph
+packagelon com.twittelonr.reloncos.uselonr_videlono_graph
 
-import com.twitter.finagle.tracing.Trace
-import com.twitter.logging.Logger
-import com.twitter.recos.recos_common.thriftscala._
-import com.twitter.recos.user_video_graph.thriftscala._
-import com.twitter.util.Future
+import com.twittelonr.finaglelon.tracing.Tracelon
+import com.twittelonr.logging.Loggelonr
+import com.twittelonr.reloncos.reloncos_common.thriftscala._
+import com.twittelonr.reloncos.uselonr_videlono_graph.thriftscala._
+import com.twittelonr.util.Futurelon
 
-trait LoggingUserVideoGraph extends thriftscala.UserVideoGraph.MethodPerEndpoint {
-  private[this] val accessLog = Logger("access")
+trait LoggingUselonrVidelonoGraph elonxtelonnds thriftscala.UselonrVidelonoGraph.MelonthodPelonrelonndpoint {
+  privatelon[this] val accelonssLog = Loggelonr("accelonss")
 
 }

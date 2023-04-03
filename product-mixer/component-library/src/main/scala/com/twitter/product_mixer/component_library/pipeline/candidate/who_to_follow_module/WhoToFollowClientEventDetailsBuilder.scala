@@ -1,67 +1,67 @@
-package com.twitter.product_mixer.component_library.pipeline.candidate.who_to_follow_module
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.pipelonlinelon.candidatelon.who_to_follow_modulelon
 
-import com.twitter.bijection.scrooge.BinaryScalaCodec
-import com.twitter.bijection.Base64String
-import com.twitter.bijection.{Injection => Serializer}
-import com.twitter.hermit.internal.thriftscala.HermitTrackingToken
-import com.twitter.product_mixer.component_library.model.candidate.UserCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventDetailsBuilder
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventDetails
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.TimelinesDetails
-import com.twitter.servo.cache.ThriftSerializer
-import com.twitter.suggests.controller_data.thriftscala.ControllerData
-import com.twitter.util.Try
-import org.apache.thrift.protocol.TBinaryProtocol
+import com.twittelonr.bijelonction.scroogelon.BinaryScalaCodelonc
+import com.twittelonr.bijelonction.Baselon64String
+import com.twittelonr.bijelonction.{Injelonction => Selonrializelonr}
+import com.twittelonr.helonrmit.intelonrnal.thriftscala.HelonrmitTrackingTokelonn
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.UselonrCandidatelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.melontadata.BaselonClielonntelonvelonntDelontailsBuildelonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.ClielonntelonvelonntDelontails
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.TimelonlinelonsDelontails
+import com.twittelonr.selonrvo.cachelon.ThriftSelonrializelonr
+import com.twittelonr.suggelonsts.controllelonr_data.thriftscala.ControllelonrData
+import com.twittelonr.util.Try
+import org.apachelon.thrift.protocol.TBinaryProtocol
 
-object WhoToFollowClientEventDetailsBuilder {
+objelonct WhoToFollowClielonntelonvelonntDelontailsBuildelonr {
 
-  val InjectionType = "WhoToFollow"
+  val InjelonctionTypelon = "WhoToFollow"
 
-  private implicit val ByteSerializer: Serializer[ControllerData, Array[Byte]] =
-    BinaryScalaCodec(ControllerData)
+  privatelon implicit val BytelonSelonrializelonr: Selonrializelonr[ControllelonrData, Array[Bytelon]] =
+    BinaryScalaCodelonc(ControllelonrData)
 
-  private val TrackingTokenSerializer =
-    new ThriftSerializer[HermitTrackingToken](HermitTrackingToken, new TBinaryProtocol.Factory())
+  privatelon val TrackingTokelonnSelonrializelonr =
+    nelonw ThriftSelonrializelonr[HelonrmitTrackingTokelonn](HelonrmitTrackingTokelonn, nelonw TBinaryProtocol.Factory())
 
-  val ControllerDataSerializer: Serializer[ControllerData, String] =
-    Serializer.connect[ControllerData, Array[Byte], Base64String, String]
+  val ControllelonrDataSelonrializelonr: Selonrializelonr[ControllelonrData, String] =
+    Selonrializelonr.connelonct[ControllelonrData, Array[Bytelon], Baselon64String, String]
 
-  def deserializeTrackingToken(token: Option[String]): Option[HermitTrackingToken] =
-    token.flatMap(t => Try(TrackingTokenSerializer.fromString(t)).toOption)
+  delonf delonselonrializelonTrackingTokelonn(tokelonn: Option[String]): Option[HelonrmitTrackingTokelonn] =
+    tokelonn.flatMap(t => Try(TrackingTokelonnSelonrializelonr.fromString(t)).toOption)
 
-  def serializeControllerData(cd: ControllerData): String = ControllerDataSerializer(cd)
+  delonf selonrializelonControllelonrData(cd: ControllelonrData): String = ControllelonrDataSelonrializelonr(cd)
 }
 
-case class WhoToFollowClientEventDetailsBuilder[-Query <: PipelineQuery](
-  trackingTokenFeature: Feature[_, Option[String]],
-) extends BaseClientEventDetailsBuilder[Query, UserCandidate] {
+caselon class WhoToFollowClielonntelonvelonntDelontailsBuildelonr[-Quelonry <: PipelonlinelonQuelonry](
+  trackingTokelonnFelonaturelon: Felonaturelon[_, Option[String]],
+) elonxtelonnds BaselonClielonntelonvelonntDelontailsBuildelonr[Quelonry, UselonrCandidatelon] {
 
-  override def apply(
-    query: Query,
-    candidate: UserCandidate,
-    candidateFeatures: FeatureMap
-  ): Option[ClientEventDetails] = {
-    val serializedTrackingToken = candidateFeatures.getOrElse(trackingTokenFeature, None)
+  ovelonrridelon delonf apply(
+    quelonry: Quelonry,
+    candidatelon: UselonrCandidatelon,
+    candidatelonFelonaturelons: FelonaturelonMap
+  ): Option[ClielonntelonvelonntDelontails] = {
+    val selonrializelondTrackingTokelonn = candidatelonFelonaturelons.gelontOrelonlselon(trackingTokelonnFelonaturelon, Nonelon)
 
-    val controllerData = WhoToFollowClientEventDetailsBuilder
-      .deserializeTrackingToken(serializedTrackingToken)
-      .flatMap(_.controllerData)
-      .map(WhoToFollowClientEventDetailsBuilder.serializeControllerData)
+    val controllelonrData = WhoToFollowClielonntelonvelonntDelontailsBuildelonr
+      .delonselonrializelonTrackingTokelonn(selonrializelondTrackingTokelonn)
+      .flatMap(_.controllelonrData)
+      .map(WhoToFollowClielonntelonvelonntDelontailsBuildelonr.selonrializelonControllelonrData)
 
-    Some(
-      ClientEventDetails(
-        conversationDetails = None,
-        timelinesDetails = Some(
-          TimelinesDetails(
-            injectionType = Some(WhoToFollowClientEventDetailsBuilder.InjectionType),
-            controllerData = controllerData,
-            sourceData = serializedTrackingToken)),
-        articleDetails = None,
-        liveEventDetails = None,
-        commerceDetails = None
+    Somelon(
+      ClielonntelonvelonntDelontails(
+        convelonrsationDelontails = Nonelon,
+        timelonlinelonsDelontails = Somelon(
+          TimelonlinelonsDelontails(
+            injelonctionTypelon = Somelon(WhoToFollowClielonntelonvelonntDelontailsBuildelonr.InjelonctionTypelon),
+            controllelonrData = controllelonrData,
+            sourcelonData = selonrializelondTrackingTokelonn)),
+        articlelonDelontails = Nonelon,
+        livelonelonvelonntDelontails = Nonelon,
+        commelonrcelonDelontails = Nonelon
       ))
   }
 }

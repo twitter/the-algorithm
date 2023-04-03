@@ -1,201 +1,201 @@
-package com.twitter.follow_recommendations.flows.content_recommender_flow
+packagelon com.twittelonr.follow_reloncommelonndations.flows.contelonnt_reloncommelonndelonr_flow
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.base.EnrichedCandidateSource
-import com.twitter.follow_recommendations.common.base.GatedPredicateBase
-import com.twitter.follow_recommendations.common.base.ParamPredicate
-import com.twitter.follow_recommendations.common.base.Predicate
-import com.twitter.follow_recommendations.common.base.Ranker
-import com.twitter.follow_recommendations.common.base.RecommendationFlow
-import com.twitter.follow_recommendations.common.base.RecommendationResultsConfig
-import com.twitter.follow_recommendations.common.base.Transform
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.predicates.ExcludedUserIdPredicate
-import com.twitter.follow_recommendations.common.predicates.InactivePredicate
-import com.twitter.follow_recommendations.common.predicates.gizmoduck.GizmoduckPredicate
-import com.twitter.follow_recommendations.common.predicates.sgs.InvalidRelationshipPredicate
-import com.twitter.follow_recommendations.common.predicates.sgs.InvalidTargetCandidateRelationshipTypesPredicate
-import com.twitter.follow_recommendations.common.predicates.sgs.RecentFollowingPredicate
-import com.twitter.follow_recommendations.common.rankers.weighted_candidate_source_ranker.WeightedCandidateSourceRanker
-import com.twitter.follow_recommendations.common.transforms.dedup.DedupTransform
-import com.twitter.follow_recommendations.common.transforms.tracking_token.TrackingTokenTransform
-import com.twitter.follow_recommendations.utils.CandidateSourceHoldbackUtil
-import com.twitter.follow_recommendations.utils.RecommendationFlowBaseSideEffectsUtil
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.quality_factor.BoundsWithDefault
-import com.twitter.product_mixer.core.quality_factor.LinearLatencyQualityFactor
-import com.twitter.product_mixer.core.quality_factor.LinearLatencyQualityFactorConfig
-import com.twitter.product_mixer.core.quality_factor.LinearLatencyQualityFactorObserver
-import com.twitter.product_mixer.core.quality_factor.QualityFactorObserver
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.follow_reloncommelonndations.common.baselon.elonnrichelondCandidatelonSourcelon
+import com.twittelonr.follow_reloncommelonndations.common.baselon.GatelondPrelondicatelonBaselon
+import com.twittelonr.follow_reloncommelonndations.common.baselon.ParamPrelondicatelon
+import com.twittelonr.follow_reloncommelonndations.common.baselon.Prelondicatelon
+import com.twittelonr.follow_reloncommelonndations.common.baselon.Rankelonr
+import com.twittelonr.follow_reloncommelonndations.common.baselon.ReloncommelonndationFlow
+import com.twittelonr.follow_reloncommelonndations.common.baselon.ReloncommelonndationRelonsultsConfig
+import com.twittelonr.follow_reloncommelonndations.common.baselon.Transform
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.CandidatelonUselonr
+import com.twittelonr.follow_reloncommelonndations.common.prelondicatelons.elonxcludelondUselonrIdPrelondicatelon
+import com.twittelonr.follow_reloncommelonndations.common.prelondicatelons.InactivelonPrelondicatelon
+import com.twittelonr.follow_reloncommelonndations.common.prelondicatelons.gizmoduck.GizmoduckPrelondicatelon
+import com.twittelonr.follow_reloncommelonndations.common.prelondicatelons.sgs.InvalidRelonlationshipPrelondicatelon
+import com.twittelonr.follow_reloncommelonndations.common.prelondicatelons.sgs.InvalidTargelontCandidatelonRelonlationshipTypelonsPrelondicatelon
+import com.twittelonr.follow_reloncommelonndations.common.prelondicatelons.sgs.ReloncelonntFollowingPrelondicatelon
+import com.twittelonr.follow_reloncommelonndations.common.rankelonrs.welonightelond_candidatelon_sourcelon_rankelonr.WelonightelondCandidatelonSourcelonRankelonr
+import com.twittelonr.follow_reloncommelonndations.common.transforms.delondup.DelondupTransform
+import com.twittelonr.follow_reloncommelonndations.common.transforms.tracking_tokelonn.TrackingTokelonnTransform
+import com.twittelonr.follow_reloncommelonndations.utils.CandidatelonSourcelonHoldbackUtil
+import com.twittelonr.follow_reloncommelonndations.utils.ReloncommelonndationFlowBaselonSidelonelonffelonctsUtil
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.CandidatelonSourcelon
+import com.twittelonr.product_mixelonr.corelon.quality_factor.BoundsWithDelonfault
+import com.twittelonr.product_mixelonr.corelon.quality_factor.LinelonarLatelonncyQualityFactor
+import com.twittelonr.product_mixelonr.corelon.quality_factor.LinelonarLatelonncyQualityFactorConfig
+import com.twittelonr.product_mixelonr.corelon.quality_factor.LinelonarLatelonncyQualityFactorObselonrvelonr
+import com.twittelonr.product_mixelonr.corelon.quality_factor.QualityFactorObselonrvelonr
 
-import javax.inject.Inject
-import javax.inject.Singleton
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class ContentRecommenderFlow @Inject() (
-  contentRecommenderFlowCandidateSourceRegistry: ContentRecommenderFlowCandidateSourceRegistry,
-  recentFollowingPredicate: RecentFollowingPredicate,
-  gizmoduckPredicate: GizmoduckPredicate,
-  inactivePredicate: InactivePredicate,
-  sgsPredicate: InvalidTargetCandidateRelationshipTypesPredicate,
-  invalidRelationshipPredicate: InvalidRelationshipPredicate,
-  trackingTokenTransform: TrackingTokenTransform,
-  baseStatsReceiver: StatsReceiver)
-    extends RecommendationFlow[ContentRecommenderRequest, CandidateUser]
-    with RecommendationFlowBaseSideEffectsUtil[ContentRecommenderRequest, CandidateUser]
-    with CandidateSourceHoldbackUtil {
+@Singlelonton
+class ContelonntReloncommelonndelonrFlow @Injelonct() (
+  contelonntReloncommelonndelonrFlowCandidatelonSourcelonRelongistry: ContelonntReloncommelonndelonrFlowCandidatelonSourcelonRelongistry,
+  reloncelonntFollowingPrelondicatelon: ReloncelonntFollowingPrelondicatelon,
+  gizmoduckPrelondicatelon: GizmoduckPrelondicatelon,
+  inactivelonPrelondicatelon: InactivelonPrelondicatelon,
+  sgsPrelondicatelon: InvalidTargelontCandidatelonRelonlationshipTypelonsPrelondicatelon,
+  invalidRelonlationshipPrelondicatelon: InvalidRelonlationshipPrelondicatelon,
+  trackingTokelonnTransform: TrackingTokelonnTransform,
+  baselonStatsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds ReloncommelonndationFlow[ContelonntReloncommelonndelonrRelonquelonst, CandidatelonUselonr]
+    with ReloncommelonndationFlowBaselonSidelonelonffelonctsUtil[ContelonntReloncommelonndelonrRelonquelonst, CandidatelonUselonr]
+    with CandidatelonSourcelonHoldbackUtil {
 
-  override val statsReceiver: StatsReceiver = baseStatsReceiver.scope("content_recommender_flow")
+  ovelonrridelon val statsReloncelonivelonr: StatsReloncelonivelonr = baselonStatsReloncelonivelonr.scopelon("contelonnt_reloncommelonndelonr_flow")
 
-  override val qualityFactorObserver: Option[QualityFactorObserver] = {
-    val config = LinearLatencyQualityFactorConfig(
+  ovelonrridelon val qualityFactorObselonrvelonr: Option[QualityFactorObselonrvelonr] = {
+    val config = LinelonarLatelonncyQualityFactorConfig(
       qualityFactorBounds =
-        BoundsWithDefault(minInclusive = 0.1, maxInclusive = 1.0, default = 1.0),
-      initialDelay = 60.seconds,
-      targetLatency = 100.milliseconds,
-      targetLatencyPercentile = 95.0,
-      delta = 0.001
+        BoundsWithDelonfault(minInclusivelon = 0.1, maxInclusivelon = 1.0, delonfault = 1.0),
+      initialDelonlay = 60.selonconds,
+      targelontLatelonncy = 100.milliselonconds,
+      targelontLatelonncyPelonrcelonntilelon = 95.0,
+      delonlta = 0.001
     )
-    val qualityFactor = LinearLatencyQualityFactor(config)
-    val observer = LinearLatencyQualityFactorObserver(qualityFactor)
-    statsReceiver.provideGauge("quality_factor")(qualityFactor.currentValue.toFloat)
-    Some(observer)
+    val qualityFactor = LinelonarLatelonncyQualityFactor(config)
+    val obselonrvelonr = LinelonarLatelonncyQualityFactorObselonrvelonr(qualityFactor)
+    statsReloncelonivelonr.providelonGaugelon("quality_factor")(qualityFactor.currelonntValuelon.toFloat)
+    Somelon(obselonrvelonr)
   }
 
-  protected override def targetEligibility: Predicate[ContentRecommenderRequest] =
-    new ParamPredicate[ContentRecommenderRequest](
-      ContentRecommenderParams.TargetEligibility
+  protelonctelond ovelonrridelon delonf targelontelonligibility: Prelondicatelon[ContelonntReloncommelonndelonrRelonquelonst] =
+    nelonw ParamPrelondicatelon[ContelonntReloncommelonndelonrRelonquelonst](
+      ContelonntReloncommelonndelonrParams.Targelontelonligibility
     )
 
-  protected override def candidateSources(
-    target: ContentRecommenderRequest
-  ): Seq[CandidateSource[ContentRecommenderRequest, CandidateUser]] = {
-    import EnrichedCandidateSource._
-    val identifiers = ContentRecommenderFlowCandidateSourceWeights.getWeights(target.params).keySet
-    val selected = contentRecommenderFlowCandidateSourceRegistry.select(identifiers)
-    val budget =
-      target.params(ContentRecommenderParams.FetchCandidateSourceBudgetInMillisecond).millisecond
-    filterCandidateSources(target, selected.map(c => c.failOpenWithin(budget, statsReceiver)).toSeq)
+  protelonctelond ovelonrridelon delonf candidatelonSourcelons(
+    targelont: ContelonntReloncommelonndelonrRelonquelonst
+  ): Selonq[CandidatelonSourcelon[ContelonntReloncommelonndelonrRelonquelonst, CandidatelonUselonr]] = {
+    import elonnrichelondCandidatelonSourcelon._
+    val idelonntifielonrs = ContelonntReloncommelonndelonrFlowCandidatelonSourcelonWelonights.gelontWelonights(targelont.params).kelonySelont
+    val selonlelonctelond = contelonntReloncommelonndelonrFlowCandidatelonSourcelonRelongistry.selonlelonct(idelonntifielonrs)
+    val budgelont =
+      targelont.params(ContelonntReloncommelonndelonrParams.FelontchCandidatelonSourcelonBudgelontInMilliseloncond).milliseloncond
+    filtelonrCandidatelonSourcelons(targelont, selonlelonctelond.map(c => c.failOpelonnWithin(budgelont, statsReloncelonivelonr)).toSelonq)
   }
 
-  protected override val preRankerCandidateFilter: Predicate[
-    (ContentRecommenderRequest, CandidateUser)
+  protelonctelond ovelonrridelon val prelonRankelonrCandidatelonFiltelonr: Prelondicatelon[
+    (ContelonntReloncommelonndelonrRelonquelonst, CandidatelonUselonr)
   ] = {
-    val preRankerFilterStats = statsReceiver.scope("pre_ranker")
-    val recentFollowingPredicateStats = preRankerFilterStats.scope("recent_following_predicate")
-    val invalidRelationshipPredicateStats =
-      preRankerFilterStats.scope("invalid_relationship_predicate")
+    val prelonRankelonrFiltelonrStats = statsReloncelonivelonr.scopelon("prelon_rankelonr")
+    val reloncelonntFollowingPrelondicatelonStats = prelonRankelonrFiltelonrStats.scopelon("reloncelonnt_following_prelondicatelon")
+    val invalidRelonlationshipPrelondicatelonStats =
+      prelonRankelonrFiltelonrStats.scopelon("invalid_relonlationship_prelondicatelon")
 
-    object recentFollowingGatedPredicate
-        extends GatedPredicateBase[(ContentRecommenderRequest, CandidateUser)](
-          recentFollowingPredicate,
-          recentFollowingPredicateStats
+    objelonct reloncelonntFollowingGatelondPrelondicatelon
+        elonxtelonnds GatelondPrelondicatelonBaselon[(ContelonntReloncommelonndelonrRelonquelonst, CandidatelonUselonr)](
+          reloncelonntFollowingPrelondicatelon,
+          reloncelonntFollowingPrelondicatelonStats
         ) {
-      override def gate(item: (ContentRecommenderRequest, CandidateUser)): Boolean =
-        item._1.params(ContentRecommenderParams.EnableRecentFollowingPredicate)
+      ovelonrridelon delonf gatelon(itelonm: (ContelonntReloncommelonndelonrRelonquelonst, CandidatelonUselonr)): Boolelonan =
+        itelonm._1.params(ContelonntReloncommelonndelonrParams.elonnablelonReloncelonntFollowingPrelondicatelon)
     }
 
-    object invalidRelationshipGatedPredicate
-        extends GatedPredicateBase[(ContentRecommenderRequest, CandidateUser)](
-          invalidRelationshipPredicate,
-          invalidRelationshipPredicateStats
+    objelonct invalidRelonlationshipGatelondPrelondicatelon
+        elonxtelonnds GatelondPrelondicatelonBaselon[(ContelonntReloncommelonndelonrRelonquelonst, CandidatelonUselonr)](
+          invalidRelonlationshipPrelondicatelon,
+          invalidRelonlationshipPrelondicatelonStats
         ) {
-      override def gate(item: (ContentRecommenderRequest, CandidateUser)): Boolean =
-        item._1.params(ContentRecommenderParams.EnableInvalidRelationshipPredicate)
+      ovelonrridelon delonf gatelon(itelonm: (ContelonntReloncommelonndelonrRelonquelonst, CandidatelonUselonr)): Boolelonan =
+        itelonm._1.params(ContelonntReloncommelonndelonrParams.elonnablelonInvalidRelonlationshipPrelondicatelon)
     }
 
-    ExcludedUserIdPredicate
-      .observe(preRankerFilterStats.scope("exclude_user_id_predicate"))
-      .andThen(recentFollowingGatedPredicate.observe(recentFollowingPredicateStats))
-      .andThen(invalidRelationshipGatedPredicate.observe(invalidRelationshipPredicateStats))
+    elonxcludelondUselonrIdPrelondicatelon
+      .obselonrvelon(prelonRankelonrFiltelonrStats.scopelon("elonxcludelon_uselonr_id_prelondicatelon"))
+      .andThelonn(reloncelonntFollowingGatelondPrelondicatelon.obselonrvelon(reloncelonntFollowingPrelondicatelonStats))
+      .andThelonn(invalidRelonlationshipGatelondPrelondicatelon.obselonrvelon(invalidRelonlationshipPrelondicatelonStats))
   }
 
   /**
-   * rank the candidates
+   * rank thelon candidatelons
    */
-  protected override def selectRanker(
-    target: ContentRecommenderRequest
-  ): Ranker[ContentRecommenderRequest, CandidateUser] = {
-    val rankersStatsReceiver = statsReceiver.scope("rankers")
-    WeightedCandidateSourceRanker
-      .build[ContentRecommenderRequest](
-        ContentRecommenderFlowCandidateSourceWeights.getWeights(target.params),
-        randomSeed = target.getRandomizationSeed
-      ).observe(rankersStatsReceiver.scope("weighted_candidate_source_ranker"))
+  protelonctelond ovelonrridelon delonf selonlelonctRankelonr(
+    targelont: ContelonntReloncommelonndelonrRelonquelonst
+  ): Rankelonr[ContelonntReloncommelonndelonrRelonquelonst, CandidatelonUselonr] = {
+    val rankelonrsStatsReloncelonivelonr = statsReloncelonivelonr.scopelon("rankelonrs")
+    WelonightelondCandidatelonSourcelonRankelonr
+      .build[ContelonntReloncommelonndelonrRelonquelonst](
+        ContelonntReloncommelonndelonrFlowCandidatelonSourcelonWelonights.gelontWelonights(targelont.params),
+        randomSelonelond = targelont.gelontRandomizationSelonelond
+      ).obselonrvelon(rankelonrsStatsReloncelonivelonr.scopelon("welonightelond_candidatelon_sourcelon_rankelonr"))
   }
 
   /**
-   * transform the candidates after ranking
+   * transform thelon candidatelons aftelonr ranking
    */
-  protected override def postRankerTransform: Transform[
-    ContentRecommenderRequest,
-    CandidateUser
+  protelonctelond ovelonrridelon delonf postRankelonrTransform: Transform[
+    ContelonntReloncommelonndelonrRelonquelonst,
+    CandidatelonUselonr
   ] = {
-    new DedupTransform[ContentRecommenderRequest, CandidateUser]
-      .observe(statsReceiver.scope("dedupping"))
+    nelonw DelondupTransform[ContelonntReloncommelonndelonrRelonquelonst, CandidatelonUselonr]
+      .obselonrvelon(statsReloncelonivelonr.scopelon("delondupping"))
   }
 
-  protected override def validateCandidates: Predicate[
-    (ContentRecommenderRequest, CandidateUser)
+  protelonctelond ovelonrridelon delonf validatelonCandidatelons: Prelondicatelon[
+    (ContelonntReloncommelonndelonrRelonquelonst, CandidatelonUselonr)
   ] = {
-    val stats = statsReceiver.scope("validate_candidates")
-    val gizmoduckPredicateStats = stats.scope("gizmoduck_predicate")
-    val inactivePredicateStats = stats.scope("inactive_predicate")
-    val sgsPredicateStats = stats.scope("sgs_predicate")
+    val stats = statsReloncelonivelonr.scopelon("validatelon_candidatelons")
+    val gizmoduckPrelondicatelonStats = stats.scopelon("gizmoduck_prelondicatelon")
+    val inactivelonPrelondicatelonStats = stats.scopelon("inactivelon_prelondicatelon")
+    val sgsPrelondicatelonStats = stats.scopelon("sgs_prelondicatelon")
 
-    val includeGizmoduckPredicate =
-      new ParamPredicate[ContentRecommenderRequest](
-        ContentRecommenderParams.EnableGizmoduckPredicate)
-        .map[(ContentRecommenderRequest, CandidateUser)] {
-          case (request: ContentRecommenderRequest, _) =>
-            request
+    val includelonGizmoduckPrelondicatelon =
+      nelonw ParamPrelondicatelon[ContelonntReloncommelonndelonrRelonquelonst](
+        ContelonntReloncommelonndelonrParams.elonnablelonGizmoduckPrelondicatelon)
+        .map[(ContelonntReloncommelonndelonrRelonquelonst, CandidatelonUselonr)] {
+          caselon (relonquelonst: ContelonntReloncommelonndelonrRelonquelonst, _) =>
+            relonquelonst
         }
 
-    val includeInactivePredicate =
-      new ParamPredicate[ContentRecommenderRequest](
-        ContentRecommenderParams.EnableInactivePredicate)
-        .map[(ContentRecommenderRequest, CandidateUser)] {
-          case (request: ContentRecommenderRequest, _) =>
-            request
+    val includelonInactivelonPrelondicatelon =
+      nelonw ParamPrelondicatelon[ContelonntReloncommelonndelonrRelonquelonst](
+        ContelonntReloncommelonndelonrParams.elonnablelonInactivelonPrelondicatelon)
+        .map[(ContelonntReloncommelonndelonrRelonquelonst, CandidatelonUselonr)] {
+          caselon (relonquelonst: ContelonntReloncommelonndelonrRelonquelonst, _) =>
+            relonquelonst
         }
 
-    val includeInvalidTargetCandidateRelationshipTypesPredicate =
-      new ParamPredicate[ContentRecommenderRequest](
-        ContentRecommenderParams.EnableInvalidTargetCandidateRelationshipPredicate)
-        .map[(ContentRecommenderRequest, CandidateUser)] {
-          case (request: ContentRecommenderRequest, _) =>
-            request
+    val includelonInvalidTargelontCandidatelonRelonlationshipTypelonsPrelondicatelon =
+      nelonw ParamPrelondicatelon[ContelonntReloncommelonndelonrRelonquelonst](
+        ContelonntReloncommelonndelonrParams.elonnablelonInvalidTargelontCandidatelonRelonlationshipPrelondicatelon)
+        .map[(ContelonntReloncommelonndelonrRelonquelonst, CandidatelonUselonr)] {
+          caselon (relonquelonst: ContelonntReloncommelonndelonrRelonquelonst, _) =>
+            relonquelonst
         }
 
-    Predicate
-      .andConcurrently[(ContentRecommenderRequest, CandidateUser)](
-        Seq(
-          gizmoduckPredicate.observe(gizmoduckPredicateStats).gate(includeGizmoduckPredicate),
-          inactivePredicate.observe(inactivePredicateStats).gate(includeInactivePredicate),
-          sgsPredicate
-            .observe(sgsPredicateStats).gate(
-              includeInvalidTargetCandidateRelationshipTypesPredicate),
+    Prelondicatelon
+      .andConcurrelonntly[(ContelonntReloncommelonndelonrRelonquelonst, CandidatelonUselonr)](
+        Selonq(
+          gizmoduckPrelondicatelon.obselonrvelon(gizmoduckPrelondicatelonStats).gatelon(includelonGizmoduckPrelondicatelon),
+          inactivelonPrelondicatelon.obselonrvelon(inactivelonPrelondicatelonStats).gatelon(includelonInactivelonPrelondicatelon),
+          sgsPrelondicatelon
+            .obselonrvelon(sgsPrelondicatelonStats).gatelon(
+              includelonInvalidTargelontCandidatelonRelonlationshipTypelonsPrelondicatelon),
         )
       )
   }
 
   /**
-   * transform the candidates into results and return
+   * transform thelon candidatelons into relonsults and relonturn
    */
-  protected override def transformResults: Transform[ContentRecommenderRequest, CandidateUser] = {
-    trackingTokenTransform
+  protelonctelond ovelonrridelon delonf transformRelonsults: Transform[ContelonntReloncommelonndelonrRelonquelonst, CandidatelonUselonr] = {
+    trackingTokelonnTransform
   }
 
   /**
-   *  configuration for recommendation results
+   *  configuration for reloncommelonndation relonsults
    */
-  protected override def resultsConfig(
-    target: ContentRecommenderRequest
-  ): RecommendationResultsConfig = {
-    RecommendationResultsConfig(
-      target.maxResults.getOrElse(target.params(ContentRecommenderParams.ResultSizeParam)),
-      target.params(ContentRecommenderParams.BatchSizeParam)
+  protelonctelond ovelonrridelon delonf relonsultsConfig(
+    targelont: ContelonntReloncommelonndelonrRelonquelonst
+  ): ReloncommelonndationRelonsultsConfig = {
+    ReloncommelonndationRelonsultsConfig(
+      targelont.maxRelonsults.gelontOrelonlselon(targelont.params(ContelonntReloncommelonndelonrParams.RelonsultSizelonParam)),
+      targelont.params(ContelonntReloncommelonndelonrParams.BatchSizelonParam)
     )
   }
 

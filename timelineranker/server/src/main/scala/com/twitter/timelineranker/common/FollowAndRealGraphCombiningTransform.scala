@@ -1,197 +1,197 @@
-package com.twitter.timelineranker.common
+packagelon com.twittelonr.timelonlinelonrankelonr.common
 
-import com.twitter.finagle.stats.Stat
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.servo.util.FutureArrow
-import com.twitter.timelineranker.core.CandidateEnvelope
-import com.twitter.timelineranker.model.RecapQuery.DependencyProvider
-import com.twitter.timelineranker.parameters.recap.RecapQueryContext
-import com.twitter.timelineranker.parameters.in_network_tweets.InNetworkTweetParams.RecycledMaxFollowedUsersEnableAntiDilutionParam
-import com.twitter.timelineranker.visibility.FollowGraphDataProvider
-import com.twitter.timelines.earlybird.common.options.AuthorScoreAdjustments
-import com.twitter.util.Future
+import com.twittelonr.finaglelon.stats.Stat
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.selonrvo.util.FuturelonArrow
+import com.twittelonr.timelonlinelonrankelonr.corelon.Candidatelonelonnvelonlopelon
+import com.twittelonr.timelonlinelonrankelonr.modelonl.ReloncapQuelonry.DelonpelonndelonncyProvidelonr
+import com.twittelonr.timelonlinelonrankelonr.paramelontelonrs.reloncap.ReloncapQuelonryContelonxt
+import com.twittelonr.timelonlinelonrankelonr.paramelontelonrs.in_nelontwork_twelonelonts.InNelontworkTwelonelontParams.ReloncyclelondMaxFollowelondUselonrselonnablelonAntiDilutionParam
+import com.twittelonr.timelonlinelonrankelonr.visibility.FollowGraphDataProvidelonr
+import com.twittelonr.timelonlinelons.elonarlybird.common.options.AuthorScorelonAdjustmelonnts
+import com.twittelonr.util.Futurelon
 
 /**
- * Transform which conditionally augments follow graph data using the real graph,
- * derived from the earlybirdOptions passed in the query
+ * Transform which conditionally augmelonnts follow graph data using thelon relonal graph,
+ * delonrivelond from thelon elonarlybirdOptions passelond in thelon quelonry
  *
- * @param followGraphDataProvider data provider to be used for fetching updated mutual follow info
- * @param maxFollowedUsersProvider max number of users to return
- * @param enableRealGraphUsersProvider should we augment using real graph data?
- * @param maxRealGraphAndFollowedUsersProvider max combined users to return, overrides maxFollowedUsersProvider above
- * @param statsReceiver scoped stats received
+ * @param followGraphDataProvidelonr data providelonr to belon uselond for felontching updatelond mutual follow info
+ * @param maxFollowelondUselonrsProvidelonr max numbelonr of uselonrs to relonturn
+ * @param elonnablelonRelonalGraphUselonrsProvidelonr should welon augmelonnt using relonal graph data?
+ * @param maxRelonalGraphAndFollowelondUselonrsProvidelonr max combinelond uselonrs to relonturn, ovelonrridelons maxFollowelondUselonrsProvidelonr abovelon
+ * @param statsReloncelonivelonr scopelond stats reloncelonivelond
  */
-class FollowAndRealGraphCombiningTransform(
-  followGraphDataProvider: FollowGraphDataProvider,
-  maxFollowedUsersProvider: DependencyProvider[Int],
-  enableRealGraphUsersProvider: DependencyProvider[Boolean],
-  maxRealGraphAndFollowedUsersProvider: DependencyProvider[Int],
-  imputeRealGraphAuthorWeightsProvider: DependencyProvider[Boolean],
-  imputeRealGraphAuthorWeightsPercentileProvider: DependencyProvider[Int],
-  statsReceiver: StatsReceiver)
-    extends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
+class FollowAndRelonalGraphCombiningTransform(
+  followGraphDataProvidelonr: FollowGraphDataProvidelonr,
+  maxFollowelondUselonrsProvidelonr: DelonpelonndelonncyProvidelonr[Int],
+  elonnablelonRelonalGraphUselonrsProvidelonr: DelonpelonndelonncyProvidelonr[Boolelonan],
+  maxRelonalGraphAndFollowelondUselonrsProvidelonr: DelonpelonndelonncyProvidelonr[Int],
+  imputelonRelonalGraphAuthorWelonightsProvidelonr: DelonpelonndelonncyProvidelonr[Boolelonan],
+  imputelonRelonalGraphAuthorWelonightsPelonrcelonntilelonProvidelonr: DelonpelonndelonncyProvidelonr[Int],
+  statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds FuturelonArrow[Candidatelonelonnvelonlopelon, Candidatelonelonnvelonlopelon] {
 
-  // Number of authors in the seedset after mixing followed users and real graph users
-  // Only have this stat if user follows >= maxFollowedUsers and enableRealGraphUsers is true and onlyRealGraphUsers is false
-  val numFollowAndRealGraphUsersStat: Stat = statsReceiver.stat("numFollowAndRealGraphUsers")
-  val numFollowAndRealGraphUsersFromFollowGraphStat =
-    statsReceiver.scope("numFollowAndRealGraphUsers").stat("FollowGraphUsers")
-  val numFollowAndRealGraphUsersFromRealGraphStat =
-    statsReceiver.scope("numFollowAndRealGraphUsers").stat("RealGraphUsers")
-  val numFollowAndRealGraphUsersFromRealGraphCounter =
-    statsReceiver.scope("numFollowAndRealGraphUsers").counter()
+  // Numbelonr of authors in thelon selonelondselont aftelonr mixing followelond uselonrs and relonal graph uselonrs
+  // Only havelon this stat if uselonr follows >= maxFollowelondUselonrs and elonnablelonRelonalGraphUselonrs is truelon and onlyRelonalGraphUselonrs is falselon
+  val numFollowAndRelonalGraphUselonrsStat: Stat = statsReloncelonivelonr.stat("numFollowAndRelonalGraphUselonrs")
+  val numFollowAndRelonalGraphUselonrsFromFollowGraphStat =
+    statsReloncelonivelonr.scopelon("numFollowAndRelonalGraphUselonrs").stat("FollowGraphUselonrs")
+  val numFollowAndRelonalGraphUselonrsFromRelonalGraphStat =
+    statsReloncelonivelonr.scopelon("numFollowAndRelonalGraphUselonrs").stat("RelonalGraphUselonrs")
+  val numFollowAndRelonalGraphUselonrsFromRelonalGraphCountelonr =
+    statsReloncelonivelonr.scopelon("numFollowAndRelonalGraphUselonrs").countelonr()
 
-  // Number of authors in the seedset with only followed users
-  // Only have this stat if user follows >= maxFollowedUsers and enableRealGraphUsers is false
-  val numFollowedUsersStat: Stat = statsReceiver.stat("numFollowedUsers")
+  // Numbelonr of authors in thelon selonelondselont with only followelond uselonrs
+  // Only havelon this stat if uselonr follows >= maxFollowelondUselonrs and elonnablelonRelonalGraphUselonrs is falselon
+  val numFollowelondUselonrsStat: Stat = statsReloncelonivelonr.stat("numFollowelondUselonrs")
 
-  // Number of authors in the seedset with only followed users
-  // Only have this stat if user follows < maxFollowedUsers
-  val numFollowedUsersLessThanMaxStat: Stat = statsReceiver.stat("numFollowedUsersLessThanMax")
-  val numFollowedUsersLessThanMaxCounter =
-    statsReceiver.scope("numFollowedUsersLessThanMax").counter()
-  val numFollowedUsersMoreThanMaxStat: Stat = statsReceiver.stat("numFollowedUsersMoreThanMax")
-  val numFollowedUsersMoreThanMaxCounter =
-    statsReceiver.scope("numFollowedUsersMoreThanMax").counter()
+  // Numbelonr of authors in thelon selonelondselont with only followelond uselonrs
+  // Only havelon this stat if uselonr follows < maxFollowelondUselonrs
+  val numFollowelondUselonrsLelonssThanMaxStat: Stat = statsReloncelonivelonr.stat("numFollowelondUselonrsLelonssThanMax")
+  val numFollowelondUselonrsLelonssThanMaxCountelonr =
+    statsReloncelonivelonr.scopelon("numFollowelondUselonrsLelonssThanMax").countelonr()
+  val numFollowelondUselonrsMorelonThanMaxStat: Stat = statsReloncelonivelonr.stat("numFollowelondUselonrsMorelonThanMax")
+  val numFollowelondUselonrsMorelonThanMaxCountelonr =
+    statsReloncelonivelonr.scopelon("numFollowelondUselonrsMorelonThanMax").countelonr()
 
-  val realGraphAuthorWeightsSumProdStat: Stat = statsReceiver.stat("realGraphAuthorWeightsSumProd")
-  val realGraphAuthorWeightsSumMinExpStat: Stat =
-    statsReceiver.stat("realGraphAuthorWeightsSumMinExp")
-  val realGraphAuthorWeightsSumP50ExpStat: Stat =
-    statsReceiver.stat("realGraphAuthorWeightsSumP50Exp")
-  val realGraphAuthorWeightsSumP95ExpStat: Stat =
-    statsReceiver.stat("realGraphAuthorWeightsSumP95Exp")
-  val numAuthorsWithoutRealgraphScoreStat: Stat =
-    statsReceiver.stat("numAuthorsWithoutRealgraphScore")
+  val relonalGraphAuthorWelonightsSumProdStat: Stat = statsReloncelonivelonr.stat("relonalGraphAuthorWelonightsSumProd")
+  val relonalGraphAuthorWelonightsSumMinelonxpStat: Stat =
+    statsReloncelonivelonr.stat("relonalGraphAuthorWelonightsSumMinelonxp")
+  val relonalGraphAuthorWelonightsSumP50elonxpStat: Stat =
+    statsReloncelonivelonr.stat("relonalGraphAuthorWelonightsSumP50elonxp")
+  val relonalGraphAuthorWelonightsSumP95elonxpStat: Stat =
+    statsReloncelonivelonr.stat("relonalGraphAuthorWelonightsSumP95elonxp")
+  val numAuthorsWithoutRelonalgraphScorelonStat: Stat =
+    statsReloncelonivelonr.stat("numAuthorsWithoutRelonalgraphScorelon")
 
-  override def apply(envelope: CandidateEnvelope): Future[CandidateEnvelope] = {
-    val realGraphData = envelope.query.earlybirdOptions
-      .map(_.authorScoreAdjustments.authorScoreMap)
-      .getOrElse(Map.empty)
+  ovelonrridelon delonf apply(elonnvelonlopelon: Candidatelonelonnvelonlopelon): Futurelon[Candidatelonelonnvelonlopelon] = {
+    val relonalGraphData = elonnvelonlopelon.quelonry.elonarlybirdOptions
+      .map(_.authorScorelonAdjustmelonnts.authorScorelonMap)
+      .gelontOrelonlselon(Map.elonmpty)
 
-    Future
+    Futurelon
       .join(
-        envelope.followGraphData.followedUserIdsFuture,
-        envelope.followGraphData.mutedUserIdsFuture
+        elonnvelonlopelon.followGraphData.followelondUselonrIdsFuturelon,
+        elonnvelonlopelon.followGraphData.mutelondUselonrIdsFuturelon
       ).map {
-        case (followedUserIds, mutedUserIds) =>
+        caselon (followelondUselonrIds, mutelondUselonrIds) =>
           // Anti-dilution param for DDG-16198
-          val recycledMaxFollowedUsersEnableAntiDilutionParamProvider =
-            DependencyProvider.from(RecycledMaxFollowedUsersEnableAntiDilutionParam)
+          val reloncyclelondMaxFollowelondUselonrselonnablelonAntiDilutionParamProvidelonr =
+            DelonpelonndelonncyProvidelonr.from(ReloncyclelondMaxFollowelondUselonrselonnablelonAntiDilutionParam)
 
-          val maxFollowedUsers = {
-            if (followedUserIds.size > RecapQueryContext.MaxFollowedUsers.default && recycledMaxFollowedUsersEnableAntiDilutionParamProvider(
-                envelope.query)) {
-              // trigger experiment
-              maxFollowedUsersProvider(envelope.query)
-            } else {
-              maxFollowedUsersProvider(envelope.query)
+          val maxFollowelondUselonrs = {
+            if (followelondUselonrIds.sizelon > ReloncapQuelonryContelonxt.MaxFollowelondUselonrs.delonfault && reloncyclelondMaxFollowelondUselonrselonnablelonAntiDilutionParamProvidelonr(
+                elonnvelonlopelon.quelonry)) {
+              // triggelonr elonxpelonrimelonnt
+              maxFollowelondUselonrsProvidelonr(elonnvelonlopelon.quelonry)
+            } elonlselon {
+              maxFollowelondUselonrsProvidelonr(elonnvelonlopelon.quelonry)
             }
           }
 
-          val filteredRealGraphUserIds = realGraphData.keySet
-            .filterNot(mutedUserIds)
-            .take(maxFollowedUsers)
-            .toSeq
+          val filtelonrelondRelonalGraphUselonrIds = relonalGraphData.kelonySelont
+            .filtelonrNot(mutelondUselonrIds)
+            .takelon(maxFollowelondUselonrs)
+            .toSelonq
 
-          val filteredFollowedUserIds = followedUserIds.filterNot(mutedUserIds)
+          val filtelonrelondFollowelondUselonrIds = followelondUselonrIds.filtelonrNot(mutelondUselonrIds)
 
-          if (followedUserIds.size < maxFollowedUsers) {
-            numFollowedUsersLessThanMaxStat.add(filteredFollowedUserIds.size)
+          if (followelondUselonrIds.sizelon < maxFollowelondUselonrs) {
+            numFollowelondUselonrsLelonssThanMaxStat.add(filtelonrelondFollowelondUselonrIds.sizelon)
             // stats
-            numFollowedUsersLessThanMaxCounter.incr()
-            (filteredFollowedUserIds, false)
-          } else {
-            numFollowedUsersMoreThanMaxStat.add(filteredFollowedUserIds.size)
-            numFollowedUsersMoreThanMaxCounter.incr()
-            if (enableRealGraphUsersProvider(envelope.query)) {
-              val maxRealGraphAndFollowedUsersNum =
-                maxRealGraphAndFollowedUsersProvider(envelope.query)
-              require(
-                maxRealGraphAndFollowedUsersNum >= maxFollowedUsers,
-                "maxRealGraphAndFollowedUsers must be greater than or equal to maxFollowedUsers."
+            numFollowelondUselonrsLelonssThanMaxCountelonr.incr()
+            (filtelonrelondFollowelondUselonrIds, falselon)
+          } elonlselon {
+            numFollowelondUselonrsMorelonThanMaxStat.add(filtelonrelondFollowelondUselonrIds.sizelon)
+            numFollowelondUselonrsMorelonThanMaxCountelonr.incr()
+            if (elonnablelonRelonalGraphUselonrsProvidelonr(elonnvelonlopelon.quelonry)) {
+              val maxRelonalGraphAndFollowelondUselonrsNum =
+                maxRelonalGraphAndFollowelondUselonrsProvidelonr(elonnvelonlopelon.quelonry)
+              relonquirelon(
+                maxRelonalGraphAndFollowelondUselonrsNum >= maxFollowelondUselonrs,
+                "maxRelonalGraphAndFollowelondUselonrs must belon grelonatelonr than or elonqual to maxFollowelondUselonrs."
               )
-              val recentFollowedUsersNum = RecapQueryContext.MaxFollowedUsers.bounds
-                .apply(maxRealGraphAndFollowedUsersNum - filteredRealGraphUserIds.size)
+              val reloncelonntFollowelondUselonrsNum = ReloncapQuelonryContelonxt.MaxFollowelondUselonrs.bounds
+                .apply(maxRelonalGraphAndFollowelondUselonrsNum - filtelonrelondRelonalGraphUselonrIds.sizelon)
 
-              val recentFollowedUsers =
-                filteredFollowedUserIds
-                  .filterNot(filteredRealGraphUserIds.contains)
-                  .take(recentFollowedUsersNum)
+              val reloncelonntFollowelondUselonrs =
+                filtelonrelondFollowelondUselonrIds
+                  .filtelonrNot(filtelonrelondRelonalGraphUselonrIds.contains)
+                  .takelon(reloncelonntFollowelondUselonrsNum)
 
-              val filteredFollowAndRealGraphUserIds =
-                recentFollowedUsers ++ filteredRealGraphUserIds
+              val filtelonrelondFollowAndRelonalGraphUselonrIds =
+                reloncelonntFollowelondUselonrs ++ filtelonrelondRelonalGraphUselonrIds
 
-              // Track the size of recentFollowedUsers from SGS
-              numFollowAndRealGraphUsersFromFollowGraphStat.add(recentFollowedUsers.size)
-              // Track the size of filteredRealGraphUserIds from real graph dataset.
-              numFollowAndRealGraphUsersFromRealGraphStat.add(filteredRealGraphUserIds.size)
+              // Track thelon sizelon of reloncelonntFollowelondUselonrs from SGS
+              numFollowAndRelonalGraphUselonrsFromFollowGraphStat.add(reloncelonntFollowelondUselonrs.sizelon)
+              // Track thelon sizelon of filtelonrelondRelonalGraphUselonrIds from relonal graph dataselont.
+              numFollowAndRelonalGraphUselonrsFromRelonalGraphStat.add(filtelonrelondRelonalGraphUselonrIds.sizelon)
 
-              numFollowAndRealGraphUsersFromRealGraphCounter.incr()
+              numFollowAndRelonalGraphUselonrsFromRelonalGraphCountelonr.incr()
 
-              numFollowAndRealGraphUsersStat.add(filteredFollowAndRealGraphUserIds.size)
+              numFollowAndRelonalGraphUselonrsStat.add(filtelonrelondFollowAndRelonalGraphUselonrIds.sizelon)
 
-              (filteredFollowAndRealGraphUserIds, true)
-            } else {
-              numFollowedUsersStat.add(followedUserIds.size)
-              (filteredFollowedUserIds, false)
+              (filtelonrelondFollowAndRelonalGraphUselonrIds, truelon)
+            } elonlselon {
+              numFollowelondUselonrsStat.add(followelondUselonrIds.sizelon)
+              (filtelonrelondFollowelondUselonrIds, falselon)
             }
           }
       }.map {
-        case (updatedFollowSeq, shouldUpdateMutualFollows) =>
-          val updatedMutualFollowing = if (shouldUpdateMutualFollows) {
-            followGraphDataProvider.getMutuallyFollowingUserIds(
-              envelope.query.userId,
-              updatedFollowSeq)
-          } else {
-            envelope.followGraphData.mutuallyFollowingUserIdsFuture
+        caselon (updatelondFollowSelonq, shouldUpdatelonMutualFollows) =>
+          val updatelondMutualFollowing = if (shouldUpdatelonMutualFollows) {
+            followGraphDataProvidelonr.gelontMutuallyFollowingUselonrIds(
+              elonnvelonlopelon.quelonry.uselonrId,
+              updatelondFollowSelonq)
+          } elonlselon {
+            elonnvelonlopelon.followGraphData.mutuallyFollowingUselonrIdsFuturelon
           }
 
-          val followGraphData = envelope.followGraphData.copy(
-            followedUserIdsFuture = Future.value(updatedFollowSeq),
-            mutuallyFollowingUserIdsFuture = updatedMutualFollowing
+          val followGraphData = elonnvelonlopelon.followGraphData.copy(
+            followelondUselonrIdsFuturelon = Futurelon.valuelon(updatelondFollowSelonq),
+            mutuallyFollowingUselonrIdsFuturelon = updatelondMutualFollowing
           )
 
-          val authorIdsWithRealgraphScore = realGraphData.keySet
-          val authorIdsWithoutRealgraphScores =
-            updatedFollowSeq.filterNot(authorIdsWithRealgraphScore.contains)
+          val authorIdsWithRelonalgraphScorelon = relonalGraphData.kelonySelont
+          val authorIdsWithoutRelonalgraphScorelons =
+            updatelondFollowSelonq.filtelonrNot(authorIdsWithRelonalgraphScorelon.contains)
 
-          //stat for logging the percentage of users' followings that do not have a realgraph score
-          if (updatedFollowSeq.nonEmpty)
-            numAuthorsWithoutRealgraphScoreStat.add(
-              authorIdsWithoutRealgraphScores.size / updatedFollowSeq.size * 100)
+          //stat for logging thelon pelonrcelonntagelon of uselonrs' followings that do not havelon a relonalgraph scorelon
+          if (updatelondFollowSelonq.nonelonmpty)
+            numAuthorsWithoutRelonalgraphScorelonStat.add(
+              authorIdsWithoutRelonalgraphScorelons.sizelon / updatelondFollowSelonq.sizelon * 100)
 
-          if (imputeRealGraphAuthorWeightsProvider(envelope.query) && realGraphData.nonEmpty) {
-            val imputedScorePercentile =
-              imputeRealGraphAuthorWeightsPercentileProvider(envelope.query) / 100.0
-            val existingAuthorIdScores = realGraphData.values.toList.sorted
-            val imputedScoreIndex = Math.min(
-              existingAuthorIdScores.length - 1,
-              (existingAuthorIdScores.length * imputedScorePercentile).toInt)
-            val imputedScore = existingAuthorIdScores(imputedScoreIndex)
+          if (imputelonRelonalGraphAuthorWelonightsProvidelonr(elonnvelonlopelon.quelonry) && relonalGraphData.nonelonmpty) {
+            val imputelondScorelonPelonrcelonntilelon =
+              imputelonRelonalGraphAuthorWelonightsPelonrcelonntilelonProvidelonr(elonnvelonlopelon.quelonry) / 100.0
+            val elonxistingAuthorIdScorelons = relonalGraphData.valuelons.toList.sortelond
+            val imputelondScorelonIndelonx = Math.min(
+              elonxistingAuthorIdScorelons.lelonngth - 1,
+              (elonxistingAuthorIdScorelons.lelonngth * imputelondScorelonPelonrcelonntilelon).toInt)
+            val imputelondScorelon = elonxistingAuthorIdScorelons(imputelondScorelonIndelonx)
 
-            val updatedAuthorScoreMap = realGraphData ++ authorIdsWithoutRealgraphScores
-              .map(_ -> imputedScore).toMap
-            imputedScorePercentile match {
-              case 0.0 =>
-                realGraphAuthorWeightsSumMinExpStat.add(updatedAuthorScoreMap.values.sum.toFloat)
-              case 0.5 =>
-                realGraphAuthorWeightsSumP50ExpStat.add(updatedAuthorScoreMap.values.sum.toFloat)
-              case 0.95 =>
-                realGraphAuthorWeightsSumP95ExpStat.add(updatedAuthorScoreMap.values.sum.toFloat)
-              case _ =>
+            val updatelondAuthorScorelonMap = relonalGraphData ++ authorIdsWithoutRelonalgraphScorelons
+              .map(_ -> imputelondScorelon).toMap
+            imputelondScorelonPelonrcelonntilelon match {
+              caselon 0.0 =>
+                relonalGraphAuthorWelonightsSumMinelonxpStat.add(updatelondAuthorScorelonMap.valuelons.sum.toFloat)
+              caselon 0.5 =>
+                relonalGraphAuthorWelonightsSumP50elonxpStat.add(updatelondAuthorScorelonMap.valuelons.sum.toFloat)
+              caselon 0.95 =>
+                relonalGraphAuthorWelonightsSumP95elonxpStat.add(updatelondAuthorScorelonMap.valuelons.sum.toFloat)
+              caselon _ =>
             }
-            val earlybirdOptionsWithUpdatedAuthorScoreMap = envelope.query.earlybirdOptions
-              .map(_.copy(authorScoreAdjustments = AuthorScoreAdjustments(updatedAuthorScoreMap)))
-            val updatedQuery =
-              envelope.query.copy(earlybirdOptions = earlybirdOptionsWithUpdatedAuthorScoreMap)
-            envelope.copy(query = updatedQuery, followGraphData = followGraphData)
-          } else {
-            envelope.query.earlybirdOptions
-              .map(_.authorScoreAdjustments.authorScoreMap.values.sum.toFloat).foreach {
-                realGraphAuthorWeightsSumProdStat.add(_)
+            val elonarlybirdOptionsWithUpdatelondAuthorScorelonMap = elonnvelonlopelon.quelonry.elonarlybirdOptions
+              .map(_.copy(authorScorelonAdjustmelonnts = AuthorScorelonAdjustmelonnts(updatelondAuthorScorelonMap)))
+            val updatelondQuelonry =
+              elonnvelonlopelon.quelonry.copy(elonarlybirdOptions = elonarlybirdOptionsWithUpdatelondAuthorScorelonMap)
+            elonnvelonlopelon.copy(quelonry = updatelondQuelonry, followGraphData = followGraphData)
+          } elonlselon {
+            elonnvelonlopelon.quelonry.elonarlybirdOptions
+              .map(_.authorScorelonAdjustmelonnts.authorScorelonMap.valuelons.sum.toFloat).forelonach {
+                relonalGraphAuthorWelonightsSumProdStat.add(_)
               }
-            envelope.copy(followGraphData = followGraphData)
+            elonnvelonlopelon.copy(followGraphData = followGraphData)
           }
       }
   }

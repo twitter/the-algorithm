@@ -1,6 +1,6 @@
-package com.twitter.follow_recommendations.common.models
+packagelon com.twittelonr.follow_reloncommelonndations.common.modelonls
 
-trait HasInvalidRelationshipUserIds {
-  // user ids that have invalid relationship with the target user
-  def invalidRelationshipUserIds: Option[Set[Long]]
+trait HasInvalidRelonlationshipUselonrIds {
+  // uselonr ids that havelon invalid relonlationship with thelon targelont uselonr
+  delonf invalidRelonlationshipUselonrIds: Option[Selont[Long]]
 }

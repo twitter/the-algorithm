@@ -1,12 +1,12 @@
 scala_library(
-    compiler_option_sets = ["fatal_warnings"],
+    compilelonr_option_selonts = ["fatal_warnings"],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/models",
-        "follow-recommendations-service/thrift/src/main/thrift:thrift-scala",
-        "stringcenter/client",
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        "follow-reloncommelonndations-selonrvicelon/common/src/main/scala/com/twittelonr/follow_reloncommelonndations/common/modelonls",
+        "follow-reloncommelonndations-selonrvicelon/thrift/src/main/thrift:thrift-scala",
+        "stringcelonntelonr/clielonnt",
     ],
-    exports = [
+    elonxports = [
     ],
 )

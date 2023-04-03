@@ -1,26 +1,26 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt
 
-import com.twitter.product_mixer.core.functional_component.marshaller.TransportMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.ReplaceEntryTimelineInstruction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.TransportMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.RelonplacelonelonntryTimelonlinelonInstruction
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.Timelonlinelonelonntry
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class ReplaceEntryInstructionMarshaller @Inject() (
-  timelineEntryMarshaller: TimelineEntryMarshaller) {
+@Singlelonton
+class RelonplacelonelonntryInstructionMarshallelonr @Injelonct() (
+  timelonlinelonelonntryMarshallelonr: TimelonlinelonelonntryMarshallelonr) {
 
-  def apply(instruction: ReplaceEntryTimelineInstruction): urt.ReplaceEntry = {
-    val instructionEntry = instruction.entry
-    urt.ReplaceEntry(
-      entryIdToReplace = instructionEntry.entryIdToReplace
-        .getOrElse(throw new MissingEntryToReplaceException(instructionEntry)),
-      entry = timelineEntryMarshaller(instructionEntry)
+  delonf apply(instruction: RelonplacelonelonntryTimelonlinelonInstruction): urt.Relonplacelonelonntry = {
+    val instructionelonntry = instruction.elonntry
+    urt.Relonplacelonelonntry(
+      elonntryIdToRelonplacelon = instructionelonntry.elonntryIdToRelonplacelon
+        .gelontOrelonlselon(throw nelonw MissingelonntryToRelonplacelonelonxcelonption(instructionelonntry)),
+      elonntry = timelonlinelonelonntryMarshallelonr(instructionelonntry)
     )
   }
 }
 
-class MissingEntryToReplaceException(entry: TimelineEntry)
-    extends IllegalArgumentException(
-      s"Missing entry ID to replace ${TransportMarshaller.getSimpleName(entry.getClass)}")
+class MissingelonntryToRelonplacelonelonxcelonption(elonntry: Timelonlinelonelonntry)
+    elonxtelonnds IllelongalArgumelonntelonxcelonption(
+      s"Missing elonntry ID to relonplacelon ${TransportMarshallelonr.gelontSimplelonNamelon(elonntry.gelontClass)}")

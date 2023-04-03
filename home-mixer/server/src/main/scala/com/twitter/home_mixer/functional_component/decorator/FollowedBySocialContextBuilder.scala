@@ -1,53 +1,53 @@
-package com.twitter.home_mixer.functional_component.decorator
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.deloncorator
 
-import com.twitter.home_mixer.model.HomeFeatures.InNetworkFeature
-import com.twitter.home_mixer.model.HomeFeatures.SGSValidFollowedByUserIdsFeature
-import com.twitter.home_mixer.product.following.model.HomeMixerExternalStrings
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.social_context.BaseSocialContextBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata._
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.product.guice.scope.ProductScoped
-import com.twitter.stringcenter.client.StringCenter
-import javax.inject.Inject
-import javax.inject.Provider
-import javax.inject.Singleton
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.InNelontworkFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.SGSValidFollowelondByUselonrIdsFelonaturelon
+import com.twittelonr.homelon_mixelonr.product.following.modelonl.HomelonMixelonrelonxtelonrnalStrings
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.TwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.social_contelonxt.BaselonSocialContelonxtBuildelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata._
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.product_mixelonr.corelon.product.guicelon.scopelon.ProductScopelond
+import com.twittelonr.stringcelonntelonr.clielonnt.StringCelonntelonr
+import javax.injelonct.Injelonct
+import javax.injelonct.Providelonr
+import javax.injelonct.Singlelonton
 
-@Singleton
-case class FollowedBySocialContextBuilder @Inject() (
-  externalStrings: HomeMixerExternalStrings,
-  @ProductScoped stringCenterProvider: Provider[StringCenter])
-    extends BaseSocialContextBuilder[PipelineQuery, TweetCandidate] {
+@Singlelonton
+caselon class FollowelondBySocialContelonxtBuildelonr @Injelonct() (
+  elonxtelonrnalStrings: HomelonMixelonrelonxtelonrnalStrings,
+  @ProductScopelond stringCelonntelonrProvidelonr: Providelonr[StringCelonntelonr])
+    elonxtelonnds BaselonSocialContelonxtBuildelonr[PipelonlinelonQuelonry, TwelonelontCandidatelon] {
 
-  private val stringCenter = stringCenterProvider.get()
+  privatelon val stringCelonntelonr = stringCelonntelonrProvidelonr.gelont()
 
-  private val engagerSocialContextBuilder = EngagerSocialContextBuilder(
-    contextType = FollowGeneralContextType,
-    stringCenter = stringCenter,
-    oneUserString = externalStrings.socialContextOneUserFollowsString,
-    twoUsersString = externalStrings.socialContextTwoUsersFollowString,
-    moreUsersString = externalStrings.socialContextMoreUsersFollowString,
-    timelineTitle = externalStrings.socialContextFollowedByTimelineTitle
+  privatelon val elonngagelonrSocialContelonxtBuildelonr = elonngagelonrSocialContelonxtBuildelonr(
+    contelonxtTypelon = FollowGelonnelonralContelonxtTypelon,
+    stringCelonntelonr = stringCelonntelonr,
+    onelonUselonrString = elonxtelonrnalStrings.socialContelonxtOnelonUselonrFollowsString,
+    twoUselonrsString = elonxtelonrnalStrings.socialContelonxtTwoUselonrsFollowString,
+    morelonUselonrsString = elonxtelonrnalStrings.socialContelonxtMorelonUselonrsFollowString,
+    timelonlinelonTitlelon = elonxtelonrnalStrings.socialContelonxtFollowelondByTimelonlinelonTitlelon
   )
 
-  def apply(
-    query: PipelineQuery,
-    candidate: TweetCandidate,
-    candidateFeatures: FeatureMap
-  ): Option[SocialContext] = {
-    // Only apply followed-by social context for OON Tweets
-    val inNetwork = candidateFeatures.getOrElse(InNetworkFeature, true)
-    if (!inNetwork) {
-      val validFollowedByUserIds =
-        candidateFeatures.getOrElse(SGSValidFollowedByUserIdsFeature, Nil)
-      engagerSocialContextBuilder(
-        socialContextIds = validFollowedByUserIds,
-        query = query,
-        candidateFeatures = candidateFeatures
+  delonf apply(
+    quelonry: PipelonlinelonQuelonry,
+    candidatelon: TwelonelontCandidatelon,
+    candidatelonFelonaturelons: FelonaturelonMap
+  ): Option[SocialContelonxt] = {
+    // Only apply followelond-by social contelonxt for OON Twelonelonts
+    val inNelontwork = candidatelonFelonaturelons.gelontOrelonlselon(InNelontworkFelonaturelon, truelon)
+    if (!inNelontwork) {
+      val validFollowelondByUselonrIds =
+        candidatelonFelonaturelons.gelontOrelonlselon(SGSValidFollowelondByUselonrIdsFelonaturelon, Nil)
+      elonngagelonrSocialContelonxtBuildelonr(
+        socialContelonxtIds = validFollowelondByUselonrIds,
+        quelonry = quelonry,
+        candidatelonFelonaturelons = candidatelonFelonaturelons
       )
-    } else {
-      None
+    } elonlselon {
+      Nonelon
     }
   }
 }

@@ -1,11 +1,11 @@
-package com.twitter.product_mixer.core.model.marshalling.request
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst
 
 /**
- * serializedRequestCursor is any serialized representation of a cursor.
+ * selonrializelondRelonquelonstCursor is any selonrializelond relonprelonselonntation of a cursor.
  *
- * The serialized representation is implementation-specific but will often be a base 64
- * representation of a Thrift struct. Cursors should not be deserialized in the unmarshaller.
+ * Thelon selonrializelond relonprelonselonntation is implelonmelonntation-speloncific but will oftelonn belon a baselon 64
+ * relonprelonselonntation of a Thrift struct. Cursors should not belon delonselonrializelond in thelon unmarshallelonr.
  */
-trait HasSerializedRequestCursor {
-  def serializedRequestCursor: Option[String]
+trait HasSelonrializelondRelonquelonstCursor {
+  delonf selonrializelondRelonquelonstCursor: Option[String]
 }

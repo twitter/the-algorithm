@@ -1,18 +1,18 @@
-package com.twitter.product_mixer.component_library.premarshaller.urt.builder
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.prelonmarshallelonr.urt.buildelonr
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineScribeConfig
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.Timelonlinelonelonntry
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.TimelonlinelonScribelonConfig
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
 /**
- * Trait for our builder which given a query and entries will return an `Option[TimelineScribeConfig]`
+ * Trait for our buildelonr which givelonn a quelonry and elonntrielons will relonturn an `Option[TimelonlinelonScribelonConfig]`
  *
- * @tparam Query
+ * @tparam Quelonry
  */
-trait TimelineScribeConfigBuilder[-Query <: PipelineQuery] {
+trait TimelonlinelonScribelonConfigBuildelonr[-Quelonry <: PipelonlinelonQuelonry] {
 
-  def build(
-    query: Query,
-    entries: Seq[TimelineEntry]
-  ): Option[TimelineScribeConfig]
+  delonf build(
+    quelonry: Quelonry,
+    elonntrielons: Selonq[Timelonlinelonelonntry]
+  ): Option[TimelonlinelonScribelonConfig]
 }

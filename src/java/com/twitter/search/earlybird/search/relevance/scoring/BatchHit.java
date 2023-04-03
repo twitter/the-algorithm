@@ -1,47 +1,47 @@
-package com.twitter.search.earlybird.search.relevance.scoring;
+packagelon com.twittelonr.selonarch.elonarlybird.selonarch.relonlelonvancelon.scoring;
 
-import com.twitter.search.common.features.thrift.ThriftSearchResultFeatures;
-import com.twitter.search.earlybird.search.relevance.LinearScoringData;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultMetadata;
+import com.twittelonr.selonarch.common.felonaturelons.thrift.ThriftSelonarchRelonsultFelonaturelons;
+import com.twittelonr.selonarch.elonarlybird.selonarch.relonlelonvancelon.LinelonarScoringData;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsultMelontadata;
 
 public class BatchHit {
-  private final LinearScoringData scoringData;
-  private final ThriftSearchResultFeatures features;
-  private final ThriftSearchResultMetadata metadata;
-  private final long tweetID;
-  private final long timeSliceID;
+  privatelon final LinelonarScoringData scoringData;
+  privatelon final ThriftSelonarchRelonsultFelonaturelons felonaturelons;
+  privatelon final ThriftSelonarchRelonsultMelontadata melontadata;
+  privatelon final long twelonelontID;
+  privatelon final long timelonSlicelonID;
 
   public BatchHit(
-      LinearScoringData scoringData,
-      ThriftSearchResultFeatures features,
-      ThriftSearchResultMetadata metadata,
-      long tweetID,
-      long timeSliceID
+      LinelonarScoringData scoringData,
+      ThriftSelonarchRelonsultFelonaturelons felonaturelons,
+      ThriftSelonarchRelonsultMelontadata melontadata,
+      long twelonelontID,
+      long timelonSlicelonID
   ) {
     this.scoringData = scoringData;
-    this.features = features;
-    this.metadata = metadata;
-    this.tweetID = tweetID;
-    this.timeSliceID = timeSliceID;
+    this.felonaturelons = felonaturelons;
+    this.melontadata = melontadata;
+    this.twelonelontID = twelonelontID;
+    this.timelonSlicelonID = timelonSlicelonID;
   }
 
-  public LinearScoringData getScoringData() {
-    return scoringData;
+  public LinelonarScoringData gelontScoringData() {
+    relonturn scoringData;
   }
 
-  public ThriftSearchResultFeatures getFeatures() {
-    return features;
+  public ThriftSelonarchRelonsultFelonaturelons gelontFelonaturelons() {
+    relonturn felonaturelons;
   }
 
-  public ThriftSearchResultMetadata getMetadata() {
-    return metadata;
+  public ThriftSelonarchRelonsultMelontadata gelontMelontadata() {
+    relonturn melontadata;
   }
 
-  public long getTweetID() {
-    return tweetID;
+  public long gelontTwelonelontID() {
+    relonturn twelonelontID;
   }
 
-  public long getTimeSliceID() {
-    return timeSliceID;
+  public long gelontTimelonSlicelonID() {
+    relonturn timelonSlicelonID;
   }
 }

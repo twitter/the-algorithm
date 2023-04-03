@@ -1,156 +1,156 @@
-package com.twitter.home_mixer.functional_component.feature_hydrator
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator
 
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.InReplyToTweetIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.IsHydratedFeature
-import com.twitter.home_mixer.model.HomeFeatures.IsNsfwFeature
-import com.twitter.home_mixer.model.HomeFeatures.IsRetweetFeature
-import com.twitter.home_mixer.model.HomeFeatures.QuotedTweetDroppedFeature
-import com.twitter.home_mixer.model.HomeFeatures.QuotedTweetIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.QuotedUserIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.SourceTweetIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.SourceUserIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.TweetTextFeature
-import com.twitter.home_mixer.model.request.FollowingProduct
-import com.twitter.home_mixer.model.request.ForYouProduct
-import com.twitter.home_mixer.model.request.ListTweetsProduct
-import com.twitter.home_mixer.model.request.ScoredTweetsProduct
-import com.twitter.home_mixer.util.tweetypie.RequestFields
-import com.twitter.product_mixer.component_library.feature_hydrator.candidate.tweet_is_nsfw.IsNsfw
-import com.twitter.product_mixer.component_library.feature_hydrator.candidate.tweet_visibility_reason.VisibilityReason
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.CandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.spam.rtf.{thriftscala => rtf}
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.tweetypie.{TweetyPie => TweetypieStitchClient}
-import com.twitter.tweetypie.{thriftscala => tp}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.AuthorIdFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.InRelonplyToTwelonelontIdFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.IsHydratelondFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.IsNsfwFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.IsRelontwelonelontFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.QuotelondTwelonelontDroppelondFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.QuotelondTwelonelontIdFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.QuotelondUselonrIdFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.SourcelonTwelonelontIdFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.SourcelonUselonrIdFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.TwelonelontTelonxtFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.relonquelonst.FollowingProduct
+import com.twittelonr.homelon_mixelonr.modelonl.relonquelonst.ForYouProduct
+import com.twittelonr.homelon_mixelonr.modelonl.relonquelonst.ListTwelonelontsProduct
+import com.twittelonr.homelon_mixelonr.modelonl.relonquelonst.ScorelondTwelonelontsProduct
+import com.twittelonr.homelon_mixelonr.util.twelonelontypielon.RelonquelonstFielonlds
+import com.twittelonr.product_mixelonr.componelonnt_library.felonaturelon_hydrator.candidatelon.twelonelont_is_nsfw.IsNsfw
+import com.twittelonr.product_mixelonr.componelonnt_library.felonaturelon_hydrator.candidatelon.twelonelont_visibility_relonason.VisibilityRelonason
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.TwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMapBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator.CandidatelonFelonaturelonHydrator
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.FelonaturelonHydratorIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.spam.rtf.{thriftscala => rtf}
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.stitch.twelonelontypielon.{TwelonelontyPielon => TwelonelontypielonStitchClielonnt}
+import com.twittelonr.twelonelontypielon.{thriftscala => tp}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class TweetypieFeatureHydrator @Inject() (tweetypieStitchClient: TweetypieStitchClient)
-    extends CandidateFeatureHydrator[PipelineQuery, TweetCandidate] {
+@Singlelonton
+class TwelonelontypielonFelonaturelonHydrator @Injelonct() (twelonelontypielonStitchClielonnt: TwelonelontypielonStitchClielonnt)
+    elonxtelonnds CandidatelonFelonaturelonHydrator[PipelonlinelonQuelonry, TwelonelontCandidatelon] {
 
-  override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier("Tweetypie")
+  ovelonrridelon val idelonntifielonr: FelonaturelonHydratorIdelonntifielonr = FelonaturelonHydratorIdelonntifielonr("Twelonelontypielon")
 
-  override val features: Set[Feature[_, _]] = Set(
-    AuthorIdFeature,
-    InReplyToTweetIdFeature,
-    IsHydratedFeature,
+  ovelonrridelon val felonaturelons: Selont[Felonaturelon[_, _]] = Selont(
+    AuthorIdFelonaturelon,
+    InRelonplyToTwelonelontIdFelonaturelon,
+    IsHydratelondFelonaturelon,
     IsNsfw,
-    IsNsfwFeature,
-    IsRetweetFeature,
-    QuotedTweetDroppedFeature,
-    QuotedTweetIdFeature,
-    QuotedUserIdFeature,
-    SourceTweetIdFeature,
-    SourceUserIdFeature,
-    TweetTextFeature,
-    VisibilityReason
+    IsNsfwFelonaturelon,
+    IsRelontwelonelontFelonaturelon,
+    QuotelondTwelonelontDroppelondFelonaturelon,
+    QuotelondTwelonelontIdFelonaturelon,
+    QuotelondUselonrIdFelonaturelon,
+    SourcelonTwelonelontIdFelonaturelon,
+    SourcelonUselonrIdFelonaturelon,
+    TwelonelontTelonxtFelonaturelon,
+    VisibilityRelonason
   )
 
-  private val DefaultFeatureMap = FeatureMapBuilder()
-    .add(IsHydratedFeature, false)
-    .add(IsNsfw, None)
-    .add(IsNsfwFeature, false)
-    .add(QuotedTweetDroppedFeature, false)
-    .add(TweetTextFeature, None)
-    .add(VisibilityReason, None)
+  privatelon val DelonfaultFelonaturelonMap = FelonaturelonMapBuildelonr()
+    .add(IsHydratelondFelonaturelon, falselon)
+    .add(IsNsfw, Nonelon)
+    .add(IsNsfwFelonaturelon, falselon)
+    .add(QuotelondTwelonelontDroppelondFelonaturelon, falselon)
+    .add(TwelonelontTelonxtFelonaturelon, Nonelon)
+    .add(VisibilityRelonason, Nonelon)
     .build()
 
-  override def apply(
-    query: PipelineQuery,
-    candidate: TweetCandidate,
-    existingFeatures: FeatureMap
-  ): Stitch[FeatureMap] = {
-    val safetyLevel = query.product match {
-      case FollowingProduct => rtf.SafetyLevel.TimelineHomeLatest
-      case ForYouProduct => rtf.SafetyLevel.TimelineHome
-      case ScoredTweetsProduct => rtf.SafetyLevel.TimelineHome
-      case ListTweetsProduct => rtf.SafetyLevel.TimelineLists
-      case unknown => throw new UnsupportedOperationException(s"Unknown product: $unknown")
+  ovelonrridelon delonf apply(
+    quelonry: PipelonlinelonQuelonry,
+    candidatelon: TwelonelontCandidatelon,
+    elonxistingFelonaturelons: FelonaturelonMap
+  ): Stitch[FelonaturelonMap] = {
+    val safelontyLelonvelonl = quelonry.product match {
+      caselon FollowingProduct => rtf.SafelontyLelonvelonl.TimelonlinelonHomelonLatelonst
+      caselon ForYouProduct => rtf.SafelontyLelonvelonl.TimelonlinelonHomelon
+      caselon ScorelondTwelonelontsProduct => rtf.SafelontyLelonvelonl.TimelonlinelonHomelon
+      caselon ListTwelonelontsProduct => rtf.SafelontyLelonvelonl.TimelonlinelonLists
+      caselon unknown => throw nelonw UnsupportelondOpelonrationelonxcelonption(s"Unknown product: $unknown")
     }
 
-    val tweetFieldsOptions = tp.GetTweetFieldsOptions(
-      tweetIncludes = RequestFields.TweetTPHydrationFields,
-      includeRetweetedTweet = true,
-      includeQuotedTweet = true,
-      visibilityPolicy = tp.TweetVisibilityPolicy.UserVisible,
-      safetyLevel = Some(safetyLevel),
-      forUserId = Some(query.getRequiredUserId)
+    val twelonelontFielonldsOptions = tp.GelontTwelonelontFielonldsOptions(
+      twelonelontIncludelons = RelonquelonstFielonlds.TwelonelontTPHydrationFielonlds,
+      includelonRelontwelonelontelondTwelonelont = truelon,
+      includelonQuotelondTwelonelont = truelon,
+      visibilityPolicy = tp.TwelonelontVisibilityPolicy.UselonrVisiblelon,
+      safelontyLelonvelonl = Somelon(safelontyLelonvelonl),
+      forUselonrId = Somelon(quelonry.gelontRelonquirelondUselonrId)
     )
 
-    tweetypieStitchClient.getTweetFields(tweetId = candidate.id, options = tweetFieldsOptions).map {
-      case tp.GetTweetFieldsResult(_, tp.TweetFieldsResultState.Found(found), quoteOpt, _) =>
-        val coreData = found.tweet.coreData
-        val isNsfwAdmin = coreData.exists(_.nsfwAdmin)
-        val isNsfwUser = coreData.exists(_.nsfwUser)
+    twelonelontypielonStitchClielonnt.gelontTwelonelontFielonlds(twelonelontId = candidatelon.id, options = twelonelontFielonldsOptions).map {
+      caselon tp.GelontTwelonelontFielonldsRelonsult(_, tp.TwelonelontFielonldsRelonsultStatelon.Found(found), quotelonOpt, _) =>
+        val corelonData = found.twelonelont.corelonData
+        val isNsfwAdmin = corelonData.elonxists(_.nsfwAdmin)
+        val isNsfwUselonr = corelonData.elonxists(_.nsfwUselonr)
 
-        val quotedTweetDropped = quoteOpt.exists {
-          case _: tp.TweetFieldsResultState.Filtered => true
-          case _: tp.TweetFieldsResultState.NotFound => true
-          case _ => false
+        val quotelondTwelonelontDroppelond = quotelonOpt.elonxists {
+          caselon _: tp.TwelonelontFielonldsRelonsultStatelon.Filtelonrelond => truelon
+          caselon _: tp.TwelonelontFielonldsRelonsultStatelon.NotFound => truelon
+          caselon _ => falselon
         }
-        val quotedTweetIsNsfw = quoteOpt.exists {
-          case quoteTweet: tp.TweetFieldsResultState.Found =>
-            quoteTweet.found.tweet.coreData.exists(data => data.nsfwAdmin || data.nsfwUser)
-          case _ => false
-        }
-
-        val sourceTweetIsNsfw =
-          found.retweetedTweet.exists(_.coreData.exists(data => data.nsfwAdmin || data.nsfwUser))
-
-        val tweetText = coreData.map(_.text)
-
-        val tweetAuthorId = coreData.map(_.userId)
-        val inReplyToTweetId = coreData.flatMap(_.reply.flatMap(_.inReplyToStatusId))
-        val retweetedTweetId = found.retweetedTweet.map(_.id)
-        val quotedTweetId = quoteOpt.flatMap {
-          case quoteTweet: tp.TweetFieldsResultState.Found =>
-            Some(quoteTweet.found.tweet.id)
-          case _ => None
+        val quotelondTwelonelontIsNsfw = quotelonOpt.elonxists {
+          caselon quotelonTwelonelont: tp.TwelonelontFielonldsRelonsultStatelon.Found =>
+            quotelonTwelonelont.found.twelonelont.corelonData.elonxists(data => data.nsfwAdmin || data.nsfwUselonr)
+          caselon _ => falselon
         }
 
-        val retweetedTweetUserId = found.retweetedTweet.flatMap(_.coreData).map(_.userId)
-        val quotedTweetUserId = quoteOpt.flatMap {
-          case quoteTweet: tp.TweetFieldsResultState.Found =>
-            quoteTweet.found.tweet.coreData.map(_.userId)
-          case _ => None
+        val sourcelonTwelonelontIsNsfw =
+          found.relontwelonelontelondTwelonelont.elonxists(_.corelonData.elonxists(data => data.nsfwAdmin || data.nsfwUselonr))
+
+        val twelonelontTelonxt = corelonData.map(_.telonxt)
+
+        val twelonelontAuthorId = corelonData.map(_.uselonrId)
+        val inRelonplyToTwelonelontId = corelonData.flatMap(_.relonply.flatMap(_.inRelonplyToStatusId))
+        val relontwelonelontelondTwelonelontId = found.relontwelonelontelondTwelonelont.map(_.id)
+        val quotelondTwelonelontId = quotelonOpt.flatMap {
+          caselon quotelonTwelonelont: tp.TwelonelontFielonldsRelonsultStatelon.Found =>
+            Somelon(quotelonTwelonelont.found.twelonelont.id)
+          caselon _ => Nonelon
         }
 
-        val isNsfw = isNsfwAdmin || isNsfwUser || sourceTweetIsNsfw || quotedTweetIsNsfw
+        val relontwelonelontelondTwelonelontUselonrId = found.relontwelonelontelondTwelonelont.flatMap(_.corelonData).map(_.uselonrId)
+        val quotelondTwelonelontUselonrId = quotelonOpt.flatMap {
+          caselon quotelonTwelonelont: tp.TwelonelontFielonldsRelonsultStatelon.Found =>
+            quotelonTwelonelont.found.twelonelont.corelonData.map(_.uselonrId)
+          caselon _ => Nonelon
+        }
 
-        FeatureMapBuilder()
-          .add(AuthorIdFeature, tweetAuthorId)
-          .add(InReplyToTweetIdFeature, inReplyToTweetId)
-          .add(IsHydratedFeature, true)
-          .add(IsNsfw, Some(isNsfw))
-          .add(IsNsfwFeature, isNsfw)
-          .add(IsRetweetFeature, retweetedTweetId.isDefined)
-          .add(QuotedTweetDroppedFeature, quotedTweetDropped)
-          .add(QuotedTweetIdFeature, quotedTweetId)
-          .add(QuotedUserIdFeature, quotedTweetUserId)
-          .add(SourceTweetIdFeature, retweetedTweetId)
-          .add(SourceUserIdFeature, retweetedTweetUserId)
-          .add(TweetTextFeature, tweetText)
-          .add(VisibilityReason, found.suppressReason)
+        val isNsfw = isNsfwAdmin || isNsfwUselonr || sourcelonTwelonelontIsNsfw || quotelondTwelonelontIsNsfw
+
+        FelonaturelonMapBuildelonr()
+          .add(AuthorIdFelonaturelon, twelonelontAuthorId)
+          .add(InRelonplyToTwelonelontIdFelonaturelon, inRelonplyToTwelonelontId)
+          .add(IsHydratelondFelonaturelon, truelon)
+          .add(IsNsfw, Somelon(isNsfw))
+          .add(IsNsfwFelonaturelon, isNsfw)
+          .add(IsRelontwelonelontFelonaturelon, relontwelonelontelondTwelonelontId.isDelonfinelond)
+          .add(QuotelondTwelonelontDroppelondFelonaturelon, quotelondTwelonelontDroppelond)
+          .add(QuotelondTwelonelontIdFelonaturelon, quotelondTwelonelontId)
+          .add(QuotelondUselonrIdFelonaturelon, quotelondTwelonelontUselonrId)
+          .add(SourcelonTwelonelontIdFelonaturelon, relontwelonelontelondTwelonelontId)
+          .add(SourcelonUselonrIdFelonaturelon, relontwelonelontelondTwelonelontUselonrId)
+          .add(TwelonelontTelonxtFelonaturelon, twelonelontTelonxt)
+          .add(VisibilityRelonason, found.supprelonssRelonason)
           .build()
 
-      // If no tweet result found, return default and pre-existing features
-      case _ =>
-        DefaultFeatureMap +
-          (AuthorIdFeature, existingFeatures.getOrElse(AuthorIdFeature, None)) +
-          (InReplyToTweetIdFeature, existingFeatures.getOrElse(InReplyToTweetIdFeature, None)) +
-          (IsRetweetFeature, existingFeatures.getOrElse(IsRetweetFeature, false)) +
-          (QuotedTweetIdFeature, existingFeatures.getOrElse(QuotedTweetIdFeature, None)) +
-          (QuotedUserIdFeature, existingFeatures.getOrElse(QuotedUserIdFeature, None)) +
-          (SourceTweetIdFeature, existingFeatures.getOrElse(SourceTweetIdFeature, None)) +
-          (SourceUserIdFeature, existingFeatures.getOrElse(SourceUserIdFeature, None))
+      // If no twelonelont relonsult found, relonturn delonfault and prelon-elonxisting felonaturelons
+      caselon _ =>
+        DelonfaultFelonaturelonMap +
+          (AuthorIdFelonaturelon, elonxistingFelonaturelons.gelontOrelonlselon(AuthorIdFelonaturelon, Nonelon)) +
+          (InRelonplyToTwelonelontIdFelonaturelon, elonxistingFelonaturelons.gelontOrelonlselon(InRelonplyToTwelonelontIdFelonaturelon, Nonelon)) +
+          (IsRelontwelonelontFelonaturelon, elonxistingFelonaturelons.gelontOrelonlselon(IsRelontwelonelontFelonaturelon, falselon)) +
+          (QuotelondTwelonelontIdFelonaturelon, elonxistingFelonaturelons.gelontOrelonlselon(QuotelondTwelonelontIdFelonaturelon, Nonelon)) +
+          (QuotelondUselonrIdFelonaturelon, elonxistingFelonaturelons.gelontOrelonlselon(QuotelondUselonrIdFelonaturelon, Nonelon)) +
+          (SourcelonTwelonelontIdFelonaturelon, elonxistingFelonaturelons.gelontOrelonlselon(SourcelonTwelonelontIdFelonaturelon, Nonelon)) +
+          (SourcelonUselonrIdFelonaturelon, elonxistingFelonaturelons.gelontOrelonlselon(SourcelonUselonrIdFelonaturelon, Nonelon))
     }
   }
 }

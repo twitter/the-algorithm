@@ -1,22 +1,22 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.timeline_module
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.timelonlinelon_modulelon
 
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.timeline_module.BaseModuleShowMoreBehaviorBuilder
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ModuleShowMoreBehavior
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ModuleShowMoreBehaviorRevealByCount
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.timelonlinelon_modulelon.BaselonModulelonShowMorelonBelonhaviorBuildelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.timelonlinelon_modulelon.ModulelonShowMorelonBelonhavior
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.timelonlinelon_modulelon.ModulelonShowMorelonBelonhaviorRelonvelonalByCount
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
-case class ModuleDynamicShowMoreBehaviorRevealByCountBuilder(
-  initialItemsCount: Int,
-  showMoreItemsCount: Int)
-    extends BaseModuleShowMoreBehaviorBuilder[PipelineQuery, UniversalNoun[Any]] {
+caselon class ModulelonDynamicShowMorelonBelonhaviorRelonvelonalByCountBuildelonr(
+  initialItelonmsCount: Int,
+  showMorelonItelonmsCount: Int)
+    elonxtelonnds BaselonModulelonShowMorelonBelonhaviorBuildelonr[PipelonlinelonQuelonry, UnivelonrsalNoun[Any]] {
 
-  override def apply(
-    query: PipelineQuery,
-    candidate: Seq[CandidateWithFeatures[UniversalNoun[Any]]]
-  ): ModuleShowMoreBehavior = ModuleShowMoreBehaviorRevealByCount(
-    initialItemsCount = initialItemsCount,
-    showMoreItemsCount = showMoreItemsCount
+  ovelonrridelon delonf apply(
+    quelonry: PipelonlinelonQuelonry,
+    candidatelon: Selonq[CandidatelonWithFelonaturelons[UnivelonrsalNoun[Any]]]
+  ): ModulelonShowMorelonBelonhavior = ModulelonShowMorelonBelonhaviorRelonvelonalByCount(
+    initialItelonmsCount = initialItelonmsCount,
+    showMorelonItelonmsCount = showMorelonItelonmsCount
   )
 }

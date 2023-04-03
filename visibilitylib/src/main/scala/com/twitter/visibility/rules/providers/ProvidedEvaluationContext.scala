@@ -1,50 +1,50 @@
-package com.twitter.visibility.rules.providers
+packagelon com.twittelonr.visibility.rulelons.providelonrs
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.timelines.configapi.Params
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.rules.EvaluationContext
-import com.twitter.visibility.rules.VisibilityPolicy
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.timelonlinelons.configapi.Params
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl
+import com.twittelonr.visibility.rulelons.elonvaluationContelonxt
+import com.twittelonr.visibility.rulelons.VisibilityPolicy
 
-sealed abstract class ProvidedEvaluationContext(
+selonalelond abstract class ProvidelondelonvaluationContelonxt(
   visibilityPolicy: VisibilityPolicy,
   params: Params,
-  statsReceiver: StatsReceiver)
-    extends EvaluationContext(
+  statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds elonvaluationContelonxt(
       visibilityPolicy = visibilityPolicy,
       params = params,
-      statsReceiver = statsReceiver)
+      statsReloncelonivelonr = statsReloncelonivelonr)
 
-object ProvidedEvaluationContext {
+objelonct ProvidelondelonvaluationContelonxt {
 
-  def injectRuntimeRulesIntoEvaluationContext(
-    evaluationContext: EvaluationContext,
-    safetyLevel: Option[SafetyLevel] = None,
-    policyProviderOpt: Option[PolicyProvider] = None
-  ): ProvidedEvaluationContext = {
-    (policyProviderOpt, safetyLevel) match {
-      case (Some(policyProvider), Some(safetyLevel)) =>
-        new InjectedEvaluationContext(
-          evaluationContext = evaluationContext,
-          safetyLevel = safetyLevel,
-          policyProvider = policyProvider)
-      case (_, _) => new StaticEvaluationContext(evaluationContext)
+  delonf injelonctRuntimelonRulelonsIntoelonvaluationContelonxt(
+    elonvaluationContelonxt: elonvaluationContelonxt,
+    safelontyLelonvelonl: Option[SafelontyLelonvelonl] = Nonelon,
+    policyProvidelonrOpt: Option[PolicyProvidelonr] = Nonelon
+  ): ProvidelondelonvaluationContelonxt = {
+    (policyProvidelonrOpt, safelontyLelonvelonl) match {
+      caselon (Somelon(policyProvidelonr), Somelon(safelontyLelonvelonl)) =>
+        nelonw InjelonctelondelonvaluationContelonxt(
+          elonvaluationContelonxt = elonvaluationContelonxt,
+          safelontyLelonvelonl = safelontyLelonvelonl,
+          policyProvidelonr = policyProvidelonr)
+      caselon (_, _) => nelonw StaticelonvaluationContelonxt(elonvaluationContelonxt)
     }
   }
 }
 
-private class StaticEvaluationContext(
-  evaluationContext: EvaluationContext)
-    extends ProvidedEvaluationContext(
-      visibilityPolicy = evaluationContext.visibilityPolicy,
-      params = evaluationContext.params,
-      statsReceiver = evaluationContext.statsReceiver)
+privatelon class StaticelonvaluationContelonxt(
+  elonvaluationContelonxt: elonvaluationContelonxt)
+    elonxtelonnds ProvidelondelonvaluationContelonxt(
+      visibilityPolicy = elonvaluationContelonxt.visibilityPolicy,
+      params = elonvaluationContelonxt.params,
+      statsReloncelonivelonr = elonvaluationContelonxt.statsReloncelonivelonr)
 
-private class InjectedEvaluationContext(
-  evaluationContext: EvaluationContext,
-  safetyLevel: SafetyLevel,
-  policyProvider: PolicyProvider)
-    extends ProvidedEvaluationContext(
-      visibilityPolicy = policyProvider.policyForSurface(safetyLevel),
-      params = evaluationContext.params,
-      statsReceiver = evaluationContext.statsReceiver)
+privatelon class InjelonctelondelonvaluationContelonxt(
+  elonvaluationContelonxt: elonvaluationContelonxt,
+  safelontyLelonvelonl: SafelontyLelonvelonl,
+  policyProvidelonr: PolicyProvidelonr)
+    elonxtelonnds ProvidelondelonvaluationContelonxt(
+      visibilityPolicy = policyProvidelonr.policyForSurfacelon(safelontyLelonvelonl),
+      params = elonvaluationContelonxt.params,
+      statsReloncelonivelonr = elonvaluationContelonxt.statsReloncelonivelonr)

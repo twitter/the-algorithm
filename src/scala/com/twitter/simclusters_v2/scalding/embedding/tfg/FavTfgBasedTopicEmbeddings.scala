@@ -1,172 +1,172 @@
-package com.twitter.simclusters_v2.scalding.embedding.tfg
+packagelon com.twittelonr.simclustelonrs_v2.scalding.elonmbelondding.tfg
 
-import com.twitter.dal.client.dataset.KeyValDALDataset
-import com.twitter.dal.client.dataset.SnapshotDALDatasetBase
-import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.DALWrite.D
-import com.twitter.scalding_internal.dalv2.DALWrite.WriteExtension
-import com.twitter.scalding_internal.dalv2.remote_access.AllowCrossClusterSameDC
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.hdfs_sources.EntityEmbeddingsSources
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId
-import com.twitter.simclusters_v2.thriftscala.TfgTopicEmbeddings
-import com.twitter.simclusters_v2.thriftscala.UserToInterestedInClusterScores
-import com.twitter.simclusters_v2.thriftscala.{SimClustersEmbedding => ThriftSimClustersEmbedding}
-import com.twitter.wtf.scalding.jobs.common.AdhocExecutionApp
-import com.twitter.wtf.scalding.jobs.common.ScheduledExecutionApp
-import java.util.TimeZone
+import com.twittelonr.dal.clielonnt.dataselont.KelonyValDALDataselont
+import com.twittelonr.dal.clielonnt.dataselont.SnapshotDALDataselontBaselon
+import com.twittelonr.scalding._
+import com.twittelonr.scalding_intelonrnal.dalv2.DAL
+import com.twittelonr.scalding_intelonrnal.dalv2.DALWritelon.D
+import com.twittelonr.scalding_intelonrnal.dalv2.DALWritelon.Writelonelonxtelonnsion
+import com.twittelonr.scalding_intelonrnal.dalv2.relonmotelon_accelonss.AllowCrossClustelonrSamelonDC
+import com.twittelonr.scalding_intelonrnal.multiformat.format.kelonyval.KelonyVal
+import com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.elonntityelonmbelonddingsSourcelons
+import com.twittelonr.simclustelonrs_v2.scalding.elonmbelondding.common.elonmbelonddingUtil
+import com.twittelonr.simclustelonrs_v2.thriftscala.elonmbelonddingTypelon
+import com.twittelonr.simclustelonrs_v2.thriftscala.ModelonlVelonrsion
+import com.twittelonr.simclustelonrs_v2.thriftscala.SimClustelonrselonmbelonddingId
+import com.twittelonr.simclustelonrs_v2.thriftscala.TfgTopicelonmbelonddings
+import com.twittelonr.simclustelonrs_v2.thriftscala.UselonrToIntelonrelonstelondInClustelonrScorelons
+import com.twittelonr.simclustelonrs_v2.thriftscala.{SimClustelonrselonmbelondding => ThriftSimClustelonrselonmbelondding}
+import com.twittelonr.wtf.scalding.jobs.common.AdhocelonxeloncutionApp
+import com.twittelonr.wtf.scalding.jobs.common.SchelondulelondelonxeloncutionApp
+import java.util.TimelonZonelon
 
 /**
- * Jobs to generate Fav-based Topic-Follow-Graph (TFG) topic embeddings
- * A topic's fav-based TFG embedding is the sum of its followers' fav-based InterestedIn
+ * Jobs to gelonnelonratelon Fav-baselond Topic-Follow-Graph (TFG) topic elonmbelonddings
+ * A topic's fav-baselond TFG elonmbelondding is thelon sum of its followelonrs' fav-baselond IntelonrelonstelondIn
  */
 
 /**
-./bazel bundle src/scala/com/twitter/simclusters_v2/scalding/embedding/tfg:fav_tfg_topic_embeddings-adhoc
- scalding remote run \
-  --user cassowary \
-  --keytab /var/lib/tss/keys/fluffy/keytabs/client/cassowary.keytab \
-  --principal service_acoount@TWITTER.BIZ \
-  --cluster bluebird-qus1 \
-  --main-class com.twitter.simclusters_v2.scalding.embedding.tfg.FavTfgTopicEmbeddingsAdhocApp \
-  --target src/scala/com/twitter/simclusters_v2/scalding/embedding/tfg:fav_tfg_topic_embeddings-adhoc \
-  --hadoop-properties "scalding.with.reducers.set.explicitly=true mapreduce.job.reduces=4000" \
-  -- --date 2020-12-08
+./bazelonl bundlelon src/scala/com/twittelonr/simclustelonrs_v2/scalding/elonmbelondding/tfg:fav_tfg_topic_elonmbelonddings-adhoc
+ scalding relonmotelon run \
+  --uselonr cassowary \
+  --kelonytab /var/lib/tss/kelonys/fluffy/kelonytabs/clielonnt/cassowary.kelonytab \
+  --principal selonrvicelon_acoount@TWITTelonR.BIZ \
+  --clustelonr bluelonbird-qus1 \
+  --main-class com.twittelonr.simclustelonrs_v2.scalding.elonmbelondding.tfg.FavTfgTopicelonmbelonddingsAdhocApp \
+  --targelont src/scala/com/twittelonr/simclustelonrs_v2/scalding/elonmbelondding/tfg:fav_tfg_topic_elonmbelonddings-adhoc \
+  --hadoop-propelonrtielons "scalding.with.relonducelonrs.selont.elonxplicitly=truelon maprelonducelon.job.relonducelons=4000" \
+  -- --datelon 2020-12-08
  */
-object FavTfgTopicEmbeddingsAdhocApp extends TfgBasedTopicEmbeddingsBaseApp with AdhocExecutionApp {
-  override val isAdhoc: Boolean = true
-  override val embeddingType: EmbeddingType = EmbeddingType.FavTfgTopic
-  override val embeddingSource: KeyValDALDataset[
-    KeyVal[SimClustersEmbeddingId, ThriftSimClustersEmbedding]
-  ] = EntityEmbeddingsSources.FavTfgTopicEmbeddingsDataset
-  override val pathSuffix: String = "fav_tfg_topic_embedding"
-  override val modelVersion: ModelVersion = ModelVersion.Model20m145kUpdated
-  override val parquetDataSource: SnapshotDALDatasetBase[TfgTopicEmbeddings] =
-    EntityEmbeddingsSources.FavTfgTopicEmbeddingsParquetDataset
-  override def scoreExtractor: UserToInterestedInClusterScores => Double = scores =>
-    scores.favScore.getOrElse(0.0)
+objelonct FavTfgTopicelonmbelonddingsAdhocApp elonxtelonnds TfgBaselondTopicelonmbelonddingsBaselonApp with AdhocelonxeloncutionApp {
+  ovelonrridelon val isAdhoc: Boolelonan = truelon
+  ovelonrridelon val elonmbelonddingTypelon: elonmbelonddingTypelon = elonmbelonddingTypelon.FavTfgTopic
+  ovelonrridelon val elonmbelonddingSourcelon: KelonyValDALDataselont[
+    KelonyVal[SimClustelonrselonmbelonddingId, ThriftSimClustelonrselonmbelondding]
+  ] = elonntityelonmbelonddingsSourcelons.FavTfgTopicelonmbelonddingsDataselont
+  ovelonrridelon val pathSuffix: String = "fav_tfg_topic_elonmbelondding"
+  ovelonrridelon val modelonlVelonrsion: ModelonlVelonrsion = ModelonlVelonrsion.Modelonl20m145kUpdatelond
+  ovelonrridelon val parquelontDataSourcelon: SnapshotDALDataselontBaselon[TfgTopicelonmbelonddings] =
+    elonntityelonmbelonddingsSourcelons.FavTfgTopicelonmbelonddingsParquelontDataselont
+  ovelonrridelon delonf scorelonelonxtractor: UselonrToIntelonrelonstelondInClustelonrScorelons => Doublelon = scorelons =>
+    scorelons.favScorelon.gelontOrelonlselon(0.0)
 }
 
 /**
-./bazel bundle src/scala/com/twitter/simclusters_v2/scalding/embedding/tfg:fav_tfg_topic_embeddings
-capesospy-v2 update --build_locally --start_cron fav_tfg_topic_embeddings src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
+./bazelonl bundlelon src/scala/com/twittelonr/simclustelonrs_v2/scalding/elonmbelondding/tfg:fav_tfg_topic_elonmbelonddings
+capelonsospy-v2 updatelon --build_locally --start_cron fav_tfg_topic_elonmbelonddings src/scala/com/twittelonr/simclustelonrs_v2/capelonsos_config/atla_proc3.yaml
  */
-object FavTfgTopicEmbeddingsScheduledApp
-    extends TfgBasedTopicEmbeddingsBaseApp
-    with ScheduledExecutionApp {
-  override val isAdhoc: Boolean = false
-  override val embeddingType: EmbeddingType = EmbeddingType.FavTfgTopic
-  override val embeddingSource: KeyValDALDataset[
-    KeyVal[SimClustersEmbeddingId, ThriftSimClustersEmbedding]
-  ] = EntityEmbeddingsSources.FavTfgTopicEmbeddingsDataset
-  override val pathSuffix: String = "fav_tfg_topic_embedding"
-  override val modelVersion: ModelVersion = ModelVersion.Model20m145kUpdated
-  override val parquetDataSource: SnapshotDALDatasetBase[TfgTopicEmbeddings] =
-    EntityEmbeddingsSources.FavTfgTopicEmbeddingsParquetDataset
-  override def scoreExtractor: UserToInterestedInClusterScores => Double = scores =>
-    scores.favScore.getOrElse(0.0)
+objelonct FavTfgTopicelonmbelonddingsSchelondulelondApp
+    elonxtelonnds TfgBaselondTopicelonmbelonddingsBaselonApp
+    with SchelondulelondelonxeloncutionApp {
+  ovelonrridelon val isAdhoc: Boolelonan = falselon
+  ovelonrridelon val elonmbelonddingTypelon: elonmbelonddingTypelon = elonmbelonddingTypelon.FavTfgTopic
+  ovelonrridelon val elonmbelonddingSourcelon: KelonyValDALDataselont[
+    KelonyVal[SimClustelonrselonmbelonddingId, ThriftSimClustelonrselonmbelondding]
+  ] = elonntityelonmbelonddingsSourcelons.FavTfgTopicelonmbelonddingsDataselont
+  ovelonrridelon val pathSuffix: String = "fav_tfg_topic_elonmbelondding"
+  ovelonrridelon val modelonlVelonrsion: ModelonlVelonrsion = ModelonlVelonrsion.Modelonl20m145kUpdatelond
+  ovelonrridelon val parquelontDataSourcelon: SnapshotDALDataselontBaselon[TfgTopicelonmbelonddings] =
+    elonntityelonmbelonddingsSourcelons.FavTfgTopicelonmbelonddingsParquelontDataselont
+  ovelonrridelon delonf scorelonelonxtractor: UselonrToIntelonrelonstelondInClustelonrScorelons => Doublelon = scorelons =>
+    scorelons.favScorelon.gelontOrelonlselon(0.0)
 
-  override val firstTime: RichDate = RichDate("2020-05-25")
-  override val batchIncrement: Duration = Days(1)
+  ovelonrridelon val firstTimelon: RichDatelon = RichDatelon("2020-05-25")
+  ovelonrridelon val batchIncrelonmelonnt: Duration = Days(1)
 }
 
 /**
-./bazel bundle src/scala/com/twitter/simclusters_v2/scalding/embedding/tfg:fav_tfg_topic_embeddings_2020-adhoc
- scalding remote run \
-  --user cassowary \
-  --keytab /var/lib/tss/keys/fluffy/keytabs/client/cassowary.keytab \
-  --principal service_acoount@TWITTER.BIZ \
-  --cluster bluebird-qus1 \
-  --main-class com.twitter.simclusters_v2.scalding.embedding.tfg.FavTfgTopicEmbeddings2020AdhocApp \
-  --target src/scala/com/twitter/simclusters_v2/scalding/embedding/tfg:fav_tfg_topic_embeddings_2020-adhoc \
-  --hadoop-properties "scalding.with.reducers.set.explicitly=true mapreduce.job.reduces=4000" \
-  -- --date 2020-12-08
+./bazelonl bundlelon src/scala/com/twittelonr/simclustelonrs_v2/scalding/elonmbelondding/tfg:fav_tfg_topic_elonmbelonddings_2020-adhoc
+ scalding relonmotelon run \
+  --uselonr cassowary \
+  --kelonytab /var/lib/tss/kelonys/fluffy/kelonytabs/clielonnt/cassowary.kelonytab \
+  --principal selonrvicelon_acoount@TWITTelonR.BIZ \
+  --clustelonr bluelonbird-qus1 \
+  --main-class com.twittelonr.simclustelonrs_v2.scalding.elonmbelondding.tfg.FavTfgTopicelonmbelonddings2020AdhocApp \
+  --targelont src/scala/com/twittelonr/simclustelonrs_v2/scalding/elonmbelondding/tfg:fav_tfg_topic_elonmbelonddings_2020-adhoc \
+  --hadoop-propelonrtielons "scalding.with.relonducelonrs.selont.elonxplicitly=truelon maprelonducelon.job.relonducelons=4000" \
+  -- --datelon 2020-12-08
  */
-object FavTfgTopicEmbeddings2020AdhocApp
-    extends TfgBasedTopicEmbeddingsBaseApp
-    with AdhocExecutionApp {
-  override val isAdhoc: Boolean = true
-  override val embeddingType: EmbeddingType = EmbeddingType.FavTfgTopic
-  override val embeddingSource: KeyValDALDataset[
-    KeyVal[SimClustersEmbeddingId, ThriftSimClustersEmbedding]
-  ] = EntityEmbeddingsSources.FavTfgTopicEmbeddings2020Dataset
-  override val pathSuffix: String = "fav_tfg_topic_embedding"
-  override val modelVersion: ModelVersion = ModelVersion.Model20m145k2020
-  override val parquetDataSource: SnapshotDALDatasetBase[TfgTopicEmbeddings] =
-    EntityEmbeddingsSources.FavTfgTopicEmbeddings2020ParquetDataset
-  override def scoreExtractor: UserToInterestedInClusterScores => Double = scores =>
-    scores.favScore.getOrElse(0.0)
+objelonct FavTfgTopicelonmbelonddings2020AdhocApp
+    elonxtelonnds TfgBaselondTopicelonmbelonddingsBaselonApp
+    with AdhocelonxeloncutionApp {
+  ovelonrridelon val isAdhoc: Boolelonan = truelon
+  ovelonrridelon val elonmbelonddingTypelon: elonmbelonddingTypelon = elonmbelonddingTypelon.FavTfgTopic
+  ovelonrridelon val elonmbelonddingSourcelon: KelonyValDALDataselont[
+    KelonyVal[SimClustelonrselonmbelonddingId, ThriftSimClustelonrselonmbelondding]
+  ] = elonntityelonmbelonddingsSourcelons.FavTfgTopicelonmbelonddings2020Dataselont
+  ovelonrridelon val pathSuffix: String = "fav_tfg_topic_elonmbelondding"
+  ovelonrridelon val modelonlVelonrsion: ModelonlVelonrsion = ModelonlVelonrsion.Modelonl20m145k2020
+  ovelonrridelon val parquelontDataSourcelon: SnapshotDALDataselontBaselon[TfgTopicelonmbelonddings] =
+    elonntityelonmbelonddingsSourcelons.FavTfgTopicelonmbelonddings2020ParquelontDataselont
+  ovelonrridelon delonf scorelonelonxtractor: UselonrToIntelonrelonstelondInClustelonrScorelons => Doublelon = scorelons =>
+    scorelons.favScorelon.gelontOrelonlselon(0.0)
 }
 
 /**
-./bazel bundle src/scala/com/twitter/simclusters_v2/scalding/embedding/tfg:fav_tfg_topic_embeddings_2020
-capesospy-v2 update --build_locally --start_cron fav_tfg_topic_embeddings_2020 src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
+./bazelonl bundlelon src/scala/com/twittelonr/simclustelonrs_v2/scalding/elonmbelondding/tfg:fav_tfg_topic_elonmbelonddings_2020
+capelonsospy-v2 updatelon --build_locally --start_cron fav_tfg_topic_elonmbelonddings_2020 src/scala/com/twittelonr/simclustelonrs_v2/capelonsos_config/atla_proc3.yaml
  */
-object FavTfgTopicEmbeddings2020ScheduledApp
-    extends TfgBasedTopicEmbeddingsBaseApp
-    with ScheduledExecutionApp {
-  override val isAdhoc: Boolean = false
-  override val embeddingType: EmbeddingType = EmbeddingType.FavTfgTopic
-  override val embeddingSource: KeyValDALDataset[
-    KeyVal[SimClustersEmbeddingId, ThriftSimClustersEmbedding]
-  ] = EntityEmbeddingsSources.FavTfgTopicEmbeddings2020Dataset
-  override val pathSuffix: String = "fav_tfg_topic_embedding"
-  override val modelVersion: ModelVersion = ModelVersion.Model20m145k2020
-  override val parquetDataSource: SnapshotDALDatasetBase[TfgTopicEmbeddings] =
-    EntityEmbeddingsSources.FavTfgTopicEmbeddings2020ParquetDataset
-  override def scoreExtractor: UserToInterestedInClusterScores => Double = scores =>
-    scores.favScore.getOrElse(0.0)
+objelonct FavTfgTopicelonmbelonddings2020SchelondulelondApp
+    elonxtelonnds TfgBaselondTopicelonmbelonddingsBaselonApp
+    with SchelondulelondelonxeloncutionApp {
+  ovelonrridelon val isAdhoc: Boolelonan = falselon
+  ovelonrridelon val elonmbelonddingTypelon: elonmbelonddingTypelon = elonmbelonddingTypelon.FavTfgTopic
+  ovelonrridelon val elonmbelonddingSourcelon: KelonyValDALDataselont[
+    KelonyVal[SimClustelonrselonmbelonddingId, ThriftSimClustelonrselonmbelondding]
+  ] = elonntityelonmbelonddingsSourcelons.FavTfgTopicelonmbelonddings2020Dataselont
+  ovelonrridelon val pathSuffix: String = "fav_tfg_topic_elonmbelondding"
+  ovelonrridelon val modelonlVelonrsion: ModelonlVelonrsion = ModelonlVelonrsion.Modelonl20m145k2020
+  ovelonrridelon val parquelontDataSourcelon: SnapshotDALDataselontBaselon[TfgTopicelonmbelonddings] =
+    elonntityelonmbelonddingsSourcelons.FavTfgTopicelonmbelonddings2020ParquelontDataselont
+  ovelonrridelon delonf scorelonelonxtractor: UselonrToIntelonrelonstelondInClustelonrScorelons => Doublelon = scorelons =>
+    scorelons.favScorelon.gelontOrelonlselon(0.0)
 
-  override val firstTime: RichDate = RichDate("2021-03-10")
-  override val batchIncrement: Duration = Days(1)
+  ovelonrridelon val firstTimelon: RichDatelon = RichDatelon("2021-03-10")
+  ovelonrridelon val batchIncrelonmelonnt: Duration = Days(1)
 }
 
 /**
-./bazel bundle src/scala/com/twitter/simclusters_v2/scalding/embedding/tfg:fav_tfg_topic_embeddings_2020_copy
-scalding scalding remote run --target src/scala/com/twitter/simclusters_v2/scalding/embedding/tfg:fav_tfg_topic_embeddings_2020_copy
+./bazelonl bundlelon src/scala/com/twittelonr/simclustelonrs_v2/scalding/elonmbelondding/tfg:fav_tfg_topic_elonmbelonddings_2020_copy
+scalding scalding relonmotelon run --targelont src/scala/com/twittelonr/simclustelonrs_v2/scalding/elonmbelondding/tfg:fav_tfg_topic_elonmbelonddings_2020_copy
  */
 
 /**
- * This is a copy job where we copy the previous version of TFG and write to a new one.
- * The dependent dataset for TFG has been deleted.
- * Instead of restarting the entire job, we create this temp hacky solution to keep TFG dataset alive until we deprecate topics.
- * Having a table TFG doesn't lead to a big quality concern b/c TFG is built from topic follows, which is relative stable
- * and we don't have new topics anymore.
+ * This is a copy job whelonrelon welon copy thelon prelonvious velonrsion of TFG and writelon to a nelonw onelon.
+ * Thelon delonpelonndelonnt dataselont for TFG has belonelonn delonlelontelond.
+ * Instelonad of relonstarting thelon elonntirelon job, welon crelonatelon this telonmp hacky solution to kelonelonp TFG dataselont alivelon until welon delonpreloncatelon topics.
+ * Having a tablelon TFG doelonsn't lelonad to a big quality concelonrn b/c TFG is built from topic follows, which is relonlativelon stablelon
+ * and welon don't havelon nelonw topics anymorelon.
  */
-object FavTfgTopicEmbeddings2020CopyScheduledApp extends ScheduledExecutionApp {
-  val isAdhoc: Boolean = false
-  val embeddingType: EmbeddingType = EmbeddingType.FavTfgTopic
-  val embeddingSource: KeyValDALDataset[
-    KeyVal[SimClustersEmbeddingId, ThriftSimClustersEmbedding]
-  ] = EntityEmbeddingsSources.FavTfgTopicEmbeddings2020Dataset
-  val pathSuffix: String = "fav_tfg_topic_embedding"
-  val modelVersion: ModelVersion = ModelVersion.Model20m145k2020
+objelonct FavTfgTopicelonmbelonddings2020CopySchelondulelondApp elonxtelonnds SchelondulelondelonxeloncutionApp {
+  val isAdhoc: Boolelonan = falselon
+  val elonmbelonddingTypelon: elonmbelonddingTypelon = elonmbelonddingTypelon.FavTfgTopic
+  val elonmbelonddingSourcelon: KelonyValDALDataselont[
+    KelonyVal[SimClustelonrselonmbelonddingId, ThriftSimClustelonrselonmbelondding]
+  ] = elonntityelonmbelonddingsSourcelons.FavTfgTopicelonmbelonddings2020Dataselont
+  val pathSuffix: String = "fav_tfg_topic_elonmbelondding"
+  val modelonlVelonrsion: ModelonlVelonrsion = ModelonlVelonrsion.Modelonl20m145k2020
 
-  override val firstTime: RichDate = RichDate("2023-01-20")
-  override val batchIncrement: Duration = Days(3)
+  ovelonrridelon val firstTimelon: RichDatelon = RichDatelon("2023-01-20")
+  ovelonrridelon val batchIncrelonmelonnt: Duration = Days(3)
 
-  def runOnDateRange(
+  delonf runOnDatelonRangelon(
     args: Args
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon,
+    uniquelonID: UniquelonID
+  ): elonxeloncution[Unit] = {
     DAL
-      .readMostRecentSnapshotNoOlderThan(
-        EntityEmbeddingsSources.FavTfgTopicEmbeddings2020Dataset,
+      .relonadMostReloncelonntSnapshotNoOldelonrThan(
+        elonntityelonmbelonddingsSourcelons.FavTfgTopicelonmbelonddings2020Dataselont,
         Days(21))
-      .withRemoteReadPolicy(AllowCrossClusterSameDC)
-      .toTypedPipe
-      .writeDALVersionedKeyValExecution(
-        EntityEmbeddingsSources.FavTfgTopicEmbeddings2020Dataset,
+      .withRelonmotelonRelonadPolicy(AllowCrossClustelonrSamelonDC)
+      .toTypelondPipelon
+      .writelonDALVelonrsionelondKelonyValelonxeloncution(
+        elonntityelonmbelonddingsSourcelons.FavTfgTopicelonmbelonddings2020Dataselont,
         D.Suffix(
-          EmbeddingUtil
-            .getHdfsPath(isAdhoc = isAdhoc, isManhattanKeyVal = true, modelVersion, pathSuffix))
+          elonmbelonddingUtil
+            .gelontHdfsPath(isAdhoc = isAdhoc, isManhattanKelonyVal = truelon, modelonlVelonrsion, pathSuffix))
       )
   }
 }

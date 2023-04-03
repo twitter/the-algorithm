@@ -1,28 +1,28 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.richtext
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.richtelonxt
 
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseStr
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.richtext.BaseRichTextBuilder
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.UrlType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichText
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextAlignment
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.melontadata.BaselonStr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.richtelonxt.BaselonRichTelonxtBuildelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.UrlTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.richtelonxt.RichTelonxt
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.richtelonxt.RichTelonxtAlignmelonnt
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
-case class RichTextBuilder[-Query <: PipelineQuery, -Candidate <: UniversalNoun[Any]](
-  textBuilder: BaseStr[Query, Candidate],
+caselon class RichTelonxtBuildelonr[-Quelonry <: PipelonlinelonQuelonry, -Candidatelon <: UnivelonrsalNoun[Any]](
+  telonxtBuildelonr: BaselonStr[Quelonry, Candidatelon],
   linkMap: Map[String, String],
-  rtl: Option[Boolean],
-  alignment: Option[RichTextAlignment],
-  linkTypeMap: Map[String, UrlType] = Map.empty)
-    extends BaseRichTextBuilder[Query, Candidate] {
+  rtl: Option[Boolelonan],
+  alignmelonnt: Option[RichTelonxtAlignmelonnt],
+  linkTypelonMap: Map[String, UrlTypelon] = Map.elonmpty)
+    elonxtelonnds BaselonRichTelonxtBuildelonr[Quelonry, Candidatelon] {
 
-  def apply(query: Query, candidate: Candidate, candidateFeatures: FeatureMap): RichText = {
-    RichTextMarkupUtil.richTextFromMarkup(
-      text = textBuilder(query, candidate, candidateFeatures),
+  delonf apply(quelonry: Quelonry, candidatelon: Candidatelon, candidatelonFelonaturelons: FelonaturelonMap): RichTelonxt = {
+    RichTelonxtMarkupUtil.richTelonxtFromMarkup(
+      telonxt = telonxtBuildelonr(quelonry, candidatelon, candidatelonFelonaturelons),
       linkMap = linkMap,
       rtl = rtl,
-      alignment = alignment,
-      linkTypeMap = linkTypeMap)
+      alignmelonnt = alignmelonnt,
+      linkTypelonMap = linkTypelonMap)
   }
 }

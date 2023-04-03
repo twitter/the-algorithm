@@ -1,6 +1,6 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.metadata
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata
 
-sealed trait ConfirmationDisplayType
+selonalelond trait ConfirmationDisplayTypelon
 
-case object Inline extends ConfirmationDisplayType
-case object BottomSheet extends ConfirmationDisplayType
+caselon objelonct Inlinelon elonxtelonnds ConfirmationDisplayTypelon
+caselon objelonct BottomShelonelont elonxtelonnds ConfirmationDisplayTypelon

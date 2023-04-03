@@ -1,611 +1,611 @@
-/* Copyright 2016 The TensorFlow Authors. All Rights Reserved.
+/* Copyright 2016 Thelon TelonnsorFlow Authors. All Rights Relonselonrvelond.
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+Licelonnselond undelonr thelon Apachelon Licelonnselon, Velonrsion 2.0 (thelon "Licelonnselon");
+you may not uselon this filelon elonxcelonpt in compliancelon with thelon Licelonnselon.
+You may obtain a copy of thelon Licelonnselon at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+    http://www.apachelon.org/licelonnselons/LICelonNSelon-2.0
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+Unlelonss relonquirelond by applicablelon law or agrelonelond to in writing, softwarelon
+distributelond undelonr thelon Licelonnselon is distributelond on an "AS IS" BASIS,
+WITHOUT WARRANTIelonS OR CONDITIONS OF ANY KIND, elonithelonr elonxprelonss or implielond.
+Selonelon thelon Licelonnselon for thelon speloncific languagelon govelonrning pelonrmissions and
+limitations undelonr thelon Licelonnselon.
 ==============================================================================*/
 
 syntax = "proto3";
 
-package tensorflow;
+packagelon telonnsorflow;
 
-import "google/protobuf/any.proto";
-import "tensorflow/core/framework/cost_graph.proto";
-import "tensorflow/core/framework/device_attributes.proto";
-import "tensorflow/core/framework/graph.proto";
-import "tensorflow/core/framework/step_stats.proto";
-import "tensorflow/core/framework/tensor.proto";
-import "tensorflow/core/framework/tensor_shape.proto";
-import "tensorflow/core/framework/types.proto";
-import "tensorflow/core/protobuf/config.proto";
-import "tensorflow/core/protobuf/coordination_config.proto";
-import "tensorflow/core/protobuf/debug.proto";
-import "tensorflow/core/protobuf/error_codes.proto";
-import "tensorflow/core/protobuf/named_tensor.proto";
-import "tensorflow/core/protobuf/tensorflow_server.proto";
+import "googlelon/protobuf/any.proto";
+import "telonnsorflow/corelon/framelonwork/cost_graph.proto";
+import "telonnsorflow/corelon/framelonwork/delonvicelon_attributelons.proto";
+import "telonnsorflow/corelon/framelonwork/graph.proto";
+import "telonnsorflow/corelon/framelonwork/stelonp_stats.proto";
+import "telonnsorflow/corelon/framelonwork/telonnsor.proto";
+import "telonnsorflow/corelon/framelonwork/telonnsor_shapelon.proto";
+import "telonnsorflow/corelon/framelonwork/typelons.proto";
+import "telonnsorflow/corelon/protobuf/config.proto";
+import "telonnsorflow/corelon/protobuf/coordination_config.proto";
+import "telonnsorflow/corelon/protobuf/delonbug.proto";
+import "telonnsorflow/corelon/protobuf/elonrror_codelons.proto";
+import "telonnsorflow/corelon/protobuf/namelond_telonnsor.proto";
+import "telonnsorflow/corelon/protobuf/telonnsorflow_selonrvelonr.proto";
 
-option cc_enable_arenas = true;
-option java_outer_classname = "WorkerProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.distruntime";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+option cc_elonnablelon_arelonnas = truelon;
+option java_outelonr_classnamelon = "WorkelonrProtos";
+option java_multiplelon_filelons = truelon;
+option java_packagelon = "org.telonnsorflow.distruntimelon";
+option go_packagelon = "github.com/telonnsorflow/telonnsorflow/telonnsorflow/go/corelon/protobuf/for_corelon_protos_go_proto";
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-// GetStatus method request/response messages
+// GelontStatus melonthod relonquelonst/relonsponselon melonssagelons
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-message GetStatusRequest {}
+melonssagelon GelontStatusRelonquelonst {}
 
-message GetStatusResponse {
-  repeated DeviceAttributes device_attributes = 1;
+melonssagelon GelontStatusRelonsponselon {
+  relonpelonatelond DelonvicelonAttributelons delonvicelon_attributelons = 1;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-// CreateSession method request/response messages
+// CrelonatelonSelonssion melonthod relonquelonst/relonsponselon melonssagelons
 //
-// For each session,
+// For elonach selonssion,
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-message CreateWorkerSessionRequest {
-  // Sessions are identified by a given handle.
-  string session_handle = 1;
+melonssagelon CrelonatelonWorkelonrSelonssionRelonquelonst {
+  // Selonssions arelon idelonntifielond by a givelonn handlelon.
+  string selonssion_handlelon = 1;
 
-  // Defines the configuration of a TensorFlow worker.
-  ServerDef server_def = 2;
+  // Delonfinelons thelon configuration of a TelonnsorFlow workelonr.
+  SelonrvelonrDelonf selonrvelonr_delonf = 2;
 
-  // If true, any resources such as Variables used in the session will not be
-  // shared with other sessions.
-  bool isolate_session_state = 3;
+  // If truelon, any relonsourcelons such as Variablelons uselond in thelon selonssion will not belon
+  // sharelond with othelonr selonssions.
+  bool isolatelon_selonssion_statelon = 3;
 
-  // The device attributes of all the devices in the cluster.
-  repeated DeviceAttributes cluster_device_attributes = 4;
+  // Thelon delonvicelon attributelons of all thelon delonvicelons in thelon clustelonr.
+  relonpelonatelond DelonvicelonAttributelons clustelonr_delonvicelon_attributelons = 4;
 
-  // The master task name from which the request is sent.
-  string master_task = 5;
+  // Thelon mastelonr task namelon from which thelon relonquelonst is selonnt.
+  string mastelonr_task = 5;
 
-  // The incarnation ID of the master task local CPU device.
-  // If the target worker already has a WorkerSession created previously with
-  // the same master task name but a different incarnation, it usually indicates
-  // that the previous master failed before deleting the WorkerSession on the
-  // worker. To prevent memory leaks, the worker should garbage collect the old
-  // WorkerSessions.
-  int64 master_incarnation = 6;
+  // Thelon incarnation ID of thelon mastelonr task local CPU delonvicelon.
+  // If thelon targelont workelonr alrelonady has a WorkelonrSelonssion crelonatelond prelonviously with
+  // thelon samelon mastelonr task namelon but a diffelonrelonnt incarnation, it usually indicatelons
+  // that thelon prelonvious mastelonr failelond belonforelon delonlelonting thelon WorkelonrSelonssion on thelon
+  // workelonr. To prelonvelonnt melonmory lelonaks, thelon workelonr should garbagelon collelonct thelon old
+  // WorkelonrSelonssions.
+  int64 mastelonr_incarnation = 6;
 
-  // Configures coordination service within worker sessions.
-  CoordinationServiceConfig coordination_service_config = 7;
+  // Configurelons coordination selonrvicelon within workelonr selonssions.
+  CoordinationSelonrvicelonConfig coordination_selonrvicelon_config = 7;
 }
 
-message CreateWorkerSessionResponse {}
+melonssagelon CrelonatelonWorkelonrSelonssionRelonsponselon {}
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-// DeleteSession method request/response messages
+// DelonlelontelonSelonssion melonthod relonquelonst/relonsponselon melonssagelons
 //
-// Deletes all worker-side state associated with the given session handle.
+// Delonlelontelons all workelonr-sidelon statelon associatelond with thelon givelonn selonssion handlelon.
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-message DeleteWorkerSessionRequest {
-  // Sessions are identified by a given handle.
-  string session_handle = 1;
+melonssagelon DelonlelontelonWorkelonrSelonssionRelonquelonst {
+  // Selonssions arelon idelonntifielond by a givelonn handlelon.
+  string selonssion_handlelon = 1;
 }
 
-message DeleteWorkerSessionResponse {}
+melonssagelon DelonlelontelonWorkelonrSelonssionRelonsponselon {}
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-// RegisterGraph method request/response messages
+// RelongistelonrGraph melonthod relonquelonst/relonsponselon melonssagelons
 //
-// For each session, after the master placed every node on a device,
-// it partitions the whole graph into many subgraphs. All the nodes in
-// a subgraph were in the same worker, but potentially on many devices
-// owned by that worker (e.g. cpu0, plus gpu0, gpu1, ..., gpu7). The
-// master registers subgraphs for a worker before running any steps. A
-// successful registration returns a graph handle to be used in latter
-// RunGraph requests.
+// For elonach selonssion, aftelonr thelon mastelonr placelond elonvelonry nodelon on a delonvicelon,
+// it partitions thelon wholelon graph into many subgraphs. All thelon nodelons in
+// a subgraph welonrelon in thelon samelon workelonr, but potelonntially on many delonvicelons
+// ownelond by that workelonr (elon.g. cpu0, plus gpu0, gpu1, ..., gpu7). Thelon
+// mastelonr relongistelonrs subgraphs for a workelonr belonforelon running any stelonps. A
+// succelonssful relongistration relonturns a graph handlelon to belon uselond in lattelonr
+// RunGraph relonquelonsts.
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-message RegisterGraphRequest {
-  // Subgraphs are scoped within one session.
-  string session_handle = 1;
+melonssagelon RelongistelonrGraphRelonquelonst {
+  // Subgraphs arelon scopelond within onelon selonssion.
+  string selonssion_handlelon = 1;
 
-  // Set to true if `CreateWorkerSession` was called for `session_handle`.
-  bool create_worker_session_called = 6;
+  // Selont to truelon if `CrelonatelonWorkelonrSelonssion` was callelond for `selonssion_handlelon`.
+  bool crelonatelon_workelonr_selonssion_callelond = 6;
 
-  // "graph_def" has the subgraph of nodes for this worker, with each node
-  // having its device_name filled in.
-  GraphDef graph_def = 2;
+  // "graph_delonf" has thelon subgraph of nodelons for this workelonr, with elonach nodelon
+  // having its delonvicelon_namelon fillelond in.
+  GraphDelonf graph_delonf = 2;
 
-  // True iff the graph (before partitioning) contains control flow nodes.
+  // Truelon iff thelon graph (belonforelon partitioning) contains control flow nodelons.
   //
-  // As of 01/11/2015, this is no longer set by clients.
-  bool has_control_flow = 3 [deprecated = true];
+  // As of 01/11/2015, this is no longelonr selont by clielonnts.
+  bool has_control_flow = 3 [delonpreloncatelond = truelon];
 
-  // Configuration options for the session in which this graph was created.
+  // Configuration options for thelon selonssion in which this graph was crelonatelond.
   GraphOptions graph_options = 4;
 
-  // Field(s) used by TensorFlow Debugger (tfdbg).
-  DebugOptions debug_options = 5;
+  // Fielonld(s) uselond by TelonnsorFlow Delonbuggelonr (tfdbg).
+  DelonbugOptions delonbug_options = 5;
 
-  // If graph_def contains any collective ops this must be a positive
-  // integer used to coordinate execution with other graphs.  All
-  // graphs in a distributed execution with the same
-  // collective_graph_key will coordinate to use the same step_id
-  // concurrently so that BufRendezvous entries will make the correct
-  // values accessible.
-  int64 collective_graph_key = 7;
+  // If graph_delonf contains any collelonctivelon ops this must belon a positivelon
+  // intelongelonr uselond to coordinatelon elonxeloncution with othelonr graphs.  All
+  // graphs in a distributelond elonxeloncution with thelon samelon
+  // collelonctivelon_graph_kelony will coordinatelon to uselon thelon samelon stelonp_id
+  // concurrelonntly so that BufRelonndelonzvous elonntrielons will makelon thelon correlonct
+  // valuelons accelonssiblelon.
+  int64 collelonctivelon_graph_kelony = 7;
 
-  // ConfigProto from the session in which this graph was created.
-  // Contains additional parameters beyond graph_options, including
-  // the name of the requested executor.
+  // ConfigProto from thelon selonssion in which this graph was crelonatelond.
+  // Contains additional paramelontelonrs belonyond graph_options, including
+  // thelon namelon of thelon relonquelonstelond elonxeloncutor.
   ConfigProto config_proto = 8;
 }
 
-message RegisterGraphResponse {
-  // If the registration succeeds, returns an opaque graph_handle to
-  // the master. The master calls RunGraph with graph_handle to
-  // compute different steps.
-  string graph_handle = 1;
+melonssagelon RelongistelonrGraphRelonsponselon {
+  // If thelon relongistration succelonelonds, relonturns an opaquelon graph_handlelon to
+  // thelon mastelonr. Thelon mastelonr calls RunGraph with graph_handlelon to
+  // computelon diffelonrelonnt stelonps.
+  string graph_handlelon = 1;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-// DeregisterGraph method request/response messages
+// DelonrelongistelonrGraph melonthod relonquelonst/relonsponselon melonssagelons
 //
-// The master deregisters the given graph_handle when the graph is no
-// longer needed (e.g., the overall graph is re-scheduled and nodes
-// are re-placed).
+// Thelon mastelonr delonrelongistelonrs thelon givelonn graph_handlelon whelonn thelon graph is no
+// longelonr nelonelondelond (elon.g., thelon ovelonrall graph is relon-schelondulelond and nodelons
+// arelon relon-placelond).
 //
-// The worker deregisters a graph_handle automatically according to on
-// a TTL-base policy in case of master restarts.
+// Thelon workelonr delonrelongistelonrs a graph_handlelon automatically according to on
+// a TTL-baselon policy in caselon of mastelonr relonstarts.
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-message DeregisterGraphRequest {
-  // The session_handle used when registering the graph. If session_handle is
-  // empty, a single global namespace is used.
-  string session_handle = 2;
+melonssagelon DelonrelongistelonrGraphRelonquelonst {
+  // Thelon selonssion_handlelon uselond whelonn relongistelonring thelon graph. If selonssion_handlelon is
+  // elonmpty, a singlelon global namelonspacelon is uselond.
+  string selonssion_handlelon = 2;
 
-  // Set to true if `CreateWorkerSession` was called for `session_handle`.
-  bool create_worker_session_called = 3;
+  // Selont to truelon if `CrelonatelonWorkelonrSelonssion` was callelond for `selonssion_handlelon`.
+  bool crelonatelon_workelonr_selonssion_callelond = 3;
 
-  // REQUIRED: graph_handle must be returned by a RegisterGraph call
-  // to the same WorkerService.
-  string graph_handle = 1;
+  // RelonQUIRelonD: graph_handlelon must belon relonturnelond by a RelongistelonrGraph call
+  // to thelon samelon WorkelonrSelonrvicelon.
+  string graph_handlelon = 1;
 }
 
-message DeregisterGraphResponse {
-  // TODO: Optionally add summary stats for the graph.
+melonssagelon DelonrelongistelonrGraphRelonsponselon {
+  // TODO: Optionally add summary stats for thelon graph.
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-// CleanupAll method request/response messages
+// ClelonanupAll melonthod relonquelonst/relonsponselon melonssagelons
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-message CleanupAllRequest {
-  // A list of container names.
+melonssagelon ClelonanupAllRelonquelonst {
+  // A list of containelonr namelons.
   //
-  // If 'container' is not empty, releases resources in the given
-  // containers in all devices.
+  // If 'containelonr' is not elonmpty, relonlelonaselons relonsourcelons in thelon givelonn
+  // containelonrs in all delonvicelons.
   //
-  // If 'container' is empty, releases resources in the default
-  // container in all devices.
-  repeated string container = 1;
+  // If 'containelonr' is elonmpty, relonlelonaselons relonsourcelons in thelon delonfault
+  // containelonr in all delonvicelons.
+  relonpelonatelond string containelonr = 1;
 }
 
-message CleanupAllResponse {}
+melonssagelon ClelonanupAllRelonsponselon {}
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-// RunGraph request / response messages
+// RunGraph relonquelonst / relonsponselon melonssagelons
 //
-// The worker executes all subgraphs registered under graph_handle.
-// RunGraph returns after the execution finishes or an error is
-// encountered.
-// A sequence of RunGraphRequests with is_partial may be sent to RunGraph for
-// partial graph execution.
+// Thelon workelonr elonxeloncutelons all subgraphs relongistelonrelond undelonr graph_handlelon.
+// RunGraph relonturns aftelonr thelon elonxeloncution finishelons or an elonrror is
+// elonncountelonrelond.
+// A selonquelonncelon of RunGraphRelonquelonsts with is_partial may belon selonnt to RunGraph for
+// partial graph elonxeloncution.
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-// Options specific to the execution of a single step.
-message ExecutorOpts {
-  bool record_costs = 1;
-  bool record_timeline = 3;
-  bool record_partition_graphs = 4;
-  bool report_tensor_allocations_upon_oom = 5;
+// Options speloncific to thelon elonxeloncution of a singlelon stelonp.
+melonssagelon elonxeloncutorOpts {
+  bool reloncord_costs = 1;
+  bool reloncord_timelonlinelon = 3;
+  bool reloncord_partition_graphs = 4;
+  bool relonport_telonnsor_allocations_upon_oom = 5;
 }
 
-message RunGraphRequest {
-  // session_handle is the master-generated unique id for this session.
-  // If session_handle is non-empty, it must be the same as used when
-  // registering the graph. If it is empty, a single global namespace is used to
-  // search for the graph_handle.
-  string session_handle = 8;
+melonssagelon RunGraphRelonquelonst {
+  // selonssion_handlelon is thelon mastelonr-gelonnelonratelond uniquelon id for this selonssion.
+  // If selonssion_handlelon is non-elonmpty, it must belon thelon samelon as uselond whelonn
+  // relongistelonring thelon graph. If it is elonmpty, a singlelon global namelonspacelon is uselond to
+  // selonarch for thelon graph_handlelon.
+  string selonssion_handlelon = 8;
 
-  // Set to true if `CreateWorkerSession` was called for `session_handle`.
-  bool create_worker_session_called = 10;
+  // Selont to truelon if `CrelonatelonWorkelonrSelonssion` was callelond for `selonssion_handlelon`.
+  bool crelonatelon_workelonr_selonssion_callelond = 10;
 
-  // REQUIRED: graph_handle must be returned by a RegisterGraph call
-  // to the same WorkerService.
-  string graph_handle = 1;
+  // RelonQUIRelonD: graph_handlelon must belon relonturnelond by a RelongistelonrGraph call
+  // to thelon samelon WorkelonrSelonrvicelon.
+  string graph_handlelon = 1;
 
-  // A unique ID to distinguish different runs of the same graph.
+  // A uniquelon ID to distinguish diffelonrelonnt runs of thelon samelon graph.
   //
-  // The master generates a global unique `step_id` to distinguish
-  // different runs of the graph computation. Subgraphs communicate
-  // (e.g., send/recv ops) with each other using `step_id` to
-  // distinguish tensors generated by different runs.
-  int64 step_id = 2;
+  // Thelon mastelonr gelonnelonratelons a global uniquelon `stelonp_id` to distinguish
+  // diffelonrelonnt runs of thelon graph computation. Subgraphs communicatelon
+  // (elon.g., selonnd/reloncv ops) with elonach othelonr using `stelonp_id` to
+  // distinguish telonnsors gelonnelonratelond by diffelonrelonnt runs.
+  int64 stelonp_id = 2;
 
-  // Options for this step.
-  ExecutorOpts exec_opts = 5;
+  // Options for this stelonp.
+  elonxeloncutorOpts elonxelonc_opts = 5;
 
-  // Runs the graph.
+  // Runs thelon graph.
   //
-  // Sends the tensors in "send" into the graph before the run and
-  // fetches the keys into `RunGraphResponse.recv` after the run.
-  repeated NamedTensorProto send = 3;
-  repeated string recv_key = 4;
+  // Selonnds thelon telonnsors in "selonnd" into thelon graph belonforelon thelon run and
+  // felontchelons thelon kelonys into `RunGraphRelonsponselon.reloncv` aftelonr thelon run.
+  relonpelonatelond NamelondTelonnsorProto selonnd = 3;
+  relonpelonatelond string reloncv_kelony = 4;
 
-  // True if the RunGraphRequest is a partial run request.
+  // Truelon if thelon RunGraphRelonquelonst is a partial run relonquelonst.
   bool is_partial = 6;
-  // True if this is the last partial run request in a sequence of requests.
+  // Truelon if this is thelon last partial run relonquelonst in a selonquelonncelon of relonquelonsts.
   bool is_last_partial_run = 7;
 
-  // If true then some errors, e.g., execution errors that have long
-  // error messages, may return an OK RunGraphResponse with the actual
-  // error saved in the status_code/status_error_message fields of the
-  // response body. This is a workaround since the RPC subsystem may
-  // truncate long metadata messages.
-  bool store_errors_in_response_body = 9;
+  // If truelon thelonn somelon elonrrors, elon.g., elonxeloncution elonrrors that havelon long
+  // elonrror melonssagelons, may relonturn an OK RunGraphRelonsponselon with thelon actual
+  // elonrror savelond in thelon status_codelon/status_elonrror_melonssagelon fielonlds of thelon
+  // relonsponselon body. This is a workaround sincelon thelon RPC subsystelonm may
+  // truncatelon long melontadata melonssagelons.
+  bool storelon_elonrrors_in_relonsponselon_body = 9;
 
-  // Unique identifier for this request. Every RunGraphRequest must have a
-  // unique request_id, and retried RunGraphRequests must have the same
-  // request_id. If request_id is zero, retry detection is disabled.
+  // Uniquelon idelonntifielonr for this relonquelonst. elonvelonry RunGraphRelonquelonst must havelon a
+  // uniquelon relonquelonst_id, and relontrielond RunGraphRelonquelonsts must havelon thelon samelon
+  // relonquelonst_id. If relonquelonst_id is zelonro, relontry delontelonction is disablelond.
   //
-  // Retried RunGraphRequests are problematic because they may issue a
-  // RecvTensor that will have no corresponding sender and will wait forever.
-  // Workers use request_ids to reject retried RunGraph requests instead of
-  // waiting forever.
-  int64 request_id = 11;
+  // Relontrielond RunGraphRelonquelonsts arelon problelonmatic beloncauselon thelony may issuelon a
+  // ReloncvTelonnsor that will havelon no correlonsponding selonndelonr and will wait forelonvelonr.
+  // Workelonrs uselon relonquelonst_ids to relonjelonct relontrielond RunGraph relonquelonsts instelonad of
+  // waiting forelonvelonr.
+  int64 relonquelonst_id = 11;
 
-  // Next: 12
+  // Nelonxt: 12
 }
 
-message RunGraphResponse {
-  // A list of tensors corresponding to those requested by
-  // `RunGraphRequest.recv_key`.
-  repeated NamedTensorProto recv = 1;
+melonssagelon RunGraphRelonsponselon {
+  // A list of telonnsors correlonsponding to thoselon relonquelonstelond by
+  // `RunGraphRelonquelonst.reloncv_kelony`.
+  relonpelonatelond NamelondTelonnsorProto reloncv = 1;
 
-  // If the request asked for execution stats, the cost graph, or the partition
-  // graphs, these are returned here.
-  // TODO: Package these in a RunMetadata instead.
-  StepStats step_stats = 2;
-  CostGraphDef cost_graph = 3;
-  repeated GraphDef partition_graph = 4;
+  // If thelon relonquelonst askelond for elonxeloncution stats, thelon cost graph, or thelon partition
+  // graphs, thelonselon arelon relonturnelond helonrelon.
+  // TODO: Packagelon thelonselon in a RunMelontadata instelonad.
+  StelonpStats stelonp_stats = 2;
+  CostGraphDelonf cost_graph = 3;
+  relonpelonatelond GraphDelonf partition_graph = 4;
 
-  // If store_errors_in_response_body is true in the request, then
-  // optionally the server may return an OK status for the RPC and
-  // fill the true status into the fields below, to allow for messages
-  // that are too long to fit in metadata.
-  error.Code status_code = 5;
-  string status_error_message = 6;
+  // If storelon_elonrrors_in_relonsponselon_body is truelon in thelon relonquelonst, thelonn
+  // optionally thelon selonrvelonr may relonturn an OK status for thelon RPC and
+  // fill thelon truelon status into thelon fielonlds belonlow, to allow for melonssagelons
+  // that arelon too long to fit in melontadata.
+  elonrror.Codelon status_codelon = 5;
+  string status_elonrror_melonssagelon = 6;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-// CleanupGraph method request/response messages
+// ClelonanupGraph melonthod relonquelonst/relonsponselon melonssagelons
 //
-// After the master receives RunGraph responses from all workers, the
-// master instructs every worker to cleanup any remaining state of a
-// step (e.g. tensors buffered by a `Send` op but not picked up by
-// other workers). The master does not necessarily need to wait for
-// completion of CleanupGraph calls.
+// Aftelonr thelon mastelonr reloncelonivelons RunGraph relonsponselons from all workelonrs, thelon
+// mastelonr instructs elonvelonry workelonr to clelonanup any relonmaining statelon of a
+// stelonp (elon.g. telonnsors buffelonrelond by a `Selonnd` op but not pickelond up by
+// othelonr workelonrs). Thelon mastelonr doelons not neloncelonssarily nelonelond to wait for
+// complelontion of ClelonanupGraph calls.
 //
-// Workers should cleanup step states automatically according to a
-// TTL-based policy in case of master restarts.
+// Workelonrs should clelonanup stelonp statelons automatically according to a
+// TTL-baselond policy in caselon of mastelonr relonstarts.
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-message CleanupGraphRequest {
-  int64 step_id = 1;
+melonssagelon ClelonanupGraphRelonquelonst {
+  int64 stelonp_id = 1;
 }
 
-message CleanupGraphResponse {}
+melonssagelon ClelonanupGraphRelonsponselon {}
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-// RecvTensor method request/response messages
+// ReloncvTelonnsor melonthod relonquelonst/relonsponselon melonssagelons
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-message RecvTensorRequest {
-  // The step in which the tensor will be produced.
+melonssagelon ReloncvTelonnsorRelonquelonst {
+  // Thelon stelonp in which thelon telonnsor will belon producelond.
   //
-  // REQUIRED: This must eventually correspond to the `step_id` passed
-  // into a RunGraph call on the same WorkerService.
-  int64 step_id = 1;
+  // RelonQUIRelonD: This must elonvelonntually correlonspond to thelon `stelonp_id` passelond
+  // into a RunGraph call on thelon samelon WorkelonrSelonrvicelon.
+  int64 stelonp_id = 1;
 
-  // A key identifying the channel to receive tensors from. A RecvTensor request
-  // retrieves one tensor from the channel, but multiple tensors can be sent and
-  // received over the same channel with multiple RecvTensor requests. See
-  // rendezvous.h for details.
-  string rendezvous_key = 2;
+  // A kelony idelonntifying thelon channelonl to reloncelonivelon telonnsors from. A ReloncvTelonnsor relonquelonst
+  // relontrielonvelons onelon telonnsor from thelon channelonl, but multiplelon telonnsors can belon selonnt and
+  // reloncelonivelond ovelonr thelon samelon channelonl with multiplelon ReloncvTelonnsor relonquelonsts. Selonelon
+  // relonndelonzvous.h for delontails.
+  string relonndelonzvous_kelony = 2;
 
-  // If true, use an out-of-band DMA mechanism to transfer the
-  // received tensor.
+  // If truelon, uselon an out-of-band DMA melonchanism to transfelonr thelon
+  // reloncelonivelond telonnsor.
   bool dma_ok = 3;
 
-  // Optional information on client-side device locality.
-  DeviceLocality client_locality = 4;
+  // Optional information on clielonnt-sidelon delonvicelon locality.
+  DelonvicelonLocality clielonnt_locality = 4;
 
-  // Optional information on server-side device locality.
-  DeviceLocality server_locality = 5;
+  // Optional information on selonrvelonr-sidelon delonvicelon locality.
+  DelonvicelonLocality selonrvelonr_locality = 5;
 
-  // Optional information needed by the RPC subsystem.
-  google.protobuf.Any transport_options = 6;
+  // Optional information nelonelondelond by thelon RPC subsystelonm.
+  googlelon.protobuf.Any transport_options = 6;
 
-  // Unique identifier for this request. Every RecvTensorRequest must have a
-  // unique request_id, and retried RecvTensorRequests must have the same
-  // request_id. If request_id is zero, retry detection and response cache
-  // are disabled.
+  // Uniquelon idelonntifielonr for this relonquelonst. elonvelonry ReloncvTelonnsorRelonquelonst must havelon a
+  // uniquelon relonquelonst_id, and relontrielond ReloncvTelonnsorRelonquelonsts must havelon thelon samelon
+  // relonquelonst_id. If relonquelonst_id is zelonro, relontry delontelonction and relonsponselon cachelon
+  // arelon disablelond.
   //
-  // Retried RecvTensorRequests are problematic because a RecvTensor with no
-  // corresponding sender will wait forever, and the tensor may have been
-  // delivered to a previous retry. Workers use request_ids to reject retried
-  // RecvTensor requests instead of waiting forever.
-  int64 request_id = 7;
+  // Relontrielond ReloncvTelonnsorRelonquelonsts arelon problelonmatic beloncauselon a ReloncvTelonnsor with no
+  // correlonsponding selonndelonr will wait forelonvelonr, and thelon telonnsor may havelon belonelonn
+  // delonlivelonrelond to a prelonvious relontry. Workelonrs uselon relonquelonst_ids to relonjelonct relontrielond
+  // ReloncvTelonnsor relonquelonsts instelonad of waiting forelonvelonr.
+  int64 relonquelonst_id = 7;
 }
 
-message RecvTensorResponse {
-  // The tensor as a proto.
-  TensorProto tensor = 1;
+melonssagelon ReloncvTelonnsorRelonsponselon {
+  // Thelon telonnsor as a proto.
+  TelonnsorProto telonnsor = 1;
 
-  // If true, this tensor was the output of a dead node, and the
-  // content is invalid.
-  bool is_dead = 2;
+  // If truelon, this telonnsor was thelon output of a delonad nodelon, and thelon
+  // contelonnt is invalid.
+  bool is_delonad = 2;
 
-  // The time at which tensor was available and started to be returned.
-  int64 send_start_micros = 3;
+  // Thelon timelon at which telonnsor was availablelon and startelond to belon relonturnelond.
+  int64 selonnd_start_micros = 3;
 
-  // Optional additional information about how to receive the tensor,
-  // e.g. in the event that `RecvTensorRequest.dma_ok` was true.
-  google.protobuf.Any transport_options = 4;
+  // Optional additional information about how to reloncelonivelon thelon telonnsor,
+  // elon.g. in thelon elonvelonnt that `ReloncvTelonnsorRelonquelonst.dma_ok` was truelon.
+  googlelon.protobuf.Any transport_options = 4;
 
-  // Whether the receiver should send a MarkRecvFinishedRequest to the sender
-  // to ack the message.
-  bool require_ack = 5;
+  // Whelonthelonr thelon reloncelonivelonr should selonnd a MarkReloncvFinishelondRelonquelonst to thelon selonndelonr
+  // to ack thelon melonssagelon.
+  bool relonquirelon_ack = 5;
 }
 
-// Message for managing the response cache maintained on the sender side.
-// Currently only used by the gRPC worker service.
-message MarkRecvFinishedRequest {
-  int64 request_id = 1;
+// Melonssagelon for managing thelon relonsponselon cachelon maintainelond on thelon selonndelonr sidelon.
+// Currelonntly only uselond by thelon gRPC workelonr selonrvicelon.
+melonssagelon MarkReloncvFinishelondRelonquelonst {
+  int64 relonquelonst_id = 1;
 }
 
-message MarkRecvFinishedResponse {}
+melonssagelon MarkReloncvFinishelondRelonsponselon {}
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-// Logging method request/response messages
+// Logging melonthod relonquelonst/relonsponselon melonssagelons
 //
-// NOTE(mrry): This feature is not supported in the open-source
-// version, and these messages are expected to change.
-//
-////////////////////////////////////////////////////////////////////////////////
-
-// Out-of-band request to begin or end logging, or
-// to retrieve logs for particular steps.
-message LoggingRequest {
-  // If true, RPC logging will be enabled.
-  bool enable_rpc_logging = 1;
-
-  // If true, RPC logging will be disabled.
-  bool disable_rpc_logging = 4;
-
-  // If true, discard any saved logging data (for all steps).
-  bool clear = 2;
-
-  // When set, requests all saved log data pertaining to the step.
-  // Any log data retrieved is eliminated from the store and cannot be
-  // retrieved again.
-  repeated int64 fetch_step_id = 3;
-}
-
-message LabeledStepStats {
-  int64 step_id = 1;
-  StepStats step_stats = 2;
-}
-
-message LoggingResponse {
-  repeated LabeledStepStats step = 1;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-//
-// Tracing method request/response messages
-//
-// NOTE(mrry): This feature is not supported in the open-source
-// version, and these messages are expected to change.
+// NOTelon(mrry): This felonaturelon is not supportelond in thelon opelonn-sourcelon
+// velonrsion, and thelonselon melonssagelons arelon elonxpelonctelond to changelon.
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-message TraceOpts {
-  // Length of the trace to be taken, in seconds.
-  double duration = 1;
-  // If true, capture step profile locally in each worker. Currently
-  // unimplemented.
-  bool use_step_profiler = 2;
-  // If true, capture kernel events from each worker.
-  bool use_kernel_profiler = 3;
-  // If true, capture extended profiling events from TensorFlow process.
-  bool use_extended_profiler = 4;
-  // If true, capture GPU profiling events locally on each
-  // machine. Currently unimplemented.
-  bool use_gpu_profiler = 5;
-  // If true, collect sampled profile events. Currently unimplemented.
-  bool use_sample_profiler = 6;
+// Out-of-band relonquelonst to belongin or elonnd logging, or
+// to relontrielonvelon logs for particular stelonps.
+melonssagelon LoggingRelonquelonst {
+  // If truelon, RPC logging will belon elonnablelond.
+  bool elonnablelon_rpc_logging = 1;
+
+  // If truelon, RPC logging will belon disablelond.
+  bool disablelon_rpc_logging = 4;
+
+  // If truelon, discard any savelond logging data (for all stelonps).
+  bool clelonar = 2;
+
+  // Whelonn selont, relonquelonsts all savelond log data pelonrtaining to thelon stelonp.
+  // Any log data relontrielonvelond is elonliminatelond from thelon storelon and cannot belon
+  // relontrielonvelond again.
+  relonpelonatelond int64 felontch_stelonp_id = 3;
 }
 
-// Out-of-band request to configure distributed tracing.
-message TracingRequest {
-  TraceOpts options = 1;
+melonssagelon LabelonlelondStelonpStats {
+  int64 stelonp_id = 1;
+  StelonpStats stelonp_stats = 2;
 }
 
-message TracingResponse {}
+melonssagelon LoggingRelonsponselon {
+  relonpelonatelond LabelonlelondStelonpStats stelonp = 1;
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-// Raw data transfers in support of Collective Ops.
-// These methods are experimental and subject to change.
+// Tracing melonthod relonquelonst/relonsponselon melonssagelons
 //
-// The intention is to allow collectives to take advantage of the most
-// efficient methods available on a platform, e.g. RDMA, and not be
-// constrained to use the RPC system in use by other methods.
+// NOTelon(mrry): This felonaturelon is not supportelond in thelon opelonn-sourcelon
+// velonrsion, and thelonselon melonssagelons arelon elonxpelonctelond to changelon.
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-message RecvBufRequest {
-  // Use of the fields below may vary by implementation.  For example
-  // the buf_ptr and num_bytes may be set only for local operations and
-  // not sent on the wire, or only sent on the wire in one direction.
+melonssagelon TracelonOpts {
+  // Lelonngth of thelon tracelon to belon takelonn, in selonconds.
+  doublelon duration = 1;
+  // If truelon, capturelon stelonp profilelon locally in elonach workelonr. Currelonntly
+  // unimplelonmelonntelond.
+  bool uselon_stelonp_profilelonr = 2;
+  // If truelon, capturelon kelonrnelonl elonvelonnts from elonach workelonr.
+  bool uselon_kelonrnelonl_profilelonr = 3;
+  // If truelon, capturelon elonxtelonndelond profiling elonvelonnts from TelonnsorFlow procelonss.
+  bool uselon_elonxtelonndelond_profilelonr = 4;
+  // If truelon, capturelon GPU profiling elonvelonnts locally on elonach
+  // machinelon. Currelonntly unimplelonmelonntelond.
+  bool uselon_gpu_profilelonr = 5;
+  // If truelon, collelonct samplelond profilelon elonvelonnts. Currelonntly unimplelonmelonntelond.
+  bool uselon_samplelon_profilelonr = 6;
+}
 
-  // Used at server side to find the correct BufRendezvous.
-  int64 step_id = 1;
+// Out-of-band relonquelonst to configurelon distributelond tracing.
+melonssagelon TracingRelonquelonst {
+  TracelonOpts options = 1;
+}
 
-  // Arbitrary string identifying a BufRendezvous entry.
-  string buf_rendezvous_key = 2;
+melonssagelon TracingRelonsponselon {}
 
-  // Size of value expected, must agree with BufRendezvous entry.
-  int64 num_bytes = 3;
+////////////////////////////////////////////////////////////////////////////////
+//
+// Raw data transfelonrs in support of Collelonctivelon Ops.
+// Thelonselon melonthods arelon elonxpelonrimelonntal and subjelonct to changelon.
+//
+// Thelon intelonntion is to allow collelonctivelons to takelon advantagelon of thelon most
+// elonfficielonnt melonthods availablelon on a platform, elon.g. RDMA, and not belon
+// constrainelond to uselon thelon RPC systelonm in uselon by othelonr melonthods.
+//
+////////////////////////////////////////////////////////////////////////////////
 
-  // When RDMA is in use, address of destination field on client.
-  fixed64 buf_ptr = 4;
+melonssagelon ReloncvBufRelonquelonst {
+  // Uselon of thelon fielonlds belonlow may vary by implelonmelonntation.  For elonxamplelon
+  // thelon buf_ptr and num_bytelons may belon selont only for local opelonrations and
+  // not selonnt on thelon wirelon, or only selonnt on thelon wirelon in onelon direlonction.
 
-  // Optional information on client-side device locality.
-  DeviceLocality client_locality = 5;
+  // Uselond at selonrvelonr sidelon to find thelon correlonct BufRelonndelonzvous.
+  int64 stelonp_id = 1;
 
-  // Optional information on server-side device locality.
-  DeviceLocality server_locality = 6;
+  // Arbitrary string idelonntifying a BufRelonndelonzvous elonntry.
+  string buf_relonndelonzvous_kelony = 2;
 
-  // Optional, implementation-specific data.
-  google.protobuf.Any transport_options = 7;
-  // For annotating timeline and device incarnation check.
-  string src_device = 8;
-  // Optional, for annotating the timeline.
-  string dst_device = 9;
+  // Sizelon of valuelon elonxpelonctelond, must agrelonelon with BufRelonndelonzvous elonntry.
+  int64 num_bytelons = 3;
 
-  // Depending on the RPC system in use, it may be necessary to set this
-  // id to detect resends of RPCs where the server is not aware that
-  // the prior RPC failed.
-  int64 request_id = 10;
+  // Whelonn RDMA is in uselon, addrelonss of delonstination fielonld on clielonnt.
+  fixelond64 buf_ptr = 4;
 
-  // Incarnation number of the source device, used to detect worker failures.
+  // Optional information on clielonnt-sidelon delonvicelon locality.
+  DelonvicelonLocality clielonnt_locality = 5;
+
+  // Optional information on selonrvelonr-sidelon delonvicelon locality.
+  DelonvicelonLocality selonrvelonr_locality = 6;
+
+  // Optional, implelonmelonntation-speloncific data.
+  googlelon.protobuf.Any transport_options = 7;
+  // For annotating timelonlinelon and delonvicelon incarnation chelonck.
+  string src_delonvicelon = 8;
+  // Optional, for annotating thelon timelonlinelon.
+  string dst_delonvicelon = 9;
+
+  // Delonpelonnding on thelon RPC systelonm in uselon, it may belon neloncelonssary to selont this
+  // id to delontelonct relonselonnds of RPCs whelonrelon thelon selonrvelonr is not awarelon that
+  // thelon prior RPC failelond.
+  int64 relonquelonst_id = 10;
+
+  // Incarnation numbelonr of thelon sourcelon delonvicelon, uselond to delontelonct workelonr failurelons.
   uint64 src_incarnation = 11;
 }
 
-message RecvBufResponse {
-  // Use of the fields below may vary by implementation.  Comments give
-  // intended use.
+melonssagelon ReloncvBufRelonsponselon {
+  // Uselon of thelon fielonlds belonlow may vary by implelonmelonntation.  Commelonnts givelon
+  // intelonndelond uselon.
 
-  fixed64 buf_ptr = 1;  // Address of source field on server.
-  int64 num_bytes = 2;  // Byte length of buf_ptr field, if set.
-  bool is_dead = 3;     // True if value is 'dead' like a tensor.
-  // Optional, implementation-specific data.
-  google.protobuf.Any transport_options = 4;
-  // Optional, for timeline.
-  int64 send_start_micros = 5;
+  fixelond64 buf_ptr = 1;  // Addrelonss of sourcelon fielonld on selonrvelonr.
+  int64 num_bytelons = 2;  // Bytelon lelonngth of buf_ptr fielonld, if selont.
+  bool is_delonad = 3;     // Truelon if valuelon is 'delonad' likelon a telonnsor.
+  // Optional, implelonmelonntation-speloncific data.
+  googlelon.protobuf.Any transport_options = 4;
+  // Optional, for timelonlinelon.
+  int64 selonnd_start_micros = 5;
 
-  // Whether the receiver should send a MarkRecvFinishedRequest to the sender
-  // to ack the message.
-  bool require_ack = 6;
+  // Whelonthelonr thelon reloncelonivelonr should selonnd a MarkReloncvFinishelondRelonquelonst to thelon selonndelonr
+  // to ack thelon melonssagelon.
+  bool relonquirelon_ack = 6;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-// Collective Op dynamic group resolution messages.
+// Collelonctivelon Op dynamic group relonsolution melonssagelons.
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-// Supplies one or more device names as members of the group identified by
-// group_key.  Service will respond when all group_size devices become known.
-// All devices in group must have same type.
-message CompleteGroupRequest {
-  int32 group_key = 1;
-  int32 group_size = 2;
-  string device_type = 3;
-  int32 collective_type = 5;
-  DeviceAttributes device_attributes = 6;
+// Supplielons onelon or morelon delonvicelon namelons as melonmbelonrs of thelon group idelonntifielond by
+// group_kelony.  Selonrvicelon will relonspond whelonn all group_sizelon delonvicelons beloncomelon known.
+// All delonvicelons in group must havelon samelon typelon.
+melonssagelon ComplelontelonGroupRelonquelonst {
+  int32 group_kelony = 1;
+  int32 group_sizelon = 2;
+  string delonvicelon_typelon = 3;
+  int32 collelonctivelon_typelon = 5;
+  DelonvicelonAttributelons delonvicelon_attributelons = 6;
 
-  reserved 4;
+  relonselonrvelond 4;
 }
 
-// Gives the complete membership of the group identified by group_key.
-message CompleteGroupResponse {
-  int32 group_key = 1;
-  int32 group_size = 2;
-  string device_type = 3;
-  int32 num_tasks = 4;  // number of distinct tasks hosting the devices
-  bytes communicator_key = 7;
-  repeated DeviceAttributes device_attributes = 8;
+// Givelons thelon complelontelon melonmbelonrship of thelon group idelonntifielond by group_kelony.
+melonssagelon ComplelontelonGroupRelonsponselon {
+  int32 group_kelony = 1;
+  int32 group_sizelon = 2;
+  string delonvicelon_typelon = 3;
+  int32 num_tasks = 4;  // numbelonr of distinct tasks hosting thelon delonvicelons
+  bytelons communicator_kelony = 7;
+  relonpelonatelond DelonvicelonAttributelons delonvicelon_attributelons = 8;
 
-  reserved 5, 6;
+  relonselonrvelond 5, 6;
 }
 
-// Supplies data about one collective op belonging to the instance identified
-// by instance_key.  Service will respond when all group_size ops have
-// become known.  Most of the data being sent is for correctness checking,
-// to ensure that all ops in the instance share common attributes.
-message CompleteInstanceRequest {
-  string name = 1;
-  int32 type = 2;
-  DataType data_type = 3;
-  TensorShapeProto shape = 4;
-  int32 group_key = 5;
-  int32 group_size = 6;
-  int32 instance_key = 7;
-  string device_type = 8;
-  repeated int32 subdiv_offset = 9;
-  string device = 10;
-  bool is_source = 11;
+// Supplielons data about onelon collelonctivelon op belonlonging to thelon instancelon idelonntifielond
+// by instancelon_kelony.  Selonrvicelon will relonspond whelonn all group_sizelon ops havelon
+// beloncomelon known.  Most of thelon data beloning selonnt is for correlonctnelonss cheloncking,
+// to elonnsurelon that all ops in thelon instancelon sharelon common attributelons.
+melonssagelon ComplelontelonInstancelonRelonquelonst {
+  string namelon = 1;
+  int32 typelon = 2;
+  DataTypelon data_typelon = 3;
+  TelonnsorShapelonProto shapelon = 4;
+  int32 group_kelony = 5;
+  int32 group_sizelon = 6;
+  int32 instancelon_kelony = 7;
+  string delonvicelon_typelon = 8;
+  relonpelonatelond int32 subdiv_offselont = 9;
+  string delonvicelon = 10;
+  bool is_sourcelon = 11;
 }
 
-// Confirms that every op in the instance has consistently declared itself.
-// Also gives the source_rank in case of broadcast.
-message CompleteInstanceResponse {
-  int32 instance_key = 1;
-  int32 source_rank = 2;
-  reserved 3;
+// Confirms that elonvelonry op in thelon instancelon has consistelonntly delonclarelond itselonlf.
+// Also givelons thelon sourcelon_rank in caselon of broadcast.
+melonssagelon ComplelontelonInstancelonRelonsponselon {
+  int32 instancelon_kelony = 1;
+  int32 sourcelon_rank = 2;
+  relonselonrvelond 3;
 }
 
-// Request for next agreed-upon step_id for the specified graph_keys.
-// This is used to enable multiple graphs containing nodes from
-// a common collective instance to coordinate using the same step_ids.
-message GetStepSequenceRequest {
-  repeated int64 graph_key = 1;
+// Relonquelonst for nelonxt agrelonelond-upon stelonp_id for thelon speloncifielond graph_kelonys.
+// This is uselond to elonnablelon multiplelon graphs containing nodelons from
+// a common collelonctivelon instancelon to coordinatelon using thelon samelon stelonp_ids.
+melonssagelon GelontStelonpSelonquelonncelonRelonquelonst {
+  relonpelonatelond int64 graph_kelony = 1;
 }
 
-message StepSequence {
-  int64 graph_key = 1;
-  int64 next_step_id = 2;
+melonssagelon StelonpSelonquelonncelon {
+  int64 graph_kelony = 1;
+  int64 nelonxt_stelonp_id = 2;
 }
 
-// Next valid step_ids for one or more graph_keys.
-message GetStepSequenceResponse {
-  repeated StepSequence step_sequence = 1;
+// Nelonxt valid stelonp_ids for onelon or morelon graph_kelonys.
+melonssagelon GelontStelonpSelonquelonncelonRelonsponselon {
+  relonpelonatelond StelonpSelonquelonncelon stelonp_selonquelonncelon = 1;
 }

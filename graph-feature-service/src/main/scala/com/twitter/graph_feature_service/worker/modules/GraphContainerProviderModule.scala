@@ -1,62 +1,62 @@
-package com.twitter.graph_feature_service.worker.modules
+packagelon com.twittelonr.graph_felonaturelon_selonrvicelon.workelonr.modulelons
 
-import com.google.inject.Provides
-import com.twitter.concurrent.AsyncSemaphore
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.graph_feature_service.common.Configs._
-import com.twitter.graph_feature_service.worker.util
-import com.twitter.graph_feature_service.worker.util.AutoUpdatingGraph
-import com.twitter.graph_feature_service.worker.util.FollowedByPartialValueGraph
-import com.twitter.graph_feature_service.worker.util.FollowingPartialValueGraph
-import com.twitter.graph_feature_service.worker.util.GraphContainer
-import com.twitter.graph_feature_service.worker.util.GraphKey
-import com.twitter.graph_feature_service.worker.util.MutualFollowPartialValueGraph
-import com.twitter.inject.TwitterModule
-import com.twitter.inject.annotations.Flag
-import com.twitter.util.Timer
-import javax.inject.Singleton
+import com.googlelon.injelonct.Providelons
+import com.twittelonr.concurrelonnt.AsyncSelonmaphorelon
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.graph_felonaturelon_selonrvicelon.common.Configs._
+import com.twittelonr.graph_felonaturelon_selonrvicelon.workelonr.util
+import com.twittelonr.graph_felonaturelon_selonrvicelon.workelonr.util.AutoUpdatingGraph
+import com.twittelonr.graph_felonaturelon_selonrvicelon.workelonr.util.FollowelondByPartialValuelonGraph
+import com.twittelonr.graph_felonaturelon_selonrvicelon.workelonr.util.FollowingPartialValuelonGraph
+import com.twittelonr.graph_felonaturelon_selonrvicelon.workelonr.util.GraphContainelonr
+import com.twittelonr.graph_felonaturelon_selonrvicelon.workelonr.util.GraphKelony
+import com.twittelonr.graph_felonaturelon_selonrvicelon.workelonr.util.MutualFollowPartialValuelonGraph
+import com.twittelonr.injelonct.TwittelonrModulelon
+import com.twittelonr.injelonct.annotations.Flag
+import com.twittelonr.util.Timelonr
+import javax.injelonct.Singlelonton
 
-object GraphContainerProviderModule extends TwitterModule {
+objelonct GraphContainelonrProvidelonrModulelon elonxtelonnds TwittelonrModulelon {
 
-  @Provides
-  @Singleton
-  def provideAutoUpdatingGraphs(
-    @Flag(WorkerFlagNames.HdfsCluster) hdfsCluster: String,
-    @Flag(WorkerFlagNames.HdfsClusterUrl) hdfsClusterUrl: String,
-    @Flag(WorkerFlagNames.ShardId) shardId: Int
+  @Providelons
+  @Singlelonton
+  delonf providelonAutoUpdatingGraphs(
+    @Flag(WorkelonrFlagNamelons.HdfsClustelonr) hdfsClustelonr: String,
+    @Flag(WorkelonrFlagNamelons.HdfsClustelonrUrl) hdfsClustelonrUrl: String,
+    @Flag(WorkelonrFlagNamelons.ShardId) shardId: Int
   )(
-    implicit statsReceiver: StatsReceiver,
-    timer: Timer
-  ): GraphContainer = {
+    implicit statsReloncelonivelonr: StatsReloncelonivelonr,
+    timelonr: Timelonr
+  ): GraphContainelonr = {
 
-    // NOTE that we do not load some the graphs for saving RAM at this moment.
-    val enabledGraphPaths: Map[GraphKey, String] =
+    // NOTelon that welon do not load somelon thelon graphs for saving RAM at this momelonnt.
+    val elonnablelondGraphPaths: Map[GraphKelony, String] =
       Map(
-        FollowingPartialValueGraph -> FollowOutValPath,
-        FollowedByPartialValueGraph -> FollowInValPath
+        FollowingPartialValuelonGraph -> FollowOutValPath,
+        FollowelondByPartialValuelonGraph -> FollowInValPath
       )
 
-    // Only allow one graph to update at the same time.
-    val sharedSemaphore = new AsyncSemaphore(1)
+    // Only allow onelon graph to updatelon at thelon samelon timelon.
+    val sharelondSelonmaphorelon = nelonw AsyncSelonmaphorelon(1)
 
-    val graphs: Map[GraphKey, AutoUpdatingGraph] =
-      enabledGraphPaths.map {
-        case (graphKey, path) =>
-          graphKey -> AutoUpdatingGraph(
-            dataPath = getHdfsPath(path),
-            hdfsCluster = hdfsCluster,
-            hdfsClusterUrl = hdfsClusterUrl,
+    val graphs: Map[GraphKelony, AutoUpdatingGraph] =
+      elonnablelondGraphPaths.map {
+        caselon (graphKelony, path) =>
+          graphKelony -> AutoUpdatingGraph(
+            dataPath = gelontHdfsPath(path),
+            hdfsClustelonr = hdfsClustelonr,
+            hdfsClustelonrUrl = hdfsClustelonrUrl,
             shard = shardId,
-            minimumSizeForCompleteGraph = 1e6.toLong,
-            sharedSemaphore = Some(sharedSemaphore)
+            minimumSizelonForComplelontelonGraph = 1elon6.toLong,
+            sharelondSelonmaphorelon = Somelon(sharelondSelonmaphorelon)
           )(
-            statsReceiver
-              .scope("graphs")
-              .scope(graphKey.getClass.getSimpleName),
-            timer
+            statsReloncelonivelonr
+              .scopelon("graphs")
+              .scopelon(graphKelony.gelontClass.gelontSimplelonNamelon),
+            timelonr
           )
       }
 
-    util.GraphContainer(graphs)
+    util.GraphContainelonr(graphs)
   }
 }

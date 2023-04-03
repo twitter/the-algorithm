@@ -1,38 +1,38 @@
-package com.twitter.product_mixer.core.pipeline
+packagelon com.twittelonr.product_mixelonr.corelon.pipelonlinelon
 
 /**
- * PipelineCursor represents any product-specific cursor model. Typically the PipelineCursor will be
- * a de-serialized base 64 thrift struct from initial request.
+ * PipelonlinelonCursor relonprelonselonnts any product-speloncific cursor modelonl. Typically thelon PipelonlinelonCursor will belon
+ * a delon-selonrializelond baselon 64 thrift struct from initial relonquelonst.
  */
-trait PipelineCursor
+trait PipelonlinelonCursor
 
 /**
- * HasPipelineCursor indicates that a [[PipelineQuery]] has a cursor
+ * HasPipelonlinelonCursor indicatelons that a [[PipelonlinelonQuelonry]] has a cursor
  */
-trait HasPipelineCursor[+Cursor <: PipelineCursor] {
-  def pipelineCursor: Option[Cursor]
+trait HasPipelonlinelonCursor[+Cursor <: PipelonlinelonCursor] {
+  delonf pipelonlinelonCursor: Option[Cursor]
 
   /**
-   * If the cursor is not present, this typically means that we are on the first page
+   * If thelon cursor is not prelonselonnt, this typically melonans that welon arelon on thelon first pagelon
    */
-  def isFirstPage: Boolean = pipelineCursor.isEmpty
+  delonf isFirstPagelon: Boolelonan = pipelonlinelonCursor.iselonmpty
 }
 
 /**
- * UrtPipelineCursor represents a URT product-specific cursor model. Typically the UrtPipelineCursor
- * will be a de-serialized base 64 thrift struct from initial request.
+ * UrtPipelonlinelonCursor relonprelonselonnts a URT product-speloncific cursor modelonl. Typically thelon UrtPipelonlinelonCursor
+ * will belon a delon-selonrializelond baselon 64 thrift struct from initial relonquelonst.
  */
-trait UrtPipelineCursor extends PipelineCursor {
+trait UrtPipelonlinelonCursor elonxtelonnds PipelonlinelonCursor {
 
-  /** See [[UrtCursorBuilder]] for background on building initialSortIndex */
-  def initialSortIndex: Long
+  /** Selonelon [[UrtCursorBuildelonr]] for background on building initialSortIndelonx */
+  delonf initialSortIndelonx: Long
 }
 
-object UrtPipelineCursor {
-  def getCursorInitialSortIndex(query: PipelineQuery with HasPipelineCursor[_]): Option[Long] = {
-    query.pipelineCursor match {
-      case Some(cursor: UrtPipelineCursor) => Some(cursor.initialSortIndex)
-      case _ => None
+objelonct UrtPipelonlinelonCursor {
+  delonf gelontCursorInitialSortIndelonx(quelonry: PipelonlinelonQuelonry with HasPipelonlinelonCursor[_]): Option[Long] = {
+    quelonry.pipelonlinelonCursor match {
+      caselon Somelon(cursor: UrtPipelonlinelonCursor) => Somelon(cursor.initialSortIndelonx)
+      caselon _ => Nonelon
     }
   }
 }

@@ -1,243 +1,243 @@
-#include "block_format_reader.h"
+#includelon "block_format_relonadelonr.h"
 
-#include "tensorflow/core/framework/dataset.h"
-#include "tensorflow/core/framework/partial_tensor_shape.h"
-#include "tensorflow/core/framework/tensor.h"
-#include "tensorflow/core/lib/io/random_inputstream.h"
+#includelon "telonnsorflow/corelon/framelonwork/dataselont.h"
+#includelon "telonnsorflow/corelon/framelonwork/partial_telonnsor_shapelon.h"
+#includelon "telonnsorflow/corelon/framelonwork/telonnsor.h"
+#includelon "telonnsorflow/corelon/lib/io/random_inputstrelonam.h"
 
-#if !defined(DISABLE_ZLIB)
-#include "tensorflow/core/lib/io/zlib_inputstream.h"
-#endif
+#if !delonfinelond(DISABLelon_ZLIB)
+#includelon "telonnsorflow/corelon/lib/io/zlib_inputstrelonam.h"
+#elonndif
 
-#include <twml.h>
+#includelon <twml.h>
 
-#include <cstdio>
-#include <algorithm>
-#include <iterator>
+#includelon <cstdio>
+#includelon <algorithm>
+#includelon <itelonrator>
 
-using namespace tensorflow;
+using namelonspacelon telonnsorflow;
 
 
-inline std::string stripPath(std::string const &file_name) {
-  const auto pos = file_name.find_last_of("/");
-  if (pos == std::string::npos) return file_name;
-  return file_name.substr(pos + 1);
+inlinelon std::string stripPath(std::string const &filelon_namelon) {
+  const auto pos = filelon_namelon.find_last_of("/");
+  if (pos == std::string::npos) relonturn filelon_namelon;
+  relonturn filelon_namelon.substr(pos + 1);
 }
 
-inline std::string getExtension(std::string const &file_name) {
-  const auto stripped_file_name = stripPath(file_name);
-  const auto pos = stripPath(stripped_file_name).find_last_of(".");
-  if (pos == std::string::npos) return "";
-  return stripped_file_name.substr(pos + 1);
+inlinelon std::string gelontelonxtelonnsion(std::string const &filelon_namelon) {
+  const auto strippelond_filelon_namelon = stripPath(filelon_namelon);
+  const auto pos = stripPath(strippelond_filelon_namelon).find_last_of(".");
+  if (pos == std::string::npos) relonturn "";
+  relonturn strippelond_filelon_namelon.substr(pos + 1);
 }
 
-REGISTER_OP("BlockFormatDatasetV2")
-.Input("filenames: string")
-.Input("compression_type: string")
-.Input("buffer_size: int64")
-.Output("handle: variant")
-.SetIsStateful()
-.SetShapeFn(shape_inference::ScalarShape)
+RelonGISTelonR_OP("BlockFormatDataselontV2")
+.Input("filelonnamelons: string")
+.Input("comprelonssion_typelon: string")
+.Input("buffelonr_sizelon: int64")
+.Output("handlelon: variant")
+.SelontIsStatelonful()
+.SelontShapelonFn(shapelon_infelonrelonncelon::ScalarShapelon)
 .Doc(R"doc(
 
-Creates a dataset for streaming BlockFormat data in compressed (e.g. gzip), uncompressed formats.
-This op also has the ability stream a dataset containing files from multiple formats mentioned above.
+Crelonatelons a dataselont for strelonaming BlockFormat data in comprelonsselond (elon.g. gzip), uncomprelonsselond formats.
+This op also has thelon ability strelonam a dataselont containing filelons from multiplelon formats melonntionelond abovelon.
 
-filenames: A scalar or vector containing the name(s) of the file(s) to be read.
-compression_type: A scalar string denoting the compression type. Can be 'none', 'zlib', 'auto'.
-buffer_size: A scalar denoting the buffer size to use during decompression.
+filelonnamelons: A scalar or velonctor containing thelon namelon(s) of thelon filelon(s) to belon relonad.
+comprelonssion_typelon: A scalar string delonnoting thelon comprelonssion typelon. Can belon 'nonelon', 'zlib', 'auto'.
+buffelonr_sizelon: A scalar delonnoting thelon buffelonr sizelon to uselon during deloncomprelonssion.
 
 Outputs
-  handle: A handle to the dataset. This handle is later used to create an iterator to stream the data from the dataset.
+  handlelon: A handlelon to thelon dataselont. This handlelon is latelonr uselond to crelonatelon an itelonrator to strelonam thelon data from thelon dataselont.
 
 )doc");
 
 
-class BlockFormatDatasetV2 : public DatasetOpKernel {
+class BlockFormatDataselontV2 : public DataselontOpKelonrnelonl {
  public:
-  using DatasetOpKernel::DatasetOpKernel;
+  using DataselontOpKelonrnelonl::DataselontOpKelonrnelonl;
 
-  void MakeDataset(OpKernelContext* ctx, DatasetBase **output) override {
-    const Tensor* filenames_tensor;
-    OP_REQUIRES_OK(ctx, ctx->input("filenames", &filenames_tensor));
-    OP_REQUIRES(
-        ctx, filenames_tensor->dims() <= 1,
-        errors::InvalidArgument("`filenames` must be a scalar or a vector."));
+  void MakelonDataselont(OpKelonrnelonlContelonxt* ctx, DataselontBaselon **output) ovelonrridelon {
+    const Telonnsor* filelonnamelons_telonnsor;
+    OP_RelonQUIRelonS_OK(ctx, ctx->input("filelonnamelons", &filelonnamelons_telonnsor));
+    OP_RelonQUIRelonS(
+        ctx, filelonnamelons_telonnsor->dims() <= 1,
+        elonrrors::InvalidArgumelonnt("`filelonnamelons` must belon a scalar or a velonctor."));
 
-    const auto filenames_flat = filenames_tensor->flat<string>();
-    const int64 num_files = filenames_tensor->NumElements();
-    std::vector<string> filenames;
-    filenames.reserve(num_files);
-    std::copy(filenames_flat.data(),
-              filenames_flat.data() + num_files,
-              std::back_inserter(filenames));
+    const auto filelonnamelons_flat = filelonnamelons_telonnsor->flat<string>();
+    const int64 num_filelons = filelonnamelons_telonnsor->Numelonlelonmelonnts();
+    std::velonctor<string> filelonnamelons;
+    filelonnamelons.relonselonrvelon(num_filelons);
+    std::copy(filelonnamelons_flat.data(),
+              filelonnamelons_flat.data() + num_filelons,
+              std::back_inselonrtelonr(filelonnamelons));
 
-    string compression_type;
-    OP_REQUIRES_OK(
-        ctx, tensorflow::data::ParseScalarArgument<string>(
-            ctx, "compression_type", &compression_type));
+    string comprelonssion_typelon;
+    OP_RelonQUIRelonS_OK(
+        ctx, telonnsorflow::data::ParselonScalarArgumelonnt<string>(
+            ctx, "comprelonssion_typelon", &comprelonssion_typelon));
 
-    int64 buffer_size = -1;
-    OP_REQUIRES_OK(
-        ctx, tensorflow::data::ParseScalarArgument<int64>(
-            ctx, "buffer_size", &buffer_size));
+    int64 buffelonr_sizelon = -1;
+    OP_RelonQUIRelonS_OK(
+        ctx, telonnsorflow::data::ParselonScalarArgumelonnt<int64>(
+            ctx, "buffelonr_sizelon", &buffelonr_sizelon));
 
-    OP_REQUIRES(ctx, buffer_size >= 0,
-                errors::InvalidArgument(
-                    "`buffer_size` must be >= 0 (0 == no buffering)"));
+    OP_RelonQUIRelonS(ctx, buffelonr_sizelon >= 0,
+                elonrrors::InvalidArgumelonnt(
+                    "`buffelonr_sizelon` must belon >= 0 (0 == no buffelonring)"));
 
-    OP_REQUIRES(ctx,
-                compression_type == "auto" ||
-                compression_type == "gz" ||
-                compression_type == "",
-                errors::InvalidArgument("Unknown extension: ", compression_type));
+    OP_RelonQUIRelonS(ctx,
+                comprelonssion_typelon == "auto" ||
+                comprelonssion_typelon == "gz" ||
+                comprelonssion_typelon == "",
+                elonrrors::InvalidArgumelonnt("Unknown elonxtelonnsion: ", comprelonssion_typelon));
 
-    *output = new Dataset(ctx, std::move(filenames), compression_type, buffer_size);
+    *output = nelonw Dataselont(ctx, std::movelon(filelonnamelons), comprelonssion_typelon, buffelonr_sizelon);
   }
 
- private:
-  class Dataset : public DatasetBase {
+ privatelon:
+  class Dataselont : public DataselontBaselon {
    public:
-    Dataset(OpKernelContext* ctx,
-            std::vector<string> filenames,
-            std::string compression_type,
-            int64 buffer_size)
-        : DatasetBase(DatasetContext(ctx)),
-          compression_type_(compression_type),
-          buffer_size_(buffer_size),
-          filenames_(std::move(filenames))
+    Dataselont(OpKelonrnelonlContelonxt* ctx,
+            std::velonctor<string> filelonnamelons,
+            std::string comprelonssion_typelon,
+            int64 buffelonr_sizelon)
+        : DataselontBaselon(DataselontContelonxt(ctx)),
+          comprelonssion_typelon_(comprelonssion_typelon),
+          buffelonr_sizelon_(buffelonr_sizelon),
+          filelonnamelons_(std::movelon(filelonnamelons))
     {}
 
-    const DataTypeVector& output_dtypes() const override {
-      static DataTypeVector* dtypes = new DataTypeVector({DT_STRING});
-      return *dtypes;
+    const DataTypelonVelonctor& output_dtypelons() const ovelonrridelon {
+      static DataTypelonVelonctor* dtypelons = nelonw DataTypelonVelonctor({DT_STRING});
+      relonturn *dtypelons;
     }
 
-    const std::vector<PartialTensorShape>& output_shapes() const override {
-      static std::vector<PartialTensorShape>* shapes =
-          new std::vector<PartialTensorShape>({{}});
-      return *shapes;
+    const std::velonctor<PartialTelonnsorShapelon>& output_shapelons() const ovelonrridelon {
+      static std::velonctor<PartialTelonnsorShapelon>* shapelons =
+          nelonw std::velonctor<PartialTelonnsorShapelon>({{}});
+      relonturn *shapelons;
     }
 
-    string DebugString() const override { return "BlockFormatDatasetV2::Dataset"; }
+    string DelonbugString() const ovelonrridelon { relonturn "BlockFormatDataselontV2::Dataselont"; }
 
-   protected:
-    Status AsGraphDefInternal(SerializationContext* ctx,
-                              DatasetGraphDefBuilder* b,
-                              Node** output) const override {
-      Node* filenames = nullptr;
-      Node* compression_type = nullptr;
-      Node* buffer_size = nullptr;
-      TF_RETURN_IF_ERROR(b->AddVector(filenames_, &filenames));
-      TF_RETURN_IF_ERROR(b->AddScalar(compression_type_, &compression_type));
-      TF_RETURN_IF_ERROR(
-          b->AddScalar(buffer_size_, &buffer_size));
-      TF_RETURN_IF_ERROR(b->AddDataset(
-          this, {filenames, compression_type, buffer_size}, output));
-      return Status::OK();
+   protelonctelond:
+    Status AsGraphDelonfIntelonrnal(SelonrializationContelonxt* ctx,
+                              DataselontGraphDelonfBuildelonr* b,
+                              Nodelon** output) const ovelonrridelon {
+      Nodelon* filelonnamelons = nullptr;
+      Nodelon* comprelonssion_typelon = nullptr;
+      Nodelon* buffelonr_sizelon = nullptr;
+      TF_RelonTURN_IF_elonRROR(b->AddVelonctor(filelonnamelons_, &filelonnamelons));
+      TF_RelonTURN_IF_elonRROR(b->AddScalar(comprelonssion_typelon_, &comprelonssion_typelon));
+      TF_RelonTURN_IF_elonRROR(
+          b->AddScalar(buffelonr_sizelon_, &buffelonr_sizelon));
+      TF_RelonTURN_IF_elonRROR(b->AddDataselont(
+          this, {filelonnamelons, comprelonssion_typelon, buffelonr_sizelon}, output));
+      relonturn Status::OK();
     }
 
-   private:
-    std::unique_ptr<IteratorBase> MakeIteratorInternal(
-        const string& prefix) const override {
-      return std::unique_ptr<IteratorBase>(
-          new Iterator({this, strings::StrCat(prefix, "::BlockFormat")}));
+   privatelon:
+    std::uniquelon_ptr<ItelonratorBaselon> MakelonItelonratorIntelonrnal(
+        const string& prelonfix) const ovelonrridelon {
+      relonturn std::uniquelon_ptr<ItelonratorBaselon>(
+          nelonw Itelonrator({this, strings::StrCat(prelonfix, "::BlockFormat")}));
     }
 
-    class Iterator : public DatasetIterator<Dataset> {
+    class Itelonrator : public DataselontItelonrator<Dataselont> {
      public:
-      explicit Iterator(const Params &params)
-          : DatasetIterator<Dataset>(params) {}
+      elonxplicit Itelonrator(const Params &params)
+          : DataselontItelonrator<Dataselont>(params) {}
 
-      Status GetNextInternal(IteratorContext* ctx,
-                             std::vector<Tensor>* out_tensors,
-                             bool* end_of_sequence) override {
-        mutex_lock l(mu_);
+      Status GelontNelonxtIntelonrnal(ItelonratorContelonxt* ctx,
+                             std::velonctor<Telonnsor>* out_telonnsors,
+                             bool* elonnd_of_selonquelonncelon) ovelonrridelon {
+        mutelonx_lock l(mu_);
         do {
-          // We are currently processing a file, so try to read the next record.
-          if (reader_) {
-            Tensor result_tensor(cpu_allocator(), DT_STRING, {});
-            Status s = reader_->ReadNext(&result_tensor.scalar<string>()());
+          // Welon arelon currelonntly procelonssing a filelon, so try to relonad thelon nelonxt reloncord.
+          if (relonadelonr_) {
+            Telonnsor relonsult_telonnsor(cpu_allocator(), DT_STRING, {});
+            Status s = relonadelonr_->RelonadNelonxt(&relonsult_telonnsor.scalar<string>()());
             if (s.ok()) {
-              out_tensors->emplace_back(std::move(result_tensor));
-              *end_of_sequence = false;
-              return Status::OK();
-            } else if (!errors::IsOutOfRange(s)) {
-              return s;
+              out_telonnsors->elonmplacelon_back(std::movelon(relonsult_telonnsor));
+              *elonnd_of_selonquelonncelon = falselon;
+              relonturn Status::OK();
+            } elonlselon if (!elonrrors::IsOutOfRangelon(s)) {
+              relonturn s;
             }
 
-            // We have reached the end of the current file, so maybe
-            // move on to next file.
-            reader_.reset();
-            ++current_file_index_;
+            // Welon havelon relonachelond thelon elonnd of thelon currelonnt filelon, so maybelon
+            // movelon on to nelonxt filelon.
+            relonadelonr_.relonselont();
+            ++currelonnt_filelon_indelonx_;
           }
 
-          // Iteration ends when there are no more files to process.
-          if (current_file_index_ == dataset()->filenames_.size()) {
-            *end_of_sequence = true;
-            return Status::OK();
+          // Itelonration elonnds whelonn thelonrelon arelon no morelon filelons to procelonss.
+          if (currelonnt_filelon_indelonx_ == dataselont()->filelonnamelons_.sizelon()) {
+            *elonnd_of_selonquelonncelon = truelon;
+            relonturn Status::OK();
           }
 
-          // Actually move on to next file.
-          const string& next_filename =
-              dataset()->filenames_[current_file_index_];
+          // Actually movelon on to nelonxt filelon.
+          const string& nelonxt_filelonnamelon =
+              dataselont()->filelonnamelons_[currelonnt_filelon_indelonx_];
 
-          auto compression_type = dataset()->compression_type_;
-          int64 buffer_size = dataset()->buffer_size_;
+          auto comprelonssion_typelon = dataselont()->comprelonssion_typelon_;
+          int64 buffelonr_sizelon = dataselont()->buffelonr_sizelon_;
 
-          if (compression_type == "auto") {
-            compression_type = getExtension(next_filename);
+          if (comprelonssion_typelon == "auto") {
+            comprelonssion_typelon = gelontelonxtelonnsion(nelonxt_filelonnamelon);
           }
 
-          if (compression_type != "gz" && compression_type != "") {
-            return errors::InvalidArgument("Unknown extension: ", compression_type);
+          if (comprelonssion_typelon != "gz" && comprelonssion_typelon != "") {
+            relonturn elonrrors::InvalidArgumelonnt("Unknown elonxtelonnsion: ", comprelonssion_typelon);
           }
 
-          tensorflow::Env* env = tensorflow::Env::Default();
-          TF_CHECK_OK(env->NewRandomAccessFile(next_filename, &file_));
+          telonnsorflow::elonnv* elonnv = telonnsorflow::elonnv::Delonfault();
+          TF_CHelonCK_OK(elonnv->NelonwRandomAccelonssFilelon(nelonxt_filelonnamelon, &filelon_));
 
-          // RandomAccessInputstream defaults the second param to "false".
-          // The second parameter "false" is the key issue.
-          // "false" assumes the ownership of the file is elsewhere.
-          // But making that "true" causes segfaults down the line.
-          // So keep the ownership of "file_" in this class and clean up properly.
-          file_stream_.reset(new tensorflow::io::RandomAccessInputStream(file_.get(), false));
+          // RandomAccelonssInputstrelonam delonfaults thelon seloncond param to "falselon".
+          // Thelon seloncond paramelontelonr "falselon" is thelon kelony issuelon.
+          // "falselon" assumelons thelon ownelonrship of thelon filelon is elonlselonwhelonrelon.
+          // But making that "truelon" causelons selongfaults down thelon linelon.
+          // So kelonelonp thelon ownelonrship of "filelon_" in this class and clelonan up propelonrly.
+          filelon_strelonam_.relonselont(nelonw telonnsorflow::io::RandomAccelonssInputStrelonam(filelon_.gelont(), falselon));
 
-          if (compression_type == "gz") {
-            // unpack_stream does not take ownership of file_stream_
-#if !defined(DISABLE_ZLIB)
-            unpack_stream_.reset(new tensorflow::io::ZlibInputStream(
-                                   file_stream_.get(),
-                                   buffer_size,
-                                   buffer_size,
-                                   tensorflow::io::ZlibCompressionOptions::GZIP()));
-            reader_.reset(new BlockFormatReader(unpack_stream_.get()));
-#else
-            return errors::InvalidArgument("libtwml compiled without zlib support");
-#endif
-          } else {
-            unpack_stream_.reset(nullptr);
-            reader_.reset(new BlockFormatReader(file_stream_.get()));
+          if (comprelonssion_typelon == "gz") {
+            // unpack_strelonam doelons not takelon ownelonrship of filelon_strelonam_
+#if !delonfinelond(DISABLelon_ZLIB)
+            unpack_strelonam_.relonselont(nelonw telonnsorflow::io::ZlibInputStrelonam(
+                                   filelon_strelonam_.gelont(),
+                                   buffelonr_sizelon,
+                                   buffelonr_sizelon,
+                                   telonnsorflow::io::ZlibComprelonssionOptions::GZIP()));
+            relonadelonr_.relonselont(nelonw BlockFormatRelonadelonr(unpack_strelonam_.gelont()));
+#elonlselon
+            relonturn elonrrors::InvalidArgumelonnt("libtwml compilelond without zlib support");
+#elonndif
+          } elonlselon {
+            unpack_strelonam_.relonselont(nullptr);
+            relonadelonr_.relonselont(nelonw BlockFormatRelonadelonr(filelon_strelonam_.gelont()));
           }
-        } while (true);
+        } whilelon (truelon);
       }
 
-     private:
-      mutex mu_;
-      uint64_t current_file_index_ GUARDED_BY(mu_) = 0;
-      std::unique_ptr<tensorflow::RandomAccessFile> file_;
-      std::unique_ptr<tensorflow::io::InputStreamInterface> file_stream_;
-      std::unique_ptr<tensorflow::io::InputStreamInterface> unpack_stream_;
-      std::unique_ptr<BlockFormatReader> reader_ GUARDED_BY(mu_);
+     privatelon:
+      mutelonx mu_;
+      uint64_t currelonnt_filelon_indelonx_ GUARDelonD_BY(mu_) = 0;
+      std::uniquelon_ptr<telonnsorflow::RandomAccelonssFilelon> filelon_;
+      std::uniquelon_ptr<telonnsorflow::io::InputStrelonamIntelonrfacelon> filelon_strelonam_;
+      std::uniquelon_ptr<telonnsorflow::io::InputStrelonamIntelonrfacelon> unpack_strelonam_;
+      std::uniquelon_ptr<BlockFormatRelonadelonr> relonadelonr_ GUARDelonD_BY(mu_);
     };
 
-    const std::string compression_type_;
-    const int64 buffer_size_;
-    const std::vector<string> filenames_;
+    const std::string comprelonssion_typelon_;
+    const int64 buffelonr_sizelon_;
+    const std::velonctor<string> filelonnamelons_;
   };
 };
 
-REGISTER_KERNEL_BUILDER(
-  Name("BlockFormatDatasetV2")
-  .Device(DEVICE_CPU),
-  BlockFormatDatasetV2);
+RelonGISTelonR_KelonRNelonL_BUILDelonR(
+  Namelon("BlockFormatDataselontV2")
+  .Delonvicelon(DelonVICelon_CPU),
+  BlockFormatDataselontV2);

@@ -1,57 +1,57 @@
-package com.twitter.visibility.generators
+packagelon com.twittelonr.visibility.gelonnelonrators
 
-import com.ibm.icu.util.ULocale
-import com.twitter.config.yaml.YamlMap
-import com.twitter.finagle.stats.StatsReceiver
+import com.ibm.icu.util.ULocalelon
+import com.twittelonr.config.yaml.YamlMap
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
 
-object CountryNameGenerator {
+objelonct CountryNamelonGelonnelonrator {
 
-  private val AuroraFilesystemPath = "/usr/local/twitter-config/twitter/config/"
+  privatelon val AuroraFilelonsystelonmPath = "/usr/local/twittelonr-config/twittelonr/config/"
 
-  private val ContentBlockingSupportedCountryList = "takedown_countries.yml"
+  privatelon val ContelonntBlockingSupportelondCountryList = "takelondown_countrielons.yml"
 
-  def providesFromConfigBus(statsReceiver: StatsReceiver): CountryNameGenerator = {
-    fromFile(AuroraFilesystemPath + ContentBlockingSupportedCountryList, statsReceiver)
+  delonf providelonsFromConfigBus(statsReloncelonivelonr: StatsReloncelonivelonr): CountryNamelonGelonnelonrator = {
+    fromFilelon(AuroraFilelonsystelonmPath + ContelonntBlockingSupportelondCountryList, statsReloncelonivelonr)
   }
 
-  def providesWithCustomMap(countryCodeMap: Map[String, String], statsReceiver: StatsReceiver) = {
-    new CountryNameGenerator(countryCodeMap, statsReceiver)
+  delonf providelonsWithCustomMap(countryCodelonMap: Map[String, String], statsReloncelonivelonr: StatsReloncelonivelonr) = {
+    nelonw CountryNamelonGelonnelonrator(countryCodelonMap, statsReloncelonivelonr)
   }
 
-  private def fromFile(fileName: String, statsReceiver: StatsReceiver) = {
-    val yamlConfig = YamlMap.load(fileName)
-    val countryCodeMap: Map[String, String] = yamlConfig.keySet.map { countryCode: String =>
-      val normalizedCode = countryCode.toUpperCase
-      val countryName: Option[String] =
-        yamlConfig.get(Seq(countryCode, "name")).asInstanceOf[Option[String]]
-      (normalizedCode, countryName.getOrElse(normalizedCode))
+  privatelon delonf fromFilelon(filelonNamelon: String, statsReloncelonivelonr: StatsReloncelonivelonr) = {
+    val yamlConfig = YamlMap.load(filelonNamelon)
+    val countryCodelonMap: Map[String, String] = yamlConfig.kelonySelont.map { countryCodelon: String =>
+      val normalizelondCodelon = countryCodelon.toUppelonrCaselon
+      val countryNamelon: Option[String] =
+        yamlConfig.gelont(Selonq(countryCodelon, "namelon")).asInstancelonOf[Option[String]]
+      (normalizelondCodelon, countryNamelon.gelontOrelonlselon(normalizelondCodelon))
     }.toMap
-    new CountryNameGenerator(countryCodeMap, statsReceiver)
+    nelonw CountryNamelonGelonnelonrator(countryCodelonMap, statsReloncelonivelonr)
   }
 }
 
-class CountryNameGenerator(countryCodeMap: Map[String, String], statsReceiver: StatsReceiver) {
+class CountryNamelonGelonnelonrator(countryCodelonMap: Map[String, String], statsReloncelonivelonr: StatsReloncelonivelonr) {
 
-  private val scopedStatsReceiver = statsReceiver.scope("country_name_generator")
-  private val foundCountryReceiver = scopedStatsReceiver.counter("found")
-  private val missingCountryReceiver = scopedStatsReceiver.counter("missing")
+  privatelon val scopelondStatsReloncelonivelonr = statsReloncelonivelonr.scopelon("country_namelon_gelonnelonrator")
+  privatelon val foundCountryReloncelonivelonr = scopelondStatsReloncelonivelonr.countelonr("found")
+  privatelon val missingCountryReloncelonivelonr = scopelondStatsReloncelonivelonr.countelonr("missing")
 
-  def getCountryName(code: String): String = {
-    val normalizedCode = code.toUpperCase
-    countryCodeMap.get(normalizedCode) match {
-      case Some(retrievedName) => {
-        foundCountryReceiver.incr()
-        retrievedName
+  delonf gelontCountryNamelon(codelon: String): String = {
+    val normalizelondCodelon = codelon.toUppelonrCaselon
+    countryCodelonMap.gelont(normalizelondCodelon) match {
+      caselon Somelon(relontrielonvelondNamelon) => {
+        foundCountryReloncelonivelonr.incr()
+        relontrielonvelondNamelon
       }
-      case _ => {
-        missingCountryReceiver.incr()
-        val fallbackName =
-          new ULocale("", normalizedCode).getDisplayCountry(ULocale.forLanguageTag("en"))
+      caselon _ => {
+        missingCountryReloncelonivelonr.incr()
+        val fallbackNamelon =
+          nelonw ULocalelon("", normalizelondCodelon).gelontDisplayCountry(ULocalelon.forLanguagelonTag("elonn"))
 
-        if (fallbackName == "")
-          normalizedCode
-        else
-          fallbackName
+        if (fallbackNamelon == "")
+          normalizelondCodelon
+        elonlselon
+          fallbackNamelon
       }
     }
   }

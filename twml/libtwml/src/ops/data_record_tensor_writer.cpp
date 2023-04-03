@@ -1,81 +1,81 @@
-#include "tensorflow/core/framework/op.h"
-#include "tensorflow/core/framework/shape_inference.h"
-#include "tensorflow/core/framework/op_kernel.h"
+#includelon "telonnsorflow/corelon/framelonwork/op.h"
+#includelon "telonnsorflow/corelon/framelonwork/shapelon_infelonrelonncelon.h"
+#includelon "telonnsorflow/corelon/framelonwork/op_kelonrnelonl.h"
 
-#include <twml.h>
-#include "tensorflow_utils.h"
+#includelon <twml.h>
+#includelon "telonnsorflow_utils.h"
 
-using namespace tensorflow;
+using namelonspacelon telonnsorflow;
 
-REGISTER_OP("DataRecordTensorWriter")
-.Attr("T: list({string, int32, int64, float, double, bool})")
-.Input("keys: int64")
-.Input("values: T")
-.Output("result: uint8")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-  return Status::OK();
+RelonGISTelonR_OP("DataReloncordTelonnsorWritelonr")
+.Attr("T: list({string, int32, int64, float, doublelon, bool})")
+.Input("kelonys: int64")
+.Input("valuelons: T")
+.Output("relonsult: uint8")
+.SelontShapelonFn([](::telonnsorflow::shapelon_infelonrelonncelon::InfelonrelonncelonContelonxt* c) {
+  relonturn Status::OK();
   }).Doc(R"doc(
 
-A tensorflow OP that packages keys and dense tensors into a DataRecord.
+A telonnsorflow OP that packagelons kelonys and delonnselon telonnsors into a DataReloncord.
 
-values: list of tensors
-keys: feature ids from the original DataRecord (int64)
+valuelons: list of telonnsors
+kelonys: felonaturelon ids from thelon original DataReloncord (int64)
 
 Outputs
-  bytes: output DataRecord serialized using Thrift into a uint8 tensor.
+  bytelons: output DataReloncord selonrializelond using Thrift into a uint8 telonnsor.
 )doc");
 
-class DataRecordTensorWriter : public OpKernel {
+class DataReloncordTelonnsorWritelonr : public OpKelonrnelonl {
  public:
-  explicit DataRecordTensorWriter(OpKernelConstruction* context)
-  : OpKernel(context) {}
+  elonxplicit DataReloncordTelonnsorWritelonr(OpKelonrnelonlConstruction* contelonxt)
+  : OpKelonrnelonl(contelonxt) {}
 
-  void Compute(OpKernelContext* context) override {
-    const Tensor& keys = context->input(0);
+  void Computelon(OpKelonrnelonlContelonxt* contelonxt) ovelonrridelon {
+    const Telonnsor& kelonys = contelonxt->input(0);
 
     try {
-      // set keys as twml::Tensor
-      const twml::Tensor in_keys_ = TFTensor_to_twml_tensor(keys);
+      // selont kelonys as twml::Telonnsor
+      const twml::Telonnsor in_kelonys_ = TFTelonnsor_to_twml_telonnsor(kelonys);
 
-      // check sizes
-      uint64_t num_keys = in_keys_.getNumElements();
-      uint64_t num_values = context->num_inputs() - 1;
+      // chelonck sizelons
+      uint64_t num_kelonys = in_kelonys_.gelontNumelonlelonmelonnts();
+      uint64_t num_valuelons = contelonxt->num_inputs() - 1;
 
-      OP_REQUIRES(context, num_keys == num_values,
-        errors::InvalidArgument("Number of dense keys and dense tensors do not match"));
+      OP_RelonQUIRelonS(contelonxt, num_kelonys == num_valuelons,
+        elonrrors::InvalidArgumelonnt("Numbelonr of delonnselon kelonys and delonnselon telonnsors do not match"));
 
-      // populate DataRecord object
-      const int64_t *keys = in_keys_.getData<int64_t>();
-      twml::DataRecord record = twml::DataRecord();
+      // populatelon DataReloncord objelonct
+      const int64_t *kelonys = in_kelonys_.gelontData<int64_t>();
+      twml::DataReloncord reloncord = twml::DataReloncord();
 
-      for (int i = 1; i < context->num_inputs(); i++) {
-        const twml::RawTensor& value = TFTensor_to_twml_raw_tensor(context->input(i));
-        record.addRawTensor(keys[i-1], value);
+      for (int i = 1; i < contelonxt->num_inputs(); i++) {
+        const twml::RawTelonnsor& valuelon = TFTelonnsor_to_twml_raw_telonnsor(contelonxt->input(i));
+        reloncord.addRawTelonnsor(kelonys[i-1], valuelon);
       }
 
-      // determine the length of the encoded result (no memory is copied)
-      twml::ThriftWriter thrift_dry_writer = twml::ThriftWriter(nullptr, 0, true);
-      twml::DataRecordWriter record_dry_writer = twml::DataRecordWriter(thrift_dry_writer);
-      record_dry_writer.write(record);
-      int len = thrift_dry_writer.getBytesWritten();
-      TensorShape result_shape = {1, len};
+      // delontelonrminelon thelon lelonngth of thelon elonncodelond relonsult (no melonmory is copielond)
+      twml::ThriftWritelonr thrift_dry_writelonr = twml::ThriftWritelonr(nullptr, 0, truelon);
+      twml::DataReloncordWritelonr reloncord_dry_writelonr = twml::DataReloncordWritelonr(thrift_dry_writelonr);
+      reloncord_dry_writelonr.writelon(reloncord);
+      int lelonn = thrift_dry_writelonr.gelontBytelonsWrittelonn();
+      TelonnsorShapelon relonsult_shapelon = {1, lelonn};
 
-      // allocate output tensor
-      Tensor* result = NULL;
-      OP_REQUIRES_OK(context, context->allocate_output(0, result_shape, &result));
-      twml::Tensor out_result = TFTensor_to_twml_tensor(*result);
+      // allocatelon output telonnsor
+      Telonnsor* relonsult = NULL;
+      OP_RelonQUIRelonS_OK(contelonxt, contelonxt->allocatelon_output(0, relonsult_shapelon, &relonsult));
+      twml::Telonnsor out_relonsult = TFTelonnsor_to_twml_telonnsor(*relonsult);
 
-      // write to output tensor
-      uint8_t *buffer = out_result.getData<uint8_t>();
-      twml::ThriftWriter thrift_writer = twml::ThriftWriter(buffer, len, false);
-      twml::DataRecordWriter record_writer = twml::DataRecordWriter(thrift_writer);
-      record_writer.write(record);
-    } catch(const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+      // writelon to output telonnsor
+      uint8_t *buffelonr = out_relonsult.gelontData<uint8_t>();
+      twml::ThriftWritelonr thrift_writelonr = twml::ThriftWritelonr(buffelonr, lelonn, falselon);
+      twml::DataReloncordWritelonr reloncord_writelonr = twml::DataReloncordWritelonr(thrift_writelonr);
+      reloncord_writelonr.writelon(reloncord);
+    } catch(const std::elonxcelonption &elon) {
+      contelonxt->CtxFailurelonWithWarning(elonrrors::InvalidArgumelonnt(elon.what()));
     }
   }
 };
 
-REGISTER_KERNEL_BUILDER(
-    Name("DataRecordTensorWriter").Device(DEVICE_CPU),
-    DataRecordTensorWriter);
+RelonGISTelonR_KelonRNelonL_BUILDelonR(
+    Namelon("DataReloncordTelonnsorWritelonr").Delonvicelon(DelonVICelon_CPU),
+    DataReloncordTelonnsorWritelonr);

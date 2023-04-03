@@ -1,217 +1,217 @@
-package com.twitter.recos.hose.common
+packagelon com.twittelonr.reloncos.hoselon.common
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finatra.kafka.consumers.FinagleKafkaConsumerBuilder
-import com.twitter.graphjet.bipartite.LeftIndexedMultiSegmentBipartiteGraph
-import com.twitter.graphjet.bipartite.segment.LeftIndexedBipartiteGraphSegment
-import com.twitter.kafka.client.processor.{AtLeastOnceProcessor, ThreadSafeKafkaConsumerClient}
-import com.twitter.logging.Logger
-import com.twitter.recos.internal.thriftscala.RecosHoseMessage
-import java.util.concurrent.atomic.AtomicBoolean
-import java.util.concurrent.{ConcurrentLinkedQueue, ExecutorService, Executors, Semaphore}
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.finatra.kafka.consumelonrs.FinaglelonKafkaConsumelonrBuildelonr
+import com.twittelonr.graphjelont.bipartitelon.LelonftIndelonxelondMultiSelongmelonntBipartitelonGraph
+import com.twittelonr.graphjelont.bipartitelon.selongmelonnt.LelonftIndelonxelondBipartitelonGraphSelongmelonnt
+import com.twittelonr.kafka.clielonnt.procelonssor.{AtLelonastOncelonProcelonssor, ThrelonadSafelonKafkaConsumelonrClielonnt}
+import com.twittelonr.logging.Loggelonr
+import com.twittelonr.reloncos.intelonrnal.thriftscala.ReloncosHoselonMelonssagelon
+import java.util.concurrelonnt.atomic.AtomicBoolelonan
+import java.util.concurrelonnt.{ConcurrelonntLinkelondQuelonuelon, elonxeloncutorSelonrvicelon, elonxeloncutors, Selonmaphorelon}
 
 /**
- * The class submits a number of graph writer threads, BufferedEdgeWriter,
- * during service startup. One of them is live writer thread, and the other $(numBootstrapWriters - 1)
- * are catchup writer threads. All of them consume kafka events from an internal concurrent queue,
- * which is populated by kafka reader threads. At bootstrap time, the kafka reader threads look
- * back kafka offset from several hours ago and populate the internal concurrent queue.
- * Each graph writer thread writes to an individual graph segment separately.
- * The (numBootstrapWriters - 1) catchup writer threads will stop once all events
- * between current system time at startup and the time in memcache are processed.
- * The live writer thread will continue to write all incoming kafka events.
- * It lives through the entire life cycle of recos graph service.
+ * Thelon class submits a numbelonr of graph writelonr threlonads, BuffelonrelondelondgelonWritelonr,
+ * during selonrvicelon startup. Onelon of thelonm is livelon writelonr threlonad, and thelon othelonr $(numBootstrapWritelonrs - 1)
+ * arelon catchup writelonr threlonads. All of thelonm consumelon kafka elonvelonnts from an intelonrnal concurrelonnt quelonuelon,
+ * which is populatelond by kafka relonadelonr threlonads. At bootstrap timelon, thelon kafka relonadelonr threlonads look
+ * back kafka offselont from selonvelonral hours ago and populatelon thelon intelonrnal concurrelonnt quelonuelon.
+ * elonach graph writelonr threlonad writelons to an individual graph selongmelonnt selonparatelonly.
+ * Thelon (numBootstrapWritelonrs - 1) catchup writelonr threlonads will stop oncelon all elonvelonnts
+ * belontwelonelonn currelonnt systelonm timelon at startup and thelon timelon in melonmcachelon arelon procelonsselond.
+ * Thelon livelon writelonr threlonad will continuelon to writelon all incoming kafka elonvelonnts.
+ * It livelons through thelon elonntirelon lifelon cyclelon of reloncos graph selonrvicelon.
  */
-trait UnifiedGraphWriter[
-  TSegment <: LeftIndexedBipartiteGraphSegment,
-  TGraph <: LeftIndexedMultiSegmentBipartiteGraph[TSegment]] { writer =>
+trait UnifielondGraphWritelonr[
+  TSelongmelonnt <: LelonftIndelonxelondBipartitelonGraphSelongmelonnt,
+  TGraph <: LelonftIndelonxelondMultiSelongmelonntBipartitelonGraph[TSelongmelonnt]] { writelonr =>
 
-  import UnifiedGraphWriter._
+  import UnifielondGraphWritelonr._
 
-  def shardId: String
-  def env: String
-  def hosename: String
-  def bufferSize: Int
-  def consumerNum: Int
-  def catchupWriterNum: Int
-  def kafkaConsumerBuilder: FinagleKafkaConsumerBuilder[String, RecosHoseMessage]
-  def clientId: String
-  def statsReceiver: StatsReceiver
-
-  /**
-   * Adds a RecosHoseMessage to the graph. used by live writer to insert edges to the
-   * current segment
-   */
-  def addEdgeToGraph(graph: TGraph, recosHoseMessage: RecosHoseMessage): Unit
+  delonf shardId: String
+  delonf elonnv: String
+  delonf hoselonnamelon: String
+  delonf buffelonrSizelon: Int
+  delonf consumelonrNum: Int
+  delonf catchupWritelonrNum: Int
+  delonf kafkaConsumelonrBuildelonr: FinaglelonKafkaConsumelonrBuildelonr[String, ReloncosHoselonMelonssagelon]
+  delonf clielonntId: String
+  delonf statsReloncelonivelonr: StatsReloncelonivelonr
 
   /**
-   * Adds a RecosHoseMessage to the given segment in the graph. Used by catch up writers to
-   * insert edges to non-current (old) segments
+   * Adds a ReloncosHoselonMelonssagelon to thelon graph. uselond by livelon writelonr to inselonrt elondgelons to thelon
+   * currelonnt selongmelonnt
    */
-  def addEdgeToSegment(segment: TSegment, recosHoseMessage: RecosHoseMessage): Unit
+  delonf addelondgelonToGraph(graph: TGraph, reloncosHoselonMelonssagelon: ReloncosHoselonMelonssagelon): Unit
 
-  private val log = Logger()
-  private val isRunning: AtomicBoolean = new AtomicBoolean(true)
-  private val initialized: AtomicBoolean = new AtomicBoolean(false)
-  private var processors: Seq[AtLeastOnceProcessor[String, RecosHoseMessage]] = Seq.empty
-  private var consumers: Seq[ThreadSafeKafkaConsumerClient[String, RecosHoseMessage]] = Seq.empty
-  private val threadPool: ExecutorService = Executors.newCachedThreadPool()
+  /**
+   * Adds a ReloncosHoselonMelonssagelon to thelon givelonn selongmelonnt in thelon graph. Uselond by catch up writelonrs to
+   * inselonrt elondgelons to non-currelonnt (old) selongmelonnts
+   */
+  delonf addelondgelonToSelongmelonnt(selongmelonnt: TSelongmelonnt, reloncosHoselonMelonssagelon: ReloncosHoselonMelonssagelon): Unit
 
-  def shutdown(): Unit = {
-    processors.foreach { processor =>
-      processor.close()
+  privatelon val log = Loggelonr()
+  privatelon val isRunning: AtomicBoolelonan = nelonw AtomicBoolelonan(truelon)
+  privatelon val initializelond: AtomicBoolelonan = nelonw AtomicBoolelonan(falselon)
+  privatelon var procelonssors: Selonq[AtLelonastOncelonProcelonssor[String, ReloncosHoselonMelonssagelon]] = Selonq.elonmpty
+  privatelon var consumelonrs: Selonq[ThrelonadSafelonKafkaConsumelonrClielonnt[String, ReloncosHoselonMelonssagelon]] = Selonq.elonmpty
+  privatelon val threlonadPool: elonxeloncutorSelonrvicelon = elonxeloncutors.nelonwCachelondThrelonadPool()
+
+  delonf shutdown(): Unit = {
+    procelonssors.forelonach { procelonssor =>
+      procelonssor.closelon()
     }
-    processors = Seq.empty
-    consumers.foreach { consumer =>
-      consumer.close()
+    procelonssors = Selonq.elonmpty
+    consumelonrs.forelonach { consumelonr =>
+      consumelonr.closelon()
     }
-    consumers = Seq.empty
-    threadPool.shutdown()
-    isRunning.set(false)
+    consumelonrs = Selonq.elonmpty
+    threlonadPool.shutdown()
+    isRunning.selont(falselon)
   }
 
-  def initHose(liveGraph: TGraph): Unit = this.synchronized {
-    if (!initialized.get) {
-      initialized.set(true)
+  delonf initHoselon(livelonGraph: TGraph): Unit = this.synchronizelond {
+    if (!initializelond.gelont) {
+      initializelond.selont(truelon)
 
-      val queue: java.util.Queue[Array[RecosHoseMessage]] =
-        new ConcurrentLinkedQueue[Array[RecosHoseMessage]]()
-      val queuelimit: Semaphore = new Semaphore(1024)
+      val quelonuelon: java.util.Quelonuelon[Array[ReloncosHoselonMelonssagelon]] =
+        nelonw ConcurrelonntLinkelondQuelonuelon[Array[ReloncosHoselonMelonssagelon]]()
+      val quelonuelonlimit: Selonmaphorelon = nelonw Selonmaphorelon(1024)
 
-      initRecosHoseKafka(queue, queuelimit)
-      initGrpahWriters(liveGraph, queue, queuelimit)
-    } else {
-      throw new RuntimeException("attempt to re-init kafka hose")
+      initReloncosHoselonKafka(quelonuelon, quelonuelonlimit)
+      initGrpahWritelonrs(livelonGraph, quelonuelon, quelonuelonlimit)
+    } elonlselon {
+      throw nelonw Runtimelonelonxcelonption("attelonmpt to relon-init kafka hoselon")
     }
   }
 
-  private def initRecosHoseKafka(
-    queue: java.util.Queue[Array[RecosHoseMessage]],
-    queuelimit: Semaphore,
+  privatelon delonf initReloncosHoselonKafka(
+    quelonuelon: java.util.Quelonuelon[Array[ReloncosHoselonMelonssagelon]],
+    quelonuelonlimit: Selonmaphorelon,
   ): Unit = {
     try {
-      consumers = (0 until consumerNum).map { index =>
-        new ThreadSafeKafkaConsumerClient(
-          kafkaConsumerBuilder.clientId(s"clientId-$index").enableAutoCommit(false).config)
+      consumelonrs = (0 until consumelonrNum).map { indelonx =>
+        nelonw ThrelonadSafelonKafkaConsumelonrClielonnt(
+          kafkaConsumelonrBuildelonr.clielonntId(s"clielonntId-$indelonx").elonnablelonAutoCommit(falselon).config)
       }
-      processors = consumers.zipWithIndex.map {
-        case (consumer, index) =>
-          val bufferedWriter = BufferedEdgeCollector(bufferSize, queue, queuelimit, statsReceiver)
-          val processor = RecosEdgeProcessor(bufferedWriter)(statsReceiver)
+      procelonssors = consumelonrs.zipWithIndelonx.map {
+        caselon (consumelonr, indelonx) =>
+          val buffelonrelondWritelonr = BuffelonrelondelondgelonCollelonctor(buffelonrSizelon, quelonuelon, quelonuelonlimit, statsReloncelonivelonr)
+          val procelonssor = ReloncoselondgelonProcelonssor(buffelonrelondWritelonr)(statsReloncelonivelonr)
 
-          AtLeastOnceProcessor[String, RecosHoseMessage](
-            s"recos-injector-kafka-$index",
-            hosename,
-            consumer,
-            processor.process,
-            maxPendingRequests = MaxPendingRequests * bufferSize,
-            workerThreads = ProcessorThreads,
-            commitIntervalMs = CommitIntervalMs,
-            statsReceiver = statsReceiver
+          AtLelonastOncelonProcelonssor[String, ReloncosHoselonMelonssagelon](
+            s"reloncos-injelonctor-kafka-$indelonx",
+            hoselonnamelon,
+            consumelonr,
+            procelonssor.procelonss,
+            maxPelonndingRelonquelonsts = MaxPelonndingRelonquelonsts * buffelonrSizelon,
+            workelonrThrelonads = ProcelonssorThrelonads,
+            commitIntelonrvalMs = CommitIntelonrvalMs,
+            statsReloncelonivelonr = statsReloncelonivelonr
           )
       }
 
-      log.info(s"starting ${processors.size} recosKafka processors")
-      processors.foreach { processor =>
-        processor.start()
+      log.info(s"starting ${procelonssors.sizelon} reloncosKafka procelonssors")
+      procelonssors.forelonach { procelonssor =>
+        procelonssor.start()
       }
     } catch {
-      case e: Throwable =>
-        e.printStackTrace()
-        log.error(e, e.toString)
-        processors.foreach { processor =>
-          processor.close()
+      caselon elon: Throwablelon =>
+        elon.printStackTracelon()
+        log.elonrror(elon, elon.toString)
+        procelonssors.forelonach { procelonssor =>
+          procelonssor.closelon()
         }
-        processors = Seq.empty
-        consumers.foreach { consumer =>
-          consumer.close()
+        procelonssors = Selonq.elonmpty
+        consumelonrs.forelonach { consumelonr =>
+          consumelonr.closelon()
         }
-        consumers = Seq.empty
+        consumelonrs = Selonq.elonmpty
     }
   }
 
   /**
-   * Initialize the graph writers,
-   * by first creating catch up writers to bootstrap the older segments,
-   * and then assigning a live writer to populate the live segment.
+   * Initializelon thelon graph writelonrs,
+   * by first crelonating catch up writelonrs to bootstrap thelon oldelonr selongmelonnts,
+   * and thelonn assigning a livelon writelonr to populatelon thelon livelon selongmelonnt.
    */
-  private def initGrpahWriters(
-    liveGraph: TGraph,
-    queue: java.util.Queue[Array[RecosHoseMessage]],
-    queuelimit: Semaphore
+  privatelon delonf initGrpahWritelonrs(
+    livelonGraph: TGraph,
+    quelonuelon: java.util.Quelonuelon[Array[ReloncosHoselonMelonssagelon]],
+    quelonuelonlimit: Selonmaphorelon
   ): Unit = {
-    // define a number of (numBootstrapWriters - 1) catchup writer threads, each of which will write
-    // to a separate graph segment.
-    val catchupWriters = (0 until (catchupWriterNum - 1)).map { index =>
-      val segment = liveGraph.getLiveSegment
-      liveGraph.rollForwardSegment()
-      getCatchupWriter(segment, queue, queuelimit, index)
+    // delonfinelon a numbelonr of (numBootstrapWritelonrs - 1) catchup writelonr threlonads, elonach of which will writelon
+    // to a selonparatelon graph selongmelonnt.
+    val catchupWritelonrs = (0 until (catchupWritelonrNum - 1)).map { indelonx =>
+      val selongmelonnt = livelonGraph.gelontLivelonSelongmelonnt
+      livelonGraph.rollForwardSelongmelonnt()
+      gelontCatchupWritelonr(selongmelonnt, quelonuelon, quelonuelonlimit, indelonx)
     }
-    val threadPool: ExecutorService = Executors.newCachedThreadPool()
+    val threlonadPool: elonxeloncutorSelonrvicelon = elonxeloncutors.nelonwCachelondThrelonadPool()
 
-    // define one live writer thread
-    val liveWriter = getLiveWriter(liveGraph, queue, queuelimit)
-    log.info("starting live graph writer that runs until service shutdown")
-    threadPool.submit(liveWriter)
+    // delonfinelon onelon livelon writelonr threlonad
+    val livelonWritelonr = gelontLivelonWritelonr(livelonGraph, quelonuelon, quelonuelonlimit)
+    log.info("starting livelon graph writelonr that runs until selonrvicelon shutdown")
+    threlonadPool.submit(livelonWritelonr)
     log.info(
-      "starting catchup graph writer, which will terminate as soon as the catchup segment is full"
+      "starting catchup graph writelonr, which will telonrminatelon as soon as thelon catchup selongmelonnt is full"
     )
-    catchupWriters.map(threadPool.submit(_))
+    catchupWritelonrs.map(threlonadPool.submit(_))
   }
 
-  private def getLiveWriter(
-    liveGraph: TGraph,
-    queue: java.util.Queue[Array[RecosHoseMessage]],
-    queuelimit: Semaphore
-  ): BufferedEdgeWriter = {
-    val liveEdgeCollector = new EdgeCollector {
-      override def addEdge(message: RecosHoseMessage): Unit = addEdgeToGraph(liveGraph, message)
+  privatelon delonf gelontLivelonWritelonr(
+    livelonGraph: TGraph,
+    quelonuelon: java.util.Quelonuelon[Array[ReloncosHoselonMelonssagelon]],
+    quelonuelonlimit: Selonmaphorelon
+  ): BuffelonrelondelondgelonWritelonr = {
+    val livelonelondgelonCollelonctor = nelonw elondgelonCollelonctor {
+      ovelonrridelon delonf addelondgelon(melonssagelon: ReloncosHoselonMelonssagelon): Unit = addelondgelonToGraph(livelonGraph, melonssagelon)
     }
-    BufferedEdgeWriter(
-      queue,
-      queuelimit,
-      liveEdgeCollector,
-      statsReceiver.scope("liveWriter"),
-      isRunning.get
+    BuffelonrelondelondgelonWritelonr(
+      quelonuelon,
+      quelonuelonlimit,
+      livelonelondgelonCollelonctor,
+      statsReloncelonivelonr.scopelon("livelonWritelonr"),
+      isRunning.gelont
     )
   }
 
-  private def getCatchupWriter(
-    segment: TSegment,
-    queue: java.util.Queue[Array[RecosHoseMessage]],
-    queuelimit: Semaphore,
-    catchupWriterIndex: Int
-  ): BufferedEdgeWriter = {
-    val catchupEdgeCollector = new EdgeCollector {
-      var currentNumEdges = 0
+  privatelon delonf gelontCatchupWritelonr(
+    selongmelonnt: TSelongmelonnt,
+    quelonuelon: java.util.Quelonuelon[Array[ReloncosHoselonMelonssagelon]],
+    quelonuelonlimit: Selonmaphorelon,
+    catchupWritelonrIndelonx: Int
+  ): BuffelonrelondelondgelonWritelonr = {
+    val catchupelondgelonCollelonctor = nelonw elondgelonCollelonctor {
+      var currelonntNumelondgelons = 0
 
-      override def addEdge(message: RecosHoseMessage): Unit = {
-        currentNumEdges += 1
-        addEdgeToSegment(segment, message)
+      ovelonrridelon delonf addelondgelon(melonssagelon: ReloncosHoselonMelonssagelon): Unit = {
+        currelonntNumelondgelons += 1
+        addelondgelonToSelongmelonnt(selongmelonnt, melonssagelon)
       }
     }
-    val maxEdges = segment.getMaxNumEdges
+    val maxelondgelons = selongmelonnt.gelontMaxNumelondgelons
 
-    def runCondition(): Boolean = {
-      isRunning.get && ((maxEdges - catchupEdgeCollector.currentNumEdges) > bufferSize)
+    delonf runCondition(): Boolelonan = {
+      isRunning.gelont && ((maxelondgelons - catchupelondgelonCollelonctor.currelonntNumelondgelons) > buffelonrSizelon)
     }
 
-    BufferedEdgeWriter(
-      queue,
-      queuelimit,
-      catchupEdgeCollector,
-      statsReceiver.scope("catcher_" + catchupWriterIndex),
+    BuffelonrelondelondgelonWritelonr(
+      quelonuelon,
+      quelonuelonlimit,
+      catchupelondgelonCollelonctor,
+      statsReloncelonivelonr.scopelon("catchelonr_" + catchupWritelonrIndelonx),
       runCondition
     )
   }
 }
 
-private object UnifiedGraphWriter {
+privatelon objelonct UnifielondGraphWritelonr {
 
-  // The RecosEdgeProcessor is not thread-safe. Only use one thread to process each instance.
-  val ProcessorThreads = 1
-  // Each one cache at most 1000 * bufferSize requests.
-  val MaxPendingRequests = 1000
-  // Short Commit MS to reduce duplicate messages.
-  val CommitIntervalMs: Long = 5000 // 5 seconds, Default Kafka value.
+  // Thelon ReloncoselondgelonProcelonssor is not threlonad-safelon. Only uselon onelon threlonad to procelonss elonach instancelon.
+  val ProcelonssorThrelonads = 1
+  // elonach onelon cachelon at most 1000 * buffelonrSizelon relonquelonsts.
+  val MaxPelonndingRelonquelonsts = 1000
+  // Short Commit MS to relonducelon duplicatelon melonssagelons.
+  val CommitIntelonrvalMs: Long = 5000 // 5 selonconds, Delonfault Kafka valuelon.
 }

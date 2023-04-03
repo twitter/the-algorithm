@@ -1,341 +1,341 @@
-package com.twitter.visibility.builder.dms
+packagelon com.twittelonr.visibility.buildelonr.dms
 
-import com.twitter.convosvc.thriftscala.Event
-import com.twitter.convosvc.thriftscala.StoredDelete
-import com.twitter.convosvc.thriftscala.StoredPerspectivalMessageInfo
-import com.twitter.convosvc.thriftscala.PerspectivalSpamState
-import com.twitter.stitch.Stitch
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.builder.users.AuthorFeatures
-import com.twitter.visibility.common.DmEventId
-import com.twitter.visibility.common.dm_sources.DmEventSource
-import com.twitter.visibility.common.UserId
-import com.twitter.convosvc.thriftscala.EventType
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.stitch.NotFound
-import com.twitter.visibility.common.dm_sources.DmConversationSource
-import com.twitter.visibility.features._
+import com.twittelonr.convosvc.thriftscala.elonvelonnt
+import com.twittelonr.convosvc.thriftscala.StorelondDelonlelontelon
+import com.twittelonr.convosvc.thriftscala.StorelondPelonrspelonctivalMelonssagelonInfo
+import com.twittelonr.convosvc.thriftscala.PelonrspelonctivalSpamStatelon
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.visibility.buildelonr.FelonaturelonMapBuildelonr
+import com.twittelonr.visibility.buildelonr.uselonrs.AuthorFelonaturelons
+import com.twittelonr.visibility.common.DmelonvelonntId
+import com.twittelonr.visibility.common.dm_sourcelons.DmelonvelonntSourcelon
+import com.twittelonr.visibility.common.UselonrId
+import com.twittelonr.convosvc.thriftscala.elonvelonntTypelon
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.stitch.NotFound
+import com.twittelonr.visibility.common.dm_sourcelons.DmConvelonrsationSourcelon
+import com.twittelonr.visibility.felonaturelons._
 
-case class InvalidDmEventFeatureException(message: String) extends Exception(message)
+caselon class InvalidDmelonvelonntFelonaturelonelonxcelonption(melonssagelon: String) elonxtelonnds elonxcelonption(melonssagelon)
 
-class DmEventFeatures(
-  dmEventSource: DmEventSource,
-  dmConversationSource: DmConversationSource,
-  authorFeatures: AuthorFeatures,
-  dmConversationFeatures: DmConversationFeatures,
-  statsReceiver: StatsReceiver) {
-  private[this] val scopedStatsReceiver = statsReceiver.scope("dm_event_features")
-  private[this] val requests = scopedStatsReceiver.counter("requests")
+class DmelonvelonntFelonaturelons(
+  dmelonvelonntSourcelon: DmelonvelonntSourcelon,
+  dmConvelonrsationSourcelon: DmConvelonrsationSourcelon,
+  authorFelonaturelons: AuthorFelonaturelons,
+  dmConvelonrsationFelonaturelons: DmConvelonrsationFelonaturelons,
+  statsReloncelonivelonr: StatsReloncelonivelonr) {
+  privatelon[this] val scopelondStatsReloncelonivelonr = statsReloncelonivelonr.scopelon("dm_elonvelonnt_felonaturelons")
+  privatelon[this] val relonquelonsts = scopelondStatsReloncelonivelonr.countelonr("relonquelonsts")
 
-  def forDmEventId(
-    dmEventId: DmEventId,
-    viewerId: UserId
-  ): FeatureMapBuilder => FeatureMapBuilder = {
-    requests.incr()
+  delonf forDmelonvelonntId(
+    dmelonvelonntId: DmelonvelonntId,
+    vielonwelonrId: UselonrId
+  ): FelonaturelonMapBuildelonr => FelonaturelonMapBuildelonr = {
+    relonquelonsts.incr()
 
-    val dmEventStitchRef: Stitch[Option[Event]] =
-      Stitch.ref(dmEventSource.getDmEvent(dmEventId, viewerId))
+    val dmelonvelonntStitchRelonf: Stitch[Option[elonvelonnt]] =
+      Stitch.relonf(dmelonvelonntSourcelon.gelontDmelonvelonnt(dmelonvelonntId, vielonwelonrId))
 
-    _.withFeature(
-      DmEventIsMessageCreateEvent,
-      isDmEventType(dmEventStitchRef, EventType.MessageCreate))
-      .withFeature(
-        AuthorIsSuspended,
-        messageCreateEventHasInactiveInitiatingUser(
-          dmEventStitchRef,
-          initiatingUser => authorFeatures.authorIsSuspended(initiatingUser))
+    _.withFelonaturelon(
+      DmelonvelonntIsMelonssagelonCrelonatelonelonvelonnt,
+      isDmelonvelonntTypelon(dmelonvelonntStitchRelonf, elonvelonntTypelon.MelonssagelonCrelonatelon))
+      .withFelonaturelon(
+        AuthorIsSuspelonndelond,
+        melonssagelonCrelonatelonelonvelonntHasInactivelonInitiatingUselonr(
+          dmelonvelonntStitchRelonf,
+          initiatingUselonr => authorFelonaturelons.authorIsSuspelonndelond(initiatingUselonr))
       )
-      .withFeature(
-        AuthorIsDeactivated,
-        messageCreateEventHasInactiveInitiatingUser(
-          dmEventStitchRef,
-          initiatingUser => authorFeatures.authorIsDeactivated(initiatingUser))
+      .withFelonaturelon(
+        AuthorIsDelonactivatelond,
+        melonssagelonCrelonatelonelonvelonntHasInactivelonInitiatingUselonr(
+          dmelonvelonntStitchRelonf,
+          initiatingUselonr => authorFelonaturelons.authorIsDelonactivatelond(initiatingUselonr))
       )
-      .withFeature(
-        AuthorIsErased,
-        messageCreateEventHasInactiveInitiatingUser(
-          dmEventStitchRef,
-          initiatingUser => authorFeatures.authorIsErased(initiatingUser))
+      .withFelonaturelon(
+        AuthorIselonraselond,
+        melonssagelonCrelonatelonelonvelonntHasInactivelonInitiatingUselonr(
+          dmelonvelonntStitchRelonf,
+          initiatingUselonr => authorFelonaturelons.authorIselonraselond(initiatingUselonr))
       )
-      .withFeature(
-        DmEventOccurredBeforeLastClearedEvent,
-        dmEventOccurredBeforeLastClearedEvent(dmEventStitchRef, dmEventId, viewerId)
+      .withFelonaturelon(
+        DmelonvelonntOccurrelondBelonforelonLastClelonarelondelonvelonnt,
+        dmelonvelonntOccurrelondBelonforelonLastClelonarelondelonvelonnt(dmelonvelonntStitchRelonf, dmelonvelonntId, vielonwelonrId)
       )
-      .withFeature(
-        DmEventOccurredBeforeJoinConversationEvent,
-        dmEventOccurredBeforeJoinConversationEvent(dmEventStitchRef, dmEventId, viewerId)
+      .withFelonaturelon(
+        DmelonvelonntOccurrelondBelonforelonJoinConvelonrsationelonvelonnt,
+        dmelonvelonntOccurrelondBelonforelonJoinConvelonrsationelonvelonnt(dmelonvelonntStitchRelonf, dmelonvelonntId, vielonwelonrId)
       )
-      .withFeature(
-        ViewerIsDmConversationParticipant,
-        dmEventViewerIsDmConversationParticipant(dmEventStitchRef, viewerId)
+      .withFelonaturelon(
+        VielonwelonrIsDmConvelonrsationParticipant,
+        dmelonvelonntVielonwelonrIsDmConvelonrsationParticipant(dmelonvelonntStitchRelonf, vielonwelonrId)
       )
-      .withFeature(
-        DmEventIsDeleted,
-        dmEventIsDeleted(dmEventStitchRef, dmEventId)
+      .withFelonaturelon(
+        DmelonvelonntIsDelonlelontelond,
+        dmelonvelonntIsDelonlelontelond(dmelonvelonntStitchRelonf, dmelonvelonntId)
       )
-      .withFeature(
-        DmEventIsHidden,
-        dmEventIsHidden(dmEventStitchRef, dmEventId)
+      .withFelonaturelon(
+        DmelonvelonntIsHiddelonn,
+        dmelonvelonntIsHiddelonn(dmelonvelonntStitchRelonf, dmelonvelonntId)
       )
-      .withFeature(
-        ViewerIsDmEventInitiatingUser,
-        viewerIsDmEventInitiatingUser(dmEventStitchRef, viewerId)
+      .withFelonaturelon(
+        VielonwelonrIsDmelonvelonntInitiatingUselonr,
+        vielonwelonrIsDmelonvelonntInitiatingUselonr(dmelonvelonntStitchRelonf, vielonwelonrId)
       )
-      .withFeature(
-        DmEventInOneToOneConversationWithUnavailableUser,
-        dmEventInOneToOneConversationWithUnavailableUser(dmEventStitchRef, viewerId)
+      .withFelonaturelon(
+        DmelonvelonntInOnelonToOnelonConvelonrsationWithUnavailablelonUselonr,
+        dmelonvelonntInOnelonToOnelonConvelonrsationWithUnavailablelonUselonr(dmelonvelonntStitchRelonf, vielonwelonrId)
       )
-      .withFeature(
-        DmEventIsLastMessageReadUpdateEvent,
-        isDmEventType(dmEventStitchRef, EventType.LastMessageReadUpdate)
+      .withFelonaturelon(
+        DmelonvelonntIsLastMelonssagelonRelonadUpdatelonelonvelonnt,
+        isDmelonvelonntTypelon(dmelonvelonntStitchRelonf, elonvelonntTypelon.LastMelonssagelonRelonadUpdatelon)
       )
-      .withFeature(
-        DmEventIsJoinConversationEvent,
-        isDmEventType(dmEventStitchRef, EventType.JoinConversation)
+      .withFelonaturelon(
+        DmelonvelonntIsJoinConvelonrsationelonvelonnt,
+        isDmelonvelonntTypelon(dmelonvelonntStitchRelonf, elonvelonntTypelon.JoinConvelonrsation)
       )
-      .withFeature(
-        DmEventIsWelcomeMessageCreateEvent,
-        isDmEventType(dmEventStitchRef, EventType.WelcomeMessageCreate)
+      .withFelonaturelon(
+        DmelonvelonntIsWelonlcomelonMelonssagelonCrelonatelonelonvelonnt,
+        isDmelonvelonntTypelon(dmelonvelonntStitchRelonf, elonvelonntTypelon.WelonlcomelonMelonssagelonCrelonatelon)
       )
-      .withFeature(
-        DmEventIsTrustConversationEvent,
-        isDmEventType(dmEventStitchRef, EventType.TrustConversation)
+      .withFelonaturelon(
+        DmelonvelonntIsTrustConvelonrsationelonvelonnt,
+        isDmelonvelonntTypelon(dmelonvelonntStitchRelonf, elonvelonntTypelon.TrustConvelonrsation)
       )
-      .withFeature(
-        DmEventIsCsFeedbackSubmitted,
-        isDmEventType(dmEventStitchRef, EventType.CsFeedbackSubmitted)
+      .withFelonaturelon(
+        DmelonvelonntIsCsFelonelondbackSubmittelond,
+        isDmelonvelonntTypelon(dmelonvelonntStitchRelonf, elonvelonntTypelon.CsFelonelondbackSubmittelond)
       )
-      .withFeature(
-        DmEventIsCsFeedbackDismissed,
-        isDmEventType(dmEventStitchRef, EventType.CsFeedbackDismissed)
+      .withFelonaturelon(
+        DmelonvelonntIsCsFelonelondbackDismisselond,
+        isDmelonvelonntTypelon(dmelonvelonntStitchRelonf, elonvelonntTypelon.CsFelonelondbackDismisselond)
       )
-      .withFeature(
-        DmEventIsConversationCreateEvent,
-        isDmEventType(dmEventStitchRef, EventType.ConversationCreate)
+      .withFelonaturelon(
+        DmelonvelonntIsConvelonrsationCrelonatelonelonvelonnt,
+        isDmelonvelonntTypelon(dmelonvelonntStitchRelonf, elonvelonntTypelon.ConvelonrsationCrelonatelon)
       )
-      .withFeature(
-        DmEventInOneToOneConversation,
-        dmEventInOneToOneConversation(dmEventStitchRef, viewerId)
+      .withFelonaturelon(
+        DmelonvelonntInOnelonToOnelonConvelonrsation,
+        dmelonvelonntInOnelonToOnelonConvelonrsation(dmelonvelonntStitchRelonf, vielonwelonrId)
       )
-      .withFeature(
-        DmEventIsPerspectivalJoinConversationEvent,
-        dmEventIsPerspectivalJoinConversationEvent(dmEventStitchRef, dmEventId, viewerId))
+      .withFelonaturelon(
+        DmelonvelonntIsPelonrspelonctivalJoinConvelonrsationelonvelonnt,
+        dmelonvelonntIsPelonrspelonctivalJoinConvelonrsationelonvelonnt(dmelonvelonntStitchRelonf, dmelonvelonntId, vielonwelonrId))
 
   }
 
-  private def isDmEventType(
-    dmEventOptStitch: Stitch[Option[Event]],
-    eventType: EventType
-  ): Stitch[Boolean] =
-    dmEventSource.getEventType(dmEventOptStitch).flatMap {
-      case Some(_: eventType.type) =>
-        Stitch.True
-      case None =>
-        Stitch.exception(InvalidDmEventFeatureException(s"$eventType event type not found"))
-      case _ =>
-        Stitch.False
+  privatelon delonf isDmelonvelonntTypelon(
+    dmelonvelonntOptStitch: Stitch[Option[elonvelonnt]],
+    elonvelonntTypelon: elonvelonntTypelon
+  ): Stitch[Boolelonan] =
+    dmelonvelonntSourcelon.gelontelonvelonntTypelon(dmelonvelonntOptStitch).flatMap {
+      caselon Somelon(_: elonvelonntTypelon.typelon) =>
+        Stitch.Truelon
+      caselon Nonelon =>
+        Stitch.elonxcelonption(InvalidDmelonvelonntFelonaturelonelonxcelonption(s"$elonvelonntTypelon elonvelonnt typelon not found"))
+      caselon _ =>
+        Stitch.Falselon
     }
 
-  private def dmEventIsPerspectivalJoinConversationEvent(
-    dmEventOptStitch: Stitch[Option[Event]],
-    dmEventId: DmEventId,
-    viewerId: UserId
-  ): Stitch[Boolean] =
+  privatelon delonf dmelonvelonntIsPelonrspelonctivalJoinConvelonrsationelonvelonnt(
+    dmelonvelonntOptStitch: Stitch[Option[elonvelonnt]],
+    dmelonvelonntId: DmelonvelonntId,
+    vielonwelonrId: UselonrId
+  ): Stitch[Boolelonan] =
     Stitch
       .join(
-        dmEventSource.getEventType(dmEventOptStitch),
-        dmEventSource.getConversationId(dmEventOptStitch)).flatMap {
-        case (Some(EventType.JoinConversation), conversationIdOpt) =>
-          conversationIdOpt match {
-            case Some(conversationId) =>
-              dmConversationSource
-                .getParticipantJoinConversationEventId(conversationId, viewerId, viewerId)
+        dmelonvelonntSourcelon.gelontelonvelonntTypelon(dmelonvelonntOptStitch),
+        dmelonvelonntSourcelon.gelontConvelonrsationId(dmelonvelonntOptStitch)).flatMap {
+        caselon (Somelon(elonvelonntTypelon.JoinConvelonrsation), convelonrsationIdOpt) =>
+          convelonrsationIdOpt match {
+            caselon Somelon(convelonrsationId) =>
+              dmConvelonrsationSourcelon
+                .gelontParticipantJoinConvelonrsationelonvelonntId(convelonrsationId, vielonwelonrId, vielonwelonrId)
                 .flatMap {
-                  case Some(joinConversationEventId) =>
-                    Stitch.value(joinConversationEventId == dmEventId)
-                  case _ => Stitch.False
+                  caselon Somelon(joinConvelonrsationelonvelonntId) =>
+                    Stitch.valuelon(joinConvelonrsationelonvelonntId == dmelonvelonntId)
+                  caselon _ => Stitch.Falselon
                 }
-            case _ =>
-              Stitch.exception(InvalidDmEventFeatureException("Conversation id not found"))
+            caselon _ =>
+              Stitch.elonxcelonption(InvalidDmelonvelonntFelonaturelonelonxcelonption("Convelonrsation id not found"))
           }
-        case (None, _) =>
-          Stitch.exception(InvalidDmEventFeatureException("Event type not found"))
-        case _ => Stitch.False
+        caselon (Nonelon, _) =>
+          Stitch.elonxcelonption(InvalidDmelonvelonntFelonaturelonelonxcelonption("elonvelonnt typelon not found"))
+        caselon _ => Stitch.Falselon
       }
 
-  private def messageCreateEventHasInactiveInitiatingUser(
-    dmEventOptStitch: Stitch[Option[Event]],
-    condition: UserId => Stitch[Boolean],
-  ): Stitch[Boolean] =
+  privatelon delonf melonssagelonCrelonatelonelonvelonntHasInactivelonInitiatingUselonr(
+    dmelonvelonntOptStitch: Stitch[Option[elonvelonnt]],
+    condition: UselonrId => Stitch[Boolelonan],
+  ): Stitch[Boolelonan] =
     Stitch
       .join(
-        dmEventSource.getEventType(dmEventOptStitch),
-        dmEventSource.getInitiatingUserId(dmEventOptStitch)).flatMap {
-        case (Some(EventType.MessageCreate), Some(userId)) =>
-          condition(userId).rescue {
-            case NotFound =>
-              Stitch.exception(InvalidDmEventFeatureException("initiating user not found"))
+        dmelonvelonntSourcelon.gelontelonvelonntTypelon(dmelonvelonntOptStitch),
+        dmelonvelonntSourcelon.gelontInitiatingUselonrId(dmelonvelonntOptStitch)).flatMap {
+        caselon (Somelon(elonvelonntTypelon.MelonssagelonCrelonatelon), Somelon(uselonrId)) =>
+          condition(uselonrId).relonscuelon {
+            caselon NotFound =>
+              Stitch.elonxcelonption(InvalidDmelonvelonntFelonaturelonelonxcelonption("initiating uselonr not found"))
           }
-        case (None, _) =>
-          Stitch.exception(InvalidDmEventFeatureException("DmEvent type is missing"))
-        case (Some(EventType.MessageCreate), _) =>
-          Stitch.exception(InvalidDmEventFeatureException("initiating user id is missing"))
-        case _ => Stitch.False
+        caselon (Nonelon, _) =>
+          Stitch.elonxcelonption(InvalidDmelonvelonntFelonaturelonelonxcelonption("Dmelonvelonnt typelon is missing"))
+        caselon (Somelon(elonvelonntTypelon.MelonssagelonCrelonatelon), _) =>
+          Stitch.elonxcelonption(InvalidDmelonvelonntFelonaturelonelonxcelonption("initiating uselonr id is missing"))
+        caselon _ => Stitch.Falselon
       }
 
-  private def dmEventOccurredBeforeLastClearedEvent(
-    dmEventOptStitch: Stitch[Option[Event]],
-    dmEventId: DmEventId,
-    viewerId: UserId
-  ): Stitch[Boolean] = {
-    dmEventSource.getConversationId(dmEventOptStitch).flatMap {
-      case Some(convoId) =>
-        val lastClearedEventIdStitch =
-          dmConversationSource.getParticipantLastClearedEventId(convoId, viewerId, viewerId)
-        lastClearedEventIdStitch.flatMap {
-          case Some(lastClearedEventId) => Stitch(dmEventId <= lastClearedEventId)
-          case _ =>
-            Stitch.False
+  privatelon delonf dmelonvelonntOccurrelondBelonforelonLastClelonarelondelonvelonnt(
+    dmelonvelonntOptStitch: Stitch[Option[elonvelonnt]],
+    dmelonvelonntId: DmelonvelonntId,
+    vielonwelonrId: UselonrId
+  ): Stitch[Boolelonan] = {
+    dmelonvelonntSourcelon.gelontConvelonrsationId(dmelonvelonntOptStitch).flatMap {
+      caselon Somelon(convoId) =>
+        val lastClelonarelondelonvelonntIdStitch =
+          dmConvelonrsationSourcelon.gelontParticipantLastClelonarelondelonvelonntId(convoId, vielonwelonrId, vielonwelonrId)
+        lastClelonarelondelonvelonntIdStitch.flatMap {
+          caselon Somelon(lastClelonarelondelonvelonntId) => Stitch(dmelonvelonntId <= lastClelonarelondelonvelonntId)
+          caselon _ =>
+            Stitch.Falselon
         }
-      case _ => Stitch.False
+      caselon _ => Stitch.Falselon
     }
   }
 
-  private def dmEventOccurredBeforeJoinConversationEvent(
-    dmEventOptStitch: Stitch[Option[Event]],
-    dmEventId: DmEventId,
-    viewerId: UserId
-  ): Stitch[Boolean] = {
-    dmEventSource.getConversationId(dmEventOptStitch).flatMap {
-      case Some(convoId) =>
-        val joinConversationEventIdStitch =
-          dmConversationSource
-            .getParticipantJoinConversationEventId(convoId, viewerId, viewerId)
-        joinConversationEventIdStitch.flatMap {
-          case Some(joinConversationEventId) => Stitch(dmEventId < joinConversationEventId)
-          case _ => Stitch.False
+  privatelon delonf dmelonvelonntOccurrelondBelonforelonJoinConvelonrsationelonvelonnt(
+    dmelonvelonntOptStitch: Stitch[Option[elonvelonnt]],
+    dmelonvelonntId: DmelonvelonntId,
+    vielonwelonrId: UselonrId
+  ): Stitch[Boolelonan] = {
+    dmelonvelonntSourcelon.gelontConvelonrsationId(dmelonvelonntOptStitch).flatMap {
+      caselon Somelon(convoId) =>
+        val joinConvelonrsationelonvelonntIdStitch =
+          dmConvelonrsationSourcelon
+            .gelontParticipantJoinConvelonrsationelonvelonntId(convoId, vielonwelonrId, vielonwelonrId)
+        joinConvelonrsationelonvelonntIdStitch.flatMap {
+          caselon Somelon(joinConvelonrsationelonvelonntId) => Stitch(dmelonvelonntId < joinConvelonrsationelonvelonntId)
+          caselon _ => Stitch.Falselon
         }
-      case _ => Stitch.False
+      caselon _ => Stitch.Falselon
     }
   }
 
-  private def dmEventViewerIsDmConversationParticipant(
-    dmEventOptStitch: Stitch[Option[Event]],
-    viewerId: UserId
-  ): Stitch[Boolean] = {
-    dmEventSource.getConversationId(dmEventOptStitch).flatMap {
-      case Some(convoId) =>
-        dmConversationFeatures.viewerIsDmConversationParticipant(convoId, Some(viewerId))
-      case _ => Stitch.True
+  privatelon delonf dmelonvelonntVielonwelonrIsDmConvelonrsationParticipant(
+    dmelonvelonntOptStitch: Stitch[Option[elonvelonnt]],
+    vielonwelonrId: UselonrId
+  ): Stitch[Boolelonan] = {
+    dmelonvelonntSourcelon.gelontConvelonrsationId(dmelonvelonntOptStitch).flatMap {
+      caselon Somelon(convoId) =>
+        dmConvelonrsationFelonaturelons.vielonwelonrIsDmConvelonrsationParticipant(convoId, Somelon(vielonwelonrId))
+      caselon _ => Stitch.Truelon
     }
   }
 
-  private def dmEventIsDeleted(
-    dmEventOptStitch: Stitch[Option[Event]],
-    dmEventId: DmEventId
-  ): Stitch[Boolean] =
-    dmEventSource.getConversationId(dmEventOptStitch).flatMap {
-      case Some(convoId) =>
-        dmConversationSource
-          .getDeleteInfo(convoId, dmEventId).rescue {
-            case e: java.lang.IllegalArgumentException =>
-              Stitch.exception(InvalidDmEventFeatureException("Invalid conversation id"))
+  privatelon delonf dmelonvelonntIsDelonlelontelond(
+    dmelonvelonntOptStitch: Stitch[Option[elonvelonnt]],
+    dmelonvelonntId: DmelonvelonntId
+  ): Stitch[Boolelonan] =
+    dmelonvelonntSourcelon.gelontConvelonrsationId(dmelonvelonntOptStitch).flatMap {
+      caselon Somelon(convoId) =>
+        dmConvelonrsationSourcelon
+          .gelontDelonlelontelonInfo(convoId, dmelonvelonntId).relonscuelon {
+            caselon elon: java.lang.IllelongalArgumelonntelonxcelonption =>
+              Stitch.elonxcelonption(InvalidDmelonvelonntFelonaturelonelonxcelonption("Invalid convelonrsation id"))
           }.flatMap {
-            case Some(StoredDelete(None)) => Stitch.True
-            case _ => Stitch.False
+            caselon Somelon(StorelondDelonlelontelon(Nonelon)) => Stitch.Truelon
+            caselon _ => Stitch.Falselon
           }
-      case _ => Stitch.False
+      caselon _ => Stitch.Falselon
     }
 
-  private def dmEventIsHidden(
-    dmEventOptStitch: Stitch[Option[Event]],
-    dmEventId: DmEventId
-  ): Stitch[Boolean] =
-    dmEventSource.getConversationId(dmEventOptStitch).flatMap {
-      case Some(convoId) =>
-        dmConversationSource
-          .getPerspectivalMessageInfo(convoId, dmEventId).rescue {
-            case e: java.lang.IllegalArgumentException =>
-              Stitch.exception(InvalidDmEventFeatureException("Invalid conversation id"))
+  privatelon delonf dmelonvelonntIsHiddelonn(
+    dmelonvelonntOptStitch: Stitch[Option[elonvelonnt]],
+    dmelonvelonntId: DmelonvelonntId
+  ): Stitch[Boolelonan] =
+    dmelonvelonntSourcelon.gelontConvelonrsationId(dmelonvelonntOptStitch).flatMap {
+      caselon Somelon(convoId) =>
+        dmConvelonrsationSourcelon
+          .gelontPelonrspelonctivalMelonssagelonInfo(convoId, dmelonvelonntId).relonscuelon {
+            caselon elon: java.lang.IllelongalArgumelonntelonxcelonption =>
+              Stitch.elonxcelonption(InvalidDmelonvelonntFelonaturelonelonxcelonption("Invalid convelonrsation id"))
           }.flatMap {
-            case Some(StoredPerspectivalMessageInfo(Some(hidden), _)) if hidden =>
-              Stitch.True
-            case Some(StoredPerspectivalMessageInfo(_, Some(spamState)))
-                if spamState == PerspectivalSpamState.Spam =>
-              Stitch.True
-            case _ => Stitch.False
+            caselon Somelon(StorelondPelonrspelonctivalMelonssagelonInfo(Somelon(hiddelonn), _)) if hiddelonn =>
+              Stitch.Truelon
+            caselon Somelon(StorelondPelonrspelonctivalMelonssagelonInfo(_, Somelon(spamStatelon)))
+                if spamStatelon == PelonrspelonctivalSpamStatelon.Spam =>
+              Stitch.Truelon
+            caselon _ => Stitch.Falselon
           }
-      case _ => Stitch.False
+      caselon _ => Stitch.Falselon
     }
 
-  private def viewerIsDmEventInitiatingUser(
-    dmEventOptStitch: Stitch[Option[Event]],
-    viewerId: UserId
-  ): Stitch[Boolean] =
+  privatelon delonf vielonwelonrIsDmelonvelonntInitiatingUselonr(
+    dmelonvelonntOptStitch: Stitch[Option[elonvelonnt]],
+    vielonwelonrId: UselonrId
+  ): Stitch[Boolelonan] =
     Stitch
       .join(
-        dmEventSource.getEventType(dmEventOptStitch),
-        dmEventSource.getInitiatingUserId(dmEventOptStitch)).flatMap {
-        case (
-              Some(
-                EventType.TrustConversation | EventType.CsFeedbackSubmitted |
-                EventType.CsFeedbackDismissed | EventType.WelcomeMessageCreate |
-                EventType.JoinConversation),
-              Some(userId)) =>
-          Stitch(viewerId == userId)
-        case (
-              Some(
-                EventType.TrustConversation | EventType.CsFeedbackSubmitted |
-                EventType.CsFeedbackDismissed | EventType.WelcomeMessageCreate |
-                EventType.JoinConversation),
-              None) =>
-          Stitch.exception(InvalidDmEventFeatureException("Initiating user id is missing"))
-        case (None, _) =>
-          Stitch.exception(InvalidDmEventFeatureException("DmEvent type is missing"))
-        case _ => Stitch.True
+        dmelonvelonntSourcelon.gelontelonvelonntTypelon(dmelonvelonntOptStitch),
+        dmelonvelonntSourcelon.gelontInitiatingUselonrId(dmelonvelonntOptStitch)).flatMap {
+        caselon (
+              Somelon(
+                elonvelonntTypelon.TrustConvelonrsation | elonvelonntTypelon.CsFelonelondbackSubmittelond |
+                elonvelonntTypelon.CsFelonelondbackDismisselond | elonvelonntTypelon.WelonlcomelonMelonssagelonCrelonatelon |
+                elonvelonntTypelon.JoinConvelonrsation),
+              Somelon(uselonrId)) =>
+          Stitch(vielonwelonrId == uselonrId)
+        caselon (
+              Somelon(
+                elonvelonntTypelon.TrustConvelonrsation | elonvelonntTypelon.CsFelonelondbackSubmittelond |
+                elonvelonntTypelon.CsFelonelondbackDismisselond | elonvelonntTypelon.WelonlcomelonMelonssagelonCrelonatelon |
+                elonvelonntTypelon.JoinConvelonrsation),
+              Nonelon) =>
+          Stitch.elonxcelonption(InvalidDmelonvelonntFelonaturelonelonxcelonption("Initiating uselonr id is missing"))
+        caselon (Nonelon, _) =>
+          Stitch.elonxcelonption(InvalidDmelonvelonntFelonaturelonelonxcelonption("Dmelonvelonnt typelon is missing"))
+        caselon _ => Stitch.Truelon
       }
 
-  private def dmEventInOneToOneConversationWithUnavailableUser(
-    dmEventOptStitch: Stitch[Option[Event]],
-    viewerId: UserId
-  ): Stitch[Boolean] =
-    dmEventSource.getConversationId(dmEventOptStitch).flatMap {
-      case Some(conversationId) =>
-        dmConversationFeatures
-          .dmConversationIsOneToOneConversation(conversationId, Some(viewerId)).flatMap {
-            isOneToOne =>
-              if (isOneToOne) {
+  privatelon delonf dmelonvelonntInOnelonToOnelonConvelonrsationWithUnavailablelonUselonr(
+    dmelonvelonntOptStitch: Stitch[Option[elonvelonnt]],
+    vielonwelonrId: UselonrId
+  ): Stitch[Boolelonan] =
+    dmelonvelonntSourcelon.gelontConvelonrsationId(dmelonvelonntOptStitch).flatMap {
+      caselon Somelon(convelonrsationId) =>
+        dmConvelonrsationFelonaturelons
+          .dmConvelonrsationIsOnelonToOnelonConvelonrsation(convelonrsationId, Somelon(vielonwelonrId)).flatMap {
+            isOnelonToOnelon =>
+              if (isOnelonToOnelon) {
                 Stitch
                   .join(
-                    dmConversationFeatures
-                      .dmConversationHasSuspendedParticipant(conversationId, Some(viewerId)),
-                    dmConversationFeatures
-                      .dmConversationHasDeactivatedParticipant(conversationId, Some(viewerId)),
-                    dmConversationFeatures
-                      .dmConversationHasErasedParticipant(conversationId, Some(viewerId))
+                    dmConvelonrsationFelonaturelons
+                      .dmConvelonrsationHasSuspelonndelondParticipant(convelonrsationId, Somelon(vielonwelonrId)),
+                    dmConvelonrsationFelonaturelons
+                      .dmConvelonrsationHasDelonactivatelondParticipant(convelonrsationId, Somelon(vielonwelonrId)),
+                    dmConvelonrsationFelonaturelons
+                      .dmConvelonrsationHaselonraselondParticipant(convelonrsationId, Somelon(vielonwelonrId))
                   ).flatMap {
-                    case (
-                          convoParticipantIsSuspended,
-                          convoParticipantIsDeactivated,
-                          convoParticipantIsErased) =>
-                      Stitch.value(
-                        convoParticipantIsSuspended || convoParticipantIsDeactivated || convoParticipantIsErased)
+                    caselon (
+                          convoParticipantIsSuspelonndelond,
+                          convoParticipantIsDelonactivatelond,
+                          convoParticipantIselonraselond) =>
+                      Stitch.valuelon(
+                        convoParticipantIsSuspelonndelond || convoParticipantIsDelonactivatelond || convoParticipantIselonraselond)
                   }
-              } else {
-                Stitch.False
+              } elonlselon {
+                Stitch.Falselon
               }
           }
-      case _ => Stitch.False
+      caselon _ => Stitch.Falselon
     }
 
-  private def dmEventInOneToOneConversation(
-    dmEventOptStitch: Stitch[Option[Event]],
-    viewerId: UserId
-  ): Stitch[Boolean] =
-    dmEventSource.getConversationId(dmEventOptStitch).flatMap {
-      case Some(conversationId) =>
-        dmConversationFeatures
-          .dmConversationIsOneToOneConversation(conversationId, Some(viewerId))
-      case _ => Stitch.False
+  privatelon delonf dmelonvelonntInOnelonToOnelonConvelonrsation(
+    dmelonvelonntOptStitch: Stitch[Option[elonvelonnt]],
+    vielonwelonrId: UselonrId
+  ): Stitch[Boolelonan] =
+    dmelonvelonntSourcelon.gelontConvelonrsationId(dmelonvelonntOptStitch).flatMap {
+      caselon Somelon(convelonrsationId) =>
+        dmConvelonrsationFelonaturelons
+          .dmConvelonrsationIsOnelonToOnelonConvelonrsation(convelonrsationId, Somelon(vielonwelonrId))
+      caselon _ => Stitch.Falselon
     }
 }

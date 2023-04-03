@@ -1,57 +1,57 @@
-package com.twitter.home_mixer.functional_component.feature_hydrator
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.home_mixer.model.HomeFeatures.ImpressionBloomFilterFeature
-import com.twitter.home_mixer.model.request.HasSeenTweetIds
-import com.twitter.home_mixer.service.HomeMixerAlertConfig
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.QueryFeatureHydrator
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.impressionbloomfilter.{thriftscala => t}
-import com.twitter.timelines.impressionstore.impressionbloomfilter.ImpressionBloomFilter
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.ImprelonssionBloomFiltelonrFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.relonquelonst.HasSelonelonnTwelonelontIds
+import com.twittelonr.homelon_mixelonr.selonrvicelon.HomelonMixelonrAlelonrtConfig
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMapBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator.QuelonryFelonaturelonHydrator
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.FelonaturelonHydratorIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.timelonlinelons.imprelonssionbloomfiltelonr.{thriftscala => t}
+import com.twittelonr.timelonlinelons.imprelonssionstorelon.imprelonssionbloomfiltelonr.ImprelonssionBloomFiltelonr
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-case class ImpressionBloomFilterQueryFeatureHydrator[
-  Query <: PipelineQuery with HasSeenTweetIds] @Inject() (
-  bloomFilter: ImpressionBloomFilter)
-    extends QueryFeatureHydrator[Query] {
+@Singlelonton
+caselon class ImprelonssionBloomFiltelonrQuelonryFelonaturelonHydrator[
+  Quelonry <: PipelonlinelonQuelonry with HasSelonelonnTwelonelontIds] @Injelonct() (
+  bloomFiltelonr: ImprelonssionBloomFiltelonr)
+    elonxtelonnds QuelonryFelonaturelonHydrator[Quelonry] {
 
-  override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier(
-    "ImpressionBloomFilter")
+  ovelonrridelon val idelonntifielonr: FelonaturelonHydratorIdelonntifielonr = FelonaturelonHydratorIdelonntifielonr(
+    "ImprelonssionBloomFiltelonr")
 
-  private val ImpressionBloomFilterTTL = 7.day
-  private val ImpressionBloomFilterFalsePositiveRate = 0.002
+  privatelon val ImprelonssionBloomFiltelonrTTL = 7.day
+  privatelon val ImprelonssionBloomFiltelonrFalselonPositivelonRatelon = 0.002
 
-  override val features: Set[Feature[_, _]] = Set(ImpressionBloomFilterFeature)
+  ovelonrridelon val felonaturelons: Selont[Felonaturelon[_, _]] = Selont(ImprelonssionBloomFiltelonrFelonaturelon)
 
-  private val SurfaceArea = t.SurfaceArea.HomeTimeline
+  privatelon val SurfacelonArelona = t.SurfacelonArelona.HomelonTimelonlinelon
 
-  override def hydrate(query: Query): Stitch[FeatureMap] = {
-    val userId = query.getRequiredUserId
-    bloomFilter.getBloomFilterSeq(userId, SurfaceArea).map { bloomFilterSeq =>
-      val updatedBloomFilterSeq =
-        if (query.seenTweetIds.forall(_.isEmpty)) bloomFilterSeq
-        else {
-          bloomFilter.addElements(
-            userId = userId,
-            surfaceArea = SurfaceArea,
-            tweetIds = query.seenTweetIds.get,
-            bloomFilterEntrySeq = bloomFilterSeq,
-            timeToLive = ImpressionBloomFilterTTL,
-            falsePositiveRate = ImpressionBloomFilterFalsePositiveRate
+  ovelonrridelon delonf hydratelon(quelonry: Quelonry): Stitch[FelonaturelonMap] = {
+    val uselonrId = quelonry.gelontRelonquirelondUselonrId
+    bloomFiltelonr.gelontBloomFiltelonrSelonq(uselonrId, SurfacelonArelona).map { bloomFiltelonrSelonq =>
+      val updatelondBloomFiltelonrSelonq =
+        if (quelonry.selonelonnTwelonelontIds.forall(_.iselonmpty)) bloomFiltelonrSelonq
+        elonlselon {
+          bloomFiltelonr.addelonlelonmelonnts(
+            uselonrId = uselonrId,
+            surfacelonArelona = SurfacelonArelona,
+            twelonelontIds = quelonry.selonelonnTwelonelontIds.gelont,
+            bloomFiltelonrelonntrySelonq = bloomFiltelonrSelonq,
+            timelonToLivelon = ImprelonssionBloomFiltelonrTTL,
+            falselonPositivelonRatelon = ImprelonssionBloomFiltelonrFalselonPositivelonRatelon
           )
         }
-      FeatureMapBuilder().add(ImpressionBloomFilterFeature, updatedBloomFilterSeq).build()
+      FelonaturelonMapBuildelonr().add(ImprelonssionBloomFiltelonrFelonaturelon, updatelondBloomFiltelonrSelonq).build()
     }
   }
 
-  override val alerts = Seq(
-    HomeMixerAlertConfig.BusinessHours.defaultSuccessRateAlert(99.8)
+  ovelonrridelon val alelonrts = Selonq(
+    HomelonMixelonrAlelonrtConfig.BusinelonssHours.delonfaultSuccelonssRatelonAlelonrt(99.8)
   )
 }

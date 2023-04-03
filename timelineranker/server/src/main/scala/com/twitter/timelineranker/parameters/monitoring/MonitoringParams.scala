@@ -1,13 +1,13 @@
-package com.twitter.timelineranker.parameters.monitoring
+packagelon com.twittelonr.timelonlinelonrankelonr.paramelontelonrs.monitoring
 
-import com.twitter.timelines.configapi.FSParam
+import com.twittelonr.timelonlinelons.configapi.FSParam
 
-object MonitoringParams {
+objelonct MonitoringParams {
 
-  object DebugAuthorsAllowListParam
-      extends FSParam[Seq[Long]](
-        name = "monitoring_debug_authors_allow_list",
-        default = Seq.empty[Long]
+  objelonct DelonbugAuthorsAllowListParam
+      elonxtelonnds FSParam[Selonq[Long]](
+        namelon = "monitoring_delonbug_authors_allow_list",
+        delonfault = Selonq.elonmpty[Long]
       )
 
 }

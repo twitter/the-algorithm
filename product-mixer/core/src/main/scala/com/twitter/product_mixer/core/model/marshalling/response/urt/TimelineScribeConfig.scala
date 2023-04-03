@@ -1,6 +1,6 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt
 
-case class TimelineScribeConfig(
-  page: Option[String],
-  section: Option[String],
-  entityToken: Option[String])
+caselon class TimelonlinelonScribelonConfig(
+  pagelon: Option[String],
+  selonction: Option[String],
+  elonntityTokelonn: Option[String])

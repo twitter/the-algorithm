@@ -1,153 +1,153 @@
-package com.twitter.search.earlybird.queryparser;
+packagelon com.twittelonr.selonarch.elonarlybird.quelonryparselonr;
 
 import java.util.List;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
+import com.googlelon.common.baselon.Prelonconditions;
+import com.googlelon.common.collelonct.ImmutablelonList;
 
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants;
-import com.twitter.search.earlybird.common.userupdates.UserTable;
-import com.twitter.search.queryparser.query.Conjunction;
-import com.twitter.search.queryparser.query.Disjunction;
-import com.twitter.search.queryparser.query.Query;
-import com.twitter.search.queryparser.query.search.SearchOperator;
-import com.twitter.search.queryparser.query.search.SearchOperatorConstants;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdFielonldConstants;
+import com.twittelonr.selonarch.elonarlybird.common.uselonrupdatelons.UselonrTablelon;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.Conjunction;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.Disjunction;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.Quelonry;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.selonarch.SelonarchOpelonrator;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.selonarch.SelonarchOpelonratorConstants;
 
-public class ProtectedOperatorQueryRewriter {
-  private static final String ERROR_MESSAGE = "Positive 'protected' operator must be in the root"
-      + " query node and the root query node must be a Conjunction.";
-  private static final Query EXCLUDE_PROTECTED_OPERATOR =
-      new SearchOperator(SearchOperator.Type.EXCLUDE, SearchOperatorConstants.PROTECTED);
+public class ProtelonctelondOpelonratorQuelonryRelonwritelonr {
+  privatelon static final String elonRROR_MelonSSAGelon = "Positivelon 'protelonctelond' opelonrator must belon in thelon root"
+      + " quelonry nodelon and thelon root quelonry nodelon must belon a Conjunction.";
+  privatelon static final Quelonry elonXCLUDelon_PROTelonCTelonD_OPelonRATOR =
+      nelonw SelonarchOpelonrator(SelonarchOpelonrator.Typelon.elonXCLUDelon, SelonarchOpelonratorConstants.PROTelonCTelonD);
 
   /**
-   * Rewrite a query with positive 'protected' operator into an equivalent query without the positive
-   * 'protected' operator. This method assumes the following preconditions hold:
-   *  1. 'followedUserIds' is not empty
-   *  2. the query's root node is of type Conjunction
-   *  3. the query's root node is not negated
-   *  4. there is one positive 'protected' operator in the root node
-   *  5. there is only one 'protected' operator in the whole query
+   * Relonwritelon a quelonry with positivelon 'protelonctelond' opelonrator into an elonquivalelonnt quelonry without thelon positivelon
+   * 'protelonctelond' opelonrator. This melonthod assumelons thelon following prelonconditions hold:
+   *  1. 'followelondUselonrIds' is not elonmpty
+   *  2. thelon quelonry's root nodelon is of typelon Conjunction
+   *  3. thelon quelonry's root nodelon is not nelongatelond
+   *  4. thelonrelon is onelon positivelon 'protelonctelond' opelonrator in thelon root nodelon
+   *  5. thelonrelon is only onelon 'protelonctelond' opelonrator in thelon wholelon quelonry
    *
-   *  Query with '[include protected]' operator is rewritten into a Disjunction of a query with
-   *  protected Tweets only and a query with public Tweets only.
-   *  For example,
-   *    Original query:
-   *      (* "cat" [include protected])
-   *        with followedUserIds=[1, 7, 12] where 1 and 7 are protected users
-   *    Rewritten query:
+   *  Quelonry with '[includelon protelonctelond]' opelonrator is relonwrittelonn into a Disjunction of a quelonry with
+   *  protelonctelond Twelonelonts only and a quelonry with public Twelonelonts only.
+   *  For elonxamplelon,
+   *    Original quelonry:
+   *      (* "cat" [includelon protelonctelond])
+   *        with followelondUselonrIds=[1, 7, 12] whelonrelon 1 and 7 arelon protelonctelond uselonrs
+   *    Relonwrittelonn quelonry:
    *      (+
-   *        (* "cat" [multi_term_disjunction from_user_id 1 7])
-   *        (* "cat" [exclude protected])
+   *        (* "cat" [multi_telonrm_disjunction from_uselonr_id 1 7])
+   *        (* "cat" [elonxcludelon protelonctelond])
    *      )
    *
-   *  Query with '[filter protected]' operator is rewritten with multi_term_disjunction from_user_id
-   *  operator.
-   *  For example,
-   *    Original query:
-   *      (* "cat" [filter protected])
-   *        with followedUserIds=[1, 7, 12] where 1 and 7 are protected users
-   *    Rewritten query:
-   *      (* "cat" [multi_term_disjunction from_user_id 1 7])
+   *  Quelonry with '[filtelonr protelonctelond]' opelonrator is relonwrittelonn with multi_telonrm_disjunction from_uselonr_id
+   *  opelonrator.
+   *  For elonxamplelon,
+   *    Original quelonry:
+   *      (* "cat" [filtelonr protelonctelond])
+   *        with followelondUselonrIds=[1, 7, 12] whelonrelon 1 and 7 arelon protelonctelond uselonrs
+   *    Relonwrittelonn quelonry:
+   *      (* "cat" [multi_telonrm_disjunction from_uselonr_id 1 7])
    */
-  public Query rewrite(Query parsedQuery, List<Long> followedUserIds, UserTable userTable) {
-    Preconditions.checkState(followedUserIds != null && !followedUserIds.isEmpty(),
-        "'followedUserIds' should not be empty when positive 'protected' operator exists.");
-    Preconditions.checkState(
-        parsedQuery.isTypeOf(com.twitter.search.queryparser.query.Query.QueryType.CONJUNCTION),
-        ERROR_MESSAGE);
-    Conjunction parsedConjQuery = (Conjunction) parsedQuery;
-    List<Query> children = parsedConjQuery.getChildren();
-    int opIndex = findPositiveProtectedOperatorIndex(children);
-    Preconditions.checkState(opIndex >= 0, ERROR_MESSAGE);
-    SearchOperator protectedOp = (SearchOperator) children.get(opIndex);
+  public Quelonry relonwritelon(Quelonry parselondQuelonry, List<Long> followelondUselonrIds, UselonrTablelon uselonrTablelon) {
+    Prelonconditions.chelonckStatelon(followelondUselonrIds != null && !followelondUselonrIds.iselonmpty(),
+        "'followelondUselonrIds' should not belon elonmpty whelonn positivelon 'protelonctelond' opelonrator elonxists.");
+    Prelonconditions.chelonckStatelon(
+        parselondQuelonry.isTypelonOf(com.twittelonr.selonarch.quelonryparselonr.quelonry.Quelonry.QuelonryTypelon.CONJUNCTION),
+        elonRROR_MelonSSAGelon);
+    Conjunction parselondConjQuelonry = (Conjunction) parselondQuelonry;
+    List<Quelonry> childrelonn = parselondConjQuelonry.gelontChildrelonn();
+    int opIndelonx = findPositivelonProtelonctelondOpelonratorIndelonx(childrelonn);
+    Prelonconditions.chelonckStatelon(opIndelonx >= 0, elonRROR_MelonSSAGelon);
+    SelonarchOpelonrator protelonctelondOp = (SelonarchOpelonrator) childrelonn.gelont(opIndelonx);
 
-    ImmutableList.Builder<Query> otherChildrenBuilder = ImmutableList.builder();
-    otherChildrenBuilder.addAll(children.subList(0, opIndex));
-    if (opIndex + 1 < children.size()) {
-      otherChildrenBuilder.addAll(children.subList(opIndex + 1, children.size()));
+    ImmutablelonList.Buildelonr<Quelonry> othelonrChildrelonnBuildelonr = ImmutablelonList.buildelonr();
+    othelonrChildrelonnBuildelonr.addAll(childrelonn.subList(0, opIndelonx));
+    if (opIndelonx + 1 < childrelonn.sizelon()) {
+      othelonrChildrelonnBuildelonr.addAll(childrelonn.subList(opIndelonx + 1, childrelonn.sizelon()));
     }
-    List<Query> otherChildren = otherChildrenBuilder.build();
+    List<Quelonry> othelonrChildrelonn = othelonrChildrelonnBuildelonr.build();
 
-    List<Long> protectedUserIds = getProtectedUserIds(followedUserIds, userTable);
-    if (protectedOp.getOperatorType() == SearchOperator.Type.FILTER) {
-      if (protectedUserIds.isEmpty()) {
-        // match none query
-        return Disjunction.EMPTY_DISJUNCTION;
-      } else {
-        return parsedConjQuery.newBuilder()
-            .setChildren(otherChildren)
-            .addChild(createFromUserIdMultiTermDisjunctionQuery(protectedUserIds))
+    List<Long> protelonctelondUselonrIds = gelontProtelonctelondUselonrIds(followelondUselonrIds, uselonrTablelon);
+    if (protelonctelondOp.gelontOpelonratorTypelon() == SelonarchOpelonrator.Typelon.FILTelonR) {
+      if (protelonctelondUselonrIds.iselonmpty()) {
+        // match nonelon quelonry
+        relonturn Disjunction.elonMPTY_DISJUNCTION;
+      } elonlselon {
+        relonturn parselondConjQuelonry.nelonwBuildelonr()
+            .selontChildrelonn(othelonrChildrelonn)
+            .addChild(crelonatelonFromUselonrIdMultiTelonrmDisjunctionQuelonry(protelonctelondUselonrIds))
             .build();
       }
-    } else {
-      // 'include' or negated 'exclude' operator
-      // negated 'exclude' is considered the same as 'include' to be consistent with the logic in
-      // EarlybirdLuceneQueryVisitor
-      if (protectedUserIds.isEmpty()) {
-        // return public only query
-        return parsedConjQuery.newBuilder()
-            .setChildren(otherChildren)
-            .addChild(EXCLUDE_PROTECTED_OPERATOR)
+    } elonlselon {
+      // 'includelon' or nelongatelond 'elonxcludelon' opelonrator
+      // nelongatelond 'elonxcludelon' is considelonrelond thelon samelon as 'includelon' to belon consistelonnt with thelon logic in
+      // elonarlybirdLucelonnelonQuelonryVisitor
+      if (protelonctelondUselonrIds.iselonmpty()) {
+        // relonturn public only quelonry
+        relonturn parselondConjQuelonry.nelonwBuildelonr()
+            .selontChildrelonn(othelonrChildrelonn)
+            .addChild(elonXCLUDelon_PROTelonCTelonD_OPelonRATOR)
             .build();
-      } else {
-        // build a disjunction of protected only query and public only query
-        Query protectedOnlyQuery = parsedConjQuery.newBuilder()
-            .setChildren(otherChildren)
-            .addChild(createFromUserIdMultiTermDisjunctionQuery(protectedUserIds))
+      } elonlselon {
+        // build a disjunction of protelonctelond only quelonry and public only quelonry
+        Quelonry protelonctelondOnlyQuelonry = parselondConjQuelonry.nelonwBuildelonr()
+            .selontChildrelonn(othelonrChildrelonn)
+            .addChild(crelonatelonFromUselonrIdMultiTelonrmDisjunctionQuelonry(protelonctelondUselonrIds))
             .build();
-        Query publicOnlyQuery = parsedConjQuery.newBuilder()
-            .setChildren(otherChildren)
-            .addChild(EXCLUDE_PROTECTED_OPERATOR)
+        Quelonry publicOnlyQuelonry = parselondConjQuelonry.nelonwBuildelonr()
+            .selontChildrelonn(othelonrChildrelonn)
+            .addChild(elonXCLUDelon_PROTelonCTelonD_OPelonRATOR)
             .build();
-        return new Disjunction(protectedOnlyQuery, publicOnlyQuery);
+        relonturn nelonw Disjunction(protelonctelondOnlyQuelonry, publicOnlyQuelonry);
       }
     }
   }
 
-  private Query createFromUserIdMultiTermDisjunctionQuery(List<Long> userIds) {
-    ImmutableList.Builder<String> operandsBuilder = ImmutableList.builder();
-    operandsBuilder
-        .add(EarlybirdFieldConstants.EarlybirdFieldConstant.FROM_USER_ID_FIELD.getFieldName());
-    for (Long userId : userIds) {
-      operandsBuilder.add(userId.toString());
+  privatelon Quelonry crelonatelonFromUselonrIdMultiTelonrmDisjunctionQuelonry(List<Long> uselonrIds) {
+    ImmutablelonList.Buildelonr<String> opelonrandsBuildelonr = ImmutablelonList.buildelonr();
+    opelonrandsBuildelonr
+        .add(elonarlybirdFielonldConstants.elonarlybirdFielonldConstant.FROM_USelonR_ID_FIelonLD.gelontFielonldNamelon());
+    for (Long uselonrId : uselonrIds) {
+      opelonrandsBuildelonr.add(uselonrId.toString());
     }
-    List<String> operands = operandsBuilder.build();
-    return new SearchOperator(SearchOperator.Type.MULTI_TERM_DISJUNCTION, operands);
+    List<String> opelonrands = opelonrandsBuildelonr.build();
+    relonturn nelonw SelonarchOpelonrator(SelonarchOpelonrator.Typelon.MULTI_TelonRM_DISJUNCTION, opelonrands);
   }
 
-  private List<Long> getProtectedUserIds(List<Long> followedUserIds, UserTable userTable) {
-    ImmutableList.Builder<Long> protectedUserIds = ImmutableList.builder();
-    for (Long userId : followedUserIds) {
-      if (userTable.isSet(userId, UserTable.IS_PROTECTED_BIT)) {
-        protectedUserIds.add(userId);
+  privatelon List<Long> gelontProtelonctelondUselonrIds(List<Long> followelondUselonrIds, UselonrTablelon uselonrTablelon) {
+    ImmutablelonList.Buildelonr<Long> protelonctelondUselonrIds = ImmutablelonList.buildelonr();
+    for (Long uselonrId : followelondUselonrIds) {
+      if (uselonrTablelon.isSelont(uselonrId, UselonrTablelon.IS_PROTelonCTelonD_BIT)) {
+        protelonctelondUselonrIds.add(uselonrId);
       }
     }
-    return protectedUserIds.build();
+    relonturn protelonctelondUselonrIds.build();
   }
 
-  private int findPositiveProtectedOperatorIndex(List<Query> children) {
-    for (int i = 0; i < children.size(); i++) {
-      Query child = children.get(i);
-      if (child instanceof SearchOperator) {
-        SearchOperator searchOp = (SearchOperator) child;
-        if (SearchOperatorConstants.PROTECTED.equals(searchOp.getOperand())
-            && (isNegateExclude(searchOp) || isPositive(searchOp))) {
-          return i;
+  privatelon int findPositivelonProtelonctelondOpelonratorIndelonx(List<Quelonry> childrelonn) {
+    for (int i = 0; i < childrelonn.sizelon(); i++) {
+      Quelonry child = childrelonn.gelont(i);
+      if (child instancelonof SelonarchOpelonrator) {
+        SelonarchOpelonrator selonarchOp = (SelonarchOpelonrator) child;
+        if (SelonarchOpelonratorConstants.PROTelonCTelonD.elonquals(selonarchOp.gelontOpelonrand())
+            && (isNelongatelonelonxcludelon(selonarchOp) || isPositivelon(selonarchOp))) {
+          relonturn i;
         }
       }
     }
 
-    return -1;
+    relonturn -1;
   }
 
-  private boolean isNegateExclude(SearchOperator searchOp) {
-    return searchOp.mustNotOccur()
-        && searchOp.getOperatorType() == SearchOperator.Type.EXCLUDE;
+  privatelon boolelonan isNelongatelonelonxcludelon(SelonarchOpelonrator selonarchOp) {
+    relonturn selonarchOp.mustNotOccur()
+        && selonarchOp.gelontOpelonratorTypelon() == SelonarchOpelonrator.Typelon.elonXCLUDelon;
   }
 
-  private boolean isPositive(SearchOperator searchOp) {
-    return !searchOp.mustNotOccur()
-        && (searchOp.getOperatorType() == SearchOperator.Type.INCLUDE
-        || searchOp.getOperatorType() == SearchOperator.Type.FILTER);
+  privatelon boolelonan isPositivelon(SelonarchOpelonrator selonarchOp) {
+    relonturn !selonarchOp.mustNotOccur()
+        && (selonarchOp.gelontOpelonratorTypelon() == SelonarchOpelonrator.Typelon.INCLUDelon
+        || selonarchOp.gelontOpelonratorTypelon() == SelonarchOpelonrator.Typelon.FILTelonR);
   }
 }

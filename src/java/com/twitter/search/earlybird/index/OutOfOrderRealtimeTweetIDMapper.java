@@ -1,531 +1,531 @@
-package com.twitter.search.earlybird.index;
+packagelon com.twittelonr.selonarch.elonarlybird.indelonx;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 import java.util.Arrays;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.partitioning.snowflakeparser.SnowflakeIdParser;
-import com.twitter.search.common.util.io.flushable.DataDeserializer;
-import com.twitter.search.common.util.io.flushable.DataSerializer;
-import com.twitter.search.common.util.io.flushable.FlushInfo;
-import com.twitter.search.common.util.io.flushable.Flushable;
-import com.twitter.search.core.earlybird.index.DocIDToTweetIDMapper;
+import com.twittelonr.selonarch.common.melontrics.SelonarchRatelonCountelonr;
+import com.twittelonr.selonarch.common.partitioning.snowflakelonparselonr.SnowflakelonIdParselonr;
+import com.twittelonr.selonarch.common.util.io.flushablelon.DataDelonselonrializelonr;
+import com.twittelonr.selonarch.common.util.io.flushablelon.DataSelonrializelonr;
+import com.twittelonr.selonarch.common.util.io.flushablelon.FlushInfo;
+import com.twittelonr.selonarch.common.util.io.flushablelon.Flushablelon;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.DocIDToTwelonelontIDMappelonr;
 
-import it.unimi.dsi.fastutil.ints.Int2ByteOpenHashMap;
+import it.unimi.dsi.fastutil.ints.Int2BytelonOpelonnHashMap;
 import it.unimi.dsi.fastutil.ints.Int2LongMap;
-import it.unimi.dsi.fastutil.ints.Int2LongOpenHashMap;
+import it.unimi.dsi.fastutil.ints.Int2LongOpelonnHashMap;
 
 /**
- * A mapper that maps tweet IDs to doc IDs based on the tweet timestamps. This mapper guarantees
- * that if creationTime(A) > creationTime(B), then docId(A) < docId(B), no matter in which order
- * the tweets are added to this mapper. However, if creationTime(A) == creationTime(B), then there
- * is no guarantee on the order between docId(A) and docId(B).
+ * A mappelonr that maps twelonelont IDs to doc IDs baselond on thelon twelonelont timelonstamps. This mappelonr guarantelonelons
+ * that if crelonationTimelon(A) > crelonationTimelon(B), thelonn docId(A) < docId(B), no mattelonr in which ordelonr
+ * thelon twelonelonts arelon addelond to this mappelonr. Howelonvelonr, if crelonationTimelon(A) == crelonationTimelon(B), thelonn thelonrelon
+ * is no guarantelonelon on thelon ordelonr belontwelonelonn docId(A) and docId(B).
  *
- * Essentially, this mapper guarantees that tweets with a later creation time are mapped to smaller
- * doc IDs, but it does not provide any ordering for tweets with the same timestamp (down to
- * millisecond granularity, which is what Snowflake provides). Our claim is that ordering tweets
- * with the same timestamp is not needed, because for the purposes of realtime search, the only
- * significant part of the tweet ID is the timestamp. So any such ordering would just be an ordering
- * for the Snowflake shards and/or sequence numbers, rather than a time based ordering for tweets.
+ * elonsselonntially, this mappelonr guarantelonelons that twelonelonts with a latelonr crelonation timelon arelon mappelond to smallelonr
+ * doc IDs, but it doelons not providelon any ordelonring for twelonelonts with thelon samelon timelonstamp (down to
+ * milliseloncond granularity, which is what Snowflakelon providelons). Our claim is that ordelonring twelonelonts
+ * with thelon samelon timelonstamp is not nelonelondelond, beloncauselon for thelon purposelons of relonaltimelon selonarch, thelon only
+ * significant part of thelon twelonelont ID is thelon timelonstamp. So any such ordelonring would just belon an ordelonring
+ * for thelon Snowflakelon shards and/or selonquelonncelon numbelonrs, rathelonr than a timelon baselond ordelonring for twelonelonts.
  *
- * The mapper uses the following scheme to assign docIDs to tweets:
+ * Thelon mappelonr uselons thelon following schelonmelon to assign docIDs to twelonelonts:
  *   +----------+-----------------------------+------------------------------+
  *   | Bit 0    | Bits 1 - 27                 | Bits 28 - 31                 |
  *   + ---------+-----------------------------+------------------------------+
- *   | sign     | tweet ID timestamp -        | Allow 16 tweets to be posted |
- *   | always 0 | segment boundary timestamp  | on the same millisecond      |
+ *   | sign     | twelonelont ID timelonstamp -        | Allow 16 twelonelonts to belon postelond |
+ *   | always 0 | selongmelonnt boundary timelonstamp  | on thelon samelon milliseloncond      |
  *   + ---------+-----------------------------+------------------------------+
  *
  * Important assumptions:
- *   * Snowflake IDs have millisecond granularity. Therefore, 27 bits is enough to represent a time
- *     period of 2^27 / (3600 * 100) = ~37 hours, which is more than enough to cover one realtime
- *     segment (our realtime segments currently span ~13 hours).
- *   * At peak times, the tweet posting rate is less than 10,000 tps. Given our current partitioning
- *     scheme (22 partitions), each realtime earlybird should expect to get less than 500 tweets per
- *     second, which comes down to less than 1 tweet per millisecond, assuming the partitioning hash
- *     function distributes the tweets fairly randomly independent of their timestamps. Therefore,
- *     providing space for 16 tweets (4 bits) in every millisecond should be more than enough to
- *     accommodate the current requirements, and any potential future changes (higher tweet rate,
- *     fewer partitions, etc.).
+ *   * Snowflakelon IDs havelon milliseloncond granularity. Thelonrelonforelon, 27 bits is elonnough to relonprelonselonnt a timelon
+ *     pelonriod of 2^27 / (3600 * 100) = ~37 hours, which is morelon than elonnough to covelonr onelon relonaltimelon
+ *     selongmelonnt (our relonaltimelon selongmelonnts currelonntly span ~13 hours).
+ *   * At pelonak timelons, thelon twelonelont posting ratelon is lelonss than 10,000 tps. Givelonn our currelonnt partitioning
+ *     schelonmelon (22 partitions), elonach relonaltimelon elonarlybird should elonxpelonct to gelont lelonss than 500 twelonelonts pelonr
+ *     seloncond, which comelons down to lelonss than 1 twelonelont pelonr milliseloncond, assuming thelon partitioning hash
+ *     function distributelons thelon twelonelonts fairly randomly indelonpelonndelonnt of thelonir timelonstamps. Thelonrelonforelon,
+ *     providing spacelon for 16 twelonelonts (4 bits) in elonvelonry milliseloncond should belon morelon than elonnough to
+ *     accommodatelon thelon currelonnt relonquirelonmelonnts, and any potelonntial futurelon changelons (highelonr twelonelont ratelon,
+ *     felonwelonr partitions, elontc.).
  *
- * How the mapper works:
- *   * The tweetId -> docId conversion is implicit (using the tweet's timestamp).
- *   * We use a IntToByteMap to store the number of tweets for each timestamp, so that we can
- *     allocate different doc IDs to tweets posted on the same millisecond. The size of this map is:
- *         segmentSize * 2 (load factor) * 1 (size of byte) = 16MB
- *   * The docId -> tweetId mappings are stored in an IntToLongMap. The size of this map is:
- *         segmentSize * 2 (load factor) * 8 (size of long) = 128MB
- *   * The mapper takes the "segment boundary" (the timestamp of the timeslice ID) as a parameter.
- *     This segment boundary determines the earliest tweet that this mapper can correctly index
- *     (it is subtracted from the timestamp of all tweets added to the mapper). Therefore, in order
- *     to correctly handle late tweets, we move back this segment boundary by twelve hour.
- *   * Tweets created before (segment boundary - 12 hours) are stored as if their timestamp was the
- *     segment boundary.
- *   * The largest timestamp that the mapper can store is:
- *         LARGEST_RELATIVE_TIMESTAMP = (1 << TIMESTAMP_BITS) - LUCENE_TIMESTAMP_BUFFER.
- *     Tweets created after (segmentBoundaryTimestamp + LARGEST_RELATIVE_TIMESTAMP) are stored as if
- *     their timestamp was (segmentBoundaryTimestamp + LARGEST_RELATIVE_TIMESTAMP).
- *   * When a tweet is added, we compute its doc ID as:
- *         int relativeTimestamp = tweetTimestamp - segmentBoundaryTimestamp;
- *         int docIdTimestamp = LARGEST_RELATIVE_TIMESTAMP - relativeTimestamp;
- *         int numTweetsForTimestamp = tweetsPerTimestamp.get(docIdTimestamp);
- *         int docId = (docIdTimestamp << DOC_ID_BITS)
- *             + MAX_DOCS_PER_TIMESTAMP - numTweetsForTimestamp - 1
+ * How thelon mappelonr works:
+ *   * Thelon twelonelontId -> docId convelonrsion is implicit (using thelon twelonelont's timelonstamp).
+ *   * Welon uselon a IntToBytelonMap to storelon thelon numbelonr of twelonelonts for elonach timelonstamp, so that welon can
+ *     allocatelon diffelonrelonnt doc IDs to twelonelonts postelond on thelon samelon milliseloncond. Thelon sizelon of this map is:
+ *         selongmelonntSizelon * 2 (load factor) * 1 (sizelon of bytelon) = 16MB
+ *   * Thelon docId -> twelonelontId mappings arelon storelond in an IntToLongMap. Thelon sizelon of this map is:
+ *         selongmelonntSizelon * 2 (load factor) * 8 (sizelon of long) = 128MB
+ *   * Thelon mappelonr takelons thelon "selongmelonnt boundary" (thelon timelonstamp of thelon timelonslicelon ID) as a paramelontelonr.
+ *     This selongmelonnt boundary delontelonrminelons thelon elonarlielonst twelonelont that this mappelonr can correlonctly indelonx
+ *     (it is subtractelond from thelon timelonstamp of all twelonelonts addelond to thelon mappelonr). Thelonrelonforelon, in ordelonr
+ *     to correlonctly handlelon latelon twelonelonts, welon movelon back this selongmelonnt boundary by twelonlvelon hour.
+ *   * Twelonelonts crelonatelond belonforelon (selongmelonnt boundary - 12 hours) arelon storelond as if thelonir timelonstamp was thelon
+ *     selongmelonnt boundary.
+ *   * Thelon largelonst timelonstamp that thelon mappelonr can storelon is:
+ *         LARGelonST_RelonLATIVelon_TIMelonSTAMP = (1 << TIMelonSTAMP_BITS) - LUCelonNelon_TIMelonSTAMP_BUFFelonR.
+ *     Twelonelonts crelonatelond aftelonr (selongmelonntBoundaryTimelonstamp + LARGelonST_RelonLATIVelon_TIMelonSTAMP) arelon storelond as if
+ *     thelonir timelonstamp was (selongmelonntBoundaryTimelonstamp + LARGelonST_RelonLATIVelon_TIMelonSTAMP).
+ *   * Whelonn a twelonelont is addelond, welon computelon its doc ID as:
+ *         int relonlativelonTimelonstamp = twelonelontTimelonstamp - selongmelonntBoundaryTimelonstamp;
+ *         int docIdTimelonstamp = LARGelonST_RelonLATIVelon_TIMelonSTAMP - relonlativelonTimelonstamp;
+ *         int numTwelonelontsForTimelonstamp = twelonelontsPelonrTimelonstamp.gelont(docIdTimelonstamp);
+ *         int docId = (docIdTimelonstamp << DOC_ID_BITS)
+ *             + MAX_DOCS_PelonR_TIMelonSTAMP - numTwelonelontsForTimelonstamp - 1
  *
- * This doc ID distribution scheme guarantees that tweets created later will be assigned smaller doc
- * IDs (as long as we don't have more than 16 tweets created in the same millisecond). However,
- * there is no ordering guarantee for tweets created at the same timestamp -- they are assigned doc
- * IDs in the order in which they're added to the mapper.
+ * This doc ID distribution schelonmelon guarantelonelons that twelonelonts crelonatelond latelonr will belon assignelond smallelonr doc
+ * IDs (as long as welon don't havelon morelon than 16 twelonelonts crelonatelond in thelon samelon milliseloncond). Howelonvelonr,
+ * thelonrelon is no ordelonring guarantelonelon for twelonelonts crelonatelond at thelon samelon timelonstamp -- thelony arelon assignelond doc
+ * IDs in thelon ordelonr in which thelony'relon addelond to thelon mappelonr.
  *
- * If we have more than 16 tweets created at time T, the mapper will still gracefully handle that
- * case: the "extra" tweets will be assigned doc IDs from the pool of doc IDs for timestamp (T + 1).
- * However, the ordering guarantee might no longer hold for those "extra" tweets. Also, the "extra"
- * tweets might be missed by certain since_id/max_id queries (the findDocIdBound() method might not
- * be able to correctly work for these tweet IDs).
+ * If welon havelon morelon than 16 twelonelonts crelonatelond at timelon T, thelon mappelonr will still gracelonfully handlelon that
+ * caselon: thelon "elonxtra" twelonelonts will belon assignelond doc IDs from thelon pool of doc IDs for timelonstamp (T + 1).
+ * Howelonvelonr, thelon ordelonring guarantelonelon might no longelonr hold for thoselon "elonxtra" twelonelonts. Also, thelon "elonxtra"
+ * twelonelonts might belon misselond by celonrtain sincelon_id/max_id quelonrielons (thelon findDocIdBound() melonthod might not
+ * belon ablelon to correlonctly work for thelonselon twelonelont IDs).
  */
-public class OutOfOrderRealtimeTweetIDMapper extends TweetIDMapper {
-  private static final Logger LOG = LoggerFactory.getLogger(OutOfOrderRealtimeTweetIDMapper.class);
+public class OutOfOrdelonrRelonaltimelonTwelonelontIDMappelonr elonxtelonnds TwelonelontIDMappelonr {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(OutOfOrdelonrRelonaltimelonTwelonelontIDMappelonr.class);
 
-  // The number of bits used to represent the tweet timestamp.
-  private static final int TIMESTAMP_BITS = 27;
+  // Thelon numbelonr of bits uselond to relonprelonselonnt thelon twelonelont timelonstamp.
+  privatelon static final int TIMelonSTAMP_BITS = 27;
 
-  // The number of bits used to represent the number of tweets with a certain timestamp.
-  @VisibleForTesting
-  static final int DOC_ID_BITS = Integer.SIZE - TIMESTAMP_BITS - 1;
+  // Thelon numbelonr of bits uselond to relonprelonselonnt thelon numbelonr of twelonelonts with a celonrtain timelonstamp.
+  @VisiblelonForTelonsting
+  static final int DOC_ID_BITS = Intelongelonr.SIZelon - TIMelonSTAMP_BITS - 1;
 
-  // The maximum number of tweets/docs that we can store per timestamp.
-  @VisibleForTesting
-  static final int MAX_DOCS_PER_TIMESTAMP = 1 << DOC_ID_BITS;
+  // Thelon maximum numbelonr of twelonelonts/docs that welon can storelon pelonr timelonstamp.
+  @VisiblelonForTelonsting
+  static final int MAX_DOCS_PelonR_TIMelonSTAMP = 1 << DOC_ID_BITS;
 
-  // Lucene has some logic that doesn't deal well with doc IDs close to Integer.MAX_VALUE.
-  // For example, BooleanScorer has a SIZE constant set to 2048, which gets added to the doc IDs
-  // inside the score() method. So when the doc IDs are close to Integer.MAX_VALUE, this causes an
-  // overflow, which can send Lucene into an infinite loop. Therefore, we need to make sure that
-  // we do not assign doc IDs close to Integer.MAX_VALUE.
-  private static final int LUCENE_TIMESTAMP_BUFFER = 1 << 16;
+  // Lucelonnelon has somelon logic that doelonsn't delonal welonll with doc IDs closelon to Intelongelonr.MAX_VALUelon.
+  // For elonxamplelon, BoolelonanScorelonr has a SIZelon constant selont to 2048, which gelonts addelond to thelon doc IDs
+  // insidelon thelon scorelon() melonthod. So whelonn thelon doc IDs arelon closelon to Intelongelonr.MAX_VALUelon, this causelons an
+  // ovelonrflow, which can selonnd Lucelonnelon into an infinitelon loop. Thelonrelonforelon, welon nelonelond to makelon surelon that
+  // welon do not assign doc IDs closelon to Intelongelonr.MAX_VALUelon.
+  privatelon static final int LUCelonNelon_TIMelonSTAMP_BUFFelonR = 1 << 16;
 
-  @VisibleForTesting
-  public static final int LATE_TWEETS_TIME_BUFFER_MILLIS = 12 * 3600 * 1000;  // 12 hours
+  @VisiblelonForTelonsting
+  public static final int LATelon_TWelonelonTS_TIMelon_BUFFelonR_MILLIS = 12 * 3600 * 1000;  // 12 hours
 
-  // The largest relative timestamp that this mapper can store.
-  @VisibleForTesting
-  static final int LARGEST_RELATIVE_TIMESTAMP = (1 << TIMESTAMP_BITS) - LUCENE_TIMESTAMP_BUFFER;
+  // Thelon largelonst relonlativelon timelonstamp that this mappelonr can storelon.
+  @VisiblelonForTelonsting
+  static final int LARGelonST_RelonLATIVelon_TIMelonSTAMP = (1 << TIMelonSTAMP_BITS) - LUCelonNelon_TIMelonSTAMP_BUFFelonR;
 
-  private final long segmentBoundaryTimestamp;
-  private final int segmentSize;
+  privatelon final long selongmelonntBoundaryTimelonstamp;
+  privatelon final int selongmelonntSizelon;
 
-  private final Int2LongOpenHashMap tweetIds;
-  private final Int2ByteOpenHashMap tweetsPerTimestamp;
+  privatelon final Int2LongOpelonnHashMap twelonelontIds;
+  privatelon final Int2BytelonOpelonnHashMap twelonelontsPelonrTimelonstamp;
 
-  private static final SearchRateCounter BAD_BUCKET_RATE =
-      SearchRateCounter.export("tweets_assigned_to_bad_timestamp_bucket");
-  private static final SearchRateCounter TWEETS_NOT_ASSIGNED_RATE =
-      SearchRateCounter.export("tweets_not_assigned");
-  private static final SearchRateCounter OLD_TWEETS_DROPPED =
-      SearchRateCounter.export("old_tweets_dropped");
+  privatelon static final SelonarchRatelonCountelonr BAD_BUCKelonT_RATelon =
+      SelonarchRatelonCountelonr.elonxport("twelonelonts_assignelond_to_bad_timelonstamp_buckelont");
+  privatelon static final SelonarchRatelonCountelonr TWelonelonTS_NOT_ASSIGNelonD_RATelon =
+      SelonarchRatelonCountelonr.elonxport("twelonelonts_not_assignelond");
+  privatelon static final SelonarchRatelonCountelonr OLD_TWelonelonTS_DROPPelonD =
+      SelonarchRatelonCountelonr.elonxport("old_twelonelonts_droppelond");
 
-  public OutOfOrderRealtimeTweetIDMapper(int segmentSize, long timesliceID) {
-    long firstTimestamp = SnowflakeIdParser.getTimestampFromTweetId(timesliceID);
-    // Leave a buffer so that we can handle tweets that are up to twelve hours late.
-    this.segmentBoundaryTimestamp = firstTimestamp - LATE_TWEETS_TIME_BUFFER_MILLIS;
-    this.segmentSize = segmentSize;
+  public OutOfOrdelonrRelonaltimelonTwelonelontIDMappelonr(int selongmelonntSizelon, long timelonslicelonID) {
+    long firstTimelonstamp = SnowflakelonIdParselonr.gelontTimelonstampFromTwelonelontId(timelonslicelonID);
+    // Lelonavelon a buffelonr so that welon can handlelon twelonelonts that arelon up to twelonlvelon hours latelon.
+    this.selongmelonntBoundaryTimelonstamp = firstTimelonstamp - LATelon_TWelonelonTS_TIMelon_BUFFelonR_MILLIS;
+    this.selongmelonntSizelon = selongmelonntSizelon;
 
-    tweetIds = new Int2LongOpenHashMap(segmentSize);
-    tweetIds.defaultReturnValue(ID_NOT_FOUND);
+    twelonelontIds = nelonw Int2LongOpelonnHashMap(selongmelonntSizelon);
+    twelonelontIds.delonfaultRelonturnValuelon(ID_NOT_FOUND);
 
-    tweetsPerTimestamp = new Int2ByteOpenHashMap(segmentSize);
-    tweetsPerTimestamp.defaultReturnValue((byte) ID_NOT_FOUND);
+    twelonelontsPelonrTimelonstamp = nelonw Int2BytelonOpelonnHashMap(selongmelonntSizelon);
+    twelonelontsPelonrTimelonstamp.delonfaultRelonturnValuelon((bytelon) ID_NOT_FOUND);
   }
 
-  @VisibleForTesting
-  int getDocIdTimestamp(long tweetId) {
-    long tweetTimestamp = SnowflakeIdParser.getTimestampFromTweetId(tweetId);
-    if (tweetTimestamp < segmentBoundaryTimestamp) {
-      return ID_NOT_FOUND;
+  @VisiblelonForTelonsting
+  int gelontDocIdTimelonstamp(long twelonelontId) {
+    long twelonelontTimelonstamp = SnowflakelonIdParselonr.gelontTimelonstampFromTwelonelontId(twelonelontId);
+    if (twelonelontTimelonstamp < selongmelonntBoundaryTimelonstamp) {
+      relonturn ID_NOT_FOUND;
     }
 
-    long relativeTimestamp = tweetTimestamp - segmentBoundaryTimestamp;
-    if (relativeTimestamp > LARGEST_RELATIVE_TIMESTAMP) {
-      relativeTimestamp = LARGEST_RELATIVE_TIMESTAMP;
+    long relonlativelonTimelonstamp = twelonelontTimelonstamp - selongmelonntBoundaryTimelonstamp;
+    if (relonlativelonTimelonstamp > LARGelonST_RelonLATIVelon_TIMelonSTAMP) {
+      relonlativelonTimelonstamp = LARGelonST_RelonLATIVelon_TIMelonSTAMP;
     }
 
-    return LARGEST_RELATIVE_TIMESTAMP - (int) relativeTimestamp;
+    relonturn LARGelonST_RelonLATIVelon_TIMelonSTAMP - (int) relonlativelonTimelonstamp;
   }
 
-  private int getDocIdForTimestamp(int docIdTimestamp, byte docIndexInTimestamp) {
-    return (docIdTimestamp << DOC_ID_BITS) + MAX_DOCS_PER_TIMESTAMP - docIndexInTimestamp;
+  privatelon int gelontDocIdForTimelonstamp(int docIdTimelonstamp, bytelon docIndelonxInTimelonstamp) {
+    relonturn (docIdTimelonstamp << DOC_ID_BITS) + MAX_DOCS_PelonR_TIMelonSTAMP - docIndelonxInTimelonstamp;
   }
 
-  @VisibleForTesting
-  long[] getTweetsForDocIdTimestamp(int docIdTimestamp) {
-    byte numDocsForTimestamp = tweetsPerTimestamp.get(docIdTimestamp);
-    if (numDocsForTimestamp == ID_NOT_FOUND) {
-      // This should never happen in prod, but better to be safe.
-      return new long[0];
+  @VisiblelonForTelonsting
+  long[] gelontTwelonelontsForDocIdTimelonstamp(int docIdTimelonstamp) {
+    bytelon numDocsForTimelonstamp = twelonelontsPelonrTimelonstamp.gelont(docIdTimelonstamp);
+    if (numDocsForTimelonstamp == ID_NOT_FOUND) {
+      // This should nelonvelonr happelonn in prod, but belonttelonr to belon safelon.
+      relonturn nelonw long[0];
     }
 
-    long[] tweetIdsInBucket = new long[numDocsForTimestamp];
-    int startingDocId = (docIdTimestamp << DOC_ID_BITS) + MAX_DOCS_PER_TIMESTAMP - 1;
-    for (int i = 0; i < numDocsForTimestamp; ++i) {
-      tweetIdsInBucket[i] = tweetIds.get(startingDocId - i);
+    long[] twelonelontIdsInBuckelont = nelonw long[numDocsForTimelonstamp];
+    int startingDocId = (docIdTimelonstamp << DOC_ID_BITS) + MAX_DOCS_PelonR_TIMelonSTAMP - 1;
+    for (int i = 0; i < numDocsForTimelonstamp; ++i) {
+      twelonelontIdsInBuckelont[i] = twelonelontIds.gelont(startingDocId - i);
     }
-    return tweetIdsInBucket;
+    relonturn twelonelontIdsInBuckelont;
   }
 
-  private int newDocId(long tweetId) {
-    int expectedDocIdTimestamp = getDocIdTimestamp(tweetId);
-    if (expectedDocIdTimestamp == ID_NOT_FOUND) {
-      LOG.info("Dropping tweet {} because it is from before the segment boundary timestamp {}",
-          tweetId,
-          segmentBoundaryTimestamp);
-      OLD_TWEETS_DROPPED.increment();
-      return ID_NOT_FOUND;
+  privatelon int nelonwDocId(long twelonelontId) {
+    int elonxpelonctelondDocIdTimelonstamp = gelontDocIdTimelonstamp(twelonelontId);
+    if (elonxpelonctelondDocIdTimelonstamp == ID_NOT_FOUND) {
+      LOG.info("Dropping twelonelont {} beloncauselon it is from belonforelon thelon selongmelonnt boundary timelonstamp {}",
+          twelonelontId,
+          selongmelonntBoundaryTimelonstamp);
+      OLD_TWelonelonTS_DROPPelonD.increlonmelonnt();
+      relonturn ID_NOT_FOUND;
     }
 
-    int docIdTimestamp = expectedDocIdTimestamp;
-    byte numDocsForTimestamp = tweetsPerTimestamp.get(docIdTimestamp);
+    int docIdTimelonstamp = elonxpelonctelondDocIdTimelonstamp;
+    bytelon numDocsForTimelonstamp = twelonelontsPelonrTimelonstamp.gelont(docIdTimelonstamp);
 
-    if (numDocsForTimestamp == MAX_DOCS_PER_TIMESTAMP) {
-      BAD_BUCKET_RATE.increment();
+    if (numDocsForTimelonstamp == MAX_DOCS_PelonR_TIMelonSTAMP) {
+      BAD_BUCKelonT_RATelon.increlonmelonnt();
     }
 
-    while ((docIdTimestamp > 0) && (numDocsForTimestamp == MAX_DOCS_PER_TIMESTAMP)) {
-      --docIdTimestamp;
-      numDocsForTimestamp = tweetsPerTimestamp.get(docIdTimestamp);
+    whilelon ((docIdTimelonstamp > 0) && (numDocsForTimelonstamp == MAX_DOCS_PelonR_TIMelonSTAMP)) {
+      --docIdTimelonstamp;
+      numDocsForTimelonstamp = twelonelontsPelonrTimelonstamp.gelont(docIdTimelonstamp);
     }
 
-    if (numDocsForTimestamp == MAX_DOCS_PER_TIMESTAMP) {
-      // The relative timestamp 0 already has MAX_DOCS_PER_TIMESTAMP. Can't add more docs.
-      LOG.error("Tweet {} could not be assigned a doc ID in any bucket, because the bucket for "
-          + "timestamp 0 is already full: {}",
-          tweetId, Arrays.toString(getTweetsForDocIdTimestamp(0)));
-      TWEETS_NOT_ASSIGNED_RATE.increment();
-      return ID_NOT_FOUND;
+    if (numDocsForTimelonstamp == MAX_DOCS_PelonR_TIMelonSTAMP) {
+      // Thelon relonlativelon timelonstamp 0 alrelonady has MAX_DOCS_PelonR_TIMelonSTAMP. Can't add morelon docs.
+      LOG.elonrror("Twelonelont {} could not belon assignelond a doc ID in any buckelont, beloncauselon thelon buckelont for "
+          + "timelonstamp 0 is alrelonady full: {}",
+          twelonelontId, Arrays.toString(gelontTwelonelontsForDocIdTimelonstamp(0)));
+      TWelonelonTS_NOT_ASSIGNelonD_RATelon.increlonmelonnt();
+      relonturn ID_NOT_FOUND;
     }
 
-    if (docIdTimestamp != expectedDocIdTimestamp) {
-      LOG.warn("Tweet {} could not be assigned a doc ID in the bucket for its timestamp {}, "
-               + "because this bucket is full. Instead, it was assigned a doc ID in the bucket for "
-               + "timestamp {}. The tweets in the correct bucket are: {}",
-               tweetId,
-               expectedDocIdTimestamp,
-               docIdTimestamp,
-               Arrays.toString(getTweetsForDocIdTimestamp(expectedDocIdTimestamp)));
+    if (docIdTimelonstamp != elonxpelonctelondDocIdTimelonstamp) {
+      LOG.warn("Twelonelont {} could not belon assignelond a doc ID in thelon buckelont for its timelonstamp {}, "
+               + "beloncauselon this buckelont is full. Instelonad, it was assignelond a doc ID in thelon buckelont for "
+               + "timelonstamp {}. Thelon twelonelonts in thelon correlonct buckelont arelon: {}",
+               twelonelontId,
+               elonxpelonctelondDocIdTimelonstamp,
+               docIdTimelonstamp,
+               Arrays.toString(gelontTwelonelontsForDocIdTimelonstamp(elonxpelonctelondDocIdTimelonstamp)));
     }
 
-    if (numDocsForTimestamp == ID_NOT_FOUND) {
-      numDocsForTimestamp = 0;
+    if (numDocsForTimelonstamp == ID_NOT_FOUND) {
+      numDocsForTimelonstamp = 0;
     }
-    ++numDocsForTimestamp;
-    tweetsPerTimestamp.put(docIdTimestamp, numDocsForTimestamp);
+    ++numDocsForTimelonstamp;
+    twelonelontsPelonrTimelonstamp.put(docIdTimelonstamp, numDocsForTimelonstamp);
 
-    return getDocIdForTimestamp(docIdTimestamp, numDocsForTimestamp);
+    relonturn gelontDocIdForTimelonstamp(docIdTimelonstamp, numDocsForTimelonstamp);
   }
 
-  @Override
-  public int getDocID(long tweetId) {
-    int docIdTimestamp = getDocIdTimestamp(tweetId);
-    while (docIdTimestamp >= 0) {
-      int numDocsForTimestamp = tweetsPerTimestamp.get(docIdTimestamp);
-      int startingDocId = (docIdTimestamp << DOC_ID_BITS) + MAX_DOCS_PER_TIMESTAMP - 1;
-      for (int docId = startingDocId; docId > startingDocId - numDocsForTimestamp; --docId) {
-        if (tweetIds.get(docId) == tweetId) {
-          return docId;
+  @Ovelonrridelon
+  public int gelontDocID(long twelonelontId) {
+    int docIdTimelonstamp = gelontDocIdTimelonstamp(twelonelontId);
+    whilelon (docIdTimelonstamp >= 0) {
+      int numDocsForTimelonstamp = twelonelontsPelonrTimelonstamp.gelont(docIdTimelonstamp);
+      int startingDocId = (docIdTimelonstamp << DOC_ID_BITS) + MAX_DOCS_PelonR_TIMelonSTAMP - 1;
+      for (int docId = startingDocId; docId > startingDocId - numDocsForTimelonstamp; --docId) {
+        if (twelonelontIds.gelont(docId) == twelonelontId) {
+          relonturn docId;
         }
       }
 
-      // If we have MAX_DOCS_PER_TIMESTAMP docs with this timestamp, then we might've mis-assigned
-      // a tweet to the previous docIdTimestamp bucket. In that case, we need to keep searching.
-      // Otherwise, the tweet is not in the index.
-      if (numDocsForTimestamp < MAX_DOCS_PER_TIMESTAMP) {
-        break;
+      // If welon havelon MAX_DOCS_PelonR_TIMelonSTAMP docs with this timelonstamp, thelonn welon might'velon mis-assignelond
+      // a twelonelont to thelon prelonvious docIdTimelonstamp buckelont. In that caselon, welon nelonelond to kelonelonp selonarching.
+      // Othelonrwiselon, thelon twelonelont is not in thelon indelonx.
+      if (numDocsForTimelonstamp < MAX_DOCS_PelonR_TIMelonSTAMP) {
+        brelonak;
       }
 
-      --docIdTimestamp;
+      --docIdTimelonstamp;
     }
 
-    return ID_NOT_FOUND;
+    relonturn ID_NOT_FOUND;
   }
 
-  @Override
-  protected int getNextDocIDInternal(int docId) {
-    // Check if docId + 1 is an assigned doc ID in this mapper. This might be the case when we have
-    // multiple tweets posted on the same millisecond.
-    if (tweetIds.get(docId + 1) != ID_NOT_FOUND) {
-      return docId + 1;
+  @Ovelonrridelon
+  protelonctelond int gelontNelonxtDocIDIntelonrnal(int docId) {
+    // Chelonck if docId + 1 is an assignelond doc ID in this mappelonr. This might belon thelon caselon whelonn welon havelon
+    // multiplelon twelonelonts postelond on thelon samelon milliseloncond.
+    if (twelonelontIds.gelont(docId + 1) != ID_NOT_FOUND) {
+      relonturn docId + 1;
     }
 
-    // If (docId + 1) is not assigned, then it means we do not have any more tweets posted at the
-    // timestamp corresponding to docId. We need to find the next relative timestamp for which this
-    // mapper has tweets, and return the first tweet for that timestamp. Note that iterating over
-    // the space of all possible timestamps is faster than iterating over the space of all possible
-    // doc IDs (it's MAX_DOCS_PER_TIMESTAMP times faster).
-    int nextDocIdTimestamp = (docId >> DOC_ID_BITS) + 1;
-    byte numDocsForTimestamp = tweetsPerTimestamp.get(nextDocIdTimestamp);
-    int maxDocIdTimestamp = getMaxDocID() >> DOC_ID_BITS;
-    while ((nextDocIdTimestamp <= maxDocIdTimestamp)
-           && (numDocsForTimestamp == ID_NOT_FOUND)) {
-      ++nextDocIdTimestamp;
-      numDocsForTimestamp = tweetsPerTimestamp.get(nextDocIdTimestamp);
+    // If (docId + 1) is not assignelond, thelonn it melonans welon do not havelon any morelon twelonelonts postelond at thelon
+    // timelonstamp correlonsponding to docId. Welon nelonelond to find thelon nelonxt relonlativelon timelonstamp for which this
+    // mappelonr has twelonelonts, and relonturn thelon first twelonelont for that timelonstamp. Notelon that itelonrating ovelonr
+    // thelon spacelon of all possiblelon timelonstamps is fastelonr than itelonrating ovelonr thelon spacelon of all possiblelon
+    // doc IDs (it's MAX_DOCS_PelonR_TIMelonSTAMP timelons fastelonr).
+    int nelonxtDocIdTimelonstamp = (docId >> DOC_ID_BITS) + 1;
+    bytelon numDocsForTimelonstamp = twelonelontsPelonrTimelonstamp.gelont(nelonxtDocIdTimelonstamp);
+    int maxDocIdTimelonstamp = gelontMaxDocID() >> DOC_ID_BITS;
+    whilelon ((nelonxtDocIdTimelonstamp <= maxDocIdTimelonstamp)
+           && (numDocsForTimelonstamp == ID_NOT_FOUND)) {
+      ++nelonxtDocIdTimelonstamp;
+      numDocsForTimelonstamp = twelonelontsPelonrTimelonstamp.gelont(nelonxtDocIdTimelonstamp);
     }
 
-    if (numDocsForTimestamp != ID_NOT_FOUND) {
-      return getDocIdForTimestamp(nextDocIdTimestamp, numDocsForTimestamp);
+    if (numDocsForTimelonstamp != ID_NOT_FOUND) {
+      relonturn gelontDocIdForTimelonstamp(nelonxtDocIdTimelonstamp, numDocsForTimelonstamp);
     }
 
-    return ID_NOT_FOUND;
+    relonturn ID_NOT_FOUND;
   }
 
-  @Override
-  protected int getPreviousDocIDInternal(int docId) {
-    // Check if docId - 1 is an assigned doc ID in this mapper. This might be the case when we have
-    // multiple tweets posted on the same millisecond.
-    if (tweetIds.get(docId - 1) != ID_NOT_FOUND) {
-      return docId - 1;
+  @Ovelonrridelon
+  protelonctelond int gelontPrelonviousDocIDIntelonrnal(int docId) {
+    // Chelonck if docId - 1 is an assignelond doc ID in this mappelonr. This might belon thelon caselon whelonn welon havelon
+    // multiplelon twelonelonts postelond on thelon samelon milliseloncond.
+    if (twelonelontIds.gelont(docId - 1) != ID_NOT_FOUND) {
+      relonturn docId - 1;
     }
 
-    // If (docId - 1) is not assigned, then it means we do not have any more tweets posted at the
-    // timestamp corresponding to docId. We need to find the previous relative timestamp for which
-    // this mapper has tweets, and return the first tweet for that timestamp. Note that iterating
-    // over the space of all possible timestamps is faster than iterating over the space of all
-    // possible doc IDs (it's MAX_DOCS_PER_TIMESTAMP times faster).
-    int previousDocIdTimestamp = (docId >> DOC_ID_BITS) - 1;
-    byte numDocsForTimestamp = tweetsPerTimestamp.get(previousDocIdTimestamp);
-    int minDocIdTimestamp = getMinDocID() >> DOC_ID_BITS;
-    while ((previousDocIdTimestamp >= minDocIdTimestamp)
-           && (numDocsForTimestamp == ID_NOT_FOUND)) {
-      --previousDocIdTimestamp;
-      numDocsForTimestamp = tweetsPerTimestamp.get(previousDocIdTimestamp);
+    // If (docId - 1) is not assignelond, thelonn it melonans welon do not havelon any morelon twelonelonts postelond at thelon
+    // timelonstamp correlonsponding to docId. Welon nelonelond to find thelon prelonvious relonlativelon timelonstamp for which
+    // this mappelonr has twelonelonts, and relonturn thelon first twelonelont for that timelonstamp. Notelon that itelonrating
+    // ovelonr thelon spacelon of all possiblelon timelonstamps is fastelonr than itelonrating ovelonr thelon spacelon of all
+    // possiblelon doc IDs (it's MAX_DOCS_PelonR_TIMelonSTAMP timelons fastelonr).
+    int prelonviousDocIdTimelonstamp = (docId >> DOC_ID_BITS) - 1;
+    bytelon numDocsForTimelonstamp = twelonelontsPelonrTimelonstamp.gelont(prelonviousDocIdTimelonstamp);
+    int minDocIdTimelonstamp = gelontMinDocID() >> DOC_ID_BITS;
+    whilelon ((prelonviousDocIdTimelonstamp >= minDocIdTimelonstamp)
+           && (numDocsForTimelonstamp == ID_NOT_FOUND)) {
+      --prelonviousDocIdTimelonstamp;
+      numDocsForTimelonstamp = twelonelontsPelonrTimelonstamp.gelont(prelonviousDocIdTimelonstamp);
     }
 
-    if (numDocsForTimestamp != ID_NOT_FOUND) {
-      return getDocIdForTimestamp(previousDocIdTimestamp, (byte) 1);
+    if (numDocsForTimelonstamp != ID_NOT_FOUND) {
+      relonturn gelontDocIdForTimelonstamp(prelonviousDocIdTimelonstamp, (bytelon) 1);
     }
 
-    return ID_NOT_FOUND;
+    relonturn ID_NOT_FOUND;
   }
 
-  @Override
-  public long getTweetID(int docId) {
-    return tweetIds.get(docId);
+  @Ovelonrridelon
+  public long gelontTwelonelontID(int docId) {
+    relonturn twelonelontIds.gelont(docId);
   }
 
-  @Override
-  protected int addMappingInternal(long tweetId) {
-    int docId = newDocId(tweetId);
+  @Ovelonrridelon
+  protelonctelond int addMappingIntelonrnal(long twelonelontId) {
+    int docId = nelonwDocId(twelonelontId);
     if (docId == ID_NOT_FOUND) {
-      return ID_NOT_FOUND;
+      relonturn ID_NOT_FOUND;
     }
 
-    tweetIds.put(docId, tweetId);
-    return docId;
+    twelonelontIds.put(docId, twelonelontId);
+    relonturn docId;
   }
 
-  @Override
-  protected int findDocIDBoundInternal(long tweetId, boolean findMaxDocId) {
-    // Note that it would be incorrect to lookup the doc ID for the given tweet ID and return that
-    // doc ID, as we would skip over tweets created in the same millisecond but with a lower doc ID.
-    int docIdTimestamp = getDocIdTimestamp(tweetId);
+  @Ovelonrridelon
+  protelonctelond int findDocIDBoundIntelonrnal(long twelonelontId, boolelonan findMaxDocId) {
+    // Notelon that it would belon incorrelonct to lookup thelon doc ID for thelon givelonn twelonelont ID and relonturn that
+    // doc ID, as welon would skip ovelonr twelonelonts crelonatelond in thelon samelon milliseloncond but with a lowelonr doc ID.
+    int docIdTimelonstamp = gelontDocIdTimelonstamp(twelonelontId);
 
-    // The docIdTimestamp is ID_NOT_FOUND only if the tweet is from before the segment boundary and
-    // this should never happen here because TweetIDMapper.findDocIdBound ensures that the tweet id
-    // passed into this method is >= minTweetID which means the tweet is from after the segment
+    // Thelon docIdTimelonstamp is ID_NOT_FOUND only if thelon twelonelont is from belonforelon thelon selongmelonnt boundary and
+    // this should nelonvelonr happelonn helonrelon beloncauselon TwelonelontIDMappelonr.findDocIdBound elonnsurelons that thelon twelonelont id
+    // passelond into this melonthod is >= minTwelonelontID which melonans thelon twelonelont is from aftelonr thelon selongmelonnt
     // boundary.
-    Preconditions.checkState(
-        docIdTimestamp != ID_NOT_FOUND,
-        "Tried to find doc id bound for tweet %d which is from before the segment boundary %d",
-        tweetId,
-        segmentBoundaryTimestamp);
+    Prelonconditions.chelonckStatelon(
+        docIdTimelonstamp != ID_NOT_FOUND,
+        "Trielond to find doc id bound for twelonelont %d which is from belonforelon thelon selongmelonnt boundary %d",
+        twelonelontId,
+        selongmelonntBoundaryTimelonstamp);
 
-    // It's OK to return a doc ID that doesn't correspond to any tweet ID in the index,
-    // as the doc ID is simply used as a starting point and ending point for range queries,
-    // not a source of truth.
+    // It's OK to relonturn a doc ID that doelonsn't correlonspond to any twelonelont ID in thelon indelonx,
+    // as thelon doc ID is simply uselond as a starting point and elonnding point for rangelon quelonrielons,
+    // not a sourcelon of truth.
     if (findMaxDocId) {
-      // Return the largest possible doc ID for the timestamp.
-      return getDocIdForTimestamp(docIdTimestamp, (byte) 1);
-    } else {
-      // Return the smallest possible doc ID for the timestamp.
-      byte tweetsInTimestamp = tweetsPerTimestamp.getOrDefault(docIdTimestamp, (byte) 0);
-      return getDocIdForTimestamp(docIdTimestamp, tweetsInTimestamp);
+      // Relonturn thelon largelonst possiblelon doc ID for thelon timelonstamp.
+      relonturn gelontDocIdForTimelonstamp(docIdTimelonstamp, (bytelon) 1);
+    } elonlselon {
+      // Relonturn thelon smallelonst possiblelon doc ID for thelon timelonstamp.
+      bytelon twelonelontsInTimelonstamp = twelonelontsPelonrTimelonstamp.gelontOrDelonfault(docIdTimelonstamp, (bytelon) 0);
+      relonturn gelontDocIdForTimelonstamp(docIdTimelonstamp, twelonelontsInTimelonstamp);
     }
   }
 
   /**
-   * Returns the array of all tweet IDs stored in this mapper in a sorted (descending) order.
-   * Essentially, this method remaps all tweet IDs stored in this mapper to a compressed doc ID
-   * space of [0, numDocs).
+   * Relonturns thelon array of all twelonelont IDs storelond in this mappelonr in a sortelond (delonscelonnding) ordelonr.
+   * elonsselonntially, this melonthod relonmaps all twelonelont IDs storelond in this mappelonr to a comprelonsselond doc ID
+   * spacelon of [0, numDocs).
    *
-   * Note that this method is not thread safe, and it's meant to be called only at segment
-   * optimization time. If addMappingInternal() is called during the execution of this method,
-   * the behavior is undefined (it will most likely return bad results or throw an exception).
+   * Notelon that this melonthod is not threlonad safelon, and it's melonant to belon callelond only at selongmelonnt
+   * optimization timelon. If addMappingIntelonrnal() is callelond during thelon elonxeloncution of this melonthod,
+   * thelon belonhavior is undelonfinelond (it will most likelonly relonturn bad relonsults or throw an elonxcelonption).
    *
-   * @return An array of all tweet IDs stored in this mapper, in a sorted (descending) order.
+   * @relonturn An array of all twelonelont IDs storelond in this mappelonr, in a sortelond (delonscelonnding) ordelonr.
    */
-  public long[] sortTweetIds() {
-    int numDocs = getNumDocs();
+  public long[] sortTwelonelontIds() {
+    int numDocs = gelontNumDocs();
     if (numDocs == 0) {
-      return new long[0];
+      relonturn nelonw long[0];
     }
 
-    // Add all tweets stored in this mapper to sortTweetIds.
-    long[] sortedTweetIds = new long[numDocs];
-    int sortedTweetIdsIndex = 0;
-    for (int docId = getMinDocID(); docId != ID_NOT_FOUND; docId = getNextDocID(docId)) {
-      sortedTweetIds[sortedTweetIdsIndex++] = getTweetID(docId);
+    // Add all twelonelonts storelond in this mappelonr to sortTwelonelontIds.
+    long[] sortelondTwelonelontIds = nelonw long[numDocs];
+    int sortelondTwelonelontIdsIndelonx = 0;
+    for (int docId = gelontMinDocID(); docId != ID_NOT_FOUND; docId = gelontNelonxtDocID(docId)) {
+      sortelondTwelonelontIds[sortelondTwelonelontIdsIndelonx++] = gelontTwelonelontID(docId);
     }
-    Preconditions.checkState(sortedTweetIdsIndex == numDocs,
-                             "Could not traverse all documents in the mapper. Expected to find "
-                             + numDocs + " docs, but found only " + sortedTweetIdsIndex);
+    Prelonconditions.chelonckStatelon(sortelondTwelonelontIdsIndelonx == numDocs,
+                             "Could not travelonrselon all documelonnts in thelon mappelonr. elonxpelonctelond to find "
+                             + numDocs + " docs, but found only " + sortelondTwelonelontIdsIndelonx);
 
-    // Sort sortedTweetIdsIndex in descending order. There's no way to sort a primitive array in
-    // descending order, so we have to sort it in ascending order and then reverse it.
-    Arrays.sort(sortedTweetIds);
+    // Sort sortelondTwelonelontIdsIndelonx in delonscelonnding ordelonr. Thelonrelon's no way to sort a primitivelon array in
+    // delonscelonnding ordelonr, so welon havelon to sort it in ascelonnding ordelonr and thelonn relonvelonrselon it.
+    Arrays.sort(sortelondTwelonelontIds);
     for (int i = 0; i < numDocs / 2; ++i) {
-      long tmp = sortedTweetIds[i];
-      sortedTweetIds[i] = sortedTweetIds[numDocs - 1 - i];
-      sortedTweetIds[numDocs - 1 - i] = tmp;
+      long tmp = sortelondTwelonelontIds[i];
+      sortelondTwelonelontIds[i] = sortelondTwelonelontIds[numDocs - 1 - i];
+      sortelondTwelonelontIds[numDocs - 1 - i] = tmp;
     }
 
-    return sortedTweetIds;
+    relonturn sortelondTwelonelontIds;
   }
 
-  @Override
-  public DocIDToTweetIDMapper optimize() throws IOException {
-    return new OptimizedTweetIDMapper(this);
-  }
-
-  /**
-   * Returns the largest Tweet ID that this doc ID mapper could handle. The returned Tweet ID
-   * would be safe to put into the mapper, but any larger ones would not be correctly handled.
-   */
-  public static long calculateMaxTweetID(long timesliceID) {
-    long numberOfUsableTimestamps = LARGEST_RELATIVE_TIMESTAMP - LATE_TWEETS_TIME_BUFFER_MILLIS;
-    long firstTimestamp = SnowflakeIdParser.getTimestampFromTweetId(timesliceID);
-    long lastTimestamp = firstTimestamp + numberOfUsableTimestamps;
-    return SnowflakeIdParser.generateValidStatusId(
-        lastTimestamp, SnowflakeIdParser.RESERVED_BITS_MASK);
+  @Ovelonrridelon
+  public DocIDToTwelonelontIDMappelonr optimizelon() throws IOelonxcelonption {
+    relonturn nelonw OptimizelondTwelonelontIDMappelonr(this);
   }
 
   /**
-   * Evaluates whether two instances of OutOfOrderRealtimeTweetIDMapper are equal by value. It is
-   * slow because it has to check every tweet ID/doc ID in the map.
+   * Relonturns thelon largelonst Twelonelont ID that this doc ID mappelonr could handlelon. Thelon relonturnelond Twelonelont ID
+   * would belon safelon to put into thelon mappelonr, but any largelonr onelons would not belon correlonctly handlelond.
    */
-  @VisibleForTesting
-  boolean verySlowEqualsForTests(OutOfOrderRealtimeTweetIDMapper that) {
-    return getMinTweetID() == that.getMinTweetID()
-        && getMaxTweetID() == that.getMaxTweetID()
-        && getMinDocID() == that.getMinDocID()
-        && getMaxDocID() == that.getMaxDocID()
-        && segmentBoundaryTimestamp == that.segmentBoundaryTimestamp
-        && segmentSize == that.segmentSize
-        && tweetsPerTimestamp.equals(that.tweetsPerTimestamp)
-        && tweetIds.equals(that.tweetIds);
+  public static long calculatelonMaxTwelonelontID(long timelonslicelonID) {
+    long numbelonrOfUsablelonTimelonstamps = LARGelonST_RelonLATIVelon_TIMelonSTAMP - LATelon_TWelonelonTS_TIMelon_BUFFelonR_MILLIS;
+    long firstTimelonstamp = SnowflakelonIdParselonr.gelontTimelonstampFromTwelonelontId(timelonslicelonID);
+    long lastTimelonstamp = firstTimelonstamp + numbelonrOfUsablelonTimelonstamps;
+    relonturn SnowflakelonIdParselonr.gelonnelonratelonValidStatusId(
+        lastTimelonstamp, SnowflakelonIdParselonr.RelonSelonRVelonD_BITS_MASK);
   }
 
-  @Override
-  public OutOfOrderRealtimeTweetIDMapper.FlushHandler getFlushHandler() {
-    return new OutOfOrderRealtimeTweetIDMapper.FlushHandler(this);
+  /**
+   * elonvaluatelons whelonthelonr two instancelons of OutOfOrdelonrRelonaltimelonTwelonelontIDMappelonr arelon elonqual by valuelon. It is
+   * slow beloncauselon it has to chelonck elonvelonry twelonelont ID/doc ID in thelon map.
+   */
+  @VisiblelonForTelonsting
+  boolelonan velonrySlowelonqualsForTelonsts(OutOfOrdelonrRelonaltimelonTwelonelontIDMappelonr that) {
+    relonturn gelontMinTwelonelontID() == that.gelontMinTwelonelontID()
+        && gelontMaxTwelonelontID() == that.gelontMaxTwelonelontID()
+        && gelontMinDocID() == that.gelontMinDocID()
+        && gelontMaxDocID() == that.gelontMaxDocID()
+        && selongmelonntBoundaryTimelonstamp == that.selongmelonntBoundaryTimelonstamp
+        && selongmelonntSizelon == that.selongmelonntSizelon
+        && twelonelontsPelonrTimelonstamp.elonquals(that.twelonelontsPelonrTimelonstamp)
+        && twelonelontIds.elonquals(that.twelonelontIds);
   }
 
-  private OutOfOrderRealtimeTweetIDMapper(
-    long minTweetID,
-    long maxTweetID,
+  @Ovelonrridelon
+  public OutOfOrdelonrRelonaltimelonTwelonelontIDMappelonr.FlushHandlelonr gelontFlushHandlelonr() {
+    relonturn nelonw OutOfOrdelonrRelonaltimelonTwelonelontIDMappelonr.FlushHandlelonr(this);
+  }
+
+  privatelon OutOfOrdelonrRelonaltimelonTwelonelontIDMappelonr(
+    long minTwelonelontID,
+    long maxTwelonelontID,
     int minDocID,
     int maxDocID,
-    long segmentBoundaryTimestamp,
-    int segmentSize,
+    long selongmelonntBoundaryTimelonstamp,
+    int selongmelonntSizelon,
     int[] docIDs,
-    long[] tweetIDList
+    long[] twelonelontIDList
   ) {
-    super(minTweetID, maxTweetID, minDocID, maxDocID, docIDs.length);
+    supelonr(minTwelonelontID, maxTwelonelontID, minDocID, maxDocID, docIDs.lelonngth);
 
-    Preconditions.checkState(docIDs.length == tweetIDList.length);
+    Prelonconditions.chelonckStatelon(docIDs.lelonngth == twelonelontIDList.lelonngth);
 
-    this.segmentBoundaryTimestamp = segmentBoundaryTimestamp;
-    this.segmentSize = segmentSize;
+    this.selongmelonntBoundaryTimelonstamp = selongmelonntBoundaryTimelonstamp;
+    this.selongmelonntSizelon = selongmelonntSizelon;
 
-    tweetIds = new Int2LongOpenHashMap(segmentSize);
-    tweetIds.defaultReturnValue(ID_NOT_FOUND);
+    twelonelontIds = nelonw Int2LongOpelonnHashMap(selongmelonntSizelon);
+    twelonelontIds.delonfaultRelonturnValuelon(ID_NOT_FOUND);
 
-    tweetsPerTimestamp = new Int2ByteOpenHashMap(segmentSize);
-    tweetsPerTimestamp.defaultReturnValue((byte) ID_NOT_FOUND);
+    twelonelontsPelonrTimelonstamp = nelonw Int2BytelonOpelonnHashMap(selongmelonntSizelon);
+    twelonelontsPelonrTimelonstamp.delonfaultRelonturnValuelon((bytelon) ID_NOT_FOUND);
 
-    for (int i = 0; i < docIDs.length; i++) {
+    for (int i = 0; i < docIDs.lelonngth; i++) {
       int docID = docIDs[i];
-      long tweetID = tweetIDList[i];
-      tweetIds.put(docID, tweetID);
+      long twelonelontID = twelonelontIDList[i];
+      twelonelontIds.put(docID, twelonelontID);
 
-      int timestampBucket = docID >> DOC_ID_BITS;
-      if (tweetsPerTimestamp.containsKey(timestampBucket)) {
-        tweetsPerTimestamp.addTo(timestampBucket, (byte) 1);
-      } else {
-        tweetsPerTimestamp.put(timestampBucket, (byte) 1);
+      int timelonstampBuckelont = docID >> DOC_ID_BITS;
+      if (twelonelontsPelonrTimelonstamp.containsKelony(timelonstampBuckelont)) {
+        twelonelontsPelonrTimelonstamp.addTo(timelonstampBuckelont, (bytelon) 1);
+      } elonlselon {
+        twelonelontsPelonrTimelonstamp.put(timelonstampBuckelont, (bytelon) 1);
       }
     }
   }
 
-  public static class FlushHandler extends Flushable.Handler<OutOfOrderRealtimeTweetIDMapper> {
-    private static final String MIN_TWEET_ID_PROP_NAME = "MinTweetID";
-    private static final String MAX_TWEET_ID_PROP_NAME = "MaxTweetID";
-    private static final String MIN_DOC_ID_PROP_NAME = "MinDocID";
-    private static final String MAX_DOC_ID_PROP_NAME = "MaxDocID";
-    private static final String SEGMENT_BOUNDARY_TIMESTAMP_PROP_NAME = "SegmentBoundaryTimestamp";
-    private static final String SEGMENT_SIZE_PROP_NAME = "SegmentSize";
+  public static class FlushHandlelonr elonxtelonnds Flushablelon.Handlelonr<OutOfOrdelonrRelonaltimelonTwelonelontIDMappelonr> {
+    privatelon static final String MIN_TWelonelonT_ID_PROP_NAMelon = "MinTwelonelontID";
+    privatelon static final String MAX_TWelonelonT_ID_PROP_NAMelon = "MaxTwelonelontID";
+    privatelon static final String MIN_DOC_ID_PROP_NAMelon = "MinDocID";
+    privatelon static final String MAX_DOC_ID_PROP_NAMelon = "MaxDocID";
+    privatelon static final String SelonGMelonNT_BOUNDARY_TIMelonSTAMP_PROP_NAMelon = "SelongmelonntBoundaryTimelonstamp";
+    privatelon static final String SelonGMelonNT_SIZelon_PROP_NAMelon = "SelongmelonntSizelon";
 
-    public FlushHandler() {
-      super();
+    public FlushHandlelonr() {
+      supelonr();
     }
 
-    public FlushHandler(OutOfOrderRealtimeTweetIDMapper objectToFlush) {
-      super(objectToFlush);
+    public FlushHandlelonr(OutOfOrdelonrRelonaltimelonTwelonelontIDMappelonr objelonctToFlush) {
+      supelonr(objelonctToFlush);
     }
 
-    @Override
-    protected void doFlush(FlushInfo flushInfo, DataSerializer serializer) throws IOException {
-      OutOfOrderRealtimeTweetIDMapper mapper = getObjectToFlush();
+    @Ovelonrridelon
+    protelonctelond void doFlush(FlushInfo flushInfo, DataSelonrializelonr selonrializelonr) throws IOelonxcelonption {
+      OutOfOrdelonrRelonaltimelonTwelonelontIDMappelonr mappelonr = gelontObjelonctToFlush();
 
-      flushInfo.addLongProperty(MIN_TWEET_ID_PROP_NAME, mapper.getMinTweetID());
-      flushInfo.addLongProperty(MAX_TWEET_ID_PROP_NAME, mapper.getMaxTweetID());
-      flushInfo.addIntProperty(MIN_DOC_ID_PROP_NAME, mapper.getMinDocID());
-      flushInfo.addIntProperty(MAX_DOC_ID_PROP_NAME, mapper.getMaxDocID());
-      flushInfo.addLongProperty(SEGMENT_BOUNDARY_TIMESTAMP_PROP_NAME,
-          mapper.segmentBoundaryTimestamp);
-      flushInfo.addIntProperty(SEGMENT_SIZE_PROP_NAME, mapper.segmentSize);
+      flushInfo.addLongPropelonrty(MIN_TWelonelonT_ID_PROP_NAMelon, mappelonr.gelontMinTwelonelontID());
+      flushInfo.addLongPropelonrty(MAX_TWelonelonT_ID_PROP_NAMelon, mappelonr.gelontMaxTwelonelontID());
+      flushInfo.addIntPropelonrty(MIN_DOC_ID_PROP_NAMelon, mappelonr.gelontMinDocID());
+      flushInfo.addIntPropelonrty(MAX_DOC_ID_PROP_NAMelon, mappelonr.gelontMaxDocID());
+      flushInfo.addLongPropelonrty(SelonGMelonNT_BOUNDARY_TIMelonSTAMP_PROP_NAMelon,
+          mappelonr.selongmelonntBoundaryTimelonstamp);
+      flushInfo.addIntPropelonrty(SelonGMelonNT_SIZelon_PROP_NAMelon, mappelonr.selongmelonntSizelon);
 
-      serializer.writeInt(mapper.tweetIds.size());
-      for (Int2LongMap.Entry entry : mapper.tweetIds.int2LongEntrySet()) {
-        serializer.writeInt(entry.getIntKey());
-        serializer.writeLong(entry.getLongValue());
+      selonrializelonr.writelonInt(mappelonr.twelonelontIds.sizelon());
+      for (Int2LongMap.elonntry elonntry : mappelonr.twelonelontIds.int2LongelonntrySelont()) {
+        selonrializelonr.writelonInt(elonntry.gelontIntKelony());
+        selonrializelonr.writelonLong(elonntry.gelontLongValuelon());
       }
     }
 
-    @Override
-    protected OutOfOrderRealtimeTweetIDMapper doLoad(FlushInfo flushInfo, DataDeserializer in)
-        throws IOException {
+    @Ovelonrridelon
+    protelonctelond OutOfOrdelonrRelonaltimelonTwelonelontIDMappelonr doLoad(FlushInfo flushInfo, DataDelonselonrializelonr in)
+        throws IOelonxcelonption {
 
-      int size = in.readInt();
-      int[] docIds = new int[size];
-      long[] tweetIds = new long[size];
-      for (int i = 0; i < size; i++) {
-        docIds[i] = in.readInt();
-        tweetIds[i] = in.readLong();
+      int sizelon = in.relonadInt();
+      int[] docIds = nelonw int[sizelon];
+      long[] twelonelontIds = nelonw long[sizelon];
+      for (int i = 0; i < sizelon; i++) {
+        docIds[i] = in.relonadInt();
+        twelonelontIds[i] = in.relonadLong();
       }
 
-      return new OutOfOrderRealtimeTweetIDMapper(
-          flushInfo.getLongProperty(MIN_TWEET_ID_PROP_NAME),
-          flushInfo.getLongProperty(MAX_TWEET_ID_PROP_NAME),
-          flushInfo.getIntProperty(MIN_DOC_ID_PROP_NAME),
-          flushInfo.getIntProperty(MAX_DOC_ID_PROP_NAME),
-          flushInfo.getLongProperty(SEGMENT_BOUNDARY_TIMESTAMP_PROP_NAME),
-          flushInfo.getIntProperty(SEGMENT_SIZE_PROP_NAME),
+      relonturn nelonw OutOfOrdelonrRelonaltimelonTwelonelontIDMappelonr(
+          flushInfo.gelontLongPropelonrty(MIN_TWelonelonT_ID_PROP_NAMelon),
+          flushInfo.gelontLongPropelonrty(MAX_TWelonelonT_ID_PROP_NAMelon),
+          flushInfo.gelontIntPropelonrty(MIN_DOC_ID_PROP_NAMelon),
+          flushInfo.gelontIntPropelonrty(MAX_DOC_ID_PROP_NAMelon),
+          flushInfo.gelontLongPropelonrty(SelonGMelonNT_BOUNDARY_TIMelonSTAMP_PROP_NAMelon),
+          flushInfo.gelontIntPropelonrty(SelonGMelonNT_SIZelon_PROP_NAMelon),
           docIds,
-          tweetIds);
+          twelonelontIds);
     }
   }
 }

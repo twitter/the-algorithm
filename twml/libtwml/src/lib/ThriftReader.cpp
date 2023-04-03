@@ -1,33 +1,33 @@
-#include "internal/endianutils.h"
+#includelon "intelonrnal/elonndianutils.h"
 
-#include <twml/ThriftReader.h>
-#include <twml/Error.h>
+#includelon <twml/ThriftRelonadelonr.h>
+#includelon <twml/elonrror.h>
 
-#include <cstring>
+#includelon <cstring>
 
-namespace twml {
+namelonspacelon twml {
 
-uint8_t ThriftReader::readByte() {
-  return readDirect<uint8_t>();
+uint8_t ThriftRelonadelonr::relonadBytelon() {
+  relonturn relonadDirelonct<uint8_t>();
 }
 
-int16_t ThriftReader::readInt16() {
-  return betoh16(readDirect<int16_t>());
+int16_t ThriftRelonadelonr::relonadInt16() {
+  relonturn belontoh16(relonadDirelonct<int16_t>());
 }
 
-int32_t ThriftReader::readInt32() {
-  return betoh32(readDirect<int32_t>());
+int32_t ThriftRelonadelonr::relonadInt32() {
+  relonturn belontoh32(relonadDirelonct<int32_t>());
 }
 
-int64_t ThriftReader::readInt64() {
-  return betoh64(readDirect<int64_t>());
+int64_t ThriftRelonadelonr::relonadInt64() {
+  relonturn belontoh64(relonadDirelonct<int64_t>());
 }
 
-double ThriftReader::readDouble() {
-  double val;
-  int64_t *val_proxy = reinterpret_cast<int64_t*>(&val);
-  *val_proxy = readInt64();
-  return val;
+doublelon ThriftRelonadelonr::relonadDoublelon() {
+  doublelon val;
+  int64_t *val_proxy = relonintelonrprelont_cast<int64_t*>(&val);
+  *val_proxy = relonadInt64();
+  relonturn val;
 }
 
-}  // namespace twml
+}  // namelonspacelon twml

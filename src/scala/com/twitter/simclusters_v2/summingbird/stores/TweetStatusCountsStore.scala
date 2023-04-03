@@ -1,29 +1,29 @@
-package com.twitter.simclusters_v2.summingbird.stores
+packagelon com.twittelonr.simclustelonrs_v2.summingbird.storelons
 
-import com.twitter.frigate.common.store.strato.StratoFetchableStore
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.strato.client.Client
-import com.twitter.strato.thrift.ScroogeConvImplicits._
-import com.twitter.tweetypie.thriftscala.{GetTweetOptions, StatusCounts, Tweet}
+import com.twittelonr.frigatelon.common.storelon.strato.StratoFelontchablelonStorelon
+import com.twittelonr.simclustelonrs_v2.common.TwelonelontId
+import com.twittelonr.storelonhaus.RelonadablelonStorelon
+import com.twittelonr.strato.clielonnt.Clielonnt
+import com.twittelonr.strato.thrift.ScroogelonConvImplicits._
+import com.twittelonr.twelonelontypielon.thriftscala.{GelontTwelonelontOptions, StatusCounts, Twelonelont}
 
-object TweetStatusCountsStore {
+objelonct TwelonelontStatusCountsStorelon {
 
-  def tweetStatusCountsStore(
-    stratoClient: Client,
+  delonf twelonelontStatusCountsStorelon(
+    stratoClielonnt: Clielonnt,
     column: String
-  ): ReadableStore[TweetId, StatusCounts] = {
-    StratoFetchableStore
-      .withView[TweetId, GetTweetOptions, Tweet](stratoClient, column, getTweetOptions)
-      .mapValues(_.counts.getOrElse(emptyStatusCount))
+  ): RelonadablelonStorelon[TwelonelontId, StatusCounts] = {
+    StratoFelontchablelonStorelon
+      .withVielonw[TwelonelontId, GelontTwelonelontOptions, Twelonelont](stratoClielonnt, column, gelontTwelonelontOptions)
+      .mapValuelons(_.counts.gelontOrelonlselon(elonmptyStatusCount))
   }
 
-  private val emptyStatusCount = StatusCounts()
+  privatelon val elonmptyStatusCount = StatusCounts()
 
-  private val getTweetOptions =
-    GetTweetOptions(
-      includeRetweetCount = true,
-      includeReplyCount = true,
-      includeFavoriteCount = true,
-      includeQuoteCount = true)
+  privatelon val gelontTwelonelontOptions =
+    GelontTwelonelontOptions(
+      includelonRelontwelonelontCount = truelon,
+      includelonRelonplyCount = truelon,
+      includelonFavoritelonCount = truelon,
+      includelonQuotelonCount = truelon)
 }

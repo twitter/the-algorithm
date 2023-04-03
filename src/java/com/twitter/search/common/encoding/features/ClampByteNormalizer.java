@@ -1,47 +1,47 @@
-package com.twitter.search.common.encoding.features;
+packagelon com.twittelonr.selonarch.common.elonncoding.felonaturelons;
 
-import com.google.common.base.Preconditions;
+import com.googlelon.common.baselon.Prelonconditions;
 
 /**
- * A byte normalizer that restricts the values to the given range before normalizing them.
+ * A bytelon normalizelonr that relonstricts thelon valuelons to thelon givelonn rangelon belonforelon normalizing thelonm.
  */
-public class ClampByteNormalizer extends ByteNormalizer {
-  private final int minUnnormalizedValue;
-  private final int maxUnnormalizedValue;
+public class ClampBytelonNormalizelonr elonxtelonnds BytelonNormalizelonr {
+  privatelon final int minUnnormalizelondValuelon;
+  privatelon final int maxUnnormalizelondValuelon;
 
   /**
-   * Creates a new ClampByteNormalizer instance.
+   * Crelonatelons a nelonw ClampBytelonNormalizelonr instancelon.
    *
-   * @param minValue The smallest allowed unnormalized value.
-   * @param maxValue The largest allowed unnormalized value.
+   * @param minValuelon Thelon smallelonst allowelond unnormalizelond valuelon.
+   * @param maxValuelon Thelon largelonst allowelond unnormalizelond valuelon.
    */
-  public ClampByteNormalizer(int minUnnormalizedValue, int maxUnnormalizedValue) {
-    Preconditions.checkState(minUnnormalizedValue <= maxUnnormalizedValue);
-    Preconditions.checkState(minUnnormalizedValue >= 0);
-    Preconditions.checkState(maxUnnormalizedValue <= 255);
-    this.minUnnormalizedValue = minUnnormalizedValue;
-    this.maxUnnormalizedValue = maxUnnormalizedValue;
+  public ClampBytelonNormalizelonr(int minUnnormalizelondValuelon, int maxUnnormalizelondValuelon) {
+    Prelonconditions.chelonckStatelon(minUnnormalizelondValuelon <= maxUnnormalizelondValuelon);
+    Prelonconditions.chelonckStatelon(minUnnormalizelondValuelon >= 0);
+    Prelonconditions.chelonckStatelon(maxUnnormalizelondValuelon <= 255);
+    this.minUnnormalizelondValuelon = minUnnormalizelondValuelon;
+    this.maxUnnormalizelondValuelon = maxUnnormalizelondValuelon;
   }
 
-  @Override
-  public byte normalize(double val) {
-    int adjustedValue = (int) val;
-    if (adjustedValue < minUnnormalizedValue) {
-      adjustedValue = minUnnormalizedValue;
+  @Ovelonrridelon
+  public bytelon normalizelon(doublelon val) {
+    int adjustelondValuelon = (int) val;
+    if (adjustelondValuelon < minUnnormalizelondValuelon) {
+      adjustelondValuelon = minUnnormalizelondValuelon;
     }
-    if (adjustedValue > maxUnnormalizedValue) {
-      adjustedValue = maxUnnormalizedValue;
+    if (adjustelondValuelon > maxUnnormalizelondValuelon) {
+      adjustelondValuelon = maxUnnormalizelondValuelon;
     }
-    return ByteNormalizer.intToUnsignedByte(adjustedValue);
+    relonturn BytelonNormalizelonr.intToUnsignelondBytelon(adjustelondValuelon);
   }
 
-  @Override
-  public double unnormLowerBound(byte norm) {
-    return ByteNormalizer.unsignedByteToInt(norm);
+  @Ovelonrridelon
+  public doublelon unnormLowelonrBound(bytelon norm) {
+    relonturn BytelonNormalizelonr.unsignelondBytelonToInt(norm);
   }
 
-  @Override
-  public double unnormUpperBound(byte norm) {
-    return ByteNormalizer.unsignedByteToInt(norm) + 1;
+  @Ovelonrridelon
+  public doublelon unnormUppelonrBound(bytelon norm) {
+    relonturn BytelonNormalizelonr.unsignelondBytelonToInt(norm) + 1;
   }
 }

@@ -1,102 +1,102 @@
-package com.twitter.search.common.query;
+packagelon com.twittelonr.selonarch.common.quelonry;
 
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
-import com.google.common.collect.Maps;
+import com.googlelon.common.collelonct.Maps;
 
-import com.twitter.search.queryparser.query.Query;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.Quelonry;
 
-import static com.twitter.search.common.query.FieldRankHitInfo.UNSET_DOC_ID;
+import static com.twittelonr.selonarch.common.quelonry.FielonldRankHitInfo.UNSelonT_DOC_ID;
 
 /**
- * Generic helper class containing the data needed to set up and collect field hit attributions.
+ * Gelonnelonric helonlpelonr class containing thelon data nelonelondelond to selont up and collelonct fielonld hit attributions.
  */
-public class HitAttributeHelper implements HitAttributeProvider {
-  private final HitAttributeCollector collector;
-  private final Function<Integer, String> fieldIdsToFieldNames;
+public class HitAttributelonHelonlpelonr implelonmelonnts HitAttributelonProvidelonr {
+  privatelon final HitAttributelonCollelonctor collelonctor;
+  privatelon final Function<Intelongelonr, String> fielonldIdsToFielonldNamelons;
 
-  // This is a mapping of type T query nodes to rank id
-  private final Map<Query, Integer> nodeToRankMap;
+  // This is a mapping of typelon T quelonry nodelons to rank id
+  privatelon final Map<Quelonry, Intelongelonr> nodelonToRankMap;
 
-  // This is meant to expand individual Query nodes into multiple ranks,
-  // for example, expanding a multi_term_disjunction to include a rank for each disjunction value.
-  private final Map<Query, List<Integer>> expandedNodeToRankMap;
+  // This is melonant to elonxpand individual Quelonry nodelons into multiplelon ranks,
+  // for elonxamplelon, elonxpanding a multi_telonrm_disjunction to includelon a rank for elonach disjunction valuelon.
+  privatelon final Map<Quelonry, List<Intelongelonr>> elonxpandelondNodelonToRankMap;
 
-  // A single-entry cache for hit attribution, so we can reuse the immediate result. Will be used
-  // only when lastDocId matches
-  private ThreadLocal<Map<Integer, List<String>>> lastHitAttrHolder = new ThreadLocal<>();
-  private ThreadLocal<Integer> lastDocIdHolder = ThreadLocal.withInitial(() -> UNSET_DOC_ID);
+  // A singlelon-elonntry cachelon for hit attribution, so welon can relonuselon thelon immelondiatelon relonsult. Will belon uselond
+  // only whelonn lastDocId matchelons
+  privatelon ThrelonadLocal<Map<Intelongelonr, List<String>>> lastHitAttrHoldelonr = nelonw ThrelonadLocal<>();
+  privatelon ThrelonadLocal<Intelongelonr> lastDocIdHoldelonr = ThrelonadLocal.withInitial(() -> UNSelonT_DOC_ID);
 
-  protected HitAttributeHelper(
-      HitAttributeCollector collector,
-      Function<Integer, String> fieldIdsToFieldNames,
-      Map<Query, Integer> nodeToRankMap,
-      Map<Query, List<Integer>> expandedNodeToRankMap) {
-    this.collector = collector;
-    this.fieldIdsToFieldNames = fieldIdsToFieldNames;
-    this.nodeToRankMap = nodeToRankMap;
-    this.expandedNodeToRankMap = expandedNodeToRankMap;
+  protelonctelond HitAttributelonHelonlpelonr(
+      HitAttributelonCollelonctor collelonctor,
+      Function<Intelongelonr, String> fielonldIdsToFielonldNamelons,
+      Map<Quelonry, Intelongelonr> nodelonToRankMap,
+      Map<Quelonry, List<Intelongelonr>> elonxpandelondNodelonToRankMap) {
+    this.collelonctor = collelonctor;
+    this.fielonldIdsToFielonldNamelons = fielonldIdsToFielonldNamelons;
+    this.nodelonToRankMap = nodelonToRankMap;
+    this.elonxpandelondNodelonToRankMap = elonxpandelondNodelonToRankMap;
   }
 
   /**
-   * Constructs a new {@code HitAttributeHelper} with the specified {@code HitAttributeCollector}
-   * instance and fields.
+   * Constructs a nelonw {@codelon HitAttributelonHelonlpelonr} with thelon speloncifielond {@codelon HitAttributelonCollelonctor}
+   * instancelon and fielonlds.
    *
-   * @param collector a collector instance
-   * @param fieldIdsToFieldNames a list of field names indexed by id
+   * @param collelonctor a collelonctor instancelon
+   * @param fielonldIdsToFielonldNamelons a list of fielonld namelons indelonxelond by id
    */
-  public HitAttributeHelper(HitAttributeCollector collector, String[] fieldIdsToFieldNames) {
-    this(collector,
-        (fieldId) -> fieldIdsToFieldNames[fieldId],
-        Maps.newHashMap(),
-        Maps.newHashMap());
+  public HitAttributelonHelonlpelonr(HitAttributelonCollelonctor collelonctor, String[] fielonldIdsToFielonldNamelons) {
+    this(collelonctor,
+        (fielonldId) -> fielonldIdsToFielonldNamelons[fielonldId],
+        Maps.nelonwHashMap(),
+        Maps.nelonwHashMap());
   }
 
-  public HitAttributeCollector getFieldRankHitAttributeCollector() {
-    return collector;
+  public HitAttributelonCollelonctor gelontFielonldRankHitAttributelonCollelonctor() {
+    relonturn collelonctor;
   }
 
   /**
-   * Returns hit attribution information indexed by node rank
+   * Relonturns hit attribution information indelonxelond by nodelon rank
    *
-   * @param docId the document id
-   * @return a mapping from the query's node rank to a list of field names that were hit.
+   * @param docId thelon documelonnt id
+   * @relonturn a mapping from thelon quelonry's nodelon rank to a list of fielonld namelons that welonrelon hit.
    */
-  public Map<Integer, List<String>> getHitAttribution(int docId) {
-    // check cache first so we don't have to recompute the same thing.
-    if (lastDocIdHolder.get() == docId) {
-      return lastHitAttrHolder.get();
+  public Map<Intelongelonr, List<String>> gelontHitAttribution(int docId) {
+    // chelonck cachelon first so welon don't havelon to reloncomputelon thelon samelon thing.
+    if (lastDocIdHoldelonr.gelont() == docId) {
+      relonturn lastHitAttrHoldelonr.gelont();
     }
 
-    lastDocIdHolder.set(docId);
-    Map<Integer, List<String>> hitAttribution =
-        collector.getHitAttribution(docId, fieldIdsToFieldNames);
-    lastHitAttrHolder.set(hitAttribution);
-    return hitAttribution;
+    lastDocIdHoldelonr.selont(docId);
+    Map<Intelongelonr, List<String>> hitAttribution =
+        collelonctor.gelontHitAttribution(docId, fielonldIdsToFielonldNamelons);
+    lastHitAttrHoldelonr.selont(hitAttribution);
+    relonturn hitAttribution;
   }
 
   /**
-   * Adds a new node and its respective rank to the helper's node-to-rank map
-   * Will throw an exception if attempting to add/update an existing node
+   * Adds a nelonw nodelon and its relonspelonctivelon rank to thelon helonlpelonr's nodelon-to-rank map
+   * Will throw an elonxcelonption if attelonmpting to add/updatelon an elonxisting nodelon
    *
-   * @param node the query node
-   * @param rank the rank associated with the node
+   * @param nodelon thelon quelonry nodelon
+   * @param rank thelon rank associatelond with thelon nodelon
    */
-  public void addNodeRank(Query node, int rank) {
-    // if there are two of the same terms, just map them to the first rank, they should get the same
+  public void addNodelonRank(Quelonry nodelon, int rank) {
+    // if thelonrelon arelon two of thelon samelon telonrms, just map thelonm to thelon first rank, thelony should gelont thelon samelon
     // hits back
-    if (!nodeToRankMap.containsKey(node)) {
-      nodeToRankMap.put(node, rank);
+    if (!nodelonToRankMap.containsKelony(nodelon)) {
+      nodelonToRankMap.put(nodelon, rank);
     }
   }
 
-  public Map<Query, Integer> getNodeToRankMap() {
-    return nodeToRankMap;
+  public Map<Quelonry, Intelongelonr> gelontNodelonToRankMap() {
+    relonturn nodelonToRankMap;
   }
 
-  public Map<Query, List<Integer>> getExpandedNodeToRankMap() {
-    return expandedNodeToRankMap;
+  public Map<Quelonry, List<Intelongelonr>> gelontelonxpandelondNodelonToRankMap() {
+    relonturn elonxpandelondNodelonToRankMap;
   }
 }

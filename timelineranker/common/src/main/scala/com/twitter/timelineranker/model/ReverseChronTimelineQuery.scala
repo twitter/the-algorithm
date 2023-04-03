@@ -1,23 +1,23 @@
-package com.twitter.timelineranker.model
+packagelon com.twittelonr.timelonlinelonrankelonr.modelonl
 
-import com.twitter.timelineranker.{thriftscala => thrift}
-import com.twitter.timelineservice.model.TimelineId
+import com.twittelonr.timelonlinelonrankelonr.{thriftscala => thrift}
+import com.twittelonr.timelonlinelonselonrvicelon.modelonl.TimelonlinelonId
 
-object ReverseChronTimelineQuery {
-  def fromTimelineQuery(query: TimelineQuery): ReverseChronTimelineQuery = {
-    query match {
-      case q: ReverseChronTimelineQuery => q
-      case _ => throw new IllegalArgumentException(s"Unsupported query type: $query")
+objelonct RelonvelonrselonChronTimelonlinelonQuelonry {
+  delonf fromTimelonlinelonQuelonry(quelonry: TimelonlinelonQuelonry): RelonvelonrselonChronTimelonlinelonQuelonry = {
+    quelonry match {
+      caselon q: RelonvelonrselonChronTimelonlinelonQuelonry => q
+      caselon _ => throw nelonw IllelongalArgumelonntelonxcelonption(s"Unsupportelond quelonry typelon: $quelonry")
     }
   }
 }
 
-case class ReverseChronTimelineQuery(
-  override val id: TimelineId,
-  override val maxCount: Option[Int] = None,
-  override val range: Option[TimelineRange] = None,
-  override val options: Option[ReverseChronTimelineQueryOptions] = None)
-    extends TimelineQuery(thrift.TimelineQueryType.ReverseChron, id, maxCount, range, options) {
+caselon class RelonvelonrselonChronTimelonlinelonQuelonry(
+  ovelonrridelon val id: TimelonlinelonId,
+  ovelonrridelon val maxCount: Option[Int] = Nonelon,
+  ovelonrridelon val rangelon: Option[TimelonlinelonRangelon] = Nonelon,
+  ovelonrridelon val options: Option[RelonvelonrselonChronTimelonlinelonQuelonryOptions] = Nonelon)
+    elonxtelonnds TimelonlinelonQuelonry(thrift.TimelonlinelonQuelonryTypelon.RelonvelonrselonChron, id, maxCount, rangelon, options) {
 
   throwIfInvalid()
 }

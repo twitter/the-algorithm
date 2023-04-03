@@ -1,40 +1,40 @@
-package com.twitter.home_mixer.param.decider
+packagelon com.twittelonr.homelon_mixelonr.param.deloncidelonr
 
-import com.twitter.servo.decider.DeciderKeyEnum
+import com.twittelonr.selonrvo.deloncidelonr.DeloncidelonrKelonyelonnum
 
 /**
- * These values must correspond to the deciders configured in the
- * home-mixer/server/src/main/resources/config/decider.yml file
+ * Thelonselon valuelons must correlonspond to thelon deloncidelonrs configurelond in thelon
+ * homelon-mixelonr/selonrvelonr/src/main/relonsourcelons/config/deloncidelonr.yml filelon
  *
- * @see [[com.twitter.product_mixer.core.product.ProductParamConfig.enabledDeciderKey]]
+ * @selonelon [[com.twittelonr.product_mixelonr.corelon.product.ProductParamConfig.elonnablelondDeloncidelonrKelony]]
  */
-object DeciderKey extends DeciderKeyEnum {
+objelonct DeloncidelonrKelony elonxtelonnds DeloncidelonrKelonyelonnum {
   // Products
-  val EnableForYouProduct = Value("enable_for_you_product")
+  val elonnablelonForYouProduct = Valuelon("elonnablelon_for_you_product")
 
-  val EnableFollowingProduct = Value("enable_following_product")
+  val elonnablelonFollowingProduct = Valuelon("elonnablelon_following_product")
 
-  val EnableScoredTweetsProduct = Value("enable_scored_tweets_product")
+  val elonnablelonScorelondTwelonelontsProduct = Valuelon("elonnablelon_scorelond_twelonelonts_product")
 
-  val EnableListTweetsProduct = Value("enable_list_tweets_product")
+  val elonnablelonListTwelonelontsProduct = Valuelon("elonnablelon_list_twelonelonts_product")
 
-  val EnableListRecommendedUsersProduct = Value("enable_list_recommended_users_product")
+  val elonnablelonListReloncommelonndelondUselonrsProduct = Valuelon("elonnablelon_list_reloncommelonndelond_uselonrs_product")
 
-  // Candidate Pipelines
-  val EnableForYouScoredTweetsCandidatePipeline = Value(
-    "enable_for_you_scored_tweets_candidate_pipeline")
+  // Candidatelon Pipelonlinelons
+  val elonnablelonForYouScorelondTwelonelontsCandidatelonPipelonlinelon = Valuelon(
+    "elonnablelon_for_you_scorelond_twelonelonts_candidatelon_pipelonlinelon")
 
-  val EnableScoredTweetsCrMixerCandidatePipeline = Value(
-    "enable_scored_tweets_cr_mixer_candidate_pipeline")
+  val elonnablelonScorelondTwelonelontsCrMixelonrCandidatelonPipelonlinelon = Valuelon(
+    "elonnablelon_scorelond_twelonelonts_cr_mixelonr_candidatelon_pipelonlinelon")
 
-  val EnableScoredTweetsFrsCandidatePipeline = Value("enable_scored_tweets_frs_candidate_pipeline")
+  val elonnablelonScorelondTwelonelontsFrsCandidatelonPipelonlinelon = Valuelon("elonnablelon_scorelond_twelonelonts_frs_candidatelon_pipelonlinelon")
 
-  val EnableScoredTweetsInNetworkCandidatePipeline = Value(
-    "enable_scored_tweets_in_network_candidate_pipeline")
+  val elonnablelonScorelondTwelonelontsInNelontworkCandidatelonPipelonlinelon = Valuelon(
+    "elonnablelon_scorelond_twelonelonts_in_nelontwork_candidatelon_pipelonlinelon")
 
-  val EnableScoredTweetsUtegCandidatePipeline = Value(
-    "enable_scored_tweets_uteg_candidate_pipeline")
+  val elonnablelonScorelondTwelonelontsUtelongCandidatelonPipelonlinelon = Valuelon(
+    "elonnablelon_scorelond_twelonelonts_utelong_candidatelon_pipelonlinelon")
 
-  val EnableSimClustersSimilarityFeatureHydration = Value(
-    "enable_simclusters_similarity_feature_hydration")
+  val elonnablelonSimClustelonrsSimilarityFelonaturelonHydration = Valuelon(
+    "elonnablelon_simclustelonrs_similarity_felonaturelon_hydration")
 }

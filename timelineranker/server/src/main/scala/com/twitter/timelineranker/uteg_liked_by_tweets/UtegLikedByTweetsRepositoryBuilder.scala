@@ -1,46 +1,46 @@
-package com.twitter.timelineranker.uteg_liked_by_tweets
+packagelon com.twittelonr.timelonlinelonrankelonr.utelong_likelond_by_twelonelonts
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.timelineranker.config.RequestScopes
-import com.twitter.timelineranker.config.RuntimeConfiguration
-import com.twitter.timelineranker.parameters.ConfigBuilder
-import com.twitter.timelineranker.repository.CandidatesRepositoryBuilder
-import com.twitter.timelineranker.visibility.SgsFollowGraphDataFields
-import com.twitter.search.earlybird.thriftscala.EarlybirdService
-import com.twitter.timelines.util.stats.RequestScope
-import com.twitter.util.Duration
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.timelonlinelonrankelonr.config.RelonquelonstScopelons
+import com.twittelonr.timelonlinelonrankelonr.config.RuntimelonConfiguration
+import com.twittelonr.timelonlinelonrankelonr.paramelontelonrs.ConfigBuildelonr
+import com.twittelonr.timelonlinelonrankelonr.relonpository.CandidatelonsRelonpositoryBuildelonr
+import com.twittelonr.timelonlinelonrankelonr.visibility.SgsFollowGraphDataFielonlds
+import com.twittelonr.selonarch.elonarlybird.thriftscala.elonarlybirdSelonrvicelon
+import com.twittelonr.timelonlinelons.util.stats.RelonquelonstScopelon
+import com.twittelonr.util.Duration
 
-class UtegLikedByTweetsRepositoryBuilder(config: RuntimeConfiguration, configBuilder: ConfigBuilder)
-    extends CandidatesRepositoryBuilder(config) {
-  override val clientSubId = "uteg_liked_by_tweets"
-  override val requestScope: RequestScope = RequestScopes.UtegLikedByTweetsSource
-  override val followGraphDataFieldsToFetch: SgsFollowGraphDataFields.ValueSet =
-    SgsFollowGraphDataFields.ValueSet(
-      SgsFollowGraphDataFields.FollowedUserIds,
-      SgsFollowGraphDataFields.MutuallyFollowingUserIds,
-      SgsFollowGraphDataFields.MutedUserIds
+class UtelongLikelondByTwelonelontsRelonpositoryBuildelonr(config: RuntimelonConfiguration, configBuildelonr: ConfigBuildelonr)
+    elonxtelonnds CandidatelonsRelonpositoryBuildelonr(config) {
+  ovelonrridelon val clielonntSubId = "utelong_likelond_by_twelonelonts"
+  ovelonrridelon val relonquelonstScopelon: RelonquelonstScopelon = RelonquelonstScopelons.UtelongLikelondByTwelonelontsSourcelon
+  ovelonrridelon val followGraphDataFielonldsToFelontch: SgsFollowGraphDataFielonlds.ValuelonSelont =
+    SgsFollowGraphDataFielonlds.ValuelonSelont(
+      SgsFollowGraphDataFielonlds.FollowelondUselonrIds,
+      SgsFollowGraphDataFielonlds.MutuallyFollowingUselonrIds,
+      SgsFollowGraphDataFielonlds.MutelondUselonrIds
     )
-  override val searchProcessingTimeout: Duration = 400.milliseconds
-  override def earlybirdClient(scope: String): EarlybirdService.MethodPerEndpoint =
-    config.underlyingClients.createEarlybirdClient(
-      scope = scope,
-      requestTimeout = 500.milliseconds,
-      timeout = 900.milliseconds,
-      retryPolicy = config.underlyingClients.DefaultRetryPolicy
-    )
-
-  def apply(): UtegLikedByTweetsRepository = {
-    val utegLikedByTweetsSource = new UtegLikedByTweetsSource(
-      userTweetEntityGraphClient = userTweetEntityGraphClient,
-      gizmoduckClient = gizmoduckClient,
-      searchClient = searchClient,
-      tweetyPieClient = tweetyPieHighQoSClient,
-      userMetadataClient = userMetadataClient,
-      followGraphDataProvider = followGraphDataProvider,
-      contentFeaturesCache = config.underlyingClients.contentFeaturesCache,
-      statsReceiver = config.statsReceiver
+  ovelonrridelon val selonarchProcelonssingTimelonout: Duration = 400.milliselonconds
+  ovelonrridelon delonf elonarlybirdClielonnt(scopelon: String): elonarlybirdSelonrvicelon.MelonthodPelonrelonndpoint =
+    config.undelonrlyingClielonnts.crelonatelonelonarlybirdClielonnt(
+      scopelon = scopelon,
+      relonquelonstTimelonout = 500.milliselonconds,
+      timelonout = 900.milliselonconds,
+      relontryPolicy = config.undelonrlyingClielonnts.DelonfaultRelontryPolicy
     )
 
-    new UtegLikedByTweetsRepository(utegLikedByTweetsSource)
+  delonf apply(): UtelongLikelondByTwelonelontsRelonpository = {
+    val utelongLikelondByTwelonelontsSourcelon = nelonw UtelongLikelondByTwelonelontsSourcelon(
+      uselonrTwelonelontelonntityGraphClielonnt = uselonrTwelonelontelonntityGraphClielonnt,
+      gizmoduckClielonnt = gizmoduckClielonnt,
+      selonarchClielonnt = selonarchClielonnt,
+      twelonelontyPielonClielonnt = twelonelontyPielonHighQoSClielonnt,
+      uselonrMelontadataClielonnt = uselonrMelontadataClielonnt,
+      followGraphDataProvidelonr = followGraphDataProvidelonr,
+      contelonntFelonaturelonsCachelon = config.undelonrlyingClielonnts.contelonntFelonaturelonsCachelon,
+      statsReloncelonivelonr = config.statsReloncelonivelonr
+    )
+
+    nelonw UtelongLikelondByTwelonelontsRelonpository(utelongLikelondByTwelonelontsSourcelon)
   }
 }

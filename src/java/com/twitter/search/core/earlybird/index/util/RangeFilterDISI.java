@@ -1,58 +1,58 @@
-package com.twitter.search.core.earlybird.index.util;
+packagelon com.twittelonr.selonarch.corelon.elonarlybird.indelonx.util;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 
-import org.apache.lucene.index.LeafReader;
-import org.apache.lucene.search.DocIdSetIterator;
+import org.apachelon.lucelonnelon.indelonx.LelonafRelonadelonr;
+import org.apachelon.lucelonnelon.selonarch.DocIdSelontItelonrator;
 
 /**
- * A doc id set iterator that iterates over a filtered set of ids from firstId inclusive to lastId
- * inclusive.
+ * A doc id selont itelonrator that itelonratelons ovelonr a filtelonrelond selont of ids from firstId inclusivelon to lastId
+ * inclusivelon.
  */
-public class RangeFilterDISI extends DocIdSetIterator {
-  private final RangeDISI delegate;
+public class RangelonFiltelonrDISI elonxtelonnds DocIdSelontItelonrator {
+  privatelon final RangelonDISI delonlelongatelon;
 
-  public RangeFilterDISI(LeafReader reader) throws IOException {
-    this(reader, 0, reader.maxDoc() - 1);
+  public RangelonFiltelonrDISI(LelonafRelonadelonr relonadelonr) throws IOelonxcelonption {
+    this(relonadelonr, 0, relonadelonr.maxDoc() - 1);
   }
 
-  public RangeFilterDISI(LeafReader reader, int smallestDocID, int largestDocID)
-      throws IOException {
-    this.delegate = new RangeDISI(reader, smallestDocID, largestDocID);
+  public RangelonFiltelonrDISI(LelonafRelonadelonr relonadelonr, int smallelonstDocID, int largelonstDocID)
+      throws IOelonxcelonption {
+    this.delonlelongatelon = nelonw RangelonDISI(relonadelonr, smallelonstDocID, largelonstDocID);
   }
 
-  @Override
+  @Ovelonrridelon
   public int docID() {
-    return delegate.docID();
+    relonturn delonlelongatelon.docID();
   }
 
-  @Override
-  public int nextDoc() throws IOException {
-    delegate.nextDoc();
-    return nextValidDoc();
+  @Ovelonrridelon
+  public int nelonxtDoc() throws IOelonxcelonption {
+    delonlelongatelon.nelonxtDoc();
+    relonturn nelonxtValidDoc();
   }
 
-  @Override
-  public int advance(int target) throws IOException {
-    delegate.advance(target);
-    return nextValidDoc();
+  @Ovelonrridelon
+  public int advancelon(int targelont) throws IOelonxcelonption {
+    delonlelongatelon.advancelon(targelont);
+    relonturn nelonxtValidDoc();
   }
 
-  private int nextValidDoc() throws IOException {
-    int doc = delegate.docID();
-    while (doc != NO_MORE_DOCS && !shouldReturnDoc()) {
-      doc = delegate.nextDoc();
+  privatelon int nelonxtValidDoc() throws IOelonxcelonption {
+    int doc = delonlelongatelon.docID();
+    whilelon (doc != NO_MORelon_DOCS && !shouldRelonturnDoc()) {
+      doc = delonlelongatelon.nelonxtDoc();
     }
-    return doc;
+    relonturn doc;
   }
 
-  @Override
+  @Ovelonrridelon
   public long cost() {
-    return delegate.cost();
+    relonturn delonlelongatelon.cost();
   }
 
-  // Override this method to add additional filters. Should return true if the current doc is OK.
-  protected boolean shouldReturnDoc() throws IOException {
-    return true;
+  // Ovelonrridelon this melonthod to add additional filtelonrs. Should relonturn truelon if thelon currelonnt doc is OK.
+  protelonctelond boolelonan shouldRelonturnDoc() throws IOelonxcelonption {
+    relonturn truelon;
   }
 }

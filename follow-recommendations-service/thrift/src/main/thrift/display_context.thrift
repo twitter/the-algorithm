@@ -1,62 +1,62 @@
-include "flows.thrift"
-include "recently_engaged_user_id.thrift"
+includelon "flows.thrift"
+includelon "reloncelonntly_elonngagelond_uselonr_id.thrift"
 
-namespace java com.twitter.follow_recommendations.thriftjava
-#@namespace scala com.twitter.follow_recommendations.thriftscala
-#@namespace strato com.twitter.follow_recommendations
+namelonspacelon java com.twittelonr.follow_reloncommelonndations.thriftjava
+#@namelonspacelon scala com.twittelonr.follow_reloncommelonndations.thriftscala
+#@namelonspacelon strato com.twittelonr.follow_reloncommelonndations
 
-struct Profile {
-    1: required i64 profileId(personalDataType='UserId')
-}(hasPersonalData='true')
+struct Profilelon {
+    1: relonquirelond i64 profilelonId(pelonrsonalDataTypelon='UselonrId')
+}(hasPelonrsonalData='truelon')
 
-struct Search {
-    1: required string searchQuery(personalDataType='SearchQuery')
-}(hasPersonalData='true')
+struct Selonarch {
+    1: relonquirelond string selonarchQuelonry(pelonrsonalDataTypelon='SelonarchQuelonry')
+}(hasPelonrsonalData='truelon')
 
 struct Rux {
-    1: required i64 focalAuthorId(personalDataType='UserId')
-}(hasPersonalData='true')
+    1: relonquirelond i64 focalAuthorId(pelonrsonalDataTypelon='UselonrId')
+}(hasPelonrsonalData='truelon')
 
 struct Topic {
-  1: required i64 topicId(personalDataType = 'TopicFollow')
-}(hasPersonalData='true')
+  1: relonquirelond i64 topicId(pelonrsonalDataTypelon = 'TopicFollow')
+}(hasPelonrsonalData='truelon')
 
-struct ReactiveFollow {
-    1: required list<i64> followedUserIds(personalDataType='UserId')
-}(hasPersonalData='true')
+struct RelonactivelonFollow {
+    1: relonquirelond list<i64> followelondUselonrIds(pelonrsonalDataTypelon='UselonrId')
+}(hasPelonrsonalData='truelon')
 
-struct NuxInterests {
-    1: optional flows.FlowContext flowContext // set for recommendation inside an interactive flow
-    2: optional list<i64> uttInterestIds // if provided, we use these interestIds for generating candidates instead of for example fetching user selected interests
-}(hasPersonalData='true')
+struct NuxIntelonrelonsts {
+    1: optional flows.FlowContelonxt flowContelonxt // selont for reloncommelonndation insidelon an intelonractivelon flow
+    2: optional list<i64> uttIntelonrelonstIds // if providelond, welon uselon thelonselon intelonrelonstIds for gelonnelonrating candidatelons instelonad of for elonxamplelon felontching uselonr selonlelonctelond intelonrelonsts
+}(hasPelonrsonalData='truelon')
 
-struct AdCampaignTarget {
-    1: required list<i64> similarToUserIds(personalDataType='UserId')
-}(hasPersonalData='true')
+struct AdCampaignTargelont {
+    1: relonquirelond list<i64> similarToUselonrIds(pelonrsonalDataTypelon='UselonrId')
+}(hasPelonrsonalData='truelon')
 
-struct ConnectTab {
-    1: required list<i64> byfSeedUserIds(personalDataType='UserId')
-    2: required list<i64> similarToUserIds(personalDataType='UserId')
-    3: required list<recently_engaged_user_id.RecentlyEngagedUserId> recentlyEngagedUserIds
-}(hasPersonalData='true')
+struct ConnelonctTab {
+    1: relonquirelond list<i64> byfSelonelondUselonrIds(pelonrsonalDataTypelon='UselonrId')
+    2: relonquirelond list<i64> similarToUselonrIds(pelonrsonalDataTypelon='UselonrId')
+    3: relonquirelond list<reloncelonntly_elonngagelond_uselonr_id.ReloncelonntlyelonngagelondUselonrId> reloncelonntlyelonngagelondUselonrIds
+}(hasPelonrsonalData='truelon')
 
-struct SimilarToUser {
-    1: required i64 similarToUserId(personalDataType='UserId')
-}(hasPersonalData='true')
+struct SimilarToUselonr {
+    1: relonquirelond i64 similarToUselonrId(pelonrsonalDataTypelon='UselonrId')
+}(hasPelonrsonalData='truelon')
 
 struct PostNuxFollowTask {
-    1: optional flows.FlowContext flowContext // set for recommendation inside an interactive flow
-}(hasPersonalData='true')
+    1: optional flows.FlowContelonxt flowContelonxt // selont for reloncommelonndation insidelon an intelonractivelon flow
+}(hasPelonrsonalData='truelon')
 
-union DisplayContext {
-    1: Profile profile
-    2: Search search
+union DisplayContelonxt {
+    1: Profilelon profilelon
+    2: Selonarch selonarch
     3: Rux rux
     4: Topic topic
-    5: ReactiveFollow reactiveFollow
-    6: NuxInterests nuxInterests
-    7: AdCampaignTarget adCampaignTarget
-    8: ConnectTab connectTab
-    9: SimilarToUser similarToUser
+    5: RelonactivelonFollow relonactivelonFollow
+    6: NuxIntelonrelonsts nuxIntelonrelonsts
+    7: AdCampaignTargelont adCampaignTargelont
+    8: ConnelonctTab connelonctTab
+    9: SimilarToUselonr similarToUselonr
     10: PostNuxFollowTask postNuxFollowTask
-}(hasPersonalData='true')
+}(hasPelonrsonalData='truelon')

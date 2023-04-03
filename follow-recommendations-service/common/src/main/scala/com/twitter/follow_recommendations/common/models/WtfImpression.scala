@@ -1,12 +1,12 @@
-package com.twitter.follow_recommendations.common.models
+packagelon com.twittelonr.follow_reloncommelonndations.common.modelonls
 
-import com.twitter.util.Time
+import com.twittelonr.util.Timelon
 
 /**
- * Domain model for representing impressions on wtf recommendations in the past 16 days
+ * Domain modelonl for relonprelonselonnting imprelonssions on wtf reloncommelonndations in thelon past 16 days
  */
-case class WtfImpression(
-  candidateId: Long,
+caselon class WtfImprelonssion(
+  candidatelonId: Long,
   displayLocation: DisplayLocation,
-  latestTime: Time,
+  latelonstTimelon: Timelon,
   counts: Int)

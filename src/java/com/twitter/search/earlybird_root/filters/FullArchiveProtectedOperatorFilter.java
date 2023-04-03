@@ -1,167 +1,167 @@
-package com.twitter.search.earlybird_root.filters;
+packagelon com.twittelonr.selonarch.elonarlybird_root.filtelonrs;
 
 import java.util.List;
 
-import javax.inject.Inject;
+import javax.injelonct.Injelonct;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.earlybird.thrift.EarlybirdDebugInfo;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.queryparser.query.Query;
-import com.twitter.search.queryparser.query.QueryNodeUtils;
-import com.twitter.search.queryparser.query.QueryParserException;
-import com.twitter.search.queryparser.query.search.SearchOperator;
-import com.twitter.search.queryparser.query.search.SearchOperatorConstants;
-import com.twitter.search.queryparser.visitors.DropAllProtectedOperatorVisitor;
-import com.twitter.search.queryparser.visitors.QueryTreeIndex;
-import com.twitter.util.Future;
+import com.twittelonr.finaglelon.Selonrvicelon;
+import com.twittelonr.finaglelon.SimplelonFiltelonr;
+import com.twittelonr.selonarch.common.deloncidelonr.SelonarchDeloncidelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdDelonbugInfo;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonquelonst;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselonCodelon;
+import com.twittelonr.selonarch.elonarlybird_root.common.elonarlybirdRelonquelonstContelonxt;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.Quelonry;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.QuelonryNodelonUtils;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.QuelonryParselonrelonxcelonption;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.selonarch.SelonarchOpelonrator;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.selonarch.SelonarchOpelonratorConstants;
+import com.twittelonr.selonarch.quelonryparselonr.visitors.DropAllProtelonctelondOpelonratorVisitor;
+import com.twittelonr.selonarch.quelonryparselonr.visitors.QuelonryTrelonelonIndelonx;
+import com.twittelonr.util.Futurelon;
 
 /**
- * Full archive service filter validates requests with a protected operator, appends the
- * '[exclude protected]' operator by default, and appends '[filter protected]' operator instead if
- * 'getProtectedTweetsOnly' request param is set. A client error response is returned if any of the
- * following rules is violated.
- *   1. There is at most one 'protected' operator in the query.
- *   2. If there is a 'protected' operator, it must be in the query root node.
- *   3. The parent node of the 'protected' operator must not be negated and must be a conjunction.
- *   4. If there is a positive 'protected' operator, 'followedUserIds' and 'searcherId' request
- *   params must be set.
+ * Full archivelon selonrvicelon filtelonr validatelons relonquelonsts with a protelonctelond opelonrator, appelonnds thelon
+ * '[elonxcludelon protelonctelond]' opelonrator by delonfault, and appelonnds '[filtelonr protelonctelond]' opelonrator instelonad if
+ * 'gelontProtelonctelondTwelonelontsOnly' relonquelonst param is selont. A clielonnt elonrror relonsponselon is relonturnelond if any of thelon
+ * following rulelons is violatelond.
+ *   1. Thelonrelon is at most onelon 'protelonctelond' opelonrator in thelon quelonry.
+ *   2. If thelonrelon is a 'protelonctelond' opelonrator, it must belon in thelon quelonry root nodelon.
+ *   3. Thelon parelonnt nodelon of thelon 'protelonctelond' opelonrator must not belon nelongatelond and must belon a conjunction.
+ *   4. If thelonrelon is a positivelon 'protelonctelond' opelonrator, 'followelondUselonrIds' and 'selonarchelonrId' relonquelonst
+ *   params must belon selont.
  */
-public class FullArchiveProtectedOperatorFilter extends
-    SimpleFilter<EarlybirdRequestContext, EarlybirdResponse> {
-  private static final Logger LOG =
-      LoggerFactory.getLogger(FullArchiveProtectedOperatorFilter.class);
-  private static final SearchOperator EXCLUDE_PROTECTED_OPERATOR =
-      new SearchOperator(SearchOperator.Type.EXCLUDE, SearchOperatorConstants.PROTECTED);
-  private static final SearchOperator FILTER_PROTECTED_OPERATOR =
-      new SearchOperator(SearchOperator.Type.FILTER, SearchOperatorConstants.PROTECTED);
-  private static final SearchCounter QUERY_PARSER_FAILURE_COUNT =
-      SearchCounter.export("protected_operator_filter_query_parser_failure_count");
+public class FullArchivelonProtelonctelondOpelonratorFiltelonr elonxtelonnds
+    SimplelonFiltelonr<elonarlybirdRelonquelonstContelonxt, elonarlybirdRelonsponselon> {
+  privatelon static final Loggelonr LOG =
+      LoggelonrFactory.gelontLoggelonr(FullArchivelonProtelonctelondOpelonratorFiltelonr.class);
+  privatelon static final SelonarchOpelonrator elonXCLUDelon_PROTelonCTelonD_OPelonRATOR =
+      nelonw SelonarchOpelonrator(SelonarchOpelonrator.Typelon.elonXCLUDelon, SelonarchOpelonratorConstants.PROTelonCTelonD);
+  privatelon static final SelonarchOpelonrator FILTelonR_PROTelonCTelonD_OPelonRATOR =
+      nelonw SelonarchOpelonrator(SelonarchOpelonrator.Typelon.FILTelonR, SelonarchOpelonratorConstants.PROTelonCTelonD);
+  privatelon static final SelonarchCountelonr QUelonRY_PARSelonR_FAILURelon_COUNT =
+      SelonarchCountelonr.elonxport("protelonctelond_opelonrator_filtelonr_quelonry_parselonr_failurelon_count");
 
-  private final DropAllProtectedOperatorVisitor dropProtectedOperatorVisitor;
-  private final SearchDecider decider;
+  privatelon final DropAllProtelonctelondOpelonratorVisitor dropProtelonctelondOpelonratorVisitor;
+  privatelon final SelonarchDeloncidelonr deloncidelonr;
 
-  @Inject
-  public FullArchiveProtectedOperatorFilter(
-      DropAllProtectedOperatorVisitor dropProtectedOperatorVisitor,
-      SearchDecider decider) {
-    this.dropProtectedOperatorVisitor = dropProtectedOperatorVisitor;
-    this.decider = decider;
+  @Injelonct
+  public FullArchivelonProtelonctelondOpelonratorFiltelonr(
+      DropAllProtelonctelondOpelonratorVisitor dropProtelonctelondOpelonratorVisitor,
+      SelonarchDeloncidelonr deloncidelonr) {
+    this.dropProtelonctelondOpelonratorVisitor = dropProtelonctelondOpelonratorVisitor;
+    this.deloncidelonr = deloncidelonr;
   }
 
-  @Override
-  public Future<EarlybirdResponse> apply(
-      EarlybirdRequestContext requestContext,
-      Service<EarlybirdRequestContext, EarlybirdResponse> service) {
-    Query query = requestContext.getParsedQuery();
-    if (query == null) {
-      return service.apply(requestContext);
+  @Ovelonrridelon
+  public Futurelon<elonarlybirdRelonsponselon> apply(
+      elonarlybirdRelonquelonstContelonxt relonquelonstContelonxt,
+      Selonrvicelon<elonarlybirdRelonquelonstContelonxt, elonarlybirdRelonsponselon> selonrvicelon) {
+    Quelonry quelonry = relonquelonstContelonxt.gelontParselondQuelonry();
+    if (quelonry == null) {
+      relonturn selonrvicelon.apply(relonquelonstContelonxt);
     }
 
-    QueryTreeIndex queryTreeIndex = QueryTreeIndex.buildFor(query);
-    List<Query> nodeList = queryTreeIndex.getNodeList();
-    // try to find a protected operator, returns error response if more than one protected
-    // operator is detected
-    SearchOperator protectedOperator = null;
-    for (Query node : nodeList) {
-      if (node instanceof SearchOperator) {
-        SearchOperator searchOp = (SearchOperator) node;
-        if (SearchOperatorConstants.PROTECTED.equals(searchOp.getOperand())) {
-          if (protectedOperator == null) {
-            protectedOperator = searchOp;
-          } else {
-            return createErrorResponse("Only one 'protected' operator is expected.");
+    QuelonryTrelonelonIndelonx quelonryTrelonelonIndelonx = QuelonryTrelonelonIndelonx.buildFor(quelonry);
+    List<Quelonry> nodelonList = quelonryTrelonelonIndelonx.gelontNodelonList();
+    // try to find a protelonctelond opelonrator, relonturns elonrror relonsponselon if morelon than onelon protelonctelond
+    // opelonrator is delontelonctelond
+    SelonarchOpelonrator protelonctelondOpelonrator = null;
+    for (Quelonry nodelon : nodelonList) {
+      if (nodelon instancelonof SelonarchOpelonrator) {
+        SelonarchOpelonrator selonarchOp = (SelonarchOpelonrator) nodelon;
+        if (SelonarchOpelonratorConstants.PROTelonCTelonD.elonquals(selonarchOp.gelontOpelonrand())) {
+          if (protelonctelondOpelonrator == null) {
+            protelonctelondOpelonrator = selonarchOp;
+          } elonlselon {
+            relonturn crelonatelonelonrrorRelonsponselon("Only onelon 'protelonctelond' opelonrator is elonxpelonctelond.");
           }
         }
       }
     }
 
-    Query processedQuery;
-    if (protectedOperator == null) {
-      // no protected operator is detected, append '[exclude protected]' by default
-      processedQuery = QueryNodeUtils.appendAsConjunction(query, EXCLUDE_PROTECTED_OPERATOR);
-    } else {
-      // protected operator must be in the query root node
-      if (queryTreeIndex.getParentOf(protectedOperator) != query) {
-        return createErrorResponse("'protected' operator must be in the query root node");
+    Quelonry procelonsselondQuelonry;
+    if (protelonctelondOpelonrator == null) {
+      // no protelonctelond opelonrator is delontelonctelond, appelonnd '[elonxcludelon protelonctelond]' by delonfault
+      procelonsselondQuelonry = QuelonryNodelonUtils.appelonndAsConjunction(quelonry, elonXCLUDelon_PROTelonCTelonD_OPelonRATOR);
+    } elonlselon {
+      // protelonctelond opelonrator must belon in thelon quelonry root nodelon
+      if (quelonryTrelonelonIndelonx.gelontParelonntOf(protelonctelondOpelonrator) != quelonry) {
+        relonturn crelonatelonelonrrorRelonsponselon("'protelonctelond' opelonrator must belon in thelon quelonry root nodelon");
       }
-      // the query node that contains protected operator must not be negated
-      if (query.mustNotOccur()) {
-        return createErrorResponse("The query node that contains a 'protected' operator must not"
-            + " be negated.");
+      // thelon quelonry nodelon that contains protelonctelond opelonrator must not belon nelongatelond
+      if (quelonry.mustNotOccur()) {
+        relonturn crelonatelonelonrrorRelonsponselon("Thelon quelonry nodelon that contains a 'protelonctelond' opelonrator must not"
+            + " belon nelongatelond.");
       }
-      // the query node that contains protected operator must be a conjunction
-      if (!query.isTypeOf(Query.QueryType.CONJUNCTION)) {
-        return createErrorResponse("The query node that contains a 'protected' operator must"
-            + " be a conjunction.");
+      // thelon quelonry nodelon that contains protelonctelond opelonrator must belon a conjunction
+      if (!quelonry.isTypelonOf(Quelonry.QuelonryTypelon.CONJUNCTION)) {
+        relonturn crelonatelonelonrrorRelonsponselon("Thelon quelonry nodelon that contains a 'protelonctelond' opelonrator must"
+            + " belon a conjunction.");
       }
-      // check the existence of 'followedUserIds' and 'searcherId' if it is a positive operator
-      if (isPositive(protectedOperator)) {
-        if (!validateRequestParam(requestContext.getRequest())) {
-          return createErrorResponse("'followedUserIds' and 'searcherId' are required "
-              + "by positive 'protected' operator.");
+      // chelonck thelon elonxistelonncelon of 'followelondUselonrIds' and 'selonarchelonrId' if it is a positivelon opelonrator
+      if (isPositivelon(protelonctelondOpelonrator)) {
+        if (!validatelonRelonquelonstParam(relonquelonstContelonxt.gelontRelonquelonst())) {
+          relonturn crelonatelonelonrrorRelonsponselon("'followelondUselonrIds' and 'selonarchelonrId' arelon relonquirelond "
+              + "by positivelon 'protelonctelond' opelonrator.");
         }
       }
-      processedQuery = query;
+      procelonsselondQuelonry = quelonry;
     }
-    // update processedQuery if 'getProtectedTweetsOnly' is set to true, it takes precedence over
-    // the existing protected operators
-    if (requestContext.getRequest().isGetProtectedTweetsOnly()) {
-      if (!validateRequestParam(requestContext.getRequest())) {
-        return createErrorResponse("'followedUserIds' and 'searcherId' are required "
-            + "when 'getProtectedTweetsOnly' is set to true.");
+    // updatelon procelonsselondQuelonry if 'gelontProtelonctelondTwelonelontsOnly' is selont to truelon, it takelons preloncelondelonncelon ovelonr
+    // thelon elonxisting protelonctelond opelonrators
+    if (relonquelonstContelonxt.gelontRelonquelonst().isGelontProtelonctelondTwelonelontsOnly()) {
+      if (!validatelonRelonquelonstParam(relonquelonstContelonxt.gelontRelonquelonst())) {
+        relonturn crelonatelonelonrrorRelonsponselon("'followelondUselonrIds' and 'selonarchelonrId' arelon relonquirelond "
+            + "whelonn 'gelontProtelonctelondTwelonelontsOnly' is selont to truelon.");
       }
       try {
-        processedQuery = processedQuery.accept(dropProtectedOperatorVisitor);
-      } catch (QueryParserException e) {
-        // this should not happen since we already have a parsed query
-        QUERY_PARSER_FAILURE_COUNT.increment();
+        procelonsselondQuelonry = procelonsselondQuelonry.accelonpt(dropProtelonctelondOpelonratorVisitor);
+      } catch (QuelonryParselonrelonxcelonption elon) {
+        // this should not happelonn sincelon welon alrelonady havelon a parselond quelonry
+        QUelonRY_PARSelonR_FAILURelon_COUNT.increlonmelonnt();
         LOG.warn(
-            "Failed to drop protected operator for serialized query: " + query.serialize(), e);
+            "Failelond to drop protelonctelond opelonrator for selonrializelond quelonry: " + quelonry.selonrializelon(), elon);
       }
-      processedQuery =
-          QueryNodeUtils.appendAsConjunction(processedQuery, FILTER_PROTECTED_OPERATOR);
+      procelonsselondQuelonry =
+          QuelonryNodelonUtils.appelonndAsConjunction(procelonsselondQuelonry, FILTelonR_PROTelonCTelonD_OPelonRATOR);
     }
 
-    if (processedQuery == query) {
-      return service.apply(requestContext);
-    } else {
-      EarlybirdRequestContext clonedRequestContext =
-          EarlybirdRequestContext.copyRequestContext(requestContext, processedQuery);
-      return service.apply(clonedRequestContext);
+    if (procelonsselondQuelonry == quelonry) {
+      relonturn selonrvicelon.apply(relonquelonstContelonxt);
+    } elonlselon {
+      elonarlybirdRelonquelonstContelonxt clonelondRelonquelonstContelonxt =
+          elonarlybirdRelonquelonstContelonxt.copyRelonquelonstContelonxt(relonquelonstContelonxt, procelonsselondQuelonry);
+      relonturn selonrvicelon.apply(clonelondRelonquelonstContelonxt);
     }
   }
 
-  private boolean validateRequestParam(EarlybirdRequest request) {
-    List<Long> followedUserIds = request.followedUserIds;
-    Long searcherId = (request.searchQuery != null && request.searchQuery.isSetSearcherId())
-        ? request.searchQuery.getSearcherId() : null;
-    return followedUserIds != null && !followedUserIds.isEmpty() && searcherId != null;
+  privatelon boolelonan validatelonRelonquelonstParam(elonarlybirdRelonquelonst relonquelonst) {
+    List<Long> followelondUselonrIds = relonquelonst.followelondUselonrIds;
+    Long selonarchelonrId = (relonquelonst.selonarchQuelonry != null && relonquelonst.selonarchQuelonry.isSelontSelonarchelonrId())
+        ? relonquelonst.selonarchQuelonry.gelontSelonarchelonrId() : null;
+    relonturn followelondUselonrIds != null && !followelondUselonrIds.iselonmpty() && selonarchelonrId != null;
   }
 
-  private boolean isPositive(SearchOperator searchOp) {
-    boolean isNegateExclude = searchOp.mustNotOccur()
-        && searchOp.getOperatorType() == SearchOperator.Type.EXCLUDE;
-    boolean isPositive = !searchOp.mustNotOccur()
-        && (searchOp.getOperatorType() == SearchOperator.Type.INCLUDE
-        || searchOp.getOperatorType() == SearchOperator.Type.FILTER);
-    return isNegateExclude || isPositive;
+  privatelon boolelonan isPositivelon(SelonarchOpelonrator selonarchOp) {
+    boolelonan isNelongatelonelonxcludelon = selonarchOp.mustNotOccur()
+        && selonarchOp.gelontOpelonratorTypelon() == SelonarchOpelonrator.Typelon.elonXCLUDelon;
+    boolelonan isPositivelon = !selonarchOp.mustNotOccur()
+        && (selonarchOp.gelontOpelonratorTypelon() == SelonarchOpelonrator.Typelon.INCLUDelon
+        || selonarchOp.gelontOpelonratorTypelon() == SelonarchOpelonrator.Typelon.FILTelonR);
+    relonturn isNelongatelonelonxcludelon || isPositivelon;
   }
 
-  private Future<EarlybirdResponse> createErrorResponse(String errorMsg) {
-    EarlybirdResponse response = new EarlybirdResponse(EarlybirdResponseCode.CLIENT_ERROR, 0);
-    response.setDebugInfo(new EarlybirdDebugInfo().setHost("full_archive_root"));
-    response.setDebugString(errorMsg);
-    return Future.value(response);
+  privatelon Futurelon<elonarlybirdRelonsponselon> crelonatelonelonrrorRelonsponselon(String elonrrorMsg) {
+    elonarlybirdRelonsponselon relonsponselon = nelonw elonarlybirdRelonsponselon(elonarlybirdRelonsponselonCodelon.CLIelonNT_elonRROR, 0);
+    relonsponselon.selontDelonbugInfo(nelonw elonarlybirdDelonbugInfo().selontHost("full_archivelon_root"));
+    relonsponselon.selontDelonbugString(elonrrorMsg);
+    relonturn Futurelon.valuelon(relonsponselon);
   }
 
 }

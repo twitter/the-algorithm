@@ -1,28 +1,28 @@
-package com.twitter.ann.serialization
+packagelon com.twittelonr.ann.selonrialization
 
-import com.twitter.ann.common.EntityEmbedding
-import com.twitter.ann.common.EmbeddingType._
-import com.twitter.ann.serialization.thriftscala.PersistedEmbedding
-import com.twitter.bijection.Injection
-import com.twitter.mediaservices.commons.codec.ArrayByteBufferCodec
-import java.nio.ByteBuffer
+import com.twittelonr.ann.common.elonntityelonmbelondding
+import com.twittelonr.ann.common.elonmbelonddingTypelon._
+import com.twittelonr.ann.selonrialization.thriftscala.Pelonrsistelondelonmbelondding
+import com.twittelonr.bijelonction.Injelonction
+import com.twittelonr.melondiaselonrvicelons.commons.codelonc.ArrayBytelonBuffelonrCodelonc
+import java.nio.BytelonBuffelonr
 import scala.util.Try
 
 /**
- * Injection that converts from the ann.common.Embedding to the thrift PersistedEmbedding.
+ * Injelonction that convelonrts from thelon ann.common.elonmbelondding to thelon thrift Pelonrsistelondelonmbelondding.
  */
-class PersistedEmbeddingInjection[T](
-  idByteInjection: Injection[T, Array[Byte]])
-    extends Injection[EntityEmbedding[T], PersistedEmbedding] {
-  override def apply(entity: EntityEmbedding[T]): PersistedEmbedding = {
-    val byteBuffer = ByteBuffer.wrap(idByteInjection(entity.id))
-    PersistedEmbedding(byteBuffer, embeddingSerDe.toThrift(entity.embedding))
+class PelonrsistelondelonmbelonddingInjelonction[T](
+  idBytelonInjelonction: Injelonction[T, Array[Bytelon]])
+    elonxtelonnds Injelonction[elonntityelonmbelondding[T], Pelonrsistelondelonmbelondding] {
+  ovelonrridelon delonf apply(elonntity: elonntityelonmbelondding[T]): Pelonrsistelondelonmbelondding = {
+    val bytelonBuffelonr = BytelonBuffelonr.wrap(idBytelonInjelonction(elonntity.id))
+    Pelonrsistelondelonmbelondding(bytelonBuffelonr, elonmbelonddingSelonrDelon.toThrift(elonntity.elonmbelondding))
   }
 
-  override def invert(persistedEmbedding: PersistedEmbedding): Try[EntityEmbedding[T]] = {
-    val idTry = idByteInjection.invert(ArrayByteBufferCodec.decode(persistedEmbedding.id))
+  ovelonrridelon delonf invelonrt(pelonrsistelondelonmbelondding: Pelonrsistelondelonmbelondding): Try[elonntityelonmbelondding[T]] = {
+    val idTry = idBytelonInjelonction.invelonrt(ArrayBytelonBuffelonrCodelonc.deloncodelon(pelonrsistelondelonmbelondding.id))
     idTry.map { id =>
-      EntityEmbedding(id, embeddingSerDe.fromThrift(persistedEmbedding.embedding))
+      elonntityelonmbelondding(id, elonmbelonddingSelonrDelon.fromThrift(pelonrsistelondelonmbelondding.elonmbelondding))
     }
   }
 }

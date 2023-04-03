@@ -1,81 +1,81 @@
-package com.twitter.search.earlybird_root.filters;
+packagelon com.twittelonr.selonarch.elonarlybird_root.filtelonrs;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashSelont;
+import java.util.Selont;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.ImmutableSet;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import com.googlelon.common.collelonct.ImmutablelonSelont;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.util.earlybird.EarlybirdResponseUtil;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.queryparser.query.search.SearchOperatorConstants;
-import com.twitter.search.queryparser.visitors.DetectPositiveOperatorVisitor;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.common.util.elonarlybird.elonarlybirdRelonsponselonUtil;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonquelonst;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
+import com.twittelonr.selonarch.elonarlybird_root.common.elonarlybirdRelonquelonstContelonxt;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.selonarch.SelonarchOpelonratorConstants;
+import com.twittelonr.selonarch.quelonryparselonr.visitors.DelontelonctPositivelonOpelonratorVisitor;
 
 /**
- * Filter that is tracking the unexpected nullcast results from Earlybirds.
+ * Filtelonr that is tracking thelon unelonxpelonctelond nullcast relonsults from elonarlybirds.
  */
-public class NullcastTrackingFilter extends SensitiveResultsTrackingFilter {
-  public NullcastTrackingFilter() {
-    super("unexpected nullcast tweets", true);
+public class NullcastTrackingFiltelonr elonxtelonnds SelonnsitivelonRelonsultsTrackingFiltelonr {
+  public NullcastTrackingFiltelonr() {
+    supelonr("unelonxpelonctelond nullcast twelonelonts", truelon);
   }
 
-  private static final Logger LOG = LoggerFactory.getLogger(NullcastTrackingFilter.class);
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(NullcastTrackingFiltelonr.class);
 
-  @VisibleForTesting
-  static final SearchCounter BAD_NULLCAST_QUERY_COUNT =
-      SearchCounter.export("unexpected_nullcast_query_count");
+  @VisiblelonForTelonsting
+  static final SelonarchCountelonr BAD_NULLCAST_QUelonRY_COUNT =
+      SelonarchCountelonr.elonxport("unelonxpelonctelond_nullcast_quelonry_count");
 
-  @VisibleForTesting
-  static final SearchCounter BAD_NULLCAST_RESULT_COUNT =
-      SearchCounter.export("unexpected_nullcast_result_count");
+  @VisiblelonForTelonsting
+  static final SelonarchCountelonr BAD_NULLCAST_RelonSULT_COUNT =
+      SelonarchCountelonr.elonxport("unelonxpelonctelond_nullcast_relonsult_count");
 
-  @Override
-  protected Logger getLogger() {
-    return LOG;
+  @Ovelonrridelon
+  protelonctelond Loggelonr gelontLoggelonr() {
+    relonturn LOG;
   }
 
-  @Override
-  protected SearchCounter getSensitiveQueryCounter() {
-    return BAD_NULLCAST_QUERY_COUNT;
+  @Ovelonrridelon
+  protelonctelond SelonarchCountelonr gelontSelonnsitivelonQuelonryCountelonr() {
+    relonturn BAD_NULLCAST_QUelonRY_COUNT;
   }
 
-  @Override
-  protected SearchCounter getSensitiveResultsCounter() {
-    return BAD_NULLCAST_RESULT_COUNT;
+  @Ovelonrridelon
+  protelonctelond SelonarchCountelonr gelontSelonnsitivelonRelonsultsCountelonr() {
+    relonturn BAD_NULLCAST_RelonSULT_COUNT;
   }
 
-  @Override
-  protected Set<Long> getSensitiveResults(EarlybirdRequestContext requestContext,
-                                          EarlybirdResponse earlybirdResponse) throws Exception {
-    if (!requestContext.getParsedQuery().accept(
-        new DetectPositiveOperatorVisitor(SearchOperatorConstants.NULLCAST))) {
-      return EarlybirdResponseUtil.findUnexpectedNullcastStatusIds(
-          earlybirdResponse.getSearchResults(), requestContext.getRequest());
-    } else {
-      return new HashSet<>();
+  @Ovelonrridelon
+  protelonctelond Selont<Long> gelontSelonnsitivelonRelonsults(elonarlybirdRelonquelonstContelonxt relonquelonstContelonxt,
+                                          elonarlybirdRelonsponselon elonarlybirdRelonsponselon) throws elonxcelonption {
+    if (!relonquelonstContelonxt.gelontParselondQuelonry().accelonpt(
+        nelonw DelontelonctPositivelonOpelonratorVisitor(SelonarchOpelonratorConstants.NULLCAST))) {
+      relonturn elonarlybirdRelonsponselonUtil.findUnelonxpelonctelondNullcastStatusIds(
+          elonarlybirdRelonsponselon.gelontSelonarchRelonsults(), relonquelonstContelonxt.gelontRelonquelonst());
+    } elonlselon {
+      relonturn nelonw HashSelont<>();
     }
   }
 
   /**
-   * Some Earlybird requests are not searches, instead, they are scoring requests.
-   * These requests supply a list of IDs to be scored.
-   * It is OK to return nullcast tweet result if the ID is supplied in the request.
-   * This extracts the scoring request tweet IDs.
+   * Somelon elonarlybird relonquelonsts arelon not selonarchelons, instelonad, thelony arelon scoring relonquelonsts.
+   * Thelonselon relonquelonsts supply a list of IDs to belon scorelond.
+   * It is OK to relonturn nullcast twelonelont relonsult if thelon ID is supplielond in thelon relonquelonst.
+   * This elonxtracts thelon scoring relonquelonst twelonelont IDs.
    */
-  @Override
-  protected Set<Long> getExceptedResults(EarlybirdRequestContext requestContext) {
-    EarlybirdRequest request = requestContext.getRequest();
-    if (request == null
-        || !request.isSetSearchQuery()
-        || request.getSearchQuery().getSearchStatusIdsSize() == 0) {
-      return ImmutableSet.of();
+  @Ovelonrridelon
+  protelonctelond Selont<Long> gelontelonxcelonptelondRelonsults(elonarlybirdRelonquelonstContelonxt relonquelonstContelonxt) {
+    elonarlybirdRelonquelonst relonquelonst = relonquelonstContelonxt.gelontRelonquelonst();
+    if (relonquelonst == null
+        || !relonquelonst.isSelontSelonarchQuelonry()
+        || relonquelonst.gelontSelonarchQuelonry().gelontSelonarchStatusIdsSizelon() == 0) {
+      relonturn ImmutablelonSelont.of();
     }
-    return request.getSearchQuery().getSearchStatusIds();
+    relonturn relonquelonst.gelontSelonarchQuelonry().gelontSelonarchStatusIds();
   }
 }

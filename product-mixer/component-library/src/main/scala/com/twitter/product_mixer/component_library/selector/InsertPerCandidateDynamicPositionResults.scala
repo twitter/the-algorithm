@@ -1,78 +1,78 @@
-package com.twitter.product_mixer.component_library.selector
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.selonlelonctor
 
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.functional_component.common.SpecificPipeline
-import com.twitter.product_mixer.core.functional_component.common.SpecificPipelines
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.functional_component.selector.SelectorResult
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.CandidatelonScopelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.SpeloncificPipelonlinelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.SpeloncificPipelonlinelons
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.selonlelonctor.Selonlelonctor
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.selonlelonctor.SelonlelonctorRelonsult
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonPipelonlinelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
-object InsertPerCandidateDynamicPositionResults {
-  def apply[Query <: PipelineQuery](
-    candidatePipeline: CandidatePipelineIdentifier,
-    candidatePositionInResults: CandidatePositionInResults[Query]
-  ): InsertPerCandidateDynamicPositionResults[Query] =
-    InsertPerCandidateDynamicPositionResults[Query](
-      SpecificPipeline(candidatePipeline),
-      candidatePositionInResults)
+objelonct InselonrtPelonrCandidatelonDynamicPositionRelonsults {
+  delonf apply[Quelonry <: PipelonlinelonQuelonry](
+    candidatelonPipelonlinelon: CandidatelonPipelonlinelonIdelonntifielonr,
+    candidatelonPositionInRelonsults: CandidatelonPositionInRelonsults[Quelonry]
+  ): InselonrtPelonrCandidatelonDynamicPositionRelonsults[Quelonry] =
+    InselonrtPelonrCandidatelonDynamicPositionRelonsults[Quelonry](
+      SpeloncificPipelonlinelon(candidatelonPipelonlinelon),
+      candidatelonPositionInRelonsults)
 
-  def apply[Query <: PipelineQuery](
-    candidatePipelines: Set[CandidatePipelineIdentifier],
-    candidatePositionInResults: CandidatePositionInResults[Query]
-  ): InsertPerCandidateDynamicPositionResults[Query] =
-    InsertPerCandidateDynamicPositionResults[Query](
-      SpecificPipelines(candidatePipelines),
-      candidatePositionInResults)
+  delonf apply[Quelonry <: PipelonlinelonQuelonry](
+    candidatelonPipelonlinelons: Selont[CandidatelonPipelonlinelonIdelonntifielonr],
+    candidatelonPositionInRelonsults: CandidatelonPositionInRelonsults[Quelonry]
+  ): InselonrtPelonrCandidatelonDynamicPositionRelonsults[Quelonry] =
+    InselonrtPelonrCandidatelonDynamicPositionRelonsults[Quelonry](
+      SpeloncificPipelonlinelons(candidatelonPipelonlinelons),
+      candidatelonPositionInRelonsults)
 }
 
 /**
- * Insert each candidate in the [[CandidateScope]] at the index relative to the original candidate in the `result`
- * at that index using the provided [[CandidatePositionInResults]] instance. If the current results are shorter
- * length than the computed position, then the candidate will be appended to the results.
+ * Inselonrt elonach candidatelon in thelon [[CandidatelonScopelon]] at thelon indelonx relonlativelon to thelon original candidatelon in thelon `relonsult`
+ * at that indelonx using thelon providelond [[CandidatelonPositionInRelonsults]] instancelon. If thelon currelonnt relonsults arelon shortelonr
+ * lelonngth than thelon computelond position, thelonn thelon candidatelon will belon appelonndelond to thelon relonsults.
  *
- * When the [[CandidatePositionInResults]] returns a `None`, that candidate is not
- * added to the result. Negative position values are treated as 0 (front of the results).
+ * Whelonn thelon [[CandidatelonPositionInRelonsults]] relonturns a `Nonelon`, that candidatelon is not
+ * addelond to thelon relonsult. Nelongativelon position valuelons arelon trelonatelond as 0 (front of thelon relonsults).
  *
- * @example if [[CandidatePositionInResults]] results in a candidate mapping from index to candidate of
- *          `{0 -> a, 0 -> b, 0 -> c, 1 -> e, 2 -> g, 2 -> h} ` with  original `results` = `[D, F]`,
- *          then the resulting output would look like `[a, b, c, D, e, F, g, h]`
+ * @elonxamplelon if [[CandidatelonPositionInRelonsults]] relonsults in a candidatelon mapping from indelonx to candidatelon of
+ *          `{0 -> a, 0 -> b, 0 -> c, 1 -> elon, 2 -> g, 2 -> h} ` with  original `relonsults` = `[D, F]`,
+ *          thelonn thelon relonsulting output would look likelon `[a, b, c, D, elon, F, g, h]`
  */
-case class InsertPerCandidateDynamicPositionResults[-Query <: PipelineQuery](
-  pipelineScope: CandidateScope,
-  candidatePositionInResults: CandidatePositionInResults[Query])
-    extends Selector[Query] {
+caselon class InselonrtPelonrCandidatelonDynamicPositionRelonsults[-Quelonry <: PipelonlinelonQuelonry](
+  pipelonlinelonScopelon: CandidatelonScopelon,
+  candidatelonPositionInRelonsults: CandidatelonPositionInRelonsults[Quelonry])
+    elonxtelonnds Selonlelonctor[Quelonry] {
 
-  override def apply(
-    query: Query,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
-  ): SelectorResult = {
-    val (candidatesToInsert, otherRemainingCandidatesTuples) = remainingCandidates
-      .map { candidate: CandidateWithDetails =>
+  ovelonrridelon delonf apply(
+    quelonry: Quelonry,
+    relonmainingCandidatelons: Selonq[CandidatelonWithDelontails],
+    relonsult: Selonq[CandidatelonWithDelontails]
+  ): SelonlelonctorRelonsult = {
+    val (candidatelonsToInselonrt, othelonrRelonmainingCandidatelonsTuplelons) = relonmainingCandidatelons
+      .map { candidatelon: CandidatelonWithDelontails =>
         val position =
-          if (pipelineScope.contains(candidate))
-            candidatePositionInResults(query, candidate, result)
-          else
-            None
-        (position, candidate)
-      }.partition { case (index, _) => index.isDefined }
+          if (pipelonlinelonScopelon.contains(candidatelon))
+            candidatelonPositionInRelonsults(quelonry, candidatelon, relonsult)
+          elonlselon
+            Nonelon
+        (position, candidatelon)
+      }.partition { caselon (indelonx, _) => indelonx.isDelonfinelond }
 
-    val otherRemainingCandidates = otherRemainingCandidatesTuples.map {
-      case (_, candidate) => candidate
+    val othelonrRelonmainingCandidatelons = othelonrRelonmainingCandidatelonsTuplelons.map {
+      caselon (_, candidatelon) => candidatelon
     }
 
-    val positionAndCandidateList = candidatesToInsert.collect {
-      case (Some(position), candidate) => (position, candidate)
+    val positionAndCandidatelonList = candidatelonsToInselonrt.collelonct {
+      caselon (Somelon(position), candidatelon) => (position, candidatelon)
     }
 
-    val mergedResult = DynamicPositionSelector.mergeByIndexIntoResult(
-      positionAndCandidateList,
-      result,
-      DynamicPositionSelector.RelativeIndices
+    val melonrgelondRelonsult = DynamicPositionSelonlelonctor.melonrgelonByIndelonxIntoRelonsult(
+      positionAndCandidatelonList,
+      relonsult,
+      DynamicPositionSelonlelonctor.RelonlativelonIndicelons
     )
 
-    SelectorResult(remainingCandidates = otherRemainingCandidates, result = mergedResult)
+    SelonlelonctorRelonsult(relonmainingCandidatelons = othelonrRelonmainingCandidatelons, relonsult = melonrgelondRelonsult)
   }
 }

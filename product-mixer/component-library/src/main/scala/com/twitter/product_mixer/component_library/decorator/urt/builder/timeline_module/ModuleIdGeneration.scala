@@ -1,51 +1,51 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.timeline_module
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.timelonlinelon_modulelon
 
 /**
- *  This trait is used for Module ID generation. Clients are safe to ignore this code unless they
- *  have a specific use case that requires hard-coded, specific, module ids.  In that scenario,
- *  they can use the [[ManualModuleId]] case class.
+ *  This trait is uselond for Modulelon ID gelonnelonration. Clielonnts arelon safelon to ignorelon this codelon unlelonss thelony
+ *  havelon a speloncific uselon caselon that relonquirelons hard-codelond, speloncific, modulelon ids.  In that scelonnario,
+ *  thelony can uselon thelon [[ManualModulelonId]] caselon class.
  */
-sealed trait ModuleIdGeneration {
-  val moduleId: Long
+selonalelond trait ModulelonIdGelonnelonration {
+  val modulelonId: Long
 }
 
-object ModuleIdGeneration {
-  def apply(moduleId: Long): ModuleIdGeneration = moduleId match {
-    case moduleId if AutomaticUniqueModuleId.isAutomaticUniqueModuleId(moduleId) =>
-      AutomaticUniqueModuleId(moduleId)
-    case moduleId => ManualModuleId(moduleId)
+objelonct ModulelonIdGelonnelonration {
+  delonf apply(modulelonId: Long): ModulelonIdGelonnelonration = modulelonId match {
+    caselon modulelonId if AutomaticUniquelonModulelonId.isAutomaticUniquelonModulelonId(modulelonId) =>
+      AutomaticUniquelonModulelonId(modulelonId)
+    caselon modulelonId => ManualModulelonId(modulelonId)
   }
 }
 
 /**
- * Generate unique Ids for each module, which results in unique URT entryIds
- * for each module even if they share the same entryNamespace.
- * This is the default and recommended use case.
- * Note that the module Id value is just a placeholder
+ * Gelonnelonratelon uniquelon Ids for elonach modulelon, which relonsults in uniquelon URT elonntryIds
+ * for elonach modulelon elonvelonn if thelony sharelon thelon samelon elonntryNamelonspacelon.
+ * This is thelon delonfault and reloncommelonndelond uselon caselon.
+ * Notelon that thelon modulelon Id valuelon is just a placelonholdelonr
  */
-case class AutomaticUniqueModuleId private (moduleId: Long = 0L) extends ModuleIdGeneration {
-  def withOffset(offset: Long): AutomaticUniqueModuleId = copy(
-    AutomaticUniqueModuleId.idRange.min + offset)
+caselon class AutomaticUniquelonModulelonId privatelon (modulelonId: Long = 0L) elonxtelonnds ModulelonIdGelonnelonration {
+  delonf withOffselont(offselont: Long): AutomaticUniquelonModulelonId = copy(
+    AutomaticUniquelonModulelonId.idRangelon.min + offselont)
 }
 
-object AutomaticUniqueModuleId {
-  // We use a specific numeric range to track whether IDs should be automatically generated.
-  val idRange: Range = Range(-10000, -1000)
+objelonct AutomaticUniquelonModulelonId {
+  // Welon uselon a speloncific numelonric rangelon to track whelonthelonr IDs should belon automatically gelonnelonratelond.
+  val idRangelon: Rangelon = Rangelon(-10000, -1000)
 
-  def apply(): AutomaticUniqueModuleId = AutomaticUniqueModuleId(idRange.min)
+  delonf apply(): AutomaticUniquelonModulelonId = AutomaticUniquelonModulelonId(idRangelon.min)
 
-  def isAutomaticUniqueModuleId(moduleId: Long): Boolean = idRange.contains(moduleId)
+  delonf isAutomaticUniquelonModulelonId(modulelonId: Long): Boolelonan = idRangelon.contains(modulelonId)
 }
 
 /**
- * ManualModuleId should normally not be required, but is helpful if the
- * entryId of the module must be controlled. A scenario where this may be
- * required is if a single candidate source returns multiple modules, and
- * each module has the same presentation (e.g. Header, Footer). By setting
- * different IDs, we signal to the platform that each module should be separate
- * by using a different manual Id.
+ * ManualModulelonId should normally not belon relonquirelond, but is helonlpful if thelon
+ * elonntryId of thelon modulelon must belon controllelond. A scelonnario whelonrelon this may belon
+ * relonquirelond is if a singlelon candidatelon sourcelon relonturns multiplelon modulelons, and
+ * elonach modulelon has thelon samelon prelonselonntation (elon.g. Helonadelonr, Footelonr). By selontting
+ * diffelonrelonnt IDs, welon signal to thelon platform that elonach modulelon should belon selonparatelon
+ * by using a diffelonrelonnt manual Id.
  */
-case class ManualModuleId(override val moduleId: Long) extends ModuleIdGeneration {
-  // Negative module IDs are reserved for internal usage
-  if (moduleId < 0) throw new IllegalArgumentException("moduleId must be a positive number")
+caselon class ManualModulelonId(ovelonrridelon val modulelonId: Long) elonxtelonnds ModulelonIdGelonnelonration {
+  // Nelongativelon modulelon IDs arelon relonselonrvelond for intelonrnal usagelon
+  if (modulelonId < 0) throw nelonw IllelongalArgumelonntelonxcelonption("modulelonId must belon a positivelon numbelonr")
 }

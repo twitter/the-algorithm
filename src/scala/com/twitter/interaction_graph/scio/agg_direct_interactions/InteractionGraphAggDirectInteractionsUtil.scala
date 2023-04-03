@@ -1,168 +1,168 @@
-package com.twitter.interaction_graph.scio.agg_direct_interactions
+packagelon com.twittelonr.intelonraction_graph.scio.agg_direlonct_intelonractions
 
-import com.spotify.scio.ScioMetrics
-import com.spotify.scio.values.SCollection
-import com.twitter.interaction_graph.scio.common.FeatureGeneratorUtil
-import com.twitter.interaction_graph.scio.common.FeatureKey
-import com.twitter.interaction_graph.scio.common.InteractionGraphRawInput
-import com.twitter.interaction_graph.scio.common.UserUtil.DUMMY_USER_ID
-import com.twitter.interaction_graph.thriftscala.Edge
-import com.twitter.interaction_graph.thriftscala.FeatureName
-import com.twitter.interaction_graph.thriftscala.Vertex
-import com.twitter.timelineservice.thriftscala.ContextualizedFavoriteEvent
-import com.twitter.timelineservice.thriftscala.FavoriteEventUnion.Favorite
-import com.twitter.tweetsource.common.thriftscala.UnhydratedFlatTweet
-import com.twitter.tweetypie.thriftscala.TweetMediaTagEvent
+import com.spotify.scio.ScioMelontrics
+import com.spotify.scio.valuelons.SCollelonction
+import com.twittelonr.intelonraction_graph.scio.common.FelonaturelonGelonnelonratorUtil
+import com.twittelonr.intelonraction_graph.scio.common.FelonaturelonKelony
+import com.twittelonr.intelonraction_graph.scio.common.IntelonractionGraphRawInput
+import com.twittelonr.intelonraction_graph.scio.common.UselonrUtil.DUMMY_USelonR_ID
+import com.twittelonr.intelonraction_graph.thriftscala.elondgelon
+import com.twittelonr.intelonraction_graph.thriftscala.FelonaturelonNamelon
+import com.twittelonr.intelonraction_graph.thriftscala.Velonrtelonx
+import com.twittelonr.timelonlinelonselonrvicelon.thriftscala.ContelonxtualizelondFavoritelonelonvelonnt
+import com.twittelonr.timelonlinelonselonrvicelon.thriftscala.FavoritelonelonvelonntUnion.Favoritelon
+import com.twittelonr.twelonelontsourcelon.common.thriftscala.UnhydratelondFlatTwelonelont
+import com.twittelonr.twelonelontypielon.thriftscala.TwelonelontMelondiaTagelonvelonnt
 
-object InteractionGraphAggDirectInteractionsUtil {
+objelonct IntelonractionGraphAggDirelonctIntelonractionsUtil {
 
-  val DefaultFeatureValue = 1L
+  val DelonfaultFelonaturelonValuelon = 1L
 
-  def favouriteFeatures(
-    rawFavorites: SCollection[ContextualizedFavoriteEvent]
-  ): SCollection[(FeatureKey, Long)] = {
-    rawFavorites
-      .withName("fav features")
-      .flatMap { event =>
-        event.event match {
-          case Favorite(e) if e.userId != e.tweetUserId =>
-            ScioMetrics.counter("process", "fav").inc()
-            Some(
-              FeatureKey(e.userId, e.tweetUserId, FeatureName.NumFavorites) -> DefaultFeatureValue)
-          case _ => None
+  delonf favouritelonFelonaturelons(
+    rawFavoritelons: SCollelonction[ContelonxtualizelondFavoritelonelonvelonnt]
+  ): SCollelonction[(FelonaturelonKelony, Long)] = {
+    rawFavoritelons
+      .withNamelon("fav felonaturelons")
+      .flatMap { elonvelonnt =>
+        elonvelonnt.elonvelonnt match {
+          caselon Favoritelon(elon) if elon.uselonrId != elon.twelonelontUselonrId =>
+            ScioMelontrics.countelonr("procelonss", "fav").inc()
+            Somelon(
+              FelonaturelonKelony(elon.uselonrId, elon.twelonelontUselonrId, FelonaturelonNamelon.NumFavoritelons) -> DelonfaultFelonaturelonValuelon)
+          caselon _ => Nonelon
         }
       }
 
   }
 
-  def mentionFeatures(
-    tweetSource: SCollection[UnhydratedFlatTweet]
-  ): SCollection[(FeatureKey, Long)] = {
-    tweetSource
-      .withName("mention features")
+  delonf melonntionFelonaturelons(
+    twelonelontSourcelon: SCollelonction[UnhydratelondFlatTwelonelont]
+  ): SCollelonction[(FelonaturelonKelony, Long)] = {
+    twelonelontSourcelon
+      .withNamelon("melonntion felonaturelons")
       .flatMap {
-        case s if s.shareSourceTweetId.isEmpty => // only for non-retweets
-          s.atMentionedUserIds
-            .map { users =>
-              users.toSet.map { uid: Long =>
-                ScioMetrics.counter("process", "mention").inc()
-                FeatureKey(s.userId, uid, FeatureName.NumMentions) -> DefaultFeatureValue
-              }.toSeq
+        caselon s if s.sharelonSourcelonTwelonelontId.iselonmpty => // only for non-relontwelonelonts
+          s.atMelonntionelondUselonrIds
+            .map { uselonrs =>
+              uselonrs.toSelont.map { uid: Long =>
+                ScioMelontrics.countelonr("procelonss", "melonntion").inc()
+                FelonaturelonKelony(s.uselonrId, uid, FelonaturelonNamelon.NumMelonntions) -> DelonfaultFelonaturelonValuelon
+              }.toSelonq
             }
-            .getOrElse(Nil)
-        case _ =>
+            .gelontOrelonlselon(Nil)
+        caselon _ =>
           Nil
       }
   }
 
-  def photoTagFeatures(
-    rawPhotoTags: SCollection[TweetMediaTagEvent]
-  ): SCollection[(FeatureKey, Long)] = {
+  delonf photoTagFelonaturelons(
+    rawPhotoTags: SCollelonction[TwelonelontMelondiaTagelonvelonnt]
+  ): SCollelonction[(FelonaturelonKelony, Long)] = {
     rawPhotoTags
-      .withName("photo tag features")
+      .withNamelon("photo tag felonaturelons")
       .flatMap { p =>
-        p.taggedUserIds.map { (p.userId, _) }
+        p.taggelondUselonrIds.map { (p.uselonrId, _) }
       }
-      .collect {
-        case (src, dst) if src != dst =>
-          ScioMetrics.counter("process", "photo tag").inc()
-          FeatureKey(src, dst, FeatureName.NumPhotoTags) -> DefaultFeatureValue
-      }
-  }
-
-  def retweetFeatures(
-    tweetSource: SCollection[UnhydratedFlatTweet]
-  ): SCollection[(FeatureKey, Long)] = {
-    tweetSource
-      .withName("retweet features")
-      .collect {
-        case s if s.shareSourceUserId.exists(_ != s.userId) =>
-          ScioMetrics.counter("process", "share tweet").inc()
-          FeatureKey(
-            s.userId,
-            s.shareSourceUserId.get,
-            FeatureName.NumRetweets) -> DefaultFeatureValue
+      .collelonct {
+        caselon (src, dst) if src != dst =>
+          ScioMelontrics.countelonr("procelonss", "photo tag").inc()
+          FelonaturelonKelony(src, dst, FelonaturelonNamelon.NumPhotoTags) -> DelonfaultFelonaturelonValuelon
       }
   }
 
-  def quotedTweetFeatures(
-    tweetSource: SCollection[UnhydratedFlatTweet]
-  ): SCollection[(FeatureKey, Long)] = {
-    tweetSource
-      .withName("quoted tweet features")
-      .collect {
-        case t if t.quotedTweetUserId.isDefined =>
-          ScioMetrics.counter("process", "quote tweet").inc()
-          FeatureKey(
-            t.userId,
-            t.quotedTweetUserId.get,
-            FeatureName.NumTweetQuotes) -> DefaultFeatureValue
+  delonf relontwelonelontFelonaturelons(
+    twelonelontSourcelon: SCollelonction[UnhydratelondFlatTwelonelont]
+  ): SCollelonction[(FelonaturelonKelony, Long)] = {
+    twelonelontSourcelon
+      .withNamelon("relontwelonelont felonaturelons")
+      .collelonct {
+        caselon s if s.sharelonSourcelonUselonrId.elonxists(_ != s.uselonrId) =>
+          ScioMelontrics.countelonr("procelonss", "sharelon twelonelont").inc()
+          FelonaturelonKelony(
+            s.uselonrId,
+            s.sharelonSourcelonUselonrId.gelont,
+            FelonaturelonNamelon.NumRelontwelonelonts) -> DelonfaultFelonaturelonValuelon
       }
   }
 
-  def replyTweetFeatures(
-    tweetSource: SCollection[UnhydratedFlatTweet]
-  ): SCollection[(FeatureKey, Long)] = {
-    tweetSource
-      .withName("reply tweet features")
-      .collect {
-        case t if t.inReplyToUserId.isDefined =>
-          ScioMetrics.counter("process", "reply tweet").inc()
-          FeatureKey(t.userId, t.inReplyToUserId.get, FeatureName.NumReplies) -> DefaultFeatureValue
+  delonf quotelondTwelonelontFelonaturelons(
+    twelonelontSourcelon: SCollelonction[UnhydratelondFlatTwelonelont]
+  ): SCollelonction[(FelonaturelonKelony, Long)] = {
+    twelonelontSourcelon
+      .withNamelon("quotelond twelonelont felonaturelons")
+      .collelonct {
+        caselon t if t.quotelondTwelonelontUselonrId.isDelonfinelond =>
+          ScioMelontrics.countelonr("procelonss", "quotelon twelonelont").inc()
+          FelonaturelonKelony(
+            t.uselonrId,
+            t.quotelondTwelonelontUselonrId.gelont,
+            FelonaturelonNamelon.NumTwelonelontQuotelons) -> DelonfaultFelonaturelonValuelon
       }
   }
 
-  // we create edges to a dummy user id since creating a tweet has no destination id
-  def createTweetFeatures(
-    tweetSource: SCollection[UnhydratedFlatTweet]
-  ): SCollection[(FeatureKey, Long)] = {
-    tweetSource.withName("create tweet features").map { tweet =>
-      ScioMetrics.counter("process", "create tweet").inc()
-      FeatureKey(tweet.userId, DUMMY_USER_ID, FeatureName.NumCreateTweets) -> DefaultFeatureValue
+  delonf relonplyTwelonelontFelonaturelons(
+    twelonelontSourcelon: SCollelonction[UnhydratelondFlatTwelonelont]
+  ): SCollelonction[(FelonaturelonKelony, Long)] = {
+    twelonelontSourcelon
+      .withNamelon("relonply twelonelont felonaturelons")
+      .collelonct {
+        caselon t if t.inRelonplyToUselonrId.isDelonfinelond =>
+          ScioMelontrics.countelonr("procelonss", "relonply twelonelont").inc()
+          FelonaturelonKelony(t.uselonrId, t.inRelonplyToUselonrId.gelont, FelonaturelonNamelon.NumRelonplielons) -> DelonfaultFelonaturelonValuelon
+      }
+  }
+
+  // welon crelonatelon elondgelons to a dummy uselonr id sincelon crelonating a twelonelont has no delonstination id
+  delonf crelonatelonTwelonelontFelonaturelons(
+    twelonelontSourcelon: SCollelonction[UnhydratelondFlatTwelonelont]
+  ): SCollelonction[(FelonaturelonKelony, Long)] = {
+    twelonelontSourcelon.withNamelon("crelonatelon twelonelont felonaturelons").map { twelonelont =>
+      ScioMelontrics.countelonr("procelonss", "crelonatelon twelonelont").inc()
+      FelonaturelonKelony(twelonelont.uselonrId, DUMMY_USelonR_ID, FelonaturelonNamelon.NumCrelonatelonTwelonelonts) -> DelonfaultFelonaturelonValuelon
     }
   }
 
-  def process(
-    rawFavorites: SCollection[ContextualizedFavoriteEvent],
-    tweetSource: SCollection[UnhydratedFlatTweet],
-    rawPhotoTags: SCollection[TweetMediaTagEvent],
-    safeUsers: SCollection[Long]
-  ): (SCollection[Vertex], SCollection[Edge]) = {
-    val favouriteInput = favouriteFeatures(rawFavorites)
-    val mentionInput = mentionFeatures(tweetSource)
-    val photoTagInput = photoTagFeatures(rawPhotoTags)
-    val retweetInput = retweetFeatures(tweetSource)
-    val quotedTweetInput = quotedTweetFeatures(tweetSource)
-    val replyInput = replyTweetFeatures(tweetSource)
-    val createTweetInput = createTweetFeatures(tweetSource)
+  delonf procelonss(
+    rawFavoritelons: SCollelonction[ContelonxtualizelondFavoritelonelonvelonnt],
+    twelonelontSourcelon: SCollelonction[UnhydratelondFlatTwelonelont],
+    rawPhotoTags: SCollelonction[TwelonelontMelondiaTagelonvelonnt],
+    safelonUselonrs: SCollelonction[Long]
+  ): (SCollelonction[Velonrtelonx], SCollelonction[elondgelon]) = {
+    val favouritelonInput = favouritelonFelonaturelons(rawFavoritelons)
+    val melonntionInput = melonntionFelonaturelons(twelonelontSourcelon)
+    val photoTagInput = photoTagFelonaturelons(rawPhotoTags)
+    val relontwelonelontInput = relontwelonelontFelonaturelons(twelonelontSourcelon)
+    val quotelondTwelonelontInput = quotelondTwelonelontFelonaturelons(twelonelontSourcelon)
+    val relonplyInput = relonplyTwelonelontFelonaturelons(twelonelontSourcelon)
+    val crelonatelonTwelonelontInput = crelonatelonTwelonelontFelonaturelons(twelonelontSourcelon)
 
-    val allInput = SCollection.unionAll(
-      Seq(
-        favouriteInput,
-        mentionInput,
+    val allInput = SCollelonction.unionAll(
+      Selonq(
+        favouritelonInput,
+        melonntionInput,
         photoTagInput,
-        retweetInput,
-        quotedTweetInput,
-        replyInput,
-        createTweetInput
+        relontwelonelontInput,
+        quotelondTwelonelontInput,
+        relonplyInput,
+        crelonatelonTwelonelontInput
       ))
 
-    val filteredFeatureInput = allInput
-      .keyBy(_._1.src)
-      .intersectByKey(safeUsers) // filter for safe users
-      .values
-      .collect {
-        case (FeatureKey(src, dst, feature), featureValue) if src != dst =>
-          FeatureKey(src, dst, feature) -> featureValue
+    val filtelonrelondFelonaturelonInput = allInput
+      .kelonyBy(_._1.src)
+      .intelonrselonctByKelony(safelonUselonrs) // filtelonr for safelon uselonrs
+      .valuelons
+      .collelonct {
+        caselon (FelonaturelonKelony(src, dst, felonaturelon), felonaturelonValuelon) if src != dst =>
+          FelonaturelonKelony(src, dst, felonaturelon) -> felonaturelonValuelon
       }
-      .sumByKey
+      .sumByKelony
       .map {
-        case (FeatureKey(src, dst, feature), featureValue) =>
-          val age = 1
-          InteractionGraphRawInput(src, dst, feature, age, featureValue)
+        caselon (FelonaturelonKelony(src, dst, felonaturelon), felonaturelonValuelon) =>
+          val agelon = 1
+          IntelonractionGraphRawInput(src, dst, felonaturelon, agelon, felonaturelonValuelon)
       }
 
-    FeatureGeneratorUtil.getFeatures(filteredFeatureInput)
+    FelonaturelonGelonnelonratorUtil.gelontFelonaturelons(filtelonrelondFelonaturelonInput)
   }
 
 }

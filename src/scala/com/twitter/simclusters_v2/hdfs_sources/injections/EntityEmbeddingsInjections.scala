@@ -1,47 +1,47 @@
-package com.twitter.simclusters_v2.hdfs_sources.injections
+packagelon com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions
 
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.ScalaBinaryThrift
-import com.twitter.simclusters_v2.thriftscala._
-import com.twitter.ml.api.thriftscala.Embedding
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.Long2BigEndian
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.ScalaCompactThrift
+import com.twittelonr.scalding_intelonrnal.multiformat.format.kelonyval.KelonyValInjelonction
+import com.twittelonr.scalding_intelonrnal.multiformat.format.kelonyval.KelonyValInjelonction.ScalaBinaryThrift
+import com.twittelonr.simclustelonrs_v2.thriftscala._
+import com.twittelonr.ml.api.thriftscala.elonmbelondding
+import com.twittelonr.scalding_intelonrnal.multiformat.format.kelonyval.KelonyValInjelonction.Long2Bigelonndian
+import com.twittelonr.scalding_intelonrnal.multiformat.format.kelonyval.KelonyValInjelonction.ScalaCompactThrift
 
-object EntityEmbeddingsInjections {
+objelonct elonntityelonmbelonddingsInjelonctions {
 
-  final val EntitySimClustersEmbeddingInjection: KeyValInjection[
-    SimClustersEmbeddingId,
-    SimClustersEmbedding
+  final val elonntitySimClustelonrselonmbelonddingInjelonction: KelonyValInjelonction[
+    SimClustelonrselonmbelonddingId,
+    SimClustelonrselonmbelondding
   ] =
-    KeyValInjection(
-      ScalaBinaryThrift(SimClustersEmbeddingId),
-      ScalaBinaryThrift(SimClustersEmbedding)
+    KelonyValInjelonction(
+      ScalaBinaryThrift(SimClustelonrselonmbelonddingId),
+      ScalaBinaryThrift(SimClustelonrselonmbelondding)
     )
 
-  final val InternalIdEmbeddingInjection: KeyValInjection[
-    SimClustersEmbeddingId,
-    InternalIdEmbedding
+  final val IntelonrnalIdelonmbelonddingInjelonction: KelonyValInjelonction[
+    SimClustelonrselonmbelonddingId,
+    IntelonrnalIdelonmbelondding
   ] =
-    KeyValInjection(
-      ScalaBinaryThrift(SimClustersEmbeddingId),
-      ScalaBinaryThrift(InternalIdEmbedding)
+    KelonyValInjelonction(
+      ScalaBinaryThrift(SimClustelonrselonmbelonddingId),
+      ScalaBinaryThrift(IntelonrnalIdelonmbelondding)
     )
 
-  final val EntitySimClustersMultiEmbeddingInjection: KeyValInjection[
-    SimClustersMultiEmbeddingId,
-    SimClustersMultiEmbedding
+  final val elonntitySimClustelonrsMultielonmbelonddingInjelonction: KelonyValInjelonction[
+    SimClustelonrsMultielonmbelonddingId,
+    SimClustelonrsMultielonmbelondding
   ] =
-    KeyValInjection(
-      ScalaBinaryThrift(SimClustersMultiEmbeddingId),
-      ScalaBinaryThrift(SimClustersMultiEmbedding)
+    KelonyValInjelonction(
+      ScalaBinaryThrift(SimClustelonrsMultielonmbelonddingId),
+      ScalaBinaryThrift(SimClustelonrsMultielonmbelondding)
     )
 
-  final val UserMbcgEmbeddingInjection: KeyValInjection[
+  final val UselonrMbcgelonmbelonddingInjelonction: KelonyValInjelonction[
     Long,
-    Embedding
+    elonmbelondding
   ] =
-    KeyValInjection[Long, Embedding](
-      Long2BigEndian,
-      ScalaCompactThrift(Embedding)
+    KelonyValInjelonction[Long, elonmbelondding](
+      Long2Bigelonndian,
+      ScalaCompactThrift(elonmbelondding)
     )
 }

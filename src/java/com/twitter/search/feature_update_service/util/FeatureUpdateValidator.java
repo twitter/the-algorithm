@@ -1,41 +1,41 @@
-package com.twitter.search.feature_update_service.util;
+packagelon com.twittelonr.selonarch.felonaturelon_updatelon_selonrvicelon.util;
 
 
-import javax.annotation.Nullable;
+import javax.annotation.Nullablelon;
 
-import com.twitter.search.common.schema.base.ThriftDocumentUtil;
-import com.twitter.search.feature_update_service.thriftjava.FeatureUpdateRequest;
-import com.twitter.search.feature_update_service.thriftjava.FeatureUpdateResponse;
-import com.twitter.search.feature_update_service.thriftjava.FeatureUpdateResponseCode;
+import com.twittelonr.selonarch.common.schelonma.baselon.ThriftDocumelonntUtil;
+import com.twittelonr.selonarch.felonaturelon_updatelon_selonrvicelon.thriftjava.FelonaturelonUpdatelonRelonquelonst;
+import com.twittelonr.selonarch.felonaturelon_updatelon_selonrvicelon.thriftjava.FelonaturelonUpdatelonRelonsponselon;
+import com.twittelonr.selonarch.felonaturelon_updatelon_selonrvicelon.thriftjava.FelonaturelonUpdatelonRelonsponselonCodelon;
 
-public final class FeatureUpdateValidator {
+public final class FelonaturelonUpdatelonValidator {
 
-  private FeatureUpdateValidator() { }
+  privatelon FelonaturelonUpdatelonValidator() { }
 
   /**
-   * Validates FeatureUpdateRequest
-   * @param featureUpdate instance of FeatureUpdateRequest with ThriftIndexingEvent
-   * @return null if valid, instance of FeatureUpdateResponse if not.
-   * Response will have appropriate error code and message set.
+   * Validatelons FelonaturelonUpdatelonRelonquelonst
+   * @param felonaturelonUpdatelon instancelon of FelonaturelonUpdatelonRelonquelonst with ThriftIndelonxingelonvelonnt
+   * @relonturn null if valid, instancelon of FelonaturelonUpdatelonRelonsponselon if not.
+   * Relonsponselon will havelon appropriatelon elonrror codelon and melonssagelon selont.
    */
-  @Nullable
-  public static FeatureUpdateResponse validate(FeatureUpdateRequest featureUpdate) {
+  @Nullablelon
+  public static FelonaturelonUpdatelonRelonsponselon validatelon(FelonaturelonUpdatelonRelonquelonst felonaturelonUpdatelon) {
 
-    if (ThriftDocumentUtil.hasDuplicateFields(featureUpdate.getEvent().getDocument())) {
-      return createResponse(
-          String.format("duplicate document fields: %s", featureUpdate.toString()));
+    if (ThriftDocumelonntUtil.hasDuplicatelonFielonlds(felonaturelonUpdatelon.gelontelonvelonnt().gelontDocumelonnt())) {
+      relonturn crelonatelonRelonsponselon(
+          String.format("duplicatelon documelonnt fielonlds: %s", felonaturelonUpdatelon.toString()));
     }
-    if (!featureUpdate.getEvent().isSetUid()) {
-      return createResponse(String.format("unset uid: %s", featureUpdate.toString()));
+    if (!felonaturelonUpdatelon.gelontelonvelonnt().isSelontUid()) {
+      relonturn crelonatelonRelonsponselon(String.format("unselont uid: %s", felonaturelonUpdatelon.toString()));
     }
 
-    return null;
+    relonturn null;
   }
 
-  private static FeatureUpdateResponse createResponse(String errorMsg) {
-    FeatureUpdateResponseCode responseCode = FeatureUpdateResponseCode.CLIENT_ERROR;
-    FeatureUpdateResponse response = new FeatureUpdateResponse(responseCode);
-    response.setDetailMessage(errorMsg);
-    return response;
+  privatelon static FelonaturelonUpdatelonRelonsponselon crelonatelonRelonsponselon(String elonrrorMsg) {
+    FelonaturelonUpdatelonRelonsponselonCodelon relonsponselonCodelon = FelonaturelonUpdatelonRelonsponselonCodelon.CLIelonNT_elonRROR;
+    FelonaturelonUpdatelonRelonsponselon relonsponselon = nelonw FelonaturelonUpdatelonRelonsponselon(relonsponselonCodelon);
+    relonsponselon.selontDelontailMelonssagelon(elonrrorMsg);
+    relonturn relonsponselon;
   }
 }

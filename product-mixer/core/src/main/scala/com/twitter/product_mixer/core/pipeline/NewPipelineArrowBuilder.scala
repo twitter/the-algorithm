@@ -1,181 +1,181 @@
-package com.twitter.product_mixer.core.pipeline
+packagelon com.twittelonr.product_mixelonr.corelon.pipelonlinelon
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.PipelineStepIdentifier
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.pipeline.state.HasExecutorResults
-import com.twitter.product_mixer.core.pipeline.state.HasResult
-import com.twitter.product_mixer.core.pipeline.step.Step
-import com.twitter.product_mixer.core.quality_factor.QualityFactorStatus
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.product_mixer.core.service.Executor.Context
-import com.twitter.product_mixer.core.service.ExecutorResult
-import com.twitter.stitch.Arrow
-import com.twitter.stitch.Arrow.Iso
-import com.twitter.util.Return
-import com.twitter.util.Throw
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.ComponelonntIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.PipelonlinelonStelonpIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.PipelonlinelonFailurelon
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.statelon.HaselonxeloncutorRelonsults
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.statelon.HasRelonsult
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.stelonp.Stelonp
+import com.twittelonr.product_mixelonr.corelon.quality_factor.QualityFactorStatus
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.elonxeloncutor
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.elonxeloncutor.Contelonxt
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.elonxeloncutorRelonsult
+import com.twittelonr.stitch.Arrow
+import com.twittelonr.stitch.Arrow.Iso
+import com.twittelonr.util.Relonturn
+import com.twittelonr.util.Throw
 
 /**
- * Pipeline Arrow Builder used for constructing a final arrow for a pipeline after adding necessary
- * steps.
+ * Pipelonlinelon Arrow Buildelonr uselond for constructing a final arrow for a pipelonlinelon aftelonr adding neloncelonssary
+ * stelonps.
  *
- * @param steps The kept non-empty Pipeline Steps
- * @param addedSteps Steps that have been added, but not necessarily kept.
- * @param statsReceiver Stats Receiver for metric book keeping
- * @tparam Result sThe expected final result type of the pipeline.
- * @tparam State The input state type, which should implement [[HasResult]].
+ * @param stelonps Thelon kelonpt non-elonmpty Pipelonlinelon Stelonps
+ * @param addelondStelonps Stelonps that havelon belonelonn addelond, but not neloncelonssarily kelonpt.
+ * @param statsReloncelonivelonr Stats Reloncelonivelonr for melontric book kelonelonping
+ * @tparam Relonsult sThelon elonxpelonctelond final relonsult typelon of thelon pipelonlinelon.
+ * @tparam Statelon Thelon input statelon typelon, which should implelonmelonnt [[HasRelonsult]].
  */
-case class NewPipelineArrowBuilder[
-  Result,
-  State <: HasExecutorResults[State] with HasResult[Result]
-] private (
-  private val steps: Seq[PipelineStep[State, _, _, _]],
-  override val statsReceiver: StatsReceiver)
-    extends Executor {
+caselon class NelonwPipelonlinelonArrowBuildelonr[
+  Relonsult,
+  Statelon <: HaselonxeloncutorRelonsults[Statelon] with HasRelonsult[Relonsult]
+] privatelon (
+  privatelon val stelonps: Selonq[PipelonlinelonStelonp[Statelon, _, _, _]],
+  ovelonrridelon val statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds elonxeloncutor {
 
-  def add[Config, ExecutorInput, ExResult <: ExecutorResult](
-    pipelineStepIdentifier: PipelineStepIdentifier,
-    step: Step[State, Config, ExecutorInput, ExResult],
-    executorConfig: Config
-  ): NewPipelineArrowBuilder[Result, State] = {
-    require(
-      !steps.contains(pipelineStepIdentifier),
-      s"Found duplicate step $pipelineStepIdentifier when building pipeline arrow")
+  delonf add[Config, elonxeloncutorInput, elonxRelonsult <: elonxeloncutorRelonsult](
+    pipelonlinelonStelonpIdelonntifielonr: PipelonlinelonStelonpIdelonntifielonr,
+    stelonp: Stelonp[Statelon, Config, elonxeloncutorInput, elonxRelonsult],
+    elonxeloncutorConfig: Config
+  ): NelonwPipelonlinelonArrowBuildelonr[Relonsult, Statelon] = {
+    relonquirelon(
+      !stelonps.contains(pipelonlinelonStelonpIdelonntifielonr),
+      s"Found duplicatelon stelonp $pipelonlinelonStelonpIdelonntifielonr whelonn building pipelonlinelon arrow")
 
-    // If the step has nothing to execute, drop it for simplification but still added it to the
-    // "addedSteps" field for build time validation
-    if (step.isEmpty(executorConfig)) {
+    // If thelon stelonp has nothing to elonxeloncutelon, drop it for simplification but still addelond it to thelon
+    // "addelondStelonps" fielonld for build timelon validation
+    if (stelonp.iselonmpty(elonxeloncutorConfig)) {
       this
-    } else {
-      val newPipelineStep =
-        PipelineStep(pipelineStepIdentifier, executorConfig, step)
-      val newSteps = steps :+ newPipelineStep
-      this.copy(steps = newSteps)
+    } elonlselon {
+      val nelonwPipelonlinelonStelonp =
+        PipelonlinelonStelonp(pipelonlinelonStelonpIdelonntifielonr, elonxeloncutorConfig, stelonp)
+      val nelonwStelonps = stelonps :+ nelonwPipelonlinelonStelonp
+      this.copy(stelonps = nelonwStelonps)
     }
   }
 
-  def buildArrow(
-    context: Executor.Context
-  ): Arrow[State, NewPipelineResult[Result]] = {
+  delonf buildArrow(
+    contelonxt: elonxeloncutor.Contelonxt
+  ): Arrow[Statelon, NelonwPipelonlinelonRelonsult[Relonsult]] = {
     val initialArrow = Arrow
-      .map { input: State => NewStepData[State](input) }
-    val allStepArrows = steps.map { step =>
-      Iso.onlyIf[NewStepData[State]] { stepData => !stepData.stopExecuting } {
-        wrapStepWithExecutorBookkeeping(step, context)
+      .map { input: Statelon => NelonwStelonpData[Statelon](input) }
+    val allStelonpArrows = stelonps.map { stelonp =>
+      Iso.onlyIf[NelonwStelonpData[Statelon]] { stelonpData => !stelonpData.stopelonxeloncuting } {
+        wrapStelonpWithelonxeloncutorBookkelonelonping(stelonp, contelonxt)
       }
     }
-    val combinedArrow = isoArrowsSequentially(allStepArrows)
-    val resultArrow = Arrow.map { stepData: NewStepData[State] =>
-      stepData.pipelineFailure match {
-        case Some(failure) =>
-          NewPipelineResult.Failure(failure, stepData.pipelineState.executorResultsByPipelineStep)
-        case None =>
-          NewPipelineResult.Success(
-            stepData.pipelineState.buildResult,
-            stepData.pipelineState.executorResultsByPipelineStep)
+    val combinelondArrow = isoArrowsSelonquelonntially(allStelonpArrows)
+    val relonsultArrow = Arrow.map { stelonpData: NelonwStelonpData[Statelon] =>
+      stelonpData.pipelonlinelonFailurelon match {
+        caselon Somelon(failurelon) =>
+          NelonwPipelonlinelonRelonsult.Failurelon(failurelon, stelonpData.pipelonlinelonStatelon.elonxeloncutorRelonsultsByPipelonlinelonStelonp)
+        caselon Nonelon =>
+          NelonwPipelonlinelonRelonsult.Succelonss(
+            stelonpData.pipelonlinelonStatelon.buildRelonsult,
+            stelonpData.pipelonlinelonStatelon.elonxeloncutorRelonsultsByPipelonlinelonStelonp)
       }
     }
-    initialArrow.andThen(combinedArrow).andThen(resultArrow)
+    initialArrow.andThelonn(combinelondArrow).andThelonn(relonsultArrow)
   }
 
-  private[this] def wrapStepWithExecutorBookkeeping(
-    step: PipelineStep[State, _, _, _],
-    context: Context
-  ): Arrow.Iso[NewStepData[State]] = {
-    val wrapped = wrapStepWithExecutorBookkeeping[NewStepData[State], NewStepData[State]](
-      context = context,
-      identifier = step.stepIdentifier,
-      arrow = step.arrow(context),
-      // extract the failure only if it's present. Not sure if this is needed???
-      transformer = _.pipelineFailure.map(Throw(_)).getOrElse(Return.Unit)
+  privatelon[this] delonf wrapStelonpWithelonxeloncutorBookkelonelonping(
+    stelonp: PipelonlinelonStelonp[Statelon, _, _, _],
+    contelonxt: Contelonxt
+  ): Arrow.Iso[NelonwStelonpData[Statelon]] = {
+    val wrappelond = wrapStelonpWithelonxeloncutorBookkelonelonping[NelonwStelonpData[Statelon], NelonwStelonpData[Statelon]](
+      contelonxt = contelonxt,
+      idelonntifielonr = stelonp.stelonpIdelonntifielonr,
+      arrow = stelonp.arrow(contelonxt),
+      // elonxtract thelon failurelon only if it's prelonselonnt. Not surelon if this is nelonelondelond???
+      transformelonr = _.pipelonlinelonFailurelon.map(Throw(_)).gelontOrelonlselon(Relonturn.Unit)
     )
 
     Arrow
-      .zipWithArg(wrapped.liftToTry)
+      .zipWithArg(wrappelond.liftToTry)
       .map {
-        case (_: NewStepData[State], Return(result)) =>
-          // if Step was successful, return the result
-          result
-        case (previous: NewStepData[State], Throw(pipelineFailure: PipelineFailure)) =>
-          // if the Step failed in such a way that the failure was NOT captured
-          // in the result object, then update the State with the failure
-          previous.withFailure(pipelineFailure)
-        case (_, Throw(ex)) =>
-          // an exception was thrown which was not handled by the failure classifier
-          // this only happens with cancellation exceptions which are re-thrown
-          throw ex
+        caselon (_: NelonwStelonpData[Statelon], Relonturn(relonsult)) =>
+          // if Stelonp was succelonssful, relonturn thelon relonsult
+          relonsult
+        caselon (prelonvious: NelonwStelonpData[Statelon], Throw(pipelonlinelonFailurelon: PipelonlinelonFailurelon)) =>
+          // if thelon Stelonp failelond in such a way that thelon failurelon was NOT capturelond
+          // in thelon relonsult objelonct, thelonn updatelon thelon Statelon with thelon failurelon
+          prelonvious.withFailurelon(pipelonlinelonFailurelon)
+        caselon (_, Throw(elonx)) =>
+          // an elonxcelonption was thrown which was not handlelond by thelon failurelon classifielonr
+          // this only happelonns with cancelonllation elonxcelonptions which arelon relon-thrown
+          throw elonx
       }
   }
 
   /**
-   * Sets up stats [[com.twitter.finagle.stats.Gauge]]s for any [[QualityFactorStatus]]
+   * Selonts up stats [[com.twittelonr.finaglelon.stats.Gaugelon]]s for any [[QualityFactorStatus]]
    *
-   * @note We use provideGauge so these gauges live forever even without a reference.
+   * @notelon Welon uselon providelonGaugelon so thelonselon gaugelons livelon forelonvelonr elonvelonn without a relonfelonrelonncelon.
    */
-  private[pipeline] def buildGaugesForQualityFactor(
-    pipelineIdentifier: ComponentIdentifier,
+  privatelon[pipelonlinelon] delonf buildGaugelonsForQualityFactor(
+    pipelonlinelonIdelonntifielonr: ComponelonntIdelonntifielonr,
     qualityFactorStatus: QualityFactorStatus,
-    statsReceiver: StatsReceiver
+    statsReloncelonivelonr: StatsReloncelonivelonr
   ): Unit = {
-    qualityFactorStatus.qualityFactorByPipeline.foreach {
-      case (identifier, qualityFactor) =>
-        // QF is a relative stat (since the parent pipeline is monitoring a child pipeline)
-        val scopes = pipelineIdentifier.toScopes ++ identifier.toScopes :+ "QualityFactor"
-        statsReceiver.provideGauge(scopes: _*) { qualityFactor.currentValue.toFloat }
+    qualityFactorStatus.qualityFactorByPipelonlinelon.forelonach {
+      caselon (idelonntifielonr, qualityFactor) =>
+        // QF is a relonlativelon stat (sincelon thelon parelonnt pipelonlinelon is monitoring a child pipelonlinelon)
+        val scopelons = pipelonlinelonIdelonntifielonr.toScopelons ++ idelonntifielonr.toScopelons :+ "QualityFactor"
+        statsReloncelonivelonr.providelonGaugelon(scopelons: _*) { qualityFactor.currelonntValuelon.toFloat }
     }
   }
 }
 
-object NewPipelineArrowBuilder {
-  def apply[Result, InputState <: HasExecutorResults[InputState] with HasResult[Result]](
-    statsReceiver: StatsReceiver
-  ): NewPipelineArrowBuilder[Result, InputState] = {
-    NewPipelineArrowBuilder(
-      Seq.empty,
-      statsReceiver
+objelonct NelonwPipelonlinelonArrowBuildelonr {
+  delonf apply[Relonsult, InputStatelon <: HaselonxeloncutorRelonsults[InputStatelon] with HasRelonsult[Relonsult]](
+    statsReloncelonivelonr: StatsReloncelonivelonr
+  ): NelonwPipelonlinelonArrowBuildelonr[Relonsult, InputStatelon] = {
+    NelonwPipelonlinelonArrowBuildelonr(
+      Selonq.elonmpty,
+      statsReloncelonivelonr
     )
   }
 }
 
 /**
- * This is a pipeline specific instance of a step, i.e, a generic step with the step identifier
- * within the pipeline and its executor configs.
- * @param stepIdentifier Step identifier of the step within a pipeline
- * @param executorConfig Config to execute the step with
- * @param step The underlying step to be used
- * @tparam InputState The input state object
- * @tparam ExecutorConfig The config expected for the given step
- * @tparam ExecutorInput Input for the underlying executor
- * @tparam ExecResult The result type
+ * This is a pipelonlinelon speloncific instancelon of a stelonp, i.elon, a gelonnelonric stelonp with thelon stelonp idelonntifielonr
+ * within thelon pipelonlinelon and its elonxeloncutor configs.
+ * @param stelonpIdelonntifielonr Stelonp idelonntifielonr of thelon stelonp within a pipelonlinelon
+ * @param elonxeloncutorConfig Config to elonxeloncutelon thelon stelonp with
+ * @param stelonp Thelon undelonrlying stelonp to belon uselond
+ * @tparam InputStatelon Thelon input statelon objelonct
+ * @tparam elonxeloncutorConfig Thelon config elonxpelonctelond for thelon givelonn stelonp
+ * @tparam elonxeloncutorInput Input for thelon undelonrlying elonxeloncutor
+ * @tparam elonxeloncRelonsult Thelon relonsult typelon
  */
-case class PipelineStep[
-  State <: HasExecutorResults[State],
-  PipelineStepConfig,
-  ExecutorInput,
-  ExecResult <: ExecutorResult
+caselon class PipelonlinelonStelonp[
+  Statelon <: HaselonxeloncutorRelonsults[Statelon],
+  PipelonlinelonStelonpConfig,
+  elonxeloncutorInput,
+  elonxeloncRelonsult <: elonxeloncutorRelonsult
 ](
-  stepIdentifier: PipelineStepIdentifier,
-  executorConfig: PipelineStepConfig,
-  step: Step[State, PipelineStepConfig, ExecutorInput, ExecResult]) {
+  stelonpIdelonntifielonr: PipelonlinelonStelonpIdelonntifielonr,
+  elonxeloncutorConfig: PipelonlinelonStelonpConfig,
+  stelonp: Stelonp[Statelon, PipelonlinelonStelonpConfig, elonxeloncutorInput, elonxeloncRelonsult]) {
 
-  def arrow(
-    context: Executor.Context
-  ): Arrow.Iso[NewStepData[State]] = {
-    val inputArrow = Arrow.map { stepData: NewStepData[State] =>
-      step.adaptInput(stepData.pipelineState, executorConfig)
+  delonf arrow(
+    contelonxt: elonxeloncutor.Contelonxt
+  ): Arrow.Iso[NelonwStelonpData[Statelon]] = {
+    val inputArrow = Arrow.map { stelonpData: NelonwStelonpData[Statelon] =>
+      stelonp.adaptInput(stelonpData.pipelonlinelonStatelon, elonxeloncutorConfig)
     }
 
     Arrow
-      .zipWithArg(inputArrow.andThen(step.arrow(executorConfig, context))).map {
-        case (stepData: NewStepData[State], executorResult: ExecResult @unchecked) =>
-          val updatedResultsByPipelineStep =
-            stepData.pipelineState.executorResultsByPipelineStep + (stepIdentifier -> executorResult)
-          val updatedPipelineState = step
-            .updateState(stepData.pipelineState, executorResult, executorConfig).setExecutorResults(
-              updatedResultsByPipelineStep)
+      .zipWithArg(inputArrow.andThelonn(stelonp.arrow(elonxeloncutorConfig, contelonxt))).map {
+        caselon (stelonpData: NelonwStelonpData[Statelon], elonxeloncutorRelonsult: elonxeloncRelonsult @unchelonckelond) =>
+          val updatelondRelonsultsByPipelonlinelonStelonp =
+            stelonpData.pipelonlinelonStatelon.elonxeloncutorRelonsultsByPipelonlinelonStelonp + (stelonpIdelonntifielonr -> elonxeloncutorRelonsult)
+          val updatelondPipelonlinelonStatelon = stelonp
+            .updatelonStatelon(stelonpData.pipelonlinelonStatelon, elonxeloncutorRelonsult, elonxeloncutorConfig).selontelonxeloncutorRelonsults(
+              updatelondRelonsultsByPipelonlinelonStelonp)
 
-          NewStepData(updatedPipelineState)
+          NelonwStelonpData(updatelondPipelonlinelonStatelon)
       }
   }
 }

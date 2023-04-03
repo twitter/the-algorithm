@@ -1,72 +1,72 @@
-package com.twitter.simclusters_v2.scalding.common
+packagelon com.twittelonr.simclustelonrs_v2.scalding.common
 
-import com.twitter.algebird._
-import com.twitter.scalding.typed.TypedPipe
-import com.twitter.scalding.{Execution, Stat, UniqueID}
+import com.twittelonr.algelonbird._
+import com.twittelonr.scalding.typelond.TypelondPipelon
+import com.twittelonr.scalding.{elonxeloncution, Stat, UniquelonID}
 
 /**
- * A richer version of TypedPipe.
+ * A richelonr velonrsion of TypelondPipelon.
  */
-class TypedRichPipe[V](pipe: TypedPipe[V]) {
+class TypelondRichPipelon[V](pipelon: TypelondPipelon[V]) {
 
-  def count(counterName: String)(implicit uniqueID: UniqueID): TypedPipe[V] = {
-    val stat = Stat(counterName)
-    pipe.map { v =>
+  delonf count(countelonrNamelon: String)(implicit uniquelonID: UniquelonID): TypelondPipelon[V] = {
+    val stat = Stat(countelonrNamelon)
+    pipelon.map { v =>
       stat.inc()
       v
     }
   }
 
   /**
-   * Print a summary of the TypedPipe with total size and some randomly selected records
+   * Print a summary of thelon TypelondPipelon with total sizelon and somelon randomly selonlelonctelond reloncords
    */
-  def getSummary(numRecords: Int = 100): Execution[Option[(Long, String)]] = {
-    val randomSample = Aggregator.reservoirSample[V](numRecords)
+  delonf gelontSummary(numReloncords: Int = 100): elonxeloncution[Option[(Long, String)]] = {
+    val randomSamplelon = Aggrelongator.relonselonrvoirSamplelon[V](numReloncords)
 
-    // more aggregator can be added here
-    pipe
-      .aggregate(randomSample.join(Aggregator.size))
+    // morelon aggrelongator can belon addelond helonrelon
+    pipelon
+      .aggrelongatelon(randomSamplelon.join(Aggrelongator.sizelon))
       .map {
-        case (randomSamples, size) =>
-          val samplesStr = randomSamples
-            .map { sample =>
-              Util.prettyJsonMapper
-                .writeValueAsString(sample)
-                .replaceAll("\n", " ")
+        caselon (randomSamplelons, sizelon) =>
+          val samplelonsStr = randomSamplelons
+            .map { samplelon =>
+              Util.prelonttyJsonMappelonr
+                .writelonValuelonAsString(samplelon)
+                .relonplacelonAll("\n", " ")
             }
             .mkString("\n\t")
 
-          (size, samplesStr)
+          (sizelon, samplelonsStr)
       }
-      .toOptionExecution
+      .toOptionelonxeloncution
   }
 
-  def getSummaryString(name: String, numRecords: Int = 100): Execution[String] = {
-    getSummary(numRecords)
+  delonf gelontSummaryString(namelon: String, numReloncords: Int = 100): elonxeloncution[String] = {
+    gelontSummary(numReloncords)
       .map {
-        case Some((size, string)) =>
-          s"TypedPipeName: $name \nTotal size: $size. \nSample records: \n$string"
-        case None => s"TypedPipeName: $name is empty"
+        caselon Somelon((sizelon, string)) =>
+          s"TypelondPipelonNamelon: $namelon \nTotal sizelon: $sizelon. \nSamplelon reloncords: \n$string"
+        caselon Nonelon => s"TypelondPipelonNamelon: $namelon is elonmpty"
       }
 
   }
 
   /**
-   * Print a summary of the TypedPipe with total size and some randomly selected records
+   * Print a summary of thelon TypelondPipelon with total sizelon and somelon randomly selonlelonctelond reloncords
    */
-  def printSummary(name: String, numRecords: Int = 100): Execution[Unit] = {
-    getSummaryString(name, numRecords).map { s => println(s) }
+  delonf printSummary(namelon: String, numReloncords: Int = 100): elonxeloncution[Unit] = {
+    gelontSummaryString(namelon, numReloncords).map { s => println(s) }
   }
 }
 
-object TypedRichPipe extends java.io.Serializable {
-  import scala.language.implicitConversions
+objelonct TypelondRichPipelon elonxtelonnds java.io.Selonrializablelon {
+  import scala.languagelon.implicitConvelonrsions
 
-  implicit def typedPipeToRichPipe[V](
-    pipe: TypedPipe[V]
+  implicit delonf typelondPipelonToRichPipelon[V](
+    pipelon: TypelondPipelon[V]
   )(
-    implicit uniqueID: UniqueID
-  ): TypedRichPipe[V] = {
-    new TypedRichPipe(pipe)
+    implicit uniquelonID: UniquelonID
+  ): TypelondRichPipelon[V] = {
+    nelonw TypelondRichPipelon(pipelon)
   }
 }

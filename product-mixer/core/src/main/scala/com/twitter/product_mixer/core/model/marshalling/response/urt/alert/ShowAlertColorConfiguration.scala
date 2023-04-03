@@ -1,9 +1,9 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.alert
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.alelonrt
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.RosettaColor
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.color.RoselonttaColor
 
-case class ShowAlertColorConfiguration(
-  background: RosettaColor,
-  text: RosettaColor,
-  border: Option[RosettaColor],
+caselon class ShowAlelonrtColorConfiguration(
+  background: RoselonttaColor,
+  telonxt: RoselonttaColor,
+  bordelonr: Option[RoselonttaColor],
 )

@@ -1,46 +1,46 @@
-package com.twitter.follow_recommendations.flows.post_nux_ml
+packagelon com.twittelonr.follow_reloncommelonndations.flows.post_nux_ml
 
-object PostNuxMlFlowCandidateSourceWeightsFeatureSwitchKeys {
-  val CandidateWeightCrowdSearch = "post_nux_ml_flow_candidate_source_weights_user_crowd_search"
-  val CandidateWeightTopOrganicFollow =
-    "post_nux_ml_flow_candidate_source_weights_top_organic_follow"
-  val CandidateWeightPPMILocaleFollow =
-    "post_nux_ml_flow_candidate_source_weights_user_ppmi_locale_follow"
-  val CandidateWeightForwardEmailBook =
-    "post_nux_ml_flow_candidate_source_weights_user_forward_email_book"
-  val CandidateWeightForwardPhoneBook =
-    "post_nux_ml_flow_candidate_source_weights_user_forward_phone_book"
-  val CandidateWeightOfflineStrongTiePrediction =
-    "post_nux_ml_flow_candidate_source_weights_user_offline_strong_tie_prediction"
-  val CandidateWeightOnlineStp = "post_nux_ml_flow_candidate_source_weights_user_online_stp"
-  val CandidateWeightPopCountry = "post_nux_ml_flow_candidate_source_weights_user_pop_country"
-  val CandidateWeightPopGeohash = "post_nux_ml_flow_candidate_source_weights_user_pop_geohash"
-  val CandidateWeightPopGeohashQualityFollow =
-    "post_nux_ml_flow_candidate_source_weights_user_pop_geohash_quality_follow"
-  val CandidateWeightPopGeoBackfill =
-    "post_nux_ml_flow_candidate_source_weights_user_pop_geo_backfill"
-  val CandidateWeightRecentFollowingSimilarUsers =
-    "post_nux_ml_flow_candidate_source_weights_user_recent_following_similar_users"
-  val CandidateWeightRecentEngagementDirectFollowSalsaExpansion =
-    "post_nux_ml_flow_candidate_source_weights_user_recent_engagement_direct_follow_salsa_expansion"
-  val CandidateWeightRecentEngagementNonDirectFollow =
-    "post_nux_ml_flow_candidate_source_weights_user_recent_engagement_non_direct_follow"
-  val CandidateWeightRecentEngagementSimilarUsers =
-    "post_nux_ml_flow_candidate_source_weights_user_recent_engagement_similar_users"
-  val CandidateWeightRepeatedProfileVisits =
-    "post_nux_ml_flow_candidate_source_weights_user_repeated_profile_visits"
-  val CandidateWeightFollow2vecNearestNeighbors =
-    "post_nux_ml_flow_candidate_source_weights_user_follow2vec_nearest_neighbors"
-  val CandidateWeightReverseEmailBook =
-    "post_nux_ml_flow_candidate_source_weights_user_reverse_email_book"
-  val CandidateWeightReversePhoneBook =
-    "post_nux_ml_flow_candidate_source_weights_user_reverse_phone_book"
-  val CandidateWeightTriangularLoops =
-    "post_nux_ml_flow_candidate_source_weights_user_triangular_loops"
-  val CandidateWeightTwoHopRandomWalk =
-    "post_nux_ml_flow_candidate_source_weights_user_two_hop_random_walk"
-  val CandidateWeightUserUserGraph =
-    "post_nux_ml_flow_candidate_source_weights_user_user_user_graph"
-  val CandidateWeightRealGraphOonV2 =
-    "post_nux_ml_flow_candidate_source_weights_user_real_graph_oon_v2"
+objelonct PostNuxMlFlowCandidatelonSourcelonWelonightsFelonaturelonSwitchKelonys {
+  val CandidatelonWelonightCrowdSelonarch = "post_nux_ml_flow_candidatelon_sourcelon_welonights_uselonr_crowd_selonarch"
+  val CandidatelonWelonightTopOrganicFollow =
+    "post_nux_ml_flow_candidatelon_sourcelon_welonights_top_organic_follow"
+  val CandidatelonWelonightPPMILocalelonFollow =
+    "post_nux_ml_flow_candidatelon_sourcelon_welonights_uselonr_ppmi_localelon_follow"
+  val CandidatelonWelonightForwardelonmailBook =
+    "post_nux_ml_flow_candidatelon_sourcelon_welonights_uselonr_forward_elonmail_book"
+  val CandidatelonWelonightForwardPhonelonBook =
+    "post_nux_ml_flow_candidatelon_sourcelon_welonights_uselonr_forward_phonelon_book"
+  val CandidatelonWelonightOfflinelonStrongTielonPrelondiction =
+    "post_nux_ml_flow_candidatelon_sourcelon_welonights_uselonr_offlinelon_strong_tielon_prelondiction"
+  val CandidatelonWelonightOnlinelonStp = "post_nux_ml_flow_candidatelon_sourcelon_welonights_uselonr_onlinelon_stp"
+  val CandidatelonWelonightPopCountry = "post_nux_ml_flow_candidatelon_sourcelon_welonights_uselonr_pop_country"
+  val CandidatelonWelonightPopGelonohash = "post_nux_ml_flow_candidatelon_sourcelon_welonights_uselonr_pop_gelonohash"
+  val CandidatelonWelonightPopGelonohashQualityFollow =
+    "post_nux_ml_flow_candidatelon_sourcelon_welonights_uselonr_pop_gelonohash_quality_follow"
+  val CandidatelonWelonightPopGelonoBackfill =
+    "post_nux_ml_flow_candidatelon_sourcelon_welonights_uselonr_pop_gelono_backfill"
+  val CandidatelonWelonightReloncelonntFollowingSimilarUselonrs =
+    "post_nux_ml_flow_candidatelon_sourcelon_welonights_uselonr_reloncelonnt_following_similar_uselonrs"
+  val CandidatelonWelonightReloncelonntelonngagelonmelonntDirelonctFollowSalsaelonxpansion =
+    "post_nux_ml_flow_candidatelon_sourcelon_welonights_uselonr_reloncelonnt_elonngagelonmelonnt_direlonct_follow_salsa_elonxpansion"
+  val CandidatelonWelonightReloncelonntelonngagelonmelonntNonDirelonctFollow =
+    "post_nux_ml_flow_candidatelon_sourcelon_welonights_uselonr_reloncelonnt_elonngagelonmelonnt_non_direlonct_follow"
+  val CandidatelonWelonightReloncelonntelonngagelonmelonntSimilarUselonrs =
+    "post_nux_ml_flow_candidatelon_sourcelon_welonights_uselonr_reloncelonnt_elonngagelonmelonnt_similar_uselonrs"
+  val CandidatelonWelonightRelonpelonatelondProfilelonVisits =
+    "post_nux_ml_flow_candidatelon_sourcelon_welonights_uselonr_relonpelonatelond_profilelon_visits"
+  val CandidatelonWelonightFollow2veloncNelonarelonstNelonighbors =
+    "post_nux_ml_flow_candidatelon_sourcelon_welonights_uselonr_follow2velonc_nelonarelonst_nelonighbors"
+  val CandidatelonWelonightRelonvelonrselonelonmailBook =
+    "post_nux_ml_flow_candidatelon_sourcelon_welonights_uselonr_relonvelonrselon_elonmail_book"
+  val CandidatelonWelonightRelonvelonrselonPhonelonBook =
+    "post_nux_ml_flow_candidatelon_sourcelon_welonights_uselonr_relonvelonrselon_phonelon_book"
+  val CandidatelonWelonightTriangularLoops =
+    "post_nux_ml_flow_candidatelon_sourcelon_welonights_uselonr_triangular_loops"
+  val CandidatelonWelonightTwoHopRandomWalk =
+    "post_nux_ml_flow_candidatelon_sourcelon_welonights_uselonr_two_hop_random_walk"
+  val CandidatelonWelonightUselonrUselonrGraph =
+    "post_nux_ml_flow_candidatelon_sourcelon_welonights_uselonr_uselonr_uselonr_graph"
+  val CandidatelonWelonightRelonalGraphOonV2 =
+    "post_nux_ml_flow_candidatelon_sourcelon_welonights_uselonr_relonal_graph_oon_v2"
 }

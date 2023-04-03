@@ -1,85 +1,85 @@
-package com.twitter.search.earlybird.search.relevance.scoring;
+packagelon com.twittelonr.selonarch.elonarlybird.selonarch.relonlelonvancelon.scoring;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 
-import com.google.common.annotations.VisibleForTesting;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
 
-import org.apache.lucene.search.Explanation;
+import org.apachelon.lucelonnelon.selonarch.elonxplanation;
 
-import com.twitter.search.common.relevance.features.RelevanceSignalConstants;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultMetadata;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultMetadataOptions;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultsRelevanceStats;
+import com.twittelonr.selonarch.common.relonlelonvancelon.felonaturelons.RelonlelonvancelonSignalConstants;
+import com.twittelonr.selonarch.common.schelonma.baselon.ImmutablelonSchelonmaIntelonrfacelon;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdFielonldConstants.elonarlybirdFielonldConstant;
+import com.twittelonr.selonarch.elonarlybird.common.config.elonarlybirdConfig;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsultMelontadata;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsultMelontadataOptions;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsultsRelonlelonvancelonStats;
 
-public class SpamVectorScoringFunction extends ScoringFunction {
-  private static final int MIN_TWEEPCRED_WITH_LINK =
-      EarlybirdConfig.getInt("min_tweepcred_with_non_whitelisted_link", 25);
+public class SpamVelonctorScoringFunction elonxtelonnds ScoringFunction {
+  privatelon static final int MIN_TWelonelonPCRelonD_WITH_LINK =
+      elonarlybirdConfig.gelontInt("min_twelonelonpcrelond_with_non_whitelonlistelond_link", 25);
 
-  // The engagement threshold that prevents us from filtering users with low tweepcred.
-  private static final int ENGAGEMENTS_NO_FILTER = 1;
+  // Thelon elonngagelonmelonnt threlonshold that prelonvelonnts us from filtelonring uselonrs with low twelonelonpcrelond.
+  privatelon static final int elonNGAGelonMelonNTS_NO_FILTelonR = 1;
 
-  @VisibleForTesting
-  static final float NOT_SPAM_SCORE = 0.5f;
-  @VisibleForTesting
-  static final float SPAM_SCORE = -0.5f;
+  @VisiblelonForTelonsting
+  static final float NOT_SPAM_SCORelon = 0.5f;
+  @VisiblelonForTelonsting
+  static final float SPAM_SCORelon = -0.5f;
 
-  public SpamVectorScoringFunction(ImmutableSchemaInterface schema) {
-    super(schema);
+  public SpamVelonctorScoringFunction(ImmutablelonSchelonmaIntelonrfacelon schelonma) {
+    supelonr(schelonma);
   }
 
-  @Override
-  protected float score(float luceneQueryScore) throws IOException {
-    if (documentFeatures.isFlagSet(EarlybirdFieldConstant.FROM_VERIFIED_ACCOUNT_FLAG)) {
-      return NOT_SPAM_SCORE;
+  @Ovelonrridelon
+  protelonctelond float scorelon(float lucelonnelonQuelonryScorelon) throws IOelonxcelonption {
+    if (documelonntFelonaturelons.isFlagSelont(elonarlybirdFielonldConstant.FROM_VelonRIFIelonD_ACCOUNT_FLAG)) {
+      relonturn NOT_SPAM_SCORelon;
     }
 
-    int tweepCredThreshold = 0;
-    if (documentFeatures.isFlagSet(EarlybirdFieldConstant.HAS_LINK_FLAG)
-        && !documentFeatures.isFlagSet(EarlybirdFieldConstant.HAS_IMAGE_URL_FLAG)
-        && !documentFeatures.isFlagSet(EarlybirdFieldConstant.HAS_VIDEO_URL_FLAG)
-        && !documentFeatures.isFlagSet(EarlybirdFieldConstant.HAS_NEWS_URL_FLAG)) {
-      // Contains a non-media non-news link, definite spam vector.
-      tweepCredThreshold = MIN_TWEEPCRED_WITH_LINK;
+    int twelonelonpCrelondThrelonshold = 0;
+    if (documelonntFelonaturelons.isFlagSelont(elonarlybirdFielonldConstant.HAS_LINK_FLAG)
+        && !documelonntFelonaturelons.isFlagSelont(elonarlybirdFielonldConstant.HAS_IMAGelon_URL_FLAG)
+        && !documelonntFelonaturelons.isFlagSelont(elonarlybirdFielonldConstant.HAS_VIDelonO_URL_FLAG)
+        && !documelonntFelonaturelons.isFlagSelont(elonarlybirdFielonldConstant.HAS_NelonWS_URL_FLAG)) {
+      // Contains a non-melondia non-nelonws link, delonfinitelon spam velonctor.
+      twelonelonpCrelondThrelonshold = MIN_TWelonelonPCRelonD_WITH_LINK;
     }
 
-    int tweepcred = (int) documentFeatures.getFeatureValue(EarlybirdFieldConstant.USER_REPUTATION);
+    int twelonelonpcrelond = (int) documelonntFelonaturelons.gelontFelonaturelonValuelon(elonarlybirdFielonldConstant.USelonR_RelonPUTATION);
 
-    // For new user, tweepcred is set to a sentinel value of -128, specified at
-    // src/thrift/com/twitter/search/common/indexing/status.thrift
-    if (tweepcred >= tweepCredThreshold
-        || tweepcred == (int) RelevanceSignalConstants.UNSET_REPUTATION_SENTINEL) {
-      return NOT_SPAM_SCORE;
+    // For nelonw uselonr, twelonelonpcrelond is selont to a selonntinelonl valuelon of -128, speloncifielond at
+    // src/thrift/com/twittelonr/selonarch/common/indelonxing/status.thrift
+    if (twelonelonpcrelond >= twelonelonpCrelondThrelonshold
+        || twelonelonpcrelond == (int) RelonlelonvancelonSignalConstants.UNSelonT_RelonPUTATION_SelonNTINelonL) {
+      relonturn NOT_SPAM_SCORelon;
     }
 
-    double retweetCount =
-        documentFeatures.getUnnormalizedFeatureValue(EarlybirdFieldConstant.RETWEET_COUNT);
-    double replyCount =
-        documentFeatures.getUnnormalizedFeatureValue(EarlybirdFieldConstant.REPLY_COUNT);
-    double favoriteCount =
-        documentFeatures.getUnnormalizedFeatureValue(EarlybirdFieldConstant.FAVORITE_COUNT);
+    doublelon relontwelonelontCount =
+        documelonntFelonaturelons.gelontUnnormalizelondFelonaturelonValuelon(elonarlybirdFielonldConstant.RelonTWelonelonT_COUNT);
+    doublelon relonplyCount =
+        documelonntFelonaturelons.gelontUnnormalizelondFelonaturelonValuelon(elonarlybirdFielonldConstant.RelonPLY_COUNT);
+    doublelon favoritelonCount =
+        documelonntFelonaturelons.gelontUnnormalizelondFelonaturelonValuelon(elonarlybirdFielonldConstant.FAVORITelon_COUNT);
 
-    // If the tweet has enough engagements, do not mark it as spam.
-    if (retweetCount + replyCount + favoriteCount >= ENGAGEMENTS_NO_FILTER) {
-      return NOT_SPAM_SCORE;
+    // If thelon twelonelont has elonnough elonngagelonmelonnts, do not mark it as spam.
+    if (relontwelonelontCount + relonplyCount + favoritelonCount >= elonNGAGelonMelonNTS_NO_FILTelonR) {
+      relonturn NOT_SPAM_SCORelon;
     }
 
-    return SPAM_SCORE;
+    relonturn SPAM_SCORelon;
   }
 
-  @Override
-  protected Explanation doExplain(float luceneScore) {
-    return null;
+  @Ovelonrridelon
+  protelonctelond elonxplanation doelonxplain(float lucelonnelonScorelon) {
+    relonturn null;
   }
 
-  @Override
-  public ThriftSearchResultMetadata getResultMetadata(ThriftSearchResultMetadataOptions options) {
-    return null;
+  @Ovelonrridelon
+  public ThriftSelonarchRelonsultMelontadata gelontRelonsultMelontadata(ThriftSelonarchRelonsultMelontadataOptions options) {
+    relonturn null;
   }
 
-  @Override
-  public void updateRelevanceStats(ThriftSearchResultsRelevanceStats relevanceStats) {
+  @Ovelonrridelon
+  public void updatelonRelonlelonvancelonStats(ThriftSelonarchRelonsultsRelonlelonvancelonStats relonlelonvancelonStats) {
   }
 }

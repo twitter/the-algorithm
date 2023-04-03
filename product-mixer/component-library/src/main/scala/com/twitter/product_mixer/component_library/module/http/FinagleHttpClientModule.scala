@@ -1,69 +1,69 @@
-package com.twitter.product_mixer.component_library.module.http
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.modulelon.http
 
-import com.google.inject.Provides
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.Http
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
-import com.twitter.inject.annotations.Flag
-import com.twitter.product_mixer.shared_library.http_client.FinagleHttpClientBuilder.buildFinagleHttpClientMutualTls
-import com.twitter.util.Duration
-import javax.inject.Named
-import javax.inject.Singleton
+import com.googlelon.injelonct.Providelons
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.finaglelon.Http
+import com.twittelonr.finaglelon.mtls.authelonntication.SelonrvicelonIdelonntifielonr
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.injelonct.TwittelonrModulelon
+import com.twittelonr.injelonct.annotations.Flag
+import com.twittelonr.product_mixelonr.sharelond_library.http_clielonnt.FinaglelonHttpClielonntBuildelonr.buildFinaglelonHttpClielonntMutualTls
+import com.twittelonr.util.Duration
+import javax.injelonct.Namelond
+import javax.injelonct.Singlelonton
 
-object FinagleHttpClientModule extends TwitterModule {
+objelonct FinaglelonHttpClielonntModulelon elonxtelonnds TwittelonrModulelon {
 
-  final val HttpClientRequestTimeout = "http_client.request_timeout"
-  final val HttpClientConnectTimeout = "http_client.connect_timeout"
-  final val HttpClientAcquisitionTimeout = "http_client.acquisition_timeout"
-
-  flag[Duration](
-    name = HttpClientRequestTimeout,
-    default = 200.milliseconds,
-    help = "HTTP client request timeout")
+  final val HttpClielonntRelonquelonstTimelonout = "http_clielonnt.relonquelonst_timelonout"
+  final val HttpClielonntConnelonctTimelonout = "http_clielonnt.connelonct_timelonout"
+  final val HttpClielonntAcquisitionTimelonout = "http_clielonnt.acquisition_timelonout"
 
   flag[Duration](
-    name = HttpClientConnectTimeout,
-    default = 500.milliseconds,
-    help = "HTTP client transport connect timeout")
+    namelon = HttpClielonntRelonquelonstTimelonout,
+    delonfault = 200.milliselonconds,
+    helonlp = "HTTP clielonnt relonquelonst timelonout")
 
   flag[Duration](
-    name = HttpClientAcquisitionTimeout,
-    default = 500.milliseconds,
-    help = "HTTP client session acquisition timeout")
+    namelon = HttpClielonntConnelonctTimelonout,
+    delonfault = 500.milliselonconds,
+    helonlp = "HTTP clielonnt transport connelonct timelonout")
 
-  final val FinagleHttpClientModule = "FinagleHttpClientModule"
+  flag[Duration](
+    namelon = HttpClielonntAcquisitionTimelonout,
+    delonfault = 500.milliselonconds,
+    helonlp = "HTTP clielonnt selonssion acquisition timelonout")
+
+  final val FinaglelonHttpClielonntModulelon = "FinaglelonHttpClielonntModulelon"
 
   /**
-   * Provides a Finagle HTTP client with S2S Auth / Mutual TLS
+   * Providelons a Finaglelon HTTP clielonnt with S2S Auth / Mutual TLS
    *
-   * Note that the timeouts configured in this module are meant to be a reasonable starting point
-   * only. To further tuning the settings, either override the flags or create local copy of the module.
+   * Notelon that thelon timelonouts configurelond in this modulelon arelon melonant to belon a relonasonablelon starting point
+   * only. To furthelonr tuning thelon selonttings, elonithelonr ovelonrridelon thelon flags or crelonatelon local copy of thelon modulelon.
    *
-   * @param requestTimeout     HTTP client request timeout
-   * @param connectTimeout     HTTP client transport connect timeout
-   * @param acquisitionTimeout HTTP client session acquisition timeout
-   * @param serviceIdentifier  Service ID used to S2S Auth
-   * @param statsReceiver      Stats
+   * @param relonquelonstTimelonout     HTTP clielonnt relonquelonst timelonout
+   * @param connelonctTimelonout     HTTP clielonnt transport connelonct timelonout
+   * @param acquisitionTimelonout HTTP clielonnt selonssion acquisition timelonout
+   * @param selonrvicelonIdelonntifielonr  Selonrvicelon ID uselond to S2S Auth
+   * @param statsReloncelonivelonr      Stats
    *
-   * @return Finagle HTTP Client with S2S Auth / Mutual TLS
+   * @relonturn Finaglelon HTTP Clielonnt with S2S Auth / Mutual TLS
    */
-  @Provides
-  @Singleton
-  @Named(FinagleHttpClientModule)
-  def providesFinagleHttpClient(
-    @Flag(HttpClientRequestTimeout) requestTimeout: Duration,
-    @Flag(HttpClientConnectTimeout) connectTimeout: Duration,
-    @Flag(HttpClientAcquisitionTimeout) acquisitionTimeout: Duration,
-    serviceIdentifier: ServiceIdentifier,
-    statsReceiver: StatsReceiver
-  ): Http.Client =
-    buildFinagleHttpClientMutualTls(
-      requestTimeout = requestTimeout,
-      connectTimeout = connectTimeout,
-      acquisitionTimeout = acquisitionTimeout,
-      serviceIdentifier = serviceIdentifier,
-      statsReceiver = statsReceiver
+  @Providelons
+  @Singlelonton
+  @Namelond(FinaglelonHttpClielonntModulelon)
+  delonf providelonsFinaglelonHttpClielonnt(
+    @Flag(HttpClielonntRelonquelonstTimelonout) relonquelonstTimelonout: Duration,
+    @Flag(HttpClielonntConnelonctTimelonout) connelonctTimelonout: Duration,
+    @Flag(HttpClielonntAcquisitionTimelonout) acquisitionTimelonout: Duration,
+    selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr,
+    statsReloncelonivelonr: StatsReloncelonivelonr
+  ): Http.Clielonnt =
+    buildFinaglelonHttpClielonntMutualTls(
+      relonquelonstTimelonout = relonquelonstTimelonout,
+      connelonctTimelonout = connelonctTimelonout,
+      acquisitionTimelonout = acquisitionTimelonout,
+      selonrvicelonIdelonntifielonr = selonrvicelonIdelonntifielonr,
+      statsReloncelonivelonr = statsReloncelonivelonr
     )
 }

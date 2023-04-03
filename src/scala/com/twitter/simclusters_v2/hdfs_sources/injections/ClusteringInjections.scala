@@ -1,16 +1,16 @@
-package com.twitter.simclusters_v2.hdfs_sources.injections
+packagelon com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions
 
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.ScalaBinaryThrift
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.Long2BigEndian
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.thriftscala._
+import com.twittelonr.scalding_intelonrnal.multiformat.format.kelonyval.KelonyValInjelonction
+import com.twittelonr.scalding_intelonrnal.multiformat.format.kelonyval.KelonyValInjelonction.ScalaBinaryThrift
+import com.twittelonr.scalding_intelonrnal.multiformat.format.kelonyval.KelonyValInjelonction.Long2Bigelonndian
+import com.twittelonr.simclustelonrs_v2.common.UselonrId
+import com.twittelonr.simclustelonrs_v2.thriftscala._
 
-object ClusteringInjections {
+objelonct ClustelonringInjelonctions {
 
-  final val OrderedClustersAndMembersInjection: KeyValInjection[
-    UserId,
-    OrderedClustersAndMembers
+  final val OrdelonrelondClustelonrsAndMelonmbelonrsInjelonction: KelonyValInjelonction[
+    UselonrId,
+    OrdelonrelondClustelonrsAndMelonmbelonrs
   ] =
-    KeyValInjection(Long2BigEndian, ScalaBinaryThrift(OrderedClustersAndMembers))
+    KelonyValInjelonction(Long2Bigelonndian, ScalaBinaryThrift(OrdelonrelondClustelonrsAndMelonmbelonrs))
 }

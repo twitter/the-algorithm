@@ -1,33 +1,33 @@
-package com.twitter.timelineranker.common
+packagelon com.twittelonr.timelonlinelonrankelonr.common
 
-import com.twitter.servo.util.FutureArrow
-import com.twitter.timelineranker.core.CandidateEnvelope
-import com.twitter.timelineranker.core.HydratedCandidatesAndFeaturesEnvelope
-import com.twitter.timelineranker.model.RecapQuery
-import com.twitter.util.Future
+import com.twittelonr.selonrvo.util.FuturelonArrow
+import com.twittelonr.timelonlinelonrankelonr.corelon.Candidatelonelonnvelonlopelon
+import com.twittelonr.timelonlinelonrankelonr.corelon.HydratelondCandidatelonsAndFelonaturelonselonnvelonlopelon
+import com.twittelonr.timelonlinelonrankelonr.modelonl.ReloncapQuelonry
+import com.twittelonr.util.Futurelon
 
 /**
- * Fetches all data required for feature hydration and generates the HydratedCandidatesAndFeaturesEnvelope
- * @param tweetHydrationAndFilteringPipeline Pipeline which fetches the candidate tweets, hydrates and filters them
- * @param languagesService Fetch user languages, required for feature hydration
- * @param userProfileInfoService Fetch user profile info, required for feature hydration
+ * Felontchelons all data relonquirelond for felonaturelon hydration and gelonnelonratelons thelon HydratelondCandidatelonsAndFelonaturelonselonnvelonlopelon
+ * @param twelonelontHydrationAndFiltelonringPipelonlinelon Pipelonlinelon which felontchelons thelon candidatelon twelonelonts, hydratelons and filtelonrs thelonm
+ * @param languagelonsSelonrvicelon Felontch uselonr languagelons, relonquirelond for felonaturelon hydration
+ * @param uselonrProfilelonInfoSelonrvicelon Felontch uselonr profilelon info, relonquirelond for felonaturelon hydration
  */
-class FeatureHydrationDataTransform(
-  tweetHydrationAndFilteringPipeline: FutureArrow[RecapQuery, CandidateEnvelope],
-  languagesService: UserLanguagesTransform,
-  userProfileInfoService: UserProfileInfoTransform)
-    extends FutureArrow[RecapQuery, HydratedCandidatesAndFeaturesEnvelope] {
-  override def apply(request: RecapQuery): Future[HydratedCandidatesAndFeaturesEnvelope] = {
-    Future
+class FelonaturelonHydrationDataTransform(
+  twelonelontHydrationAndFiltelonringPipelonlinelon: FuturelonArrow[ReloncapQuelonry, Candidatelonelonnvelonlopelon],
+  languagelonsSelonrvicelon: UselonrLanguagelonsTransform,
+  uselonrProfilelonInfoSelonrvicelon: UselonrProfilelonInfoTransform)
+    elonxtelonnds FuturelonArrow[ReloncapQuelonry, HydratelondCandidatelonsAndFelonaturelonselonnvelonlopelon] {
+  ovelonrridelon delonf apply(relonquelonst: ReloncapQuelonry): Futurelon[HydratelondCandidatelonsAndFelonaturelonselonnvelonlopelon] = {
+    Futurelon
       .join(
-        languagesService(request),
-        userProfileInfoService(request),
-        tweetHydrationAndFilteringPipeline(request)).map {
-        case (languages, userProfileInfo, transformedCandidateEnvelope) =>
-          HydratedCandidatesAndFeaturesEnvelope(
-            transformedCandidateEnvelope,
-            languages,
-            userProfileInfo)
+        languagelonsSelonrvicelon(relonquelonst),
+        uselonrProfilelonInfoSelonrvicelon(relonquelonst),
+        twelonelontHydrationAndFiltelonringPipelonlinelon(relonquelonst)).map {
+        caselon (languagelons, uselonrProfilelonInfo, transformelondCandidatelonelonnvelonlopelon) =>
+          HydratelondCandidatelonsAndFelonaturelonselonnvelonlopelon(
+            transformelondCandidatelonelonnvelonlopelon,
+            languagelons,
+            uselonrProfilelonInfo)
       }
   }
 }

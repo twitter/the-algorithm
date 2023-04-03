@@ -1,10 +1,10 @@
-package com.twitter.visibility.interfaces.spaces
+packagelon com.twittelonr.visibility.intelonrfacelons.spacelons
 
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.models.ViewerContext
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl
+import com.twittelonr.visibility.modelonls.VielonwelonrContelonxt
 
-case class SpaceVisibilityRequest(
-  spaceId: String,
-  safetyLevel: SafetyLevel,
-  viewerContext: ViewerContext,
-  spaceHostAndAdminUserIds: Option[Seq[Long]])
+caselon class SpacelonVisibilityRelonquelonst(
+  spacelonId: String,
+  safelontyLelonvelonl: SafelontyLelonvelonl,
+  vielonwelonrContelonxt: VielonwelonrContelonxt,
+  spacelonHostAndAdminUselonrIds: Option[Selonq[Long]])

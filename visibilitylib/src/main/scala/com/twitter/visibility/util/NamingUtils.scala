@@ -1,6 +1,6 @@
-package com.twitter.visibility.util
+packagelon com.twittelonr.visibility.util
 
-object NamingUtils {
-  def getFriendlyName(a: Any): String = getFriendlyNameFromClass(a.getClass)
-  def getFriendlyNameFromClass(a: Class[_]): String = a.getSimpleName.stripSuffix("$")
+objelonct NamingUtils {
+  delonf gelontFrielonndlyNamelon(a: Any): String = gelontFrielonndlyNamelonFromClass(a.gelontClass)
+  delonf gelontFrielonndlyNamelonFromClass(a: Class[_]): String = a.gelontSimplelonNamelon.stripSuffix("$")
 }

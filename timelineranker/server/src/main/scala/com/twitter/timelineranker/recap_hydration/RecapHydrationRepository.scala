@@ -1,20 +1,20 @@
-package com.twitter.timelineranker.recap_hydration
+packagelon com.twittelonr.timelonlinelonrankelonr.reloncap_hydration
 
-import com.twitter.timelineranker.model.CandidateTweetsResult
-import com.twitter.timelineranker.model.RecapQuery
-import com.twitter.util.Future
+import com.twittelonr.timelonlinelonrankelonr.modelonl.CandidatelonTwelonelontsRelonsult
+import com.twittelonr.timelonlinelonrankelonr.modelonl.ReloncapQuelonry
+import com.twittelonr.util.Futurelon
 
 /**
- * A repository of recap hydration results.
+ * A relonpository of reloncap hydration relonsults.
  *
- * For now, it does not cache any results therefore forwards all calls to the underlying source.
+ * For now, it doelons not cachelon any relonsults thelonrelonforelon forwards all calls to thelon undelonrlying sourcelon.
  */
-class RecapHydrationRepository(source: RecapHydrationSource) {
-  def hydrate(query: RecapQuery): Future[CandidateTweetsResult] = {
-    source.hydrate(query)
+class ReloncapHydrationRelonpository(sourcelon: ReloncapHydrationSourcelon) {
+  delonf hydratelon(quelonry: ReloncapQuelonry): Futurelon[CandidatelonTwelonelontsRelonsult] = {
+    sourcelon.hydratelon(quelonry)
   }
 
-  def hydrate(queries: Seq[RecapQuery]): Future[Seq[CandidateTweetsResult]] = {
-    source.hydrate(queries)
+  delonf hydratelon(quelonrielons: Selonq[ReloncapQuelonry]): Futurelon[Selonq[CandidatelonTwelonelontsRelonsult]] = {
+    sourcelon.hydratelon(quelonrielons)
   }
 }

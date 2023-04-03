@@ -1,84 +1,84 @@
-package com.twitter.follow_recommendations.common.candidate_sources.ppmi_locale_follow
+packagelon com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.ppmi_localelon_follow
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.candidate_sources.ppmi_locale_follow.PPMILocaleFollowSourceParams.CandidateSourceEnabled
-import com.twitter.follow_recommendations.common.candidate_sources.ppmi_locale_follow.PPMILocaleFollowSourceParams.LocaleToExcludeFromRecommendation
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.ppmi_localelon_follow.PPMILocalelonFollowSourcelonParams.CandidatelonSourcelonelonnablelond
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.ppmi_localelon_follow.PPMILocalelonFollowSourcelonParams.LocalelonToelonxcludelonFromReloncommelonndation
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.CandidatelonUselonr
+import com.twittelonr.helonrmit.modelonl.Algorithm
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.CandidatelonSourcelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonSourcelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.HasClielonntContelonxt
+import com.twittelonr.stitch.Stitch
 
-import javax.inject.Inject
-import javax.inject.Singleton
-import com.twitter.strato.generated.client.onboarding.UserPreferredLanguagesOnUserClientColumn
-import com.twitter.strato.generated.client.onboarding.userrecs.LocaleFollowPpmiClientColumn
-import com.twitter.timelines.configapi.HasParams
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
+import com.twittelonr.strato.gelonnelonratelond.clielonnt.onboarding.UselonrPrelonfelonrrelondLanguagelonsOnUselonrClielonntColumn
+import com.twittelonr.strato.gelonnelonratelond.clielonnt.onboarding.uselonrreloncs.LocalelonFollowPpmiClielonntColumn
+import com.twittelonr.timelonlinelons.configapi.HasParams
 
 /**
- * Fetches candidates based on the Positive Pointwise Mutual Information (PPMI) statistic
- * for a set of locales
+ * Felontchelons candidatelons baselond on thelon Positivelon Pointwiselon Mutual Information (PPMI) statistic
+ * for a selont of localelons
  * */
-@Singleton
-class PPMILocaleFollowSource @Inject() (
-  userPreferredLanguagesOnUserClientColumn: UserPreferredLanguagesOnUserClientColumn,
-  localeFollowPpmiClientColumn: LocaleFollowPpmiClientColumn,
-  statsReceiver: StatsReceiver)
-    extends CandidateSource[HasClientContext with HasParams, CandidateUser] {
+@Singlelonton
+class PPMILocalelonFollowSourcelon @Injelonct() (
+  uselonrPrelonfelonrrelondLanguagelonsOnUselonrClielonntColumn: UselonrPrelonfelonrrelondLanguagelonsOnUselonrClielonntColumn,
+  localelonFollowPpmiClielonntColumn: LocalelonFollowPpmiClielonntColumn,
+  statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds CandidatelonSourcelon[HasClielonntContelonxt with HasParams, CandidatelonUselonr] {
 
-  override val identifier: CandidateSourceIdentifier = PPMILocaleFollowSource.Identifier
-  private val stats = statsReceiver.scope("PPMILocaleFollowSource")
+  ovelonrridelon val idelonntifielonr: CandidatelonSourcelonIdelonntifielonr = PPMILocalelonFollowSourcelon.Idelonntifielonr
+  privatelon val stats = statsReloncelonivelonr.scopelon("PPMILocalelonFollowSourcelon")
 
-  override def apply(target: HasClientContext with HasParams): Stitch[Seq[CandidateUser]] = {
+  ovelonrridelon delonf apply(targelont: HasClielonntContelonxt with HasParams): Stitch[Selonq[CandidatelonUselonr]] = {
     (for {
-      countryCode <- target.getCountryCode
-      userId <- target.getOptionalUserId
-    } yield {
-      getPreferredLocales(userId, countryCode.toLowerCase())
-        .flatMap { locale =>
-          stats.addGauge("allLocale") {
-            locale.length
+      countryCodelon <- targelont.gelontCountryCodelon
+      uselonrId <- targelont.gelontOptionalUselonrId
+    } yielonld {
+      gelontPrelonfelonrrelondLocalelons(uselonrId, countryCodelon.toLowelonrCaselon())
+        .flatMap { localelon =>
+          stats.addGaugelon("allLocalelon") {
+            localelon.lelonngth
           }
-          val filteredLocale =
-            locale.filter(!target.params(LocaleToExcludeFromRecommendation).contains(_))
-          stats.addGauge("postFilterLocale") {
-            filteredLocale.length
+          val filtelonrelondLocalelon =
+            localelon.filtelonr(!targelont.params(LocalelonToelonxcludelonFromReloncommelonndation).contains(_))
+          stats.addGaugelon("postFiltelonrLocalelon") {
+            filtelonrelondLocalelon.lelonngth
           }
-          if (target.params(CandidateSourceEnabled)) {
-            getPPMILocaleFollowCandidates(filteredLocale)
-          } else Stitch(Seq.empty)
+          if (targelont.params(CandidatelonSourcelonelonnablelond)) {
+            gelontPPMILocalelonFollowCandidatelons(filtelonrelondLocalelon)
+          } elonlselon Stitch(Selonq.elonmpty)
         }
-        .map(_.sortBy(_.score)(Ordering[Option[Double]].reverse)
-          .take(PPMILocaleFollowSource.DefaultMaxCandidatesToReturn))
-    }).getOrElse(Stitch.Nil)
+        .map(_.sortBy(_.scorelon)(Ordelonring[Option[Doublelon]].relonvelonrselon)
+          .takelon(PPMILocalelonFollowSourcelon.DelonfaultMaxCandidatelonsToRelonturn))
+    }).gelontOrelonlselon(Stitch.Nil)
   }
 
-  private def getPPMILocaleFollowCandidates(
-    locales: Seq[String]
-  ): Stitch[Seq[CandidateUser]] = {
+  privatelon delonf gelontPPMILocalelonFollowCandidatelons(
+    localelons: Selonq[String]
+  ): Stitch[Selonq[CandidatelonUselonr]] = {
     Stitch
-      .traverse(locales) { locale =>
-        // Get PPMI candidates for each locale
-        localeFollowPpmiClientColumn.fetcher
-          .fetch(locale)
+      .travelonrselon(localelons) { localelon =>
+        // Gelont PPMI candidatelons for elonach localelon
+        localelonFollowPpmiClielonntColumn.felontchelonr
+          .felontch(localelon)
           .map(_.v
-            .map(_.candidates).getOrElse(Nil).map { candidate =>
-              CandidateUser(id = candidate.userId, score = Some(candidate.score))
-            }.map(_.withCandidateSource(identifier)))
-      }.map(_.flatten)
+            .map(_.candidatelons).gelontOrelonlselon(Nil).map { candidatelon =>
+              CandidatelonUselonr(id = candidatelon.uselonrId, scorelon = Somelon(candidatelon.scorelon))
+            }.map(_.withCandidatelonSourcelon(idelonntifielonr)))
+      }.map(_.flattelonn)
   }
 
-  private def getPreferredLocales(userId: Long, countryCode: String): Stitch[Seq[String]] = {
-    userPreferredLanguagesOnUserClientColumn.fetcher
-      .fetch(userId)
-      .map(_.v.map(_.languages).getOrElse(Nil).map { lang =>
-        s"$countryCode-$lang".toLowerCase
+  privatelon delonf gelontPrelonfelonrrelondLocalelons(uselonrId: Long, countryCodelon: String): Stitch[Selonq[String]] = {
+    uselonrPrelonfelonrrelondLanguagelonsOnUselonrClielonntColumn.felontchelonr
+      .felontch(uselonrId)
+      .map(_.v.map(_.languagelons).gelontOrelonlselon(Nil).map { lang =>
+        s"$countryCodelon-$lang".toLowelonrCaselon
       })
   }
 }
 
-object PPMILocaleFollowSource {
-  val Identifier = CandidateSourceIdentifier(Algorithm.PPMILocaleFollow.toString)
-  val DefaultMaxCandidatesToReturn = 100
+objelonct PPMILocalelonFollowSourcelon {
+  val Idelonntifielonr = CandidatelonSourcelonIdelonntifielonr(Algorithm.PPMILocalelonFollow.toString)
+  val DelonfaultMaxCandidatelonsToRelonturn = 100
 }

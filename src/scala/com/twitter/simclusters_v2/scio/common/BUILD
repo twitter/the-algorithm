@@ -1,21 +1,21 @@
 scala_library(
-    sources = [
+    sourcelons = [
         "*.scala",
     ],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "beam-internal/src/main/scala/com/twitter/beam/io/dal",
-        "beam-internal/src/main/scala/com/twitter/scio_internal/runner/dataflow",
-        "flockdb-tools/datasets/flock:flock-blocks-edges-scala",
-        "flockdb-tools/datasets/flock:flock-follows-edges-scala",
-        "flockdb-tools/datasets/flock:flock-report-as-abuse-edges-scala",
-        "flockdb-tools/datasets/flock:flock-report-as-spam-edges-scala",
-        "iesource/processing/events/src/main/scala/com/twitter/iesource/processing/events/batch:server_engagements-scala",
-        "src/scala/com/twitter/simclusters_v2/scalding",
-        "src/thrift/com/twitter/twadoop/user/gen:gen-scala",
-        "tweetsource/public_tweets/src/main/scala/com/twitter/tweetsource/public_tweets:public_tweets-scala",
-        "usersource/snapshot/src/main/scala/com/twitter/usersource/snapshot/flat:usersource_flat-scala",
-        "usersource/snapshot/src/main/thrift/com/twitter/usersource/snapshot/flat:flat-scala",
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        "belonam-intelonrnal/src/main/scala/com/twittelonr/belonam/io/dal",
+        "belonam-intelonrnal/src/main/scala/com/twittelonr/scio_intelonrnal/runnelonr/dataflow",
+        "flockdb-tools/dataselonts/flock:flock-blocks-elondgelons-scala",
+        "flockdb-tools/dataselonts/flock:flock-follows-elondgelons-scala",
+        "flockdb-tools/dataselonts/flock:flock-relonport-as-abuselon-elondgelons-scala",
+        "flockdb-tools/dataselonts/flock:flock-relonport-as-spam-elondgelons-scala",
+        "ielonsourcelon/procelonssing/elonvelonnts/src/main/scala/com/twittelonr/ielonsourcelon/procelonssing/elonvelonnts/batch:selonrvelonr_elonngagelonmelonnts-scala",
+        "src/scala/com/twittelonr/simclustelonrs_v2/scalding",
+        "src/thrift/com/twittelonr/twadoop/uselonr/gelonn:gelonn-scala",
+        "twelonelontsourcelon/public_twelonelonts/src/main/scala/com/twittelonr/twelonelontsourcelon/public_twelonelonts:public_twelonelonts-scala",
+        "uselonrsourcelon/snapshot/src/main/scala/com/twittelonr/uselonrsourcelon/snapshot/flat:uselonrsourcelon_flat-scala",
+        "uselonrsourcelon/snapshot/src/main/thrift/com/twittelonr/uselonrsourcelon/snapshot/flat:flat-scala",
     ],
 )

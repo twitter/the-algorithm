@@ -1,146 +1,146 @@
-# The keys in this file correspond to the DeciderValues defined in
-# https://sourcegraph.twitter.biz/git.twitter.biz/source/-/blob/cr-mixer/server/src/main/scala/com/twitter/cr_mixer/param/decider/DeciderKey.scala
+# Thelon kelonys in this filelon correlonspond to thelon DeloncidelonrValuelons delonfinelond in
+# https://sourcelongraph.twittelonr.biz/git.twittelonr.biz/sourcelon/-/blob/cr-mixelonr/selonrvelonr/src/main/scala/com/twittelonr/cr_mixelonr/param/deloncidelonr/DeloncidelonrKelony.scala
 
-dark_traffic_filter:
-  comment: Proportion of the requests that are forwarded as dark traffic to the proxy
-  default_availability: 0
+dark_traffic_filtelonr:
+  commelonnt: Proportion of thelon relonquelonsts that arelon forwardelond as dark traffic to thelon proxy
+  delonfault_availability: 0
 
-enable_tweet_recommendations_home_product:
-  comment: Proportion of requests where we return an actual response for TweetRecommendations Home product
-  default_availability: 10000
+elonnablelon_twelonelont_reloncommelonndations_homelon_product:
+  commelonnt: Proportion of relonquelonsts whelonrelon welon relonturn an actual relonsponselon for TwelonelontReloncommelonndations Homelon product
+  delonfault_availability: 10000
 
-enable_tweet_health_score:
-  comment: "Enable the calculation for health scores in tweetInfo. By enabling this decider, we will compute TweetHealthModelScore"
-  default_availability: 10000
+elonnablelon_twelonelont_helonalth_scorelon:
+  commelonnt: "elonnablelon thelon calculation for helonalth scorelons in twelonelontInfo. By elonnabling this deloncidelonr, welon will computelon TwelonelontHelonalthModelonlScorelon"
+  delonfault_availability: 10000
 
-enable_user_agatha_score:
-  comment: "Enable the calculation for health scores in tweetInfo. By enabling this decider, we will compute UserHealthModelScore"
-  default_availability: 10000
+elonnablelon_uselonr_agatha_scorelon:
+  commelonnt: "elonnablelon thelon calculation for helonalth scorelons in twelonelontInfo. By elonnabling this deloncidelonr, welon will computelon UselonrHelonalthModelonlScorelon"
+  delonfault_availability: 10000
 
-enable_user_tweet_entity_graph_traffic:
-  comment: "Enable the traffic to user entity tweet graph to fetch liked-by tweets candidates"
-  default_availability: 10000
+elonnablelon_uselonr_twelonelont_elonntity_graph_traffic:
+  commelonnt: "elonnablelon thelon traffic to uselonr elonntity twelonelont graph to felontch likelond-by twelonelonts candidatelons"
+  delonfault_availability: 10000
 
-enable_user_tweet_graph_traffic:
-  comment: "Enable the traffic to user tweet graph to fetch similar tweets candidates"
-  default_availability: 10000
+elonnablelon_uselonr_twelonelont_graph_traffic:
+  commelonnt: "elonnablelon thelon traffic to uselonr twelonelont graph to felontch similar twelonelonts candidatelons"
+  delonfault_availability: 10000
 
-enable_user_video_graph_traffic:
-  comment: "Enable the traffic to user video graph to fetch similar tweets candidates"
-  default_availability: 10000
+elonnablelon_uselonr_videlono_graph_traffic:
+  commelonnt: "elonnablelon thelon traffic to uselonr videlono graph to felontch similar twelonelonts candidatelons"
+  delonfault_availability: 10000
 
-enable_user_ad_graph_traffic:
-  comment: "Enable the traffic to user ad graph to fetch similar tweets candidates"
-  default_availability: 10000
+elonnablelon_uselonr_ad_graph_traffic:
+  commelonnt: "elonnablelon thelon traffic to uselonr ad graph to felontch similar twelonelonts candidatelons"
+  delonfault_availability: 10000
 
-enable_qig_similar_tweets_traffic:
-  comment: "Enable the traffic to QIG to fetch similar tweet candidates"
-  default_availability: 0
+elonnablelon_qig_similar_twelonelonts_traffic:
+  commelonnt: "elonnablelon thelon traffic to QIG to felontch similar twelonelont candidatelons"
+  delonfault_availability: 0
 
-enable_frs_traffic:
-  comment: "Enable the traffic to FRS to fetch user follow recommendations"
-  default_availability: 0
+elonnablelon_frs_traffic:
+  commelonnt: "elonnablelon thelon traffic to FRS to felontch uselonr follow reloncommelonndations"
+  delonfault_availability: 0
 
-enable_hydra_dark_traffic:
-  comment: "Enable dark traffic to hydra"
-  default_availability: 0
+elonnablelon_hydra_dark_traffic:
+  commelonnt: "elonnablelon dark traffic to hydra"
+  delonfault_availability: 0
 
-enable_real_graph_mh_store:
-  comment: "Enable traffic for the real graph manhattan based store"
-  default_availability: 0
+elonnablelon_relonal_graph_mh_storelon:
+  commelonnt: "elonnablelon traffic for thelon relonal graph manhattan baselond storelon"
+  delonfault_availability: 0
 
-enable_simclusters_ann_experimental_dark_traffic:
-  comment: "Enable dark traffic to simclusters-ann-experimental"
-  default_availability: 0
+elonnablelon_simclustelonrs_ann_elonxpelonrimelonntal_dark_traffic:
+  commelonnt: "elonnablelon dark traffic to simclustelonrs-ann-elonxpelonrimelonntal"
+  delonfault_availability: 0
 
-enable_simclusters_ann_2_dark_traffic:
-  comment: "Enable dark traffic to prod SimClustersANN2"
-  default_availability: 0
+elonnablelon_simclustelonrs_ann_2_dark_traffic:
+  commelonnt: "elonnablelon dark traffic to prod SimClustelonrsANN2"
+  delonfault_availability: 0
 
-enable_user_state_store:
-  comment: "Enable traffic user state store to hydrate user state"
-  default_availability: 0
+elonnablelon_uselonr_statelon_storelon:
+  commelonnt: "elonnablelon traffic uselonr statelon storelon to hydratelon uselonr statelon"
+  delonfault_availability: 0
 
-upper_funnel_per_step_scribe_rate:
-  comment: "Enable Upper Funnel Event Scribe Sampling (fetch, pre-rank, interleave etc.) for getTweetsRecommendations() endpoint"
-  default_availability: 0
+uppelonr_funnelonl_pelonr_stelonp_scribelon_ratelon:
+  commelonnt: "elonnablelon Uppelonr Funnelonl elonvelonnt Scribelon Sampling (felontch, prelon-rank, intelonrlelonavelon elontc.) for gelontTwelonelontsReloncommelonndations() elonndpoint"
+  delonfault_availability: 0
 
-kafka_message_scribe_sample_rate:
-  comment: "Gates the production of forked scribe messages to kafka for the async feature hydrator"
-  default_availability: 0
+kafka_melonssagelon_scribelon_samplelon_ratelon:
+  commelonnt: "Gatelons thelon production of forkelond scribelon melonssagelons to kafka for thelon async felonaturelon hydrator"
+  delonfault_availability: 0
 
-top_level_api_ddg_metrics_scribe_rate:
-  comment: "Enable Top Level API DDG Metrics Scribe Sampling for getTweetsRecommendations() endpoint"
-  default_availability: 0
+top_lelonvelonl_api_ddg_melontrics_scribelon_ratelon:
+  commelonnt: "elonnablelon Top Lelonvelonl API DDG Melontrics Scribelon Sampling for gelontTwelonelontsReloncommelonndations() elonndpoint"
+  delonfault_availability: 0
 
-ads_recommendations_per_experiment_scribe_rate:
-  comment: "Percentage of DDG traffic to Scribe for getAdsRecommendations() endpoint"
-  default_availability: 0
+ads_reloncommelonndations_pelonr_elonxpelonrimelonnt_scribelon_ratelon:
+  commelonnt: "Pelonrcelonntagelon of DDG traffic to Scribelon for gelontAdsReloncommelonndations() elonndpoint"
+  delonfault_availability: 0
 
-enable_loadshedding_getTweetRecommendations:
-  comment: "Enable loadshedding (from 0% to 100%). Requests that have been shed will return an empty response"
-  default_availability: 0
+elonnablelon_loadshelondding_gelontTwelonelontReloncommelonndations:
+  commelonnt: "elonnablelon loadshelondding (from 0% to 100%). Relonquelonsts that havelon belonelonn shelond will relonturn an elonmpty relonsponselon"
+  delonfault_availability: 0
 
-enable_loadshedding_getTweetRecommendations_Home:
-  comment: "Enable loadshedding (from 0% to 100%). Requests that have been shed will return an empty response"
-  default_availability: 0
+elonnablelon_loadshelondding_gelontTwelonelontReloncommelonndations_Homelon:
+  commelonnt: "elonnablelon loadshelondding (from 0% to 100%). Relonquelonsts that havelon belonelonn shelond will relonturn an elonmpty relonsponselon"
+  delonfault_availability: 0
 
-enable_loadshedding_getTweetRecommendations_Notifications:
-  comment: "Enable loadshedding (from 0% to 100%). Requests that have been shed will return an empty response"
-  default_availability: 0
+elonnablelon_loadshelondding_gelontTwelonelontReloncommelonndations_Notifications:
+  commelonnt: "elonnablelon loadshelondding (from 0% to 100%). Relonquelonsts that havelon belonelonn shelond will relonturn an elonmpty relonsponselon"
+  delonfault_availability: 0
 
-enable_loadshedding_getTweetRecommendations_Email:
-  comment: "Enable loadshedding (from 0% to 100%). Requests that have been shed will return an empty response"
-  default_availability: 0
+elonnablelon_loadshelondding_gelontTwelonelontReloncommelonndations_elonmail:
+  commelonnt: "elonnablelon loadshelondding (from 0% to 100%). Relonquelonsts that havelon belonelonn shelond will relonturn an elonmpty relonsponselon"
+  delonfault_availability: 0
 
-enable_loadshedding_getRelatedTweetsForQueryTweet:
-  comment: "Enable loadshedding (from 0% to 100%). Requests that have been shed will return an empty response"
-  default_availability: 0
+elonnablelon_loadshelondding_gelontRelonlatelondTwelonelontsForQuelonryTwelonelont:
+  commelonnt: "elonnablelon loadshelondding (from 0% to 100%). Relonquelonsts that havelon belonelonn shelond will relonturn an elonmpty relonsponselon"
+  delonfault_availability: 0
 
-enable_loadshedding_getRelatedTweetsForQueryTweet_Home:
-  comment: "Enable loadshedding (from 0% to 100%). Requests that have been shed will return an empty response"
-  default_availability: 0
+elonnablelon_loadshelondding_gelontRelonlatelondTwelonelontsForQuelonryTwelonelont_Homelon:
+  commelonnt: "elonnablelon loadshelondding (from 0% to 100%). Relonquelonsts that havelon belonelonn shelond will relonturn an elonmpty relonsponselon"
+  delonfault_availability: 0
 
-enable_loadshedding_getRelatedTweetsForQueryTweet_MoreTweetsModule:
-  comment: "Enable loadshedding (from 0% to 100%). Requests that have been shed will return an empty response"
-  default_availability: 0
+elonnablelon_loadshelondding_gelontRelonlatelondTwelonelontsForQuelonryTwelonelont_MorelonTwelonelontsModulelon:
+  commelonnt: "elonnablelon loadshelondding (from 0% to 100%). Relonquelonsts that havelon belonelonn shelond will relonturn an elonmpty relonsponselon"
+  delonfault_availability: 0
 
-enable_loadshedding_getRelatedTweetsForQueryAuthor:
-  comment: "Enable loadshedding (from 0% to 100%). Requests that have been shed will return an empty response"
-  default_availability: 0
+elonnablelon_loadshelondding_gelontRelonlatelondTwelonelontsForQuelonryAuthor:
+  commelonnt: "elonnablelon loadshelondding (from 0% to 100%). Relonquelonsts that havelon belonelonn shelond will relonturn an elonmpty relonsponselon"
+  delonfault_availability: 0
 
-enable_loadshedding_getRelatedTweetsForQueryAuthor_MoreTweetsModule:
-  comment: "Enable loadshedding (from 0% to 100%). Requests that have been shed will return an empty response"
-  default_availability: 0
+elonnablelon_loadshelondding_gelontRelonlatelondTwelonelontsForQuelonryAuthor_MorelonTwelonelontsModulelon:
+  commelonnt: "elonnablelon loadshelondding (from 0% to 100%). Relonquelonsts that havelon belonelonn shelond will relonturn an elonmpty relonsponselon"
+  delonfault_availability: 0
 
-enable_loadshedding_getFrsBasedTweetRecommendations_Home:
-  comment: "Enable loadshedding (from 0% to 100%). Requests that have been shed will return an empty response"
-  default_availability: 0
+elonnablelon_loadshelondding_gelontFrsBaselondTwelonelontReloncommelonndations_Homelon:
+  commelonnt: "elonnablelon loadshelondding (from 0% to 100%). Relonquelonsts that havelon belonelonn shelond will relonturn an elonmpty relonsponselon"
+  delonfault_availability: 0
 
-enable_loadshedding_getFrsBasedTweetRecommendations_Notifications:
-  comment: "Enable loadshedding (from 0% to 100%). Requests that have been shed will return an empty response"
-  default_availability: 0
+elonnablelon_loadshelondding_gelontFrsBaselondTwelonelontReloncommelonndations_Notifications:
+  commelonnt: "elonnablelon loadshelondding (from 0% to 100%). Relonquelonsts that havelon belonelonn shelond will relonturn an elonmpty relonsponselon"
+  delonfault_availability: 0
 
-enable_user_media_representation_store:
-  comment: "Enable fetching user nudity rate signal from Media Understanding"
-  default_availability: 0
+elonnablelon_uselonr_melondia_relonprelonselonntation_storelon:
+  commelonnt: "elonnablelon felontching uselonr nudity ratelon signal from Melondia Undelonrstanding"
+  delonfault_availability: 0
 
-enable_magic_recs_real_time_aggregates_store:
-  comment: "Enable fetching real time aggregates features from Magic Recs memcache"
-  default_availability: 0
+elonnablelon_magic_reloncs_relonal_timelon_aggrelongatelons_storelon:
+  commelonnt: "elonnablelon felontching relonal timelon aggrelongatelons felonaturelons from Magic Reloncs melonmcachelon"
+  delonfault_availability: 0
 
-enable_utg_realtime_tweet_engagement_score:
-  comment: "Enable fetching real time tweet engagement score from utg-plus"
-  default_availability: 0
+elonnablelon_utg_relonaltimelon_twelonelont_elonngagelonmelonnt_scorelon:
+  commelonnt: "elonnablelon felontching relonal timelon twelonelont elonngagelonmelonnt scorelon from utg-plus"
+  delonfault_availability: 0
 
-get_tweet_recommendations_cache_rate:
-  comment: "Proportion of users where getTweetRecommendations() request and responses will be cached"
-  default_availability: 1000
+gelont_twelonelont_reloncommelonndations_cachelon_ratelon:
+  commelonnt: "Proportion of uselonrs whelonrelon gelontTwelonelontReloncommelonndations() relonquelonst and relonsponselons will belon cachelond"
+  delonfault_availability: 1000
 
-enable_earlybird_traffic:
-  comment: "Enable fetching tweet candidates from Earlybird"
-  default_availability: 0
+elonnablelon_elonarlybird_traffic:
+  commelonnt: "elonnablelon felontching twelonelont candidatelons from elonarlybird"
+  delonfault_availability: 0
 
-enable_scribe_for_blue_verified_tweet_candidates:
-  comment: "Enable scribing for tweet candidates from Blue Verified users"
-  default_availability: 0
+elonnablelon_scribelon_for_bluelon_velonrifielond_twelonelont_candidatelons:
+  commelonnt: "elonnablelon scribing for twelonelont candidatelons from Bluelon Velonrifielond uselonrs"
+  delonfault_availability: 0

@@ -1,42 +1,42 @@
-package com.twitter.product_mixer.core.pipeline
+packagelon com.twittelonr.product_mixelonr.corelon.pipelonlinelon
 
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.MisconfiguredFeatureMapFailure
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailureCategory
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.MisconfigurelondFelonaturelonMapFailurelon
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.PipelonlinelonFailurelonCatelongory
 
 /**
- * [[FailOpenPolicy]] determines what should happen in the event that a candidate pipeline fails
- * to execute successfully.
+ * [[FailOpelonnPolicy]] delontelonrminelons what should happelonn in thelon elonvelonnt that a candidatelon pipelonlinelon fails
+ * to elonxeloncutelon succelonssfully.
  *
- * Exercise caution when creating new fail open policies. Product Mixer will fail open by default in
- * certain error cases (e.g. closed gate on a candidate pipeline) but these might inadvertently be
- * excluded by a new policy.
+ * elonxelonrciselon caution whelonn crelonating nelonw fail opelonn policielons. Product Mixelonr will fail opelonn by delonfault in
+ * celonrtain elonrror caselons (elon.g. closelond gatelon on a candidatelon pipelonlinelon) but thelonselon might inadvelonrtelonntly belon
+ * elonxcludelond by a nelonw policy.
  */
-trait FailOpenPolicy {
-  def apply(failureCategory: PipelineFailureCategory): Boolean
+trait FailOpelonnPolicy {
+  delonf apply(failurelonCatelongory: PipelonlinelonFailurelonCatelongory): Boolelonan
 }
 
-object FailOpenPolicy {
+objelonct FailOpelonnPolicy {
 
   /**
-   * Always fail open on candidate pipeline failures except
-   * for [[MisconfiguredFeatureMapFailure]]s because it's a programmer error
-   * and should always fail loudly, even with an [[Always]] p[[FailOpenPolicy]]
+   * Always fail opelonn on candidatelon pipelonlinelon failurelons elonxcelonpt
+   * for [[MisconfigurelondFelonaturelonMapFailurelon]]s beloncauselon it's a programmelonr elonrror
+   * and should always fail loudly, elonvelonn with an [[Always]] p[[FailOpelonnPolicy]]
    */
-  val Always: FailOpenPolicy = (category: PipelineFailureCategory) => {
-    category != MisconfiguredFeatureMapFailure
+  val Always: FailOpelonnPolicy = (catelongory: PipelonlinelonFailurelonCatelongory) => {
+    catelongory != MisconfigurelondFelonaturelonMapFailurelon
   }
 
   /**
-   * Never fail open on candidate pipeline failures.
+   * Nelonvelonr fail opelonn on candidatelon pipelonlinelon failurelons.
    *
-   * @note this is more restrictive than the default behavior which is to allow gate closed
-   *       failures.
+   * @notelon this is morelon relonstrictivelon than thelon delonfault belonhavior which is to allow gatelon closelond
+   *       failurelons.
    */
-  val Never: FailOpenPolicy = (_: PipelineFailureCategory) => false
+  val Nelonvelonr: FailOpelonnPolicy = (_: PipelonlinelonFailurelonCatelongory) => falselon
 
-  // Build a policy that will fail open for a given set of categories
-  def apply(categories: Set[PipelineFailureCategory]): FailOpenPolicy =
-    (failureCategory: PipelineFailureCategory) =>
-      categories
-        .contains(failureCategory)
+  // Build a policy that will fail opelonn for a givelonn selont of catelongorielons
+  delonf apply(catelongorielons: Selont[PipelonlinelonFailurelonCatelongory]): FailOpelonnPolicy =
+    (failurelonCatelongory: PipelonlinelonFailurelonCatelongory) =>
+      catelongorielons
+        .contains(failurelonCatelongory)
 }

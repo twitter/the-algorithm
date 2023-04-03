@@ -1,8 +1,8 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.timelonlinelon_modulelon
 
-sealed trait ModuleShowMoreBehavior
+selonalelond trait ModulelonShowMorelonBelonhavior
 
-case class ModuleShowMoreBehaviorRevealByCount(
-  initialItemsCount: Int,
-  showMoreItemsCount: Int)
-    extends ModuleShowMoreBehavior
+caselon class ModulelonShowMorelonBelonhaviorRelonvelonalByCount(
+  initialItelonmsCount: Int,
+  showMorelonItelonmsCount: Int)
+    elonxtelonnds ModulelonShowMorelonBelonhavior

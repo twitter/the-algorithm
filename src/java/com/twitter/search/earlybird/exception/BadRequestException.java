@@ -1,11 +1,11 @@
-package com.twitter.search.earlybird.exception;
+packagelon com.twittelonr.selonarch.elonarlybird.elonxcelonption;
 
-public class BadRequestException extends Exception {
-  public BadRequestException(String message, Throwable cause) {
-    super(message, cause);
+public class BadRelonquelonstelonxcelonption elonxtelonnds elonxcelonption {
+  public BadRelonquelonstelonxcelonption(String melonssagelon, Throwablelon causelon) {
+    supelonr(melonssagelon, causelon);
   }
 
-  public BadRequestException(String message) {
-    super(message);
+  public BadRelonquelonstelonxcelonption(String melonssagelon) {
+    supelonr(melonssagelon);
   }
 }

@@ -1,31 +1,31 @@
-package com.twitter.product_mixer.component_library.premarshaller.urt.builder
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.prelonmarshallelonr.urt.buildelonr
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.pipeline.HasPipelineCursor
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.Timelonlinelonelonntry
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.HasPipelonlinelonCursor
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
-trait IncludeInstruction[-Query <: PipelineQuery] { self =>
-  def apply(query: Query, entries: Seq[TimelineEntry]): Boolean
+trait IncludelonInstruction[-Quelonry <: PipelonlinelonQuelonry] { selonlf =>
+  delonf apply(quelonry: Quelonry, elonntrielons: Selonq[Timelonlinelonelonntry]): Boolelonan
 
-  def inverse(): IncludeInstruction[Query] = new IncludeInstruction[Query] {
-    def apply(query: Query, entries: Seq[TimelineEntry]): Boolean = !self.apply(query, entries)
+  delonf invelonrselon(): IncludelonInstruction[Quelonry] = nelonw IncludelonInstruction[Quelonry] {
+    delonf apply(quelonry: Quelonry, elonntrielons: Selonq[Timelonlinelonelonntry]): Boolelonan = !selonlf.apply(quelonry, elonntrielons)
   }
 }
 
-object AlwaysInclude extends IncludeInstruction[PipelineQuery] {
-  override def apply(query: PipelineQuery, entries: Seq[TimelineEntry]): Boolean = true
+objelonct AlwaysIncludelon elonxtelonnds IncludelonInstruction[PipelonlinelonQuelonry] {
+  ovelonrridelon delonf apply(quelonry: PipelonlinelonQuelonry, elonntrielons: Selonq[Timelonlinelonelonntry]): Boolelonan = truelon
 }
 
-object IncludeOnFirstPage extends IncludeInstruction[PipelineQuery with HasPipelineCursor[_]] {
-  override def apply(
-    query: PipelineQuery with HasPipelineCursor[_],
-    entries: Seq[TimelineEntry]
-  ): Boolean = query.isFirstPage
+objelonct IncludelonOnFirstPagelon elonxtelonnds IncludelonInstruction[PipelonlinelonQuelonry with HasPipelonlinelonCursor[_]] {
+  ovelonrridelon delonf apply(
+    quelonry: PipelonlinelonQuelonry with HasPipelonlinelonCursor[_],
+    elonntrielons: Selonq[Timelonlinelonelonntry]
+  ): Boolelonan = quelonry.isFirstPagelon
 }
 
-object IncludeAfterFirstPage extends IncludeInstruction[PipelineQuery with HasPipelineCursor[_]] {
-  override def apply(
-    query: PipelineQuery with HasPipelineCursor[_],
-    entries: Seq[TimelineEntry]
-  ): Boolean = !query.isFirstPage
+objelonct IncludelonAftelonrFirstPagelon elonxtelonnds IncludelonInstruction[PipelonlinelonQuelonry with HasPipelonlinelonCursor[_]] {
+  ovelonrridelon delonf apply(
+    quelonry: PipelonlinelonQuelonry with HasPipelonlinelonCursor[_],
+    elonntrielons: Selonq[Timelonlinelonelonntry]
+  ): Boolelonan = !quelonry.isFirstPagelon
 }

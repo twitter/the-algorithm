@@ -1,189 +1,189 @@
-package com.twitter.search.common.util.ml.tensorflow_engine;
+packagelon com.twittelonr.selonarch.common.util.ml.telonnsorflow_elonnginelon;
 
-import java.io.IOException;
-import java.util.Collections;
+import java.io.IOelonxcelonption;
+import java.util.Collelonctions;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Supplier;
+import java.util.function.Supplielonr;
 
-import com.google.common.base.Preconditions;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.tensorflow.SavedModelBundle;
-import org.tensorflow.Session;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
+import org.telonnsorflow.SavelondModelonlBundlelon;
+import org.telonnsorflow.Selonssion;
 
-import com.twitter.ml.api.FeatureUtil;
-import com.twitter.search.common.features.thrift.ThriftSearchFeatureSchema;
-import com.twitter.search.common.features.thrift.ThriftSearchFeatureSchemaEntry;
-import com.twitter.search.common.file.AbstractFile;
-import com.twitter.search.common.schema.DynamicSchema;
-import com.twitter.search.common.util.ml.models_manager.BaseModelsManager;
-import com.twitter.tfcompute_java.TFModelRunner;
-import com.twitter.tfcompute_java.TFSessionInit;
-import com.twitter.twml.runtime.lib.TwmlLoader;
-import com.twitter.twml.runtime.models.ModelLocator;
-import com.twitter.twml.runtime.models.ModelLocator$;
-import com.twitter.util.Await;
+import com.twittelonr.ml.api.FelonaturelonUtil;
+import com.twittelonr.selonarch.common.felonaturelons.thrift.ThriftSelonarchFelonaturelonSchelonma;
+import com.twittelonr.selonarch.common.felonaturelons.thrift.ThriftSelonarchFelonaturelonSchelonmaelonntry;
+import com.twittelonr.selonarch.common.filelon.AbstractFilelon;
+import com.twittelonr.selonarch.common.schelonma.DynamicSchelonma;
+import com.twittelonr.selonarch.common.util.ml.modelonls_managelonr.BaselonModelonlsManagelonr;
+import com.twittelonr.tfcomputelon_java.TFModelonlRunnelonr;
+import com.twittelonr.tfcomputelon_java.TFSelonssionInit;
+import com.twittelonr.twml.runtimelon.lib.TwmlLoadelonr;
+import com.twittelonr.twml.runtimelon.modelonls.ModelonlLocator;
+import com.twittelonr.twml.runtimelon.modelonls.ModelonlLocator$;
+import com.twittelonr.util.Await;
 
 /**
- * TensorflowModelsManager manages the lifecyle of TF models.
+ * TelonnsorflowModelonlsManagelonr managelons thelon lifeloncylelon of TF modelonls.
  */
-public class TensorflowModelsManager extends BaseModelsManager<TFModelRunner>  {
+public class TelonnsorflowModelonlsManagelonr elonxtelonnds BaselonModelonlsManagelonr<TFModelonlRunnelonr>  {
 
-  private static final Logger LOG = LoggerFactory.getLogger(TensorflowModelsManager.class);
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(TelonnsorflowModelonlsManagelonr.class);
 
-  private static final String[] TF_TAGS = new String[] {"serve"};
+  privatelon static final String[] TF_TAGS = nelonw String[] {"selonrvelon"};
 
-  private volatile Map<Integer, Long> featureSchemaIdToMlApiId = new HashMap<Integer, Long>();
+  privatelon volatilelon Map<Intelongelonr, Long> felonaturelonSchelonmaIdToMlApiId = nelonw HashMap<Intelongelonr, Long>();
 
   static {
-    TwmlLoader.load();
+    TwmlLoadelonr.load();
   }
 
-  public static final TensorflowModelsManager NO_OP_MANAGER =
-    createNoOp("no_op_manager");
+  public static final TelonnsorflowModelonlsManagelonr NO_OP_MANAGelonR =
+    crelonatelonNoOp("no_op_managelonr");
 
-  public TensorflowModelsManager(
-      Supplier<Map<String, AbstractFile>> activeModelsSupplier,
-      boolean shouldUnloadInactiveModels,
-      String statsPrefix
+  public TelonnsorflowModelonlsManagelonr(
+      Supplielonr<Map<String, AbstractFilelon>> activelonModelonlsSupplielonr,
+      boolelonan shouldUnloadInactivelonModelonls,
+      String statsPrelonfix
   ) {
     this(
-      activeModelsSupplier,
-      shouldUnloadInactiveModels,
-      statsPrefix,
-      () -> true,
-      () -> true,
+      activelonModelonlsSupplielonr,
+      shouldUnloadInactivelonModelonls,
+      statsPrelonfix,
+      () -> truelon,
+      () -> truelon,
       null
     );
   }
 
-  public TensorflowModelsManager(
-      Supplier<Map<String, AbstractFile>> activeModelsSupplier,
-      boolean shouldUnloadInactiveModels,
-      String statsPrefix,
-      Supplier<Boolean> serveModels,
-      Supplier<Boolean> loadModels,
-      DynamicSchema dynamicSchema
+  public TelonnsorflowModelonlsManagelonr(
+      Supplielonr<Map<String, AbstractFilelon>> activelonModelonlsSupplielonr,
+      boolelonan shouldUnloadInactivelonModelonls,
+      String statsPrelonfix,
+      Supplielonr<Boolelonan> selonrvelonModelonls,
+      Supplielonr<Boolelonan> loadModelonls,
+      DynamicSchelonma dynamicSchelonma
   ) {
-    super(
-      activeModelsSupplier,
-      shouldUnloadInactiveModels,
-      statsPrefix,
-      serveModels,
-      loadModels
+    supelonr(
+      activelonModelonlsSupplielonr,
+      shouldUnloadInactivelonModelonls,
+      statsPrelonfix,
+      selonrvelonModelonls,
+      loadModelonls
     );
-    if (dynamicSchema != null) {
-      updateFeatureSchemaIdToMlIdMap(dynamicSchema.getSearchFeatureSchema());
+    if (dynamicSchelonma != null) {
+      updatelonFelonaturelonSchelonmaIdToMlIdMap(dynamicSchelonma.gelontSelonarchFelonaturelonSchelonma());
     }
   }
 
   /**
-   * The ML API feature ids for tensorflow scoring are hashes of their feature names. This hashing
-   * could be expensive to do for every search request. Instead, allow the map from schema feature
-   * id to ML API id to be updated whenever the schema is reloaded.
+   * Thelon ML API felonaturelon ids for telonnsorflow scoring arelon hashelons of thelonir felonaturelon namelons. This hashing
+   * could belon elonxpelonnsivelon to do for elonvelonry selonarch relonquelonst. Instelonad, allow thelon map from schelonma felonaturelon
+   * id to ML API id to belon updatelond whelonnelonvelonr thelon schelonma is relonloadelond.
    */
-  public void updateFeatureSchemaIdToMlIdMap(ThriftSearchFeatureSchema schema) {
-    HashMap<Integer, Long> newFeatureSchemaIdToMlApiId = new HashMap<Integer, Long>();
-    Map<Integer, ThriftSearchFeatureSchemaEntry> featureEntries = schema.getEntries();
-    for (Map.Entry<Integer, ThriftSearchFeatureSchemaEntry> entry : featureEntries.entrySet()) {
-      long mlApiFeatureId = FeatureUtil.featureIdForName(entry.getValue().getFeatureName());
-      newFeatureSchemaIdToMlApiId.put(entry.getKey(), mlApiFeatureId);
+  public void updatelonFelonaturelonSchelonmaIdToMlIdMap(ThriftSelonarchFelonaturelonSchelonma schelonma) {
+    HashMap<Intelongelonr, Long> nelonwFelonaturelonSchelonmaIdToMlApiId = nelonw HashMap<Intelongelonr, Long>();
+    Map<Intelongelonr, ThriftSelonarchFelonaturelonSchelonmaelonntry> felonaturelonelonntrielons = schelonma.gelontelonntrielons();
+    for (Map.elonntry<Intelongelonr, ThriftSelonarchFelonaturelonSchelonmaelonntry> elonntry : felonaturelonelonntrielons.elonntrySelont()) {
+      long mlApiFelonaturelonId = FelonaturelonUtil.felonaturelonIdForNamelon(elonntry.gelontValuelon().gelontFelonaturelonNamelon());
+      nelonwFelonaturelonSchelonmaIdToMlApiId.put(elonntry.gelontKelony(), mlApiFelonaturelonId);
     }
 
-    featureSchemaIdToMlApiId = newFeatureSchemaIdToMlApiId;
+    felonaturelonSchelonmaIdToMlApiId = nelonwFelonaturelonSchelonmaIdToMlApiId;
   }
 
-  public Map<Integer, Long> getFeatureSchemaIdToMlApiId() {
-    return featureSchemaIdToMlApiId;
-  }
-
-  /**
-   * If the manager is not enabled, it won't fetch TF models.
-   */
-  public boolean isEnabled() {
-    return true;
+  public Map<Intelongelonr, Long> gelontFelonaturelonSchelonmaIdToMlApiId() {
+    relonturn felonaturelonSchelonmaIdToMlApiId;
   }
 
   /**
-   * Load an individual model and make it available for inference.
+   * If thelon managelonr is not elonnablelond, it won't felontch TF modelonls.
    */
-  public TFModelRunner readModelFromDirectory(
-    AbstractFile modelDir) throws IOException {
+  public boolelonan iselonnablelond() {
+    relonturn truelon;
+  }
 
-    ModelLocator modelLocator =
-      ModelLocator$.MODULE$.apply(
-        modelDir.toString(),
-        modelDir.toURI()
+  /**
+   * Load an individual modelonl and makelon it availablelon for infelonrelonncelon.
+   */
+  public TFModelonlRunnelonr relonadModelonlFromDirelonctory(
+    AbstractFilelon modelonlDir) throws IOelonxcelonption {
+
+    ModelonlLocator modelonlLocator =
+      ModelonlLocator$.MODULelon$.apply(
+        modelonlDir.toString(),
+        modelonlDir.toURI()
       );
 
     try {
-      Await.result(modelLocator.ensureLocalPresent(true));
-    } catch (Exception e) {
-      LOG.error("Couldn't find model " + modelDir.toString(), e);
-      throw new IOException("Couldn't find model " + modelDir.toString());
+      Await.relonsult(modelonlLocator.elonnsurelonLocalPrelonselonnt(truelon));
+    } catch (elonxcelonption elon) {
+      LOG.elonrror("Couldn't find modelonl " + modelonlDir.toString(), elon);
+      throw nelonw IOelonxcelonption("Couldn't find modelonl " + modelonlDir.toString());
     }
 
-    Session session = SavedModelBundle.load(modelLocator.localPath(), TF_TAGS).session();
+    Selonssion selonssion = SavelondModelonlBundlelon.load(modelonlLocator.localPath(), TF_TAGS).selonssion();
 
-    return new TFModelRunner(session);
+    relonturn nelonw TFModelonlRunnelonr(selonssion);
   }
 
 
   /**
-   * Initialize Tensorflow intra and inter op thread pools.
-   * See `ConfigProto.[intra|inter]_op_parallelism_threads` documentation for more information:
-   * https://github.com/tensorflow/tensorflow/blob/master/tensorflow/core/protobuf/config.proto
-   * Initialization should happen only once.
-   * Default values for Tensorflow are:
-   * intraOpParallelismThreads = 0 which means that TF will pick an appropriate default.
-   * interOpParallelismThreads = 0 which means that TF will pick an appropriate default.
-   * operation_timeout_in_ms = 0 which means that no timeout will be applied.
+   * Initializelon Telonnsorflow intra and intelonr op threlonad pools.
+   * Selonelon `ConfigProto.[intra|intelonr]_op_parallelonlism_threlonads` documelonntation for morelon information:
+   * https://github.com/telonnsorflow/telonnsorflow/blob/mastelonr/telonnsorflow/corelon/protobuf/config.proto
+   * Initialization should happelonn only oncelon.
+   * Delonfault valuelons for Telonnsorflow arelon:
+   * intraOpParallelonlismThrelonads = 0 which melonans that TF will pick an appropriatelon delonfault.
+   * intelonrOpParallelonlismThrelonads = 0 which melonans that TF will pick an appropriatelon delonfault.
+   * opelonration_timelonout_in_ms = 0 which melonans that no timelonout will belon applielond.
    */
-  public static void initTensorflowThreadPools(
-    int intraOpParallelismThreads,
-    int interOpParallelismThreads) {
-    new TFSessionInit(intraOpParallelismThreads, interOpParallelismThreads, 0);
+  public static void initTelonnsorflowThrelonadPools(
+    int intraOpParallelonlismThrelonads,
+    int intelonrOpParallelonlismThrelonads) {
+    nelonw TFSelonssionInit(intraOpParallelonlismThrelonads, intelonrOpParallelonlismThrelonads, 0);
   }
 
   /**
-   * Creates a no-op instance. It can be used for tests or when the models are disabled.
+   * Crelonatelons a no-op instancelon. It can belon uselond for telonsts or whelonn thelon modelonls arelon disablelond.
    */
-  public static TensorflowModelsManager createNoOp(String statsPrefix) {
-    return new TensorflowModelsManager(Collections::emptyMap, false, statsPrefix) {
-      @Override
+  public static TelonnsorflowModelonlsManagelonr crelonatelonNoOp(String statsPrelonfix) {
+    relonturn nelonw TelonnsorflowModelonlsManagelonr(Collelonctions::elonmptyMap, falselon, statsPrelonfix) {
+      @Ovelonrridelon
       public void run() { }
 
-      @Override
-      public boolean isEnabled() {
-        return false;
+      @Ovelonrridelon
+      public boolelonan iselonnablelond() {
+        relonturn falselon;
       }
 
-      @Override
-      public void updateFeatureSchemaIdToMlIdMap(ThriftSearchFeatureSchema schema) { }
+      @Ovelonrridelon
+      public void updatelonFelonaturelonSchelonmaIdToMlIdMap(ThriftSelonarchFelonaturelonSchelonma schelonma) { }
     };
   }
 
  /**
-   * Creates an instance that loads the models based on a ConfigSupplier.
+   * Crelonatelons an instancelon that loads thelon modelonls baselond on a ConfigSupplielonr.
    */
-  public static TensorflowModelsManager createUsingConfigFile(
-      AbstractFile configFile,
-      boolean shouldUnloadInactiveModels,
-      String statsPrefix,
-      Supplier<Boolean> serveModels,
-      Supplier<Boolean> loadModels,
-      DynamicSchema dynamicSchema) {
-    Preconditions.checkArgument(
-        configFile.canRead(), "Config file is not readable: %s", configFile.getPath());
-    return new TensorflowModelsManager(
-      new ConfigSupplier(configFile),
-      shouldUnloadInactiveModels,
-      statsPrefix,
-      serveModels,
-      loadModels,
-      dynamicSchema
+  public static TelonnsorflowModelonlsManagelonr crelonatelonUsingConfigFilelon(
+      AbstractFilelon configFilelon,
+      boolelonan shouldUnloadInactivelonModelonls,
+      String statsPrelonfix,
+      Supplielonr<Boolelonan> selonrvelonModelonls,
+      Supplielonr<Boolelonan> loadModelonls,
+      DynamicSchelonma dynamicSchelonma) {
+    Prelonconditions.chelonckArgumelonnt(
+        configFilelon.canRelonad(), "Config filelon is not relonadablelon: %s", configFilelon.gelontPath());
+    relonturn nelonw TelonnsorflowModelonlsManagelonr(
+      nelonw ConfigSupplielonr(configFilelon),
+      shouldUnloadInactivelonModelonls,
+      statsPrelonfix,
+      selonrvelonModelonls,
+      loadModelonls,
+      dynamicSchelonma
     );
   }
 }

@@ -1,20 +1,20 @@
-package com.twitter.ann.service.query_server.common
+packagelon com.twittelonr.ann.selonrvicelon.quelonry_selonrvelonr.common
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.logging.Logger
-import com.twitter.search.common.file.AbstractFile
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.logging.Loggelonr
+import com.twittelonr.selonarch.common.filelon.AbstractFilelon
 
-case class FaissIndexPathProvider(
-  override val minIndexSizeBytes: Long,
-  override val maxIndexSizeBytes: Long,
-  override val statsReceiver: StatsReceiver)
-    extends BaseIndexPathProvider {
+caselon class FaissIndelonxPathProvidelonr(
+  ovelonrridelon val minIndelonxSizelonBytelons: Long,
+  ovelonrridelon val maxIndelonxSizelonBytelons: Long,
+  ovelonrridelon val statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds BaselonIndelonxPathProvidelonr {
 
-  override val log = Logger.get("FAISSIndexPathProvider")
+  ovelonrridelon val log = Loggelonr.gelont("FAISSIndelonxPathProvidelonr")
 
-  override def isValidIndex(dir: AbstractFile): Boolean = {
-    dir.isDirectory &&
-    dir.hasSuccessFile &&
-    dir.getChild("faiss.index").exists()
+  ovelonrridelon delonf isValidIndelonx(dir: AbstractFilelon): Boolelonan = {
+    dir.isDirelonctory &&
+    dir.hasSuccelonssFilelon &&
+    dir.gelontChild("faiss.indelonx").elonxists()
   }
 }

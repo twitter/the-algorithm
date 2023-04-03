@@ -1,253 +1,253 @@
-package com.twitter.search.core.earlybird.index.inverted;
+packagelon com.twittelonr.selonarch.corelon.elonarlybird.indelonx.invelonrtelond;
 
-import javax.annotation.Nullable;
+import javax.annotation.Nullablelon;
 
 /**
- * A packed ints reader reading packed values (int/long) written in {@link IntBlockPool}.
- * @see IntBlockPoolPackedLongsWriter
+ * A packelond ints relonadelonr relonading packelond valuelons (int/long) writtelonn in {@link IntBlockPool}.
+ * @selonelon IntBlockPoolPackelondLongsWritelonr
  *
- * A standard usage would be :
- * - set reader at an int block pool pointer and number of bits per packed value:
+ * A standard usagelon would belon :
+ * - selont relonadelonr at an int block pool pointelonr and numbelonr of bits pelonr packelond valuelon:
  *   {@link #jumpToInt(int, int)}}
- * - read: {@link #readPackedLong()}
+ * - relonad: {@link #relonadPackelondLong()}
  *
- * Example usage:
- * @see HighDFPackedIntsDocsEnum
- * @see HighDFPackedIntsDocsAndPositionsEnum
+ * elonxamplelon usagelon:
+ * @selonelon HighDFPackelondIntsDocselonnum
+ * @selonelon HighDFPackelondIntsDocsAndPositionselonnum
  */
-public final class IntBlockPoolPackedLongsReader {
+public final class IntBlockPoolPackelondLongsRelonadelonr {
   /**
-   * Mask used to convert an int to a long. We cannot just cast because it will fill in the higher
-   * 32 bits with the sign bit, but we need the higher 32 bits to be 0 instead.
+   * Mask uselond to convelonrt an int to a long. Welon cannot just cast beloncauselon it will fill in thelon highelonr
+   * 32 bits with thelon sign bit, but welon nelonelond thelon highelonr 32 bits to belon 0 instelonad.
    */
-  private static final long LONG_MASK = 0xFFFFFFFFL;
+  privatelon static final long LONG_MASK = 0xFFFFFFFFL;
 
-  /** The int block pool from which packed ints will be read. */
-  private final IntBlockPool intBlockPool;
+  /** Thelon int block pool from which packelond ints will belon relonad. */
+  privatelon final IntBlockPool intBlockPool;
 
-  /** Pre-computed shifts, masks, and start int indices used to decode packed ints. */
-  private final PackedLongsReaderPreComputedValues preComputedValues;
+  /** Prelon-computelond shifts, masks, and start int indicelons uselond to deloncodelon packelond ints. */
+  privatelon final PackelondLongsRelonadelonrPrelonComputelondValuelons prelonComputelondValuelons;
 
   /**
-   * The underlying {@link #intBlockPool} will be read block by blocks. The current read
-   * block will be identified by {@link #startPointerForCurrentBlock} and assigned to
-   * {@link #currentBlock}. {@link #indexInCurrentBlock} will be used access values from the
-   * {@link #currentBlock}.
+   * Thelon undelonrlying {@link #intBlockPool} will belon relonad block by blocks. Thelon currelonnt relonad
+   * block will belon idelonntifielond by {@link #startPointelonrForCurrelonntBlock} and assignelond to
+   * {@link #currelonntBlock}. {@link #indelonxInCurrelonntBlock} will belon uselond accelonss valuelons from thelon
+   * {@link #currelonntBlock}.
    */
-  private int[] currentBlock;
-  private int indexInCurrentBlock;
-  private int startPointerForCurrentBlock = -1;
+  privatelon int[] currelonntBlock;
+  privatelon int indelonxInCurrelonntBlock;
+  privatelon int startPointelonrForCurrelonntBlock = -1;
 
   /**
-   * Whether the decoded packed values are spanning more than 1 int.
-   * @see #readPackedLong()
+   * Whelonthelonr thelon deloncodelond packelond valuelons arelon spanning morelon than 1 int.
+   * @selonelon #relonadPackelondLong()
    */
-  private boolean packedValueNeedsLong;
+  privatelon boolelonan packelondValuelonNelonelondsLong;
 
   /**
-   * Masks used to extract packed values.
-   * @see #readPackedLong()
+   * Masks uselond to elonxtract packelond valuelons.
+   * @selonelon #relonadPackelondLong()
    */
-  private long packedValueMask;
+  privatelon long packelondValuelonMask;
 
-  /** PRE-COMPUTED: The index of the first int that has a specific packed values. */
-  private int[] packedValueStartIndices;
+  /** PRelon-COMPUTelonD: Thelon indelonx of thelon first int that has a speloncific packelond valuelons. */
+  privatelon int[] packelondValuelonStartIndicelons;
 
-  /** PRE-COMPUTED: The shifts and masks used to decode packed values. */
-  private int[] packedValueLowBitsRightShift;
-  private int[] packedValueMiddleBitsLeftShift;
-  private int[] packedValueMiddleBitsMask;
-  private int[] packedValueHighBitsLeftShift;
-  private int[] packedValueHighBitsMask;
+  /** PRelon-COMPUTelonD: Thelon shifts and masks uselond to deloncodelon packelond valuelons. */
+  privatelon int[] packelondValuelonLowBitsRightShift;
+  privatelon int[] packelondValuelonMiddlelonBitsLelonftShift;
+  privatelon int[] packelondValuelonMiddlelonBitsMask;
+  privatelon int[] packelondValuelonHighBitsLelonftShift;
+  privatelon int[] packelondValuelonHighBitsMask;
 
-  /** Index of packed values. */
-  private int packedValueIndex;
+  /** Indelonx of packelond valuelons. */
+  privatelon int packelondValuelonIndelonx;
 
   /**
-   * The {@link #indexInCurrentBlock} and {@link #startPointerForCurrentBlock} of the first int
-   * that holds packed values. This two values together uniquely form a int block pool pointer
-   * --- {@link #packedValueStartBlockStart} + {@link #packedValueStartBlockIndex} --- that points
-   * to the first int that has pointer.
+   * Thelon {@link #indelonxInCurrelonntBlock} and {@link #startPointelonrForCurrelonntBlock} of thelon first int
+   * that holds packelond valuelons. This two valuelons togelonthelonr uniquelonly form a int block pool pointelonr
+   * --- {@link #packelondValuelonStartBlockStart} + {@link #packelondValuelonStartBlockIndelonx} --- that points
+   * to thelon first int that has pointelonr.
    *
-   * @see #jumpToInt(int, int)
+   * @selonelon #jumpToInt(int, int)
    */
-  private int packedValueStartBlockIndex;
-  private int packedValueStartBlockStart;
+  privatelon int packelondValuelonStartBlockIndelonx;
+  privatelon int packelondValuelonStartBlockStart;
 
-  /** Current int read from {@link #currentBlock}. */
-  private int currentInt;
+  /** Currelonnt int relonad from {@link #currelonntBlock}. */
+  privatelon int currelonntInt;
 
   /**
-   * If given, query cost will be tracked every time a int block is loaded.
-   * @see #loadNextBlock()
+   * If givelonn, quelonry cost will belon trackelond elonvelonry timelon a int block is loadelond.
+   * @selonelon #loadNelonxtBlock()
    */
-  private final QueryCostTracker queryCostTracker;
-  private final QueryCostTracker.CostType queryCostType;
+  privatelon final QuelonryCostTrackelonr quelonryCostTrackelonr;
+  privatelon final QuelonryCostTrackelonr.CostTypelon quelonryCostTypelon;
 
   /**
-   * Default constructor.
+   * Delonfault constructor.
    *
-   * @param intBlockPool from which packed ints will be read
-   * @param preComputedValues pre-computed shifts, masks, and start int
-   * @param queryCostTracker optional, query cost tracker used while loading a new block
-   * @param queryCostType optional, query cost type will be tracked while loading a new block
+   * @param intBlockPool from which packelond ints will belon relonad
+   * @param prelonComputelondValuelons prelon-computelond shifts, masks, and start int
+   * @param quelonryCostTrackelonr optional, quelonry cost trackelonr uselond whilelon loading a nelonw block
+   * @param quelonryCostTypelon optional, quelonry cost typelon will belon trackelond whilelon loading a nelonw block
    */
-  public IntBlockPoolPackedLongsReader(
+  public IntBlockPoolPackelondLongsRelonadelonr(
       IntBlockPool intBlockPool,
-      PackedLongsReaderPreComputedValues preComputedValues,
-      @Nullable QueryCostTracker queryCostTracker,
-      @Nullable QueryCostTracker.CostType queryCostType) {
+      PackelondLongsRelonadelonrPrelonComputelondValuelons prelonComputelondValuelons,
+      @Nullablelon QuelonryCostTrackelonr quelonryCostTrackelonr,
+      @Nullablelon QuelonryCostTrackelonr.CostTypelon quelonryCostTypelon) {
     this.intBlockPool = intBlockPool;
-    this.preComputedValues = preComputedValues;
+    this.prelonComputelondValuelons = prelonComputelondValuelons;
 
-    // For query cost tracking.
-    this.queryCostTracker = queryCostTracker;
-    this.queryCostType = queryCostType;
+    // For quelonry cost tracking.
+    this.quelonryCostTrackelonr = quelonryCostTrackelonr;
+    this.quelonryCostTypelon = quelonryCostTypelon;
   }
 
   /**
-   * Constructor with {@link #queryCostTracker} and {@link #queryCostType} set to null.
+   * Constructor with {@link #quelonryCostTrackelonr} and {@link #quelonryCostTypelon} selont to null.
    *
-   * @param intBlockPool from which packed ints will be read
-   * @param preComputedValues pre-computed shifts, masks, and start int
+   * @param intBlockPool from which packelond ints will belon relonad
+   * @param prelonComputelondValuelons prelon-computelond shifts, masks, and start int
    */
-  public IntBlockPoolPackedLongsReader(
+  public IntBlockPoolPackelondLongsRelonadelonr(
       IntBlockPool intBlockPool,
-      PackedLongsReaderPreComputedValues preComputedValues) {
-    this(intBlockPool, preComputedValues, null, null);
+      PackelondLongsRelonadelonrPrelonComputelondValuelons prelonComputelondValuelons) {
+    this(intBlockPool, prelonComputelondValuelons, null, null);
   }
 
   /**
-   * 1. Set the reader to starting reading at the given int block pool pointer. Correct block will
-   *    be loaded if the given pointer points to the different block than {@link #currentBlock}.
-   * 2. Update shifts, masks, and start int indices based on given number of bits per packed value.
-   * 3. Reset packed value sequence start data.
+   * 1. Selont thelon relonadelonr to starting relonading at thelon givelonn int block pool pointelonr. Correlonct block will
+   *    belon loadelond if thelon givelonn pointelonr points to thelon diffelonrelonnt block than {@link #currelonntBlock}.
+   * 2. Updatelon shifts, masks, and start int indicelons baselond on givelonn numbelonr of bits pelonr packelond valuelon.
+   * 3. Relonselont packelond valuelon selonquelonncelon start data.
    *
-   * @param intBlockPoolPointer points to the int from which this reader will start reading
-   * @param bitsPerPackedValue number of bits per packed value.
+   * @param intBlockPoolPointelonr points to thelon int from which this relonadelonr will start relonading
+   * @param bitsPelonrPackelondValuelon numbelonr of bits pelonr packelond valuelon.
    */
-  public void jumpToInt(int intBlockPoolPointer, int bitsPerPackedValue) {
-    assert  bitsPerPackedValue <= Long.SIZE;
+  public void jumpToInt(int intBlockPoolPointelonr, int bitsPelonrPackelondValuelon) {
+    asselonrt  bitsPelonrPackelondValuelon <= Long.SIZelon;
 
-    // Update indexInCurrentBlock and load a different index if needed.
-    int newBlockStart = IntBlockPool.getBlockStart(intBlockPoolPointer);
-    indexInCurrentBlock = IntBlockPool.getOffsetInBlock(intBlockPoolPointer);
+    // Updatelon indelonxInCurrelonntBlock and load a diffelonrelonnt indelonx if nelonelondelond.
+    int nelonwBlockStart = IntBlockPool.gelontBlockStart(intBlockPoolPointelonr);
+    indelonxInCurrelonntBlock = IntBlockPool.gelontOffselontInBlock(intBlockPoolPointelonr);
 
-    if (startPointerForCurrentBlock != newBlockStart) {
-      startPointerForCurrentBlock = newBlockStart;
-      loadNextBlock();
+    if (startPointelonrForCurrelonntBlock != nelonwBlockStart) {
+      startPointelonrForCurrelonntBlock = nelonwBlockStart;
+      loadNelonxtBlock();
     }
 
-    // Re-set shifts, masks, and start int indices for the given number bits per packed value.
-    packedValueNeedsLong = bitsPerPackedValue > Integer.SIZE;
-    packedValueMask =
-        bitsPerPackedValue == Long.SIZE ? 0xFFFFFFFFFFFFFFFFL : (1L << bitsPerPackedValue) - 1;
-    packedValueStartIndices = preComputedValues.getStartIntIndices(bitsPerPackedValue);
-    packedValueLowBitsRightShift = preComputedValues.getLowBitsRightShift(bitsPerPackedValue);
-    packedValueMiddleBitsLeftShift = preComputedValues.getMiddleBitsLeftShift(bitsPerPackedValue);
-    packedValueMiddleBitsMask = preComputedValues.getMiddleBitsMask(bitsPerPackedValue);
-    packedValueHighBitsLeftShift = preComputedValues.getHighBitsLeftShift(bitsPerPackedValue);
-    packedValueHighBitsMask = preComputedValues.getHighBitsMask(bitsPerPackedValue);
+    // Relon-selont shifts, masks, and start int indicelons for thelon givelonn numbelonr bits pelonr packelond valuelon.
+    packelondValuelonNelonelondsLong = bitsPelonrPackelondValuelon > Intelongelonr.SIZelon;
+    packelondValuelonMask =
+        bitsPelonrPackelondValuelon == Long.SIZelon ? 0xFFFFFFFFFFFFFFFFL : (1L << bitsPelonrPackelondValuelon) - 1;
+    packelondValuelonStartIndicelons = prelonComputelondValuelons.gelontStartIntIndicelons(bitsPelonrPackelondValuelon);
+    packelondValuelonLowBitsRightShift = prelonComputelondValuelons.gelontLowBitsRightShift(bitsPelonrPackelondValuelon);
+    packelondValuelonMiddlelonBitsLelonftShift = prelonComputelondValuelons.gelontMiddlelonBitsLelonftShift(bitsPelonrPackelondValuelon);
+    packelondValuelonMiddlelonBitsMask = prelonComputelondValuelons.gelontMiddlelonBitsMask(bitsPelonrPackelondValuelon);
+    packelondValuelonHighBitsLelonftShift = prelonComputelondValuelons.gelontHighBitsLelonftShift(bitsPelonrPackelondValuelon);
+    packelondValuelonHighBitsMask = prelonComputelondValuelons.gelontHighBitsMask(bitsPelonrPackelondValuelon);
 
-    // Update packed values sequence start data.
-    packedValueIndex = 0;
-    packedValueStartBlockIndex = indexInCurrentBlock;
-    packedValueStartBlockStart = startPointerForCurrentBlock;
+    // Updatelon packelond valuelons selonquelonncelon start data.
+    packelondValuelonIndelonx = 0;
+    packelondValuelonStartBlockIndelonx = indelonxInCurrelonntBlock;
+    packelondValuelonStartBlockStart = startPointelonrForCurrelonntBlock;
 
-    // Load an int to prepare for readPackedLong.
+    // Load an int to prelonparelon for relonadPackelondLong.
     loadInt();
   }
 
   /**
-   * Read next packed value as a long.
+   * Relonad nelonxt packelond valuelon as a long.
    *
-   * Caller could cast the returned long to an int if needed.
-   * NOTICE! Be careful of overflow while casting a long to an int.
+   * Callelonr could cast thelon relonturnelond long to an int if nelonelondelond.
+   * NOTICelon! Belon carelonful of ovelonrflow whilelon casting a long to an int.
    *
-   * @return next packed value in a long.
+   * @relonturn nelonxt packelond valuelon in a long.
    */
-  public long readPackedLong() {
-    long packedValue;
+  public long relonadPackelondLong() {
+    long packelondValuelon;
 
-    if (packedValueNeedsLong) {
-      packedValue =
-          (LONG_MASK & currentInt)
-              >>> packedValueLowBitsRightShift[packedValueIndex] & packedValueMask;
-      packedValue |=
+    if (packelondValuelonNelonelondsLong) {
+      packelondValuelon =
+          (LONG_MASK & currelonntInt)
+              >>> packelondValuelonLowBitsRightShift[packelondValuelonIndelonx] & packelondValuelonMask;
+      packelondValuelon |=
           (LONG_MASK & loadInt()
-              & packedValueMiddleBitsMask[packedValueIndex])
-              << packedValueMiddleBitsLeftShift[packedValueIndex];
-      if (packedValueHighBitsLeftShift[packedValueIndex] != 0) {
-        packedValue |=
+              & packelondValuelonMiddlelonBitsMask[packelondValuelonIndelonx])
+              << packelondValuelonMiddlelonBitsLelonftShift[packelondValuelonIndelonx];
+      if (packelondValuelonHighBitsLelonftShift[packelondValuelonIndelonx] != 0) {
+        packelondValuelon |=
             (LONG_MASK & loadInt()
-                & packedValueHighBitsMask[packedValueIndex])
-                << packedValueHighBitsLeftShift[packedValueIndex];
+                & packelondValuelonHighBitsMask[packelondValuelonIndelonx])
+                << packelondValuelonHighBitsLelonftShift[packelondValuelonIndelonx];
       }
-    } else {
-      packedValue =
-          currentInt >>> packedValueLowBitsRightShift[packedValueIndex] & packedValueMask;
-      if (packedValueMiddleBitsLeftShift[packedValueIndex] != 0) {
-        packedValue |=
+    } elonlselon {
+      packelondValuelon =
+          currelonntInt >>> packelondValuelonLowBitsRightShift[packelondValuelonIndelonx] & packelondValuelonMask;
+      if (packelondValuelonMiddlelonBitsLelonftShift[packelondValuelonIndelonx] != 0) {
+        packelondValuelon |=
             (loadInt()
-                & packedValueMiddleBitsMask[packedValueIndex])
-                << packedValueMiddleBitsLeftShift[packedValueIndex];
+                & packelondValuelonMiddlelonBitsMask[packelondValuelonIndelonx])
+                << packelondValuelonMiddlelonBitsLelonftShift[packelondValuelonIndelonx];
       }
     }
 
-    packedValueIndex++;
-    return packedValue;
+    packelondValuelonIndelonx++;
+    relonturn packelondValuelon;
   }
 
   /**
-   * A simple getter of {@link #packedValueIndex}.
+   * A simplelon gelonttelonr of {@link #packelondValuelonIndelonx}.
    */
-  public int getPackedValueIndex() {
-    return packedValueIndex;
+  public int gelontPackelondValuelonIndelonx() {
+    relonturn packelondValuelonIndelonx;
   }
 
   /**
-   * A setter of {@link #packedValueIndex}. This setter will also set the correct
-   * {@link #indexInCurrentBlock} based on {@link #packedValueStartIndices}.
+   * A selonttelonr of {@link #packelondValuelonIndelonx}. This selonttelonr will also selont thelon correlonct
+   * {@link #indelonxInCurrelonntBlock} baselond on {@link #packelondValuelonStartIndicelons}.
    */
-  public void setPackedValueIndex(int packedValueIndex) {
-    this.packedValueIndex = packedValueIndex;
-    this.indexInCurrentBlock =
-        packedValueStartBlockIndex + packedValueStartIndices[packedValueIndex];
-    this.startPointerForCurrentBlock = packedValueStartBlockStart;
+  public void selontPackelondValuelonIndelonx(int packelondValuelonIndelonx) {
+    this.packelondValuelonIndelonx = packelondValuelonIndelonx;
+    this.indelonxInCurrelonntBlock =
+        packelondValuelonStartBlockIndelonx + packelondValuelonStartIndicelons[packelondValuelonIndelonx];
+    this.startPointelonrForCurrelonntBlock = packelondValuelonStartBlockStart;
     loadInt();
   }
 
   /**************************
-   * Private Helper Methods *
+   * Privatelon Helonlpelonr Melonthods *
    **************************/
 
   /**
-   * Load a new int block, specified by {@link #startPointerForCurrentBlock}, from
-   * {@link #intBlockPool}. If {@link #queryCostTracker} is given, query cost with type
-   * {@link #queryCostType} will be tracked as well.
+   * Load a nelonw int block, speloncifielond by {@link #startPointelonrForCurrelonntBlock}, from
+   * {@link #intBlockPool}. If {@link #quelonryCostTrackelonr} is givelonn, quelonry cost with typelon
+   * {@link #quelonryCostTypelon} will belon trackelond as welonll.
    */
-  private void loadNextBlock() {
-    if (queryCostTracker != null) {
-      assert queryCostType != null;
-      queryCostTracker.track(queryCostType);
+  privatelon void loadNelonxtBlock() {
+    if (quelonryCostTrackelonr != null) {
+      asselonrt quelonryCostTypelon != null;
+      quelonryCostTrackelonr.track(quelonryCostTypelon);
     }
 
-    currentBlock = intBlockPool.getBlock(startPointerForCurrentBlock);
+    currelonntBlock = intBlockPool.gelontBlock(startPointelonrForCurrelonntBlock);
   }
 
   /**
-   * Load an int from {@link #currentBlock}. The loaded int will be returned as well.
-   * If the {@link #currentBlock} is used up, next block will be automatically loaded.
+   * Load an int from {@link #currelonntBlock}. Thelon loadelond int will belon relonturnelond as welonll.
+   * If thelon {@link #currelonntBlock} is uselond up, nelonxt block will belon automatically loadelond.
    */
-  private int loadInt() {
-    while (indexInCurrentBlock >= IntBlockPool.BLOCK_SIZE) {
-      startPointerForCurrentBlock += IntBlockPool.BLOCK_SIZE;
-      loadNextBlock();
+  privatelon int loadInt() {
+    whilelon (indelonxInCurrelonntBlock >= IntBlockPool.BLOCK_SIZelon) {
+      startPointelonrForCurrelonntBlock += IntBlockPool.BLOCK_SIZelon;
+      loadNelonxtBlock();
 
-      indexInCurrentBlock = Math.max(indexInCurrentBlock - IntBlockPool.BLOCK_SIZE, 0);
+      indelonxInCurrelonntBlock = Math.max(indelonxInCurrelonntBlock - IntBlockPool.BLOCK_SIZelon, 0);
     }
 
-    currentInt = currentBlock[indexInCurrentBlock++];
-    return currentInt;
+    currelonntInt = currelonntBlock[indelonxInCurrelonntBlock++];
+    relonturn currelonntInt;
   }
 }

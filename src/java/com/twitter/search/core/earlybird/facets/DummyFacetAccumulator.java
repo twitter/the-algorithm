@@ -1,28 +1,28 @@
-package com.twitter.search.core.earlybird.facets;
+packagelon com.twittelonr.selonarch.corelon.elonarlybird.facelonts;
 
 /**
- * This accumulator does not accumulate the facet counts when {@link #add(long, int, int, int)}
- * is called.
+ * This accumulator doelons not accumulatelon thelon facelont counts whelonn {@link #add(long, int, int, int)}
+ * is callelond.
  */
-public class DummyFacetAccumulator<R> extends FacetAccumulator<R> {
+public class DummyFacelontAccumulator<R> elonxtelonnds FacelontAccumulator<R> {
 
-  @Override
-  public int add(long termID, int scoreIncrement, int penaltyCount, int tweepCred) {
-    return 0;
+  @Ovelonrridelon
+  public int add(long telonrmID, int scorelonIncrelonmelonnt, int pelonnaltyCount, int twelonelonpCrelond) {
+    relonturn 0;
   }
 
-  @Override
-  public R getAllFacets() {
-    return null;
+  @Ovelonrridelon
+  public R gelontAllFacelonts() {
+    relonturn null;
   }
 
-  @Override
-  public R getTopFacets(int n) {
-    return null;
+  @Ovelonrridelon
+  public R gelontTopFacelonts(int n) {
+    relonturn null;
   }
 
-  @Override
-  public void reset(FacetLabelProvider facetLabelProvider) {
+  @Ovelonrridelon
+  public void relonselont(FacelontLabelonlProvidelonr facelontLabelonlProvidelonr) {
   }
 
 }

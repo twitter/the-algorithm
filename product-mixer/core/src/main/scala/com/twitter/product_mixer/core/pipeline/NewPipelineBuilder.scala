@@ -1,31 +1,31 @@
-package com.twitter.product_mixer.core.pipeline
+packagelon com.twittelonr.product_mixelonr.corelon.pipelonlinelon
 
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifierStack
-import com.twitter.product_mixer.core.pipeline.state.HasExecutorResults
-import com.twitter.product_mixer.core.pipeline.state.HasResult
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.ComponelonntIdelonntifielonrStack
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.statelon.HaselonxeloncutorRelonsults
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.statelon.HasRelonsult
 
 /**
- * A pipeline builder that is responsible for taking a PipelineConfig and creating a final pipeline
- * from it. It provides an [[NewPipelineArrowBuilder]] for composing the pipeline's underlying arrow
- * from [[Step]]s.
+ * A pipelonlinelon buildelonr that is relonsponsiblelon for taking a PipelonlinelonConfig and crelonating a final pipelonlinelon
+ * from it. It providelons an [[NelonwPipelonlinelonArrowBuildelonr]] for composing thelon pipelonlinelon's undelonrlying arrow
+ * from [[Stelonp]]s.
  *
- * @tparam Config The Pipeline Config
- * @tparam PipelineArrowResult The expected final result
- * @tparam PipelineArrowState State object for maintaining state across the pipeline.
- * @tparam OutputPipeline The final pipeline
+ * @tparam Config Thelon Pipelonlinelon Config
+ * @tparam PipelonlinelonArrowRelonsult Thelon elonxpelonctelond final relonsult
+ * @tparam PipelonlinelonArrowStatelon Statelon objelonct for maintaining statelon across thelon pipelonlinelon.
+ * @tparam OutputPipelonlinelon Thelon final pipelonlinelon
  */
-trait NewPipelineBuilder[
-  Config <: PipelineConfig,
-  PipelineArrowResult,
-  PipelineArrowState <: HasExecutorResults[PipelineArrowState] with HasResult[PipelineArrowResult],
-  OutputPipeline <: Pipeline[_, _]] {
+trait NelonwPipelonlinelonBuildelonr[
+  Config <: PipelonlinelonConfig,
+  PipelonlinelonArrowRelonsult,
+  PipelonlinelonArrowStatelon <: HaselonxeloncutorRelonsults[PipelonlinelonArrowStatelon] with HasRelonsult[PipelonlinelonArrowRelonsult],
+  OutputPipelonlinelon <: Pipelonlinelon[_, _]] {
 
-  type ArrowResult = PipelineArrowResult
-  type ArrowState = PipelineArrowState
+  typelon ArrowRelonsult = PipelonlinelonArrowRelonsult
+  typelon ArrowStatelon = PipelonlinelonArrowStatelon
 
-  def build(
-    parentComponentIdentifierStack: ComponentIdentifierStack,
-    arrowBuilder: NewPipelineArrowBuilder[ArrowResult, ArrowState],
+  delonf build(
+    parelonntComponelonntIdelonntifielonrStack: ComponelonntIdelonntifielonrStack,
+    arrowBuildelonr: NelonwPipelonlinelonArrowBuildelonr[ArrowRelonsult, ArrowStatelon],
     config: Config
-  ): OutputPipeline
+  ): OutputPipelonlinelon
 }

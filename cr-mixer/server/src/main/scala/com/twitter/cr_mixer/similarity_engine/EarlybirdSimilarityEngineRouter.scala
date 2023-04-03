@@ -1,136 +1,136 @@
-package com.twitter.cr_mixer.similarity_engine
+packagelon com.twittelonr.cr_mixelonr.similarity_elonnginelon
 
-import com.twitter.cr_mixer.config.TimeoutConfig
-import com.twitter.cr_mixer.model.EarlybirdSimilarityEngineType
-import com.twitter.cr_mixer.model.EarlybirdSimilarityEngineType_ModelBased
-import com.twitter.cr_mixer.model.EarlybirdSimilarityEngineType_RecencyBased
-import com.twitter.cr_mixer.model.EarlybirdSimilarityEngineType_TensorflowBased
-import com.twitter.cr_mixer.model.TweetWithAuthor
-import com.twitter.cr_mixer.param.EarlybirdFrsBasedCandidateGenerationParams
-import com.twitter.cr_mixer.param.EarlybirdFrsBasedCandidateGenerationParams.FrsBasedCandidateGenerationEarlybirdSimilarityEngineTypeParam
-import com.twitter.cr_mixer.param.FrsParams.FrsBasedCandidateGenerationMaxCandidatesNumParam
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.timelines.configapi
-import com.twitter.util.Duration
-import com.twitter.util.Future
-import com.twitter.util.Time
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.cr_mixelonr.config.TimelonoutConfig
+import com.twittelonr.cr_mixelonr.modelonl.elonarlybirdSimilarityelonnginelonTypelon
+import com.twittelonr.cr_mixelonr.modelonl.elonarlybirdSimilarityelonnginelonTypelon_ModelonlBaselond
+import com.twittelonr.cr_mixelonr.modelonl.elonarlybirdSimilarityelonnginelonTypelon_ReloncelonncyBaselond
+import com.twittelonr.cr_mixelonr.modelonl.elonarlybirdSimilarityelonnginelonTypelon_TelonnsorflowBaselond
+import com.twittelonr.cr_mixelonr.modelonl.TwelonelontWithAuthor
+import com.twittelonr.cr_mixelonr.param.elonarlybirdFrsBaselondCandidatelonGelonnelonrationParams
+import com.twittelonr.cr_mixelonr.param.elonarlybirdFrsBaselondCandidatelonGelonnelonrationParams.FrsBaselondCandidatelonGelonnelonrationelonarlybirdSimilarityelonnginelonTypelonParam
+import com.twittelonr.cr_mixelonr.param.FrsParams.FrsBaselondCandidatelonGelonnelonrationMaxCandidatelonsNumParam
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.simclustelonrs_v2.common.TwelonelontId
+import com.twittelonr.simclustelonrs_v2.common.UselonrId
+import com.twittelonr.snowflakelon.id.SnowflakelonId
+import com.twittelonr.storelonhaus.RelonadablelonStorelon
+import com.twittelonr.timelonlinelons.configapi
+import com.twittelonr.util.Duration
+import com.twittelonr.util.Futurelon
+import com.twittelonr.util.Timelon
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-case class EarlybirdSimilarityEngineRouter @Inject() (
-  earlybirdRecencyBasedSimilarityEngine: EarlybirdSimilarityEngine[
-    EarlybirdRecencyBasedSimilarityEngine.EarlybirdRecencyBasedSearchQuery,
-    EarlybirdRecencyBasedSimilarityEngine
+@Singlelonton
+caselon class elonarlybirdSimilarityelonnginelonRoutelonr @Injelonct() (
+  elonarlybirdReloncelonncyBaselondSimilarityelonnginelon: elonarlybirdSimilarityelonnginelon[
+    elonarlybirdReloncelonncyBaselondSimilarityelonnginelon.elonarlybirdReloncelonncyBaselondSelonarchQuelonry,
+    elonarlybirdReloncelonncyBaselondSimilarityelonnginelon
   ],
-  earlybirdModelBasedSimilarityEngine: EarlybirdSimilarityEngine[
-    EarlybirdModelBasedSimilarityEngine.EarlybirdModelBasedSearchQuery,
-    EarlybirdModelBasedSimilarityEngine
+  elonarlybirdModelonlBaselondSimilarityelonnginelon: elonarlybirdSimilarityelonnginelon[
+    elonarlybirdModelonlBaselondSimilarityelonnginelon.elonarlybirdModelonlBaselondSelonarchQuelonry,
+    elonarlybirdModelonlBaselondSimilarityelonnginelon
   ],
-  earlybirdTensorflowBasedSimilarityEngine: EarlybirdSimilarityEngine[
-    EarlybirdTensorflowBasedSimilarityEngine.EarlybirdTensorflowBasedSearchQuery,
-    EarlybirdTensorflowBasedSimilarityEngine
+  elonarlybirdTelonnsorflowBaselondSimilarityelonnginelon: elonarlybirdSimilarityelonnginelon[
+    elonarlybirdTelonnsorflowBaselondSimilarityelonnginelon.elonarlybirdTelonnsorflowBaselondSelonarchQuelonry,
+    elonarlybirdTelonnsorflowBaselondSimilarityelonnginelon
   ],
-  timeoutConfig: TimeoutConfig,
-  statsReceiver: StatsReceiver)
-    extends ReadableStore[EarlybirdSimilarityEngineRouter.Query, Seq[TweetWithAuthor]] {
-  import EarlybirdSimilarityEngineRouter._
+  timelonoutConfig: TimelonoutConfig,
+  statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds RelonadablelonStorelon[elonarlybirdSimilarityelonnginelonRoutelonr.Quelonry, Selonq[TwelonelontWithAuthor]] {
+  import elonarlybirdSimilarityelonnginelonRoutelonr._
 
-  override def get(
-    k: EarlybirdSimilarityEngineRouter.Query
-  ): Future[Option[Seq[TweetWithAuthor]]] = {
-    k.rankingMode match {
-      case EarlybirdSimilarityEngineType_RecencyBased =>
-        earlybirdRecencyBasedSimilarityEngine.getCandidates(recencyBasedQueryFromParams(k))
-      case EarlybirdSimilarityEngineType_ModelBased =>
-        earlybirdModelBasedSimilarityEngine.getCandidates(modelBasedQueryFromParams(k))
-      case EarlybirdSimilarityEngineType_TensorflowBased =>
-        earlybirdTensorflowBasedSimilarityEngine.getCandidates(tensorflowBasedQueryFromParams(k))
+  ovelonrridelon delonf gelont(
+    k: elonarlybirdSimilarityelonnginelonRoutelonr.Quelonry
+  ): Futurelon[Option[Selonq[TwelonelontWithAuthor]]] = {
+    k.rankingModelon match {
+      caselon elonarlybirdSimilarityelonnginelonTypelon_ReloncelonncyBaselond =>
+        elonarlybirdReloncelonncyBaselondSimilarityelonnginelon.gelontCandidatelons(reloncelonncyBaselondQuelonryFromParams(k))
+      caselon elonarlybirdSimilarityelonnginelonTypelon_ModelonlBaselond =>
+        elonarlybirdModelonlBaselondSimilarityelonnginelon.gelontCandidatelons(modelonlBaselondQuelonryFromParams(k))
+      caselon elonarlybirdSimilarityelonnginelonTypelon_TelonnsorflowBaselond =>
+        elonarlybirdTelonnsorflowBaselondSimilarityelonnginelon.gelontCandidatelons(telonnsorflowBaselondQuelonryFromParams(k))
     }
   }
 }
 
-object EarlybirdSimilarityEngineRouter {
-  case class Query(
-    searcherUserId: Option[UserId],
-    seedUserIds: Seq[UserId],
-    maxNumTweets: Int,
-    excludedTweetIds: Set[TweetId],
-    rankingMode: EarlybirdSimilarityEngineType,
-    frsUserToScoresForScoreAdjustment: Option[Map[UserId, Double]],
-    maxTweetAge: Duration,
-    filterOutRetweetsAndReplies: Boolean,
+objelonct elonarlybirdSimilarityelonnginelonRoutelonr {
+  caselon class Quelonry(
+    selonarchelonrUselonrId: Option[UselonrId],
+    selonelondUselonrIds: Selonq[UselonrId],
+    maxNumTwelonelonts: Int,
+    elonxcludelondTwelonelontIds: Selont[TwelonelontId],
+    rankingModelon: elonarlybirdSimilarityelonnginelonTypelon,
+    frsUselonrToScorelonsForScorelonAdjustmelonnt: Option[Map[UselonrId, Doublelon]],
+    maxTwelonelontAgelon: Duration,
+    filtelonrOutRelontwelonelontsAndRelonplielons: Boolelonan,
     params: configapi.Params)
 
-  def queryFromParams(
-    searcherUserId: Option[UserId],
-    seedUserIds: Seq[UserId],
-    excludedTweetIds: Set[TweetId],
-    frsUserToScoresForScoreAdjustment: Option[Map[UserId, Double]],
+  delonf quelonryFromParams(
+    selonarchelonrUselonrId: Option[UselonrId],
+    selonelondUselonrIds: Selonq[UselonrId],
+    elonxcludelondTwelonelontIds: Selont[TwelonelontId],
+    frsUselonrToScorelonsForScorelonAdjustmelonnt: Option[Map[UselonrId, Doublelon]],
     params: configapi.Params
-  ): Query =
-    Query(
-      searcherUserId,
-      seedUserIds,
-      maxNumTweets = params(FrsBasedCandidateGenerationMaxCandidatesNumParam),
-      excludedTweetIds,
-      rankingMode =
-        params(FrsBasedCandidateGenerationEarlybirdSimilarityEngineTypeParam).rankingMode,
-      frsUserToScoresForScoreAdjustment,
-      maxTweetAge = params(
-        EarlybirdFrsBasedCandidateGenerationParams.FrsBasedCandidateGenerationEarlybirdMaxTweetAge),
-      filterOutRetweetsAndReplies = params(
-        EarlybirdFrsBasedCandidateGenerationParams.FrsBasedCandidateGenerationEarlybirdFilterOutRetweetsAndReplies),
+  ): Quelonry =
+    Quelonry(
+      selonarchelonrUselonrId,
+      selonelondUselonrIds,
+      maxNumTwelonelonts = params(FrsBaselondCandidatelonGelonnelonrationMaxCandidatelonsNumParam),
+      elonxcludelondTwelonelontIds,
+      rankingModelon =
+        params(FrsBaselondCandidatelonGelonnelonrationelonarlybirdSimilarityelonnginelonTypelonParam).rankingModelon,
+      frsUselonrToScorelonsForScorelonAdjustmelonnt,
+      maxTwelonelontAgelon = params(
+        elonarlybirdFrsBaselondCandidatelonGelonnelonrationParams.FrsBaselondCandidatelonGelonnelonrationelonarlybirdMaxTwelonelontAgelon),
+      filtelonrOutRelontwelonelontsAndRelonplielons = params(
+        elonarlybirdFrsBaselondCandidatelonGelonnelonrationParams.FrsBaselondCandidatelonGelonnelonrationelonarlybirdFiltelonrOutRelontwelonelontsAndRelonplielons),
       params
     )
 
-  private def recencyBasedQueryFromParams(
-    query: Query
-  ): EngineQuery[EarlybirdRecencyBasedSimilarityEngine.EarlybirdRecencyBasedSearchQuery] =
-    EngineQuery(
-      EarlybirdRecencyBasedSimilarityEngine.EarlybirdRecencyBasedSearchQuery(
-        seedUserIds = query.seedUserIds,
-        maxNumTweets = query.maxNumTweets,
-        excludedTweetIds = query.excludedTweetIds,
-        maxTweetAge = query.maxTweetAge,
-        filterOutRetweetsAndReplies = query.filterOutRetweetsAndReplies
+  privatelon delonf reloncelonncyBaselondQuelonryFromParams(
+    quelonry: Quelonry
+  ): elonnginelonQuelonry[elonarlybirdReloncelonncyBaselondSimilarityelonnginelon.elonarlybirdReloncelonncyBaselondSelonarchQuelonry] =
+    elonnginelonQuelonry(
+      elonarlybirdReloncelonncyBaselondSimilarityelonnginelon.elonarlybirdReloncelonncyBaselondSelonarchQuelonry(
+        selonelondUselonrIds = quelonry.selonelondUselonrIds,
+        maxNumTwelonelonts = quelonry.maxNumTwelonelonts,
+        elonxcludelondTwelonelontIds = quelonry.elonxcludelondTwelonelontIds,
+        maxTwelonelontAgelon = quelonry.maxTwelonelontAgelon,
+        filtelonrOutRelontwelonelontsAndRelonplielons = quelonry.filtelonrOutRelontwelonelontsAndRelonplielons
       ),
-      query.params
+      quelonry.params
     )
 
-  private def tensorflowBasedQueryFromParams(
-    query: Query,
-  ): EngineQuery[EarlybirdTensorflowBasedSimilarityEngine.EarlybirdTensorflowBasedSearchQuery] =
-    EngineQuery(
-      EarlybirdTensorflowBasedSimilarityEngine.EarlybirdTensorflowBasedSearchQuery(
-        searcherUserId = query.searcherUserId,
-        seedUserIds = query.seedUserIds,
-        maxNumTweets = query.maxNumTweets,
-        // hard code the params below for now. Will move to FS after shipping the ddg
-        beforeTweetIdExclusive = None,
-        afterTweetIdExclusive =
-          Some(SnowflakeId.firstIdFor((Time.now - query.maxTweetAge).inMilliseconds)),
-        filterOutRetweetsAndReplies = query.filterOutRetweetsAndReplies,
-        useTensorflowRanking = true,
-        excludedTweetIds = query.excludedTweetIds,
-        maxNumHitsPerShard = 1000
+  privatelon delonf telonnsorflowBaselondQuelonryFromParams(
+    quelonry: Quelonry,
+  ): elonnginelonQuelonry[elonarlybirdTelonnsorflowBaselondSimilarityelonnginelon.elonarlybirdTelonnsorflowBaselondSelonarchQuelonry] =
+    elonnginelonQuelonry(
+      elonarlybirdTelonnsorflowBaselondSimilarityelonnginelon.elonarlybirdTelonnsorflowBaselondSelonarchQuelonry(
+        selonarchelonrUselonrId = quelonry.selonarchelonrUselonrId,
+        selonelondUselonrIds = quelonry.selonelondUselonrIds,
+        maxNumTwelonelonts = quelonry.maxNumTwelonelonts,
+        // hard codelon thelon params belonlow for now. Will movelon to FS aftelonr shipping thelon ddg
+        belonforelonTwelonelontIdelonxclusivelon = Nonelon,
+        aftelonrTwelonelontIdelonxclusivelon =
+          Somelon(SnowflakelonId.firstIdFor((Timelon.now - quelonry.maxTwelonelontAgelon).inMilliselonconds)),
+        filtelonrOutRelontwelonelontsAndRelonplielons = quelonry.filtelonrOutRelontwelonelontsAndRelonplielons,
+        uselonTelonnsorflowRanking = truelon,
+        elonxcludelondTwelonelontIds = quelonry.elonxcludelondTwelonelontIds,
+        maxNumHitsPelonrShard = 1000
       ),
-      query.params
+      quelonry.params
     )
-  private def modelBasedQueryFromParams(
-    query: Query,
-  ): EngineQuery[EarlybirdModelBasedSimilarityEngine.EarlybirdModelBasedSearchQuery] =
-    EngineQuery(
-      EarlybirdModelBasedSimilarityEngine.EarlybirdModelBasedSearchQuery(
-        seedUserIds = query.seedUserIds,
-        maxNumTweets = query.maxNumTweets,
-        oldestTweetTimestampInSec = Some(query.maxTweetAge.ago.inSeconds),
-        frsUserToScoresForScoreAdjustment = query.frsUserToScoresForScoreAdjustment
+  privatelon delonf modelonlBaselondQuelonryFromParams(
+    quelonry: Quelonry,
+  ): elonnginelonQuelonry[elonarlybirdModelonlBaselondSimilarityelonnginelon.elonarlybirdModelonlBaselondSelonarchQuelonry] =
+    elonnginelonQuelonry(
+      elonarlybirdModelonlBaselondSimilarityelonnginelon.elonarlybirdModelonlBaselondSelonarchQuelonry(
+        selonelondUselonrIds = quelonry.selonelondUselonrIds,
+        maxNumTwelonelonts = quelonry.maxNumTwelonelonts,
+        oldelonstTwelonelontTimelonstampInSelonc = Somelon(quelonry.maxTwelonelontAgelon.ago.inSelonconds),
+        frsUselonrToScorelonsForScorelonAdjustmelonnt = quelonry.frsUselonrToScorelonsForScorelonAdjustmelonnt
       ),
-      query.params
+      quelonry.params
     )
 }

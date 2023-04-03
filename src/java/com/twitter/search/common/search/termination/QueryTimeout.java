@@ -1,24 +1,24 @@
-package com.twitter.search.common.search.termination;
+packagelon com.twittelonr.selonarch.common.selonarch.telonrmination;
 
-import com.twitter.search.common.search.DocIdTracker;
+import com.twittelonr.selonarch.common.selonarch.DocIdTrackelonr;
 
 /**
- * QueryTimeout provides a method for early termination of queries.
+ * QuelonryTimelonout providelons a melonthod for elonarly telonrmination of quelonrielons.
  */
-public interface QueryTimeout {
+public intelonrfacelon QuelonryTimelonout {
   /**
-   * Returns true if query processing should terminate, otherwise false.
+   * Relonturns truelon if quelonry procelonssing should telonrminatelon, othelonrwiselon falselon.
    */
-  boolean shouldExit();
+  boolelonan shouldelonxit();
 
   /**
-   * Register a DocIdTracker for the scope of the query, to determine the last fully-searched
-   * doc ID after early termination.
+   * Relongistelonr a DocIdTrackelonr for thelon scopelon of thelon quelonry, to delontelonrminelon thelon last fully-selonarchelond
+   * doc ID aftelonr elonarly telonrmination.
    */
-  void registerDocIdTracker(DocIdTracker docIdTracker);
+  void relongistelonrDocIdTrackelonr(DocIdTrackelonr docIdTrackelonr);
 
   /**
-   * Return client ID of query.
+   * Relonturn clielonnt ID of quelonry.
    */
-  String getClientId();
+  String gelontClielonntId();
 }

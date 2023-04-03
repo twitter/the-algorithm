@@ -1,95 +1,95 @@
-package com.twitter.visibility.models
+packagelon com.twittelonr.visibility.modelonls
 
-import com.twitter.visibility.safety_label_store.{thriftscala => s}
-import com.twitter.visibility.util.NamingUtils
+import com.twittelonr.visibility.safelonty_labelonl_storelon.{thriftscala => s}
+import com.twittelonr.visibility.util.NamingUtils
 
-sealed trait SpaceSafetyLabelType extends SafetyLabelType {
-  lazy val name: String = NamingUtils.getFriendlyName(this)
+selonalelond trait SpacelonSafelontyLabelonlTypelon elonxtelonnds SafelontyLabelonlTypelon {
+  lazy val namelon: String = NamingUtils.gelontFrielonndlyNamelon(this)
 }
 
-object SpaceSafetyLabelType extends SafetyLabelType {
+objelonct SpacelonSafelontyLabelonlTypelon elonxtelonnds SafelontyLabelonlTypelon {
 
-  val List: List[SpaceSafetyLabelType] = s.SpaceSafetyLabelType.list.map(fromThrift)
+  val List: List[SpacelonSafelontyLabelonlTypelon] = s.SpacelonSafelontyLabelonlTypelon.list.map(fromThrift)
 
-  val ActiveLabels: List[SpaceSafetyLabelType] = List.filter { labelType =>
-    labelType != Unknown && labelType != Deprecated
+  val ActivelonLabelonls: List[SpacelonSafelontyLabelonlTypelon] = List.filtelonr { labelonlTypelon =>
+    labelonlTypelon != Unknown && labelonlTypelon != Delonpreloncatelond
   }
 
-  private lazy val nameToValueMap: Map[String, SpaceSafetyLabelType] =
-    List.map(l => l.name.toLowerCase -> l).toMap
-  def fromName(name: String): Option[SpaceSafetyLabelType] = nameToValueMap.get(name.toLowerCase)
+  privatelon lazy val namelonToValuelonMap: Map[String, SpacelonSafelontyLabelonlTypelon] =
+    List.map(l => l.namelon.toLowelonrCaselon -> l).toMap
+  delonf fromNamelon(namelon: String): Option[SpacelonSafelontyLabelonlTypelon] = namelonToValuelonMap.gelont(namelon.toLowelonrCaselon)
 
-  private val UnknownThriftSafetyLabelType =
-    s.SpaceSafetyLabelType.EnumUnknownSpaceSafetyLabelType(UnknownEnumValue)
+  privatelon val UnknownThriftSafelontyLabelonlTypelon =
+    s.SpacelonSafelontyLabelonlTypelon.elonnumUnknownSpacelonSafelontyLabelonlTypelon(UnknownelonnumValuelon)
 
-  private lazy val thriftToModelMap: Map[s.SpaceSafetyLabelType, SpaceSafetyLabelType] = Map(
-    s.SpaceSafetyLabelType.DoNotAmplify -> DoNotAmplify,
-    s.SpaceSafetyLabelType.CoordinatedHarmfulActivityHighRecall -> CoordinatedHarmfulActivityHighRecall,
-    s.SpaceSafetyLabelType.UntrustedUrl -> UntrustedUrl,
-    s.SpaceSafetyLabelType.MisleadingHighRecall -> MisleadingHighRecall,
-    s.SpaceSafetyLabelType.NsfwHighPrecision -> NsfwHighPrecision,
-    s.SpaceSafetyLabelType.NsfwHighRecall -> NsfwHighRecall,
-    s.SpaceSafetyLabelType.CivicIntegrityMisinfo -> CivicIntegrityMisinfo,
-    s.SpaceSafetyLabelType.MedicalMisinfo -> MedicalMisinfo,
-    s.SpaceSafetyLabelType.GenericMisinfo -> GenericMisinfo,
-    s.SpaceSafetyLabelType.DmcaWithheld -> DmcaWithheld,
-    s.SpaceSafetyLabelType.HatefulHighRecall -> HatefulHighRecall,
-    s.SpaceSafetyLabelType.ViolenceHighRecall -> ViolenceHighRecall,
-    s.SpaceSafetyLabelType.HighToxicityModelScore -> HighToxicityModelScore,
-    s.SpaceSafetyLabelType.UkraineCrisisTopic -> UkraineCrisisTopic,
-    s.SpaceSafetyLabelType.DoNotPublicPublish -> DoNotPublicPublish,
-    s.SpaceSafetyLabelType.Reserved16 -> Deprecated,
-    s.SpaceSafetyLabelType.Reserved17 -> Deprecated,
-    s.SpaceSafetyLabelType.Reserved18 -> Deprecated,
-    s.SpaceSafetyLabelType.Reserved19 -> Deprecated,
-    s.SpaceSafetyLabelType.Reserved20 -> Deprecated,
-    s.SpaceSafetyLabelType.Reserved21 -> Deprecated,
-    s.SpaceSafetyLabelType.Reserved22 -> Deprecated,
-    s.SpaceSafetyLabelType.Reserved23 -> Deprecated,
-    s.SpaceSafetyLabelType.Reserved24 -> Deprecated,
-    s.SpaceSafetyLabelType.Reserved25 -> Deprecated,
+  privatelon lazy val thriftToModelonlMap: Map[s.SpacelonSafelontyLabelonlTypelon, SpacelonSafelontyLabelonlTypelon] = Map(
+    s.SpacelonSafelontyLabelonlTypelon.DoNotAmplify -> DoNotAmplify,
+    s.SpacelonSafelontyLabelonlTypelon.CoordinatelondHarmfulActivityHighReloncall -> CoordinatelondHarmfulActivityHighReloncall,
+    s.SpacelonSafelontyLabelonlTypelon.UntrustelondUrl -> UntrustelondUrl,
+    s.SpacelonSafelontyLabelonlTypelon.MislelonadingHighReloncall -> MislelonadingHighReloncall,
+    s.SpacelonSafelontyLabelonlTypelon.NsfwHighPreloncision -> NsfwHighPreloncision,
+    s.SpacelonSafelontyLabelonlTypelon.NsfwHighReloncall -> NsfwHighReloncall,
+    s.SpacelonSafelontyLabelonlTypelon.CivicIntelongrityMisinfo -> CivicIntelongrityMisinfo,
+    s.SpacelonSafelontyLabelonlTypelon.MelondicalMisinfo -> MelondicalMisinfo,
+    s.SpacelonSafelontyLabelonlTypelon.GelonnelonricMisinfo -> GelonnelonricMisinfo,
+    s.SpacelonSafelontyLabelonlTypelon.DmcaWithhelonld -> DmcaWithhelonld,
+    s.SpacelonSafelontyLabelonlTypelon.HatelonfulHighReloncall -> HatelonfulHighReloncall,
+    s.SpacelonSafelontyLabelonlTypelon.ViolelonncelonHighReloncall -> ViolelonncelonHighReloncall,
+    s.SpacelonSafelontyLabelonlTypelon.HighToxicityModelonlScorelon -> HighToxicityModelonlScorelon,
+    s.SpacelonSafelontyLabelonlTypelon.UkrainelonCrisisTopic -> UkrainelonCrisisTopic,
+    s.SpacelonSafelontyLabelonlTypelon.DoNotPublicPublish -> DoNotPublicPublish,
+    s.SpacelonSafelontyLabelonlTypelon.Relonselonrvelond16 -> Delonpreloncatelond,
+    s.SpacelonSafelontyLabelonlTypelon.Relonselonrvelond17 -> Delonpreloncatelond,
+    s.SpacelonSafelontyLabelonlTypelon.Relonselonrvelond18 -> Delonpreloncatelond,
+    s.SpacelonSafelontyLabelonlTypelon.Relonselonrvelond19 -> Delonpreloncatelond,
+    s.SpacelonSafelontyLabelonlTypelon.Relonselonrvelond20 -> Delonpreloncatelond,
+    s.SpacelonSafelontyLabelonlTypelon.Relonselonrvelond21 -> Delonpreloncatelond,
+    s.SpacelonSafelontyLabelonlTypelon.Relonselonrvelond22 -> Delonpreloncatelond,
+    s.SpacelonSafelontyLabelonlTypelon.Relonselonrvelond23 -> Delonpreloncatelond,
+    s.SpacelonSafelontyLabelonlTypelon.Relonselonrvelond24 -> Delonpreloncatelond,
+    s.SpacelonSafelontyLabelonlTypelon.Relonselonrvelond25 -> Delonpreloncatelond,
   )
 
-  private lazy val modelToThriftMap: Map[SpaceSafetyLabelType, s.SpaceSafetyLabelType] =
-    (for ((k, v) <- thriftToModelMap) yield (v, k)) ++ Map(
-      Deprecated -> s.SpaceSafetyLabelType.EnumUnknownSpaceSafetyLabelType(DeprecatedEnumValue),
+  privatelon lazy val modelonlToThriftMap: Map[SpacelonSafelontyLabelonlTypelon, s.SpacelonSafelontyLabelonlTypelon] =
+    (for ((k, v) <- thriftToModelonlMap) yielonld (v, k)) ++ Map(
+      Delonpreloncatelond -> s.SpacelonSafelontyLabelonlTypelon.elonnumUnknownSpacelonSafelontyLabelonlTypelon(DelonpreloncatelondelonnumValuelon),
     )
 
-  case object DoNotAmplify extends SpaceSafetyLabelType
-  case object CoordinatedHarmfulActivityHighRecall extends SpaceSafetyLabelType
-  case object UntrustedUrl extends SpaceSafetyLabelType
-  case object MisleadingHighRecall extends SpaceSafetyLabelType
-  case object NsfwHighPrecision extends SpaceSafetyLabelType
-  case object NsfwHighRecall extends SpaceSafetyLabelType
-  case object CivicIntegrityMisinfo extends SpaceSafetyLabelType
-  case object MedicalMisinfo extends SpaceSafetyLabelType
-  case object GenericMisinfo extends SpaceSafetyLabelType
-  case object DmcaWithheld extends SpaceSafetyLabelType
-  case object HatefulHighRecall extends SpaceSafetyLabelType
-  case object ViolenceHighRecall extends SpaceSafetyLabelType
-  case object HighToxicityModelScore extends SpaceSafetyLabelType
+  caselon objelonct DoNotAmplify elonxtelonnds SpacelonSafelontyLabelonlTypelon
+  caselon objelonct CoordinatelondHarmfulActivityHighReloncall elonxtelonnds SpacelonSafelontyLabelonlTypelon
+  caselon objelonct UntrustelondUrl elonxtelonnds SpacelonSafelontyLabelonlTypelon
+  caselon objelonct MislelonadingHighReloncall elonxtelonnds SpacelonSafelontyLabelonlTypelon
+  caselon objelonct NsfwHighPreloncision elonxtelonnds SpacelonSafelontyLabelonlTypelon
+  caselon objelonct NsfwHighReloncall elonxtelonnds SpacelonSafelontyLabelonlTypelon
+  caselon objelonct CivicIntelongrityMisinfo elonxtelonnds SpacelonSafelontyLabelonlTypelon
+  caselon objelonct MelondicalMisinfo elonxtelonnds SpacelonSafelontyLabelonlTypelon
+  caselon objelonct GelonnelonricMisinfo elonxtelonnds SpacelonSafelontyLabelonlTypelon
+  caselon objelonct DmcaWithhelonld elonxtelonnds SpacelonSafelontyLabelonlTypelon
+  caselon objelonct HatelonfulHighReloncall elonxtelonnds SpacelonSafelontyLabelonlTypelon
+  caselon objelonct ViolelonncelonHighReloncall elonxtelonnds SpacelonSafelontyLabelonlTypelon
+  caselon objelonct HighToxicityModelonlScorelon elonxtelonnds SpacelonSafelontyLabelonlTypelon
 
-  case object UkraineCrisisTopic extends SpaceSafetyLabelType
+  caselon objelonct UkrainelonCrisisTopic elonxtelonnds SpacelonSafelontyLabelonlTypelon
 
-  case object DoNotPublicPublish extends SpaceSafetyLabelType
+  caselon objelonct DoNotPublicPublish elonxtelonnds SpacelonSafelontyLabelonlTypelon
 
-  case object Deprecated extends SpaceSafetyLabelType
-  case object Unknown extends SpaceSafetyLabelType
+  caselon objelonct Delonpreloncatelond elonxtelonnds SpacelonSafelontyLabelonlTypelon
+  caselon objelonct Unknown elonxtelonnds SpacelonSafelontyLabelonlTypelon
 
-  def fromThrift(safetyLabelType: s.SpaceSafetyLabelType): SpaceSafetyLabelType =
-    thriftToModelMap.get(safetyLabelType) match {
-      case Some(spaceSafetyLabelType) => spaceSafetyLabelType
-      case _ =>
-        safetyLabelType match {
-          case s.SpaceSafetyLabelType.EnumUnknownSpaceSafetyLabelType(DeprecatedEnumValue) =>
-            Deprecated
-          case _ =>
+  delonf fromThrift(safelontyLabelonlTypelon: s.SpacelonSafelontyLabelonlTypelon): SpacelonSafelontyLabelonlTypelon =
+    thriftToModelonlMap.gelont(safelontyLabelonlTypelon) match {
+      caselon Somelon(spacelonSafelontyLabelonlTypelon) => spacelonSafelontyLabelonlTypelon
+      caselon _ =>
+        safelontyLabelonlTypelon match {
+          caselon s.SpacelonSafelontyLabelonlTypelon.elonnumUnknownSpacelonSafelontyLabelonlTypelon(DelonpreloncatelondelonnumValuelon) =>
+            Delonpreloncatelond
+          caselon _ =>
             Unknown
         }
     }
 
-  def toThrift(safetyLabelType: SpaceSafetyLabelType): s.SpaceSafetyLabelType = {
-    modelToThriftMap
-      .get(safetyLabelType).getOrElse(UnknownThriftSafetyLabelType)
+  delonf toThrift(safelontyLabelonlTypelon: SpacelonSafelontyLabelonlTypelon): s.SpacelonSafelontyLabelonlTypelon = {
+    modelonlToThriftMap
+      .gelont(safelontyLabelonlTypelon).gelontOrelonlselon(UnknownThriftSafelontyLabelonlTypelon)
   }
 }

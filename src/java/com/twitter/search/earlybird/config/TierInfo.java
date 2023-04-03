@@ -1,180 +1,180 @@
-package com.twitter.search.earlybird.config;
+packagelon com.twittelonr.selonarch.elonarlybird.config;
 
-import java.util.Date;
+import java.util.Datelon;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import com.twitter.common.util.Clock;
+import com.twittelonr.common.util.Clock;
 
 /**
- * Properties of a single tier.
+ * Propelonrtielons of a singlelon tielonr.
  */
-public class TierInfo implements ServingRange {
-  // What I'm seeing historically is that this has been used when adding a new tier. First you
-  // add it and send dark traffic to it, then possibly grey and then you launch it by turning on
+public class TielonrInfo implelonmelonnts SelonrvingRangelon {
+  // What I'm seloneloning historically is that this has belonelonn uselond whelonn adding a nelonw tielonr. First you
+  // add it and selonnd dark traffic to it, thelonn possibly grelony and thelonn you launch it by turning on
   // light traffic.
-  public static enum RequestReadType {
-    // Light read: send request, wait for results, and results are returned
+  public static elonnum RelonquelonstRelonadTypelon {
+    // Light relonad: selonnd relonquelonst, wait for relonsults, and relonsults arelon relonturnelond
     LIGHT,
-    // Dark read: send request, do not wait for results, and results are discarded
+    // Dark relonad: selonnd relonquelonst, do not wait for relonsults, and relonsults arelon discardelond
     DARK,
-    // Grey read: send request, wait for results, but discard after results come back.
-    // Same results as dark read; similar latency as light read.
-    GREY,
+    // Grelony relonad: selonnd relonquelonst, wait for relonsults, but discard aftelonr relonsults comelon back.
+    // Samelon relonsults as dark relonad; similar latelonncy as light relonad.
+    GRelonY,
   }
 
-  private final String tierName;
-  private final Date dataStartDate;
-  private final Date dataEndDate;
-  private final int numPartitions;
-  private final int maxTimeslices;
-  private final TierServingBoundaryEndPoint servingRangeSince;
-  private final TierServingBoundaryEndPoint servingRangeMax;
-  private final TierServingBoundaryEndPoint servingRangeSinceOverride;
-  private final TierServingBoundaryEndPoint servingRangeMaxOverride;
+  privatelon final String tielonrNamelon;
+  privatelon final Datelon dataStartDatelon;
+  privatelon final Datelon dataelonndDatelon;
+  privatelon final int numPartitions;
+  privatelon final int maxTimelonslicelons;
+  privatelon final TielonrSelonrvingBoundaryelonndPoint selonrvingRangelonSincelon;
+  privatelon final TielonrSelonrvingBoundaryelonndPoint selonrvingRangelonMax;
+  privatelon final TielonrSelonrvingBoundaryelonndPoint selonrvingRangelonSincelonOvelonrridelon;
+  privatelon final TielonrSelonrvingBoundaryelonndPoint selonrvingRangelonMaxOvelonrridelon;
 
-  // These two properties are only used by clients of Earlybird (E.g. roots),
-  // but not by Earlybirds.
-  private final boolean enabled;
-  private final RequestReadType readType;
-  private final RequestReadType readTypeOverride;
+  // Thelonselon two propelonrtielons arelon only uselond by clielonnts of elonarlybird (elon.g. roots),
+  // but not by elonarlybirds.
+  privatelon final boolelonan elonnablelond;
+  privatelon final RelonquelonstRelonadTypelon relonadTypelon;
+  privatelon final RelonquelonstRelonadTypelon relonadTypelonOvelonrridelon;
 
-  public TierInfo(String tierName,
-                  Date dataStartDate,
-                  Date dataEndDate,
+  public TielonrInfo(String tielonrNamelon,
+                  Datelon dataStartDatelon,
+                  Datelon dataelonndDatelon,
                   int numPartitions,
-                  int maxTimeslices,
-                  boolean enabled,
-                  String sinceIdString,
+                  int maxTimelonslicelons,
+                  boolelonan elonnablelond,
+                  String sincelonIdString,
                   String maxIdString,
-                  Date servingStartDateOverride,
-                  Date servingEndDateOverride,
-                  RequestReadType readType,
-                  RequestReadType readTypeOverride,
+                  Datelon selonrvingStartDatelonOvelonrridelon,
+                  Datelon selonrvingelonndDatelonOvelonrridelon,
+                  RelonquelonstRelonadTypelon relonadTypelon,
+                  RelonquelonstRelonadTypelon relonadTypelonOvelonrridelon,
                   Clock clock) {
-    Preconditions.checkArgument(numPartitions > 0);
-    Preconditions.checkArgument(maxTimeslices > 0);
-    this.tierName = tierName;
-    this.dataStartDate = dataStartDate;
-    this.dataEndDate = dataEndDate;
+    Prelonconditions.chelonckArgumelonnt(numPartitions > 0);
+    Prelonconditions.chelonckArgumelonnt(maxTimelonslicelons > 0);
+    this.tielonrNamelon = tielonrNamelon;
+    this.dataStartDatelon = dataStartDatelon;
+    this.dataelonndDatelon = dataelonndDatelon;
     this.numPartitions = numPartitions;
-    this.maxTimeslices = maxTimeslices;
-    this.enabled = enabled;
-    this.readType = readType;
-    this.readTypeOverride = readTypeOverride;
-    this.servingRangeSince = TierServingBoundaryEndPoint
-        .newTierServingBoundaryEndPoint(sinceIdString, dataStartDate, clock);
-    this.servingRangeMax = TierServingBoundaryEndPoint
-        .newTierServingBoundaryEndPoint(maxIdString, dataEndDate, clock);
-    if (servingStartDateOverride != null) {
-      this.servingRangeSinceOverride = TierServingBoundaryEndPoint.newTierServingBoundaryEndPoint(
-          TierServingBoundaryEndPoint.INFERRED_FROM_DATA_RANGE, servingStartDateOverride, clock);
-    } else {
-      this.servingRangeSinceOverride = servingRangeSince;
+    this.maxTimelonslicelons = maxTimelonslicelons;
+    this.elonnablelond = elonnablelond;
+    this.relonadTypelon = relonadTypelon;
+    this.relonadTypelonOvelonrridelon = relonadTypelonOvelonrridelon;
+    this.selonrvingRangelonSincelon = TielonrSelonrvingBoundaryelonndPoint
+        .nelonwTielonrSelonrvingBoundaryelonndPoint(sincelonIdString, dataStartDatelon, clock);
+    this.selonrvingRangelonMax = TielonrSelonrvingBoundaryelonndPoint
+        .nelonwTielonrSelonrvingBoundaryelonndPoint(maxIdString, dataelonndDatelon, clock);
+    if (selonrvingStartDatelonOvelonrridelon != null) {
+      this.selonrvingRangelonSincelonOvelonrridelon = TielonrSelonrvingBoundaryelonndPoint.nelonwTielonrSelonrvingBoundaryelonndPoint(
+          TielonrSelonrvingBoundaryelonndPoint.INFelonRRelonD_FROM_DATA_RANGelon, selonrvingStartDatelonOvelonrridelon, clock);
+    } elonlselon {
+      this.selonrvingRangelonSincelonOvelonrridelon = selonrvingRangelonSincelon;
     }
 
-    if (servingEndDateOverride != null) {
-      this.servingRangeMaxOverride = TierServingBoundaryEndPoint.newTierServingBoundaryEndPoint(
-          TierServingBoundaryEndPoint.INFERRED_FROM_DATA_RANGE, servingEndDateOverride, clock);
-    } else {
-      this.servingRangeMaxOverride = servingRangeMax;
+    if (selonrvingelonndDatelonOvelonrridelon != null) {
+      this.selonrvingRangelonMaxOvelonrridelon = TielonrSelonrvingBoundaryelonndPoint.nelonwTielonrSelonrvingBoundaryelonndPoint(
+          TielonrSelonrvingBoundaryelonndPoint.INFelonRRelonD_FROM_DATA_RANGelon, selonrvingelonndDatelonOvelonrridelon, clock);
+    } elonlselon {
+      this.selonrvingRangelonMaxOvelonrridelon = selonrvingRangelonMax;
     }
   }
 
-  @VisibleForTesting
-  public TierInfo(String tierName,
-                  Date dataStartDate,
-                  Date dataEndDate,
+  @VisiblelonForTelonsting
+  public TielonrInfo(String tielonrNamelon,
+                  Datelon dataStartDatelon,
+                  Datelon dataelonndDatelon,
                   int numPartitions,
-                  int maxTimeslices,
-                  boolean enabled,
-                  String sinceIdString,
+                  int maxTimelonslicelons,
+                  boolelonan elonnablelond,
+                  String sincelonIdString,
                   String maxIdString,
-                  RequestReadType readType,
+                  RelonquelonstRelonadTypelon relonadTypelon,
                   Clock clock) {
-    // No overrides:
-    //   servingRangeSinceOverride == servingRangeSince
-    //   servingRangeMaxOverride == servingRangeMax
-    //   readTypeOverride == readType
-    this(tierName, dataStartDate, dataEndDate, numPartitions, maxTimeslices, enabled, sinceIdString,
-         maxIdString, null, null, readType, readType, clock);
+    // No ovelonrridelons:
+    //   selonrvingRangelonSincelonOvelonrridelon == selonrvingRangelonSincelon
+    //   selonrvingRangelonMaxOvelonrridelon == selonrvingRangelonMax
+    //   relonadTypelonOvelonrridelon == relonadTypelon
+    this(tielonrNamelon, dataStartDatelon, dataelonndDatelon, numPartitions, maxTimelonslicelons, elonnablelond, sincelonIdString,
+         maxIdString, null, null, relonadTypelon, relonadTypelon, clock);
   }
 
-  @Override
+  @Ovelonrridelon
   public String toString() {
-    return tierName;
+    relonturn tielonrNamelon;
   }
 
-  public String getTierName() {
-    return tierName;
+  public String gelontTielonrNamelon() {
+    relonturn tielonrNamelon;
   }
 
-  public Date getDataStartDate() {
-    return dataStartDate;
+  public Datelon gelontDataStartDatelon() {
+    relonturn dataStartDatelon;
   }
 
-  public Date getDataEndDate() {
-    return dataEndDate;
+  public Datelon gelontDataelonndDatelon() {
+    relonturn dataelonndDatelon;
   }
 
-  public int getNumPartitions() {
-    return numPartitions;
+  public int gelontNumPartitions() {
+    relonturn numPartitions;
   }
 
-  public int getMaxTimeslices() {
-    return maxTimeslices;
+  public int gelontMaxTimelonslicelons() {
+    relonturn maxTimelonslicelons;
   }
 
-  public TierConfig.ConfigSource getSource() {
-    return TierConfig.getTierConfigSource();
+  public TielonrConfig.ConfigSourcelon gelontSourcelon() {
+    relonturn TielonrConfig.gelontTielonrConfigSourcelon();
   }
 
-  public boolean isEnabled() {
-    return enabled;
+  public boolelonan iselonnablelond() {
+    relonturn elonnablelond;
   }
 
-  public boolean isDarkRead() {
-    return readType == RequestReadType.DARK;
+  public boolelonan isDarkRelonad() {
+    relonturn relonadTypelon == RelonquelonstRelonadTypelon.DARK;
   }
 
-  public RequestReadType getReadType() {
-    return readType;
+  public RelonquelonstRelonadTypelon gelontRelonadTypelon() {
+    relonturn relonadTypelon;
   }
 
-  public RequestReadType getReadTypeOverride() {
-    return readTypeOverride;
+  public RelonquelonstRelonadTypelon gelontRelonadTypelonOvelonrridelon() {
+    relonturn relonadTypelonOvelonrridelon;
   }
 
-  public long getServingRangeSinceId() {
-    return servingRangeSince.getBoundaryTweetId();
+  public long gelontSelonrvingRangelonSincelonId() {
+    relonturn selonrvingRangelonSincelon.gelontBoundaryTwelonelontId();
   }
 
-  public long getServingRangeMaxId() {
-    return servingRangeMax.getBoundaryTweetId();
+  public long gelontSelonrvingRangelonMaxId() {
+    relonturn selonrvingRangelonMax.gelontBoundaryTwelonelontId();
   }
 
-  long getServingRangeOverrideSinceId() {
-    return servingRangeSinceOverride.getBoundaryTweetId();
+  long gelontSelonrvingRangelonOvelonrridelonSincelonId() {
+    relonturn selonrvingRangelonSincelonOvelonrridelon.gelontBoundaryTwelonelontId();
   }
 
-  long getServingRangeOverrideMaxId() {
-    return servingRangeMaxOverride.getBoundaryTweetId();
+  long gelontSelonrvingRangelonOvelonrridelonMaxId() {
+    relonturn selonrvingRangelonMaxOvelonrridelon.gelontBoundaryTwelonelontId();
   }
 
-  public long getServingRangeSinceTimeSecondsFromEpoch() {
-    return servingRangeSince.getBoundaryTimeSecondsFromEpoch();
+  public long gelontSelonrvingRangelonSincelonTimelonSeloncondsFromelonpoch() {
+    relonturn selonrvingRangelonSincelon.gelontBoundaryTimelonSeloncondsFromelonpoch();
   }
 
-  public long getServingRangeUntilTimeSecondsFromEpoch() {
-    return servingRangeMax.getBoundaryTimeSecondsFromEpoch();
+  public long gelontSelonrvingRangelonUntilTimelonSeloncondsFromelonpoch() {
+    relonturn selonrvingRangelonMax.gelontBoundaryTimelonSeloncondsFromelonpoch();
   }
 
-  long getServingRangeOverrideSinceTimeSecondsFromEpoch() {
-    return servingRangeSinceOverride.getBoundaryTimeSecondsFromEpoch();
+  long gelontSelonrvingRangelonOvelonrridelonSincelonTimelonSeloncondsFromelonpoch() {
+    relonturn selonrvingRangelonSincelonOvelonrridelon.gelontBoundaryTimelonSeloncondsFromelonpoch();
   }
 
-  long getServingRangeOverrideUntilTimeSecondsFromEpoch() {
-    return servingRangeMaxOverride.getBoundaryTimeSecondsFromEpoch();
+  long gelontSelonrvingRangelonOvelonrridelonUntilTimelonSeloncondsFromelonpoch() {
+    relonturn selonrvingRangelonMaxOvelonrridelon.gelontBoundaryTimelonSeloncondsFromelonpoch();
   }
 }

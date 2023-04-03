@@ -1,109 +1,109 @@
-package com.twitter.timelineranker.in_network_tweets
+packagelon com.twittelonr.timelonlinelonrankelonr.in_nelontwork_twelonelonts
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.service.RetryPolicy
-import com.twitter.search.earlybird.thriftscala.EarlybirdService
-import com.twitter.timelineranker.config.RequestScopes
-import com.twitter.timelineranker.config.RuntimeConfiguration
-import com.twitter.timelineranker.parameters.ConfigBuilder
-import com.twitter.timelineranker.repository.CandidatesRepositoryBuilder
-import com.twitter.timelineranker.visibility.SgsFollowGraphDataFields
-import com.twitter.timelines.util.stats.RequestScope
-import com.twitter.timelines.visibility.model.CheckedUserActorType
-import com.twitter.timelines.visibility.model.ExclusionReason
-import com.twitter.timelines.visibility.model.VisibilityCheckStatus
-import com.twitter.timelines.visibility.model.VisibilityCheckUser
-import com.twitter.util.Duration
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.finaglelon.selonrvicelon.RelontryPolicy
+import com.twittelonr.selonarch.elonarlybird.thriftscala.elonarlybirdSelonrvicelon
+import com.twittelonr.timelonlinelonrankelonr.config.RelonquelonstScopelons
+import com.twittelonr.timelonlinelonrankelonr.config.RuntimelonConfiguration
+import com.twittelonr.timelonlinelonrankelonr.paramelontelonrs.ConfigBuildelonr
+import com.twittelonr.timelonlinelonrankelonr.relonpository.CandidatelonsRelonpositoryBuildelonr
+import com.twittelonr.timelonlinelonrankelonr.visibility.SgsFollowGraphDataFielonlds
+import com.twittelonr.timelonlinelons.util.stats.RelonquelonstScopelon
+import com.twittelonr.timelonlinelons.visibility.modelonl.ChelonckelondUselonrActorTypelon
+import com.twittelonr.timelonlinelons.visibility.modelonl.elonxclusionRelonason
+import com.twittelonr.timelonlinelons.visibility.modelonl.VisibilityChelonckStatus
+import com.twittelonr.timelonlinelons.visibility.modelonl.VisibilityChelonckUselonr
+import com.twittelonr.util.Duration
 
-object InNetworkTweetRepositoryBuilder {
-  val VisibilityRuleExclusions: Set[ExclusionReason] = Set[ExclusionReason](
-    ExclusionReason(
-      CheckedUserActorType(Some(false), VisibilityCheckUser.SourceUser),
-      Set(VisibilityCheckStatus.Blocked)
+objelonct InNelontworkTwelonelontRelonpositoryBuildelonr {
+  val VisibilityRulelonelonxclusions: Selont[elonxclusionRelonason] = Selont[elonxclusionRelonason](
+    elonxclusionRelonason(
+      ChelonckelondUselonrActorTypelon(Somelon(falselon), VisibilityChelonckUselonr.SourcelonUselonr),
+      Selont(VisibilityChelonckStatus.Blockelond)
     )
   )
 
-  private val EarlybirdTimeout = 600.milliseconds
-  private val EarlybirdRequestTimeout = 600.milliseconds
+  privatelon val elonarlybirdTimelonout = 600.milliselonconds
+  privatelon val elonarlybirdRelonquelonstTimelonout = 600.milliselonconds
 
   /**
-   * The timeouts below are only used for the Earlybird Cluster Migration
+   * Thelon timelonouts belonlow arelon only uselond for thelon elonarlybird Clustelonr Migration
    */
-  private val EarlybirdRealtimeCGTimeout = 600.milliseconds
-  private val EarlybirdRealtimeCGRequestTimeout = 600.milliseconds
+  privatelon val elonarlybirdRelonaltimelonCGTimelonout = 600.milliselonconds
+  privatelon val elonarlybirdRelonaltimelonCGRelonquelonstTimelonout = 600.milliselonconds
 }
 
-class InNetworkTweetRepositoryBuilder(config: RuntimeConfiguration, configBuilder: ConfigBuilder)
-    extends CandidatesRepositoryBuilder(config) {
-  import InNetworkTweetRepositoryBuilder._
+class InNelontworkTwelonelontRelonpositoryBuildelonr(config: RuntimelonConfiguration, configBuildelonr: ConfigBuildelonr)
+    elonxtelonnds CandidatelonsRelonpositoryBuildelonr(config) {
+  import InNelontworkTwelonelontRelonpositoryBuildelonr._
 
-  override val clientSubId = "recycled_tweets"
-  override val requestScope: RequestScope = RequestScopes.InNetworkTweetSource
-  override val followGraphDataFieldsToFetch: SgsFollowGraphDataFields.ValueSet =
-    SgsFollowGraphDataFields.ValueSet(
-      SgsFollowGraphDataFields.FollowedUserIds,
-      SgsFollowGraphDataFields.MutuallyFollowingUserIds,
-      SgsFollowGraphDataFields.MutedUserIds,
-      SgsFollowGraphDataFields.RetweetsMutedUserIds
+  ovelonrridelon val clielonntSubId = "reloncyclelond_twelonelonts"
+  ovelonrridelon val relonquelonstScopelon: RelonquelonstScopelon = RelonquelonstScopelons.InNelontworkTwelonelontSourcelon
+  ovelonrridelon val followGraphDataFielonldsToFelontch: SgsFollowGraphDataFielonlds.ValuelonSelont =
+    SgsFollowGraphDataFielonlds.ValuelonSelont(
+      SgsFollowGraphDataFielonlds.FollowelondUselonrIds,
+      SgsFollowGraphDataFielonlds.MutuallyFollowingUselonrIds,
+      SgsFollowGraphDataFielonlds.MutelondUselonrIds,
+      SgsFollowGraphDataFielonlds.RelontwelonelontsMutelondUselonrIds
     )
-  override val searchProcessingTimeout: Duration = 200.milliseconds
+  ovelonrridelon val selonarchProcelonssingTimelonout: Duration = 200.milliselonconds
 
-  override def earlybirdClient(scope: String): EarlybirdService.MethodPerEndpoint =
-    config.underlyingClients.createEarlybirdClient(
-      scope = scope,
-      requestTimeout = EarlybirdRequestTimeout,
-      timeout = EarlybirdTimeout,
-      retryPolicy = RetryPolicy.Never
+  ovelonrridelon delonf elonarlybirdClielonnt(scopelon: String): elonarlybirdSelonrvicelon.MelonthodPelonrelonndpoint =
+    config.undelonrlyingClielonnts.crelonatelonelonarlybirdClielonnt(
+      scopelon = scopelon,
+      relonquelonstTimelonout = elonarlybirdRelonquelonstTimelonout,
+      timelonout = elonarlybirdTimelonout,
+      relontryPolicy = RelontryPolicy.Nelonvelonr
     )
 
-  private lazy val searchClientForSourceTweets =
-    newSearchClient(clientId = clientSubId + "_source_tweets")
+  privatelon lazy val selonarchClielonntForSourcelonTwelonelonts =
+    nelonwSelonarchClielonnt(clielonntId = clielonntSubId + "_sourcelon_twelonelonts")
 
-  /** The RealtimeCG clients below are only used for the Earlybird Cluster Migration */
-  private def earlybirdRealtimeCGClient(scope: String): EarlybirdService.MethodPerEndpoint =
-    config.underlyingClients.createEarlybirdRealtimeCgClient(
-      scope = scope,
-      requestTimeout = EarlybirdRealtimeCGRequestTimeout,
-      timeout = EarlybirdRealtimeCGTimeout,
-      retryPolicy = RetryPolicy.Never
+  /** Thelon RelonaltimelonCG clielonnts belonlow arelon only uselond for thelon elonarlybird Clustelonr Migration */
+  privatelon delonf elonarlybirdRelonaltimelonCGClielonnt(scopelon: String): elonarlybirdSelonrvicelon.MelonthodPelonrelonndpoint =
+    config.undelonrlyingClielonnts.crelonatelonelonarlybirdRelonaltimelonCgClielonnt(
+      scopelon = scopelon,
+      relonquelonstTimelonout = elonarlybirdRelonaltimelonCGRelonquelonstTimelonout,
+      timelonout = elonarlybirdRelonaltimelonCGTimelonout,
+      relontryPolicy = RelontryPolicy.Nelonvelonr
     )
-  private val realtimeCGClientSubId = "realtime_cg_recycled_tweets"
-  private lazy val searchRealtimeCGClient =
-    newSearchClient(earlybirdRealtimeCGClient, clientId = realtimeCGClientSubId)
+  privatelon val relonaltimelonCGClielonntSubId = "relonaltimelon_cg_reloncyclelond_twelonelonts"
+  privatelon lazy val selonarchRelonaltimelonCGClielonnt =
+    nelonwSelonarchClielonnt(elonarlybirdRelonaltimelonCGClielonnt, clielonntId = relonaltimelonCGClielonntSubId)
 
-  def apply(): InNetworkTweetRepository = {
-    val inNetworkTweetSource = new InNetworkTweetSource(
-      gizmoduckClient,
-      searchClient,
-      searchClientForSourceTweets,
-      tweetyPieHighQoSClient,
-      userMetadataClient,
-      followGraphDataProvider,
-      config.underlyingClients.contentFeaturesCache,
-      clientFactories.visibilityEnforcerFactory.apply(
-        VisibilityRules,
-        RequestScopes.InNetworkTweetSource,
-        reasonsToExclude = InNetworkTweetRepositoryBuilder.VisibilityRuleExclusions
+  delonf apply(): InNelontworkTwelonelontRelonpository = {
+    val inNelontworkTwelonelontSourcelon = nelonw InNelontworkTwelonelontSourcelon(
+      gizmoduckClielonnt,
+      selonarchClielonnt,
+      selonarchClielonntForSourcelonTwelonelonts,
+      twelonelontyPielonHighQoSClielonnt,
+      uselonrMelontadataClielonnt,
+      followGraphDataProvidelonr,
+      config.undelonrlyingClielonnts.contelonntFelonaturelonsCachelon,
+      clielonntFactorielons.visibilityelonnforcelonrFactory.apply(
+        VisibilityRulelons,
+        RelonquelonstScopelons.InNelontworkTwelonelontSourcelon,
+        relonasonsToelonxcludelon = InNelontworkTwelonelontRelonpositoryBuildelonr.VisibilityRulelonelonxclusions
       ),
-      config.statsReceiver
+      config.statsReloncelonivelonr
     )
 
-    val inNetworkTweetRealtimeCGSource = new InNetworkTweetSource(
-      gizmoduckClient,
-      searchRealtimeCGClient,
-      searchClientForSourceTweets, // do not migrate source_tweets as they are sharded by TweetID
-      tweetyPieHighQoSClient,
-      userMetadataClient,
-      followGraphDataProvider,
-      config.underlyingClients.contentFeaturesCache,
-      clientFactories.visibilityEnforcerFactory.apply(
-        VisibilityRules,
-        RequestScopes.InNetworkTweetSource,
-        reasonsToExclude = InNetworkTweetRepositoryBuilder.VisibilityRuleExclusions
+    val inNelontworkTwelonelontRelonaltimelonCGSourcelon = nelonw InNelontworkTwelonelontSourcelon(
+      gizmoduckClielonnt,
+      selonarchRelonaltimelonCGClielonnt,
+      selonarchClielonntForSourcelonTwelonelonts, // do not migratelon sourcelon_twelonelonts as thelony arelon shardelond by TwelonelontID
+      twelonelontyPielonHighQoSClielonnt,
+      uselonrMelontadataClielonnt,
+      followGraphDataProvidelonr,
+      config.undelonrlyingClielonnts.contelonntFelonaturelonsCachelon,
+      clielonntFactorielons.visibilityelonnforcelonrFactory.apply(
+        VisibilityRulelons,
+        RelonquelonstScopelons.InNelontworkTwelonelontSourcelon,
+        relonasonsToelonxcludelon = InNelontworkTwelonelontRelonpositoryBuildelonr.VisibilityRulelonelonxclusions
       ),
-      config.statsReceiver.scope("replacementRealtimeCG")
+      config.statsReloncelonivelonr.scopelon("relonplacelonmelonntRelonaltimelonCG")
     )
 
-    new InNetworkTweetRepository(inNetworkTweetSource, inNetworkTweetRealtimeCGSource)
+    nelonw InNelontworkTwelonelontRelonpository(inNelontworkTwelonelontSourcelon, inNelontworkTwelonelontRelonaltimelonCGSourcelon)
   }
 }

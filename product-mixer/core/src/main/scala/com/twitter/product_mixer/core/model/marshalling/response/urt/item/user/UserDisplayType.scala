@@ -1,7 +1,7 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.user
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.uselonr
 
-sealed trait UserDisplayType
+selonalelond trait UselonrDisplayTypelon
 
-case object User extends UserDisplayType
-case object UserDetailed extends UserDisplayType
-case object PendingFollowUser extends UserDisplayType
+caselon objelonct Uselonr elonxtelonnds UselonrDisplayTypelon
+caselon objelonct UselonrDelontailelond elonxtelonnds UselonrDisplayTypelon
+caselon objelonct PelonndingFollowUselonr elonxtelonnds UselonrDisplayTypelon

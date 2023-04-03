@@ -1,14 +1,14 @@
-package com.twitter.interaction_graph.scio.agg_all
+packagelon com.twittelonr.intelonraction_graph.scio.agg_all
 
-object InteractionGraphScoringConfig {
+objelonct IntelonractionGraphScoringConfig {
 
   /**
-   * This is alpha for a variant of the Exponentially weighted moving average, computed as:
-   *             ewma_{t+1} = x_{t+1} + (1-alpha) * ewma_t     (ewma_1 = x_1, t > 0)
-   * We choose alpha such that the half life of weights is 7 days.
-   * Note that we don't down-weight x_{t+1} (unlike in EWMA) as we only want to decay actions
-   * as they grow old, not compute the average value.
+   * This is alpha for a variant of thelon elonxponelonntially welonightelond moving avelonragelon, computelond as:
+   *             elonwma_{t+1} = x_{t+1} + (1-alpha) * elonwma_t     (elonwma_1 = x_1, t > 0)
+   * Welon chooselon alpha such that thelon half lifelon of welonights is 7 days.
+   * Notelon that welon don't down-welonight x_{t+1} (unlikelon in elonWMA) as welon only want to deloncay actions
+   * as thelony grow old, not computelon thelon avelonragelon valuelon.
    */
   val ALPHA = 1.0
-  val ONE_MINUS_ALPHA = 0.955
+  val ONelon_MINUS_ALPHA = 0.955
 }

@@ -1,67 +1,67 @@
-package com.twitter.home_mixer.functional_component.feature_hydrator
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator
 
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.InNetworkFeature
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BulkCandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.socialgraph.{thriftscala => sg}
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.socialgraph.{SocialGraph => SocialGraphStitchClient}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.AuthorIdFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.InNelontworkFelonaturelon
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.TwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMapBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator.BulkCandidatelonFelonaturelonHydrator
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.FelonaturelonHydratorIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.socialgraph.{thriftscala => sg}
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.stitch.socialgraph.{SocialGraph => SocialGraphStitchClielonnt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class SocialGraphServiceFeatureHydrator @Inject() (socialGraphStitchClient: SocialGraphStitchClient)
-    extends BulkCandidateFeatureHydrator[PipelineQuery, TweetCandidate] {
+@Singlelonton
+class SocialGraphSelonrvicelonFelonaturelonHydrator @Injelonct() (socialGraphStitchClielonnt: SocialGraphStitchClielonnt)
+    elonxtelonnds BulkCandidatelonFelonaturelonHydrator[PipelonlinelonQuelonry, TwelonelontCandidatelon] {
 
-  override val identifier: FeatureHydratorIdentifier =
-    FeatureHydratorIdentifier("SocialGraphService")
+  ovelonrridelon val idelonntifielonr: FelonaturelonHydratorIdelonntifielonr =
+    FelonaturelonHydratorIdelonntifielonr("SocialGraphSelonrvicelon")
 
-  override val features: Set[Feature[_, _]] = Set(InNetworkFeature)
+  ovelonrridelon val felonaturelons: Selont[Felonaturelon[_, _]] = Selont(InNelontworkFelonaturelon)
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[Seq[FeatureMap]] = {
-    val viewerId = query.getRequiredUserId
+  ovelonrridelon delonf apply(
+    quelonry: PipelonlinelonQuelonry,
+    candidatelons: Selonq[CandidatelonWithFelonaturelons[TwelonelontCandidatelon]]
+  ): Stitch[Selonq[FelonaturelonMap]] = {
+    val vielonwelonrId = quelonry.gelontRelonquirelondUselonrId
 
-    // We use authorId and not sourceAuthorId here so that retweets are defined as in network
-    val authorIds = candidates.map(_.features.getOrElse(AuthorIdFeature, None).getOrElse(0L))
-    val distinctNonSelfAuthorIds = authorIds.filter(_ != viewerId).distinct
+    // Welon uselon authorId and not sourcelonAuthorId helonrelon so that relontwelonelonts arelon delonfinelond as in nelontwork
+    val authorIds = candidatelons.map(_.felonaturelons.gelontOrelonlselon(AuthorIdFelonaturelon, Nonelon).gelontOrelonlselon(0L))
+    val distinctNonSelonlfAuthorIds = authorIds.filtelonr(_ != vielonwelonrId).distinct
 
-    val idsRequest = createIdsRequest(
-      userId = viewerId,
-      relationshipTypes = Set(sg.RelationshipType.Following),
-      targetIds = Some(distinctNonSelfAuthorIds)
+    val idsRelonquelonst = crelonatelonIdsRelonquelonst(
+      uselonrId = vielonwelonrId,
+      relonlationshipTypelons = Selont(sg.RelonlationshipTypelon.Following),
+      targelontIds = Somelon(distinctNonSelonlfAuthorIds)
     )
 
-    socialGraphStitchClient
-      .ids(request = idsRequest, requestContext = None)
-      .map { idResult =>
+    socialGraphStitchClielonnt
+      .ids(relonquelonst = idsRelonquelonst, relonquelonstContelonxt = Nonelon)
+      .map { idRelonsult =>
         authorIds.map { authorId =>
-          // Users cannot follow themselves but this is in network by definition
-          val isSelfTweet = authorId == viewerId
-          val inNetworkAuthorIds = idResult.ids.toSet
-          val isInNetwork = isSelfTweet || inNetworkAuthorIds.contains(authorId) || authorId == 0L
-          FeatureMapBuilder().add(InNetworkFeature, isInNetwork).build()
+          // Uselonrs cannot follow thelonmselonlvelons but this is in nelontwork by delonfinition
+          val isSelonlfTwelonelont = authorId == vielonwelonrId
+          val inNelontworkAuthorIds = idRelonsult.ids.toSelont
+          val isInNelontwork = isSelonlfTwelonelont || inNelontworkAuthorIds.contains(authorId) || authorId == 0L
+          FelonaturelonMapBuildelonr().add(InNelontworkFelonaturelon, isInNelontwork).build()
         }
       }
   }
 
-  private def createIdsRequest(
-    userId: Long,
-    relationshipTypes: Set[sg.RelationshipType],
-    targetIds: Option[Seq[Long]] = None
-  ): sg.IdsRequest = sg.IdsRequest(
-    relationshipTypes.map { relationshipType =>
-      sg.SrcRelationship(userId, relationshipType, targets = targetIds)
-    }.toSeq,
-    Some(sg.PageRequest(selectAll = Some(true)))
+  privatelon delonf crelonatelonIdsRelonquelonst(
+    uselonrId: Long,
+    relonlationshipTypelons: Selont[sg.RelonlationshipTypelon],
+    targelontIds: Option[Selonq[Long]] = Nonelon
+  ): sg.IdsRelonquelonst = sg.IdsRelonquelonst(
+    relonlationshipTypelons.map { relonlationshipTypelon =>
+      sg.SrcRelonlationship(uselonrId, relonlationshipTypelon, targelonts = targelontIds)
+    }.toSelonq,
+    Somelon(sg.PagelonRelonquelonst(selonlelonctAll = Somelon(truelon)))
   )
 }

@@ -1,16 +1,16 @@
-package com.twitter.timelineranker.repository
+packagelon com.twittelonr.timelonlinelonrankelonr.relonpository
 
-import com.twitter.timelineranker.model.Timeline
-import com.twitter.timelineranker.model.TimelineQuery
-import com.twitter.util.Future
+import com.twittelonr.timelonlinelonrankelonr.modelonl.Timelonlinelon
+import com.twittelonr.timelonlinelonrankelonr.modelonl.TimelonlinelonQuelonry
+import com.twittelonr.util.Futurelon
 
 /**
- * A repository of ranked home timelines.
+ * A relonpository of rankelond homelon timelonlinelons.
  */
-class RankedHomeTimelineRepository extends TimelineRepository {
-  def get(queries: Seq[TimelineQuery]): Seq[Future[Timeline]] = {
-    queries.map { _ =>
-      Future.exception(new UnsupportedOperationException("ranked timelines are not yet supported."))
+class RankelondHomelonTimelonlinelonRelonpository elonxtelonnds TimelonlinelonRelonpository {
+  delonf gelont(quelonrielons: Selonq[TimelonlinelonQuelonry]): Selonq[Futurelon[Timelonlinelon]] = {
+    quelonrielons.map { _ =>
+      Futurelon.elonxcelonption(nelonw UnsupportelondOpelonrationelonxcelonption("rankelond timelonlinelons arelon not yelont supportelond."))
     }
   }
 }

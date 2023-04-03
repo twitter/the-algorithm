@@ -1,15 +1,15 @@
 scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "configapi/configapi-core/src/main/scala/com/twitter/timelines/configapi",
-        "configapi/configapi-decider/src/main/scala/com/twitter/timelines/configapi/decider",
-        "servo/decider",
-        "servo/util/src/main/scala",
-        "timelineranker/server/src/main/scala/com/twitter/timelineranker/decider",
-        "timelineranker/server/src/main/scala/com/twitter/timelineranker/parameters/recap",
-        "timelineranker/server/src/main/scala/com/twitter/timelineranker/parameters/util",
+    sourcelons = ["*.scala"],
+    compilelonr_option_selonts = ["fatal_warnings"],
+    strict_delonps = Truelon,
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        "configapi/configapi-corelon/src/main/scala/com/twittelonr/timelonlinelons/configapi",
+        "configapi/configapi-deloncidelonr/src/main/scala/com/twittelonr/timelonlinelons/configapi/deloncidelonr",
+        "selonrvo/deloncidelonr",
+        "selonrvo/util/src/main/scala",
+        "timelonlinelonrankelonr/selonrvelonr/src/main/scala/com/twittelonr/timelonlinelonrankelonr/deloncidelonr",
+        "timelonlinelonrankelonr/selonrvelonr/src/main/scala/com/twittelonr/timelonlinelonrankelonr/paramelontelonrs/reloncap",
+        "timelonlinelonrankelonr/selonrvelonr/src/main/scala/com/twittelonr/timelonlinelonrankelonr/paramelontelonrs/util",
     ],
 )

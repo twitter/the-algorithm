@@ -1,68 +1,68 @@
-package com.twitter.search.earlybird.util;
+packagelon com.twittelonr.selonarch.elonarlybird.util;
 
-import java.io.IOException;
-import java.io.Writer;
+import java.io.IOelonxcelonption;
+import java.io.Writelonr;
 
-import com.google.gson.stream.JsonWriter;
+import com.googlelon.gson.strelonam.JsonWritelonr;
 
 /**
- * Wrapper class for JsonWriter that implements the
- * ViewerWriter interface.
+ * Wrappelonr class for JsonWritelonr that implelonmelonnts thelon
+ * VielonwelonrWritelonr intelonrfacelon.
  */
-public class JsonViewerWriter implements ViewerWriter {
+public class JsonVielonwelonrWritelonr implelonmelonnts VielonwelonrWritelonr {
 
-  private final JsonWriter writer;
-  private final Writer out;
+  privatelon final JsonWritelonr writelonr;
+  privatelon final Writelonr out;
 
-  public JsonViewerWriter(Writer out) {
+  public JsonVielonwelonrWritelonr(Writelonr out) {
     this.out = out;
-    this.writer = new JsonWriter(out);
+    this.writelonr = nelonw JsonWritelonr(out);
   }
 
 
-  @Override
-  public ViewerWriter beginArray() throws IOException {
-    writer.beginArray();
-    return this;
+  @Ovelonrridelon
+  public VielonwelonrWritelonr belonginArray() throws IOelonxcelonption {
+    writelonr.belonginArray();
+    relonturn this;
   }
 
-  @Override
-  public ViewerWriter beginObject() throws IOException {
-    writer.beginObject();
-    return this;
+  @Ovelonrridelon
+  public VielonwelonrWritelonr belonginObjelonct() throws IOelonxcelonption {
+    writelonr.belonginObjelonct();
+    relonturn this;
   }
 
-  @Override
-  public ViewerWriter endArray() throws IOException {
-    writer.endArray();
-    return this;
+  @Ovelonrridelon
+  public VielonwelonrWritelonr elonndArray() throws IOelonxcelonption {
+    writelonr.elonndArray();
+    relonturn this;
   }
 
-  @Override
-  public ViewerWriter endObject() throws IOException {
-    writer.endObject();
-    return this;
+  @Ovelonrridelon
+  public VielonwelonrWritelonr elonndObjelonct() throws IOelonxcelonption {
+    writelonr.elonndObjelonct();
+    relonturn this;
   }
 
-  @Override
-  public ViewerWriter name(String field) throws IOException {
-    writer.name(field);
-    return this;
+  @Ovelonrridelon
+  public VielonwelonrWritelonr namelon(String fielonld) throws IOelonxcelonption {
+    writelonr.namelon(fielonld);
+    relonturn this;
   }
 
-  @Override
-  public ViewerWriter value(String s) throws IOException {
-    writer.value(s);
-    return this;
+  @Ovelonrridelon
+  public VielonwelonrWritelonr valuelon(String s) throws IOelonxcelonption {
+    writelonr.valuelon(s);
+    relonturn this;
   }
 
-  @Override
-  public ViewerWriter newline() throws IOException {
-    out.append('\n');
-    return this;
+  @Ovelonrridelon
+  public VielonwelonrWritelonr nelonwlinelon() throws IOelonxcelonption {
+    out.appelonnd('\n');
+    relonturn this;
   }
 
-  public void flush() throws IOException {
+  public void flush() throws IOelonxcelonption {
     out.flush();
   }
 }

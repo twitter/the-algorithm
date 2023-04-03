@@ -1,73 +1,73 @@
-package com.twitter.product_mixer.component_library.selector.ads
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.selonlelonctor.ads
 
-import com.google.inject.Inject
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.goldfinch.adaptors.ads.productmixer.ProductMixerPromotedEntriesAdaptor
-import com.twitter.goldfinch.adaptors.productmixer.ProductMixerNonPromotedEntriesAdaptor
-import com.twitter.goldfinch.adaptors.productmixer.ProductMixerQueryConverter
-import com.twitter.goldfinch.api.AdsInjectionRequestContextConverter
-import com.twitter.goldfinch.api.AdsInjectionSurfaceAreas.SurfaceAreaName
-import com.twitter.goldfinch.api.{AdsInjector => GoldfinchAdsInjector}
-import com.twitter.goldfinch.api.NonPromotedEntriesAdaptor
-import com.twitter.goldfinch.api.PromotedEntriesAdaptor
-import com.twitter.goldfinch.impl.injector.AdsInjectorBuilder
-import com.twitter.goldfinch.impl.injector.product_mixer.AdsInjectionSurfaceAreaAdjustersMap
-import com.twitter.goldfinch.impl.injector.product_mixer.VerticalSizeAdjustmentConfigMap
-import com.twitter.inject.Logging
-import com.twitter.product_mixer.component_library.model.query.ads._
-import com.twitter.product_mixer.core.model.common.presentation._
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import javax.inject.Singleton
-import com.twitter.goldfinch.impl.core.DefaultFeatureSwitchResultsFactory
-import com.twitter.goldfinch.impl.core.LocalDevelopmentFeatureSwitchResultsFactory
-import com.twitter.inject.annotations.Flag
-import com.twitter.product_mixer.core.module.product_mixer_flags.ProductMixerFlagModule.ConfigRepoLocalPath
-import com.twitter.product_mixer.core.module.product_mixer_flags.ProductMixerFlagModule.ServiceLocal
+import com.googlelon.injelonct.Injelonct
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.goldfinch.adaptors.ads.productmixelonr.ProductMixelonrPromotelondelonntrielonsAdaptor
+import com.twittelonr.goldfinch.adaptors.productmixelonr.ProductMixelonrNonPromotelondelonntrielonsAdaptor
+import com.twittelonr.goldfinch.adaptors.productmixelonr.ProductMixelonrQuelonryConvelonrtelonr
+import com.twittelonr.goldfinch.api.AdsInjelonctionRelonquelonstContelonxtConvelonrtelonr
+import com.twittelonr.goldfinch.api.AdsInjelonctionSurfacelonArelonas.SurfacelonArelonaNamelon
+import com.twittelonr.goldfinch.api.{AdsInjelonctor => GoldfinchAdsInjelonctor}
+import com.twittelonr.goldfinch.api.NonPromotelondelonntrielonsAdaptor
+import com.twittelonr.goldfinch.api.PromotelondelonntrielonsAdaptor
+import com.twittelonr.goldfinch.impl.injelonctor.AdsInjelonctorBuildelonr
+import com.twittelonr.goldfinch.impl.injelonctor.product_mixelonr.AdsInjelonctionSurfacelonArelonaAdjustelonrsMap
+import com.twittelonr.goldfinch.impl.injelonctor.product_mixelonr.VelonrticalSizelonAdjustmelonntConfigMap
+import com.twittelonr.injelonct.Logging
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.quelonry.ads._
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation._
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import javax.injelonct.Singlelonton
+import com.twittelonr.goldfinch.impl.corelon.DelonfaultFelonaturelonSwitchRelonsultsFactory
+import com.twittelonr.goldfinch.impl.corelon.LocalDelonvelonlopmelonntFelonaturelonSwitchRelonsultsFactory
+import com.twittelonr.injelonct.annotations.Flag
+import com.twittelonr.product_mixelonr.corelon.modulelon.product_mixelonr_flags.ProductMixelonrFlagModulelon.ConfigRelonpoLocalPath
+import com.twittelonr.product_mixelonr.corelon.modulelon.product_mixelonr_flags.ProductMixelonrFlagModulelon.SelonrvicelonLocal
 
-@Singleton
-class AdsInjector @Inject() (
-  statsReceiver: StatsReceiver,
-  @Flag(ConfigRepoLocalPath) localConfigRepoPath: String,
-  @Flag(ServiceLocal) isServiceLocal: Boolean)
-    extends Logging {
-  private val adsQueryRequestConverter: AdsInjectionRequestContextConverter[
-    PipelineQuery with AdsQuery
-  ] = ProductMixerQueryConverter
+@Singlelonton
+class AdsInjelonctor @Injelonct() (
+  statsReloncelonivelonr: StatsReloncelonivelonr,
+  @Flag(ConfigRelonpoLocalPath) localConfigRelonpoPath: String,
+  @Flag(SelonrvicelonLocal) isSelonrvicelonLocal: Boolelonan)
+    elonxtelonnds Logging {
+  privatelon val adsQuelonryRelonquelonstConvelonrtelonr: AdsInjelonctionRelonquelonstContelonxtConvelonrtelonr[
+    PipelonlinelonQuelonry with AdsQuelonry
+  ] = ProductMixelonrQuelonryConvelonrtelonr
 
-  def forSurfaceArea(
-    surfaceAreaName: SurfaceAreaName
-  ): GoldfinchAdsInjector[
-    PipelineQuery with AdsQuery,
-    CandidateWithDetails,
-    CandidateWithDetails
+  delonf forSurfacelonArelona(
+    surfacelonArelonaNamelon: SurfacelonArelonaNamelon
+  ): GoldfinchAdsInjelonctor[
+    PipelonlinelonQuelonry with AdsQuelonry,
+    CandidatelonWithDelontails,
+    CandidatelonWithDelontails
   ] = {
 
-    val scopedStatsReceiver: StatsReceiver =
-      statsReceiver.scope("goldfinch", surfaceAreaName.toString)
+    val scopelondStatsReloncelonivelonr: StatsReloncelonivelonr =
+      statsReloncelonivelonr.scopelon("goldfinch", surfacelonArelonaNamelon.toString)
 
-    val nonAdsAdaptor: NonPromotedEntriesAdaptor[CandidateWithDetails] =
-      ProductMixerNonPromotedEntriesAdaptor(
-        VerticalSizeAdjustmentConfigMap.configsBySurfaceArea(surfaceAreaName),
-        scopedStatsReceiver)
+    val nonAdsAdaptor: NonPromotelondelonntrielonsAdaptor[CandidatelonWithDelontails] =
+      ProductMixelonrNonPromotelondelonntrielonsAdaptor(
+        VelonrticalSizelonAdjustmelonntConfigMap.configsBySurfacelonArelona(surfacelonArelonaNamelon),
+        scopelondStatsReloncelonivelonr)
 
-    val adsAdaptor: PromotedEntriesAdaptor[CandidateWithDetails] =
-      new ProductMixerPromotedEntriesAdaptor(scopedStatsReceiver)
+    val adsAdaptor: PromotelondelonntrielonsAdaptor[CandidatelonWithDelontails] =
+      nelonw ProductMixelonrPromotelondelonntrielonsAdaptor(scopelondStatsReloncelonivelonr)
 
-    val featureSwitchFactory = if (isServiceLocal) {
-      new LocalDevelopmentFeatureSwitchResultsFactory(
-        surfaceAreaName.toString,
-        configRepoAbsPath = localConfigRepoPath)
-    } else new DefaultFeatureSwitchResultsFactory(surfaceAreaName.toString)
+    val felonaturelonSwitchFactory = if (isSelonrvicelonLocal) {
+      nelonw LocalDelonvelonlopmelonntFelonaturelonSwitchRelonsultsFactory(
+        surfacelonArelonaNamelon.toString,
+        configRelonpoAbsPath = localConfigRelonpoPath)
+    } elonlselon nelonw DelonfaultFelonaturelonSwitchRelonsultsFactory(surfacelonArelonaNamelon.toString)
 
-    new AdsInjectorBuilder[PipelineQuery with AdsQuery, CandidateWithDetails, CandidateWithDetails](
-      requestAdapter = adsQueryRequestConverter,
-      nonPromotedEntriesAdaptor = nonAdsAdaptor,
-      promotedEntriesAdaptor = adsAdaptor,
-      adjusters =
-        AdsInjectionSurfaceAreaAdjustersMap.getAdjusters(surfaceAreaName, scopedStatsReceiver),
-      featureSwitchFactory = featureSwitchFactory,
-      statsReceiver = scopedStatsReceiver,
-      logger = logger
+    nelonw AdsInjelonctorBuildelonr[PipelonlinelonQuelonry with AdsQuelonry, CandidatelonWithDelontails, CandidatelonWithDelontails](
+      relonquelonstAdaptelonr = adsQuelonryRelonquelonstConvelonrtelonr,
+      nonPromotelondelonntrielonsAdaptor = nonAdsAdaptor,
+      promotelondelonntrielonsAdaptor = adsAdaptor,
+      adjustelonrs =
+        AdsInjelonctionSurfacelonArelonaAdjustelonrsMap.gelontAdjustelonrs(surfacelonArelonaNamelon, scopelondStatsReloncelonivelonr),
+      felonaturelonSwitchFactory = felonaturelonSwitchFactory,
+      statsReloncelonivelonr = scopelondStatsReloncelonivelonr,
+      loggelonr = loggelonr
     ).build()
   }
 }

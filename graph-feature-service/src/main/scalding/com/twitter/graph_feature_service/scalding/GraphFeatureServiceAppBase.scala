@@ -1,47 +1,47 @@
-package com.twitter.graph_feature_service.scalding
+packagelon com.twittelonr.graph_felonaturelon_selonrvicelon.scalding
 
-import com.twitter.scalding._
-import com.twitter.scalding_internal.job.TwitterExecutionApp
-import com.twitter.scalding_internal.job.analytics_batch.{
-  AnalyticsBatchExecution,
-  AnalyticsBatchExecutionArgs,
-  BatchDescription,
-  BatchFirstTime,
-  BatchIncrement,
-  TwitterScheduledExecutionApp
+import com.twittelonr.scalding._
+import com.twittelonr.scalding_intelonrnal.job.TwittelonrelonxeloncutionApp
+import com.twittelonr.scalding_intelonrnal.job.analytics_batch.{
+  AnalyticsBatchelonxeloncution,
+  AnalyticsBatchelonxeloncutionArgs,
+  BatchDelonscription,
+  BatchFirstTimelon,
+  BatchIncrelonmelonnt,
+  TwittelonrSchelondulelondelonxeloncutionApp
 }
-import java.util.TimeZone
+import java.util.TimelonZonelon
 
 /**
- * Each job only needs to implement this runOnDateRange() function. It makes it easier for testing.
+ * elonach job only nelonelonds to implelonmelonnt this runOnDatelonRangelon() function. It makelons it elonasielonr for telonsting.
  */
-trait GraphFeatureServiceBaseJob {
-  implicit val timeZone: TimeZone = DateOps.UTC
-  implicit val dateParser: DateParser = DateParser.default
+trait GraphFelonaturelonSelonrvicelonBaselonJob {
+  implicit val timelonZonelon: TimelonZonelon = DatelonOps.UTC
+  implicit val datelonParselonr: DatelonParselonr = DatelonParselonr.delonfault
 
-  def runOnDateRange(
-    enableValueGraphs: Option[Boolean] = None,
-    enableKeyGraphs: Option[Boolean] = None
+  delonf runOnDatelonRangelon(
+    elonnablelonValuelonGraphs: Option[Boolelonan] = Nonelon,
+    elonnablelonKelonyGraphs: Option[Boolelonan] = Nonelon
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit]
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon,
+    uniquelonID: UniquelonID
+  ): elonxeloncution[Unit]
 
   /**
-   * Print customized counters in the log
+   * Print customizelond countelonrs in thelon log
    */
-  def printerCounters[T](execution: Execution[T]): Execution[Unit] = {
-    execution.getCounters
+  delonf printelonrCountelonrs[T](elonxeloncution: elonxeloncution[T]): elonxeloncution[Unit] = {
+    elonxeloncution.gelontCountelonrs
       .flatMap {
-        case (_, counters) =>
-          counters.toMap.toSeq
-            .sortBy(e => (e._1.group, e._1.counter))
-            .foreach {
-              case (statKey, value) =>
-                println(s"${statKey.group}\t${statKey.counter}\t$value")
+        caselon (_, countelonrs) =>
+          countelonrs.toMap.toSelonq
+            .sortBy(elon => (elon._1.group, elon._1.countelonr))
+            .forelonach {
+              caselon (statKelony, valuelon) =>
+                println(s"${statKelony.group}\t${statKelony.countelonr}\t$valuelon")
             }
-          Execution.unit
+          elonxeloncution.unit
       }
   }
 }
@@ -49,37 +49,37 @@ trait GraphFeatureServiceBaseJob {
 /**
  * Trait that wraps things about adhoc jobs.
  */
-trait GraphFeatureServiceAdhocBaseApp extends TwitterExecutionApp with GraphFeatureServiceBaseJob {
-  override def job: Execution[Unit] = Execution.withId { implicit uniqueId =>
-    Execution.getArgs.flatMap { args: Args =>
-      implicit val dateRange: DateRange = DateRange.parse(args.list("date"))(timeZone, dateParser)
-      printerCounters(runOnDateRange())
+trait GraphFelonaturelonSelonrvicelonAdhocBaselonApp elonxtelonnds TwittelonrelonxeloncutionApp with GraphFelonaturelonSelonrvicelonBaselonJob {
+  ovelonrridelon delonf job: elonxeloncution[Unit] = elonxeloncution.withId { implicit uniquelonId =>
+    elonxeloncution.gelontArgs.flatMap { args: Args =>
+      implicit val datelonRangelon: DatelonRangelon = DatelonRangelon.parselon(args.list("datelon"))(timelonZonelon, datelonParselonr)
+      printelonrCountelonrs(runOnDatelonRangelon())
     }
   }
 }
 
 /**
- * Trait that wraps things about scheduled jobs.
+ * Trait that wraps things about schelondulelond jobs.
  *
- * A new daily app only needs to declare the starting date.
+ * A nelonw daily app only nelonelonds to delonclarelon thelon starting datelon.
  */
-trait GraphFeatureServiceScheduledBaseApp
-    extends TwitterScheduledExecutionApp
-    with GraphFeatureServiceBaseJob {
+trait GraphFelonaturelonSelonrvicelonSchelondulelondBaselonApp
+    elonxtelonnds TwittelonrSchelondulelondelonxeloncutionApp
+    with GraphFelonaturelonSelonrvicelonBaselonJob {
 
-  def firstTime: RichDate // for example: RichDate("2018-02-21")
+  delonf firstTimelon: RichDatelon // for elonxamplelon: RichDatelon("2018-02-21")
 
-  def batchIncrement: Duration = Days(1)
+  delonf batchIncrelonmelonnt: Duration = Days(1)
 
-  override def scheduledJob: Execution[Unit] = Execution.withId { implicit uniqueId =>
-    val analyticsArgs = AnalyticsBatchExecutionArgs(
-      batchDesc = BatchDescription(getClass.getName),
-      firstTime = BatchFirstTime(firstTime),
-      batchIncrement = BatchIncrement(batchIncrement)
+  ovelonrridelon delonf schelondulelondJob: elonxeloncution[Unit] = elonxeloncution.withId { implicit uniquelonId =>
+    val analyticsArgs = AnalyticsBatchelonxeloncutionArgs(
+      batchDelonsc = BatchDelonscription(gelontClass.gelontNamelon),
+      firstTimelon = BatchFirstTimelon(firstTimelon),
+      batchIncrelonmelonnt = BatchIncrelonmelonnt(batchIncrelonmelonnt)
     )
 
-    AnalyticsBatchExecution(analyticsArgs) { implicit dateRange =>
-      printerCounters(runOnDateRange())
+    AnalyticsBatchelonxeloncution(analyticsArgs) { implicit datelonRangelon =>
+      printelonrCountelonrs(runOnDatelonRangelon())
     }
   }
 }

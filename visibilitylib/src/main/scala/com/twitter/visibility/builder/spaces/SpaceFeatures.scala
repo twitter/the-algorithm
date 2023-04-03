@@ -1,131 +1,131 @@
-package com.twitter.visibility.builder.spaces
+packagelon com.twittelonr.visibility.buildelonr.spacelons
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.gizmoduck.thriftscala.Label
-import com.twitter.gizmoduck.thriftscala.MuteSurface
-import com.twitter.stitch.Stitch
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.builder.common.MutedKeywordFeatures
-import com.twitter.visibility.builder.users.AuthorFeatures
-import com.twitter.visibility.builder.users.RelationshipFeatures
-import com.twitter.visibility.common.AudioSpaceSource
-import com.twitter.visibility.common.SpaceId
-import com.twitter.visibility.common.SpaceSafetyLabelMapSource
-import com.twitter.visibility.common.UserId
-import com.twitter.visibility.features._
-import com.twitter.visibility.models.{MutedKeyword => VfMutedKeyword}
-import com.twitter.visibility.models.SafetyLabel
-import com.twitter.visibility.models.SpaceSafetyLabel
-import com.twitter.visibility.models.SpaceSafetyLabelType
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.gizmoduck.thriftscala.Labelonl
+import com.twittelonr.gizmoduck.thriftscala.MutelonSurfacelon
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.visibility.buildelonr.FelonaturelonMapBuildelonr
+import com.twittelonr.visibility.buildelonr.common.MutelondKelonywordFelonaturelons
+import com.twittelonr.visibility.buildelonr.uselonrs.AuthorFelonaturelons
+import com.twittelonr.visibility.buildelonr.uselonrs.RelonlationshipFelonaturelons
+import com.twittelonr.visibility.common.AudioSpacelonSourcelon
+import com.twittelonr.visibility.common.SpacelonId
+import com.twittelonr.visibility.common.SpacelonSafelontyLabelonlMapSourcelon
+import com.twittelonr.visibility.common.UselonrId
+import com.twittelonr.visibility.felonaturelons._
+import com.twittelonr.visibility.modelonls.{MutelondKelonyword => VfMutelondKelonyword}
+import com.twittelonr.visibility.modelonls.SafelontyLabelonl
+import com.twittelonr.visibility.modelonls.SpacelonSafelontyLabelonl
+import com.twittelonr.visibility.modelonls.SpacelonSafelontyLabelonlTypelon
 
-class SpaceFeatures(
-  spaceSafetyLabelMap: StratoSpaceLabelMaps,
-  authorFeatures: AuthorFeatures,
-  relationshipFeatures: RelationshipFeatures,
-  mutedKeywordFeatures: MutedKeywordFeatures,
-  audioSpaceSource: AudioSpaceSource) {
+class SpacelonFelonaturelons(
+  spacelonSafelontyLabelonlMap: StratoSpacelonLabelonlMaps,
+  authorFelonaturelons: AuthorFelonaturelons,
+  relonlationshipFelonaturelons: RelonlationshipFelonaturelons,
+  mutelondKelonywordFelonaturelons: MutelondKelonywordFelonaturelons,
+  audioSpacelonSourcelon: AudioSpacelonSourcelon) {
 
-  def forSpaceAndAuthorIds(
-    spaceId: SpaceId,
-    viewerId: Option[UserId],
-    authorIds: Option[Seq[UserId]]
-  ): FeatureMapBuilder => FeatureMapBuilder = {
+  delonf forSpacelonAndAuthorIds(
+    spacelonId: SpacelonId,
+    vielonwelonrId: Option[UselonrId],
+    authorIds: Option[Selonq[UselonrId]]
+  ): FelonaturelonMapBuildelonr => FelonaturelonMapBuildelonr = {
 
-    _.withFeature(SpaceSafetyLabels, spaceSafetyLabelMap.forSpaceId(spaceId))
-      .withFeature(AuthorId, getSpaceAuthors(spaceId, authorIds).map(_.toSet))
-      .withFeature(AuthorUserLabels, allSpaceAuthorLabels(spaceId, authorIds))
-      .withFeature(ViewerFollowsAuthor, viewerFollowsAnySpaceAuthor(spaceId, authorIds, viewerId))
-      .withFeature(ViewerMutesAuthor, viewerMutesAnySpaceAuthor(spaceId, authorIds, viewerId))
-      .withFeature(ViewerBlocksAuthor, viewerBlocksAnySpaceAuthor(spaceId, authorIds, viewerId))
-      .withFeature(AuthorBlocksViewer, anySpaceAuthorBlocksViewer(spaceId, authorIds, viewerId))
-      .withFeature(
-        ViewerMutesKeywordInSpaceTitleForNotifications,
-        titleContainsMutedKeyword(
-          audioSpaceSource.getSpaceTitle(spaceId),
-          audioSpaceSource.getSpaceLanguage(spaceId),
-          viewerId)
+    _.withFelonaturelon(SpacelonSafelontyLabelonls, spacelonSafelontyLabelonlMap.forSpacelonId(spacelonId))
+      .withFelonaturelon(AuthorId, gelontSpacelonAuthors(spacelonId, authorIds).map(_.toSelont))
+      .withFelonaturelon(AuthorUselonrLabelonls, allSpacelonAuthorLabelonls(spacelonId, authorIds))
+      .withFelonaturelon(VielonwelonrFollowsAuthor, vielonwelonrFollowsAnySpacelonAuthor(spacelonId, authorIds, vielonwelonrId))
+      .withFelonaturelon(VielonwelonrMutelonsAuthor, vielonwelonrMutelonsAnySpacelonAuthor(spacelonId, authorIds, vielonwelonrId))
+      .withFelonaturelon(VielonwelonrBlocksAuthor, vielonwelonrBlocksAnySpacelonAuthor(spacelonId, authorIds, vielonwelonrId))
+      .withFelonaturelon(AuthorBlocksVielonwelonr, anySpacelonAuthorBlocksVielonwelonr(spacelonId, authorIds, vielonwelonrId))
+      .withFelonaturelon(
+        VielonwelonrMutelonsKelonywordInSpacelonTitlelonForNotifications,
+        titlelonContainsMutelondKelonyword(
+          audioSpacelonSourcelon.gelontSpacelonTitlelon(spacelonId),
+          audioSpacelonSourcelon.gelontSpacelonLanguagelon(spacelonId),
+          vielonwelonrId)
       )
   }
 
-  def titleContainsMutedKeyword(
-    titleOptStitch: Stitch[Option[String]],
-    languageOptStitch: Stitch[Option[String]],
-    viewerId: Option[UserId],
-  ): Stitch[VfMutedKeyword] = {
-    titleOptStitch.flatMap {
-      case None => Stitch.value(VfMutedKeyword(None))
-      case Some(spaceTitle) =>
-        languageOptStitch.flatMap { languageOpt =>
-          mutedKeywordFeatures.spaceTitleContainsMutedKeyword(
-            spaceTitle,
-            languageOpt,
-            mutedKeywordFeatures.allMutedKeywords(viewerId),
-            MuteSurface.Notifications)
+  delonf titlelonContainsMutelondKelonyword(
+    titlelonOptStitch: Stitch[Option[String]],
+    languagelonOptStitch: Stitch[Option[String]],
+    vielonwelonrId: Option[UselonrId],
+  ): Stitch[VfMutelondKelonyword] = {
+    titlelonOptStitch.flatMap {
+      caselon Nonelon => Stitch.valuelon(VfMutelondKelonyword(Nonelon))
+      caselon Somelon(spacelonTitlelon) =>
+        languagelonOptStitch.flatMap { languagelonOpt =>
+          mutelondKelonywordFelonaturelons.spacelonTitlelonContainsMutelondKelonyword(
+            spacelonTitlelon,
+            languagelonOpt,
+            mutelondKelonywordFelonaturelons.allMutelondKelonywords(vielonwelonrId),
+            MutelonSurfacelon.Notifications)
         }
     }
   }
 
-  def getSpaceAuthors(
-    spaceId: SpaceId,
-    authorIdsFromRequest: Option[Seq[UserId]]
-  ): Stitch[Seq[UserId]] = {
-    authorIdsFromRequest match {
-      case Some(authorIds) => Stitch.apply(authorIds)
-      case _ => audioSpaceSource.getAdminIds(spaceId)
+  delonf gelontSpacelonAuthors(
+    spacelonId: SpacelonId,
+    authorIdsFromRelonquelonst: Option[Selonq[UselonrId]]
+  ): Stitch[Selonq[UselonrId]] = {
+    authorIdsFromRelonquelonst match {
+      caselon Somelon(authorIds) => Stitch.apply(authorIds)
+      caselon _ => audioSpacelonSourcelon.gelontAdminIds(spacelonId)
     }
   }
 
-  def allSpaceAuthorLabels(
-    spaceId: SpaceId,
-    authorIdsFromRequest: Option[Seq[UserId]]
-  ): Stitch[Seq[Label]] = {
-    getSpaceAuthors(spaceId, authorIdsFromRequest)
+  delonf allSpacelonAuthorLabelonls(
+    spacelonId: SpacelonId,
+    authorIdsFromRelonquelonst: Option[Selonq[UselonrId]]
+  ): Stitch[Selonq[Labelonl]] = {
+    gelontSpacelonAuthors(spacelonId, authorIdsFromRelonquelonst)
       .flatMap(authorIds =>
-        Stitch.collect(authorIds.map(authorId => authorFeatures.authorUserLabels(authorId)))).map(
-        _.flatten)
+        Stitch.collelonct(authorIds.map(authorId => authorFelonaturelons.authorUselonrLabelonls(authorId)))).map(
+        _.flattelonn)
   }
 
-  def viewerMutesAnySpaceAuthor(
-    spaceId: SpaceId,
-    authorIdsFromRequest: Option[Seq[UserId]],
-    viewerId: Option[UserId]
-  ): Stitch[Boolean] = {
-    getSpaceAuthors(spaceId, authorIdsFromRequest)
+  delonf vielonwelonrMutelonsAnySpacelonAuthor(
+    spacelonId: SpacelonId,
+    authorIdsFromRelonquelonst: Option[Selonq[UselonrId]],
+    vielonwelonrId: Option[UselonrId]
+  ): Stitch[Boolelonan] = {
+    gelontSpacelonAuthors(spacelonId, authorIdsFromRelonquelonst)
       .flatMap(authorIds =>
-        Stitch.collect(authorIds.map(authorId =>
-          relationshipFeatures.viewerMutesAuthor(authorId, viewerId)))).map(_.contains(true))
+        Stitch.collelonct(authorIds.map(authorId =>
+          relonlationshipFelonaturelons.vielonwelonrMutelonsAuthor(authorId, vielonwelonrId)))).map(_.contains(truelon))
   }
 
-  def anySpaceAuthorBlocksViewer(
-    spaceId: SpaceId,
-    authorIdsFromRequest: Option[Seq[UserId]],
-    viewerId: Option[UserId]
-  ): Stitch[Boolean] = {
-    getSpaceAuthors(spaceId, authorIdsFromRequest)
+  delonf anySpacelonAuthorBlocksVielonwelonr(
+    spacelonId: SpacelonId,
+    authorIdsFromRelonquelonst: Option[Selonq[UselonrId]],
+    vielonwelonrId: Option[UselonrId]
+  ): Stitch[Boolelonan] = {
+    gelontSpacelonAuthors(spacelonId, authorIdsFromRelonquelonst)
       .flatMap(authorIds =>
-        Stitch.collect(authorIds.map(authorId =>
-          relationshipFeatures.authorBlocksViewer(authorId, viewerId)))).map(_.contains(true))
+        Stitch.collelonct(authorIds.map(authorId =>
+          relonlationshipFelonaturelons.authorBlocksVielonwelonr(authorId, vielonwelonrId)))).map(_.contains(truelon))
   }
 }
 
-class StratoSpaceLabelMaps(
-  spaceSafetyLabelSource: SpaceSafetyLabelMapSource,
-  statsReceiver: StatsReceiver) {
+class StratoSpacelonLabelonlMaps(
+  spacelonSafelontyLabelonlSourcelon: SpacelonSafelontyLabelonlMapSourcelon,
+  statsReloncelonivelonr: StatsReloncelonivelonr) {
 
-  private[this] val scopedStatsReceiver = statsReceiver.scope("space_features")
-  private[this] val spaceSafetyLabelsStats =
-    scopedStatsReceiver.scope(SpaceSafetyLabels.name).counter("requests")
+  privatelon[this] val scopelondStatsReloncelonivelonr = statsReloncelonivelonr.scopelon("spacelon_felonaturelons")
+  privatelon[this] val spacelonSafelontyLabelonlsStats =
+    scopelondStatsReloncelonivelonr.scopelon(SpacelonSafelontyLabelonls.namelon).countelonr("relonquelonsts")
 
-  def forSpaceId(
-    spaceId: SpaceId,
-  ): Stitch[Seq[SpaceSafetyLabel]] = {
-    spaceSafetyLabelSource
-      .fetch(spaceId).map(_.flatMap(_.labels.map { stratoSafetyLabelMap =>
-        stratoSafetyLabelMap
-          .map(label =>
-            SpaceSafetyLabel(
-              SpaceSafetyLabelType.fromThrift(label._1),
-              SafetyLabel.fromThrift(label._2)))
-      }).toSeq.flatten).ensure(spaceSafetyLabelsStats.incr)
+  delonf forSpacelonId(
+    spacelonId: SpacelonId,
+  ): Stitch[Selonq[SpacelonSafelontyLabelonl]] = {
+    spacelonSafelontyLabelonlSourcelon
+      .felontch(spacelonId).map(_.flatMap(_.labelonls.map { stratoSafelontyLabelonlMap =>
+        stratoSafelontyLabelonlMap
+          .map(labelonl =>
+            SpacelonSafelontyLabelonl(
+              SpacelonSafelontyLabelonlTypelon.fromThrift(labelonl._1),
+              SafelontyLabelonl.fromThrift(labelonl._2)))
+      }).toSelonq.flattelonn).elonnsurelon(spacelonSafelontyLabelonlsStats.incr)
   }
 }

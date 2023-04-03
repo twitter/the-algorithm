@@ -1,118 +1,118 @@
-package com.twitter.search.common.relevance.classifiers;
+packagelon com.twittelonr.selonarch.common.relonlelonvancelon.classifielonrs;
 
-import com.google.common.base.Preconditions;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import com.twitter.search.common.relevance.entities.TwitterMessage;
+import com.twittelonr.selonarch.common.relonlelonvancelon.elonntitielons.TwittelonrMelonssagelon;
 
 /**
- * Interface to perform feature classification for a single
- * @TwitterMessage object, or a group of them.
+ * Intelonrfacelon to pelonrform felonaturelon classification for a singlelon
+ * @TwittelonrMelonssagelon objelonct, or a group of thelonm.
  *
- * Classification includes two steps: feature extraction, and
- * quality evaluation. During feature extraction, any interesting
- * feature that is deemed useful for subsequent quality analysis
- * is extracted from the @TwitterMessage object. Quality evaluation
- * is then done by a group of @TweetEvaluator objects associated
- * with the classifier, by using the various features extracted in the
- * previous step.
+ * Classification includelons two stelonps: felonaturelon elonxtraction, and
+ * quality elonvaluation. During felonaturelon elonxtraction, any intelonrelonsting
+ * felonaturelon that is delonelonmelond uselonful for subselonquelonnt quality analysis
+ * is elonxtractelond from thelon @TwittelonrMelonssagelon objelonct. Quality elonvaluation
+ * is thelonn donelon by a group of @Twelonelontelonvaluator objeloncts associatelond
+ * with thelon classifielonr, by using thelon various felonaturelons elonxtractelond in thelon
+ * prelonvious stelonp.
  *
- * Feature extraction and quality evaluation results are stored in
- * @TweetFeatures field of the @TwitterMessage object, which is defined
- * in src/main/thrift/classifier.thrift.
+ * Felonaturelon elonxtraction and quality elonvaluation relonsults arelon storelond in
+ * @TwelonelontFelonaturelons fielonld of thelon @TwittelonrMelonssagelon objelonct, which is delonfinelond
+ * in src/main/thrift/classifielonr.thrift.
  */
-public abstract class TweetClassifier {
+public abstract class TwelonelontClassifielonr {
   /**
-   * A list of TweetQualityEvaluators which are invoked after
-   * feature extraction is done. If null, no quality evaluation
-   * is done.
+   * A list of TwelonelontQualityelonvaluators which arelon invokelond aftelonr
+   * felonaturelon elonxtraction is donelon. If null, no quality elonvaluation
+   * is donelon.
    */
-  protected Iterable<TweetEvaluator> qualityEvaluators = null;
+  protelonctelond Itelonrablelon<Twelonelontelonvaluator> qualityelonvaluators = null;
 
   /**
-   * Passed in TwitterMessage is examined and any extractable
-   * features are saved in TweetFeatures field of TwitterMessage.
-   * Then TweetQualityEvaluators are applied to compute various
-   * quality values.
+   * Passelond in TwittelonrMelonssagelon is elonxaminelond and any elonxtractablelon
+   * felonaturelons arelon savelond in TwelonelontFelonaturelons fielonld of TwittelonrMelonssagelon.
+   * Thelonn TwelonelontQualityelonvaluators arelon applielond to computelon various
+   * quality valuelons.
    *
-   * @param tweet TwitterMessage to perform classification on.
+   * @param twelonelont TwittelonrMelonssagelon to pelonrform classification on.
    */
-  public void classifyTweet(final TwitterMessage tweet) {
-    Preconditions.checkNotNull(tweet);
+  public void classifyTwelonelont(final TwittelonrMelonssagelon twelonelont) {
+    Prelonconditions.chelonckNotNull(twelonelont);
 
-    // extract features
-    extractFeatures(tweet);
+    // elonxtract felonaturelons
+    elonxtractFelonaturelons(twelonelont);
 
-    // compute quality
-    evaluate(tweet);
+    // computelon quality
+    elonvaluatelon(twelonelont);
   }
 
   /**
-   * Classify a group of TwitterMessages and store features in their corresponding
-   * TweetFeatures fields.
+   * Classify a group of TwittelonrMelonssagelons and storelon felonaturelons in thelonir correlonsponding
+   * TwelonelontFelonaturelons fielonlds.
    *
-   * This default implementation just iterates through the map and classifies each
-   * individual tweet. Batching for better performance, if applicable, can be implemented by
-   * concrete subclasses.
+   * This delonfault implelonmelonntation just itelonratelons through thelon map and classifielons elonach
+   * individual twelonelont. Batching for belonttelonr pelonrformancelon, if applicablelon, can belon implelonmelonntelond by
+   * concrelontelon subclasselons.
    *
-   * @param tweets TwitterMessages to perform classification on.
+   * @param twelonelonts TwittelonrMelonssagelons to pelonrform classification on.
    */
-  public void classifyTweets(final Iterable<TwitterMessage> tweets) {
-    extractFeatures(tweets);
-    evaluate(tweets);
+  public void classifyTwelonelonts(final Itelonrablelon<TwittelonrMelonssagelon> twelonelonts) {
+    elonxtractFelonaturelons(twelonelonts);
+    elonvaluatelon(twelonelonts);
   }
 
   /**
-   * Use the specified list of TweetQualityEvaluators for this classifier.
+   * Uselon thelon speloncifielond list of TwelonelontQualityelonvaluators for this classifielonr.
    *
-   * @param evaluators list of TweetQualityEvaluators to be used with this classifier.
+   * @param elonvaluators list of TwelonelontQualityelonvaluators to belon uselond with this classifielonr.
    */
-  protected void setQualityEvaluators(final Iterable<TweetEvaluator> qualityEvaluators) {
-    Preconditions.checkNotNull(qualityEvaluators);
-    this.qualityEvaluators = qualityEvaluators;
+  protelonctelond void selontQualityelonvaluators(final Itelonrablelon<Twelonelontelonvaluator> qualityelonvaluators) {
+    Prelonconditions.chelonckNotNull(qualityelonvaluators);
+    this.qualityelonvaluators = qualityelonvaluators;
   }
 
 
   /**
-   * Extract interesting features from a single TwitterMessage for classification.
+   * elonxtract intelonrelonsting felonaturelons from a singlelon TwittelonrMelonssagelon for classification.
    *
-   * @param tweet TwitterMessage to extract interesting features for
+   * @param twelonelont TwittelonrMelonssagelon to elonxtract intelonrelonsting felonaturelons for
    */
-  protected abstract void extractFeatures(final TwitterMessage tweet);
+  protelonctelond abstract void elonxtractFelonaturelons(final TwittelonrMelonssagelon twelonelont);
 
   /**
-   * Extract interesting features from a list of TwitterMessages for classification.
-   * @param tweets list of TwitterMessages to extract interesting features for
+   * elonxtract intelonrelonsting felonaturelons from a list of TwittelonrMelonssagelons for classification.
+   * @param twelonelonts list of TwittelonrMelonssagelons to elonxtract intelonrelonsting felonaturelons for
    */
-  protected void extractFeatures(final Iterable<TwitterMessage> tweets) {
-    for (TwitterMessage tweet: tweets) {
-      extractFeatures(tweet);
+  protelonctelond void elonxtractFelonaturelons(final Itelonrablelon<TwittelonrMelonssagelon> twelonelonts) {
+    for (TwittelonrMelonssagelon twelonelont: twelonelonts) {
+      elonxtractFelonaturelons(twelonelont);
     }
   }
 
   /**
-   * Given a TwitterMessage which already has its features extracted,
-   * perform quality evaluation.
+   * Givelonn a TwittelonrMelonssagelon which alrelonady has its felonaturelons elonxtractelond,
+   * pelonrform quality elonvaluation.
    *
-   * @param tweet TwitterMessage to perform quality evaluation for
+   * @param twelonelont TwittelonrMelonssagelon to pelonrform quality elonvaluation for
    */
-  protected void evaluate(final TwitterMessage tweet) {
-    if (qualityEvaluators == null) {
-      return;
+  protelonctelond void elonvaluatelon(final TwittelonrMelonssagelon twelonelont) {
+    if (qualityelonvaluators == null) {
+      relonturn;
     }
-    for (TweetEvaluator evaluator : qualityEvaluators) {
-      evaluator.evaluate(tweet);
+    for (Twelonelontelonvaluator elonvaluator : qualityelonvaluators) {
+      elonvaluator.elonvaluatelon(twelonelont);
     }
   }
 
   /**
-   * Given a list of TwitterMessages which already have their features extracted,
-   * perform quality evaluation.
+   * Givelonn a list of TwittelonrMelonssagelons which alrelonady havelon thelonir felonaturelons elonxtractelond,
+   * pelonrform quality elonvaluation.
    *
-   * @param tweets list of TwitterMessages to perform quality evaluation for
+   * @param twelonelonts list of TwittelonrMelonssagelons to pelonrform quality elonvaluation for
    */
-  protected void evaluate(final Iterable<TwitterMessage> tweets) {
-    for (TwitterMessage tweet: tweets) {
-      evaluate(tweet);
+  protelonctelond void elonvaluatelon(final Itelonrablelon<TwittelonrMelonssagelon> twelonelonts) {
+    for (TwittelonrMelonssagelon twelonelont: twelonelonts) {
+      elonvaluatelon(twelonelont);
     }
   }
 }

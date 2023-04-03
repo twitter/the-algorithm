@@ -1,7 +1,7 @@
-package com.twitter.visibility.interfaces.conversations
+packagelon com.twittelonr.visibility.intelonrfacelons.convelonrsations
 
-import com.twitter.visibility.builder.VisibilityResult
+import com.twittelonr.visibility.buildelonr.VisibilityRelonsult
 
-case class TimelineConversationsVisibilityResponse(
-  visibilityResults: Map[Long, VisibilityResult],
-  failedTweetIds: Seq[Long])
+caselon class TimelonlinelonConvelonrsationsVisibilityRelonsponselon(
+  visibilityRelonsults: Map[Long, VisibilityRelonsult],
+  failelondTwelonelontIds: Selonq[Long])

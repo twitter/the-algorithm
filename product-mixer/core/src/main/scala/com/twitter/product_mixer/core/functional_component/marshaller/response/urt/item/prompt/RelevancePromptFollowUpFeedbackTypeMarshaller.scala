@@ -1,19 +1,19 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.prompt
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.itelonm.prompt
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.prompt._
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.prompt._
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class RelevancePromptFollowUpFeedbackTypeMarshaller @Inject() (
-  relevancePromptFollowUpTextInputMarshaller: RelevancePromptFollowUpTextInputMarshaller) {
+@Singlelonton
+class RelonlelonvancelonPromptFollowUpFelonelondbackTypelonMarshallelonr @Injelonct() (
+  relonlelonvancelonPromptFollowUpTelonxtInputMarshallelonr: RelonlelonvancelonPromptFollowUpTelonxtInputMarshallelonr) {
 
-  def apply(
-    relevancePromptFollowUpFeedbackType: RelevancePromptFollowUpFeedbackType
-  ): urt.RelevancePromptFollowUpFeedbackType = relevancePromptFollowUpFeedbackType match {
-    case relevancePromptFollowUpTextInput: RelevancePromptFollowUpTextInput =>
-      urt.RelevancePromptFollowUpFeedbackType.FollowUpTextInput(
-        relevancePromptFollowUpTextInputMarshaller(relevancePromptFollowUpTextInput))
+  delonf apply(
+    relonlelonvancelonPromptFollowUpFelonelondbackTypelon: RelonlelonvancelonPromptFollowUpFelonelondbackTypelon
+  ): urt.RelonlelonvancelonPromptFollowUpFelonelondbackTypelon = relonlelonvancelonPromptFollowUpFelonelondbackTypelon match {
+    caselon relonlelonvancelonPromptFollowUpTelonxtInput: RelonlelonvancelonPromptFollowUpTelonxtInput =>
+      urt.RelonlelonvancelonPromptFollowUpFelonelondbackTypelon.FollowUpTelonxtInput(
+        relonlelonvancelonPromptFollowUpTelonxtInputMarshallelonr(relonlelonvancelonPromptFollowUpTelonxtInput))
   }
 }

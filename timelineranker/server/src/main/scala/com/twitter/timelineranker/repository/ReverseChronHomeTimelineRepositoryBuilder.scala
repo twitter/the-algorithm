@@ -1,72 +1,72 @@
-package com.twitter.timelineranker.repository
+packagelon com.twittelonr.timelonlinelonrankelonr.relonpository
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.timelineranker.config.RequestScopes
-import com.twitter.timelineranker.config.RuntimeConfiguration
-import com.twitter.timelineranker.parameters.ConfigBuilder
-import com.twitter.timelineranker.parameters.revchron.ReverseChronTimelineQueryContextBuilder
-import com.twitter.timelineranker.parameters.util.RequestContextBuilderImpl
-import com.twitter.timelineranker.source.ReverseChronHomeTimelineSource
-import com.twitter.timelineranker.visibility.RealGraphFollowGraphDataProvider
-import com.twitter.timelineranker.visibility.SgsFollowGraphDataFields
-import com.twitter.search.earlybird.thriftscala.EarlybirdService
-import com.twitter.timelineranker.decider.DeciderKey
-import com.twitter.timelines.util.stats.RequestScope
-import com.twitter.util.Duration
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.timelonlinelonrankelonr.config.RelonquelonstScopelons
+import com.twittelonr.timelonlinelonrankelonr.config.RuntimelonConfiguration
+import com.twittelonr.timelonlinelonrankelonr.paramelontelonrs.ConfigBuildelonr
+import com.twittelonr.timelonlinelonrankelonr.paramelontelonrs.relonvchron.RelonvelonrselonChronTimelonlinelonQuelonryContelonxtBuildelonr
+import com.twittelonr.timelonlinelonrankelonr.paramelontelonrs.util.RelonquelonstContelonxtBuildelonrImpl
+import com.twittelonr.timelonlinelonrankelonr.sourcelon.RelonvelonrselonChronHomelonTimelonlinelonSourcelon
+import com.twittelonr.timelonlinelonrankelonr.visibility.RelonalGraphFollowGraphDataProvidelonr
+import com.twittelonr.timelonlinelonrankelonr.visibility.SgsFollowGraphDataFielonlds
+import com.twittelonr.selonarch.elonarlybird.thriftscala.elonarlybirdSelonrvicelon
+import com.twittelonr.timelonlinelonrankelonr.deloncidelonr.DeloncidelonrKelony
+import com.twittelonr.timelonlinelons.util.stats.RelonquelonstScopelon
+import com.twittelonr.util.Duration
 
-class ReverseChronHomeTimelineRepositoryBuilder(
-  config: RuntimeConfiguration,
-  configBuilder: ConfigBuilder)
-    extends CandidatesRepositoryBuilder(config) {
+class RelonvelonrselonChronHomelonTimelonlinelonRelonpositoryBuildelonr(
+  config: RuntimelonConfiguration,
+  configBuildelonr: ConfigBuildelonr)
+    elonxtelonnds CandidatelonsRelonpositoryBuildelonr(config) {
 
-  override val clientSubId = "home_materialization"
-  override val requestScope: RequestScope = RequestScopes.HomeTimelineMaterialization
-  override val followGraphDataFieldsToFetch: SgsFollowGraphDataFields.ValueSet =
-    SgsFollowGraphDataFields.ValueSet(
-      SgsFollowGraphDataFields.FollowedUserIds,
-      SgsFollowGraphDataFields.MutedUserIds,
-      SgsFollowGraphDataFields.RetweetsMutedUserIds
+  ovelonrridelon val clielonntSubId = "homelon_matelonrialization"
+  ovelonrridelon val relonquelonstScopelon: RelonquelonstScopelon = RelonquelonstScopelons.HomelonTimelonlinelonMatelonrialization
+  ovelonrridelon val followGraphDataFielonldsToFelontch: SgsFollowGraphDataFielonlds.ValuelonSelont =
+    SgsFollowGraphDataFielonlds.ValuelonSelont(
+      SgsFollowGraphDataFielonlds.FollowelondUselonrIds,
+      SgsFollowGraphDataFielonlds.MutelondUselonrIds,
+      SgsFollowGraphDataFielonlds.RelontwelonelontsMutelondUselonrIds
     )
-  override val searchProcessingTimeout: Duration = 800.milliseconds // [3]
+  ovelonrridelon val selonarchProcelonssingTimelonout: Duration = 800.milliselonconds // [3]
 
-  override def earlybirdClient(scope: String): EarlybirdService.MethodPerEndpoint =
-    config.underlyingClients.createEarlybirdClient(
-      scope = scope,
-      requestTimeout = 1.second, // [1]
-      timeout = 1900.milliseconds, // [2]
-      retryPolicy = config.underlyingClients.DefaultRetryPolicy
+  ovelonrridelon delonf elonarlybirdClielonnt(scopelon: String): elonarlybirdSelonrvicelon.MelonthodPelonrelonndpoint =
+    config.undelonrlyingClielonnts.crelonatelonelonarlybirdClielonnt(
+      scopelon = scopelon,
+      relonquelonstTimelonout = 1.seloncond, // [1]
+      timelonout = 1900.milliselonconds, // [2]
+      relontryPolicy = config.undelonrlyingClielonnts.DelonfaultRelontryPolicy
     )
 
-  val realGraphFollowGraphDataProvider = new RealGraphFollowGraphDataProvider(
-    followGraphDataProvider,
-    config.clientWrapperFactories.realGraphClientFactory
-      .scope(RequestScopes.ReverseChronHomeTimelineSource),
-    config.clientWrapperFactories.socialGraphClientFactory
-      .scope(RequestScopes.ReverseChronHomeTimelineSource),
-    config.deciderGateBuilder.idGate(DeciderKey.SupplementFollowsWithRealGraph),
-    config.statsReceiver.scope(RequestScopes.ReverseChronHomeTimelineSource.scope)
+  val relonalGraphFollowGraphDataProvidelonr = nelonw RelonalGraphFollowGraphDataProvidelonr(
+    followGraphDataProvidelonr,
+    config.clielonntWrappelonrFactorielons.relonalGraphClielonntFactory
+      .scopelon(RelonquelonstScopelons.RelonvelonrselonChronHomelonTimelonlinelonSourcelon),
+    config.clielonntWrappelonrFactorielons.socialGraphClielonntFactory
+      .scopelon(RelonquelonstScopelons.RelonvelonrselonChronHomelonTimelonlinelonSourcelon),
+    config.deloncidelonrGatelonBuildelonr.idGatelon(DeloncidelonrKelony.SupplelonmelonntFollowsWithRelonalGraph),
+    config.statsReloncelonivelonr.scopelon(RelonquelonstScopelons.RelonvelonrselonChronHomelonTimelonlinelonSourcelon.scopelon)
   )
 
-  def apply(): ReverseChronHomeTimelineRepository = {
-    val reverseChronTimelineSource = new ReverseChronHomeTimelineSource(
-      searchClient,
-      realGraphFollowGraphDataProvider,
-      clientFactories.visibilityEnforcerFactory.apply(
-        VisibilityRules,
-        RequestScopes.ReverseChronHomeTimelineSource
+  delonf apply(): RelonvelonrselonChronHomelonTimelonlinelonRelonpository = {
+    val relonvelonrselonChronTimelonlinelonSourcelon = nelonw RelonvelonrselonChronHomelonTimelonlinelonSourcelon(
+      selonarchClielonnt,
+      relonalGraphFollowGraphDataProvidelonr,
+      clielonntFactorielons.visibilityelonnforcelonrFactory.apply(
+        VisibilityRulelons,
+        RelonquelonstScopelons.RelonvelonrselonChronHomelonTimelonlinelonSourcelon
       ),
-      config.statsReceiver
+      config.statsReloncelonivelonr
     )
 
-    val contextBuilder = new ReverseChronTimelineQueryContextBuilder(
-      configBuilder.rootConfig,
+    val contelonxtBuildelonr = nelonw RelonvelonrselonChronTimelonlinelonQuelonryContelonxtBuildelonr(
+      configBuildelonr.rootConfig,
       config,
-      new RequestContextBuilderImpl(config.configApiConfiguration.requestContextFactory)
+      nelonw RelonquelonstContelonxtBuildelonrImpl(config.configApiConfiguration.relonquelonstContelonxtFactory)
     )
 
-    new ReverseChronHomeTimelineRepository(
-      reverseChronTimelineSource,
-      contextBuilder
+    nelonw RelonvelonrselonChronHomelonTimelonlinelonRelonpository(
+      relonvelonrselonChronTimelonlinelonSourcelon,
+      contelonxtBuildelonr
     )
   }
 }

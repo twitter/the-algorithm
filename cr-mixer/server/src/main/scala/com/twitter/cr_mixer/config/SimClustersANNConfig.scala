@@ -1,473 +1,473 @@
-package com.twitter.cr_mixer.config
+packagelon com.twittelonr.cr_mixelonr.config
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.cr_mixer.exception.InvalidSANNConfigException
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType
-import com.twitter.simclustersann.thriftscala.ScoringAlgorithm
-import com.twitter.simclustersann.thriftscala.{SimClustersANNConfig => ThriftSimClustersANNConfig}
-import com.twitter.util.Duration
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.cr_mixelonr.elonxcelonption.InvalidSANNConfigelonxcelonption
+import com.twittelonr.simclustelonrs_v2.thriftscala.elonmbelonddingTypelon
+import com.twittelonr.simclustelonrsann.thriftscala.ScoringAlgorithm
+import com.twittelonr.simclustelonrsann.thriftscala.{SimClustelonrsANNConfig => ThriftSimClustelonrsANNConfig}
+import com.twittelonr.util.Duration
 
-case class SimClustersANNConfig(
-  maxNumResults: Int,
-  minScore: Double,
-  candidateEmbeddingType: EmbeddingType,
-  maxTopTweetsPerCluster: Int,
-  maxScanClusters: Int,
-  maxTweetCandidateAge: Duration,
-  minTweetCandidateAge: Duration,
+caselon class SimClustelonrsANNConfig(
+  maxNumRelonsults: Int,
+  minScorelon: Doublelon,
+  candidatelonelonmbelonddingTypelon: elonmbelonddingTypelon,
+  maxTopTwelonelontsPelonrClustelonr: Int,
+  maxScanClustelonrs: Int,
+  maxTwelonelontCandidatelonAgelon: Duration,
+  minTwelonelontCandidatelonAgelon: Duration,
   annAlgorithm: ScoringAlgorithm) {
-  val toSANNConfigThrift: ThriftSimClustersANNConfig = ThriftSimClustersANNConfig(
-    maxNumResults = maxNumResults,
-    minScore = minScore,
-    candidateEmbeddingType = candidateEmbeddingType,
-    maxTopTweetsPerCluster = maxTopTweetsPerCluster,
-    maxScanClusters = maxScanClusters,
-    maxTweetCandidateAgeHours = maxTweetCandidateAge.inHours,
-    minTweetCandidateAgeHours = minTweetCandidateAge.inHours,
+  val toSANNConfigThrift: ThriftSimClustelonrsANNConfig = ThriftSimClustelonrsANNConfig(
+    maxNumRelonsults = maxNumRelonsults,
+    minScorelon = minScorelon,
+    candidatelonelonmbelonddingTypelon = candidatelonelonmbelonddingTypelon,
+    maxTopTwelonelontsPelonrClustelonr = maxTopTwelonelontsPelonrClustelonr,
+    maxScanClustelonrs = maxScanClustelonrs,
+    maxTwelonelontCandidatelonAgelonHours = maxTwelonelontCandidatelonAgelon.inHours,
+    minTwelonelontCandidatelonAgelonHours = minTwelonelontCandidatelonAgelon.inHours,
     annAlgorithm = annAlgorithm,
   )
 }
 
-object SimClustersANNConfig {
+objelonct SimClustelonrsANNConfig {
 
-  final val DefaultConfig = SimClustersANNConfig(
-    maxNumResults = 200,
-    minScore = 0.0,
-    candidateEmbeddingType = EmbeddingType.LogFavBasedTweet,
-    maxTopTweetsPerCluster = 800,
-    maxScanClusters = 50,
-    maxTweetCandidateAge = 24.hours,
-    minTweetCandidateAge = 0.hours,
-    annAlgorithm = ScoringAlgorithm.CosineSimilarity,
+  final val DelonfaultConfig = SimClustelonrsANNConfig(
+    maxNumRelonsults = 200,
+    minScorelon = 0.0,
+    candidatelonelonmbelonddingTypelon = elonmbelonddingTypelon.LogFavBaselondTwelonelont,
+    maxTopTwelonelontsPelonrClustelonr = 800,
+    maxScanClustelonrs = 50,
+    maxTwelonelontCandidatelonAgelon = 24.hours,
+    minTwelonelontCandidatelonAgelon = 0.hours,
+    annAlgorithm = ScoringAlgorithm.CosinelonSimilarity,
   )
 
   /*
-  SimClustersANNConfigId: String
-  Format: Prod - “EmbeddingType_ModelVersion_Default”
-  Format: Experiment - “EmbeddingType_ModelVersion_Date_Two-Digit-Serial-Number”. Date : YYYYMMDD
+  SimClustelonrsANNConfigId: String
+  Format: Prod - “elonmbelonddingTypelon_ModelonlVelonrsion_Delonfault”
+  Format: elonxpelonrimelonnt - “elonmbelonddingTypelon_ModelonlVelonrsion_Datelon_Two-Digit-Selonrial-Numbelonr”. Datelon : YYYYMMDD
    */
 
-  private val FavBasedProducer_Model20m145k2020_Default = DefaultConfig.copy()
+  privatelon val FavBaselondProducelonr_Modelonl20m145k2020_Delonfault = DelonfaultConfig.copy()
 
-  // Chunnan's exp on maxTweetCandidateAgeDays 2
-  private val FavBasedProducer_Model20m145k2020_20220617_06 =
-    FavBasedProducer_Model20m145k2020_Default.copy(
-      maxTweetCandidateAge = 48.hours,
+  // Chunnan's elonxp on maxTwelonelontCandidatelonAgelonDays 2
+  privatelon val FavBaselondProducelonr_Modelonl20m145k2020_20220617_06 =
+    FavBaselondProducelonr_Modelonl20m145k2020_Delonfault.copy(
+      maxTwelonelontCandidatelonAgelon = 48.hours,
     )
 
-  // Experimental SANN config
-  private val FavBasedProducer_Model20m145k2020_20220801 =
-    FavBasedProducer_Model20m145k2020_Default.copy(
-      candidateEmbeddingType = EmbeddingType.VideoPlayBack50LogFavBasedTweet,
-    )
-
-  // SANN-1 config
-  private val FavBasedProducer_Model20m145k2020_20220810 =
-    FavBasedProducer_Model20m145k2020_Default.copy(
-      maxNumResults = 100,
-      candidateEmbeddingType = EmbeddingType.LogFavBasedAdsTweet,
-      maxTweetCandidateAge = 175200.hours,
-      maxTopTweetsPerCluster = 1600
-    )
-
-  // SANN-2 config
-  private val FavBasedProducer_Model20m145k2020_20220818 =
-    FavBasedProducer_Model20m145k2020_Default.copy(
-      maxNumResults = 100,
-      candidateEmbeddingType = EmbeddingType.LogFavClickBasedAdsTweet,
-      maxTweetCandidateAge = 175200.hours,
-      maxTopTweetsPerCluster = 1600
-    )
-
-  // SANN-3 config
-  private val FavBasedProducer_Model20m145k2020_20220819 =
-    FavBasedProducer_Model20m145k2020_Default.copy(
-      candidateEmbeddingType = EmbeddingType.PushOpenLogFavBasedTweet,
-    )
-
-  // SANN-5 config
-  private val FavBasedProducer_Model20m145k2020_20221221 =
-    FavBasedProducer_Model20m145k2020_Default.copy(
-      candidateEmbeddingType = EmbeddingType.LogFavBasedRealTimeTweet,
-      maxTweetCandidateAge = 1.hours
-    )
-
-  // SANN-4 config
-  private val FavBasedProducer_Model20m145k2020_20221220 =
-    FavBasedProducer_Model20m145k2020_Default.copy(
-      candidateEmbeddingType = EmbeddingType.LogFavBasedEvergreenTweet,
-      maxTweetCandidateAge = 48.hours
-    )
-  private val LogFavLongestL2EmbeddingTweet_Model20m145k2020_Default = DefaultConfig.copy()
-
-  // Chunnan's exp on maxTweetCandidateAgeDays 2
-  private val LogFavLongestL2EmbeddingTweet_Model20m145k2020_20220617_06 =
-    LogFavLongestL2EmbeddingTweet_Model20m145k2020_Default.copy(
-      maxTweetCandidateAge = 48.hours,
-    )
-
-  // Experimental SANN config
-  private val LogFavLongestL2EmbeddingTweet_Model20m145k2020_20220801 =
-    LogFavLongestL2EmbeddingTweet_Model20m145k2020_Default.copy(
-      candidateEmbeddingType = EmbeddingType.VideoPlayBack50LogFavBasedTweet,
+  // elonxpelonrimelonntal SANN config
+  privatelon val FavBaselondProducelonr_Modelonl20m145k2020_20220801 =
+    FavBaselondProducelonr_Modelonl20m145k2020_Delonfault.copy(
+      candidatelonelonmbelonddingTypelon = elonmbelonddingTypelon.VidelonoPlayBack50LogFavBaselondTwelonelont,
     )
 
   // SANN-1 config
-  private val LogFavLongestL2EmbeddingTweet_Model20m145k2020_20220810 =
-    LogFavLongestL2EmbeddingTweet_Model20m145k2020_Default.copy(
-      maxNumResults = 100,
-      candidateEmbeddingType = EmbeddingType.LogFavBasedAdsTweet,
-      maxTweetCandidateAge = 175200.hours,
-      maxTopTweetsPerCluster = 1600
+  privatelon val FavBaselondProducelonr_Modelonl20m145k2020_20220810 =
+    FavBaselondProducelonr_Modelonl20m145k2020_Delonfault.copy(
+      maxNumRelonsults = 100,
+      candidatelonelonmbelonddingTypelon = elonmbelonddingTypelon.LogFavBaselondAdsTwelonelont,
+      maxTwelonelontCandidatelonAgelon = 175200.hours,
+      maxTopTwelonelontsPelonrClustelonr = 1600
     )
 
   // SANN-2 config
-  private val LogFavLongestL2EmbeddingTweet_Model20m145k2020_20220818 =
-    LogFavLongestL2EmbeddingTweet_Model20m145k2020_Default.copy(
-      maxNumResults = 100,
-      candidateEmbeddingType = EmbeddingType.LogFavClickBasedAdsTweet,
-      maxTweetCandidateAge = 175200.hours,
-      maxTopTweetsPerCluster = 1600
+  privatelon val FavBaselondProducelonr_Modelonl20m145k2020_20220818 =
+    FavBaselondProducelonr_Modelonl20m145k2020_Delonfault.copy(
+      maxNumRelonsults = 100,
+      candidatelonelonmbelonddingTypelon = elonmbelonddingTypelon.LogFavClickBaselondAdsTwelonelont,
+      maxTwelonelontCandidatelonAgelon = 175200.hours,
+      maxTopTwelonelontsPelonrClustelonr = 1600
     )
 
   // SANN-3 config
-  private val LogFavLongestL2EmbeddingTweet_Model20m145k2020_20220819 =
-    LogFavLongestL2EmbeddingTweet_Model20m145k2020_Default.copy(
-      candidateEmbeddingType = EmbeddingType.PushOpenLogFavBasedTweet,
+  privatelon val FavBaselondProducelonr_Modelonl20m145k2020_20220819 =
+    FavBaselondProducelonr_Modelonl20m145k2020_Delonfault.copy(
+      candidatelonelonmbelonddingTypelon = elonmbelonddingTypelon.PushOpelonnLogFavBaselondTwelonelont,
     )
 
   // SANN-5 config
-  private val LogFavLongestL2EmbeddingTweet_Model20m145k2020_20221221 =
-    LogFavLongestL2EmbeddingTweet_Model20m145k2020_Default.copy(
-      candidateEmbeddingType = EmbeddingType.LogFavBasedRealTimeTweet,
-      maxTweetCandidateAge = 1.hours
+  privatelon val FavBaselondProducelonr_Modelonl20m145k2020_20221221 =
+    FavBaselondProducelonr_Modelonl20m145k2020_Delonfault.copy(
+      candidatelonelonmbelonddingTypelon = elonmbelonddingTypelon.LogFavBaselondRelonalTimelonTwelonelont,
+      maxTwelonelontCandidatelonAgelon = 1.hours
     )
+
   // SANN-4 config
-  private val LogFavLongestL2EmbeddingTweet_Model20m145k2020_20221220 =
-    LogFavLongestL2EmbeddingTweet_Model20m145k2020_Default.copy(
-      candidateEmbeddingType = EmbeddingType.LogFavBasedEvergreenTweet,
-      maxTweetCandidateAge = 48.hours
+  privatelon val FavBaselondProducelonr_Modelonl20m145k2020_20221220 =
+    FavBaselondProducelonr_Modelonl20m145k2020_Delonfault.copy(
+      candidatelonelonmbelonddingTypelon = elonmbelonddingTypelon.LogFavBaselondelonvelonrgrelonelonnTwelonelont,
+      maxTwelonelontCandidatelonAgelon = 48.hours
     )
-  private val UnfilteredUserInterestedIn_Model20m145k2020_Default = DefaultConfig.copy()
+  privatelon val LogFavLongelonstL2elonmbelonddingTwelonelont_Modelonl20m145k2020_Delonfault = DelonfaultConfig.copy()
 
-  // Chunnan's exp on maxTweetCandidateAgeDays 2
-  private val UnfilteredUserInterestedIn_Model20m145k2020_20220617_06 =
-    UnfilteredUserInterestedIn_Model20m145k2020_Default.copy(
-      maxTweetCandidateAge = 48.hours,
+  // Chunnan's elonxp on maxTwelonelontCandidatelonAgelonDays 2
+  privatelon val LogFavLongelonstL2elonmbelonddingTwelonelont_Modelonl20m145k2020_20220617_06 =
+    LogFavLongelonstL2elonmbelonddingTwelonelont_Modelonl20m145k2020_Delonfault.copy(
+      maxTwelonelontCandidatelonAgelon = 48.hours,
     )
 
-  // Experimental SANN config
-  private val UnfilteredUserInterestedIn_Model20m145k2020_20220801 =
-    UnfilteredUserInterestedIn_Model20m145k2020_20220617_06.copy(
-      candidateEmbeddingType = EmbeddingType.VideoPlayBack50LogFavBasedTweet,
+  // elonxpelonrimelonntal SANN config
+  privatelon val LogFavLongelonstL2elonmbelonddingTwelonelont_Modelonl20m145k2020_20220801 =
+    LogFavLongelonstL2elonmbelonddingTwelonelont_Modelonl20m145k2020_Delonfault.copy(
+      candidatelonelonmbelonddingTypelon = elonmbelonddingTypelon.VidelonoPlayBack50LogFavBaselondTwelonelont,
     )
 
   // SANN-1 config
-  private val UnfilteredUserInterestedIn_Model20m145k2020_20220810 =
-    UnfilteredUserInterestedIn_Model20m145k2020_Default.copy(
-      maxNumResults = 100,
-      candidateEmbeddingType = EmbeddingType.LogFavBasedAdsTweet,
-      maxTweetCandidateAge = 175200.hours,
-      maxTopTweetsPerCluster = 1600
+  privatelon val LogFavLongelonstL2elonmbelonddingTwelonelont_Modelonl20m145k2020_20220810 =
+    LogFavLongelonstL2elonmbelonddingTwelonelont_Modelonl20m145k2020_Delonfault.copy(
+      maxNumRelonsults = 100,
+      candidatelonelonmbelonddingTypelon = elonmbelonddingTypelon.LogFavBaselondAdsTwelonelont,
+      maxTwelonelontCandidatelonAgelon = 175200.hours,
+      maxTopTwelonelontsPelonrClustelonr = 1600
     )
 
   // SANN-2 config
-  private val UnfilteredUserInterestedIn_Model20m145k2020_20220818 =
-    UnfilteredUserInterestedIn_Model20m145k2020_Default.copy(
-      maxNumResults = 100,
-      candidateEmbeddingType = EmbeddingType.LogFavClickBasedAdsTweet,
-      maxTweetCandidateAge = 175200.hours,
-      maxTopTweetsPerCluster = 1600
+  privatelon val LogFavLongelonstL2elonmbelonddingTwelonelont_Modelonl20m145k2020_20220818 =
+    LogFavLongelonstL2elonmbelonddingTwelonelont_Modelonl20m145k2020_Delonfault.copy(
+      maxNumRelonsults = 100,
+      candidatelonelonmbelonddingTypelon = elonmbelonddingTypelon.LogFavClickBaselondAdsTwelonelont,
+      maxTwelonelontCandidatelonAgelon = 175200.hours,
+      maxTopTwelonelontsPelonrClustelonr = 1600
     )
 
   // SANN-3 config
-  private val UnfilteredUserInterestedIn_Model20m145k2020_20220819 =
-    UnfilteredUserInterestedIn_Model20m145k2020_Default.copy(
-      candidateEmbeddingType = EmbeddingType.PushOpenLogFavBasedTweet,
+  privatelon val LogFavLongelonstL2elonmbelonddingTwelonelont_Modelonl20m145k2020_20220819 =
+    LogFavLongelonstL2elonmbelonddingTwelonelont_Modelonl20m145k2020_Delonfault.copy(
+      candidatelonelonmbelonddingTypelon = elonmbelonddingTypelon.PushOpelonnLogFavBaselondTwelonelont,
     )
 
   // SANN-5 config
-  private val UnfilteredUserInterestedIn_Model20m145k2020_20221221 =
-    UnfilteredUserInterestedIn_Model20m145k2020_Default.copy(
-      candidateEmbeddingType = EmbeddingType.LogFavBasedRealTimeTweet,
-      maxTweetCandidateAge = 1.hours
+  privatelon val LogFavLongelonstL2elonmbelonddingTwelonelont_Modelonl20m145k2020_20221221 =
+    LogFavLongelonstL2elonmbelonddingTwelonelont_Modelonl20m145k2020_Delonfault.copy(
+      candidatelonelonmbelonddingTypelon = elonmbelonddingTypelon.LogFavBaselondRelonalTimelonTwelonelont,
+      maxTwelonelontCandidatelonAgelon = 1.hours
     )
-
   // SANN-4 config
-  private val UnfilteredUserInterestedIn_Model20m145k2020_20221220 =
-    UnfilteredUserInterestedIn_Model20m145k2020_Default.copy(
-      candidateEmbeddingType = EmbeddingType.LogFavBasedEvergreenTweet,
-      maxTweetCandidateAge = 48.hours
+  privatelon val LogFavLongelonstL2elonmbelonddingTwelonelont_Modelonl20m145k2020_20221220 =
+    LogFavLongelonstL2elonmbelonddingTwelonelont_Modelonl20m145k2020_Delonfault.copy(
+      candidatelonelonmbelonddingTypelon = elonmbelonddingTypelon.LogFavBaselondelonvelonrgrelonelonnTwelonelont,
+      maxTwelonelontCandidatelonAgelon = 48.hours
     )
-  private val LogFavBasedUserInterestedInFromAPE_Model20m145k2020_Default = DefaultConfig.copy()
+  privatelon val UnfiltelonrelondUselonrIntelonrelonstelondIn_Modelonl20m145k2020_Delonfault = DelonfaultConfig.copy()
 
-  // Chunnan's exp on maxTweetCandidateAgeDays 2
-  private val LogFavBasedUserInterestedInFromAPE_Model20m145k2020_20220617_06 =
-    LogFavBasedUserInterestedInFromAPE_Model20m145k2020_Default.copy(
-      maxTweetCandidateAge = 48.hours,
+  // Chunnan's elonxp on maxTwelonelontCandidatelonAgelonDays 2
+  privatelon val UnfiltelonrelondUselonrIntelonrelonstelondIn_Modelonl20m145k2020_20220617_06 =
+    UnfiltelonrelondUselonrIntelonrelonstelondIn_Modelonl20m145k2020_Delonfault.copy(
+      maxTwelonelontCandidatelonAgelon = 48.hours,
     )
 
-  // Experimental SANN config
-  private val LogFavBasedUserInterestedInFromAPE_Model20m145k2020_20220801 =
-    LogFavBasedUserInterestedInFromAPE_Model20m145k2020_Default.copy(
-      candidateEmbeddingType = EmbeddingType.VideoPlayBack50LogFavBasedTweet,
+  // elonxpelonrimelonntal SANN config
+  privatelon val UnfiltelonrelondUselonrIntelonrelonstelondIn_Modelonl20m145k2020_20220801 =
+    UnfiltelonrelondUselonrIntelonrelonstelondIn_Modelonl20m145k2020_20220617_06.copy(
+      candidatelonelonmbelonddingTypelon = elonmbelonddingTypelon.VidelonoPlayBack50LogFavBaselondTwelonelont,
     )
 
   // SANN-1 config
-  private val LogFavBasedUserInterestedInFromAPE_Model20m145k2020_20220810 =
-    LogFavBasedUserInterestedInFromAPE_Model20m145k2020_Default.copy(
-      maxNumResults = 100,
-      candidateEmbeddingType = EmbeddingType.LogFavBasedAdsTweet,
-      maxTweetCandidateAge = 175200.hours,
-      maxTopTweetsPerCluster = 1600
+  privatelon val UnfiltelonrelondUselonrIntelonrelonstelondIn_Modelonl20m145k2020_20220810 =
+    UnfiltelonrelondUselonrIntelonrelonstelondIn_Modelonl20m145k2020_Delonfault.copy(
+      maxNumRelonsults = 100,
+      candidatelonelonmbelonddingTypelon = elonmbelonddingTypelon.LogFavBaselondAdsTwelonelont,
+      maxTwelonelontCandidatelonAgelon = 175200.hours,
+      maxTopTwelonelontsPelonrClustelonr = 1600
     )
 
   // SANN-2 config
-  private val LogFavBasedUserInterestedInFromAPE_Model20m145k2020_20220818 =
-    LogFavBasedUserInterestedInFromAPE_Model20m145k2020_Default.copy(
-      maxNumResults = 100,
-      candidateEmbeddingType = EmbeddingType.LogFavClickBasedAdsTweet,
-      maxTweetCandidateAge = 175200.hours,
-      maxTopTweetsPerCluster = 1600
+  privatelon val UnfiltelonrelondUselonrIntelonrelonstelondIn_Modelonl20m145k2020_20220818 =
+    UnfiltelonrelondUselonrIntelonrelonstelondIn_Modelonl20m145k2020_Delonfault.copy(
+      maxNumRelonsults = 100,
+      candidatelonelonmbelonddingTypelon = elonmbelonddingTypelon.LogFavClickBaselondAdsTwelonelont,
+      maxTwelonelontCandidatelonAgelon = 175200.hours,
+      maxTopTwelonelontsPelonrClustelonr = 1600
     )
 
   // SANN-3 config
-  private val LogFavBasedUserInterestedInFromAPE_Model20m145k2020_20220819 =
-    LogFavBasedUserInterestedInFromAPE_Model20m145k2020_Default.copy(
-      candidateEmbeddingType = EmbeddingType.PushOpenLogFavBasedTweet,
+  privatelon val UnfiltelonrelondUselonrIntelonrelonstelondIn_Modelonl20m145k2020_20220819 =
+    UnfiltelonrelondUselonrIntelonrelonstelondIn_Modelonl20m145k2020_Delonfault.copy(
+      candidatelonelonmbelonddingTypelon = elonmbelonddingTypelon.PushOpelonnLogFavBaselondTwelonelont,
     )
 
   // SANN-5 config
-  private val LogFavBasedUserInterestedInFromAPE_Model20m145k2020_20221221 =
-    LogFavBasedUserInterestedInFromAPE_Model20m145k2020_Default.copy(
-      candidateEmbeddingType = EmbeddingType.LogFavBasedRealTimeTweet,
-      maxTweetCandidateAge = 1.hours
+  privatelon val UnfiltelonrelondUselonrIntelonrelonstelondIn_Modelonl20m145k2020_20221221 =
+    UnfiltelonrelondUselonrIntelonrelonstelondIn_Modelonl20m145k2020_Delonfault.copy(
+      candidatelonelonmbelonddingTypelon = elonmbelonddingTypelon.LogFavBaselondRelonalTimelonTwelonelont,
+      maxTwelonelontCandidatelonAgelon = 1.hours
     )
 
   // SANN-4 config
-  private val LogFavBasedUserInterestedInFromAPE_Model20m145k2020_20221220 =
-    LogFavBasedUserInterestedInFromAPE_Model20m145k2020_Default.copy(
-      candidateEmbeddingType = EmbeddingType.LogFavBasedEvergreenTweet,
-      maxTweetCandidateAge = 48.hours
+  privatelon val UnfiltelonrelondUselonrIntelonrelonstelondIn_Modelonl20m145k2020_20221220 =
+    UnfiltelonrelondUselonrIntelonrelonstelondIn_Modelonl20m145k2020_Delonfault.copy(
+      candidatelonelonmbelonddingTypelon = elonmbelonddingTypelon.LogFavBaselondelonvelonrgrelonelonnTwelonelont,
+      maxTwelonelontCandidatelonAgelon = 48.hours
     )
-  private val LogFavBasedUserInterestedLouvainMaxpoolingAddressBookFromIIAPE_Model20m145k2020_Default =
-    DefaultConfig.copy()
+  privatelon val LogFavBaselondUselonrIntelonrelonstelondInFromAPelon_Modelonl20m145k2020_Delonfault = DelonfaultConfig.copy()
 
-  // Chunnan's exp on maxTweetCandidateAgeDays 2
-  private val LogFavBasedUserInterestedLouvainMaxpoolingAddressBookFromIIAPE_Model20m145k2020_20220617_06 =
-    LogFavBasedUserInterestedLouvainMaxpoolingAddressBookFromIIAPE_Model20m145k2020_Default.copy(
-      maxTweetCandidateAge = 48.hours,
+  // Chunnan's elonxp on maxTwelonelontCandidatelonAgelonDays 2
+  privatelon val LogFavBaselondUselonrIntelonrelonstelondInFromAPelon_Modelonl20m145k2020_20220617_06 =
+    LogFavBaselondUselonrIntelonrelonstelondInFromAPelon_Modelonl20m145k2020_Delonfault.copy(
+      maxTwelonelontCandidatelonAgelon = 48.hours,
     )
 
-  // Experimental SANN config
-  private val LogFavBasedUserInterestedLouvainMaxpoolingAddressBookFromIIAPE_Model20m145k2020_20220801 =
-    LogFavBasedUserInterestedLouvainMaxpoolingAddressBookFromIIAPE_Model20m145k2020_Default.copy(
-      candidateEmbeddingType = EmbeddingType.VideoPlayBack50LogFavBasedTweet,
+  // elonxpelonrimelonntal SANN config
+  privatelon val LogFavBaselondUselonrIntelonrelonstelondInFromAPelon_Modelonl20m145k2020_20220801 =
+    LogFavBaselondUselonrIntelonrelonstelondInFromAPelon_Modelonl20m145k2020_Delonfault.copy(
+      candidatelonelonmbelonddingTypelon = elonmbelonddingTypelon.VidelonoPlayBack50LogFavBaselondTwelonelont,
     )
 
   // SANN-1 config
-  private val LogFavBasedUserInterestedLouvainMaxpoolingAddressBookFromIIAPE_Model20m145k2020_20220810 =
-    LogFavBasedUserInterestedLouvainMaxpoolingAddressBookFromIIAPE_Model20m145k2020_Default.copy(
-      maxNumResults = 100,
-      candidateEmbeddingType = EmbeddingType.LogFavBasedAdsTweet,
-      maxTweetCandidateAge = 175200.hours,
-      maxTopTweetsPerCluster = 1600
+  privatelon val LogFavBaselondUselonrIntelonrelonstelondInFromAPelon_Modelonl20m145k2020_20220810 =
+    LogFavBaselondUselonrIntelonrelonstelondInFromAPelon_Modelonl20m145k2020_Delonfault.copy(
+      maxNumRelonsults = 100,
+      candidatelonelonmbelonddingTypelon = elonmbelonddingTypelon.LogFavBaselondAdsTwelonelont,
+      maxTwelonelontCandidatelonAgelon = 175200.hours,
+      maxTopTwelonelontsPelonrClustelonr = 1600
     )
 
   // SANN-2 config
-  private val LogFavBasedUserInterestedLouvainMaxpoolingAddressBookFromIIAPE_Model20m145k2020_20220818 =
-    LogFavBasedUserInterestedLouvainMaxpoolingAddressBookFromIIAPE_Model20m145k2020_Default.copy(
-      maxNumResults = 100,
-      candidateEmbeddingType = EmbeddingType.LogFavClickBasedAdsTweet,
-      maxTweetCandidateAge = 175200.hours,
-      maxTopTweetsPerCluster = 1600
+  privatelon val LogFavBaselondUselonrIntelonrelonstelondInFromAPelon_Modelonl20m145k2020_20220818 =
+    LogFavBaselondUselonrIntelonrelonstelondInFromAPelon_Modelonl20m145k2020_Delonfault.copy(
+      maxNumRelonsults = 100,
+      candidatelonelonmbelonddingTypelon = elonmbelonddingTypelon.LogFavClickBaselondAdsTwelonelont,
+      maxTwelonelontCandidatelonAgelon = 175200.hours,
+      maxTopTwelonelontsPelonrClustelonr = 1600
     )
 
   // SANN-3 config
-  private val LogFavBasedUserInterestedLouvainMaxpoolingAddressBookFromIIAPE_Model20m145k2020_20220819 =
-    LogFavBasedUserInterestedLouvainMaxpoolingAddressBookFromIIAPE_Model20m145k2020_Default.copy(
-      candidateEmbeddingType = EmbeddingType.PushOpenLogFavBasedTweet,
+  privatelon val LogFavBaselondUselonrIntelonrelonstelondInFromAPelon_Modelonl20m145k2020_20220819 =
+    LogFavBaselondUselonrIntelonrelonstelondInFromAPelon_Modelonl20m145k2020_Delonfault.copy(
+      candidatelonelonmbelonddingTypelon = elonmbelonddingTypelon.PushOpelonnLogFavBaselondTwelonelont,
     )
 
   // SANN-5 config
-  private val LogFavBasedUserInterestedLouvainMaxpoolingAddressBookFromIIAPE_Model20m145k2020_20221221 =
-    LogFavBasedUserInterestedLouvainMaxpoolingAddressBookFromIIAPE_Model20m145k2020_Default.copy(
-      candidateEmbeddingType = EmbeddingType.LogFavBasedRealTimeTweet,
-      maxTweetCandidateAge = 1.hours
+  privatelon val LogFavBaselondUselonrIntelonrelonstelondInFromAPelon_Modelonl20m145k2020_20221221 =
+    LogFavBaselondUselonrIntelonrelonstelondInFromAPelon_Modelonl20m145k2020_Delonfault.copy(
+      candidatelonelonmbelonddingTypelon = elonmbelonddingTypelon.LogFavBaselondRelonalTimelonTwelonelont,
+      maxTwelonelontCandidatelonAgelon = 1.hours
     )
 
   // SANN-4 config
-  private val LogFavBasedUserInterestedLouvainMaxpoolingAddressBookFromIIAPE_Model20m145k2020_20221220 =
-    LogFavBasedUserInterestedLouvainMaxpoolingAddressBookFromIIAPE_Model20m145k2020_Default.copy(
-      candidateEmbeddingType = EmbeddingType.LogFavBasedEvergreenTweet,
-      maxTweetCandidateAge = 48.hours
+  privatelon val LogFavBaselondUselonrIntelonrelonstelondInFromAPelon_Modelonl20m145k2020_20221220 =
+    LogFavBaselondUselonrIntelonrelonstelondInFromAPelon_Modelonl20m145k2020_Delonfault.copy(
+      candidatelonelonmbelonddingTypelon = elonmbelonddingTypelon.LogFavBaselondelonvelonrgrelonelonnTwelonelont,
+      maxTwelonelontCandidatelonAgelon = 48.hours
     )
-  private val UserNextInterestedIn_Model20m145k2020_Default = DefaultConfig.copy()
+  privatelon val LogFavBaselondUselonrIntelonrelonstelondLouvainMaxpoolingAddrelonssBookFromIIAPelon_Modelonl20m145k2020_Delonfault =
+    DelonfaultConfig.copy()
 
-  // Chunnan's exp on maxTweetCandidateAgeDays 2
-  private val UserNextInterestedIn_Model20m145k2020_20220617_06 =
-    UserNextInterestedIn_Model20m145k2020_Default.copy(
-      maxTweetCandidateAge = 48.hours,
+  // Chunnan's elonxp on maxTwelonelontCandidatelonAgelonDays 2
+  privatelon val LogFavBaselondUselonrIntelonrelonstelondLouvainMaxpoolingAddrelonssBookFromIIAPelon_Modelonl20m145k2020_20220617_06 =
+    LogFavBaselondUselonrIntelonrelonstelondLouvainMaxpoolingAddrelonssBookFromIIAPelon_Modelonl20m145k2020_Delonfault.copy(
+      maxTwelonelontCandidatelonAgelon = 48.hours,
     )
 
-  // Experimental SANN config
-  private val UserNextInterestedIn_Model20m145k2020_20220801 =
-    UserNextInterestedIn_Model20m145k2020_Default.copy(
-      candidateEmbeddingType = EmbeddingType.VideoPlayBack50LogFavBasedTweet,
+  // elonxpelonrimelonntal SANN config
+  privatelon val LogFavBaselondUselonrIntelonrelonstelondLouvainMaxpoolingAddrelonssBookFromIIAPelon_Modelonl20m145k2020_20220801 =
+    LogFavBaselondUselonrIntelonrelonstelondLouvainMaxpoolingAddrelonssBookFromIIAPelon_Modelonl20m145k2020_Delonfault.copy(
+      candidatelonelonmbelonddingTypelon = elonmbelonddingTypelon.VidelonoPlayBack50LogFavBaselondTwelonelont,
     )
 
   // SANN-1 config
-  private val UserNextInterestedIn_Model20m145k2020_20220810 =
-    UserNextInterestedIn_Model20m145k2020_Default.copy(
-      maxNumResults = 100,
-      candidateEmbeddingType = EmbeddingType.LogFavBasedAdsTweet,
-      maxTweetCandidateAge = 175200.hours,
-      maxTopTweetsPerCluster = 1600
+  privatelon val LogFavBaselondUselonrIntelonrelonstelondLouvainMaxpoolingAddrelonssBookFromIIAPelon_Modelonl20m145k2020_20220810 =
+    LogFavBaselondUselonrIntelonrelonstelondLouvainMaxpoolingAddrelonssBookFromIIAPelon_Modelonl20m145k2020_Delonfault.copy(
+      maxNumRelonsults = 100,
+      candidatelonelonmbelonddingTypelon = elonmbelonddingTypelon.LogFavBaselondAdsTwelonelont,
+      maxTwelonelontCandidatelonAgelon = 175200.hours,
+      maxTopTwelonelontsPelonrClustelonr = 1600
     )
 
   // SANN-2 config
-  private val UserNextInterestedIn_Model20m145k2020_20220818 =
-    UserNextInterestedIn_Model20m145k2020_Default.copy(
-      maxNumResults = 100,
-      candidateEmbeddingType = EmbeddingType.LogFavClickBasedAdsTweet,
-      maxTweetCandidateAge = 175200.hours,
-      maxTopTweetsPerCluster = 1600
+  privatelon val LogFavBaselondUselonrIntelonrelonstelondLouvainMaxpoolingAddrelonssBookFromIIAPelon_Modelonl20m145k2020_20220818 =
+    LogFavBaselondUselonrIntelonrelonstelondLouvainMaxpoolingAddrelonssBookFromIIAPelon_Modelonl20m145k2020_Delonfault.copy(
+      maxNumRelonsults = 100,
+      candidatelonelonmbelonddingTypelon = elonmbelonddingTypelon.LogFavClickBaselondAdsTwelonelont,
+      maxTwelonelontCandidatelonAgelon = 175200.hours,
+      maxTopTwelonelontsPelonrClustelonr = 1600
     )
 
   // SANN-3 config
-  private val UserNextInterestedIn_Model20m145k2020_20220819 =
-    UserNextInterestedIn_Model20m145k2020_Default.copy(
-      candidateEmbeddingType = EmbeddingType.PushOpenLogFavBasedTweet,
+  privatelon val LogFavBaselondUselonrIntelonrelonstelondLouvainMaxpoolingAddrelonssBookFromIIAPelon_Modelonl20m145k2020_20220819 =
+    LogFavBaselondUselonrIntelonrelonstelondLouvainMaxpoolingAddrelonssBookFromIIAPelon_Modelonl20m145k2020_Delonfault.copy(
+      candidatelonelonmbelonddingTypelon = elonmbelonddingTypelon.PushOpelonnLogFavBaselondTwelonelont,
     )
 
   // SANN-5 config
-  private val UserNextInterestedIn_Model20m145k2020_20221221 =
-    UserNextInterestedIn_Model20m145k2020_Default.copy(
-      candidateEmbeddingType = EmbeddingType.LogFavBasedRealTimeTweet,
-      maxTweetCandidateAge = 1.hours
+  privatelon val LogFavBaselondUselonrIntelonrelonstelondLouvainMaxpoolingAddrelonssBookFromIIAPelon_Modelonl20m145k2020_20221221 =
+    LogFavBaselondUselonrIntelonrelonstelondLouvainMaxpoolingAddrelonssBookFromIIAPelon_Modelonl20m145k2020_Delonfault.copy(
+      candidatelonelonmbelonddingTypelon = elonmbelonddingTypelon.LogFavBaselondRelonalTimelonTwelonelont,
+      maxTwelonelontCandidatelonAgelon = 1.hours
     )
 
   // SANN-4 config
-  private val UserNextInterestedIn_Model20m145k2020_20221220 =
-    UserNextInterestedIn_Model20m145k2020_Default.copy(
-      candidateEmbeddingType = EmbeddingType.LogFavBasedEvergreenTweet,
-      maxTweetCandidateAge = 48.hours
+  privatelon val LogFavBaselondUselonrIntelonrelonstelondLouvainMaxpoolingAddrelonssBookFromIIAPelon_Modelonl20m145k2020_20221220 =
+    LogFavBaselondUselonrIntelonrelonstelondLouvainMaxpoolingAddrelonssBookFromIIAPelon_Modelonl20m145k2020_Delonfault.copy(
+      candidatelonelonmbelonddingTypelon = elonmbelonddingTypelon.LogFavBaselondelonvelonrgrelonelonnTwelonelont,
+      maxTwelonelontCandidatelonAgelon = 48.hours
     )
-  // Vincent's experiment on using FollowBasedProducer as query embedding type for UserFollow
-  private val FollowBasedProducer_Model20m145k2020_Default =
-    FavBasedProducer_Model20m145k2020_Default.copy()
+  privatelon val UselonrNelonxtIntelonrelonstelondIn_Modelonl20m145k2020_Delonfault = DelonfaultConfig.copy()
 
-  // Experimental SANN config
-  private val FollowBasedProducer_Model20m145k2020_20220801 =
-    FavBasedProducer_Model20m145k2020_Default.copy(
-      candidateEmbeddingType = EmbeddingType.VideoPlayBack50LogFavBasedTweet,
+  // Chunnan's elonxp on maxTwelonelontCandidatelonAgelonDays 2
+  privatelon val UselonrNelonxtIntelonrelonstelondIn_Modelonl20m145k2020_20220617_06 =
+    UselonrNelonxtIntelonrelonstelondIn_Modelonl20m145k2020_Delonfault.copy(
+      maxTwelonelontCandidatelonAgelon = 48.hours,
+    )
+
+  // elonxpelonrimelonntal SANN config
+  privatelon val UselonrNelonxtIntelonrelonstelondIn_Modelonl20m145k2020_20220801 =
+    UselonrNelonxtIntelonrelonstelondIn_Modelonl20m145k2020_Delonfault.copy(
+      candidatelonelonmbelonddingTypelon = elonmbelonddingTypelon.VidelonoPlayBack50LogFavBaselondTwelonelont,
     )
 
   // SANN-1 config
-  private val FollowBasedProducer_Model20m145k2020_20220810 =
-    FavBasedProducer_Model20m145k2020_Default.copy(
-      maxNumResults = 100,
-      candidateEmbeddingType = EmbeddingType.LogFavBasedAdsTweet,
-      maxTweetCandidateAge = 175200.hours,
-      maxTopTweetsPerCluster = 1600
+  privatelon val UselonrNelonxtIntelonrelonstelondIn_Modelonl20m145k2020_20220810 =
+    UselonrNelonxtIntelonrelonstelondIn_Modelonl20m145k2020_Delonfault.copy(
+      maxNumRelonsults = 100,
+      candidatelonelonmbelonddingTypelon = elonmbelonddingTypelon.LogFavBaselondAdsTwelonelont,
+      maxTwelonelontCandidatelonAgelon = 175200.hours,
+      maxTopTwelonelontsPelonrClustelonr = 1600
     )
 
   // SANN-2 config
-  private val FollowBasedProducer_Model20m145k2020_20220818 =
-    FavBasedProducer_Model20m145k2020_Default.copy(
-      maxNumResults = 100,
-      candidateEmbeddingType = EmbeddingType.LogFavClickBasedAdsTweet,
-      maxTweetCandidateAge = 175200.hours,
-      maxTopTweetsPerCluster = 1600
+  privatelon val UselonrNelonxtIntelonrelonstelondIn_Modelonl20m145k2020_20220818 =
+    UselonrNelonxtIntelonrelonstelondIn_Modelonl20m145k2020_Delonfault.copy(
+      maxNumRelonsults = 100,
+      candidatelonelonmbelonddingTypelon = elonmbelonddingTypelon.LogFavClickBaselondAdsTwelonelont,
+      maxTwelonelontCandidatelonAgelon = 175200.hours,
+      maxTopTwelonelontsPelonrClustelonr = 1600
     )
 
   // SANN-3 config
-  private val FollowBasedProducer_Model20m145k2020_20220819 =
-    FavBasedProducer_Model20m145k2020_Default.copy(
-      candidateEmbeddingType = EmbeddingType.PushOpenLogFavBasedTweet,
+  privatelon val UselonrNelonxtIntelonrelonstelondIn_Modelonl20m145k2020_20220819 =
+    UselonrNelonxtIntelonrelonstelondIn_Modelonl20m145k2020_Delonfault.copy(
+      candidatelonelonmbelonddingTypelon = elonmbelonddingTypelon.PushOpelonnLogFavBaselondTwelonelont,
     )
 
   // SANN-5 config
-  private val FollowBasedProducer_Model20m145k2020_20221221 =
-    FavBasedProducer_Model20m145k2020_Default.copy(
-      candidateEmbeddingType = EmbeddingType.LogFavBasedRealTimeTweet,
-      maxTweetCandidateAge = 1.hours
+  privatelon val UselonrNelonxtIntelonrelonstelondIn_Modelonl20m145k2020_20221221 =
+    UselonrNelonxtIntelonrelonstelondIn_Modelonl20m145k2020_Delonfault.copy(
+      candidatelonelonmbelonddingTypelon = elonmbelonddingTypelon.LogFavBaselondRelonalTimelonTwelonelont,
+      maxTwelonelontCandidatelonAgelon = 1.hours
     )
 
   // SANN-4 config
-  private val FollowBasedProducer_Model20m145k2020_20221220 =
-    FavBasedProducer_Model20m145k2020_Default.copy(
-      candidateEmbeddingType = EmbeddingType.LogFavBasedEvergreenTweet,
-      maxTweetCandidateAge = 48.hours
+  privatelon val UselonrNelonxtIntelonrelonstelondIn_Modelonl20m145k2020_20221220 =
+    UselonrNelonxtIntelonrelonstelondIn_Modelonl20m145k2020_Delonfault.copy(
+      candidatelonelonmbelonddingTypelon = elonmbelonddingTypelon.LogFavBaselondelonvelonrgrelonelonnTwelonelont,
+      maxTwelonelontCandidatelonAgelon = 48.hours
     )
-  val DefaultConfigMappings: Map[String, SimClustersANNConfig] = Map(
-    "FavBasedProducer_Model20m145k2020_Default" -> FavBasedProducer_Model20m145k2020_Default,
-    "FavBasedProducer_Model20m145k2020_20220617_06" -> FavBasedProducer_Model20m145k2020_20220617_06,
-    "FavBasedProducer_Model20m145k2020_20220801" -> FavBasedProducer_Model20m145k2020_20220801,
-    "FavBasedProducer_Model20m145k2020_20220810" -> FavBasedProducer_Model20m145k2020_20220810,
-    "FavBasedProducer_Model20m145k2020_20220818" -> FavBasedProducer_Model20m145k2020_20220818,
-    "FavBasedProducer_Model20m145k2020_20220819" -> FavBasedProducer_Model20m145k2020_20220819,
-    "FavBasedProducer_Model20m145k2020_20221221" -> FavBasedProducer_Model20m145k2020_20221221,
-    "FavBasedProducer_Model20m145k2020_20221220" -> FavBasedProducer_Model20m145k2020_20221220,
-    "FollowBasedProducer_Model20m145k2020_Default" -> FollowBasedProducer_Model20m145k2020_Default,
-    "FollowBasedProducer_Model20m145k2020_20220801" -> FollowBasedProducer_Model20m145k2020_20220801,
-    "FollowBasedProducer_Model20m145k2020_20220810" -> FollowBasedProducer_Model20m145k2020_20220810,
-    "FollowBasedProducer_Model20m145k2020_20220818" -> FollowBasedProducer_Model20m145k2020_20220818,
-    "FollowBasedProducer_Model20m145k2020_20220819" -> FollowBasedProducer_Model20m145k2020_20220819,
-    "FollowBasedProducer_Model20m145k2020_20221221" -> FollowBasedProducer_Model20m145k2020_20221221,
-    "FollowBasedProducer_Model20m145k2020_20221220" -> FollowBasedProducer_Model20m145k2020_20221220,
-    "LogFavLongestL2EmbeddingTweet_Model20m145k2020_Default" -> LogFavLongestL2EmbeddingTweet_Model20m145k2020_Default,
-    "LogFavLongestL2EmbeddingTweet_Model20m145k2020_20220617_06" -> LogFavLongestL2EmbeddingTweet_Model20m145k2020_20220617_06,
-    "LogFavLongestL2EmbeddingTweet_Model20m145k2020_20220801" -> LogFavLongestL2EmbeddingTweet_Model20m145k2020_20220801,
-    "LogFavLongestL2EmbeddingTweet_Model20m145k2020_20220810" -> LogFavLongestL2EmbeddingTweet_Model20m145k2020_20220810,
-    "LogFavLongestL2EmbeddingTweet_Model20m145k2020_20220818" -> LogFavLongestL2EmbeddingTweet_Model20m145k2020_20220818,
-    "LogFavLongestL2EmbeddingTweet_Model20m145k2020_20220819" -> LogFavLongestL2EmbeddingTweet_Model20m145k2020_20220819,
-    "LogFavLongestL2EmbeddingTweet_Model20m145k2020_20221221" -> LogFavLongestL2EmbeddingTweet_Model20m145k2020_20221221,
-    "LogFavLongestL2EmbeddingTweet_Model20m145k2020_20221220" -> LogFavLongestL2EmbeddingTweet_Model20m145k2020_20221220,
-    "UnfilteredUserInterestedIn_Model20m145k2020_Default" -> UnfilteredUserInterestedIn_Model20m145k2020_Default,
-    "UnfilteredUserInterestedIn_Model20m145k2020_20220617_06" -> UnfilteredUserInterestedIn_Model20m145k2020_20220617_06,
-    "UnfilteredUserInterestedIn_Model20m145k2020_20220801" -> UnfilteredUserInterestedIn_Model20m145k2020_20220801,
-    "UnfilteredUserInterestedIn_Model20m145k2020_20220810" -> UnfilteredUserInterestedIn_Model20m145k2020_20220810,
-    "UnfilteredUserInterestedIn_Model20m145k2020_20220818" -> UnfilteredUserInterestedIn_Model20m145k2020_20220818,
-    "UnfilteredUserInterestedIn_Model20m145k2020_20220819" -> UnfilteredUserInterestedIn_Model20m145k2020_20220819,
-    "UnfilteredUserInterestedIn_Model20m145k2020_20221221" -> UnfilteredUserInterestedIn_Model20m145k2020_20221221,
-    "UnfilteredUserInterestedIn_Model20m145k2020_20221220" -> UnfilteredUserInterestedIn_Model20m145k2020_20221220,
-    "LogFavBasedUserInterestedInFromAPE_Model20m145k2020_Default" -> LogFavBasedUserInterestedInFromAPE_Model20m145k2020_Default,
-    "LogFavBasedUserInterestedInFromAPE_Model20m145k2020_20220617_06" -> LogFavBasedUserInterestedInFromAPE_Model20m145k2020_20220617_06,
-    "LogFavBasedUserInterestedInFromAPE_Model20m145k2020_20220801" -> LogFavBasedUserInterestedInFromAPE_Model20m145k2020_20220801,
-    "LogFavBasedUserInterestedInFromAPE_Model20m145k2020_20220810" -> LogFavBasedUserInterestedInFromAPE_Model20m145k2020_20220810,
-    "LogFavBasedUserInterestedInFromAPE_Model20m145k2020_20220818" -> LogFavBasedUserInterestedInFromAPE_Model20m145k2020_20220818,
-    "LogFavBasedUserInterestedInFromAPE_Model20m145k2020_20220819" -> LogFavBasedUserInterestedInFromAPE_Model20m145k2020_20220819,
-    "LogFavBasedUserInterestedInFromAPE_Model20m145k2020_20221221" -> LogFavBasedUserInterestedInFromAPE_Model20m145k2020_20221221,
-    "LogFavBasedUserInterestedInFromAPE_Model20m145k2020_20221220" -> LogFavBasedUserInterestedInFromAPE_Model20m145k2020_20221220,
-    "LogFavBasedUserInterestedLouvainMaxpoolingAddressBookFromIIAPE_Model20m145k2020_Default" -> LogFavBasedUserInterestedLouvainMaxpoolingAddressBookFromIIAPE_Model20m145k2020_Default,
-    "LogFavBasedUserInterestedLouvainMaxpoolingAddressBookFromIIAPE_Model20m145k2020_20220617_06" -> LogFavBasedUserInterestedLouvainMaxpoolingAddressBookFromIIAPE_Model20m145k2020_20220617_06,
-    "LogFavBasedUserInterestedLouvainMaxpoolingAddressBookFromIIAPE_Model20m145k2020_20220801" -> LogFavBasedUserInterestedLouvainMaxpoolingAddressBookFromIIAPE_Model20m145k2020_20220801,
-    "LogFavBasedUserInterestedLouvainMaxpoolingAddressBookFromIIAPE_Model20m145k2020_20220810" -> LogFavBasedUserInterestedLouvainMaxpoolingAddressBookFromIIAPE_Model20m145k2020_20220810,
-    "LogFavBasedUserInterestedLouvainMaxpoolingAddressBookFromIIAPE_Model20m145k2020_20220818" -> LogFavBasedUserInterestedLouvainMaxpoolingAddressBookFromIIAPE_Model20m145k2020_20220818,
-    "LogFavBasedUserInterestedLouvainMaxpoolingAddressBookFromIIAPE_Model20m145k2020_20220819" -> LogFavBasedUserInterestedLouvainMaxpoolingAddressBookFromIIAPE_Model20m145k2020_20220819,
-    "LogFavBasedUserInterestedLouvainMaxpoolingAddressBookFromIIAPE_Model20m145k2020_20221221" -> LogFavBasedUserInterestedLouvainMaxpoolingAddressBookFromIIAPE_Model20m145k2020_20221221,
-    "LogFavBasedUserInterestedLouvainMaxpoolingAddressBookFromIIAPE_Model20m145k2020_20221220" -> LogFavBasedUserInterestedLouvainMaxpoolingAddressBookFromIIAPE_Model20m145k2020_20221220,
-    "UserNextInterestedIn_Model20m145k2020_Default" -> UserNextInterestedIn_Model20m145k2020_Default,
-    "UserNextInterestedIn_Model20m145k2020_20220617_06" -> UserNextInterestedIn_Model20m145k2020_20220617_06,
-    "UserNextInterestedIn_Model20m145k2020_20220801" -> UserNextInterestedIn_Model20m145k2020_20220801,
-    "UserNextInterestedIn_Model20m145k2020_20220810" -> UserNextInterestedIn_Model20m145k2020_20220810,
-    "UserNextInterestedIn_Model20m145k2020_20220818" -> UserNextInterestedIn_Model20m145k2020_20220818,
-    "UserNextInterestedIn_Model20m145k2020_20220819" -> UserNextInterestedIn_Model20m145k2020_20220819,
-    "UserNextInterestedIn_Model20m145k2020_20221221" -> UserNextInterestedIn_Model20m145k2020_20221221,
-    "UserNextInterestedIn_Model20m145k2020_20221220" -> UserNextInterestedIn_Model20m145k2020_20221220,
+  // Vincelonnt's elonxpelonrimelonnt on using FollowBaselondProducelonr as quelonry elonmbelondding typelon for UselonrFollow
+  privatelon val FollowBaselondProducelonr_Modelonl20m145k2020_Delonfault =
+    FavBaselondProducelonr_Modelonl20m145k2020_Delonfault.copy()
+
+  // elonxpelonrimelonntal SANN config
+  privatelon val FollowBaselondProducelonr_Modelonl20m145k2020_20220801 =
+    FavBaselondProducelonr_Modelonl20m145k2020_Delonfault.copy(
+      candidatelonelonmbelonddingTypelon = elonmbelonddingTypelon.VidelonoPlayBack50LogFavBaselondTwelonelont,
+    )
+
+  // SANN-1 config
+  privatelon val FollowBaselondProducelonr_Modelonl20m145k2020_20220810 =
+    FavBaselondProducelonr_Modelonl20m145k2020_Delonfault.copy(
+      maxNumRelonsults = 100,
+      candidatelonelonmbelonddingTypelon = elonmbelonddingTypelon.LogFavBaselondAdsTwelonelont,
+      maxTwelonelontCandidatelonAgelon = 175200.hours,
+      maxTopTwelonelontsPelonrClustelonr = 1600
+    )
+
+  // SANN-2 config
+  privatelon val FollowBaselondProducelonr_Modelonl20m145k2020_20220818 =
+    FavBaselondProducelonr_Modelonl20m145k2020_Delonfault.copy(
+      maxNumRelonsults = 100,
+      candidatelonelonmbelonddingTypelon = elonmbelonddingTypelon.LogFavClickBaselondAdsTwelonelont,
+      maxTwelonelontCandidatelonAgelon = 175200.hours,
+      maxTopTwelonelontsPelonrClustelonr = 1600
+    )
+
+  // SANN-3 config
+  privatelon val FollowBaselondProducelonr_Modelonl20m145k2020_20220819 =
+    FavBaselondProducelonr_Modelonl20m145k2020_Delonfault.copy(
+      candidatelonelonmbelonddingTypelon = elonmbelonddingTypelon.PushOpelonnLogFavBaselondTwelonelont,
+    )
+
+  // SANN-5 config
+  privatelon val FollowBaselondProducelonr_Modelonl20m145k2020_20221221 =
+    FavBaselondProducelonr_Modelonl20m145k2020_Delonfault.copy(
+      candidatelonelonmbelonddingTypelon = elonmbelonddingTypelon.LogFavBaselondRelonalTimelonTwelonelont,
+      maxTwelonelontCandidatelonAgelon = 1.hours
+    )
+
+  // SANN-4 config
+  privatelon val FollowBaselondProducelonr_Modelonl20m145k2020_20221220 =
+    FavBaselondProducelonr_Modelonl20m145k2020_Delonfault.copy(
+      candidatelonelonmbelonddingTypelon = elonmbelonddingTypelon.LogFavBaselondelonvelonrgrelonelonnTwelonelont,
+      maxTwelonelontCandidatelonAgelon = 48.hours
+    )
+  val DelonfaultConfigMappings: Map[String, SimClustelonrsANNConfig] = Map(
+    "FavBaselondProducelonr_Modelonl20m145k2020_Delonfault" -> FavBaselondProducelonr_Modelonl20m145k2020_Delonfault,
+    "FavBaselondProducelonr_Modelonl20m145k2020_20220617_06" -> FavBaselondProducelonr_Modelonl20m145k2020_20220617_06,
+    "FavBaselondProducelonr_Modelonl20m145k2020_20220801" -> FavBaselondProducelonr_Modelonl20m145k2020_20220801,
+    "FavBaselondProducelonr_Modelonl20m145k2020_20220810" -> FavBaselondProducelonr_Modelonl20m145k2020_20220810,
+    "FavBaselondProducelonr_Modelonl20m145k2020_20220818" -> FavBaselondProducelonr_Modelonl20m145k2020_20220818,
+    "FavBaselondProducelonr_Modelonl20m145k2020_20220819" -> FavBaselondProducelonr_Modelonl20m145k2020_20220819,
+    "FavBaselondProducelonr_Modelonl20m145k2020_20221221" -> FavBaselondProducelonr_Modelonl20m145k2020_20221221,
+    "FavBaselondProducelonr_Modelonl20m145k2020_20221220" -> FavBaselondProducelonr_Modelonl20m145k2020_20221220,
+    "FollowBaselondProducelonr_Modelonl20m145k2020_Delonfault" -> FollowBaselondProducelonr_Modelonl20m145k2020_Delonfault,
+    "FollowBaselondProducelonr_Modelonl20m145k2020_20220801" -> FollowBaselondProducelonr_Modelonl20m145k2020_20220801,
+    "FollowBaselondProducelonr_Modelonl20m145k2020_20220810" -> FollowBaselondProducelonr_Modelonl20m145k2020_20220810,
+    "FollowBaselondProducelonr_Modelonl20m145k2020_20220818" -> FollowBaselondProducelonr_Modelonl20m145k2020_20220818,
+    "FollowBaselondProducelonr_Modelonl20m145k2020_20220819" -> FollowBaselondProducelonr_Modelonl20m145k2020_20220819,
+    "FollowBaselondProducelonr_Modelonl20m145k2020_20221221" -> FollowBaselondProducelonr_Modelonl20m145k2020_20221221,
+    "FollowBaselondProducelonr_Modelonl20m145k2020_20221220" -> FollowBaselondProducelonr_Modelonl20m145k2020_20221220,
+    "LogFavLongelonstL2elonmbelonddingTwelonelont_Modelonl20m145k2020_Delonfault" -> LogFavLongelonstL2elonmbelonddingTwelonelont_Modelonl20m145k2020_Delonfault,
+    "LogFavLongelonstL2elonmbelonddingTwelonelont_Modelonl20m145k2020_20220617_06" -> LogFavLongelonstL2elonmbelonddingTwelonelont_Modelonl20m145k2020_20220617_06,
+    "LogFavLongelonstL2elonmbelonddingTwelonelont_Modelonl20m145k2020_20220801" -> LogFavLongelonstL2elonmbelonddingTwelonelont_Modelonl20m145k2020_20220801,
+    "LogFavLongelonstL2elonmbelonddingTwelonelont_Modelonl20m145k2020_20220810" -> LogFavLongelonstL2elonmbelonddingTwelonelont_Modelonl20m145k2020_20220810,
+    "LogFavLongelonstL2elonmbelonddingTwelonelont_Modelonl20m145k2020_20220818" -> LogFavLongelonstL2elonmbelonddingTwelonelont_Modelonl20m145k2020_20220818,
+    "LogFavLongelonstL2elonmbelonddingTwelonelont_Modelonl20m145k2020_20220819" -> LogFavLongelonstL2elonmbelonddingTwelonelont_Modelonl20m145k2020_20220819,
+    "LogFavLongelonstL2elonmbelonddingTwelonelont_Modelonl20m145k2020_20221221" -> LogFavLongelonstL2elonmbelonddingTwelonelont_Modelonl20m145k2020_20221221,
+    "LogFavLongelonstL2elonmbelonddingTwelonelont_Modelonl20m145k2020_20221220" -> LogFavLongelonstL2elonmbelonddingTwelonelont_Modelonl20m145k2020_20221220,
+    "UnfiltelonrelondUselonrIntelonrelonstelondIn_Modelonl20m145k2020_Delonfault" -> UnfiltelonrelondUselonrIntelonrelonstelondIn_Modelonl20m145k2020_Delonfault,
+    "UnfiltelonrelondUselonrIntelonrelonstelondIn_Modelonl20m145k2020_20220617_06" -> UnfiltelonrelondUselonrIntelonrelonstelondIn_Modelonl20m145k2020_20220617_06,
+    "UnfiltelonrelondUselonrIntelonrelonstelondIn_Modelonl20m145k2020_20220801" -> UnfiltelonrelondUselonrIntelonrelonstelondIn_Modelonl20m145k2020_20220801,
+    "UnfiltelonrelondUselonrIntelonrelonstelondIn_Modelonl20m145k2020_20220810" -> UnfiltelonrelondUselonrIntelonrelonstelondIn_Modelonl20m145k2020_20220810,
+    "UnfiltelonrelondUselonrIntelonrelonstelondIn_Modelonl20m145k2020_20220818" -> UnfiltelonrelondUselonrIntelonrelonstelondIn_Modelonl20m145k2020_20220818,
+    "UnfiltelonrelondUselonrIntelonrelonstelondIn_Modelonl20m145k2020_20220819" -> UnfiltelonrelondUselonrIntelonrelonstelondIn_Modelonl20m145k2020_20220819,
+    "UnfiltelonrelondUselonrIntelonrelonstelondIn_Modelonl20m145k2020_20221221" -> UnfiltelonrelondUselonrIntelonrelonstelondIn_Modelonl20m145k2020_20221221,
+    "UnfiltelonrelondUselonrIntelonrelonstelondIn_Modelonl20m145k2020_20221220" -> UnfiltelonrelondUselonrIntelonrelonstelondIn_Modelonl20m145k2020_20221220,
+    "LogFavBaselondUselonrIntelonrelonstelondInFromAPelon_Modelonl20m145k2020_Delonfault" -> LogFavBaselondUselonrIntelonrelonstelondInFromAPelon_Modelonl20m145k2020_Delonfault,
+    "LogFavBaselondUselonrIntelonrelonstelondInFromAPelon_Modelonl20m145k2020_20220617_06" -> LogFavBaselondUselonrIntelonrelonstelondInFromAPelon_Modelonl20m145k2020_20220617_06,
+    "LogFavBaselondUselonrIntelonrelonstelondInFromAPelon_Modelonl20m145k2020_20220801" -> LogFavBaselondUselonrIntelonrelonstelondInFromAPelon_Modelonl20m145k2020_20220801,
+    "LogFavBaselondUselonrIntelonrelonstelondInFromAPelon_Modelonl20m145k2020_20220810" -> LogFavBaselondUselonrIntelonrelonstelondInFromAPelon_Modelonl20m145k2020_20220810,
+    "LogFavBaselondUselonrIntelonrelonstelondInFromAPelon_Modelonl20m145k2020_20220818" -> LogFavBaselondUselonrIntelonrelonstelondInFromAPelon_Modelonl20m145k2020_20220818,
+    "LogFavBaselondUselonrIntelonrelonstelondInFromAPelon_Modelonl20m145k2020_20220819" -> LogFavBaselondUselonrIntelonrelonstelondInFromAPelon_Modelonl20m145k2020_20220819,
+    "LogFavBaselondUselonrIntelonrelonstelondInFromAPelon_Modelonl20m145k2020_20221221" -> LogFavBaselondUselonrIntelonrelonstelondInFromAPelon_Modelonl20m145k2020_20221221,
+    "LogFavBaselondUselonrIntelonrelonstelondInFromAPelon_Modelonl20m145k2020_20221220" -> LogFavBaselondUselonrIntelonrelonstelondInFromAPelon_Modelonl20m145k2020_20221220,
+    "LogFavBaselondUselonrIntelonrelonstelondLouvainMaxpoolingAddrelonssBookFromIIAPelon_Modelonl20m145k2020_Delonfault" -> LogFavBaselondUselonrIntelonrelonstelondLouvainMaxpoolingAddrelonssBookFromIIAPelon_Modelonl20m145k2020_Delonfault,
+    "LogFavBaselondUselonrIntelonrelonstelondLouvainMaxpoolingAddrelonssBookFromIIAPelon_Modelonl20m145k2020_20220617_06" -> LogFavBaselondUselonrIntelonrelonstelondLouvainMaxpoolingAddrelonssBookFromIIAPelon_Modelonl20m145k2020_20220617_06,
+    "LogFavBaselondUselonrIntelonrelonstelondLouvainMaxpoolingAddrelonssBookFromIIAPelon_Modelonl20m145k2020_20220801" -> LogFavBaselondUselonrIntelonrelonstelondLouvainMaxpoolingAddrelonssBookFromIIAPelon_Modelonl20m145k2020_20220801,
+    "LogFavBaselondUselonrIntelonrelonstelondLouvainMaxpoolingAddrelonssBookFromIIAPelon_Modelonl20m145k2020_20220810" -> LogFavBaselondUselonrIntelonrelonstelondLouvainMaxpoolingAddrelonssBookFromIIAPelon_Modelonl20m145k2020_20220810,
+    "LogFavBaselondUselonrIntelonrelonstelondLouvainMaxpoolingAddrelonssBookFromIIAPelon_Modelonl20m145k2020_20220818" -> LogFavBaselondUselonrIntelonrelonstelondLouvainMaxpoolingAddrelonssBookFromIIAPelon_Modelonl20m145k2020_20220818,
+    "LogFavBaselondUselonrIntelonrelonstelondLouvainMaxpoolingAddrelonssBookFromIIAPelon_Modelonl20m145k2020_20220819" -> LogFavBaselondUselonrIntelonrelonstelondLouvainMaxpoolingAddrelonssBookFromIIAPelon_Modelonl20m145k2020_20220819,
+    "LogFavBaselondUselonrIntelonrelonstelondLouvainMaxpoolingAddrelonssBookFromIIAPelon_Modelonl20m145k2020_20221221" -> LogFavBaselondUselonrIntelonrelonstelondLouvainMaxpoolingAddrelonssBookFromIIAPelon_Modelonl20m145k2020_20221221,
+    "LogFavBaselondUselonrIntelonrelonstelondLouvainMaxpoolingAddrelonssBookFromIIAPelon_Modelonl20m145k2020_20221220" -> LogFavBaselondUselonrIntelonrelonstelondLouvainMaxpoolingAddrelonssBookFromIIAPelon_Modelonl20m145k2020_20221220,
+    "UselonrNelonxtIntelonrelonstelondIn_Modelonl20m145k2020_Delonfault" -> UselonrNelonxtIntelonrelonstelondIn_Modelonl20m145k2020_Delonfault,
+    "UselonrNelonxtIntelonrelonstelondIn_Modelonl20m145k2020_20220617_06" -> UselonrNelonxtIntelonrelonstelondIn_Modelonl20m145k2020_20220617_06,
+    "UselonrNelonxtIntelonrelonstelondIn_Modelonl20m145k2020_20220801" -> UselonrNelonxtIntelonrelonstelondIn_Modelonl20m145k2020_20220801,
+    "UselonrNelonxtIntelonrelonstelondIn_Modelonl20m145k2020_20220810" -> UselonrNelonxtIntelonrelonstelondIn_Modelonl20m145k2020_20220810,
+    "UselonrNelonxtIntelonrelonstelondIn_Modelonl20m145k2020_20220818" -> UselonrNelonxtIntelonrelonstelondIn_Modelonl20m145k2020_20220818,
+    "UselonrNelonxtIntelonrelonstelondIn_Modelonl20m145k2020_20220819" -> UselonrNelonxtIntelonrelonstelondIn_Modelonl20m145k2020_20220819,
+    "UselonrNelonxtIntelonrelonstelondIn_Modelonl20m145k2020_20221221" -> UselonrNelonxtIntelonrelonstelondIn_Modelonl20m145k2020_20221221,
+    "UselonrNelonxtIntelonrelonstelondIn_Modelonl20m145k2020_20221220" -> UselonrNelonxtIntelonrelonstelondIn_Modelonl20m145k2020_20221220,
   )
 
-  def getConfig(
-    embeddingType: String,
-    modelVersion: String,
+  delonf gelontConfig(
+    elonmbelonddingTypelon: String,
+    modelonlVelonrsion: String,
     id: String
-  ): SimClustersANNConfig = {
-    val configName = embeddingType + "_" + modelVersion + "_" + id
-    DefaultConfigMappings.get(configName) match {
-      case Some(config) => config
-      case None =>
-        throw InvalidSANNConfigException(s"Incorrect config id passed in for SANN $configName")
+  ): SimClustelonrsANNConfig = {
+    val configNamelon = elonmbelonddingTypelon + "_" + modelonlVelonrsion + "_" + id
+    DelonfaultConfigMappings.gelont(configNamelon) match {
+      caselon Somelon(config) => config
+      caselon Nonelon =>
+        throw InvalidSANNConfigelonxcelonption(s"Incorrelonct config id passelond in for SANN $configNamelon")
     }
   }
 }

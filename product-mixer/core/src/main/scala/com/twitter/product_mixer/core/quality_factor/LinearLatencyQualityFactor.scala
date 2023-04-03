@@ -1,34 +1,34 @@
-package com.twitter.product_mixer.core.quality_factor
+packagelon com.twittelonr.product_mixelonr.corelon.quality_factor
 
-import com.twitter.util.Duration
-import com.twitter.util.Stopwatch
+import com.twittelonr.util.Duration
+import com.twittelonr.util.Stopwatch
 
-case class LinearLatencyQualityFactor(
-  override val config: LinearLatencyQualityFactorConfig)
-    extends QualityFactor[Duration] {
+caselon class LinelonarLatelonncyQualityFactor(
+  ovelonrridelon val config: LinelonarLatelonncyQualityFactorConfig)
+    elonxtelonnds QualityFactor[Duration] {
 
-  private val delayedUntilInMillis = Stopwatch.timeMillis() + config.initialDelay.inMillis
+  privatelon val delonlayelondUntilInMillis = Stopwatch.timelonMillis() + config.initialDelonlay.inMillis
 
-  private var state: Double = config.qualityFactorBounds.default
+  privatelon var statelon: Doublelon = config.qualityFactorBounds.delonfault
 
-  override def currentValue: Double = state
+  ovelonrridelon delonf currelonntValuelon: Doublelon = statelon
 
-  override def update(latency: Duration): Unit = {
-    if (Stopwatch.timeMillis() >= delayedUntilInMillis) {
-      if (latency > config.targetLatency) {
-        adjustState(getNegativeDelta)
-      } else {
-        adjustState(config.delta)
+  ovelonrridelon delonf updatelon(latelonncy: Duration): Unit = {
+    if (Stopwatch.timelonMillis() >= delonlayelondUntilInMillis) {
+      if (latelonncy > config.targelontLatelonncy) {
+        adjustStatelon(gelontNelongativelonDelonlta)
+      } elonlselon {
+        adjustStatelon(config.delonlta)
       }
     }
   }
 
-  override def buildObserver(): QualityFactorObserver = LinearLatencyQualityFactorObserver(this)
+  ovelonrridelon delonf buildObselonrvelonr(): QualityFactorObselonrvelonr = LinelonarLatelonncyQualityFactorObselonrvelonr(this)
 
-  private def getNegativeDelta: Double =
-    -config.delta * config.targetLatencyPercentile / (100.0 - config.targetLatencyPercentile)
+  privatelon delonf gelontNelongativelonDelonlta: Doublelon =
+    -config.delonlta * config.targelontLatelonncyPelonrcelonntilelon / (100.0 - config.targelontLatelonncyPelonrcelonntilelon)
 
-  private def adjustState(delta: Double): Unit = {
-    state = config.qualityFactorBounds.bounds(state + delta)
+  privatelon delonf adjustStatelon(delonlta: Doublelon): Unit = {
+    statelon = config.qualityFactorBounds.bounds(statelon + delonlta)
   }
 }

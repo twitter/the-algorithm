@@ -1,54 +1,54 @@
-package com.twitter.search.common.relevance.classifiers;
+packagelon com.twittelonr.selonarch.common.relonlelonvancelon.classifielonrs;
 
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
-import java.util.stream.Collectors;
+import java.util.strelonam.Collelonctors;
 
-import com.twitter.common_internal.text.version.PenguinVersion;
-import com.twitter.search.common.relevance.entities.TwitterMessage;
-import com.twitter.search.common.relevance.features.TweetTextFeatures;
-import com.twitter.search.common.relevance.features.TweetTextQuality;
+import com.twittelonr.common_intelonrnal.telonxt.velonrsion.PelonnguinVelonrsion;
+import com.twittelonr.selonarch.common.relonlelonvancelon.elonntitielons.TwittelonrMelonssagelon;
+import com.twittelonr.selonarch.common.relonlelonvancelon.felonaturelons.TwelonelontTelonxtFelonaturelons;
+import com.twittelonr.selonarch.common.relonlelonvancelon.felonaturelons.TwelonelontTelonxtQuality;
 
 /**
- * Calculates entropy of tweet text based on tokens.
+ * Calculatelons elonntropy of twelonelont telonxt baselond on tokelonns.
  */
-public class TweetTextEvaluator extends TweetEvaluator {
+public class TwelonelontTelonxtelonvaluator elonxtelonnds Twelonelontelonvaluator {
 
-  @Override
-  public void evaluate(final TwitterMessage tweet) {
-    for (PenguinVersion penguinVersion : tweet.getSupportedPenguinVersions()) {
-      TweetTextFeatures textFeatures = tweet.getTweetTextFeatures(penguinVersion);
-      TweetTextQuality textQuality = tweet.getTweetTextQuality(penguinVersion);
+  @Ovelonrridelon
+  public void elonvaluatelon(final TwittelonrMelonssagelon twelonelont) {
+    for (PelonnguinVelonrsion pelonnguinVelonrsion : twelonelont.gelontSupportelondPelonnguinVelonrsions()) {
+      TwelonelontTelonxtFelonaturelons telonxtFelonaturelons = twelonelont.gelontTwelonelontTelonxtFelonaturelons(pelonnguinVelonrsion);
+      TwelonelontTelonxtQuality telonxtQuality = twelonelont.gelontTwelonelontTelonxtQuality(pelonnguinVelonrsion);
 
-      double readability = 0;
-      int numKeptWords = textFeatures.getStrippedTokensSize();
-      for (String token : textFeatures.getStrippedTokens()) {
-        readability += token.length();
+      doublelon relonadability = 0;
+      int numKelonptWords = telonxtFelonaturelons.gelontStrippelondTokelonnsSizelon();
+      for (String tokelonn : telonxtFelonaturelons.gelontStrippelondTokelonns()) {
+        relonadability += tokelonn.lelonngth();
       }
-      if (numKeptWords > 0) {
-        readability = readability * Math.log(numKeptWords) / numKeptWords;
+      if (numKelonptWords > 0) {
+        relonadability = relonadability * Math.log(numKelonptWords) / numKelonptWords;
       }
-      textQuality.setReadability(readability);
-      textQuality.setEntropy(entropy(textFeatures.getStrippedTokens()));
-      textQuality.setShout(textFeatures.getCaps() / Math.max(textFeatures.getLength(), 1.0d));
+      telonxtQuality.selontRelonadability(relonadability);
+      telonxtQuality.selontelonntropy(elonntropy(telonxtFelonaturelons.gelontStrippelondTokelonns()));
+      telonxtQuality.selontShout(telonxtFelonaturelons.gelontCaps() / Math.max(telonxtFelonaturelons.gelontLelonngth(), 1.0d));
     }
   }
 
-  private static double entropy(List<String> tokens) {
-    Map<String, Long> tokenCounts =
-        tokens.stream().collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
-    int numItems = tokens.size();
+  privatelon static doublelon elonntropy(List<String> tokelonns) {
+    Map<String, Long> tokelonnCounts =
+        tokelonns.strelonam().collelonct(Collelonctors.groupingBy(Function.idelonntity(), Collelonctors.counting()));
+    int numItelonms = tokelonns.sizelon();
 
-    double entropy = 0;
-    for (long count : tokenCounts.values()) {
-      double prob = (double) count / numItems;
-      entropy -= prob * log2(prob);
+    doublelon elonntropy = 0;
+    for (long count : tokelonnCounts.valuelons()) {
+      doublelon prob = (doublelon) count / numItelonms;
+      elonntropy -= prob * log2(prob);
     }
-    return entropy;
+    relonturn elonntropy;
   }
 
-  private static double log2(double n) {
-    return Math.log(n) / Math.log(2);
+  privatelon static doublelon log2(doublelon n) {
+    relonturn Math.log(n) / Math.log(2);
   }
 }

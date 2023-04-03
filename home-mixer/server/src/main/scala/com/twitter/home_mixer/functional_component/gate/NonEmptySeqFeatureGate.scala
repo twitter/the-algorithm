@@ -1,18 +1,18 @@
-package com.twitter.home_mixer.functional_component.gate
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.gatelon
 
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.functional_component.gate.Gate
-import com.twitter.product_mixer.core.model.common.identifier.GateIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import scala.reflect.runtime.universe._
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.gatelon.Gatelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.GatelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stitch.Stitch
+import scala.relonflelonct.runtimelon.univelonrselon._
 
-case class NonEmptySeqFeatureGate[T: TypeTag](
-  feature: Feature[PipelineQuery, Seq[T]])
-    extends Gate[PipelineQuery] {
+caselon class NonelonmptySelonqFelonaturelonGatelon[T: TypelonTag](
+  felonaturelon: Felonaturelon[PipelonlinelonQuelonry, Selonq[T]])
+    elonxtelonnds Gatelon[PipelonlinelonQuelonry] {
 
-  override val identifier: GateIdentifier = GateIdentifier(s"NonEmptySeq$feature")
+  ovelonrridelon val idelonntifielonr: GatelonIdelonntifielonr = GatelonIdelonntifielonr(s"NonelonmptySelonq$felonaturelon")
 
-  override def shouldContinue(query: PipelineQuery): Stitch[Boolean] =
-    Stitch.value(query.features.exists(_.get(feature).nonEmpty))
+  ovelonrridelon delonf shouldContinuelon(quelonry: PipelonlinelonQuelonry): Stitch[Boolelonan] =
+    Stitch.valuelon(quelonry.felonaturelons.elonxists(_.gelont(felonaturelon).nonelonmpty))
 }

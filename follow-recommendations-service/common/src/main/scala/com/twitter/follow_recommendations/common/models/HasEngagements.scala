@@ -1,7 +1,7 @@
-package com.twitter.follow_recommendations.common.models
+packagelon com.twittelonr.follow_reloncommelonndations.common.modelonls
 
-trait HasEngagements {
+trait Haselonngagelonmelonnts {
 
-  def engagements: Seq[EngagementType]
+  delonf elonngagelonmelonnts: Selonq[elonngagelonmelonntTypelon]
 
 }

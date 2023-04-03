@@ -1,17 +1,17 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.promotelond
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.DisclaimerIssue
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.DisclaimerPolitical
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.DisclaimerType
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.promotelond.DisclaimelonrIssuelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.promotelond.DisclaimelonrPolitical
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.promotelond.DisclaimelonrTypelon
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class DisclaimerTypeMarshaller @Inject() () {
+@Singlelonton
+class DisclaimelonrTypelonMarshallelonr @Injelonct() () {
 
-  def apply(disclaimerType: DisclaimerType): urt.DisclaimerType = disclaimerType match {
-    case DisclaimerPolitical => urt.DisclaimerType.Political
-    case DisclaimerIssue => urt.DisclaimerType.Issue
+  delonf apply(disclaimelonrTypelon: DisclaimelonrTypelon): urt.DisclaimelonrTypelon = disclaimelonrTypelon match {
+    caselon DisclaimelonrPolitical => urt.DisclaimelonrTypelon.Political
+    caselon DisclaimelonrIssuelon => urt.DisclaimelonrTypelon.Issuelon
   }
 }

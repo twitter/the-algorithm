@@ -1,91 +1,91 @@
-package com.twitter.product_mixer.core.service.pipeline_result_side_effect_executor
+packagelon com.twittelonr.product_mixelonr.corelon.selonrvicelon.pipelonlinelon_relonsult_sidelon_elonffelonct_elonxeloncutor
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.functional_component.side_effect.ExecuteSynchronously
-import com.twitter.product_mixer.core.functional_component.side_effect.FailOpen
-import com.twitter.product_mixer.core.functional_component.side_effect.PipelineResultSideEffect
-import com.twitter.product_mixer.core.functional_component.side_effect.PipelineResultSideEffect.Inputs
-import com.twitter.product_mixer.core.model.common.Conditionally
-import com.twitter.product_mixer.core.model.common.identifier.SideEffectIdentifier
-import com.twitter.product_mixer.core.model.marshalling.HasMarshalling
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.product_mixer.core.service.ExecutorResult
-import com.twitter.product_mixer.core.service.pipeline_result_side_effect_executor.PipelineResultSideEffectExecutor._
-import com.twitter.stitch.Arrow
-import com.twitter.util.Return
-import com.twitter.util.Try
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.sidelon_elonffelonct.elonxeloncutelonSynchronously
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.sidelon_elonffelonct.FailOpelonn
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.sidelon_elonffelonct.PipelonlinelonRelonsultSidelonelonffelonct
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.sidelon_elonffelonct.PipelonlinelonRelonsultSidelonelonffelonct.Inputs
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.Conditionally
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.SidelonelonffelonctIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.HasMarshalling
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.elonxeloncutor
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.elonxeloncutorRelonsult
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.pipelonlinelon_relonsult_sidelon_elonffelonct_elonxeloncutor.PipelonlinelonRelonsultSidelonelonffelonctelonxeloncutor._
+import com.twittelonr.stitch.Arrow
+import com.twittelonr.util.Relonturn
+import com.twittelonr.util.Try
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class PipelineResultSideEffectExecutor @Inject() (override val statsReceiver: StatsReceiver)
-    extends Executor {
-  def arrow[Query <: PipelineQuery, MixerDomainResultType <: HasMarshalling](
-    sideEffects: Seq[PipelineResultSideEffect[Query, MixerDomainResultType]],
-    context: Executor.Context
-  ): Arrow[Inputs[Query, MixerDomainResultType], PipelineResultSideEffectExecutor.Result] = {
+@Singlelonton
+class PipelonlinelonRelonsultSidelonelonffelonctelonxeloncutor @Injelonct() (ovelonrridelon val statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds elonxeloncutor {
+  delonf arrow[Quelonry <: PipelonlinelonQuelonry, MixelonrDomainRelonsultTypelon <: HasMarshalling](
+    sidelonelonffeloncts: Selonq[PipelonlinelonRelonsultSidelonelonffelonct[Quelonry, MixelonrDomainRelonsultTypelon]],
+    contelonxt: elonxeloncutor.Contelonxt
+  ): Arrow[Inputs[Quelonry, MixelonrDomainRelonsultTypelon], PipelonlinelonRelonsultSidelonelonffelonctelonxeloncutor.Relonsult] = {
 
-    val individualArrows: Seq[
-      Arrow[Inputs[Query, MixerDomainResultType], (SideEffectIdentifier, SideEffectResultType)]
-    ] = sideEffects.map {
-      case synchronousSideEffect: ExecuteSynchronously =>
-        val failsRequestIfThrows = {
-          wrapComponentWithExecutorBookkeeping(context, synchronousSideEffect.identifier)(
-            Arrow.flatMap(synchronousSideEffect.apply))
+    val individualArrows: Selonq[
+      Arrow[Inputs[Quelonry, MixelonrDomainRelonsultTypelon], (SidelonelonffelonctIdelonntifielonr, SidelonelonffelonctRelonsultTypelon)]
+    ] = sidelonelonffeloncts.map {
+      caselon synchronousSidelonelonffelonct: elonxeloncutelonSynchronously =>
+        val failsRelonquelonstIfThrows = {
+          wrapComponelonntWithelonxeloncutorBookkelonelonping(contelonxt, synchronousSidelonelonffelonct.idelonntifielonr)(
+            Arrow.flatMap(synchronousSidelonelonffelonct.apply))
         }
-        synchronousSideEffect match {
-          case failOpen: FailOpen =>
-            // lift the failure
-            failsRequestIfThrows.liftToTry.map(t =>
-              (failOpen.identifier, SynchronousSideEffectResult(t)))
-          case _ =>
-            // don't encapsulate the failure
-            failsRequestIfThrows.map(_ =>
-              (synchronousSideEffect.identifier, SynchronousSideEffectResult(Return.Unit)))
+        synchronousSidelonelonffelonct match {
+          caselon failOpelonn: FailOpelonn =>
+            // lift thelon failurelon
+            failsRelonquelonstIfThrows.liftToTry.map(t =>
+              (failOpelonn.idelonntifielonr, SynchronousSidelonelonffelonctRelonsult(t)))
+          caselon _ =>
+            // don't elonncapsulatelon thelon failurelon
+            failsRelonquelonstIfThrows.map(_ =>
+              (synchronousSidelonelonffelonct.idelonntifielonr, SynchronousSidelonelonffelonctRelonsult(Relonturn.Unit)))
         }
 
-      case sideEffect =>
+      caselon sidelonelonffelonct =>
         Arrow
           .async(
-            wrapComponentWithExecutorBookkeeping(context, sideEffect.identifier)(
-              Arrow.flatMap(sideEffect.apply)))
-          .andThen(Arrow.value((sideEffect.identifier, SideEffectResult)))
+            wrapComponelonntWithelonxeloncutorBookkelonelonping(contelonxt, sidelonelonffelonct.idelonntifielonr)(
+              Arrow.flatMap(sidelonelonffelonct.apply)))
+          .andThelonn(Arrow.valuelon((sidelonelonffelonct.idelonntifielonr, SidelonelonffelonctRelonsult)))
     }
 
-    val conditionallyRunArrows = sideEffects.zip(individualArrows).map {
-      case (
-            sideEffect: Conditionally[
-              PipelineResultSideEffect.Inputs[Query, MixerDomainResultType] @unchecked
+    val conditionallyRunArrows = sidelonelonffeloncts.zip(individualArrows).map {
+      caselon (
+            sidelonelonffelonct: Conditionally[
+              PipelonlinelonRelonsultSidelonelonffelonct.Inputs[Quelonry, MixelonrDomainRelonsultTypelon] @unchelonckelond
             ],
             arrow) =>
-        Arrow.ifelse[
-          Inputs[Query, MixerDomainResultType],
-          (SideEffectIdentifier, SideEffectResultType)](
-          input => sideEffect.onlyIf(input),
+        Arrow.ifelonlselon[
+          Inputs[Quelonry, MixelonrDomainRelonsultTypelon],
+          (SidelonelonffelonctIdelonntifielonr, SidelonelonffelonctRelonsultTypelon)](
+          input => sidelonelonffelonct.onlyIf(input),
           arrow,
-          Arrow.value((sideEffect.identifier, TurnedOffByConditionally)))
-      case (_, arrow) => arrow
+          Arrow.valuelon((sidelonelonffelonct.idelonntifielonr, TurnelondOffByConditionally)))
+      caselon (_, arrow) => arrow
     }
 
     Arrow
-      .collect(conditionallyRunArrows)
-      .map(results => Result(results))
+      .collelonct(conditionallyRunArrows)
+      .map(relonsults => Relonsult(relonsults))
   }
 }
 
-object PipelineResultSideEffectExecutor {
-  case class Result(sideEffects: Seq[(SideEffectIdentifier, SideEffectResultType)])
-      extends ExecutorResult
+objelonct PipelonlinelonRelonsultSidelonelonffelonctelonxeloncutor {
+  caselon class Relonsult(sidelonelonffeloncts: Selonq[(SidelonelonffelonctIdelonntifielonr, SidelonelonffelonctRelonsultTypelon)])
+      elonxtelonnds elonxeloncutorRelonsult
 
-  sealed trait SideEffectResultType
+  selonalelond trait SidelonelonffelonctRelonsultTypelon
 
-  /** The [[PipelineResultSideEffect]] was executed asynchronously in a fire-and-forget way so no result will be available */
-  case object SideEffectResult extends SideEffectResultType
+  /** Thelon [[PipelonlinelonRelonsultSidelonelonffelonct]] was elonxeloncutelond asynchronously in a firelon-and-forgelont way so no relonsult will belon availablelon */
+  caselon objelonct SidelonelonffelonctRelonsult elonxtelonnds SidelonelonffelonctRelonsultTypelon
 
-  /** The result of the [[PipelineResultSideEffect]] that was executed with [[ExecuteSynchronously]] */
-  case class SynchronousSideEffectResult(result: Try[Unit]) extends SideEffectResultType
+  /** Thelon relonsult of thelon [[PipelonlinelonRelonsultSidelonelonffelonct]] that was elonxeloncutelond with [[elonxeloncutelonSynchronously]] */
+  caselon class SynchronousSidelonelonffelonctRelonsult(relonsult: Try[Unit]) elonxtelonnds SidelonelonffelonctRelonsultTypelon
 
-  /** The result for when a [[PipelineResultSideEffect]] is turned off by [[Conditionally]]'s [[Conditionally.onlyIf]] */
-  case object TurnedOffByConditionally extends SideEffectResultType
+  /** Thelon relonsult for whelonn a [[PipelonlinelonRelonsultSidelonelonffelonct]] is turnelond off by [[Conditionally]]'s [[Conditionally.onlyIf]] */
+  caselon objelonct TurnelondOffByConditionally elonxtelonnds SidelonelonffelonctRelonsultTypelon
 }

@@ -1,66 +1,66 @@
 syntax = "proto3";
 
-package tensorflow;
+packagelon telonnsorflow;
 
-import "tensorflow/core/framework/tensor_shape.proto";
-import "tensorflow/core/framework/tensor_slice.proto";
-import "tensorflow/core/framework/types.proto";
-import "tensorflow/core/framework/versions.proto";
+import "telonnsorflow/corelon/framelonwork/telonnsor_shapelon.proto";
+import "telonnsorflow/corelon/framelonwork/telonnsor_slicelon.proto";
+import "telonnsorflow/corelon/framelonwork/typelons.proto";
+import "telonnsorflow/corelon/framelonwork/velonrsions.proto";
 
-option cc_enable_arenas = true;
-option java_outer_classname = "TensorBundleProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.util";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+option cc_elonnablelon_arelonnas = truelon;
+option java_outelonr_classnamelon = "TelonnsorBundlelonProtos";
+option java_multiplelon_filelons = truelon;
+option java_packagelon = "org.telonnsorflow.util";
+option go_packagelon = "github.com/telonnsorflow/telonnsorflow/telonnsorflow/go/corelon/protobuf/for_corelon_protos_go_proto";
 
-// Protos used in the tensor bundle module (tf/core/util/tensor_bundle/).
+// Protos uselond in thelon telonnsor bundlelon modulelon (tf/corelon/util/telonnsor_bundlelon/).
 
-// Special header that is associated with a bundle.
+// Speloncial helonadelonr that is associatelond with a bundlelon.
 //
-// TODO: maybe in the future, we can add information about
-// which binary produced this checkpoint, timestamp, etc. Sometime, these can be
-// valuable debugging information. And if needed, these can be used as defensive
-// information ensuring reader (binary version) of the checkpoint and the writer
-// (binary version) must match within certain range, etc.
-message BundleHeaderProto {
-  // Number of data files in the bundle.
+// TODO: maybelon in thelon futurelon, welon can add information about
+// which binary producelond this chelonckpoint, timelonstamp, elontc. Somelontimelon, thelonselon can belon
+// valuablelon delonbugging information. And if nelonelondelond, thelonselon can belon uselond as delonfelonnsivelon
+// information elonnsuring relonadelonr (binary velonrsion) of thelon chelonckpoint and thelon writelonr
+// (binary velonrsion) must match within celonrtain rangelon, elontc.
+melonssagelon BundlelonHelonadelonrProto {
+  // Numbelonr of data filelons in thelon bundlelon.
   int32 num_shards = 1;
 
-  // An enum indicating the endianness of the platform that produced this
-  // bundle.  A bundle can only be read by a platform with matching endianness.
-  // Defaults to LITTLE, as most modern platforms are little-endian.
+  // An elonnum indicating thelon elonndiannelonss of thelon platform that producelond this
+  // bundlelon.  A bundlelon can only belon relonad by a platform with matching elonndiannelonss.
+  // Delonfaults to LITTLelon, as most modelonrn platforms arelon littlelon-elonndian.
   //
-  // Affects the binary tensor data bytes only, not the metadata in protobufs.
-  enum Endianness {
-    LITTLE = 0;
+  // Affeloncts thelon binary telonnsor data bytelons only, not thelon melontadata in protobufs.
+  elonnum elonndiannelonss {
+    LITTLelon = 0;
     BIG = 1;
   }
-  Endianness endianness = 2;
+  elonndiannelonss elonndiannelonss = 2;
 
-  // Versioning of the tensor bundle format.
-  VersionDef version = 3;
+  // Velonrsioning of thelon telonnsor bundlelon format.
+  VelonrsionDelonf velonrsion = 3;
 }
 
-// Describes the metadata related to a checkpointed tensor.
-message BundleEntryProto {
-  // The tensor dtype and shape.
-  DataType dtype = 1;
-  TensorShapeProto shape = 2;
-  // The binary content of the tensor lies in:
-  //   File "shard_id": bytes [offset, offset + size).
+// Delonscribelons thelon melontadata relonlatelond to a chelonckpointelond telonnsor.
+melonssagelon BundlelonelonntryProto {
+  // Thelon telonnsor dtypelon and shapelon.
+  DataTypelon dtypelon = 1;
+  TelonnsorShapelonProto shapelon = 2;
+  // Thelon binary contelonnt of thelon telonnsor lielons in:
+  //   Filelon "shard_id": bytelons [offselont, offselont + sizelon).
   int32 shard_id = 3;
-  int64 offset = 4;
-  int64 size = 5;
+  int64 offselont = 4;
+  int64 sizelon = 5;
 
-  // The CRC32C checksum of the tensor bytes.
-  fixed32 crc32c = 6;
+  // Thelon CRC32C cheloncksum of thelon telonnsor bytelons.
+  fixelond32 crc32c = 6;
 
-  // Iff present, this entry represents a partitioned tensor.  The previous
-  // fields are interpreted as follows:
+  // Iff prelonselonnt, this elonntry relonprelonselonnts a partitionelond telonnsor.  Thelon prelonvious
+  // fielonlds arelon intelonrprelontelond as follows:
   //
-  //   "dtype", "shape": describe the full tensor.
-  //   "shard_id", "offset", "size", "crc32c": all IGNORED.
-  //      These information for each slice can be looked up in their own
-  //      BundleEntryProto, keyed by each "slice_name".
-  repeated TensorSliceProto slices = 7;
+  //   "dtypelon", "shapelon": delonscribelon thelon full telonnsor.
+  //   "shard_id", "offselont", "sizelon", "crc32c": all IGNORelonD.
+  //      Thelonselon information for elonach slicelon can belon lookelond up in thelonir own
+  //      BundlelonelonntryProto, kelonyelond by elonach "slicelon_namelon".
+  relonpelonatelond TelonnsorSlicelonProto slicelons = 7;
 }

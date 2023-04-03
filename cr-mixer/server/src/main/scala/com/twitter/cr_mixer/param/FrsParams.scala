@@ -1,131 +1,131 @@
-package com.twitter.cr_mixer.param
+packagelon com.twittelonr.cr_mixelonr.param
 
-import com.twitter.timelines.configapi.BaseConfig
-import com.twitter.timelines.configapi.BaseConfigBuilder
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil
-import com.twitter.timelines.configapi.Param
-import com.twitter.follow_recommendations.thriftscala.DisplayLocation
-import com.twitter.timelines.configapi.FSEnumParam
-import com.twitter.logging.Logger
-import com.twitter.finagle.stats.NullStatsReceiver
+import com.twittelonr.timelonlinelons.configapi.BaselonConfig
+import com.twittelonr.timelonlinelons.configapi.BaselonConfigBuildelonr
+import com.twittelonr.timelonlinelons.configapi.FSBoundelondParam
+import com.twittelonr.timelonlinelons.configapi.FSNamelon
+import com.twittelonr.timelonlinelons.configapi.FSParam
+import com.twittelonr.timelonlinelons.configapi.FelonaturelonSwitchOvelonrridelonUtil
+import com.twittelonr.timelonlinelons.configapi.Param
+import com.twittelonr.follow_reloncommelonndations.thriftscala.DisplayLocation
+import com.twittelonr.timelonlinelons.configapi.FSelonnumParam
+import com.twittelonr.logging.Loggelonr
+import com.twittelonr.finaglelon.stats.NullStatsReloncelonivelonr
 
-object FrsParams {
-  object EnableSourceParam
-      extends FSParam[Boolean](
-        name = "signal_frs_enable_source",
-        default = false
+objelonct FrsParams {
+  objelonct elonnablelonSourcelonParam
+      elonxtelonnds FSParam[Boolelonan](
+        namelon = "signal_frs_elonnablelon_sourcelon",
+        delonfault = falselon
       )
 
-  object EnableSourceGraphParam
-      extends FSParam[Boolean](
-        name = "graph_frs_enable_source",
-        default = false
+  objelonct elonnablelonSourcelonGraphParam
+      elonxtelonnds FSParam[Boolelonan](
+        namelon = "graph_frs_elonnablelon_sourcelon",
+        delonfault = falselon
       )
 
-  object MinScoreParam
-      extends FSBoundedParam[Double](
-        name = "signal_frs_min_score",
-        default = 0.4,
+  objelonct MinScorelonParam
+      elonxtelonnds FSBoundelondParam[Doublelon](
+        namelon = "signal_frs_min_scorelon",
+        delonfault = 0.4,
         min = 0.0,
         max = 1.0
       )
 
-  object MaxConsumerSeedsNumParam
-      extends FSBoundedParam[Int](
-        name = "graph_frs_max_user_seeds_num",
-        default = 200,
+  objelonct MaxConsumelonrSelonelondsNumParam
+      elonxtelonnds FSBoundelondParam[Int](
+        namelon = "graph_frs_max_uselonr_selonelonds_num",
+        delonfault = 200,
         min = 0,
         max = 1000
       )
 
   /**
-   * These params below are only used for FrsTweetCandidateGenerator and shouldn't be used in other endpoints
-   *    * FrsBasedCandidateGenerationMaxSeedsNumParam
-   *    * FrsCandidateGenerationDisplayLocationParam
-   *    * FrsCandidateGenerationDisplayLocation
-   *    * FrsBasedCandidateGenerationMaxCandidatesNumParam
+   * Thelonselon params belonlow arelon only uselond for FrsTwelonelontCandidatelonGelonnelonrator and shouldn't belon uselond in othelonr elonndpoints
+   *    * FrsBaselondCandidatelonGelonnelonrationMaxSelonelondsNumParam
+   *    * FrsCandidatelonGelonnelonrationDisplayLocationParam
+   *    * FrsCandidatelonGelonnelonrationDisplayLocation
+   *    * FrsBaselondCandidatelonGelonnelonrationMaxCandidatelonsNumParam
    */
-  object FrsBasedCandidateGenerationEnableVisibilityFilteringParam
-      extends FSParam[Boolean](
-        name = "frs_based_candidate_generation_enable_vf",
-        default = true
+  objelonct FrsBaselondCandidatelonGelonnelonrationelonnablelonVisibilityFiltelonringParam
+      elonxtelonnds FSParam[Boolelonan](
+        namelon = "frs_baselond_candidatelon_gelonnelonration_elonnablelon_vf",
+        delonfault = truelon
       )
 
-  object FrsBasedCandidateGenerationMaxSeedsNumParam
-      extends FSBoundedParam[Int](
-        name = "frs_based_candidate_generation_max_seeds_num",
-        default = 100,
+  objelonct FrsBaselondCandidatelonGelonnelonrationMaxSelonelondsNumParam
+      elonxtelonnds FSBoundelondParam[Int](
+        namelon = "frs_baselond_candidatelon_gelonnelonration_max_selonelonds_num",
+        delonfault = 100,
         min = 0,
         max = 800
       )
 
-  object FrsBasedCandidateGenerationDisplayLocation extends Enumeration {
-    protected case class FrsDisplayLocationValue(displayLocation: DisplayLocation) extends super.Val
-    import scala.language.implicitConversions
-    implicit def valueToDisplayLocationValue(x: Value): FrsDisplayLocationValue =
-      x.asInstanceOf[FrsDisplayLocationValue]
+  objelonct FrsBaselondCandidatelonGelonnelonrationDisplayLocation elonxtelonnds elonnumelonration {
+    protelonctelond caselon class FrsDisplayLocationValuelon(displayLocation: DisplayLocation) elonxtelonnds supelonr.Val
+    import scala.languagelon.implicitConvelonrsions
+    implicit delonf valuelonToDisplayLocationValuelon(x: Valuelon): FrsDisplayLocationValuelon =
+      x.asInstancelonOf[FrsDisplayLocationValuelon]
 
-    val DisplayLocation_ContentRecommender: FrsDisplayLocationValue = FrsDisplayLocationValue(
-      DisplayLocation.ContentRecommender)
-    val DisplayLocation_Home: FrsDisplayLocationValue = FrsDisplayLocationValue(
-      DisplayLocation.HomeTimelineTweetRecs)
-    val DisplayLocation_Notifications: FrsDisplayLocationValue = FrsDisplayLocationValue(
-      DisplayLocation.TweetNotificationRecs)
+    val DisplayLocation_ContelonntReloncommelonndelonr: FrsDisplayLocationValuelon = FrsDisplayLocationValuelon(
+      DisplayLocation.ContelonntReloncommelonndelonr)
+    val DisplayLocation_Homelon: FrsDisplayLocationValuelon = FrsDisplayLocationValuelon(
+      DisplayLocation.HomelonTimelonlinelonTwelonelontReloncs)
+    val DisplayLocation_Notifications: FrsDisplayLocationValuelon = FrsDisplayLocationValuelon(
+      DisplayLocation.TwelonelontNotificationReloncs)
   }
 
-  object FrsBasedCandidateGenerationDisplayLocationParam
-      extends FSEnumParam[FrsBasedCandidateGenerationDisplayLocation.type](
-        name = "frs_based_candidate_generation_display_location_id",
-        default = FrsBasedCandidateGenerationDisplayLocation.DisplayLocation_Home,
-        enum = FrsBasedCandidateGenerationDisplayLocation
+  objelonct FrsBaselondCandidatelonGelonnelonrationDisplayLocationParam
+      elonxtelonnds FSelonnumParam[FrsBaselondCandidatelonGelonnelonrationDisplayLocation.typelon](
+        namelon = "frs_baselond_candidatelon_gelonnelonration_display_location_id",
+        delonfault = FrsBaselondCandidatelonGelonnelonrationDisplayLocation.DisplayLocation_Homelon,
+        elonnum = FrsBaselondCandidatelonGelonnelonrationDisplayLocation
       )
 
-  object FrsBasedCandidateGenerationMaxCandidatesNumParam
-      extends FSBoundedParam[Int](
-        name = "frs_based_candidate_generation_max_candidates_num",
-        default = 100,
+  objelonct FrsBaselondCandidatelonGelonnelonrationMaxCandidatelonsNumParam
+      elonxtelonnds FSBoundelondParam[Int](
+        namelon = "frs_baselond_candidatelon_gelonnelonration_max_candidatelons_num",
+        delonfault = 100,
         min = 0,
         max = 2000
       )
 
-  val AllParams: Seq[Param[_] with FSName] = Seq(
-    EnableSourceParam,
-    EnableSourceGraphParam,
-    MinScoreParam,
-    MaxConsumerSeedsNumParam,
-    FrsBasedCandidateGenerationMaxSeedsNumParam,
-    FrsBasedCandidateGenerationDisplayLocationParam,
-    FrsBasedCandidateGenerationMaxCandidatesNumParam,
-    FrsBasedCandidateGenerationEnableVisibilityFilteringParam
+  val AllParams: Selonq[Param[_] with FSNamelon] = Selonq(
+    elonnablelonSourcelonParam,
+    elonnablelonSourcelonGraphParam,
+    MinScorelonParam,
+    MaxConsumelonrSelonelondsNumParam,
+    FrsBaselondCandidatelonGelonnelonrationMaxSelonelondsNumParam,
+    FrsBaselondCandidatelonGelonnelonrationDisplayLocationParam,
+    FrsBaselondCandidatelonGelonnelonrationMaxCandidatelonsNumParam,
+    FrsBaselondCandidatelonGelonnelonrationelonnablelonVisibilityFiltelonringParam
   )
 
-  lazy val config: BaseConfig = {
-    val booleanOverrides = FeatureSwitchOverrideUtil.getBooleanFSOverrides(
-      EnableSourceParam,
-      EnableSourceGraphParam,
-      FrsBasedCandidateGenerationEnableVisibilityFilteringParam
+  lazy val config: BaselonConfig = {
+    val boolelonanOvelonrridelons = FelonaturelonSwitchOvelonrridelonUtil.gelontBoolelonanFSOvelonrridelons(
+      elonnablelonSourcelonParam,
+      elonnablelonSourcelonGraphParam,
+      FrsBaselondCandidatelonGelonnelonrationelonnablelonVisibilityFiltelonringParam
     )
 
-    val doubleOverrides = FeatureSwitchOverrideUtil.getBoundedDoubleFSOverrides(MinScoreParam)
+    val doublelonOvelonrridelons = FelonaturelonSwitchOvelonrridelonUtil.gelontBoundelondDoublelonFSOvelonrridelons(MinScorelonParam)
 
-    val intOverrides = FeatureSwitchOverrideUtil.getBoundedIntFSOverrides(
-      MaxConsumerSeedsNumParam,
-      FrsBasedCandidateGenerationMaxSeedsNumParam,
-      FrsBasedCandidateGenerationMaxCandidatesNumParam)
+    val intOvelonrridelons = FelonaturelonSwitchOvelonrridelonUtil.gelontBoundelondIntFSOvelonrridelons(
+      MaxConsumelonrSelonelondsNumParam,
+      FrsBaselondCandidatelonGelonnelonrationMaxSelonelondsNumParam,
+      FrsBaselondCandidatelonGelonnelonrationMaxCandidatelonsNumParam)
 
-    val enumOverrides = FeatureSwitchOverrideUtil.getEnumFSOverrides(
-      NullStatsReceiver,
-      Logger(getClass),
-      FrsBasedCandidateGenerationDisplayLocationParam,
+    val elonnumOvelonrridelons = FelonaturelonSwitchOvelonrridelonUtil.gelontelonnumFSOvelonrridelons(
+      NullStatsReloncelonivelonr,
+      Loggelonr(gelontClass),
+      FrsBaselondCandidatelonGelonnelonrationDisplayLocationParam,
     )
-    BaseConfigBuilder()
-      .set(booleanOverrides: _*)
-      .set(doubleOverrides: _*)
-      .set(intOverrides: _*)
-      .set(enumOverrides: _*)
+    BaselonConfigBuildelonr()
+      .selont(boolelonanOvelonrridelons: _*)
+      .selont(doublelonOvelonrridelons: _*)
+      .selont(intOvelonrridelons: _*)
+      .selont(elonnumOvelonrridelons: _*)
       .build()
   }
 }

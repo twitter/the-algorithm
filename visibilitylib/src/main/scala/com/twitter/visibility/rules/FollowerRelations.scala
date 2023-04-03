@@ -1,20 +1,20 @@
-package com.twitter.visibility.rules
+packagelon com.twittelonr.visibility.rulelons
 
-import com.twitter.visibility.features.AuthorMutesViewer
-import com.twitter.visibility.rules.Condition.BooleanFeatureCondition
-import com.twitter.visibility.rules.Condition.ProtectedViewer
-import com.twitter.visibility.rules.Reason.Unspecified
+import com.twittelonr.visibility.felonaturelons.AuthorMutelonsVielonwelonr
+import com.twittelonr.visibility.rulelons.Condition.BoolelonanFelonaturelonCondition
+import com.twittelonr.visibility.rulelons.Condition.ProtelonctelondVielonwelonr
+import com.twittelonr.visibility.rulelons.Relonason.Unspeloncifielond
 
-object FollowerRelations {
+objelonct FollowelonrRelonlations {
 
-  case object AuthorMutesViewerFeature extends BooleanFeatureCondition(AuthorMutesViewer)
+  caselon objelonct AuthorMutelonsVielonwelonrFelonaturelon elonxtelonnds BoolelonanFelonaturelonCondition(AuthorMutelonsVielonwelonr)
 
-  object AuthorMutesViewerRule
-      extends OnlyWhenNotAuthorViewerRule(
-        action = Drop(Unspecified),
-        condition = AuthorMutesViewerFeature)
+  objelonct AuthorMutelonsVielonwelonrRulelon
+      elonxtelonnds OnlyWhelonnNotAuthorVielonwelonrRulelon(
+        action = Drop(Unspeloncifielond),
+        condition = AuthorMutelonsVielonwelonrFelonaturelon)
 
-  object ProtectedViewerRule
-      extends OnlyWhenNotAuthorViewerRule(action = Drop(Unspecified), condition = ProtectedViewer)
+  objelonct ProtelonctelondVielonwelonrRulelon
+      elonxtelonnds OnlyWhelonnNotAuthorVielonwelonrRulelon(action = Drop(Unspeloncifielond), condition = ProtelonctelondVielonwelonr)
 
 }

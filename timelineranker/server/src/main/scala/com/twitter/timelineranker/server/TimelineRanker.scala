@@ -1,253 +1,253 @@
-package com.twitter.timelineranker.server
+packagelon com.twittelonr.timelonlinelonrankelonr.selonrvelonr
 
-import com.twitter.abdecider.LoggingABDecider
-import com.twitter.finagle.TimeoutException
-import com.twitter.finagle.stats.Stat
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.servo.util.FunctionArrow
-import com.twitter.timelineranker.entity_tweets.EntityTweetsRepository
-import com.twitter.timelineranker.in_network_tweets.InNetworkTweetRepository
-import com.twitter.timelineranker.model._
-import com.twitter.timelineranker.observe.ObservedRequests
-import com.twitter.timelineranker.recap_author.RecapAuthorRepository
-import com.twitter.timelineranker.recap_hydration.RecapHydrationRepository
-import com.twitter.timelineranker.repository._
-import com.twitter.timelineranker.uteg_liked_by_tweets.UtegLikedByTweetsRepository
-import com.twitter.timelineranker.{thriftscala => thrift}
-import com.twitter.timelines.authorization.TimelinesClientRequestAuthorizer
-import com.twitter.timelines.observe.DebugObserver
-import com.twitter.timelines.observe.ObservedAndValidatedRequests
-import com.twitter.timelines.observe.QueryWidth
-import com.twitter.timelines.observe.ServiceObserver
-import com.twitter.util.Future
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import com.twitter.util.Try
+import com.twittelonr.abdeloncidelonr.LoggingABDeloncidelonr
+import com.twittelonr.finaglelon.Timelonoutelonxcelonption
+import com.twittelonr.finaglelon.stats.Stat
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.selonrvo.util.FunctionArrow
+import com.twittelonr.timelonlinelonrankelonr.elonntity_twelonelonts.elonntityTwelonelontsRelonpository
+import com.twittelonr.timelonlinelonrankelonr.in_nelontwork_twelonelonts.InNelontworkTwelonelontRelonpository
+import com.twittelonr.timelonlinelonrankelonr.modelonl._
+import com.twittelonr.timelonlinelonrankelonr.obselonrvelon.ObselonrvelondRelonquelonsts
+import com.twittelonr.timelonlinelonrankelonr.reloncap_author.ReloncapAuthorRelonpository
+import com.twittelonr.timelonlinelonrankelonr.reloncap_hydration.ReloncapHydrationRelonpository
+import com.twittelonr.timelonlinelonrankelonr.relonpository._
+import com.twittelonr.timelonlinelonrankelonr.utelong_likelond_by_twelonelonts.UtelongLikelondByTwelonelontsRelonpository
+import com.twittelonr.timelonlinelonrankelonr.{thriftscala => thrift}
+import com.twittelonr.timelonlinelons.authorization.TimelonlinelonsClielonntRelonquelonstAuthorizelonr
+import com.twittelonr.timelonlinelons.obselonrvelon.DelonbugObselonrvelonr
+import com.twittelonr.timelonlinelons.obselonrvelon.ObselonrvelondAndValidatelondRelonquelonsts
+import com.twittelonr.timelonlinelons.obselonrvelon.QuelonryWidth
+import com.twittelonr.timelonlinelons.obselonrvelon.SelonrvicelonObselonrvelonr
+import com.twittelonr.util.Futurelon
+import com.twittelonr.util.Relonturn
+import com.twittelonr.util.Throw
+import com.twittelonr.util.Try
 
-object TimelineRanker {
-  def toTimelineErrorThriftResponse(
-    ex: Throwable,
-    reason: Option[thrift.ErrorReason] = None
-  ): thrift.GetTimelineResponse = {
-    thrift.GetTimelineResponse(
-      error = Some(thrift.TimelineError(message = ex.toString, reason))
+objelonct TimelonlinelonRankelonr {
+  delonf toTimelonlinelonelonrrorThriftRelonsponselon(
+    elonx: Throwablelon,
+    relonason: Option[thrift.elonrrorRelonason] = Nonelon
+  ): thrift.GelontTimelonlinelonRelonsponselon = {
+    thrift.GelontTimelonlinelonRelonsponselon(
+      elonrror = Somelon(thrift.Timelonlinelonelonrror(melonssagelon = elonx.toString, relonason))
     )
   }
 
-  def getTimelinesExceptionHandler: PartialFunction[
-    Throwable,
-    Future[thrift.GetTimelineResponse]
+  delonf gelontTimelonlinelonselonxcelonptionHandlelonr: PartialFunction[
+    Throwablelon,
+    Futurelon[thrift.GelontTimelonlinelonRelonsponselon]
   ] = {
-    case e: TimeoutException =>
-      Future.value(toTimelineErrorThriftResponse(e, Some(thrift.ErrorReason.UpstreamTimeout)))
-    case e: Throwable if ObservedAndValidatedRequests.isOverCapacityException(e) =>
-      Future.value(toTimelineErrorThriftResponse(e, Some(thrift.ErrorReason.OverCapacity)))
-    case e => Future.value(toTimelineErrorThriftResponse(e))
+    caselon elon: Timelonoutelonxcelonption =>
+      Futurelon.valuelon(toTimelonlinelonelonrrorThriftRelonsponselon(elon, Somelon(thrift.elonrrorRelonason.UpstrelonamTimelonout)))
+    caselon elon: Throwablelon if ObselonrvelondAndValidatelondRelonquelonsts.isOvelonrCapacityelonxcelonption(elon) =>
+      Futurelon.valuelon(toTimelonlinelonelonrrorThriftRelonsponselon(elon, Somelon(thrift.elonrrorRelonason.OvelonrCapacity)))
+    caselon elon => Futurelon.valuelon(toTimelonlinelonelonrrorThriftRelonsponselon(elon))
   }
 
-  def toErrorThriftResponse(
-    ex: Throwable,
-    reason: Option[thrift.ErrorReason] = None
-  ): thrift.GetCandidateTweetsResponse = {
-    thrift.GetCandidateTweetsResponse(
-      error = Some(thrift.TimelineError(message = ex.toString, reason))
+  delonf toelonrrorThriftRelonsponselon(
+    elonx: Throwablelon,
+    relonason: Option[thrift.elonrrorRelonason] = Nonelon
+  ): thrift.GelontCandidatelonTwelonelontsRelonsponselon = {
+    thrift.GelontCandidatelonTwelonelontsRelonsponselon(
+      elonrror = Somelon(thrift.Timelonlinelonelonrror(melonssagelon = elonx.toString, relonason))
     )
   }
 
-  def exceptionHandler: PartialFunction[Throwable, Future[thrift.GetCandidateTweetsResponse]] = {
-    case e: TimeoutException =>
-      Future.value(toErrorThriftResponse(e, Some(thrift.ErrorReason.UpstreamTimeout)))
-    case e: Throwable if ObservedAndValidatedRequests.isOverCapacityException(e) =>
-      Future.value(toErrorThriftResponse(e, Some(thrift.ErrorReason.OverCapacity)))
-    case e => Future.value(toErrorThriftResponse(e))
+  delonf elonxcelonptionHandlelonr: PartialFunction[Throwablelon, Futurelon[thrift.GelontCandidatelonTwelonelontsRelonsponselon]] = {
+    caselon elon: Timelonoutelonxcelonption =>
+      Futurelon.valuelon(toelonrrorThriftRelonsponselon(elon, Somelon(thrift.elonrrorRelonason.UpstrelonamTimelonout)))
+    caselon elon: Throwablelon if ObselonrvelondAndValidatelondRelonquelonsts.isOvelonrCapacityelonxcelonption(elon) =>
+      Futurelon.valuelon(toelonrrorThriftRelonsponselon(elon, Somelon(thrift.elonrrorRelonason.OvelonrCapacity)))
+    caselon elon => Futurelon.valuelon(toelonrrorThriftRelonsponselon(elon))
   }
 }
 
-class TimelineRanker(
-  routingRepository: RoutingTimelineRepository,
-  inNetworkTweetRepository: InNetworkTweetRepository,
-  recapHydrationRepository: RecapHydrationRepository,
-  recapAuthorRepository: RecapAuthorRepository,
-  entityTweetsRepository: EntityTweetsRepository,
-  utegLikedByTweetsRepository: UtegLikedByTweetsRepository,
-  serviceObserver: ServiceObserver,
-  val abdecider: Option[LoggingABDecider],
-  override val clientRequestAuthorizer: TimelinesClientRequestAuthorizer,
-  override val debugObserver: DebugObserver,
-  queryParamInitializer: FunctionArrow[RecapQuery, Future[RecapQuery]],
-  statsReceiver: StatsReceiver)
-    extends thrift.TimelineRanker.MethodPerEndpoint
-    with ObservedRequests {
+class TimelonlinelonRankelonr(
+  routingRelonpository: RoutingTimelonlinelonRelonpository,
+  inNelontworkTwelonelontRelonpository: InNelontworkTwelonelontRelonpository,
+  reloncapHydrationRelonpository: ReloncapHydrationRelonpository,
+  reloncapAuthorRelonpository: ReloncapAuthorRelonpository,
+  elonntityTwelonelontsRelonpository: elonntityTwelonelontsRelonpository,
+  utelongLikelondByTwelonelontsRelonpository: UtelongLikelondByTwelonelontsRelonpository,
+  selonrvicelonObselonrvelonr: SelonrvicelonObselonrvelonr,
+  val abdeloncidelonr: Option[LoggingABDeloncidelonr],
+  ovelonrridelon val clielonntRelonquelonstAuthorizelonr: TimelonlinelonsClielonntRelonquelonstAuthorizelonr,
+  ovelonrridelon val delonbugObselonrvelonr: DelonbugObselonrvelonr,
+  quelonryParamInitializelonr: FunctionArrow[ReloncapQuelonry, Futurelon[ReloncapQuelonry]],
+  statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds thrift.TimelonlinelonRankelonr.MelonthodPelonrelonndpoint
+    with ObselonrvelondRelonquelonsts {
 
-  override val requestWidthStats: Stat = statsReceiver.stat("TimelineRanker/requestWidth")
+  ovelonrridelon val relonquelonstWidthStats: Stat = statsReloncelonivelonr.stat("TimelonlinelonRankelonr/relonquelonstWidth")
 
-  private[this] val getTimelinesStats = serviceObserver.readMethodStats(
-    "getTimelines",
-    QueryWidth.one[TimelineQuery]
+  privatelon[this] val gelontTimelonlinelonsStats = selonrvicelonObselonrvelonr.relonadMelonthodStats(
+    "gelontTimelonlinelons",
+    QuelonryWidth.onelon[TimelonlinelonQuelonry]
   )
 
-  private[this] val getInNetworkTweetCandidatesStats = serviceObserver.readMethodStats(
-    "getInNetworkTweetCandidates",
-    QueryWidth.one[RecapQuery]
+  privatelon[this] val gelontInNelontworkTwelonelontCandidatelonsStats = selonrvicelonObselonrvelonr.relonadMelonthodStats(
+    "gelontInNelontworkTwelonelontCandidatelons",
+    QuelonryWidth.onelon[ReloncapQuelonry]
   )
 
-  private[this] val hydrateTweetCandidatesStats = serviceObserver.readMethodStats(
-    "hydrateTweetCandidates",
-    QueryWidth.one[RecapQuery]
+  privatelon[this] val hydratelonTwelonelontCandidatelonsStats = selonrvicelonObselonrvelonr.relonadMelonthodStats(
+    "hydratelonTwelonelontCandidatelons",
+    QuelonryWidth.onelon[ReloncapQuelonry]
   )
 
-  private[this] val getRecapCandidatesFromAuthorsStats = serviceObserver.readMethodStats(
-    "getRecapCandidatesFromAuthors",
-    QueryWidth.one[RecapQuery]
+  privatelon[this] val gelontReloncapCandidatelonsFromAuthorsStats = selonrvicelonObselonrvelonr.relonadMelonthodStats(
+    "gelontReloncapCandidatelonsFromAuthors",
+    QuelonryWidth.onelon[ReloncapQuelonry]
   )
 
-  private[this] val getEntityTweetCandidatesStats = serviceObserver.readMethodStats(
-    "getEntityTweetCandidates",
-    QueryWidth.one[RecapQuery]
+  privatelon[this] val gelontelonntityTwelonelontCandidatelonsStats = selonrvicelonObselonrvelonr.relonadMelonthodStats(
+    "gelontelonntityTwelonelontCandidatelons",
+    QuelonryWidth.onelon[ReloncapQuelonry]
   )
 
-  private[this] val getUtegLikedByTweetCandidatesStats = serviceObserver.readMethodStats(
-    "getUtegLikedByTweetCandidates",
-    QueryWidth.one[RecapQuery]
+  privatelon[this] val gelontUtelongLikelondByTwelonelontCandidatelonsStats = selonrvicelonObselonrvelonr.relonadMelonthodStats(
+    "gelontUtelongLikelondByTwelonelontCandidatelons",
+    QuelonryWidth.onelon[ReloncapQuelonry]
   )
 
-  def getTimelines(
-    thriftQueries: Seq[thrift.TimelineQuery]
-  ): Future[Seq[thrift.GetTimelineResponse]] = {
-    Future.collect(
-      thriftQueries.map { thriftQuery =>
-        Try(TimelineQuery.fromThrift(thriftQuery)) match {
-          case Return(query) =>
-            observeAndValidate(
-              query,
-              Seq(query.userId),
-              getTimelinesStats,
-              TimelineRanker.getTimelinesExceptionHandler) { validatedQuery =>
-              routingRepository.get(validatedQuery).map { timeline =>
-                thrift.GetTimelineResponse(Some(timeline.toThrift))
+  delonf gelontTimelonlinelons(
+    thriftQuelonrielons: Selonq[thrift.TimelonlinelonQuelonry]
+  ): Futurelon[Selonq[thrift.GelontTimelonlinelonRelonsponselon]] = {
+    Futurelon.collelonct(
+      thriftQuelonrielons.map { thriftQuelonry =>
+        Try(TimelonlinelonQuelonry.fromThrift(thriftQuelonry)) match {
+          caselon Relonturn(quelonry) =>
+            obselonrvelonAndValidatelon(
+              quelonry,
+              Selonq(quelonry.uselonrId),
+              gelontTimelonlinelonsStats,
+              TimelonlinelonRankelonr.gelontTimelonlinelonselonxcelonptionHandlelonr) { validatelondQuelonry =>
+              routingRelonpository.gelont(validatelondQuelonry).map { timelonlinelon =>
+                thrift.GelontTimelonlinelonRelonsponselon(Somelon(timelonlinelon.toThrift))
               }
             }
-          case Throw(e) => Future.value(TimelineRanker.toTimelineErrorThriftResponse(e))
+          caselon Throw(elon) => Futurelon.valuelon(TimelonlinelonRankelonr.toTimelonlinelonelonrrorThriftRelonsponselon(elon))
         }
       }
     )
   }
 
-  def getRecycledTweetCandidates(
-    thriftQueries: Seq[thrift.RecapQuery]
-  ): Future[Seq[thrift.GetCandidateTweetsResponse]] = {
-    Future.collect(
-      thriftQueries.map { thriftQuery =>
-        Try(RecapQuery.fromThrift(thriftQuery)) match {
-          case Return(query) =>
-            observeAndValidate(
-              query,
-              Seq(query.userId),
-              getInNetworkTweetCandidatesStats,
-              TimelineRanker.exceptionHandler
-            ) { validatedQuery =>
-              Future(queryParamInitializer(validatedQuery)).flatten.liftToTry.flatMap {
-                case Return(q) => inNetworkTweetRepository.get(q).map(_.toThrift)
-                case Throw(e) => Future.value(TimelineRanker.toErrorThriftResponse(e))
+  delonf gelontReloncyclelondTwelonelontCandidatelons(
+    thriftQuelonrielons: Selonq[thrift.ReloncapQuelonry]
+  ): Futurelon[Selonq[thrift.GelontCandidatelonTwelonelontsRelonsponselon]] = {
+    Futurelon.collelonct(
+      thriftQuelonrielons.map { thriftQuelonry =>
+        Try(ReloncapQuelonry.fromThrift(thriftQuelonry)) match {
+          caselon Relonturn(quelonry) =>
+            obselonrvelonAndValidatelon(
+              quelonry,
+              Selonq(quelonry.uselonrId),
+              gelontInNelontworkTwelonelontCandidatelonsStats,
+              TimelonlinelonRankelonr.elonxcelonptionHandlelonr
+            ) { validatelondQuelonry =>
+              Futurelon(quelonryParamInitializelonr(validatelondQuelonry)).flattelonn.liftToTry.flatMap {
+                caselon Relonturn(q) => inNelontworkTwelonelontRelonpository.gelont(q).map(_.toThrift)
+                caselon Throw(elon) => Futurelon.valuelon(TimelonlinelonRankelonr.toelonrrorThriftRelonsponselon(elon))
               }
             }
-          case Throw(e) => Future.value(TimelineRanker.toErrorThriftResponse(e))
+          caselon Throw(elon) => Futurelon.valuelon(TimelonlinelonRankelonr.toelonrrorThriftRelonsponselon(elon))
         }
       }
     )
   }
 
-  def hydrateTweetCandidates(
-    thriftQueries: Seq[thrift.RecapHydrationQuery]
-  ): Future[Seq[thrift.GetCandidateTweetsResponse]] = {
-    Future.collect(
-      thriftQueries.map { thriftQuery =>
-        Try(RecapQuery.fromThrift(thriftQuery)) match {
-          case Return(query) =>
-            observeAndValidate(
-              query,
-              Seq(query.userId),
-              hydrateTweetCandidatesStats,
-              TimelineRanker.exceptionHandler
-            ) { validatedQuery =>
-              Future(queryParamInitializer(validatedQuery)).flatten.liftToTry.flatMap {
-                case Return(q) => recapHydrationRepository.hydrate(q).map(_.toThrift)
-                case Throw(e) => Future.value(TimelineRanker.toErrorThriftResponse(e))
+  delonf hydratelonTwelonelontCandidatelons(
+    thriftQuelonrielons: Selonq[thrift.ReloncapHydrationQuelonry]
+  ): Futurelon[Selonq[thrift.GelontCandidatelonTwelonelontsRelonsponselon]] = {
+    Futurelon.collelonct(
+      thriftQuelonrielons.map { thriftQuelonry =>
+        Try(ReloncapQuelonry.fromThrift(thriftQuelonry)) match {
+          caselon Relonturn(quelonry) =>
+            obselonrvelonAndValidatelon(
+              quelonry,
+              Selonq(quelonry.uselonrId),
+              hydratelonTwelonelontCandidatelonsStats,
+              TimelonlinelonRankelonr.elonxcelonptionHandlelonr
+            ) { validatelondQuelonry =>
+              Futurelon(quelonryParamInitializelonr(validatelondQuelonry)).flattelonn.liftToTry.flatMap {
+                caselon Relonturn(q) => reloncapHydrationRelonpository.hydratelon(q).map(_.toThrift)
+                caselon Throw(elon) => Futurelon.valuelon(TimelonlinelonRankelonr.toelonrrorThriftRelonsponselon(elon))
               }
             }
-          case Throw(e) => Future.value(TimelineRanker.toErrorThriftResponse(e))
+          caselon Throw(elon) => Futurelon.valuelon(TimelonlinelonRankelonr.toelonrrorThriftRelonsponselon(elon))
         }
       }
     )
   }
 
-  def getRecapCandidatesFromAuthors(
-    thriftQueries: Seq[thrift.RecapQuery]
-  ): Future[Seq[thrift.GetCandidateTweetsResponse]] = {
-    Future.collect(
-      thriftQueries.map { thriftQuery =>
-        Try(RecapQuery.fromThrift(thriftQuery)) match {
-          case Return(query) =>
-            observeAndValidate(
-              query,
-              Seq(query.userId),
-              getRecapCandidatesFromAuthorsStats,
-              TimelineRanker.exceptionHandler
-            ) { validatedQuery =>
-              Future(queryParamInitializer(validatedQuery)).flatten.liftToTry.flatMap {
-                case Return(q) => recapAuthorRepository.get(q).map(_.toThrift)
-                case Throw(e) => Future.value(TimelineRanker.toErrorThriftResponse(e))
+  delonf gelontReloncapCandidatelonsFromAuthors(
+    thriftQuelonrielons: Selonq[thrift.ReloncapQuelonry]
+  ): Futurelon[Selonq[thrift.GelontCandidatelonTwelonelontsRelonsponselon]] = {
+    Futurelon.collelonct(
+      thriftQuelonrielons.map { thriftQuelonry =>
+        Try(ReloncapQuelonry.fromThrift(thriftQuelonry)) match {
+          caselon Relonturn(quelonry) =>
+            obselonrvelonAndValidatelon(
+              quelonry,
+              Selonq(quelonry.uselonrId),
+              gelontReloncapCandidatelonsFromAuthorsStats,
+              TimelonlinelonRankelonr.elonxcelonptionHandlelonr
+            ) { validatelondQuelonry =>
+              Futurelon(quelonryParamInitializelonr(validatelondQuelonry)).flattelonn.liftToTry.flatMap {
+                caselon Relonturn(q) => reloncapAuthorRelonpository.gelont(q).map(_.toThrift)
+                caselon Throw(elon) => Futurelon.valuelon(TimelonlinelonRankelonr.toelonrrorThriftRelonsponselon(elon))
               }
             }
-          case Throw(e) => Future.value(TimelineRanker.toErrorThriftResponse(e))
+          caselon Throw(elon) => Futurelon.valuelon(TimelonlinelonRankelonr.toelonrrorThriftRelonsponselon(elon))
         }
       }
     )
   }
 
-  def getEntityTweetCandidates(
-    thriftQueries: Seq[thrift.EntityTweetsQuery]
-  ): Future[Seq[thrift.GetCandidateTweetsResponse]] = {
-    Future.collect(
-      thriftQueries.map { thriftQuery =>
-        Try(RecapQuery.fromThrift(thriftQuery)) match {
-          case Return(query) =>
-            observeAndValidate(
-              query,
-              Seq(query.userId),
-              getEntityTweetCandidatesStats,
-              TimelineRanker.exceptionHandler
-            ) { validatedQuery =>
-              Future(queryParamInitializer(validatedQuery)).flatten.liftToTry.flatMap {
-                case Return(q) => entityTweetsRepository.get(q).map(_.toThrift)
-                case Throw(e) => Future.value(TimelineRanker.toErrorThriftResponse(e))
+  delonf gelontelonntityTwelonelontCandidatelons(
+    thriftQuelonrielons: Selonq[thrift.elonntityTwelonelontsQuelonry]
+  ): Futurelon[Selonq[thrift.GelontCandidatelonTwelonelontsRelonsponselon]] = {
+    Futurelon.collelonct(
+      thriftQuelonrielons.map { thriftQuelonry =>
+        Try(ReloncapQuelonry.fromThrift(thriftQuelonry)) match {
+          caselon Relonturn(quelonry) =>
+            obselonrvelonAndValidatelon(
+              quelonry,
+              Selonq(quelonry.uselonrId),
+              gelontelonntityTwelonelontCandidatelonsStats,
+              TimelonlinelonRankelonr.elonxcelonptionHandlelonr
+            ) { validatelondQuelonry =>
+              Futurelon(quelonryParamInitializelonr(validatelondQuelonry)).flattelonn.liftToTry.flatMap {
+                caselon Relonturn(q) => elonntityTwelonelontsRelonpository.gelont(q).map(_.toThrift)
+                caselon Throw(elon) => Futurelon.valuelon(TimelonlinelonRankelonr.toelonrrorThriftRelonsponselon(elon))
               }
             }
-          case Throw(e) => Future.value(TimelineRanker.toErrorThriftResponse(e))
+          caselon Throw(elon) => Futurelon.valuelon(TimelonlinelonRankelonr.toelonrrorThriftRelonsponselon(elon))
         }
       }
     )
   }
 
-  def getUtegLikedByTweetCandidates(
-    thriftQueries: Seq[thrift.UtegLikedByTweetsQuery]
-  ): Future[Seq[thrift.GetCandidateTweetsResponse]] = {
-    Future.collect(
-      thriftQueries.map { thriftQuery =>
-        Try(RecapQuery.fromThrift(thriftQuery)) match {
-          case Return(query) =>
-            observeAndValidate(
-              query,
-              Seq(query.userId),
-              getUtegLikedByTweetCandidatesStats,
-              TimelineRanker.exceptionHandler
-            ) { validatedQuery =>
-              Future(queryParamInitializer(validatedQuery)).flatten.liftToTry.flatMap {
-                case Return(q) => utegLikedByTweetsRepository.get(q).map(_.toThrift)
-                case Throw(e) => Future.value(TimelineRanker.toErrorThriftResponse(e))
+  delonf gelontUtelongLikelondByTwelonelontCandidatelons(
+    thriftQuelonrielons: Selonq[thrift.UtelongLikelondByTwelonelontsQuelonry]
+  ): Futurelon[Selonq[thrift.GelontCandidatelonTwelonelontsRelonsponselon]] = {
+    Futurelon.collelonct(
+      thriftQuelonrielons.map { thriftQuelonry =>
+        Try(ReloncapQuelonry.fromThrift(thriftQuelonry)) match {
+          caselon Relonturn(quelonry) =>
+            obselonrvelonAndValidatelon(
+              quelonry,
+              Selonq(quelonry.uselonrId),
+              gelontUtelongLikelondByTwelonelontCandidatelonsStats,
+              TimelonlinelonRankelonr.elonxcelonptionHandlelonr
+            ) { validatelondQuelonry =>
+              Futurelon(quelonryParamInitializelonr(validatelondQuelonry)).flattelonn.liftToTry.flatMap {
+                caselon Relonturn(q) => utelongLikelondByTwelonelontsRelonpository.gelont(q).map(_.toThrift)
+                caselon Throw(elon) => Futurelon.valuelon(TimelonlinelonRankelonr.toelonrrorThriftRelonsponselon(elon))
               }
             }
-          case Throw(e) => Future.value(TimelineRanker.toErrorThriftResponse(e))
+          caselon Throw(elon) => Futurelon.valuelon(TimelonlinelonRankelonr.toelonrrorThriftRelonsponselon(elon))
         }
       }
     )

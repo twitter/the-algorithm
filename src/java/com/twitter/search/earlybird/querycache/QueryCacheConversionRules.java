@@ -1,100 +1,100 @@
-package com.twitter.search.earlybird.querycache;
+packagelon com.twittelonr.selonarch.elonarlybird.quelonrycachelon;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
+import java.util.Selont;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Sets;
+import com.googlelon.common.collelonct.ImmutablelonList;
+import com.googlelon.common.collelonct.Selonts;
 
-import com.twitter.search.common.constants.QueryCacheConstants;
-import com.twitter.search.queryparser.query.Query;
-import com.twitter.search.queryparser.query.search.SearchOperator;
-import com.twitter.search.queryparser.query.search.SearchOperatorConstants;
+import com.twittelonr.selonarch.common.constants.QuelonryCachelonConstants;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.Quelonry;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.selonarch.SelonarchOpelonrator;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.selonarch.SelonarchOpelonratorConstants;
 
-import static com.twitter.search.common.util.RuleBasedConverter.Rule;
+import static com.twittelonr.selonarch.common.util.RulelonBaselondConvelonrtelonr.Rulelon;
 
 /**
- * Rules to convert exclude operators into cached filters and consolidate them.
- * NOTE: this is copied from blender/core/parser/service/queryparser/QueryCacheConversionRules.java
- * We should remove the blender one once this is in production.
+ * Rulelons to convelonrt elonxcludelon opelonrators into cachelond filtelonrs and consolidatelon thelonm.
+ * NOTelon: this is copielond from blelonndelonr/corelon/parselonr/selonrvicelon/quelonryparselonr/QuelonryCachelonConvelonrsionRulelons.java
+ * Welon should relonmovelon thelon blelonndelonr onelon oncelon this is in production.
  */
-public final class QueryCacheConversionRules {
-  static final SearchOperator EXCLUDE_ANTISOCIAL =
-      new SearchOperator(SearchOperator.Type.EXCLUDE, SearchOperatorConstants.ANTISOCIAL);
-  static final SearchOperator EXCLUDE_SPAM =
-      new SearchOperator(SearchOperator.Type.EXCLUDE, SearchOperatorConstants.SPAM);
-  static final SearchOperator EXCLUDE_REPLIES =
-      new SearchOperator(SearchOperator.Type.EXCLUDE, SearchOperatorConstants.REPLIES);
-  static final SearchOperator EXCLUDE_NATIVERETWEETS =
-      new SearchOperator(SearchOperator.Type.EXCLUDE, SearchOperatorConstants.NATIVE_RETWEETS);
+public final class QuelonryCachelonConvelonrsionRulelons {
+  static final SelonarchOpelonrator elonXCLUDelon_ANTISOCIAL =
+      nelonw SelonarchOpelonrator(SelonarchOpelonrator.Typelon.elonXCLUDelon, SelonarchOpelonratorConstants.ANTISOCIAL);
+  static final SelonarchOpelonrator elonXCLUDelon_SPAM =
+      nelonw SelonarchOpelonrator(SelonarchOpelonrator.Typelon.elonXCLUDelon, SelonarchOpelonratorConstants.SPAM);
+  static final SelonarchOpelonrator elonXCLUDelon_RelonPLIelonS =
+      nelonw SelonarchOpelonrator(SelonarchOpelonrator.Typelon.elonXCLUDelon, SelonarchOpelonratorConstants.RelonPLIelonS);
+  static final SelonarchOpelonrator elonXCLUDelon_NATIVelonRelonTWelonelonTS =
+      nelonw SelonarchOpelonrator(SelonarchOpelonrator.Typelon.elonXCLUDelon, SelonarchOpelonratorConstants.NATIVelon_RelonTWelonelonTS);
 
-  public static final SearchOperator CACHED_EXCLUDE_ANTISOCIAL =
-      new SearchOperator(SearchOperator.Type.CACHED_FILTER,
-                         QueryCacheConstants.EXCLUDE_ANTISOCIAL);
-  static final SearchOperator CACHED_EXCLUDE_NATIVERETWEETS =
-      new SearchOperator(SearchOperator.Type.CACHED_FILTER,
-                         QueryCacheConstants.EXCLUDE_ANTISOCIAL_AND_NATIVERETWEETS);
-  static final SearchOperator CACHED_EXCLUDE_SPAM =
-      new SearchOperator(SearchOperator.Type.CACHED_FILTER,
-                         QueryCacheConstants.EXCLUDE_SPAM);
-  static final SearchOperator CACHED_EXCLUDE_SPAM_AND_NATIVERETWEETS =
-      new SearchOperator(SearchOperator.Type.CACHED_FILTER,
-                         QueryCacheConstants.EXCLUDE_SPAM_AND_NATIVERETWEETS);
-  static final SearchOperator CACHED_EXCLUDE_REPLIES =
-      new SearchOperator(SearchOperator.Type.CACHED_FILTER,
-                         QueryCacheConstants.EXCLUDE_REPLIES);
+  public static final SelonarchOpelonrator CACHelonD_elonXCLUDelon_ANTISOCIAL =
+      nelonw SelonarchOpelonrator(SelonarchOpelonrator.Typelon.CACHelonD_FILTelonR,
+                         QuelonryCachelonConstants.elonXCLUDelon_ANTISOCIAL);
+  static final SelonarchOpelonrator CACHelonD_elonXCLUDelon_NATIVelonRelonTWelonelonTS =
+      nelonw SelonarchOpelonrator(SelonarchOpelonrator.Typelon.CACHelonD_FILTelonR,
+                         QuelonryCachelonConstants.elonXCLUDelon_ANTISOCIAL_AND_NATIVelonRelonTWelonelonTS);
+  static final SelonarchOpelonrator CACHelonD_elonXCLUDelon_SPAM =
+      nelonw SelonarchOpelonrator(SelonarchOpelonrator.Typelon.CACHelonD_FILTelonR,
+                         QuelonryCachelonConstants.elonXCLUDelon_SPAM);
+  static final SelonarchOpelonrator CACHelonD_elonXCLUDelon_SPAM_AND_NATIVelonRelonTWelonelonTS =
+      nelonw SelonarchOpelonrator(SelonarchOpelonrator.Typelon.CACHelonD_FILTelonR,
+                         QuelonryCachelonConstants.elonXCLUDelon_SPAM_AND_NATIVelonRelonTWelonelonTS);
+  static final SelonarchOpelonrator CACHelonD_elonXCLUDelon_RelonPLIelonS =
+      nelonw SelonarchOpelonrator(SelonarchOpelonrator.Typelon.CACHelonD_FILTelonR,
+                         QuelonryCachelonConstants.elonXCLUDelon_RelonPLIelonS);
 
-  private QueryCacheConversionRules() {
+  privatelon QuelonryCachelonConvelonrsionRulelons() {
   }
 
-  public static final List<Rule<Query>> DEFAULT_RULES = ImmutableList.of(
-      // basic translation from exclude:filter to cached filter
-      new Rule<>(new Query[]{EXCLUDE_ANTISOCIAL},
-                 new Query[]{CACHED_EXCLUDE_ANTISOCIAL}),
+  public static final List<Rulelon<Quelonry>> DelonFAULT_RULelonS = ImmutablelonList.of(
+      // basic translation from elonxcludelon:filtelonr to cachelond filtelonr
+      nelonw Rulelon<>(nelonw Quelonry[]{elonXCLUDelon_ANTISOCIAL},
+                 nelonw Quelonry[]{CACHelonD_elonXCLUDelon_ANTISOCIAL}),
 
-      new Rule<>(new Query[]{EXCLUDE_SPAM},
-                 new Query[]{CACHED_EXCLUDE_SPAM}),
+      nelonw Rulelon<>(nelonw Quelonry[]{elonXCLUDelon_SPAM},
+                 nelonw Quelonry[]{CACHelonD_elonXCLUDelon_SPAM}),
 
-      new Rule<>(new Query[]{EXCLUDE_NATIVERETWEETS},
-                 new Query[]{CACHED_EXCLUDE_NATIVERETWEETS}),
+      nelonw Rulelon<>(nelonw Quelonry[]{elonXCLUDelon_NATIVelonRelonTWelonelonTS},
+                 nelonw Quelonry[]{CACHelonD_elonXCLUDelon_NATIVelonRelonTWelonelonTS}),
 
-      new Rule<>(new Query[]{EXCLUDE_REPLIES},
-                 new Query[]{CACHED_EXCLUDE_REPLIES}),
+      nelonw Rulelon<>(nelonw Quelonry[]{elonXCLUDelon_RelonPLIelonS},
+                 nelonw Quelonry[]{CACHelonD_elonXCLUDelon_RelonPLIelonS}),
 
-      // combine two cached filter to a new one
-      new Rule<>(new Query[]{CACHED_EXCLUDE_SPAM, CACHED_EXCLUDE_NATIVERETWEETS},
-                 new Query[]{CACHED_EXCLUDE_SPAM_AND_NATIVERETWEETS}),
+      // combinelon two cachelond filtelonr to a nelonw onelon
+      nelonw Rulelon<>(nelonw Quelonry[]{CACHelonD_elonXCLUDelon_SPAM, CACHelonD_elonXCLUDelon_NATIVelonRelonTWelonelonTS},
+                 nelonw Quelonry[]{CACHelonD_elonXCLUDelon_SPAM_AND_NATIVelonRelonTWelonelonTS}),
 
-      // Remove redundant filters. A cached filter is redundant when it coexist with a
-      // more strict filter. Note all the filter will filter out antisocial.
-      new Rule<>(
-          new Query[]{CACHED_EXCLUDE_SPAM, CACHED_EXCLUDE_ANTISOCIAL},
-          new Query[]{CACHED_EXCLUDE_SPAM}),
+      // Relonmovelon relondundant filtelonrs. A cachelond filtelonr is relondundant whelonn it coelonxist with a
+      // morelon strict filtelonr. Notelon all thelon filtelonr will filtelonr out antisocial.
+      nelonw Rulelon<>(
+          nelonw Quelonry[]{CACHelonD_elonXCLUDelon_SPAM, CACHelonD_elonXCLUDelon_ANTISOCIAL},
+          nelonw Quelonry[]{CACHelonD_elonXCLUDelon_SPAM}),
 
-      new Rule<>(
-          new Query[]{CACHED_EXCLUDE_NATIVERETWEETS, CACHED_EXCLUDE_ANTISOCIAL},
-          new Query[]{CACHED_EXCLUDE_NATIVERETWEETS}),
+      nelonw Rulelon<>(
+          nelonw Quelonry[]{CACHelonD_elonXCLUDelon_NATIVelonRelonTWelonelonTS, CACHelonD_elonXCLUDelon_ANTISOCIAL},
+          nelonw Quelonry[]{CACHelonD_elonXCLUDelon_NATIVelonRelonTWelonelonTS}),
 
-      new Rule<>(
-          new Query[]{CACHED_EXCLUDE_SPAM_AND_NATIVERETWEETS, CACHED_EXCLUDE_ANTISOCIAL},
-          new Query[]{CACHED_EXCLUDE_SPAM_AND_NATIVERETWEETS}),
+      nelonw Rulelon<>(
+          nelonw Quelonry[]{CACHelonD_elonXCLUDelon_SPAM_AND_NATIVelonRelonTWelonelonTS, CACHelonD_elonXCLUDelon_ANTISOCIAL},
+          nelonw Quelonry[]{CACHelonD_elonXCLUDelon_SPAM_AND_NATIVelonRelonTWelonelonTS}),
 
-      new Rule<>(
-          new Query[]{CACHED_EXCLUDE_SPAM_AND_NATIVERETWEETS, CACHED_EXCLUDE_SPAM},
-          new Query[]{CACHED_EXCLUDE_SPAM_AND_NATIVERETWEETS}),
+      nelonw Rulelon<>(
+          nelonw Quelonry[]{CACHelonD_elonXCLUDelon_SPAM_AND_NATIVelonRelonTWelonelonTS, CACHelonD_elonXCLUDelon_SPAM},
+          nelonw Quelonry[]{CACHelonD_elonXCLUDelon_SPAM_AND_NATIVelonRelonTWelonelonTS}),
 
-      new Rule<>(
-          new Query[]{CACHED_EXCLUDE_SPAM_AND_NATIVERETWEETS, CACHED_EXCLUDE_NATIVERETWEETS},
-          new Query[]{CACHED_EXCLUDE_SPAM_AND_NATIVERETWEETS})
+      nelonw Rulelon<>(
+          nelonw Quelonry[]{CACHelonD_elonXCLUDelon_SPAM_AND_NATIVelonRelonTWelonelonTS, CACHelonD_elonXCLUDelon_NATIVelonRelonTWelonelonTS},
+          nelonw Quelonry[]{CACHelonD_elonXCLUDelon_SPAM_AND_NATIVelonRelonTWelonelonTS})
   );
 
-  public static final List<Query> STRIP_ANNOTATIONS_QUERIES;
+  public static final List<Quelonry> STRIP_ANNOTATIONS_QUelonRIelonS;
   static {
-    Set<Query> stripAnnotationsQueries = Sets.newHashSet();
-    for (Rule<Query> rule : DEFAULT_RULES) {
-      stripAnnotationsQueries.addAll(Arrays.asList(rule.getSources()));
+    Selont<Quelonry> stripAnnotationsQuelonrielons = Selonts.nelonwHashSelont();
+    for (Rulelon<Quelonry> rulelon : DelonFAULT_RULelonS) {
+      stripAnnotationsQuelonrielons.addAll(Arrays.asList(rulelon.gelontSourcelons()));
     }
-    STRIP_ANNOTATIONS_QUERIES = ImmutableList.copyOf(stripAnnotationsQueries);
+    STRIP_ANNOTATIONS_QUelonRIelonS = ImmutablelonList.copyOf(stripAnnotationsQuelonrielons);
   }
 }

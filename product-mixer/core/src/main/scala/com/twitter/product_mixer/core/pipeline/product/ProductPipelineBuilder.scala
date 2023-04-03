@@ -1,385 +1,385 @@
-package com.twitter.product_mixer.core.pipeline.product
+packagelon com.twittelonr.product_mixelonr.corelon.pipelonlinelon.product
 
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.tracing.Trace
-import com.twitter.finagle.transport.Transport
-import com.twitter.product_mixer.core.functional_component.common.access_policy.AccessPolicy
-import com.twitter.product_mixer.core.functional_component.common.alert.Alert
-import com.twitter.product_mixer.core.functional_component.gate.Gate
-import com.twitter.product_mixer.core.gate.DenyLoggedOutUsersGate
-import com.twitter.product_mixer.core.gate.ParamGate
-import com.twitter.product_mixer.core.gate.ParamGate.EnabledGateSuffix
-import com.twitter.product_mixer.core.gate.ParamGate.SupportedClientGateSuffix
-import com.twitter.product_mixer.core.model.common.Component
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifierStack
-import com.twitter.product_mixer.core.model.common.identifier.ProductPipelineIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.PipelineStepIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.Request
-import com.twitter.product_mixer.core.pipeline.InvalidStepStateException
-import com.twitter.product_mixer.core.pipeline.Pipeline
-import com.twitter.product_mixer.core.pipeline.PipelineBuilder
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.mixer.MixerPipelineBuilderFactory
-import com.twitter.product_mixer.core.pipeline.mixer.MixerPipelineConfig
-import com.twitter.product_mixer.core.pipeline.mixer.MixerPipelineResult
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailureClassifier
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.ProductDisabled
-import com.twitter.product_mixer.core.pipeline.recommendation.RecommendationPipelineBuilderFactory
-import com.twitter.product_mixer.core.pipeline.recommendation.RecommendationPipelineConfig
-import com.twitter.product_mixer.core.pipeline.recommendation.RecommendationPipelineResult
-import com.twitter.product_mixer.core.quality_factor.HasQualityFactorStatus
-import com.twitter.product_mixer.core.quality_factor.QualityFactorObserver
-import com.twitter.product_mixer.core.quality_factor.QualityFactorStatus
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.product_mixer.core.service.gate_executor.GateExecutor
-import com.twitter.product_mixer.core.service.gate_executor.GateExecutorResult
-import com.twitter.product_mixer.core.service.gate_executor.StoppedGateException
-import com.twitter.product_mixer.core.service.pipeline_execution_logger.PipelineExecutionLogger
-import com.twitter.product_mixer.core.service.pipeline_executor.PipelineExecutor
-import com.twitter.product_mixer.core.service.pipeline_executor.PipelineExecutorRequest
-import com.twitter.product_mixer.core.service.pipeline_executor.PipelineExecutorResult
-import com.twitter.product_mixer.core.service.pipeline_selector_executor.PipelineSelectorExecutor
-import com.twitter.product_mixer.core.service.pipeline_selector_executor.PipelineSelectorExecutorResult
-import com.twitter.product_mixer.core.service.quality_factor_executor.QualityFactorExecutorResult
-import com.twitter.stitch.Arrow
-import com.twitter.stringcenter.client.StringCenterRequestContext
-import com.twitter.stringcenter.client.stitch.StringCenterRequestContextLetter
-import com.twitter.timelines.configapi.Params
-import com.twitter.util.logging.Logging
+import com.twittelonr.finaglelon.mtls.authelonntication.SelonrvicelonIdelonntifielonr
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.finaglelon.tracing.Tracelon
+import com.twittelonr.finaglelon.transport.Transport
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.accelonss_policy.AccelonssPolicy
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.alelonrt.Alelonrt
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.gatelon.Gatelon
+import com.twittelonr.product_mixelonr.corelon.gatelon.DelonnyLoggelondOutUselonrsGatelon
+import com.twittelonr.product_mixelonr.corelon.gatelon.ParamGatelon
+import com.twittelonr.product_mixelonr.corelon.gatelon.ParamGatelon.elonnablelondGatelonSuffix
+import com.twittelonr.product_mixelonr.corelon.gatelon.ParamGatelon.SupportelondClielonntGatelonSuffix
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.Componelonnt
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.ComponelonntIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.ComponelonntIdelonntifielonrStack
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.ProductPipelonlinelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.PipelonlinelonStelonpIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.Relonquelonst
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.InvalidStelonpStatelonelonxcelonption
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.Pipelonlinelon
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonBuildelonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.mixelonr.MixelonrPipelonlinelonBuildelonrFactory
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.mixelonr.MixelonrPipelonlinelonConfig
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.mixelonr.MixelonrPipelonlinelonRelonsult
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.PipelonlinelonFailurelonClassifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.ProductDisablelond
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.reloncommelonndation.ReloncommelonndationPipelonlinelonBuildelonrFactory
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.reloncommelonndation.ReloncommelonndationPipelonlinelonConfig
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.reloncommelonndation.ReloncommelonndationPipelonlinelonRelonsult
+import com.twittelonr.product_mixelonr.corelon.quality_factor.HasQualityFactorStatus
+import com.twittelonr.product_mixelonr.corelon.quality_factor.QualityFactorObselonrvelonr
+import com.twittelonr.product_mixelonr.corelon.quality_factor.QualityFactorStatus
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.elonxeloncutor
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.gatelon_elonxeloncutor.Gatelonelonxeloncutor
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.gatelon_elonxeloncutor.GatelonelonxeloncutorRelonsult
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.gatelon_elonxeloncutor.StoppelondGatelonelonxcelonption
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.pipelonlinelon_elonxeloncution_loggelonr.PipelonlinelonelonxeloncutionLoggelonr
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.pipelonlinelon_elonxeloncutor.Pipelonlinelonelonxeloncutor
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.pipelonlinelon_elonxeloncutor.PipelonlinelonelonxeloncutorRelonquelonst
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.pipelonlinelon_elonxeloncutor.PipelonlinelonelonxeloncutorRelonsult
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.pipelonlinelon_selonlelonctor_elonxeloncutor.PipelonlinelonSelonlelonctorelonxeloncutor
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.pipelonlinelon_selonlelonctor_elonxeloncutor.PipelonlinelonSelonlelonctorelonxeloncutorRelonsult
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.quality_factor_elonxeloncutor.QualityFactorelonxeloncutorRelonsult
+import com.twittelonr.stitch.Arrow
+import com.twittelonr.stringcelonntelonr.clielonnt.StringCelonntelonrRelonquelonstContelonxt
+import com.twittelonr.stringcelonntelonr.clielonnt.stitch.StringCelonntelonrRelonquelonstContelonxtLelonttelonr
+import com.twittelonr.timelonlinelons.configapi.Params
+import com.twittelonr.util.logging.Logging
 import org.slf4j.MDC
 
-class ProductPipelineBuilder[TRequest <: Request, Query <: PipelineQuery, Response](
-  gateExecutor: GateExecutor,
-  pipelineSelectorExecutor: PipelineSelectorExecutor,
-  pipelineExecutor: PipelineExecutor,
-  mixerPipelineBuilderFactory: MixerPipelineBuilderFactory,
-  recommendationPipelineBuilderFactory: RecommendationPipelineBuilderFactory,
-  override val statsReceiver: StatsReceiver,
-  pipelineExecutionLogger: PipelineExecutionLogger)
-    extends PipelineBuilder[ProductPipelineRequest[TRequest]]
-    with Logging { builder =>
+class ProductPipelonlinelonBuildelonr[TRelonquelonst <: Relonquelonst, Quelonry <: PipelonlinelonQuelonry, Relonsponselon](
+  gatelonelonxeloncutor: Gatelonelonxeloncutor,
+  pipelonlinelonSelonlelonctorelonxeloncutor: PipelonlinelonSelonlelonctorelonxeloncutor,
+  pipelonlinelonelonxeloncutor: Pipelonlinelonelonxeloncutor,
+  mixelonrPipelonlinelonBuildelonrFactory: MixelonrPipelonlinelonBuildelonrFactory,
+  reloncommelonndationPipelonlinelonBuildelonrFactory: ReloncommelonndationPipelonlinelonBuildelonrFactory,
+  ovelonrridelon val statsReloncelonivelonr: StatsReloncelonivelonr,
+  pipelonlinelonelonxeloncutionLoggelonr: PipelonlinelonelonxeloncutionLoggelonr)
+    elonxtelonnds PipelonlinelonBuildelonr[ProductPipelonlinelonRelonquelonst[TRelonquelonst]]
+    with Logging { buildelonr =>
 
-  override type UnderlyingResultType = Response
-  override type PipelineResultType = ProductPipelineResult[Response]
+  ovelonrridelon typelon UndelonrlyingRelonsultTypelon = Relonsponselon
+  ovelonrridelon typelon PipelonlinelonRelonsultTypelon = ProductPipelonlinelonRelonsult[Relonsponselon]
 
   /**
-   * Query Transformer Step is implemented inline instead of using an executor.
+   * Quelonry Transformelonr Stelonp is implelonmelonntelond inlinelon instelonad of using an elonxeloncutor.
    *
-   * It's a simple, synchronous step that executes the query transformer.
+   * It's a simplelon, synchronous stelonp that elonxeloncutelons thelon quelonry transformelonr.
    *
-   * Since the output of the transformer is used in multiple other steps (Gate, Pipeline Execution),
-   * we've promoted the transformer to a step so that it's outputs can be reused easily.
+   * Sincelon thelon output of thelon transformelonr is uselond in multiplelon othelonr stelonps (Gatelon, Pipelonlinelon elonxeloncution),
+   * welon'velon promotelond thelon transformelonr to a stelonp so that it's outputs can belon relonuselond elonasily.
    */
-  def pipelineQueryTransformerStep(
-    queryTransformer: (TRequest, Params) => Query,
-    context: Executor.Context
-  ): Step[ProductPipelineRequest[TRequest], Query] =
-    new Step[ProductPipelineRequest[TRequest], Query] {
+  delonf pipelonlinelonQuelonryTransformelonrStelonp(
+    quelonryTransformelonr: (TRelonquelonst, Params) => Quelonry,
+    contelonxt: elonxeloncutor.Contelonxt
+  ): Stelonp[ProductPipelonlinelonRelonquelonst[TRelonquelonst], Quelonry] =
+    nelonw Stelonp[ProductPipelonlinelonRelonquelonst[TRelonquelonst], Quelonry] {
 
-      override def identifier: PipelineStepIdentifier =
-        ProductPipelineConfig.pipelineQueryTransformerStep
+      ovelonrridelon delonf idelonntifielonr: PipelonlinelonStelonpIdelonntifielonr =
+        ProductPipelonlinelonConfig.pipelonlinelonQuelonryTransformelonrStelonp
 
-      override def executorArrow: Arrow[ProductPipelineRequest[TRequest], Query] = {
-        wrapWithErrorHandling(context, identifier)(
-          Arrow.map[ProductPipelineRequest[TRequest], Query] {
-            case ProductPipelineRequest(request, params) => queryTransformer(request, params)
+      ovelonrridelon delonf elonxeloncutorArrow: Arrow[ProductPipelonlinelonRelonquelonst[TRelonquelonst], Quelonry] = {
+        wrapWithelonrrorHandling(contelonxt, idelonntifielonr)(
+          Arrow.map[ProductPipelonlinelonRelonquelonst[TRelonquelonst], Quelonry] {
+            caselon ProductPipelonlinelonRelonquelonst(relonquelonst, params) => quelonryTransformelonr(relonquelonst, params)
           }
         )
       }
 
-      override def inputAdaptor(
-        query: ProductPipelineRequest[TRequest],
-        previousResult: ProductPipelineResult[Response]
-      ): ProductPipelineRequest[TRequest] = query
+      ovelonrridelon delonf inputAdaptor(
+        quelonry: ProductPipelonlinelonRelonquelonst[TRelonquelonst],
+        prelonviousRelonsult: ProductPipelonlinelonRelonsult[Relonsponselon]
+      ): ProductPipelonlinelonRelonquelonst[TRelonquelonst] = quelonry
 
-      override def resultUpdater(
-        previousPipelineResult: ProductPipelineResult[Response],
-        executorResult: Query
-      ): ProductPipelineResult[Response] =
-        previousPipelineResult.copy(transformedQuery = Some(executorResult))
+      ovelonrridelon delonf relonsultUpdatelonr(
+        prelonviousPipelonlinelonRelonsult: ProductPipelonlinelonRelonsult[Relonsponselon],
+        elonxeloncutorRelonsult: Quelonry
+      ): ProductPipelonlinelonRelonsult[Relonsponselon] =
+        prelonviousPipelonlinelonRelonsult.copy(transformelondQuelonry = Somelon(elonxeloncutorRelonsult))
     }
 
-  def qualityFactorStep(
+  delonf qualityFactorStelonp(
     qualityFactorStatus: QualityFactorStatus
-  ): Step[Query, QualityFactorExecutorResult] = {
-    new Step[Query, QualityFactorExecutorResult] {
-      override def identifier: PipelineStepIdentifier = ProductPipelineConfig.qualityFactorStep
+  ): Stelonp[Quelonry, QualityFactorelonxeloncutorRelonsult] = {
+    nelonw Stelonp[Quelonry, QualityFactorelonxeloncutorRelonsult] {
+      ovelonrridelon delonf idelonntifielonr: PipelonlinelonStelonpIdelonntifielonr = ProductPipelonlinelonConfig.qualityFactorStelonp
 
-      override def executorArrow: Arrow[Query, QualityFactorExecutorResult] =
+      ovelonrridelon delonf elonxeloncutorArrow: Arrow[Quelonry, QualityFactorelonxeloncutorRelonsult] =
         Arrow
-          .map[Query, QualityFactorExecutorResult] { _ =>
-            QualityFactorExecutorResult(
-              pipelineQualityFactors =
-                qualityFactorStatus.qualityFactorByPipeline.mapValues(_.currentValue)
+          .map[Quelonry, QualityFactorelonxeloncutorRelonsult] { _ =>
+            QualityFactorelonxeloncutorRelonsult(
+              pipelonlinelonQualityFactors =
+                qualityFactorStatus.qualityFactorByPipelonlinelon.mapValuelons(_.currelonntValuelon)
             )
           }
 
-      override def inputAdaptor(
-        query: ProductPipelineRequest[TRequest],
-        previousResult: ProductPipelineResult[Response]
-      ): Query = previousResult.transformedQuery
-        .getOrElse {
-          throw InvalidStepStateException(identifier, "TransformedQuery")
-        }.asInstanceOf[Query]
+      ovelonrridelon delonf inputAdaptor(
+        quelonry: ProductPipelonlinelonRelonquelonst[TRelonquelonst],
+        prelonviousRelonsult: ProductPipelonlinelonRelonsult[Relonsponselon]
+      ): Quelonry = prelonviousRelonsult.transformelondQuelonry
+        .gelontOrelonlselon {
+          throw InvalidStelonpStatelonelonxcelonption(idelonntifielonr, "TransformelondQuelonry")
+        }.asInstancelonOf[Quelonry]
 
-      override def resultUpdater(
-        previousPipelineResult: ProductPipelineResult[Response],
-        executorResult: QualityFactorExecutorResult
-      ): ProductPipelineResult[Response] = {
-        previousPipelineResult.copy(
-          transformedQuery = previousPipelineResult.transformedQuery.map {
-            case queryWithQualityFactor: HasQualityFactorStatus =>
-              queryWithQualityFactor
-                .withQualityFactorStatus(qualityFactorStatus).asInstanceOf[Query]
-            case query =>
-              query
+      ovelonrridelon delonf relonsultUpdatelonr(
+        prelonviousPipelonlinelonRelonsult: ProductPipelonlinelonRelonsult[Relonsponselon],
+        elonxeloncutorRelonsult: QualityFactorelonxeloncutorRelonsult
+      ): ProductPipelonlinelonRelonsult[Relonsponselon] = {
+        prelonviousPipelonlinelonRelonsult.copy(
+          transformelondQuelonry = prelonviousPipelonlinelonRelonsult.transformelondQuelonry.map {
+            caselon quelonryWithQualityFactor: HasQualityFactorStatus =>
+              quelonryWithQualityFactor
+                .withQualityFactorStatus(qualityFactorStatus).asInstancelonOf[Quelonry]
+            caselon quelonry =>
+              quelonry
           },
-          qualityFactorResult = Some(executorResult)
+          qualityFactorRelonsult = Somelon(elonxeloncutorRelonsult)
         )
       }
     }
   }
 
-  def gatesStep(
-    gates: Seq[Gate[Query]],
-    context: Executor.Context
-  ): Step[Query, GateExecutorResult] = new Step[Query, GateExecutorResult] {
-    override def identifier: PipelineStepIdentifier = ProductPipelineConfig.gatesStep
+  delonf gatelonsStelonp(
+    gatelons: Selonq[Gatelon[Quelonry]],
+    contelonxt: elonxeloncutor.Contelonxt
+  ): Stelonp[Quelonry, GatelonelonxeloncutorRelonsult] = nelonw Stelonp[Quelonry, GatelonelonxeloncutorRelonsult] {
+    ovelonrridelon delonf idelonntifielonr: PipelonlinelonStelonpIdelonntifielonr = ProductPipelonlinelonConfig.gatelonsStelonp
 
-    override def executorArrow: Arrow[Query, GateExecutorResult] = {
-      gateExecutor.arrow(gates, context)
+    ovelonrridelon delonf elonxeloncutorArrow: Arrow[Quelonry, GatelonelonxeloncutorRelonsult] = {
+      gatelonelonxeloncutor.arrow(gatelons, contelonxt)
     }
 
-    override def inputAdaptor(
-      query: ProductPipelineRequest[TRequest],
-      previousResult: ProductPipelineResult[Response]
-    ): Query = previousResult.transformedQuery
-      .getOrElse {
-        throw InvalidStepStateException(identifier, "TransformedQuery")
-      }.asInstanceOf[Query]
+    ovelonrridelon delonf inputAdaptor(
+      quelonry: ProductPipelonlinelonRelonquelonst[TRelonquelonst],
+      prelonviousRelonsult: ProductPipelonlinelonRelonsult[Relonsponselon]
+    ): Quelonry = prelonviousRelonsult.transformelondQuelonry
+      .gelontOrelonlselon {
+        throw InvalidStelonpStatelonelonxcelonption(idelonntifielonr, "TransformelondQuelonry")
+      }.asInstancelonOf[Quelonry]
 
-    override def resultUpdater(
-      previousPipelineResult: ProductPipelineResult[Response],
-      executorResult: GateExecutorResult
-    ): ProductPipelineResult[Response] =
-      previousPipelineResult.copy(gateResult = Some(executorResult))
+    ovelonrridelon delonf relonsultUpdatelonr(
+      prelonviousPipelonlinelonRelonsult: ProductPipelonlinelonRelonsult[Relonsponselon],
+      elonxeloncutorRelonsult: GatelonelonxeloncutorRelonsult
+    ): ProductPipelonlinelonRelonsult[Relonsponselon] =
+      prelonviousPipelonlinelonRelonsult.copy(gatelonRelonsult = Somelon(elonxeloncutorRelonsult))
   }
 
-  def pipelineSelectorStep(
-    pipelineByIdentifer: Map[ComponentIdentifier, Pipeline[Query, Response]],
-    pipelineSelector: Query => ComponentIdentifier,
-    context: Executor.Context
-  ): Step[Query, PipelineSelectorExecutorResult] =
-    new Step[Query, PipelineSelectorExecutorResult] {
-      override def identifier: PipelineStepIdentifier = ProductPipelineConfig.pipelineSelectorStep
+  delonf pipelonlinelonSelonlelonctorStelonp(
+    pipelonlinelonByIdelonntifelonr: Map[ComponelonntIdelonntifielonr, Pipelonlinelon[Quelonry, Relonsponselon]],
+    pipelonlinelonSelonlelonctor: Quelonry => ComponelonntIdelonntifielonr,
+    contelonxt: elonxeloncutor.Contelonxt
+  ): Stelonp[Quelonry, PipelonlinelonSelonlelonctorelonxeloncutorRelonsult] =
+    nelonw Stelonp[Quelonry, PipelonlinelonSelonlelonctorelonxeloncutorRelonsult] {
+      ovelonrridelon delonf idelonntifielonr: PipelonlinelonStelonpIdelonntifielonr = ProductPipelonlinelonConfig.pipelonlinelonSelonlelonctorStelonp
 
-      override def executorArrow: Arrow[
-        Query,
-        PipelineSelectorExecutorResult
-      ] = pipelineSelectorExecutor.arrow(pipelineByIdentifer, pipelineSelector, context)
+      ovelonrridelon delonf elonxeloncutorArrow: Arrow[
+        Quelonry,
+        PipelonlinelonSelonlelonctorelonxeloncutorRelonsult
+      ] = pipelonlinelonSelonlelonctorelonxeloncutor.arrow(pipelonlinelonByIdelonntifelonr, pipelonlinelonSelonlelonctor, contelonxt)
 
-      override def inputAdaptor(
-        query: ProductPipelineRequest[TRequest],
-        previousResult: ProductPipelineResult[Response]
-      ): Query =
-        previousResult.transformedQuery
-          .getOrElse(throw InvalidStepStateException(identifier, "TransformedQuery")).asInstanceOf[
-            Query]
+      ovelonrridelon delonf inputAdaptor(
+        quelonry: ProductPipelonlinelonRelonquelonst[TRelonquelonst],
+        prelonviousRelonsult: ProductPipelonlinelonRelonsult[Relonsponselon]
+      ): Quelonry =
+        prelonviousRelonsult.transformelondQuelonry
+          .gelontOrelonlselon(throw InvalidStelonpStatelonelonxcelonption(idelonntifielonr, "TransformelondQuelonry")).asInstancelonOf[
+            Quelonry]
 
-      override def resultUpdater(
-        previousPipelineResult: ProductPipelineResult[Response],
-        executorResult: PipelineSelectorExecutorResult
-      ): ProductPipelineResult[Response] =
-        previousPipelineResult.copy(pipelineSelectorResult = Some(executorResult))
+      ovelonrridelon delonf relonsultUpdatelonr(
+        prelonviousPipelonlinelonRelonsult: ProductPipelonlinelonRelonsult[Relonsponselon],
+        elonxeloncutorRelonsult: PipelonlinelonSelonlelonctorelonxeloncutorRelonsult
+      ): ProductPipelonlinelonRelonsult[Relonsponselon] =
+        prelonviousPipelonlinelonRelonsult.copy(pipelonlinelonSelonlelonctorRelonsult = Somelon(elonxeloncutorRelonsult))
     }
 
-  def pipelineExecutionStep(
-    pipelineByIdentifier: Map[ComponentIdentifier, Pipeline[Query, Response]],
-    qualityFactorObserverByPipeline: Map[ComponentIdentifier, QualityFactorObserver],
-    context: Executor.Context
-  ): Step[PipelineExecutorRequest[Query], PipelineExecutorResult[Response]] =
-    new Step[PipelineExecutorRequest[Query], PipelineExecutorResult[Response]] {
-      override def identifier: PipelineStepIdentifier = ProductPipelineConfig.pipelineExecutionStep
+  delonf pipelonlinelonelonxeloncutionStelonp(
+    pipelonlinelonByIdelonntifielonr: Map[ComponelonntIdelonntifielonr, Pipelonlinelon[Quelonry, Relonsponselon]],
+    qualityFactorObselonrvelonrByPipelonlinelon: Map[ComponelonntIdelonntifielonr, QualityFactorObselonrvelonr],
+    contelonxt: elonxeloncutor.Contelonxt
+  ): Stelonp[PipelonlinelonelonxeloncutorRelonquelonst[Quelonry], PipelonlinelonelonxeloncutorRelonsult[Relonsponselon]] =
+    nelonw Stelonp[PipelonlinelonelonxeloncutorRelonquelonst[Quelonry], PipelonlinelonelonxeloncutorRelonsult[Relonsponselon]] {
+      ovelonrridelon delonf idelonntifielonr: PipelonlinelonStelonpIdelonntifielonr = ProductPipelonlinelonConfig.pipelonlinelonelonxeloncutionStelonp
 
-      override def executorArrow: Arrow[
-        PipelineExecutorRequest[Query],
-        PipelineExecutorResult[Response]
+      ovelonrridelon delonf elonxeloncutorArrow: Arrow[
+        PipelonlinelonelonxeloncutorRelonquelonst[Quelonry],
+        PipelonlinelonelonxeloncutorRelonsult[Relonsponselon]
       ] = {
-        pipelineExecutor.arrow(pipelineByIdentifier, qualityFactorObserverByPipeline, context)
+        pipelonlinelonelonxeloncutor.arrow(pipelonlinelonByIdelonntifielonr, qualityFactorObselonrvelonrByPipelonlinelon, contelonxt)
       }
 
-      override def inputAdaptor(
-        request: ProductPipelineRequest[TRequest],
-        previousResult: ProductPipelineResult[Response]
-      ): PipelineExecutorRequest[Query] = {
-        val query = previousResult.transformedQuery
-          .getOrElse {
-            throw InvalidStepStateException(identifier, "TransformedQuery")
-          }.asInstanceOf[Query]
+      ovelonrridelon delonf inputAdaptor(
+        relonquelonst: ProductPipelonlinelonRelonquelonst[TRelonquelonst],
+        prelonviousRelonsult: ProductPipelonlinelonRelonsult[Relonsponselon]
+      ): PipelonlinelonelonxeloncutorRelonquelonst[Quelonry] = {
+        val quelonry = prelonviousRelonsult.transformelondQuelonry
+          .gelontOrelonlselon {
+            throw InvalidStelonpStatelonelonxcelonption(idelonntifielonr, "TransformelondQuelonry")
+          }.asInstancelonOf[Quelonry]
 
-        val pipelineIdentifier = previousResult.pipelineSelectorResult
-          .map(_.pipelineIdentifier).getOrElse {
-            throw InvalidStepStateException(identifier, "PipelineSelectorResult")
+        val pipelonlinelonIdelonntifielonr = prelonviousRelonsult.pipelonlinelonSelonlelonctorRelonsult
+          .map(_.pipelonlinelonIdelonntifielonr).gelontOrelonlselon {
+            throw InvalidStelonpStatelonelonxcelonption(idelonntifielonr, "PipelonlinelonSelonlelonctorRelonsult")
           }
 
-        PipelineExecutorRequest(query, pipelineIdentifier)
+        PipelonlinelonelonxeloncutorRelonquelonst(quelonry, pipelonlinelonIdelonntifielonr)
       }
 
-      override def resultUpdater(
-        previousPipelineResult: ProductPipelineResult[Response],
-        executorResult: PipelineExecutorResult[Response]
-      ): ProductPipelineResult[Response] = {
+      ovelonrridelon delonf relonsultUpdatelonr(
+        prelonviousPipelonlinelonRelonsult: ProductPipelonlinelonRelonsult[Relonsponselon],
+        elonxeloncutorRelonsult: PipelonlinelonelonxeloncutorRelonsult[Relonsponselon]
+      ): ProductPipelonlinelonRelonsult[Relonsponselon] = {
 
-        val mixerPipelineResult = executorResult.pipelineResult match {
-          case mixerPipelineResult: MixerPipelineResult[Response] @unchecked =>
-            Some(mixerPipelineResult)
-          case _ =>
-            None
+        val mixelonrPipelonlinelonRelonsult = elonxeloncutorRelonsult.pipelonlinelonRelonsult match {
+          caselon mixelonrPipelonlinelonRelonsult: MixelonrPipelonlinelonRelonsult[Relonsponselon] @unchelonckelond =>
+            Somelon(mixelonrPipelonlinelonRelonsult)
+          caselon _ =>
+            Nonelon
         }
 
-        val recommendationPipelineResult = executorResult.pipelineResult match {
-          case recommendationPipelineResult: RecommendationPipelineResult[
+        val reloncommelonndationPipelonlinelonRelonsult = elonxeloncutorRelonsult.pipelonlinelonRelonsult match {
+          caselon reloncommelonndationPipelonlinelonRelonsult: ReloncommelonndationPipelonlinelonRelonsult[
                 _,
-                Response
-              ] @unchecked =>
-            Some(recommendationPipelineResult)
-          case _ =>
-            None
+                Relonsponselon
+              ] @unchelonckelond =>
+            Somelon(reloncommelonndationPipelonlinelonRelonsult)
+          caselon _ =>
+            Nonelon
         }
 
-        previousPipelineResult.copy(
-          mixerPipelineResult = mixerPipelineResult,
-          recommendationPipelineResult = recommendationPipelineResult,
-          traceId = Trace.idOption.map(_.traceId.toString()),
-          result = executorResult.pipelineResult.result
+        prelonviousPipelonlinelonRelonsult.copy(
+          mixelonrPipelonlinelonRelonsult = mixelonrPipelonlinelonRelonsult,
+          reloncommelonndationPipelonlinelonRelonsult = reloncommelonndationPipelonlinelonRelonsult,
+          tracelonId = Tracelon.idOption.map(_.tracelonId.toString()),
+          relonsult = elonxeloncutorRelonsult.pipelonlinelonRelonsult.relonsult
         )
       }
     }
 
-  def build(
-    parentComponentIdentifierStack: ComponentIdentifierStack,
-    config: ProductPipelineConfig[TRequest, Query, Response]
-  ): ProductPipeline[TRequest, Response] = {
+  delonf build(
+    parelonntComponelonntIdelonntifielonrStack: ComponelonntIdelonntifielonrStack,
+    config: ProductPipelonlinelonConfig[TRelonquelonst, Quelonry, Relonsponselon]
+  ): ProductPipelonlinelon[TRelonquelonst, Relonsponselon] = {
 
-    val pipelineIdentifier = config.identifier
+    val pipelonlinelonIdelonntifielonr = config.idelonntifielonr
 
-    val context = Executor.Context(
-      PipelineFailureClassifier(
-        config.failureClassifier.orElse(StoppedGateException.classifier(ProductDisabled))),
-      parentComponentIdentifierStack.push(pipelineIdentifier)
+    val contelonxt = elonxeloncutor.Contelonxt(
+      PipelonlinelonFailurelonClassifielonr(
+        config.failurelonClassifielonr.orelonlselon(StoppelondGatelonelonxcelonption.classifielonr(ProductDisablelond))),
+      parelonntComponelonntIdelonntifielonrStack.push(pipelonlinelonIdelonntifielonr)
     )
 
-    val denyLoggedOutUsersGate = if (config.denyLoggedOutUsers) {
-      Some(DenyLoggedOutUsersGate(pipelineIdentifier))
-    } else {
-      None
+    val delonnyLoggelondOutUselonrsGatelon = if (config.delonnyLoggelondOutUselonrs) {
+      Somelon(DelonnyLoggelondOutUselonrsGatelon(pipelonlinelonIdelonntifielonr))
+    } elonlselon {
+      Nonelon
     }
-    val enabledGate: ParamGate =
-      ParamGate(pipelineIdentifier + EnabledGateSuffix, config.paramConfig.EnabledDeciderParam)
-    val supportedClientGate =
-      ParamGate(
-        pipelineIdentifier + SupportedClientGateSuffix,
-        config.paramConfig.SupportedClientParam)
+    val elonnablelondGatelon: ParamGatelon =
+      ParamGatelon(pipelonlinelonIdelonntifielonr + elonnablelondGatelonSuffix, config.paramConfig.elonnablelondDeloncidelonrParam)
+    val supportelondClielonntGatelon =
+      ParamGatelon(
+        pipelonlinelonIdelonntifielonr + SupportelondClielonntGatelonSuffix,
+        config.paramConfig.SupportelondClielonntParam)
 
     /**
-     * Evaluate enabled decider gate first since if it's off, there is no reason to proceed
-     * Next evaluate supported client feature switch gate, followed by customer configured gates
+     * elonvaluatelon elonnablelond deloncidelonr gatelon first sincelon if it's off, thelonrelon is no relonason to procelonelond
+     * Nelonxt elonvaluatelon supportelond clielonnt felonaturelon switch gatelon, followelond by customelonr configurelond gatelons
      */
-    val allGates =
-      denyLoggedOutUsersGate.toSeq ++: enabledGate +: supportedClientGate +: config.gates
+    val allGatelons =
+      delonnyLoggelondOutUselonrsGatelon.toSelonq ++: elonnablelondGatelon +: supportelondClielonntGatelon +: config.gatelons
 
-    val childPipelines: Seq[Pipeline[Query, Response]] =
-      config.pipelines.map {
-        case mixerConfig: MixerPipelineConfig[Query, _, Response] =>
-          mixerConfig.build(context.componentStack, mixerPipelineBuilderFactory)
-        case recommendationConfig: RecommendationPipelineConfig[Query, _, _, Response] =>
-          recommendationConfig.build(context.componentStack, recommendationPipelineBuilderFactory)
-        case other =>
-          throw new IllegalArgumentException(
-            s"Product Pipelines only support Mixer and Recommendation pipelines, not $other")
+    val childPipelonlinelons: Selonq[Pipelonlinelon[Quelonry, Relonsponselon]] =
+      config.pipelonlinelons.map {
+        caselon mixelonrConfig: MixelonrPipelonlinelonConfig[Quelonry, _, Relonsponselon] =>
+          mixelonrConfig.build(contelonxt.componelonntStack, mixelonrPipelonlinelonBuildelonrFactory)
+        caselon reloncommelonndationConfig: ReloncommelonndationPipelonlinelonConfig[Quelonry, _, _, Relonsponselon] =>
+          reloncommelonndationConfig.build(contelonxt.componelonntStack, reloncommelonndationPipelonlinelonBuildelonrFactory)
+        caselon othelonr =>
+          throw nelonw IllelongalArgumelonntelonxcelonption(
+            s"Product Pipelonlinelons only support Mixelonr and Reloncommelonndation pipelonlinelons, not $othelonr")
       }
 
-    val pipelineByIdentifier: Map[ComponentIdentifier, Pipeline[Query, Response]] =
-      childPipelines.map { pipeline =>
-        (pipeline.identifier, pipeline)
+    val pipelonlinelonByIdelonntifielonr: Map[ComponelonntIdelonntifielonr, Pipelonlinelon[Quelonry, Relonsponselon]] =
+      childPipelonlinelons.map { pipelonlinelon =>
+        (pipelonlinelon.idelonntifielonr, pipelonlinelon)
       }.toMap
 
     val qualityFactorStatus: QualityFactorStatus =
       QualityFactorStatus.build(config.qualityFactorConfigs)
 
-    val qualityFactorObserverByPipeline = qualityFactorStatus.qualityFactorByPipeline.mapValues {
+    val qualityFactorObselonrvelonrByPipelonlinelon = qualityFactorStatus.qualityFactorByPipelonlinelon.mapValuelons {
       qualityFactor =>
-        qualityFactor.buildObserver()
+        qualityFactor.buildObselonrvelonr()
     }
 
-    buildGaugesForQualityFactor(pipelineIdentifier, qualityFactorStatus, statsReceiver)
+    buildGaugelonsForQualityFactor(pipelonlinelonIdelonntifielonr, qualityFactorStatus, statsReloncelonivelonr)
 
     /**
-     * Initialize MDC with access logging with everything we have at request time. We can put
-     * more stuff into MDC later down the pipeline, but at risk of exceptions/errors preventing
-     * them from being added
+     * Initializelon MDC with accelonss logging with elonvelonrything welon havelon at relonquelonst timelon. Welon can put
+     * morelon stuff into MDC latelonr down thelon pipelonlinelon, but at risk of elonxcelonptions/elonrrors prelonvelonnting
+     * thelonm from beloning addelond
      */
     val mdcInitArrow =
-      Arrow.map[ProductPipelineRequest[TRequest], ProductPipelineRequest[TRequest]] { request =>
-        val serviceIdentifier = ServiceIdentifier.fromCertificate(Transport.peerCertificate)
-        MDC.put("product", config.product.identifier.name)
-        MDC.put("serviceIdentifier", ServiceIdentifier.asString(serviceIdentifier))
-        request
+      Arrow.map[ProductPipelonlinelonRelonquelonst[TRelonquelonst], ProductPipelonlinelonRelonquelonst[TRelonquelonst]] { relonquelonst =>
+        val selonrvicelonIdelonntifielonr = SelonrvicelonIdelonntifielonr.fromCelonrtificatelon(Transport.pelonelonrCelonrtificatelon)
+        MDC.put("product", config.product.idelonntifielonr.namelon)
+        MDC.put("selonrvicelonIdelonntifielonr", SelonrvicelonIdelonntifielonr.asString(selonrvicelonIdelonntifielonr))
+        relonquelonst
       }
 
-    val builtSteps = Seq(
-      pipelineQueryTransformerStep(config.pipelineQueryTransformer, context),
-      qualityFactorStep(qualityFactorStatus),
-      gatesStep(allGates, context),
-      pipelineSelectorStep(pipelineByIdentifier, config.pipelineSelector, context),
-      pipelineExecutionStep(pipelineByIdentifier, qualityFactorObserverByPipeline, context)
+    val builtStelonps = Selonq(
+      pipelonlinelonQuelonryTransformelonrStelonp(config.pipelonlinelonQuelonryTransformelonr, contelonxt),
+      qualityFactorStelonp(qualityFactorStatus),
+      gatelonsStelonp(allGatelons, contelonxt),
+      pipelonlinelonSelonlelonctorStelonp(pipelonlinelonByIdelonntifielonr, config.pipelonlinelonSelonlelonctor, contelonxt),
+      pipelonlinelonelonxeloncutionStelonp(pipelonlinelonByIdelonntifielonr, qualityFactorObselonrvelonrByPipelonlinelon, contelonxt)
     )
 
-    val underlying: Arrow[ProductPipelineRequest[TRequest], ProductPipelineResult[Response]] =
-      buildCombinedArrowFromSteps(
-        steps = builtSteps,
-        context = context,
-        initialEmptyResult = ProductPipelineResult.empty,
-        stepsInOrderFromConfig = ProductPipelineConfig.stepsInOrder
+    val undelonrlying: Arrow[ProductPipelonlinelonRelonquelonst[TRelonquelonst], ProductPipelonlinelonRelonsult[Relonsponselon]] =
+      buildCombinelondArrowFromStelonps(
+        stelonps = builtStelonps,
+        contelonxt = contelonxt,
+        initialelonmptyRelonsult = ProductPipelonlinelonRelonsult.elonmpty,
+        stelonpsInOrdelonrFromConfig = ProductPipelonlinelonConfig.stelonpsInOrdelonr
       )
 
     /**
-     * Unlike other components and pipelines, [[ProductPipeline]] must be observed in the
-     * [[ProductPipelineBuilder]] directly because the resulting [[ProductPipeline.arrow]]
-     * is run directly without an executor so must contain all stats.
+     * Unlikelon othelonr componelonnts and pipelonlinelons, [[ProductPipelonlinelon]] must belon obselonrvelond in thelon
+     * [[ProductPipelonlinelonBuildelonr]] direlonctly beloncauselon thelon relonsulting [[ProductPipelonlinelon.arrow]]
+     * is run direlonctly without an elonxeloncutor so must contain all stats.
      */
-    val observed =
-      wrapProductPipelineWithExecutorBookkeeping[
-        ProductPipelineRequest[TRequest],
-        ProductPipelineResult[Response]
-      ](context, pipelineIdentifier)(underlying)
+    val obselonrvelond =
+      wrapProductPipelonlinelonWithelonxeloncutorBookkelonelonping[
+        ProductPipelonlinelonRelonquelonst[TRelonquelonst],
+        ProductPipelonlinelonRelonsult[Relonsponselon]
+      ](contelonxt, pipelonlinelonIdelonntifielonr)(undelonrlying)
 
-    val finalArrow: Arrow[ProductPipelineRequest[TRequest], ProductPipelineResult[Response]] =
+    val finalArrow: Arrow[ProductPipelonlinelonRelonquelonst[TRelonquelonst], ProductPipelonlinelonRelonsult[Relonsponselon]] =
       Arrow
-        .letWithArg[
-          ProductPipelineRequest[TRequest],
-          ProductPipelineResult[Response],
-          StringCenterRequestContext](StringCenterRequestContextLetter)(request =>
-          StringCenterRequestContext(
-            request.request.clientContext.languageCode,
-            request.request.clientContext.countryCode
+        .lelontWithArg[
+          ProductPipelonlinelonRelonquelonst[TRelonquelonst],
+          ProductPipelonlinelonRelonsult[Relonsponselon],
+          StringCelonntelonrRelonquelonstContelonxt](StringCelonntelonrRelonquelonstContelonxtLelonttelonr)(relonquelonst =>
+          StringCelonntelonrRelonquelonstContelonxt(
+            relonquelonst.relonquelonst.clielonntContelonxt.languagelonCodelon,
+            relonquelonst.relonquelonst.clielonntContelonxt.countryCodelon
           ))(
           mdcInitArrow
-            .andThen(observed)
-            .onSuccess(result => result.transformedQuery.map(pipelineExecutionLogger(_, result))))
+            .andThelonn(obselonrvelond)
+            .onSuccelonss(relonsult => relonsult.transformelondQuelonry.map(pipelonlinelonelonxeloncutionLoggelonr(_, relonsult))))
 
-    val configFromBuilder = config
-    new ProductPipeline[TRequest, Response] {
-      override private[core] val config: ProductPipelineConfig[TRequest, _, Response] =
-        configFromBuilder
-      override val arrow: Arrow[ProductPipelineRequest[TRequest], ProductPipelineResult[Response]] =
+    val configFromBuildelonr = config
+    nelonw ProductPipelonlinelon[TRelonquelonst, Relonsponselon] {
+      ovelonrridelon privatelon[corelon] val config: ProductPipelonlinelonConfig[TRelonquelonst, _, Relonsponselon] =
+        configFromBuildelonr
+      ovelonrridelon val arrow: Arrow[ProductPipelonlinelonRelonquelonst[TRelonquelonst], ProductPipelonlinelonRelonsult[Relonsponselon]] =
         finalArrow
-      override val identifier: ProductPipelineIdentifier = pipelineIdentifier
-      override val alerts: Seq[Alert] = config.alerts
-      override val debugAccessPolicies: Set[AccessPolicy] = config.debugAccessPolicies
-      override val children: Seq[Component] = allGates ++ childPipelines
+      ovelonrridelon val idelonntifielonr: ProductPipelonlinelonIdelonntifielonr = pipelonlinelonIdelonntifielonr
+      ovelonrridelon val alelonrts: Selonq[Alelonrt] = config.alelonrts
+      ovelonrridelon val delonbugAccelonssPolicielons: Selont[AccelonssPolicy] = config.delonbugAccelonssPolicielons
+      ovelonrridelon val childrelonn: Selonq[Componelonnt] = allGatelons ++ childPipelonlinelons
     }
   }
 }

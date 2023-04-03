@@ -1,63 +1,63 @@
-namespace java com.twitter.simclusters_v2.thriftjava
-namespace py gen.twitter.simclusters_v2.offline_job_internal
-#@namespace scala com.twitter.simclusters_v2.thriftscala
-#@namespace strato com.twitter.simclusters_v2
+namelonspacelon java com.twittelonr.simclustelonrs_v2.thriftjava
+namelonspacelon py gelonn.twittelonr.simclustelonrs_v2.offlinelon_job_intelonrnal
+#@namelonspacelon scala com.twittelonr.simclustelonrs_v2.thriftscala
+#@namelonspacelon strato com.twittelonr.simclustelonrs_v2
 
-include "com/twitter/algebird_internal/algebird.thrift"
+includelon "com/twittelonr/algelonbird_intelonrnal/algelonbird.thrift"
 
-// For internal usage only. Mainly for offline_evaluation.
-// Deprecated. Please use 'online_store/ModelVersion'
-enum PersistedModelVersion {
-  MODEL_20M_145K_dec11 = 1,
-  MODEL_20M_145K_updated = 2,
-  MODEL_20M_145K_2020 = 3,
-  RESERVED_4 = 4,
-  RESERVED_5 = 5
-}(persisted = 'true', hasPersonalData = 'false')
+// For intelonrnal usagelon only. Mainly for offlinelon_elonvaluation.
+// Delonpreloncatelond. Plelonaselon uselon 'onlinelon_storelon/ModelonlVelonrsion'
+elonnum PelonrsistelondModelonlVelonrsion {
+  MODelonL_20M_145K_delonc11 = 1,
+  MODelonL_20M_145K_updatelond = 2,
+  MODelonL_20M_145K_2020 = 3,
+  RelonSelonRVelonD_4 = 4,
+  RelonSelonRVelonD_5 = 5
+}(pelonrsistelond = 'truelon', hasPelonrsonalData = 'falselon')
 
-enum PersistedScoreType {
-  NORMALIZED_FAV_8_HR_HALF_LIFE = 1,
-  NORMALIZED_FOLLOW_8_HR_HALF_LIFE = 2,
-  NORMALIZED_LOG_FAV_8_HR_HALF_LIFE = 3,
-  RESERVED_4 = 4,
-  RESERVED_5 = 5
-}(persisted = 'true', hasPersonalData = 'false')
+elonnum PelonrsistelondScorelonTypelon {
+  NORMALIZelonD_FAV_8_HR_HALF_LIFelon = 1,
+  NORMALIZelonD_FOLLOW_8_HR_HALF_LIFelon = 2,
+  NORMALIZelonD_LOG_FAV_8_HR_HALF_LIFelon = 3,
+  RelonSelonRVelonD_4 = 4,
+  RelonSelonRVelonD_5 = 5
+}(pelonrsistelond = 'truelon', hasPelonrsonalData = 'falselon')
 
-struct PersistedScores {
-  1: optional algebird.DecayedValue score
-}(persisted = 'true', hasPersonalData = 'false')
+struct PelonrsistelondScorelons {
+  1: optional algelonbird.DeloncayelondValuelon scorelon
+}(pelonrsistelond = 'truelon', hasPelonrsonalData = 'falselon')
 
-struct TweetAndClusterScores {
-  1: required i64 tweetId(personalDataType = 'TweetId')
-  2: required i32 clusterId(personalDataType = 'InferredInterests')
-  3: required PersistedModelVersion modelVersion
-  4: required PersistedScores scores(personalDataType = 'EngagementScore')
-  5: optional PersistedScoreType scoreType
-}(persisted="true", hasPersonalData = 'true')
+struct TwelonelontAndClustelonrScorelons {
+  1: relonquirelond i64 twelonelontId(pelonrsonalDataTypelon = 'TwelonelontId')
+  2: relonquirelond i32 clustelonrId(pelonrsonalDataTypelon = 'InfelonrrelondIntelonrelonsts')
+  3: relonquirelond PelonrsistelondModelonlVelonrsion modelonlVelonrsion
+  4: relonquirelond PelonrsistelondScorelons scorelons(pelonrsonalDataTypelon = 'elonngagelonmelonntScorelon')
+  5: optional PelonrsistelondScorelonTypelon scorelonTypelon
+}(pelonrsistelond="truelon", hasPelonrsonalData = 'truelon')
 
-struct TweetTopKClustersWithScores {
-  1: required i64 tweetId(personalDataType = 'TweetId')
-  2: required PersistedModelVersion modelVersion
-  3: required map<i32, PersistedScores> topKClusters(personalDataTypeKey = 'InferredInterests')
-  4: optional PersistedScoreType scoreType
-}(persisted="true", hasPersonalData = 'true')
+struct TwelonelontTopKClustelonrsWithScorelons {
+  1: relonquirelond i64 twelonelontId(pelonrsonalDataTypelon = 'TwelonelontId')
+  2: relonquirelond PelonrsistelondModelonlVelonrsion modelonlVelonrsion
+  3: relonquirelond map<i32, PelonrsistelondScorelons> topKClustelonrs(pelonrsonalDataTypelonKelony = 'InfelonrrelondIntelonrelonsts')
+  4: optional PelonrsistelondScorelonTypelon scorelonTypelon
+}(pelonrsistelond="truelon", hasPelonrsonalData = 'truelon')
 
-struct ClusterTopKTweetsWithScores {
-  1: required i32 clusterId(personalDataType = 'InferredInterests')
-  2: required PersistedModelVersion modelVersion
-  3: required map<i64, PersistedScores> topKTweets(personalDataTypeKey = 'TweetId')
-  4: optional PersistedScoreType scoreType
-}(persisted = 'true', hasPersonalData = 'true')
+struct ClustelonrTopKTwelonelontsWithScorelons {
+  1: relonquirelond i32 clustelonrId(pelonrsonalDataTypelon = 'InfelonrrelondIntelonrelonsts')
+  2: relonquirelond PelonrsistelondModelonlVelonrsion modelonlVelonrsion
+  3: relonquirelond map<i64, PelonrsistelondScorelons> topKTwelonelonts(pelonrsonalDataTypelonKelony = 'TwelonelontId')
+  4: optional PelonrsistelondScorelonTypelon scorelonTypelon
+}(pelonrsistelond = 'truelon', hasPelonrsonalData = 'truelon')
 
-struct QueryAndClusterScores {
-  1: required string query(personalDataType = 'SearchQuery')
-  2: required i32 clusterId
-  3: required PersistedModelVersion modelVersion
-  4: required PersistedScores scores
-}(persisted = 'true', hasPersonalData = 'true')
+struct QuelonryAndClustelonrScorelons {
+  1: relonquirelond string quelonry(pelonrsonalDataTypelon = 'SelonarchQuelonry')
+  2: relonquirelond i32 clustelonrId
+  3: relonquirelond PelonrsistelondModelonlVelonrsion modelonlVelonrsion
+  4: relonquirelond PelonrsistelondScorelons scorelons
+}(pelonrsistelond = 'truelon', hasPelonrsonalData = 'truelon')
 
-struct QueryTopKClustersWithScores {
-  1: required string query(personalDataType = 'SearchQuery')
-  2: required PersistedModelVersion modelVersion
-  3: required map<i32, PersistedScores> topKClusters
-}(persisted = 'true', hasPersonalData = 'true')
+struct QuelonryTopKClustelonrsWithScorelons {
+  1: relonquirelond string quelonry(pelonrsonalDataTypelon = 'SelonarchQuelonry')
+  2: relonquirelond PelonrsistelondModelonlVelonrsion modelonlVelonrsion
+  3: relonquirelond map<i32, PelonrsistelondScorelons> topKClustelonrs
+}(pelonrsistelond = 'truelon', hasPelonrsonalData = 'truelon')

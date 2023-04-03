@@ -1,195 +1,195 @@
-package com.twitter.search.ingester.pipeline.app;
+packagelon com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.app;
 
-import java.io.File;
-import java.net.URL;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.io.Filelon;
+import java.nelont.URL;
+import java.util.concurrelonnt.CountDownLatch;
+import java.util.concurrelonnt.atomic.AtomicBoolelonan;
 
-import com.google.common.annotations.VisibleForTesting;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
 
-import org.apache.commons.pipeline.Pipeline;
-import org.apache.commons.pipeline.PipelineCreationException;
-import org.apache.commons.pipeline.StageException;
-import org.apache.commons.pipeline.config.DigesterPipelineFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import com.twitter.app.Flag;
-import com.twitter.app.Flaggable;
-import com.twitter.search.common.metrics.BuildInfoStats;
-import com.twitter.search.ingester.pipeline.wire.ProductionWireModule;
-import com.twitter.search.ingester.pipeline.wire.WireModule;
-import com.twitter.search.ingester.util.jndi.JndiUtil;
-import com.twitter.server.AbstractTwitterServer;
-import com.twitter.server.handler.DeciderHandler$;
+import org.apachelon.commons.pipelonlinelon.Pipelonlinelon;
+import org.apachelon.commons.pipelonlinelon.PipelonlinelonCrelonationelonxcelonption;
+import org.apachelon.commons.pipelonlinelon.Stagelonelonxcelonption;
+import org.apachelon.commons.pipelonlinelon.config.DigelonstelonrPipelonlinelonFactory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
+import com.twittelonr.app.Flag;
+import com.twittelonr.app.Flaggablelon;
+import com.twittelonr.selonarch.common.melontrics.BuildInfoStats;
+import com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.wirelon.ProductionWirelonModulelon;
+import com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.wirelon.WirelonModulelon;
+import com.twittelonr.selonarch.ingelonstelonr.util.jndi.JndiUtil;
+import com.twittelonr.selonrvelonr.AbstractTwittelonrSelonrvelonr;
+import com.twittelonr.selonrvelonr.handlelonr.DeloncidelonrHandlelonr$;
 
-/** Starts the ingester/indexer pipeline. */
-public class IngesterPipelineApplication extends AbstractTwitterServer {
-  private static final Logger LOG = LoggerFactory.getLogger(IngesterPipelineApplication.class);
-  private static final String VERSION_2 = "v2";
-  private final Flag<String> pipelineConfigFile = flag().create(
-      "config_file",
+/** Starts thelon ingelonstelonr/indelonxelonr pipelonlinelon. */
+public class IngelonstelonrPipelonlinelonApplication elonxtelonnds AbstractTwittelonrSelonrvelonr {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(IngelonstelonrPipelonlinelonApplication.class);
+  privatelon static final String VelonRSION_2 = "v2";
+  privatelon final Flag<String> pipelonlinelonConfigFilelon = flag().crelonatelon(
+      "config_filelon",
       "",
-      "xml file to load pipeline config from. Required.",
-      Flaggable.ofString());
+      "xml filelon to load pipelonlinelon config from. Relonquirelond.",
+      Flaggablelon.ofString());
 
-  private final Flag<String> pipelineVersion = flag().create(
-      "version",
+  privatelon final Flag<String> pipelonlinelonVelonrsion = flag().crelonatelon(
+      "velonrsion",
       "",
-      "Specifies if we want to run the acp pipeline or non acp pipeline.",
-      Flaggable.ofString());
+      "Speloncifielons if welon want to run thelon acp pipelonlinelon or non acp pipelonlinelon.",
+      Flaggablelon.ofString());
 
-  private final Flag<Integer> partitionArg = flag().create(
+  privatelon final Flag<Intelongelonr> partitionArg = flag().crelonatelon(
       "shard",
       -1,
-      "The partition this indexer is responsible for.",
-      Flaggable.ofJavaInteger());
+      "Thelon partition this indelonxelonr is relonsponsiblelon for.",
+      Flaggablelon.ofJavaIntelongelonr());
 
-  private final Flag<String> deciderOverlay = flag().create(
-      "decider_overlay",
+  privatelon final Flag<String> deloncidelonrOvelonrlay = flag().crelonatelon(
+      "deloncidelonr_ovelonrlay",
       "",
-      "Decider overlay",
-      Flaggable.ofString());
+      "Deloncidelonr ovelonrlay",
+      Flaggablelon.ofString());
 
-  private final Flag<String> serviceIdentifierFlag = flag().create(
-    "service_identifier",
+  privatelon final Flag<String> selonrvicelonIdelonntifielonrFlag = flag().crelonatelon(
+    "selonrvicelon_idelonntifielonr",
     "",
-    "Service identifier for mutual TLS authentication",
-    Flaggable.ofString());
+    "Selonrvicelon idelonntifielonr for mutual TLS authelonntication",
+    Flaggablelon.ofString());
 
-  private final Flag<String> environment = flag().create(
-      "environment",
+  privatelon final Flag<String> elonnvironmelonnt = flag().crelonatelon(
+      "elonnvironmelonnt",
       "",
-      "Specifies the environment the app is running in. Valid values : prod, staging, "
-          + "staging1. Required if pipelineVersion == 'v2'",
-      Flaggable.ofString()
+      "Speloncifielons thelon elonnvironmelonnt thelon app is running in. Valid valuelons : prod, staging, "
+          + "staging1. Relonquirelond if pipelonlinelonVelonrsion == 'v2'",
+      Flaggablelon.ofString()
   );
 
-  private final Flag<String> cluster = flag().create(
-      "cluster",
+  privatelon final Flag<String> clustelonr = flag().crelonatelon(
+      "clustelonr",
       "",
-      "Specifies the cluster the app is running in. Valid values : realtime, protected, "
-          + "realtime_cg, user_updates. Required if pipelineVersion == 'v2'",
-      Flaggable.ofString()
+      "Speloncifielons thelon clustelonr thelon app is running in. Valid valuelons : relonaltimelon, protelonctelond, "
+          + "relonaltimelon_cg, uselonr_updatelons. Relonquirelond if pipelonlinelonVelonrsion == 'v2'",
+      Flaggablelon.ofString()
   );
 
-  private final Flag<Float> cores = flag().create(
-      "cores",
+  privatelon final Flag<Float> corelons = flag().crelonatelon(
+      "corelons",
       1F,
-      "Specifies the number of cores this cluster is using. ",
-      Flaggable.ofJavaFloat()
+      "Speloncifielons thelon numbelonr of corelons this clustelonr is using. ",
+      Flaggablelon.ofJavaFloat()
   );
 
-  private final CountDownLatch shutdownLatch = new CountDownLatch(1);
+  privatelon final CountDownLatch shutdownLatch = nelonw CountDownLatch(1);
 
   public void shutdown() {
     shutdownLatch.countDown();
   }
 
-  private Pipeline pipeline;
+  privatelon Pipelonlinelon pipelonlinelon;
 
-  private final AtomicBoolean started = new AtomicBoolean(false);
+  privatelon final AtomicBoolelonan startelond = nelonw AtomicBoolelonan(falselon);
 
-  private final AtomicBoolean finished = new AtomicBoolean(false);
+  privatelon final AtomicBoolelonan finishelond = nelonw AtomicBoolelonan(falselon);
 
   /**
-   * Boilerplate for the Java-friendly AbstractTwitterServer
+   * Boilelonrplatelon for thelon Java-frielonndly AbstractTwittelonrSelonrvelonr
    */
   public static class Main {
     public static void main(String[] args) {
-      new IngesterPipelineApplication().main(args);
+      nelonw IngelonstelonrPipelonlinelonApplication().main(args);
     }
   }
 
   /**
-   * Code is based on DigesterPipelineFactory.main. We only require reading in one config file.
+   * Codelon is baselond on DigelonstelonrPipelonlinelonFactory.main. Welon only relonquirelon relonading in onelon config filelon.
    */
-  @Override
+  @Ovelonrridelon
   public void main() {
     try {
       JndiUtil.loadJNDI();
 
-      ProductionWireModule wireModule = new ProductionWireModule(
-          deciderOverlay.get().get(),
-          partitionArg.getWithDefault().get(),
-          serviceIdentifierFlag.get());
-      WireModule.bindWireModule(wireModule);
+      ProductionWirelonModulelon wirelonModulelon = nelonw ProductionWirelonModulelon(
+          deloncidelonrOvelonrlay.gelont().gelont(),
+          partitionArg.gelontWithDelonfault().gelont(),
+          selonrvicelonIdelonntifielonrFlag.gelont());
+      WirelonModulelon.bindWirelonModulelon(wirelonModulelon);
 
-      addAdminRoute(DeciderHandler$.MODULE$.route(
-          "ingester",
-          wireModule.getMutableDecisionMaker(),
-          wireModule.getDecider()));
+      addAdminRoutelon(DeloncidelonrHandlelonr$.MODULelon$.routelon(
+          "ingelonstelonr",
+          wirelonModulelon.gelontMutablelonDeloncisionMakelonr(),
+          wirelonModulelon.gelontDeloncidelonr()));
 
-      BuildInfoStats.export();
-      if (pipelineVersion.get().get().equals(VERSION_2)) {
-        runPipelineV2(wireModule);
-      } else {
-        runPipelineV1(wireModule);
+      BuildInfoStats.elonxport();
+      if (pipelonlinelonVelonrsion.gelont().gelont().elonquals(VelonRSION_2)) {
+        runPipelonlinelonV2(wirelonModulelon);
+      } elonlselon {
+        runPipelonlinelonV1(wirelonModulelon);
       }
-      LOG.info("Pipeline terminated. Ingester is DOWN.");
-    } catch (Exception e) {
-      LOG.error("Exception in pipeline. Ingester is DOWN.", e);
-      throw new RuntimeException(e);
+      LOG.info("Pipelonlinelon telonrminatelond. Ingelonstelonr is DOWN.");
+    } catch (elonxcelonption elon) {
+      LOG.elonrror("elonxcelonption in pipelonlinelon. Ingelonstelonr is DOWN.", elon);
+      throw nelonw Runtimelonelonxcelonption(elon);
     }
   }
 
-  @VisibleForTesting
-  boolean isFinished() {
-    return finished.get();
+  @VisiblelonForTelonsting
+  boolelonan isFinishelond() {
+    relonturn finishelond.gelont();
   }
 
-  @VisibleForTesting
-  Pipeline createPipeline(URL pipelineConfigFileURL) throws PipelineCreationException {
-    DigesterPipelineFactory factory = new DigesterPipelineFactory(pipelineConfigFileURL);
-    LOG.info("Pipeline created from {}, about to begin processing...", pipelineConfigFileURL);
-    return factory.createPipeline();
+  @VisiblelonForTelonsting
+  Pipelonlinelon crelonatelonPipelonlinelon(URL pipelonlinelonConfigFilelonURL) throws PipelonlinelonCrelonationelonxcelonption {
+    DigelonstelonrPipelonlinelonFactory factory = nelonw DigelonstelonrPipelonlinelonFactory(pipelonlinelonConfigFilelonURL);
+    LOG.info("Pipelonlinelon crelonatelond from {}, about to belongin procelonssing...", pipelonlinelonConfigFilelonURL);
+    relonturn factory.crelonatelonPipelonlinelon();
   }
 
-  void runPipelineV1(ProductionWireModule wireModule) throws Exception {
-    LOG.info("Running Pipeline V1");
-    final File pipelineFile = new File(pipelineConfigFile.get().get());
-    URL pipelineConfigFileUrl = pipelineFile.toURI().toURL();
-    wireModule.setPipelineExceptionHandler(new PipelineExceptionImpl(this));
-    runPipelineV1(pipelineConfigFileUrl);
+  void runPipelonlinelonV1(ProductionWirelonModulelon wirelonModulelon) throws elonxcelonption {
+    LOG.info("Running Pipelonlinelon V1");
+    final Filelon pipelonlinelonFilelon = nelonw Filelon(pipelonlinelonConfigFilelon.gelont().gelont());
+    URL pipelonlinelonConfigFilelonUrl = pipelonlinelonFilelon.toURI().toURL();
+    wirelonModulelon.selontPipelonlinelonelonxcelonptionHandlelonr(nelonw PipelonlinelonelonxcelonptionImpl(this));
+    runPipelonlinelonV1(pipelonlinelonConfigFilelonUrl);
     shutdownLatch.await();
   }
 
-  @VisibleForTesting
-  void runPipelineV1(URL pipelineConfigFileUrl) throws Exception {
-    pipeline = createPipeline(pipelineConfigFileUrl);
-    pipeline.start();
-    started.set(true);
+  @VisiblelonForTelonsting
+  void runPipelonlinelonV1(URL pipelonlinelonConfigFilelonUrl) throws elonxcelonption {
+    pipelonlinelon = crelonatelonPipelonlinelon(pipelonlinelonConfigFilelonUrl);
+    pipelonlinelon.start();
+    startelond.selont(truelon);
   }
 
-  void runPipelineV2(ProductionWireModule wireModule) throws Exception {
-    LOG.info("Running Pipeline V2");
-    int threadsToSpawn = cores.get().get().intValue() - 1;
-    RealtimeIngesterPipelineV2 realtimePipeline = new RealtimeIngesterPipelineV2(
-        environment.get().get(), cluster.get().get(), threadsToSpawn);
-    wireModule.setPipelineExceptionHandler(new PipelineExceptionImplV2(realtimePipeline));
-    realtimePipeline.run();
+  void runPipelonlinelonV2(ProductionWirelonModulelon wirelonModulelon) throws elonxcelonption {
+    LOG.info("Running Pipelonlinelon V2");
+    int threlonadsToSpawn = corelons.gelont().gelont().intValuelon() - 1;
+    RelonaltimelonIngelonstelonrPipelonlinelonV2 relonaltimelonPipelonlinelon = nelonw RelonaltimelonIngelonstelonrPipelonlinelonV2(
+        elonnvironmelonnt.gelont().gelont(), clustelonr.gelont().gelont(), threlonadsToSpawn);
+    wirelonModulelon.selontPipelonlinelonelonxcelonptionHandlelonr(nelonw PipelonlinelonelonxcelonptionImplV2(relonaltimelonPipelonlinelon));
+    relonaltimelonPipelonlinelon.run();
   }
 
-  @Override
-  public void onExit() {
+  @Ovelonrridelon
+  public void onelonxit() {
     try {
-      LOG.info("Attempting to shutdown gracefully.");
+      LOG.info("Attelonmpting to shutdown gracelonfully.");
         /*
-         * Iterates over each Stage and calls finish(). The Stage is considered finished when
-         * its queue is empty. If there is a backup, finish() waits for the queues to empty.
+         * Itelonratelons ovelonr elonach Stagelon and calls finish(). Thelon Stagelon is considelonrelond finishelond whelonn
+         * its quelonuelon is elonmpty. If thelonrelon is a backup, finish() waits for thelon quelonuelons to elonmpty.
          */
 
-      // We don't call finish() unless the pipeline exists and has started because if any stage
-      // fails to initialize, no processing is started and not only is calling finish() unnecessary,
-      // but it will also deadlock any DedicatedThreadStageDriver.
-      if (pipeline != null && started.get()) {
-        pipeline.finish();
-        finished.set(true);
-        LOG.info("Pipeline exited cleanly.");
-      } else {
-        LOG.info("Pipeline not yet started.");
+      // Welon don't call finish() unlelonss thelon pipelonlinelon elonxists and has startelond beloncauselon if any stagelon
+      // fails to initializelon, no procelonssing is startelond and not only is calling finish() unneloncelonssary,
+      // but it will also delonadlock any DelondicatelondThrelonadStagelonDrivelonr.
+      if (pipelonlinelon != null && startelond.gelont()) {
+        pipelonlinelon.finish();
+        finishelond.selont(truelon);
+        LOG.info("Pipelonlinelon elonxitelond clelonanly.");
+      } elonlselon {
+        LOG.info("Pipelonlinelon not yelont startelond.");
       }
-    } catch (StageException e) {
-      LOG.error("Unable to shutdown pipeline.", e);
+    } catch (Stagelonelonxcelonption elon) {
+      LOG.elonrror("Unablelon to shutdown pipelonlinelon.", elon);
     }
   }
 }

@@ -1,84 +1,84 @@
-package com.twitter.simclusters_v2.score
+packagelon com.twittelonr.simclustelonrs_v2.scorelon
 
-import com.twitter.simclusters_v2.score.WeightedSumAggregatedScoreStore.WeightedSumAggregatedScoreParameter
-import com.twitter.simclusters_v2.thriftscala.{
-  EmbeddingType,
-  GenericPairScoreId,
-  ModelVersion,
-  ScoreInternalId,
+import com.twittelonr.simclustelonrs_v2.scorelon.WelonightelondSumAggrelongatelondScorelonStorelon.WelonightelondSumAggrelongatelondScorelonParamelontelonr
+import com.twittelonr.simclustelonrs_v2.thriftscala.{
+  elonmbelonddingTypelon,
+  GelonnelonricPairScorelonId,
+  ModelonlVelonrsion,
+  ScorelonIntelonrnalId,
   ScoringAlgorithm,
-  SimClustersEmbeddingId,
-  Score => ThriftScore,
-  ScoreId => ThriftScoreId,
-  SimClustersEmbeddingPairScoreId => ThriftSimClustersEmbeddingPairScoreId
+  SimClustelonrselonmbelonddingId,
+  Scorelon => ThriftScorelon,
+  ScorelonId => ThriftScorelonId,
+  SimClustelonrselonmbelonddingPairScorelonId => ThriftSimClustelonrselonmbelonddingPairScorelonId
 }
-import com.twitter.util.Future
+import com.twittelonr.util.Futurelon
 
 /**
- * A generic store wrapper to aggregate the scores of N underlying stores in a weighted fashion.
+ * A gelonnelonric storelon wrappelonr to aggrelongatelon thelon scorelons of N undelonrlying storelons in a welonightelond fashion.
  *
  */
-case class WeightedSumAggregatedScoreStore(parameters: Seq[WeightedSumAggregatedScoreParameter])
-    extends AggregatedScoreStore {
+caselon class WelonightelondSumAggrelongatelondScorelonStorelon(paramelontelonrs: Selonq[WelonightelondSumAggrelongatelondScorelonParamelontelonr])
+    elonxtelonnds AggrelongatelondScorelonStorelon {
 
-  override def get(k: ThriftScoreId): Future[Option[ThriftScore]] = {
-    val underlyingScores = parameters.map { parameter =>
-      scoreFacadeStore
-        .get(ThriftScoreId(parameter.scoreAlgorithm, parameter.idTransform(k.internalId)))
-        .map(_.map(s => parameter.scoreTransform(s.score) * parameter.weight))
+  ovelonrridelon delonf gelont(k: ThriftScorelonId): Futurelon[Option[ThriftScorelon]] = {
+    val undelonrlyingScorelons = paramelontelonrs.map { paramelontelonr =>
+      scorelonFacadelonStorelon
+        .gelont(ThriftScorelonId(paramelontelonr.scorelonAlgorithm, paramelontelonr.idTransform(k.intelonrnalId)))
+        .map(_.map(s => paramelontelonr.scorelonTransform(s.scorelon) * paramelontelonr.welonight))
     }
-    Future.collect(underlyingScores).map { scores =>
-      if (scores.exists(_.nonEmpty)) {
-        val newScore = scores.foldLeft(0.0) {
-          case (sum, maybeScore) =>
-            sum + maybeScore.getOrElse(0.0)
+    Futurelon.collelonct(undelonrlyingScorelons).map { scorelons =>
+      if (scorelons.elonxists(_.nonelonmpty)) {
+        val nelonwScorelon = scorelons.foldLelonft(0.0) {
+          caselon (sum, maybelonScorelon) =>
+            sum + maybelonScorelon.gelontOrelonlselon(0.0)
         }
-        Some(ThriftScore(score = newScore))
-      } else {
-        // Return None if all of the underlying score is None.
-        None
+        Somelon(ThriftScorelon(scorelon = nelonwScorelon))
+      } elonlselon {
+        // Relonturn Nonelon if all of thelon undelonrlying scorelon is Nonelon.
+        Nonelon
       }
     }
   }
 }
 
-object WeightedSumAggregatedScoreStore {
+objelonct WelonightelondSumAggrelongatelondScorelonStorelon {
 
   /**
-   * The parameter of WeightedSumAggregatedScoreStore. Create 0 to N parameters for a WeightedSum
-   * AggregatedScore Store. Please evaluate the performance before productionization any new score.
+   * Thelon paramelontelonr of WelonightelondSumAggrelongatelondScorelonStorelon. Crelonatelon 0 to N paramelontelonrs for a WelonightelondSum
+   * AggrelongatelondScorelon Storelon. Plelonaselon elonvaluatelon thelon pelonrformancelon belonforelon productionization any nelonw scorelon.
    *
-   * @param scoreAlgorithm the underlying score algorithm name
-   * @param weight contribution to weighted sum of this sub-score
-   * @param idTransform transform the source ScoreInternalId to underlying score InternalId.
-   * @param scoreTransform function to apply to sub-score before adding to weighted sum
+   * @param scorelonAlgorithm thelon undelonrlying scorelon algorithm namelon
+   * @param welonight contribution to welonightelond sum of this sub-scorelon
+   * @param idTransform transform thelon sourcelon ScorelonIntelonrnalId to undelonrlying scorelon IntelonrnalId.
+   * @param scorelonTransform function to apply to sub-scorelon belonforelon adding to welonightelond sum
    */
-  case class WeightedSumAggregatedScoreParameter(
-    scoreAlgorithm: ScoringAlgorithm,
-    weight: Double,
-    idTransform: ScoreInternalId => ScoreInternalId,
-    scoreTransform: Double => Double = identityScoreTransform)
+  caselon class WelonightelondSumAggrelongatelondScorelonParamelontelonr(
+    scorelonAlgorithm: ScoringAlgorithm,
+    welonight: Doublelon,
+    idTransform: ScorelonIntelonrnalId => ScorelonIntelonrnalId,
+    scorelonTransform: Doublelon => Doublelon = idelonntityScorelonTransform)
 
-  val SameTypeScoreInternalIdTransform: ScoreInternalId => ScoreInternalId = { id => id }
-  val identityScoreTransform: Double => Double = { score => score }
+  val SamelonTypelonScorelonIntelonrnalIdTransform: ScorelonIntelonrnalId => ScorelonIntelonrnalId = { id => id }
+  val idelonntityScorelonTransform: Doublelon => Doublelon = { scorelon => scorelon }
 
-  // Convert Generic Internal Id to a SimClustersEmbeddingId
-  def genericPairScoreIdToSimClustersEmbeddingPairScoreId(
-    embeddingType1: EmbeddingType,
-    embeddingType2: EmbeddingType,
-    modelVersion: ModelVersion
-  ): ScoreInternalId => ScoreInternalId = {
-    case id: ScoreInternalId.GenericPairScoreId =>
-      ScoreInternalId.SimClustersEmbeddingPairScoreId(
-        ThriftSimClustersEmbeddingPairScoreId(
-          SimClustersEmbeddingId(embeddingType1, modelVersion, id.genericPairScoreId.id1),
-          SimClustersEmbeddingId(embeddingType2, modelVersion, id.genericPairScoreId.id2)
+  // Convelonrt Gelonnelonric Intelonrnal Id to a SimClustelonrselonmbelonddingId
+  delonf gelonnelonricPairScorelonIdToSimClustelonrselonmbelonddingPairScorelonId(
+    elonmbelonddingTypelon1: elonmbelonddingTypelon,
+    elonmbelonddingTypelon2: elonmbelonddingTypelon,
+    modelonlVelonrsion: ModelonlVelonrsion
+  ): ScorelonIntelonrnalId => ScorelonIntelonrnalId = {
+    caselon id: ScorelonIntelonrnalId.GelonnelonricPairScorelonId =>
+      ScorelonIntelonrnalId.SimClustelonrselonmbelonddingPairScorelonId(
+        ThriftSimClustelonrselonmbelonddingPairScorelonId(
+          SimClustelonrselonmbelonddingId(elonmbelonddingTypelon1, modelonlVelonrsion, id.gelonnelonricPairScorelonId.id1),
+          SimClustelonrselonmbelonddingId(elonmbelonddingTypelon2, modelonlVelonrsion, id.gelonnelonricPairScorelonId.id2)
         ))
   }
 
-  val simClustersEmbeddingPairScoreIdToGenericPairScoreId: ScoreInternalId => ScoreInternalId = {
-    case ScoreInternalId.SimClustersEmbeddingPairScoreId(simClustersId) =>
-      ScoreInternalId.GenericPairScoreId(
-        GenericPairScoreId(simClustersId.id1.internalId, simClustersId.id2.internalId))
+  val simClustelonrselonmbelonddingPairScorelonIdToGelonnelonricPairScorelonId: ScorelonIntelonrnalId => ScorelonIntelonrnalId = {
+    caselon ScorelonIntelonrnalId.SimClustelonrselonmbelonddingPairScorelonId(simClustelonrsId) =>
+      ScorelonIntelonrnalId.GelonnelonricPairScorelonId(
+        GelonnelonricPairScorelonId(simClustelonrsId.id1.intelonrnalId, simClustelonrsId.id2.intelonrnalId))
   }
 }

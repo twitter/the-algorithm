@@ -1,10 +1,10 @@
-#@namespace scala com.twitter.ann.serialization.thriftscala
+#@namelonspacelon scala com.twittelonr.ann.selonrialization.thriftscala
 
-include "com/twitter/ml/api/embedding.thrift"
+includelon "com/twittelonr/ml/api/elonmbelondding.thrift"
 /**
-* Thrift schema for storing embeddings in a file
+* Thrift schelonma for storing elonmbelonddings in a filelon
 */
-struct PersistedEmbedding {
-  1: required binary id
-  2: required embedding.Embedding embedding
-}(persisted = 'true')
+struct Pelonrsistelondelonmbelondding {
+  1: relonquirelond binary id
+  2: relonquirelond elonmbelondding.elonmbelondding elonmbelondding
+}(pelonrsistelond = 'truelon')

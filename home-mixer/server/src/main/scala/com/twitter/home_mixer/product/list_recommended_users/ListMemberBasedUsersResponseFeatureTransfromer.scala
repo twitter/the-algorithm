@@ -1,21 +1,21 @@
-package com.twitter.home_mixer.product.list_recommended_users
+packagelon com.twittelonr.homelon_mixelonr.product.list_reloncommelonndelond_uselonrs
 
-import com.twitter.hermit.candidate.{thriftscala => t}
-import com.twitter.home_mixer.product.list_recommended_users.model.ListFeatures.ScoreFeature
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
-import com.twitter.product_mixer.core.model.common.identifier.TransformerIdentifier
+import com.twittelonr.helonrmit.candidatelon.{thriftscala => t}
+import com.twittelonr.homelon_mixelonr.product.list_reloncommelonndelond_uselonrs.modelonl.ListFelonaturelons.ScorelonFelonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMapBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.transformelonr.CandidatelonFelonaturelonTransformelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.TransformelonrIdelonntifielonr
 
-object ListMemberBasedUsersResponseFeatureTransfromer
-    extends CandidateFeatureTransformer[t.Candidate] {
+objelonct ListMelonmbelonrBaselondUselonrsRelonsponselonFelonaturelonTransfromelonr
+    elonxtelonnds CandidatelonFelonaturelonTransformelonr[t.Candidatelon] {
 
-  override val identifier: TransformerIdentifier = TransformerIdentifier("ListMemberBasedUsers")
+  ovelonrridelon val idelonntifielonr: TransformelonrIdelonntifielonr = TransformelonrIdelonntifielonr("ListMelonmbelonrBaselondUselonrs")
 
-  override val features: Set[Feature[_, _]] = Set(ScoreFeature)
+  ovelonrridelon val felonaturelons: Selont[Felonaturelon[_, _]] = Selont(ScorelonFelonaturelon)
 
-  override def transform(candidate: t.Candidate): FeatureMap = FeatureMapBuilder()
-    .add(ScoreFeature, candidate.score)
+  ovelonrridelon delonf transform(candidatelon: t.Candidatelon): FelonaturelonMap = FelonaturelonMapBuildelonr()
+    .add(ScorelonFelonaturelon, candidatelon.scorelon)
     .build()
 }

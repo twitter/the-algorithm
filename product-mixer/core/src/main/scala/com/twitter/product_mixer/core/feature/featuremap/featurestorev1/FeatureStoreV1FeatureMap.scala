@@ -1,191 +1,191 @@
-package com.twitter.product_mixer.core.feature.featuremap.featurestorev1
+packagelon com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.felonaturelonstorelonv1
 
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.featurestore.lib.EntityId
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.MissingFeatureException
-import com.twitter.product_mixer.core.feature.featurestorev1.FeatureStoreV1CandidateFeature
-import com.twitter.product_mixer.core.feature.featurestorev1.FeatureStoreV1CandidateFeatureGroup
-import com.twitter.product_mixer.core.feature.featurestorev1.FeatureStoreV1QueryFeature
-import com.twitter.product_mixer.core.feature.featurestorev1.FeatureStoreV1QueryFeatureGroup
-import com.twitter.product_mixer.core.feature.featurestorev1.featurevalue.FeatureStoreV1ResponseFeature
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.util.Try
+import com.twittelonr.ml.api.DataReloncord
+import com.twittelonr.ml.felonaturelonstorelon.lib.elonntityId
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.MissingFelonaturelonelonxcelonption
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonstorelonv1.FelonaturelonStorelonV1CandidatelonFelonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonstorelonv1.FelonaturelonStorelonV1CandidatelonFelonaturelonGroup
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonstorelonv1.FelonaturelonStorelonV1QuelonryFelonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonstorelonv1.FelonaturelonStorelonV1QuelonryFelonaturelonGroup
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonstorelonv1.felonaturelonvaluelon.FelonaturelonStorelonV1RelonsponselonFelonaturelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.util.Try
 
-object FeatureStoreV1FeatureMap {
+objelonct FelonaturelonStorelonV1FelonaturelonMap {
 
   /**
-   * Implicitly add convenience accessors for FeatureStoreV1 features in [[FeatureMap]]. Note that
-   * we cannot add these methods directly to [[FeatureMap]] because it would introduce a circular
-   * dependency ([[PipelineQuery]] depends on [[FeatureMap]], and the methods below depend on
-   * [[PipelineQuery]])
+   * Implicitly add convelonnielonncelon accelonssors for FelonaturelonStorelonV1 felonaturelons in [[FelonaturelonMap]]. Notelon that
+   * welon cannot add thelonselon melonthods direlonctly to [[FelonaturelonMap]] beloncauselon it would introducelon a circular
+   * delonpelonndelonncy ([[PipelonlinelonQuelonry]] delonpelonnds on [[FelonaturelonMap]], and thelon melonthods belonlow delonpelonnd on
+   * [[PipelonlinelonQuelonry]])
    *
-   * @param featureMap the featureMap we are wrapping
-   * @note The FeatureStoreV1Feature::defaultValue set on the BoundFeature is only used and set
-   *       during PredictionRecord to DataRecord conversion. Therefore, the default will not be set
-   *       on the PredictionRecord value if reading from it directly, and as such for convenience
-   *       the defaultValue is manually returned during retrieval from PredictionRecord.
-   * @note the Value generic type on the methods below cannot be passed to
-   *       FeatureStoreV1QueryFeature's Value generic type. While this is actually the same type,
-   *       (note the explicit type cast back to Value), we must instead use an existential on
-   *       FeatureStoreV1QueryFeature since it is constructed with an existential for the Value
-   *       generic (see [[FeatureStoreV1QueryFeature]] and [[FeatureStoreV1CandidateFeature]])
+   * @param felonaturelonMap thelon felonaturelonMap welon arelon wrapping
+   * @notelon Thelon FelonaturelonStorelonV1Felonaturelon::delonfaultValuelon selont on thelon BoundFelonaturelon is only uselond and selont
+   *       during PrelondictionReloncord to DataReloncord convelonrsion. Thelonrelonforelon, thelon delonfault will not belon selont
+   *       on thelon PrelondictionReloncord valuelon if relonading from it direlonctly, and as such for convelonnielonncelon
+   *       thelon delonfaultValuelon is manually relonturnelond during relontrielonval from PrelondictionReloncord.
+   * @notelon thelon Valuelon gelonnelonric typelon on thelon melonthods belonlow cannot belon passelond to
+   *       FelonaturelonStorelonV1QuelonryFelonaturelon's Valuelon gelonnelonric typelon. Whilelon this is actually thelon samelon typelon,
+   *       (notelon thelon elonxplicit typelon cast back to Valuelon), welon must instelonad uselon an elonxistelonntial on
+   *       FelonaturelonStorelonV1QuelonryFelonaturelon sincelon it is constructelond with an elonxistelonntial for thelon Valuelon
+   *       gelonnelonric (selonelon [[FelonaturelonStorelonV1QuelonryFelonaturelon]] and [[FelonaturelonStorelonV1CandidatelonFelonaturelon]])
    */
-  implicit class FeatureStoreV1FeatureMapAccessors(private val featureMap: FeatureMap) {
+  implicit class FelonaturelonStorelonV1FelonaturelonMapAccelonssors(privatelon val felonaturelonMap: FelonaturelonMap) {
 
-    def getFeatureStoreV1QueryFeature[Query <: PipelineQuery, Value](
-      feature: FeatureStoreV1QueryFeature[Query, _ <: EntityId, Value]
-    ): Value =
-      getOrElseFeatureStoreV1QueryFeature(
-        feature,
-        feature.defaultValue.getOrElse {
-          throw MissingFeatureException(feature)
+    delonf gelontFelonaturelonStorelonV1QuelonryFelonaturelon[Quelonry <: PipelonlinelonQuelonry, Valuelon](
+      felonaturelon: FelonaturelonStorelonV1QuelonryFelonaturelon[Quelonry, _ <: elonntityId, Valuelon]
+    ): Valuelon =
+      gelontOrelonlselonFelonaturelonStorelonV1QuelonryFelonaturelon(
+        felonaturelon,
+        felonaturelon.delonfaultValuelon.gelontOrelonlselon {
+          throw MissingFelonaturelonelonxcelonption(felonaturelon)
         })
 
-    def getFeatureStoreV1QueryFeatureTry[Query <: PipelineQuery, Value](
-      feature: FeatureStoreV1QueryFeature[Query, _ <: EntityId, Value]
-    ): Try[Value] =
-      Try(getFeatureStoreV1QueryFeature(feature))
+    delonf gelontFelonaturelonStorelonV1QuelonryFelonaturelonTry[Quelonry <: PipelonlinelonQuelonry, Valuelon](
+      felonaturelon: FelonaturelonStorelonV1QuelonryFelonaturelon[Quelonry, _ <: elonntityId, Valuelon]
+    ): Try[Valuelon] =
+      Try(gelontFelonaturelonStorelonV1QuelonryFelonaturelon(felonaturelon))
 
-    def getOrElseFeatureStoreV1QueryFeature[Query <: PipelineQuery, Value](
-      feature: FeatureStoreV1QueryFeature[Query, _ <: EntityId, Value],
-      default: => Value
-    ): Value = {
+    delonf gelontOrelonlselonFelonaturelonStorelonV1QuelonryFelonaturelon[Quelonry <: PipelonlinelonQuelonry, Valuelon](
+      felonaturelon: FelonaturelonStorelonV1QuelonryFelonaturelon[Quelonry, _ <: elonntityId, Valuelon],
+      delonfault: => Valuelon
+    ): Valuelon = {
 
       /**
-       * FeatureStoreV1ResponseFeature should never be missing from the FeatureMap as FSv1 is
-       * guaranteed to return a prediction record per feature store request. However, this may be
-       * called on candidates that never hydrated FSv1 features. For example by
-       * [[com.twitter.product_mixer.component_library.selector.sorter.featurestorev1.FeatureStoreV1FeatureValueSorter]]
+       * FelonaturelonStorelonV1RelonsponselonFelonaturelon should nelonvelonr belon missing from thelon FelonaturelonMap as FSv1 is
+       * guarantelonelond to relonturn a prelondiction reloncord pelonr felonaturelon storelon relonquelonst. Howelonvelonr, this may belon
+       * callelond on candidatelons that nelonvelonr hydratelond FSv1 felonaturelons. For elonxamplelon by
+       * [[com.twittelonr.product_mixelonr.componelonnt_library.selonlelonctor.sortelonr.felonaturelonstorelonv1.FelonaturelonStorelonV1FelonaturelonValuelonSortelonr]]
        */
-      val featureStoreV1FeatureValueOpt = featureMap.getTry(FeatureStoreV1ResponseFeature).toOption
+      val felonaturelonStorelonV1FelonaturelonValuelonOpt = felonaturelonMap.gelontTry(FelonaturelonStorelonV1RelonsponselonFelonaturelon).toOption
 
-      val dataRecordValue: Option[Value] = featureStoreV1FeatureValueOpt.flatMap {
-        featureStoreV1FeatureValue =>
-          featureStoreV1FeatureValue.richDataRecord.getFeatureValueOpt(
-            feature.boundFeature.mlApiFeature)(feature.fromDataRecordValue)
+      val dataReloncordValuelon: Option[Valuelon] = felonaturelonStorelonV1FelonaturelonValuelonOpt.flatMap {
+        felonaturelonStorelonV1FelonaturelonValuelon =>
+          felonaturelonStorelonV1FelonaturelonValuelon.richDataReloncord.gelontFelonaturelonValuelonOpt(
+            felonaturelon.boundFelonaturelon.mlApiFelonaturelon)(felonaturelon.fromDataReloncordValuelon)
       }
 
-      dataRecordValue.getOrElse(default)
+      dataReloncordValuelon.gelontOrelonlselon(delonfault)
     }
 
-    def getFeatureStoreV1CandidateFeature[
-      Query <: PipelineQuery,
-      Candidate <: UniversalNoun[Any],
-      Value
+    delonf gelontFelonaturelonStorelonV1CandidatelonFelonaturelon[
+      Quelonry <: PipelonlinelonQuelonry,
+      Candidatelon <: UnivelonrsalNoun[Any],
+      Valuelon
     ](
-      feature: FeatureStoreV1CandidateFeature[Query, Candidate, _ <: EntityId, Value]
-    ): Value =
-      getOrElseFeatureStoreV1CandidateFeature(
-        feature,
-        feature.defaultValue.getOrElse {
-          throw MissingFeatureException(feature)
+      felonaturelon: FelonaturelonStorelonV1CandidatelonFelonaturelon[Quelonry, Candidatelon, _ <: elonntityId, Valuelon]
+    ): Valuelon =
+      gelontOrelonlselonFelonaturelonStorelonV1CandidatelonFelonaturelon(
+        felonaturelon,
+        felonaturelon.delonfaultValuelon.gelontOrelonlselon {
+          throw MissingFelonaturelonelonxcelonption(felonaturelon)
         })
 
-    def getFeatureStoreV1CandidateFeatureTry[
-      Query <: PipelineQuery,
-      Candidate <: UniversalNoun[Any],
-      Value
+    delonf gelontFelonaturelonStorelonV1CandidatelonFelonaturelonTry[
+      Quelonry <: PipelonlinelonQuelonry,
+      Candidatelon <: UnivelonrsalNoun[Any],
+      Valuelon
     ](
-      feature: FeatureStoreV1CandidateFeature[Query, Candidate, _ <: EntityId, Value]
-    ): Try[Value] =
-      Try(getFeatureStoreV1CandidateFeature(feature))
+      felonaturelon: FelonaturelonStorelonV1CandidatelonFelonaturelon[Quelonry, Candidatelon, _ <: elonntityId, Valuelon]
+    ): Try[Valuelon] =
+      Try(gelontFelonaturelonStorelonV1CandidatelonFelonaturelon(felonaturelon))
 
-    def getOrElseFeatureStoreV1CandidateFeature[
-      Query <: PipelineQuery,
-      Candidate <: UniversalNoun[Any],
-      Value
+    delonf gelontOrelonlselonFelonaturelonStorelonV1CandidatelonFelonaturelon[
+      Quelonry <: PipelonlinelonQuelonry,
+      Candidatelon <: UnivelonrsalNoun[Any],
+      Valuelon
     ](
-      feature: FeatureStoreV1CandidateFeature[Query, Candidate, _ <: EntityId, Value],
-      default: => Value
-    ): Value = {
+      felonaturelon: FelonaturelonStorelonV1CandidatelonFelonaturelon[Quelonry, Candidatelon, _ <: elonntityId, Valuelon],
+      delonfault: => Valuelon
+    ): Valuelon = {
 
       /**
-       * FeatureStoreV1ResponseFeature should never be missing from the FeatureMap as FSv1 is
-       * guaranteed to return a prediction record per feature store request. However, this may be
-       * called on candidates that never hydrated FSv1 features. For example by
-       * [[com.twitter.product_mixer.component_library.selector.sorter.featurestorev1.FeatureStoreV1FeatureValueSorter]]
+       * FelonaturelonStorelonV1RelonsponselonFelonaturelon should nelonvelonr belon missing from thelon FelonaturelonMap as FSv1 is
+       * guarantelonelond to relonturn a prelondiction reloncord pelonr felonaturelon storelon relonquelonst. Howelonvelonr, this may belon
+       * callelond on candidatelons that nelonvelonr hydratelond FSv1 felonaturelons. For elonxamplelon by
+       * [[com.twittelonr.product_mixelonr.componelonnt_library.selonlelonctor.sortelonr.felonaturelonstorelonv1.FelonaturelonStorelonV1FelonaturelonValuelonSortelonr]]
        */
-      val featureStoreV1FeatureValueOpt = featureMap.getTry(FeatureStoreV1ResponseFeature).toOption
+      val felonaturelonStorelonV1FelonaturelonValuelonOpt = felonaturelonMap.gelontTry(FelonaturelonStorelonV1RelonsponselonFelonaturelon).toOption
 
-      val dataRecordValue: Option[Value] = featureStoreV1FeatureValueOpt.flatMap {
-        featureStoreV1FeatureValue =>
-          featureStoreV1FeatureValue.richDataRecord.getFeatureValueOpt(
-            feature.boundFeature.mlApiFeature)(feature.fromDataRecordValue)
+      val dataReloncordValuelon: Option[Valuelon] = felonaturelonStorelonV1FelonaturelonValuelonOpt.flatMap {
+        felonaturelonStorelonV1FelonaturelonValuelon =>
+          felonaturelonStorelonV1FelonaturelonValuelon.richDataReloncord.gelontFelonaturelonValuelonOpt(
+            felonaturelon.boundFelonaturelon.mlApiFelonaturelon)(felonaturelon.fromDataReloncordValuelon)
       }
 
-      dataRecordValue.getOrElse(default)
+      dataReloncordValuelon.gelontOrelonlselon(delonfault)
     }
 
     /**
-     * Get queryFeatureGroup, which is store in the featureMap as a DataRecordInAFeature
-     * It doesn't have the mlApiFeature as other regular FeatureStoreV1 features
-     * Please refer to [[com.twitter.product_mixer.core.feature.datarecord.DataRecordInAFeature]] scaladoc for more details
+     * Gelont quelonryFelonaturelonGroup, which is storelon in thelon felonaturelonMap as a DataReloncordInAFelonaturelon
+     * It doelonsn't havelon thelon mlApiFelonaturelon as othelonr relongular FelonaturelonStorelonV1 felonaturelons
+     * Plelonaselon relonfelonr to [[com.twittelonr.product_mixelonr.corelon.felonaturelon.datareloncord.DataReloncordInAFelonaturelon]] scaladoc for morelon delontails
      */
-    def getFeatureStoreV1QueryFeatureGroup[Query <: PipelineQuery](
-      featureGroup: FeatureStoreV1QueryFeatureGroup[Query, _ <: EntityId]
-    ): DataRecord =
-      getOrElseFeatureStoreV1QueryFeatureGroup(
-        featureGroup,
-        throw MissingFeatureException(featureGroup)
+    delonf gelontFelonaturelonStorelonV1QuelonryFelonaturelonGroup[Quelonry <: PipelonlinelonQuelonry](
+      felonaturelonGroup: FelonaturelonStorelonV1QuelonryFelonaturelonGroup[Quelonry, _ <: elonntityId]
+    ): DataReloncord =
+      gelontOrelonlselonFelonaturelonStorelonV1QuelonryFelonaturelonGroup(
+        felonaturelonGroup,
+        throw MissingFelonaturelonelonxcelonption(felonaturelonGroup)
       )
 
-    def getFeatureStoreV1CandidateFeatureGroupTry[Query <: PipelineQuery](
-      featureGroup: FeatureStoreV1QueryFeatureGroup[Query, _ <: EntityId]
-    ): Try[DataRecord] =
-      Try(getFeatureStoreV1QueryFeatureGroup(featureGroup))
+    delonf gelontFelonaturelonStorelonV1CandidatelonFelonaturelonGroupTry[Quelonry <: PipelonlinelonQuelonry](
+      felonaturelonGroup: FelonaturelonStorelonV1QuelonryFelonaturelonGroup[Quelonry, _ <: elonntityId]
+    ): Try[DataReloncord] =
+      Try(gelontFelonaturelonStorelonV1QuelonryFelonaturelonGroup(felonaturelonGroup))
 
-    def getOrElseFeatureStoreV1QueryFeatureGroup[Query <: PipelineQuery](
-      featureGroup: FeatureStoreV1QueryFeatureGroup[Query, _ <: EntityId],
-      default: => DataRecord
-    ): DataRecord = {
-      featureMap.getTry(featureGroup).toOption.getOrElse(default)
+    delonf gelontOrelonlselonFelonaturelonStorelonV1QuelonryFelonaturelonGroup[Quelonry <: PipelonlinelonQuelonry](
+      felonaturelonGroup: FelonaturelonStorelonV1QuelonryFelonaturelonGroup[Quelonry, _ <: elonntityId],
+      delonfault: => DataReloncord
+    ): DataReloncord = {
+      felonaturelonMap.gelontTry(felonaturelonGroup).toOption.gelontOrelonlselon(delonfault)
     }
 
     /**
-     * Get candidateFeatureGroup, which is store in the featureMap as a DataRecordInAFeature
-     * It doesn't have the mlApiFeature as other regular FeatureStoreV1 features
-     * Please refer to [[com.twitter.product_mixer.core.feature.datarecord.DataRecordInAFeature]] scaladoc for more details
+     * Gelont candidatelonFelonaturelonGroup, which is storelon in thelon felonaturelonMap as a DataReloncordInAFelonaturelon
+     * It doelonsn't havelon thelon mlApiFelonaturelon as othelonr relongular FelonaturelonStorelonV1 felonaturelons
+     * Plelonaselon relonfelonr to [[com.twittelonr.product_mixelonr.corelon.felonaturelon.datareloncord.DataReloncordInAFelonaturelon]] scaladoc for morelon delontails
      */
-    def getFeatureStoreV1CandidateFeatureGroup[
-      Query <: PipelineQuery,
-      Candidate <: UniversalNoun[Any]
+    delonf gelontFelonaturelonStorelonV1CandidatelonFelonaturelonGroup[
+      Quelonry <: PipelonlinelonQuelonry,
+      Candidatelon <: UnivelonrsalNoun[Any]
     ](
-      featureGroup: FeatureStoreV1CandidateFeatureGroup[Query, Candidate, _ <: EntityId]
-    ): DataRecord =
-      getOrElseFeatureStoreV1CandidateFeatureGroup(
-        featureGroup,
-        throw MissingFeatureException(featureGroup)
+      felonaturelonGroup: FelonaturelonStorelonV1CandidatelonFelonaturelonGroup[Quelonry, Candidatelon, _ <: elonntityId]
+    ): DataReloncord =
+      gelontOrelonlselonFelonaturelonStorelonV1CandidatelonFelonaturelonGroup(
+        felonaturelonGroup,
+        throw MissingFelonaturelonelonxcelonption(felonaturelonGroup)
       )
 
-    def getFeatureStoreV1CandidateFeatureGroupTry[
-      Query <: PipelineQuery,
-      Candidate <: UniversalNoun[Any]
+    delonf gelontFelonaturelonStorelonV1CandidatelonFelonaturelonGroupTry[
+      Quelonry <: PipelonlinelonQuelonry,
+      Candidatelon <: UnivelonrsalNoun[Any]
     ](
-      featureGroup: FeatureStoreV1CandidateFeatureGroup[Query, Candidate, _ <: EntityId]
-    ): Try[DataRecord] =
-      Try(getFeatureStoreV1CandidateFeatureGroup(featureGroup))
+      felonaturelonGroup: FelonaturelonStorelonV1CandidatelonFelonaturelonGroup[Quelonry, Candidatelon, _ <: elonntityId]
+    ): Try[DataReloncord] =
+      Try(gelontFelonaturelonStorelonV1CandidatelonFelonaturelonGroup(felonaturelonGroup))
 
-    def getOrElseFeatureStoreV1CandidateFeatureGroup[
-      Query <: PipelineQuery,
-      Candidate <: UniversalNoun[Any]
+    delonf gelontOrelonlselonFelonaturelonStorelonV1CandidatelonFelonaturelonGroup[
+      Quelonry <: PipelonlinelonQuelonry,
+      Candidatelon <: UnivelonrsalNoun[Any]
     ](
-      featureGroup: FeatureStoreV1CandidateFeatureGroup[Query, Candidate, _ <: EntityId],
-      default: => DataRecord
-    ): DataRecord = {
-      featureMap.getTry(featureGroup).toOption.getOrElse(default)
+      felonaturelonGroup: FelonaturelonStorelonV1CandidatelonFelonaturelonGroup[Quelonry, Candidatelon, _ <: elonntityId],
+      delonfault: => DataReloncord
+    ): DataReloncord = {
+      felonaturelonMap.gelontTry(felonaturelonGroup).toOption.gelontOrelonlselon(delonfault)
     }
 
-    def getOrElseFeatureStoreV1FeatureDataRecord(
-      default: => DataRecord
+    delonf gelontOrelonlselonFelonaturelonStorelonV1FelonaturelonDataReloncord(
+      delonfault: => DataReloncord
     ) = {
-      val featureStoreV1FeatureValueOpt = featureMap.getTry(FeatureStoreV1ResponseFeature).toOption
+      val felonaturelonStorelonV1FelonaturelonValuelonOpt = felonaturelonMap.gelontTry(FelonaturelonStorelonV1RelonsponselonFelonaturelon).toOption
 
-      featureStoreV1FeatureValueOpt
-        .map { featureStoreV1FeatureValue =>
-          featureStoreV1FeatureValue.richDataRecord.getRecord
-        }.getOrElse(default)
+      felonaturelonStorelonV1FelonaturelonValuelonOpt
+        .map { felonaturelonStorelonV1FelonaturelonValuelon =>
+          felonaturelonStorelonV1FelonaturelonValuelon.richDataReloncord.gelontReloncord
+        }.gelontOrelonlselon(delonfault)
     }
   }
 }

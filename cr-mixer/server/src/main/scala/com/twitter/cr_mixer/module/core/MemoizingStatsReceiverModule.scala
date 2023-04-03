@@ -1,12 +1,12 @@
-package com.twitter.cr_mixer.module.core
+packagelon com.twittelonr.cr_mixelonr.modulelon.corelon
 
-import com.twitter.finagle.stats.LoadedStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
-import com.twitter.servo.util.MemoizingStatsReceiver
+import com.twittelonr.finaglelon.stats.LoadelondStatsReloncelonivelonr
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.injelonct.TwittelonrModulelon
+import com.twittelonr.selonrvo.util.MelonmoizingStatsReloncelonivelonr
 
-object MemoizingStatsReceiverModule extends TwitterModule {
-  override def configure(): Unit = {
-    bind[StatsReceiver].toInstance(new MemoizingStatsReceiver(LoadedStatsReceiver))
+objelonct MelonmoizingStatsReloncelonivelonrModulelon elonxtelonnds TwittelonrModulelon {
+  ovelonrridelon delonf configurelon(): Unit = {
+    bind[StatsReloncelonivelonr].toInstancelon(nelonw MelonmoizingStatsReloncelonivelonr(LoadelondStatsReloncelonivelonr))
   }
 }

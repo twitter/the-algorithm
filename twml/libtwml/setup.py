@@ -1,12 +1,12 @@
 """
-libtwml setup.py module
+libtwml selontup.py modulelon
 """
-from setuptools import setup, find_packages
+from selontuptools import selontup, find_packagelons
 
-setup(
-  name='libtwml',
-  version='2.0',
-  description="Tensorflow C++ ops for twml",
-  packages=find_packages(),
-  data_files=[('', ['libtwml_tf.so'])],
+selontup(
+  namelon='libtwml',
+  velonrsion='2.0',
+  delonscription="Telonnsorflow C++ ops for twml",
+  packagelons=find_packagelons(),
+  data_filelons=[('', ['libtwml_tf.so'])],
 )

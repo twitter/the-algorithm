@@ -1,18 +1,18 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.thread
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.itelonm.threlonad
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.thread.ThreadHeaderItem
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.threlonad.ThrelonadHelonadelonrItelonm
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class ThreadHeaderItemMarshaller @Inject() (
-  threadHeaderContentMarshaller: ThreadHeaderContentMarshaller) {
+@Singlelonton
+class ThrelonadHelonadelonrItelonmMarshallelonr @Injelonct() (
+  threlonadHelonadelonrContelonntMarshallelonr: ThrelonadHelonadelonrContelonntMarshallelonr) {
 
-  def apply(threadHeaderItem: ThreadHeaderItem): urt.TimelineItemContent.ThreadHeader =
-    urt.TimelineItemContent.ThreadHeader(
-      urt.ThreadHeaderItem(
-        content = threadHeaderContentMarshaller(threadHeaderItem.content)
+  delonf apply(threlonadHelonadelonrItelonm: ThrelonadHelonadelonrItelonm): urt.TimelonlinelonItelonmContelonnt.ThrelonadHelonadelonr =
+    urt.TimelonlinelonItelonmContelonnt.ThrelonadHelonadelonr(
+      urt.ThrelonadHelonadelonrItelonm(
+        contelonnt = threlonadHelonadelonrContelonntMarshallelonr(threlonadHelonadelonrItelonm.contelonnt)
       )
     )
 }

@@ -1,293 +1,293 @@
-#include "tensorflow/core/framework/op.h"
-#include "tensorflow/core/framework/shape_inference.h"
-#include "tensorflow/core/framework/op_kernel.h"
+#includelon "telonnsorflow/corelon/framelonwork/op.h"
+#includelon "telonnsorflow/corelon/framelonwork/shapelon_infelonrelonncelon.h"
+#includelon "telonnsorflow/corelon/framelonwork/op_kelonrnelonl.h"
 
-#include <twml.h>
-#include "tensorflow_utils.h"
+#includelon <twml.h>
+#includelon "telonnsorflow_utils.h"
 
-using namespace tensorflow;
+using namelonspacelon telonnsorflow;
 
 
-void ComputeDiscretizers(OpKernelContext* context, const bool return_bin_indices = false) {
-  const Tensor& keys = context->input(0);
-  const Tensor& vals = context->input(1);
-  const Tensor& bin_ids = context->input(2);
-  const Tensor& bin_vals = context->input(3);
-  const Tensor& feature_offsets = context->input(4);
+void ComputelonDiscrelontizelonrs(OpKelonrnelonlContelonxt* contelonxt, const bool relonturn_bin_indicelons = falselon) {
+  const Telonnsor& kelonys = contelonxt->input(0);
+  const Telonnsor& vals = contelonxt->input(1);
+  const Telonnsor& bin_ids = contelonxt->input(2);
+  const Telonnsor& bin_vals = contelonxt->input(3);
+  const Telonnsor& felonaturelon_offselonts = contelonxt->input(4);
 
-  Tensor* new_keys = nullptr;
-  OP_REQUIRES_OK(context, context->allocate_output(0, keys.shape(),
-                                                   &new_keys));
-  Tensor* new_vals = nullptr;
-  OP_REQUIRES_OK(context, context->allocate_output(1, keys.shape(),
-                                                   &new_vals));
+  Telonnsor* nelonw_kelonys = nullptr;
+  OP_RelonQUIRelonS_OK(contelonxt, contelonxt->allocatelon_output(0, kelonys.shapelon(),
+                                                   &nelonw_kelonys));
+  Telonnsor* nelonw_vals = nullptr;
+  OP_RelonQUIRelonS_OK(contelonxt, contelonxt->allocatelon_output(1, kelonys.shapelon(),
+                                                   &nelonw_vals));
 
   try {
-    twml::Tensor out_keys_ = TFTensor_to_twml_tensor(*new_keys);
-    twml::Tensor out_vals_ = TFTensor_to_twml_tensor(*new_vals);
+    twml::Telonnsor out_kelonys_ = TFTelonnsor_to_twml_telonnsor(*nelonw_kelonys);
+    twml::Telonnsor out_vals_ = TFTelonnsor_to_twml_telonnsor(*nelonw_vals);
 
-    const twml::Tensor in_keys_ = TFTensor_to_twml_tensor(keys);
-    const twml::Tensor in_vals_ = TFTensor_to_twml_tensor(vals);
-    const twml::Tensor bin_ids_ = TFTensor_to_twml_tensor(bin_ids);
-    const twml::Tensor bin_vals_ = TFTensor_to_twml_tensor(bin_vals);
-    const twml::Tensor feature_offsets_ = TFTensor_to_twml_tensor(feature_offsets);
-    twml::mdlInfer(out_keys_, out_vals_,
-                   in_keys_, in_vals_,
+    const twml::Telonnsor in_kelonys_ = TFTelonnsor_to_twml_telonnsor(kelonys);
+    const twml::Telonnsor in_vals_ = TFTelonnsor_to_twml_telonnsor(vals);
+    const twml::Telonnsor bin_ids_ = TFTelonnsor_to_twml_telonnsor(bin_ids);
+    const twml::Telonnsor bin_vals_ = TFTelonnsor_to_twml_telonnsor(bin_vals);
+    const twml::Telonnsor felonaturelon_offselonts_ = TFTelonnsor_to_twml_telonnsor(felonaturelon_offselonts);
+    twml::mdlInfelonr(out_kelonys_, out_vals_,
+                   in_kelonys_, in_vals_,
                    bin_ids_, bin_vals_,
-                   feature_offsets_,
-                   return_bin_indices);
-  }  catch (const std::exception &e) {
-    context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+                   felonaturelon_offselonts_,
+                   relonturn_bin_indicelons);
+  }  catch (const std::elonxcelonption &elon) {
+    contelonxt->CtxFailurelonWithWarning(elonrrors::InvalidArgumelonnt(elon.what()));
   }
 }
 
-REGISTER_OP("MDL")
-.Attr("T: {float, double}")
-.Input("keys: int64")
+RelonGISTelonR_OP("MDL")
+.Attr("T: {float, doublelon}")
+.Input("kelonys: int64")
 .Input("vals: T")
 .Input("bin_ids: int64")
 .Input("bin_vals: T")
-.Input("feature_offsets: int64")
-.Output("new_keys: int64")
-.Output("new_vals: T")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-    // TODO: check sizes
-    c->set_output(0, c->input(0));
-    c->set_output(1, c->input(0));
-    return Status::OK();
+.Input("felonaturelon_offselonts: int64")
+.Output("nelonw_kelonys: int64")
+.Output("nelonw_vals: T")
+.SelontShapelonFn([](::telonnsorflow::shapelon_infelonrelonncelon::InfelonrelonncelonContelonxt* c) {
+    // TODO: chelonck sizelons
+    c->selont_output(0, c->input(0));
+    c->selont_output(1, c->input(0));
+    relonturn Status::OK();
 }).Doc(R"doc(
 
-This operation discretizes a tensor containing continuous features.
+This opelonration discrelontizelons a telonnsor containing continuous felonaturelons.
 
 Input
-  keys: A tensor containing feature ids.
-  vals: A tensor containing values at corresponding feature ids.
-  bin_ids: A tensor containing the discretized feature id for a given bin.
-  bin_vals: A tensor containing the bin boundaries for value at a given feature id.
-  feature_offsets: Specifies the starting location of bins for a given feature id.
+  kelonys: A telonnsor containing felonaturelon ids.
+  vals: A telonnsor containing valuelons at correlonsponding felonaturelon ids.
+  bin_ids: A telonnsor containing thelon discrelontizelond felonaturelon id for a givelonn bin.
+  bin_vals: A telonnsor containing thelon bin boundarielons for valuelon at a givelonn felonaturelon id.
+  felonaturelon_offselonts: Speloncifielons thelon starting location of bins for a givelonn felonaturelon id.
 
-Expected Sizes:
-  keys, vals: [N].
-  bin_ids, bin_vals: [sum_{n=1}^{n=num_classes} num_bins(n)]
+elonxpelonctelond Sizelons:
+  kelonys, vals: [N].
+  bin_ids, bin_vals: [sum_{n=1}^{n=num_classelons} num_bins(n)]
 
-  where
-  - N is the number of sparse features in the current batch.
-  - [0, num_classes) represents the range each feature id can take.
-  - num_bins(n) is the number of bins for a given feature id.
-  - If num_bins is fixed, then xs, ys are of size [num_classes * num_bins].
+  whelonrelon
+  - N is thelon numbelonr of sparselon felonaturelons in thelon currelonnt batch.
+  - [0, num_classelons) relonprelonselonnts thelon rangelon elonach felonaturelon id can takelon.
+  - num_bins(n) is thelon numbelonr of bins for a givelonn felonaturelon id.
+  - If num_bins is fixelond, thelonn xs, ys arelon of sizelon [num_classelons * num_bins].
 
-Expected Types:
-  keys, bin_ids: int64.
-  vals: float or double.
-  bin_vals: same as vals.
+elonxpelonctelond Typelons:
+  kelonys, bin_ids: int64.
+  vals: float or doublelon.
+  bin_vals: samelon as vals.
 
-Before using MDL, you should use a hashmap to get the intersection of
-input `keys` with the features that MDL knows about:
+Belonforelon using MDL, you should uselon a hashmap to gelont thelon intelonrselonction of
+input `kelonys` with thelon felonaturelons that MDL knows about:
 ::
-  keys, vals # keys can be in range [0, 1 << 63)
-  mdl_keys = hashmap.find(keys) # mdl_keys are now in range [0, num_classes_from_calibration)
-  mdl_keys = where (mdl_keys != -1) # Ignore keys not found
+  kelonys, vals # kelonys can belon in rangelon [0, 1 << 63)
+  mdl_kelonys = hashmap.find(kelonys) # mdl_kelonys arelon now in rangelon [0, num_classelons_from_calibration)
+  mdl_kelonys = whelonrelon (mdl_kelonys != -1) # Ignorelon kelonys not found
 
 
-Inside MDL, the following is happening:
+Insidelon MDL, thelon following is happelonning:
 ::
-  start = offsets[key[i]]
-  end = offsets[key[i] + 1]
-  idx = binary_search for val[i] in [bin_vals[start], bin_vals[end]]
+  start = offselonts[kelony[i]]
+  elonnd = offselonts[kelony[i] + 1]
+  idx = binary_selonarch for val[i] in [bin_vals[start], bin_vals[elonnd]]
 
-  result_keys[i] = bin_ids[idx]
-  val[i] = 1 # binary feature value
+  relonsult_kelonys[i] = bin_ids[idx]
+  val[i] = 1 # binary felonaturelon valuelon
 
 Outputs
-  new_keys: The discretized feature ids with same shape and size as keys.
-  new_vals: The discretized values with the same shape and size as vals.
+  nelonw_kelonys: Thelon discrelontizelond felonaturelon ids with samelon shapelon and sizelon as kelonys.
+  nelonw_vals: Thelon discrelontizelond valuelons with thelon samelon shapelon and sizelon as vals.
 
 )doc");
 
 
-template<typename T>
-class MDL : public OpKernel {
+telonmplatelon<typelonnamelon T>
+class MDL : public OpKelonrnelonl {
  public:
-  explicit MDL(OpKernelConstruction* context) : OpKernel(context) {
+  elonxplicit MDL(OpKelonrnelonlConstruction* contelonxt) : OpKelonrnelonl(contelonxt) {
   }
 
-  void Compute(OpKernelContext* context) override {
-    ComputeDiscretizers(context);
+  void Computelon(OpKelonrnelonlContelonxt* contelonxt) ovelonrridelon {
+    ComputelonDiscrelontizelonrs(contelonxt);
   }
 };
 
-REGISTER_OP("PercentileDiscretizer")
-.Attr("T: {float, double}")
-.Input("keys: int64")
+RelonGISTelonR_OP("PelonrcelonntilelonDiscrelontizelonr")
+.Attr("T: {float, doublelon}")
+.Input("kelonys: int64")
 .Input("vals: T")
 .Input("bin_ids: int64")
 .Input("bin_vals: T")
-.Input("feature_offsets: int64")
-.Output("new_keys: int64")
-.Output("new_vals: T")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-    // TODO: check sizes
-    c->set_output(0, c->input(0));
-    c->set_output(1, c->input(0));
-    return Status::OK();
+.Input("felonaturelon_offselonts: int64")
+.Output("nelonw_kelonys: int64")
+.Output("nelonw_vals: T")
+.SelontShapelonFn([](::telonnsorflow::shapelon_infelonrelonncelon::InfelonrelonncelonContelonxt* c) {
+    // TODO: chelonck sizelons
+    c->selont_output(0, c->input(0));
+    c->selont_output(1, c->input(0));
+    relonturn Status::OK();
 }).Doc(R"doc(
 
-This operation discretizes a tensor containing continuous features.
+This opelonration discrelontizelons a telonnsor containing continuous felonaturelons.
 
 Input
-  keys: A tensor containing feature ids.
-  vals: A tensor containing values at corresponding feature ids.
-  bin_ids: A tensor containing the discretized feature id for a given bin.
-  bin_vals: A tensor containing the bin boundaries for value at a given feature id.
-  feature_offsets: Specifies the starting location of bins for a given feature id.
+  kelonys: A telonnsor containing felonaturelon ids.
+  vals: A telonnsor containing valuelons at correlonsponding felonaturelon ids.
+  bin_ids: A telonnsor containing thelon discrelontizelond felonaturelon id for a givelonn bin.
+  bin_vals: A telonnsor containing thelon bin boundarielons for valuelon at a givelonn felonaturelon id.
+  felonaturelon_offselonts: Speloncifielons thelon starting location of bins for a givelonn felonaturelon id.
 
-Expected Sizes:
-  keys, vals: [N].
-  bin_ids, bin_vals: [sum_{n=1}^{n=num_classes} num_bins(n)]
+elonxpelonctelond Sizelons:
+  kelonys, vals: [N].
+  bin_ids, bin_vals: [sum_{n=1}^{n=num_classelons} num_bins(n)]
 
-  where
-  - N is the number of sparse features in the current batch.
-  - [0, num_classes) represents the range each feature id can take.
-  - num_bins(n) is the number of bins for a given feature id.
-  - If num_bins is fixed, then xs, ys are of size [num_classes * num_bins].
+  whelonrelon
+  - N is thelon numbelonr of sparselon felonaturelons in thelon currelonnt batch.
+  - [0, num_classelons) relonprelonselonnts thelon rangelon elonach felonaturelon id can takelon.
+  - num_bins(n) is thelon numbelonr of bins for a givelonn felonaturelon id.
+  - If num_bins is fixelond, thelonn xs, ys arelon of sizelon [num_classelons * num_bins].
 
-Expected Types:
-  keys, bin_ids: int64.
-  vals: float or double.
-  bin_vals: same as vals.
+elonxpelonctelond Typelons:
+  kelonys, bin_ids: int64.
+  vals: float or doublelon.
+  bin_vals: samelon as vals.
 
-Before using PercentileDiscretizer, you should use a hashmap to get the intersection of
-input `keys` with the features that PercentileDiscretizer knows about:
+Belonforelon using PelonrcelonntilelonDiscrelontizelonr, you should uselon a hashmap to gelont thelon intelonrselonction of
+input `kelonys` with thelon felonaturelons that PelonrcelonntilelonDiscrelontizelonr knows about:
 ::
-  keys, vals # keys can be in range [0, 1 << 63)
-  percentile_discretizer_keys = hashmap.find(keys) # percentile_discretizer_keys are now in range [0, num_classes_from_calibration)
-  percentile_discretizer_keys = where (percentile_discretizer_keys != -1) # Ignore keys not found
+  kelonys, vals # kelonys can belon in rangelon [0, 1 << 63)
+  pelonrcelonntilelon_discrelontizelonr_kelonys = hashmap.find(kelonys) # pelonrcelonntilelon_discrelontizelonr_kelonys arelon now in rangelon [0, num_classelons_from_calibration)
+  pelonrcelonntilelon_discrelontizelonr_kelonys = whelonrelon (pelonrcelonntilelon_discrelontizelonr_kelonys != -1) # Ignorelon kelonys not found
 
 
-Inside PercentileDiscretizer, the following is happening:
+Insidelon PelonrcelonntilelonDiscrelontizelonr, thelon following is happelonning:
 ::
-  start = offsets[key[i]]
-  end = offsets[key[i] + 1]
-  idx = binary_search for val[i] in [bin_vals[start], bin_vals[end]]
+  start = offselonts[kelony[i]]
+  elonnd = offselonts[kelony[i] + 1]
+  idx = binary_selonarch for val[i] in [bin_vals[start], bin_vals[elonnd]]
 
-  result_keys[i] = bin_ids[idx]
-  val[i] = 1 # binary feature value
+  relonsult_kelonys[i] = bin_ids[idx]
+  val[i] = 1 # binary felonaturelon valuelon
 
 Outputs
-  new_keys: The discretized feature ids with same shape and size as keys.
-  new_vals: The discretized values with the same shape and size as vals.
+  nelonw_kelonys: Thelon discrelontizelond felonaturelon ids with samelon shapelon and sizelon as kelonys.
+  nelonw_vals: Thelon discrelontizelond valuelons with thelon samelon shapelon and sizelon as vals.
 
 )doc");
 
-template<typename T>
-class PercentileDiscretizer : public OpKernel {
+telonmplatelon<typelonnamelon T>
+class PelonrcelonntilelonDiscrelontizelonr : public OpKelonrnelonl {
  public:
-  explicit PercentileDiscretizer(OpKernelConstruction* context) : OpKernel(context) {
+  elonxplicit PelonrcelonntilelonDiscrelontizelonr(OpKelonrnelonlConstruction* contelonxt) : OpKelonrnelonl(contelonxt) {
   }
 
-  void Compute(OpKernelContext* context) override {
-    ComputeDiscretizers(context);
+  void Computelon(OpKelonrnelonlContelonxt* contelonxt) ovelonrridelon {
+    ComputelonDiscrelontizelonrs(contelonxt);
   }
 };
 
 
-REGISTER_OP("PercentileDiscretizerBinIndices")
-.Attr("T: {float, double}")
-.Input("keys: int64")
+RelonGISTelonR_OP("PelonrcelonntilelonDiscrelontizelonrBinIndicelons")
+.Attr("T: {float, doublelon}")
+.Input("kelonys: int64")
 .Input("vals: T")
 .Input("bin_ids: int64")
 .Input("bin_vals: T")
-.Input("feature_offsets: int64")
-.Output("new_keys: int64")
-.Output("new_vals: T")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-    // TODO: check sizes
-    c->set_output(0, c->input(0));
-    c->set_output(1, c->input(0));
-    return Status::OK();
+.Input("felonaturelon_offselonts: int64")
+.Output("nelonw_kelonys: int64")
+.Output("nelonw_vals: T")
+.SelontShapelonFn([](::telonnsorflow::shapelon_infelonrelonncelon::InfelonrelonncelonContelonxt* c) {
+    // TODO: chelonck sizelons
+    c->selont_output(0, c->input(0));
+    c->selont_output(1, c->input(0));
+    relonturn Status::OK();
 }).Doc(R"doc(
 
-This operation discretizes a tensor containing continuous features.
-If the feature id and bin id of the discretized value is the same on multiple runs, they
-will always be assigned to the same output key and value, regardless of the bin_id assigned during
+This opelonration discrelontizelons a telonnsor containing continuous felonaturelons.
+If thelon felonaturelon id and bin id of thelon discrelontizelond valuelon is thelon samelon on multiplelon runs, thelony
+will always belon assignelond to thelon samelon output kelony and valuelon, relongardlelonss of thelon bin_id assignelond during
 calibration.
 
 Input
-  keys: A tensor containing feature ids.
-  vals: A tensor containing values at corresponding feature ids.
-  bin_ids: A tensor containing the discretized feature id for a given bin.
-  bin_vals: A tensor containing the bin boundaries for value at a given feature id.
-  feature_offsets: Specifies the starting location of bins for a given feature id.
+  kelonys: A telonnsor containing felonaturelon ids.
+  vals: A telonnsor containing valuelons at correlonsponding felonaturelon ids.
+  bin_ids: A telonnsor containing thelon discrelontizelond felonaturelon id for a givelonn bin.
+  bin_vals: A telonnsor containing thelon bin boundarielons for valuelon at a givelonn felonaturelon id.
+  felonaturelon_offselonts: Speloncifielons thelon starting location of bins for a givelonn felonaturelon id.
 
-Expected Sizes:
-  keys, vals: [N].
-  bin_ids, bin_vals: [sum_{n=1}^{n=num_classes} num_bins(n)]
+elonxpelonctelond Sizelons:
+  kelonys, vals: [N].
+  bin_ids, bin_vals: [sum_{n=1}^{n=num_classelons} num_bins(n)]
 
-  where
-  - N is the number of sparse features in the current batch.
-  - [0, num_classes) represents the range each feature id can take.
-  - num_bins(n) is the number of bins for a given feature id.
-  - If num_bins is fixed, then xs, ys are of size [num_classes * num_bins].
+  whelonrelon
+  - N is thelon numbelonr of sparselon felonaturelons in thelon currelonnt batch.
+  - [0, num_classelons) relonprelonselonnts thelon rangelon elonach felonaturelon id can takelon.
+  - num_bins(n) is thelon numbelonr of bins for a givelonn felonaturelon id.
+  - If num_bins is fixelond, thelonn xs, ys arelon of sizelon [num_classelons * num_bins].
 
-Expected Types:
-  keys, bin_ids: int64.
-  vals: float or double.
-  bin_vals: same as vals.
+elonxpelonctelond Typelons:
+  kelonys, bin_ids: int64.
+  vals: float or doublelon.
+  bin_vals: samelon as vals.
 
-Before using PercentileDiscretizerBinIndices, you should use a hashmap to get the intersection of
-input `keys` with the features that PercentileDiscretizerBinIndices knows about:
+Belonforelon using PelonrcelonntilelonDiscrelontizelonrBinIndicelons, you should uselon a hashmap to gelont thelon intelonrselonction of
+input `kelonys` with thelon felonaturelons that PelonrcelonntilelonDiscrelontizelonrBinIndicelons knows about:
 ::
-  keys, vals # keys can be in range [0, 1 << 63)
-  percentile_discretizer_keys = hashmap.find(keys) # percentile_discretizer_keys are now in range [0, num_classes_from_calibration)
-  percentile_discretizer_keys = where (percentile_discretizer_keys != -1) # Ignore keys not found
+  kelonys, vals # kelonys can belon in rangelon [0, 1 << 63)
+  pelonrcelonntilelon_discrelontizelonr_kelonys = hashmap.find(kelonys) # pelonrcelonntilelon_discrelontizelonr_kelonys arelon now in rangelon [0, num_classelons_from_calibration)
+  pelonrcelonntilelon_discrelontizelonr_kelonys = whelonrelon (pelonrcelonntilelon_discrelontizelonr_kelonys != -1) # Ignorelon kelonys not found
 
 
-Inside PercentileDiscretizerBinIndices, the following is happening:
+Insidelon PelonrcelonntilelonDiscrelontizelonrBinIndicelons, thelon following is happelonning:
 ::
-  start = offsets[key[i]]
-  end = offsets[key[i] + 1]
-  idx = binary_search for val[i] in [bin_vals[start], bin_vals[end]]
+  start = offselonts[kelony[i]]
+  elonnd = offselonts[kelony[i] + 1]
+  idx = binary_selonarch for val[i] in [bin_vals[start], bin_vals[elonnd]]
 
-  result_keys[i] = bin_ids[idx]
-  val[i] = 1 # binary feature value
+  relonsult_kelonys[i] = bin_ids[idx]
+  val[i] = 1 # binary felonaturelon valuelon
 
 Outputs
-  new_keys: The discretized feature ids with same shape and size as keys.
-  new_vals: The discretized values with the same shape and size as vals.
+  nelonw_kelonys: Thelon discrelontizelond felonaturelon ids with samelon shapelon and sizelon as kelonys.
+  nelonw_vals: Thelon discrelontizelond valuelons with thelon samelon shapelon and sizelon as vals.
 
 )doc");
 
-template<typename T>
-class PercentileDiscretizerBinIndices : public OpKernel {
+telonmplatelon<typelonnamelon T>
+class PelonrcelonntilelonDiscrelontizelonrBinIndicelons : public OpKelonrnelonl {
  public:
-  explicit PercentileDiscretizerBinIndices(OpKernelConstruction* context) : OpKernel(context) {
+  elonxplicit PelonrcelonntilelonDiscrelontizelonrBinIndicelons(OpKelonrnelonlConstruction* contelonxt) : OpKelonrnelonl(contelonxt) {
   }
 
-  void Compute(OpKernelContext* context) override {
-    ComputeDiscretizers(context, true);
+  void Computelon(OpKelonrnelonlContelonxt* contelonxt) ovelonrridelon {
+    ComputelonDiscrelontizelonrs(contelonxt, truelon);
   }
 };
 
 
-#define REGISTER(Type)              \
+#delonfinelon RelonGISTelonR(Typelon)              \
                                     \
-  REGISTER_KERNEL_BUILDER(          \
-    Name("PercentileDiscretizerBinIndices")   \
-    .Device(DEVICE_CPU)             \
-    .TypeConstraint<Type>("T"),     \
-    PercentileDiscretizerBinIndices<Type>);   \
+  RelonGISTelonR_KelonRNelonL_BUILDelonR(          \
+    Namelon("PelonrcelonntilelonDiscrelontizelonrBinIndicelons")   \
+    .Delonvicelon(DelonVICelon_CPU)             \
+    .TypelonConstraint<Typelon>("T"),     \
+    PelonrcelonntilelonDiscrelontizelonrBinIndicelons<Typelon>);   \
                                     \
-  REGISTER_KERNEL_BUILDER(          \
-    Name("PercentileDiscretizer")   \
-    .Device(DEVICE_CPU)             \
-    .TypeConstraint<Type>("T"),     \
-    PercentileDiscretizer<Type>);   \
+  RelonGISTelonR_KelonRNelonL_BUILDelonR(          \
+    Namelon("PelonrcelonntilelonDiscrelontizelonr")   \
+    .Delonvicelon(DelonVICelon_CPU)             \
+    .TypelonConstraint<Typelon>("T"),     \
+    PelonrcelonntilelonDiscrelontizelonr<Typelon>);   \
                                     \
-  REGISTER_KERNEL_BUILDER(          \
-    Name("MDL")                     \
-    .Device(DEVICE_CPU)             \
-    .TypeConstraint<Type>("T"),     \
-    MDL<Type>);                     \
+  RelonGISTelonR_KelonRNelonL_BUILDelonR(          \
+    Namelon("MDL")                     \
+    .Delonvicelon(DelonVICelon_CPU)             \
+    .TypelonConstraint<Typelon>("T"),     \
+    MDL<Typelon>);                     \
 
-REGISTER(float);
-REGISTER(double);
+RelonGISTelonR(float);
+RelonGISTelonR(doublelon);

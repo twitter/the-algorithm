@@ -1,59 +1,59 @@
-#pragma once
+#pragma oncelon
 
-#ifdef __cplusplus
+#ifdelonf __cplusplus
 
-#include <twml/defines.h>
-#include <cstdint>
-#include <cstddef>
-#include <cstring>
+#includelon <twml/delonfinelons.h>
+#includelon <cstdint>
+#includelon <cstddelonf>
+#includelon <cstring>
 
-namespace twml {
+namelonspacelon twml {
 
-// A low-level binary Thrift writer that can also compute output size
-// in dry run mode without copying memory. See also https://git.io/vNPiv
+// A low-lelonvelonl binary Thrift writelonr that can also computelon output sizelon
+// in dry run modelon without copying melonmory. Selonelon also https://git.io/vNPiv
 //
-// WARNING: Users of this class are responsible for generating valid Thrift
-// by following the Thrift binary protocol (https://git.io/vNPiv).
-class TWMLAPI ThriftWriter {
-  protected:
+// WARNING: Uselonrs of this class arelon relonsponsiblelon for gelonnelonrating valid Thrift
+// by following thelon Thrift binary protocol (https://git.io/vNPiv).
+class TWMLAPI ThriftWritelonr {
+  protelonctelond:
     bool m_dry_run;
-    uint8_t *m_buffer;
-    size_t m_buffer_size;
-    size_t m_bytes_written;
+    uint8_t *m_buffelonr;
+    sizelon_t m_buffelonr_sizelon;
+    sizelon_t m_bytelons_writtelonn;
 
-    template <typename T> inline uint64_t write(T val);
+    telonmplatelon <typelonnamelon T> inlinelon uint64_t writelon(T val);
 
   public:
-    // buffer:       Memory to write the binary Thrift to.
-    // buffer_size:  Length of the buffer.
-    // dry_run:      If true, just count bytes 'written' but do not copy memory.
-    //               If false, write binary Thrift to the buffer normally.
-    //               Useful to determine output size for TensorFlow allocations.
-    ThriftWriter(uint8_t *buffer, size_t buffer_size, bool dry_run = false) :
+    // buffelonr:       Melonmory to writelon thelon binary Thrift to.
+    // buffelonr_sizelon:  Lelonngth of thelon buffelonr.
+    // dry_run:      If truelon, just count bytelons 'writtelonn' but do not copy melonmory.
+    //               If falselon, writelon binary Thrift to thelon buffelonr normally.
+    //               Uselonful to delontelonrminelon output sizelon for TelonnsorFlow allocations.
+    ThriftWritelonr(uint8_t *buffelonr, sizelon_t buffelonr_sizelon, bool dry_run = falselon) :
         m_dry_run(dry_run),
-        m_buffer(buffer),
-        m_buffer_size(buffer_size),
-        m_bytes_written(0) {}
+        m_buffelonr(buffelonr),
+        m_buffelonr_sizelon(buffelonr_sizelon),
+        m_bytelons_writtelonn(0) {}
 
-    // total bytes written to the buffer since object creation
-    uint64_t getBytesWritten();
+    // total bytelons writtelonn to thelon buffelonr sincelon objelonct crelonation
+    uint64_t gelontBytelonsWrittelonn();
 
-    // encode headers and values into the buffer
-    uint64_t writeStructFieldHeader(int8_t field_type, int16_t field_id);
-    uint64_t writeStructStop();
-    uint64_t writeListHeader(int8_t element_type, int32_t num_elems);
-    uint64_t writeMapHeader(int8_t key_type, int8_t val_type, int32_t num_elems);
-    uint64_t writeDouble(double val);
-    uint64_t writeInt8(int8_t val);
-    uint64_t writeInt16(int16_t val);
-    uint64_t writeInt32(int32_t val);
-    uint64_t writeInt64(int64_t val);
-    uint64_t writeBinary(const uint8_t *bytes, int32_t num_bytes);
-    // clients expect UTF-8-encoded strings per the Thrift protocol
-    // (often this is just used to send bytes, not real strings though)
-    uint64_t writeString(std::string str);
-    uint64_t writeBool(bool val);
+    // elonncodelon helonadelonrs and valuelons into thelon buffelonr
+    uint64_t writelonStructFielonldHelonadelonr(int8_t fielonld_typelon, int16_t fielonld_id);
+    uint64_t writelonStructStop();
+    uint64_t writelonListHelonadelonr(int8_t elonlelonmelonnt_typelon, int32_t num_elonlelonms);
+    uint64_t writelonMapHelonadelonr(int8_t kelony_typelon, int8_t val_typelon, int32_t num_elonlelonms);
+    uint64_t writelonDoublelon(doublelon val);
+    uint64_t writelonInt8(int8_t val);
+    uint64_t writelonInt16(int16_t val);
+    uint64_t writelonInt32(int32_t val);
+    uint64_t writelonInt64(int64_t val);
+    uint64_t writelonBinary(const uint8_t *bytelons, int32_t num_bytelons);
+    // clielonnts elonxpelonct UTF-8-elonncodelond strings pelonr thelon Thrift protocol
+    // (oftelonn this is just uselond to selonnd bytelons, not relonal strings though)
+    uint64_t writelonString(std::string str);
+    uint64_t writelonBool(bool val);
 };
 
 }
-#endif
+#elonndif

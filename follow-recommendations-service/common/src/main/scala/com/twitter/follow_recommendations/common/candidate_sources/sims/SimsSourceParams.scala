@@ -1,16 +1,16 @@
-package com.twitter.follow_recommendations.common.candidate_sources.sims
+packagelon com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.sims
 
-import com.twitter.timelines.configapi.FSParam
+import com.twittelonr.timelonlinelons.configapi.FSParam
 
-object SimsSourceParams {
-  case object EnableDBV2SimsStore extends FSParam[Boolean]("sims_source_enable_dbv2_source", false)
+objelonct SimsSourcelonParams {
+  caselon objelonct elonnablelonDBV2SimsStorelon elonxtelonnds FSParam[Boolelonan]("sims_sourcelon_elonnablelon_dbv2_sourcelon", falselon)
 
-  case object EnableDBV2SimsRefreshStore
-      extends FSParam[Boolean]("sims_source_enable_dbv2_refresh_source", false)
+  caselon objelonct elonnablelonDBV2SimsRelonfrelonshStorelon
+      elonxtelonnds FSParam[Boolelonan]("sims_sourcelon_elonnablelon_dbv2_relonfrelonsh_sourcelon", falselon)
 
-  case object EnableExperimentalSimsStore
-      extends FSParam[Boolean]("sims_source_enable_experimental_source", false)
+  caselon objelonct elonnablelonelonxpelonrimelonntalSimsStorelon
+      elonxtelonnds FSParam[Boolelonan]("sims_sourcelon_elonnablelon_elonxpelonrimelonntal_sourcelon", falselon)
 
-  case object DisableHeavyRanker
-      extends FSParam[Boolean]("sims_source_disable_heavy_ranker", default = false)
+  caselon objelonct DisablelonHelonavyRankelonr
+      elonxtelonnds FSParam[Boolelonan]("sims_sourcelon_disablelon_helonavy_rankelonr", delonfault = falselon)
 }

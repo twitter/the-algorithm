@@ -1,92 +1,92 @@
-package com.twitter.search.earlybird.partition.freshstartup;
+packagelon com.twittelonr.selonarch.elonarlybird.partition.frelonshstartup;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.search.earlybird.partition.SegmentWriter;
+import com.twittelonr.selonarch.elonarlybird.partition.SelongmelonntWritelonr;
 
-// Data collected and produced while building a segment.
-class SegmentBuildInfo {
-  private static final Logger LOG = LoggerFactory.getLogger(SegmentBuildInfo.class);
+// Data collelonctelond and producelond whilelon building a selongmelonnt.
+class SelongmelonntBuildInfo {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(SelongmelonntBuildInfo.class);
 
-  // Inclusive boundaries. [start, end].
-  private final long tweetStartOffset;
-  private final long tweetEndOffset;
-  private final int index;
-  private final boolean lastSegment;
+  // Inclusivelon boundarielons. [start, elonnd].
+  privatelon final long twelonelontStartOffselont;
+  privatelon final long twelonelontelonndOffselont;
+  privatelon final int indelonx;
+  privatelon final boolelonan lastSelongmelonnt;
 
-  private long startTweetId;
-  private long maxIndexedTweetId;
-  private KafkaOffsetPair updateKafkaOffsetPair;
-  private SegmentWriter segmentWriter;
+  privatelon long startTwelonelontId;
+  privatelon long maxIndelonxelondTwelonelontId;
+  privatelon KafkaOffselontPair updatelonKafkaOffselontPair;
+  privatelon SelongmelonntWritelonr selongmelonntWritelonr;
 
-  public SegmentBuildInfo(long tweetStartOffset,
-                          long tweetEndOffset,
-                          int index,
-                          boolean lastSegment) {
-    this.tweetStartOffset = tweetStartOffset;
-    this.tweetEndOffset = tweetEndOffset;
-    this.index = index;
-    this.lastSegment = lastSegment;
+  public SelongmelonntBuildInfo(long twelonelontStartOffselont,
+                          long twelonelontelonndOffselont,
+                          int indelonx,
+                          boolelonan lastSelongmelonnt) {
+    this.twelonelontStartOffselont = twelonelontStartOffselont;
+    this.twelonelontelonndOffselont = twelonelontelonndOffselont;
+    this.indelonx = indelonx;
+    this.lastSelongmelonnt = lastSelongmelonnt;
 
-    this.startTweetId = -1;
-    this.updateKafkaOffsetPair = null;
-    this.maxIndexedTweetId = -1;
-    this.segmentWriter = null;
+    this.startTwelonelontId = -1;
+    this.updatelonKafkaOffselontPair = null;
+    this.maxIndelonxelondTwelonelontId = -1;
+    this.selongmelonntWritelonr = null;
   }
 
-  public void setUpdateKafkaOffsetPair(KafkaOffsetPair updateKafkaOffsetPair) {
-    this.updateKafkaOffsetPair = updateKafkaOffsetPair;
+  public void selontUpdatelonKafkaOffselontPair(KafkaOffselontPair updatelonKafkaOffselontPair) {
+    this.updatelonKafkaOffselontPair = updatelonKafkaOffselontPair;
   }
 
-  public KafkaOffsetPair getUpdateKafkaOffsetPair() {
-    return updateKafkaOffsetPair;
+  public KafkaOffselontPair gelontUpdatelonKafkaOffselontPair() {
+    relonturn updatelonKafkaOffselontPair;
   }
 
-  public boolean isLastSegment() {
-    return lastSegment;
+  public boolelonan isLastSelongmelonnt() {
+    relonturn lastSelongmelonnt;
   }
 
-  public void setStartTweetId(long startTweetId) {
-    this.startTweetId = startTweetId;
+  public void selontStartTwelonelontId(long startTwelonelontId) {
+    this.startTwelonelontId = startTwelonelontId;
   }
 
-  public long getTweetStartOffset() {
-    return tweetStartOffset;
+  public long gelontTwelonelontStartOffselont() {
+    relonturn twelonelontStartOffselont;
   }
 
-  public long getTweetEndOffset() {
-    return tweetEndOffset;
+  public long gelontTwelonelontelonndOffselont() {
+    relonturn twelonelontelonndOffselont;
   }
 
-  public long getStartTweetId() {
-    return startTweetId;
+  public long gelontStartTwelonelontId() {
+    relonturn startTwelonelontId;
   }
 
-  public int getIndex() {
-    return index;
+  public int gelontIndelonx() {
+    relonturn indelonx;
   }
 
-  public void setMaxIndexedTweetId(long maxIndexedTweetId) {
-    this.maxIndexedTweetId = maxIndexedTweetId;
+  public void selontMaxIndelonxelondTwelonelontId(long maxIndelonxelondTwelonelontId) {
+    this.maxIndelonxelondTwelonelontId = maxIndelonxelondTwelonelontId;
   }
 
-  public long getMaxIndexedTweetId() {
-    return maxIndexedTweetId;
+  public long gelontMaxIndelonxelondTwelonelontId() {
+    relonturn maxIndelonxelondTwelonelontId;
   }
 
-  public SegmentWriter getSegmentWriter() {
-    return segmentWriter;
+  public SelongmelonntWritelonr gelontSelongmelonntWritelonr() {
+    relonturn selongmelonntWritelonr;
   }
 
-  public void setSegmentWriter(SegmentWriter segmentWriter) {
-    this.segmentWriter = segmentWriter;
+  public void selontSelongmelonntWritelonr(SelongmelonntWritelonr selongmelonntWritelonr) {
+    this.selongmelonntWritelonr = selongmelonntWritelonr;
   }
 
-  public void logState() {
-    LOG.info("SegmentBuildInfo (index:{})", index);
-    LOG.info(String.format("  Start offset: %,d", tweetStartOffset));
-    LOG.info(String.format("  End offset: %,d", tweetEndOffset));
-    LOG.info(String.format("  Start tweet id: %d", startTweetId));
+  public void logStatelon() {
+    LOG.info("SelongmelonntBuildInfo (indelonx:{})", indelonx);
+    LOG.info(String.format("  Start offselont: %,d", twelonelontStartOffselont));
+    LOG.info(String.format("  elonnd offselont: %,d", twelonelontelonndOffselont));
+    LOG.info(String.format("  Start twelonelont id: %d", startTwelonelontId));
   }
 }

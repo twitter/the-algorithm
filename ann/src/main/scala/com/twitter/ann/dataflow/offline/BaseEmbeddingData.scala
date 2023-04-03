@@ -1,6 +1,6 @@
-package com.twitter.ann.dataflow.offline
+packagelon com.twittelonr.ann.dataflow.offlinelon
 
-trait BaseEmbeddingData {
-  val entityId: Option[Long]
-  val embedding: Seq[Double]
+trait BaselonelonmbelonddingData {
+  val elonntityId: Option[Long]
+  val elonmbelondding: Selonq[Doublelon]
 }

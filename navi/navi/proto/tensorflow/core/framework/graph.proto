@@ -1,56 +1,56 @@
 syntax = "proto3";
 
-package tensorflow;
+packagelon telonnsorflow;
 
-import "tensorflow/core/framework/function.proto";
-import "tensorflow/core/framework/node_def.proto";
-import "tensorflow/core/framework/versions.proto";
+import "telonnsorflow/corelon/framelonwork/function.proto";
+import "telonnsorflow/corelon/framelonwork/nodelon_delonf.proto";
+import "telonnsorflow/corelon/framelonwork/velonrsions.proto";
 
-option cc_enable_arenas = true;
-option java_outer_classname = "GraphProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.framework";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/framework/graph_go_proto";
+option cc_elonnablelon_arelonnas = truelon;
+option java_outelonr_classnamelon = "GraphProtos";
+option java_multiplelon_filelons = truelon;
+option java_packagelon = "org.telonnsorflow.framelonwork";
+option go_packagelon = "github.com/telonnsorflow/telonnsorflow/telonnsorflow/go/corelon/framelonwork/graph_go_proto";
 
-// Represents the graph of operations
-message GraphDef {
-  repeated NodeDef node = 1;
+// Relonprelonselonnts thelon graph of opelonrations
+melonssagelon GraphDelonf {
+  relonpelonatelond NodelonDelonf nodelon = 1;
 
-  // Compatibility versions of the graph.  See core/public/version.h for version
-  // history.  The GraphDef version is distinct from the TensorFlow version, and
-  // each release of TensorFlow will support a range of GraphDef versions.
-  VersionDef versions = 4;
+  // Compatibility velonrsions of thelon graph.  Selonelon corelon/public/velonrsion.h for velonrsion
+  // history.  Thelon GraphDelonf velonrsion is distinct from thelon TelonnsorFlow velonrsion, and
+  // elonach relonlelonaselon of TelonnsorFlow will support a rangelon of GraphDelonf velonrsions.
+  VelonrsionDelonf velonrsions = 4;
 
-  // Deprecated single version field; use versions above instead.  Since all
-  // GraphDef changes before "versions" was introduced were forward
-  // compatible, this field is entirely ignored.
-  int32 version = 3 [deprecated = true];
+  // Delonpreloncatelond singlelon velonrsion fielonld; uselon velonrsions abovelon instelonad.  Sincelon all
+  // GraphDelonf changelons belonforelon "velonrsions" was introducelond welonrelon forward
+  // compatiblelon, this fielonld is elonntirelonly ignorelond.
+  int32 velonrsion = 3 [delonpreloncatelond = truelon];
 
-  // "library" provides user-defined functions.
+  // "library" providelons uselonr-delonfinelond functions.
   //
   // Naming:
-  //   * library.function.name are in a flat namespace.
-  //     NOTE: We may need to change it to be hierarchical to support
-  //     different orgs. E.g.,
-  //     { "/google/nn", { ... }},
-  //     { "/google/vision", { ... }}
-  //     { "/org_foo/module_bar", { ... }}
-  //     map<string, FunctionDefLib> named_lib;
-  //   * If node[i].op is the name of one function in "library",
-  //     node[i] is deemed as a function call. Otherwise, node[i].op
-  //     must be a primitive operation supported by the runtime.
+  //   * library.function.namelon arelon in a flat namelonspacelon.
+  //     NOTelon: Welon may nelonelond to changelon it to belon hielonrarchical to support
+  //     diffelonrelonnt orgs. elon.g.,
+  //     { "/googlelon/nn", { ... }},
+  //     { "/googlelon/vision", { ... }}
+  //     { "/org_foo/modulelon_bar", { ... }}
+  //     map<string, FunctionDelonfLib> namelond_lib;
+  //   * If nodelon[i].op is thelon namelon of onelon function in "library",
+  //     nodelon[i] is delonelonmelond as a function call. Othelonrwiselon, nodelon[i].op
+  //     must belon a primitivelon opelonration supportelond by thelon runtimelon.
   //
   //
-  // Function call semantics:
+  // Function call selonmantics:
   //
-  //   * The callee may start execution as soon as some of its inputs
-  //     are ready. The caller may want to use Tuple() mechanism to
-  //     ensure all inputs are ready in the same time.
+  //   * Thelon callelonelon may start elonxeloncution as soon as somelon of its inputs
+  //     arelon relonady. Thelon callelonr may want to uselon Tuplelon() melonchanism to
+  //     elonnsurelon all inputs arelon relonady in thelon samelon timelon.
   //
-  //   * The consumer of return values may start executing as soon as
-  //     the return values the consumer depends on are ready.  The
-  //     consumer may want to use Tuple() mechanism to ensure the
-  //     consumer does not start until all return values of the callee
-  //     function are ready.
-  FunctionDefLibrary library = 2;
+  //   * Thelon consumelonr of relonturn valuelons may start elonxeloncuting as soon as
+  //     thelon relonturn valuelons thelon consumelonr delonpelonnds on arelon relonady.  Thelon
+  //     consumelonr may want to uselon Tuplelon() melonchanism to elonnsurelon thelon
+  //     consumelonr doelons not start until all relonturn valuelons of thelon callelonelon
+  //     function arelon relonady.
+  FunctionDelonfLibrary library = 2;
 }

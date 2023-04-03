@@ -1,30 +1,30 @@
-package com.twitter.product_mixer.component_library.premarshaller.slice.builder
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.prelonmarshallelonr.slicelon.buildelonr
 
-import com.twitter.product_mixer.component_library.model.cursor.OrderedCursor
-import com.twitter.product_mixer.component_library.premarshaller.cursor.CursorSerializer
-import com.twitter.product_mixer.core.model.marshalling.response.slice.CursorType
-import com.twitter.product_mixer.core.model.marshalling.response.slice.PreviousCursor
-import com.twitter.product_mixer.core.model.marshalling.response.slice.SliceItem
-import com.twitter.product_mixer.core.pipeline.HasPipelineCursor
-import com.twitter.product_mixer.core.pipeline.PipelineCursorSerializer
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.cursor.OrdelonrelondCursor
+import com.twittelonr.product_mixelonr.componelonnt_library.prelonmarshallelonr.cursor.CursorSelonrializelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.slicelon.CursorTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.slicelon.PrelonviousCursor
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.slicelon.SlicelonItelonm
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.HasPipelonlinelonCursor
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonCursorSelonrializelonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
 /**
- * Updates an [[OrderedCursor]] in the Previous position
+ * Updatelons an [[OrdelonrelondCursor]] in thelon Prelonvious position
  *
- * @param idSelector Specifies the entry from which to derive the `id` field
- * @param includeOperation Specifies whether to include the builder operation in the response
- * @param serializer Converts the cursor to an encoded string
+ * @param idSelonlelonctor Speloncifielons thelon elonntry from which to delonrivelon thelon `id` fielonld
+ * @param includelonOpelonration Speloncifielons whelonthelonr to includelon thelon buildelonr opelonration in thelon relonsponselon
+ * @param selonrializelonr Convelonrts thelon cursor to an elonncodelond string
  */
-case class OrderedPreviousCursorUpdater[
-  Query <: PipelineQuery with HasPipelineCursor[OrderedCursor]
+caselon class OrdelonrelondPrelonviousCursorUpdatelonr[
+  Quelonry <: PipelonlinelonQuelonry with HasPipelonlinelonCursor[OrdelonrelondCursor]
 ](
-  idSelector: PartialFunction[SliceItem, Long],
-  override val includeOperation: ShouldInclude[Query] = AlwaysInclude,
-  serializer: PipelineCursorSerializer[OrderedCursor] = CursorSerializer)
-    extends SliceCursorUpdaterFromUnderlyingBuilder[Query] {
-  override val cursorType: CursorType = PreviousCursor
+  idSelonlelonctor: PartialFunction[SlicelonItelonm, Long],
+  ovelonrridelon val includelonOpelonration: ShouldIncludelon[Quelonry] = AlwaysIncludelon,
+  selonrializelonr: PipelonlinelonCursorSelonrializelonr[OrdelonrelondCursor] = CursorSelonrializelonr)
+    elonxtelonnds SlicelonCursorUpdatelonrFromUndelonrlyingBuildelonr[Quelonry] {
+  ovelonrridelon val cursorTypelon: CursorTypelon = PrelonviousCursor
 
-  override val underlying: OrderedPreviousCursorBuilder[Query] =
-    OrderedPreviousCursorBuilder(idSelector, includeOperation, serializer)
+  ovelonrridelon val undelonrlying: OrdelonrelondPrelonviousCursorBuildelonr[Quelonry] =
+    OrdelonrelondPrelonviousCursorBuildelonr(idSelonlelonctor, includelonOpelonration, selonrializelonr)
 }

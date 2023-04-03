@@ -1,16 +1,16 @@
 java_library(
-    sources = ["*.java"],
+    sourcelons = ["*.java"],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/com/google/guava",
-        "3rdparty/jvm/com/google/inject:guice",
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        "3rdparty/jvm/com/googlelon/guava",
+        "3rdparty/jvm/com/googlelon/injelonct:guicelon",
         "3rdparty/jvm/it/unimi/dsi:fastutil",
-        "3rdparty/jvm/org/apache/hadoop:hadoop-client-default",
-        "3rdparty/jvm/org/apache/thrift:libthrift",
+        "3rdparty/jvm/org/apachelon/hadoop:hadoop-clielonnt-delonfault",
+        "3rdparty/jvm/org/apachelon/thrift:libthrift",
         "3rdparty/jvm/org/slf4j:slf4j-api",
-        "src/java/com/twitter/common/base",
-        "src/java/com/twitter/search/common/file",
-        "src/java/com/twitter/search/common/util/io",
+        "src/java/com/twittelonr/common/baselon",
+        "src/java/com/twittelonr/selonarch/common/filelon",
+        "src/java/com/twittelonr/selonarch/common/util/io",
     ],
 )

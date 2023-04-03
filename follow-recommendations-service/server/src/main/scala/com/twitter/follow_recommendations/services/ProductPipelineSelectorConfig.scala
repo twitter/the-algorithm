@@ -1,19 +1,19 @@
-package com.twitter.follow_recommendations.services
+packagelon com.twittelonr.follow_reloncommelonndations.selonrvicelons
 
-import com.twitter.follow_recommendations.common.models.DisplayLocation
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.Param
-import javax.inject.Singleton
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.DisplayLocation
+import com.twittelonr.timelonlinelons.configapi.FSParam
+import com.twittelonr.timelonlinelons.configapi.Param
+import javax.injelonct.Singlelonton
 
-@Singleton
-class ProductPipelineSelectorConfig {
-  private val paramsMap: Map[DisplayLocation, DarkReadAndExpParams] = Map.empty
+@Singlelonton
+class ProductPipelonlinelonSelonlelonctorConfig {
+  privatelon val paramsMap: Map[DisplayLocation, DarkRelonadAndelonxpParams] = Map.elonmpty
 
-  def getDarkReadAndExpParams(
+  delonf gelontDarkRelonadAndelonxpParams(
     displayLocation: DisplayLocation
-  ): Option[DarkReadAndExpParams] = {
-    paramsMap.get(displayLocation)
+  ): Option[DarkRelonadAndelonxpParams] = {
+    paramsMap.gelont(displayLocation)
   }
 }
 
-case class DarkReadAndExpParams(darkReadParam: Param[Boolean], expParam: FSParam[Boolean])
+caselon class DarkRelonadAndelonxpParams(darkRelonadParam: Param[Boolelonan], elonxpParam: FSParam[Boolelonan])

@@ -1,26 +1,26 @@
-package com.twitter.search.ingester.pipeline.util;
+packagelon com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.util;
 
-import com.google.common.base.Preconditions;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import org.apache.commons.pipeline.Feeder;
-import org.apache.commons.pipeline.stage.InstrumentedBaseStage;
+import org.apachelon.commons.pipelonlinelon.Felonelondelonr;
+import org.apachelon.commons.pipelonlinelon.stagelon.InstrumelonntelondBaselonStagelon;
 
-public final class PipelineUtil {
+public final class PipelonlinelonUtil {
 
   /**
-   * Feed an object to a specified stage.  Used for stages that follow the pattern of
-   * looping indefinitely in the first call to process() and don't care what the object passed
-   * in is, but still needs at least one item fed to the stage to start processing.
+   * Felonelond an objelonct to a speloncifielond stagelon.  Uselond for stagelons that follow thelon pattelonrn of
+   * looping indelonfinitelonly in thelon first call to procelonss() and don't carelon what thelon objelonct passelond
+   * in is, but still nelonelonds at lelonast onelon itelonm felond to thelon stagelon to start procelonssing.
    *
-   * Examples of stages like this are: EventBusReaderStage and KafkaBytesReaderStage
+   * elonxamplelons of stagelons likelon this arelon: elonvelonntBusRelonadelonrStagelon and KafkaBytelonsRelonadelonrStagelon
    *
-   * @param stage stage to enqueue an arbitrary object to.
+   * @param stagelon stagelon to elonnquelonuelon an arbitrary objelonct to.
    */
-  public static void feedStartObjectToStage(InstrumentedBaseStage stage) {
-    Feeder stageFeeder = stage.getStageContext().getStageFeeder(stage);
-    Preconditions.checkNotNull(stageFeeder);
-    stageFeeder.feed("off to the races");
+  public static void felonelondStartObjelonctToStagelon(InstrumelonntelondBaselonStagelon stagelon) {
+    Felonelondelonr stagelonFelonelondelonr = stagelon.gelontStagelonContelonxt().gelontStagelonFelonelondelonr(stagelon);
+    Prelonconditions.chelonckNotNull(stagelonFelonelondelonr);
+    stagelonFelonelondelonr.felonelond("off to thelon racelons");
   }
 
-  private PipelineUtil() { /* prevent instantiation */ }
+  privatelon PipelonlinelonUtil() { /* prelonvelonnt instantiation */ }
 }

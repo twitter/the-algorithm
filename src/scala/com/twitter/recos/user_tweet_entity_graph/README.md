@@ -1,17 +1,17 @@
-# UserTweetEntityGraph (UTEG)
+# UselonrTwelonelontelonntityGraph (UTelonG)
 
 ## What is it
-User Tweet Entity Graph (UTEG) is a Finalge thrift service built on the GraphJet framework. In maintains a graph of user-tweet relationships and serves user recommendations based on traversals in this graph.
+Uselonr Twelonelont elonntity Graph (UTelonG) is a Finalgelon thrift selonrvicelon built on thelon GraphJelont framelonwork. In maintains a graph of uselonr-twelonelont relonlationships and selonrvelons uselonr reloncommelonndations baselond on travelonrsals in this graph.
 
-## How is it used on Twitter
-UTEG generates the "XXX Liked" out-of-network tweets seen on Twitter's Home Timeline.
-The core idea behind UTEG is collaborative filtering. UTEG takes a user's weighted follow graph (i.e a list of weighted userIds) as input, 
-performs efficient traversal & aggregation, and returns the top weighted tweets engaged basd on # of users that engaged the tweet, as well as 
-the engaged users' weights.
+## How is it uselond on Twittelonr
+UTelonG gelonnelonratelons thelon "XXX Likelond" out-of-nelontwork twelonelonts selonelonn on Twittelonr's Homelon Timelonlinelon.
+Thelon corelon idelona belonhind UTelonG is collaborativelon filtelonring. UTelonG takelons a uselonr's welonightelond follow graph (i.elon a list of welonightelond uselonrIds) as input, 
+pelonrforms elonfficielonnt travelonrsal & aggrelongation, and relonturns thelon top welonightelond twelonelonts elonngagelond basd on # of uselonrs that elonngagelond thelon twelonelont, as welonll as 
+thelon elonngagelond uselonrs' welonights.
 
-UTEG is a stateful service and relies on a Kafka stream to ingest & persist states. It maintains an in-memory user engagements over the past 
-24-48 hours. Older events are dropped and GC'ed. 
+UTelonG is a statelonful selonrvicelon and relonlielons on a Kafka strelonam to ingelonst & pelonrsist statelons. It maintains an in-melonmory uselonr elonngagelonmelonnts ovelonr thelon past 
+24-48 hours. Oldelonr elonvelonnts arelon droppelond and GC'elond. 
 
-For full details on storage & processing, please check out our open-sourced project GraphJet, a general-purpose high performance in-memory storage engine.
-- https://github.com/twitter/GraphJet
+For full delontails on storagelon & procelonssing, plelonaselon chelonck out our opelonn-sourcelond projelonct GraphJelont, a gelonnelonral-purposelon high pelonrformancelon in-melonmory storagelon elonnginelon.
+- https://github.com/twittelonr/GraphJelont
 - http://www.vldb.org/pvldb/vol9/p1281-sharma.pdf

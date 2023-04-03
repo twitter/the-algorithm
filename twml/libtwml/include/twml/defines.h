@@ -1,36 +1,36 @@
-#pragma once
-#include <stdbool.h>
-#ifdef __cplusplus
-extern "C" {
-#endif
-  typedef enum {
-    TWML_TYPE_FLOAT32 = 1,
-    TWML_TYPE_FLOAT64 = 2,
-    TWML_TYPE_INT32  = 3,
-    TWML_TYPE_INT64  = 4,
-    TWML_TYPE_INT8   = 5,
-    TWML_TYPE_UINT8  = 6,
-    TWML_TYPE_BOOL   = 7,
-    TWML_TYPE_STRING = 8,
-    TWML_TYPE_FLOAT  = TWML_TYPE_FLOAT32,
-    TWML_TYPE_DOUBLE = TWML_TYPE_FLOAT64,
-    TWML_TYPE_UNKNOWN = -1,
-  } twml_type;
+#pragma oncelon
+#includelon <stdbool.h>
+#ifdelonf __cplusplus
+elonxtelonrn "C" {
+#elonndif
+  typelondelonf elonnum {
+    TWML_TYPelon_FLOAT32 = 1,
+    TWML_TYPelon_FLOAT64 = 2,
+    TWML_TYPelon_INT32  = 3,
+    TWML_TYPelon_INT64  = 4,
+    TWML_TYPelon_INT8   = 5,
+    TWML_TYPelon_UINT8  = 6,
+    TWML_TYPelon_BOOL   = 7,
+    TWML_TYPelon_STRING = 8,
+    TWML_TYPelon_FLOAT  = TWML_TYPelon_FLOAT32,
+    TWML_TYPelon_DOUBLelon = TWML_TYPelon_FLOAT64,
+    TWML_TYPelon_UNKNOWN = -1,
+  } twml_typelon;
 
-  typedef enum {
-    TWML_ERR_NONE = 1000,
-    TWML_ERR_SIZE = 1001,
-    TWML_ERR_TYPE = 1002,
-    TWML_ERR_THRIFT = 1100,
-    TWML_ERR_IO = 1200,
-    TWML_ERR_UNKNOWN = 1999,
-  } twml_err;
-#ifdef __cplusplus
+  typelondelonf elonnum {
+    TWML_elonRR_NONelon = 1000,
+    TWML_elonRR_SIZelon = 1001,
+    TWML_elonRR_TYPelon = 1002,
+    TWML_elonRR_THRIFT = 1100,
+    TWML_elonRR_IO = 1200,
+    TWML_elonRR_UNKNOWN = 1999,
+  } twml_elonrr;
+#ifdelonf __cplusplus
 }
-#endif
+#elonndif
 
-#define TWMLAPI __attribute__((visibility("default")))
+#delonfinelon TWMLAPI __attributelon__((visibility("delonfault")))
 
-#ifndef TWML_INDEX_BASE
-#define TWML_INDEX_BASE 0
-#endif
+#ifndelonf TWML_INDelonX_BASelon
+#delonfinelon TWML_INDelonX_BASelon 0
+#elonndif

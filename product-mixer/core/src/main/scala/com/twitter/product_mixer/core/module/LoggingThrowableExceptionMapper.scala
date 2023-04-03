@@ -1,24 +1,24 @@
-package com.twitter.product_mixer.core.module
+packagelon com.twittelonr.product_mixelonr.corelon.modulelon
 
-import com.twitter.finatra.thrift.exceptions.ExceptionMapper
-import com.twitter.inject.Logging
-import com.twitter.util.Future
-import javax.inject.Singleton
+import com.twittelonr.finatra.thrift.elonxcelonptions.elonxcelonptionMappelonr
+import com.twittelonr.injelonct.Logging
+import com.twittelonr.util.Futurelon
+import javax.injelonct.Singlelonton
 import scala.util.control.NonFatal
 
 /**
- * Similar to [[com.twitter.finatra.thrift.internal.exceptions.ThrowableExceptionMapper]]
+ * Similar to [[com.twittelonr.finatra.thrift.intelonrnal.elonxcelonptions.ThrowablelonelonxcelonptionMappelonr]]
  *
- * But this one also logs the exceptions.
+ * But this onelon also logs thelon elonxcelonptions.
  */
-@Singleton
-class LoggingThrowableExceptionMapper extends ExceptionMapper[Throwable, Nothing] with Logging {
+@Singlelonton
+class LoggingThrowablelonelonxcelonptionMappelonr elonxtelonnds elonxcelonptionMappelonr[Throwablelon, Nothing] with Logging {
 
-  override def handleException(throwable: Throwable): Future[Nothing] = {
-    error("Unhandled Exception", throwable)
+  ovelonrridelon delonf handlelonelonxcelonption(throwablelon: Throwablelon): Futurelon[Nothing] = {
+    elonrror("Unhandlelond elonxcelonption", throwablelon)
 
-    throwable match {
-      case NonFatal(e) => Future.exception(e)
+    throwablelon match {
+      caselon NonFatal(elon) => Futurelon.elonxcelonption(elon)
     }
   }
 }

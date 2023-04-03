@@ -1,129 +1,129 @@
-enable_recommendations:
-  comment: Proportion of requests where we return an actual response as part. Decreasing the value will increase the portion of empty responses (in order to disable the service) as part of the graceful degradation.
-  default_availability: 10000
-enable_score_user_candidates:
-  comment: Proportion of requests where score user candidates from the scoreUserCandidates endpoint
-  default_availability: 10000
-enable_profile_sidebar_product:
-  comment: Proportion of requests where we return an actual response for profile sidebar product
-  default_availability: 10000
-enable_magic_recs_product:
-  comment: Proportion of requests where we return an actual response for magic recs product
-  default_availability: 10000
-enable_rux_landing_page_product:
-  comment: Proportion of requests where we return an actual response for rux landing page product
-  default_availability: 10000
-enable_rux_pymk_product:
-  comment: Proportion of requests where we return an actual response for rux pymk product
-  default_availability: 10000
-enable_profile_bonus_follow_product:
-  comment: Proportion of requests where we return an actual response for profile bonus follow product
-  default_availability: 10000
-enable_election_explore_wtf_product:
-  comment: Proportion of requests where we return an actual response for election explore wtf product
-  default_availability: 10000
-enable_cluster_follow_product:
-  comment: Proportion of requests where we return an actual response for cluster follow product
-  default_availability: 10000
-enable_home_timeline_product:
-  comment: Proportion of requests where we return an actual response for htl wtf product
-  default_availability: 10000
-enable_htl_bonus_follow_product:
-  comment: Proportion of requests where we return an actual response for htl bonus follow product
-  default_availability: 10000
-enable_explore_tab_product:
-  comment: Proportion of requests where we return an actual response for explore tab product
-  default_availability: 10000
-enable_sidebar_product:
-  comment: Proportion of requests where we return an actual response for sidebar product
-  default_availability: 10000
-enable_campaign_form_product:
-  comment: Proportion of requests where we return an actual response for campaign form product
-  default_availability: 10000
-enable_reactive_follow_product:
-  comment: Proportion of requests where we return an actual response for reactive follow product
-  default_availability: 10000
-enable_nux_pymk_product:
-  comment: Proportion of requests where we return an actual response for nux pymk product
-  default_availability: 10000
-enable_nux_interests_product:
-  comment: Proportion of requests where we return an actual response for nux interests product
-  default_availability: 10000
-enable_nux_topic_bonus_follow_product:
-  comment: Proportion of requests where we return an actual response for nux topic-based bonus follow product
-  default_availability: 10000
-enable_india_covid19_curated_accounts_wtf_product:
-  comment: Proportion of requests where we return an actual response for india covid19 curated accounts wtf product
-  default_availability: 10000
-enable_ab_upload_product:
-  comment: Proportion of requests where we return an actual response for the address book upload product
-  default_availability: 10000
-enable_people_plus_plus_product:
-  comment: Proportion of requests where we return an actual response for the PeoplePlusPlus/Connect Tab product
-  default_availability: 10000
-enable_tweet_notification_recs_product:
-  comment: Proportion of requests where we return an actual response for the Tweet Notification Recommendations product
-  default_availability: 10000
-enable_profile_device_follow_product:
-  comment: Proportion of requests where we return an actual response for the ProfileDeviceFollow product
-  default_availability: 10000
-enable_diffy_module_dark_reading:
-  comment: Percentage of dark read traffic routed to diffy thrift
-  default_availability: 0
-enable_recos_backfill_product:
-  comment: Proportion of requests where we return an actual response for the RecosBackfill product
-  default_availability: 10000
-enable_post_nux_follow_task_product:
-  comment: Proportion of requests where we return an actual response for post NUX follow task product
-  default_availability: 10000
-enable_curated_space_hosts_product:
-  comment: Proportion of requests where we return an actual response for curated space hosts product
-  default_availability: 10000
-enable_nux_geo_category_product:
-  comment: Proportion of requests where we return an actual response for nux geo category product
-  default_availability: 10000
-enable_nux_interests_category_product:
-  comment: Proportion of requests where we return an actual response for nux interests category product
-  default_availability: 10000
-enable_nux_pymk_category_product:
-  comment: Proportion of requests where we return an actual response for nux pymk category product
-  default_availability: 10000
-enable_home_timeline_tweet_recs_product:
-  comment: Proportion of requests where we return an actual response for the Home Timeline Tweet Recs product
-  default_availability: 10000
-enable_htl_bulk_friend_follows_product:
-  comment: Proportion of requests where we return an actual response for the HTL bulk friend follows product
-  default_availability: 10000
-enable_nux_auto_follow_product:
-  comment: Proportion of requests where we return an actual response for the NUX auto follow product
-  default_availability: 10000
-enable_search_bonus_follow_product:
-  comment: Proportion of requests where we return an actual response for search bonus follow product
-  default_availability: 10000
-enable_fetch_user_in_request_builder:
-  comment: Proportion of requests where we fetch user object from gizmoduck in request builder
-  default_availability: 0
-enable_product_mixer_magic_recs_product:
-  comment: Proportion of requests where we enable the product mixer magic recs product
-  default_availability: 10000
-enable_home_timeline_reverse_chron_product:
-  comment: Proportion of requests where we return an actual response for Home timeline reverse chron product
-  default_availability: 10000
-enable_product_mixer_pipeline_magic_recs_dark_read:
-  comment: Compare product mixer pipeline responses to current FRS pipeline responses for Magic Recs
-  default_availability: 0
-enable_experimental_caching:
-  comment: Proportion of requests we use experimental caching for data caching
-  default_availability: 0
-enable_distributed_caching:
-  comment: Proportion of requests we use a distributed cache cluster for data caching
-  default_availability: 10000
-enable_gizmoduck_caching:
-  comment: Proportion of requests we use a distributed cache cluster for data caching in Gizmoduck
-  default_availability: 10000
-enable_traffic_dark_reading:
-  comment: Proportion of requests where we replicate the request for traffic dark reading
-  default_availability: 0
-enable_graph_feature_service_requests:
-  comment: Proportion of requests where we allow request calls to Graph Feature Service
-  default_availability: 10000
+elonnablelon_reloncommelonndations:
+  commelonnt: Proportion of relonquelonsts whelonrelon welon relonturn an actual relonsponselon as part. Deloncrelonasing thelon valuelon will increlonaselon thelon portion of elonmpty relonsponselons (in ordelonr to disablelon thelon selonrvicelon) as part of thelon gracelonful delongradation.
+  delonfault_availability: 10000
+elonnablelon_scorelon_uselonr_candidatelons:
+  commelonnt: Proportion of relonquelonsts whelonrelon scorelon uselonr candidatelons from thelon scorelonUselonrCandidatelons elonndpoint
+  delonfault_availability: 10000
+elonnablelon_profilelon_sidelonbar_product:
+  commelonnt: Proportion of relonquelonsts whelonrelon welon relonturn an actual relonsponselon for profilelon sidelonbar product
+  delonfault_availability: 10000
+elonnablelon_magic_reloncs_product:
+  commelonnt: Proportion of relonquelonsts whelonrelon welon relonturn an actual relonsponselon for magic reloncs product
+  delonfault_availability: 10000
+elonnablelon_rux_landing_pagelon_product:
+  commelonnt: Proportion of relonquelonsts whelonrelon welon relonturn an actual relonsponselon for rux landing pagelon product
+  delonfault_availability: 10000
+elonnablelon_rux_pymk_product:
+  commelonnt: Proportion of relonquelonsts whelonrelon welon relonturn an actual relonsponselon for rux pymk product
+  delonfault_availability: 10000
+elonnablelon_profilelon_bonus_follow_product:
+  commelonnt: Proportion of relonquelonsts whelonrelon welon relonturn an actual relonsponselon for profilelon bonus follow product
+  delonfault_availability: 10000
+elonnablelon_elonlelonction_elonxplorelon_wtf_product:
+  commelonnt: Proportion of relonquelonsts whelonrelon welon relonturn an actual relonsponselon for elonlelonction elonxplorelon wtf product
+  delonfault_availability: 10000
+elonnablelon_clustelonr_follow_product:
+  commelonnt: Proportion of relonquelonsts whelonrelon welon relonturn an actual relonsponselon for clustelonr follow product
+  delonfault_availability: 10000
+elonnablelon_homelon_timelonlinelon_product:
+  commelonnt: Proportion of relonquelonsts whelonrelon welon relonturn an actual relonsponselon for htl wtf product
+  delonfault_availability: 10000
+elonnablelon_htl_bonus_follow_product:
+  commelonnt: Proportion of relonquelonsts whelonrelon welon relonturn an actual relonsponselon for htl bonus follow product
+  delonfault_availability: 10000
+elonnablelon_elonxplorelon_tab_product:
+  commelonnt: Proportion of relonquelonsts whelonrelon welon relonturn an actual relonsponselon for elonxplorelon tab product
+  delonfault_availability: 10000
+elonnablelon_sidelonbar_product:
+  commelonnt: Proportion of relonquelonsts whelonrelon welon relonturn an actual relonsponselon for sidelonbar product
+  delonfault_availability: 10000
+elonnablelon_campaign_form_product:
+  commelonnt: Proportion of relonquelonsts whelonrelon welon relonturn an actual relonsponselon for campaign form product
+  delonfault_availability: 10000
+elonnablelon_relonactivelon_follow_product:
+  commelonnt: Proportion of relonquelonsts whelonrelon welon relonturn an actual relonsponselon for relonactivelon follow product
+  delonfault_availability: 10000
+elonnablelon_nux_pymk_product:
+  commelonnt: Proportion of relonquelonsts whelonrelon welon relonturn an actual relonsponselon for nux pymk product
+  delonfault_availability: 10000
+elonnablelon_nux_intelonrelonsts_product:
+  commelonnt: Proportion of relonquelonsts whelonrelon welon relonturn an actual relonsponselon for nux intelonrelonsts product
+  delonfault_availability: 10000
+elonnablelon_nux_topic_bonus_follow_product:
+  commelonnt: Proportion of relonquelonsts whelonrelon welon relonturn an actual relonsponselon for nux topic-baselond bonus follow product
+  delonfault_availability: 10000
+elonnablelon_india_covid19_curatelond_accounts_wtf_product:
+  commelonnt: Proportion of relonquelonsts whelonrelon welon relonturn an actual relonsponselon for india covid19 curatelond accounts wtf product
+  delonfault_availability: 10000
+elonnablelon_ab_upload_product:
+  commelonnt: Proportion of relonquelonsts whelonrelon welon relonturn an actual relonsponselon for thelon addrelonss book upload product
+  delonfault_availability: 10000
+elonnablelon_pelonoplelon_plus_plus_product:
+  commelonnt: Proportion of relonquelonsts whelonrelon welon relonturn an actual relonsponselon for thelon PelonoplelonPlusPlus/Connelonct Tab product
+  delonfault_availability: 10000
+elonnablelon_twelonelont_notification_reloncs_product:
+  commelonnt: Proportion of relonquelonsts whelonrelon welon relonturn an actual relonsponselon for thelon Twelonelont Notification Reloncommelonndations product
+  delonfault_availability: 10000
+elonnablelon_profilelon_delonvicelon_follow_product:
+  commelonnt: Proportion of relonquelonsts whelonrelon welon relonturn an actual relonsponselon for thelon ProfilelonDelonvicelonFollow product
+  delonfault_availability: 10000
+elonnablelon_diffy_modulelon_dark_relonading:
+  commelonnt: Pelonrcelonntagelon of dark relonad traffic routelond to diffy thrift
+  delonfault_availability: 0
+elonnablelon_reloncos_backfill_product:
+  commelonnt: Proportion of relonquelonsts whelonrelon welon relonturn an actual relonsponselon for thelon ReloncosBackfill product
+  delonfault_availability: 10000
+elonnablelon_post_nux_follow_task_product:
+  commelonnt: Proportion of relonquelonsts whelonrelon welon relonturn an actual relonsponselon for post NUX follow task product
+  delonfault_availability: 10000
+elonnablelon_curatelond_spacelon_hosts_product:
+  commelonnt: Proportion of relonquelonsts whelonrelon welon relonturn an actual relonsponselon for curatelond spacelon hosts product
+  delonfault_availability: 10000
+elonnablelon_nux_gelono_catelongory_product:
+  commelonnt: Proportion of relonquelonsts whelonrelon welon relonturn an actual relonsponselon for nux gelono catelongory product
+  delonfault_availability: 10000
+elonnablelon_nux_intelonrelonsts_catelongory_product:
+  commelonnt: Proportion of relonquelonsts whelonrelon welon relonturn an actual relonsponselon for nux intelonrelonsts catelongory product
+  delonfault_availability: 10000
+elonnablelon_nux_pymk_catelongory_product:
+  commelonnt: Proportion of relonquelonsts whelonrelon welon relonturn an actual relonsponselon for nux pymk catelongory product
+  delonfault_availability: 10000
+elonnablelon_homelon_timelonlinelon_twelonelont_reloncs_product:
+  commelonnt: Proportion of relonquelonsts whelonrelon welon relonturn an actual relonsponselon for thelon Homelon Timelonlinelon Twelonelont Reloncs product
+  delonfault_availability: 10000
+elonnablelon_htl_bulk_frielonnd_follows_product:
+  commelonnt: Proportion of relonquelonsts whelonrelon welon relonturn an actual relonsponselon for thelon HTL bulk frielonnd follows product
+  delonfault_availability: 10000
+elonnablelon_nux_auto_follow_product:
+  commelonnt: Proportion of relonquelonsts whelonrelon welon relonturn an actual relonsponselon for thelon NUX auto follow product
+  delonfault_availability: 10000
+elonnablelon_selonarch_bonus_follow_product:
+  commelonnt: Proportion of relonquelonsts whelonrelon welon relonturn an actual relonsponselon for selonarch bonus follow product
+  delonfault_availability: 10000
+elonnablelon_felontch_uselonr_in_relonquelonst_buildelonr:
+  commelonnt: Proportion of relonquelonsts whelonrelon welon felontch uselonr objelonct from gizmoduck in relonquelonst buildelonr
+  delonfault_availability: 0
+elonnablelon_product_mixelonr_magic_reloncs_product:
+  commelonnt: Proportion of relonquelonsts whelonrelon welon elonnablelon thelon product mixelonr magic reloncs product
+  delonfault_availability: 10000
+elonnablelon_homelon_timelonlinelon_relonvelonrselon_chron_product:
+  commelonnt: Proportion of relonquelonsts whelonrelon welon relonturn an actual relonsponselon for Homelon timelonlinelon relonvelonrselon chron product
+  delonfault_availability: 10000
+elonnablelon_product_mixelonr_pipelonlinelon_magic_reloncs_dark_relonad:
+  commelonnt: Comparelon product mixelonr pipelonlinelon relonsponselons to currelonnt FRS pipelonlinelon relonsponselons for Magic Reloncs
+  delonfault_availability: 0
+elonnablelon_elonxpelonrimelonntal_caching:
+  commelonnt: Proportion of relonquelonsts welon uselon elonxpelonrimelonntal caching for data caching
+  delonfault_availability: 0
+elonnablelon_distributelond_caching:
+  commelonnt: Proportion of relonquelonsts welon uselon a distributelond cachelon clustelonr for data caching
+  delonfault_availability: 10000
+elonnablelon_gizmoduck_caching:
+  commelonnt: Proportion of relonquelonsts welon uselon a distributelond cachelon clustelonr for data caching in Gizmoduck
+  delonfault_availability: 10000
+elonnablelon_traffic_dark_relonading:
+  commelonnt: Proportion of relonquelonsts whelonrelon welon relonplicatelon thelon relonquelonst for traffic dark relonading
+  delonfault_availability: 0
+elonnablelon_graph_felonaturelon_selonrvicelon_relonquelonsts:
+  commelonnt: Proportion of relonquelonsts whelonrelon welon allow relonquelonst calls to Graph Felonaturelon Selonrvicelon
+  delonfault_availability: 10000

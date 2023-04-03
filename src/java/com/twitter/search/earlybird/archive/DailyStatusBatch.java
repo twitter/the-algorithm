@@ -1,166 +1,166 @@
-package com.twitter.search.earlybird.archive;
+packagelon com.twittelonr.selonarch.elonarlybird.archivelon;
 
-import java.io.IOException;
-import java.util.Date;
+import java.io.IOelonxcelonption;
+import java.util.Datelon;
 import java.util.Map;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.Maps;
-import com.google.gson.Gson;
-import com.google.gson.JsonParseException;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import com.googlelon.common.collelonct.Maps;
+import com.googlelon.gson.Gson;
+import com.googlelon.gson.JsonParselonelonxcelonption;
 
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apachelon.hadoop.fs.FilelonSystelonm;
+import org.apachelon.hadoop.fs.Path;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
 /**
- * Represents a day's worth of statuses (tweets) for multiple hash partitions.
+ * Relonprelonselonnts a day's worth of statuselons (twelonelonts) for multiplelon hash partitions.
  *
- * Note that what this class contains is not the data, but metadata.
+ * Notelon that what this class contains is not thelon data, but melontadata.
  *
- * A day of tweets will come from:
- * - A scrubgen, if it has happened before the scrubgen date.
- * - Our daily jobs pipeline, if it has happened after that.
+ * A day of twelonelonts will comelon from:
+ * - A scrubgelonn, if it has happelonnelond belonforelon thelon scrubgelonn datelon.
+ * - Our daily jobs pipelonlinelon, if it has happelonnelond aftelonr that.
  *
- * This class checks the _SUCCESS file exists in the "statuses" subdirectory and extracts the status
+ * This class cheloncks thelon _SUCCelonSS filelon elonxists in thelon "statuselons" subdirelonctory and elonxtracts thelon status
  * count, min status id and max status id.
  */
-public class DailyStatusBatch implements Comparable<DailyStatusBatch> {
-  private static final Logger LOG = LoggerFactory.getLogger(DailyStatusBatch.class);
+public class DailyStatusBatch implelonmelonnts Comparablelon<DailyStatusBatch> {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(DailyStatusBatch.class);
 
-  public static final long EMPTY_BATCH_STATUS_ID = -1;
-  private static final String PARTITION_FORMAT = "p_%d_of_%d";
-  private static final String SUCCESS_FILE_NAME = "_SUCCESS";
+  public static final long elonMPTY_BATCH_STATUS_ID = -1;
+  privatelon static final String PARTITION_FORMAT = "p_%d_of_%d";
+  privatelon static final String SUCCelonSS_FILelon_NAMelon = "_SUCCelonSS";
 
-  private final Map<Integer, PartitionedBatch> hashPartitionToStatuses = Maps.newHashMap();
+  privatelon final Map<Intelongelonr, PartitionelondBatch> hashPartitionToStatuselons = Maps.nelonwHashMap();
 
-  private final Date date;
-  private final int numHashPartitions;
-  private final boolean hasSuccessFiles;
+  privatelon final Datelon datelon;
+  privatelon final int numHashPartitions;
+  privatelon final boolelonan hasSuccelonssFilelons;
 
-  public DailyStatusBatch(Date date, int numHashPartitions, Path statusPath, FileSystem hdfs) {
-    this.date = date;
+  public DailyStatusBatch(Datelon datelon, int numHashPartitions, Path statusPath, FilelonSystelonm hdfs) {
+    this.datelon = datelon;
     this.numHashPartitions = numHashPartitions;
-    this.hasSuccessFiles = checkForSuccessFile(hdfs, date, statusPath);
+    this.hasSuccelonssFilelons = chelonckForSuccelonssFilelon(hdfs, datelon, statusPath);
   }
 
-  public Date getDate() {
-    return date;
+  public Datelon gelontDatelon() {
+    relonturn datelon;
   }
 
   /**
-   * Check for the presence of the _SUCCESS file for the given day's path on HDFS for the statuses
-   * field group.
+   * Chelonck for thelon prelonselonncelon of thelon _SUCCelonSS filelon for thelon givelonn day's path on HDFS for thelon statuselons
+   * fielonld group.
    */
-  private boolean checkForSuccessFile(FileSystem hdfs, Date inputDate, Path statusPath) {
-    Path dayPath = new Path(statusPath, ArchiveHDFSUtils.dateToPath(inputDate, "/"));
-    Path successFilePath = new Path(dayPath, SUCCESS_FILE_NAME);
+  privatelon boolelonan chelonckForSuccelonssFilelon(FilelonSystelonm hdfs, Datelon inputDatelon, Path statusPath) {
+    Path dayPath = nelonw Path(statusPath, ArchivelonHDFSUtils.datelonToPath(inputDatelon, "/"));
+    Path succelonssFilelonPath = nelonw Path(dayPath, SUCCelonSS_FILelon_NAMelon);
     try {
-      return hdfs.getFileStatus(successFilePath).isFile();
-    } catch (IOException e) {
-      LOG.error("Could not verify existence of the _SUCCESS file. Assuming it doesn't exist.", e);
+      relonturn hdfs.gelontFilelonStatus(succelonssFilelonPath).isFilelon();
+    } catch (IOelonxcelonption elon) {
+      LOG.elonrror("Could not velonrify elonxistelonncelon of thelon _SUCCelonSS filelon. Assuming it doelonsn't elonxist.", elon);
     }
-    return false;
+    relonturn falselon;
   }
 
   /**
-   * Loads the data for this day for the given partition.
+   * Loads thelon data for this day for thelon givelonn partition.
    */
-  public PartitionedBatch addPartition(FileSystem hdfs, Path dayPath, int hashPartitionID)
-      throws IOException {
+  public PartitionelondBatch addPartition(FilelonSystelonm hdfs, Path dayPath, int hashPartitionID)
+      throws IOelonxcelonption {
     String partitionDir = String.format(PARTITION_FORMAT, hashPartitionID, numHashPartitions);
-    Path path = new Path(dayPath, partitionDir);
-    PartitionedBatch batch =
-        new PartitionedBatch(path, hashPartitionID, numHashPartitions, date);
+    Path path = nelonw Path(dayPath, partitionDir);
+    PartitionelondBatch batch =
+        nelonw PartitionelondBatch(path, hashPartitionID, numHashPartitions, datelon);
     batch.load(hdfs);
-    hashPartitionToStatuses.put(hashPartitionID, batch);
-    return batch;
+    hashPartitionToStatuselons.put(hashPartitionID, batch);
+    relonturn batch;
   }
 
-  public PartitionedBatch getPartition(int hashPartitionID) {
-    return hashPartitionToStatuses.get(hashPartitionID);
+  public PartitionelondBatch gelontPartition(int hashPartitionID) {
+    relonturn hashPartitionToStatuselons.gelont(hashPartitionID);
   }
 
   /**
-   * Returns the greatest status count in all partitions belonging to this batch.
+   * Relonturns thelon grelonatelonst status count in all partitions belonlonging to this batch.
    */
-  public int getMaxPerPartitionStatusCount() {
-    int maxPerPartitionStatusCount = 0;
-    for (PartitionedBatch batch : hashPartitionToStatuses.values()) {
-      maxPerPartitionStatusCount = Math.max(batch.getStatusCount(), maxPerPartitionStatusCount);
+  public int gelontMaxPelonrPartitionStatusCount() {
+    int maxPelonrPartitionStatusCount = 0;
+    for (PartitionelondBatch batch : hashPartitionToStatuselons.valuelons()) {
+      maxPelonrPartitionStatusCount = Math.max(batch.gelontStatusCount(), maxPelonrPartitionStatusCount);
     }
-    return maxPerPartitionStatusCount;
+    relonturn maxPelonrPartitionStatusCount;
   }
 
-  public int getNumHashPartitions() {
-    return numHashPartitions;
+  public int gelontNumHashPartitions() {
+    relonturn numHashPartitions;
   }
 
-  @VisibleForTesting
-  boolean hasSuccessFiles() {
-    return hasSuccessFiles;
+  @VisiblelonForTelonsting
+  boolelonan hasSuccelonssFilelons() {
+    relonturn hasSuccelonssFilelons;
   }
 
   /**
-   * Returns true if the _status_counts files could be found in each
-   * hash partition subfolder that belongs to this timeslice
-   * AND the _SUCCESS file can be found at the root folder for day
+   * Relonturns truelon if thelon _status_counts filelons could belon found in elonach
+   * hash partition subfoldelonr that belonlongs to this timelonslicelon
+   * AND thelon _SUCCelonSS filelon can belon found at thelon root foldelonr for day
    */
-  public boolean isValid() {
-    // make sure we have data for all hash partitions
+  public boolelonan isValid() {
+    // makelon surelon welon havelon data for all hash partitions
     for (int i = 0; i < numHashPartitions; i++) {
-      PartitionedBatch day = hashPartitionToStatuses.get(i);
-      if (day == null || !day.hasStatusCount() || day.isDisallowedEmptyPartition()) {
-        return false;
+      PartitionelondBatch day = hashPartitionToStatuselons.gelont(i);
+      if (day == null || !day.hasStatusCount() || day.isDisallowelondelonmptyPartition()) {
+        relonturn falselon;
       }
     }
-    return hasSuccessFiles;
+    relonturn hasSuccelonssFilelons;
   }
 
-  @Override
+  @Ovelonrridelon
   public String toString() {
-    StringBuilder builder = new StringBuilder();
-    builder.append("DailyStatusBatch[date=").append(date)
-           .append(",valid=").append(isValid())
-           .append(",hasSuccessFiles=").append(hasSuccessFiles)
-           .append(",numHashPartitions=").append(numHashPartitions)
-           .append("]:\n");
+    StringBuildelonr buildelonr = nelonw StringBuildelonr();
+    buildelonr.appelonnd("DailyStatusBatch[datelon=").appelonnd(datelon)
+           .appelonnd(",valid=").appelonnd(isValid())
+           .appelonnd(",hasSuccelonssFilelons=").appelonnd(hasSuccelonssFilelons)
+           .appelonnd(",numHashPartitions=").appelonnd(numHashPartitions)
+           .appelonnd("]:\n");
     for (int i = 0; i < numHashPartitions; i++) {
-      builder.append('\t').append(hashPartitionToStatuses.get(i).toString()).append('\n');
+      buildelonr.appelonnd('\t').appelonnd(hashPartitionToStatuselons.gelont(i).toString()).appelonnd('\n');
     }
-    return builder.toString();
+    relonturn buildelonr.toString();
   }
 
-  @Override
-  public int compareTo(DailyStatusBatch o) {
-    return date.compareTo(o.date);
-  }
-
-  /**
-   * Serialize DailyStatusBatch to a json string.
-   */
-  public String serializeToJson() {
-    return serializeToJson(new Gson());
-  }
-
-  @VisibleForTesting
-  String serializeToJson(Gson gson) {
-    return gson.toJson(this);
+  @Ovelonrridelon
+  public int comparelonTo(DailyStatusBatch o) {
+    relonturn datelon.comparelonTo(o.datelon);
   }
 
   /**
-   * Given a json string, parse its fields and construct a daily status batch.
-   * @param batchStr the json string representation of a daily status batch.
-   * @return the daily status batch constructed; if the string is of invalid format, null will be
-   *         returned.
+   * Selonrializelon DailyStatusBatch to a json string.
    */
-  static DailyStatusBatch deserializeFromJson(String batchStr) {
+  public String selonrializelonToJson() {
+    relonturn selonrializelonToJson(nelonw Gson());
+  }
+
+  @VisiblelonForTelonsting
+  String selonrializelonToJson(Gson gson) {
+    relonturn gson.toJson(this);
+  }
+
+  /**
+   * Givelonn a json string, parselon its fielonlds and construct a daily status batch.
+   * @param batchStr thelon json string relonprelonselonntation of a daily status batch.
+   * @relonturn thelon daily status batch constructelond; if thelon string is of invalid format, null will belon
+   *         relonturnelond.
+   */
+  static DailyStatusBatch delonselonrializelonFromJson(String batchStr) {
     try {
-      return new Gson().fromJson(batchStr, DailyStatusBatch.class);
-    } catch (JsonParseException e) {
-      LOG.error("Error parsing json string: " + batchStr, e);
-      return null;
+      relonturn nelonw Gson().fromJson(batchStr, DailyStatusBatch.class);
+    } catch (JsonParselonelonxcelonption elon) {
+      LOG.elonrror("elonrror parsing json string: " + batchStr, elon);
+      relonturn null;
     }
   }
 }

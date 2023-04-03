@@ -1,21 +1,21 @@
-package com.twitter.follow_recommendations.common.utils
+packagelon com.twittelonr.follow_reloncommelonndations.common.utils
 
 /**
- * Typeclass for any Recommendation type that has a weight
+ * Typelonclass for any Reloncommelonndation typelon that has a welonight
  *
  */
-trait Weighted[-Rec] {
-  def apply(rec: Rec): Double
+trait Welonightelond[-Relonc] {
+  delonf apply(relonc: Relonc): Doublelon
 }
 
-object Weighted {
-  implicit object WeightedTuple extends Weighted[(_, Double)] {
-    override def apply(rec: (_, Double)): Double = rec._2
+objelonct Welonightelond {
+  implicit objelonct WelonightelondTuplelon elonxtelonnds Welonightelond[(_, Doublelon)] {
+    ovelonrridelon delonf apply(relonc: (_, Doublelon)): Doublelon = relonc._2
   }
 
-  def fromFunction[Rec](f: Rec => Double): Weighted[Rec] = {
-    new Weighted[Rec] {
-      override def apply(rec: Rec): Double = f(rec)
+  delonf fromFunction[Relonc](f: Relonc => Doublelon): Welonightelond[Relonc] = {
+    nelonw Welonightelond[Relonc] {
+      ovelonrridelon delonf apply(relonc: Relonc): Doublelon = f(relonc)
     }
   }
 }

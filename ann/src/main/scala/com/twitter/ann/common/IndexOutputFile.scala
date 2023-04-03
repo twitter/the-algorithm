@@ -1,226 +1,226 @@
-package com.twitter.ann.common
+packagelon com.twittelonr.ann.common
 
-import com.google.common.io.ByteStreams
-import com.twitter.ann.common.thriftscala.AnnIndexMetadata
-import com.twitter.mediaservices.commons.codec.ArrayByteBufferCodec
-import com.twitter.mediaservices.commons.codec.ThriftByteBufferCodec
-import com.twitter.search.common.file.AbstractFile
-import java.io.IOException
-import java.io.InputStream
-import java.io.OutputStream
-import java.nio.channels.Channels
-import org.apache.beam.sdk.io.FileSystems
-import org.apache.beam.sdk.io.fs.MoveOptions
-import org.apache.beam.sdk.io.fs.ResolveOptions
-import org.apache.beam.sdk.io.fs.ResolveOptions.StandardResolveOptions
-import org.apache.beam.sdk.io.fs.ResourceId
-import org.apache.beam.sdk.util.MimeTypes
-import org.apache.hadoop.io.IOUtils
-import scala.collection.JavaConverters._
+import com.googlelon.common.io.BytelonStrelonams
+import com.twittelonr.ann.common.thriftscala.AnnIndelonxMelontadata
+import com.twittelonr.melondiaselonrvicelons.commons.codelonc.ArrayBytelonBuffelonrCodelonc
+import com.twittelonr.melondiaselonrvicelons.commons.codelonc.ThriftBytelonBuffelonrCodelonc
+import com.twittelonr.selonarch.common.filelon.AbstractFilelon
+import java.io.IOelonxcelonption
+import java.io.InputStrelonam
+import java.io.OutputStrelonam
+import java.nio.channelonls.Channelonls
+import org.apachelon.belonam.sdk.io.FilelonSystelonms
+import org.apachelon.belonam.sdk.io.fs.MovelonOptions
+import org.apachelon.belonam.sdk.io.fs.RelonsolvelonOptions
+import org.apachelon.belonam.sdk.io.fs.RelonsolvelonOptions.StandardRelonsolvelonOptions
+import org.apachelon.belonam.sdk.io.fs.RelonsourcelonId
+import org.apachelon.belonam.sdk.util.MimelonTypelons
+import org.apachelon.hadoop.io.IOUtils
+import scala.collelonction.JavaConvelonrtelonrs._
 
 /**
- * This class creates a wrapper around GCS filesystem and HDFS filesystem for the index
- * generation job. It implements the basic methods required by the index generation job and hides
- * the logic around handling HDFS vs GCS.
+ * This class crelonatelons a wrappelonr around GCS filelonsystelonm and HDFS filelonsystelonm for thelon indelonx
+ * gelonnelonration job. It implelonmelonnts thelon basic melonthods relonquirelond by thelon indelonx gelonnelonration job and hidelons
+ * thelon logic around handling HDFS vs GCS.
  */
-class IndexOutputFile(val abstractFile: AbstractFile, val resourceId: ResourceId) {
+class IndelonxOutputFilelon(val abstractFilelon: AbstractFilelon, val relonsourcelonId: RelonsourcelonId) {
 
-  // Success file name
-  private val SUCCESS_FILE = "_SUCCESS"
-  private val INDEX_METADATA_FILE = "ANN_INDEX_METADATA"
-  private val MetadataCodec = new ThriftByteBufferCodec[AnnIndexMetadata](AnnIndexMetadata)
+  // Succelonss filelon namelon
+  privatelon val SUCCelonSS_FILelon = "_SUCCelonSS"
+  privatelon val INDelonX_MelonTADATA_FILelon = "ANN_INDelonX_MelonTADATA"
+  privatelon val MelontadataCodelonc = nelonw ThriftBytelonBuffelonrCodelonc[AnnIndelonxMelontadata](AnnIndelonxMelontadata)
 
   /**
-   * Constructor for ResourceId. This is used for GCS filesystem
-   * @param resourceId
+   * Constructor for RelonsourcelonId. This is uselond for GCS filelonsystelonm
+   * @param relonsourcelonId
    */
-  def this(resourceId: ResourceId) = {
-    this(null, resourceId)
+  delonf this(relonsourcelonId: RelonsourcelonId) = {
+    this(null, relonsourcelonId)
   }
 
   /**
-   * Constructor for AbstractFile. This is used for HDFS and local filesystem
-   * @param abstractFile
+   * Constructor for AbstractFilelon. This is uselond for HDFS and local filelonsystelonm
+   * @param abstractFilelon
    */
-  def this(abstractFile: AbstractFile) = {
-    this(abstractFile, null)
+  delonf this(abstractFilelon: AbstractFilelon) = {
+    this(abstractFilelon, null)
   }
 
   /**
-   * Returns true if this instance is around an AbstractFile.
-   * @return
+   * Relonturns truelon if this instancelon is around an AbstractFilelon.
+   * @relonturn
    */
-  def isAbstractFile(): Boolean = {
-    abstractFile != null
+  delonf isAbstractFilelon(): Boolelonan = {
+    abstractFilelon != null
   }
 
   /**
-   * Creates a _SUCCESS file in the current directory.
+   * Crelonatelons a _SUCCelonSS filelon in thelon currelonnt direlonctory.
    */
-  def createSuccessFile(): Unit = {
-    if (isAbstractFile()) {
-      abstractFile.createSuccessFile()
-    } else {
-      val successFile =
-        resourceId.resolve(SUCCESS_FILE, ResolveOptions.StandardResolveOptions.RESOLVE_FILE)
-      val successWriterChannel = FileSystems.create(successFile, MimeTypes.BINARY)
-      successWriterChannel.close()
+  delonf crelonatelonSuccelonssFilelon(): Unit = {
+    if (isAbstractFilelon()) {
+      abstractFilelon.crelonatelonSuccelonssFilelon()
+    } elonlselon {
+      val succelonssFilelon =
+        relonsourcelonId.relonsolvelon(SUCCelonSS_FILelon, RelonsolvelonOptions.StandardRelonsolvelonOptions.RelonSOLVelon_FILelon)
+      val succelonssWritelonrChannelonl = FilelonSystelonms.crelonatelon(succelonssFilelon, MimelonTypelons.BINARY)
+      succelonssWritelonrChannelonl.closelon()
     }
   }
 
   /**
-   * Returns whether the current instance represents a directory
-   * @return True if the current instance is a directory
+   * Relonturns whelonthelonr thelon currelonnt instancelon relonprelonselonnts a direlonctory
+   * @relonturn Truelon if thelon currelonnt instancelon is a direlonctory
    */
-  def isDirectory(): Boolean = {
-    if (isAbstractFile()) {
-      abstractFile.isDirectory
-    } else {
-      resourceId.isDirectory
+  delonf isDirelonctory(): Boolelonan = {
+    if (isAbstractFilelon()) {
+      abstractFilelon.isDirelonctory
+    } elonlselon {
+      relonsourcelonId.isDirelonctory
     }
   }
 
   /**
-   * Return the current path of the file represented by the current instance
-   * @return The path string of the file/directory
+   * Relonturn thelon currelonnt path of thelon filelon relonprelonselonntelond by thelon currelonnt instancelon
+   * @relonturn Thelon path string of thelon filelon/direlonctory
    */
-  def getPath(): String = {
-    if (isAbstractFile()) {
-      abstractFile.getPath.toString
-    } else {
-      if (resourceId.isDirectory) {
-        resourceId.getCurrentDirectory.toString
-      } else {
-        resourceId.getCurrentDirectory.toString + resourceId.getFilename
+  delonf gelontPath(): String = {
+    if (isAbstractFilelon()) {
+      abstractFilelon.gelontPath.toString
+    } elonlselon {
+      if (relonsourcelonId.isDirelonctory) {
+        relonsourcelonId.gelontCurrelonntDirelonctory.toString
+      } elonlselon {
+        relonsourcelonId.gelontCurrelonntDirelonctory.toString + relonsourcelonId.gelontFilelonnamelon
       }
     }
   }
 
   /**
-   * Creates a new file @param fileName in the current directory.
-   * @param fileName
-   * @return A new file inside the current directory
+   * Crelonatelons a nelonw filelon @param filelonNamelon in thelon currelonnt direlonctory.
+   * @param filelonNamelon
+   * @relonturn A nelonw filelon insidelon thelon currelonnt direlonctory
    */
-  def createFile(fileName: String): IndexOutputFile = {
-    if (isAbstractFile()) {
-      // AbstractFile treats files and directories the same way. Hence, not checking for directory
-      // here.
-      new IndexOutputFile(abstractFile.getChild(fileName))
-    } else {
-      if (!resourceId.isDirectory) {
-        // If this is not a directory, throw exception.
-        throw new IllegalArgumentException(getPath() + " is not a directory.")
+  delonf crelonatelonFilelon(filelonNamelon: String): IndelonxOutputFilelon = {
+    if (isAbstractFilelon()) {
+      // AbstractFilelon trelonats filelons and direlonctorielons thelon samelon way. Helonncelon, not cheloncking for direlonctory
+      // helonrelon.
+      nelonw IndelonxOutputFilelon(abstractFilelon.gelontChild(filelonNamelon))
+    } elonlselon {
+      if (!relonsourcelonId.isDirelonctory) {
+        // If this is not a direlonctory, throw elonxcelonption.
+        throw nelonw IllelongalArgumelonntelonxcelonption(gelontPath() + " is not a direlonctory.")
       }
-      new IndexOutputFile(
-        resourceId.resolve(fileName, ResolveOptions.StandardResolveOptions.RESOLVE_FILE))
+      nelonw IndelonxOutputFilelon(
+        relonsourcelonId.relonsolvelon(filelonNamelon, RelonsolvelonOptions.StandardRelonsolvelonOptions.RelonSOLVelon_FILelon))
     }
   }
 
   /**
-   * Creates a new directory @param directoryName in the current directory.
-   * @param directoryName
-   * @return A new directory inside the current directory
+   * Crelonatelons a nelonw direlonctory @param direlonctoryNamelon in thelon currelonnt direlonctory.
+   * @param direlonctoryNamelon
+   * @relonturn A nelonw direlonctory insidelon thelon currelonnt direlonctory
    */
-  def createDirectory(directoryName: String): IndexOutputFile = {
-    if (isAbstractFile()) {
-      // AbstractFile treats files and directories the same way. Hence, not checking for directory
-      // here.
-      val dir = abstractFile.getChild(directoryName)
+  delonf crelonatelonDirelonctory(direlonctoryNamelon: String): IndelonxOutputFilelon = {
+    if (isAbstractFilelon()) {
+      // AbstractFilelon trelonats filelons and direlonctorielons thelon samelon way. Helonncelon, not cheloncking for direlonctory
+      // helonrelon.
+      val dir = abstractFilelon.gelontChild(direlonctoryNamelon)
       dir.mkdirs()
-      new IndexOutputFile(dir)
-    } else {
-      if (!resourceId.isDirectory) {
-        // If this is not a directory, throw exception.
-        throw new IllegalArgumentException(getPath() + " is not a directory.")
+      nelonw IndelonxOutputFilelon(dir)
+    } elonlselon {
+      if (!relonsourcelonId.isDirelonctory) {
+        // If this is not a direlonctory, throw elonxcelonption.
+        throw nelonw IllelongalArgumelonntelonxcelonption(gelontPath() + " is not a direlonctory.")
       }
-      val newResourceId =
-        resourceId.resolve(directoryName, ResolveOptions.StandardResolveOptions.RESOLVE_DIRECTORY)
+      val nelonwRelonsourcelonId =
+        relonsourcelonId.relonsolvelon(direlonctoryNamelon, RelonsolvelonOptions.StandardRelonsolvelonOptions.RelonSOLVelon_DIRelonCTORY)
 
-      // Create a tmp file and delete in order to trigger directory creation
-      val tmpFile =
-        newResourceId.resolve("tmp", ResolveOptions.StandardResolveOptions.RESOLVE_FILE)
-      val tmpWriterChannel = FileSystems.create(tmpFile, MimeTypes.BINARY)
-      tmpWriterChannel.close()
-      FileSystems.delete(List(tmpFile).asJava, MoveOptions.StandardMoveOptions.IGNORE_MISSING_FILES)
+      // Crelonatelon a tmp filelon and delonlelontelon in ordelonr to triggelonr direlonctory crelonation
+      val tmpFilelon =
+        nelonwRelonsourcelonId.relonsolvelon("tmp", RelonsolvelonOptions.StandardRelonsolvelonOptions.RelonSOLVelon_FILelon)
+      val tmpWritelonrChannelonl = FilelonSystelonms.crelonatelon(tmpFilelon, MimelonTypelons.BINARY)
+      tmpWritelonrChannelonl.closelon()
+      FilelonSystelonms.delonlelontelon(List(tmpFilelon).asJava, MovelonOptions.StandardMovelonOptions.IGNORelon_MISSING_FILelonS)
 
-      new IndexOutputFile(newResourceId)
+      nelonw IndelonxOutputFilelon(nelonwRelonsourcelonId)
     }
   }
 
-  def getChild(fileName: String, isDirectory: Boolean = false): IndexOutputFile = {
-    if (isAbstractFile()) {
-      new IndexOutputFile(abstractFile.getChild(fileName))
-    } else {
-      val resolveOption = if (isDirectory) {
-        StandardResolveOptions.RESOLVE_DIRECTORY
-      } else {
-        StandardResolveOptions.RESOLVE_FILE
+  delonf gelontChild(filelonNamelon: String, isDirelonctory: Boolelonan = falselon): IndelonxOutputFilelon = {
+    if (isAbstractFilelon()) {
+      nelonw IndelonxOutputFilelon(abstractFilelon.gelontChild(filelonNamelon))
+    } elonlselon {
+      val relonsolvelonOption = if (isDirelonctory) {
+        StandardRelonsolvelonOptions.RelonSOLVelon_DIRelonCTORY
+      } elonlselon {
+        StandardRelonsolvelonOptions.RelonSOLVelon_FILelon
       }
-      new IndexOutputFile(resourceId.resolve(fileName, resolveOption))
+      nelonw IndelonxOutputFilelon(relonsourcelonId.relonsolvelon(filelonNamelon, relonsolvelonOption))
     }
   }
 
   /**
-   * Returns an OutputStream for the underlying file.
-   * Note: Close the OutputStream after writing
-   * @return
+   * Relonturns an OutputStrelonam for thelon undelonrlying filelon.
+   * Notelon: Closelon thelon OutputStrelonam aftelonr writing
+   * @relonturn
    */
-  def getOutputStream(): OutputStream = {
-    if (isAbstractFile()) {
-      abstractFile.getByteSink.openStream()
-    } else {
-      if (resourceId.isDirectory) {
-        // If this is a directory, throw exception.
-        throw new IllegalArgumentException(getPath() + " is a directory.")
+  delonf gelontOutputStrelonam(): OutputStrelonam = {
+    if (isAbstractFilelon()) {
+      abstractFilelon.gelontBytelonSink.opelonnStrelonam()
+    } elonlselon {
+      if (relonsourcelonId.isDirelonctory) {
+        // If this is a direlonctory, throw elonxcelonption.
+        throw nelonw IllelongalArgumelonntelonxcelonption(gelontPath() + " is a direlonctory.")
       }
-      val writerChannel = FileSystems.create(resourceId, MimeTypes.BINARY)
-      Channels.newOutputStream(writerChannel)
+      val writelonrChannelonl = FilelonSystelonms.crelonatelon(relonsourcelonId, MimelonTypelons.BINARY)
+      Channelonls.nelonwOutputStrelonam(writelonrChannelonl)
     }
   }
 
   /**
-   * Returns an InputStream for the underlying file.
-   * Note: Close the InputStream after reading
-   * @return
+   * Relonturns an InputStrelonam for thelon undelonrlying filelon.
+   * Notelon: Closelon thelon InputStrelonam aftelonr relonading
+   * @relonturn
    */
-  def getInputStream(): InputStream = {
-    if (isAbstractFile()) {
-      abstractFile.getByteSource.openStream()
-    } else {
-      if (resourceId.isDirectory) {
-        // If this is a directory, throw exception.
-        throw new IllegalArgumentException(getPath() + " is a directory.")
+  delonf gelontInputStrelonam(): InputStrelonam = {
+    if (isAbstractFilelon()) {
+      abstractFilelon.gelontBytelonSourcelon.opelonnStrelonam()
+    } elonlselon {
+      if (relonsourcelonId.isDirelonctory) {
+        // If this is a direlonctory, throw elonxcelonption.
+        throw nelonw IllelongalArgumelonntelonxcelonption(gelontPath() + " is a direlonctory.")
       }
-      val readChannel = FileSystems.open(resourceId)
-      Channels.newInputStream(readChannel)
+      val relonadChannelonl = FilelonSystelonms.opelonn(relonsourcelonId)
+      Channelonls.nelonwInputStrelonam(relonadChannelonl)
     }
   }
 
   /**
-   * Copies content from the srcIn into the current file.
+   * Copielons contelonnt from thelon srcIn into thelon currelonnt filelon.
    * @param srcIn
    */
-  def copyFrom(srcIn: InputStream): Unit = {
-    val out = getOutputStream()
+  delonf copyFrom(srcIn: InputStrelonam): Unit = {
+    val out = gelontOutputStrelonam()
     try {
-      IOUtils.copyBytes(srcIn, out, 4096)
-      out.close()
+      IOUtils.copyBytelons(srcIn, out, 4096)
+      out.closelon()
     } catch {
-      case ex: IOException =>
-        IOUtils.closeStream(out);
-        throw ex;
+      caselon elonx: IOelonxcelonption =>
+        IOUtils.closelonStrelonam(out);
+        throw elonx;
     }
   }
 
-  def writeIndexMetadata(annIndexMetadata: AnnIndexMetadata): Unit = {
-    val out = createFile(INDEX_METADATA_FILE).getOutputStream()
-    val bytes = ArrayByteBufferCodec.decode(MetadataCodec.encode(annIndexMetadata))
-    out.write(bytes)
-    out.close()
+  delonf writelonIndelonxMelontadata(annIndelonxMelontadata: AnnIndelonxMelontadata): Unit = {
+    val out = crelonatelonFilelon(INDelonX_MelonTADATA_FILelon).gelontOutputStrelonam()
+    val bytelons = ArrayBytelonBuffelonrCodelonc.deloncodelon(MelontadataCodelonc.elonncodelon(annIndelonxMelontadata))
+    out.writelon(bytelons)
+    out.closelon()
   }
 
-  def loadIndexMetadata(): AnnIndexMetadata = {
-    val in = ByteStreams.toByteArray(getInputStream())
-    MetadataCodec.decode(ArrayByteBufferCodec.encode(in))
+  delonf loadIndelonxMelontadata(): AnnIndelonxMelontadata = {
+    val in = BytelonStrelonams.toBytelonArray(gelontInputStrelonam())
+    MelontadataCodelonc.deloncodelon(ArrayBytelonBuffelonrCodelonc.elonncodelon(in))
   }
 }

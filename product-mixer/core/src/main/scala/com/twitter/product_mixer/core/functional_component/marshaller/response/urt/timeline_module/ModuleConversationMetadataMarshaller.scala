@@ -1,20 +1,20 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.timeline_module
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.timelonlinelon_modulelon
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.SocialContextMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ModuleConversationMetadata
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.melontadata.SocialContelonxtMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.timelonlinelon_modulelon.ModulelonConvelonrsationMelontadata
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class ModuleConversationMetadataMarshaller @Inject() (
-  socialContextMarshaller: SocialContextMarshaller) {
+@Singlelonton
+class ModulelonConvelonrsationMelontadataMarshallelonr @Injelonct() (
+  socialContelonxtMarshallelonr: SocialContelonxtMarshallelonr) {
 
-  def apply(
-    moduleConversationMetadata: ModuleConversationMetadata
-  ): urt.ModuleConversationMetadata = urt.ModuleConversationMetadata(
-    allTweetIds = moduleConversationMetadata.allTweetIds,
-    socialContext = moduleConversationMetadata.socialContext.map(socialContextMarshaller(_)),
-    enableDeduplication = moduleConversationMetadata.enableDeduplication
+  delonf apply(
+    modulelonConvelonrsationMelontadata: ModulelonConvelonrsationMelontadata
+  ): urt.ModulelonConvelonrsationMelontadata = urt.ModulelonConvelonrsationMelontadata(
+    allTwelonelontIds = modulelonConvelonrsationMelontadata.allTwelonelontIds,
+    socialContelonxt = modulelonConvelonrsationMelontadata.socialContelonxt.map(socialContelonxtMarshallelonr(_)),
+    elonnablelonDelonduplication = modulelonConvelonrsationMelontadata.elonnablelonDelonduplication
   )
 }

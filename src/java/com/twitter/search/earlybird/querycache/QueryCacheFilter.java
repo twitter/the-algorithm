@@ -1,302 +1,302 @@
-package com.twitter.search.earlybird.querycache;
+packagelon com.twittelonr.selonarch.elonarlybird.quelonrycachelon;
 
 import java.util.List;
-import java.util.TreeMap;
+import java.util.TrelonelonMap;
 
-import com.google.common.base.Preconditions;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import org.apache.lucene.search.Query;
+import org.apachelon.lucelonnelon.selonarch.Quelonry;
 
-import com.twitter.common.collections.Pair;
-import com.twitter.common.quantity.Amount;
-import com.twitter.common.quantity.Time;
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchStatsReceiver;
-import com.twitter.search.common.query.thriftjava.CollectorParams;
-import com.twitter.search.common.query.thriftjava.CollectorTerminationParams;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.common.search.TerminationTracker;
-import com.twitter.search.common.util.text.regex.Regex;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.common.userupdates.UserTable;
-import com.twitter.search.earlybird.queryparser.EarlybirdLuceneQueryVisitor;
-import com.twitter.search.earlybird.search.SearchRequestInfo;
-import com.twitter.search.earlybird.thrift.ThriftSearchQuery;
-import com.twitter.search.queryparser.parser.SerializedQueryParser;
-import com.twitter.search.queryparser.query.QueryParserException;
+import com.twittelonr.common.collelonctions.Pair;
+import com.twittelonr.common.quantity.Amount;
+import com.twittelonr.common.quantity.Timelon;
+import com.twittelonr.common.util.Clock;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchStatsReloncelonivelonr;
+import com.twittelonr.selonarch.common.quelonry.thriftjava.CollelonctorParams;
+import com.twittelonr.selonarch.common.quelonry.thriftjava.CollelonctorTelonrminationParams;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdClustelonr;
+import com.twittelonr.selonarch.common.selonarch.TelonrminationTrackelonr;
+import com.twittelonr.selonarch.common.util.telonxt.relongelonx.Relongelonx;
+import com.twittelonr.selonarch.elonarlybird.common.config.elonarlybirdConfig;
+import com.twittelonr.selonarch.elonarlybird.common.uselonrupdatelons.UselonrTablelon;
+import com.twittelonr.selonarch.elonarlybird.quelonryparselonr.elonarlybirdLucelonnelonQuelonryVisitor;
+import com.twittelonr.selonarch.elonarlybird.selonarch.SelonarchRelonquelonstInfo;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchQuelonry;
+import com.twittelonr.selonarch.quelonryparselonr.parselonr.SelonrializelondQuelonryParselonr;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.QuelonryParselonrelonxcelonption;
 
 /**
- * The definition of a QueryCache filter/entry, like the name of the filter, the query used
- * to populate the cache, update schedule, etc..
+ * Thelon delonfinition of a QuelonryCachelon filtelonr/elonntry, likelon thelon namelon of thelon filtelonr, thelon quelonry uselond
+ * to populatelon thelon cachelon, updatelon schelondulelon, elontc..
  *
- * Instances of this class are created by the YAML loader when loading the config file. Most
- * members are populated by YAML using setters through reflection.
+ * Instancelons of this class arelon crelonatelond by thelon YAML loadelonr whelonn loading thelon config filelon. Most
+ * melonmbelonrs arelon populatelond by YAML using selonttelonrs through relonflelonction.
  */
-public class QueryCacheFilter {
-  // Data structure type supported as cache result holder
-  public enum ResultSetType {
-    FixedBitSet,
-    SparseFixedBitSet
+public class QuelonryCachelonFiltelonr {
+  // Data structurelon typelon supportelond as cachelon relonsult holdelonr
+  public elonnum RelonsultSelontTypelon {
+    FixelondBitSelont,
+    SparselonFixelondBitSelont
   }
 
-  // Fields set directly from YML config file.
-  private String filterName;           // unique name for cached filter
-  private String query;                // serialized query string
-  private ResultSetType resultType;
-  private boolean cacheModeOnly;
-  private List<UpdateInterval> schedule;
-  private SearchCounter queries;
+  // Fielonlds selont direlonctly from YML config filelon.
+  privatelon String filtelonrNamelon;           // uniquelon namelon for cachelond filtelonr
+  privatelon String quelonry;                // selonrializelond quelonry string
+  privatelon RelonsultSelontTypelon relonsultTypelon;
+  privatelon boolelonan cachelonModelonOnly;
+  privatelon List<UpdatelonIntelonrval> schelondulelon;
+  privatelon SelonarchCountelonr quelonrielons;
 
-  // Fields generated based on config (but not directly).
-  private volatile Pair<ThriftSearchQuery, Query> queryPair;
-  private TreeMap<Integer, UpdateInterval> scheduleMap;  // tree map from index to interval
+  // Fielonlds gelonnelonratelond baselond on config (but not direlonctly).
+  privatelon volatilelon Pair<ThriftSelonarchQuelonry, Quelonry> quelonryPair;
+  privatelon TrelonelonMap<Intelongelonr, UpdatelonIntelonrval> schelondulelonMap;  // trelonelon map from indelonx to intelonrval
 
-  public class InvalidEntryException extends Exception {
-    public InvalidEntryException(String message) {
-      super("Filter [" + filterName + "]: " + message);
+  public class Invalidelonntryelonxcelonption elonxtelonnds elonxcelonption {
+    public Invalidelonntryelonxcelonption(String melonssagelon) {
+      supelonr("Filtelonr [" + filtelonrNamelon + "]: " + melonssagelon);
     }
   }
 
-  public static class UpdateInterval {
-    // Overrides *all* query cache update frequencies to be this value, in seconds.
-    private final int overrideSecondsForTests = EarlybirdConfig.getInt(
-        "override_query_cache_update_frequency", -1);
+  public static class UpdatelonIntelonrval {
+    // Ovelonrridelons *all* quelonry cachelon updatelon frelonquelonncielons to belon this valuelon, in selonconds.
+    privatelon final int ovelonrridelonSeloncondsForTelonsts = elonarlybirdConfig.gelontInt(
+        "ovelonrridelon_quelonry_cachelon_updatelon_frelonquelonncy", -1);
 
-    // Fields set directly from YML config file.
-    private int segment;
-    private long seconds;
+    // Fielonlds selont direlonctly from YML config filelon.
+    privatelon int selongmelonnt;
+    privatelon long selonconds;
 
-    public void setSegment(int segment) {
-      this.segment = segment;
+    public void selontSelongmelonnt(int selongmelonnt) {
+      this.selongmelonnt = selongmelonnt;
     }
 
     /**
-     * Sets the update period in seconds. If the override_query_cache_update_frequency parameter is
-     * specified in the earlybird configuration, its value is used instead (the value passed to this
-     * method is ignored).
+     * Selonts thelon updatelon pelonriod in selonconds. If thelon ovelonrridelon_quelonry_cachelon_updatelon_frelonquelonncy paramelontelonr is
+     * speloncifielond in thelon elonarlybird configuration, its valuelon is uselond instelonad (thelon valuelon passelond to this
+     * melonthod is ignorelond).
      */
-    public void setSeconds(long seconds) {
-      if (overrideSecondsForTests != -1) {
-        this.seconds = overrideSecondsForTests;
-      } else {
-        this.seconds = seconds;
+    public void selontSelonconds(long selonconds) {
+      if (ovelonrridelonSeloncondsForTelonsts != -1) {
+        this.selonconds = ovelonrridelonSeloncondsForTelonsts;
+      } elonlselon {
+        this.selonconds = selonconds;
       }
     }
 
-    public int getSegment() {
-      return segment;
+    public int gelontSelongmelonnt() {
+      relonturn selongmelonnt;
     }
 
-    public long getSeconds() {
-      return seconds;
+    public long gelontSelonconds() {
+      relonturn selonconds;
     }
   }
 
-  public void setFilterName(String filterName) throws InvalidEntryException {
-    sanityCheckFilterName(filterName);
-    this.filterName = filterName;
+  public void selontFiltelonrNamelon(String filtelonrNamelon) throws Invalidelonntryelonxcelonption {
+    sanityChelonckFiltelonrNamelon(filtelonrNamelon);
+    this.filtelonrNamelon = filtelonrNamelon;
   }
 
   /**
-   * Sets the driving query for this query cache filter.
+   * Selonts thelon driving quelonry for this quelonry cachelon filtelonr.
    */
-  public void setQuery(String query) throws InvalidEntryException {
-    if (query == null || query.isEmpty()) {
-      throw new InvalidEntryException("Empty query string");
+  public void selontQuelonry(String quelonry) throws Invalidelonntryelonxcelonption {
+    if (quelonry == null || quelonry.iselonmpty()) {
+      throw nelonw Invalidelonntryelonxcelonption("elonmpty quelonry string");
     }
 
-    this.query = query;
+    this.quelonry = quelonry;
   }
 
   /**
-   * Sets the type of the results that will be generated by this query cache filter.
+   * Selonts thelon typelon of thelon relonsults that will belon gelonnelonratelond by this quelonry cachelon filtelonr.
    */
-  public void setResultType(String resultType) throws InvalidEntryException {
-    if (ResultSetType.FixedBitSet.toString().equalsIgnoreCase(resultType)) {
-      this.resultType = ResultSetType.FixedBitSet;
-    } else if (ResultSetType.SparseFixedBitSet.toString().equalsIgnoreCase(resultType)) {
-      this.resultType = ResultSetType.SparseFixedBitSet;
-    } else {
-      throw new InvalidEntryException("Unregconized result type [" + resultType + "]");
+  public void selontRelonsultTypelon(String relonsultTypelon) throws Invalidelonntryelonxcelonption {
+    if (RelonsultSelontTypelon.FixelondBitSelont.toString().elonqualsIgnorelonCaselon(relonsultTypelon)) {
+      this.relonsultTypelon = RelonsultSelontTypelon.FixelondBitSelont;
+    } elonlselon if (RelonsultSelontTypelon.SparselonFixelondBitSelont.toString().elonqualsIgnorelonCaselon(relonsultTypelon)) {
+      this.relonsultTypelon = RelonsultSelontTypelon.SparselonFixelondBitSelont;
+    } elonlselon {
+      throw nelonw Invalidelonntryelonxcelonption("Unrelongconizelond relonsult typelon [" + relonsultTypelon + "]");
     }
   }
 
-  public void setCacheModeOnly(boolean cacheModeOnly) {
-    this.cacheModeOnly = cacheModeOnly;
+  public void selontCachelonModelonOnly(boolelonan cachelonModelonOnly) {
+    this.cachelonModelonOnly = cachelonModelonOnly;
   }
 
-  public void setSchedule(List<UpdateInterval> schedule)
-      throws QueryCacheFilter.InvalidEntryException {
-    sanityCheckSchedule(schedule);
-    this.schedule = schedule;
-    this.scheduleMap = createScheduleMap(schedule);
+  public void selontSchelondulelon(List<UpdatelonIntelonrval> schelondulelon)
+      throws QuelonryCachelonFiltelonr.Invalidelonntryelonxcelonption {
+    sanityChelonckSchelondulelon(schelondulelon);
+    this.schelondulelon = schelondulelon;
+    this.schelondulelonMap = crelonatelonSchelondulelonMap(schelondulelon);
   }
 
-  public void createQueryCounter(SearchStatsReceiver statsReceiver) {
-    queries = statsReceiver.getCounter("cached_filter_" + filterName + "_queries");
+  public void crelonatelonQuelonryCountelonr(SelonarchStatsReloncelonivelonr statsReloncelonivelonr) {
+    quelonrielons = statsReloncelonivelonr.gelontCountelonr("cachelond_filtelonr_" + filtelonrNamelon + "_quelonrielons");
   }
 
-  public void incrementUsageStat() {
-    queries.increment();
+  public void increlonmelonntUsagelonStat() {
+    quelonrielons.increlonmelonnt();
   }
 
-  public String getFilterName() {
-    return filterName;
+  public String gelontFiltelonrNamelon() {
+    relonturn filtelonrNamelon;
   }
 
-  public String getQueryString() {
-    return query;
+  public String gelontQuelonryString() {
+    relonturn quelonry;
   }
 
-  // snakeyaml does not like a getter named getResultType() that does not return a string
-  public ResultSetType getResultSetType() {
-    return resultType;
+  // snakelonyaml doelons not likelon a gelonttelonr namelond gelontRelonsultTypelon() that doelons not relonturn a string
+  public RelonsultSelontTypelon gelontRelonsultSelontTypelon() {
+    relonturn relonsultTypelon;
   }
 
-  public boolean getCacheModeOnly() {
-    return cacheModeOnly;
+  public boolelonan gelontCachelonModelonOnly() {
+    relonturn cachelonModelonOnly;
   }
 
-  public Query getLuceneQuery() {
-    return queryPair.getSecond();
+  public Quelonry gelontLucelonnelonQuelonry() {
+    relonturn quelonryPair.gelontSeloncond();
   }
 
-  public ThriftSearchQuery getSearchQuery() {
-    return queryPair.getFirst();
+  public ThriftSelonarchQuelonry gelontSelonarchQuelonry() {
+    relonturn quelonryPair.gelontFirst();
   }
 
   /**
-   * Create a new {@link SearchRequestInfo} using {@link #queryPair}.
+   * Crelonatelon a nelonw {@link SelonarchRelonquelonstInfo} using {@link #quelonryPair}.
    *
-   * @return a new {@link SearchRequestInfo}
+   * @relonturn a nelonw {@link SelonarchRelonquelonstInfo}
    */
-  public SearchRequestInfo createSearchRequestInfo() {
-    ThriftSearchQuery searchQuery = Preconditions.checkNotNull(queryPair.getFirst());
-    Query luceneQuery = Preconditions.checkNotNull(queryPair.getSecond());
+  public SelonarchRelonquelonstInfo crelonatelonSelonarchRelonquelonstInfo() {
+    ThriftSelonarchQuelonry selonarchQuelonry = Prelonconditions.chelonckNotNull(quelonryPair.gelontFirst());
+    Quelonry lucelonnelonQuelonry = Prelonconditions.chelonckNotNull(quelonryPair.gelontSeloncond());
 
-    return new SearchRequestInfo(
-        searchQuery, luceneQuery, new TerminationTracker(Clock.SYSTEM_CLOCK));
+    relonturn nelonw SelonarchRelonquelonstInfo(
+        selonarchQuelonry, lucelonnelonQuelonry, nelonw TelonrminationTrackelonr(Clock.SYSTelonM_CLOCK));
   }
 
-  public void setup(
-      QueryCacheManager queryCacheManager,
-      UserTable userTable,
-      EarlybirdCluster earlybirdCluster) throws QueryParserException {
-    createQuery(queryCacheManager, userTable, earlybirdCluster);
+  public void selontup(
+      QuelonryCachelonManagelonr quelonryCachelonManagelonr,
+      UselonrTablelon uselonrTablelon,
+      elonarlybirdClustelonr elonarlybirdClustelonr) throws QuelonryParselonrelonxcelonption {
+    crelonatelonQuelonry(quelonryCachelonManagelonr, uselonrTablelon, elonarlybirdClustelonr);
   }
 
-  // index corresponds to 'segment' from the config file.  this is the index of the
-  // segment, starting with the current segment (0) and counting backwards in time.
-  public Amount<Long, Time> getUpdateInterval(int index) {
-    long seconds = scheduleMap.floorEntry(index).getValue().getSeconds();
-    return Amount.of(seconds, Time.SECONDS);
+  // indelonx correlonsponds to 'selongmelonnt' from thelon config filelon.  this is thelon indelonx of thelon
+  // selongmelonnt, starting with thelon currelonnt selongmelonnt (0) and counting backwards in timelon.
+  public Amount<Long, Timelon> gelontUpdatelonIntelonrval(int indelonx) {
+    long selonconds = schelondulelonMap.floorelonntry(indelonx).gelontValuelon().gelontSelonconds();
+    relonturn Amount.of(selonconds, Timelon.SelonCONDS);
   }
 
-  private TreeMap<Integer, UpdateInterval> createScheduleMap(List<UpdateInterval> scheduleToUse) {
-    TreeMap<Integer, UpdateInterval> map = new TreeMap<>();
-    for (UpdateInterval interval : scheduleToUse) {
-      map.put(interval.segment, interval);
+  privatelon TrelonelonMap<Intelongelonr, UpdatelonIntelonrval> crelonatelonSchelondulelonMap(List<UpdatelonIntelonrval> schelondulelonToUselon) {
+    TrelonelonMap<Intelongelonr, UpdatelonIntelonrval> map = nelonw TrelonelonMap<>();
+    for (UpdatelonIntelonrval intelonrval : schelondulelonToUselon) {
+      map.put(intelonrval.selongmelonnt, intelonrval);
     }
-    return map;
+    relonturn map;
   }
 
-  private void createQuery(
-      QueryCacheManager queryCacheManager,
-      UserTable userTable,
-      EarlybirdCluster earlybirdCluster) throws QueryParserException {
+  privatelon void crelonatelonQuelonry(
+      QuelonryCachelonManagelonr quelonryCachelonManagelonr,
+      UselonrTablelon uselonrTablelon,
+      elonarlybirdClustelonr elonarlybirdClustelonr) throws QuelonryParselonrelonxcelonption {
 
-    int maxSegmentSize = EarlybirdConfig.getMaxSegmentSize();
-    CollectorParams collectionParams = new CollectorParams();
-    collectionParams.setNumResultsToReturn(maxSegmentSize);
-    CollectorTerminationParams terminationParams = new CollectorTerminationParams();
-    terminationParams.setMaxHitsToProcess(maxSegmentSize);
-    collectionParams.setTerminationParams(terminationParams);
+    int maxSelongmelonntSizelon = elonarlybirdConfig.gelontMaxSelongmelonntSizelon();
+    CollelonctorParams collelonctionParams = nelonw CollelonctorParams();
+    collelonctionParams.selontNumRelonsultsToRelonturn(maxSelongmelonntSizelon);
+    CollelonctorTelonrminationParams telonrminationParams = nelonw CollelonctorTelonrminationParams();
+    telonrminationParams.selontMaxHitsToProcelonss(maxSelongmelonntSizelon);
+    collelonctionParams.selontTelonrminationParams(telonrminationParams);
 
-    ThriftSearchQuery searchQuery = new ThriftSearchQuery();
-    searchQuery.setMaxHitsPerUser(maxSegmentSize);
-    searchQuery.setCollectorParams(collectionParams);
-    searchQuery.setSerializedQuery(query);
+    ThriftSelonarchQuelonry selonarchQuelonry = nelonw ThriftSelonarchQuelonry();
+    selonarchQuelonry.selontMaxHitsPelonrUselonr(maxSelongmelonntSizelon);
+    selonarchQuelonry.selontCollelonctorParams(collelonctionParams);
+    selonarchQuelonry.selontSelonrializelondQuelonry(quelonry);
 
-    final SerializedQueryParser parser = new SerializedQueryParser(
-        EarlybirdConfig.getPenguinVersion());
+    final SelonrializelondQuelonryParselonr parselonr = nelonw SelonrializelondQuelonryParselonr(
+        elonarlybirdConfig.gelontPelonnguinVelonrsion());
 
-    Query luceneQuery = parser.parse(query).simplify().accept(
-        new EarlybirdLuceneQueryVisitor(
-            queryCacheManager.getIndexConfig().getSchema().getSchemaSnapshot(),
-            queryCacheManager,
-            userTable,
-            queryCacheManager.getUserScrubGeoMap(),
-            earlybirdCluster,
-            queryCacheManager.getDecider()));
-    if (luceneQuery == null) {
-      throw new QueryParserException("Unable to create lucene query from " + query);
+    Quelonry lucelonnelonQuelonry = parselonr.parselon(quelonry).simplify().accelonpt(
+        nelonw elonarlybirdLucelonnelonQuelonryVisitor(
+            quelonryCachelonManagelonr.gelontIndelonxConfig().gelontSchelonma().gelontSchelonmaSnapshot(),
+            quelonryCachelonManagelonr,
+            uselonrTablelon,
+            quelonryCachelonManagelonr.gelontUselonrScrubGelonoMap(),
+            elonarlybirdClustelonr,
+            quelonryCachelonManagelonr.gelontDeloncidelonr()));
+    if (lucelonnelonQuelonry == null) {
+      throw nelonw QuelonryParselonrelonxcelonption("Unablelon to crelonatelon lucelonnelon quelonry from " + quelonry);
     }
 
-    queryPair = new Pair<>(searchQuery, luceneQuery);
+    quelonryPair = nelonw Pair<>(selonarchQuelonry, lucelonnelonQuelonry);
   }
 
-  private void sanityCheckFilterName(String filter) throws InvalidEntryException {
-    if (filter == null || filter.isEmpty()) {
-      throw new InvalidEntryException("Missing filter name");
+  privatelon void sanityChelonckFiltelonrNamelon(String filtelonr) throws Invalidelonntryelonxcelonption {
+    if (filtelonr == null || filtelonr.iselonmpty()) {
+      throw nelonw Invalidelonntryelonxcelonption("Missing filtelonr namelon");
     }
-    if (Regex.FILTER_NAME_CHECK.matcher(filter).find()) {
-      throw new InvalidEntryException(
-          "Invalid character in filter name. Chars allowed [a-zA-Z_0-9]");
+    if (Relongelonx.FILTelonR_NAMelon_CHelonCK.matchelonr(filtelonr).find()) {
+      throw nelonw Invalidelonntryelonxcelonption(
+          "Invalid charactelonr in filtelonr namelon. Chars allowelond [a-zA-Z_0-9]");
     }
   }
 
-  private void sanityCheckSchedule(List<UpdateInterval> intervals)
-      throws InvalidEntryException {
-    // Make sure there's at least 1 interval defined
-    if (intervals == null || intervals.isEmpty()) {
-      throw new InvalidEntryException("No schedule defined");
+  privatelon void sanityChelonckSchelondulelon(List<UpdatelonIntelonrval> intelonrvals)
+      throws Invalidelonntryelonxcelonption {
+    // Makelon surelon thelonrelon's at lelonast 1 intelonrval delonfinelond
+    if (intelonrvals == null || intelonrvals.iselonmpty()) {
+      throw nelonw Invalidelonntryelonxcelonption("No schelondulelon delonfinelond");
     }
 
-    // Make sure the first interval starts with segment 0
-    if (intervals.get(0).getSegment() != 0) {
-      throw new InvalidEntryException(
-          "The first interval in the schedule must start from segment 0");
+    // Makelon surelon thelon first intelonrval starts with selongmelonnt 0
+    if (intelonrvals.gelont(0).gelontSelongmelonnt() != 0) {
+      throw nelonw Invalidelonntryelonxcelonption(
+          "Thelon first intelonrval in thelon schelondulelon must start from selongmelonnt 0");
     }
 
-    // Make sure segments are defined in order, and no segment is defined more than twice
-    int prevSegment = intervals.get(0).getSegment();
-    for (int i = 1; i < intervals.size(); ++i) {
-      int currentSegment = intervals.get(i).getSegment();
-      if (prevSegment > currentSegment) {
-        throw new InvalidEntryException("Segment intervals out of order. Segment " + prevSegment
-            + " is defined before segment " + currentSegment);
+    // Makelon surelon selongmelonnts arelon delonfinelond in ordelonr, and no selongmelonnt is delonfinelond morelon than twicelon
+    int prelonvSelongmelonnt = intelonrvals.gelont(0).gelontSelongmelonnt();
+    for (int i = 1; i < intelonrvals.sizelon(); ++i) {
+      int currelonntSelongmelonnt = intelonrvals.gelont(i).gelontSelongmelonnt();
+      if (prelonvSelongmelonnt > currelonntSelongmelonnt) {
+        throw nelonw Invalidelonntryelonxcelonption("Selongmelonnt intelonrvals out of ordelonr. Selongmelonnt " + prelonvSelongmelonnt
+            + " is delonfinelond belonforelon selongmelonnt " + currelonntSelongmelonnt);
       }
 
-      if (prevSegment == intervals.get(i).getSegment()) {
-        throw new InvalidEntryException("Segment " + prevSegment + " is defined twice");
+      if (prelonvSelongmelonnt == intelonrvals.gelont(i).gelontSelongmelonnt()) {
+        throw nelonw Invalidelonntryelonxcelonption("Selongmelonnt " + prelonvSelongmelonnt + " is delonfinelond twicelon");
       }
 
-      prevSegment = currentSegment;
+      prelonvSelongmelonnt = currelonntSelongmelonnt;
     }
   }
 
-  protected void sanityCheck() throws InvalidEntryException {
-    sanityCheckFilterName(filterName);
-    if (query == null || query.isEmpty()) {
-      throw new InvalidEntryException("Missing query");
+  protelonctelond void sanityChelonck() throws Invalidelonntryelonxcelonption {
+    sanityChelonckFiltelonrNamelon(filtelonrNamelon);
+    if (quelonry == null || quelonry.iselonmpty()) {
+      throw nelonw Invalidelonntryelonxcelonption("Missing quelonry");
     }
-    if (resultType == null) {
-      throw new InvalidEntryException("Missing result type");
+    if (relonsultTypelon == null) {
+      throw nelonw Invalidelonntryelonxcelonption("Missing relonsult typelon");
     }
-    if (schedule == null || schedule.size() == 0) {
-      throw new InvalidEntryException("Missing update schedule");
+    if (schelondulelon == null || schelondulelon.sizelon() == 0) {
+      throw nelonw Invalidelonntryelonxcelonption("Missing updatelon schelondulelon");
     }
-    if (scheduleMap == null || scheduleMap.size() == 0) {
-      throw new InvalidEntryException("Missing update schedule map");
+    if (schelondulelonMap == null || schelondulelonMap.sizelon() == 0) {
+      throw nelonw Invalidelonntryelonxcelonption("Missing updatelon schelondulelon map");
     }
   }
 
-  @Override
+  @Ovelonrridelon
   public String toString() {
-    return "filterName: [" + getFilterName()
-        + "] query: [" + getQueryString()
-        + "] result type [" + getResultSetType()
-        + "] schedule: " + schedule;
+    relonturn "filtelonrNamelon: [" + gelontFiltelonrNamelon()
+        + "] quelonry: [" + gelontQuelonryString()
+        + "] relonsult typelon [" + gelontRelonsultSelontTypelon()
+        + "] schelondulelon: " + schelondulelon;
   }
 }

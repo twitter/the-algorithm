@@ -1,15 +1,15 @@
-package com.twitter.visibility.models
+packagelon com.twittelonr.visibility.modelonls
 
-case class UserAge(ageInYears: Option[Int]) {
-  def hasAge: Boolean = ageInYears.isDefined
+caselon class UselonrAgelon(agelonInYelonars: Option[Int]) {
+  delonf hasAgelon: Boolelonan = agelonInYelonars.isDelonfinelond
 
-  def isGte(ageToCompare: Int): Boolean =
-    ageInYears
-      .collectFirst {
-        case age if age > ageToCompare => true
-      }.getOrElse(false)
+  delonf isGtelon(agelonToComparelon: Int): Boolelonan =
+    agelonInYelonars
+      .collelonctFirst {
+        caselon agelon if agelon > agelonToComparelon => truelon
+      }.gelontOrelonlselon(falselon)
 
-  def unapply(userAge: UserAge): Option[Int] = {
-    ageInYears
+  delonf unapply(uselonrAgelon: UselonrAgelon): Option[Int] = {
+    agelonInYelonars
   }
 }

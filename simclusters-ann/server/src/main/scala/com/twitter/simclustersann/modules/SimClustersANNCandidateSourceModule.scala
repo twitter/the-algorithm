@@ -1,47 +1,47 @@
-package com.twitter.simclustersann.modules
+packagelon com.twittelonr.simclustelonrsann.modulelons
 
-import com.google.inject.Provides
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
-import com.twitter.simclusters_v2.common.ClusterId
-import com.twitter.simclusters_v2.common.SimClustersEmbedding
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId
-import com.twitter.storehaus.ReadableStore
-import javax.inject.Singleton
-import com.twitter.simclustersann.candidate_source.ApproximateCosineSimilarity
-import com.twitter.simclustersann.candidate_source.ExperimentalApproximateCosineSimilarity
-import com.twitter.simclustersann.candidate_source.OptimizedApproximateCosineSimilarity
-import com.twitter.simclustersann.candidate_source.SimClustersANNCandidateSource
+import com.googlelon.injelonct.Providelons
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.injelonct.TwittelonrModulelon
+import com.twittelonr.simclustelonrs_v2.common.ClustelonrId
+import com.twittelonr.simclustelonrs_v2.common.SimClustelonrselonmbelondding
+import com.twittelonr.simclustelonrs_v2.common.TwelonelontId
+import com.twittelonr.simclustelonrs_v2.thriftscala.SimClustelonrselonmbelonddingId
+import com.twittelonr.storelonhaus.RelonadablelonStorelon
+import javax.injelonct.Singlelonton
+import com.twittelonr.simclustelonrsann.candidatelon_sourcelon.ApproximatelonCosinelonSimilarity
+import com.twittelonr.simclustelonrsann.candidatelon_sourcelon.elonxpelonrimelonntalApproximatelonCosinelonSimilarity
+import com.twittelonr.simclustelonrsann.candidatelon_sourcelon.OptimizelondApproximatelonCosinelonSimilarity
+import com.twittelonr.simclustelonrsann.candidatelon_sourcelon.SimClustelonrsANNCandidatelonSourcelon
 
-object SimClustersANNCandidateSourceModule extends TwitterModule {
+objelonct SimClustelonrsANNCandidatelonSourcelonModulelon elonxtelonnds TwittelonrModulelon {
 
   val acsFlag = flag[String](
-    name = "approximate_cosine_similarity",
-    default = "original",
-    help =
-      "Select different implementations of the approximate cosine similarity algorithm, for testing optimizations",
+    namelon = "approximatelon_cosinelon_similarity",
+    delonfault = "original",
+    helonlp =
+      "Selonlelonct diffelonrelonnt implelonmelonntations of thelon approximatelon cosinelon similarity algorithm, for telonsting optimizations",
   )
-  @Singleton
-  @Provides
-  def provides(
-    embeddingStore: ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding],
-    cachedClusterTweetIndexStore: ReadableStore[ClusterId, Seq[(TweetId, Double)]],
-    statsReceiver: StatsReceiver
-  ): SimClustersANNCandidateSource = {
+  @Singlelonton
+  @Providelons
+  delonf providelons(
+    elonmbelonddingStorelon: RelonadablelonStorelon[SimClustelonrselonmbelonddingId, SimClustelonrselonmbelondding],
+    cachelondClustelonrTwelonelontIndelonxStorelon: RelonadablelonStorelon[ClustelonrId, Selonq[(TwelonelontId, Doublelon)]],
+    statsReloncelonivelonr: StatsReloncelonivelonr
+  ): SimClustelonrsANNCandidatelonSourcelon = {
 
-    val approximateCosineSimilarity = acsFlag() match {
-      case "original" => ApproximateCosineSimilarity
-      case "optimized" => OptimizedApproximateCosineSimilarity
-      case "experimental" => ExperimentalApproximateCosineSimilarity
-      case _ => ApproximateCosineSimilarity
+    val approximatelonCosinelonSimilarity = acsFlag() match {
+      caselon "original" => ApproximatelonCosinelonSimilarity
+      caselon "optimizelond" => OptimizelondApproximatelonCosinelonSimilarity
+      caselon "elonxpelonrimelonntal" => elonxpelonrimelonntalApproximatelonCosinelonSimilarity
+      caselon _ => ApproximatelonCosinelonSimilarity
     }
 
-    new SimClustersANNCandidateSource(
-      approximateCosineSimilarity = approximateCosineSimilarity,
-      clusterTweetCandidatesStore = cachedClusterTweetIndexStore,
-      simClustersEmbeddingStore = embeddingStore,
-      statsReceiver = statsReceiver.scope("simClustersANNCandidateSource")
+    nelonw SimClustelonrsANNCandidatelonSourcelon(
+      approximatelonCosinelonSimilarity = approximatelonCosinelonSimilarity,
+      clustelonrTwelonelontCandidatelonsStorelon = cachelondClustelonrTwelonelontIndelonxStorelon,
+      simClustelonrselonmbelonddingStorelon = elonmbelonddingStorelon,
+      statsReloncelonivelonr = statsReloncelonivelonr.scopelon("simClustelonrsANNCandidatelonSourcelon")
     )
   }
 }

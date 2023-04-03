@@ -1,49 +1,49 @@
-package com.twitter.visibility.builder.users
+packagelon com.twittelonr.visibility.buildelonr.uselonrs
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.stitch.Stitch
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.common.UserId
-import com.twitter.visibility.common.UserSearchSafetySource
-import com.twitter.visibility.features.ViewerId
-import com.twitter.visibility.features.ViewerOptInBlocking
-import com.twitter.visibility.features.ViewerOptInFiltering
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.visibility.buildelonr.FelonaturelonMapBuildelonr
+import com.twittelonr.visibility.common.UselonrId
+import com.twittelonr.visibility.common.UselonrSelonarchSafelontySourcelon
+import com.twittelonr.visibility.felonaturelons.VielonwelonrId
+import com.twittelonr.visibility.felonaturelons.VielonwelonrOptInBlocking
+import com.twittelonr.visibility.felonaturelons.VielonwelonrOptInFiltelonring
 
-class ViewerSearchSafetyFeatures(
-  userSearchSafetySource: UserSearchSafetySource,
-  statsReceiver: StatsReceiver) {
-  private[this] val scopedStatsReceiver = statsReceiver.scope("viewer_search_safety_features")
+class VielonwelonrSelonarchSafelontyFelonaturelons(
+  uselonrSelonarchSafelontySourcelon: UselonrSelonarchSafelontySourcelon,
+  statsReloncelonivelonr: StatsReloncelonivelonr) {
+  privatelon[this] val scopelondStatsReloncelonivelonr = statsReloncelonivelonr.scopelon("vielonwelonr_selonarch_safelonty_felonaturelons")
 
-  private[this] val requests = scopedStatsReceiver.counter("requests")
+  privatelon[this] val relonquelonsts = scopelondStatsReloncelonivelonr.countelonr("relonquelonsts")
 
-  private[this] val viewerOptInBlockingRequests =
-    scopedStatsReceiver.scope(ViewerOptInBlocking.name).counter("requests")
+  privatelon[this] val vielonwelonrOptInBlockingRelonquelonsts =
+    scopelondStatsReloncelonivelonr.scopelon(VielonwelonrOptInBlocking.namelon).countelonr("relonquelonsts")
 
-  private[this] val viewerOptInFilteringRequests =
-    scopedStatsReceiver.scope(ViewerOptInFiltering.name).counter("requests")
+  privatelon[this] val vielonwelonrOptInFiltelonringRelonquelonsts =
+    scopelondStatsReloncelonivelonr.scopelon(VielonwelonrOptInFiltelonring.namelon).countelonr("relonquelonsts")
 
-  def forViewerId(viewerId: Option[UserId]): FeatureMapBuilder => FeatureMapBuilder = { builder =>
-    requests.incr()
+  delonf forVielonwelonrId(vielonwelonrId: Option[UselonrId]): FelonaturelonMapBuildelonr => FelonaturelonMapBuildelonr = { buildelonr =>
+    relonquelonsts.incr()
 
-    builder
-      .withConstantFeature(ViewerId, viewerId)
-      .withFeature(ViewerOptInBlocking, viewerOptInBlocking(viewerId))
-      .withFeature(ViewerOptInFiltering, viewerOptInFiltering(viewerId))
+    buildelonr
+      .withConstantFelonaturelon(VielonwelonrId, vielonwelonrId)
+      .withFelonaturelon(VielonwelonrOptInBlocking, vielonwelonrOptInBlocking(vielonwelonrId))
+      .withFelonaturelon(VielonwelonrOptInFiltelonring, vielonwelonrOptInFiltelonring(vielonwelonrId))
   }
 
-  def viewerOptInBlocking(viewerId: Option[UserId]): Stitch[Boolean] = {
-    viewerOptInBlockingRequests.incr()
-    viewerId match {
-      case Some(userId) => userSearchSafetySource.optInBlocking(userId)
-      case _ => Stitch.False
+  delonf vielonwelonrOptInBlocking(vielonwelonrId: Option[UselonrId]): Stitch[Boolelonan] = {
+    vielonwelonrOptInBlockingRelonquelonsts.incr()
+    vielonwelonrId match {
+      caselon Somelon(uselonrId) => uselonrSelonarchSafelontySourcelon.optInBlocking(uselonrId)
+      caselon _ => Stitch.Falselon
     }
   }
 
-  def viewerOptInFiltering(viewerId: Option[UserId]): Stitch[Boolean] = {
-    viewerOptInFilteringRequests.incr()
-    viewerId match {
-      case Some(userId) => userSearchSafetySource.optInFiltering(userId)
-      case _ => Stitch.False
+  delonf vielonwelonrOptInFiltelonring(vielonwelonrId: Option[UselonrId]): Stitch[Boolelonan] = {
+    vielonwelonrOptInFiltelonringRelonquelonsts.incr()
+    vielonwelonrId match {
+      caselon Somelon(uselonrId) => uselonrSelonarchSafelontySourcelon.optInFiltelonring(uselonrId)
+      caselon _ => Stitch.Falselon
     }
   }
 }

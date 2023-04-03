@@ -1,88 +1,88 @@
-package com.twitter.search.earlybird.archive;
+packagelon com.twittelonr.selonarch.elonarlybird.archivelon;
 
-import java.io.IOException;
-import java.util.Date;
+import java.io.IOelonxcelonption;
+import java.util.Datelon;
 
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
+import com.googlelon.common.baselon.Prelondicatelon;
+import com.googlelon.common.baselon.Prelondicatelons;
 
-import com.twitter.search.common.partitioning.base.Segment;
-import com.twitter.search.common.partitioning.base.TimeSlice;
-import com.twitter.search.common.schema.thriftjava.ThriftIndexingEvent;
-import com.twitter.search.common.util.io.recordreader.RecordReader;
-import com.twitter.search.earlybird.archive.ArchiveTimeSlicer.ArchiveTimeSlice;
-import com.twitter.search.earlybird.document.DocumentFactory;
-import com.twitter.search.earlybird.document.TweetDocument;
+import com.twittelonr.selonarch.common.partitioning.baselon.Selongmelonnt;
+import com.twittelonr.selonarch.common.partitioning.baselon.TimelonSlicelon;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftIndelonxingelonvelonnt;
+import com.twittelonr.selonarch.common.util.io.reloncordrelonadelonr.ReloncordRelonadelonr;
+import com.twittelonr.selonarch.elonarlybird.archivelon.ArchivelonTimelonSlicelonr.ArchivelonTimelonSlicelon;
+import com.twittelonr.selonarch.elonarlybird.documelonnt.DocumelonntFactory;
+import com.twittelonr.selonarch.elonarlybird.documelonnt.TwelonelontDocumelonnt;
 
-public class ArchiveSegment extends Segment {
-  private final ArchiveTimeSlice archiveTimeSlice;
+public class ArchivelonSelongmelonnt elonxtelonnds Selongmelonnt {
+  privatelon final ArchivelonTimelonSlicelon archivelonTimelonSlicelon;
 
-  public static final Predicate<Date> MATCH_ALL_DATE_PREDICATE = input -> true;
+  public static final Prelondicatelon<Datelon> MATCH_ALL_DATelon_PRelonDICATelon = input -> truelon;
 
-  // Constructor used for indexing an archive segment
-  public ArchiveSegment(ArchiveTimeSlice archiveTimeSlice,
+  // Constructor uselond for indelonxing an archivelon selongmelonnt
+  public ArchivelonSelongmelonnt(ArchivelonTimelonSlicelon archivelonTimelonSlicelon,
                         int hashPartitionID,
-                        int maxSegmentSize) {
-    super(new TimeSlice(archiveTimeSlice.getMinStatusID(hashPartitionID),
-            maxSegmentSize, hashPartitionID,
-            archiveTimeSlice.getNumHashPartitions()),
-        archiveTimeSlice.getEndDate().getTime());
-    this.archiveTimeSlice = archiveTimeSlice;
+                        int maxSelongmelonntSizelon) {
+    supelonr(nelonw TimelonSlicelon(archivelonTimelonSlicelon.gelontMinStatusID(hashPartitionID),
+            maxSelongmelonntSizelon, hashPartitionID,
+            archivelonTimelonSlicelon.gelontNumHashPartitions()),
+        archivelonTimelonSlicelon.gelontelonndDatelon().gelontTimelon());
+    this.archivelonTimelonSlicelon = archivelonTimelonSlicelon;
   }
 
   /**
-   * Constructor used for loading a flushed segment. Only be used by SegmentBuilder; Earlybird
-   * does not use this.
+   * Constructor uselond for loading a flushelond selongmelonnt. Only belon uselond by SelongmelonntBuildelonr; elonarlybird
+   * doelons not uselon this.
    */
-  ArchiveSegment(long timeSliceId,
-                 int maxSegmentSize,
+  ArchivelonSelongmelonnt(long timelonSlicelonId,
+                 int maxSelongmelonntSizelon,
                  int partitions,
                  int hashPartitionID,
-                 Date dataEndDate) {
-    super(new TimeSlice(timeSliceId, maxSegmentSize, hashPartitionID, partitions),
-        dataEndDate.getTime());
-    // No archive timeslice is needed for loading.
-    this.archiveTimeSlice = null;
+                 Datelon dataelonndDatelon) {
+    supelonr(nelonw TimelonSlicelon(timelonSlicelonId, maxSelongmelonntSizelon, hashPartitionID, partitions),
+        dataelonndDatelon.gelontTimelon());
+    // No archivelon timelonslicelon is nelonelondelond for loading.
+    this.archivelonTimelonSlicelon = null;
   }
 
   /**
-   * Returns the tweets reader for this segment.
+   * Relonturns thelon twelonelonts relonadelonr for this selongmelonnt.
    *
-   * @param documentFactory The factory that converts ThriftDocuments to Lucene documents.
+   * @param documelonntFactory Thelon factory that convelonrts ThriftDocumelonnts to Lucelonnelon documelonnts.
    */
-  public RecordReader<TweetDocument> getStatusRecordReader(
-      DocumentFactory<ThriftIndexingEvent> documentFactory) throws IOException {
-    return getStatusRecordReader(documentFactory, Predicates.<Date>alwaysTrue());
+  public ReloncordRelonadelonr<TwelonelontDocumelonnt> gelontStatusReloncordRelonadelonr(
+      DocumelonntFactory<ThriftIndelonxingelonvelonnt> documelonntFactory) throws IOelonxcelonption {
+    relonturn gelontStatusReloncordRelonadelonr(documelonntFactory, Prelondicatelons.<Datelon>alwaysTruelon());
   }
 
   /**
-   * Returns the tweets reader for this segment.
+   * Relonturns thelon twelonelonts relonadelonr for this selongmelonnt.
    *
-   * @param documentFactory The factory that converts ThriftDocuments to Lucene documents.
-   * @param filter A predicate that filters tweets based on the date they were created on.
+   * @param documelonntFactory Thelon factory that convelonrts ThriftDocumelonnts to Lucelonnelon documelonnts.
+   * @param filtelonr A prelondicatelon that filtelonrs twelonelonts baselond on thelon datelon thelony welonrelon crelonatelond on.
    */
-  public RecordReader<TweetDocument> getStatusRecordReader(
-      DocumentFactory<ThriftIndexingEvent> documentFactory,
-      Predicate<Date> filter) throws IOException {
-    if (archiveTimeSlice != null) {
-      return archiveTimeSlice.getStatusReader(this, documentFactory, filter);
-    } else {
-      throw new IllegalStateException("ArchiveSegment has no associated ArchiveTimeslice."
-          + "This ArchiveSegment can only be used for loading flushed segments.");
+  public ReloncordRelonadelonr<TwelonelontDocumelonnt> gelontStatusReloncordRelonadelonr(
+      DocumelonntFactory<ThriftIndelonxingelonvelonnt> documelonntFactory,
+      Prelondicatelon<Datelon> filtelonr) throws IOelonxcelonption {
+    if (archivelonTimelonSlicelon != null) {
+      relonturn archivelonTimelonSlicelon.gelontStatusRelonadelonr(this, documelonntFactory, filtelonr);
+    } elonlselon {
+      throw nelonw IllelongalStatelonelonxcelonption("ArchivelonSelongmelonnt has no associatelond ArchivelonTimelonslicelon."
+          + "This ArchivelonSelongmelonnt can only belon uselond for loading flushelond selongmelonnts.");
     }
   }
 
-  public Date getDataEndDate() {
-    return archiveTimeSlice == null
-        ? new Date(getDataEndDateInclusiveMillis()) : archiveTimeSlice.getEndDate();
+  public Datelon gelontDataelonndDatelon() {
+    relonturn archivelonTimelonSlicelon == null
+        ? nelonw Datelon(gelontDataelonndDatelonInclusivelonMillis()) : archivelonTimelonSlicelon.gelontelonndDatelon();
   }
 
-  public ArchiveTimeSlice getArchiveTimeSlice() {
-    return archiveTimeSlice;
+  public ArchivelonTimelonSlicelon gelontArchivelonTimelonSlicelon() {
+    relonturn archivelonTimelonSlicelon;
   }
 
-  @Override
+  @Ovelonrridelon
   public String toString() {
-    return super.toString() + " " + archiveTimeSlice.getDescription();
+    relonturn supelonr.toString() + " " + archivelonTimelonSlicelon.gelontDelonscription();
   }
 }

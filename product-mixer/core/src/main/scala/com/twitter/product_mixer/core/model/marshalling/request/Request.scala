@@ -1,10 +1,10 @@
-package com.twitter.product_mixer.core.model.marshalling.request
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst
 
-trait Request
-    extends HasClientContext
+trait Relonquelonst
+    elonxtelonnds HasClielonntContelonxt
     with HasProduct
-    with HasProductContext
-    with HasSerializedRequestCursor {
-  def maxResults: Option[Int]
-  def debugParams: Option[DebugParams]
+    with HasProductContelonxt
+    with HasSelonrializelondRelonquelonstCursor {
+  delonf maxRelonsults: Option[Int]
+  delonf delonbugParams: Option[DelonbugParams]
 }

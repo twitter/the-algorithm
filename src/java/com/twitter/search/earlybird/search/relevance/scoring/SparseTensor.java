@@ -1,87 +1,87 @@
-package com.twitter.search.earlybird.search.relevance.scoring;
+packagelon com.twittelonr.selonarch.elonarlybird.selonarch.relonlelonvancelon.scoring;
 
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
+import java.nio.BytelonBuffelonr;
+import java.nio.BytelonOrdelonr;
 
-// Ideally, this part should live somewhere in the Cortex common
-// code. Today, it is not possible to create
-// a `SparseTensor` that relies only on ByteBuffer.
-public class SparseTensor {
+// Idelonally, this part should livelon somelonwhelonrelon in thelon Cortelonx common
+// codelon. Today, it is not possiblelon to crelonatelon
+// a `SparselonTelonnsor` that relonlielons only on BytelonBuffelonr.
+public class SparselonTelonnsor {
 
-  private ByteBuffer sparseIndices;
-  private ByteBuffer sparseValues;
-  private ByteBuffer sparseShape;
+  privatelon BytelonBuffelonr sparselonIndicelons;
+  privatelon BytelonBuffelonr sparselonValuelons;
+  privatelon BytelonBuffelonr sparselonShapelon;
 
-  private int numDocs;
-  private final long[] sparseShapeShapeDimension = new long[] {2L};
-  private final long inputBitSize = 1 << 63;
+  privatelon int numDocs;
+  privatelon final long[] sparselonShapelonShapelonDimelonnsion = nelonw long[] {2L};
+  privatelon final long inputBitSizelon = 1 << 63;
 
-  private long numRecordsSeen = 0;
-  private final long numFeatures;
-  private int numValuesSeen;
+  privatelon long numReloncordsSelonelonn = 0;
+  privatelon final long numFelonaturelons;
+  privatelon int numValuelonsSelonelonn;
 
-  public SparseTensor(int numDocs, int numFeatures) {
+  public SparselonTelonnsor(int numDocs, int numFelonaturelons) {
     this.numDocs = numDocs;
-    this.numFeatures = (long) numFeatures;
-    this.sparseValues =
-      ByteBuffer
-      .allocate(numFeatures * numDocs * Float.BYTES)
-      .order(ByteOrder.LITTLE_ENDIAN);
-    this.sparseIndices =
-      ByteBuffer
-        .allocate(2 * numFeatures * numDocs * Long.BYTES)
-        .order(ByteOrder.LITTLE_ENDIAN);
-    this.sparseShape =
-      ByteBuffer
-      .allocate(2 * Long.BYTES)
-      .order(ByteOrder.LITTLE_ENDIAN);
+    this.numFelonaturelons = (long) numFelonaturelons;
+    this.sparselonValuelons =
+      BytelonBuffelonr
+      .allocatelon(numFelonaturelons * numDocs * Float.BYTelonS)
+      .ordelonr(BytelonOrdelonr.LITTLelon_elonNDIAN);
+    this.sparselonIndicelons =
+      BytelonBuffelonr
+        .allocatelon(2 * numFelonaturelons * numDocs * Long.BYTelonS)
+        .ordelonr(BytelonOrdelonr.LITTLelon_elonNDIAN);
+    this.sparselonShapelon =
+      BytelonBuffelonr
+      .allocatelon(2 * Long.BYTelonS)
+      .ordelonr(BytelonOrdelonr.LITTLelon_elonNDIAN);
   }
 
-  public void incNumRecordsSeen() {
-    numRecordsSeen++;
-  }
-
-  /**
-   * Adds the given value to this tensor.
-   */
-  public void addValue(long featureId, float value) {
-    sparseValues.putFloat(value);
-    sparseIndices.putLong(numRecordsSeen);
-    sparseIndices.putLong(featureId);
-    numValuesSeen++;
-  }
-
-  public ByteBuffer getSparseValues() {
-    sparseValues.limit(numValuesSeen * Float.BYTES);
-    sparseValues.rewind();
-    return sparseValues;
-  }
-
-  public long[] getSparseValuesShape() {
-    return new long[] {numValuesSeen};
-  }
-
-  public long[] getSparseIndicesShape() {
-    return new long[] {numValuesSeen, 2L};
-  }
-
-  public long[] getSparseShapeShape() {
-    return sparseShapeShapeDimension;
-  }
-
-  public ByteBuffer getSparseIndices() {
-    sparseIndices.limit(2 * numValuesSeen * Long.BYTES);
-    sparseIndices.rewind();
-    return sparseIndices;
+  public void incNumReloncordsSelonelonn() {
+    numReloncordsSelonelonn++;
   }
 
   /**
-   * Returns the sparse shape for this tensor.
+   * Adds thelon givelonn valuelon to this telonnsor.
    */
-  public ByteBuffer getSparseShape() {
-    sparseShape.putLong(numRecordsSeen);
-    sparseShape.putLong(inputBitSize);
-    sparseShape.rewind();
-    return sparseShape;
+  public void addValuelon(long felonaturelonId, float valuelon) {
+    sparselonValuelons.putFloat(valuelon);
+    sparselonIndicelons.putLong(numReloncordsSelonelonn);
+    sparselonIndicelons.putLong(felonaturelonId);
+    numValuelonsSelonelonn++;
+  }
+
+  public BytelonBuffelonr gelontSparselonValuelons() {
+    sparselonValuelons.limit(numValuelonsSelonelonn * Float.BYTelonS);
+    sparselonValuelons.relonwind();
+    relonturn sparselonValuelons;
+  }
+
+  public long[] gelontSparselonValuelonsShapelon() {
+    relonturn nelonw long[] {numValuelonsSelonelonn};
+  }
+
+  public long[] gelontSparselonIndicelonsShapelon() {
+    relonturn nelonw long[] {numValuelonsSelonelonn, 2L};
+  }
+
+  public long[] gelontSparselonShapelonShapelon() {
+    relonturn sparselonShapelonShapelonDimelonnsion;
+  }
+
+  public BytelonBuffelonr gelontSparselonIndicelons() {
+    sparselonIndicelons.limit(2 * numValuelonsSelonelonn * Long.BYTelonS);
+    sparselonIndicelons.relonwind();
+    relonturn sparselonIndicelons;
+  }
+
+  /**
+   * Relonturns thelon sparselon shapelon for this telonnsor.
+   */
+  public BytelonBuffelonr gelontSparselonShapelon() {
+    sparselonShapelon.putLong(numReloncordsSelonelonn);
+    sparselonShapelon.putLong(inputBitSizelon);
+    sparselonShapelon.relonwind();
+    relonturn sparselonShapelon;
   }
 }

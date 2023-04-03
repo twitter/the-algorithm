@@ -1,56 +1,56 @@
-package com.twitter.cr_mixer.module
+packagelon com.twittelonr.cr_mixelonr.modulelon
 
-import com.twitter.inject.TwitterModule
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.store.strato.StratoFetchableStore
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.strato.client.{Client => StratoClient}
-import com.twitter.storehaus.ReadableStore
-import com.twitter.simclusters_v2.thriftscala.ScoringAlgorithm
-import com.google.inject.Provides
-import com.google.inject.Singleton
-import com.twitter.hermit.store.common.ObservedReadableStore
-import javax.inject.Named
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.representationscorer.thriftscala.ListScoreId
+import com.twittelonr.injelonct.TwittelonrModulelon
+import com.twittelonr.simclustelonrs_v2.thriftscala.elonmbelonddingTypelon
+import com.twittelonr.simclustelonrs_v2.thriftscala.IntelonrnalId
+import com.twittelonr.simclustelonrs_v2.thriftscala.ModelonlVelonrsion
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.frigatelon.common.storelon.strato.StratoFelontchablelonStorelon
+import com.twittelonr.simclustelonrs_v2.common.UselonrId
+import com.twittelonr.simclustelonrs_v2.common.TwelonelontId
+import com.twittelonr.strato.clielonnt.{Clielonnt => StratoClielonnt}
+import com.twittelonr.storelonhaus.RelonadablelonStorelon
+import com.twittelonr.simclustelonrs_v2.thriftscala.ScoringAlgorithm
+import com.googlelon.injelonct.Providelons
+import com.googlelon.injelonct.Singlelonton
+import com.twittelonr.helonrmit.storelon.common.ObselonrvelondRelonadablelonStorelon
+import javax.injelonct.Namelond
+import com.twittelonr.cr_mixelonr.modelonl.ModulelonNamelons
+import com.twittelonr.relonprelonselonntationscorelonr.thriftscala.ListScorelonId
 
-object RepresentationScorerModule extends TwitterModule {
+objelonct RelonprelonselonntationScorelonrModulelon elonxtelonnds TwittelonrModulelon {
 
-  private val rsxColumnPath = "recommendations/representation_scorer/listScore"
+  privatelon val rsxColumnPath = "reloncommelonndations/relonprelonselonntation_scorelonr/listScorelon"
 
-  private final val SimClusterModelVersion = ModelVersion.Model20m145k2020
-  private final val TweetEmbeddingType = EmbeddingType.LogFavBasedTweet
+  privatelon final val SimClustelonrModelonlVelonrsion = ModelonlVelonrsion.Modelonl20m145k2020
+  privatelon final val TwelonelontelonmbelonddingTypelon = elonmbelonddingTypelon.LogFavBaselondTwelonelont
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.RsxStore)
-  def providesRepresentationScorerStore(
-    statsReceiver: StatsReceiver,
-    stratoClient: StratoClient,
-  ): ReadableStore[(UserId, TweetId), Double] = {
-    ObservedReadableStore(
-      StratoFetchableStore
-        .withUnitView[ListScoreId, Double](stratoClient, rsxColumnPath).composeKeyMapping[(
-          UserId,
-          TweetId
-        )] { key =>
-          representationScorerStoreKeyMapping(key._1, key._2)
+  @Providelons
+  @Singlelonton
+  @Namelond(ModulelonNamelons.RsxStorelon)
+  delonf providelonsRelonprelonselonntationScorelonrStorelon(
+    statsReloncelonivelonr: StatsReloncelonivelonr,
+    stratoClielonnt: StratoClielonnt,
+  ): RelonadablelonStorelon[(UselonrId, TwelonelontId), Doublelon] = {
+    ObselonrvelondRelonadablelonStorelon(
+      StratoFelontchablelonStorelon
+        .withUnitVielonw[ListScorelonId, Doublelon](stratoClielonnt, rsxColumnPath).composelonKelonyMapping[(
+          UselonrId,
+          TwelonelontId
+        )] { kelony =>
+          relonprelonselonntationScorelonrStorelonKelonyMapping(kelony._1, kelony._2)
         }
-    )(statsReceiver.scope("rsx_store"))
+    )(statsReloncelonivelonr.scopelon("rsx_storelon"))
   }
 
-  private def representationScorerStoreKeyMapping(t1: TweetId, t2: TweetId): ListScoreId = {
-    ListScoreId(
-      algorithm = ScoringAlgorithm.PairEmbeddingLogCosineSimilarity,
-      modelVersion = SimClusterModelVersion,
-      targetEmbeddingType = TweetEmbeddingType,
-      targetId = InternalId.TweetId(t1),
-      candidateEmbeddingType = TweetEmbeddingType,
-      candidateIds = Seq(InternalId.TweetId(t2))
+  privatelon delonf relonprelonselonntationScorelonrStorelonKelonyMapping(t1: TwelonelontId, t2: TwelonelontId): ListScorelonId = {
+    ListScorelonId(
+      algorithm = ScoringAlgorithm.PairelonmbelonddingLogCosinelonSimilarity,
+      modelonlVelonrsion = SimClustelonrModelonlVelonrsion,
+      targelontelonmbelonddingTypelon = TwelonelontelonmbelonddingTypelon,
+      targelontId = IntelonrnalId.TwelonelontId(t1),
+      candidatelonelonmbelonddingTypelon = TwelonelontelonmbelonddingTypelon,
+      candidatelonIds = Selonq(IntelonrnalId.TwelonelontId(t2))
     )
   }
 }

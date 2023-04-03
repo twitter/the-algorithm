@@ -1,29 +1,29 @@
-package com.twitter.timelineranker.common
+packagelon com.twittelonr.timelonlinelonrankelonr.common
 
-import com.twitter.servo.util.FutureArrow
-import com.twitter.timelineranker.model.RecapQuery
-import com.twitter.timelines.clients.gizmoduck.GizmoduckClient
-import com.twitter.timelines.clients.gizmoduck.UserProfileInfo
-import com.twitter.timelines.util.FailOpenHandler
-import com.twitter.util.Future
+import com.twittelonr.selonrvo.util.FuturelonArrow
+import com.twittelonr.timelonlinelonrankelonr.modelonl.ReloncapQuelonry
+import com.twittelonr.timelonlinelons.clielonnts.gizmoduck.GizmoduckClielonnt
+import com.twittelonr.timelonlinelons.clielonnts.gizmoduck.UselonrProfilelonInfo
+import com.twittelonr.timelonlinelons.util.FailOpelonnHandlelonr
+import com.twittelonr.util.Futurelon
 
-object UserProfileInfoTransform {
-  val EmptyUserProfileInfo: UserProfileInfo = UserProfileInfo(None, None, None, None)
-  val EmptyUserProfileInfoFuture: Future[UserProfileInfo] = Future.value(EmptyUserProfileInfo)
+objelonct UselonrProfilelonInfoTransform {
+  val elonmptyUselonrProfilelonInfo: UselonrProfilelonInfo = UselonrProfilelonInfo(Nonelon, Nonelon, Nonelon, Nonelon)
+  val elonmptyUselonrProfilelonInfoFuturelon: Futurelon[UselonrProfilelonInfo] = Futurelon.valuelon(elonmptyUselonrProfilelonInfo)
 }
 
 /**
- * FutureArrow which fetches user profile info
- * It should be run in parallel with the main pipeline which fetches and hydrates CandidateTweets
+ * FuturelonArrow which felontchelons uselonr profilelon info
+ * It should belon run in parallelonl with thelon main pipelonlinelon which felontchelons and hydratelons CandidatelonTwelonelonts
  */
-class UserProfileInfoTransform(handler: FailOpenHandler, gizmoduckClient: GizmoduckClient)
-    extends FutureArrow[RecapQuery, UserProfileInfo] {
-  import UserProfileInfoTransform._
-  override def apply(request: RecapQuery): Future[UserProfileInfo] = {
-    handler {
-      gizmoduckClient.getProfileInfo(request.userId).map { profileInfoOpt =>
-        profileInfoOpt.getOrElse(EmptyUserProfileInfo)
+class UselonrProfilelonInfoTransform(handlelonr: FailOpelonnHandlelonr, gizmoduckClielonnt: GizmoduckClielonnt)
+    elonxtelonnds FuturelonArrow[ReloncapQuelonry, UselonrProfilelonInfo] {
+  import UselonrProfilelonInfoTransform._
+  ovelonrridelon delonf apply(relonquelonst: ReloncapQuelonry): Futurelon[UselonrProfilelonInfo] = {
+    handlelonr {
+      gizmoduckClielonnt.gelontProfilelonInfo(relonquelonst.uselonrId).map { profilelonInfoOpt =>
+        profilelonInfoOpt.gelontOrelonlselon(elonmptyUselonrProfilelonInfo)
       }
-    } { _: Throwable => EmptyUserProfileInfoFuture }
+    } { _: Throwablelon => elonmptyUselonrProfilelonInfoFuturelon }
   }
 }

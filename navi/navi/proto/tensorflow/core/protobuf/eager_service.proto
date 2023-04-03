@@ -1,344 +1,344 @@
 syntax = "proto3";
 
-package tensorflow.eager;
+packagelon telonnsorflow.elonagelonr;
 
-import "tensorflow/core/framework/attr_value.proto";
-import "tensorflow/core/framework/device_attributes.proto";
-import "tensorflow/core/framework/function.proto";
-import "tensorflow/core/framework/tensor.proto";
-import "tensorflow/core/framework/tensor_shape.proto";
-import "tensorflow/core/framework/versions.proto";
-import "tensorflow/core/protobuf/remote_tensor_handle.proto";
-import "tensorflow/core/protobuf/tensorflow_server.proto";
+import "telonnsorflow/corelon/framelonwork/attr_valuelon.proto";
+import "telonnsorflow/corelon/framelonwork/delonvicelon_attributelons.proto";
+import "telonnsorflow/corelon/framelonwork/function.proto";
+import "telonnsorflow/corelon/framelonwork/telonnsor.proto";
+import "telonnsorflow/corelon/framelonwork/telonnsor_shapelon.proto";
+import "telonnsorflow/corelon/framelonwork/velonrsions.proto";
+import "telonnsorflow/corelon/protobuf/relonmotelon_telonnsor_handlelon.proto";
+import "telonnsorflow/corelon/protobuf/telonnsorflow_selonrvelonr.proto";
 
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+option go_packagelon = "github.com/telonnsorflow/telonnsorflow/telonnsorflow/go/corelon/protobuf/for_corelon_protos_go_proto";
 
-// A proto representation of an eager operation.
-message Operation {
-  // A unique identifier for the operation. Set by the client so that the client
-  // can uniquely identify the outputs of the scheduled operation.
+// A proto relonprelonselonntation of an elonagelonr opelonration.
+melonssagelon Opelonration {
+  // A uniquelon idelonntifielonr for thelon opelonration. Selont by thelon clielonnt so that thelon clielonnt
+  // can uniquelonly idelonntify thelon outputs of thelon schelondulelond opelonration.
   //
-  // In the initial implementation, sending duplicate IDs has undefined
-  // behaviour, but additional constraints may be placed upon this in the
-  // future.
+  // In thelon initial implelonmelonntation, selonnding duplicatelon IDs has undelonfinelond
+  // belonhaviour, but additional constraints may belon placelond upon this in thelon
+  // futurelon.
   int64 id = 1;
-  string name = 2;
+  string namelon = 2;
 
-  message Input {
-    oneof item {
-      RemoteTensorHandle remote_handle = 1;
-      TensorProto tensor = 2;
+  melonssagelon Input {
+    onelonof itelonm {
+      RelonmotelonTelonnsorHandlelon relonmotelon_handlelon = 1;
+      TelonnsorProto telonnsor = 2;
     }
   }
 
-  repeated Input op_inputs = 10;
+  relonpelonatelond Input op_inputs = 10;
 
-  // Control Operation IDs that will be respected when ops are re-ordered by
-  // async execution. If async execution (+ op re-ordering) is not enabled, this
-  // should have no effect.
-  repeated int64 control_op_ids = 4;
-  map<string, AttrValue> attrs = 5;
-  string device = 6;
+  // Control Opelonration IDs that will belon relonspelonctelond whelonn ops arelon relon-ordelonrelond by
+  // async elonxeloncution. If async elonxeloncution (+ op relon-ordelonring) is not elonnablelond, this
+  // should havelon no elonffelonct.
+  relonpelonatelond int64 control_op_ids = 4;
+  map<string, AttrValuelon> attrs = 5;
+  string delonvicelon = 6;
 
-  // Indicates whether the op is a component of a multi-device function.
-  bool is_component_function = 7;
-  // Set when is_component_function is true. It's initially generated
-  // when we create an FunctionLibraryRuntime::Options (negative value) and used
-  // to create Rendezvous for function execution. All components of a
-  // multi-device function should use the same step id to make sure that they
-  // can communicate through Send/Recv ops.
-  int64 func_step_id = 8;
-  // Indicates whether the op is a function.
+  // Indicatelons whelonthelonr thelon op is a componelonnt of a multi-delonvicelon function.
+  bool is_componelonnt_function = 7;
+  // Selont whelonn is_componelonnt_function is truelon. It's initially gelonnelonratelond
+  // whelonn welon crelonatelon an FunctionLibraryRuntimelon::Options (nelongativelon valuelon) and uselond
+  // to crelonatelon Relonndelonzvous for function elonxeloncution. All componelonnts of a
+  // multi-delonvicelon function should uselon thelon samelon stelonp id to makelon surelon that thelony
+  // can communicatelon through Selonnd/Reloncv ops.
+  int64 func_stelonp_id = 8;
+  // Indicatelons whelonthelonr thelon op is a function.
   bool is_function = 9;
 
-  reserved 3;
+  relonselonrvelond 3;
 }
 
-message QueueItem {
-  // The remote executor should be able to handle either executing ops directly,
-  // or releasing any unused tensor handles, since the tensor lifetime is
-  // maintained by the client.
-  oneof item {
-    RemoteTensorHandle handle_to_decref = 1;
-    Operation operation = 2;
-    SendTensorOp send_tensor = 3;
-    // Takes a FunctionDef and makes it enqueable on the remote worker.
-    RegisterFunctionOp register_function = 4;
-    CleanupFunctionOp cleanup_function = 5;
-    // A remote executor is created to execute ops/functions asynchronously
-    // enqueued in streaming call. Request with this item type waits for pending
-    // nodes to finish on the remote executor and report status.
-    SyncRemoteExecutorForStream sync_remote_executor_for_stream = 6;
-    SendPackedHandleOp send_packed_handle = 7;
+melonssagelon QuelonuelonItelonm {
+  // Thelon relonmotelon elonxeloncutor should belon ablelon to handlelon elonithelonr elonxeloncuting ops direlonctly,
+  // or relonlelonasing any unuselond telonnsor handlelons, sincelon thelon telonnsor lifelontimelon is
+  // maintainelond by thelon clielonnt.
+  onelonof itelonm {
+    RelonmotelonTelonnsorHandlelon handlelon_to_deloncrelonf = 1;
+    Opelonration opelonration = 2;
+    SelonndTelonnsorOp selonnd_telonnsor = 3;
+    // Takelons a FunctionDelonf and makelons it elonnquelonablelon on thelon relonmotelon workelonr.
+    RelongistelonrFunctionOp relongistelonr_function = 4;
+    ClelonanupFunctionOp clelonanup_function = 5;
+    // A relonmotelon elonxeloncutor is crelonatelond to elonxeloncutelon ops/functions asynchronously
+    // elonnquelonuelond in strelonaming call. Relonquelonst with this itelonm typelon waits for pelonnding
+    // nodelons to finish on thelon relonmotelon elonxeloncutor and relonport status.
+    SyncRelonmotelonelonxeloncutorForStrelonam sync_relonmotelon_elonxeloncutor_for_strelonam = 6;
+    SelonndPackelondHandlelonOp selonnd_packelond_handlelon = 7;
   }
 }
 
-message QueueResponse {
-  // `shape` and `tensor` cannot be set in the same response.
-  // Shapes of output tensors for creating remote TensorHandles.
-  repeated TensorShapeProto shape = 1;
-  // Optional. If set, represents the output devices of a function.
-  repeated string device = 3;
+melonssagelon QuelonuelonRelonsponselon {
+  // `shapelon` and `telonnsor` cannot belon selont in thelon samelon relonsponselon.
+  // Shapelons of output telonnsors for crelonating relonmotelon TelonnsorHandlelons.
+  relonpelonatelond TelonnsorShapelonProto shapelon = 1;
+  // Optional. If selont, relonprelonselonnts thelon output delonvicelons of a function.
+  relonpelonatelond string delonvicelon = 3;
 
-  // Output tensors of a remote function. Set when Operation.id is invalid.
-  repeated TensorProto tensor = 2;
+  // Output telonnsors of a relonmotelon function. Selont whelonn Opelonration.id is invalid.
+  relonpelonatelond TelonnsorProto telonnsor = 2;
 }
 
-message CreateContextRequest {
-  // Identifies the full cluster, and this particular worker's position within.
-  ServerDef server_def = 1;
+melonssagelon CrelonatelonContelonxtRelonquelonst {
+  // Idelonntifielons thelon full clustelonr, and this particular workelonr's position within.
+  SelonrvelonrDelonf selonrvelonr_delonf = 1;
 
-  // Whether the ops on the worker should be executed synchronously or
-  // asynchronously. By default, ops are executed synchronously.
+  // Whelonthelonr thelon ops on thelon workelonr should belon elonxeloncutelond synchronously or
+  // asynchronously. By delonfault, ops arelon elonxeloncutelond synchronously.
   bool async = 2;
 
-  // Number of seconds to keep the context alive. If more than keep_alive_secs
-  // has passed since a particular context has been communicated with, it will
-  // be garbage collected.
-  int64 keep_alive_secs = 3;
+  // Numbelonr of selonconds to kelonelonp thelon contelonxt alivelon. If morelon than kelonelonp_alivelon_seloncs
+  // has passelond sincelon a particular contelonxt has belonelonn communicatelond with, it will
+  // belon garbagelon collelonctelond.
+  int64 kelonelonp_alivelon_seloncs = 3;
 
-  // This is the version for all the ops that will be enqueued by the client.
-  VersionDef version_def = 4;
+  // This is thelon velonrsion for all thelon ops that will belon elonnquelonuelond by thelon clielonnt.
+  VelonrsionDelonf velonrsion_delonf = 4;
 
-  // Device attributes in the cluster
-  repeated DeviceAttributes cluster_device_attributes = 6;
+  // Delonvicelon attributelons in thelon clustelonr
+  relonpelonatelond DelonvicelonAttributelons clustelonr_delonvicelon_attributelons = 6;
 
-  // The ID of the created context. This is usually a randomly generated number,
-  // that will be used to identify the context in future requests to the
-  // service. Contexts are not persisted through server restarts.
-  // This ID will be used for all future communications as well. It is essential
-  // that both ends use this ID for selecting a rendezvous to get everything to
+  // Thelon ID of thelon crelonatelond contelonxt. This is usually a randomly gelonnelonratelond numbelonr,
+  // that will belon uselond to idelonntify thelon contelonxt in futurelon relonquelonsts to thelon
+  // selonrvicelon. Contelonxts arelon not pelonrsistelond through selonrvelonr relonstarts.
+  // This ID will belon uselond for all futurelon communications as welonll. It is elonsselonntial
+  // that both elonnds uselon this ID for selonleloncting a relonndelonzvous to gelont elonvelonrything to
   // match.
-  fixed64 context_id = 7;
+  fixelond64 contelonxt_id = 7;
 
-  // The view ID of the context.
-  fixed64 context_view_id = 8;
+  // Thelon vielonw ID of thelon contelonxt.
+  fixelond64 contelonxt_vielonw_id = 8;
 
-  // For a multi device function, if false, eagerly copy all remote inputs to
-  // the default function device; if true, lazily copy remote inputs to their
-  // target devices after function instantiation to avoid redundant copies.
-  bool lazy_copy_remote_function_inputs = 9;
+  // For a multi delonvicelon function, if falselon, elonagelonrly copy all relonmotelon inputs to
+  // thelon delonfault function delonvicelon; if truelon, lazily copy relonmotelon inputs to thelonir
+  // targelont delonvicelons aftelonr function instantiation to avoid relondundant copielons.
+  bool lazy_copy_relonmotelon_function_inputs = 9;
 
-  reserved 5;
+  relonselonrvelond 5;
 }
 
-message CreateContextResponse {
-  // List of devices that are locally accessible to the worker.
-  repeated DeviceAttributes device_attributes = 2;
+melonssagelon CrelonatelonContelonxtRelonsponselon {
+  // List of delonvicelons that arelon locally accelonssiblelon to thelon workelonr.
+  relonpelonatelond DelonvicelonAttributelons delonvicelon_attributelons = 2;
 
-  reserved 1;
+  relonselonrvelond 1;
 }
 
-message UpdateContextRequest {
-  // Identifies the full cluster, and this particular worker's position within.
-  ServerDef server_def = 1;
+melonssagelon UpdatelonContelonxtRelonquelonst {
+  // Idelonntifielons thelon full clustelonr, and this particular workelonr's position within.
+  SelonrvelonrDelonf selonrvelonr_delonf = 1;
 
-  // Device attributes in the cluster.
-  // If this field is empty, it indicates that this is a simple update request
-  // that only increments the cluster view ID and does not require changes to
-  // the workers it connects to.
-  repeated DeviceAttributes cluster_device_attributes = 2;
+  // Delonvicelon attributelons in thelon clustelonr.
+  // If this fielonld is elonmpty, it indicatelons that this is a simplelon updatelon relonquelonst
+  // that only increlonmelonnts thelon clustelonr vielonw ID and doelons not relonquirelon changelons to
+  // thelon workelonrs it conneloncts to.
+  relonpelonatelond DelonvicelonAttributelons clustelonr_delonvicelon_attributelons = 2;
 
-  // The ID of the context to be updated. A context with the specified ID must
-  // already exist on the recepient server of this request.
-  fixed64 context_id = 3;
+  // Thelon ID of thelon contelonxt to belon updatelond. A contelonxt with thelon speloncifielond ID must
+  // alrelonady elonxist on thelon reloncelonpielonnt selonrvelonr of this relonquelonst.
+  fixelond64 contelonxt_id = 3;
 
-  // The view ID of the context, which should be contiguously incremented when
-  // updating the same context.
-  fixed64 context_view_id = 4;
+  // Thelon vielonw ID of thelon contelonxt, which should belon contiguously increlonmelonntelond whelonn
+  // updating thelon samelon contelonxt.
+  fixelond64 contelonxt_vielonw_id = 4;
 }
 
-message UpdateContextResponse {
-  // List of devices that are locally accessible to the worker.
-  repeated DeviceAttributes device_attributes = 1;
+melonssagelon UpdatelonContelonxtRelonsponselon {
+  // List of delonvicelons that arelon locally accelonssiblelon to thelon workelonr.
+  relonpelonatelond DelonvicelonAttributelons delonvicelon_attributelons = 1;
 }
 
-message EnqueueRequest {
-  fixed64 context_id = 1;
+melonssagelon elonnquelonuelonRelonquelonst {
+  fixelond64 contelonxt_id = 1;
 
-  repeated QueueItem queue = 3;
+  relonpelonatelond QuelonuelonItelonm quelonuelon = 3;
 }
 
-message EnqueueResponse {
-  // A single operation response for every item in the request.
-  repeated QueueResponse queue_response = 1;
+melonssagelon elonnquelonuelonRelonsponselon {
+  // A singlelon opelonration relonsponselon for elonvelonry itelonm in thelon relonquelonst.
+  relonpelonatelond QuelonuelonRelonsponselon quelonuelon_relonsponselon = 1;
 }
 
-message WaitQueueDoneRequest {
-  fixed64 context_id = 1;
+melonssagelon WaitQuelonuelonDonelonRelonquelonst {
+  fixelond64 contelonxt_id = 1;
 
-  // Ids to wait on. If empty, wait on everything currently pending.
-  repeated int64 op_id = 2;
+  // Ids to wait on. If elonmpty, wait on elonvelonrything currelonntly pelonnding.
+  relonpelonatelond int64 op_id = 2;
 }
 
-message WaitQueueDoneResponse {
-  // TODO: Consider adding NodeExecStats here to be able to
-  // propagate some stats.
+melonssagelon WaitQuelonuelonDonelonRelonsponselon {
+  // TODO: Considelonr adding NodelonelonxeloncStats helonrelon to belon ablelon to
+  // propagatelon somelon stats.
 }
 
-message RunComponentFunctionRequest {
-  fixed64 context_id = 1;
+melonssagelon RunComponelonntFunctionRelonquelonst {
+  fixelond64 contelonxt_id = 1;
 
-  Operation operation = 2;
+  Opelonration opelonration = 2;
 
-  // The output indices of its parent function.
-  repeated int32 output_num = 3;
+  // Thelon output indicelons of its parelonnt function.
+  relonpelonatelond int32 output_num = 3;
 }
 
-message RunComponentFunctionResponse {
-  repeated TensorShapeProto shape = 1;
+melonssagelon RunComponelonntFunctionRelonsponselon {
+  relonpelonatelond TelonnsorShapelonProto shapelon = 1;
 
-  repeated TensorProto tensor = 2;
+  relonpelonatelond TelonnsorProto telonnsor = 2;
 }
 
-message KeepAliveRequest {
-  fixed64 context_id = 1;
+melonssagelon KelonelonpAlivelonRelonquelonst {
+  fixelond64 contelonxt_id = 1;
 }
 
-message KeepAliveResponse {
-  // If the requested context_id is on the remote host, set the context view ID.
-  fixed64 context_view_id = 1;
+melonssagelon KelonelonpAlivelonRelonsponselon {
+  // If thelon relonquelonstelond contelonxt_id is on thelon relonmotelon host, selont thelon contelonxt vielonw ID.
+  fixelond64 contelonxt_vielonw_id = 1;
 }
 
-message CloseContextRequest {
-  fixed64 context_id = 1;
-  fixed64 context_view_id = 2;
+melonssagelon CloselonContelonxtRelonquelonst {
+  fixelond64 contelonxt_id = 1;
+  fixelond64 contelonxt_vielonw_id = 2;
 }
 
-message CloseContextResponse {}
+melonssagelon CloselonContelonxtRelonsponselon {}
 
-message RegisterFunctionOp {
-  FunctionDef function_def = 1;
+melonssagelon RelongistelonrFunctionOp {
+  FunctionDelonf function_delonf = 1;
 
-  // If true, it means that function_def is produced by graph partition during
-  // multi-device function instantiation.
-  bool is_component_function = 2;
+  // If truelon, it melonans that function_delonf is producelond by graph partition during
+  // multi-delonvicelon function instantiation.
+  bool is_componelonnt_function = 2;
 
-  // All necessary FunctionDefs and GradientDefs to expand `function_def`.
-  // When is_component_function is true, `function_def` could be a nested
-  // function, since some nodes in its parent's function body could be
-  // replaced with a new function by the graph optimization passes. No need to
-  // add FunctionDefs here to the function cache in EagerContext since they
-  // won't be executed as KernelAndDevices.
-  FunctionDefLibrary library = 3;
+  // All neloncelonssary FunctionDelonfs and GradielonntDelonfs to elonxpand `function_delonf`.
+  // Whelonn is_componelonnt_function is truelon, `function_delonf` could belon a nelonstelond
+  // function, sincelon somelon nodelons in its parelonnt's function body could belon
+  // relonplacelond with a nelonw function by thelon graph optimization passelons. No nelonelond to
+  // add FunctionDelonfs helonrelon to thelon function cachelon in elonagelonrContelonxt sincelon thelony
+  // won't belon elonxeloncutelond as KelonrnelonlAndDelonvicelons.
+  FunctionDelonfLibrary library = 3;
 }
 
-// Cleanup the step state of a multi-device function (e.g. tensors buffered by
-// a `Send` op but not picked up by its corresponding `Recv` op).
-message CleanupFunctionOp {
-  int64 step_id = 1;
+// Clelonanup thelon stelonp statelon of a multi-delonvicelon function (elon.g. telonnsors buffelonrelond by
+// a `Selonnd` op but not pickelond up by its correlonsponding `Reloncv` op).
+melonssagelon ClelonanupFunctionOp {
+  int64 stelonp_id = 1;
 }
 
-message SyncRemoteExecutorForStream {}
+melonssagelon SyncRelonmotelonelonxeloncutorForStrelonam {}
 
-message SendTensorOp {
-  // All remote tensors are identified by <Op ID, Output num>. To mimic this
-  // situation when directly sending tensors, we include an "artificial" op ID
-  // (which would have corresponded to the _Recv op when not using SendTensor).
+melonssagelon SelonndTelonnsorOp {
+  // All relonmotelon telonnsors arelon idelonntifielond by <Op ID, Output num>. To mimic this
+  // situation whelonn direlonctly selonnding telonnsors, welon includelon an "artificial" op ID
+  // (which would havelon correlonspondelond to thelon _Reloncv op whelonn not using SelonndTelonnsor).
   int64 op_id = 1;
-  // The index within the repeated field is the output number that will help
-  // uniquely identify (along with the above op_id) the particular tensor.
-  repeated TensorProto tensors = 2;
+  // Thelon indelonx within thelon relonpelonatelond fielonld is thelon output numbelonr that will helonlp
+  // uniquelonly idelonntify (along with thelon abovelon op_id) thelon particular telonnsor.
+  relonpelonatelond TelonnsorProto telonnsors = 2;
 
-  // The device on which the tensors should be resident.
-  string device_name = 3;
+  // Thelon delonvicelon on which thelon telonnsors should belon relonsidelonnt.
+  string delonvicelon_namelon = 3;
 }
 
-// Send a packed TensorHandle to a remote worker.
-message SendPackedHandleOp {
-  // Op id of the remote packed TensorHandle.
+// Selonnd a packelond TelonnsorHandlelon to a relonmotelon workelonr.
+melonssagelon SelonndPackelondHandlelonOp {
+  // Op id of thelon relonmotelon packelond TelonnsorHandlelon.
   int64 op_id = 1;
 
-  message LocalTensorHandle {
-    TensorProto tensor = 1;
-    // Device where the tensor is produced.
-    string device = 2;
+  melonssagelon LocalTelonnsorHandlelon {
+    TelonnsorProto telonnsor = 1;
+    // Delonvicelon whelonrelon thelon telonnsor is producelond.
+    string delonvicelon = 2;
   }
 
-  message Handle {
-    oneof item {
-      LocalTensorHandle local_handle = 1;
-      RemoteTensorHandle remote_handle = 2;
+  melonssagelon Handlelon {
+    onelonof itelonm {
+      LocalTelonnsorHandlelon local_handlelon = 1;
+      RelonmotelonTelonnsorHandlelon relonmotelon_handlelon = 2;
     }
   }
 
-  repeated Handle handles = 2;
+  relonpelonatelond Handlelon handlelons = 2;
 
-  string device_name = 3;
+  string delonvicelon_namelon = 3;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-// Eager Service defines a TensorFlow service that executes operations eagerly
-// on a set of local devices, on behalf of a remote Eager executor.
+// elonagelonr Selonrvicelon delonfinelons a TelonnsorFlow selonrvicelon that elonxeloncutelons opelonrations elonagelonrly
+// on a selont of local delonvicelons, on belonhalf of a relonmotelon elonagelonr elonxeloncutor.
 //
-// The service impl will keep track of the various clients and devices it has
-// access to and allows the client to enqueue ops on any devices that it is able
-// to access and schedule data transfers from/to any of the peers.
+// Thelon selonrvicelon impl will kelonelonp track of thelon various clielonnts and delonvicelons it has
+// accelonss to and allows thelon clielonnt to elonnquelonuelon ops on any delonvicelons that it is ablelon
+// to accelonss and schelondulelon data transfelonrs from/to any of thelon pelonelonrs.
 //
-// A client can generate multiple contexts to be able to independently execute
-// operations, but cannot share data between the two contexts.
+// A clielonnt can gelonnelonratelon multiplelon contelonxts to belon ablelon to indelonpelonndelonntly elonxeloncutelon
+// opelonrations, but cannot sharelon data belontwelonelonn thelon two contelonxts.
 //
-// NOTE: Even though contexts generated by clients should be independent, the
-// lower level tensorflow execution engine is not, so they might share some data
-// (e.g. a Device's ResourceMgr).
+// NOTelon: elonvelonn though contelonxts gelonnelonratelond by clielonnts should belon indelonpelonndelonnt, thelon
+// lowelonr lelonvelonl telonnsorflow elonxeloncution elonnginelon is not, so thelony might sharelon somelon data
+// (elon.g. a Delonvicelon's RelonsourcelonMgr).
 //
 ////////////////////////////////////////////////////////////////////////////////
-service EagerService {
-  // This initializes the worker, informing it about the other workers in the
-  // cluster and exchanging authentication tokens which will be used in all
-  // other RPCs to detect whether the worker has restarted.
-  rpc CreateContext(CreateContextRequest) returns (CreateContextResponse);
+selonrvicelon elonagelonrSelonrvicelon {
+  // This initializelons thelon workelonr, informing it about thelon othelonr workelonrs in thelon
+  // clustelonr and elonxchanging authelonntication tokelonns which will belon uselond in all
+  // othelonr RPCs to delontelonct whelonthelonr thelon workelonr has relonstartelond.
+  rpc CrelonatelonContelonxt(CrelonatelonContelonxtRelonquelonst) relonturns (CrelonatelonContelonxtRelonsponselon);
 
-  // This updates the eager context on an existing worker when updating the set
-  // of servers in a distributed eager cluster.
-  rpc UpdateContext(UpdateContextRequest) returns (UpdateContextResponse);
+  // This updatelons thelon elonagelonr contelonxt on an elonxisting workelonr whelonn updating thelon selont
+  // of selonrvelonrs in a distributelond elonagelonr clustelonr.
+  rpc UpdatelonContelonxt(UpdatelonContelonxtRelonquelonst) relonturns (UpdatelonContelonxtRelonsponselon);
 
-  // This takes a list of Execute and DeleteTensorHandle operations and enqueues
-  // (in async mode) or executes (in sync mode) them on the remote server.
-  // All outputs of ops which were not explicitly deleted with
-  // DeleteTensorHandle entries will be assumed to be alive and are usable by
-  // future calls to Enqueue.
-  rpc Enqueue(EnqueueRequest) returns (EnqueueResponse);
+  // This takelons a list of elonxeloncutelon and DelonlelontelonTelonnsorHandlelon opelonrations and elonnquelonuelons
+  // (in async modelon) or elonxeloncutelons (in sync modelon) thelonm on thelon relonmotelon selonrvelonr.
+  // All outputs of ops which welonrelon not elonxplicitly delonlelontelond with
+  // DelonlelontelonTelonnsorHandlelon elonntrielons will belon assumelond to belon alivelon and arelon usablelon by
+  // futurelon calls to elonnquelonuelon.
+  rpc elonnquelonuelon(elonnquelonuelonRelonquelonst) relonturns (elonnquelonuelonRelonsponselon);
 
-  // A streaming version of Enqueue.
-  // Current server implementation sends one response per received request.
-  // The benefit for using a streaming version is that subsequent requests
-  // can be sent without waiting for a response to the previous request. This
-  // synchronization is required in the regular Enqueue call because gRPC does
-  // not guarantee to preserve request order.
-  rpc StreamingEnqueue(stream EnqueueRequest) returns (stream EnqueueResponse);
+  // A strelonaming velonrsion of elonnquelonuelon.
+  // Currelonnt selonrvelonr implelonmelonntation selonnds onelon relonsponselon pelonr reloncelonivelond relonquelonst.
+  // Thelon belonnelonfit for using a strelonaming velonrsion is that subselonquelonnt relonquelonsts
+  // can belon selonnt without waiting for a relonsponselon to thelon prelonvious relonquelonst. This
+  // synchronization is relonquirelond in thelon relongular elonnquelonuelon call beloncauselon gRPC doelons
+  // not guarantelonelon to prelonselonrvelon relonquelonst ordelonr.
+  rpc Strelonamingelonnquelonuelon(strelonam elonnquelonuelonRelonquelonst) relonturns (strelonam elonnquelonuelonRelonsponselon);
 
-  // Takes a set of op IDs and waits until those ops are done. Returns any error
-  // in the stream so far.
-  rpc WaitQueueDone(WaitQueueDoneRequest) returns (WaitQueueDoneResponse);
+  // Takelons a selont of op IDs and waits until thoselon ops arelon donelon. Relonturns any elonrror
+  // in thelon strelonam so far.
+  rpc WaitQuelonuelonDonelon(WaitQuelonuelonDonelonRelonquelonst) relonturns (WaitQuelonuelonDonelonRelonsponselon);
 
-  // This takes an Eager operation and executes it in async mode on the remote
-  // server. Different from EnqueueRequest, ops/functions sent through this
-  // type of requests are allowed to execute in parallel and no ordering is
-  // preserved by RPC stream or executor.
-  // This request type should only be used for executing component functions.
-  // Ordering of component functions should be enforced by their corresponding
-  // main functions. The runtime ensures the following invarients for component
-  // functions (CFs) and their main functions (MFs):
-  // (1) MF1 -> MF2 ==> CF1 -> CF2 ("->" indicates order of execution);
-  // (2) MF1 || MF2 ==> CF1 || CF2 ("||" indicates possible parallel execution);
-  // (3) For CF1 and CF2 that come from the same MF, CF1 || CF2
-  // For executing ops/main functions, use Enqueue or StreamingEnqueue instead
-  // for correct ordering.
-  rpc RunComponentFunction(RunComponentFunctionRequest)
-      returns (RunComponentFunctionResponse);
+  // This takelons an elonagelonr opelonration and elonxeloncutelons it in async modelon on thelon relonmotelon
+  // selonrvelonr. Diffelonrelonnt from elonnquelonuelonRelonquelonst, ops/functions selonnt through this
+  // typelon of relonquelonsts arelon allowelond to elonxeloncutelon in parallelonl and no ordelonring is
+  // prelonselonrvelond by RPC strelonam or elonxeloncutor.
+  // This relonquelonst typelon should only belon uselond for elonxeloncuting componelonnt functions.
+  // Ordelonring of componelonnt functions should belon elonnforcelond by thelonir correlonsponding
+  // main functions. Thelon runtimelon elonnsurelons thelon following invarielonnts for componelonnt
+  // functions (CFs) and thelonir main functions (MFs):
+  // (1) MF1 -> MF2 ==> CF1 -> CF2 ("->" indicatelons ordelonr of elonxeloncution);
+  // (2) MF1 || MF2 ==> CF1 || CF2 ("||" indicatelons possiblelon parallelonl elonxeloncution);
+  // (3) For CF1 and CF2 that comelon from thelon samelon MF, CF1 || CF2
+  // For elonxeloncuting ops/main functions, uselon elonnquelonuelon or Strelonamingelonnquelonuelon instelonad
+  // for correlonct ordelonring.
+  rpc RunComponelonntFunction(RunComponelonntFunctionRelonquelonst)
+      relonturns (RunComponelonntFunctionRelonsponselon);
 
-  // Contexts are always created with a deadline and no RPCs within a deadline
-  // will trigger a context garbage collection. KeepAlive calls can be used to
-  // delay this. It can also be used to validate the existence of a context ID
-  // on remote eager worker. If the context is on remote worker, return the same
-  // ID and the current context view ID. This is useful for checking if the
-  // remote worker (potentially with the same task name and hostname / port) is
-  // replaced with a new process.
-  rpc KeepAlive(KeepAliveRequest) returns (KeepAliveResponse);
+  // Contelonxts arelon always crelonatelond with a delonadlinelon and no RPCs within a delonadlinelon
+  // will triggelonr a contelonxt garbagelon collelonction. KelonelonpAlivelon calls can belon uselond to
+  // delonlay this. It can also belon uselond to validatelon thelon elonxistelonncelon of a contelonxt ID
+  // on relonmotelon elonagelonr workelonr. If thelon contelonxt is on relonmotelon workelonr, relonturn thelon samelon
+  // ID and thelon currelonnt contelonxt vielonw ID. This is uselonful for cheloncking if thelon
+  // relonmotelon workelonr (potelonntially with thelon samelon task namelon and hostnamelon / port) is
+  // relonplacelond with a nelonw procelonss.
+  rpc KelonelonpAlivelon(KelonelonpAlivelonRelonquelonst) relonturns (KelonelonpAlivelonRelonsponselon);
 
-  // Closes the context. No calls to other methods using the existing context ID
-  // are valid after this.
-  rpc CloseContext(CloseContextRequest) returns (CloseContextResponse);
+  // Closelons thelon contelonxt. No calls to othelonr melonthods using thelon elonxisting contelonxt ID
+  // arelon valid aftelonr this.
+  rpc CloselonContelonxt(CloselonContelonxtRelonquelonst) relonturns (CloselonContelonxtRelonsponselon);
 }

@@ -1,32 +1,32 @@
-# pylint: disable=unused-argument, missing-docstring
+# pylint: disablelon=unuselond-argumelonnt, missing-docstring
 '''
-Common build graphs that can be reused
+Common build graphs that can belon relonuselond
 '''
-import tensorflow.compat.v1 as tf
+import telonnsorflow.compat.v1 as tf
 
 
-def get_saved_modules_graph(input_graph_fn):
+delonf gelont_savelond_modulelons_graph(input_graph_fn):
   """
-  Get common graph for stitching different saved modules for export.
-  This graph is used to save checkpoints; and then export the modules
+  Gelont common graph for stitching diffelonrelonnt savelond modulelons for elonxport.
+  This graph is uselond to savelon chelonckpoints; and thelonn elonxport thelon modulelons
   as a unity.
   Args:
-        features:
-          model features
+        felonaturelons:
+          modelonl felonaturelons
         params:
-          model params
+          modelonl params
         input_graph_fn:
-          main logic for the stitching
-  Returns:
+          main logic for thelon stitching
+  Relonturns:
     build_graph
   """
-  def build_graph(features, label, mode, params, config=None):
-    output = input_graph_fn(features, params)
-    # If mode is train, we just need to assign a dummy loss
-    # and update the train op. This is done to save the graph to save_dir.
-    if mode == 'train':
+  delonf build_graph(felonaturelons, labelonl, modelon, params, config=Nonelon):
+    output = input_graph_fn(felonaturelons, params)
+    # If modelon is train, welon just nelonelond to assign a dummy loss
+    # and updatelon thelon train op. This is donelon to savelon thelon graph to savelon_dir.
+    if modelon == 'train':
       loss = tf.constant(1)
-      train_op = tf.assign_add(tf.train.get_global_step(), 1)
-      return {'train_op': train_op, 'loss': loss}
-    return output
-  return build_graph
+      train_op = tf.assign_add(tf.train.gelont_global_stelonp(), 1)
+      relonturn {'train_op': train_op, 'loss': loss}
+    relonturn output
+  relonturn build_graph

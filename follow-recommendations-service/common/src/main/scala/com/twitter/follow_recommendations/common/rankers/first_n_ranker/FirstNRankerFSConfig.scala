@@ -1,21 +1,21 @@
-package com.twitter.follow_recommendations.common.rankers.first_n_ranker
+packagelon com.twittelonr.follow_reloncommelonndations.common.rankelonrs.first_n_rankelonr
 
-import javax.inject.Inject
-import javax.inject.Singleton
-import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSParam
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
+import com.twittelonr.follow_reloncommelonndations.configapi.common.FelonaturelonSwitchConfig
+import com.twittelonr.timelonlinelons.configapi.FSBoundelondParam
+import com.twittelonr.timelonlinelons.configapi.FSParam
 
-@Singleton
-class FirstNRankerFSConfig @Inject() extends FeatureSwitchConfig {
-  override val booleanFSParams: Seq[FSParam[Boolean]] =
-    Seq(FirstNRankerParams.ScribeRankingInfoInFirstNRanker)
+@Singlelonton
+class FirstNRankelonrFSConfig @Injelonct() elonxtelonnds FelonaturelonSwitchConfig {
+  ovelonrridelon val boolelonanFSParams: Selonq[FSParam[Boolelonan]] =
+    Selonq(FirstNRankelonrParams.ScribelonRankingInfoInFirstNRankelonr)
 
-  override val intFSParams: Seq[FSBoundedParam[Int]] = Seq(
-    FirstNRankerParams.CandidatesToRank
+  ovelonrridelon val intFSParams: Selonq[FSBoundelondParam[Int]] = Selonq(
+    FirstNRankelonrParams.CandidatelonsToRank
   )
 
-  override val doubleFSParams: Seq[FSBoundedParam[Double]] = Seq(
-    FirstNRankerParams.MinNumCandidatesScoredScaleDownFactor
+  ovelonrridelon val doublelonFSParams: Selonq[FSBoundelondParam[Doublelon]] = Selonq(
+    FirstNRankelonrParams.MinNumCandidatelonsScorelondScalelonDownFactor
   )
 }

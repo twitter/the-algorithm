@@ -1,26 +1,26 @@
-package com.twitter.follow_recommendations.common.candidate_sources.sims_expansion
+packagelon com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.sims_elonxpansion
 
-import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSParam
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.follow_reloncommelonndations.configapi.common.FelonaturelonSwitchConfig
+import com.twittelonr.timelonlinelons.configapi.FSBoundelondParam
+import com.twittelonr.timelonlinelons.configapi.FSParam
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class SimsExpansionFSConfig @Inject() () extends FeatureSwitchConfig {
-  override val intFSParams: Seq[FSBoundedParam[Int]] = Seq(
-    RecentFollowingSimilarUsersParams.MaxFirstDegreeNodes,
-    RecentFollowingSimilarUsersParams.MaxSecondaryDegreeExpansionPerNode,
-    RecentFollowingSimilarUsersParams.MaxResults
+@Singlelonton
+class SimselonxpansionFSConfig @Injelonct() () elonxtelonnds FelonaturelonSwitchConfig {
+  ovelonrridelon val intFSParams: Selonq[FSBoundelondParam[Int]] = Selonq(
+    ReloncelonntFollowingSimilarUselonrsParams.MaxFirstDelongrelonelonNodelons,
+    ReloncelonntFollowingSimilarUselonrsParams.MaxSeloncondaryDelongrelonelonelonxpansionPelonrNodelon,
+    ReloncelonntFollowingSimilarUselonrsParams.MaxRelonsults
   )
 
-  override val doubleFSParams: Seq[FSBoundedParam[Double]] = Seq(
-    DBV2SimsExpansionParams.RecentFollowingSimilarUsersDBV2CalibrateDivisor,
-    DBV2SimsExpansionParams.RecentEngagementSimilarUsersDBV2CalibrateDivisor
+  ovelonrridelon val doublelonFSParams: Selonq[FSBoundelondParam[Doublelon]] = Selonq(
+    DBV2SimselonxpansionParams.ReloncelonntFollowingSimilarUselonrsDBV2CalibratelonDivisor,
+    DBV2SimselonxpansionParams.ReloncelonntelonngagelonmelonntSimilarUselonrsDBV2CalibratelonDivisor
   )
 
-  override val booleanFSParams: Seq[FSParam[Boolean]] = Seq(
-    DBV2SimsExpansionParams.DisableHeavyRanker,
-    RecentFollowingSimilarUsersParams.TimestampIntegrated
+  ovelonrridelon val boolelonanFSParams: Selonq[FSParam[Boolelonan]] = Selonq(
+    DBV2SimselonxpansionParams.DisablelonHelonavyRankelonr,
+    ReloncelonntFollowingSimilarUselonrsParams.TimelonstampIntelongratelond
   )
 }

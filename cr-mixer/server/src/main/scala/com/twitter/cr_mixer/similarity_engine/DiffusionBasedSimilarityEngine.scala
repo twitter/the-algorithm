@@ -1,72 +1,72 @@
-package com.twitter.cr_mixer.similarity_engine
+packagelon com.twittelonr.cr_mixelonr.similarity_elonnginelon
 
-import com.twitter.cr_mixer.model.SimilarityEngineInfo
-import com.twitter.simclusters_v2.thriftscala.TweetsWithScore
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.cr_mixer.model.TweetWithScore
-import com.twitter.cr_mixer.thriftscala.SimilarityEngineType
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.timelines.configapi
-import com.twitter.util.Future
-import javax.inject.Singleton
+import com.twittelonr.cr_mixelonr.modelonl.SimilarityelonnginelonInfo
+import com.twittelonr.simclustelonrs_v2.thriftscala.TwelonelontsWithScorelon
+import com.twittelonr.simclustelonrs_v2.thriftscala.IntelonrnalId
+import com.twittelonr.cr_mixelonr.modelonl.TwelonelontWithScorelon
+import com.twittelonr.cr_mixelonr.thriftscala.SimilarityelonnginelonTypelon
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.simclustelonrs_v2.thriftscala.IntelonrnalId
+import com.twittelonr.storelonhaus.RelonadablelonStorelon
+import com.twittelonr.timelonlinelons.configapi
+import com.twittelonr.util.Futurelon
+import javax.injelonct.Singlelonton
 
-@Singleton
-case class DiffusionBasedSimilarityEngine(
-  retweetBasedDiffusionRecsMhStore: ReadableStore[Long, TweetsWithScore],
-  statsReceiver: StatsReceiver)
-    extends ReadableStore[
-      DiffusionBasedSimilarityEngine.Query,
-      Seq[TweetWithScore]
+@Singlelonton
+caselon class DiffusionBaselondSimilarityelonnginelon(
+  relontwelonelontBaselondDiffusionReloncsMhStorelon: RelonadablelonStorelon[Long, TwelonelontsWithScorelon],
+  statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds RelonadablelonStorelon[
+      DiffusionBaselondSimilarityelonnginelon.Quelonry,
+      Selonq[TwelonelontWithScorelon]
     ] {
 
-  override def get(
-    query: DiffusionBasedSimilarityEngine.Query
-  ): Future[Option[Seq[TweetWithScore]]] = {
+  ovelonrridelon delonf gelont(
+    quelonry: DiffusionBaselondSimilarityelonnginelon.Quelonry
+  ): Futurelon[Option[Selonq[TwelonelontWithScorelon]]] = {
 
-    query.sourceId match {
-      case InternalId.UserId(userId) =>
-        retweetBasedDiffusionRecsMhStore.get(userId).map {
-          _.map { tweetsWithScore =>
+    quelonry.sourcelonId match {
+      caselon IntelonrnalId.UselonrId(uselonrId) =>
+        relontwelonelontBaselondDiffusionReloncsMhStorelon.gelont(uselonrId).map {
+          _.map { twelonelontsWithScorelon =>
             {
-              tweetsWithScore.tweets
-                .map(tweet => TweetWithScore(tweet.tweetId, tweet.score))
+              twelonelontsWithScorelon.twelonelonts
+                .map(twelonelont => TwelonelontWithScorelon(twelonelont.twelonelontId, twelonelont.scorelon))
             }
           }
         }
-      case _ =>
-        Future.None
+      caselon _ =>
+        Futurelon.Nonelon
     }
   }
 }
 
-object DiffusionBasedSimilarityEngine {
+objelonct DiffusionBaselondSimilarityelonnginelon {
 
-  val defaultScore: Double = 0.0
+  val delonfaultScorelon: Doublelon = 0.0
 
-  case class Query(
-    sourceId: InternalId,
+  caselon class Quelonry(
+    sourcelonId: IntelonrnalId,
   )
 
-  def toSimilarityEngineInfo(
-    query: LookupEngineQuery[Query],
-    score: Double
-  ): SimilarityEngineInfo = {
-    SimilarityEngineInfo(
-      similarityEngineType = SimilarityEngineType.DiffusionBasedTweet,
-      modelId = Some(query.lookupKey),
-      score = Some(score))
+  delonf toSimilarityelonnginelonInfo(
+    quelonry: LookupelonnginelonQuelonry[Quelonry],
+    scorelon: Doublelon
+  ): SimilarityelonnginelonInfo = {
+    SimilarityelonnginelonInfo(
+      similarityelonnginelonTypelon = SimilarityelonnginelonTypelon.DiffusionBaselondTwelonelont,
+      modelonlId = Somelon(quelonry.lookupKelony),
+      scorelon = Somelon(scorelon))
   }
 
-  def fromParams(
-    sourceId: InternalId,
-    modelId: String,
+  delonf fromParams(
+    sourcelonId: IntelonrnalId,
+    modelonlId: String,
     params: configapi.Params,
-  ): LookupEngineQuery[Query] = {
-    LookupEngineQuery(
-      Query(sourceId = sourceId),
-      modelId,
+  ): LookupelonnginelonQuelonry[Quelonry] = {
+    LookupelonnginelonQuelonry(
+      Quelonry(sourcelonId = sourcelonId),
+      modelonlId,
       params
     )
   }

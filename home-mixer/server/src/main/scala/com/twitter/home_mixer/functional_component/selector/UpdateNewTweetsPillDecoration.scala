@@ -1,80 +1,80 @@
-package com.twitter.home_mixer.functional_component.selector
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.selonlelonctor
 
-import com.twitter.home_mixer.functional_component.selector.UpdateNewTweetsPillDecoration.NumAvatars
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.IsRetweetFeature
-import com.twitter.home_mixer.model.request.HasDeviceContext
-import com.twitter.home_mixer.param.HomeGlobalParams.EnableNewTweetsPillAvatarsParam
-import com.twitter.home_mixer.util.CandidatesUtil
-import com.twitter.product_mixer.component_library.model.candidate.ShowAlertCandidate
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.component_library.model.presentation.urt.UrtItemPresentation
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.functional_component.selector.SelectorResult
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ItemCandidateWithDetails
-import com.twitter.product_mixer.core.model.marshalling.response.urt.ShowAlert
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichText
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stringcenter.client.StringCenter
-import com.twitter.stringcenter.client.core.ExternalString
+import com.twittelonr.homelon_mixelonr.functional_componelonnt.selonlelonctor.UpdatelonNelonwTwelonelontsPillDeloncoration.NumAvatars
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.AuthorIdFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.IsRelontwelonelontFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.relonquelonst.HasDelonvicelonContelonxt
+import com.twittelonr.homelon_mixelonr.param.HomelonGlobalParams.elonnablelonNelonwTwelonelontsPillAvatarsParam
+import com.twittelonr.homelon_mixelonr.util.CandidatelonsUtil
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.ShowAlelonrtCandidatelon
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.TwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.prelonselonntation.urt.UrtItelonmPrelonselonntation
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.CandidatelonScopelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.selonlelonctor.Selonlelonctor
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.selonlelonctor.SelonlelonctorRelonsult
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.ItelonmCandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.ShowAlelonrt
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.richtelonxt.RichTelonxt
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stringcelonntelonr.clielonnt.StringCelonntelonr
+import com.twittelonr.stringcelonntelonr.clielonnt.corelon.elonxtelonrnalString
 
-object UpdateNewTweetsPillDecoration {
+objelonct UpdatelonNelonwTwelonelontsPillDeloncoration {
   val NumAvatars = 3
 }
 
-case class UpdateNewTweetsPillDecoration[Query <: PipelineQuery with HasDeviceContext](
-  override val pipelineScope: CandidateScope,
-  stringCenter: StringCenter,
-  seeNewTweetsString: ExternalString,
-  tweetedString: ExternalString)
-    extends Selector[Query] {
+caselon class UpdatelonNelonwTwelonelontsPillDeloncoration[Quelonry <: PipelonlinelonQuelonry with HasDelonvicelonContelonxt](
+  ovelonrridelon val pipelonlinelonScopelon: CandidatelonScopelon,
+  stringCelonntelonr: StringCelonntelonr,
+  selonelonNelonwTwelonelontsString: elonxtelonrnalString,
+  twelonelontelondString: elonxtelonrnalString)
+    elonxtelonnds Selonlelonctor[Quelonry] {
 
-  override def apply(
-    query: Query,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
-  ): SelectorResult = {
-    val (alerts, otherCandidates) =
-      remainingCandidates.partition(candidate =>
-        candidate.isCandidateType[ShowAlertCandidate]() && pipelineScope.contains(candidate))
-    val updatedCandidates = alerts
-      .collectFirst {
-        case newTweetsPill: ItemCandidateWithDetails =>
-          val userIds = CandidatesUtil
-            .getItemCandidatesWithOnlyModuleLast(result)
-            .filter(candidate =>
-              candidate.isCandidateType[TweetCandidate]() && pipelineScope.contains(candidate))
-            .filterNot(_.features.getOrElse(IsRetweetFeature, false))
-            .flatMap(_.features.getOrElse(AuthorIdFeature, None))
-            .filterNot(_ == query.getRequiredUserId)
+  ovelonrridelon delonf apply(
+    quelonry: Quelonry,
+    relonmainingCandidatelons: Selonq[CandidatelonWithDelontails],
+    relonsult: Selonq[CandidatelonWithDelontails]
+  ): SelonlelonctorRelonsult = {
+    val (alelonrts, othelonrCandidatelons) =
+      relonmainingCandidatelons.partition(candidatelon =>
+        candidatelon.isCandidatelonTypelon[ShowAlelonrtCandidatelon]() && pipelonlinelonScopelon.contains(candidatelon))
+    val updatelondCandidatelons = alelonrts
+      .collelonctFirst {
+        caselon nelonwTwelonelontsPill: ItelonmCandidatelonWithDelontails =>
+          val uselonrIds = CandidatelonsUtil
+            .gelontItelonmCandidatelonsWithOnlyModulelonLast(relonsult)
+            .filtelonr(candidatelon =>
+              candidatelon.isCandidatelonTypelon[TwelonelontCandidatelon]() && pipelonlinelonScopelon.contains(candidatelon))
+            .filtelonrNot(_.felonaturelons.gelontOrelonlselon(IsRelontwelonelontFelonaturelon, falselon))
+            .flatMap(_.felonaturelons.gelontOrelonlselon(AuthorIdFelonaturelon, Nonelon))
+            .filtelonrNot(_ == quelonry.gelontRelonquirelondUselonrId)
             .distinct
 
-          val updatedPresentation = newTweetsPill.presentation.map {
-            case presentation: UrtItemPresentation =>
-              presentation.timelineItem match {
-                case alert: ShowAlert =>
-                  val text = if (useAvatars(query, userIds)) tweetedString else seeNewTweetsString
-                  val richText = RichText(
-                    text = stringCenter.prepare(text),
-                    entities = List.empty,
-                    rtl = None,
-                    alignment = None)
+          val updatelondPrelonselonntation = nelonwTwelonelontsPill.prelonselonntation.map {
+            caselon prelonselonntation: UrtItelonmPrelonselonntation =>
+              prelonselonntation.timelonlinelonItelonm match {
+                caselon alelonrt: ShowAlelonrt =>
+                  val telonxt = if (uselonAvatars(quelonry, uselonrIds)) twelonelontelondString elonlselon selonelonNelonwTwelonelontsString
+                  val richTelonxt = RichTelonxt(
+                    telonxt = stringCelonntelonr.prelonparelon(telonxt),
+                    elonntitielons = List.elonmpty,
+                    rtl = Nonelon,
+                    alignmelonnt = Nonelon)
 
-                  val updatedAlert =
-                    alert.copy(userIds = Some(userIds.take(NumAvatars)), richText = Some(richText))
-                  presentation.copy(timelineItem = updatedAlert)
+                  val updatelondAlelonrt =
+                    alelonrt.copy(uselonrIds = Somelon(uselonrIds.takelon(NumAvatars)), richTelonxt = Somelon(richTelonxt))
+                  prelonselonntation.copy(timelonlinelonItelonm = updatelondAlelonrt)
               }
           }
-          otherCandidates :+ newTweetsPill.copy(presentation = updatedPresentation)
-      }.getOrElse(remainingCandidates)
+          othelonrCandidatelons :+ nelonwTwelonelontsPill.copy(prelonselonntation = updatelondPrelonselonntation)
+      }.gelontOrelonlselon(relonmainingCandidatelons)
 
-    SelectorResult(remainingCandidates = updatedCandidates, result = result)
+    SelonlelonctorRelonsult(relonmainingCandidatelons = updatelondCandidatelons, relonsult = relonsult)
   }
 
-  private def useAvatars(query: Query, userIds: Seq[Long]): Boolean = {
-    val enableAvatars = query.params(EnableNewTweetsPillAvatarsParam)
-    enableAvatars && userIds.size >= NumAvatars
+  privatelon delonf uselonAvatars(quelonry: Quelonry, uselonrIds: Selonq[Long]): Boolelonan = {
+    val elonnablelonAvatars = quelonry.params(elonnablelonNelonwTwelonelontsPillAvatarsParam)
+    elonnablelonAvatars && uselonrIds.sizelon >= NumAvatars
   }
 }

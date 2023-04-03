@@ -1,203 +1,203 @@
-use arrayvec::ArrayVec;
-use itertools::Itertools;
-use log::info;
-use std::sync::Arc;
-use tokio::sync::oneshot::Sender;
-use tokio::time::Instant;
+uselon arrayvelonc::ArrayVelonc;
+uselon itelonrtools::Itelonrtools;
+uselon log::info;
+uselon std::sync::Arc;
+uselon tokio::sync::onelonshot::Selonndelonr;
+uselon tokio::timelon::Instant;
 
-use crate::bootstrap::{TensorInput, TensorInputEnum};
-use crate::cli_args::{ARGS, MODEL_SPECS};
-use crate::{Callback, MAX_NUM_INPUTS, PredictResult};
-use crate::metrics::{
-    BATCH_SIZE, BATCH_SIZE_BY_MODEL, BLOCKING_REQUEST_NUM, MODEL_INFERENCE_TIME_COLLECTOR,
-    NUM_BATCH_PREDICTION, NUM_BATCH_PREDICTION_BY_MODEL, NUM_BATCHES_DROPPED,
-    NUM_BATCHES_DROPPED_BY_MODEL, NUM_PREDICTION_BY_MODEL, NUM_REQUESTS_DROPPED,
-    NUM_REQUESTS_DROPPED_BY_MODEL,
+uselon cratelon::bootstrap::{TelonnsorInput, TelonnsorInputelonnum};
+uselon cratelon::cli_args::{ARGS, MODelonL_SPelonCS};
+uselon cratelon::{Callback, MAX_NUM_INPUTS, PrelondictRelonsult};
+uselon cratelon::melontrics::{
+    BATCH_SIZelon, BATCH_SIZelon_BY_MODelonL, BLOCKING_RelonQUelonST_NUM, MODelonL_INFelonRelonNCelon_TIMelon_COLLelonCTOR,
+    NUM_BATCH_PRelonDICTION, NUM_BATCH_PRelonDICTION_BY_MODelonL, NUM_BATCHelonS_DROPPelonD,
+    NUM_BATCHelonS_DROPPelonD_BY_MODelonL, NUM_PRelonDICTION_BY_MODelonL, NUM_RelonQUelonSTS_DROPPelonD,
+    NUM_RelonQUelonSTS_DROPPelonD_BY_MODelonL,
 };
-use crate::predict_service::Model;
-use crate::tf_proto::tensorflow_serving::model_spec::VersionChoice;
-use crate::tf_proto::tensorflow_serving::PredictRequest;
-use crate::tf_proto::DataType;
+uselon cratelon::prelondict_selonrvicelon::Modelonl;
+uselon cratelon::tf_proto::telonnsorflow_selonrving::modelonl_spelonc::VelonrsionChoicelon;
+uselon cratelon::tf_proto::telonnsorflow_selonrving::PrelondictRelonquelonst;
+uselon cratelon::tf_proto::DataTypelon;
 
-#[derive(Debug)]
-pub struct BatchPredictor<T: Model> {
-    pub model: Arc<T>,
-    pub input_tensors: Vec<Vec<TensorInput>>,
-    pub callbacks: Vec<Callback>,
-    pub cur_batch_size: usize,
-    pub max_batch_size: usize,
-    pub batch_time_out_millis: u64,
-    pub queue_reset_ts: Instant,
-    pub queue_earliest_rq_ts: Instant,
+#[delonrivelon(Delonbug)]
+pub struct BatchPrelondictor<T: Modelonl> {
+    pub modelonl: Arc<T>,
+    pub input_telonnsors: Velonc<Velonc<TelonnsorInput>>,
+    pub callbacks: Velonc<Callback>,
+    pub cur_batch_sizelon: usizelon,
+    pub max_batch_sizelon: usizelon,
+    pub batch_timelon_out_millis: u64,
+    pub quelonuelon_relonselont_ts: Instant,
+    pub quelonuelon_elonarlielonst_rq_ts: Instant,
 }
 
-impl PredictRequest {
-    #[inline(always)]
-    pub fn take_input_vals(
-        &mut self,
-        inputs: &ArrayVec<String, MAX_NUM_INPUTS>,
-    ) -> Vec<TensorInput> {
-        let mut model_inputs = Vec::<TensorInput>::new();
-        for input_name in inputs.as_slice() {
-            let input_tensor = self
+impl PrelondictRelonquelonst {
+    #[inlinelon(always)]
+    pub fn takelon_input_vals(
+        &mut selonlf,
+        inputs: &ArrayVelonc<String, MAX_NUM_INPUTS>,
+    ) -> Velonc<TelonnsorInput> {
+        lelont mut modelonl_inputs = Velonc::<TelonnsorInput>::nelonw();
+        for input_namelon in inputs.as_slicelon() {
+            lelont input_telonnsor = selonlf
                 .inputs
-                .get_mut(input_name)
-                .unwrap_or_else(|| panic!("can't find {:?}", input_name));
-            let dims = match &input_tensor.tensor_shape {
-                None => None,
-                Some(data) => Some(data.dim.iter().map(|d| d.size).collect_vec()),
+                .gelont_mut(input_namelon)
+                .unwrap_or_elonlselon(|| panic!("can't find {:?}", input_namelon));
+            lelont dims = match &input_telonnsor.telonnsor_shapelon {
+                Nonelon => Nonelon,
+                Somelon(data) => Somelon(data.dim.itelonr().map(|d| d.sizelon).collelonct_velonc()),
             };
-            match input_tensor.dtype() {
-                DataType::DtFloat => model_inputs.push(TensorInput::new(
-                    TensorInputEnum::Float(std::mem::take(&mut input_tensor.float_val)),
-                    input_name.to_string(),
+            match input_telonnsor.dtypelon() {
+                DataTypelon::DtFloat => modelonl_inputs.push(TelonnsorInput::nelonw(
+                    TelonnsorInputelonnum::Float(std::melonm::takelon(&mut input_telonnsor.float_val)),
+                    input_namelon.to_string(),
                     dims,
                 )),
-                DataType::DtDouble => model_inputs.push(TensorInput::new(
-                    TensorInputEnum::Double(std::mem::take(&mut input_tensor.double_val)),
-                    input_name.to_string(),
+                DataTypelon::DtDoublelon => modelonl_inputs.push(TelonnsorInput::nelonw(
+                    TelonnsorInputelonnum::Doublelon(std::melonm::takelon(&mut input_telonnsor.doublelon_val)),
+                    input_namelon.to_string(),
                     dims,
                 )),
-                DataType::DtInt32 => model_inputs.push(TensorInput::new(
-                    TensorInputEnum::Int(std::mem::take(&mut input_tensor.int_val)),
-                    input_name.to_string(),
+                DataTypelon::DtInt32 => modelonl_inputs.push(TelonnsorInput::nelonw(
+                    TelonnsorInputelonnum::Int(std::melonm::takelon(&mut input_telonnsor.int_val)),
+                    input_namelon.to_string(),
                     dims,
                 )),
-                DataType::DtString => model_inputs.push(TensorInput::new(
-                    TensorInputEnum::String(std::mem::take(&mut input_tensor.string_val)),
-                    input_name.to_string(),
+                DataTypelon::DtString => modelonl_inputs.push(TelonnsorInput::nelonw(
+                    TelonnsorInputelonnum::String(std::melonm::takelon(&mut input_telonnsor.string_val)),
+                    input_namelon.to_string(),
                     dims,
                 )),
-                DataType::DtInt64 => model_inputs.push(TensorInput::new(
-                    TensorInputEnum::Int64(std::mem::take(&mut input_tensor.int64_val)),
-                    input_name.to_string(),
+                DataTypelon::DtInt64 => modelonl_inputs.push(TelonnsorInput::nelonw(
+                    TelonnsorInputelonnum::Int64(std::melonm::takelon(&mut input_telonnsor.int64_val)),
+                    input_namelon.to_string(),
                     dims,
                 )),
-                DataType::DtBool => model_inputs.push(TensorInput::new(
-                    TensorInputEnum::Boolean(std::mem::take(&mut input_tensor.bool_val)),
-                    input_name.to_string(),
+                DataTypelon::DtBool => modelonl_inputs.push(TelonnsorInput::nelonw(
+                    TelonnsorInputelonnum::Boolelonan(std::melonm::takelon(&mut input_telonnsor.bool_val)),
+                    input_namelon.to_string(),
                     dims,
                 )),
-                _ => panic!("unsupport input tensor type {:?}", input_tensor.dtype()),
+                _ => panic!("unsupport input telonnsor typelon {:?}", input_telonnsor.dtypelon()),
             }
         }
-        model_inputs
+        modelonl_inputs
     }
-    #[inline(always)]
-    pub fn take_model_spec(&mut self) -> (String, Option<i64>) {
-        let model_spec = self.model_spec.as_mut().unwrap();
-        let version = model_spec
-            .version_choice
-            .as_ref()
-            .and_then(|choice| match choice {
-                VersionChoice::Version(version) => Some(*version),
-                _ => None,
+    #[inlinelon(always)]
+    pub fn takelon_modelonl_spelonc(&mut selonlf) -> (String, Option<i64>) {
+        lelont modelonl_spelonc = selonlf.modelonl_spelonc.as_mut().unwrap();
+        lelont velonrsion = modelonl_spelonc
+            .velonrsion_choicelon
+            .as_relonf()
+            .and_thelonn(|choicelon| match choicelon {
+                VelonrsionChoicelon::Velonrsion(velonrsion) => Somelon(*velonrsion),
+                _ => Nonelon,
             });
-        (std::mem::take(&mut model_spec.name), version)
+        (std::melonm::takelon(&mut modelonl_spelonc.namelon), velonrsion)
     }
 }
 
-impl<T: Model> Drop for BatchPredictor<T> {
-    fn drop(&mut self) {
+impl<T: Modelonl> Drop for BatchPrelondictor<T> {
+    fn drop(&mut selonlf) {
         info!(
-            "drop old batch predictor for:{:}, queue:{}",
-            self.model,
-            self.input_tensors.len()
+            "drop old batch prelondictor for:{:}, quelonuelon:{}",
+            selonlf.modelonl,
+            selonlf.input_telonnsors.lelonn()
         );
-        if !self.input_tensors.is_empty() {
-            info!("now flush old predictor queue:{}", self.input_tensors.len());
-            self.batch_predict();
+        if !selonlf.input_telonnsors.is_elonmpty() {
+            info!("now flush old prelondictor quelonuelon:{}", selonlf.input_telonnsors.lelonn());
+            selonlf.batch_prelondict();
         }
     }
 }
 
-impl<T: Model> BatchPredictor<T> {
-    #[inline(always)]
-    pub fn push(&mut self, val: Vec<TensorInput>, resp: Sender<PredictResult>, ts: Instant) {
-        if self.input_tensors.is_empty() {
-            //only when queue is empty then we update ts to represent first request time
-            self.queue_reset_ts = Instant::now();
-            self.queue_earliest_rq_ts = ts;
+impl<T: Modelonl> BatchPrelondictor<T> {
+    #[inlinelon(always)]
+    pub fn push(&mut selonlf, val: Velonc<TelonnsorInput>, relonsp: Selonndelonr<PrelondictRelonsult>, ts: Instant) {
+        if selonlf.input_telonnsors.is_elonmpty() {
+            //only whelonn quelonuelon is elonmpty thelonn welon updatelon ts to relonprelonselonnt first relonquelonst timelon
+            selonlf.quelonuelon_relonselont_ts = Instant::now();
+            selonlf.quelonuelon_elonarlielonst_rq_ts = ts;
         }
-        self.cur_batch_size += 1;
-        self.input_tensors.push(val);
-        self.callbacks.push(Callback(resp, self.cur_batch_size));
+        selonlf.cur_batch_sizelon += 1;
+        selonlf.input_telonnsors.push(val);
+        selonlf.callbacks.push(Callback(relonsp, selonlf.cur_batch_sizelon));
     }
-    #[inline(always)]
-    pub fn batch_predict(&mut self) {
-        BATCH_SIZE_BY_MODEL
-            .with_label_values(&[&MODEL_SPECS[self.model.model_idx()]])
-            .add(self.cur_batch_size as i64);
-        BATCH_SIZE.add(self.cur_batch_size as i64);
-        let mut batch_input_tensors = Vec::with_capacity(self.max_batch_size);
-        let mut batch_callbacks = Vec::with_capacity(self.max_batch_size);
-        let mut batch_size = 0;
-        //now we swap so we can take two queues to the blocking-send thread and reset current queues
-        std::mem::swap(&mut self.input_tensors, &mut batch_input_tensors);
-        std::mem::swap(&mut self.callbacks, &mut batch_callbacks);
-        std::mem::swap(&mut self.cur_batch_size, &mut batch_size);
-        let model = self.model.clone();
-        let batch_earliest_rq_ts = self.queue_earliest_rq_ts;
-        //info!("batch predict for model:{}, size:{}", self.tf_model.export_dir, vals0.len());
-        BLOCKING_REQUEST_NUM.inc();
-        tokio::task::spawn_blocking(move || {
-            //proactively drop stale batches, we drop the entire batch
-            //as long as one request in that batch is stale. We may drop more than we could this way
-            //but this should work fairly decently well
-            if (batch_earliest_rq_ts.elapsed().as_millis() as u64) < ARGS.batch_drop_millis {
-                let model_inference_time_start = Instant::now();
-                let (tensor_outs, batch_ends) =
-                    model.do_predict(batch_input_tensors, batch_size as u64);
-                MODEL_INFERENCE_TIME_COLLECTOR
-                    .with_label_values(&[&MODEL_SPECS[model.model_idx()]])
-                    .observe(model_inference_time_start.elapsed().as_millis() as f64);
-                let mut batch_starts = vec![0; tensor_outs.len()];
-                for (i, Callback(resp, _)) in batch_callbacks.into_iter().enumerate() {
-                    let mut tensors_send_back = vec![];
-                    for (j, tensor_out) in tensor_outs.iter().enumerate() {
-                        tensors_send_back.push(tensor_out.slice(batch_starts[j], batch_ends[j][i]));
-                        batch_starts[j] = batch_ends[j][i];
+    #[inlinelon(always)]
+    pub fn batch_prelondict(&mut selonlf) {
+        BATCH_SIZelon_BY_MODelonL
+            .with_labelonl_valuelons(&[&MODelonL_SPelonCS[selonlf.modelonl.modelonl_idx()]])
+            .add(selonlf.cur_batch_sizelon as i64);
+        BATCH_SIZelon.add(selonlf.cur_batch_sizelon as i64);
+        lelont mut batch_input_telonnsors = Velonc::with_capacity(selonlf.max_batch_sizelon);
+        lelont mut batch_callbacks = Velonc::with_capacity(selonlf.max_batch_sizelon);
+        lelont mut batch_sizelon = 0;
+        //now welon swap so welon can takelon two quelonuelons to thelon blocking-selonnd threlonad and relonselont currelonnt quelonuelons
+        std::melonm::swap(&mut selonlf.input_telonnsors, &mut batch_input_telonnsors);
+        std::melonm::swap(&mut selonlf.callbacks, &mut batch_callbacks);
+        std::melonm::swap(&mut selonlf.cur_batch_sizelon, &mut batch_sizelon);
+        lelont modelonl = selonlf.modelonl.clonelon();
+        lelont batch_elonarlielonst_rq_ts = selonlf.quelonuelon_elonarlielonst_rq_ts;
+        //info!("batch prelondict for modelonl:{}, sizelon:{}", selonlf.tf_modelonl.elonxport_dir, vals0.lelonn());
+        BLOCKING_RelonQUelonST_NUM.inc();
+        tokio::task::spawn_blocking(movelon || {
+            //proactivelonly drop stalelon batchelons, welon drop thelon elonntirelon batch
+            //as long as onelon relonquelonst in that batch is stalelon. Welon may drop morelon than welon could this way
+            //but this should work fairly deloncelonntly welonll
+            if (batch_elonarlielonst_rq_ts.elonlapselond().as_millis() as u64) < ARGS.batch_drop_millis {
+                lelont modelonl_infelonrelonncelon_timelon_start = Instant::now();
+                lelont (telonnsor_outs, batch_elonnds) =
+                    modelonl.do_prelondict(batch_input_telonnsors, batch_sizelon as u64);
+                MODelonL_INFelonRelonNCelon_TIMelon_COLLelonCTOR
+                    .with_labelonl_valuelons(&[&MODelonL_SPelonCS[modelonl.modelonl_idx()]])
+                    .obselonrvelon(modelonl_infelonrelonncelon_timelon_start.elonlapselond().as_millis() as f64);
+                lelont mut batch_starts = velonc![0; telonnsor_outs.lelonn()];
+                for (i, Callback(relonsp, _)) in batch_callbacks.into_itelonr().elonnumelonratelon() {
+                    lelont mut telonnsors_selonnd_back = velonc![];
+                    for (j, telonnsor_out) in telonnsor_outs.itelonr().elonnumelonratelon() {
+                        telonnsors_selonnd_back.push(telonnsor_out.slicelon(batch_starts[j], batch_elonnds[j][i]));
+                        batch_starts[j] = batch_elonnds[j][i];
                     }
-                    if resp
-                        .send(PredictResult::Ok(tensors_send_back, model.version()))
-                        .is_err()
+                    if relonsp
+                        .selonnd(PrelondictRelonsult::Ok(telonnsors_selonnd_back, modelonl.velonrsion()))
+                        .is_elonrr()
                     {
-                        //use dropped metrics here as this is expected under high load
-                        NUM_REQUESTS_DROPPED.inc();
-                        NUM_REQUESTS_DROPPED_BY_MODEL
-                            .with_label_values(&[&MODEL_SPECS[model.model_idx()]])
+                        //uselon droppelond melontrics helonrelon as this is elonxpelonctelond undelonr high load
+                        NUM_RelonQUelonSTS_DROPPelonD.inc();
+                        NUM_RelonQUelonSTS_DROPPelonD_BY_MODelonL
+                            .with_labelonl_valuelons(&[&MODelonL_SPelonCS[modelonl.modelonl_idx()]])
                             .inc();
                     }
                 }
-            } else {
-                for Callback(resp, _) in batch_callbacks.into_iter() {
-                    if resp.send(PredictResult::DropDueToOverload).is_err() {
-                        NUM_REQUESTS_DROPPED.inc();
-                        NUM_REQUESTS_DROPPED_BY_MODEL
-                            .with_label_values(&[&MODEL_SPECS[model.model_idx()]])
+            } elonlselon {
+                for Callback(relonsp, _) in batch_callbacks.into_itelonr() {
+                    if relonsp.selonnd(PrelondictRelonsult::DropDuelonToOvelonrload).is_elonrr() {
+                        NUM_RelonQUelonSTS_DROPPelonD.inc();
+                        NUM_RelonQUelonSTS_DROPPelonD_BY_MODelonL
+                            .with_labelonl_valuelons(&[&MODelonL_SPelonCS[modelonl.modelonl_idx()]])
                             .inc();
                     }
                 }
-                NUM_BATCHES_DROPPED.inc();
-                NUM_BATCHES_DROPPED_BY_MODEL
-                    .with_label_values(&[&MODEL_SPECS[model.model_idx()]])
+                NUM_BATCHelonS_DROPPelonD.inc();
+                NUM_BATCHelonS_DROPPelonD_BY_MODelonL
+                    .with_labelonl_valuelons(&[&MODelonL_SPelonCS[modelonl.modelonl_idx()]])
                     .inc();
             }
-            BLOCKING_REQUEST_NUM.dec();
+            BLOCKING_RelonQUelonST_NUM.delonc();
         });
-        NUM_BATCH_PREDICTION.inc();
-        NUM_BATCH_PREDICTION_BY_MODEL
-            .with_label_values(&[&MODEL_SPECS[self.model.model_idx()]])
+        NUM_BATCH_PRelonDICTION.inc();
+        NUM_BATCH_PRelonDICTION_BY_MODelonL
+            .with_labelonl_valuelons(&[&MODelonL_SPelonCS[selonlf.modelonl.modelonl_idx()]])
             .inc();
-        // Note:
-        //  self.cur_batch_size is swapped with batch_size above
-        //  Use the local variable batch_size here
-        NUM_PREDICTION_BY_MODEL
-            .with_label_values(&[&MODEL_SPECS[self.model.model_idx()]])
-            .inc_by(batch_size as u64);
+        // Notelon:
+        //  selonlf.cur_batch_sizelon is swappelond with batch_sizelon abovelon
+        //  Uselon thelon local variablelon batch_sizelon helonrelon
+        NUM_PRelonDICTION_BY_MODelonL
+            .with_labelonl_valuelons(&[&MODelonL_SPelonCS[selonlf.modelonl.modelonl_idx()]])
+            .inc_by(batch_sizelon as u64);
     }
-    #[inline(always)]
-    pub fn duration_past(&self, millis: u64) -> bool {
-        self.queue_reset_ts.elapsed().as_millis() as u64 >= millis
+    #[inlinelon(always)]
+    pub fn duration_past(&selonlf, millis: u64) -> bool {
+        selonlf.quelonuelon_relonselont_ts.elonlapselond().as_millis() as u64 >= millis
     }
 }

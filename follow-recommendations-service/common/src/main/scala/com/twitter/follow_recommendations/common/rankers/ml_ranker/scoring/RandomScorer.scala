@@ -1,42 +1,42 @@
-package com.twitter.follow_recommendations.common.rankers.ml_ranker.scoring
+packagelon com.twittelonr.follow_reloncommelonndations.common.rankelonrs.ml_rankelonr.scoring
 
-import com.twitter.cortex.deepbird.thriftjava.DeepbirdPredictionService
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.constants.GuiceNamedConstants
-import com.twitter.follow_recommendations.common.rankers.common.RankerId
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.Feature
-import com.twitter.util.Future
-import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Singleton
+import com.twittelonr.cortelonx.delonelonpbird.thriftjava.DelonelonpbirdPrelondictionSelonrvicelon
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.follow_reloncommelonndations.common.constants.GuicelonNamelondConstants
+import com.twittelonr.follow_reloncommelonndations.common.rankelonrs.common.RankelonrId
+import com.twittelonr.ml.api.DataReloncord
+import com.twittelonr.ml.api.Felonaturelon
+import com.twittelonr.util.Futurelon
+import javax.injelonct.Injelonct
+import javax.injelonct.Namelond
+import javax.injelonct.Singlelonton
 
 /**
- * This scorer assigns random values between 0 and 1 to each candidate as scores.
+ * This scorelonr assigns random valuelons belontwelonelonn 0 and 1 to elonach candidatelon as scorelons.
  */
 
-@Singleton
-class RandomScorer @Inject() (
-  @Named(GuiceNamedConstants.WTF_PROD_DEEPBIRDV2_CLIENT)
-  override val deepbirdClient: DeepbirdPredictionService.ServiceToClient,
-  override val baseStats: StatsReceiver)
-    extends DeepbirdScorer {
-  override val id = RankerId.RandomRanker
-  private val rnd = new scala.util.Random(System.currentTimeMillis())
+@Singlelonton
+class RandomScorelonr @Injelonct() (
+  @Namelond(GuicelonNamelondConstants.WTF_PROD_DelonelonPBIRDV2_CLIelonNT)
+  ovelonrridelon val delonelonpbirdClielonnt: DelonelonpbirdPrelondictionSelonrvicelon.SelonrvicelonToClielonnt,
+  ovelonrridelon val baselonStats: StatsReloncelonivelonr)
+    elonxtelonnds DelonelonpbirdScorelonr {
+  ovelonrridelon val id = RankelonrId.RandomRankelonr
+  privatelon val rnd = nelonw scala.util.Random(Systelonm.currelonntTimelonMillis())
 
-  override def predict(dataRecords: Seq[DataRecord]): Future[Seq[Option[Double]]] = {
-    if (dataRecords.isEmpty) {
-      Future.Nil
-    } else {
-      // All candidates are assigned a random value between 0 and 1 as score.
-      Future.value(dataRecords.map(_ => Option(rnd.nextDouble())))
+  ovelonrridelon delonf prelondict(dataReloncords: Selonq[DataReloncord]): Futurelon[Selonq[Option[Doublelon]]] = {
+    if (dataReloncords.iselonmpty) {
+      Futurelon.Nil
+    } elonlselon {
+      // All candidatelons arelon assignelond a random valuelon belontwelonelonn 0 and 1 as scorelon.
+      Futurelon.valuelon(dataReloncords.map(_ => Option(rnd.nelonxtDoublelon())))
     }
   }
 
-  override val modelName = "PostNuxRandomRanker"
+  ovelonrridelon val modelonlNamelon = "PostNuxRandomRankelonr"
 
-  // This is not needed since we are overriding the `predict` function, but we have to override
-  // `predictionFeature` anyway.
-  override val predictionFeature: Feature.Continuous =
-    new Feature.Continuous("prediction.pfollow_pengagement")
+  // This is not nelonelondelond sincelon welon arelon ovelonrriding thelon `prelondict` function, but welon havelon to ovelonrridelon
+  // `prelondictionFelonaturelon` anyway.
+  ovelonrridelon val prelondictionFelonaturelon: Felonaturelon.Continuous =
+    nelonw Felonaturelon.Continuous("prelondiction.pfollow_pelonngagelonmelonnt")
 }

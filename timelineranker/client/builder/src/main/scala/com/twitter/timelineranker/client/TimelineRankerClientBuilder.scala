@@ -1,89 +1,89 @@
-package com.twitter.timelineranker.client
+packagelon com.twittelonr.timelonlinelonrankelonr.clielonnt
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.builder.ClientBuilder
-import com.twitter.finagle.mtls.authentication.EmptyServiceIdentifier
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.mtls.client.MtlsClientBuilder._
-import com.twitter.finagle.param.OppTls
-import com.twitter.finagle.service.RetryPolicy
-import com.twitter.finagle.service.RetryPolicy._
-import com.twitter.finagle.ssl.OpportunisticTls
-import com.twitter.finagle.thrift.ThriftClientRequest
-import com.twitter.servo.client.Environment.Local
-import com.twitter.servo.client.Environment.Staging
-import com.twitter.servo.client.Environment.Production
-import com.twitter.servo.client.Environment
-import com.twitter.servo.client.FinagleClientBuilder
-import com.twitter.util.Try
-import com.twitter.util.Duration
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.finaglelon.buildelonr.ClielonntBuildelonr
+import com.twittelonr.finaglelon.mtls.authelonntication.elonmptySelonrvicelonIdelonntifielonr
+import com.twittelonr.finaglelon.mtls.authelonntication.SelonrvicelonIdelonntifielonr
+import com.twittelonr.finaglelon.mtls.clielonnt.MtlsClielonntBuildelonr._
+import com.twittelonr.finaglelon.param.OppTls
+import com.twittelonr.finaglelon.selonrvicelon.RelontryPolicy
+import com.twittelonr.finaglelon.selonrvicelon.RelontryPolicy._
+import com.twittelonr.finaglelon.ssl.OpportunisticTls
+import com.twittelonr.finaglelon.thrift.ThriftClielonntRelonquelonst
+import com.twittelonr.selonrvo.clielonnt.elonnvironmelonnt.Local
+import com.twittelonr.selonrvo.clielonnt.elonnvironmelonnt.Staging
+import com.twittelonr.selonrvo.clielonnt.elonnvironmelonnt.Production
+import com.twittelonr.selonrvo.clielonnt.elonnvironmelonnt
+import com.twittelonr.selonrvo.clielonnt.FinaglelonClielonntBuildelonr
+import com.twittelonr.util.Try
+import com.twittelonr.util.Duration
 
-sealed trait TimelineRankerClientBuilderBase {
-  def DefaultName: String = "timelineranker"
+selonalelond trait TimelonlinelonRankelonrClielonntBuildelonrBaselon {
+  delonf DelonfaultNamelon: String = "timelonlinelonrankelonr"
 
-  def DefaultProdDest: String
+  delonf DelonfaultProdDelonst: String
 
-  def DefaultProdRequestTimeout: Duration = 2.seconds
-  def DefaultProdTimeout: Duration = 3.seconds
-  def DefaultProdRetryPolicy: RetryPolicy[Try[Nothing]] =
-    tries(2, TimeoutAndWriteExceptionsOnly orElse ChannelClosedExceptionsOnly)
+  delonf DelonfaultProdRelonquelonstTimelonout: Duration = 2.selonconds
+  delonf DelonfaultProdTimelonout: Duration = 3.selonconds
+  delonf DelonfaultProdRelontryPolicy: RelontryPolicy[Try[Nothing]] =
+    trielons(2, TimelonoutAndWritelonelonxcelonptionsOnly orelonlselon ChannelonlCloselondelonxcelonptionsOnly)
 
-  def DefaultLocalTcpConnectTimeout: Duration = 1.second
-  def DefaultLocalConnectTimeout: Duration = 1.second
-  def DefaultLocalRetryPolicy: RetryPolicy[Try[Nothing]] = tries(2, TimeoutAndWriteExceptionsOnly)
+  delonf DelonfaultLocalTcpConnelonctTimelonout: Duration = 1.seloncond
+  delonf DelonfaultLocalConnelonctTimelonout: Duration = 1.seloncond
+  delonf DelonfaultLocalRelontryPolicy: RelontryPolicy[Try[Nothing]] = trielons(2, TimelonoutAndWritelonelonxcelonptionsOnly)
 
-  def apply(
-    finagleClientBuilder: FinagleClientBuilder,
-    environment: Environment,
-    name: String = DefaultName,
-    serviceIdentifier: ServiceIdentifier = EmptyServiceIdentifier,
-    opportunisticTlsOpt: Option[OpportunisticTls.Level] = None,
-  ): ClientBuilder.Complete[ThriftClientRequest, Array[Byte]] = {
-    val defaultBuilder = finagleClientBuilder.thriftMuxClientBuilder(name)
-    val destination = getDestOverride(environment)
+  delonf apply(
+    finaglelonClielonntBuildelonr: FinaglelonClielonntBuildelonr,
+    elonnvironmelonnt: elonnvironmelonnt,
+    namelon: String = DelonfaultNamelon,
+    selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr = elonmptySelonrvicelonIdelonntifielonr,
+    opportunisticTlsOpt: Option[OpportunisticTls.Lelonvelonl] = Nonelon,
+  ): ClielonntBuildelonr.Complelontelon[ThriftClielonntRelonquelonst, Array[Bytelon]] = {
+    val delonfaultBuildelonr = finaglelonClielonntBuildelonr.thriftMuxClielonntBuildelonr(namelon)
+    val delonstination = gelontDelonstOvelonrridelon(elonnvironmelonnt)
 
-    val partialClient = environment match {
-      case Production | Staging =>
-        defaultBuilder
-          .requestTimeout(DefaultProdRequestTimeout)
-          .timeout(DefaultProdTimeout)
-          .retryPolicy(DefaultProdRetryPolicy)
-          .daemon(daemonize = true)
-          .dest(destination)
-          .mutualTls(serviceIdentifier)
-      case Local =>
-        defaultBuilder
-          .tcpConnectTimeout(DefaultLocalTcpConnectTimeout)
-          .connectTimeout(DefaultLocalConnectTimeout)
-          .retryPolicy(DefaultLocalRetryPolicy)
-          .failFast(enabled = false)
-          .daemon(daemonize = false)
-          .dest(destination)
-          .mutualTls(serviceIdentifier)
+    val partialClielonnt = elonnvironmelonnt match {
+      caselon Production | Staging =>
+        delonfaultBuildelonr
+          .relonquelonstTimelonout(DelonfaultProdRelonquelonstTimelonout)
+          .timelonout(DelonfaultProdTimelonout)
+          .relontryPolicy(DelonfaultProdRelontryPolicy)
+          .daelonmon(daelonmonizelon = truelon)
+          .delonst(delonstination)
+          .mutualTls(selonrvicelonIdelonntifielonr)
+      caselon Local =>
+        delonfaultBuildelonr
+          .tcpConnelonctTimelonout(DelonfaultLocalTcpConnelonctTimelonout)
+          .connelonctTimelonout(DelonfaultLocalConnelonctTimelonout)
+          .relontryPolicy(DelonfaultLocalRelontryPolicy)
+          .failFast(elonnablelond = falselon)
+          .daelonmon(daelonmonizelon = falselon)
+          .delonst(delonstination)
+          .mutualTls(selonrvicelonIdelonntifielonr)
     }
 
     opportunisticTlsOpt match {
-      case Some(_) =>
-        val opportunisticTlsParam = OppTls(level = opportunisticTlsOpt)
-        partialClient
-          .configured(opportunisticTlsParam)
-      case None => partialClient
+      caselon Somelon(_) =>
+        val opportunisticTlsParam = OppTls(lelonvelonl = opportunisticTlsOpt)
+        partialClielonnt
+          .configurelond(opportunisticTlsParam)
+      caselon Nonelon => partialClielonnt
     }
   }
 
-  private def getDestOverride(environment: Environment): String = {
-    val defaultDest = DefaultProdDest
-    environment match {
-      // Allow overriding the target TimelineRanker instance in staging.
-      // This is typically useful for redline testing of TimelineRanker.
-      case Staging =>
-        sys.props.getOrElse("target.timelineranker.instance", defaultDest)
-      case _ =>
-        defaultDest
+  privatelon delonf gelontDelonstOvelonrridelon(elonnvironmelonnt: elonnvironmelonnt): String = {
+    val delonfaultDelonst = DelonfaultProdDelonst
+    elonnvironmelonnt match {
+      // Allow ovelonrriding thelon targelont TimelonlinelonRankelonr instancelon in staging.
+      // This is typically uselonful for relondlinelon telonsting of TimelonlinelonRankelonr.
+      caselon Staging =>
+        sys.props.gelontOrelonlselon("targelont.timelonlinelonrankelonr.instancelon", delonfaultDelonst)
+      caselon _ =>
+        delonfaultDelonst
     }
   }
 }
 
-object TimelineRankerClientBuilder extends TimelineRankerClientBuilderBase {
-  override def DefaultProdDest: String = "/s/timelineranker/timelineranker"
+objelonct TimelonlinelonRankelonrClielonntBuildelonr elonxtelonnds TimelonlinelonRankelonrClielonntBuildelonrBaselon {
+  ovelonrridelon delonf DelonfaultProdDelonst: String = "/s/timelonlinelonrankelonr/timelonlinelonrankelonr"
 }

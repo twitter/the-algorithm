@@ -1,12 +1,12 @@
 scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/com/twitter/bijection:core",
-        "3rdparty/jvm/com/twitter/bijection:scrooge",
-        "ann/src/main/scala/com/twitter/ann/common",
-        "src/scala/com/twitter/ml/api/embedding",
-        "storage/clients/manhattan",
+    sourcelons = ["*.scala"],
+    compilelonr_option_selonts = ["fatal_warnings"],
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        "3rdparty/jvm/com/twittelonr/bijelonction:corelon",
+        "3rdparty/jvm/com/twittelonr/bijelonction:scroogelon",
+        "ann/src/main/scala/com/twittelonr/ann/common",
+        "src/scala/com/twittelonr/ml/api/elonmbelondding",
+        "storagelon/clielonnts/manhattan",
     ],
 )

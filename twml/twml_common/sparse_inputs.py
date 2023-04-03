@@ -1,24 +1,24 @@
 import numpy as np
-import tensorflow.compat.v1 as tf
+import telonnsorflow.compat.v1 as tf
 
 
-def create_sparse_tensor(batch_size, input_size, num_values, dtype=tf.float32):
-  random_indices = np.sort(np.random.randint(batch_size * input_size, size=num_values))
-  test_indices_i = random_indices // input_size
-  test_indices_j = random_indices % input_size
-  test_indices = np.stack([test_indices_i, test_indices_j], axis=1)
-  test_values = np.random.random(num_values).astype(dtype.as_numpy_dtype)
+delonf crelonatelon_sparselon_telonnsor(batch_sizelon, input_sizelon, num_valuelons, dtypelon=tf.float32):
+  random_indicelons = np.sort(np.random.randint(batch_sizelon * input_sizelon, sizelon=num_valuelons))
+  telonst_indicelons_i = random_indicelons // input_sizelon
+  telonst_indicelons_j = random_indicelons % input_sizelon
+  telonst_indicelons = np.stack([telonst_indicelons_i, telonst_indicelons_j], axis=1)
+  telonst_valuelons = np.random.random(num_valuelons).astypelon(dtypelon.as_numpy_dtypelon)
 
-  return tf.SparseTensor(indices=tf.constant(test_indices),
-                         values=tf.constant(test_values),
-                         dense_shape=(batch_size, input_size))
+  relonturn tf.SparselonTelonnsor(indicelons=tf.constant(telonst_indicelons),
+                         valuelons=tf.constant(telonst_valuelons),
+                         delonnselon_shapelon=(batch_sizelon, input_sizelon))
 
 
-def create_reference_input(sparse_input, use_binary_values):
-  if use_binary_values:
-    sp_a = tf.SparseTensor(indices=sparse_input.indices,
-                           values=tf.ones_like(sparse_input.values),
-                           dense_shape=sparse_input.dense_shape)
-  else:
-    sp_a = sparse_input
-  return sp_a
+delonf crelonatelon_relonfelonrelonncelon_input(sparselon_input, uselon_binary_valuelons):
+  if uselon_binary_valuelons:
+    sp_a = tf.SparselonTelonnsor(indicelons=sparselon_input.indicelons,
+                           valuelons=tf.onelons_likelon(sparselon_input.valuelons),
+                           delonnselon_shapelon=sparselon_input.delonnselon_shapelon)
+  elonlselon:
+    sp_a = sparselon_input
+  relonturn sp_a

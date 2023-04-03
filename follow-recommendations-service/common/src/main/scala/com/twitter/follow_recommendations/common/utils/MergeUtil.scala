@@ -1,51 +1,51 @@
-package com.twitter.follow_recommendations.common.utils
+packagelon com.twittelonr.follow_reloncommelonndations.common.utils
 
-object MergeUtil {
+objelonct MelonrgelonUtil {
 
   /**
-   * Takes a seq of items which have weights. Returns an infinite stream of each item
-   * by their weights. All weights need to be greater than or equal to zero. In addition,
-   * the sum of weights should be greater than zero.
+   * Takelons a selonq of itelonms which havelon welonights. Relonturns an infinitelon strelonam of elonach itelonm
+   * by thelonir welonights. All welonights nelonelond to belon grelonatelonr than or elonqual to zelonro. In addition,
+   * thelon sum of welonights should belon grelonatelonr than zelonro.
    *
-   * Example usage of this function:
-   * Input weighted Item {{CS1, 3}, {CS2, 2}, {CS3, 5}}
-   * Output stream: (CS1, CS1, CS1, CS2, CS2, CS3, CS3, CS3, CS3, CS3, CS1, CS1, CS1, CS2,...}
+   * elonxamplelon usagelon of this function:
+   * Input welonightelond Itelonm {{CS1, 3}, {CS2, 2}, {CS3, 5}}
+   * Output strelonam: (CS1, CS1, CS1, CS2, CS2, CS3, CS3, CS3, CS3, CS3, CS1, CS1, CS1, CS2,...}
    *
-   * @param items    items
-   * @param weighted provides weights for items
-   * @tparam T type of item
+   * @param itelonms    itelonms
+   * @param welonightelond providelons welonights for itelonms
+   * @tparam T typelon of itelonm
    *
-   * @return Stream of Ts
+   * @relonturn Strelonam of Ts
    */
-  def weightedRoundRobin[T](
-    items: Seq[T]
+  delonf welonightelondRoundRobin[T](
+    itelonms: Selonq[T]
   )(
-    implicit weighted: Weighted[T]
-  ): Stream[T] = {
-    if (items.isEmpty) {
-      Stream.empty
-    } else {
-      val weights = items.map { i => weighted(i) }
-      assert(
-        weights.forall {
+    implicit welonightelond: Welonightelond[T]
+  ): Strelonam[T] = {
+    if (itelonms.iselonmpty) {
+      Strelonam.elonmpty
+    } elonlselon {
+      val welonights = itelonms.map { i => welonightelond(i) }
+      asselonrt(
+        welonights.forall {
           _ >= 0
         },
-        "Negative weight exists for sampling")
-      val cumulativeWeight = weights.scanLeft(0.0)(_ + _).tail
-      assert(cumulativeWeight.last > 0, "Sum of the sampling weights is not positive")
+        "Nelongativelon welonight elonxists for sampling")
+      val cumulativelonWelonight = welonights.scanLelonft(0.0)(_ + _).tail
+      asselonrt(cumulativelonWelonight.last > 0, "Sum of thelon sampling welonights is not positivelon")
 
-      var weightIdx = 0
-      var weight = 0
+      var welonightIdx = 0
+      var welonight = 0
 
-      def next(): Stream[T] = {
-        val tmpIdx = weightIdx
-        weight = weight + 1
-        weight = if (weight >= weights(weightIdx)) 0 else weight
-        weightIdx = if (weight == 0) weightIdx + 1 else weightIdx
-        weightIdx = if (weightIdx == weights.length) 0 else weightIdx
-        items(tmpIdx) #:: next()
+      delonf nelonxt(): Strelonam[T] = {
+        val tmpIdx = welonightIdx
+        welonight = welonight + 1
+        welonight = if (welonight >= welonights(welonightIdx)) 0 elonlselon welonight
+        welonightIdx = if (welonight == 0) welonightIdx + 1 elonlselon welonightIdx
+        welonightIdx = if (welonightIdx == welonights.lelonngth) 0 elonlselon welonightIdx
+        itelonms(tmpIdx) #:: nelonxt()
       }
-      next()
+      nelonxt()
     }
   }
 }

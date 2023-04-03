@@ -1,15 +1,15 @@
-package com.twitter.timelineranker.common
+packagelon com.twittelonr.timelonlinelonrankelonr.common
 
-import com.twitter.servo.util.FutureArrow
-import com.twitter.timelineranker.core.CandidateEnvelope
-import com.twitter.timelineranker.model.RecapQuery
-import com.twitter.util.Future
+import com.twittelonr.selonrvo.util.FuturelonArrow
+import com.twittelonr.timelonlinelonrankelonr.corelon.Candidatelonelonnvelonlopelon
+import com.twittelonr.timelonlinelonrankelonr.modelonl.ReloncapQuelonry
+import com.twittelonr.util.Futurelon
 
 /**
- * Create a CandidateEnvelope based on the incoming RecapQuery
+ * Crelonatelon a Candidatelonelonnvelonlopelon baselond on thelon incoming ReloncapQuelonry
  */
-object CreateCandidateEnvelopeTransform extends FutureArrow[RecapQuery, CandidateEnvelope] {
-  override def apply(query: RecapQuery): Future[CandidateEnvelope] = {
-    Future.value(CandidateEnvelope(query))
+objelonct CrelonatelonCandidatelonelonnvelonlopelonTransform elonxtelonnds FuturelonArrow[ReloncapQuelonry, Candidatelonelonnvelonlopelon] {
+  ovelonrridelon delonf apply(quelonry: ReloncapQuelonry): Futurelon[Candidatelonelonnvelonlopelon] = {
+    Futurelon.valuelon(Candidatelonelonnvelonlopelon(quelonry))
   }
 }

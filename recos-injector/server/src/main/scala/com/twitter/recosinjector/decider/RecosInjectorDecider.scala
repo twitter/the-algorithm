@@ -1,33 +1,33 @@
-package com.twitter.recosinjector.decider
+packagelon com.twittelonr.reloncosinjelonctor.deloncidelonr
 
-import com.twitter.decider.{Decider, DeciderFactory, RandomRecipient, Recipient}
+import com.twittelonr.deloncidelonr.{Deloncidelonr, DeloncidelonrFactory, RandomReloncipielonnt, Reloncipielonnt}
 
-case class RecosInjectorDecider(isProd: Boolean, dataCenter: String) {
-  lazy val decider: Decider = DeciderFactory(
-    Some("config/decider.yml"),
-    Some(getOverlayPath(isProd, dataCenter))
+caselon class ReloncosInjelonctorDeloncidelonr(isProd: Boolelonan, dataCelonntelonr: String) {
+  lazy val deloncidelonr: Deloncidelonr = DeloncidelonrFactory(
+    Somelon("config/deloncidelonr.yml"),
+    Somelon(gelontOvelonrlayPath(isProd, dataCelonntelonr))
   )()
 
-  private def getOverlayPath(isProd: Boolean, dataCenter: String): String = {
+  privatelon delonf gelontOvelonrlayPath(isProd: Boolelonan, dataCelonntelonr: String): String = {
     if (isProd) {
-      s"/usr/local/config/overlays/recos-injector/recos-injector/prod/$dataCenter/decider_overlay.yml"
-    } else {
-      s"/usr/local/config/overlays/recos-injector/recos-injector/staging/$dataCenter/decider_overlay.yml"
+      s"/usr/local/config/ovelonrlays/reloncos-injelonctor/reloncos-injelonctor/prod/$dataCelonntelonr/deloncidelonr_ovelonrlay.yml"
+    } elonlselon {
+      s"/usr/local/config/ovelonrlays/reloncos-injelonctor/reloncos-injelonctor/staging/$dataCelonntelonr/deloncidelonr_ovelonrlay.yml"
     }
   }
 
-  def getDecider: Decider = decider
+  delonf gelontDeloncidelonr: Deloncidelonr = deloncidelonr
 
-  def isAvailable(feature: String, recipient: Option[Recipient]): Boolean = {
-    decider.isAvailable(feature, recipient)
+  delonf isAvailablelon(felonaturelon: String, reloncipielonnt: Option[Reloncipielonnt]): Boolelonan = {
+    deloncidelonr.isAvailablelon(felonaturelon, reloncipielonnt)
   }
 
-  def isAvailable(feature: String): Boolean = isAvailable(feature, Some(RandomRecipient))
+  delonf isAvailablelon(felonaturelon: String): Boolelonan = isAvailablelon(felonaturelon, Somelon(RandomReloncipielonnt))
 }
 
-object RecosInjectorDeciderConstants {
-  val TweetEventTransformerUserTweetEntityEdgesDecider =
-    "tweet_event_transformer_user_tweet_entity_edges"
-  val EnableEmitTweetEdgeFromReply = "enable_emit_tweet_edge_from_reply"
-  val EnableUnfavoriteEdge = "enable_unfavorite_edge"
+objelonct ReloncosInjelonctorDeloncidelonrConstants {
+  val TwelonelontelonvelonntTransformelonrUselonrTwelonelontelonntityelondgelonsDeloncidelonr =
+    "twelonelont_elonvelonnt_transformelonr_uselonr_twelonelont_elonntity_elondgelons"
+  val elonnablelonelonmitTwelonelontelondgelonFromRelonply = "elonnablelon_elonmit_twelonelont_elondgelon_from_relonply"
+  val elonnablelonUnfavoritelonelondgelon = "elonnablelon_unfavoritelon_elondgelon"
 }

@@ -1,30 +1,30 @@
-package com.twitter.search.earlybird_root.filters;
+packagelon com.twittelonr.selonarch.elonarlybird_root.filtelonrs;
 
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestUtil;
-import com.twitter.util.Future;
+import com.twittelonr.finaglelon.Selonrvicelon;
+import com.twittelonr.finaglelon.SimplelonFiltelonr;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonquelonst;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
+import com.twittelonr.selonarch.elonarlybird_root.common.elonarlybirdRelonquelonstUtil;
+import com.twittelonr.util.Futurelon;
 
 /**
- * A filter that unsets some request fields that make sense only on the SuperRoot, before sending
- * them to the individual roots.
+ * A filtelonr that unselonts somelon relonquelonst fielonlds that makelon selonnselon only on thelon SupelonrRoot, belonforelon selonnding
+ * thelonm to thelon individual roots.
  */
-public class UnsetSuperRootFieldsFilter extends SimpleFilter<EarlybirdRequest, EarlybirdResponse> {
-  private final boolean unsetFollowedUserIds;
+public class UnselontSupelonrRootFielonldsFiltelonr elonxtelonnds SimplelonFiltelonr<elonarlybirdRelonquelonst, elonarlybirdRelonsponselon> {
+  privatelon final boolelonan unselontFollowelondUselonrIds;
 
-  public UnsetSuperRootFieldsFilter() {
-    this(true);
+  public UnselontSupelonrRootFielonldsFiltelonr() {
+    this(truelon);
   }
 
-  public UnsetSuperRootFieldsFilter(boolean unsetFollowedUserIds) {
-    this.unsetFollowedUserIds = unsetFollowedUserIds;
+  public UnselontSupelonrRootFielonldsFiltelonr(boolelonan unselontFollowelondUselonrIds) {
+    this.unselontFollowelondUselonrIds = unselontFollowelondUselonrIds;
   }
 
-  @Override
-  public Future<EarlybirdResponse> apply(EarlybirdRequest request,
-                                         Service<EarlybirdRequest, EarlybirdResponse> service) {
-    return service.apply(EarlybirdRequestUtil.unsetSuperRootFields(request, unsetFollowedUserIds));
+  @Ovelonrridelon
+  public Futurelon<elonarlybirdRelonsponselon> apply(elonarlybirdRelonquelonst relonquelonst,
+                                         Selonrvicelon<elonarlybirdRelonquelonst, elonarlybirdRelonsponselon> selonrvicelon) {
+    relonturn selonrvicelon.apply(elonarlybirdRelonquelonstUtil.unselontSupelonrRootFielonlds(relonquelonst, unselontFollowelondUselonrIds));
   }
 }

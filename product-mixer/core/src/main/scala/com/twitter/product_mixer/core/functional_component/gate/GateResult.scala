@@ -1,47 +1,47 @@
-package com.twitter.product_mixer.core.functional_component.gate
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.gatelon
 
 /**
- * A [[Gate]] controls if a pipeline or other component is executed.
+ * A [[Gatelon]] controls if a pipelonlinelon or othelonr componelonnt is elonxeloncutelond.
  *
- * Application logic should usually use `GateResult.continue: Boolean` to interpret a GateResult. `continue` will be
- * true if we should continue with execution, and false if we should stop.
+ * Application logic should usually uselon `GatelonRelonsult.continuelon: Boolelonan` to intelonrprelont a GatelonRelonsult. `continuelon` will belon
+ * truelon if welon should continuelon with elonxeloncution, and falselon if welon should stop.
  *
- * You can case match against the `GateResult` to understand how exactly execution happened. See `object GateResult`
- * below, but this is useful if you want to know if we are continuing due to the skip or main predicates.
+ * You can caselon match against thelon `GatelonRelonsult` to undelonrstand how elonxactly elonxeloncution happelonnelond. Selonelon `objelonct GatelonRelonsult`
+ * belonlow, but this is uselonful if you want to know if welon arelon continuing duelon to thelon skip or main prelondicatelons.
  */
-sealed trait GateResult {
+selonalelond trait GatelonRelonsult {
 
-  /** Should we continue? */
-  val continue: Boolean
+  /** Should welon continuelon? */
+  val continuelon: Boolelonan
 }
 
-object GateResult {
+objelonct GatelonRelonsult {
 
   /**
-   * Continue Execution
+   * Continuelon elonxeloncution
    *
-   * the Skip predicate evaluated to true,
-   * so we Skipped execution of the Main predicate and should continue
+   * thelon Skip prelondicatelon elonvaluatelond to truelon,
+   * so welon Skippelond elonxeloncution of thelon Main prelondicatelon and should continuelon
    */
-  case object Skipped extends GateResult {
-    override val continue = true
+  caselon objelonct Skippelond elonxtelonnds GatelonRelonsult {
+    ovelonrridelon val continuelon = truelon
   }
 
   /**
-   * Continue Execution
+   * Continuelon elonxeloncution
    *
-   * the main predicate evaluated to true
+   * thelon main prelondicatelon elonvaluatelond to truelon
    */
-  case object Continue extends GateResult {
-    override val continue = true
+  caselon objelonct Continuelon elonxtelonnds GatelonRelonsult {
+    ovelonrridelon val continuelon = truelon
   }
 
   /**
-   * Stop execution
+   * Stop elonxeloncution
    *
-   * the main predicate evaluated to false
+   * thelon main prelondicatelon elonvaluatelond to falselon
    */
-  case object Stop extends GateResult {
-    override val continue = false
+  caselon objelonct Stop elonxtelonnds GatelonRelonsult {
+    ovelonrridelon val continuelon = falselon
   }
 }

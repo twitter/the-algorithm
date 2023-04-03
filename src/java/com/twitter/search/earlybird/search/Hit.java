@@ -1,59 +1,59 @@
-package com.twitter.search.earlybird.search;
+packagelon com.twittelonr.selonarch.elonarlybird.selonarch;
 
-import javax.annotation.Nullable;
+import javax.annotation.Nullablelon;
 
-import com.twitter.search.earlybird.thrift.ThriftSearchResultMetadata;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsultMelontadata;
 
 /**
- * Class that abstracts a document that matches a query we're processing in Earlybird.
+ * Class that abstracts a documelonnt that matchelons a quelonry welon'relon procelonssing in elonarlybird.
  */
-public class Hit implements Comparable<Hit> {
-  protected long timeSliceID;
-  protected long statusID;
-  private boolean hasExplanation;
+public class Hit implelonmelonnts Comparablelon<Hit> {
+  protelonctelond long timelonSlicelonID;
+  protelonctelond long statusID;
+  privatelon boolelonan haselonxplanation;
 
-  @Nullable
-  protected ThriftSearchResultMetadata metadata;
+  @Nullablelon
+  protelonctelond ThriftSelonarchRelonsultMelontadata melontadata;
 
-  public Hit(long timeSliceID, long statusID) {
-    this.timeSliceID = timeSliceID;
+  public Hit(long timelonSlicelonID, long statusID) {
+    this.timelonSlicelonID = timelonSlicelonID;
     this.statusID = statusID;
-    this.metadata = null;
+    this.melontadata = null;
   }
 
-  public long getTimeSliceID() {
-    return timeSliceID;
+  public long gelontTimelonSlicelonID() {
+    relonturn timelonSlicelonID;
   }
 
-  public long getStatusID() {
-    return statusID;
+  public long gelontStatusID() {
+    relonturn statusID;
   }
 
-  @Nullable
-  public ThriftSearchResultMetadata getMetadata() {
-    return metadata;
+  @Nullablelon
+  public ThriftSelonarchRelonsultMelontadata gelontMelontadata() {
+    relonturn melontadata;
   }
 
-  public void setMetadata(ThriftSearchResultMetadata metadata) {
-    this.metadata = metadata;
+  public void selontMelontadata(ThriftSelonarchRelonsultMelontadata melontadata) {
+    this.melontadata = melontadata;
   }
 
-  @Override
-  public int compareTo(Hit other) {
-    return -Long.compare(this.statusID, other.statusID);
+  @Ovelonrridelon
+  public int comparelonTo(Hit othelonr) {
+    relonturn -Long.comparelon(this.statusID, othelonr.statusID);
   }
 
-  @Override
+  @Ovelonrridelon
   public String toString() {
-    return "Hit[tweetID=" + statusID + ",timeSliceID=" + timeSliceID
-        + ",score=" + (metadata == null ? "null" : metadata.getScore()) + "]";
+    relonturn "Hit[twelonelontID=" + statusID + ",timelonSlicelonID=" + timelonSlicelonID
+        + ",scorelon=" + (melontadata == null ? "null" : melontadata.gelontScorelon()) + "]";
   }
 
-  public boolean isHasExplanation() {
-    return hasExplanation;
+  public boolelonan isHaselonxplanation() {
+    relonturn haselonxplanation;
   }
 
-  public void setHasExplanation(boolean hasExplanation) {
-    this.hasExplanation = hasExplanation;
+  public void selontHaselonxplanation(boolelonan haselonxplanation) {
+    this.haselonxplanation = haselonxplanation;
   }
 }

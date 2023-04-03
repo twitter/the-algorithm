@@ -1,127 +1,127 @@
-package com.twitter.product_mixer.core.functional_component.gate
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.gatelon
 
-import com.twitter.product_mixer.core.functional_component.gate.Gate.SkippedResult
-import com.twitter.product_mixer.core.model.common.Component
-import com.twitter.product_mixer.core.model.common.identifier.GateIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.CandidatePipelineResults
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.IllegalStateFailure
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.stitch.Arrow
-import com.twitter.stitch.Stitch
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.gatelon.Gatelon.SkippelondRelonsult
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.Componelonnt
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.GatelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.CandidatelonPipelonlinelonRelonsults
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.IllelongalStatelonFailurelon
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.PipelonlinelonFailurelon
+import com.twittelonr.stitch.Arrow
+import com.twittelonr.stitch.Stitch
 
 /**
- * A gate controls if a pipeline or other component is executed
+ * A gatelon controls if a pipelonlinelon or othelonr componelonnt is elonxeloncutelond
  *
- * A gate is mostly controlled by it's `shouldContinue` function - when this function
- * returns true, execution Continues.
+ * A gatelon is mostly controllelond by it's `shouldContinuelon` function - whelonn this function
+ * relonturns truelon, elonxeloncution Continuelons.
  *
- * Gates also have a optional `shouldSkip`- When it returns
- * true, then we Continue without executing `main`.
+ * Gatelons also havelon a optional `shouldSkip`- Whelonn it relonturns
+ * truelon, thelonn welon Continuelon without elonxeloncuting `main`.
  *
- * @tparam Query The query type that the gate will receive as input
+ * @tparam Quelonry Thelon quelonry typelon that thelon gatelon will reloncelonivelon as input
  *
- * @return A GateResult includes both the boolean `continue` and a specific reason. See [[GateResult]] for more
+ * @relonturn A GatelonRelonsult includelons both thelon boolelonan `continuelon` and a speloncific relonason. Selonelon [[GatelonRelonsult]] for morelon
  *         information.
  */
 
-sealed trait BaseGate[-Query <: PipelineQuery] extends Component {
-  override val identifier: GateIdentifier
+selonalelond trait BaselonGatelon[-Quelonry <: PipelonlinelonQuelonry] elonxtelonnds Componelonnt {
+  ovelonrridelon val idelonntifielonr: GatelonIdelonntifielonr
 
   /**
-   * If a shouldSkip returns true, the gate returns a Skip(continue=true) without executing
-   * the main predicate. We expect this to be useful for debugging, dogfooding, etc.
+   * If a shouldSkip relonturns truelon, thelon gatelon relonturns a Skip(continuelon=truelon) without elonxeloncuting
+   * thelon main prelondicatelon. Welon elonxpelonct this to belon uselonful for delonbugging, dogfooding, elontc.
    */
-  def shouldSkip(query: Query): Stitch[Boolean] = Stitch.False
+  delonf shouldSkip(quelonry: Quelonry): Stitch[Boolelonan] = Stitch.Falselon
 
   /**
-   * The main predicate that controls this gate. If this predicate returns true, the gate returns Continue.
+   * Thelon main prelondicatelon that controls this gatelon. If this prelondicatelon relonturns truelon, thelon gatelon relonturns Continuelon.
    */
-  def shouldContinue(query: Query): Stitch[Boolean]
+  delonf shouldContinuelon(quelonry: Quelonry): Stitch[Boolelonan]
 
-  /** returns a [[GateResult]] to determine whether a pipeline should be executed based on `t` */
-  final def apply(t: Query): Stitch[GateResult] = {
-    shouldSkip(t).flatMap { skipResult =>
-      if (skipResult) {
-        SkippedResult
-      } else {
-        shouldContinue(t).map { mainResult =>
-          if (mainResult) GateResult.Continue else GateResult.Stop
+  /** relonturns a [[GatelonRelonsult]] to delontelonrminelon whelonthelonr a pipelonlinelon should belon elonxeloncutelond baselond on `t` */
+  final delonf apply(t: Quelonry): Stitch[GatelonRelonsult] = {
+    shouldSkip(t).flatMap { skipRelonsult =>
+      if (skipRelonsult) {
+        SkippelondRelonsult
+      } elonlselon {
+        shouldContinuelon(t).map { mainRelonsult =>
+          if (mainRelonsult) GatelonRelonsult.Continuelon elonlselon GatelonRelonsult.Stop
         }
       }
     }
   }
 
-  /** Arrow representation of `this` [[Gate]] */
-  final def arrow: Arrow[Query, GateResult] = Arrow(apply)
+  /** Arrow relonprelonselonntation of `this` [[Gatelon]] */
+  final delonf arrow: Arrow[Quelonry, GatelonRelonsult] = Arrow(apply)
 }
 
 /**
- * A regular Gate which only has access to the Query typed PipelineQuery. This can be used anywhere
- * Gates are available.
+ * A relongular Gatelon which only has accelonss to thelon Quelonry typelond PipelonlinelonQuelonry. This can belon uselond anywhelonrelon
+ * Gatelons arelon availablelon.
  *
- * A gate is mostly controlled by it's `shouldContinue` function - when this function
- * returns true, execution Continues.
+ * A gatelon is mostly controllelond by it's `shouldContinuelon` function - whelonn this function
+ * relonturns truelon, elonxeloncution Continuelons.
  *
- * Gates also have a optional `shouldSkip`- When it returns
- * true, then we Continue without executing `main`.
- * @tparam Query The query type that the gate will receive as input
+ * Gatelons also havelon a optional `shouldSkip`- Whelonn it relonturns
+ * truelon, thelonn welon Continuelon without elonxeloncuting `main`.
+ * @tparam Quelonry Thelon quelonry typelon that thelon gatelon will reloncelonivelon as input
  *
- * @return A GateResult includes both the boolean `continue` and a specific reason. See [[GateResult]] for more
+ * @relonturn A GatelonRelonsult includelons both thelon boolelonan `continuelon` and a speloncific relonason. Selonelon [[GatelonRelonsult]] for morelon
  *         information.
  */
-trait Gate[-Query <: PipelineQuery] extends BaseGate[Query]
+trait Gatelon[-Quelonry <: PipelonlinelonQuelonry] elonxtelonnds BaselonGatelon[Quelonry]
 
 /**
- * A Query And Candidate Gate which only has access both to the Query typed PipelineQuery and the
- * list of previously fetched candidates. This can be used on dependent candidate pipelines to
- * make a decision on whether to enable/disable them based on previous candidates.
+ * A Quelonry And Candidatelon Gatelon which only has accelonss both to thelon Quelonry typelond PipelonlinelonQuelonry and thelon
+ * list of prelonviously felontchelond candidatelons. This can belon uselond on delonpelonndelonnt candidatelon pipelonlinelons to
+ * makelon a deloncision on whelonthelonr to elonnablelon/disablelon thelonm baselond on prelonvious candidatelons.
  *
- * A gate is mostly controlled by it's `shouldContinue` function - when this function
- * returns true, execution Continues.
+ * A gatelon is mostly controllelond by it's `shouldContinuelon` function - whelonn this function
+ * relonturns truelon, elonxeloncution Continuelons.
  *
- * Gates also have a optional `shouldSkip`- When it returns
- * true, then we Continue without executing `main`.
+ * Gatelons also havelon a optional `shouldSkip`- Whelonn it relonturns
+ * truelon, thelonn welon Continuelon without elonxeloncuting `main`.
  *
- * @tparam Query The query type that the gate will receive as input
+ * @tparam Quelonry Thelon quelonry typelon that thelon gatelon will reloncelonivelon as input
  *
- * @return A GateResult includes both the boolean `continue` and a specific reason. See [[GateResult]] for more
+ * @relonturn A GatelonRelonsult includelons both thelon boolelonan `continuelon` and a speloncific relonason. Selonelon [[GatelonRelonsult]] for morelon
  *         information.
  */
-trait QueryAndCandidateGate[-Query <: PipelineQuery] extends BaseGate[Query] {
+trait QuelonryAndCandidatelonGatelon[-Quelonry <: PipelonlinelonQuelonry] elonxtelonnds BaselonGatelon[Quelonry] {
 
   /**
-   * If a shouldSkip returns true, the gate returns a Skip(continue=true) without executing
-   * the main predicate. We expect this to be useful for debugging, dogfooding, etc.
+   * If a shouldSkip relonturns truelon, thelon gatelon relonturns a Skip(continuelon=truelon) without elonxeloncuting
+   * thelon main prelondicatelon. Welon elonxpelonct this to belon uselonful for delonbugging, dogfooding, elontc.
    */
-  def shouldSkip(query: Query, candidates: Seq[CandidateWithDetails]): Stitch[Boolean] =
-    Stitch.False
+  delonf shouldSkip(quelonry: Quelonry, candidatelons: Selonq[CandidatelonWithDelontails]): Stitch[Boolelonan] =
+    Stitch.Falselon
 
   /**
-   * The main predicate that controls this gate. If this predicate returns true, the gate returns Continue.
+   * Thelon main prelondicatelon that controls this gatelon. If this prelondicatelon relonturns truelon, thelon gatelon relonturns Continuelon.
    */
-  def shouldContinue(query: Query, candidates: Seq[CandidateWithDetails]): Stitch[Boolean]
+  delonf shouldContinuelon(quelonry: Quelonry, candidatelons: Selonq[CandidatelonWithDelontails]): Stitch[Boolelonan]
 
-  final override def shouldSkip(query: Query): Stitch[Boolean] = {
-    val candidates = query.features
-      .map(_.get(CandidatePipelineResults)).getOrElse(
-        throw PipelineFailure(
-          IllegalStateFailure,
-          "Candidate Pipeline Results Feature missing from query features"))
-    shouldSkip(query, candidates)
+  final ovelonrridelon delonf shouldSkip(quelonry: Quelonry): Stitch[Boolelonan] = {
+    val candidatelons = quelonry.felonaturelons
+      .map(_.gelont(CandidatelonPipelonlinelonRelonsults)).gelontOrelonlselon(
+        throw PipelonlinelonFailurelon(
+          IllelongalStatelonFailurelon,
+          "Candidatelon Pipelonlinelon Relonsults Felonaturelon missing from quelonry felonaturelons"))
+    shouldSkip(quelonry, candidatelons)
   }
 
-  final override def shouldContinue(query: Query): Stitch[Boolean] = {
-    val candidates = query.features
-      .map(_.get(CandidatePipelineResults)).getOrElse(
-        throw PipelineFailure(
-          IllegalStateFailure,
-          "Candidate Pipeline Results Feature missing from query features"))
-    shouldContinue(query, candidates)
+  final ovelonrridelon delonf shouldContinuelon(quelonry: Quelonry): Stitch[Boolelonan] = {
+    val candidatelons = quelonry.felonaturelons
+      .map(_.gelont(CandidatelonPipelonlinelonRelonsults)).gelontOrelonlselon(
+        throw PipelonlinelonFailurelon(
+          IllelongalStatelonFailurelon,
+          "Candidatelon Pipelonlinelon Relonsults Felonaturelon missing from quelonry felonaturelons"))
+    shouldContinuelon(quelonry, candidatelons)
   }
 }
 
-object Gate {
-  val SkippedResult: Stitch[GateResult] = Stitch.value(GateResult.Skipped)
+objelonct Gatelon {
+  val SkippelondRelonsult: Stitch[GatelonRelonsult] = Stitch.valuelon(GatelonRelonsult.Skippelond)
 }

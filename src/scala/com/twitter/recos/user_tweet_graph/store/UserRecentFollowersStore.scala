@@ -1,50 +1,50 @@
-package com.twitter.recos.user_tweet_graph.store
+packagelon com.twittelonr.reloncos.uselonr_twelonelont_graph.storelon
 
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.socialgraph.thriftscala.EdgesRequest
-import com.twitter.socialgraph.thriftscala.EdgesResult
-import com.twitter.socialgraph.thriftscala.PageRequest
-import com.twitter.socialgraph.thriftscala.RelationshipType
-import com.twitter.socialgraph.thriftscala.SrcRelationship
-import com.twitter.socialgraph.thriftscala.SocialGraphService
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Duration
-import com.twitter.util.Future
-import com.twitter.util.Time
+import com.twittelonr.simclustelonrs_v2.common.UselonrId
+import com.twittelonr.socialgraph.thriftscala.elondgelonsRelonquelonst
+import com.twittelonr.socialgraph.thriftscala.elondgelonsRelonsult
+import com.twittelonr.socialgraph.thriftscala.PagelonRelonquelonst
+import com.twittelonr.socialgraph.thriftscala.RelonlationshipTypelon
+import com.twittelonr.socialgraph.thriftscala.SrcRelonlationship
+import com.twittelonr.socialgraph.thriftscala.SocialGraphSelonrvicelon
+import com.twittelonr.storelonhaus.RelonadablelonStorelon
+import com.twittelonr.util.Duration
+import com.twittelonr.util.Futurelon
+import com.twittelonr.util.Timelon
 
-class UserRecentFollowersStore(
-  sgsClient: SocialGraphService.MethodPerEndpoint)
-    extends ReadableStore[UserRecentFollowersStore.Query, Seq[UserId]] {
+class UselonrReloncelonntFollowelonrsStorelon(
+  sgsClielonnt: SocialGraphSelonrvicelon.MelonthodPelonrelonndpoint)
+    elonxtelonnds RelonadablelonStorelon[UselonrReloncelonntFollowelonrsStorelon.Quelonry, Selonq[UselonrId]] {
 
-  override def get(key: UserRecentFollowersStore.Query): Future[Option[Seq[UserId]]] = {
-    val edgeRequest = EdgesRequest(
-      relationship = SrcRelationship(key.userId, RelationshipType.FollowedBy),
-      // Could have a better guess at count when k.maxAge != None
-      pageRequest = Some(PageRequest(count = key.maxResults))
+  ovelonrridelon delonf gelont(kelony: UselonrReloncelonntFollowelonrsStorelon.Quelonry): Futurelon[Option[Selonq[UselonrId]]] = {
+    val elondgelonRelonquelonst = elondgelonsRelonquelonst(
+      relonlationship = SrcRelonlationship(kelony.uselonrId, RelonlationshipTypelon.FollowelondBy),
+      // Could havelon a belonttelonr guelonss at count whelonn k.maxAgelon != Nonelon
+      pagelonRelonquelonst = Somelon(PagelonRelonquelonst(count = kelony.maxRelonsults))
     )
 
-    val lookbackThresholdMillis = key.maxAge
-      .map(maxAge => (Time.now - maxAge).inMilliseconds)
-      .getOrElse(0L)
+    val lookbackThrelonsholdMillis = kelony.maxAgelon
+      .map(maxAgelon => (Timelon.now - maxAgelon).inMilliselonconds)
+      .gelontOrelonlselon(0L)
 
-    sgsClient
-      .edges(Seq(edgeRequest))
+    sgsClielonnt
+      .elondgelons(Selonq(elondgelonRelonquelonst))
       .map(_.flatMap {
-        case EdgesResult(edges, _, _) =>
-          edges.collect {
-            case e if e.createdAt >= lookbackThresholdMillis =>
-              e.target
+        caselon elondgelonsRelonsult(elondgelons, _, _) =>
+          elondgelons.collelonct {
+            caselon elon if elon.crelonatelondAt >= lookbackThrelonsholdMillis =>
+              elon.targelont
           }
       })
-      .map(Some(_))
+      .map(Somelon(_))
   }
 }
 
-object UserRecentFollowersStore {
-  case class Query(
-    userId: UserId,
-    // maxResults - if Some(count), we return only the `count` most recent follows
-    maxResults: Option[Int] = None,
-    // maxAge - if Some(duration), return only follows since `Time.now - duration`
-    maxAge: Option[Duration] = None)
+objelonct UselonrReloncelonntFollowelonrsStorelon {
+  caselon class Quelonry(
+    uselonrId: UselonrId,
+    // maxRelonsults - if Somelon(count), welon relonturn only thelon `count` most reloncelonnt follows
+    maxRelonsults: Option[Int] = Nonelon,
+    // maxAgelon - if Somelon(duration), relonturn only follows sincelon `Timelon.now - duration`
+    maxAgelon: Option[Duration] = Nonelon)
 }

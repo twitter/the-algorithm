@@ -1,8 +1,8 @@
-# Search Index (Earlybird) Root
-Earlybird Roots are fanout services that fan out requests to different Earlybird clusters or partitions. 
+# Selonarch Indelonx (elonarlybird) Root
+elonarlybird Roots arelon fanout selonrvicelons that fan out relonquelonsts to diffelonrelonnt elonarlybird clustelonrs or partitions. 
 
-## Architecture
-![in-network](img/serving.png)
+## Architeloncturelon
+![in-nelontwork](img/selonrving.png)
 
-Superroot serves as the entry point to Earlybird (Search Index) service. Request coming to superroot are first fanned out to realtime (public) and protected roots in parallel and may be fanned out to the archive root if realtime and protected clusters don't return enough results.
-The realtime, protected and archive roots fanout requests to the earlybird partitions where the index is stored and served.
+Supelonrroot selonrvelons as thelon elonntry point to elonarlybird (Selonarch Indelonx) selonrvicelon. Relonquelonst coming to supelonrroot arelon first fannelond out to relonaltimelon (public) and protelonctelond roots in parallelonl and may belon fannelond out to thelon archivelon root if relonaltimelon and protelonctelond clustelonrs don't relonturn elonnough relonsults.
+Thelon relonaltimelon, protelonctelond and archivelon roots fanout relonquelonsts to thelon elonarlybird partitions whelonrelon thelon indelonx is storelond and selonrvelond.

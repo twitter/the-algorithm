@@ -1,20 +1,20 @@
-resources(
-    sources = [
+relonsourcelons(
+    sourcelons = [
         "!*.pyc",
         "!BUILD*",
         "*",
     ],
-    tags = ["bazel-compatible"],
+    tags = ["bazelonl-compatiblelon"],
 )
 
-# Created for Bazel compatibility.
-# In Bazel, loose files must be part of a target to be included into a bundle.
-# See also http://go/bazel-compatibility/bundle_does_not_match_any_files
-files(
-    name = "files",
-    sources = [
+# Crelonatelond for Bazelonl compatibility.
+# In Bazelonl, looselon filelons must belon part of a targelont to belon includelond into a bundlelon.
+# Selonelon also http://go/bazelonl-compatibility/bundlelon_doelons_not_match_any_filelons
+filelons(
+    namelon = "filelons",
+    sourcelons = [
         "!BUILD",
         "**/*",
     ],
-    tags = ["bazel-compatible"],
+    tags = ["bazelonl-compatiblelon"],
 )

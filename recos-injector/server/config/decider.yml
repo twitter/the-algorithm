@@ -1,11 +1,11 @@
-tweet_event_transformer_user_tweet_entity_edges:
-  comment: "Enables the generation of UserTweetEntity edges in tweet event transformer"
-  default_availability: 0
+twelonelont_elonvelonnt_transformelonr_uselonr_twelonelont_elonntity_elondgelons:
+  commelonnt: "elonnablelons thelon gelonnelonration of UselonrTwelonelontelonntity elondgelons in twelonelont elonvelonnt transformelonr"
+  delonfault_availability: 0
 
-enable_emit_tweet_edge_from_reply:
-  comment: "Decides when processing a Reply edge, whether to generate a Tweet edge for it as well"
-  default_availability: 0
+elonnablelon_elonmit_twelonelont_elondgelon_from_relonply:
+  commelonnt: "Deloncidelons whelonn procelonssing a Relonply elondgelon, whelonthelonr to gelonnelonratelon a Twelonelont elondgelon for it as welonll"
+  delonfault_availability: 0
 
-enable_unfavorite_edge:
-  comment: "Decides when processing a UnfavoriteEvent from Timeline events, whether to process unfav edges"
-  default_availability: 0
+elonnablelon_unfavoritelon_elondgelon:
+  commelonnt: "Deloncidelons whelonn procelonssing a Unfavoritelonelonvelonnt from Timelonlinelon elonvelonnts, whelonthelonr to procelonss unfav elondgelons"
+  delonfault_availability: 0

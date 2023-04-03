@@ -1,43 +1,43 @@
-DECLARE date_start, date_end DATE;
-SET date_end = (SELECT DATE(TIMESTAMP_MILLIS($start_time$)));
-SET date_start = DATE_SUB(date_end, INTERVAL 30 DAY);
+DelonCLARelon datelon_start, datelon_elonnd DATelon;
+SelonT datelon_elonnd = (SelonLelonCT DATelon(TIMelonSTAMP_MILLIS($start_timelon$)));
+SelonT datelon_start = DATelon_SUB(datelon_elonnd, INTelonRVAL 30 DAY);
 
-CREATE OR REPLACE TABLE `twttr-recos-ml-prod.realgraph.candidates_for_training` 
+CRelonATelon OR RelonPLACelon TABLelon `twttr-reloncos-ml-prod.relonalgraph.candidatelons_for_training`
 PARTITION BY ds
 AS
 WITH T1 AS (
-  SELECT source_id, destination_id, label, dateHour
-  FROM `twttr-bq-cassowary-prod.user.interaction_graph_labels_daily`
-  LEFT JOIN UNNEST(labels) AS label
-  WHERE DATE(dateHour) BETWEEN date_start AND date_end
+  SelonLelonCT sourcelon_id, delonstination_id, labelonl, datelonHour
+  FROM `twttr-bq-cassowary-prod.uselonr.intelonraction_graph_labelonls_daily`
+  LelonFT JOIN UNNelonST(labelonls) AS labelonl
+  WHelonRelon DATelon(datelonHour) BelonTWelonelonN datelon_start AND datelon_elonnd
 ), T2 AS (
-    SELECT source_id, destination_id, num_tweets
-  FROM `twttr-recos-ml-prod.realgraph.tweeting_follows`
+    SelonLelonCT sourcelon_id, delonstination_id, num_twelonelonts
+  FROM `twttr-reloncos-ml-prod.relonalgraph.twelonelonting_follows`
 ), T3 AS (
-SELECT 
-COALESCE(T1.source_id, T2.source_id) AS source_id,
-COALESCE(T1.destination_id, T2.destination_id) AS destination_id,
-COUNT(DISTINCT(T1.dateHour)) AS num_days,
-MIN(COALESCE(num_tweets,0)) AS num_tweets, -- all rows' num_tweets should be the same
-COALESCE(DATE_DIFF(date_end, DATE(MAX(T1.dateHour)), DAY),30) AS days_since_last_interaction,
-COUNT(DISTINCT(label)) AS label_types,
-COUNTIF(label="num_follows") AS num_follows,
-COUNTIF(label="num_favorites") AS num_favorites,
-COUNTIF(label="num_tweet_clicks") AS num_tweet_clicks,
-COUNTIF(label="num_profile_views") AS num_profile_views,
+SelonLelonCT
+COALelonSCelon(T1.sourcelon_id, T2.sourcelon_id) AS sourcelon_id,
+COALelonSCelon(T1.delonstination_id, T2.delonstination_id) AS delonstination_id,
+COUNT(DISTINCT(T1.datelonHour)) AS num_days,
+MIN(COALelonSCelon(num_twelonelonts,0)) AS num_twelonelonts, -- all rows' num_twelonelonts should belon thelon samelon
+COALelonSCelon(DATelon_DIFF(datelon_elonnd, DATelon(MAX(T1.datelonHour)), DAY),30) AS days_sincelon_last_intelonraction,
+COUNT(DISTINCT(labelonl)) AS labelonl_typelons,
+COUNTIF(labelonl="num_follows") AS num_follows,
+COUNTIF(labelonl="num_favoritelons") AS num_favoritelons,
+COUNTIF(labelonl="num_twelonelont_clicks") AS num_twelonelont_clicks,
+COUNTIF(labelonl="num_profilelon_vielonws") AS num_profilelon_vielonws,
 FROM T1 
 FULL JOIN T2
-USING (source_id, destination_id)
-LEFT JOIN `twttr-bq-cassowary-prod.user.interaction_graph_agg_negative_edge_snapshot` N
-USING (source_id, destination_id)
-WHERE N.source_id IS NULL AND N.destination_id IS NULL
+USING (sourcelon_id, delonstination_id)
+LelonFT JOIN `twttr-bq-cassowary-prod.uselonr.intelonraction_graph_agg_nelongativelon_elondgelon_snapshot` N
+USING (sourcelon_id, delonstination_id)
+WHelonRelon N.sourcelon_id IS NULL AND N.delonstination_id IS NULL
 GROUP BY 1,2
-ORDER BY 3 DESC,4 DESC
+ORDelonR BY 3 DelonSC,4 DelonSC
 ), T4 AS (
-  SELECT RANK() OVER (PARTITION BY source_id ORDER BY num_days DESC, num_tweets DESC) AS rn, *
+  SelonLelonCT RANK() OVelonR (PARTITION BY sourcelon_id ORDelonR BY num_days DelonSC, num_twelonelonts DelonSC) AS rn, *
   FROM T3
-) SELECT *, date_end AS ds FROM T4 WHERE rn <= 2000;
+) SelonLelonCT *, datelon_elonnd AS ds FROM T4 WHelonRelon rn <= 2000;
 
-SELECT ds FROM `twttr-recos-ml-prod.realgraph.candidates_for_training`
-WHERE ds = (SELECT DATE(TIMESTAMP_MILLIS($start_time$)))
+SelonLelonCT ds FROM `twttr-reloncos-ml-prod.relonalgraph.candidatelons_for_training`
+WHelonRelon ds = (SelonLelonCT DATelon(TIMelonSTAMP_MILLIS($start_timelon$)))
 LIMIT 1

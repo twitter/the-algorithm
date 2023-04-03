@@ -1,10 +1,10 @@
-package com.twitter.product_mixer.core.functional_component.decorator.urt.builder.item.alert
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.itelonm.alelonrt
 
-import com.twitter.product_mixer.component_library.model.candidate.ShowAlertCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.ShowAlelonrtCandidatelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
-trait BaseShowAlertUserIdsBuilder[-Query <: PipelineQuery] {
+trait BaselonShowAlelonrtUselonrIdsBuildelonr[-Quelonry <: PipelonlinelonQuelonry] {
 
-  def apply(query: Query, candidate: ShowAlertCandidate, features: FeatureMap): Option[Seq[Long]]
+  delonf apply(quelonry: Quelonry, candidatelon: ShowAlelonrtCandidatelon, felonaturelons: FelonaturelonMap): Option[Selonq[Long]]
 }

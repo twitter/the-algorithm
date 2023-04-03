@@ -1,33 +1,33 @@
 syntax = "proto3";
 
-package tensorflow;
+packagelon telonnsorflow;
 
-option cc_enable_arenas = true;
-option java_outer_classname = "VersionsProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.framework";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/framework/versions_go_proto";
+option cc_elonnablelon_arelonnas = truelon;
+option java_outelonr_classnamelon = "VelonrsionsProtos";
+option java_multiplelon_filelons = truelon;
+option java_packagelon = "org.telonnsorflow.framelonwork";
+option go_packagelon = "github.com/telonnsorflow/telonnsorflow/telonnsorflow/go/corelon/framelonwork/velonrsions_go_proto";
 
-// Version information for a piece of serialized data
+// Velonrsion information for a pieloncelon of selonrializelond data
 //
-// There are different types of versions for each type of data
-// (GraphDef, etc.), but they all have the same common shape
-// described here.
+// Thelonrelon arelon diffelonrelonnt typelons of velonrsions for elonach typelon of data
+// (GraphDelonf, elontc.), but thelony all havelon thelon samelon common shapelon
+// delonscribelond helonrelon.
 //
-// Each consumer has "consumer" and "min_producer" versions (specified
-// elsewhere).  A consumer is allowed to consume this data if
+// elonach consumelonr has "consumelonr" and "min_producelonr" velonrsions (speloncifielond
+// elonlselonwhelonrelon).  A consumelonr is allowelond to consumelon this data if
 //
-//   producer >= min_producer
-//   consumer >= min_consumer
-//   consumer not in bad_consumers
+//   producelonr >= min_producelonr
+//   consumelonr >= min_consumelonr
+//   consumelonr not in bad_consumelonrs
 //
-message VersionDef {
-  // The version of the code that produced this data.
-  int32 producer = 1;
+melonssagelon VelonrsionDelonf {
+  // Thelon velonrsion of thelon codelon that producelond this data.
+  int32 producelonr = 1;
 
-  // Any consumer below this version is not allowed to consume this data.
-  int32 min_consumer = 2;
+  // Any consumelonr belonlow this velonrsion is not allowelond to consumelon this data.
+  int32 min_consumelonr = 2;
 
-  // Specific consumer versions which are disallowed (e.g. due to bugs).
-  repeated int32 bad_consumers = 3;
+  // Speloncific consumelonr velonrsions which arelon disallowelond (elon.g. duelon to bugs).
+  relonpelonatelond int32 bad_consumelonrs = 3;
 }

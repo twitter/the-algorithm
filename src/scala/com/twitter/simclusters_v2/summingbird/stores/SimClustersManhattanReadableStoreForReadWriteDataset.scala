@@ -1,65 +1,65 @@
-package com.twitter.simclusters_v2.summingbird.stores
-import com.twitter.simclusters_v2.thriftscala.ClustersUserIsInterestedIn
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId
-import com.twitter.storage.client.manhattan.kv.ManhattanKVClient
-import com.twitter.storage.client.manhattan.kv.ManhattanKVClientMtlsParams
-import com.twitter.storage.client.manhattan.kv.ManhattanKVEndpointBuilder
-import com.twitter.storage.client.manhattan.kv.impl.Component
-import com.twitter.storage.client.manhattan.kv.impl.DescriptorP1L0
-import com.twitter.storage.client.manhattan.kv.impl.KeyDescriptor
-import com.twitter.storage.client.manhattan.kv.impl.ValueDescriptor
-import com.twitter.storehaus.ReadableStore
-import com.twitter.storehaus_internal.manhattan.ManhattanCluster
-import com.twitter.storehaus_internal.manhattan.Adama
-import com.twitter.storage.client.manhattan.bijections.Bijections.BinaryScalaInjection
-import com.twitter.storage.client.manhattan.kv.Guarantee
-import com.twitter.conversions.DurationOps._
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.stitch.Stitch
-import com.twitter.storage.client.manhattan.bijections.Bijections.LongInjection
-import com.twitter.util.Future
+packagelon com.twittelonr.simclustelonrs_v2.summingbird.storelons
+import com.twittelonr.simclustelonrs_v2.thriftscala.ClustelonrsUselonrIsIntelonrelonstelondIn
+import com.twittelonr.simclustelonrs_v2.thriftscala.SimClustelonrselonmbelonddingId
+import com.twittelonr.storagelon.clielonnt.manhattan.kv.ManhattanKVClielonnt
+import com.twittelonr.storagelon.clielonnt.manhattan.kv.ManhattanKVClielonntMtlsParams
+import com.twittelonr.storagelon.clielonnt.manhattan.kv.ManhattanKVelonndpointBuildelonr
+import com.twittelonr.storagelon.clielonnt.manhattan.kv.impl.Componelonnt
+import com.twittelonr.storagelon.clielonnt.manhattan.kv.impl.DelonscriptorP1L0
+import com.twittelonr.storagelon.clielonnt.manhattan.kv.impl.KelonyDelonscriptor
+import com.twittelonr.storagelon.clielonnt.manhattan.kv.impl.ValuelonDelonscriptor
+import com.twittelonr.storelonhaus.RelonadablelonStorelon
+import com.twittelonr.storelonhaus_intelonrnal.manhattan.ManhattanClustelonr
+import com.twittelonr.storelonhaus_intelonrnal.manhattan.Adama
+import com.twittelonr.storagelon.clielonnt.manhattan.bijelonctions.Bijelonctions.BinaryScalaInjelonction
+import com.twittelonr.storagelon.clielonnt.manhattan.kv.Guarantelonelon
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.simclustelonrs_v2.thriftscala.IntelonrnalId
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.storagelon.clielonnt.manhattan.bijelonctions.Bijelonctions.LongInjelonction
+import com.twittelonr.util.Futurelon
 
 /**
- * Manhattan Readable Store to fetch simcluster embedding from a read-write dataset.
- * Only read operations are allowed through this store.
- * @param appId The "application id"
- * @param datasetName The MH dataset name.
- * @param label The human readable label for the finagle thrift client
- * @param mtlsParams Client service identifier to use to authenticate with Manhattan service
- * @param manhattanCluster Manhattan RW cluster
+ * Manhattan Relonadablelon Storelon to felontch simclustelonr elonmbelondding from a relonad-writelon dataselont.
+ * Only relonad opelonrations arelon allowelond through this storelon.
+ * @param appId Thelon "application id"
+ * @param dataselontNamelon Thelon MH dataselont namelon.
+ * @param labelonl Thelon human relonadablelon labelonl for thelon finaglelon thrift clielonnt
+ * @param mtlsParams Clielonnt selonrvicelon idelonntifielonr to uselon to authelonnticatelon with Manhattan selonrvicelon
+ * @param manhattanClustelonr Manhattan RW clustelonr
  **/
-class SimClustersManhattanReadableStoreForReadWriteDataset(
+class SimClustelonrsManhattanRelonadablelonStorelonForRelonadWritelonDataselont(
   appId: String,
-  datasetName: String,
-  label: String,
-  mtlsParams: ManhattanKVClientMtlsParams,
-  manhattanCluster: ManhattanCluster = Adama)
-    extends ReadableStore[SimClustersEmbeddingId, ClustersUserIsInterestedIn] {
+  dataselontNamelon: String,
+  labelonl: String,
+  mtlsParams: ManhattanKVClielonntMtlsParams,
+  manhattanClustelonr: ManhattanClustelonr = Adama)
+    elonxtelonnds RelonadablelonStorelon[SimClustelonrselonmbelonddingId, ClustelonrsUselonrIsIntelonrelonstelondIn] {
   /*
-  Setting up a new builder to read from Manhattan RW dataset. This is specifically required for
-  BeT project where we update the MH RW dataset (every 2 hours) using cloud shuttle service.
+  Selontting up a nelonw buildelonr to relonad from Manhattan RW dataselont. This is speloncifically relonquirelond for
+  BelonT projelonct whelonrelon welon updatelon thelon MH RW dataselont (elonvelonry 2 hours) using cloud shuttlelon selonrvicelon.
    */
-  val destName = manhattanCluster.wilyName
-  val endPoint = ManhattanKVEndpointBuilder(ManhattanKVClient(appId, destName, mtlsParams, label))
-    .defaultGuarantee(Guarantee.SoftDcReadMyWrites)
+  val delonstNamelon = manhattanClustelonr.wilyNamelon
+  val elonndPoint = ManhattanKVelonndpointBuildelonr(ManhattanKVClielonnt(appId, delonstNamelon, mtlsParams, labelonl))
+    .delonfaultGuarantelonelon(Guarantelonelon.SoftDcRelonadMyWritelons)
     .build()
 
-  val keyDesc = KeyDescriptor(Component(LongInjection), Component()).withDataset(datasetName)
-  val valueDesc = ValueDescriptor(BinaryScalaInjection(ClustersUserIsInterestedIn))
+  val kelonyDelonsc = KelonyDelonscriptor(Componelonnt(LongInjelonction), Componelonnt()).withDataselont(dataselontNamelon)
+  val valuelonDelonsc = ValuelonDelonscriptor(BinaryScalaInjelonction(ClustelonrsUselonrIsIntelonrelonstelondIn))
 
-  override def get(
-    embeddingId: SimClustersEmbeddingId
-  ): Future[Option[ClustersUserIsInterestedIn]] = {
-    embeddingId match {
-      case SimClustersEmbeddingId(theEmbeddingType, theModelVersion, InternalId.UserId(userId)) =>
-        val populatedKey: DescriptorP1L0.FullKey[Long] = keyDesc.withPkey(userId)
-        // returns result
-        val mhValue = Stitch.run(endPoint.get(populatedKey, valueDesc))
-        mhValue.map {
-          case Some(x) => Option(x.contents)
-          case _ => None
+  ovelonrridelon delonf gelont(
+    elonmbelonddingId: SimClustelonrselonmbelonddingId
+  ): Futurelon[Option[ClustelonrsUselonrIsIntelonrelonstelondIn]] = {
+    elonmbelonddingId match {
+      caselon SimClustelonrselonmbelonddingId(thelonelonmbelonddingTypelon, thelonModelonlVelonrsion, IntelonrnalId.UselonrId(uselonrId)) =>
+        val populatelondKelony: DelonscriptorP1L0.FullKelony[Long] = kelonyDelonsc.withPkelony(uselonrId)
+        // relonturns relonsult
+        val mhValuelon = Stitch.run(elonndPoint.gelont(populatelondKelony, valuelonDelonsc))
+        mhValuelon.map {
+          caselon Somelon(x) => Option(x.contelonnts)
+          caselon _ => Nonelon
         }
-      case _ => Future.None
+      caselon _ => Futurelon.Nonelon
     }
   }
 }

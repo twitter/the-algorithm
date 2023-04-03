@@ -1,5 +1,5 @@
-To reproduce, you need to run
+To relonproducelon, you nelonelond to run
 
-1. SimClustersTweetEmbeddingAdhocApp to generate cluster -> top tweets and tweet -> top clusters data sets
-2. TweetSimilarityEvaluationSamplingAdhocApp to sample a subset of tweets that you want to compute some metrics on
-3. TweetSimilarityEvaluationAdhocApp to perform the evaluation
+1. SimClustelonrsTwelonelontelonmbelonddingAdhocApp to gelonnelonratelon clustelonr -> top twelonelonts and twelonelont -> top clustelonrs data selonts
+2. TwelonelontSimilarityelonvaluationSamplingAdhocApp to samplelon a subselont of twelonelonts that you want to computelon somelon melontrics on
+3. TwelonelontSimilarityelonvaluationAdhocApp to pelonrform thelon elonvaluation

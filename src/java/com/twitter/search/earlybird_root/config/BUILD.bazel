@@ -1,7 +1,7 @@
 java_library(
-    sources = ["*.java"],
-    dependencies = [
-        "src/java/com/twitter/common/util:system-mocks",
-        "src/java/com/twitter/search/earlybird/config",
+    sourcelons = ["*.java"],
+    delonpelonndelonncielons = [
+        "src/java/com/twittelonr/common/util:systelonm-mocks",
+        "src/java/com/twittelonr/selonarch/elonarlybird/config",
     ],
 )

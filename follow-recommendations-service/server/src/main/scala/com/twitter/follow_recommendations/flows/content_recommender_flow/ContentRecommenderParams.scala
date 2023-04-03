@@ -1,85 +1,85 @@
-package com.twitter.follow_recommendations.flows.content_recommender_flow
+packagelon com.twittelonr.follow_reloncommelonndations.flows.contelonnt_reloncommelonndelonr_flow
 
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.Param
+import com.twittelonr.timelonlinelons.configapi.FSBoundelondParam
+import com.twittelonr.timelonlinelons.configapi.FSParam
+import com.twittelonr.timelonlinelons.configapi.Param
 
-abstract class ContentRecommenderParams[A](default: A) extends Param[A](default) {
-  override val statName: String = "content_recommender/" + this.getClass.getSimpleName
+abstract class ContelonntReloncommelonndelonrParams[A](delonfault: A) elonxtelonnds Param[A](delonfault) {
+  ovelonrridelon val statNamelon: String = "contelonnt_reloncommelonndelonr/" + this.gelontClass.gelontSimplelonNamelon
 }
 
-object ContentRecommenderParams {
+objelonct ContelonntReloncommelonndelonrParams {
 
-  case object TargetEligibility
-      extends FSParam[Boolean](ContentRecommenderFlowFeatureSwitchKeys.TargetUserEligible, true)
+  caselon objelonct Targelontelonligibility
+      elonxtelonnds FSParam[Boolelonan](ContelonntReloncommelonndelonrFlowFelonaturelonSwitchKelonys.TargelontUselonrelonligiblelon, truelon)
 
-  case object ResultSizeParam
-      extends FSBoundedParam[Int](ContentRecommenderFlowFeatureSwitchKeys.ResultSize, 15, 1, 500)
-  case object BatchSizeParam
-      extends FSBoundedParam[Int](ContentRecommenderFlowFeatureSwitchKeys.BatchSize, 15, 1, 500)
-  case object RecentFollowingPredicateBudgetInMillisecond
-      extends FSBoundedParam[Int](
-        ContentRecommenderFlowFeatureSwitchKeys.RecentFollowingPredicateBudgetInMillisecond,
+  caselon objelonct RelonsultSizelonParam
+      elonxtelonnds FSBoundelondParam[Int](ContelonntReloncommelonndelonrFlowFelonaturelonSwitchKelonys.RelonsultSizelon, 15, 1, 500)
+  caselon objelonct BatchSizelonParam
+      elonxtelonnds FSBoundelondParam[Int](ContelonntReloncommelonndelonrFlowFelonaturelonSwitchKelonys.BatchSizelon, 15, 1, 500)
+  caselon objelonct ReloncelonntFollowingPrelondicatelonBudgelontInMilliseloncond
+      elonxtelonnds FSBoundelondParam[Int](
+        ContelonntReloncommelonndelonrFlowFelonaturelonSwitchKelonys.ReloncelonntFollowingPrelondicatelonBudgelontInMilliseloncond,
         8,
         1,
         50)
-  case object FetchCandidateSourceBudgetInMillisecond
-      extends FSBoundedParam[Int](
-        ContentRecommenderFlowFeatureSwitchKeys.CandidateGenerationBudgetInMillisecond,
+  caselon objelonct FelontchCandidatelonSourcelonBudgelontInMilliseloncond
+      elonxtelonnds FSBoundelondParam[Int](
+        ContelonntReloncommelonndelonrFlowFelonaturelonSwitchKelonys.CandidatelonGelonnelonrationBudgelontInMilliseloncond,
         60,
         1,
         80)
-  case object EnableRecentFollowingPredicate
-      extends FSParam[Boolean](
-        ContentRecommenderFlowFeatureSwitchKeys.EnableRecentFollowingPredicate,
-        true)
-  case object EnableGizmoduckPredicate
-      extends FSParam[Boolean](
-        ContentRecommenderFlowFeatureSwitchKeys.EnableGizmoduckPredicate,
-        false)
-  case object EnableInactivePredicate
-      extends FSParam[Boolean](
-        ContentRecommenderFlowFeatureSwitchKeys.EnableInactivePredicate,
-        false)
-  case object EnableInvalidTargetCandidateRelationshipPredicate
-      extends FSParam[Boolean](
-        ContentRecommenderFlowFeatureSwitchKeys.EnableInvalidTargetCandidateRelationshipPredicate,
-        false)
-  case object IncludeActivityBasedCandidateSource
-      extends FSParam[Boolean](
-        ContentRecommenderFlowFeatureSwitchKeys.IncludeActivityBasedCandidateSource,
-        true)
-  case object IncludeSocialBasedCandidateSource
-      extends FSParam[Boolean](
-        ContentRecommenderFlowFeatureSwitchKeys.IncludeSocialBasedCandidateSource,
-        true)
-  case object IncludeGeoBasedCandidateSource
-      extends FSParam[Boolean](
-        ContentRecommenderFlowFeatureSwitchKeys.IncludeGeoBasedCandidateSource,
-        true)
-  case object IncludeHomeTimelineTweetRecsCandidateSource
-      extends FSParam[Boolean](
-        ContentRecommenderFlowFeatureSwitchKeys.IncludeHomeTimelineTweetRecsCandidateSource,
-        false)
-  case object IncludeSocialProofEnforcedCandidateSource
-      extends FSParam[Boolean](
-        ContentRecommenderFlowFeatureSwitchKeys.IncludeSocialProofEnforcedCandidateSource,
-        false)
-  case object IncludeNewFollowingNewFollowingExpansionCandidateSource
-      extends FSParam[Boolean](
-        ContentRecommenderFlowFeatureSwitchKeys.IncludeNewFollowingNewFollowingExpansionCandidateSource,
-        false)
+  caselon objelonct elonnablelonReloncelonntFollowingPrelondicatelon
+      elonxtelonnds FSParam[Boolelonan](
+        ContelonntReloncommelonndelonrFlowFelonaturelonSwitchKelonys.elonnablelonReloncelonntFollowingPrelondicatelon,
+        truelon)
+  caselon objelonct elonnablelonGizmoduckPrelondicatelon
+      elonxtelonnds FSParam[Boolelonan](
+        ContelonntReloncommelonndelonrFlowFelonaturelonSwitchKelonys.elonnablelonGizmoduckPrelondicatelon,
+        falselon)
+  caselon objelonct elonnablelonInactivelonPrelondicatelon
+      elonxtelonnds FSParam[Boolelonan](
+        ContelonntReloncommelonndelonrFlowFelonaturelonSwitchKelonys.elonnablelonInactivelonPrelondicatelon,
+        falselon)
+  caselon objelonct elonnablelonInvalidTargelontCandidatelonRelonlationshipPrelondicatelon
+      elonxtelonnds FSParam[Boolelonan](
+        ContelonntReloncommelonndelonrFlowFelonaturelonSwitchKelonys.elonnablelonInvalidTargelontCandidatelonRelonlationshipPrelondicatelon,
+        falselon)
+  caselon objelonct IncludelonActivityBaselondCandidatelonSourcelon
+      elonxtelonnds FSParam[Boolelonan](
+        ContelonntReloncommelonndelonrFlowFelonaturelonSwitchKelonys.IncludelonActivityBaselondCandidatelonSourcelon,
+        truelon)
+  caselon objelonct IncludelonSocialBaselondCandidatelonSourcelon
+      elonxtelonnds FSParam[Boolelonan](
+        ContelonntReloncommelonndelonrFlowFelonaturelonSwitchKelonys.IncludelonSocialBaselondCandidatelonSourcelon,
+        truelon)
+  caselon objelonct IncludelonGelonoBaselondCandidatelonSourcelon
+      elonxtelonnds FSParam[Boolelonan](
+        ContelonntReloncommelonndelonrFlowFelonaturelonSwitchKelonys.IncludelonGelonoBaselondCandidatelonSourcelon,
+        truelon)
+  caselon objelonct IncludelonHomelonTimelonlinelonTwelonelontReloncsCandidatelonSourcelon
+      elonxtelonnds FSParam[Boolelonan](
+        ContelonntReloncommelonndelonrFlowFelonaturelonSwitchKelonys.IncludelonHomelonTimelonlinelonTwelonelontReloncsCandidatelonSourcelon,
+        falselon)
+  caselon objelonct IncludelonSocialProofelonnforcelondCandidatelonSourcelon
+      elonxtelonnds FSParam[Boolelonan](
+        ContelonntReloncommelonndelonrFlowFelonaturelonSwitchKelonys.IncludelonSocialProofelonnforcelondCandidatelonSourcelon,
+        falselon)
+  caselon objelonct IncludelonNelonwFollowingNelonwFollowingelonxpansionCandidatelonSourcelon
+      elonxtelonnds FSParam[Boolelonan](
+        ContelonntReloncommelonndelonrFlowFelonaturelonSwitchKelonys.IncludelonNelonwFollowingNelonwFollowingelonxpansionCandidatelonSourcelon,
+        falselon)
 
-  case object IncludeMoreGeoBasedCandidateSource
-      extends FSParam[Boolean](
-        ContentRecommenderFlowFeatureSwitchKeys.IncludeMoreGeoBasedCandidateSource,
-        false)
+  caselon objelonct IncludelonMorelonGelonoBaselondCandidatelonSourcelon
+      elonxtelonnds FSParam[Boolelonan](
+        ContelonntReloncommelonndelonrFlowFelonaturelonSwitchKelonys.IncludelonMorelonGelonoBaselondCandidatelonSourcelon,
+        falselon)
 
-  case object GetFollowersFromSgs
-      extends FSParam[Boolean](ContentRecommenderFlowFeatureSwitchKeys.GetFollowersFromSgs, false)
+  caselon objelonct GelontFollowelonrsFromSgs
+      elonxtelonnds FSParam[Boolelonan](ContelonntReloncommelonndelonrFlowFelonaturelonSwitchKelonys.GelontFollowelonrsFromSgs, falselon)
 
-  case object EnableInvalidRelationshipPredicate
-      extends FSParam[Boolean](
-        ContentRecommenderFlowFeatureSwitchKeys.EnableInvalidRelationshipPredicate,
-        false)
+  caselon objelonct elonnablelonInvalidRelonlationshipPrelondicatelon
+      elonxtelonnds FSParam[Boolelonan](
+        ContelonntReloncommelonndelonrFlowFelonaturelonSwitchKelonys.elonnablelonInvalidRelonlationshipPrelondicatelon,
+        falselon)
 }

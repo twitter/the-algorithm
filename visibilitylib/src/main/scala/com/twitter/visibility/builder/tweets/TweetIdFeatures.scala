@@ -1,76 +1,76 @@
-package com.twitter.visibility.builder.tweets
+packagelon com.twittelonr.visibility.buildelonr.twelonelonts
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.servo.util.Gate
-import com.twitter.spam.rtf.thriftscala.SafetyLabel
-import com.twitter.spam.rtf.thriftscala.SafetyLabelType
-import com.twitter.spam.rtf.thriftscala.SafetyLabelValue
-import com.twitter.stitch.Stitch
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.common.stitch.StitchHelpers
-import com.twitter.visibility.features.TweetId
-import com.twitter.visibility.features.TweetSafetyLabels
-import com.twitter.visibility.features.TweetTimestamp
-import com.twitter.visibility.models.TweetSafetyLabel
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.selonrvo.util.Gatelon
+import com.twittelonr.spam.rtf.thriftscala.SafelontyLabelonl
+import com.twittelonr.spam.rtf.thriftscala.SafelontyLabelonlTypelon
+import com.twittelonr.spam.rtf.thriftscala.SafelontyLabelonlValuelon
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.visibility.buildelonr.FelonaturelonMapBuildelonr
+import com.twittelonr.visibility.common.stitch.StitchHelonlpelonrs
+import com.twittelonr.visibility.felonaturelons.TwelonelontId
+import com.twittelonr.visibility.felonaturelons.TwelonelontSafelontyLabelonls
+import com.twittelonr.visibility.felonaturelons.TwelonelontTimelonstamp
+import com.twittelonr.visibility.modelonls.TwelonelontSafelontyLabelonl
 
-class TweetIdFeatures(
-  statsReceiver: StatsReceiver,
-  enableStitchProfiling: Gate[Unit]) {
-  private[this] val scopedStatsReceiver: StatsReceiver = statsReceiver.scope("tweet_id_features")
+class TwelonelontIdFelonaturelons(
+  statsReloncelonivelonr: StatsReloncelonivelonr,
+  elonnablelonStitchProfiling: Gatelon[Unit]) {
+  privatelon[this] val scopelondStatsReloncelonivelonr: StatsReloncelonivelonr = statsReloncelonivelonr.scopelon("twelonelont_id_felonaturelons")
 
-  private[this] val requests = scopedStatsReceiver.counter("requests")
-  private[this] val tweetSafetyLabels =
-    scopedStatsReceiver.scope(TweetSafetyLabels.name).counter("requests")
-  private[this] val tweetTimestamp =
-    scopedStatsReceiver.scope(TweetTimestamp.name).counter("requests")
+  privatelon[this] val relonquelonsts = scopelondStatsReloncelonivelonr.countelonr("relonquelonsts")
+  privatelon[this] val twelonelontSafelontyLabelonls =
+    scopelondStatsReloncelonivelonr.scopelon(TwelonelontSafelontyLabelonls.namelon).countelonr("relonquelonsts")
+  privatelon[this] val twelonelontTimelonstamp =
+    scopelondStatsReloncelonivelonr.scopelon(TwelonelontTimelonstamp.namelon).countelonr("relonquelonsts")
 
-  private[this] val labelFetchScope: StatsReceiver =
-    scopedStatsReceiver.scope("labelFetch")
+  privatelon[this] val labelonlFelontchScopelon: StatsReloncelonivelonr =
+    scopelondStatsReloncelonivelonr.scopelon("labelonlFelontch")
 
-  private[this] def getTweetLabels(
-    tweetId: Long,
-    labelFetcher: Long => Stitch[Map[SafetyLabelType, SafetyLabel]]
-  ): Stitch[Seq[TweetSafetyLabel]] = {
+  privatelon[this] delonf gelontTwelonelontLabelonls(
+    twelonelontId: Long,
+    labelonlFelontchelonr: Long => Stitch[Map[SafelontyLabelonlTypelon, SafelontyLabelonl]]
+  ): Stitch[Selonq[TwelonelontSafelontyLabelonl]] = {
     val stitch =
-      labelFetcher(tweetId).map { labelMap =>
-        labelMap
-          .map { case (labelType, label) => SafetyLabelValue(labelType, label) }.toSeq
-          .map(TweetSafetyLabel.fromThrift)
+      labelonlFelontchelonr(twelonelontId).map { labelonlMap =>
+        labelonlMap
+          .map { caselon (labelonlTypelon, labelonl) => SafelontyLabelonlValuelon(labelonlTypelon, labelonl) }.toSelonq
+          .map(TwelonelontSafelontyLabelonl.fromThrift)
       }
 
-    if (enableStitchProfiling()) {
-      StitchHelpers.profileStitch(
+    if (elonnablelonStitchProfiling()) {
+      StitchHelonlpelonrs.profilelonStitch(
         stitch,
-        Seq(labelFetchScope)
+        Selonq(labelonlFelontchScopelon)
       )
-    } else {
+    } elonlselon {
       stitch
     }
   }
 
-  def forTweetId(
-    tweetId: Long,
-    labelFetcher: Long => Stitch[Map[SafetyLabelType, SafetyLabel]]
-  ): FeatureMapBuilder => FeatureMapBuilder = {
-    requests.incr()
-    tweetSafetyLabels.incr()
-    tweetTimestamp.incr()
+  delonf forTwelonelontId(
+    twelonelontId: Long,
+    labelonlFelontchelonr: Long => Stitch[Map[SafelontyLabelonlTypelon, SafelontyLabelonl]]
+  ): FelonaturelonMapBuildelonr => FelonaturelonMapBuildelonr = {
+    relonquelonsts.incr()
+    twelonelontSafelontyLabelonls.incr()
+    twelonelontTimelonstamp.incr()
 
-    _.withFeature(TweetSafetyLabels, getTweetLabels(tweetId, labelFetcher))
-      .withConstantFeature(TweetTimestamp, TweetFeatures.tweetTimestamp(tweetId))
-      .withConstantFeature(TweetId, tweetId)
+    _.withFelonaturelon(TwelonelontSafelontyLabelonls, gelontTwelonelontLabelonls(twelonelontId, labelonlFelontchelonr))
+      .withConstantFelonaturelon(TwelonelontTimelonstamp, TwelonelontFelonaturelons.twelonelontTimelonstamp(twelonelontId))
+      .withConstantFelonaturelon(TwelonelontId, twelonelontId)
   }
 
-  def forTweetId(
-    tweetId: Long,
-    constantTweetSafetyLabels: Seq[TweetSafetyLabel]
-  ): FeatureMapBuilder => FeatureMapBuilder = {
-    requests.incr()
-    tweetSafetyLabels.incr()
-    tweetTimestamp.incr()
+  delonf forTwelonelontId(
+    twelonelontId: Long,
+    constantTwelonelontSafelontyLabelonls: Selonq[TwelonelontSafelontyLabelonl]
+  ): FelonaturelonMapBuildelonr => FelonaturelonMapBuildelonr = {
+    relonquelonsts.incr()
+    twelonelontSafelontyLabelonls.incr()
+    twelonelontTimelonstamp.incr()
 
-    _.withConstantFeature(TweetSafetyLabels, constantTweetSafetyLabels)
-      .withConstantFeature(TweetTimestamp, TweetFeatures.tweetTimestamp(tweetId))
-      .withConstantFeature(TweetId, tweetId)
+    _.withConstantFelonaturelon(TwelonelontSafelontyLabelonls, constantTwelonelontSafelontyLabelonls)
+      .withConstantFelonaturelon(TwelonelontTimelonstamp, TwelonelontFelonaturelons.twelonelontTimelonstamp(twelonelontId))
+      .withConstantFelonaturelon(TwelonelontId, twelonelontId)
   }
 }

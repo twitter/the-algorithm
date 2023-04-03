@@ -1,693 +1,693 @@
-package com.twitter.search.common.schema;
+packagelon com.twittelonr.selonarch.common.schelonma;
 
 import java.util.Map;
-import java.util.Set;
-import javax.annotation.Nullable;
+import java.util.Selont;
+import javax.annotation.Nullablelon;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Sets;
+import com.googlelon.common.baselon.Prelonconditions;
+import com.googlelon.common.collelonct.ImmutablelonList;
+import com.googlelon.common.collelonct.Selonts;
 
-import com.twitter.common.text.util.CharSequenceTermAttributeSerializer;
-import com.twitter.common.text.util.PositionIncrementAttributeSerializer;
-import com.twitter.common.text.util.TokenStreamSerializer;
-import com.twitter.common.text.util.TokenTypeAttributeSerializer;
-import com.twitter.search.common.schema.base.FeatureConfiguration;
-import com.twitter.search.common.schema.base.FieldNameToIdMapping;
-import com.twitter.search.common.schema.thriftjava.ThriftCSFFieldSettings;
-import com.twitter.search.common.schema.thriftjava.ThriftCSFType;
-import com.twitter.search.common.schema.thriftjava.ThriftCSFViewSettings;
-import com.twitter.search.common.schema.thriftjava.ThriftFacetFieldSettings;
-import com.twitter.search.common.schema.thriftjava.ThriftFeatureNormalizationType;
-import com.twitter.search.common.schema.thriftjava.ThriftFeatureUpdateConstraint;
-import com.twitter.search.common.schema.thriftjava.ThriftFieldConfiguration;
-import com.twitter.search.common.schema.thriftjava.ThriftFieldSettings;
-import com.twitter.search.common.schema.thriftjava.ThriftFixedLengthCSFSettings;
-import com.twitter.search.common.schema.thriftjava.ThriftIndexOptions;
-import com.twitter.search.common.schema.thriftjava.ThriftIndexedFieldSettings;
-import com.twitter.search.common.schema.thriftjava.ThriftIndexedNumericFieldSettings;
-import com.twitter.search.common.schema.thriftjava.ThriftNumericType;
-import com.twitter.search.common.schema.thriftjava.ThriftSchema;
-import com.twitter.search.common.schema.thriftjava.ThriftSearchFieldSettings;
-import com.twitter.search.common.schema.thriftjava.ThriftTokenStreamSerializer;
-import com.twitter.search.common.util.analysis.CharTermAttributeSerializer;
-import com.twitter.search.common.util.analysis.IntTermAttributeSerializer;
-import com.twitter.search.common.util.analysis.LongTermAttributeSerializer;
-import com.twitter.search.common.util.analysis.PayloadAttributeSerializer;
+import com.twittelonr.common.telonxt.util.CharSelonquelonncelonTelonrmAttributelonSelonrializelonr;
+import com.twittelonr.common.telonxt.util.PositionIncrelonmelonntAttributelonSelonrializelonr;
+import com.twittelonr.common.telonxt.util.TokelonnStrelonamSelonrializelonr;
+import com.twittelonr.common.telonxt.util.TokelonnTypelonAttributelonSelonrializelonr;
+import com.twittelonr.selonarch.common.schelonma.baselon.FelonaturelonConfiguration;
+import com.twittelonr.selonarch.common.schelonma.baselon.FielonldNamelonToIdMapping;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftCSFFielonldSelonttings;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftCSFTypelon;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftCSFVielonwSelonttings;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftFacelontFielonldSelonttings;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftFelonaturelonNormalizationTypelon;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftFelonaturelonUpdatelonConstraint;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftFielonldConfiguration;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftFielonldSelonttings;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftFixelondLelonngthCSFSelonttings;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftIndelonxOptions;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftIndelonxelondFielonldSelonttings;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftIndelonxelondNumelonricFielonldSelonttings;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftNumelonricTypelon;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftSchelonma;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftSelonarchFielonldSelonttings;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftTokelonnStrelonamSelonrializelonr;
+import com.twittelonr.selonarch.common.util.analysis.CharTelonrmAttributelonSelonrializelonr;
+import com.twittelonr.selonarch.common.util.analysis.IntTelonrmAttributelonSelonrializelonr;
+import com.twittelonr.selonarch.common.util.analysis.LongTelonrmAttributelonSelonrializelonr;
+import com.twittelonr.selonarch.common.util.analysis.PayloadAttributelonSelonrializelonr;
 
-public class SchemaBuilder {
+public class SchelonmaBuildelonr {
 
-  public static final String CSF_VIEW_NAME_SEPARATOR = ".";
-  protected final ThriftSchema schema = new ThriftSchema();
-  protected final FieldNameToIdMapping idMapping;
-  protected final int tokenStreamSerializerVersion;
+  public static final String CSF_VIelonW_NAMelon_SelonPARATOR = ".";
+  protelonctelond final ThriftSchelonma schelonma = nelonw ThriftSchelonma();
+  protelonctelond final FielonldNamelonToIdMapping idMapping;
+  protelonctelond final int tokelonnStrelonamSelonrializelonrVelonrsion;
 
-  // As of now, we do not allow two fields to share the same field name.
-  // This set is used to perform this check.
-  private final Set<String> fieldNameSet = Sets.newHashSet();
+  // As of now, welon do not allow two fielonlds to sharelon thelon samelon fielonld namelon.
+  // This selont is uselond to pelonrform this chelonck.
+  privatelon final Selont<String> fielonldNamelonSelont = Selonts.nelonwHashSelont();
 
   /**
-   * Construct a schema builder with the given FieldNameToIdMapper.
-   * A SchemaBuilder is used to build a ThriftSchema incrementally.
+   * Construct a schelonma buildelonr with thelon givelonn FielonldNamelonToIdMappelonr.
+   * A SchelonmaBuildelonr is uselond to build a ThriftSchelonma increlonmelonntally.
    */
-  public SchemaBuilder(FieldNameToIdMapping idMapping,
-                       TokenStreamSerializer.Version tokenStreamSerializerVersion) {
+  public SchelonmaBuildelonr(FielonldNamelonToIdMapping idMapping,
+                       TokelonnStrelonamSelonrializelonr.Velonrsion tokelonnStrelonamSelonrializelonrVelonrsion) {
     this.idMapping = idMapping;
-    Preconditions.checkArgument(
-        tokenStreamSerializerVersion == TokenStreamSerializer.Version.VERSION_2);
-    this.tokenStreamSerializerVersion = tokenStreamSerializerVersion.ordinal();
+    Prelonconditions.chelonckArgumelonnt(
+        tokelonnStrelonamSelonrializelonrVelonrsion == TokelonnStrelonamSelonrializelonr.Velonrsion.VelonRSION_2);
+    this.tokelonnStrelonamSelonrializelonrVelonrsion = tokelonnStrelonamSelonrializelonrVelonrsion.ordinal();
   }
 
   /**
-   * Build ThriftSchema using settings accumulated so far.
+   * Build ThriftSchelonma using selonttings accumulatelond so far.
    */
-  public final ThriftSchema build() {
-    return schema;
+  public final ThriftSchelonma build() {
+    relonturn schelonma;
   }
 
   /**
-   * Uses fieldName also as facetName.
+   * Uselons fielonldNamelon also as facelontNamelon.
    */
-  public final SchemaBuilder withFacetConfigs(String fieldName,
-      boolean storeSkipList,
-      boolean storeOffensiveCounters,
-      boolean useCSFForFacetCounting) {
-    return withFacetConfigs(
-        fieldName,
-        fieldName,
-        storeSkipList,
-        storeOffensiveCounters,
-        useCSFForFacetCounting);
+  public final SchelonmaBuildelonr withFacelontConfigs(String fielonldNamelon,
+      boolelonan storelonSkipList,
+      boolelonan storelonOffelonnsivelonCountelonrs,
+      boolelonan uselonCSFForFacelontCounting) {
+    relonturn withFacelontConfigs(
+        fielonldNamelon,
+        fielonldNamelon,
+        storelonSkipList,
+        storelonOffelonnsivelonCountelonrs,
+        uselonCSFForFacelontCounting);
   }
 
   /**
-   * Add facet field configuration.
+   * Add facelont fielonld configuration.
    */
-  public final SchemaBuilder withFacetConfigs(String fieldName,
-      String facetName,
-      boolean storeSkipList,
-      boolean storeOffensiveCounters,
-      boolean useCSFForFacetCounting) {
-    if (!shouldIncludeField(fieldName)) {
-      return this;
+  public final SchelonmaBuildelonr withFacelontConfigs(String fielonldNamelon,
+      String facelontNamelon,
+      boolelonan storelonSkipList,
+      boolelonan storelonOffelonnsivelonCountelonrs,
+      boolelonan uselonCSFForFacelontCounting) {
+    if (!shouldIncludelonFielonld(fielonldNamelon)) {
+      relonturn this;
     }
-    ThriftFacetFieldSettings facetSettings = new ThriftFacetFieldSettings();
-    // As of now, all our facet names are the same as field names
-    facetSettings.setFacetName(facetName);
-    facetSettings.setStoreSkiplist(storeSkipList);
-    facetSettings.setStoreOffensiveCounters(storeOffensiveCounters);
-    facetSettings.setUseCSFForFacetCounting(useCSFForFacetCounting);
+    ThriftFacelontFielonldSelonttings facelontSelonttings = nelonw ThriftFacelontFielonldSelonttings();
+    // As of now, all our facelont namelons arelon thelon samelon as fielonld namelons
+    facelontSelonttings.selontFacelontNamelon(facelontNamelon);
+    facelontSelonttings.selontStorelonSkiplist(storelonSkipList);
+    facelontSelonttings.selontStorelonOffelonnsivelonCountelonrs(storelonOffelonnsivelonCountelonrs);
+    facelontSelonttings.selontUselonCSFForFacelontCounting(uselonCSFForFacelontCounting);
 
-    int fieldId = idMapping.getFieldID(fieldName);
-    ThriftFieldConfiguration fieldConfiguration = schema.getFieldConfigs().get(fieldId);
-    Preconditions.checkNotNull(fieldConfiguration,
-        "In Earlybird, a facet field must be indexed. "
-            + "No ThriftIndexedFieldSettings found for field " + fieldName);
-    fieldConfiguration.getSettings().setFacetFieldSettings(facetSettings);
-    return this;
+    int fielonldId = idMapping.gelontFielonldID(fielonldNamelon);
+    ThriftFielonldConfiguration fielonldConfiguration = schelonma.gelontFielonldConfigs().gelont(fielonldId);
+    Prelonconditions.chelonckNotNull(fielonldConfiguration,
+        "In elonarlybird, a facelont fielonld must belon indelonxelond. "
+            + "No ThriftIndelonxelondFielonldSelonttings found for fielonld " + fielonldNamelon);
+    fielonldConfiguration.gelontSelonttings().selontFacelontFielonldSelonttings(facelontSelonttings);
+    relonturn this;
   }
 
   /**
-   * Configure the given field ID to be used for partitioning.
+   * Configurelon thelon givelonn fielonld ID to belon uselond for partitioning.
    */
-  public final SchemaBuilder withPartitionFieldId(int partitionFieldId) {
-    schema.setPartitionFieldId(partitionFieldId);
-    return this;
+  public final SchelonmaBuildelonr withPartitionFielonldId(int partitionFielonldId) {
+    schelonma.selontPartitionFielonldId(partitionFielonldId);
+    relonturn this;
   }
 
   /**
-   * Add a column stride field into schema.
+   * Add a column stridelon fielonld into schelonma.
    */
-  public final SchemaBuilder withColumnStrideField(String fieldName,
-      ThriftCSFType type,
-      int numValuesPerDoc,
-      boolean updatable,
-      boolean loadIntoRam) {
-    return withColumnStrideField(fieldName, type, numValuesPerDoc, updatable, loadIntoRam, null);
+  public final SchelonmaBuildelonr withColumnStridelonFielonld(String fielonldNamelon,
+      ThriftCSFTypelon typelon,
+      int numValuelonsPelonrDoc,
+      boolelonan updatablelon,
+      boolelonan loadIntoRam) {
+    relonturn withColumnStridelonFielonld(fielonldNamelon, typelon, numValuelonsPelonrDoc, updatablelon, loadIntoRam, null);
   }
 
   /**
-   * Add a column stride field into schema that is variable length.
+   * Add a column stridelon fielonld into schelonma that is variablelon lelonngth.
    */
-  public final SchemaBuilder withBinaryColumnStrideField(String fieldName,
-                                                         boolean loadIntoRam) {
-    if (!shouldIncludeField(fieldName)) {
-      return this;
+  public final SchelonmaBuildelonr withBinaryColumnStridelonFielonld(String fielonldNamelon,
+                                                         boolelonan loadIntoRam) {
+    if (!shouldIncludelonFielonld(fielonldNamelon)) {
+      relonturn this;
     }
-    ThriftCSFFieldSettings csfFieldSettings = new ThriftCSFFieldSettings();
-    csfFieldSettings.setCsfType(ThriftCSFType.BYTE)
-        .setVariableLength(true)
-        .setLoadIntoRAM(loadIntoRam);
+    ThriftCSFFielonldSelonttings csfFielonldSelonttings = nelonw ThriftCSFFielonldSelonttings();
+    csfFielonldSelonttings.selontCsfTypelon(ThriftCSFTypelon.BYTelon)
+        .selontVariablelonLelonngth(truelon)
+        .selontLoadIntoRAM(loadIntoRam);
 
-    ThriftFieldSettings fieldSettings =
-        new ThriftFieldSettings().setCsfFieldSettings(csfFieldSettings);
-    ThriftFieldConfiguration fieldConf =
-        new ThriftFieldConfiguration(fieldName).setSettings(fieldSettings);
-    putIntoFieldConfigs(idMapping.getFieldID(fieldName), fieldConf);
-    return this;
+    ThriftFielonldSelonttings fielonldSelonttings =
+        nelonw ThriftFielonldSelonttings().selontCsfFielonldSelonttings(csfFielonldSelonttings);
+    ThriftFielonldConfiguration fielonldConf =
+        nelonw ThriftFielonldConfiguration(fielonldNamelon).selontSelonttings(fielonldSelonttings);
+    putIntoFielonldConfigs(idMapping.gelontFielonldID(fielonldNamelon), fielonldConf);
+    relonturn this;
   }
 
   /**
-   * Add a column stride field into schema which has a default value.
+   * Add a column stridelon fielonld into schelonma which has a delonfault valuelon.
    */
-  public final SchemaBuilder withColumnStrideField(String fieldName,
-      ThriftCSFType type,
-      int numValuesPerDoc,
-      boolean updatable,
-      boolean loadIntoRam,
-      Long defaultValue) {
-    if (!shouldIncludeField(fieldName)) {
-      return this;
+  public final SchelonmaBuildelonr withColumnStridelonFielonld(String fielonldNamelon,
+      ThriftCSFTypelon typelon,
+      int numValuelonsPelonrDoc,
+      boolelonan updatablelon,
+      boolelonan loadIntoRam,
+      Long delonfaultValuelon) {
+    if (!shouldIncludelonFielonld(fielonldNamelon)) {
+      relonturn this;
     }
-    ThriftCSFFieldSettings csfFieldSettings = new ThriftCSFFieldSettings();
-    csfFieldSettings.setCsfType(type)
-        .setVariableLength(false)
-        .setFixedLengthSettings(
-            new ThriftFixedLengthCSFSettings()
-                .setNumValuesPerDoc(numValuesPerDoc)
-                .setUpdateable(updatable))
-        .setLoadIntoRAM(loadIntoRam);
+    ThriftCSFFielonldSelonttings csfFielonldSelonttings = nelonw ThriftCSFFielonldSelonttings();
+    csfFielonldSelonttings.selontCsfTypelon(typelon)
+        .selontVariablelonLelonngth(falselon)
+        .selontFixelondLelonngthSelonttings(
+            nelonw ThriftFixelondLelonngthCSFSelonttings()
+                .selontNumValuelonsPelonrDoc(numValuelonsPelonrDoc)
+                .selontUpdatelonablelon(updatablelon))
+        .selontLoadIntoRAM(loadIntoRam);
 
-    if (defaultValue != null) {
-      csfFieldSettings.setDefaultValue(defaultValue);
+    if (delonfaultValuelon != null) {
+      csfFielonldSelonttings.selontDelonfaultValuelon(delonfaultValuelon);
     }
 
-    ThriftFieldSettings fieldSettings =
-        new ThriftFieldSettings().setCsfFieldSettings(csfFieldSettings);
-    ThriftFieldConfiguration fieldConf =
-        new ThriftFieldConfiguration(fieldName).setSettings(fieldSettings);
-    putIntoFieldConfigs(idMapping.getFieldID(fieldName), fieldConf);
-    return this;
+    ThriftFielonldSelonttings fielonldSelonttings =
+        nelonw ThriftFielonldSelonttings().selontCsfFielonldSelonttings(csfFielonldSelonttings);
+    ThriftFielonldConfiguration fielonldConf =
+        nelonw ThriftFielonldConfiguration(fielonldNamelon).selontSelonttings(fielonldSelonttings);
+    putIntoFielonldConfigs(idMapping.gelontFielonldID(fielonldNamelon), fielonldConf);
+    relonturn this;
   }
 
   /**
-   * Add a CSF view into schema. A view is a portion of another CSF.
+   * Add a CSF vielonw into schelonma. A vielonw is a portion of anothelonr CSF.
    */
-  public final SchemaBuilder withColumnStrideFieldView(
-      String fieldName,
-      ThriftCSFType csfType,
-      ThriftCSFType outputCSFType,
-      String baseFieldName,
-      int valueIndex,
+  public final SchelonmaBuildelonr withColumnStridelonFielonldVielonw(
+      String fielonldNamelon,
+      ThriftCSFTypelon csfTypelon,
+      ThriftCSFTypelon outputCSFTypelon,
+      String baselonFielonldNamelon,
+      int valuelonIndelonx,
       int bitStartPosition,
-      int bitLength,
-      ThriftFeatureNormalizationType featureNormalizationType,
-      @Nullable Set<ThriftFeatureUpdateConstraint> constraints) {
-    if (!shouldIncludeField(fieldName)) {
-      return this;
+      int bitLelonngth,
+      ThriftFelonaturelonNormalizationTypelon felonaturelonNormalizationTypelon,
+      @Nullablelon Selont<ThriftFelonaturelonUpdatelonConstraint> constraints) {
+    if (!shouldIncludelonFielonld(fielonldNamelon)) {
+      relonturn this;
     }
 
-    int baseFieldConfigID = idMapping.getFieldID(baseFieldName);
+    int baselonFielonldConfigID = idMapping.gelontFielonldID(baselonFielonldNamelon);
 
-    ThriftCSFViewSettings csfViewSettings = new ThriftCSFViewSettings()
-            .setBaseFieldConfigId(baseFieldConfigID)
-            .setCsfType(csfType)
-            .setValueIndex(valueIndex)
-            .setBitStartPosition(bitStartPosition)
-            .setBitLength(bitLength);
-    if (outputCSFType != null) {
-      csfViewSettings.setOutputCSFType(outputCSFType);
+    ThriftCSFVielonwSelonttings csfVielonwSelonttings = nelonw ThriftCSFVielonwSelonttings()
+            .selontBaselonFielonldConfigId(baselonFielonldConfigID)
+            .selontCsfTypelon(csfTypelon)
+            .selontValuelonIndelonx(valuelonIndelonx)
+            .selontBitStartPosition(bitStartPosition)
+            .selontBitLelonngth(bitLelonngth);
+    if (outputCSFTypelon != null) {
+      csfVielonwSelonttings.selontOutputCSFTypelon(outputCSFTypelon);
     }
-    if (featureNormalizationType != ThriftFeatureNormalizationType.NONE) {
-      csfViewSettings.setNormalizationType(featureNormalizationType);
+    if (felonaturelonNormalizationTypelon != ThriftFelonaturelonNormalizationTypelon.NONelon) {
+      csfVielonwSelonttings.selontNormalizationTypelon(felonaturelonNormalizationTypelon);
     }
     if (constraints != null) {
-      csfViewSettings.setFeatureUpdateConstraints(constraints);
+      csfVielonwSelonttings.selontFelonaturelonUpdatelonConstraints(constraints);
     }
-    ThriftFieldSettings fieldSettings = new ThriftFieldSettings()
-            .setCsfViewSettings(csfViewSettings);
-    ThriftFieldConfiguration fieldConf = new ThriftFieldConfiguration(fieldName)
-            .setSettings(fieldSettings);
+    ThriftFielonldSelonttings fielonldSelonttings = nelonw ThriftFielonldSelonttings()
+            .selontCsfVielonwSelonttings(csfVielonwSelonttings);
+    ThriftFielonldConfiguration fielonldConf = nelonw ThriftFielonldConfiguration(fielonldNamelon)
+            .selontSelonttings(fielonldSelonttings);
 
-    Map<Integer, ThriftFieldConfiguration> fieldConfigs = schema.getFieldConfigs();
-    verifyCSFViewSettings(fieldConfigs, fieldConf);
+    Map<Intelongelonr, ThriftFielonldConfiguration> fielonldConfigs = schelonma.gelontFielonldConfigs();
+    velonrifyCSFVielonwSelonttings(fielonldConfigs, fielonldConf);
 
-    putIntoFieldConfigs(idMapping.getFieldID(fieldName), fieldConf);
-    return this;
+    putIntoFielonldConfigs(idMapping.gelontFielonldID(fielonldNamelon), fielonldConf);
+    relonturn this;
   }
 
   /**
-   * Sanity checks for CSF view settings.
+   * Sanity cheloncks for CSF vielonw selonttings.
    */
-  public static void verifyCSFViewSettings(Map<Integer, ThriftFieldConfiguration> fieldConfigs,
-      ThriftFieldConfiguration fieldConf) {
-    Preconditions.checkNotNull(fieldConf.getSettings());
-    Preconditions.checkNotNull(fieldConf.getSettings().getCsfViewSettings());
-    ThriftCSFViewSettings csfViewSettings = fieldConf.getSettings().getCsfViewSettings();
+  public static void velonrifyCSFVielonwSelonttings(Map<Intelongelonr, ThriftFielonldConfiguration> fielonldConfigs,
+      ThriftFielonldConfiguration fielonldConf) {
+    Prelonconditions.chelonckNotNull(fielonldConf.gelontSelonttings());
+    Prelonconditions.chelonckNotNull(fielonldConf.gelontSelonttings().gelontCsfVielonwSelonttings());
+    ThriftCSFVielonwSelonttings csfVielonwSelonttings = fielonldConf.gelontSelonttings().gelontCsfVielonwSelonttings();
 
-    if (fieldConfigs != null) {
-      ThriftFieldConfiguration baseFieldConfig = fieldConfigs.get(
-              csfViewSettings.getBaseFieldConfigId());
-      if (baseFieldConfig != null) {
-        String baseFieldName = baseFieldConfig.getFieldName();
-        String expectedViewNamePrefix = baseFieldName + CSF_VIEW_NAME_SEPARATOR;
-        if (fieldConf.getFieldName().startsWith(expectedViewNamePrefix)) {
-          ThriftFieldSettings baseFieldSettings = baseFieldConfig.getSettings();
-          ThriftCSFFieldSettings baseFieldCSFSettings = baseFieldSettings.getCsfFieldSettings();
+    if (fielonldConfigs != null) {
+      ThriftFielonldConfiguration baselonFielonldConfig = fielonldConfigs.gelont(
+              csfVielonwSelonttings.gelontBaselonFielonldConfigId());
+      if (baselonFielonldConfig != null) {
+        String baselonFielonldNamelon = baselonFielonldConfig.gelontFielonldNamelon();
+        String elonxpelonctelondVielonwNamelonPrelonfix = baselonFielonldNamelon + CSF_VIelonW_NAMelon_SelonPARATOR;
+        if (fielonldConf.gelontFielonldNamelon().startsWith(elonxpelonctelondVielonwNamelonPrelonfix)) {
+          ThriftFielonldSelonttings baselonFielonldSelonttings = baselonFielonldConfig.gelontSelonttings();
+          ThriftCSFFielonldSelonttings baselonFielonldCSFSelonttings = baselonFielonldSelonttings.gelontCsfFielonldSelonttings();
 
-          if (baseFieldCSFSettings != null) {
-             if (!baseFieldCSFSettings.isVariableLength()
-                 && baseFieldCSFSettings.getFixedLengthSettings() != null) {
+          if (baselonFielonldCSFSelonttings != null) {
+             if (!baselonFielonldCSFSelonttings.isVariablelonLelonngth()
+                 && baselonFielonldCSFSelonttings.gelontFixelondLelonngthSelonttings() != null) {
 
-               ThriftCSFType baseCSFType = baseFieldCSFSettings.getCsfType();
-               switch (baseCSFType) {
-                 case BYTE:
-                   checkCSFViewPositions(baseFieldCSFSettings, 8, csfViewSettings);
-                   break;
-                 case INT:
-                   checkCSFViewPositions(baseFieldCSFSettings, 32, csfViewSettings);
-                   break;
-                 default:
-                   throw new IllegalStateException("Base field: " + baseFieldName
-                           + " is of a non-supported CSFType: " + baseCSFType);
+               ThriftCSFTypelon baselonCSFTypelon = baselonFielonldCSFSelonttings.gelontCsfTypelon();
+               switch (baselonCSFTypelon) {
+                 caselon BYTelon:
+                   chelonckCSFVielonwPositions(baselonFielonldCSFSelonttings, 8, csfVielonwSelonttings);
+                   brelonak;
+                 caselon INT:
+                   chelonckCSFVielonwPositions(baselonFielonldCSFSelonttings, 32, csfVielonwSelonttings);
+                   brelonak;
+                 delonfault:
+                   throw nelonw IllelongalStatelonelonxcelonption("Baselon fielonld: " + baselonFielonldNamelon
+                           + " is of a non-supportelond CSFTypelon: " + baselonCSFTypelon);
                }
-             } else {
-               throw new IllegalStateException("Base field: " + baseFieldName
-                       + " must be a fixed-length CSF field");
+             } elonlselon {
+               throw nelonw IllelongalStatelonelonxcelonption("Baselon fielonld: " + baselonFielonldNamelon
+                       + " must belon a fixelond-lelonngth CSF fielonld");
              }
-          } else {
-            throw new IllegalStateException("Base field: " + baseFieldName + " is not a CSF field");
+          } elonlselon {
+            throw nelonw IllelongalStatelonelonxcelonption("Baselon fielonld: " + baselonFielonldNamelon + " is not a CSF fielonld");
           }
-        } else {
-          throw new IllegalStateException("View field name for baseFieldConfigID: "
-                  + csfViewSettings.getBaseFieldConfigId() + " must start with: '"
-                  + expectedViewNamePrefix + "'");
+        } elonlselon {
+          throw nelonw IllelongalStatelonelonxcelonption("Vielonw fielonld namelon for baselonFielonldConfigID: "
+                  + csfVielonwSelonttings.gelontBaselonFielonldConfigId() + " must start with: '"
+                  + elonxpelonctelondVielonwNamelonPrelonfix + "'");
         }
-      } else {
-        throw new IllegalStateException("Can't add a view, no field defined for base fieldID: "
-                + csfViewSettings.getBaseFieldConfigId());
+      } elonlselon {
+        throw nelonw IllelongalStatelonelonxcelonption("Can't add a vielonw, no fielonld delonfinelond for baselon fielonldID: "
+                + csfVielonwSelonttings.gelontBaselonFielonldConfigId());
       }
-    } else {
-      throw new IllegalStateException("Can't add a view, no field configs defined.");
+    } elonlselon {
+      throw nelonw IllelongalStatelonelonxcelonption("Can't add a vielonw, no fielonld configs delonfinelond.");
     }
   }
 
-  private static void checkCSFViewPositions(ThriftCSFFieldSettings baseFieldCSFSettings,
-      int bitsPerValue,
-      ThriftCSFViewSettings csfViewSettings) {
-    ThriftFixedLengthCSFSettings fixedLengthCSFSettings =
-            baseFieldCSFSettings.getFixedLengthSettings();
-    Preconditions.checkNotNull(fixedLengthCSFSettings);
+  privatelon static void chelonckCSFVielonwPositions(ThriftCSFFielonldSelonttings baselonFielonldCSFSelonttings,
+      int bitsPelonrValuelon,
+      ThriftCSFVielonwSelonttings csfVielonwSelonttings) {
+    ThriftFixelondLelonngthCSFSelonttings fixelondLelonngthCSFSelonttings =
+            baselonFielonldCSFSelonttings.gelontFixelondLelonngthSelonttings();
+    Prelonconditions.chelonckNotNull(fixelondLelonngthCSFSelonttings);
 
-    int numValues = fixedLengthCSFSettings.getNumValuesPerDoc();
-    Preconditions.checkState(csfViewSettings.getValueIndex() >= 0,
-        "value index must be positive: " + csfViewSettings.getValueIndex());
-    Preconditions.checkState(csfViewSettings.getValueIndex() < numValues, "value index "
-        + csfViewSettings.getValueIndex() + " must be less than numValues: " + numValues);
+    int numValuelons = fixelondLelonngthCSFSelonttings.gelontNumValuelonsPelonrDoc();
+    Prelonconditions.chelonckStatelon(csfVielonwSelonttings.gelontValuelonIndelonx() >= 0,
+        "valuelon indelonx must belon positivelon: " + csfVielonwSelonttings.gelontValuelonIndelonx());
+    Prelonconditions.chelonckStatelon(csfVielonwSelonttings.gelontValuelonIndelonx() < numValuelons, "valuelon indelonx "
+        + csfVielonwSelonttings.gelontValuelonIndelonx() + " must belon lelonss than numValuelons: " + numValuelons);
 
-    Preconditions.checkState(csfViewSettings.getBitStartPosition() >= 0,
-        "bitStartPosition must be positive: " + csfViewSettings.getBitStartPosition());
-    Preconditions.checkState(csfViewSettings.getBitStartPosition() < bitsPerValue,
-        "bitStartPosition " + csfViewSettings.getBitStartPosition()
-            + " must be less than bitsPerValue " + bitsPerValue);
+    Prelonconditions.chelonckStatelon(csfVielonwSelonttings.gelontBitStartPosition() >= 0,
+        "bitStartPosition must belon positivelon: " + csfVielonwSelonttings.gelontBitStartPosition());
+    Prelonconditions.chelonckStatelon(csfVielonwSelonttings.gelontBitStartPosition() < bitsPelonrValuelon,
+        "bitStartPosition " + csfVielonwSelonttings.gelontBitStartPosition()
+            + " must belon lelonss than bitsPelonrValuelon " + bitsPelonrValuelon);
 
-    Preconditions.checkState(csfViewSettings.getBitLength() >= 1,
-        "bitLength must be positive: " + csfViewSettings.getBitLength());
+    Prelonconditions.chelonckStatelon(csfVielonwSelonttings.gelontBitLelonngth() >= 1,
+        "bitLelonngth must belon positivelon: " + csfVielonwSelonttings.gelontBitLelonngth());
 
-    Preconditions.checkState(
-        csfViewSettings.getBitStartPosition() + csfViewSettings.getBitLength() <= bitsPerValue,
-        String.format("bitStartPosition (%d) + bitLength (%d) must be less than bitsPerValue (%d)",
-        csfViewSettings.getBitStartPosition(), csfViewSettings.getBitLength(), bitsPerValue));
+    Prelonconditions.chelonckStatelon(
+        csfVielonwSelonttings.gelontBitStartPosition() + csfVielonwSelonttings.gelontBitLelonngth() <= bitsPelonrValuelon,
+        String.format("bitStartPosition (%d) + bitLelonngth (%d) must belon lelonss than bitsPelonrValuelon (%d)",
+        csfVielonwSelonttings.gelontBitStartPosition(), csfVielonwSelonttings.gelontBitLelonngth(), bitsPelonrValuelon));
   }
 
-  // No position; no freq; not pretokenized; not tokenized.
+  // No position; no frelonq; not prelontokelonnizelond; not tokelonnizelond.
   /**
-   * Norm is disabled as default. Like Lucene string field, or int/long fields.
+   * Norm is disablelond as delonfault. Likelon Lucelonnelon string fielonld, or int/long fielonlds.
    */
-  public final SchemaBuilder withIndexedNotTokenizedField(String fieldName) {
-    return withIndexedNotTokenizedField(fieldName, false);
+  public final SchelonmaBuildelonr withIndelonxelondNotTokelonnizelondFielonld(String fielonldNamelon) {
+    relonturn withIndelonxelondNotTokelonnizelondFielonld(fielonldNamelon, falselon);
   }
 
   /**
-   * Add an indexed but not tokenized field. This is similar to Lucene's StringField.
+   * Add an indelonxelond but not tokelonnizelond fielonld. This is similar to Lucelonnelon's StringFielonld.
    */
-  public final SchemaBuilder withIndexedNotTokenizedField(String fieldName,
-                                                          boolean supportOutOfOrderAppends) {
-    return withIndexedNotTokenizedField(fieldName, supportOutOfOrderAppends, true);
+  public final SchelonmaBuildelonr withIndelonxelondNotTokelonnizelondFielonld(String fielonldNamelon,
+                                                          boolelonan supportOutOfOrdelonrAppelonnds) {
+    relonturn withIndelonxelondNotTokelonnizelondFielonld(fielonldNamelon, supportOutOfOrdelonrAppelonnds, truelon);
   }
 
-  private final SchemaBuilder withIndexedNotTokenizedField(String fieldName,
-                                                          boolean supportOutOfOrderAppends,
-                                                          boolean omitNorms) {
-    if (!shouldIncludeField(fieldName)) {
-      return this;
+  privatelon final SchelonmaBuildelonr withIndelonxelondNotTokelonnizelondFielonld(String fielonldNamelon,
+                                                          boolelonan supportOutOfOrdelonrAppelonnds,
+                                                          boolelonan omitNorms) {
+    if (!shouldIncludelonFielonld(fielonldNamelon)) {
+      relonturn this;
     }
-    ThriftFieldSettings settings = getNoPositionNoFreqSettings(supportOutOfOrderAppends);
-    settings.getIndexedFieldSettings().setOmitNorms(omitNorms);
-    ThriftFieldConfiguration config = new ThriftFieldConfiguration(fieldName)
-        .setSettings(settings);
-    putIntoFieldConfigs(idMapping.getFieldID(fieldName), config);
-    return this;
+    ThriftFielonldSelonttings selonttings = gelontNoPositionNoFrelonqSelonttings(supportOutOfOrdelonrAppelonnds);
+    selonttings.gelontIndelonxelondFielonldSelonttings().selontOmitNorms(omitNorms);
+    ThriftFielonldConfiguration config = nelonw ThriftFielonldConfiguration(fielonldNamelon)
+        .selontSelonttings(selonttings);
+    putIntoFielonldConfigs(idMapping.gelontFielonldID(fielonldNamelon), config);
+    relonturn this;
   }
 
 
-  /** Makes the given field searchable by default, with the given weight. */
-  public final SchemaBuilder withSearchFieldByDefault(
-      String fieldName, float textSearchableFieldWeight) {
-    if (!shouldIncludeField(fieldName)) {
-      return this;
+  /** Makelons thelon givelonn fielonld selonarchablelon by delonfault, with thelon givelonn welonight. */
+  public final SchelonmaBuildelonr withSelonarchFielonldByDelonfault(
+      String fielonldNamelon, float telonxtSelonarchablelonFielonldWelonight) {
+    if (!shouldIncludelonFielonld(fielonldNamelon)) {
+      relonturn this;
     }
 
-    ThriftFieldSettings settings =
-        schema.getFieldConfigs().get(idMapping.getFieldID(fieldName)).getSettings();
-    settings.setSearchFieldSettings(
-        new ThriftSearchFieldSettings()
-            .setTextSearchableFieldWeight(textSearchableFieldWeight)
-            .setTextDefaultSearchable(true));
+    ThriftFielonldSelonttings selonttings =
+        schelonma.gelontFielonldConfigs().gelont(idMapping.gelontFielonldID(fielonldNamelon)).gelontSelonttings();
+    selonttings.selontSelonarchFielonldSelonttings(
+        nelonw ThriftSelonarchFielonldSelonttings()
+            .selontTelonxtSelonarchablelonFielonldWelonight(telonxtSelonarchablelonFielonldWelonight)
+            .selontTelonxtDelonfaultSelonarchablelon(truelon));
 
-    return this;
+    relonturn this;
   }
 
   /**
-   * Similar to Lucene's TextField. The string is analyzed using the default/override analyzer.
-   * @param fieldName
-   * @param addHfPairIfHfFieldsArePresent Add hfPair fields if they exists in the schema.
-   *            For certain text fields, adding hfPair fields are usually preferred, but they may
-   *            not exist in the schema, in which case the hfPair fields will not be added.
+   * Similar to Lucelonnelon's TelonxtFielonld. Thelon string is analyzelond using thelon delonfault/ovelonrridelon analyzelonr.
+   * @param fielonldNamelon
+   * @param addHfPairIfHfFielonldsArelonPrelonselonnt Add hfPair fielonlds if thelony elonxists in thelon schelonma.
+   *            For celonrtain telonxt fielonlds, adding hfPair fielonlds arelon usually prelonfelonrrelond, but thelony may
+   *            not elonxist in thelon schelonma, in which caselon thelon hfPair fielonlds will not belon addelond.
    */
-  public final SchemaBuilder withTextField(String fieldName,
-                                           boolean addHfPairIfHfFieldsArePresent) {
-    if (!shouldIncludeField(fieldName)) {
-      return this;
+  public final SchelonmaBuildelonr withTelonxtFielonld(String fielonldNamelon,
+                                           boolelonan addHfPairIfHfFielonldsArelonPrelonselonnt) {
+    if (!shouldIncludelonFielonld(fielonldNamelon)) {
+      relonturn this;
     }
-    ThriftFieldConfiguration config = new ThriftFieldConfiguration(fieldName).setSettings(
-        getDefaultSettings(ThriftIndexOptions.DOCS_AND_FREQS_AND_POSITIONS));
+    ThriftFielonldConfiguration config = nelonw ThriftFielonldConfiguration(fielonldNamelon).selontSelonttings(
+        gelontDelonfaultSelonttings(ThriftIndelonxOptions.DOCS_AND_FRelonQS_AND_POSITIONS));
 
-    if (addHfPairIfHfFieldsArePresent) {
-      // Add hfPair fields only if they exist in the schema for the cluster
-      boolean hfPair = shouldIncludeField(ImmutableSchema.HF_TERM_PAIRS_FIELD)
-                       && shouldIncludeField(ImmutableSchema.HF_PHRASE_PAIRS_FIELD);
-      config.getSettings().getIndexedFieldSettings().setIndexHighFreqTermPairs(hfPair);
+    if (addHfPairIfHfFielonldsArelonPrelonselonnt) {
+      // Add hfPair fielonlds only if thelony elonxist in thelon schelonma for thelon clustelonr
+      boolelonan hfPair = shouldIncludelonFielonld(ImmutablelonSchelonma.HF_TelonRM_PAIRS_FIelonLD)
+                       && shouldIncludelonFielonld(ImmutablelonSchelonma.HF_PHRASelon_PAIRS_FIelonLD);
+      config.gelontSelonttings().gelontIndelonxelondFielonldSelonttings().selontIndelonxHighFrelonqTelonrmPairs(hfPair);
     }
 
-    config.getSettings().getIndexedFieldSettings().setTokenized(true);
-    putIntoFieldConfigs(idMapping.getFieldID(fieldName), config);
-    return this;
+    config.gelontSelonttings().gelontIndelonxelondFielonldSelonttings().selontTokelonnizelond(truelon);
+    putIntoFielonldConfigs(idMapping.gelontFielonldID(fielonldNamelon), config);
+    relonturn this;
   }
 
   /**
-   * Marked the given field as having per position payload.
+   * Markelond thelon givelonn fielonld as having pelonr position payload.
    */
-  public final SchemaBuilder withPerPositionPayload(String fieldName, int defaultPayloadLength) {
-    if (!shouldIncludeField(fieldName)) {
-      return this;
+  public final SchelonmaBuildelonr withPelonrPositionPayload(String fielonldNamelon, int delonfaultPayloadLelonngth) {
+    if (!shouldIncludelonFielonld(fielonldNamelon)) {
+      relonturn this;
     }
-    ThriftFieldSettings settings =
-            schema.getFieldConfigs().get(idMapping.getFieldID(fieldName)).getSettings();
+    ThriftFielonldSelonttings selonttings =
+            schelonma.gelontFielonldConfigs().gelont(idMapping.gelontFielonldID(fielonldNamelon)).gelontSelonttings();
 
-    settings.getIndexedFieldSettings().setStorePerPositionPayloads(true);
-    settings.getIndexedFieldSettings().setDefaultPerPositionPayloadLength(defaultPayloadLength);
-    return this;
+    selonttings.gelontIndelonxelondFielonldSelonttings().selontStorelonPelonrPositionPayloads(truelon);
+    selonttings.gelontIndelonxelondFielonldSelonttings().selontDelonfaultPelonrPositionPayloadLelonngth(delonfaultPayloadLelonngth);
+    relonturn this;
   }
 
   /**
-   * Add field into schema that is pre-tokenized and does not have position.
-   * E.g. hashtags / stocks / card_domain
+   * Add fielonld into schelonma that is prelon-tokelonnizelond and doelons not havelon position.
+   * elon.g. hashtags / stocks / card_domain
    */
-  public final SchemaBuilder withPretokenizedNoPositionField(String fieldName) {
-    if (!shouldIncludeField(fieldName)) {
-      return this;
+  public final SchelonmaBuildelonr withPrelontokelonnizelondNoPositionFielonld(String fielonldNamelon) {
+    if (!shouldIncludelonFielonld(fielonldNamelon)) {
+      relonturn this;
     }
-    ThriftFieldConfiguration config = new ThriftFieldConfiguration(fieldName)
-        .setSettings(getPretokenizedNoPositionFieldSetting());
-    // Add hfPair fields only if they exist in the schema for the cluster
-    boolean hfPair = shouldIncludeField(ImmutableSchema.HF_TERM_PAIRS_FIELD)
-                         && shouldIncludeField(ImmutableSchema.HF_PHRASE_PAIRS_FIELD);
-    config.getSettings().getIndexedFieldSettings().setIndexHighFreqTermPairs(hfPair);
-    putIntoFieldConfigs(idMapping.getFieldID(fieldName), config);
-    return this;
+    ThriftFielonldConfiguration config = nelonw ThriftFielonldConfiguration(fielonldNamelon)
+        .selontSelonttings(gelontPrelontokelonnizelondNoPositionFielonldSelontting());
+    // Add hfPair fielonlds only if thelony elonxist in thelon schelonma for thelon clustelonr
+    boolelonan hfPair = shouldIncludelonFielonld(ImmutablelonSchelonma.HF_TelonRM_PAIRS_FIelonLD)
+                         && shouldIncludelonFielonld(ImmutablelonSchelonma.HF_PHRASelon_PAIRS_FIelonLD);
+    config.gelontSelonttings().gelontIndelonxelondFielonldSelonttings().selontIndelonxHighFrelonqTelonrmPairs(hfPair);
+    putIntoFielonldConfigs(idMapping.gelontFielonldID(fielonldNamelon), config);
+    relonturn this;
   }
 
   /**
-   * Mark the field to have ordered term dictionary.
-   * In Lucene, term dictionary is sorted. In Earlybird, term dictionary order is not
-   * guaranteed unless this is turned on.
+   * Mark thelon fielonld to havelon ordelonrelond telonrm dictionary.
+   * In Lucelonnelon, telonrm dictionary is sortelond. In elonarlybird, telonrm dictionary ordelonr is not
+   * guarantelonelond unlelonss this is turnelond on.
    */
-  public final SchemaBuilder withOrderedTerms(String fieldName) {
-    if (!shouldIncludeField(fieldName)) {
-      return this;
+  public final SchelonmaBuildelonr withOrdelonrelondTelonrms(String fielonldNamelon) {
+    if (!shouldIncludelonFielonld(fielonldNamelon)) {
+      relonturn this;
     }
-    ThriftFieldSettings settings =
-        schema.getFieldConfigs().get(idMapping.getFieldID(fieldName)).getSettings();
+    ThriftFielonldSelonttings selonttings =
+        schelonma.gelontFielonldConfigs().gelont(idMapping.gelontFielonldID(fielonldNamelon)).gelontSelonttings();
 
-    settings.getIndexedFieldSettings().setSupportOrderedTerms(true);
-    return this;
+    selonttings.gelontIndelonxelondFielonldSelonttings().selontSupportOrdelonrelondTelonrms(truelon);
+    relonturn this;
   }
 
   /**
-   * Support lookup of term text by term id in the term dictionary.
+   * Support lookup of telonrm telonxt by telonrm id in thelon telonrm dictionary.
    */
-  public final SchemaBuilder withTermTextLookup(String fieldName) {
-    if (!shouldIncludeField(fieldName)) {
-      return this;
+  public final SchelonmaBuildelonr withTelonrmTelonxtLookup(String fielonldNamelon) {
+    if (!shouldIncludelonFielonld(fielonldNamelon)) {
+      relonturn this;
     }
-    ThriftFieldSettings settings =
-        schema.getFieldConfigs().get(idMapping.getFieldID(fieldName)).getSettings();
+    ThriftFielonldSelonttings selonttings =
+        schelonma.gelontFielonldConfigs().gelont(idMapping.gelontFielonldID(fielonldNamelon)).gelontSelonttings();
 
-    settings.getIndexedFieldSettings().setSupportTermTextLookup(true);
-    return this;
+    selonttings.gelontIndelonxelondFielonldSelonttings().selontSupportTelonrmTelonxtLookup(truelon);
+    relonturn this;
   }
 
   /**
-   * Add a text field that is pre-tokenized, so not analyzed again in the index (e.g. Earlybird).
+   * Add a telonxt fielonld that is prelon-tokelonnizelond, so not analyzelond again in thelon indelonx (elon.g. elonarlybird).
    *
-   * Note that the token streams MUST be created using the attributes defined in
-   * {@link com.twitter.search.common.util.text.TweetTokenStreamSerializer}.
+   * Notelon that thelon tokelonn strelonams MUST belon crelonatelond using thelon attributelons delonfinelond in
+   * {@link com.twittelonr.selonarch.common.util.telonxt.TwelonelontTokelonnStrelonamSelonrializelonr}.
    */
-  public final SchemaBuilder withPretokenizedTextField(
-      String fieldName,
-      boolean addHfPairIfHfFieldsArePresent) {
-    if (!shouldIncludeField(fieldName)) {
-      return this;
+  public final SchelonmaBuildelonr withPrelontokelonnizelondTelonxtFielonld(
+      String fielonldNamelon,
+      boolelonan addHfPairIfHfFielonldsArelonPrelonselonnt) {
+    if (!shouldIncludelonFielonld(fielonldNamelon)) {
+      relonturn this;
     }
-    ThriftFieldConfiguration config = new ThriftFieldConfiguration(fieldName)
-        .setSettings(getDefaultPretokenizedSettings(
-            ThriftIndexOptions.DOCS_AND_FREQS_AND_POSITIONS));
-    putIntoFieldConfigs(idMapping.getFieldID(fieldName), config);
-    // Add hfPair fields only if they exist in the schema for the cluster
-    if (addHfPairIfHfFieldsArePresent) {
-      // Add hfPair fields only if they exist in the schema for the cluster
-      boolean hfPair = shouldIncludeField(ImmutableSchema.HF_TERM_PAIRS_FIELD)
-                       && shouldIncludeField(ImmutableSchema.HF_PHRASE_PAIRS_FIELD);
-      config.getSettings().getIndexedFieldSettings().setIndexHighFreqTermPairs(hfPair);
+    ThriftFielonldConfiguration config = nelonw ThriftFielonldConfiguration(fielonldNamelon)
+        .selontSelonttings(gelontDelonfaultPrelontokelonnizelondSelonttings(
+            ThriftIndelonxOptions.DOCS_AND_FRelonQS_AND_POSITIONS));
+    putIntoFielonldConfigs(idMapping.gelontFielonldID(fielonldNamelon), config);
+    // Add hfPair fielonlds only if thelony elonxist in thelon schelonma for thelon clustelonr
+    if (addHfPairIfHfFielonldsArelonPrelonselonnt) {
+      // Add hfPair fielonlds only if thelony elonxist in thelon schelonma for thelon clustelonr
+      boolelonan hfPair = shouldIncludelonFielonld(ImmutablelonSchelonma.HF_TelonRM_PAIRS_FIelonLD)
+                       && shouldIncludelonFielonld(ImmutablelonSchelonma.HF_PHRASelon_PAIRS_FIelonLD);
+      config.gelontSelonttings().gelontIndelonxelondFielonldSelonttings().selontIndelonxHighFrelonqTelonrmPairs(hfPair);
     }
-    return this;
+    relonturn this;
   }
 
   /**
-   * Add a feature configuration
+   * Add a felonaturelon configuration
    */
-  public final SchemaBuilder withFeatureConfiguration(String baseFieldName, String viewName,
-                                                      FeatureConfiguration featureConfiguration) {
-    return withColumnStrideFieldView(
-        viewName,
-        // Defaulting all encoded tweet features to int since the underlying encoded tweet features
-        // are ints.
-        ThriftCSFType.INT,
-        featureConfiguration.getOutputType(),
-        baseFieldName,
-        featureConfiguration.getValueIndex(),
-        featureConfiguration.getBitStartPosition(),
-        featureConfiguration.getBitLength(),
-        featureConfiguration.getFeatureNormalizationType(),
-        featureConfiguration.getUpdateConstraints()
+  public final SchelonmaBuildelonr withFelonaturelonConfiguration(String baselonFielonldNamelon, String vielonwNamelon,
+                                                      FelonaturelonConfiguration felonaturelonConfiguration) {
+    relonturn withColumnStridelonFielonldVielonw(
+        vielonwNamelon,
+        // Delonfaulting all elonncodelond twelonelont felonaturelons to int sincelon thelon undelonrlying elonncodelond twelonelont felonaturelons
+        // arelon ints.
+        ThriftCSFTypelon.INT,
+        felonaturelonConfiguration.gelontOutputTypelon(),
+        baselonFielonldNamelon,
+        felonaturelonConfiguration.gelontValuelonIndelonx(),
+        felonaturelonConfiguration.gelontBitStartPosition(),
+        felonaturelonConfiguration.gelontBitLelonngth(),
+        felonaturelonConfiguration.gelontFelonaturelonNormalizationTypelon(),
+        felonaturelonConfiguration.gelontUpdatelonConstraints()
     );
   }
 
   /**
-   * Add a long field in schema. This field uses LongTermAttribute.
+   * Add a long fielonld in schelonma. This fielonld uselons LongTelonrmAttributelon.
    */
-  private SchemaBuilder addLongTermField(String fieldName, boolean useSortableEncoding) {
-    if (!shouldIncludeField(fieldName)) {
-      return this;
+  privatelon SchelonmaBuildelonr addLongTelonrmFielonld(String fielonldNamelon, boolelonan uselonSortablelonelonncoding) {
+    if (!shouldIncludelonFielonld(fielonldNamelon)) {
+      relonturn this;
     }
-    ThriftFieldSettings longTermSettings = getEarlybirdNumericFieldSettings();
-    ThriftTokenStreamSerializer tokenStreamSerializer =
-        new ThriftTokenStreamSerializer(tokenStreamSerializerVersion);
-    tokenStreamSerializer.setAttributeSerializerClassNames(
-        ImmutableList.<String>of(LongTermAttributeSerializer.class.getName()));
-    longTermSettings.getIndexedFieldSettings().setTokenStreamSerializer(tokenStreamSerializer);
+    ThriftFielonldSelonttings longTelonrmSelonttings = gelontelonarlybirdNumelonricFielonldSelonttings();
+    ThriftTokelonnStrelonamSelonrializelonr tokelonnStrelonamSelonrializelonr =
+        nelonw ThriftTokelonnStrelonamSelonrializelonr(tokelonnStrelonamSelonrializelonrVelonrsion);
+    tokelonnStrelonamSelonrializelonr.selontAttributelonSelonrializelonrClassNamelons(
+        ImmutablelonList.<String>of(LongTelonrmAttributelonSelonrializelonr.class.gelontNamelon()));
+    longTelonrmSelonttings.gelontIndelonxelondFielonldSelonttings().selontTokelonnStrelonamSelonrializelonr(tokelonnStrelonamSelonrializelonr);
 
-    ThriftIndexedNumericFieldSettings numericFieldSettings =
-        new ThriftIndexedNumericFieldSettings(true);
-    numericFieldSettings.setNumericType(ThriftNumericType.LONG);
-    numericFieldSettings.setUseSortableEncoding(useSortableEncoding);
-    longTermSettings.getIndexedFieldSettings().setNumericFieldSettings(numericFieldSettings);
+    ThriftIndelonxelondNumelonricFielonldSelonttings numelonricFielonldSelonttings =
+        nelonw ThriftIndelonxelondNumelonricFielonldSelonttings(truelon);
+    numelonricFielonldSelonttings.selontNumelonricTypelon(ThriftNumelonricTypelon.LONG);
+    numelonricFielonldSelonttings.selontUselonSortablelonelonncoding(uselonSortablelonelonncoding);
+    longTelonrmSelonttings.gelontIndelonxelondFielonldSelonttings().selontNumelonricFielonldSelonttings(numelonricFielonldSelonttings);
 
-    putIntoFieldConfigs(idMapping.getFieldID(fieldName),
-        new ThriftFieldConfiguration(fieldName).setSettings(longTermSettings));
-    return this;
+    putIntoFielonldConfigs(idMapping.gelontFielonldID(fielonldNamelon),
+        nelonw ThriftFielonldConfiguration(fielonldNamelon).selontSelonttings(longTelonrmSelonttings));
+    relonturn this;
   }
 
-  public final SchemaBuilder withSortableLongTermField(String fieldName) {
-    return addLongTermField(fieldName, true);
+  public final SchelonmaBuildelonr withSortablelonLongTelonrmFielonld(String fielonldNamelon) {
+    relonturn addLongTelonrmFielonld(fielonldNamelon, truelon);
   }
 
-  public final SchemaBuilder withLongTermField(String fieldName) {
-    return addLongTermField(fieldName, false);
+  public final SchelonmaBuildelonr withLongTelonrmFielonld(String fielonldNamelon) {
+    relonturn addLongTelonrmFielonld(fielonldNamelon, falselon);
   }
 
   /**
-   * Add an int field in schema. This field uses IntTermAttribute.
+   * Add an int fielonld in schelonma. This fielonld uselons IntTelonrmAttributelon.
    */
-  public final SchemaBuilder withIntTermField(String fieldName) {
-    if (!shouldIncludeField(fieldName)) {
-      return this;
+  public final SchelonmaBuildelonr withIntTelonrmFielonld(String fielonldNamelon) {
+    if (!shouldIncludelonFielonld(fielonldNamelon)) {
+      relonturn this;
     }
-    ThriftFieldSettings intTermSettings = getEarlybirdNumericFieldSettings();
-    ThriftTokenStreamSerializer attributeSerializer =
-        new ThriftTokenStreamSerializer(tokenStreamSerializerVersion);
-    attributeSerializer.setAttributeSerializerClassNames(
-        ImmutableList.<String>of(IntTermAttributeSerializer.class.getName()));
-    intTermSettings.getIndexedFieldSettings().setTokenStreamSerializer(attributeSerializer);
+    ThriftFielonldSelonttings intTelonrmSelonttings = gelontelonarlybirdNumelonricFielonldSelonttings();
+    ThriftTokelonnStrelonamSelonrializelonr attributelonSelonrializelonr =
+        nelonw ThriftTokelonnStrelonamSelonrializelonr(tokelonnStrelonamSelonrializelonrVelonrsion);
+    attributelonSelonrializelonr.selontAttributelonSelonrializelonrClassNamelons(
+        ImmutablelonList.<String>of(IntTelonrmAttributelonSelonrializelonr.class.gelontNamelon()));
+    intTelonrmSelonttings.gelontIndelonxelondFielonldSelonttings().selontTokelonnStrelonamSelonrializelonr(attributelonSelonrializelonr);
 
-    ThriftIndexedNumericFieldSettings numericFieldSettings =
-        new ThriftIndexedNumericFieldSettings(true);
-    numericFieldSettings.setNumericType(ThriftNumericType.INT);
-    intTermSettings.getIndexedFieldSettings().setNumericFieldSettings(numericFieldSettings);
+    ThriftIndelonxelondNumelonricFielonldSelonttings numelonricFielonldSelonttings =
+        nelonw ThriftIndelonxelondNumelonricFielonldSelonttings(truelon);
+    numelonricFielonldSelonttings.selontNumelonricTypelon(ThriftNumelonricTypelon.INT);
+    intTelonrmSelonttings.gelontIndelonxelondFielonldSelonttings().selontNumelonricFielonldSelonttings(numelonricFielonldSelonttings);
 
-    putIntoFieldConfigs(idMapping.getFieldID(fieldName),
-        new ThriftFieldConfiguration(fieldName).setSettings(intTermSettings));
-    return this;
+    putIntoFielonldConfigs(idMapping.gelontFielonldID(fielonldNamelon),
+        nelonw ThriftFielonldConfiguration(fielonldNamelon).selontSelonttings(intTelonrmSelonttings));
+    relonturn this;
   }
 
   /**
-   * Timeline and ExpertSearch uses
-   * {@link com.twitter.search.common.util.analysis.PayloadWeightedTokenizer} to store weighted
-   * values.
+   * Timelonlinelon and elonxpelonrtSelonarch uselons
+   * {@link com.twittelonr.selonarch.common.util.analysis.PayloadWelonightelondTokelonnizelonr} to storelon welonightelond
+   * valuelons.
    *
-   * E.g. for the PRODUCED_LANGUAGES and CONSUMED_LANGUAGES fields, they contain not a single,
-   * value, but instead a list of values with a weight associated with each value.
+   * elon.g. for thelon PRODUCelonD_LANGUAGelonS and CONSUMelonD_LANGUAGelonS fielonlds, thelony contain not a singlelon,
+   * valuelon, but instelonad a list of valuelons with a welonight associatelond with elonach valuelon.
    *
-   * This method adds an indexed field that uses
-   * {@link com.twitter.search.common.util.analysis.PayloadWeightedTokenizer}.
+   * This melonthod adds an indelonxelond fielonld that uselons
+   * {@link com.twittelonr.selonarch.common.util.analysis.PayloadWelonightelondTokelonnizelonr}.
    */
-  public final SchemaBuilder withCharTermPayloadWeightedField(String fieldName) {
-    ThriftFieldConfiguration config = new ThriftFieldConfiguration(fieldName)
-        .setSettings(getPayloadWeightedSettings(ThriftIndexOptions.DOCS_AND_FREQS_AND_POSITIONS));
-    putIntoFieldConfigs(idMapping.getFieldID(fieldName), config);
-    return this;
+  public final SchelonmaBuildelonr withCharTelonrmPayloadWelonightelondFielonld(String fielonldNamelon) {
+    ThriftFielonldConfiguration config = nelonw ThriftFielonldConfiguration(fielonldNamelon)
+        .selontSelonttings(gelontPayloadWelonightelondSelonttings(ThriftIndelonxOptions.DOCS_AND_FRelonQS_AND_POSITIONS));
+    putIntoFielonldConfigs(idMapping.gelontFielonldID(fielonldNamelon), config);
+    relonturn this;
   }
 
   /**
-   * Set the version and description of this schema.
+   * Selont thelon velonrsion and delonscription of this schelonma.
    */
-  public final SchemaBuilder withSchemaVersion(
-      int majorVersionNumber,
-      int minorVersionNumber,
-      String versionDesc,
-      boolean isOfficial) {
-    schema.setMajorVersionNumber(majorVersionNumber);
-    schema.setMinorVersionNumber(minorVersionNumber);
+  public final SchelonmaBuildelonr withSchelonmaVelonrsion(
+      int majorVelonrsionNumbelonr,
+      int minorVelonrsionNumbelonr,
+      String velonrsionDelonsc,
+      boolelonan isOfficial) {
+    schelonma.selontMajorVelonrsionNumbelonr(majorVelonrsionNumbelonr);
+    schelonma.selontMinorVelonrsionNumbelonr(minorVelonrsionNumbelonr);
 
-    schema.setVersion(majorVersionNumber + ":" + versionDesc);
-    schema.setVersionIsOfficial(isOfficial);
+    schelonma.selontVelonrsion(majorVelonrsionNumbelonr + ":" + velonrsionDelonsc);
+    schelonma.selontVelonrsionIsOfficial(isOfficial);
 
-    return this;
+    relonturn this;
   }
 
-  public final SchemaBuilder withSchemaVersion(
-      int majorVersionNumber,
-      String versionDesc,
-      boolean isOfficial) {
-    return withSchemaVersion(majorVersionNumber, 0, versionDesc, isOfficial);
+  public final SchelonmaBuildelonr withSchelonmaVelonrsion(
+      int majorVelonrsionNumbelonr,
+      String velonrsionDelonsc,
+      boolelonan isOfficial) {
+    relonturn withSchelonmaVelonrsion(majorVelonrsionNumbelonr, 0, velonrsionDelonsc, isOfficial);
   }
 
-  protected void putIntoFieldConfigs(int id, ThriftFieldConfiguration config) {
-    if (schema.getFieldConfigs() != null && schema.getFieldConfigs().containsKey(id)) {
-      throw new IllegalStateException("Already have a ThriftFieldConfiguration for field id " + id);
+  protelonctelond void putIntoFielonldConfigs(int id, ThriftFielonldConfiguration config) {
+    if (schelonma.gelontFielonldConfigs() != null && schelonma.gelontFielonldConfigs().containsKelony(id)) {
+      throw nelonw IllelongalStatelonelonxcelonption("Alrelonady havelon a ThriftFielonldConfiguration for fielonld id " + id);
     }
 
-    if (fieldNameSet.contains(config.getFieldName())) {
-      throw new IllegalStateException("Already have a ThriftFieldConfiguration for field "
-          + config.getFieldName());
+    if (fielonldNamelonSelont.contains(config.gelontFielonldNamelon())) {
+      throw nelonw IllelongalStatelonelonxcelonption("Alrelonady havelon a ThriftFielonldConfiguration for fielonld "
+          + config.gelontFielonldNamelon());
     }
-    fieldNameSet.add(config.getFieldName());
-    schema.putToFieldConfigs(id, config);
+    fielonldNamelonSelont.add(config.gelontFielonldNamelon());
+    schelonma.putToFielonldConfigs(id, config);
   }
 
-  // Default field settings. Most field settings are similar to this.
-  protected ThriftFieldSettings getDefaultSettings(ThriftIndexOptions indexOption) {
-    return getDefaultSettings(indexOption, false);
+  // Delonfault fielonld selonttings. Most fielonld selonttings arelon similar to this.
+  protelonctelond ThriftFielonldSelonttings gelontDelonfaultSelonttings(ThriftIndelonxOptions indelonxOption) {
+    relonturn gelontDelonfaultSelonttings(indelonxOption, falselon);
   }
 
-  protected ThriftFieldSettings getDefaultSettings(ThriftIndexOptions indexOption,
-                                                   boolean supportOutOfOrderAppends) {
-    ThriftFieldSettings fieldSettings = new ThriftFieldSettings();
-    ThriftIndexedFieldSettings indexedFieldSettings = new ThriftIndexedFieldSettings();
-    indexedFieldSettings
-        .setIndexed(true)
-        .setStored(false)
-        .setTokenized(false)
-        .setStoreTermVectors(false)
-        .setStoreTermVectorOffsets(false)
-        .setStoreTermVectorPayloads(false)
-        .setStoreTermVectorPositions(false)
-        .setSupportOutOfOrderAppends(supportOutOfOrderAppends)
-        .setIndexOptions(indexOption)
-        .setOmitNorms(true); // All Earlybird fields omit norms.
-    fieldSettings.setIndexedFieldSettings(indexedFieldSettings);
-    return fieldSettings;
+  protelonctelond ThriftFielonldSelonttings gelontDelonfaultSelonttings(ThriftIndelonxOptions indelonxOption,
+                                                   boolelonan supportOutOfOrdelonrAppelonnds) {
+    ThriftFielonldSelonttings fielonldSelonttings = nelonw ThriftFielonldSelonttings();
+    ThriftIndelonxelondFielonldSelonttings indelonxelondFielonldSelonttings = nelonw ThriftIndelonxelondFielonldSelonttings();
+    indelonxelondFielonldSelonttings
+        .selontIndelonxelond(truelon)
+        .selontStorelond(falselon)
+        .selontTokelonnizelond(falselon)
+        .selontStorelonTelonrmVelonctors(falselon)
+        .selontStorelonTelonrmVelonctorOffselonts(falselon)
+        .selontStorelonTelonrmVelonctorPayloads(falselon)
+        .selontStorelonTelonrmVelonctorPositions(falselon)
+        .selontSupportOutOfOrdelonrAppelonnds(supportOutOfOrdelonrAppelonnds)
+        .selontIndelonxOptions(indelonxOption)
+        .selontOmitNorms(truelon); // All elonarlybird fielonlds omit norms.
+    fielonldSelonttings.selontIndelonxelondFielonldSelonttings(indelonxelondFielonldSelonttings);
+    relonturn fielonldSelonttings;
   }
 
   /**
-   * Default field settings for fields that are pretokenized
+   * Delonfault fielonld selonttings for fielonlds that arelon prelontokelonnizelond
    *
-   * The fields that use these settings will need to be tokenized using a serializer with the
-   * attributes defined in {@link com.twitter.search.common.util.text.TweetTokenStreamSerializer}.
+   * Thelon fielonlds that uselon thelonselon selonttings will nelonelond to belon tokelonnizelond using a selonrializelonr with thelon
+   * attributelons delonfinelond in {@link com.twittelonr.selonarch.common.util.telonxt.TwelonelontTokelonnStrelonamSelonrializelonr}.
    */
-  protected final ThriftFieldSettings getDefaultPretokenizedSettings(
-      ThriftIndexOptions indexOption) {
-    ThriftFieldSettings fieldSettings = getDefaultSettings(indexOption);
-    fieldSettings.getIndexedFieldSettings().setTokenized(true);
-    ThriftTokenStreamSerializer attributeSerializer =
-        new ThriftTokenStreamSerializer(tokenStreamSerializerVersion);
-    attributeSerializer.setAttributeSerializerClassNames(
-        ImmutableList.<String>of(
-            CharSequenceTermAttributeSerializer.class.getName(),
-            PositionIncrementAttributeSerializer.class.getName(),
-            TokenTypeAttributeSerializer.class.getName()));
+  protelonctelond final ThriftFielonldSelonttings gelontDelonfaultPrelontokelonnizelondSelonttings(
+      ThriftIndelonxOptions indelonxOption) {
+    ThriftFielonldSelonttings fielonldSelonttings = gelontDelonfaultSelonttings(indelonxOption);
+    fielonldSelonttings.gelontIndelonxelondFielonldSelonttings().selontTokelonnizelond(truelon);
+    ThriftTokelonnStrelonamSelonrializelonr attributelonSelonrializelonr =
+        nelonw ThriftTokelonnStrelonamSelonrializelonr(tokelonnStrelonamSelonrializelonrVelonrsion);
+    attributelonSelonrializelonr.selontAttributelonSelonrializelonrClassNamelons(
+        ImmutablelonList.<String>of(
+            CharSelonquelonncelonTelonrmAttributelonSelonrializelonr.class.gelontNamelon(),
+            PositionIncrelonmelonntAttributelonSelonrializelonr.class.gelontNamelon(),
+            TokelonnTypelonAttributelonSelonrializelonr.class.gelontNamelon()));
 
-    fieldSettings.getIndexedFieldSettings().setTokenStreamSerializer(attributeSerializer);
-    return fieldSettings;
+    fielonldSelonttings.gelontIndelonxelondFielonldSelonttings().selontTokelonnStrelonamSelonrializelonr(attributelonSelonrializelonr);
+    relonturn fielonldSelonttings;
   }
 
-  protected final ThriftFieldSettings getPretokenizedNoPositionFieldSetting() {
-    return getDefaultPretokenizedSettings(ThriftIndexOptions.DOCS_AND_FREQS);
+  protelonctelond final ThriftFielonldSelonttings gelontPrelontokelonnizelondNoPositionFielonldSelontting() {
+    relonturn gelontDelonfaultPrelontokelonnizelondSelonttings(ThriftIndelonxOptions.DOCS_AND_FRelonQS);
   }
 
-  protected final ThriftFieldSettings getNoPositionNoFreqSettings() {
-    return getNoPositionNoFreqSettings(false);
+  protelonctelond final ThriftFielonldSelonttings gelontNoPositionNoFrelonqSelonttings() {
+    relonturn gelontNoPositionNoFrelonqSelonttings(falselon);
   }
 
-  protected final ThriftFieldSettings getNoPositionNoFreqSettings(
-      boolean supportOutOfOrderAppends) {
-    return getDefaultSettings(ThriftIndexOptions.DOCS_ONLY, supportOutOfOrderAppends);
+  protelonctelond final ThriftFielonldSelonttings gelontNoPositionNoFrelonqSelonttings(
+      boolelonan supportOutOfOrdelonrAppelonnds) {
+    relonturn gelontDelonfaultSelonttings(ThriftIndelonxOptions.DOCS_ONLY, supportOutOfOrdelonrAppelonnds);
   }
 
-  protected final ThriftFieldSettings getEarlybirdNumericFieldSettings() {
-    // Supposedly numeric fields are not tokenized.
-    // However, Earlybird uses SingleTokenTokenStream to handle int/long fields.
-    // So we need to set indexed to true for these fields.
-    ThriftFieldSettings settings = getNoPositionNoFreqSettings();
-    settings.getIndexedFieldSettings().setTokenized(true);
-    return settings;
+  protelonctelond final ThriftFielonldSelonttings gelontelonarlybirdNumelonricFielonldSelonttings() {
+    // Supposelondly numelonric fielonlds arelon not tokelonnizelond.
+    // Howelonvelonr, elonarlybird uselons SinglelonTokelonnTokelonnStrelonam to handlelon int/long fielonlds.
+    // So welon nelonelond to selont indelonxelond to truelon for thelonselon fielonlds.
+    ThriftFielonldSelonttings selonttings = gelontNoPositionNoFrelonqSelonttings();
+    selonttings.gelontIndelonxelondFielonldSelonttings().selontTokelonnizelond(truelon);
+    relonturn selonttings;
   }
 
-  private ThriftFieldSettings getPayloadWeightedSettings(ThriftIndexOptions indexOption) {
-    ThriftFieldSettings fieldSettings = getDefaultSettings(indexOption);
-    fieldSettings.getIndexedFieldSettings().setTokenized(true);
-    ThriftTokenStreamSerializer attributeSerializer =
-        new ThriftTokenStreamSerializer(tokenStreamSerializerVersion);
-    attributeSerializer.setAttributeSerializerClassNames(
-        ImmutableList.<String>of(CharTermAttributeSerializer.class.getName(),
-            PositionIncrementAttributeSerializer.class.getName(),
-            PayloadAttributeSerializer.class.getName()));
-    fieldSettings.getIndexedFieldSettings().setTokenStreamSerializer(attributeSerializer);
-    return fieldSettings;
+  privatelon ThriftFielonldSelonttings gelontPayloadWelonightelondSelonttings(ThriftIndelonxOptions indelonxOption) {
+    ThriftFielonldSelonttings fielonldSelonttings = gelontDelonfaultSelonttings(indelonxOption);
+    fielonldSelonttings.gelontIndelonxelondFielonldSelonttings().selontTokelonnizelond(truelon);
+    ThriftTokelonnStrelonamSelonrializelonr attributelonSelonrializelonr =
+        nelonw ThriftTokelonnStrelonamSelonrializelonr(tokelonnStrelonamSelonrializelonrVelonrsion);
+    attributelonSelonrializelonr.selontAttributelonSelonrializelonrClassNamelons(
+        ImmutablelonList.<String>of(CharTelonrmAttributelonSelonrializelonr.class.gelontNamelon(),
+            PositionIncrelonmelonntAttributelonSelonrializelonr.class.gelontNamelon(),
+            PayloadAttributelonSelonrializelonr.class.gelontNamelon()));
+    fielonldSelonttings.gelontIndelonxelondFielonldSelonttings().selontTokelonnStrelonamSelonrializelonr(attributelonSelonrializelonr);
+    relonturn fielonldSelonttings;
   }
 
-  protected boolean shouldIncludeField(String fieldName) {
-    return true;
+  protelonctelond boolelonan shouldIncludelonFielonld(String fielonldNamelon) {
+    relonturn truelon;
   }
 }

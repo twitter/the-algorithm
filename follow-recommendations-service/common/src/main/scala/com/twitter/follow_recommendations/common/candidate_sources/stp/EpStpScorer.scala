@@ -1,65 +1,65 @@
-package com.twitter.follow_recommendations.common.candidate_sources.stp
+packagelon com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.stp
 
-import com.twitter.bijection.scrooge.BinaryScalaCodec
-import com.twitter.bijection.thrift.BinaryThriftCodec
-import com.twitter.relevance.ep_model.scorer.EPScorer
-import com.twitter.relevance.ep_model.scorer.ScorerUtil
-import com.twitter.relevance.ep_model.thrift
-import com.twitter.relevance.ep_model.thriftscala.EPScoringOptions
-import com.twitter.relevance.ep_model.thriftscala.EPScoringRequest
-import com.twitter.relevance.ep_model.thriftscala.EPScoringResponse
-import com.twitter.relevance.ep_model.thriftscala.Record
-import com.twitter.stitch.Stitch
-import com.twitter.util.Future
-import javax.inject.Inject
-import javax.inject.Singleton
-import scala.collection.JavaConverters._
-import scala.util.Success
+import com.twittelonr.bijelonction.scroogelon.BinaryScalaCodelonc
+import com.twittelonr.bijelonction.thrift.BinaryThriftCodelonc
+import com.twittelonr.relonlelonvancelon.elonp_modelonl.scorelonr.elonPScorelonr
+import com.twittelonr.relonlelonvancelon.elonp_modelonl.scorelonr.ScorelonrUtil
+import com.twittelonr.relonlelonvancelon.elonp_modelonl.thrift
+import com.twittelonr.relonlelonvancelon.elonp_modelonl.thriftscala.elonPScoringOptions
+import com.twittelonr.relonlelonvancelon.elonp_modelonl.thriftscala.elonPScoringRelonquelonst
+import com.twittelonr.relonlelonvancelon.elonp_modelonl.thriftscala.elonPScoringRelonsponselon
+import com.twittelonr.relonlelonvancelon.elonp_modelonl.thriftscala.Reloncord
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.util.Futurelon
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
+import scala.collelonction.JavaConvelonrtelonrs._
+import scala.util.Succelonss
 
-case class ScoredResponse(score: Double, featuresBreakdown: Option[String] = None)
+caselon class ScorelondRelonsponselon(scorelon: Doublelon, felonaturelonsBrelonakdown: Option[String] = Nonelon)
 
 /**
- * STP ML ranker trained using prehistoric ML framework
+ * STP ML rankelonr trainelond using prelonhistoric ML framelonwork
  */
-@Singleton
-class EpStpScorer @Inject() (epScorer: EPScorer) {
-  private def getScore(responses: List[EPScoringResponse]): Option[ScoredResponse] =
-    responses.headOption
-      .flatMap { response =>
-        response.scores.flatMap {
-          _.headOption.map(score => ScoredResponse(ScorerUtil.normalize(score)))
+@Singlelonton
+class elonpStpScorelonr @Injelonct() (elonpScorelonr: elonPScorelonr) {
+  privatelon delonf gelontScorelon(relonsponselons: List[elonPScoringRelonsponselon]): Option[ScorelondRelonsponselon] =
+    relonsponselons.helonadOption
+      .flatMap { relonsponselon =>
+        relonsponselon.scorelons.flatMap {
+          _.helonadOption.map(scorelon => ScorelondRelonsponselon(ScorelonrUtil.normalizelon(scorelon)))
         }
       }
 
-  def getScoredResponse(
-    record: Record,
-    details: Boolean = false
-  ): Stitch[Option[ScoredResponse]] = {
-    val scoringOptions = EPScoringOptions(
-      addFeaturesBreakDown = details,
-      addTransformerIntermediateRecords = details
+  delonf gelontScorelondRelonsponselon(
+    reloncord: Reloncord,
+    delontails: Boolelonan = falselon
+  ): Stitch[Option[ScorelondRelonsponselon]] = {
+    val scoringOptions = elonPScoringOptions(
+      addFelonaturelonsBrelonakDown = delontails,
+      addTransformelonrIntelonrmelondiatelonReloncords = delontails
     )
-    val request = EPScoringRequest(auxFeatures = Some(Seq(record)), options = Some(scoringOptions))
+    val relonquelonst = elonPScoringRelonquelonst(auxFelonaturelons = Somelon(Selonq(reloncord)), options = Somelon(scoringOptions))
 
-    Stitch.callFuture(
-      BinaryThriftCodec[thrift.EPScoringRequest]
-        .invert(BinaryScalaCodec(EPScoringRequest).apply(request))
-        .map { thriftRequest: thrift.EPScoringRequest =>
-          val responsesF = epScorer
-            .score(List(thriftRequest).asJava)
+    Stitch.callFuturelon(
+      BinaryThriftCodelonc[thrift.elonPScoringRelonquelonst]
+        .invelonrt(BinaryScalaCodelonc(elonPScoringRelonquelonst).apply(relonquelonst))
+        .map { thriftRelonquelonst: thrift.elonPScoringRelonquelonst =>
+          val relonsponselonsF = elonpScorelonr
+            .scorelon(List(thriftRelonquelonst).asJava)
             .map(
               _.asScala.toList
-                .map(response =>
-                  BinaryScalaCodec(EPScoringResponse)
-                    .invert(BinaryThriftCodec[thrift.EPScoringResponse].apply(response)))
-                .collect { case Success(response) => response }
+                .map(relonsponselon =>
+                  BinaryScalaCodelonc(elonPScoringRelonsponselon)
+                    .invelonrt(BinaryThriftCodelonc[thrift.elonPScoringRelonsponselon].apply(relonsponselon)))
+                .collelonct { caselon Succelonss(relonsponselon) => relonsponselon }
             )
-          responsesF.map(getScore)
+          relonsponselonsF.map(gelontScorelon)
         }
-        .getOrElse(Future(None)))
+        .gelontOrelonlselon(Futurelon(Nonelon)))
   }
 }
 
-object EpStpScorer {
-  val WithFeaturesBreakDown = false
+objelonct elonpStpScorelonr {
+  val WithFelonaturelonsBrelonakDown = falselon
 }

@@ -1,176 +1,176 @@
-package com.twitter.simclusters_v2.summingbird.stores
+packagelon com.twittelonr.simclustelonrs_v2.summingbird.storelons
 
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.simclusters_v2.common.ModelVersions
-import com.twitter.simclusters_v2.summingbird.common.Implicits.batcher
-import com.twitter.simclusters_v2.summingbird.common.Implicits.topKClustersWithScoresCodec
-import com.twitter.simclusters_v2.summingbird.common.Implicits.topKClustersWithScoresMonoid
-import com.twitter.simclusters_v2.summingbird.common.SimClustersProfile.Environment
-import com.twitter.simclusters_v2.summingbird.common.ClientConfigs
-import com.twitter.simclusters_v2.summingbird.common.Configs
-import com.twitter.simclusters_v2.summingbird.common.Implicits
-import com.twitter.simclusters_v2.summingbird.common.SimClustersProfile
-import com.twitter.simclusters_v2.thriftscala._
-import com.twitter.storehaus.ReadableStore
-import com.twitter.storehaus.algebra.MergeableStore
-import com.twitter.storehaus_internal.memcache.Memcache
-import com.twitter.summingbird.batch.BatchID
-import com.twitter.summingbird.store.ClientStore
-import com.twitter.summingbird_internal.bijection.BatchPairImplicits
-import com.twitter.util.Duration
-import com.twitter.util.Future
+import com.twittelonr.finaglelon.mtls.authelonntication.SelonrvicelonIdelonntifielonr
+import com.twittelonr.simclustelonrs_v2.common.ModelonlVelonrsions
+import com.twittelonr.simclustelonrs_v2.summingbird.common.Implicits.batchelonr
+import com.twittelonr.simclustelonrs_v2.summingbird.common.Implicits.topKClustelonrsWithScorelonsCodelonc
+import com.twittelonr.simclustelonrs_v2.summingbird.common.Implicits.topKClustelonrsWithScorelonsMonoid
+import com.twittelonr.simclustelonrs_v2.summingbird.common.SimClustelonrsProfilelon.elonnvironmelonnt
+import com.twittelonr.simclustelonrs_v2.summingbird.common.ClielonntConfigs
+import com.twittelonr.simclustelonrs_v2.summingbird.common.Configs
+import com.twittelonr.simclustelonrs_v2.summingbird.common.Implicits
+import com.twittelonr.simclustelonrs_v2.summingbird.common.SimClustelonrsProfilelon
+import com.twittelonr.simclustelonrs_v2.thriftscala._
+import com.twittelonr.storelonhaus.RelonadablelonStorelon
+import com.twittelonr.storelonhaus.algelonbra.MelonrgelonablelonStorelon
+import com.twittelonr.storelonhaus_intelonrnal.melonmcachelon.Melonmcachelon
+import com.twittelonr.summingbird.batch.BatchID
+import com.twittelonr.summingbird.storelon.ClielonntStorelon
+import com.twittelonr.summingbird_intelonrnal.bijelonction.BatchPairImplicits
+import com.twittelonr.util.Duration
+import com.twittelonr.util.Futurelon
 
-object TopKClustersForTweetReadableStore {
+objelonct TopKClustelonrsForTwelonelontRelonadablelonStorelon {
 
-  private[summingbird] final lazy val onlineMergeableStore: (
+  privatelon[summingbird] final lazy val onlinelonMelonrgelonablelonStorelon: (
     String,
-    ServiceIdentifier
-  ) => MergeableStore[(EntityWithVersion, BatchID), TopKClustersWithScores] = {
-    (storePath: String, serviceIdentifier: ServiceIdentifier) =>
-      Memcache.getMemcacheStore[(EntityWithVersion, BatchID), TopKClustersWithScores](
-        ClientConfigs.tweetTopKClustersMemcacheConfig(storePath, serviceIdentifier)
+    SelonrvicelonIdelonntifielonr
+  ) => MelonrgelonablelonStorelon[(elonntityWithVelonrsion, BatchID), TopKClustelonrsWithScorelons] = {
+    (storelonPath: String, selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr) =>
+      Melonmcachelon.gelontMelonmcachelonStorelon[(elonntityWithVelonrsion, BatchID), TopKClustelonrsWithScorelons](
+        ClielonntConfigs.twelonelontTopKClustelonrsMelonmcachelonConfig(storelonPath, selonrvicelonIdelonntifielonr)
       )(
-        BatchPairImplicits.keyInjection[EntityWithVersion](Implicits.topKClustersKeyCodec),
-        topKClustersWithScoresCodec,
-        topKClustersWithScoresMonoid
+        BatchPairImplicits.kelonyInjelonction[elonntityWithVelonrsion](Implicits.topKClustelonrsKelonyCodelonc),
+        topKClustelonrsWithScorelonsCodelonc,
+        topKClustelonrsWithScorelonsMonoid
       )
   }
 
-  final lazy val defaultStore: (
+  final lazy val delonfaultStorelon: (
     String,
-    ServiceIdentifier
-  ) => ReadableStore[EntityWithVersion, TopKClustersWithScores] = {
-    (storePath: String, serviceIdentifier: ServiceIdentifier) =>
-      // note that DefaultTopKClustersForEntityReadableStore is reused here because they share the
-      // same structure
-      TopKClustersForEntityReadableStore(
-        ClientStore(this.onlineMergeableStore(storePath, serviceIdentifier), Configs.batchesToKeep))
+    SelonrvicelonIdelonntifielonr
+  ) => RelonadablelonStorelon[elonntityWithVelonrsion, TopKClustelonrsWithScorelons] = {
+    (storelonPath: String, selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr) =>
+      // notelon that DelonfaultTopKClustelonrsForelonntityRelonadablelonStorelon is relonuselond helonrelon beloncauselon thelony sharelon thelon
+      // samelon structurelon
+      TopKClustelonrsForelonntityRelonadablelonStorelon(
+        ClielonntStorelon(this.onlinelonMelonrgelonablelonStorelon(storelonPath, selonrvicelonIdelonntifielonr), Configs.batchelonsToKelonelonp))
   }
 }
 
-case class TweetKey(
-  tweetId: Long,
-  modelVersion: String,
-  embeddingType: EmbeddingType = EmbeddingType.FavBasedTweet,
-  halfLife: Duration = Configs.HalfLife) {
+caselon class TwelonelontKelony(
+  twelonelontId: Long,
+  modelonlVelonrsion: String,
+  elonmbelonddingTypelon: elonmbelonddingTypelon = elonmbelonddingTypelon.FavBaselondTwelonelont,
+  halfLifelon: Duration = Configs.HalfLifelon) {
 
-  lazy val modelVersionThrift: ModelVersion = ModelVersions.toModelVersion(modelVersion)
+  lazy val modelonlVelonrsionThrift: ModelonlVelonrsion = ModelonlVelonrsions.toModelonlVelonrsion(modelonlVelonrsion)
 
-  lazy val simClustersEmbeddingId: SimClustersEmbeddingId =
-    SimClustersEmbeddingId(embeddingType, modelVersionThrift, InternalId.TweetId(tweetId))
+  lazy val simClustelonrselonmbelonddingId: SimClustelonrselonmbelonddingId =
+    SimClustelonrselonmbelonddingId(elonmbelonddingTypelon, modelonlVelonrsionThrift, IntelonrnalId.TwelonelontId(twelonelontId))
 }
 
-object TweetKey {
+objelonct TwelonelontKelony {
 
-  def apply(simClustersEmbeddingId: SimClustersEmbeddingId): TweetKey = {
-    simClustersEmbeddingId match {
-      case SimClustersEmbeddingId(embeddingType, modelVersion, InternalId.TweetId(tweetId)) =>
-        TweetKey(tweetId, ModelVersions.toKnownForModelVersion(modelVersion), embeddingType)
-      case id =>
-        throw new IllegalArgumentException(s"Invalid $id for TweetKey")
+  delonf apply(simClustelonrselonmbelonddingId: SimClustelonrselonmbelonddingId): TwelonelontKelony = {
+    simClustelonrselonmbelonddingId match {
+      caselon SimClustelonrselonmbelonddingId(elonmbelonddingTypelon, modelonlVelonrsion, IntelonrnalId.TwelonelontId(twelonelontId)) =>
+        TwelonelontKelony(twelonelontId, ModelonlVelonrsions.toKnownForModelonlVelonrsion(modelonlVelonrsion), elonmbelonddingTypelon)
+      caselon id =>
+        throw nelonw IllelongalArgumelonntelonxcelonption(s"Invalid $id for TwelonelontKelony")
     }
   }
 
 }
 
-case class TopKClustersForTweetKeyReadableStore(
-  proxyMap: Map[(EmbeddingType, String), ReadableStore[EntityWithVersion, TopKClustersWithScores]],
-  halfLifeDuration: Duration,
-  topKClustersWithScoresToSeq: TopKClustersWithScores => Seq[(Int, Double)],
-  maxResult: Option[Int] = None)
-    extends ReadableStore[TweetKey, Seq[(Int, Double)]] {
+caselon class TopKClustelonrsForTwelonelontKelonyRelonadablelonStorelon(
+  proxyMap: Map[(elonmbelonddingTypelon, String), RelonadablelonStorelon[elonntityWithVelonrsion, TopKClustelonrsWithScorelons]],
+  halfLifelonDuration: Duration,
+  topKClustelonrsWithScorelonsToSelonq: TopKClustelonrsWithScorelons => Selonq[(Int, Doublelon)],
+  maxRelonsult: Option[Int] = Nonelon)
+    elonxtelonnds RelonadablelonStorelon[TwelonelontKelony, Selonq[(Int, Doublelon)]] {
 
-  private val modifiedProxyMap = proxyMap.map {
-    case ((embeddingType, modelVersion), proxy) =>
-      (embeddingType, modelVersion) -> proxy.composeKeyMapping { key: TweetKey =>
-        EntityWithVersion(
-          SimClusterEntity.TweetId(key.tweetId),
-          // Fast fail if the model version is invalid.
-          ModelVersions.toModelVersion(modelVersion))
+  privatelon val modifielondProxyMap = proxyMap.map {
+    caselon ((elonmbelonddingTypelon, modelonlVelonrsion), proxy) =>
+      (elonmbelonddingTypelon, modelonlVelonrsion) -> proxy.composelonKelonyMapping { kelony: TwelonelontKelony =>
+        elonntityWithVelonrsion(
+          SimClustelonrelonntity.TwelonelontId(kelony.twelonelontId),
+          // Fast fail if thelon modelonl velonrsion is invalid.
+          ModelonlVelonrsions.toModelonlVelonrsion(modelonlVelonrsion))
       }
   }
 
-  override def multiGet[K1 <: TweetKey](
-    keys: Set[K1]
-  ): Map[K1, Future[Option[Seq[(Int, Double)]]]] = {
-    val (validKeys, invalidKeys) = keys.partition { tweetKey =>
-      proxyMap.contains((tweetKey.embeddingType, tweetKey.modelVersion)) &&
-      halfLifeDuration.inMilliseconds == Configs.HalfLifeInMs
+  ovelonrridelon delonf multiGelont[K1 <: TwelonelontKelony](
+    kelonys: Selont[K1]
+  ): Map[K1, Futurelon[Option[Selonq[(Int, Doublelon)]]]] = {
+    val (validKelonys, invalidKelonys) = kelonys.partition { twelonelontKelony =>
+      proxyMap.contains((twelonelontKelony.elonmbelonddingTypelon, twelonelontKelony.modelonlVelonrsion)) &&
+      halfLifelonDuration.inMilliselonconds == Configs.HalfLifelonInMs
     }
 
-    val resultsFuture = validKeys.groupBy(key => (key.embeddingType, key.modelVersion)).flatMap {
-      case (typeModelTuple, subKeys) =>
-        modifiedProxyMap(typeModelTuple).multiGet(subKeys)
+    val relonsultsFuturelon = validKelonys.groupBy(kelony => (kelony.elonmbelonddingTypelon, kelony.modelonlVelonrsion)).flatMap {
+      caselon (typelonModelonlTuplelon, subKelonys) =>
+        modifielondProxyMap(typelonModelonlTuplelon).multiGelont(subKelonys)
     }
 
-    resultsFuture.mapValues { topKClustersWithScoresFut =>
-      for (topKClustersWithScoresOpt <- topKClustersWithScoresFut) yield {
+    relonsultsFuturelon.mapValuelons { topKClustelonrsWithScorelonsFut =>
+      for (topKClustelonrsWithScorelonsOpt <- topKClustelonrsWithScorelonsFut) yielonld {
         for {
-          topKClustersWithScores <- topKClustersWithScoresOpt
-        } yield {
-          val results = topKClustersWithScoresToSeq(topKClustersWithScores)
-          maxResult match {
-            case Some(max) =>
-              results.take(max)
-            case None =>
-              results
+          topKClustelonrsWithScorelons <- topKClustelonrsWithScorelonsOpt
+        } yielonld {
+          val relonsults = topKClustelonrsWithScorelonsToSelonq(topKClustelonrsWithScorelons)
+          maxRelonsult match {
+            caselon Somelon(max) =>
+              relonsults.takelon(max)
+            caselon Nonelon =>
+              relonsults
           }
         }
       }
-    } ++ invalidKeys.map { key => (key, Future.None) }.toMap
+    } ++ invalidKelonys.map { kelony => (kelony, Futurelon.Nonelon) }.toMap
   }
 }
 
-object TopKClustersForTweetKeyReadableStore {
-  // Use Prod cache by default
-  def defaultProxyMap(
-    serviceIdentifier: ServiceIdentifier
-  ): Map[(EmbeddingType, String), ReadableStore[EntityWithVersion, TopKClustersWithScores]] =
-    SimClustersProfile.tweetJobProfileMap(Environment.Prod).mapValues { profile =>
-      TopKClustersForTweetReadableStore
-        .defaultStore(profile.clusterTopKTweetsPath, serviceIdentifier)
+objelonct TopKClustelonrsForTwelonelontKelonyRelonadablelonStorelon {
+  // Uselon Prod cachelon by delonfault
+  delonf delonfaultProxyMap(
+    selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr
+  ): Map[(elonmbelonddingTypelon, String), RelonadablelonStorelon[elonntityWithVelonrsion, TopKClustelonrsWithScorelons]] =
+    SimClustelonrsProfilelon.twelonelontJobProfilelonMap(elonnvironmelonnt.Prod).mapValuelons { profilelon =>
+      TopKClustelonrsForTwelonelontRelonadablelonStorelon
+        .delonfaultStorelon(profilelon.clustelonrTopKTwelonelontsPath, selonrvicelonIdelonntifielonr)
     }
-  val defaultHalfLife: Duration = Duration.fromMilliseconds(Configs.HalfLifeInMs)
+  val delonfaultHalfLifelon: Duration = Duration.fromMilliselonconds(Configs.HalfLifelonInMs)
 
-  def defaultStore(
-    serviceIdentifier: ServiceIdentifier
-  ): ReadableStore[TweetKey, Seq[(Int, Double)]] =
-    TopKClustersForTweetKeyReadableStore(
-      defaultProxyMap(serviceIdentifier),
-      defaultHalfLife,
-      getTopClustersWithScoresByFavClusterNormalizedScore
+  delonf delonfaultStorelon(
+    selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr
+  ): RelonadablelonStorelon[TwelonelontKelony, Selonq[(Int, Doublelon)]] =
+    TopKClustelonrsForTwelonelontKelonyRelonadablelonStorelon(
+      delonfaultProxyMap(selonrvicelonIdelonntifielonr),
+      delonfaultHalfLifelon,
+      gelontTopClustelonrsWithScorelonsByFavClustelonrNormalizelondScorelon
     )
 
-  def overrideLimitDefaultStore(
-    maxResult: Int,
-    serviceIdentifier: ServiceIdentifier
-  ): ReadableStore[TweetKey, Seq[(Int, Double)]] = {
-    TopKClustersForTweetKeyReadableStore(
-      defaultProxyMap(serviceIdentifier),
-      defaultHalfLife,
-      getTopClustersWithScoresByFavClusterNormalizedScore,
-      Some(maxResult)
+  delonf ovelonrridelonLimitDelonfaultStorelon(
+    maxRelonsult: Int,
+    selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr
+  ): RelonadablelonStorelon[TwelonelontKelony, Selonq[(Int, Doublelon)]] = {
+    TopKClustelonrsForTwelonelontKelonyRelonadablelonStorelon(
+      delonfaultProxyMap(selonrvicelonIdelonntifielonr),
+      delonfaultHalfLifelon,
+      gelontTopClustelonrsWithScorelonsByFavClustelonrNormalizelondScorelon,
+      Somelon(maxRelonsult)
     )
   }
 
-  private def getTopClustersWithScoresByFavClusterNormalizedScore(
-    topKClustersWithScores: TopKClustersWithScores
-  ): Seq[(Int, Double)] = {
+  privatelon delonf gelontTopClustelonrsWithScorelonsByFavClustelonrNormalizelondScorelon(
+    topKClustelonrsWithScorelons: TopKClustelonrsWithScorelons
+  ): Selonq[(Int, Doublelon)] = {
     {
       for {
-        clusterIdWIthScores <- topKClustersWithScores.topClustersByFavClusterNormalizedScore
-      } yield {
+        clustelonrIdWIthScorelons <- topKClustelonrsWithScorelons.topClustelonrsByFavClustelonrNormalizelondScorelon
+      } yielonld {
         (
           for {
-            (clusterId, scores) <- clusterIdWIthScores
-            favClusterNormalized8HrHalfLifeScore <- scores.favClusterNormalized8HrHalfLifeScore
-            if favClusterNormalized8HrHalfLifeScore.value > 0.0
-          } yield {
-            clusterId -> favClusterNormalized8HrHalfLifeScore.value
+            (clustelonrId, scorelons) <- clustelonrIdWIthScorelons
+            favClustelonrNormalizelond8HrHalfLifelonScorelon <- scorelons.favClustelonrNormalizelond8HrHalfLifelonScorelon
+            if favClustelonrNormalizelond8HrHalfLifelonScorelon.valuelon > 0.0
+          } yielonld {
+            clustelonrId -> favClustelonrNormalizelond8HrHalfLifelonScorelon.valuelon
           }
-        ).toSeq.sortBy(-_._2)
+        ).toSelonq.sortBy(-_._2)
       }
-    }.getOrElse(Nil)
+    }.gelontOrelonlselon(Nil)
   }
 
 }

@@ -1,28 +1,28 @@
-package com.twitter.product_mixer.component_library.candidate_source.ads
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.candidatelon_sourcelon.ads
 
-import com.twitter.adserver.thriftscala.AdImpression
-import com.twitter.adserver.thriftscala.AdRequestParams
-import com.twitter.adserver.thriftscala.AdRequestResponse
-import com.twitter.product_mixer.core.functional_component.candidate_source.strato.StratoKeyFetcherSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.strato.client.Fetcher
-import com.twitter.strato.generated.client.ads.admixer.MakeAdRequestStagingClientColumn
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.adselonrvelonr.thriftscala.AdImprelonssion
+import com.twittelonr.adselonrvelonr.thriftscala.AdRelonquelonstParams
+import com.twittelonr.adselonrvelonr.thriftscala.AdRelonquelonstRelonsponselon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.strato.StratoKelonyFelontchelonrSourcelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonSourcelonIdelonntifielonr
+import com.twittelonr.strato.clielonnt.Felontchelonr
+import com.twittelonr.strato.gelonnelonratelond.clielonnt.ads.admixelonr.MakelonAdRelonquelonstStagingClielonntColumn
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class AdsStagingCandidateSource @Inject() (adsClient: MakeAdRequestStagingClientColumn)
-    extends StratoKeyFetcherSource[
-      AdRequestParams,
-      AdRequestResponse,
-      AdImpression
+@Singlelonton
+class AdsStagingCandidatelonSourcelon @Injelonct() (adsClielonnt: MakelonAdRelonquelonstStagingClielonntColumn)
+    elonxtelonnds StratoKelonyFelontchelonrSourcelon[
+      AdRelonquelonstParams,
+      AdRelonquelonstRelonsponselon,
+      AdImprelonssion
     ] {
-  override val identifier: CandidateSourceIdentifier = CandidateSourceIdentifier("AdsStaging")
+  ovelonrridelon val idelonntifielonr: CandidatelonSourcelonIdelonntifielonr = CandidatelonSourcelonIdelonntifielonr("AdsStaging")
 
-  override val fetcher: Fetcher[AdRequestParams, Unit, AdRequestResponse] = adsClient.fetcher
+  ovelonrridelon val felontchelonr: Felontchelonr[AdRelonquelonstParams, Unit, AdRelonquelonstRelonsponselon] = adsClielonnt.felontchelonr
 
-  override protected def stratoResultTransformer(
-    stratoResult: AdRequestResponse
-  ): Seq[AdImpression] =
-    stratoResult.impressions
+  ovelonrridelon protelonctelond delonf stratoRelonsultTransformelonr(
+    stratoRelonsult: AdRelonquelonstRelonsponselon
+  ): Selonq[AdImprelonssion] =
+    stratoRelonsult.imprelonssions
 }

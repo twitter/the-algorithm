@@ -1,5 +1,5 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.metadata
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata
 
-sealed trait ImageAnimationType
+selonalelond trait ImagelonAnimationTypelon
 
-case object Bounce extends ImageAnimationType
+caselon objelonct Bouncelon elonxtelonnds ImagelonAnimationTypelon

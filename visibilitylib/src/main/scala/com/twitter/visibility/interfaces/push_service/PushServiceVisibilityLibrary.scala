@@ -1,177 +1,177 @@
-package com.twitter.visibility.interfaces.push_service
+packagelon com.twittelonr.visibility.intelonrfacelons.push_selonrvicelon
 
-import com.twitter.gizmoduck.thriftscala.User
-import com.twitter.servo.util.Gate
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.tweetypie.TweetyPie.TweetyPieResult
-import com.twitter.storehaus.ReadableStore
-import com.twitter.strato.client.{Client => StratoClient}
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.visibility.VisibilityLibrary
-import com.twitter.visibility.builder.tweets.TweetFeatures
-import com.twitter.visibility.builder.tweets.StratoTweetLabelMaps
-import com.twitter.visibility.builder.users.AuthorFeatures
-import com.twitter.visibility.builder.users.RelationshipFeatures
-import com.twitter.visibility.builder.users.ViewerFeatures
-import com.twitter.visibility.builder.VisibilityResult
-import com.twitter.visibility.common._
-import com.twitter.visibility.common.UserRelationshipSource
-import com.twitter.visibility.common.UserSource
-import com.twitter.visibility.features.FeatureMap
-import com.twitter.visibility.features.TweetIsInnerQuotedTweet
-import com.twitter.visibility.features.TweetIsRetweet
-import com.twitter.visibility.features.TweetIsSourceTweet
-import com.twitter.visibility.interfaces.push_service.PushServiceVisibilityLibraryUtil._
-import com.twitter.visibility.models.ContentId
-import com.twitter.visibility.models.ViewerContext
+import com.twittelonr.gizmoduck.thriftscala.Uselonr
+import com.twittelonr.selonrvo.util.Gatelon
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.stitch.twelonelontypielon.TwelonelontyPielon.TwelonelontyPielonRelonsult
+import com.twittelonr.storelonhaus.RelonadablelonStorelon
+import com.twittelonr.strato.clielonnt.{Clielonnt => StratoClielonnt}
+import com.twittelonr.twelonelontypielon.thriftscala.Twelonelont
+import com.twittelonr.visibility.VisibilityLibrary
+import com.twittelonr.visibility.buildelonr.twelonelonts.TwelonelontFelonaturelons
+import com.twittelonr.visibility.buildelonr.twelonelonts.StratoTwelonelontLabelonlMaps
+import com.twittelonr.visibility.buildelonr.uselonrs.AuthorFelonaturelons
+import com.twittelonr.visibility.buildelonr.uselonrs.RelonlationshipFelonaturelons
+import com.twittelonr.visibility.buildelonr.uselonrs.VielonwelonrFelonaturelons
+import com.twittelonr.visibility.buildelonr.VisibilityRelonsult
+import com.twittelonr.visibility.common._
+import com.twittelonr.visibility.common.UselonrRelonlationshipSourcelon
+import com.twittelonr.visibility.common.UselonrSourcelon
+import com.twittelonr.visibility.felonaturelons.FelonaturelonMap
+import com.twittelonr.visibility.felonaturelons.TwelonelontIsInnelonrQuotelondTwelonelont
+import com.twittelonr.visibility.felonaturelons.TwelonelontIsRelontwelonelont
+import com.twittelonr.visibility.felonaturelons.TwelonelontIsSourcelonTwelonelont
+import com.twittelonr.visibility.intelonrfacelons.push_selonrvicelon.PushSelonrvicelonVisibilityLibraryUtil._
+import com.twittelonr.visibility.modelonls.ContelonntId
+import com.twittelonr.visibility.modelonls.VielonwelonrContelonxt
 
-object TweetType extends Enumeration {
-  type TweetType = Value
-  val ORIGINAL, SOURCE, QUOTED = Value
+objelonct TwelonelontTypelon elonxtelonnds elonnumelonration {
+  typelon TwelonelontTypelon = Valuelon
+  val ORIGINAL, SOURCelon, QUOTelonD = Valuelon
 }
-import com.twitter.visibility.interfaces.push_service.TweetType._
+import com.twittelonr.visibility.intelonrfacelons.push_selonrvicelon.TwelonelontTypelon._
 
-object PushServiceVisibilityLibrary {
-  type Type = PushServiceVisibilityRequest => Stitch[PushServiceVisibilityResponse]
+objelonct PushSelonrvicelonVisibilityLibrary {
+  typelon Typelon = PushSelonrvicelonVisibilityRelonquelonst => Stitch[PushSelonrvicelonVisibilityRelonsponselon]
 
-  def apply(
+  delonf apply(
     visibilityLibrary: VisibilityLibrary,
-    userSource: UserSource,
-    userRelationshipSource: UserRelationshipSource,
-    stratoClient: StratoClient,
-    enableParityTest: Gate[Unit] = Gate.False,
-    cachedTweetyPieStoreV2: ReadableStore[Long, TweetyPieResult] = ReadableStore.empty,
-    safeCachedTweetyPieStoreV2: ReadableStore[Long, TweetyPieResult] = ReadableStore.empty,
+    uselonrSourcelon: UselonrSourcelon,
+    uselonrRelonlationshipSourcelon: UselonrRelonlationshipSourcelon,
+    stratoClielonnt: StratoClielonnt,
+    elonnablelonParityTelonst: Gatelon[Unit] = Gatelon.Falselon,
+    cachelondTwelonelontyPielonStorelonV2: RelonadablelonStorelon[Long, TwelonelontyPielonRelonsult] = RelonadablelonStorelon.elonmpty,
+    safelonCachelondTwelonelontyPielonStorelonV2: RelonadablelonStorelon[Long, TwelonelontyPielonRelonsult] = RelonadablelonStorelon.elonmpty,
   )(
-    implicit statsReceiver: StatsReceiver
-  ): Type = {
-    val stats = statsReceiver.scope("push_service_vf")
-    val candidateTweetCounter = stats.counter("request_cnt")
-    val allowedTweetCounter = stats.counter("allow_cnt")
-    val droppedTweetCounter = stats.counter("drop_cnt")
-    val failedTweetCounter = stats.counter("fail_cnt")
-    val authorLabelsEmptyCount = stats.counter("author_labels_empty_cnt")
-    val authorLabelsCount = stats.counter("author_labels_cnt")
+    implicit statsReloncelonivelonr: StatsReloncelonivelonr
+  ): Typelon = {
+    val stats = statsReloncelonivelonr.scopelon("push_selonrvicelon_vf")
+    val candidatelonTwelonelontCountelonr = stats.countelonr("relonquelonst_cnt")
+    val allowelondTwelonelontCountelonr = stats.countelonr("allow_cnt")
+    val droppelondTwelonelontCountelonr = stats.countelonr("drop_cnt")
+    val failelondTwelonelontCountelonr = stats.countelonr("fail_cnt")
+    val authorLabelonlselonmptyCount = stats.countelonr("author_labelonls_elonmpty_cnt")
+    val authorLabelonlsCount = stats.countelonr("author_labelonls_cnt")
 
-    val tweetLabelMaps = new StratoTweetLabelMaps(
-      SafetyLabelMapSource.fromSafetyLabelMapFetcher(
-        PushServiceSafetyLabelMapFetcher(stratoClient, stats)))
+    val twelonelontLabelonlMaps = nelonw StratoTwelonelontLabelonlMaps(
+      SafelontyLabelonlMapSourcelon.fromSafelontyLabelonlMapFelontchelonr(
+        PushSelonrvicelonSafelontyLabelonlMapFelontchelonr(stratoClielonnt, stats)))
 
-    val viewerFeatures = new ViewerFeatures(UserSource.empty, stats)
-    val tweetFeatures = new TweetFeatures(tweetLabelMaps, stats)
-    val authorFeatures = new AuthorFeatures(userSource, stats)
-    val relationshipFeatures = new RelationshipFeatures(UserRelationshipSource.empty, stats)
+    val vielonwelonrFelonaturelons = nelonw VielonwelonrFelonaturelons(UselonrSourcelon.elonmpty, stats)
+    val twelonelontFelonaturelons = nelonw TwelonelontFelonaturelons(twelonelontLabelonlMaps, stats)
+    val authorFelonaturelons = nelonw AuthorFelonaturelons(uselonrSourcelon, stats)
+    val relonlationshipFelonaturelons = nelonw RelonlationshipFelonaturelons(UselonrRelonlationshipSourcelon.elonmpty, stats)
 
-    val parityTester = new PushServiceVisibilityLibraryParity(
-      cachedTweetyPieStoreV2,
-      safeCachedTweetyPieStoreV2
-    )(statsReceiver)
+    val parityTelonstelonr = nelonw PushSelonrvicelonVisibilityLibraryParity(
+      cachelondTwelonelontyPielonStorelonV2,
+      safelonCachelondTwelonelontyPielonStorelonV2
+    )(statsReloncelonivelonr)
 
-    def buildFeatureMap(
-      request: PushServiceVisibilityRequest,
-      tweet: Tweet,
-      tweetType: TweetType,
-      author: Option[User] = None,
-    ): FeatureMap = {
-      val authorId = author.map(_.id) orElse getAuthorId(tweet)
-      (author.map(authorFeatures.forAuthor(_)) orElse
-        getAuthorId(tweet).map(authorFeatures.forAuthorId(_))) match {
-        case Some(authorVisibilityFeatures) =>
-          visibilityLibrary.featureMapBuilder(
-            Seq(
-              viewerFeatures.forViewerContext(ViewerContext.fromContextWithViewerIdFallback(None)),
-              tweetFeatures.forTweet(tweet),
-              authorVisibilityFeatures,
-              relationshipFeatures.forAuthorId(authorId.get, None),
-              _.withConstantFeature(TweetIsInnerQuotedTweet, tweetType == QUOTED),
-              _.withConstantFeature(TweetIsRetweet, request.isRetweet),
-              _.withConstantFeature(TweetIsSourceTweet, tweetType == SOURCE)
+    delonf buildFelonaturelonMap(
+      relonquelonst: PushSelonrvicelonVisibilityRelonquelonst,
+      twelonelont: Twelonelont,
+      twelonelontTypelon: TwelonelontTypelon,
+      author: Option[Uselonr] = Nonelon,
+    ): FelonaturelonMap = {
+      val authorId = author.map(_.id) orelonlselon gelontAuthorId(twelonelont)
+      (author.map(authorFelonaturelons.forAuthor(_)) orelonlselon
+        gelontAuthorId(twelonelont).map(authorFelonaturelons.forAuthorId(_))) match {
+        caselon Somelon(authorVisibilityFelonaturelons) =>
+          visibilityLibrary.felonaturelonMapBuildelonr(
+            Selonq(
+              vielonwelonrFelonaturelons.forVielonwelonrContelonxt(VielonwelonrContelonxt.fromContelonxtWithVielonwelonrIdFallback(Nonelon)),
+              twelonelontFelonaturelons.forTwelonelont(twelonelont),
+              authorVisibilityFelonaturelons,
+              relonlationshipFelonaturelons.forAuthorId(authorId.gelont, Nonelon),
+              _.withConstantFelonaturelon(TwelonelontIsInnelonrQuotelondTwelonelont, twelonelontTypelon == QUOTelonD),
+              _.withConstantFelonaturelon(TwelonelontIsRelontwelonelont, relonquelonst.isRelontwelonelont),
+              _.withConstantFelonaturelon(TwelonelontIsSourcelonTwelonelont, twelonelontTypelon == SOURCelon)
             )
           )
-        case _ =>
-          visibilityLibrary.featureMapBuilder(
-            Seq(
-              viewerFeatures.forViewerContext(ViewerContext.fromContextWithViewerIdFallback(None)),
-              tweetFeatures.forTweet(tweet),
-              _.withConstantFeature(TweetIsInnerQuotedTweet, tweetType == QUOTED),
-              _.withConstantFeature(TweetIsRetweet, request.isRetweet),
-              _.withConstantFeature(TweetIsSourceTweet, tweetType == SOURCE)
+        caselon _ =>
+          visibilityLibrary.felonaturelonMapBuildelonr(
+            Selonq(
+              vielonwelonrFelonaturelons.forVielonwelonrContelonxt(VielonwelonrContelonxt.fromContelonxtWithVielonwelonrIdFallback(Nonelon)),
+              twelonelontFelonaturelons.forTwelonelont(twelonelont),
+              _.withConstantFelonaturelon(TwelonelontIsInnelonrQuotelondTwelonelont, twelonelontTypelon == QUOTelonD),
+              _.withConstantFelonaturelon(TwelonelontIsRelontwelonelont, relonquelonst.isRelontwelonelont),
+              _.withConstantFelonaturelon(TwelonelontIsSourcelonTwelonelont, twelonelontTypelon == SOURCelon)
             )
           )
       }
     }
 
-    def runRuleEngineForTweet(
-      request: PushServiceVisibilityRequest,
-      tweet: Tweet,
-      tweetType: TweetType,
-      author: Option[User] = None,
-    ): Stitch[VisibilityResult] = {
-      val featureMap = buildFeatureMap(request, tweet, tweetType, author)
-      val contentId = ContentId.TweetId(tweet.id)
-      visibilityLibrary.runRuleEngine(
-        contentId,
-        featureMap,
-        request.viewerContext,
-        request.safetyLevel)
+    delonf runRulelonelonnginelonForTwelonelont(
+      relonquelonst: PushSelonrvicelonVisibilityRelonquelonst,
+      twelonelont: Twelonelont,
+      twelonelontTypelon: TwelonelontTypelon,
+      author: Option[Uselonr] = Nonelon,
+    ): Stitch[VisibilityRelonsult] = {
+      val felonaturelonMap = buildFelonaturelonMap(relonquelonst, twelonelont, twelonelontTypelon, author)
+      val contelonntId = ContelonntId.TwelonelontId(twelonelont.id)
+      visibilityLibrary.runRulelonelonnginelon(
+        contelonntId,
+        felonaturelonMap,
+        relonquelonst.vielonwelonrContelonxt,
+        relonquelonst.safelontyLelonvelonl)
     }
 
-    def runRuleEngineForAuthor(
-      request: PushServiceVisibilityRequest,
-      tweet: Tweet,
-      tweetType: TweetType,
-      author: Option[User] = None,
-    ): Stitch[VisibilityResult] = {
-      val featureMap = buildFeatureMap(request, tweet, tweetType, author)
-      val authorId = author.map(_.id).getOrElse(getAuthorId(tweet).get)
-      val contentId = ContentId.UserId(authorId)
-      visibilityLibrary.runRuleEngine(
-        contentId,
-        featureMap,
-        request.viewerContext,
-        request.safetyLevel)
+    delonf runRulelonelonnginelonForAuthor(
+      relonquelonst: PushSelonrvicelonVisibilityRelonquelonst,
+      twelonelont: Twelonelont,
+      twelonelontTypelon: TwelonelontTypelon,
+      author: Option[Uselonr] = Nonelon,
+    ): Stitch[VisibilityRelonsult] = {
+      val felonaturelonMap = buildFelonaturelonMap(relonquelonst, twelonelont, twelonelontTypelon, author)
+      val authorId = author.map(_.id).gelontOrelonlselon(gelontAuthorId(twelonelont).gelont)
+      val contelonntId = ContelonntId.UselonrId(authorId)
+      visibilityLibrary.runRulelonelonnginelon(
+        contelonntId,
+        felonaturelonMap,
+        relonquelonst.vielonwelonrContelonxt,
+        relonquelonst.safelontyLelonvelonl)
     }
 
-    def getAllVisibilityFilters(
-      request: PushServiceVisibilityRequest
-    ): Stitch[PushServiceVisibilityResponse] = {
-      val tweetResult =
-        runRuleEngineForTweet(request, request.tweet, ORIGINAL, Some(request.author))
-      val authorResult =
-        runRuleEngineForAuthor(request, request.tweet, ORIGINAL, Some(request.author))
-      val sourceTweetResult = request.sourceTweet
-        .map(runRuleEngineForTweet(request, _, SOURCE).map(Some(_))).getOrElse(Stitch.None)
-      val quotedTweetResult = request.quotedTweet
-        .map(runRuleEngineForTweet(request, _, QUOTED).map(Some(_))).getOrElse(Stitch.None)
+    delonf gelontAllVisibilityFiltelonrs(
+      relonquelonst: PushSelonrvicelonVisibilityRelonquelonst
+    ): Stitch[PushSelonrvicelonVisibilityRelonsponselon] = {
+      val twelonelontRelonsult =
+        runRulelonelonnginelonForTwelonelont(relonquelonst, relonquelonst.twelonelont, ORIGINAL, Somelon(relonquelonst.author))
+      val authorRelonsult =
+        runRulelonelonnginelonForAuthor(relonquelonst, relonquelonst.twelonelont, ORIGINAL, Somelon(relonquelonst.author))
+      val sourcelonTwelonelontRelonsult = relonquelonst.sourcelonTwelonelont
+        .map(runRulelonelonnginelonForTwelonelont(relonquelonst, _, SOURCelon).map(Somelon(_))).gelontOrelonlselon(Stitch.Nonelon)
+      val quotelondTwelonelontRelonsult = relonquelonst.quotelondTwelonelont
+        .map(runRulelonelonnginelonForTwelonelont(relonquelonst, _, QUOTelonD).map(Somelon(_))).gelontOrelonlselon(Stitch.Nonelon)
 
-      Stitch.join(tweetResult, authorResult, sourceTweetResult, quotedTweetResult).map {
-        case (tweetResult, authorResult, sourceTweetResult, quotedTweetResult) =>
-          PushServiceVisibilityResponse(
-            tweetResult,
-            authorResult,
-            sourceTweetResult,
-            quotedTweetResult)
+      Stitch.join(twelonelontRelonsult, authorRelonsult, sourcelonTwelonelontRelonsult, quotelondTwelonelontRelonsult).map {
+        caselon (twelonelontRelonsult, authorRelonsult, sourcelonTwelonelontRelonsult, quotelondTwelonelontRelonsult) =>
+          PushSelonrvicelonVisibilityRelonsponselon(
+            twelonelontRelonsult,
+            authorRelonsult,
+            sourcelonTwelonelontRelonsult,
+            quotelondTwelonelontRelonsult)
       }
     }
 
-    { request: PushServiceVisibilityRequest =>
-      candidateTweetCounter.incr()
+    { relonquelonst: PushSelonrvicelonVisibilityRelonquelonst =>
+      candidatelonTwelonelontCountelonr.incr()
 
-      request.author.labels match {
-        case Some(labels) if (!labels._1.isEmpty) => authorLabelsCount.incr()
-        case _ => authorLabelsEmptyCount.incr()
+      relonquelonst.author.labelonls match {
+        caselon Somelon(labelonls) if (!labelonls._1.iselonmpty) => authorLabelonlsCount.incr()
+        caselon _ => authorLabelonlselonmptyCount.incr()
       }
 
-      val response = getAllVisibilityFilters(request)
-        .onSuccess { response =>
-          if (response.shouldAllow) allowedTweetCounter.incr() else droppedTweetCounter.incr()
-        }.onFailure { _ => failedTweetCounter.incr() }
+      val relonsponselon = gelontAllVisibilityFiltelonrs(relonquelonst)
+        .onSuccelonss { relonsponselon =>
+          if (relonsponselon.shouldAllow) allowelondTwelonelontCountelonr.incr() elonlselon droppelondTwelonelontCountelonr.incr()
+        }.onFailurelon { _ => failelondTwelonelontCountelonr.incr() }
 
-      if (enableParityTest()) {
-        response.applyEffect { resp => Stitch.async(parityTester.runParityTest(request, resp)) }
-      } else {
-        response
+      if (elonnablelonParityTelonst()) {
+        relonsponselon.applyelonffelonct { relonsp => Stitch.async(parityTelonstelonr.runParityTelonst(relonquelonst, relonsp)) }
+      } elonlselon {
+        relonsponselon
       }
 
     }

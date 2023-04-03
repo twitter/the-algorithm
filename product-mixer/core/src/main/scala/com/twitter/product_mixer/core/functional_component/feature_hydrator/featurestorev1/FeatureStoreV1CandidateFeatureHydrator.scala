@@ -1,97 +1,97 @@
-package com.twitter.product_mixer.core.functional_component.feature_hydrator.featurestorev1
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator.felonaturelonstorelonv1
 
-import com.twitter.ml.api.util.SRichDataRecord
-import com.twitter.ml.featurestore.lib.EntityId
-import com.twitter.ml.featurestore.lib.data.PredictionRecordAdapter
-import com.twitter.ml.featurestore.lib.entity.EntityWithId
-import com.twitter.ml.featurestore.lib.online.FeatureStoreRequest
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.feature.featurestorev1.BaseFeatureStoreV1CandidateFeature
-import com.twitter.product_mixer.core.feature.featurestorev1.FeatureStoreV1CandidateEntity
-import com.twitter.product_mixer.core.feature.featurestorev1.featurevalue.FeatureStoreV1Response
-import com.twitter.product_mixer.core.feature.featurestorev1.featurevalue.FeatureStoreV1ResponseFeature
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BaseBulkCandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.FeatureHydrationFailed
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.stitch.Stitch
-import com.twitter.util.logging.Logging
+import com.twittelonr.ml.api.util.SRichDataReloncord
+import com.twittelonr.ml.felonaturelonstorelon.lib.elonntityId
+import com.twittelonr.ml.felonaturelonstorelon.lib.data.PrelondictionReloncordAdaptelonr
+import com.twittelonr.ml.felonaturelonstorelon.lib.elonntity.elonntityWithId
+import com.twittelonr.ml.felonaturelonstorelon.lib.onlinelon.FelonaturelonStorelonRelonquelonst
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMapBuildelonr
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonstorelonv1.BaselonFelonaturelonStorelonV1CandidatelonFelonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonstorelonv1.FelonaturelonStorelonV1Candidatelonelonntity
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonstorelonv1.felonaturelonvaluelon.FelonaturelonStorelonV1Relonsponselon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonstorelonv1.felonaturelonvaluelon.FelonaturelonStorelonV1RelonsponselonFelonaturelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator.BaselonBulkCandidatelonFelonaturelonHydrator
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.FelonaturelonHydrationFailelond
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.PipelonlinelonFailurelon
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.util.logging.Logging
 
-trait FeatureStoreV1CandidateFeatureHydrator[
-  Query <: PipelineQuery,
-  Candidate <: UniversalNoun[Any]]
-    extends BaseBulkCandidateFeatureHydrator[
-      Query,
-      Candidate,
-      BaseFeatureStoreV1CandidateFeature[Query, Candidate, _ <: EntityId, _]
+trait FelonaturelonStorelonV1CandidatelonFelonaturelonHydrator[
+  Quelonry <: PipelonlinelonQuelonry,
+  Candidatelon <: UnivelonrsalNoun[Any]]
+    elonxtelonnds BaselonBulkCandidatelonFelonaturelonHydrator[
+      Quelonry,
+      Candidatelon,
+      BaselonFelonaturelonStorelonV1CandidatelonFelonaturelon[Quelonry, Candidatelon, _ <: elonntityId, _]
     ]
     with Logging {
 
-  override def features: Set[BaseFeatureStoreV1CandidateFeature[Query, Candidate, _ <: EntityId, _]]
+  ovelonrridelon delonf felonaturelons: Selont[BaselonFelonaturelonStorelonV1CandidatelonFelonaturelon[Quelonry, Candidatelon, _ <: elonntityId, _]]
 
-  def clientBuilder: FeatureStoreV1DynamicClientBuilder
+  delonf clielonntBuildelonr: FelonaturelonStorelonV1DynamicClielonntBuildelonr
 
-  private lazy val hydrationConfig = FeatureStoreV1CandidateFeatureHydrationConfig(features)
+  privatelon lazy val hydrationConfig = FelonaturelonStorelonV1CandidatelonFelonaturelonHydrationConfig(felonaturelons)
 
-  private lazy val client = clientBuilder.build(hydrationConfig)
+  privatelon lazy val clielonnt = clielonntBuildelonr.build(hydrationConfig)
 
-  private lazy val datasetToFeatures =
-    FeatureStoreDatasetErrorHandler.datasetToFeaturesMapping(features)
+  privatelon lazy val dataselontToFelonaturelons =
+    FelonaturelonStorelonDataselontelonrrorHandlelonr.dataselontToFelonaturelonsMapping(felonaturelons)
 
-  private lazy val dataRecordAdapter =
-    PredictionRecordAdapter.oneToOne(hydrationConfig.allBoundFeatures)
+  privatelon lazy val dataReloncordAdaptelonr =
+    PrelondictionReloncordAdaptelonr.onelonToOnelon(hydrationConfig.allBoundFelonaturelons)
 
-  private lazy val featureContext = hydrationConfig.allBoundFeatures.toFeatureContext
+  privatelon lazy val felonaturelonContelonxt = hydrationConfig.allBoundFelonaturelons.toFelonaturelonContelonxt
 
-  override def apply(
-    query: Query,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): Stitch[Seq[FeatureMap]] = {
-    // Duplicate entities are expected across features, so de-dupe via the Set before converting to Seq
-    val entities: Seq[FeatureStoreV1CandidateEntity[Query, Candidate, _ <: EntityId]] =
-      features.map(_.entity).toSeq
+  ovelonrridelon delonf apply(
+    quelonry: Quelonry,
+    candidatelons: Selonq[CandidatelonWithFelonaturelons[Candidatelon]]
+  ): Stitch[Selonq[FelonaturelonMap]] = {
+    // Duplicatelon elonntitielons arelon elonxpelonctelond across felonaturelons, so delon-dupelon via thelon Selont belonforelon convelonrting to Selonq
+    val elonntitielons: Selonq[FelonaturelonStorelonV1Candidatelonelonntity[Quelonry, Candidatelon, _ <: elonntityId]] =
+      felonaturelons.map(_.elonntity).toSelonq
 
-    val featureStoreRequests = candidates.map { candidate =>
-      val candidateEntityIds: Seq[EntityWithId[_ <: EntityId]] =
-        entities.map(_.entityWithId(query, candidate.candidate, candidate.features))
+    val felonaturelonStorelonRelonquelonsts = candidatelons.map { candidatelon =>
+      val candidatelonelonntityIds: Selonq[elonntityWithId[_ <: elonntityId]] =
+        elonntitielons.map(_.elonntityWithId(quelonry, candidatelon.candidatelon, candidatelon.felonaturelons))
 
-      FeatureStoreRequest(entityIds = candidateEntityIds)
+      FelonaturelonStorelonRelonquelonst(elonntityIds = candidatelonelonntityIds)
     }
 
-    val featureMaps = client(featureStoreRequests, query).map { predictionRecords =>
-      if (predictionRecords.size == candidates.size)
-        predictionRecords
-          .zip(candidates).map {
-            case (predictionRecord, candidate) =>
-              val datasetErrors = predictionRecord.getDatasetHydrationErrors
-              val errorMap =
-                FeatureStoreDatasetErrorHandler.featureToHydrationErrors(
-                  datasetToFeatures,
-                  datasetErrors)
+    val felonaturelonMaps = clielonnt(felonaturelonStorelonRelonquelonsts, quelonry).map { prelondictionReloncords =>
+      if (prelondictionReloncords.sizelon == candidatelons.sizelon)
+        prelondictionReloncords
+          .zip(candidatelons).map {
+            caselon (prelondictionReloncord, candidatelon) =>
+              val dataselontelonrrors = prelondictionReloncord.gelontDataselontHydrationelonrrors
+              val elonrrorMap =
+                FelonaturelonStorelonDataselontelonrrorHandlelonr.felonaturelonToHydrationelonrrors(
+                  dataselontToFelonaturelons,
+                  dataselontelonrrors)
 
-              if (errorMap.nonEmpty) {
-                logger.debug(() =>
-                  s"$identifier hydration errors for candidate ${candidate.candidate.id}: $errorMap")
+              if (elonrrorMap.nonelonmpty) {
+                loggelonr.delonbug(() =>
+                  s"$idelonntifielonr hydration elonrrors for candidatelon ${candidatelon.candidatelon.id}: $elonrrorMap")
               }
-              val dataRecord =
-                new SRichDataRecord(
-                  dataRecordAdapter.adaptToDataRecord(predictionRecord),
-                  featureContext)
-              val featureStoreResponse =
-                FeatureStoreV1Response(dataRecord, errorMap)
-              FeatureMapBuilder()
-                .add(FeatureStoreV1ResponseFeature, featureStoreResponse).build()
+              val dataReloncord =
+                nelonw SRichDataReloncord(
+                  dataReloncordAdaptelonr.adaptToDataReloncord(prelondictionReloncord),
+                  felonaturelonContelonxt)
+              val felonaturelonStorelonRelonsponselon =
+                FelonaturelonStorelonV1Relonsponselon(dataReloncord, elonrrorMap)
+              FelonaturelonMapBuildelonr()
+                .add(FelonaturelonStorelonV1RelonsponselonFelonaturelon, felonaturelonStorelonRelonsponselon).build()
           }
-      else
-        // Should not happen as FSv1 is guaranteed to return a prediction record per feature store request
-        throw PipelineFailure(
-          FeatureHydrationFailed,
-          "Unexpected response length from Feature Store V1 while hydrating candidate features")
+      elonlselon
+        // Should not happelonn as FSv1 is guarantelonelond to relonturn a prelondiction reloncord pelonr felonaturelon storelon relonquelonst
+        throw PipelonlinelonFailurelon(
+          FelonaturelonHydrationFailelond,
+          "Unelonxpelonctelond relonsponselon lelonngth from Felonaturelon Storelon V1 whilelon hydrating candidatelon felonaturelons")
     }
 
-    Stitch.callFuture(featureMaps)
+    Stitch.callFuturelon(felonaturelonMaps)
   }
 }

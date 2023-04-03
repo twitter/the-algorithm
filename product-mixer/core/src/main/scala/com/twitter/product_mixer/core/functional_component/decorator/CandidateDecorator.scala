@@ -1,61 +1,61 @@
-package com.twitter.product_mixer.core.functional_component.decorator
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator
 
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.Component
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.DecoratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.Componelonnt
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.ComponelonntIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.DeloncoratorIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stitch.Stitch
 
 /**
- * [[CandidateDecorator]] generates a [[com.twitter.product_mixer.core.model.common.presentation.UniversalPresentation]]
- * for Candidates, which encapsulate information about how to present the candidate
+ * [[CandidatelonDeloncorator]] gelonnelonratelons a [[com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.UnivelonrsalPrelonselonntation]]
+ * for Candidatelons, which elonncapsulatelon information about how to prelonselonnt thelon candidatelon
  *
- * @see [[https://docbird.twitter.biz/product-mixer/functional-components.html#candidate-decorator]]
- * @see [[com.twitter.product_mixer.core.model.common.presentation.UniversalPresentation]]
+ * @selonelon [[https://docbird.twittelonr.biz/product-mixelonr/functional-componelonnts.html#candidatelon-deloncorator]]
+ * @selonelon [[com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.UnivelonrsalPrelonselonntation]]
  */
-trait CandidateDecorator[-Query <: PipelineQuery, -Candidate <: UniversalNoun[Any]]
-    extends Component {
+trait CandidatelonDeloncorator[-Quelonry <: PipelonlinelonQuelonry, -Candidatelon <: UnivelonrsalNoun[Any]]
+    elonxtelonnds Componelonnt {
 
-  override val identifier: DecoratorIdentifier = CandidateDecorator.DefaultCandidateDecoratorId
+  ovelonrridelon val idelonntifielonr: DeloncoratorIdelonntifielonr = CandidatelonDeloncorator.DelonfaultCandidatelonDeloncoratorId
 
   /**
-   * Given a Seq of `Candidate`, returns a [[Decoration]] for candidates which should be decorated
+   * Givelonn a Selonq of `Candidatelon`, relonturns a [[Deloncoration]] for candidatelons which should belon deloncoratelond
    *
-   * `Candidate`s which aren't decorated can be omitted from the results
+   * `Candidatelon`s which arelonn't deloncoratelond can belon omittelond from thelon relonsults
    */
-  def apply(
-    query: Query,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): Stitch[Seq[Decoration]]
+  delonf apply(
+    quelonry: Quelonry,
+    candidatelons: Selonq[CandidatelonWithFelonaturelons[Candidatelon]]
+  ): Stitch[Selonq[Deloncoration]]
 }
 
-object CandidateDecorator {
-  private[core] val DefaultCandidateDecoratorId: DecoratorIdentifier =
-    DecoratorIdentifier(ComponentIdentifier.BasedOnParentComponent)
+objelonct CandidatelonDeloncorator {
+  privatelon[corelon] val DelonfaultCandidatelonDeloncoratorId: DeloncoratorIdelonntifielonr =
+    DeloncoratorIdelonntifielonr(ComponelonntIdelonntifielonr.BaselondOnParelonntComponelonnt)
 
   /**
-   * For use when building a [[CandidateDecorator]] in a [[com.twitter.product_mixer.core.pipeline.PipelineBuilder]]
-   * to ensure that the identifier is updated with the parent [[com.twitter.product_mixer.core.pipeline.Pipeline.identifier]]
+   * For uselon whelonn building a [[CandidatelonDeloncorator]] in a [[com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonBuildelonr]]
+   * to elonnsurelon that thelon idelonntifielonr is updatelond with thelon parelonnt [[com.twittelonr.product_mixelonr.corelon.pipelonlinelon.Pipelonlinelon.idelonntifielonr]]
    */
-  private[core] def copyWithUpdatedIdentifier[
-    Query <: PipelineQuery,
-    Candidate <: UniversalNoun[Any]
+  privatelon[corelon] delonf copyWithUpdatelondIdelonntifielonr[
+    Quelonry <: PipelonlinelonQuelonry,
+    Candidatelon <: UnivelonrsalNoun[Any]
   ](
-    decorator: CandidateDecorator[Query, Candidate],
-    parentIdentifier: ComponentIdentifier
-  ): CandidateDecorator[Query, Candidate] = {
-    if (decorator.identifier == DefaultCandidateDecoratorId) {
-      new CandidateDecorator[Query, Candidate] {
-        override val identifier: DecoratorIdentifier = DecoratorIdentifier(parentIdentifier.name)
-        override def apply(
-          query: Query,
-          candidates: Seq[CandidateWithFeatures[Candidate]]
-        ): Stitch[Seq[Decoration]] = decorator.apply(query, candidates)
+    deloncorator: CandidatelonDeloncorator[Quelonry, Candidatelon],
+    parelonntIdelonntifielonr: ComponelonntIdelonntifielonr
+  ): CandidatelonDeloncorator[Quelonry, Candidatelon] = {
+    if (deloncorator.idelonntifielonr == DelonfaultCandidatelonDeloncoratorId) {
+      nelonw CandidatelonDeloncorator[Quelonry, Candidatelon] {
+        ovelonrridelon val idelonntifielonr: DeloncoratorIdelonntifielonr = DeloncoratorIdelonntifielonr(parelonntIdelonntifielonr.namelon)
+        ovelonrridelon delonf apply(
+          quelonry: Quelonry,
+          candidatelons: Selonq[CandidatelonWithFelonaturelons[Candidatelon]]
+        ): Stitch[Selonq[Deloncoration]] = deloncorator.apply(quelonry, candidatelons)
       }
-    } else {
-      decorator
+    } elonlselon {
+      deloncorator
     }
   }
 }

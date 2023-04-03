@@ -1,18 +1,18 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.melontadata
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.CommerceDetails
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.CommelonrcelonDelontails
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class CommerceDetailsMarshaller @Inject() () {
+@Singlelonton
+class CommelonrcelonDelontailsMarshallelonr @Injelonct() () {
 
-  def apply(commerceDetails: CommerceDetails): urt.CommerceDetails = urt.CommerceDetails(
-    dropId = commerceDetails.dropId,
-    shopV2Id = commerceDetails.shopV2Id,
-    productKey = commerceDetails.productKey,
-    merchantId = commerceDetails.merchantId,
-    productIndex = commerceDetails.productIndex,
+  delonf apply(commelonrcelonDelontails: CommelonrcelonDelontails): urt.CommelonrcelonDelontails = urt.CommelonrcelonDelontails(
+    dropId = commelonrcelonDelontails.dropId,
+    shopV2Id = commelonrcelonDelontails.shopV2Id,
+    productKelony = commelonrcelonDelontails.productKelony,
+    melonrchantId = commelonrcelonDelontails.melonrchantId,
+    productIndelonx = commelonrcelonDelontails.productIndelonx,
   )
 }

@@ -1,71 +1,71 @@
-package com.twitter.follow_recommendations.modules
+packagelon com.twittelonr.follow_reloncommelonndations.modulelons
 
-import com.google.inject.Provides
-import com.google.inject.Singleton
-import com.twitter.inject.annotations.Flag
-import com.twitter.decider.RandomRecipient
-import com.twitter.finagle.ThriftMux
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.mtls.client.MtlsStackClient.MtlsThriftMuxClientSyntax
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.finatra.annotations.DarkTrafficService
-import com.twitter.follow_recommendations.configapi.deciders.DeciderKey
-import com.twitter.follow_recommendations.thriftscala.FollowRecommendationsThriftService
-import com.twitter.inject.TwitterModule
-import com.twitter.inject.thrift.filters.DarkTrafficFilter
-import com.twitter.servo.decider.DeciderGateBuilder
+import com.googlelon.injelonct.Providelons
+import com.googlelon.injelonct.Singlelonton
+import com.twittelonr.injelonct.annotations.Flag
+import com.twittelonr.deloncidelonr.RandomReloncipielonnt
+import com.twittelonr.finaglelon.ThriftMux
+import com.twittelonr.finaglelon.mtls.authelonntication.SelonrvicelonIdelonntifielonr
+import com.twittelonr.finaglelon.mtls.clielonnt.MtlsStackClielonnt.MtlsThriftMuxClielonntSyntax
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.finaglelon.thrift.ClielonntId
+import com.twittelonr.finatra.annotations.DarkTrafficSelonrvicelon
+import com.twittelonr.follow_reloncommelonndations.configapi.deloncidelonrs.DeloncidelonrKelony
+import com.twittelonr.follow_reloncommelonndations.thriftscala.FollowReloncommelonndationsThriftSelonrvicelon
+import com.twittelonr.injelonct.TwittelonrModulelon
+import com.twittelonr.injelonct.thrift.filtelonrs.DarkTrafficFiltelonr
+import com.twittelonr.selonrvo.deloncidelonr.DeloncidelonrGatelonBuildelonr
 
-object DiffyModule extends TwitterModule {
-  // diffy.dest is defined in the Follow Recommendations Service aurora file
-  // and points to the Dark Traffic Proxy server
-  private val destFlag =
-    flag[String]("diffy.dest", "/$/nil", "Resolvable name of diffy-service or proxy")
+objelonct DiffyModulelon elonxtelonnds TwittelonrModulelon {
+  // diffy.delonst is delonfinelond in thelon Follow Reloncommelonndations Selonrvicelon aurora filelon
+  // and points to thelon Dark Traffic Proxy selonrvelonr
+  privatelon val delonstFlag =
+    flag[String]("diffy.delonst", "/$/nil", "Relonsolvablelon namelon of diffy-selonrvicelon or proxy")
 
-  @Provides
-  @Singleton
-  @DarkTrafficService
-  def provideDarkTrafficService(
-    serviceIdentifier: ServiceIdentifier
-  ): FollowRecommendationsThriftService.ReqRepServicePerEndpoint = {
-    ThriftMux.client
-      .withClientId(ClientId("follow_recos_service_darktraffic_proxy_client"))
-      .withMutualTls(serviceIdentifier)
-      .servicePerEndpoint[FollowRecommendationsThriftService.ReqRepServicePerEndpoint](
-        dest = destFlag(),
-        label = "darktrafficproxy"
+  @Providelons
+  @Singlelonton
+  @DarkTrafficSelonrvicelon
+  delonf providelonDarkTrafficSelonrvicelon(
+    selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr
+  ): FollowReloncommelonndationsThriftSelonrvicelon.RelonqRelonpSelonrvicelonPelonrelonndpoint = {
+    ThriftMux.clielonnt
+      .withClielonntId(ClielonntId("follow_reloncos_selonrvicelon_darktraffic_proxy_clielonnt"))
+      .withMutualTls(selonrvicelonIdelonntifielonr)
+      .selonrvicelonPelonrelonndpoint[FollowReloncommelonndationsThriftSelonrvicelon.RelonqRelonpSelonrvicelonPelonrelonndpoint](
+        delonst = delonstFlag(),
+        labelonl = "darktrafficproxy"
       )
   }
 
-  @Provides
-  @Singleton
-  def provideDarkTrafficFilter(
-    @DarkTrafficService darkService: FollowRecommendationsThriftService.ReqRepServicePerEndpoint,
-    deciderGateBuilder: DeciderGateBuilder,
-    statsReceiver: StatsReceiver,
-    @Flag("environment") env: String
-  ): DarkTrafficFilter[FollowRecommendationsThriftService.ReqRepServicePerEndpoint] = {
-    // sampleFunction is used to determine which requests should get replicated
-    // to the dark traffic proxy server
-    val sampleFunction: Any => Boolean = { _ =>
-      // check whether the current FRS instance is deployed in production
-      env match {
-        case "prod" =>
-          statsReceiver.scope("provideDarkTrafficFilter").counter("prod").incr()
-          destFlag.isDefined && deciderGateBuilder
-            .keyToFeature(DeciderKey.EnableTrafficDarkReading).isAvailable(RandomRecipient)
-        case _ =>
-          statsReceiver.scope("provideDarkTrafficFilter").counter("devel").incr()
-          // replicate zero requests if in non-production environment
-          false
+  @Providelons
+  @Singlelonton
+  delonf providelonDarkTrafficFiltelonr(
+    @DarkTrafficSelonrvicelon darkSelonrvicelon: FollowReloncommelonndationsThriftSelonrvicelon.RelonqRelonpSelonrvicelonPelonrelonndpoint,
+    deloncidelonrGatelonBuildelonr: DeloncidelonrGatelonBuildelonr,
+    statsReloncelonivelonr: StatsReloncelonivelonr,
+    @Flag("elonnvironmelonnt") elonnv: String
+  ): DarkTrafficFiltelonr[FollowReloncommelonndationsThriftSelonrvicelon.RelonqRelonpSelonrvicelonPelonrelonndpoint] = {
+    // samplelonFunction is uselond to delontelonrminelon which relonquelonsts should gelont relonplicatelond
+    // to thelon dark traffic proxy selonrvelonr
+    val samplelonFunction: Any => Boolelonan = { _ =>
+      // chelonck whelonthelonr thelon currelonnt FRS instancelon is delonployelond in production
+      elonnv match {
+        caselon "prod" =>
+          statsReloncelonivelonr.scopelon("providelonDarkTrafficFiltelonr").countelonr("prod").incr()
+          delonstFlag.isDelonfinelond && deloncidelonrGatelonBuildelonr
+            .kelonyToFelonaturelon(DeloncidelonrKelony.elonnablelonTrafficDarkRelonading).isAvailablelon(RandomReloncipielonnt)
+        caselon _ =>
+          statsReloncelonivelonr.scopelon("providelonDarkTrafficFiltelonr").countelonr("delonvelonl").incr()
+          // relonplicatelon zelonro relonquelonsts if in non-production elonnvironmelonnt
+          falselon
       }
     }
-    new DarkTrafficFilter[FollowRecommendationsThriftService.ReqRepServicePerEndpoint](
-      darkService,
-      sampleFunction,
-      forwardAfterService = true,
-      statsReceiver.scope("DarkTrafficFilter"),
-      lookupByMethod = true
+    nelonw DarkTrafficFiltelonr[FollowReloncommelonndationsThriftSelonrvicelon.RelonqRelonpSelonrvicelonPelonrelonndpoint](
+      darkSelonrvicelon,
+      samplelonFunction,
+      forwardAftelonrSelonrvicelon = truelon,
+      statsReloncelonivelonr.scopelon("DarkTrafficFiltelonr"),
+      lookupByMelonthod = truelon
     )
   }
 }

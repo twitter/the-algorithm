@@ -1,20 +1,20 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.vertical_grid_item
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.itelonm.velonrtical_grid_itelonm
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.vertical_grid_item.SingleStateDefaultVerticalGridItemTileStyle
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.vertical_grid_item.DoubleStateDefaultVerticalGridItemTileStyle
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.vertical_grid_item.VerticalGridItemTileStyle
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.velonrtical_grid_itelonm.SinglelonStatelonDelonfaultVelonrticalGridItelonmTilelonStylelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.velonrtical_grid_itelonm.DoublelonStatelonDelonfaultVelonrticalGridItelonmTilelonStylelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.velonrtical_grid_itelonm.VelonrticalGridItelonmTilelonStylelon
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class VerticalGridItemTileStyleMarshaller @Inject() () {
+@Singlelonton
+class VelonrticalGridItelonmTilelonStylelonMarshallelonr @Injelonct() () {
 
-  def apply(verticalGridItemTileStyle: VerticalGridItemTileStyle): urt.VerticalGridItemTileStyle =
-    verticalGridItemTileStyle match {
-      case SingleStateDefaultVerticalGridItemTileStyle =>
-        urt.VerticalGridItemTileStyle.SingleStateDefault
-      case DoubleStateDefaultVerticalGridItemTileStyle =>
-        urt.VerticalGridItemTileStyle.DoubleStateDefault
+  delonf apply(velonrticalGridItelonmTilelonStylelon: VelonrticalGridItelonmTilelonStylelon): urt.VelonrticalGridItelonmTilelonStylelon =
+    velonrticalGridItelonmTilelonStylelon match {
+      caselon SinglelonStatelonDelonfaultVelonrticalGridItelonmTilelonStylelon =>
+        urt.VelonrticalGridItelonmTilelonStylelon.SinglelonStatelonDelonfault
+      caselon DoublelonStatelonDelonfaultVelonrticalGridItelonmTilelonStylelon =>
+        urt.VelonrticalGridItelonmTilelonStylelon.DoublelonStatelonDelonfault
     }
 }

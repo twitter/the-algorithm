@@ -1,111 +1,111 @@
-package com.twitter.timelineranker.util
+packagelon com.twittelonr.timelonlinelonrankelonr.util
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.servo.util.Gate
-import com.twitter.timelineranker.contentfeatures.ContentFeaturesProvider
-import com.twitter.timelineranker.core.HydratedTweets
-import com.twitter.timelineranker.model.RecapQuery
-import com.twitter.timelineranker.recap.model.ContentFeatures
-import com.twitter.timelines.clients.tweetypie.TweetyPieClient
-import com.twitter.timelines.model.TweetId
-import com.twitter.timelines.model.tweet.HydratedTweet
-import com.twitter.timelines.util.FailOpenHandler
-import com.twitter.tweetypie.thriftscala.MediaEntity
-import com.twitter.tweetypie.thriftscala.TweetInclude
-import com.twitter.tweetypie.thriftscala.{Tweet => TTweet}
-import com.twitter.util.Future
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.selonrvo.util.Gatelon
+import com.twittelonr.timelonlinelonrankelonr.contelonntfelonaturelons.ContelonntFelonaturelonsProvidelonr
+import com.twittelonr.timelonlinelonrankelonr.corelon.HydratelondTwelonelonts
+import com.twittelonr.timelonlinelonrankelonr.modelonl.ReloncapQuelonry
+import com.twittelonr.timelonlinelonrankelonr.reloncap.modelonl.ContelonntFelonaturelons
+import com.twittelonr.timelonlinelons.clielonnts.twelonelontypielon.TwelonelontyPielonClielonnt
+import com.twittelonr.timelonlinelons.modelonl.TwelonelontId
+import com.twittelonr.timelonlinelons.modelonl.twelonelont.HydratelondTwelonelont
+import com.twittelonr.timelonlinelons.util.FailOpelonnHandlelonr
+import com.twittelonr.twelonelontypielon.thriftscala.Melondiaelonntity
+import com.twittelonr.twelonelontypielon.thriftscala.TwelonelontIncludelon
+import com.twittelonr.twelonelontypielon.thriftscala.{Twelonelont => TTwelonelont}
+import com.twittelonr.util.Futurelon
 
-object TweetypieContentFeaturesProvider {
-  val DefaultTweetyPieFieldsToHydrate: Set[TweetInclude] = TweetyPieClient.CoreTweetFields ++
-    TweetyPieClient.MediaFields ++
-    TweetyPieClient.SelfThreadFields ++
-    Set[TweetInclude](TweetInclude.MediaEntityFieldId(MediaEntity.AdditionalMetadataField.id))
+objelonct TwelonelontypielonContelonntFelonaturelonsProvidelonr {
+  val DelonfaultTwelonelontyPielonFielonldsToHydratelon: Selont[TwelonelontIncludelon] = TwelonelontyPielonClielonnt.CorelonTwelonelontFielonlds ++
+    TwelonelontyPielonClielonnt.MelondiaFielonlds ++
+    TwelonelontyPielonClielonnt.SelonlfThrelonadFielonlds ++
+    Selont[TwelonelontIncludelon](TwelonelontIncludelon.MelondiaelonntityFielonldId(Melondiaelonntity.AdditionalMelontadataFielonld.id))
 
-  //add Tweet fields from semantic core
-  val TweetyPieFieldsToHydrate: Set[TweetInclude] = DefaultTweetyPieFieldsToHydrate ++
-    Set[TweetInclude](TweetInclude.TweetFieldId(TTweet.EscherbirdEntityAnnotationsField.id))
-  val EmptyHydratedTweets: HydratedTweets =
-    HydratedTweets(Seq.empty[HydratedTweet], Seq.empty[HydratedTweet])
-  val EmptyHydratedTweetsFuture: Future[HydratedTweets] = Future.value(EmptyHydratedTweets)
+  //add Twelonelont fielonlds from selonmantic corelon
+  val TwelonelontyPielonFielonldsToHydratelon: Selont[TwelonelontIncludelon] = DelonfaultTwelonelontyPielonFielonldsToHydratelon ++
+    Selont[TwelonelontIncludelon](TwelonelontIncludelon.TwelonelontFielonldId(TTwelonelont.elonschelonrbirdelonntityAnnotationsFielonld.id))
+  val elonmptyHydratelondTwelonelonts: HydratelondTwelonelonts =
+    HydratelondTwelonelonts(Selonq.elonmpty[HydratelondTwelonelont], Selonq.elonmpty[HydratelondTwelonelont])
+  val elonmptyHydratelondTwelonelontsFuturelon: Futurelon[HydratelondTwelonelonts] = Futurelon.valuelon(elonmptyHydratelondTwelonelonts)
 }
 
-class TweetypieContentFeaturesProvider(
-  tweetHydrator: TweetHydrator,
-  enableContentFeaturesGate: Gate[RecapQuery],
-  enableTokensInContentFeaturesGate: Gate[RecapQuery],
-  enableTweetTextInContentFeaturesGate: Gate[RecapQuery],
-  enableConversationControlContentFeaturesGate: Gate[RecapQuery],
-  enableTweetMediaHydrationGate: Gate[RecapQuery],
-  statsReceiver: StatsReceiver)
-    extends ContentFeaturesProvider {
-  val scopedStatsReceiver: StatsReceiver = statsReceiver.scope("TweetypieContentFeaturesProvider")
+class TwelonelontypielonContelonntFelonaturelonsProvidelonr(
+  twelonelontHydrator: TwelonelontHydrator,
+  elonnablelonContelonntFelonaturelonsGatelon: Gatelon[ReloncapQuelonry],
+  elonnablelonTokelonnsInContelonntFelonaturelonsGatelon: Gatelon[ReloncapQuelonry],
+  elonnablelonTwelonelontTelonxtInContelonntFelonaturelonsGatelon: Gatelon[ReloncapQuelonry],
+  elonnablelonConvelonrsationControlContelonntFelonaturelonsGatelon: Gatelon[ReloncapQuelonry],
+  elonnablelonTwelonelontMelondiaHydrationGatelon: Gatelon[ReloncapQuelonry],
+  statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds ContelonntFelonaturelonsProvidelonr {
+  val scopelondStatsReloncelonivelonr: StatsReloncelonivelonr = statsReloncelonivelonr.scopelon("TwelonelontypielonContelonntFelonaturelonsProvidelonr")
 
-  override def apply(
-    query: RecapQuery,
-    tweetIds: Seq[TweetId]
-  ): Future[Map[TweetId, ContentFeatures]] = {
-    import TweetypieContentFeaturesProvider._
+  ovelonrridelon delonf apply(
+    quelonry: ReloncapQuelonry,
+    twelonelontIds: Selonq[TwelonelontId]
+  ): Futurelon[Map[TwelonelontId, ContelonntFelonaturelons]] = {
+    import TwelonelontypielonContelonntFelonaturelonsProvidelonr._
 
-    val tweetypieHydrationHandler = new FailOpenHandler(scopedStatsReceiver)
-    val hydratePenguinTextFeatures = enableContentFeaturesGate(query)
-    val hydrateSemanticCoreFeatures = enableContentFeaturesGate(query)
-    val hydrateTokens = enableTokensInContentFeaturesGate(query)
-    val hydrateTweetText = enableTweetTextInContentFeaturesGate(query)
-    val hydrateConversationControl = enableConversationControlContentFeaturesGate(query)
+    val twelonelontypielonHydrationHandlelonr = nelonw FailOpelonnHandlelonr(scopelondStatsReloncelonivelonr)
+    val hydratelonPelonnguinTelonxtFelonaturelons = elonnablelonContelonntFelonaturelonsGatelon(quelonry)
+    val hydratelonSelonmanticCorelonFelonaturelons = elonnablelonContelonntFelonaturelonsGatelon(quelonry)
+    val hydratelonTokelonns = elonnablelonTokelonnsInContelonntFelonaturelonsGatelon(quelonry)
+    val hydratelonTwelonelontTelonxt = elonnablelonTwelonelontTelonxtInContelonntFelonaturelonsGatelon(quelonry)
+    val hydratelonConvelonrsationControl = elonnablelonConvelonrsationControlContelonntFelonaturelonsGatelon(quelonry)
 
-    val userId = query.userId
+    val uselonrId = quelonry.uselonrId
 
-    val hydratedTweetsFuture = tweetypieHydrationHandler {
-      // tweetyPie fields to hydrate given hydrateSemanticCoreFeatures
-      val fieldsToHydrateWithSemanticCore = if (hydrateSemanticCoreFeatures) {
-        TweetyPieFieldsToHydrate
-      } else {
-        DefaultTweetyPieFieldsToHydrate
+    val hydratelondTwelonelontsFuturelon = twelonelontypielonHydrationHandlelonr {
+      // twelonelontyPielon fielonlds to hydratelon givelonn hydratelonSelonmanticCorelonFelonaturelons
+      val fielonldsToHydratelonWithSelonmanticCorelon = if (hydratelonSelonmanticCorelonFelonaturelons) {
+        TwelonelontyPielonFielonldsToHydratelon
+      } elonlselon {
+        DelonfaultTwelonelontyPielonFielonldsToHydratelon
       }
 
-      // tweetyPie fields to hydrate given hydrateSemanticCoreFeatures & hydrateConversationControl
-      val fieldsToHydrateWithConversationControl = if (hydrateConversationControl) {
-        fieldsToHydrateWithSemanticCore ++ TweetyPieClient.ConversationControlField
-      } else {
-        fieldsToHydrateWithSemanticCore
+      // twelonelontyPielon fielonlds to hydratelon givelonn hydratelonSelonmanticCorelonFelonaturelons & hydratelonConvelonrsationControl
+      val fielonldsToHydratelonWithConvelonrsationControl = if (hydratelonConvelonrsationControl) {
+        fielonldsToHydratelonWithSelonmanticCorelon ++ TwelonelontyPielonClielonnt.ConvelonrsationControlFielonld
+      } elonlselon {
+        fielonldsToHydratelonWithSelonmanticCorelon
       }
 
-      tweetHydrator.hydrate(Some(userId), tweetIds, fieldsToHydrateWithConversationControl)
+      twelonelontHydrator.hydratelon(Somelon(uselonrId), twelonelontIds, fielonldsToHydratelonWithConvelonrsationControl)
 
-    } { e: Throwable => EmptyHydratedTweetsFuture }
+    } { elon: Throwablelon => elonmptyHydratelondTwelonelontsFuturelon }
 
-    hydratedTweetsFuture.map[Map[TweetId, ContentFeatures]] { hydratedTweets =>
-      hydratedTweets.outerTweets.map { hydratedTweet =>
-        val contentFeaturesFromTweet = ContentFeatures.Empty.copy(
-          selfThreadMetadata = hydratedTweet.tweet.selfThreadMetadata
+    hydratelondTwelonelontsFuturelon.map[Map[TwelonelontId, ContelonntFelonaturelons]] { hydratelondTwelonelonts =>
+      hydratelondTwelonelonts.outelonrTwelonelonts.map { hydratelondTwelonelont =>
+        val contelonntFelonaturelonsFromTwelonelont = ContelonntFelonaturelons.elonmpty.copy(
+          selonlfThrelonadMelontadata = hydratelondTwelonelont.twelonelont.selonlfThrelonadMelontadata
         )
 
-        val contentFeaturesWithText = TweetTextFeaturesExtractor.addTextFeaturesFromTweet(
-          contentFeaturesFromTweet,
-          hydratedTweet.tweet,
-          hydratePenguinTextFeatures,
-          hydrateTokens,
-          hydrateTweetText
+        val contelonntFelonaturelonsWithTelonxt = TwelonelontTelonxtFelonaturelonselonxtractor.addTelonxtFelonaturelonsFromTwelonelont(
+          contelonntFelonaturelonsFromTwelonelont,
+          hydratelondTwelonelont.twelonelont,
+          hydratelonPelonnguinTelonxtFelonaturelons,
+          hydratelonTokelonns,
+          hydratelonTwelonelontTelonxt
         )
-        val contentFeaturesWithMedia = TweetMediaFeaturesExtractor.addMediaFeaturesFromTweet(
-          contentFeaturesWithText,
-          hydratedTweet.tweet,
-          enableTweetMediaHydrationGate(query)
+        val contelonntFelonaturelonsWithMelondia = TwelonelontMelondiaFelonaturelonselonxtractor.addMelondiaFelonaturelonsFromTwelonelont(
+          contelonntFelonaturelonsWithTelonxt,
+          hydratelondTwelonelont.twelonelont,
+          elonnablelonTwelonelontMelondiaHydrationGatelon(quelonry)
         )
-        val contentFeaturesWithAnnotations = TweetAnnotationFeaturesExtractor
-          .addAnnotationFeaturesFromTweet(
-            contentFeaturesWithMedia,
-            hydratedTweet.tweet,
-            hydrateSemanticCoreFeatures
+        val contelonntFelonaturelonsWithAnnotations = TwelonelontAnnotationFelonaturelonselonxtractor
+          .addAnnotationFelonaturelonsFromTwelonelont(
+            contelonntFelonaturelonsWithMelondia,
+            hydratelondTwelonelont.twelonelont,
+            hydratelonSelonmanticCorelonFelonaturelons
           )
-        // add conversationControl to content features if hydrateConversationControl is true
-        if (hydrateConversationControl) {
-          val contentFeaturesWithConversationControl = contentFeaturesWithAnnotations.copy(
-            conversationControl = hydratedTweet.tweet.conversationControl
+        // add convelonrsationControl to contelonnt felonaturelons if hydratelonConvelonrsationControl is truelon
+        if (hydratelonConvelonrsationControl) {
+          val contelonntFelonaturelonsWithConvelonrsationControl = contelonntFelonaturelonsWithAnnotations.copy(
+            convelonrsationControl = hydratelondTwelonelont.twelonelont.convelonrsationControl
           )
-          hydratedTweet.tweetId -> contentFeaturesWithConversationControl
-        } else {
-          hydratedTweet.tweetId -> contentFeaturesWithAnnotations
+          hydratelondTwelonelont.twelonelontId -> contelonntFelonaturelonsWithConvelonrsationControl
+        } elonlselon {
+          hydratelondTwelonelont.twelonelontId -> contelonntFelonaturelonsWithAnnotations
         }
 
       }.toMap

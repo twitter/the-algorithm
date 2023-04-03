@@ -1,256 +1,256 @@
-package com.twitter.recosinjector.event_processors
+packagelon com.twittelonr.reloncosinjelonctor.elonvelonnt_procelonssors
 
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.util.SnowflakeUtils
-import com.twitter.gizmoduck.thriftscala.User
-import com.twitter.recos.util.Action
-import com.twitter.recos.util.Action.Action
-import com.twitter.recosinjector.clients.Gizmoduck
-import com.twitter.recosinjector.clients.SocialGraph
-import com.twitter.recosinjector.clients.Tweetypie
-import com.twitter.recosinjector.edges.TweetEventToUserTweetEntityGraphBuilder
-import com.twitter.recosinjector.edges.TweetEventToUserUserGraphBuilder
-import com.twitter.recosinjector.filters.TweetFilter
-import com.twitter.recosinjector.filters.UserFilter
-import com.twitter.recosinjector.publishers.KafkaEventPublisher
-import com.twitter.recosinjector.util.TweetCreateEventDetails
-import com.twitter.recosinjector.util.TweetDetails
-import com.twitter.recosinjector.util.UserTweetEngagement
-import com.twitter.scrooge.ThriftStructCodec
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.tweetypie.thriftscala.TweetCreateEvent
-import com.twitter.tweetypie.thriftscala.TweetEvent
-import com.twitter.tweetypie.thriftscala.TweetEventData
-import com.twitter.util.Future
+import com.twittelonr.finaglelon.mtls.authelonntication.SelonrvicelonIdelonntifielonr
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.frigatelon.common.util.SnowflakelonUtils
+import com.twittelonr.gizmoduck.thriftscala.Uselonr
+import com.twittelonr.reloncos.util.Action
+import com.twittelonr.reloncos.util.Action.Action
+import com.twittelonr.reloncosinjelonctor.clielonnts.Gizmoduck
+import com.twittelonr.reloncosinjelonctor.clielonnts.SocialGraph
+import com.twittelonr.reloncosinjelonctor.clielonnts.Twelonelontypielon
+import com.twittelonr.reloncosinjelonctor.elondgelons.TwelonelontelonvelonntToUselonrTwelonelontelonntityGraphBuildelonr
+import com.twittelonr.reloncosinjelonctor.elondgelons.TwelonelontelonvelonntToUselonrUselonrGraphBuildelonr
+import com.twittelonr.reloncosinjelonctor.filtelonrs.TwelonelontFiltelonr
+import com.twittelonr.reloncosinjelonctor.filtelonrs.UselonrFiltelonr
+import com.twittelonr.reloncosinjelonctor.publishelonrs.KafkaelonvelonntPublishelonr
+import com.twittelonr.reloncosinjelonctor.util.TwelonelontCrelonatelonelonvelonntDelontails
+import com.twittelonr.reloncosinjelonctor.util.TwelonelontDelontails
+import com.twittelonr.reloncosinjelonctor.util.UselonrTwelonelontelonngagelonmelonnt
+import com.twittelonr.scroogelon.ThriftStructCodelonc
+import com.twittelonr.twelonelontypielon.thriftscala.Twelonelont
+import com.twittelonr.twelonelontypielon.thriftscala.TwelonelontCrelonatelonelonvelonnt
+import com.twittelonr.twelonelontypielon.thriftscala.Twelonelontelonvelonnt
+import com.twittelonr.twelonelontypielon.thriftscala.TwelonelontelonvelonntData
+import com.twittelonr.util.Futurelon
 
 /**
- * Event processor for tweet_events EventBus stream from Tweetypie. This stream provides all the
- * key events related to a new tweet, like Creation, Retweet, Quote Tweet, and Replying.
- * It also carries the entities/metadata information in a tweet, including
- * @ Mention, HashTag, MediaTag, URL, etc.
+ * elonvelonnt procelonssor for twelonelont_elonvelonnts elonvelonntBus strelonam from Twelonelontypielon. This strelonam providelons all thelon
+ * kelony elonvelonnts relonlatelond to a nelonw twelonelont, likelon Crelonation, Relontwelonelont, Quotelon Twelonelont, and Relonplying.
+ * It also carrielons thelon elonntitielons/melontadata information in a twelonelont, including
+ * @ Melonntion, HashTag, MelondiaTag, URL, elontc.
  */
-class TweetEventProcessor(
-  override val eventBusStreamName: String,
-  override val thriftStruct: ThriftStructCodec[TweetEvent],
-  override val serviceIdentifier: ServiceIdentifier,
-  userUserGraphMessageBuilder: TweetEventToUserUserGraphBuilder,
-  userUserGraphTopic: String,
-  userTweetEntityGraphMessageBuilder: TweetEventToUserTweetEntityGraphBuilder,
-  userTweetEntityGraphTopic: String,
-  kafkaEventPublisher: KafkaEventPublisher,
+class TwelonelontelonvelonntProcelonssor(
+  ovelonrridelon val elonvelonntBusStrelonamNamelon: String,
+  ovelonrridelon val thriftStruct: ThriftStructCodelonc[Twelonelontelonvelonnt],
+  ovelonrridelon val selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr,
+  uselonrUselonrGraphMelonssagelonBuildelonr: TwelonelontelonvelonntToUselonrUselonrGraphBuildelonr,
+  uselonrUselonrGraphTopic: String,
+  uselonrTwelonelontelonntityGraphMelonssagelonBuildelonr: TwelonelontelonvelonntToUselonrTwelonelontelonntityGraphBuildelonr,
+  uselonrTwelonelontelonntityGraphTopic: String,
+  kafkaelonvelonntPublishelonr: KafkaelonvelonntPublishelonr,
   socialGraph: SocialGraph,
   gizmoduck: Gizmoduck,
-  tweetypie: Tweetypie
+  twelonelontypielon: Twelonelontypielon
 )(
-  override implicit val statsReceiver: StatsReceiver)
-    extends EventBusProcessor[TweetEvent] {
+  ovelonrridelon implicit val statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds elonvelonntBusProcelonssor[Twelonelontelonvelonnt] {
 
-  private val tweetCreateEventCounter = statsReceiver.counter("num_tweet_create_events")
-  private val nonTweetCreateEventCounter = statsReceiver.counter("num_non_tweet_create_events")
+  privatelon val twelonelontCrelonatelonelonvelonntCountelonr = statsReloncelonivelonr.countelonr("num_twelonelont_crelonatelon_elonvelonnts")
+  privatelon val nonTwelonelontCrelonatelonelonvelonntCountelonr = statsReloncelonivelonr.countelonr("num_non_twelonelont_crelonatelon_elonvelonnts")
 
-  private val tweetActionStats = statsReceiver.scope("tweet_action")
-  private val numUrlCounter = statsReceiver.counter("num_tweet_url")
-  private val numMediaUrlCounter = statsReceiver.counter("num_tweet_media_url")
-  private val numHashTagCounter = statsReceiver.counter("num_tweet_hashtag")
+  privatelon val twelonelontActionStats = statsReloncelonivelonr.scopelon("twelonelont_action")
+  privatelon val numUrlCountelonr = statsReloncelonivelonr.countelonr("num_twelonelont_url")
+  privatelon val numMelondiaUrlCountelonr = statsReloncelonivelonr.countelonr("num_twelonelont_melondia_url")
+  privatelon val numHashTagCountelonr = statsReloncelonivelonr.countelonr("num_twelonelont_hashtag")
 
-  private val numMentionsCounter = statsReceiver.counter("num_tweet_mention")
-  private val numMediatagCounter = statsReceiver.counter("num_tweet_mediatag")
-  private val numValidMentionsCounter = statsReceiver.counter("num_tweet_valid_mention")
-  private val numValidMediatagCounter = statsReceiver.counter("num_tweet_valid_mediatag")
+  privatelon val numMelonntionsCountelonr = statsReloncelonivelonr.countelonr("num_twelonelont_melonntion")
+  privatelon val numMelondiatagCountelonr = statsReloncelonivelonr.countelonr("num_twelonelont_melondiatag")
+  privatelon val numValidMelonntionsCountelonr = statsReloncelonivelonr.countelonr("num_twelonelont_valid_melonntion")
+  privatelon val numValidMelondiatagCountelonr = statsReloncelonivelonr.countelonr("num_twelonelont_valid_melondiatag")
 
-  private val numNullCastTweetCounter = statsReceiver.counter("num_null_cast_tweet")
-  private val numNullCastSourceTweetCounter = statsReceiver.counter("num_null_cast_source_tweet")
-  private val numTweetFailSafetyLevelCounter = statsReceiver.counter("num_fail_tweetypie_safety")
-  private val numAuthorUnsafeCounter = statsReceiver.counter("num_author_unsafe")
-  private val numProcessTweetCounter = statsReceiver.counter("num_process_tweet")
-  private val numNoProcessTweetCounter = statsReceiver.counter("num_no_process_tweet")
+  privatelon val numNullCastTwelonelontCountelonr = statsReloncelonivelonr.countelonr("num_null_cast_twelonelont")
+  privatelon val numNullCastSourcelonTwelonelontCountelonr = statsReloncelonivelonr.countelonr("num_null_cast_sourcelon_twelonelont")
+  privatelon val numTwelonelontFailSafelontyLelonvelonlCountelonr = statsReloncelonivelonr.countelonr("num_fail_twelonelontypielon_safelonty")
+  privatelon val numAuthorUnsafelonCountelonr = statsReloncelonivelonr.countelonr("num_author_unsafelon")
+  privatelon val numProcelonssTwelonelontCountelonr = statsReloncelonivelonr.countelonr("num_procelonss_twelonelont")
+  privatelon val numNoProcelonssTwelonelontCountelonr = statsReloncelonivelonr.countelonr("num_no_procelonss_twelonelont")
 
-  private val selfRetweetCounter = statsReceiver.counter("num_retweets_self")
+  privatelon val selonlfRelontwelonelontCountelonr = statsReloncelonivelonr.countelonr("num_relontwelonelonts_selonlf")
 
-  private val engageUserFilter = new UserFilter(gizmoduck)(statsReceiver.scope("author_user"))
-  private val tweetFilter = new TweetFilter(tweetypie)
+  privatelon val elonngagelonUselonrFiltelonr = nelonw UselonrFiltelonr(gizmoduck)(statsReloncelonivelonr.scopelon("author_uselonr"))
+  privatelon val twelonelontFiltelonr = nelonw TwelonelontFiltelonr(twelonelontypielon)
 
-  private def trackTweetCreateEventStats(details: TweetCreateEventDetails): Unit = {
-    tweetActionStats.counter(details.userTweetEngagement.action.toString).incr()
+  privatelon delonf trackTwelonelontCrelonatelonelonvelonntStats(delontails: TwelonelontCrelonatelonelonvelonntDelontails): Unit = {
+    twelonelontActionStats.countelonr(delontails.uselonrTwelonelontelonngagelonmelonnt.action.toString).incr()
 
-    details.userTweetEngagement.tweetDetails.foreach { tweetDetails =>
-      tweetDetails.mentionUserIds.foreach(mention => numMentionsCounter.incr(mention.size))
-      tweetDetails.mediatagUserIds.foreach(mediatag => numMediatagCounter.incr(mediatag.size))
-      tweetDetails.urls.foreach(urls => numUrlCounter.incr(urls.size))
-      tweetDetails.mediaUrls.foreach(mediaUrls => numMediaUrlCounter.incr(mediaUrls.size))
-      tweetDetails.hashtags.foreach(hashtags => numHashTagCounter.incr(hashtags.size))
+    delontails.uselonrTwelonelontelonngagelonmelonnt.twelonelontDelontails.forelonach { twelonelontDelontails =>
+      twelonelontDelontails.melonntionUselonrIds.forelonach(melonntion => numMelonntionsCountelonr.incr(melonntion.sizelon))
+      twelonelontDelontails.melondiatagUselonrIds.forelonach(melondiatag => numMelondiatagCountelonr.incr(melondiatag.sizelon))
+      twelonelontDelontails.urls.forelonach(urls => numUrlCountelonr.incr(urls.sizelon))
+      twelonelontDelontails.melondiaUrls.forelonach(melondiaUrls => numMelondiaUrlCountelonr.incr(melondiaUrls.sizelon))
+      twelonelontDelontails.hashtags.forelonach(hashtags => numHashTagCountelonr.incr(hashtags.sizelon))
     }
 
-    details.validMentionUserIds.foreach(mentions => numValidMentionsCounter.incr(mentions.size))
-    details.validMediatagUserIds.foreach(mediatags => numValidMediatagCounter.incr(mediatags.size))
+    delontails.validMelonntionUselonrIds.forelonach(melonntions => numValidMelonntionsCountelonr.incr(melonntions.sizelon))
+    delontails.validMelondiatagUselonrIds.forelonach(melondiatags => numValidMelondiatagCountelonr.incr(melondiatags.sizelon))
   }
 
   /**
-   * Given a created tweet, return what type of tweet it is, i.e. Tweet, Retweet, Quote, or Reply。
-   * Retweet, Quote, or Reply are responsive actions to a source tweet, so for these tweets,
-   * we also return the tweet id and author of the source tweet (ex. the tweet being retweeted).
+   * Givelonn a crelonatelond twelonelont, relonturn what typelon of twelonelont it is, i.elon. Twelonelont, Relontwelonelont, Quotelon, or Relonply。
+   * Relontwelonelont, Quotelon, or Relonply arelon relonsponsivelon actions to a sourcelon twelonelont, so for thelonselon twelonelonts,
+   * welon also relonturn thelon twelonelont id and author of thelon sourcelon twelonelont (elonx. thelon twelonelont beloning relontwelonelontelond).
    */
-  private def getTweetAction(tweetDetails: TweetDetails): Action = {
-    (tweetDetails.replySourceId, tweetDetails.retweetSourceId, tweetDetails.quoteSourceId) match {
-      case (Some(_), _, _) =>
-        Action.Reply
-      case (_, Some(_), _) =>
-        Action.Retweet
-      case (_, _, Some(_)) =>
-        Action.Quote
-      case _ =>
-        Action.Tweet
-    }
-  }
-
-  /**
-   * Given a list of mentioned users and mediatagged users in the tweet, return the users who
-   * actually follow the source user.
-   */
-  private def getFollowedByIds(
-    sourceUserId: Long,
-    mentionUserIds: Option[Seq[Long]],
-    mediatagUserIds: Option[Seq[Long]]
-  ): Future[Seq[Long]] = {
-    val uniqueEntityUserIds =
-      (mentionUserIds.getOrElse(Nil) ++ mediatagUserIds.getOrElse(Nil)).distinct
-    if (uniqueEntityUserIds.isEmpty) {
-      Future.Nil
-    } else {
-      socialGraph.followedByNotMutedBy(sourceUserId, uniqueEntityUserIds)
-    }
-  }
-
-  private def getSourceTweet(tweetDetails: TweetDetails): Future[Option[Tweet]] = {
-    tweetDetails.sourceTweetId match {
-      case Some(sourceTweetId) =>
-        tweetypie.getTweet(sourceTweetId)
-      case _ =>
-        Future.None
+  privatelon delonf gelontTwelonelontAction(twelonelontDelontails: TwelonelontDelontails): Action = {
+    (twelonelontDelontails.relonplySourcelonId, twelonelontDelontails.relontwelonelontSourcelonId, twelonelontDelontails.quotelonSourcelonId) match {
+      caselon (Somelon(_), _, _) =>
+        Action.Relonply
+      caselon (_, Somelon(_), _) =>
+        Action.Relontwelonelont
+      caselon (_, _, Somelon(_)) =>
+        Action.Quotelon
+      caselon _ =>
+        Action.Twelonelont
     }
   }
 
   /**
-   * Extract and return the details when the source user created a new tweet.
+   * Givelonn a list of melonntionelond uselonrs and melondiataggelond uselonrs in thelon twelonelont, relonturn thelon uselonrs who
+   * actually follow thelon sourcelon uselonr.
    */
-  private def getTweetDetails(
-    tweet: Tweet,
-    engageUser: User
-  ): Future[TweetCreateEventDetails] = {
-    val tweetDetails = TweetDetails(tweet)
+  privatelon delonf gelontFollowelondByIds(
+    sourcelonUselonrId: Long,
+    melonntionUselonrIds: Option[Selonq[Long]],
+    melondiatagUselonrIds: Option[Selonq[Long]]
+  ): Futurelon[Selonq[Long]] = {
+    val uniquelonelonntityUselonrIds =
+      (melonntionUselonrIds.gelontOrelonlselon(Nil) ++ melondiatagUselonrIds.gelontOrelonlselon(Nil)).distinct
+    if (uniquelonelonntityUselonrIds.iselonmpty) {
+      Futurelon.Nil
+    } elonlselon {
+      socialGraph.followelondByNotMutelondBy(sourcelonUselonrId, uniquelonelonntityUselonrIds)
+    }
+  }
 
-    val action = getTweetAction(tweetDetails)
-    val tweetCreationTimeMillis = SnowflakeUtils.tweetCreationTime(tweet.id).map(_.inMilliseconds)
-    val engageUserId = engageUser.id
-    val userTweetEngagement = UserTweetEngagement(
-      engageUserId = engageUserId,
-      engageUser = Some(engageUser),
+  privatelon delonf gelontSourcelonTwelonelont(twelonelontDelontails: TwelonelontDelontails): Futurelon[Option[Twelonelont]] = {
+    twelonelontDelontails.sourcelonTwelonelontId match {
+      caselon Somelon(sourcelonTwelonelontId) =>
+        twelonelontypielon.gelontTwelonelont(sourcelonTwelonelontId)
+      caselon _ =>
+        Futurelon.Nonelon
+    }
+  }
+
+  /**
+   * elonxtract and relonturn thelon delontails whelonn thelon sourcelon uselonr crelonatelond a nelonw twelonelont.
+   */
+  privatelon delonf gelontTwelonelontDelontails(
+    twelonelont: Twelonelont,
+    elonngagelonUselonr: Uselonr
+  ): Futurelon[TwelonelontCrelonatelonelonvelonntDelontails] = {
+    val twelonelontDelontails = TwelonelontDelontails(twelonelont)
+
+    val action = gelontTwelonelontAction(twelonelontDelontails)
+    val twelonelontCrelonationTimelonMillis = SnowflakelonUtils.twelonelontCrelonationTimelon(twelonelont.id).map(_.inMilliselonconds)
+    val elonngagelonUselonrId = elonngagelonUselonr.id
+    val uselonrTwelonelontelonngagelonmelonnt = UselonrTwelonelontelonngagelonmelonnt(
+      elonngagelonUselonrId = elonngagelonUselonrId,
+      elonngagelonUselonr = Somelon(elonngagelonUselonr),
       action = action,
-      engagementTimeMillis = tweetCreationTimeMillis,
-      tweetId = tweet.id,
-      tweetDetails = Some(tweetDetails)
+      elonngagelonmelonntTimelonMillis = twelonelontCrelonationTimelonMillis,
+      twelonelontId = twelonelont.id,
+      twelonelontDelontails = Somelon(twelonelontDelontails)
     )
 
-    val sourceTweetFut = getSourceTweet(tweetDetails)
-    val followedByIdsFut = getFollowedByIds(
-      engageUserId,
-      tweetDetails.mentionUserIds,
-      tweetDetails.mediatagUserIds
+    val sourcelonTwelonelontFut = gelontSourcelonTwelonelont(twelonelontDelontails)
+    val followelondByIdsFut = gelontFollowelondByIds(
+      elonngagelonUselonrId,
+      twelonelontDelontails.melonntionUselonrIds,
+      twelonelontDelontails.melondiatagUselonrIds
     )
 
-    Future.join(followedByIdsFut, sourceTweetFut).map {
-      case (followedByIds, sourceTweet) =>
-        TweetCreateEventDetails(
-          userTweetEngagement = userTweetEngagement,
-          validEntityUserIds = followedByIds,
-          sourceTweetDetails = sourceTweet.map(TweetDetails)
+    Futurelon.join(followelondByIdsFut, sourcelonTwelonelontFut).map {
+      caselon (followelondByIds, sourcelonTwelonelont) =>
+        TwelonelontCrelonatelonelonvelonntDelontails(
+          uselonrTwelonelontelonngagelonmelonnt = uselonrTwelonelontelonngagelonmelonnt,
+          validelonntityUselonrIds = followelondByIds,
+          sourcelonTwelonelontDelontails = sourcelonTwelonelont.map(TwelonelontDelontails)
         )
     }
   }
 
   /**
-   * Exclude any Retweets of one's own tweets
+   * elonxcludelon any Relontwelonelonts of onelon's own twelonelonts
    */
-  private def isEventSelfRetweet(tweetEvent: TweetCreateEventDetails): Boolean = {
-    (tweetEvent.userTweetEngagement.action == Action.Retweet) &&
-    tweetEvent.userTweetEngagement.tweetDetails.exists(
-      _.sourceTweetUserId.contains(
-        tweetEvent.userTweetEngagement.engageUserId
+  privatelon delonf iselonvelonntSelonlfRelontwelonelont(twelonelontelonvelonnt: TwelonelontCrelonatelonelonvelonntDelontails): Boolelonan = {
+    (twelonelontelonvelonnt.uselonrTwelonelontelonngagelonmelonnt.action == Action.Relontwelonelont) &&
+    twelonelontelonvelonnt.uselonrTwelonelontelonngagelonmelonnt.twelonelontDelontails.elonxists(
+      _.sourcelonTwelonelontUselonrId.contains(
+        twelonelontelonvelonnt.uselonrTwelonelontelonngagelonmelonnt.elonngagelonUselonrId
       ))
   }
 
-  private def isTweetPassSafetyFilter(tweetEvent: TweetCreateEventDetails): Future[Boolean] = {
-    tweetEvent.userTweetEngagement.action match {
-      case Action.Reply | Action.Retweet | Action.Quote =>
-        tweetEvent.userTweetEngagement.tweetDetails
-          .flatMap(_.sourceTweetId).map { sourceTweetId =>
-            tweetFilter.filterForTweetypieSafetyLevel(sourceTweetId)
-          }.getOrElse(Future(false))
-      case Action.Tweet =>
-        tweetFilter.filterForTweetypieSafetyLevel(tweetEvent.userTweetEngagement.tweetId)
+  privatelon delonf isTwelonelontPassSafelontyFiltelonr(twelonelontelonvelonnt: TwelonelontCrelonatelonelonvelonntDelontails): Futurelon[Boolelonan] = {
+    twelonelontelonvelonnt.uselonrTwelonelontelonngagelonmelonnt.action match {
+      caselon Action.Relonply | Action.Relontwelonelont | Action.Quotelon =>
+        twelonelontelonvelonnt.uselonrTwelonelontelonngagelonmelonnt.twelonelontDelontails
+          .flatMap(_.sourcelonTwelonelontId).map { sourcelonTwelonelontId =>
+            twelonelontFiltelonr.filtelonrForTwelonelontypielonSafelontyLelonvelonl(sourcelonTwelonelontId)
+          }.gelontOrelonlselon(Futurelon(falselon))
+      caselon Action.Twelonelont =>
+        twelonelontFiltelonr.filtelonrForTwelonelontypielonSafelontyLelonvelonl(twelonelontelonvelonnt.uselonrTwelonelontelonngagelonmelonnt.twelonelontId)
     }
   }
 
-  private def shouldProcessTweetEvent(event: TweetCreateEventDetails): Future[Boolean] = {
-    val engagement = event.userTweetEngagement
-    val engageUserId = engagement.engageUserId
+  privatelon delonf shouldProcelonssTwelonelontelonvelonnt(elonvelonnt: TwelonelontCrelonatelonelonvelonntDelontails): Futurelon[Boolelonan] = {
+    val elonngagelonmelonnt = elonvelonnt.uselonrTwelonelontelonngagelonmelonnt
+    val elonngagelonUselonrId = elonngagelonmelonnt.elonngagelonUselonrId
 
-    val isNullCastTweet = engagement.tweetDetails.forall(_.isNullCastTweet)
-    val isNullCastSourceTweet = event.sourceTweetDetails.exists(_.isNullCastTweet)
-    val isSelfRetweet = isEventSelfRetweet(event)
-    val isEngageUserSafeFut = engageUserFilter.filterByUserId(engageUserId)
-    val isTweetPassSafetyFut = isTweetPassSafetyFilter(event)
+    val isNullCastTwelonelont = elonngagelonmelonnt.twelonelontDelontails.forall(_.isNullCastTwelonelont)
+    val isNullCastSourcelonTwelonelont = elonvelonnt.sourcelonTwelonelontDelontails.elonxists(_.isNullCastTwelonelont)
+    val isSelonlfRelontwelonelont = iselonvelonntSelonlfRelontwelonelont(elonvelonnt)
+    val iselonngagelonUselonrSafelonFut = elonngagelonUselonrFiltelonr.filtelonrByUselonrId(elonngagelonUselonrId)
+    val isTwelonelontPassSafelontyFut = isTwelonelontPassSafelontyFiltelonr(elonvelonnt)
 
-    Future.join(isEngageUserSafeFut, isTweetPassSafetyFut).map {
-      case (isEngageUserSafe, isTweetPassSafety) =>
-        if (isNullCastTweet) numNullCastTweetCounter.incr()
-        if (isNullCastSourceTweet) numNullCastSourceTweetCounter.incr()
-        if (!isEngageUserSafe) numAuthorUnsafeCounter.incr()
-        if (isSelfRetweet) selfRetweetCounter.incr()
-        if (!isTweetPassSafety) numTweetFailSafetyLevelCounter.incr()
+    Futurelon.join(iselonngagelonUselonrSafelonFut, isTwelonelontPassSafelontyFut).map {
+      caselon (iselonngagelonUselonrSafelon, isTwelonelontPassSafelonty) =>
+        if (isNullCastTwelonelont) numNullCastTwelonelontCountelonr.incr()
+        if (isNullCastSourcelonTwelonelont) numNullCastSourcelonTwelonelontCountelonr.incr()
+        if (!iselonngagelonUselonrSafelon) numAuthorUnsafelonCountelonr.incr()
+        if (isSelonlfRelontwelonelont) selonlfRelontwelonelontCountelonr.incr()
+        if (!isTwelonelontPassSafelonty) numTwelonelontFailSafelontyLelonvelonlCountelonr.incr()
 
-        !isNullCastTweet &&
-        !isNullCastSourceTweet &&
-        !isSelfRetweet &&
-        isEngageUserSafe &&
-        isTweetPassSafety
+        !isNullCastTwelonelont &&
+        !isNullCastSourcelonTwelonelont &&
+        !isSelonlfRelontwelonelont &&
+        iselonngagelonUselonrSafelon &&
+        isTwelonelontPassSafelonty
     }
   }
 
-  override def processEvent(event: TweetEvent): Future[Unit] = {
-    event.data match {
-      case TweetEventData.TweetCreateEvent(event: TweetCreateEvent) =>
-        getTweetDetails(
-          tweet = event.tweet,
-          engageUser = event.user
-        ).flatMap { eventWithDetails =>
-          tweetCreateEventCounter.incr()
+  ovelonrridelon delonf procelonsselonvelonnt(elonvelonnt: Twelonelontelonvelonnt): Futurelon[Unit] = {
+    elonvelonnt.data match {
+      caselon TwelonelontelonvelonntData.TwelonelontCrelonatelonelonvelonnt(elonvelonnt: TwelonelontCrelonatelonelonvelonnt) =>
+        gelontTwelonelontDelontails(
+          twelonelont = elonvelonnt.twelonelont,
+          elonngagelonUselonr = elonvelonnt.uselonr
+        ).flatMap { elonvelonntWithDelontails =>
+          twelonelontCrelonatelonelonvelonntCountelonr.incr()
 
-          shouldProcessTweetEvent(eventWithDetails).map {
-            case true =>
-              numProcessTweetCounter.incr()
-              trackTweetCreateEventStats(eventWithDetails)
-              // Convert the event for UserUserGraph
-              userUserGraphMessageBuilder.processEvent(eventWithDetails).map { edges =>
-                edges.foreach { edge =>
-                  kafkaEventPublisher.publish(edge.convertToRecosHoseMessage, userUserGraphTopic)
+          shouldProcelonssTwelonelontelonvelonnt(elonvelonntWithDelontails).map {
+            caselon truelon =>
+              numProcelonssTwelonelontCountelonr.incr()
+              trackTwelonelontCrelonatelonelonvelonntStats(elonvelonntWithDelontails)
+              // Convelonrt thelon elonvelonnt for UselonrUselonrGraph
+              uselonrUselonrGraphMelonssagelonBuildelonr.procelonsselonvelonnt(elonvelonntWithDelontails).map { elondgelons =>
+                elondgelons.forelonach { elondgelon =>
+                  kafkaelonvelonntPublishelonr.publish(elondgelon.convelonrtToReloncosHoselonMelonssagelon, uselonrUselonrGraphTopic)
                 }
               }
-              // Convert the event for UserTweetEntityGraph
-              userTweetEntityGraphMessageBuilder.processEvent(eventWithDetails).map { edges =>
-                edges.foreach { edge =>
-                  kafkaEventPublisher
-                    .publish(edge.convertToRecosHoseMessage, userTweetEntityGraphTopic)
+              // Convelonrt thelon elonvelonnt for UselonrTwelonelontelonntityGraph
+              uselonrTwelonelontelonntityGraphMelonssagelonBuildelonr.procelonsselonvelonnt(elonvelonntWithDelontails).map { elondgelons =>
+                elondgelons.forelonach { elondgelon =>
+                  kafkaelonvelonntPublishelonr
+                    .publish(elondgelon.convelonrtToReloncosHoselonMelonssagelon, uselonrTwelonelontelonntityGraphTopic)
                 }
               }
-            case false =>
-              numNoProcessTweetCounter.incr()
+            caselon falselon =>
+              numNoProcelonssTwelonelontCountelonr.incr()
           }
         }
-      case _ =>
-        nonTweetCreateEventCounter.incr()
-        Future.Unit
+      caselon _ =>
+        nonTwelonelontCrelonatelonelonvelonntCountelonr.incr()
+        Futurelon.Unit
     }
   }
 }

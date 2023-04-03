@@ -1,39 +1,39 @@
-package com.twitter.product_mixer.component_library.pipeline.candidate.who_to_follow_module
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.pipelonlinelon.candidatelon.who_to_follow_modulelon
 
-import com.twitter.peoplediscovery.api.thriftscala.ClientContext
-import com.twitter.peoplediscovery.api.thriftscala.GetModuleRequest
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.configapi.Param
+import com.twittelonr.pelonoplelondiscovelonry.api.thriftscala.ClielonntContelonxt
+import com.twittelonr.pelonoplelondiscovelonry.api.thriftscala.GelontModulelonRelonquelonst
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.transformelonr.CandidatelonPipelonlinelonQuelonryTransformelonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.timelonlinelons.configapi.Param
 
-object WhoToFollowCandidatePipelineQueryTransformer {
-  val DisplayLocation = "timeline"
-  val SupportedLayouts = Seq("user-bio-list")
-  val LayoutVersion = 2
+objelonct WhoToFollowCandidatelonPipelonlinelonQuelonryTransformelonr {
+  val DisplayLocation = "timelonlinelon"
+  val SupportelondLayouts = Selonq("uselonr-bio-list")
+  val LayoutVelonrsion = 2
 }
 
-case class WhoToFollowCandidatePipelineQueryTransformer[-Query <: PipelineQuery](
+caselon class WhoToFollowCandidatelonPipelonlinelonQuelonryTransformelonr[-Quelonry <: PipelonlinelonQuelonry](
   displayLocationParam: Param[String],
-  supportedLayoutsParam: Param[Seq[String]],
-  layoutVersionParam: Param[Int],
-  excludedUserIdsFeature: Option[Feature[PipelineQuery, Seq[Long]]],
-) extends CandidatePipelineQueryTransformer[Query, GetModuleRequest] {
+  supportelondLayoutsParam: Param[Selonq[String]],
+  layoutVelonrsionParam: Param[Int],
+  elonxcludelondUselonrIdsFelonaturelon: Option[Felonaturelon[PipelonlinelonQuelonry, Selonq[Long]]],
+) elonxtelonnds CandidatelonPipelonlinelonQuelonryTransformelonr[Quelonry, GelontModulelonRelonquelonst] {
 
-  override def transform(input: Query): GetModuleRequest =
-    GetModuleRequest(
-      clientContext = ClientContext(
-        userId = input.getRequiredUserId,
-        deviceId = input.clientContext.deviceId,
-        userAgent = input.clientContext.userAgent,
-        countryCode = input.clientContext.countryCode,
-        languageCode = input.clientContext.languageCode,
+  ovelonrridelon delonf transform(input: Quelonry): GelontModulelonRelonquelonst =
+    GelontModulelonRelonquelonst(
+      clielonntContelonxt = ClielonntContelonxt(
+        uselonrId = input.gelontRelonquirelondUselonrId,
+        delonvicelonId = input.clielonntContelonxt.delonvicelonId,
+        uselonrAgelonnt = input.clielonntContelonxt.uselonrAgelonnt,
+        countryCodelon = input.clielonntContelonxt.countryCodelon,
+        languagelonCodelon = input.clielonntContelonxt.languagelonCodelon,
       ),
       displayLocation = input.params(displayLocationParam),
-      supportedLayouts = input.params(supportedLayoutsParam),
-      layoutVersion = input.params(layoutVersionParam),
-      excludedUserIds =
-        excludedUserIdsFeature.flatMap(feature => input.features.map(_.get(feature))),
-      includePromoted = Some(true),
+      supportelondLayouts = input.params(supportelondLayoutsParam),
+      layoutVelonrsion = input.params(layoutVelonrsionParam),
+      elonxcludelondUselonrIds =
+        elonxcludelondUselonrIdsFelonaturelon.flatMap(felonaturelon => input.felonaturelons.map(_.gelont(felonaturelon))),
+      includelonPromotelond = Somelon(truelon),
     )
 }

@@ -1,207 +1,207 @@
-package com.twitter.cr_mixer.candidate_generation
+packagelon com.twittelonr.cr_mixelonr.candidatelon_gelonnelonration
 
-import com.twitter.contentrecommender.thriftscala.TweetInfo
-import com.twitter.cr_mixer.config.TimeoutConfig
-import com.twitter.cr_mixer.model.FrsTweetCandidateGeneratorQuery
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.cr_mixer.model.TweetWithAuthor
-import com.twitter.cr_mixer.param.FrsParams
-import com.twitter.cr_mixer.similarity_engine.EarlybirdSimilarityEngineRouter
-import com.twitter.cr_mixer.source_signal.FrsStore
-import com.twitter.cr_mixer.source_signal.FrsStore.FrsQueryResult
-import com.twitter.cr_mixer.thriftscala.FrsTweet
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.util.DefaultTimer
-import com.twitter.frigate.common.util.StatsUtil
-import com.twitter.hermit.constants.AlgorithmFeedbackTokens
-import com.twitter.hermit.constants.AlgorithmFeedbackTokens.AlgorithmToFeedbackTokenMap
-import com.twitter.hermit.model.Algorithm
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.timelines.configapi.Params
-import com.twitter.util.Future
-import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Singleton
+import com.twittelonr.contelonntreloncommelonndelonr.thriftscala.TwelonelontInfo
+import com.twittelonr.cr_mixelonr.config.TimelonoutConfig
+import com.twittelonr.cr_mixelonr.modelonl.FrsTwelonelontCandidatelonGelonnelonratorQuelonry
+import com.twittelonr.cr_mixelonr.modelonl.ModulelonNamelons
+import com.twittelonr.cr_mixelonr.modelonl.TwelonelontWithAuthor
+import com.twittelonr.cr_mixelonr.param.FrsParams
+import com.twittelonr.cr_mixelonr.similarity_elonnginelon.elonarlybirdSimilarityelonnginelonRoutelonr
+import com.twittelonr.cr_mixelonr.sourcelon_signal.FrsStorelon
+import com.twittelonr.cr_mixelonr.sourcelon_signal.FrsStorelon.FrsQuelonryRelonsult
+import com.twittelonr.cr_mixelonr.thriftscala.FrsTwelonelont
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.finaglelon.util.DelonfaultTimelonr
+import com.twittelonr.frigatelon.common.util.StatsUtil
+import com.twittelonr.helonrmit.constants.AlgorithmFelonelondbackTokelonns
+import com.twittelonr.helonrmit.constants.AlgorithmFelonelondbackTokelonns.AlgorithmToFelonelondbackTokelonnMap
+import com.twittelonr.helonrmit.modelonl.Algorithm
+import com.twittelonr.simclustelonrs_v2.common.TwelonelontId
+import com.twittelonr.simclustelonrs_v2.common.UselonrId
+import com.twittelonr.storelonhaus.RelonadablelonStorelon
+import com.twittelonr.timelonlinelons.configapi.Params
+import com.twittelonr.util.Futurelon
+import javax.injelonct.Injelonct
+import javax.injelonct.Namelond
+import javax.injelonct.Singlelonton
 
 /**
- * TweetCandidateGenerator based on FRS seed users. For now this candidate generator fetches seed
- * users from FRS, and retrieves the seed users' past tweets from Earlybird with Earlybird light
- * ranking models.
+ * TwelonelontCandidatelonGelonnelonrator baselond on FRS selonelond uselonrs. For now this candidatelon gelonnelonrator felontchelons selonelond
+ * uselonrs from FRS, and relontrielonvelons thelon selonelond uselonrs' past twelonelonts from elonarlybird with elonarlybird light
+ * ranking modelonls.
  */
-@Singleton
-class FrsTweetCandidateGenerator @Inject() (
-  @Named(ModuleNames.FrsStore) frsStore: ReadableStore[FrsStore.Query, Seq[FrsQueryResult]],
-  frsBasedSimilarityEngine: EarlybirdSimilarityEngineRouter,
-  tweetInfoStore: ReadableStore[TweetId, TweetInfo],
-  timeoutConfig: TimeoutConfig,
-  globalStats: StatsReceiver) {
-  import FrsTweetCandidateGenerator._
+@Singlelonton
+class FrsTwelonelontCandidatelonGelonnelonrator @Injelonct() (
+  @Namelond(ModulelonNamelons.FrsStorelon) frsStorelon: RelonadablelonStorelon[FrsStorelon.Quelonry, Selonq[FrsQuelonryRelonsult]],
+  frsBaselondSimilarityelonnginelon: elonarlybirdSimilarityelonnginelonRoutelonr,
+  twelonelontInfoStorelon: RelonadablelonStorelon[TwelonelontId, TwelonelontInfo],
+  timelonoutConfig: TimelonoutConfig,
+  globalStats: StatsReloncelonivelonr) {
+  import FrsTwelonelontCandidatelonGelonnelonrator._
 
-  private val timer = DefaultTimer
-  private val stats: StatsReceiver = globalStats.scope(this.getClass.getCanonicalName)
-  private val fetchSeedsStats = stats.scope("fetchSeeds")
-  private val fetchCandidatesStats = stats.scope("fetchCandidates")
-  private val filterCandidatesStats = stats.scope("filterCandidates")
-  private val hydrateCandidatesStats = stats.scope("hydrateCandidates")
-  private val getCandidatesStats = stats.scope("getCandidates")
+  privatelon val timelonr = DelonfaultTimelonr
+  privatelon val stats: StatsReloncelonivelonr = globalStats.scopelon(this.gelontClass.gelontCanonicalNamelon)
+  privatelon val felontchSelonelondsStats = stats.scopelon("felontchSelonelonds")
+  privatelon val felontchCandidatelonsStats = stats.scopelon("felontchCandidatelons")
+  privatelon val filtelonrCandidatelonsStats = stats.scopelon("filtelonrCandidatelons")
+  privatelon val hydratelonCandidatelonsStats = stats.scopelon("hydratelonCandidatelons")
+  privatelon val gelontCandidatelonsStats = stats.scopelon("gelontCandidatelons")
 
   /**
-   * The function retrieves the candidate for the given user as follows:
-   * 1. Seed user fetch from FRS.
-   * 2. Candidate fetch from Earlybird.
-   * 3. Filtering.
-   * 4. Candidate hydration.
+   * Thelon function relontrielonvelons thelon candidatelon for thelon givelonn uselonr as follows:
+   * 1. Selonelond uselonr felontch from FRS.
+   * 2. Candidatelon felontch from elonarlybird.
+   * 3. Filtelonring.
+   * 4. Candidatelon hydration.
    * 5. Truncation.
    */
-  def get(
-    frsTweetCandidateGeneratorQuery: FrsTweetCandidateGeneratorQuery
-  ): Future[Seq[FrsTweet]] = {
-    val userId = frsTweetCandidateGeneratorQuery.userId
-    val product = frsTweetCandidateGeneratorQuery.product
-    val allStats = stats.scope("all")
-    val perProductStats = stats.scope("perProduct", product.name)
-    StatsUtil.trackItemsStats(allStats) {
-      StatsUtil.trackItemsStats(perProductStats) {
-        val result = for {
-          seedAuthorWithScores <- StatsUtil.trackOptionItemMapStats(fetchSeedsStats) {
-            fetchSeeds(
-              userId,
-              frsTweetCandidateGeneratorQuery.impressedUserList,
-              frsTweetCandidateGeneratorQuery.languageCodeOpt,
-              frsTweetCandidateGeneratorQuery.countryCodeOpt,
-              frsTweetCandidateGeneratorQuery.params,
+  delonf gelont(
+    frsTwelonelontCandidatelonGelonnelonratorQuelonry: FrsTwelonelontCandidatelonGelonnelonratorQuelonry
+  ): Futurelon[Selonq[FrsTwelonelont]] = {
+    val uselonrId = frsTwelonelontCandidatelonGelonnelonratorQuelonry.uselonrId
+    val product = frsTwelonelontCandidatelonGelonnelonratorQuelonry.product
+    val allStats = stats.scopelon("all")
+    val pelonrProductStats = stats.scopelon("pelonrProduct", product.namelon)
+    StatsUtil.trackItelonmsStats(allStats) {
+      StatsUtil.trackItelonmsStats(pelonrProductStats) {
+        val relonsult = for {
+          selonelondAuthorWithScorelons <- StatsUtil.trackOptionItelonmMapStats(felontchSelonelondsStats) {
+            felontchSelonelonds(
+              uselonrId,
+              frsTwelonelontCandidatelonGelonnelonratorQuelonry.imprelonsselondUselonrList,
+              frsTwelonelontCandidatelonGelonnelonratorQuelonry.languagelonCodelonOpt,
+              frsTwelonelontCandidatelonGelonnelonratorQuelonry.countryCodelonOpt,
+              frsTwelonelontCandidatelonGelonnelonratorQuelonry.params,
             )
           }
-          tweetCandidates <- StatsUtil.trackOptionItemsStats(fetchCandidatesStats) {
-            fetchCandidates(
-              userId,
-              seedAuthorWithScores.map(_.keys.toSeq).getOrElse(Seq.empty),
-              frsTweetCandidateGeneratorQuery.impressedTweetList,
-              seedAuthorWithScores.map(_.mapValues(_.score)).getOrElse(Map.empty),
-              frsTweetCandidateGeneratorQuery.params
+          twelonelontCandidatelons <- StatsUtil.trackOptionItelonmsStats(felontchCandidatelonsStats) {
+            felontchCandidatelons(
+              uselonrId,
+              selonelondAuthorWithScorelons.map(_.kelonys.toSelonq).gelontOrelonlselon(Selonq.elonmpty),
+              frsTwelonelontCandidatelonGelonnelonratorQuelonry.imprelonsselondTwelonelontList,
+              selonelondAuthorWithScorelons.map(_.mapValuelons(_.scorelon)).gelontOrelonlselon(Map.elonmpty),
+              frsTwelonelontCandidatelonGelonnelonratorQuelonry.params
             )
           }
-          filteredTweetCandidates <- StatsUtil.trackOptionItemsStats(filterCandidatesStats) {
-            filterCandidates(
-              tweetCandidates,
-              frsTweetCandidateGeneratorQuery.params
+          filtelonrelondTwelonelontCandidatelons <- StatsUtil.trackOptionItelonmsStats(filtelonrCandidatelonsStats) {
+            filtelonrCandidatelons(
+              twelonelontCandidatelons,
+              frsTwelonelontCandidatelonGelonnelonratorQuelonry.params
             )
           }
-          hydratedTweetCandidates <- StatsUtil.trackOptionItemsStats(hydrateCandidatesStats) {
-            hydrateCandidates(
-              seedAuthorWithScores,
-              filteredTweetCandidates
+          hydratelondTwelonelontCandidatelons <- StatsUtil.trackOptionItelonmsStats(hydratelonCandidatelonsStats) {
+            hydratelonCandidatelons(
+              selonelondAuthorWithScorelons,
+              filtelonrelondTwelonelontCandidatelons
             )
           }
-        } yield {
-          hydratedTweetCandidates
-            .map(_.take(frsTweetCandidateGeneratorQuery.maxNumResults)).getOrElse(Seq.empty)
+        } yielonld {
+          hydratelondTwelonelontCandidatelons
+            .map(_.takelon(frsTwelonelontCandidatelonGelonnelonratorQuelonry.maxNumRelonsults)).gelontOrelonlselon(Selonq.elonmpty)
         }
-        result.raiseWithin(timeoutConfig.frsBasedTweetEndpointTimeout)(timer)
+        relonsult.raiselonWithin(timelonoutConfig.frsBaselondTwelonelontelonndpointTimelonout)(timelonr)
       }
     }
   }
 
   /**
-   * Fetch recommended seed users from FRS
+   * Felontch reloncommelonndelond selonelond uselonrs from FRS
    */
-  private def fetchSeeds(
-    userId: UserId,
-    userDenyList: Set[UserId],
-    languageCodeOpt: Option[String],
-    countryCodeOpt: Option[String],
+  privatelon delonf felontchSelonelonds(
+    uselonrId: UselonrId,
+    uselonrDelonnyList: Selont[UselonrId],
+    languagelonCodelonOpt: Option[String],
+    countryCodelonOpt: Option[String],
     params: Params
-  ): Future[Option[Map[UserId, FrsQueryResult]]] = {
-    frsStore
-      .get(
-        FrsStore.Query(
-          userId,
-          params(FrsParams.FrsBasedCandidateGenerationMaxSeedsNumParam),
-          params(FrsParams.FrsBasedCandidateGenerationDisplayLocationParam).displayLocation,
-          userDenyList.toSeq,
-          languageCodeOpt,
-          countryCodeOpt
+  ): Futurelon[Option[Map[UselonrId, FrsQuelonryRelonsult]]] = {
+    frsStorelon
+      .gelont(
+        FrsStorelon.Quelonry(
+          uselonrId,
+          params(FrsParams.FrsBaselondCandidatelonGelonnelonrationMaxSelonelondsNumParam),
+          params(FrsParams.FrsBaselondCandidatelonGelonnelonrationDisplayLocationParam).displayLocation,
+          uselonrDelonnyList.toSelonq,
+          languagelonCodelonOpt,
+          countryCodelonOpt
         )).map {
-        _.map { seedAuthors =>
-          seedAuthors.map(user => user.userId -> user).toMap
+        _.map { selonelondAuthors =>
+          selonelondAuthors.map(uselonr => uselonr.uselonrId -> uselonr).toMap
         }
       }
   }
 
   /**
-   * Fetch tweet candidates from Earlybird
+   * Felontch twelonelont candidatelons from elonarlybird
    */
-  private def fetchCandidates(
-    searcherUserId: UserId,
-    seedAuthors: Seq[UserId],
-    impressedTweetList: Set[TweetId],
-    frsUserToScores: Map[UserId, Double],
+  privatelon delonf felontchCandidatelons(
+    selonarchelonrUselonrId: UselonrId,
+    selonelondAuthors: Selonq[UselonrId],
+    imprelonsselondTwelonelontList: Selont[TwelonelontId],
+    frsUselonrToScorelons: Map[UselonrId, Doublelon],
     params: Params
-  ): Future[Option[Seq[TweetWithAuthor]]] = {
-    if (seedAuthors.nonEmpty) {
-      // call earlybird
-      val query = EarlybirdSimilarityEngineRouter.queryFromParams(
-        Some(searcherUserId),
-        seedAuthors,
-        impressedTweetList,
-        frsUserToScoresForScoreAdjustment = Some(frsUserToScores),
+  ): Futurelon[Option[Selonq[TwelonelontWithAuthor]]] = {
+    if (selonelondAuthors.nonelonmpty) {
+      // call elonarlybird
+      val quelonry = elonarlybirdSimilarityelonnginelonRoutelonr.quelonryFromParams(
+        Somelon(selonarchelonrUselonrId),
+        selonelondAuthors,
+        imprelonsselondTwelonelontList,
+        frsUselonrToScorelonsForScorelonAdjustmelonnt = Somelon(frsUselonrToScorelons),
         params
       )
-      frsBasedSimilarityEngine.get(query)
-    } else Future.None
+      frsBaselondSimilarityelonnginelon.gelont(quelonry)
+    } elonlselon Futurelon.Nonelon
   }
 
   /**
-   * Filter candidates that do not pass visibility filter policy
+   * Filtelonr candidatelons that do not pass visibility filtelonr policy
    */
-  private def filterCandidates(
-    candidates: Option[Seq[TweetWithAuthor]],
+  privatelon delonf filtelonrCandidatelons(
+    candidatelons: Option[Selonq[TwelonelontWithAuthor]],
     params: Params
-  ): Future[Option[Seq[TweetWithAuthor]]] = {
-    val tweetIds = candidates.map(_.map(_.tweetId).toSet).getOrElse(Set.empty)
-    if (params(FrsParams.FrsBasedCandidateGenerationEnableVisibilityFilteringParam))
-      Future
-        .collect(tweetInfoStore.multiGet(tweetIds)).map { tweetInfos =>
-          candidates.map {
-            // If tweetInfo does not exist, we will filter out this tweet candidate.
-            _.filter(candidate => tweetInfos.getOrElse(candidate.tweetId, None).isDefined)
+  ): Futurelon[Option[Selonq[TwelonelontWithAuthor]]] = {
+    val twelonelontIds = candidatelons.map(_.map(_.twelonelontId).toSelont).gelontOrelonlselon(Selont.elonmpty)
+    if (params(FrsParams.FrsBaselondCandidatelonGelonnelonrationelonnablelonVisibilityFiltelonringParam))
+      Futurelon
+        .collelonct(twelonelontInfoStorelon.multiGelont(twelonelontIds)).map { twelonelontInfos =>
+          candidatelons.map {
+            // If twelonelontInfo doelons not elonxist, welon will filtelonr out this twelonelont candidatelon.
+            _.filtelonr(candidatelon => twelonelontInfos.gelontOrelonlselon(candidatelon.twelonelontId, Nonelon).isDelonfinelond)
           }
         }
-    else {
-      Future.value(candidates)
+    elonlselon {
+      Futurelon.valuelon(candidatelons)
     }
   }
 
   /**
-   * Hydrate the candidates with the FRS candidate sources and scores
+   * Hydratelon thelon candidatelons with thelon FRS candidatelon sourcelons and scorelons
    */
-  private def hydrateCandidates(
-    frsAuthorWithScores: Option[Map[UserId, FrsQueryResult]],
-    candidates: Option[Seq[TweetWithAuthor]]
-  ): Future[Option[Seq[FrsTweet]]] = {
-    Future.value {
-      candidates.map {
-        _.map { tweetWithAuthor =>
-          val frsQueryResult = frsAuthorWithScores.flatMap(_.get(tweetWithAuthor.authorId))
-          FrsTweet(
-            tweetId = tweetWithAuthor.tweetId,
-            authorId = tweetWithAuthor.authorId,
-            frsPrimarySource = frsQueryResult.flatMap(_.primarySource),
-            frsAuthorScore = frsQueryResult.map(_.score),
-            frsCandidateSourceScores = frsQueryResult.flatMap { result =>
-              result.sourceWithScores.map {
-                _.collect {
-                  // see TokenStrToAlgorithmMap @ https://sourcegraph.twitter.biz/git.twitter.biz/source/-/blob/hermit/hermit-core/src/main/scala/com/twitter/hermit/constants/AlgorithmFeedbackTokens.scala
-                  // see Algorithm @ https://sourcegraph.twitter.biz/git.twitter.biz/source/-/blob/hermit/hermit-core/src/main/scala/com/twitter/hermit/model/Algorithm.scala
-                  case (candidateSourceAlgoStr, score)
-                      if AlgorithmFeedbackTokens.TokenStrToAlgorithmMap.contains(
-                        candidateSourceAlgoStr) =>
-                    AlgorithmToFeedbackTokenMap.getOrElse(
-                      AlgorithmFeedbackTokens.TokenStrToAlgorithmMap
-                        .getOrElse(candidateSourceAlgoStr, DefaultAlgo),
-                      DefaultAlgoToken) -> score
+  privatelon delonf hydratelonCandidatelons(
+    frsAuthorWithScorelons: Option[Map[UselonrId, FrsQuelonryRelonsult]],
+    candidatelons: Option[Selonq[TwelonelontWithAuthor]]
+  ): Futurelon[Option[Selonq[FrsTwelonelont]]] = {
+    Futurelon.valuelon {
+      candidatelons.map {
+        _.map { twelonelontWithAuthor =>
+          val frsQuelonryRelonsult = frsAuthorWithScorelons.flatMap(_.gelont(twelonelontWithAuthor.authorId))
+          FrsTwelonelont(
+            twelonelontId = twelonelontWithAuthor.twelonelontId,
+            authorId = twelonelontWithAuthor.authorId,
+            frsPrimarySourcelon = frsQuelonryRelonsult.flatMap(_.primarySourcelon),
+            frsAuthorScorelon = frsQuelonryRelonsult.map(_.scorelon),
+            frsCandidatelonSourcelonScorelons = frsQuelonryRelonsult.flatMap { relonsult =>
+              relonsult.sourcelonWithScorelons.map {
+                _.collelonct {
+                  // selonelon TokelonnStrToAlgorithmMap @ https://sourcelongraph.twittelonr.biz/git.twittelonr.biz/sourcelon/-/blob/helonrmit/helonrmit-corelon/src/main/scala/com/twittelonr/helonrmit/constants/AlgorithmFelonelondbackTokelonns.scala
+                  // selonelon Algorithm @ https://sourcelongraph.twittelonr.biz/git.twittelonr.biz/sourcelon/-/blob/helonrmit/helonrmit-corelon/src/main/scala/com/twittelonr/helonrmit/modelonl/Algorithm.scala
+                  caselon (candidatelonSourcelonAlgoStr, scorelon)
+                      if AlgorithmFelonelondbackTokelonns.TokelonnStrToAlgorithmMap.contains(
+                        candidatelonSourcelonAlgoStr) =>
+                    AlgorithmToFelonelondbackTokelonnMap.gelontOrelonlselon(
+                      AlgorithmFelonelondbackTokelonns.TokelonnStrToAlgorithmMap
+                        .gelontOrelonlselon(candidatelonSourcelonAlgoStr, DelonfaultAlgo),
+                      DelonfaultAlgoTokelonn) -> scorelon
                 }
               }
             }
@@ -213,8 +213,8 @@ class FrsTweetCandidateGenerator @Inject() (
 
 }
 
-object FrsTweetCandidateGenerator {
-  val DefaultAlgo: Algorithm.Value = Algorithm.Other
-  // 9999 is the token for Algorithm.Other
-  val DefaultAlgoToken: Int = AlgorithmToFeedbackTokenMap.getOrElse(DefaultAlgo, 9999)
+objelonct FrsTwelonelontCandidatelonGelonnelonrator {
+  val DelonfaultAlgo: Algorithm.Valuelon = Algorithm.Othelonr
+  // 9999 is thelon tokelonn for Algorithm.Othelonr
+  val DelonfaultAlgoTokelonn: Int = AlgorithmToFelonelondbackTokelonnMap.gelontOrelonlselon(DelonfaultAlgo, 9999)
 }

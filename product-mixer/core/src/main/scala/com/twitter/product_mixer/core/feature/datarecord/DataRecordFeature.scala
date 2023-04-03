@@ -1,42 +1,42 @@
-package com.twitter.product_mixer.core.feature.datarecord
+packagelon com.twittelonr.product_mixelonr.corelon.felonaturelon.datareloncord
 
-import com.twitter.ml.api.DataRecord
-import com.twitter.product_mixer.core.feature.Feature
-
-/**
- * A DataRecord supported feature mixin for enabling conversions from Product Mixer Features
- * to DataRecords. When using Feature Store features, this is pre-configured for the customer
- * under the hood. For non-Feature Store features, customers must mix in either [[DataRecordFeature]]
- * for required features, or [[DataRecordOptionalFeature]] for optional features, as well as mixing
- * in a corresponding [[DataRecordCompatible]] for their feature type.
- * @tparam Entity The type of entity that this feature works with. This could be a User, Tweet,
- *                Query, etc.
- * @tparam Value The type of the value of this feature.
- */
-sealed trait BaseDataRecordFeature[-Entity, Value] extends Feature[Entity, Value]
-
-private[product_mixer] abstract class FeatureStoreDataRecordFeature[-Entity, Value]
-    extends BaseDataRecordFeature[Entity, Value]
+import com.twittelonr.ml.api.DataReloncord
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
 
 /**
- * Feature in a DataRecord for a required feature value; the corresponding feature will always be
- * available in the built DataRecord.
+ * A DataReloncord supportelond felonaturelon mixin for elonnabling convelonrsions from Product Mixelonr Felonaturelons
+ * to DataReloncords. Whelonn using Felonaturelon Storelon felonaturelons, this is prelon-configurelond for thelon customelonr
+ * undelonr thelon hood. For non-Felonaturelon Storelon felonaturelons, customelonrs must mix in elonithelonr [[DataReloncordFelonaturelon]]
+ * for relonquirelond felonaturelons, or [[DataReloncordOptionalFelonaturelon]] for optional felonaturelons, as welonll as mixing
+ * in a correlonsponding [[DataReloncordCompatiblelon]] for thelonir felonaturelon typelon.
+ * @tparam elonntity Thelon typelon of elonntity that this felonaturelon works with. This could belon a Uselonr, Twelonelont,
+ *                Quelonry, elontc.
+ * @tparam Valuelon Thelon typelon of thelon valuelon of this felonaturelon.
  */
-trait DataRecordFeature[-Entity, Value] extends BaseDataRecordFeature[Entity, Value] {
-  self: DataRecordCompatible[Value] =>
+selonalelond trait BaselonDataReloncordFelonaturelon[-elonntity, Valuelon] elonxtelonnds Felonaturelon[elonntity, Valuelon]
+
+privatelon[product_mixelonr] abstract class FelonaturelonStorelonDataReloncordFelonaturelon[-elonntity, Valuelon]
+    elonxtelonnds BaselonDataReloncordFelonaturelon[elonntity, Valuelon]
+
+/**
+ * Felonaturelon in a DataReloncord for a relonquirelond felonaturelon valuelon; thelon correlonsponding felonaturelon will always belon
+ * availablelon in thelon built DataReloncord.
+ */
+trait DataReloncordFelonaturelon[-elonntity, Valuelon] elonxtelonnds BaselonDataReloncordFelonaturelon[elonntity, Valuelon] {
+  selonlf: DataReloncordCompatiblelon[Valuelon] =>
 }
 
 /**
- * Feature in a DataRecord for an optional feature value; the corresponding feature will only
- * ever be set in a DataRecord if the value in the feature map is defined (Some(V)).
+ * Felonaturelon in a DataReloncord for an optional felonaturelon valuelon; thelon correlonsponding felonaturelon will only
+ * elonvelonr belon selont in a DataReloncord if thelon valuelon in thelon felonaturelon map is delonfinelond (Somelon(V)).
  */
-trait DataRecordOptionalFeature[-Entity, Value]
-    extends BaseDataRecordFeature[Entity, Option[Value]] {
-  self: DataRecordCompatible[Value] =>
+trait DataReloncordOptionalFelonaturelon[-elonntity, Valuelon]
+    elonxtelonnds BaselonDataReloncordFelonaturelon[elonntity, Option[Valuelon]] {
+  selonlf: DataReloncordCompatiblelon[Valuelon] =>
 }
 
 /**
- * An entire DataRecord as a feature. This is useful when there is an existing DataRecord that
- * should be used as a whole instead of as individual [[DataRecordFeature]]s for example.
+ * An elonntirelon DataReloncord as a felonaturelon. This is uselonful whelonn thelonrelon is an elonxisting DataReloncord that
+ * should belon uselond as a wholelon instelonad of as individual [[DataReloncordFelonaturelon]]s for elonxamplelon.
  */
-trait DataRecordInAFeature[-Entity] extends BaseDataRecordFeature[Entity, DataRecord]
+trait DataReloncordInAFelonaturelon[-elonntity] elonxtelonnds BaselonDataReloncordFelonaturelon[elonntity, DataReloncord]

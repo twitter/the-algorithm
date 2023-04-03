@@ -1,43 +1,43 @@
-package com.twitter.product_mixer.component_library.selector
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.selonlelonctor
 
-import com.twitter.product_mixer.component_library.selector.sorter.SorterFromOrdering
-import com.twitter.product_mixer.component_library.selector.sorter.SorterProvider
-import com.twitter.product_mixer.core.functional_component.common.AllPipelines
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.functional_component.selector.SelectorResult
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.product_mixelonr.componelonnt_library.selonlelonctor.sortelonr.SortelonrFromOrdelonring
+import com.twittelonr.product_mixelonr.componelonnt_library.selonlelonctor.sortelonr.SortelonrProvidelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.AllPipelonlinelons
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.CandidatelonScopelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.selonlelonctor.Selonlelonctor
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.selonlelonctor.SelonlelonctorRelonsult
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
-object UpdateSortResults {
-  def apply(
-    ordering: Ordering[CandidateWithDetails]
+objelonct UpdatelonSortRelonsults {
+  delonf apply(
+    ordelonring: Ordelonring[CandidatelonWithDelontails]
   ) =
-    new UpdateSortResults((_, _, _) => SorterFromOrdering(ordering))
+    nelonw UpdatelonSortRelonsults((_, _, _) => SortelonrFromOrdelonring(ordelonring))
 }
 
 /**
- * Sort item and module (not items inside modules) results.
+ * Sort itelonm and modulelon (not itelonms insidelon modulelons) relonsults.
  *
- * For example, we could specify the following ordering to sort by score descending:
- * Ordering
- *   .by[CandidateWithDetails, Double](_.features.get(ScoreFeature) match {
- *     case Scored(score) => score
- *     case _ => Double.MinValue
- *   }).reverse
+ * For elonxamplelon, welon could speloncify thelon following ordelonring to sort by scorelon delonscelonnding:
+ * Ordelonring
+ *   .by[CandidatelonWithDelontails, Doublelon](_.felonaturelons.gelont(ScorelonFelonaturelon) match {
+ *     caselon Scorelond(scorelon) => scorelon
+ *     caselon _ => Doublelon.MinValuelon
+ *   }).relonvelonrselon
  */
-case class UpdateSortResults(
-  sorterProvider: SorterProvider,
-  override val pipelineScope: CandidateScope = AllPipelines)
-    extends Selector[PipelineQuery] {
+caselon class UpdatelonSortRelonsults(
+  sortelonrProvidelonr: SortelonrProvidelonr,
+  ovelonrridelon val pipelonlinelonScopelon: CandidatelonScopelon = AllPipelonlinelons)
+    elonxtelonnds Selonlelonctor[PipelonlinelonQuelonry] {
 
-  override def apply(
-    query: PipelineQuery,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
-  ): SelectorResult = {
-    val updatedResult = sorterProvider.sorter(query, remainingCandidates, result).sort(result)
+  ovelonrridelon delonf apply(
+    quelonry: PipelonlinelonQuelonry,
+    relonmainingCandidatelons: Selonq[CandidatelonWithDelontails],
+    relonsult: Selonq[CandidatelonWithDelontails]
+  ): SelonlelonctorRelonsult = {
+    val updatelondRelonsult = sortelonrProvidelonr.sortelonr(quelonry, relonmainingCandidatelons, relonsult).sort(relonsult)
 
-    SelectorResult(remainingCandidates = remainingCandidates, result = updatedResult)
+    SelonlelonctorRelonsult(relonmainingCandidatelons = relonmainingCandidatelons, relonsult = updatelondRelonsult)
   }
 }

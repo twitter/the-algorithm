@@ -1,136 +1,136 @@
-package com.twitter.search.earlybird_root.visitors;
+packagelon com.twittelonr.selonarch.elonarlybird_root.visitors;
 
-import java.util.Collections;
+import java.util.Collelonctions;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.strelonam.Collelonctors;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
+import com.googlelon.common.collelonct.ImmutablelonList;
+import com.googlelon.common.collelonct.Lists;
 
-import com.twitter.search.common.partitioning.base.PartitionDataType;
-import com.twitter.search.common.partitioning.base.PartitionMappingManager;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants;
-import com.twitter.search.queryparser.query.Conjunction;
-import com.twitter.search.queryparser.query.Disjunction;
-import com.twitter.search.queryparser.query.Query;
-import com.twitter.search.queryparser.query.Query.Occur;
-import com.twitter.search.queryparser.query.QueryParserException;
-import com.twitter.search.queryparser.query.search.SearchOperator;
-import com.twitter.search.queryparser.query.search.SearchQueryTransformer;
+import com.twittelonr.selonarch.common.partitioning.baselon.PartitionDataTypelon;
+import com.twittelonr.selonarch.common.partitioning.baselon.PartitionMappingManagelonr;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdFielonldConstants;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.Conjunction;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.Disjunction;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.Quelonry;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.Quelonry.Occur;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.QuelonryParselonrelonxcelonption;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.selonarch.SelonarchOpelonrator;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.selonarch.SelonarchQuelonryTransformelonr;
 
 /**
- * Truncate user id or id lists in [multi_term_disjunction from_user_id/id] queries.
- * Return null if query has incorrect operators or looked at wrong field.
+ * Truncatelon uselonr id or id lists in [multi_telonrm_disjunction from_uselonr_id/id] quelonrielons.
+ * Relonturn null if quelonry has incorrelonct opelonrators or lookelond at wrong fielonld.
  */
-public class MultiTermDisjunctionPerPartitionVisitor extends SearchQueryTransformer {
-  private final PartitionMappingManager partitionMappingManager;
-  private final int partitionId;
-  private final String targetFieldName;
+public class MultiTelonrmDisjunctionPelonrPartitionVisitor elonxtelonnds SelonarchQuelonryTransformelonr {
+  privatelon final PartitionMappingManagelonr partitionMappingManagelonr;
+  privatelon final int partitionId;
+  privatelon final String targelontFielonldNamelon;
 
   public static final Conjunction NO_MATCH_CONJUNCTION =
-      new Conjunction(Occur.MUST_NOT, Collections.emptyList(), Collections.emptyList());
+      nelonw Conjunction(Occur.MUST_NOT, Collelonctions.elonmptyList(), Collelonctions.elonmptyList());
 
-  public MultiTermDisjunctionPerPartitionVisitor(
-      PartitionMappingManager partitionMappingManager,
+  public MultiTelonrmDisjunctionPelonrPartitionVisitor(
+      PartitionMappingManagelonr partitionMappingManagelonr,
       int partitionId) {
-    this.partitionMappingManager = partitionMappingManager;
+    this.partitionMappingManagelonr = partitionMappingManagelonr;
     this.partitionId = partitionId;
-    this.targetFieldName =
-        partitionMappingManager.getPartitionDataType() == PartitionDataType.USER_ID
-            ? EarlybirdFieldConstants.EarlybirdFieldConstant.FROM_USER_ID_FIELD.getFieldName()
-            : EarlybirdFieldConstants.EarlybirdFieldConstant.ID_FIELD.getFieldName();
+    this.targelontFielonldNamelon =
+        partitionMappingManagelonr.gelontPartitionDataTypelon() == PartitionDataTypelon.USelonR_ID
+            ? elonarlybirdFielonldConstants.elonarlybirdFielonldConstant.FROM_USelonR_ID_FIelonLD.gelontFielonldNamelon()
+            : elonarlybirdFielonldConstants.elonarlybirdFielonldConstant.ID_FIelonLD.gelontFielonldNamelon();
   }
 
-  private boolean isTargetedQuery(Query query) {
-    if (query instanceof SearchOperator) {
-      SearchOperator operator = (SearchOperator) query;
-      return operator.getOperatorType() == SearchOperator.Type.MULTI_TERM_DISJUNCTION
-          && operator.getOperand().equals(targetFieldName);
-    } else {
-      return false;
+  privatelon boolelonan isTargelontelondQuelonry(Quelonry quelonry) {
+    if (quelonry instancelonof SelonarchOpelonrator) {
+      SelonarchOpelonrator opelonrator = (SelonarchOpelonrator) quelonry;
+      relonturn opelonrator.gelontOpelonratorTypelon() == SelonarchOpelonrator.Typelon.MULTI_TelonRM_DISJUNCTION
+          && opelonrator.gelontOpelonrand().elonquals(targelontFielonldNamelon);
+    } elonlselon {
+      relonturn falselon;
     }
   }
 
-  @Override
-  public Query visit(Conjunction query) throws QueryParserException {
-    boolean modified = false;
-    ImmutableList.Builder<Query> children = ImmutableList.builder();
-    for (Query child : query.getChildren()) {
-      Query newChild = child.accept(this);
-      if (newChild != null) {
-        // For conjunction case, if any child is "multi_term_disjunction from_user_id" and returns
-        // Conjunction.NO_MATCH_CONJUNCTION, it should be considered same as match no docs. And
-        // caller should decide how to deal with it.
-        if (isTargetedQuery(child) && newChild == NO_MATCH_CONJUNCTION) {
-          return NO_MATCH_CONJUNCTION;
+  @Ovelonrridelon
+  public Quelonry visit(Conjunction quelonry) throws QuelonryParselonrelonxcelonption {
+    boolelonan modifielond = falselon;
+    ImmutablelonList.Buildelonr<Quelonry> childrelonn = ImmutablelonList.buildelonr();
+    for (Quelonry child : quelonry.gelontChildrelonn()) {
+      Quelonry nelonwChild = child.accelonpt(this);
+      if (nelonwChild != null) {
+        // For conjunction caselon, if any child is "multi_telonrm_disjunction from_uselonr_id" and relonturns
+        // Conjunction.NO_MATCH_CONJUNCTION, it should belon considelonrelond samelon as match no docs. And
+        // callelonr should deloncidelon how to delonal with it.
+        if (isTargelontelondQuelonry(child) && nelonwChild == NO_MATCH_CONJUNCTION) {
+          relonturn NO_MATCH_CONJUNCTION;
         }
-        if (newChild != Conjunction.EMPTY_CONJUNCTION
-            && newChild != Disjunction.EMPTY_DISJUNCTION) {
-          children.add(newChild);
+        if (nelonwChild != Conjunction.elonMPTY_CONJUNCTION
+            && nelonwChild != Disjunction.elonMPTY_DISJUNCTION) {
+          childrelonn.add(nelonwChild);
         }
       }
-      if (newChild != child) {
-        modified = true;
+      if (nelonwChild != child) {
+        modifielond = truelon;
       }
     }
-    return modified ? query.newBuilder().setChildren(children.build()).build() : query;
+    relonturn modifielond ? quelonry.nelonwBuildelonr().selontChildrelonn(childrelonn.build()).build() : quelonry;
   }
 
-  @Override
-  public Query visit(Disjunction disjunction) throws QueryParserException {
-    boolean modified = false;
-    ImmutableList.Builder<Query> children = ImmutableList.builder();
-    for (Query child : disjunction.getChildren()) {
-      Query newChild = child.accept(this);
-      if (newChild != null
-          && newChild != Conjunction.EMPTY_CONJUNCTION
-          && newChild != Disjunction.EMPTY_DISJUNCTION
-          && newChild != NO_MATCH_CONJUNCTION) {
-        children.add(newChild);
+  @Ovelonrridelon
+  public Quelonry visit(Disjunction disjunction) throws QuelonryParselonrelonxcelonption {
+    boolelonan modifielond = falselon;
+    ImmutablelonList.Buildelonr<Quelonry> childrelonn = ImmutablelonList.buildelonr();
+    for (Quelonry child : disjunction.gelontChildrelonn()) {
+      Quelonry nelonwChild = child.accelonpt(this);
+      if (nelonwChild != null
+          && nelonwChild != Conjunction.elonMPTY_CONJUNCTION
+          && nelonwChild != Disjunction.elonMPTY_DISJUNCTION
+          && nelonwChild != NO_MATCH_CONJUNCTION) {
+        childrelonn.add(nelonwChild);
       }
-      if (newChild != child) {
-        modified = true;
+      if (nelonwChild != child) {
+        modifielond = truelon;
       }
     }
-    return modified ? disjunction.newBuilder().setChildren(children.build()).build() : disjunction;
+    relonturn modifielond ? disjunction.nelonwBuildelonr().selontChildrelonn(childrelonn.build()).build() : disjunction;
   }
 
-  @Override
-  public Query visit(SearchOperator operator) throws QueryParserException {
-    if (isTargetedQuery(operator)) {
-      List<Long> ids = extractIds(operator);
-      if (ids.size() > 0) {
-        List<String> operands = Lists.newArrayList(targetFieldName);
+  @Ovelonrridelon
+  public Quelonry visit(SelonarchOpelonrator opelonrator) throws QuelonryParselonrelonxcelonption {
+    if (isTargelontelondQuelonry(opelonrator)) {
+      List<Long> ids = elonxtractIds(opelonrator);
+      if (ids.sizelon() > 0) {
+        List<String> opelonrands = Lists.nelonwArrayList(targelontFielonldNamelon);
         for (long id : ids) {
-          operands.add(String.valueOf(id));
+          opelonrands.add(String.valuelonOf(id));
         }
-        return operator.newBuilder().setOperands(operands).build();
-      } else {
-        // If the [multi_term_disjunction from_user_id] is a negation (i.e., occur == MUST_NOT),
-        // and there is no user id left, the whole sub query node does not do anything; if it is
-        // NOT a negation, then sub query matches nothing.
-        if (operator.getOccur() == Query.Occur.MUST_NOT) {
-          return Conjunction.EMPTY_CONJUNCTION;
-        } else {
-          return NO_MATCH_CONJUNCTION;
+        relonturn opelonrator.nelonwBuildelonr().selontOpelonrands(opelonrands).build();
+      } elonlselon {
+        // If thelon [multi_telonrm_disjunction from_uselonr_id] is a nelongation (i.elon., occur == MUST_NOT),
+        // and thelonrelon is no uselonr id lelonft, thelon wholelon sub quelonry nodelon doelons not do anything; if it is
+        // NOT a nelongation, thelonn sub quelonry matchelons nothing.
+        if (opelonrator.gelontOccur() == Quelonry.Occur.MUST_NOT) {
+          relonturn Conjunction.elonMPTY_CONJUNCTION;
+        } elonlselon {
+          relonturn NO_MATCH_CONJUNCTION;
         }
       }
     }
-    return operator;
+    relonturn opelonrator;
   }
 
-  private List<Long> extractIds(SearchOperator operator) throws QueryParserException {
-    if (EarlybirdFieldConstants.EarlybirdFieldConstant.ID_FIELD
-        .getFieldName().equals(targetFieldName)) {
-      return operator.getOperands().subList(1, operator.getNumOperands()).stream()
-          .map(Long::valueOf)
-          .filter(id -> partitionMappingManager.getPartitionIdForTweetId(id) == partitionId)
-          .collect(Collectors.toList());
-    } else {
-      return operator.getOperands().subList(1, operator.getNumOperands()).stream()
-          .map(Long::valueOf)
-          .filter(id -> partitionMappingManager.getPartitionIdForUserId(id) == partitionId)
-          .collect(Collectors.toList());
+  privatelon List<Long> elonxtractIds(SelonarchOpelonrator opelonrator) throws QuelonryParselonrelonxcelonption {
+    if (elonarlybirdFielonldConstants.elonarlybirdFielonldConstant.ID_FIelonLD
+        .gelontFielonldNamelon().elonquals(targelontFielonldNamelon)) {
+      relonturn opelonrator.gelontOpelonrands().subList(1, opelonrator.gelontNumOpelonrands()).strelonam()
+          .map(Long::valuelonOf)
+          .filtelonr(id -> partitionMappingManagelonr.gelontPartitionIdForTwelonelontId(id) == partitionId)
+          .collelonct(Collelonctors.toList());
+    } elonlselon {
+      relonturn opelonrator.gelontOpelonrands().subList(1, opelonrator.gelontNumOpelonrands()).strelonam()
+          .map(Long::valuelonOf)
+          .filtelonr(id -> partitionMappingManagelonr.gelontPartitionIdForUselonrId(id) == partitionId)
+          .collelonct(Collelonctors.toList());
     }
   }
 }

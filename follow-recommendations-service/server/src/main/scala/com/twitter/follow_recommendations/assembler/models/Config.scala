@@ -1,8 +1,8 @@
-package com.twitter.follow_recommendations.assembler.models
+packagelon com.twittelonr.follow_reloncommelonndations.asselonmblelonr.modelonls
 
-import com.twitter.stringcenter.client.core.ExternalString
+import com.twittelonr.stringcelonntelonr.clielonnt.corelon.elonxtelonrnalString
 
-case class HeaderConfig(title: TitleConfig)
-case class TitleConfig(text: ExternalString)
-case class FooterConfig(actionConfig: Option[ActionConfig])
-case class ActionConfig(footerText: ExternalString, actionURL: String)
+caselon class HelonadelonrConfig(titlelon: TitlelonConfig)
+caselon class TitlelonConfig(telonxt: elonxtelonrnalString)
+caselon class FootelonrConfig(actionConfig: Option[ActionConfig])
+caselon class ActionConfig(footelonrTelonxt: elonxtelonrnalString, actionURL: String)

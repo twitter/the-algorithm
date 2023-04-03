@@ -1,14 +1,14 @@
-package com.twitter.product_mixer.core.gate
+packagelon com.twittelonr.product_mixelonr.corelon.gatelon
 
-import com.twitter.product_mixer.core.functional_component.gate.Gate
-import com.twitter.product_mixer.core.model.common.identifier.GateIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.Param
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.gatelon.Gatelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.GatelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.timelonlinelons.configapi.Param
 
-case class ParamNotGate(name: String, param: Param[Boolean]) extends Gate[PipelineQuery] {
-  override val identifier: GateIdentifier = GateIdentifier(name)
+caselon class ParamNotGatelon(namelon: String, param: Param[Boolelonan]) elonxtelonnds Gatelon[PipelonlinelonQuelonry] {
+  ovelonrridelon val idelonntifielonr: GatelonIdelonntifielonr = GatelonIdelonntifielonr(namelon)
 
-  override def shouldContinue(query: PipelineQuery): Stitch[Boolean] =
-    Stitch.value(!query.params(param))
+  ovelonrridelon delonf shouldContinuelon(quelonry: PipelonlinelonQuelonry): Stitch[Boolelonan] =
+    Stitch.valuelon(!quelonry.params(param))
 }

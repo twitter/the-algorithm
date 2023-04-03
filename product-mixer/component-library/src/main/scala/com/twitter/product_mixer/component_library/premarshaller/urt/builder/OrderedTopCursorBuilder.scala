@@ -1,52 +1,52 @@
-package com.twitter.product_mixer.component_library.premarshaller.urt.builder
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.prelonmarshallelonr.urt.buildelonr
 
-import com.twitter.product_mixer.component_library.model.cursor.UrtOrderedCursor
-import com.twitter.product_mixer.component_library.premarshaller.cursor.UrtCursorSerializer
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.OrderedTopCursorBuilder.TopCursorOffset
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.CursorType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.TopCursor
-import com.twitter.product_mixer.core.pipeline.HasPipelineCursor
-import com.twitter.product_mixer.core.pipeline.PipelineCursorSerializer
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.cursor.UrtOrdelonrelondCursor
+import com.twittelonr.product_mixelonr.componelonnt_library.prelonmarshallelonr.cursor.UrtCursorSelonrializelonr
+import com.twittelonr.product_mixelonr.componelonnt_library.prelonmarshallelonr.urt.buildelonr.OrdelonrelondTopCursorBuildelonr.TopCursorOffselont
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.Timelonlinelonelonntry
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.opelonration.CursorTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.opelonration.TopCursor
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.HasPipelonlinelonCursor
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonCursorSelonrializelonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
-case object OrderedTopCursorBuilder {
-  // Ensure that the next initial sort index is at least 10000 entries away from top cursor's
-  // current sort index. This is to ensure that the contents of the next page can be populated
-  // without being assigned sort indices which conflict with that of the current page. This assumes
-  // that each page will have fewer than 10000 entries.
-  val TopCursorOffset = 10000L
+caselon objelonct OrdelonrelondTopCursorBuildelonr {
+  // elonnsurelon that thelon nelonxt initial sort indelonx is at lelonast 10000 elonntrielons away from top cursor's
+  // currelonnt sort indelonx. This is to elonnsurelon that thelon contelonnts of thelon nelonxt pagelon can belon populatelond
+  // without beloning assignelond sort indicelons which conflict with that of thelon currelonnt pagelon. This assumelons
+  // that elonach pagelon will havelon felonwelonr than 10000 elonntrielons.
+  val TopCursorOffselont = 10000L
 }
 
 /**
- * Builds [[UrtOrderedCursor]] in the Top position
+ * Builds [[UrtOrdelonrelondCursor]] in thelon Top position
  *
- * @param idSelector Specifies the entry from which to derive the `id` field
- * @param serializer Converts the cursor to an encoded string
+ * @param idSelonlelonctor Speloncifielons thelon elonntry from which to delonrivelon thelon `id` fielonld
+ * @param selonrializelonr Convelonrts thelon cursor to an elonncodelond string
  */
-case class OrderedTopCursorBuilder(
-  idSelector: PartialFunction[UniversalNoun[_], Long],
-  serializer: PipelineCursorSerializer[UrtOrderedCursor] = UrtCursorSerializer)
-    extends UrtCursorBuilder[
-      PipelineQuery with HasPipelineCursor[UrtOrderedCursor]
+caselon class OrdelonrelondTopCursorBuildelonr(
+  idSelonlelonctor: PartialFunction[UnivelonrsalNoun[_], Long],
+  selonrializelonr: PipelonlinelonCursorSelonrializelonr[UrtOrdelonrelondCursor] = UrtCursorSelonrializelonr)
+    elonxtelonnds UrtCursorBuildelonr[
+      PipelonlinelonQuelonry with HasPipelonlinelonCursor[UrtOrdelonrelondCursor]
     ] {
-  override val cursorType: CursorType = TopCursor
+  ovelonrridelon val cursorTypelon: CursorTypelon = TopCursor
 
-  override def cursorValue(
-    query: PipelineQuery with HasPipelineCursor[UrtOrderedCursor],
-    timelineEntries: Seq[TimelineEntry]
+  ovelonrridelon delonf cursorValuelon(
+    quelonry: PipelonlinelonQuelonry with HasPipelonlinelonCursor[UrtOrdelonrelondCursor],
+    timelonlinelonelonntrielons: Selonq[Timelonlinelonelonntry]
   ): String = {
-    val topId = timelineEntries.collectFirst(idSelector)
+    val topId = timelonlinelonelonntrielons.collelonctFirst(idSelonlelonctor)
 
-    val id = topId.orElse(query.pipelineCursor.flatMap(_.id))
+    val id = topId.orelonlselon(quelonry.pipelonlinelonCursor.flatMap(_.id))
 
-    val cursor = UrtOrderedCursor(
-      initialSortIndex = cursorSortIndex(query, timelineEntries) + TopCursorOffset,
+    val cursor = UrtOrdelonrelondCursor(
+      initialSortIndelonx = cursorSortIndelonx(quelonry, timelonlinelonelonntrielons) + TopCursorOffselont,
       id = id,
-      cursorType = Some(cursorType)
+      cursorTypelon = Somelon(cursorTypelon)
     )
 
-    serializer.serializeCursor(cursor)
+    selonrializelonr.selonrializelonCursor(cursor)
   }
 }

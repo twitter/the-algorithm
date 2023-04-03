@@ -1,12 +1,12 @@
-package com.twitter.search.common.query;
+packagelon com.twittelonr.selonarch.common.quelonry;
 
 import java.util.List;
 import java.util.Map;
 
 /**
- * The interface for objects that can provide hit attributes for a document.
+ * Thelon intelonrfacelon for objeloncts that can providelon hit attributelons for a documelonnt.
  */
-public interface HitAttributeProvider {
-  /** Returns the hit attributes for the given document. */
-  Map<Integer, List<String>> getHitAttribution(int docId);
+public intelonrfacelon HitAttributelonProvidelonr {
+  /** Relonturns thelon hit attributelons for thelon givelonn documelonnt. */
+  Map<Intelongelonr, List<String>> gelontHitAttribution(int docId);
 }

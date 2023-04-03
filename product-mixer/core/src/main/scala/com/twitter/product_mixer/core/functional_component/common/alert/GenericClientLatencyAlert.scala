@@ -1,19 +1,19 @@
-package com.twitter.product_mixer.core.functional_component.common.alert
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.alelonrt
 
-import com.twitter.product_mixer.core.functional_component.common.alert.predicate.TriggerIfLatencyAbove
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.alelonrt.prelondicatelon.TriggelonrIfLatelonncyAbovelon
 
 /**
- * Similar to [[LatencyAlert]] but intended for use with an external client calling Product Mixer.
+ * Similar to [[LatelonncyAlelonrt]] but intelonndelond for uselon with an elonxtelonrnal clielonnt calling Product Mixelonr.
  *
- * [[GenericClientLatencyAlert]] triggers when the Latency for the specified client
- * rises above the [[TriggerIfLatencyAbove]] threshold for the configured amount of time.
+ * [[GelonnelonricClielonntLatelonncyAlelonrt]] triggelonrs whelonn thelon Latelonncy for thelon speloncifielond clielonnt
+ * riselons abovelon thelon [[TriggelonrIfLatelonncyAbovelon]] threlonshold for thelon configurelond amount of timelon.
  */
-case class GenericClientLatencyAlert(
-  override val source: GenericClient,
-  override val notificationGroup: NotificationGroup,
-  override val warnPredicate: TriggerIfLatencyAbove,
-  override val criticalPredicate: TriggerIfLatencyAbove,
-  override val runbookLink: Option[String] = None)
-    extends Alert {
-  override val alertType: AlertType = Latency
+caselon class GelonnelonricClielonntLatelonncyAlelonrt(
+  ovelonrridelon val sourcelon: GelonnelonricClielonnt,
+  ovelonrridelon val notificationGroup: NotificationGroup,
+  ovelonrridelon val warnPrelondicatelon: TriggelonrIfLatelonncyAbovelon,
+  ovelonrridelon val criticalPrelondicatelon: TriggelonrIfLatelonncyAbovelon,
+  ovelonrridelon val runbookLink: Option[String] = Nonelon)
+    elonxtelonnds Alelonrt {
+  ovelonrridelon val alelonrtTypelon: AlelonrtTypelon = Latelonncy
 }

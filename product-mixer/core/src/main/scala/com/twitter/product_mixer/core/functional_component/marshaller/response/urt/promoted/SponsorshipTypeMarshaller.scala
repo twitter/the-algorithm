@@ -1,19 +1,19 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.promotelond
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.DirectSponsorshipType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.IndirectSponsorshipType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.NoSponsorshipSponsorshipType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.SponsorshipType
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.promotelond.DirelonctSponsorshipTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.promotelond.IndirelonctSponsorshipTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.promotelond.NoSponsorshipSponsorshipTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.promotelond.SponsorshipTypelon
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class SponsorshipTypeMarshaller @Inject() () {
+@Singlelonton
+class SponsorshipTypelonMarshallelonr @Injelonct() () {
 
-  def apply(sponsorshipType: SponsorshipType): urt.SponsorshipType = sponsorshipType match {
-    case DirectSponsorshipType => urt.SponsorshipType.Direct
-    case IndirectSponsorshipType => urt.SponsorshipType.Indirect
-    case NoSponsorshipSponsorshipType => urt.SponsorshipType.NoSponsorship
+  delonf apply(sponsorshipTypelon: SponsorshipTypelon): urt.SponsorshipTypelon = sponsorshipTypelon match {
+    caselon DirelonctSponsorshipTypelon => urt.SponsorshipTypelon.Direlonct
+    caselon IndirelonctSponsorshipTypelon => urt.SponsorshipTypelon.Indirelonct
+    caselon NoSponsorshipSponsorshipTypelon => urt.SponsorshipTypelon.NoSponsorship
   }
 }

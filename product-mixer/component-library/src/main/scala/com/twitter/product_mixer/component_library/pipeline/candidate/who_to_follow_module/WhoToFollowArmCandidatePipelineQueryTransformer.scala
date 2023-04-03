@@ -1,72 +1,72 @@
-package com.twitter.product_mixer.component_library.pipeline.candidate.who_to_follow_module
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.pipelonlinelon.candidatelon.who_to_follow_modulelon
 
-import com.twitter.account_recommendations_mixer.{thriftscala => t}
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.functional_component.marshaller.request.ClientContextMarshaller
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.BadRequest
-import com.twitter.timelines.configapi.Param
+import com.twittelonr.account_reloncommelonndations_mixelonr.{thriftscala => t}
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonquelonst.ClielonntContelonxtMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.transformelonr.CandidatelonPipelonlinelonQuelonryTransformelonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.PipelonlinelonFailurelon
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.BadRelonquelonst
+import com.twittelonr.timelonlinelons.configapi.Param
 
-object WhoToFollowArmCandidatePipelineQueryTransformer {
-  val HomeDisplayLocation = "timeline"
-  val HomeReverseChronDisplayLocation = "timeline_reverse_chron"
-  val ProfileDisplayLocation = "profile_timeline"
+objelonct WhoToFollowArmCandidatelonPipelonlinelonQuelonryTransformelonr {
+  val HomelonDisplayLocation = "timelonlinelon"
+  val HomelonRelonvelonrselonChronDisplayLocation = "timelonlinelon_relonvelonrselon_chron"
+  val ProfilelonDisplayLocation = "profilelon_timelonlinelon"
 }
 
-case class WhoToFollowArmCandidatePipelineQueryTransformer[-Query <: PipelineQuery](
+caselon class WhoToFollowArmCandidatelonPipelonlinelonQuelonryTransformelonr[-Quelonry <: PipelonlinelonQuelonry](
   displayLocationParam: Param[String],
-  excludedUserIdsFeature: Option[Feature[PipelineQuery, Seq[Long]]],
-  profileUserIdFeature: Option[Feature[PipelineQuery, Long]])
-    extends CandidatePipelineQueryTransformer[Query, t.AccountRecommendationsMixerRequest] {
+  elonxcludelondUselonrIdsFelonaturelon: Option[Felonaturelon[PipelonlinelonQuelonry, Selonq[Long]]],
+  profilelonUselonrIdFelonaturelon: Option[Felonaturelon[PipelonlinelonQuelonry, Long]])
+    elonxtelonnds CandidatelonPipelonlinelonQuelonryTransformelonr[Quelonry, t.AccountReloncommelonndationsMixelonrRelonquelonst] {
 
-  override def transform(input: Query): t.AccountRecommendationsMixerRequest = {
+  ovelonrridelon delonf transform(input: Quelonry): t.AccountReloncommelonndationsMixelonrRelonquelonst = {
     input.params(displayLocationParam) match {
-      case WhoToFollowArmCandidatePipelineQueryTransformer.HomeReverseChronDisplayLocation =>
-        t.AccountRecommendationsMixerRequest(
-          clientContext = ClientContextMarshaller(input.clientContext),
-          product = t.Product.HomeReverseChronWhoToFollow,
-          productContext = Some(
-            t.ProductContext.HomeReverseChronWhoToFollowProductContext(
-              t.HomeReverseChronWhoToFollowProductContext(
-                wtfReactiveContext = Some(getWhoToFollowReactiveContext(input))
+      caselon WhoToFollowArmCandidatelonPipelonlinelonQuelonryTransformelonr.HomelonRelonvelonrselonChronDisplayLocation =>
+        t.AccountReloncommelonndationsMixelonrRelonquelonst(
+          clielonntContelonxt = ClielonntContelonxtMarshallelonr(input.clielonntContelonxt),
+          product = t.Product.HomelonRelonvelonrselonChronWhoToFollow,
+          productContelonxt = Somelon(
+            t.ProductContelonxt.HomelonRelonvelonrselonChronWhoToFollowProductContelonxt(
+              t.HomelonRelonvelonrselonChronWhoToFollowProductContelonxt(
+                wtfRelonactivelonContelonxt = Somelon(gelontWhoToFollowRelonactivelonContelonxt(input))
               )))
         )
-      case WhoToFollowArmCandidatePipelineQueryTransformer.HomeDisplayLocation =>
-        t.AccountRecommendationsMixerRequest(
-          clientContext = ClientContextMarshaller(input.clientContext),
-          product = t.Product.HomeWhoToFollow,
-          productContext = Some(
-            t.ProductContext.HomeWhoToFollowProductContext(
-              t.HomeWhoToFollowProductContext(
-                wtfReactiveContext = Some(getWhoToFollowReactiveContext(input))
+      caselon WhoToFollowArmCandidatelonPipelonlinelonQuelonryTransformelonr.HomelonDisplayLocation =>
+        t.AccountReloncommelonndationsMixelonrRelonquelonst(
+          clielonntContelonxt = ClielonntContelonxtMarshallelonr(input.clielonntContelonxt),
+          product = t.Product.HomelonWhoToFollow,
+          productContelonxt = Somelon(
+            t.ProductContelonxt.HomelonWhoToFollowProductContelonxt(
+              t.HomelonWhoToFollowProductContelonxt(
+                wtfRelonactivelonContelonxt = Somelon(gelontWhoToFollowRelonactivelonContelonxt(input))
               )))
         )
-      case WhoToFollowArmCandidatePipelineQueryTransformer.ProfileDisplayLocation =>
-        t.AccountRecommendationsMixerRequest(
-          clientContext = ClientContextMarshaller(input.clientContext),
-          product = t.Product.ProfileWhoToFollow,
-          productContext = Some(
-            t.ProductContext.ProfileWhoToFollowProductContext(t.ProfileWhoToFollowProductContext(
-              wtfReactiveContext = Some(getWhoToFollowReactiveContext(input)),
-              profileUserId = profileUserIdFeature
-                .flatMap(feature => input.features.map(_.get(feature)))
-                .getOrElse(throw PipelineFailure(BadRequest, "profileUserId not provided")),
+      caselon WhoToFollowArmCandidatelonPipelonlinelonQuelonryTransformelonr.ProfilelonDisplayLocation =>
+        t.AccountReloncommelonndationsMixelonrRelonquelonst(
+          clielonntContelonxt = ClielonntContelonxtMarshallelonr(input.clielonntContelonxt),
+          product = t.Product.ProfilelonWhoToFollow,
+          productContelonxt = Somelon(
+            t.ProductContelonxt.ProfilelonWhoToFollowProductContelonxt(t.ProfilelonWhoToFollowProductContelonxt(
+              wtfRelonactivelonContelonxt = Somelon(gelontWhoToFollowRelonactivelonContelonxt(input)),
+              profilelonUselonrId = profilelonUselonrIdFelonaturelon
+                .flatMap(felonaturelon => input.felonaturelons.map(_.gelont(felonaturelon)))
+                .gelontOrelonlselon(throw PipelonlinelonFailurelon(BadRelonquelonst, "profilelonUselonrId not providelond")),
             )))
         )
-      case displayLocation =>
-        throw PipelineFailure(BadRequest, s"display location $displayLocation not supported")
+      caselon displayLocation =>
+        throw PipelonlinelonFailurelon(BadRelonquelonst, s"display location $displayLocation not supportelond")
     }
   }
 
-  private def getWhoToFollowReactiveContext(
-    input: Query
-  ): t.WhoToFollowReactiveContext = {
-    t.WhoToFollowReactiveContext(
-      excludedUserIds = excludedUserIdsFeature.flatMap(feature =>
-        input.features
-          .map(_.get(feature))),
+  privatelon delonf gelontWhoToFollowRelonactivelonContelonxt(
+    input: Quelonry
+  ): t.WhoToFollowRelonactivelonContelonxt = {
+    t.WhoToFollowRelonactivelonContelonxt(
+      elonxcludelondUselonrIds = elonxcludelondUselonrIdsFelonaturelon.flatMap(felonaturelon =>
+        input.felonaturelons
+          .map(_.gelont(felonaturelon))),
     )
   }
 }

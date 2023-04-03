@@ -1,44 +1,44 @@
-package com.twitter.product_mixer.component_library.premarshaller.urt.builder
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.prelonmarshallelonr.urt.buildelonr
 
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.UrtCursorUpdater.getCursorByType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.CursorOperation
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.CursorType
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.product_mixelonr.componelonnt_library.prelonmarshallelonr.urt.buildelonr.UrtCursorUpdatelonr.gelontCursorByTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.Timelonlinelonelonntry
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.opelonration.CursorOpelonration
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.opelonration.CursorTypelon
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
-object UrtCursorUpdater {
+objelonct UrtCursorUpdatelonr {
 
-  def getCursorByType(
-    entries: Seq[TimelineEntry],
-    cursorType: CursorType
-  ): Option[CursorOperation] = {
-    entries.collectFirst {
-      case cursor: CursorOperation if cursor.cursorType == cursorType => cursor
+  delonf gelontCursorByTypelon(
+    elonntrielons: Selonq[Timelonlinelonelonntry],
+    cursorTypelon: CursorTypelon
+  ): Option[CursorOpelonration] = {
+    elonntrielons.collelonctFirst {
+      caselon cursor: CursorOpelonration if cursor.cursorTypelon == cursorTypelon => cursor
     }
   }
 }
 
-// If a CursorCandidate is returned by a Candidate Source, use this trait to update that Cursor as
-// necessary (as opposed to building a new cursor which is done with the UrtCursorBuilder)
-trait UrtCursorUpdater[-Query <: PipelineQuery] extends UrtCursorBuilder[Query] { self =>
+// If a CursorCandidatelon is relonturnelond by a Candidatelon Sourcelon, uselon this trait to updatelon that Cursor as
+// neloncelonssary (as opposelond to building a nelonw cursor which is donelon with thelon UrtCursorBuildelonr)
+trait UrtCursorUpdatelonr[-Quelonry <: PipelonlinelonQuelonry] elonxtelonnds UrtCursorBuildelonr[Quelonry] { selonlf =>
 
-  def getExistingCursor(entries: Seq[TimelineEntry]): Option[CursorOperation] = {
-    getCursorByType(entries, self.cursorType)
+  delonf gelontelonxistingCursor(elonntrielons: Selonq[Timelonlinelonelonntry]): Option[CursorOpelonration] = {
+    gelontCursorByTypelon(elonntrielons, selonlf.cursorTypelon)
   }
 
-  def update(query: Query, entries: Seq[TimelineEntry]): Seq[TimelineEntry] = {
-    if (includeOperation(query, entries)) {
-      getExistingCursor(entries)
-        .map { existingCursor =>
-          // Safe .get because includeOperation() is shared in this context
-          // build() method creates a new CursorOperation. We copy over the `idToReplace`
-          // from the existing cursor.
-          val newCursor =
-            build(query, entries).get
-              .copy(idToReplace = existingCursor.idToReplace)
+  delonf updatelon(quelonry: Quelonry, elonntrielons: Selonq[Timelonlinelonelonntry]): Selonq[Timelonlinelonelonntry] = {
+    if (includelonOpelonration(quelonry, elonntrielons)) {
+      gelontelonxistingCursor(elonntrielons)
+        .map { elonxistingCursor =>
+          // Safelon .gelont beloncauselon includelonOpelonration() is sharelond in this contelonxt
+          // build() melonthod crelonatelons a nelonw CursorOpelonration. Welon copy ovelonr thelon `idToRelonplacelon`
+          // from thelon elonxisting cursor.
+          val nelonwCursor =
+            build(quelonry, elonntrielons).gelont
+              .copy(idToRelonplacelon = elonxistingCursor.idToRelonplacelon)
 
-          entries.filterNot(_ == existingCursor) :+ newCursor
-        }.getOrElse(entries)
-    } else entries
+          elonntrielons.filtelonrNot(_ == elonxistingCursor) :+ nelonwCursor
+        }.gelontOrelonlselon(elonntrielons)
+    } elonlselon elonntrielons
   }
 }

@@ -1,82 +1,82 @@
-package com.twitter.product_mixer.component_library.selector
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.selonlelonctor
 
-import com.twitter.product_mixer.component_library.model.candidate.BaseTweetCandidate
-import com.twitter.product_mixer.component_library.model.candidate.IsPinnedFeature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.model.common.presentation.ItemCandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.CandidatePipelines
-import com.twitter.product_mixer.core.model.common.presentation.CandidateSources
-import com.twitter.product_mixer.core.model.common.presentation.CandidateSourcePosition
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.BaselonTwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.IsPinnelondFelonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMapBuildelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.ItelonmCandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonPipelonlinelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonSourcelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonSourcelonPosition
 
 /**
- * Once a pair of duplicate candidates has been found we need to someone 'resolve' the duplication.
- * This may be as simple as picking whichever candidate came first (see [[PickFirstCandidateMerger]]
- * but this strategy could mean losing important candidate information. Candidates might, for
- * example, have different features. [[CandidateMergeStrategy]] lets you define a custom behavior
- * for resolving duplication to help support these more nuanced situations.
+ * Oncelon a pair of duplicatelon candidatelons has belonelonn found welon nelonelond to somelononelon 'relonsolvelon' thelon duplication.
+ * This may belon as simplelon as picking whichelonvelonr candidatelon camelon first (selonelon [[PickFirstCandidatelonMelonrgelonr]]
+ * but this stratelongy could melonan losing important candidatelon information. Candidatelons might, for
+ * elonxamplelon, havelon diffelonrelonnt felonaturelons. [[CandidatelonMelonrgelonStratelongy]] lelonts you delonfinelon a custom belonhavior
+ * for relonsolving duplication to helonlp support thelonselon morelon nuancelond situations.
  */
-trait CandidateMergeStrategy {
-  def apply(
-    existingCandidate: ItemCandidateWithDetails,
-    newCandidate: ItemCandidateWithDetails
-  ): ItemCandidateWithDetails
+trait CandidatelonMelonrgelonStratelongy {
+  delonf apply(
+    elonxistingCandidatelon: ItelonmCandidatelonWithDelontails,
+    nelonwCandidatelon: ItelonmCandidatelonWithDelontails
+  ): ItelonmCandidatelonWithDelontails
 }
 
 /**
- * Keep whichever candidate was encountered first.
+ * Kelonelonp whichelonvelonr candidatelon was elonncountelonrelond first.
  */
-object PickFirstCandidateMerger extends CandidateMergeStrategy {
-  override def apply(
-    existingCandidate: ItemCandidateWithDetails,
-    newCandidate: ItemCandidateWithDetails
-  ): ItemCandidateWithDetails = existingCandidate
+objelonct PickFirstCandidatelonMelonrgelonr elonxtelonnds CandidatelonMelonrgelonStratelongy {
+  ovelonrridelon delonf apply(
+    elonxistingCandidatelon: ItelonmCandidatelonWithDelontails,
+    nelonwCandidatelon: ItelonmCandidatelonWithDelontails
+  ): ItelonmCandidatelonWithDelontails = elonxistingCandidatelon
 }
 
 /**
- * Keep the candidate encountered first but combine all candidate feature maps.
+ * Kelonelonp thelon candidatelon elonncountelonrelond first but combinelon all candidatelon felonaturelon maps.
  */
-object CombineFeatureMapsCandidateMerger extends CandidateMergeStrategy {
-  override def apply(
-    existingCandidate: ItemCandidateWithDetails,
-    newCandidate: ItemCandidateWithDetails
-  ): ItemCandidateWithDetails = {
-    // Prepend new because list set keeps insertion order, and last operations in ListSet are O(1)
-    val mergedCandidateSourceIdentifiers =
-      newCandidate.features.get(CandidateSources) ++ existingCandidate.features
-        .get(CandidateSources)
-    val mergedCandidatePipelineIdentifiers =
-      newCandidate.features.get(CandidatePipelines) ++ existingCandidate.features
-        .get(CandidatePipelines)
+objelonct CombinelonFelonaturelonMapsCandidatelonMelonrgelonr elonxtelonnds CandidatelonMelonrgelonStratelongy {
+  ovelonrridelon delonf apply(
+    elonxistingCandidatelon: ItelonmCandidatelonWithDelontails,
+    nelonwCandidatelon: ItelonmCandidatelonWithDelontails
+  ): ItelonmCandidatelonWithDelontails = {
+    // Prelonpelonnd nelonw beloncauselon list selont kelonelonps inselonrtion ordelonr, and last opelonrations in ListSelont arelon O(1)
+    val melonrgelondCandidatelonSourcelonIdelonntifielonrs =
+      nelonwCandidatelon.felonaturelons.gelont(CandidatelonSourcelons) ++ elonxistingCandidatelon.felonaturelons
+        .gelont(CandidatelonSourcelons)
+    val melonrgelondCandidatelonPipelonlinelonIdelonntifielonrs =
+      nelonwCandidatelon.felonaturelons.gelont(CandidatelonPipelonlinelons) ++ elonxistingCandidatelon.felonaturelons
+        .gelont(CandidatelonPipelonlinelons)
 
-    // the unitary features are pulled from the existing candidate as explained above, while
-    // Set Features are merged/accumulated.
-    val mergedCommonFeatureMap = FeatureMapBuilder()
-      .add(CandidatePipelines, mergedCandidatePipelineIdentifiers)
-      .add(CandidateSources, mergedCandidateSourceIdentifiers)
-      .add(CandidateSourcePosition, existingCandidate.sourcePosition)
+    // thelon unitary felonaturelons arelon pullelond from thelon elonxisting candidatelon as elonxplainelond abovelon, whilelon
+    // Selont Felonaturelons arelon melonrgelond/accumulatelond.
+    val melonrgelondCommonFelonaturelonMap = FelonaturelonMapBuildelonr()
+      .add(CandidatelonPipelonlinelons, melonrgelondCandidatelonPipelonlinelonIdelonntifielonrs)
+      .add(CandidatelonSourcelons, melonrgelondCandidatelonSourcelonIdelonntifielonrs)
+      .add(CandidatelonSourcelonPosition, elonxistingCandidatelon.sourcelonPosition)
       .build()
 
-    existingCandidate.copy(features =
-      existingCandidate.features ++ newCandidate.features ++ mergedCommonFeatureMap)
+    elonxistingCandidatelon.copy(felonaturelons =
+      elonxistingCandidatelon.felonaturelons ++ nelonwCandidatelon.felonaturelons ++ melonrgelondCommonFelonaturelonMap)
   }
 }
 
 /**
- * Keep the pinnable candidate. For cases where we are dealing with duplicate entries across
- * different candidate types, such as different sub-classes of
- * [[com.twitter.product_mixer.component_library.model.candidate.BaseTweetCandidate]], we will
- * prioritize the candidate with [[IsPinnedFeature]] because it contains additional information
- * needed for the positioning of a pinned entry on a timeline.
+ * Kelonelonp thelon pinnablelon candidatelon. For caselons whelonrelon welon arelon delonaling with duplicatelon elonntrielons across
+ * diffelonrelonnt candidatelon typelons, such as diffelonrelonnt sub-classelons of
+ * [[com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.BaselonTwelonelontCandidatelon]], welon will
+ * prioritizelon thelon candidatelon with [[IsPinnelondFelonaturelon]] beloncauselon it contains additional information
+ * nelonelondelond for thelon positioning of a pinnelond elonntry on a timelonlinelon.
  */
-object PickPinnedCandidateMerger extends CandidateMergeStrategy {
-  override def apply(
-    existingCandidate: ItemCandidateWithDetails,
-    newCandidate: ItemCandidateWithDetails
-  ): ItemCandidateWithDetails =
-    Seq(existingCandidate, newCandidate)
-      .collectFirst {
-        case candidate @ ItemCandidateWithDetails(_: BaseTweetCandidate, _, features)
-            if features.getTry(IsPinnedFeature).toOption.contains(true) =>
-          candidate
-      }.getOrElse(existingCandidate)
+objelonct PickPinnelondCandidatelonMelonrgelonr elonxtelonnds CandidatelonMelonrgelonStratelongy {
+  ovelonrridelon delonf apply(
+    elonxistingCandidatelon: ItelonmCandidatelonWithDelontails,
+    nelonwCandidatelon: ItelonmCandidatelonWithDelontails
+  ): ItelonmCandidatelonWithDelontails =
+    Selonq(elonxistingCandidatelon, nelonwCandidatelon)
+      .collelonctFirst {
+        caselon candidatelon @ ItelonmCandidatelonWithDelontails(_: BaselonTwelonelontCandidatelon, _, felonaturelons)
+            if felonaturelons.gelontTry(IsPinnelondFelonaturelon).toOption.contains(truelon) =>
+          candidatelon
+      }.gelontOrelonlselon(elonxistingCandidatelon)
 }

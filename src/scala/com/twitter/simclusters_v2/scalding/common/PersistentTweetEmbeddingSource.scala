@@ -1,60 +1,60 @@
-package com.twitter.simclusters_v2.scalding.common
+packagelon com.twittelonr.simclustelonrs_v2.scalding.common
 
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.scalding.DateRange
-import com.twitter.simclusters_v2.common.Timestamp
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.thriftscala.PersistentSimClustersEmbedding
-import com.twitter.strato.scalding.StratoManhattanExportSource
-import com.twitter.strato.thrift.ScroogeConvImplicits._
+import com.twittelonr.finaglelon.mtls.authelonntication.SelonrvicelonIdelonntifielonr
+import com.twittelonr.scalding.DatelonRangelon
+import com.twittelonr.simclustelonrs_v2.common.Timelonstamp
+import com.twittelonr.simclustelonrs_v2.common.TwelonelontId
+import com.twittelonr.simclustelonrs_v2.thriftscala.PelonrsistelonntSimClustelonrselonmbelondding
+import com.twittelonr.strato.scalding.StratoManhattanelonxportSourcelon
+import com.twittelonr.strato.thrift.ScroogelonConvImplicits._
 
-object PersistentTweetEmbeddingSource {
+objelonct PelonrsistelonntTwelonelontelonmbelonddingSourcelon {
   // hdfs paths
-  val FavBasedUpdatedHdfsPath: String =
-    "/atla/proc/user/cassowary/manhattan-exporter/fav_based_tweet_20m_145k_updated_embeddings"
+  val FavBaselondUpdatelondHdfsPath: String =
+    "/atla/proc/uselonr/cassowary/manhattan-elonxportelonr/fav_baselond_twelonelont_20m_145k_updatelond_elonmbelonddings"
 
-  val LogFavBasedUpdatedHdfsPath: String =
-    "/atla/proc/user/cassowary/manhattan-exporter/log_fav_based_tweet_20m_145k_updated_embeddings"
+  val LogFavBaselondUpdatelondHdfsPath: String =
+    "/atla/proc/uselonr/cassowary/manhattan-elonxportelonr/log_fav_baselond_twelonelont_20m_145k_updatelond_elonmbelonddings"
 
-  val LogFavBased2020HdfsPath: String =
-    "/atla/proc/user/cassowary/manhattan-exporter/log_fav_based_tweet_20m_145k_2020_embeddings"
+  val LogFavBaselond2020HdfsPath: String =
+    "/atla/proc/uselonr/cassowary/manhattan-elonxportelonr/log_fav_baselond_twelonelont_20m_145k_2020_elonmbelonddings"
 
   // Strato columns
-  val FavBasedUpdatedStratoColumn: String =
-    "recommendations/simclusters_v2/embeddings/favBasedTweet20M145KUpdated"
+  val FavBaselondUpdatelondStratoColumn: String =
+    "reloncommelonndations/simclustelonrs_v2/elonmbelonddings/favBaselondTwelonelont20M145KUpdatelond"
 
-  val LogFavBasedUpdatedStratoColumn: String =
-    "recommendations/simclusters_v2/embeddings/logFavBasedTweet20M145KUpdatedPersistent"
+  val LogFavBaselondUpdatelondStratoColumn: String =
+    "reloncommelonndations/simclustelonrs_v2/elonmbelonddings/logFavBaselondTwelonelont20M145KUpdatelondPelonrsistelonnt"
 
-  val LogFavBased2020StratoColumn: String =
-    "recommendations/simclusters_v2/embeddings/logFavBasedTweet20M145K2020Persistent"
+  val LogFavBaselond2020StratoColumn: String =
+    "reloncommelonndations/simclustelonrs_v2/elonmbelonddings/logFavBaselondTwelonelont20M145K2020Pelonrsistelonnt"
 
 }
 
 /**
- * The source that read the Manhattan export persistent embeddings
+ * Thelon sourcelon that relonad thelon Manhattan elonxport pelonrsistelonnt elonmbelonddings
  */
-// Defaults to Updated version.
-class FavBasedPersistentTweetEmbeddingMhExportSource(
-  hdfsPath: String = PersistentTweetEmbeddingSource.FavBasedUpdatedHdfsPath,
-  stratoColumnPath: String = PersistentTweetEmbeddingSource.FavBasedUpdatedStratoColumn,
-  range: DateRange,
-  serviceIdentifier: ServiceIdentifier = ServiceIdentifier.empty)
-    extends StratoManhattanExportSource[(TweetId, Timestamp), PersistentSimClustersEmbedding](
+// Delonfaults to Updatelond velonrsion.
+class FavBaselondPelonrsistelonntTwelonelontelonmbelonddingMhelonxportSourcelon(
+  hdfsPath: String = PelonrsistelonntTwelonelontelonmbelonddingSourcelon.FavBaselondUpdatelondHdfsPath,
+  stratoColumnPath: String = PelonrsistelonntTwelonelontelonmbelonddingSourcelon.FavBaselondUpdatelondStratoColumn,
+  rangelon: DatelonRangelon,
+  selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr = SelonrvicelonIdelonntifielonr.elonmpty)
+    elonxtelonnds StratoManhattanelonxportSourcelon[(TwelonelontId, Timelonstamp), PelonrsistelonntSimClustelonrselonmbelondding](
       hdfsPath,
-      range,
+      rangelon,
       stratoColumnPath,
-      serviceIdentifier = serviceIdentifier
+      selonrvicelonIdelonntifielonr = selonrvicelonIdelonntifielonr
     )
-// Defaults to 2020 version.
-class LogFavBasedPersistentTweetEmbeddingMhExportSource(
-  hdfsPath: String = PersistentTweetEmbeddingSource.LogFavBased2020HdfsPath,
-  stratoColumnPath: String = PersistentTweetEmbeddingSource.LogFavBased2020StratoColumn,
-  range: DateRange,
-  serviceIdentifier: ServiceIdentifier = ServiceIdentifier.empty)
-    extends StratoManhattanExportSource[(TweetId, Timestamp), PersistentSimClustersEmbedding](
+// Delonfaults to 2020 velonrsion.
+class LogFavBaselondPelonrsistelonntTwelonelontelonmbelonddingMhelonxportSourcelon(
+  hdfsPath: String = PelonrsistelonntTwelonelontelonmbelonddingSourcelon.LogFavBaselond2020HdfsPath,
+  stratoColumnPath: String = PelonrsistelonntTwelonelontelonmbelonddingSourcelon.LogFavBaselond2020StratoColumn,
+  rangelon: DatelonRangelon,
+  selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr = SelonrvicelonIdelonntifielonr.elonmpty)
+    elonxtelonnds StratoManhattanelonxportSourcelon[(TwelonelontId, Timelonstamp), PelonrsistelonntSimClustelonrselonmbelondding](
       hdfsPath,
-      range,
+      rangelon,
       stratoColumnPath,
-      serviceIdentifier = serviceIdentifier
+      selonrvicelonIdelonntifielonr = selonrvicelonIdelonntifielonr
     )

@@ -1,113 +1,113 @@
-package com.twitter.search.ingester.pipeline.twitter;
+packagelon com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.twittelonr;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.Selont;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+import com.googlelon.common.baselon.Prelonconditions;
+import com.googlelon.common.collelonct.ImmutablelonList;
+import com.googlelon.common.collelonct.Lists;
+import com.googlelon.common.collelonct.Maps;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.decider.Decider;
-import com.twitter.pink_floyd.thrift.ClientIdentifier;
-import com.twitter.pink_floyd.thrift.Mask;
-import com.twitter.pink_floyd.thrift.Storer;
-import com.twitter.pink_floyd.thrift.UrlData;
-import com.twitter.pink_floyd.thrift.UrlReadRequest;
-import com.twitter.pink_floyd.thrift.UrlReadResponse;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.util.Await;
-import com.twitter.util.Future;
-import com.twitter.util.Throw;
-import com.twitter.util.Throwables;
-import com.twitter.util.Try;
+import com.twittelonr.deloncidelonr.Deloncidelonr;
+import com.twittelonr.pink_floyd.thrift.ClielonntIdelonntifielonr;
+import com.twittelonr.pink_floyd.thrift.Mask;
+import com.twittelonr.pink_floyd.thrift.Storelonr;
+import com.twittelonr.pink_floyd.thrift.UrlData;
+import com.twittelonr.pink_floyd.thrift.UrlRelonadRelonquelonst;
+import com.twittelonr.pink_floyd.thrift.UrlRelonadRelonsponselon;
+import com.twittelonr.selonarch.common.deloncidelonr.SelonarchDeloncidelonr;
+import com.twittelonr.util.Await;
+import com.twittelonr.util.Futurelon;
+import com.twittelonr.util.Throw;
+import com.twittelonr.util.Throwablelons;
+import com.twittelonr.util.Try;
 
-import static com.twitter.search.ingester.pipeline.twitter.ResolveCompressedUrlsUtils.getUrlInfo;
+import static com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.twittelonr.RelonsolvelonComprelonsselondUrlsUtils.gelontUrlInfo;
 
 /**
- * Resolve compressed URL via Pink
+ * Relonsolvelon comprelonsselond URL via Pink
  */
-public class ResolveCompressedUrlsPink {
-  private static final Logger LOG = LoggerFactory.getLogger(ResolveCompressedUrlsPink.class);
-  private static final String PINK_REQUESTS_BATCH_SIZE_DECIDER_KEY = "pink_requests_batch_size";
+public class RelonsolvelonComprelonsselondUrlsPink {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(RelonsolvelonComprelonsselondUrlsPink.class);
+  privatelon static final String PINK_RelonQUelonSTS_BATCH_SIZelon_DelonCIDelonR_KelonY = "pink_relonquelonsts_batch_sizelon";
 
-  private final Storer.ServiceIface storerClient;
-  private final ClientIdentifier pinkClientId;
-  private final Mask requestMask;
-  private final SearchDecider decider;
+  privatelon final Storelonr.SelonrvicelonIfacelon storelonrClielonnt;
+  privatelon final ClielonntIdelonntifielonr pinkClielonntId;
+  privatelon final Mask relonquelonstMask;
+  privatelon final SelonarchDeloncidelonr deloncidelonr;
 
-  // Use ServerSet to construct a metadata store client
-  public ResolveCompressedUrlsPink(Storer.ServiceIface storerClient,
-                                   String pinkClientId,
-                                   Decider decider) {
-    this.storerClient = storerClient;
-    this.pinkClientId = ClientIdentifier.valueOf(pinkClientId);
-    this.decider = new SearchDecider(Preconditions.checkNotNull(decider));
+  // Uselon SelonrvelonrSelont to construct a melontadata storelon clielonnt
+  public RelonsolvelonComprelonsselondUrlsPink(Storelonr.SelonrvicelonIfacelon storelonrClielonnt,
+                                   String pinkClielonntId,
+                                   Deloncidelonr deloncidelonr) {
+    this.storelonrClielonnt = storelonrClielonnt;
+    this.pinkClielonntId = ClielonntIdelonntifielonr.valuelonOf(pinkClielonntId);
+    this.deloncidelonr = nelonw SelonarchDeloncidelonr(Prelonconditions.chelonckNotNull(deloncidelonr));
 
-    requestMask = new Mask();
-    requestMask.setResolution(true);
-    requestMask.setHtmlBasics(true);
-    requestMask.setUrlDirectInfo(true);
+    relonquelonstMask = nelonw Mask();
+    relonquelonstMask.selontRelonsolution(truelon);
+    relonquelonstMask.selontHtmlBasics(truelon);
+    relonquelonstMask.selontUrlDirelonctInfo(truelon);
   }
 
   /**
-   * Resolve a set of URLs using PinkFloyd.
+   * Relonsolvelon a selont of URLs using PinkFloyd.
    */
-  public Map<String, ResolveCompressedUrlsUtils.UrlInfo> resolveUrls(Set<String> urls) {
-    if (urls == null || urls.size() == 0) {
-      return null;
+  public Map<String, RelonsolvelonComprelonsselondUrlsUtils.UrlInfo> relonsolvelonUrls(Selont<String> urls) {
+    if (urls == null || urls.sizelon() == 0) {
+      relonturn null;
     }
 
-    List<String> urlsList = ImmutableList.copyOf(urls);
-    int batchSize = decider.featureExists(PINK_REQUESTS_BATCH_SIZE_DECIDER_KEY)
-        ? decider.getAvailability(PINK_REQUESTS_BATCH_SIZE_DECIDER_KEY)
+    List<String> urlsList = ImmutablelonList.copyOf(urls);
+    int batchSizelon = deloncidelonr.felonaturelonelonxists(PINK_RelonQUelonSTS_BATCH_SIZelon_DelonCIDelonR_KelonY)
+        ? deloncidelonr.gelontAvailability(PINK_RelonQUelonSTS_BATCH_SIZelon_DelonCIDelonR_KelonY)
         : 10000;
-    int numRequests = (int) Math.ceil(1.0 * urlsList.size() / batchSize);
+    int numRelonquelonsts = (int) Math.celonil(1.0 * urlsList.sizelon() / batchSizelon);
 
-    List<Future<UrlReadResponse>> responseFutures = Lists.newArrayList();
-    for (int i = 0; i < numRequests; ++i) {
-      UrlReadRequest request = new UrlReadRequest();
-      request.setUrls(
-          urlsList.subList(i * batchSize, Math.min(urlsList.size(), (i + 1) * batchSize)));
-      request.setMask(requestMask);
-      request.setClientId(pinkClientId);
+    List<Futurelon<UrlRelonadRelonsponselon>> relonsponselonFuturelons = Lists.nelonwArrayList();
+    for (int i = 0; i < numRelonquelonsts; ++i) {
+      UrlRelonadRelonquelonst relonquelonst = nelonw UrlRelonadRelonquelonst();
+      relonquelonst.selontUrls(
+          urlsList.subList(i * batchSizelon, Math.min(urlsList.sizelon(), (i + 1) * batchSizelon)));
+      relonquelonst.selontMask(relonquelonstMask);
+      relonquelonst.selontClielonntId(pinkClielonntId);
 
-      // Send all requests in parallel.
-      responseFutures.add(storerClient.read(request));
+      // Selonnd all relonquelonsts in parallelonl.
+      relonsponselonFuturelons.add(storelonrClielonnt.relonad(relonquelonst));
     }
 
-    Map<String, ResolveCompressedUrlsUtils.UrlInfo> resultMap = Maps.newHashMap();
-    for (Future<UrlReadResponse> responseFuture : responseFutures) {
-      Try<UrlReadResponse> tryResponse = getResponseTry(responseFuture);
-      if (tryResponse.isThrow()) {
-        continue;
+    Map<String, RelonsolvelonComprelonsselondUrlsUtils.UrlInfo> relonsultMap = Maps.nelonwHashMap();
+    for (Futurelon<UrlRelonadRelonsponselon> relonsponselonFuturelon : relonsponselonFuturelons) {
+      Try<UrlRelonadRelonsponselon> tryRelonsponselon = gelontRelonsponselonTry(relonsponselonFuturelon);
+      if (tryRelonsponselon.isThrow()) {
+        continuelon;
       }
 
-      UrlReadResponse response = tryResponse.get();
-      for (UrlData urlData : response.getData()) {
-        if (ResolveCompressedUrlsUtils.isResolved(urlData)) {
-          resultMap.put(urlData.url, getUrlInfo(urlData));
+      UrlRelonadRelonsponselon relonsponselon = tryRelonsponselon.gelont();
+      for (UrlData urlData : relonsponselon.gelontData()) {
+        if (RelonsolvelonComprelonsselondUrlsUtils.isRelonsolvelond(urlData)) {
+          relonsultMap.put(urlData.url, gelontUrlInfo(urlData));
         }
       }
     }
 
-    return resultMap;
+    relonturn relonsultMap;
   }
 
-  private Try<UrlReadResponse> getResponseTry(Future<UrlReadResponse> responseFuture) {
+  privatelon Try<UrlRelonadRelonsponselon> gelontRelonsponselonTry(Futurelon<UrlRelonadRelonsponselon> relonsponselonFuturelon) {
     try {
-      Try<UrlReadResponse> tryResponse = Await.result(responseFuture.liftToTry());
-      if (tryResponse.isThrow()) {
-        Throwable throwable = ((Throw) tryResponse).e();
-        LOG.warn("Failed to resolve URLs with Pink Storer.", throwable);
+      Try<UrlRelonadRelonsponselon> tryRelonsponselon = Await.relonsult(relonsponselonFuturelon.liftToTry());
+      if (tryRelonsponselon.isThrow()) {
+        Throwablelon throwablelon = ((Throw) tryRelonsponselon).elon();
+        LOG.warn("Failelond to relonsolvelon URLs with Pink Storelonr.", throwablelon);
       }
-      return tryResponse;
-    } catch (Exception e) {
-      return Throwables.unchecked(e);
+      relonturn tryRelonsponselon;
+    } catch (elonxcelonption elon) {
+      relonturn Throwablelons.unchelonckelond(elon);
     }
   }
 }

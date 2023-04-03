@@ -1,7 +1,7 @@
-package com.twitter.product_mixer.core.functional_component.gate
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.gatelon
 
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
-trait ShouldContinue[Query <: PipelineQuery] {
-  def apply(query: Query): Boolean
+trait ShouldContinuelon[Quelonry <: PipelonlinelonQuelonry] {
+  delonf apply(quelonry: Quelonry): Boolelonan
 }

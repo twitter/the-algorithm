@@ -1,7 +1,7 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.topic
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.topic
 
-sealed trait TopicFunctionalityType
+selonalelond trait TopicFunctionalityTypelon
 
-case object BasicTopicFunctionalityType extends TopicFunctionalityType
-case object PivotTopicFunctionalityType extends TopicFunctionalityType
-case object RecommendationTopicFunctionalityType extends TopicFunctionalityType
+caselon objelonct BasicTopicFunctionalityTypelon elonxtelonnds TopicFunctionalityTypelon
+caselon objelonct PivotTopicFunctionalityTypelon elonxtelonnds TopicFunctionalityTypelon
+caselon objelonct ReloncommelonndationTopicFunctionalityTypelon elonxtelonnds TopicFunctionalityTypelon

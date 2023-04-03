@@ -1,42 +1,42 @@
-package com.twitter.ann.annoy
+packagelon com.twittelonr.ann.annoy
 
-import com.twitter.ann.annoy.AnnoyCommon._
-import com.twitter.ann.common._
-import com.twitter.ann.file_store.ReadableIndexIdFileStore
-import com.twitter.bijection.Injection
-import com.twitter.search.common.file.AbstractFile
-import com.twitter.util.FuturePool
+import com.twittelonr.ann.annoy.AnnoyCommon._
+import com.twittelonr.ann.common._
+import com.twittelonr.ann.filelon_storelon.RelonadablelonIndelonxIdFilelonStorelon
+import com.twittelonr.bijelonction.Injelonction
+import com.twittelonr.selonarch.common.filelon.AbstractFilelon
+import com.twittelonr.util.FuturelonPool
 
-private[annoy] object TypedAnnoyQueryIndexWithFile {
-  private[annoy] def apply[T, D <: Distance[D]](
-    dimension: Int,
-    metric: Metric[D],
-    injection: Injection[T, Array[Byte]],
-    futurePool: FuturePool,
-    directory: AbstractFile
-  ): Queryable[T, AnnoyRuntimeParams, D] = {
-    val deserializer =
-      new TypedAnnoyQueryIndexWithFile(dimension, metric, futurePool, injection)
-    deserializer.fromDirectory(directory)
+privatelon[annoy] objelonct TypelondAnnoyQuelonryIndelonxWithFilelon {
+  privatelon[annoy] delonf apply[T, D <: Distancelon[D]](
+    dimelonnsion: Int,
+    melontric: Melontric[D],
+    injelonction: Injelonction[T, Array[Bytelon]],
+    futurelonPool: FuturelonPool,
+    direlonctory: AbstractFilelon
+  ): Quelonryablelon[T, AnnoyRuntimelonParams, D] = {
+    val delonselonrializelonr =
+      nelonw TypelondAnnoyQuelonryIndelonxWithFilelon(dimelonnsion, melontric, futurelonPool, injelonction)
+    delonselonrializelonr.fromDirelonctory(direlonctory)
   }
 }
 
-private[this] class TypedAnnoyQueryIndexWithFile[T, D <: Distance[D]](
-  dimension: Int,
-  metric: Metric[D],
-  futurePool: FuturePool,
-  injection: Injection[T, Array[Byte]])
-    extends QueryableDeserialization[
+privatelon[this] class TypelondAnnoyQuelonryIndelonxWithFilelon[T, D <: Distancelon[D]](
+  dimelonnsion: Int,
+  melontric: Melontric[D],
+  futurelonPool: FuturelonPool,
+  injelonction: Injelonction[T, Array[Bytelon]])
+    elonxtelonnds QuelonryablelonDelonselonrialization[
       T,
-      AnnoyRuntimeParams,
+      AnnoyRuntimelonParams,
       D,
-      Queryable[T, AnnoyRuntimeParams, D]
+      Quelonryablelon[T, AnnoyRuntimelonParams, D]
     ] {
-  override def fromDirectory(directory: AbstractFile): Queryable[T, AnnoyRuntimeParams, D] = {
-    val index = RawAnnoyQueryIndex(dimension, metric, futurePool, directory)
+  ovelonrridelon delonf fromDirelonctory(direlonctory: AbstractFilelon): Quelonryablelon[T, AnnoyRuntimelonParams, D] = {
+    val indelonx = RawAnnoyQuelonryIndelonx(dimelonnsion, melontric, futurelonPool, direlonctory)
 
-    val indexIdFile = directory.getChild(IndexIdMappingFileName)
-    val readableFileStore = ReadableIndexIdFileStore(indexIdFile, injection)
-    IndexTransformer.transformQueryable(index, readableFileStore)
+    val indelonxIdFilelon = direlonctory.gelontChild(IndelonxIdMappingFilelonNamelon)
+    val relonadablelonFilelonStorelon = RelonadablelonIndelonxIdFilelonStorelon(indelonxIdFilelon, injelonction)
+    IndelonxTransformelonr.transformQuelonryablelon(indelonx, relonadablelonFilelonStorelon)
   }
 }

@@ -1,18 +1,18 @@
 java_library(
-    sources = ["*.java"],
+    sourcelons = ["*.java"],
     platform = "java8",
-    provides = artifact(
-        org = "com.twitter.search.common.util",
-        name = "lang",
-        repo = artifactory,
+    providelons = artifact(
+        org = "com.twittelonr.selonarch.common.util",
+        namelon = "lang",
+        relonpo = artifactory,
     ),
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/com/google/code/findbugs:jsr305",
-        "3rdparty/jvm/com/google/guava",
-        "3rdparty/jvm/org/apache/thrift:libthrift",
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        "3rdparty/jvm/com/googlelon/codelon/findbugs:jsr305",
+        "3rdparty/jvm/com/googlelon/guava",
+        "3rdparty/jvm/org/apachelon/thrift:libthrift",
         "3rdparty/jvm/org/slf4j:slf4j-api",
-        "src/java/com/twitter/common/text/language:locale-util",
-        "src/thrift/com/twitter/search/common:constants-java",
+        "src/java/com/twittelonr/common/telonxt/languagelon:localelon-util",
+        "src/thrift/com/twittelonr/selonarch/common:constants-java",
     ],
 )

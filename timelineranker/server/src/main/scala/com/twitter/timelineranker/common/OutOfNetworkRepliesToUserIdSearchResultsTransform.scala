@@ -1,48 +1,48 @@
-package com.twitter.timelineranker.common
+packagelon com.twittelonr.timelonlinelonrankelonr.common
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.servo.util.FutureArrow
-import com.twitter.timelineranker.core.CandidateEnvelope
-import com.twitter.timelines.clients.relevance_search.SearchClient
-import com.twitter.util.Future
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.selonrvo.util.FuturelonArrow
+import com.twittelonr.timelonlinelonrankelonr.corelon.Candidatelonelonnvelonlopelon
+import com.twittelonr.timelonlinelons.clielonnts.relonlelonvancelon_selonarch.SelonarchClielonnt
+import com.twittelonr.util.Futurelon
 
-object OutOfNetworkRepliesToUserIdSearchResultsTransform {
-  val DefaultMaxTweetCount = 100
+objelonct OutOfNelontworkRelonplielonsToUselonrIdSelonarchRelonsultsTransform {
+  val DelonfaultMaxTwelonelontCount = 100
 }
 
-// Requests search results for out-of-network replies to a user Id
-class OutOfNetworkRepliesToUserIdSearchResultsTransform(
-  searchClient: SearchClient,
-  statsReceiver: StatsReceiver,
-  logSearchDebugInfo: Boolean = true)
-    extends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
-  private[this] val maxCountStat = statsReceiver.stat("maxCount")
-  private[this] val numResultsFromSearchStat = statsReceiver.stat("numResultsFromSearch")
-  private[this] val earlybirdScoreX100Stat = statsReceiver.stat("earlybirdScoreX100")
+// Relonquelonsts selonarch relonsults for out-of-nelontwork relonplielons to a uselonr Id
+class OutOfNelontworkRelonplielonsToUselonrIdSelonarchRelonsultsTransform(
+  selonarchClielonnt: SelonarchClielonnt,
+  statsReloncelonivelonr: StatsReloncelonivelonr,
+  logSelonarchDelonbugInfo: Boolelonan = truelon)
+    elonxtelonnds FuturelonArrow[Candidatelonelonnvelonlopelon, Candidatelonelonnvelonlopelon] {
+  privatelon[this] val maxCountStat = statsReloncelonivelonr.stat("maxCount")
+  privatelon[this] val numRelonsultsFromSelonarchStat = statsReloncelonivelonr.stat("numRelonsultsFromSelonarch")
+  privatelon[this] val elonarlybirdScorelonX100Stat = statsReloncelonivelonr.stat("elonarlybirdScorelonX100")
 
-  override def apply(envelope: CandidateEnvelope): Future[CandidateEnvelope] = {
-    val maxCount = envelope.query.maxCount
-      .getOrElse(OutOfNetworkRepliesToUserIdSearchResultsTransform.DefaultMaxTweetCount)
+  ovelonrridelon delonf apply(elonnvelonlopelon: Candidatelonelonnvelonlopelon): Futurelon[Candidatelonelonnvelonlopelon] = {
+    val maxCount = elonnvelonlopelon.quelonry.maxCount
+      .gelontOrelonlselon(OutOfNelontworkRelonplielonsToUselonrIdSelonarchRelonsultsTransform.DelonfaultMaxTwelonelontCount)
     maxCountStat.add(maxCount)
 
-    envelope.followGraphData.followedUserIdsFuture
+    elonnvelonlopelon.followGraphData.followelondUselonrIdsFuturelon
       .flatMap {
-        case followedIds =>
-          searchClient
-            .getOutOfNetworkRepliesToUserId(
-              userId = envelope.query.userId,
-              followedUserIds = followedIds.toSet,
+        caselon followelondIds =>
+          selonarchClielonnt
+            .gelontOutOfNelontworkRelonplielonsToUselonrId(
+              uselonrId = elonnvelonlopelon.quelonry.uselonrId,
+              followelondUselonrIds = followelondIds.toSelont,
               maxCount = maxCount,
-              earlybirdOptions = envelope.query.earlybirdOptions,
-              logSearchDebugInfo
-            ).map { results =>
-              numResultsFromSearchStat.add(results.size)
-              results.foreach { result =>
-                val earlybirdScoreX100 =
-                  result.metadata.flatMap(_.score).getOrElse(0.0).toFloat * 100
-                earlybirdScoreX100Stat.add(earlybirdScoreX100)
+              elonarlybirdOptions = elonnvelonlopelon.quelonry.elonarlybirdOptions,
+              logSelonarchDelonbugInfo
+            ).map { relonsults =>
+              numRelonsultsFromSelonarchStat.add(relonsults.sizelon)
+              relonsults.forelonach { relonsult =>
+                val elonarlybirdScorelonX100 =
+                  relonsult.melontadata.flatMap(_.scorelon).gelontOrelonlselon(0.0).toFloat * 100
+                elonarlybirdScorelonX100Stat.add(elonarlybirdScorelonX100)
               }
-              envelope.copy(searchResults = results)
+              elonnvelonlopelon.copy(selonarchRelonsults = relonsults)
             }
       }
   }

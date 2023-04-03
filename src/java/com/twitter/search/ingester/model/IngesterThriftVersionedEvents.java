@@ -1,50 +1,50 @@
-package com.twitter.search.ingester.model;
+packagelon com.twittelonr.selonarch.ingelonstelonr.modelonl;
 
 import java.util.Map;
 
-import com.google.common.primitives.Longs;
+import com.googlelon.common.primitivelons.Longs;
 
-import com.twitter.search.common.debug.DebugEventAccumulator;
-import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
-import com.twitter.search.common.partitioning.base.Partitionable;
-import com.twitter.search.common.schema.thriftjava.ThriftIndexingEvent;
+import com.twittelonr.selonarch.common.delonbug.DelonbugelonvelonntAccumulator;
+import com.twittelonr.selonarch.common.indelonxing.thriftjava.ThriftVelonrsionelondelonvelonnts;
+import com.twittelonr.selonarch.common.partitioning.baselon.Partitionablelon;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftIndelonxingelonvelonnt;
 
 /**
- * Wrap of ThriftVersionedEvents, make it partitionable for the queue writer.
+ * Wrap of ThriftVelonrsionelondelonvelonnts, makelon it partitionablelon for thelon quelonuelon writelonr.
  */
-public class IngesterThriftVersionedEvents extends ThriftVersionedEvents
-    implements Comparable<ThriftVersionedEvents>, Partitionable, DebugEventAccumulator {
+public class IngelonstelonrThriftVelonrsionelondelonvelonnts elonxtelonnds ThriftVelonrsionelondelonvelonnts
+    implelonmelonnts Comparablelon<ThriftVelonrsionelondelonvelonnts>, Partitionablelon, DelonbugelonvelonntAccumulator {
 
-  // Make userId field easier to be accessed to calculate partition number
-  private final long userId;
+  // Makelon uselonrId fielonld elonasielonr to belon accelonsselond to calculatelon partition numbelonr
+  privatelon final long uselonrId;
 
-  public IngesterThriftVersionedEvents(long userId) {
-    this.userId = userId;
+  public IngelonstelonrThriftVelonrsionelondelonvelonnts(long uselonrId) {
+    this.uselonrId = uselonrId;
   }
 
-  public IngesterThriftVersionedEvents(long userId,
-                                       Map<Byte, ThriftIndexingEvent> versionedEvents) {
-    super(versionedEvents);
-    this.userId = userId;
+  public IngelonstelonrThriftVelonrsionelondelonvelonnts(long uselonrId,
+                                       Map<Bytelon, ThriftIndelonxingelonvelonnt> velonrsionelondelonvelonnts) {
+    supelonr(velonrsionelondelonvelonnts);
+    this.uselonrId = uselonrId;
   }
 
-  public IngesterThriftVersionedEvents(long userId, ThriftVersionedEvents original) {
-    super(original);
-    this.userId = userId;
+  public IngelonstelonrThriftVelonrsionelondelonvelonnts(long uselonrId, ThriftVelonrsionelondelonvelonnts original) {
+    supelonr(original);
+    this.uselonrId = uselonrId;
   }
 
-  @Override
-  public int compareTo(ThriftVersionedEvents o) {
-    return Longs.compare(getId(), o.getId());
+  @Ovelonrridelon
+  public int comparelonTo(ThriftVelonrsionelondelonvelonnts o) {
+    relonturn Longs.comparelon(gelontId(), o.gelontId());
   }
 
-  @Override
-  public long getTweetId() {
-    return this.getId();
+  @Ovelonrridelon
+  public long gelontTwelonelontId() {
+    relonturn this.gelontId();
   }
 
-  @Override
-  public long getUserId() {
-    return this.userId;
+  @Ovelonrridelon
+  public long gelontUselonrId() {
+    relonturn this.uselonrId;
   }
 }

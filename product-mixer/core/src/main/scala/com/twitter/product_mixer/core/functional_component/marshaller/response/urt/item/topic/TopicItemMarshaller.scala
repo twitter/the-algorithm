@@ -1,25 +1,25 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.topic
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.itelonm.topic
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.topic.TopicItem
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.topic.TopicItelonm
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class TopicItemMarshaller @Inject() (
-  displayTypeMarshaller: TopicDisplayTypeMarshaller,
-  functionalityTypeMarshaller: TopicFunctionalityTypeMarshaller) {
+@Singlelonton
+class TopicItelonmMarshallelonr @Injelonct() (
+  displayTypelonMarshallelonr: TopicDisplayTypelonMarshallelonr,
+  functionalityTypelonMarshallelonr: TopicFunctionalityTypelonMarshallelonr) {
 
-  def apply(topicItem: TopicItem): urt.TimelineItemContent = {
-    urt.TimelineItemContent.Topic(
+  delonf apply(topicItelonm: TopicItelonm): urt.TimelonlinelonItelonmContelonnt = {
+    urt.TimelonlinelonItelonmContelonnt.Topic(
       urt.Topic(
-        topicId = topicItem.id.toString,
-        topicDisplayType = topicItem.topicDisplayType
-          .map(displayTypeMarshaller(_)).getOrElse(urt.TopicDisplayType.Basic),
-        topicFunctionalityType = topicItem.topicFunctionalityType
-          .map(functionalityTypeMarshaller(_)).getOrElse(urt.TopicFunctionalityType.Basic),
-        // This is currently not required by users of this library
-        reactiveTriggers = None
+        topicId = topicItelonm.id.toString,
+        topicDisplayTypelon = topicItelonm.topicDisplayTypelon
+          .map(displayTypelonMarshallelonr(_)).gelontOrelonlselon(urt.TopicDisplayTypelon.Basic),
+        topicFunctionalityTypelon = topicItelonm.topicFunctionalityTypelon
+          .map(functionalityTypelonMarshallelonr(_)).gelontOrelonlselon(urt.TopicFunctionalityTypelon.Basic),
+        // This is currelonntly not relonquirelond by uselonrs of this library
+        relonactivelonTriggelonrs = Nonelon
       )
     )
   }

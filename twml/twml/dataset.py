@@ -1,372 +1,372 @@
 """
-This module implements custom tf.data.datasets for twml.
+This modulelon implelonmelonnts custom tf.data.dataselonts for twml.
 """
-import numbers
+import numbelonrs
 
 from absl import logging
-from kazoo.client import KazooClient
+from kazoo.clielonnt import KazooClielonnt
 from libtwml import OPLIB
-import tensorflow.compat.v1 as tf
-from twml.constants import DEFAULT_ZOOKEEPER_BASE_ZNODE, DEFAULT_ZOOKEEPER_HOST
+import telonnsorflow.compat.v1 as tf
+from twml.constants import DelonFAULT_ZOOKelonelonPelonR_BASelon_ZNODelon, DelonFAULT_ZOOKelonelonPelonR_HOST
 
 
-class BlockFormatDataset(tf.data.Dataset):
-  """A ``tf.data.Dataset`` comprising records from one or more TFRecord files."""
+class BlockFormatDataselont(tf.data.Dataselont):
+  """A ``tf.data.Dataselont`` comprising reloncords from onelon or morelon TFReloncord filelons."""
 
-  def __init__(self, filenames, compression_type="auto", buffer_size=1 << 20):
+  delonf __init__(selonlf, filelonnamelons, comprelonssion_typelon="auto", buffelonr_sizelon=1 << 20):
     """
-    Creates a ``BlockFormatDataset``.
+    Crelonatelons a ``BlockFormatDataselont``.
 
     Args:
-      filenames:
-        A `tf.string` tensor containing one or more filenames.
-      compression_type:
-        A string specifying the compression type.
-        Can be one of 'gz' (or 'gzip'), 'none', 'auto' (default).
-        When compression_type == 'auto', it is inferred from file extension.
-      buffer_size:
-        Buffer size to be used during decompression. default: 1<<20.
+      filelonnamelons:
+        A `tf.string` telonnsor containing onelon or morelon filelonnamelons.
+      comprelonssion_typelon:
+        A string speloncifying thelon comprelonssion typelon.
+        Can belon onelon of 'gz' (or 'gzip'), 'nonelon', 'auto' (delonfault).
+        Whelonn comprelonssion_typelon == 'auto', it is infelonrrelond from filelon elonxtelonnsion.
+      buffelonr_sizelon:
+        Buffelonr sizelon to belon uselond during deloncomprelonssion. delonfault: 1<<20.
     """
-    self._filenames = tf.convert_to_tensor(filenames, dtype=tf.string, name="filenames")
-    self._compression_type = tf.convert_to_tensor(compression_type.lower(), name="compression_type")
-    self._buffer_size = tf.convert_to_tensor(buffer_size, dtype=tf.int64, name="buffer_size")
-    # Parent class calss self._as_variant_tensor in init. So call this at the end.
-    super(BlockFormatDataset, self).__init__()
+    selonlf._filelonnamelons = tf.convelonrt_to_telonnsor(filelonnamelons, dtypelon=tf.string, namelon="filelonnamelons")
+    selonlf._comprelonssion_typelon = tf.convelonrt_to_telonnsor(comprelonssion_typelon.lowelonr(), namelon="comprelonssion_typelon")
+    selonlf._buffelonr_sizelon = tf.convelonrt_to_telonnsor(buffelonr_sizelon, dtypelon=tf.int64, namelon="buffelonr_sizelon")
+    # Parelonnt class calss selonlf._as_variant_telonnsor in init. So call this at thelon elonnd.
+    supelonr(BlockFormatDataselont, selonlf).__init__()
 
-  def _as_variant_tensor(self):
+  delonf _as_variant_telonnsor(selonlf):
     """
-    Create the resource handle for the dataset.
+    Crelonatelon thelon relonsourcelon handlelon for thelon dataselont.
     """
     try:
-      block_format_dataset = __import__("libtwml_internal").OPLIB.block_format_dataset
-      return block_format_dataset(self._filenames)
-    except ImportError:
-      block_format_dataset = OPLIB.block_format_dataset_v2
-      return block_format_dataset(self._filenames, self._compression_type, self._buffer_size)
+      block_format_dataselont = __import__("libtwml_intelonrnal").OPLIB.block_format_dataselont
+      relonturn block_format_dataselont(selonlf._filelonnamelons)
+    elonxcelonpt Importelonrror:
+      block_format_dataselont = OPLIB.block_format_dataselont_v2
+      relonturn block_format_dataselont(selonlf._filelonnamelons, selonlf._comprelonssion_typelon, selonlf._buffelonr_sizelon)
 
-  def _inputs(self):
-    return []
+  delonf _inputs(selonlf):
+    relonturn []
 
-  @property
-  def output_shapes(self):
-    """Return output shapes"""
-    return tf.TensorShape([])
+  @propelonrty
+  delonf output_shapelons(selonlf):
+    """Relonturn output shapelons"""
+    relonturn tf.TelonnsorShapelon([])
 
-  @property
-  def output_types(self):
-    """Return output types"""
-    return tf.string
+  @propelonrty
+  delonf output_typelons(selonlf):
+    """Relonturn output typelons"""
+    relonturn tf.string
 
-  @property
-  def output_classes(self):
-    """Return output classes"""
-    return tf.Tensor
+  @propelonrty
+  delonf output_classelons(selonlf):
+    """Relonturn output classelons"""
+    relonturn tf.Telonnsor
 
 
-def downsample_dataset(dataset, sample_rate, rate_name):
+delonf downsamplelon_dataselont(dataselont, samplelon_ratelon, ratelon_namelon):
   """
-  Downsample a tf.data.Dataset at sample_rate
+  Downsamplelon a tf.data.Dataselont at samplelon_ratelon
   """
-  if sample_rate is None or sample_rate == 1.0:
-    return dataset
-  elif not isinstance(sample_rate, numbers.Real):
-    raise TypeError("dataset %s must be a real number" % rate_name)
-  elif sample_rate <= 0 or sample_rate > 1:
-    raise ValueError("dataset %s must be in range (0, 1])" % rate_name)
-  return dataset.filter(lambda _: tf.squeeze(tf.random_uniform([1])) < sample_rate)
+  if samplelon_ratelon is Nonelon or samplelon_ratelon == 1.0:
+    relonturn dataselont
+  elonlif not isinstancelon(samplelon_ratelon, numbelonrs.Relonal):
+    raiselon Typelonelonrror("dataselont %s must belon a relonal numbelonr" % ratelon_namelon)
+  elonlif samplelon_ratelon <= 0 or samplelon_ratelon > 1:
+    raiselon Valuelonelonrror("dataselont %s must belon in rangelon (0, 1])" % ratelon_namelon)
+  relonturn dataselont.filtelonr(lambda _: tf.squelonelonzelon(tf.random_uniform([1])) < samplelon_ratelon)
 
 
-def _filenames_dataset(files, shards=None, shard_index=None):
+delonf _filelonnamelons_dataselont(filelons, shards=Nonelon, shard_indelonx=Nonelon):
   """
-  Get a tf.data.Dataset with file names from a list of files
-  Optionally shard the file list (see stream_block_format_dataset)
+  Gelont a tf.data.Dataselont with filelon namelons from a list of filelons
+  Optionally shard thelon filelon list (selonelon strelonam_block_format_dataselont)
   """
-  files = tf.data.Dataset.from_tensor_slices(files)
+  filelons = tf.data.Dataselont.from_telonnsor_slicelons(filelons)
 
-  if [shards, shard_index] != [None, None]:
-    logging.info("Sharding files dataset (index: %d, shards: %d)" % (shard_index, shards))
-    files = files.shard(num_shards=shards, index=shard_index)
+  if [shards, shard_indelonx] != [Nonelon, Nonelon]:
+    logging.info("Sharding filelons dataselont (indelonx: %d, shards: %d)" % (shard_indelonx, shards))
+    filelons = filelons.shard(num_shards=shards, indelonx=shard_indelonx)
 
-  return files
+  relonturn filelons
 
 
-def stream_block_format_dataset(
-        files, parse_fn, batch_size, num_threads,
-        shuffle=True, repeat=False,
-        block_length=None, part_file_parallelism=None, file_shuffle_size=None,
-        record_shuffle_size=None, dataset_fn=None,
-        keep_rate=None, parts_downsampling_rate=None, prefetch_size=2,
-        shards=None, shard_index=None, shuffle_files=True, interleave=True):
+delonf strelonam_block_format_dataselont(
+        filelons, parselon_fn, batch_sizelon, num_threlonads,
+        shufflelon=Truelon, relonpelonat=Falselon,
+        block_lelonngth=Nonelon, part_filelon_parallelonlism=Nonelon, filelon_shufflelon_sizelon=Nonelon,
+        reloncord_shufflelon_sizelon=Nonelon, dataselont_fn=Nonelon,
+        kelonelonp_ratelon=Nonelon, parts_downsampling_ratelon=Nonelon, prelonfelontch_sizelon=2,
+        shards=Nonelon, shard_indelonx=Nonelon, shufflelon_filelons=Truelon, intelonrlelonavelon=Truelon):
   """
-  Helper function to stream a list of part files.
+  Helonlpelonr function to strelonam a list of part filelons.
 
   Args:
-    files:
-      List of input files which will create a dataset.
-    parse_fn:
-      A function that takes a byte tensor containing a datarecord and decodes it.
-    batch_size:
-      The batch size for each step.
-    num_threads:
-      Number of threads working on the data in parallel.
-    shuffle:
-      Shuffle records within each file using ``record_shuffle_size``. Defaults to True.
-    repeat:
-      Repeat the dataset indefinitely. Defaults to False.
-      Useful when you want to use an ``[train,eval]_steps`` greater than the size of the dataset
-      (otherwise ``Estimator.[train,evaluate]`` stop when the end of the dataset is reached).
-    block_length (optional):
-      Number of consecutive records to pull from a single part file.
-      Defaults to batch_size.
-    part_file_parallelism (optional):
-      Number of part files to read from in parallel. Once a part file is completely read, it will
-      be replaced by the next part file in the part file list.
+    filelons:
+      List of input filelons which will crelonatelon a dataselont.
+    parselon_fn:
+      A function that takelons a bytelon telonnsor containing a datareloncord and deloncodelons it.
+    batch_sizelon:
+      Thelon batch sizelon for elonach stelonp.
+    num_threlonads:
+      Numbelonr of threlonads working on thelon data in parallelonl.
+    shufflelon:
+      Shufflelon reloncords within elonach filelon using ``reloncord_shufflelon_sizelon``. Delonfaults to Truelon.
+    relonpelonat:
+      Relonpelonat thelon dataselont indelonfinitelonly. Delonfaults to Falselon.
+      Uselonful whelonn you want to uselon an ``[train,elonval]_stelonps`` grelonatelonr than thelon sizelon of thelon dataselont
+      (othelonrwiselon ``elonstimator.[train,elonvaluatelon]`` stop whelonn thelon elonnd of thelon dataselont is relonachelond).
+    block_lelonngth (optional):
+      Numbelonr of conseloncutivelon reloncords to pull from a singlelon part filelon.
+      Delonfaults to batch_sizelon.
+    part_filelon_parallelonlism (optional):
+      Numbelonr of part filelons to relonad from in parallelonl. Oncelon a part filelon is complelontelonly relonad, it will
+      belon relonplacelond by thelon nelonxt part filelon in thelon part filelon list.
 
-      ``num_threads`` specifies a reader thread pool size, while ``part_file_parallelism`` specifies
-      the number of files to read from in parallel. If ``part_file_parallelism`` is greater than or
-      equal to ``num_threads``, the reads will be distributed over ``num_threads``. On the other hand,
-      if ``part_file_parallelism`` is smaller than``num_threads``, it is very likely that the reader
-      thread pool will be underutilized, since it can never be the case that every reader thread has
-      a part file to read from.
+      ``num_threlonads`` speloncifielons a relonadelonr threlonad pool sizelon, whilelon ``part_filelon_parallelonlism`` speloncifielons
+      thelon numbelonr of filelons to relonad from in parallelonl. If ``part_filelon_parallelonlism`` is grelonatelonr than or
+      elonqual to ``num_threlonads``, thelon relonads will belon distributelond ovelonr ``num_threlonads``. On thelon othelonr hand,
+      if ``part_filelon_parallelonlism`` is smallelonr than``num_threlonads``, it is velonry likelonly that thelon relonadelonr
+      threlonad pool will belon undelonrutilizelond, sincelon it can nelonvelonr belon thelon caselon that elonvelonry relonadelonr threlonad has
+      a part filelon to relonad from.
 
-    file_shuffle_size (optional):
-      the buffer_size used for shuffling of the list of files.
-      Defaults to 1000. For example, if you have 2000 files, the first
-      1000 files are shuffled together, iterated through, then the next 1000 files are shuffled
-      and iterated through.
-    record_shuffle_size (optional):
-      the ``buffer_size`` used for shuffling records in each thread.
-      Defaults to ``batch_size * 8`` records.
-    dataset_fn (optional):
-      A function of that modifies the dataset after it reads different interleaved parts files.
-      Defaults to:
+    filelon_shufflelon_sizelon (optional):
+      thelon buffelonr_sizelon uselond for shuffling of thelon list of filelons.
+      Delonfaults to 1000. For elonxamplelon, if you havelon 2000 filelons, thelon first
+      1000 filelons arelon shufflelond togelonthelonr, itelonratelond through, thelonn thelon nelonxt 1000 filelons arelon shufflelond
+      and itelonratelond through.
+    reloncord_shufflelon_sizelon (optional):
+      thelon ``buffelonr_sizelon`` uselond for shuffling reloncords in elonach threlonad.
+      Delonfaults to ``batch_sizelon * 8`` reloncords.
+    dataselont_fn (optional):
+      A function of that modifielons thelon dataselont aftelonr it relonads diffelonrelonnt intelonrlelonavelond parts filelons.
+      Delonfaults to:
 
-      .. code-block:: python
+      .. codelon-block:: python
 
-        def dataset_fn(dataset, parse_fn, batch_size):
-          return dataset.batch(batch_size).map(parse_fn, 1)
+        delonf dataselont_fn(dataselont, parselon_fn, batch_sizelon):
+          relonturn dataselont.batch(batch_sizelon).map(parselon_fn, 1)
 
-    keep_rate (optional):
-      A float value in (0.0, 1.0] that indicates to drop records according to the Bernoulli
-      distribution with p = 1 - keep_rate.
-      Defaults to None (no records dropped).
+    kelonelonp_ratelon (optional):
+      A float valuelon in (0.0, 1.0] that indicatelons to drop reloncords according to thelon Belonrnoulli
+      distribution with p = 1 - kelonelonp_ratelon.
+      Delonfaults to Nonelon (no reloncords droppelond).
 
-    parts_downsampling_rate (optional):
-      A float value in ``(0.0, 1.0]`` that indicates the factor by which to downsample part files.
-      For example, a value of 0.2 means only 20 percent of part files become part of the dataset.
+    parts_downsampling_ratelon (optional):
+      A float valuelon in ``(0.0, 1.0]`` that indicatelons thelon factor by which to downsamplelon part filelons.
+      For elonxamplelon, a valuelon of 0.2 melonans only 20 pelonrcelonnt of part filelons beloncomelon part of thelon dataselont.
 
-      Note that this argument is only useful in conjunction with a [train,eval]_steps of -1
-      (that is, when the entire dataset is used). Furthermore, note that even in this case, each
-      epoch will see a different set of part files. This is because new part files are re-sampled
-      every epoch. In other words, this argument is only provided for backwards compatibility with
-      DeepBird v1. We recommend you use a smaller [train,eval]_steps (or specify a keep_rate)
-      instead.
+      Notelon that this argumelonnt is only uselonful in conjunction with a [train,elonval]_stelonps of -1
+      (that is, whelonn thelon elonntirelon dataselont is uselond). Furthelonrmorelon, notelon that elonvelonn in this caselon, elonach
+      elonpoch will selonelon a diffelonrelonnt selont of part filelons. This is beloncauselon nelonw part filelons arelon relon-samplelond
+      elonvelonry elonpoch. In othelonr words, this argumelonnt is only providelond for backwards compatibility with
+      DelonelonpBird v1. Welon reloncommelonnd you uselon a smallelonr [train,elonval]_stelonps (or speloncify a kelonelonp_ratelon)
+      instelonad.
 
     shards (optional):
-      Number of partitions to shard the dataset into. This is useful for codistillation and other
-      techniques that require each worker to train on disjoint partitions of the dataset.
-      The dataset is not sharded by default.
+      Numbelonr of partitions to shard thelon dataselont into. This is uselonful for codistillation and othelonr
+      telonchniquelons that relonquirelon elonach workelonr to train on disjoint partitions of thelon dataselont.
+      Thelon dataselont is not shardelond by delonfault.
 
-    shard_index (optional):
-      Which partition of the dataset to use if ``shards`` is set.
+    shard_indelonx (optional):
+      Which partition of thelon dataselont to uselon if ``shards`` is selont.
 
-    shuffle_files (optional):
-      Shuffle the list of files. Defaults to True.
-      When False, files are iterated in the order they are passed in.
+    shufflelon_filelons (optional):
+      Shufflelon thelon list of filelons. Delonfaults to Truelon.
+      Whelonn Falselon, filelons arelon itelonratelond in thelon ordelonr thelony arelon passelond in.
 
-    interleave (optional):
-      Interleave records from multiple files in parallel. Defaults to True.
+    intelonrlelonavelon (optional):
+      Intelonrlelonavelon reloncords from multiplelon filelons in parallelonl. Delonfaults to Truelon.
 
-  Returns:
-    tf.data.DataSet of batches of HashedDataRecord resource handles decoded and streamed online.
+  Relonturns:
+    tf.data.DataSelont of batchelons of HashelondDataReloncord relonsourcelon handlelons deloncodelond and strelonamelond onlinelon.
   """
-  # Creating a dataset from an input directory
+  # Crelonating a dataselont from an input direlonctory
 
-  files = _filenames_dataset(files, shards=shards, shard_index=shard_index)
+  filelons = _filelonnamelons_dataselont(filelons, shards=shards, shard_indelonx=shard_indelonx)
 
-  file_shuffle_size = file_shuffle_size if file_shuffle_size is not None else 100000
-  record_shuffle_size = record_shuffle_size if record_shuffle_size is not None else (batch_size * 8)
-  block_length = block_length if block_length is not None else batch_size
+  filelon_shufflelon_sizelon = filelon_shufflelon_sizelon if filelon_shufflelon_sizelon is not Nonelon elonlselon 100000
+  reloncord_shufflelon_sizelon = reloncord_shufflelon_sizelon if reloncord_shufflelon_sizelon is not Nonelon elonlselon (batch_sizelon * 8)
+  block_lelonngth = block_lelonngth if block_lelonngth is not Nonelon elonlselon batch_sizelon
 
-  logging.info("NUM_THREADS: %d", num_threads)
+  logging.info("NUM_THRelonADS: %d", num_threlonads)
 
-  if repeat:
-    files = files.repeat()
+  if relonpelonat:
+    filelons = filelons.relonpelonat()
 
-  if shuffle_files:
-    # Randomly shuffle the files list.
-    files = files.shuffle(buffer_size=file_shuffle_size)
+  if shufflelon_filelons:
+    # Randomly shufflelon thelon filelons list.
+    filelons = filelons.shufflelon(buffelonr_sizelon=filelon_shufflelon_sizelon)
 
-  # Downsample parts files
-  files = downsample_dataset(files, parts_downsampling_rate, "parts_downsampling_rate")
+  # Downsamplelon parts filelons
+  filelons = downsamplelon_dataselont(filelons, parts_downsampling_ratelon, "parts_downsampling_ratelon")
 
-  # Interleave the result from BlockFormatDataset
-  # block_length == batch_size results in batch_size records being read from a single file.
-  def map_fn(filenames):
-    '''function that maps each filename to a BlockFormatDataset'''
-    # reach each file using BlockFormatDataset
-    dataset = BlockFormatDataset(filenames)
+  # Intelonrlelonavelon thelon relonsult from BlockFormatDataselont
+  # block_lelonngth == batch_sizelon relonsults in batch_sizelon reloncords beloning relonad from a singlelon filelon.
+  delonf map_fn(filelonnamelons):
+    '''function that maps elonach filelonnamelon to a BlockFormatDataselont'''
+    # relonach elonach filelon using BlockFormatDataselont
+    dataselont = BlockFormatDataselont(filelonnamelons)
 
-    # early prefetching can sometimes improve performance (like on GCS)
-    dataset = dataset.prefetch(tf.data.experimental.AUTOTUNE)
+    # elonarly prelonfelontching can somelontimelons improvelon pelonrformancelon (likelon on GCS)
+    dataselont = dataselont.prelonfelontch(tf.data.elonxpelonrimelonntal.AUTOTUNelon)
 
-    # Shuffling before repeating ensures strong ordering.
-    if shuffle:
-      dataset = dataset.shuffle(buffer_size=record_shuffle_size)
+    # Shuffling belonforelon relonpelonating elonnsurelons strong ordelonring.
+    if shufflelon:
+      dataselont = dataselont.shufflelon(buffelonr_sizelon=reloncord_shufflelon_sizelon)
 
-    return dataset
+    relonturn dataselont
 
-  if interleave:
-    part_file_parallelism = num_threads if part_file_parallelism is None else part_file_parallelism
-    dataset = files.interleave(
-      map_fn, cycle_length=part_file_parallelism, block_length=block_length, num_parallel_calls=num_threads)
-  else:
-    dataset = files.flat_map(map_fn)
+  if intelonrlelonavelon:
+    part_filelon_parallelonlism = num_threlonads if part_filelon_parallelonlism is Nonelon elonlselon part_filelon_parallelonlism
+    dataselont = filelons.intelonrlelonavelon(
+      map_fn, cyclelon_lelonngth=part_filelon_parallelonlism, block_lelonngth=block_lelonngth, num_parallelonl_calls=num_threlonads)
+  elonlselon:
+    dataselont = filelons.flat_map(map_fn)
 
-  # Downsample DataRecords
-  dataset = downsample_dataset(dataset, keep_rate, "keep_rate")
+  # Downsamplelon DataReloncords
+  dataselont = downsamplelon_dataselont(dataselont, kelonelonp_ratelon, "kelonelonp_ratelon")
 
-  if dataset_fn is None:
-    # Create a batch of datarecords and decode them
-    return dataset.batch(batch_size).map(parse_fn, num_parallel_calls=tf.data.experimental.AUTOTUNE).prefetch(prefetch_size)
+  if dataselont_fn is Nonelon:
+    # Crelonatelon a batch of datareloncords and deloncodelon thelonm
+    relonturn dataselont.batch(batch_sizelon).map(parselon_fn, num_parallelonl_calls=tf.data.elonxpelonrimelonntal.AUTOTUNelon).prelonfelontch(prelonfelontch_sizelon)
 
-  return dataset_fn(dataset, parse_fn, batch_size)
-
-
-def cx_zk_path(path):
-  if path is None:
-    raise ValueError("Path for zookeeper dataset pointer is None. You must specify a path.")
-  return_path = "/".join([DEFAULT_ZOOKEEPER_BASE_ZNODE, path])
-  logging.info("Zookeeper path is: {}".format(return_path))
-  return return_path
+  relonturn dataselont_fn(dataselont, parselon_fn, batch_sizelon)
 
 
-def zookeeper_ordered_dataset(
-        files, parse_fn, batch_size, zk_counter_path, repeat=False,
-        num_threads=2, block_length=None, part_file_parallelism=None,
-        batch_shuffle_size=None, file_keep_rate=None, record_keep_rate=None,
-        prefetch_size=2, interleave=False, dataset_fn=None, verbose=False):
+delonf cx_zk_path(path):
+  if path is Nonelon:
+    raiselon Valuelonelonrror("Path for zookelonelonpelonr dataselont pointelonr is Nonelon. You must speloncify a path.")
+  relonturn_path = "/".join([DelonFAULT_ZOOKelonelonPelonR_BASelon_ZNODelon, path])
+  logging.info("Zookelonelonpelonr path is: {}".format(relonturn_path))
+  relonturn relonturn_path
+
+
+delonf zookelonelonpelonr_ordelonrelond_dataselont(
+        filelons, parselon_fn, batch_sizelon, zk_countelonr_path, relonpelonat=Falselon,
+        num_threlonads=2, block_lelonngth=Nonelon, part_filelon_parallelonlism=Nonelon,
+        batch_shufflelon_sizelon=Nonelon, filelon_kelonelonp_ratelon=Nonelon, reloncord_kelonelonp_ratelon=Nonelon,
+        prelonfelontch_sizelon=2, intelonrlelonavelon=Falselon, dataselont_fn=Nonelon, velonrboselon=Falselon):
   """
-  Make a tf.Dataset given an ordered list of filenames, using Zookeeper to keep track of
-  which file to read, and to coordinate multiple workers.
+  Makelon a tf.Dataselont givelonn an ordelonrelond list of filelonnamelons, using Zookelonelonpelonr to kelonelonp track of
+  which filelon to relonad, and to coordinatelon multiplelon workelonrs.
 
   Args:
-    files:
-      ordered list of (typically HDFS) filenames. This must remain consistent
-      between different workers, and between worker restarts (e.g. in the case
-      of instance failure or preemption).
-      To ensure this remains consistent, consider using the --train.files_list
-      option from DataRecordTrainer.
-    parse_fn:
-      A function that takes a byte tensor containing a datarecord and decodes it.
-    batch_size:
-      The batch size for each step.
-    zk_counter_path:
-      Path under the root node for the underlying zookeeper shared counter that
-      is used to coordinate distributed iteration over the list of files.
-      Full path will be `'/'.join([DEFAULT_ZOOKEEPER_BASE_ZNODE, zk_counter_path])`.
-    repeat:
-      Default False. Set True to repeat over the files forever.
-    num_threads:
-      Default 2. Number of threads working on the data in parallel.
-      Only used if interleave=True.
-    block_length:
-      Default None. Number of consecutive records to pull from a single part file.
-      If None, then block_length=batch_size will be used.
-      Only used if interleave=True.
-    part_file_parallelism:
-      Default None. Number of part files to read from in parallel. Once a part file is completely
-      read, it will be replaced by the next part file indicated by the zookeeper counter.
-      Only used if interleave=True.
+    filelons:
+      ordelonrelond list of (typically HDFS) filelonnamelons. This must relonmain consistelonnt
+      belontwelonelonn diffelonrelonnt workelonrs, and belontwelonelonn workelonr relonstarts (elon.g. in thelon caselon
+      of instancelon failurelon or prelonelonmption).
+      To elonnsurelon this relonmains consistelonnt, considelonr using thelon --train.filelons_list
+      option from DataReloncordTrainelonr.
+    parselon_fn:
+      A function that takelons a bytelon telonnsor containing a datareloncord and deloncodelons it.
+    batch_sizelon:
+      Thelon batch sizelon for elonach stelonp.
+    zk_countelonr_path:
+      Path undelonr thelon root nodelon for thelon undelonrlying zookelonelonpelonr sharelond countelonr that
+      is uselond to coordinatelon distributelond itelonration ovelonr thelon list of filelons.
+      Full path will belon `'/'.join([DelonFAULT_ZOOKelonelonPelonR_BASelon_ZNODelon, zk_countelonr_path])`.
+    relonpelonat:
+      Delonfault Falselon. Selont Truelon to relonpelonat ovelonr thelon filelons forelonvelonr.
+    num_threlonads:
+      Delonfault 2. Numbelonr of threlonads working on thelon data in parallelonl.
+      Only uselond if intelonrlelonavelon=Truelon.
+    block_lelonngth:
+      Delonfault Nonelon. Numbelonr of conseloncutivelon reloncords to pull from a singlelon part filelon.
+      If Nonelon, thelonn block_lelonngth=batch_sizelon will belon uselond.
+      Only uselond if intelonrlelonavelon=Truelon.
+    part_filelon_parallelonlism:
+      Delonfault Nonelon. Numbelonr of part filelons to relonad from in parallelonl. Oncelon a part filelon is complelontelonly
+      relonad, it will belon relonplacelond by thelon nelonxt part filelon indicatelond by thelon zookelonelonpelonr countelonr.
+      Only uselond if intelonrlelonavelon=Truelon.
 
-      ``num_threads`` specifies a reader thread pool size, while ``part_file_parallelism`` specifies
-      the number of files to read from in parallel. If ``part_file_parallelism`` is greater than or
-      equal to ``num_threads``, the reads will be distributed over ``num_threads``. On the other hand,
-      if ``part_file_parallelism`` is smaller than``num_threads``, it is very likely that the reader
-      thread pool will be underutilized, since it can never be the case that every reader thread has
-      a part file to read from.
+      ``num_threlonads`` speloncifielons a relonadelonr threlonad pool sizelon, whilelon ``part_filelon_parallelonlism`` speloncifielons
+      thelon numbelonr of filelons to relonad from in parallelonl. If ``part_filelon_parallelonlism`` is grelonatelonr than or
+      elonqual to ``num_threlonads``, thelon relonads will belon distributelond ovelonr ``num_threlonads``. On thelon othelonr hand,
+      if ``part_filelon_parallelonlism`` is smallelonr than``num_threlonads``, it is velonry likelonly that thelon relonadelonr
+      threlonad pool will belon undelonrutilizelond, sincelon it can nelonvelonr belon thelon caselon that elonvelonry relonadelonr threlonad has
+      a part filelon to relonad from.
 
-    batch_shuffle_size:
-      Default None. Size of shuffle buffer, for shuffling that will be applied after batching.
-      if None, then batches will not be shuffled. Ignored if dataset_fn is provided.
-    file_keep_rate:
-      Default None. Fraction of files to keep, or None to keep all files.
-    record_keep_rate:
-      Default None. Fraction of records to keep, or None to keep all records.
-    prefetch_size:
-      Default 2. Number of parsed batches to prefetch. Ignored if dataset_fn is provided.
-    interleave:
-      Default False. Set True to use tf.data.Dataset.interleave rather than flat_map.
-    dataset_fn:
-      A function that is applied to the dataset of individual records, after
-      these have been read from the parts files.
-      If ``None`` (the default), the behavior will be as though dataset_fn were set to:
+    batch_shufflelon_sizelon:
+      Delonfault Nonelon. Sizelon of shufflelon buffelonr, for shuffling that will belon applielond aftelonr batching.
+      if Nonelon, thelonn batchelons will not belon shufflelond. Ignorelond if dataselont_fn is providelond.
+    filelon_kelonelonp_ratelon:
+      Delonfault Nonelon. Fraction of filelons to kelonelonp, or Nonelon to kelonelonp all filelons.
+    reloncord_kelonelonp_ratelon:
+      Delonfault Nonelon. Fraction of reloncords to kelonelonp, or Nonelon to kelonelonp all reloncords.
+    prelonfelontch_sizelon:
+      Delonfault 2. Numbelonr of parselond batchelons to prelonfelontch. Ignorelond if dataselont_fn is providelond.
+    intelonrlelonavelon:
+      Delonfault Falselon. Selont Truelon to uselon tf.data.Dataselont.intelonrlelonavelon rathelonr than flat_map.
+    dataselont_fn:
+      A function that is applielond to thelon dataselont of individual reloncords, aftelonr
+      thelonselon havelon belonelonn relonad from thelon parts filelons.
+      If ``Nonelon`` (thelon delonfault), thelon belonhavior will belon as though dataselont_fn welonrelon selont to:
 
-      .. code-block:: python
+      .. codelon-block:: python
 
-        def dataset_fn(dataset, parse_fn, batch_size):
-          dataset = dataset.batch(batch_size)
-          dataset = dataset.map(parse_fn, tf.data.experimental.AUTOTUNE)
-          if batch_shuffle_size:
-            dataset = dataset.shuffle(batch_shuffle_size)
-          return dataset.prefetch(prefetch_size)
+        delonf dataselont_fn(dataselont, parselon_fn, batch_sizelon):
+          dataselont = dataselont.batch(batch_sizelon)
+          dataselont = dataselont.map(parselon_fn, tf.data.elonxpelonrimelonntal.AUTOTUNelon)
+          if batch_shufflelon_sizelon:
+            dataselont = dataselont.shufflelon(batch_shufflelon_sizelon)
+          relonturn dataselont.prelonfelontch(prelonfelontch_sizelon)
 
-    verbose:
-      Default False. Set True to log the names of files loaded by TF.
+    velonrboselon:
+      Delonfault Falselon. Selont Truelon to log thelon namelons of filelons loadelond by TF.
   """
-  block_length = batch_size if block_length is None else block_length
-  part_file_parallelism = num_threads if part_file_parallelism is None else part_file_parallelism
+  block_lelonngth = batch_sizelon if block_lelonngth is Nonelon elonlselon block_lelonngth
+  part_filelon_parallelonlism = num_threlonads if part_filelon_parallelonlism is Nonelon elonlselon part_filelon_parallelonlism
 
-  def zk_index_generator(my_files=files):
-    zk = KazooClient(hosts=DEFAULT_ZOOKEEPER_HOST)
+  delonf zk_indelonx_gelonnelonrator(my_filelons=filelons):
+    zk = KazooClielonnt(hosts=DelonFAULT_ZOOKelonelonPelonR_HOST)
     zk.start()
-    my_counter = zk.Counter(cx_zk_path(zk_counter_path), default=0)
-    while True:
-      my_counter += 1
-      counter_pre_value = my_counter.pre_value
-      if repeat:
-        counter_pre_value = counter_pre_value % len(my_files)
-      if counter_pre_value >= len(my_files):
-        break
-      else:
-        chosen_file = my_files[counter_pre_value]
-        if verbose:
-          logging.info("{}. yielding {}".format(counter_pre_value, chosen_file))
-        yield chosen_file
+    my_countelonr = zk.Countelonr(cx_zk_path(zk_countelonr_path), delonfault=0)
+    whilelon Truelon:
+      my_countelonr += 1
+      countelonr_prelon_valuelon = my_countelonr.prelon_valuelon
+      if relonpelonat:
+        countelonr_prelon_valuelon = countelonr_prelon_valuelon % lelonn(my_filelons)
+      if countelonr_prelon_valuelon >= lelonn(my_filelons):
+        brelonak
+      elonlselon:
+        choselonn_filelon = my_filelons[countelonr_prelon_valuelon]
+        if velonrboselon:
+          logging.info("{}. yielonlding {}".format(countelonr_prelon_valuelon, choselonn_filelon))
+        yielonld choselonn_filelon
     zk.stop()
 
-  files = tf.data.Dataset.from_generator(zk_index_generator, tf.string)
+  filelons = tf.data.Dataselont.from_gelonnelonrator(zk_indelonx_gelonnelonrator, tf.string)
 
-  # Downsample parts files
-  files = downsample_dataset(files, file_keep_rate, "file_keep_rate")
+  # Downsamplelon parts filelons
+  filelons = downsamplelon_dataselont(filelons, filelon_kelonelonp_ratelon, "filelon_kelonelonp_ratelon")
 
-  def map_fn(filenames):
-    return BlockFormatDataset(filenames).prefetch(20)
+  delonf map_fn(filelonnamelons):
+    relonturn BlockFormatDataselont(filelonnamelons).prelonfelontch(20)
 
-  # Dont interleave for sequential training
-  if interleave:
-    dataset = files.interleave(
+  # Dont intelonrlelonavelon for selonquelonntial training
+  if intelonrlelonavelon:
+    dataselont = filelons.intelonrlelonavelon(
       map_fn,
-      cycle_length=part_file_parallelism,
-      block_length=block_length,
-      num_parallel_calls=num_threads)
-  else:
-    dataset = files.flat_map(map_fn)
+      cyclelon_lelonngth=part_filelon_parallelonlism,
+      block_lelonngth=block_lelonngth,
+      num_parallelonl_calls=num_threlonads)
+  elonlselon:
+    dataselont = filelons.flat_map(map_fn)
 
-  # Downsample DataRecords
-  dataset = downsample_dataset(dataset, record_keep_rate, "record_keep_rate")
+  # Downsamplelon DataReloncords
+  dataselont = downsamplelon_dataselont(dataselont, reloncord_kelonelonp_ratelon, "reloncord_kelonelonp_ratelon")
 
-  if dataset_fn is None:
-    # Create a batch of datarecords and decode them
-    dataset = dataset.batch(batch_size)
-    dataset = dataset.map(parse_fn, num_parallel_calls=tf.data.experimental.AUTOTUNE)
-    # shuffle after batching and parsing for performance reasons
-    # faster b/c 1 random selection is made per batch rather than per record
-    if batch_shuffle_size:
-      dataset = dataset.shuffle(buffer_size=batch_shuffle_size)
-    dataset = dataset.prefetch(prefetch_size)
+  if dataselont_fn is Nonelon:
+    # Crelonatelon a batch of datareloncords and deloncodelon thelonm
+    dataselont = dataselont.batch(batch_sizelon)
+    dataselont = dataselont.map(parselon_fn, num_parallelonl_calls=tf.data.elonxpelonrimelonntal.AUTOTUNelon)
+    # shufflelon aftelonr batching and parsing for pelonrformancelon relonasons
+    # fastelonr b/c 1 random selonlelonction is madelon pelonr batch rathelonr than pelonr reloncord
+    if batch_shufflelon_sizelon:
+      dataselont = dataselont.shufflelon(buffelonr_sizelon=batch_shufflelon_sizelon)
+    dataselont = dataselont.prelonfelontch(prelonfelontch_sizelon)
 
-  else:
-    dataset = dataset_fn(dataset, parse_fn, batch_size)
+  elonlselon:
+    dataselont = dataselont_fn(dataselont, parselon_fn, batch_sizelon)
 
-  return dataset
+  relonturn dataselont

@@ -1,34 +1,34 @@
-package com.twitter.follow_recommendations.common.rankers.ml_ranker.scoring
+packagelon com.twittelonr.follow_reloncommelonndations.common.rankelonrs.ml_rankelonr.scoring
 
-import com.twitter.cortex.deepbird.thriftjava.DeepbirdPredictionService
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.constants.GuiceNamedConstants
-import com.twitter.follow_recommendations.common.rankers.common.RankerId
-import com.twitter.ml.api.Feature
-import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Singleton
+import com.twittelonr.cortelonx.delonelonpbird.thriftjava.DelonelonpbirdPrelondictionSelonrvicelon
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.follow_reloncommelonndations.common.constants.GuicelonNamelondConstants
+import com.twittelonr.follow_reloncommelonndations.common.rankelonrs.common.RankelonrId
+import com.twittelonr.ml.api.Felonaturelon
+import javax.injelonct.Injelonct
+import javax.injelonct.Namelond
+import javax.injelonct.Singlelonton
 
-// This is a standard DeepbirdV2 ML Ranker scoring config that should be extended by all ML scorers
+// This is a standard DelonelonpbirdV2 ML Rankelonr scoring config that should belon elonxtelonndelond by all ML scorelonrs
 //
-// Only modify this trait when adding new fields to DeepbirdV2 scorers which
-trait DeepbirdProdScorer extends DeepbirdScorer {
-  override val batchSize = 20
+// Only modify this trait whelonn adding nelonw fielonlds to DelonelonpbirdV2 scorelonrs which
+trait DelonelonpbirdProdScorelonr elonxtelonnds DelonelonpbirdScorelonr {
+  ovelonrridelon val batchSizelon = 20
 }
 
-// Feature.Continuous("prediction") is specific to ClemNet architecture, we can change it to be more informative in the next iteration
-trait PostNuxV1DeepbirdProdScorer extends DeepbirdProdScorer {
-  override val predictionFeature: Feature.Continuous =
-    new Feature.Continuous("prediction")
+// Felonaturelon.Continuous("prelondiction") is speloncific to ClelonmNelont architeloncturelon, welon can changelon it to belon morelon informativelon in thelon nelonxt itelonration
+trait PostNuxV1DelonelonpbirdProdScorelonr elonxtelonnds DelonelonpbirdProdScorelonr {
+  ovelonrridelon val prelondictionFelonaturelon: Felonaturelon.Continuous =
+    nelonw Felonaturelon.Continuous("prelondiction")
 }
 
-// The current, primary PostNUX DeepbirdV2 scorer used in production
-@Singleton
-class PostnuxDeepbirdProdScorer @Inject() (
-  @Named(GuiceNamedConstants.WTF_PROD_DEEPBIRDV2_CLIENT)
-  override val deepbirdClient: DeepbirdPredictionService.ServiceToClient,
-  override val baseStats: StatsReceiver)
-    extends PostNuxV1DeepbirdProdScorer {
-  override val id = RankerId.PostNuxProdRanker
-  override val modelName = "PostNUX14531GafClemNetWarmStart"
+// Thelon currelonnt, primary PostNUX DelonelonpbirdV2 scorelonr uselond in production
+@Singlelonton
+class PostnuxDelonelonpbirdProdScorelonr @Injelonct() (
+  @Namelond(GuicelonNamelondConstants.WTF_PROD_DelonelonPBIRDV2_CLIelonNT)
+  ovelonrridelon val delonelonpbirdClielonnt: DelonelonpbirdPrelondictionSelonrvicelon.SelonrvicelonToClielonnt,
+  ovelonrridelon val baselonStats: StatsReloncelonivelonr)
+    elonxtelonnds PostNuxV1DelonelonpbirdProdScorelonr {
+  ovelonrridelon val id = RankelonrId.PostNuxProdRankelonr
+  ovelonrridelon val modelonlNamelon = "PostNUX14531GafClelonmNelontWarmStart"
 }

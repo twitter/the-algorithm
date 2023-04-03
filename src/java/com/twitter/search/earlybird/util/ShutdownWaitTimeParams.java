@@ -1,40 +1,40 @@
-package com.twitter.search.earlybird.util;
+packagelon com.twittelonr.selonarch.elonarlybird.util;
 
-import java.util.concurrent.TimeUnit;
+import java.util.concurrelonnt.TimelonUnit;
 
 /**
- * Specifies how much time do we wait when shutting down a task.
+ * Speloncifielons how much timelon do welon wait whelonn shutting down a task.
  */
-public class ShutdownWaitTimeParams {
-  private long waitDuration;
-  private TimeUnit waitUnit;
+public class ShutdownWaitTimelonParams {
+  privatelon long waitDuration;
+  privatelon TimelonUnit waitUnit;
 
-  public ShutdownWaitTimeParams(long waitDuration, TimeUnit waitUnit) {
+  public ShutdownWaitTimelonParams(long waitDuration, TimelonUnit waitUnit) {
     this.waitDuration = waitDuration;
     this.waitUnit = waitUnit;
   }
 
-  public long getWaitDuration() {
-    return waitDuration;
+  public long gelontWaitDuration() {
+    relonturn waitDuration;
   }
 
-  public TimeUnit getWaitUnit() {
-    return waitUnit;
-  }
-
-  /**
-   * Returns a ShutdownWaitTimeParams instance that instructs the caller to wait indefinitely for
-   * the task to shut down.
-   */
-  public static ShutdownWaitTimeParams indefinitely() {
-    return new ShutdownWaitTimeParams(Long.MAX_VALUE, TimeUnit.DAYS);
+  public TimelonUnit gelontWaitUnit() {
+    relonturn waitUnit;
   }
 
   /**
-   * Returns a ShutdownWaitTimeParams instance that instructs the caller to shut down the task
-   * immediately.
+   * Relonturns a ShutdownWaitTimelonParams instancelon that instructs thelon callelonr to wait indelonfinitelonly for
+   * thelon task to shut down.
    */
-  public static ShutdownWaitTimeParams immediately() {
-    return new ShutdownWaitTimeParams(0, TimeUnit.MILLISECONDS);
+  public static ShutdownWaitTimelonParams indelonfinitelonly() {
+    relonturn nelonw ShutdownWaitTimelonParams(Long.MAX_VALUelon, TimelonUnit.DAYS);
+  }
+
+  /**
+   * Relonturns a ShutdownWaitTimelonParams instancelon that instructs thelon callelonr to shut down thelon task
+   * immelondiatelonly.
+   */
+  public static ShutdownWaitTimelonParams immelondiatelonly() {
+    relonturn nelonw ShutdownWaitTimelonParams(0, TimelonUnit.MILLISelonCONDS);
   }
 }

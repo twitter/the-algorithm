@@ -1,30 +1,30 @@
-package com.twitter.follow_recommendations.common.models
+packagelon com.twittelonr.follow_reloncommelonndations.common.modelonls
 
-import com.twitter.follow_recommendations.logging.{thriftscala => offline}
-import com.twitter.follow_recommendations.{thriftscala => t}
+import com.twittelonr.follow_reloncommelonndations.logging.{thriftscala => offlinelon}
+import com.twittelonr.follow_reloncommelonndations.{thriftscala => t}
 
-case class RecentlyEngagedUserId(id: Long, engagementType: EngagementType) {
-  def toThrift: t.RecentlyEngagedUserId =
-    t.RecentlyEngagedUserId(id = id, engagementType = engagementType.toThrift)
+caselon class ReloncelonntlyelonngagelondUselonrId(id: Long, elonngagelonmelonntTypelon: elonngagelonmelonntTypelon) {
+  delonf toThrift: t.ReloncelonntlyelonngagelondUselonrId =
+    t.ReloncelonntlyelonngagelondUselonrId(id = id, elonngagelonmelonntTypelon = elonngagelonmelonntTypelon.toThrift)
 
-  def toOfflineThrift: offline.RecentlyEngagedUserId =
-    offline.RecentlyEngagedUserId(id = id, engagementType = engagementType.toOfflineThrift)
+  delonf toOfflinelonThrift: offlinelon.ReloncelonntlyelonngagelondUselonrId =
+    offlinelon.ReloncelonntlyelonngagelondUselonrId(id = id, elonngagelonmelonntTypelon = elonngagelonmelonntTypelon.toOfflinelonThrift)
 }
 
-object RecentlyEngagedUserId {
-  def fromThrift(recentlyEngagedUserId: t.RecentlyEngagedUserId): RecentlyEngagedUserId = {
-    RecentlyEngagedUserId(
-      id = recentlyEngagedUserId.id,
-      engagementType = EngagementType.fromThrift(recentlyEngagedUserId.engagementType)
+objelonct ReloncelonntlyelonngagelondUselonrId {
+  delonf fromThrift(reloncelonntlyelonngagelondUselonrId: t.ReloncelonntlyelonngagelondUselonrId): ReloncelonntlyelonngagelondUselonrId = {
+    ReloncelonntlyelonngagelondUselonrId(
+      id = reloncelonntlyelonngagelondUselonrId.id,
+      elonngagelonmelonntTypelon = elonngagelonmelonntTypelon.fromThrift(reloncelonntlyelonngagelondUselonrId.elonngagelonmelonntTypelon)
     )
   }
 
-  def fromOfflineThrift(
-    recentlyEngagedUserId: offline.RecentlyEngagedUserId
-  ): RecentlyEngagedUserId = {
-    RecentlyEngagedUserId(
-      id = recentlyEngagedUserId.id,
-      engagementType = EngagementType.fromOfflineThrift(recentlyEngagedUserId.engagementType)
+  delonf fromOfflinelonThrift(
+    reloncelonntlyelonngagelondUselonrId: offlinelon.ReloncelonntlyelonngagelondUselonrId
+  ): ReloncelonntlyelonngagelondUselonrId = {
+    ReloncelonntlyelonngagelondUselonrId(
+      id = reloncelonntlyelonngagelondUselonrId.id,
+      elonngagelonmelonntTypelon = elonngagelonmelonntTypelon.fromOfflinelonThrift(reloncelonntlyelonngagelondUselonrId.elonngagelonmelonntTypelon)
     )
   }
 

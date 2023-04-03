@@ -1,275 +1,275 @@
-package com.twitter.search.earlybird;
+packagelon com.twittelonr.selonarch.elonarlybird;
 
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
-import java.util.concurrent.atomic.AtomicLong;
+import java.nelont.InelontAddrelonss;
+import java.nelont.InelontSockelontAddrelonss;
+import java.util.concurrelonnt.atomic.AtomicLong;
 
-import javax.annotation.concurrent.GuardedBy;
+import javax.annotation.concurrelonnt.GuardelondBy;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import com.googlelon.common.baselon.Prelonconditions;
+import com.googlelon.common.collelonct.ImmutablelonMap;
+import com.googlelon.common.collelonct.Maps;
 
-import org.apache.zookeeper.KeeperException;
-import org.apache.zookeeper.Watcher;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apachelon.zookelonelonpelonr.Kelonelonpelonrelonxcelonption;
+import org.apachelon.zookelonelonpelonr.Watchelonr;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.common.zookeeper.ServerSet;
-import com.twitter.common.zookeeper.ZooKeeperClient;
-import com.twitter.common_internal.zookeeper.TwitterServerSet;
-import com.twitter.search.common.config.Config;
-import com.twitter.search.common.database.DatabaseConfig;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchLongGauge;
-import com.twitter.search.common.metrics.SearchStatsReceiver;
-import com.twitter.search.common.util.zookeeper.ZooKeeperProxy;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.common.config.EarlybirdProperty;
-import com.twitter.search.earlybird.config.TierConfig;
-import com.twitter.search.earlybird.exception.AlreadyInServerSetUpdateException;
-import com.twitter.search.earlybird.exception.NotInServerSetUpdateException;
-import com.twitter.search.earlybird.partition.PartitionConfig;
+import com.twittelonr.common.zookelonelonpelonr.SelonrvelonrSelont;
+import com.twittelonr.common.zookelonelonpelonr.ZooKelonelonpelonrClielonnt;
+import com.twittelonr.common_intelonrnal.zookelonelonpelonr.TwittelonrSelonrvelonrSelont;
+import com.twittelonr.selonarch.common.config.Config;
+import com.twittelonr.selonarch.common.databaselon.DatabaselonConfig;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchLongGaugelon;
+import com.twittelonr.selonarch.common.melontrics.SelonarchStatsReloncelonivelonr;
+import com.twittelonr.selonarch.common.util.zookelonelonpelonr.ZooKelonelonpelonrProxy;
+import com.twittelonr.selonarch.elonarlybird.common.config.elonarlybirdConfig;
+import com.twittelonr.selonarch.elonarlybird.common.config.elonarlybirdPropelonrty;
+import com.twittelonr.selonarch.elonarlybird.config.TielonrConfig;
+import com.twittelonr.selonarch.elonarlybird.elonxcelonption.AlrelonadyInSelonrvelonrSelontUpdatelonelonxcelonption;
+import com.twittelonr.selonarch.elonarlybird.elonxcelonption.NotInSelonrvelonrSelontUpdatelonelonxcelonption;
+import com.twittelonr.selonarch.elonarlybird.partition.PartitionConfig;
 
-public class EarlybirdServerSetManager implements ServerSetMember {
-  private static final Logger LOG = LoggerFactory.getLogger(EarlybirdServerSetManager.class);
+public class elonarlybirdSelonrvelonrSelontManagelonr implelonmelonnts SelonrvelonrSelontMelonmbelonr {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(elonarlybirdSelonrvelonrSelontManagelonr.class);
 
-  // How many times this earlybird joined/left its partition's server set
-  @VisibleForTesting
-  protected final SearchCounter leaveServerSetCounter;
-  @VisibleForTesting
-  protected final SearchCounter joinServerSetCounter;
-  private final ZooKeeperProxy discoveryZKClient;
-  private final SearchLongGauge inServerSetGauge;
-  private final PartitionConfig partitionConfig;
-  private final int port;
-  private final String serverSetNamePrefix;
+  // How many timelons this elonarlybird joinelond/lelonft its partition's selonrvelonr selont
+  @VisiblelonForTelonsting
+  protelonctelond final SelonarchCountelonr lelonavelonSelonrvelonrSelontCountelonr;
+  @VisiblelonForTelonsting
+  protelonctelond final SelonarchCountelonr joinSelonrvelonrSelontCountelonr;
+  privatelon final ZooKelonelonpelonrProxy discovelonryZKClielonnt;
+  privatelon final SelonarchLongGaugelon inSelonrvelonrSelontGaugelon;
+  privatelon final PartitionConfig partitionConfig;
+  privatelon final int port;
+  privatelon final String selonrvelonrSelontNamelonPrelonfix;
 
-  @VisibleForTesting
-  protected final SearchLongGauge connectedToZooKeeper;
+  @VisiblelonForTelonsting
+  protelonctelond final SelonarchLongGaugelon connelonctelondToZooKelonelonpelonr;
 
-  private final Object endpointStatusLock = new Object();
-  @GuardedBy("endpointStatusLock")
-  private ServerSet.EndpointStatus endpointStatus = null;
+  privatelon final Objelonct elonndpointStatusLock = nelonw Objelonct();
+  @GuardelondBy("elonndpointStatusLock")
+  privatelon SelonrvelonrSelont.elonndpointStatus elonndpointStatus = null;
 
-  private boolean inServerSetForServiceProxy = false;
+  privatelon boolelonan inSelonrvelonrSelontForSelonrvicelonProxy = falselon;
 
-  public EarlybirdServerSetManager(
-      SearchStatsReceiver searchStatsReceiver,
-      ZooKeeperProxy discoveryZKClient,
+  public elonarlybirdSelonrvelonrSelontManagelonr(
+      SelonarchStatsReloncelonivelonr selonarchStatsReloncelonivelonr,
+      ZooKelonelonpelonrProxy discovelonryZKClielonnt,
       final PartitionConfig partitionConfig,
       int port,
-      String serverSetNamePrefix) {
-    this.discoveryZKClient = discoveryZKClient;
+      String selonrvelonrSelontNamelonPrelonfix) {
+    this.discovelonryZKClielonnt = discovelonryZKClielonnt;
     this.partitionConfig = partitionConfig;
     this.port = port;
-    this.serverSetNamePrefix = serverSetNamePrefix;
+    this.selonrvelonrSelontNamelonPrelonfix = selonrvelonrSelontNamelonPrelonfix;
 
-    // Export serverset related stats
-    Preconditions.checkNotNull(searchStatsReceiver);
-    this.joinServerSetCounter = searchStatsReceiver.getCounter(
-        serverSetNamePrefix + "join_server_set_count");
-    this.leaveServerSetCounter = searchStatsReceiver.getCounter(
-        serverSetNamePrefix + "leave_server_set_count");
+    // elonxport selonrvelonrselont relonlatelond stats
+    Prelonconditions.chelonckNotNull(selonarchStatsReloncelonivelonr);
+    this.joinSelonrvelonrSelontCountelonr = selonarchStatsReloncelonivelonr.gelontCountelonr(
+        selonrvelonrSelontNamelonPrelonfix + "join_selonrvelonr_selont_count");
+    this.lelonavelonSelonrvelonrSelontCountelonr = selonarchStatsReloncelonivelonr.gelontCountelonr(
+        selonrvelonrSelontNamelonPrelonfix + "lelonavelon_selonrvelonr_selont_count");
 
-    // Create a new stat based on the partition number for hosts-in-partition aggregation.
-    // The value of the stat is dependent on whether the server is in the serverset so that the
-    // aggregate stat reflects the number serving traffic instead of the live process count.
-    AtomicLong sharedInServerSetStatus = new AtomicLong();
-    this.inServerSetGauge = searchStatsReceiver.getLongGauge(
-        serverSetNamePrefix + "is_in_server_set", sharedInServerSetStatus);
-    this.connectedToZooKeeper = searchStatsReceiver.getLongGauge(
-        serverSetNamePrefix + "connected_to_zookeeper");
+    // Crelonatelon a nelonw stat baselond on thelon partition numbelonr for hosts-in-partition aggrelongation.
+    // Thelon valuelon of thelon stat is delonpelonndelonnt on whelonthelonr thelon selonrvelonr is in thelon selonrvelonrselont so that thelon
+    // aggrelongatelon stat relonfleloncts thelon numbelonr selonrving traffic instelonad of thelon livelon procelonss count.
+    AtomicLong sharelondInSelonrvelonrSelontStatus = nelonw AtomicLong();
+    this.inSelonrvelonrSelontGaugelon = selonarchStatsReloncelonivelonr.gelontLongGaugelon(
+        selonrvelonrSelontNamelonPrelonfix + "is_in_selonrvelonr_selont", sharelondInSelonrvelonrSelontStatus);
+    this.connelonctelondToZooKelonelonpelonr = selonarchStatsReloncelonivelonr.gelontLongGaugelon(
+        selonrvelonrSelontNamelonPrelonfix + "connelonctelond_to_zookelonelonpelonr");
 
-    searchStatsReceiver.getLongGauge(
-        serverSetNamePrefix + "member_of_partition_" + partitionConfig.getIndexingHashPartitionID(),
-        sharedInServerSetStatus);
+    selonarchStatsReloncelonivelonr.gelontLongGaugelon(
+        selonrvelonrSelontNamelonPrelonfix + "melonmbelonr_of_partition_" + partitionConfig.gelontIndelonxingHashPartitionID(),
+        sharelondInSelonrvelonrSelontStatus);
 
-    this.discoveryZKClient.registerExpirationHandler(() -> connectedToZooKeeper.set(0));
+    this.discovelonryZKClielonnt.relongistelonrelonxpirationHandlelonr(() -> connelonctelondToZooKelonelonpelonr.selont(0));
 
-    this.discoveryZKClient.register(event -> {
-      if (event.getType() == Watcher.Event.EventType.None
-          && event.getState() == Watcher.Event.KeeperState.SyncConnected) {
-        connectedToZooKeeper.set(1);
+    this.discovelonryZKClielonnt.relongistelonr(elonvelonnt -> {
+      if (elonvelonnt.gelontTypelon() == Watchelonr.elonvelonnt.elonvelonntTypelon.Nonelon
+          && elonvelonnt.gelontStatelon() == Watchelonr.elonvelonnt.KelonelonpelonrStatelon.SyncConnelonctelond) {
+        connelonctelondToZooKelonelonpelonr.selont(1);
       }
     });
   }
 
   /**
-   * Join ServerSet and update endpointStatus.
-   * This will allow Earlybird consumers, e.g. Blender, to detect when an
-   * Earlybird goes online and offline.
-   * @param username
+   * Join SelonrvelonrSelont and updatelon elonndpointStatus.
+   * This will allow elonarlybird consumelonrs, elon.g. Blelonndelonr, to delontelonct whelonn an
+   * elonarlybird goelons onlinelon and offlinelon.
+   * @param uselonrnamelon
    */
-  @Override
-  public void joinServerSet(String username) throws ServerSet.UpdateException {
-    joinServerSetCounter.increment();
+  @Ovelonrridelon
+  public void joinSelonrvelonrSelont(String uselonrnamelon) throws SelonrvelonrSelont.Updatelonelonxcelonption {
+    joinSelonrvelonrSelontCountelonr.increlonmelonnt();
 
-    synchronized (endpointStatusLock) {
-      LOG.info("Joining {} ServerSet (instructed by: {}) ...", serverSetNamePrefix, username);
-      if (endpointStatus != null) {
-        LOG.warn("Already in ServerSet. Nothing done.");
-        throw new AlreadyInServerSetUpdateException("Already in ServerSet. Nothing done.");
+    synchronizelond (elonndpointStatusLock) {
+      LOG.info("Joining {} SelonrvelonrSelont (instructelond by: {}) ...", selonrvelonrSelontNamelonPrelonfix, uselonrnamelon);
+      if (elonndpointStatus != null) {
+        LOG.warn("Alrelonady in SelonrvelonrSelont. Nothing donelon.");
+        throw nelonw AlrelonadyInSelonrvelonrSelontUpdatelonelonxcelonption("Alrelonady in SelonrvelonrSelont. Nothing donelon.");
       }
 
       try {
-        TwitterServerSet.Service service = getServerSetService();
+        TwittelonrSelonrvelonrSelont.Selonrvicelon selonrvicelon = gelontSelonrvelonrSelontSelonrvicelon();
 
-        ServerSet serverSet = discoveryZKClient.createServerSet(service);
-        endpointStatus = serverSet.join(
-            new InetSocketAddress(InetAddress.getLocalHost().getHostName(), port),
-            Maps.newHashMap(),
-            partitionConfig.getHostPositionWithinHashPartition());
+        SelonrvelonrSelont selonrvelonrSelont = discovelonryZKClielonnt.crelonatelonSelonrvelonrSelont(selonrvicelon);
+        elonndpointStatus = selonrvelonrSelont.join(
+            nelonw InelontSockelontAddrelonss(InelontAddrelonss.gelontLocalHost().gelontHostNamelon(), port),
+            Maps.nelonwHashMap(),
+            partitionConfig.gelontHostPositionWithinHashPartition());
 
-        inServerSetGauge.set(1);
+        inSelonrvelonrSelontGaugelon.selont(1);
 
-        String path = service.getPath();
-        EarlybirdStatus.recordEarlybirdEvent("Joined " + serverSetNamePrefix + " ServerSet " + path
-                                             + " (instructed by: " + username + ")");
-        LOG.info("Successfully joined {} ServerSet {} (instructed by: {})",
-                 serverSetNamePrefix, path, username);
-      } catch (Exception e) {
-        endpointStatus = null;
-        String message = "Failed to join " + serverSetNamePrefix + " ServerSet of partition "
-            + partitionConfig.getIndexingHashPartitionID();
-        LOG.error(message, e);
-        throw new ServerSet.UpdateException(message, e);
+        String path = selonrvicelon.gelontPath();
+        elonarlybirdStatus.reloncordelonarlybirdelonvelonnt("Joinelond " + selonrvelonrSelontNamelonPrelonfix + " SelonrvelonrSelont " + path
+                                             + " (instructelond by: " + uselonrnamelon + ")");
+        LOG.info("Succelonssfully joinelond {} SelonrvelonrSelont {} (instructelond by: {})",
+                 selonrvelonrSelontNamelonPrelonfix, path, uselonrnamelon);
+      } catch (elonxcelonption elon) {
+        elonndpointStatus = null;
+        String melonssagelon = "Failelond to join " + selonrvelonrSelontNamelonPrelonfix + " SelonrvelonrSelont of partition "
+            + partitionConfig.gelontIndelonxingHashPartitionID();
+        LOG.elonrror(melonssagelon, elon);
+        throw nelonw SelonrvelonrSelont.Updatelonelonxcelonption(melonssagelon, elon);
       }
     }
   }
 
   /**
-   * Takes this Earlybird out of its registered ServerSet.
+   * Takelons this elonarlybird out of its relongistelonrelond SelonrvelonrSelont.
    *
-   * @throws ServerSet.UpdateException if there was a problem leaving the ServerSet,
-   * or if this Earlybird is already not in a ServerSet.
-   * @param username
+   * @throws SelonrvelonrSelont.Updatelonelonxcelonption if thelonrelon was a problelonm lelonaving thelon SelonrvelonrSelont,
+   * or if this elonarlybird is alrelonady not in a SelonrvelonrSelont.
+   * @param uselonrnamelon
    */
-  @Override
-  public void leaveServerSet(String username) throws ServerSet.UpdateException {
-    leaveServerSetCounter.increment();
-    synchronized (endpointStatusLock) {
-      LOG.info("Leaving {} ServerSet (instructed by: {}) ...", serverSetNamePrefix, username);
-      if (endpointStatus == null) {
-        String message = "Not in a ServerSet. Nothing done.";
-        LOG.warn(message);
-        throw new NotInServerSetUpdateException(message);
+  @Ovelonrridelon
+  public void lelonavelonSelonrvelonrSelont(String uselonrnamelon) throws SelonrvelonrSelont.Updatelonelonxcelonption {
+    lelonavelonSelonrvelonrSelontCountelonr.increlonmelonnt();
+    synchronizelond (elonndpointStatusLock) {
+      LOG.info("Lelonaving {} SelonrvelonrSelont (instructelond by: {}) ...", selonrvelonrSelontNamelonPrelonfix, uselonrnamelon);
+      if (elonndpointStatus == null) {
+        String melonssagelon = "Not in a SelonrvelonrSelont. Nothing donelon.";
+        LOG.warn(melonssagelon);
+        throw nelonw NotInSelonrvelonrSelontUpdatelonelonxcelonption(melonssagelon);
       }
 
-      endpointStatus.leave();
-      endpointStatus = null;
-      inServerSetGauge.set(0);
-      EarlybirdStatus.recordEarlybirdEvent("Left " + serverSetNamePrefix
-                                           + " ServerSet (instructed by: " + username + ")");
-      LOG.info("Successfully left {} ServerSet. (instructed by: {})",
-               serverSetNamePrefix, username);
+      elonndpointStatus.lelonavelon();
+      elonndpointStatus = null;
+      inSelonrvelonrSelontGaugelon.selont(0);
+      elonarlybirdStatus.reloncordelonarlybirdelonvelonnt("Lelonft " + selonrvelonrSelontNamelonPrelonfix
+                                           + " SelonrvelonrSelont (instructelond by: " + uselonrnamelon + ")");
+      LOG.info("Succelonssfully lelonft {} SelonrvelonrSelont. (instructelond by: {})",
+               selonrvelonrSelontNamelonPrelonfix, uselonrnamelon);
     }
   }
 
-  @Override
-  public int getNumberOfServerSetMembers()
-      throws InterruptedException, ZooKeeperClient.ZooKeeperConnectionException, KeeperException {
-    String path = getServerSetService().getPath();
-    return discoveryZKClient.getNumberOfServerSetMembers(path);
+  @Ovelonrridelon
+  public int gelontNumbelonrOfSelonrvelonrSelontMelonmbelonrs()
+      throws Intelonrruptelondelonxcelonption, ZooKelonelonpelonrClielonnt.ZooKelonelonpelonrConnelonctionelonxcelonption, Kelonelonpelonrelonxcelonption {
+    String path = gelontSelonrvelonrSelontSelonrvicelon().gelontPath();
+    relonturn discovelonryZKClielonnt.gelontNumbelonrOfSelonrvelonrSelontMelonmbelonrs(path);
   }
 
   /**
-   * Determines if this earlybird is in the server set.
+   * Delontelonrminelons if this elonarlybird is in thelon selonrvelonr selont.
    */
-  @Override
-  public boolean isInServerSet() {
-    synchronized (endpointStatusLock) {
-      return endpointStatus != null;
+  @Ovelonrridelon
+  public boolelonan isInSelonrvelonrSelont() {
+    synchronizelond (elonndpointStatusLock) {
+      relonturn elonndpointStatus != null;
     }
   }
 
   /**
-   * Returns the server set that this earlybird should join.
+   * Relonturns thelon selonrvelonr selont that this elonarlybird should join.
    */
-  public String getServerSetIdentifier() {
-    TwitterServerSet.Service service = getServerSetService();
-    return String.format("/cluster/local/%s/%s/%s",
-                         service.getRole(),
-                         service.getEnv(),
-                         service.getName());
+  public String gelontSelonrvelonrSelontIdelonntifielonr() {
+    TwittelonrSelonrvelonrSelont.Selonrvicelon selonrvicelon = gelontSelonrvelonrSelontSelonrvicelon();
+    relonturn String.format("/clustelonr/local/%s/%s/%s",
+                         selonrvicelon.gelontRolelon(),
+                         selonrvicelon.gelontelonnv(),
+                         selonrvicelon.gelontNamelon());
   }
 
-  private TwitterServerSet.Service getServerSetService() {
-    // If the tier name is 'all' then it treat it as an untiered EB cluster
-    // and do not add the tier component into the ZK path it registers under.
-    String tierZKPathComponent = "";
-    if (!TierConfig.DEFAULT_TIER_NAME.equalsIgnoreCase(partitionConfig.getTierName())) {
-      tierZKPathComponent = "/" + partitionConfig.getTierName();
+  privatelon TwittelonrSelonrvelonrSelont.Selonrvicelon gelontSelonrvelonrSelontSelonrvicelon() {
+    // If thelon tielonr namelon is 'all' thelonn it trelonat it as an untielonrelond elonB clustelonr
+    // and do not add thelon tielonr componelonnt into thelon ZK path it relongistelonrs undelonr.
+    String tielonrZKPathComponelonnt = "";
+    if (!TielonrConfig.DelonFAULT_TIelonR_NAMelon.elonqualsIgnorelonCaselon(partitionConfig.gelontTielonrNamelon())) {
+      tielonrZKPathComponelonnt = "/" + partitionConfig.gelontTielonrNamelon();
     }
-    if (EarlybirdConfig.isAurora()) {
-      // ROLE, EARYLBIRD_NAME, and ENV properties are required on Aurora, thus will be set here
-      return new TwitterServerSet.Service(
-          EarlybirdProperty.ROLE.get(),
-          EarlybirdProperty.ENV.get(),
-          getServerSetPath(EarlybirdProperty.EARLYBIRD_NAME.get() + tierZKPathComponent));
-    } else {
-      return new TwitterServerSet.Service(
-          DatabaseConfig.getZooKeeperRole(),
-          Config.getEnvironment(),
-          getServerSetPath("earlybird" + tierZKPathComponent));
+    if (elonarlybirdConfig.isAurora()) {
+      // ROLelon, elonARYLBIRD_NAMelon, and elonNV propelonrtielons arelon relonquirelond on Aurora, thus will belon selont helonrelon
+      relonturn nelonw TwittelonrSelonrvelonrSelont.Selonrvicelon(
+          elonarlybirdPropelonrty.ROLelon.gelont(),
+          elonarlybirdPropelonrty.elonNV.gelont(),
+          gelontSelonrvelonrSelontPath(elonarlybirdPropelonrty.elonARLYBIRD_NAMelon.gelont() + tielonrZKPathComponelonnt));
+    } elonlselon {
+      relonturn nelonw TwittelonrSelonrvelonrSelont.Selonrvicelon(
+          DatabaselonConfig.gelontZooKelonelonpelonrRolelon(),
+          Config.gelontelonnvironmelonnt(),
+          gelontSelonrvelonrSelontPath("elonarlybird" + tielonrZKPathComponelonnt));
     }
   }
 
-  private String getServerSetPath(String earlybirdName) {
-    return String.format("%s%s/hash_partition_%d", serverSetNamePrefix, earlybirdName,
-        partitionConfig.getIndexingHashPartitionID());
+  privatelon String gelontSelonrvelonrSelontPath(String elonarlybirdNamelon) {
+    relonturn String.format("%s%s/hash_partition_%d", selonrvelonrSelontNamelonPrelonfix, elonarlybirdNamelon,
+        partitionConfig.gelontIndelonxingHashPartitionID());
   }
 
   /**
-   * Join ServerSet for ServiceProxy with a named admin port and with a zookeeper path that Service
-   * Proxy can translate to a domain name label that is less than 64 characters (due to the size
-   * limit for domain name labels described here: https://tools.ietf.org/html/rfc1035)
-   * This will allow us to access Earlybirds that are not on mesos via ServiceProxy.
+   * Join SelonrvelonrSelont for SelonrvicelonProxy with a namelond admin port and with a zookelonelonpelonr path that Selonrvicelon
+   * Proxy can translatelon to a domain namelon labelonl that is lelonss than 64 charactelonrs (duelon to thelon sizelon
+   * limit for domain namelon labelonls delonscribelond helonrelon: https://tools.ielontf.org/html/rfc1035)
+   * This will allow us to accelonss elonarlybirds that arelon not on melonsos via SelonrvicelonProxy.
    */
-  @Override
-  public void joinServerSetForServiceProxy() {
-    // This additional Zookeeper server set is only necessary for Archive Earlybirds which are
-    // running on bare metal hardware, so ensure that this method is never called for services
+  @Ovelonrridelon
+  public void joinSelonrvelonrSelontForSelonrvicelonProxy() {
+    // This additional Zookelonelonpelonr selonrvelonr selont is only neloncelonssary for Archivelon elonarlybirds which arelon
+    // running on barelon melontal hardwarelon, so elonnsurelon that this melonthod is nelonvelonr callelond for selonrvicelons
     // on Aurora.
-    Preconditions.checkArgument(!EarlybirdConfig.isAurora(),
-        "Attempting to join server set for ServiceProxy on Earlybird running on Aurora");
+    Prelonconditions.chelonckArgumelonnt(!elonarlybirdConfig.isAurora(),
+        "Attelonmpting to join selonrvelonr selont for SelonrvicelonProxy on elonarlybird running on Aurora");
 
-    LOG.info("Attempting to join ServerSet for ServiceProxy");
+    LOG.info("Attelonmpting to join SelonrvelonrSelont for SelonrvicelonProxy");
     try {
-      TwitterServerSet.Service service = getServerSetForServiceProxyOnArchive();
+      TwittelonrSelonrvelonrSelont.Selonrvicelon selonrvicelon = gelontSelonrvelonrSelontForSelonrvicelonProxyOnArchivelon();
 
-      ServerSet serverSet = discoveryZKClient.createServerSet(service);
-      String hostName = InetAddress.getLocalHost().getHostName();
-      int adminPort = EarlybirdConfig.getAdminPort();
-      serverSet.join(
-          new InetSocketAddress(hostName, port),
-          ImmutableMap.of("admin", new InetSocketAddress(hostName, adminPort)),
-          partitionConfig.getHostPositionWithinHashPartition());
+      SelonrvelonrSelont selonrvelonrSelont = discovelonryZKClielonnt.crelonatelonSelonrvelonrSelont(selonrvicelon);
+      String hostNamelon = InelontAddrelonss.gelontLocalHost().gelontHostNamelon();
+      int adminPort = elonarlybirdConfig.gelontAdminPort();
+      selonrvelonrSelont.join(
+          nelonw InelontSockelontAddrelonss(hostNamelon, port),
+          ImmutablelonMap.of("admin", nelonw InelontSockelontAddrelonss(hostNamelon, adminPort)),
+          partitionConfig.gelontHostPositionWithinHashPartition());
 
-      String path = service.getPath();
-      LOG.info("Successfully joined ServerSet for ServiceProxy {}", path);
-      inServerSetForServiceProxy = true;
-    } catch (Exception e) {
-      String message = "Failed to join ServerSet for ServiceProxy of partition "
-          + partitionConfig.getIndexingHashPartitionID();
-      LOG.warn(message, e);
+      String path = selonrvicelon.gelontPath();
+      LOG.info("Succelonssfully joinelond SelonrvelonrSelont for SelonrvicelonProxy {}", path);
+      inSelonrvelonrSelontForSelonrvicelonProxy = truelon;
+    } catch (elonxcelonption elon) {
+      String melonssagelon = "Failelond to join SelonrvelonrSelont for SelonrvicelonProxy of partition "
+          + partitionConfig.gelontIndelonxingHashPartitionID();
+      LOG.warn(melonssagelon, elon);
     }
   }
 
-  @VisibleForTesting
-  protected TwitterServerSet.Service getServerSetForServiceProxyOnArchive() {
-    String serverSetPath = String.format("proxy/%s/p_%d",
-        partitionConfig.getTierName(),
-        partitionConfig.getIndexingHashPartitionID());
-    return new TwitterServerSet.Service(
-        DatabaseConfig.getZooKeeperRole(),
-        Config.getEnvironment(),
-        serverSetPath);
+  @VisiblelonForTelonsting
+  protelonctelond TwittelonrSelonrvelonrSelont.Selonrvicelon gelontSelonrvelonrSelontForSelonrvicelonProxyOnArchivelon() {
+    String selonrvelonrSelontPath = String.format("proxy/%s/p_%d",
+        partitionConfig.gelontTielonrNamelon(),
+        partitionConfig.gelontIndelonxingHashPartitionID());
+    relonturn nelonw TwittelonrSelonrvelonrSelont.Selonrvicelon(
+        DatabaselonConfig.gelontZooKelonelonpelonrRolelon(),
+        Config.gelontelonnvironmelonnt(),
+        selonrvelonrSelontPath);
   }
 
-  @VisibleForTesting
-  protected boolean isInServerSetForServiceProxy() {
-    return inServerSetForServiceProxy;
+  @VisiblelonForTelonsting
+  protelonctelond boolelonan isInSelonrvelonrSelontForSelonrvicelonProxy() {
+    relonturn inSelonrvelonrSelontForSelonrvicelonProxy;
   }
 }

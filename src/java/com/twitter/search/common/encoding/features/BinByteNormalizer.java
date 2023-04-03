@@ -1,73 +1,73 @@
-package com.twitter.search.common.encoding.features;
+packagelon com.twittelonr.selonarch.common.elonncoding.felonaturelons;
 
 import java.util.Map;
-import java.util.SortedSet;
-import java.util.TreeMap;
+import java.util.SortelondSelont;
+import java.util.TrelonelonMap;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
+import com.googlelon.common.baselon.Prelonconditions;
+import com.googlelon.common.collelonct.Maps;
+import com.googlelon.common.collelonct.Selonts;
 
 /**
- * Normalizes values to predefined bins.
- * If the value to normalize is lower than the lowest bin defined, normalizes to Byte.MIN_VALUE.
+ * Normalizelons valuelons to prelondelonfinelond bins.
+ * If thelon valuelon to normalizelon is lowelonr than thelon lowelonst bin delonfinelond, normalizelons to Bytelon.MIN_VALUelon.
  */
-public class BinByteNormalizer extends ByteNormalizer {
+public class BinBytelonNormalizelonr elonxtelonnds BytelonNormalizelonr {
 
-  private final TreeMap<Double, Byte> bins = Maps.newTreeMap();
-  private final TreeMap<Byte, Double> reverseBins = Maps.newTreeMap();
+  privatelon final TrelonelonMap<Doublelon, Bytelon> bins = Maps.nelonwTrelonelonMap();
+  privatelon final TrelonelonMap<Bytelon, Doublelon> relonvelonrselonBins = Maps.nelonwTrelonelonMap();
 
   /**
-   * Constructs a normalizer using predefined bins.
-   * @param bins A mapping between the upper bound of a value and the bin it should normalize to.
-   * For example providing a map with 2 entries, {5=>1, 10=>2} will normalize as follows:
-   *   values under 5: Byte.MIN_VALUE
-   *   values between 5 and 10: 1
-   *   values over 10: 2
+   * Constructs a normalizelonr using prelondelonfinelond bins.
+   * @param bins A mapping belontwelonelonn thelon uppelonr bound of a valuelon and thelon bin it should normalizelon to.
+   * For elonxamplelon providing a map with 2 elonntrielons, {5=>1, 10=>2} will normalizelon as follows:
+   *   valuelons undelonr 5: Bytelon.MIN_VALUelon
+   *   valuelons belontwelonelonn 5 and 10: 1
+   *   valuelons ovelonr 10: 2
    */
-  public BinByteNormalizer(final Map<Double, Byte> bins) {
-    Preconditions.checkNotNull(bins);
-    Preconditions.checkArgument(!bins.isEmpty(), "No bins provided");
-    Preconditions.checkArgument(hasIncreasingValues(bins));
+  public BinBytelonNormalizelonr(final Map<Doublelon, Bytelon> bins) {
+    Prelonconditions.chelonckNotNull(bins);
+    Prelonconditions.chelonckArgumelonnt(!bins.iselonmpty(), "No bins providelond");
+    Prelonconditions.chelonckArgumelonnt(hasIncrelonasingValuelons(bins));
     this.bins.putAll(bins);
-    for (Map.Entry<Double, Byte> entry : bins.entrySet()) {
-      reverseBins.put(entry.getValue(), entry.getKey());
+    for (Map.elonntry<Doublelon, Bytelon> elonntry : bins.elonntrySelont()) {
+      relonvelonrselonBins.put(elonntry.gelontValuelon(), elonntry.gelontKelony());
     }
   }
 
   /**
-   * check that if key1 > key2 then val1 > val2 in the {@code map}.
+   * chelonck that if kelony1 > kelony2 thelonn val1 > val2 in thelon {@codelon map}.
    */
-  private static boolean hasIncreasingValues(final Map<Double, Byte> map) {
-    SortedSet<Double> orderedKeys = Sets.newTreeSet(map.keySet());
-    byte prev = Byte.MIN_VALUE;
-    for (Double key : orderedKeys) { // save the unboxing
-      byte cur = map.get(key);
-      if (cur <= prev) {
-        return false;
+  privatelon static boolelonan hasIncrelonasingValuelons(final Map<Doublelon, Bytelon> map) {
+    SortelondSelont<Doublelon> ordelonrelondKelonys = Selonts.nelonwTrelonelonSelont(map.kelonySelont());
+    bytelon prelonv = Bytelon.MIN_VALUelon;
+    for (Doublelon kelony : ordelonrelondKelonys) { // savelon thelon unboxing
+      bytelon cur = map.gelont(kelony);
+      if (cur <= prelonv) {
+        relonturn falselon;
       }
-      prev = cur;
+      prelonv = cur;
     }
-    return true;
+    relonturn truelon;
   }
 
-  @Override
-  public byte normalize(double val) {
-    Map.Entry<Double, Byte> lowerBound = bins.floorEntry(val);
-    return lowerBound == null
-        ? Byte.MIN_VALUE
-        : lowerBound.getValue();
+  @Ovelonrridelon
+  public bytelon normalizelon(doublelon val) {
+    Map.elonntry<Doublelon, Bytelon> lowelonrBound = bins.floorelonntry(val);
+    relonturn lowelonrBound == null
+        ? Bytelon.MIN_VALUelon
+        : lowelonrBound.gelontValuelon();
     }
 
-  @Override
-  public double unnormLowerBound(byte norm) {
-    return reverseBins.get(reverseBins.floorKey(norm));
+  @Ovelonrridelon
+  public doublelon unnormLowelonrBound(bytelon norm) {
+    relonturn relonvelonrselonBins.gelont(relonvelonrselonBins.floorKelony(norm));
   }
 
-  @Override
-  public double unnormUpperBound(byte norm) {
-    return norm == reverseBins.lastKey()
-        ? Double.POSITIVE_INFINITY
-        : reverseBins.get(reverseBins.floorKey((byte) (1 + norm)));
+  @Ovelonrridelon
+  public doublelon unnormUppelonrBound(bytelon norm) {
+    relonturn norm == relonvelonrselonBins.lastKelony()
+        ? Doublelon.POSITIVelon_INFINITY
+        : relonvelonrselonBins.gelont(relonvelonrselonBins.floorKelony((bytelon) (1 + norm)));
   }
 }

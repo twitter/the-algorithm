@@ -1,10 +1,10 @@
-package com.twitter.follow_recommendations.common.candidate_sources.socialgraph
+packagelon com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.socialgraph
 
-import com.twitter.timelines.configapi.FSParam
+import com.twittelonr.timelonlinelons.configapi.FSParam
 
-object RecentFollowingRecentFollowingExpansionSourceParams {
-  object CallSgsCachedColumn
-      extends FSParam[Boolean](
-        "recent_following_recent_following_source_call_sgs_cached_column",
-        true)
+objelonct ReloncelonntFollowingReloncelonntFollowingelonxpansionSourcelonParams {
+  objelonct CallSgsCachelondColumn
+      elonxtelonnds FSParam[Boolelonan](
+        "reloncelonnt_following_reloncelonnt_following_sourcelon_call_sgs_cachelond_column",
+        truelon)
 }

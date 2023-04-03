@@ -1,21 +1,21 @@
-package com.twitter.product_mixer.core.module
+packagelon com.twittelonr.product_mixelonr.corelon.modulelon
 
-import com.google.inject.Provides
-import com.twitter.decider.Decider
-import com.twitter.inject.TwitterModule
-import com.twitter.product_mixer.core.functional_component.configapi.ConfigBuilder
-import com.twitter.servo.decider.DeciderGateBuilder
-import com.twitter.timelines.configapi.Config
-import javax.inject.Singleton
+import com.googlelon.injelonct.Providelons
+import com.twittelonr.deloncidelonr.Deloncidelonr
+import com.twittelonr.injelonct.TwittelonrModulelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.configapi.ConfigBuildelonr
+import com.twittelonr.selonrvo.deloncidelonr.DeloncidelonrGatelonBuildelonr
+import com.twittelonr.timelonlinelons.configapi.Config
+import javax.injelonct.Singlelonton
 
-object ConfigApiModule extends TwitterModule {
+objelonct ConfigApiModulelon elonxtelonnds TwittelonrModulelon {
 
-  @Provides
-  @Singleton
-  def providesDeciderGateBuilder(decider: Decider): DeciderGateBuilder =
-    new DeciderGateBuilder(decider)
+  @Providelons
+  @Singlelonton
+  delonf providelonsDeloncidelonrGatelonBuildelonr(deloncidelonr: Deloncidelonr): DeloncidelonrGatelonBuildelonr =
+    nelonw DeloncidelonrGatelonBuildelonr(deloncidelonr)
 
-  @Provides
-  @Singleton
-  def providesConfig(configBuilder: ConfigBuilder): Config = configBuilder.build()
+  @Providelons
+  @Singlelonton
+  delonf providelonsConfig(configBuildelonr: ConfigBuildelonr): Config = configBuildelonr.build()
 }

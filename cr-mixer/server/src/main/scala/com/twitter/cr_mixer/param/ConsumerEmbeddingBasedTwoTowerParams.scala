@@ -1,32 +1,32 @@
-package com.twitter.cr_mixer.param
+packagelon com.twittelonr.cr_mixelonr.param
 
-import com.twitter.cr_mixer.model.ModelConfig.TwoTowerFavALL20220808
-import com.twitter.timelines.configapi.BaseConfig
-import com.twitter.timelines.configapi.BaseConfigBuilder
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil
-import com.twitter.timelines.configapi.Param
+import com.twittelonr.cr_mixelonr.modelonl.ModelonlConfig.TwoTowelonrFavALL20220808
+import com.twittelonr.timelonlinelons.configapi.BaselonConfig
+import com.twittelonr.timelonlinelons.configapi.BaselonConfigBuildelonr
+import com.twittelonr.timelonlinelons.configapi.FSNamelon
+import com.twittelonr.timelonlinelons.configapi.FSParam
+import com.twittelonr.timelonlinelons.configapi.FelonaturelonSwitchOvelonrridelonUtil
+import com.twittelonr.timelonlinelons.configapi.Param
 
-object ConsumerEmbeddingBasedTwoTowerParams {
-  object ModelIdParam
-      extends FSParam[String](
-        name = "consumer_embedding_based_two_tower_model_id",
-        default = TwoTowerFavALL20220808,
-      ) // Note: this default value does not match with ModelIds yet. This FS is a placeholder
+objelonct ConsumelonrelonmbelonddingBaselondTwoTowelonrParams {
+  objelonct ModelonlIdParam
+      elonxtelonnds FSParam[String](
+        namelon = "consumelonr_elonmbelondding_baselond_two_towelonr_modelonl_id",
+        delonfault = TwoTowelonrFavALL20220808,
+      ) // Notelon: this delonfault valuelon doelons not match with ModelonlIds yelont. This FS is a placelonholdelonr
 
-  val AllParams: Seq[Param[_] with FSName] = Seq(
-    ModelIdParam
+  val AllParams: Selonq[Param[_] with FSNamelon] = Selonq(
+    ModelonlIdParam
   )
 
-  lazy val config: BaseConfig = {
-    val stringFSOverrides =
-      FeatureSwitchOverrideUtil.getStringFSOverrides(
-        ModelIdParam
+  lazy val config: BaselonConfig = {
+    val stringFSOvelonrridelons =
+      FelonaturelonSwitchOvelonrridelonUtil.gelontStringFSOvelonrridelons(
+        ModelonlIdParam
       )
 
-    BaseConfigBuilder()
-      .set(stringFSOverrides: _*)
+    BaselonConfigBuildelonr()
+      .selont(stringFSOvelonrridelons: _*)
       .build()
   }
 }

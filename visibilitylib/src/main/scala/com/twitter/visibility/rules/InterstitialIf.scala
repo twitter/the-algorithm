@@ -1,43 +1,43 @@
-package com.twitter.visibility.rules
+packagelon com.twittelonr.visibility.rulelons
 
-import com.twitter.visibility.rules.Condition.And
-import com.twitter.visibility.rules.Condition.Not
+import com.twittelonr.visibility.rulelons.Condition.And
+import com.twittelonr.visibility.rulelons.Condition.Not
 
-object InterstitialIf {
+objelonct IntelonrstitialIf {
 
-  object ViewerMutedKeyword
-      extends RuleWithConstantAction(
-        Interstitial(Reason.MutedKeyword),
+  objelonct VielonwelonrMutelondKelonyword
+      elonxtelonnds RulelonWithConstantAction(
+        Intelonrstitial(Relonason.MutelondKelonyword),
         And(
-          Not(Condition.IsFocalTweet),
-          Condition.ViewerHasMatchingKeywordForTweetReplies,
+          Not(Condition.IsFocalTwelonelont),
+          Condition.VielonwelonrHasMatchingKelonywordForTwelonelontRelonplielons,
         )
       )
 
-  object ViewerBlockedAuthor
-      extends RuleWithConstantAction(
-        Interstitial(Reason.ViewerBlocksAuthor),
+  objelonct VielonwelonrBlockelondAuthor
+      elonxtelonnds RulelonWithConstantAction(
+        Intelonrstitial(Relonason.VielonwelonrBlocksAuthor),
         And(
-          Not(Condition.IsFocalTweet),
-          Condition.ViewerBlocksAuthor
+          Not(Condition.IsFocalTwelonelont),
+          Condition.VielonwelonrBlocksAuthor
         )
       )
 
-  object ViewerHardMutedAuthor
-      extends RuleWithConstantAction(
-        Interstitial(Reason.ViewerHardMutedAuthor),
+  objelonct VielonwelonrHardMutelondAuthor
+      elonxtelonnds RulelonWithConstantAction(
+        Intelonrstitial(Relonason.VielonwelonrHardMutelondAuthor),
         And(
-          Not(Condition.IsFocalTweet),
-          Condition.ViewerMutesAuthor,
+          Not(Condition.IsFocalTwelonelont),
+          Condition.VielonwelonrMutelonsAuthor,
           Not(
-            Condition.ViewerDoesFollowAuthor
+            Condition.VielonwelonrDoelonsFollowAuthor
           )
         )
       )
 
-  object ViewerReportedAuthor
-      extends RuleWithConstantAction(
-        Interstitial(Reason.ViewerReportedAuthor),
-        Condition.ViewerReportsAuthor
+  objelonct VielonwelonrRelonportelondAuthor
+      elonxtelonnds RulelonWithConstantAction(
+        Intelonrstitial(Relonason.VielonwelonrRelonportelondAuthor),
+        Condition.VielonwelonrRelonportsAuthor
       )
 }

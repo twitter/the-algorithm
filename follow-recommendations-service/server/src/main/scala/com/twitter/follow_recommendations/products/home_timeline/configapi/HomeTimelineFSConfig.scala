@@ -1,22 +1,22 @@
-package com.twitter.follow_recommendations.products.home_timeline.configapi
+packagelon com.twittelonr.follow_reloncommelonndations.products.homelon_timelonlinelon.configapi
 
-import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
-import com.twitter.follow_recommendations.products.home_timeline.configapi.HomeTimelineParams._
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.HasDurationConversion
-import com.twitter.timelines.configapi.Param
-import com.twitter.util.Duration
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.follow_reloncommelonndations.configapi.common.FelonaturelonSwitchConfig
+import com.twittelonr.follow_reloncommelonndations.products.homelon_timelonlinelon.configapi.HomelonTimelonlinelonParams._
+import com.twittelonr.timelonlinelons.configapi.FSBoundelondParam
+import com.twittelonr.timelonlinelons.configapi.FSNamelon
+import com.twittelonr.timelonlinelons.configapi.HasDurationConvelonrsion
+import com.twittelonr.timelonlinelons.configapi.Param
+import com.twittelonr.util.Duration
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class HomeTimelineFSConfig @Inject() () extends FeatureSwitchConfig {
-  override val booleanFSParams: Seq[Param[Boolean] with FSName] =
-    Seq(EnableWritingServingHistory)
+@Singlelonton
+class HomelonTimelonlinelonFSConfig @Injelonct() () elonxtelonnds FelonaturelonSwitchConfig {
+  ovelonrridelon val boolelonanFSParams: Selonq[Param[Boolelonan] with FSNamelon] =
+    Selonq(elonnablelonWritingSelonrvingHistory)
 
-  override val durationFSParams: Seq[FSBoundedParam[Duration] with HasDurationConversion] = Seq(
-    DurationGuardrailToForceSuggest,
-    SuggestBasedFatigueDuration
+  ovelonrridelon val durationFSParams: Selonq[FSBoundelondParam[Duration] with HasDurationConvelonrsion] = Selonq(
+    DurationGuardrailToForcelonSuggelonst,
+    SuggelonstBaselondFatiguelonDuration
   )
 }

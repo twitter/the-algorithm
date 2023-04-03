@@ -1,12 +1,12 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urp
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urp
 
-import com.twitter.product_mixer.core.model.marshalling.HasMarshalling
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineScribeConfig
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.HasMarshalling
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.TimelonlinelonScribelonConfig
 
-case class Page(
+caselon class Pagelon(
   id: String,
-  pageBody: PageBody,
-  scribeConfig: Option[TimelineScribeConfig] = None,
-  pageHeader: Option[PageHeader] = None,
-  pageNavBar: Option[PageNavBar] = None)
-    extends HasMarshalling
+  pagelonBody: PagelonBody,
+  scribelonConfig: Option[TimelonlinelonScribelonConfig] = Nonelon,
+  pagelonHelonadelonr: Option[PagelonHelonadelonr] = Nonelon,
+  pagelonNavBar: Option[PagelonNavBar] = Nonelon)
+    elonxtelonnds HasMarshalling

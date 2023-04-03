@@ -1,37 +1,37 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.operation
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.opelonration
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.EntryNamespace
-import com.twitter.product_mixer.core.model.marshalling.response.urt.HasEntryNamespace
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.elonntryNamelonspacelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.HaselonntryNamelonspacelon
 
-sealed trait CursorType extends HasEntryNamespace
+selonalelond trait CursorTypelon elonxtelonnds HaselonntryNamelonspacelon
 
-case object TopCursor extends CursorType {
-  override val entryNamespace: EntryNamespace = EntryNamespace("top")
+caselon objelonct TopCursor elonxtelonnds CursorTypelon {
+  ovelonrridelon val elonntryNamelonspacelon: elonntryNamelonspacelon = elonntryNamelonspacelon("top")
 }
-case object BottomCursor extends CursorType {
-  override val entryNamespace: EntryNamespace = EntryNamespace("bottom")
+caselon objelonct BottomCursor elonxtelonnds CursorTypelon {
+  ovelonrridelon val elonntryNamelonspacelon: elonntryNamelonspacelon = elonntryNamelonspacelon("bottom")
 }
-case object GapCursor extends CursorType {
-  override val entryNamespace: EntryNamespace = EntryNamespace("gap")
+caselon objelonct GapCursor elonxtelonnds CursorTypelon {
+  ovelonrridelon val elonntryNamelonspacelon: elonntryNamelonspacelon = elonntryNamelonspacelon("gap")
 }
-case object PivotCursor extends CursorType {
-  override val entryNamespace: EntryNamespace = EntryNamespace("pivot")
+caselon objelonct PivotCursor elonxtelonnds CursorTypelon {
+  ovelonrridelon val elonntryNamelonspacelon: elonntryNamelonspacelon = elonntryNamelonspacelon("pivot")
 }
-case object SubBranchCursor extends CursorType {
-  override val entryNamespace: EntryNamespace = EntryNamespace("subbranch")
+caselon objelonct SubBranchCursor elonxtelonnds CursorTypelon {
+  ovelonrridelon val elonntryNamelonspacelon: elonntryNamelonspacelon = elonntryNamelonspacelon("subbranch")
 }
-case object ShowMoreCursor extends CursorType {
-  override val entryNamespace: EntryNamespace = EntryNamespace("showmore")
+caselon objelonct ShowMorelonCursor elonxtelonnds CursorTypelon {
+  ovelonrridelon val elonntryNamelonspacelon: elonntryNamelonspacelon = elonntryNamelonspacelon("showmorelon")
 }
-case object ShowMoreThreadsCursor extends CursorType {
-  override val entryNamespace: EntryNamespace = EntryNamespace("showmorethreads")
+caselon objelonct ShowMorelonThrelonadsCursor elonxtelonnds CursorTypelon {
+  ovelonrridelon val elonntryNamelonspacelon: elonntryNamelonspacelon = elonntryNamelonspacelon("showmorelonthrelonads")
 }
-case object ShowMoreThreadsPromptCursor extends CursorType {
-  override val entryNamespace: EntryNamespace = EntryNamespace("showmorethreadsprompt")
+caselon objelonct ShowMorelonThrelonadsPromptCursor elonxtelonnds CursorTypelon {
+  ovelonrridelon val elonntryNamelonspacelon: elonntryNamelonspacelon = elonntryNamelonspacelon("showmorelonthrelonadsprompt")
 }
-case object SecondRepliesSectionCursor extends CursorType {
-  override val entryNamespace: EntryNamespace = EntryNamespace("secondrepliessection")
+caselon objelonct SeloncondRelonplielonsSelonctionCursor elonxtelonnds CursorTypelon {
+  ovelonrridelon val elonntryNamelonspacelon: elonntryNamelonspacelon = elonntryNamelonspacelon("seloncondrelonplielonsselonction")
 }
-case object ThirdRepliesSectionCursor extends CursorType {
-  override val entryNamespace: EntryNamespace = EntryNamespace("thirdrepliessection")
+caselon objelonct ThirdRelonplielonsSelonctionCursor elonxtelonnds CursorTypelon {
+  ovelonrridelon val elonntryNamelonspacelon: elonntryNamelonspacelon = elonntryNamelonspacelon("thirdrelonplielonsselonction")
 }

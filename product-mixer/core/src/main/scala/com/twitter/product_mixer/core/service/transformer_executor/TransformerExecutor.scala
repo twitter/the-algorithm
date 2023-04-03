@@ -1,22 +1,22 @@
-package com.twitter.product_mixer.core.service.transformer_executor
+packagelon com.twittelonr.product_mixelonr.corelon.selonrvicelon.transformelonr_elonxeloncutor
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.functional_component.transformer.Transformer
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.stitch.Arrow
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.transformelonr.Transformelonr
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.elonxeloncutor
+import com.twittelonr.stitch.Arrow
 
-import javax.inject.Inject
-import javax.inject.Singleton
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class TransformerExecutor @Inject() (override val statsReceiver: StatsReceiver) extends Executor {
-  def arrow[In, Out](
-    transformer: Transformer[In, Out],
-    context: Executor.Context
+@Singlelonton
+class Transformelonrelonxeloncutor @Injelonct() (ovelonrridelon val statsReloncelonivelonr: StatsReloncelonivelonr) elonxtelonnds elonxeloncutor {
+  delonf arrow[In, Out](
+    transformelonr: Transformelonr[In, Out],
+    contelonxt: elonxeloncutor.Contelonxt
   ): Arrow[In, Out] = {
-    wrapComponentWithExecutorBookkeeping(
-      context,
-      transformer.identifier
-    )(Arrow.map(transformer.transform))
+    wrapComponelonntWithelonxeloncutorBookkelonelonping(
+      contelonxt,
+      transformelonr.idelonntifielonr
+    )(Arrow.map(transformelonr.transform))
   }
 }

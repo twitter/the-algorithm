@@ -1,81 +1,81 @@
 scala_library(
-    sources = ["*.scala"],
+    sourcelons = ["*.scala"],
     platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-only",
+        "bazelonl-compatiblelon",
+        "bazelonl-only",
     ],
-    dependencies = [
-        "src/scala/com/twitter/octain/p13n/batch:p13n_preferences-scala",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources:data_sources",
-        "src/scala/com/twitter/simclusters_v2/scalding",
-        "src/scala/com/twitter/simclusters_v2/scalding/common",
-        "src/scala/com/twitter/simclusters_v2/scalding/inferred_entities",
-        "src/scala/com/twitter/wtf/scalding/jobs/common:cassowary_job",
-        "src/scala/com/twitter/wtf/scalding/jobs/common:execution_app",
-        "src/scala/com/twitter/wtf/scalding/jobs/common:sources",
-        "src/scala/com/twitter/wtf/scalding/jobs/common:stats_util",
+    delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/octain/p13n/batch:p13n_prelonfelonrelonncelons-scala",
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons",
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons:data_sourcelons",
+        "src/scala/com/twittelonr/simclustelonrs_v2/scalding",
+        "src/scala/com/twittelonr/simclustelonrs_v2/scalding/common",
+        "src/scala/com/twittelonr/simclustelonrs_v2/scalding/infelonrrelond_elonntitielons",
+        "src/scala/com/twittelonr/wtf/scalding/jobs/common:cassowary_job",
+        "src/scala/com/twittelonr/wtf/scalding/jobs/common:elonxeloncution_app",
+        "src/scala/com/twittelonr/wtf/scalding/jobs/common:sourcelons",
+        "src/scala/com/twittelonr/wtf/scalding/jobs/common:stats_util",
     ],
 )
 
 hadoop_binary(
-    name = "known_for_optout-adhoc",
-    main = "com.twitter.simclusters_v2.scalding.optout.KnownForOptOutAdhocJob",
+    namelon = "known_for_optout-adhoc",
+    main = "com.twittelonr.simclustelonrs_v2.scalding.optout.KnownForOptOutAdhocJob",
     platform = "java8",
-    runtime_platform = "java8",
+    runtimelon_platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
+        "bazelonl-compatiblelon",
+        "bazelonl-compatiblelon:migratelond",
+        "bazelonl-only",
     ],
-    dependencies = [
+    delonpelonndelonncielons = [
         ":optout",
     ],
 )
 
 hadoop_binary(
-    name = "known_for_optout_daily",
-    main = "com.twitter.simclusters_v2.scalding.optout.KnownForOptOutDailyBatchJob",
+    namelon = "known_for_optout_daily",
+    main = "com.twittelonr.simclustelonrs_v2.scalding.optout.KnownForOptOutDailyBatchJob",
     platform = "java8",
-    runtime_platform = "java8",
+    runtimelon_platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
+        "bazelonl-compatiblelon",
+        "bazelonl-compatiblelon:migratelond",
+        "bazelonl-only",
     ],
-    dependencies = [
+    delonpelonndelonncielons = [
         ":optout",
     ],
 )
 
 hadoop_binary(
-    name = "interested_in_optout-adhoc",
-    main = "com.twitter.simclusters_v2.scalding.optout.InterestedInOptOutAdhocJob",
+    namelon = "intelonrelonstelond_in_optout-adhoc",
+    main = "com.twittelonr.simclustelonrs_v2.scalding.optout.IntelonrelonstelondInOptOutAdhocJob",
     platform = "java8",
-    runtime_platform = "java8",
+    runtimelon_platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
+        "bazelonl-compatiblelon",
+        "bazelonl-compatiblelon:migratelond",
+        "bazelonl-only",
         "known-to-fail-jira:SD-14439",
     ],
-    dependencies = [
+    delonpelonndelonncielons = [
         ":optout",
     ],
 )
 
 hadoop_binary(
-    name = "interested_in_optout_daily",
-    main = "com.twitter.simclusters_v2.scalding.optout.InterestedInOptOutDailyBatchJob",
+    namelon = "intelonrelonstelond_in_optout_daily",
+    main = "com.twittelonr.simclustelonrs_v2.scalding.optout.IntelonrelonstelondInOptOutDailyBatchJob",
     platform = "java8",
-    runtime_platform = "java8",
+    runtimelon_platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
+        "bazelonl-compatiblelon",
+        "bazelonl-compatiblelon:migratelond",
+        "bazelonl-only",
     ],
-    dependencies = [
+    delonpelonndelonncielons = [
         ":optout",
     ],
 )

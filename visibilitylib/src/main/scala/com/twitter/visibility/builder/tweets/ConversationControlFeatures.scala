@@ -1,178 +1,178 @@
-package com.twitter.visibility.builder.tweets
+packagelon com.twittelonr.visibility.buildelonr.twelonelonts
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.tweetypie.thriftscala.ConversationControl
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.builder.users.RelationshipFeatures
-import com.twitter.visibility.common.InvitedToConversationRepo
-import com.twitter.visibility.features.ConversationRootAuthorFollowsViewer
-import com.twitter.visibility.features.TweetConversationViewerIsInvited
-import com.twitter.visibility.features.TweetConversationViewerIsInvitedViaReplyMention
-import com.twitter.visibility.features.TweetConversationViewerIsRootAuthor
-import com.twitter.visibility.features.TweetHasByInvitationConversationControl
-import com.twitter.visibility.features.TweetHasCommunityConversationControl
-import com.twitter.visibility.features.TweetHasFollowersConversationControl
-import com.twitter.visibility.features.ViewerFollowsConversationRootAuthor
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.twelonelontypielon.thriftscala.Twelonelont
+import com.twittelonr.twelonelontypielon.thriftscala.ConvelonrsationControl
+import com.twittelonr.visibility.buildelonr.FelonaturelonMapBuildelonr
+import com.twittelonr.visibility.buildelonr.uselonrs.RelonlationshipFelonaturelons
+import com.twittelonr.visibility.common.InvitelondToConvelonrsationRelonpo
+import com.twittelonr.visibility.felonaturelons.ConvelonrsationRootAuthorFollowsVielonwelonr
+import com.twittelonr.visibility.felonaturelons.TwelonelontConvelonrsationVielonwelonrIsInvitelond
+import com.twittelonr.visibility.felonaturelons.TwelonelontConvelonrsationVielonwelonrIsInvitelondViaRelonplyMelonntion
+import com.twittelonr.visibility.felonaturelons.TwelonelontConvelonrsationVielonwelonrIsRootAuthor
+import com.twittelonr.visibility.felonaturelons.TwelonelontHasByInvitationConvelonrsationControl
+import com.twittelonr.visibility.felonaturelons.TwelonelontHasCommunityConvelonrsationControl
+import com.twittelonr.visibility.felonaturelons.TwelonelontHasFollowelonrsConvelonrsationControl
+import com.twittelonr.visibility.felonaturelons.VielonwelonrFollowsConvelonrsationRootAuthor
 
-class ConversationControlFeatures(
-  relationshipFeatures: RelationshipFeatures,
-  isInvitedToConversationRepository: InvitedToConversationRepo,
-  statsReceiver: StatsReceiver) {
+class ConvelonrsationControlFelonaturelons(
+  relonlationshipFelonaturelons: RelonlationshipFelonaturelons,
+  isInvitelondToConvelonrsationRelonpository: InvitelondToConvelonrsationRelonpo,
+  statsReloncelonivelonr: StatsReloncelonivelonr) {
 
-  private[this] val scopedStatsReceiver = statsReceiver.scope("conversation_control_features")
+  privatelon[this] val scopelondStatsReloncelonivelonr = statsReloncelonivelonr.scopelon("convelonrsation_control_felonaturelons")
 
-  private[this] val requests = scopedStatsReceiver.counter("requests")
+  privatelon[this] val relonquelonsts = scopelondStatsReloncelonivelonr.countelonr("relonquelonsts")
 
-  private[this] val tweetCommunityConversationRequest =
-    scopedStatsReceiver.scope(TweetHasCommunityConversationControl.name).counter("requests")
-  private[this] val tweetByInvitationConversationRequest =
-    scopedStatsReceiver.scope(TweetHasByInvitationConversationControl.name).counter("requests")
-  private[this] val tweetFollowersConversationRequest =
-    scopedStatsReceiver.scope(TweetHasFollowersConversationControl.name).counter("requests")
-  private[this] val rootAuthorFollowsViewer =
-    scopedStatsReceiver.scope(ConversationRootAuthorFollowsViewer.name).counter("requests")
-  private[this] val viewerFollowsRootAuthor =
-    scopedStatsReceiver.scope(ViewerFollowsConversationRootAuthor.name).counter("requests")
+  privatelon[this] val twelonelontCommunityConvelonrsationRelonquelonst =
+    scopelondStatsReloncelonivelonr.scopelon(TwelonelontHasCommunityConvelonrsationControl.namelon).countelonr("relonquelonsts")
+  privatelon[this] val twelonelontByInvitationConvelonrsationRelonquelonst =
+    scopelondStatsReloncelonivelonr.scopelon(TwelonelontHasByInvitationConvelonrsationControl.namelon).countelonr("relonquelonsts")
+  privatelon[this] val twelonelontFollowelonrsConvelonrsationRelonquelonst =
+    scopelondStatsReloncelonivelonr.scopelon(TwelonelontHasFollowelonrsConvelonrsationControl.namelon).countelonr("relonquelonsts")
+  privatelon[this] val rootAuthorFollowsVielonwelonr =
+    scopelondStatsReloncelonivelonr.scopelon(ConvelonrsationRootAuthorFollowsVielonwelonr.namelon).countelonr("relonquelonsts")
+  privatelon[this] val vielonwelonrFollowsRootAuthor =
+    scopelondStatsReloncelonivelonr.scopelon(VielonwelonrFollowsConvelonrsationRootAuthor.namelon).countelonr("relonquelonsts")
 
-  def isCommunityConversation(conversationControl: Option[ConversationControl]): Boolean =
-    conversationControl
-      .collect {
-        case _: ConversationControl.Community =>
-          tweetCommunityConversationRequest.incr()
-          true
-      }.getOrElse(false)
+  delonf isCommunityConvelonrsation(convelonrsationControl: Option[ConvelonrsationControl]): Boolelonan =
+    convelonrsationControl
+      .collelonct {
+        caselon _: ConvelonrsationControl.Community =>
+          twelonelontCommunityConvelonrsationRelonquelonst.incr()
+          truelon
+      }.gelontOrelonlselon(falselon)
 
-  def isByInvitationConversation(conversationControl: Option[ConversationControl]): Boolean =
-    conversationControl
-      .collect {
-        case _: ConversationControl.ByInvitation =>
-          tweetByInvitationConversationRequest.incr()
-          true
-      }.getOrElse(false)
+  delonf isByInvitationConvelonrsation(convelonrsationControl: Option[ConvelonrsationControl]): Boolelonan =
+    convelonrsationControl
+      .collelonct {
+        caselon _: ConvelonrsationControl.ByInvitation =>
+          twelonelontByInvitationConvelonrsationRelonquelonst.incr()
+          truelon
+      }.gelontOrelonlselon(falselon)
 
-  def isFollowersConversation(conversationControl: Option[ConversationControl]): Boolean =
-    conversationControl
-      .collect {
-        case _: ConversationControl.Followers =>
-          tweetFollowersConversationRequest.incr()
-          true
-      }.getOrElse(false)
+  delonf isFollowelonrsConvelonrsation(convelonrsationControl: Option[ConvelonrsationControl]): Boolelonan =
+    convelonrsationControl
+      .collelonct {
+        caselon _: ConvelonrsationControl.Followelonrs =>
+          twelonelontFollowelonrsConvelonrsationRelonquelonst.incr()
+          truelon
+      }.gelontOrelonlselon(falselon)
 
-  def conversationRootAuthorId(
-    conversationControl: Option[ConversationControl]
+  delonf convelonrsationRootAuthorId(
+    convelonrsationControl: Option[ConvelonrsationControl]
   ): Option[Long] =
-    conversationControl match {
-      case Some(ConversationControl.Community(community)) =>
-        Some(community.conversationTweetAuthorId)
-      case Some(ConversationControl.ByInvitation(byInvitation)) =>
-        Some(byInvitation.conversationTweetAuthorId)
-      case Some(ConversationControl.Followers(followers)) =>
-        Some(followers.conversationTweetAuthorId)
-      case _ => None
+    convelonrsationControl match {
+      caselon Somelon(ConvelonrsationControl.Community(community)) =>
+        Somelon(community.convelonrsationTwelonelontAuthorId)
+      caselon Somelon(ConvelonrsationControl.ByInvitation(byInvitation)) =>
+        Somelon(byInvitation.convelonrsationTwelonelontAuthorId)
+      caselon Somelon(ConvelonrsationControl.Followelonrs(followelonrs)) =>
+        Somelon(followelonrs.convelonrsationTwelonelontAuthorId)
+      caselon _ => Nonelon
     }
 
-  def viewerIsRootAuthor(
-    conversationControl: Option[ConversationControl],
-    viewerIdOpt: Option[Long]
-  ): Boolean =
-    (conversationRootAuthorId(conversationControl), viewerIdOpt) match {
-      case (Some(rootAuthorId), Some(viewerId)) if rootAuthorId == viewerId => true
-      case _ => false
+  delonf vielonwelonrIsRootAuthor(
+    convelonrsationControl: Option[ConvelonrsationControl],
+    vielonwelonrIdOpt: Option[Long]
+  ): Boolelonan =
+    (convelonrsationRootAuthorId(convelonrsationControl), vielonwelonrIdOpt) match {
+      caselon (Somelon(rootAuthorId), Somelon(vielonwelonrId)) if rootAuthorId == vielonwelonrId => truelon
+      caselon _ => falselon
     }
 
-  def viewerIsInvited(
-    conversationControl: Option[ConversationControl],
-    viewerId: Option[Long]
-  ): Boolean = {
-    val invitedUserIds = conversationControl match {
-      case Some(ConversationControl.Community(community)) =>
-        community.invitedUserIds
-      case Some(ConversationControl.ByInvitation(byInvitation)) =>
-        byInvitation.invitedUserIds
-      case Some(ConversationControl.Followers(followers)) =>
-        followers.invitedUserIds
-      case _ => Seq()
+  delonf vielonwelonrIsInvitelond(
+    convelonrsationControl: Option[ConvelonrsationControl],
+    vielonwelonrId: Option[Long]
+  ): Boolelonan = {
+    val invitelondUselonrIds = convelonrsationControl match {
+      caselon Somelon(ConvelonrsationControl.Community(community)) =>
+        community.invitelondUselonrIds
+      caselon Somelon(ConvelonrsationControl.ByInvitation(byInvitation)) =>
+        byInvitation.invitelondUselonrIds
+      caselon Somelon(ConvelonrsationControl.Followelonrs(followelonrs)) =>
+        followelonrs.invitelondUselonrIds
+      caselon _ => Selonq()
     }
 
-    viewerId.exists(invitedUserIds.contains(_))
+    vielonwelonrId.elonxists(invitelondUselonrIds.contains(_))
   }
 
-  def conversationAuthorFollows(
-    conversationControl: Option[ConversationControl],
-    viewerId: Option[Long]
-  ): Stitch[Boolean] = {
-    val conversationAuthorId = conversationControl.collect {
-      case ConversationControl.Community(community) =>
-        community.conversationTweetAuthorId
+  delonf convelonrsationAuthorFollows(
+    convelonrsationControl: Option[ConvelonrsationControl],
+    vielonwelonrId: Option[Long]
+  ): Stitch[Boolelonan] = {
+    val convelonrsationAuthorId = convelonrsationControl.collelonct {
+      caselon ConvelonrsationControl.Community(community) =>
+        community.convelonrsationTwelonelontAuthorId
     }
 
-    conversationAuthorId match {
-      case Some(authorId) =>
-        rootAuthorFollowsViewer.incr()
-        relationshipFeatures.authorFollowsViewer(authorId, viewerId)
-      case None =>
-        Stitch.False
-    }
-  }
-
-  def followsConversationAuthor(
-    conversationControl: Option[ConversationControl],
-    viewerId: Option[Long]
-  ): Stitch[Boolean] = {
-    val conversationAuthorId = conversationControl.collect {
-      case ConversationControl.Followers(followers) =>
-        followers.conversationTweetAuthorId
-    }
-
-    conversationAuthorId match {
-      case Some(authorId) =>
-        viewerFollowsRootAuthor.incr()
-        relationshipFeatures.viewerFollowsAuthor(authorId, viewerId)
-      case None =>
-        Stitch.False
+    convelonrsationAuthorId match {
+      caselon Somelon(authorId) =>
+        rootAuthorFollowsVielonwelonr.incr()
+        relonlationshipFelonaturelons.authorFollowsVielonwelonr(authorId, vielonwelonrId)
+      caselon Nonelon =>
+        Stitch.Falselon
     }
   }
 
-  def viewerIsInvitedViaReplyMention(
-    tweet: Tweet,
-    viewerIdOpt: Option[Long]
-  ): Stitch[Boolean] = {
-    val conversationIdOpt: Option[Long] = tweet.conversationControl match {
-      case Some(ConversationControl.Community(community))
-          if community.inviteViaMention.contains(true) =>
-        tweet.coreData.flatMap(_.conversationId)
-      case Some(ConversationControl.ByInvitation(invitation))
-          if invitation.inviteViaMention.contains(true) =>
-        tweet.coreData.flatMap(_.conversationId)
-      case Some(ConversationControl.Followers(followers))
-          if followers.inviteViaMention.contains(true) =>
-        tweet.coreData.flatMap(_.conversationId)
-      case _ => None
+  delonf followsConvelonrsationAuthor(
+    convelonrsationControl: Option[ConvelonrsationControl],
+    vielonwelonrId: Option[Long]
+  ): Stitch[Boolelonan] = {
+    val convelonrsationAuthorId = convelonrsationControl.collelonct {
+      caselon ConvelonrsationControl.Followelonrs(followelonrs) =>
+        followelonrs.convelonrsationTwelonelontAuthorId
     }
 
-    (conversationIdOpt, viewerIdOpt) match {
-      case (Some(conversationId), Some(viewerId)) =>
-        isInvitedToConversationRepository(conversationId, viewerId)
-      case _ => Stitch.False
+    convelonrsationAuthorId match {
+      caselon Somelon(authorId) =>
+        vielonwelonrFollowsRootAuthor.incr()
+        relonlationshipFelonaturelons.vielonwelonrFollowsAuthor(authorId, vielonwelonrId)
+      caselon Nonelon =>
+        Stitch.Falselon
     }
   }
 
-  def forTweet(tweet: Tweet, viewerId: Option[Long]): FeatureMapBuilder => FeatureMapBuilder = {
-    requests.incr()
-    val cc = tweet.conversationControl
+  delonf vielonwelonrIsInvitelondViaRelonplyMelonntion(
+    twelonelont: Twelonelont,
+    vielonwelonrIdOpt: Option[Long]
+  ): Stitch[Boolelonan] = {
+    val convelonrsationIdOpt: Option[Long] = twelonelont.convelonrsationControl match {
+      caselon Somelon(ConvelonrsationControl.Community(community))
+          if community.invitelonViaMelonntion.contains(truelon) =>
+        twelonelont.corelonData.flatMap(_.convelonrsationId)
+      caselon Somelon(ConvelonrsationControl.ByInvitation(invitation))
+          if invitation.invitelonViaMelonntion.contains(truelon) =>
+        twelonelont.corelonData.flatMap(_.convelonrsationId)
+      caselon Somelon(ConvelonrsationControl.Followelonrs(followelonrs))
+          if followelonrs.invitelonViaMelonntion.contains(truelon) =>
+        twelonelont.corelonData.flatMap(_.convelonrsationId)
+      caselon _ => Nonelon
+    }
 
-    _.withConstantFeature(TweetHasCommunityConversationControl, isCommunityConversation(cc))
-      .withConstantFeature(TweetHasByInvitationConversationControl, isByInvitationConversation(cc))
-      .withConstantFeature(TweetHasFollowersConversationControl, isFollowersConversation(cc))
-      .withConstantFeature(TweetConversationViewerIsRootAuthor, viewerIsRootAuthor(cc, viewerId))
-      .withConstantFeature(TweetConversationViewerIsInvited, viewerIsInvited(cc, viewerId))
-      .withFeature(ConversationRootAuthorFollowsViewer, conversationAuthorFollows(cc, viewerId))
-      .withFeature(ViewerFollowsConversationRootAuthor, followsConversationAuthor(cc, viewerId))
-      .withFeature(
-        TweetConversationViewerIsInvitedViaReplyMention,
-        viewerIsInvitedViaReplyMention(tweet, viewerId))
+    (convelonrsationIdOpt, vielonwelonrIdOpt) match {
+      caselon (Somelon(convelonrsationId), Somelon(vielonwelonrId)) =>
+        isInvitelondToConvelonrsationRelonpository(convelonrsationId, vielonwelonrId)
+      caselon _ => Stitch.Falselon
+    }
+  }
+
+  delonf forTwelonelont(twelonelont: Twelonelont, vielonwelonrId: Option[Long]): FelonaturelonMapBuildelonr => FelonaturelonMapBuildelonr = {
+    relonquelonsts.incr()
+    val cc = twelonelont.convelonrsationControl
+
+    _.withConstantFelonaturelon(TwelonelontHasCommunityConvelonrsationControl, isCommunityConvelonrsation(cc))
+      .withConstantFelonaturelon(TwelonelontHasByInvitationConvelonrsationControl, isByInvitationConvelonrsation(cc))
+      .withConstantFelonaturelon(TwelonelontHasFollowelonrsConvelonrsationControl, isFollowelonrsConvelonrsation(cc))
+      .withConstantFelonaturelon(TwelonelontConvelonrsationVielonwelonrIsRootAuthor, vielonwelonrIsRootAuthor(cc, vielonwelonrId))
+      .withConstantFelonaturelon(TwelonelontConvelonrsationVielonwelonrIsInvitelond, vielonwelonrIsInvitelond(cc, vielonwelonrId))
+      .withFelonaturelon(ConvelonrsationRootAuthorFollowsVielonwelonr, convelonrsationAuthorFollows(cc, vielonwelonrId))
+      .withFelonaturelon(VielonwelonrFollowsConvelonrsationRootAuthor, followsConvelonrsationAuthor(cc, vielonwelonrId))
+      .withFelonaturelon(
+        TwelonelontConvelonrsationVielonwelonrIsInvitelondViaRelonplyMelonntion,
+        vielonwelonrIsInvitelondViaRelonplyMelonntion(twelonelont, vielonwelonrId))
 
   }
 }

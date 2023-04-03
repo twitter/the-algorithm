@@ -1,493 +1,493 @@
-package com.twitter.timelineranker.util
+packagelon com.twittelonr.timelonlinelonrankelonr.util
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.logging.Level
-import com.twitter.logging.Logger
-import com.twitter.timelines.model.TweetId
-import com.twitter.timelines.model.UserId
-import com.twitter.timelines.model.tweet.HydratedTweet
-import com.twitter.timelines.util.stats.BooleanObserver
-import com.twitter.timelines.util.stats.RequestStats
-import scala.collection.mutable
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.logging.Lelonvelonl
+import com.twittelonr.logging.Loggelonr
+import com.twittelonr.timelonlinelons.modelonl.TwelonelontId
+import com.twittelonr.timelonlinelons.modelonl.UselonrId
+import com.twittelonr.timelonlinelons.modelonl.twelonelont.HydratelondTwelonelont
+import com.twittelonr.timelonlinelons.util.stats.BoolelonanObselonrvelonr
+import com.twittelonr.timelonlinelons.util.stats.RelonquelonstStats
+import scala.collelonction.mutablelon
 
-object TweetFilters extends Enumeration {
-  // Filters independent of users or their follow graph.
-  val DuplicateRetweets: Value = Value
-  val DuplicateTweets: Value = Value
-  val NullcastTweets: Value = Value
-  val Replies: Value = Value
-  val Retweets: Value = Value
+objelonct TwelonelontFiltelonrs elonxtelonnds elonnumelonration {
+  // Filtelonrs indelonpelonndelonnt of uselonrs or thelonir follow graph.
+  val DuplicatelonRelontwelonelonts: Valuelon = Valuelon
+  val DuplicatelonTwelonelonts: Valuelon = Valuelon
+  val NullcastTwelonelonts: Valuelon = Valuelon
+  val Relonplielons: Valuelon = Valuelon
+  val Relontwelonelonts: Valuelon = Valuelon
 
-  // Filters that depend on users or their follow graph.
-  val DirectedAtNotFollowedUsers: Value = Value
-  val NonReplyDirectedAtNotFollowedUsers: Value = Value
-  val TweetsFromNotFollowedUsers: Value = Value
-  val ExtendedReplies: Value = Value
-  val NotQualifiedExtendedReplies: Value = Value
-  val NotValidExpandedExtendedReplies: Value = Value
-  val NotQualifiedReverseExtendedReplies: Value = Value
-  val RecommendedRepliesToNotFollowedUsers: Value = Value
+  // Filtelonrs that delonpelonnd on uselonrs or thelonir follow graph.
+  val DirelonctelondAtNotFollowelondUselonrs: Valuelon = Valuelon
+  val NonRelonplyDirelonctelondAtNotFollowelondUselonrs: Valuelon = Valuelon
+  val TwelonelontsFromNotFollowelondUselonrs: Valuelon = Valuelon
+  val elonxtelonndelondRelonplielons: Valuelon = Valuelon
+  val NotQualifielondelonxtelonndelondRelonplielons: Valuelon = Valuelon
+  val NotValidelonxpandelondelonxtelonndelondRelonplielons: Valuelon = Valuelon
+  val NotQualifielondRelonvelonrselonelonxtelonndelondRelonplielons: Valuelon = Valuelon
+  val ReloncommelonndelondRelonplielonsToNotFollowelondUselonrs: Valuelon = Valuelon
 
-  val None: TweetFilters.ValueSet = ValueSet.empty
+  val Nonelon: TwelonelontFiltelonrs.ValuelonSelont = ValuelonSelont.elonmpty
 
-  val UserDependent: ValueSet = ValueSet(
-    NonReplyDirectedAtNotFollowedUsers,
-    DirectedAtNotFollowedUsers,
-    TweetsFromNotFollowedUsers,
-    ExtendedReplies,
-    NotQualifiedExtendedReplies,
-    NotValidExpandedExtendedReplies,
-    NotQualifiedReverseExtendedReplies,
-    RecommendedRepliesToNotFollowedUsers
+  val UselonrDelonpelonndelonnt: ValuelonSelont = ValuelonSelont(
+    NonRelonplyDirelonctelondAtNotFollowelondUselonrs,
+    DirelonctelondAtNotFollowelondUselonrs,
+    TwelonelontsFromNotFollowelondUselonrs,
+    elonxtelonndelondRelonplielons,
+    NotQualifielondelonxtelonndelondRelonplielons,
+    NotValidelonxpandelondelonxtelonndelondRelonplielons,
+    NotQualifielondRelonvelonrselonelonxtelonndelondRelonplielons,
+    ReloncommelonndelondRelonplielonsToNotFollowelondUselonrs
   )
 
-  val UserIndependent: ValueSet = ValueSet(
-    DuplicateRetweets,
-    DuplicateTweets,
-    NullcastTweets,
-    Replies,
-    Retweets
+  val UselonrIndelonpelonndelonnt: ValuelonSelont = ValuelonSelont(
+    DuplicatelonRelontwelonelonts,
+    DuplicatelonTwelonelonts,
+    NullcastTwelonelonts,
+    Relonplielons,
+    Relontwelonelonts
   )
-  require(
-    (UserDependent ++ UserIndependent) == TweetFilters.values,
-    "UserIndependent and UserDependent should contain all possible filters"
+  relonquirelon(
+    (UselonrDelonpelonndelonnt ++ UselonrIndelonpelonndelonnt) == TwelonelontFiltelonrs.valuelons,
+    "UselonrIndelonpelonndelonnt and UselonrDelonpelonndelonnt should contain all possiblelon filtelonrs"
   )
 
-  private[util] type FilterMethod =
-    (HydratedTweet, TweetsPostFilterParams, MutableState) => Boolean
+  privatelon[util] typelon FiltelonrMelonthod =
+    (HydratelondTwelonelont, TwelonelontsPostFiltelonrParams, MutablelonStatelon) => Boolelonan
 
-  case class MutableState(
-    seenTweetIds: mutable.Map[TweetId, Int] = mutable.Map.empty[TweetId, Int].withDefaultValue(0)) {
-    def isSeen(tweetId: TweetId): Boolean = {
-      val seen = seenTweetIds(tweetId) >= 1
-      incrementIf0(tweetId)
-      seen
+  caselon class MutablelonStatelon(
+    selonelonnTwelonelontIds: mutablelon.Map[TwelonelontId, Int] = mutablelon.Map.elonmpty[TwelonelontId, Int].withDelonfaultValuelon(0)) {
+    delonf isSelonelonn(twelonelontId: TwelonelontId): Boolelonan = {
+      val selonelonn = selonelonnTwelonelontIds(twelonelontId) >= 1
+      increlonmelonntIf0(twelonelontId)
+      selonelonn
     }
 
-    def incrementIf0(key: TweetId): Unit = {
-      if (seenTweetIds(key) == 0) {
-        seenTweetIds(key) = 1
+    delonf increlonmelonntIf0(kelony: TwelonelontId): Unit = {
+      if (selonelonnTwelonelontIds(kelony) == 0) {
+        selonelonnTwelonelontIds(kelony) = 1
       }
     }
 
-    def incrementThenGetCount(key: TweetId): Int = {
-      seenTweetIds(key) += 1
-      seenTweetIds(key)
+    delonf increlonmelonntThelonnGelontCount(kelony: TwelonelontId): Int = {
+      selonelonnTwelonelontIds(kelony) += 1
+      selonelonnTwelonelontIds(kelony)
     }
   }
 }
 
-case class TweetsPostFilterParams(
-  userId: UserId,
-  followedUserIds: Seq[UserId],
-  inNetworkUserIds: Seq[UserId],
-  mutedUserIds: Set[UserId],
-  numRetweetsAllowed: Int,
-  loggingPrefix: String = "",
-  sourceTweets: Seq[HydratedTweet] = Nil) {
-  lazy val sourceTweetsById: Map[TweetId, HydratedTweet] =
-    sourceTweets.map(tweet => tweet.tweetId -> tweet).toMap
+caselon class TwelonelontsPostFiltelonrParams(
+  uselonrId: UselonrId,
+  followelondUselonrIds: Selonq[UselonrId],
+  inNelontworkUselonrIds: Selonq[UselonrId],
+  mutelondUselonrIds: Selont[UselonrId],
+  numRelontwelonelontsAllowelond: Int,
+  loggingPrelonfix: String = "",
+  sourcelonTwelonelonts: Selonq[HydratelondTwelonelont] = Nil) {
+  lazy val sourcelonTwelonelontsById: Map[TwelonelontId, HydratelondTwelonelont] =
+    sourcelonTwelonelonts.map(twelonelont => twelonelont.twelonelontId -> twelonelont).toMap
 }
 
 /**
- * Performs post-filtering on tweets obtained from search.
+ * Pelonrforms post-filtelonring on twelonelonts obtainelond from selonarch.
  *
- * Search currently does not perform certain steps or performs them inadequately.
- * This class addresses those shortcomings by post-processing hydrated search results.
+ * Selonarch currelonntly doelons not pelonrform celonrtain stelonps or pelonrforms thelonm inadelonquatelonly.
+ * This class addrelonsselons thoselon shortcomings by post-procelonssing hydratelond selonarch relonsults.
  */
-abstract class TweetsPostFilterBase(
-  filters: TweetFilters.ValueSet,
-  logger: Logger,
-  statsReceiver: StatsReceiver)
-    extends RequestStats {
-  import TweetFilters.FilterMethod
-  import TweetFilters.MutableState
+abstract class TwelonelontsPostFiltelonrBaselon(
+  filtelonrs: TwelonelontFiltelonrs.ValuelonSelont,
+  loggelonr: Loggelonr,
+  statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds RelonquelonstStats {
+  import TwelonelontFiltelonrs.FiltelonrMelonthod
+  import TwelonelontFiltelonrs.MutablelonStatelon
 
-  private[this] val baseScope = statsReceiver.scope("filter")
-  private[this] val directedAtNotFollowedCounter = baseScope.counter("directedAtNotFollowed")
-  private[this] val nonReplyDirectedAtNotFollowedObserver =
-    BooleanObserver(baseScope.scope("nonReplyDirectedAtNotFollowed"))
-  private[this] val dupRetweetCounter = baseScope.counter("dupRetweet")
-  private[this] val dupTweetCounter = baseScope.counter("dupTweet")
-  private[this] val notFollowedCounter = baseScope.counter("notFollowed")
-  private[this] val nullcastCounter = baseScope.counter("nullcast")
-  private[this] val repliesCounter = baseScope.counter("replies")
-  private[this] val retweetsCounter = baseScope.counter("retweets")
-  private[this] val extendedRepliesCounter = baseScope.counter("extendedReplies")
-  private[this] val notQualifiedExtendedRepliesObserver =
-    BooleanObserver(baseScope.scope("notQualifiedExtendedReplies"))
-  private[this] val notValidExpandedExtendedRepliesObserver =
-    BooleanObserver(baseScope.scope("notValidExpandedExtendedReplies"))
-  private[this] val notQualifiedReverseExtendedRepliesCounter =
-    baseScope.counter("notQualifiedReverseExtendedReplies")
-  private[this] val recommendedRepliesToNotFollowedUsersObserver =
-    BooleanObserver(baseScope.scope("recommendedRepliesToNotFollowedUsers"))
+  privatelon[this] val baselonScopelon = statsReloncelonivelonr.scopelon("filtelonr")
+  privatelon[this] val direlonctelondAtNotFollowelondCountelonr = baselonScopelon.countelonr("direlonctelondAtNotFollowelond")
+  privatelon[this] val nonRelonplyDirelonctelondAtNotFollowelondObselonrvelonr =
+    BoolelonanObselonrvelonr(baselonScopelon.scopelon("nonRelonplyDirelonctelondAtNotFollowelond"))
+  privatelon[this] val dupRelontwelonelontCountelonr = baselonScopelon.countelonr("dupRelontwelonelont")
+  privatelon[this] val dupTwelonelontCountelonr = baselonScopelon.countelonr("dupTwelonelont")
+  privatelon[this] val notFollowelondCountelonr = baselonScopelon.countelonr("notFollowelond")
+  privatelon[this] val nullcastCountelonr = baselonScopelon.countelonr("nullcast")
+  privatelon[this] val relonplielonsCountelonr = baselonScopelon.countelonr("relonplielons")
+  privatelon[this] val relontwelonelontsCountelonr = baselonScopelon.countelonr("relontwelonelonts")
+  privatelon[this] val elonxtelonndelondRelonplielonsCountelonr = baselonScopelon.countelonr("elonxtelonndelondRelonplielons")
+  privatelon[this] val notQualifielondelonxtelonndelondRelonplielonsObselonrvelonr =
+    BoolelonanObselonrvelonr(baselonScopelon.scopelon("notQualifielondelonxtelonndelondRelonplielons"))
+  privatelon[this] val notValidelonxpandelondelonxtelonndelondRelonplielonsObselonrvelonr =
+    BoolelonanObselonrvelonr(baselonScopelon.scopelon("notValidelonxpandelondelonxtelonndelondRelonplielons"))
+  privatelon[this] val notQualifielondRelonvelonrselonelonxtelonndelondRelonplielonsCountelonr =
+    baselonScopelon.countelonr("notQualifielondRelonvelonrselonelonxtelonndelondRelonplielons")
+  privatelon[this] val reloncommelonndelondRelonplielonsToNotFollowelondUselonrsObselonrvelonr =
+    BoolelonanObselonrvelonr(baselonScopelon.scopelon("reloncommelonndelondRelonplielonsToNotFollowelondUselonrs"))
 
-  private[this] val totalCounter = baseScope.counter(Total)
-  private[this] val resultCounter = baseScope.counter("result")
+  privatelon[this] val totalCountelonr = baselonScopelon.countelonr(Total)
+  privatelon[this] val relonsultCountelonr = baselonScopelon.countelonr("relonsult")
 
-  // Used for debugging. Its values should remain false for prod use.
-  private[this] val alwaysLog = false
+  // Uselond for delonbugging. Its valuelons should relonmain falselon for prod uselon.
+  privatelon[this] val alwaysLog = falselon
 
-  val applicableFilters: Seq[FilterMethod] = Filters.getApplicableFilters(filters)
+  val applicablelonFiltelonrs: Selonq[FiltelonrMelonthod] = Filtelonrs.gelontApplicablelonFiltelonrs(filtelonrs)
 
-  protected def filter(
-    tweets: Seq[HydratedTweet],
-    params: TweetsPostFilterParams
-  ): Seq[HydratedTweet] = {
-    val invocationState = MutableState()
-    val result = tweets.reverseIterator
-      .filterNot { tweet => applicableFilters.exists(_(tweet, params, invocationState)) }
-      .toSeq
-      .reverse
-    totalCounter.incr(tweets.size)
-    resultCounter.incr(result.size)
-    result
+  protelonctelond delonf filtelonr(
+    twelonelonts: Selonq[HydratelondTwelonelont],
+    params: TwelonelontsPostFiltelonrParams
+  ): Selonq[HydratelondTwelonelont] = {
+    val invocationStatelon = MutablelonStatelon()
+    val relonsult = twelonelonts.relonvelonrselonItelonrator
+      .filtelonrNot { twelonelont => applicablelonFiltelonrs.elonxists(_(twelonelont, params, invocationStatelon)) }
+      .toSelonq
+      .relonvelonrselon
+    totalCountelonr.incr(twelonelonts.sizelon)
+    relonsultCountelonr.incr(relonsult.sizelon)
+    relonsult
   }
 
-  object Filters {
-    case class FilterData(kind: TweetFilters.Value, method: FilterMethod)
-    private val allFilters = Seq[FilterData](
-      FilterData(TweetFilters.DuplicateTweets, isDuplicateTweet),
-      FilterData(TweetFilters.DuplicateRetweets, isDuplicateRetweet),
-      FilterData(TweetFilters.DirectedAtNotFollowedUsers, isDirectedAtNonFollowedUser),
-      FilterData(
-        TweetFilters.NonReplyDirectedAtNotFollowedUsers,
-        isNonReplyDirectedAtNonFollowedUser
+  objelonct Filtelonrs {
+    caselon class FiltelonrData(kind: TwelonelontFiltelonrs.Valuelon, melonthod: FiltelonrMelonthod)
+    privatelon val allFiltelonrs = Selonq[FiltelonrData](
+      FiltelonrData(TwelonelontFiltelonrs.DuplicatelonTwelonelonts, isDuplicatelonTwelonelont),
+      FiltelonrData(TwelonelontFiltelonrs.DuplicatelonRelontwelonelonts, isDuplicatelonRelontwelonelont),
+      FiltelonrData(TwelonelontFiltelonrs.DirelonctelondAtNotFollowelondUselonrs, isDirelonctelondAtNonFollowelondUselonr),
+      FiltelonrData(
+        TwelonelontFiltelonrs.NonRelonplyDirelonctelondAtNotFollowelondUselonrs,
+        isNonRelonplyDirelonctelondAtNonFollowelondUselonr
       ),
-      FilterData(TweetFilters.NullcastTweets, isNullcast),
-      FilterData(TweetFilters.Replies, isReply),
-      FilterData(TweetFilters.Retweets, isRetweet),
-      FilterData(TweetFilters.TweetsFromNotFollowedUsers, isFromNonFollowedUser),
-      FilterData(TweetFilters.ExtendedReplies, isExtendedReply),
-      FilterData(TweetFilters.NotQualifiedExtendedReplies, isNotQualifiedExtendedReply),
-      FilterData(TweetFilters.NotValidExpandedExtendedReplies, isNotValidExpandedExtendedReply),
-      FilterData(
-        TweetFilters.NotQualifiedReverseExtendedReplies,
-        isNotQualifiedReverseExtendedReply),
-      FilterData(
-        TweetFilters.RecommendedRepliesToNotFollowedUsers,
-        isRecommendedRepliesToNotFollowedUsers)
+      FiltelonrData(TwelonelontFiltelonrs.NullcastTwelonelonts, isNullcast),
+      FiltelonrData(TwelonelontFiltelonrs.Relonplielons, isRelonply),
+      FiltelonrData(TwelonelontFiltelonrs.Relontwelonelonts, isRelontwelonelont),
+      FiltelonrData(TwelonelontFiltelonrs.TwelonelontsFromNotFollowelondUselonrs, isFromNonFollowelondUselonr),
+      FiltelonrData(TwelonelontFiltelonrs.elonxtelonndelondRelonplielons, iselonxtelonndelondRelonply),
+      FiltelonrData(TwelonelontFiltelonrs.NotQualifielondelonxtelonndelondRelonplielons, isNotQualifielondelonxtelonndelondRelonply),
+      FiltelonrData(TwelonelontFiltelonrs.NotValidelonxpandelondelonxtelonndelondRelonplielons, isNotValidelonxpandelondelonxtelonndelondRelonply),
+      FiltelonrData(
+        TwelonelontFiltelonrs.NotQualifielondRelonvelonrselonelonxtelonndelondRelonplielons,
+        isNotQualifielondRelonvelonrselonelonxtelonndelondRelonply),
+      FiltelonrData(
+        TwelonelontFiltelonrs.ReloncommelonndelondRelonplielonsToNotFollowelondUselonrs,
+        isReloncommelonndelondRelonplielonsToNotFollowelondUselonrs)
     )
 
-    def getApplicableFilters(filters: TweetFilters.ValueSet): Seq[FilterMethod] = {
-      require(allFilters.map(_.kind).toSet == TweetFilters.values)
-      allFilters.filter(data => filters.contains(data.kind)).map(_.method)
+    delonf gelontApplicablelonFiltelonrs(filtelonrs: TwelonelontFiltelonrs.ValuelonSelont): Selonq[FiltelonrMelonthod] = {
+      relonquirelon(allFiltelonrs.map(_.kind).toSelont == TwelonelontFiltelonrs.valuelons)
+      allFiltelonrs.filtelonr(data => filtelonrs.contains(data.kind)).map(_.melonthod)
     }
 
-    private def isNullcast(
-      tweet: HydratedTweet,
-      params: TweetsPostFilterParams,
-      invocationState: MutableState
-    ): Boolean = {
-      if (tweet.isNullcast) {
-        nullcastCounter.incr()
+    privatelon delonf isNullcast(
+      twelonelont: HydratelondTwelonelont,
+      params: TwelonelontsPostFiltelonrParams,
+      invocationStatelon: MutablelonStatelon
+    ): Boolelonan = {
+      if (twelonelont.isNullcast) {
+        nullcastCountelonr.incr()
         log(
-          Level.ERROR,
-          () => s"${params.loggingPrefix}:: Found nullcast tweet: tweet-id: ${tweet.tweetId}"
+          Lelonvelonl.elonRROR,
+          () => s"${params.loggingPrelonfix}:: Found nullcast twelonelont: twelonelont-id: ${twelonelont.twelonelontId}"
         )
-        true
-      } else {
-        false
+        truelon
+      } elonlselon {
+        falselon
       }
     }
 
-    private def isReply(
-      tweet: HydratedTweet,
-      params: TweetsPostFilterParams,
-      invocationState: MutableState
-    ): Boolean = {
-      if (tweet.hasReply) {
-        repliesCounter.incr()
-        log(Level.OFF, () => s"${params.loggingPrefix}:: Removed reply: tweet-id: ${tweet.tweetId}")
-        true
-      } else {
-        false
+    privatelon delonf isRelonply(
+      twelonelont: HydratelondTwelonelont,
+      params: TwelonelontsPostFiltelonrParams,
+      invocationStatelon: MutablelonStatelon
+    ): Boolelonan = {
+      if (twelonelont.hasRelonply) {
+        relonplielonsCountelonr.incr()
+        log(Lelonvelonl.OFF, () => s"${params.loggingPrelonfix}:: Relonmovelond relonply: twelonelont-id: ${twelonelont.twelonelontId}")
+        truelon
+      } elonlselon {
+        falselon
       }
     }
 
-    private def isRetweet(
-      tweet: HydratedTweet,
-      params: TweetsPostFilterParams,
-      invocationState: MutableState
-    ): Boolean = {
-      if (tweet.isRetweet) {
-        retweetsCounter.incr()
+    privatelon delonf isRelontwelonelont(
+      twelonelont: HydratelondTwelonelont,
+      params: TwelonelontsPostFiltelonrParams,
+      invocationStatelon: MutablelonStatelon
+    ): Boolelonan = {
+      if (twelonelont.isRelontwelonelont) {
+        relontwelonelontsCountelonr.incr()
         log(
-          Level.OFF,
-          () => s"${params.loggingPrefix}:: Removed retweet: tweet-id: ${tweet.tweetId}"
+          Lelonvelonl.OFF,
+          () => s"${params.loggingPrelonfix}:: Relonmovelond relontwelonelont: twelonelont-id: ${twelonelont.twelonelontId}"
         )
-        true
-      } else {
-        false
+        truelon
+      } elonlselon {
+        falselon
       }
     }
 
-    private def isFromNonFollowedUser(
-      tweet: HydratedTweet,
-      params: TweetsPostFilterParams,
-      invocationState: MutableState
-    ): Boolean = {
-      if ((tweet.userId != params.userId) && !params.inNetworkUserIds.contains(tweet.userId)) {
-        notFollowedCounter.incr()
+    privatelon delonf isFromNonFollowelondUselonr(
+      twelonelont: HydratelondTwelonelont,
+      params: TwelonelontsPostFiltelonrParams,
+      invocationStatelon: MutablelonStatelon
+    ): Boolelonan = {
+      if ((twelonelont.uselonrId != params.uselonrId) && !params.inNelontworkUselonrIds.contains(twelonelont.uselonrId)) {
+        notFollowelondCountelonr.incr()
         log(
-          Level.ERROR,
+          Lelonvelonl.elonRROR,
           () =>
-            s"${params.loggingPrefix}:: Found tweet from not-followed user: ${tweet.tweetId} from ${tweet.userId}"
+            s"${params.loggingPrelonfix}:: Found twelonelont from not-followelond uselonr: ${twelonelont.twelonelontId} from ${twelonelont.uselonrId}"
         )
-        true
-      } else {
-        false
+        truelon
+      } elonlselon {
+        falselon
       }
     }
 
-    private def isDirectedAtNonFollowedUser(
-      tweet: HydratedTweet,
-      params: TweetsPostFilterParams,
-      invocationState: MutableState
-    ): Boolean = {
-      tweet.directedAtUser.exists { directedAtUserId =>
-        val shouldFilterOut = (tweet.userId != params.userId) && !params.inNetworkUserIds
-          .contains(directedAtUserId)
-        // We do not log here because search is known to not handle this case.
-        if (shouldFilterOut) {
+    privatelon delonf isDirelonctelondAtNonFollowelondUselonr(
+      twelonelont: HydratelondTwelonelont,
+      params: TwelonelontsPostFiltelonrParams,
+      invocationStatelon: MutablelonStatelon
+    ): Boolelonan = {
+      twelonelont.direlonctelondAtUselonr.elonxists { direlonctelondAtUselonrId =>
+        val shouldFiltelonrOut = (twelonelont.uselonrId != params.uselonrId) && !params.inNelontworkUselonrIds
+          .contains(direlonctelondAtUselonrId)
+        // Welon do not log helonrelon beloncauselon selonarch is known to not handlelon this caselon.
+        if (shouldFiltelonrOut) {
           log(
-            Level.OFF,
+            Lelonvelonl.OFF,
             () =>
-              s"${params.loggingPrefix}:: Found tweet: ${tweet.tweetId} directed-at not-followed user: $directedAtUserId"
+              s"${params.loggingPrelonfix}:: Found twelonelont: ${twelonelont.twelonelontId} direlonctelond-at not-followelond uselonr: $direlonctelondAtUselonrId"
           )
-          directedAtNotFollowedCounter.incr()
+          direlonctelondAtNotFollowelondCountelonr.incr()
         }
-        shouldFilterOut
+        shouldFiltelonrOut
       }
     }
 
-    private def isNonReplyDirectedAtNonFollowedUser(
-      tweet: HydratedTweet,
-      params: TweetsPostFilterParams,
-      invocationState: MutableState
-    ): Boolean = {
-      tweet.directedAtUser.exists { directedAtUserId =>
-        val shouldFilterOut = !tweet.hasReply &&
-          (tweet.userId != params.userId) &&
-          !params.inNetworkUserIds.contains(directedAtUserId)
-        // We do not log here because search is known to not handle this case.
-        if (nonReplyDirectedAtNotFollowedObserver(shouldFilterOut)) {
+    privatelon delonf isNonRelonplyDirelonctelondAtNonFollowelondUselonr(
+      twelonelont: HydratelondTwelonelont,
+      params: TwelonelontsPostFiltelonrParams,
+      invocationStatelon: MutablelonStatelon
+    ): Boolelonan = {
+      twelonelont.direlonctelondAtUselonr.elonxists { direlonctelondAtUselonrId =>
+        val shouldFiltelonrOut = !twelonelont.hasRelonply &&
+          (twelonelont.uselonrId != params.uselonrId) &&
+          !params.inNelontworkUselonrIds.contains(direlonctelondAtUselonrId)
+        // Welon do not log helonrelon beloncauselon selonarch is known to not handlelon this caselon.
+        if (nonRelonplyDirelonctelondAtNotFollowelondObselonrvelonr(shouldFiltelonrOut)) {
           log(
-            Level.OFF,
+            Lelonvelonl.OFF,
             () =>
-              s"${params.loggingPrefix}:: Found non-reply tweet: ${tweet.tweetId} directed-at not-followed user: $directedAtUserId"
+              s"${params.loggingPrelonfix}:: Found non-relonply twelonelont: ${twelonelont.twelonelontId} direlonctelond-at not-followelond uselonr: $direlonctelondAtUselonrId"
           )
         }
-        shouldFilterOut
+        shouldFiltelonrOut
       }
     }
 
     /**
-     * Determines whether the given tweet has already been seen.
+     * Delontelonrminelons whelonthelonr thelon givelonn twelonelont has alrelonady belonelonn selonelonn.
      */
-    private def isDuplicateTweet(
-      tweet: HydratedTweet,
-      params: TweetsPostFilterParams,
-      invocationState: MutableState
-    ): Boolean = {
-      val shouldFilterOut = invocationState.isSeen(tweet.tweetId)
-      if (shouldFilterOut) {
-        dupTweetCounter.incr()
-        log(Level.ERROR, () => s"${params.loggingPrefix}:: Duplicate tweet found: ${tweet.tweetId}")
+    privatelon delonf isDuplicatelonTwelonelont(
+      twelonelont: HydratelondTwelonelont,
+      params: TwelonelontsPostFiltelonrParams,
+      invocationStatelon: MutablelonStatelon
+    ): Boolelonan = {
+      val shouldFiltelonrOut = invocationStatelon.isSelonelonn(twelonelont.twelonelontId)
+      if (shouldFiltelonrOut) {
+        dupTwelonelontCountelonr.incr()
+        log(Lelonvelonl.elonRROR, () => s"${params.loggingPrelonfix}:: Duplicatelon twelonelont found: ${twelonelont.twelonelontId}")
       }
-      shouldFilterOut
+      shouldFiltelonrOut
     }
 
     /**
-     * If the given tweet is a retweet, determines whether the source tweet
-     * of that retweet has already been seen.
+     * If thelon givelonn twelonelont is a relontwelonelont, delontelonrminelons whelonthelonr thelon sourcelon twelonelont
+     * of that relontwelonelont has alrelonady belonelonn selonelonn.
      */
-    private def isDuplicateRetweet(
-      tweet: HydratedTweet,
-      params: TweetsPostFilterParams,
-      invocationState: MutableState
-    ): Boolean = {
-      invocationState.incrementIf0(tweet.tweetId)
-      tweet.sourceTweetId.exists { sourceTweetId =>
-        val seenCount = invocationState.incrementThenGetCount(sourceTweetId)
-        val shouldFilterOut = seenCount > params.numRetweetsAllowed
-        if (shouldFilterOut) {
-          // We do not log here because search is known to not handle this case.
-          dupRetweetCounter.incr()
+    privatelon delonf isDuplicatelonRelontwelonelont(
+      twelonelont: HydratelondTwelonelont,
+      params: TwelonelontsPostFiltelonrParams,
+      invocationStatelon: MutablelonStatelon
+    ): Boolelonan = {
+      invocationStatelon.increlonmelonntIf0(twelonelont.twelonelontId)
+      twelonelont.sourcelonTwelonelontId.elonxists { sourcelonTwelonelontId =>
+        val selonelonnCount = invocationStatelon.increlonmelonntThelonnGelontCount(sourcelonTwelonelontId)
+        val shouldFiltelonrOut = selonelonnCount > params.numRelontwelonelontsAllowelond
+        if (shouldFiltelonrOut) {
+          // Welon do not log helonrelon beloncauselon selonarch is known to not handlelon this caselon.
+          dupRelontwelonelontCountelonr.incr()
           log(
-            Level.OFF,
+            Lelonvelonl.OFF,
             () =>
-              s"${params.loggingPrefix}:: Found dup retweet: ${tweet.tweetId} (source tweet: $sourceTweetId), count: $seenCount"
+              s"${params.loggingPrelonfix}:: Found dup relontwelonelont: ${twelonelont.twelonelontId} (sourcelon twelonelont: $sourcelonTwelonelontId), count: $selonelonnCount"
           )
         }
-        shouldFilterOut
+        shouldFiltelonrOut
       }
     }
 
-    private def isExtendedReply(
-      tweet: HydratedTweet,
-      params: TweetsPostFilterParams,
-      invocationState: MutableState
-    ): Boolean = {
-      val shouldFilterOut = ExtendedRepliesFilter.isExtendedReply(
-        tweet,
-        params.followedUserIds
+    privatelon delonf iselonxtelonndelondRelonply(
+      twelonelont: HydratelondTwelonelont,
+      params: TwelonelontsPostFiltelonrParams,
+      invocationStatelon: MutablelonStatelon
+    ): Boolelonan = {
+      val shouldFiltelonrOut = elonxtelonndelondRelonplielonsFiltelonr.iselonxtelonndelondRelonply(
+        twelonelont,
+        params.followelondUselonrIds
       )
-      if (shouldFilterOut) {
-        extendedRepliesCounter.incr()
+      if (shouldFiltelonrOut) {
+        elonxtelonndelondRelonplielonsCountelonr.incr()
         log(
-          Level.DEBUG,
-          () => s"${params.loggingPrefix}:: extended reply to be filtered: ${tweet.tweetId}"
+          Lelonvelonl.DelonBUG,
+          () => s"${params.loggingPrelonfix}:: elonxtelonndelond relonply to belon filtelonrelond: ${twelonelont.twelonelontId}"
         )
       }
-      shouldFilterOut
+      shouldFiltelonrOut
     }
 
-    private def isNotQualifiedExtendedReply(
-      tweet: HydratedTweet,
-      params: TweetsPostFilterParams,
-      invocationState: MutableState
-    ): Boolean = {
-      val shouldFilterOut = ExtendedRepliesFilter.isNotQualifiedExtendedReply(
-        tweet,
-        params.userId,
-        params.followedUserIds,
-        params.mutedUserIds,
-        params.sourceTweetsById
+    privatelon delonf isNotQualifielondelonxtelonndelondRelonply(
+      twelonelont: HydratelondTwelonelont,
+      params: TwelonelontsPostFiltelonrParams,
+      invocationStatelon: MutablelonStatelon
+    ): Boolelonan = {
+      val shouldFiltelonrOut = elonxtelonndelondRelonplielonsFiltelonr.isNotQualifielondelonxtelonndelondRelonply(
+        twelonelont,
+        params.uselonrId,
+        params.followelondUselonrIds,
+        params.mutelondUselonrIds,
+        params.sourcelonTwelonelontsById
       )
-      if (notQualifiedExtendedRepliesObserver(shouldFilterOut)) {
+      if (notQualifielondelonxtelonndelondRelonplielonsObselonrvelonr(shouldFiltelonrOut)) {
         log(
-          Level.DEBUG,
+          Lelonvelonl.DelonBUG,
           () =>
-            s"${params.loggingPrefix}:: non qualified extended reply to be filtered: ${tweet.tweetId}"
+            s"${params.loggingPrelonfix}:: non qualifielond elonxtelonndelond relonply to belon filtelonrelond: ${twelonelont.twelonelontId}"
         )
       }
-      shouldFilterOut
+      shouldFiltelonrOut
     }
 
-    private def isNotValidExpandedExtendedReply(
-      tweet: HydratedTweet,
-      params: TweetsPostFilterParams,
-      invocationState: MutableState
-    ): Boolean = {
-      val shouldFilterOut = ExtendedRepliesFilter.isNotValidExpandedExtendedReply(
-        tweet,
-        params.userId,
-        params.followedUserIds,
-        params.mutedUserIds,
-        params.sourceTweetsById
+    privatelon delonf isNotValidelonxpandelondelonxtelonndelondRelonply(
+      twelonelont: HydratelondTwelonelont,
+      params: TwelonelontsPostFiltelonrParams,
+      invocationStatelon: MutablelonStatelon
+    ): Boolelonan = {
+      val shouldFiltelonrOut = elonxtelonndelondRelonplielonsFiltelonr.isNotValidelonxpandelondelonxtelonndelondRelonply(
+        twelonelont,
+        params.uselonrId,
+        params.followelondUselonrIds,
+        params.mutelondUselonrIds,
+        params.sourcelonTwelonelontsById
       )
-      if (notValidExpandedExtendedRepliesObserver(shouldFilterOut)) {
+      if (notValidelonxpandelondelonxtelonndelondRelonplielonsObselonrvelonr(shouldFiltelonrOut)) {
         log(
-          Level.DEBUG,
+          Lelonvelonl.DelonBUG,
           () =>
-            s"${params.loggingPrefix}:: non qualified extended reply to be filtered: ${tweet.tweetId}"
+            s"${params.loggingPrelonfix}:: non qualifielond elonxtelonndelond relonply to belon filtelonrelond: ${twelonelont.twelonelontId}"
         )
       }
-      shouldFilterOut
+      shouldFiltelonrOut
     }
 
-    private def isRecommendedRepliesToNotFollowedUsers(
-      tweet: HydratedTweet,
-      params: TweetsPostFilterParams,
-      invocationState: MutableState
-    ): Boolean = {
-      val shouldFilterOut = RecommendedRepliesFilter.isRecommendedReplyToNotFollowedUser(
-        tweet,
-        params.userId,
-        params.followedUserIds,
-        params.mutedUserIds
+    privatelon delonf isReloncommelonndelondRelonplielonsToNotFollowelondUselonrs(
+      twelonelont: HydratelondTwelonelont,
+      params: TwelonelontsPostFiltelonrParams,
+      invocationStatelon: MutablelonStatelon
+    ): Boolelonan = {
+      val shouldFiltelonrOut = ReloncommelonndelondRelonplielonsFiltelonr.isReloncommelonndelondRelonplyToNotFollowelondUselonr(
+        twelonelont,
+        params.uselonrId,
+        params.followelondUselonrIds,
+        params.mutelondUselonrIds
       )
-      if (recommendedRepliesToNotFollowedUsersObserver(shouldFilterOut)) {
+      if (reloncommelonndelondRelonplielonsToNotFollowelondUselonrsObselonrvelonr(shouldFiltelonrOut)) {
         log(
-          Level.DEBUG,
+          Lelonvelonl.DelonBUG,
           () =>
-            s"${params.loggingPrefix}:: non qualified recommended reply to be filtered: ${tweet.tweetId}"
+            s"${params.loggingPrelonfix}:: non qualifielond reloncommelonndelond relonply to belon filtelonrelond: ${twelonelont.twelonelontId}"
         )
       }
-      shouldFilterOut
+      shouldFiltelonrOut
     }
 
-    //For now this filter is meant to be used only with reply tweets from the inReplyToUserId query
-    private def isNotQualifiedReverseExtendedReply(
-      tweet: HydratedTweet,
-      params: TweetsPostFilterParams,
-      invocationState: MutableState
-    ): Boolean = {
-      val shouldFilterOut = !ReverseExtendedRepliesFilter.isQualifiedReverseExtendedReply(
-        tweet,
-        params.userId,
-        params.followedUserIds,
-        params.mutedUserIds,
-        params.sourceTweetsById
+    //For now this filtelonr is melonant to belon uselond only with relonply twelonelonts from thelon inRelonplyToUselonrId quelonry
+    privatelon delonf isNotQualifielondRelonvelonrselonelonxtelonndelondRelonply(
+      twelonelont: HydratelondTwelonelont,
+      params: TwelonelontsPostFiltelonrParams,
+      invocationStatelon: MutablelonStatelon
+    ): Boolelonan = {
+      val shouldFiltelonrOut = !RelonvelonrselonelonxtelonndelondRelonplielonsFiltelonr.isQualifielondRelonvelonrselonelonxtelonndelondRelonply(
+        twelonelont,
+        params.uselonrId,
+        params.followelondUselonrIds,
+        params.mutelondUselonrIds,
+        params.sourcelonTwelonelontsById
       )
 
-      if (shouldFilterOut) {
-        notQualifiedReverseExtendedRepliesCounter.incr()
+      if (shouldFiltelonrOut) {
+        notQualifielondRelonvelonrselonelonxtelonndelondRelonplielonsCountelonr.incr()
         log(
-          Level.DEBUG,
+          Lelonvelonl.DelonBUG,
           () =>
-            s"${params.loggingPrefix}:: non qualified reverse extended reply to be filtered: ${tweet.tweetId}"
+            s"${params.loggingPrelonfix}:: non qualifielond relonvelonrselon elonxtelonndelond relonply to belon filtelonrelond: ${twelonelont.twelonelontId}"
         )
       }
-      shouldFilterOut
+      shouldFiltelonrOut
     }
 
-    private def log(level: Level, message: () => String): Unit = {
-      if (alwaysLog || ((level != Level.OFF) && logger.isLoggable(level))) {
-        val updatedLevel = if (alwaysLog) Level.INFO else level
-        logger.log(updatedLevel, message())
+    privatelon delonf log(lelonvelonl: Lelonvelonl, melonssagelon: () => String): Unit = {
+      if (alwaysLog || ((lelonvelonl != Lelonvelonl.OFF) && loggelonr.isLoggablelon(lelonvelonl))) {
+        val updatelondLelonvelonl = if (alwaysLog) Lelonvelonl.INFO elonlselon lelonvelonl
+        loggelonr.log(updatelondLelonvelonl, melonssagelon())
       }
     }
   }
 }
 
-class TweetsPostFilter(filters: TweetFilters.ValueSet, logger: Logger, statsReceiver: StatsReceiver)
-    extends TweetsPostFilterBase(filters, logger, statsReceiver) {
+class TwelonelontsPostFiltelonr(filtelonrs: TwelonelontFiltelonrs.ValuelonSelont, loggelonr: Loggelonr, statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds TwelonelontsPostFiltelonrBaselon(filtelonrs, loggelonr, statsReloncelonivelonr) {
 
-  def apply(
-    userId: UserId,
-    followedUserIds: Seq[UserId],
-    inNetworkUserIds: Seq[UserId],
-    mutedUserIds: Set[UserId],
-    tweets: Seq[HydratedTweet],
-    numRetweetsAllowed: Int = 1,
-    sourceTweets: Seq[HydratedTweet] = Nil
-  ): Seq[HydratedTweet] = {
-    val loggingPrefix = s"userId: $userId"
-    val params = TweetsPostFilterParams(
-      userId = userId,
-      followedUserIds = followedUserIds,
-      inNetworkUserIds = inNetworkUserIds,
-      mutedUserIds = mutedUserIds,
-      numRetweetsAllowed = numRetweetsAllowed,
-      loggingPrefix = loggingPrefix,
-      sourceTweets = sourceTweets
+  delonf apply(
+    uselonrId: UselonrId,
+    followelondUselonrIds: Selonq[UselonrId],
+    inNelontworkUselonrIds: Selonq[UselonrId],
+    mutelondUselonrIds: Selont[UselonrId],
+    twelonelonts: Selonq[HydratelondTwelonelont],
+    numRelontwelonelontsAllowelond: Int = 1,
+    sourcelonTwelonelonts: Selonq[HydratelondTwelonelont] = Nil
+  ): Selonq[HydratelondTwelonelont] = {
+    val loggingPrelonfix = s"uselonrId: $uselonrId"
+    val params = TwelonelontsPostFiltelonrParams(
+      uselonrId = uselonrId,
+      followelondUselonrIds = followelondUselonrIds,
+      inNelontworkUselonrIds = inNelontworkUselonrIds,
+      mutelondUselonrIds = mutelondUselonrIds,
+      numRelontwelonelontsAllowelond = numRelontwelonelontsAllowelond,
+      loggingPrelonfix = loggingPrelonfix,
+      sourcelonTwelonelonts = sourcelonTwelonelonts
     )
-    super.filter(tweets, params)
+    supelonr.filtelonr(twelonelonts, params)
   }
 }
 
-class TweetsPostFilterUserIndependent(
-  filters: TweetFilters.ValueSet,
-  logger: Logger,
-  statsReceiver: StatsReceiver)
-    extends TweetsPostFilterBase(filters, logger, statsReceiver) {
+class TwelonelontsPostFiltelonrUselonrIndelonpelonndelonnt(
+  filtelonrs: TwelonelontFiltelonrs.ValuelonSelont,
+  loggelonr: Loggelonr,
+  statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds TwelonelontsPostFiltelonrBaselon(filtelonrs, loggelonr, statsReloncelonivelonr) {
 
-  require(
-    (filters -- TweetFilters.UserIndependent).isEmpty,
-    "Only user independent filters are supported"
+  relonquirelon(
+    (filtelonrs -- TwelonelontFiltelonrs.UselonrIndelonpelonndelonnt).iselonmpty,
+    "Only uselonr indelonpelonndelonnt filtelonrs arelon supportelond"
   )
 
-  def apply(tweets: Seq[HydratedTweet], numRetweetsAllowed: Int = 1): Seq[HydratedTweet] = {
-    val params = TweetsPostFilterParams(
-      userId = 0L,
-      followedUserIds = Seq.empty,
-      inNetworkUserIds = Seq.empty,
-      mutedUserIds = Set.empty,
-      numRetweetsAllowed
+  delonf apply(twelonelonts: Selonq[HydratelondTwelonelont], numRelontwelonelontsAllowelond: Int = 1): Selonq[HydratelondTwelonelont] = {
+    val params = TwelonelontsPostFiltelonrParams(
+      uselonrId = 0L,
+      followelondUselonrIds = Selonq.elonmpty,
+      inNelontworkUselonrIds = Selonq.elonmpty,
+      mutelondUselonrIds = Selont.elonmpty,
+      numRelontwelonelontsAllowelond
     )
-    super.filter(tweets, params)
+    supelonr.filtelonr(twelonelonts, params)
   }
 }

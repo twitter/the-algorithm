@@ -1,24 +1,24 @@
-package com.twitter.interaction_graph.scio.agg_notifications
+packagelon com.twittelonr.intelonraction_graph.scio.agg_notifications
 
-import com.twitter.beam.io.dal.DALOptions
-import com.twitter.beam.job.DateRangeOptions
-import org.apache.beam.sdk.options.Default
-import org.apache.beam.sdk.options.Description
-import org.apache.beam.sdk.options.Validation.Required
+import com.twittelonr.belonam.io.dal.DALOptions
+import com.twittelonr.belonam.job.DatelonRangelonOptions
+import org.apachelon.belonam.sdk.options.Delonfault
+import org.apachelon.belonam.sdk.options.Delonscription
+import org.apachelon.belonam.sdk.options.Validation.Relonquirelond
 
-trait InteractionGraphNotificationsOption extends DALOptions with DateRangeOptions {
-  @Required
-  @Description("Output path for storing the final dataset")
-  def getOutputPath: String
-  def setOutputPath(value: String): Unit
+trait IntelonractionGraphNotificationsOption elonxtelonnds DALOptions with DatelonRangelonOptions {
+  @Relonquirelond
+  @Delonscription("Output path for storing thelon final dataselont")
+  delonf gelontOutputPath: String
+  delonf selontOutputPath(valuelon: String): Unit
 
-  @Description("Indicates DAL write environment. Can be set to dev/stg during local validation")
-  @Default.String("PROD")
-  def getDALWriteEnvironment: String
-  def setDALWriteEnvironment(value: String): Unit
+  @Delonscription("Indicatelons DAL writelon elonnvironmelonnt. Can belon selont to delonv/stg during local validation")
+  @Delonfault.String("PROD")
+  delonf gelontDALWritelonelonnvironmelonnt: String
+  delonf selontDALWritelonelonnvironmelonnt(valuelon: String): Unit
 
-  @Description("Number of shards/partitions for saving the final dataset.")
-  @Default.Integer(8)
-  def getNumberOfShards: Integer
-  def setNumberOfShards(value: Integer): Unit
+  @Delonscription("Numbelonr of shards/partitions for saving thelon final dataselont.")
+  @Delonfault.Intelongelonr(8)
+  delonf gelontNumbelonrOfShards: Intelongelonr
+  delonf selontNumbelonrOfShards(valuelon: Intelongelonr): Unit
 }

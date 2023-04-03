@@ -1,33 +1,33 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.moment
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.momelonnt
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.EntryNamespace
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackActionInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichText
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.elonntryNamelonspacelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.Timelonlinelonelonntry
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.TimelonlinelonItelonm
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.ClielonntelonvelonntInfo
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.FelonelondbackActionInfo
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.richtelonxt.RichTelonxt
 
-object MomentAnnotationItem {
-  val MomentAnnotationEntryNamespace = EntryNamespace("momentannotation")
+objelonct MomelonntAnnotationItelonm {
+  val MomelonntAnnotationelonntryNamelonspacelon = elonntryNamelonspacelon("momelonntannotation")
 }
 
 /**
- * Represents a MomentAnnotation URT item.
- * This is primarily used by Trends Searth Result Page for displaying Trends Title or Description
- * URT API Reference: https://docbird.twitter.biz/unified_rich_timelines_urt/gen/com/twitter/timelines/render/thriftscala/MomentAnnotation.html
+ * Relonprelonselonnts a MomelonntAnnotation URT itelonm.
+ * This is primarily uselond by Trelonnds Selonarth Relonsult Pagelon for displaying Trelonnds Titlelon or Delonscription
+ * URT API Relonfelonrelonncelon: https://docbird.twittelonr.biz/unifielond_rich_timelonlinelons_urt/gelonn/com/twittelonr/timelonlinelons/relonndelonr/thriftscala/MomelonntAnnotation.html
  */
-case class MomentAnnotationItem(
-  override val id: Long,
-  override val sortIndex: Option[Long],
-  override val clientEventInfo: Option[ClientEventInfo],
-  override val feedbackActionInfo: Option[FeedbackActionInfo],
-  override val isPinned: Option[Boolean],
-  text: Option[RichText],
-  header: Option[RichText],
-) extends TimelineItem {
+caselon class MomelonntAnnotationItelonm(
+  ovelonrridelon val id: Long,
+  ovelonrridelon val sortIndelonx: Option[Long],
+  ovelonrridelon val clielonntelonvelonntInfo: Option[ClielonntelonvelonntInfo],
+  ovelonrridelon val felonelondbackActionInfo: Option[FelonelondbackActionInfo],
+  ovelonrridelon val isPinnelond: Option[Boolelonan],
+  telonxt: Option[RichTelonxt],
+  helonadelonr: Option[RichTelonxt],
+) elonxtelonnds TimelonlinelonItelonm {
 
-  override val entryNamespace: EntryNamespace =
-    MomentAnnotationItem.MomentAnnotationEntryNamespace
+  ovelonrridelon val elonntryNamelonspacelon: elonntryNamelonspacelon =
+    MomelonntAnnotationItelonm.MomelonntAnnotationelonntryNamelonspacelon
 
-  override def withSortIndex(sortIndex: Long): TimelineEntry = copy(sortIndex = Some(sortIndex))
+  ovelonrridelon delonf withSortIndelonx(sortIndelonx: Long): Timelonlinelonelonntry = copy(sortIndelonx = Somelon(sortIndelonx))
 }

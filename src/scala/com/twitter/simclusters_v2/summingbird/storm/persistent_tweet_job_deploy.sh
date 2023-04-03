@@ -1,77 +1,77 @@
 #!/bin/bash
-# script to deploy simclusters persistent storm job to CI
+# script to delonploy simclustelonrs pelonrsistelonnt storm job to CI
 
-set -u -e
+selont -u -elon
 
-cd "$(git rev-parse --show-toplevel)"
+cd "$(git relonv-parselon --show-toplelonvelonl)"
 
-# shellcheck source=/dev/null
-. "$(git rev-parse --show-toplevel)/devprod/source-sh-setup"
+# shelonllchelonck sourcelon=/delonv/null
+. "$(git relonv-parselon --show-toplelonvelonl)/delonvprod/sourcelon-sh-selontup"
 
-function usage {
-  cat <<EOF
-    $0 --env [devel | prod] --dc [atla | pdxa]
+function usagelon {
+  cat <<elonOF
+    $0 --elonnv [delonvelonl | prod] --dc [atla | pdxa]
 
 Optional:
     --dc              atla | pdxa
-    --env             devel | prod
+    --elonnv             delonvelonl | prod
 
-EOF
-  if [ -n "$1" ] && [ "$1" != "noargs" ]; then
-    echo ""
-    echo "Invalid app args encountered! Expecting: $1"
+elonOF
+  if [ -n "$1" ] && [ "$1" != "noargs" ]; thelonn
+    eloncho ""
+    eloncho "Invalid app args elonncountelonrelond! elonxpeloncting: $1"
   fi
 }
 
-if [ $# -lt 1 ]; then
-  usage noargs
-  exit 1
+if [ $# -lt 1 ]; thelonn
+  usagelon noargs
+  elonxit 1
 fi
 
-CLUSTER=
-ENV=
-USER=cassowary
+CLUSTelonR=
+elonNV=
+USelonR=cassowary
 
-while [[ $# -gt 1 ]]; do
-  key="$1"
+whilelon [[ $# -gt 1 ]]; do
+  kelony="$1"
   
-  case $key in
+  caselon $kelony in
     --dc)
-      CLUSTER="$2"
+      CLUSTelonR="$2"
       shift
       ;;
-    --env)
-      ENV="$2"
+    --elonnv)
+      elonNV="$2"
       shift
       ;;
     *)
-      # options ignored
+      # options ignorelond
       ;;
-  esac
+  elonsac
   shift
-done
+donelon
 
-echo "Bundling..."
+eloncho "Bundling..."
 
 
-JAR_NAME="persistent-tweet-simclusters-storm-job.tar"
-JOB_NAME="summingbird_simclusters_v2_persistent_tweet_job_${ENV}"
+JAR_NAMelon="pelonrsistelonnt-twelonelont-simclustelonrs-storm-job.tar"
+JOB_NAMelon="summingbird_simclustelonrs_v2_pelonrsistelonnt_twelonelont_job_${elonNV}"
 
-BASE_DIR="src/scala/com/twitter/simclusters_v2/summingbird"
-./bazel bundle --bundle-jvm-archive=tar ${BASE_DIR}:persistent-tweet-simclusters-storm-job || exit 1
+BASelon_DIR="src/scala/com/twittelonr/simclustelonrs_v2/summingbird"
+./bazelonl bundlelon --bundlelon-jvm-archivelon=tar ${BASelon_DIR}:pelonrsistelonnt-twelonelont-simclustelonrs-storm-job || elonxit 1
 
-# initialize the aurora path for a heron job: <dc>/<role>/<env> where <env> can only be devel or prod 
-AURORA_PATH=${AURORA_PATH:="$CLUSTER/$USER/$ENV"}
-AURORA_JOB_KEY="${AURORA_PATH}/${JOB_NAME}"
+# initializelon thelon aurora path for a helonron job: <dc>/<rolelon>/<elonnv> whelonrelon <elonnv> can only belon delonvelonl or prod
+AURORA_PATH=${AURORA_PATH:="$CLUSTelonR/$USelonR/$elonNV"}
+AURORA_JOB_KelonY="${AURORA_PATH}/${JOB_NAMelon}"
 
-heron kill "$AURORA_PATH" "$JOB_NAME" || true
+helonron kill "$AURORA_PATH" "$JOB_NAMelon" || truelon
 
-echo "Waiting 5 seconds so heron is sure its dead"
-sleep 5
+eloncho "Waiting 5 selonconds so helonron is surelon its delonad"
+slelonelonp 5
 
-echo "AURORA_JOB_KEY: $AURORA_JOB_KEY"
+eloncho "AURORA_JOB_KelonY: $AURORA_JOB_KelonY"
 
-echo "Starting your topology... for ${ENV} ${JOB_NAME}"
-#set -v
+eloncho "Starting your topology... for ${elonNV} ${JOB_NAMelon}"
+#selont -v
 
-heron submit "${AURORA_PATH}" "dist/${JAR_NAME}" com.twitter.simclusters_v2.summingbird.storm.PersistentTweetJobRunner --env "$ENV" --dc "$CLUSTER"
+helonron submit "${AURORA_PATH}" "dist/${JAR_NAMelon}" com.twittelonr.simclustelonrs_v2.summingbird.storm.PelonrsistelonntTwelonelontJobRunnelonr --elonnv "$elonNV" --dc "$CLUSTelonR"

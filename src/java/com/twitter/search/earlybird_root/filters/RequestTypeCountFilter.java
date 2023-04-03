@@ -1,105 +1,105 @@
-package com.twitter.search.earlybird_root.filters;
+packagelon com.twittelonr.selonarch.elonarlybird_root.filtelonrs;
 
-import com.google.common.base.Preconditions;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
-import com.google.common.collect.ImmutableMap;
+import com.googlelon.common.baselon.Prelonconditions;
+import com.googlelon.common.cachelon.CachelonBuildelonr;
+import com.googlelon.common.cachelon.CachelonLoadelonr;
+import com.googlelon.common.cachelon.LoadingCachelon;
+import com.googlelon.common.collelonct.ImmutablelonMap;
 
-import com.twitter.common.util.Clock;
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.search.common.clientstats.RequestCounters;
-import com.twitter.search.common.clientstats.RequestCountersEventListener;
-import com.twitter.search.common.util.FinagleUtil;
-import com.twitter.search.earlybird.common.ClientIdUtil;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestType;
-import com.twitter.util.Future;
+import com.twittelonr.common.util.Clock;
+import com.twittelonr.finaglelon.Selonrvicelon;
+import com.twittelonr.finaglelon.SimplelonFiltelonr;
+import com.twittelonr.selonarch.common.clielonntstats.RelonquelonstCountelonrs;
+import com.twittelonr.selonarch.common.clielonntstats.RelonquelonstCountelonrselonvelonntListelonnelonr;
+import com.twittelonr.selonarch.common.util.FinaglelonUtil;
+import com.twittelonr.selonarch.elonarlybird.common.ClielonntIdUtil;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
+import com.twittelonr.selonarch.elonarlybird_root.common.elonarlybirdRelonquelonstContelonxt;
+import com.twittelonr.selonarch.elonarlybird_root.common.elonarlybirdRelonquelonstTypelon;
+import com.twittelonr.util.Futurelon;
 
-public class RequestTypeCountFilter
-    extends SimpleFilter<EarlybirdRequestContext, EarlybirdResponse> {
-  private final ImmutableMap<EarlybirdRequestType, RequestCounters> typeCounters;
-  private final RequestCounters allRequestTypesCounter;
-  private final ImmutableMap<EarlybirdRequestType, LoadingCache<String, RequestCounters>>
-    perTypePerClientCounters;
+public class RelonquelonstTypelonCountFiltelonr
+    elonxtelonnds SimplelonFiltelonr<elonarlybirdRelonquelonstContelonxt, elonarlybirdRelonsponselon> {
+  privatelon final ImmutablelonMap<elonarlybirdRelonquelonstTypelon, RelonquelonstCountelonrs> typelonCountelonrs;
+  privatelon final RelonquelonstCountelonrs allRelonquelonstTypelonsCountelonr;
+  privatelon final ImmutablelonMap<elonarlybirdRelonquelonstTypelon, LoadingCachelon<String, RelonquelonstCountelonrs>>
+    pelonrTypelonPelonrClielonntCountelonrs;
 
   /**
-   * Constructs the filter.
+   * Constructs thelon filtelonr.
    */
-  public RequestTypeCountFilter(final String statSuffix) {
-    ImmutableMap.Builder<EarlybirdRequestType, RequestCounters> perTypeBuilder =
-      ImmutableMap.builder();
-    for (EarlybirdRequestType type : EarlybirdRequestType.values()) {
-      perTypeBuilder.put(type, new RequestCounters(
-          "request_type_count_filter_" + type.getNormalizedName() + "_" + statSuffix));
+  public RelonquelonstTypelonCountFiltelonr(final String statSuffix) {
+    ImmutablelonMap.Buildelonr<elonarlybirdRelonquelonstTypelon, RelonquelonstCountelonrs> pelonrTypelonBuildelonr =
+      ImmutablelonMap.buildelonr();
+    for (elonarlybirdRelonquelonstTypelon typelon : elonarlybirdRelonquelonstTypelon.valuelons()) {
+      pelonrTypelonBuildelonr.put(typelon, nelonw RelonquelonstCountelonrs(
+          "relonquelonst_typelon_count_filtelonr_" + typelon.gelontNormalizelondNamelon() + "_" + statSuffix));
     }
-    typeCounters = perTypeBuilder.build();
+    typelonCountelonrs = pelonrTypelonBuildelonr.build();
 
-    allRequestTypesCounter =
-        new RequestCounters("request_type_count_filter_all_" + statSuffix, true);
+    allRelonquelonstTypelonsCountelonr =
+        nelonw RelonquelonstCountelonrs("relonquelonst_typelon_count_filtelonr_all_" + statSuffix, truelon);
 
-    ImmutableMap.Builder<EarlybirdRequestType, LoadingCache<String, RequestCounters>>
-      perTypePerClientBuilder = ImmutableMap.builder();
+    ImmutablelonMap.Buildelonr<elonarlybirdRelonquelonstTypelon, LoadingCachelon<String, RelonquelonstCountelonrs>>
+      pelonrTypelonPelonrClielonntBuildelonr = ImmutablelonMap.buildelonr();
 
-    // No point in setting any kind of expiration policy for the cache, since the stats will
-    // continue to be exported, so the objects will not be GCed anyway.
-    CacheBuilder<Object, Object> cacheBuilder = CacheBuilder.newBuilder();
-    for (final EarlybirdRequestType requestType : EarlybirdRequestType.values()) {
-      CacheLoader<String, RequestCounters> cacheLoader =
-        new CacheLoader<String, RequestCounters>() {
-          @Override
-          public RequestCounters load(String clientId) {
-            return new RequestCounters("request_type_count_filter_for_" + clientId + "_"
-                                       + requestType.getNormalizedName() + "_" + statSuffix);
+    // No point in selontting any kind of elonxpiration policy for thelon cachelon, sincelon thelon stats will
+    // continuelon to belon elonxportelond, so thelon objeloncts will not belon GCelond anyway.
+    CachelonBuildelonr<Objelonct, Objelonct> cachelonBuildelonr = CachelonBuildelonr.nelonwBuildelonr();
+    for (final elonarlybirdRelonquelonstTypelon relonquelonstTypelon : elonarlybirdRelonquelonstTypelon.valuelons()) {
+      CachelonLoadelonr<String, RelonquelonstCountelonrs> cachelonLoadelonr =
+        nelonw CachelonLoadelonr<String, RelonquelonstCountelonrs>() {
+          @Ovelonrridelon
+          public RelonquelonstCountelonrs load(String clielonntId) {
+            relonturn nelonw RelonquelonstCountelonrs("relonquelonst_typelon_count_filtelonr_for_" + clielonntId + "_"
+                                       + relonquelonstTypelon.gelontNormalizelondNamelon() + "_" + statSuffix);
           }
         };
-      perTypePerClientBuilder.put(requestType, cacheBuilder.build(cacheLoader));
+      pelonrTypelonPelonrClielonntBuildelonr.put(relonquelonstTypelon, cachelonBuildelonr.build(cachelonLoadelonr));
     }
-    perTypePerClientCounters = perTypePerClientBuilder.build();
+    pelonrTypelonPelonrClielonntCountelonrs = pelonrTypelonPelonrClielonntBuildelonr.build();
   }
 
-  @Override
-  public Future<EarlybirdResponse> apply(
-      EarlybirdRequestContext requestContext,
-      Service<EarlybirdRequestContext, EarlybirdResponse> service) {
-    EarlybirdRequestType requestType = requestContext.getEarlybirdRequestType();
-    RequestCounters requestCounters = typeCounters.get(requestType);
-    Preconditions.checkNotNull(requestCounters);
+  @Ovelonrridelon
+  public Futurelon<elonarlybirdRelonsponselon> apply(
+      elonarlybirdRelonquelonstContelonxt relonquelonstContelonxt,
+      Selonrvicelon<elonarlybirdRelonquelonstContelonxt, elonarlybirdRelonsponselon> selonrvicelon) {
+    elonarlybirdRelonquelonstTypelon relonquelonstTypelon = relonquelonstContelonxt.gelontelonarlybirdRelonquelonstTypelon();
+    RelonquelonstCountelonrs relonquelonstCountelonrs = typelonCountelonrs.gelont(relonquelonstTypelon);
+    Prelonconditions.chelonckNotNull(relonquelonstCountelonrs);
 
-    // Update the per-type and "all" counters.
-    RequestCountersEventListener<EarlybirdResponse> requestCountersEventListener =
-        new RequestCountersEventListener<>(
-            requestCounters, Clock.SYSTEM_CLOCK, EarlybirdSuccessfulResponseHandler.INSTANCE);
-    RequestCountersEventListener<EarlybirdResponse> allRequestTypesEventListener =
-        new RequestCountersEventListener<>(
-            allRequestTypesCounter, Clock.SYSTEM_CLOCK,
-            EarlybirdSuccessfulResponseHandler.INSTANCE);
+    // Updatelon thelon pelonr-typelon and "all" countelonrs.
+    RelonquelonstCountelonrselonvelonntListelonnelonr<elonarlybirdRelonsponselon> relonquelonstCountelonrselonvelonntListelonnelonr =
+        nelonw RelonquelonstCountelonrselonvelonntListelonnelonr<>(
+            relonquelonstCountelonrs, Clock.SYSTelonM_CLOCK, elonarlybirdSuccelonssfulRelonsponselonHandlelonr.INSTANCelon);
+    RelonquelonstCountelonrselonvelonntListelonnelonr<elonarlybirdRelonsponselon> allRelonquelonstTypelonselonvelonntListelonnelonr =
+        nelonw RelonquelonstCountelonrselonvelonntListelonnelonr<>(
+            allRelonquelonstTypelonsCountelonr, Clock.SYSTelonM_CLOCK,
+            elonarlybirdSuccelonssfulRelonsponselonHandlelonr.INSTANCelon);
 
-    RequestCountersEventListener<EarlybirdResponse> perTypePerClientEventListener =
-      updatePerTypePerClientCountersListener(requestContext);
+    RelonquelonstCountelonrselonvelonntListelonnelonr<elonarlybirdRelonsponselon> pelonrTypelonPelonrClielonntelonvelonntListelonnelonr =
+      updatelonPelonrTypelonPelonrClielonntCountelonrsListelonnelonr(relonquelonstContelonxt);
 
-    return service.apply(requestContext)
-      .addEventListener(requestCountersEventListener)
-      .addEventListener(allRequestTypesEventListener)
-      .addEventListener(perTypePerClientEventListener);
+    relonturn selonrvicelon.apply(relonquelonstContelonxt)
+      .addelonvelonntListelonnelonr(relonquelonstCountelonrselonvelonntListelonnelonr)
+      .addelonvelonntListelonnelonr(allRelonquelonstTypelonselonvelonntListelonnelonr)
+      .addelonvelonntListelonnelonr(pelonrTypelonPelonrClielonntelonvelonntListelonnelonr);
   }
 
-  private RequestCountersEventListener<EarlybirdResponse> updatePerTypePerClientCountersListener(
-      EarlybirdRequestContext earlybirdRequestContext) {
-    EarlybirdRequestType requestType = earlybirdRequestContext.getEarlybirdRequestType();
-    LoadingCache<String, RequestCounters> perClientCounters =
-      perTypePerClientCounters.get(requestType);
-    Preconditions.checkNotNull(perClientCounters);
+  privatelon RelonquelonstCountelonrselonvelonntListelonnelonr<elonarlybirdRelonsponselon> updatelonPelonrTypelonPelonrClielonntCountelonrsListelonnelonr(
+      elonarlybirdRelonquelonstContelonxt elonarlybirdRelonquelonstContelonxt) {
+    elonarlybirdRelonquelonstTypelon relonquelonstTypelon = elonarlybirdRelonquelonstContelonxt.gelontelonarlybirdRelonquelonstTypelon();
+    LoadingCachelon<String, RelonquelonstCountelonrs> pelonrClielonntCountelonrs =
+      pelonrTypelonPelonrClielonntCountelonrs.gelont(relonquelonstTypelon);
+    Prelonconditions.chelonckNotNull(pelonrClielonntCountelonrs);
 
-    String clientId = ClientIdUtil.formatFinagleClientIdAndClientId(
-        FinagleUtil.getFinagleClientName(),
-        ClientIdUtil.getClientIdFromRequest(earlybirdRequestContext.getRequest()));
-    RequestCounters clientCounters = perClientCounters.getUnchecked(clientId);
-    Preconditions.checkNotNull(clientCounters);
+    String clielonntId = ClielonntIdUtil.formatFinaglelonClielonntIdAndClielonntId(
+        FinaglelonUtil.gelontFinaglelonClielonntNamelon(),
+        ClielonntIdUtil.gelontClielonntIdFromRelonquelonst(elonarlybirdRelonquelonstContelonxt.gelontRelonquelonst()));
+    RelonquelonstCountelonrs clielonntCountelonrs = pelonrClielonntCountelonrs.gelontUnchelonckelond(clielonntId);
+    Prelonconditions.chelonckNotNull(clielonntCountelonrs);
 
-    return new RequestCountersEventListener<>(
-        clientCounters, Clock.SYSTEM_CLOCK, EarlybirdSuccessfulResponseHandler.INSTANCE);
+    relonturn nelonw RelonquelonstCountelonrselonvelonntListelonnelonr<>(
+        clielonntCountelonrs, Clock.SYSTelonM_CLOCK, elonarlybirdSuccelonssfulRelonsponselonHandlelonr.INSTANCelon);
   }
 }

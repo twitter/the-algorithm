@@ -1,3 +1,3 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.metadata
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata
 
-case class ConversationDetails(conversationSection: Option[ConversationSection])
+caselon class ConvelonrsationDelontails(convelonrsationSelonction: Option[ConvelonrsationSelonction])

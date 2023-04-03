@@ -1,85 +1,85 @@
-package com.twitter.follow_recommendations.common.feature_hydration.sources
+packagelon com.twittelonr.follow_reloncommelonndations.common.felonaturelon_hydration.sourcelons
 
-import com.google.inject.Inject
-import com.google.inject.Provides
-import com.google.inject.Singleton
-import com.twitter.follow_recommendations.common.feature_hydration.common.FeatureSource
-import com.twitter.follow_recommendations.common.feature_hydration.common.FeatureSourceId
-import com.twitter.follow_recommendations.common.feature_hydration.common.HasPreFetchedFeature
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.HasDisplayLocation
-import com.twitter.follow_recommendations.common.models.HasSimilarToContext
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.DataRecordMerger
-import com.twitter.ml.api.FeatureContext
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
+import com.googlelon.injelonct.Injelonct
+import com.googlelon.injelonct.Providelons
+import com.googlelon.injelonct.Singlelonton
+import com.twittelonr.follow_reloncommelonndations.common.felonaturelon_hydration.common.FelonaturelonSourcelon
+import com.twittelonr.follow_reloncommelonndations.common.felonaturelon_hydration.common.FelonaturelonSourcelonId
+import com.twittelonr.follow_reloncommelonndations.common.felonaturelon_hydration.common.HasPrelonFelontchelondFelonaturelon
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.CandidatelonUselonr
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.HasDisplayLocation
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.HasSimilarToContelonxt
+import com.twittelonr.ml.api.DataReloncord
+import com.twittelonr.ml.api.DataReloncordMelonrgelonr
+import com.twittelonr.ml.api.FelonaturelonContelonxt
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.HasClielonntContelonxt
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.timelonlinelons.configapi.HasParams
 
 /**
- * This source wraps around the separate sources that we hydrate features from
- * @param featureStoreSource        gets features that require a RPC call to feature store
- * @param stratoFeatureHydrationSource    gets features that require a RPC call to strato columns
- * @param clientContextSource       gets features that are already present in the request context
- * @param candidateAlgorithmSource  gets features that are already present from candidate generation
- * @param preFetchedFeatureSource   gets features that were prehydrated (shared in request lifecycle)
+ * This sourcelon wraps around thelon selonparatelon sourcelons that welon hydratelon felonaturelons from
+ * @param felonaturelonStorelonSourcelon        gelonts felonaturelons that relonquirelon a RPC call to felonaturelon storelon
+ * @param stratoFelonaturelonHydrationSourcelon    gelonts felonaturelons that relonquirelon a RPC call to strato columns
+ * @param clielonntContelonxtSourcelon       gelonts felonaturelons that arelon alrelonady prelonselonnt in thelon relonquelonst contelonxt
+ * @param candidatelonAlgorithmSourcelon  gelonts felonaturelons that arelon alrelonady prelonselonnt from candidatelon gelonnelonration
+ * @param prelonFelontchelondFelonaturelonSourcelon   gelonts felonaturelons that welonrelon prelonhydratelond (sharelond in relonquelonst lifeloncyclelon)
  */
-@Provides
-@Singleton
-class UserScoringFeatureSource @Inject() (
-  featureStoreSource: FeatureStoreSource,
-  featureStoreGizmoduckSource: FeatureStoreGizmoduckSource,
-  featureStorePostNuxAlgorithmSource: FeatureStorePostNuxAlgorithmSource,
-  featureStoreTimelinesAuthorSource: FeatureStoreTimelinesAuthorSource,
-  featureStoreUserMetricCountsSource: FeatureStoreUserMetricCountsSource,
-  clientContextSource: ClientContextSource,
-  candidateAlgorithmSource: CandidateAlgorithmSource,
-  preFetchedFeatureSource: PreFetchedFeatureSource)
-    extends FeatureSource {
+@Providelons
+@Singlelonton
+class UselonrScoringFelonaturelonSourcelon @Injelonct() (
+  felonaturelonStorelonSourcelon: FelonaturelonStorelonSourcelon,
+  felonaturelonStorelonGizmoduckSourcelon: FelonaturelonStorelonGizmoduckSourcelon,
+  felonaturelonStorelonPostNuxAlgorithmSourcelon: FelonaturelonStorelonPostNuxAlgorithmSourcelon,
+  felonaturelonStorelonTimelonlinelonsAuthorSourcelon: FelonaturelonStorelonTimelonlinelonsAuthorSourcelon,
+  felonaturelonStorelonUselonrMelontricCountsSourcelon: FelonaturelonStorelonUselonrMelontricCountsSourcelon,
+  clielonntContelonxtSourcelon: ClielonntContelonxtSourcelon,
+  candidatelonAlgorithmSourcelon: CandidatelonAlgorithmSourcelon,
+  prelonFelontchelondFelonaturelonSourcelon: PrelonFelontchelondFelonaturelonSourcelon)
+    elonxtelonnds FelonaturelonSourcelon {
 
-  override val id: FeatureSourceId = FeatureSourceId.UserScoringFeatureSourceId
+  ovelonrridelon val id: FelonaturelonSourcelonId = FelonaturelonSourcelonId.UselonrScoringFelonaturelonSourcelonId
 
-  override val featureContext: FeatureContext = FeatureContext.merge(
-    featureStoreSource.featureContext,
-    featureStoreGizmoduckSource.featureContext,
-    featureStorePostNuxAlgorithmSource.featureContext,
-    featureStoreTimelinesAuthorSource.featureContext,
-    featureStoreUserMetricCountsSource.featureContext,
-    clientContextSource.featureContext,
-    candidateAlgorithmSource.featureContext,
-    preFetchedFeatureSource.featureContext,
+  ovelonrridelon val felonaturelonContelonxt: FelonaturelonContelonxt = FelonaturelonContelonxt.melonrgelon(
+    felonaturelonStorelonSourcelon.felonaturelonContelonxt,
+    felonaturelonStorelonGizmoduckSourcelon.felonaturelonContelonxt,
+    felonaturelonStorelonPostNuxAlgorithmSourcelon.felonaturelonContelonxt,
+    felonaturelonStorelonTimelonlinelonsAuthorSourcelon.felonaturelonContelonxt,
+    felonaturelonStorelonUselonrMelontricCountsSourcelon.felonaturelonContelonxt,
+    clielonntContelonxtSourcelon.felonaturelonContelonxt,
+    candidatelonAlgorithmSourcelon.felonaturelonContelonxt,
+    prelonFelontchelondFelonaturelonSourcelon.felonaturelonContelonxt,
   )
 
-  val sources =
-    Seq(
-      featureStoreSource,
-      featureStorePostNuxAlgorithmSource,
-      featureStoreTimelinesAuthorSource,
-      featureStoreUserMetricCountsSource,
-      featureStoreGizmoduckSource,
-      clientContextSource,
-      candidateAlgorithmSource,
-      preFetchedFeatureSource
+  val sourcelons =
+    Selonq(
+      felonaturelonStorelonSourcelon,
+      felonaturelonStorelonPostNuxAlgorithmSourcelon,
+      felonaturelonStorelonTimelonlinelonsAuthorSourcelon,
+      felonaturelonStorelonUselonrMelontricCountsSourcelon,
+      felonaturelonStorelonGizmoduckSourcelon,
+      clielonntContelonxtSourcelon,
+      candidatelonAlgorithmSourcelon,
+      prelonFelontchelondFelonaturelonSourcelon
     )
 
-  val dataRecordMerger = new DataRecordMerger
+  val dataReloncordMelonrgelonr = nelonw DataReloncordMelonrgelonr
 
-  def hydrateFeatures(
-    target: HasClientContext
-      with HasPreFetchedFeature
+  delonf hydratelonFelonaturelons(
+    targelont: HasClielonntContelonxt
+      with HasPrelonFelontchelondFelonaturelon
       with HasParams
-      with HasSimilarToContext
+      with HasSimilarToContelonxt
       with HasDisplayLocation,
-    candidates: Seq[CandidateUser]
-  ): Stitch[Map[CandidateUser, DataRecord]] = {
-    Stitch.collect(sources.map(_.hydrateFeatures(target, candidates))).map { featureMaps =>
+    candidatelons: Selonq[CandidatelonUselonr]
+  ): Stitch[Map[CandidatelonUselonr, DataReloncord]] = {
+    Stitch.collelonct(sourcelons.map(_.hydratelonFelonaturelons(targelont, candidatelons))).map { felonaturelonMaps =>
       (for {
-        candidate <- candidates
-      } yield {
-        val combinedDataRecord = new DataRecord
-        featureMaps
-          .flatMap(_.get(candidate).toSeq).foreach(dataRecordMerger.merge(combinedDataRecord, _))
-        candidate -> combinedDataRecord
+        candidatelon <- candidatelons
+      } yielonld {
+        val combinelondDataReloncord = nelonw DataReloncord
+        felonaturelonMaps
+          .flatMap(_.gelont(candidatelon).toSelonq).forelonach(dataReloncordMelonrgelonr.melonrgelon(combinelondDataReloncord, _))
+        candidatelon -> combinelondDataReloncord
       }).toMap
     }
   }

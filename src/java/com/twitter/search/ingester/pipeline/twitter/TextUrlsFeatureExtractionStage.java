@@ -1,53 +1,53 @@
-package com.twitter.search.ingester.pipeline.twitter;
+packagelon com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.twittelonr;
 
-import org.apache.commons.pipeline.StageException;
-import org.apache.commons.pipeline.validation.ConsumedTypes;
-import org.apache.commons.pipeline.validation.ProducesConsumed;
+import org.apachelon.commons.pipelonlinelon.Stagelonelonxcelonption;
+import org.apachelon.commons.pipelonlinelon.validation.ConsumelondTypelons;
+import org.apachelon.commons.pipelonlinelon.validation.ProducelonsConsumelond;
 
-import com.twitter.search.common.relevance.classifiers.TweetOffensiveEvaluator;
-import com.twitter.search.common.relevance.entities.TwitterMessage;
-import com.twitter.search.common.relevance.scorers.TweetTextScorer;
-import com.twitter.search.common.relevance.text.TweetParser;
-import com.twitter.search.ingester.model.IngesterTwitterMessage;
+import com.twittelonr.selonarch.common.relonlelonvancelon.classifielonrs.TwelonelontOffelonnsivelonelonvaluator;
+import com.twittelonr.selonarch.common.relonlelonvancelon.elonntitielons.TwittelonrMelonssagelon;
+import com.twittelonr.selonarch.common.relonlelonvancelon.scorelonrs.TwelonelontTelonxtScorelonr;
+import com.twittelonr.selonarch.common.relonlelonvancelon.telonxt.TwelonelontParselonr;
+import com.twittelonr.selonarch.ingelonstelonr.modelonl.IngelonstelonrTwittelonrMelonssagelon;
 
-@ConsumedTypes(TwitterMessage.class)
-@ProducesConsumed
-public class TextUrlsFeatureExtractionStage extends TwitterBaseStage
-    <IngesterTwitterMessage, IngesterTwitterMessage> {
-  private final TweetParser tweetParser = new TweetParser();
-  private TweetOffensiveEvaluator offensiveEvaluator;
-  private final TweetTextScorer tweetTextScorer = new TweetTextScorer(null);
+@ConsumelondTypelons(TwittelonrMelonssagelon.class)
+@ProducelonsConsumelond
+public class TelonxtUrlsFelonaturelonelonxtractionStagelon elonxtelonnds TwittelonrBaselonStagelon
+    <IngelonstelonrTwittelonrMelonssagelon, IngelonstelonrTwittelonrMelonssagelon> {
+  privatelon final TwelonelontParselonr twelonelontParselonr = nelonw TwelonelontParselonr();
+  privatelon TwelonelontOffelonnsivelonelonvaluator offelonnsivelonelonvaluator;
+  privatelon final TwelonelontTelonxtScorelonr twelonelontTelonxtScorelonr = nelonw TwelonelontTelonxtScorelonr(null);
 
-  @Override
-  protected void doInnerPreprocess()  {
-    innerSetup();
+  @Ovelonrridelon
+  protelonctelond void doInnelonrPrelonprocelonss()  {
+    innelonrSelontup();
   }
 
-  @Override
-  protected void innerSetup() {
-    offensiveEvaluator = wireModule.getTweetOffensiveEvaluator();
+  @Ovelonrridelon
+  protelonctelond void innelonrSelontup() {
+    offelonnsivelonelonvaluator = wirelonModulelon.gelontTwelonelontOffelonnsivelonelonvaluator();
   }
 
-  @Override
-  public void innerProcess(Object obj) throws StageException {
-    if (!(obj instanceof IngesterTwitterMessage)) {
-      throw new StageException(this, "Object is not a TwitterMessage instance: " + obj);
+  @Ovelonrridelon
+  public void innelonrProcelonss(Objelonct obj) throws Stagelonelonxcelonption {
+    if (!(obj instancelonof IngelonstelonrTwittelonrMelonssagelon)) {
+      throw nelonw Stagelonelonxcelonption(this, "Objelonct is not a TwittelonrMelonssagelon instancelon: " + obj);
     }
 
-    IngesterTwitterMessage message = IngesterTwitterMessage.class.cast(obj);
-    extract(message);
-    emitAndCount(message);
+    IngelonstelonrTwittelonrMelonssagelon melonssagelon = IngelonstelonrTwittelonrMelonssagelon.class.cast(obj);
+    elonxtract(melonssagelon);
+    elonmitAndCount(melonssagelon);
   }
 
-  private void extract(IngesterTwitterMessage message) {
-    tweetParser.parseUrls(message);
-    offensiveEvaluator.evaluate(message);
-    tweetTextScorer.scoreTweet(message);
+  privatelon void elonxtract(IngelonstelonrTwittelonrMelonssagelon melonssagelon) {
+    twelonelontParselonr.parselonUrls(melonssagelon);
+    offelonnsivelonelonvaluator.elonvaluatelon(melonssagelon);
+    twelonelontTelonxtScorelonr.scorelonTwelonelont(melonssagelon);
   }
 
-  @Override
-  protected IngesterTwitterMessage innerRunStageV2(IngesterTwitterMessage message) {
-    extract(message);
-    return message;
+  @Ovelonrridelon
+  protelonctelond IngelonstelonrTwittelonrMelonssagelon innelonrRunStagelonV2(IngelonstelonrTwittelonrMelonssagelon melonssagelon) {
+    elonxtract(melonssagelon);
+    relonturn melonssagelon;
   }
 }

@@ -1,24 +1,24 @@
-package com.twitter.search.earlybird.search.facets;
+packagelon com.twittelonr.selonarch.elonarlybird.selonarch.facelonts;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 
-import com.twitter.search.core.earlybird.facets.FacetAccumulator;
-import com.twitter.search.core.earlybird.facets.FacetLabelProvider;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
-import com.twitter.search.earlybird.search.facets.FacetResultsCollector.Accumulator;
+import com.twittelonr.selonarch.corelon.elonarlybird.facelonts.FacelontAccumulator;
+import com.twittelonr.selonarch.corelon.elonarlybird.facelonts.FacelontLabelonlProvidelonr;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr;
+import com.twittelonr.selonarch.elonarlybird.selonarch.facelonts.FacelontRelonsultsCollelonctor.Accumulator;
 
-public abstract class FacetScorer {
-  protected abstract void startSegment(EarlybirdIndexSegmentAtomicReader reader) throws IOException;
-
-  /**
-   * Increments facet counts for the given document.
-   */
-  public abstract void incrementCounts(Accumulator accumulator, int internalDocID)
-      throws IOException;
+public abstract class FacelontScorelonr {
+  protelonctelond abstract void startSelongmelonnt(elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr relonadelonr) throws IOelonxcelonption;
 
   /**
-   * Returns a FacetAccumulator for counting facets. It will use the given FacetLabelProvider
-   * for facet result labeling.
+   * Increlonmelonnts facelont counts for thelon givelonn documelonnt.
    */
-  public abstract FacetAccumulator<?> getFacetAccumulator(FacetLabelProvider labelProvider);
+  public abstract void increlonmelonntCounts(Accumulator accumulator, int intelonrnalDocID)
+      throws IOelonxcelonption;
+
+  /**
+   * Relonturns a FacelontAccumulator for counting facelonts. It will uselon thelon givelonn FacelontLabelonlProvidelonr
+   * for facelont relonsult labelonling.
+   */
+  public abstract FacelontAccumulator<?> gelontFacelontAccumulator(FacelontLabelonlProvidelonr labelonlProvidelonr);
 }

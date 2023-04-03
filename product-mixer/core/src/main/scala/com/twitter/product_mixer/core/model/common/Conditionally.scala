@@ -1,56 +1,56 @@
-package com.twitter.product_mixer.core.model.common
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.common
 
 /**
- * A mixin trait that can be added to a [[Component]] that's marked with [[SupportsConditionally]]
- * A [[Component]] with [[SupportsConditionally]] and [[Conditionally]] will only be run when `onlyIf` returns true
- * if `onlyIf` returns false, the [[Component]] is skipped and no stats are recorded for it.
+ * A mixin trait that can belon addelond to a [[Componelonnt]] that's markelond with [[SupportsConditionally]]
+ * A [[Componelonnt]] with [[SupportsConditionally]] and [[Conditionally]] will only belon run whelonn `onlyIf` relonturns truelon
+ * if `onlyIf` relonturns falselon, thelon [[Componelonnt]] is skippelond and no stats arelon reloncordelond for it.
  *
- * @note if an exception is thrown when evaluating `onlyIf`, it will bubble up to the containing `Pipeline`,
- *       however the [[Component]]'s stats will not be incremented. Because of this `onlyIf` should never throw.
+ * @notelon if an elonxcelonption is thrown whelonn elonvaluating `onlyIf`, it will bubblelon up to thelon containing `Pipelonlinelon`,
+ *       howelonvelonr thelon [[Componelonnt]]'s stats will not belon increlonmelonntelond. Beloncauselon of this `onlyIf` should nelonvelonr throw.
  *
- * @note each [[Component]] that [[SupportsConditionally]] has an implementation with in the
- *       component library that will conditionally run the component based on a [[com.twitter.timelines.configapi.Param]]
+ * @notelon elonach [[Componelonnt]] that [[SupportsConditionally]] has an implelonmelonntation with in thelon
+ *       componelonnt library that will conditionally run thelon componelonnt baselond on a [[com.twittelonr.timelonlinelons.configapi.Param]]
  *
- * @note [[Conditionally]] functionality is wired into the Component's Executor.
+ * @notelon [[Conditionally]] functionality is wirelond into thelon Componelonnt's elonxeloncutor.
  *
- * @tparam Input the input that is used to gate a component on or off
+ * @tparam Input thelon input that is uselond to gatelon a componelonnt on or off
  */
 trait Conditionally[-Input] { _: SupportsConditionally[Input] =>
 
   /**
-   * if `onlyIf` returns true, the underling [[Component]] is run, otherwise it's skipped
-   * @note must not throw
+   * if `onlyIf` relonturns truelon, thelon undelonrling [[Componelonnt]] is run, othelonrwiselon it's skippelond
+   * @notelon must not throw
    */
-  def onlyIf(query: Input): Boolean
+  delonf onlyIf(quelonry: Input): Boolelonan
 }
 
 /**
- * Marker trait added  to the base type for each [[Component]] which supports the [[Conditionally]] mixin
+ * Markelonr trait addelond  to thelon baselon typelon for elonach [[Componelonnt]] which supports thelon [[Conditionally]] mixin
  *
- * @note this is `private[core]` because it can only be added to the base implementation of components by the Product Mixer team
+ * @notelon this is `privatelon[corelon]` beloncauselon it can only belon addelond to thelon baselon implelonmelonntation of componelonnts by thelon Product Mixelonr telonam
  *
- * @tparam Input the input that is used to gate a component on or off if [[Conditionally]] is mixed in
+ * @tparam Input thelon input that is uselond to gatelon a componelonnt on or off if [[Conditionally]] is mixelond in
  */
-private[core] trait SupportsConditionally[-Input] { _: Component => }
+privatelon[corelon] trait SupportsConditionally[-Input] { _: Componelonnt => }
 
-object Conditionally {
+objelonct Conditionally {
 
   /**
-   * Helper method for combining the [[Conditionally.onlyIf]] of an underlying [[Component]] with an additional predicate
+   * Helonlpelonr melonthod for combining thelon [[Conditionally.onlyIf]] of an undelonrlying [[Componelonnt]] with an additional prelondicatelon
    */
-  def and[ComponentType <: Component, Input](
-    query: Input,
-    component: ComponentType with SupportsConditionally[Input],
-    onlyIf: Boolean
-  ): Boolean =
+  delonf and[ComponelonntTypelon <: Componelonnt, Input](
+    quelonry: Input,
+    componelonnt: ComponelonntTypelon with SupportsConditionally[Input],
+    onlyIf: Boolelonan
+  ): Boolelonan =
     onlyIf && {
-      component match {
-        // @unchecked is safe here because the type parameter is guaranteed by
-        // the `SupportsConditionally[Input]` type parameter
-        case underlying: Conditionally[Input @unchecked] =>
-          underlying.onlyIf(query)
-        case _ =>
-          true
+      componelonnt match {
+        // @unchelonckelond is safelon helonrelon beloncauselon thelon typelon paramelontelonr is guarantelonelond by
+        // thelon `SupportsConditionally[Input]` typelon paramelontelonr
+        caselon undelonrlying: Conditionally[Input @unchelonckelond] =>
+          undelonrlying.onlyIf(quelonry)
+        caselon _ =>
+          truelon
       }
     }
 

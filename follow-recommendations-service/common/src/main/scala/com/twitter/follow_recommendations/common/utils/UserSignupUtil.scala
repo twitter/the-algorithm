@@ -1,14 +1,14 @@
-package com.twitter.follow_recommendations.common.utils
+packagelon com.twittelonr.follow_reloncommelonndations.common.utils
 
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.util.Duration
-import com.twitter.util.Time
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.HasClielonntContelonxt
+import com.twittelonr.snowflakelon.id.SnowflakelonId
+import com.twittelonr.util.Duration
+import com.twittelonr.util.Timelon
 
-object UserSignupUtil {
-  def signupTime(hasClientContext: HasClientContext): Option[Time] =
-    hasClientContext.clientContext.userId.flatMap(SnowflakeId.timeFromIdOpt)
+objelonct UselonrSignupUtil {
+  delonf signupTimelon(hasClielonntContelonxt: HasClielonntContelonxt): Option[Timelon] =
+    hasClielonntContelonxt.clielonntContelonxt.uselonrId.flatMap(SnowflakelonId.timelonFromIdOpt)
 
-  def userSignupAge(hasClientContext: HasClientContext): Option[Duration] =
-    signupTime(hasClientContext).map(Time.now - _)
+  delonf uselonrSignupAgelon(hasClielonntContelonxt: HasClielonntContelonxt): Option[Duration] =
+    signupTimelon(hasClielonntContelonxt).map(Timelon.now - _)
 }

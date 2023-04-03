@@ -1,79 +1,79 @@
-package com.twitter.product_mixer.core.functional_component.feature_hydrator.featurestorev1
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator.felonaturelonstorelonv1
 
-import com.twitter.ml.api.util.SRichDataRecord
-import com.twitter.ml.featurestore.lib.EntityId
-import com.twitter.ml.featurestore.lib.data.PredictionRecordAdapter
-import com.twitter.ml.featurestore.lib.entity.EntityWithId
-import com.twitter.ml.featurestore.lib.online.FeatureStoreRequest
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.feature.featurestorev1.BaseFeatureStoreV1QueryFeature
-import com.twitter.product_mixer.core.feature.featurestorev1.FeatureStoreV1QueryEntity
-import com.twitter.product_mixer.core.feature.featurestorev1.featurevalue.FeatureStoreV1Response
-import com.twitter.product_mixer.core.feature.featurestorev1.featurevalue.FeatureStoreV1ResponseFeature
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BaseQueryFeatureHydrator
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.FeatureHydrationFailed
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.stitch.Stitch
-import com.twitter.util.logging.Logging
+import com.twittelonr.ml.api.util.SRichDataReloncord
+import com.twittelonr.ml.felonaturelonstorelon.lib.elonntityId
+import com.twittelonr.ml.felonaturelonstorelon.lib.data.PrelondictionReloncordAdaptelonr
+import com.twittelonr.ml.felonaturelonstorelon.lib.elonntity.elonntityWithId
+import com.twittelonr.ml.felonaturelonstorelon.lib.onlinelon.FelonaturelonStorelonRelonquelonst
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMapBuildelonr
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonstorelonv1.BaselonFelonaturelonStorelonV1QuelonryFelonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonstorelonv1.FelonaturelonStorelonV1Quelonryelonntity
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonstorelonv1.felonaturelonvaluelon.FelonaturelonStorelonV1Relonsponselon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonstorelonv1.felonaturelonvaluelon.FelonaturelonStorelonV1RelonsponselonFelonaturelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator.BaselonQuelonryFelonaturelonHydrator
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.FelonaturelonHydrationFailelond
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.PipelonlinelonFailurelon
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.util.logging.Logging
 
-trait FeatureStoreV1QueryFeatureHydrator[Query <: PipelineQuery]
-    extends BaseQueryFeatureHydrator[
-      Query,
-      BaseFeatureStoreV1QueryFeature[Query, _ <: EntityId, _]
+trait FelonaturelonStorelonV1QuelonryFelonaturelonHydrator[Quelonry <: PipelonlinelonQuelonry]
+    elonxtelonnds BaselonQuelonryFelonaturelonHydrator[
+      Quelonry,
+      BaselonFelonaturelonStorelonV1QuelonryFelonaturelon[Quelonry, _ <: elonntityId, _]
     ]
     with Logging {
 
-  def features: Set[BaseFeatureStoreV1QueryFeature[Query, _ <: EntityId, _]]
+  delonf felonaturelons: Selont[BaselonFelonaturelonStorelonV1QuelonryFelonaturelon[Quelonry, _ <: elonntityId, _]]
 
-  def clientBuilder: FeatureStoreV1DynamicClientBuilder
+  delonf clielonntBuildelonr: FelonaturelonStorelonV1DynamicClielonntBuildelonr
 
-  private lazy val hydrationConfig = FeatureStoreV1QueryFeatureHydrationConfig(features)
+  privatelon lazy val hydrationConfig = FelonaturelonStorelonV1QuelonryFelonaturelonHydrationConfig(felonaturelons)
 
-  private lazy val client = clientBuilder.build(hydrationConfig)
+  privatelon lazy val clielonnt = clielonntBuildelonr.build(hydrationConfig)
 
-  private lazy val datasetToFeatures =
-    FeatureStoreDatasetErrorHandler.datasetToFeaturesMapping(features)
+  privatelon lazy val dataselontToFelonaturelons =
+    FelonaturelonStorelonDataselontelonrrorHandlelonr.dataselontToFelonaturelonsMapping(felonaturelons)
 
-  private lazy val dataRecordAdapter =
-    PredictionRecordAdapter.oneToOne(hydrationConfig.allBoundFeatures)
+  privatelon lazy val dataReloncordAdaptelonr =
+    PrelondictionReloncordAdaptelonr.onelonToOnelon(hydrationConfig.allBoundFelonaturelons)
 
-  private lazy val featureContext = hydrationConfig.allBoundFeatures.toFeatureContext
+  privatelon lazy val felonaturelonContelonxt = hydrationConfig.allBoundFelonaturelons.toFelonaturelonContelonxt
 
-  override def hydrate(
-    query: Query
-  ): Stitch[FeatureMap] = {
-    // Duplicate entities are expected across features, so de-dupe via the Set before converting to Seq
-    val entities: Seq[FeatureStoreV1QueryEntity[Query, _ <: EntityId]] =
-      features.map(_.entity).toSeq
-    val entityIds: Seq[EntityWithId[_ <: EntityId]] = entities.map(_.entityWithId(query))
+  ovelonrridelon delonf hydratelon(
+    quelonry: Quelonry
+  ): Stitch[FelonaturelonMap] = {
+    // Duplicatelon elonntitielons arelon elonxpelonctelond across felonaturelons, so delon-dupelon via thelon Selont belonforelon convelonrting to Selonq
+    val elonntitielons: Selonq[FelonaturelonStorelonV1Quelonryelonntity[Quelonry, _ <: elonntityId]] =
+      felonaturelons.map(_.elonntity).toSelonq
+    val elonntityIds: Selonq[elonntityWithId[_ <: elonntityId]] = elonntitielons.map(_.elonntityWithId(quelonry))
 
-    val featureStoreRequest = Seq(FeatureStoreRequest(entityIds = entityIds))
+    val felonaturelonStorelonRelonquelonst = Selonq(FelonaturelonStorelonRelonquelonst(elonntityIds = elonntityIds))
 
-    val featureMap = client(featureStoreRequest, query).map { predictionRecords =>
-      // Should not happen as FSv1 is guaranteed to return a prediction record per feature store request
-      val predictionRecord = predictionRecords.headOption.getOrElse {
-        throw PipelineFailure(
-          FeatureHydrationFailed,
-          "Unexpected empty response from Feature Store V1 while hydrating query features")
+    val felonaturelonMap = clielonnt(felonaturelonStorelonRelonquelonst, quelonry).map { prelondictionReloncords =>
+      // Should not happelonn as FSv1 is guarantelonelond to relonturn a prelondiction reloncord pelonr felonaturelon storelon relonquelonst
+      val prelondictionReloncord = prelondictionReloncords.helonadOption.gelontOrelonlselon {
+        throw PipelonlinelonFailurelon(
+          FelonaturelonHydrationFailelond,
+          "Unelonxpelonctelond elonmpty relonsponselon from Felonaturelon Storelon V1 whilelon hydrating quelonry felonaturelons")
       }
 
-      val datasetErrors = predictionRecord.getDatasetHydrationErrors
-      val errorMap =
-        FeatureStoreDatasetErrorHandler.featureToHydrationErrors(datasetToFeatures, datasetErrors)
+      val dataselontelonrrors = prelondictionReloncord.gelontDataselontHydrationelonrrors
+      val elonrrorMap =
+        FelonaturelonStorelonDataselontelonrrorHandlelonr.felonaturelonToHydrationelonrrors(dataselontToFelonaturelons, dataselontelonrrors)
 
-      if (errorMap.nonEmpty) {
-        logger.debug(() => s"$identifier hydration errors for query: $errorMap")
+      if (elonrrorMap.nonelonmpty) {
+        loggelonr.delonbug(() => s"$idelonntifielonr hydration elonrrors for quelonry: $elonrrorMap")
       }
 
-      val richDataRecord =
-        SRichDataRecord(dataRecordAdapter.adaptToDataRecord(predictionRecord), featureContext)
-      val featureStoreResponse =
-        FeatureStoreV1Response(richDataRecord, errorMap)
-      FeatureMapBuilder().add(FeatureStoreV1ResponseFeature, featureStoreResponse).build()
+      val richDataReloncord =
+        SRichDataReloncord(dataReloncordAdaptelonr.adaptToDataReloncord(prelondictionReloncord), felonaturelonContelonxt)
+      val felonaturelonStorelonRelonsponselon =
+        FelonaturelonStorelonV1Relonsponselon(richDataReloncord, elonrrorMap)
+      FelonaturelonMapBuildelonr().add(FelonaturelonStorelonV1RelonsponselonFelonaturelon, felonaturelonStorelonRelonsponselon).build()
     }
 
-    Stitch.callFuture(featureMap)
+    Stitch.callFuturelon(felonaturelonMap)
   }
 }

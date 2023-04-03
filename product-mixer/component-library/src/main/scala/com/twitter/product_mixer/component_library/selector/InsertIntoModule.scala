@@ -1,69 +1,69 @@
-package com.twitter.product_mixer.component_library.selector
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.selonlelonctor
 
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ItemCandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ModuleCandidateWithDetails
-import scala.collection.immutable.Queue
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonPipelonlinelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.ItelonmCandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.ModulelonCandidatelonWithDelontails
+import scala.collelonction.immutablelon.Quelonuelon
 
-private[selector] object InsertIntoModule {
-  case class ModuleAndIndex(
-    moduleToInsertInto: ModuleCandidateWithDetails,
-    indexOfModuleInOtherCandidates: Int)
+privatelon[selonlelonctor] objelonct InselonrtIntoModulelon {
+  caselon class ModulelonAndIndelonx(
+    modulelonToInselonrtInto: ModulelonCandidatelonWithDelontails,
+    indelonxOfModulelonInOthelonrCandidatelons: Int)
 
-  case class ModuleWithItemsToAddAndOtherCandidates(
-    moduleToUpdateAndIndex: Option[ModuleAndIndex],
-    itemsToInsertIntoModule: Queue[ItemCandidateWithDetails],
-    otherCandidates: Queue[CandidateWithDetails])
+  caselon class ModulelonWithItelonmsToAddAndOthelonrCandidatelons(
+    modulelonToUpdatelonAndIndelonx: Option[ModulelonAndIndelonx],
+    itelonmsToInselonrtIntoModulelon: Quelonuelon[ItelonmCandidatelonWithDelontails],
+    othelonrCandidatelons: Quelonuelon[CandidatelonWithDelontails])
 
   /**
-   * Given a Seq of `candidates`, returns the first module with it's index that matches the
-   * `targetModuleCandidatePipeline` with all the [[ItemCandidateWithDetails]] that match the
-   * `candidatePipeline` added to the `itemsToInsert` and the remaining candidates, including the
-   * module, in the `otherCandidates`
+   * Givelonn a Selonq of `candidatelons`, relonturns thelon first modulelon with it's indelonx that matchelons thelon
+   * `targelontModulelonCandidatelonPipelonlinelon` with all thelon [[ItelonmCandidatelonWithDelontails]] that match thelon
+   * `candidatelonPipelonlinelon` addelond to thelon `itelonmsToInselonrt` and thelon relonmaining candidatelons, including thelon
+   * modulelon, in thelon `othelonrCandidatelons`
    */
-  def moduleToUpdate(
-    candidatePipeline: CandidatePipelineIdentifier,
-    targetModuleCandidatePipeline: CandidatePipelineIdentifier,
-    candidates: Seq[CandidateWithDetails]
-  ): ModuleWithItemsToAddAndOtherCandidates = {
-    candidates.foldLeft[ModuleWithItemsToAddAndOtherCandidates](
-      ModuleWithItemsToAddAndOtherCandidates(None, Queue.empty, Queue.empty)) {
-      case (
-            state @ ModuleWithItemsToAddAndOtherCandidates(_, itemsToInsertIntoModule, _),
-            selectedItem: ItemCandidateWithDetails) if selectedItem.source == candidatePipeline =>
-        state.copy(itemsToInsertIntoModule = itemsToInsertIntoModule :+ selectedItem)
+  delonf modulelonToUpdatelon(
+    candidatelonPipelonlinelon: CandidatelonPipelonlinelonIdelonntifielonr,
+    targelontModulelonCandidatelonPipelonlinelon: CandidatelonPipelonlinelonIdelonntifielonr,
+    candidatelons: Selonq[CandidatelonWithDelontails]
+  ): ModulelonWithItelonmsToAddAndOthelonrCandidatelons = {
+    candidatelons.foldLelonft[ModulelonWithItelonmsToAddAndOthelonrCandidatelons](
+      ModulelonWithItelonmsToAddAndOthelonrCandidatelons(Nonelon, Quelonuelon.elonmpty, Quelonuelon.elonmpty)) {
+      caselon (
+            statelon @ ModulelonWithItelonmsToAddAndOthelonrCandidatelons(_, itelonmsToInselonrtIntoModulelon, _),
+            selonlelonctelondItelonm: ItelonmCandidatelonWithDelontails) if selonlelonctelondItelonm.sourcelon == candidatelonPipelonlinelon =>
+        statelon.copy(itelonmsToInselonrtIntoModulelon = itelonmsToInselonrtIntoModulelon :+ selonlelonctelondItelonm)
 
-      case (
-            state @ ModuleWithItemsToAddAndOtherCandidates(None, _, otherCandidates),
-            module: ModuleCandidateWithDetails) if module.source == targetModuleCandidatePipeline =>
-        val insertionIndex = otherCandidates.length
-        val moduleAndIndex = Some(
-          ModuleAndIndex(
-            moduleToInsertInto = module,
-            indexOfModuleInOtherCandidates = insertionIndex))
-        val otherCandidatesWithModuleAppended = otherCandidates :+ module
-        state.copy(
-          moduleToUpdateAndIndex = moduleAndIndex,
-          otherCandidates = otherCandidatesWithModuleAppended)
+      caselon (
+            statelon @ ModulelonWithItelonmsToAddAndOthelonrCandidatelons(Nonelon, _, othelonrCandidatelons),
+            modulelon: ModulelonCandidatelonWithDelontails) if modulelon.sourcelon == targelontModulelonCandidatelonPipelonlinelon =>
+        val inselonrtionIndelonx = othelonrCandidatelons.lelonngth
+        val modulelonAndIndelonx = Somelon(
+          ModulelonAndIndelonx(
+            modulelonToInselonrtInto = modulelon,
+            indelonxOfModulelonInOthelonrCandidatelons = inselonrtionIndelonx))
+        val othelonrCandidatelonsWithModulelonAppelonndelond = othelonrCandidatelons :+ modulelon
+        statelon.copy(
+          modulelonToUpdatelonAndIndelonx = modulelonAndIndelonx,
+          othelonrCandidatelons = othelonrCandidatelonsWithModulelonAppelonndelond)
 
-      case (_, invalidModule: ModuleCandidateWithDetails)
-          if invalidModule.source == candidatePipeline =>
+      caselon (_, invalidModulelon: ModulelonCandidatelonWithDelontails)
+          if invalidModulelon.sourcelon == candidatelonPipelonlinelon =>
         /**
-         * while not exactly an illegal state, its most likely an incorrectly configured candidate pipeline
-         * that returned a module instead of returning the candidates the module contains. Since you can't
-         * nest a module inside of a module, we can either throw or ignore it and we choose to ignore it
-         * to catch a potential bug a customer may do accidentally.
+         * whilelon not elonxactly an illelongal statelon, its most likelonly an incorrelonctly configurelond candidatelon pipelonlinelon
+         * that relonturnelond a modulelon instelonad of relonturning thelon candidatelons thelon modulelon contains. Sincelon you can't
+         * nelonst a modulelon insidelon of a modulelon, welon can elonithelonr throw or ignorelon it and welon chooselon to ignorelon it
+         * to catch a potelonntial bug a customelonr may do accidelonntally.
          */
-        throw new UnsupportedOperationException(
-          s"Expected the candidatePipeline $candidatePipeline to contain items to put into the module from the targetModuleCandidatePipeline $targetModuleCandidatePipeline, but not contain modules itself. " +
-            s"This can occur if your $candidatePipeline was incorrectly configured and returns a module when you intended to return the candidates the module contained."
+        throw nelonw UnsupportelondOpelonrationelonxcelonption(
+          s"elonxpelonctelond thelon candidatelonPipelonlinelon $candidatelonPipelonlinelon to contain itelonms to put into thelon modulelon from thelon targelontModulelonCandidatelonPipelonlinelon $targelontModulelonCandidatelonPipelonlinelon, but not contain modulelons itselonlf. " +
+            s"This can occur if your $candidatelonPipelonlinelon was incorrelonctly configurelond and relonturns a modulelon whelonn you intelonndelond to relonturn thelon candidatelons thelon modulelon containelond."
         )
 
-      case (
-            state @ ModuleWithItemsToAddAndOtherCandidates(_, _, otherCandidates),
-            unselectedCandidate) =>
-        state.copy(otherCandidates = otherCandidates :+ unselectedCandidate)
+      caselon (
+            statelon @ ModulelonWithItelonmsToAddAndOthelonrCandidatelons(_, _, othelonrCandidatelons),
+            unselonlelonctelondCandidatelon) =>
+        statelon.copy(othelonrCandidatelons = othelonrCandidatelons :+ unselonlelonctelondCandidatelon)
     }
   }
 

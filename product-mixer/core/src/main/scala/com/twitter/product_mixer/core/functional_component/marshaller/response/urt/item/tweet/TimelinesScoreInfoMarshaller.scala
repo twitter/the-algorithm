@@ -1,13 +1,13 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.tweet
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.itelonm.twelonelont
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet.TimelinesScoreInfo
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.twelonelont.TimelonlinelonsScorelonInfo
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class TimelinesScoreInfoMarshaller @Inject() () {
+@Singlelonton
+class TimelonlinelonsScorelonInfoMarshallelonr @Injelonct() () {
 
-  def apply(timelinesScoreInfo: TimelinesScoreInfo): urt.TimelinesScoreInfo =
-    urt.TimelinesScoreInfo(score = timelinesScoreInfo.score)
+  delonf apply(timelonlinelonsScorelonInfo: TimelonlinelonsScorelonInfo): urt.TimelonlinelonsScorelonInfo =
+    urt.TimelonlinelonsScorelonInfo(scorelon = timelonlinelonsScorelonInfo.scorelon)
 }

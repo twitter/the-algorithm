@@ -1,51 +1,51 @@
-package com.twitter.product_mixer.component_library.decorator.urt
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt
 
-import com.twitter.product_mixer.component_library.model.presentation.urt.UrtItemPresentation
-import com.twitter.product_mixer.component_library.model.presentation.urt.UrtModulePresentation
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.DecoratorIdentifier
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineItem
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.functional_component.decorator.CandidateDecorator
-import com.twitter.product_mixer.core.functional_component.decorator.Decoration
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.timeline_module.BaseTimelineModuleBuilder
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.stitch.Stitch
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.prelonselonntation.urt.UrtItelonmPrelonselonntation
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.prelonselonntation.urt.UrtModulelonPrelonselonntation
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.DeloncoratorIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.TimelonlinelonItelonm
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.CandidatelonDeloncorator
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.Deloncoration
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.timelonlinelon_modulelon.BaselonTimelonlinelonModulelonBuildelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.stitch.Stitch
 
 /**
- * Decorator that will apply the provided [[urtItemCandidateDecorator]] to all the `candidates` and apply
- * the same [[UrtModulePresentation]] from [[moduleBuilder]] to each Candidate.
+ * Deloncorator that will apply thelon providelond [[urtItelonmCandidatelonDeloncorator]] to all thelon `candidatelons` and apply
+ * thelon samelon [[UrtModulelonPrelonselonntation]] from [[modulelonBuildelonr]] to elonach Candidatelon.
  */
-case class UrtItemInModuleDecorator[
-  Query <: PipelineQuery,
-  BuilderInput <: UniversalNoun[Any],
-  BuilderOutput <: TimelineItem
+caselon class UrtItelonmInModulelonDeloncorator[
+  Quelonry <: PipelonlinelonQuelonry,
+  BuildelonrInput <: UnivelonrsalNoun[Any],
+  BuildelonrOutput <: TimelonlinelonItelonm
 ](
-  urtItemCandidateDecorator: CandidateDecorator[Query, BuilderInput],
-  moduleBuilder: BaseTimelineModuleBuilder[Query, BuilderInput],
-  override val identifier: DecoratorIdentifier = DecoratorIdentifier("UrtItemInModule"))
-    extends CandidateDecorator[Query, BuilderInput] {
+  urtItelonmCandidatelonDeloncorator: CandidatelonDeloncorator[Quelonry, BuildelonrInput],
+  modulelonBuildelonr: BaselonTimelonlinelonModulelonBuildelonr[Quelonry, BuildelonrInput],
+  ovelonrridelon val idelonntifielonr: DeloncoratorIdelonntifielonr = DeloncoratorIdelonntifielonr("UrtItelonmInModulelon"))
+    elonxtelonnds CandidatelonDeloncorator[Quelonry, BuildelonrInput] {
 
-  override def apply(
-    query: Query,
-    candidates: Seq[CandidateWithFeatures[BuilderInput]]
-  ): Stitch[Seq[Decoration]] = {
-    if (candidates.nonEmpty) {
-      val urtItemCandidatesWithDecoration = urtItemCandidateDecorator(query, candidates)
+  ovelonrridelon delonf apply(
+    quelonry: Quelonry,
+    candidatelons: Selonq[CandidatelonWithFelonaturelons[BuildelonrInput]]
+  ): Stitch[Selonq[Deloncoration]] = {
+    if (candidatelons.nonelonmpty) {
+      val urtItelonmCandidatelonsWithDeloncoration = urtItelonmCandidatelonDeloncorator(quelonry, candidatelons)
 
-      // Pass candidates to support when the module is constructed dynamically based on the list
-      val modulePresentation =
-        UrtModulePresentation(moduleBuilder(query, candidates))
+      // Pass candidatelons to support whelonn thelon modulelon is constructelond dynamically baselond on thelon list
+      val modulelonPrelonselonntation =
+        UrtModulelonPrelonselonntation(modulelonBuildelonr(quelonry, candidatelons))
 
-      urtItemCandidatesWithDecoration.map { candidates =>
-        candidates.collect {
-          case Decoration(candidate, urtItemPresentation: UrtItemPresentation) =>
-            Decoration(
-              candidate,
-              urtItemPresentation.copy(modulePresentation = Some(modulePresentation)))
+      urtItelonmCandidatelonsWithDeloncoration.map { candidatelons =>
+        candidatelons.collelonct {
+          caselon Deloncoration(candidatelon, urtItelonmPrelonselonntation: UrtItelonmPrelonselonntation) =>
+            Deloncoration(
+              candidatelon,
+              urtItelonmPrelonselonntation.copy(modulelonPrelonselonntation = Somelon(modulelonPrelonselonntation)))
         }
       }
-    } else {
+    } elonlselon {
       Stitch.Nil
     }
   }

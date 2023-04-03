@@ -1,7 +1,7 @@
 scala_library(
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "graph-feature-service/src/main/thrift/com/twitter/graph_feature_service:graph_feature_service_thrift-scala",
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        "graph-felonaturelon-selonrvicelon/src/main/thrift/com/twittelonr/graph_felonaturelon_selonrvicelon:graph_felonaturelon_selonrvicelon_thrift-scala",
     ],
 )

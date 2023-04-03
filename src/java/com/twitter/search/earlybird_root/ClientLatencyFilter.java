@@ -1,45 +1,45 @@
-package com.twitter.search.earlybird_root;
+packagelon com.twittelonr.selonarch.elonarlybird_root;
 
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrelonnt.ConcurrelonntHashMap;
 
-import com.twitter.common.util.Clock;
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.search.common.clientstats.RequestCounters;
-import com.twitter.search.common.clientstats.RequestCountersEventListener;
-import com.twitter.search.earlybird.common.ClientIdUtil;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird_root.filters.EarlybirdSuccessfulResponseHandler;
-import com.twitter.util.Future;
+import com.twittelonr.common.util.Clock;
+import com.twittelonr.finaglelon.Selonrvicelon;
+import com.twittelonr.finaglelon.SimplelonFiltelonr;
+import com.twittelonr.selonarch.common.clielonntstats.RelonquelonstCountelonrs;
+import com.twittelonr.selonarch.common.clielonntstats.RelonquelonstCountelonrselonvelonntListelonnelonr;
+import com.twittelonr.selonarch.elonarlybird.common.ClielonntIdUtil;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonquelonst;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
+import com.twittelonr.selonarch.elonarlybird_root.filtelonrs.elonarlybirdSuccelonssfulRelonsponselonHandlelonr;
+import com.twittelonr.util.Futurelon;
 
-public class ClientLatencyFilter extends SimpleFilter<EarlybirdRequest, EarlybirdResponse> {
-  // _client_latency_stats_for_ is intended to measure the latency of requests to services that this
-  // root depends on. This can be used to measure how long a request takes in transit between when
-  // it leaves a root and when a root receives the response, in case this latency is significantly
-  // different than Earlybird measured latency. We break it down by client, so that we can tell
-  // which customers are being hit by this latency.
-  private static final String STAT_FORMAT = "%s_client_latency_stats_for_%s";
+public class ClielonntLatelonncyFiltelonr elonxtelonnds SimplelonFiltelonr<elonarlybirdRelonquelonst, elonarlybirdRelonsponselon> {
+  // _clielonnt_latelonncy_stats_for_ is intelonndelond to melonasurelon thelon latelonncy of relonquelonsts to selonrvicelons that this
+  // root delonpelonnds on. This can belon uselond to melonasurelon how long a relonquelonst takelons in transit belontwelonelonn whelonn
+  // it lelonavelons a root and whelonn a root reloncelonivelons thelon relonsponselon, in caselon this latelonncy is significantly
+  // diffelonrelonnt than elonarlybird melonasurelond latelonncy. Welon brelonak it down by clielonnt, so that welon can telonll
+  // which customelonrs arelon beloning hit by this latelonncy.
+  privatelon static final String STAT_FORMAT = "%s_clielonnt_latelonncy_stats_for_%s";
 
-  private final ConcurrentHashMap<String, RequestCounters> requestCounterForClient =
-      new ConcurrentHashMap<>();
-  private final String prefix;
+  privatelon final ConcurrelonntHashMap<String, RelonquelonstCountelonrs> relonquelonstCountelonrForClielonnt =
+      nelonw ConcurrelonntHashMap<>();
+  privatelon final String prelonfix;
 
-  public ClientLatencyFilter(String prefix) {
-    this.prefix = prefix;
+  public ClielonntLatelonncyFiltelonr(String prelonfix) {
+    this.prelonfix = prelonfix;
   }
 
-  @Override
-  public Future<EarlybirdResponse> apply(EarlybirdRequest request,
-                                         Service<EarlybirdRequest, EarlybirdResponse> service) {
+  @Ovelonrridelon
+  public Futurelon<elonarlybirdRelonsponselon> apply(elonarlybirdRelonquelonst relonquelonst,
+                                         Selonrvicelon<elonarlybirdRelonquelonst, elonarlybirdRelonsponselon> selonrvicelon) {
 
-    RequestCounters requestCounters = requestCounterForClient.computeIfAbsent(
-        ClientIdUtil.getClientIdFromRequest(request), client ->
-            new RequestCounters(String.format(STAT_FORMAT, prefix, client)));
+    RelonquelonstCountelonrs relonquelonstCountelonrs = relonquelonstCountelonrForClielonnt.computelonIfAbselonnt(
+        ClielonntIdUtil.gelontClielonntIdFromRelonquelonst(relonquelonst), clielonnt ->
+            nelonw RelonquelonstCountelonrs(String.format(STAT_FORMAT, prelonfix, clielonnt)));
 
-    RequestCountersEventListener<EarlybirdResponse> requestCountersEventListener =
-        new RequestCountersEventListener<>(requestCounters, Clock.SYSTEM_CLOCK,
-            EarlybirdSuccessfulResponseHandler.INSTANCE);
-    return service.apply(request).addEventListener(requestCountersEventListener);
+    RelonquelonstCountelonrselonvelonntListelonnelonr<elonarlybirdRelonsponselon> relonquelonstCountelonrselonvelonntListelonnelonr =
+        nelonw RelonquelonstCountelonrselonvelonntListelonnelonr<>(relonquelonstCountelonrs, Clock.SYSTelonM_CLOCK,
+            elonarlybirdSuccelonssfulRelonsponselonHandlelonr.INSTANCelon);
+    relonturn selonrvicelon.apply(relonquelonst).addelonvelonntListelonnelonr(relonquelonstCountelonrselonvelonntListelonnelonr);
   }
 }

@@ -1,164 +1,164 @@
-package com.twitter.visibility.configapi.params
+packagelon com.twittelonr.visibility.configapi.params
 
-import com.twitter.timelines.configapi.EnumParam
-import com.twitter.timelines.configapi.Param
+import com.twittelonr.timelonlinelons.configapi.elonnumParam
+import com.twittelonr.timelonlinelons.configapi.Param
 
-abstract class RuleParam[T](override val default: T) extends Param(default) {
-  override val statName: String = s"RuleParam/${this.getClass.getSimpleName}"
+abstract class RulelonParam[T](ovelonrridelon val delonfault: T) elonxtelonnds Param(delonfault) {
+  ovelonrridelon val statNamelon: String = s"RulelonParam/${this.gelontClass.gelontSimplelonNamelon}"
 }
 
-abstract class EnumRuleParam[T <: Enumeration](override val default: T#Value, override val enum: T)
-    extends EnumParam(default, enum) {
-  override val statName: String = s"RuleParam/${this.getClass.getSimpleName}"
+abstract class elonnumRulelonParam[T <: elonnumelonration](ovelonrridelon val delonfault: T#Valuelon, ovelonrridelon val elonnum: T)
+    elonxtelonnds elonnumParam(delonfault, elonnum) {
+  ovelonrridelon val statNamelon: String = s"RulelonParam/${this.gelontClass.gelontSimplelonNamelon}"
 }
 
-private[visibility] object RuleParams {
-  object True extends RuleParam(true)
-  object False extends RuleParam(false)
+privatelon[visibility] objelonct RulelonParams {
+  objelonct Truelon elonxtelonnds RulelonParam(truelon)
+  objelonct Falselon elonxtelonnds RulelonParam(falselon)
 
-  object TestHoldbackParam extends RuleParam(true)
+  objelonct TelonstHoldbackParam elonxtelonnds RulelonParam(truelon)
 
-  object TweetConversationControlEnabledParam extends RuleParam(default = false)
+  objelonct TwelonelontConvelonrsationControlelonnablelondParam elonxtelonnds RulelonParam(delonfault = falselon)
 
-  object EnableLimitRepliesFollowersConversationRule extends RuleParam(default = false)
+  objelonct elonnablelonLimitRelonplielonsFollowelonrsConvelonrsationRulelon elonxtelonnds RulelonParam(delonfault = falselon)
 
-  object CommunityTweetsEnabledParam extends RuleParam(default = false)
+  objelonct CommunityTwelonelontselonnablelondParam elonxtelonnds RulelonParam(delonfault = falselon)
 
-  object DropCommunityTweetWithUndefinedCommunityRuleEnabledParam extends RuleParam(default = false)
+  objelonct DropCommunityTwelonelontWithUndelonfinelondCommunityRulelonelonnablelondParam elonxtelonnds RulelonParam(delonfault = falselon)
 
-  object EnableHighPSpammyTweetScoreSearchTweetLabelDropRuleParam extends RuleParam(false)
+  objelonct elonnablelonHighPSpammyTwelonelontScorelonSelonarchTwelonelontLabelonlDropRulelonParam elonxtelonnds RulelonParam(falselon)
 
-  object EnableSmyteSpamTweetRuleParam extends RuleParam(false)
+  objelonct elonnablelonSmytelonSpamTwelonelontRulelonParam elonxtelonnds RulelonParam(falselon)
 
-  object EnableHighSpammyTweetContentScoreSearchLatestTweetLabelDropRuleParam
-      extends RuleParam(false)
+  objelonct elonnablelonHighSpammyTwelonelontContelonntScorelonSelonarchLatelonstTwelonelontLabelonlDropRulelonParam
+      elonxtelonnds RulelonParam(falselon)
 
-  object EnableHighSpammyTweetContentScoreSearchTopTweetLabelDropRuleParam extends RuleParam(false)
+  objelonct elonnablelonHighSpammyTwelonelontContelonntScorelonSelonarchTopTwelonelontLabelonlDropRulelonParam elonxtelonnds RulelonParam(falselon)
 
-  object NotGraduatedUserLabelRuleHoldbackExperimentParam extends RuleParam(default = false)
+  objelonct NotGraduatelondUselonrLabelonlRulelonHoldbackelonxpelonrimelonntParam elonxtelonnds RulelonParam(delonfault = falselon)
 
-  object EnableGoreAndViolenceTopicHighRecallTweetLabelRule extends RuleParam(default = false)
+  objelonct elonnablelonGorelonAndViolelonncelonTopicHighReloncallTwelonelontLabelonlRulelon elonxtelonnds RulelonParam(delonfault = falselon)
 
-  object EnableBlinkBadDownrankingRuleParam extends RuleParam(false)
-  object EnableBlinkWorstDownrankingRuleParam extends RuleParam(false)
+  objelonct elonnablelonBlinkBadDownrankingRulelonParam elonxtelonnds RulelonParam(falselon)
+  objelonct elonnablelonBlinkWorstDownrankingRulelonParam elonxtelonnds RulelonParam(falselon)
 
-  object EnableHighSpammyTweetContentScoreTrendsTopTweetLabelDropRuleParam
-      extends RuleParam(default = false)
+  objelonct elonnablelonHighSpammyTwelonelontContelonntScorelonTrelonndsTopTwelonelontLabelonlDropRulelonParam
+      elonxtelonnds RulelonParam(delonfault = falselon)
 
-  object EnableHighSpammyTweetContentScoreTrendsLatestTweetLabelDropRuleParam
-      extends RuleParam(default = false)
+  objelonct elonnablelonHighSpammyTwelonelontContelonntScorelonTrelonndsLatelonstTwelonelontLabelonlDropRulelonParam
+      elonxtelonnds RulelonParam(delonfault = falselon)
 
-  object EnableCopypastaSpamDownrankConvosAbusiveQualityRule extends RuleParam(default = false)
-  object EnableCopypastaSpamSearchDropRule extends RuleParam(default = false)
+  objelonct elonnablelonCopypastaSpamDownrankConvosAbusivelonQualityRulelon elonxtelonnds RulelonParam(delonfault = falselon)
+  objelonct elonnablelonCopypastaSpamSelonarchDropRulelon elonxtelonnds RulelonParam(delonfault = falselon)
 
-  object EnableSpammyUserModelTweetDropRuleParam extends RuleParam(default = false)
+  objelonct elonnablelonSpammyUselonrModelonlTwelonelontDropRulelonParam elonxtelonnds RulelonParam(delonfault = falselon)
 
-  object EnableAvoidNsfwRulesParam extends RuleParam(false)
+  objelonct elonnablelonAvoidNsfwRulelonsParam elonxtelonnds RulelonParam(falselon)
 
-  object EnableReportedTweetInterstitialRule extends RuleParam(default = false)
+  objelonct elonnablelonRelonportelondTwelonelontIntelonrstitialRulelon elonxtelonnds RulelonParam(delonfault = falselon)
 
-  object EnableReportedTweetInterstitialSearchRule extends RuleParam(default = false)
+  objelonct elonnablelonRelonportelondTwelonelontIntelonrstitialSelonarchRulelon elonxtelonnds RulelonParam(delonfault = falselon)
 
-  object EnableDropExclusiveTweetContentRule extends RuleParam(default = false)
+  objelonct elonnablelonDropelonxclusivelonTwelonelontContelonntRulelon elonxtelonnds RulelonParam(delonfault = falselon)
 
-  object EnableDropExclusiveTweetContentRuleFailClosed extends RuleParam(default = false)
+  objelonct elonnablelonDropelonxclusivelonTwelonelontContelonntRulelonFailCloselond elonxtelonnds RulelonParam(delonfault = falselon)
 
-  object EnableTombstoneExclusiveQtProfileTimelineParam extends RuleParam(default = false)
+  objelonct elonnablelonTombstonelonelonxclusivelonQtProfilelonTimelonlinelonParam elonxtelonnds RulelonParam(delonfault = falselon)
 
-  object EnableDropAllExclusiveTweetsRuleParam extends RuleParam(false)
-  object EnableDropAllExclusiveTweetsRuleFailClosedParam extends RuleParam(false)
+  objelonct elonnablelonDropAllelonxclusivelonTwelonelontsRulelonParam elonxtelonnds RulelonParam(falselon)
+  objelonct elonnablelonDropAllelonxclusivelonTwelonelontsRulelonFailCloselondParam elonxtelonnds RulelonParam(falselon)
 
-  object EnableDownrankSpamReplySectioningRuleParam extends RuleParam(default = false)
-  object EnableNsfwTextSectioningRuleParam extends RuleParam(default = false)
+  objelonct elonnablelonDownrankSpamRelonplySelonctioningRulelonParam elonxtelonnds RulelonParam(delonfault = falselon)
+  objelonct elonnablelonNsfwTelonxtSelonctioningRulelonParam elonxtelonnds RulelonParam(delonfault = falselon)
 
-  object EnableSearchIpiSafeSearchWithoutUserInQueryDropRule extends RuleParam(false)
+  objelonct elonnablelonSelonarchIpiSafelonSelonarchWithoutUselonrInQuelonryDropRulelon elonxtelonnds RulelonParam(falselon)
 
-  object PromotedTweetHealthEnforcementHoldback extends RuleParam(default = true)
-  object EnableTimelineHomePromotedTweetHealthEnforcementRules extends RuleParam(default = false)
+  objelonct PromotelondTwelonelontHelonalthelonnforcelonmelonntHoldback elonxtelonnds RulelonParam(delonfault = truelon)
+  objelonct elonnablelonTimelonlinelonHomelonPromotelondTwelonelontHelonalthelonnforcelonmelonntRulelons elonxtelonnds RulelonParam(delonfault = falselon)
 
-  object EnableMutedKeywordFilteringSpaceTitleNotificationsRuleParam extends RuleParam(false)
+  objelonct elonnablelonMutelondKelonywordFiltelonringSpacelonTitlelonNotificationsRulelonParam elonxtelonnds RulelonParam(falselon)
 
-  object EnableDropTweetsWithGeoRestrictedMediaRuleParam extends RuleParam(default = false)
+  objelonct elonnablelonDropTwelonelontsWithGelonoRelonstrictelondMelondiaRulelonParam elonxtelonnds RulelonParam(delonfault = falselon)
 
-  object EnableDropAllTrustedFriendsTweetsRuleParam extends RuleParam(false)
-  object EnableDropTrustedFriendsTweetContentRuleParam extends RuleParam(false)
+  objelonct elonnablelonDropAllTrustelondFrielonndsTwelonelontsRulelonParam elonxtelonnds RulelonParam(falselon)
+  objelonct elonnablelonDropTrustelondFrielonndsTwelonelontContelonntRulelonParam elonxtelonnds RulelonParam(falselon)
 
-  object EnableDropAllCollabInvitationTweetsRuleParam extends RuleParam(false)
+  objelonct elonnablelonDropAllCollabInvitationTwelonelontsRulelonParam elonxtelonnds RulelonParam(falselon)
 
-  object EnableNsfwTextTopicsDropRuleParam extends RuleParam(false)
+  objelonct elonnablelonNsfwTelonxtTopicsDropRulelonParam elonxtelonnds RulelonParam(falselon)
 
-  object EnableLikelyIvsUserLabelDropRule extends RuleParam(false)
+  objelonct elonnablelonLikelonlyIvsUselonrLabelonlDropRulelon elonxtelonnds RulelonParam(falselon)
 
-  object EnableCardUriRootDomainCardDenylistRule extends RuleParam(false)
-  object EnableCommunityNonMemberPollCardRule extends RuleParam(false)
-  object EnableCommunityNonMemberPollCardRuleFailClosed extends RuleParam(false)
+  objelonct elonnablelonCardUriRootDomainCardDelonnylistRulelon elonxtelonnds RulelonParam(falselon)
+  objelonct elonnablelonCommunityNonMelonmbelonrPollCardRulelon elonxtelonnds RulelonParam(falselon)
+  objelonct elonnablelonCommunityNonMelonmbelonrPollCardRulelonFailCloselond elonxtelonnds RulelonParam(falselon)
 
-  object EnableExperimentalNudgeEnabledParam extends RuleParam(false)
+  objelonct elonnablelonelonxpelonrimelonntalNudgelonelonnablelondParam elonxtelonnds RulelonParam(falselon)
 
-  object NsfwHighPrecisionUserLabelAvoidTweetRuleEnabledParam extends RuleParam(default = false)
+  objelonct NsfwHighPreloncisionUselonrLabelonlAvoidTwelonelontRulelonelonnablelondParam elonxtelonnds RulelonParam(delonfault = falselon)
 
-  object EnableNewAdAvoidanceRulesParam extends RuleParam(false)
+  objelonct elonnablelonNelonwAdAvoidancelonRulelonsParam elonxtelonnds RulelonParam(falselon)
 
-  object EnableNsfaHighRecallAdAvoidanceParam extends RuleParam(false)
+  objelonct elonnablelonNsfaHighReloncallAdAvoidancelonParam elonxtelonnds RulelonParam(falselon)
 
-  object EnableNsfaKeywordsHighPrecisionAdAvoidanceParam extends RuleParam(false)
+  objelonct elonnablelonNsfaKelonywordsHighPreloncisionAdAvoidancelonParam elonxtelonnds RulelonParam(falselon)
 
-  object EnableStaleTweetDropRuleParam extends RuleParam(false)
-  object EnableStaleTweetDropRuleFailClosedParam extends RuleParam(false)
+  objelonct elonnablelonStalelonTwelonelontDropRulelonParam elonxtelonnds RulelonParam(falselon)
+  objelonct elonnablelonStalelonTwelonelontDropRulelonFailCloselondParam elonxtelonnds RulelonParam(falselon)
 
-  object EnableDeleteStateTweetRulesParam extends RuleParam(default = false)
+  objelonct elonnablelonDelonlelontelonStatelonTwelonelontRulelonsParam elonxtelonnds RulelonParam(delonfault = falselon)
 
-  object EnableSpacesSharingNsfwDropRulesParam extends RuleParam(default = true)
+  objelonct elonnablelonSpacelonsSharingNsfwDropRulelonsParam elonxtelonnds RulelonParam(delonfault = truelon)
 
-  object EnableViewerIsSoftUserDropRuleParam extends RuleParam(default = false)
+  objelonct elonnablelonVielonwelonrIsSoftUselonrDropRulelonParam elonxtelonnds RulelonParam(delonfault = falselon)
 
-  object EnablePdnaQuotedTweetTombstoneRuleParam extends RuleParam(default = true)
-  object EnableSpamQuotedTweetTombstoneRuleParam extends RuleParam(default = true)
+  objelonct elonnablelonPdnaQuotelondTwelonelontTombstonelonRulelonParam elonxtelonnds RulelonParam(delonfault = truelon)
+  objelonct elonnablelonSpamQuotelondTwelonelontTombstonelonRulelonParam elonxtelonnds RulelonParam(delonfault = truelon)
 
-  object EnableNsfwHpQuotedTweetDropRuleParam extends RuleParam(default = false)
-  object EnableNsfwHpQuotedTweetTombstoneRuleParam extends RuleParam(default = false)
+  objelonct elonnablelonNsfwHpQuotelondTwelonelontDropRulelonParam elonxtelonnds RulelonParam(delonfault = falselon)
+  objelonct elonnablelonNsfwHpQuotelondTwelonelontTombstonelonRulelonParam elonxtelonnds RulelonParam(delonfault = falselon)
 
-  object EnableInnerQuotedTweetViewerBlocksAuthorInterstitialRuleParam
-      extends RuleParam(default = false)
-  object EnableInnerQuotedTweetViewerMutesAuthorInterstitialRuleParam
-      extends RuleParam(default = false)
+  objelonct elonnablelonInnelonrQuotelondTwelonelontVielonwelonrBlocksAuthorIntelonrstitialRulelonParam
+      elonxtelonnds RulelonParam(delonfault = falselon)
+  objelonct elonnablelonInnelonrQuotelondTwelonelontVielonwelonrMutelonsAuthorIntelonrstitialRulelonParam
+      elonxtelonnds RulelonParam(delonfault = falselon)
 
 
-  object EnableNewSensitiveMediaSettingsInterstitialsHomeTimelineRulesParam extends RuleParam(false)
+  objelonct elonnablelonNelonwSelonnsitivelonMelondiaSelonttingsIntelonrstitialsHomelonTimelonlinelonRulelonsParam elonxtelonnds RulelonParam(falselon)
 
-  object EnableNewSensitiveMediaSettingsInterstitialsConversationRulesParam extends RuleParam(false)
+  objelonct elonnablelonNelonwSelonnsitivelonMelondiaSelonttingsIntelonrstitialsConvelonrsationRulelonsParam elonxtelonnds RulelonParam(falselon)
 
-  object EnableNewSensitiveMediaSettingsInterstitialsProfileTimelineRulesParam
-      extends RuleParam(false)
+  objelonct elonnablelonNelonwSelonnsitivelonMelondiaSelonttingsIntelonrstitialsProfilelonTimelonlinelonRulelonsParam
+      elonxtelonnds RulelonParam(falselon)
 
-  object EnableNewSensitiveMediaSettingsInterstitialsTweetDetailRulesParam extends RuleParam(false)
+  objelonct elonnablelonNelonwSelonnsitivelonMelondiaSelonttingsIntelonrstitialsTwelonelontDelontailRulelonsParam elonxtelonnds RulelonParam(falselon)
 
-  object EnableLegacySensitiveMediaHomeTimelineRulesParam extends RuleParam(true)
+  objelonct elonnablelonLelongacySelonnsitivelonMelondiaHomelonTimelonlinelonRulelonsParam elonxtelonnds RulelonParam(truelon)
 
-  object EnableLegacySensitiveMediaConversationRulesParam extends RuleParam(true)
+  objelonct elonnablelonLelongacySelonnsitivelonMelondiaConvelonrsationRulelonsParam elonxtelonnds RulelonParam(truelon)
 
-  object EnableLegacySensitiveMediaProfileTimelineRulesParam extends RuleParam(true)
+  objelonct elonnablelonLelongacySelonnsitivelonMelondiaProfilelonTimelonlinelonRulelonsParam elonxtelonnds RulelonParam(truelon)
 
-  object EnableLegacySensitiveMediaTweetDetailRulesParam extends RuleParam(true)
+  objelonct elonnablelonLelongacySelonnsitivelonMelondiaTwelonelontDelontailRulelonsParam elonxtelonnds RulelonParam(truelon)
 
-  object EnableLegacySensitiveMediaDirectMessagesRulesParam extends RuleParam(true)
+  objelonct elonnablelonLelongacySelonnsitivelonMelondiaDirelonctMelonssagelonsRulelonsParam elonxtelonnds RulelonParam(truelon)
 
-  object EnableToxicReplyFilteringConversationRulesParam extends RuleParam(false)
-  object EnableToxicReplyFilteringNotificationsRulesParam extends RuleParam(false)
+  objelonct elonnablelonToxicRelonplyFiltelonringConvelonrsationRulelonsParam elonxtelonnds RulelonParam(falselon)
+  objelonct elonnablelonToxicRelonplyFiltelonringNotificationsRulelonsParam elonxtelonnds RulelonParam(falselon)
 
-  object EnableSearchQueryMatchesTweetAuthorConditionParam extends RuleParam(default = false)
+  objelonct elonnablelonSelonarchQuelonryMatchelonsTwelonelontAuthorConditionParam elonxtelonnds RulelonParam(delonfault = falselon)
 
-  object EnableSearchBasicBlockMuteRulesParam extends RuleParam(default = false)
+  objelonct elonnablelonSelonarchBasicBlockMutelonRulelonsParam elonxtelonnds RulelonParam(delonfault = falselon)
 
-  object EnableAbusiveBehaviorDropRuleParam extends RuleParam(default = false)
-  object EnableAbusiveBehaviorInterstitialRuleParam extends RuleParam(default = false)
-  object EnableAbusiveBehaviorLimitedEngagementsRuleParam extends RuleParam(default = false)
+  objelonct elonnablelonAbusivelonBelonhaviorDropRulelonParam elonxtelonnds RulelonParam(delonfault = falselon)
+  objelonct elonnablelonAbusivelonBelonhaviorIntelonrstitialRulelonParam elonxtelonnds RulelonParam(delonfault = falselon)
+  objelonct elonnablelonAbusivelonBelonhaviorLimitelondelonngagelonmelonntsRulelonParam elonxtelonnds RulelonParam(delonfault = falselon)
 
-  object EnableNotGraduatedDownrankConvosAbusiveQualityRuleParam extends RuleParam(default = false)
-  object EnableNotGraduatedSearchDropRuleParam extends RuleParam(default = false)
-  object EnableNotGraduatedDropRuleParam extends RuleParam(default = false)
+  objelonct elonnablelonNotGraduatelondDownrankConvosAbusivelonQualityRulelonParam elonxtelonnds RulelonParam(delonfault = falselon)
+  objelonct elonnablelonNotGraduatelondSelonarchDropRulelonParam elonxtelonnds RulelonParam(delonfault = falselon)
+  objelonct elonnablelonNotGraduatelondDropRulelonParam elonxtelonnds RulelonParam(delonfault = falselon)
 
-  object EnableFosnrRuleParam extends RuleParam(default = false)
+  objelonct elonnablelonFosnrRulelonParam elonxtelonnds RulelonParam(delonfault = falselon)
 
-  object EnableAuthorBlocksViewerDropRuleParam extends RuleParam(default = false)
+  objelonct elonnablelonAuthorBlocksVielonwelonrDropRulelonParam elonxtelonnds RulelonParam(delonfault = falselon)
 }

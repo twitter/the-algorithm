@@ -1,138 +1,138 @@
-package com.twitter.visibility.interfaces.tweets
+packagelon com.twittelonr.visibility.intelonrfacelons.twelonelonts
 
-import com.twitter.decider.Decider
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.stitch.Stitch
-import com.twitter.visibility.VisibilityLibrary
-import com.twitter.visibility.builder.VisibilityResult
-import com.twitter.visibility.builder.users.UserUnavailableFeatures
-import com.twitter.visibility.common.actions.converter.scala.DropReasonConverter
-import com.twitter.visibility.configapi.configs.VisibilityDeciderGates
-import com.twitter.visibility.features.TweetIsInnerQuotedTweet
-import com.twitter.visibility.features.TweetIsRetweet
-import com.twitter.visibility.generators.LocalizedInterstitialGenerator
-import com.twitter.visibility.generators.TombstoneGenerator
-import com.twitter.visibility.models.ContentId.UserUnavailableState
-import com.twitter.visibility.models.UserUnavailableStateEnum
-import com.twitter.visibility.rules.Drop
-import com.twitter.visibility.rules.Interstitial
-import com.twitter.visibility.rules.Reason
-import com.twitter.visibility.rules.Tombstone
-import com.twitter.visibility.thriftscala.UserVisibilityResult
+import com.twittelonr.deloncidelonr.Deloncidelonr
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.visibility.VisibilityLibrary
+import com.twittelonr.visibility.buildelonr.VisibilityRelonsult
+import com.twittelonr.visibility.buildelonr.uselonrs.UselonrUnavailablelonFelonaturelons
+import com.twittelonr.visibility.common.actions.convelonrtelonr.scala.DropRelonasonConvelonrtelonr
+import com.twittelonr.visibility.configapi.configs.VisibilityDeloncidelonrGatelons
+import com.twittelonr.visibility.felonaturelons.TwelonelontIsInnelonrQuotelondTwelonelont
+import com.twittelonr.visibility.felonaturelons.TwelonelontIsRelontwelonelont
+import com.twittelonr.visibility.gelonnelonrators.LocalizelondIntelonrstitialGelonnelonrator
+import com.twittelonr.visibility.gelonnelonrators.TombstonelonGelonnelonrator
+import com.twittelonr.visibility.modelonls.ContelonntId.UselonrUnavailablelonStatelon
+import com.twittelonr.visibility.modelonls.UselonrUnavailablelonStatelonelonnum
+import com.twittelonr.visibility.rulelons.Drop
+import com.twittelonr.visibility.rulelons.Intelonrstitial
+import com.twittelonr.visibility.rulelons.Relonason
+import com.twittelonr.visibility.rulelons.Tombstonelon
+import com.twittelonr.visibility.thriftscala.UselonrVisibilityRelonsult
 
-object UserUnavailableStateVisibilityLibrary {
-  type Type = UserUnavailableStateVisibilityRequest => Stitch[VisibilityResult]
+objelonct UselonrUnavailablelonStatelonVisibilityLibrary {
+  typelon Typelon = UselonrUnavailablelonStatelonVisibilityRelonquelonst => Stitch[VisibilityRelonsult]
 
-  def apply(
+  delonf apply(
     visibilityLibrary: VisibilityLibrary,
-    decider: Decider,
-    tombstoneGenerator: TombstoneGenerator,
-    interstitialGenerator: LocalizedInterstitialGenerator
-  ): Type = {
-    val libraryStatsReceiver = visibilityLibrary.statsReceiver.scope("user_unavailable_vis_library")
-    val defaultDropScope = visibilityLibrary.statsReceiver.scope("default_drop")
-    val vfEngineCounter = libraryStatsReceiver.counter("vf_engine_requests")
+    deloncidelonr: Deloncidelonr,
+    tombstonelonGelonnelonrator: TombstonelonGelonnelonrator,
+    intelonrstitialGelonnelonrator: LocalizelondIntelonrstitialGelonnelonrator
+  ): Typelon = {
+    val libraryStatsReloncelonivelonr = visibilityLibrary.statsReloncelonivelonr.scopelon("uselonr_unavailablelon_vis_library")
+    val delonfaultDropScopelon = visibilityLibrary.statsReloncelonivelonr.scopelon("delonfault_drop")
+    val vfelonnginelonCountelonr = libraryStatsReloncelonivelonr.countelonr("vf_elonnginelon_relonquelonsts")
 
-    val userUnavailableFeatures = UserUnavailableFeatures(libraryStatsReceiver)
-    val visibilityDeciderGates = VisibilityDeciderGates(decider)
+    val uselonrUnavailablelonFelonaturelons = UselonrUnavailablelonFelonaturelons(libraryStatsReloncelonivelonr)
+    val visibilityDeloncidelonrGatelons = VisibilityDeloncidelonrGatelons(deloncidelonr)
 
-    { r: UserUnavailableStateVisibilityRequest =>
-      vfEngineCounter.incr()
-      val contentId = UserUnavailableState(r.tweetId)
+    { r: UselonrUnavailablelonStatelonVisibilityRelonquelonst =>
+      vfelonnginelonCountelonr.incr()
+      val contelonntId = UselonrUnavailablelonStatelon(r.twelonelontId)
 
-      val featureMap =
-        visibilityLibrary.featureMapBuilder(
-          Seq(
-            _.withConstantFeature(TweetIsInnerQuotedTweet, r.isInnerQuotedTweet),
-            _.withConstantFeature(TweetIsRetweet, r.isRetweet),
-            userUnavailableFeatures.forState(r.userUnavailableState)
+      val felonaturelonMap =
+        visibilityLibrary.felonaturelonMapBuildelonr(
+          Selonq(
+            _.withConstantFelonaturelon(TwelonelontIsInnelonrQuotelondTwelonelont, r.isInnelonrQuotelondTwelonelont),
+            _.withConstantFelonaturelon(TwelonelontIsRelontwelonelont, r.isRelontwelonelont),
+            uselonrUnavailablelonFelonaturelons.forStatelon(r.uselonrUnavailablelonStatelon)
           )
         )
 
-      val language = r.viewerContext.requestLanguageCode.getOrElse("en")
+      val languagelon = r.vielonwelonrContelonxt.relonquelonstLanguagelonCodelon.gelontOrelonlselon("elonn")
 
-      val reason = visibilityLibrary
-        .runRuleEngine(
-          contentId,
-          featureMap,
-          r.viewerContext,
-          r.safetyLevel
-        ).map(defaultToDrop(r.userUnavailableState, defaultDropScope))
-        .map(tombstoneGenerator(_, language))
-        .map(visibilityResult => {
-          if (visibilityDeciderGates.enableLocalizedInterstitialInUserStateLibrary()) {
-            interstitialGenerator(visibilityResult, language)
-          } else {
-            visibilityResult
+      val relonason = visibilityLibrary
+        .runRulelonelonnginelon(
+          contelonntId,
+          felonaturelonMap,
+          r.vielonwelonrContelonxt,
+          r.safelontyLelonvelonl
+        ).map(delonfaultToDrop(r.uselonrUnavailablelonStatelon, delonfaultDropScopelon))
+        .map(tombstonelonGelonnelonrator(_, languagelon))
+        .map(visibilityRelonsult => {
+          if (visibilityDeloncidelonrGatelons.elonnablelonLocalizelondIntelonrstitialInUselonrStatelonLibrary()) {
+            intelonrstitialGelonnelonrator(visibilityRelonsult, languagelon)
+          } elonlselon {
+            visibilityRelonsult
           }
         })
 
-      reason
+      relonason
     }
   }
 
-  def defaultToDrop(
-    userUnavailableState: UserUnavailableStateEnum,
-    defaultDropScope: StatsReceiver
+  delonf delonfaultToDrop(
+    uselonrUnavailablelonStatelon: UselonrUnavailablelonStatelonelonnum,
+    delonfaultDropScopelon: StatsReloncelonivelonr
   )(
-    result: VisibilityResult
-  ): VisibilityResult =
-    result.verdict match {
-      case _: Drop | _: Tombstone => result
+    relonsult: VisibilityRelonsult
+  ): VisibilityRelonsult =
+    relonsult.velonrdict match {
+      caselon _: Drop | _: Tombstonelon => relonsult
 
-      case _: Interstitial => result
-      case _ =>
-        result.copy(verdict =
-          Drop(userUnavailableStateToDropReason(userUnavailableState, defaultDropScope)))
+      caselon _: Intelonrstitial => relonsult
+      caselon _ =>
+        relonsult.copy(velonrdict =
+          Drop(uselonrUnavailablelonStatelonToDropRelonason(uselonrUnavailablelonStatelon, delonfaultDropScopelon)))
     }
 
-  private[this] def userUnavailableStateToDropReason(
-    userUnavailableState: UserUnavailableStateEnum,
-    stats: StatsReceiver
-  ): Reason =
-    userUnavailableState match {
-      case UserUnavailableStateEnum.Erased =>
-        stats.counter("erased").incr()
-        Reason.ErasedAuthor
-      case UserUnavailableStateEnum.Protected =>
-        stats.counter("protected").incr()
-        Reason.ProtectedAuthor
-      case UserUnavailableStateEnum.Offboarded =>
-        stats.counter("offboarded").incr()
-        Reason.OffboardedAuthor
-      case UserUnavailableStateEnum.AuthorBlocksViewer =>
-        stats.counter("author_blocks_viewer").incr()
-        Reason.AuthorBlocksViewer
-      case UserUnavailableStateEnum.Suspended =>
-        stats.counter("suspended_author").incr()
-        Reason.SuspendedAuthor
-      case UserUnavailableStateEnum.Deactivated =>
-        stats.counter("deactivated_author").incr()
-        Reason.DeactivatedAuthor
-      case UserUnavailableStateEnum.Filtered(result) =>
-        stats.counter("filtered").incr()
-        userVisibilityResultToDropReason(result, stats.scope("filtered"))
-      case UserUnavailableStateEnum.Unavailable =>
-        stats.counter("unspecified").incr()
-        Reason.Unspecified
-      case _ =>
-        stats.counter("unknown").incr()
-        stats.scope("unknown").counter(userUnavailableState.name).incr()
-        Reason.Unspecified
+  privatelon[this] delonf uselonrUnavailablelonStatelonToDropRelonason(
+    uselonrUnavailablelonStatelon: UselonrUnavailablelonStatelonelonnum,
+    stats: StatsReloncelonivelonr
+  ): Relonason =
+    uselonrUnavailablelonStatelon match {
+      caselon UselonrUnavailablelonStatelonelonnum.elonraselond =>
+        stats.countelonr("elonraselond").incr()
+        Relonason.elonraselondAuthor
+      caselon UselonrUnavailablelonStatelonelonnum.Protelonctelond =>
+        stats.countelonr("protelonctelond").incr()
+        Relonason.ProtelonctelondAuthor
+      caselon UselonrUnavailablelonStatelonelonnum.Offboardelond =>
+        stats.countelonr("offboardelond").incr()
+        Relonason.OffboardelondAuthor
+      caselon UselonrUnavailablelonStatelonelonnum.AuthorBlocksVielonwelonr =>
+        stats.countelonr("author_blocks_vielonwelonr").incr()
+        Relonason.AuthorBlocksVielonwelonr
+      caselon UselonrUnavailablelonStatelonelonnum.Suspelonndelond =>
+        stats.countelonr("suspelonndelond_author").incr()
+        Relonason.SuspelonndelondAuthor
+      caselon UselonrUnavailablelonStatelonelonnum.Delonactivatelond =>
+        stats.countelonr("delonactivatelond_author").incr()
+        Relonason.DelonactivatelondAuthor
+      caselon UselonrUnavailablelonStatelonelonnum.Filtelonrelond(relonsult) =>
+        stats.countelonr("filtelonrelond").incr()
+        uselonrVisibilityRelonsultToDropRelonason(relonsult, stats.scopelon("filtelonrelond"))
+      caselon UselonrUnavailablelonStatelonelonnum.Unavailablelon =>
+        stats.countelonr("unspeloncifielond").incr()
+        Relonason.Unspeloncifielond
+      caselon _ =>
+        stats.countelonr("unknown").incr()
+        stats.scopelon("unknown").countelonr(uselonrUnavailablelonStatelon.namelon).incr()
+        Relonason.Unspeloncifielond
     }
 
-  private[this] def userVisibilityResultToDropReason(
-    result: UserVisibilityResult,
-    stats: StatsReceiver
-  ): Reason =
-    result.action
-      .flatMap(DropReasonConverter.fromAction)
-      .map { dropReason =>
-        val reason = Reason.fromDropReason(dropReason)
-        stats.counter(reason.name).incr()
-        reason
-      }.getOrElse {
-        stats.counter("empty")
-        Reason.Unspecified
+  privatelon[this] delonf uselonrVisibilityRelonsultToDropRelonason(
+    relonsult: UselonrVisibilityRelonsult,
+    stats: StatsReloncelonivelonr
+  ): Relonason =
+    relonsult.action
+      .flatMap(DropRelonasonConvelonrtelonr.fromAction)
+      .map { dropRelonason =>
+        val relonason = Relonason.fromDropRelonason(dropRelonason)
+        stats.countelonr(relonason.namelon).incr()
+        relonason
+      }.gelontOrelonlselon {
+        stats.countelonr("elonmpty")
+        Relonason.Unspeloncifielond
       }
 }

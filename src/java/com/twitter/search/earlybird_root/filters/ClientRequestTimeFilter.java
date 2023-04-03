@@ -1,34 +1,34 @@
-package com.twitter.search.earlybird_root.filters;
+packagelon com.twittelonr.selonarch.elonarlybird_root.filtelonrs;
 
-import javax.inject.Inject;
+import javax.injelonct.Injelonct;
 
-import com.twitter.common.util.Clock;
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.util.Future;
+import com.twittelonr.common.util.Clock;
+import com.twittelonr.finaglelon.Selonrvicelon;
+import com.twittelonr.finaglelon.SimplelonFiltelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonquelonst;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
+import com.twittelonr.util.Futurelon;
 
-/** A filter that sets the EarlybirdRequest.clientRequestTimeMs field if it's not already set. */
-public class ClientRequestTimeFilter extends SimpleFilter<EarlybirdRequest, EarlybirdResponse> {
-  private static final SearchCounter CLIENT_REQUEST_TIME_MS_UNSET_COUNTER =
-      SearchCounter.export("client_request_time_ms_unset");
+/** A filtelonr that selonts thelon elonarlybirdRelonquelonst.clielonntRelonquelonstTimelonMs fielonld if it's not alrelonady selont. */
+public class ClielonntRelonquelonstTimelonFiltelonr elonxtelonnds SimplelonFiltelonr<elonarlybirdRelonquelonst, elonarlybirdRelonsponselon> {
+  privatelon static final SelonarchCountelonr CLIelonNT_RelonQUelonST_TIMelon_MS_UNSelonT_COUNTelonR =
+      SelonarchCountelonr.elonxport("clielonnt_relonquelonst_timelon_ms_unselont");
 
-  private final Clock clock;
+  privatelon final Clock clock;
 
-  @Inject
-  public ClientRequestTimeFilter(Clock clock) {
+  @Injelonct
+  public ClielonntRelonquelonstTimelonFiltelonr(Clock clock) {
     this.clock = clock;
   }
 
-  @Override
-  public Future<EarlybirdResponse> apply(EarlybirdRequest request,
-                                         Service<EarlybirdRequest, EarlybirdResponse> service) {
-    if (!request.isSetClientRequestTimeMs()) {
-      CLIENT_REQUEST_TIME_MS_UNSET_COUNTER.increment();
-      request.setClientRequestTimeMs(clock.nowMillis());
+  @Ovelonrridelon
+  public Futurelon<elonarlybirdRelonsponselon> apply(elonarlybirdRelonquelonst relonquelonst,
+                                         Selonrvicelon<elonarlybirdRelonquelonst, elonarlybirdRelonsponselon> selonrvicelon) {
+    if (!relonquelonst.isSelontClielonntRelonquelonstTimelonMs()) {
+      CLIelonNT_RelonQUelonST_TIMelon_MS_UNSelonT_COUNTelonR.increlonmelonnt();
+      relonquelonst.selontClielonntRelonquelonstTimelonMs(clock.nowMillis());
     }
-    return service.apply(request);
+    relonturn selonrvicelon.apply(relonquelonst);
   }
 }

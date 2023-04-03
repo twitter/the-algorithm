@@ -1,71 +1,71 @@
-package com.twitter.product_mixer.component_library.filter
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.filtelonr
 
-import com.twitter.util.logging.Logging
-import com.twitter.product_mixer.component_library.filter.TweetVisibilityFilter._
-import com.twitter.product_mixer.component_library.model.candidate.BaseTweetCandidate
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.filter.FilterResult
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.spam.rtf.thriftscala.SafetyLevel
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.tweetypie.{TweetyPie => TweetypieStitchClient}
-import com.twitter.tweetypie.{thriftscala => TP}
-import com.twitter.util.Return
-import com.twitter.util.Try
+import com.twittelonr.util.logging.Logging
+import com.twittelonr.product_mixelonr.componelonnt_library.filtelonr.TwelonelontVisibilityFiltelonr._
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.BaselonTwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.filtelonr.Filtelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.filtelonr.FiltelonrRelonsult
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.FiltelonrIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.spam.rtf.thriftscala.SafelontyLelonvelonl
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.stitch.twelonelontypielon.{TwelonelontyPielon => TwelonelontypielonStitchClielonnt}
+import com.twittelonr.twelonelontypielon.{thriftscala => TP}
+import com.twittelonr.util.Relonturn
+import com.twittelonr.util.Try
 
-object TweetVisibilityFilter {
-  val DefaultTweetIncludes = Set(TP.TweetInclude.TweetFieldId(TP.Tweet.IdField.id))
-  private final val getTweetFieldsFailureMessage = "TweetyPie.getTweetFields failed: "
+objelonct TwelonelontVisibilityFiltelonr {
+  val DelonfaultTwelonelontIncludelons = Selont(TP.TwelonelontIncludelon.TwelonelontFielonldId(TP.Twelonelont.IdFielonld.id))
+  privatelon final val gelontTwelonelontFielonldsFailurelonMelonssagelon = "TwelonelontyPielon.gelontTwelonelontFielonlds failelond: "
 }
 
-case class TweetVisibilityFilter[Candidate <: BaseTweetCandidate](
-  tweetypieStitchClient: TweetypieStitchClient,
-  tweetVisibilityPolicy: TP.TweetVisibilityPolicy,
-  safetyLevel: SafetyLevel,
-  tweetIncludes: Set[TP.TweetInclude.TweetFieldId] = DefaultTweetIncludes)
-    extends Filter[PipelineQuery, Candidate]
+caselon class TwelonelontVisibilityFiltelonr[Candidatelon <: BaselonTwelonelontCandidatelon](
+  twelonelontypielonStitchClielonnt: TwelonelontypielonStitchClielonnt,
+  twelonelontVisibilityPolicy: TP.TwelonelontVisibilityPolicy,
+  safelontyLelonvelonl: SafelontyLelonvelonl,
+  twelonelontIncludelons: Selont[TP.TwelonelontIncludelon.TwelonelontFielonldId] = DelonfaultTwelonelontIncludelons)
+    elonxtelonnds Filtelonr[PipelonlinelonQuelonry, Candidatelon]
     with Logging {
 
-  override val identifier: FilterIdentifier = FilterIdentifier("TweetVisibility")
+  ovelonrridelon val idelonntifielonr: FiltelonrIdelonntifielonr = FiltelonrIdelonntifielonr("TwelonelontVisibility")
 
-  def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): Stitch[FilterResult[Candidate]] = {
+  delonf apply(
+    quelonry: PipelonlinelonQuelonry,
+    candidatelons: Selonq[CandidatelonWithFelonaturelons[Candidatelon]]
+  ): Stitch[FiltelonrRelonsult[Candidatelon]] = {
     Stitch
-      .traverse(candidates.map(_.candidate.id)) { tweetId =>
-        tweetypieStitchClient
-          .getTweetFields(tweetId, getTweetFieldsOptions(query.getOptionalUserId))
+      .travelonrselon(candidatelons.map(_.candidatelon.id)) { twelonelontId =>
+        twelonelontypielonStitchClielonnt
+          .gelontTwelonelontFielonlds(twelonelontId, gelontTwelonelontFielonldsOptions(quelonry.gelontOptionalUselonrId))
           .liftToTry
       }
-      .map { getTweetFieldsResults: Seq[Try[TP.GetTweetFieldsResult]] =>
-        val (checkedSucceeded, checkFailed) = getTweetFieldsResults.partition(_.isReturn)
-        checkFailed.foreach(e => warn(() => getTweetFieldsFailureMessage, e.throwable))
-        if (checkFailed.nonEmpty) {
+      .map { gelontTwelonelontFielonldsRelonsults: Selonq[Try[TP.GelontTwelonelontFielonldsRelonsult]] =>
+        val (chelonckelondSuccelonelondelond, chelonckFailelond) = gelontTwelonelontFielonldsRelonsults.partition(_.isRelonturn)
+        chelonckFailelond.forelonach(elon => warn(() => gelontTwelonelontFielonldsFailurelonMelonssagelon, elon.throwablelon))
+        if (chelonckFailelond.nonelonmpty) {
           warn(() =>
-            s"TweetVisibilityFilter dropped ${checkFailed.size} candidates due to tweetypie failure.")
+            s"TwelonelontVisibilityFiltelonr droppelond ${chelonckFailelond.sizelon} candidatelons duelon to twelonelontypielon failurelon.")
         }
 
-        val allowedTweets = checkedSucceeded.collect {
-          case Return(TP.GetTweetFieldsResult(_, TP.TweetFieldsResultState.Found(found), _, _)) =>
-            found.tweet.id
-        }.toSet
+        val allowelondTwelonelonts = chelonckelondSuccelonelondelond.collelonct {
+          caselon Relonturn(TP.GelontTwelonelontFielonldsRelonsult(_, TP.TwelonelontFielonldsRelonsultStatelon.Found(found), _, _)) =>
+            found.twelonelont.id
+        }.toSelont
 
-        val (kept, removed) =
-          candidates.map(_.candidate).partition(candidate => allowedTweets.contains(candidate.id))
+        val (kelonpt, relonmovelond) =
+          candidatelons.map(_.candidatelon).partition(candidatelon => allowelondTwelonelonts.contains(candidatelon.id))
 
-        FilterResult(kept = kept, removed = removed)
+        FiltelonrRelonsult(kelonpt = kelonpt, relonmovelond = relonmovelond)
       }
   }
 
-  private def getTweetFieldsOptions(userId: Option[Long]) =
-    TP.GetTweetFieldsOptions(
-      forUserId = userId,
-      tweetIncludes = tweetIncludes.toSet,
-      doNotCache = true,
-      visibilityPolicy = tweetVisibilityPolicy,
-      safetyLevel = Some(safetyLevel)
+  privatelon delonf gelontTwelonelontFielonldsOptions(uselonrId: Option[Long]) =
+    TP.GelontTwelonelontFielonldsOptions(
+      forUselonrId = uselonrId,
+      twelonelontIncludelons = twelonelontIncludelons.toSelont,
+      doNotCachelon = truelon,
+      visibilityPolicy = twelonelontVisibilityPolicy,
+      safelontyLelonvelonl = Somelon(safelontyLelonvelonl)
     )
 }

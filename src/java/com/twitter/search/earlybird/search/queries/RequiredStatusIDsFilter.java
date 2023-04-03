@@ -1,131 +1,131 @@
-package com.twitter.search.earlybird.search.queries;
+packagelon com.twittelonr.selonarch.elonarlybird.selonarch.quelonrielons;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 import java.util.Arrays;
-import java.util.Collection;
+import java.util.Collelonction;
 
-import com.google.common.base.Preconditions;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import org.apache.lucene.index.LeafReader;
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.search.BooleanClause;
-import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.ScoreMode;
-import org.apache.lucene.search.Weight;
+import org.apachelon.lucelonnelon.indelonx.LelonafRelonadelonr;
+import org.apachelon.lucelonnelon.indelonx.LelonafRelonadelonrContelonxt;
+import org.apachelon.lucelonnelon.selonarch.BoolelonanClauselon;
+import org.apachelon.lucelonnelon.selonarch.BoolelonanQuelonry;
+import org.apachelon.lucelonnelon.selonarch.DocIdSelontItelonrator;
+import org.apachelon.lucelonnelon.selonarch.IndelonxSelonarchelonr;
+import org.apachelon.lucelonnelon.selonarch.Quelonry;
+import org.apachelon.lucelonnelon.selonarch.ScorelonModelon;
+import org.apachelon.lucelonnelon.selonarch.Welonight;
 
-import com.twitter.search.common.query.DefaultFilterWeight;
-import com.twitter.search.common.search.IntArrayDocIdSetIterator;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
-import com.twitter.search.core.earlybird.index.util.AllDocsIterator;
-import com.twitter.search.earlybird.index.TweetIDMapper;
+import com.twittelonr.selonarch.common.quelonry.DelonfaultFiltelonrWelonight;
+import com.twittelonr.selonarch.common.selonarch.IntArrayDocIdSelontItelonrator;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.util.AllDocsItelonrator;
+import com.twittelonr.selonarch.elonarlybird.indelonx.TwelonelontIDMappelonr;
 
-public final class RequiredStatusIDsFilter extends Query {
-  private final Collection<Long> statusIDs;
+public final class RelonquirelondStatusIDsFiltelonr elonxtelonnds Quelonry {
+  privatelon final Collelonction<Long> statusIDs;
 
-  public static Query getRequiredStatusIDsQuery(Collection<Long> statusIDs) {
-    return new BooleanQuery.Builder()
-        .add(new RequiredStatusIDsFilter(statusIDs), BooleanClause.Occur.FILTER)
+  public static Quelonry gelontRelonquirelondStatusIDsQuelonry(Collelonction<Long> statusIDs) {
+    relonturn nelonw BoolelonanQuelonry.Buildelonr()
+        .add(nelonw RelonquirelondStatusIDsFiltelonr(statusIDs), BoolelonanClauselon.Occur.FILTelonR)
         .build();
   }
 
-  private RequiredStatusIDsFilter(Collection<Long> statusIDs) {
-    this.statusIDs = Preconditions.checkNotNull(statusIDs);
+  privatelon RelonquirelondStatusIDsFiltelonr(Collelonction<Long> statusIDs) {
+    this.statusIDs = Prelonconditions.chelonckNotNull(statusIDs);
   }
 
-  @Override
-  public Weight createWeight(IndexSearcher searcher, ScoreMode scoreMode, float boost) {
-    return new DefaultFilterWeight(this) {
-      @Override
-      protected DocIdSetIterator getDocIdSetIterator(LeafReaderContext context) throws IOException {
-        LeafReader leafReader = context.reader();
-        if (!(leafReader instanceof EarlybirdIndexSegmentAtomicReader)) {
-          return DocIdSetIterator.empty();
+  @Ovelonrridelon
+  public Welonight crelonatelonWelonight(IndelonxSelonarchelonr selonarchelonr, ScorelonModelon scorelonModelon, float boost) {
+    relonturn nelonw DelonfaultFiltelonrWelonight(this) {
+      @Ovelonrridelon
+      protelonctelond DocIdSelontItelonrator gelontDocIdSelontItelonrator(LelonafRelonadelonrContelonxt contelonxt) throws IOelonxcelonption {
+        LelonafRelonadelonr lelonafRelonadelonr = contelonxt.relonadelonr();
+        if (!(lelonafRelonadelonr instancelonof elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr)) {
+          relonturn DocIdSelontItelonrator.elonmpty();
         }
 
-        EarlybirdIndexSegmentAtomicReader reader = (EarlybirdIndexSegmentAtomicReader) leafReader;
-        TweetIDMapper idMapper = (TweetIDMapper) reader.getSegmentData().getDocIDToTweetIDMapper();
+        elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr relonadelonr = (elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr) lelonafRelonadelonr;
+        TwelonelontIDMappelonr idMappelonr = (TwelonelontIDMappelonr) relonadelonr.gelontSelongmelonntData().gelontDocIDToTwelonelontIDMappelonr();
 
-        int docIdsSize = 0;
-        int[] docIds = new int[statusIDs.size()];
+        int docIdsSizelon = 0;
+        int[] docIds = nelonw int[statusIDs.sizelon()];
         for (long statusID : statusIDs) {
-          int docId = idMapper.getDocID(statusID);
+          int docId = idMappelonr.gelontDocID(statusID);
           if (docId >= 0) {
-            docIds[docIdsSize++] = docId;
+            docIds[docIdsSizelon++] = docId;
           }
         }
 
-        Arrays.sort(docIds, 0, docIdsSize);
-        DocIdSetIterator statusesDISI =
-            new IntArrayDocIdSetIterator(Arrays.copyOf(docIds, docIdsSize));
-        DocIdSetIterator allDocsDISI = new AllDocsIterator(reader);
+        Arrays.sort(docIds, 0, docIdsSizelon);
+        DocIdSelontItelonrator statuselonsDISI =
+            nelonw IntArrayDocIdSelontItelonrator(Arrays.copyOf(docIds, docIdsSizelon));
+        DocIdSelontItelonrator allDocsDISI = nelonw AllDocsItelonrator(relonadelonr);
 
-        // We only want to return IDs for fully indexed documents. So we need to make sure that
-        // every doc ID we return exists in allDocsDISI. However, allDocsDISI has all documents in
-        // this segment, so driving by allDocsDISI would be very slow. So we want to drive by
-        // statusesDISI, and use allDocsDISI as a post-filter. What this comes down to is that we do
-        // not want to call allDocsDISI.nextDoc(); we only want to call allDocsDISI.advance(), and
-        // only on the doc IDs returned by statusesDISI.
-        return new DocIdSetIterator() {
-          @Override
+        // Welon only want to relonturn IDs for fully indelonxelond documelonnts. So welon nelonelond to makelon surelon that
+        // elonvelonry doc ID welon relonturn elonxists in allDocsDISI. Howelonvelonr, allDocsDISI has all documelonnts in
+        // this selongmelonnt, so driving by allDocsDISI would belon velonry slow. So welon want to drivelon by
+        // statuselonsDISI, and uselon allDocsDISI as a post-filtelonr. What this comelons down to is that welon do
+        // not want to call allDocsDISI.nelonxtDoc(); welon only want to call allDocsDISI.advancelon(), and
+        // only on thelon doc IDs relonturnelond by statuselonsDISI.
+        relonturn nelonw DocIdSelontItelonrator() {
+          @Ovelonrridelon
           public int docID() {
-            return statusesDISI.docID();
+            relonturn statuselonsDISI.docID();
           }
 
-          @Override
-          public int nextDoc() throws IOException {
-            statusesDISI.nextDoc();
-            return advanceToNextFullyIndexedDoc();
+          @Ovelonrridelon
+          public int nelonxtDoc() throws IOelonxcelonption {
+            statuselonsDISI.nelonxtDoc();
+            relonturn advancelonToNelonxtFullyIndelonxelondDoc();
           }
 
-          @Override
-          public int advance(int target) throws IOException {
-            statusesDISI.advance(target);
-            return advanceToNextFullyIndexedDoc();
+          @Ovelonrridelon
+          public int advancelon(int targelont) throws IOelonxcelonption {
+            statuselonsDISI.advancelon(targelont);
+            relonturn advancelonToNelonxtFullyIndelonxelondDoc();
           }
 
-          private int advanceToNextFullyIndexedDoc() throws IOException {
-            while (docID() != DocIdSetIterator.NO_MORE_DOCS) {
-              // Check if the current doc is fully indexed.
-              // If it is, then we can return it. If it's not, then we need to keep searching.
-              int allDocsDocId = allDocsDISI.advance(docID());
+          privatelon int advancelonToNelonxtFullyIndelonxelondDoc() throws IOelonxcelonption {
+            whilelon (docID() != DocIdSelontItelonrator.NO_MORelon_DOCS) {
+              // Chelonck if thelon currelonnt doc is fully indelonxelond.
+              // If it is, thelonn welon can relonturn it. If it's not, thelonn welon nelonelond to kelonelonp selonarching.
+              int allDocsDocId = allDocsDISI.advancelon(docID());
               if (allDocsDocId == docID()) {
-                break;
+                brelonak;
               }
 
-              statusesDISI.advance(allDocsDocId);
+              statuselonsDISI.advancelon(allDocsDocId);
             }
-            return docID();
+            relonturn docID();
           }
 
-          @Override
+          @Ovelonrridelon
           public long cost() {
-            return statusesDISI.cost();
+            relonturn statuselonsDISI.cost();
           }
         };
       }
     };
   }
 
-  @Override
-  public int hashCode() {
-    return statusIDs.hashCode();
+  @Ovelonrridelon
+  public int hashCodelon() {
+    relonturn statusIDs.hashCodelon();
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (!(obj instanceof RequiredStatusIDsFilter)) {
-      return false;
+  @Ovelonrridelon
+  public boolelonan elonquals(Objelonct obj) {
+    if (!(obj instancelonof RelonquirelondStatusIDsFiltelonr)) {
+      relonturn falselon;
     }
 
-    RequiredStatusIDsFilter filter = RequiredStatusIDsFilter.class.cast(obj);
-    return statusIDs.equals(filter.statusIDs);
+    RelonquirelondStatusIDsFiltelonr filtelonr = RelonquirelondStatusIDsFiltelonr.class.cast(obj);
+    relonturn statusIDs.elonquals(filtelonr.statusIDs);
   }
 
-  @Override
-  public final String toString(String field) {
-    return String.format("RequiredStatusIDs[%s]", statusIDs);
+  @Ovelonrridelon
+  public final String toString(String fielonld) {
+    relonturn String.format("RelonquirelondStatusIDs[%s]", statusIDs);
   }
 }

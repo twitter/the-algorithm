@@ -1,24 +1,24 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.rtf.safety_level
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.rtf.safelonty_lelonvelonl
 
-import com.twitter.product_mixer.core.model.marshalling.response.rtf.safety_level.ConversationFocalTweetSafetyLevel
-import com.twitter.product_mixer.core.model.marshalling.response.rtf.safety_level.ConversationInjectedTweetSafetyLevel
-import com.twitter.product_mixer.core.model.marshalling.response.rtf.safety_level.ConversationReplySafetyLevel
-import com.twitter.product_mixer.core.model.marshalling.response.rtf.safety_level.SafetyLevel
-import com.twitter.product_mixer.core.model.marshalling.response.rtf.safety_level.TimelineFocalTweetSafetyLevel
-import com.twitter.product_mixer.core.model.marshalling.response.rtf.safety_level.TimelineHomePromotedHydrationSafetyLevel
-import com.twitter.spam.rtf.{thriftscala => thrift}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.rtf.safelonty_lelonvelonl.ConvelonrsationFocalTwelonelontSafelontyLelonvelonl
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.rtf.safelonty_lelonvelonl.ConvelonrsationInjelonctelondTwelonelontSafelontyLelonvelonl
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.rtf.safelonty_lelonvelonl.ConvelonrsationRelonplySafelontyLelonvelonl
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.rtf.safelonty_lelonvelonl.SafelontyLelonvelonl
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.rtf.safelonty_lelonvelonl.TimelonlinelonFocalTwelonelontSafelontyLelonvelonl
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.rtf.safelonty_lelonvelonl.TimelonlinelonHomelonPromotelondHydrationSafelontyLelonvelonl
+import com.twittelonr.spam.rtf.{thriftscala => thrift}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class SafetyLevelMarshaller @Inject() () {
+@Singlelonton
+class SafelontyLelonvelonlMarshallelonr @Injelonct() () {
 
-  def apply(safetyLevel: SafetyLevel): thrift.SafetyLevel = safetyLevel match {
-    case ConversationFocalTweetSafetyLevel => thrift.SafetyLevel.ConversationFocalTweet
-    case ConversationReplySafetyLevel => thrift.SafetyLevel.ConversationReply
-    case ConversationInjectedTweetSafetyLevel => thrift.SafetyLevel.ConversationInjectedTweet
-    case TimelineFocalTweetSafetyLevel => thrift.SafetyLevel.TimelineFocalTweet
-    case TimelineHomePromotedHydrationSafetyLevel =>
-      thrift.SafetyLevel.TimelineHomePromotedHydration
+  delonf apply(safelontyLelonvelonl: SafelontyLelonvelonl): thrift.SafelontyLelonvelonl = safelontyLelonvelonl match {
+    caselon ConvelonrsationFocalTwelonelontSafelontyLelonvelonl => thrift.SafelontyLelonvelonl.ConvelonrsationFocalTwelonelont
+    caselon ConvelonrsationRelonplySafelontyLelonvelonl => thrift.SafelontyLelonvelonl.ConvelonrsationRelonply
+    caselon ConvelonrsationInjelonctelondTwelonelontSafelontyLelonvelonl => thrift.SafelontyLelonvelonl.ConvelonrsationInjelonctelondTwelonelont
+    caselon TimelonlinelonFocalTwelonelontSafelontyLelonvelonl => thrift.SafelontyLelonvelonl.TimelonlinelonFocalTwelonelont
+    caselon TimelonlinelonHomelonPromotelondHydrationSafelontyLelonvelonl =>
+      thrift.SafelontyLelonvelonl.TimelonlinelonHomelonPromotelondHydration
   }
 }

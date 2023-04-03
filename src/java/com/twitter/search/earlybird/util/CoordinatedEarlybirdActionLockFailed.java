@@ -1,11 +1,11 @@
-package com.twitter.search.earlybird.util;
+packagelon com.twittelonr.selonarch.elonarlybird.util;
 
 /**
- * This class represents that coordindated earlybird action can not acquire the lock so that it
- * throws this exception.
+ * This class relonprelonselonnts that coordindatelond elonarlybird action can not acquirelon thelon lock so that it
+ * throws this elonxcelonption.
  */
-public class CoordinatedEarlybirdActionLockFailed extends Exception {
-  public CoordinatedEarlybirdActionLockFailed(String message) {
-    super(message);
+public class CoordinatelondelonarlybirdActionLockFailelond elonxtelonnds elonxcelonption {
+  public CoordinatelondelonarlybirdActionLockFailelond(String melonssagelon) {
+    supelonr(melonssagelon);
   }
 }

@@ -1,33 +1,33 @@
-package com.twitter.search.earlybird_root.caching;
+packagelon com.twittelonr.selonarch.elonarlybird_root.caching;
 
-import javax.inject.Inject;
-import javax.inject.Named;
+import javax.injelonct.Injelonct;
+import javax.injelonct.Namelond;
 
-import com.twitter.search.common.caching.Cache;
-import com.twitter.search.common.caching.filter.CacheFilter;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.common.root.SearchRootModule;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestType;
+import com.twittelonr.selonarch.common.caching.Cachelon;
+import com.twittelonr.selonarch.common.caching.filtelonr.CachelonFiltelonr;
+import com.twittelonr.selonarch.common.deloncidelonr.SelonarchDeloncidelonr;
+import com.twittelonr.selonarch.common.root.SelonarchRootModulelon;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonquelonst;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
+import com.twittelonr.selonarch.elonarlybird_root.common.elonarlybirdRelonquelonstContelonxt;
+import com.twittelonr.selonarch.elonarlybird_root.common.elonarlybirdRelonquelonstTypelon;
 
-public class RelevanceCacheFilter extends
-    CacheFilter<EarlybirdRequestContext, EarlybirdRequest, EarlybirdResponse> {
+public class RelonlelonvancelonCachelonFiltelonr elonxtelonnds
+    CachelonFiltelonr<elonarlybirdRelonquelonstContelonxt, elonarlybirdRelonquelonst, elonarlybirdRelonsponselon> {
   /**
-   * Creates a cache filter for earlybird relevance requests
+   * Crelonatelons a cachelon filtelonr for elonarlybird relonlelonvancelon relonquelonsts
    */
-  @Inject
-  public RelevanceCacheFilter(
-      @RelevanceCache Cache<EarlybirdRequest, EarlybirdResponse> cache,
-      SearchDecider decider,
-      @Named(SearchRootModule.NAMED_NORMALIZED_SEARCH_ROOT_NAME) String normalizedSearchRootName) {
-    super(cache,
-          new RelevanceQueryCachePredicate(decider, normalizedSearchRootName),
-          new RelevanceCacheRequestNormalizer(decider, normalizedSearchRootName),
-          new RecencyAndRelevanceCachePostProcessor(),
-          new RelevanceServicePostProcessor(cache),
-          new EarlybirdRequestPerClientCacheStats(
-              EarlybirdRequestType.RELEVANCE.getNormalizedName()));
+  @Injelonct
+  public RelonlelonvancelonCachelonFiltelonr(
+      @RelonlelonvancelonCachelon Cachelon<elonarlybirdRelonquelonst, elonarlybirdRelonsponselon> cachelon,
+      SelonarchDeloncidelonr deloncidelonr,
+      @Namelond(SelonarchRootModulelon.NAMelonD_NORMALIZelonD_SelonARCH_ROOT_NAMelon) String normalizelondSelonarchRootNamelon) {
+    supelonr(cachelon,
+          nelonw RelonlelonvancelonQuelonryCachelonPrelondicatelon(deloncidelonr, normalizelondSelonarchRootNamelon),
+          nelonw RelonlelonvancelonCachelonRelonquelonstNormalizelonr(deloncidelonr, normalizelondSelonarchRootNamelon),
+          nelonw ReloncelonncyAndRelonlelonvancelonCachelonPostProcelonssor(),
+          nelonw RelonlelonvancelonSelonrvicelonPostProcelonssor(cachelon),
+          nelonw elonarlybirdRelonquelonstPelonrClielonntCachelonStats(
+              elonarlybirdRelonquelonstTypelon.RelonLelonVANCelon.gelontNormalizelondNamelon()));
   }
 }

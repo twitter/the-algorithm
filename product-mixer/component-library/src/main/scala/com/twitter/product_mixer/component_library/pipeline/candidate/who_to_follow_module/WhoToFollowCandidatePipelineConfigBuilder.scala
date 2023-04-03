@@ -1,69 +1,69 @@
-package com.twitter.product_mixer.component_library.pipeline.candidate.who_to_follow_module
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.pipelonlinelon.candidatelon.who_to_follow_modulelon
 
-import com.twitter.product_mixer.component_library.candidate_source.people_discovery.PeopleDiscoveryCandidateSource
-import com.twitter.product_mixer.component_library.model.candidate.UserCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.functional_component.common.alert.Alert
-import com.twitter.product_mixer.core.functional_component.configapi.StaticParam
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.timeline_module.BaseModuleDisplayTypeBuilder
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.gate.Gate
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.Param
-import com.twitter.timelines.configapi.decider.DeciderParam
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.componelonnt_library.candidatelon_sourcelon.pelonoplelon_discovelonry.PelonoplelonDiscovelonryCandidatelonSourcelon
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.UselonrCandidatelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.alelonrt.Alelonrt
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.configapi.StaticParam
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.melontadata.BaselonFelonelondbackActionInfoBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.timelonlinelon_modulelon.BaselonModulelonDisplayTypelonBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.filtelonr.Filtelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.gatelon.Gatelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonPipelonlinelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.timelonlinelons.configapi.FSParam
+import com.twittelonr.timelonlinelons.configapi.Param
+import com.twittelonr.timelonlinelons.configapi.deloncidelonr.DeloncidelonrParam
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class WhoToFollowCandidatePipelineConfigBuilder @Inject() (
-  whoToFollowCandidateSource: PeopleDiscoveryCandidateSource) {
+@Singlelonton
+class WhoToFollowCandidatelonPipelonlinelonConfigBuildelonr @Injelonct() (
+  whoToFollowCandidatelonSourcelon: PelonoplelonDiscovelonryCandidatelonSourcelon) {
 
   /**
-   * Build a WhoToFollowCandidatePipelineConfig
+   * Build a WhoToFollowCandidatelonPipelonlinelonConfig
    *
-   * To create a DependentCandidatePipelineConfig instead see [[WhoToFollowDependentCandidatePipelineConfigBuilder]].
+   * To crelonatelon a DelonpelonndelonntCandidatelonPipelonlinelonConfig instelonad selonelon [[WhoToFollowDelonpelonndelonntCandidatelonPipelonlinelonConfigBuildelonr]].
    *
-   * @note If injected classes are needed to populate parameters in this method, consider creating a
-   *       ProductWhoToFollowCandidatePipelineConfigBuilder with a single `def build()` method. That
-   *       product-specific builder class can then inject everything it needs (including this class),
-   *       and delegate to this class's build() method within its own build() method.
+   * @notelon If injelonctelond classelons arelon nelonelondelond to populatelon paramelontelonrs in this melonthod, considelonr crelonating a
+   *       ProductWhoToFollowCandidatelonPipelonlinelonConfigBuildelonr with a singlelon `delonf build()` melonthod. That
+   *       product-speloncific buildelonr class can thelonn injelonct elonvelonrything it nelonelonds (including this class),
+   *       and delonlelongatelon to this class's build() melonthod within its own build() melonthod.
    */
-  def build[Query <: PipelineQuery](
-    moduleDisplayTypeBuilder: BaseModuleDisplayTypeBuilder[Query, UserCandidate],
-    identifier: CandidatePipelineIdentifier = WhoToFollowCandidatePipelineConfig.identifier,
-    enabledDeciderParam: Option[DeciderParam[Boolean]] = None,
-    supportedClientParam: Option[FSParam[Boolean]] = None,
-    alerts: Seq[Alert] = Seq.empty,
-    gates: Seq[Gate[Query]] = Seq.empty,
-    filters: Seq[Filter[Query, UserCandidate]] = Seq.empty,
-    feedbackActionInfoBuilder: Option[BaseFeedbackActionInfoBuilder[
-      PipelineQuery,
-      UserCandidate
-    ]] = None,
+  delonf build[Quelonry <: PipelonlinelonQuelonry](
+    modulelonDisplayTypelonBuildelonr: BaselonModulelonDisplayTypelonBuildelonr[Quelonry, UselonrCandidatelon],
+    idelonntifielonr: CandidatelonPipelonlinelonIdelonntifielonr = WhoToFollowCandidatelonPipelonlinelonConfig.idelonntifielonr,
+    elonnablelondDeloncidelonrParam: Option[DeloncidelonrParam[Boolelonan]] = Nonelon,
+    supportelondClielonntParam: Option[FSParam[Boolelonan]] = Nonelon,
+    alelonrts: Selonq[Alelonrt] = Selonq.elonmpty,
+    gatelons: Selonq[Gatelon[Quelonry]] = Selonq.elonmpty,
+    filtelonrs: Selonq[Filtelonr[Quelonry, UselonrCandidatelon]] = Selonq.elonmpty,
+    felonelondbackActionInfoBuildelonr: Option[BaselonFelonelondbackActionInfoBuildelonr[
+      PipelonlinelonQuelonry,
+      UselonrCandidatelon
+    ]] = Nonelon,
     displayLocationParam: Param[String] =
-      StaticParam(WhoToFollowCandidatePipelineQueryTransformer.DisplayLocation),
-    supportedLayoutsParam: Param[Seq[String]] =
-      StaticParam(WhoToFollowCandidatePipelineQueryTransformer.SupportedLayouts),
-    layoutVersionParam: Param[Int] =
-      StaticParam(WhoToFollowCandidatePipelineQueryTransformer.LayoutVersion),
-    excludedUserIdsFeature: Option[Feature[PipelineQuery, Seq[Long]]] = None,
-  ): WhoToFollowCandidatePipelineConfig[Query] =
-    new WhoToFollowCandidatePipelineConfig(
-      identifier = identifier,
-      enabledDeciderParam = enabledDeciderParam,
-      supportedClientParam = supportedClientParam,
-      alerts = alerts,
-      gates = gates,
-      moduleDisplayTypeBuilder = moduleDisplayTypeBuilder,
-      whoToFollowCandidateSource = whoToFollowCandidateSource,
-      filters = filters,
-      feedbackActionInfoBuilder = feedbackActionInfoBuilder,
+      StaticParam(WhoToFollowCandidatelonPipelonlinelonQuelonryTransformelonr.DisplayLocation),
+    supportelondLayoutsParam: Param[Selonq[String]] =
+      StaticParam(WhoToFollowCandidatelonPipelonlinelonQuelonryTransformelonr.SupportelondLayouts),
+    layoutVelonrsionParam: Param[Int] =
+      StaticParam(WhoToFollowCandidatelonPipelonlinelonQuelonryTransformelonr.LayoutVelonrsion),
+    elonxcludelondUselonrIdsFelonaturelon: Option[Felonaturelon[PipelonlinelonQuelonry, Selonq[Long]]] = Nonelon,
+  ): WhoToFollowCandidatelonPipelonlinelonConfig[Quelonry] =
+    nelonw WhoToFollowCandidatelonPipelonlinelonConfig(
+      idelonntifielonr = idelonntifielonr,
+      elonnablelondDeloncidelonrParam = elonnablelondDeloncidelonrParam,
+      supportelondClielonntParam = supportelondClielonntParam,
+      alelonrts = alelonrts,
+      gatelons = gatelons,
+      modulelonDisplayTypelonBuildelonr = modulelonDisplayTypelonBuildelonr,
+      whoToFollowCandidatelonSourcelon = whoToFollowCandidatelonSourcelon,
+      filtelonrs = filtelonrs,
+      felonelondbackActionInfoBuildelonr = felonelondbackActionInfoBuildelonr,
       displayLocationParam = displayLocationParam,
-      supportedLayoutsParam = supportedLayoutsParam,
-      layoutVersionParam = layoutVersionParam,
-      excludedUserIdsFeature = excludedUserIdsFeature
+      supportelondLayoutsParam = supportelondLayoutsParam,
+      layoutVelonrsionParam = layoutVelonrsionParam,
+      elonxcludelondUselonrIdsFelonaturelon = elonxcludelondUselonrIdsFelonaturelon
     )
 }

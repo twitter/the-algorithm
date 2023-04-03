@@ -1,6 +1,6 @@
-package com.twitter.cr_mixer.model
+packagelon com.twittelonr.cr_mixelonr.modelonl
 
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.common.UserId
+import com.twittelonr.simclustelonrs_v2.common.TwelonelontId
+import com.twittelonr.simclustelonrs_v2.common.UselonrId
 
-case class TweetWithAuthor(tweetId: TweetId, authorId: UserId)
+caselon class TwelonelontWithAuthor(twelonelontId: TwelonelontId, authorId: UselonrId)

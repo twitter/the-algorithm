@@ -1,15 +1,15 @@
-package com.twitter.timelineranker.recap_hydration
+packagelon com.twittelonr.timelonlinelonrankelonr.reloncap_hydration
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.timelineranker.common.RecapHydrationSearchResultsTransformBase
-import com.twitter.timelineranker.core.CandidateEnvelope
-import com.twitter.timelines.clients.relevance_search.SearchClient
-import com.twitter.timelines.model.TweetId
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.timelonlinelonrankelonr.common.ReloncapHydrationSelonarchRelonsultsTransformBaselon
+import com.twittelonr.timelonlinelonrankelonr.corelon.Candidatelonelonnvelonlopelon
+import com.twittelonr.timelonlinelons.clielonnts.relonlelonvancelon_selonarch.SelonarchClielonnt
+import com.twittelonr.timelonlinelons.modelonl.TwelonelontId
 
-class RecapHydrationSearchResultsTransform(
-  override protected val searchClient: SearchClient,
-  override protected val statsReceiver: StatsReceiver)
-    extends RecapHydrationSearchResultsTransformBase {
-  override def tweetIdsToHydrate(envelope: CandidateEnvelope): Seq[TweetId] =
-    envelope.query.tweetIds.get
+class ReloncapHydrationSelonarchRelonsultsTransform(
+  ovelonrridelon protelonctelond val selonarchClielonnt: SelonarchClielonnt,
+  ovelonrridelon protelonctelond val statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds ReloncapHydrationSelonarchRelonsultsTransformBaselon {
+  ovelonrridelon delonf twelonelontIdsToHydratelon(elonnvelonlopelon: Candidatelonelonnvelonlopelon): Selonq[TwelonelontId] =
+    elonnvelonlopelon.quelonry.twelonelontIds.gelont
 }

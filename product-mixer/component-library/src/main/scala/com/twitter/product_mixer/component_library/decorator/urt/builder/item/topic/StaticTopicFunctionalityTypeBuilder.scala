@@ -1,18 +1,18 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.topic
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.itelonm.topic
 
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.component_library.model.candidate.BaseTopicCandidate
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.item.topic.BaseTopicFunctionalityTypeBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.topic.TopicFunctionalityType
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.BaselonTopicCandidatelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.itelonm.topic.BaselonTopicFunctionalityTypelonBuildelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.topic.TopicFunctionalityTypelon
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
-case class StaticTopicFunctionalityTypeBuilder(
-  functionalityType: TopicFunctionalityType)
-    extends BaseTopicFunctionalityTypeBuilder[PipelineQuery, BaseTopicCandidate] {
+caselon class StaticTopicFunctionalityTypelonBuildelonr(
+  functionalityTypelon: TopicFunctionalityTypelon)
+    elonxtelonnds BaselonTopicFunctionalityTypelonBuildelonr[PipelonlinelonQuelonry, BaselonTopicCandidatelon] {
 
-  override def apply(
-    query: PipelineQuery,
-    candidate: BaseTopicCandidate,
-    candidateFeatures: FeatureMap
-  ): Option[TopicFunctionalityType] = Some(functionalityType)
+  ovelonrridelon delonf apply(
+    quelonry: PipelonlinelonQuelonry,
+    candidatelon: BaselonTopicCandidatelon,
+    candidatelonFelonaturelons: FelonaturelonMap
+  ): Option[TopicFunctionalityTypelon] = Somelon(functionalityTypelon)
 }

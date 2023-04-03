@@ -1,19 +1,19 @@
-namespace java com.twitter.cr_mixer.thriftjava
-#@namespace scala com.twitter.cr_mixer.thriftscala
-#@namespace strato com.twitter.cr_mixer
+namelonspacelon java com.twittelonr.cr_mixelonr.thriftjava
+#@namelonspacelon scala com.twittelonr.cr_mixelonr.thriftscala
+#@namelonspacelon strato com.twittelonr.cr_mixelonr
 
-// ValidationErrorCode is used to identify classes of client errors returned from a Product Mixer
-// service. Use [[PipelineFailureExceptionMapper]] to adapt pipeline failures into thrift errors.
-enum ValidationErrorCode {
-  PRODUCT_DISABLED = 1
-  PLACEHOLDER_2 = 2
-} (hasPersonalData='false')
+// ValidationelonrrorCodelon is uselond to idelonntify classelons of clielonnt elonrrors relonturnelond from a Product Mixelonr
+// selonrvicelon. Uselon [[PipelonlinelonFailurelonelonxcelonptionMappelonr]] to adapt pipelonlinelon failurelons into thrift elonrrors.
+elonnum ValidationelonrrorCodelon {
+  PRODUCT_DISABLelonD = 1
+  PLACelonHOLDelonR_2 = 2
+} (hasPelonrsonalData='falselon')
 
-exception ValidationException {
-  1: ValidationErrorCode errorCode
+elonxcelonption Validationelonxcelonption {
+  1: ValidationelonrrorCodelon elonrrorCodelon
   2: string msg
-} (hasPersonalData='false')
+} (hasPelonrsonalData='falselon')
 
-exception ValidationExceptionList {
-  1: list<ValidationException> errors
-} (hasPersonalData='false')
+elonxcelonption ValidationelonxcelonptionList {
+  1: list<Validationelonxcelonption> elonrrors
+} (hasPelonrsonalData='falselon')

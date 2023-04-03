@@ -1,161 +1,161 @@
-package com.twitter.follow_recommendations.common.models
+packagelon com.twittelonr.follow_reloncommelonndations.common.modelonls
 
-import com.twitter.hermit.ml.models.Feature
-import com.twitter.hermit.model.Algorithm
-import com.twitter.hermit.model.Algorithm.Algorithm
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
+import com.twittelonr.helonrmit.ml.modelonls.Felonaturelon
+import com.twittelonr.helonrmit.modelonl.Algorithm
+import com.twittelonr.helonrmit.modelonl.Algorithm.Algorithm
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonSourcelonIdelonntifielonr
 
 /**
- * Used to keep track of a candidate's source not so much as a feature but for filtering candidate
- * from specific sources (eg. GizmoduckPredicate)
+ * Uselond to kelonelonp track of a candidatelon's sourcelon not so much as a felonaturelon but for filtelonring candidatelon
+ * from speloncific sourcelons (elong. GizmoduckPrelondicatelon)
  */
-trait HasUserCandidateSourceDetails { candidateUser: CandidateUser =>
-  def userCandidateSourceDetails: Option[UserCandidateSourceDetails]
+trait HasUselonrCandidatelonSourcelonDelontails { candidatelonUselonr: CandidatelonUselonr =>
+  delonf uselonrCandidatelonSourcelonDelontails: Option[UselonrCandidatelonSourcelonDelontails]
 
-  def getAlgorithm: Algorithm = {
+  delonf gelontAlgorithm: Algorithm = {
     val algorithm = for {
-      details <- userCandidateSourceDetails
-      identifier <- details.primaryCandidateSource
-      algorithm <- Algorithm.withNameOpt(identifier.name)
-    } yield algorithm
+      delontails <- uselonrCandidatelonSourcelonDelontails
+      idelonntifielonr <- delontails.primaryCandidatelonSourcelon
+      algorithm <- Algorithm.withNamelonOpt(idelonntifielonr.namelon)
+    } yielonld algorithm
 
-    algorithm.getOrElse(throw new Exception("Algorithm missing on candidate user!"))
+    algorithm.gelontOrelonlselon(throw nelonw elonxcelonption("Algorithm missing on candidatelon uselonr!"))
   }
 
-  def getAllAlgorithms: Seq[Algorithm] = {
-    getCandidateSources.keys
-      .flatMap(identifier => Algorithm.withNameOpt(identifier.name)).toSeq
+  delonf gelontAllAlgorithms: Selonq[Algorithm] = {
+    gelontCandidatelonSourcelons.kelonys
+      .flatMap(idelonntifielonr => Algorithm.withNamelonOpt(idelonntifielonr.namelon)).toSelonq
   }
 
-  def getAddressBookMetadata: Option[AddressBookMetadata] = {
-    userCandidateSourceDetails.flatMap(_.addressBookMetadata)
+  delonf gelontAddrelonssBookMelontadata: Option[AddrelonssBookMelontadata] = {
+    uselonrCandidatelonSourcelonDelontails.flatMap(_.addrelonssBookMelontadata)
   }
 
-  def getCandidateSources: Map[CandidateSourceIdentifier, Option[Double]] = {
-    userCandidateSourceDetails.map(_.candidateSourceScores).getOrElse(Map.empty)
+  delonf gelontCandidatelonSourcelons: Map[CandidatelonSourcelonIdelonntifielonr, Option[Doublelon]] = {
+    uselonrCandidatelonSourcelonDelontails.map(_.candidatelonSourcelonScorelons).gelontOrelonlselon(Map.elonmpty)
   }
 
-  def getCandidateRanks: Map[CandidateSourceIdentifier, Int] = {
-    userCandidateSourceDetails.map(_.candidateSourceRanks).getOrElse(Map.empty)
+  delonf gelontCandidatelonRanks: Map[CandidatelonSourcelonIdelonntifielonr, Int] = {
+    uselonrCandidatelonSourcelonDelontails.map(_.candidatelonSourcelonRanks).gelontOrelonlselon(Map.elonmpty)
   }
 
-  def getCandidateFeatures: Map[CandidateSourceIdentifier, Seq[Feature]] = {
-    userCandidateSourceDetails.map(_.candidateSourceFeatures).getOrElse(Map.empty)
+  delonf gelontCandidatelonFelonaturelons: Map[CandidatelonSourcelonIdelonntifielonr, Selonq[Felonaturelon]] = {
+    uselonrCandidatelonSourcelonDelontails.map(_.candidatelonSourcelonFelonaturelons).gelontOrelonlselon(Map.elonmpty)
   }
 
-  def getPrimaryCandidateSource: Option[CandidateSourceIdentifier] = {
-    userCandidateSourceDetails.flatMap(_.primaryCandidateSource)
+  delonf gelontPrimaryCandidatelonSourcelon: Option[CandidatelonSourcelonIdelonntifielonr] = {
+    uselonrCandidatelonSourcelonDelontails.flatMap(_.primaryCandidatelonSourcelon)
   }
 
-  def withCandidateSource(source: CandidateSourceIdentifier): CandidateUser = {
-    withCandidateSourceAndScore(source, candidateUser.score)
+  delonf withCandidatelonSourcelon(sourcelon: CandidatelonSourcelonIdelonntifielonr): CandidatelonUselonr = {
+    withCandidatelonSourcelonAndScorelon(sourcelon, candidatelonUselonr.scorelon)
   }
 
-  def withCandidateSourceAndScore(
-    source: CandidateSourceIdentifier,
-    score: Option[Double]
-  ): CandidateUser = {
-    withCandidateSourceScoreAndFeatures(source, score, Nil)
+  delonf withCandidatelonSourcelonAndScorelon(
+    sourcelon: CandidatelonSourcelonIdelonntifielonr,
+    scorelon: Option[Doublelon]
+  ): CandidatelonUselonr = {
+    withCandidatelonSourcelonScorelonAndFelonaturelons(sourcelon, scorelon, Nil)
   }
 
-  def withCandidateSourceAndFeatures(
-    source: CandidateSourceIdentifier,
-    features: Seq[Feature]
-  ): CandidateUser = {
-    withCandidateSourceScoreAndFeatures(source, candidateUser.score, features)
+  delonf withCandidatelonSourcelonAndFelonaturelons(
+    sourcelon: CandidatelonSourcelonIdelonntifielonr,
+    felonaturelons: Selonq[Felonaturelon]
+  ): CandidatelonUselonr = {
+    withCandidatelonSourcelonScorelonAndFelonaturelons(sourcelon, candidatelonUselonr.scorelon, felonaturelons)
   }
 
-  def withCandidateSourceScoreAndFeatures(
-    source: CandidateSourceIdentifier,
-    score: Option[Double],
-    features: Seq[Feature]
-  ): CandidateUser = {
-    val candidateSourceDetails =
-      candidateUser.userCandidateSourceDetails
-        .map { details =>
-          details.copy(
-            primaryCandidateSource = Some(source),
-            candidateSourceScores = details.candidateSourceScores + (source -> score),
-            candidateSourceFeatures = details.candidateSourceFeatures + (source -> features)
+  delonf withCandidatelonSourcelonScorelonAndFelonaturelons(
+    sourcelon: CandidatelonSourcelonIdelonntifielonr,
+    scorelon: Option[Doublelon],
+    felonaturelons: Selonq[Felonaturelon]
+  ): CandidatelonUselonr = {
+    val candidatelonSourcelonDelontails =
+      candidatelonUselonr.uselonrCandidatelonSourcelonDelontails
+        .map { delontails =>
+          delontails.copy(
+            primaryCandidatelonSourcelon = Somelon(sourcelon),
+            candidatelonSourcelonScorelons = delontails.candidatelonSourcelonScorelons + (sourcelon -> scorelon),
+            candidatelonSourcelonFelonaturelons = delontails.candidatelonSourcelonFelonaturelons + (sourcelon -> felonaturelons)
           )
-        }.getOrElse(
-          UserCandidateSourceDetails(
-            Some(source),
-            Map(source -> score),
-            Map.empty,
-            None,
-            Map(source -> features)))
-    candidateUser.copy(
-      userCandidateSourceDetails = Some(candidateSourceDetails)
+        }.gelontOrelonlselon(
+          UselonrCandidatelonSourcelonDelontails(
+            Somelon(sourcelon),
+            Map(sourcelon -> scorelon),
+            Map.elonmpty,
+            Nonelon,
+            Map(sourcelon -> felonaturelons)))
+    candidatelonUselonr.copy(
+      uselonrCandidatelonSourcelonDelontails = Somelon(candidatelonSourcelonDelontails)
     )
   }
 
-  def addCandidateSourceScoresMap(
-    scoreMap: Map[CandidateSourceIdentifier, Option[Double]]
-  ): CandidateUser = {
-    val candidateSourceDetails = candidateUser.userCandidateSourceDetails
-      .map { details =>
-        details.copy(candidateSourceScores = details.candidateSourceScores ++ scoreMap)
-      }.getOrElse(UserCandidateSourceDetails(scoreMap.keys.headOption, scoreMap, Map.empty, None))
-    candidateUser.copy(
-      userCandidateSourceDetails = Some(candidateSourceDetails)
+  delonf addCandidatelonSourcelonScorelonsMap(
+    scorelonMap: Map[CandidatelonSourcelonIdelonntifielonr, Option[Doublelon]]
+  ): CandidatelonUselonr = {
+    val candidatelonSourcelonDelontails = candidatelonUselonr.uselonrCandidatelonSourcelonDelontails
+      .map { delontails =>
+        delontails.copy(candidatelonSourcelonScorelons = delontails.candidatelonSourcelonScorelons ++ scorelonMap)
+      }.gelontOrelonlselon(UselonrCandidatelonSourcelonDelontails(scorelonMap.kelonys.helonadOption, scorelonMap, Map.elonmpty, Nonelon))
+    candidatelonUselonr.copy(
+      uselonrCandidatelonSourcelonDelontails = Somelon(candidatelonSourcelonDelontails)
     )
   }
 
-  def addCandidateSourceRanksMap(
-    rankMap: Map[CandidateSourceIdentifier, Int]
-  ): CandidateUser = {
-    val candidateSourceDetails = candidateUser.userCandidateSourceDetails
-      .map { details =>
-        details.copy(candidateSourceRanks = details.candidateSourceRanks ++ rankMap)
-      }.getOrElse(UserCandidateSourceDetails(rankMap.keys.headOption, Map.empty, rankMap, None))
-    candidateUser.copy(
-      userCandidateSourceDetails = Some(candidateSourceDetails)
+  delonf addCandidatelonSourcelonRanksMap(
+    rankMap: Map[CandidatelonSourcelonIdelonntifielonr, Int]
+  ): CandidatelonUselonr = {
+    val candidatelonSourcelonDelontails = candidatelonUselonr.uselonrCandidatelonSourcelonDelontails
+      .map { delontails =>
+        delontails.copy(candidatelonSourcelonRanks = delontails.candidatelonSourcelonRanks ++ rankMap)
+      }.gelontOrelonlselon(UselonrCandidatelonSourcelonDelontails(rankMap.kelonys.helonadOption, Map.elonmpty, rankMap, Nonelon))
+    candidatelonUselonr.copy(
+      uselonrCandidatelonSourcelonDelontails = Somelon(candidatelonSourcelonDelontails)
     )
   }
 
-  def addInfoPerRankingStage(
-    rankingStage: String,
-    scores: Option[Scores],
+  delonf addInfoPelonrRankingStagelon(
+    rankingStagelon: String,
+    scorelons: Option[Scorelons],
     rank: Int
-  ): CandidateUser = {
-    val scoresOpt: Option[Scores] = scores.orElse(candidateUser.scores)
-    val originalInfoPerRankingStage =
-      candidateUser.infoPerRankingStage.getOrElse(Map[String, RankingInfo]())
-    candidateUser.copy(
-      infoPerRankingStage =
-        Some(originalInfoPerRankingStage + (rankingStage -> RankingInfo(scoresOpt, Some(rank))))
+  ): CandidatelonUselonr = {
+    val scorelonsOpt: Option[Scorelons] = scorelons.orelonlselon(candidatelonUselonr.scorelons)
+    val originalInfoPelonrRankingStagelon =
+      candidatelonUselonr.infoPelonrRankingStagelon.gelontOrelonlselon(Map[String, RankingInfo]())
+    candidatelonUselonr.copy(
+      infoPelonrRankingStagelon =
+        Somelon(originalInfoPelonrRankingStagelon + (rankingStagelon -> RankingInfo(scorelonsOpt, Somelon(rank))))
     )
   }
 
-  def addAddressBookMetadataIfAvailable(
-    candidateSources: Seq[CandidateSourceIdentifier]
-  ): CandidateUser = {
+  delonf addAddrelonssBookMelontadataIfAvailablelon(
+    candidatelonSourcelons: Selonq[CandidatelonSourcelonIdelonntifielonr]
+  ): CandidatelonUselonr = {
 
-    val addressBookMetadata = AddressBookMetadata(
-      inForwardPhoneBook =
-        candidateSources.contains(AddressBookMetadata.ForwardPhoneBookCandidateSource),
-      inReversePhoneBook =
-        candidateSources.contains(AddressBookMetadata.ReversePhoneBookCandidateSource),
-      inForwardEmailBook =
-        candidateSources.contains(AddressBookMetadata.ForwardEmailBookCandidateSource),
-      inReverseEmailBook =
-        candidateSources.contains(AddressBookMetadata.ReverseEmailBookCandidateSource)
+    val addrelonssBookMelontadata = AddrelonssBookMelontadata(
+      inForwardPhonelonBook =
+        candidatelonSourcelons.contains(AddrelonssBookMelontadata.ForwardPhonelonBookCandidatelonSourcelon),
+      inRelonvelonrselonPhonelonBook =
+        candidatelonSourcelons.contains(AddrelonssBookMelontadata.RelonvelonrselonPhonelonBookCandidatelonSourcelon),
+      inForwardelonmailBook =
+        candidatelonSourcelons.contains(AddrelonssBookMelontadata.ForwardelonmailBookCandidatelonSourcelon),
+      inRelonvelonrselonelonmailBook =
+        candidatelonSourcelons.contains(AddrelonssBookMelontadata.RelonvelonrselonelonmailBookCandidatelonSourcelon)
     )
 
-    val newCandidateSourceDetails = candidateUser.userCandidateSourceDetails
-      .map { details =>
-        details.copy(addressBookMetadata = Some(addressBookMetadata))
-      }.getOrElse(
-        UserCandidateSourceDetails(
-          None,
-          Map.empty,
-          Map.empty,
-          Some(addressBookMetadata),
-          Map.empty))
+    val nelonwCandidatelonSourcelonDelontails = candidatelonUselonr.uselonrCandidatelonSourcelonDelontails
+      .map { delontails =>
+        delontails.copy(addrelonssBookMelontadata = Somelon(addrelonssBookMelontadata))
+      }.gelontOrelonlselon(
+        UselonrCandidatelonSourcelonDelontails(
+          Nonelon,
+          Map.elonmpty,
+          Map.elonmpty,
+          Somelon(addrelonssBookMelontadata),
+          Map.elonmpty))
 
-    candidateUser.copy(
-      userCandidateSourceDetails = Some(newCandidateSourceDetails)
+    candidatelonUselonr.copy(
+      uselonrCandidatelonSourcelonDelontails = Somelon(nelonwCandidatelonSourcelonDelontails)
     )
   }
 

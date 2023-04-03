@@ -1,277 +1,277 @@
-package com.twitter.visibility.rules
+packagelon com.twittelonr.visibility.rulelons
 
-import com.twitter.visibility.rules.Condition.ViewerHasAdultMediaSettingLevel
-import com.twitter.visibility.rules.Condition.ViewerHasViolentMediaSettingLevel
-import com.twitter.visibility.rules.Condition.ViewerHasOtherSensitiveMediaSettingLevel
-import com.twitter.visibility.rules.Condition.LoggedInViewer
-import com.twitter.visibility.rules.Condition.LoggedOutViewer
-import com.twitter.visibility.rules.Condition.TweetHasNsfwUserAuthor
-import com.twitter.visibility.rules.Condition.TweetHasNsfwAdminAuthor
-import com.twitter.visibility.rules.Condition.And
-import com.twitter.visibility.rules.Condition.Or
-import com.twitter.visibility.rules.Condition.Not
-import com.twitter.visibility.rules.Condition.NonAuthorViewer
-import com.twitter.visibility.rules.Condition.TweetHasMedia
-import com.twitter.visibility.rules.Reason.Nsfw
-import com.twitter.visibility.models.TweetSafetyLabelType
-import com.twitter.contenthealth.sensitivemediasettings.thriftscala.SensitiveMediaSettingsLevel
+import com.twittelonr.visibility.rulelons.Condition.VielonwelonrHasAdultMelondiaSelonttingLelonvelonl
+import com.twittelonr.visibility.rulelons.Condition.VielonwelonrHasViolelonntMelondiaSelonttingLelonvelonl
+import com.twittelonr.visibility.rulelons.Condition.VielonwelonrHasOthelonrSelonnsitivelonMelondiaSelonttingLelonvelonl
+import com.twittelonr.visibility.rulelons.Condition.LoggelondInVielonwelonr
+import com.twittelonr.visibility.rulelons.Condition.LoggelondOutVielonwelonr
+import com.twittelonr.visibility.rulelons.Condition.TwelonelontHasNsfwUselonrAuthor
+import com.twittelonr.visibility.rulelons.Condition.TwelonelontHasNsfwAdminAuthor
+import com.twittelonr.visibility.rulelons.Condition.And
+import com.twittelonr.visibility.rulelons.Condition.Or
+import com.twittelonr.visibility.rulelons.Condition.Not
+import com.twittelonr.visibility.rulelons.Condition.NonAuthorVielonwelonr
+import com.twittelonr.visibility.rulelons.Condition.TwelonelontHasMelondia
+import com.twittelonr.visibility.rulelons.Relonason.Nsfw
+import com.twittelonr.visibility.modelonls.TwelonelontSafelontyLabelonlTypelon
+import com.twittelonr.contelonnthelonalth.selonnsitivelonmelondiaselonttings.thriftscala.SelonnsitivelonMelondiaSelonttingsLelonvelonl
 
 
-abstract class AdultMediaTweetLabelDropRule(tweetSafetyLabelType: TweetSafetyLabelType)
-    extends ConditionWithTweetLabelRule(
+abstract class AdultMelondiaTwelonelontLabelonlDropRulelon(twelonelontSafelontyLabelonlTypelon: TwelonelontSafelontyLabelonlTypelon)
+    elonxtelonnds ConditionWithTwelonelontLabelonlRulelon(
       Drop(Nsfw),
-      And(LoggedInViewer, ViewerHasAdultMediaSettingLevel(SensitiveMediaSettingsLevel.Drop)),
-      tweetSafetyLabelType
+      And(LoggelondInVielonwelonr, VielonwelonrHasAdultMelondiaSelonttingLelonvelonl(SelonnsitivelonMelondiaSelonttingsLelonvelonl.Drop)),
+      twelonelontSafelontyLabelonlTypelon
     )
 
-abstract class ViolentMediaTweetLabelDropRule(tweetSafetyLabelType: TweetSafetyLabelType)
-    extends ConditionWithTweetLabelRule(
+abstract class ViolelonntMelondiaTwelonelontLabelonlDropRulelon(twelonelontSafelontyLabelonlTypelon: TwelonelontSafelontyLabelonlTypelon)
+    elonxtelonnds ConditionWithTwelonelontLabelonlRulelon(
       Drop(Nsfw),
-      And(LoggedInViewer, ViewerHasViolentMediaSettingLevel(SensitiveMediaSettingsLevel.Drop)),
-      tweetSafetyLabelType
+      And(LoggelondInVielonwelonr, VielonwelonrHasViolelonntMelondiaSelonttingLelonvelonl(SelonnsitivelonMelondiaSelonttingsLelonvelonl.Drop)),
+      twelonelontSafelontyLabelonlTypelon
     )
 
-abstract class OtherSensitiveMediaTweetLabelDropRule(condition: Condition)
-    extends RuleWithConstantAction(
+abstract class OthelonrSelonnsitivelonMelondiaTwelonelontLabelonlDropRulelon(condition: Condition)
+    elonxtelonnds RulelonWithConstantAction(
       Drop(Nsfw),
       And(
         condition,
         And(
-          TweetHasMedia,
-          LoggedInViewer,
-          ViewerHasOtherSensitiveMediaSettingLevel(SensitiveMediaSettingsLevel.Drop)))
+          TwelonelontHasMelondia,
+          LoggelondInVielonwelonr,
+          VielonwelonrHasOthelonrSelonnsitivelonMelondiaSelonttingLelonvelonl(SelonnsitivelonMelondiaSelonttingsLelonvelonl.Drop)))
     )
 
-abstract class AdultMediaTweetLabelInterstitialRule(tweetSafetyLabelType: TweetSafetyLabelType)
-    extends ConditionWithTweetLabelRule(
-      Interstitial(Nsfw),
+abstract class AdultMelondiaTwelonelontLabelonlIntelonrstitialRulelon(twelonelontSafelontyLabelonlTypelon: TwelonelontSafelontyLabelonlTypelon)
+    elonxtelonnds ConditionWithTwelonelontLabelonlRulelon(
+      Intelonrstitial(Nsfw),
       Or(
-        LoggedOutViewer,
-        ViewerHasAdultMediaSettingLevel(SensitiveMediaSettingsLevel.Warn),
-        Not(ViewerHasAdultMediaSettingLevel(SensitiveMediaSettingsLevel.Allow))
+        LoggelondOutVielonwelonr,
+        VielonwelonrHasAdultMelondiaSelonttingLelonvelonl(SelonnsitivelonMelondiaSelonttingsLelonvelonl.Warn),
+        Not(VielonwelonrHasAdultMelondiaSelonttingLelonvelonl(SelonnsitivelonMelondiaSelonttingsLelonvelonl.Allow))
       ),
-      tweetSafetyLabelType
+      twelonelontSafelontyLabelonlTypelon
     )
 
-abstract class ViolentMediaTweetLabelInterstitialRule(tweetSafetyLabelType: TweetSafetyLabelType)
-    extends ConditionWithTweetLabelRule(
-      Interstitial(Nsfw),
+abstract class ViolelonntMelondiaTwelonelontLabelonlIntelonrstitialRulelon(twelonelontSafelontyLabelonlTypelon: TwelonelontSafelontyLabelonlTypelon)
+    elonxtelonnds ConditionWithTwelonelontLabelonlRulelon(
+      Intelonrstitial(Nsfw),
       Or(
-        LoggedOutViewer,
-        ViewerHasViolentMediaSettingLevel(SensitiveMediaSettingsLevel.Warn),
-        Not(ViewerHasViolentMediaSettingLevel(SensitiveMediaSettingsLevel.Allow))
+        LoggelondOutVielonwelonr,
+        VielonwelonrHasViolelonntMelondiaSelonttingLelonvelonl(SelonnsitivelonMelondiaSelonttingsLelonvelonl.Warn),
+        Not(VielonwelonrHasViolelonntMelondiaSelonttingLelonvelonl(SelonnsitivelonMelondiaSelonttingsLelonvelonl.Allow))
       ),
-      tweetSafetyLabelType
+      twelonelontSafelontyLabelonlTypelon
     )
 
-abstract class OtherSensitiveMediaTweetLabelInterstitialRule(condition: Condition)
-    extends RuleWithConstantAction(
-      Interstitial(Nsfw),
+abstract class OthelonrSelonnsitivelonMelondiaTwelonelontLabelonlIntelonrstitialRulelon(condition: Condition)
+    elonxtelonnds RulelonWithConstantAction(
+      Intelonrstitial(Nsfw),
       And(
         condition,
-        TweetHasMedia,
+        TwelonelontHasMelondia,
         Or(
-          LoggedOutViewer,
-          ViewerHasOtherSensitiveMediaSettingLevel(SensitiveMediaSettingsLevel.Warn)
+          LoggelondOutVielonwelonr,
+          VielonwelonrHasOthelonrSelonnsitivelonMelondiaSelonttingLelonvelonl(SelonnsitivelonMelondiaSelonttingsLelonvelonl.Warn)
         )
       )
     )
 
-abstract class AdultMediaTweetLabelDropSettingLevelTombstoneRule(
-  tweetSafetyLabelType: TweetSafetyLabelType)
-    extends ConditionWithTweetLabelRule(
-      Tombstone(Epitaph.AdultMedia),
+abstract class AdultMelondiaTwelonelontLabelonlDropSelonttingLelonvelonlTombstonelonRulelon(
+  twelonelontSafelontyLabelonlTypelon: TwelonelontSafelontyLabelonlTypelon)
+    elonxtelonnds ConditionWithTwelonelontLabelonlRulelon(
+      Tombstonelon(elonpitaph.AdultMelondia),
       And(
-        LoggedInViewer,
-        NonAuthorViewer,
-        ViewerHasAdultMediaSettingLevel(SensitiveMediaSettingsLevel.Drop)),
-      tweetSafetyLabelType
+        LoggelondInVielonwelonr,
+        NonAuthorVielonwelonr,
+        VielonwelonrHasAdultMelondiaSelonttingLelonvelonl(SelonnsitivelonMelondiaSelonttingsLelonvelonl.Drop)),
+      twelonelontSafelontyLabelonlTypelon
     )
 
-abstract class ViolentMediaTweetLabelDropSettingLevelTombstoneRule(
-  tweetSafetyLabelType: TweetSafetyLabelType)
-    extends ConditionWithTweetLabelRule(
-      Tombstone(Epitaph.ViolentMedia),
+abstract class ViolelonntMelondiaTwelonelontLabelonlDropSelonttingLelonvelonlTombstonelonRulelon(
+  twelonelontSafelontyLabelonlTypelon: TwelonelontSafelontyLabelonlTypelon)
+    elonxtelonnds ConditionWithTwelonelontLabelonlRulelon(
+      Tombstonelon(elonpitaph.ViolelonntMelondia),
       And(
-        LoggedInViewer,
-        NonAuthorViewer,
-        ViewerHasViolentMediaSettingLevel(SensitiveMediaSettingsLevel.Drop)),
-      tweetSafetyLabelType
+        LoggelondInVielonwelonr,
+        NonAuthorVielonwelonr,
+        VielonwelonrHasViolelonntMelondiaSelonttingLelonvelonl(SelonnsitivelonMelondiaSelonttingsLelonvelonl.Drop)),
+      twelonelontSafelontyLabelonlTypelon
     )
 
-abstract class OtherSensitiveMediaTweetLabelDropSettingLevelTombstoneRule(condition: Condition)
-    extends RuleWithConstantAction(
-      Tombstone(Epitaph.OtherSensitiveMedia),
+abstract class OthelonrSelonnsitivelonMelondiaTwelonelontLabelonlDropSelonttingLelonvelonlTombstonelonRulelon(condition: Condition)
+    elonxtelonnds RulelonWithConstantAction(
+      Tombstonelon(elonpitaph.OthelonrSelonnsitivelonMelondia),
       And(
         condition,
         And(
-          TweetHasMedia,
-          LoggedInViewer,
-          NonAuthorViewer,
-          ViewerHasOtherSensitiveMediaSettingLevel(SensitiveMediaSettingsLevel.Drop))
+          TwelonelontHasMelondia,
+          LoggelondInVielonwelonr,
+          NonAuthorVielonwelonr,
+          VielonwelonrHasOthelonrSelonnsitivelonMelondiaSelonttingLelonvelonl(SelonnsitivelonMelondiaSelonttingsLelonvelonl.Drop))
       )
     )
 
-case object SensitiveMediaTweetDropRules {
+caselon objelonct SelonnsitivelonMelondiaTwelonelontDropRulelons {
 
 
-  object AdultMediaNsfwHighPrecisionTweetLabelDropRule
-      extends AdultMediaTweetLabelDropRule(
-        TweetSafetyLabelType.NsfwHighPrecision
+  objelonct AdultMelondiaNsfwHighPreloncisionTwelonelontLabelonlDropRulelon
+      elonxtelonnds AdultMelondiaTwelonelontLabelonlDropRulelon(
+        TwelonelontSafelontyLabelonlTypelon.NsfwHighPreloncision
       )
 
-  object AdultMediaNsfwCardImageTweetLabelDropRule
-      extends AdultMediaTweetLabelDropRule(
-        TweetSafetyLabelType.NsfwCardImage
+  objelonct AdultMelondiaNsfwCardImagelonTwelonelontLabelonlDropRulelon
+      elonxtelonnds AdultMelondiaTwelonelontLabelonlDropRulelon(
+        TwelonelontSafelontyLabelonlTypelon.NsfwCardImagelon
       )
 
-  object AdultMediaNsfwReportedHeuristicsTweetLabelDropRule
-      extends AdultMediaTweetLabelDropRule(
-        TweetSafetyLabelType.NsfwReportedHeuristics
+  objelonct AdultMelondiaNsfwRelonportelondHelonuristicsTwelonelontLabelonlDropRulelon
+      elonxtelonnds AdultMelondiaTwelonelontLabelonlDropRulelon(
+        TwelonelontSafelontyLabelonlTypelon.NsfwRelonportelondHelonuristics
       )
 
-  object AdultMediaNsfwVideoTweetLabelDropRule
-      extends AdultMediaTweetLabelDropRule(
-        TweetSafetyLabelType.NsfwVideo
+  objelonct AdultMelondiaNsfwVidelonoTwelonelontLabelonlDropRulelon
+      elonxtelonnds AdultMelondiaTwelonelontLabelonlDropRulelon(
+        TwelonelontSafelontyLabelonlTypelon.NsfwVidelono
       )
 
-  object AdultMediaNsfwHighRecallTweetLabelDropRule
-      extends AdultMediaTweetLabelDropRule(
-        TweetSafetyLabelType.NsfwHighRecall
+  objelonct AdultMelondiaNsfwHighReloncallTwelonelontLabelonlDropRulelon
+      elonxtelonnds AdultMelondiaTwelonelontLabelonlDropRulelon(
+        TwelonelontSafelontyLabelonlTypelon.NsfwHighReloncall
       )
 
-  object AdultMediaNsfwTextTweetLabelDropRule
-      extends AdultMediaTweetLabelDropRule(
-        TweetSafetyLabelType.NsfwText
+  objelonct AdultMelondiaNsfwTelonxtTwelonelontLabelonlDropRulelon
+      elonxtelonnds AdultMelondiaTwelonelontLabelonlDropRulelon(
+        TwelonelontSafelontyLabelonlTypelon.NsfwTelonxt
       )
 
-  object ViolentMediaGoreAndViolenceHighPrecisionDropRule
-      extends ViolentMediaTweetLabelDropRule(
-        TweetSafetyLabelType.GoreAndViolenceHighPrecision
+  objelonct ViolelonntMelondiaGorelonAndViolelonncelonHighPreloncisionDropRulelon
+      elonxtelonnds ViolelonntMelondiaTwelonelontLabelonlDropRulelon(
+        TwelonelontSafelontyLabelonlTypelon.GorelonAndViolelonncelonHighPreloncision
       )
 
-  object ViolentMediaGoreAndViolenceReportedHeuristicsDropRule
-      extends ViolentMediaTweetLabelDropRule(
-        TweetSafetyLabelType.GoreAndViolenceReportedHeuristics
+  objelonct ViolelonntMelondiaGorelonAndViolelonncelonRelonportelondHelonuristicsDropRulelon
+      elonxtelonnds ViolelonntMelondiaTwelonelontLabelonlDropRulelon(
+        TwelonelontSafelontyLabelonlTypelon.GorelonAndViolelonncelonRelonportelondHelonuristics
       )
 
-  object OtherSensitiveMediaNsfwUserTweetFlagDropRule
-      extends OtherSensitiveMediaTweetLabelDropRule(
-        TweetHasNsfwUserAuthor
+  objelonct OthelonrSelonnsitivelonMelondiaNsfwUselonrTwelonelontFlagDropRulelon
+      elonxtelonnds OthelonrSelonnsitivelonMelondiaTwelonelontLabelonlDropRulelon(
+        TwelonelontHasNsfwUselonrAuthor
       )
 
-  object OtherSensitiveMediaNsfwAdminTweetFlagDropRule
-      extends OtherSensitiveMediaTweetLabelDropRule(
-        TweetHasNsfwAdminAuthor
+  objelonct OthelonrSelonnsitivelonMelondiaNsfwAdminTwelonelontFlagDropRulelon
+      elonxtelonnds OthelonrSelonnsitivelonMelondiaTwelonelontLabelonlDropRulelon(
+        TwelonelontHasNsfwAdminAuthor
       )
 }
 
-case object SensitiveMediaTweetInterstitialRules {
+caselon objelonct SelonnsitivelonMelondiaTwelonelontIntelonrstitialRulelons {
 
-  object AdultMediaNsfwHighPrecisionTweetLabelInterstitialRule
-      extends AdultMediaTweetLabelInterstitialRule(
-        TweetSafetyLabelType.NsfwHighPrecision
+  objelonct AdultMelondiaNsfwHighPreloncisionTwelonelontLabelonlIntelonrstitialRulelon
+      elonxtelonnds AdultMelondiaTwelonelontLabelonlIntelonrstitialRulelon(
+        TwelonelontSafelontyLabelonlTypelon.NsfwHighPreloncision
       )
-      with DoesLogVerdict
+      with DoelonsLogVelonrdict
 
-  object AdultMediaNsfwCardImageTweetLabelInterstitialRule
-      extends AdultMediaTweetLabelInterstitialRule(
-        TweetSafetyLabelType.NsfwCardImage
-      )
-
-  object AdultMediaNsfwReportedHeuristicsTweetLabelInterstitialRule
-      extends AdultMediaTweetLabelInterstitialRule(
-        TweetSafetyLabelType.NsfwReportedHeuristics
+  objelonct AdultMelondiaNsfwCardImagelonTwelonelontLabelonlIntelonrstitialRulelon
+      elonxtelonnds AdultMelondiaTwelonelontLabelonlIntelonrstitialRulelon(
+        TwelonelontSafelontyLabelonlTypelon.NsfwCardImagelon
       )
 
-  object AdultMediaNsfwVideoTweetLabelInterstitialRule
-      extends AdultMediaTweetLabelInterstitialRule(
-        TweetSafetyLabelType.NsfwVideo
+  objelonct AdultMelondiaNsfwRelonportelondHelonuristicsTwelonelontLabelonlIntelonrstitialRulelon
+      elonxtelonnds AdultMelondiaTwelonelontLabelonlIntelonrstitialRulelon(
+        TwelonelontSafelontyLabelonlTypelon.NsfwRelonportelondHelonuristics
       )
 
-  object AdultMediaNsfwHighRecallTweetLabelInterstitialRule
-      extends AdultMediaTweetLabelInterstitialRule(
-        TweetSafetyLabelType.NsfwHighRecall
+  objelonct AdultMelondiaNsfwVidelonoTwelonelontLabelonlIntelonrstitialRulelon
+      elonxtelonnds AdultMelondiaTwelonelontLabelonlIntelonrstitialRulelon(
+        TwelonelontSafelontyLabelonlTypelon.NsfwVidelono
       )
 
-  object AdultMediaNsfwTextTweetLabelInterstitialRule
-      extends AdultMediaTweetLabelInterstitialRule(
-        TweetSafetyLabelType.NsfwText
+  objelonct AdultMelondiaNsfwHighReloncallTwelonelontLabelonlIntelonrstitialRulelon
+      elonxtelonnds AdultMelondiaTwelonelontLabelonlIntelonrstitialRulelon(
+        TwelonelontSafelontyLabelonlTypelon.NsfwHighReloncall
       )
 
-  object ViolentMediaGoreAndViolenceHighPrecisionInterstitialRule
-      extends ViolentMediaTweetLabelInterstitialRule(
-        TweetSafetyLabelType.GoreAndViolenceHighPrecision
-      )
-      with DoesLogVerdict
-
-  object ViolentMediaGoreAndViolenceReportedHeuristicsInterstitialRule
-      extends ViolentMediaTweetLabelInterstitialRule(
-        TweetSafetyLabelType.GoreAndViolenceReportedHeuristics
+  objelonct AdultMelondiaNsfwTelonxtTwelonelontLabelonlIntelonrstitialRulelon
+      elonxtelonnds AdultMelondiaTwelonelontLabelonlIntelonrstitialRulelon(
+        TwelonelontSafelontyLabelonlTypelon.NsfwTelonxt
       )
 
-  object OtherSensitiveMediaNsfwUserTweetFlagInterstitialRule
-      extends OtherSensitiveMediaTweetLabelInterstitialRule(
-        TweetHasNsfwUserAuthor
+  objelonct ViolelonntMelondiaGorelonAndViolelonncelonHighPreloncisionIntelonrstitialRulelon
+      elonxtelonnds ViolelonntMelondiaTwelonelontLabelonlIntelonrstitialRulelon(
+        TwelonelontSafelontyLabelonlTypelon.GorelonAndViolelonncelonHighPreloncision
+      )
+      with DoelonsLogVelonrdict
+
+  objelonct ViolelonntMelondiaGorelonAndViolelonncelonRelonportelondHelonuristicsIntelonrstitialRulelon
+      elonxtelonnds ViolelonntMelondiaTwelonelontLabelonlIntelonrstitialRulelon(
+        TwelonelontSafelontyLabelonlTypelon.GorelonAndViolelonncelonRelonportelondHelonuristics
       )
 
-  object OtherSensitiveMediaNsfwAdminTweetFlagInterstitialRule
-      extends OtherSensitiveMediaTweetLabelInterstitialRule(
-        TweetHasNsfwAdminAuthor
+  objelonct OthelonrSelonnsitivelonMelondiaNsfwUselonrTwelonelontFlagIntelonrstitialRulelon
+      elonxtelonnds OthelonrSelonnsitivelonMelondiaTwelonelontLabelonlIntelonrstitialRulelon(
+        TwelonelontHasNsfwUselonrAuthor
+      )
+
+  objelonct OthelonrSelonnsitivelonMelondiaNsfwAdminTwelonelontFlagIntelonrstitialRulelon
+      elonxtelonnds OthelonrSelonnsitivelonMelondiaTwelonelontLabelonlIntelonrstitialRulelon(
+        TwelonelontHasNsfwAdminAuthor
       )
 
 }
 
-case object SensitiveMediaTweetDropSettingLevelTombstoneRules {
+caselon objelonct SelonnsitivelonMelondiaTwelonelontDropSelonttingLelonvelonlTombstonelonRulelons {
 
 
-  object AdultMediaNsfwHighPrecisionTweetLabelDropSettingLevelTombstoneRule
-      extends AdultMediaTweetLabelDropSettingLevelTombstoneRule(
-        TweetSafetyLabelType.NsfwHighPrecision
+  objelonct AdultMelondiaNsfwHighPreloncisionTwelonelontLabelonlDropSelonttingLelonvelonlTombstonelonRulelon
+      elonxtelonnds AdultMelondiaTwelonelontLabelonlDropSelonttingLelonvelonlTombstonelonRulelon(
+        TwelonelontSafelontyLabelonlTypelon.NsfwHighPreloncision
       )
 
-  object AdultMediaNsfwCardImageTweetLabelDropSettingLevelTombstoneRule
-      extends AdultMediaTweetLabelDropSettingLevelTombstoneRule(
-        TweetSafetyLabelType.NsfwCardImage
+  objelonct AdultMelondiaNsfwCardImagelonTwelonelontLabelonlDropSelonttingLelonvelonlTombstonelonRulelon
+      elonxtelonnds AdultMelondiaTwelonelontLabelonlDropSelonttingLelonvelonlTombstonelonRulelon(
+        TwelonelontSafelontyLabelonlTypelon.NsfwCardImagelon
       )
 
-  object AdultMediaNsfwReportedHeuristicsTweetLabelDropSettingLevelTombstoneRule
-      extends AdultMediaTweetLabelDropSettingLevelTombstoneRule(
-        TweetSafetyLabelType.NsfwReportedHeuristics
+  objelonct AdultMelondiaNsfwRelonportelondHelonuristicsTwelonelontLabelonlDropSelonttingLelonvelonlTombstonelonRulelon
+      elonxtelonnds AdultMelondiaTwelonelontLabelonlDropSelonttingLelonvelonlTombstonelonRulelon(
+        TwelonelontSafelontyLabelonlTypelon.NsfwRelonportelondHelonuristics
       )
 
-  object AdultMediaNsfwVideoTweetLabelDropSettingLevelTombstoneRule
-      extends AdultMediaTweetLabelDropSettingLevelTombstoneRule(
-        TweetSafetyLabelType.NsfwVideo
+  objelonct AdultMelondiaNsfwVidelonoTwelonelontLabelonlDropSelonttingLelonvelonlTombstonelonRulelon
+      elonxtelonnds AdultMelondiaTwelonelontLabelonlDropSelonttingLelonvelonlTombstonelonRulelon(
+        TwelonelontSafelontyLabelonlTypelon.NsfwVidelono
       )
 
-  object AdultMediaNsfwHighRecallTweetLabelDropSettingLevelTombstoneRule
-      extends AdultMediaTweetLabelDropSettingLevelTombstoneRule(
-        TweetSafetyLabelType.NsfwHighRecall
+  objelonct AdultMelondiaNsfwHighReloncallTwelonelontLabelonlDropSelonttingLelonvelonlTombstonelonRulelon
+      elonxtelonnds AdultMelondiaTwelonelontLabelonlDropSelonttingLelonvelonlTombstonelonRulelon(
+        TwelonelontSafelontyLabelonlTypelon.NsfwHighReloncall
       )
 
-  object AdultMediaNsfwTextTweetLabelDropSettingLevelTombstoneRule
-      extends AdultMediaTweetLabelDropSettingLevelTombstoneRule(
-        TweetSafetyLabelType.NsfwText
+  objelonct AdultMelondiaNsfwTelonxtTwelonelontLabelonlDropSelonttingLelonvelonlTombstonelonRulelon
+      elonxtelonnds AdultMelondiaTwelonelontLabelonlDropSelonttingLelonvelonlTombstonelonRulelon(
+        TwelonelontSafelontyLabelonlTypelon.NsfwTelonxt
       )
 
-  object ViolentMediaGoreAndViolenceHighPrecisionDropSettingLeveTombstoneRule
-      extends ViolentMediaTweetLabelDropSettingLevelTombstoneRule(
-        TweetSafetyLabelType.GoreAndViolenceHighPrecision
+  objelonct ViolelonntMelondiaGorelonAndViolelonncelonHighPreloncisionDropSelonttingLelonvelonTombstonelonRulelon
+      elonxtelonnds ViolelonntMelondiaTwelonelontLabelonlDropSelonttingLelonvelonlTombstonelonRulelon(
+        TwelonelontSafelontyLabelonlTypelon.GorelonAndViolelonncelonHighPreloncision
       )
 
-  object ViolentMediaGoreAndViolenceReportedHeuristicsDropSettingLevelTombstoneRule
-      extends ViolentMediaTweetLabelDropSettingLevelTombstoneRule(
-        TweetSafetyLabelType.GoreAndViolenceReportedHeuristics
+  objelonct ViolelonntMelondiaGorelonAndViolelonncelonRelonportelondHelonuristicsDropSelonttingLelonvelonlTombstonelonRulelon
+      elonxtelonnds ViolelonntMelondiaTwelonelontLabelonlDropSelonttingLelonvelonlTombstonelonRulelon(
+        TwelonelontSafelontyLabelonlTypelon.GorelonAndViolelonncelonRelonportelondHelonuristics
       )
 
-  object OtherSensitiveMediaNsfwUserTweetFlagDropSettingLevelTombstoneRule
-      extends OtherSensitiveMediaTweetLabelDropSettingLevelTombstoneRule(
-        TweetHasNsfwUserAuthor
+  objelonct OthelonrSelonnsitivelonMelondiaNsfwUselonrTwelonelontFlagDropSelonttingLelonvelonlTombstonelonRulelon
+      elonxtelonnds OthelonrSelonnsitivelonMelondiaTwelonelontLabelonlDropSelonttingLelonvelonlTombstonelonRulelon(
+        TwelonelontHasNsfwUselonrAuthor
       )
 
-  object OtherSensitiveMediaNsfwAdminTweetFlagDropSettingLevelTombstoneRule
-      extends OtherSensitiveMediaTweetLabelDropSettingLevelTombstoneRule(
-        TweetHasNsfwAdminAuthor
+  objelonct OthelonrSelonnsitivelonMelondiaNsfwAdminTwelonelontFlagDropSelonttingLelonvelonlTombstonelonRulelon
+      elonxtelonnds OthelonrSelonnsitivelonMelondiaTwelonelontLabelonlDropSelonttingLelonvelonlTombstonelonRulelon(
+        TwelonelontHasNsfwAdminAuthor
       )
 }

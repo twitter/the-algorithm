@@ -1,608 +1,608 @@
-package com.twitter.search.earlybird;
+packagelon com.twittelonr.selonarch.elonarlybird;
 
-import java.io.BufferedWriter;
-import java.io.Closeable;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
+import java.io.BuffelonrelondWritelonr;
+import java.io.Closelonablelon;
+import java.io.Filelon;
+import java.io.IOelonxcelonption;
+import java.nio.filelon.Filelons;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.RejectedExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicReference;
-import javax.annotation.Nullable;
-import javax.annotation.concurrent.GuardedBy;
+import java.util.Selont;
+import java.util.concurrelonnt.ArrayBlockingQuelonuelon;
+import java.util.concurrelonnt.elonxeloncutionelonxcelonption;
+import java.util.concurrelonnt.elonxeloncutorSelonrvicelon;
+import java.util.concurrelonnt.elonxeloncutors;
+import java.util.concurrelonnt.Relonjelonctelondelonxeloncutionelonxcelonption;
+import java.util.concurrelonnt.TimelonUnit;
+import java.util.concurrelonnt.atomic.AtomicRelonfelonrelonncelon;
+import javax.annotation.Nullablelon;
+import javax.annotation.concurrelonnt.GuardelondBy;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Charsets;
-import com.google.common.base.Stopwatch;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
-import com.google.common.util.concurrent.AtomicLongMap;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import com.googlelon.common.baselon.Charselonts;
+import com.googlelon.common.baselon.Stopwatch;
+import com.googlelon.common.cachelon.CachelonBuildelonr;
+import com.googlelon.common.cachelon.CachelonLoadelonr;
+import com.googlelon.common.cachelon.LoadingCachelon;
+import com.googlelon.common.collelonct.ImmutablelonMap;
+import com.googlelon.common.collelonct.Lists;
+import com.googlelon.common.util.concurrelonnt.AtomicLongMap;
 
-import org.apache.commons.codec.binary.Base64;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.thrift.TBase;
-import org.apache.thrift.TException;
-import org.apache.thrift.TSerializer;
-import org.apache.zookeeper.KeeperException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apachelon.commons.codelonc.binary.Baselon64;
+import org.apachelon.lucelonnelon.selonarch.IndelonxSelonarchelonr;
+import org.apachelon.thrift.TBaselon;
+import org.apachelon.thrift.Telonxcelonption;
+import org.apachelon.thrift.TSelonrializelonr;
+import org.apachelon.zookelonelonpelonr.Kelonelonpelonrelonxcelonption;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.common.collections.Pair;
-import com.twitter.common.util.Clock;
-import com.twitter.common.zookeeper.ServerSet.UpdateException;
-import com.twitter.common.zookeeper.ZooKeeperClient;
-import com.twitter.decider.Decider;
-import com.twitter.finagle.Failure;
-import com.twitter.search.common.database.DatabaseConfig;
-import com.twitter.search.common.metrics.Percentile;
-import com.twitter.search.common.metrics.PercentileUtil;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchLongGauge;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.metrics.SearchStatsReceiver;
-import com.twitter.search.common.metrics.SearchTimerStats;
-import com.twitter.search.common.metrics.Timer;
-import com.twitter.search.common.schema.DynamicSchema;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.schema.earlybird.FlushVersion;
-import com.twitter.search.common.search.termination.QueryTimeoutFactory;
-import com.twitter.search.common.util.FinagleUtil;
-import com.twitter.search.common.util.GCUtil;
-import com.twitter.search.common.util.ml.tensorflow_engine.TensorflowModelsManager;
-import com.twitter.search.common.util.zookeeper.ZooKeeperProxy;
-import com.twitter.search.core.earlybird.index.inverted.QueryCostTracker;
-import com.twitter.search.earlybird.admin.LastSearchesSummary;
-import com.twitter.search.earlybird.admin.QueriedFieldsAndSchemaStats;
-import com.twitter.search.earlybird.common.ClientIdUtil;
-import com.twitter.search.earlybird.common.EarlybirdRequestLogger;
-import com.twitter.search.earlybird.common.EarlybirdRequestPostLogger;
-import com.twitter.search.earlybird.common.EarlybirdRequestPreLogger;
-import com.twitter.search.earlybird.common.EarlybirdRequestUtil;
-import com.twitter.search.earlybird.common.RequestResponsePair;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.exception.EarlybirdStartupException;
-import com.twitter.search.earlybird.exception.TransientException;
-import com.twitter.search.earlybird.ml.ScoringModelsManager;
-import com.twitter.search.earlybird.partition.AudioSpaceTable;
-import com.twitter.search.earlybird.partition.DynamicPartitionConfig;
-import com.twitter.search.earlybird.partition.EarlybirdStartup;
-import com.twitter.search.earlybird.partition.MultiSegmentTermDictionaryManager;
-import com.twitter.search.earlybird.partition.PartitionConfig;
-import com.twitter.search.earlybird.partition.PartitionManager;
-import com.twitter.search.earlybird.partition.SearchIndexingMetricSet;
-import com.twitter.search.earlybird.partition.SegmentManager;
-import com.twitter.search.earlybird.partition.SegmentSyncConfig;
-import com.twitter.search.earlybird.partition.SegmentVulture;
-import com.twitter.search.earlybird.querycache.QueryCacheManager;
-import com.twitter.search.earlybird.stats.EarlybirdRPCStats;
-import com.twitter.search.earlybird.stats.EarlybirdSearcherStats;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.search.earlybird.thrift.EarlybirdServerStats;
-import com.twitter.search.earlybird.thrift.EarlybirdService;
-import com.twitter.search.earlybird.thrift.EarlybirdStatusCode;
-import com.twitter.search.earlybird.thrift.EarlybirdStatusResponse;
-import com.twitter.search.earlybird.thrift.ThriftSearchResult;
-import com.twitter.search.earlybird.thrift.ThriftSearchResults;
-import com.twitter.search.earlybird.util.OneTaskScheduledExecutorManager;
-import com.twitter.search.earlybird.util.TermCountMonitor;
-import com.twitter.search.earlybird.util.TweetCountMonitor;
-import com.twitter.snowflake.id.SnowflakeId;
-import com.twitter.util.Duration;
-import com.twitter.util.Function;
-import com.twitter.util.Function0;
-import com.twitter.util.Future;
+import com.twittelonr.common.collelonctions.Pair;
+import com.twittelonr.common.util.Clock;
+import com.twittelonr.common.zookelonelonpelonr.SelonrvelonrSelont.Updatelonelonxcelonption;
+import com.twittelonr.common.zookelonelonpelonr.ZooKelonelonpelonrClielonnt;
+import com.twittelonr.deloncidelonr.Deloncidelonr;
+import com.twittelonr.finaglelon.Failurelon;
+import com.twittelonr.selonarch.common.databaselon.DatabaselonConfig;
+import com.twittelonr.selonarch.common.melontrics.Pelonrcelonntilelon;
+import com.twittelonr.selonarch.common.melontrics.PelonrcelonntilelonUtil;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchLongGaugelon;
+import com.twittelonr.selonarch.common.melontrics.SelonarchRatelonCountelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchStatsReloncelonivelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchTimelonrStats;
+import com.twittelonr.selonarch.common.melontrics.Timelonr;
+import com.twittelonr.selonarch.common.schelonma.DynamicSchelonma;
+import com.twittelonr.selonarch.common.schelonma.baselon.ImmutablelonSchelonmaIntelonrfacelon;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.FlushVelonrsion;
+import com.twittelonr.selonarch.common.selonarch.telonrmination.QuelonryTimelonoutFactory;
+import com.twittelonr.selonarch.common.util.FinaglelonUtil;
+import com.twittelonr.selonarch.common.util.GCUtil;
+import com.twittelonr.selonarch.common.util.ml.telonnsorflow_elonnginelon.TelonnsorflowModelonlsManagelonr;
+import com.twittelonr.selonarch.common.util.zookelonelonpelonr.ZooKelonelonpelonrProxy;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.invelonrtelond.QuelonryCostTrackelonr;
+import com.twittelonr.selonarch.elonarlybird.admin.LastSelonarchelonsSummary;
+import com.twittelonr.selonarch.elonarlybird.admin.QuelonrielondFielonldsAndSchelonmaStats;
+import com.twittelonr.selonarch.elonarlybird.common.ClielonntIdUtil;
+import com.twittelonr.selonarch.elonarlybird.common.elonarlybirdRelonquelonstLoggelonr;
+import com.twittelonr.selonarch.elonarlybird.common.elonarlybirdRelonquelonstPostLoggelonr;
+import com.twittelonr.selonarch.elonarlybird.common.elonarlybirdRelonquelonstPrelonLoggelonr;
+import com.twittelonr.selonarch.elonarlybird.common.elonarlybirdRelonquelonstUtil;
+import com.twittelonr.selonarch.elonarlybird.common.RelonquelonstRelonsponselonPair;
+import com.twittelonr.selonarch.elonarlybird.common.config.elonarlybirdConfig;
+import com.twittelonr.selonarch.elonarlybird.elonxcelonption.elonarlybirdStartupelonxcelonption;
+import com.twittelonr.selonarch.elonarlybird.elonxcelonption.Transielonntelonxcelonption;
+import com.twittelonr.selonarch.elonarlybird.ml.ScoringModelonlsManagelonr;
+import com.twittelonr.selonarch.elonarlybird.partition.AudioSpacelonTablelon;
+import com.twittelonr.selonarch.elonarlybird.partition.DynamicPartitionConfig;
+import com.twittelonr.selonarch.elonarlybird.partition.elonarlybirdStartup;
+import com.twittelonr.selonarch.elonarlybird.partition.MultiSelongmelonntTelonrmDictionaryManagelonr;
+import com.twittelonr.selonarch.elonarlybird.partition.PartitionConfig;
+import com.twittelonr.selonarch.elonarlybird.partition.PartitionManagelonr;
+import com.twittelonr.selonarch.elonarlybird.partition.SelonarchIndelonxingMelontricSelont;
+import com.twittelonr.selonarch.elonarlybird.partition.SelongmelonntManagelonr;
+import com.twittelonr.selonarch.elonarlybird.partition.SelongmelonntSyncConfig;
+import com.twittelonr.selonarch.elonarlybird.partition.SelongmelonntVulturelon;
+import com.twittelonr.selonarch.elonarlybird.quelonrycachelon.QuelonryCachelonManagelonr;
+import com.twittelonr.selonarch.elonarlybird.stats.elonarlybirdRPCStats;
+import com.twittelonr.selonarch.elonarlybird.stats.elonarlybirdSelonarchelonrStats;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonquelonst;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselonCodelon;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdSelonrvelonrStats;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdSelonrvicelon;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdStatusCodelon;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdStatusRelonsponselon;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsult;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsults;
+import com.twittelonr.selonarch.elonarlybird.util.OnelonTaskSchelondulelondelonxeloncutorManagelonr;
+import com.twittelonr.selonarch.elonarlybird.util.TelonrmCountMonitor;
+import com.twittelonr.selonarch.elonarlybird.util.TwelonelontCountMonitor;
+import com.twittelonr.snowflakelon.id.SnowflakelonId;
+import com.twittelonr.util.Duration;
+import com.twittelonr.util.Function;
+import com.twittelonr.util.Function0;
+import com.twittelonr.util.Futurelon;
 
-public class EarlybirdServer implements EarlybirdService.ServiceIface, ServerSetMember {
-  private static final Logger LOG = LoggerFactory.getLogger(EarlybirdServer.class);
+public class elonarlybirdSelonrvelonr implelonmelonnts elonarlybirdSelonrvicelon.SelonrvicelonIfacelon, SelonrvelonrSelontMelonmbelonr {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(elonarlybirdSelonrvelonr.class);
 
-  private static final String EARLYBIRD_STARTUP = "earlybird startup";
-  public static final String SERVICE_NAME = "Earlybird";
+  privatelon static final String elonARLYBIRD_STARTUP = "elonarlybird startup";
+  public static final String SelonRVICelon_NAMelon = "elonarlybird";
 
-  private static final boolean REGISTER_WITH_ZK_ON_STARTUP =
-      EarlybirdConfig.getBool("register_with_zk_on_startup", true);
-  private static final Duration SERVER_CLOSE_WAIT_TIME = Duration.apply(5L, TimeUnit.SECONDS);
+  privatelon static final boolelonan RelonGISTelonR_WITH_ZK_ON_STARTUP =
+      elonarlybirdConfig.gelontBool("relongistelonr_with_zk_on_startup", truelon);
+  privatelon static final Duration SelonRVelonR_CLOSelon_WAIT_TIMelon = Duration.apply(5L, TimelonUnit.SelonCONDS);
 
-  private static final Failure QUEUE_FULL_FAILURE =
-      Failure.rejected("Rejected due to full executor queue");
+  privatelon static final Failurelon QUelonUelon_FULL_FAILURelon =
+      Failurelon.relonjelonctelond("Relonjelonctelond duelon to full elonxeloncutor quelonuelon");
 
-  private final int port = EarlybirdConfig.getThriftPort();
-  private final int warmUpPort = EarlybirdConfig.getWarmUpThriftPort();
-  private final int numSearcherThreads = EarlybirdConfig.getSearcherThreads();
+  privatelon final int port = elonarlybirdConfig.gelontThriftPort();
+  privatelon final int warmUpPort = elonarlybirdConfig.gelontWarmUpThriftPort();
+  privatelon final int numSelonarchelonrThrelonads = elonarlybirdConfig.gelontSelonarchelonrThrelonads();
 
-  private final SearchStatsReceiver earlybirdServerStatsReceiver;
-  private final EarlybirdRPCStats searchStats = new EarlybirdRPCStats("search");
-  private final EarlybirdSearcherStats tweetsSearcherStats;
+  privatelon final SelonarchStatsReloncelonivelonr elonarlybirdSelonrvelonrStatsReloncelonivelonr;
+  privatelon final elonarlybirdRPCStats selonarchStats = nelonw elonarlybirdRPCStats("selonarch");
+  privatelon final elonarlybirdSelonarchelonrStats twelonelontsSelonarchelonrStats;
 
-  private static final String REQUESTS_RECEIVED_BY_FINAGLE_ID_COUNTER_NAME_PATTERN =
-      "requests_for_finagle_id_%s_all";
-  private static final String REQUESTS_RECEIVED_BY_FINAGLE_ID_AND_CLIENT_ID_COUNTER_NAME_PATTERN =
-      "requests_for_finagle_id_%s_and_client_id_%s";
-  private static final String RESPONSES_PER_CLIENT_ID_STAT_TEMPLATE =
-      "responses_for_client_id_%s_with_response_code_%s";
+  privatelon static final String RelonQUelonSTS_RelonCelonIVelonD_BY_FINAGLelon_ID_COUNTelonR_NAMelon_PATTelonRN =
+      "relonquelonsts_for_finaglelon_id_%s_all";
+  privatelon static final String RelonQUelonSTS_RelonCelonIVelonD_BY_FINAGLelon_ID_AND_CLIelonNT_ID_COUNTelonR_NAMelon_PATTelonRN =
+      "relonquelonsts_for_finaglelon_id_%s_and_clielonnt_id_%s";
+  privatelon static final String RelonSPONSelonS_PelonR_CLIelonNT_ID_STAT_TelonMPLATelon =
+      "relonsponselons_for_clielonnt_id_%s_with_relonsponselon_codelon_%s";
 
-  // Loading cache for per finagle-client-id stats. Storing them in a loading cache key-ed by
-  // finagle client id so we don't export the stat multiple times.
-  private final LoadingCache<String, SearchTimerStats> requestCountersByFinagleClientId =
-      CacheBuilder.newBuilder().build(
-          new CacheLoader<String, SearchTimerStats>() {
-            @Override
-            public SearchTimerStats load(String finagleClientId) {
-              return earlybirdServerStatsReceiver.getTimerStats(
+  // Loading cachelon for pelonr finaglelon-clielonnt-id stats. Storing thelonm in a loading cachelon kelony-elond by
+  // finaglelon clielonnt id so welon don't elonxport thelon stat multiplelon timelons.
+  privatelon final LoadingCachelon<String, SelonarchTimelonrStats> relonquelonstCountelonrsByFinaglelonClielonntId =
+      CachelonBuildelonr.nelonwBuildelonr().build(
+          nelonw CachelonLoadelonr<String, SelonarchTimelonrStats>() {
+            @Ovelonrridelon
+            public SelonarchTimelonrStats load(String finaglelonClielonntId) {
+              relonturn elonarlybirdSelonrvelonrStatsReloncelonivelonr.gelontTimelonrStats(
                   String.format(
-                      REQUESTS_RECEIVED_BY_FINAGLE_ID_COUNTER_NAME_PATTERN,
-                      finagleClientId), TimeUnit.MICROSECONDS, false, true, false);
+                      RelonQUelonSTS_RelonCelonIVelonD_BY_FINAGLelon_ID_COUNTelonR_NAMelon_PATTelonRN,
+                      finaglelonClielonntId), TimelonUnit.MICROSelonCONDS, falselon, truelon, falselon);
             }
           });
 
-  // Counters per client and response code.
-  private final LoadingCache<String, SearchCounter> responseByClientIdAndResponseCode =
-      CacheBuilder.newBuilder().build(
-          new CacheLoader<String, SearchCounter>() {
-              @Override
-              public SearchCounter load(String key) {
-                  return earlybirdServerStatsReceiver.getCounter(key);
+  // Countelonrs pelonr clielonnt and relonsponselon codelon.
+  privatelon final LoadingCachelon<String, SelonarchCountelonr> relonsponselonByClielonntIdAndRelonsponselonCodelon =
+      CachelonBuildelonr.nelonwBuildelonr().build(
+          nelonw CachelonLoadelonr<String, SelonarchCountelonr>() {
+              @Ovelonrridelon
+              public SelonarchCountelonr load(String kelony) {
+                  relonturn elonarlybirdSelonrvelonrStatsReloncelonivelonr.gelontCountelonr(kelony);
               }
           });
 
-  private final LoadingCache<String, SearchCounter> resultsAgeCounter =
-      CacheBuilder.newBuilder().build(
-          new CacheLoader<String, SearchCounter>() {
-            @Override
-            public SearchCounter load(String key) {
-              return earlybirdServerStatsReceiver.getCounter(key);
+  privatelon final LoadingCachelon<String, SelonarchCountelonr> relonsultsAgelonCountelonr =
+      CachelonBuildelonr.nelonwBuildelonr().build(
+          nelonw CachelonLoadelonr<String, SelonarchCountelonr>() {
+            @Ovelonrridelon
+            public SelonarchCountelonr load(String kelony) {
+              relonturn elonarlybirdSelonrvelonrStatsReloncelonivelonr.gelontCountelonr(kelony);
             }
           }
       );
 
-  // Loading cache for per finagle client id and client id stats. These are stored separate
-  // from the other stats because they are key-ed by the pair of finagle client id and client id
-  // in order to make sure the stats are only exported once.
-  // In the key-pair the first element is the finagle client id while the second element is the
-  // client id.
-  private final LoadingCache<Pair<String, String>, SearchRateCounter>
-      requestCountersByFinagleIdAndClientId = CacheBuilder.newBuilder().build(
-          new CacheLoader<Pair<String, String>, SearchRateCounter>() {
-            @Override
-            public SearchRateCounter load(Pair<String, String> clientKey) {
-              return earlybirdServerStatsReceiver.getRateCounter(
+  // Loading cachelon for pelonr finaglelon clielonnt id and clielonnt id stats. Thelonselon arelon storelond selonparatelon
+  // from thelon othelonr stats beloncauselon thelony arelon kelony-elond by thelon pair of finaglelon clielonnt id and clielonnt id
+  // in ordelonr to makelon surelon thelon stats arelon only elonxportelond oncelon.
+  // In thelon kelony-pair thelon first elonlelonmelonnt is thelon finaglelon clielonnt id whilelon thelon seloncond elonlelonmelonnt is thelon
+  // clielonnt id.
+  privatelon final LoadingCachelon<Pair<String, String>, SelonarchRatelonCountelonr>
+      relonquelonstCountelonrsByFinaglelonIdAndClielonntId = CachelonBuildelonr.nelonwBuildelonr().build(
+          nelonw CachelonLoadelonr<Pair<String, String>, SelonarchRatelonCountelonr>() {
+            @Ovelonrridelon
+            public SelonarchRatelonCountelonr load(Pair<String, String> clielonntKelony) {
+              relonturn elonarlybirdSelonrvelonrStatsReloncelonivelonr.gelontRatelonCountelonr(
                   String.format(
-                      REQUESTS_RECEIVED_BY_FINAGLE_ID_AND_CLIENT_ID_COUNTER_NAME_PATTERN,
-                      clientKey.getFirst(),
-                      clientKey.getSecond()));
+                      RelonQUelonSTS_RelonCelonIVelonD_BY_FINAGLelon_ID_AND_CLIelonNT_ID_COUNTelonR_NAMelon_PATTelonRN,
+                      clielonntKelony.gelontFirst(),
+                      clielonntKelony.gelontSeloncond()));
             }
           });
 
-  // Loading cache for per-client-id latency stats. Stored in a loading cache here mainly because
-  // the tests assert the mock stats receiver that each stat is only exported once.
-  private final LoadingCache<String, SearchTimerStats> clientIdSearchStats =
-      CacheBuilder.newBuilder().build(
-          new CacheLoader<String, SearchTimerStats>() {
-            @Override
-            public SearchTimerStats load(String clientId) {
-              String formattedClientId = ClientIdUtil.formatClientId(clientId);
-              return earlybirdServerStatsReceiver.getTimerStats(formattedClientId,
-                  TimeUnit.MICROSECONDS, false, true, true);
+  // Loading cachelon for pelonr-clielonnt-id latelonncy stats. Storelond in a loading cachelon helonrelon mainly beloncauselon
+  // thelon telonsts asselonrt thelon mock stats reloncelonivelonr that elonach stat is only elonxportelond oncelon.
+  privatelon final LoadingCachelon<String, SelonarchTimelonrStats> clielonntIdSelonarchStats =
+      CachelonBuildelonr.nelonwBuildelonr().build(
+          nelonw CachelonLoadelonr<String, SelonarchTimelonrStats>() {
+            @Ovelonrridelon
+            public SelonarchTimelonrStats load(String clielonntId) {
+              String formattelondClielonntId = ClielonntIdUtil.formatClielonntId(clielonntId);
+              relonturn elonarlybirdSelonrvelonrStatsReloncelonivelonr.gelontTimelonrStats(formattelondClielonntId,
+                  TimelonUnit.MICROSelonCONDS, falselon, truelon, truelon);
             }
           });
 
-  private final LoadingCache<String, SearchTimerStats> clientIdScoringPerQueryStats =
-      CacheBuilder.newBuilder().build(
-          new CacheLoader<String, SearchTimerStats>() {
-            @Override
-            public SearchTimerStats load(String clientId) {
-              String statName =
-                  String.format("scoring_time_per_query_for_client_id_%s", clientId);
-              return earlybirdServerStatsReceiver.getTimerStats(statName,
-                  TimeUnit.NANOSECONDS, false, true, false);
+  privatelon final LoadingCachelon<String, SelonarchTimelonrStats> clielonntIdScoringPelonrQuelonryStats =
+      CachelonBuildelonr.nelonwBuildelonr().build(
+          nelonw CachelonLoadelonr<String, SelonarchTimelonrStats>() {
+            @Ovelonrridelon
+            public SelonarchTimelonrStats load(String clielonntId) {
+              String statNamelon =
+                  String.format("scoring_timelon_pelonr_quelonry_for_clielonnt_id_%s", clielonntId);
+              relonturn elonarlybirdSelonrvelonrStatsReloncelonivelonr.gelontTimelonrStats(statNamelon,
+                  TimelonUnit.NANOSelonCONDS, falselon, truelon, falselon);
             }
           });
 
-  private final LoadingCache<String, SearchTimerStats> clientIdScoringPerHitStats =
-      CacheBuilder.newBuilder().build(
-          new CacheLoader<String, SearchTimerStats>() {
-            @Override
-            public SearchTimerStats load(String clientId) {
-              String statName =
-                  String.format("scoring_time_per_hit_for_client_id_%s", clientId);
-              return earlybirdServerStatsReceiver.getTimerStats(statName,
-                  TimeUnit.NANOSECONDS, false, true, false);
+  privatelon final LoadingCachelon<String, SelonarchTimelonrStats> clielonntIdScoringPelonrHitStats =
+      CachelonBuildelonr.nelonwBuildelonr().build(
+          nelonw CachelonLoadelonr<String, SelonarchTimelonrStats>() {
+            @Ovelonrridelon
+            public SelonarchTimelonrStats load(String clielonntId) {
+              String statNamelon =
+                  String.format("scoring_timelon_pelonr_hit_for_clielonnt_id_%s", clielonntId);
+              relonturn elonarlybirdSelonrvelonrStatsReloncelonivelonr.gelontTimelonrStats(statNamelon,
+                  TimelonUnit.NANOSelonCONDS, falselon, truelon, falselon);
             }
           });
 
-  private final LoadingCache<String, Percentile<Integer>> clientIdScoringNumHitsProcessedStats =
-      CacheBuilder.newBuilder().build(
-          new CacheLoader<String, Percentile<Integer>>() {
-            @Override
-            public Percentile<Integer> load(String clientId) {
-              String statName =
-                  String.format("scoring_num_hits_processed_for_client_id_%s", clientId);
-              return PercentileUtil.createPercentile(statName);
+  privatelon final LoadingCachelon<String, Pelonrcelonntilelon<Intelongelonr>> clielonntIdScoringNumHitsProcelonsselondStats =
+      CachelonBuildelonr.nelonwBuildelonr().build(
+          nelonw CachelonLoadelonr<String, Pelonrcelonntilelon<Intelongelonr>>() {
+            @Ovelonrridelon
+            public Pelonrcelonntilelon<Intelongelonr> load(String clielonntId) {
+              String statNamelon =
+                  String.format("scoring_num_hits_procelonsselond_for_clielonnt_id_%s", clielonntId);
+              relonturn PelonrcelonntilelonUtil.crelonatelonPelonrcelonntilelon(statNamelon);
             }
           });
 
-  private final LoadingCache<String, AtomicReference<RequestResponsePair>> lastRequestPerClientId =
-      CacheBuilder.newBuilder().build(
-          new CacheLoader<String, AtomicReference<RequestResponsePair>>() {
-            @Override
-            public AtomicReference<RequestResponsePair> load(String key) throws Exception {
-              return new AtomicReference<>(null);
+  privatelon final LoadingCachelon<String, AtomicRelonfelonrelonncelon<RelonquelonstRelonsponselonPair>> lastRelonquelonstPelonrClielonntId =
+      CachelonBuildelonr.nelonwBuildelonr().build(
+          nelonw CachelonLoadelonr<String, AtomicRelonfelonrelonncelon<RelonquelonstRelonsponselonPair>>() {
+            @Ovelonrridelon
+            public AtomicRelonfelonrelonncelon<RelonquelonstRelonsponselonPair> load(String kelony) throws elonxcelonption {
+              relonturn nelonw AtomicRelonfelonrelonncelon<>(null);
             }
           });
 
 
-  private final SearchTimerStats overallScoringTimePerQueryStats;
-  private final SearchTimerStats overallScoringTimePerHitStats;
-  private final Percentile<Integer> overallScoringNumHitsProcessedStats;
+  privatelon final SelonarchTimelonrStats ovelonrallScoringTimelonPelonrQuelonryStats;
+  privatelon final SelonarchTimelonrStats ovelonrallScoringTimelonPelonrHitStats;
+  privatelon final Pelonrcelonntilelon<Intelongelonr> ovelonrallScoringNumHitsProcelonsselondStats;
 
-  private final EarlybirdIndexConfig earlybirdIndexConfig;
-  private final DynamicPartitionConfig dynamicPartitionConfig;
-  private final SegmentManager segmentManager;
-  private final UpdateableEarlybirdStateManager stateManager;
-  private final AudioSpaceTable audioSpaceTable;
+  privatelon final elonarlybirdIndelonxConfig elonarlybirdIndelonxConfig;
+  privatelon final DynamicPartitionConfig dynamicPartitionConfig;
+  privatelon final SelongmelonntManagelonr selongmelonntManagelonr;
+  privatelon final UpdatelonablelonelonarlybirdStatelonManagelonr statelonManagelonr;
+  privatelon final AudioSpacelonTablelon audioSpacelonTablelon;
 
-  private final SearchLongGauge startupTimeGauge;
+  privatelon final SelonarchLongGaugelon startupTimelonGaugelon;
 
-  // Time spent in an internal thread pool queue, between the time we get the search request
-  // from finagle until it actually starts being executed.
-  private final SearchTimerStats internalQueueWaitTimeStats;
+  // Timelon spelonnt in an intelonrnal threlonad pool quelonuelon, belontwelonelonn thelon timelon welon gelont thelon selonarch relonquelonst
+  // from finaglelon until it actually starts beloning elonxeloncutelond.
+  privatelon final SelonarchTimelonrStats intelonrnalQuelonuelonWaitTimelonStats;
 
-  // Tracking request that have exceeded their allocated timeout prior to us actually being able
-  // to start executing the search.
-  private final SearchCounter requestTimeoutExceededBeforeSearchCounter;
-  // Current number of running searcher threads.
-  private final SearchLongGauge numSearcherThreadsGauge;
-  private final QueryTimeoutFactory queryTimeoutFactory;
+  // Tracking relonquelonst that havelon elonxcelonelondelond thelonir allocatelond timelonout prior to us actually beloning ablelon
+  // to start elonxeloncuting thelon selonarch.
+  privatelon final SelonarchCountelonr relonquelonstTimelonoutelonxcelonelondelondBelonforelonSelonarchCountelonr;
+  // Currelonnt numbelonr of running selonarchelonr threlonads.
+  privatelon final SelonarchLongGaugelon numSelonarchelonrThrelonadsGaugelon;
+  privatelon final QuelonryTimelonoutFactory quelonryTimelonoutFactory;
 
-  private PartitionManager partitionManager;
-  private QueryCacheManager queryCacheManager;
+  privatelon PartitionManagelonr partitionManagelonr;
+  privatelon QuelonryCachelonManagelonr quelonryCachelonManagelonr;
 
-  private final ScoringModelsManager scoringModelsManager;
+  privatelon final ScoringModelonlsManagelonr scoringModelonlsManagelonr;
 
-  private final TensorflowModelsManager tensorflowModelsManager;
+  privatelon final TelonnsorflowModelonlsManagelonr telonnsorflowModelonlsManagelonr;
 
-  private final EarlybirdRequestPreLogger requestPreLogger;
-  private final EarlybirdRequestPostLogger requestLogger;
+  privatelon final elonarlybirdRelonquelonstPrelonLoggelonr relonquelonstPrelonLoggelonr;
+  privatelon final elonarlybirdRelonquelonstPostLoggelonr relonquelonstLoggelonr;
 
-  private final TweetCountMonitor tweetCountMonitor;
-  private final TermCountMonitor termCountMonitor;
+  privatelon final TwelonelontCountMonitor twelonelontCountMonitor;
+  privatelon final TelonrmCountMonitor telonrmCountMonitor;
 
-  private final EarlybirdServerSetManager serverSetManager;
-  private final EarlybirdWarmUpManager warmUpManager;
-  private final MultiSegmentTermDictionaryManager multiSegmentTermDictionaryManager;
+  privatelon final elonarlybirdSelonrvelonrSelontManagelonr selonrvelonrSelontManagelonr;
+  privatelon final elonarlybirdWarmUpManagelonr warmUpManagelonr;
+  privatelon final MultiSelongmelonntTelonrmDictionaryManagelonr multiSelongmelonntTelonrmDictionaryManagelonr;
 
-  private final Object shutdownLock = new Object();
-  @GuardedBy("shutdownLock")
-  private final EarlybirdFuturePoolManager futurePoolManager;
-  @GuardedBy("shutdownLock")
-  private final EarlybirdFinagleServerManager finagleServerManager;
+  privatelon final Objelonct shutdownLock = nelonw Objelonct();
+  @GuardelondBy("shutdownLock")
+  privatelon final elonarlybirdFuturelonPoolManagelonr futurelonPoolManagelonr;
+  @GuardelondBy("shutdownLock")
+  privatelon final elonarlybirdFinaglelonSelonrvelonrManagelonr finaglelonSelonrvelonrManagelonr;
 
-  // If a search request comes in with a client-side start time, and we see that based on that
-  // the timeout has expired, whether we should drop that query immediately.
-  private final boolean skipTimedOutRequests =
-      EarlybirdConfig.getBool("skip_timedout_requests", false);
+  // If a selonarch relonquelonst comelons in with a clielonnt-sidelon start timelon, and welon selonelon that baselond on that
+  // thelon timelonout has elonxpirelond, whelonthelonr welon should drop that quelonry immelondiatelonly.
+  privatelon final boolelonan skipTimelondOutRelonquelonsts =
+      elonarlybirdConfig.gelontBool("skip_timelondout_relonquelonsts", falselon);
 
-  // client of szookeeper.local.twitter.com.
-  // This is used to perform distributed locking and layout reading etc.
-  private final ZooKeeperProxy sZooKeeperClient;
+  // clielonnt of szookelonelonpelonr.local.twittelonr.com.
+  // This is uselond to pelonrform distributelond locking and layout relonading elontc.
+  privatelon final ZooKelonelonpelonrProxy sZooKelonelonpelonrClielonnt;
 
-  private final Decider decider;
+  privatelon final Deloncidelonr deloncidelonr;
 
-  private final Clock clock;
+  privatelon final Clock clock;
 
-  private final List<Closeable> toClose = new ArrayList<>();
+  privatelon final List<Closelonablelon> toCloselon = nelonw ArrayList<>();
 
-  private final SearchIndexingMetricSet searchIndexingMetricSet;
+  privatelon final SelonarchIndelonxingMelontricSelont selonarchIndelonxingMelontricSelont;
 
-  private final EarlybirdDarkProxy earlybirdDarkProxy;
+  privatelon final elonarlybirdDarkProxy elonarlybirdDarkProxy;
 
-  private final ImmutableMap<EarlybirdResponseCode, SearchCounter> responseCodeCounters;
-  private final SegmentSyncConfig segmentSyncConfig;
-  private final EarlybirdStartup earlybirdStartup;
-  private final QualityFactor qualityFactor;
+  privatelon final ImmutablelonMap<elonarlybirdRelonsponselonCodelon, SelonarchCountelonr> relonsponselonCodelonCountelonrs;
+  privatelon final SelongmelonntSyncConfig selongmelonntSyncConfig;
+  privatelon final elonarlybirdStartup elonarlybirdStartup;
+  privatelon final QualityFactor qualityFactor;
 
-  private boolean isShutdown = false;
-  private boolean isShuttingDown = false;
+  privatelon boolelonan isShutdown = falselon;
+  privatelon boolelonan isShuttingDown = falselon;
 
-  private final AtomicLongMap<String> queriedFieldsCounts = AtomicLongMap.create();
+  privatelon final AtomicLongMap<String> quelonrielondFielonldsCounts = AtomicLongMap.crelonatelon();
 
-  public EarlybirdServer(QueryCacheManager queryCacheManager,
-                         ZooKeeperProxy sZkClient,
-                         Decider decider,
-                         EarlybirdIndexConfig earlybirdIndexConfig,
+  public elonarlybirdSelonrvelonr(QuelonryCachelonManagelonr quelonryCachelonManagelonr,
+                         ZooKelonelonpelonrProxy sZkClielonnt,
+                         Deloncidelonr deloncidelonr,
+                         elonarlybirdIndelonxConfig elonarlybirdIndelonxConfig,
                          DynamicPartitionConfig dynamicPartitionConfig,
-                         PartitionManager partitionManager,
-                         SegmentManager segmentManager,
-                         AudioSpaceTable audioSpaceTable,
-                         TermCountMonitor termCountMonitor,
-                         TweetCountMonitor tweetCountMonitor,
-                         UpdateableEarlybirdStateManager earlybirdStateManager,
-                         EarlybirdFuturePoolManager futurePoolManager,
-                         EarlybirdFinagleServerManager finagleServerManager,
-                         EarlybirdServerSetManager serverSetManager,
-                         EarlybirdWarmUpManager warmUpManager,
-                         SearchStatsReceiver earlybirdServerStatsReceiver,
-                         EarlybirdSearcherStats tweetsSearcherStats,
-                         ScoringModelsManager scoringModelsManager,
-                         TensorflowModelsManager tensorflowModelsManager,
+                         PartitionManagelonr partitionManagelonr,
+                         SelongmelonntManagelonr selongmelonntManagelonr,
+                         AudioSpacelonTablelon audioSpacelonTablelon,
+                         TelonrmCountMonitor telonrmCountMonitor,
+                         TwelonelontCountMonitor twelonelontCountMonitor,
+                         UpdatelonablelonelonarlybirdStatelonManagelonr elonarlybirdStatelonManagelonr,
+                         elonarlybirdFuturelonPoolManagelonr futurelonPoolManagelonr,
+                         elonarlybirdFinaglelonSelonrvelonrManagelonr finaglelonSelonrvelonrManagelonr,
+                         elonarlybirdSelonrvelonrSelontManagelonr selonrvelonrSelontManagelonr,
+                         elonarlybirdWarmUpManagelonr warmUpManagelonr,
+                         SelonarchStatsReloncelonivelonr elonarlybirdSelonrvelonrStatsReloncelonivelonr,
+                         elonarlybirdSelonarchelonrStats twelonelontsSelonarchelonrStats,
+                         ScoringModelonlsManagelonr scoringModelonlsManagelonr,
+                         TelonnsorflowModelonlsManagelonr telonnsorflowModelonlsManagelonr,
                          Clock clock,
-                         MultiSegmentTermDictionaryManager multiSegmentTermDictionaryManager,
-                         EarlybirdDarkProxy earlybirdDarkProxy,
-                         SegmentSyncConfig segmentSyncConfig,
-                         QueryTimeoutFactory queryTimeoutFactory,
-                         EarlybirdStartup earlybirdStartup,
+                         MultiSelongmelonntTelonrmDictionaryManagelonr multiSelongmelonntTelonrmDictionaryManagelonr,
+                         elonarlybirdDarkProxy elonarlybirdDarkProxy,
+                         SelongmelonntSyncConfig selongmelonntSyncConfig,
+                         QuelonryTimelonoutFactory quelonryTimelonoutFactory,
+                         elonarlybirdStartup elonarlybirdStartup,
                          QualityFactor qualityFactor,
-                         SearchIndexingMetricSet searchIndexingMetricSet) {
-    LOG.info("Creating EarlybirdServer");
-    this.decider = decider;
+                         SelonarchIndelonxingMelontricSelont selonarchIndelonxingMelontricSelont) {
+    LOG.info("Crelonating elonarlybirdSelonrvelonr");
+    this.deloncidelonr = deloncidelonr;
     this.clock = clock;
-    this.sZooKeeperClient = sZkClient;
-    this.earlybirdIndexConfig = earlybirdIndexConfig;
+    this.sZooKelonelonpelonrClielonnt = sZkClielonnt;
+    this.elonarlybirdIndelonxConfig = elonarlybirdIndelonxConfig;
     this.dynamicPartitionConfig = dynamicPartitionConfig;
-    this.segmentManager = segmentManager;
-    this.queryCacheManager = queryCacheManager;
-    this.termCountMonitor = termCountMonitor;
-    this.tweetCountMonitor = tweetCountMonitor;
-    this.stateManager = earlybirdStateManager;
-    this.partitionManager = partitionManager;
-    this.futurePoolManager = futurePoolManager;
-    this.finagleServerManager = finagleServerManager;
-    this.serverSetManager = serverSetManager;
-    this.warmUpManager = warmUpManager;
-    this.earlybirdServerStatsReceiver = earlybirdServerStatsReceiver;
-    this.tweetsSearcherStats = tweetsSearcherStats;
-    this.scoringModelsManager = scoringModelsManager;
-    this.tensorflowModelsManager = tensorflowModelsManager;
-    this.multiSegmentTermDictionaryManager = multiSegmentTermDictionaryManager;
-    this.searchIndexingMetricSet = searchIndexingMetricSet;
-    this.earlybirdDarkProxy = earlybirdDarkProxy;
-    this.segmentSyncConfig = segmentSyncConfig;
-    this.queryTimeoutFactory = queryTimeoutFactory;
-    this.earlybirdStartup = earlybirdStartup;
+    this.selongmelonntManagelonr = selongmelonntManagelonr;
+    this.quelonryCachelonManagelonr = quelonryCachelonManagelonr;
+    this.telonrmCountMonitor = telonrmCountMonitor;
+    this.twelonelontCountMonitor = twelonelontCountMonitor;
+    this.statelonManagelonr = elonarlybirdStatelonManagelonr;
+    this.partitionManagelonr = partitionManagelonr;
+    this.futurelonPoolManagelonr = futurelonPoolManagelonr;
+    this.finaglelonSelonrvelonrManagelonr = finaglelonSelonrvelonrManagelonr;
+    this.selonrvelonrSelontManagelonr = selonrvelonrSelontManagelonr;
+    this.warmUpManagelonr = warmUpManagelonr;
+    this.elonarlybirdSelonrvelonrStatsReloncelonivelonr = elonarlybirdSelonrvelonrStatsReloncelonivelonr;
+    this.twelonelontsSelonarchelonrStats = twelonelontsSelonarchelonrStats;
+    this.scoringModelonlsManagelonr = scoringModelonlsManagelonr;
+    this.telonnsorflowModelonlsManagelonr = telonnsorflowModelonlsManagelonr;
+    this.multiSelongmelonntTelonrmDictionaryManagelonr = multiSelongmelonntTelonrmDictionaryManagelonr;
+    this.selonarchIndelonxingMelontricSelont = selonarchIndelonxingMelontricSelont;
+    this.elonarlybirdDarkProxy = elonarlybirdDarkProxy;
+    this.selongmelonntSyncConfig = selongmelonntSyncConfig;
+    this.quelonryTimelonoutFactory = quelonryTimelonoutFactory;
+    this.elonarlybirdStartup = elonarlybirdStartup;
     this.qualityFactor = qualityFactor;
-    this.audioSpaceTable = audioSpaceTable;
+    this.audioSpacelonTablelon = audioSpacelonTablelon;
 
-    EarlybirdStatus.setStartTime(System.currentTimeMillis());
+    elonarlybirdStatus.selontStartTimelon(Systelonm.currelonntTimelonMillis());
 
-    // Our initial status code is STARTING.
-    EarlybirdStatus.setStatus(EarlybirdStatusCode.STARTING);
-    EarlybirdStatus.THRIFT_SERVICE_STARTED.set(false);
+    // Our initial status codelon is STARTING.
+    elonarlybirdStatus.selontStatus(elonarlybirdStatusCodelon.STARTING);
+    elonarlybirdStatus.THRIFT_SelonRVICelon_STARTelonD.selont(falselon);
 
-    PartitionConfig partitionConfig = dynamicPartitionConfig.getCurrentPartitionConfig();
-    earlybirdServerStatsReceiver.getLongGauge(
-        "search_cluster_" + partitionConfig.getClusterName()).set(1);
-    earlybirdServerStatsReceiver.getLongGauge(
-        "tier_name_" + partitionConfig.getTierName()).set(1);
+    PartitionConfig partitionConfig = dynamicPartitionConfig.gelontCurrelonntPartitionConfig();
+    elonarlybirdSelonrvelonrStatsReloncelonivelonr.gelontLongGaugelon(
+        "selonarch_clustelonr_" + partitionConfig.gelontClustelonrNamelon()).selont(1);
+    elonarlybirdSelonrvelonrStatsReloncelonivelonr.gelontLongGaugelon(
+        "tielonr_namelon_" + partitionConfig.gelontTielonrNamelon()).selont(1);
 
-    earlybirdServerStatsReceiver.getLongGauge("partition").set(
-        partitionConfig.getIndexingHashPartitionID());
-    earlybirdServerStatsReceiver.getLongGauge("replica").set(
-        partitionConfig.getHostPositionWithinHashPartition());
-    earlybirdServerStatsReceiver.getLongGauge("penguin_version").set(
-        EarlybirdConfig.getPenguinVersionByte());
+    elonarlybirdSelonrvelonrStatsReloncelonivelonr.gelontLongGaugelon("partition").selont(
+        partitionConfig.gelontIndelonxingHashPartitionID());
+    elonarlybirdSelonrvelonrStatsReloncelonivelonr.gelontLongGaugelon("relonplica").selont(
+        partitionConfig.gelontHostPositionWithinHashPartition());
+    elonarlybirdSelonrvelonrStatsReloncelonivelonr.gelontLongGaugelon("pelonnguin_velonrsion").selont(
+        elonarlybirdConfig.gelontPelonnguinVelonrsionBytelon());
 
-    earlybirdServerStatsReceiver.getLongGauge("flush_version").set(
-        FlushVersion.CURRENT_FLUSH_VERSION.ordinal());
-    String buildGen = EarlybirdConfig.getString("offline_segment_build_gen", "unknown");
-    earlybirdServerStatsReceiver.getLongGauge("build_gen_" + buildGen).set(1);
+    elonarlybirdSelonrvelonrStatsReloncelonivelonr.gelontLongGaugelon("flush_velonrsion").selont(
+        FlushVelonrsion.CURRelonNT_FLUSH_VelonRSION.ordinal());
+    String buildGelonn = elonarlybirdConfig.gelontString("offlinelon_selongmelonnt_build_gelonn", "unknown");
+    elonarlybirdSelonrvelonrStatsReloncelonivelonr.gelontLongGaugelon("build_gelonn_" + buildGelonn).selont(1);
 
-    this.startupTimeGauge = earlybirdServerStatsReceiver.getLongGauge("startup_time_millis");
-    this.internalQueueWaitTimeStats = earlybirdServerStatsReceiver.getTimerStats(
-        "internal_queue_wait_time", TimeUnit.MILLISECONDS, false, true, false);
-    this.requestTimeoutExceededBeforeSearchCounter = earlybirdServerStatsReceiver.getCounter(
-        "request_timeout_exceeded_before_search");
-    this.numSearcherThreadsGauge =
-        earlybirdServerStatsReceiver.getLongGauge("num_searcher_threads");
-    this.overallScoringTimePerQueryStats = earlybirdServerStatsReceiver.getTimerStats(
-        "overall_scoring_time_per_query", TimeUnit.NANOSECONDS, false, true, false);
+    this.startupTimelonGaugelon = elonarlybirdSelonrvelonrStatsReloncelonivelonr.gelontLongGaugelon("startup_timelon_millis");
+    this.intelonrnalQuelonuelonWaitTimelonStats = elonarlybirdSelonrvelonrStatsReloncelonivelonr.gelontTimelonrStats(
+        "intelonrnal_quelonuelon_wait_timelon", TimelonUnit.MILLISelonCONDS, falselon, truelon, falselon);
+    this.relonquelonstTimelonoutelonxcelonelondelondBelonforelonSelonarchCountelonr = elonarlybirdSelonrvelonrStatsReloncelonivelonr.gelontCountelonr(
+        "relonquelonst_timelonout_elonxcelonelondelond_belonforelon_selonarch");
+    this.numSelonarchelonrThrelonadsGaugelon =
+        elonarlybirdSelonrvelonrStatsReloncelonivelonr.gelontLongGaugelon("num_selonarchelonr_threlonads");
+    this.ovelonrallScoringTimelonPelonrQuelonryStats = elonarlybirdSelonrvelonrStatsReloncelonivelonr.gelontTimelonrStats(
+        "ovelonrall_scoring_timelon_pelonr_quelonry", TimelonUnit.NANOSelonCONDS, falselon, truelon, falselon);
 
-    // For most of our scoring functions the scoring_time_per_hit records the actual time to score a
-    // single hit. However, the tensorflow based scoring function uses batch scoring, so we do not
-    // know the actual time it takes to score a single hit. We are now including batch scoring time
-    // in all scoring time stats (SEARCH-26014), which means that the scoring_time_per_hit stat may
-    // be a bit misleading for tensorflow based queries. For these queries the scoring_time_per_hit
-    // represents the ratio between total_scoring_time and the number_of_hits, instead of the actual
-    // time to score a single hit.
-    this.overallScoringTimePerHitStats = earlybirdServerStatsReceiver.getTimerStats(
-        "overall_scoring_time_per_hit", TimeUnit.NANOSECONDS, false, true, false);
-    this.overallScoringNumHitsProcessedStats = PercentileUtil.createPercentile(
-        "overall_scoring_num_hits_processed");
+    // For most of our scoring functions thelon scoring_timelon_pelonr_hit reloncords thelon actual timelon to scorelon a
+    // singlelon hit. Howelonvelonr, thelon telonnsorflow baselond scoring function uselons batch scoring, so welon do not
+    // know thelon actual timelon it takelons to scorelon a singlelon hit. Welon arelon now including batch scoring timelon
+    // in all scoring timelon stats (SelonARCH-26014), which melonans that thelon scoring_timelon_pelonr_hit stat may
+    // belon a bit mislelonading for telonnsorflow baselond quelonrielons. For thelonselon quelonrielons thelon scoring_timelon_pelonr_hit
+    // relonprelonselonnts thelon ratio belontwelonelonn total_scoring_timelon and thelon numbelonr_of_hits, instelonad of thelon actual
+    // timelon to scorelon a singlelon hit.
+    this.ovelonrallScoringTimelonPelonrHitStats = elonarlybirdSelonrvelonrStatsReloncelonivelonr.gelontTimelonrStats(
+        "ovelonrall_scoring_timelon_pelonr_hit", TimelonUnit.NANOSelonCONDS, falselon, truelon, falselon);
+    this.ovelonrallScoringNumHitsProcelonsselondStats = PelonrcelonntilelonUtil.crelonatelonPelonrcelonntilelon(
+        "ovelonrall_scoring_num_hits_procelonsselond");
 
-    ImmutableMap.Builder<EarlybirdResponseCode, SearchCounter> responseCodeCountersBuilder =
-        new ImmutableMap.Builder<>();
-    for (EarlybirdResponseCode responseCode : EarlybirdResponseCode.values()) {
-      responseCodeCountersBuilder.put(
-          responseCode,
-          earlybirdServerStatsReceiver.getCounter(
-              "responses_with_response_code_" + responseCode.name().toLowerCase()));
+    ImmutablelonMap.Buildelonr<elonarlybirdRelonsponselonCodelon, SelonarchCountelonr> relonsponselonCodelonCountelonrsBuildelonr =
+        nelonw ImmutablelonMap.Buildelonr<>();
+    for (elonarlybirdRelonsponselonCodelon relonsponselonCodelon : elonarlybirdRelonsponselonCodelon.valuelons()) {
+      relonsponselonCodelonCountelonrsBuildelonr.put(
+          relonsponselonCodelon,
+          elonarlybirdSelonrvelonrStatsReloncelonivelonr.gelontCountelonr(
+              "relonsponselons_with_relonsponselon_codelon_" + relonsponselonCodelon.namelon().toLowelonrCaselon()));
     }
-    responseCodeCounters = responseCodeCountersBuilder.build();
+    relonsponselonCodelonCountelonrs = relonsponselonCodelonCountelonrsBuildelonr.build();
 
-    disableLuceneQueryCache();
-    initManagers();
+    disablelonLucelonnelonQuelonryCachelon();
+    initManagelonrs();
 
-    requestPreLogger = EarlybirdRequestPreLogger.buildForShard(
-      EarlybirdConfig.getInt("latency_warn_threshold", 100), decider);
-    requestLogger = EarlybirdRequestPostLogger.buildForShard(
-        EarlybirdConfig.getInt("latency_warn_threshold", 100), decider);
+    relonquelonstPrelonLoggelonr = elonarlybirdRelonquelonstPrelonLoggelonr.buildForShard(
+      elonarlybirdConfig.gelontInt("latelonncy_warn_threlonshold", 100), deloncidelonr);
+    relonquelonstLoggelonr = elonarlybirdRelonquelonstPostLoggelonr.buildForShard(
+        elonarlybirdConfig.gelontInt("latelonncy_warn_threlonshold", 100), deloncidelonr);
 
-    this.qualityFactor.startUpdates();
+    this.qualityFactor.startUpdatelons();
 
-    LOG.info("Created EarlybirdServer");
+    LOG.info("Crelonatelond elonarlybirdSelonrvelonr");
   }
 
-  public boolean isShutdown() {
-    return this.isShutdown;
+  public boolelonan isShutdown() {
+    relonturn this.isShutdown;
   }
 
-  private void initManagers() {
-    LOG.info("Created EarlybirdIndexConfig: " + earlybirdIndexConfig.getClass().getSimpleName());
+  privatelon void initManagelonrs() {
+    LOG.info("Crelonatelond elonarlybirdIndelonxConfig: " + elonarlybirdIndelonxConfig.gelontClass().gelontSimplelonNamelon());
 
-    segmentManager.addUpdateListener(queryCacheManager);
+    selongmelonntManagelonr.addUpdatelonListelonnelonr(quelonryCachelonManagelonr);
   }
 
-  public PartitionManager getPartitionManager() {
-    return partitionManager;
+  public PartitionManagelonr gelontPartitionManagelonr() {
+    relonturn partitionManagelonr;
   }
 
-  public QueryCacheManager getQueryCacheManager() {
-    return queryCacheManager;
+  public QuelonryCachelonManagelonr gelontQuelonryCachelonManagelonr() {
+    relonturn quelonryCachelonManagelonr;
   }
 
-  public SegmentManager getSegmentManager() {
-    return segmentManager;
+  public SelongmelonntManagelonr gelontSelongmelonntManagelonr() {
+    relonturn selongmelonntManagelonr;
   }
 
-  public MultiSegmentTermDictionaryManager getMultiSegmentTermDictionaryManager() {
-    return this.multiSegmentTermDictionaryManager;
+  public MultiSelongmelonntTelonrmDictionaryManagelonr gelontMultiSelongmelonntTelonrmDictionaryManagelonr() {
+    relonturn this.multiSelongmelonntTelonrmDictionaryManagelonr;
   }
 
-  @VisibleForTesting
-  public int getPort() {
-    return port;
+  @VisiblelonForTelonsting
+  public int gelontPort() {
+    relonturn port;
   }
 
-  private void disableLuceneQueryCache() {
-    // SEARCH-30046: Look into possibly re-enabling the query -> weight cache.
-    // We can't use this cache until we upgrade to Lucene 6.0.0, because we have queries with a
-    // boost of 0.0, and they don't play nicely with Lucene's LRUQueryCache.get() method.
+  privatelon void disablelonLucelonnelonQuelonryCachelon() {
+    // SelonARCH-30046: Look into possibly relon-elonnabling thelon quelonry -> welonight cachelon.
+    // Welon can't uselon this cachelon until welon upgradelon to Lucelonnelon 6.0.0, beloncauselon welon havelon quelonrielons with a
+    // boost of 0.0, and thelony don't play nicelonly with Lucelonnelon's LRUQuelonryCachelon.gelont() melonthod.
     //
-    // Lucene 6.0.0 changes how boosts are handled: "real" boosts should be wrapped into BoostQuery
-    // instances, and queries with a boost of 0.0 should be rewritten as "filters"
-    // (BooleanQuery.add(query, BooleanClause.Occur.FILTER)). So when we upgrade to Lucene 6.0.0 we
-    // will be forced to refactor how we handle our current queries with a boost of 0.0, which might
-    // allow us to re-enable this cache.
+    // Lucelonnelon 6.0.0 changelons how boosts arelon handlelond: "relonal" boosts should belon wrappelond into BoostQuelonry
+    // instancelons, and quelonrielons with a boost of 0.0 should belon relonwrittelonn as "filtelonrs"
+    // (BoolelonanQuelonry.add(quelonry, BoolelonanClauselon.Occur.FILTelonR)). So whelonn welon upgradelon to Lucelonnelon 6.0.0 welon
+    // will belon forcelond to relonfactor how welon handlelon our currelonnt quelonrielons with a boost of 0.0, which might
+    // allow us to relon-elonnablelon this cachelon.
     //
-    // Note that disabling this cache is not a regression: it should give us the behavior that we
-    // had with Lucene 5.2.1 (and it's unclear if this cache is useful at all).
+    // Notelon that disabling this cachelon is not a relongrelonssion: it should givelon us thelon belonhavior that welon
+    // had with Lucelonnelon 5.2.1 (and it's unclelonar if this cachelon is uselonful at all).
     //
-    // WARNING: The default 'DefaultQueryCache' maintains a static reference to the weight forever,
-    // causing a memory leak. Our weights hold references to an entire segment so the memory leak is
+    // WARNING: Thelon delonfault 'DelonfaultQuelonryCachelon' maintains a static relonfelonrelonncelon to thelon welonight forelonvelonr,
+    // causing a melonmory lelonak. Our welonights hold relonfelonrelonncelons to an elonntirelon selongmelonnt so thelon melonmory lelonak is
     // significant.
-    IndexSearcher.setDefaultQueryCache(null);
+    IndelonxSelonarchelonr.selontDelonfaultQuelonryCachelon(null);
   }
 
   /**
-   * Starts the earlybird server.
+   * Starts thelon elonarlybird selonrvelonr.
    */
-  public void start() throws EarlybirdStartupException {
-    // Make sure this is at the top of the function before other parts of the system start running
-    new EarlybirdBlacklistHandler(Clock.SYSTEM_CLOCK, sZooKeeperClient)
-        .blockThenExitIfBlacklisted();
+  public void start() throws elonarlybirdStartupelonxcelonption {
+    // Makelon surelon this is at thelon top of thelon function belonforelon othelonr parts of thelon systelonm start running
+    nelonw elonarlybirdBlacklistHandlelonr(Clock.SYSTelonM_CLOCK, sZooKelonelonpelonrClielonnt)
+        .blockThelonnelonxitIfBlacklistelond();
 
-    Stopwatch startupWatch = Stopwatch.createStarted();
-    EarlybirdStatus.beginEvent(EARLYBIRD_STARTUP, searchIndexingMetricSet.startupInProgress);
+    Stopwatch startupWatch = Stopwatch.crelonatelonStartelond();
+    elonarlybirdStatus.belonginelonvelonnt(elonARLYBIRD_STARTUP, selonarchIndelonxingMelontricSelont.startupInProgrelonss);
 
-    LOG.info("java.library.path is: " + System.getProperty("java.library.path"));
+    LOG.info("java.library.path is: " + Systelonm.gelontPropelonrty("java.library.path"));
 
-    PartitionConfig partitionConfig = dynamicPartitionConfig.getCurrentPartitionConfig();
+    PartitionConfig partitionConfig = dynamicPartitionConfig.gelontCurrelonntPartitionConfig();
 
-    SegmentVulture.removeUnusedSegments(partitionManager, partitionConfig,
-        earlybirdIndexConfig.getSchema().getMajorVersionNumber(), segmentSyncConfig);
+    SelongmelonntVulturelon.relonmovelonUnuselondSelongmelonnts(partitionManagelonr, partitionConfig,
+        elonarlybirdIndelonxConfig.gelontSchelonma().gelontMajorVelonrsionNumbelonr(), selongmelonntSyncConfig);
 
-    // Start the schema manager
-    schedule(stateManager);
+    // Start thelon schelonma managelonr
+    schelondulelon(statelonManagelonr);
 
-    Closeable closeable = earlybirdStartup.start();
-    toClose.add(closeable);
-    if (EarlybirdStatus.getStatusCode() == EarlybirdStatusCode.STOPPING) {
-      LOG.info("Server is shutdown. Exiting...");
-      return;
+    Closelonablelon closelonablelon = elonarlybirdStartup.start();
+    toCloselon.add(closelonablelon);
+    if (elonarlybirdStatus.gelontStatusCodelon() == elonarlybirdStatusCodelon.STOPPING) {
+      LOG.info("Selonrvelonr is shutdown. elonxiting...");
+      relonturn;
     }
 
-    startupTimeGauge.set(startupWatch.elapsed(TimeUnit.MILLISECONDS));
+    startupTimelonGaugelon.selont(startupWatch.elonlapselond(TimelonUnit.MILLISelonCONDS));
 
-    EarlybirdStatus.endEvent(EARLYBIRD_STARTUP, searchIndexingMetricSet.startupInProgress);
+    elonarlybirdStatus.elonndelonvelonnt(elonARLYBIRD_STARTUP, selonarchIndelonxingMelontricSelont.startupInProgrelonss);
 
-    GCUtil.runGC();  // Attempt to force a full GC before joining the serverset
+    GCUtil.runGC();  // Attelonmpt to forcelon a full GC belonforelon joining thelon selonrvelonrselont
 
     try {
-      startThriftService(null, true);
-    } catch (InterruptedException e) {
-      LOG.info("Interrupted while starting thrift server, quitting earlybird");
-      throw new EarlybirdStartupException("Interrupted while starting thrift server");
+      startThriftSelonrvicelon(null, truelon);
+    } catch (Intelonrruptelondelonxcelonption elon) {
+      LOG.info("Intelonrruptelond whilelon starting thrift selonrvelonr, quitting elonarlybird");
+      throw nelonw elonarlybirdStartupelonxcelonption("Intelonrruptelond whilelon starting thrift selonrvelonr");
     }
 
-    EarlybirdStatus.THRIFT_SERVICE_STARTED.set(true);
+    elonarlybirdStatus.THRIFT_SelonRVICelon_STARTelonD.selont(truelon);
 
-    // only once we're current, kick off daily tweet count monitors only for archive cluster
-    if (EarlybirdConfig.getInt(TweetCountMonitor.RUN_INTERVAL_MINUTES_CONFIG_NAME, -1) > 0) {
-      schedule(tweetCountMonitor);
+    // only oncelon welon'relon currelonnt, kick off daily twelonelont count monitors only for archivelon clustelonr
+    if (elonarlybirdConfig.gelontInt(TwelonelontCountMonitor.RUN_INTelonRVAL_MINUTelonS_CONFIG_NAMelon, -1) > 0) {
+      schelondulelon(twelonelontCountMonitor);
     }
 
-    // only once we're current, kick off per-field term count monitors
-    if (EarlybirdConfig.getInt(TermCountMonitor.RUN_INTERVAL_MINUTES_CONFIG_NAME, -1) > 0) {
-      schedule(termCountMonitor);
+    // only oncelon welon'relon currelonnt, kick off pelonr-fielonld telonrm count monitors
+    if (elonarlybirdConfig.gelontInt(TelonrmCountMonitor.RUN_INTelonRVAL_MINUTelonS_CONFIG_NAMelon, -1) > 0) {
+      schelondulelon(telonrmCountMonitor);
     }
 
-    startupTimeGauge.set(startupWatch.elapsed(TimeUnit.MILLISECONDS));
-    LOG.info("EarlybirdServer start up time: {}", startupWatch);
+    startupTimelonGaugelon.selont(startupWatch.elonlapselond(TimelonUnit.MILLISelonCONDS));
+    LOG.info("elonarlybirdSelonrvelonr start up timelon: {}", startupWatch);
   }
 
   /**
-   * Starts the thrift server if the server is not running.
-   * If searcherThreads is null, it uses the value specified by EarlybirdConfig.
+   * Starts thelon thrift selonrvelonr if thelon selonrvelonr is not running.
+   * If selonarchelonrThrelonads is null, it uselons thelon valuelon speloncifielond by elonarlybirdConfig.
    */
-  public void startThriftService(@Nullable Integer searcherThreads, boolean isStartingUp)
-      throws InterruptedException {
-    synchronized (shutdownLock) {
-      if (!finagleServerManager.isWarmUpServerRunning()
-          && !finagleServerManager.isProductionServerRunning()) {
-        int threadCount = searcherThreads != null
-            ? searcherThreads : this.numSearcherThreads;
-        LOG.info("Starting searcher pool with " + threadCount + " threads");
-        futurePoolManager.createUnderlyingFuturePool(threadCount);
-        numSearcherThreadsGauge.set(threadCount);
+  public void startThriftSelonrvicelon(@Nullablelon Intelongelonr selonarchelonrThrelonads, boolelonan isStartingUp)
+      throws Intelonrruptelondelonxcelonption {
+    synchronizelond (shutdownLock) {
+      if (!finaglelonSelonrvelonrManagelonr.isWarmUpSelonrvelonrRunning()
+          && !finaglelonSelonrvelonrManagelonr.isProductionSelonrvelonrRunning()) {
+        int threlonadCount = selonarchelonrThrelonads != null
+            ? selonarchelonrThrelonads : this.numSelonarchelonrThrelonads;
+        LOG.info("Starting selonarchelonr pool with " + threlonadCount + " threlonads");
+        futurelonPoolManagelonr.crelonatelonUndelonrlyingFuturelonPool(threlonadCount);
+        numSelonarchelonrThrelonadsGaugelon.selont(threlonadCount);
 
-        // If the server is not shutting down, go through the warm up stage. If the server is
-        // instructed to shut down during warm up, warmUpManager.warmUp() should return within a
-        // second, and should leave the warm up server set. We should still shut down the warm up
-        // Finagle server.
-        if (isStartingUp && (EarlybirdStatus.getStatusCode() != EarlybirdStatusCode.STOPPING)) {
-          LOG.info("Opening warmup thrift port...");
-          finagleServerManager.startWarmUpFinagleServer(this, SERVICE_NAME, warmUpPort);
-          EarlybirdStatus.WARMUP_THRIFT_PORT_OPEN.set(true);
+        // If thelon selonrvelonr is not shutting down, go through thelon warm up stagelon. If thelon selonrvelonr is
+        // instructelond to shut down during warm up, warmUpManagelonr.warmUp() should relonturn within a
+        // seloncond, and should lelonavelon thelon warm up selonrvelonr selont. Welon should still shut down thelon warm up
+        // Finaglelon selonrvelonr.
+        if (isStartingUp && (elonarlybirdStatus.gelontStatusCodelon() != elonarlybirdStatusCodelon.STOPPING)) {
+          LOG.info("Opelonning warmup thrift port...");
+          finaglelonSelonrvelonrManagelonr.startWarmUpFinaglelonSelonrvelonr(this, SelonRVICelon_NAMelon, warmUpPort);
+          elonarlybirdStatus.WARMUP_THRIFT_PORT_OPelonN.selont(truelon);
 
           try {
-            warmUpManager.warmUp();
-          } catch (UpdateException e) {
-            LOG.warn("Could not join or leave the warm up server set.", e);
+            warmUpManagelonr.warmUp();
+          } catch (Updatelonelonxcelonption elon) {
+            LOG.warn("Could not join or lelonavelon thelon warm up selonrvelonr selont.", elon);
           } finally {
-            finagleServerManager.stopWarmUpFinagleServer(SERVER_CLOSE_WAIT_TIME);
-            EarlybirdStatus.WARMUP_THRIFT_PORT_OPEN.set(false);
+            finaglelonSelonrvelonrManagelonr.stopWarmUpFinaglelonSelonrvelonr(SelonRVelonR_CLOSelon_WAIT_TIMelon);
+            elonarlybirdStatus.WARMUP_THRIFT_PORT_OPelonN.selont(falselon);
           }
         }
 
-        // If the server is not shutting down, we can start the production Finagle server and join
-        // the production server set.
-        if (EarlybirdStatus.getStatusCode() != EarlybirdStatusCode.STOPPING) {
-          LOG.info("Opening production thrift port...");
-          finagleServerManager.startProductionFinagleServer(
-              earlybirdDarkProxy.getDarkProxy(), this, SERVICE_NAME, port);
-          EarlybirdStatus.THRIFT_PORT_OPEN.set(true);
+        // If thelon selonrvelonr is not shutting down, welon can start thelon production Finaglelon selonrvelonr and join
+        // thelon production selonrvelonr selont.
+        if (elonarlybirdStatus.gelontStatusCodelon() != elonarlybirdStatusCodelon.STOPPING) {
+          LOG.info("Opelonning production thrift port...");
+          finaglelonSelonrvelonrManagelonr.startProductionFinaglelonSelonrvelonr(
+              elonarlybirdDarkProxy.gelontDarkProxy(), this, SelonRVICelon_NAMelon, port);
+          elonarlybirdStatus.THRIFT_PORT_OPelonN.selont(truelon);
 
-          if (REGISTER_WITH_ZK_ON_STARTUP) {
-            // After the earlybird starts up, register with ZooKeeper.
+          if (RelonGISTelonR_WITH_ZK_ON_STARTUP) {
+            // Aftelonr thelon elonarlybird starts up, relongistelonr with ZooKelonelonpelonr.
             try {
-              joinServerSet("internal start-up");
+              joinSelonrvelonrSelont("intelonrnal start-up");
 
-              // Join separate server set for ServiceProxy on Archive Earlybirds
-              if (!EarlybirdConfig.isAurora()) {
-                joinServerSetForServiceProxy();
+              // Join selonparatelon selonrvelonr selont for SelonrvicelonProxy on Archivelon elonarlybirds
+              if (!elonarlybirdConfig.isAurora()) {
+                joinSelonrvelonrSelontForSelonrvicelonProxy();
               }
-            } catch (UpdateException e) {
-              throw new RuntimeException("Unable to join ServerSet during startup.", e);
+            } catch (Updatelonelonxcelonption elon) {
+              throw nelonw Runtimelonelonxcelonption("Unablelon to join SelonrvelonrSelont during startup.", elon);
             }
           }
         }
@@ -611,413 +611,413 @@ public class EarlybirdServer implements EarlybirdService.ServiceIface, ServerSet
   }
 
   /**
-   * Stops the thrift server if the server is already running.
+   * Stops thelon thrift selonrvelonr if thelon selonrvelonr is alrelonady running.
    */
-  public void stopThriftService(boolean shouldShutDown) {
-    synchronized (shutdownLock) {
+  public void stopThriftSelonrvicelon(boolelonan shouldShutDown) {
+    synchronizelond (shutdownLock) {
       try {
-        leaveServerSet(shouldShutDown ? "internal shutdown" : "admin stopThriftService");
-      } catch (UpdateException e) {
-        LOG.warn("Leaving production ServerSet failed.", e);
+        lelonavelonSelonrvelonrSelont(shouldShutDown ? "intelonrnal shutdown" : "admin stopThriftSelonrvicelon");
+      } catch (Updatelonelonxcelonption elon) {
+        LOG.warn("Lelonaving production SelonrvelonrSelont failelond.", elon);
       }
 
-      if (finagleServerManager.isProductionServerRunning()) {
+      if (finaglelonSelonrvelonrManagelonr.isProductionSelonrvelonrRunning()) {
         try {
-          finagleServerManager.stopProductionFinagleServer(SERVER_CLOSE_WAIT_TIME);
-          futurePoolManager.stopUnderlyingFuturePool(
-              SERVER_CLOSE_WAIT_TIME.inSeconds(), TimeUnit.SECONDS);
-          numSearcherThreadsGauge.set(0);
-        } catch (InterruptedException e) {
-          LOG.error("Interrupted while stopping thrift service", e);
-          Thread.currentThread().interrupt();
+          finaglelonSelonrvelonrManagelonr.stopProductionFinaglelonSelonrvelonr(SelonRVelonR_CLOSelon_WAIT_TIMelon);
+          futurelonPoolManagelonr.stopUndelonrlyingFuturelonPool(
+              SelonRVelonR_CLOSelon_WAIT_TIMelon.inSelonconds(), TimelonUnit.SelonCONDS);
+          numSelonarchelonrThrelonadsGaugelon.selont(0);
+        } catch (Intelonrruptelondelonxcelonption elon) {
+          LOG.elonrror("Intelonrruptelond whilelon stopping thrift selonrvicelon", elon);
+          Threlonad.currelonntThrelonad().intelonrrupt();
         }
-        EarlybirdStatus.THRIFT_PORT_OPEN.set(false);
+        elonarlybirdStatus.THRIFT_PORT_OPelonN.selont(falselon);
       }
     }
   }
 
   /**
-   * Gets a string with information about the last request we've seen from each client.
+   * Gelonts a string with information about thelon last relonquelonst welon'velon selonelonn from elonach clielonnt.
    */
-  public Future<String> getLastSearchesByClient(boolean includeResults) {
-    LastSearchesSummary summary = new LastSearchesSummary(
-        lastRequestPerClientId, clientIdSearchStats, includeResults);
-    return Future.value(summary.getSummary());
+  public Futurelon<String> gelontLastSelonarchelonsByClielonnt(boolelonan includelonRelonsults) {
+    LastSelonarchelonsSummary summary = nelonw LastSelonarchelonsSummary(
+        lastRelonquelonstPelonrClielonntId, clielonntIdSelonarchStats, includelonRelonsults);
+    relonturn Futurelon.valuelon(summary.gelontSummary());
   }
 
   /**
-   * The following are all the Thrift RPC methods inherited from EarlybirdService.Iface
+   * Thelon following arelon all thelon Thrift RPC melonthods inhelonritelond from elonarlybirdSelonrvicelon.Ifacelon
    */
 
-  // Thrift getName RPC.
-  @Override
-  public Future<String> getName() {
-    return Future.value(SERVICE_NAME);
+  // Thrift gelontNamelon RPC.
+  @Ovelonrridelon
+  public Futurelon<String> gelontNamelon() {
+    relonturn Futurelon.valuelon(SelonRVICelon_NAMelon);
   }
 
-  // Thrift getStatus RPC.
-  @Override
-  public Future<EarlybirdStatusResponse> getStatus() {
-    EarlybirdStatusResponse response = new EarlybirdStatusResponse();
-    response.setCode(EarlybirdStatus.getStatusCode());
-    response.setAliveSince(EarlybirdStatus.getStartTime());
-    response.setMessage(EarlybirdStatus.getStatusMessage());
-    return Future.value(response);
+  // Thrift gelontStatus RPC.
+  @Ovelonrridelon
+  public Futurelon<elonarlybirdStatusRelonsponselon> gelontStatus() {
+    elonarlybirdStatusRelonsponselon relonsponselon = nelonw elonarlybirdStatusRelonsponselon();
+    relonsponselon.selontCodelon(elonarlybirdStatus.gelontStatusCodelon());
+    relonsponselon.selontAlivelonSincelon(elonarlybirdStatus.gelontStartTimelon());
+    relonsponselon.selontMelonssagelon(elonarlybirdStatus.gelontStatusMelonssagelon());
+    relonturn Futurelon.valuelon(relonsponselon);
   }
 
-  public Future<List<String>> getSegmentMetadata() {
-    return Future.value(segmentManager.getSegmentMetadata());
+  public Futurelon<List<String>> gelontSelongmelonntMelontadata() {
+    relonturn Futurelon.valuelon(selongmelonntManagelonr.gelontSelongmelonntMelontadata());
   }
 
-  public Future<String> getQueryCachesData() {
-    return Future.value(segmentManager.getQueryCachesData());
+  public Futurelon<String> gelontQuelonryCachelonsData() {
+    relonturn Futurelon.valuelon(selongmelonntManagelonr.gelontQuelonryCachelonsData());
   }
 
   /**
-   * Get a text summary for which fields did we use in a schema.
+   * Gelont a telonxt summary for which fielonlds did welon uselon in a schelonma.
    */
-  public Future<String> getQueriedFieldsAndSchemaStats() {
-    ImmutableSchemaInterface schema = this.earlybirdIndexConfig.getSchema().getSchemaSnapshot();
+  public Futurelon<String> gelontQuelonrielondFielonldsAndSchelonmaStats() {
+    ImmutablelonSchelonmaIntelonrfacelon schelonma = this.elonarlybirdIndelonxConfig.gelontSchelonma().gelontSchelonmaSnapshot();
 
-    QueriedFieldsAndSchemaStats summary = new QueriedFieldsAndSchemaStats(schema,
-        queriedFieldsCounts);
-    return Future.value(summary.getSummary());
+    QuelonrielondFielonldsAndSchelonmaStats summary = nelonw QuelonrielondFielonldsAndSchelonmaStats(schelonma,
+        quelonrielondFielonldsCounts);
+    relonturn Futurelon.valuelon(summary.gelontSummary());
   }
 
   /**
-   * Shuts down the earlybird server.
+   * Shuts down thelon elonarlybird selonrvelonr.
    */
   public void shutdown() {
-    LOG.info("shutdown(): status set to STOPPING");
-    EarlybirdStatus.setStatus(EarlybirdStatusCode.STOPPING);
+    LOG.info("shutdown(): status selont to STOPPING");
+    elonarlybirdStatus.selontStatus(elonarlybirdStatusCodelon.STOPPING);
     try {
-      LOG.info("Stopping Finagle server.");
-      stopThriftService(true);
-      EarlybirdStatus.THRIFT_SERVICE_STARTED.set(false);
+      LOG.info("Stopping Finaglelon selonrvelonr.");
+      stopThriftSelonrvicelon(truelon);
+      elonarlybirdStatus.THRIFT_SelonRVICelon_STARTelonD.selont(falselon);
 
-      if (queryCacheManager != null) {
-        queryCacheManager.shutdown();
-      } else {
-        LOG.info("No queryCacheManager to shut down");
+      if (quelonryCachelonManagelonr != null) {
+        quelonryCachelonManagelonr.shutdown();
+      } elonlselon {
+        LOG.info("No quelonryCachelonManagelonr to shut down");
       }
 
-      earlybirdIndexConfig.getResourceCloser().shutdownExecutor();
+      elonarlybirdIndelonxConfig.gelontRelonsourcelonCloselonr().shutdownelonxeloncutor();
 
-      isShuttingDown = true;
-      LOG.info("Closing {} closeables.", toClose.size());
-      for (Closeable closeable : toClose) {
-        closeable.close();
+      isShuttingDown = truelon;
+      LOG.info("Closing {} closelonablelons.", toCloselon.sizelon());
+      for (Closelonablelon closelonablelon : toCloselon) {
+        closelonablelon.closelon();
       }
-    } catch (InterruptedException | IOException e) {
-      EarlybirdStatus.setStatus(EarlybirdStatusCode.UNHEALTHY, e.getMessage());
-      LOG.error("Interrupted during shutdown, status set to UNHEALTHY");
+    } catch (Intelonrruptelondelonxcelonption | IOelonxcelonption elon) {
+      elonarlybirdStatus.selontStatus(elonarlybirdStatusCodelon.UNHelonALTHY, elon.gelontMelonssagelon());
+      LOG.elonrror("Intelonrruptelond during shutdown, status selont to UNHelonALTHY");
     }
-    LOG.info("Earlybird server stopped!");
-    isShutdown = true;
+    LOG.info("elonarlybird selonrvelonr stoppelond!");
+    isShutdown = truelon;
   }
 
-  @Override
-  public Future<EarlybirdResponse> search(final EarlybirdRequest request) {
-    final long requestReceivedTimeMillis = System.currentTimeMillis();
-    // Record clock diff as early as possible.
-    EarlybirdRequestUtil.recordClientClockDiff(request);
+  @Ovelonrridelon
+  public Futurelon<elonarlybirdRelonsponselon> selonarch(final elonarlybirdRelonquelonst relonquelonst) {
+    final long relonquelonstReloncelonivelondTimelonMillis = Systelonm.currelonntTimelonMillis();
+    // Reloncord clock diff as elonarly as possiblelon.
+    elonarlybirdRelonquelonstUtil.reloncordClielonntClockDiff(relonquelonst);
 
-    if (!futurePoolManager.isPoolReady()) {
-      return Future.exception(new TransientException("Earlybird not yet able to handle requests."));
+    if (!futurelonPoolManagelonr.isPoolRelonady()) {
+      relonturn Futurelon.elonxcelonption(nelonw Transielonntelonxcelonption("elonarlybird not yelont ablelon to handlelon relonquelonsts."));
     }
 
-    return futurePoolManager.apply(new Function0<EarlybirdResponse>() {
-      @Override
-      public EarlybirdResponse apply() {
-        return doSearch(request, requestReceivedTimeMillis);
+    relonturn futurelonPoolManagelonr.apply(nelonw Function0<elonarlybirdRelonsponselon>() {
+      @Ovelonrridelon
+      public elonarlybirdRelonsponselon apply() {
+        relonturn doSelonarch(relonquelonst, relonquelonstReloncelonivelondTimelonMillis);
       }
-    }).rescue(Function.func(
-        // respond with Nack when the queue is full
-        t -> Future.exception((t instanceof RejectedExecutionException) ? QUEUE_FULL_FAILURE : t)));
+    }).relonscuelon(Function.func(
+        // relonspond with Nack whelonn thelon quelonuelon is full
+        t -> Futurelon.elonxcelonption((t instancelonof Relonjelonctelondelonxeloncutionelonxcelonption) ? QUelonUelon_FULL_FAILURelon : t)));
   }
 
-  private EarlybirdResponse doSearch(EarlybirdRequest request, long requestReceivedTimeMillis) {
-    final long queueWaitTime = System.currentTimeMillis() - requestReceivedTimeMillis;
-    internalQueueWaitTimeStats.timerIncrement(queueWaitTime);
+  privatelon elonarlybirdRelonsponselon doSelonarch(elonarlybirdRelonquelonst relonquelonst, long relonquelonstReloncelonivelondTimelonMillis) {
+    final long quelonuelonWaitTimelon = Systelonm.currelonntTimelonMillis() - relonquelonstReloncelonivelondTimelonMillis;
+    intelonrnalQuelonuelonWaitTimelonStats.timelonrIncrelonmelonnt(quelonuelonWaitTimelon);
 
-    // request restart time, not to be confused with startTime which is server restart time
-    Timer timer = new Timer(TimeUnit.MICROSECONDS);
+    // relonquelonst relonstart timelon, not to belon confuselond with startTimelon which is selonrvelonr relonstart timelon
+    Timelonr timelonr = nelonw Timelonr(TimelonUnit.MICROSelonCONDS);
 
-    requestPreLogger.logRequest(request);
+    relonquelonstPrelonLoggelonr.logRelonquelonst(relonquelonst);
 
-    String clientId = ClientIdUtil.getClientIdFromRequest(request);
-    String finagleClientId = FinagleUtil.getFinagleClientName();
-    requestCountersByFinagleIdAndClientId.getUnchecked(new Pair<>(finagleClientId, clientId))
-        .increment();
+    String clielonntId = ClielonntIdUtil.gelontClielonntIdFromRelonquelonst(relonquelonst);
+    String finaglelonClielonntId = FinaglelonUtil.gelontFinaglelonClielonntNamelon();
+    relonquelonstCountelonrsByFinaglelonIdAndClielonntId.gelontUnchelonckelond(nelonw Pair<>(finaglelonClielonntId, clielonntId))
+        .increlonmelonnt();
 
-    EarlybirdRequestUtil.checkAndSetCollectorParams(request);
+    elonarlybirdRelonquelonstUtil.chelonckAndSelontCollelonctorParams(relonquelonst);
 
-    // If the thrift logger is busy logging, queue the thrift request for logging.
-    if (EarlybirdThriftRequestLoggingUtil.thriftLoggerBusy) {
-      EarlybirdThriftRequestLoggingUtil.REQUEST_BUFFER.offer(request);
+    // If thelon thrift loggelonr is busy logging, quelonuelon thelon thrift relonquelonst for logging.
+    if (elonarlybirdThriftRelonquelonstLoggingUtil.thriftLoggelonrBusy) {
+      elonarlybirdThriftRelonquelonstLoggingUtil.RelonQUelonST_BUFFelonR.offelonr(relonquelonst);
     }
 
-    EarlybirdRequestUtil.logAndFixExcessiveValues(request);
+    elonarlybirdRelonquelonstUtil.logAndFixelonxcelonssivelonValuelons(relonquelonst);
 
-    final EarlybirdSearcher searcher = new EarlybirdSearcher(
-        request,
-        segmentManager,
-        audioSpaceTable,
-        queryCacheManager,
-        earlybirdIndexConfig.getSchema().getSchemaSnapshot(),
-        earlybirdIndexConfig.getCluster(),
-        dynamicPartitionConfig.getCurrentPartitionConfig(),
-        decider,
-        tweetsSearcherStats,
-        scoringModelsManager,
-        tensorflowModelsManager,
+    final elonarlybirdSelonarchelonr selonarchelonr = nelonw elonarlybirdSelonarchelonr(
+        relonquelonst,
+        selongmelonntManagelonr,
+        audioSpacelonTablelon,
+        quelonryCachelonManagelonr,
+        elonarlybirdIndelonxConfig.gelontSchelonma().gelontSchelonmaSnapshot(),
+        elonarlybirdIndelonxConfig.gelontClustelonr(),
+        dynamicPartitionConfig.gelontCurrelonntPartitionConfig(),
+        deloncidelonr,
+        twelonelontsSelonarchelonrStats,
+        scoringModelonlsManagelonr,
+        telonnsorflowModelonlsManagelonr,
         clock,
-        multiSegmentTermDictionaryManager,
-        queryTimeoutFactory,
+        multiSelongmelonntTelonrmDictionaryManagelonr,
+        quelonryTimelonoutFactory,
         qualityFactor);
 
-    QueryCostTracker queryCostTracker = QueryCostTracker.getTracker();
-    EarlybirdResponse response = null;
+    QuelonryCostTrackelonr quelonryCostTrackelonr = QuelonryCostTrackelonr.gelontTrackelonr();
+    elonarlybirdRelonsponselon relonsponselon = null;
     try {
-      if (skipTimedOutRequests
-          && searcher.getTerminationTracker().getTimeoutEndTimeWithReservation()
+      if (skipTimelondOutRelonquelonsts
+          && selonarchelonr.gelontTelonrminationTrackelonr().gelontTimelonoutelonndTimelonWithRelonselonrvation()
           <= clock.nowMillis()) {
-        requestTimeoutExceededBeforeSearchCounter.increment();
-        response = new EarlybirdResponse();
-        response.setResponseCode(EarlybirdResponseCode.SERVER_TIMEOUT_ERROR);
-      } else {
-        queryCostTracker.reset();
-        response = searcher.search();
+        relonquelonstTimelonoutelonxcelonelondelondBelonforelonSelonarchCountelonr.increlonmelonnt();
+        relonsponselon = nelonw elonarlybirdRelonsponselon();
+        relonsponselon.selontRelonsponselonCodelon(elonarlybirdRelonsponselonCodelon.SelonRVelonR_TIMelonOUT_elonRROR);
+      } elonlselon {
+        quelonryCostTrackelonr.relonselont();
+        relonsponselon = selonarchelonr.selonarch();
       }
     } finally {
-      if (response == null) {
-        // This can only happen if we failed to catch an exception in the searcher.
-        LOG.error("Response was null: " + request.toString());
-        response = new EarlybirdResponse();
-        response.setResponseCode(EarlybirdResponseCode.TRANSIENT_ERROR);
+      if (relonsponselon == null) {
+        // This can only happelonn if welon failelond to catch an elonxcelonption in thelon selonarchelonr.
+        LOG.elonrror("Relonsponselon was null: " + relonquelonst.toString());
+        relonsponselon = nelonw elonarlybirdRelonsponselon();
+        relonsponselon.selontRelonsponselonCodelon(elonarlybirdRelonsponselonCodelon.TRANSIelonNT_elonRROR);
       }
 
-      if (response.getSearchResults() == null) {
-        List<ThriftSearchResult> emptyResultSet = Lists.newArrayList();
-        response.setSearchResults(new ThriftSearchResults(emptyResultSet));
+      if (relonsponselon.gelontSelonarchRelonsults() == null) {
+        List<ThriftSelonarchRelonsult> elonmptyRelonsultSelont = Lists.nelonwArrayList();
+        relonsponselon.selontSelonarchRelonsults(nelonw ThriftSelonarchRelonsults(elonmptyRelonsultSelont));
       }
 
-      long reqLatency = timer.stop();
-      response.setResponseTime(reqLatency / 1000);
-      response.setResponseTimeMicros(reqLatency);
-      response.getSearchResults().setQueryCost(queryCostTracker.getTotalCost());
+      long relonqLatelonncy = timelonr.stop();
+      relonsponselon.selontRelonsponselonTimelon(relonqLatelonncy / 1000);
+      relonsponselon.selontRelonsponselonTimelonMicros(relonqLatelonncy);
+      relonsponselon.gelontSelonarchRelonsults().selontQuelonryCost(quelonryCostTrackelonr.gelontTotalCost());
 
-      requestLogger.logRequest(request, response, timer);
+      relonquelonstLoggelonr.logRelonquelonst(relonquelonst, relonsponselon, timelonr);
 
-      int numResults = EarlybirdRequestLogger.numResultsForLog(response);
-      boolean success = response.getResponseCode() == EarlybirdResponseCode.SUCCESS;
-      boolean clientError = response.getResponseCode() == EarlybirdResponseCode.CLIENT_ERROR;
-      boolean earlyTerminated = (response.getSearchResults().isSetNumPartitionsEarlyTerminated()
-          && response.getSearchResults().getNumPartitionsEarlyTerminated() > 0)
-          || searcher.getTerminationTracker().isEarlyTerminated();
-      // Update termination stats.
-      searcher.getTerminationTracker().getEarlyTerminationState().incrementCount();
+      int numRelonsults = elonarlybirdRelonquelonstLoggelonr.numRelonsultsForLog(relonsponselon);
+      boolelonan succelonss = relonsponselon.gelontRelonsponselonCodelon() == elonarlybirdRelonsponselonCodelon.SUCCelonSS;
+      boolelonan clielonntelonrror = relonsponselon.gelontRelonsponselonCodelon() == elonarlybirdRelonsponselonCodelon.CLIelonNT_elonRROR;
+      boolelonan elonarlyTelonrminatelond = (relonsponselon.gelontSelonarchRelonsults().isSelontNumPartitionselonarlyTelonrminatelond()
+          && relonsponselon.gelontSelonarchRelonsults().gelontNumPartitionselonarlyTelonrminatelond() > 0)
+          || selonarchelonr.gelontTelonrminationTrackelonr().iselonarlyTelonrminatelond();
+      // Updatelon telonrmination stats.
+      selonarchelonr.gelontTelonrminationTrackelonr().gelontelonarlyTelonrminationStatelon().increlonmelonntCount();
 
-      searchStats.requestComplete(reqLatency, numResults, success, earlyTerminated, clientError);
-      if (searcher.getRequestStats() != null) {
-        searcher.getRequestStats().requestComplete(reqLatency, numResults, success,
-            earlyTerminated, clientError);
+      selonarchStats.relonquelonstComplelontelon(relonqLatelonncy, numRelonsults, succelonss, elonarlyTelonrminatelond, clielonntelonrror);
+      if (selonarchelonr.gelontRelonquelonstStats() != null) {
+        selonarchelonr.gelontRelonquelonstStats().relonquelonstComplelontelon(relonqLatelonncy, numRelonsults, succelonss,
+            elonarlyTelonrminatelond, clielonntelonrror);
       }
 
-      getResponseCodeCounter(response.getResponseCode()).increment();
-      // Adding this counter to make it easier to debug cases where we see a spike in
-      // bad client request errors but don't know where they're coming from. (The
-      // alternative is to ssh to a machine in the cluster and sample
-      // /var/log/earlybird/earlybird.failed_requests).
-      getClientIdResponseCodeCounter(clientId, response.getResponseCode()).increment();
+      gelontRelonsponselonCodelonCountelonr(relonsponselon.gelontRelonsponselonCodelon()).increlonmelonnt();
+      // Adding this countelonr to makelon it elonasielonr to delonbug caselons whelonrelon welon selonelon a spikelon in
+      // bad clielonnt relonquelonst elonrrors but don't know whelonrelon thelony'relon coming from. (Thelon
+      // altelonrnativelon is to ssh to a machinelon in thelon clustelonr and samplelon
+      // /var/log/elonarlybird/elonarlybird.failelond_relonquelonsts).
+      gelontClielonntIdRelonsponselonCodelonCountelonr(clielonntId, relonsponselon.gelontRelonsponselonCodelon()).increlonmelonnt();
 
-      // Export request latency as a stat.
-      clientIdSearchStats.getUnchecked(clientId).timerIncrement(reqLatency);
-      requestCountersByFinagleClientId.getUnchecked(finagleClientId).timerIncrement(reqLatency);
-      addEarlybirdServerStats(response, queueWaitTime);
-      // Export scoring stats for the request.
-      exportScoringTimeStats(response, clientId);
+      // elonxport relonquelonst latelonncy as a stat.
+      clielonntIdSelonarchStats.gelontUnchelonckelond(clielonntId).timelonrIncrelonmelonnt(relonqLatelonncy);
+      relonquelonstCountelonrsByFinaglelonClielonntId.gelontUnchelonckelond(finaglelonClielonntId).timelonrIncrelonmelonnt(relonqLatelonncy);
+      addelonarlybirdSelonrvelonrStats(relonsponselon, quelonuelonWaitTimelon);
+      // elonxport scoring stats for thelon relonquelonst.
+      elonxportScoringTimelonStats(relonsponselon, clielonntId);
     }
 
-    Set<String> queriedFields = searcher.getQueriedFields();
-    if (queriedFields != null) {
-      for (String queriedField : queriedFields) {
-        queriedFieldsCounts.incrementAndGet(queriedField);
+    Selont<String> quelonrielondFielonlds = selonarchelonr.gelontQuelonrielondFielonlds();
+    if (quelonrielondFielonlds != null) {
+      for (String quelonrielondFielonld : quelonrielondFielonlds) {
+        quelonrielondFielonldsCounts.increlonmelonntAndGelont(quelonrielondFielonld);
       }
     }
 
-    // Increment counters for age of the returned results.
-    if (response.getSearchResults() != null && response.getSearchResults().getResults() != null) {
-      long currentTime = System.currentTimeMillis();
-      for (ThriftSearchResult result : response.getSearchResults().getResults()) {
-        long tweetId = result.getId();
-        if (SnowflakeId.isSnowflakeId(tweetId)) {
-          long ageMillis = Math.max(0L,
-              currentTime - SnowflakeId.unixTimeMillisFromId(tweetId));
-          int ageDays = Duration.fromMilliseconds(ageMillis).inDays();
+    // Increlonmelonnt countelonrs for agelon of thelon relonturnelond relonsults.
+    if (relonsponselon.gelontSelonarchRelonsults() != null && relonsponselon.gelontSelonarchRelonsults().gelontRelonsults() != null) {
+      long currelonntTimelon = Systelonm.currelonntTimelonMillis();
+      for (ThriftSelonarchRelonsult relonsult : relonsponselon.gelontSelonarchRelonsults().gelontRelonsults()) {
+        long twelonelontId = relonsult.gelontId();
+        if (SnowflakelonId.isSnowflakelonId(twelonelontId)) {
+          long agelonMillis = Math.max(0L,
+              currelonntTimelon - SnowflakelonId.unixTimelonMillisFromId(twelonelontId));
+          int agelonDays = Duration.fromMilliselonconds(agelonMillis).inDays();
 
-          if (EarlybirdConfig.isRealtimeOrProtected()) {
-            String key = "result_age_in_days_" + ageDays;
-            resultsAgeCounter.getUnchecked(key).increment();
-          } else {
-            int ageYears = ageDays / 365;
-            String key = "result_age_in_years_" + ageYears;
-            resultsAgeCounter.getUnchecked(key).increment();
+          if (elonarlybirdConfig.isRelonaltimelonOrProtelonctelond()) {
+            String kelony = "relonsult_agelon_in_days_" + agelonDays;
+            relonsultsAgelonCountelonr.gelontUnchelonckelond(kelony).increlonmelonnt();
+          } elonlselon {
+            int agelonYelonars = agelonDays / 365;
+            String kelony = "relonsult_agelon_in_yelonars_" + agelonYelonars;
+            relonsultsAgelonCountelonr.gelontUnchelonckelond(kelony).increlonmelonnt();
           }
         }
       }
     }
 
     try {
-      lastRequestPerClientId.get(clientId).set(
-          new RequestResponsePair(request, searcher.getParsedQuery(),
-              searcher.getLuceneQuery(), response));
-    } catch (ExecutionException ex) {
-      // Not a big problem, we'll just notice that the admin page doesn't work, and it
-      // probably won't happen.
+      lastRelonquelonstPelonrClielonntId.gelont(clielonntId).selont(
+          nelonw RelonquelonstRelonsponselonPair(relonquelonst, selonarchelonr.gelontParselondQuelonry(),
+              selonarchelonr.gelontLucelonnelonQuelonry(), relonsponselon));
+    } catch (elonxeloncutionelonxcelonption elonx) {
+      // Not a big problelonm, welon'll just noticelon that thelon admin pagelon doelonsn't work, and it
+      // probably won't happelonn.
     }
 
 
-    return response;
+    relonturn relonsponselon;
   }
 
-  private void exportScoringTimeStats(EarlybirdResponse response, String clientId) {
-    if (response.isSetSearchResults()
-        && response.getSearchResults().isSetScoringTimeNanos()
-        && response.getSearchResults().isSetNumHitsProcessed()) {
-      int numHitsProcessed = response.getSearchResults().getNumHitsProcessed();
-      long scoringTimeNanos = response.getSearchResults().getScoringTimeNanos();
+  privatelon void elonxportScoringTimelonStats(elonarlybirdRelonsponselon relonsponselon, String clielonntId) {
+    if (relonsponselon.isSelontSelonarchRelonsults()
+        && relonsponselon.gelontSelonarchRelonsults().isSelontScoringTimelonNanos()
+        && relonsponselon.gelontSelonarchRelonsults().isSelontNumHitsProcelonsselond()) {
+      int numHitsProcelonsselond = relonsponselon.gelontSelonarchRelonsults().gelontNumHitsProcelonsselond();
+      long scoringTimelonNanos = relonsponselon.gelontSelonarchRelonsults().gelontScoringTimelonNanos();
 
-      if (numHitsProcessed > 0) {
-        // Only compute and report scoring time per hit when we have hits. (i.e. we don't just want
-        // to report 0's for cases where there were no hits, and only want to report legit per-hit
-        // times.
-        long scoringTimePerHit = scoringTimeNanos / numHitsProcessed;
+      if (numHitsProcelonsselond > 0) {
+        // Only computelon and relonport scoring timelon pelonr hit whelonn welon havelon hits. (i.elon. welon don't just want
+        // to relonport 0's for caselons whelonrelon thelonrelon welonrelon no hits, and only want to relonport lelongit pelonr-hit
+        // timelons.
+        long scoringTimelonPelonrHit = scoringTimelonNanos / numHitsProcelonsselond;
 
-        this.clientIdScoringPerHitStats.getUnchecked(clientId).timerIncrement(scoringTimePerHit);
-        this.overallScoringTimePerHitStats.timerIncrement(scoringTimePerHit);
+        this.clielonntIdScoringPelonrHitStats.gelontUnchelonckelond(clielonntId).timelonrIncrelonmelonnt(scoringTimelonPelonrHit);
+        this.ovelonrallScoringTimelonPelonrHitStats.timelonrIncrelonmelonnt(scoringTimelonPelonrHit);
       }
 
-      this.clientIdScoringPerQueryStats.getUnchecked(clientId).timerIncrement(scoringTimeNanos);
-      this.overallScoringTimePerQueryStats.timerIncrement(scoringTimeNanos);
+      this.clielonntIdScoringPelonrQuelonryStats.gelontUnchelonckelond(clielonntId).timelonrIncrelonmelonnt(scoringTimelonNanos);
+      this.ovelonrallScoringTimelonPelonrQuelonryStats.timelonrIncrelonmelonnt(scoringTimelonNanos);
 
-      // The num hits processed stats here are scoped only to queries that were actually scored.
-      // This would exclude queries like term stats (that would otherwise have huge num hits
-      // processed).
-      this.clientIdScoringNumHitsProcessedStats.getUnchecked(clientId).record(numHitsProcessed);
-      this.overallScoringNumHitsProcessedStats.record(numHitsProcessed);
+      // Thelon num hits procelonsselond stats helonrelon arelon scopelond only to quelonrielons that welonrelon actually scorelond.
+      // This would elonxcludelon quelonrielons likelon telonrm stats (that would othelonrwiselon havelon hugelon num hits
+      // procelonsselond).
+      this.clielonntIdScoringNumHitsProcelonsselondStats.gelontUnchelonckelond(clielonntId).reloncord(numHitsProcelonsselond);
+      this.ovelonrallScoringNumHitsProcelonsselondStats.reloncord(numHitsProcelonsselond);
     }
   }
 
-  private void addEarlybirdServerStats(EarlybirdResponse response, long queueWaitTime) {
-    PartitionConfig curPartitionConfig = dynamicPartitionConfig.getCurrentPartitionConfig();
-    EarlybirdServerStats earlybirdServerStats = new EarlybirdServerStats();
-    response.setEarlybirdServerStats(earlybirdServerStats);
-    earlybirdServerStats.setHostname(DatabaseConfig.getLocalHostname());
-    earlybirdServerStats.setPartition(curPartitionConfig.getIndexingHashPartitionID());
-    earlybirdServerStats.setTierName(curPartitionConfig.getTierName());
-    earlybirdServerStats.setCurrentQps(searchStats.getRequestRate());
-    earlybirdServerStats.setQueueTimeMillis(queueWaitTime);
-    earlybirdServerStats.setAverageQueueTimeMillis(
-        (long) (double) internalQueueWaitTimeStats.read());
-    earlybirdServerStats.setAverageLatencyMicros(searchStats.getAverageLatency());
+  privatelon void addelonarlybirdSelonrvelonrStats(elonarlybirdRelonsponselon relonsponselon, long quelonuelonWaitTimelon) {
+    PartitionConfig curPartitionConfig = dynamicPartitionConfig.gelontCurrelonntPartitionConfig();
+    elonarlybirdSelonrvelonrStats elonarlybirdSelonrvelonrStats = nelonw elonarlybirdSelonrvelonrStats();
+    relonsponselon.selontelonarlybirdSelonrvelonrStats(elonarlybirdSelonrvelonrStats);
+    elonarlybirdSelonrvelonrStats.selontHostnamelon(DatabaselonConfig.gelontLocalHostnamelon());
+    elonarlybirdSelonrvelonrStats.selontPartition(curPartitionConfig.gelontIndelonxingHashPartitionID());
+    elonarlybirdSelonrvelonrStats.selontTielonrNamelon(curPartitionConfig.gelontTielonrNamelon());
+    elonarlybirdSelonrvelonrStats.selontCurrelonntQps(selonarchStats.gelontRelonquelonstRatelon());
+    elonarlybirdSelonrvelonrStats.selontQuelonuelonTimelonMillis(quelonuelonWaitTimelon);
+    elonarlybirdSelonrvelonrStats.selontAvelonragelonQuelonuelonTimelonMillis(
+        (long) (doublelon) intelonrnalQuelonuelonWaitTimelonStats.relonad());
+    elonarlybirdSelonrvelonrStats.selontAvelonragelonLatelonncyMicros(selonarchStats.gelontAvelonragelonLatelonncy());
   }
 
-  @Override
-  public void joinServerSet(String username) throws UpdateException {
-    serverSetManager.joinServerSet(username);
+  @Ovelonrridelon
+  public void joinSelonrvelonrSelont(String uselonrnamelon) throws Updatelonelonxcelonption {
+    selonrvelonrSelontManagelonr.joinSelonrvelonrSelont(uselonrnamelon);
   }
 
 
-  @Override
-  public int getNumberOfServerSetMembers() throws InterruptedException,
-      ZooKeeperClient.ZooKeeperConnectionException, KeeperException {
-    return serverSetManager.getNumberOfServerSetMembers();
+  @Ovelonrridelon
+  public int gelontNumbelonrOfSelonrvelonrSelontMelonmbelonrs() throws Intelonrruptelondelonxcelonption,
+      ZooKelonelonpelonrClielonnt.ZooKelonelonpelonrConnelonctionelonxcelonption, Kelonelonpelonrelonxcelonption {
+    relonturn selonrvelonrSelontManagelonr.gelontNumbelonrOfSelonrvelonrSelontMelonmbelonrs();
   }
 
-  @Override
-  public void leaveServerSet(String username) throws UpdateException {
-    serverSetManager.leaveServerSet(username);
+  @Ovelonrridelon
+  public void lelonavelonSelonrvelonrSelont(String uselonrnamelon) throws Updatelonelonxcelonption {
+    selonrvelonrSelontManagelonr.lelonavelonSelonrvelonrSelont(uselonrnamelon);
   }
 
-  @Override
-  public void joinServerSetForServiceProxy() {
-    serverSetManager.joinServerSetForServiceProxy();
+  @Ovelonrridelon
+  public void joinSelonrvelonrSelontForSelonrvicelonProxy() {
+    selonrvelonrSelontManagelonr.joinSelonrvelonrSelontForSelonrvicelonProxy();
   }
 
-  @VisibleForTesting
-  protected static class EarlybirdThriftRequestLoggingUtil {
-    private static final int DEFAULT_MAX_ENTRIES_TO_LOG = 50000;
-    private static final int DEFAULT_BUFFER_SIZE = 10000;
-    private static final int DEFAULT_LOGGING_SLEEP_MS = 100;
+  @VisiblelonForTelonsting
+  protelonctelond static class elonarlybirdThriftRelonquelonstLoggingUtil {
+    privatelon static final int DelonFAULT_MAX_elonNTRIelonS_TO_LOG = 50000;
+    privatelon static final int DelonFAULT_BUFFelonR_SIZelon = 10000;
+    privatelon static final int DelonFAULT_LOGGING_SLelonelonP_MS = 100;
 
-    @VisibleForTesting
-    protected static volatile boolean thriftLoggerBusy = false;
-    private static final ExecutorService LOGGING_EXECUTOR = Executors.newCachedThreadPool();
+    @VisiblelonForTelonsting
+    protelonctelond static volatilelon boolelonan thriftLoggelonrBusy = falselon;
+    privatelon static final elonxeloncutorSelonrvicelon LOGGING_elonXelonCUTOR = elonxeloncutors.nelonwCachelondThrelonadPool();
 
-    // Synchronized circular buffer used for buffering requests.
-    // If buffer is full, the oldest requests are replaced. This should not be a problem for
-    // logging purpose.
-    @VisibleForTesting
-    protected static final ArrayBlockingQueue<EarlybirdRequest> REQUEST_BUFFER =
-        new ArrayBlockingQueue<>(DEFAULT_BUFFER_SIZE);
+    // Synchronizelond circular buffelonr uselond for buffelonring relonquelonsts.
+    // If buffelonr is full, thelon oldelonst relonquelonsts arelon relonplacelond. This should not belon a problelonm for
+    // logging purposelon.
+    @VisiblelonForTelonsting
+    protelonctelond static final ArrayBlockingQuelonuelon<elonarlybirdRelonquelonst> RelonQUelonST_BUFFelonR =
+        nelonw ArrayBlockingQuelonuelon<>(DelonFAULT_BUFFelonR_SIZelon);
 
 
     /**
-     * Create a separate thread to log thrift request to the given file. If a thread is already
-     * logging thrift requests, this does nothing and throws an IOException indicating that the
-     * logging thread is busy.
+     * Crelonatelon a selonparatelon threlonad to log thrift relonquelonst to thelon givelonn filelon. If a threlonad is alrelonady
+     * logging thrift relonquelonsts, this doelons nothing and throws an IOelonxcelonption indicating that thelon
+     * logging threlonad is busy.
      *
-     * @param logFile File to log to.
-     * @param maxEntriesToLog Number of entries to log.
-     * @param postLoggingHook Code to run after logging finishes. Only used for testing as of now.
+     * @param logFilelon Filelon to log to.
+     * @param maxelonntrielonsToLog Numbelonr of elonntrielons to log.
+     * @param postLoggingHook Codelon to run aftelonr logging finishelons. Only uselond for telonsting as of now.
      */
-    @VisibleForTesting
-    protected static synchronized void startThriftLogging(final File logFile,
-                                                          final int maxEntriesToLog,
-                                                          final Runnable postLoggingHook)
-        throws IOException {
-      if (thriftLoggerBusy) {
-        throw new IOException("Already busy logging thrift request. No action taken.");
+    @VisiblelonForTelonsting
+    protelonctelond static synchronizelond void startThriftLogging(final Filelon logFilelon,
+                                                          final int maxelonntrielonsToLog,
+                                                          final Runnablelon postLoggingHook)
+        throws IOelonxcelonption {
+      if (thriftLoggelonrBusy) {
+        throw nelonw IOelonxcelonption("Alrelonady busy logging thrift relonquelonst. No action takelonn.");
       }
 
-      if (!logFile.canWrite()) {
-        throw new IOException("Unable to open log file for writing:  " + logFile);
+      if (!logFilelon.canWritelon()) {
+        throw nelonw IOelonxcelonption("Unablelon to opelonn log filelon for writing:  " + logFilelon);
       }
 
-      final BufferedWriter thriftLogWriter =
-          Files.newBufferedWriter(logFile.toPath(), Charsets.UTF_8);
+      final BuffelonrelondWritelonr thriftLogWritelonr =
+          Filelons.nelonwBuffelonrelondWritelonr(logFilelon.toPath(), Charselonts.UTF_8);
 
-      // TSerializer used by the writer thread.
-      final TSerializer serializer = new TSerializer();
+      // TSelonrializelonr uselond by thelon writelonr threlonad.
+      final TSelonrializelonr selonrializelonr = nelonw TSelonrializelonr();
 
-      REQUEST_BUFFER.clear();
-      thriftLoggerBusy = true;
-      LOG.info("Started to log thrift requests into file " + logFile.getAbsolutePath());
-      LOGGING_EXECUTOR.submit(() -> {
+      RelonQUelonST_BUFFelonR.clelonar();
+      thriftLoggelonrBusy = truelon;
+      LOG.info("Startelond to log thrift relonquelonsts into filelon " + logFilelon.gelontAbsolutelonPath());
+      LOGGING_elonXelonCUTOR.submit(() -> {
         try {
           int count = 0;
-          while (count < maxEntriesToLog) {
-            if (REQUEST_BUFFER.isEmpty()) {
-              Thread.sleep(DEFAULT_LOGGING_SLEEP_MS);
-              continue;
+          whilelon (count < maxelonntrielonsToLog) {
+            if (RelonQUelonST_BUFFelonR.iselonmpty()) {
+              Threlonad.slelonelonp(DelonFAULT_LOGGING_SLelonelonP_MS);
+              continuelon;
             }
 
             try {
-              EarlybirdRequest ebRequest = REQUEST_BUFFER.poll();
-              String logLine = serializeThriftObject(ebRequest, serializer);
-              thriftLogWriter.write(logLine);
+              elonarlybirdRelonquelonst elonbRelonquelonst = RelonQUelonST_BUFFelonR.poll();
+              String logLinelon = selonrializelonThriftObjelonct(elonbRelonquelonst, selonrializelonr);
+              thriftLogWritelonr.writelon(logLinelon);
               count++;
-            } catch (TException e) {
-              LOG.warn("Unable to serialize EarlybirdRequest for logging.", e);
+            } catch (Telonxcelonption elon) {
+              LOG.warn("Unablelon to selonrializelon elonarlybirdRelonquelonst for logging.", elon);
             }
           }
-          return count;
+          relonturn count;
         } finally {
-          thriftLogWriter.close();
-          thriftLoggerBusy = false;
-          LOG.info("Finished logging thrift requests into file " + logFile.getAbsolutePath());
-          REQUEST_BUFFER.clear();
+          thriftLogWritelonr.closelon();
+          thriftLoggelonrBusy = falselon;
+          LOG.info("Finishelond logging thrift relonquelonsts into filelon " + logFilelon.gelontAbsolutelonPath());
+          RelonQUelonST_BUFFelonR.clelonar();
           if (postLoggingHook != null) {
             postLoggingHook.run();
           }
@@ -1026,62 +1026,62 @@ public class EarlybirdServer implements EarlybirdService.ServiceIface, ServerSet
     }
 
     /**
-     * Serialize a thrift object to a base 64 encoded string.
+     * Selonrializelon a thrift objelonct to a baselon 64 elonncodelond string.
      */
-    private static String serializeThriftObject(TBase<?, ?> tObject, TSerializer serializer)
-        throws TException {
-      return new Base64().encodeToString(serializer.serialize(tObject)) + "\n";
+    privatelon static String selonrializelonThriftObjelonct(TBaselon<?, ?> tObjelonct, TSelonrializelonr selonrializelonr)
+        throws Telonxcelonption {
+      relonturn nelonw Baselon64().elonncodelonToString(selonrializelonr.selonrializelon(tObjelonct)) + "\n";
     }
   }
 
   /**
-   * Start to log thrift EarlybirdRequests.
+   * Start to log thrift elonarlybirdRelonquelonsts.
    *
-   * @param logFile Log file to write to.
-   * @param numRequestsToLog Number of requests to collect.  Default value of 50000 used if
-   * 0 or negative numbers are pass in.
+   * @param logFilelon Log filelon to writelon to.
+   * @param numRelonquelonstsToLog Numbelonr of relonquelonsts to collelonct.  Delonfault valuelon of 50000 uselond if
+   * 0 or nelongativelon numbelonrs arelon pass in.
    */
-  public void startThriftLogging(File logFile, int numRequestsToLog) throws IOException {
-    int requestToLog = numRequestsToLog <= 0
-        ? EarlybirdThriftRequestLoggingUtil.DEFAULT_MAX_ENTRIES_TO_LOG : numRequestsToLog;
-    EarlybirdThriftRequestLoggingUtil.startThriftLogging(logFile, requestToLog, null);
+  public void startThriftLogging(Filelon logFilelon, int numRelonquelonstsToLog) throws IOelonxcelonption {
+    int relonquelonstToLog = numRelonquelonstsToLog <= 0
+        ? elonarlybirdThriftRelonquelonstLoggingUtil.DelonFAULT_MAX_elonNTRIelonS_TO_LOG : numRelonquelonstsToLog;
+    elonarlybirdThriftRelonquelonstLoggingUtil.startThriftLogging(logFilelon, relonquelonstToLog, null);
   }
 
-  @VisibleForTesting
-  @Override
-  public boolean isInServerSet() {
-    return serverSetManager.isInServerSet();
+  @VisiblelonForTelonsting
+  @Ovelonrridelon
+  public boolelonan isInSelonrvelonrSelont() {
+    relonturn selonrvelonrSelontManagelonr.isInSelonrvelonrSelont();
   }
 
-  @VisibleForTesting
-  SearchCounter getResponseCodeCounter(EarlybirdResponseCode responseCode) {
-    return responseCodeCounters.get(responseCode);
+  @VisiblelonForTelonsting
+  SelonarchCountelonr gelontRelonsponselonCodelonCountelonr(elonarlybirdRelonsponselonCodelon relonsponselonCodelon) {
+    relonturn relonsponselonCodelonCountelonrs.gelont(relonsponselonCodelon);
   }
 
-  @VisibleForTesting
-  SearchCounter getClientIdResponseCodeCounter(
-      String clientId, EarlybirdResponseCode responseCode) {
-    String key = String.format(RESPONSES_PER_CLIENT_ID_STAT_TEMPLATE,
-            clientId, responseCode.name().toLowerCase());
-    return responseByClientIdAndResponseCode.getUnchecked(key);
+  @VisiblelonForTelonsting
+  SelonarchCountelonr gelontClielonntIdRelonsponselonCodelonCountelonr(
+      String clielonntId, elonarlybirdRelonsponselonCodelon relonsponselonCodelon) {
+    String kelony = String.format(RelonSPONSelonS_PelonR_CLIelonNT_ID_STAT_TelonMPLATelon,
+            clielonntId, relonsponselonCodelon.namelon().toLowelonrCaselon());
+    relonturn relonsponselonByClielonntIdAndRelonsponselonCodelon.gelontUnchelonckelond(kelony);
   }
 
-  public void setNoShutdownWhenNotInLayout(boolean noShutdown) {
-    stateManager.setNoShutdownWhenNotInLayout(noShutdown);
+  public void selontNoShutdownWhelonnNotInLayout(boolelonan noShutdown) {
+    statelonManagelonr.selontNoShutdownWhelonnNotInLayout(noShutdown);
   }
 
-  private void schedule(OneTaskScheduledExecutorManager manager) {
+  privatelon void schelondulelon(OnelonTaskSchelondulelondelonxeloncutorManagelonr managelonr) {
     if (!isShuttingDown) {
-      manager.schedule();
-      toClose.add(manager);
+      managelonr.schelondulelon();
+      toCloselon.add(managelonr);
     }
   }
 
-  public DynamicSchema getSchema() {
-    return earlybirdIndexConfig.getSchema();
+  public DynamicSchelonma gelontSchelonma() {
+    relonturn elonarlybirdIndelonxConfig.gelontSchelonma();
   }
 
-  public AudioSpaceTable getAudioSpaceTable() {
-    return audioSpaceTable;
+  public AudioSpacelonTablelon gelontAudioSpacelonTablelon() {
+    relonturn audioSpacelonTablelon;
   }
 }

@@ -1,76 +1,76 @@
-package com.twitter.home_mixer.functional_component.feature_hydrator.offline_aggregates
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator.offlinelon_aggrelongatelons
 
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.QueryFeatureHydrator
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.servo.repository.Repository
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.aggregate_interactions.thriftjava.UserAggregateInteractions
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.AggregateType.AggregateType
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.StoreConfig
-import com.twitter.timelines.suggests.common.dense_data_record.thriftscala.DenseFeatureMetadata
-import com.twitter.user_session_store.thriftjava.UserSession
-import com.twitter.util.Future
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMapBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator.QuelonryFelonaturelonHydrator
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.selonrvo.relonpository.Relonpository
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.timelonlinelons.aggrelongatelon_intelonractions.thriftjava.UselonrAggrelongatelonIntelonractions
+import com.twittelonr.timelonlinelons.data_procelonssing.ml_util.aggrelongation_framelonwork.AggrelongatelonTypelon.AggrelongatelonTypelon
+import com.twittelonr.timelonlinelons.data_procelonssing.ml_util.aggrelongation_framelonwork.StorelonConfig
+import com.twittelonr.timelonlinelons.suggelonsts.common.delonnselon_data_reloncord.thriftscala.DelonnselonFelonaturelonMelontadata
+import com.twittelonr.uselonr_selonssion_storelon.thriftjava.UselonrSelonssion
+import com.twittelonr.util.Futurelon
 
-abstract class BaseAggregateQueryFeatureHydrator(
-  featureRepository: Repository[Long, Option[UserSession]],
-  metadataRepository: Repository[Int, Option[DenseFeatureMetadata]],
-  feature: Feature[PipelineQuery, Option[AggregateFeaturesToDecodeWithMetadata]])
-    extends QueryFeatureHydrator[PipelineQuery] {
+abstract class BaselonAggrelongatelonQuelonryFelonaturelonHydrator(
+  felonaturelonRelonpository: Relonpository[Long, Option[UselonrSelonssion]],
+  melontadataRelonpository: Relonpository[Int, Option[DelonnselonFelonaturelonMelontadata]],
+  felonaturelon: Felonaturelon[PipelonlinelonQuelonry, Option[AggrelongatelonFelonaturelonsToDeloncodelonWithMelontadata]])
+    elonxtelonnds QuelonryFelonaturelonHydrator[PipelonlinelonQuelonry] {
 
-  override def hydrate(query: PipelineQuery): Stitch[FeatureMap] = {
-    val viewerId = query.getRequiredUserId
+  ovelonrridelon delonf hydratelon(quelonry: PipelonlinelonQuelonry): Stitch[FelonaturelonMap] = {
+    val vielonwelonrId = quelonry.gelontRelonquirelondUselonrId
 
-    Stitch.callFuture(
-      featureRepository(viewerId)
-        .flatMap { userSession: Option[UserSession] =>
-          val featuresWithMetadata: Option[Future[AggregateFeaturesToDecodeWithMetadata]] =
-            userSession
-              .flatMap(decodeUserSession(_))
+    Stitch.callFuturelon(
+      felonaturelonRelonpository(vielonwelonrId)
+        .flatMap { uselonrSelonssion: Option[UselonrSelonssion] =>
+          val felonaturelonsWithMelontadata: Option[Futurelon[AggrelongatelonFelonaturelonsToDeloncodelonWithMelontadata]] =
+            uselonrSelonssion
+              .flatMap(deloncodelonUselonrSelonssion(_))
 
-          featuresWithMetadata
-            .map { fu: Future[AggregateFeaturesToDecodeWithMetadata] => fu.map(Some(_)) }
-            .getOrElse(Future.None)
-            .map { value =>
-              FeatureMapBuilder()
-                .add(feature, value)
+          felonaturelonsWithMelontadata
+            .map { fu: Futurelon[AggrelongatelonFelonaturelonsToDeloncodelonWithMelontadata] => fu.map(Somelon(_)) }
+            .gelontOrelonlselon(Futurelon.Nonelon)
+            .map { valuelon =>
+              FelonaturelonMapBuildelonr()
+                .add(felonaturelon, valuelon)
                 .build()
             }
         }
     )
   }
 
-  private def decodeUserSession(
-    session: UserSession
-  ): Option[Future[AggregateFeaturesToDecodeWithMetadata]] = {
-    Option(session.user_aggregate_interactions).flatMap { aggregates =>
-      aggregates.getSetField match {
-        case UserAggregateInteractions._Fields.V17 =>
-          Some(
-            getAggregateFeaturesWithMetadata(
-              aggregates.getV17.user_aggregates.versionId,
-              UserAggregateInteractions.v17(aggregates.getV17))
+  privatelon delonf deloncodelonUselonrSelonssion(
+    selonssion: UselonrSelonssion
+  ): Option[Futurelon[AggrelongatelonFelonaturelonsToDeloncodelonWithMelontadata]] = {
+    Option(selonssion.uselonr_aggrelongatelon_intelonractions).flatMap { aggrelongatelons =>
+      aggrelongatelons.gelontSelontFielonld match {
+        caselon UselonrAggrelongatelonIntelonractions._Fielonlds.V17 =>
+          Somelon(
+            gelontAggrelongatelonFelonaturelonsWithMelontadata(
+              aggrelongatelons.gelontV17.uselonr_aggrelongatelons.velonrsionId,
+              UselonrAggrelongatelonIntelonractions.v17(aggrelongatelons.gelontV17))
           )
-        case _ =>
-          None
+        caselon _ =>
+          Nonelon
       }
     }
   }
 
-  private def getAggregateFeaturesWithMetadata(
-    versionId: Int,
-    userAggregateInteractions: UserAggregateInteractions,
-  ): Future[AggregateFeaturesToDecodeWithMetadata] = {
-    metadataRepository(versionId)
-      .map(AggregateFeaturesToDecodeWithMetadata(_, userAggregateInteractions))
+  privatelon delonf gelontAggrelongatelonFelonaturelonsWithMelontadata(
+    velonrsionId: Int,
+    uselonrAggrelongatelonIntelonractions: UselonrAggrelongatelonIntelonractions,
+  ): Futurelon[AggrelongatelonFelonaturelonsToDeloncodelonWithMelontadata] = {
+    melontadataRelonpository(velonrsionId)
+      .map(AggrelongatelonFelonaturelonsToDeloncodelonWithMelontadata(_, uselonrAggrelongatelonIntelonractions))
   }
 }
 
-trait BaseAggregateRootFeature
-    extends Feature[PipelineQuery, Option[AggregateFeaturesToDecodeWithMetadata]] {
-  def aggregateStores: Set[StoreConfig[_]]
+trait BaselonAggrelongatelonRootFelonaturelon
+    elonxtelonnds Felonaturelon[PipelonlinelonQuelonry, Option[AggrelongatelonFelonaturelonsToDeloncodelonWithMelontadata]] {
+  delonf aggrelongatelonStorelons: Selont[StorelonConfig[_]]
 
-  lazy val aggregateTypes: Set[AggregateType] = aggregateStores.map(_.aggregateType)
+  lazy val aggrelongatelonTypelons: Selont[AggrelongatelonTypelon] = aggrelongatelonStorelons.map(_.aggrelongatelonTypelon)
 }

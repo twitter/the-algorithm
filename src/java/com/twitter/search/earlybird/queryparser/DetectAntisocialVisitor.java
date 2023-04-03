@@ -1,131 +1,131 @@
-package com.twitter.search.earlybird.queryparser;
+packagelon com.twittelonr.selonarch.elonarlybird.quelonryparselonr;
 
-import com.twitter.search.common.constants.QueryCacheConstants;
-import com.twitter.search.queryparser.query.Conjunction;
-import com.twitter.search.queryparser.query.Disjunction;
-import com.twitter.search.queryparser.query.Phrase;
-import com.twitter.search.queryparser.query.QueryParserException;
-import com.twitter.search.queryparser.query.SpecialTerm;
-import com.twitter.search.queryparser.query.Term;
-import com.twitter.search.queryparser.query.search.SearchOperator;
-import com.twitter.search.queryparser.query.search.SearchOperatorConstants;
-import com.twitter.search.queryparser.query.search.SearchQueryVisitor;
+import com.twittelonr.selonarch.common.constants.QuelonryCachelonConstants;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.Conjunction;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.Disjunction;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.Phraselon;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.QuelonryParselonrelonxcelonption;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.SpeloncialTelonrm;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.Telonrm;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.selonarch.SelonarchOpelonrator;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.selonarch.SelonarchOpelonratorConstants;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.selonarch.SelonarchQuelonryVisitor;
 
 /**
- * Visitor to detect presence of any antisocial / spam operator in a Query.
- * Visitor returns true if any operators it detects were found.
+ * Visitor to delontelonct prelonselonncelon of any antisocial / spam opelonrator in a Quelonry.
+ * Visitor relonturns truelon if any opelonrators it delonteloncts welonrelon found.
  */
-public class DetectAntisocialVisitor extends SearchQueryVisitor<Boolean> {
-  // True if the query contains any operator to include antisocial tweets.
-  private boolean includeAntisocial = false;
+public class DelontelonctAntisocialVisitor elonxtelonnds SelonarchQuelonryVisitor<Boolelonan> {
+  // Truelon if thelon quelonry contains any opelonrator to includelon antisocial twelonelonts.
+  privatelon boolelonan includelonAntisocial = falselon;
 
-  // True if the query contains any operator to exclude antisocial/spam tweets.
-  private boolean excludeAntisocial = false;
+  // Truelon if thelon quelonry contains any opelonrator to elonxcludelon antisocial/spam twelonelonts.
+  privatelon boolelonan elonxcludelonAntisocial = falselon;
 
-  // True if the query contains an antisocial tweets filter.
-  private boolean filterAntisocial = false;
+  // Truelon if thelon quelonry contains an antisocial twelonelonts filtelonr.
+  privatelon boolelonan filtelonrAntisocial = falselon;
 
-  public boolean hasIncludeAntisocial() {
-    return includeAntisocial;
+  public boolelonan hasIncludelonAntisocial() {
+    relonturn includelonAntisocial;
   }
 
-  public boolean hasExcludeAntisocial() {
-    return excludeAntisocial;
+  public boolelonan haselonxcludelonAntisocial() {
+    relonturn elonxcludelonAntisocial;
   }
 
-  public boolean hasFilterAntisocial() {
-    return filterAntisocial;
+  public boolelonan hasFiltelonrAntisocial() {
+    relonturn filtelonrAntisocial;
   }
 
-  public boolean hasAnyAntisocialOperator() {
-    // Top tweets is considered an antisocial operator due to scoring also excluding
-    // spam tweets.
-    return hasIncludeAntisocial() || hasExcludeAntisocial() || hasFilterAntisocial();
+  public boolelonan hasAnyAntisocialOpelonrator() {
+    // Top twelonelonts is considelonrelond an antisocial opelonrator duelon to scoring also elonxcluding
+    // spam twelonelonts.
+    relonturn hasIncludelonAntisocial() || haselonxcludelonAntisocial() || hasFiltelonrAntisocial();
   }
 
-  @Override public Boolean visit(Disjunction disjunction) throws QueryParserException {
-    boolean found = false;
-    for (com.twitter.search.queryparser.query.Query node : disjunction.getChildren()) {
-      if (node.accept(this)) {
-        found = true;
+  @Ovelonrridelon public Boolelonan visit(Disjunction disjunction) throws QuelonryParselonrelonxcelonption {
+    boolelonan found = falselon;
+    for (com.twittelonr.selonarch.quelonryparselonr.quelonry.Quelonry nodelon : disjunction.gelontChildrelonn()) {
+      if (nodelon.accelonpt(this)) {
+        found = truelon;
       }
     }
-    return found;
+    relonturn found;
   }
 
-  @Override public Boolean visit(Conjunction conjunction) throws QueryParserException {
-    boolean found = false;
-    for (com.twitter.search.queryparser.query.Query node : conjunction.getChildren()) {
-      if (node.accept(this)) {
-        found = true;
+  @Ovelonrridelon public Boolelonan visit(Conjunction conjunction) throws QuelonryParselonrelonxcelonption {
+    boolelonan found = falselon;
+    for (com.twittelonr.selonarch.quelonryparselonr.quelonry.Quelonry nodelon : conjunction.gelontChildrelonn()) {
+      if (nodelon.accelonpt(this)) {
+        found = truelon;
       }
     }
-    return found;
+    relonturn found;
   }
 
-  @Override public Boolean visit(SearchOperator operator) throws QueryParserException {
-    boolean found = false;
-    switch (operator.getOperatorType()) {
-      case INCLUDE:
-        if (SearchOperatorConstants.ANTISOCIAL.equals(operator.getOperand())) {
-          if (operator.mustNotOccur()) {
-            excludeAntisocial = true;
-          } else {
-            includeAntisocial = true;
+  @Ovelonrridelon public Boolelonan visit(SelonarchOpelonrator opelonrator) throws QuelonryParselonrelonxcelonption {
+    boolelonan found = falselon;
+    switch (opelonrator.gelontOpelonratorTypelon()) {
+      caselon INCLUDelon:
+        if (SelonarchOpelonratorConstants.ANTISOCIAL.elonquals(opelonrator.gelontOpelonrand())) {
+          if (opelonrator.mustNotOccur()) {
+            elonxcludelonAntisocial = truelon;
+          } elonlselon {
+            includelonAntisocial = truelon;
           }
-          found = true;
+          found = truelon;
         }
-        break;
-      case EXCLUDE:
-        if (SearchOperatorConstants.ANTISOCIAL.equals(operator.getOperand())) {
-          if (operator.mustNotOccur()) {
-            includeAntisocial = true;
-          } else {
-            excludeAntisocial = true;
+        brelonak;
+      caselon elonXCLUDelon:
+        if (SelonarchOpelonratorConstants.ANTISOCIAL.elonquals(opelonrator.gelontOpelonrand())) {
+          if (opelonrator.mustNotOccur()) {
+            includelonAntisocial = truelon;
+          } elonlselon {
+            elonxcludelonAntisocial = truelon;
           }
-          found = true;
+          found = truelon;
         }
-        break;
-      case FILTER:
-        if (SearchOperatorConstants.ANTISOCIAL.equals(operator.getOperand())) {
-          if (operator.mustNotOccur()) {
-            excludeAntisocial = true;
-          } else {
-            filterAntisocial = true;
+        brelonak;
+      caselon FILTelonR:
+        if (SelonarchOpelonratorConstants.ANTISOCIAL.elonquals(opelonrator.gelontOpelonrand())) {
+          if (opelonrator.mustNotOccur()) {
+            elonxcludelonAntisocial = truelon;
+          } elonlselon {
+            filtelonrAntisocial = truelon;
           }
-          found = true;
+          found = truelon;
         }
-        break;
-      case CACHED_FILTER:
-        if (QueryCacheConstants.EXCLUDE_SPAM.equals(operator.getOperand())
-            || QueryCacheConstants.EXCLUDE_SPAM_AND_NATIVERETWEETS.equals(operator.getOperand())
-            || QueryCacheConstants.EXCLUDE_ANTISOCIAL.equals(operator.getOperand())
-            || QueryCacheConstants.EXCLUDE_ANTISOCIAL_AND_NATIVERETWEETS
-                .equals(operator.getOperand())) {
+        brelonak;
+      caselon CACHelonD_FILTelonR:
+        if (QuelonryCachelonConstants.elonXCLUDelon_SPAM.elonquals(opelonrator.gelontOpelonrand())
+            || QuelonryCachelonConstants.elonXCLUDelon_SPAM_AND_NATIVelonRelonTWelonelonTS.elonquals(opelonrator.gelontOpelonrand())
+            || QuelonryCachelonConstants.elonXCLUDelon_ANTISOCIAL.elonquals(opelonrator.gelontOpelonrand())
+            || QuelonryCachelonConstants.elonXCLUDelon_ANTISOCIAL_AND_NATIVelonRelonTWelonelonTS
+                .elonquals(opelonrator.gelontOpelonrand())) {
 
-          excludeAntisocial = true;
-          found = true;
+          elonxcludelonAntisocial = truelon;
+          found = truelon;
         }
-        break;
-      default:
-        break;
+        brelonak;
+      delonfault:
+        brelonak;
     }
 
-    return found;
+    relonturn found;
   }
 
-  @Override
-  public Boolean visit(SpecialTerm special) throws QueryParserException {
-    return false;
+  @Ovelonrridelon
+  public Boolelonan visit(SpeloncialTelonrm speloncial) throws QuelonryParselonrelonxcelonption {
+    relonturn falselon;
   }
 
-  @Override
-  public Boolean visit(Phrase phrase) throws QueryParserException {
-    return false;
+  @Ovelonrridelon
+  public Boolelonan visit(Phraselon phraselon) throws QuelonryParselonrelonxcelonption {
+    relonturn falselon;
   }
 
-  @Override
-  public Boolean visit(Term term) throws QueryParserException {
-    return false;
+  @Ovelonrridelon
+  public Boolelonan visit(Telonrm telonrm) throws QuelonryParselonrelonxcelonption {
+    relonturn falselon;
   }
 }

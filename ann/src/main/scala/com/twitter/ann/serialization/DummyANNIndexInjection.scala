@@ -1,12 +1,12 @@
-package com.twitter.ann.serialization
+packagelon com.twittelonr.ann.selonrialization
 
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.Long2BigEndian
+import com.twittelonr.scalding_intelonrnal.multiformat.format.kelonyval.KelonyValInjelonction
+import com.twittelonr.scalding_intelonrnal.multiformat.format.kelonyval.KelonyValInjelonction.Long2Bigelonndian
 
 /**
-Dummy injection required to writeup dummy dal dataset to ANN folder.
+Dummy injelonction relonquirelond to writelonup dummy dal dataselont to ANN foldelonr.
 **/
-object DummyANNIndexInjection {
-  val injection: KeyValInjection[Long, Long] =
-    KeyValInjection[Long, Long](Long2BigEndian, Long2BigEndian)
+objelonct DummyANNIndelonxInjelonction {
+  val injelonction: KelonyValInjelonction[Long, Long] =
+    KelonyValInjelonction[Long, Long](Long2Bigelonndian, Long2Bigelonndian)
 }

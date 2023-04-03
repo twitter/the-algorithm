@@ -1,22 +1,22 @@
-package com.twitter.cr_mixer.filter
+packagelon com.twittelonr.cr_mixelonr.filtelonr
 
-import com.twitter.cr_mixer.model.CandidateGeneratorQuery
-import com.twitter.cr_mixer.model.InitialCandidate
-import com.twitter.util.Future
+import com.twittelonr.cr_mixelonr.modelonl.CandidatelonGelonnelonratorQuelonry
+import com.twittelonr.cr_mixelonr.modelonl.InitialCandidatelon
+import com.twittelonr.util.Futurelon
 
-trait FilterBase {
-  def name: String
+trait FiltelonrBaselon {
+  delonf namelon: String
 
-  type ConfigType
+  typelon ConfigTypelon
 
-  def filter(
-    candidates: Seq[Seq[InitialCandidate]],
-    config: ConfigType
-  ): Future[Seq[Seq[InitialCandidate]]]
+  delonf filtelonr(
+    candidatelons: Selonq[Selonq[InitialCandidatelon]],
+    config: ConfigTypelon
+  ): Futurelon[Selonq[Selonq[InitialCandidatelon]]]
 
   /**
-   * Build the config params here. passing in param() into the filter is strongly discouraged
-   * because param() can be slow when called many times
+   * Build thelon config params helonrelon. passing in param() into thelon filtelonr is strongly discouragelond
+   * beloncauselon param() can belon slow whelonn callelond many timelons
    */
-  def requestToConfig[CGQueryType <: CandidateGeneratorQuery](request: CGQueryType): ConfigType
+  delonf relonquelonstToConfig[CGQuelonryTypelon <: CandidatelonGelonnelonratorQuelonry](relonquelonst: CGQuelonryTypelon): ConfigTypelon
 }

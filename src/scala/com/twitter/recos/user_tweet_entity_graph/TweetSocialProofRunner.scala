@@ -1,168 +1,168 @@
-package com.twitter.recos.user_tweet_entity_graph
+packagelon com.twittelonr.reloncos.uselonr_twelonelont_elonntity_graph
 
 import java.util.Random
-import com.twitter.concurrent.AsyncQueue
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.graphjet.bipartite.NodeMetadataLeftIndexedMultiSegmentBipartiteGraph
-import com.twitter.graphjet.algorithms.RecommendationInfo
-import com.twitter.graphjet.algorithms.socialproof.{
-  SocialProofResult,
-  TweetSocialProofGenerator,
-  SocialProofRequest => SocialProofJavaRequest,
-  SocialProofResponse => SocialProofJavaResponse
+import com.twittelonr.concurrelonnt.AsyncQuelonuelon
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.graphjelont.bipartitelon.NodelonMelontadataLelonftIndelonxelondMultiSelongmelonntBipartitelonGraph
+import com.twittelonr.graphjelont.algorithms.ReloncommelonndationInfo
+import com.twittelonr.graphjelont.algorithms.socialproof.{
+  SocialProofRelonsult,
+  TwelonelontSocialProofGelonnelonrator,
+  SocialProofRelonquelonst => SocialProofJavaRelonquelonst,
+  SocialProofRelonsponselon => SocialProofJavaRelonsponselon
 }
-import com.twitter.logging.Logger
-import com.twitter.recos.model.SalsaQueryRunner.SalsaRunnerConfig
-import com.twitter.recos.user_tweet_entity_graph.thriftscala.{
-  RecommendationType,
-  RecommendationSocialProofRequest => RecommendationSocialProofThriftRequest,
-  SocialProofRequest => SocialProofThriftRequest
+import com.twittelonr.logging.Loggelonr
+import com.twittelonr.reloncos.modelonl.SalsaQuelonryRunnelonr.SalsaRunnelonrConfig
+import com.twittelonr.reloncos.uselonr_twelonelont_elonntity_graph.thriftscala.{
+  ReloncommelonndationTypelon,
+  ReloncommelonndationSocialProofRelonquelonst => ReloncommelonndationSocialProofThriftRelonquelonst,
+  SocialProofRelonquelonst => SocialProofThriftRelonquelonst
 }
-import com.twitter.util.{Future, Try}
-import it.unimi.dsi.fastutil.longs.{Long2DoubleMap, Long2DoubleOpenHashMap, LongArraySet}
-import scala.collection.JavaConverters._
+import com.twittelonr.util.{Futurelon, Try}
+import it.unimi.dsi.fastutil.longs.{Long2DoublelonMap, Long2DoublelonOpelonnHashMap, LongArraySelont}
+import scala.collelonction.JavaConvelonrtelonrs._
 
 /**
- * TweetSocialProofRunner creates a queue of reader threads, TweetSocialProofGenerator, and each one
- * reads from the graph and computes social proofs.
+ * TwelonelontSocialProofRunnelonr crelonatelons a quelonuelon of relonadelonr threlonads, TwelonelontSocialProofGelonnelonrator, and elonach onelon
+ * relonads from thelon graph and computelons social proofs.
  */
-class TweetSocialProofRunner(
-  bipartiteGraph: NodeMetadataLeftIndexedMultiSegmentBipartiteGraph,
-  salsaRunnerConfig: SalsaRunnerConfig,
-  statsReceiver: StatsReceiver) {
-  private val log: Logger = Logger()
-  private val stats = statsReceiver.scope(this.getClass.getSimpleName)
-  private val socialProofSizeStat = stats.stat("socialProofSize")
+class TwelonelontSocialProofRunnelonr(
+  bipartitelonGraph: NodelonMelontadataLelonftIndelonxelondMultiSelongmelonntBipartitelonGraph,
+  salsaRunnelonrConfig: SalsaRunnelonrConfig,
+  statsReloncelonivelonr: StatsReloncelonivelonr) {
+  privatelon val log: Loggelonr = Loggelonr()
+  privatelon val stats = statsReloncelonivelonr.scopelon(this.gelontClass.gelontSimplelonNamelon)
+  privatelon val socialProofSizelonStat = stats.stat("socialProofSizelon")
 
-  private val socialProofFailureCounter = stats.counter("failure")
-  private val pollCounter = stats.counter("poll")
-  private val pollTimeoutCounter = stats.counter("pollTimeout")
-  private val offerCounter = stats.counter("offer")
-  private val pollLatencyStat = stats.stat("pollLatency")
-  private val socialProofRunnerPool = initSocialProofRunnerPool()
+  privatelon val socialProofFailurelonCountelonr = stats.countelonr("failurelon")
+  privatelon val pollCountelonr = stats.countelonr("poll")
+  privatelon val pollTimelonoutCountelonr = stats.countelonr("pollTimelonout")
+  privatelon val offelonrCountelonr = stats.countelonr("offelonr")
+  privatelon val pollLatelonncyStat = stats.stat("pollLatelonncy")
+  privatelon val socialProofRunnelonrPool = initSocialProofRunnelonrPool()
 
-  private def initSocialProofRunnerPool(): AsyncQueue[TweetSocialProofGenerator] = {
-    val socialProofQueue = new AsyncQueue[TweetSocialProofGenerator]
-    (0 until salsaRunnerConfig.numSalsaRunners).foreach { _ =>
-      socialProofQueue.offer(new TweetSocialProofGenerator(bipartiteGraph))
+  privatelon delonf initSocialProofRunnelonrPool(): AsyncQuelonuelon[TwelonelontSocialProofGelonnelonrator] = {
+    val socialProofQuelonuelon = nelonw AsyncQuelonuelon[TwelonelontSocialProofGelonnelonrator]
+    (0 until salsaRunnelonrConfig.numSalsaRunnelonrs).forelonach { _ =>
+      socialProofQuelonuelon.offelonr(nelonw TwelonelontSocialProofGelonnelonrator(bipartitelonGraph))
     }
-    socialProofQueue
+    socialProofQuelonuelon
   }
 
   /**
-   * Helper method to interpret the output of SocialProofJavaResponse
+   * Helonlpelonr melonthod to intelonrprelont thelon output of SocialProofJavaRelonsponselon
    *
-   * @param socialProofResponse is the response from running TweetSocialProof
-   * @return a sequence of SocialProofResult
+   * @param socialProofRelonsponselon is thelon relonsponselon from running TwelonelontSocialProof
+   * @relonturn a selonquelonncelon of SocialProofRelonsult
    */
-  private def transformSocialProofResponse(
-    socialProofResponse: Option[SocialProofJavaResponse]
-  ): Seq[RecommendationInfo] = {
-    socialProofResponse match {
-      case Some(response) =>
-        val scalaResponse = response.getRankedRecommendations.asScala
-        scalaResponse.foreach { result =>
-          socialProofSizeStat.add(result.asInstanceOf[SocialProofResult].getSocialProofSize)
+  privatelon delonf transformSocialProofRelonsponselon(
+    socialProofRelonsponselon: Option[SocialProofJavaRelonsponselon]
+  ): Selonq[ReloncommelonndationInfo] = {
+    socialProofRelonsponselon match {
+      caselon Somelon(relonsponselon) =>
+        val scalaRelonsponselon = relonsponselon.gelontRankelondReloncommelonndations.asScala
+        scalaRelonsponselon.forelonach { relonsult =>
+          socialProofSizelonStat.add(relonsult.asInstancelonOf[SocialProofRelonsult].gelontSocialProofSizelon)
         }
-        scalaResponse.toSeq
-      case _ => Nil
+        scalaRelonsponselon.toSelonq
+      caselon _ => Nil
     }
   }
 
   /**
-   * Helper method to run social proof computation and convert the results to Option
+   * Helonlpelonr melonthod to run social proof computation and convelonrt thelon relonsults to Option
    *
-   * @param socialProof is socialProof reader on bipartite graph
-   * @param request is the socialProof request
-   * @return is an option of SocialProofJavaResponse
+   * @param socialProof is socialProof relonadelonr on bipartitelon graph
+   * @param relonquelonst is thelon socialProof relonquelonst
+   * @relonturn is an option of SocialProofJavaRelonsponselon
    */
-  private def getSocialProofResponse(
-    socialProof: TweetSocialProofGenerator,
-    request: SocialProofJavaRequest,
+  privatelon delonf gelontSocialProofRelonsponselon(
+    socialProof: TwelonelontSocialProofGelonnelonrator,
+    relonquelonst: SocialProofJavaRelonquelonst,
     random: Random
   )(
-    implicit statsReceiver: StatsReceiver
-  ): Option[SocialProofJavaResponse] = {
-    val attempt = Try(socialProof.computeRecommendations(request, random)).onFailure { e =>
-      socialProofFailureCounter.incr()
-      log.error(e, "SocialProof computation failed")
+    implicit statsReloncelonivelonr: StatsReloncelonivelonr
+  ): Option[SocialProofJavaRelonsponselon] = {
+    val attelonmpt = Try(socialProof.computelonReloncommelonndations(relonquelonst, random)).onFailurelon { elon =>
+      socialProofFailurelonCountelonr.incr()
+      log.elonrror(elon, "SocialProof computation failelond")
     }
-    attempt.toOption
+    attelonmpt.toOption
   }
 
   /**
-   * Attempt to retrieve a TweetSocialProof thread from the runner pool
-   * to execute a socialProofRequest
+   * Attelonmpt to relontrielonvelon a TwelonelontSocialProof threlonad from thelon runnelonr pool
+   * to elonxeloncutelon a socialProofRelonquelonst
    */
-  private def handleSocialProofRequest(socialProofRequest: SocialProofJavaRequest) = {
-    pollCounter.incr()
-    val t0 = System.currentTimeMillis()
-    socialProofRunnerPool.poll().map { tweetSocialProof =>
-      val pollTime = System.currentTimeMillis - t0
-      pollLatencyStat.add(pollTime)
-      val socialProofResponse = Try {
-        if (pollTime < salsaRunnerConfig.timeoutSalsaRunner) {
-          val response = getSocialProofResponse(tweetSocialProof, socialProofRequest, new Random())(
-            statsReceiver
+  privatelon delonf handlelonSocialProofRelonquelonst(socialProofRelonquelonst: SocialProofJavaRelonquelonst) = {
+    pollCountelonr.incr()
+    val t0 = Systelonm.currelonntTimelonMillis()
+    socialProofRunnelonrPool.poll().map { twelonelontSocialProof =>
+      val pollTimelon = Systelonm.currelonntTimelonMillis - t0
+      pollLatelonncyStat.add(pollTimelon)
+      val socialProofRelonsponselon = Try {
+        if (pollTimelon < salsaRunnelonrConfig.timelonoutSalsaRunnelonr) {
+          val relonsponselon = gelontSocialProofRelonsponselon(twelonelontSocialProof, socialProofRelonquelonst, nelonw Random())(
+            statsReloncelonivelonr
           )
-          transformSocialProofResponse(response)
-        } else {
-          // if we did not get a social proof in time, then fail fast here and immediately put it back
-          log.warning("socialProof polling timeout")
-          pollTimeoutCounter.incr()
-          throw new RuntimeException("socialProof poll timeout")
+          transformSocialProofRelonsponselon(relonsponselon)
+        } elonlselon {
+          // if welon did not gelont a social proof in timelon, thelonn fail fast helonrelon and immelondiatelonly put it back
+          log.warning("socialProof polling timelonout")
+          pollTimelonoutCountelonr.incr()
+          throw nelonw Runtimelonelonxcelonption("socialProof poll timelonout")
           Nil
         }
-      } ensure {
-        socialProofRunnerPool.offer(tweetSocialProof)
-        offerCounter.incr()
+      } elonnsurelon {
+        socialProofRunnelonrPool.offelonr(twelonelontSocialProof)
+        offelonrCountelonr.incr()
       }
-      socialProofResponse.toOption getOrElse Nil
+      socialProofRelonsponselon.toOption gelontOrelonlselon Nil
     }
   }
 
   /**
-   * This apply() supports requests coming from the old tweet social proof endpoint.
-   * Currently this supports clients such as Email Recommendations, MagicRecs, and HomeTimeline.
-   * In order to avoid heavy migration work, we are retaining this endpoint.
+   * This apply() supports relonquelonsts coming from thelon old twelonelont social proof elonndpoint.
+   * Currelonntly this supports clielonnts such as elonmail Reloncommelonndations, MagicReloncs, and HomelonTimelonlinelon.
+   * In ordelonr to avoid helonavy migration work, welon arelon relontaining this elonndpoint.
    */
-  def apply(request: SocialProofThriftRequest): Future[Seq[RecommendationInfo]] = {
-    val tweetSet = new LongArraySet(request.inputTweets.toArray)
-    val leftSeedNodes: Long2DoubleMap = new Long2DoubleOpenHashMap(
-      request.seedsWithWeights.keys.toArray,
-      request.seedsWithWeights.values.toArray
+  delonf apply(relonquelonst: SocialProofThriftRelonquelonst): Futurelon[Selonq[ReloncommelonndationInfo]] = {
+    val twelonelontSelont = nelonw LongArraySelont(relonquelonst.inputTwelonelonts.toArray)
+    val lelonftSelonelondNodelons: Long2DoublelonMap = nelonw Long2DoublelonOpelonnHashMap(
+      relonquelonst.selonelondsWithWelonights.kelonys.toArray,
+      relonquelonst.selonelondsWithWelonights.valuelons.toArray
     )
 
-    val socialProofRequest = new SocialProofJavaRequest(
-      tweetSet,
-      leftSeedNodes,
-      UserTweetEdgeTypeMask.getUserTweetGraphSocialProofTypes(request.socialProofTypes)
+    val socialProofRelonquelonst = nelonw SocialProofJavaRelonquelonst(
+      twelonelontSelont,
+      lelonftSelonelondNodelons,
+      UselonrTwelonelontelondgelonTypelonMask.gelontUselonrTwelonelontGraphSocialProofTypelons(relonquelonst.socialProofTypelons)
     )
 
-    handleSocialProofRequest(socialProofRequest)
+    handlelonSocialProofRelonquelonst(socialProofRelonquelonst)
   }
 
   /**
-   * This apply() supports requests coming from the new social proof endpoint in UTEG that works for
-   * tweet social proof generation, as well as hashtag and url social proof generation.
-   * Currently this endpoint supports url social proof generation for Guide.
+   * This apply() supports relonquelonsts coming from thelon nelonw social proof elonndpoint in UTelonG that works for
+   * twelonelont social proof gelonnelonration, as welonll as hashtag and url social proof gelonnelonration.
+   * Currelonntly this elonndpoint supports url social proof gelonnelonration for Guidelon.
    */
-  def apply(request: RecommendationSocialProofThriftRequest): Future[Seq[RecommendationInfo]] = {
-    val tweetIds = request.recommendationIdsForSocialProof.collect {
-      case (RecommendationType.Tweet, ids) => ids
-    }.flatten
-    val tweetSet = new LongArraySet(tweetIds.toArray)
-    val leftSeedNodes: Long2DoubleMap = new Long2DoubleOpenHashMap(
-      request.seedsWithWeights.keys.toArray,
-      request.seedsWithWeights.values.toArray
+  delonf apply(relonquelonst: ReloncommelonndationSocialProofThriftRelonquelonst): Futurelon[Selonq[ReloncommelonndationInfo]] = {
+    val twelonelontIds = relonquelonst.reloncommelonndationIdsForSocialProof.collelonct {
+      caselon (ReloncommelonndationTypelon.Twelonelont, ids) => ids
+    }.flattelonn
+    val twelonelontSelont = nelonw LongArraySelont(twelonelontIds.toArray)
+    val lelonftSelonelondNodelons: Long2DoublelonMap = nelonw Long2DoublelonOpelonnHashMap(
+      relonquelonst.selonelondsWithWelonights.kelonys.toArray,
+      relonquelonst.selonelondsWithWelonights.valuelons.toArray
     )
 
-    val socialProofRequest = new SocialProofJavaRequest(
-      tweetSet,
-      leftSeedNodes,
-      UserTweetEdgeTypeMask.getUserTweetGraphSocialProofTypes(request.socialProofTypes)
+    val socialProofRelonquelonst = nelonw SocialProofJavaRelonquelonst(
+      twelonelontSelont,
+      lelonftSelonelondNodelons,
+      UselonrTwelonelontelondgelonTypelonMask.gelontUselonrTwelonelontGraphSocialProofTypelons(relonquelonst.socialProofTypelons)
     )
 
-    handleSocialProofRequest(socialProofRequest)
+    handlelonSocialProofRelonquelonst(socialProofRelonquelonst)
   }
 }

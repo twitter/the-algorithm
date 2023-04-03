@@ -1,175 +1,175 @@
-package com.twitter.search.earlybird_root.mergers;
+packagelon com.twittelonr.selonarch.elonarlybird_root.melonrgelonrs;
 
 
-import javax.annotation.Nullable;
+import javax.annotation.Nullablelon;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Function;
-import com.google.common.base.Joiner;
-import com.google.common.collect.Iterables;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import com.googlelon.common.baselon.Function;
+import com.googlelon.common.baselon.Joinelonr;
+import com.googlelon.common.collelonct.Itelonrablelons;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.search.common.logging.DebugMessageBuilder;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.search.earlybird.thrift.ThriftSearchQuery;
-import com.twitter.search.earlybird.thrift.ThriftSearchResult;
+import com.twittelonr.selonarch.common.logging.DelonbugMelonssagelonBuildelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonquelonst;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselonCodelon;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchQuelonry;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsult;
 
 /**
- * Collects debug messages to attach to EarlybirdResponse
+ * Colleloncts delonbug melonssagelons to attach to elonarlybirdRelonsponselon
  */
-class EarlybirdResponseDebugMessageBuilder {
-  private static final Logger LOG =
-      LoggerFactory.getLogger(EarlybirdResponseDebugMessageBuilder.class);
+class elonarlybirdRelonsponselonDelonbugMelonssagelonBuildelonr {
+  privatelon static final Loggelonr LOG =
+      LoggelonrFactory.gelontLoggelonr(elonarlybirdRelonsponselonDelonbugMelonssagelonBuildelonr.class);
 
-  private static final Logger TOO_MANY_FAILED_PARTITIONS_LOG =
-      LoggerFactory.getLogger(String.format("%s_too_many_failed_partitions",
-                                            EarlybirdResponseDebugMessageBuilder.class.getName()));
+  privatelon static final Loggelonr TOO_MANY_FAILelonD_PARTITIONS_LOG =
+      LoggelonrFactory.gelontLoggelonr(String.format("%s_too_many_failelond_partitions",
+                                            elonarlybirdRelonsponselonDelonbugMelonssagelonBuildelonr.class.gelontNamelon()));
 
-  @VisibleForTesting
-  protected final SearchCounter insufficientValidResponseCounter =
-      SearchCounter.export("insufficient_valid_partition_responses_count");
-  @VisibleForTesting
-  protected final SearchCounter validPartitionResponseCounter =
-      SearchCounter.export("valid_partition_response_count");
+  @VisiblelonForTelonsting
+  protelonctelond final SelonarchCountelonr insufficielonntValidRelonsponselonCountelonr =
+      SelonarchCountelonr.elonxport("insufficielonnt_valid_partition_relonsponselons_count");
+  @VisiblelonForTelonsting
+  protelonctelond final SelonarchCountelonr validPartitionRelonsponselonCountelonr =
+      SelonarchCountelonr.elonxport("valid_partition_relonsponselon_count");
 
-  // the combined debug string for all earlybird responses
-  private final StringBuilder debugString;
+  // thelon combinelond delonbug string for all elonarlybird relonsponselons
+  privatelon final StringBuildelonr delonbugString;
   /**
-   * A message builder backed by the same {@link #debugString} above.
+   * A melonssagelon buildelonr backelond by thelon samelon {@link #delonbugString} abovelon.
    */
-  private final DebugMessageBuilder debugMessageBuilder;
+  privatelon final DelonbugMelonssagelonBuildelonr delonbugMelonssagelonBuildelonr;
 
-  private static final Joiner JOINER = Joiner.on(", ");
+  privatelon static final Joinelonr JOINelonR = Joinelonr.on(", ");
 
-  EarlybirdResponseDebugMessageBuilder(EarlybirdRequest request) {
-    this(getDebugLevel(request));
+  elonarlybirdRelonsponselonDelonbugMelonssagelonBuildelonr(elonarlybirdRelonquelonst relonquelonst) {
+    this(gelontDelonbugLelonvelonl(relonquelonst));
   }
 
-  EarlybirdResponseDebugMessageBuilder(DebugMessageBuilder.Level level) {
-    this.debugString = new StringBuilder();
-    this.debugMessageBuilder = new DebugMessageBuilder(debugString, level);
+  elonarlybirdRelonsponselonDelonbugMelonssagelonBuildelonr(DelonbugMelonssagelonBuildelonr.Lelonvelonl lelonvelonl) {
+    this.delonbugString = nelonw StringBuildelonr();
+    this.delonbugMelonssagelonBuildelonr = nelonw DelonbugMelonssagelonBuildelonr(delonbugString, lelonvelonl);
   }
 
-  private static DebugMessageBuilder.Level getDebugLevel(EarlybirdRequest request) {
-    if (request.isSetDebugMode() && request.getDebugMode() > 0) {
-      return DebugMessageBuilder.getDebugLevel(request.getDebugMode());
-    } else if (request.isSetDebugOptions()) {
-      return DebugMessageBuilder.Level.DEBUG_BASIC;
-    } else {
-      return DebugMessageBuilder.Level.DEBUG_NONE;
+  privatelon static DelonbugMelonssagelonBuildelonr.Lelonvelonl gelontDelonbugLelonvelonl(elonarlybirdRelonquelonst relonquelonst) {
+    if (relonquelonst.isSelontDelonbugModelon() && relonquelonst.gelontDelonbugModelon() > 0) {
+      relonturn DelonbugMelonssagelonBuildelonr.gelontDelonbugLelonvelonl(relonquelonst.gelontDelonbugModelon());
+    } elonlselon if (relonquelonst.isSelontDelonbugOptions()) {
+      relonturn DelonbugMelonssagelonBuildelonr.Lelonvelonl.DelonBUG_BASIC;
+    } elonlselon {
+      relonturn DelonbugMelonssagelonBuildelonr.Lelonvelonl.DelonBUG_NONelon;
     }
   }
 
-  protected boolean isDebugMode() {
-    return debugMessageBuilder.getDebugLevel() > 0;
+  protelonctelond boolelonan isDelonbugModelon() {
+    relonturn delonbugMelonssagelonBuildelonr.gelontDelonbugLelonvelonl() > 0;
   }
 
-  void append(String msg) {
-    debugString.append(msg);
+  void appelonnd(String msg) {
+    delonbugString.appelonnd(msg);
   }
 
-  void debugAndLogWarning(String msg) {
-    if (isDebugMode()) {
-      debugString.append(msg).append('\n');
+  void delonbugAndLogWarning(String msg) {
+    if (isDelonbugModelon()) {
+      delonbugString.appelonnd(msg).appelonnd('\n');
     }
     LOG.warn(msg);
   }
 
-  void debugDetailed(String format, Object... args) {
-    debugAtLevel(DebugMessageBuilder.Level.DEBUG_DETAILED, format, args);
+  void delonbugDelontailelond(String format, Objelonct... args) {
+    delonbugAtLelonvelonl(DelonbugMelonssagelonBuildelonr.Lelonvelonl.DelonBUG_DelonTAILelonD, format, args);
   }
 
-  void debugVerbose(String format, Object... args) {
-    debugAtLevel(DebugMessageBuilder.Level.DEBUG_VERBOSE, format, args);
+  void delonbugVelonrboselon(String format, Objelonct... args) {
+    delonbugAtLelonvelonl(DelonbugMelonssagelonBuildelonr.Lelonvelonl.DelonBUG_VelonRBOSelon, format, args);
   }
 
-  void debugVerbose2(String format, Object... args) {
-    debugAtLevel(DebugMessageBuilder.Level.DEBUG_VERBOSE_2, format, args);
+  void delonbugVelonrboselon2(String format, Objelonct... args) {
+    delonbugAtLelonvelonl(DelonbugMelonssagelonBuildelonr.Lelonvelonl.DelonBUG_VelonRBOSelon_2, format, args);
   }
 
-  void debugAtLevel(DebugMessageBuilder.Level level, String format, Object... args) {
-    boolean levelOK = debugMessageBuilder.isAtLeastLevel(level);
-    if (levelOK || LOG.isDebugEnabled()) {
-      // We check both modes here in order to build the formatted message only once.
-      String message = String.format(format, args);
+  void delonbugAtLelonvelonl(DelonbugMelonssagelonBuildelonr.Lelonvelonl lelonvelonl, String format, Objelonct... args) {
+    boolelonan lelonvelonlOK = delonbugMelonssagelonBuildelonr.isAtLelonastLelonvelonl(lelonvelonl);
+    if (lelonvelonlOK || LOG.isDelonbugelonnablelond()) {
+      // Welon chelonck both modelons helonrelon in ordelonr to build thelon formattelond melonssagelon only oncelon.
+      String melonssagelon = String.format(format, args);
 
-      LOG.debug(message);
+      LOG.delonbug(melonssagelon);
 
-      if (levelOK) {
-        debugString.append(message).append('\n');
+      if (lelonvelonlOK) {
+        delonbugString.appelonnd(melonssagelon).appelonnd('\n');
       }
     }
   }
 
-  String debugString() {
-    return debugString.toString();
+  String delonbugString() {
+    relonturn delonbugString.toString();
   }
 
-  DebugMessageBuilder getDebugMessageBuilder() {
-    return debugMessageBuilder;
+  DelonbugMelonssagelonBuildelonr gelontDelonbugMelonssagelonBuildelonr() {
+    relonturn delonbugMelonssagelonBuildelonr;
   }
 
-  void logBelowSuccessThreshold(ThriftSearchQuery searchQuery, int numSuccessResponses,
-                                int numPartitions, double successThreshold) {
-    String rawQuery = (searchQuery != null && searchQuery.isSetRawQuery())
-        ? "[" + searchQuery.getRawQuery() + "]" : "null";
-    String serializedQuery = (searchQuery != null && searchQuery.isSetSerializedQuery())
-        ? "[" + searchQuery.getSerializedQuery() + "]" : "null";
-    // Not enough successful responses from partitions.
-    String errorMessage = String.format(
-        "Only %d valid responses returned out of %d partitions for raw query: %s"
-            + " serialized query: %s. Lower than threshold of %s",
-        numSuccessResponses, numPartitions, rawQuery, serializedQuery, successThreshold);
+  void logBelonlowSuccelonssThrelonshold(ThriftSelonarchQuelonry selonarchQuelonry, int numSuccelonssRelonsponselons,
+                                int numPartitions, doublelon succelonssThrelonshold) {
+    String rawQuelonry = (selonarchQuelonry != null && selonarchQuelonry.isSelontRawQuelonry())
+        ? "[" + selonarchQuelonry.gelontRawQuelonry() + "]" : "null";
+    String selonrializelondQuelonry = (selonarchQuelonry != null && selonarchQuelonry.isSelontSelonrializelondQuelonry())
+        ? "[" + selonarchQuelonry.gelontSelonrializelondQuelonry() + "]" : "null";
+    // Not elonnough succelonssful relonsponselons from partitions.
+    String elonrrorMelonssagelon = String.format(
+        "Only %d valid relonsponselons relonturnelond out of %d partitions for raw quelonry: %s"
+            + " selonrializelond quelonry: %s. Lowelonr than threlonshold of %s",
+        numSuccelonssRelonsponselons, numPartitions, rawQuelonry, selonrializelondQuelonry, succelonssThrelonshold);
 
-    TOO_MANY_FAILED_PARTITIONS_LOG.warn(errorMessage);
+    TOO_MANY_FAILelonD_PARTITIONS_LOG.warn(elonrrorMelonssagelon);
 
-    insufficientValidResponseCounter.increment();
-    validPartitionResponseCounter.add(numSuccessResponses);
-    debugString.append(errorMessage);
+    insufficielonntValidRelonsponselonCountelonr.increlonmelonnt();
+    validPartitionRelonsponselonCountelonr.add(numSuccelonssRelonsponselons);
+    delonbugString.appelonnd(elonrrorMelonssagelon);
   }
 
 
-  @VisibleForTesting
-  void logResponseDebugInfo(EarlybirdRequest earlybirdRequest,
-                            String partitionTierName,
-                            EarlybirdResponse response) {
-    if (response.isSetDebugString() && !response.getDebugString().isEmpty()) {
-      debugString.append(String.format("Received response from [%s] with debug string [%s]",
-          partitionTierName, response.getDebugString())).append("\n");
+  @VisiblelonForTelonsting
+  void logRelonsponselonDelonbugInfo(elonarlybirdRelonquelonst elonarlybirdRelonquelonst,
+                            String partitionTielonrNamelon,
+                            elonarlybirdRelonsponselon relonsponselon) {
+    if (relonsponselon.isSelontDelonbugString() && !relonsponselon.gelontDelonbugString().iselonmpty()) {
+      delonbugString.appelonnd(String.format("Reloncelonivelond relonsponselon from [%s] with delonbug string [%s]",
+          partitionTielonrNamelon, relonsponselon.gelontDelonbugString())).appelonnd("\n");
     }
 
-    if (!response.isSetResponseCode()) {
-      debugAndLogWarning(String.format(
-          "Received Earlybird null response code for query [%s] from [%s]",
-          earlybirdRequest, partitionTierName));
-    } else if (response.getResponseCode() != EarlybirdResponseCode.SUCCESS
-        && response.getResponseCode() != EarlybirdResponseCode.PARTITION_SKIPPED
-        && response.getResponseCode() != EarlybirdResponseCode.PARTITION_DISABLED
-        && response.getResponseCode() != EarlybirdResponseCode.TIER_SKIPPED) {
-      debugAndLogWarning(String.format(
-          "Received Earlybird response error [%s] for query [%s] from [%s]",
-          response.getResponseCode(), earlybirdRequest, partitionTierName));
+    if (!relonsponselon.isSelontRelonsponselonCodelon()) {
+      delonbugAndLogWarning(String.format(
+          "Reloncelonivelond elonarlybird null relonsponselon codelon for quelonry [%s] from [%s]",
+          elonarlybirdRelonquelonst, partitionTielonrNamelon));
+    } elonlselon if (relonsponselon.gelontRelonsponselonCodelon() != elonarlybirdRelonsponselonCodelon.SUCCelonSS
+        && relonsponselon.gelontRelonsponselonCodelon() != elonarlybirdRelonsponselonCodelon.PARTITION_SKIPPelonD
+        && relonsponselon.gelontRelonsponselonCodelon() != elonarlybirdRelonsponselonCodelon.PARTITION_DISABLelonD
+        && relonsponselon.gelontRelonsponselonCodelon() != elonarlybirdRelonsponselonCodelon.TIelonR_SKIPPelonD) {
+      delonbugAndLogWarning(String.format(
+          "Reloncelonivelond elonarlybird relonsponselon elonrror [%s] for quelonry [%s] from [%s]",
+          relonsponselon.gelontRelonsponselonCodelon(), elonarlybirdRelonquelonst, partitionTielonrNamelon));
     }
 
-    if (debugMessageBuilder.isVerbose2()) {
-      debugVerbose2("Earlybird [%s] returned response: %s", partitionTierName, response);
-    } else if (debugMessageBuilder.isVerbose()) {
-      if (response.isSetSearchResults() && response.getSearchResults().getResultsSize() > 0) {
-        String ids = JOINER.join(Iterables.transform(
-            response.getSearchResults().getResults(),
-            new Function<ThriftSearchResult, Long>() {
-              @Nullable
-              @Override
-              public Long apply(ThriftSearchResult result) {
-                return result.getId();
+    if (delonbugMelonssagelonBuildelonr.isVelonrboselon2()) {
+      delonbugVelonrboselon2("elonarlybird [%s] relonturnelond relonsponselon: %s", partitionTielonrNamelon, relonsponselon);
+    } elonlselon if (delonbugMelonssagelonBuildelonr.isVelonrboselon()) {
+      if (relonsponselon.isSelontSelonarchRelonsults() && relonsponselon.gelontSelonarchRelonsults().gelontRelonsultsSizelon() > 0) {
+        String ids = JOINelonR.join(Itelonrablelons.transform(
+            relonsponselon.gelontSelonarchRelonsults().gelontRelonsults(),
+            nelonw Function<ThriftSelonarchRelonsult, Long>() {
+              @Nullablelon
+              @Ovelonrridelon
+              public Long apply(ThriftSelonarchRelonsult relonsult) {
+                relonturn relonsult.gelontId();
               }
             }));
-        debugVerbose("Earlybird [%s] returned TweetIDs: %s", partitionTierName, ids);
+        delonbugVelonrboselon("elonarlybird [%s] relonturnelond TwelonelontIDs: %s", partitionTielonrNamelon, ids);
       }
     }
   }

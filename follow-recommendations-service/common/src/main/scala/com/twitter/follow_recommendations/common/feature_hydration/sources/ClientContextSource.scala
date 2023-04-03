@@ -1,43 +1,43 @@
-package com.twitter.follow_recommendations.common.feature_hydration.sources
+packagelon com.twittelonr.follow_reloncommelonndations.common.felonaturelon_hydration.sourcelons
 
-import com.google.inject.Provides
-import com.google.inject.Singleton
-import com.twitter.follow_recommendations.common.feature_hydration.adapters.ClientContextAdapter
-import com.twitter.follow_recommendations.common.feature_hydration.common.FeatureSource
-import com.twitter.follow_recommendations.common.feature_hydration.common.FeatureSourceId
-import com.twitter.follow_recommendations.common.feature_hydration.common.HasPreFetchedFeature
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.HasDisplayLocation
-import com.twitter.follow_recommendations.common.models.HasSimilarToContext
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.FeatureContext
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
+import com.googlelon.injelonct.Providelons
+import com.googlelon.injelonct.Singlelonton
+import com.twittelonr.follow_reloncommelonndations.common.felonaturelon_hydration.adaptelonrs.ClielonntContelonxtAdaptelonr
+import com.twittelonr.follow_reloncommelonndations.common.felonaturelon_hydration.common.FelonaturelonSourcelon
+import com.twittelonr.follow_reloncommelonndations.common.felonaturelon_hydration.common.FelonaturelonSourcelonId
+import com.twittelonr.follow_reloncommelonndations.common.felonaturelon_hydration.common.HasPrelonFelontchelondFelonaturelon
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.CandidatelonUselonr
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.HasDisplayLocation
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.HasSimilarToContelonxt
+import com.twittelonr.ml.api.DataReloncord
+import com.twittelonr.ml.api.FelonaturelonContelonxt
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.HasClielonntContelonxt
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.timelonlinelons.configapi.HasParams
 
 /**
- * This source only takes features from the request (e.g. client context, WTF display location)
- * No external calls are made.
+ * This sourcelon only takelons felonaturelons from thelon relonquelonst (elon.g. clielonnt contelonxt, WTF display location)
+ * No elonxtelonrnal calls arelon madelon.
  */
-@Provides
-@Singleton
-class ClientContextSource() extends FeatureSource {
+@Providelons
+@Singlelonton
+class ClielonntContelonxtSourcelon() elonxtelonnds FelonaturelonSourcelon {
 
-  override val id: FeatureSourceId = FeatureSourceId.ClientContextSourceId
+  ovelonrridelon val id: FelonaturelonSourcelonId = FelonaturelonSourcelonId.ClielonntContelonxtSourcelonId
 
-  override val featureContext: FeatureContext = ClientContextAdapter.getFeatureContext
+  ovelonrridelon val felonaturelonContelonxt: FelonaturelonContelonxt = ClielonntContelonxtAdaptelonr.gelontFelonaturelonContelonxt
 
-  override def hydrateFeatures(
-    t: HasClientContext
-      with HasPreFetchedFeature
+  ovelonrridelon delonf hydratelonFelonaturelons(
+    t: HasClielonntContelonxt
+      with HasPrelonFelontchelondFelonaturelon
       with HasParams
-      with HasSimilarToContext
+      with HasSimilarToContelonxt
       with HasDisplayLocation,
-    candidates: Seq[CandidateUser]
-  ): Stitch[Map[CandidateUser, DataRecord]] = {
-    Stitch.value(
-      candidates
-        .map(_ -> ((t.clientContext, t.displayLocation))).toMap.mapValues(
-          ClientContextAdapter.adaptToDataRecord))
+    candidatelons: Selonq[CandidatelonUselonr]
+  ): Stitch[Map[CandidatelonUselonr, DataReloncord]] = {
+    Stitch.valuelon(
+      candidatelons
+        .map(_ -> ((t.clielonntContelonxt, t.displayLocation))).toMap.mapValuelons(
+          ClielonntContelonxtAdaptelonr.adaptToDataReloncord))
   }
 }

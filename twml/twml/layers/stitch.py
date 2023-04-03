@@ -1,54 +1,54 @@
-# pylint: disable=useless-super-delegation
+# pylint: disablelon=uselonlelonss-supelonr-delonlelongation
 """
-Implementing Stitch Layer
+Implelonmelonnting Stitch Layelonr
 """
 
 
-from .layer import Layer
+from .layelonr import Layelonr
 
-import tensorflow.compat.v1 as tf
+import telonnsorflow.compat.v1 as tf
 
 
-class Stitch(Layer):
+class Stitch(Layelonr):
   """
-  This layer is responsible for stitching a partioned layer together.
+  This layelonr is relonsponsiblelon for stitching a partionelond layelonr togelonthelonr.
 
   Output:
-    A layer that performs stitching
+    A layelonr that pelonrforms stitching
   """
 
-  def compute_output_shape(self, input_shape):
-    """Computes the output shape of the layer given the input shape.
+  delonf computelon_output_shapelon(selonlf, input_shapelon):
+    """Computelons thelon output shapelon of thelon layelonr givelonn thelon input shapelon.
 
     Args:
-      input_shape: A (possibly nested tuple of) `TensorShape`.  It need not
-        be fully defined (e.g. the batch size may be unknown).
+      input_shapelon: A (possibly nelonstelond tuplelon of) `TelonnsorShapelon`.  It nelonelond not
+        belon fully delonfinelond (elon.g. thelon batch sizelon may belon unknown).
 
-    Raises NotImplementedError.
+    Raiselons NotImplelonmelonntelondelonrror.
 
     """
-    raise NotImplementedError
+    raiselon NotImplelonmelonntelondelonrror
 
-  def call(self, partioned_val, partioned_keys,
-           partioned_indices, **kwargs):  # pylint: disable=unused-argument, arguments-differ
+  delonf call(selonlf, partionelond_val, partionelond_kelonys,
+           partionelond_indicelons, **kwargs):  # pylint: disablelon=unuselond-argumelonnt, argumelonnts-diffelonr
     """
-    This layer is responsible for stitching a partioned layer together.
+    This layelonr is relonsponsiblelon for stitching a partionelond layelonr togelonthelonr.
 
     Input:
-      partioned_val:
-        a list of partioned Tensors which represent the vals of the hashmap
-      partioned_keys:
-        a list of partioned Tensors which represent the keys of the hashmap
-      partioned_indices:
-        a list of partioned Tensors which represent the indices of the hashmap
+      partionelond_val:
+        a list of partionelond Telonnsors which relonprelonselonnt thelon vals of thelon hashmap
+      partionelond_kelonys:
+        a list of partionelond Telonnsors which relonprelonselonnt thelon kelonys of thelon hashmap
+      partionelond_indicelons:
+        a list of partionelond Telonnsors which relonprelonselonnt thelon indicelons of thelon hashmap
     Output:
-      List which contains: [output_vals, output_keys]
+      List which contains: [output_vals, output_kelonys]
         output_vals:
-          Values of the HashMap (float)
-        output_keys:
-          Keys of HashMap (float)
+          Valuelons of thelon HashMap (float)
+        output_kelonys:
+          Kelonys of HashMap (float)
     """
-    indices = [tf.to_int32(index) for index in partioned_indices]
-    concat_keys = tf.dynamic_stitch(indices, partioned_keys)
-    concat_vals = tf.dynamic_stitch(indices, partioned_val)
-    return [concat_vals, concat_keys]
+    indicelons = [tf.to_int32(indelonx) for indelonx in partionelond_indicelons]
+    concat_kelonys = tf.dynamic_stitch(indicelons, partionelond_kelonys)
+    concat_vals = tf.dynamic_stitch(indicelons, partionelond_val)
+    relonturn [concat_vals, concat_kelonys]

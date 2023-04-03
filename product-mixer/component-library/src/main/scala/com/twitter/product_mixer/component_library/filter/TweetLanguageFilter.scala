@@ -1,40 +1,40 @@
-package com.twitter.product_mixer.component_library.filter
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.filtelonr
 
-import com.twitter.product_mixer.component_library.model.candidate.BaseTweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.filter.FilterResult
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.BaselonTwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.filtelonr.Filtelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.filtelonr.FiltelonrRelonsult
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.FiltelonrIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stitch.Stitch
 
-case class TweetLanguageFilter[Candidate <: BaseTweetCandidate](
-  languageCodeFeature: Feature[Candidate, Option[String]])
-    extends Filter[PipelineQuery, Candidate] {
+caselon class TwelonelontLanguagelonFiltelonr[Candidatelon <: BaselonTwelonelontCandidatelon](
+  languagelonCodelonFelonaturelon: Felonaturelon[Candidatelon, Option[String]])
+    elonxtelonnds Filtelonr[PipelonlinelonQuelonry, Candidatelon] {
 
-  override val identifier: FilterIdentifier = FilterIdentifier("TweetLanguage")
+  ovelonrridelon val idelonntifielonr: FiltelonrIdelonntifielonr = FiltelonrIdelonntifielonr("TwelonelontLanguagelon")
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): Stitch[FilterResult[Candidate]] = {
+  ovelonrridelon delonf apply(
+    quelonry: PipelonlinelonQuelonry,
+    candidatelons: Selonq[CandidatelonWithFelonaturelons[Candidatelon]]
+  ): Stitch[FiltelonrRelonsult[Candidatelon]] = {
 
-    val userAppLanguage = query.getLanguageCode
+    val uselonrAppLanguagelon = quelonry.gelontLanguagelonCodelon
 
-    val (keptCandidates, removedCandidates) = candidates.partition { filterCandidate =>
-      val tweetLanguage = filterCandidate.features.get(languageCodeFeature)
+    val (kelonptCandidatelons, relonmovelondCandidatelons) = candidatelons.partition { filtelonrCandidatelon =>
+      val twelonelontLanguagelon = filtelonrCandidatelon.felonaturelons.gelont(languagelonCodelonFelonaturelon)
 
-      (tweetLanguage, userAppLanguage) match {
-        case (Some(tweetLanguageCode), Some(userAppLanguageCode)) =>
-          tweetLanguageCode.equalsIgnoreCase(userAppLanguageCode)
-        case _ => true
+      (twelonelontLanguagelon, uselonrAppLanguagelon) match {
+        caselon (Somelon(twelonelontLanguagelonCodelon), Somelon(uselonrAppLanguagelonCodelon)) =>
+          twelonelontLanguagelonCodelon.elonqualsIgnorelonCaselon(uselonrAppLanguagelonCodelon)
+        caselon _ => truelon
       }
     }
 
-    Stitch.value(
-      FilterResult(
-        kept = keptCandidates.map(_.candidate),
-        removed = removedCandidates.map(_.candidate)))
+    Stitch.valuelon(
+      FiltelonrRelonsult(
+        kelonpt = kelonptCandidatelons.map(_.candidatelon),
+        relonmovelond = relonmovelondCandidatelons.map(_.candidatelon)))
   }
 }

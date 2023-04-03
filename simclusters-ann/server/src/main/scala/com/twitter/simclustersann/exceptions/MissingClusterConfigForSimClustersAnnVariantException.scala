@@ -1,6 +1,6 @@
-package com.twitter.simclustersann.exceptions
+packagelon com.twittelonr.simclustelonrsann.elonxcelonptions
 
-case class MissingClusterConfigForSimClustersAnnVariantException(sannServiceName: String)
-    extends IllegalStateException(
-      s"No cluster configuration found for service ($sannServiceName)",
+caselon class MissingClustelonrConfigForSimClustelonrsAnnVariantelonxcelonption(sannSelonrvicelonNamelon: String)
+    elonxtelonnds IllelongalStatelonelonxcelonption(
+      s"No clustelonr configuration found for selonrvicelon ($sannSelonrvicelonNamelon)",
       null)

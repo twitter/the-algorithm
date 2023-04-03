@@ -1,29 +1,29 @@
-package com.twitter.home_mixer.product.list_recommended_users.filter
+packagelon com.twittelonr.homelon_mixelonr.product.list_reloncommelonndelond_uselonrs.filtelonr
 
-import com.twitter.home_mixer.product.list_recommended_users.model.ListFeatures.ScoreFeature
-import com.twitter.product_mixer.component_library.model.candidate.UserCandidate
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.filter.FilterResult
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+import com.twittelonr.homelon_mixelonr.product.list_reloncommelonndelond_uselonrs.modelonl.ListFelonaturelons.ScorelonFelonaturelon
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.UselonrCandidatelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.filtelonr.Filtelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.filtelonr.FiltelonrRelonsult
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.FiltelonrIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stitch.Stitch
 
-object DropMaxCandidatesByScoreFilter extends Filter[PipelineQuery, UserCandidate] {
+objelonct DropMaxCandidatelonsByScorelonFiltelonr elonxtelonnds Filtelonr[PipelonlinelonQuelonry, UselonrCandidatelon] {
 
-  override val identifier: FilterIdentifier = FilterIdentifier("DropMaxCandidatesByScore")
+  ovelonrridelon val idelonntifielonr: FiltelonrIdelonntifielonr = FiltelonrIdelonntifielonr("DropMaxCandidatelonsByScorelon")
 
-  private val MaxSimilarUserCandidates = 1000
+  privatelon val MaxSimilarUselonrCandidatelons = 1000
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[UserCandidate]]
-  ): Stitch[FilterResult[UserCandidate]] = {
+  ovelonrridelon delonf apply(
+    quelonry: PipelonlinelonQuelonry,
+    candidatelons: Selonq[CandidatelonWithFelonaturelons[UselonrCandidatelon]]
+  ): Stitch[FiltelonrRelonsult[UselonrCandidatelon]] = {
 
-    val sortedCandidates = candidates.sortBy(-_.features.getOrElse(ScoreFeature, 0.0))
+    val sortelondCandidatelons = candidatelons.sortBy(-_.felonaturelons.gelontOrelonlselon(ScorelonFelonaturelon, 0.0))
 
-    val (kept, removed) = sortedCandidates.map(_.candidate).splitAt(MaxSimilarUserCandidates)
+    val (kelonpt, relonmovelond) = sortelondCandidatelons.map(_.candidatelon).splitAt(MaxSimilarUselonrCandidatelons)
 
-    Stitch.value(FilterResult(kept, removed))
+    Stitch.valuelon(FiltelonrRelonsult(kelonpt, relonmovelond))
   }
 }

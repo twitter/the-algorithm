@@ -1,74 +1,74 @@
-package com.twitter.visibility.rules.generators
+packagelon com.twittelonr.visibility.rulelons.gelonnelonrators
 
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.models.SafetyLevelGroup
-import com.twitter.visibility.rules.Action
-import com.twitter.visibility.rules.FreedomOfSpeechNotReachActions.FreedomOfSpeechNotReachActionBuilder
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonlGroup
+import com.twittelonr.visibility.rulelons.Action
+import com.twittelonr.visibility.rulelons.FrelonelondomOfSpelonelonchNotRelonachActions.FrelonelondomOfSpelonelonchNotRelonachActionBuildelonr
 
-class TweetVisibilityPolicy(
-  rules: Map[SafetyLevel, FreedomOfSpeechNotReachActionBuilder[_ <: Action]] = Map()) {
-  def getRules(): Map[SafetyLevel, FreedomOfSpeechNotReachActionBuilder[_ <: Action]] = rules
+class TwelonelontVisibilityPolicy(
+  rulelons: Map[SafelontyLelonvelonl, FrelonelondomOfSpelonelonchNotRelonachActionBuildelonr[_ <: Action]] = Map()) {
+  delonf gelontRulelons(): Map[SafelontyLelonvelonl, FrelonelondomOfSpelonelonchNotRelonachActionBuildelonr[_ <: Action]] = rulelons
 }
 
-object TweetVisibilityPolicy {
-  private[generators] val allApplicableSurfaces =
-    SafetyLevel.List.toSet --
-      SafetyLevelGroup.Special.levels --
-      Set(
-        SafetyLevel.SearchPeopleTypeahead,
-        SafetyLevel.UserProfileHeader,
-        SafetyLevel.UserScopedTimeline,
-        SafetyLevel.SpacesParticipants,
-        SafetyLevel.GryphonDecksAndColumns,
-        SafetyLevel.UserSettings,
-        SafetyLevel.BlockMuteUsersTimeline,
-        SafetyLevel.AdsBusinessSettings,
-        SafetyLevel.TrustedFriendsUserList,
-        SafetyLevel.UserSelfViewOnly,
-        SafetyLevel.ShoppingManagerSpyMode,
+objelonct TwelonelontVisibilityPolicy {
+  privatelon[gelonnelonrators] val allApplicablelonSurfacelons =
+    SafelontyLelonvelonl.List.toSelont --
+      SafelontyLelonvelonlGroup.Speloncial.lelonvelonls --
+      Selont(
+        SafelontyLelonvelonl.SelonarchPelonoplelonTypelonahelonad,
+        SafelontyLelonvelonl.UselonrProfilelonHelonadelonr,
+        SafelontyLelonvelonl.UselonrScopelondTimelonlinelon,
+        SafelontyLelonvelonl.SpacelonsParticipants,
+        SafelontyLelonvelonl.GryphonDeloncksAndColumns,
+        SafelontyLelonvelonl.UselonrSelonttings,
+        SafelontyLelonvelonl.BlockMutelonUselonrsTimelonlinelon,
+        SafelontyLelonvelonl.AdsBusinelonssSelonttings,
+        SafelontyLelonvelonl.TrustelondFrielonndsUselonrList,
+        SafelontyLelonvelonl.UselonrSelonlfVielonwOnly,
+        SafelontyLelonvelonl.ShoppingManagelonrSpyModelon,
       )
 
-  def builder(): TweetVisibilityPolicyBuilder = TweetVisibilityPolicyBuilder()
+  delonf buildelonr(): TwelonelontVisibilityPolicyBuildelonr = TwelonelontVisibilityPolicyBuildelonr()
 }
 
-case class TweetVisibilityPolicyBuilder(
-  rules: Map[SafetyLevel, FreedomOfSpeechNotReachActionBuilder[_ <: Action]] = Map()) {
+caselon class TwelonelontVisibilityPolicyBuildelonr(
+  rulelons: Map[SafelontyLelonvelonl, FrelonelondomOfSpelonelonchNotRelonachActionBuildelonr[_ <: Action]] = Map()) {
 
-  def addGlobalRule[T <: Action](
-    actionBuilder: FreedomOfSpeechNotReachActionBuilder[T]
-  ): TweetVisibilityPolicyBuilder =
-    copy(rules =
-      rules ++ TweetVisibilityPolicy.allApplicableSurfaces.map(_ -> actionBuilder))
+  delonf addGlobalRulelon[T <: Action](
+    actionBuildelonr: FrelonelondomOfSpelonelonchNotRelonachActionBuildelonr[T]
+  ): TwelonelontVisibilityPolicyBuildelonr =
+    copy(rulelons =
+      rulelons ++ TwelonelontVisibilityPolicy.allApplicablelonSurfacelons.map(_ -> actionBuildelonr))
 
-  def addSafetyLevelRule[T <: Action](
-    safetyLevel: SafetyLevel,
-    actionBuilder: FreedomOfSpeechNotReachActionBuilder[T]
-  ): TweetVisibilityPolicyBuilder = {
-    if (TweetVisibilityPolicy.allApplicableSurfaces.contains(safetyLevel)) {
-      copy(rules = rules ++ Map(safetyLevel -> actionBuilder))
-    } else {
+  delonf addSafelontyLelonvelonlRulelon[T <: Action](
+    safelontyLelonvelonl: SafelontyLelonvelonl,
+    actionBuildelonr: FrelonelondomOfSpelonelonchNotRelonachActionBuildelonr[T]
+  ): TwelonelontVisibilityPolicyBuildelonr = {
+    if (TwelonelontVisibilityPolicy.allApplicablelonSurfacelons.contains(safelontyLelonvelonl)) {
+      copy(rulelons = rulelons ++ Map(safelontyLelonvelonl -> actionBuildelonr))
+    } elonlselon {
       this
     }
   }
 
-  def addSafetyLevelGroupRule[T <: Action](
-    group: SafetyLevelGroup,
-    actionBuilder: FreedomOfSpeechNotReachActionBuilder[T]
-  ): TweetVisibilityPolicyBuilder =
-    copy(rules =
-      rules ++ group.levels.collect {
-        case safetyLevel if TweetVisibilityPolicy.allApplicableSurfaces.contains(safetyLevel) =>
-          safetyLevel -> actionBuilder
+  delonf addSafelontyLelonvelonlGroupRulelon[T <: Action](
+    group: SafelontyLelonvelonlGroup,
+    actionBuildelonr: FrelonelondomOfSpelonelonchNotRelonachActionBuildelonr[T]
+  ): TwelonelontVisibilityPolicyBuildelonr =
+    copy(rulelons =
+      rulelons ++ group.lelonvelonls.collelonct {
+        caselon safelontyLelonvelonl if TwelonelontVisibilityPolicy.allApplicablelonSurfacelons.contains(safelontyLelonvelonl) =>
+          safelontyLelonvelonl -> actionBuildelonr
       })
 
-  def addRuleForAllRemainingSafetyLevels[T <: Action](
-    actionBuilder: FreedomOfSpeechNotReachActionBuilder[T]
-  ): TweetVisibilityPolicyBuilder =
-    copy(rules =
-      rules ++ (TweetVisibilityPolicy.allApplicableSurfaces -- rules.keySet)
-        .map(_ -> actionBuilder).toMap)
+  delonf addRulelonForAllRelonmainingSafelontyLelonvelonls[T <: Action](
+    actionBuildelonr: FrelonelondomOfSpelonelonchNotRelonachActionBuildelonr[T]
+  ): TwelonelontVisibilityPolicyBuildelonr =
+    copy(rulelons =
+      rulelons ++ (TwelonelontVisibilityPolicy.allApplicablelonSurfacelons -- rulelons.kelonySelont)
+        .map(_ -> actionBuildelonr).toMap)
 
-  def build: TweetVisibilityPolicy = {
-    new TweetVisibilityPolicy(rules)
+  delonf build: TwelonelontVisibilityPolicy = {
+    nelonw TwelonelontVisibilityPolicy(rulelons)
   }
 }

@@ -1,236 +1,236 @@
-package com.twitter.simclusters_v2.scalding.embedding
+packagelon com.twittelonr.simclustelonrs_v2.scalding.elonmbelondding
 
-import com.twitter.onboarding.relevance.candidates.thriftscala.InterestBasedUserRecommendations
-import com.twitter.onboarding.relevance.candidates.thriftscala.UTTInterest
-import com.twitter.onboarding.relevance.source.UttAccountRecommendationsScalaDataset
-import com.twitter.scalding.Args
-import com.twitter.scalding.DateRange
-import com.twitter.scalding.Days
-import com.twitter.scalding.Duration
-import com.twitter.scalding.Execution
-import com.twitter.scalding.RichDate
-import com.twitter.scalding.UniqueID
-import com.twitter.scalding.typed.TypedPipe
-import com.twitter.scalding.typed.UnsortedGrouped
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.scalding_internal.dalv2.remote_access.ExplicitLocation
-import com.twitter.scalding_internal.dalv2.remote_access.ProcAtla
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.ModelVersions
-import com.twitter.simclusters_v2.common.SimClustersEmbedding
-import com.twitter.simclusters_v2.hdfs_sources.AdhocKeyValSources
-import com.twitter.simclusters_v2.hdfs_sources.ProducerEmbeddingSources
-import com.twitter.simclusters_v2.hdfs_sources.SemanticCoreEmbeddingsFromProducerScalaDataset
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil._
-import com.twitter.simclusters_v2.thriftscala
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
-import com.twitter.simclusters_v2.thriftscala.SimClusterWithScore
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId
-import com.twitter.simclusters_v2.thriftscala.TopSimClustersWithScore
-import com.twitter.wtf.scalding.jobs.common.AdhocExecutionApp
-import com.twitter.wtf.scalding.jobs.common.ScheduledExecutionApp
-import com.twitter.wtf.scalding.jobs.common.StatsUtil._
-import java.util.TimeZone
+import com.twittelonr.onboarding.relonlelonvancelon.candidatelons.thriftscala.IntelonrelonstBaselondUselonrReloncommelonndations
+import com.twittelonr.onboarding.relonlelonvancelon.candidatelons.thriftscala.UTTIntelonrelonst
+import com.twittelonr.onboarding.relonlelonvancelon.sourcelon.UttAccountReloncommelonndationsScalaDataselont
+import com.twittelonr.scalding.Args
+import com.twittelonr.scalding.DatelonRangelon
+import com.twittelonr.scalding.Days
+import com.twittelonr.scalding.Duration
+import com.twittelonr.scalding.elonxeloncution
+import com.twittelonr.scalding.RichDatelon
+import com.twittelonr.scalding.UniquelonID
+import com.twittelonr.scalding.typelond.TypelondPipelon
+import com.twittelonr.scalding.typelond.UnsortelondGroupelond
+import com.twittelonr.scalding_intelonrnal.dalv2.DAL
+import com.twittelonr.scalding_intelonrnal.dalv2.DALWritelon._
+import com.twittelonr.scalding_intelonrnal.dalv2.relonmotelon_accelonss.elonxplicitLocation
+import com.twittelonr.scalding_intelonrnal.dalv2.relonmotelon_accelonss.ProcAtla
+import com.twittelonr.scalding_intelonrnal.multiformat.format.kelonyval.KelonyVal
+import com.twittelonr.simclustelonrs_v2.common.ModelonlVelonrsions
+import com.twittelonr.simclustelonrs_v2.common.SimClustelonrselonmbelondding
+import com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.AdhocKelonyValSourcelons
+import com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.ProducelonrelonmbelonddingSourcelons
+import com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.SelonmanticCorelonelonmbelonddingsFromProducelonrScalaDataselont
+import com.twittelonr.simclustelonrs_v2.scalding.elonmbelondding.common.elonmbelonddingUtil._
+import com.twittelonr.simclustelonrs_v2.thriftscala
+import com.twittelonr.simclustelonrs_v2.thriftscala.elonmbelonddingTypelon
+import com.twittelonr.simclustelonrs_v2.thriftscala.IntelonrnalId
+import com.twittelonr.simclustelonrs_v2.thriftscala.ModelonlVelonrsion
+import com.twittelonr.simclustelonrs_v2.thriftscala.SimClustelonrWithScorelon
+import com.twittelonr.simclustelonrs_v2.thriftscala.SimClustelonrselonmbelonddingId
+import com.twittelonr.simclustelonrs_v2.thriftscala.TopSimClustelonrsWithScorelon
+import com.twittelonr.wtf.scalding.jobs.common.AdhocelonxeloncutionApp
+import com.twittelonr.wtf.scalding.jobs.common.SchelondulelondelonxeloncutionApp
+import com.twittelonr.wtf.scalding.jobs.common.StatsUtil._
+import java.util.TimelonZonelon
 
 /*
-  $ ./bazel bundle src/scala/com/twitter/simclusters_v2/scalding/embedding:entity_embedding_from_producer_embedding-adhoc
+  $ ./bazelonl bundlelon src/scala/com/twittelonr/simclustelonrs_v2/scalding/elonmbelondding:elonntity_elonmbelondding_from_producelonr_elonmbelondding-adhoc
 
-  $ scalding remote run \
-  --main-class com.twitter.simclusters_v2.scalding.embedding.EntityEmbeddingFromProducerEmbeddingAdhocJob \
-  --target src/scala/com/twitter/simclusters_v2/scalding/embedding:entity_embedding_from_producer_embedding-adhoc \
-  --user recos-platform \
-  -- --date 2019-10-23 --model_version 20M_145K_updated
+  $ scalding relonmotelon run \
+  --main-class com.twittelonr.simclustelonrs_v2.scalding.elonmbelondding.elonntityelonmbelonddingFromProducelonrelonmbelonddingAdhocJob \
+  --targelont src/scala/com/twittelonr/simclustelonrs_v2/scalding/elonmbelondding:elonntity_elonmbelondding_from_producelonr_elonmbelondding-adhoc \
+  --uselonr reloncos-platform \
+  -- --datelon 2019-10-23 --modelonl_velonrsion 20M_145K_updatelond
  */
-object EntityEmbeddingFromProducerEmbeddingAdhocJob extends AdhocExecutionApp {
-  override def runOnDateRange(
+objelonct elonntityelonmbelonddingFromProducelonrelonmbelonddingAdhocJob elonxtelonnds AdhocelonxeloncutionApp {
+  ovelonrridelon delonf runOnDatelonRangelon(
     args: Args
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
-    // step 1: read in (entity, producer) pairs and remove duplicates
-    val topK = args.getOrElse("top_k", "100").toInt
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon,
+    uniquelonID: UniquelonID
+  ): elonxeloncution[Unit] = {
+    // stelonp 1: relonad in (elonntity, producelonr) pairs and relonmovelon duplicatelons
+    val topK = args.gelontOrelonlselon("top_k", "100").toInt
 
-    val modelVersion = ModelVersions.toModelVersion(
-      args.getOrElse("model_version", ModelVersions.Model20M145KUpdated))
+    val modelonlVelonrsion = ModelonlVelonrsions.toModelonlVelonrsion(
+      args.gelontOrelonlselon("modelonl_velonrsion", ModelonlVelonrsions.Modelonl20M145KUpdatelond))
 
-    val entityKnownForProducers =
-      EntityEmbeddingFromProducerEmbeddingJob
-        .getNormalizedEntityProducerMatrix(dateRange.embiggen(Days(7)))
-        .count("num unique entity producer pairs").map {
-          case (entityId, producerId, score) => (producerId, (entityId, score))
+    val elonntityKnownForProducelonrs =
+      elonntityelonmbelonddingFromProducelonrelonmbelonddingJob
+        .gelontNormalizelondelonntityProducelonrMatrix(datelonRangelon.elonmbiggelonn(Days(7)))
+        .count("num uniquelon elonntity producelonr pairs").map {
+          caselon (elonntityId, producelonrId, scorelon) => (producelonrId, (elonntityId, scorelon))
         }
 
-    // step 2: read in producer to simclusters embeddings
+    // stelonp 2: relonad in producelonr to simclustelonrs elonmbelonddings
 
-    val producersEmbeddingsFollowBased =
-      ProducerEmbeddingSources.producerEmbeddingSourceLegacy(
-        EmbeddingType.ProducerFollowBasedSemanticCoreEntity,
-        modelVersion)(dateRange.embiggen(Days(7)))
+    val producelonrselonmbelonddingsFollowBaselond =
+      ProducelonrelonmbelonddingSourcelons.producelonrelonmbelonddingSourcelonLelongacy(
+        elonmbelonddingTypelon.ProducelonrFollowBaselondSelonmanticCorelonelonntity,
+        modelonlVelonrsion)(datelonRangelon.elonmbiggelonn(Days(7)))
 
-    val producersEmbeddingsFavBased =
-      ProducerEmbeddingSources.producerEmbeddingSourceLegacy(
-        EmbeddingType.ProducerFavBasedSemanticCoreEntity,
-        modelVersion)(dateRange.embiggen(Days(7)))
+    val producelonrselonmbelonddingsFavBaselond =
+      ProducelonrelonmbelonddingSourcelons.producelonrelonmbelonddingSourcelonLelongacy(
+        elonmbelonddingTypelon.ProducelonrFavBaselondSelonmanticCorelonelonntity,
+        modelonlVelonrsion)(datelonRangelon.elonmbiggelonn(Days(7)))
 
-    // step 3: join producer embedding with entity, producer pairs and reformat result into format [SimClustersEmbeddingId, SimClustersEmbedding]
-    val producerBasedEntityEmbeddingsFollowBased =
-      EntityEmbeddingFromProducerEmbeddingJob
-        .computeEmbedding(
-          producersEmbeddingsFollowBased,
-          entityKnownForProducers,
+    // stelonp 3: join producelonr elonmbelondding with elonntity, producelonr pairs and relonformat relonsult into format [SimClustelonrselonmbelonddingId, SimClustelonrselonmbelondding]
+    val producelonrBaselondelonntityelonmbelonddingsFollowBaselond =
+      elonntityelonmbelonddingFromProducelonrelonmbelonddingJob
+        .computelonelonmbelondding(
+          producelonrselonmbelonddingsFollowBaselond,
+          elonntityKnownForProducelonrs,
           topK,
-          modelVersion,
-          EmbeddingType.ProducerFollowBasedSemanticCoreEntity).toTypedPipe.count(
-          "follow_based_entity_count")
+          modelonlVelonrsion,
+          elonmbelonddingTypelon.ProducelonrFollowBaselondSelonmanticCorelonelonntity).toTypelondPipelon.count(
+          "follow_baselond_elonntity_count")
 
-    val producerBasedEntityEmbeddingsFavBased =
-      EntityEmbeddingFromProducerEmbeddingJob
-        .computeEmbedding(
-          producersEmbeddingsFavBased,
-          entityKnownForProducers,
+    val producelonrBaselondelonntityelonmbelonddingsFavBaselond =
+      elonntityelonmbelonddingFromProducelonrelonmbelonddingJob
+        .computelonelonmbelondding(
+          producelonrselonmbelonddingsFavBaselond,
+          elonntityKnownForProducelonrs,
           topK,
-          modelVersion,
-          EmbeddingType.ProducerFavBasedSemanticCoreEntity).toTypedPipe.count(
-          "fav_based_entity_count")
+          modelonlVelonrsion,
+          elonmbelonddingTypelon.ProducelonrFavBaselondSelonmanticCorelonelonntity).toTypelondPipelon.count(
+          "fav_baselond_elonntity_count")
 
-    val producerBasedEntityEmbeddings =
-      producerBasedEntityEmbeddingsFollowBased ++ producerBasedEntityEmbeddingsFavBased
+    val producelonrBaselondelonntityelonmbelonddings =
+      producelonrBaselondelonntityelonmbelonddingsFollowBaselond ++ producelonrBaselondelonntityelonmbelonddingsFavBaselond
 
-    // step 4 write results to file
-    producerBasedEntityEmbeddings
-      .count("total_count").writeExecution(
-        AdhocKeyValSources.entityToClustersSource(
-          getHdfsPath(isAdhoc = true, isManhattanKeyVal = true, modelVersion, "producer")))
+    // stelonp 4 writelon relonsults to filelon
+    producelonrBaselondelonntityelonmbelonddings
+      .count("total_count").writelonelonxeloncution(
+        AdhocKelonyValSourcelons.elonntityToClustelonrsSourcelon(
+          gelontHdfsPath(isAdhoc = truelon, isManhattanKelonyVal = truelon, modelonlVelonrsion, "producelonr")))
   }
 
 }
 
 /*
- $ ./bazel bundle src/scala/com/twitter/simclusters_v2/scalding/embedding:entity_embedding_from_producer_embedding_job
- $ capesospy-v2 update \
+ $ ./bazelonl bundlelon src/scala/com/twittelonr/simclustelonrs_v2/scalding/elonmbelondding:elonntity_elonmbelondding_from_producelonr_elonmbelondding_job
+ $ capelonsospy-v2 updatelon \
   --build_locally \
-  --start_cron entity_embedding_from_producer_embedding_job src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
+  --start_cron elonntity_elonmbelondding_from_producelonr_elonmbelondding_job src/scala/com/twittelonr/simclustelonrs_v2/capelonsos_config/atla_proc3.yaml
  */
-object EntityEmbeddingFromProducerEmbeddingScheduledJob extends ScheduledExecutionApp {
-  override def firstTime: RichDate = RichDate("2019-10-16")
+objelonct elonntityelonmbelonddingFromProducelonrelonmbelonddingSchelondulelondJob elonxtelonnds SchelondulelondelonxeloncutionApp {
+  ovelonrridelon delonf firstTimelon: RichDatelon = RichDatelon("2019-10-16")
 
-  override def batchIncrement: Duration = Days(7)
+  ovelonrridelon delonf batchIncrelonmelonnt: Duration = Days(7)
 
-  override def runOnDateRange(
+  ovelonrridelon delonf runOnDatelonRangelon(
     args: Args
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
-    // parse args: modelVersion, topK
-    val topK = args.getOrElse("top_k", "100").toInt
-    // only support dec11 now since updated model is not productionized for producer embedding
-    val modelVersion =
-      ModelVersions.toModelVersion(
-        args.getOrElse("model_version", ModelVersions.Model20M145KUpdated))
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon,
+    uniquelonID: UniquelonID
+  ): elonxeloncution[Unit] = {
+    // parselon args: modelonlVelonrsion, topK
+    val topK = args.gelontOrelonlselon("top_k", "100").toInt
+    // only support delonc11 now sincelon updatelond modelonl is not productionizelond for producelonr elonmbelondding
+    val modelonlVelonrsion =
+      ModelonlVelonrsions.toModelonlVelonrsion(
+        args.gelontOrelonlselon("modelonl_velonrsion", ModelonlVelonrsions.Modelonl20M145KUpdatelond))
 
-    val entityKnownForProducers =
-      EntityEmbeddingFromProducerEmbeddingJob
-        .getNormalizedEntityProducerMatrix(dateRange.embiggen(Days(7)))
-        .count("num unique entity producer pairs").map {
-          case (entityId, producerId, score) => (producerId, (entityId, score))
+    val elonntityKnownForProducelonrs =
+      elonntityelonmbelonddingFromProducelonrelonmbelonddingJob
+        .gelontNormalizelondelonntityProducelonrMatrix(datelonRangelon.elonmbiggelonn(Days(7)))
+        .count("num uniquelon elonntity producelonr pairs").map {
+          caselon (elonntityId, producelonrId, scorelon) => (producelonrId, (elonntityId, scorelon))
         }
 
-    val favBasedEmbeddings = EntityEmbeddingFromProducerEmbeddingJob
-      .computeEmbedding(
-        ProducerEmbeddingSources.producerEmbeddingSourceLegacy(
-          EmbeddingType.ProducerFavBasedSemanticCoreEntity,
-          modelVersion)(dateRange.embiggen(Days(7))),
-        entityKnownForProducers,
+    val favBaselondelonmbelonddings = elonntityelonmbelonddingFromProducelonrelonmbelonddingJob
+      .computelonelonmbelondding(
+        ProducelonrelonmbelonddingSourcelons.producelonrelonmbelonddingSourcelonLelongacy(
+          elonmbelonddingTypelon.ProducelonrFavBaselondSelonmanticCorelonelonntity,
+          modelonlVelonrsion)(datelonRangelon.elonmbiggelonn(Days(7))),
+        elonntityKnownForProducelonrs,
         topK,
-        modelVersion,
-        EmbeddingType.ProducerFavBasedSemanticCoreEntity
-      ).toTypedPipe.count("follow_based_entity_count")
+        modelonlVelonrsion,
+        elonmbelonddingTypelon.ProducelonrFavBaselondSelonmanticCorelonelonntity
+      ).toTypelondPipelon.count("follow_baselond_elonntity_count")
 
-    val followBasedEmbeddings = EntityEmbeddingFromProducerEmbeddingJob
-      .computeEmbedding(
-        ProducerEmbeddingSources.producerEmbeddingSourceLegacy(
-          EmbeddingType.ProducerFollowBasedSemanticCoreEntity,
-          modelVersion)(dateRange.embiggen(Days(7))),
-        entityKnownForProducers,
+    val followBaselondelonmbelonddings = elonntityelonmbelonddingFromProducelonrelonmbelonddingJob
+      .computelonelonmbelondding(
+        ProducelonrelonmbelonddingSourcelons.producelonrelonmbelonddingSourcelonLelongacy(
+          elonmbelonddingTypelon.ProducelonrFollowBaselondSelonmanticCorelonelonntity,
+          modelonlVelonrsion)(datelonRangelon.elonmbiggelonn(Days(7))),
+        elonntityKnownForProducelonrs,
         topK,
-        modelVersion,
-        EmbeddingType.ProducerFollowBasedSemanticCoreEntity
-      ).toTypedPipe.count("fav_based_entity_count")
+        modelonlVelonrsion,
+        elonmbelonddingTypelon.ProducelonrFollowBaselondSelonmanticCorelonelonntity
+      ).toTypelondPipelon.count("fav_baselond_elonntity_count")
 
-    val embedding = favBasedEmbeddings ++ followBasedEmbeddings
+    val elonmbelondding = favBaselondelonmbelonddings ++ followBaselondelonmbelonddings
 
-    embedding
+    elonmbelondding
       .count("total_count")
       .map {
-        case (embeddingId, embedding) => KeyVal(embeddingId, embedding)
-      }.writeDALVersionedKeyValExecution(
-        SemanticCoreEmbeddingsFromProducerScalaDataset,
-        D.Suffix(getHdfsPath(isAdhoc = false, isManhattanKeyVal = true, modelVersion, "producer"))
+        caselon (elonmbelonddingId, elonmbelondding) => KelonyVal(elonmbelonddingId, elonmbelondding)
+      }.writelonDALVelonrsionelondKelonyValelonxeloncution(
+        SelonmanticCorelonelonmbelonddingsFromProducelonrScalaDataselont,
+        D.Suffix(gelontHdfsPath(isAdhoc = falselon, isManhattanKelonyVal = truelon, modelonlVelonrsion, "producelonr"))
       )
 
   }
 
 }
 
-private object EntityEmbeddingFromProducerEmbeddingJob {
-  def computeEmbedding(
-    producersEmbeddings: TypedPipe[(Long, TopSimClustersWithScore)],
-    entityKnownForProducers: TypedPipe[(Long, (Long, Double))],
+privatelon objelonct elonntityelonmbelonddingFromProducelonrelonmbelonddingJob {
+  delonf computelonelonmbelondding(
+    producelonrselonmbelonddings: TypelondPipelon[(Long, TopSimClustelonrsWithScorelon)],
+    elonntityKnownForProducelonrs: TypelondPipelon[(Long, (Long, Doublelon))],
     topK: Int,
-    modelVersion: ModelVersion,
-    embeddingType: EmbeddingType
-  ): UnsortedGrouped[SimClustersEmbeddingId, thriftscala.SimClustersEmbedding] = {
-    producersEmbeddings
-      .hashJoin(entityKnownForProducers).flatMap {
-        case (_, (topSimClustersWithScore, (entityId, producerScore))) => {
-          val entityEmbedding = topSimClustersWithScore.topClusters
-          entityEmbedding.map {
-            case SimClusterWithScore(clusterId, score) =>
+    modelonlVelonrsion: ModelonlVelonrsion,
+    elonmbelonddingTypelon: elonmbelonddingTypelon
+  ): UnsortelondGroupelond[SimClustelonrselonmbelonddingId, thriftscala.SimClustelonrselonmbelondding] = {
+    producelonrselonmbelonddings
+      .hashJoin(elonntityKnownForProducelonrs).flatMap {
+        caselon (_, (topSimClustelonrsWithScorelon, (elonntityId, producelonrScorelon))) => {
+          val elonntityelonmbelondding = topSimClustelonrsWithScorelon.topClustelonrs
+          elonntityelonmbelondding.map {
+            caselon SimClustelonrWithScorelon(clustelonrId, scorelon) =>
               (
                 (
-                  SimClustersEmbeddingId(
-                    embeddingType,
-                    modelVersion,
-                    InternalId.EntityId(entityId)),
-                  clusterId),
-                score * producerScore)
+                  SimClustelonrselonmbelonddingId(
+                    elonmbelonddingTypelon,
+                    modelonlVelonrsion,
+                    IntelonrnalId.elonntityId(elonntityId)),
+                  clustelonrId),
+                scorelon * producelonrScorelon)
           }
         }
-      }.sumByKey.map {
-        case ((embeddingId, clusterId), clusterScore) =>
-          (embeddingId, (clusterId, clusterScore))
-      }.group.sortedReverseTake(topK)(Ordering.by(_._2)).mapValues(SimClustersEmbedding
+      }.sumByKelony.map {
+        caselon ((elonmbelonddingId, clustelonrId), clustelonrScorelon) =>
+          (elonmbelonddingId, (clustelonrId, clustelonrScorelon))
+      }.group.sortelondRelonvelonrselonTakelon(topK)(Ordelonring.by(_._2)).mapValuelons(SimClustelonrselonmbelondding
         .apply(_).toThrift)
   }
 
-  def getNormalizedEntityProducerMatrix(
-    implicit dateRange: DateRange
-  ): TypedPipe[(Long, Long, Double)] = {
-    val uttRecs: TypedPipe[(UTTInterest, InterestBasedUserRecommendations)] =
+  delonf gelontNormalizelondelonntityProducelonrMatrix(
+    implicit datelonRangelon: DatelonRangelon
+  ): TypelondPipelon[(Long, Long, Doublelon)] = {
+    val uttReloncs: TypelondPipelon[(UTTIntelonrelonst, IntelonrelonstBaselondUselonrReloncommelonndations)] =
       DAL
-        .readMostRecentSnapshot(UttAccountRecommendationsScalaDataset).withRemoteReadPolicy(
-          ExplicitLocation(ProcAtla)).toTypedPipe.map {
-          case KeyVal(interest, candidates) => (interest, candidates)
+        .relonadMostReloncelonntSnapshot(UttAccountReloncommelonndationsScalaDataselont).withRelonmotelonRelonadPolicy(
+          elonxplicitLocation(ProcAtla)).toTypelondPipelon.map {
+          caselon KelonyVal(intelonrelonst, candidatelons) => (intelonrelonst, candidatelons)
         }
 
-    uttRecs
+    uttReloncs
       .flatMap {
-        case (interest, candidates) => {
-          // current populated features
-          val top20Producers = candidates.recommendations.sortBy(-_.score.getOrElse(0.0d)).take(20)
-          val producerScorePairs = top20Producers.map { producer =>
-            (producer.candidateUserID, producer.score.getOrElse(0.0))
+        caselon (intelonrelonst, candidatelons) => {
+          // currelonnt populatelond felonaturelons
+          val top20Producelonrs = candidatelons.reloncommelonndations.sortBy(-_.scorelon.gelontOrelonlselon(0.0d)).takelon(20)
+          val producelonrScorelonPairs = top20Producelonrs.map { producelonr =>
+            (producelonr.candidatelonUselonrID, producelonr.scorelon.gelontOrelonlselon(0.0))
           }
-          val scoreSum = producerScorePairs.map(_._2).sum
-          producerScorePairs.map {
-            case (producerId, score) => (interest.uttID, producerId, score / scoreSum)
+          val scorelonSum = producelonrScorelonPairs.map(_._2).sum
+          producelonrScorelonPairs.map {
+            caselon (producelonrId, scorelon) => (intelonrelonst.uttID, producelonrId, scorelon / scorelonSum)
           }
         }
       }

@@ -1,117 +1,117 @@
-package com.twitter.search.ingester.pipeline.twitter;
+packagelon com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.twittelonr;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 import java.util.List;
 import java.util.Optional;
 
-import javax.naming.NamingException;
+import javax.naming.Namingelonxcelonption;
 
-import com.google.common.base.Preconditions;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.pipeline.StageException;
-import org.apache.commons.pipeline.validation.ConsumedTypes;
-import org.apache.commons.pipeline.validation.ProducesConsumed;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apachelon.commons.lang.StringUtils;
+import org.apachelon.commons.pipelonlinelon.Stagelonelonxcelonption;
+import org.apachelon.commons.pipelonlinelon.validation.ConsumelondTypelons;
+import org.apachelon.commons.pipelonlinelon.validation.ProducelonsConsumelond;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.common_internal.text.version.PenguinVersion;
-import com.twitter.search.common.converter.earlybird.BasicIndexingConverter;
-import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.common.schema.earlybird.EarlybirdSchemaCreateTool;
-import com.twitter.search.ingester.model.IngesterThriftVersionedEvents;
-import com.twitter.search.ingester.model.IngesterTwitterMessage;
+import com.twittelonr.common_intelonrnal.telonxt.velonrsion.PelonnguinVelonrsion;
+import com.twittelonr.selonarch.common.convelonrtelonr.elonarlybird.BasicIndelonxingConvelonrtelonr;
+import com.twittelonr.selonarch.common.indelonxing.thriftjava.ThriftVelonrsionelondelonvelonnts;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.common.schelonma.baselon.Schelonma;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdSchelonmaCrelonatelonTool;
+import com.twittelonr.selonarch.ingelonstelonr.modelonl.IngelonstelonrThriftVelonrsionelondelonvelonnts;
+import com.twittelonr.selonarch.ingelonstelonr.modelonl.IngelonstelonrTwittelonrMelonssagelon;
 
-@ConsumedTypes(IngesterTwitterMessage.class)
-@ProducesConsumed
-public class ConvertMessageToThriftStage extends TwitterBaseStage
-    <IngesterTwitterMessage, IngesterTwitterMessage> {
-  private static final Logger LOG = LoggerFactory.getLogger(ConvertMessageToThriftStage.class);
+@ConsumelondTypelons(IngelonstelonrTwittelonrMelonssagelon.class)
+@ProducelonsConsumelond
+public class ConvelonrtMelonssagelonToThriftStagelon elonxtelonnds TwittelonrBaselonStagelon
+    <IngelonstelonrTwittelonrMelonssagelon, IngelonstelonrTwittelonrMelonssagelon> {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(ConvelonrtMelonssagelonToThriftStagelon.class);
 
-  private List<PenguinVersion> penguinVersionList;
-  private String thriftVersionedEventsBranchName;
-  private FieldStatExporter fieldStatExporter;
-  private BasicIndexingConverter messageConverter;
+  privatelon List<PelonnguinVelonrsion> pelonnguinVelonrsionList;
+  privatelon String thriftVelonrsionelondelonvelonntsBranchNamelon;
+  privatelon FielonldStatelonxportelonr fielonldStatelonxportelonr;
+  privatelon BasicIndelonxingConvelonrtelonr melonssagelonConvelonrtelonr;
 
-  private SearchCounter twitterMessageToTveErrorCount;
+  privatelon SelonarchCountelonr twittelonrMelonssagelonToTvelonelonrrorCount;
 
-  @Override
+  @Ovelonrridelon
   public void initStats() {
-    super.initStats();
-    twitterMessageToTveErrorCount = SearchCounter.export(
-        getStageNamePrefix() + "_ingester_convert_twitter_message_to_tve_error_count");
+    supelonr.initStats();
+    twittelonrMelonssagelonToTvelonelonrrorCount = SelonarchCountelonr.elonxport(
+        gelontStagelonNamelonPrelonfix() + "_ingelonstelonr_convelonrt_twittelonr_melonssagelon_to_tvelon_elonrror_count");
   }
 
-  @Override
-  protected void doInnerPreprocess() throws StageException, NamingException {
-    Schema schema;
+  @Ovelonrridelon
+  protelonctelond void doInnelonrPrelonprocelonss() throws Stagelonelonxcelonption, Namingelonxcelonption {
+    Schelonma schelonma;
     try {
-      schema = EarlybirdSchemaCreateTool.buildSchema(Preconditions.checkNotNull(earlybirdCluster));
-    } catch (Schema.SchemaValidationException e) {
-      throw new StageException(this, e);
+      schelonma = elonarlybirdSchelonmaCrelonatelonTool.buildSchelonma(Prelonconditions.chelonckNotNull(elonarlybirdClustelonr));
+    } catch (Schelonma.SchelonmaValidationelonxcelonption elon) {
+      throw nelonw Stagelonelonxcelonption(this, elon);
     }
 
-    penguinVersionList = wireModule.getPenguinVersions();
-    Preconditions.checkState(StringUtils.isNotBlank(thriftVersionedEventsBranchName));
-    messageConverter = new BasicIndexingConverter(schema, earlybirdCluster);
-    fieldStatExporter = new FieldStatExporter("unsorted_tweets", schema, penguinVersionList);
+    pelonnguinVelonrsionList = wirelonModulelon.gelontPelonnguinVelonrsions();
+    Prelonconditions.chelonckStatelon(StringUtils.isNotBlank(thriftVelonrsionelondelonvelonntsBranchNamelon));
+    melonssagelonConvelonrtelonr = nelonw BasicIndelonxingConvelonrtelonr(schelonma, elonarlybirdClustelonr);
+    fielonldStatelonxportelonr = nelonw FielonldStatelonxportelonr("unsortelond_twelonelonts", schelonma, pelonnguinVelonrsionList);
   }
 
-  @Override
-  public void innerProcess(Object obj) throws StageException {
-    if (!(obj instanceof IngesterTwitterMessage)) {
-      throw new StageException(this, "Object is not an IngesterTwitterMessage instance: " + obj);
+  @Ovelonrridelon
+  public void innelonrProcelonss(Objelonct obj) throws Stagelonelonxcelonption {
+    if (!(obj instancelonof IngelonstelonrTwittelonrMelonssagelon)) {
+      throw nelonw Stagelonelonxcelonption(this, "Objelonct is not an IngelonstelonrTwittelonrMelonssagelon instancelon: " + obj);
     }
 
-    penguinVersionList = wireModule.getCurrentlyEnabledPenguinVersions();
-    fieldStatExporter.updatePenguinVersions(penguinVersionList);
+    pelonnguinVelonrsionList = wirelonModulelon.gelontCurrelonntlyelonnablelondPelonnguinVelonrsions();
+    fielonldStatelonxportelonr.updatelonPelonnguinVelonrsions(pelonnguinVelonrsionList);
 
-    IngesterTwitterMessage message = IngesterTwitterMessage.class.cast(obj);
+    IngelonstelonrTwittelonrMelonssagelon melonssagelon = IngelonstelonrTwittelonrMelonssagelon.class.cast(obj);
 
-    Optional<IngesterThriftVersionedEvents> maybeEvents = buildVersionedEvents(message);
-    if (maybeEvents.isPresent()) {
-      IngesterThriftVersionedEvents events = maybeEvents.get();
-      fieldStatExporter.addFieldStats(events);
-      emitToBranchAndCount(thriftVersionedEventsBranchName, events);
+    Optional<IngelonstelonrThriftVelonrsionelondelonvelonnts> maybelonelonvelonnts = buildVelonrsionelondelonvelonnts(melonssagelon);
+    if (maybelonelonvelonnts.isPrelonselonnt()) {
+      IngelonstelonrThriftVelonrsionelondelonvelonnts elonvelonnts = maybelonelonvelonnts.gelont();
+      fielonldStatelonxportelonr.addFielonldStats(elonvelonnts);
+      elonmitToBranchAndCount(thriftVelonrsionelondelonvelonntsBranchNamelon, elonvelonnts);
     }
 
-    emitAndCount(message);
+    elonmitAndCount(melonssagelon);
   }
 
   /**
-   * Method that converts a TwitterMessage to a ThriftVersionedEvents.
+   * Melonthod that convelonrts a TwittelonrMelonssagelon to a ThriftVelonrsionelondelonvelonnts.
    *
-   * @param twitterMessage An IngesterThriftVersionedEvents instance to be converted.
-   * @return The corresponding ThriftVersionedEvents.
+   * @param twittelonrMelonssagelon An IngelonstelonrThriftVelonrsionelondelonvelonnts instancelon to belon convelonrtelond.
+   * @relonturn Thelon correlonsponding ThriftVelonrsionelondelonvelonnts.
    */
-  private Optional<IngesterThriftVersionedEvents> buildVersionedEvents(
-      IngesterTwitterMessage twitterMessage) {
-    IngesterThriftVersionedEvents ingesterEvents =
-        new IngesterThriftVersionedEvents(twitterMessage.getUserId());
-    ingesterEvents.setDarkWrite(false);
-    ingesterEvents.setId(twitterMessage.getTweetId());
+  privatelon Optional<IngelonstelonrThriftVelonrsionelondelonvelonnts> buildVelonrsionelondelonvelonnts(
+      IngelonstelonrTwittelonrMelonssagelon twittelonrMelonssagelon) {
+    IngelonstelonrThriftVelonrsionelondelonvelonnts ingelonstelonrelonvelonnts =
+        nelonw IngelonstelonrThriftVelonrsionelondelonvelonnts(twittelonrMelonssagelon.gelontUselonrId());
+    ingelonstelonrelonvelonnts.selontDarkWritelon(falselon);
+    ingelonstelonrelonvelonnts.selontId(twittelonrMelonssagelon.gelontTwelonelontId());
 
-    // We will emit both the original TwitterMessage, and the ThriftVersionedEvents instance, so we
-    // need to make sure they have separate DebugEvents copies.
-    ingesterEvents.setDebugEvents(twitterMessage.getDebugEvents().deepCopy());
+    // Welon will elonmit both thelon original TwittelonrMelonssagelon, and thelon ThriftVelonrsionelondelonvelonnts instancelon, so welon
+    // nelonelond to makelon surelon thelony havelon selonparatelon Delonbugelonvelonnts copielons.
+    ingelonstelonrelonvelonnts.selontDelonbugelonvelonnts(twittelonrMelonssagelon.gelontDelonbugelonvelonnts().delonelonpCopy());
 
     try {
-      ThriftVersionedEvents versionedEvents =
-          messageConverter.convertMessageToThrift(twitterMessage, true, penguinVersionList);
-      ingesterEvents.setVersionedEvents(versionedEvents.getVersionedEvents());
-      return Optional.of(ingesterEvents);
-    } catch (IOException e) {
-      LOG.error("Failed to convert tweet " + twitterMessage.getTweetId() + " from TwitterMessage "
-                + "to ThriftVersionedEvents for Penguin versions " + penguinVersionList,
-                e);
-      twitterMessageToTveErrorCount.increment();
+      ThriftVelonrsionelondelonvelonnts velonrsionelondelonvelonnts =
+          melonssagelonConvelonrtelonr.convelonrtMelonssagelonToThrift(twittelonrMelonssagelon, truelon, pelonnguinVelonrsionList);
+      ingelonstelonrelonvelonnts.selontVelonrsionelondelonvelonnts(velonrsionelondelonvelonnts.gelontVelonrsionelondelonvelonnts());
+      relonturn Optional.of(ingelonstelonrelonvelonnts);
+    } catch (IOelonxcelonption elon) {
+      LOG.elonrror("Failelond to convelonrt twelonelont " + twittelonrMelonssagelon.gelontTwelonelontId() + " from TwittelonrMelonssagelon "
+                + "to ThriftVelonrsionelondelonvelonnts for Pelonnguin velonrsions " + pelonnguinVelonrsionList,
+                elon);
+      twittelonrMelonssagelonToTvelonelonrrorCount.increlonmelonnt();
     }
-    return Optional.empty();
+    relonturn Optional.elonmpty();
   }
 
-  public void setThriftVersionedEventsBranchName(String thriftVersionedEventsBranchName) {
-    this.thriftVersionedEventsBranchName = thriftVersionedEventsBranchName;
+  public void selontThriftVelonrsionelondelonvelonntsBranchNamelon(String thriftVelonrsionelondelonvelonntsBranchNamelon) {
+    this.thriftVelonrsionelondelonvelonntsBranchNamelon = thriftVelonrsionelondelonvelonntsBranchNamelon;
   }
 }

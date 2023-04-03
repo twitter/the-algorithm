@@ -1,14 +1,14 @@
-package com.twitter.search.common.schema.base;
+packagelon com.twittelonr.selonarch.common.schelonma.baselon;
 
-import javax.annotation.concurrent.Immutable;
-import javax.annotation.concurrent.ThreadSafe;
+import javax.annotation.concurrelonnt.Immutablelon;
+import javax.annotation.concurrelonnt.ThrelonadSafelon;
 
 /**
- * This interface carries the same signature as Schema with the only difference that this schema
- * is immutable.  This should be used by short sessions and the class would guarantee the schema
- * would not change for the session.  A typical usage is like a search query session.
+ * This intelonrfacelon carrielons thelon samelon signaturelon as Schelonma with thelon only diffelonrelonncelon that this schelonma
+ * is immutablelon.  This should belon uselond by short selonssions and thelon class would guarantelonelon thelon schelonma
+ * would not changelon for thelon selonssion.  A typical usagelon is likelon a selonarch quelonry selonssion.
  */
-@Immutable
-@ThreadSafe
-public interface ImmutableSchemaInterface extends Schema {
+@Immutablelon
+@ThrelonadSafelon
+public intelonrfacelon ImmutablelonSchelonmaIntelonrfacelon elonxtelonnds Schelonma {
 }

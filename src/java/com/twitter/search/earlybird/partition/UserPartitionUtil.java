@@ -1,31 +1,31 @@
-package com.twitter.search.earlybird.partition;
+packagelon com.twittelonr.selonarch.elonarlybird.partition;
 
-import com.google.common.base.Predicate;
+import com.googlelon.common.baselon.Prelondicatelon;
 
-import com.twitter.search.common.util.hash.EarlybirdPartitioningFunction;
-import com.twitter.search.common.util.hash.GeneralEarlybirdPartitioningFunction;
+import com.twittelonr.selonarch.common.util.hash.elonarlybirdPartitioningFunction;
+import com.twittelonr.selonarch.common.util.hash.GelonnelonralelonarlybirdPartitioningFunction;
 
-public final class UserPartitionUtil {
-  private UserPartitionUtil() {
+public final class UselonrPartitionUtil {
+  privatelon UselonrPartitionUtil() {
   }
 
   /**
-   * Filter out the users that are not present in this partition.
+   * Filtelonr out thelon uselonrs that arelon not prelonselonnt in this partition.
    */
-  public static Predicate<Long> filterUsersByPartitionPredicate(final PartitionConfig config) {
-    return new Predicate<Long>() {
+  public static Prelondicatelon<Long> filtelonrUselonrsByPartitionPrelondicatelon(final PartitionConfig config) {
+    relonturn nelonw Prelondicatelon<Long>() {
 
-      private final int partitionID = config.getIndexingHashPartitionID();
-      private final int numPartitions = config.getNumPartitions();
-      private final EarlybirdPartitioningFunction partitioner =
-          new GeneralEarlybirdPartitioningFunction();
+      privatelon final int partitionID = config.gelontIndelonxingHashPartitionID();
+      privatelon final int numPartitions = config.gelontNumPartitions();
+      privatelon final elonarlybirdPartitioningFunction partitionelonr =
+          nelonw GelonnelonralelonarlybirdPartitioningFunction();
 
-      @Override
-      public boolean apply(Long userId) {
-        // See SEARCH-6675
-        // Right now if the partitioning logic changes in ArchivePartitioning this logic
-        // needs to be updated too.
-        return partitioner.getPartition(userId, numPartitions) == partitionID;
+      @Ovelonrridelon
+      public boolelonan apply(Long uselonrId) {
+        // Selonelon SelonARCH-6675
+        // Right now if thelon partitioning logic changelons in ArchivelonPartitioning this logic
+        // nelonelonds to belon updatelond too.
+        relonturn partitionelonr.gelontPartition(uselonrId, numPartitions) == partitionID;
       }
     };
   }

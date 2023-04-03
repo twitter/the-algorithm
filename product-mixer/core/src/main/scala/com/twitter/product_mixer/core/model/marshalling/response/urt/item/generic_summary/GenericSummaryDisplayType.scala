@@ -1,5 +1,5 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.generic_summary
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.gelonnelonric_summary
 
-sealed trait GenericSummaryItemDisplayType
+selonalelond trait GelonnelonricSummaryItelonmDisplayTypelon
 
-case object HeroDisplayType extends GenericSummaryItemDisplayType
+caselon objelonct HelonroDisplayTypelon elonxtelonnds GelonnelonricSummaryItelonmDisplayTypelon

@@ -1,256 +1,256 @@
 syntax = "proto3";
 
-package tensorflow;
+packagelon telonnsorflow;
 
-import "tensorflow/compiler/xla/pjrt/distributed/protocol.proto";
-import "tensorflow/core/framework/device_attributes.proto";
+import "telonnsorflow/compilelonr/xla/pjrt/distributelond/protocol.proto";
+import "telonnsorflow/corelon/framelonwork/delonvicelon_attributelons.proto";
 
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+option go_packagelon = "github.com/telonnsorflow/telonnsorflow/telonnsorflow/go/corelon/protobuf/for_corelon_protos_go_proto";
 
-// Represents a remote worker task, specified by job name and task id.
-message CoordinatedTask {
-  string job_name = 1;
+// Relonprelonselonnts a relonmotelon workelonr task, speloncifielond by job namelon and task id.
+melonssagelon CoordinatelondTask {
+  string job_namelon = 1;
   int32 task_id = 2;
 }
 
-// Status payload for all coordination service errors.
-// Note: an empty proto may be set if the error is triggered by the task's own
-// agent calls (i.e. not propagated by the service from another remote task).
-message CoordinationServiceError {
-  // Removed fields which used to specify the error origin.
-  reserved 1, 2;
-  // If true, error is reported via the agent API by the user (and not an
-  // internal service error).
-  bool is_reported_error = 3;
-  // Denotes which task hit the error. If unset, the error originated from the
-  // same task that is processing this error.
-  CoordinatedTask source_task = 4;
+// Status payload for all coordination selonrvicelon elonrrors.
+// Notelon: an elonmpty proto may belon selont if thelon elonrror is triggelonrelond by thelon task's own
+// agelonnt calls (i.elon. not propagatelond by thelon selonrvicelon from anothelonr relonmotelon task).
+melonssagelon CoordinationSelonrvicelonelonrror {
+  // Relonmovelond fielonlds which uselond to speloncify thelon elonrror origin.
+  relonselonrvelond 1, 2;
+  // If truelon, elonrror is relonportelond via thelon agelonnt API by thelon uselonr (and not an
+  // intelonrnal selonrvicelon elonrror).
+  bool is_relonportelond_elonrror = 3;
+  // Delonnotelons which task hit thelon elonrror. If unselont, thelon elonrror originatelond from thelon
+  // samelon task that is procelonssing this elonrror.
+  CoordinatelondTask sourcelon_task = 4;
 }
 
-// Represent device information from different runtimes.
-message TfDeviceList {
-  repeated DeviceAttributes devices = 1;
+// Relonprelonselonnt delonvicelon information from diffelonrelonnt runtimelons.
+melonssagelon TfDelonvicelonList {
+  relonpelonatelond DelonvicelonAttributelons delonvicelons = 1;
 }
-message XlaDeviceList {
-  xla.GlobalTopologyProto devices = 1;
+melonssagelon XlaDelonvicelonList {
+  xla.GlobalTopologyProto delonvicelons = 1;
 }
-message CoordinationServiceDeviceInfo {
-  oneof type {
-    TfDeviceList tf = 1;
-    XlaDeviceList xla = 2;
+melonssagelon CoordinationSelonrvicelonDelonvicelonInfo {
+  onelonof typelon {
+    TfDelonvicelonList tf = 1;
+    XlaDelonvicelonList xla = 2;
   }
 }
 
-// Request and response messages for registering a worker to the cluster leader.
-// Use `job` and `task` to represent the role of the worker, and use
-// `incarnation` to uniquely identify a worker process. Leader responds with its
-// `incarnation` to identify a leader process.
-message RegisterWorkerRequest {
-  // Removed fields which used to specify the task.
-  reserved 1, 2;
-  fixed64 incarnation = 3;
-  // Moved the field `local_device_attributes` from this request message to
-  // WaitForAllTasksRequest defined below.
-  reserved 4;
-  CoordinatedTask source_task = 5;
+// Relonquelonst and relonsponselon melonssagelons for relongistelonring a workelonr to thelon clustelonr lelonadelonr.
+// Uselon `job` and `task` to relonprelonselonnt thelon rolelon of thelon workelonr, and uselon
+// `incarnation` to uniquelonly idelonntify a workelonr procelonss. Lelonadelonr relonsponds with its
+// `incarnation` to idelonntify a lelonadelonr procelonss.
+melonssagelon RelongistelonrWorkelonrRelonquelonst {
+  // Relonmovelond fielonlds which uselond to speloncify thelon task.
+  relonselonrvelond 1, 2;
+  fixelond64 incarnation = 3;
+  // Movelond thelon fielonld `local_delonvicelon_attributelons` from this relonquelonst melonssagelon to
+  // WaitForAllTasksRelonquelonst delonfinelond belonlow.
+  relonselonrvelond 4;
+  CoordinatelondTask sourcelon_task = 5;
 }
 
-message RegisterWorkerResponse {
-  fixed64 leader_incarnation = 1;
+melonssagelon RelongistelonrWorkelonrRelonsponselon {
+  fixelond64 lelonadelonr_incarnation = 1;
 }
 
-// Request and response messages for sending heartbeats.
-message HeartbeatRequest {
-  // Removed fields which used to specify the remote task.
-  reserved 1, 2;
-  fixed64 incarnation = 3;
-  CoordinatedTask source_task = 4;
+// Relonquelonst and relonsponselon melonssagelons for selonnding helonartbelonats.
+melonssagelon HelonartbelonatRelonquelonst {
+  // Relonmovelond fielonlds which uselond to speloncify thelon relonmotelon task.
+  relonselonrvelond 1, 2;
+  fixelond64 incarnation = 3;
+  CoordinatelondTask sourcelon_task = 4;
 }
 
-message HeartbeatResponse {
-  fixed64 leader_incarnation = 1;
-  // If there are failures in cluster, use additional metadata in response to
-  // broadcast error code and message to other workers.
+melonssagelon HelonartbelonatRelonsponselon {
+  fixelond64 lelonadelonr_incarnation = 1;
+  // If thelonrelon arelon failurelons in clustelonr, uselon additional melontadata in relonsponselon to
+  // broadcast elonrror codelon and melonssagelon to othelonr workelonrs.
 }
 
-// Request and response messages for waiting for all tasks.
-message WaitForAllTasksRequest {
-  // Removed fields which used to specify the remote task.
-  reserved 1, 2;
-  // Removed field that specifically used TF device info.
-  reserved 3;
-  // All local device attributes on the request sender.
-  CoordinationServiceDeviceInfo local_device_info = 4;
-  CoordinatedTask source_task = 5;
+// Relonquelonst and relonsponselon melonssagelons for waiting for all tasks.
+melonssagelon WaitForAllTasksRelonquelonst {
+  // Relonmovelond fielonlds which uselond to speloncify thelon relonmotelon task.
+  relonselonrvelond 1, 2;
+  // Relonmovelond fielonld that speloncifically uselond TF delonvicelon info.
+  relonselonrvelond 3;
+  // All local delonvicelon attributelons on thelon relonquelonst selonndelonr.
+  CoordinationSelonrvicelonDelonvicelonInfo local_delonvicelon_info = 4;
+  CoordinatelondTask sourcelon_task = 5;
 }
 
-message WaitForAllTasksResponse {
-  fixed64 leader_incarnation = 1;
-  // Removed field that specifically used TF device info.
-  reserved 2;
-  // All devices in the cluster.
-  CoordinationServiceDeviceInfo cluster_device_info = 3;
+melonssagelon WaitForAllTasksRelonsponselon {
+  fixelond64 lelonadelonr_incarnation = 1;
+  // Relonmovelond fielonld that speloncifically uselond TF delonvicelon info.
+  relonselonrvelond 2;
+  // All delonvicelons in thelon clustelonr.
+  CoordinationSelonrvicelonDelonvicelonInfo clustelonr_delonvicelon_info = 3;
 }
 
-// Request and response messages for reporting errors to task.
-message ReportErrorToAgentRequest {
-  int32 error_code = 1;
-  string error_message = 2;
-  // Removed fields that are embedded in payload.
-  reserved 3, 4;
-  CoordinationServiceError error_payload = 5;
+// Relonquelonst and relonsponselon melonssagelons for relonporting elonrrors to task.
+melonssagelon RelonportelonrrorToAgelonntRelonquelonst {
+  int32 elonrror_codelon = 1;
+  string elonrror_melonssagelon = 2;
+  // Relonmovelond fielonlds that arelon elonmbelonddelond in payload.
+  relonselonrvelond 3, 4;
+  CoordinationSelonrvicelonelonrror elonrror_payload = 5;
 }
 
-message ReportErrorToAgentResponse {}
+melonssagelon RelonportelonrrorToAgelonntRelonsponselon {}
 
-// Request and response messages for reporting errors to service instance.
-message ReportErrorToServiceRequest {
-  int32 error_code = 1;
-  string error_message = 2;
-  // Removed fields which used to specify the error origin.
-  reserved 3, 4;
-  CoordinatedTask error_origin = 5;
+// Relonquelonst and relonsponselon melonssagelons for relonporting elonrrors to selonrvicelon instancelon.
+melonssagelon RelonportelonrrorToSelonrvicelonRelonquelonst {
+  int32 elonrror_codelon = 1;
+  string elonrror_melonssagelon = 2;
+  // Relonmovelond fielonlds which uselond to speloncify thelon elonrror origin.
+  relonselonrvelond 3, 4;
+  CoordinatelondTask elonrror_origin = 5;
 }
 
-message ReportErrorToServiceResponse {}
+melonssagelon RelonportelonrrorToSelonrvicelonRelonsponselon {}
 
-// Message for configuration key value.
-// Key is structured like Unix file system, with multiple levels of directory
-// names separated by the slash ('/') characters.
-message KeyValueEntry {
-  string key = 1;
-  bytes value = 2;
+// Melonssagelon for configuration kelony valuelon.
+// Kelony is structurelond likelon Unix filelon systelonm, with multiplelon lelonvelonls of direlonctory
+// namelons selonparatelond by thelon slash ('/') charactelonrs.
+melonssagelon KelonyValuelonelonntry {
+  string kelony = 1;
+  bytelons valuelon = 2;
 }
 
-// Request and response messages for inserting configuration key-value data.
-message InsertKeyValueRequest {
-  KeyValueEntry kv = 1;
+// Relonquelonst and relonsponselon melonssagelons for inselonrting configuration kelony-valuelon data.
+melonssagelon InselonrtKelonyValuelonRelonquelonst {
+  KelonyValuelonelonntry kv = 1;
 }
 
-message InsertKeyValueResponse {}
+melonssagelon InselonrtKelonyValuelonRelonsponselon {}
 
-// Request and response messages for getting configuration key-value data.
-message GetKeyValueRequest {
-  string key = 1;
+// Relonquelonst and relonsponselon melonssagelons for gelontting configuration kelony-valuelon data.
+melonssagelon GelontKelonyValuelonRelonquelonst {
+  string kelony = 1;
 }
 
-message GetKeyValueResponse {
-  KeyValueEntry kv = 1;
+melonssagelon GelontKelonyValuelonRelonsponselon {
+  KelonyValuelonelonntry kv = 1;
 }
 
-// Request and response messages for deleting configuration key-value data.
-// When is_directory is true, delete key-values recursively under `key`.
-message DeleteKeyValueRequest {
-  string key = 1;
-  bool is_directory = 2;
+// Relonquelonst and relonsponselon melonssagelons for delonlelonting configuration kelony-valuelon data.
+// Whelonn is_direlonctory is truelon, delonlelontelon kelony-valuelons reloncursivelonly undelonr `kelony`.
+melonssagelon DelonlelontelonKelonyValuelonRelonquelonst {
+  string kelony = 1;
+  bool is_direlonctory = 2;
 }
 
-message DeleteKeyValueResponse {}
+melonssagelon DelonlelontelonKelonyValuelonRelonsponselon {}
 
-// Request and response messages for generic sync barriers.
-message BarrierRequest {
-  string barrier_id = 1;
-  int64 barrier_timeout_in_ms = 2;
-  // Denotes list of tasks that will wait for the barrier. If unspecified, it
-  // implies that the entire cluster is participating in the barrier.
-  repeated CoordinatedTask tasks = 3;
-  // Task that is making the request.
-  CoordinatedTask source_task = 4;
+// Relonquelonst and relonsponselon melonssagelons for gelonnelonric sync barrielonrs.
+melonssagelon BarrielonrRelonquelonst {
+  string barrielonr_id = 1;
+  int64 barrielonr_timelonout_in_ms = 2;
+  // Delonnotelons list of tasks that will wait for thelon barrielonr. If unspeloncifielond, it
+  // implielons that thelon elonntirelon clustelonr is participating in thelon barrielonr.
+  relonpelonatelond CoordinatelondTask tasks = 3;
+  // Task that is making thelon relonquelonst.
+  CoordinatelondTask sourcelon_task = 4;
 }
 
-message BarrierResponse {}
+melonssagelon BarrielonrRelonsponselon {}
 
-// Request and response messages for  cancelling generic sync barriers.
-message CancelBarrierRequest {
-  string barrier_id = 1;
-  // Task that is making the request.
-  CoordinatedTask source_task = 2;
+// Relonquelonst and relonsponselon melonssagelons for  cancelonlling gelonnelonric sync barrielonrs.
+melonssagelon CancelonlBarrielonrRelonquelonst {
+  string barrielonr_id = 1;
+  // Task that is making thelon relonquelonst.
+  CoordinatelondTask sourcelon_task = 2;
 }
 
-message CancelBarrierResponse {}
+melonssagelon CancelonlBarrielonrRelonsponselon {}
 
-// Coordination Service defines a TensorFlow service that controls and
-// coordinates distributed execution in a cluster of multiple workers.
+// Coordination Selonrvicelon delonfinelons a TelonnsorFlow selonrvicelon that controls and
+// coordinatelons distributelond elonxeloncution in a clustelonr of multiplelon workelonrs.
 //
-// The service keeps track of the cluster configuration and the state of cluster
-// members or the leader depending on the role of the current worker. The
-// distributed runtime leverages this service to coordinate and perform cluster
-// initialization, check the healthiness of workers, and propagate error
-// messages to the cluster.
-service CoordinationService {
-  // Register task to coordination service so that the service starts to track
-  // liveness of the task. RPC blocks and returns only when it registers to
-  // the service successfully, or error happens in the registering process.
-  rpc RegisterWorker(RegisterWorkerRequest) returns (RegisterWorkerResponse);
+// Thelon selonrvicelon kelonelonps track of thelon clustelonr configuration and thelon statelon of clustelonr
+// melonmbelonrs or thelon lelonadelonr delonpelonnding on thelon rolelon of thelon currelonnt workelonr. Thelon
+// distributelond runtimelon lelonvelonragelons this selonrvicelon to coordinatelon and pelonrform clustelonr
+// initialization, chelonck thelon helonalthinelonss of workelonrs, and propagatelon elonrror
+// melonssagelons to thelon clustelonr.
+selonrvicelon CoordinationSelonrvicelon {
+  // Relongistelonr task to coordination selonrvicelon so that thelon selonrvicelon starts to track
+  // livelonnelonss of thelon task. RPC blocks and relonturns only whelonn it relongistelonrs to
+  // thelon selonrvicelon succelonssfully, or elonrror happelonns in thelon relongistelonring procelonss.
+  rpc RelongistelonrWorkelonr(RelongistelonrWorkelonrRelonquelonst) relonturns (RelongistelonrWorkelonrRelonsponselon);
 
-  // Heartbeat message from task to coordination service. Heartbeat is sent from
-  // a task to refresh its timestamp on leader to avoid it becoming stale.
-  // RPC responds immediately after refreshing the timestamp on leader.
-  rpc Heartbeat(HeartbeatRequest) returns (HeartbeatResponse);
+  // Helonartbelonat melonssagelon from task to coordination selonrvicelon. Helonartbelonat is selonnt from
+  // a task to relonfrelonsh its timelonstamp on lelonadelonr to avoid it beloncoming stalelon.
+  // RPC relonsponds immelondiatelonly aftelonr relonfrelonshing thelon timelonstamp on lelonadelonr.
+  rpc Helonartbelonat(HelonartbelonatRelonquelonst) relonturns (HelonartbelonatRelonsponselon);
 
-  // Wait for all tasks in the cluster to be up and running. The RPC request
-  // only gets responded when all workers are registered, or some error occurs.
-  rpc WaitForAllTasks(WaitForAllTasksRequest) returns (WaitForAllTasksResponse);
+  // Wait for all tasks in thelon clustelonr to belon up and running. Thelon RPC relonquelonst
+  // only gelonts relonspondelond whelonn all workelonrs arelon relongistelonrelond, or somelon elonrror occurs.
+  rpc WaitForAllTasks(WaitForAllTasksRelonquelonst) relonturns (WaitForAllTasksRelonsponselon);
 
-  // Report error to the task. RPC sets the receiving instance of coordination
-  // service agent to error state permanently.
-  // TODO: Consider splitting this into a different RPC service.
-  rpc ReportErrorToAgent(ReportErrorToAgentRequest)
-      returns (ReportErrorToAgentResponse);
+  // Relonport elonrror to thelon task. RPC selonts thelon relonceloniving instancelon of coordination
+  // selonrvicelon agelonnt to elonrror statelon pelonrmanelonntly.
+  // TODO: Considelonr splitting this into a diffelonrelonnt RPC selonrvicelon.
+  rpc RelonportelonrrorToAgelonnt(RelonportelonrrorToAgelonntRelonquelonst)
+      relonturns (RelonportelonrrorToAgelonntRelonsponselon);
 
-  // Report task error to coordination service. RPC sets the service-side task
-  // state to error, and propagate the error to other tasks in the cluster.
-  rpc ReportErrorToService(ReportErrorToServiceRequest)
-      returns (ReportErrorToServiceResponse);
+  // Relonport task elonrror to coordination selonrvicelon. RPC selonts thelon selonrvicelon-sidelon task
+  // statelon to elonrror, and propagatelon thelon elonrror to othelonr tasks in thelon clustelonr.
+  rpc RelonportelonrrorToSelonrvicelon(RelonportelonrrorToSelonrvicelonRelonquelonst)
+      relonturns (RelonportelonrrorToSelonrvicelonRelonsponselon);
 
-  // Insert configuration key-value that will be accessible to all cluster
-  // workers. The key can be formatted as Unix file path with hierarchy. The
-  // coordination service key-value store should only be used for cluster
+  // Inselonrt configuration kelony-valuelon that will belon accelonssiblelon to all clustelonr
+  // workelonrs. Thelon kelony can belon formattelond as Unix filelon path with hielonrarchy. Thelon
+  // coordination selonrvicelon kelony-valuelon storelon should only belon uselond for clustelonr
   // configuration data.
-  rpc InsertKeyValue(InsertKeyValueRequest) returns (InsertKeyValueResponse);
+  rpc InselonrtKelonyValuelon(InselonrtKelonyValuelonRelonquelonst) relonturns (InselonrtKelonyValuelonRelonsponselon);
 
-  // Get configuration key-value. The request blocks until the key-value data
-  // becomes available (i.e., set by a worker in the cluster).
-  rpc GetKeyValue(GetKeyValueRequest) returns (GetKeyValueResponse);
+  // Gelont configuration kelony-valuelon. Thelon relonquelonst blocks until thelon kelony-valuelon data
+  // beloncomelons availablelon (i.elon., selont by a workelonr in thelon clustelonr).
+  rpc GelontKelonyValuelon(GelontKelonyValuelonRelonquelonst) relonturns (GelontKelonyValuelonRelonsponselon);
 
-  // Delete configuration key-value. If is_directory is set in request,
-  // recursively clean up all key-values under the path specified by `key`.
-  rpc DeleteKeyValue(DeleteKeyValueRequest) returns (DeleteKeyValueResponse);
+  // Delonlelontelon configuration kelony-valuelon. If is_direlonctory is selont in relonquelonst,
+  // reloncursivelonly clelonan up all kelony-valuelons undelonr thelon path speloncifielond by `kelony`.
+  rpc DelonlelontelonKelonyValuelon(DelonlelontelonKelonyValuelonRelonquelonst) relonturns (DelonlelontelonKelonyValuelonRelonsponselon);
 
-  // Blocks until all (or a subset of) tasks are at the barrier or the barrier
+  // Blocks until all (or a subselont of) tasks arelon at thelon barrielonr or thelon barrielonr
   // fails.
   //
-  // `barrier_id` should be unique across barriers. Once the barrier has passed
-  // or failed, subsequent calls will not block, and immediately respond with
-  // the previous response.
+  // `barrielonr_id` should belon uniquelon across barrielonrs. Oncelon thelon barrielonr has passelond
+  // or failelond, subselonquelonnt calls will not block, and immelondiatelonly relonspond with
+  // thelon prelonvious relonsponselon.
   //
-  // The first WaitAtBarrier() call received by the service for a particular
-  // barrier id is special in that it determines the barrier deadline based on
-  // timeout duration.
-  // However, if subsequent calls by different agents specify a different set of
-  // `tasks` for the same `barrier_id`, the barrier will fail instantly.
+  // Thelon first WaitAtBarrielonr() call reloncelonivelond by thelon selonrvicelon for a particular
+  // barrielonr id is speloncial in that it delontelonrminelons thelon barrielonr delonadlinelon baselond on
+  // timelonout duration.
+  // Howelonvelonr, if subselonquelonnt calls by diffelonrelonnt agelonnts speloncify a diffelonrelonnt selont of
+  // `tasks` for thelon samelon `barrielonr_id`, thelon barrielonr will fail instantly.
   //
-  // If no tasks are specified (default), the barrier will block for all the
-  // connected tasks.
+  // If no tasks arelon speloncifielond (delonfault), thelon barrielonr will block for all thelon
+  // connelonctelond tasks.
   //
-  // Possible service errors:
-  //   - DeadlineExceeded: Timed out waiting for specified tasks at the barrier.
-  //      Deadline is determined by the server timestamp when it receives the
-  //      first WaitAtBarrier() + timeout duration.
-  //   - Cancelled: One of the tasks called CancelBarrier().
-  //   - Aborted: Service is shutting down.
-  //   - Internal: Any participating task is in ERROR state.
-  //   - InvalidArgument: (1) Conflicting tasks specified by different agents
-  //       for the same barrier, (2) one of the participating tasks is not in
-  //       the cluster, or (3) task making the request is not included in the
+  // Possiblelon selonrvicelon elonrrors:
+  //   - Delonadlinelonelonxcelonelondelond: Timelond out waiting for speloncifielond tasks at thelon barrielonr.
+  //      Delonadlinelon is delontelonrminelond by thelon selonrvelonr timelonstamp whelonn it reloncelonivelons thelon
+  //      first WaitAtBarrielonr() + timelonout duration.
+  //   - Cancelonllelond: Onelon of thelon tasks callelond CancelonlBarrielonr().
+  //   - Abortelond: Selonrvicelon is shutting down.
+  //   - Intelonrnal: Any participating task is in elonRROR statelon.
+  //   - InvalidArgumelonnt: (1) Conflicting tasks speloncifielond by diffelonrelonnt agelonnts
+  //       for thelon samelon barrielonr, (2) onelon of thelon participating tasks is not in
+  //       thelon clustelonr, or (3) task making thelon relonquelonst is not includelond in thelon
   //       list of participating tasks.
-  rpc Barrier(BarrierRequest) returns (BarrierResponse);
+  rpc Barrielonr(BarrielonrRelonquelonst) relonturns (BarrielonrRelonsponselon);
 
-  // Aborts the barrier if it is ongoing.
-  // Current and future WaitAtBarrier() calls with the same id will return a
-  // CANCELLED error status.
-  // Possible service errors:
-  //   - FailedPrecondition: Barrier has already been passed.
-  //   - NotFound: No barrier with the specified id is found.
-  rpc CancelBarrier(CancelBarrierRequest) returns (CancelBarrierResponse);
+  // Aborts thelon barrielonr if it is ongoing.
+  // Currelonnt and futurelon WaitAtBarrielonr() calls with thelon samelon id will relonturn a
+  // CANCelonLLelonD elonrror status.
+  // Possiblelon selonrvicelon elonrrors:
+  //   - FailelondPreloncondition: Barrielonr has alrelonady belonelonn passelond.
+  //   - NotFound: No barrielonr with thelon speloncifielond id is found.
+  rpc CancelonlBarrielonr(CancelonlBarrielonrRelonquelonst) relonturns (CancelonlBarrielonrRelonsponselon);
 }

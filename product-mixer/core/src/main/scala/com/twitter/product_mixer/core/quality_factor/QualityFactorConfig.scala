@@ -1,120 +1,120 @@
-package com.twitter.product_mixer.core.quality_factor
+packagelon com.twittelonr.product_mixelonr.corelon.quality_factor
 
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.ClientFailure
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.quality_factor.QualityFactorConfig.defaultIgnorableFailures
-import com.twitter.servo.util.CancelledExceptionExtractor
-import com.twitter.util.Duration
-import com.twitter.conversions.DurationOps.RichDuration
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.ClielonntFailurelon
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.PipelonlinelonFailurelon
+import com.twittelonr.product_mixelonr.corelon.quality_factor.QualityFactorConfig.delonfaultIgnorablelonFailurelons
+import com.twittelonr.selonrvo.util.Cancelonllelondelonxcelonptionelonxtractor
+import com.twittelonr.util.Duration
+import com.twittelonr.convelonrsions.DurationOps.RichDuration
 
 /**
- * Quality factor is an abstract number that enables a feedback loop to control operation costs and ultimately
- * maintain the operation success rate. Abstractly, if operations/calls are too expensive (such as high
- * latencies), the quality factor should go down, which helps future calls to ease their demand/load (such as
- * reducing request width); if ops/calls are fast, the quality factor should go up, so we can incur more load.
+ * Quality factor is an abstract numbelonr that elonnablelons a felonelondback loop to control opelonration costs and ultimatelonly
+ * maintain thelon opelonration succelonss ratelon. Abstractly, if opelonrations/calls arelon too elonxpelonnsivelon (such as high
+ * latelonncielons), thelon quality factor should go down, which helonlps futurelon calls to elonaselon thelonir delonmand/load (such as
+ * relonducing relonquelonst width); if ops/calls arelon fast, thelon quality factor should go up, so welon can incur morelon load.
  */
-sealed trait QualityFactorConfig {
+selonalelond trait QualityFactorConfig {
 
   /**
-   * specifies the quality factor min and max bounds and default value.
+   * speloncifielons thelon quality factor min and max bounds and delonfault valuelon.
    */
-  def qualityFactorBounds: BoundsWithDefault[Double]
+  delonf qualityFactorBounds: BoundsWithDelonfault[Doublelon]
 
   /**
-   * initialDelay Specifies how much delay we should have before the quality factor calculation start to kick in. This is
-   * mostly to ease the load during the initial warmup/startup.
+   * initialDelonlay Speloncifielons how much delonlay welon should havelon belonforelon thelon quality factor calculation start to kick in. This is
+   * mostly to elonaselon thelon load during thelon initial warmup/startup.
    */
-  def initialDelay: Duration
+  delonf initialDelonlay: Duration
 
   /**
-   * [[Throwable]]s that should be ignored when calculating
-   * the [[QualityFactor]] if this is [[PartialFunction.isDefinedAt]]
+   * [[Throwablelon]]s that should belon ignorelond whelonn calculating
+   * thelon [[QualityFactor]] if this is [[PartialFunction.isDelonfinelondAt]]
    */
-  def ignorableFailures: PartialFunction[Throwable, Unit] = defaultIgnorableFailures
+  delonf ignorablelonFailurelons: PartialFunction[Throwablelon, Unit] = delonfaultIgnorablelonFailurelons
 }
 
-object QualityFactorConfig {
+objelonct QualityFactorConfig {
 
   /**
-   * Default value for [[QualityFactorConfig.ignorableFailures]] that ignores any
-   * Cancelled requests and [[ClientFailure]]
+   * Delonfault valuelon for [[QualityFactorConfig.ignorablelonFailurelons]] that ignorelons any
+   * Cancelonllelond relonquelonsts and [[ClielonntFailurelon]]
    */
-  val defaultIgnorableFailures: PartialFunction[Throwable, Unit] = {
-    case PipelineFailure(_: ClientFailure, _, _, _) => ()
-    case CancelledExceptionExtractor(_) => ()
+  val delonfaultIgnorablelonFailurelons: PartialFunction[Throwablelon, Unit] = {
+    caselon PipelonlinelonFailurelon(_: ClielonntFailurelon, _, _, _) => ()
+    caselon Cancelonllelondelonxcelonptionelonxtractor(_) => ()
   }
 }
 
 /**
- * This is a linear quality factor implementation, aimed to achieve and maintain a percentile latency target.
+ * This is a linelonar quality factor implelonmelonntation, aimelond to achielonvelon and maintain a pelonrcelonntilelon latelonncy targelont.
  *
- * If we call quality factor q, target latency t and target percentile p,
- *   then the q (quality factor) formula should be:
- *   q += delta                      for each request with latency <= t
- *   q -= delta * p / (100 - p)      for each request with latency > t ms or a timeout.
+ * If welon call quality factor q, targelont latelonncy t and targelont pelonrcelonntilelon p,
+ *   thelonn thelon q (quality factor) formula should belon:
+ *   q += delonlta                      for elonach relonquelonst with latelonncy <= t
+ *   q -= delonlta * p / (100 - p)      for elonach relonquelonst with latelonncy > t ms or a timelonout.
  *
- *   When percentile p latency stays at target latency t, then based on the formula above, q will
- *   stay constant (fluctuates around a constant value).
+ *   Whelonn pelonrcelonntilelon p latelonncy stays at targelont latelonncy t, thelonn baselond on thelon formula abovelon, q will
+ *   stay constant (fluctuatelons around a constant valuelon).
  *
- *   For example, assume t = 100ms, p = p99, and q = 0.5
- *   let's say, p99 latency stays at 100ms when q = 0.5. p99 means that out of every 100 latencies,
- *   99 times the latency is below 100ms and 1 time it is above 100ms. So based on the formula above,
- *   q will increase by "delta" 99 times and it will decrease by delta * p / (100 - p) = delta * 99 once,
- *   which results in the same q = 0.5.
+ *   For elonxamplelon, assumelon t = 100ms, p = p99, and q = 0.5
+ *   lelont's say, p99 latelonncy stays at 100ms whelonn q = 0.5. p99 melonans that out of elonvelonry 100 latelonncielons,
+ *   99 timelons thelon latelonncy is belonlow 100ms and 1 timelon it is abovelon 100ms. So baselond on thelon formula abovelon,
+ *   q will increlonaselon by "delonlta" 99 timelons and it will deloncrelonaselon by delonlta * p / (100 - p) = delonlta * 99 oncelon,
+ *   which relonsults in thelon samelon q = 0.5.
  *
- * @param targetLatency This is the latency target, calls with latencies above which will cause quality
- * factor to go down, and vice versa. e.g. 500ms.
- * @param targetLatencyPercentile This the percentile where the target latency is aimed at. e.g. 95.0.
- * @param delta the step for adjusting quality factor. It should be a positive double. If delta is
- *              too large, then quality factor will fluctuate more, and if it is too small, the
- *              responsiveness will be reduced.
+ * @param targelontLatelonncy This is thelon latelonncy targelont, calls with latelonncielons abovelon which will causelon quality
+ * factor to go down, and vicelon velonrsa. elon.g. 500ms.
+ * @param targelontLatelonncyPelonrcelonntilelon This thelon pelonrcelonntilelon whelonrelon thelon targelont latelonncy is aimelond at. elon.g. 95.0.
+ * @param delonlta thelon stelonp for adjusting quality factor. It should belon a positivelon doublelon. If delonlta is
+ *              too largelon, thelonn quality factor will fluctuatelon morelon, and if it is too small, thelon
+ *              relonsponsivelonnelonss will belon relonducelond.
  */
-case class LinearLatencyQualityFactorConfig(
-  override val qualityFactorBounds: BoundsWithDefault[Double],
-  override val initialDelay: Duration,
-  targetLatency: Duration,
-  targetLatencyPercentile: Double,
-  delta: Double,
-  override val ignorableFailures: PartialFunction[Throwable, Unit] =
-    QualityFactorConfig.defaultIgnorableFailures)
-    extends QualityFactorConfig {
-  require(
-    targetLatencyPercentile >= 50.0 && targetLatencyPercentile < 100.0,
-    s"Invalid targetLatencyPercentile value: ${targetLatencyPercentile}.\n" +
-      s"Correct sample values: 95.0, 99.9. Incorrect sample values: 0.95, 0.999."
+caselon class LinelonarLatelonncyQualityFactorConfig(
+  ovelonrridelon val qualityFactorBounds: BoundsWithDelonfault[Doublelon],
+  ovelonrridelon val initialDelonlay: Duration,
+  targelontLatelonncy: Duration,
+  targelontLatelonncyPelonrcelonntilelon: Doublelon,
+  delonlta: Doublelon,
+  ovelonrridelon val ignorablelonFailurelons: PartialFunction[Throwablelon, Unit] =
+    QualityFactorConfig.delonfaultIgnorablelonFailurelons)
+    elonxtelonnds QualityFactorConfig {
+  relonquirelon(
+    targelontLatelonncyPelonrcelonntilelon >= 50.0 && targelontLatelonncyPelonrcelonntilelon < 100.0,
+    s"Invalid targelontLatelonncyPelonrcelonntilelon valuelon: ${targelontLatelonncyPelonrcelonntilelon}.\n" +
+      s"Correlonct samplelon valuelons: 95.0, 99.9. Incorrelonct samplelon valuelons: 0.95, 0.999."
   )
 }
 
 /**
- * A quality factor provides component capacity state based on sampling component
- * Queries Per Second (qps) at local host level.
+ * A quality factor providelons componelonnt capacity statelon baselond on sampling componelonnt
+ * Quelonrielons Pelonr Seloncond (qps) at local host lelonvelonl.
  *
- * If we call quality factor q, max qps R:
- *   then the q (quality factor) formula should be:
- *   q = Math.min([[qualityFactorBounds.bounds.maxInclusive]], q + delta)      for each request that observed qps <= R on local host
- *   q -= delta                                      for each request that observed qps > R on local host
+ * If welon call quality factor q, max qps R:
+ *   thelonn thelon q (quality factor) formula should belon:
+ *   q = Math.min([[qualityFactorBounds.bounds.maxInclusivelon]], q + delonlta)      for elonach relonquelonst that obselonrvelond qps <= R on local host
+ *   q -= delonlta                                      for elonach relonquelonst that obselonrvelond qps > R on local host
  *
- *   When qps r stays below R, q will stay as constant (value at [[qualityFactorBounds.bounds.maxInclusive]]).
- *   When qps r starts to increase above R, q will decrease by delta per request,
- *   with delta being an additive factor that controls how sensitive q is when max qps R is exceeded.
+ *   Whelonn qps r stays belonlow R, q will stay as constant (valuelon at [[qualityFactorBounds.bounds.maxInclusivelon]]).
+ *   Whelonn qps r starts to increlonaselon abovelon R, q will deloncrelonaselon by delonlta pelonr relonquelonst,
+ *   with delonlta beloning an additivelon factor that controls how selonnsitivelon q is whelonn max qps R is elonxcelonelondelond.
  *
- *   @param initialDelay Specifies an initial delay time to allow query rate counter warm up to start reflecting actual traffic load.
- *                       Qf value would only start to update after this initial delay.
- *   @param maxQueriesPerSecond The max qps the underlying component can take. Requests go above this qps threshold will cause quality factor to go down.
- *   @param queriesPerSecondSampleWindow The window of underlying query rate counter counting with and calculate an average qps over the window,
- *                                 default to count with 10 seconds time window (i.e. qps = total requests over last 10 secs / 10).
- *                                 Note: underlying query rate counter has a sliding window with 10 fixed slices. Therefore a larger
- *                                 window would lead to a coarser qps calculation. (e.g. with 60 secs time window, it sliding over 6 seconds slice (60 / 10 = 6 secs)).
- *                                 A larger time window also lead to a slower reaction to sudden qps burst, but more robust to flaky qps pattern.
- *   @param delta The step for adjusting quality factor. It should be a positive double. If the delta is large, the quality factor
- *                will fluctuate more and be more responsive to exceeding max qps, and if it is small, the quality factor will be less responsive.
+ *   @param initialDelonlay Speloncifielons an initial delonlay timelon to allow quelonry ratelon countelonr warm up to start relonfleloncting actual traffic load.
+ *                       Qf valuelon would only start to updatelon aftelonr this initial delonlay.
+ *   @param maxQuelonrielonsPelonrSeloncond Thelon max qps thelon undelonrlying componelonnt can takelon. Relonquelonsts go abovelon this qps threlonshold will causelon quality factor to go down.
+ *   @param quelonrielonsPelonrSeloncondSamplelonWindow Thelon window of undelonrlying quelonry ratelon countelonr counting with and calculatelon an avelonragelon qps ovelonr thelon window,
+ *                                 delonfault to count with 10 selonconds timelon window (i.elon. qps = total relonquelonsts ovelonr last 10 seloncs / 10).
+ *                                 Notelon: undelonrlying quelonry ratelon countelonr has a sliding window with 10 fixelond slicelons. Thelonrelonforelon a largelonr
+ *                                 window would lelonad to a coarselonr qps calculation. (elon.g. with 60 seloncs timelon window, it sliding ovelonr 6 selonconds slicelon (60 / 10 = 6 seloncs)).
+ *                                 A largelonr timelon window also lelonad to a slowelonr relonaction to suddelonn qps burst, but morelon robust to flaky qps pattelonrn.
+ *   @param delonlta Thelon stelonp for adjusting quality factor. It should belon a positivelon doublelon. If thelon delonlta is largelon, thelon quality factor
+ *                will fluctuatelon morelon and belon morelon relonsponsivelon to elonxcelonelonding max qps, and if it is small, thelon quality factor will belon lelonss relonsponsivelon.
  */
-case class QueriesPerSecondBasedQualityFactorConfig(
-  override val qualityFactorBounds: BoundsWithDefault[Double],
-  override val initialDelay: Duration,
-  maxQueriesPerSecond: Int,
-  queriesPerSecondSampleWindow: Duration = 10.seconds,
-  delta: Double = 0.001,
-  override val ignorableFailures: PartialFunction[Throwable, Unit] =
-    QualityFactorConfig.defaultIgnorableFailures)
-    extends QualityFactorConfig
+caselon class QuelonrielonsPelonrSeloncondBaselondQualityFactorConfig(
+  ovelonrridelon val qualityFactorBounds: BoundsWithDelonfault[Doublelon],
+  ovelonrridelon val initialDelonlay: Duration,
+  maxQuelonrielonsPelonrSeloncond: Int,
+  quelonrielonsPelonrSeloncondSamplelonWindow: Duration = 10.selonconds,
+  delonlta: Doublelon = 0.001,
+  ovelonrridelon val ignorablelonFailurelons: PartialFunction[Throwablelon, Unit] =
+    QualityFactorConfig.delonfaultIgnorablelonFailurelons)
+    elonxtelonnds QualityFactorConfig

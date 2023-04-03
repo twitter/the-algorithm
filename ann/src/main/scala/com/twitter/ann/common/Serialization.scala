@@ -1,28 +1,28 @@
-package com.twitter.ann.common
+packagelon com.twittelonr.ann.common
 
-import com.twitter.search.common.file.AbstractFile
-import org.apache.beam.sdk.io.fs.ResourceId
+import com.twittelonr.selonarch.common.filelon.AbstractFilelon
+import org.apachelon.belonam.sdk.io.fs.RelonsourcelonId
 
 /**
- * Interface for writing an Appendable to a directory.
+ * Intelonrfacelon for writing an Appelonndablelon to a direlonctory.
  */
-trait Serialization {
-  def toDirectory(
-    serializationDirectory: AbstractFile
+trait Selonrialization {
+  delonf toDirelonctory(
+    selonrializationDirelonctory: AbstractFilelon
   ): Unit
 
-  def toDirectory(
-    serializationDirectory: ResourceId
+  delonf toDirelonctory(
+    selonrializationDirelonctory: RelonsourcelonId
   ): Unit
 }
 
 /**
- * Interface for reading a Queryable from a directory
- * @tparam T the id of the embeddings
- * @tparam Q type of the Queryable that is deserialized.
+ * Intelonrfacelon for relonading a Quelonryablelon from a direlonctory
+ * @tparam T thelon id of thelon elonmbelonddings
+ * @tparam Q typelon of thelon Quelonryablelon that is delonselonrializelond.
  */
-trait QueryableDeserialization[T, P <: RuntimeParams, D <: Distance[D], Q <: Queryable[T, P, D]] {
-  def fromDirectory(
-    serializationDirectory: AbstractFile
+trait QuelonryablelonDelonselonrialization[T, P <: RuntimelonParams, D <: Distancelon[D], Q <: Quelonryablelon[T, P, D]] {
+  delonf fromDirelonctory(
+    selonrializationDirelonctory: AbstractFilelon
   ): Q
 }

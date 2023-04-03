@@ -1,206 +1,206 @@
-package com.twitter.follow_recommendations.common.models
+packagelon com.twittelonr.follow_reloncommelonndations.common.modelonls
 
-import com.twitter.follow_recommendations.{thriftscala => t}
-import com.twitter.follow_recommendations.logging.{thriftscala => offline}
+import com.twittelonr.follow_reloncommelonndations.{thriftscala => t}
+import com.twittelonr.follow_reloncommelonndations.logging.{thriftscala => offlinelon}
 
-case class FollowProof(followedBy: Seq[Long], numIds: Int) {
-  def toThrift: t.FollowProof = {
-    t.FollowProof(followedBy, numIds)
+caselon class FollowProof(followelondBy: Selonq[Long], numIds: Int) {
+  delonf toThrift: t.FollowProof = {
+    t.FollowProof(followelondBy, numIds)
   }
 
-  def toOfflineThrift: offline.FollowProof = offline.FollowProof(followedBy, numIds)
+  delonf toOfflinelonThrift: offlinelon.FollowProof = offlinelon.FollowProof(followelondBy, numIds)
 }
 
-object FollowProof {
+objelonct FollowProof {
 
-  def fromThrift(proof: t.FollowProof): FollowProof = {
-    FollowProof(proof.userIds, proof.numIds)
+  delonf fromThrift(proof: t.FollowProof): FollowProof = {
+    FollowProof(proof.uselonrIds, proof.numIds)
   }
 }
 
-case class SimilarToProof(similarTo: Seq[Long]) {
-  def toThrift: t.SimilarToProof = {
+caselon class SimilarToProof(similarTo: Selonq[Long]) {
+  delonf toThrift: t.SimilarToProof = {
     t.SimilarToProof(similarTo)
   }
 
-  def toOfflineThrift: offline.SimilarToProof = offline.SimilarToProof(similarTo)
+  delonf toOfflinelonThrift: offlinelon.SimilarToProof = offlinelon.SimilarToProof(similarTo)
 }
 
-object SimilarToProof {
-  def fromThrift(proof: t.SimilarToProof): SimilarToProof = {
-    SimilarToProof(proof.userIds)
+objelonct SimilarToProof {
+  delonf fromThrift(proof: t.SimilarToProof): SimilarToProof = {
+    SimilarToProof(proof.uselonrIds)
   }
 }
 
-case class PopularInGeoProof(location: String) {
-  def toThrift: t.PopularInGeoProof = {
-    t.PopularInGeoProof(location)
+caselon class PopularInGelonoProof(location: String) {
+  delonf toThrift: t.PopularInGelonoProof = {
+    t.PopularInGelonoProof(location)
   }
 
-  def toOfflineThrift: offline.PopularInGeoProof = offline.PopularInGeoProof(location)
+  delonf toOfflinelonThrift: offlinelon.PopularInGelonoProof = offlinelon.PopularInGelonoProof(location)
 }
 
-object PopularInGeoProof {
+objelonct PopularInGelonoProof {
 
-  def fromThrift(proof: t.PopularInGeoProof): PopularInGeoProof = {
-    PopularInGeoProof(proof.location)
-  }
-}
-
-case class TttInterestProof(interestId: Long, interestDisplayName: String) {
-  def toThrift: t.TttInterestProof = {
-    t.TttInterestProof(interestId, interestDisplayName)
-  }
-
-  def toOfflineThrift: offline.TttInterestProof =
-    offline.TttInterestProof(interestId, interestDisplayName)
-}
-
-object TttInterestProof {
-
-  def fromThrift(proof: t.TttInterestProof): TttInterestProof = {
-    TttInterestProof(proof.interestId, proof.interestDisplayName)
+  delonf fromThrift(proof: t.PopularInGelonoProof): PopularInGelonoProof = {
+    PopularInGelonoProof(proof.location)
   }
 }
 
-case class TopicProof(topicId: Long) {
-  def toThrift: t.TopicProof = {
+caselon class TttIntelonrelonstProof(intelonrelonstId: Long, intelonrelonstDisplayNamelon: String) {
+  delonf toThrift: t.TttIntelonrelonstProof = {
+    t.TttIntelonrelonstProof(intelonrelonstId, intelonrelonstDisplayNamelon)
+  }
+
+  delonf toOfflinelonThrift: offlinelon.TttIntelonrelonstProof =
+    offlinelon.TttIntelonrelonstProof(intelonrelonstId, intelonrelonstDisplayNamelon)
+}
+
+objelonct TttIntelonrelonstProof {
+
+  delonf fromThrift(proof: t.TttIntelonrelonstProof): TttIntelonrelonstProof = {
+    TttIntelonrelonstProof(proof.intelonrelonstId, proof.intelonrelonstDisplayNamelon)
+  }
+}
+
+caselon class TopicProof(topicId: Long) {
+  delonf toThrift: t.TopicProof = {
     t.TopicProof(topicId)
   }
 
-  def toOfflineThrift: offline.TopicProof =
-    offline.TopicProof(topicId)
+  delonf toOfflinelonThrift: offlinelon.TopicProof =
+    offlinelon.TopicProof(topicId)
 }
 
-object TopicProof {
-  def fromThrift(proof: t.TopicProof): TopicProof = {
+objelonct TopicProof {
+  delonf fromThrift(proof: t.TopicProof): TopicProof = {
     TopicProof(proof.topicId)
   }
 }
 
-case class CustomInterest(query: String) {
-  def toThrift: t.CustomInterestProof = {
-    t.CustomInterestProof(query)
+caselon class CustomIntelonrelonst(quelonry: String) {
+  delonf toThrift: t.CustomIntelonrelonstProof = {
+    t.CustomIntelonrelonstProof(quelonry)
   }
 
-  def toOfflineThrift: offline.CustomInterestProof =
-    offline.CustomInterestProof(query)
+  delonf toOfflinelonThrift: offlinelon.CustomIntelonrelonstProof =
+    offlinelon.CustomIntelonrelonstProof(quelonry)
 }
 
-object CustomInterest {
-  def fromThrift(proof: t.CustomInterestProof): CustomInterest = {
-    CustomInterest(proof.query)
-  }
-}
-
-case class TweetsAuthorProof(tweetIds: Seq[Long]) {
-  def toThrift: t.TweetsAuthorProof = {
-    t.TweetsAuthorProof(tweetIds)
-  }
-
-  def toOfflineThrift: offline.TweetsAuthorProof =
-    offline.TweetsAuthorProof(tweetIds)
-}
-
-object TweetsAuthorProof {
-  def fromThrift(proof: t.TweetsAuthorProof): TweetsAuthorProof = {
-    TweetsAuthorProof(proof.tweetIds)
+objelonct CustomIntelonrelonst {
+  delonf fromThrift(proof: t.CustomIntelonrelonstProof): CustomIntelonrelonst = {
+    CustomIntelonrelonst(proof.quelonry)
   }
 }
 
-case class DeviceFollowProof(isDeviceFollow: Boolean) {
-  def toThrift: t.DeviceFollowProof = {
-    t.DeviceFollowProof(isDeviceFollow)
-  }
-  def toOfflineThrift: offline.DeviceFollowProof =
-    offline.DeviceFollowProof(isDeviceFollow)
-}
-
-object DeviceFollowProof {
-  def fromThrift(proof: t.DeviceFollowProof): DeviceFollowProof = {
-    DeviceFollowProof(proof.isDeviceFollow)
+caselon class TwelonelontsAuthorProof(twelonelontIds: Selonq[Long]) {
+  delonf toThrift: t.TwelonelontsAuthorProof = {
+    t.TwelonelontsAuthorProof(twelonelontIds)
   }
 
+  delonf toOfflinelonThrift: offlinelon.TwelonelontsAuthorProof =
+    offlinelon.TwelonelontsAuthorProof(twelonelontIds)
 }
 
-case class AccountProof(
-  followProof: Option[FollowProof] = None,
-  similarToProof: Option[SimilarToProof] = None,
-  popularInGeoProof: Option[PopularInGeoProof] = None,
-  tttInterestProof: Option[TttInterestProof] = None,
-  topicProof: Option[TopicProof] = None,
-  customInterestProof: Option[CustomInterest] = None,
-  tweetsAuthorProof: Option[TweetsAuthorProof] = None,
-  deviceFollowProof: Option[DeviceFollowProof] = None) {
-  def toThrift: t.AccountProof = {
+objelonct TwelonelontsAuthorProof {
+  delonf fromThrift(proof: t.TwelonelontsAuthorProof): TwelonelontsAuthorProof = {
+    TwelonelontsAuthorProof(proof.twelonelontIds)
+  }
+}
+
+caselon class DelonvicelonFollowProof(isDelonvicelonFollow: Boolelonan) {
+  delonf toThrift: t.DelonvicelonFollowProof = {
+    t.DelonvicelonFollowProof(isDelonvicelonFollow)
+  }
+  delonf toOfflinelonThrift: offlinelon.DelonvicelonFollowProof =
+    offlinelon.DelonvicelonFollowProof(isDelonvicelonFollow)
+}
+
+objelonct DelonvicelonFollowProof {
+  delonf fromThrift(proof: t.DelonvicelonFollowProof): DelonvicelonFollowProof = {
+    DelonvicelonFollowProof(proof.isDelonvicelonFollow)
+  }
+
+}
+
+caselon class AccountProof(
+  followProof: Option[FollowProof] = Nonelon,
+  similarToProof: Option[SimilarToProof] = Nonelon,
+  popularInGelonoProof: Option[PopularInGelonoProof] = Nonelon,
+  tttIntelonrelonstProof: Option[TttIntelonrelonstProof] = Nonelon,
+  topicProof: Option[TopicProof] = Nonelon,
+  customIntelonrelonstProof: Option[CustomIntelonrelonst] = Nonelon,
+  twelonelontsAuthorProof: Option[TwelonelontsAuthorProof] = Nonelon,
+  delonvicelonFollowProof: Option[DelonvicelonFollowProof] = Nonelon) {
+  delonf toThrift: t.AccountProof = {
     t.AccountProof(
       followProof.map(_.toThrift),
       similarToProof.map(_.toThrift),
-      popularInGeoProof.map(_.toThrift),
-      tttInterestProof.map(_.toThrift),
+      popularInGelonoProof.map(_.toThrift),
+      tttIntelonrelonstProof.map(_.toThrift),
       topicProof.map(_.toThrift),
-      customInterestProof.map(_.toThrift),
-      tweetsAuthorProof.map(_.toThrift),
-      deviceFollowProof.map(_.toThrift)
+      customIntelonrelonstProof.map(_.toThrift),
+      twelonelontsAuthorProof.map(_.toThrift),
+      delonvicelonFollowProof.map(_.toThrift)
     )
   }
 
-  def toOfflineThrift: offline.AccountProof = {
-    offline.AccountProof(
-      followProof.map(_.toOfflineThrift),
-      similarToProof.map(_.toOfflineThrift),
-      popularInGeoProof.map(_.toOfflineThrift),
-      tttInterestProof.map(_.toOfflineThrift),
-      topicProof.map(_.toOfflineThrift),
-      customInterestProof.map(_.toOfflineThrift),
-      tweetsAuthorProof.map(_.toOfflineThrift),
-      deviceFollowProof.map(_.toOfflineThrift)
+  delonf toOfflinelonThrift: offlinelon.AccountProof = {
+    offlinelon.AccountProof(
+      followProof.map(_.toOfflinelonThrift),
+      similarToProof.map(_.toOfflinelonThrift),
+      popularInGelonoProof.map(_.toOfflinelonThrift),
+      tttIntelonrelonstProof.map(_.toOfflinelonThrift),
+      topicProof.map(_.toOfflinelonThrift),
+      customIntelonrelonstProof.map(_.toOfflinelonThrift),
+      twelonelontsAuthorProof.map(_.toOfflinelonThrift),
+      delonvicelonFollowProof.map(_.toOfflinelonThrift)
     )
   }
 }
 
-object AccountProof {
-  def fromThrift(proof: t.AccountProof): AccountProof = {
+objelonct AccountProof {
+  delonf fromThrift(proof: t.AccountProof): AccountProof = {
     AccountProof(
       proof.followProof.map(FollowProof.fromThrift),
       proof.similarToProof.map(SimilarToProof.fromThrift),
-      proof.popularInGeoProof.map(PopularInGeoProof.fromThrift),
-      proof.tttInterestProof.map(TttInterestProof.fromThrift),
+      proof.popularInGelonoProof.map(PopularInGelonoProof.fromThrift),
+      proof.tttIntelonrelonstProof.map(TttIntelonrelonstProof.fromThrift),
       proof.topicProof.map(TopicProof.fromThrift),
-      proof.customInterestProof.map(CustomInterest.fromThrift),
-      proof.tweetsAuthorProof.map(TweetsAuthorProof.fromThrift),
-      proof.deviceFollowProof.map(DeviceFollowProof.fromThrift)
+      proof.customIntelonrelonstProof.map(CustomIntelonrelonst.fromThrift),
+      proof.twelonelontsAuthorProof.map(TwelonelontsAuthorProof.fromThrift),
+      proof.delonvicelonFollowProof.map(DelonvicelonFollowProof.fromThrift)
     )
   }
 }
 
-case class Reason(accountProof: Option[AccountProof]) {
-  def toThrift: t.Reason = {
-    t.Reason(accountProof.map(_.toThrift))
+caselon class Relonason(accountProof: Option[AccountProof]) {
+  delonf toThrift: t.Relonason = {
+    t.Relonason(accountProof.map(_.toThrift))
   }
 
-  def toOfflineThrift: offline.Reason = {
-    offline.Reason(accountProof.map(_.toOfflineThrift))
-  }
-}
-
-object Reason {
-
-  def fromThrift(reason: t.Reason): Reason = {
-    Reason(reason.accountProof.map(AccountProof.fromThrift))
+  delonf toOfflinelonThrift: offlinelon.Relonason = {
+    offlinelon.Relonason(accountProof.map(_.toOfflinelonThrift))
   }
 }
 
-trait HasReason {
+objelonct Relonason {
 
-  def reason: Option[Reason]
-  // helper methods below
+  delonf fromThrift(relonason: t.Relonason): Relonason = {
+    Relonason(relonason.accountProof.map(AccountProof.fromThrift))
+  }
+}
 
-  def followedBy: Option[Seq[Long]] = {
+trait HasRelonason {
+
+  delonf relonason: Option[Relonason]
+  // helonlpelonr melonthods belonlow
+
+  delonf followelondBy: Option[Selonq[Long]] = {
     for {
-      reason <- reason
-      accountProof <- reason.accountProof
+      relonason <- relonason
+      accountProof <- relonason.accountProof
       followProof <- accountProof.followProof
-    } yield { followProof.followedBy }
+    } yielonld { followProof.followelondBy }
   }
 }

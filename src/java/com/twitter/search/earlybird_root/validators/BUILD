@@ -1,9 +1,9 @@
 java_library(
-    sources = ["*.java"],
+    sourcelons = ["*.java"],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "src/java/com/twitter/search/common/schema/earlybird",
-        "src/thrift/com/twitter/search:earlybird-java",
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        "src/java/com/twittelonr/selonarch/common/schelonma/elonarlybird",
+        "src/thrift/com/twittelonr/selonarch:elonarlybird-java",
     ],
 )

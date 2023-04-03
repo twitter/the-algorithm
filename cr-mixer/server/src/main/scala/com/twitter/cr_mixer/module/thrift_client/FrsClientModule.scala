@@ -1,41 +1,41 @@
-package com.twitter.cr_mixer.module.thrift_client
+packagelon com.twittelonr.cr_mixelonr.modulelon.thrift_clielonnt
 
-import com.twitter.app.Flag
-import com.twitter.finagle.ThriftMux
-import com.twitter.conversions.DurationOps._
-import com.twitter.cr_mixer.module.core.TimeoutConfigModule.FrsClientTimeoutFlagName
-import com.twitter.finagle.service.RetryBudget
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsClient
-import com.twitter.follow_recommendations.thriftscala.FollowRecommendationsThriftService
-import com.twitter.inject.Injector
-import com.twitter.inject.thrift.modules.ThriftMethodBuilderClientModule
-import com.twitter.util.Duration
+import com.twittelonr.app.Flag
+import com.twittelonr.finaglelon.ThriftMux
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.cr_mixelonr.modulelon.corelon.TimelonoutConfigModulelon.FrsClielonntTimelonoutFlagNamelon
+import com.twittelonr.finaglelon.selonrvicelon.RelontryBudgelont
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.finatra.mtls.thriftmux.modulelons.MtlsClielonnt
+import com.twittelonr.follow_reloncommelonndations.thriftscala.FollowReloncommelonndationsThriftSelonrvicelon
+import com.twittelonr.injelonct.Injelonctor
+import com.twittelonr.injelonct.thrift.modulelons.ThriftMelonthodBuildelonrClielonntModulelon
+import com.twittelonr.util.Duration
 
-object FrsClientModule
-    extends ThriftMethodBuilderClientModule[
-      FollowRecommendationsThriftService.ServicePerEndpoint,
-      FollowRecommendationsThriftService.MethodPerEndpoint
+objelonct FrsClielonntModulelon
+    elonxtelonnds ThriftMelonthodBuildelonrClielonntModulelon[
+      FollowReloncommelonndationsThriftSelonrvicelon.SelonrvicelonPelonrelonndpoint,
+      FollowReloncommelonndationsThriftSelonrvicelon.MelonthodPelonrelonndpoint
     ]
-    with MtlsClient {
+    with MtlsClielonnt {
 
-  override def label: String = "follow-recommendations-service"
-  override def dest: String = "/s/follow-recommendations/follow-recos-service"
+  ovelonrridelon delonf labelonl: String = "follow-reloncommelonndations-selonrvicelon"
+  ovelonrridelon delonf delonst: String = "/s/follow-reloncommelonndations/follow-reloncos-selonrvicelon"
 
-  private val frsSignalFetchTimeout: Flag[Duration] =
-    flag[Duration](FrsClientTimeoutFlagName, "FRS signal fetch client timeout")
-  override def requestTimeout: Duration = frsSignalFetchTimeout()
+  privatelon val frsSignalFelontchTimelonout: Flag[Duration] =
+    flag[Duration](FrsClielonntTimelonoutFlagNamelon, "FRS signal felontch clielonnt timelonout")
+  ovelonrridelon delonf relonquelonstTimelonout: Duration = frsSignalFelontchTimelonout()
 
-  override def retryBudget: RetryBudget = RetryBudget.Empty
+  ovelonrridelon delonf relontryBudgelont: RelontryBudgelont = RelontryBudgelont.elonmpty
 
-  override def configureThriftMuxClient(
-    injector: Injector,
-    client: ThriftMux.Client
-  ): ThriftMux.Client = {
-    super
-      .configureThriftMuxClient(injector, client)
-      .withStatsReceiver(injector.instance[StatsReceiver].scope("clnt"))
-      .withSessionQualifier
-      .successRateFailureAccrual(successRate = 0.9, window = 30.seconds)
+  ovelonrridelon delonf configurelonThriftMuxClielonnt(
+    injelonctor: Injelonctor,
+    clielonnt: ThriftMux.Clielonnt
+  ): ThriftMux.Clielonnt = {
+    supelonr
+      .configurelonThriftMuxClielonnt(injelonctor, clielonnt)
+      .withStatsReloncelonivelonr(injelonctor.instancelon[StatsReloncelonivelonr].scopelon("clnt"))
+      .withSelonssionQualifielonr
+      .succelonssRatelonFailurelonAccrual(succelonssRatelon = 0.9, window = 30.selonconds)
   }
 }

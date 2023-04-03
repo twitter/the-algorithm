@@ -1,47 +1,47 @@
-package com.twitter.product_mixer.component_library.module
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.modulelon
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.ThriftMux
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.mtls.client.MtlsStackClient._
-import com.twitter.finagle.thriftmux.MethodBuilder
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsClient
-import com.twitter.inject.Injector
-import com.twitter.inject.thrift.modules.ThriftMethodBuilderClientModule
-import com.twitter.timelineranker.{thriftscala => t}
-import com.twitter.util.Duration
-import org.apache.thrift.protocol.TCompactProtocol
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.finaglelon.ThriftMux
+import com.twittelonr.finaglelon.mtls.authelonntication.SelonrvicelonIdelonntifielonr
+import com.twittelonr.finaglelon.mtls.clielonnt.MtlsStackClielonnt._
+import com.twittelonr.finaglelon.thriftmux.MelonthodBuildelonr
+import com.twittelonr.finatra.mtls.thriftmux.modulelons.MtlsClielonnt
+import com.twittelonr.injelonct.Injelonctor
+import com.twittelonr.injelonct.thrift.modulelons.ThriftMelonthodBuildelonrClielonntModulelon
+import com.twittelonr.timelonlinelonrankelonr.{thriftscala => t}
+import com.twittelonr.util.Duration
+import org.apachelon.thrift.protocol.TCompactProtocol
 
-object TimelineRankerClientModule
-    extends ThriftMethodBuilderClientModule[
-      t.TimelineRanker.ServicePerEndpoint,
-      t.TimelineRanker.MethodPerEndpoint
+objelonct TimelonlinelonRankelonrClielonntModulelon
+    elonxtelonnds ThriftMelonthodBuildelonrClielonntModulelon[
+      t.TimelonlinelonRankelonr.SelonrvicelonPelonrelonndpoint,
+      t.TimelonlinelonRankelonr.MelonthodPelonrelonndpoint
     ]
-    with MtlsClient {
+    with MtlsClielonnt {
 
-  override val label = "timeline-ranker"
-  override val dest = "/s/timelineranker/timelineranker:compactthrift"
+  ovelonrridelon val labelonl = "timelonlinelon-rankelonr"
+  ovelonrridelon val delonst = "/s/timelonlinelonrankelonr/timelonlinelonrankelonr:compactthrift"
 
-  override protected def configureMethodBuilder(
-    injector: Injector,
-    methodBuilder: MethodBuilder
-  ): MethodBuilder = {
-    methodBuilder
-      .withTimeoutPerRequest(750.millis)
-      .withTimeoutTotal(750.millis)
+  ovelonrridelon protelonctelond delonf configurelonMelonthodBuildelonr(
+    injelonctor: Injelonctor,
+    melonthodBuildelonr: MelonthodBuildelonr
+  ): MelonthodBuildelonr = {
+    melonthodBuildelonr
+      .withTimelonoutPelonrRelonquelonst(750.millis)
+      .withTimelonoutTotal(750.millis)
   }
 
-  override def configureThriftMuxClient(
-    injector: Injector,
-    client: ThriftMux.Client
-  ): ThriftMux.Client = {
-    val serviceIdentifier = injector.instance[ServiceIdentifier]
-    super
-      .configureThriftMuxClient(injector, client)
-      .withProtocolFactory(new TCompactProtocol.Factory())
-      .withMutualTls(serviceIdentifier)
-      .withPerEndpointStats
+  ovelonrridelon delonf configurelonThriftMuxClielonnt(
+    injelonctor: Injelonctor,
+    clielonnt: ThriftMux.Clielonnt
+  ): ThriftMux.Clielonnt = {
+    val selonrvicelonIdelonntifielonr = injelonctor.instancelon[SelonrvicelonIdelonntifielonr]
+    supelonr
+      .configurelonThriftMuxClielonnt(injelonctor, clielonnt)
+      .withProtocolFactory(nelonw TCompactProtocol.Factory())
+      .withMutualTls(selonrvicelonIdelonntifielonr)
+      .withPelonrelonndpointStats
   }
 
-  override protected def sessionAcquisitionTimeout: Duration = 500.milliseconds
+  ovelonrridelon protelonctelond delonf selonssionAcquisitionTimelonout: Duration = 500.milliselonconds
 }

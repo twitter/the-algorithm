@@ -1,19 +1,19 @@
-package com.twitter.follow_recommendations.common.predicates.sgs
+packagelon com.twittelonr.follow_reloncommelonndations.common.prelondicatelons.sgs
 
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.DurationConversion
-import com.twitter.timelines.configapi.HasDurationConversion
-import com.twitter.util.Duration
-import com.twitter.conversions.DurationOps._
+import com.twittelonr.timelonlinelons.configapi.FSBoundelondParam
+import com.twittelonr.timelonlinelons.configapi.DurationConvelonrsion
+import com.twittelonr.timelonlinelons.configapi.HasDurationConvelonrsion
+import com.twittelonr.util.Duration
+import com.twittelonr.convelonrsions.DurationOps._
 
-object SgsPredicateParams {
-  case object SgsRelationshipsPredicateTimeout
-      extends FSBoundedParam[Duration](
-        name = "sgs_predicate_relationships_timeout_in_millis",
-        default = 300.millisecond,
-        min = 1.millisecond,
-        max = 1000.millisecond)
-      with HasDurationConversion {
-    override def durationConversion: DurationConversion = DurationConversion.FromMillis
+objelonct SgsPrelondicatelonParams {
+  caselon objelonct SgsRelonlationshipsPrelondicatelonTimelonout
+      elonxtelonnds FSBoundelondParam[Duration](
+        namelon = "sgs_prelondicatelon_relonlationships_timelonout_in_millis",
+        delonfault = 300.milliseloncond,
+        min = 1.milliseloncond,
+        max = 1000.milliseloncond)
+      with HasDurationConvelonrsion {
+    ovelonrridelon delonf durationConvelonrsion: DurationConvelonrsion = DurationConvelonrsion.FromMillis
   }
 }

@@ -1,401 +1,401 @@
-from datetime import datetime
-from importlib import import_module
+from datelontimelon import datelontimelon
+from importlib import import_modulelon
 import os
 
-from toxicity_ml_pipeline.data.data_preprocessing import (
-  DefaultENNoPreprocessor,
-  DefaultENPreprocessor,
+from toxicity_ml_pipelonlinelon.data.data_prelonprocelonssing import (
+  DelonfaultelonNNoPrelonprocelonssor,
+  DelonfaultelonNPrelonprocelonssor,
 )
-from toxicity_ml_pipeline.data.dataframe_loader import ENLoader, ENLoaderWithSampling
-from toxicity_ml_pipeline.data.mb_generator import BalancedMiniBatchLoader
-from toxicity_ml_pipeline.load_model import load, get_last_layer
-from toxicity_ml_pipeline.optim.callbacks import (
-  AdditionalResultLogger,
-  ControlledStoppingCheckpointCallback,
-  GradientLoggingTensorBoard,
-  SyncingTensorBoard,
+from toxicity_ml_pipelonlinelon.data.dataframelon_loadelonr import elonNLoadelonr, elonNLoadelonrWithSampling
+from toxicity_ml_pipelonlinelon.data.mb_gelonnelonrator import BalancelondMiniBatchLoadelonr
+from toxicity_ml_pipelonlinelon.load_modelonl import load, gelont_last_layelonr
+from toxicity_ml_pipelonlinelon.optim.callbacks import (
+  AdditionalRelonsultLoggelonr,
+  ControllelondStoppingChelonckpointCallback,
+  GradielonntLoggingTelonnsorBoard,
+  SyncingTelonnsorBoard,
 )
-from toxicity_ml_pipeline.optim.schedulers import WarmUp
-from toxicity_ml_pipeline.settings.default_settings_abs import GCS_ADDRESS as ABS_GCS
-from toxicity_ml_pipeline.settings.default_settings_tox import (
-  GCS_ADDRESS as TOX_GCS,
-  MODEL_DIR,
-  RANDOM_SEED,
-  REMOTE_LOGDIR,
-  WARM_UP_PERC,
+from toxicity_ml_pipelonlinelon.optim.schelondulelonrs import WarmUp
+from toxicity_ml_pipelonlinelon.selonttings.delonfault_selonttings_abs import GCS_ADDRelonSS as ABS_GCS
+from toxicity_ml_pipelonlinelon.selonttings.delonfault_selonttings_tox import (
+  GCS_ADDRelonSS as TOX_GCS,
+  MODelonL_DIR,
+  RANDOM_SelonelonD,
+  RelonMOTelon_LOGDIR,
+  WARM_UP_PelonRC,
 )
-from toxicity_ml_pipeline.utils.helpers import check_gpu, set_seeds, upload_model
+from toxicity_ml_pipelonlinelon.utils.helonlpelonrs import chelonck_gpu, selont_selonelonds, upload_modelonl
 
 import numpy as np
-import tensorflow as tf
+import telonnsorflow as tf
 
 
 try:
-  from tensorflow_addons.optimizers import AdamW
-except ModuleNotFoundError:
+  from telonnsorflow_addons.optimizelonrs import AdamW
+elonxcelonpt ModulelonNotFoundelonrror:
   print("No TFA")
 
 
-class Trainer(object):
-  OPTIMIZERS = ["Adam", "AdamW"]
+class Trainelonr(objelonct):
+  OPTIMIZelonRS = ["Adam", "AdamW"]
 
-  def __init__(
-    self,
-    optimizer_name,
-    weight_decay,
-    learning_rate,
-    mb_size,
-    train_epochs,
-    content_loss_weight=1,
-    language="en",
-    scope='TOX',
-    project=...,
-    experiment_id="default",
-    gradient_clipping=None,
-    fold="time",
-    seed=RANDOM_SEED,
-    log_gradients=False,
+  delonf __init__(
+    selonlf,
+    optimizelonr_namelon,
+    welonight_deloncay,
+    lelonarning_ratelon,
+    mb_sizelon,
+    train_elonpochs,
+    contelonnt_loss_welonight=1,
+    languagelon="elonn",
+    scopelon='TOX',
+    projelonct=...,
+    elonxpelonrimelonnt_id="delonfault",
+    gradielonnt_clipping=Nonelon,
+    fold="timelon",
+    selonelond=RANDOM_SelonelonD,
+    log_gradielonnts=Falselon,
     kw="",
-    stopping_epoch=None,
-    test=False,
+    stopping_elonpoch=Nonelon,
+    telonst=Falselon,
   ):
-    self.seed = seed
-    self.weight_decay = weight_decay
-    self.learning_rate = learning_rate
-    self.mb_size = mb_size
-    self.train_epochs = train_epochs
-    self.gradient_clipping = gradient_clipping
+    selonlf.selonelond = selonelond
+    selonlf.welonight_deloncay = welonight_deloncay
+    selonlf.lelonarning_ratelon = lelonarning_ratelon
+    selonlf.mb_sizelon = mb_sizelon
+    selonlf.train_elonpochs = train_elonpochs
+    selonlf.gradielonnt_clipping = gradielonnt_clipping
 
-    if optimizer_name not in self.OPTIMIZERS:
-      raise ValueError(
-        f"Optimizer {optimizer_name} not implemented. Accepted values {self.OPTIMIZERS}."
+    if optimizelonr_namelon not in selonlf.OPTIMIZelonRS:
+      raiselon Valuelonelonrror(
+        f"Optimizelonr {optimizelonr_namelon} not implelonmelonntelond. Accelonptelond valuelons {selonlf.OPTIMIZelonRS}."
       )
-    self.optimizer_name = optimizer_name
-    self.log_gradients = log_gradients
-    self.test = test
-    self.fold = fold
-    self.stopping_epoch = stopping_epoch
-    self.language = language
-    if scope == 'TOX':
-      GCS_ADDRESS = TOX_GCS.format(project=project)
-    elif scope == 'ABS':
-      GCS_ADDRESS = ABS_GCS
-    else:
-      raise ValueError
-    GCS_ADDRESS = GCS_ADDRESS.format(project=project)
+    selonlf.optimizelonr_namelon = optimizelonr_namelon
+    selonlf.log_gradielonnts = log_gradielonnts
+    selonlf.telonst = telonst
+    selonlf.fold = fold
+    selonlf.stopping_elonpoch = stopping_elonpoch
+    selonlf.languagelon = languagelon
+    if scopelon == 'TOX':
+      GCS_ADDRelonSS = TOX_GCS.format(projelonct=projelonct)
+    elonlif scopelon == 'ABS':
+      GCS_ADDRelonSS = ABS_GCS
+    elonlselon:
+      raiselon Valuelonelonrror
+    GCS_ADDRelonSS = GCS_ADDRelonSS.format(projelonct=projelonct)
     try:
-      self.setting_file = import_module(f"toxicity_ml_pipeline.settings.{scope.lower()}{project}_settings")
-    except ModuleNotFoundError:
-      raise ValueError(f"You need to define a setting file for your project {project}.")
-    experiment_settings = self.setting_file.experiment_settings
+      selonlf.selontting_filelon = import_modulelon(f"toxicity_ml_pipelonlinelon.selonttings.{scopelon.lowelonr()}{projelonct}_selonttings")
+    elonxcelonpt ModulelonNotFoundelonrror:
+      raiselon Valuelonelonrror(f"You nelonelond to delonfinelon a selontting filelon for your projelonct {projelonct}.")
+    elonxpelonrimelonnt_selonttings = selonlf.selontting_filelon.elonxpelonrimelonnt_selonttings
 
-    self.project = project
-    self.remote_logdir = REMOTE_LOGDIR.format(GCS_ADDRESS=GCS_ADDRESS, project=project)
-    self.model_dir = MODEL_DIR.format(GCS_ADDRESS=GCS_ADDRESS, project=project)
+    selonlf.projelonct = projelonct
+    selonlf.relonmotelon_logdir = RelonMOTelon_LOGDIR.format(GCS_ADDRelonSS=GCS_ADDRelonSS, projelonct=projelonct)
+    selonlf.modelonl_dir = MODelonL_DIR.format(GCS_ADDRelonSS=GCS_ADDRelonSS, projelonct=projelonct)
 
-    if experiment_id not in experiment_settings:
-      raise ValueError("This is not an experiment id as defined in the settings file.")
+    if elonxpelonrimelonnt_id not in elonxpelonrimelonnt_selonttings:
+      raiselon Valuelonelonrror("This is not an elonxpelonrimelonnt id as delonfinelond in thelon selonttings filelon.")
 
-    for var, default_value in experiment_settings["default"].items():
-      override_val = experiment_settings[experiment_id].get(var, default_value)
-      print("Setting ", var, override_val)
-      self.__setattr__(var, override_val)
+    for var, delonfault_valuelon in elonxpelonrimelonnt_selonttings["delonfault"].itelonms():
+      ovelonrridelon_val = elonxpelonrimelonnt_selonttings[elonxpelonrimelonnt_id].gelont(var, delonfault_valuelon)
+      print("Selontting ", var, ovelonrridelon_val)
+      selonlf.__selontattr__(var, ovelonrridelon_val)
 
-    self.content_loss_weight = content_loss_weight if self.dual_head else None
+    selonlf.contelonnt_loss_welonight = contelonnt_loss_welonight if selonlf.dual_helonad elonlselon Nonelon
 
-    self.mb_loader = BalancedMiniBatchLoader(
-      fold=self.fold,
-      seed=self.seed,
-      perc_training_tox=self.perc_training_tox,
-      mb_size=self.mb_size,
-      n_outer_splits="time",
-      scope=scope,
-      project=project,
-      dual_head=self.dual_head,
-      sample_weights=self.sample_weights,
-      huggingface=("bertweet" in self.model_type),
+    selonlf.mb_loadelonr = BalancelondMiniBatchLoadelonr(
+      fold=selonlf.fold,
+      selonelond=selonlf.selonelond,
+      pelonrc_training_tox=selonlf.pelonrc_training_tox,
+      mb_sizelon=selonlf.mb_sizelon,
+      n_outelonr_splits="timelon",
+      scopelon=scopelon,
+      projelonct=projelonct,
+      dual_helonad=selonlf.dual_helonad,
+      samplelon_welonights=selonlf.samplelon_welonights,
+      huggingfacelon=("belonrtwelonelont" in selonlf.modelonl_typelon),
     )
-    self._init_dirnames(kw=kw, experiment_id=experiment_id)
-    print("------- Checking there is a GPU")
-    check_gpu()
+    selonlf._init_dirnamelons(kw=kw, elonxpelonrimelonnt_id=elonxpelonrimelonnt_id)
+    print("------- Cheloncking thelonrelon is a GPU")
+    chelonck_gpu()
 
-  def _init_dirnames(self, kw, experiment_id):
-    kw = "test" if self.test else kw
-    hyper_param_kw = ""
-    if self.optimizer_name == "AdamW":
-      hyper_param_kw += f"{self.weight_decay}_"
-    if self.gradient_clipping:
-      hyper_param_kw += f"{self.gradient_clipping}_"
-    if self.content_loss_weight:
-      hyper_param_kw += f"{self.content_loss_weight}_"
-    experiment_name = (
-      f"{self.language}{str(datetime.now()).replace(' ', '')[:-7]}{kw}_{experiment_id}{self.fold}_"
-      f"{self.optimizer_name}_"
-      f"{self.learning_rate}_"
-      f"{hyper_param_kw}"
-      f"{self.mb_size}_"
-      f"{self.perc_training_tox}_"
-      f"{self.train_epochs}_seed{self.seed}"
+  delonf _init_dirnamelons(selonlf, kw, elonxpelonrimelonnt_id):
+    kw = "telonst" if selonlf.telonst elonlselon kw
+    hypelonr_param_kw = ""
+    if selonlf.optimizelonr_namelon == "AdamW":
+      hypelonr_param_kw += f"{selonlf.welonight_deloncay}_"
+    if selonlf.gradielonnt_clipping:
+      hypelonr_param_kw += f"{selonlf.gradielonnt_clipping}_"
+    if selonlf.contelonnt_loss_welonight:
+      hypelonr_param_kw += f"{selonlf.contelonnt_loss_welonight}_"
+    elonxpelonrimelonnt_namelon = (
+      f"{selonlf.languagelon}{str(datelontimelon.now()).relonplacelon(' ', '')[:-7]}{kw}_{elonxpelonrimelonnt_id}{selonlf.fold}_"
+      f"{selonlf.optimizelonr_namelon}_"
+      f"{selonlf.lelonarning_ratelon}_"
+      f"{hypelonr_param_kw}"
+      f"{selonlf.mb_sizelon}_"
+      f"{selonlf.pelonrc_training_tox}_"
+      f"{selonlf.train_elonpochs}_selonelond{selonlf.selonelond}"
     )
-    print("------- Experiment name: ", experiment_name)
-    self.logdir = (
+    print("------- elonxpelonrimelonnt namelon: ", elonxpelonrimelonnt_namelon)
+    selonlf.logdir = (
       f"..."
-      if self.test
-      else f"..."
+      if selonlf.telonst
+      elonlselon f"..."
     )
-    self.checkpoint_path = f"{self.model_dir}/{experiment_name}"
+    selonlf.chelonckpoint_path = f"{selonlf.modelonl_dir}/{elonxpelonrimelonnt_namelon}"
 
-  @staticmethod
-  def _additional_writers(logdir, metric_name):
-    return tf.summary.create_file_writer(os.path.join(logdir, metric_name))
+  @staticmelonthod
+  delonf _additional_writelonrs(logdir, melontric_namelon):
+    relonturn tf.summary.crelonatelon_filelon_writelonr(os.path.join(logdir, melontric_namelon))
 
-  def get_callbacks(self, fold, val_data, test_data):
-    fold_logdir = self.logdir + f"_fold{fold}"
-    fold_checkpoint_path = self.checkpoint_path + f"_fold{fold}/{{epoch:02d}}"
+  delonf gelont_callbacks(selonlf, fold, val_data, telonst_data):
+    fold_logdir = selonlf.logdir + f"_fold{fold}"
+    fold_chelonckpoint_path = selonlf.chelonckpoint_path + f"_fold{fold}/{{elonpoch:02d}}"
 
     tb_args = {
       "log_dir": fold_logdir,
-      "histogram_freq": 0,
-      "update_freq": 500,
-      "embeddings_freq": 0,
-      "remote_logdir": f"{self.remote_logdir}_{self.language}"
-      if not self.test
-      else f"{self.remote_logdir}_test",
+      "histogram_frelonq": 0,
+      "updatelon_frelonq": 500,
+      "elonmbelonddings_frelonq": 0,
+      "relonmotelon_logdir": f"{selonlf.relonmotelon_logdir}_{selonlf.languagelon}"
+      if not selonlf.telonst
+      elonlselon f"{selonlf.relonmotelon_logdir}_telonst",
     }
-    tensorboard_callback = (
-      GradientLoggingTensorBoard(loader=self.mb_loader, val_data=val_data, freq=10, **tb_args)
-      if self.log_gradients
-      else SyncingTensorBoard(**tb_args)
+    telonnsorboard_callback = (
+      GradielonntLoggingTelonnsorBoard(loadelonr=selonlf.mb_loadelonr, val_data=val_data, frelonq=10, **tb_args)
+      if selonlf.log_gradielonnts
+      elonlselon SyncingTelonnsorBoard(**tb_args)
     )
 
-    callbacks = [tensorboard_callback]
-    if "bertweet" in self.model_type:
-      from_logits = True
-      dataset_transform_func = self.mb_loader.make_huggingface_tensorflow_ds
-    else:
-      from_logits = False
-      dataset_transform_func = None
+    callbacks = [telonnsorboard_callback]
+    if "belonrtwelonelont" in selonlf.modelonl_typelon:
+      from_logits = Truelon
+      dataselont_transform_func = selonlf.mb_loadelonr.makelon_huggingfacelon_telonnsorflow_ds
+    elonlselon:
+      from_logits = Falselon
+      dataselont_transform_func = Nonelon
 
-    fixed_recall = 0.85 if not self.dual_head else 0.5
-    val_callback = AdditionalResultLogger(
+    fixelond_reloncall = 0.85 if not selonlf.dual_helonad elonlselon 0.5
+    val_callback = AdditionalRelonsultLoggelonr(
       data=val_data,
-      set_="validation",
+      selont_="validation",
       from_logits=from_logits,
-      dataset_transform_func=dataset_transform_func,
-      dual_head=self.dual_head,
-      fixed_recall=fixed_recall
+      dataselont_transform_func=dataselont_transform_func,
+      dual_helonad=selonlf.dual_helonad,
+      fixelond_reloncall=fixelond_reloncall
     )
-    if val_callback is not None:
-      callbacks.append(val_callback)
+    if val_callback is not Nonelon:
+      callbacks.appelonnd(val_callback)
 
-    test_callback = AdditionalResultLogger(
-      data=test_data,
-      set_="test",
+    telonst_callback = AdditionalRelonsultLoggelonr(
+      data=telonst_data,
+      selont_="telonst",
       from_logits=from_logits,
-      dataset_transform_func=dataset_transform_func,
-      dual_head=self.dual_head,
-      fixed_recall=fixed_recall
+      dataselont_transform_func=dataselont_transform_func,
+      dual_helonad=selonlf.dual_helonad,
+      fixelond_reloncall=fixelond_reloncall
     )
-    callbacks.append(test_callback)
+    callbacks.appelonnd(telonst_callback)
 
-    checkpoint_args = {
-      "filepath": fold_checkpoint_path,
-      "verbose": 0,
+    chelonckpoint_args = {
+      "filelonpath": fold_chelonckpoint_path,
+      "velonrboselon": 0,
       "monitor": "val_pr_auc",
-      "save_weights_only": True,
-      "mode": "max",
-      "save_freq": "epoch",
+      "savelon_welonights_only": Truelon,
+      "modelon": "max",
+      "savelon_frelonq": "elonpoch",
     }
-    if self.stopping_epoch:
-      checkpoint_callback = ControlledStoppingCheckpointCallback(
-        **checkpoint_args,
-        stopping_epoch=self.stopping_epoch,
-        save_best_only=False,
+    if selonlf.stopping_elonpoch:
+      chelonckpoint_callback = ControllelondStoppingChelonckpointCallback(
+        **chelonckpoint_args,
+        stopping_elonpoch=selonlf.stopping_elonpoch,
+        savelon_belonst_only=Falselon,
       )
-      callbacks.append(checkpoint_callback)
+      callbacks.appelonnd(chelonckpoint_callback)
 
-    return callbacks
+    relonturn callbacks
 
-  def get_lr_schedule(self, steps_per_epoch):
-    total_num_steps = steps_per_epoch * self.train_epochs
+  delonf gelont_lr_schelondulelon(selonlf, stelonps_pelonr_elonpoch):
+    total_num_stelonps = stelonps_pelonr_elonpoch * selonlf.train_elonpochs
 
-    warm_up_perc = WARM_UP_PERC if self.learning_rate >= 1e-3 else 0
-    warm_up_steps = int(total_num_steps * warm_up_perc)
-    if self.linear_lr_decay:
-      learning_rate_fn = tf.keras.optimizers.schedules.PolynomialDecay(
-        self.learning_rate,
-        total_num_steps - warm_up_steps,
-        end_learning_rate=0.0,
-        power=1.0,
-        cycle=False,
+    warm_up_pelonrc = WARM_UP_PelonRC if selonlf.lelonarning_ratelon >= 1elon-3 elonlselon 0
+    warm_up_stelonps = int(total_num_stelonps * warm_up_pelonrc)
+    if selonlf.linelonar_lr_deloncay:
+      lelonarning_ratelon_fn = tf.kelonras.optimizelonrs.schelondulelons.PolynomialDeloncay(
+        selonlf.lelonarning_ratelon,
+        total_num_stelonps - warm_up_stelonps,
+        elonnd_lelonarning_ratelon=0.0,
+        powelonr=1.0,
+        cyclelon=Falselon,
       )
-    else:
-      print('Constant learning rate')
-      learning_rate_fn = self.learning_rate
+    elonlselon:
+      print('Constant lelonarning ratelon')
+      lelonarning_ratelon_fn = selonlf.lelonarning_ratelon
 
-    if warm_up_perc > 0:
-      print(f".... using warm-up for {warm_up_steps} steps")
-      warm_up_schedule = WarmUp(
-        initial_learning_rate=self.learning_rate,
-        decay_schedule_fn=learning_rate_fn,
-        warmup_steps=warm_up_steps,
+    if warm_up_pelonrc > 0:
+      print(f".... using warm-up for {warm_up_stelonps} stelonps")
+      warm_up_schelondulelon = WarmUp(
+        initial_lelonarning_ratelon=selonlf.lelonarning_ratelon,
+        deloncay_schelondulelon_fn=lelonarning_ratelon_fn,
+        warmup_stelonps=warm_up_stelonps,
       )
-      return warm_up_schedule
-    return learning_rate_fn
+      relonturn warm_up_schelondulelon
+    relonturn lelonarning_ratelon_fn
 
-  def get_optimizer(self, schedule):
+  delonf gelont_optimizelonr(selonlf, schelondulelon):
     optim_args = {
-      "learning_rate": schedule,
-      "beta_1": 0.9,
-      "beta_2": 0.999,
-      "epsilon": 1e-6,
-      "amsgrad": False,
+      "lelonarning_ratelon": schelondulelon,
+      "belonta_1": 0.9,
+      "belonta_2": 0.999,
+      "elonpsilon": 1elon-6,
+      "amsgrad": Falselon,
     }
-    if self.gradient_clipping:
-      optim_args["global_clipnorm"] = self.gradient_clipping
+    if selonlf.gradielonnt_clipping:
+      optim_args["global_clipnorm"] = selonlf.gradielonnt_clipping
 
-    print(f".... {self.optimizer_name} w global clipnorm {self.gradient_clipping}")
-    if self.optimizer_name == "Adam":
-      return tf.keras.optimizers.Adam(**optim_args)
+    print(f".... {selonlf.optimizelonr_namelon} w global clipnorm {selonlf.gradielonnt_clipping}")
+    if selonlf.optimizelonr_namelon == "Adam":
+      relonturn tf.kelonras.optimizelonrs.Adam(**optim_args)
 
-    if self.optimizer_name == "AdamW":
-      optim_args["weight_decay"] = self.weight_decay
-      return AdamW(**optim_args)
-    raise NotImplementedError
+    if selonlf.optimizelonr_namelon == "AdamW":
+      optim_args["welonight_deloncay"] = selonlf.welonight_deloncay
+      relonturn AdamW(**optim_args)
+    raiselon NotImplelonmelonntelondelonrror
 
-  def get_training_actors(self, steps_per_epoch, val_data, test_data, fold):
-    callbacks = self.get_callbacks(fold=fold, val_data=val_data, test_data=test_data)
-    schedule = self.get_lr_schedule(steps_per_epoch=steps_per_epoch)
+  delonf gelont_training_actors(selonlf, stelonps_pelonr_elonpoch, val_data, telonst_data, fold):
+    callbacks = selonlf.gelont_callbacks(fold=fold, val_data=val_data, telonst_data=telonst_data)
+    schelondulelon = selonlf.gelont_lr_schelondulelon(stelonps_pelonr_elonpoch=stelonps_pelonr_elonpoch)
 
-    optimizer = self.get_optimizer(schedule)
+    optimizelonr = selonlf.gelont_optimizelonr(schelondulelon)
 
-    return optimizer, callbacks
+    relonturn optimizelonr, callbacks
 
-  def load_data(self):
-    if self.project == 435 or self.project == 211:
-      if self.dataset_type is None:
-        data_loader = ENLoader(project=self.project, setting_file=self.setting_file)
-        dataset_type_args = {}
-      else:
-        data_loader = ENLoaderWithSampling(project=self.project, setting_file=self.setting_file)
-        dataset_type_args = self.dataset_type
+  delonf load_data(selonlf):
+    if selonlf.projelonct == 435 or selonlf.projelonct == 211:
+      if selonlf.dataselont_typelon is Nonelon:
+        data_loadelonr = elonNLoadelonr(projelonct=selonlf.projelonct, selontting_filelon=selonlf.selontting_filelon)
+        dataselont_typelon_args = {}
+      elonlselon:
+        data_loadelonr = elonNLoadelonrWithSampling(projelonct=selonlf.projelonct, selontting_filelon=selonlf.selontting_filelon)
+        dataselont_typelon_args = selonlf.dataselont_typelon
 
-    df = data_loader.load_data(
-      language=self.language, test=self.test, reload=self.dataset_reload, **dataset_type_args
+    df = data_loadelonr.load_data(
+      languagelon=selonlf.languagelon, telonst=selonlf.telonst, relonload=selonlf.dataselont_relonload, **dataselont_typelon_args
     )
 
-    return df
+    relonturn df
 
-  def preprocess(self, df):
-    if self.project == 435 or self.project == 211:
-      if self.preprocessing is None:
-        data_prepro = DefaultENNoPreprocessor()
-      elif self.preprocessing == "default":
-        data_prepro = DefaultENPreprocessor()
-      else:
-        raise NotImplementedError
+  delonf prelonprocelonss(selonlf, df):
+    if selonlf.projelonct == 435 or selonlf.projelonct == 211:
+      if selonlf.prelonprocelonssing is Nonelon:
+        data_prelonpro = DelonfaultelonNNoPrelonprocelonssor()
+      elonlif selonlf.prelonprocelonssing == "delonfault":
+        data_prelonpro = DelonfaultelonNPrelonprocelonssor()
+      elonlselon:
+        raiselon NotImplelonmelonntelondelonrror
 
-    return data_prepro(
+    relonturn data_prelonpro(
       df=df,
-      label_column=self.label_column,
-      class_weight=self.perc_training_tox if self.sample_weights == 'class_weight' else None,
-      filter_low_agreements=self.filter_low_agreements,
-      num_classes=self.num_classes,
+      labelonl_column=selonlf.labelonl_column,
+      class_welonight=selonlf.pelonrc_training_tox if selonlf.samplelon_welonights == 'class_welonight' elonlselon Nonelon,
+      filtelonr_low_agrelonelonmelonnts=selonlf.filtelonr_low_agrelonelonmelonnts,
+      num_classelons=selonlf.num_classelons,
     )
 
-  def load_model(self, optimizer):
-    smart_bias_value = (
-      np.log(self.perc_training_tox / (1 - self.perc_training_tox)) if self.smart_bias_init else 0
+  delonf load_modelonl(selonlf, optimizelonr):
+    smart_bias_valuelon = (
+      np.log(selonlf.pelonrc_training_tox / (1 - selonlf.pelonrc_training_tox)) if selonlf.smart_bias_init elonlselon 0
     )
-    model = load(
-      optimizer,
-      seed=self.seed,
-      trainable=self.trainable,
-      model_type=self.model_type,
-      loss_name=self.loss_name,
-      num_classes=self.num_classes,
-      additional_layer=self.additional_layer,
-      smart_bias_value=smart_bias_value,
-      content_num_classes=self.content_num_classes,
-      content_loss_name=self.content_loss_name,
-      content_loss_weight=self.content_loss_weight
+    modelonl = load(
+      optimizelonr,
+      selonelond=selonlf.selonelond,
+      trainablelon=selonlf.trainablelon,
+      modelonl_typelon=selonlf.modelonl_typelon,
+      loss_namelon=selonlf.loss_namelon,
+      num_classelons=selonlf.num_classelons,
+      additional_layelonr=selonlf.additional_layelonr,
+      smart_bias_valuelon=smart_bias_valuelon,
+      contelonnt_num_classelons=selonlf.contelonnt_num_classelons,
+      contelonnt_loss_namelon=selonlf.contelonnt_loss_namelon,
+      contelonnt_loss_welonight=selonlf.contelonnt_loss_welonight
     )
 
-    if self.model_reload is not False:
-      model_folder = upload_model(full_gcs_model_path=os.path.join(self.model_dir, self.model_reload))
-      model.load_weights(model_folder)
-      if self.scratch_last_layer:
-        print('Putting the last layer back to scratch')
-        model.layers[-1] = get_last_layer(seed=self.seed,
-                                        num_classes=self.num_classes,
-                                        smart_bias_value=smart_bias_value)
+    if selonlf.modelonl_relonload is not Falselon:
+      modelonl_foldelonr = upload_modelonl(full_gcs_modelonl_path=os.path.join(selonlf.modelonl_dir, selonlf.modelonl_relonload))
+      modelonl.load_welonights(modelonl_foldelonr)
+      if selonlf.scratch_last_layelonr:
+        print('Putting thelon last layelonr back to scratch')
+        modelonl.layelonrs[-1] = gelont_last_layelonr(selonelond=selonlf.selonelond,
+                                        num_classelons=selonlf.num_classelons,
+                                        smart_bias_valuelon=smart_bias_valuelon)
 
-    return model
+    relonturn modelonl
 
-  def _train_single_fold(self, mb_generator, test_data, steps_per_epoch, fold, val_data=None):
-    steps_per_epoch = 100 if self.test else steps_per_epoch
+  delonf _train_singlelon_fold(selonlf, mb_gelonnelonrator, telonst_data, stelonps_pelonr_elonpoch, fold, val_data=Nonelon):
+    stelonps_pelonr_elonpoch = 100 if selonlf.telonst elonlselon stelonps_pelonr_elonpoch
 
-    optimizer, callbacks = self.get_training_actors(
-      steps_per_epoch=steps_per_epoch, val_data=val_data, test_data=test_data, fold=fold
+    optimizelonr, callbacks = selonlf.gelont_training_actors(
+      stelonps_pelonr_elonpoch=stelonps_pelonr_elonpoch, val_data=val_data, telonst_data=telonst_data, fold=fold
     )
-    print("Loading model")
-    model = self.load_model(optimizer)
-    print(f"Nb of steps per epoch: {steps_per_epoch} ---- launching training")
+    print("Loading modelonl")
+    modelonl = selonlf.load_modelonl(optimizelonr)
+    print(f"Nb of stelonps pelonr elonpoch: {stelonps_pelonr_elonpoch} ---- launching training")
     training_args = {
-      "epochs": self.train_epochs,
-      "steps_per_epoch": steps_per_epoch,
-      "batch_size": self.mb_size,
+      "elonpochs": selonlf.train_elonpochs,
+      "stelonps_pelonr_elonpoch": stelonps_pelonr_elonpoch,
+      "batch_sizelon": selonlf.mb_sizelon,
       "callbacks": callbacks,
-      "verbose": 2,
+      "velonrboselon": 2,
     }
 
-    model.fit(mb_generator, **training_args)
-    return
+    modelonl.fit(mb_gelonnelonrator, **training_args)
+    relonturn
 
-  def train_full_model(self):
-    print("Setting up random seed.")
-    set_seeds(self.seed)
+  delonf train_full_modelonl(selonlf):
+    print("Selontting up random selonelond.")
+    selont_selonelonds(selonlf.selonelond)
 
-    print(f"Loading {self.language} data")
-    df = self.load_data()
-    df = self.preprocess(df=df)
+    print(f"Loading {selonlf.languagelon} data")
+    df = selonlf.load_data()
+    df = selonlf.prelonprocelonss(df=df)
 
-    print("Going to train on everything but the test dataset")
-    mini_batches, test_data, steps_per_epoch = self.mb_loader.simple_cv_load(df)
+    print("Going to train on elonvelonrything but thelon telonst dataselont")
+    mini_batchelons, telonst_data, stelonps_pelonr_elonpoch = selonlf.mb_loadelonr.simplelon_cv_load(df)
 
-    self._train_single_fold(
-      mb_generator=mini_batches, test_data=test_data, steps_per_epoch=steps_per_epoch, fold="full"
+    selonlf._train_singlelon_fold(
+      mb_gelonnelonrator=mini_batchelons, telonst_data=telonst_data, stelonps_pelonr_elonpoch=stelonps_pelonr_elonpoch, fold="full"
     )
 
-  def train(self):
-    print("Setting up random seed.")
-    set_seeds(self.seed)
+  delonf train(selonlf):
+    print("Selontting up random selonelond.")
+    selont_selonelonds(selonlf.selonelond)
 
-    print(f"Loading {self.language} data")
-    df = self.load_data()
-    df = self.preprocess(df=df)
+    print(f"Loading {selonlf.languagelon} data")
+    df = selonlf.load_data()
+    df = selonlf.prelonprocelonss(df=df)
 
-    print("Loading MB generator")
+    print("Loading MB gelonnelonrator")
     i = 0
-    if self.project == 435 or self.project == 211:
-      mb_generator, steps_per_epoch, val_data, test_data = self.mb_loader.no_cv_load(full_df=df)
-      self._train_single_fold(
-        mb_generator=mb_generator,
+    if selonlf.projelonct == 435 or selonlf.projelonct == 211:
+      mb_gelonnelonrator, stelonps_pelonr_elonpoch, val_data, telonst_data = selonlf.mb_loadelonr.no_cv_load(full_df=df)
+      selonlf._train_singlelon_fold(
+        mb_gelonnelonrator=mb_gelonnelonrator,
         val_data=val_data,
-        test_data=test_data,
-        steps_per_epoch=steps_per_epoch,
+        telonst_data=telonst_data,
+        stelonps_pelonr_elonpoch=stelonps_pelonr_elonpoch,
         fold=i,
       )
-    else:
-      raise ValueError("Sure you want to do multiple fold training")
-      for mb_generator, steps_per_epoch, val_data, test_data in self.mb_loader(full_df=df):
-        self._train_single_fold(
-          mb_generator=mb_generator,
+    elonlselon:
+      raiselon Valuelonelonrror("Surelon you want to do multiplelon fold training")
+      for mb_gelonnelonrator, stelonps_pelonr_elonpoch, val_data, telonst_data in selonlf.mb_loadelonr(full_df=df):
+        selonlf._train_singlelon_fold(
+          mb_gelonnelonrator=mb_gelonnelonrator,
           val_data=val_data,
-          test_data=test_data,
-          steps_per_epoch=steps_per_epoch,
+          telonst_data=telonst_data,
+          stelonps_pelonr_elonpoch=stelonps_pelonr_elonpoch,
           fold=i,
         )
         i += 1
         if i == 3:
-          break
+          brelonak

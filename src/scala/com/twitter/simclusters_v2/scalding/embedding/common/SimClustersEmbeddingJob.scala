@@ -1,83 +1,83 @@
-package com.twitter.simclusters_v2.scalding.embedding.common
+packagelon com.twittelonr.simclustelonrs_v2.scalding.elonmbelondding.common
 
-import com.twitter.scalding.{Args, DateRange, Execution, TypedPipe, UniqueID}
-import com.twitter.simclusters_v2.common.ModelVersions
-import com.twitter.simclusters_v2.scalding.common.matrix.{SparseMatrix, SparseRowMatrix}
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil._
-import com.twitter.simclusters_v2.thriftscala._
-import java.util.TimeZone
+import com.twittelonr.scalding.{Args, DatelonRangelon, elonxeloncution, TypelondPipelon, UniquelonID}
+import com.twittelonr.simclustelonrs_v2.common.ModelonlVelonrsions
+import com.twittelonr.simclustelonrs_v2.scalding.common.matrix.{SparselonMatrix, SparselonRowMatrix}
+import com.twittelonr.simclustelonrs_v2.scalding.elonmbelondding.common.elonmbelonddingUtil._
+import com.twittelonr.simclustelonrs_v2.thriftscala._
+import java.util.TimelonZonelon
 
 /**
- * This is the base job for computing SimClusters Embedding for any Noun Type on Twitter, such as
- * Users, Tweets, Topics, Entities, Channels, etc.
+ * This is thelon baselon job for computing SimClustelonrs elonmbelondding for any Noun Typelon on Twittelonr, such as
+ * Uselonrs, Twelonelonts, Topics, elonntitielons, Channelonls, elontc.
  *
- * The most straightforward way to understand the SimClusters Embeddings for a Noun is that it is
- * a weighted sum of SimClusters InterestedIn vectors from users who are interested in the Noun.
- * So for a noun type, you only need to define `prepareNounToUserMatrix` to pass in a matrix which
- * represents how much each user is interested in this noun.
+ * Thelon most straightforward way to undelonrstand thelon SimClustelonrs elonmbelonddings for a Noun is that it is
+ * a welonightelond sum of SimClustelonrs IntelonrelonstelondIn velonctors from uselonrs who arelon intelonrelonstelond in thelon Noun.
+ * So for a noun typelon, you only nelonelond to delonfinelon `prelonparelonNounToUselonrMatrix` to pass in a matrix which
+ * relonprelonselonnts how much elonach uselonr is intelonrelonstelond in this noun.
  */
-trait SimClustersEmbeddingBaseJob[NounType] {
+trait SimClustelonrselonmbelonddingBaselonJob[NounTypelon] {
 
-  def numClustersPerNoun: Int
+  delonf numClustelonrsPelonrNoun: Int
 
-  def numNounsPerClusters: Int
+  delonf numNounsPelonrClustelonrs: Int
 
-  def thresholdForEmbeddingScores: Double
+  delonf threlonsholdForelonmbelonddingScorelons: Doublelon
 
-  def numReducersOpt: Option[Int] = None
+  delonf numRelonducelonrsOpt: Option[Int] = Nonelon
 
-  def prepareNounToUserMatrix(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): SparseMatrix[NounType, UserId, Double]
+  delonf prelonparelonNounToUselonrMatrix(
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon,
+    uniquelonID: UniquelonID
+  ): SparselonMatrix[NounTypelon, UselonrId, Doublelon]
 
-  def prepareUserToClusterMatrix(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): SparseRowMatrix[UserId, ClusterId, Double]
+  delonf prelonparelonUselonrToClustelonrMatrix(
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon,
+    uniquelonID: UniquelonID
+  ): SparselonRowMatrix[UselonrId, ClustelonrId, Doublelon]
 
-  def writeNounToClustersIndex(
-    output: TypedPipe[(NounType, Seq[(ClusterId, Double)])]
+  delonf writelonNounToClustelonrsIndelonx(
+    output: TypelondPipelon[(NounTypelon, Selonq[(ClustelonrId, Doublelon)])]
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit]
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon,
+    uniquelonID: UniquelonID
+  ): elonxeloncution[Unit]
 
-  def writeClusterToNounsIndex(
-    output: TypedPipe[(ClusterId, Seq[(NounType, Double)])]
+  delonf writelonClustelonrToNounsIndelonx(
+    output: TypelondPipelon[(ClustelonrId, Selonq[(NounTypelon, Doublelon)])]
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit]
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon,
+    uniquelonID: UniquelonID
+  ): elonxeloncution[Unit]
 
-  def runOnDateRange(
+  delonf runOnDatelonRangelon(
     args: Args
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon,
+    uniquelonID: UniquelonID
+  ): elonxeloncution[Unit] = {
 
-    val embeddingMatrix: SparseRowMatrix[NounType, ClusterId, Double] =
-      prepareNounToUserMatrix.rowL2Normalize
-        .multiplySkinnySparseRowMatrix(
-          prepareUserToClusterMatrix.colL2Normalize,
-          numReducersOpt
+    val elonmbelonddingMatrix: SparselonRowMatrix[NounTypelon, ClustelonrId, Doublelon] =
+      prelonparelonNounToUselonrMatrix.rowL2Normalizelon
+        .multiplySkinnySparselonRowMatrix(
+          prelonparelonUselonrToClustelonrMatrix.colL2Normalizelon,
+          numRelonducelonrsOpt
         )
-        .filter((_, _, v) => v > thresholdForEmbeddingScores)
+        .filtelonr((_, _, v) => v > threlonsholdForelonmbelonddingScorelons)
 
-    Execution
+    elonxeloncution
       .zip(
-        writeNounToClustersIndex(
-          embeddingMatrix.sortWithTakePerRow(numClustersPerNoun)(Ordering.by(-_._2))
+        writelonNounToClustelonrsIndelonx(
+          elonmbelonddingMatrix.sortWithTakelonPelonrRow(numClustelonrsPelonrNoun)(Ordelonring.by(-_._2))
         ),
-        writeClusterToNounsIndex(
-          embeddingMatrix.sortWithTakePerCol(numNounsPerClusters)(
-            Ordering.by(-_._2)
+        writelonClustelonrToNounsIndelonx(
+          elonmbelonddingMatrix.sortWithTakelonPelonrCol(numNounsPelonrClustelonrs)(
+            Ordelonring.by(-_._2)
           )
         )
       )
@@ -86,163 +86,163 @@ trait SimClustersEmbeddingBaseJob[NounType] {
 
 }
 
-object SimClustersEmbeddingJob {
+objelonct SimClustelonrselonmbelonddingJob {
 
   /**
-   * Multiply the [user, cluster] and [user, T] matrices, and return the cross product.
+   * Multiply thelon [uselonr, clustelonr] and [uselonr, T] matricelons, and relonturn thelon cross product.
    */
-  def computeEmbeddings[T](
-    simClustersSource: TypedPipe[(UserId, ClustersUserIsInterestedIn)],
-    normalizedInputMatrix: TypedPipe[(UserId, (T, Double))],
-    scoreExtractors: Seq[UserToInterestedInClusterScores => (Double, ScoreType.ScoreType)],
-    modelVersion: ModelVersion,
-    toSimClustersEmbeddingId: (T, ScoreType.ScoreType) => SimClustersEmbeddingId,
-    numReducers: Option[Int] = None
-  ): TypedPipe[(SimClustersEmbeddingId, (ClusterId, Double))] = {
-    val userSimClustersMatrix =
-      getUserSimClustersMatrix(simClustersSource, scoreExtractors, modelVersion)
-    multiplyMatrices(
-      normalizedInputMatrix,
-      userSimClustersMatrix,
-      toSimClustersEmbeddingId,
-      numReducers)
+  delonf computelonelonmbelonddings[T](
+    simClustelonrsSourcelon: TypelondPipelon[(UselonrId, ClustelonrsUselonrIsIntelonrelonstelondIn)],
+    normalizelondInputMatrix: TypelondPipelon[(UselonrId, (T, Doublelon))],
+    scorelonelonxtractors: Selonq[UselonrToIntelonrelonstelondInClustelonrScorelons => (Doublelon, ScorelonTypelon.ScorelonTypelon)],
+    modelonlVelonrsion: ModelonlVelonrsion,
+    toSimClustelonrselonmbelonddingId: (T, ScorelonTypelon.ScorelonTypelon) => SimClustelonrselonmbelonddingId,
+    numRelonducelonrs: Option[Int] = Nonelon
+  ): TypelondPipelon[(SimClustelonrselonmbelonddingId, (ClustelonrId, Doublelon))] = {
+    val uselonrSimClustelonrsMatrix =
+      gelontUselonrSimClustelonrsMatrix(simClustelonrsSourcelon, scorelonelonxtractors, modelonlVelonrsion)
+    multiplyMatricelons(
+      normalizelondInputMatrix,
+      uselonrSimClustelonrsMatrix,
+      toSimClustelonrselonmbelonddingId,
+      numRelonducelonrs)
   }
 
-  def getL2Norm[T](
-    inputMatrix: TypedPipe[(T, (UserId, Double))],
-    numReducers: Option[Int] = None
+  delonf gelontL2Norm[T](
+    inputMatrix: TypelondPipelon[(T, (UselonrId, Doublelon))],
+    numRelonducelonrs: Option[Int] = Nonelon
   )(
-    implicit ordering: Ordering[T]
-  ): TypedPipe[(T, Double)] = {
+    implicit ordelonring: Ordelonring[T]
+  ): TypelondPipelon[(T, Doublelon)] = {
     val l2Norm = inputMatrix
-      .mapValues {
-        case (_, score) => score * score
+      .mapValuelons {
+        caselon (_, scorelon) => scorelon * scorelon
       }
-      .sumByKey
-      .mapValues(math.sqrt)
+      .sumByKelony
+      .mapValuelons(math.sqrt)
 
-    numReducers match {
-      case Some(reducers) => l2Norm.withReducers(reducers)
-      case _ => l2Norm
+    numRelonducelonrs match {
+      caselon Somelon(relonducelonrs) => l2Norm.withRelonducelonrs(relonducelonrs)
+      caselon _ => l2Norm
     }
   }
 
-  def getNormalizedTransposeInputMatrix[T](
-    inputMatrix: TypedPipe[(T, (UserId, Double))],
-    numReducers: Option[Int] = None
+  delonf gelontNormalizelondTransposelonInputMatrix[T](
+    inputMatrix: TypelondPipelon[(T, (UselonrId, Doublelon))],
+    numRelonducelonrs: Option[Int] = Nonelon
   )(
-    implicit ordering: Ordering[T]
-  ): TypedPipe[(UserId, (T, Double))] = {
-    val inputWithNorm = inputMatrix.join(getL2Norm(inputMatrix, numReducers))
+    implicit ordelonring: Ordelonring[T]
+  ): TypelondPipelon[(UselonrId, (T, Doublelon))] = {
+    val inputWithNorm = inputMatrix.join(gelontL2Norm(inputMatrix, numRelonducelonrs))
 
-    (numReducers match {
-      case Some(reducers) => inputWithNorm.withReducers(reducers)
-      case _ => inputWithNorm
+    (numRelonducelonrs match {
+      caselon Somelon(relonducelonrs) => inputWithNorm.withRelonducelonrs(relonducelonrs)
+      caselon _ => inputWithNorm
     }).map {
-      case (inputId, ((userId, favScore), norm)) =>
-        (userId, (inputId, favScore / norm))
+      caselon (inputId, ((uselonrId, favScorelon), norm)) =>
+        (uselonrId, (inputId, favScorelon / norm))
     }
   }
 
   /**
-   * Matrix multiplication with the ability to tune the reducer size for better performance
+   * Matrix multiplication with thelon ability to tunelon thelon relonducelonr sizelon for belonttelonr pelonrformancelon
    */
-  @Deprecated
-  def legacyMultiplyMatrices[T](
-    normalizedTransposeInputMatrix: TypedPipe[(UserId, (T, Double))],
-    userSimClustersMatrix: TypedPipe[(UserId, Seq[(ClusterId, Double)])],
-    numReducers: Int // Matrix multiplication is expensive. Use this to tune performance
+  @Delonpreloncatelond
+  delonf lelongacyMultiplyMatricelons[T](
+    normalizelondTransposelonInputMatrix: TypelondPipelon[(UselonrId, (T, Doublelon))],
+    uselonrSimClustelonrsMatrix: TypelondPipelon[(UselonrId, Selonq[(ClustelonrId, Doublelon)])],
+    numRelonducelonrs: Int // Matrix multiplication is elonxpelonnsivelon. Uselon this to tunelon pelonrformancelon
   )(
-    implicit ordering: Ordering[T]
-  ): TypedPipe[((ClusterId, T), Double)] = {
-    normalizedTransposeInputMatrix
-      .join(userSimClustersMatrix)
-      .withReducers(numReducers)
+    implicit ordelonring: Ordelonring[T]
+  ): TypelondPipelon[((ClustelonrId, T), Doublelon)] = {
+    normalizelondTransposelonInputMatrix
+      .join(uselonrSimClustelonrsMatrix)
+      .withRelonducelonrs(numRelonducelonrs)
       .flatMap {
-        case (_, ((inputId, score), clustersWithScores)) =>
-          clustersWithScores.map {
-            case (clusterId, clusterScore) =>
-              ((clusterId, inputId), score * clusterScore)
+        caselon (_, ((inputId, scorelon), clustelonrsWithScorelons)) =>
+          clustelonrsWithScorelons.map {
+            caselon (clustelonrId, clustelonrScorelon) =>
+              ((clustelonrId, inputId), scorelon * clustelonrScorelon)
           }
       }
-      .sumByKey
-      .withReducers(numReducers + 1) // +1 to distinguish this step from above in Dr. Scalding
+      .sumByKelony
+      .withRelonducelonrs(numRelonducelonrs + 1) // +1 to distinguish this stelonp from abovelon in Dr. Scalding
   }
 
-  def multiplyMatrices[T](
-    normalizedTransposeInputMatrix: TypedPipe[(UserId, (T, Double))],
-    userSimClustersMatrix: TypedPipe[(UserId, Seq[((ClusterId, ScoreType.ScoreType), Double)])],
-    toSimClustersEmbeddingId: (T, ScoreType.ScoreType) => SimClustersEmbeddingId,
-    numReducers: Option[Int] = None
-  ): TypedPipe[(SimClustersEmbeddingId, (ClusterId, Double))] = {
-    val inputJoinedWithSimClusters = numReducers match {
-      case Some(reducers) =>
-        normalizedTransposeInputMatrix
-          .join(userSimClustersMatrix)
-          .withReducers(reducers)
-      case _ =>
-        normalizedTransposeInputMatrix.join(userSimClustersMatrix)
+  delonf multiplyMatricelons[T](
+    normalizelondTransposelonInputMatrix: TypelondPipelon[(UselonrId, (T, Doublelon))],
+    uselonrSimClustelonrsMatrix: TypelondPipelon[(UselonrId, Selonq[((ClustelonrId, ScorelonTypelon.ScorelonTypelon), Doublelon)])],
+    toSimClustelonrselonmbelonddingId: (T, ScorelonTypelon.ScorelonTypelon) => SimClustelonrselonmbelonddingId,
+    numRelonducelonrs: Option[Int] = Nonelon
+  ): TypelondPipelon[(SimClustelonrselonmbelonddingId, (ClustelonrId, Doublelon))] = {
+    val inputJoinelondWithSimClustelonrs = numRelonducelonrs match {
+      caselon Somelon(relonducelonrs) =>
+        normalizelondTransposelonInputMatrix
+          .join(uselonrSimClustelonrsMatrix)
+          .withRelonducelonrs(relonducelonrs)
+      caselon _ =>
+        normalizelondTransposelonInputMatrix.join(uselonrSimClustelonrsMatrix)
     }
 
-    val matrixMultiplicationResult = inputJoinedWithSimClusters.flatMap {
-      case (_, ((inputId, inputScore), clustersWithScores)) =>
-        clustersWithScores.map {
-          case ((clusterId, scoreType), clusterScore) =>
-            ((clusterId, toSimClustersEmbeddingId(inputId, scoreType)), inputScore * clusterScore)
+    val matrixMultiplicationRelonsult = inputJoinelondWithSimClustelonrs.flatMap {
+      caselon (_, ((inputId, inputScorelon), clustelonrsWithScorelons)) =>
+        clustelonrsWithScorelons.map {
+          caselon ((clustelonrId, scorelonTypelon), clustelonrScorelon) =>
+            ((clustelonrId, toSimClustelonrselonmbelonddingId(inputId, scorelonTypelon)), inputScorelon * clustelonrScorelon)
         }
-    }.sumByKey
+    }.sumByKelony
 
-    (numReducers match {
-      case Some(reducers) =>
-        matrixMultiplicationResult.withReducers(reducers + 1)
-      case _ => matrixMultiplicationResult
+    (numRelonducelonrs match {
+      caselon Somelon(relonducelonrs) =>
+        matrixMultiplicationRelonsult.withRelonducelonrs(relonducelonrs + 1)
+      caselon _ => matrixMultiplicationRelonsult
     }).map {
-      case ((clusterId, embeddingId), score) =>
-        (embeddingId, (clusterId, score))
+      caselon ((clustelonrId, elonmbelonddingId), scorelon) =>
+        (elonmbelonddingId, (clustelonrId, scorelon))
     }
   }
 
-  def getUserSimClustersMatrix(
-    simClustersSource: TypedPipe[(UserId, ClustersUserIsInterestedIn)],
-    scoreExtractors: Seq[UserToInterestedInClusterScores => (Double, ScoreType.ScoreType)],
-    modelVersion: ModelVersion
-  ): TypedPipe[(UserId, Seq[((ClusterId, ScoreType.ScoreType), Double)])] = {
-    simClustersSource.map {
-      case (userId, clusters)
-          if ModelVersions.toModelVersion(clusters.knownForModelVersion) == modelVersion =>
-        userId -> clusters.clusterIdToScores.flatMap {
-          case (clusterId, clusterScores) =>
-            scoreExtractors.map { scoreExtractor =>
-              scoreExtractor(clusterScores) match {
-                case (score, scoreType) => ((clusterId, scoreType), score)
+  delonf gelontUselonrSimClustelonrsMatrix(
+    simClustelonrsSourcelon: TypelondPipelon[(UselonrId, ClustelonrsUselonrIsIntelonrelonstelondIn)],
+    scorelonelonxtractors: Selonq[UselonrToIntelonrelonstelondInClustelonrScorelons => (Doublelon, ScorelonTypelon.ScorelonTypelon)],
+    modelonlVelonrsion: ModelonlVelonrsion
+  ): TypelondPipelon[(UselonrId, Selonq[((ClustelonrId, ScorelonTypelon.ScorelonTypelon), Doublelon)])] = {
+    simClustelonrsSourcelon.map {
+      caselon (uselonrId, clustelonrs)
+          if ModelonlVelonrsions.toModelonlVelonrsion(clustelonrs.knownForModelonlVelonrsion) == modelonlVelonrsion =>
+        uselonrId -> clustelonrs.clustelonrIdToScorelons.flatMap {
+          caselon (clustelonrId, clustelonrScorelons) =>
+            scorelonelonxtractors.map { scorelonelonxtractor =>
+              scorelonelonxtractor(clustelonrScorelons) match {
+                caselon (scorelon, scorelonTypelon) => ((clustelonrId, scorelonTypelon), scorelon)
               }
             }
-        }.toSeq
-      case (userId, _) => userId -> Nil
+        }.toSelonq
+      caselon (uselonrId, _) => uselonrId -> Nil
     }
   }
 
-  def toReverseIndexSimClusterEmbedding(
-    embeddings: TypedPipe[(SimClustersEmbeddingId, (ClusterId, EmbeddingScore))],
+  delonf toRelonvelonrselonIndelonxSimClustelonrelonmbelondding(
+    elonmbelonddings: TypelondPipelon[(SimClustelonrselonmbelonddingId, (ClustelonrId, elonmbelonddingScorelon))],
     topK: Int
-  ): TypedPipe[(SimClustersEmbeddingId, InternalIdEmbedding)] = {
-    embeddings
+  ): TypelondPipelon[(SimClustelonrselonmbelonddingId, IntelonrnalIdelonmbelondding)] = {
+    elonmbelonddings
       .map {
-        case (embeddingId, (clusterId, score)) =>
+        caselon (elonmbelonddingId, (clustelonrId, scorelon)) =>
           (
-            SimClustersEmbeddingId(
-              embeddingId.embeddingType,
-              embeddingId.modelVersion,
-              InternalId.ClusterId(clusterId)),
-            (embeddingId.internalId, score))
+            SimClustelonrselonmbelonddingId(
+              elonmbelonddingId.elonmbelonddingTypelon,
+              elonmbelonddingId.modelonlVelonrsion,
+              IntelonrnalId.ClustelonrId(clustelonrId)),
+            (elonmbelonddingId.intelonrnalId, scorelon))
       }
       .group
-      .sortedReverseTake(topK)(Ordering.by(_._2))
-      .mapValues { topInternalIdsWithScore =>
-        val internalIdsWithScore = topInternalIdsWithScore.map {
-          case (internalId, score) => InternalIdWithScore(internalId, score)
+      .sortelondRelonvelonrselonTakelon(topK)(Ordelonring.by(_._2))
+      .mapValuelons { topIntelonrnalIdsWithScorelon =>
+        val intelonrnalIdsWithScorelon = topIntelonrnalIdsWithScorelon.map {
+          caselon (intelonrnalId, scorelon) => IntelonrnalIdWithScorelon(intelonrnalId, scorelon)
         }
-        InternalIdEmbedding(internalIdsWithScore)
+        IntelonrnalIdelonmbelondding(intelonrnalIdsWithScorelon)
       }
   }
 }

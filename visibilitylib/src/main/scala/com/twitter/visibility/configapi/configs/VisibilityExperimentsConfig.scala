@@ -1,33 +1,33 @@
-package com.twitter.visibility.configapi.configs
+packagelon com.twittelonr.visibility.configapi.configs
 
-import com.twitter.timelines.configapi.Config
-import com.twitter.visibility.configapi.params.RuleParams._
-import com.twitter.visibility.configapi.params.VisibilityExperiments._
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.models.SafetyLevel._
+import com.twittelonr.timelonlinelons.configapi.Config
+import com.twittelonr.visibility.configapi.params.RulelonParams._
+import com.twittelonr.visibility.configapi.params.Visibilityelonxpelonrimelonnts._
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl._
 
-private[visibility] object VisibilityExperimentsConfig {
-  import ExperimentsHelper._
+privatelon[visibility] objelonct VisibilityelonxpelonrimelonntsConfig {
+  import elonxpelonrimelonntsHelonlpelonr._
 
-  val TestExperimentConfig: Config = mkABExperimentConfig(TestExperiment, TestHoldbackParam)
+  val TelonstelonxpelonrimelonntConfig: Config = mkABelonxpelonrimelonntConfig(Telonstelonxpelonrimelonnt, TelonstHoldbackParam)
 
-  val NotGraduatedUserLabelRuleHoldbackExperimentConfig: Config =
-    mkABExperimentConfig(
-      NotGraduatedUserLabelRuleExperiment,
-      NotGraduatedUserLabelRuleHoldbackExperimentParam
+  val NotGraduatelondUselonrLabelonlRulelonHoldbackelonxpelonrimelonntConfig: Config =
+    mkABelonxpelonrimelonntConfig(
+      NotGraduatelondUselonrLabelonlRulelonelonxpelonrimelonnt,
+      NotGraduatelondUselonrLabelonlRulelonHoldbackelonxpelonrimelonntParam
     )
 
-  def config(safetyLevel: SafetyLevel): Seq[Config] = {
+  delonf config(safelontyLelonvelonl: SafelontyLelonvelonl): Selonq[Config] = {
 
-    val experimentConfigs = safetyLevel match {
+    val elonxpelonrimelonntConfigs = safelontyLelonvelonl match {
 
-      case Test =>
-        Seq(TestExperimentConfig)
+      caselon Telonst =>
+        Selonq(TelonstelonxpelonrimelonntConfig)
 
-      case _ => Seq(NotGraduatedUserLabelRuleHoldbackExperimentConfig)
+      caselon _ => Selonq(NotGraduatelondUselonrLabelonlRulelonHoldbackelonxpelonrimelonntConfig)
     }
 
-    experimentConfigs
+    elonxpelonrimelonntConfigs
   }
 
 }

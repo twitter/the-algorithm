@@ -1,414 +1,414 @@
-# checkstyle: noqa
+# chelonckstylelon: noqa
 
-import time
-from collections import defaultdict
+import timelon
+from collelonctions import delonfaultdict
 
-from com.twitter.mlmetastore.modelrepo.client import ModelRepoClient
-from com.twitter.mlmetastore.modelrepo.core import FeatureImportance, FeatureNames
-from twitter.deepbird.io.util import match_feature_regex_list
+from com.twittelonr.mlmelontastorelon.modelonlrelonpo.clielonnt import ModelonlRelonpoClielonnt
+from com.twittelonr.mlmelontastorelon.modelonlrelonpo.corelon import FelonaturelonImportancelon, FelonaturelonNamelons
+from twittelonr.delonelonpbird.io.util import match_felonaturelon_relongelonx_list
 
-from twml.contrib.feature_importances.helpers import (
-  _get_feature_name_from_config,
-  _get_feature_types_from_records,
-  _get_metrics_hook,
-  _expand_prefix,
-  longest_common_prefix,
-  write_list_to_hdfs_gfile)
-from twml.contrib.feature_importances.feature_permutation import PermutedInputFnFactory
-from twml.tracking import ExperimentTracker
+from twml.contrib.felonaturelon_importancelons.helonlpelonrs import (
+  _gelont_felonaturelon_namelon_from_config,
+  _gelont_felonaturelon_typelons_from_reloncords,
+  _gelont_melontrics_hook,
+  _elonxpand_prelonfix,
+  longelonst_common_prelonfix,
+  writelon_list_to_hdfs_gfilelon)
+from twml.contrib.felonaturelon_importancelons.felonaturelon_pelonrmutation import PelonrmutelondInputFnFactory
+from twml.tracking import elonxpelonrimelonntTrackelonr
 
-from tensorflow.compat.v1 import logging
-from requests.exceptions import HTTPError, RetryError
-from queue import Queue
+from telonnsorflow.compat.v1 import logging
+from relonquelonsts.elonxcelonptions import HTTPelonrror, Relontryelonrror
+from quelonuelon import Quelonuelon
 
 
-SERIAL = "serial"
-TREE = "tree"
+SelonRIAL = "selonrial"
+TRelonelon = "trelonelon"
 INDIVIDUAL = "Individual"
 GROUP = "Group"
 ROC_AUC = "roc_auc"
-RCE = "rce"
+RCelon = "rcelon"
 LOSS = "loss"
 
 
-def _repartition(feature_list_queue, fnames_ftypes, split_feature_group_on_period):
+delonf _relonpartition(felonaturelon_list_quelonuelon, fnamelons_ftypelons, split_felonaturelon_group_on_pelonriod):
   """
-  Iterate through letters to partition each feature by prefix, and then put each tuple
-    (prefix, feature_partition) into the feature_list_queue
+  Itelonratelon through lelonttelonrs to partition elonach felonaturelon by prelonfix, and thelonn put elonach tuplelon
+    (prelonfix, felonaturelon_partition) into thelon felonaturelon_list_quelonuelon
   Args:
-    prefix (str): The prefix shared by each feature in list_of_feature_types
-    feature_list_queue (Queue<(str, list<(str, str)>)>): The queue of feature groups
-    fnames_ftypes (list<(str, str)>): List of (fname, ftype) pairs. Each fname begins with prefix
-    split_feature_group_on_period (str): If true, require that feature groups end in a period
-  Returns:
-    Updated queue with each group in fnames_ftypes
+    prelonfix (str): Thelon prelonfix sharelond by elonach felonaturelon in list_of_felonaturelon_typelons
+    felonaturelon_list_quelonuelon (Quelonuelon<(str, list<(str, str)>)>): Thelon quelonuelon of felonaturelon groups
+    fnamelons_ftypelons (list<(str, str)>): List of (fnamelon, ftypelon) pairs. elonach fnamelon belongins with prelonfix
+    split_felonaturelon_group_on_pelonriod (str): If truelon, relonquirelon that felonaturelon groups elonnd in a pelonriod
+  Relonturns:
+    Updatelond quelonuelon with elonach group in fnamelons_ftypelons
   """
-  assert len(fnames_ftypes) > 1
+  asselonrt lelonn(fnamelons_ftypelons) > 1
 
-  split_character = "." if split_feature_group_on_period else None
-  # Compute the longest prefix of the words
-  prefix = longest_common_prefix(
-    strings=[fname for fname, _ in fnames_ftypes], split_character=split_character)
+  split_charactelonr = "." if split_felonaturelon_group_on_pelonriod elonlselon Nonelon
+  # Computelon thelon longelonst prelonfix of thelon words
+  prelonfix = longelonst_common_prelonfix(
+    strings=[fnamelon for fnamelon, _ in fnamelons_ftypelons], split_charactelonr=split_charactelonr)
 
-  # Separate the features by prefix
-  prefix_to_features = defaultdict(list)
-  for fname, ftype in fnames_ftypes:
-    assert fname.startswith(prefix)
-    new_prefix = _expand_prefix(fname=fname, prefix=prefix, split_character=split_character)
-    prefix_to_features[new_prefix].append((fname, ftype))
+  # Selonparatelon thelon felonaturelons by prelonfix
+  prelonfix_to_felonaturelons = delonfaultdict(list)
+  for fnamelon, ftypelon in fnamelons_ftypelons:
+    asselonrt fnamelon.startswith(prelonfix)
+    nelonw_prelonfix = _elonxpand_prelonfix(fnamelon=fnamelon, prelonfix=prelonfix, split_charactelonr=split_charactelonr)
+    prelonfix_to_felonaturelons[nelonw_prelonfix].appelonnd((fnamelon, ftypelon))
 
-  # Add all of the new partitions to the queue
-  for new_prefix, fname_ftype_list in prefix_to_features.items():
-    extended_new_prefix = longest_common_prefix(
-      strings=[fname for fname, _ in fname_ftype_list], split_character=split_character)
-    assert extended_new_prefix.startswith(new_prefix)
-    feature_list_queue.put((extended_new_prefix, fname_ftype_list))
-  return feature_list_queue
-
-
-def _infer_if_is_metric_larger_the_better(stopping_metric):
-  # Infers whether a metric should be interpreted such that larger numbers are better (e.g. ROC_AUC), as opposed to
-  #   larger numbers being worse (e.g. LOSS)
-  if stopping_metric is None:
-    raise ValueError("Error: Stopping Metric cannot be None")
-  elif stopping_metric.startswith(LOSS):
-    logging.info("Interpreting {} to be a metric where larger numbers are worse".format(stopping_metric))
-    is_metric_larger_the_better = False
-  else:
-    logging.info("Interpreting {} to be a metric where larger numbers are better".format(stopping_metric))
-    is_metric_larger_the_better = True
-  return is_metric_larger_the_better
+  # Add all of thelon nelonw partitions to thelon quelonuelon
+  for nelonw_prelonfix, fnamelon_ftypelon_list in prelonfix_to_felonaturelons.itelonms():
+    elonxtelonndelond_nelonw_prelonfix = longelonst_common_prelonfix(
+      strings=[fnamelon for fnamelon, _ in fnamelon_ftypelon_list], split_charactelonr=split_charactelonr)
+    asselonrt elonxtelonndelond_nelonw_prelonfix.startswith(nelonw_prelonfix)
+    felonaturelon_list_quelonuelon.put((elonxtelonndelond_nelonw_prelonfix, fnamelon_ftypelon_list))
+  relonturn felonaturelon_list_quelonuelon
 
 
-def _check_whether_tree_should_expand(baseline_performance, computed_performance, sensitivity, stopping_metric, is_metric_larger_the_better):
+delonf _infelonr_if_is_melontric_largelonr_thelon_belonttelonr(stopping_melontric):
+  # Infelonrs whelonthelonr a melontric should belon intelonrprelontelond such that largelonr numbelonrs arelon belonttelonr (elon.g. ROC_AUC), as opposelond to
+  #   largelonr numbelonrs beloning worselon (elon.g. LOSS)
+  if stopping_melontric is Nonelon:
+    raiselon Valuelonelonrror("elonrror: Stopping Melontric cannot belon Nonelon")
+  elonlif stopping_melontric.startswith(LOSS):
+    logging.info("Intelonrprelonting {} to belon a melontric whelonrelon largelonr numbelonrs arelon worselon".format(stopping_melontric))
+    is_melontric_largelonr_thelon_belonttelonr = Falselon
+  elonlselon:
+    logging.info("Intelonrprelonting {} to belon a melontric whelonrelon largelonr numbelonrs arelon belonttelonr".format(stopping_melontric))
+    is_melontric_largelonr_thelon_belonttelonr = Truelon
+  relonturn is_melontric_largelonr_thelon_belonttelonr
+
+
+delonf _chelonck_whelonthelonr_trelonelon_should_elonxpand(baselonlinelon_pelonrformancelon, computelond_pelonrformancelon, selonnsitivity, stopping_melontric, is_melontric_largelonr_thelon_belonttelonr):
   """
-  Returns True if
-    - the metric is positive (e.g. ROC_AUC) and computed_performance is nontrivially smaller than the baseline_performance
-    - the metric is negative (e.g. LOSS) and computed_performance is nontrivially larger than the baseline_performance
+  Relonturns Truelon if
+    - thelon melontric is positivelon (elon.g. ROC_AUC) and computelond_pelonrformancelon is nontrivially smallelonr than thelon baselonlinelon_pelonrformancelon
+    - thelon melontric is nelongativelon (elon.g. LOSS) and computelond_pelonrformancelon is nontrivially largelonr than thelon baselonlinelon_pelonrformancelon
   """
-  difference = ((baseline_performance[stopping_metric] - computed_performance[stopping_metric]) /
-                 baseline_performance[stopping_metric])
+  diffelonrelonncelon = ((baselonlinelon_pelonrformancelon[stopping_melontric] - computelond_pelonrformancelon[stopping_melontric]) /
+                 baselonlinelon_pelonrformancelon[stopping_melontric])
 
-  if not is_metric_larger_the_better:
-      difference = -difference
+  if not is_melontric_largelonr_thelon_belonttelonr:
+      diffelonrelonncelon = -diffelonrelonncelon
 
   logging.info(
-    "Found a {} difference of {}. Sensitivity is {}.".format("positive" if is_metric_larger_the_better else "negative", difference, sensitivity))
-  return difference > sensitivity
+    "Found a {} diffelonrelonncelon of {}. Selonnsitivity is {}.".format("positivelon" if is_melontric_largelonr_thelon_belonttelonr elonlselon "nelongativelon", diffelonrelonncelon, selonnsitivity))
+  relonturn diffelonrelonncelon > selonnsitivity
 
 
-def _compute_multiple_permuted_performances_from_trainer(
-    factory, fname_ftypes, trainer, parse_fn, record_count):
-  """Compute performances with fname and fype permuted
+delonf _computelon_multiplelon_pelonrmutelond_pelonrformancelons_from_trainelonr(
+    factory, fnamelon_ftypelons, trainelonr, parselon_fn, reloncord_count):
+  """Computelon pelonrformancelons with fnamelon and fypelon pelonrmutelond
   """
-  metrics_hook = _get_metrics_hook(trainer)
-  trainer._estimator.evaluate(
-    input_fn=factory.get_permuted_input_fn(
-      batch_size=trainer._params.eval_batch_size, parse_fn=parse_fn, fname_ftypes=fname_ftypes),
-    steps=(record_count + trainer._params.eval_batch_size) // trainer._params.eval_batch_size,
-    hooks=[metrics_hook],
-    checkpoint_path=trainer.best_or_latest_checkpoint)
-  return metrics_hook.metric_values
+  melontrics_hook = _gelont_melontrics_hook(trainelonr)
+  trainelonr._elonstimator.elonvaluatelon(
+    input_fn=factory.gelont_pelonrmutelond_input_fn(
+      batch_sizelon=trainelonr._params.elonval_batch_sizelon, parselon_fn=parselon_fn, fnamelon_ftypelons=fnamelon_ftypelons),
+    stelonps=(reloncord_count + trainelonr._params.elonval_batch_sizelon) // trainelonr._params.elonval_batch_sizelon,
+    hooks=[melontrics_hook],
+    chelonckpoint_path=trainelonr.belonst_or_latelonst_chelonckpoint)
+  relonturn melontrics_hook.melontric_valuelons
 
 
-def _get_extra_feature_group_performances(factory, trainer, parse_fn, extra_groups, feature_to_type, record_count):
-  """Compute performance differences for the extra feature groups
+delonf _gelont_elonxtra_felonaturelon_group_pelonrformancelons(factory, trainelonr, parselon_fn, elonxtra_groups, felonaturelon_to_typelon, reloncord_count):
+  """Computelon pelonrformancelon diffelonrelonncelons for thelon elonxtra felonaturelon groups
   """
-  extra_group_feature_performance_results = {}
-  for group_name, raw_feature_regex_list in extra_groups.items():
-    start = time.time()
-    fnames = match_feature_regex_list(
-      features=feature_to_type.keys(),
-      feature_regex_list=[regex for regex in raw_feature_regex_list],
-      preprocess=False,
-      as_dict=False)
+  elonxtra_group_felonaturelon_pelonrformancelon_relonsults = {}
+  for group_namelon, raw_felonaturelon_relongelonx_list in elonxtra_groups.itelonms():
+    start = timelon.timelon()
+    fnamelons = match_felonaturelon_relongelonx_list(
+      felonaturelons=felonaturelon_to_typelon.kelonys(),
+      felonaturelon_relongelonx_list=[relongelonx for relongelonx in raw_felonaturelon_relongelonx_list],
+      prelonprocelonss=Falselon,
+      as_dict=Falselon)
 
-    fnames_ftypes = [(fname, feature_to_type[fname]) for fname in fnames]
+    fnamelons_ftypelons = [(fnamelon, felonaturelon_to_typelon[fnamelon]) for fnamelon in fnamelons]
 
-    logging.info("Extracted extra group {} with features {}".format(group_name, fnames_ftypes))
-    extra_group_feature_performance_results[group_name] = _compute_multiple_permuted_performances_from_trainer(
-      factory=factory, fname_ftypes=fnames_ftypes,
-      trainer=trainer, parse_fn=parse_fn, record_count=record_count)
-    logging.info("\n\nImportances computed for {} in {} seconds \n\n".format(
-      group_name, int(time.time() - start)))
-  return extra_group_feature_performance_results
+    logging.info("elonxtractelond elonxtra group {} with felonaturelons {}".format(group_namelon, fnamelons_ftypelons))
+    elonxtra_group_felonaturelon_pelonrformancelon_relonsults[group_namelon] = _computelon_multiplelon_pelonrmutelond_pelonrformancelons_from_trainelonr(
+      factory=factory, fnamelon_ftypelons=fnamelons_ftypelons,
+      trainelonr=trainelonr, parselon_fn=parselon_fn, reloncord_count=reloncord_count)
+    logging.info("\n\nImportancelons computelond for {} in {} selonconds \n\n".format(
+      group_namelon, int(timelon.timelon() - start)))
+  relonturn elonxtra_group_felonaturelon_pelonrformancelon_relonsults
 
 
-def _feature_importances_tree_algorithm(
-    data_dir, trainer, parse_fn, fnames, stopping_metric, file_list=None, datarecord_filter_fn=None, split_feature_group_on_period=True,
-    record_count=99999, is_metric_larger_the_better=None, sensitivity=0.025, extra_groups=None, dont_build_tree=False):
-  """Tree algorithm for feature and feature group importances. This algorithm build a prefix tree of
-  the feature names and then traverses the tree with a BFS. At each node (aka group of features with
-  a shared prefix) the algorithm computes the performance of the model when we permute all features
-  in the group. The algorithm only zooms-in on groups that impact the performance by more than
-  sensitivity. As a result, features that affect the model performance by less than sensitivity will
-  not have an exact importance.
+delonf _felonaturelon_importancelons_trelonelon_algorithm(
+    data_dir, trainelonr, parselon_fn, fnamelons, stopping_melontric, filelon_list=Nonelon, datareloncord_filtelonr_fn=Nonelon, split_felonaturelon_group_on_pelonriod=Truelon,
+    reloncord_count=99999, is_melontric_largelonr_thelon_belonttelonr=Nonelon, selonnsitivity=0.025, elonxtra_groups=Nonelon, dont_build_trelonelon=Falselon):
+  """Trelonelon algorithm for felonaturelon and felonaturelon group importancelons. This algorithm build a prelonfix trelonelon of
+  thelon felonaturelon namelons and thelonn travelonrselons thelon trelonelon with a BFS. At elonach nodelon (aka group of felonaturelons with
+  a sharelond prelonfix) thelon algorithm computelons thelon pelonrformancelon of thelon modelonl whelonn welon pelonrmutelon all felonaturelons
+  in thelon group. Thelon algorithm only zooms-in on groups that impact thelon pelonrformancelon by morelon than
+  selonnsitivity. As a relonsult, felonaturelons that affelonct thelon modelonl pelonrformancelon by lelonss than selonnsitivity will
+  not havelon an elonxact importancelon.
   Args:
-    data_dir: (str): The location of the training or testing data to compute importances over.
-      If None, the trainer._eval_files are used
-    trainer: (DataRecordTrainer): A DataRecordTrainer object
-    parse_fn: (function): The parse_fn used by eval_input_fn
-    fnames (list<string>): The list of feature names
-    stopping_metric (str): The metric to use to determine when to stop expanding trees
-    file_list (list<str>): The list of filenames. Exactly one of file_list and data_dir should be
-      provided
-    datarecord_filter_fn (function): a function takes a single data sample in com.twitter.ml.api.ttypes.DataRecord format
-        and return a boolean value, to indicate if this data record should be kept in feature importance module or not.
-    split_feature_group_on_period (boolean): If true, split feature groups by period rather than on
-      optimal prefix
-    record_count (int): The number of records to compute importances over
-    is_metric_larger_the_better (boolean): If true, assume that stopping_metric is a metric where larger
-      values are better (e.g. ROC-AUC)
-    sensitivity (float): The smallest change in performance to continue to expand the tree
-    extra_groups (dict<str, list<str>>): A dictionary mapping the name of extra feature groups to the list of
-      the names of the features in the group. You should only supply a value for this argument if you have a set
-      of features that you want to evaluate as a group but don't share a prefix
-    dont_build_tree (boolean): If True, don't build the tree and only compute the extra_groups importances
-  Returns:
-    A dictionary that contains the individual and group feature importances
+    data_dir: (str): Thelon location of thelon training or telonsting data to computelon importancelons ovelonr.
+      If Nonelon, thelon trainelonr._elonval_filelons arelon uselond
+    trainelonr: (DataReloncordTrainelonr): A DataReloncordTrainelonr objelonct
+    parselon_fn: (function): Thelon parselon_fn uselond by elonval_input_fn
+    fnamelons (list<string>): Thelon list of felonaturelon namelons
+    stopping_melontric (str): Thelon melontric to uselon to delontelonrminelon whelonn to stop elonxpanding trelonelons
+    filelon_list (list<str>): Thelon list of filelonnamelons. elonxactly onelon of filelon_list and data_dir should belon
+      providelond
+    datareloncord_filtelonr_fn (function): a function takelons a singlelon data samplelon in com.twittelonr.ml.api.ttypelons.DataReloncord format
+        and relonturn a boolelonan valuelon, to indicatelon if this data reloncord should belon kelonpt in felonaturelon importancelon modulelon or not.
+    split_felonaturelon_group_on_pelonriod (boolelonan): If truelon, split felonaturelon groups by pelonriod rathelonr than on
+      optimal prelonfix
+    reloncord_count (int): Thelon numbelonr of reloncords to computelon importancelons ovelonr
+    is_melontric_largelonr_thelon_belonttelonr (boolelonan): If truelon, assumelon that stopping_melontric is a melontric whelonrelon largelonr
+      valuelons arelon belonttelonr (elon.g. ROC-AUC)
+    selonnsitivity (float): Thelon smallelonst changelon in pelonrformancelon to continuelon to elonxpand thelon trelonelon
+    elonxtra_groups (dict<str, list<str>>): A dictionary mapping thelon namelon of elonxtra felonaturelon groups to thelon list of
+      thelon namelons of thelon felonaturelons in thelon group. You should only supply a valuelon for this argumelonnt if you havelon a selont
+      of felonaturelons that you want to elonvaluatelon as a group but don't sharelon a prelonfix
+    dont_build_trelonelon (boolelonan): If Truelon, don't build thelon trelonelon and only computelon thelon elonxtra_groups importancelons
+  Relonturns:
+    A dictionary that contains thelon individual and group felonaturelon importancelons
   """
-  factory = PermutedInputFnFactory(
-    data_dir=data_dir, record_count=record_count, file_list=file_list, datarecord_filter_fn=datarecord_filter_fn)
-  baseline_performance = _compute_multiple_permuted_performances_from_trainer(
-    factory=factory, fname_ftypes=[],
-    trainer=trainer, parse_fn=parse_fn, record_count=record_count)
-  out = {"None": baseline_performance}
+  factory = PelonrmutelondInputFnFactory(
+    data_dir=data_dir, reloncord_count=reloncord_count, filelon_list=filelon_list, datareloncord_filtelonr_fn=datareloncord_filtelonr_fn)
+  baselonlinelon_pelonrformancelon = _computelon_multiplelon_pelonrmutelond_pelonrformancelons_from_trainelonr(
+    factory=factory, fnamelon_ftypelons=[],
+    trainelonr=trainelonr, parselon_fn=parselon_fn, reloncord_count=reloncord_count)
+  out = {"Nonelon": baselonlinelon_pelonrformancelon}
 
-  if stopping_metric not in baseline_performance:
-    raise ValueError("The stopping metric '{}' not found in baseline_performance. Metrics are {}".format(
-      stopping_metric, list(baseline_performance.keys())))
+  if stopping_melontric not in baselonlinelon_pelonrformancelon:
+    raiselon Valuelonelonrror("Thelon stopping melontric '{}' not found in baselonlinelon_pelonrformancelon. Melontrics arelon {}".format(
+      stopping_melontric, list(baselonlinelon_pelonrformancelon.kelonys())))
 
-  is_metric_larger_the_better = (
-    is_metric_larger_the_better if is_metric_larger_the_better is not None else _infer_if_is_metric_larger_the_better(stopping_metric))
-  logging.info("Using {} as the stopping metric for the tree algorithm".format(stopping_metric))
+  is_melontric_largelonr_thelon_belonttelonr = (
+    is_melontric_largelonr_thelon_belonttelonr if is_melontric_largelonr_thelon_belonttelonr is not Nonelon elonlselon _infelonr_if_is_melontric_largelonr_thelon_belonttelonr(stopping_melontric))
+  logging.info("Using {} as thelon stopping melontric for thelon trelonelon algorithm".format(stopping_melontric))
 
-  feature_to_type = _get_feature_types_from_records(records=factory.records, fnames=fnames)
-  all_feature_types = list(feature_to_type.items())
+  felonaturelon_to_typelon = _gelont_felonaturelon_typelons_from_reloncords(reloncords=factory.reloncords, fnamelons=fnamelons)
+  all_felonaturelon_typelons = list(felonaturelon_to_typelon.itelonms())
 
-  individual_feature_performances = {}
-  feature_group_performances = {}
-  if dont_build_tree:
-    logging.info("Not building feature importance trie. Will only compute importances for the extra_groups")
-  else:
-    logging.info("Building feature importance trie")
-    # Each element in the Queue will be a tuple of (prefix, list_of_feature_type_pairs) where
-    #   each feature in list_of_feature_type_pairs will have have the prefix "prefix"
-    feature_list_queue = _repartition(
-      feature_list_queue=Queue(), fnames_ftypes=all_feature_types, split_feature_group_on_period=split_feature_group_on_period)
+  individual_felonaturelon_pelonrformancelons = {}
+  felonaturelon_group_pelonrformancelons = {}
+  if dont_build_trelonelon:
+    logging.info("Not building felonaturelon importancelon trielon. Will only computelon importancelons for thelon elonxtra_groups")
+  elonlselon:
+    logging.info("Building felonaturelon importancelon trielon")
+    # elonach elonlelonmelonnt in thelon Quelonuelon will belon a tuplelon of (prelonfix, list_of_felonaturelon_typelon_pairs) whelonrelon
+    #   elonach felonaturelon in list_of_felonaturelon_typelon_pairs will havelon havelon thelon prelonfix "prelonfix"
+    felonaturelon_list_quelonuelon = _relonpartition(
+      felonaturelon_list_quelonuelon=Quelonuelon(), fnamelons_ftypelons=all_felonaturelon_typelons, split_felonaturelon_group_on_pelonriod=split_felonaturelon_group_on_pelonriod)
 
-    while not feature_list_queue.empty():
-      # Pop the queue. We should never have an empty list in the queue
-      prefix, fnames_ftypes = feature_list_queue.get()
-      assert len(fnames_ftypes) > 0
+    whilelon not felonaturelon_list_quelonuelon.elonmpty():
+      # Pop thelon quelonuelon. Welon should nelonvelonr havelon an elonmpty list in thelon quelonuelon
+      prelonfix, fnamelons_ftypelons = felonaturelon_list_quelonuelon.gelont()
+      asselonrt lelonn(fnamelons_ftypelons) > 0
 
-      # Compute performance from permuting all features in fname_ftypes
+      # Computelon pelonrformancelon from pelonrmuting all felonaturelons in fnamelon_ftypelons
       logging.info(
-        "\n\nComputing importances for {} ({}...). {} elements left in the queue \n\n".format(
-          prefix, fnames_ftypes[:5], feature_list_queue.qsize()))
-      start = time.time()
-      computed_performance = _compute_multiple_permuted_performances_from_trainer(
-        factory=factory, fname_ftypes=fnames_ftypes,
-        trainer=trainer, parse_fn=parse_fn, record_count=record_count)
-      logging.info("\n\nImportances computed for {} in {} seconds \n\n".format(
-        prefix, int(time.time() - start)))
-      if len(fnames_ftypes) == 1:
-        individual_feature_performances[fnames_ftypes[0][0]] = computed_performance
-      else:
-        feature_group_performances[prefix] = computed_performance
-      # Dig deeper into the features in fname_ftypes only if there is more than one feature in the
-      #    list and the performance drop is nontrivial
-      logging.info("Checking performance for {} ({}...)".format(prefix, fnames_ftypes[:5]))
-      check = _check_whether_tree_should_expand(
-        baseline_performance=baseline_performance, computed_performance=computed_performance,
-        sensitivity=sensitivity, stopping_metric=stopping_metric, is_metric_larger_the_better=is_metric_larger_the_better)
-      if len(fnames_ftypes) > 1 and check:
-        logging.info("Expanding {} ({}...)".format(prefix, fnames_ftypes[:5]))
-        feature_list_queue = _repartition(
-          feature_list_queue=feature_list_queue, fnames_ftypes=fnames_ftypes, split_feature_group_on_period=split_feature_group_on_period)
-      else:
-        logging.info("Not expanding {} ({}...)".format(prefix, fnames_ftypes[:5]))
+        "\n\nComputing importancelons for {} ({}...). {} elonlelonmelonnts lelonft in thelon quelonuelon \n\n".format(
+          prelonfix, fnamelons_ftypelons[:5], felonaturelon_list_quelonuelon.qsizelon()))
+      start = timelon.timelon()
+      computelond_pelonrformancelon = _computelon_multiplelon_pelonrmutelond_pelonrformancelons_from_trainelonr(
+        factory=factory, fnamelon_ftypelons=fnamelons_ftypelons,
+        trainelonr=trainelonr, parselon_fn=parselon_fn, reloncord_count=reloncord_count)
+      logging.info("\n\nImportancelons computelond for {} in {} selonconds \n\n".format(
+        prelonfix, int(timelon.timelon() - start)))
+      if lelonn(fnamelons_ftypelons) == 1:
+        individual_felonaturelon_pelonrformancelons[fnamelons_ftypelons[0][0]] = computelond_pelonrformancelon
+      elonlselon:
+        felonaturelon_group_pelonrformancelons[prelonfix] = computelond_pelonrformancelon
+      # Dig delonelonpelonr into thelon felonaturelons in fnamelon_ftypelons only if thelonrelon is morelon than onelon felonaturelon in thelon
+      #    list and thelon pelonrformancelon drop is nontrivial
+      logging.info("Cheloncking pelonrformancelon for {} ({}...)".format(prelonfix, fnamelons_ftypelons[:5]))
+      chelonck = _chelonck_whelonthelonr_trelonelon_should_elonxpand(
+        baselonlinelon_pelonrformancelon=baselonlinelon_pelonrformancelon, computelond_pelonrformancelon=computelond_pelonrformancelon,
+        selonnsitivity=selonnsitivity, stopping_melontric=stopping_melontric, is_melontric_largelonr_thelon_belonttelonr=is_melontric_largelonr_thelon_belonttelonr)
+      if lelonn(fnamelons_ftypelons) > 1 and chelonck:
+        logging.info("elonxpanding {} ({}...)".format(prelonfix, fnamelons_ftypelons[:5]))
+        felonaturelon_list_quelonuelon = _relonpartition(
+          felonaturelon_list_quelonuelon=felonaturelon_list_quelonuelon, fnamelons_ftypelons=fnamelons_ftypelons, split_felonaturelon_group_on_pelonriod=split_felonaturelon_group_on_pelonriod)
+      elonlselon:
+        logging.info("Not elonxpanding {} ({}...)".format(prelonfix, fnamelons_ftypelons[:5]))
 
-  # Baseline performance is grouped in with individual_feature_importance_results
-  individual_feature_performance_results = dict(
-    out, **{k: v for k, v in individual_feature_performances.items()})
-  group_feature_performance_results = {k: v for k, v in feature_group_performances.items()}
+  # Baselonlinelon pelonrformancelon is groupelond in with individual_felonaturelon_importancelon_relonsults
+  individual_felonaturelon_pelonrformancelon_relonsults = dict(
+    out, **{k: v for k, v in individual_felonaturelon_pelonrformancelons.itelonms()})
+  group_felonaturelon_pelonrformancelon_relonsults = {k: v for k, v in felonaturelon_group_pelonrformancelons.itelonms()}
 
-  if extra_groups is not None:
-    logging.info("Computing performances for extra groups {}".format(extra_groups.keys()))
-    for group_name, performances in _get_extra_feature_group_performances(
+  if elonxtra_groups is not Nonelon:
+    logging.info("Computing pelonrformancelons for elonxtra groups {}".format(elonxtra_groups.kelonys()))
+    for group_namelon, pelonrformancelons in _gelont_elonxtra_felonaturelon_group_pelonrformancelons(
         factory=factory,
-        trainer=trainer,
-        parse_fn=parse_fn,
-        extra_groups=extra_groups,
-        feature_to_type=feature_to_type,
-        record_count=record_count).items():
-      group_feature_performance_results[group_name] = performances
-  else:
-    logging.info("Not computing performances for extra groups")
+        trainelonr=trainelonr,
+        parselon_fn=parselon_fn,
+        elonxtra_groups=elonxtra_groups,
+        felonaturelon_to_typelon=felonaturelon_to_typelon,
+        reloncord_count=reloncord_count).itelonms():
+      group_felonaturelon_pelonrformancelon_relonsults[group_namelon] = pelonrformancelons
+  elonlselon:
+    logging.info("Not computing pelonrformancelons for elonxtra groups")
 
-  return {INDIVIDUAL: individual_feature_performance_results,
-          GROUP: group_feature_performance_results}
+  relonturn {INDIVIDUAL: individual_felonaturelon_pelonrformancelon_relonsults,
+          GROUP: group_felonaturelon_pelonrformancelon_relonsults}
 
 
-def _feature_importances_serial_algorithm(
-    data_dir, trainer, parse_fn, fnames, file_list=None, datarecord_filter_fn=None, factory=None, record_count=99999):
-  """Serial algorithm for feature importances. This algorithm computes the
-  importance of each feature.
+delonf _felonaturelon_importancelons_selonrial_algorithm(
+    data_dir, trainelonr, parselon_fn, fnamelons, filelon_list=Nonelon, datareloncord_filtelonr_fn=Nonelon, factory=Nonelon, reloncord_count=99999):
+  """Selonrial algorithm for felonaturelon importancelons. This algorithm computelons thelon
+  importancelon of elonach felonaturelon.
   """
-  factory = PermutedInputFnFactory(
-    data_dir=data_dir, record_count=record_count, file_list=file_list, datarecord_filter_fn=datarecord_filter_fn)
-  feature_to_type = _get_feature_types_from_records(records=factory.records, fnames=fnames)
+  factory = PelonrmutelondInputFnFactory(
+    data_dir=data_dir, reloncord_count=reloncord_count, filelon_list=filelon_list, datareloncord_filtelonr_fn=datareloncord_filtelonr_fn)
+  felonaturelon_to_typelon = _gelont_felonaturelon_typelons_from_reloncords(reloncords=factory.reloncords, fnamelons=fnamelons)
 
   out = {}
-  for fname, ftype in list(feature_to_type.items()) + [(None, None)]:
-    logging.info("\n\nComputing importances for {}\n\n".format(fname))
-    start = time.time()
-    fname_ftypes = [(fname, ftype)] if fname is not None else []
-    out[str(fname)] = _compute_multiple_permuted_performances_from_trainer(
-      factory=factory, fname_ftypes=fname_ftypes,
-      trainer=trainer, parse_fn=parse_fn, record_count=record_count)
-    logging.info("\n\nImportances computed for {} in {} seconds \n\n".format(
-      fname, int(time.time() - start)))
-  # The serial algorithm does not compute group feature results.
-  return {INDIVIDUAL: out, GROUP: {}}
+  for fnamelon, ftypelon in list(felonaturelon_to_typelon.itelonms()) + [(Nonelon, Nonelon)]:
+    logging.info("\n\nComputing importancelons for {}\n\n".format(fnamelon))
+    start = timelon.timelon()
+    fnamelon_ftypelons = [(fnamelon, ftypelon)] if fnamelon is not Nonelon elonlselon []
+    out[str(fnamelon)] = _computelon_multiplelon_pelonrmutelond_pelonrformancelons_from_trainelonr(
+      factory=factory, fnamelon_ftypelons=fnamelon_ftypelons,
+      trainelonr=trainelonr, parselon_fn=parselon_fn, reloncord_count=reloncord_count)
+    logging.info("\n\nImportancelons computelond for {} in {} selonconds \n\n".format(
+      fnamelon, int(timelon.timelon() - start)))
+  # Thelon selonrial algorithm doelons not computelon group felonaturelon relonsults.
+  relonturn {INDIVIDUAL: out, GROUP: {}}
 
 
-def _process_feature_name_for_mldash(feature_name):
-  # Using a forward slash in the name causes feature importance writing to fail because strato interprets it as
+delonf _procelonss_felonaturelon_namelon_for_mldash(felonaturelon_namelon):
+  # Using a forward slash in thelon namelon causelons felonaturelon importancelon writing to fail beloncauselon strato intelonrprelonts it as
   #   part of a url
-  return feature_name.replace("/", "__")
+  relonturn felonaturelon_namelon.relonplacelon("/", "__")
 
 
-def compute_feature_importances(
-    trainer, data_dir=None, feature_config=None, algorithm=TREE, parse_fn=None, datarecord_filter_fn=None, **kwargs):
-  """Perform a feature importance analysis on a trained model
+delonf computelon_felonaturelon_importancelons(
+    trainelonr, data_dir=Nonelon, felonaturelon_config=Nonelon, algorithm=TRelonelon, parselon_fn=Nonelon, datareloncord_filtelonr_fn=Nonelon, **kwargs):
+  """Pelonrform a felonaturelon importancelon analysis on a trainelond modelonl
   Args:
-    trainer: (DataRecordTrainer): A DataRecordTrainer object
-    data_dir: (str): The location of the training or testing data to compute importances over.
-      If None, the trainer._eval_files are used
-    feature_config (contrib.FeatureConfig): The feature config object. If this is not provided, it
-      is taken from the trainer
-    algorithm (str): The algorithm to use
-    parse_fn: (function): The parse_fn used by eval_input_fn. By default this is
-      feature_config.get_parse_fn()
-    datarecord_filter_fn (function): a function takes a single data sample in com.twitter.ml.api.ttypes.DataRecord format
-        and return a boolean value, to indicate if this data record should be kept in feature importance module or not.
+    trainelonr: (DataReloncordTrainelonr): A DataReloncordTrainelonr objelonct
+    data_dir: (str): Thelon location of thelon training or telonsting data to computelon importancelons ovelonr.
+      If Nonelon, thelon trainelonr._elonval_filelons arelon uselond
+    felonaturelon_config (contrib.FelonaturelonConfig): Thelon felonaturelon config objelonct. If this is not providelond, it
+      is takelonn from thelon trainelonr
+    algorithm (str): Thelon algorithm to uselon
+    parselon_fn: (function): Thelon parselon_fn uselond by elonval_input_fn. By delonfault this is
+      felonaturelon_config.gelont_parselon_fn()
+    datareloncord_filtelonr_fn (function): a function takelons a singlelon data samplelon in com.twittelonr.ml.api.ttypelons.DataReloncord format
+        and relonturn a boolelonan valuelon, to indicatelon if this data reloncord should belon kelonpt in felonaturelon importancelon modulelon or not.
   """
 
-  # We only use the trainer's eval files if an override data_dir is not provided
-  if data_dir is None:
-    logging.info("Using trainer._eval_files (found {} as files)".format(trainer._eval_files))
-    file_list = trainer._eval_files
-  else:
-    logging.info("data_dir provided. Looking at {} for data.".format(data_dir))
-    file_list = None
+  # Welon only uselon thelon trainelonr's elonval filelons if an ovelonrridelon data_dir is not providelond
+  if data_dir is Nonelon:
+    logging.info("Using trainelonr._elonval_filelons (found {} as filelons)".format(trainelonr._elonval_filelons))
+    filelon_list = trainelonr._elonval_filelons
+  elonlselon:
+    logging.info("data_dir providelond. Looking at {} for data.".format(data_dir))
+    filelon_list = Nonelon
 
-  feature_config = feature_config or trainer._feature_config
+  felonaturelon_config = felonaturelon_config or trainelonr._felonaturelon_config
   out = {}
-  if not feature_config:
-    logging.warn("WARN: Not computing feature importance because trainer._feature_config is None")
-    out = None
-  else:
-    parse_fn = parse_fn if parse_fn is not None else feature_config.get_parse_fn()
-    fnames = _get_feature_name_from_config(feature_config)
-    logging.info("Computing importances for {}".format(fnames))
-    logging.info("Using the {} feature importance computation algorithm".format(algorithm))
+  if not felonaturelon_config:
+    logging.warn("WARN: Not computing felonaturelon importancelon beloncauselon trainelonr._felonaturelon_config is Nonelon")
+    out = Nonelon
+  elonlselon:
+    parselon_fn = parselon_fn if parselon_fn is not Nonelon elonlselon felonaturelon_config.gelont_parselon_fn()
+    fnamelons = _gelont_felonaturelon_namelon_from_config(felonaturelon_config)
+    logging.info("Computing importancelons for {}".format(fnamelons))
+    logging.info("Using thelon {} felonaturelon importancelon computation algorithm".format(algorithm))
     algorithm = {
-      SERIAL: _feature_importances_serial_algorithm,
-      TREE: _feature_importances_tree_algorithm}[algorithm]
-    out = algorithm(data_dir=data_dir, trainer=trainer, parse_fn=parse_fn, fnames=fnames, file_list=file_list, datarecord_filter_fn=datarecord_filter_fn, **kwargs)
-  return out
+      SelonRIAL: _felonaturelon_importancelons_selonrial_algorithm,
+      TRelonelon: _felonaturelon_importancelons_trelonelon_algorithm}[algorithm]
+    out = algorithm(data_dir=data_dir, trainelonr=trainelonr, parselon_fn=parselon_fn, fnamelons=fnamelons, filelon_list=filelon_list, datareloncord_filtelonr_fn=datareloncord_filtelonr_fn, **kwargs)
+  relonturn out
 
 
-def write_feature_importances_to_hdfs(
-    trainer, feature_importances, output_path=None, metric="roc_auc"):
-  """Publish a feature importance analysis to hdfs as a tsv
+delonf writelon_felonaturelon_importancelons_to_hdfs(
+    trainelonr, felonaturelon_importancelons, output_path=Nonelon, melontric="roc_auc"):
+  """Publish a felonaturelon importancelon analysis to hdfs as a tsv
   Args:
-    (see compute_feature_importances for other args)
-    trainer (Trainer)
-    feature_importances (dict): Dictionary of feature importances
-    output_path (str): The remote or local file to write the feature importances to. If not
-      provided, this is inferred to be the trainer save dir
-    metric (str): The metric to write to tsv
+    (selonelon computelon_felonaturelon_importancelons for othelonr args)
+    trainelonr (Trainelonr)
+    felonaturelon_importancelons (dict): Dictionary of felonaturelon importancelons
+    output_path (str): Thelon relonmotelon or local filelon to writelon thelon felonaturelon importancelons to. If not
+      providelond, this is infelonrrelond to belon thelon trainelonr savelon dir
+    melontric (str): Thelon melontric to writelon to tsv
   """
-  # String formatting appends (Individual) or (Group) to feature name depending on type
-  perfs = {"{} ({})".format(k, importance_key) if k != "None" else k: v[metric]
-    for importance_key, importance_value in feature_importances.items()
-    for k, v in importance_value.items()}
+  # String formatting appelonnds (Individual) or (Group) to felonaturelon namelon delonpelonnding on typelon
+  pelonrfs = {"{} ({})".format(k, importancelon_kelony) if k != "Nonelon" elonlselon k: v[melontric]
+    for importancelon_kelony, importancelon_valuelon in felonaturelon_importancelons.itelonms()
+    for k, v in importancelon_valuelon.itelonms()}
 
-  output_path = ("{}/feature_importances-{}".format(
-    trainer._save_dir[:-1] if trainer._save_dir.endswith('/') else trainer._save_dir,
-    output_path if output_path is not None else str(time.time())))
+  output_path = ("{}/felonaturelon_importancelons-{}".format(
+    trainelonr._savelon_dir[:-1] if trainelonr._savelon_dir.elonndswith('/') elonlselon trainelonr._savelon_dir,
+    output_path if output_path is not Nonelon elonlselon str(timelon.timelon())))
 
-  if len(perfs) > 0:
-    logging.info("Writing feature_importances for {} to hdfs".format(perfs.keys()))
-    entries = [
+  if lelonn(pelonrfs) > 0:
+    logging.info("Writing felonaturelon_importancelons for {} to hdfs".format(pelonrfs.kelonys()))
+    elonntrielons = [
       {
-        "name": name,
-        "drop": perfs["None"] - perfs[name],
-        "pdrop": 100 * (perfs["None"] - perfs[name]) / (perfs["None"] + 1e-8),
-        "perf": perfs[name]
-      } for name in perfs.keys()]
-    out = ["Name\tPerformance Drop\tPercent Performance Drop\tPerformance"]
-    for entry in sorted(entries, key=lambda d: d["drop"]):
-      out.append("{name}\t{drop}\t{pdrop}%\t{perf}".format(**entry))
+        "namelon": namelon,
+        "drop": pelonrfs["Nonelon"] - pelonrfs[namelon],
+        "pdrop": 100 * (pelonrfs["Nonelon"] - pelonrfs[namelon]) / (pelonrfs["Nonelon"] + 1elon-8),
+        "pelonrf": pelonrfs[namelon]
+      } for namelon in pelonrfs.kelonys()]
+    out = ["Namelon\tPelonrformancelon Drop\tPelonrcelonnt Pelonrformancelon Drop\tPelonrformancelon"]
+    for elonntry in sortelond(elonntrielons, kelony=lambda d: d["drop"]):
+      out.appelonnd("{namelon}\t{drop}\t{pdrop}%\t{pelonrf}".format(**elonntry))
     logging.info("\n".join(out))
-    write_list_to_hdfs_gfile(out, output_path)
-    logging.info("Wrote feature feature_importances to {}".format(output_path))
-  else:
-    logging.info("Not writing feature_importances to hdfs")
-  return output_path
+    writelon_list_to_hdfs_gfilelon(out, output_path)
+    logging.info("Wrotelon felonaturelon felonaturelon_importancelons to {}".format(output_path))
+  elonlselon:
+    logging.info("Not writing felonaturelon_importancelons to hdfs")
+  relonturn output_path
 
 
-def write_feature_importances_to_ml_dash(trainer, feature_importances, feature_config=None):
-  # type: (DataRecordTrainer, FeatureConfig, dict) -> None
-  """Publish feature importances + all feature names to ML Metastore
+delonf writelon_felonaturelon_importancelons_to_ml_dash(trainelonr, felonaturelon_importancelons, felonaturelon_config=Nonelon):
+  # typelon: (DataReloncordTrainelonr, FelonaturelonConfig, dict) -> Nonelon
+  """Publish felonaturelon importancelons + all felonaturelon namelons to ML Melontastorelon
   Args:
-    trainer: (DataRecordTrainer): A DataRecordTrainer object
-    feature_config (contrib.FeatureConfig): The feature config object. If this is not provided, it
-      is taken from the trainer
-    feature_importances (dict, default=None): Dictionary of precomputed feature importances
-    feature_importance_metric (str, default=None): The metric to write to ML Dashboard
+    trainelonr: (DataReloncordTrainelonr): A DataReloncordTrainelonr objelonct
+    felonaturelon_config (contrib.FelonaturelonConfig): Thelon felonaturelon config objelonct. If this is not providelond, it
+      is takelonn from thelon trainelonr
+    felonaturelon_importancelons (dict, delonfault=Nonelon): Dictionary of preloncomputelond felonaturelon importancelons
+    felonaturelon_importancelon_melontric (str, delonfault=Nonelon): Thelon melontric to writelon to ML Dashboard
   """
-  experiment_tracking_path = trainer.experiment_tracker.tracking_path\
-    if trainer.experiment_tracker.tracking_path\
-    else ExperimentTracker.guess_path(trainer._save_dir)
+  elonxpelonrimelonnt_tracking_path = trainelonr.elonxpelonrimelonnt_trackelonr.tracking_path\
+    if trainelonr.elonxpelonrimelonnt_trackelonr.tracking_path\
+    elonlselon elonxpelonrimelonntTrackelonr.guelonss_path(trainelonr._savelon_dir)
 
-  logging.info('Computing feature importances for run: {}'.format(experiment_tracking_path))
+  logging.info('Computing felonaturelon importancelons for run: {}'.format(elonxpelonrimelonnt_tracking_path))
 
-  feature_importance_list = []
-  for key in feature_importances:
-    for feature, imps in feature_importances[key].items():
-      logging.info('FEATURE NAME: {}'.format(feature))
-      feature_name = feature.split(' (').pop(0)
-      for metric_name, value in imps.items():
+  felonaturelon_importancelon_list = []
+  for kelony in felonaturelon_importancelons:
+    for felonaturelon, imps in felonaturelon_importancelons[kelony].itelonms():
+      logging.info('FelonATURelon NAMelon: {}'.format(felonaturelon))
+      felonaturelon_namelon = felonaturelon.split(' (').pop(0)
+      for melontric_namelon, valuelon in imps.itelonms():
         try:
-          imps[metric_name] = float(value)
-          logging.info('Wrote feature importance value {} for metric: {}'.format(str(value), metric_name))
-        except Exception as ex:
-          logging.error("Skipping writing metric:{} to ML Metastore due to invalid metric value: {} or value type: {}. Exception: {}".format(metric_name, str(value), type(value), str(ex)))
+          imps[melontric_namelon] = float(valuelon)
+          logging.info('Wrotelon felonaturelon importancelon valuelon {} for melontric: {}'.format(str(valuelon), melontric_namelon))
+        elonxcelonpt elonxcelonption as elonx:
+          logging.elonrror("Skipping writing melontric:{} to ML Melontastorelon duelon to invalid melontric valuelon: {} or valuelon typelon: {}. elonxcelonption: {}".format(melontric_namelon, str(valuelon), typelon(valuelon), str(elonx)))
           pass
 
-      feature_importance_list.append(FeatureImportance(
-        run_id=experiment_tracking_path,
-        feature_name=_process_feature_name_for_mldash(feature_name),
-        feature_importance_metrics=imps,
-        is_group=key == GROUP
+      felonaturelon_importancelon_list.appelonnd(FelonaturelonImportancelon(
+        run_id=elonxpelonrimelonnt_tracking_path,
+        felonaturelon_namelon=_procelonss_felonaturelon_namelon_for_mldash(felonaturelon_namelon),
+        felonaturelon_importancelon_melontrics=imps,
+        is_group=kelony == GROUP
       ))
 
-# setting feature config to match the one used in compute_feature_importances
-  feature_config = feature_config or trainer._feature_config
-  feature_names = FeatureNames(
-    run_id=experiment_tracking_path,
-    names=list(feature_config.features.keys())
+# selontting felonaturelon config to match thelon onelon uselond in computelon_felonaturelon_importancelons
+  felonaturelon_config = felonaturelon_config or trainelonr._felonaturelon_config
+  felonaturelon_namelons = FelonaturelonNamelons(
+    run_id=elonxpelonrimelonnt_tracking_path,
+    namelons=list(felonaturelon_config.felonaturelons.kelonys())
   )
 
   try:
-    client = ModelRepoClient()
-    logging.info('Writing feature importances to ML Metastore')
-    client.add_feature_importances(feature_importance_list)
-    logging.info('Writing feature names to ML Metastore')
-    client.add_feature_names(feature_names)
-  except (HTTPError, RetryError) as err:
-    logging.error('Feature importance is not being written due to: '
-                  'HTTPError when attempting to write to ML Metastore: \n{}.'.format(err))
+    clielonnt = ModelonlRelonpoClielonnt()
+    logging.info('Writing felonaturelon importancelons to ML Melontastorelon')
+    clielonnt.add_felonaturelon_importancelons(felonaturelon_importancelon_list)
+    logging.info('Writing felonaturelon namelons to ML Melontastorelon')
+    clielonnt.add_felonaturelon_namelons(felonaturelon_namelons)
+  elonxcelonpt (HTTPelonrror, Relontryelonrror) as elonrr:
+    logging.elonrror('Felonaturelon importancelon is not beloning writtelonn duelon to: '
+                  'HTTPelonrror whelonn attelonmpting to writelon to ML Melontastorelon: \n{}.'.format(elonrr))

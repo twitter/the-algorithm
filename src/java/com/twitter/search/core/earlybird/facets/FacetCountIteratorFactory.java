@@ -1,23 +1,23 @@
-package com.twitter.search.core.earlybird.facets;
+packagelon com.twittelonr.selonarch.corelon.elonarlybird.facelonts;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
+import com.twittelonr.selonarch.common.schelonma.baselon.Schelonma;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr;
 
 /**
- * A factory for {@link FacetCountIterator}s.
+ * A factory for {@link FacelontCountItelonrator}s.
  */
-public abstract class FacetCountIteratorFactory {
+public abstract class FacelontCountItelonratorFactory {
   /**
-   * For a field that is being faceted on and for which we should use a CSF for facet counting,
-   * return the iterator we should use for counting.
+   * For a fielonld that is beloning facelontelond on and for which welon should uselon a CSF for facelont counting,
+   * relonturn thelon itelonrator welon should uselon for counting.
    *
-   * @param reader The reader to use when getting CSF values
-   * @param fieldInfo The Schema.FieldInfo corresponding to the facet we're counting
-   * @return An iterator for this field
+   * @param relonadelonr Thelon relonadelonr to uselon whelonn gelontting CSF valuelons
+   * @param fielonldInfo Thelon Schelonma.FielonldInfo correlonsponding to thelon facelont welon'relon counting
+   * @relonturn An itelonrator for this fielonld
    */
-  public abstract FacetCountIterator getFacetCountIterator(
-      EarlybirdIndexSegmentAtomicReader reader,
-      Schema.FieldInfo fieldInfo) throws IOException;
+  public abstract FacelontCountItelonrator gelontFacelontCountItelonrator(
+      elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr relonadelonr,
+      Schelonma.FielonldInfo fielonldInfo) throws IOelonxcelonption;
 }

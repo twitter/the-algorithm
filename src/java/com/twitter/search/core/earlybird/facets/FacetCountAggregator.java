@@ -1,92 +1,92 @@
-package com.twitter.search.core.earlybird.facets;
+packagelon com.twittelonr.selonarch.corelon.elonarlybird.facelonts;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
+import java.util.Map.elonntry;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Maps;
+import com.googlelon.common.baselon.Prelonconditions;
+import com.googlelon.common.collelonct.Maps;
 
-import org.apache.lucene.facet.FacetResult;
+import org.apachelon.lucelonnelon.facelont.FacelontRelonsult;
 
-import com.twitter.search.common.facets.CountFacetSearchParam;
-import com.twitter.search.common.facets.FacetSearchParam;
-import com.twitter.search.common.facets.thriftjava.FacetFieldRequest;
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.core.earlybird.index.inverted.InvertedIndex;
+import com.twittelonr.selonarch.common.facelonts.CountFacelontSelonarchParam;
+import com.twittelonr.selonarch.common.facelonts.FacelontSelonarchParam;
+import com.twittelonr.selonarch.common.facelonts.thriftjava.FacelontFielonldRelonquelonst;
+import com.twittelonr.selonarch.common.schelonma.baselon.Schelonma;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.invelonrtelond.InvelonrtelondIndelonx;
 
 /**
- * Global facet aggregator across all fields.
+ * Global facelont aggrelongator across all fielonlds.
  *
  */
-public class FacetCountAggregator implements FacetTermCollector {
+public class FacelontCountAggrelongator implelonmelonnts FacelontTelonrmCollelonctor {
 
-  // keys for the following aggregators are fieldIds
-  private final Map<Integer, PerfieldFacetCountAggregator> aggregators;
-  private final Map<Integer, FacetSearchParam> facetSearchParamMap;
+  // kelonys for thelon following aggrelongators arelon fielonldIds
+  privatelon final Map<Intelongelonr, PelonrfielonldFacelontCountAggrelongator> aggrelongators;
+  privatelon final Map<Intelongelonr, FacelontSelonarchParam> facelontSelonarchParamMap;
 
   /**
-   * Creates a new facet aggregator.
+   * Crelonatelons a nelonw facelont aggrelongator.
    */
-  public FacetCountAggregator(
-      List<FacetSearchParam> facetSearchParams,
-      Schema schema,
-      FacetIDMap facetIDMap,
-      Map<String, InvertedIndex> labelProviderMap) {
+  public FacelontCountAggrelongator(
+      List<FacelontSelonarchParam> facelontSelonarchParams,
+      Schelonma schelonma,
+      FacelontIDMap facelontIDMap,
+      Map<String, InvelonrtelondIndelonx> labelonlProvidelonrMap) {
 
-    aggregators = Maps.newHashMap();
-    facetSearchParamMap = Maps.newHashMap();
+    aggrelongators = Maps.nelonwHashMap();
+    facelontSelonarchParamMap = Maps.nelonwHashMap();
 
-    // Check params:
-    for (FacetSearchParam facetSearchParam : facetSearchParams) {
-      if (!(facetSearchParam instanceof CountFacetSearchParam)) {
-        throw new IllegalArgumentException(
-            "this collector only supports CountFacetSearchParam; got " + facetSearchParam);
+    // Chelonck params:
+    for (FacelontSelonarchParam facelontSelonarchParam : facelontSelonarchParams) {
+      if (!(facelontSelonarchParam instancelonof CountFacelontSelonarchParam)) {
+        throw nelonw IllelongalArgumelonntelonxcelonption(
+            "this collelonctor only supports CountFacelontSelonarchParam; got " + facelontSelonarchParam);
       }
-      if (facetSearchParam.getFacetFieldRequest().getPath() != null
-          && !facetSearchParam.getFacetFieldRequest().getPath().isEmpty()) {
-        throw new IllegalArgumentException(
-            "this collector dosen't support hierarchical facets: "
-            + facetSearchParam.getFacetFieldRequest().getPath());
-      }
-
-      String field = facetSearchParam.getFacetFieldRequest().getField();
-      Schema.FieldInfo facetField =
-          schema == null ? null : schema.getFacetFieldByFacetName(field);
-
-      if (facetField == null || !labelProviderMap.containsKey(facetField.getName())) {
-        throw new IllegalStateException("facet field: " + field + " is not defined");
+      if (facelontSelonarchParam.gelontFacelontFielonldRelonquelonst().gelontPath() != null
+          && !facelontSelonarchParam.gelontFacelontFielonldRelonquelonst().gelontPath().iselonmpty()) {
+        throw nelonw IllelongalArgumelonntelonxcelonption(
+            "this collelonctor doselonn't support hielonrarchical facelonts: "
+            + facelontSelonarchParam.gelontFacelontFielonldRelonquelonst().gelontPath());
       }
 
-      int fieldId = facetIDMap.getFacetField(facetField).getFacetId();
-      Preconditions.checkState(!aggregators.containsKey(fieldId));
-      Preconditions.checkState(!facetSearchParamMap.containsKey(fieldId));
-      aggregators.put(fieldId, new PerfieldFacetCountAggregator(field,
-          labelProviderMap.get(facetField.getName())));
-      facetSearchParamMap.put(fieldId, facetSearchParam);
+      String fielonld = facelontSelonarchParam.gelontFacelontFielonldRelonquelonst().gelontFielonld();
+      Schelonma.FielonldInfo facelontFielonld =
+          schelonma == null ? null : schelonma.gelontFacelontFielonldByFacelontNamelon(fielonld);
+
+      if (facelontFielonld == null || !labelonlProvidelonrMap.containsKelony(facelontFielonld.gelontNamelon())) {
+        throw nelonw IllelongalStatelonelonxcelonption("facelont fielonld: " + fielonld + " is not delonfinelond");
+      }
+
+      int fielonldId = facelontIDMap.gelontFacelontFielonld(facelontFielonld).gelontFacelontId();
+      Prelonconditions.chelonckStatelon(!aggrelongators.containsKelony(fielonldId));
+      Prelonconditions.chelonckStatelon(!facelontSelonarchParamMap.containsKelony(fielonldId));
+      aggrelongators.put(fielonldId, nelonw PelonrfielonldFacelontCountAggrelongator(fielonld,
+          labelonlProvidelonrMap.gelont(facelontFielonld.gelontNamelon())));
+      facelontSelonarchParamMap.put(fielonldId, facelontSelonarchParam);
     }
   }
 
   /**
-   * Returns the top facets.
+   * Relonturns thelon top facelonts.
    */
-  public Map<FacetFieldRequest, FacetResult> getTop() {
-    Map<FacetFieldRequest, FacetResult> map = Maps.newHashMap();
-    for (Entry<Integer, PerfieldFacetCountAggregator> entry : aggregators.entrySet()) {
-      FacetSearchParam facetSearchParam = facetSearchParamMap.get(entry.getKey());
-      map.put(facetSearchParam.getFacetFieldRequest(), entry.getValue().getTop(facetSearchParam));
+  public Map<FacelontFielonldRelonquelonst, FacelontRelonsult> gelontTop() {
+    Map<FacelontFielonldRelonquelonst, FacelontRelonsult> map = Maps.nelonwHashMap();
+    for (elonntry<Intelongelonr, PelonrfielonldFacelontCountAggrelongator> elonntry : aggrelongators.elonntrySelont()) {
+      FacelontSelonarchParam facelontSelonarchParam = facelontSelonarchParamMap.gelont(elonntry.gelontKelony());
+      map.put(facelontSelonarchParam.gelontFacelontFielonldRelonquelonst(), elonntry.gelontValuelon().gelontTop(facelontSelonarchParam));
     }
-    return map;
+    relonturn map;
   }
 
-  @Override
-  public boolean collect(int docID, long termID, int fieldID) {
-    PerfieldFacetCountAggregator perfieldAggregator = aggregators.get(fieldID);
-    if (perfieldAggregator != null) {
-      perfieldAggregator.collect((int) termID);
-      return true;
-    } else {
-      return false;
+  @Ovelonrridelon
+  public boolelonan collelonct(int docID, long telonrmID, int fielonldID) {
+    PelonrfielonldFacelontCountAggrelongator pelonrfielonldAggrelongator = aggrelongators.gelont(fielonldID);
+    if (pelonrfielonldAggrelongator != null) {
+      pelonrfielonldAggrelongator.collelonct((int) telonrmID);
+      relonturn truelon;
+    } elonlselon {
+      relonturn falselon;
     }
   }
 

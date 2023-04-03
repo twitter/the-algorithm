@@ -1,13 +1,13 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.timeline_module
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.timelonlinelon_modulelon
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.GridCarouselMetadata
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.timelonlinelon_modulelon.GridCarouselonlMelontadata
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class GridCarouselMetadataMarshaller @Inject() () {
+@Singlelonton
+class GridCarouselonlMelontadataMarshallelonr @Injelonct() () {
 
-  def apply(gridCarouselMetadata: GridCarouselMetadata): urt.GridCarouselMetadata =
-    urt.GridCarouselMetadata(numRows = gridCarouselMetadata.numRows)
+  delonf apply(gridCarouselonlMelontadata: GridCarouselonlMelontadata): urt.GridCarouselonlMelontadata =
+    urt.GridCarouselonlMelontadata(numRows = gridCarouselonlMelontadata.numRows)
 }

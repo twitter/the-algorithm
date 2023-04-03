@@ -1,242 +1,242 @@
-package com.twitter.search.earlybird.querycache;
+packagelon com.twittelonr.selonarch.elonarlybird.quelonrycachelon;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
+import java.util.Collelonction;
+import java.util.Itelonrator;
 import java.util.List;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrelonnt.SchelondulelondelonxeloncutorSelonrvicelon;
+import java.util.concurrelonnt.SchelondulelondFuturelon;
+import java.util.concurrelonnt.TimelonUnit;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import com.googlelon.common.baselon.Prelonconditions;
+import com.googlelon.common.collelonct.Lists;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.common.quantity.Amount;
-import com.twitter.common.quantity.Time;
-import com.twitter.common.util.Clock;
-import com.twitter.decider.Decider;
-import com.twitter.search.common.concurrent.ScheduledExecutorServiceFactory;
-import com.twitter.search.common.metrics.SearchCustomGauge;
-import com.twitter.search.common.metrics.SearchStatsReceiver;
-import com.twitter.search.earlybird.common.userupdates.UserTable;
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
-import com.twitter.search.earlybird.factory.QueryCacheUpdaterScheduledExecutorService;
-import com.twitter.search.earlybird.partition.SegmentInfo;
-import com.twitter.search.earlybird.stats.EarlybirdSearcherStats;
-import com.twitter.search.earlybird.util.PeriodicActionParams;
-import com.twitter.search.earlybird.util.ScheduledExecutorManager;
-import com.twitter.search.earlybird.util.ShutdownWaitTimeParams;
+import com.twittelonr.common.quantity.Amount;
+import com.twittelonr.common.quantity.Timelon;
+import com.twittelonr.common.util.Clock;
+import com.twittelonr.deloncidelonr.Deloncidelonr;
+import com.twittelonr.selonarch.common.concurrelonnt.SchelondulelondelonxeloncutorSelonrvicelonFactory;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCustomGaugelon;
+import com.twittelonr.selonarch.common.melontrics.SelonarchStatsReloncelonivelonr;
+import com.twittelonr.selonarch.elonarlybird.common.uselonrupdatelons.UselonrTablelon;
+import com.twittelonr.selonarch.elonarlybird.elonxcelonption.CriticalelonxcelonptionHandlelonr;
+import com.twittelonr.selonarch.elonarlybird.factory.QuelonryCachelonUpdatelonrSchelondulelondelonxeloncutorSelonrvicelon;
+import com.twittelonr.selonarch.elonarlybird.partition.SelongmelonntInfo;
+import com.twittelonr.selonarch.elonarlybird.stats.elonarlybirdSelonarchelonrStats;
+import com.twittelonr.selonarch.elonarlybird.util.PelonriodicActionParams;
+import com.twittelonr.selonarch.elonarlybird.util.SchelondulelondelonxeloncutorManagelonr;
+import com.twittelonr.selonarch.elonarlybird.util.ShutdownWaitTimelonParams;
 
 /**
- * Class to manage the scheduler service and all the update tasks. Through this
- * class, update tasks are created and scheduled, canceled and removed.
+ * Class to managelon thelon schelondulelonr selonrvicelon and all thelon updatelon tasks. Through this
+ * class, updatelon tasks arelon crelonatelond and schelondulelond, cancelonlelond and relonmovelond.
  *
- * This class is not thread-safe.
+ * This class is not threlonad-safelon.
  */
-@VisibleForTesting
-final class QueryCacheUpdater extends ScheduledExecutorManager {
-  private static final Logger LOG = LoggerFactory.getLogger(QueryCacheUpdater.class);
+@VisiblelonForTelonsting
+final class QuelonryCachelonUpdatelonr elonxtelonnds SchelondulelondelonxeloncutorManagelonr {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(QuelonryCachelonUpdatelonr.class);
 
-  private final List<Task> tasks;
-  private final EarlybirdSearcherStats searcherStats;
-  private final Decider decider;
-  private final UserTable userTable;
-  private final Clock clock;
+  privatelon final List<Task> tasks;
+  privatelon final elonarlybirdSelonarchelonrStats selonarchelonrStats;
+  privatelon final Deloncidelonr deloncidelonr;
+  privatelon final UselonrTablelon uselonrTablelon;
+  privatelon final Clock clock;
 
-  @VisibleForTesting
+  @VisiblelonForTelonsting
   static final class Task {
-    @VisibleForTesting public final QueryCacheUpdateTask updateTask;
-    @VisibleForTesting public final ScheduledFuture future;
+    @VisiblelonForTelonsting public final QuelonryCachelonUpdatelonTask updatelonTask;
+    @VisiblelonForTelonsting public final SchelondulelondFuturelon futurelon;
 
-    private Task(QueryCacheUpdateTask updateTask, ScheduledFuture future) {
-      this.updateTask = updateTask;
-      this.future = future;
+    privatelon Task(QuelonryCachelonUpdatelonTask updatelonTask, SchelondulelondFuturelon futurelon) {
+      this.updatelonTask = updatelonTask;
+      this.futurelon = futurelon;
     }
   }
 
-  public QueryCacheUpdater(Collection<QueryCacheFilter> cacheFilters,
-                           ScheduledExecutorServiceFactory updaterScheduledExecutorServiceFactory,
-                           UserTable userTable,
-                           SearchStatsReceiver searchStatsReceiver,
-                           EarlybirdSearcherStats searcherStats,
-                           Decider decider,
-                           CriticalExceptionHandler criticalExceptionHandler,
+  public QuelonryCachelonUpdatelonr(Collelonction<QuelonryCachelonFiltelonr> cachelonFiltelonrs,
+                           SchelondulelondelonxeloncutorSelonrvicelonFactory updatelonrSchelondulelondelonxeloncutorSelonrvicelonFactory,
+                           UselonrTablelon uselonrTablelon,
+                           SelonarchStatsReloncelonivelonr selonarchStatsReloncelonivelonr,
+                           elonarlybirdSelonarchelonrStats selonarchelonrStats,
+                           Deloncidelonr deloncidelonr,
+                           CriticalelonxcelonptionHandlelonr criticalelonxcelonptionHandlelonr,
                            Clock clock) {
-    super(updaterScheduledExecutorServiceFactory.build("QueryCacheUpdateThread-%d", true),
-        ShutdownWaitTimeParams.immediately(), searchStatsReceiver,
-        criticalExceptionHandler, clock);
-    Preconditions.checkNotNull(cacheFilters);
-    Preconditions.checkArgument(getExecutor() instanceof QueryCacheUpdaterScheduledExecutorService,
-        getExecutor().getClass());
+    supelonr(updatelonrSchelondulelondelonxeloncutorSelonrvicelonFactory.build("QuelonryCachelonUpdatelonThrelonad-%d", truelon),
+        ShutdownWaitTimelonParams.immelondiatelonly(), selonarchStatsReloncelonivelonr,
+        criticalelonxcelonptionHandlelonr, clock);
+    Prelonconditions.chelonckNotNull(cachelonFiltelonrs);
+    Prelonconditions.chelonckArgumelonnt(gelontelonxeloncutor() instancelonof QuelonryCachelonUpdatelonrSchelondulelondelonxeloncutorSelonrvicelon,
+        gelontelonxeloncutor().gelontClass());
 
-    this.searcherStats = searcherStats;
-    this.decider = decider;
-    this.userTable = userTable;
+    this.selonarchelonrStats = selonarchelonrStats;
+    this.deloncidelonr = deloncidelonr;
+    this.uselonrTablelon = uselonrTablelon;
     this.clock = clock;
 
-    shouldLog = false;
-    // One update task per <query, segment>
-    tasks = Lists.newArrayListWithCapacity(cacheFilters.size() * 20);
+    shouldLog = falselon;
+    // Onelon updatelon task pelonr <quelonry, selongmelonnt>
+    tasks = Lists.nelonwArrayListWithCapacity(cachelonFiltelonrs.sizelon() * 20);
 
-    SearchCustomGauge.export(
-        "querycache_num_tasks",
-        tasks::size
+    SelonarchCustomGaugelon.elonxport(
+        "quelonrycachelon_num_tasks",
+        tasks::sizelon
     );
   }
 
   /**
-   * Create an update task and add it to the executor
+   * Crelonatelon an updatelon task and add it to thelon elonxeloncutor
    *
-   * @param filter The filter the task should execute
-   * @param segmentInfo The segment that this task would be responsible for
-   * @param updateInterval time in milliseconds between successive updates
-   * @param initialDelay Introduce a delay when adding the task to the executor
+   * @param filtelonr Thelon filtelonr thelon task should elonxeloncutelon
+   * @param selongmelonntInfo Thelon selongmelonnt that this task would belon relonsponsiblelon for
+   * @param updatelonIntelonrval timelon in milliselonconds belontwelonelonn succelonssivelon updatelons
+   * @param initialDelonlay Introducelon a delonlay whelonn adding thelon task to thelon elonxeloncutor
    */
-  void addTask(QueryCacheFilter filter, SegmentInfo segmentInfo,
-               Amount<Long, Time> updateInterval, Amount<Long, Time> initialDelay) {
-    String filterName = filter.getFilterName();
-    String query = filter.getQueryString();
+  void addTask(QuelonryCachelonFiltelonr filtelonr, SelongmelonntInfo selongmelonntInfo,
+               Amount<Long, Timelon> updatelonIntelonrval, Amount<Long, Timelon> initialDelonlay) {
+    String filtelonrNamelon = filtelonr.gelontFiltelonrNamelon();
+    String quelonry = filtelonr.gelontQuelonryString();
 
-    // Create the task.
-    QueryCacheUpdateTask qcTask = new QueryCacheUpdateTask(
-        filter,
-        segmentInfo,
-        userTable,
-        updateInterval,
-        initialDelay,
-        getIterationCounter(),
-        searcherStats,
-        decider,
-        criticalExceptionHandler,
+    // Crelonatelon thelon task.
+    QuelonryCachelonUpdatelonTask qcTask = nelonw QuelonryCachelonUpdatelonTask(
+        filtelonr,
+        selongmelonntInfo,
+        uselonrTablelon,
+        updatelonIntelonrval,
+        initialDelonlay,
+        gelontItelonrationCountelonr(),
+        selonarchelonrStats,
+        deloncidelonr,
+        criticalelonxcelonptionHandlelonr,
         clock);
 
-    long initialDelayAsMS = initialDelay.as(Time.MILLISECONDS);
-    long updateIntervalAsMS = updateInterval.as(Time.MILLISECONDS);
-    Preconditions.checkArgument(
-        initialDelayAsMS >= initialDelay.getValue(), "initial delay unit granularity too small");
-    Preconditions.checkArgument(
-        updateIntervalAsMS >= updateInterval.getValue(),
-        "update interval unit granularity too small");
+    long initialDelonlayAsMS = initialDelonlay.as(Timelon.MILLISelonCONDS);
+    long updatelonIntelonrvalAsMS = updatelonIntelonrval.as(Timelon.MILLISelonCONDS);
+    Prelonconditions.chelonckArgumelonnt(
+        initialDelonlayAsMS >= initialDelonlay.gelontValuelon(), "initial delonlay unit granularity too small");
+    Prelonconditions.chelonckArgumelonnt(
+        updatelonIntelonrvalAsMS >= updatelonIntelonrval.gelontValuelon(),
+        "updatelon intelonrval unit granularity too small");
 
-    // Schedule the task.
-    ScheduledFuture future = scheduleNewTask(qcTask,
-        PeriodicActionParams.withIntialWaitAndFixedDelay(
-            initialDelayAsMS, updateIntervalAsMS, TimeUnit.MILLISECONDS
+    // Schelondulelon thelon task.
+    SchelondulelondFuturelon futurelon = schelondulelonNelonwTask(qcTask,
+        PelonriodicActionParams.withIntialWaitAndFixelondDelonlay(
+            initialDelonlayAsMS, updatelonIntelonrvalAsMS, TimelonUnit.MILLISelonCONDS
         )
     );
 
-    tasks.add(new Task(qcTask, future));
+    tasks.add(nelonw Task(qcTask, futurelon));
 
-    LOG.debug("Added a task for filter [" + filterName
-            + "] for segment [" + segmentInfo.getTimeSliceID()
-            + "] with query [" + query
-            + "] update interval " + updateInterval + " "
-            + (initialDelay.getValue() == 0 ? "without" : "with " + initialDelay)
-            + " initial delay");
+    LOG.delonbug("Addelond a task for filtelonr [" + filtelonrNamelon
+            + "] for selongmelonnt [" + selongmelonntInfo.gelontTimelonSlicelonID()
+            + "] with quelonry [" + quelonry
+            + "] updatelon intelonrval " + updatelonIntelonrval + " "
+            + (initialDelonlay.gelontValuelon() == 0 ? "without" : "with " + initialDelonlay)
+            + " initial delonlay");
 
   }
 
-  void removeAllTasksForSegment(SegmentInfo segmentInfo) {
-    int removedTasksCount = 0;
-    for (Iterator<Task> it = tasks.iterator(); it.hasNext();) {
-      Task task = it.next();
-      if (task.updateTask.getTimeSliceID() == segmentInfo.getTimeSliceID()) {
-        task.future.cancel(true);
-        it.remove();
-        removedTasksCount += 1;
+  void relonmovelonAllTasksForSelongmelonnt(SelongmelonntInfo selongmelonntInfo) {
+    int relonmovelondTasksCount = 0;
+    for (Itelonrator<Task> it = tasks.itelonrator(); it.hasNelonxt();) {
+      Task task = it.nelonxt();
+      if (task.updatelonTask.gelontTimelonSlicelonID() == selongmelonntInfo.gelontTimelonSlicelonID()) {
+        task.futurelon.cancelonl(truelon);
+        it.relonmovelon();
+        relonmovelondTasksCount += 1;
       }
     }
 
-    LOG.info("Removed {} update tasks for segment {}.", removedTasksCount,
-        segmentInfo.getTimeSliceID());
+    LOG.info("Relonmovelond {} updatelon tasks for selongmelonnt {}.", relonmovelondTasksCount,
+        selongmelonntInfo.gelontTimelonSlicelonID());
   }
 
-  public void clearTasks() {
-    int totalTasks = tasks.size();
-    LOG.info("Removing {} update tasks for all segments.", totalTasks);
+  public void clelonarTasks() {
+    int totalTasks = tasks.sizelon();
+    LOG.info("Relonmoving {} updatelon tasks for all selongmelonnts.", totalTasks);
     for (Task task : tasks) {
-      task.future.cancel(true);
+      task.futurelon.cancelonl(truelon);
     }
-    tasks.clear();
-    LOG.info("Canceled {} QueryCache update tasks", totalTasks);
+    tasks.clelonar();
+    LOG.info("Cancelonlelond {} QuelonryCachelon updatelon tasks", totalTasks);
   }
 
-  // Have all tasks run at least once (even if they failed)?
-  public boolean allTasksRan() {
-    boolean allTasksRan = true;
+  // Havelon all tasks run at lelonast oncelon (elonvelonn if thelony failelond)?
+  public boolelonan allTasksRan() {
+    boolelonan allTasksRan = truelon;
     for (Task task : tasks) {
-      if (!task.updateTask.ranOnce()) {
-        allTasksRan = false;
-        break;
+      if (!task.updatelonTask.ranOncelon()) {
+        allTasksRan = falselon;
+        brelonak;
       }
     }
 
-    return allTasksRan;
+    relonturn allTasksRan;
   }
 
-  // Have all tasks for this run at least once (even if they failed)?
-  public boolean allTasksRanForSegment(SegmentInfo segmentInfo) {
-    boolean allTasksRanForSegment = true;
+  // Havelon all tasks for this run at lelonast oncelon (elonvelonn if thelony failelond)?
+  public boolelonan allTasksRanForSelongmelonnt(SelongmelonntInfo selongmelonntInfo) {
+    boolelonan allTasksRanForSelongmelonnt = truelon;
     for (Task task : tasks) {
-      if ((task.updateTask.getTimeSliceID() == segmentInfo.getTimeSliceID())
-          && !task.updateTask.ranOnce()) {
-        allTasksRanForSegment = false;
-        break;
+      if ((task.updatelonTask.gelontTimelonSlicelonID() == selongmelonntInfo.gelontTimelonSlicelonID())
+          && !task.updatelonTask.ranOncelon()) {
+        allTasksRanForSelongmelonnt = falselon;
+        brelonak;
       }
     }
 
-    return allTasksRanForSegment;
+    relonturn allTasksRanForSelongmelonnt;
   }
 
   /**
-   * After startup, we want only one thread to update the query cache.
+   * Aftelonr startup, welon want only onelon threlonad to updatelon thelon quelonry cachelon.
    */
-  void setWorkerPoolSizeAfterStartup() {
-    QueryCacheUpdaterScheduledExecutorService executor =
-        (QueryCacheUpdaterScheduledExecutorService) getExecutor();
-    executor.setWorkerPoolSizeAfterStartup();
-    LOG.info("Done setting executor core pool size to one");
+  void selontWorkelonrPoolSizelonAftelonrStartup() {
+    QuelonryCachelonUpdatelonrSchelondulelondelonxeloncutorSelonrvicelon elonxeloncutor =
+        (QuelonryCachelonUpdatelonrSchelondulelondelonxeloncutorSelonrvicelon) gelontelonxeloncutor();
+    elonxeloncutor.selontWorkelonrPoolSizelonAftelonrStartup();
+    LOG.info("Donelon selontting elonxeloncutor corelon pool sizelon to onelon");
   }
 
-  @Override
-  protected void shutdownComponent() {
-    clearTasks();
+  @Ovelonrridelon
+  protelonctelond void shutdownComponelonnt() {
+    clelonarTasks();
   }
 
   //////////////////////////
-  // for unit tests only
+  // for unit telonsts only
   //////////////////////////
 
   /**
-   * Returns the list of all query cache updater tasks. This method should be used only in tests.
+   * Relonturns thelon list of all quelonry cachelon updatelonr tasks. This melonthod should belon uselond only in telonsts.
    */
-  @VisibleForTesting
-  List<Task> getTasksForTest() {
-    synchronized (tasks) {
-      return new ArrayList<>(tasks);
+  @VisiblelonForTelonsting
+  List<Task> gelontTasksForTelonst() {
+    synchronizelond (tasks) {
+      relonturn nelonw ArrayList<>(tasks);
     }
   }
 
-  @VisibleForTesting
-  int getTasksSize() {
-    synchronized (tasks) {
-      return tasks.size();
+  @VisiblelonForTelonsting
+  int gelontTasksSizelon() {
+    synchronizelond (tasks) {
+      relonturn tasks.sizelon();
     }
   }
 
-  @VisibleForTesting
-  boolean tasksContains(Task task) {
-    synchronized (tasks) {
-      return tasks.contains(task);
+  @VisiblelonForTelonsting
+  boolelonan tasksContains(Task task) {
+    synchronizelond (tasks) {
+      relonturn tasks.contains(task);
     }
   }
 
-  @VisibleForTesting
-  public ScheduledExecutorService getExecutorForTest() {
-    return getExecutor();
+  @VisiblelonForTelonsting
+  public SchelondulelondelonxeloncutorSelonrvicelon gelontelonxeloncutorForTelonst() {
+    relonturn gelontelonxeloncutor();
   }
 }

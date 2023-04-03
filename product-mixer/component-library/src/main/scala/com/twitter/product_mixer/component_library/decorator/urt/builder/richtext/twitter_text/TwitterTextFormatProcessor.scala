@@ -1,67 +1,67 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.richtext.twitter_text
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.richtelonxt.twittelonr_telonxt
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.Plain
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichText
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextFormat
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.Strong
-import scala.collection.mutable
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.richtelonxt.Plain
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.richtelonxt.RichTelonxt
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.richtelonxt.RichTelonxtFormat
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.richtelonxt.Strong
+import scala.collelonction.mutablelon
 
-object TwitterTextFormatProcessor {
-  lazy val defaultFormatProcessor = TwitterTextFormatProcessor()
+objelonct TwittelonrTelonxtFormatProcelonssor {
+  lazy val delonfaultFormatProcelonssor = TwittelonrTelonxtFormatProcelonssor()
 }
 
 /**
- * Add the corresponding [[RichTextFormat]] extraction logic into [[TwitterTextRenderer]].
- * The [[TwitterTextRenderer]] after being processed will extract the defined entities. 
+ * Add thelon correlonsponding [[RichTelonxtFormat]] elonxtraction logic into [[TwittelonrTelonxtRelonndelonrelonr]].
+ * Thelon [[TwittelonrTelonxtRelonndelonrelonr]] aftelonr beloning procelonsselond will elonxtract thelon delonfinelond elonntitielons.
  */
-case class TwitterTextFormatProcessor(
-  formats: Set[RichTextFormat] = Set(Plain, Strong),
-) extends TwitterTextRendererProcessor {
+caselon class TwittelonrTelonxtFormatProcelonssor(
+  formats: Selont[RichTelonxtFormat] = Selont(Plain, Strong),
+) elonxtelonnds TwittelonrTelonxtRelonndelonrelonrProcelonssor {
 
-  private val formatMap = formats.map { format => format.name.toLowerCase -> format }.toMap
+  privatelon val formatMap = formats.map { format => format.namelon.toLowelonrCaselon -> format }.toMap
 
-  private[this] val formatMatcher = {
-    val formatNames = formatMap.keys.toSet
-    s"<(/?)(${formatNames.mkString("|")})>".r
+  privatelon[this] val formatMatchelonr = {
+    val formatNamelons = formatMap.kelonys.toSelont
+    s"<(/?)(${formatNamelons.mkString("|")})>".r
   }
 
-  def renderText(text: String): RichText = {
-    process(TwitterTextRenderer(text)).build
+  delonf relonndelonrTelonxt(telonxt: String): RichTelonxt = {
+    procelonss(TwittelonrTelonxtRelonndelonrelonr(telonxt)).build
   }
 
-  def process(richTextBuilder: TwitterTextRenderer): TwitterTextRenderer = {
-    val text = richTextBuilder.text
-    val nodeStack = mutable.ArrayStack[(RichTextFormat, Int)]()
-    var offset = 0
+  delonf procelonss(richTelonxtBuildelonr: TwittelonrTelonxtRelonndelonrelonr): TwittelonrTelonxtRelonndelonrelonr = {
+    val telonxt = richTelonxtBuildelonr.telonxt
+    val nodelonStack = mutablelon.ArrayStack[(RichTelonxtFormat, Int)]()
+    var offselont = 0
 
-    formatMatcher.findAllMatchIn(text).foreach { m =>
-      formatMap.get(m.group(2)) match {
-        case Some(format) => {
-          if (m.group(1).nonEmpty) {
-            if (!nodeStack.headOption.exists {
-                case (formatFromStack, _) => formatFromStack == format
+    formatMatchelonr.findAllMatchIn(telonxt).forelonach { m =>
+      formatMap.gelont(m.group(2)) match {
+        caselon Somelon(format) => {
+          if (m.group(1).nonelonmpty) {
+            if (!nodelonStack.helonadOption.elonxists {
+                caselon (formatFromStack, _) => formatFromStack == format
               }) {
-              throw UnmatchedFormatTag(format)
+              throw UnmatchelondFormatTag(format)
             }
-            val (_, startIndex) = nodeStack.pop
-            richTextBuilder.mergeFormat(startIndex, m.start + offset, format)
-          } else {
-            nodeStack.push((format, m.start + offset))
+            val (_, startIndelonx) = nodelonStack.pop
+            richTelonxtBuildelonr.melonrgelonFormat(startIndelonx, m.start + offselont, format)
+          } elonlselon {
+            nodelonStack.push((format, m.start + offselont))
           }
-          richTextBuilder.remove(m.start + offset, m.end + offset)
-          offset -= m.end - m.start
+          richTelonxtBuildelonr.relonmovelon(m.start + offselont, m.elonnd + offselont)
+          offselont -= m.elonnd - m.start
         }
-        case _ => // if format is not found, skip this format
+        caselon _ => // if format is not found, skip this format
       }
     }
 
-    if (nodeStack.nonEmpty) {
-      throw UnmatchedFormatTag(nodeStack.head._1)
+    if (nodelonStack.nonelonmpty) {
+      throw UnmatchelondFormatTag(nodelonStack.helonad._1)
     }
 
-    richTextBuilder
+    richTelonxtBuildelonr
   }
 }
 
-case class UnmatchedFormatTag(format: RichTextFormat)
-    extends Exception(s"Unmatched format start and end tags for $format")
+caselon class UnmatchelondFormatTag(format: RichTelonxtFormat)
+    elonxtelonnds elonxcelonption(s"Unmatchelond format start and elonnd tags for $format")

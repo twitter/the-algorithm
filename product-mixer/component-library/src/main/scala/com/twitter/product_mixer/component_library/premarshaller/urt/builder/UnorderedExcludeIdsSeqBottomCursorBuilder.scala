@@ -1,30 +1,30 @@
-package com.twitter.product_mixer.component_library.premarshaller.urt.builder
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.prelonmarshallelonr.urt.buildelonr
 
-import com.twitter.product_mixer.component_library.model.cursor.UrtUnorderedExcludeIdsCursor
-import com.twitter.product_mixer.component_library.premarshaller.cursor.UrtCursorSerializer
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.pipeline.PipelineCursorSerializer
-import com.twitter.timelines.configapi.Param
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.cursor.UrtUnordelonrelondelonxcludelonIdsCursor
+import com.twittelonr.product_mixelonr.componelonnt_library.prelonmarshallelonr.cursor.UrtCursorSelonrializelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.Timelonlinelonelonntry
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonCursorSelonrializelonr
+import com.twittelonr.timelonlinelons.configapi.Param
 
 /**
- * Builds [[UrtUnorderedExcludeIdsCursor]] in the Bottom position when we want to also exclude ids
- * of items inside a module. The reason we cannot use [[UnorderedExcludeIdsBottomCursorBuilder]] in
- * such case is that the excludeIdsSelector of [[UnorderedExcludeIdsBottomCursorBuilder]] is doing a
- * one to one mapping between entries and excluded ids, but in case of having a module, a module
- * entry can result in excluding a sequence of entries.
+ * Builds [[UrtUnordelonrelondelonxcludelonIdsCursor]] in thelon Bottom position whelonn welon want to also elonxcludelon ids
+ * of itelonms insidelon a modulelon. Thelon relonason welon cannot uselon [[UnordelonrelondelonxcludelonIdsBottomCursorBuildelonr]] in
+ * such caselon is that thelon elonxcludelonIdsSelonlelonctor of [[UnordelonrelondelonxcludelonIdsBottomCursorBuildelonr]] is doing a
+ * onelon to onelon mapping belontwelonelonn elonntrielons and elonxcludelond ids, but in caselon of having a modulelon, a modulelon
+ * elonntry can relonsult in elonxcluding a selonquelonncelon of elonntrielons.
  *
- * @param excludedIdsMaxLengthParam The maximum length of the cursor
- * @param excludeIdsSelector Specifies the entry Ids to populate on the `excludedIds` field
- * @param serializer Converts the cursor to an encoded string
+ * @param elonxcludelondIdsMaxLelonngthParam Thelon maximum lelonngth of thelon cursor
+ * @param elonxcludelonIdsSelonlelonctor Speloncifielons thelon elonntry Ids to populatelon on thelon `elonxcludelondIds` fielonld
+ * @param selonrializelonr Convelonrts thelon cursor to an elonncodelond string
  */
-case class UnorderedExcludeIdsSeqBottomCursorBuilder(
-  override val excludedIdsMaxLengthParam: Param[Int],
-  excludeIdsSelector: PartialFunction[UniversalNoun[_], Seq[Long]],
-  override val serializer: PipelineCursorSerializer[UrtUnorderedExcludeIdsCursor] =
-    UrtCursorSerializer)
-    extends BaseUnorderedExcludeIdsBottomCursorBuilder {
+caselon class UnordelonrelondelonxcludelonIdsSelonqBottomCursorBuildelonr(
+  ovelonrridelon val elonxcludelondIdsMaxLelonngthParam: Param[Int],
+  elonxcludelonIdsSelonlelonctor: PartialFunction[UnivelonrsalNoun[_], Selonq[Long]],
+  ovelonrridelon val selonrializelonr: PipelonlinelonCursorSelonrializelonr[UrtUnordelonrelondelonxcludelonIdsCursor] =
+    UrtCursorSelonrializelonr)
+    elonxtelonnds BaselonUnordelonrelondelonxcludelonIdsBottomCursorBuildelonr {
 
-  override def excludeEntriesCollector(entries: Seq[TimelineEntry]): Seq[Long] =
-    entries.collect(excludeIdsSelector).flatten
+  ovelonrridelon delonf elonxcludelonelonntrielonsCollelonctor(elonntrielons: Selonq[Timelonlinelonelonntry]): Selonq[Long] =
+    elonntrielons.collelonct(elonxcludelonIdsSelonlelonctor).flattelonn
 }

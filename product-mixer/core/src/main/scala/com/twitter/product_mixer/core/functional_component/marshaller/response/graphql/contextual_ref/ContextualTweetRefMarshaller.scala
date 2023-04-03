@@ -1,17 +1,17 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.graphql.contextual_ref
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.graphql.contelonxtual_relonf
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.contextual_ref.ContextualTweetRef
-import com.twitter.strato.graphql.contextual_refs.{thriftscala => thrift}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.contelonxtual_relonf.ContelonxtualTwelonelontRelonf
+import com.twittelonr.strato.graphql.contelonxtual_relonfs.{thriftscala => thrift}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class ContextualTweetRefMarshaller @Inject() (
-  tweetHydrationContextMarshaller: TweetHydrationContextMarshaller) {
+@Singlelonton
+class ContelonxtualTwelonelontRelonfMarshallelonr @Injelonct() (
+  twelonelontHydrationContelonxtMarshallelonr: TwelonelontHydrationContelonxtMarshallelonr) {
 
-  def apply(contextualTweetRef: ContextualTweetRef): thrift.ContextualTweetRef =
-    thrift.ContextualTweetRef(
-      id = contextualTweetRef.id,
-      hydrationContext =
-        contextualTweetRef.hydrationContext.map(tweetHydrationContextMarshaller(_)))
+  delonf apply(contelonxtualTwelonelontRelonf: ContelonxtualTwelonelontRelonf): thrift.ContelonxtualTwelonelontRelonf =
+    thrift.ContelonxtualTwelonelontRelonf(
+      id = contelonxtualTwelonelontRelonf.id,
+      hydrationContelonxt =
+        contelonxtualTwelonelontRelonf.hydrationContelonxt.map(twelonelontHydrationContelonxtMarshallelonr(_)))
 }

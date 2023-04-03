@@ -1,16 +1,16 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.cover
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.covelonr
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.CoverFullCoverDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.FullCoverDisplayType
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.covelonr.CovelonrFullCovelonrDisplayTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.covelonr.FullCovelonrDisplayTypelon
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class FullCoverDisplayTypeMarshaller @Inject() () {
+@Singlelonton
+class FullCovelonrDisplayTypelonMarshallelonr @Injelonct() () {
 
-  def apply(halfCoverDisplayType: FullCoverDisplayType): urt.FullCoverDisplayType =
-    halfCoverDisplayType match {
-      case CoverFullCoverDisplayType => urt.FullCoverDisplayType.Cover
+  delonf apply(halfCovelonrDisplayTypelon: FullCovelonrDisplayTypelon): urt.FullCovelonrDisplayTypelon =
+    halfCovelonrDisplayTypelon match {
+      caselon CovelonrFullCovelonrDisplayTypelon => urt.FullCovelonrDisplayTypelon.Covelonr
     }
 }

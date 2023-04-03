@@ -1,255 +1,255 @@
-package com.twitter.simclusters_v2.scio
-package bq_generation.common
+packagelon com.twittelonr.simclustelonrs_v2.scio
+packagelon bq_gelonnelonration.common
 
-import com.twitter.wtf.beam.bq_embedding_export.BQQueryUtils
-import org.joda.time.DateTime
+import com.twittelonr.wtf.belonam.bq_elonmbelondding_elonxport.BQQuelonryUtils
+import org.joda.timelon.DatelonTimelon
 
-object BQGenerationUtil {
-  // Consumer Embeddings BQ table details
-  val interestedInEmbeddings20M145K2020Table = BQTableDetails(
+objelonct BQGelonnelonrationUtil {
+  // Consumelonr elonmbelonddings BQ tablelon delontails
+  val intelonrelonstelondInelonmbelonddings20M145K2020Tablelon = BQTablelonDelontails(
     "twttr-bq-cassowary-prod",
-    "user",
-    "simclusters_v2_user_to_interested_in_20M_145K_2020",
+    "uselonr",
+    "simclustelonrs_v2_uselonr_to_intelonrelonstelond_in_20M_145K_2020",
   )
-  val mtsConsumerEmbeddingsFav90P20MTable = BQTableDetails(
+  val mtsConsumelonrelonmbelonddingsFav90P20MTablelon = BQTablelonDelontails(
     "twttr-bq-cassowary-prod",
-    "user",
-    "mts_consumer_embeddings_fav90p_20m",
+    "uselonr",
+    "mts_consumelonr_elonmbelonddings_fav90p_20m",
   )
 
   // Common SQL path
-  val TweetFavCountSQLPath =
-    s"/com/twitter/simclusters_v2/scio/bq_generation/sql/tweet_fav_count.sql"
+  val TwelonelontFavCountSQLPath =
+    s"/com/twittelonr/simclustelonrs_v2/scio/bq_gelonnelonration/sql/twelonelont_fav_count.sql"
 
-  val NSFWTweetIdDenylistSQLPath =
-    s"/com/twitter/simclusters_v2/scio/bq_generation/sql/nsfw_tweet_denylist.sql"
+  val NSFWTwelonelontIdDelonnylistSQLPath =
+    s"/com/twittelonr/simclustelonrs_v2/scio/bq_gelonnelonration/sql/nsfw_twelonelont_delonnylist.sql"
 
-  val ClusterTopTweetsIntersectionWithFavBasedIndexSQLPath =
-    s"/com/twitter/simclusters_v2/scio/bq_generation/sql/cluster_top_tweets_intersection_with_fav_based_index.sql"
+  val ClustelonrTopTwelonelontsIntelonrselonctionWithFavBaselondIndelonxSQLPath =
+    s"/com/twittelonr/simclustelonrs_v2/scio/bq_gelonnelonration/sql/clustelonr_top_twelonelonts_intelonrselonction_with_fav_baselond_indelonx.sql"
 
-  // Read InterestedIn 2020
-  def getInterestedIn2020SQL(
-    queryDate: DateTime,
+  // Relonad IntelonrelonstelondIn 2020
+  delonf gelontIntelonrelonstelondIn2020SQL(
+    quelonryDatelon: DatelonTimelon,
     lookBackDays: Int
   ): String = {
     s"""
-       |SELECT userId, 
-       |        clusterIdToScores.key AS clusterId,
-       |        clusterIdToScores.value.logFavScore AS userScore,
-       |        clusterIdToScores.value.logFavScoreClusterNormalizedOnly AS clusterNormalizedLogFavScore,
-       |FROM `$interestedInEmbeddings20M145K2020Table`, UNNEST(clusterIdToScores) AS clusterIdToScores
-       |WHERE DATE(_PARTITIONTIME) = 
-       |  (  -- Get latest partition time
-       |  SELECT MAX(DATE(_PARTITIONTIME)) latest_partition
-       |  FROM `$interestedInEmbeddings20M145K2020Table`
-       |  WHERE Date(_PARTITIONTIME) BETWEEN 
-       |      DATE_SUB(Date("${queryDate}"), 
-       |      INTERVAL $lookBackDays DAY) AND DATE("$queryDate")
+       |SelonLelonCT uselonrId,
+       |        clustelonrIdToScorelons.kelony AS clustelonrId,
+       |        clustelonrIdToScorelons.valuelon.logFavScorelon AS uselonrScorelon,
+       |        clustelonrIdToScorelons.valuelon.logFavScorelonClustelonrNormalizelondOnly AS clustelonrNormalizelondLogFavScorelon,
+       |FROM `$intelonrelonstelondInelonmbelonddings20M145K2020Tablelon`, UNNelonST(clustelonrIdToScorelons) AS clustelonrIdToScorelons
+       |WHelonRelon DATelon(_PARTITIONTIMelon) =
+       |  (  -- Gelont latelonst partition timelon
+       |  SelonLelonCT MAX(DATelon(_PARTITIONTIMelon)) latelonst_partition
+       |  FROM `$intelonrelonstelondInelonmbelonddings20M145K2020Tablelon`
+       |  WHelonRelon Datelon(_PARTITIONTIMelon) BelonTWelonelonN
+       |      DATelon_SUB(Datelon("${quelonryDatelon}"),
+       |      INTelonRVAL $lookBackDays DAY) AND DATelon("$quelonryDatelon")
        |  )
-       |   AND clusterIdToScores.value.logFavScore > 0.0 # min score threshold for user embedding values
+       |   AND clustelonrIdToScorelons.valuelon.logFavScorelon > 0.0 # min scorelon threlonshold for uselonr elonmbelondding valuelons
        |""".stripMargin
   }
 
-  // Read MTS Consumer Embeddings - Fav90P20M config
-  def getMTSConsumerEmbeddingsFav90P20MSQL(
-    queryDate: DateTime,
+  // Relonad MTS Consumelonr elonmbelonddings - Fav90P20M config
+  delonf gelontMTSConsumelonrelonmbelonddingsFav90P20MSQL(
+    quelonryDatelon: DatelonTimelon,
     lookBackDays: Int
   ): String = {
-    // We read the most recent snapshot of MTS Consumer Embeddings Fav90P20M
+    // Welon relonad thelon most reloncelonnt snapshot of MTS Consumelonr elonmbelonddings Fav90P20M
     s"""
-       |SELECT userId,             
-       |    clusterIdToScores.key AS clusterId,
-       |    clusterIdToScores.value.logFavUserScore AS userScore,
-       |    clusterIdToScores.value.logFavUserScoreClusterNormalized AS clusterNormalizedLogFavScore
-       |    FROM `$mtsConsumerEmbeddingsFav90P20MTable`, UNNEST(embedding.clusterIdToScores) AS clusterIdToScores
-       |WHERE DATE(ingestionTime) = (  
-       |    -- Get latest partition time
-       |    SELECT MAX(DATE(ingestionTime)) latest_partition
-       |    FROM `$mtsConsumerEmbeddingsFav90P20MTable`
-       |    WHERE Date(ingestionTime) BETWEEN 
-       |        DATE_SUB(Date("${queryDate}"), 
-       |        INTERVAL  $lookBackDays DAY) AND DATE("${queryDate}")
-       |) AND clusterIdToScores.value.logFavUserScore > 0.0
+       |SelonLelonCT uselonrId,
+       |    clustelonrIdToScorelons.kelony AS clustelonrId,
+       |    clustelonrIdToScorelons.valuelon.logFavUselonrScorelon AS uselonrScorelon,
+       |    clustelonrIdToScorelons.valuelon.logFavUselonrScorelonClustelonrNormalizelond AS clustelonrNormalizelondLogFavScorelon
+       |    FROM `$mtsConsumelonrelonmbelonddingsFav90P20MTablelon`, UNNelonST(elonmbelondding.clustelonrIdToScorelons) AS clustelonrIdToScorelons
+       |WHelonRelon DATelon(ingelonstionTimelon) = (
+       |    -- Gelont latelonst partition timelon
+       |    SelonLelonCT MAX(DATelon(ingelonstionTimelon)) latelonst_partition
+       |    FROM `$mtsConsumelonrelonmbelonddingsFav90P20MTablelon`
+       |    WHelonRelon Datelon(ingelonstionTimelon) BelonTWelonelonN
+       |        DATelon_SUB(Datelon("${quelonryDatelon}"),
+       |        INTelonRVAL  $lookBackDays DAY) AND DATelon("${quelonryDatelon}")
+       |) AND clustelonrIdToScorelons.valuelon.logFavUselonrScorelon > 0.0
        |""".stripMargin
   }
 
   /*
-   * For a specific tweet engagement, retrieve the user id, tweet id, and timestamp
+   * For a speloncific twelonelont elonngagelonmelonnt, relontrielonvelon thelon uselonr id, twelonelont id, and timelonstamp
    *
-   * Return:
-   *  String - UserId, TweetId and Timestamp table SQL string format
-   *           Table Schema
-   *              - userId: Long
-   *              - tweetId: Long
+   * Relonturn:
+   *  String - UselonrId, TwelonelontId and Timelonstamp tablelon SQL string format
+   *           Tablelon Schelonma
+   *              - uselonrId: Long
+   *              - twelonelontId: Long
    *              - tsMillis: Long
    */
-  def getUserTweetEngagementEventPairSQL(
-    startTime: DateTime,
-    endTime: DateTime,
-    userTweetEngagementEventPairSqlPath: String,
-    userTweetEngagementEventPairTemplateVariable: Map[String, String]
+  delonf gelontUselonrTwelonelontelonngagelonmelonntelonvelonntPairSQL(
+    startTimelon: DatelonTimelon,
+    elonndTimelon: DatelonTimelon,
+    uselonrTwelonelontelonngagelonmelonntelonvelonntPairSqlPath: String,
+    uselonrTwelonelontelonngagelonmelonntelonvelonntPairTelonmplatelonVariablelon: Map[String, String]
   ): String = {
-    val templateVariables = Map(
-      "START_TIME" -> startTime.toString(),
-      "END_TIME" -> endTime.toString(),
-      "NO_OLDER_TWEETS_THAN_DATE" -> startTime.toString()
-    ) ++ userTweetEngagementEventPairTemplateVariable
-    BQQueryUtils.getBQQueryFromSqlFile(userTweetEngagementEventPairSqlPath, templateVariables)
+    val telonmplatelonVariablelons = Map(
+      "START_TIMelon" -> startTimelon.toString(),
+      "elonND_TIMelon" -> elonndTimelon.toString(),
+      "NO_OLDelonR_TWelonelonTS_THAN_DATelon" -> startTimelon.toString()
+    ) ++ uselonrTwelonelontelonngagelonmelonntelonvelonntPairTelonmplatelonVariablelon
+    BQQuelonryUtils.gelontBQQuelonryFromSqlFilelon(uselonrTwelonelontelonngagelonmelonntelonvelonntPairSqlPath, telonmplatelonVariablelons)
   }
 
   /*
-   * Retrieve tweets and the # of favs it got from a given time window
+   * Relontrielonvelon twelonelonts and thelon # of favs it got from a givelonn timelon window
    *
-   * Return:
-   *  String - TweetId  and fav count table SQL string format
-   *           Table Schema
-   *              - tweetId: Long
+   * Relonturn:
+   *  String - TwelonelontId  and fav count tablelon SQL string format
+   *           Tablelon Schelonma
+   *              - twelonelontId: Long
    *              - favCount: Long
    */
-  def getTweetIdWithFavCountSQL(
-    startTime: DateTime,
-    endTime: DateTime,
+  delonf gelontTwelonelontIdWithFavCountSQL(
+    startTimelon: DatelonTimelon,
+    elonndTimelon: DatelonTimelon,
   ): String = {
-    val templateVariables =
+    val telonmplatelonVariablelons =
       Map(
-        "START_TIME" -> startTime.toString(),
-        "END_TIME" -> endTime.toString(),
+        "START_TIMelon" -> startTimelon.toString(),
+        "elonND_TIMelon" -> elonndTimelon.toString(),
       )
-    BQQueryUtils.getBQQueryFromSqlFile(TweetFavCountSQLPath, templateVariables)
+    BQQuelonryUtils.gelontBQQuelonryFromSqlFilelon(TwelonelontFavCountSQLPath, telonmplatelonVariablelons)
   }
 
   /*
-   * From a given time window, retrieve tweetIds that were created by specific author or media type
+   * From a givelonn timelon window, relontrielonvelon twelonelontIds that welonrelon crelonatelond by speloncific author or melondia typelon
    *
    * Input:
-   *  - startTime: DateTime
-   *  - endTime: DateTime
-   *  - filterMediaType: Option[Int]
-   *      MediaType
-   *        1: Image
+   *  - startTimelon: DatelonTimelon
+   *  - elonndTimelon: DatelonTimelon
+   *  - filtelonrMelondiaTypelon: Option[Int]
+   *      MelondiaTypelon
+   *        1: Imagelon
    *        2: GIF
-   *        3: Video
-   * - filterNSFWAuthor: Boolean
-   *      Whether we want to filter out NSFW tweet authors
+   *        3: Videlono
+   * - filtelonrNSFWAuthor: Boolelonan
+   *      Whelonthelonr welon want to filtelonr out NSFW twelonelont authors
    *
-   * Return:
-   *  String - TweetId table SQL string format
-   *           Table Schema
-   *              - tweetId: Long
+   * Relonturn:
+   *  String - TwelonelontId tablelon SQL string format
+   *           Tablelon Schelonma
+   *              - twelonelontId: Long
    */
-  def getTweetIdWithMediaAndNSFWAuthorFilterSQL(
-    startTime: DateTime,
-    endTime: DateTime,
-    filterMediaType: Option[Int],
-    filterNSFWAuthor: Boolean
+  delonf gelontTwelonelontIdWithMelondiaAndNSFWAuthorFiltelonrSQL(
+    startTimelon: DatelonTimelon,
+    elonndTimelon: DatelonTimelon,
+    filtelonrMelondiaTypelon: Option[Int],
+    filtelonrNSFWAuthor: Boolelonan
   ): String = {
     val sql = s"""
-                 |SELECT DISTINCT tweetId
-                 |FROM `twttr-bq-tweetsource-prod.user.unhydrated_flat` tweetsource, UNNEST(media) AS media 
-                 |WHERE (DATE(_PARTITIONTIME) >= DATE("${startTime}") AND DATE(_PARTITIONTIME) <= DATE("${endTime}")) AND
-                 |         timestamp_millis((1288834974657 + 
-                 |          ((tweetId  & 9223372036850581504) >> 22))) >= TIMESTAMP("${startTime}")
-                 |          AND timestamp_millis((1288834974657 + 
-                 |        ((tweetId  & 9223372036850581504) >> 22))) <= TIMESTAMP("${endTime}")
+                 |SelonLelonCT DISTINCT twelonelontId
+                 |FROM `twttr-bq-twelonelontsourcelon-prod.uselonr.unhydratelond_flat` twelonelontsourcelon, UNNelonST(melondia) AS melondia
+                 |WHelonRelon (DATelon(_PARTITIONTIMelon) >= DATelon("${startTimelon}") AND DATelon(_PARTITIONTIMelon) <= DATelon("${elonndTimelon}")) AND
+                 |         timelonstamp_millis((1288834974657 +
+                 |          ((twelonelontId  & 9223372036850581504) >> 22))) >= TIMelonSTAMP("${startTimelon}")
+                 |          AND timelonstamp_millis((1288834974657 +
+                 |        ((twelonelontId  & 9223372036850581504) >> 22))) <= TIMelonSTAMP("${elonndTimelon}")
                  |""".stripMargin
 
-    val filterMediaStr = filterMediaType match {
-      case Some(mediaType) => s" AND media.media_type =${mediaType}"
-      case _ => ""
+    val filtelonrMelondiaStr = filtelonrMelondiaTypelon match {
+      caselon Somelon(melondiaTypelon) => s" AND melondia.melondia_typelon =${melondiaTypelon}"
+      caselon _ => ""
     }
-    val filterNSFWAuthorStr = if (filterNSFWAuthor) " AND nsfwUser = false" else ""
-    sql + filterMediaStr + filterNSFWAuthorStr
+    val filtelonrNSFWAuthorStr = if (filtelonrNSFWAuthor) " AND nsfwUselonr = falselon" elonlselon ""
+    sql + filtelonrMelondiaStr + filtelonrNSFWAuthorStr
   }
 
   /*
-   * From a given time window, retrieve tweetIds that fall into the NSFW deny list
+   * From a givelonn timelon window, relontrielonvelon twelonelontIds that fall into thelon NSFW delonny list
    *
    * Input:
-   *  - startTime: DateTime
-   *  - endTime: DateTime
+   *  - startTimelon: DatelonTimelon
+   *  - elonndTimelon: DatelonTimelon
    *
-  * Return:
-   *  String - TweetId table SQL string format
-   *           Table Schema
-   *              - tweetId: Long
+  * Relonturn:
+   *  String - TwelonelontId tablelon SQL string format
+   *           Tablelon Schelonma
+   *              - twelonelontId: Long
    */
-  def getNSFWTweetIdDenylistSQL(
-    startTime: DateTime,
-    endTime: DateTime,
+  delonf gelontNSFWTwelonelontIdDelonnylistSQL(
+    startTimelon: DatelonTimelon,
+    elonndTimelon: DatelonTimelon,
   ): String = {
-    val templateVariables =
+    val telonmplatelonVariablelons =
       Map(
-        "START_TIME" -> startTime.toString(),
-        "END_TIME" -> endTime.toString(),
+        "START_TIMelon" -> startTimelon.toString(),
+        "elonND_TIMelon" -> elonndTimelon.toString(),
       )
-    BQQueryUtils.getBQQueryFromSqlFile(NSFWTweetIdDenylistSQLPath, templateVariables)
+    BQQuelonryUtils.gelontBQQuelonryFromSqlFilelon(NSFWTwelonelontIdDelonnylistSQLPath, telonmplatelonVariablelons)
   }
 
   /*
-   * From a given cluster id to top k tweets table and a time window,
-   * (1) Retrieve the latest fav-based top tweets per cluster table within the time window
-   * (2) Inner join with the given table using cluster id and tweet id
-   * (3) Create the top k tweets per cluster table for the intersection
+   * From a givelonn clustelonr id to top k twelonelonts tablelon and a timelon window,
+   * (1) Relontrielonvelon thelon latelonst fav-baselond top twelonelonts pelonr clustelonr tablelon within thelon timelon window
+   * (2) Innelonr join with thelon givelonn tablelon using clustelonr id and twelonelont id
+   * (3) Crelonatelon thelon top k twelonelonts pelonr clustelonr tablelon for thelon intelonrselonction
    *
    * Input:
-   *  - startTime: DateTime
-   *  - endTime: DateTime
-   *  - topKTweetsForClusterKeySQL: String, a SQL query
+   *  - startTimelon: DatelonTimelon
+   *  - elonndTimelon: DatelonTimelon
+   *  - topKTwelonelontsForClustelonrKelonySQL: String, a SQL quelonry
    *
-   * Return:
-   *  String - TopKTweetsForClusterKey table SQL string format
-   *           Table Schema
-   *              - clusterId: Long
-   *              - topKTweetsForClusterKey: (Long, Long)
-   *                  - tweetId: Long
-   *                  - tweetScore: Long
+   * Relonturn:
+   *  String - TopKTwelonelontsForClustelonrKelony tablelon SQL string format
+   *           Tablelon Schelonma
+   *              - clustelonrId: Long
+   *              - topKTwelonelontsForClustelonrKelony: (Long, Long)
+   *                  - twelonelontId: Long
+   *                  - twelonelontScorelon: Long
    */
-  def generateClusterTopTweetIntersectionWithFavBasedIndexSQL(
-    startTime: DateTime,
-    endTime: DateTime,
-    clusterTopKTweets: Int,
-    topKTweetsForClusterKeySQL: String
+  delonf gelonnelonratelonClustelonrTopTwelonelontIntelonrselonctionWithFavBaselondIndelonxSQL(
+    startTimelon: DatelonTimelon,
+    elonndTimelon: DatelonTimelon,
+    clustelonrTopKTwelonelonts: Int,
+    topKTwelonelontsForClustelonrKelonySQL: String
   ): String = {
-    val templateVariables =
+    val telonmplatelonVariablelons =
       Map(
-        "START_TIME" -> startTime.toString(),
-        "END_TIME" -> endTime.toString(),
-        "CLUSTER_TOP_K_TWEETS" -> clusterTopKTweets.toString,
-        "CLUSTER_TOP_TWEETS_SQL" -> topKTweetsForClusterKeySQL
+        "START_TIMelon" -> startTimelon.toString(),
+        "elonND_TIMelon" -> elonndTimelon.toString(),
+        "CLUSTelonR_TOP_K_TWelonelonTS" -> clustelonrTopKTwelonelonts.toString,
+        "CLUSTelonR_TOP_TWelonelonTS_SQL" -> topKTwelonelontsForClustelonrKelonySQL
       )
-    BQQueryUtils.getBQQueryFromSqlFile(
-      ClusterTopTweetsIntersectionWithFavBasedIndexSQLPath,
-      templateVariables)
+    BQQuelonryUtils.gelontBQQuelonryFromSqlFilelon(
+      ClustelonrTopTwelonelontsIntelonrselonctionWithFavBaselondIndelonxSQLPath,
+      telonmplatelonVariablelons)
   }
 
   /*
-   * Given a list of action types, build a string that indicates the user
-   * engaged with the tweet
+   * Givelonn a list of action typelons, build a string that indicatelons thelon uselonr
+   * elonngagelond with thelon twelonelont
    *
-   * Example use case: We want to build a SQL query that specifies this user engaged
-   *  with tweet with either fav or retweet actions.
+   * elonxamplelon uselon caselon: Welon want to build a SQL quelonry that speloncifielons this uselonr elonngagelond
+   *  with twelonelont with elonithelonr fav or relontwelonelont actions.
    *
    * Input:
-   *  - actionTypes: Seq("ServerTweetFav", "ServerTweetRetweet")
-   *  - booleanOperator: "OR"
-   * Output: "ServerTweetFav.engaged = 1 OR ServerTweetRetweet.engaged = 1"
+   *  - actionTypelons: Selonq("SelonrvelonrTwelonelontFav", "SelonrvelonrTwelonelontRelontwelonelont")
+   *  - boolelonanOpelonrator: "OR"
+   * Output: "SelonrvelonrTwelonelontFav.elonngagelond = 1 OR SelonrvelonrTwelonelontRelontwelonelont.elonngagelond = 1"
    *
-   * Example SQL:
-   *  SELECT ServerTweetFav, ServerTweetRetweet
-   *  FROM table
-   *  WHERE ServerTweetFav.engaged = 1 OR ServerTweetRetweet.engaged = 1
+   * elonxamplelon SQL:
+   *  SelonLelonCT SelonrvelonrTwelonelontFav, SelonrvelonrTwelonelontRelontwelonelont
+   *  FROM tablelon
+   *  WHelonRelon SelonrvelonrTwelonelontFav.elonngagelond = 1 OR SelonrvelonrTwelonelontRelontwelonelont.elonngagelond = 1
    */
-  def buildActionTypesEngagementIndicatorString(
-    actionTypes: Seq[String],
-    booleanOperator: String = "OR"
+  delonf buildActionTypelonselonngagelonmelonntIndicatorString(
+    actionTypelons: Selonq[String],
+    boolelonanOpelonrator: String = "OR"
   ): String = {
-    actionTypes.map(action => f"""${action}.engaged = 1""").mkString(f""" ${booleanOperator} """)
+    actionTypelons.map(action => f"""${action}.elonngagelond = 1""").mkString(f""" ${boolelonanOpelonrator} """)
   }
 }
 
-case class BQTableDetails(
-  projectName: String,
-  tableName: String,
-  datasetName: String) {
-  override def toString: String = s"${projectName}.${tableName}.${datasetName}"
+caselon class BQTablelonDelontails(
+  projelonctNamelon: String,
+  tablelonNamelon: String,
+  dataselontNamelon: String) {
+  ovelonrridelon delonf toString: String = s"${projelonctNamelon}.${tablelonNamelon}.${dataselontNamelon}"
 }

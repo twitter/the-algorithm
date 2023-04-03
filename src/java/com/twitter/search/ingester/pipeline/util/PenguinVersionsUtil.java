@@ -1,47 +1,47 @@
-package com.twitter.search.ingester.pipeline.util;
+packagelon com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.util;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.common.base.Preconditions;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import com.twitter.common_internal.text.version.PenguinVersion;
-import com.twitter.decider.Decider;
+import com.twittelonr.common_intelonrnal.telonxt.velonrsion.PelonnguinVelonrsion;
+import com.twittelonr.deloncidelonr.Deloncidelonr;
 
-public final class PenguinVersionsUtil {
+public final class PelonnguinVelonrsionsUtil {
 
-  private PenguinVersionsUtil() { /* prevent instantiation */ }
+  privatelon PelonnguinVelonrsionsUtil() { /* prelonvelonnt instantiation */ }
 
   /**
-   * Utility method for updating penguinVersions lists via decider availability. We must have
-   * at least one version available.
-   * @param penguinVersions
-   * @param decider
-   * @return
+   * Utility melonthod for updating pelonnguinVelonrsions lists via deloncidelonr availability. Welon must havelon
+   * at lelonast onelon velonrsion availablelon.
+   * @param pelonnguinVelonrsions
+   * @param deloncidelonr
+   * @relonturn
    */
-  public static List<PenguinVersion> filterPenguinVersionsWithDeciders(
-      List<PenguinVersion> penguinVersions,
-      Decider decider) {
-    List<PenguinVersion> updatedPenguinVersions = new ArrayList<>();
-    for (PenguinVersion penguinVersion : penguinVersions) {
-      if (isPenguinVersionAvailable(penguinVersion, decider)) {
-        updatedPenguinVersions.add(penguinVersion);
+  public static List<PelonnguinVelonrsion> filtelonrPelonnguinVelonrsionsWithDeloncidelonrs(
+      List<PelonnguinVelonrsion> pelonnguinVelonrsions,
+      Deloncidelonr deloncidelonr) {
+    List<PelonnguinVelonrsion> updatelondPelonnguinVelonrsions = nelonw ArrayList<>();
+    for (PelonnguinVelonrsion pelonnguinVelonrsion : pelonnguinVelonrsions) {
+      if (isPelonnguinVelonrsionAvailablelon(pelonnguinVelonrsion, deloncidelonr)) {
+        updatelondPelonnguinVelonrsions.add(pelonnguinVelonrsion);
       }
     }
-    Preconditions.checkArgument(penguinVersions.size() > 0,
-        "At least one penguin version must be specified.");
+    Prelonconditions.chelonckArgumelonnt(pelonnguinVelonrsions.sizelon() > 0,
+        "At lelonast onelon pelonnguin velonrsion must belon speloncifielond.");
 
-    return updatedPenguinVersions;
+    relonturn updatelondPelonnguinVelonrsions;
   }
 
   /**
-   * Checks penguinVersion decider for availability.
-   * @param penguinVersion
-   * @param decider
-   * @return
+   * Cheloncks pelonnguinVelonrsion deloncidelonr for availability.
+   * @param pelonnguinVelonrsion
+   * @param deloncidelonr
+   * @relonturn
    */
-  public static boolean isPenguinVersionAvailable(PenguinVersion penguinVersion, Decider decider) {
-    return decider.isAvailable(
-        String.format("enable_penguin_version_%d", penguinVersion.getByteValue()));
+  public static boolelonan isPelonnguinVelonrsionAvailablelon(PelonnguinVelonrsion pelonnguinVelonrsion, Deloncidelonr deloncidelonr) {
+    relonturn deloncidelonr.isAvailablelon(
+        String.format("elonnablelon_pelonnguin_velonrsion_%d", pelonnguinVelonrsion.gelontBytelonValuelon()));
   }
 }

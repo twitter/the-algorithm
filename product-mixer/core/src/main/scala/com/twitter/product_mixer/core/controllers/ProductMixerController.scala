@@ -1,79 +1,79 @@
-package com.twitter.product_mixer.core.controllers
+packagelon com.twittelonr.product_mixelonr.corelon.controllelonrs
 
-import com.twitter.finagle.http.Request
-import com.twitter.finagle.http.Response
-import com.twitter.finagle.http.Status
-import com.twitter.finagle.http.RouteIndex
-import com.twitter.finatra.http.Controller
-import com.twitter.scrooge.ThriftMethod
-import com.twitter.inject.Injector
-import com.twitter.inject.annotations.Flags
-import com.twitter.product_mixer.core.model.common.identifier.ProductIdentifier
-import com.twitter.product_mixer.core.module.product_mixer_flags.ProductMixerFlagModule.ServiceLocal
-import com.twitter.product_mixer.core.service.component_registry.ComponentRegistry
-import com.twitter.product_mixer.core.service.component_registry.{
-  RegisteredComponent => ComponentRegistryRegisteredComponent
+import com.twittelonr.finaglelon.http.Relonquelonst
+import com.twittelonr.finaglelon.http.Relonsponselon
+import com.twittelonr.finaglelon.http.Status
+import com.twittelonr.finaglelon.http.RoutelonIndelonx
+import com.twittelonr.finatra.http.Controllelonr
+import com.twittelonr.scroogelon.ThriftMelonthod
+import com.twittelonr.injelonct.Injelonctor
+import com.twittelonr.injelonct.annotations.Flags
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.ProductIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modulelon.product_mixelonr_flags.ProductMixelonrFlagModulelon.SelonrvicelonLocal
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.componelonnt_relongistry.ComponelonntRelongistry
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.componelonnt_relongistry.{
+  RelongistelonrelondComponelonnt => ComponelonntRelongistryRelongistelonrelondComponelonnt
 }
-import com.twitter.util.Future
-import java.net.URLEncoder
+import com.twittelonr.util.Futurelon
+import java.nelont.URLelonncodelonr
 
 /**
- * Register endpoints necessary for enabling Product Mixer tooling such as alerts, dashboard
- * generation and Turntable.
+ * Relongistelonr elonndpoints neloncelonssary for elonnabling Product Mixelonr tooling such as alelonrts, dashboard
+ * gelonnelonration and Turntablelon.
  *
- * @param debugEndpoint a debug endpoint to run queries against. This feature is experimental and we
- *                      do not recommend that teams use it yet. Providing [[None]] will disable
- *                      debug queries.
- * @tparam ServiceIface a thrift service containing the [[debugEndpoint]]
+ * @param delonbugelonndpoint a delonbug elonndpoint to run quelonrielons against. This felonaturelon is elonxpelonrimelonntal and welon
+ *                      do not reloncommelonnd that telonams uselon it yelont. Providing [[Nonelon]] will disablelon
+ *                      delonbug quelonrielons.
+ * @tparam SelonrvicelonIfacelon a thrift selonrvicelon containing thelon [[delonbugelonndpoint]]
  */
-case class ProductMixerController[ServiceIface](
-  injector: Injector,
-  debugEndpoint: ThriftMethod,
+caselon class ProductMixelonrControllelonr[SelonrvicelonIfacelon](
+  injelonctor: Injelonctor,
+  delonbugelonndpoint: ThriftMelonthod,
 )(
-  implicit val serviceIFace: Manifest[ServiceIface])
-    extends Controller {
+  implicit val selonrvicelonIFacelon: Manifelonst[SelonrvicelonIfacelon])
+    elonxtelonnds Controllelonr {
 
-  val isLocal: Boolean = injector.instance[Boolean](Flags.named(ServiceLocal))
+  val isLocal: Boolelonan = injelonctor.instancelon[Boolelonan](Flags.namelond(SelonrvicelonLocal))
 
   if (!isLocal) {
-    prefix("/admin/product-mixer") {
-      val productNamesFut: Future[Seq[String]] =
-        injector.instance[ComponentRegistry].get.map { componentRegistry =>
-          componentRegistry.getAllRegisteredComponents.collect {
-            case ComponentRegistryRegisteredComponent(identifier: ProductIdentifier, _, _) =>
-              identifier.name
+    prelonfix("/admin/product-mixelonr") {
+      val productNamelonsFut: Futurelon[Selonq[String]] =
+        injelonctor.instancelon[ComponelonntRelongistry].gelont.map { componelonntRelongistry =>
+          componelonntRelongistry.gelontAllRelongistelonrelondComponelonnts.collelonct {
+            caselon ComponelonntRelongistryRelongistelonrelondComponelonnt(idelonntifielonr: ProductIdelonntifielonr, _, _) =>
+              idelonntifielonr.namelon
           }
         }
 
-      productNamesFut.map { productNames =>
-        productNames.foreach { productName =>
-          get(
-            route = "/debug-query/" + productName,
-            admin = true,
-            index = Some(RouteIndex(alias = "Query " + productName, group = "Feeds/Debug Query"))
-          ) { _: Request =>
+      productNamelonsFut.map { productNamelons =>
+        productNamelons.forelonach { productNamelon =>
+          gelont(
+            routelon = "/delonbug-quelonry/" + productNamelon,
+            admin = truelon,
+            indelonx = Somelon(RoutelonIndelonx(alias = "Quelonry " + productNamelon, group = "Felonelonds/Delonbug Quelonry"))
+          ) { _: Relonquelonst =>
             val auroraPath =
-              URLEncoder.encode(System.getProperty("aurora.instanceKey", ""), "UTF-8")
+              URLelonncodelonr.elonncodelon(Systelonm.gelontPropelonrty("aurora.instancelonKelony", ""), "UTF-8")
 
-            // Extract service name from clientId since there isn't a specific flag for that
-            val serviceName = injector
-              .instance[String](Flags.named("thrift.clientId"))
+            // elonxtract selonrvicelon namelon from clielonntId sincelon thelonrelon isn't a speloncific flag for that
+            val selonrvicelonNamelon = injelonctor
+              .instancelon[String](Flags.namelond("thrift.clielonntId"))
               .split("\\.")(0)
 
-            val redirectUrl =
-              s"https://feeds.twitter.biz/dtab/$serviceName/$productName?servicePath=$auroraPath"
+            val relondirelonctUrl =
+              s"https://felonelonds.twittelonr.biz/dtab/$selonrvicelonNamelon/$productNamelon?selonrvicelonPath=$auroraPath"
 
-            val response = Response().status(Status.Found)
-            response.location = redirectUrl
-            response
+            val relonsponselon = Relonsponselon().status(Status.Found)
+            relonsponselon.location = relondirelonctUrl
+            relonsponselon
           }
         }
       }
     }
   }
 
-  prefix("/product-mixer") {
-    get(route = "/component-registry")(GetComponentRegistryHandler(injector).apply)
-    get(route = "/debug-configuration")(GetDebugConfigurationHandler(debugEndpoint).apply)
+  prelonfix("/product-mixelonr") {
+    gelont(routelon = "/componelonnt-relongistry")(GelontComponelonntRelongistryHandlelonr(injelonctor).apply)
+    gelont(routelon = "/delonbug-configuration")(GelontDelonbugConfigurationHandlelonr(delonbugelonndpoint).apply)
   }
 }

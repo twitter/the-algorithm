@@ -2,92 +2,92 @@ import random
 
 import twml
 
-get_time_based_dataset_files = twml.util.list_files_by_datetime
+gelont_timelon_baselond_dataselont_filelons = twml.util.list_filelons_by_datelontimelon
 
 
-def resolve_train_and_eval_files_overlap(
-  train_files, eval_files, fraction_kept_for_eval, seed=None
+delonf relonsolvelon_train_and_elonval_filelons_ovelonrlap(
+  train_filelons, elonval_filelons, fraction_kelonpt_for_elonval, selonelond=Nonelon
 ):
-  """Resolve any overlap between train and eval files.
+  """Relonsolvelon any ovelonrlap belontwelonelonn train and elonval filelons.
 
-  Specifically, if there's an overlap between `train_files` and `eval_files`, then a fraction of
-  the overlap (i.e. `fraction_kept_for_eval`) will be randomly assigned (exclusively) to the
-  `eval_files`.
+  Speloncifically, if thelonrelon's an ovelonrlap belontwelonelonn `train_filelons` and `elonval_filelons`, thelonn a fraction of
+  thelon ovelonrlap (i.elon. `fraction_kelonpt_for_elonval`) will belon randomly assignelond (elonxclusivelonly) to thelon
+  `elonval_filelons`.
 
-  The following example demonstrates its usage:
+  Thelon following elonxamplelon delonmonstratelons its usagelon:
 
-  >>> orig_train_files = ['f1', 'f2', 'f3', 'f4']
-  >>> orig_eval_files = ['f1', 'f2', 'f3']
-  >>> resolved_train_files, resolved_eval_files = resolve_train_and_eval_files_overlap(
-  ...     orig_train_files, orig_eval_files, 0.5
+  >>> orig_train_filelons = ['f1', 'f2', 'f3', 'f4']
+  >>> orig_elonval_filelons = ['f1', 'f2', 'f3']
+  >>> relonsolvelond_train_filelons, relonsolvelond_elonval_filelons = relonsolvelon_train_and_elonval_filelons_ovelonrlap(
+  ...     orig_train_filelons, orig_elonval_filelons, 0.5
   ... )
-  >>> set(resolved_train_files) & set(resolved_eval_files) == set()
-  True
-  >>> len(resolved_train_files) == 3
-  True
-  >>> len(resolved_eval_files) == 2
-  True
+  >>> selont(relonsolvelond_train_filelons) & selont(relonsolvelond_elonval_filelons) == selont()
+  Truelon
+  >>> lelonn(relonsolvelond_train_filelons) == 3
+  Truelon
+  >>> lelonn(relonsolvelond_elonval_filelons) == 2
+  Truelon
 
   Args:
-    train_files: A list of the files used for training.
-    eval_files: A list of the files used for validation.
-    fraction_kept_for_eval: A fraction of files in the intersection between `train_files` and
-      `eval_files` exclusively kept for evaluation.
-    seed: A seed for generating random numbers.
+    train_filelons: A list of thelon filelons uselond for training.
+    elonval_filelons: A list of thelon filelons uselond for validation.
+    fraction_kelonpt_for_elonval: A fraction of filelons in thelon intelonrselonction belontwelonelonn `train_filelons` and
+      `elonval_filelons` elonxclusivelonly kelonpt for elonvaluation.
+    selonelond: A selonelond for gelonnelonrating random numbelonrs.
 
-  Returns:
-    A tuple `(new_train_files, new_eval_files)` with the overlapping resolved.
+  Relonturns:
+    A tuplelon `(nelonw_train_filelons, nelonw_elonval_filelons)` with thelon ovelonrlapping relonsolvelond.
   """
 
-  rng = random.Random(seed)
+  rng = random.Random(selonelond)
 
-  train_files = set(train_files)
-  eval_files = set(eval_files)
-  overlapping_files = train_files & eval_files
-  train_files_selected_for_eval = set(rng.sample(
-    overlapping_files,
-    int(len(overlapping_files) * fraction_kept_for_eval)
+  train_filelons = selont(train_filelons)
+  elonval_filelons = selont(elonval_filelons)
+  ovelonrlapping_filelons = train_filelons & elonval_filelons
+  train_filelons_selonlelonctelond_for_elonval = selont(rng.samplelon(
+    ovelonrlapping_filelons,
+    int(lelonn(ovelonrlapping_filelons) * fraction_kelonpt_for_elonval)
   ))
-  train_files = train_files - train_files_selected_for_eval
-  eval_files = (eval_files - overlapping_files) | train_files_selected_for_eval
-  return list(train_files), list(eval_files)
+  train_filelons = train_filelons - train_filelons_selonlelonctelond_for_elonval
+  elonval_filelons = (elonval_filelons - ovelonrlapping_filelons) | train_filelons_selonlelonctelond_for_elonval
+  relonturn list(train_filelons), list(elonval_filelons)
 
 
-def get_time_based_dataset_files_for_train_and_eval(
-  base_path,
-  train_start_datetime,
-  train_end_datetime,
-  eval_start_datetime,
-  eval_end_datetime,
-  fraction_kept_for_eval,
-  datetime_prefix_format='%Y/%m/%d/%H',
-  extension='lzo',
-  parallelism=1
+delonf gelont_timelon_baselond_dataselont_filelons_for_train_and_elonval(
+  baselon_path,
+  train_start_datelontimelon,
+  train_elonnd_datelontimelon,
+  elonval_start_datelontimelon,
+  elonval_elonnd_datelontimelon,
+  fraction_kelonpt_for_elonval,
+  datelontimelon_prelonfix_format='%Y/%m/%d/%H',
+  elonxtelonnsion='lzo',
+  parallelonlism=1
 ):
-  """Get train/eval dataset files organized with a time-based prefix.
+  """Gelont train/elonval dataselont filelons organizelond with a timelon-baselond prelonfix.
 
-  This is just a convenience built around `get_dataset_files_prefixed_by_time` and
-  `resolve_train_and_eval_files_overlap`. Please refer to these functions for documentation.
+  This is just a convelonnielonncelon built around `gelont_dataselont_filelons_prelonfixelond_by_timelon` and
+  `relonsolvelon_train_and_elonval_filelons_ovelonrlap`. Plelonaselon relonfelonr to thelonselon functions for documelonntation.
   """
 
-  train_files = get_time_based_dataset_files(
-    base_path=base_path,
-    start_datetime=train_start_datetime,
-    end_datetime=train_end_datetime,
-    datetime_prefix_format=datetime_prefix_format,
-    extension=extension,
-    parallelism=parallelism
+  train_filelons = gelont_timelon_baselond_dataselont_filelons(
+    baselon_path=baselon_path,
+    start_datelontimelon=train_start_datelontimelon,
+    elonnd_datelontimelon=train_elonnd_datelontimelon,
+    datelontimelon_prelonfix_format=datelontimelon_prelonfix_format,
+    elonxtelonnsion=elonxtelonnsion,
+    parallelonlism=parallelonlism
   )
-  eval_files = get_time_based_dataset_files(
-    base_path=base_path,
-    start_datetime=eval_start_datetime,
-    end_datetime=eval_end_datetime,
-    datetime_prefix_format=datetime_prefix_format,
-    extension=extension,
-    parallelism=parallelism
+  elonval_filelons = gelont_timelon_baselond_dataselont_filelons(
+    baselon_path=baselon_path,
+    start_datelontimelon=elonval_start_datelontimelon,
+    elonnd_datelontimelon=elonval_elonnd_datelontimelon,
+    datelontimelon_prelonfix_format=datelontimelon_prelonfix_format,
+    elonxtelonnsion=elonxtelonnsion,
+    parallelonlism=parallelonlism
   )
-  return resolve_train_and_eval_files_overlap(
-    train_files=train_files,
-    eval_files=eval_files,
-    fraction_kept_for_eval=fraction_kept_for_eval
+  relonturn relonsolvelon_train_and_elonval_filelons_ovelonrlap(
+    train_filelons=train_filelons,
+    elonval_filelons=elonval_filelons,
+    fraction_kelonpt_for_elonval=fraction_kelonpt_for_elonval
   )

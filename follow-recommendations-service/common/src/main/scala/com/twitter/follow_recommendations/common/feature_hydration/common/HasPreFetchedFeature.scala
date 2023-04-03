@@ -1,25 +1,25 @@
-package com.twitter.follow_recommendations.common.feature_hydration.common
+packagelon com.twittelonr.follow_reloncommelonndations.common.felonaturelon_hydration.common
 
-import com.twitter.follow_recommendations.common.models.HasMutualFollowedUserIds
-import com.twitter.follow_recommendations.common.models.HasWtfImpressions
-import com.twitter.follow_recommendations.common.models.WtfImpression
-import com.twitter.util.Time
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.HasMutualFollowelondUselonrIds
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.HasWtfImprelonssions
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.WtfImprelonssion
+import com.twittelonr.util.Timelon
 
-trait HasPreFetchedFeature extends HasMutualFollowedUserIds with HasWtfImpressions {
+trait HasPrelonFelontchelondFelonaturelon elonxtelonnds HasMutualFollowelondUselonrIds with HasWtfImprelonssions {
 
-  lazy val followedImpressions: Seq[WtfImpression] = {
+  lazy val followelondImprelonssions: Selonq[WtfImprelonssion] = {
     for {
-      wtfImprList <- wtfImpressions.toSeq
+      wtfImprList <- wtfImprelonssions.toSelonq
       wtfImpr <- wtfImprList
-      if recentFollowedUserIds.exists(_.contains(wtfImpr.candidateId))
-    } yield wtfImpr
+      if reloncelonntFollowelondUselonrIds.elonxists(_.contains(wtfImpr.candidatelonId))
+    } yielonld wtfImpr
   }
 
-  lazy val numFollowedImpressions: Int = followedImpressions.size
+  lazy val numFollowelondImprelonssions: Int = followelondImprelonssions.sizelon
 
-  lazy val lastFollowedImpressionDurationMs: Option[Long] = {
-    if (followedImpressions.nonEmpty) {
-      Some((Time.now - followedImpressions.map(_.latestTime).max).inMillis)
-    } else None
+  lazy val lastFollowelondImprelonssionDurationMs: Option[Long] = {
+    if (followelondImprelonssions.nonelonmpty) {
+      Somelon((Timelon.now - followelondImprelonssions.map(_.latelonstTimelon).max).inMillis)
+    } elonlselon Nonelon
   }
 }

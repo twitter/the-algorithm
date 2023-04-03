@@ -1,80 +1,80 @@
-package com.twitter.visibility.builder.tweets
+packagelon com.twittelonr.visibility.buildelonr.twelonelonts
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.thriftscala.EscherbirdEntityAnnotations
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.common.MisinformationPolicySource
-import com.twitter.visibility.features._
-import com.twitter.visibility.models.MisinformationPolicy
-import com.twitter.visibility.models.SemanticCoreMisinformation
-import com.twitter.visibility.models.ViewerContext
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.twelonelontypielon.thriftscala.elonschelonrbirdelonntityAnnotations
+import com.twittelonr.twelonelontypielon.thriftscala.Twelonelont
+import com.twittelonr.visibility.buildelonr.FelonaturelonMapBuildelonr
+import com.twittelonr.visibility.common.MisinformationPolicySourcelon
+import com.twittelonr.visibility.felonaturelons._
+import com.twittelonr.visibility.modelonls.MisinformationPolicy
+import com.twittelonr.visibility.modelonls.SelonmanticCorelonMisinformation
+import com.twittelonr.visibility.modelonls.VielonwelonrContelonxt
 
-class MisinformationPolicyFeatures(
-  misinformationPolicySource: MisinformationPolicySource,
-  statsReceiver: StatsReceiver) {
+class MisinformationPolicyFelonaturelons(
+  misinformationPolicySourcelon: MisinformationPolicySourcelon,
+  statsReloncelonivelonr: StatsReloncelonivelonr) {
 
-  private[this] val scopedStatsReceiver =
-    statsReceiver.scope("misinformation_policy_features")
+  privatelon[this] val scopelondStatsReloncelonivelonr =
+    statsReloncelonivelonr.scopelon("misinformation_policy_felonaturelons")
 
-  private[this] val requests = scopedStatsReceiver.counter("requests")
-  private[this] val tweetMisinformationPolicies =
-    scopedStatsReceiver.scope(TweetMisinformationPolicies.name).counter("requests")
+  privatelon[this] val relonquelonsts = scopelondStatsReloncelonivelonr.countelonr("relonquelonsts")
+  privatelon[this] val twelonelontMisinformationPolicielons =
+    scopelondStatsReloncelonivelonr.scopelon(TwelonelontMisinformationPolicielons.namelon).countelonr("relonquelonsts")
 
-  def forTweet(
-    tweet: Tweet,
-    viewerContext: ViewerContext
-  ): FeatureMapBuilder => FeatureMapBuilder = {
-    requests.incr()
-    tweetMisinformationPolicies.incr()
+  delonf forTwelonelont(
+    twelonelont: Twelonelont,
+    vielonwelonrContelonxt: VielonwelonrContelonxt
+  ): FelonaturelonMapBuildelonr => FelonaturelonMapBuildelonr = {
+    relonquelonsts.incr()
+    twelonelontMisinformationPolicielons.incr()
 
-    _.withFeature(
-      TweetMisinformationPolicies,
-      misinformationPolicy(tweet.escherbirdEntityAnnotations, viewerContext))
-      .withFeature(
-        TweetEnglishMisinformationPolicies,
-        misinformationPolicyEnglishOnly(tweet.escherbirdEntityAnnotations))
+    _.withFelonaturelon(
+      TwelonelontMisinformationPolicielons,
+      misinformationPolicy(twelonelont.elonschelonrbirdelonntityAnnotations, vielonwelonrContelonxt))
+      .withFelonaturelon(
+        TwelonelontelonnglishMisinformationPolicielons,
+        misinformationPolicyelonnglishOnly(twelonelont.elonschelonrbirdelonntityAnnotations))
   }
 
-  def misinformationPolicyEnglishOnly(
-    escherbirdEntityAnnotations: Option[EscherbirdEntityAnnotations],
-  ): Stitch[Seq[MisinformationPolicy]] = {
-    val locale = Some(
-      MisinformationPolicySource.LanguageAndCountry(
-        language = Some("en"),
-        country = Some("us")
+  delonf misinformationPolicyelonnglishOnly(
+    elonschelonrbirdelonntityAnnotations: Option[elonschelonrbirdelonntityAnnotations],
+  ): Stitch[Selonq[MisinformationPolicy]] = {
+    val localelon = Somelon(
+      MisinformationPolicySourcelon.LanguagelonAndCountry(
+        languagelon = Somelon("elonn"),
+        country = Somelon("us")
       ))
-    fetchMisinformationPolicy(escherbirdEntityAnnotations, locale)
+    felontchMisinformationPolicy(elonschelonrbirdelonntityAnnotations, localelon)
   }
 
-  def misinformationPolicy(
-    escherbirdEntityAnnotations: Option[EscherbirdEntityAnnotations],
-    viewerContext: ViewerContext
-  ): Stitch[Seq[MisinformationPolicy]] = {
-    val locale = viewerContext.requestLanguageCode.map { language =>
-      MisinformationPolicySource.LanguageAndCountry(
-        language = Some(language),
-        country = viewerContext.requestCountryCode
+  delonf misinformationPolicy(
+    elonschelonrbirdelonntityAnnotations: Option[elonschelonrbirdelonntityAnnotations],
+    vielonwelonrContelonxt: VielonwelonrContelonxt
+  ): Stitch[Selonq[MisinformationPolicy]] = {
+    val localelon = vielonwelonrContelonxt.relonquelonstLanguagelonCodelon.map { languagelon =>
+      MisinformationPolicySourcelon.LanguagelonAndCountry(
+        languagelon = Somelon(languagelon),
+        country = vielonwelonrContelonxt.relonquelonstCountryCodelon
       )
     }
-    fetchMisinformationPolicy(escherbirdEntityAnnotations, locale)
+    felontchMisinformationPolicy(elonschelonrbirdelonntityAnnotations, localelon)
   }
 
-  def fetchMisinformationPolicy(
-    escherbirdEntityAnnotations: Option[EscherbirdEntityAnnotations],
-    locale: Option[MisinformationPolicySource.LanguageAndCountry]
-  ): Stitch[Seq[MisinformationPolicy]] = {
-    Stitch.collect(
-      escherbirdEntityAnnotations
-        .map(_.entityAnnotations)
-        .getOrElse(Seq.empty)
-        .filter(_.domainId == SemanticCoreMisinformation.domainId)
+  delonf felontchMisinformationPolicy(
+    elonschelonrbirdelonntityAnnotations: Option[elonschelonrbirdelonntityAnnotations],
+    localelon: Option[MisinformationPolicySourcelon.LanguagelonAndCountry]
+  ): Stitch[Selonq[MisinformationPolicy]] = {
+    Stitch.collelonct(
+      elonschelonrbirdelonntityAnnotations
+        .map(_.elonntityAnnotations)
+        .gelontOrelonlselon(Selonq.elonmpty)
+        .filtelonr(_.domainId == SelonmanticCorelonMisinformation.domainId)
         .map(annotation =>
-          misinformationPolicySource
-            .fetch(
+          misinformationPolicySourcelon
+            .felontch(
               annotation,
-              locale
+              localelon
             )
             .map(misinformation =>
               MisinformationPolicy(

@@ -1,15 +1,15 @@
-package com.twitter.search.earlybird_root.caching;
+packagelon com.twittelonr.selonarch.elonarlybird_root.caching;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
+import java.lang.annotation.elonlelonmelonntTypelon;
+import java.lang.annotation.Relontelonntion;
+import java.lang.annotation.Targelont;
 
-import com.google.inject.BindingAnnotation;
+import com.googlelon.injelonct.BindingAnnotation;
 
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import static java.lang.annotation.RelontelonntionPolicy.RUNTIMelon;
 
-@Retention(RUNTIME)
-@Target({ ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD })
+@Relontelonntion(RUNTIMelon)
+@Targelont({ elonlelonmelonntTypelon.FIelonLD, elonlelonmelonntTypelon.PARAMelonTelonR, elonlelonmelonntTypelon.MelonTHOD })
 @BindingAnnotation
-public @interface StrictRecencyCache {
+public @intelonrfacelon StrictReloncelonncyCachelon {
 }

@@ -1,11 +1,11 @@
-package com.twitter.visibility.configapi.params
+packagelon com.twittelonr.visibility.configapi.params
 
-import com.twitter.timelines.configapi.Param
+import com.twittelonr.timelonlinelons.configapi.Param
 
-abstract class GlobalParam[T](override val default: T) extends Param(default) {
-  override val statName: String = s"GlobalParam/${this.getClass.getSimpleName}"
+abstract class GlobalParam[T](ovelonrridelon val delonfault: T) elonxtelonnds Param(delonfault) {
+  ovelonrridelon val statNamelon: String = s"GlobalParam/${this.gelontClass.gelontSimplelonNamelon}"
 }
 
-private[visibility] object GlobalParams {
-  object EnableFetchingLabelMap extends GlobalParam(false)
+privatelon[visibility] objelonct GlobalParams {
+  objelonct elonnablelonFelontchingLabelonlMap elonxtelonnds GlobalParam(falselon)
 }

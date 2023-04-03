@@ -1,12 +1,12 @@
-package com.twitter.follow_recommendations.models.failures
+packagelon com.twittelonr.follow_reloncommelonndations.modelonls.failurelons
 
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.CandidateSourceTimeout
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.CandidatelonSourcelonTimelonout
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.PipelonlinelonFailurelon
 
-object TimeoutPipelineFailure {
-  def apply(candidateSourceName: String): PipelineFailure = {
-    PipelineFailure(
-      CandidateSourceTimeout,
-      s"Candidate Source $candidateSourceName timed out before returning candidates")
+objelonct TimelonoutPipelonlinelonFailurelon {
+  delonf apply(candidatelonSourcelonNamelon: String): PipelonlinelonFailurelon = {
+    PipelonlinelonFailurelon(
+      CandidatelonSourcelonTimelonout,
+      s"Candidatelon Sourcelon $candidatelonSourcelonNamelon timelond out belonforelon relonturning candidatelons")
   }
 }

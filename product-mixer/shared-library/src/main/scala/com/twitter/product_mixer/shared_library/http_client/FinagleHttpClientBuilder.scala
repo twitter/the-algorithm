@@ -1,57 +1,57 @@
-package com.twitter.product_mixer.shared_library.http_client
+packagelon com.twittelonr.product_mixelonr.sharelond_library.http_clielonnt
 
-import com.twitter.finagle.Http
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.mtls.client.MtlsStackClient._
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.util.Duration
+import com.twittelonr.finaglelon.Http
+import com.twittelonr.finaglelon.mtls.authelonntication.SelonrvicelonIdelonntifielonr
+import com.twittelonr.finaglelon.mtls.clielonnt.MtlsStackClielonnt._
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.util.Duration
 
-object FinagleHttpClientBuilder {
-
-  /**
-   * Build a Finagle HTTP client with S2S Auth / Mutual TLS
-   *
-   * @param requestTimeout     HTTP client request timeout
-   * @param connectTimeout     HTTP client transport connect timeout
-   * @param acquisitionTimeout HTTP client session acquisition timeout
-   * @param serviceIdentifier  Service ID used to S2S Auth
-   * @param statsReceiver      Stats
-   *
-   * @return Finagle HTTP Client with S2S Auth / Mutual TLS
-   */
-  def buildFinagleHttpClientMutualTls(
-    requestTimeout: Duration,
-    connectTimeout: Duration,
-    acquisitionTimeout: Duration,
-    serviceIdentifier: ServiceIdentifier,
-    statsReceiver: StatsReceiver
-  ): Http.Client =
-    buildFinagleHttpClient(
-      requestTimeout = requestTimeout,
-      connectTimeout = connectTimeout,
-      acquisitionTimeout = acquisitionTimeout,
-      statsReceiver = statsReceiver
-    ).withMutualTls(serviceIdentifier)
+objelonct FinaglelonHttpClielonntBuildelonr {
 
   /**
-   * Build a Finagle HTTP client
+   * Build a Finaglelon HTTP clielonnt with S2S Auth / Mutual TLS
    *
-   * @param requestTimeout     HTTP client request timeout
-   * @param connectTimeout     HTTP client transport connect timeout
-   * @param acquisitionTimeout HTTP client session acquisition timeout
-   * @param statsReceiver      stats
+   * @param relonquelonstTimelonout     HTTP clielonnt relonquelonst timelonout
+   * @param connelonctTimelonout     HTTP clielonnt transport connelonct timelonout
+   * @param acquisitionTimelonout HTTP clielonnt selonssion acquisition timelonout
+   * @param selonrvicelonIdelonntifielonr  Selonrvicelon ID uselond to S2S Auth
+   * @param statsReloncelonivelonr      Stats
    *
-   * @return Finagle HTTP Client
+   * @relonturn Finaglelon HTTP Clielonnt with S2S Auth / Mutual TLS
    */
-  def buildFinagleHttpClient(
-    requestTimeout: Duration,
-    connectTimeout: Duration,
-    acquisitionTimeout: Duration,
-    statsReceiver: StatsReceiver,
-  ): Http.Client =
-    Http.client
-      .withStatsReceiver(statsReceiver)
-      .withRequestTimeout(requestTimeout)
-      .withTransport.connectTimeout(connectTimeout)
-      .withSession.acquisitionTimeout(acquisitionTimeout)
+  delonf buildFinaglelonHttpClielonntMutualTls(
+    relonquelonstTimelonout: Duration,
+    connelonctTimelonout: Duration,
+    acquisitionTimelonout: Duration,
+    selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr,
+    statsReloncelonivelonr: StatsReloncelonivelonr
+  ): Http.Clielonnt =
+    buildFinaglelonHttpClielonnt(
+      relonquelonstTimelonout = relonquelonstTimelonout,
+      connelonctTimelonout = connelonctTimelonout,
+      acquisitionTimelonout = acquisitionTimelonout,
+      statsReloncelonivelonr = statsReloncelonivelonr
+    ).withMutualTls(selonrvicelonIdelonntifielonr)
+
+  /**
+   * Build a Finaglelon HTTP clielonnt
+   *
+   * @param relonquelonstTimelonout     HTTP clielonnt relonquelonst timelonout
+   * @param connelonctTimelonout     HTTP clielonnt transport connelonct timelonout
+   * @param acquisitionTimelonout HTTP clielonnt selonssion acquisition timelonout
+   * @param statsReloncelonivelonr      stats
+   *
+   * @relonturn Finaglelon HTTP Clielonnt
+   */
+  delonf buildFinaglelonHttpClielonnt(
+    relonquelonstTimelonout: Duration,
+    connelonctTimelonout: Duration,
+    acquisitionTimelonout: Duration,
+    statsReloncelonivelonr: StatsReloncelonivelonr,
+  ): Http.Clielonnt =
+    Http.clielonnt
+      .withStatsReloncelonivelonr(statsReloncelonivelonr)
+      .withRelonquelonstTimelonout(relonquelonstTimelonout)
+      .withTransport.connelonctTimelonout(connelonctTimelonout)
+      .withSelonssion.acquisitionTimelonout(acquisitionTimelonout)
 }

@@ -1,360 +1,360 @@
-package com.twitter.search.ingester.pipeline.twitter;
+packagelon com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.twittelonr;
 
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
+import java.util.Collelonction;
+import java.util.Collelonctions;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrelonnt.ConcurrelonntMap;
+import java.util.concurrelonnt.TimelonUnit;
 
-import javax.naming.NamingException;
+import javax.naming.Namingelonxcelonption;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Maps;
+import com.googlelon.common.baselon.Prelonconditions;
+import com.googlelon.common.collelonct.Maps;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.pipeline.StageException;
-import org.apache.commons.pipeline.stage.InstrumentedBaseStage;
+import org.apachelon.commons.lang.StringUtils;
+import org.apachelon.commons.pipelonlinelon.Stagelonelonxcelonption;
+import org.apachelon.commons.pipelonlinelon.stagelon.InstrumelonntelondBaselonStagelon;
 
-import com.twitter.common.metrics.Metrics;
-import com.twitter.common.util.Clock;
-import com.twitter.decider.Decider;
-import com.twitter.search.common.debug.DebugEventAccumulator;
-import com.twitter.search.common.debug.DebugEventUtil;
-import com.twitter.search.common.decider.DeciderUtil;
-import com.twitter.search.common.metrics.Percentile;
-import com.twitter.search.common.metrics.PercentileUtil;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchCustomGauge;
-import com.twitter.search.common.metrics.SearchLongGauge;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.metrics.SearchTimerStats;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.ingester.pipeline.util.PipelineStageException;
-import com.twitter.search.ingester.pipeline.util.PipelineStageRuntimeException;
-import com.twitter.search.ingester.pipeline.wire.WireModule;
+import com.twittelonr.common.melontrics.Melontrics;
+import com.twittelonr.common.util.Clock;
+import com.twittelonr.deloncidelonr.Deloncidelonr;
+import com.twittelonr.selonarch.common.delonbug.DelonbugelonvelonntAccumulator;
+import com.twittelonr.selonarch.common.delonbug.DelonbugelonvelonntUtil;
+import com.twittelonr.selonarch.common.deloncidelonr.DeloncidelonrUtil;
+import com.twittelonr.selonarch.common.melontrics.Pelonrcelonntilelon;
+import com.twittelonr.selonarch.common.melontrics.PelonrcelonntilelonUtil;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCustomGaugelon;
+import com.twittelonr.selonarch.common.melontrics.SelonarchLongGaugelon;
+import com.twittelonr.selonarch.common.melontrics.SelonarchRatelonCountelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchTimelonrStats;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdClustelonr;
+import com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.util.PipelonlinelonStagelonelonxcelonption;
+import com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.util.PipelonlinelonStagelonRuntimelonelonxcelonption;
+import com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.wirelon.WirelonModulelon;
 
 /**
- * Common functionality for all stages.
+ * Common functionality for all stagelons.
  */
-public class TwitterBaseStage<T, R> extends InstrumentedBaseStage {
-  // Currently, all stages run in separate threads, so we could use simple maps here.
-  // However, it seems safer to use concurrent maps, in case we ever change our stage set up.
-  // The performance impact should be negligible.
-  private final ConcurrentMap<Optional<String>, SearchRateCounter> branchEmitObjectsRateCounters =
-      Maps.newConcurrentMap();
-  private final ConcurrentMap<Optional<String>, SearchRateCounter>
-    branchEmitBatchObjectsRateCounters = Maps.newConcurrentMap();
+public class TwittelonrBaselonStagelon<T, R> elonxtelonnds InstrumelonntelondBaselonStagelon {
+  // Currelonntly, all stagelons run in selonparatelon threlonads, so welon could uselon simplelon maps helonrelon.
+  // Howelonvelonr, it selonelonms safelonr to uselon concurrelonnt maps, in caselon welon elonvelonr changelon our stagelon selont up.
+  // Thelon pelonrformancelon impact should belon nelongligiblelon.
+  privatelon final ConcurrelonntMap<Optional<String>, SelonarchRatelonCountelonr> branchelonmitObjelonctsRatelonCountelonrs =
+      Maps.nelonwConcurrelonntMap();
+  privatelon final ConcurrelonntMap<Optional<String>, SelonarchRatelonCountelonr>
+    branchelonmitBatchObjelonctsRatelonCountelonrs = Maps.nelonwConcurrelonntMap();
 
-  private String stageNamePrefix = null;
+  privatelon String stagelonNamelonPrelonfix = null;
 
-  protected WireModule wireModule;
-  protected Decider decider;
-  protected Clock clock;
-  protected EarlybirdCluster earlybirdCluster;
+  protelonctelond WirelonModulelon wirelonModulelon;
+  protelonctelond Deloncidelonr deloncidelonr;
+  protelonctelond Clock clock;
+  protelonctelond elonarlybirdClustelonr elonarlybirdClustelonr;
 
-  private String fullStageName = null;
-  private Percentile<Long> processPercentile = null;
-  private SearchTimerStats processTimerStats = null;
-  private SearchRateCounter droppedItems = null;
-  private SearchLongGauge stageExceptions = null;
+  privatelon String fullStagelonNamelon = null;
+  privatelon Pelonrcelonntilelon<Long> procelonssPelonrcelonntilelon = null;
+  privatelon SelonarchTimelonrStats procelonssTimelonrStats = null;
+  privatelon SelonarchRatelonCountelonr droppelondItelonms = null;
+  privatelon SelonarchLongGaugelon stagelonelonxcelonptions = null;
 
-  private SearchRateCounter incomingBatchesRateCounter;
-  private SearchRateCounter incomingBatchObjectsRateCounter;
+  privatelon SelonarchRatelonCountelonr incomingBatchelonsRatelonCountelonr;
+  privatelon SelonarchRatelonCountelonr incomingBatchObjelonctsRatelonCountelonr;
 
-  private List<String> passThroughToBranches = Collections.emptyList();
-  private List<String> additionalEmitToBranches = Collections.emptyList();
+  privatelon List<String> passThroughToBranchelons = Collelonctions.elonmptyList();
+  privatelon List<String> additionalelonmitToBranchelons = Collelonctions.elonmptyList();
 
-  private boolean passThroughDownstream = false;
-  private boolean emitDownstream = true;
+  privatelon boolelonan passThroughDownstrelonam = falselon;
+  privatelon boolelonan elonmitDownstrelonam = truelon;
 
-  private String dropItemsDeciderKey;
+  privatelon String dropItelonmsDeloncidelonrKelony;
 
   // From XML config.
-  public void setPassThroughToBranches(String passThroughToBranchesString) {
-    // This is a comma-delimited string which is a list of branches to which we just
-    // pass through the incoming object without any processing/filtering.
-    this.passThroughToBranches = Arrays.asList(passThroughToBranchesString.split(","));
+  public void selontPassThroughToBranchelons(String passThroughToBranchelonsString) {
+    // This is a comma-delonlimitelond string which is a list of branchelons to which welon just
+    // pass through thelon incoming objelonct without any procelonssing/filtelonring.
+    this.passThroughToBranchelons = Arrays.asList(passThroughToBranchelonsString.split(","));
   }
 
   // From XML config.
-  public void setAdditionalEmitToBranches(String emitToBranchesString) {
-    // This is a comma-delimited string which is a list of branches to which we
-    // will emit when we call actuallyEmitAndCount(obj).
-    this.additionalEmitToBranches = Arrays.asList(emitToBranchesString.split(","));
+  public void selontAdditionalelonmitToBranchelons(String elonmitToBranchelonsString) {
+    // This is a comma-delonlimitelond string which is a list of branchelons to which welon
+    // will elonmit whelonn welon call actuallyelonmitAndCount(obj).
+    this.additionalelonmitToBranchelons = Arrays.asList(elonmitToBranchelonsString.split(","));
   }
 
   // From XML config.
-  public void setPassThroughDownstream(boolean passThroughDownstream) {
-    // If true, we emit the raw object downstream
-    this.passThroughDownstream = passThroughDownstream;
+  public void selontPassThroughDownstrelonam(boolelonan passThroughDownstrelonam) {
+    // If truelon, welon elonmit thelon raw objelonct downstrelonam
+    this.passThroughDownstrelonam = passThroughDownstrelonam;
   }
 
   // From XML config.
-  public void setEmitDownstream(boolean emitDownstream) {
-    // If true, we emit the processed object downstream.
-    this.emitDownstream = emitDownstream;
+  public void selontelonmitDownstrelonam(boolelonan elonmitDownstrelonam) {
+    // If truelon, welon elonmit thelon procelonsselond objelonct downstrelonam.
+    this.elonmitDownstrelonam = elonmitDownstrelonam;
   }
 
-  @Override
-  public final void innerPreprocess() throws StageException {
+  @Ovelonrridelon
+  public final void innelonrPrelonprocelonss() throws Stagelonelonxcelonption {
     try {
-      setupEssentialObjects();
-      doInnerPreprocess();
-    } catch (NamingException e) {
-      throw new StageException(this, "Failed to initialize stage.", e);
+      selontupelonsselonntialObjeloncts();
+      doInnelonrPrelonprocelonss();
+    } catch (Namingelonxcelonption elon) {
+      throw nelonw Stagelonelonxcelonption(this, "Failelond to initializelon stagelon.", elon);
     }
   }
 
   /***
-   * Sets up all necessary objects for this stage of the Pipeline. Previously, this task was done
-   * by the preprocess() method provided by the ACP library.
-   * @throws PipelineStageException
+   * Selonts up all neloncelonssary objeloncts for this stagelon of thelon Pipelonlinelon. Prelonviously, this task was donelon
+   * by thelon prelonprocelonss() melonthod providelond by thelon ACP library.
+   * @throws PipelonlinelonStagelonelonxcelonption
    */
-  public void setupStageV2() throws PipelineStageException {
+  public void selontupStagelonV2() throws PipelonlinelonStagelonelonxcelonption {
     try {
-      setupCommonStats();
-      innerSetupStats();
-      setupEssentialObjects();
-      innerSetup();
-    } catch (NamingException e) {
-      throw new PipelineStageException(this, "Failed to initialize stage", e);
+      selontupCommonStats();
+      innelonrSelontupStats();
+      selontupelonsselonntialObjeloncts();
+      innelonrSelontup();
+    } catch (Namingelonxcelonption elon) {
+      throw nelonw PipelonlinelonStagelonelonxcelonption(this, "Failelond to initializelon stagelon", elon);
     }
   }
 
-  protected void innerSetup() throws PipelineStageException, NamingException { }
+  protelonctelond void innelonrSelontup() throws PipelonlinelonStagelonelonxcelonption, Namingelonxcelonption { }
 
   /***
-   * Takes in an argument of type T, processes it and returns an argument of Type R. This is the
-   * main method of a pipeline stage.
+   * Takelons in an argumelonnt of typelon T, procelonsselons it and relonturns an argumelonnt of Typelon R. This is thelon
+   * main melonthod of a pipelonlinelon stagelon.
    */
-  public R runStageV2(T arg) {
-    long startingTime = startProcessing();
-    R processed = innerRunStageV2(arg);
-    endProcessing(startingTime);
-    return processed;
+  public R runStagelonV2(T arg) {
+    long startingTimelon = startProcelonssing();
+    R procelonsselond = innelonrRunStagelonV2(arg);
+    elonndProcelonssing(startingTimelon);
+    relonturn procelonsselond;
   }
 
   /***
-   * Takes in an argument of type T, processes it and pushes the processed element to some place.
-   * This method does not return anything as any time this method is called on a stage, it means
-   * there is no stage after this one. An example stage is any KafkaProducerStage.
+   * Takelons in an argumelonnt of typelon T, procelonsselons it and pushelons thelon procelonsselond elonlelonmelonnt to somelon placelon.
+   * This melonthod doelons not relonturn anything as any timelon this melonthod is callelond on a stagelon, it melonans
+   * thelonrelon is no stagelon aftelonr this onelon. An elonxamplelon stagelon is any KafkaProducelonrStagelon.
    */
-  public void runFinalStageOfBranchV2(T arg) {
-    long startingTime = startProcessing();
-    innerRunFinalStageOfBranchV2(arg);
-    endProcessing(startingTime);
+  public void runFinalStagelonOfBranchV2(T arg) {
+    long startingTimelon = startProcelonssing();
+    innelonrRunFinalStagelonOfBranchV2(arg);
+    elonndProcelonssing(startingTimelon);
   }
 
-  protected R innerRunStageV2(T arg) {
-    return null;
+  protelonctelond R innelonrRunStagelonV2(T arg) {
+    relonturn null;
   }
 
-  protected void innerRunFinalStageOfBranchV2(T arg) { }
+  protelonctelond void innelonrRunFinalStagelonOfBranchV2(T arg) { }
 
   /***
-   * called at the end of a pipeline. Cleans up all resources of the stage.
+   * callelond at thelon elonnd of a pipelonlinelon. Clelonans up all relonsourcelons of thelon stagelon.
    */
-  public void cleanupStageV2() { }
+  public void clelonanupStagelonV2() { }
 
-  private void setupEssentialObjects() throws NamingException {
-    wireModule = WireModule.getWireModule();
-    decider = wireModule.getDecider();
-    clock = wireModule.getClock();
-    earlybirdCluster = wireModule.getEarlybirdCluster();
-    dropItemsDeciderKey =
-          "drop_items_" + earlybirdCluster.getNameForStats() + "_" + fullStageName;
+  privatelon void selontupelonsselonntialObjeloncts() throws Namingelonxcelonption {
+    wirelonModulelon = WirelonModulelon.gelontWirelonModulelon();
+    deloncidelonr = wirelonModulelon.gelontDeloncidelonr();
+    clock = wirelonModulelon.gelontClock();
+    elonarlybirdClustelonr = wirelonModulelon.gelontelonarlybirdClustelonr();
+    dropItelonmsDeloncidelonrKelony =
+          "drop_itelonms_" + elonarlybirdClustelonr.gelontNamelonForStats() + "_" + fullStagelonNamelon;
   }
 
-  protected void doInnerPreprocess() throws StageException, NamingException { }
+  protelonctelond void doInnelonrPrelonprocelonss() throws Stagelonelonxcelonption, Namingelonxcelonption { }
 
-  @Override
-  protected void initStats() {
-    super.initStats();
-    setupCommonStats();
-    // Export stage timers
-    SearchCustomGauge.export(stageNamePrefix + "_queue_size",
-        () -> Optional.ofNullable(getQueueSizeAverage()).orElse(0.0));
-    SearchCustomGauge.export(stageNamePrefix + "_queue_percentage_full",
-        () -> Optional.ofNullable(getQueuePercentFull()).orElse(0.0));
+  @Ovelonrridelon
+  protelonctelond void initStats() {
+    supelonr.initStats();
+    selontupCommonStats();
+    // elonxport stagelon timelonrs
+    SelonarchCustomGaugelon.elonxport(stagelonNamelonPrelonfix + "_quelonuelon_sizelon",
+        () -> Optional.ofNullablelon(gelontQuelonuelonSizelonAvelonragelon()).orelonlselon(0.0));
+    SelonarchCustomGaugelon.elonxport(stagelonNamelonPrelonfix + "_quelonuelon_pelonrcelonntagelon_full",
+        () -> Optional.ofNullablelon(gelontQuelonuelonPelonrcelonntFull()).orelonlselon(0.0));
 
-    // This only called once on startup
-    // In some unit tests, getQueueCapacity can return null. Hence this guard is added.
-    // getQueueCapacity() does not return null here in prod.
-    SearchLongGauge.export(stageNamePrefix + "_queue_capacity")
-        .set(getQueueCapacity() == null ? 0 : getQueueCapacity());
+    // This only callelond oncelon on startup
+    // In somelon unit telonsts, gelontQuelonuelonCapacity can relonturn null. Helonncelon this guard is addelond.
+    // gelontQuelonuelonCapacity() doelons not relonturn null helonrelon in prod.
+    SelonarchLongGaugelon.elonxport(stagelonNamelonPrelonfix + "_quelonuelon_capacity")
+        .selont(gelontQuelonuelonCapacity() == null ? 0 : gelontQuelonuelonCapacity());
   }
 
-  private void setupCommonStats() {
-    // If the stage is instantiated only once, the class name is used for stats export
-    // If the stage is instantiated multiple times, the "stageName" specified in the
-    // pipeline definition xml file is also included.
-    if (StringUtils.isBlank(this.getStageName())) {
-      fullStageName = this.getClass().getSimpleName();
-    } else {
-      fullStageName = String.format(
+  privatelon void selontupCommonStats() {
+    // If thelon stagelon is instantiatelond only oncelon, thelon class namelon is uselond for stats elonxport
+    // If thelon stagelon is instantiatelond multiplelon timelons, thelon "stagelonNamelon" speloncifielond in thelon
+    // pipelonlinelon delonfinition xml filelon is also includelond.
+    if (StringUtils.isBlank(this.gelontStagelonNamelon())) {
+      fullStagelonNamelon = this.gelontClass().gelontSimplelonNamelon();
+    } elonlselon {
+      fullStagelonNamelon = String.format(
           "%s_%s",
-          this.getClass().getSimpleName(),
-          this.getStageName());
+          this.gelontClass().gelontSimplelonNamelon(),
+          this.gelontStagelonNamelon());
     }
 
-    stageNamePrefix = Metrics.normalizeName(fullStageName).toLowerCase();
+    stagelonNamelonPrelonfix = Melontrics.normalizelonNamelon(fullStagelonNamelon).toLowelonrCaselon();
 
-    droppedItems = SearchRateCounter.export(stageNamePrefix + "_dropped_messages");
-    stageExceptions = SearchLongGauge.export(stageNamePrefix + "_stage_exceptions");
+    droppelondItelonms = SelonarchRatelonCountelonr.elonxport(stagelonNamelonPrelonfix + "_droppelond_melonssagelons");
+    stagelonelonxcelonptions = SelonarchLongGaugelon.elonxport(stagelonNamelonPrelonfix + "_stagelon_elonxcelonptions");
 
-    processTimerStats = SearchTimerStats.export(stageNamePrefix, TimeUnit.NANOSECONDS,
-        true);
-    processPercentile = PercentileUtil.createPercentile(stageNamePrefix);
+    procelonssTimelonrStats = SelonarchTimelonrStats.elonxport(stagelonNamelonPrelonfix, TimelonUnit.NANOSelonCONDS,
+        truelon);
+    procelonssPelonrcelonntilelon = PelonrcelonntilelonUtil.crelonatelonPelonrcelonntilelon(stagelonNamelonPrelonfix);
 
-    incomingBatchesRateCounter = SearchRateCounter.export(stageNamePrefix + "_incoming_batches");
-    incomingBatchObjectsRateCounter =
-        SearchRateCounter.export(stageNamePrefix + "_incoming_batch_objects");
+    incomingBatchelonsRatelonCountelonr = SelonarchRatelonCountelonr.elonxport(stagelonNamelonPrelonfix + "_incoming_batchelons");
+    incomingBatchObjelonctsRatelonCountelonr =
+        SelonarchRatelonCountelonr.elonxport(stagelonNamelonPrelonfix + "_incoming_batch_objeloncts");
   }
 
-  protected void innerSetupStats() {
+  protelonctelond void innelonrSelontupStats() {
 
   }
 
-  protected SearchCounter makeStageCounter(String counterName) {
-    return SearchCounter.export(getStageNamePrefix() + "_" + counterName);
+  protelonctelond SelonarchCountelonr makelonStagelonCountelonr(String countelonrNamelon) {
+    relonturn SelonarchCountelonr.elonxport(gelontStagelonNamelonPrelonfix() + "_" + countelonrNamelon);
   }
 
-  private SearchRateCounter getEmitObjectsRateCounterFor(Optional<String> maybeBranch) {
-    return getRateCounterFor(maybeBranch, "emit_objects", branchEmitObjectsRateCounters);
+  privatelon SelonarchRatelonCountelonr gelontelonmitObjelonctsRatelonCountelonrFor(Optional<String> maybelonBranch) {
+    relonturn gelontRatelonCountelonrFor(maybelonBranch, "elonmit_objeloncts", branchelonmitObjelonctsRatelonCountelonrs);
   }
 
-  private SearchRateCounter getEmitBatchObjectsRateCounterFor(Optional<String> maybeBranch) {
-    return getRateCounterFor(maybeBranch, "emit_batch_objects", branchEmitBatchObjectsRateCounters);
+  privatelon SelonarchRatelonCountelonr gelontelonmitBatchObjelonctsRatelonCountelonrFor(Optional<String> maybelonBranch) {
+    relonturn gelontRatelonCountelonrFor(maybelonBranch, "elonmit_batch_objeloncts", branchelonmitBatchObjelonctsRatelonCountelonrs);
   }
 
-  private SearchRateCounter getRateCounterFor(
-      Optional<String> maybeBranch,
+  privatelon SelonarchRatelonCountelonr gelontRatelonCountelonrFor(
+      Optional<String> maybelonBranch,
       String statSuffix,
-      ConcurrentMap<Optional<String>, SearchRateCounter> rateCountersMap) {
-    SearchRateCounter rateCounter = rateCountersMap.get(maybeBranch);
-    if (rateCounter == null) {
-      String branchSuffix = maybeBranch.map(b -> "_" + b.toLowerCase()).orElse("");
-      rateCounter = SearchRateCounter.export(stageNamePrefix + branchSuffix + "_" + statSuffix);
-      SearchRateCounter existingRateCounter = rateCountersMap.putIfAbsent(maybeBranch, rateCounter);
-      if (existingRateCounter != null) {
-        Preconditions.checkState(
-            existingRateCounter == rateCounter,
-            "SearchRateCounter.export() should always return the same stat instance.");
+      ConcurrelonntMap<Optional<String>, SelonarchRatelonCountelonr> ratelonCountelonrsMap) {
+    SelonarchRatelonCountelonr ratelonCountelonr = ratelonCountelonrsMap.gelont(maybelonBranch);
+    if (ratelonCountelonr == null) {
+      String branchSuffix = maybelonBranch.map(b -> "_" + b.toLowelonrCaselon()).orelonlselon("");
+      ratelonCountelonr = SelonarchRatelonCountelonr.elonxport(stagelonNamelonPrelonfix + branchSuffix + "_" + statSuffix);
+      SelonarchRatelonCountelonr elonxistingRatelonCountelonr = ratelonCountelonrsMap.putIfAbselonnt(maybelonBranch, ratelonCountelonr);
+      if (elonxistingRatelonCountelonr != null) {
+        Prelonconditions.chelonckStatelon(
+            elonxistingRatelonCountelonr == ratelonCountelonr,
+            "SelonarchRatelonCountelonr.elonxport() should always relonturn thelon samelon stat instancelon.");
       }
     }
-    return rateCounter;
+    relonturn ratelonCountelonr;
   }
 
-  public String getStageNamePrefix() {
-    return stageNamePrefix;
+  public String gelontStagelonNamelonPrelonfix() {
+    relonturn stagelonNamelonPrelonfix;
   }
 
-  public String getFullStageName() {
-    return fullStageName;
+  public String gelontFullStagelonNamelon() {
+    relonturn fullStagelonNamelon;
   }
 
-  @Override
-  public void process(Object obj) throws StageException {
-    long startTime = System.nanoTime();
+  @Ovelonrridelon
+  public void procelonss(Objelonct obj) throws Stagelonelonxcelonption {
+    long startTimelon = Systelonm.nanoTimelon();
     try {
-      // this needs to be updated before calling super.process() so that innerProcess can actually
-      // use the updated incoming rates
-      updateIncomingBatchStats(obj);
-      // Track timing events for when tweets enter each stage.
-      captureStageDebugEvents(obj);
+      // this nelonelonds to belon updatelond belonforelon calling supelonr.procelonss() so that innelonrProcelonss can actually
+      // uselon thelon updatelond incoming ratelons
+      updatelonIncomingBatchStats(obj);
+      // Track timing elonvelonnts for whelonn twelonelonts elonntelonr elonach stagelon.
+      capturelonStagelonDelonbugelonvelonnts(obj);
 
-      if (DeciderUtil.isAvailableForRandomRecipient(decider, dropItemsDeciderKey)) {
-        droppedItems.increment();
-        return;
+      if (DeloncidelonrUtil.isAvailablelonForRandomReloncipielonnt(deloncidelonr, dropItelonmsDeloncidelonrKelony)) {
+        droppelondItelonms.increlonmelonnt();
+        relonturn;
       }
 
-      super.process(obj);
+      supelonr.procelonss(obj);
 
-      // Now emit the object raw to wherever we need to
-      emitToPassThroughBranches(obj);
+      // Now elonmit thelon objelonct raw to whelonrelonvelonr welon nelonelond to
+      elonmitToPassThroughBranchelons(obj);
     } finally {
-      long processTime = System.nanoTime() - startTime;
-      processTimerStats.timerIncrement(processTime);
-      processPercentile.record(processTime);
-      stageExceptions.set(stats.getExceptionCount());
+      long procelonssTimelon = Systelonm.nanoTimelon() - startTimelon;
+      procelonssTimelonrStats.timelonrIncrelonmelonnt(procelonssTimelon);
+      procelonssPelonrcelonntilelon.reloncord(procelonssTimelon);
+      stagelonelonxcelonptions.selont(stats.gelontelonxcelonptionCount());
     }
   }
 
-  protected long startProcessing() {
-    long startingTime = System.nanoTime();
-    checkIfObjectShouldBeEmittedOrThrowRuntimeException();
-    return startingTime;
+  protelonctelond long startProcelonssing() {
+    long startingTimelon = Systelonm.nanoTimelon();
+    chelonckIfObjelonctShouldBelonelonmittelondOrThrowRuntimelonelonxcelonption();
+    relonturn startingTimelon;
   }
 
-  protected void endProcessing(long startingTime) {
-    long processTime = System.nanoTime() - startingTime;
-    processTimerStats.timerIncrement(processTime);
-    processPercentile.record(processTime);
+  protelonctelond void elonndProcelonssing(long startingTimelon) {
+    long procelonssTimelon = Systelonm.nanoTimelon() - startingTimelon;
+    procelonssTimelonrStats.timelonrIncrelonmelonnt(procelonssTimelon);
+    procelonssPelonrcelonntilelon.reloncord(procelonssTimelon);
   }
 
-  private void checkIfObjectShouldBeEmittedOrThrowRuntimeException() {
-    if (DeciderUtil.isAvailableForRandomRecipient(decider, dropItemsDeciderKey)) {
-      droppedItems.increment();
-      throw new PipelineStageRuntimeException("Object does not have to be processed and passed"
-          + " to the next stage");
+  privatelon void chelonckIfObjelonctShouldBelonelonmittelondOrThrowRuntimelonelonxcelonption() {
+    if (DeloncidelonrUtil.isAvailablelonForRandomReloncipielonnt(deloncidelonr, dropItelonmsDeloncidelonrKelony)) {
+      droppelondItelonms.increlonmelonnt();
+      throw nelonw PipelonlinelonStagelonRuntimelonelonxcelonption("Objelonct doelons not havelon to belon procelonsselond and passelond"
+          + " to thelon nelonxt stagelon");
     }
   }
 
-  private void emitToPassThroughBranches(Object obj) {
-    for (String branch : passThroughToBranches) {
-      actuallyEmitAndCount(Optional.of(branch), obj);
+  privatelon void elonmitToPassThroughBranchelons(Objelonct obj) {
+    for (String branch : passThroughToBranchelons) {
+      actuallyelonmitAndCount(Optional.of(branch), obj);
     }
-    if (passThroughDownstream) {
-      actuallyEmitAndCount(Optional.empty(), obj);
-    }
-  }
-
-  private void updateIncomingBatchStats(Object obj) {
-    incomingBatchesRateCounter.increment();
-    incomingBatchObjectsRateCounter.increment(getBatchSizeForStats(obj));
-  }
-
-  protected void captureStageDebugEvents(Object obj) {
-    if (obj instanceof DebugEventAccumulator) {
-      DebugEventUtil.addDebugEvent(
-          (DebugEventAccumulator) obj, getFullStageName(), clock.nowMillis());
-    } else if (obj instanceof Collection) {
-      DebugEventUtil.addDebugEventToCollection(
-          (Collection<?>) obj, getFullStageName(), clock.nowMillis());
-    } else {
-      SearchCounter debugEventsNotSupportedCounter = SearchCounter.export(
-          stageNamePrefix + "_debug_events_not_supported_for_" + obj.getClass());
-      debugEventsNotSupportedCounter.increment();
+    if (passThroughDownstrelonam) {
+      actuallyelonmitAndCount(Optional.elonmpty(), obj);
     }
   }
 
-  protected int getBatchSizeForStats(Object obj) {
-    return (obj instanceof Collection) ? ((Collection<?>) obj).size() : 1;
+  privatelon void updatelonIncomingBatchStats(Objelonct obj) {
+    incomingBatchelonsRatelonCountelonr.increlonmelonnt();
+    incomingBatchObjelonctsRatelonCountelonr.increlonmelonnt(gelontBatchSizelonForStats(obj));
   }
 
-  protected void emitAndCount(Object obj) {
-    for (String branch : additionalEmitToBranches) {
-      actuallyEmitAndCount(Optional.of(branch), obj);
-    }
-    if (emitDownstream) {
-      actuallyEmitAndCount(Optional.empty(), obj);
+  protelonctelond void capturelonStagelonDelonbugelonvelonnts(Objelonct obj) {
+    if (obj instancelonof DelonbugelonvelonntAccumulator) {
+      DelonbugelonvelonntUtil.addDelonbugelonvelonnt(
+          (DelonbugelonvelonntAccumulator) obj, gelontFullStagelonNamelon(), clock.nowMillis());
+    } elonlselon if (obj instancelonof Collelonction) {
+      DelonbugelonvelonntUtil.addDelonbugelonvelonntToCollelonction(
+          (Collelonction<?>) obj, gelontFullStagelonNamelon(), clock.nowMillis());
+    } elonlselon {
+      SelonarchCountelonr delonbugelonvelonntsNotSupportelondCountelonr = SelonarchCountelonr.elonxport(
+          stagelonNamelonPrelonfix + "_delonbug_elonvelonnts_not_supportelond_for_" + obj.gelontClass());
+      delonbugelonvelonntsNotSupportelondCountelonr.increlonmelonnt();
     }
   }
 
-  protected void emitToBranchAndCount(String branch, Object obj) {
-    actuallyEmitAndCount(Optional.of(branch), obj);
+  protelonctelond int gelontBatchSizelonForStats(Objelonct obj) {
+    relonturn (obj instancelonof Collelonction) ? ((Collelonction<?>) obj).sizelon() : 1;
   }
 
-  // If the branch is none, emit downstream
-  private void actuallyEmitAndCount(Optional<String> maybeBranch, Object obj) {
-    if (maybeBranch.isPresent()) {
-      emit(maybeBranch.get(), obj);
-    } else {
-      emit(obj);
+  protelonctelond void elonmitAndCount(Objelonct obj) {
+    for (String branch : additionalelonmitToBranchelons) {
+      actuallyelonmitAndCount(Optional.of(branch), obj);
     }
-    getEmitObjectsRateCounterFor(maybeBranch).increment();
-    getEmitBatchObjectsRateCounterFor(maybeBranch).increment(getBatchSizeForStats(obj));
+    if (elonmitDownstrelonam) {
+      actuallyelonmitAndCount(Optional.elonmpty(), obj);
+    }
+  }
+
+  protelonctelond void elonmitToBranchAndCount(String branch, Objelonct obj) {
+    actuallyelonmitAndCount(Optional.of(branch), obj);
+  }
+
+  // If thelon branch is nonelon, elonmit downstrelonam
+  privatelon void actuallyelonmitAndCount(Optional<String> maybelonBranch, Objelonct obj) {
+    if (maybelonBranch.isPrelonselonnt()) {
+      elonmit(maybelonBranch.gelont(), obj);
+    } elonlselon {
+      elonmit(obj);
+    }
+    gelontelonmitObjelonctsRatelonCountelonrFor(maybelonBranch).increlonmelonnt();
+    gelontelonmitBatchObjelonctsRatelonCountelonrFor(maybelonBranch).increlonmelonnt(gelontBatchSizelonForStats(obj));
   }
 }

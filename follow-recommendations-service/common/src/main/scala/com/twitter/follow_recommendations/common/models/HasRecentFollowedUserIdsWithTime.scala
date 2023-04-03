@@ -1,9 +1,9 @@
-package com.twitter.follow_recommendations.common.models
+packagelon com.twittelonr.follow_reloncommelonndations.common.modelonls
 
-trait HasRecentFollowedUserIdsWithTime {
-  // user ids that are recently followed by the target user
-  def recentFollowedUserIdsWithTime: Option[Seq[UserIdWithTimestamp]]
+trait HasReloncelonntFollowelondUselonrIdsWithTimelon {
+  // uselonr ids that arelon reloncelonntly followelond by thelon targelont uselonr
+  delonf reloncelonntFollowelondUselonrIdsWithTimelon: Option[Selonq[UselonrIdWithTimelonstamp]]
 
-  lazy val numRecentFollowedUserIdsWithTime: Int =
-    recentFollowedUserIdsWithTime.map(_.size).getOrElse(0)
+  lazy val numReloncelonntFollowelondUselonrIdsWithTimelon: Int =
+    reloncelonntFollowelondUselonrIdsWithTimelon.map(_.sizelon).gelontOrelonlselon(0)
 }

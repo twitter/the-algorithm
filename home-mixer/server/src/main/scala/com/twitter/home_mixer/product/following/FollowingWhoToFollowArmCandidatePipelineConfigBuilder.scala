@@ -1,65 +1,65 @@
-package com.twitter.home_mixer.product.following
+packagelon com.twittelonr.homelon_mixelonr.product.following
 
-import com.twitter.home_mixer.functional_component.decorator.urt.builder.HomeWhoToFollowFeedbackActionInfoBuilder
-import com.twitter.home_mixer.functional_component.gate.DismissFatigueGate
-import com.twitter.home_mixer.functional_component.gate.TimelinesPersistenceStoreLastInjectionGate
-import com.twitter.home_mixer.model.HomeFeatures.DismissInfoFeature
-import com.twitter.home_mixer.model.HomeFeatures.PersistenceEntriesFeature
-import com.twitter.home_mixer.model.HomeFeatures.WhoToFollowExcludedUserIdsFeature
-import com.twitter.home_mixer.product.following.model.FollowingQuery
-import com.twitter.home_mixer.product.following.param.FollowingParam.EnableWhoToFollowCandidatePipelineParam
-import com.twitter.home_mixer.product.following.param.FollowingParam.WhoToFollowDisplayLocationParam
-import com.twitter.home_mixer.product.following.param.FollowingParam.WhoToFollowDisplayTypeIdParam
-import com.twitter.home_mixer.product.following.param.FollowingParam.WhoToFollowMinInjectionIntervalParam
-import com.twitter.home_mixer.service.HomeMixerAlertConfig
-import com.twitter.product_mixer.component_library.decorator.urt.builder.timeline_module.ParamWhoToFollowModuleDisplayTypeBuilder
-import com.twitter.product_mixer.component_library.gate.NonEmptyCandidatesGate
-import com.twitter.product_mixer.component_library.pipeline.candidate.who_to_follow_module.WhoToFollowArmCandidatePipelineConfig
-import com.twitter.product_mixer.component_library.pipeline.candidate.who_to_follow_module.WhoToFollowArmDependentCandidatePipelineConfig
-import com.twitter.product_mixer.component_library.pipeline.candidate.who_to_follow_module.WhoToFollowArmDependentCandidatePipelineConfigBuilder
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.functional_component.configapi.StaticParam
-import com.twitter.product_mixer.core.functional_component.gate.BaseGate
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelineservice.model.rich.EntityIdType
-import com.twitter.timelineservice.suggests.thriftscala.SuggestType
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.homelon_mixelonr.functional_componelonnt.deloncorator.urt.buildelonr.HomelonWhoToFollowFelonelondbackActionInfoBuildelonr
+import com.twittelonr.homelon_mixelonr.functional_componelonnt.gatelon.DismissFatiguelonGatelon
+import com.twittelonr.homelon_mixelonr.functional_componelonnt.gatelon.TimelonlinelonsPelonrsistelonncelonStorelonLastInjelonctionGatelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.DismissInfoFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.PelonrsistelonncelonelonntrielonsFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.WhoToFollowelonxcludelondUselonrIdsFelonaturelon
+import com.twittelonr.homelon_mixelonr.product.following.modelonl.FollowingQuelonry
+import com.twittelonr.homelon_mixelonr.product.following.param.FollowingParam.elonnablelonWhoToFollowCandidatelonPipelonlinelonParam
+import com.twittelonr.homelon_mixelonr.product.following.param.FollowingParam.WhoToFollowDisplayLocationParam
+import com.twittelonr.homelon_mixelonr.product.following.param.FollowingParam.WhoToFollowDisplayTypelonIdParam
+import com.twittelonr.homelon_mixelonr.product.following.param.FollowingParam.WhoToFollowMinInjelonctionIntelonrvalParam
+import com.twittelonr.homelon_mixelonr.selonrvicelon.HomelonMixelonrAlelonrtConfig
+import com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.timelonlinelon_modulelon.ParamWhoToFollowModulelonDisplayTypelonBuildelonr
+import com.twittelonr.product_mixelonr.componelonnt_library.gatelon.NonelonmptyCandidatelonsGatelon
+import com.twittelonr.product_mixelonr.componelonnt_library.pipelonlinelon.candidatelon.who_to_follow_modulelon.WhoToFollowArmCandidatelonPipelonlinelonConfig
+import com.twittelonr.product_mixelonr.componelonnt_library.pipelonlinelon.candidatelon.who_to_follow_modulelon.WhoToFollowArmDelonpelonndelonntCandidatelonPipelonlinelonConfig
+import com.twittelonr.product_mixelonr.componelonnt_library.pipelonlinelon.candidatelon.who_to_follow_modulelon.WhoToFollowArmDelonpelonndelonntCandidatelonPipelonlinelonConfigBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.CandidatelonScopelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.configapi.StaticParam
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.gatelon.BaselonGatelon
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.timelonlinelonselonrvicelon.modelonl.rich.elonntityIdTypelon
+import com.twittelonr.timelonlinelonselonrvicelon.suggelonsts.thriftscala.SuggelonstTypelon
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class FollowingWhoToFollowArmCandidatePipelineConfigBuilder @Inject() (
-  whoToFollowArmDependentCandidatePipelineConfigBuilder: WhoToFollowArmDependentCandidatePipelineConfigBuilder,
-  homeWhoToFollowFeedbackActionInfoBuilder: HomeWhoToFollowFeedbackActionInfoBuilder) {
+@Singlelonton
+class FollowingWhoToFollowArmCandidatelonPipelonlinelonConfigBuildelonr @Injelonct() (
+  whoToFollowArmDelonpelonndelonntCandidatelonPipelonlinelonConfigBuildelonr: WhoToFollowArmDelonpelonndelonntCandidatelonPipelonlinelonConfigBuildelonr,
+  homelonWhoToFollowFelonelondbackActionInfoBuildelonr: HomelonWhoToFollowFelonelondbackActionInfoBuildelonr) {
 
-  def build(
-    requiredNonEmptyPipelines: CandidateScope
-  ): WhoToFollowArmDependentCandidatePipelineConfig[FollowingQuery] = {
-    val gates: Seq[BaseGate[PipelineQuery]] = Seq(
-      TimelinesPersistenceStoreLastInjectionGate(
-        WhoToFollowMinInjectionIntervalParam,
-        PersistenceEntriesFeature,
-        EntityIdType.WhoToFollow
+  delonf build(
+    relonquirelondNonelonmptyPipelonlinelons: CandidatelonScopelon
+  ): WhoToFollowArmDelonpelonndelonntCandidatelonPipelonlinelonConfig[FollowingQuelonry] = {
+    val gatelons: Selonq[BaselonGatelon[PipelonlinelonQuelonry]] = Selonq(
+      TimelonlinelonsPelonrsistelonncelonStorelonLastInjelonctionGatelon(
+        WhoToFollowMinInjelonctionIntelonrvalParam,
+        PelonrsistelonncelonelonntrielonsFelonaturelon,
+        elonntityIdTypelon.WhoToFollow
       ),
-      DismissFatigueGate(SuggestType.WhoToFollow, DismissInfoFeature),
-      NonEmptyCandidatesGate(requiredNonEmptyPipelines)
+      DismissFatiguelonGatelon(SuggelonstTypelon.WhoToFollow, DismissInfoFelonaturelon),
+      NonelonmptyCandidatelonsGatelon(relonquirelondNonelonmptyPipelonlinelons)
     )
 
-    whoToFollowArmDependentCandidatePipelineConfigBuilder.build[FollowingQuery](
-      identifier = WhoToFollowArmCandidatePipelineConfig.identifier,
-      supportedClientParam = Some(EnableWhoToFollowCandidatePipelineParam),
-      alerts = alerts,
-      gates = gates,
-      moduleDisplayTypeBuilder =
-        ParamWhoToFollowModuleDisplayTypeBuilder(WhoToFollowDisplayTypeIdParam),
-      feedbackActionInfoBuilder = Some(homeWhoToFollowFeedbackActionInfoBuilder),
-      displayLocationParam = StaticParam(WhoToFollowDisplayLocationParam.default),
-      excludedUserIdsFeature = Some(WhoToFollowExcludedUserIdsFeature),
-      profileUserIdFeature = None
+    whoToFollowArmDelonpelonndelonntCandidatelonPipelonlinelonConfigBuildelonr.build[FollowingQuelonry](
+      idelonntifielonr = WhoToFollowArmCandidatelonPipelonlinelonConfig.idelonntifielonr,
+      supportelondClielonntParam = Somelon(elonnablelonWhoToFollowCandidatelonPipelonlinelonParam),
+      alelonrts = alelonrts,
+      gatelons = gatelons,
+      modulelonDisplayTypelonBuildelonr =
+        ParamWhoToFollowModulelonDisplayTypelonBuildelonr(WhoToFollowDisplayTypelonIdParam),
+      felonelondbackActionInfoBuildelonr = Somelon(homelonWhoToFollowFelonelondbackActionInfoBuildelonr),
+      displayLocationParam = StaticParam(WhoToFollowDisplayLocationParam.delonfault),
+      elonxcludelondUselonrIdsFelonaturelon = Somelon(WhoToFollowelonxcludelondUselonrIdsFelonaturelon),
+      profilelonUselonrIdFelonaturelon = Nonelon
     )
   }
 
-  private val alerts = Seq(
-    HomeMixerAlertConfig.BusinessHours.defaultSuccessRateAlert(70),
-    HomeMixerAlertConfig.BusinessHours.defaultEmptyResponseRateAlert()
+  privatelon val alelonrts = Selonq(
+    HomelonMixelonrAlelonrtConfig.BusinelonssHours.delonfaultSuccelonssRatelonAlelonrt(70),
+    HomelonMixelonrAlelonrtConfig.BusinelonssHours.delonfaultelonmptyRelonsponselonRatelonAlelonrt()
   )
 }

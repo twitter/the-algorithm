@@ -1,109 +1,109 @@
-package com.twitter.search.earlybird.archive.segmentbuilder;
+packagelon com.twittelonr.selonarch.elonarlybird.archivelon.selongmelonntbuildelonr;
 
-import java.util.Collection;
+import java.util.Collelonction;
 
-import com.google.common.collect.ImmutableList;
-import com.google.inject.Module;
+import com.googlelon.common.collelonct.ImmutablelonList;
+import com.googlelon.injelonct.Modulelon;
 
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.app.Flaggable;
-import com.twitter.inject.server.AbstractTwitterServer;
-import com.twitter.util.Future;
-import com.twitter.util.Time;
+import com.twittelonr.app.Flaggablelon;
+import com.twittelonr.injelonct.selonrvelonr.AbstractTwittelonrSelonrvelonr;
+import com.twittelonr.util.Futurelon;
+import com.twittelonr.util.Timelon;
 
-public class SegmentBuilderApp extends AbstractTwitterServer {
-  private static final Logger LOG = LoggerFactory.getLogger(SegmentBuilderApp.class);
+public class SelongmelonntBuildelonrApp elonxtelonnds AbstractTwittelonrSelonrvelonr {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(SelongmelonntBuildelonrApp.class);
 
-  public SegmentBuilderApp() {
-    createFlag("onlyRunOnce",
-        true,
-        "whether to stop segment builder after one loop",
-        Flaggable.ofBoolean());
+  public SelongmelonntBuildelonrApp() {
+    crelonatelonFlag("onlyRunOncelon",
+        truelon,
+        "whelonthelonr to stop selongmelonnt buildelonr aftelonr onelon loop",
+        Flaggablelon.ofBoolelonan());
 
-    createFlag("waitBetweenLoopsMins",
+    crelonatelonFlag("waitBelontwelonelonnLoopsMins",
         60,
-        "how many minutes to wait between building loops",
-        Flaggable.ofInt());
+        "how many minutelons to wait belontwelonelonn building loops",
+        Flaggablelon.ofInt());
 
-    createFlag("startup_batch_size",
+    crelonatelonFlag("startup_batch_sizelon",
         30,
-        "How many instances can start and read timeslice info from HDFS at the same time. "
-            + "If you don't know what this parameter is, please do not change this parameter.",
-        Flaggable.ofInt());
+        "How many instancelons can start and relonad timelonslicelon info from HDFS at thelon samelon timelon. "
+            + "If you don't know what this paramelontelonr is, plelonaselon do not changelon this paramelontelonr.",
+        Flaggablelon.ofInt());
 
-    createFlag("instance",
+    crelonatelonFlag("instancelon",
         20,
-        "the job instance number",
-        Flaggable.ofInt());
+        "thelon job instancelon numbelonr",
+        Flaggablelon.ofInt());
 
-    createFlag("segmentZkLockExpirationHours",
+    crelonatelonFlag("selongmelonntZkLockelonxpirationHours",
         0,
-        "max hours to hold the zookeeper lock while building segment",
-        Flaggable.ofInt());
+        "max hours to hold thelon zookelonelonpelonr lock whilelon building selongmelonnt",
+        Flaggablelon.ofInt());
 
-    createFlag("startupSleepMins",
+    crelonatelonFlag("startupSlelonelonpMins",
         2L,
-        "sleep multiplier of startupSleepMins before job runs",
-        Flaggable.ofLong());
+        "slelonelonp multiplielonr of startupSlelonelonpMins belonforelon job runs",
+        Flaggablelon.ofLong());
 
-    createFlag("maxRetriesOnFailure",
+    crelonatelonFlag("maxRelontrielonsOnFailurelon",
         3,
-        "how many times we should try to rebuild a segment when failure happens",
-        Flaggable.ofInt());
+        "how many timelons welon should try to relonbuild a selongmelonnt whelonn failurelon happelonns",
+        Flaggablelon.ofInt());
 
-    createFlag("hash_partitions",
-        ImmutableList.of(),
-        "comma separated hash partition ids, e.g., 0,1,3,4. "
-            + "If not specified, all the partitions will be built.",
-        Flaggable.ofJavaList(Flaggable.ofInt()));
+    crelonatelonFlag("hash_partitions",
+        ImmutablelonList.of(),
+        "comma selonparatelond hash partition ids, elon.g., 0,1,3,4. "
+            + "If not speloncifielond, all thelon partitions will belon built.",
+        Flaggablelon.ofJavaList(Flaggablelon.ofInt()));
 
-    createFlag("numSegmentBuilderPartitions",
+    crelonatelonFlag("numSelongmelonntBuildelonrPartitions",
         100,
-        "Number of partitions for dividing up all segment builder work",
-        Flaggable.ofInt());
+        "Numbelonr of partitions for dividing up all selongmelonnt buildelonr work",
+        Flaggablelon.ofInt());
 
-    createFlag("waitBetweenSegmentsSecs",
+    crelonatelonFlag("waitBelontwelonelonnSelongmelonntsSeloncs",
         10,
-        "Time to sleep between processing segments.",
-        Flaggable.ofInt());
+        "Timelon to slelonelonp belontwelonelonn procelonssing selongmelonnts.",
+        Flaggablelon.ofInt());
 
-    createFlag("waitBeforeQuitMins",
+    crelonatelonFlag("waitBelonforelonQuitMins",
         2,
-        "How many minutes to sleep before quitting.",
-        Flaggable.ofInt());
+        "How many minutelons to slelonelonp belonforelon quitting.",
+        Flaggablelon.ofInt());
 
-    createFlag("scrubGen",
+    crelonatelonFlag("scrubGelonn",
         "",
-        "Scrub gen for which segment builders should be run.",
-        Flaggable.ofString());
+        "Scrub gelonn for which selongmelonnt buildelonrs should belon run.",
+        Flaggablelon.ofString());
   }
 
-  @Override
+  @Ovelonrridelon
   public void start() {
-    SegmentBuilder segmentBuilder = injector().instance(SegmentBuilder.class);
-    closeOnExit((Time time) -> {
-      segmentBuilder.doShutdown();
-      return Future.Unit();
+    SelongmelonntBuildelonr selongmelonntBuildelonr = injelonctor().instancelon(SelongmelonntBuildelonr.class);
+    closelonOnelonxit((Timelon timelon) -> {
+      selongmelonntBuildelonr.doShutdown();
+      relonturn Futurelon.Unit();
     });
 
     LOG.info("Starting run()");
-    segmentBuilder.run();
-    LOG.info("run() complete");
+    selongmelonntBuildelonr.run();
+    LOG.info("run() complelontelon");
 
     // Now shutdown
     shutdown();
   }
 
-  protected void shutdown() {
-    LOG.info("Calling close() to initiate shutdown");
-    close();
+  protelonctelond void shutdown() {
+    LOG.info("Calling closelon() to initiatelon shutdown");
+    closelon();
   }
 
-  @Override
-  public Collection<Module> javaModules() {
-    return ImmutableList.of(new SegmentBuilderModule());
+  @Ovelonrridelon
+  public Collelonction<Modulelon> javaModulelons() {
+    relonturn ImmutablelonList.of(nelonw SelongmelonntBuildelonrModulelon());
   }
 }

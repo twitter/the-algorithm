@@ -1,30 +1,30 @@
-package com.twitter.product_mixer.component_library.model.cursor
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.modelonl.cursor
 
-import com.twitter.product_mixer.core.pipeline.PipelineCursor
-import com.twitter.product_mixer.core.pipeline.UrtPipelineCursor
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonCursor
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.UrtPipelonlinelonCursor
 
 /**
- * URT Cursor model that may be used when cursoring over a unordered candidate source. On each server
- * round-trip, the server will append the IDs of the elements in the response to the cursor. Then
- * on subsequent requests the client will return the cursor, and the excludedIds list can be sent to
- * the downstream's excludeIds parameter, or excluded locally via a filter on the candidate source
- * pipeline.
+ * URT Cursor modelonl that may belon uselond whelonn cursoring ovelonr a unordelonrelond candidatelon sourcelon. On elonach selonrvelonr
+ * round-trip, thelon selonrvelonr will appelonnd thelon IDs of thelon elonlelonmelonnts in thelon relonsponselon to thelon cursor. Thelonn
+ * on subselonquelonnt relonquelonsts thelon clielonnt will relonturn thelon cursor, and thelon elonxcludelondIds list can belon selonnt to
+ * thelon downstrelonam's elonxcludelonIds paramelontelonr, or elonxcludelond locally via a filtelonr on thelon candidatelon sourcelon
+ * pipelonlinelon.
  *
- * Note that the cursor is bounded, as the excludedIds list cannot be appended to indefinitely due
- * to payload size constraints. As such, this strategy is typically used for bounded (limited page
- * size) products, or for unbounded (unlimited page size) products in conjunction with an
- * impression store. In the latter case, the cursor excludedIds list would be limited to a max size
- * via a circular buffer implementation, which would be unioned with the impression store IDs when
- * filtering. This usage allows the impression store to "catch up", as there is often latency
- * between when an impression client event is sent by the client and storage in the impression
- * store.
+ * Notelon that thelon cursor is boundelond, as thelon elonxcludelondIds list cannot belon appelonndelond to indelonfinitelonly duelon
+ * to payload sizelon constraints. As such, this stratelongy is typically uselond for boundelond (limitelond pagelon
+ * sizelon) products, or for unboundelond (unlimitelond pagelon sizelon) products in conjunction with an
+ * imprelonssion storelon. In thelon lattelonr caselon, thelon cursor elonxcludelondIds list would belon limitelond to a max sizelon
+ * via a circular buffelonr implelonmelonntation, which would belon unionelond with thelon imprelonssion storelon IDs whelonn
+ * filtelonring. This usagelon allows thelon imprelonssion storelon to "catch up", as thelonrelon is oftelonn latelonncy
+ * belontwelonelonn whelonn an imprelonssion clielonnt elonvelonnt is selonnt by thelon clielonnt and storagelon in thelon imprelonssion
+ * storelon.
  *
- * @param initialSortIndex See [[UrtPipelineCursor]]
- * @param excludedIds the list of IDs to exclude from the candidate list
+ * @param initialSortIndelonx Selonelon [[UrtPipelonlinelonCursor]]
+ * @param elonxcludelondIds thelon list of IDs to elonxcludelon from thelon candidatelon list
  */
-case class UrtUnorderedExcludeIdsCursor(
-  override val initialSortIndex: Long,
-  excludedIds: Seq[Long])
-    extends UrtPipelineCursor
+caselon class UrtUnordelonrelondelonxcludelonIdsCursor(
+  ovelonrridelon val initialSortIndelonx: Long,
+  elonxcludelondIds: Selonq[Long])
+    elonxtelonnds UrtPipelonlinelonCursor
 
-case class UnorderedExcludeIdsCursor(excludedIds: Seq[Long]) extends PipelineCursor
+caselon class UnordelonrelondelonxcludelonIdsCursor(elonxcludelondIds: Selonq[Long]) elonxtelonnds PipelonlinelonCursor

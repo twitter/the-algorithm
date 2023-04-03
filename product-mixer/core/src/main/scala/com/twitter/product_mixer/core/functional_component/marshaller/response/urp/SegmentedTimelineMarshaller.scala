@@ -1,21 +1,21 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urp
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urp
 
-import com.twitter.pages.render.{thriftscala => urp}
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.TimelineScribeConfigMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urp.SegmentedTimeline
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.pagelons.relonndelonr.{thriftscala => urp}
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.TimelonlinelonScribelonConfigMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urp.SelongmelonntelondTimelonlinelon
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class SegmentedTimelineMarshaller @Inject() (
-  timelineKeyMarshaller: TimelineKeyMarshaller,
-  timelineScribeConfigMarshaller: TimelineScribeConfigMarshaller) {
+@Singlelonton
+class SelongmelonntelondTimelonlinelonMarshallelonr @Injelonct() (
+  timelonlinelonKelonyMarshallelonr: TimelonlinelonKelonyMarshallelonr,
+  timelonlinelonScribelonConfigMarshallelonr: TimelonlinelonScribelonConfigMarshallelonr) {
 
-  def apply(segmentedTimeline: SegmentedTimeline): urp.SegmentedTimeline = urp.SegmentedTimeline(
-    id = segmentedTimeline.id,
-    labelText = segmentedTimeline.labelText,
-    timeline = timelineKeyMarshaller(segmentedTimeline.timeline),
-    scribeConfig = segmentedTimeline.scribeConfig.map(timelineScribeConfigMarshaller(_)),
-    refreshIntervalSec = segmentedTimeline.refreshIntervalSec
+  delonf apply(selongmelonntelondTimelonlinelon: SelongmelonntelondTimelonlinelon): urp.SelongmelonntelondTimelonlinelon = urp.SelongmelonntelondTimelonlinelon(
+    id = selongmelonntelondTimelonlinelon.id,
+    labelonlTelonxt = selongmelonntelondTimelonlinelon.labelonlTelonxt,
+    timelonlinelon = timelonlinelonKelonyMarshallelonr(selongmelonntelondTimelonlinelon.timelonlinelon),
+    scribelonConfig = selongmelonntelondTimelonlinelon.scribelonConfig.map(timelonlinelonScribelonConfigMarshallelonr(_)),
+    relonfrelonshIntelonrvalSelonc = selongmelonntelondTimelonlinelon.relonfrelonshIntelonrvalSelonc
   )
 }

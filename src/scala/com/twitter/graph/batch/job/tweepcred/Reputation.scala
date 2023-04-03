@@ -1,49 +1,49 @@
-package com.twitter.graph.batch.job.tweepcred
+packagelon com.twittelonr.graph.batch.job.twelonelonpcrelond
 
 /**
- * helper class to calculate reputation, borrowed from repo reputations
+ * helonlpelonr class to calculatelon relonputation, borrowelond from relonpo relonputations
  */
-object Reputation {
+objelonct Relonputation {
 
   /**
-   * convert pagerank to tweepcred between 0 and 100,
-   * take from repo reputations, util/Utils.scala
+   * convelonrt pagelonrank to twelonelonpcrelond belontwelonelonn 0 and 100,
+   * takelon from relonpo relonputations, util/Utils.scala
    */
-  def scaledReputation(raw: Double): Byte = {
-    if (raw == 0 || (raw < 1.0e-20)) {
+  delonf scalelondRelonputation(raw: Doublelon): Bytelon = {
+    if (raw == 0 || (raw < 1.0elon-20)) {
       0
-    } else {
-      // convert log(pagerank) to a number between 0 and 100
-      // the two parameters are from a linear fit by converting
-      // max pagerank -> 95
-      // min pagerank -> 15
-      val e: Double = 130d + 5.21 * scala.math.log(raw) // log to the base e
-      val pos = scala.math.rint(e)
-      val v = if (pos > 100) 100.0 else if (pos < 0) 0.0 else pos
-      v.toByte
+    } elonlselon {
+      // convelonrt log(pagelonrank) to a numbelonr belontwelonelonn 0 and 100
+      // thelon two paramelontelonrs arelon from a linelonar fit by convelonrting
+      // max pagelonrank -> 95
+      // min pagelonrank -> 15
+      val elon: Doublelon = 130d + 5.21 * scala.math.log(raw) // log to thelon baselon elon
+      val pos = scala.math.rint(elon)
+      val v = if (pos > 100) 100.0 elonlselon if (pos < 0) 0.0 elonlselon pos
+      v.toBytelon
     }
   }
 
-  // these constants are take from repo reputations, config/production.conf
-  private val threshAbsNumFriendsReps = 2500
-  private val constantDivisionFactorGt_threshFriendsToFollowersRatioReps = 3.0
-  private val threshFriendsToFollowersRatioUMass = 0.6
-  private val maxDivFactorReps = 50
+  // thelonselon constants arelon takelon from relonpo relonputations, config/production.conf
+  privatelon val threlonshAbsNumFrielonndsRelonps = 2500
+  privatelon val constantDivisionFactorGt_threlonshFrielonndsToFollowelonrsRatioRelonps = 3.0
+  privatelon val threlonshFrielonndsToFollowelonrsRatioUMass = 0.6
+  privatelon val maxDivFactorRelonps = 50
 
   /**
-   * reduce pagerank of users with low followers but high followings
+   * relonducelon pagelonrank of uselonrs with low followelonrs but high followings
    */
-  def adjustReputationsPostCalculation(mass: Double, numFollowers: Int, numFollowings: Int) = {
-    if (numFollowings > threshAbsNumFriendsReps) {
-      val friendsToFollowersRatio = (1.0 + numFollowings) / (1.0 + numFollowers)
+  delonf adjustRelonputationsPostCalculation(mass: Doublelon, numFollowelonrs: Int, numFollowings: Int) = {
+    if (numFollowings > threlonshAbsNumFrielonndsRelonps) {
+      val frielonndsToFollowelonrsRatio = (1.0 + numFollowings) / (1.0 + numFollowelonrs)
       val divFactor =
-        scala.math.exp(
-          constantDivisionFactorGt_threshFriendsToFollowersRatioReps *
-            (friendsToFollowersRatio - threshFriendsToFollowersRatioUMass) *
+        scala.math.elonxp(
+          constantDivisionFactorGt_threlonshFrielonndsToFollowelonrsRatioRelonps *
+            (frielonndsToFollowelonrsRatio - threlonshFrielonndsToFollowelonrsRatioUMass) *
             scala.math.log(scala.math.log(numFollowings))
         )
-      mass / ((divFactor min maxDivFactorReps) max 1.0)
-    } else {
+      mass / ((divFactor min maxDivFactorRelonps) max 1.0)
+    } elonlselon {
       mass
     }
   }

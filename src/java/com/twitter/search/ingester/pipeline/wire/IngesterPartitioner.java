@@ -1,27 +1,27 @@
-package com.twitter.search.ingester.pipeline.wire;
+packagelon com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.wirelon;
 
-import javax.naming.NamingException;
+import javax.naming.Namingelonxcelonption;
 
-import com.twitter.search.common.partitioning.base.PartitionMappingManager;
-import com.twitter.search.common.util.io.kafka.SearchPartitioner;
+import com.twittelonr.selonarch.common.partitioning.baselon.PartitionMappingManagelonr;
+import com.twittelonr.selonarch.common.util.io.kafka.SelonarchPartitionelonr;
 
 /**
- * A variant of {@code SearchPartitioner} which retrieves {@code PartitionMappingManager} from
- * {@code WireModule}.
+ * A variant of {@codelon SelonarchPartitionelonr} which relontrielonvelons {@codelon PartitionMappingManagelonr} from
+ * {@codelon WirelonModulelon}.
  *
- * Note that the value object has to implement {@code Partitionable}.
+ * Notelon that thelon valuelon objelonct has to implelonmelonnt {@codelon Partitionablelon}.
  */
-public class IngesterPartitioner extends SearchPartitioner {
+public class IngelonstelonrPartitionelonr elonxtelonnds SelonarchPartitionelonr {
 
-  public IngesterPartitioner() {
-    super(getPartitionMappingManager());
+  public IngelonstelonrPartitionelonr() {
+    supelonr(gelontPartitionMappingManagelonr());
   }
 
-  private static PartitionMappingManager getPartitionMappingManager() {
+  privatelon static PartitionMappingManagelonr gelontPartitionMappingManagelonr() {
     try {
-      return WireModule.getWireModule().getPartitionMappingManager();
-    } catch (NamingException e) {
-      throw new RuntimeException(e);
+      relonturn WirelonModulelon.gelontWirelonModulelon().gelontPartitionMappingManagelonr();
+    } catch (Namingelonxcelonption elon) {
+      throw nelonw Runtimelonelonxcelonption(elon);
     }
   }
 }

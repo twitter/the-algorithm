@@ -1,14 +1,14 @@
 scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
+    sourcelons = ["*.scala"],
+    compilelonr_option_selonts = ["fatal_warnings"],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "emailstorage/server/src/main/thrift/com/twitter/emailstorage/api:email-storage-service-scala",
-        "finatra-internal/mtls-thriftmux/src/main/scala",
-        "finatra/inject/inject-thrift-client",
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/clients/common",
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/models",
-        "stitch/stitch-core",
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        "elonmailstoragelon/selonrvelonr/src/main/thrift/com/twittelonr/elonmailstoragelon/api:elonmail-storagelon-selonrvicelon-scala",
+        "finatra-intelonrnal/mtls-thriftmux/src/main/scala",
+        "finatra/injelonct/injelonct-thrift-clielonnt",
+        "follow-reloncommelonndations-selonrvicelon/common/src/main/scala/com/twittelonr/follow_reloncommelonndations/common/clielonnts/common",
+        "follow-reloncommelonndations-selonrvicelon/common/src/main/scala/com/twittelonr/follow_reloncommelonndations/common/modelonls",
+        "stitch/stitch-corelon",
     ],
 )

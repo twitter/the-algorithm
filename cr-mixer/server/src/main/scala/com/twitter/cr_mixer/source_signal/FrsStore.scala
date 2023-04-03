@@ -1,81 +1,81 @@
-package com.twitter.cr_mixer.source_signal
+packagelon com.twittelonr.cr_mixelonr.sourcelon_signal
 
-import com.twitter.cr_mixer.param.decider.CrMixerDecider
-import com.twitter.cr_mixer.param.decider.DeciderConstants
-import com.twitter.cr_mixer.source_signal.FrsStore.Query
-import com.twitter.cr_mixer.source_signal.FrsStore.FrsQueryResult
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.thriftscala.ClientContext
-import com.twitter.follow_recommendations.thriftscala.DisplayLocation
-import com.twitter.follow_recommendations.thriftscala.FollowRecommendationsThriftService
-import com.twitter.follow_recommendations.thriftscala.Recommendation
-import com.twitter.follow_recommendations.thriftscala.RecommendationRequest
-import com.twitter.storehaus.ReadableStore
-import javax.inject.Singleton
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.util.Future
+import com.twittelonr.cr_mixelonr.param.deloncidelonr.CrMixelonrDeloncidelonr
+import com.twittelonr.cr_mixelonr.param.deloncidelonr.DeloncidelonrConstants
+import com.twittelonr.cr_mixelonr.sourcelon_signal.FrsStorelon.Quelonry
+import com.twittelonr.cr_mixelonr.sourcelon_signal.FrsStorelon.FrsQuelonryRelonsult
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.follow_reloncommelonndations.thriftscala.ClielonntContelonxt
+import com.twittelonr.follow_reloncommelonndations.thriftscala.DisplayLocation
+import com.twittelonr.follow_reloncommelonndations.thriftscala.FollowReloncommelonndationsThriftSelonrvicelon
+import com.twittelonr.follow_reloncommelonndations.thriftscala.Reloncommelonndation
+import com.twittelonr.follow_reloncommelonndations.thriftscala.ReloncommelonndationRelonquelonst
+import com.twittelonr.storelonhaus.RelonadablelonStorelon
+import javax.injelonct.Singlelonton
+import com.twittelonr.simclustelonrs_v2.common.UselonrId
+import com.twittelonr.util.Futurelon
 
-@Singleton
-case class FrsStore(
-  frsClient: FollowRecommendationsThriftService.MethodPerEndpoint,
-  statsReceiver: StatsReceiver,
-  decider: CrMixerDecider)
-    extends ReadableStore[Query, Seq[FrsQueryResult]] {
+@Singlelonton
+caselon class FrsStorelon(
+  frsClielonnt: FollowReloncommelonndationsThriftSelonrvicelon.MelonthodPelonrelonndpoint,
+  statsReloncelonivelonr: StatsReloncelonivelonr,
+  deloncidelonr: CrMixelonrDeloncidelonr)
+    elonxtelonnds RelonadablelonStorelon[Quelonry, Selonq[FrsQuelonryRelonsult]] {
 
-  override def get(
-    query: Query
-  ): Future[Option[Seq[FrsQueryResult]]] = {
-    if (decider.isAvailable(DeciderConstants.enableFRSTrafficDeciderKey)) {
-      val recommendationRequest =
-        buildFollowRecommendationRequest(query)
+  ovelonrridelon delonf gelont(
+    quelonry: Quelonry
+  ): Futurelon[Option[Selonq[FrsQuelonryRelonsult]]] = {
+    if (deloncidelonr.isAvailablelon(DeloncidelonrConstants.elonnablelonFRSTrafficDeloncidelonrKelony)) {
+      val reloncommelonndationRelonquelonst =
+        buildFollowReloncommelonndationRelonquelonst(quelonry)
 
-      frsClient
-        .getRecommendations(recommendationRequest).map { recommendationResponse =>
-          Some(recommendationResponse.recommendations.collect {
-            case recommendation: Recommendation.User =>
-              FrsQueryResult(
-                recommendation.user.userId,
-                recommendation.user.scoringDetails
-                  .flatMap(_.score).getOrElse(0.0),
-                recommendation.user.scoringDetails
-                  .flatMap(_.candidateSourceDetails.flatMap(_.primarySource)),
-                recommendation.user.scoringDetails
-                  .flatMap(_.candidateSourceDetails.flatMap(_.candidateSourceScores)).map(_.toMap)
+      frsClielonnt
+        .gelontReloncommelonndations(reloncommelonndationRelonquelonst).map { reloncommelonndationRelonsponselon =>
+          Somelon(reloncommelonndationRelonsponselon.reloncommelonndations.collelonct {
+            caselon reloncommelonndation: Reloncommelonndation.Uselonr =>
+              FrsQuelonryRelonsult(
+                reloncommelonndation.uselonr.uselonrId,
+                reloncommelonndation.uselonr.scoringDelontails
+                  .flatMap(_.scorelon).gelontOrelonlselon(0.0),
+                reloncommelonndation.uselonr.scoringDelontails
+                  .flatMap(_.candidatelonSourcelonDelontails.flatMap(_.primarySourcelon)),
+                reloncommelonndation.uselonr.scoringDelontails
+                  .flatMap(_.candidatelonSourcelonDelontails.flatMap(_.candidatelonSourcelonScorelons)).map(_.toMap)
               )
           })
         }
-    } else {
-      Future.None
+    } elonlselon {
+      Futurelon.Nonelon
     }
   }
 
-  private def buildFollowRecommendationRequest(
-    query: Query
-  ): RecommendationRequest = {
-    RecommendationRequest(
-      clientContext = ClientContext(
-        userId = Some(query.userId),
-        countryCode = query.countryCodeOpt,
-        languageCode = query.languageCodeOpt),
-      displayLocation = query.displayLocation,
-      maxResults = Some(query.maxConsumerSeedsNum),
-      excludedIds = Some(query.excludedUserIds)
+  privatelon delonf buildFollowReloncommelonndationRelonquelonst(
+    quelonry: Quelonry
+  ): ReloncommelonndationRelonquelonst = {
+    ReloncommelonndationRelonquelonst(
+      clielonntContelonxt = ClielonntContelonxt(
+        uselonrId = Somelon(quelonry.uselonrId),
+        countryCodelon = quelonry.countryCodelonOpt,
+        languagelonCodelon = quelonry.languagelonCodelonOpt),
+      displayLocation = quelonry.displayLocation,
+      maxRelonsults = Somelon(quelonry.maxConsumelonrSelonelondsNum),
+      elonxcludelondIds = Somelon(quelonry.elonxcludelondUselonrIds)
     )
   }
 }
 
-object FrsStore {
-  case class Query(
-    userId: UserId,
-    maxConsumerSeedsNum: Int,
-    displayLocation: DisplayLocation = DisplayLocation.ContentRecommender,
-    excludedUserIds: Seq[UserId] = Seq.empty,
-    languageCodeOpt: Option[String] = None,
-    countryCodeOpt: Option[String] = None)
+objelonct FrsStorelon {
+  caselon class Quelonry(
+    uselonrId: UselonrId,
+    maxConsumelonrSelonelondsNum: Int,
+    displayLocation: DisplayLocation = DisplayLocation.ContelonntReloncommelonndelonr,
+    elonxcludelondUselonrIds: Selonq[UselonrId] = Selonq.elonmpty,
+    languagelonCodelonOpt: Option[String] = Nonelon,
+    countryCodelonOpt: Option[String] = Nonelon)
 
-  case class FrsQueryResult(
-    userId: UserId,
-    score: Double,
-    primarySource: Option[Int],
-    sourceWithScores: Option[Map[String, Double]])
+  caselon class FrsQuelonryRelonsult(
+    uselonrId: UselonrId,
+    scorelon: Doublelon,
+    primarySourcelon: Option[Int],
+    sourcelonWithScorelons: Option[Map[String, Doublelon]])
 }

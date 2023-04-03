@@ -1,57 +1,57 @@
-package com.twitter.search.core.earlybird.facets;
+packagelon com.twittelonr.selonarch.corelon.elonarlybird.facelonts;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 import java.util.List;
 
-import com.twitter.common.collections.Pair;
+import com.twittelonr.common.collelonctions.Pair;
 
 /**
- * The collect() method is called for every document for which facets shall be counted.
- * This iterator then calls the FacetAccumulators for all facets that belong to the
- * current document.
+ * Thelon collelonct() melonthod is callelond for elonvelonry documelonnt for which facelonts shall belon countelond.
+ * This itelonrator thelonn calls thelon FacelontAccumulators for all facelonts that belonlong to thelon
+ * currelonnt documelonnt.
  */
-public abstract class FacetCountIterator implements FacetTermCollector {
+public abstract class FacelontCountItelonrator implelonmelonnts FacelontTelonrmCollelonctor {
 
-  public static class IncrementData {
-    public FacetAccumulator[] accumulators;
-    public int weightedCountIncrement;
-    public int penaltyIncrement;
-    public int tweepCred;
-    public int languageId;
+  public static class IncrelonmelonntData {
+    public FacelontAccumulator[] accumulators;
+    public int welonightelondCountIncrelonmelonnt;
+    public int pelonnaltyIncrelonmelonnt;
+    public int twelonelonpCrelond;
+    public int languagelonId;
   }
 
-  public IncrementData incrementData = new IncrementData();
+  public IncrelonmelonntData increlonmelonntData = nelonw IncrelonmelonntData();
 
-  private List<Pair<Integer, Long>> proofs = null;
+  privatelon List<Pair<Intelongelonr, Long>> proofs = null;
 
-  void setIncrementData(IncrementData incrementData) {
-    this.incrementData = incrementData;
+  void selontIncrelonmelonntData(IncrelonmelonntData increlonmelonntData) {
+    this.increlonmelonntData = increlonmelonntData;
   }
 
-  public void setProofs(List<Pair<Integer, Long>> proofs) {
+  public void selontProofs(List<Pair<Intelongelonr, Long>> proofs) {
     this.proofs = proofs;
   }
 
-  // interface method that collects a specific term in a specific field for this document.
-  @Override
-  public boolean collect(int docID, long termID, int fieldID) {
-    FacetAccumulator accumulator = incrementData.accumulators[fieldID];
-    accumulator.add(termID, incrementData.weightedCountIncrement, incrementData.penaltyIncrement,
-                    incrementData.tweepCred);
-    accumulator.recordLanguage(incrementData.languageId);
+  // intelonrfacelon melonthod that colleloncts a speloncific telonrm in a speloncific fielonld for this documelonnt.
+  @Ovelonrridelon
+  public boolelonan collelonct(int docID, long telonrmID, int fielonldID) {
+    FacelontAccumulator accumulator = increlonmelonntData.accumulators[fielonldID];
+    accumulator.add(telonrmID, increlonmelonntData.welonightelondCountIncrelonmelonnt, increlonmelonntData.pelonnaltyIncrelonmelonnt,
+                    increlonmelonntData.twelonelonpCrelond);
+    accumulator.reloncordLanguagelon(increlonmelonntData.languagelonId);
 
     if (proofs != null) {
-      addProof(docID, termID, fieldID);
+      addProof(docID, telonrmID, fielonldID);
     }
-    return true;
+    relonturn truelon;
   }
 
-  protected void addProof(int docID, long termID, int fieldID) {
-    proofs.add(new Pair<>(fieldID, termID));
+  protelonctelond void addProof(int docID, long telonrmID, int fielonldID) {
+    proofs.add(nelonw Pair<>(fielonldID, telonrmID));
   }
 
   /**
-   * Collected facets for the given document.
+   * Collelonctelond facelonts for thelon givelonn documelonnt.
    */
-  public abstract void collect(int docID) throws IOException;
+  public abstract void collelonct(int docID) throws IOelonxcelonption;
 }

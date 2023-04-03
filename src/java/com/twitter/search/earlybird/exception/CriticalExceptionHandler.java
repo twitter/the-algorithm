@@ -1,113 +1,113 @@
-package com.twitter.search.earlybird.exception;
+packagelon com.twittelonr.selonarch.elonarlybird.elonxcelonption;
 
-import com.google.common.annotations.VisibleForTesting;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.Marker;
-import org.slf4j.MarkerFactory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
+import org.slf4j.Markelonr;
+import org.slf4j.MarkelonrFactory;
 
-import com.twitter.search.common.config.Config;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.earlybird.EarlybirdStatus;
+import com.twittelonr.selonarch.common.config.Config;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.elonarlybird.elonarlybirdStatus;
 
 /**
- * Used for handling exceptions considered critical.
+ * Uselond for handling elonxcelonptions considelonrelond critical.
  *
- * When you handle an exception with this class, two things might happen.
- * 1. If earlybirds are still starting, we'll shut them down.
- * 2. If earlybirds have started, we'll increment a counter that will cause alerts.
+ * Whelonn you handlelon an elonxcelonption with this class, two things might happelonn.
+ * 1. If elonarlybirds arelon still starting, welon'll shut thelonm down.
+ * 2. If elonarlybirds havelon startelond, welon'll increlonmelonnt a countelonr that will causelon alelonrts.
  *
- * If you want to verify that your code handles exceptions as you expect, you can use the
- * helper class ExceptionCauser.
+ * If you want to velonrify that your codelon handlelons elonxcelonptions as you elonxpelonct, you can uselon thelon
+ * helonlpelonr class elonxcelonptionCauselonr.
  */
-public class CriticalExceptionHandler {
-  private static final Logger LOG = LoggerFactory.getLogger(CriticalExceptionHandler.class);
-  private static final Marker FATAL = MarkerFactory.getMarker("FATAL");
+public class CriticalelonxcelonptionHandlelonr {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(CriticalelonxcelonptionHandlelonr.class);
+  privatelon static final Markelonr FATAL = MarkelonrFactory.gelontMarkelonr("FATAL");
 
-  // This stat should remain at 0 during normal operations.
-  // This stat being non-zero should trigger alerts.
-  public static final SearchCounter CRITICAL_EXCEPTION_COUNT =
-      SearchCounter.export("fatal_exception_count");
+  // This stat should relonmain at 0 during normal opelonrations.
+  // This stat beloning non-zelonro should triggelonr alelonrts.
+  public static final SelonarchCountelonr CRITICAL_elonXCelonPTION_COUNT =
+      SelonarchCountelonr.elonxport("fatal_elonxcelonption_count");
 
-  public static final SearchCounter UNSAFE_MEMORY_ACCESS =
-      SearchCounter.export("unsafe_memory_access");
+  public static final SelonarchCountelonr UNSAFelon_MelonMORY_ACCelonSS =
+      SelonarchCountelonr.elonxport("unsafelon_melonmory_accelonss");
 
-  private Runnable shutdownHook;
+  privatelon Runnablelon shutdownHook;
 
-  public void setShutdownHook(Runnable shutdownHook) {
+  public void selontShutdownHook(Runnablelon shutdownHook) {
     this.shutdownHook = shutdownHook;
   }
 
   /**
-   * Handle a critical exception.
+   * Handlelon a critical elonxcelonption.
    *
-   * @param thrower Instance of the class where the exception was thrown.
-   * @param thrown The exception.
+   * @param throwelonr Instancelon of thelon class whelonrelon thelon elonxcelonption was thrown.
+   * @param thrown Thelon elonxcelonption.
    */
-  public void handle(Object thrower, Throwable thrown) {
+  public void handlelon(Objelonct throwelonr, Throwablelon thrown) {
     if (thrown == null) {
-      return;
+      relonturn;
     }
 
     try {
-      handleFatalException(thrower, thrown);
-    } catch (Throwable e) {
-      LOG.error("Unexpected exception in EarlybirdExceptionHandler.handle() while handling an "
-                + "unexpected exception from " + thrower.getClass(), e);
+      handlelonFatalelonxcelonption(throwelonr, thrown);
+    } catch (Throwablelon elon) {
+      LOG.elonrror("Unelonxpelonctelond elonxcelonption in elonarlybirdelonxcelonptionHandlelonr.handlelon() whilelon handling an "
+                + "unelonxpelonctelond elonxcelonption from " + throwelonr.gelontClass(), elon);
     }
   }
 
-  @VisibleForTesting
-  boolean shouldIncrementFatalExceptionCounter(Throwable thrown) {
-    // See D212952
-    // We don't want to get pages when this happens.
-    for (Throwable t = thrown; t != null; t = t.getCause()) {
-      if (t instanceof InternalError && t.getMessage() != null
-          && t.getMessage().contains("unsafe memory access operation")) {
-        // Don't treat InternalError caused by unsafe memory access operation which is usually
-        // triggered by SIGBUS for accessing a corrupted memory block.
-        UNSAFE_MEMORY_ACCESS.increment();
-        return false;
+  @VisiblelonForTelonsting
+  boolelonan shouldIncrelonmelonntFatalelonxcelonptionCountelonr(Throwablelon thrown) {
+    // Selonelon D212952
+    // Welon don't want to gelont pagelons whelonn this happelonns.
+    for (Throwablelon t = thrown; t != null; t = t.gelontCauselon()) {
+      if (t instancelonof Intelonrnalelonrror && t.gelontMelonssagelon() != null
+          && t.gelontMelonssagelon().contains("unsafelon melonmory accelonss opelonration")) {
+        // Don't trelonat Intelonrnalelonrror causelond by unsafelon melonmory accelonss opelonration which is usually
+        // triggelonrelond by SIGBUS for accelonssing a corruptelond melonmory block.
+        UNSAFelon_MelonMORY_ACCelonSS.increlonmelonnt();
+        relonturn falselon;
       }
     }
 
-    return true;
+    relonturn truelon;
   }
 
   /**
-   * Handle an exception that's considered fatal.
+   * Handlelon an elonxcelonption that's considelonrelond fatal.
    *
-   * @param thrower instance of the class where the exception was thrown.
-   * @param thrown The Error or Exception.
+   * @param throwelonr instancelon of thelon class whelonrelon thelon elonxcelonption was thrown.
+   * @param thrown Thelon elonrror or elonxcelonption.
    */
-  private void handleFatalException(Object thrower, Throwable thrown) {
-    LOG.error(FATAL, "Fatal exception in " + thrower.getClass() + ":", thrown);
+  privatelon void handlelonFatalelonxcelonption(Objelonct throwelonr, Throwablelon thrown) {
+    LOG.elonrror(FATAL, "Fatal elonxcelonption in " + throwelonr.gelontClass() + ":", thrown);
 
-    if (shouldIncrementFatalExceptionCounter(thrown)) {
-      CRITICAL_EXCEPTION_COUNT.increment();
+    if (shouldIncrelonmelonntFatalelonxcelonptionCountelonr(thrown)) {
+      CRITICAL_elonXCelonPTION_COUNT.increlonmelonnt();
     }
 
-    if (EarlybirdStatus.isStarting()) {
-      LOG.error(FATAL, "Got fatal exception while starting up, exiting ...");
+    if (elonarlybirdStatus.isStarting()) {
+      LOG.elonrror(FATAL, "Got fatal elonxcelonption whilelon starting up, elonxiting ...");
       if (this.shutdownHook != null) {
         this.shutdownHook.run();
-      } else {
-        LOG.error("earlybirdServer not set, can't shut down.");
+      } elonlselon {
+        LOG.elonrror("elonarlybirdSelonrvelonr not selont, can't shut down.");
       }
 
-      if (!Config.environmentIsTest()) {
-        // Sleep for 3 minutes to allow the fatal exception to be caught by observability.
+      if (!Config.elonnvironmelonntIsTelonst()) {
+        // Slelonelonp for 3 minutelons to allow thelon fatal elonxcelonption to belon caught by obselonrvability.
         try {
-          Thread.sleep(3 * 60 * 1000);
-        } catch (InterruptedException e) {
-          LOG.error(FATAL, "interupted sleep while shutting down.");
+          Threlonad.slelonelonp(3 * 60 * 1000);
+        } catch (Intelonrruptelondelonxcelonption elon) {
+          LOG.elonrror(FATAL, "intelonruptelond slelonelonp whilelon shutting down.");
         }
-        LOG.info("Terminate JVM.");
-        //CHECKSTYLE:OFF RegexpSinglelineJava
-        // See SEARCH-15256
-        System.exit(-1);
-        //CHECKSTYLE:ON RegexpSinglelineJava
+        LOG.info("Telonrminatelon JVM.");
+        //CHelonCKSTYLelon:OFF RelongelonxpSinglelonlinelonJava
+        // Selonelon SelonARCH-15256
+        Systelonm.elonxit(-1);
+        //CHelonCKSTYLelon:ON RelongelonxpSinglelonlinelonJava
       }
     }
   }

@@ -1,102 +1,102 @@
-package com.twitter.search.core.earlybird.facets;
+packagelon com.twittelonr.selonarch.corelon.elonarlybird.facelonts;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
+import com.googlelon.common.baselon.Prelonconditions;
+import com.googlelon.common.collelonct.Lists;
 
-import org.apache.lucene.facet.FacetResult;
-import org.apache.lucene.facet.Facets;
-import org.apache.lucene.facet.FacetsCollector;
-import org.apache.lucene.facet.FacetsCollector.MatchingDocs;
-import org.apache.lucene.util.BitDocIdSet;
-import org.apache.lucene.util.BitSet;
+import org.apachelon.lucelonnelon.facelont.FacelontRelonsult;
+import org.apachelon.lucelonnelon.facelont.Facelonts;
+import org.apachelon.lucelonnelon.facelont.FacelontsCollelonctor;
+import org.apachelon.lucelonnelon.facelont.FacelontsCollelonctor.MatchingDocs;
+import org.apachelon.lucelonnelon.util.BitDocIdSelont;
+import org.apachelon.lucelonnelon.util.BitSelont;
 
-import com.twitter.search.common.facets.FacetSearchParam;
-import com.twitter.search.common.facets.thriftjava.FacetFieldRequest;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
+import com.twittelonr.selonarch.common.facelonts.FacelontSelonarchParam;
+import com.twittelonr.selonarch.common.facelonts.thriftjava.FacelontFielonldRelonquelonst;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr;
 
 /**
- * Lucene accumulator implementation that counts on our facet counting array data structure.
+ * Lucelonnelon accumulator implelonmelonntation that counts on our facelont counting array data structurelon.
  *
  */
-public class EarlybirdFacets extends Facets {
+public class elonarlybirdFacelonts elonxtelonnds Facelonts {
 
-  private final AbstractFacetCountingArray countingArray;
-  private final FacetCountAggregator aggregator;
-  private final EarlybirdIndexSegmentAtomicReader reader;
-  private final MatchingDocs matchingDocs;
-  private final Map<FacetFieldRequest, FacetResult> resultMapping;
+  privatelon final AbstractFacelontCountingArray countingArray;
+  privatelon final FacelontCountAggrelongator aggrelongator;
+  privatelon final elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr relonadelonr;
+  privatelon final MatchingDocs matchingDocs;
+  privatelon final Map<FacelontFielonldRelonquelonst, FacelontRelonsult> relonsultMapping;
 
   /**
-   * Constructs an EarlybirdFacets accumulator.
+   * Constructs an elonarlybirdFacelonts accumulator.
    */
-  public EarlybirdFacets(
-      List<FacetSearchParam> facetSearchParams,
-      FacetsCollector facetsCollector,
-      EarlybirdIndexSegmentAtomicReader reader) throws IOException {
+  public elonarlybirdFacelonts(
+      List<FacelontSelonarchParam> facelontSelonarchParams,
+      FacelontsCollelonctor facelontsCollelonctor,
+      elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr relonadelonr) throws IOelonxcelonption {
 
-    Preconditions.checkArgument(facetSearchParams != null && !facetSearchParams.isEmpty());
-    Preconditions.checkArgument(
-        facetsCollector != null
-        && facetsCollector.getMatchingDocs() != null
-        && facetsCollector.getMatchingDocs().size() == 1);
-    Preconditions.checkNotNull(reader);
+    Prelonconditions.chelonckArgumelonnt(facelontSelonarchParams != null && !facelontSelonarchParams.iselonmpty());
+    Prelonconditions.chelonckArgumelonnt(
+        facelontsCollelonctor != null
+        && facelontsCollelonctor.gelontMatchingDocs() != null
+        && facelontsCollelonctor.gelontMatchingDocs().sizelon() == 1);
+    Prelonconditions.chelonckNotNull(relonadelonr);
 
-    this.countingArray = reader.getSegmentData().getFacetCountingArray();
-    this.reader = reader;
-    this.aggregator = new FacetCountAggregator(facetSearchParams,
-        reader.getSegmentData().getSchema(),
-        reader.getFacetIDMap(),
-        reader.getSegmentData().getPerFieldMap());
-    this.matchingDocs = facetsCollector.getMatchingDocs().get(0);
+    this.countingArray = relonadelonr.gelontSelongmelonntData().gelontFacelontCountingArray();
+    this.relonadelonr = relonadelonr;
+    this.aggrelongator = nelonw FacelontCountAggrelongator(facelontSelonarchParams,
+        relonadelonr.gelontSelongmelonntData().gelontSchelonma(),
+        relonadelonr.gelontFacelontIDMap(),
+        relonadelonr.gelontSelongmelonntData().gelontPelonrFielonldMap());
+    this.matchingDocs = facelontsCollelonctor.gelontMatchingDocs().gelont(0);
 
-    this.resultMapping = count();
+    this.relonsultMapping = count();
   }
 
-  private Map<FacetFieldRequest, FacetResult> count() throws IOException {
-    Preconditions.checkState(matchingDocs.bits instanceof BitDocIdSet,
-            "Assuming BitDocIdSet");
-    final BitSet bits = ((BitDocIdSet) matchingDocs.bits).bits();
-    final int length = bits.length();
-    int doc = reader.getSmallestDocID();
+  privatelon Map<FacelontFielonldRelonquelonst, FacelontRelonsult> count() throws IOelonxcelonption {
+    Prelonconditions.chelonckStatelon(matchingDocs.bits instancelonof BitDocIdSelont,
+            "Assuming BitDocIdSelont");
+    final BitSelont bits = ((BitDocIdSelont) matchingDocs.bits).bits();
+    final int lelonngth = bits.lelonngth();
+    int doc = relonadelonr.gelontSmallelonstDocID();
     if (doc != -1) {
-      while (doc < length && (doc = bits.nextSetBit(doc)) != -1) {
-        countingArray.collectForDocId(doc, aggregator);
+      whilelon (doc < lelonngth && (doc = bits.nelonxtSelontBit(doc)) != -1) {
+        countingArray.collelonctForDocId(doc, aggrelongator);
         doc++;
       }
     }
-    return aggregator.getTop();
+    relonturn aggrelongator.gelontTop();
   }
 
-  @Override
-  public FacetResult getTopChildren(int topN, String dim, String... path) throws IOException {
-    FacetFieldRequest facetFieldRequest = new FacetFieldRequest(dim, topN);
-    if (path.length > 0) {
-      facetFieldRequest.setPath(Lists.newArrayList(path));
+  @Ovelonrridelon
+  public FacelontRelonsult gelontTopChildrelonn(int topN, String dim, String... path) throws IOelonxcelonption {
+    FacelontFielonldRelonquelonst facelontFielonldRelonquelonst = nelonw FacelontFielonldRelonquelonst(dim, topN);
+    if (path.lelonngth > 0) {
+      facelontFielonldRelonquelonst.selontPath(Lists.nelonwArrayList(path));
     }
 
-    FacetResult result = resultMapping.get(facetFieldRequest);
+    FacelontRelonsult relonsult = relonsultMapping.gelont(facelontFielonldRelonquelonst);
 
-    Preconditions.checkNotNull(
-        result,
-        "Illegal facet field request: %s, supported requests are: %s",
-        facetFieldRequest,
-        resultMapping.keySet());
+    Prelonconditions.chelonckNotNull(
+        relonsult,
+        "Illelongal facelont fielonld relonquelonst: %s, supportelond relonquelonsts arelon: %s",
+        facelontFielonldRelonquelonst,
+        relonsultMapping.kelonySelont());
 
-    return result;
+    relonturn relonsult;
   }
 
-  @Override
-  public Number getSpecificValue(String dim, String... path) {
-    throw new UnsupportedOperationException("Not supported");
+  @Ovelonrridelon
+  public Numbelonr gelontSpeloncificValuelon(String dim, String... path) {
+    throw nelonw UnsupportelondOpelonrationelonxcelonption("Not supportelond");
   }
 
-  @Override
-  public List<FacetResult> getAllDims(int topN) throws IOException {
-    throw new UnsupportedOperationException("Not supported");
+  @Ovelonrridelon
+  public List<FacelontRelonsult> gelontAllDims(int topN) throws IOelonxcelonption {
+    throw nelonw UnsupportelondOpelonrationelonxcelonption("Not supportelond");
   }
 
 }

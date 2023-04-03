@@ -1,121 +1,121 @@
-package com.twitter.follow_recommendations.common.clients.cache
+packagelon com.twittelonr.follow_reloncommelonndations.common.clielonnts.cachelon
 
-import com.twitter.bijection.Bijection
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.Memcached.Client
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.util.DefaultTimer
-import com.twitter.io.Buf
-import com.twitter.stitch.Stitch
-import com.twitter.util.Duration
-import com.twitter.util.Future
-import com.twitter.util.Time
-import java.security.MessageDigest
+import com.twittelonr.bijelonction.Bijelonction
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.finaglelon.Melonmcachelond.Clielonnt
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.finaglelon.util.DelonfaultTimelonr
+import com.twittelonr.io.Buf
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.util.Duration
+import com.twittelonr.util.Futurelon
+import com.twittelonr.util.Timelon
+import java.seloncurity.MelonssagelonDigelonst
 
-object MemcacheClient {
-  def apply[V](
-    client: Client,
-    dest: String,
-    valueBijection: Bijection[Buf, V],
+objelonct MelonmcachelonClielonnt {
+  delonf apply[V](
+    clielonnt: Clielonnt,
+    delonst: String,
+    valuelonBijelonction: Bijelonction[Buf, V],
     ttl: Duration,
-    statsReceiver: StatsReceiver
-  ): MemcacheClient[V] = {
-    new MemcacheClient(client, dest, valueBijection, ttl, statsReceiver)
+    statsReloncelonivelonr: StatsReloncelonivelonr
+  ): MelonmcachelonClielonnt[V] = {
+    nelonw MelonmcachelonClielonnt(clielonnt, delonst, valuelonBijelonction, ttl, statsReloncelonivelonr)
   }
 }
 
-class MemcacheClient[V](
-  client: Client,
-  dest: String,
-  valueBijection: Bijection[Buf, V],
+class MelonmcachelonClielonnt[V](
+  clielonnt: Clielonnt,
+  delonst: String,
+  valuelonBijelonction: Bijelonction[Buf, V],
   ttl: Duration,
-  statsReceiver: StatsReceiver) {
-  val cache = client.newRichClient(dest).adapt[V](valueBijection)
-  val cacheTtl = Time.fromSeconds(ttl.inSeconds)
+  statsReloncelonivelonr: StatsReloncelonivelonr) {
+  val cachelon = clielonnt.nelonwRichClielonnt(delonst).adapt[V](valuelonBijelonction)
+  val cachelonTtl = Timelon.fromSelonconds(ttl.inSelonconds)
 
   /**
-   * If cache contains key, return value from cache. Otherwise, run the underlying call
-   * to fetch the value, store it in cache, and then return the value.
+   * If cachelon contains kelony, relonturn valuelon from cachelon. Othelonrwiselon, run thelon undelonrlying call
+   * to felontch thelon valuelon, storelon it in cachelon, and thelonn relonturn thelon valuelon.
    */
-  def readThrough(
-    key: String,
-    underlyingCall: () => Stitch[V]
+  delonf relonadThrough(
+    kelony: String,
+    undelonrlyingCall: () => Stitch[V]
   ): Stitch[V] = {
-    val cachedResult: Stitch[Option[V]] = Stitch
-      .callFuture(getIfPresent(key))
-      .within(70.millisecond)(DefaultTimer)
-      .rescue {
-        case e: Exception =>
-          statsReceiver.scope("rescued").counter(e.getClass.getSimpleName).incr()
-          Stitch(None)
+    val cachelondRelonsult: Stitch[Option[V]] = Stitch
+      .callFuturelon(gelontIfPrelonselonnt(kelony))
+      .within(70.milliseloncond)(DelonfaultTimelonr)
+      .relonscuelon {
+        caselon elon: elonxcelonption =>
+          statsReloncelonivelonr.scopelon("relonscuelond").countelonr(elon.gelontClass.gelontSimplelonNamelon).incr()
+          Stitch(Nonelon)
       }
-    val resultStitch = cachedResult.map { resultOption =>
-      resultOption match {
-        case Some(cacheValue) => Stitch.value(cacheValue)
-        case None =>
-          val underlyingCallStitch = profileStitch(
-            underlyingCall(),
-            statsReceiver.scope("underlyingCall")
+    val relonsultStitch = cachelondRelonsult.map { relonsultOption =>
+      relonsultOption match {
+        caselon Somelon(cachelonValuelon) => Stitch.valuelon(cachelonValuelon)
+        caselon Nonelon =>
+          val undelonrlyingCallStitch = profilelonStitch(
+            undelonrlyingCall(),
+            statsReloncelonivelonr.scopelon("undelonrlyingCall")
           )
-          underlyingCallStitch.map { result =>
-            put(key, result)
-            result
+          undelonrlyingCallStitch.map { relonsult =>
+            put(kelony, relonsult)
+            relonsult
           }
       }
-    }.flatten
-    // profile the overall Stitch, and return the result
-    profileStitch(resultStitch, statsReceiver.scope("readThrough"))
+    }.flattelonn
+    // profilelon thelon ovelonrall Stitch, and relonturn thelon relonsult
+    profilelonStitch(relonsultStitch, statsReloncelonivelonr.scopelon("relonadThrough"))
   }
 
-  def getIfPresent(key: String): Future[Option[V]] = {
-    cache
-      .get(hashString(key))
-      .onSuccess {
-        case Some(value) => statsReceiver.counter("cache_hits").incr()
-        case None => statsReceiver.counter("cache_misses").incr()
+  delonf gelontIfPrelonselonnt(kelony: String): Futurelon[Option[V]] = {
+    cachelon
+      .gelont(hashString(kelony))
+      .onSuccelonss {
+        caselon Somelon(valuelon) => statsReloncelonivelonr.countelonr("cachelon_hits").incr()
+        caselon Nonelon => statsReloncelonivelonr.countelonr("cachelon_misselons").incr()
       }
-      .onFailure {
-        case e: Exception =>
-          statsReceiver.counter("cache_misses").incr()
-          statsReceiver.scope("rescued").counter(e.getClass.getSimpleName).incr()
+      .onFailurelon {
+        caselon elon: elonxcelonption =>
+          statsReloncelonivelonr.countelonr("cachelon_misselons").incr()
+          statsReloncelonivelonr.scopelon("relonscuelond").countelonr(elon.gelontClass.gelontSimplelonNamelon).incr()
       }
-      .rescue {
-        case _ => Future.None
+      .relonscuelon {
+        caselon _ => Futurelon.Nonelon
       }
   }
 
-  def put(key: String, value: V): Future[Unit] = {
-    cache.set(hashString(key), 0, cacheTtl, value)
+  delonf put(kelony: String, valuelon: V): Futurelon[Unit] = {
+    cachelon.selont(hashString(kelony), 0, cachelonTtl, valuelon)
   }
 
   /**
-   * Hash the input key string to a fixed length format using SHA-256 hash function.
+   * Hash thelon input kelony string to a fixelond lelonngth format using SHA-256 hash function.
    */
-  def hashString(input: String): String = {
-    val bytes = MessageDigest.getInstance("SHA-256").digest(input.getBytes("UTF-8"))
-    bytes.map("%02x".format(_)).mkString
+  delonf hashString(input: String): String = {
+    val bytelons = MelonssagelonDigelonst.gelontInstancelon("SHA-256").digelonst(input.gelontBytelons("UTF-8"))
+    bytelons.map("%02x".format(_)).mkString
   }
 
   /**
-   * Helper function for timing a stitch, returning the original stitch.
+   * Helonlpelonr function for timing a stitch, relonturning thelon original stitch.
    *
-   * Defining the profiling function here to keep the dependencies of this class
-   * generic and easy to export (i.e. copy-and-paste) into other services or packages.
+   * Delonfining thelon profiling function helonrelon to kelonelonp thelon delonpelonndelonncielons of this class
+   * gelonnelonric and elonasy to elonxport (i.elon. copy-and-pastelon) into othelonr selonrvicelons or packagelons.
    */
-  def profileStitch[T](stitch: Stitch[T], stat: StatsReceiver): Stitch[T] = {
+  delonf profilelonStitch[T](stitch: Stitch[T], stat: StatsReloncelonivelonr): Stitch[T] = {
     Stitch
-      .time(stitch)
+      .timelon(stitch)
       .map {
-        case (response, stitchRunDuration) =>
-          stat.counter("requests").incr()
-          stat.stat("latency_ms").add(stitchRunDuration.inMilliseconds)
-          response
-            .onSuccess { _ => stat.counter("success").incr() }
-            .onFailure { e =>
-              stat.counter("failures").incr()
-              stat.scope("failures").counter(e.getClass.getSimpleName).incr()
+        caselon (relonsponselon, stitchRunDuration) =>
+          stat.countelonr("relonquelonsts").incr()
+          stat.stat("latelonncy_ms").add(stitchRunDuration.inMilliselonconds)
+          relonsponselon
+            .onSuccelonss { _ => stat.countelonr("succelonss").incr() }
+            .onFailurelon { elon =>
+              stat.countelonr("failurelons").incr()
+              stat.scopelon("failurelons").countelonr(elon.gelontClass.gelontSimplelonNamelon).incr()
             }
       }
-      .lowerFromTry
+      .lowelonrFromTry
   }
 }

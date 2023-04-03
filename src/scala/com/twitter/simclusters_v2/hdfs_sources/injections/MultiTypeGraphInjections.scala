@@ -1,31 +1,31 @@
-package com.twitter.simclusters_v2.hdfs_sources.injections
+packagelon com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions
 
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.ScalaCompactThrift
-import com.twitter.simclusters_v2.thriftscala.LeftNode
-import com.twitter.simclusters_v2.thriftscala.NounWithFrequencyList
-import com.twitter.simclusters_v2.thriftscala.RightNode
-import com.twitter.simclusters_v2.thriftscala.RightNodeTypeStruct
-import com.twitter.simclusters_v2.thriftscala.RightNodeWithEdgeWeightList
-import com.twitter.simclusters_v2.thriftscala.SimilarRightNodes
-import com.twitter.simclusters_v2.thriftscala.CandidateTweetsList
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.Long2BigEndian
+import com.twittelonr.scalding_intelonrnal.multiformat.format.kelonyval.KelonyValInjelonction
+import com.twittelonr.scalding_intelonrnal.multiformat.format.kelonyval.KelonyValInjelonction.ScalaCompactThrift
+import com.twittelonr.simclustelonrs_v2.thriftscala.LelonftNodelon
+import com.twittelonr.simclustelonrs_v2.thriftscala.NounWithFrelonquelonncyList
+import com.twittelonr.simclustelonrs_v2.thriftscala.RightNodelon
+import com.twittelonr.simclustelonrs_v2.thriftscala.RightNodelonTypelonStruct
+import com.twittelonr.simclustelonrs_v2.thriftscala.RightNodelonWithelondgelonWelonightList
+import com.twittelonr.simclustelonrs_v2.thriftscala.SimilarRightNodelons
+import com.twittelonr.simclustelonrs_v2.thriftscala.CandidatelonTwelonelontsList
+import com.twittelonr.scalding_intelonrnal.multiformat.format.kelonyval.KelonyValInjelonction.Long2Bigelonndian
 
-object MultiTypeGraphInjections {
-  final val truncatedMultiTypeGraphInjection =
-    KeyValInjection(ScalaCompactThrift(LeftNode), ScalaCompactThrift(RightNodeWithEdgeWeightList))
-  final val topKRightNounListInjection =
-    KeyValInjection(
-      ScalaCompactThrift(RightNodeTypeStruct),
-      ScalaCompactThrift(NounWithFrequencyList))
-  final val similarRightNodesInjection =
-    KeyValInjection[RightNode, SimilarRightNodes](
-      ScalaCompactThrift(RightNode),
-      ScalaCompactThrift(SimilarRightNodes)
+objelonct MultiTypelonGraphInjelonctions {
+  final val truncatelondMultiTypelonGraphInjelonction =
+    KelonyValInjelonction(ScalaCompactThrift(LelonftNodelon), ScalaCompactThrift(RightNodelonWithelondgelonWelonightList))
+  final val topKRightNounListInjelonction =
+    KelonyValInjelonction(
+      ScalaCompactThrift(RightNodelonTypelonStruct),
+      ScalaCompactThrift(NounWithFrelonquelonncyList))
+  final val similarRightNodelonsInjelonction =
+    KelonyValInjelonction[RightNodelon, SimilarRightNodelons](
+      ScalaCompactThrift(RightNodelon),
+      ScalaCompactThrift(SimilarRightNodelons)
     )
-  final val tweetRecommendationsInjection =
-    KeyValInjection[Long, CandidateTweetsList](
-      Long2BigEndian,
-      ScalaCompactThrift(CandidateTweetsList)
+  final val twelonelontReloncommelonndationsInjelonction =
+    KelonyValInjelonction[Long, CandidatelonTwelonelontsList](
+      Long2Bigelonndian,
+      ScalaCompactThrift(CandidatelonTwelonelontsList)
     )
 }

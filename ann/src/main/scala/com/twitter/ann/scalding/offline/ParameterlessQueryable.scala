@@ -1,24 +1,24 @@
-package com.twitter.ann.scalding.offline
+packagelon com.twittelonr.ann.scalding.offlinelon
 
-import com.twitter.ann.common.EmbeddingType.EmbeddingVector
-import com.twitter.ann.common.{Distance, NeighborWithDistance, Queryable, RuntimeParams}
-import com.twitter.util.Future
+import com.twittelonr.ann.common.elonmbelonddingTypelon.elonmbelonddingVelonctor
+import com.twittelonr.ann.common.{Distancelon, NelonighborWithDistancelon, Quelonryablelon, RuntimelonParams}
+import com.twittelonr.util.Futurelon
 
-private[offline] case class ParameterlessQueryable[T, P <: RuntimeParams, D <: Distance[D]](
-  queryable: Queryable[T, P, D],
-  runtimeParamsForAllQueries: P) {
+privatelon[offlinelon] caselon class ParamelontelonrlelonssQuelonryablelon[T, P <: RuntimelonParams, D <: Distancelon[D]](
+  quelonryablelon: Quelonryablelon[T, P, D],
+  runtimelonParamsForAllQuelonrielons: P) {
 
   /**
-   * ANN query for ids with distance.
+   * ANN quelonry for ids with distancelon.
    *
-   * @param embedding      : Embedding/Vector to be queried with.
-   * @param numOfNeighbors : Number of neighbours to be queried for.
+   * @param elonmbelondding      : elonmbelondding/Velonctor to belon quelonrielond with.
+   * @param numOfNelonighbors : Numbelonr of nelonighbours to belon quelonrielond for.
    *
-   * @return List of approximate nearest neighbour ids with distance from the query embedding.
+   * @relonturn List of approximatelon nelonarelonst nelonighbour ids with distancelon from thelon quelonry elonmbelondding.
    */
-  def queryWithDistance(
-    embedding: EmbeddingVector,
-    numOfNeighbors: Int
-  ): Future[List[NeighborWithDistance[T, D]]] =
-    queryable.queryWithDistance(embedding, numOfNeighbors, runtimeParamsForAllQueries)
+  delonf quelonryWithDistancelon(
+    elonmbelondding: elonmbelonddingVelonctor,
+    numOfNelonighbors: Int
+  ): Futurelon[List[NelonighborWithDistancelon[T, D]]] =
+    quelonryablelon.quelonryWithDistancelon(elonmbelondding, numOfNelonighbors, runtimelonParamsForAllQuelonrielons)
 }

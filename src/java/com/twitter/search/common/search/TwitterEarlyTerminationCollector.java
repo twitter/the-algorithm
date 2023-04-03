@@ -1,328 +1,328 @@
-package com.twitter.search.common.search;
+packagelon com.twittelonr.selonarch.common.selonarch;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 import java.util.List;
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import javax.annotation.Nullablelon;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import org.apache.lucene.index.LeafReader;
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.search.LeafCollector;
-import org.apache.lucene.search.Scorable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apachelon.lucelonnelon.indelonx.LelonafRelonadelonr;
+import org.apachelon.lucelonnelon.indelonx.LelonafRelonadelonrContelonxt;
+import org.apachelon.lucelonnelon.selonarch.LelonafCollelonctor;
+import org.apachelon.lucelonnelon.selonarch.Scorablelon;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.query.thriftjava.CollectorParams;
-import com.twitter.search.common.query.thriftjava.CollectorTerminationParams;
+import com.twittelonr.common.util.Clock;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchRatelonCountelonr;
+import com.twittelonr.selonarch.common.quelonry.thriftjava.CollelonctorParams;
+import com.twittelonr.selonarch.common.quelonry.thriftjava.CollelonctorTelonrminationParams;
 
 /**
- * A TwitterCollector containing the most common early termination logic based on
- * timeout, cost, and max hits. This class does not do any actual hit collection---this class
- * is abstract and cannot be instantiated.
+ * A TwittelonrCollelonctor containing thelon most common elonarly telonrmination logic baselond on
+ * timelonout, cost, and max hits. This class doelons not do any actual hit collelonction---this class
+ * is abstract and cannot belon instantiatelond.
  *
- * If a Collector and all its subclasses need early termination, it should extend this class.
+ * If a Collelonctor and all its subclasselons nelonelond elonarly telonrmination, it should elonxtelonnd this class.
  *
- * However, if one just wants to add EarlyTermination to any single collector, he can just
- * use {@link DelegatingEarlyTerminationCollector}
- * as a wrapper.
+ * Howelonvelonr, if onelon just wants to add elonarlyTelonrmination to any singlelon collelonctor, helon can just
+ * uselon {@link DelonlelongatingelonarlyTelonrminationCollelonctor}
+ * as a wrappelonr.
  */
-public abstract class TwitterEarlyTerminationCollector
-    extends TwitterCollector implements LeafCollector {
-  private static final Logger LOG = LoggerFactory.getLogger(TwitterEarlyTerminationCollector.class);
-  private static final SearchCounter NEGATIVE_TIME_PER_SEGMENT =
-      SearchCounter.export("TwitterEarlyTerminationCollector_negative_time_per_segment");
-  private static final SearchRateCounter QUERY_TIMEOUT_ENFORCED =
-      SearchRateCounter.export("TwitterEarlyTerminationCollector_query_timeout_enforced");
+public abstract class TwittelonrelonarlyTelonrminationCollelonctor
+    elonxtelonnds TwittelonrCollelonctor implelonmelonnts LelonafCollelonctor {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(TwittelonrelonarlyTelonrminationCollelonctor.class);
+  privatelon static final SelonarchCountelonr NelonGATIVelon_TIMelon_PelonR_SelonGMelonNT =
+      SelonarchCountelonr.elonxport("TwittelonrelonarlyTelonrminationCollelonctor_nelongativelon_timelon_pelonr_selongmelonnt");
+  privatelon static final SelonarchRatelonCountelonr QUelonRY_TIMelonOUT_elonNFORCelonD =
+      SelonarchRatelonCountelonr.elonxport("TwittelonrelonarlyTelonrminationCollelonctor_quelonry_timelonout_elonnforcelond");
 
-  protected int curDocId = -1;
+  protelonctelond int curDocId = -1;
 
-  protected Scorable scorer = null;
-  private LeafReader curReader = null;
-  private final long maxHitsToProcess;
-  private long numHitsProcessed = 0;
-  private int lastEarlyTerminationCheckDocId = -1;
-  private final Clock clock;
+  protelonctelond Scorablelon scorelonr = null;
+  privatelon LelonafRelonadelonr curRelonadelonr = null;
+  privatelon final long maxHitsToProcelonss;
+  privatelon long numHitsProcelonsselond = 0;
+  privatelon int lastelonarlyTelonrminationChelonckDocId = -1;
+  privatelon final Clock clock;
 
-  @Nullable
-  private final QueryCostProvider queryCostProvider;
+  @Nullablelon
+  privatelon final QuelonryCostProvidelonr quelonryCostProvidelonr;
 
-  private final TerminationTracker terminationTracker;
+  privatelon final TelonrminationTrackelonr telonrminationTrackelonr;
 
-  // This determines how often the expensive early termination check is performed.
-  // If set to be negative, expensive early termination check only performed at segment boundaries.
-  // If set to a positive number X, this check is performed every X docs processed.
-  private int numDocsBetweenTimeoutChecks;
+  // This delontelonrminelons how oftelonn thelon elonxpelonnsivelon elonarly telonrmination chelonck is pelonrformelond.
+  // If selont to belon nelongativelon, elonxpelonnsivelon elonarly telonrmination chelonck only pelonrformelond at selongmelonnt boundarielons.
+  // If selont to a positivelon numbelonr X, this chelonck is pelonrformelond elonvelonry X docs procelonsselond.
+  privatelon int numDocsBelontwelonelonnTimelonoutCheloncks;
 
-  // Number of segments searched so far.
-  // This is used to predicatively early terminate.
-  // Expensive early termination checks may not happen often enough. Sometimes the request
-  // times out in between the termination checks.
-  // After finishing searching a segment, we estimate how much time is needed to search one
-  // segment on average.  If searching the next segment would cause a timeout, we early terminate.
-  private int numSearchedSegments = 0;
+  // Numbelonr of selongmelonnts selonarchelond so far.
+  // This is uselond to prelondicativelonly elonarly telonrminatelon.
+  // elonxpelonnsivelon elonarly telonrmination cheloncks may not happelonn oftelonn elonnough. Somelontimelons thelon relonquelonst
+  // timelons out in belontwelonelonn thelon telonrmination cheloncks.
+  // Aftelonr finishing selonarching a selongmelonnt, welon elonstimatelon how much timelon is nelonelondelond to selonarch onelon
+  // selongmelonnt on avelonragelon.  If selonarching thelon nelonxt selongmelonnt would causelon a timelonout, welon elonarly telonrminatelon.
+  privatelon int numSelonarchelondSelongmelonnts = 0;
 
   /**
-   * Creates a new TwitterEarlyTerminationCollector instance.
+   * Crelonatelons a nelonw TwittelonrelonarlyTelonrminationCollelonctor instancelon.
    *
-   * @param collectorParams the parameters needed to guide early termination.
-   * @param terminationTracker If null is passed in, a new TerminationTrack is created. Otherwise,
-   *        the one passed in is used.
-   * @param numDocsBetweenTimeoutChecks TerminationTracker based check are performed upon a hit
-   *        every numDocsBetweenTimeoutChecks docs. If a non-positive number is passed
-   *        in, TerminationTracker based checks are disabled.
-   *        If collectorParams specifies a value as well, that value is used.
+   * @param collelonctorParams thelon paramelontelonrs nelonelondelond to guidelon elonarly telonrmination.
+   * @param telonrminationTrackelonr If null is passelond in, a nelonw TelonrminationTrack is crelonatelond. Othelonrwiselon,
+   *        thelon onelon passelond in is uselond.
+   * @param numDocsBelontwelonelonnTimelonoutCheloncks TelonrminationTrackelonr baselond chelonck arelon pelonrformelond upon a hit
+   *        elonvelonry numDocsBelontwelonelonnTimelonoutCheloncks docs. If a non-positivelon numbelonr is passelond
+   *        in, TelonrminationTrackelonr baselond cheloncks arelon disablelond.
+   *        If collelonctorParams speloncifielons a valuelon as welonll, that valuelon is uselond.
    */
-  public TwitterEarlyTerminationCollector(
-      CollectorParams collectorParams,
-      TerminationTracker terminationTracker,
-      @Nullable QueryCostProvider queryCostProvider,
-      int numDocsBetweenTimeoutChecks,
+  public TwittelonrelonarlyTelonrminationCollelonctor(
+      CollelonctorParams collelonctorParams,
+      TelonrminationTrackelonr telonrminationTrackelonr,
+      @Nullablelon QuelonryCostProvidelonr quelonryCostProvidelonr,
+      int numDocsBelontwelonelonnTimelonoutCheloncks,
       Clock clock) {
-    CollectorTerminationParams terminationParams = collectorParams.getTerminationParams();
+    CollelonctorTelonrminationParams telonrminationParams = collelonctorParams.gelontTelonrminationParams();
 
-    if (terminationParams == null) {
-      terminationParams = new CollectorTerminationParams()
-          .setMaxHitsToProcess(Integer.MAX_VALUE)
-          .setMaxQueryCost(Double.MAX_VALUE)
-          .setTimeoutMs(Integer.MAX_VALUE);
+    if (telonrminationParams == null) {
+      telonrminationParams = nelonw CollelonctorTelonrminationParams()
+          .selontMaxHitsToProcelonss(Intelongelonr.MAX_VALUelon)
+          .selontMaxQuelonryCost(Doublelon.MAX_VALUelon)
+          .selontTimelonoutMs(Intelongelonr.MAX_VALUelon);
     }
 
-    if (!terminationParams.isSetMaxHitsToProcess() || terminationParams.getMaxHitsToProcess() < 0) {
-      maxHitsToProcess = Integer.MAX_VALUE;
-    } else {
-      maxHitsToProcess = terminationParams.getMaxHitsToProcess();
+    if (!telonrminationParams.isSelontMaxHitsToProcelonss() || telonrminationParams.gelontMaxHitsToProcelonss() < 0) {
+      maxHitsToProcelonss = Intelongelonr.MAX_VALUelon;
+    } elonlselon {
+      maxHitsToProcelonss = telonrminationParams.gelontMaxHitsToProcelonss();
     }
 
-    if (terminationParams.isSetNumDocsBetweenTimeoutChecks()) {
-      this.numDocsBetweenTimeoutChecks = terminationParams.getNumDocsBetweenTimeoutChecks();
-    } else {
-      this.numDocsBetweenTimeoutChecks = numDocsBetweenTimeoutChecks;
+    if (telonrminationParams.isSelontNumDocsBelontwelonelonnTimelonoutCheloncks()) {
+      this.numDocsBelontwelonelonnTimelonoutCheloncks = telonrminationParams.gelontNumDocsBelontwelonelonnTimelonoutCheloncks();
+    } elonlselon {
+      this.numDocsBelontwelonelonnTimelonoutCheloncks = numDocsBelontwelonelonnTimelonoutCheloncks;
     }
 
-    this.terminationTracker = Preconditions.checkNotNull(terminationTracker);
-    this.queryCostProvider = queryCostProvider;
+    this.telonrminationTrackelonr = Prelonconditions.chelonckNotNull(telonrminationTrackelonr);
+    this.quelonryCostProvidelonr = quelonryCostProvidelonr;
     this.clock = clock;
   }
 
-  public final LeafCollector getLeafCollector(LeafReaderContext context) throws IOException {
-    this.setNextReader(context);
-    return this;
+  public final LelonafCollelonctor gelontLelonafCollelonctor(LelonafRelonadelonrContelonxt contelonxt) throws IOelonxcelonption {
+    this.selontNelonxtRelonadelonr(contelonxt);
+    relonturn this;
   }
 
   /**
-   * Sub-classes may override this to add more collection logic.
+   * Sub-classelons may ovelonrridelon this to add morelon collelonction logic.
    */
-  protected abstract void doCollect() throws IOException;
+  protelonctelond abstract void doCollelonct() throws IOelonxcelonption;
 
   /**
-   * Sub-classes may override this to add more segment completion logic.
-   * @param lastSearchedDocID is the last docid searched before termination,
-   * or NO_MORE_DOCS if there was no early termination.  This doc may not be a hit!
+   * Sub-classelons may ovelonrridelon this to add morelon selongmelonnt complelontion logic.
+   * @param lastSelonarchelondDocID is thelon last docid selonarchelond belonforelon telonrmination,
+   * or NO_MORelon_DOCS if thelonrelon was no elonarly telonrmination.  This doc may not belon a hit!
    */
-  protected abstract void doFinishSegment(int lastSearchedDocID) throws IOException;
+  protelonctelond abstract void doFinishSelongmelonnt(int lastSelonarchelondDocID) throws IOelonxcelonption;
 
   /**
-   *  sub classes can override this to perform more early termination checks.
+   *  sub classelons can ovelonrridelon this to pelonrform morelon elonarly telonrmination cheloncks.
    */
-  public EarlyTerminationState innerShouldCollectMore() throws IOException {
-    return EarlyTerminationState.COLLECTING;
+  public elonarlyTelonrminationStatelon innelonrShouldCollelonctMorelon() throws IOelonxcelonption {
+    relonturn elonarlyTelonrminationStatelon.COLLelonCTING;
   }
 
   /**
-   * After early termination, this method can be used to retrieve early termination reason.
+   * Aftelonr elonarly telonrmination, this melonthod can belon uselond to relontrielonvelon elonarly telonrmination relonason.
    */
   @Nonnull
-  public final EarlyTerminationState getEarlyTerminationState() {
-    return terminationTracker.getEarlyTerminationState();
+  public final elonarlyTelonrminationStatelon gelontelonarlyTelonrminationStatelon() {
+    relonturn telonrminationTrackelonr.gelontelonarlyTelonrminationStatelon();
   }
 
-  protected final EarlyTerminationState setEarlyTerminationState(
-      EarlyTerminationState newEarlyTerminationState) {
-    terminationTracker.setEarlyTerminationState(newEarlyTerminationState);
-    return newEarlyTerminationState;
+  protelonctelond final elonarlyTelonrminationStatelon selontelonarlyTelonrminationStatelon(
+      elonarlyTelonrminationStatelon nelonwelonarlyTelonrminationStatelon) {
+    telonrminationTrackelonr.selontelonarlyTelonrminationStatelon(nelonwelonarlyTelonrminationStatelon);
+    relonturn nelonwelonarlyTelonrminationStatelon;
   }
 
-  @Override
-  public final boolean isTerminated() throws IOException {
-    EarlyTerminationState earlyTerminationState = getEarlyTerminationState();
+  @Ovelonrridelon
+  public final boolelonan isTelonrminatelond() throws IOelonxcelonption {
+    elonarlyTelonrminationStatelon elonarlyTelonrminationStatelon = gelontelonarlyTelonrminationStatelon();
 
-    if (earlyTerminationState.isTerminated()) {
-      return true;
+    if (elonarlyTelonrminationStatelon.isTelonrminatelond()) {
+      relonturn truelon;
     }
 
-    if (getNumHitsProcessed() >= getMaxHitsToProcess()) {
-      collectedEnoughResults();
-      if (shouldTerminate()) {
-        return setEarlyTerminationState(EarlyTerminationState.TERMINATED_MAX_HITS_EXCEEDED)
-            .isTerminated();
-      } else {
-        return false;
+    if (gelontNumHitsProcelonsselond() >= gelontMaxHitsToProcelonss()) {
+      collelonctelondelonnoughRelonsults();
+      if (shouldTelonrminatelon()) {
+        relonturn selontelonarlyTelonrminationStatelon(elonarlyTelonrminationStatelon.TelonRMINATelonD_MAX_HITS_elonXCelonelonDelonD)
+            .isTelonrminatelond();
+      } elonlselon {
+        relonturn falselon;
       }
     }
 
-    return innerShouldCollectMore().isTerminated();
+    relonturn innelonrShouldCollelonctMorelon().isTelonrminatelond();
   }
 
   /**
-   * Note: subclasses overriding this method are expected to call "super.setNextReader"
-   * in their setNextReader().
-   * @deprecated Remove this methods in favor of {@link #getLeafCollector(LeafReaderContext)}
+   * Notelon: subclasselons ovelonrriding this melonthod arelon elonxpelonctelond to call "supelonr.selontNelonxtRelonadelonr"
+   * in thelonir selontNelonxtRelonadelonr().
+   * @delonpreloncatelond Relonmovelon this melonthods in favor of {@link #gelontLelonafCollelonctor(LelonafRelonadelonrContelonxt)}
    */
-  @Deprecated
-  public void setNextReader(LeafReaderContext context) throws IOException {
-    if (!terminationTracker.useLastSearchedDocIdOnTimeout()) {
-      expensiveEarlyTerminationCheck();
+  @Delonpreloncatelond
+  public void selontNelonxtRelonadelonr(LelonafRelonadelonrContelonxt contelonxt) throws IOelonxcelonption {
+    if (!telonrminationTrackelonr.uselonLastSelonarchelondDocIdOnTimelonout()) {
+      elonxpelonnsivelonelonarlyTelonrminationChelonck();
     }
 
-    // Reset curDocId for next segment
+    // Relonselont curDocId for nelonxt selongmelonnt
     curDocId = -1;
-    lastEarlyTerminationCheckDocId = -1;
-    curReader = context.reader();
+    lastelonarlyTelonrminationChelonckDocId = -1;
+    curRelonadelonr = contelonxt.relonadelonr();
   }
 
   /**
-   * Sub-classes overriding this method are expected to call super.setScorer()
+   * Sub-classelons ovelonrriding this melonthod arelon elonxpelonctelond to call supelonr.selontScorelonr()
    */
-  @Override
-  public void setScorer(Scorable scorer) throws IOException {
-    this.scorer = scorer;
+  @Ovelonrridelon
+  public void selontScorelonr(Scorablelon scorelonr) throws IOelonxcelonption {
+    this.scorelonr = scorelonr;
   }
 
-  @Override
-  public final void collect(int doc) throws IOException {
+  @Ovelonrridelon
+  public final void collelonct(int doc) throws IOelonxcelonption {
     curDocId = doc;
-    doCollect();
-    numHitsProcessed++;
-    if (numDocsBetweenTimeoutChecks > 0
-        && (curDocId - lastEarlyTerminationCheckDocId) >= numDocsBetweenTimeoutChecks) {
-      lastEarlyTerminationCheckDocId = curDocId;
+    doCollelonct();
+    numHitsProcelonsselond++;
+    if (numDocsBelontwelonelonnTimelonoutCheloncks > 0
+        && (curDocId - lastelonarlyTelonrminationChelonckDocId) >= numDocsBelontwelonelonnTimelonoutCheloncks) {
+      lastelonarlyTelonrminationChelonckDocId = curDocId;
 
-      if (!terminationTracker.useLastSearchedDocIdOnTimeout()) {
-        expensiveEarlyTerminationCheck();
+      if (!telonrminationTrackelonr.uselonLastSelonarchelondDocIdOnTimelonout()) {
+        elonxpelonnsivelonelonarlyTelonrminationChelonck();
       }
     }
   }
 
   /**
-   * Accounting for a segment searched.
-   * @param lastSearchedDocID is the last docid searched before termination,
-   * or NO_MORE_DOCS if there was no early termination.  This doc may not be a hit!
+   * Accounting for a selongmelonnt selonarchelond.
+   * @param lastSelonarchelondDocID is thelon last docid selonarchelond belonforelon telonrmination,
+   * or NO_MORelon_DOCS if thelonrelon was no elonarly telonrmination.  This doc may not belon a hit!
    */
-  protected final void trackCompleteSegment(int lastSearchedDocID) throws IOException {
-    doFinishSegment(lastSearchedDocID);
+  protelonctelond final void trackComplelontelonSelongmelonnt(int lastSelonarchelondDocID) throws IOelonxcelonption {
+    doFinishSelongmelonnt(lastSelonarchelondDocID);
   }
 
-  @Override
-  public final void finishSegment(int lastSearchedDocID) throws IOException {
-    // finished searching a segment. Computer average time needed to search a segment.
-    Preconditions.checkState(curReader != null, "Did subclass call super.setNextReader()?");
-    numSearchedSegments++;
+  @Ovelonrridelon
+  public final void finishSelongmelonnt(int lastSelonarchelondDocID) throws IOelonxcelonption {
+    // finishelond selonarching a selongmelonnt. Computelonr avelonragelon timelon nelonelondelond to selonarch a selongmelonnt.
+    Prelonconditions.chelonckStatelon(curRelonadelonr != null, "Did subclass call supelonr.selontNelonxtRelonadelonr()?");
+    numSelonarchelondSelongmelonnts++;
 
-    long totalTime = clock.nowMillis() - terminationTracker.getLocalStartTimeMillis();
+    long totalTimelon = clock.nowMillis() - telonrminationTrackelonr.gelontLocalStartTimelonMillis();
 
-    if (totalTime >= Integer.MAX_VALUE) {
+    if (totalTimelon >= Intelongelonr.MAX_VALUelon) {
       String msg = String.format(
-          "%s: A query runs for %d that is longer than Integer.MAX_VALUE ms. lastSearchedDocID: %d",
-          getClass().getSimpleName(), totalTime, lastSearchedDocID
+          "%s: A quelonry runs for %d that is longelonr than Intelongelonr.MAX_VALUelon ms. lastSelonarchelondDocID: %d",
+          gelontClass().gelontSimplelonNamelon(), totalTimelon, lastSelonarchelondDocID
       );
-      LOG.error(msg);
-      throw new IllegalStateException(msg);
+      LOG.elonrror(msg);
+      throw nelonw IllelongalStatelonelonxcelonption(msg);
     }
 
-    int timePerSegment = ((int) totalTime) / numSearchedSegments;
+    int timelonPelonrSelongmelonnt = ((int) totalTimelon) / numSelonarchelondSelongmelonnts;
 
-    if (timePerSegment < 0) {
-      NEGATIVE_TIME_PER_SEGMENT.increment();
-      timePerSegment = 0;
+    if (timelonPelonrSelongmelonnt < 0) {
+      NelonGATIVelon_TIMelon_PelonR_SelonGMelonNT.increlonmelonnt();
+      timelonPelonrSelongmelonnt = 0;
     }
 
-    // If we're enforcing timeout via the last searched doc ID, we don't need to add this buffer,
-    // since we'll detect the timeout right away.
-    if (!terminationTracker.useLastSearchedDocIdOnTimeout()) {
-      terminationTracker.setPreTerminationSafeBufferTimeMillis(timePerSegment);
+    // If welon'relon elonnforcing timelonout via thelon last selonarchelond doc ID, welon don't nelonelond to add this buffelonr,
+    // sincelon welon'll delontelonct thelon timelonout right away.
+    if (!telonrminationTrackelonr.uselonLastSelonarchelondDocIdOnTimelonout()) {
+      telonrminationTrackelonr.selontPrelonTelonrminationSafelonBuffelonrTimelonMillis(timelonPelonrSelongmelonnt);
     }
 
-    // Check whether we timed out and are checking for timeout at the leaves. If so, we should use
-    // the captured lastSearchedDocId from the tracker instead, which is the most up-to-date amongst
-    // the query nodes.
-    if (terminationTracker.useLastSearchedDocIdOnTimeout()
-        && EarlyTerminationState.TERMINATED_TIME_OUT_EXCEEDED.equals(
-            terminationTracker.getEarlyTerminationState())) {
-      QUERY_TIMEOUT_ENFORCED.increment();
-      trackCompleteSegment(terminationTracker.getLastSearchedDocId());
-    } else {
-      trackCompleteSegment(lastSearchedDocID);
+    // Chelonck whelonthelonr welon timelond out and arelon cheloncking for timelonout at thelon lelonavelons. If so, welon should uselon
+    // thelon capturelond lastSelonarchelondDocId from thelon trackelonr instelonad, which is thelon most up-to-datelon amongst
+    // thelon quelonry nodelons.
+    if (telonrminationTrackelonr.uselonLastSelonarchelondDocIdOnTimelonout()
+        && elonarlyTelonrminationStatelon.TelonRMINATelonD_TIMelon_OUT_elonXCelonelonDelonD.elonquals(
+            telonrminationTrackelonr.gelontelonarlyTelonrminationStatelon())) {
+      QUelonRY_TIMelonOUT_elonNFORCelonD.increlonmelonnt();
+      trackComplelontelonSelongmelonnt(telonrminationTrackelonr.gelontLastSelonarchelondDocId());
+    } elonlselon {
+      trackComplelontelonSelongmelonnt(lastSelonarchelondDocID);
     }
 
-    // We finished a segment, so clear out the DocIdTrackers. The next segment will register its
-    // own trackers, and we don't need to keep the trackers from the current segment.
-    terminationTracker.resetDocIdTrackers();
+    // Welon finishelond a selongmelonnt, so clelonar out thelon DocIdTrackelonrs. Thelon nelonxt selongmelonnt will relongistelonr its
+    // own trackelonrs, and welon don't nelonelond to kelonelonp thelon trackelonrs from thelon currelonnt selongmelonnt.
+    telonrminationTrackelonr.relonselontDocIdTrackelonrs();
 
     curDocId = -1;
-    curReader = null;
-    scorer = null;
+    curRelonadelonr = null;
+    scorelonr = null;
   }
 
   /**
-   * More expensive Early Termination checks, which are not called every hit.
-   * This sets EarlyTerminationState if it decides that early termination should kick in.
-   * See: SEARCH-29723.
+   * Morelon elonxpelonnsivelon elonarly Telonrmination cheloncks, which arelon not callelond elonvelonry hit.
+   * This selonts elonarlyTelonrminationStatelon if it deloncidelons that elonarly telonrmination should kick in.
+   * Selonelon: SelonARCH-29723.
    */
-  private void expensiveEarlyTerminationCheck() {
-    if (queryCostProvider != null) {
-      double totalQueryCost = queryCostProvider.getTotalCost();
-      double maxQueryCost = terminationTracker.getMaxQueryCost();
-      if (totalQueryCost >= maxQueryCost) {
-        setEarlyTerminationState(EarlyTerminationState.TERMINATED_MAX_QUERY_COST_EXCEEDED);
+  privatelon void elonxpelonnsivelonelonarlyTelonrminationChelonck() {
+    if (quelonryCostProvidelonr != null) {
+      doublelon totalQuelonryCost = quelonryCostProvidelonr.gelontTotalCost();
+      doublelon maxQuelonryCost = telonrminationTrackelonr.gelontMaxQuelonryCost();
+      if (totalQuelonryCost >= maxQuelonryCost) {
+        selontelonarlyTelonrminationStatelon(elonarlyTelonrminationStatelon.TelonRMINATelonD_MAX_QUelonRY_COST_elonXCelonelonDelonD);
       }
     }
 
     final long nowMillis = clock.nowMillis();
-    if (nowMillis >= terminationTracker.getTimeoutEndTimeWithReservation()) {
-      setEarlyTerminationState(EarlyTerminationState.TERMINATED_TIME_OUT_EXCEEDED);
+    if (nowMillis >= telonrminationTrackelonr.gelontTimelonoutelonndTimelonWithRelonselonrvation()) {
+      selontelonarlyTelonrminationStatelon(elonarlyTelonrminationStatelon.TelonRMINATelonD_TIMelon_OUT_elonXCelonelonDelonD);
     }
   }
 
-  public long getMaxHitsToProcess() {
-    return maxHitsToProcess;
+  public long gelontMaxHitsToProcelonss() {
+    relonturn maxHitsToProcelonss;
   }
 
-  public final void setNumHitsProcessed(long numHitsProcessed) {
-    this.numHitsProcessed = numHitsProcessed;
+  public final void selontNumHitsProcelonsselond(long numHitsProcelonsselond) {
+    this.numHitsProcelonsselond = numHitsProcelonsselond;
   }
 
-  protected final long getNumHitsProcessed() {
-    return numHitsProcessed;
+  protelonctelond final long gelontNumHitsProcelonsselond() {
+    relonturn numHitsProcelonsselond;
   }
 
-  protected final int getNumSearchedSegments() {
-    return numSearchedSegments;
+  protelonctelond final int gelontNumSelonarchelondSelongmelonnts() {
+    relonturn numSelonarchelondSelongmelonnts;
   }
 
-  protected final Clock getClock() {
-    return clock;
+  protelonctelond final Clock gelontClock() {
+    relonturn clock;
   }
 
-  @VisibleForTesting
-  protected final TerminationTracker getTerminationTracker() {
-    return this.terminationTracker;
+  @VisiblelonForTelonsting
+  protelonctelond final TelonrminationTrackelonr gelontTelonrminationTrackelonr() {
+    relonturn this.telonrminationTrackelonr;
   }
 
-  protected void collectedEnoughResults() throws IOException {
+  protelonctelond void collelonctelondelonnoughRelonsults() throws IOelonxcelonption {
   }
 
-  protected boolean shouldTerminate() {
-    return true;
+  protelonctelond boolelonan shouldTelonrminatelon() {
+    relonturn truelon;
   }
 
   /**
-   * Debug info collected during execution.
+   * Delonbug info collelonctelond during elonxeloncution.
    */
-  public abstract List<String> getDebugInfo();
+  public abstract List<String> gelontDelonbugInfo();
 }

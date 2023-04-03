@@ -1,23 +1,23 @@
-package com.twitter.simclustersann.modules
+packagelon com.twittelonr.simclustelonrsann.modulelons
 
-import com.google.common.util.concurrent.RateLimiter
-import com.google.inject.Provides
-import com.twitter.inject.TwitterModule
-import com.twitter.inject.annotations.Flag
-import com.twitter.simclustersann.common.FlagNames.RateLimiterQPS
-import javax.inject.Singleton
+import com.googlelon.common.util.concurrelonnt.RatelonLimitelonr
+import com.googlelon.injelonct.Providelons
+import com.twittelonr.injelonct.TwittelonrModulelon
+import com.twittelonr.injelonct.annotations.Flag
+import com.twittelonr.simclustelonrsann.common.FlagNamelons.RatelonLimitelonrQPS
+import javax.injelonct.Singlelonton
 
-object RateLimiterModule extends TwitterModule {
+objelonct RatelonLimitelonrModulelon elonxtelonnds TwittelonrModulelon {
   flag[Int](
-    name = RateLimiterQPS,
-    default = 1000,
-    help = "The QPS allowed by the rate limiter."
+    namelon = RatelonLimitelonrQPS,
+    delonfault = 1000,
+    helonlp = "Thelon QPS allowelond by thelon ratelon limitelonr."
   )
 
-  @Singleton
-  @Provides
-  def providesRateLimiter(
-    @Flag(RateLimiterQPS) rateLimiterQps: Int
-  ): RateLimiter =
-    RateLimiter.create(rateLimiterQps)
+  @Singlelonton
+  @Providelons
+  delonf providelonsRatelonLimitelonr(
+    @Flag(RatelonLimitelonrQPS) ratelonLimitelonrQps: Int
+  ): RatelonLimitelonr =
+    RatelonLimitelonr.crelonatelon(ratelonLimitelonrQps)
 }

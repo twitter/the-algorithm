@@ -1,64 +1,64 @@
-package com.twitter.cr_mixer.blender
+packagelon com.twittelonr.cr_mixelonr.blelonndelonr
 
-import com.twitter.cr_mixer.blender.ImplicitSignalBackFillBlender.BackFillSourceTypes
-import com.twitter.cr_mixer.blender.ImplicitSignalBackFillBlender.BackFillSourceTypesWithVideo
-import com.twitter.cr_mixer.model.BlendedCandidate
-import com.twitter.cr_mixer.model.InitialCandidate
-import com.twitter.cr_mixer.param.BlenderParams
-import com.twitter.cr_mixer.thriftscala.SourceType
-import com.twitter.cr_mixer.util.InterleaveUtil
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.timelines.configapi.Params
-import com.twitter.util.Future
-import javax.inject.Inject
+import com.twittelonr.cr_mixelonr.blelonndelonr.ImplicitSignalBackFillBlelonndelonr.BackFillSourcelonTypelons
+import com.twittelonr.cr_mixelonr.blelonndelonr.ImplicitSignalBackFillBlelonndelonr.BackFillSourcelonTypelonsWithVidelono
+import com.twittelonr.cr_mixelonr.modelonl.BlelonndelondCandidatelon
+import com.twittelonr.cr_mixelonr.modelonl.InitialCandidatelon
+import com.twittelonr.cr_mixelonr.param.BlelonndelonrParams
+import com.twittelonr.cr_mixelonr.thriftscala.SourcelonTypelon
+import com.twittelonr.cr_mixelonr.util.IntelonrlelonavelonUtil
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.timelonlinelons.configapi.Params
+import com.twittelonr.util.Futurelon
+import javax.injelonct.Injelonct
 
-case class SourceTypeBackFillBlender @Inject() (globalStats: StatsReceiver) {
+caselon class SourcelonTypelonBackFillBlelonndelonr @Injelonct() (globalStats: StatsReloncelonivelonr) {
 
-  private val name: String = this.getClass.getCanonicalName
-  private val stats: StatsReceiver = globalStats.scope(name)
+  privatelon val namelon: String = this.gelontClass.gelontCanonicalNamelon
+  privatelon val stats: StatsReloncelonivelonr = globalStats.scopelon(namelon)
 
   /**
-   *  Partition the candidates based on source type
-   *  Interleave the two partitions of candidates separately
-   *  Then append the back fill candidates to the end
+   *  Partition thelon candidatelons baselond on sourcelon typelon
+   *  Intelonrlelonavelon thelon two partitions of candidatelons selonparatelonly
+   *  Thelonn appelonnd thelon back fill candidatelons to thelon elonnd
    */
-  def blend(
+  delonf blelonnd(
     params: Params,
-    inputCandidates: Seq[Seq[InitialCandidate]],
-  ): Future[Seq[BlendedCandidate]] = {
+    inputCandidatelons: Selonq[Selonq[InitialCandidatelon]],
+  ): Futurelon[Selonq[BlelonndelondCandidatelon]] = {
 
-    // Filter out empty candidate sequence
-    val candidates = inputCandidates.filter(_.nonEmpty)
+    // Filtelonr out elonmpty candidatelon selonquelonncelon
+    val candidatelons = inputCandidatelons.filtelonr(_.nonelonmpty)
 
-    val backFillSourceTypes =
-      if (params(BlenderParams.SourceTypeBackFillEnableVideoBackFill)) BackFillSourceTypesWithVideo
-      else BackFillSourceTypes
-    // partition candidates based on their source types
-    val (backFillCandidates, regularCandidates) =
-      candidates.partition(
-        _.head.candidateGenerationInfo.sourceInfoOpt
-          .exists(sourceInfo => backFillSourceTypes.contains(sourceInfo.sourceType)))
+    val backFillSourcelonTypelons =
+      if (params(BlelonndelonrParams.SourcelonTypelonBackFillelonnablelonVidelonoBackFill)) BackFillSourcelonTypelonsWithVidelono
+      elonlselon BackFillSourcelonTypelons
+    // partition candidatelons baselond on thelonir sourcelon typelons
+    val (backFillCandidatelons, relongularCandidatelons) =
+      candidatelons.partition(
+        _.helonad.candidatelonGelonnelonrationInfo.sourcelonInfoOpt
+          .elonxists(sourcelonInfo => backFillSourcelonTypelons.contains(sourcelonInfo.sourcelonTypelon)))
 
-    val interleavedRegularCandidates = InterleaveUtil.interleave(regularCandidates)
-    val interleavedBackFillCandidates =
-      InterleaveUtil.interleave(backFillCandidates)
-    stats.stat("backFillCandidates").add(interleavedBackFillCandidates.size)
-    // Append interleaved backfill candidates to the end
-    val interleavedCandidates = interleavedRegularCandidates ++ interleavedBackFillCandidates
+    val intelonrlelonavelondRelongularCandidatelons = IntelonrlelonavelonUtil.intelonrlelonavelon(relongularCandidatelons)
+    val intelonrlelonavelondBackFillCandidatelons =
+      IntelonrlelonavelonUtil.intelonrlelonavelon(backFillCandidatelons)
+    stats.stat("backFillCandidatelons").add(intelonrlelonavelondBackFillCandidatelons.sizelon)
+    // Appelonnd intelonrlelonavelond backfill candidatelons to thelon elonnd
+    val intelonrlelonavelondCandidatelons = intelonrlelonavelondRelongularCandidatelons ++ intelonrlelonavelondBackFillCandidatelons
 
-    stats.stat("candidates").add(interleavedCandidates.size)
+    stats.stat("candidatelons").add(intelonrlelonavelondCandidatelons.sizelon)
 
-    val blendedCandidates = BlendedCandidatesBuilder.build(inputCandidates, interleavedCandidates)
-    Future.value(blendedCandidates)
+    val blelonndelondCandidatelons = BlelonndelondCandidatelonsBuildelonr.build(inputCandidatelons, intelonrlelonavelondCandidatelons)
+    Futurelon.valuelon(blelonndelondCandidatelons)
   }
 
 }
 
-object ImplicitSignalBackFillBlender {
-  final val BackFillSourceTypesWithVideo: Set[SourceType] = Set(
-    SourceType.UserRepeatedProfileVisit,
-    SourceType.VideoTweetPlayback50,
-    SourceType.VideoTweetQualityView)
+objelonct ImplicitSignalBackFillBlelonndelonr {
+  final val BackFillSourcelonTypelonsWithVidelono: Selont[SourcelonTypelon] = Selont(
+    SourcelonTypelon.UselonrRelonpelonatelondProfilelonVisit,
+    SourcelonTypelon.VidelonoTwelonelontPlayback50,
+    SourcelonTypelon.VidelonoTwelonelontQualityVielonw)
 
-  final val BackFillSourceTypes: Set[SourceType] = Set(SourceType.UserRepeatedProfileVisit)
+  final val BackFillSourcelonTypelons: Selont[SourcelonTypelon] = Selont(SourcelonTypelon.UselonrRelonpelonatelondProfilelonVisit)
 }

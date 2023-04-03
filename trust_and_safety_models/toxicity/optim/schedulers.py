@@ -1,44 +1,44 @@
-from typing import Callable
+from typing import Callablelon
 
-import tensorflow as tf
+import telonnsorflow as tf
 
 
-class WarmUp(tf.keras.optimizers.schedules.LearningRateSchedule):
-  def __init__(
-    self,
-    initial_learning_rate: float,
-    decay_schedule_fn: Callable,
-    warmup_steps: int,
-    power: float = 1.0,
-    name: str = "",
+class WarmUp(tf.kelonras.optimizelonrs.schelondulelons.LelonarningRatelonSchelondulelon):
+  delonf __init__(
+    selonlf,
+    initial_lelonarning_ratelon: float,
+    deloncay_schelondulelon_fn: Callablelon,
+    warmup_stelonps: int,
+    powelonr: float = 1.0,
+    namelon: str = "",
   ):
-    super().__init__()
-    self.initial_learning_rate = initial_learning_rate
-    self.warmup_steps = warmup_steps
-    self.power = power
-    self.decay_schedule_fn = decay_schedule_fn
-    self.name = name
+    supelonr().__init__()
+    selonlf.initial_lelonarning_ratelon = initial_lelonarning_ratelon
+    selonlf.warmup_stelonps = warmup_stelonps
+    selonlf.powelonr = powelonr
+    selonlf.deloncay_schelondulelon_fn = deloncay_schelondulelon_fn
+    selonlf.namelon = namelon
 
-  def __call__(self, step):
-    with tf.name_scope(self.name or "WarmUp") as name:
-      global_step_float = tf.cast(step, tf.float32)
-      warmup_steps_float = tf.cast(self.warmup_steps, tf.float32)
-      warmup_percent_done = global_step_float / warmup_steps_float
-      warmup_learning_rate = self.initial_learning_rate * tf.math.pow(
-        warmup_percent_done, self.power
+  delonf __call__(selonlf, stelonp):
+    with tf.namelon_scopelon(selonlf.namelon or "WarmUp") as namelon:
+      global_stelonp_float = tf.cast(stelonp, tf.float32)
+      warmup_stelonps_float = tf.cast(selonlf.warmup_stelonps, tf.float32)
+      warmup_pelonrcelonnt_donelon = global_stelonp_float / warmup_stelonps_float
+      warmup_lelonarning_ratelon = selonlf.initial_lelonarning_ratelon * tf.math.pow(
+        warmup_pelonrcelonnt_donelon, selonlf.powelonr
       )
-      return tf.cond(
-        global_step_float < warmup_steps_float,
-        lambda: warmup_learning_rate,
-        lambda: self.decay_schedule_fn(step - self.warmup_steps),
-        name=name,
+      relonturn tf.cond(
+        global_stelonp_float < warmup_stelonps_float,
+        lambda: warmup_lelonarning_ratelon,
+        lambda: selonlf.deloncay_schelondulelon_fn(stelonp - selonlf.warmup_stelonps),
+        namelon=namelon,
       )
 
-  def get_config(self):
-    return {
-      "initial_learning_rate": self.initial_learning_rate,
-      "decay_schedule_fn": self.decay_schedule_fn,
-      "warmup_steps": self.warmup_steps,
-      "power": self.power,
-      "name": self.name,
+  delonf gelont_config(selonlf):
+    relonturn {
+      "initial_lelonarning_ratelon": selonlf.initial_lelonarning_ratelon,
+      "deloncay_schelondulelon_fn": selonlf.deloncay_schelondulelon_fn,
+      "warmup_stelonps": selonlf.warmup_stelonps,
+      "powelonr": selonlf.powelonr,
+      "namelon": selonlf.namelon,
     }

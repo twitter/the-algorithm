@@ -1,18 +1,18 @@
-package com.twitter.product_mixer.core.service.filter_executor
+packagelon com.twittelonr.product_mixelonr.corelon.selonrvicelon.filtelonr_elonxeloncutor
 
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.service.ExecutorResult
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.FiltelonrIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.elonxeloncutorRelonsult
 
-case class FilterExecutorResult[Candidate](
-  result: Seq[Candidate],
-  individualFilterResults: Seq[IndividualFilterResults[Candidate]])
-    extends ExecutorResult
+caselon class FiltelonrelonxeloncutorRelonsult[Candidatelon](
+  relonsult: Selonq[Candidatelon],
+  individualFiltelonrRelonsults: Selonq[IndividualFiltelonrRelonsults[Candidatelon]])
+    elonxtelonnds elonxeloncutorRelonsult
 
-sealed trait IndividualFilterResults[+Candidate]
-case class ConditionalFilterDisabled(identifier: FilterIdentifier)
-    extends IndividualFilterResults[Nothing]
-case class FilterExecutorIndividualResult[+Candidate](
-  identifier: FilterIdentifier,
-  kept: Seq[Candidate],
-  removed: Seq[Candidate])
-    extends IndividualFilterResults[Candidate]
+selonalelond trait IndividualFiltelonrRelonsults[+Candidatelon]
+caselon class ConditionalFiltelonrDisablelond(idelonntifielonr: FiltelonrIdelonntifielonr)
+    elonxtelonnds IndividualFiltelonrRelonsults[Nothing]
+caselon class FiltelonrelonxeloncutorIndividualRelonsult[+Candidatelon](
+  idelonntifielonr: FiltelonrIdelonntifielonr,
+  kelonpt: Selonq[Candidatelon],
+  relonmovelond: Selonq[Candidatelon])
+    elonxtelonnds IndividualFiltelonrRelonsults[Candidatelon]

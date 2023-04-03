@@ -1,117 +1,117 @@
-package com.twitter.visibility.interfaces.spaces
+packagelon com.twittelonr.visibility.intelonrfacelons.spacelons
 
-import com.twitter.servo.util.Gate
-import com.twitter.stitch.Stitch
-import com.twitter.strato.client.{Client => StratoClient}
-import com.twitter.visibility.VisibilityLibrary
-import com.twitter.visibility.builder.VisibilityResult
-import com.twitter.visibility.builder.common.MutedKeywordFeatures
-import com.twitter.visibility.builder.spaces.SpaceFeatures
-import com.twitter.visibility.builder.spaces.StratoSpaceLabelMaps
-import com.twitter.visibility.builder.users.AuthorFeatures
-import com.twitter.visibility.builder.users.RelationshipFeatures
-import com.twitter.visibility.builder.users.ViewerFeatures
-import com.twitter.visibility.common._
-import com.twitter.visibility.common.stitch.StitchHelpers
-import com.twitter.visibility.features.FeatureMap
-import com.twitter.visibility.models.ContentId.SpaceId
-import com.twitter.visibility.models.ContentId.SpacePlusUserId
-import com.twitter.visibility.rules.EvaluationContext
-import com.twitter.visibility.rules.providers.ProvidedEvaluationContext
-import com.twitter.visibility.rules.utils.ShimUtils
+import com.twittelonr.selonrvo.util.Gatelon
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.strato.clielonnt.{Clielonnt => StratoClielonnt}
+import com.twittelonr.visibility.VisibilityLibrary
+import com.twittelonr.visibility.buildelonr.VisibilityRelonsult
+import com.twittelonr.visibility.buildelonr.common.MutelondKelonywordFelonaturelons
+import com.twittelonr.visibility.buildelonr.spacelons.SpacelonFelonaturelons
+import com.twittelonr.visibility.buildelonr.spacelons.StratoSpacelonLabelonlMaps
+import com.twittelonr.visibility.buildelonr.uselonrs.AuthorFelonaturelons
+import com.twittelonr.visibility.buildelonr.uselonrs.RelonlationshipFelonaturelons
+import com.twittelonr.visibility.buildelonr.uselonrs.VielonwelonrFelonaturelons
+import com.twittelonr.visibility.common._
+import com.twittelonr.visibility.common.stitch.StitchHelonlpelonrs
+import com.twittelonr.visibility.felonaturelons.FelonaturelonMap
+import com.twittelonr.visibility.modelonls.ContelonntId.SpacelonId
+import com.twittelonr.visibility.modelonls.ContelonntId.SpacelonPlusUselonrId
+import com.twittelonr.visibility.rulelons.elonvaluationContelonxt
+import com.twittelonr.visibility.rulelons.providelonrs.ProvidelondelonvaluationContelonxt
+import com.twittelonr.visibility.rulelons.utils.ShimUtils
 
-object SpaceVisibilityLibrary {
-  type Type = SpaceVisibilityRequest => Stitch[VisibilityResult]
+objelonct SpacelonVisibilityLibrary {
+  typelon Typelon = SpacelonVisibilityRelonquelonst => Stitch[VisibilityRelonsult]
 
-  def apply(
+  delonf apply(
     visibilityLibrary: VisibilityLibrary,
-    stratoClient: StratoClient,
-    userSource: UserSource,
-    userRelationshipSource: UserRelationshipSource,
-    enableVfFeatureHydrationSpaceShim: Gate[Unit] = Gate.False
-  ): Type = {
-    val libraryStatsReceiver = visibilityLibrary.statsReceiver
-    val stratoClientStatsReceiver = visibilityLibrary.statsReceiver.scope("strato")
-    val vfLatencyStatsReceiver = visibilityLibrary.statsReceiver.scope("vf_latency")
-    val vfEngineCounter = libraryStatsReceiver.counter("vf_engine_requests")
+    stratoClielonnt: StratoClielonnt,
+    uselonrSourcelon: UselonrSourcelon,
+    uselonrRelonlationshipSourcelon: UselonrRelonlationshipSourcelon,
+    elonnablelonVfFelonaturelonHydrationSpacelonShim: Gatelon[Unit] = Gatelon.Falselon
+  ): Typelon = {
+    val libraryStatsReloncelonivelonr = visibilityLibrary.statsReloncelonivelonr
+    val stratoClielonntStatsReloncelonivelonr = visibilityLibrary.statsReloncelonivelonr.scopelon("strato")
+    val vfLatelonncyStatsReloncelonivelonr = visibilityLibrary.statsReloncelonivelonr.scopelon("vf_latelonncy")
+    val vfelonnginelonCountelonr = libraryStatsReloncelonivelonr.countelonr("vf_elonnginelon_relonquelonsts")
 
-    val spaceLabelMaps = new StratoSpaceLabelMaps(
-      SpaceSafetyLabelMapSource.fromStrato(stratoClient, stratoClientStatsReceiver),
-      libraryStatsReceiver)
-    val audioSpaceSource = AudioSpaceSource.fromStrato(stratoClient, stratoClientStatsReceiver)
+    val spacelonLabelonlMaps = nelonw StratoSpacelonLabelonlMaps(
+      SpacelonSafelontyLabelonlMapSourcelon.fromStrato(stratoClielonnt, stratoClielonntStatsReloncelonivelonr),
+      libraryStatsReloncelonivelonr)
+    val audioSpacelonSourcelon = AudioSpacelonSourcelon.fromStrato(stratoClielonnt, stratoClielonntStatsReloncelonivelonr)
 
-    val viewerFeatures = new ViewerFeatures(userSource, libraryStatsReceiver)
-    val authorFeatures = new AuthorFeatures(userSource, libraryStatsReceiver)
-    val relationshipFeatures =
-      new RelationshipFeatures(userRelationshipSource, libraryStatsReceiver)
-    val mutedKeywordFeatures = new MutedKeywordFeatures(
-      userSource,
-      userRelationshipSource,
-      KeywordMatcher.matcher(libraryStatsReceiver),
-      libraryStatsReceiver,
-      Gate.False
+    val vielonwelonrFelonaturelons = nelonw VielonwelonrFelonaturelons(uselonrSourcelon, libraryStatsReloncelonivelonr)
+    val authorFelonaturelons = nelonw AuthorFelonaturelons(uselonrSourcelon, libraryStatsReloncelonivelonr)
+    val relonlationshipFelonaturelons =
+      nelonw RelonlationshipFelonaturelons(uselonrRelonlationshipSourcelon, libraryStatsReloncelonivelonr)
+    val mutelondKelonywordFelonaturelons = nelonw MutelondKelonywordFelonaturelons(
+      uselonrSourcelon,
+      uselonrRelonlationshipSourcelon,
+      KelonywordMatchelonr.matchelonr(libraryStatsReloncelonivelonr),
+      libraryStatsReloncelonivelonr,
+      Gatelon.Falselon
     )
-    val spaceFeatures =
-      new SpaceFeatures(
-        spaceLabelMaps,
-        authorFeatures,
-        relationshipFeatures,
-        mutedKeywordFeatures,
-        audioSpaceSource)
+    val spacelonFelonaturelons =
+      nelonw SpacelonFelonaturelons(
+        spacelonLabelonlMaps,
+        authorFelonaturelons,
+        relonlationshipFelonaturelons,
+        mutelondKelonywordFelonaturelons,
+        audioSpacelonSourcelon)
 
-    { r: SpaceVisibilityRequest =>
-      vfEngineCounter.incr()
+    { r: SpacelonVisibilityRelonquelonst =>
+      vfelonnginelonCountelonr.incr()
 
-      val isVfFeatureHydrationEnabled = enableVfFeatureHydrationSpaceShim()
-      val viewerId = r.viewerContext.userId
-      val authorIds: Option[Seq[Long]] = r.spaceHostAndAdminUserIds
-      val contentId = {
-        (viewerId, authorIds) match {
-          case (Some(viewer), Some(authors)) if authors.contains(viewer) => SpaceId(r.spaceId)
-          case _ => SpacePlusUserId(r.spaceId)
+      val isVfFelonaturelonHydrationelonnablelond = elonnablelonVfFelonaturelonHydrationSpacelonShim()
+      val vielonwelonrId = r.vielonwelonrContelonxt.uselonrId
+      val authorIds: Option[Selonq[Long]] = r.spacelonHostAndAdminUselonrIds
+      val contelonntId = {
+        (vielonwelonrId, authorIds) match {
+          caselon (Somelon(vielonwelonr), Somelon(authors)) if authors.contains(vielonwelonr) => SpacelonId(r.spacelonId)
+          caselon _ => SpacelonPlusUselonrId(r.spacelonId)
         }
       }
 
-      val featureMap =
-        visibilityLibrary.featureMapBuilder(
-          Seq(
-            spaceFeatures.forSpaceAndAuthorIds(r.spaceId, viewerId, authorIds),
-            viewerFeatures.forViewerContext(r.viewerContext),
+      val felonaturelonMap =
+        visibilityLibrary.felonaturelonMapBuildelonr(
+          Selonq(
+            spacelonFelonaturelons.forSpacelonAndAuthorIds(r.spacelonId, vielonwelonrId, authorIds),
+            vielonwelonrFelonaturelons.forVielonwelonrContelonxt(r.vielonwelonrContelonxt),
           )
         )
 
-      val resp = if (isVfFeatureHydrationEnabled) {
-        val evaluationContext = ProvidedEvaluationContext.injectRuntimeRulesIntoEvaluationContext(
-          evaluationContext = EvaluationContext(
-            r.safetyLevel,
-            visibilityLibrary.getParams(r.viewerContext, r.safetyLevel),
-            visibilityLibrary.statsReceiver)
+      val relonsp = if (isVfFelonaturelonHydrationelonnablelond) {
+        val elonvaluationContelonxt = ProvidelondelonvaluationContelonxt.injelonctRuntimelonRulelonsIntoelonvaluationContelonxt(
+          elonvaluationContelonxt = elonvaluationContelonxt(
+            r.safelontyLelonvelonl,
+            visibilityLibrary.gelontParams(r.vielonwelonrContelonxt, r.safelontyLelonvelonl),
+            visibilityLibrary.statsReloncelonivelonr)
         )
 
-        val preFilteredFeatureMap =
-          ShimUtils.preFilterFeatureMap(featureMap, r.safetyLevel, contentId, evaluationContext)
+        val prelonFiltelonrelondFelonaturelonMap =
+          ShimUtils.prelonFiltelonrFelonaturelonMap(felonaturelonMap, r.safelontyLelonvelonl, contelonntId, elonvaluationContelonxt)
 
-        FeatureMap
-          .resolve(preFilteredFeatureMap, libraryStatsReceiver).flatMap { resolvedFeatureMap =>
+        FelonaturelonMap
+          .relonsolvelon(prelonFiltelonrelondFelonaturelonMap, libraryStatsReloncelonivelonr).flatMap { relonsolvelondFelonaturelonMap =>
             visibilityLibrary
-              .runRuleEngine(
-                contentId,
-                resolvedFeatureMap,
-                r.viewerContext,
-                r.safetyLevel
+              .runRulelonelonnginelon(
+                contelonntId,
+                relonsolvelondFelonaturelonMap,
+                r.vielonwelonrContelonxt,
+                r.safelontyLelonvelonl
               )
           }
-      } else {
+      } elonlselon {
         visibilityLibrary
-          .runRuleEngine(
-            contentId,
-            featureMap,
-            r.viewerContext,
-            r.safetyLevel
+          .runRulelonelonnginelon(
+            contelonntId,
+            felonaturelonMap,
+            r.vielonwelonrContelonxt,
+            r.safelontyLelonvelonl
           )
       }
 
-      StitchHelpers.profileStitch(resp, Seq(vfLatencyStatsReceiver))
+      StitchHelonlpelonrs.profilelonStitch(relonsp, Selonq(vfLatelonncyStatsReloncelonivelonr))
     }
   }
 }

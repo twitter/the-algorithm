@@ -1,9 +1,9 @@
-package com.twitter.follow_recommendations.common.predicates.dismiss
+packagelon com.twittelonr.follow_reloncommelonndations.common.prelondicatelons.dismiss
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.timelines.configapi.Param
-import com.twitter.util.Duration
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.timelonlinelons.configapi.Param
+import com.twittelonr.util.Duration
 
-object DismissedCandidatePredicateParams {
-  case object LookBackDuration extends Param[Duration](180.days)
+objelonct DismisselondCandidatelonPrelondicatelonParams {
+  caselon objelonct LookBackDuration elonxtelonnds Param[Duration](180.days)
 }

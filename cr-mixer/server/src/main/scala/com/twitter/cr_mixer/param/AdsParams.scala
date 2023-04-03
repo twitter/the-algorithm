@@ -1,64 +1,64 @@
-package com.twitter.cr_mixer.param
+packagelon com.twittelonr.cr_mixelonr.param
 
-import com.twitter.timelines.configapi.BaseConfig
-import com.twitter.timelines.configapi.BaseConfigBuilder
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil
-import com.twitter.timelines.configapi.Param
+import com.twittelonr.timelonlinelons.configapi.BaselonConfig
+import com.twittelonr.timelonlinelons.configapi.BaselonConfigBuildelonr
+import com.twittelonr.timelonlinelons.configapi.FSBoundelondParam
+import com.twittelonr.timelonlinelons.configapi.FSNamelon
+import com.twittelonr.timelonlinelons.configapi.FSParam
+import com.twittelonr.timelonlinelons.configapi.FelonaturelonSwitchOvelonrridelonUtil
+import com.twittelonr.timelonlinelons.configapi.Param
 
-object AdsParams {
-  object AdsCandidateGenerationMaxCandidatesNumParam
-      extends FSBoundedParam[Int](
-        name = "ads_candidate_generation_max_candidates_num",
-        default = 400,
+objelonct AdsParams {
+  objelonct AdsCandidatelonGelonnelonrationMaxCandidatelonsNumParam
+      elonxtelonnds FSBoundelondParam[Int](
+        namelon = "ads_candidatelon_gelonnelonration_max_candidatelons_num",
+        delonfault = 400,
         min = 0,
         max = 2000
       )
 
-  object EnableScoreBoost
-      extends FSParam[Boolean](
-        name = "ads_candidate_generation_enable_score_boost",
-        default = false
+  objelonct elonnablelonScorelonBoost
+      elonxtelonnds FSParam[Boolelonan](
+        namelon = "ads_candidatelon_gelonnelonration_elonnablelon_scorelon_boost",
+        delonfault = falselon
       )
 
-  object AdsCandidateGenerationScoreBoostFactor
-      extends FSBoundedParam[Double](
-        name = "ads_candidate_generation_score_boost_factor",
-        default = 10000.0,
+  objelonct AdsCandidatelonGelonnelonrationScorelonBoostFactor
+      elonxtelonnds FSBoundelondParam[Doublelon](
+        namelon = "ads_candidatelon_gelonnelonration_scorelon_boost_factor",
+        delonfault = 10000.0,
         min = 1.0,
         max = 100000.0
       )
 
-  object EnableScribe
-      extends FSParam[Boolean](
-        name = "ads_candidate_generation_enable_scribe",
-        default = false
+  objelonct elonnablelonScribelon
+      elonxtelonnds FSParam[Boolelonan](
+        namelon = "ads_candidatelon_gelonnelonration_elonnablelon_scribelon",
+        delonfault = falselon
       )
 
-  val AllParams: Seq[Param[_] with FSName] = Seq(
-    AdsCandidateGenerationMaxCandidatesNumParam,
-    EnableScoreBoost,
-    AdsCandidateGenerationScoreBoostFactor
+  val AllParams: Selonq[Param[_] with FSNamelon] = Selonq(
+    AdsCandidatelonGelonnelonrationMaxCandidatelonsNumParam,
+    elonnablelonScorelonBoost,
+    AdsCandidatelonGelonnelonrationScorelonBoostFactor
   )
 
-  lazy val config: BaseConfig = {
-    val intOverrides = FeatureSwitchOverrideUtil.getBoundedIntFSOverrides(
-      AdsCandidateGenerationMaxCandidatesNumParam)
+  lazy val config: BaselonConfig = {
+    val intOvelonrridelons = FelonaturelonSwitchOvelonrridelonUtil.gelontBoundelondIntFSOvelonrridelons(
+      AdsCandidatelonGelonnelonrationMaxCandidatelonsNumParam)
 
-    val booleanOverrides = FeatureSwitchOverrideUtil.getBooleanFSOverrides(
-      EnableScoreBoost,
-      EnableScribe
+    val boolelonanOvelonrridelons = FelonaturelonSwitchOvelonrridelonUtil.gelontBoolelonanFSOvelonrridelons(
+      elonnablelonScorelonBoost,
+      elonnablelonScribelon
     )
 
-    val doubleOverrides =
-      FeatureSwitchOverrideUtil.getBoundedDoubleFSOverrides(AdsCandidateGenerationScoreBoostFactor)
+    val doublelonOvelonrridelons =
+      FelonaturelonSwitchOvelonrridelonUtil.gelontBoundelondDoublelonFSOvelonrridelons(AdsCandidatelonGelonnelonrationScorelonBoostFactor)
 
-    BaseConfigBuilder()
-      .set(intOverrides: _*)
-      .set(booleanOverrides: _*)
-      .set(doubleOverrides: _*)
+    BaselonConfigBuildelonr()
+      .selont(intOvelonrridelons: _*)
+      .selont(boolelonanOvelonrridelons: _*)
+      .selont(doublelonOvelonrridelons: _*)
       .build()
   }
 }

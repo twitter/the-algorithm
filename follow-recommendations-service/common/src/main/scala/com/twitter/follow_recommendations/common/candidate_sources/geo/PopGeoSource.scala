@@ -1,50 +1,50 @@
-package com.twitter.follow_recommendations.common.candidate_sources.geo
+packagelon com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.gelono
 
-import com.google.inject.Singleton
-import com.google.inject.name.Named
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.candidate_sources.base.CachedCandidateSource
-import com.twitter.follow_recommendations.common.candidate_sources.base.StratoFetcherWithUnitViewSource
-import com.twitter.follow_recommendations.common.constants.GuiceNamedConstants
-import com.twitter.follow_recommendations.common.models.AccountProof
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.PopularInGeoProof
-import com.twitter.follow_recommendations.common.models.Reason
-import com.twitter.hermit.pop_geo.thriftscala.PopUsersInPlace
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.strato.client.Fetcher
-import com.twitter.util.Duration
-import javax.inject.Inject
+import com.googlelon.injelonct.Singlelonton
+import com.googlelon.injelonct.namelon.Namelond
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.baselon.CachelondCandidatelonSourcelon
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.baselon.StratoFelontchelonrWithUnitVielonwSourcelon
+import com.twittelonr.follow_reloncommelonndations.common.constants.GuicelonNamelondConstants
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.AccountProof
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.CandidatelonUselonr
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.PopularInGelonoProof
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.Relonason
+import com.twittelonr.helonrmit.pop_gelono.thriftscala.PopUselonrsInPlacelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonSourcelonIdelonntifielonr
+import com.twittelonr.strato.clielonnt.Felontchelonr
+import com.twittelonr.util.Duration
+import javax.injelonct.Injelonct
 
-@Singleton
-class BasePopGeoSource @Inject() (
-  @Named(GuiceNamedConstants.POP_USERS_IN_PLACE_FETCHER) fetcher: Fetcher[
+@Singlelonton
+class BaselonPopGelonoSourcelon @Injelonct() (
+  @Namelond(GuicelonNamelondConstants.POP_USelonRS_IN_PLACelon_FelonTCHelonR) felontchelonr: Felontchelonr[
     String,
     Unit,
-    PopUsersInPlace
-  ]) extends StratoFetcherWithUnitViewSource[String, PopUsersInPlace](
-      fetcher,
-      BasePopGeoSource.Identifier) {
+    PopUselonrsInPlacelon
+  ]) elonxtelonnds StratoFelontchelonrWithUnitVielonwSourcelon[String, PopUselonrsInPlacelon](
+      felontchelonr,
+      BaselonPopGelonoSourcelon.Idelonntifielonr) {
 
-  override def map(target: String, candidates: PopUsersInPlace): Seq[CandidateUser] =
-    BasePopGeoSource.map(target, candidates)
+  ovelonrridelon delonf map(targelont: String, candidatelons: PopUselonrsInPlacelon): Selonq[CandidatelonUselonr] =
+    BaselonPopGelonoSourcelon.map(targelont, candidatelons)
 }
 
-object BasePopGeoSource {
-  val Identifier: CandidateSourceIdentifier = CandidateSourceIdentifier("BasePopGeoSource")
-  val MaxResults = 200
+objelonct BaselonPopGelonoSourcelon {
+  val Idelonntifielonr: CandidatelonSourcelonIdelonntifielonr = CandidatelonSourcelonIdelonntifielonr("BaselonPopGelonoSourcelon")
+  val MaxRelonsults = 200
 
-  def map(target: String, candidates: PopUsersInPlace): Seq[CandidateUser] =
-    candidates.popUsers.sortBy(-_.score).take(BasePopGeoSource.MaxResults).view.map { candidate =>
-      CandidateUser(
-        id = candidate.userId,
-        score = Some(candidate.score),
-        reason = Some(
-          Reason(
-            Some(
+  delonf map(targelont: String, candidatelons: PopUselonrsInPlacelon): Selonq[CandidatelonUselonr] =
+    candidatelons.popUselonrs.sortBy(-_.scorelon).takelon(BaselonPopGelonoSourcelon.MaxRelonsults).vielonw.map { candidatelon =>
+      CandidatelonUselonr(
+        id = candidatelon.uselonrId,
+        scorelon = Somelon(candidatelon.scorelon),
+        relonason = Somelon(
+          Relonason(
+            Somelon(
               AccountProof(
-                popularInGeoProof = Some(PopularInGeoProof(location = candidates.place))
+                popularInGelonoProof = Somelon(PopularInGelonoProof(location = candidatelons.placelon))
               )
             )
           )
@@ -53,17 +53,17 @@ object BasePopGeoSource {
     }
 }
 
-@Singleton
-class PopGeoSource @Inject() (basePopGeoSource: BasePopGeoSource, statsReceiver: StatsReceiver)
-    extends CachedCandidateSource[String, CandidateUser](
-      basePopGeoSource,
-      PopGeoSource.MaxCacheSize,
-      PopGeoSource.CacheTTL,
-      statsReceiver,
-      PopGeoSource.Identifier)
+@Singlelonton
+class PopGelonoSourcelon @Injelonct() (baselonPopGelonoSourcelon: BaselonPopGelonoSourcelon, statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds CachelondCandidatelonSourcelon[String, CandidatelonUselonr](
+      baselonPopGelonoSourcelon,
+      PopGelonoSourcelon.MaxCachelonSizelon,
+      PopGelonoSourcelon.CachelonTTL,
+      statsReloncelonivelonr,
+      PopGelonoSourcelon.Idelonntifielonr)
 
-object PopGeoSource {
-  val Identifier: CandidateSourceIdentifier = CandidateSourceIdentifier("PopGeoSource")
-  val MaxCacheSize = 20000
-  val CacheTTL: Duration = 1.hours
+objelonct PopGelonoSourcelon {
+  val Idelonntifielonr: CandidatelonSourcelonIdelonntifielonr = CandidatelonSourcelonIdelonntifielonr("PopGelonoSourcelon")
+  val MaxCachelonSizelon = 20000
+  val CachelonTTL: Duration = 1.hours
 }

@@ -1,37 +1,37 @@
-package com.twitter.follow_recommendations.common.candidate_sources.recent_engagement
+packagelon com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.reloncelonnt_elonngagelonmelonnt
 
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSParam
+import com.twittelonr.timelonlinelons.configapi.FSBoundelondParam
+import com.twittelonr.timelonlinelons.configapi.FSParam
 
-object RepeatedProfileVisitsParams {
+objelonct RelonpelonatelondProfilelonVisitsParams {
 
-  // If RepeatedProfileVisitsSource is run and there are recommended candidates for the target user, whether or not
-  // to actually include such candidates in our output recommendations. This FS will be used to control bucketing of
-  // users into control vs treatment buckets.
-  case object IncludeCandidates
-      extends FSParam[Boolean](name = "repeated_profile_visits_include_candidates", default = false)
+  // If RelonpelonatelondProfilelonVisitsSourcelon is run and thelonrelon arelon reloncommelonndelond candidatelons for thelon targelont uselonr, whelonthelonr or not
+  // to actually includelon such candidatelons in our output reloncommelonndations. This FS will belon uselond to control buckelonting of
+  // uselonrs into control vs trelonatmelonnt buckelonts.
+  caselon objelonct IncludelonCandidatelons
+      elonxtelonnds FSParam[Boolelonan](namelon = "relonpelonatelond_profilelon_visits_includelon_candidatelons", delonfault = falselon)
 
-  // The threshold at or above which we will consider a profile to have been visited "frequently enough" to recommend
-  // the profile to the target user.
-  case object RecommendationThreshold
-      extends FSBoundedParam[Int](
-        name = "repeated_profile_visits_recommendation_threshold",
-        default = 3,
+  // Thelon threlonshold at or abovelon which welon will considelonr a profilelon to havelon belonelonn visitelond "frelonquelonntly elonnough" to reloncommelonnd
+  // thelon profilelon to thelon targelont uselonr.
+  caselon objelonct ReloncommelonndationThrelonshold
+      elonxtelonnds FSBoundelondParam[Int](
+        namelon = "relonpelonatelond_profilelon_visits_reloncommelonndation_threlonshold",
+        delonfault = 3,
         min = 0,
-        max = Integer.MAX_VALUE)
+        max = Intelongelonr.MAX_VALUelon)
 
-  // The threshold at or above which we will consider a profile to have been visited "frequently enough" to recommend
-  // the profile to the target user.
-  case object BucketingThreshold
-      extends FSBoundedParam[Int](
-        name = "repeated_profile_visits_bucketing_threshold",
-        default = 3,
+  // Thelon threlonshold at or abovelon which welon will considelonr a profilelon to havelon belonelonn visitelond "frelonquelonntly elonnough" to reloncommelonnd
+  // thelon profilelon to thelon targelont uselonr.
+  caselon objelonct BuckelontingThrelonshold
+      elonxtelonnds FSBoundelondParam[Int](
+        namelon = "relonpelonatelond_profilelon_visits_buckelonting_threlonshold",
+        delonfault = 3,
         min = 0,
-        max = Integer.MAX_VALUE)
+        max = Intelongelonr.MAX_VALUelon)
 
-  // Whether or not to use the online dataset (which has repeated profile visits information updated to within minutes)
-  // instead of the offline dataset (updated via offline jobs, which can have delays of hours to days).
-  case object UseOnlineDataset
-      extends FSParam[Boolean](name = "repeated_profile_visits_use_online_dataset", default = true)
+  // Whelonthelonr or not to uselon thelon onlinelon dataselont (which has relonpelonatelond profilelon visits information updatelond to within minutelons)
+  // instelonad of thelon offlinelon dataselont (updatelond via offlinelon jobs, which can havelon delonlays of hours to days).
+  caselon objelonct UselonOnlinelonDataselont
+      elonxtelonnds FSParam[Boolelonan](namelon = "relonpelonatelond_profilelon_visits_uselon_onlinelon_dataselont", delonfault = truelon)
 
 }

@@ -1,51 +1,51 @@
-package com.twitter.home_mixer.module
+packagelon com.twittelonr.homelon_mixelonr.modulelon
 
-import com.google.inject.Provides
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.finagle.thriftmux.MethodBuilder
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsClient
-import com.twitter.inject.Injector
-import com.twitter.inject.thrift.modules.ThriftMethodBuilderClientModule
-import com.twitter.stitch.tweetypie.TweetyPie
-import com.twitter.tweetypie.thriftscala.TweetService
-import com.twitter.util.Duration
-import javax.inject.Singleton
+import com.googlelon.injelonct.Providelons
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.finaglelon.mtls.authelonntication.SelonrvicelonIdelonntifielonr
+import com.twittelonr.finaglelon.thrift.ClielonntId
+import com.twittelonr.finaglelon.thriftmux.MelonthodBuildelonr
+import com.twittelonr.finatra.mtls.thriftmux.modulelons.MtlsClielonnt
+import com.twittelonr.injelonct.Injelonctor
+import com.twittelonr.injelonct.thrift.modulelons.ThriftMelonthodBuildelonrClielonntModulelon
+import com.twittelonr.stitch.twelonelontypielon.TwelonelontyPielon
+import com.twittelonr.twelonelontypielon.thriftscala.TwelonelontSelonrvicelon
+import com.twittelonr.util.Duration
+import javax.injelonct.Singlelonton
 
 /**
- * Idempotent TweetyPie Thrift and Stitch client.
+ * Idelonmpotelonnt TwelonelontyPielon Thrift and Stitch clielonnt.
  */
-object TweetyPieClientModule
-    extends ThriftMethodBuilderClientModule[
-      TweetService.ServicePerEndpoint,
-      TweetService.MethodPerEndpoint
+objelonct TwelonelontyPielonClielonntModulelon
+    elonxtelonnds ThriftMelonthodBuildelonrClielonntModulelon[
+      TwelonelontSelonrvicelon.SelonrvicelonPelonrelonndpoint,
+      TwelonelontSelonrvicelon.MelonthodPelonrelonndpoint
     ]
-    with MtlsClient {
-  override val label: String = "tweetypie"
-  override val dest: String = "/s/tweetypie/tweetypie"
+    with MtlsClielonnt {
+  ovelonrridelon val labelonl: String = "twelonelontypielon"
+  ovelonrridelon val delonst: String = "/s/twelonelontypielon/twelonelontypielon"
 
-  @Singleton
-  @Provides
-  def providesTweetypieStitchClient(tweetService: TweetService.MethodPerEndpoint): TweetyPie =
-    new TweetyPie(tweetService)
+  @Singlelonton
+  @Providelons
+  delonf providelonsTwelonelontypielonStitchClielonnt(twelonelontSelonrvicelon: TwelonelontSelonrvicelon.MelonthodPelonrelonndpoint): TwelonelontyPielon =
+    nelonw TwelonelontyPielon(twelonelontSelonrvicelon)
 
   /**
-   * TweetyPie client id must be in the form of {service.env} or it will not be treated as an
-   * unauthorized client
+   * TwelonelontyPielon clielonnt id must belon in thelon form of {selonrvicelon.elonnv} or it will not belon trelonatelond as an
+   * unauthorizelond clielonnt
    */
-  override protected def clientId(injector: Injector): ClientId = {
-    val serviceIdentifier = injector.instance[ServiceIdentifier]
-    ClientId(s"${serviceIdentifier.service}.${serviceIdentifier.environment}")
+  ovelonrridelon protelonctelond delonf clielonntId(injelonctor: Injelonctor): ClielonntId = {
+    val selonrvicelonIdelonntifielonr = injelonctor.instancelon[SelonrvicelonIdelonntifielonr]
+    ClielonntId(s"${selonrvicelonIdelonntifielonr.selonrvicelon}.${selonrvicelonIdelonntifielonr.elonnvironmelonnt}")
   }
 
-  override protected def configureMethodBuilder(
-    injector: Injector,
-    methodBuilder: MethodBuilder
-  ): MethodBuilder =
-    methodBuilder
-      .withTimeoutPerRequest(500.milliseconds)
-      .withTimeoutTotal(500.milliseconds)
+  ovelonrridelon protelonctelond delonf configurelonMelonthodBuildelonr(
+    injelonctor: Injelonctor,
+    melonthodBuildelonr: MelonthodBuildelonr
+  ): MelonthodBuildelonr =
+    melonthodBuildelonr
+      .withTimelonoutPelonrRelonquelonst(500.milliselonconds)
+      .withTimelonoutTotal(500.milliselonconds)
 
-  override protected def sessionAcquisitionTimeout: Duration = 250.milliseconds
+  ovelonrridelon protelonctelond delonf selonssionAcquisitionTimelonout: Duration = 250.milliselonconds
 }

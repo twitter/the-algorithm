@@ -1,70 +1,70 @@
-package com.twitter.search.earlybird.search.relevance.collectors;
+packagelon com.twittelonr.selonarch.elonarlybird.selonarch.relonlelonvancelon.collelonctors;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 import java.util.List;
 
-import com.google.common.collect.Lists;
+import com.googlelon.common.collelonct.Lists;
 
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.relevance.features.TweetIntegerShingleSignature;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.earlybird.common.userupdates.UserTable;
-import com.twitter.search.earlybird.search.relevance.RelevanceHit;
-import com.twitter.search.earlybird.search.relevance.RelevanceSearchRequestInfo;
-import com.twitter.search.earlybird.search.relevance.RelevanceSearchResults;
-import com.twitter.search.earlybird.search.relevance.scoring.ScoringFunction;
-import com.twitter.search.earlybird.stats.EarlybirdSearcherStats;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultMetadata;
+import com.twittelonr.common.util.Clock;
+import com.twittelonr.selonarch.common.relonlelonvancelon.felonaturelons.TwelonelontIntelongelonrShinglelonSignaturelon;
+import com.twittelonr.selonarch.common.schelonma.baselon.ImmutablelonSchelonmaIntelonrfacelon;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdClustelonr;
+import com.twittelonr.selonarch.elonarlybird.common.uselonrupdatelons.UselonrTablelon;
+import com.twittelonr.selonarch.elonarlybird.selonarch.relonlelonvancelon.RelonlelonvancelonHit;
+import com.twittelonr.selonarch.elonarlybird.selonarch.relonlelonvancelon.RelonlelonvancelonSelonarchRelonquelonstInfo;
+import com.twittelonr.selonarch.elonarlybird.selonarch.relonlelonvancelon.RelonlelonvancelonSelonarchRelonsults;
+import com.twittelonr.selonarch.elonarlybird.selonarch.relonlelonvancelon.scoring.ScoringFunction;
+import com.twittelonr.selonarch.elonarlybird.stats.elonarlybirdSelonarchelonrStats;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsultMelontadata;
 
 /**
- * RelevanceAllCollector is a results collector that collects all results sorted by score,
- * including signature-duplicates and results skipped by the scoring function.
+ * RelonlelonvancelonAllCollelonctor is a relonsults collelonctor that colleloncts all relonsults sortelond by scorelon,
+ * including signaturelon-duplicatelons and relonsults skippelond by thelon scoring function.
  */
-public class RelevanceAllCollector extends AbstractRelevanceCollector {
-  // All results.
-  protected final List<RelevanceHit> results;
+public class RelonlelonvancelonAllCollelonctor elonxtelonnds AbstractRelonlelonvancelonCollelonctor {
+  // All relonsults.
+  protelonctelond final List<RelonlelonvancelonHit> relonsults;
 
-  public RelevanceAllCollector(
-      ImmutableSchemaInterface schema,
-      RelevanceSearchRequestInfo searchRequestInfo,
+  public RelonlelonvancelonAllCollelonctor(
+      ImmutablelonSchelonmaIntelonrfacelon schelonma,
+      RelonlelonvancelonSelonarchRelonquelonstInfo selonarchRelonquelonstInfo,
       ScoringFunction scoringFunction,
-      EarlybirdSearcherStats searcherStats,
-      EarlybirdCluster cluster,
-      UserTable userTable,
+      elonarlybirdSelonarchelonrStats selonarchelonrStats,
+      elonarlybirdClustelonr clustelonr,
+      UselonrTablelon uselonrTablelon,
       Clock clock,
-      int requestDebugMode) {
-    super(schema, searchRequestInfo, scoringFunction, searcherStats, cluster, userTable, clock,
-        requestDebugMode);
-    this.results = Lists.newArrayList();
+      int relonquelonstDelonbugModelon) {
+    supelonr(schelonma, selonarchRelonquelonstInfo, scoringFunction, selonarchelonrStats, clustelonr, uselonrTablelon, clock,
+        relonquelonstDelonbugModelon);
+    this.relonsults = Lists.nelonwArrayList();
   }
 
-  @Override
-  protected void doCollectWithScore(long tweetID, float score) throws IOException {
-    ThriftSearchResultMetadata metadata = collectMetadata();
-    scoringFunction.populateResultMetadataBasedOnScoringData(
-        searchRequestInfo.getSearchQuery().getResultMetadataOptions(),
-        metadata,
-        scoringFunction.getScoringDataForCurrentDocument());
-    results.add(new RelevanceHit(
-        currTimeSliceID,
-        tweetID,
-        TweetIntegerShingleSignature.deserialize(metadata.getSignature()),
-        metadata));
+  @Ovelonrridelon
+  protelonctelond void doCollelonctWithScorelon(long twelonelontID, float scorelon) throws IOelonxcelonption {
+    ThriftSelonarchRelonsultMelontadata melontadata = collelonctMelontadata();
+    scoringFunction.populatelonRelonsultMelontadataBaselondOnScoringData(
+        selonarchRelonquelonstInfo.gelontSelonarchQuelonry().gelontRelonsultMelontadataOptions(),
+        melontadata,
+        scoringFunction.gelontScoringDataForCurrelonntDocumelonnt());
+    relonsults.add(nelonw RelonlelonvancelonHit(
+        currTimelonSlicelonID,
+        twelonelontID,
+        TwelonelontIntelongelonrShinglelonSignaturelon.delonselonrializelon(melontadata.gelontSignaturelon()),
+        melontadata));
   }
 
-  @Override
-  protected RelevanceSearchResults doGetRelevanceResults() {
-    final int numResults = results.size();
-    RelevanceSearchResults searchResults = new RelevanceSearchResults(numResults);
+  @Ovelonrridelon
+  protelonctelond RelonlelonvancelonSelonarchRelonsults doGelontRelonlelonvancelonRelonsults() {
+    final int numRelonsults = relonsults.sizelon();
+    RelonlelonvancelonSelonarchRelonsults selonarchRelonsults = nelonw RelonlelonvancelonSelonarchRelonsults(numRelonsults);
 
-    // Insert hits in decreasing order by score.
-    results.sort(RelevanceHit.COMPARATOR_BY_SCORE);
-    for (int i = 0; i < numResults; i++) {
-      searchResults.setHit(results.get(i), i);
+    // Inselonrt hits in deloncrelonasing ordelonr by scorelon.
+    relonsults.sort(RelonlelonvancelonHit.COMPARATOR_BY_SCORelon);
+    for (int i = 0; i < numRelonsults; i++) {
+      selonarchRelonsults.selontHit(relonsults.gelont(i), i);
     }
-    searchResults.setRelevanceStats(getRelevanceStats());
-    searchResults.setNumHits(numResults);
-    return searchResults;
+    selonarchRelonsults.selontRelonlelonvancelonStats(gelontRelonlelonvancelonStats());
+    selonarchRelonsults.selontNumHits(numRelonsults);
+    relonturn selonarchRelonsults;
   }
 }

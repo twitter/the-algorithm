@@ -1,7 +1,7 @@
-package com.twitter.search.ingester.pipeline.util;
+packagelon com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.util;
 
-public class PipelineStageRuntimeException extends RuntimeException {
-  public PipelineStageRuntimeException(String msg) {
-    super(msg);
+public class PipelonlinelonStagelonRuntimelonelonxcelonption elonxtelonnds Runtimelonelonxcelonption {
+  public PipelonlinelonStagelonRuntimelonelonxcelonption(String msg) {
+    supelonr(msg);
   }
 }

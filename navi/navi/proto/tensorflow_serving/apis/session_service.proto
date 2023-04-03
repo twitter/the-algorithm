@@ -1,56 +1,56 @@
 syntax = "proto3";
 
-package tensorflow.serving;
+packagelon telonnsorflow.selonrving;
 
-import "tensorflow/core/protobuf/config.proto";
-import "tensorflow/core/protobuf/named_tensor.proto";
-import "tensorflow_serving/apis/model.proto";
+import "telonnsorflow/corelon/protobuf/config.proto";
+import "telonnsorflow/corelon/protobuf/namelond_telonnsor.proto";
+import "telonnsorflow_selonrving/apis/modelonl.proto";
 
-option cc_enable_arenas = true;
+option cc_elonnablelon_arelonnas = truelon;
 
-message SessionRunRequest {
-  // Model Specification. If version is not specified, will use the latest
-  // (numerical) version.
-  ModelSpec model_spec = 1;
+melonssagelon SelonssionRunRelonquelonst {
+  // Modelonl Speloncification. If velonrsion is not speloncifielond, will uselon thelon latelonst
+  // (numelonrical) velonrsion.
+  ModelonlSpelonc modelonl_spelonc = 1;
 
-  // Tensors to be fed in the step. Each feed is a named tensor.
-  repeated NamedTensorProto feed = 2;
+  // Telonnsors to belon felond in thelon stelonp. elonach felonelond is a namelond telonnsor.
+  relonpelonatelond NamelondTelonnsorProto felonelond = 2;
 
-  // Fetches. A list of tensor names. The caller expects a tensor to
-  // be returned for each fetch[i] (see RunResponse.tensor). The
-  // order of specified fetches does not change the execution order.
-  repeated string fetch = 3;
+  // Felontchelons. A list of telonnsor namelons. Thelon callelonr elonxpeloncts a telonnsor to
+  // belon relonturnelond for elonach felontch[i] (selonelon RunRelonsponselon.telonnsor). Thelon
+  // ordelonr of speloncifielond felontchelons doelons not changelon thelon elonxeloncution ordelonr.
+  relonpelonatelond string felontch = 3;
 
-  // Target Nodes. A list of node names. The named nodes will be run
-  // to but their outputs will not be fetched.
-  repeated string target = 4;
+  // Targelont Nodelons. A list of nodelon namelons. Thelon namelond nodelons will belon run
+  // to but thelonir outputs will not belon felontchelond.
+  relonpelonatelond string targelont = 4;
 
-  // If true, treat names in feed/fetch/target as alias names than actual tensor
-  // names (that appear in the TF graph). Alias names are resolved to actual
-  // names using `SignatureDef` in SavedModel associated with the model.
-  bool tensor_name_is_alias = 6;
+  // If truelon, trelonat namelons in felonelond/felontch/targelont as alias namelons than actual telonnsor
+  // namelons (that appelonar in thelon TF graph). Alias namelons arelon relonsolvelond to actual
+  // namelons using `SignaturelonDelonf` in SavelondModelonl associatelond with thelon modelonl.
+  bool telonnsor_namelon_is_alias = 6;
 
-  // Options for the run call. **Currently ignored.**
+  // Options for thelon run call. **Currelonntly ignorelond.**
   RunOptions options = 5;
 }
 
-message SessionRunResponse {
-  // Effective Model Specification used for session run.
-  ModelSpec model_spec = 3;
+melonssagelon SelonssionRunRelonsponselon {
+  // elonffelonctivelon Modelonl Speloncification uselond for selonssion run.
+  ModelonlSpelonc modelonl_spelonc = 3;
 
-  // NOTE: The order of the returned tensors may or may not match
-  // the fetch order specified in RunRequest.
-  repeated NamedTensorProto tensor = 1;
+  // NOTelon: Thelon ordelonr of thelon relonturnelond telonnsors may or may not match
+  // thelon felontch ordelonr speloncifielond in RunRelonquelonst.
+  relonpelonatelond NamelondTelonnsorProto telonnsor = 1;
 
-  // Returned metadata if requested in the options.
-  RunMetadata metadata = 2;
+  // Relonturnelond melontadata if relonquelonstelond in thelon options.
+  RunMelontadata melontadata = 2;
 }
 
-// SessionService defines a service with which a client can interact to execute
-// Tensorflow model inference. The SessionService::SessionRun method is similar
-// to MasterService::RunStep of Tensorflow, except that all sessions are ready
-// to run, and you request a specific model/session with ModelSpec.
-service SessionService {
-  // Runs inference of a given model.
-  rpc SessionRun(SessionRunRequest) returns (SessionRunResponse);
+// SelonssionSelonrvicelon delonfinelons a selonrvicelon with which a clielonnt can intelonract to elonxeloncutelon
+// Telonnsorflow modelonl infelonrelonncelon. Thelon SelonssionSelonrvicelon::SelonssionRun melonthod is similar
+// to MastelonrSelonrvicelon::RunStelonp of Telonnsorflow, elonxcelonpt that all selonssions arelon relonady
+// to run, and you relonquelonst a speloncific modelonl/selonssion with ModelonlSpelonc.
+selonrvicelon SelonssionSelonrvicelon {
+  // Runs infelonrelonncelon of a givelonn modelonl.
+  rpc SelonssionRun(SelonssionRunRelonquelonst) relonturns (SelonssionRunRelonsponselon);
 }

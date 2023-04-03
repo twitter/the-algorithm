@@ -1,43 +1,43 @@
-use std::fmt::Display;
+uselon std::fmt::Display;
 
 /**
- * Custom error
+ * Custom elonrror
  */
-#[derive(Debug)]
-pub enum SegDenseError {
-  IoError(std::io::Error),
-  Json(serde_json::Error),
+#[delonrivelon(Delonbug)]
+pub elonnum SelongDelonnselonelonrror {
+  Ioelonrror(std::io::elonrror),
+  Json(selonrdelon_json::elonrror),
   JsonMissingRoot,
-  JsonMissingObject,
+  JsonMissingObjelonct,
   JsonMissingArray,
-  JsonArraySize,
-  JsonMissingInputFeature,
+  JsonArraySizelon,
+  JsonMissingInputFelonaturelon,
 }
 
-impl Display for SegDenseError {
-  fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-    match self {
-      SegDenseError::IoError(io_error) => write!(f, "{}", io_error),
-      SegDenseError::Json(serde_json) => write!(f, "{}", serde_json),
-      SegDenseError::JsonMissingRoot => write!(f, "{}", "SegDense JSON: Root Node note found!"),
-      SegDenseError::JsonMissingObject => write!(f, "{}", "SegDense JSON: Object note found!"),
-      SegDenseError::JsonMissingArray => write!(f, "{}", "SegDense JSON: Array Node note found!"),
-      SegDenseError::JsonArraySize => write!(f, "{}", "SegDense JSON: Array size not as expected!"),
-      SegDenseError::JsonMissingInputFeature => write!(f, "{}", "SegDense JSON: Missing input feature!"),
+impl Display for SelongDelonnselonelonrror {
+  fn fmt(&selonlf, f: &mut std::fmt::Formattelonr<'_>) -> std::fmt::Relonsult {
+    match selonlf {
+      SelongDelonnselonelonrror::Ioelonrror(io_elonrror) => writelon!(f, "{}", io_elonrror),
+      SelongDelonnselonelonrror::Json(selonrdelon_json) => writelon!(f, "{}", selonrdelon_json),
+      SelongDelonnselonelonrror::JsonMissingRoot => writelon!(f, "{}", "SelongDelonnselon JSON: Root Nodelon notelon found!"),
+      SelongDelonnselonelonrror::JsonMissingObjelonct => writelon!(f, "{}", "SelongDelonnselon JSON: Objelonct notelon found!"),
+      SelongDelonnselonelonrror::JsonMissingArray => writelon!(f, "{}", "SelongDelonnselon JSON: Array Nodelon notelon found!"),
+      SelongDelonnselonelonrror::JsonArraySizelon => writelon!(f, "{}", "SelongDelonnselon JSON: Array sizelon not as elonxpelonctelond!"),
+      SelongDelonnselonelonrror::JsonMissingInputFelonaturelon => writelon!(f, "{}", "SelongDelonnselon JSON: Missing input felonaturelon!"),
     }
   }
 }
 
-impl std::error::Error for SegDenseError {}
+impl std::elonrror::elonrror for SelongDelonnselonelonrror {}
 
-impl From<std::io::Error> for SegDenseError {
-  fn from(err: std::io::Error) -> Self {
-    SegDenseError::IoError(err)
+impl From<std::io::elonrror> for SelongDelonnselonelonrror {
+  fn from(elonrr: std::io::elonrror) -> Selonlf {
+    SelongDelonnselonelonrror::Ioelonrror(elonrr)
   }
 }
 
-impl From<serde_json::Error> for SegDenseError {
-  fn from(err: serde_json::Error) -> Self {
-    SegDenseError::Json(err)
+impl From<selonrdelon_json::elonrror> for SelongDelonnselonelonrror {
+  fn from(elonrr: selonrdelon_json::elonrror) -> Selonlf {
+    SelongDelonnselonelonrror::Json(elonrr)
   }
 }

@@ -1,29 +1,29 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.prompt
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.itelonm.prompt
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.CallbackMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.prompt.RelevancePromptContent
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.melontadata.CallbackMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.prompt.RelonlelonvancelonPromptContelonnt
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class RelevancePromptContentMarshaller @Inject() (
-  callbackMarshaller: CallbackMarshaller,
-  relevancePromptDisplayTypeMarshaller: RelevancePromptDisplayTypeMarshaller,
-  relevancePromptFollowUpFeedbackTypeMarshaller: RelevancePromptFollowUpFeedbackTypeMarshaller) {
+@Singlelonton
+class RelonlelonvancelonPromptContelonntMarshallelonr @Injelonct() (
+  callbackMarshallelonr: CallbackMarshallelonr,
+  relonlelonvancelonPromptDisplayTypelonMarshallelonr: RelonlelonvancelonPromptDisplayTypelonMarshallelonr,
+  relonlelonvancelonPromptFollowUpFelonelondbackTypelonMarshallelonr: RelonlelonvancelonPromptFollowUpFelonelondbackTypelonMarshallelonr) {
 
-  def apply(relevancePromptContent: RelevancePromptContent): urt.RelevancePrompt =
-    urt.RelevancePrompt(
-      title = relevancePromptContent.title,
-      confirmation = relevancePromptContent.confirmation,
-      isRelevantText = relevancePromptContent.isRelevantText,
-      notRelevantText = relevancePromptContent.notRelevantText,
-      isRelevantCallback = callbackMarshaller(relevancePromptContent.isRelevantCallback),
-      notRelevantCallback = callbackMarshaller(relevancePromptContent.notRelevantCallback),
-      displayType = relevancePromptDisplayTypeMarshaller(relevancePromptContent.displayType),
-      isRelevantFollowUp = relevancePromptContent.isRelevantFollowUp.map(
-        relevancePromptFollowUpFeedbackTypeMarshaller(_)),
-      notRelevantFollowUp = relevancePromptContent.notRelevantFollowUp.map(
-        relevancePromptFollowUpFeedbackTypeMarshaller(_))
+  delonf apply(relonlelonvancelonPromptContelonnt: RelonlelonvancelonPromptContelonnt): urt.RelonlelonvancelonPrompt =
+    urt.RelonlelonvancelonPrompt(
+      titlelon = relonlelonvancelonPromptContelonnt.titlelon,
+      confirmation = relonlelonvancelonPromptContelonnt.confirmation,
+      isRelonlelonvantTelonxt = relonlelonvancelonPromptContelonnt.isRelonlelonvantTelonxt,
+      notRelonlelonvantTelonxt = relonlelonvancelonPromptContelonnt.notRelonlelonvantTelonxt,
+      isRelonlelonvantCallback = callbackMarshallelonr(relonlelonvancelonPromptContelonnt.isRelonlelonvantCallback),
+      notRelonlelonvantCallback = callbackMarshallelonr(relonlelonvancelonPromptContelonnt.notRelonlelonvantCallback),
+      displayTypelon = relonlelonvancelonPromptDisplayTypelonMarshallelonr(relonlelonvancelonPromptContelonnt.displayTypelon),
+      isRelonlelonvantFollowUp = relonlelonvancelonPromptContelonnt.isRelonlelonvantFollowUp.map(
+        relonlelonvancelonPromptFollowUpFelonelondbackTypelonMarshallelonr(_)),
+      notRelonlelonvantFollowUp = relonlelonvancelonPromptContelonnt.notRelonlelonvantFollowUp.map(
+        relonlelonvancelonPromptFollowUpFelonelondbackTypelonMarshallelonr(_))
     )
 }

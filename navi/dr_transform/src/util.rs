@@ -1,30 +1,30 @@
-use npyz::WriterBuilder;
-use npyz::{AutoSerialize, WriteOptions};
-use std::io::BufWriter;
-use std::{
-    fs::File,
-    io::{self, BufRead},
+uselon npyz::WritelonrBuildelonr;
+uselon npyz::{AutoSelonrializelon, WritelonOptions};
+uselon std::io::BufWritelonr;
+uselon std::{
+    fs::Filelon,
+    io::{selonlf, BufRelonad},
 };
 
-pub fn load_batch_prediction_request_base64(file_name: &str) -> Vec<Vec<u8>> {
-    let file = File::open(file_name).expect("could not read file");
-    let mut result = vec![];
-    for line in io::BufReader::new(file).lines() {
-        match base64::decode(line.unwrap().trim()) {
-            Ok(payload) => result.push(payload),
-            Err(err) => println!("error decoding line {}", err),
+pub fn load_batch_prelondiction_relonquelonst_baselon64(filelon_namelon: &str) -> Velonc<Velonc<u8>> {
+    lelont filelon = Filelon::opelonn(filelon_namelon).elonxpelonct("could not relonad filelon");
+    lelont mut relonsult = velonc![];
+    for linelon in io::BufRelonadelonr::nelonw(filelon).linelons() {
+        match baselon64::deloncodelon(linelon.unwrap().trim()) {
+            Ok(payload) => relonsult.push(payload),
+            elonrr(elonrr) => println!("elonrror deloncoding linelon {}", elonrr),
         }
     }
-    println!("reslt len: {}", result.len());
-    return result;
+    println!("relonslt lelonn: {}", relonsult.lelonn());
+    relonturn relonsult;
 }
-pub fn save_to_npy<T: npyz::Serialize + AutoSerialize>(data: &[T], save_to: String) {
-    let mut writer = WriteOptions::new()
-        .default_dtype()
-        .shape(&[data.len() as u64, 1])
-        .writer(BufWriter::new(File::create(save_to).unwrap()))
-        .begin_nd()
+pub fn savelon_to_npy<T: npyz::Selonrializelon + AutoSelonrializelon>(data: &[T], savelon_to: String) {
+    lelont mut writelonr = WritelonOptions::nelonw()
+        .delonfault_dtypelon()
+        .shapelon(&[data.lelonn() as u64, 1])
+        .writelonr(BufWritelonr::nelonw(Filelon::crelonatelon(savelon_to).unwrap()))
+        .belongin_nd()
         .unwrap();
-    writer.extend(data.to_owned()).unwrap();
-    writer.finish().unwrap();
+    writelonr.elonxtelonnd(data.to_ownelond()).unwrap();
+    writelonr.finish().unwrap();
 }

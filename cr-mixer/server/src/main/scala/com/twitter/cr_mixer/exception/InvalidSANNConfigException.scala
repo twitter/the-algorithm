@@ -1,4 +1,4 @@
-package com.twitter.cr_mixer
-package exception
+packagelon com.twittelonr.cr_mixelonr
+packagelon elonxcelonption
 
-case class InvalidSANNConfigException(msg: String) extends Exception(msg)
+caselon class InvalidSANNConfigelonxcelonption(msg: String) elonxtelonnds elonxcelonption(msg)

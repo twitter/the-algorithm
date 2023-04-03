@@ -1,46 +1,46 @@
-package com.twitter.timelineranker.model
+packagelon com.twittelonr.timelonlinelonrankelonr.modelonl
 
-import com.twitter.timelineranker.{thriftscala => thrift}
-import com.twitter.timelines.model.UserId
-import com.twitter.timelineservice.model.TimelineId
-import com.twitter.timelineservice.model.core.TimelineKind
+import com.twittelonr.timelonlinelonrankelonr.{thriftscala => thrift}
+import com.twittelonr.timelonlinelons.modelonl.UselonrId
+import com.twittelonr.timelonlinelonselonrvicelon.modelonl.TimelonlinelonId
+import com.twittelonr.timelonlinelonselonrvicelon.modelonl.corelon.TimelonlinelonKind
 
-object Timeline {
-  def empty(id: TimelineId): Timeline = {
-    Timeline(id, Nil)
+objelonct Timelonlinelon {
+  delonf elonmpty(id: TimelonlinelonId): Timelonlinelon = {
+    Timelonlinelon(id, Nil)
   }
 
-  def fromThrift(timeline: thrift.Timeline): Timeline = {
-    Timeline(
-      id = TimelineId.fromThrift(timeline.id),
-      entries = timeline.entries.map(TimelineEntryEnvelope.fromThrift)
+  delonf fromThrift(timelonlinelon: thrift.Timelonlinelon): Timelonlinelon = {
+    Timelonlinelon(
+      id = TimelonlinelonId.fromThrift(timelonlinelon.id),
+      elonntrielons = timelonlinelon.elonntrielons.map(Timelonlinelonelonntryelonnvelonlopelon.fromThrift)
     )
   }
 
-  def throwIfIdInvalid(id: TimelineId): Unit = {
-    // Note: if we support timelines other than TimelineKind.home, we need to update
-    //       the implementation of userId method here and in TimelineQuery class.
-    require(id.kind == TimelineKind.home, s"Expected TimelineKind.home, found: ${id.kind}")
+  delonf throwIfIdInvalid(id: TimelonlinelonId): Unit = {
+    // Notelon: if welon support timelonlinelons othelonr than TimelonlinelonKind.homelon, welon nelonelond to updatelon
+    //       thelon implelonmelonntation of uselonrId melonthod helonrelon and in TimelonlinelonQuelonry class.
+    relonquirelon(id.kind == TimelonlinelonKind.homelon, s"elonxpelonctelond TimelonlinelonKind.homelon, found: ${id.kind}")
   }
 }
 
-case class Timeline(id: TimelineId, entries: Seq[TimelineEntryEnvelope]) {
+caselon class Timelonlinelon(id: TimelonlinelonId, elonntrielons: Selonq[Timelonlinelonelonntryelonnvelonlopelon]) {
 
   throwIfInvalid()
 
-  def userId: UserId = {
+  delonf uselonrId: UselonrId = {
     id.id
   }
 
-  def throwIfInvalid(): Unit = {
-    Timeline.throwIfIdInvalid(id)
-    entries.foreach(_.throwIfInvalid())
+  delonf throwIfInvalid(): Unit = {
+    Timelonlinelon.throwIfIdInvalid(id)
+    elonntrielons.forelonach(_.throwIfInvalid())
   }
 
-  def toThrift: thrift.Timeline = {
-    thrift.Timeline(
+  delonf toThrift: thrift.Timelonlinelon = {
+    thrift.Timelonlinelon(
       id = id.toThrift,
-      entries = entries.map(_.toThrift)
+      elonntrielons = elonntrielons.map(_.toThrift)
     )
   }
 }

@@ -1,27 +1,27 @@
-package com.twitter.follow_recommendations.common.transforms.modify_social_proof
+packagelon com.twittelonr.follow_reloncommelonndations.common.transforms.modify_social_proof
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.base.GatedTransform
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.follow_reloncommelonndations.common.baselon.GatelondTransform
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.CandidatelonUselonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.HasClielonntContelonxt
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.timelonlinelons.configapi.HasParams
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class RemoveAccountProofTransform @Inject() (statsReceiver: StatsReceiver)
-    extends GatedTransform[HasClientContext with HasParams, CandidateUser] {
+@Singlelonton
+class RelonmovelonAccountProofTransform @Injelonct() (statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds GatelondTransform[HasClielonntContelonxt with HasParams, CandidatelonUselonr] {
 
-  private val stats = statsReceiver.scope(this.getClass.getSimpleName)
-  private val removedProofsCounter = stats.counter("num_removed_proofs")
+  privatelon val stats = statsReloncelonivelonr.scopelon(this.gelontClass.gelontSimplelonNamelon)
+  privatelon val relonmovelondProofsCountelonr = stats.countelonr("num_relonmovelond_proofs")
 
-  override def transform(
-    target: HasClientContext with HasParams,
-    items: Seq[CandidateUser]
-  ): Stitch[Seq[CandidateUser]] =
-    Stitch.value(items.map { candidate =>
-      removedProofsCounter.incr()
-      candidate.copy(reason = None)
+  ovelonrridelon delonf transform(
+    targelont: HasClielonntContelonxt with HasParams,
+    itelonms: Selonq[CandidatelonUselonr]
+  ): Stitch[Selonq[CandidatelonUselonr]] =
+    Stitch.valuelon(itelonms.map { candidatelon =>
+      relonmovelondProofsCountelonr.incr()
+      candidatelon.copy(relonason = Nonelon)
     })
 }

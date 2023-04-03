@@ -1,6 +1,6 @@
-package com.twitter.follow_recommendations.common.rankers.weighted_candidate_source_ranker
+packagelon com.twittelonr.follow_reloncommelonndations.common.rankelonrs.welonightelond_candidatelon_sourcelon_rankelonr
 
-object WeightMethod extends Enumeration {
-  type WeightMethod = Value
-  val WeightedRandomSampling, WeightedRoundRobin = Value
+objelonct WelonightMelonthod elonxtelonnds elonnumelonration {
+  typelon WelonightMelonthod = Valuelon
+  val WelonightelondRandomSampling, WelonightelondRoundRobin = Valuelon
 }

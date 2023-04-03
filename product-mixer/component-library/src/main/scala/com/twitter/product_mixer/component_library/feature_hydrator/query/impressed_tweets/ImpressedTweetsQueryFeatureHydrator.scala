@@ -1,57 +1,57 @@
-package com.twitter.product_mixer.component_library.feature_hydrator.query.impressed_tweets
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.felonaturelon_hydrator.quelonry.imprelonsselond_twelonelonts
 
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.QueryFeatureHydrator
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.storehaus.ReadableStore
-import com.twitter.timelines.impressionstore.thriftscala.ImpressionList
-import com.twitter.util.Future
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.FelonaturelonWithDelonfaultOnFailurelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMapBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator.QuelonryFelonaturelonHydrator
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.FelonaturelonHydratorIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.storelonhaus.RelonadablelonStorelon
+import com.twittelonr.timelonlinelons.imprelonssionstorelon.thriftscala.ImprelonssionList
+import com.twittelonr.util.Futurelon
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
 /**
- * Query Feature to store ids of the tweets impressed by the user.
+ * Quelonry Felonaturelon to storelon ids of thelon twelonelonts imprelonsselond by thelon uselonr.
  */
-case object ImpressedTweets extends FeatureWithDefaultOnFailure[PipelineQuery, Seq[Long]] {
-  override val defaultValue: Seq[Long] = Seq.empty
+caselon objelonct ImprelonsselondTwelonelonts elonxtelonnds FelonaturelonWithDelonfaultOnFailurelon[PipelonlinelonQuelonry, Selonq[Long]] {
+  ovelonrridelon val delonfaultValuelon: Selonq[Long] = Selonq.elonmpty
 }
 
 /**
- * Enrich the query with a list of tweet ids that the user has already seen.
+ * elonnrich thelon quelonry with a list of twelonelont ids that thelon uselonr has alrelonady selonelonn.
  */
-@Singleton
-case class ImpressedTweetsQueryFeatureHydrator @Inject() (
-  tweetImpressionStore: ReadableStore[Long, ImpressionList])
-    extends QueryFeatureHydrator[PipelineQuery] {
-  override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier("TweetsToExclude")
+@Singlelonton
+caselon class ImprelonsselondTwelonelontsQuelonryFelonaturelonHydrator @Injelonct() (
+  twelonelontImprelonssionStorelon: RelonadablelonStorelon[Long, ImprelonssionList])
+    elonxtelonnds QuelonryFelonaturelonHydrator[PipelonlinelonQuelonry] {
+  ovelonrridelon val idelonntifielonr: FelonaturelonHydratorIdelonntifielonr = FelonaturelonHydratorIdelonntifielonr("TwelonelontsToelonxcludelon")
 
-  override val features: Set[Feature[_, _]] = Set(ImpressedTweets)
+  ovelonrridelon val felonaturelons: Selont[Felonaturelon[_, _]] = Selont(ImprelonsselondTwelonelonts)
 
-  override def hydrate(query: PipelineQuery): Stitch[FeatureMap] = {
-    query.getOptionalUserId match {
-      case Some(userId) =>
-        val featureMapResult: Future[FeatureMap] = tweetImpressionStore
-          .get(userId).map { impressionListOpt =>
-            val tweetIdsOpt = for {
-              impressionList <- impressionListOpt
-              impressions <- impressionList.impressions
-            } yield {
-              impressions.map(_.tweetId)
+  ovelonrridelon delonf hydratelon(quelonry: PipelonlinelonQuelonry): Stitch[FelonaturelonMap] = {
+    quelonry.gelontOptionalUselonrId match {
+      caselon Somelon(uselonrId) =>
+        val felonaturelonMapRelonsult: Futurelon[FelonaturelonMap] = twelonelontImprelonssionStorelon
+          .gelont(uselonrId).map { imprelonssionListOpt =>
+            val twelonelontIdsOpt = for {
+              imprelonssionList <- imprelonssionListOpt
+              imprelonssions <- imprelonssionList.imprelonssions
+            } yielonld {
+              imprelonssions.map(_.twelonelontId)
             }
-            val tweetIds = tweetIdsOpt.getOrElse(Seq.empty)
-            FeatureMapBuilder().add(ImpressedTweets, tweetIds).build()
+            val twelonelontIds = twelonelontIdsOpt.gelontOrelonlselon(Selonq.elonmpty)
+            FelonaturelonMapBuildelonr().add(ImprelonsselondTwelonelonts, twelonelontIds).build()
           }
-        Stitch.callFuture(featureMapResult)
-      // Non-logged-in users do not have userId, returns empty feature
+        Stitch.callFuturelon(felonaturelonMapRelonsult)
+      // Non-loggelond-in uselonrs do not havelon uselonrId, relonturns elonmpty felonaturelon
 
-      case None =>
-        val featureMapResult = FeatureMapBuilder().add(ImpressedTweets, Seq.empty).build()
-        Stitch.value(featureMapResult)
+      caselon Nonelon =>
+        val felonaturelonMapRelonsult = FelonaturelonMapBuildelonr().add(ImprelonsselondTwelonelonts, Selonq.elonmpty).build()
+        Stitch.valuelon(felonaturelonMapRelonsult)
     }
   }
 }

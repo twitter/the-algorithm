@@ -1,58 +1,58 @@
-package com.twitter.product_mixer.component_library.premarshaller.slice.builder
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.prelonmarshallelonr.slicelon.buildelonr
 
-import com.twitter.product_mixer.component_library.premarshaller.slice.builder.SliceCursorUpdater.getCursorByType
-import com.twitter.product_mixer.core.model.marshalling.response.slice.CursorItem
-import com.twitter.product_mixer.core.model.marshalling.response.slice.CursorType
-import com.twitter.product_mixer.core.model.marshalling.response.slice.SliceItem
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.product_mixelonr.componelonnt_library.prelonmarshallelonr.slicelon.buildelonr.SlicelonCursorUpdatelonr.gelontCursorByTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.slicelon.CursorItelonm
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.slicelon.CursorTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.slicelon.SlicelonItelonm
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
-object SliceCursorUpdater {
+objelonct SlicelonCursorUpdatelonr {
 
-  def getCursorByType(
-    items: Seq[SliceItem],
-    cursorType: CursorType
-  ): Option[CursorItem] = {
-    items.collectFirst {
-      case cursor: CursorItem if cursor.cursorType == cursorType => cursor
+  delonf gelontCursorByTypelon(
+    itelonms: Selonq[SlicelonItelonm],
+    cursorTypelon: CursorTypelon
+  ): Option[CursorItelonm] = {
+    itelonms.collelonctFirst {
+      caselon cursor: CursorItelonm if cursor.cursorTypelon == cursorTypelon => cursor
     }
   }
 }
 
 /**
- * If [[SliceCursorBuilder.includeOperation]] is true and a cursor does exist in the `items`,
- * this will run the the underlying [[SliceCursorBuilder]] with the full `items`
- * (including all cursors which may be present) then filter out only the originally
- * found [[CursorItem]] from the results). Then append the new cursor to the end of the results.
+ * If [[SlicelonCursorBuildelonr.includelonOpelonration]] is truelon and a cursor doelons elonxist in thelon `itelonms`,
+ * this will run thelon thelon undelonrlying [[SlicelonCursorBuildelonr]] with thelon full `itelonms`
+ * (including all cursors which may belon prelonselonnt) thelonn filtelonr out only thelon originally
+ * found [[CursorItelonm]] from thelon relonsults). Thelonn appelonnd thelon nelonw cursor to thelon elonnd of thelon relonsults.
  *
- * If you have multiple cursors that need to be updated, you will need to have multiple updaters.
+ * If you havelon multiplelon cursors that nelonelond to belon updatelond, you will nelonelond to havelon multiplelon updatelonrs.
  *
- * If a CursorCandidate is returned by a Candidate Source, use this trait to update the Cursor
- * (if necessary) and add it to the end of the candidates list.
+ * If a CursorCandidatelon is relonturnelond by a Candidatelon Sourcelon, uselon this trait to updatelon thelon Cursor
+ * (if neloncelonssary) and add it to thelon elonnd of thelon candidatelons list.
  */
-trait SliceCursorUpdater[-Query <: PipelineQuery] extends SliceCursorBuilder[Query] { self =>
+trait SlicelonCursorUpdatelonr[-Quelonry <: PipelonlinelonQuelonry] elonxtelonnds SlicelonCursorBuildelonr[Quelonry] { selonlf =>
 
-  def getExistingCursor(items: Seq[SliceItem]): Option[CursorItem] = {
-    getCursorByType(items, self.cursorType)
+  delonf gelontelonxistingCursor(itelonms: Selonq[SlicelonItelonm]): Option[CursorItelonm] = {
+    gelontCursorByTypelon(itelonms, selonlf.cursorTypelon)
   }
 
-  def update(query: Query, items: Seq[SliceItem]): Seq[SliceItem] = {
-    if (includeOperation(query, items)) {
-      getExistingCursor(items)
-        .map { existingCursor =>
-          // Safe get because includeOperation() is shared in this context
-          val newCursor = build(query, items).get
+  delonf updatelon(quelonry: Quelonry, itelonms: Selonq[SlicelonItelonm]): Selonq[SlicelonItelonm] = {
+    if (includelonOpelonration(quelonry, itelonms)) {
+      gelontelonxistingCursor(itelonms)
+        .map { elonxistingCursor =>
+          // Safelon gelont beloncauselon includelonOpelonration() is sharelond in this contelonxt
+          val nelonwCursor = build(quelonry, itelonms).gelont
 
-          items.filterNot(_ == existingCursor) :+ newCursor
-        }.getOrElse(items)
-    } else items
+          itelonms.filtelonrNot(_ == elonxistingCursor) :+ nelonwCursor
+        }.gelontOrelonlselon(itelonms)
+    } elonlselon itelonms
   }
 }
 
-trait SliceCursorUpdaterFromUnderlyingBuilder[-Query <: PipelineQuery]
-    extends SliceCursorUpdater[Query] {
-  def underlying: SliceCursorBuilder[Query]
-  override def cursorValue(
-    query: Query,
-    entries: Seq[SliceItem]
-  ): String = underlying.cursorValue(query, entries)
+trait SlicelonCursorUpdatelonrFromUndelonrlyingBuildelonr[-Quelonry <: PipelonlinelonQuelonry]
+    elonxtelonnds SlicelonCursorUpdatelonr[Quelonry] {
+  delonf undelonrlying: SlicelonCursorBuildelonr[Quelonry]
+  ovelonrridelon delonf cursorValuelon(
+    quelonry: Quelonry,
+    elonntrielons: Selonq[SlicelonItelonm]
+  ): String = undelonrlying.cursorValuelon(quelonry, elonntrielons)
 }

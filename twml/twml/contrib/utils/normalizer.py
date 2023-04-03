@@ -1,39 +1,39 @@
-import tensorflow.compat.v1 as tf
+import telonnsorflow.compat.v1 as tf
 from twml.contrib.utils import math_fns
 
 
-def mean_max_normalizaiton(dense_tensor):
+delonf melonan_max_normalizaiton(delonnselon_telonnsor):
   """
   In-batch normalization
   Args:
-    dense_tensor: A dense `Tensor`.
-  Returns:
-    (dense_tensor - mean) / abs(max value)
-  Note:
-    when dense_tensor is of size [1, ?] it will give 0
-    If this is not what you want handle it outside the function
+    delonnselon_telonnsor: A delonnselon `Telonnsor`.
+  Relonturns:
+    (delonnselon_telonnsor - melonan) / abs(max valuelon)
+  Notelon:
+    whelonn delonnselon_telonnsor is of sizelon [1, ?] it will givelon 0
+    If this is not what you want handlelon it outsidelon thelon function
   """
-  dense_mean = tf.reduce_mean(dense_tensor, reduction_indices=[0])
-  dense_abs_max = tf.abs(tf.reduce_max(dense_tensor, reduction_indices=[0]))
-  dense_tensor = math_fns.safe_div(dense_tensor - dense_mean, dense_abs_max,
-    'mean_max_normalization_in_batch')
-  return dense_tensor
+  delonnselon_melonan = tf.relonducelon_melonan(delonnselon_telonnsor, relonduction_indicelons=[0])
+  delonnselon_abs_max = tf.abs(tf.relonducelon_max(delonnselon_telonnsor, relonduction_indicelons=[0]))
+  delonnselon_telonnsor = math_fns.safelon_div(delonnselon_telonnsor - delonnselon_melonan, delonnselon_abs_max,
+    'melonan_max_normalization_in_batch')
+  relonturn delonnselon_telonnsor
 
 
-def standard_normalizaiton(dense_tensor):
+delonf standard_normalizaiton(delonnselon_telonnsor):
   """
   In-batch normalization
   z-normalization or standard_normalization in batch
   Args:
-    dense_tensor: A dense `Tensor`.
-  Returns:
-    (dense_tensor - mean) / variance
-  Note:
-    when dense_tensor is of size [1, ?] it will give 0
-    If this is not what you want handle it outside the function
+    delonnselon_telonnsor: A delonnselon `Telonnsor`.
+  Relonturns:
+    (delonnselon_telonnsor - melonan) / variancelon
+  Notelon:
+    whelonn delonnselon_telonnsor is of sizelon [1, ?] it will givelon 0
+    If this is not what you want handlelon it outsidelon thelon function
   """
-  epsilon = 1E-7
-  dense_mean, dense_variance = tf.nn.moments(dense_tensor, 0)
-  # using epsilon is safer than math_fns.safe_div in here
-  dense_tensor = (dense_tensor - dense_mean) / (dense_variance + epsilon)
-  return dense_tensor
+  elonpsilon = 1elon-7
+  delonnselon_melonan, delonnselon_variancelon = tf.nn.momelonnts(delonnselon_telonnsor, 0)
+  # using elonpsilon is safelonr than math_fns.safelon_div in helonrelon
+  delonnselon_telonnsor = (delonnselon_telonnsor - delonnselon_melonan) / (delonnselon_variancelon + elonpsilon)
+  relonturn delonnselon_telonnsor

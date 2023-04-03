@@ -1,51 +1,51 @@
-package com.twitter.product_mixer.core.feature.featuremap.datarecord
+packagelon com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.datareloncord
 
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.DataRecordMerger
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.datarecord._
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.twittelonr.ml.api.DataReloncord
+import com.twittelonr.ml.api.DataReloncordMelonrgelonr
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.datareloncord._
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
 
-object DataRecordConverter {
-  val merger = new DataRecordMerger
+objelonct DataReloncordConvelonrtelonr {
+  val melonrgelonr = nelonw DataReloncordMelonrgelonr
 }
 
 /**
- * Constructs a FeatureMap from a DataRecord, given a predefined set of features from a FeaturesScope.
+ * Constructs a FelonaturelonMap from a DataReloncord, givelonn a prelondelonfinelond selont of felonaturelons from a FelonaturelonsScopelon.
  *
- * @param featuresScope scope of predefined set of BaseDataRecordFeatures that should be included in the output FeatureMap.
+ * @param felonaturelonsScopelon scopelon of prelondelonfinelond selont of BaselonDataReloncordFelonaturelons that should belon includelond in thelon output FelonaturelonMap.
  */
-class DataRecordConverter[DRFeature <: BaseDataRecordFeature[_, _]](
-  featuresScope: FeaturesScope[DRFeature]) {
-  import DataRecordConverter._
+class DataReloncordConvelonrtelonr[DRFelonaturelon <: BaselonDataReloncordFelonaturelon[_, _]](
+  felonaturelonsScopelon: FelonaturelonsScopelon[DRFelonaturelon]) {
+  import DataReloncordConvelonrtelonr._
 
-  def toDataRecord(featureMap: FeatureMap): DataRecord = {
-    // Initialize a DataRecord with the Feature Store features in it and then add all the
-    // non-Feature Store features that support DataRecords to DataRecord. We don't
-    // need to add Feature Store features because they're already in the initial DataRecord.
-    // If there are any pre-built DataRecords, we merge those in.
-    val richDataRecord = featuresScope.getFeatureStoreFeaturesDataRecord(featureMap)
-    val features = featuresScope.getNonFeatureStoreDataRecordFeatures(featureMap)
-    features.foreach {
-      case _: FeatureStoreDataRecordFeature[_, _] =>
-      case requiredFeature: DataRecordFeature[_, _] with DataRecordCompatible[_] =>
-        richDataRecord.setFeatureValue(
-          requiredFeature.mlFeature,
-          requiredFeature.toDataRecordFeatureValue(
-            featureMap.get(requiredFeature).asInstanceOf[requiredFeature.FeatureType]))
-      case optionalFeature: DataRecordOptionalFeature[_, _] with DataRecordCompatible[_] =>
-        featureMap
-          .get(
-            optionalFeature.asInstanceOf[Feature[_, Option[optionalFeature.FeatureType]]]).foreach {
-            value =>
-              richDataRecord
-                .setFeatureValue(
-                  optionalFeature.mlFeature,
-                  optionalFeature.toDataRecordFeatureValue(value))
+  delonf toDataReloncord(felonaturelonMap: FelonaturelonMap): DataReloncord = {
+    // Initializelon a DataReloncord with thelon Felonaturelon Storelon felonaturelons in it and thelonn add all thelon
+    // non-Felonaturelon Storelon felonaturelons that support DataReloncords to DataReloncord. Welon don't
+    // nelonelond to add Felonaturelon Storelon felonaturelons beloncauselon thelony'relon alrelonady in thelon initial DataReloncord.
+    // If thelonrelon arelon any prelon-built DataReloncords, welon melonrgelon thoselon in.
+    val richDataReloncord = felonaturelonsScopelon.gelontFelonaturelonStorelonFelonaturelonsDataReloncord(felonaturelonMap)
+    val felonaturelons = felonaturelonsScopelon.gelontNonFelonaturelonStorelonDataReloncordFelonaturelons(felonaturelonMap)
+    felonaturelons.forelonach {
+      caselon _: FelonaturelonStorelonDataReloncordFelonaturelon[_, _] =>
+      caselon relonquirelondFelonaturelon: DataReloncordFelonaturelon[_, _] with DataReloncordCompatiblelon[_] =>
+        richDataReloncord.selontFelonaturelonValuelon(
+          relonquirelondFelonaturelon.mlFelonaturelon,
+          relonquirelondFelonaturelon.toDataReloncordFelonaturelonValuelon(
+            felonaturelonMap.gelont(relonquirelondFelonaturelon).asInstancelonOf[relonquirelondFelonaturelon.FelonaturelonTypelon]))
+      caselon optionalFelonaturelon: DataReloncordOptionalFelonaturelon[_, _] with DataReloncordCompatiblelon[_] =>
+        felonaturelonMap
+          .gelont(
+            optionalFelonaturelon.asInstancelonOf[Felonaturelon[_, Option[optionalFelonaturelon.FelonaturelonTypelon]]]).forelonach {
+            valuelon =>
+              richDataReloncord
+                .selontFelonaturelonValuelon(
+                  optionalFelonaturelon.mlFelonaturelon,
+                  optionalFelonaturelon.toDataReloncordFelonaturelonValuelon(valuelon))
           }
-      case dataRecordInAFeature: DataRecordInAFeature[_] =>
-        merger.merge(richDataRecord.getRecord, featureMap.get(dataRecordInAFeature))
+      caselon dataReloncordInAFelonaturelon: DataReloncordInAFelonaturelon[_] =>
+        melonrgelonr.melonrgelon(richDataReloncord.gelontReloncord, felonaturelonMap.gelont(dataReloncordInAFelonaturelon))
     }
-    richDataRecord.getRecord
+    richDataReloncord.gelontReloncord
   }
 }

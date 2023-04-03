@@ -1,29 +1,29 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.metadata
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.icon.HorizonIcon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.icon.HorizonIcon
 
-case class FeedbackAction(
-  feedbackType: FeedbackType,
+caselon class FelonelondbackAction(
+  felonelondbackTypelon: FelonelondbackTypelon,
   prompt: Option[String],
   confirmation: Option[String],
-  childFeedbackActions: Option[Seq[ChildFeedbackAction]],
-  feedbackUrl: Option[String],
-  hasUndoAction: Option[Boolean],
-  confirmationDisplayType: Option[ConfirmationDisplayType],
-  clientEventInfo: Option[ClientEventInfo],
+  childFelonelondbackActions: Option[Selonq[ChildFelonelondbackAction]],
+  felonelondbackUrl: Option[String],
+  hasUndoAction: Option[Boolelonan],
+  confirmationDisplayTypelon: Option[ConfirmationDisplayTypelon],
+  clielonntelonvelonntInfo: Option[ClielonntelonvelonntInfo],
   icon: Option[HorizonIcon],
-  richBehavior: Option[RichFeedbackBehavior],
+  richBelonhavior: Option[RichFelonelondbackBelonhavior],
   subprompt: Option[String],
-  encodedFeedbackRequest: Option[String])
+  elonncodelondFelonelondbackRelonquelonst: Option[String])
 
-case class ChildFeedbackAction(
-  feedbackType: FeedbackType,
+caselon class ChildFelonelondbackAction(
+  felonelondbackTypelon: FelonelondbackTypelon,
   prompt: Option[String],
   confirmation: Option[String],
-  feedbackUrl: Option[String],
-  hasUndoAction: Option[Boolean],
-  confirmationDisplayType: Option[ConfirmationDisplayType],
-  clientEventInfo: Option[ClientEventInfo],
+  felonelondbackUrl: Option[String],
+  hasUndoAction: Option[Boolelonan],
+  confirmationDisplayTypelon: Option[ConfirmationDisplayTypelon],
+  clielonntelonvelonntInfo: Option[ClielonntelonvelonntInfo],
   icon: Option[HorizonIcon],
-  richBehavior: Option[RichFeedbackBehavior],
+  richBelonhavior: Option[RichFelonelondbackBelonhavior],
   subprompt: Option[String])

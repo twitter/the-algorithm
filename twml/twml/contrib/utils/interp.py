@@ -1,94 +1,94 @@
 """
-Interpolation functions
+Intelonrpolation functions
 """
 
 import libtwml
-import tensorflow.compat.v1 as tf
+import telonnsorflow.compat.v1 as tf
 import twml
 
 
-def linear_interp1(inputs, ref_inputs, ref_outputs):
+delonf linelonar_intelonrp1(inputs, relonf_inputs, relonf_outputs):
   """
-  Perform 1D linear interpolation.
-  Arguments:
+  Pelonrform 1D linelonar intelonrpolation.
+  Argumelonnts:
     inputs:
-      The query input values.
-    ref_inputs:
-      Reference grid points used for interpolation.
-    ref_outputs:
-      Reference output values used for interpolation.
+      Thelon quelonry input valuelons.
+    relonf_inputs:
+      Relonfelonrelonncelon grid points uselond for intelonrpolation.
+    relonf_outputs:
+      Relonfelonrelonncelon output valuelons uselond for intelonrpolation.
 
-  Returns:
-    The interpolated outputs for the requested input values.
+  Relonturns:
+    Thelon intelonrpolatelond outputs for thelon relonquelonstelond input valuelons.
   """
 
-  inputs = tf.convert_to_tensor(inputs)
-  ref_inputs = tf.convert_to_tensor(ref_inputs)
-  ref_outputs = tf.convert_to_tensor(ref_outputs)
+  inputs = tf.convelonrt_to_telonnsor(inputs)
+  relonf_inputs = tf.convelonrt_to_telonnsor(relonf_inputs)
+  relonf_outputs = tf.convelonrt_to_telonnsor(relonf_outputs)
 
-  ndims = inputs.shape.ndims
-  ref_inputs_ndims = ref_inputs.shape.ndims
-  ref_outputs_ndims = ref_inputs.shape.ndims
+  ndims = inputs.shapelon.ndims
+  relonf_inputs_ndims = relonf_inputs.shapelon.ndims
+  relonf_outputs_ndims = relonf_inputs.shapelon.ndims
 
-  if (ref_inputs_ndims != ndims):
-    raise ValueError("Dimension mismatch. inputs: %d, ref_inputs: %d" % (ndims, ref_inputs_ndims))
+  if (relonf_inputs_ndims != ndims):
+    raiselon Valuelonelonrror("Dimelonnsion mismatch. inputs: %d, relonf_inputs: %d" % (ndims, relonf_inputs_ndims))
 
-  if (ref_outputs_ndims != ndims):
-    raise ValueError("Dimension mismatch. inputs: %d, ref_outputs: %d" % (ndims, ref_outputs_ndims))
+  if (relonf_outputs_ndims != ndims):
+    raiselon Valuelonelonrror("Dimelonnsion mismatch. inputs: %d, relonf_outputs: %d" % (ndims, relonf_outputs_ndims))
 
   if ndims > 2:
-    raise ValueError("Input dimensions should be < 2D. But got %d." % ndims)
+    raiselon Valuelonelonrror("Input dimelonnsions should belon < 2D. But got %d." % ndims)
 
-  original_input_shape = tf.shape(inputs)
-  # This is needed because isotonic_calibration expects:
-  # - inputs of size [num_samples, num_classes]
-  # - ref_inputs, ref_outputs of size [num_classes, num_bins]
-  inputs = tf.reshape(inputs, [-1, 1])
-  ref_inputs = tf.reshape(ref_inputs, [1, -1])
-  ref_outputs = tf.reshape(ref_outputs, [1, -1])
+  original_input_shapelon = tf.shapelon(inputs)
+  # This is nelonelondelond beloncauselon isotonic_calibration elonxpeloncts:
+  # - inputs of sizelon [num_samplelons, num_classelons]
+  # - relonf_inputs, relonf_outputs of sizelon [num_classelons, num_bins]
+  inputs = tf.relonshapelon(inputs, [-1, 1])
+  relonf_inputs = tf.relonshapelon(relonf_inputs, [1, -1])
+  relonf_outputs = tf.relonshapelon(relonf_outputs, [1, -1])
 
-  # isotonic_calibration is simply doing linear interpolation.
-  # This needs to be renamed in the future to make it consistent.
-  outputs = libtwml.ops.isotonic_calibration(inputs, ref_inputs, ref_outputs)
-  return tf.reshape(outputs, original_input_shape)
+  # isotonic_calibration is simply doing linelonar intelonrpolation.
+  # This nelonelonds to belon relonnamelond in thelon futurelon to makelon it consistelonnt.
+  outputs = libtwml.ops.isotonic_calibration(inputs, relonf_inputs, relonf_outputs)
+  relonturn tf.relonshapelon(outputs, original_input_shapelon)
 
 
-def linear_interp1_by_class(inputs, input_classes, ref_inputs, ref_outputs):
+delonf linelonar_intelonrp1_by_class(inputs, input_classelons, relonf_inputs, relonf_outputs):
   """
-  Perform 1D linear interpolation.
-  Arguments:
+  Pelonrform 1D linelonar intelonrpolation.
+  Argumelonnts:
     inputs:
-      The query input values.
-    input_classes:
-      The class index to use from the reference grid.
-    ref_inputs:
-      Reference 2D grid points used for interpolation.
-      Each row denotes the grid from a different class.
-    ref_outputs:
-      Reference 2D output values used for interpolation.
-      Each row denotes the grid from a different class.
+      Thelon quelonry input valuelons.
+    input_classelons:
+      Thelon class indelonx to uselon from thelon relonfelonrelonncelon grid.
+    relonf_inputs:
+      Relonfelonrelonncelon 2D grid points uselond for intelonrpolation.
+      elonach row delonnotelons thelon grid from a diffelonrelonnt class.
+    relonf_outputs:
+      Relonfelonrelonncelon 2D output valuelons uselond for intelonrpolation.
+      elonach row delonnotelons thelon grid from a diffelonrelonnt class.
 
-  Returns:
-    The interpolated outputs for the requested input values.
+  Relonturns:
+    Thelon intelonrpolatelond outputs for thelon relonquelonstelond input valuelons.
   """
 
-  inputs = tf.convert_to_tensor(inputs)
-  input_classes = tf.convert_to_tensor(input_classes)
-  ref_inputs = tf.convert_to_tensor(ref_inputs)
-  ref_outputs = tf.convert_to_tensor(ref_outputs)
+  inputs = tf.convelonrt_to_telonnsor(inputs)
+  input_classelons = tf.convelonrt_to_telonnsor(input_classelons)
+  relonf_inputs = tf.convelonrt_to_telonnsor(relonf_inputs)
+  relonf_outputs = tf.convelonrt_to_telonnsor(relonf_outputs)
 
-  original_input_shape = tf.shape(inputs)
+  original_input_shapelon = tf.shapelon(inputs)
 
   # pass through
-  def in_func(x):
-    return x
+  delonf in_func(x):
+    relonturn x
 
-  # indexed function
-  def cond_func(i, fn):
-    idx = input_classes[i]
-    x = tf.expand_dims(fn(), axis=0)
-    return linear_interp1(x, ref_inputs[idx], ref_outputs[idx])
+  # indelonxelond function
+  delonf cond_func(i, fn):
+    idx = input_classelons[i]
+    x = tf.elonxpand_dims(fn(), axis=0)
+    relonturn linelonar_intelonrp1(x, relonf_inputs[idx], relonf_outputs[idx])
 
-  # Use while loop for now, needs to be replace by a custom C++ op later.
+  # Uselon whilelon loop for now, nelonelonds to belon relonplacelon by a custom C++ op latelonr.
   outputs = twml.util.batch_apply(in_func, inputs, cond_func=cond_func)
-  return tf.reshape(outputs, original_input_shape)
+  relonturn tf.relonshapelon(outputs, original_input_shapelon)

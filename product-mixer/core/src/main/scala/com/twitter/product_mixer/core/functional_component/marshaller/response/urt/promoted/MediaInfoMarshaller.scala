@@ -1,24 +1,24 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.promotelond
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.MediaInfo
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.promotelond.MelondiaInfo
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class MediaInfoMarshaller @Inject() (
-  callToActionMarshaller: CallToActionMarshaller,
-  videoVariantsMarshaller: VideoVariantsMarshaller) {
-  def apply(mediaInfo: MediaInfo): urt.MediaInfo = {
-    urt.MediaInfo(
-      uuid = mediaInfo.uuid,
-      publisherId = mediaInfo.publisherId,
-      callToAction = mediaInfo.callToAction.map(callToActionMarshaller(_)),
-      durationMillis = mediaInfo.durationMillis,
-      videoVariants = mediaInfo.videoVariants.map(videoVariantsMarshaller(_)),
-      advertiserName = mediaInfo.advertiserName,
-      renderAdByAdvertiserName = mediaInfo.renderAdByAdvertiserName,
-      advertiserProfileImageUrl = mediaInfo.advertiserProfileImageUrl
+@Singlelonton
+class MelondiaInfoMarshallelonr @Injelonct() (
+  callToActionMarshallelonr: CallToActionMarshallelonr,
+  videlonoVariantsMarshallelonr: VidelonoVariantsMarshallelonr) {
+  delonf apply(melondiaInfo: MelondiaInfo): urt.MelondiaInfo = {
+    urt.MelondiaInfo(
+      uuid = melondiaInfo.uuid,
+      publishelonrId = melondiaInfo.publishelonrId,
+      callToAction = melondiaInfo.callToAction.map(callToActionMarshallelonr(_)),
+      durationMillis = melondiaInfo.durationMillis,
+      videlonoVariants = melondiaInfo.videlonoVariants.map(videlonoVariantsMarshallelonr(_)),
+      advelonrtiselonrNamelon = melondiaInfo.advelonrtiselonrNamelon,
+      relonndelonrAdByAdvelonrtiselonrNamelon = melondiaInfo.relonndelonrAdByAdvelonrtiselonrNamelon,
+      advelonrtiselonrProfilelonImagelonUrl = melondiaInfo.advelonrtiselonrProfilelonImagelonUrl
     )
   }
 }

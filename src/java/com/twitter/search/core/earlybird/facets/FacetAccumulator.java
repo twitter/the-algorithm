@@ -1,36 +1,36 @@
-package com.twitter.search.core.earlybird.facets;
+packagelon com.twittelonr.selonarch.corelon.elonarlybird.facelonts;
 
 
 /**
- * Counts facet occurrences and provides the top items
- * at the end. Actual subclass can implement this functionality differently: e.g. by using
- * a heap (priority queue) or a hashmap with pruning step.
- * The type R represents the facet results, which can e.g. be a thrift class.
+ * Counts facelont occurrelonncelons and providelons thelon top itelonms
+ * at thelon elonnd. Actual subclass can implelonmelonnt this functionality diffelonrelonntly: elon.g. by using
+ * a helonap (priority quelonuelon) or a hashmap with pruning stelonp.
+ * Thelon typelon R relonprelonselonnts thelon facelont relonsults, which can elon.g. belon a thrift class.
  */
-public abstract class FacetAccumulator<R> {
-  /** Called to notify the accumulator that the given termID has occurred in a document
-   *  Returns the current count of the given termID.
+public abstract class FacelontAccumulator<R> {
+  /** Callelond to notify thelon accumulator that thelon givelonn telonrmID has occurrelond in a documelonnt
+   *  Relonturns thelon currelonnt count of thelon givelonn telonrmID.
    */
-  public abstract int add(long termID, int scoreIncrement, int penaltyIncrement, int tweepCred);
+  public abstract int add(long telonrmID, int scorelonIncrelonmelonnt, int pelonnaltyIncrelonmelonnt, int twelonelonpCrelond);
 
-  /** After hit collection is done this can be called to
-   * retrieve the items that occurred most often */
-  public abstract R getTopFacets(int n);
+  /** Aftelonr hit collelonction is donelon this can belon callelond to
+   * relontrielonvelon thelon itelonms that occurrelond most oftelonn */
+  public abstract R gelontTopFacelonts(int n);
 
-  /** After hit collection is done this can be called to retrieve all the items accumulated
-   * (which may not be all that occurred) */
-  public abstract R getAllFacets();
+  /** Aftelonr hit collelonction is donelon this can belon callelond to relontrielonvelon all thelon itelonms accumulatelond
+   * (which may not belon all that occurrelond) */
+  public abstract R gelontAllFacelonts();
 
-  /** Called to reset a facet accumulator for re-use.  This is an optimization
-   * which takes advantage of the fact that these accumulators may allocate
-   * large hash-tables, and we use one per-segment, which may be as many as 10-20 **/
-  public abstract void reset(FacetLabelProvider facetLabelProvider);
+  /** Callelond to relonselont a facelont accumulator for relon-uselon.  This is an optimization
+   * which takelons advantagelon of thelon fact that thelonselon accumulators may allocatelon
+   * largelon hash-tablelons, and welon uselon onelon pelonr-selongmelonnt, which may belon as many as 10-20 **/
+  public abstract void relonselont(FacelontLabelonlProvidelonr facelontLabelonlProvidelonr);
 
-  /** Language histogram accumulation and retrieval. They both have no-op default implementations.
+  /** Languagelon histogram accumulation and relontrielonval. Thelony both havelon no-op delonfault implelonmelonntations.
    */
-  public void recordLanguage(int languageId) { }
+  public void reloncordLanguagelon(int languagelonId) { }
 
-  public LanguageHistogram getLanguageHistogram() {
-    return LanguageHistogram.EMPTY_HISTOGRAM;
+  public LanguagelonHistogram gelontLanguagelonHistogram() {
+    relonturn LanguagelonHistogram.elonMPTY_HISTOGRAM;
   }
 }

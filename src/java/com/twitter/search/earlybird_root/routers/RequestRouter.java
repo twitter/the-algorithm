@@ -1,144 +1,144 @@
-package com.twitter.search.earlybird_root.routers;
+packagelon com.twittelonr.selonarch.elonarlybird_root.routelonrs;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.search.common.futures.Futures;
-import com.twitter.search.earlybird.thrift.EarlybirdDebugInfo;
-import com.twitter.search.earlybird.thrift.EarlybirdRequestResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.util.Future;
-import com.twitter.util.Try;
+import com.twittelonr.selonarch.common.futurelons.Futurelons;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdDelonbugInfo;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonquelonstRelonsponselon;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
+import com.twittelonr.selonarch.elonarlybird_root.common.elonarlybirdRelonquelonstContelonxt;
+import com.twittelonr.util.Futurelon;
+import com.twittelonr.util.Try;
 
 /**
- * Responsible for handling requests in superroot.
+ * Relonsponsiblelon for handling relonquelonsts in supelonrroot.
  */
-public abstract class RequestRouter {
-  private static final Logger LOG = LoggerFactory.getLogger(RequestRouter.class);
+public abstract class RelonquelonstRoutelonr {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(RelonquelonstRoutelonr.class);
 
   /**
-   * Saved request and response, to be included in debug info.
+   * Savelond relonquelonst and relonsponselon, to belon includelond in delonbug info.
    */
-  class RequestResponse {
-    // Where is this request sent to. Freeform text like "realtime", "archive", etc.
-    private String sentTo;
-    private EarlybirdRequestContext requestContext;
-    private Future<EarlybirdResponse> earlybirdResponseFuture;
+  class RelonquelonstRelonsponselon {
+    // Whelonrelon is this relonquelonst selonnt to. Frelonelonform telonxt likelon "relonaltimelon", "archivelon", elontc.
+    privatelon String selonntTo;
+    privatelon elonarlybirdRelonquelonstContelonxt relonquelonstContelonxt;
+    privatelon Futurelon<elonarlybirdRelonsponselon> elonarlybirdRelonsponselonFuturelon;
 
-    RequestResponse(String sentTo,
-                           EarlybirdRequestContext requestContext,
-                           Future<EarlybirdResponse> earlybirdResponseFuture) {
-      this.sentTo = sentTo;
-      this.requestContext = requestContext;
-      this.earlybirdResponseFuture = earlybirdResponseFuture;
+    RelonquelonstRelonsponselon(String selonntTo,
+                           elonarlybirdRelonquelonstContelonxt relonquelonstContelonxt,
+                           Futurelon<elonarlybirdRelonsponselon> elonarlybirdRelonsponselonFuturelon) {
+      this.selonntTo = selonntTo;
+      this.relonquelonstContelonxt = relonquelonstContelonxt;
+      this.elonarlybirdRelonsponselonFuturelon = elonarlybirdRelonsponselonFuturelon;
     }
 
-    String getSentTo() {
-      return sentTo;
+    String gelontSelonntTo() {
+      relonturn selonntTo;
     }
 
-    public EarlybirdRequestContext getRequestContext() {
-      return requestContext;
+    public elonarlybirdRelonquelonstContelonxt gelontRelonquelonstContelonxt() {
+      relonturn relonquelonstContelonxt;
     }
 
-    Future<EarlybirdResponse> getEarlybirdResponseFuture() {
-      return earlybirdResponseFuture;
+    Futurelon<elonarlybirdRelonsponselon> gelontelonarlybirdRelonsponselonFuturelon() {
+      relonturn elonarlybirdRelonsponselonFuturelon;
     }
   }
 
   /**
-   * Forward a request to different clusters and merge the responses back into one response.
-   * @param requestContext
+   * Forward a relonquelonst to diffelonrelonnt clustelonrs and melonrgelon thelon relonsponselons back into onelon relonsponselon.
+   * @param relonquelonstContelonxt
    */
-  public abstract Future<EarlybirdResponse> route(EarlybirdRequestContext requestContext);
+  public abstract Futurelon<elonarlybirdRelonsponselon> routelon(elonarlybirdRelonquelonstContelonxt relonquelonstContelonxt);
 
   /**
-   * Save a request (and its response future) to be included in debug info.
+   * Savelon a relonquelonst (and its relonsponselon futurelon) to belon includelond in delonbug info.
    */
-  void saveRequestResponse(
-      List<RequestResponse> requestResponses,
-      String sentTo,
-      EarlybirdRequestContext earlybirdRequestContext,
-      Future<EarlybirdResponse> earlybirdResponseFuture
+  void savelonRelonquelonstRelonsponselon(
+      List<RelonquelonstRelonsponselon> relonquelonstRelonsponselons,
+      String selonntTo,
+      elonarlybirdRelonquelonstContelonxt elonarlybirdRelonquelonstContelonxt,
+      Futurelon<elonarlybirdRelonsponselon> elonarlybirdRelonsponselonFuturelon
   ) {
-    requestResponses.add(
-        new RequestResponse(
-            sentTo,
-            earlybirdRequestContext,
-            earlybirdResponseFuture
+    relonquelonstRelonsponselons.add(
+        nelonw RelonquelonstRelonsponselon(
+            selonntTo,
+            elonarlybirdRelonquelonstContelonxt,
+            elonarlybirdRelonsponselonFuturelon
         )
     );
   }
 
-  Future<EarlybirdResponse> maybeAttachSentRequestsToDebugInfo(
-      List<RequestResponse> requestResponses,
-      EarlybirdRequestContext requestContext,
-      Future<EarlybirdResponse> response
+  Futurelon<elonarlybirdRelonsponselon> maybelonAttachSelonntRelonquelonstsToDelonbugInfo(
+      List<RelonquelonstRelonsponselon> relonquelonstRelonsponselons,
+      elonarlybirdRelonquelonstContelonxt relonquelonstContelonxt,
+      Futurelon<elonarlybirdRelonsponselon> relonsponselon
   ) {
-    if (requestContext.getRequest().getDebugMode() >= 4) {
-      return this.attachSentRequestsToDebugInfo(
-          response,
-          requestResponses
+    if (relonquelonstContelonxt.gelontRelonquelonst().gelontDelonbugModelon() >= 4) {
+      relonturn this.attachSelonntRelonquelonstsToDelonbugInfo(
+          relonsponselon,
+          relonquelonstRelonsponselons
       );
-    } else {
-      return response;
+    } elonlselon {
+      relonturn relonsponselon;
     }
   }
 
   /**
-   * Attaches saved client requests and their responses to the debug info within the
-   * main EarlybirdResponse.
+   * Attachelons savelond clielonnt relonquelonsts and thelonir relonsponselons to thelon delonbug info within thelon
+   * main elonarlybirdRelonsponselon.
    */
-  Future<EarlybirdResponse> attachSentRequestsToDebugInfo(
-      Future<EarlybirdResponse> currentResponse,
-      List<RequestResponse> requestResponses) {
+  Futurelon<elonarlybirdRelonsponselon> attachSelonntRelonquelonstsToDelonbugInfo(
+      Futurelon<elonarlybirdRelonsponselon> currelonntRelonsponselon,
+      List<RelonquelonstRelonsponselon> relonquelonstRelonsponselons) {
 
-    // Get all the response futures that we're waiting on.
-    List<Future<EarlybirdResponse>> allResponseFutures = new ArrayList<>();
-    for (RequestResponse rr : requestResponses) {
-      allResponseFutures.add(rr.getEarlybirdResponseFuture());
+    // Gelont all thelon relonsponselon futurelons that welon'relon waiting on.
+    List<Futurelon<elonarlybirdRelonsponselon>> allRelonsponselonFuturelons = nelonw ArrayList<>();
+    for (RelonquelonstRelonsponselon rr : relonquelonstRelonsponselons) {
+      allRelonsponselonFuturelons.add(rr.gelontelonarlybirdRelonsponselonFuturelon());
     }
 
-    // Pack all the futures into a single future.
-    Future<List<Try<EarlybirdResponse>>> allResponsesFuture =
-        Futures.collectAll(allResponseFutures);
+    // Pack all thelon futurelons into a singlelon futurelon.
+    Futurelon<List<Try<elonarlybirdRelonsponselon>>> allRelonsponselonsFuturelon =
+        Futurelons.collelonctAll(allRelonsponselonFuturelons);
 
-    return currentResponse.flatMap(mainResponse -> {
-      if (!mainResponse.isSetDebugInfo()) {
-        mainResponse.setDebugInfo(new EarlybirdDebugInfo());
+    relonturn currelonntRelonsponselon.flatMap(mainRelonsponselon -> {
+      if (!mainRelonsponselon.isSelontDelonbugInfo()) {
+        mainRelonsponselon.selontDelonbugInfo(nelonw elonarlybirdDelonbugInfo());
       }
 
-      Future<EarlybirdResponse> responseWithRequests = allResponsesFuture.map(allResponses -> {
-        // Get all individual response "Trys" and see if we can extract something from them
-        // that we can attach to the debugInfo.
-        for (int i = 0; i < allResponses.size(); i++) {
+      Futurelon<elonarlybirdRelonsponselon> relonsponselonWithRelonquelonsts = allRelonsponselonsFuturelon.map(allRelonsponselons -> {
+        // Gelont all individual relonsponselon "Trys" and selonelon if welon can elonxtract somelonthing from thelonm
+        // that welon can attach to thelon delonbugInfo.
+        for (int i = 0; i < allRelonsponselons.sizelon(); i++) {
 
-          Try<EarlybirdResponse> responseTry = allResponses.get(i);
+          Try<elonarlybirdRelonsponselon> relonsponselonTry = allRelonsponselons.gelont(i);
 
-          if (responseTry.isReturn()) {
-            EarlybirdResponse attachedResponse = responseTry.get();
+          if (relonsponselonTry.isRelonturn()) {
+            elonarlybirdRelonsponselon attachelondRelonsponselon = relonsponselonTry.gelont();
 
-            // Don't include the debug string, it's already a part of the main response's
-            // debug string.
-            attachedResponse.unsetDebugString();
+            // Don't includelon thelon delonbug string, it's alrelonady a part of thelon main relonsponselon's
+            // delonbug string.
+            attachelondRelonsponselon.unselontDelonbugString();
 
-            EarlybirdRequestResponse reqResp = new EarlybirdRequestResponse();
-            reqResp.setSentTo(requestResponses.get(i).getSentTo());
-            reqResp.setRequest(requestResponses.get(i).getRequestContext().getRequest());
-            reqResp.setResponse(attachedResponse.toString());
+            elonarlybirdRelonquelonstRelonsponselon relonqRelonsp = nelonw elonarlybirdRelonquelonstRelonsponselon();
+            relonqRelonsp.selontSelonntTo(relonquelonstRelonsponselons.gelont(i).gelontSelonntTo());
+            relonqRelonsp.selontRelonquelonst(relonquelonstRelonsponselons.gelont(i).gelontRelonquelonstContelonxt().gelontRelonquelonst());
+            relonqRelonsp.selontRelonsponselon(attachelondRelonsponselon.toString());
 
-            mainResponse.debugInfo.addToSentRequests(reqResp);
+            mainRelonsponselon.delonbugInfo.addToSelonntRelonquelonsts(relonqRelonsp);
           }
         }
 
-        return mainResponse;
+        relonturn mainRelonsponselon;
       });
 
-      return responseWithRequests;
+      relonturn relonsponselonWithRelonquelonsts;
     });
   }
 }

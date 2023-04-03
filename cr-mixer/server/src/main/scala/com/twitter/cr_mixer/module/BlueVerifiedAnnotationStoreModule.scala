@@ -1,52 +1,52 @@
-package com.twitter.cr_mixer.module
+packagelon com.twittelonr.cr_mixelonr.modulelon
 
-import com.google.inject.Provides
-import com.google.inject.Singleton
-import com.google.inject.name.Named
-import com.twitter.inject.TwitterModule
-import com.twitter.conversions.DurationOps._
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.data_pipeline.scalding.thriftscala.BlueVerifiedAnnotationsV2
-import com.twitter.storage.client.manhattan.kv.ManhattanKVClientMtlsParams
-import com.twitter.storehaus.ReadableStore
-import com.twitter.storehaus_internal.manhattan.Athena
-import com.twitter.storehaus_internal.manhattan.ManhattanRO
-import com.twitter.storehaus_internal.manhattan.ManhattanROConfig
-import com.twitter.storehaus_internal.util.ApplicationID
-import com.twitter.storehaus_internal.util.DatasetName
-import com.twitter.storehaus_internal.util.HDFSPath
-import com.twitter.bijection.scrooge.BinaryScalaCodec
-import com.twitter.hermit.store.common.ObservedCachedReadableStore
+import com.googlelon.injelonct.Providelons
+import com.googlelon.injelonct.Singlelonton
+import com.googlelon.injelonct.namelon.Namelond
+import com.twittelonr.injelonct.TwittelonrModulelon
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.cr_mixelonr.modelonl.ModulelonNamelons
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.frigatelon.data_pipelonlinelon.scalding.thriftscala.BluelonVelonrifielondAnnotationsV2
+import com.twittelonr.storagelon.clielonnt.manhattan.kv.ManhattanKVClielonntMtlsParams
+import com.twittelonr.storelonhaus.RelonadablelonStorelon
+import com.twittelonr.storelonhaus_intelonrnal.manhattan.Athelonna
+import com.twittelonr.storelonhaus_intelonrnal.manhattan.ManhattanRO
+import com.twittelonr.storelonhaus_intelonrnal.manhattan.ManhattanROConfig
+import com.twittelonr.storelonhaus_intelonrnal.util.ApplicationID
+import com.twittelonr.storelonhaus_intelonrnal.util.DataselontNamelon
+import com.twittelonr.storelonhaus_intelonrnal.util.HDFSPath
+import com.twittelonr.bijelonction.scroogelon.BinaryScalaCodelonc
+import com.twittelonr.helonrmit.storelon.common.ObselonrvelondCachelondRelonadablelonStorelon
 
-object BlueVerifiedAnnotationStoreModule extends TwitterModule {
+objelonct BluelonVelonrifielondAnnotationStorelonModulelon elonxtelonnds TwittelonrModulelon {
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.BlueVerifiedAnnotationStore)
-  def providesBlueVerifiedAnnotationStore(
-    statsReceiver: StatsReceiver,
-    manhattanKVClientMtlsParams: ManhattanKVClientMtlsParams,
-  ): ReadableStore[String, BlueVerifiedAnnotationsV2] = {
+  @Providelons
+  @Singlelonton
+  @Namelond(ModulelonNamelons.BluelonVelonrifielondAnnotationStorelon)
+  delonf providelonsBluelonVelonrifielondAnnotationStorelon(
+    statsReloncelonivelonr: StatsReloncelonivelonr,
+    manhattanKVClielonntMtlsParams: ManhattanKVClielonntMtlsParams,
+  ): RelonadablelonStorelon[String, BluelonVelonrifielondAnnotationsV2] = {
 
-    implicit val valueCodec = new BinaryScalaCodec(BlueVerifiedAnnotationsV2)
+    implicit val valuelonCodelonc = nelonw BinaryScalaCodelonc(BluelonVelonrifielondAnnotationsV2)
 
-    val underlyingStore = ManhattanRO
-      .getReadableStoreWithMtls[String, BlueVerifiedAnnotationsV2](
+    val undelonrlyingStorelon = ManhattanRO
+      .gelontRelonadablelonStorelonWithMtls[String, BluelonVelonrifielondAnnotationsV2](
         ManhattanROConfig(
           HDFSPath(""),
-          ApplicationID("content_recommender_athena"),
-          DatasetName("blue_verified_annotations"),
-          Athena),
-        manhattanKVClientMtlsParams
+          ApplicationID("contelonnt_reloncommelonndelonr_athelonna"),
+          DataselontNamelon("bluelon_velonrifielond_annotations"),
+          Athelonna),
+        manhattanKVClielonntMtlsParams
       )
 
-    ObservedCachedReadableStore.from(
-      underlyingStore,
+    ObselonrvelondCachelondRelonadablelonStorelon.from(
+      undelonrlyingStorelon,
       ttl = 24.hours,
-      maxKeys = 100000,
-      windowSize = 10000L,
-      cacheName = "blue_verified_annotation_cache"
-    )(statsReceiver.scope("inMemoryCachedBlueVerifiedAnnotationStore"))
+      maxKelonys = 100000,
+      windowSizelon = 10000L,
+      cachelonNamelon = "bluelon_velonrifielond_annotation_cachelon"
+    )(statsReloncelonivelonr.scopelon("inMelonmoryCachelondBluelonVelonrifielondAnnotationStorelon"))
   }
 }

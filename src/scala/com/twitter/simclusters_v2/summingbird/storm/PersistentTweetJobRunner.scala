@@ -1,226 +1,226 @@
-package com.twitter.simclusters_v2.summingbird.storm
+packagelon com.twittelonr.simclustelonrs_v2.summingbird.storm
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.hermit.store.common.ObservedCachedReadableStore
-import com.twitter.scalding.Args
-import com.twitter.simclusters_v2.common.SimClustersEmbedding
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.summingbird.common.Monoids.PersistentSimClustersEmbeddingLongestL2NormMonoid
-import com.twitter.simclusters_v2.summingbird.common.SimClustersProfile.AltSetting
-import com.twitter.simclusters_v2.summingbird.common.SimClustersProfile.Environment
-import com.twitter.simclusters_v2.summingbird.common.ClientConfigs
-import com.twitter.simclusters_v2.summingbird.common.Implicits
-import com.twitter.simclusters_v2.summingbird.common.SimClustersProfile
-import com.twitter.simclusters_v2.summingbird.stores.PersistentTweetEmbeddingStore.PersistentTweetEmbeddingId
-import com.twitter.simclusters_v2.summingbird.stores.PersistentTweetEmbeddingStore
-import com.twitter.simclusters_v2.summingbird.stores.TopKClustersForTweetKeyReadableStore
-import com.twitter.simclusters_v2.summingbird.stores.TweetKey
-import com.twitter.simclusters_v2.summingbird.stores.TweetStatusCountsStore
-import com.twitter.simclusters_v2.thriftscala.PersistentSimClustersEmbedding
-import com.twitter.simclusters_v2.thriftscala.{SimClustersEmbedding => ThriftSimClustersEmbedding}
-import com.twitter.storehaus.FutureCollector
-import com.twitter.summingbird.online.option._
-import com.twitter.summingbird.option._
-import com.twitter.summingbird.storm.Storm
-import com.twitter.summingbird.Options
-import com.twitter.summingbird.TailProducer
-import com.twitter.summingbird_internal.runner.common.JobName
-import com.twitter.summingbird_internal.runner.common.SBRunConfig
-import com.twitter.summingbird_internal.runner.storm.GenericRunner
-import com.twitter.summingbird_internal.runner.storm.StormConfig
-import com.twitter.tormenta_internal.spout.eventbus.SubscriberId
-import com.twitter.tweetypie.thriftscala.StatusCounts
-import com.twitter.wtf.summingbird.sources.storm.TimelineEventSource
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.finaglelon.stats.NullStatsReloncelonivelonr
+import com.twittelonr.helonrmit.storelon.common.ObselonrvelondCachelondRelonadablelonStorelon
+import com.twittelonr.scalding.Args
+import com.twittelonr.simclustelonrs_v2.common.SimClustelonrselonmbelondding
+import com.twittelonr.simclustelonrs_v2.common.TwelonelontId
+import com.twittelonr.simclustelonrs_v2.summingbird.common.Monoids.PelonrsistelonntSimClustelonrselonmbelonddingLongelonstL2NormMonoid
+import com.twittelonr.simclustelonrs_v2.summingbird.common.SimClustelonrsProfilelon.AltSelontting
+import com.twittelonr.simclustelonrs_v2.summingbird.common.SimClustelonrsProfilelon.elonnvironmelonnt
+import com.twittelonr.simclustelonrs_v2.summingbird.common.ClielonntConfigs
+import com.twittelonr.simclustelonrs_v2.summingbird.common.Implicits
+import com.twittelonr.simclustelonrs_v2.summingbird.common.SimClustelonrsProfilelon
+import com.twittelonr.simclustelonrs_v2.summingbird.storelons.PelonrsistelonntTwelonelontelonmbelonddingStorelon.PelonrsistelonntTwelonelontelonmbelonddingId
+import com.twittelonr.simclustelonrs_v2.summingbird.storelons.PelonrsistelonntTwelonelontelonmbelonddingStorelon
+import com.twittelonr.simclustelonrs_v2.summingbird.storelons.TopKClustelonrsForTwelonelontKelonyRelonadablelonStorelon
+import com.twittelonr.simclustelonrs_v2.summingbird.storelons.TwelonelontKelony
+import com.twittelonr.simclustelonrs_v2.summingbird.storelons.TwelonelontStatusCountsStorelon
+import com.twittelonr.simclustelonrs_v2.thriftscala.PelonrsistelonntSimClustelonrselonmbelondding
+import com.twittelonr.simclustelonrs_v2.thriftscala.{SimClustelonrselonmbelondding => ThriftSimClustelonrselonmbelondding}
+import com.twittelonr.storelonhaus.FuturelonCollelonctor
+import com.twittelonr.summingbird.onlinelon.option._
+import com.twittelonr.summingbird.option._
+import com.twittelonr.summingbird.storm.Storm
+import com.twittelonr.summingbird.Options
+import com.twittelonr.summingbird.TailProducelonr
+import com.twittelonr.summingbird_intelonrnal.runnelonr.common.JobNamelon
+import com.twittelonr.summingbird_intelonrnal.runnelonr.common.SBRunConfig
+import com.twittelonr.summingbird_intelonrnal.runnelonr.storm.GelonnelonricRunnelonr
+import com.twittelonr.summingbird_intelonrnal.runnelonr.storm.StormConfig
+import com.twittelonr.tormelonnta_intelonrnal.spout.elonvelonntbus.SubscribelonrId
+import com.twittelonr.twelonelontypielon.thriftscala.StatusCounts
+import com.twittelonr.wtf.summingbird.sourcelons.storm.TimelonlinelonelonvelonntSourcelon
 import java.lang
 import java.util.{HashMap => JMap}
-import org.apache.heron.api.{Config => HeronConfig}
-import org.apache.storm.{Config => BTConfig}
+import org.apachelon.helonron.api.{Config => HelonronConfig}
+import org.apachelon.storm.{Config => BTConfig}
 
-object PersistentTweetJobRunner {
-  def main(args: Array[String]): Unit = {
-    GenericRunner(args, PersistentTweetStormJob(_))
+objelonct PelonrsistelonntTwelonelontJobRunnelonr {
+  delonf main(args: Array[String]): Unit = {
+    GelonnelonricRunnelonr(args, PelonrsistelonntTwelonelontStormJob(_))
   }
 }
 
-object PersistentTweetStormJob {
+objelonct PelonrsistelonntTwelonelontStormJob {
 
-  import com.twitter.simclusters_v2.summingbird.common.Implicits._
+  import com.twittelonr.simclustelonrs_v2.summingbird.common.Implicits._
 
-  def jLong(num: Long): lang.Long = java.lang.Long.valueOf(num)
-  def jInt(num: Int): Integer = java.lang.Integer.valueOf(num)
-  def jFloat(num: Float): lang.Float = java.lang.Float.valueOf(num)
+  delonf jLong(num: Long): lang.Long = java.lang.Long.valuelonOf(num)
+  delonf jInt(num: Int): Intelongelonr = java.lang.Intelongelonr.valuelonOf(num)
+  delonf jFloat(num: Float): lang.Float = java.lang.Float.valuelonOf(num)
 
-  def apply(args: Args): StormConfig = {
+  delonf apply(args: Args): StormConfig = {
 
-    lazy val env: String = args.getOrElse("env", "prod")
-    lazy val zone: String = args.getOrElse("dc", "atla")
-    lazy val alt: String = args.getOrElse("alt", default = "normal")
+    lazy val elonnv: String = args.gelontOrelonlselon("elonnv", "prod")
+    lazy val zonelon: String = args.gelontOrelonlselon("dc", "atla")
+    lazy val alt: String = args.gelontOrelonlselon("alt", delonfault = "normal")
 
-    lazy val profile =
-      SimClustersProfile.fetchPersistentJobProfile(Environment(env), AltSetting(alt))
+    lazy val profilelon =
+      SimClustelonrsProfilelon.felontchPelonrsistelonntJobProfilelon(elonnvironmelonnt(elonnv), AltSelontting(alt))
 
-    lazy val stratoClient = ClientConfigs.stratoClient(profile.serviceIdentifier(zone))
+    lazy val stratoClielonnt = ClielonntConfigs.stratoClielonnt(profilelon.selonrvicelonIdelonntifielonr(zonelon))
 
-    lazy val favoriteEventSource = TimelineEventSource(
-      // Note: do not share the same subsriberId with other jobs. Apply a new one if needed
-      SubscriberId(profile.timelineEventSourceSubscriberId)
-    ).kafkaSource
+    lazy val favoritelonelonvelonntSourcelon = TimelonlinelonelonvelonntSourcelon(
+      // Notelon: do not sharelon thelon samelon subsribelonrId with othelonr jobs. Apply a nelonw onelon if nelonelondelond
+      SubscribelonrId(profilelon.timelonlinelonelonvelonntSourcelonSubscribelonrId)
+    ).kafkaSourcelon
 
-    lazy val persistentTweetEmbeddingStore =
-      PersistentTweetEmbeddingStore
-        .persistentTweetEmbeddingStore(stratoClient, profile.persistentTweetStratoPath)
+    lazy val pelonrsistelonntTwelonelontelonmbelonddingStorelon =
+      PelonrsistelonntTwelonelontelonmbelonddingStorelon
+        .pelonrsistelonntTwelonelontelonmbelonddingStorelon(stratoClielonnt, profilelon.pelonrsistelonntTwelonelontStratoPath)
 
-    lazy val persistentTweetEmbeddingStoreWithLatestAggregation: Storm#Store[
-      PersistentTweetEmbeddingId,
-      PersistentSimClustersEmbedding
+    lazy val pelonrsistelonntTwelonelontelonmbelonddingStorelonWithLatelonstAggrelongation: Storm#Storelon[
+      PelonrsistelonntTwelonelontelonmbelonddingId,
+      PelonrsistelonntSimClustelonrselonmbelondding
     ] = {
-      import com.twitter.storehaus.algebra.StoreAlgebra._
+      import com.twittelonr.storelonhaus.algelonbra.StorelonAlgelonbra._
 
-      lazy val mergeableStore =
-        persistentTweetEmbeddingStore.toMergeable(
-          mon = Implicits.persistentSimClustersEmbeddingMonoid,
-          fc = implicitly[FutureCollector])
+      lazy val melonrgelonablelonStorelon =
+        pelonrsistelonntTwelonelontelonmbelonddingStorelon.toMelonrgelonablelon(
+          mon = Implicits.pelonrsistelonntSimClustelonrselonmbelonddingMonoid,
+          fc = implicitly[FuturelonCollelonctor])
 
-      Storm.onlineOnlyStore(mergeableStore)
+      Storm.onlinelonOnlyStorelon(melonrgelonablelonStorelon)
     }
 
-    lazy val persistentTweetEmbeddingStoreWithLongestL2NormAggregation: Storm#Store[
-      PersistentTweetEmbeddingId,
-      PersistentSimClustersEmbedding
+    lazy val pelonrsistelonntTwelonelontelonmbelonddingStorelonWithLongelonstL2NormAggrelongation: Storm#Storelon[
+      PelonrsistelonntTwelonelontelonmbelonddingId,
+      PelonrsistelonntSimClustelonrselonmbelondding
     ] = {
-      import com.twitter.storehaus.algebra.StoreAlgebra._
+      import com.twittelonr.storelonhaus.algelonbra.StorelonAlgelonbra._
 
-      val longestL2NormMonoid = new PersistentSimClustersEmbeddingLongestL2NormMonoid()
-      lazy val mergeableStore =
-        persistentTweetEmbeddingStore.toMergeable(
-          mon = longestL2NormMonoid,
-          fc = implicitly[FutureCollector])
+      val longelonstL2NormMonoid = nelonw PelonrsistelonntSimClustelonrselonmbelonddingLongelonstL2NormMonoid()
+      lazy val melonrgelonablelonStorelon =
+        pelonrsistelonntTwelonelontelonmbelonddingStorelon.toMelonrgelonablelon(
+          mon = longelonstL2NormMonoid,
+          fc = implicitly[FuturelonCollelonctor])
 
-      Storm.onlineOnlyStore(mergeableStore)
+      Storm.onlinelonOnlyStorelon(melonrgelonablelonStorelon)
     }
 
-    lazy val tweetStatusCountsService: Storm#Service[TweetId, StatusCounts] =
-      Storm.service(
-        ObservedCachedReadableStore.from[TweetId, StatusCounts](
-          TweetStatusCountsStore.tweetStatusCountsStore(stratoClient, "tweetypie/core.Tweet"),
-          ttl = 1.minute,
-          maxKeys = 10000, // 10K is enough for Heron Job.
-          cacheName = "tweet_status_count",
-          windowSize = 10000L
-        )(NullStatsReceiver)
+    lazy val twelonelontStatusCountsSelonrvicelon: Storm#Selonrvicelon[TwelonelontId, StatusCounts] =
+      Storm.selonrvicelon(
+        ObselonrvelondCachelondRelonadablelonStorelon.from[TwelonelontId, StatusCounts](
+          TwelonelontStatusCountsStorelon.twelonelontStatusCountsStorelon(stratoClielonnt, "twelonelontypielon/corelon.Twelonelont"),
+          ttl = 1.minutelon,
+          maxKelonys = 10000, // 10K is elonnough for Helonron Job.
+          cachelonNamelon = "twelonelont_status_count",
+          windowSizelon = 10000L
+        )(NullStatsReloncelonivelonr)
       )
 
-    lazy val tweetEmbeddingService: Storm#Service[TweetId, ThriftSimClustersEmbedding] =
-      Storm.service(
-        TopKClustersForTweetKeyReadableStore
-          .overrideLimitDefaultStore(50, profile.serviceIdentifier(zone))
-          .composeKeyMapping { tweetId: TweetId =>
-            TweetKey(tweetId, profile.modelVersionStr, profile.coreEmbeddingType)
-          }.mapValues { value => SimClustersEmbedding(value).toThrift })
+    lazy val twelonelontelonmbelonddingSelonrvicelon: Storm#Selonrvicelon[TwelonelontId, ThriftSimClustelonrselonmbelondding] =
+      Storm.selonrvicelon(
+        TopKClustelonrsForTwelonelontKelonyRelonadablelonStorelon
+          .ovelonrridelonLimitDelonfaultStorelon(50, profilelon.selonrvicelonIdelonntifielonr(zonelon))
+          .composelonKelonyMapping { twelonelontId: TwelonelontId =>
+            TwelonelontKelony(twelonelontId, profilelon.modelonlVelonrsionStr, profilelon.corelonelonmbelonddingTypelon)
+          }.mapValuelons { valuelon => SimClustelonrselonmbelondding(valuelon).toThrift })
 
-    new StormConfig {
+    nelonw StormConfig {
 
-      val jobName: JobName = JobName(profile.jobName)
+      val jobNamelon: JobNamelon = JobNamelon(profilelon.jobNamelon)
 
-      implicit val jobID: JobId = JobId(jobName.toString)
+      implicit val jobID: JobId = JobId(jobNamelon.toString)
 
       /**
-       * Add registrars for chill serialization for user-defined types.
+       * Add relongistrars for chill selonrialization for uselonr-delonfinelond typelons.
        */
-      override def registrars =
+      ovelonrridelon delonf relongistrars =
         List(
-          SBRunConfig.register[StatusCounts],
-          SBRunConfig.register[ThriftSimClustersEmbedding],
-          SBRunConfig.register[PersistentSimClustersEmbedding]
+          SBRunConfig.relongistelonr[StatusCounts],
+          SBRunConfig.relongistelonr[ThriftSimClustelonrselonmbelondding],
+          SBRunConfig.relongistelonr[PelonrsistelonntSimClustelonrselonmbelondding]
         )
 
-      /***** Job configuration settings *****/
+      /***** Job configuration selonttings *****/
       /**
-       * Use vmSettings to configure the VM
+       * Uselon vmSelonttings to configurelon thelon VM
        */
-      override def vmSettings: Seq[String] = Seq()
+      ovelonrridelon delonf vmSelonttings: Selonq[String] = Selonq()
 
-      private val SourcePerWorker = 1
-      private val FlatMapPerWorker = 1
-      private val SummerPerWorker = 1
+      privatelon val SourcelonPelonrWorkelonr = 1
+      privatelon val FlatMapPelonrWorkelonr = 1
+      privatelon val SummelonrPelonrWorkelonr = 1
 
-      private val TotalWorker = 60
+      privatelon val TotalWorkelonr = 60
 
       /**
-       * Use transformConfig to set Heron options.
+       * Uselon transformConfig to selont Helonron options.
        */
-      override def transformConfig(config: Map[String, AnyRef]): Map[String, AnyRef] = {
+      ovelonrridelon delonf transformConfig(config: Map[String, AnyRelonf]): Map[String, AnyRelonf] = {
 
-        val heronJvmOptions = new JMap[String, AnyRef]()
+        val helonronJvmOptions = nelonw JMap[String, AnyRelonf]()
 
-        val MetaspaceSize = jLong(256L * 1024 * 1024)
-        val DefaultHeapSize = jLong(2L * 1024 * 1024 * 1024)
-        val HighHeapSize = jLong(4L * 1024 * 1024 * 1024)
+        val MelontaspacelonSizelon = jLong(256L * 1024 * 1024)
+        val DelonfaultHelonapSizelon = jLong(2L * 1024 * 1024 * 1024)
+        val HighHelonapSizelon = jLong(4L * 1024 * 1024 * 1024)
 
         val TotalCPU = jLong(
-          SourcePerWorker * 1 + FlatMapPerWorker * 4 + SummerPerWorker * 3 + 1
+          SourcelonPelonrWorkelonr * 1 + FlatMapPelonrWorkelonr * 4 + SummelonrPelonrWorkelonr * 3 + 1
         )
 
-        // reserve 4GB for the StreamMgr
+        // relonselonrvelon 4GB for thelon StrelonamMgr
         val TotalRam = jLong(
-          DefaultHeapSize * (SourcePerWorker * 1 + FlatMapPerWorker * 4)
-            + HighHeapSize * SummerPerWorker * 3
-            + MetaspaceSize * 8 // Applies to all workers
+          DelonfaultHelonapSizelon * (SourcelonPelonrWorkelonr * 1 + FlatMapPelonrWorkelonr * 4)
+            + HighHelonapSizelon * SummelonrPelonrWorkelonr * 3
+            + MelontaspacelonSizelon * 8 // Applielons to all workelonrs
             + 4L * 1024 * 1024 * 1024)
 
-        // These settings help prevent GC issues in the most memory intensive steps of the job by
-        // dedicating more memory to the new gen heap designated by the -Xmn flag.
+        // Thelonselon selonttings helonlp prelonvelonnt GC issuelons in thelon most melonmory intelonnsivelon stelonps of thelon job by
+        // delondicating morelon melonmory to thelon nelonw gelonn helonap delonsignatelond by thelon -Xmn flag.
         Map(
-          "Tail" -> HighHeapSize
-        ).foreach {
-          case (stage, heap) =>
-            HeronConfig.setComponentJvmOptions(
-              heronJvmOptions,
-              stage,
-              s"-Xmx$heap -Xms$heap -Xmn${heap / 2}"
+          "Tail" -> HighHelonapSizelon
+        ).forelonach {
+          caselon (stagelon, helonap) =>
+            HelonronConfig.selontComponelonntJvmOptions(
+              helonronJvmOptions,
+              stagelon,
+              s"-Xmx$helonap -Xms$helonap -Xmn${helonap / 2}"
             )
         }
 
-        super.transformConfig(config) ++ List(
-          BTConfig.TOPOLOGY_TEAM_NAME -> "cassowary",
-          BTConfig.TOPOLOGY_TEAM_EMAIL -> "no-reply@twitter.com",
-          BTConfig.TOPOLOGY_WORKERS -> jInt(TotalWorker),
-          BTConfig.TOPOLOGY_ACKER_EXECUTORS -> jInt(0),
-          BTConfig.TOPOLOGY_MESSAGE_TIMEOUT_SECS -> jInt(30),
-          BTConfig.TOPOLOGY_WORKER_CHILDOPTS -> List(
-            "-Djava.security.auth.login.config=config/jaas.conf",
-            "-Dsun.security.krb5.debug=true",
-            "-Dcom.twitter.eventbus.client.EnableKafkaSaslTls=true",
-            "-Dcom.twitter.eventbus.client.zoneName=" + zone,
-            s"-XX:MaxMetaspaceSize=$MetaspaceSize"
+        supelonr.transformConfig(config) ++ List(
+          BTConfig.TOPOLOGY_TelonAM_NAMelon -> "cassowary",
+          BTConfig.TOPOLOGY_TelonAM_elonMAIL -> "no-relonply@twittelonr.com",
+          BTConfig.TOPOLOGY_WORKelonRS -> jInt(TotalWorkelonr),
+          BTConfig.TOPOLOGY_ACKelonR_elonXelonCUTORS -> jInt(0),
+          BTConfig.TOPOLOGY_MelonSSAGelon_TIMelonOUT_SelonCS -> jInt(30),
+          BTConfig.TOPOLOGY_WORKelonR_CHILDOPTS -> List(
+            "-Djava.seloncurity.auth.login.config=config/jaas.conf",
+            "-Dsun.seloncurity.krb5.delonbug=truelon",
+            "-Dcom.twittelonr.elonvelonntbus.clielonnt.elonnablelonKafkaSaslTls=truelon",
+            "-Dcom.twittelonr.elonvelonntbus.clielonnt.zonelonNamelon=" + zonelon,
+            s"-XX:MaxMelontaspacelonSizelon=$MelontaspacelonSizelon"
           ).mkString(" "),
-          HeronConfig.TOPOLOGY_CONTAINER_CPU_REQUESTED -> TotalCPU,
-          HeronConfig.TOPOLOGY_CONTAINER_RAM_REQUESTED -> TotalRam,
-          "storm.job.uniqueId" -> jobID.get
+          HelonronConfig.TOPOLOGY_CONTAINelonR_CPU_RelonQUelonSTelonD -> TotalCPU,
+          HelonronConfig.TOPOLOGY_CONTAINelonR_RAM_RelonQUelonSTelonD -> TotalRam,
+          "storm.job.uniquelonId" -> jobID.gelont
         )
       }
 
       /**
-       * Use getNamedOptions to set Summingbird runtime options
-       * The list of available options: com.twitter.summingbird.online.option
+       * Uselon gelontNamelondOptions to selont Summingbird runtimelon options
+       * Thelon list of availablelon options: com.twittelonr.summingbird.onlinelon.option
        */
-      override def getNamedOptions: Map[String, Options] = Map(
-        "DEFAULT" -> Options()
-          .set(SummerParallelism(TotalWorker * SummerPerWorker))
-          .set(FlatMapParallelism(TotalWorker * FlatMapPerWorker))
-          .set(SourceParallelism(TotalWorker * SourcePerWorker))
-          .set(CacheSize(10000))
-          .set(FlushFrequency(30.seconds))
+      ovelonrridelon delonf gelontNamelondOptions: Map[String, Options] = Map(
+        "DelonFAULT" -> Options()
+          .selont(SummelonrParallelonlism(TotalWorkelonr * SummelonrPelonrWorkelonr))
+          .selont(FlatMapParallelonlism(TotalWorkelonr * FlatMapPelonrWorkelonr))
+          .selont(SourcelonParallelonlism(TotalWorkelonr * SourcelonPelonrWorkelonr))
+          .selont(CachelonSizelon(10000))
+          .selont(FlushFrelonquelonncy(30.selonconds))
       )
 
-      /** Required job generation call for your job, defined in Job.scala */
-      override def graph: TailProducer[Storm, Any] = PersistentTweetJob.generate[Storm](
-        favoriteEventSource,
-        tweetStatusCountsService,
-        tweetEmbeddingService,
-        persistentTweetEmbeddingStoreWithLatestAggregation,
-        persistentTweetEmbeddingStoreWithLongestL2NormAggregation
+      /** Relonquirelond job gelonnelonration call for your job, delonfinelond in Job.scala */
+      ovelonrridelon delonf graph: TailProducelonr[Storm, Any] = PelonrsistelonntTwelonelontJob.gelonnelonratelon[Storm](
+        favoritelonelonvelonntSourcelon,
+        twelonelontStatusCountsSelonrvicelon,
+        twelonelontelonmbelonddingSelonrvicelon,
+        pelonrsistelonntTwelonelontelonmbelonddingStorelonWithLatelonstAggrelongation,
+        pelonrsistelonntTwelonelontelonmbelonddingStorelonWithLongelonstL2NormAggrelongation
       )
     }
   }

@@ -1,22 +1,22 @@
-package com.twitter.timelineranker.common
+packagelon com.twittelonr.timelonlinelonrankelonr.common
 
-import com.twitter.servo.util.FutureArrow
-import com.twitter.timelineranker.core.CandidateEnvelope
-import com.twitter.timelineranker.core.HydratedTweets
-import com.twitter.timelines.visibility.VisibilityEnforcer
-import com.twitter.util.Future
+import com.twittelonr.selonrvo.util.FuturelonArrow
+import com.twittelonr.timelonlinelonrankelonr.corelon.Candidatelonelonnvelonlopelon
+import com.twittelonr.timelonlinelonrankelonr.corelon.HydratelondTwelonelonts
+import com.twittelonr.timelonlinelons.visibility.Visibilityelonnforcelonr
+import com.twittelonr.util.Futurelon
 
 /**
- * Transform which uses an instance of a VisiblityEnforcer to filter down HydratedTweets
+ * Transform which uselons an instancelon of a Visiblityelonnforcelonr to filtelonr down HydratelondTwelonelonts
  */
-class VisibilityEnforcingTransform(visibilityEnforcer: VisibilityEnforcer)
-    extends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
-  override def apply(envelope: CandidateEnvelope): Future[CandidateEnvelope] = {
-    visibilityEnforcer.apply(Some(envelope.query.userId), envelope.hydratedTweets.outerTweets).map {
-      visibleTweets =>
-        val innerTweets = envelope.hydratedTweets.innerTweets
-        envelope.copy(
-          hydratedTweets = HydratedTweets(outerTweets = visibleTweets, innerTweets = innerTweets))
+class VisibilityelonnforcingTransform(visibilityelonnforcelonr: Visibilityelonnforcelonr)
+    elonxtelonnds FuturelonArrow[Candidatelonelonnvelonlopelon, Candidatelonelonnvelonlopelon] {
+  ovelonrridelon delonf apply(elonnvelonlopelon: Candidatelonelonnvelonlopelon): Futurelon[Candidatelonelonnvelonlopelon] = {
+    visibilityelonnforcelonr.apply(Somelon(elonnvelonlopelon.quelonry.uselonrId), elonnvelonlopelon.hydratelondTwelonelonts.outelonrTwelonelonts).map {
+      visiblelonTwelonelonts =>
+        val innelonrTwelonelonts = elonnvelonlopelon.hydratelondTwelonelonts.innelonrTwelonelonts
+        elonnvelonlopelon.copy(
+          hydratelondTwelonelonts = HydratelondTwelonelonts(outelonrTwelonelonts = visiblelonTwelonelonts, innelonrTwelonelonts = innelonrTwelonelonts))
     }
   }
 }

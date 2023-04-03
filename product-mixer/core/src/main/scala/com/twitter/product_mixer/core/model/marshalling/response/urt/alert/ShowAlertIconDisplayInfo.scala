@@ -1,5 +1,5 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.alert
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.alelonrt
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.RosettaColor
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.color.RoselonttaColor
 
-case class ShowAlertIconDisplayInfo(icon: ShowAlertIcon, tint: RosettaColor)
+caselon class ShowAlelonrtIconDisplayInfo(icon: ShowAlelonrtIcon, tint: RoselonttaColor)

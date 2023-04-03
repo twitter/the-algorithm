@@ -1,106 +1,106 @@
-package com.twitter.home_mixer.functional_component.feature_hydrator
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator
 
-import com.twitter.finagle.tracing.Annotation.BinaryAnnotation
-import com.twitter.finagle.tracing.ForwardAnnotation
-import com.twitter.home_mixer.model.HomeFeatures._
-import com.twitter.home_mixer.model.request.DeviceContext.RequestContext
-import com.twitter.home_mixer.model.request.HasDeviceContext
-import com.twitter.joinkey.context.RequestJoinKeyContext
-import com.twitter.product_mixer.component_library.model.cursor.UrtOrderedCursor
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.QueryFeatureHydrator
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.BottomCursor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.GapCursor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.TopCursor
-import com.twitter.product_mixer.core.pipeline.HasPipelineCursor
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.search.common.util.lang.ThriftLanguageUtil
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.stitch.Stitch
+import com.twittelonr.finaglelon.tracing.Annotation.BinaryAnnotation
+import com.twittelonr.finaglelon.tracing.ForwardAnnotation
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons._
+import com.twittelonr.homelon_mixelonr.modelonl.relonquelonst.DelonvicelonContelonxt.RelonquelonstContelonxt
+import com.twittelonr.homelon_mixelonr.modelonl.relonquelonst.HasDelonvicelonContelonxt
+import com.twittelonr.joinkelony.contelonxt.RelonquelonstJoinKelonyContelonxt
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.cursor.UrtOrdelonrelondCursor
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMapBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator.QuelonryFelonaturelonHydrator
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.FelonaturelonHydratorIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.opelonration.BottomCursor
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.opelonration.GapCursor
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.opelonration.TopCursor
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.HasPipelonlinelonCursor
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.selonarch.common.util.lang.ThriftLanguagelonUtil
+import com.twittelonr.snowflakelon.id.SnowflakelonId
+import com.twittelonr.stitch.Stitch
 import java.util.UUID
-import javax.inject.Inject
-import javax.inject.Singleton
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class RequestQueryFeatureHydrator[
-  Query <: PipelineQuery with HasPipelineCursor[UrtOrderedCursor] with HasDeviceContext] @Inject() (
-) extends QueryFeatureHydrator[Query] {
+@Singlelonton
+class RelonquelonstQuelonryFelonaturelonHydrator[
+  Quelonry <: PipelonlinelonQuelonry with HasPipelonlinelonCursor[UrtOrdelonrelondCursor] with HasDelonvicelonContelonxt] @Injelonct() (
+) elonxtelonnds QuelonryFelonaturelonHydrator[Quelonry] {
 
-  override val features: Set[Feature[_, _]] = Set(
-    AccountAgeFeature,
-    ClientIdFeature,
-    DeviceLanguageFeature,
-    GetInitialFeature,
-    GetMiddleFeature,
-    GetNewerFeature,
-    GetOlderFeature,
-    GuestIdFeature,
-    HasDarkRequestFeature,
-    IsForegroundRequestFeature,
-    IsLaunchRequestFeature,
-    PollingFeature,
-    PullToRefreshFeature,
-    RequestJoinIdFeature,
-    ServedRequestIdFeature,
-    ViewerIdFeature
+  ovelonrridelon val felonaturelons: Selont[Felonaturelon[_, _]] = Selont(
+    AccountAgelonFelonaturelon,
+    ClielonntIdFelonaturelon,
+    DelonvicelonLanguagelonFelonaturelon,
+    GelontInitialFelonaturelon,
+    GelontMiddlelonFelonaturelon,
+    GelontNelonwelonrFelonaturelon,
+    GelontOldelonrFelonaturelon,
+    GuelonstIdFelonaturelon,
+    HasDarkRelonquelonstFelonaturelon,
+    IsForelongroundRelonquelonstFelonaturelon,
+    IsLaunchRelonquelonstFelonaturelon,
+    PollingFelonaturelon,
+    PullToRelonfrelonshFelonaturelon,
+    RelonquelonstJoinIdFelonaturelon,
+    SelonrvelondRelonquelonstIdFelonaturelon,
+    VielonwelonrIdFelonaturelon
   )
 
-  override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier("Request")
+  ovelonrridelon val idelonntifielonr: FelonaturelonHydratorIdelonntifielonr = FelonaturelonHydratorIdelonntifielonr("Relonquelonst")
 
-  private val DarkRequestAnnotation = "clnt/has_dark_request"
+  privatelon val DarkRelonquelonstAnnotation = "clnt/has_dark_relonquelonst"
 
-  // Convert Language code to ISO 639-3 format
-  private def getLanguageISOFormatByCode(languageCode: String): String =
-    ThriftLanguageUtil.getLanguageCodeOf(ThriftLanguageUtil.getThriftLanguageOf(languageCode))
+  // Convelonrt Languagelon codelon to ISO 639-3 format
+  privatelon delonf gelontLanguagelonISOFormatByCodelon(languagelonCodelon: String): String =
+    ThriftLanguagelonUtil.gelontLanguagelonCodelonOf(ThriftLanguagelonUtil.gelontThriftLanguagelonOf(languagelonCodelon))
 
-  private def getRequestJoinId(servedRequestId: Long): Option[Long] =
-    Some(RequestJoinKeyContext.current.flatMap(_.requestJoinId).getOrElse(servedRequestId))
+  privatelon delonf gelontRelonquelonstJoinId(selonrvelondRelonquelonstId: Long): Option[Long] =
+    Somelon(RelonquelonstJoinKelonyContelonxt.currelonnt.flatMap(_.relonquelonstJoinId).gelontOrelonlselon(selonrvelondRelonquelonstId))
 
-  private def hasDarkRequest: Option[Boolean] = ForwardAnnotation.current
-    .getOrElse(Seq[BinaryAnnotation]())
-    .find(_.key == DarkRequestAnnotation)
-    .map(_.value.asInstanceOf[Boolean])
+  privatelon delonf hasDarkRelonquelonst: Option[Boolelonan] = ForwardAnnotation.currelonnt
+    .gelontOrelonlselon(Selonq[BinaryAnnotation]())
+    .find(_.kelony == DarkRelonquelonstAnnotation)
+    .map(_.valuelon.asInstancelonOf[Boolelonan])
 
-  override def hydrate(query: Query): Stitch[FeatureMap] = {
-    val requestContext = query.deviceContext.flatMap(_.requestContextValue)
-    val servedRequestId = UUID.randomUUID.getMostSignificantBits
+  ovelonrridelon delonf hydratelon(quelonry: Quelonry): Stitch[FelonaturelonMap] = {
+    val relonquelonstContelonxt = quelonry.delonvicelonContelonxt.flatMap(_.relonquelonstContelonxtValuelon)
+    val selonrvelondRelonquelonstId = UUID.randomUUID.gelontMostSignificantBits
 
-    val featureMap = FeatureMapBuilder()
-      .add(AccountAgeFeature, query.getOptionalUserId.flatMap(SnowflakeId.timeFromIdOpt))
-      .add(ClientIdFeature, query.clientContext.appId)
-      .add(DeviceLanguageFeature, query.getLanguageCode.map(getLanguageISOFormatByCode))
+    val felonaturelonMap = FelonaturelonMapBuildelonr()
+      .add(AccountAgelonFelonaturelon, quelonry.gelontOptionalUselonrId.flatMap(SnowflakelonId.timelonFromIdOpt))
+      .add(ClielonntIdFelonaturelon, quelonry.clielonntContelonxt.appId)
+      .add(DelonvicelonLanguagelonFelonaturelon, quelonry.gelontLanguagelonCodelon.map(gelontLanguagelonISOFormatByCodelon))
       .add(
-        GetInitialFeature,
-        query.pipelineCursor.forall(cursor => cursor.id.isEmpty && cursor.gapBoundaryId.isEmpty))
+        GelontInitialFelonaturelon,
+        quelonry.pipelonlinelonCursor.forall(cursor => cursor.id.iselonmpty && cursor.gapBoundaryId.iselonmpty))
       .add(
-        GetMiddleFeature,
-        query.pipelineCursor.exists(cursor =>
-          cursor.id.isDefined && cursor.gapBoundaryId.isDefined &&
-            cursor.cursorType.contains(GapCursor)))
+        GelontMiddlelonFelonaturelon,
+        quelonry.pipelonlinelonCursor.elonxists(cursor =>
+          cursor.id.isDelonfinelond && cursor.gapBoundaryId.isDelonfinelond &&
+            cursor.cursorTypelon.contains(GapCursor)))
       .add(
-        GetNewerFeature,
-        query.pipelineCursor.exists(cursor =>
-          cursor.id.isDefined && cursor.gapBoundaryId.isEmpty &&
-            cursor.cursorType.contains(TopCursor)))
+        GelontNelonwelonrFelonaturelon,
+        quelonry.pipelonlinelonCursor.elonxists(cursor =>
+          cursor.id.isDelonfinelond && cursor.gapBoundaryId.iselonmpty &&
+            cursor.cursorTypelon.contains(TopCursor)))
       .add(
-        GetOlderFeature,
-        query.pipelineCursor.exists(cursor =>
-          cursor.id.isDefined && cursor.gapBoundaryId.isEmpty &&
-            cursor.cursorType.contains(BottomCursor)))
-      .add(GuestIdFeature, query.clientContext.guestId)
-      .add(IsForegroundRequestFeature, requestContext.contains(RequestContext.Foreground))
-      .add(IsLaunchRequestFeature, requestContext.contains(RequestContext.Launch))
-      .add(PollingFeature, query.deviceContext.exists(_.isPolling.contains(true)))
-      .add(PullToRefreshFeature, requestContext.contains(RequestContext.PullToRefresh))
-      .add(ServedRequestIdFeature, Some(servedRequestId))
-      .add(RequestJoinIdFeature, getRequestJoinId(servedRequestId))
-      .add(HasDarkRequestFeature, hasDarkRequest)
-      .add(ViewerIdFeature, query.getRequiredUserId)
+        GelontOldelonrFelonaturelon,
+        quelonry.pipelonlinelonCursor.elonxists(cursor =>
+          cursor.id.isDelonfinelond && cursor.gapBoundaryId.iselonmpty &&
+            cursor.cursorTypelon.contains(BottomCursor)))
+      .add(GuelonstIdFelonaturelon, quelonry.clielonntContelonxt.guelonstId)
+      .add(IsForelongroundRelonquelonstFelonaturelon, relonquelonstContelonxt.contains(RelonquelonstContelonxt.Forelonground))
+      .add(IsLaunchRelonquelonstFelonaturelon, relonquelonstContelonxt.contains(RelonquelonstContelonxt.Launch))
+      .add(PollingFelonaturelon, quelonry.delonvicelonContelonxt.elonxists(_.isPolling.contains(truelon)))
+      .add(PullToRelonfrelonshFelonaturelon, relonquelonstContelonxt.contains(RelonquelonstContelonxt.PullToRelonfrelonsh))
+      .add(SelonrvelondRelonquelonstIdFelonaturelon, Somelon(selonrvelondRelonquelonstId))
+      .add(RelonquelonstJoinIdFelonaturelon, gelontRelonquelonstJoinId(selonrvelondRelonquelonstId))
+      .add(HasDarkRelonquelonstFelonaturelon, hasDarkRelonquelonst)
+      .add(VielonwelonrIdFelonaturelon, quelonry.gelontRelonquirelondUselonrId)
       .build()
 
-    Stitch.value(featureMap)
+    Stitch.valuelon(felonaturelonMap)
   }
 }

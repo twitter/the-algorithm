@@ -1,45 +1,45 @@
-package com.twitter.product_mixer.component_library.selector
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.selonlelonctor
 
-import com.twitter.product_mixer.component_library.selector.DropSelector.dropDuplicates
-import com.twitter.product_mixer.core.functional_component.common.AllPipelines
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.functional_component.selector.SelectorResult
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.product_mixelonr.componelonnt_library.selonlelonctor.DropSelonlelonctor.dropDuplicatelons
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.AllPipelonlinelons
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.CandidatelonScopelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.selonlelonctor.Selonlelonctor
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.selonlelonctor.SelonlelonctorRelonsult
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
 /**
- * Keep only the first instance of a candidate in the `remainingCandidates` as determined by comparing
- * the contained candidate ID and class type. Subsequent matching instances will be dropped. For
- * more details, see DropSelector#dropDuplicates
+ * Kelonelonp only thelon first instancelon of a candidatelon in thelon `relonmainingCandidatelons` as delontelonrminelond by comparing
+ * thelon containelond candidatelon ID and class typelon. Subselonquelonnt matching instancelons will belon droppelond. For
+ * morelon delontails, selonelon DropSelonlelonctor#dropDuplicatelons
  *
- * @param duplicationKey how to generate the key used to identify duplicate candidates (by default use id and class name)
- * @param mergeStrategy how to merge two candidates with the same key (by default pick the first one)
+ * @param duplicationKelony how to gelonnelonratelon thelon kelony uselond to idelonntify duplicatelon candidatelons (by delonfault uselon id and class namelon)
+ * @param melonrgelonStratelongy how to melonrgelon two candidatelons with thelon samelon kelony (by delonfault pick thelon first onelon)
  *
- * @note [[com.twitter.product_mixer.component_library.model.candidate.CursorCandidate]] are ignored.
- * @note [[com.twitter.product_mixer.core.model.common.presentation.ModuleCandidateWithDetails]] are ignored.
+ * @notelon [[com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.CursorCandidatelon]] arelon ignorelond.
+ * @notelon [[com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.ModulelonCandidatelonWithDelontails]] arelon ignorelond.
  *
- * @example if `remainingCandidates`
- * `Seq(sourceA_Id1, sourceA_Id1, sourceA_Id2, sourceB_id1, sourceB_id2, sourceB_id3, sourceC_id4)`
- * then the output candidates will be `Seq(sourceA_Id1, sourceA_Id2, sourceB_id3, sourceC_id4)`
+ * @elonxamplelon if `relonmainingCandidatelons`
+ * `Selonq(sourcelonA_Id1, sourcelonA_Id1, sourcelonA_Id2, sourcelonB_id1, sourcelonB_id2, sourcelonB_id3, sourcelonC_id4)`
+ * thelonn thelon output candidatelons will belon `Selonq(sourcelonA_Id1, sourcelonA_Id2, sourcelonB_id3, sourcelonC_id4)`
  */
-case class DropDuplicateCandidates(
-  override val pipelineScope: CandidateScope = AllPipelines,
-  duplicationKey: DeduplicationKey[_] = IdAndClassDuplicationKey,
-  mergeStrategy: CandidateMergeStrategy = PickFirstCandidateMerger)
-    extends Selector[PipelineQuery] {
+caselon class DropDuplicatelonCandidatelons(
+  ovelonrridelon val pipelonlinelonScopelon: CandidatelonScopelon = AllPipelonlinelons,
+  duplicationKelony: DelonduplicationKelony[_] = IdAndClassDuplicationKelony,
+  melonrgelonStratelongy: CandidatelonMelonrgelonStratelongy = PickFirstCandidatelonMelonrgelonr)
+    elonxtelonnds Selonlelonctor[PipelonlinelonQuelonry] {
 
-  override def apply(
-    query: PipelineQuery,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
-  ): SelectorResult = {
-    val dedupedCandidates = dropDuplicates(
-      pipelineScope = pipelineScope,
-      candidates = remainingCandidates,
-      duplicationKey = duplicationKey,
-      mergeStrategy = mergeStrategy)
+  ovelonrridelon delonf apply(
+    quelonry: PipelonlinelonQuelonry,
+    relonmainingCandidatelons: Selonq[CandidatelonWithDelontails],
+    relonsult: Selonq[CandidatelonWithDelontails]
+  ): SelonlelonctorRelonsult = {
+    val delondupelondCandidatelons = dropDuplicatelons(
+      pipelonlinelonScopelon = pipelonlinelonScopelon,
+      candidatelons = relonmainingCandidatelons,
+      duplicationKelony = duplicationKelony,
+      melonrgelonStratelongy = melonrgelonStratelongy)
 
-    SelectorResult(remainingCandidates = dedupedCandidates, result = result)
+    SelonlelonctorRelonsult(relonmainingCandidatelons = delondupelondCandidatelons, relonsult = relonsult)
   }
 }

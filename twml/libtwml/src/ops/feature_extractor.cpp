@@ -1,134 +1,134 @@
-#include "tensorflow/core/framework/op.h"
-#include "tensorflow/core/framework/shape_inference.h"
-#include "tensorflow/core/framework/op_kernel.h"
+#includelon "telonnsorflow/corelon/framelonwork/op.h"
+#includelon "telonnsorflow/corelon/framelonwork/shapelon_infelonrelonncelon.h"
+#includelon "telonnsorflow/corelon/framelonwork/op_kelonrnelonl.h"
 
-#include <twml.h>
-#include "tensorflow_utils.h"
-#include <map>
-#include <vector>
+#includelon <twml.h>
+#includelon "telonnsorflow_utils.h"
+#includelon <map>
+#includelon <velonctor>
 
-REGISTER_OP("FeatureExtractor")
-.Attr("T: {float, double} = DT_FLOAT")
+RelonGISTelonR_OP("Felonaturelonelonxtractor")
+.Attr("T: {float, doublelon} = DT_FLOAT")
 .Input("mask_in: bool")
 .Input("ids_in: int64")
-.Input("keys_in: int64")
-.Input("values_in: T")
-.Input("codes_in: int64")
-.Input("types_in: int8")
+.Input("kelonys_in: int64")
+.Input("valuelons_in: T")
+.Input("codelons_in: int64")
+.Input("typelons_in: int8")
 .Output("ids_out: int64")
-.Output("keys_out: int64")
-.Output("values_out: T")
-.Output("codes_out: int64")
-.Output("types_out: int8")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-    return Status::OK();
+.Output("kelonys_out: int64")
+.Output("valuelons_out: T")
+.Output("codelons_out: int64")
+.Output("typelons_out: int8")
+.SelontShapelonFn([](::telonnsorflow::shapelon_infelonrelonncelon::InfelonrelonncelonContelonxt* c) {
+    relonturn Status::OK();
   }).Doc(R"doc(
 
-A tensorflow OP that extracts the desired indices of a Tensor based on a mask
+A telonnsorflow OP that elonxtracts thelon delonsirelond indicelons of a Telonnsor baselond on a mask
 
 Input
-  mask_in: boolean Tensor that determines which are the indices to be kept (bool)
-  ids_in: input indices Tensor (int64)
-  keys_in: input keys Tensor (int64)
-  values_in: input values Tensor (float/double)
-  codes_in: input codes Tensor (int64)
-  types_in: input types Tensor(int8)
+  mask_in: boolelonan Telonnsor that delontelonrminelons which arelon thelon indicelons to belon kelonpt (bool)
+  ids_in: input indicelons Telonnsor (int64)
+  kelonys_in: input kelonys Telonnsor (int64)
+  valuelons_in: input valuelons Telonnsor (float/doublelon)
+  codelons_in: input codelons Telonnsor (int64)
+  typelons_in: input typelons Telonnsor(int8)
 
 Outputs
-  ids_out: output indices Tensor (int64)
-  keys_out: output keys Tensor (int64)
-  values_out: output values Tensor (float/double)
-  codes_out: output codes Tensor (int64)
-  types_out: output types Tensor(int8)
+  ids_out: output indicelons Telonnsor (int64)
+  kelonys_out: output kelonys Telonnsor (int64)
+  valuelons_out: output valuelons Telonnsor (float/doublelon)
+  codelons_out: output codelons Telonnsor (int64)
+  typelons_out: output typelons Telonnsor(int8)
 
 )doc");
-template <typename T>
-class FeatureExtractor : public OpKernel {
+telonmplatelon <typelonnamelon T>
+class Felonaturelonelonxtractor : public OpKelonrnelonl {
  public:
-  explicit FeatureExtractor(OpKernelConstruction* context)
-      : OpKernel(context) {}
+  elonxplicit Felonaturelonelonxtractor(OpKelonrnelonlConstruction* contelonxt)
+      : OpKelonrnelonl(contelonxt) {}
 
-  template <typename A, typename U>
-  bool allequal(const A &t, const U &u) {
-      return t == u;
+  telonmplatelon <typelonnamelon A, typelonnamelon U>
+  bool allelonqual(const A &t, const U &u) {
+      relonturn t == u;
   }
 
-  template <typename A, typename U, typename... Others>
-  bool allequal(const A &t, const U &u, Others const &... args) {
-      return (t == u) && allequal(u, args...);
+  telonmplatelon <typelonnamelon A, typelonnamelon U, typelonnamelon... Othelonrs>
+  bool allelonqual(const A &t, const U &u, Othelonrs const &... args) {
+      relonturn (t == u) && allelonqual(u, args...);
   }
 
-  void Compute(OpKernelContext* context) override {
-    // Get input tensors
-    const Tensor& input_mask = context->input(0);
-    const Tensor& input_ids = context->input(1);
-    const Tensor& input_keys = context->input(2);
-    const Tensor& input_values = context->input(3);
-    const Tensor& input_codes = context->input(4);
-    const Tensor& input_types = context->input(5);
+  void Computelon(OpKelonrnelonlContelonxt* contelonxt) ovelonrridelon {
+    // Gelont input telonnsors
+    const Telonnsor& input_mask = contelonxt->input(0);
+    const Telonnsor& input_ids = contelonxt->input(1);
+    const Telonnsor& input_kelonys = contelonxt->input(2);
+    const Telonnsor& input_valuelons = contelonxt->input(3);
+    const Telonnsor& input_codelons = contelonxt->input(4);
+    const Telonnsor& input_typelons = contelonxt->input(5);
 
     auto mask = input_mask.flat<bool>();
     auto ids = input_ids.flat<int64>();
-    auto keys = input_keys.flat<int64>();
-    auto codes = input_codes.flat<int64>();
-    auto values = input_values.flat<T>();
-    auto types = input_types.flat<int8>();
+    auto kelonys = input_kelonys.flat<int64>();
+    auto codelons = input_codelons.flat<int64>();
+    auto valuelons = input_valuelons.flat<T>();
+    auto typelons = input_typelons.flat<int8>();
 
-    // Verify that all Tensors have the same size.
-    OP_REQUIRES(context, allequal(mask.size(), ids.size(), keys.size(), codes.size(), values.size(), types.size()),
-                errors::InvalidArgument("all input vectors must be the same size."));
+    // Velonrify that all Telonnsors havelon thelon samelon sizelon.
+    OP_RelonQUIRelonS(contelonxt, allelonqual(mask.sizelon(), ids.sizelon(), kelonys.sizelon(), codelons.sizelon(), valuelons.sizelon(), typelons.sizelon()),
+                elonrrors::InvalidArgumelonnt("all input velonctors must belon thelon samelon sizelon."));
 
-    // Get the size of the output vectors by counting the numbers of trues.
-    int total_size = 0;
-    for (int i = 0; i < mask.size(); i++) {
+    // Gelont thelon sizelon of thelon output velonctors by counting thelon numbelonrs of truelons.
+    int total_sizelon = 0;
+    for (int i = 0; i < mask.sizelon(); i++) {
       if (mask(i))
-        total_size += 1;
+        total_sizelon += 1;
     }
 
-    // Shape is the number of Trues in the mask Eigen::Tensor
-    TensorShape shape_out = {total_size};
+    // Shapelon is thelon numbelonr of Truelons in thelon mask elonigelonn::Telonnsor
+    TelonnsorShapelon shapelon_out = {total_sizelon};
 
-    // Create the output tensors
-    Tensor* output_codes = nullptr;
-    Tensor* output_ids = nullptr;
-    Tensor* output_values = nullptr;
-    Tensor* output_types = nullptr;
-    Tensor* output_keys = nullptr;
+    // Crelonatelon thelon output telonnsors
+    Telonnsor* output_codelons = nullptr;
+    Telonnsor* output_ids = nullptr;
+    Telonnsor* output_valuelons = nullptr;
+    Telonnsor* output_typelons = nullptr;
+    Telonnsor* output_kelonys = nullptr;
 
-    OP_REQUIRES_OK(context, context->allocate_output(0, shape_out, &output_ids));
-    OP_REQUIRES_OK(context, context->allocate_output(1, shape_out, &output_keys));
-    OP_REQUIRES_OK(context, context->allocate_output(2, shape_out, &output_values));
-    OP_REQUIRES_OK(context, context->allocate_output(3, shape_out, &output_codes));
-    OP_REQUIRES_OK(context, context->allocate_output(4, shape_out, &output_types));
+    OP_RelonQUIRelonS_OK(contelonxt, contelonxt->allocatelon_output(0, shapelon_out, &output_ids));
+    OP_RelonQUIRelonS_OK(contelonxt, contelonxt->allocatelon_output(1, shapelon_out, &output_kelonys));
+    OP_RelonQUIRelonS_OK(contelonxt, contelonxt->allocatelon_output(2, shapelon_out, &output_valuelons));
+    OP_RelonQUIRelonS_OK(contelonxt, contelonxt->allocatelon_output(3, shapelon_out, &output_codelons));
+    OP_RelonQUIRelonS_OK(contelonxt, contelonxt->allocatelon_output(4, shapelon_out, &output_typelons));
 
     auto output_ids_ = output_ids->flat<int64>();
-    auto output_keys_ = output_keys->flat<int64>();
-    auto output_codes_ = output_codes->flat<int64>();
-    auto output_values_ = output_values->flat<T>();
-    auto output_types_ = output_types->flat<int8>();
+    auto output_kelonys_ = output_kelonys->flat<int64>();
+    auto output_codelons_ = output_codelons->flat<int64>();
+    auto output_valuelons_ = output_valuelons->flat<T>();
+    auto output_typelons_ = output_typelons->flat<int8>();
 
-    // Iterate through the mask and set values to output Eigen::Tensors
+    // Itelonratelon through thelon mask and selont valuelons to output elonigelonn::Telonnsors
     int j = 0;
-    for (int i = 0; i < mask.size(); i++) {
+    for (int i = 0; i < mask.sizelon(); i++) {
       if (mask(i)) {
         output_ids_(j) = ids(i);
-        output_keys_(j) = keys(i);
-        output_values_(j) = values(i);
-        output_codes_(j) = codes(i);
-        output_types_(j) = types(i);
+        output_kelonys_(j) = kelonys(i);
+        output_valuelons_(j) = valuelons(i);
+        output_codelons_(j) = codelons(i);
+        output_typelons_(j) = typelons(i);
         ++j;
       }
     }
   }
 };
 
-#define REGISTER(Type)                        \
+#delonfinelon RelonGISTelonR(Typelon)                        \
                                               \
-  REGISTER_KERNEL_BUILDER(                    \
-  Name("FeatureExtractor")  \
-  .Device(DEVICE_CPU)                         \
-  .TypeConstraint<Type>("T"),                 \
-  FeatureExtractor<Type>);  \
+  RelonGISTelonR_KelonRNelonL_BUILDelonR(                    \
+  Namelon("Felonaturelonelonxtractor")  \
+  .Delonvicelon(DelonVICelon_CPU)                         \
+  .TypelonConstraint<Typelon>("T"),                 \
+  Felonaturelonelonxtractor<Typelon>);  \
 
-REGISTER(float);
-REGISTER(double);
+RelonGISTelonR(float);
+RelonGISTelonR(doublelon);

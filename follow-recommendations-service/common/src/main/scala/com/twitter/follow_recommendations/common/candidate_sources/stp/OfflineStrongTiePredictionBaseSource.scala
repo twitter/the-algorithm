@@ -1,53 +1,53 @@
-package com.twitter.follow_recommendations.common.candidate_sources.stp
+packagelon com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.stp
 
-import com.twitter.follow_recommendations.common.models.AccountProof
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.FollowProof
-import com.twitter.follow_recommendations.common.models.Reason
-import com.twitter.hermit.stp.thriftscala.STPResult
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.strato.client.Fetcher
-import com.twitter.timelines.configapi.HasParams
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.AccountProof
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.CandidatelonUselonr
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.FollowProof
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.Relonason
+import com.twittelonr.helonrmit.stp.thriftscala.STPRelonsult
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.CandidatelonSourcelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.HasClielonntContelonxt
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.strato.clielonnt.Felontchelonr
+import com.twittelonr.timelonlinelons.configapi.HasParams
 
-/** Base class that all variants of our offline stp dataset can extend. Assumes the same STPResult
- *  value in the key and converts the result into the necessary internal model.
+/** Baselon class that all variants of our offlinelon stp dataselont can elonxtelonnd. Assumelons thelon samelon STPRelonsult
+ *  valuelon in thelon kelony and convelonrts thelon relonsult into thelon neloncelonssary intelonrnal modelonl.
  */
-abstract class OfflineStrongTiePredictionBaseSource(
-  fetcher: Fetcher[Long, Unit, STPResult])
-    extends CandidateSource[HasParams with HasClientContext, CandidateUser] {
+abstract class OfflinelonStrongTielonPrelondictionBaselonSourcelon(
+  felontchelonr: Felontchelonr[Long, Unit, STPRelonsult])
+    elonxtelonnds CandidatelonSourcelon[HasParams with HasClielonntContelonxt, CandidatelonUselonr] {
 
-  def fetch(
-    target: Long,
-  ): Stitch[Seq[CandidateUser]] = {
-    fetcher
-      .fetch(target)
-      .map { result =>
-        result.v
-          .map { candidates => OfflineStrongTiePredictionBaseSource.map(target, candidates) }
-          .getOrElse(Nil)
-          .map(_.withCandidateSource(identifier))
+  delonf felontch(
+    targelont: Long,
+  ): Stitch[Selonq[CandidatelonUselonr]] = {
+    felontchelonr
+      .felontch(targelont)
+      .map { relonsult =>
+        relonsult.v
+          .map { candidatelons => OfflinelonStrongTielonPrelondictionBaselonSourcelon.map(targelont, candidatelons) }
+          .gelontOrelonlselon(Nil)
+          .map(_.withCandidatelonSourcelon(idelonntifielonr))
       }
   }
 
-  override def apply(request: HasParams with HasClientContext): Stitch[Seq[CandidateUser]] = {
-    request.getOptionalUserId.map(fetch).getOrElse(Stitch.Nil)
+  ovelonrridelon delonf apply(relonquelonst: HasParams with HasClielonntContelonxt): Stitch[Selonq[CandidatelonUselonr]] = {
+    relonquelonst.gelontOptionalUselonrId.map(felontch).gelontOrelonlselon(Stitch.Nil)
   }
 }
 
-object OfflineStrongTiePredictionBaseSource {
-  def map(target: Long, candidates: STPResult): Seq[CandidateUser] = {
+objelonct OfflinelonStrongTielonPrelondictionBaselonSourcelon {
+  delonf map(targelont: Long, candidatelons: STPRelonsult): Selonq[CandidatelonUselonr] = {
     for {
-      candidate <- candidates.strongTieUsers.sortBy(-_.score)
-    } yield CandidateUser(
-      id = candidate.userId,
-      score = Some(candidate.score),
-      reason = Some(
-        Reason(
-          Some(
+      candidatelon <- candidatelons.strongTielonUselonrs.sortBy(-_.scorelon)
+    } yielonld CandidatelonUselonr(
+      id = candidatelon.uselonrId,
+      scorelon = Somelon(candidatelon.scorelon),
+      relonason = Somelon(
+        Relonason(
+          Somelon(
             AccountProof(
-              followProof = candidate.socialProof.map(proof => FollowProof(proof, proof.size))
+              followProof = candidatelon.socialProof.map(proof => FollowProof(proof, proof.sizelon))
             )
           )
         )

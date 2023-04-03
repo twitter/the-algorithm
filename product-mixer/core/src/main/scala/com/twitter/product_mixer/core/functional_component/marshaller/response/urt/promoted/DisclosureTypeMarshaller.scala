@@ -1,21 +1,21 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.promotelond
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.DisclosureType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.Earned
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.Issue
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.NoDisclosure
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.Political
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.promotelond.DisclosurelonTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.promotelond.elonarnelond
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.promotelond.Issuelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.promotelond.NoDisclosurelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.promotelond.Political
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class DisclosureTypeMarshaller @Inject() () {
+@Singlelonton
+class DisclosurelonTypelonMarshallelonr @Injelonct() () {
 
-  def apply(disclosureType: DisclosureType): urt.DisclosureType = disclosureType match {
-    case NoDisclosure => urt.DisclosureType.NoDisclosure
-    case Political => urt.DisclosureType.Political
-    case Earned => urt.DisclosureType.Earned
-    case Issue => urt.DisclosureType.Issue
+  delonf apply(disclosurelonTypelon: DisclosurelonTypelon): urt.DisclosurelonTypelon = disclosurelonTypelon match {
+    caselon NoDisclosurelon => urt.DisclosurelonTypelon.NoDisclosurelon
+    caselon Political => urt.DisclosurelonTypelon.Political
+    caselon elonarnelond => urt.DisclosurelonTypelon.elonarnelond
+    caselon Issuelon => urt.DisclosurelonTypelon.Issuelon
   }
 }

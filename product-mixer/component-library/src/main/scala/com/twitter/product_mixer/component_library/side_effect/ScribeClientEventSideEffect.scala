@@ -1,118 +1,118 @@
-package com.twitter.product_mixer.component_library.side_effect
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.sidelon_elonffelonct
 
-import com.twitter.abdecider.ScribingABDeciderUtil
-import com.twitter.clientapp.thriftscala.LogEvent
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.marshalling.HasMarshalling
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.scribelib.marshallers
-import com.twitter.scribelib.marshallers.ClientDataProvider
-import com.twitter.scribelib.marshallers.LogEventMarshaller
+import com.twittelonr.abdeloncidelonr.ScribingABDeloncidelonrUtil
+import com.twittelonr.clielonntapp.thriftscala.Logelonvelonnt
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.HasMarshalling
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.scribelonlib.marshallelonrs
+import com.twittelonr.scribelonlib.marshallelonrs.ClielonntDataProvidelonr
+import com.twittelonr.scribelonlib.marshallelonrs.LogelonvelonntMarshallelonr
 
 /**
- * Side effect to log client events server-side. Create an implementation of this trait by
- * defining the `buildClientEvents` method, and the `page` val.
- * The ClientEvent will be automatically converted into a [[LogEvent]] and scribed.
+ * Sidelon elonffelonct to log clielonnt elonvelonnts selonrvelonr-sidelon. Crelonatelon an implelonmelonntation of this trait by
+ * delonfining thelon `buildClielonntelonvelonnts` melonthod, and thelon `pagelon` val.
+ * Thelon Clielonntelonvelonnt will belon automatically convelonrtelond into a [[Logelonvelonnt]] and scribelond.
  */
-trait ScribeClientEventSideEffect[
-  Query <: PipelineQuery,
-  UnmarshalledResponseType <: HasMarshalling]
-    extends ScribeLogEventSideEffect[LogEvent, Query, UnmarshalledResponseType] {
+trait ScribelonClielonntelonvelonntSidelonelonffelonct[
+  Quelonry <: PipelonlinelonQuelonry,
+  UnmarshallelondRelonsponselonTypelon <: HasMarshalling]
+    elonxtelonnds ScribelonLogelonvelonntSidelonelonffelonct[Logelonvelonnt, Quelonry, UnmarshallelondRelonsponselonTypelon] {
 
   /**
-   * The page which will be defined in the namespace. This is typically the service name that's scribing
+   * Thelon pagelon which will belon delonfinelond in thelon namelonspacelon. This is typically thelon selonrvicelon namelon that's scribing
    */
-  val page: String
+  val pagelon: String
 
   /**
-   * Build the client events from query, selections and response
+   * Build thelon clielonnt elonvelonnts from quelonry, selonlelonctions and relonsponselon
    *
-   * @param query PipelineQuery
-   * @param selectedCandidates Result after Selectors are executed
-   * @param remainingCandidates Candidates which were not selected
-   * @param droppedCandidates Candidates dropped during selection
-   * @param response Result after Unmarshalling
+   * @param quelonry PipelonlinelonQuelonry
+   * @param selonlelonctelondCandidatelons Relonsult aftelonr Selonlelonctors arelon elonxeloncutelond
+   * @param relonmainingCandidatelons Candidatelons which welonrelon not selonlelonctelond
+   * @param droppelondCandidatelons Candidatelons droppelond during selonlelonction
+   * @param relonsponselon Relonsult aftelonr Unmarshalling
    */
-  def buildClientEvents(
-    query: Query,
-    selectedCandidates: Seq[CandidateWithDetails],
-    remainingCandidates: Seq[CandidateWithDetails],
-    droppedCandidates: Seq[CandidateWithDetails],
-    response: UnmarshalledResponseType
-  ): Seq[ScribeClientEventSideEffect.ClientEvent]
+  delonf buildClielonntelonvelonnts(
+    quelonry: Quelonry,
+    selonlelonctelondCandidatelons: Selonq[CandidatelonWithDelontails],
+    relonmainingCandidatelons: Selonq[CandidatelonWithDelontails],
+    droppelondCandidatelons: Selonq[CandidatelonWithDelontails],
+    relonsponselon: UnmarshallelondRelonsponselonTypelon
+  ): Selonq[ScribelonClielonntelonvelonntSidelonelonffelonct.Clielonntelonvelonnt]
 
-  final override def buildLogEvents(
-    query: Query,
-    selectedCandidates: Seq[CandidateWithDetails],
-    remainingCandidates: Seq[CandidateWithDetails],
-    droppedCandidates: Seq[CandidateWithDetails],
-    response: UnmarshalledResponseType
-  ): Seq[LogEvent] = {
-    buildClientEvents(
-      query = query,
-      selectedCandidates = selectedCandidates,
-      remainingCandidates = remainingCandidates,
-      droppedCandidates = droppedCandidates,
-      response = response).flatMap { event =>
-      val clientData = clientContextToClientDataProvider(query)
+  final ovelonrridelon delonf buildLogelonvelonnts(
+    quelonry: Quelonry,
+    selonlelonctelondCandidatelons: Selonq[CandidatelonWithDelontails],
+    relonmainingCandidatelons: Selonq[CandidatelonWithDelontails],
+    droppelondCandidatelons: Selonq[CandidatelonWithDelontails],
+    relonsponselon: UnmarshallelondRelonsponselonTypelon
+  ): Selonq[Logelonvelonnt] = {
+    buildClielonntelonvelonnts(
+      quelonry = quelonry,
+      selonlelonctelondCandidatelons = selonlelonctelondCandidatelons,
+      relonmainingCandidatelons = relonmainingCandidatelons,
+      droppelondCandidatelons = droppelondCandidatelons,
+      relonsponselon = relonsponselon).flatMap { elonvelonnt =>
+      val clielonntData = clielonntContelonxtToClielonntDataProvidelonr(quelonry)
 
-      val clientName = ScribingABDeciderUtil.clientForAppId(clientData.clientApplicationId)
+      val clielonntNamelon = ScribingABDeloncidelonrUtil.clielonntForAppId(clielonntData.clielonntApplicationId)
 
-      val namespaceMap: Map[String, String] = Map(
-        "client" -> Some(clientName),
-        "page" -> Some(page),
-        "section" -> event.namespace.section,
-        "component" -> event.namespace.component,
-        "element" -> event.namespace.element,
-        "action" -> event.namespace.action
-      ).collect { case (k, Some(v)) => k -> v }
+      val namelonspacelonMap: Map[String, String] = Map(
+        "clielonnt" -> Somelon(clielonntNamelon),
+        "pagelon" -> Somelon(pagelon),
+        "selonction" -> elonvelonnt.namelonspacelon.selonction,
+        "componelonnt" -> elonvelonnt.namelonspacelon.componelonnt,
+        "elonlelonmelonnt" -> elonvelonnt.namelonspacelon.elonlelonmelonnt,
+        "action" -> elonvelonnt.namelonspacelon.action
+      ).collelonct { caselon (k, Somelon(v)) => k -> v }
 
-      val data: Map[Any, Any] = Seq(
-        event.eventValue.map("event_value" -> _),
-        event.latencyMs.map("latency_ms" -> _)
-      ).flatten.toMap
+      val data: Map[Any, Any] = Selonq(
+        elonvelonnt.elonvelonntValuelon.map("elonvelonnt_valuelon" -> _),
+        elonvelonnt.latelonncyMs.map("latelonncy_ms" -> _)
+      ).flattelonn.toMap
 
-      val clientEventData = data +
-        ("event_namespace" -> namespaceMap) +
-        (marshallers.CategoryKey -> "client_event")
+      val clielonntelonvelonntData = data +
+        ("elonvelonnt_namelonspacelon" -> namelonspacelonMap) +
+        (marshallelonrs.CatelongoryKelony -> "clielonnt_elonvelonnt")
 
-      LogEventMarshaller.marshal(
-        data = clientEventData,
-        clientData = clientData
+      LogelonvelonntMarshallelonr.marshal(
+        data = clielonntelonvelonntData,
+        clielonntData = clielonntData
       )
     }
   }
 
   /**
-   * Makes a [[ClientDataProvider]] from the [[PipelineQuery.clientContext]] from the [[query]]
+   * Makelons a [[ClielonntDataProvidelonr]] from thelon [[PipelonlinelonQuelonry.clielonntContelonxt]] from thelon [[quelonry]]
    */
-  private def clientContextToClientDataProvider(query: Query): ClientDataProvider = {
-    new ClientDataProvider {
-      override val userId = query.clientContext.userId
-      override val guestId = query.clientContext.guestId
-      override val personalizationId = None
-      override val deviceId = query.clientContext.deviceId
-      override val clientApplicationId = query.clientContext.appId
-      override val parentApplicationId = None
-      override val countryCode = query.clientContext.countryCode
-      override val languageCode = query.clientContext.languageCode
-      override val userAgent = query.clientContext.userAgent
-      override val isSsl = None
-      override val referer = None
-      override val externalReferer = None
+  privatelon delonf clielonntContelonxtToClielonntDataProvidelonr(quelonry: Quelonry): ClielonntDataProvidelonr = {
+    nelonw ClielonntDataProvidelonr {
+      ovelonrridelon val uselonrId = quelonry.clielonntContelonxt.uselonrId
+      ovelonrridelon val guelonstId = quelonry.clielonntContelonxt.guelonstId
+      ovelonrridelon val pelonrsonalizationId = Nonelon
+      ovelonrridelon val delonvicelonId = quelonry.clielonntContelonxt.delonvicelonId
+      ovelonrridelon val clielonntApplicationId = quelonry.clielonntContelonxt.appId
+      ovelonrridelon val parelonntApplicationId = Nonelon
+      ovelonrridelon val countryCodelon = quelonry.clielonntContelonxt.countryCodelon
+      ovelonrridelon val languagelonCodelon = quelonry.clielonntContelonxt.languagelonCodelon
+      ovelonrridelon val uselonrAgelonnt = quelonry.clielonntContelonxt.uselonrAgelonnt
+      ovelonrridelon val isSsl = Nonelon
+      ovelonrridelon val relonfelonrelonr = Nonelon
+      ovelonrridelon val elonxtelonrnalRelonfelonrelonr = Nonelon
     }
   }
 }
 
-object ScribeClientEventSideEffect {
-  case class EventNamespace(
-    section: Option[String] = None,
-    component: Option[String] = None,
-    element: Option[String] = None,
-    action: Option[String] = None)
+objelonct ScribelonClielonntelonvelonntSidelonelonffelonct {
+  caselon class elonvelonntNamelonspacelon(
+    selonction: Option[String] = Nonelon,
+    componelonnt: Option[String] = Nonelon,
+    elonlelonmelonnt: Option[String] = Nonelon,
+    action: Option[String] = Nonelon)
 
-  case class ClientEvent(
-    namespace: EventNamespace,
-    eventValue: Option[Long] = None,
-    latencyMs: Option[Long] = None)
+  caselon class Clielonntelonvelonnt(
+    namelonspacelon: elonvelonntNamelonspacelon,
+    elonvelonntValuelon: Option[Long] = Nonelon,
+    latelonncyMs: Option[Long] = Nonelon)
 }

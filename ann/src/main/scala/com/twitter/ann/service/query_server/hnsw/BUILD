@@ -1,32 +1,32 @@
 scala_library(
-    name = "server",
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "ann/src/main/scala/com/twitter/ann/common",
-        "ann/src/main/scala/com/twitter/ann/hnsw",
-        "ann/src/main/scala/com/twitter/ann/service/query_server/common",
-        "ann/src/main/scala/com/twitter/ann/service/query_server/common/warmup",
-        "src/java/com/twitter/search/common/file",
+    namelon = "selonrvelonr",
+    sourcelons = ["*.scala"],
+    compilelonr_option_selonts = ["fatal_warnings"],
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        "ann/src/main/scala/com/twittelonr/ann/common",
+        "ann/src/main/scala/com/twittelonr/ann/hnsw",
+        "ann/src/main/scala/com/twittelonr/ann/selonrvicelon/quelonry_selonrvelonr/common",
+        "ann/src/main/scala/com/twittelonr/ann/selonrvicelon/quelonry_selonrvelonr/common/warmup",
+        "src/java/com/twittelonr/selonarch/common/filelon",
     ],
 )
 
 jvm_binary(
-    name = "hnsw-query-server",
-    main = "com.twitter.ann.service.query_server.hnsw.HnswQueryIndexServer",
-    compiler_option_sets = ["fatal_warnings"],
-    runtime_platform = "java11",
+    namelon = "hnsw-quelonry-selonrvelonr",
+    main = "com.twittelonr.ann.selonrvicelon.quelonry_selonrvelonr.hnsw.HnswQuelonryIndelonxSelonrvelonr",
+    compilelonr_option_selonts = ["fatal_warnings"],
+    runtimelon_platform = "java11",
     tags = [
-        "bazel-compatible",
+        "bazelonl-compatiblelon",
     ],
-    dependencies = [
-        ":server",
+    delonpelonndelonncielons = [
+        ":selonrvelonr",
         "3rdparty/jvm/ch/qos/logback:logback-classic",
-        "3rdparty/jvm/org/slf4j:jcl-over-slf4j",
+        "3rdparty/jvm/org/slf4j:jcl-ovelonr-slf4j",
         "3rdparty/jvm/org/slf4j:jul-to-slf4j",
-        "3rdparty/jvm/org/slf4j:log4j-over-slf4j",
-        "ann/src/main/resources",
-        "loglens/loglens-logback/src/main/scala/com/twitter/loglens/logback",
+        "3rdparty/jvm/org/slf4j:log4j-ovelonr-slf4j",
+        "ann/src/main/relonsourcelons",
+        "loglelonns/loglelonns-logback/src/main/scala/com/twittelonr/loglelonns/logback",
     ],
 )

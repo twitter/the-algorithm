@@ -1,20 +1,20 @@
-package com.twitter.cr_mixer.module.core
+packagelon com.twittelonr.cr_mixelonr.modulelon.corelon
 
-import com.twitter.inject.TwitterModule
+import com.twittelonr.injelonct.TwittelonrModulelon
 
-object CrMixerFlagName {
-  val SERVICE_FLAG = "cr_mixer.flag"
-  val DarkTrafficFilterDeciderKey = "thrift.dark.traffic.filter.decider_key"
+objelonct CrMixelonrFlagNamelon {
+  val SelonRVICelon_FLAG = "cr_mixelonr.flag"
+  val DarkTrafficFiltelonrDeloncidelonrKelony = "thrift.dark.traffic.filtelonr.deloncidelonr_kelony"
 }
 
-object CrMixerFlagModule extends TwitterModule {
-  import CrMixerFlagName._
+objelonct CrMixelonrFlagModulelon elonxtelonnds TwittelonrModulelon {
+  import CrMixelonrFlagNamelon._
 
-  flag[Boolean](name = SERVICE_FLAG, default = false, help = "This is a CR Mixer flag")
+  flag[Boolelonan](namelon = SelonRVICelon_FLAG, delonfault = falselon, helonlp = "This is a CR Mixelonr flag")
 
   flag[String](
-    name = DarkTrafficFilterDeciderKey,
-    default = "dark_traffic_filter",
-    help = "Dark traffic filter decider key"
+    namelon = DarkTrafficFiltelonrDeloncidelonrKelony,
+    delonfault = "dark_traffic_filtelonr",
+    helonlp = "Dark traffic filtelonr deloncidelonr kelony"
   )
 }

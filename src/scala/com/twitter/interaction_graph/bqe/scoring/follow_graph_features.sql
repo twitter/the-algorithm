@@ -1,28 +1,28 @@
-DECLARE date_latest_tweet, date_latest_follows DATE;
-SET date_latest_tweet = (
-  SELECT PARSE_DATE('%Y%m%d', SUBSTRING(MAX(partition_id), 1, 8)) AS partition_id
-  FROM `twttr-bq-tweetsource-pub-prod.user.INFORMATION_SCHEMA.PARTITIONS`
-  WHERE partition_id IS NOT NULL AND partition_id != '__NULL__' AND table_name="public_tweets");
-SET date_latest_follows = (
-  SELECT PARSE_DATE('%Y%m%d', MAX(partition_id)) AS partition_id
-  FROM `twttr-recos-ml-prod.user_events.INFORMATION_SCHEMA.PARTITIONS`
-  WHERE partition_id IS NOT NULL AND partition_id != '__NULL__' AND table_name="valid_user_follows");
+DelonCLARelon datelon_latelonst_twelonelont, datelon_latelonst_follows DATelon;
+SelonT datelon_latelonst_twelonelont = (
+  SelonLelonCT PARSelon_DATelon('%Y%m%d', SUBSTRING(MAX(partition_id), 1, 8)) AS partition_id
+  FROM `twttr-bq-twelonelontsourcelon-pub-prod.uselonr.INFORMATION_SCHelonMA.PARTITIONS`
+  WHelonRelon partition_id IS NOT NULL AND partition_id != '__NULL__' AND tablelon_namelon="public_twelonelonts");
+SelonT datelon_latelonst_follows = (
+  SelonLelonCT PARSelon_DATelon('%Y%m%d', MAX(partition_id)) AS partition_id
+  FROM `twttr-reloncos-ml-prod.uselonr_elonvelonnts.INFORMATION_SCHelonMA.PARTITIONS`
+  WHelonRelon partition_id IS NOT NULL AND partition_id != '__NULL__' AND tablelon_namelon="valid_uselonr_follows");
 
--- tweet count candidate features
-CREATE OR REPLACE TABLE `twttr-recos-ml-prod.realgraph.tweeting_follows`
+-- twelonelont count candidatelon felonaturelons
+CRelonATelon OR RelonPLACelon TABLelon `twttr-reloncos-ml-prod.relonalgraph.twelonelonting_follows`
 PARTITION BY ds
 AS
-WITH tweet_count AS (
-  SELECT userId, COUNT(userId) AS num_tweets
-  FROM `twttr-bq-tweetsource-pub-prod.user.public_tweets`
-  WHERE DATE(ts) BETWEEN DATE_SUB(date_latest_tweet, INTERVAL 3 DAY) AND date_latest_tweet
+WITH twelonelont_count AS (
+  SelonLelonCT uselonrId, COUNT(uselonrId) AS num_twelonelonts
+  FROM `twttr-bq-twelonelontsourcelon-pub-prod.uselonr.public_twelonelonts`
+  WHelonRelon DATelon(ts) BelonTWelonelonN DATelon_SUB(datelon_latelonst_twelonelont, INTelonRVAL 3 DAY) AND datelon_latelonst_twelonelont
   GROUP BY 1
 ), all_follows AS (
-  SELECT F.sourceId AS source_id, F.destinationId AS destination_id, COALESCE(T.num_tweets,0) AS num_tweets,
-  ROW_NUMBER() OVER (PARTITION BY F.sourceId ORDER BY T.num_tweets DESC) AS rn
-  FROM `twttr-recos-ml-prod.user_events.valid_user_follows` F
-  LEFT JOIN tweet_count T
-  ON F.destinationId=T.userId
-  WHERE DATE(F._PARTITIONTIME) = date_latest_follows
-) SELECT *, date_latest_tweet AS ds FROM all_follows  WHERE rn <= 2000
+  SelonLelonCT F.sourcelonId AS sourcelon_id, F.delonstinationId AS delonstination_id, COALelonSCelon(T.num_twelonelonts,0) AS num_twelonelonts,
+  ROW_NUMBelonR() OVelonR (PARTITION BY F.sourcelonId ORDelonR BY T.num_twelonelonts DelonSC) AS rn
+  FROM `twttr-reloncos-ml-prod.uselonr_elonvelonnts.valid_uselonr_follows` F
+  LelonFT JOIN twelonelont_count T
+  ON F.delonstinationId=T.uselonrId
+  WHelonRelon DATelon(F._PARTITIONTIMelon) = datelon_latelonst_follows
+) SelonLelonCT *, datelon_latelonst_twelonelont AS ds FROM all_follows  WHelonRelon rn <= 2000
 ;

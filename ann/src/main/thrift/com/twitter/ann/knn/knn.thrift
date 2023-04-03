@@ -1,15 +1,15 @@
-namespace java com.twitter.ann.knn.thriftjava
-#@namespace scala com.twitter.ann.knn.thriftscala
-namespace py gen.twitter.ann.knn
+namelonspacelon java com.twittelonr.ann.knn.thriftjava
+#@namelonspacelon scala com.twittelonr.ann.knn.thriftscala
+namelonspacelon py gelonn.twittelonr.ann.knn
 
-include "com/twitter/ml/featurestore/entity.thrift"
+includelon "com/twittelonr/ml/felonaturelonstorelon/elonntity.thrift"
 
-struct Neighbor {
-  1: required double distance
-  2: required entity.EntityId id
-} (persisted = "true")
+struct Nelonighbor {
+  1: relonquirelond doublelon distancelon
+  2: relonquirelond elonntity.elonntityId id
+} (pelonrsistelond = "truelon")
 
 struct Knn {
-  1: required entity.EntityId queryId
-  2: required list<Neighbor> neighbors
-}(persisted='true')
+  1: relonquirelond elonntity.elonntityId quelonryId
+  2: relonquirelond list<Nelonighbor> nelonighbors
+}(pelonrsistelond='truelon')

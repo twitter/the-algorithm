@@ -1,9 +1,9 @@
 java_library(
-    sources = ["*.java"],
-    compiler_option_sets = ["fatal_warnings"],
+    sourcelons = ["*.java"],
+    compilelonr_option_selonts = ["fatal_warnings"],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/com/twitter/search/ingester:legacy",
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        "3rdparty/jvm/com/twittelonr/selonarch/ingelonstelonr:lelongacy",
     ],
 )

@@ -1,56 +1,56 @@
-package com.twitter.search.earlybird_root.filters;
+packagelon com.twittelonr.selonarch.elonarlybird_root.filtelonrs;
 
 import java.util.Optional;
 
-import javax.inject.Inject;
+import javax.injelonct.Injelonct;
 
-import com.google.common.base.Preconditions;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.earlybird.common.ClientIdUtil;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.search.earlybird_root.quota.ClientIdQuotaManager;
-import com.twitter.search.earlybird_root.quota.QuotaInfo;
-import com.twitter.util.Future;
+import com.twittelonr.finaglelon.Selonrvicelon;
+import com.twittelonr.finaglelon.SimplelonFiltelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.elonarlybird.common.ClielonntIdUtil;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonquelonst;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselonCodelon;
+import com.twittelonr.selonarch.elonarlybird_root.quota.ClielonntIdQuotaManagelonr;
+import com.twittelonr.selonarch.elonarlybird_root.quota.QuotaInfo;
+import com.twittelonr.util.Futurelon;
 
-public class ClientIdArchiveAccessFilter extends SimpleFilter<EarlybirdRequest, EarlybirdResponse> {
-  private static final String UNAUTHORIZED_ARCHIVE_ACCESS_COUNTER_PATTERN =
-      "unauthorized_access_to_full_archive_by_client_%s";
+public class ClielonntIdArchivelonAccelonssFiltelonr elonxtelonnds SimplelonFiltelonr<elonarlybirdRelonquelonst, elonarlybirdRelonsponselon> {
+  privatelon static final String UNAUTHORIZelonD_ARCHIVelon_ACCelonSS_COUNTelonR_PATTelonRN =
+      "unauthorizelond_accelonss_to_full_archivelon_by_clielonnt_%s";
 
-  private final ClientIdQuotaManager quotaManager;
+  privatelon final ClielonntIdQuotaManagelonr quotaManagelonr;
 
   /**
-   * Construct the filter by using ClientIdQuotaManager
+   * Construct thelon filtelonr by using ClielonntIdQuotaManagelonr
    */
-  @Inject
-  public ClientIdArchiveAccessFilter(ClientIdQuotaManager quotaManager) {
-    this.quotaManager = Preconditions.checkNotNull(quotaManager);
+  @Injelonct
+  public ClielonntIdArchivelonAccelonssFiltelonr(ClielonntIdQuotaManagelonr quotaManagelonr) {
+    this.quotaManagelonr = Prelonconditions.chelonckNotNull(quotaManagelonr);
   }
 
-  @Override
-  public Future<EarlybirdResponse> apply(EarlybirdRequest request,
-                                         Service<EarlybirdRequest, EarlybirdResponse> service) {
-    String clientId = ClientIdUtil.getClientIdFromRequest(request);
+  @Ovelonrridelon
+  public Futurelon<elonarlybirdRelonsponselon> apply(elonarlybirdRelonquelonst relonquelonst,
+                                         Selonrvicelon<elonarlybirdRelonquelonst, elonarlybirdRelonsponselon> selonrvicelon) {
+    String clielonntId = ClielonntIdUtil.gelontClielonntIdFromRelonquelonst(relonquelonst);
 
-    Optional<QuotaInfo> quotaInfoOptional = quotaManager.getQuotaForClient(clientId);
-    QuotaInfo quotaInfo = quotaInfoOptional.orElseGet(quotaManager::getCommonPoolQuota);
-    if (!quotaInfo.hasArchiveAccess() && request.isGetOlderResults()) {
-      SearchCounter unauthorizedArchiveAccessCounter = SearchCounter.export(
-          String.format(UNAUTHORIZED_ARCHIVE_ACCESS_COUNTER_PATTERN, clientId));
-      unauthorizedArchiveAccessCounter.increment();
+    Optional<QuotaInfo> quotaInfoOptional = quotaManagelonr.gelontQuotaForClielonnt(clielonntId);
+    QuotaInfo quotaInfo = quotaInfoOptional.orelonlselonGelont(quotaManagelonr::gelontCommonPoolQuota);
+    if (!quotaInfo.hasArchivelonAccelonss() && relonquelonst.isGelontOldelonrRelonsults()) {
+      SelonarchCountelonr unauthorizelondArchivelonAccelonssCountelonr = SelonarchCountelonr.elonxport(
+          String.format(UNAUTHORIZelonD_ARCHIVelon_ACCelonSS_COUNTelonR_PATTelonRN, clielonntId));
+      unauthorizelondArchivelonAccelonssCountelonr.increlonmelonnt();
 
-      String message = String.format(
-          "Client %s is not whitelisted for archive access. Request access at go/searchquota.",
-          clientId);
-      EarlybirdResponse response = new EarlybirdResponse(
-          EarlybirdResponseCode.QUOTA_EXCEEDED_ERROR, 0)
-          .setDebugString(message);
-      return Future.value(response);
+      String melonssagelon = String.format(
+          "Clielonnt %s is not whitelonlistelond for archivelon accelonss. Relonquelonst accelonss at go/selonarchquota.",
+          clielonntId);
+      elonarlybirdRelonsponselon relonsponselon = nelonw elonarlybirdRelonsponselon(
+          elonarlybirdRelonsponselonCodelon.QUOTA_elonXCelonelonDelonD_elonRROR, 0)
+          .selontDelonbugString(melonssagelon);
+      relonturn Futurelon.valuelon(relonsponselon);
     }
-    return service.apply(request);
+    relonturn selonrvicelon.apply(relonquelonst);
   }
 }

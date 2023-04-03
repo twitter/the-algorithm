@@ -1,37 +1,37 @@
-package com.twitter.timelineranker.common
+packagelon com.twittelonr.timelonlinelonrankelonr.common
 
-import com.twitter.search.earlybird.thriftscala.ThriftSearchResult
-import com.twitter.servo.util.FutureArrow
-import com.twitter.timelineranker.core.CandidateEnvelope
-import com.twitter.timelines.model.tweet.HydratedTweet
-import com.twitter.util.Future
+import com.twittelonr.selonarch.elonarlybird.thriftscala.ThriftSelonarchRelonsult
+import com.twittelonr.selonrvo.util.FuturelonArrow
+import com.twittelonr.timelonlinelonrankelonr.corelon.Candidatelonelonnvelonlopelon
+import com.twittelonr.timelonlinelons.modelonl.twelonelont.HydratelondTwelonelont
+import com.twittelonr.util.Futurelon
 
 /**
- * trims searchResults to match with hydratedTweets
- * (if we previously filtered out hydrated tweets, this transform filters the search result set
- * down to match the hydrated tweets.)
+ * trims selonarchRelonsults to match with hydratelondTwelonelonts
+ * (if welon prelonviously filtelonrelond out hydratelond twelonelonts, this transform filtelonrs thelon selonarch relonsult selont
+ * down to match thelon hydratelond twelonelonts.)
  */
-object TrimToMatchHydratedTweetsTransform
-    extends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
-  override def apply(envelope: CandidateEnvelope): Future[CandidateEnvelope] = {
-    val filteredSearchResults =
-      trimSearchResults(envelope.searchResults, envelope.hydratedTweets.outerTweets)
-    val filteredSourceSearchResults =
-      trimSearchResults(envelope.sourceSearchResults, envelope.sourceHydratedTweets.outerTweets)
+objelonct TrimToMatchHydratelondTwelonelontsTransform
+    elonxtelonnds FuturelonArrow[Candidatelonelonnvelonlopelon, Candidatelonelonnvelonlopelon] {
+  ovelonrridelon delonf apply(elonnvelonlopelon: Candidatelonelonnvelonlopelon): Futurelon[Candidatelonelonnvelonlopelon] = {
+    val filtelonrelondSelonarchRelonsults =
+      trimSelonarchRelonsults(elonnvelonlopelon.selonarchRelonsults, elonnvelonlopelon.hydratelondTwelonelonts.outelonrTwelonelonts)
+    val filtelonrelondSourcelonSelonarchRelonsults =
+      trimSelonarchRelonsults(elonnvelonlopelon.sourcelonSelonarchRelonsults, elonnvelonlopelon.sourcelonHydratelondTwelonelonts.outelonrTwelonelonts)
 
-    Future.value(
-      envelope.copy(
-        searchResults = filteredSearchResults,
-        sourceSearchResults = filteredSourceSearchResults
+    Futurelon.valuelon(
+      elonnvelonlopelon.copy(
+        selonarchRelonsults = filtelonrelondSelonarchRelonsults,
+        sourcelonSelonarchRelonsults = filtelonrelondSourcelonSelonarchRelonsults
       )
     )
   }
 
-  private def trimSearchResults(
-    searchResults: Seq[ThriftSearchResult],
-    hydratedTweets: Seq[HydratedTweet]
-  ): Seq[ThriftSearchResult] = {
-    val filteredTweetIds = hydratedTweets.map(_.tweetId).toSet
-    searchResults.filter(result => filteredTweetIds.contains(result.id))
+  privatelon delonf trimSelonarchRelonsults(
+    selonarchRelonsults: Selonq[ThriftSelonarchRelonsult],
+    hydratelondTwelonelonts: Selonq[HydratelondTwelonelont]
+  ): Selonq[ThriftSelonarchRelonsult] = {
+    val filtelonrelondTwelonelontIds = hydratelondTwelonelonts.map(_.twelonelontId).toSelont
+    selonarchRelonsults.filtelonr(relonsult => filtelonrelondTwelonelontIds.contains(relonsult.id))
   }
 }

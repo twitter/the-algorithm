@@ -1,152 +1,152 @@
-package com.twitter.cr_mixer.param
+packagelon com.twittelonr.cr_mixelonr.param
 
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.logging.Logger
-import com.twitter.timelines.configapi.BaseConfig
-import com.twitter.timelines.configapi.BaseConfigBuilder
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSEnumParam
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil
-import com.twitter.timelines.configapi.Param
+import com.twittelonr.finaglelon.stats.NullStatsReloncelonivelonr
+import com.twittelonr.logging.Loggelonr
+import com.twittelonr.timelonlinelons.configapi.BaselonConfig
+import com.twittelonr.timelonlinelons.configapi.BaselonConfigBuildelonr
+import com.twittelonr.timelonlinelons.configapi.FSBoundelondParam
+import com.twittelonr.timelonlinelons.configapi.FSelonnumParam
+import com.twittelonr.timelonlinelons.configapi.FSNamelon
+import com.twittelonr.timelonlinelons.configapi.FSParam
+import com.twittelonr.timelonlinelons.configapi.FelonaturelonSwitchOvelonrridelonUtil
+import com.twittelonr.timelonlinelons.configapi.Param
 
-object BlenderParams {
-  object BlendingAlgorithmEnum extends Enumeration {
-    val RoundRobin: Value = Value
-    val SourceTypeBackFill: Value = Value
-    val SourceSignalSorting: Value = Value
+objelonct BlelonndelonrParams {
+  objelonct BlelonndingAlgorithmelonnum elonxtelonnds elonnumelonration {
+    val RoundRobin: Valuelon = Valuelon
+    val SourcelonTypelonBackFill: Valuelon = Valuelon
+    val SourcelonSignalSorting: Valuelon = Valuelon
   }
-  object ContentBasedSortingAlgorithmEnum extends Enumeration {
-    val FavoriteCount: Value = Value
-    val SourceSignalRecency: Value = Value
-    val RandomSorting: Value = Value
-    val SimilarityToSignalSorting: Value = Value
-    val CandidateRecency: Value = Value
+  objelonct ContelonntBaselondSortingAlgorithmelonnum elonxtelonnds elonnumelonration {
+    val FavoritelonCount: Valuelon = Valuelon
+    val SourcelonSignalReloncelonncy: Valuelon = Valuelon
+    val RandomSorting: Valuelon = Valuelon
+    val SimilarityToSignalSorting: Valuelon = Valuelon
+    val CandidatelonReloncelonncy: Valuelon = Valuelon
   }
 
-  object BlendingAlgorithmParam
-      extends FSEnumParam[BlendingAlgorithmEnum.type](
-        name = "blending_algorithm_id",
-        default = BlendingAlgorithmEnum.RoundRobin,
-        enum = BlendingAlgorithmEnum
+  objelonct BlelonndingAlgorithmParam
+      elonxtelonnds FSelonnumParam[BlelonndingAlgorithmelonnum.typelon](
+        namelon = "blelonnding_algorithm_id",
+        delonfault = BlelonndingAlgorithmelonnum.RoundRobin,
+        elonnum = BlelonndingAlgorithmelonnum
       )
 
-  object RankingInterleaveWeightShrinkageParam
-      extends FSBoundedParam[Double](
-        name = "blending_enable_ml_ranking_interleave_weights_shrinkage",
-        default = 1.0,
+  objelonct RankingIntelonrlelonavelonWelonightShrinkagelonParam
+      elonxtelonnds FSBoundelondParam[Doublelon](
+        namelon = "blelonnding_elonnablelon_ml_ranking_intelonrlelonavelon_welonights_shrinkagelon",
+        delonfault = 1.0,
         min = 0.0,
         max = 1.0
       )
 
-  object RankingInterleaveMaxWeightAdjustments
-      extends FSBoundedParam[Int](
-        name = "blending_interleave_max_weighted_adjustments",
-        default = 3000,
+  objelonct RankingIntelonrlelonavelonMaxWelonightAdjustmelonnts
+      elonxtelonnds FSBoundelondParam[Int](
+        namelon = "blelonnding_intelonrlelonavelon_max_welonightelond_adjustmelonnts",
+        delonfault = 3000,
         min = 0,
         max = 9999
       )
 
-  object SignalTypeSortingAlgorithmParam
-      extends FSEnumParam[ContentBasedSortingAlgorithmEnum.type](
-        name = "blending_algorithm_inner_signal_sorting_id",
-        default = ContentBasedSortingAlgorithmEnum.SourceSignalRecency,
-        enum = ContentBasedSortingAlgorithmEnum
+  objelonct SignalTypelonSortingAlgorithmParam
+      elonxtelonnds FSelonnumParam[ContelonntBaselondSortingAlgorithmelonnum.typelon](
+        namelon = "blelonnding_algorithm_innelonr_signal_sorting_id",
+        delonfault = ContelonntBaselondSortingAlgorithmelonnum.SourcelonSignalReloncelonncy,
+        elonnum = ContelonntBaselondSortingAlgorithmelonnum
       )
 
-  object ContentBlenderTypeSortingAlgorithmParam
-      extends FSEnumParam[ContentBasedSortingAlgorithmEnum.type](
-        name = "blending_algorithm_content_blender_sorting_id",
-        default = ContentBasedSortingAlgorithmEnum.FavoriteCount,
-        enum = ContentBasedSortingAlgorithmEnum
+  objelonct ContelonntBlelonndelonrTypelonSortingAlgorithmParam
+      elonxtelonnds FSelonnumParam[ContelonntBaselondSortingAlgorithmelonnum.typelon](
+        namelon = "blelonnding_algorithm_contelonnt_blelonndelonr_sorting_id",
+        delonfault = ContelonntBaselondSortingAlgorithmelonnum.FavoritelonCount,
+        elonnum = ContelonntBaselondSortingAlgorithmelonnum
       )
 
-  //UserAffinities Algo Param: whether to distributed the source type weights
-  object EnableDistributedSourceTypeWeightsParam
-      extends FSParam[Boolean](
-        name = "blending_algorithm_enable_distributed_source_type_weights",
-        default = false
+  //UselonrAffinitielons Algo Param: whelonthelonr to distributelond thelon sourcelon typelon welonights
+  objelonct elonnablelonDistributelondSourcelonTypelonWelonightsParam
+      elonxtelonnds FSParam[Boolelonan](
+        namelon = "blelonnding_algorithm_elonnablelon_distributelond_sourcelon_typelon_welonights",
+        delonfault = falselon
       )
 
-  object BlendGroupingMethodEnum extends Enumeration {
-    val SourceKeyDefault: Value = Value("SourceKey")
-    val SourceTypeSimilarityEngine: Value = Value("SourceTypeSimilarityEngine")
-    val AuthorId: Value = Value("AuthorId")
+  objelonct BlelonndGroupingMelonthodelonnum elonxtelonnds elonnumelonration {
+    val SourcelonKelonyDelonfault: Valuelon = Valuelon("SourcelonKelony")
+    val SourcelonTypelonSimilarityelonnginelon: Valuelon = Valuelon("SourcelonTypelonSimilarityelonnginelon")
+    val AuthorId: Valuelon = Valuelon("AuthorId")
   }
 
-  object BlendGroupingMethodParam
-      extends FSEnumParam[BlendGroupingMethodEnum.type](
-        name = "blending_grouping_method_id",
-        default = BlendGroupingMethodEnum.SourceKeyDefault,
-        enum = BlendGroupingMethodEnum
+  objelonct BlelonndGroupingMelonthodParam
+      elonxtelonnds FSelonnumParam[BlelonndGroupingMelonthodelonnum.typelon](
+        namelon = "blelonnding_grouping_melonthod_id",
+        delonfault = BlelonndGroupingMelonthodelonnum.SourcelonKelonyDelonfault,
+        elonnum = BlelonndGroupingMelonthodelonnum
       )
 
-  object RecencyBasedRandomSamplingHalfLifeInDays
-      extends FSBoundedParam[Int](
-        name = "blending_interleave_random_sampling_recency_based_half_life_in_days",
-        default = 7,
+  objelonct ReloncelonncyBaselondRandomSamplingHalfLifelonInDays
+      elonxtelonnds FSBoundelondParam[Int](
+        namelon = "blelonnding_intelonrlelonavelon_random_sampling_reloncelonncy_baselond_half_lifelon_in_days",
+        delonfault = 7,
         min = 1,
         max = 28
       )
 
-  object RecencyBasedRandomSamplingDefaultWeight
-      extends FSBoundedParam[Double](
-        name = "blending_interleave_random_sampling_recency_based_default_weight",
-        default = 1.0,
+  objelonct ReloncelonncyBaselondRandomSamplingDelonfaultWelonight
+      elonxtelonnds FSBoundelondParam[Doublelon](
+        namelon = "blelonnding_intelonrlelonavelon_random_sampling_reloncelonncy_baselond_delonfault_welonight",
+        delonfault = 1.0,
         min = 0.1,
         max = 2.0
       )
 
-  object SourceTypeBackFillEnableVideoBackFill
-      extends FSParam[Boolean](
-        name = "blending_enable_video_backfill",
-        default = false
+  objelonct SourcelonTypelonBackFillelonnablelonVidelonoBackFill
+      elonxtelonnds FSParam[Boolelonan](
+        namelon = "blelonnding_elonnablelon_videlono_backfill",
+        delonfault = falselon
       )
 
-  val AllParams: Seq[Param[_] with FSName] = Seq(
-    BlendingAlgorithmParam,
-    RankingInterleaveWeightShrinkageParam,
-    RankingInterleaveMaxWeightAdjustments,
-    EnableDistributedSourceTypeWeightsParam,
-    BlendGroupingMethodParam,
-    RecencyBasedRandomSamplingHalfLifeInDays,
-    RecencyBasedRandomSamplingDefaultWeight,
-    SourceTypeBackFillEnableVideoBackFill,
-    SignalTypeSortingAlgorithmParam,
-    ContentBlenderTypeSortingAlgorithmParam,
+  val AllParams: Selonq[Param[_] with FSNamelon] = Selonq(
+    BlelonndingAlgorithmParam,
+    RankingIntelonrlelonavelonWelonightShrinkagelonParam,
+    RankingIntelonrlelonavelonMaxWelonightAdjustmelonnts,
+    elonnablelonDistributelondSourcelonTypelonWelonightsParam,
+    BlelonndGroupingMelonthodParam,
+    ReloncelonncyBaselondRandomSamplingHalfLifelonInDays,
+    ReloncelonncyBaselondRandomSamplingDelonfaultWelonight,
+    SourcelonTypelonBackFillelonnablelonVidelonoBackFill,
+    SignalTypelonSortingAlgorithmParam,
+    ContelonntBlelonndelonrTypelonSortingAlgorithmParam,
   )
 
-  lazy val config: BaseConfig = {
-    val enumOverrides = FeatureSwitchOverrideUtil.getEnumFSOverrides(
-      NullStatsReceiver,
-      Logger(getClass),
-      BlendingAlgorithmParam,
-      BlendGroupingMethodParam,
-      SignalTypeSortingAlgorithmParam,
-      ContentBlenderTypeSortingAlgorithmParam
+  lazy val config: BaselonConfig = {
+    val elonnumOvelonrridelons = FelonaturelonSwitchOvelonrridelonUtil.gelontelonnumFSOvelonrridelons(
+      NullStatsReloncelonivelonr,
+      Loggelonr(gelontClass),
+      BlelonndingAlgorithmParam,
+      BlelonndGroupingMelonthodParam,
+      SignalTypelonSortingAlgorithmParam,
+      ContelonntBlelonndelonrTypelonSortingAlgorithmParam
     )
 
-    val booleanOverrides = FeatureSwitchOverrideUtil.getBooleanFSOverrides(
-      EnableDistributedSourceTypeWeightsParam,
-      SourceTypeBackFillEnableVideoBackFill
+    val boolelonanOvelonrridelons = FelonaturelonSwitchOvelonrridelonUtil.gelontBoolelonanFSOvelonrridelons(
+      elonnablelonDistributelondSourcelonTypelonWelonightsParam,
+      SourcelonTypelonBackFillelonnablelonVidelonoBackFill
     )
 
-    val intOverrides = FeatureSwitchOverrideUtil.getBoundedIntFSOverrides(
-      RankingInterleaveMaxWeightAdjustments,
-      RecencyBasedRandomSamplingHalfLifeInDays
+    val intOvelonrridelons = FelonaturelonSwitchOvelonrridelonUtil.gelontBoundelondIntFSOvelonrridelons(
+      RankingIntelonrlelonavelonMaxWelonightAdjustmelonnts,
+      ReloncelonncyBaselondRandomSamplingHalfLifelonInDays
     )
 
-    val doubleOverrides = FeatureSwitchOverrideUtil.getBoundedDoubleFSOverrides(
-      RankingInterleaveWeightShrinkageParam,
-      RecencyBasedRandomSamplingDefaultWeight
+    val doublelonOvelonrridelons = FelonaturelonSwitchOvelonrridelonUtil.gelontBoundelondDoublelonFSOvelonrridelons(
+      RankingIntelonrlelonavelonWelonightShrinkagelonParam,
+      ReloncelonncyBaselondRandomSamplingDelonfaultWelonight
     )
 
-    BaseConfigBuilder()
-      .set(enumOverrides: _*)
-      .set(booleanOverrides: _*)
-      .set(intOverrides: _*)
-      .set(doubleOverrides: _*)
+    BaselonConfigBuildelonr()
+      .selont(elonnumOvelonrridelons: _*)
+      .selont(boolelonanOvelonrridelons: _*)
+      .selont(intOvelonrridelons: _*)
+      .selont(doublelonOvelonrridelons: _*)
       .build()
   }
 }

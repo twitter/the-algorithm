@@ -1,64 +1,64 @@
-package com.twitter.search.earlybird_root.filters;
+packagelon com.twittelonr.selonarch.elonarlybird_root.filtelonrs;
 
 import java.util.Optional;
 
-import javax.inject.Inject;
+import javax.injelonct.Injelonct;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
+import com.googlelon.common.baselon.Prelonconditions;
+import com.googlelon.common.collelonct.Lists;
 
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.earlybird.common.ClientIdUtil;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.search.earlybird.thrift.ThriftSearchResult;
-import com.twitter.search.earlybird.thrift.ThriftSearchResults;
-import com.twitter.search.earlybird_root.quota.ClientIdQuotaManager;
-import com.twitter.search.earlybird_root.quota.QuotaInfo;
-import com.twitter.util.Future;
+import com.twittelonr.finaglelon.Selonrvicelon;
+import com.twittelonr.finaglelon.SimplelonFiltelonr;
+import com.twittelonr.selonarch.common.deloncidelonr.SelonarchDeloncidelonr;
+import com.twittelonr.selonarch.elonarlybird.common.ClielonntIdUtil;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonquelonst;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselonCodelon;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsult;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsults;
+import com.twittelonr.selonarch.elonarlybird_root.quota.ClielonntIdQuotaManagelonr;
+import com.twittelonr.selonarch.elonarlybird_root.quota.QuotaInfo;
+import com.twittelonr.util.Futurelon;
 
-public class DisableClientByTierFilter extends SimpleFilter<EarlybirdRequest, EarlybirdResponse> {
-  private static final String CLIENT_BLOCKED_RESPONSE_PATTERN =
-      "Requests of client %s are blocked due to %s disable";
+public class DisablelonClielonntByTielonrFiltelonr elonxtelonnds SimplelonFiltelonr<elonarlybirdRelonquelonst, elonarlybirdRelonsponselon> {
+  privatelon static final String CLIelonNT_BLOCKelonD_RelonSPONSelon_PATTelonRN =
+      "Relonquelonsts of clielonnt %s arelon blockelond duelon to %s disablelon";
 
-  private final SearchDecider decider;
-  private final ClientIdQuotaManager quotaManager;
+  privatelon final SelonarchDeloncidelonr deloncidelonr;
+  privatelon final ClielonntIdQuotaManagelonr quotaManagelonr;
 
   /**
-   * Construct the filter by using ClientIdQuotaManager
+   * Construct thelon filtelonr by using ClielonntIdQuotaManagelonr
    */
-  @Inject
-  public DisableClientByTierFilter(ClientIdQuotaManager quotaManager, SearchDecider decider) {
-    this.quotaManager = Preconditions.checkNotNull(quotaManager);
-    this.decider = decider;
+  @Injelonct
+  public DisablelonClielonntByTielonrFiltelonr(ClielonntIdQuotaManagelonr quotaManagelonr, SelonarchDeloncidelonr deloncidelonr) {
+    this.quotaManagelonr = Prelonconditions.chelonckNotNull(quotaManagelonr);
+    this.deloncidelonr = deloncidelonr;
   }
 
-  @Override
-  public Future<EarlybirdResponse> apply(EarlybirdRequest request,
-                                         Service<EarlybirdRequest, EarlybirdResponse> service) {
-    String clientId = ClientIdUtil.getClientIdFromRequest(request);
-    Optional<QuotaInfo> quotaInfoOptional = quotaManager.getQuotaForClient(clientId);
-    QuotaInfo quotaInfo = quotaInfoOptional.orElseGet(quotaManager::getCommonPoolQuota);
-    // Tier value should exist: if client's tier value not in config file, it will be
-    // set to "no_tier" by default in ConfigBasedQuotaConfig
-    String tier = quotaInfo.getClientTier();
+  @Ovelonrridelon
+  public Futurelon<elonarlybirdRelonsponselon> apply(elonarlybirdRelonquelonst relonquelonst,
+                                         Selonrvicelon<elonarlybirdRelonquelonst, elonarlybirdRelonsponselon> selonrvicelon) {
+    String clielonntId = ClielonntIdUtil.gelontClielonntIdFromRelonquelonst(relonquelonst);
+    Optional<QuotaInfo> quotaInfoOptional = quotaManagelonr.gelontQuotaForClielonnt(clielonntId);
+    QuotaInfo quotaInfo = quotaInfoOptional.orelonlselonGelont(quotaManagelonr::gelontCommonPoolQuota);
+    // Tielonr valuelon should elonxist: if clielonnt's tielonr valuelon not in config filelon, it will belon
+    // selont to "no_tielonr" by delonfault in ConfigBaselondQuotaConfig
+    String tielonr = quotaInfo.gelontClielonntTielonr();
 
-    Preconditions.checkNotNull(tier);
+    Prelonconditions.chelonckNotNull(tielonr);
 
-    if (decider.isAvailable("superroot_unavailable_for_" + tier + "_clients")) {
-      return Future.value(getClientBlockedResponse(clientId, tier));
-    } else {
-      return service.apply(request);
+    if (deloncidelonr.isAvailablelon("supelonrroot_unavailablelon_for_" + tielonr + "_clielonnts")) {
+      relonturn Futurelon.valuelon(gelontClielonntBlockelondRelonsponselon(clielonntId, tielonr));
+    } elonlselon {
+      relonturn selonrvicelon.apply(relonquelonst);
     }
   }
 
-  private static EarlybirdResponse getClientBlockedResponse(String clientId, String tier) {
-    return new EarlybirdResponse(EarlybirdResponseCode.CLIENT_BLOCKED_BY_TIER_ERROR, 0)
-        .setSearchResults(new ThriftSearchResults()
-            .setResults(Lists.<ThriftSearchResult>newArrayList()))
-        .setDebugString(String.format(CLIENT_BLOCKED_RESPONSE_PATTERN, clientId, tier));
+  privatelon static elonarlybirdRelonsponselon gelontClielonntBlockelondRelonsponselon(String clielonntId, String tielonr) {
+    relonturn nelonw elonarlybirdRelonsponselon(elonarlybirdRelonsponselonCodelon.CLIelonNT_BLOCKelonD_BY_TIelonR_elonRROR, 0)
+        .selontSelonarchRelonsults(nelonw ThriftSelonarchRelonsults()
+            .selontRelonsults(Lists.<ThriftSelonarchRelonsult>nelonwArrayList()))
+        .selontDelonbugString(String.format(CLIelonNT_BLOCKelonD_RelonSPONSelon_PATTelonRN, clielonntId, tielonr));
   }
 }

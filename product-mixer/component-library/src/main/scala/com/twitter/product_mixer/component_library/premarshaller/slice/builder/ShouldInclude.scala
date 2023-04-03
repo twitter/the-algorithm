@@ -1,16 +1,16 @@
-package com.twitter.product_mixer.component_library.premarshaller.slice.builder
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.prelonmarshallelonr.slicelon.buildelonr
 
-import com.twitter.product_mixer.core.model.marshalling.response.slice.SliceItem
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.slicelon.SlicelonItelonm
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
-trait ShouldInclude[-Query <: PipelineQuery] {
-  def apply(query: Query, items: Seq[SliceItem]): Boolean
+trait ShouldIncludelon[-Quelonry <: PipelonlinelonQuelonry] {
+  delonf apply(quelonry: Quelonry, itelonms: Selonq[SlicelonItelonm]): Boolelonan
 }
 
-object AlwaysInclude extends ShouldInclude[PipelineQuery] {
-  override def apply(query: PipelineQuery, entries: Seq[SliceItem]): Boolean = true
+objelonct AlwaysIncludelon elonxtelonnds ShouldIncludelon[PipelonlinelonQuelonry] {
+  ovelonrridelon delonf apply(quelonry: PipelonlinelonQuelonry, elonntrielons: Selonq[SlicelonItelonm]): Boolelonan = truelon
 }
 
-object IncludeOnNonEmpty extends ShouldInclude[PipelineQuery] {
-  override def apply(query: PipelineQuery, entries: Seq[SliceItem]): Boolean = entries.nonEmpty
+objelonct IncludelonOnNonelonmpty elonxtelonnds ShouldIncludelon[PipelonlinelonQuelonry] {
+  ovelonrridelon delonf apply(quelonry: PipelonlinelonQuelonry, elonntrielons: Selonq[SlicelonItelonm]): Boolelonan = elonntrielons.nonelonmpty
 }

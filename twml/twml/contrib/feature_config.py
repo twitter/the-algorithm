@@ -1,85 +1,85 @@
 """
-Feature configuration for DeepBird jobs returns dictionary of sparse and dense Features
+Felonaturelon configuration for DelonelonpBird jobs relonturns dictionary of sparselon and delonnselon Felonaturelons
 """
-from twitter.deepbird.io.legacy.contrib import feature_config
+from twittelonr.delonelonpbird.io.lelongacy.contrib import felonaturelon_config
 import twml
 
 
-class FeatureConfig(feature_config.FeatureConfig):
-  def get_feature_spec(self):
+class FelonaturelonConfig(felonaturelon_config.FelonaturelonConfig):
+  delonf gelont_felonaturelon_spelonc(selonlf):
     """
-    Generates a serialization-friendly dict representing this FeatureConfig.
+    Gelonnelonratelons a selonrialization-frielonndly dict relonprelonselonnting this FelonaturelonConfig.
     """
-    doc = super(FeatureConfig, self).get_feature_spec()
+    doc = supelonr(FelonaturelonConfig, selonlf).gelont_felonaturelon_spelonc()
 
-    # Override the class in the spec.
-    doc["class"] = "twml.contrib.FeatureConfig"
+    # Ovelonrridelon thelon class in thelon spelonc.
+    doc["class"] = "twml.contrib.FelonaturelonConfig"
 
-    return doc
+    relonturn doc
 
 
-class FeatureConfigBuilder(feature_config.FeatureConfigBuilder):
-  # Overwrite self.build() to return twml.FeatureConfig instead
-  def build(self):
+class FelonaturelonConfigBuildelonr(felonaturelon_config.FelonaturelonConfigBuildelonr):
+  # Ovelonrwritelon selonlf.build() to relonturn twml.FelonaturelonConfig instelonad
+  delonf build(selonlf):
     """
-    Returns an instance of FeatureConfig with the features passed to the FeatureConfigBuilder.
+    Relonturns an instancelon of FelonaturelonConfig with thelon felonaturelons passelond to thelon FelonaturelonConfigBuildelonr.
     """
 
     (
-      keep_tensors,
-      keep_sparse_tensors,
-      feature_map,
-      features_add,
-      feature_name_to_feature_parser,
-      feature_in_bq_name,
-    ) = self._build()
+      kelonelonp_telonnsors,
+      kelonelonp_sparselon_telonnsors,
+      felonaturelon_map,
+      felonaturelons_add,
+      felonaturelon_namelon_to_felonaturelon_parselonr,
+      felonaturelon_in_bq_namelon,
+    ) = selonlf._build()
 
-    discretize_dict = {}
-    for config in self._sparse_extraction_configs:
-      if config.discretize_num_bins and config.discretize_output_size_bits:
-        if config.discretize_type == "percentile":
-          calibrator = twml.contrib.calibrators.PercentileDiscretizerCalibrator
-        elif config.discretize_type == "hashed_percentile":
-          calibrator = twml.contrib.calibrators.HashedPercentileDiscretizerCalibrator
-        elif config.discretize_type == "hashing":
-          calibrator = twml.contrib.calibrators.HashingDiscretizerCalibrator
-        else:
-          raise ValueError("Unsupported discretizer type: " + config.discretize_type)
-        discretize_dict[config.output_name] = calibrator(
-          config.discretize_num_bins,
-          config.discretize_output_size_bits,
-          allow_empty_calibration=config.allow_empty_calibration,
+    discrelontizelon_dict = {}
+    for config in selonlf._sparselon_elonxtraction_configs:
+      if config.discrelontizelon_num_bins and config.discrelontizelon_output_sizelon_bits:
+        if config.discrelontizelon_typelon == "pelonrcelonntilelon":
+          calibrator = twml.contrib.calibrators.PelonrcelonntilelonDiscrelontizelonrCalibrator
+        elonlif config.discrelontizelon_typelon == "hashelond_pelonrcelonntilelon":
+          calibrator = twml.contrib.calibrators.HashelondPelonrcelonntilelonDiscrelontizelonrCalibrator
+        elonlif config.discrelontizelon_typelon == "hashing":
+          calibrator = twml.contrib.calibrators.HashingDiscrelontizelonrCalibrator
+        elonlselon:
+          raiselon Valuelonelonrror("Unsupportelond discrelontizelonr typelon: " + config.discrelontizelon_typelon)
+        discrelontizelon_dict[config.output_namelon] = calibrator(
+          config.discrelontizelon_num_bins,
+          config.discrelontizelon_output_sizelon_bits,
+          allow_elonmpty_calibration=config.allow_elonmpty_calibration,
         )
-      elif config.discretize_num_bins or config.discretize_output_size_bits:
-        raise ValueError(
-          "Discretize_num_bins AND discretize_output_size_bits need to be in the FeatureConfig"
+      elonlif config.discrelontizelon_num_bins or config.discrelontizelon_output_sizelon_bits:
+        raiselon Valuelonelonrror(
+          "Discrelontizelon_num_bins AND discrelontizelon_output_sizelon_bits nelonelond to belon in thelon FelonaturelonConfig"
         )
 
-    return FeatureConfig(
-      features={},
-      labels=self._labels,
-      weight=self._weight,
-      filters=self._filter_features,
-      tensor_types=keep_tensors,
-      sparse_tensor_types=keep_sparse_tensors,
-      feature_types=feature_map,
-      sparse_extraction_configs=self._sparse_extraction_configs,
-      feature_extraction_configs=self._feature_extraction_configs,
-      feature_group_extraction_configs=self._feature_group_extraction_configs,
-      image_configs=self._image_configs,
-      discretize_config=discretize_dict,
-      feature_ids=features_add,
-      decode_mode=self._decode_mode,
-      legacy_sparse=self._legacy_sparse,
-      feature_name_to_feature_parser=feature_name_to_feature_parser,
-      feature_in_bq_name=feature_in_bq_name,
+    relonturn FelonaturelonConfig(
+      felonaturelons={},
+      labelonls=selonlf._labelonls,
+      welonight=selonlf._welonight,
+      filtelonrs=selonlf._filtelonr_felonaturelons,
+      telonnsor_typelons=kelonelonp_telonnsors,
+      sparselon_telonnsor_typelons=kelonelonp_sparselon_telonnsors,
+      felonaturelon_typelons=felonaturelon_map,
+      sparselon_elonxtraction_configs=selonlf._sparselon_elonxtraction_configs,
+      felonaturelon_elonxtraction_configs=selonlf._felonaturelon_elonxtraction_configs,
+      felonaturelon_group_elonxtraction_configs=selonlf._felonaturelon_group_elonxtraction_configs,
+      imagelon_configs=selonlf._imagelon_configs,
+      discrelontizelon_config=discrelontizelon_dict,
+      felonaturelon_ids=felonaturelons_add,
+      deloncodelon_modelon=selonlf._deloncodelon_modelon,
+      lelongacy_sparselon=selonlf._lelongacy_sparselon,
+      felonaturelon_namelon_to_felonaturelon_parselonr=felonaturelon_namelon_to_felonaturelon_parselonr,
+      felonaturelon_in_bq_namelon=felonaturelon_in_bq_namelon,
     )
 
 
-TensorExtractionConfig = feature_config.TensorExtractionConfig
+TelonnsorelonxtractionConfig = felonaturelon_config.TelonnsorelonxtractionConfig
 
-FeatureGroupExtractionConfig = feature_config.FeatureGroupExtractionConfig
+FelonaturelonGroupelonxtractionConfig = felonaturelon_config.FelonaturelonGroupelonxtractionConfig
 
-ImageExtractionConfig = feature_config.ImageExtractionConfig
+ImagelonelonxtractionConfig = felonaturelon_config.ImagelonelonxtractionConfig
 
-_set_tensor_namedtuple = feature_config._set_tensor_namedtuple
+_selont_telonnsor_namelondtuplelon = felonaturelon_config._selont_telonnsor_namelondtuplelon

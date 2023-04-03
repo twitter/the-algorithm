@@ -1,224 +1,224 @@
-"""Utility functions to create FeatureConfig objects from feature_spec.yaml files"""
+"""Utility functions to crelonatelon FelonaturelonConfig objeloncts from felonaturelon_spelonc.yaml filelons"""
 import os
-import re
+import relon
 
-import tensorflow.compat.v1 as tf
+import telonnsorflow.compat.v1 as tf
 import yaml
-from twml.feature_config import FeatureConfigBuilder
-from twml.contrib.feature_config import FeatureConfigBuilder as FeatureConfigBuilderV2
+from twml.felonaturelon_config import FelonaturelonConfigBuildelonr
+from twml.contrib.felonaturelon_config import FelonaturelonConfigBuildelonr as FelonaturelonConfigBuildelonrV2
 
 
-def _get_config_version(config_dict):
+delonf _gelont_config_velonrsion(config_dict):
   doc = config_dict
-  supported_classes = {
-    "twml.FeatureConfig": "v1",
-    "twml.contrib.FeatureConfig": "v2"
+  supportelond_classelons = {
+    "twml.FelonaturelonConfig": "v1",
+    "twml.contrib.FelonaturelonConfig": "v2"
   }
   if "class" not in doc:
-    raise ValueError("'class' key not found")
-  if doc["class"] not in supported_classes.keys():
-    raise ValueError("Class %s not supported. Supported clases are %s"
-                     % (doc["class"], supported_classes.keys()))
-  return supported_classes[doc["class"]]
+    raiselon Valuelonelonrror("'class' kelony not found")
+  if doc["class"] not in supportelond_classelons.kelonys():
+    raiselon Valuelonelonrror("Class %s not supportelond. Supportelond claselons arelon %s"
+                     % (doc["class"], supportelond_classelons.kelonys()))
+  relonturn supportelond_classelons[doc["class"]]
 
 
-def _validate_config_dict_v1(config_dict):
+delonf _validatelon_config_dict_v1(config_dict):
   """
-  Validate spec exported by twml.FeatureConfig
-  """
-  doc = config_dict
-
-  def malformed_error(msg):
-    raise ValueError("twml.FeatureConfig: Malformed feature_spec. %s" % msg)
-
-  if doc["class"] != "twml.FeatureConfig":
-    malformed_error("'class' is not twml.FeatureConfig")
-  if "format" not in doc:
-    malformed_error("'format' key not found")
-
-  # validate spec exported by twml.FeatureConfig
-  if doc["format"] == "exported":
-    dict_keys = ["features", "labels", "weight", "tensors", "sparse_tensors"]
-    for key in dict_keys:
-      if key not in doc:
-        malformed_error("'%s' key not found" % key)
-      if type(doc[key]) != dict:
-        malformed_error("'%s' is not a dict" % key)
-    if "filters" not in doc:
-      malformed_error("'filters' key not found")
-    elif type(doc["filters"]) != list:
-      malformed_error("'filters' is not a list")
-
-  # validate spec provided by modeler
-  elif doc["format"] == "manual":
-    raise NotImplementedError("Manual config support not yet implemented")
-  else:
-    malformed_error("'format' must be 'exported' or 'manual'")
-
-
-def _validate_config_dict_v2(config_dict):
-  """
-  Validate spec exported by twml.contrib.FeatureConfig
+  Validatelon spelonc elonxportelond by twml.FelonaturelonConfig
   """
   doc = config_dict
 
-  def malformed_error(msg):
-    raise ValueError("twml.contrib.FeatureConfig: Malformed feature_spec. %s" % msg)
+  delonf malformelond_elonrror(msg):
+    raiselon Valuelonelonrror("twml.FelonaturelonConfig: Malformelond felonaturelon_spelonc. %s" % msg)
 
-  if doc["class"] != "twml.contrib.FeatureConfig":
-    malformed_error("'class' is not twml.contrib.FeatureConfig")
+  if doc["class"] != "twml.FelonaturelonConfig":
+    malformelond_elonrror("'class' is not twml.FelonaturelonConfig")
   if "format" not in doc:
-    malformed_error("'format key not found'")
+    malformelond_elonrror("'format' kelony not found")
 
-  # validate spec exported by twml.contrib.FeatureConfig (basic validation only)
-  if doc["format"] == "exported":
-    dict_keys = ["features", "labels", "weight", "tensors", "sparseTensors", "discretizeConfig"]
-    for key in dict_keys:
-      if key not in doc:
-        malformed_error("'%s' key not found" % key)
-      if type(doc[key]) != dict:
-        malformed_error("'%s' is not a dict" % key)
-    list_keys = ["sparseFeatureGroups", "denseFeatureGroups", "denseFeatures", "images", "filters"]
-    for key in list_keys:
-      if key not in doc:
-        malformed_error("'%s' key not found" % key)
-      if type(doc[key]) != list:
-        malformed_error("'%s' is not a list" % key)
+  # validatelon spelonc elonxportelond by twml.FelonaturelonConfig
+  if doc["format"] == "elonxportelond":
+    dict_kelonys = ["felonaturelons", "labelonls", "welonight", "telonnsors", "sparselon_telonnsors"]
+    for kelony in dict_kelonys:
+      if kelony not in doc:
+        malformelond_elonrror("'%s' kelony not found" % kelony)
+      if typelon(doc[kelony]) != dict:
+        malformelond_elonrror("'%s' is not a dict" % kelony)
+    if "filtelonrs" not in doc:
+      malformelond_elonrror("'filtelonrs' kelony not found")
+    elonlif typelon(doc["filtelonrs"]) != list:
+      malformelond_elonrror("'filtelonrs' is not a list")
 
-  # validate spec provided by modeler
-  elif doc["format"] == "manual":
-    raise NotImplementedError("Manual config support not yet implemented")
-  else:
-    malformed_error("'format' must be 'exported' or 'manual'")
+  # validatelon spelonc providelond by modelonlelonr
+  elonlif doc["format"] == "manual":
+    raiselon NotImplelonmelonntelondelonrror("Manual config support not yelont implelonmelonntelond")
+  elonlselon:
+    malformelond_elonrror("'format' must belon 'elonxportelond' or 'manual'")
 
 
-def _create_feature_config_v1(config_dict, data_spec_path):
-  fc_builder = FeatureConfigBuilder(data_spec_path)
+delonf _validatelon_config_dict_v2(config_dict):
+  """
+  Validatelon spelonc elonxportelond by twml.contrib.FelonaturelonConfig
+  """
+  doc = config_dict
 
-  if config_dict["format"] == "exported":
-    # add features
-    for feature_info in config_dict["features"].values():
-      feature_name = re.escape(feature_info["featureName"])
-      feature_group = feature_info["featureGroup"]
-      fc_builder.add_feature(feature_name, feature_group)
-    # add labels
-    labels = []
-    for label_info in config_dict["labels"].values():
-      labels.append(label_info["featureName"])
-    fc_builder.add_labels(labels)
-    # feature filters
-    for feature_name in config_dict["filters"]:
-      fc_builder.add_filter(feature_name)
-    # weight
-    if config_dict["weight"]:
-      weight_feature = list(config_dict["weight"].values())[0]["featureName"]
-      fc_builder.define_weight(weight_feature)
-  else:
-    raise ValueError("Format '%s' not implemented" % config_dict["format"])
+  delonf malformelond_elonrror(msg):
+    raiselon Valuelonelonrror("twml.contrib.FelonaturelonConfig: Malformelond felonaturelon_spelonc. %s" % msg)
 
-  return fc_builder.build()
+  if doc["class"] != "twml.contrib.FelonaturelonConfig":
+    malformelond_elonrror("'class' is not twml.contrib.FelonaturelonConfig")
+  if "format" not in doc:
+    malformelond_elonrror("'format kelony not found'")
+
+  # validatelon spelonc elonxportelond by twml.contrib.FelonaturelonConfig (basic validation only)
+  if doc["format"] == "elonxportelond":
+    dict_kelonys = ["felonaturelons", "labelonls", "welonight", "telonnsors", "sparselonTelonnsors", "discrelontizelonConfig"]
+    for kelony in dict_kelonys:
+      if kelony not in doc:
+        malformelond_elonrror("'%s' kelony not found" % kelony)
+      if typelon(doc[kelony]) != dict:
+        malformelond_elonrror("'%s' is not a dict" % kelony)
+    list_kelonys = ["sparselonFelonaturelonGroups", "delonnselonFelonaturelonGroups", "delonnselonFelonaturelons", "imagelons", "filtelonrs"]
+    for kelony in list_kelonys:
+      if kelony not in doc:
+        malformelond_elonrror("'%s' kelony not found" % kelony)
+      if typelon(doc[kelony]) != list:
+        malformelond_elonrror("'%s' is not a list" % kelony)
+
+  # validatelon spelonc providelond by modelonlelonr
+  elonlif doc["format"] == "manual":
+    raiselon NotImplelonmelonntelondelonrror("Manual config support not yelont implelonmelonntelond")
+  elonlselon:
+    malformelond_elonrror("'format' must belon 'elonxportelond' or 'manual'")
 
 
-def _create_feature_config_v2(config_dict, data_spec_path):
-  fc_builder = FeatureConfigBuilderV2(data_spec_path)
+delonf _crelonatelon_felonaturelon_config_v1(config_dict, data_spelonc_path):
+  fc_buildelonr = FelonaturelonConfigBuildelonr(data_spelonc_path)
 
-  if config_dict["format"] == "exported":
-    # add sparse group extraction configs
-    for sparse_group in config_dict["sparseFeatureGroups"]:
-      fids = sparse_group["features"].keys()
-      fnames = [sparse_group["features"][fid]["featureName"] for fid in fids]
-      fc_builder.extract_features_as_hashed_sparse(
-        feature_regexes=[re.escape(fname) for fname in fnames],
-        output_tensor_name=sparse_group["outputName"],
-        hash_space_size_bits=sparse_group["hashSpaceBits"],
-        discretize_num_bins=sparse_group["discretize"]["numBins"],
-        discretize_output_size_bits=sparse_group["discretize"]["outputSizeBits"],
-        discretize_type=sparse_group["discretize"]["type"],
-        type_filter=sparse_group["filterType"])
+  if config_dict["format"] == "elonxportelond":
+    # add felonaturelons
+    for felonaturelon_info in config_dict["felonaturelons"].valuelons():
+      felonaturelon_namelon = relon.elonscapelon(felonaturelon_info["felonaturelonNamelon"])
+      felonaturelon_group = felonaturelon_info["felonaturelonGroup"]
+      fc_buildelonr.add_felonaturelon(felonaturelon_namelon, felonaturelon_group)
+    # add labelonls
+    labelonls = []
+    for labelonl_info in config_dict["labelonls"].valuelons():
+      labelonls.appelonnd(labelonl_info["felonaturelonNamelon"])
+    fc_buildelonr.add_labelonls(labelonls)
+    # felonaturelon filtelonrs
+    for felonaturelon_namelon in config_dict["filtelonrs"]:
+      fc_buildelonr.add_filtelonr(felonaturelon_namelon)
+    # welonight
+    if config_dict["welonight"]:
+      welonight_felonaturelon = list(config_dict["welonight"].valuelons())[0]["felonaturelonNamelon"]
+      fc_buildelonr.delonfinelon_welonight(welonight_felonaturelon)
+  elonlselon:
+    raiselon Valuelonelonrror("Format '%s' not implelonmelonntelond" % config_dict["format"])
 
-    # add dense group extraction configs
-    for dense_group in config_dict["denseFeatureGroups"]:
-      fids = dense_group["features"].keys()
-      fnames = [dense_group["features"][fid]["featureName"] for fid in fids]
-      fc_builder.extract_feature_group(
-        feature_regexes=[re.escape(fname) for fname in fnames],
-        group_name=dense_group["outputName"],
-        type_filter=dense_group["filterType"],
-        default_value=dense_group["defaultValue"])
+  relonturn fc_buildelonr.build()
 
-    # add dense feature configs
-    for dense_features in config_dict["denseFeatures"]:
-      fids = dense_features["features"].keys()
-      fnames = [dense_features["features"][fid]["featureName"] for fid in fids]
-      default_value = dense_features["defaultValue"]
-      if len(fnames) == 1 and type(default_value) != dict:
-        fc_builder.extract_feature(
-          feature_name=re.escape(fnames[0]),
-          expected_shape=dense_features["expectedShape"],
-          default_value=dense_features["defaultValue"])
-      else:
-        fc_builder.extract_features(
-          feature_regexes=[re.escape(fname) for fname in fnames],
-          default_value_map=dense_features["defaultValue"])
 
-    # add image feature configs
-    for image in config_dict["images"]:
-      fc_builder.extract_image(
-        feature_name=image["featureName"],
-        preprocess=image["preprocess"],
-        out_type=tf.as_dtype(image["outType"].lower()),
-        channels=image["channels"],
-        default_image=image["defaultImage"],
+delonf _crelonatelon_felonaturelon_config_v2(config_dict, data_spelonc_path):
+  fc_buildelonr = FelonaturelonConfigBuildelonrV2(data_spelonc_path)
+
+  if config_dict["format"] == "elonxportelond":
+    # add sparselon group elonxtraction configs
+    for sparselon_group in config_dict["sparselonFelonaturelonGroups"]:
+      fids = sparselon_group["felonaturelons"].kelonys()
+      fnamelons = [sparselon_group["felonaturelons"][fid]["felonaturelonNamelon"] for fid in fids]
+      fc_buildelonr.elonxtract_felonaturelons_as_hashelond_sparselon(
+        felonaturelon_relongelonxelons=[relon.elonscapelon(fnamelon) for fnamelon in fnamelons],
+        output_telonnsor_namelon=sparselon_group["outputNamelon"],
+        hash_spacelon_sizelon_bits=sparselon_group["hashSpacelonBits"],
+        discrelontizelon_num_bins=sparselon_group["discrelontizelon"]["numBins"],
+        discrelontizelon_output_sizelon_bits=sparselon_group["discrelontizelon"]["outputSizelonBits"],
+        discrelontizelon_typelon=sparselon_group["discrelontizelon"]["typelon"],
+        typelon_filtelonr=sparselon_group["filtelonrTypelon"])
+
+    # add delonnselon group elonxtraction configs
+    for delonnselon_group in config_dict["delonnselonFelonaturelonGroups"]:
+      fids = delonnselon_group["felonaturelons"].kelonys()
+      fnamelons = [delonnselon_group["felonaturelons"][fid]["felonaturelonNamelon"] for fid in fids]
+      fc_buildelonr.elonxtract_felonaturelon_group(
+        felonaturelon_relongelonxelons=[relon.elonscapelon(fnamelon) for fnamelon in fnamelons],
+        group_namelon=delonnselon_group["outputNamelon"],
+        typelon_filtelonr=delonnselon_group["filtelonrTypelon"],
+        delonfault_valuelon=delonnselon_group["delonfaultValuelon"])
+
+    # add delonnselon felonaturelon configs
+    for delonnselon_felonaturelons in config_dict["delonnselonFelonaturelons"]:
+      fids = delonnselon_felonaturelons["felonaturelons"].kelonys()
+      fnamelons = [delonnselon_felonaturelons["felonaturelons"][fid]["felonaturelonNamelon"] for fid in fids]
+      delonfault_valuelon = delonnselon_felonaturelons["delonfaultValuelon"]
+      if lelonn(fnamelons) == 1 and typelon(delonfault_valuelon) != dict:
+        fc_buildelonr.elonxtract_felonaturelon(
+          felonaturelon_namelon=relon.elonscapelon(fnamelons[0]),
+          elonxpelonctelond_shapelon=delonnselon_felonaturelons["elonxpelonctelondShapelon"],
+          delonfault_valuelon=delonnselon_felonaturelons["delonfaultValuelon"])
+      elonlselon:
+        fc_buildelonr.elonxtract_felonaturelons(
+          felonaturelon_relongelonxelons=[relon.elonscapelon(fnamelon) for fnamelon in fnamelons],
+          delonfault_valuelon_map=delonnselon_felonaturelons["delonfaultValuelon"])
+
+    # add imagelon felonaturelon configs
+    for imagelon in config_dict["imagelons"]:
+      fc_buildelonr.elonxtract_imagelon(
+        felonaturelon_namelon=imagelon["felonaturelonNamelon"],
+        prelonprocelonss=imagelon["prelonprocelonss"],
+        out_typelon=tf.as_dtypelon(imagelon["outTypelon"].lowelonr()),
+        channelonls=imagelon["channelonls"],
+        delonfault_imagelon=imagelon["delonfaultImagelon"],
       )
 
-    # add other tensor features (non-image)
-    tensor_fnames = []
-    image_fnames = [img["featureName"] for img in config_dict["images"]]
-    for tensor_fname in config_dict["tensors"]:
-      if tensor_fname not in image_fnames:
-        tensor_fnames.append(tensor_fname)
-    for sparse_tensor_fname in config_dict["sparseTensors"]:
-      tensor_fnames.append(sparse_tensor_fname)
-    fc_builder.extract_tensors(tensor_fnames)
+    # add othelonr telonnsor felonaturelons (non-imagelon)
+    telonnsor_fnamelons = []
+    imagelon_fnamelons = [img["felonaturelonNamelon"] for img in config_dict["imagelons"]]
+    for telonnsor_fnamelon in config_dict["telonnsors"]:
+      if telonnsor_fnamelon not in imagelon_fnamelons:
+        telonnsor_fnamelons.appelonnd(telonnsor_fnamelon)
+    for sparselon_telonnsor_fnamelon in config_dict["sparselonTelonnsors"]:
+      telonnsor_fnamelons.appelonnd(sparselon_telonnsor_fnamelon)
+    fc_buildelonr.elonxtract_telonnsors(telonnsor_fnamelons)
 
-    # add labels
-    labels = []
-    for label_info in config_dict["labels"].values():
-      labels.append(label_info["featureName"])
-    fc_builder.add_labels(labels)
+    # add labelonls
+    labelonls = []
+    for labelonl_info in config_dict["labelonls"].valuelons():
+      labelonls.appelonnd(labelonl_info["felonaturelonNamelon"])
+    fc_buildelonr.add_labelonls(labelonls)
 
-  else:
-    raise ValueError("Format '%s' not implemented" % config_dict["format"])
+  elonlselon:
+    raiselon Valuelonelonrror("Format '%s' not implelonmelonntelond" % config_dict["format"])
 
-  return fc_builder.build()
+  relonturn fc_buildelonr.build()
 
 
-def create_feature_config_from_dict(config_dict, data_spec_path):
+delonf crelonatelon_felonaturelon_config_from_dict(config_dict, data_spelonc_path):
   """
-  Create a FeatureConfig object from a feature spec dict.
+  Crelonatelon a FelonaturelonConfig objelonct from a felonaturelon spelonc dict.
   """
-  config_version = _get_config_version(config_dict)
-  if config_version == "v1":
-    _validate_config_dict_v1(config_dict)
-    feature_config = _create_feature_config_v1(config_dict, data_spec_path)
-  elif config_version == "v2":
-    _validate_config_dict_v2(config_dict)
-    feature_config = _create_feature_config_v2(config_dict, data_spec_path)
-  else:
-    raise ValueError("version not supported")
+  config_velonrsion = _gelont_config_velonrsion(config_dict)
+  if config_velonrsion == "v1":
+    _validatelon_config_dict_v1(config_dict)
+    felonaturelon_config = _crelonatelon_felonaturelon_config_v1(config_dict, data_spelonc_path)
+  elonlif config_velonrsion == "v2":
+    _validatelon_config_dict_v2(config_dict)
+    felonaturelon_config = _crelonatelon_felonaturelon_config_v2(config_dict, data_spelonc_path)
+  elonlselon:
+    raiselon Valuelonelonrror("velonrsion not supportelond")
 
-  return feature_config
+  relonturn felonaturelon_config
 
 
-def create_feature_config(config_path, data_spec_path):
+delonf crelonatelon_felonaturelon_config(config_path, data_spelonc_path):
   """
-  Create a FeatureConfig object from a feature_spec.yaml file.
+  Crelonatelon a FelonaturelonConfig objelonct from a felonaturelon_spelonc.yaml filelon.
   """
-  _, ext = os.path.splitext(config_path)
-  if ext not in ['.yaml', '.yml']:
-    raise ValueError("create_feature_config_from_yaml: Only .yaml/.yml supported")
+  _, elonxt = os.path.splitelonxt(config_path)
+  if elonxt not in ['.yaml', '.yml']:
+    raiselon Valuelonelonrror("crelonatelon_felonaturelon_config_from_yaml: Only .yaml/.yml supportelond")
 
-  with tf.io.gfile.GFile(config_path, mode='r') as fs:
-    config_dict = yaml.safe_load(fs)
+  with tf.io.gfilelon.GFilelon(config_path, modelon='r') as fs:
+    config_dict = yaml.safelon_load(fs)
 
-  return create_feature_config_from_dict(config_dict, data_spec_path)
+  relonturn crelonatelon_felonaturelon_config_from_dict(config_dict, data_spelonc_path)

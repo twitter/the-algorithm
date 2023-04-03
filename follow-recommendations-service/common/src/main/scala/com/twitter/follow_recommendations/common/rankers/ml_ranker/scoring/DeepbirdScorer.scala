@@ -1,149 +1,149 @@
-package com.twitter.follow_recommendations.common.rankers.ml_ranker.scoring
+packagelon com.twittelonr.follow_reloncommelonndations.common.rankelonrs.ml_rankelonr.scoring
 
-import com.twitter.cortex.deepbird.thriftjava.DeepbirdPredictionService
-import com.twitter.cortex.deepbird.thriftjava.ModelSelector
-import com.twitter.finagle.stats.Stat
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.HasDebugOptions
-import com.twitter.follow_recommendations.common.models.HasDisplayLocation
-import com.twitter.follow_recommendations.common.models.Score
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.Feature
-import com.twitter.ml.api.RichDataRecord
-import com.twitter.ml.prediction_service.{BatchPredictionRequest => JBatchPredictionRequest}
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.util.Future
-import com.twitter.util.TimeoutException
-import scala.collection.JavaConversions._
-import scala.collection.JavaConverters._
+import com.twittelonr.cortelonx.delonelonpbird.thriftjava.DelonelonpbirdPrelondictionSelonrvicelon
+import com.twittelonr.cortelonx.delonelonpbird.thriftjava.ModelonlSelonlelonctor
+import com.twittelonr.finaglelon.stats.Stat
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.CandidatelonUselonr
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.HasDelonbugOptions
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.HasDisplayLocation
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.Scorelon
+import com.twittelonr.ml.api.DataReloncord
+import com.twittelonr.ml.api.Felonaturelon
+import com.twittelonr.ml.api.RichDataReloncord
+import com.twittelonr.ml.prelondiction_selonrvicelon.{BatchPrelondictionRelonquelonst => JBatchPrelondictionRelonquelonst}
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.HasClielonntContelonxt
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.timelonlinelons.configapi.HasParams
+import com.twittelonr.util.Futurelon
+import com.twittelonr.util.Timelonoutelonxcelonption
+import scala.collelonction.JavaConvelonrsions._
+import scala.collelonction.JavaConvelonrtelonrs._
 
 /**
- * Generic trait that implements the scoring given a deepbirdClient
- * To test out a new model, create a scorer extending this trait, override the modelName and inject the scorer
+ * Gelonnelonric trait that implelonmelonnts thelon scoring givelonn a delonelonpbirdClielonnt
+ * To telonst out a nelonw modelonl, crelonatelon a scorelonr elonxtelonnding this trait, ovelonrridelon thelon modelonlNamelon and injelonct thelon scorelonr
  */
-trait DeepbirdScorer extends Scorer {
-  def modelName: String
-  def predictionFeature: Feature.Continuous
-  // Set a default batchSize of 100 when making model prediction calls to the Deepbird V2 prediction server
-  def batchSize: Int = 100
-  def deepbirdClient: DeepbirdPredictionService.ServiceToClient
-  def baseStats: StatsReceiver
+trait DelonelonpbirdScorelonr elonxtelonnds Scorelonr {
+  delonf modelonlNamelon: String
+  delonf prelondictionFelonaturelon: Felonaturelon.Continuous
+  // Selont a delonfault batchSizelon of 100 whelonn making modelonl prelondiction calls to thelon Delonelonpbird V2 prelondiction selonrvelonr
+  delonf batchSizelon: Int = 100
+  delonf delonelonpbirdClielonnt: DelonelonpbirdPrelondictionSelonrvicelon.SelonrvicelonToClielonnt
+  delonf baselonStats: StatsReloncelonivelonr
 
-  def modelSelector: ModelSelector = new ModelSelector().setId(modelName)
-  def stats: StatsReceiver = baseStats.scope(this.getClass.getSimpleName).scope(modelName)
+  delonf modelonlSelonlelonctor: ModelonlSelonlelonctor = nelonw ModelonlSelonlelonctor().selontId(modelonlNamelon)
+  delonf stats: StatsReloncelonivelonr = baselonStats.scopelon(this.gelontClass.gelontSimplelonNamelon).scopelon(modelonlNamelon)
 
-  private def requestCount = stats.counter("requests")
-  private def emptyRequestCount = stats.counter("empty_requests")
-  private def successCount = stats.counter("success")
-  private def failureCount = stats.counter("failures")
-  private def inputRecordsStat = stats.stat("input_records")
-  private def outputRecordsStat = stats.stat("output_records")
+  privatelon delonf relonquelonstCount = stats.countelonr("relonquelonsts")
+  privatelon delonf elonmptyRelonquelonstCount = stats.countelonr("elonmpty_relonquelonsts")
+  privatelon delonf succelonssCount = stats.countelonr("succelonss")
+  privatelon delonf failurelonCount = stats.countelonr("failurelons")
+  privatelon delonf inputReloncordsStat = stats.stat("input_reloncords")
+  privatelon delonf outputReloncordsStat = stats.stat("output_reloncords")
 
-  // Counters for tracking batch-prediction statistics when making DBv2 prediction calls
+  // Countelonrs for tracking batch-prelondiction statistics whelonn making DBv2 prelondiction calls
   //
-  // numBatchRequests tracks the number of batch prediction requests made to DBv2 prediction servers
-  private def numBatchRequests = stats.counter("batches")
-  // numEmptyBatchRequests tracks the number of batch prediction requests made to DBv2 prediction servers
-  // that had an empty input DataRecord
-  private def numEmptyBatchRequests = stats.counter("empty_batches")
-  // numTimedOutBatchRequests tracks the number of batch prediction requests made to DBv2 prediction servers
-  // that had timed-out
-  private def numTimedOutBatchRequests = stats.counter("timeout_batches")
+  // numBatchRelonquelonsts tracks thelon numbelonr of batch prelondiction relonquelonsts madelon to DBv2 prelondiction selonrvelonrs
+  privatelon delonf numBatchRelonquelonsts = stats.countelonr("batchelons")
+  // numelonmptyBatchRelonquelonsts tracks thelon numbelonr of batch prelondiction relonquelonsts madelon to DBv2 prelondiction selonrvelonrs
+  // that had an elonmpty input DataReloncord
+  privatelon delonf numelonmptyBatchRelonquelonsts = stats.countelonr("elonmpty_batchelons")
+  // numTimelondOutBatchRelonquelonsts tracks thelon numbelonr of batch prelondiction relonquelonsts madelon to DBv2 prelondiction selonrvelonrs
+  // that had timelond-out
+  privatelon delonf numTimelondOutBatchRelonquelonsts = stats.countelonr("timelonout_batchelons")
 
-  private def batchPredictionLatency = stats.stat("batch_prediction_latency")
-  private def predictionLatency = stats.stat("prediction_latency")
+  privatelon delonf batchPrelondictionLatelonncy = stats.stat("batch_prelondiction_latelonncy")
+  privatelon delonf prelondictionLatelonncy = stats.stat("prelondiction_latelonncy")
 
-  private def numEmptyModelPredictions = stats.counter("empty_model_predictions")
-  private def numNonEmptyModelPredictions = stats.counter("non_empty_model_predictions")
+  privatelon delonf numelonmptyModelonlPrelondictions = stats.countelonr("elonmpty_modelonl_prelondictions")
+  privatelon delonf numNonelonmptyModelonlPrelondictions = stats.countelonr("non_elonmpty_modelonl_prelondictions")
 
-  private val DefaultPredictionScore = 0.0
+  privatelon val DelonfaultPrelondictionScorelon = 0.0
 
   /**
-   * NOTE: For instances of [[DeepbirdScorer]] this function SHOULD NOT be used.
-   * Please use [[score(records: Seq[DataRecord])]] instead.
+   * NOTelon: For instancelons of [[DelonelonpbirdScorelonr]] this function SHOULD NOT belon uselond.
+   * Plelonaselon uselon [[scorelon(reloncords: Selonq[DataReloncord])]] instelonad.
    */
-  @Deprecated
-  def score(
-    target: HasClientContext with HasParams with HasDisplayLocation with HasDebugOptions,
-    candidates: Seq[CandidateUser]
-  ): Seq[Option[Score]] =
-    throw new UnsupportedOperationException(
-      "For instances of DeepbirdScorer this operation is not defined. Please use " +
-        "`def score(records: Seq[DataRecord]): Stitch[Seq[Score]]` " +
-        "instead.")
+  @Delonpreloncatelond
+  delonf scorelon(
+    targelont: HasClielonntContelonxt with HasParams with HasDisplayLocation with HasDelonbugOptions,
+    candidatelons: Selonq[CandidatelonUselonr]
+  ): Selonq[Option[Scorelon]] =
+    throw nelonw UnsupportelondOpelonrationelonxcelonption(
+      "For instancelons of DelonelonpbirdScorelonr this opelonration is not delonfinelond. Plelonaselon uselon " +
+        "`delonf scorelon(reloncords: Selonq[DataReloncord]): Stitch[Selonq[Scorelon]]` " +
+        "instelonad.")
 
-  override def score(records: Seq[DataRecord]): Stitch[Seq[Score]] = {
-    requestCount.incr()
-    if (records.isEmpty) {
-      emptyRequestCount.incr()
+  ovelonrridelon delonf scorelon(reloncords: Selonq[DataReloncord]): Stitch[Selonq[Scorelon]] = {
+    relonquelonstCount.incr()
+    if (reloncords.iselonmpty) {
+      elonmptyRelonquelonstCount.incr()
       Stitch.Nil
-    } else {
-      inputRecordsStat.add(records.size)
-      Stitch.callFuture(
-        batchPredict(records, batchSize)
-          .map { recordList =>
-            val scores = recordList.map { record =>
-              Score(
-                value = record.getOrElse(DefaultPredictionScore),
-                rankerId = Some(id),
-                scoreType = scoreType)
+    } elonlselon {
+      inputReloncordsStat.add(reloncords.sizelon)
+      Stitch.callFuturelon(
+        batchPrelondict(reloncords, batchSizelon)
+          .map { reloncordList =>
+            val scorelons = reloncordList.map { reloncord =>
+              Scorelon(
+                valuelon = reloncord.gelontOrelonlselon(DelonfaultPrelondictionScorelon),
+                rankelonrId = Somelon(id),
+                scorelonTypelon = scorelonTypelon)
             }
-            outputRecordsStat.add(scores.size)
-            scores
-          }.onSuccess(_ => successCount.incr())
-          .onFailure(_ => failureCount.incr()))
+            outputReloncordsStat.add(scorelons.sizelon)
+            scorelons
+          }.onSuccelonss(_ => succelonssCount.incr())
+          .onFailurelon(_ => failurelonCount.incr()))
     }
   }
 
-  def batchPredict(
-    dataRecords: Seq[DataRecord],
-    batchSize: Int
-  ): Future[Seq[Option[Double]]] = {
+  delonf batchPrelondict(
+    dataReloncords: Selonq[DataReloncord],
+    batchSizelon: Int
+  ): Futurelon[Selonq[Option[Doublelon]]] = {
     Stat
-      .timeFuture(predictionLatency) {
-        val batchedDataRecords = dataRecords.grouped(batchSize).toSeq
-        numBatchRequests.incr(batchedDataRecords.size)
-        Future
-          .collect(batchedDataRecords.map(batch => predict(batch)))
-          .map(res => res.reduce(_ ++ _))
+      .timelonFuturelon(prelondictionLatelonncy) {
+        val batchelondDataReloncords = dataReloncords.groupelond(batchSizelon).toSelonq
+        numBatchRelonquelonsts.incr(batchelondDataReloncords.sizelon)
+        Futurelon
+          .collelonct(batchelondDataReloncords.map(batch => prelondict(batch)))
+          .map(relons => relons.relonducelon(_ ++ _))
       }
   }
 
-  def predict(dataRecords: Seq[DataRecord]): Future[Seq[Option[Double]]] = {
+  delonf prelondict(dataReloncords: Selonq[DataReloncord]): Futurelon[Selonq[Option[Doublelon]]] = {
     Stat
-      .timeFuture(batchPredictionLatency) {
-        if (dataRecords.isEmpty) {
-          numEmptyBatchRequests.incr()
-          Future.Nil
-        } else {
-          deepbirdClient
-            .batchPredictFromModel(new JBatchPredictionRequest(dataRecords.asJava), modelSelector)
-            .map { response =>
-              response.predictions.toSeq.map { prediction =>
-                val predictionFeatureOption = Option(
-                  new RichDataRecord(prediction).getFeatureValue(predictionFeature)
+      .timelonFuturelon(batchPrelondictionLatelonncy) {
+        if (dataReloncords.iselonmpty) {
+          numelonmptyBatchRelonquelonsts.incr()
+          Futurelon.Nil
+        } elonlselon {
+          delonelonpbirdClielonnt
+            .batchPrelondictFromModelonl(nelonw JBatchPrelondictionRelonquelonst(dataReloncords.asJava), modelonlSelonlelonctor)
+            .map { relonsponselon =>
+              relonsponselon.prelondictions.toSelonq.map { prelondiction =>
+                val prelondictionFelonaturelonOption = Option(
+                  nelonw RichDataReloncord(prelondiction).gelontFelonaturelonValuelon(prelondictionFelonaturelon)
                 )
-                predictionFeatureOption match {
-                  case Some(predictionValue) =>
-                    numNonEmptyModelPredictions.incr()
-                    Option(predictionValue.toDouble)
-                  case None =>
-                    numEmptyModelPredictions.incr()
-                    Option(DefaultPredictionScore)
+                prelondictionFelonaturelonOption match {
+                  caselon Somelon(prelondictionValuelon) =>
+                    numNonelonmptyModelonlPrelondictions.incr()
+                    Option(prelondictionValuelon.toDoublelon)
+                  caselon Nonelon =>
+                    numelonmptyModelonlPrelondictions.incr()
+                    Option(DelonfaultPrelondictionScorelon)
                 }
               }
             }
-            .rescue {
-              case e: TimeoutException => // DBv2 prediction calls that timed out
-                numTimedOutBatchRequests.incr()
-                stats.counter(e.getClass.getSimpleName).incr()
-                Future.value(dataRecords.map(_ => Option(DefaultPredictionScore)))
-              case e: Exception => // other generic DBv2 prediction call failures
-                stats.counter(e.getClass.getSimpleName).incr()
-                Future.value(dataRecords.map(_ => Option(DefaultPredictionScore)))
+            .relonscuelon {
+              caselon elon: Timelonoutelonxcelonption => // DBv2 prelondiction calls that timelond out
+                numTimelondOutBatchRelonquelonsts.incr()
+                stats.countelonr(elon.gelontClass.gelontSimplelonNamelon).incr()
+                Futurelon.valuelon(dataReloncords.map(_ => Option(DelonfaultPrelondictionScorelon)))
+              caselon elon: elonxcelonption => // othelonr gelonnelonric DBv2 prelondiction call failurelons
+                stats.countelonr(elon.gelontClass.gelontSimplelonNamelon).incr()
+                Futurelon.valuelon(dataReloncords.map(_ => Option(DelonfaultPrelondictionScorelon)))
             }
         }
       }

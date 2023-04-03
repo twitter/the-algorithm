@@ -1,14 +1,14 @@
-package com.twitter.follow_recommendations.products.explore_tab.configapi
+packagelon com.twittelonr.follow_reloncommelonndations.products.elonxplorelon_tab.configapi
 
-import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
-import com.twitter.follow_recommendations.products.explore_tab.configapi.ExploreTabParams._
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.Param
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.follow_reloncommelonndations.configapi.common.FelonaturelonSwitchConfig
+import com.twittelonr.follow_reloncommelonndations.products.elonxplorelon_tab.configapi.elonxplorelonTabParams._
+import com.twittelonr.timelonlinelons.configapi.FSNamelon
+import com.twittelonr.timelonlinelons.configapi.Param
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class ExploreTabFSConfig @Inject() () extends FeatureSwitchConfig {
-  override val booleanFSParams: Seq[Param[Boolean] with FSName] =
-    Seq(EnableProductForSoftUser)
+@Singlelonton
+class elonxplorelonTabFSConfig @Injelonct() () elonxtelonnds FelonaturelonSwitchConfig {
+  ovelonrridelon val boolelonanFSParams: Selonq[Param[Boolelonan] with FSNamelon] =
+    Selonq(elonnablelonProductForSoftUselonr)
 }

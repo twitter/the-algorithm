@@ -1,26 +1,26 @@
-package com.twitter.recosinjector.clients
+packagelon com.twittelonr.reloncosinjelonctor.clielonnts
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.gizmoduck.thriftscala.User
-import com.twitter.logging.Logger
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.gizmoduck.thriftscala.Uselonr
+import com.twittelonr.logging.Loggelonr
+import com.twittelonr.storelonhaus.RelonadablelonStorelon
+import com.twittelonr.util.Futurelon
 
 class Gizmoduck(
-  userStore: ReadableStore[Long, User]
+  uselonrStorelon: RelonadablelonStorelon[Long, Uselonr]
 )(
-  implicit statsReceiver: StatsReceiver) {
-  private val log = Logger()
-  private val stats = statsReceiver.scope(this.getClass.getSimpleName)
+  implicit statsReloncelonivelonr: StatsReloncelonivelonr) {
+  privatelon val log = Loggelonr()
+  privatelon val stats = statsReloncelonivelonr.scopelon(this.gelontClass.gelontSimplelonNamelon)
 
-  def getUser(userId: Long): Future[Option[User]] = {
-    userStore
-      .get(userId)
-      .rescue {
-        case e =>
-          stats.scope("getUserFailure").counter(e.getClass.getSimpleName).incr()
-          log.error(s"Failed with message ${e.toString}")
-          Future.None
+  delonf gelontUselonr(uselonrId: Long): Futurelon[Option[Uselonr]] = {
+    uselonrStorelon
+      .gelont(uselonrId)
+      .relonscuelon {
+        caselon elon =>
+          stats.scopelon("gelontUselonrFailurelon").countelonr(elon.gelontClass.gelontSimplelonNamelon).incr()
+          log.elonrror(s"Failelond with melonssagelon ${elon.toString}")
+          Futurelon.Nonelon
       }
   }
 }

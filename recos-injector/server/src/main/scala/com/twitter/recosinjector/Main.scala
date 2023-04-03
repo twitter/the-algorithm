@@ -1,213 +1,213 @@
-package com.twitter.recosinjector
+packagelon com.twittelonr.reloncosinjelonctor
 
-import com.twitter.app.Flag
-import com.twitter.finagle.http.HttpMuxer
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.util.ElfOwlFilter
-import com.twitter.recosinjector.clients.Gizmoduck
-import com.twitter.recosinjector.clients.RecosHoseEntitiesCache
-import com.twitter.recosinjector.clients.SocialGraph
-import com.twitter.recosinjector.clients.Tweetypie
-import com.twitter.recosinjector.clients.UrlResolver
-import com.twitter.recosinjector.config._
-import com.twitter.recosinjector.edges.SocialWriteEventToUserUserGraphBuilder
-import com.twitter.recosinjector.edges.TimelineEventToUserTweetEntityGraphBuilder
-import com.twitter.recosinjector.edges.TweetEventToUserTweetEntityGraphBuilder
-import com.twitter.recosinjector.edges.TweetEventToUserUserGraphBuilder
-import com.twitter.recosinjector.edges.UnifiedUserActionToUserVideoGraphBuilder
-import com.twitter.recosinjector.edges.UnifiedUserActionToUserAdGraphBuilder
-import com.twitter.recosinjector.edges.UnifiedUserActionToUserTweetGraphPlusBuilder
-import com.twitter.recosinjector.edges.UserTweetEntityEdgeBuilder
-import com.twitter.recosinjector.event_processors.SocialWriteEventProcessor
-import com.twitter.recosinjector.event_processors.TimelineEventProcessor
-import com.twitter.recosinjector.event_processors.TweetEventProcessor
-import com.twitter.recosinjector.publishers.KafkaEventPublisher
-import com.twitter.recosinjector.uua_processors.UnifiedUserActionProcessor
-import com.twitter.recosinjector.uua_processors.UnifiedUserActionsConsumer
-import com.twitter.server.logging.{Logging => JDK14Logging}
-import com.twitter.server.Deciderable
-import com.twitter.server.TwitterServer
-import com.twitter.socialgraph.thriftscala.WriteEvent
-import com.twitter.timelineservice.thriftscala.{Event => TimelineEvent}
-import com.twitter.tweetypie.thriftscala.TweetEvent
-import com.twitter.util.Await
-import com.twitter.util.Duration
-import java.util.concurrent.TimeUnit
+import com.twittelonr.app.Flag
+import com.twittelonr.finaglelon.http.HttpMuxelonr
+import com.twittelonr.finaglelon.mtls.authelonntication.SelonrvicelonIdelonntifielonr
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.frigatelon.common.util.elonlfOwlFiltelonr
+import com.twittelonr.reloncosinjelonctor.clielonnts.Gizmoduck
+import com.twittelonr.reloncosinjelonctor.clielonnts.ReloncosHoselonelonntitielonsCachelon
+import com.twittelonr.reloncosinjelonctor.clielonnts.SocialGraph
+import com.twittelonr.reloncosinjelonctor.clielonnts.Twelonelontypielon
+import com.twittelonr.reloncosinjelonctor.clielonnts.UrlRelonsolvelonr
+import com.twittelonr.reloncosinjelonctor.config._
+import com.twittelonr.reloncosinjelonctor.elondgelons.SocialWritelonelonvelonntToUselonrUselonrGraphBuildelonr
+import com.twittelonr.reloncosinjelonctor.elondgelons.TimelonlinelonelonvelonntToUselonrTwelonelontelonntityGraphBuildelonr
+import com.twittelonr.reloncosinjelonctor.elondgelons.TwelonelontelonvelonntToUselonrTwelonelontelonntityGraphBuildelonr
+import com.twittelonr.reloncosinjelonctor.elondgelons.TwelonelontelonvelonntToUselonrUselonrGraphBuildelonr
+import com.twittelonr.reloncosinjelonctor.elondgelons.UnifielondUselonrActionToUselonrVidelonoGraphBuildelonr
+import com.twittelonr.reloncosinjelonctor.elondgelons.UnifielondUselonrActionToUselonrAdGraphBuildelonr
+import com.twittelonr.reloncosinjelonctor.elondgelons.UnifielondUselonrActionToUselonrTwelonelontGraphPlusBuildelonr
+import com.twittelonr.reloncosinjelonctor.elondgelons.UselonrTwelonelontelonntityelondgelonBuildelonr
+import com.twittelonr.reloncosinjelonctor.elonvelonnt_procelonssors.SocialWritelonelonvelonntProcelonssor
+import com.twittelonr.reloncosinjelonctor.elonvelonnt_procelonssors.TimelonlinelonelonvelonntProcelonssor
+import com.twittelonr.reloncosinjelonctor.elonvelonnt_procelonssors.TwelonelontelonvelonntProcelonssor
+import com.twittelonr.reloncosinjelonctor.publishelonrs.KafkaelonvelonntPublishelonr
+import com.twittelonr.reloncosinjelonctor.uua_procelonssors.UnifielondUselonrActionProcelonssor
+import com.twittelonr.reloncosinjelonctor.uua_procelonssors.UnifielondUselonrActionsConsumelonr
+import com.twittelonr.selonrvelonr.logging.{Logging => JDK14Logging}
+import com.twittelonr.selonrvelonr.Deloncidelonrablelon
+import com.twittelonr.selonrvelonr.TwittelonrSelonrvelonr
+import com.twittelonr.socialgraph.thriftscala.Writelonelonvelonnt
+import com.twittelonr.timelonlinelonselonrvicelon.thriftscala.{elonvelonnt => Timelonlinelonelonvelonnt}
+import com.twittelonr.twelonelontypielon.thriftscala.Twelonelontelonvelonnt
+import com.twittelonr.util.Await
+import com.twittelonr.util.Duration
+import java.util.concurrelonnt.TimelonUnit
 
-object Main extends TwitterServer with JDK14Logging with Deciderable { self =>
+objelonct Main elonxtelonnds TwittelonrSelonrvelonr with JDK14Logging with Deloncidelonrablelon { selonlf =>
 
-  implicit val stats: StatsReceiver = statsReceiver
+  implicit val stats: StatsReloncelonivelonr = statsReloncelonivelonr
 
-  private val dataCenter: Flag[String] = flag("service.cluster", "atla", "Data Center")
-  private val serviceRole: Flag[String] = flag("service.role", "Service Role")
-  private val serviceEnv: Flag[String] = flag("service.env", "Service Env")
-  private val serviceName: Flag[String] = flag("service.name", "Service Name")
-  private val shardId = flag("shardId", 0, "Shard ID")
-  private val numShards = flag("numShards", 1, "Number of shards for this service")
-  private val truststoreLocation =
-    flag[String]("truststore_location", "", "Truststore file location")
+  privatelon val dataCelonntelonr: Flag[String] = flag("selonrvicelon.clustelonr", "atla", "Data Celonntelonr")
+  privatelon val selonrvicelonRolelon: Flag[String] = flag("selonrvicelon.rolelon", "Selonrvicelon Rolelon")
+  privatelon val selonrvicelonelonnv: Flag[String] = flag("selonrvicelon.elonnv", "Selonrvicelon elonnv")
+  privatelon val selonrvicelonNamelon: Flag[String] = flag("selonrvicelon.namelon", "Selonrvicelon Namelon")
+  privatelon val shardId = flag("shardId", 0, "Shard ID")
+  privatelon val numShards = flag("numShards", 1, "Numbelonr of shards for this selonrvicelon")
+  privatelon val truststorelonLocation =
+    flag[String]("truststorelon_location", "", "Truststorelon filelon location")
 
-  def main(): Unit = {
-    val serviceIdentifier = ServiceIdentifier(
-      role = serviceRole(),
-      service = serviceName(),
-      environment = serviceEnv(),
-      zone = dataCenter()
+  delonf main(): Unit = {
+    val selonrvicelonIdelonntifielonr = SelonrvicelonIdelonntifielonr(
+      rolelon = selonrvicelonRolelon(),
+      selonrvicelon = selonrvicelonNamelon(),
+      elonnvironmelonnt = selonrvicelonelonnv(),
+      zonelon = dataCelonntelonr()
     )
-    println("ServiceIdentifier = " + serviceIdentifier.toString)
-    log.info("ServiceIdentifier = " + serviceIdentifier.toString)
+    println("SelonrvicelonIdelonntifielonr = " + selonrvicelonIdelonntifielonr.toString)
+    log.info("SelonrvicelonIdelonntifielonr = " + selonrvicelonIdelonntifielonr.toString)
 
     val shard = shardId()
     val numOfShards = numShards()
-    val environment = serviceEnv()
+    val elonnvironmelonnt = selonrvicelonelonnv()
 
-    implicit val config: DeployConfig = {
-      environment match {
-        case "prod" => ProdConfig(serviceIdentifier)(stats)
-        case "staging" | "devel" => StagingConfig(serviceIdentifier)
-        case env => throw new Exception(s"Unknown environment $env")
+    implicit val config: DelonployConfig = {
+      elonnvironmelonnt match {
+        caselon "prod" => ProdConfig(selonrvicelonIdelonntifielonr)(stats)
+        caselon "staging" | "delonvelonl" => StagingConfig(selonrvicelonIdelonntifielonr)
+        caselon elonnv => throw nelonw elonxcelonption(s"Unknown elonnvironmelonnt $elonnv")
       }
     }
 
-    // Initialize the config and wait for initialization to finish
-    Await.ready(config.init())
+    // Initializelon thelon config and wait for initialization to finish
+    Await.relonady(config.init())
 
     log.info(
-      "Starting Recos Injector: environment %s, clientId %s",
-      environment,
-      config.recosInjectorThriftClientId
+      "Starting Reloncos Injelonctor: elonnvironmelonnt %s, clielonntId %s",
+      elonnvironmelonnt,
+      config.reloncosInjelonctorThriftClielonntId
     )
     log.info("Starting shard Id: %d of %d shards...".format(shard, numOfShards))
 
-    // Client wrappers
-    val cache = new RecosHoseEntitiesCache(config.recosInjectorCoreSvcsCacheClient)
-    val gizmoduck = new Gizmoduck(config.userStore)
-    val socialGraph = new SocialGraph(config.socialGraphIdStore)
-    val tweetypie = new Tweetypie(config.tweetyPieStore)
-    val urlResolver = new UrlResolver(config.urlInfoStore)
+    // Clielonnt wrappelonrs
+    val cachelon = nelonw ReloncosHoselonelonntitielonsCachelon(config.reloncosInjelonctorCorelonSvcsCachelonClielonnt)
+    val gizmoduck = nelonw Gizmoduck(config.uselonrStorelon)
+    val socialGraph = nelonw SocialGraph(config.socialGraphIdStorelon)
+    val twelonelontypielon = nelonw Twelonelontypielon(config.twelonelontyPielonStorelon)
+    val urlRelonsolvelonr = nelonw UrlRelonsolvelonr(config.urlInfoStorelon)
 
-    // Edge builders
-    val userTweetEntityEdgeBuilder = new UserTweetEntityEdgeBuilder(cache, urlResolver)
+    // elondgelon buildelonrs
+    val uselonrTwelonelontelonntityelondgelonBuildelonr = nelonw UselonrTwelonelontelonntityelondgelonBuildelonr(cachelon, urlRelonsolvelonr)
 
-    // Publishers
-    val kafkaEventPublisher = KafkaEventPublisher(
-      "/s/kafka/recommendations:kafka-tls",
-      config.outputKafkaTopicPrefix,
-      config.recosInjectorThriftClientId,
-      truststoreLocation())
+    // Publishelonrs
+    val kafkaelonvelonntPublishelonr = KafkaelonvelonntPublishelonr(
+      "/s/kafka/reloncommelonndations:kafka-tls",
+      config.outputKafkaTopicPrelonfix,
+      config.reloncosInjelonctorThriftClielonntId,
+      truststorelonLocation())
 
-    // Message Builders
-    val socialWriteToUserUserMessageBuilder =
-      new SocialWriteEventToUserUserGraphBuilder()(
-        statsReceiver.scope("SocialWriteEventToUserUserGraphBuilder")
+    // Melonssagelon Buildelonrs
+    val socialWritelonToUselonrUselonrMelonssagelonBuildelonr =
+      nelonw SocialWritelonelonvelonntToUselonrUselonrGraphBuildelonr()(
+        statsReloncelonivelonr.scopelon("SocialWritelonelonvelonntToUselonrUselonrGraphBuildelonr")
       )
 
-    val timelineToUserTweetEntityMessageBuilder = new TimelineEventToUserTweetEntityGraphBuilder(
-      userTweetEntityEdgeBuilder = userTweetEntityEdgeBuilder
-    )(statsReceiver.scope("TimelineEventToUserTweetEntityGraphBuilder"))
+    val timelonlinelonToUselonrTwelonelontelonntityMelonssagelonBuildelonr = nelonw TimelonlinelonelonvelonntToUselonrTwelonelontelonntityGraphBuildelonr(
+      uselonrTwelonelontelonntityelondgelonBuildelonr = uselonrTwelonelontelonntityelondgelonBuildelonr
+    )(statsReloncelonivelonr.scopelon("TimelonlinelonelonvelonntToUselonrTwelonelontelonntityGraphBuildelonr"))
 
-    val tweetEventToUserTweetEntityGraphBuilder = new TweetEventToUserTweetEntityGraphBuilder(
-      userTweetEntityEdgeBuilder = userTweetEntityEdgeBuilder,
-      tweetCreationStore = config.tweetCreationStore,
-      decider = config.recosInjectorDecider
-    )(statsReceiver.scope("TweetEventToUserTweetEntityGraphBuilder"))
+    val twelonelontelonvelonntToUselonrTwelonelontelonntityGraphBuildelonr = nelonw TwelonelontelonvelonntToUselonrTwelonelontelonntityGraphBuildelonr(
+      uselonrTwelonelontelonntityelondgelonBuildelonr = uselonrTwelonelontelonntityelondgelonBuildelonr,
+      twelonelontCrelonationStorelon = config.twelonelontCrelonationStorelon,
+      deloncidelonr = config.reloncosInjelonctorDeloncidelonr
+    )(statsReloncelonivelonr.scopelon("TwelonelontelonvelonntToUselonrTwelonelontelonntityGraphBuildelonr"))
 
-    val socialWriteEventProcessor = new SocialWriteEventProcessor(
-      eventBusStreamName = s"recos_injector_social_write_event_$environment",
-      thriftStruct = WriteEvent,
-      serviceIdentifier = serviceIdentifier,
-      kafkaEventPublisher = kafkaEventPublisher,
-      userUserGraphTopic = KafkaEventPublisher.UserUserTopic,
-      userUserGraphMessageBuilder = socialWriteToUserUserMessageBuilder
-    )(statsReceiver.scope("SocialWriteEventProcessor"))
+    val socialWritelonelonvelonntProcelonssor = nelonw SocialWritelonelonvelonntProcelonssor(
+      elonvelonntBusStrelonamNamelon = s"reloncos_injelonctor_social_writelon_elonvelonnt_$elonnvironmelonnt",
+      thriftStruct = Writelonelonvelonnt,
+      selonrvicelonIdelonntifielonr = selonrvicelonIdelonntifielonr,
+      kafkaelonvelonntPublishelonr = kafkaelonvelonntPublishelonr,
+      uselonrUselonrGraphTopic = KafkaelonvelonntPublishelonr.UselonrUselonrTopic,
+      uselonrUselonrGraphMelonssagelonBuildelonr = socialWritelonToUselonrUselonrMelonssagelonBuildelonr
+    )(statsReloncelonivelonr.scopelon("SocialWritelonelonvelonntProcelonssor"))
 
-    val tweetToUserUserMessageBuilder = new TweetEventToUserUserGraphBuilder()(
-      statsReceiver.scope("TweetEventToUserUserGraphBuilder")
+    val twelonelontToUselonrUselonrMelonssagelonBuildelonr = nelonw TwelonelontelonvelonntToUselonrUselonrGraphBuildelonr()(
+      statsReloncelonivelonr.scopelon("TwelonelontelonvelonntToUselonrUselonrGraphBuildelonr")
     )
 
-    val unifiedUserActionToUserVideoGraphBuilder = new UnifiedUserActionToUserVideoGraphBuilder(
-      userTweetEntityEdgeBuilder = userTweetEntityEdgeBuilder
-    )(statsReceiver.scope("UnifiedUserActionToUserVideoGraphBuilder"))
+    val unifielondUselonrActionToUselonrVidelonoGraphBuildelonr = nelonw UnifielondUselonrActionToUselonrVidelonoGraphBuildelonr(
+      uselonrTwelonelontelonntityelondgelonBuildelonr = uselonrTwelonelontelonntityelondgelonBuildelonr
+    )(statsReloncelonivelonr.scopelon("UnifielondUselonrActionToUselonrVidelonoGraphBuildelonr"))
 
-    val unifiedUserActionToUserAdGraphBuilder = new UnifiedUserActionToUserAdGraphBuilder(
-      userTweetEntityEdgeBuilder = userTweetEntityEdgeBuilder
-    )(statsReceiver.scope("UnifiedUserActionToUserAdGraphBuilder"))
+    val unifielondUselonrActionToUselonrAdGraphBuildelonr = nelonw UnifielondUselonrActionToUselonrAdGraphBuildelonr(
+      uselonrTwelonelontelonntityelondgelonBuildelonr = uselonrTwelonelontelonntityelondgelonBuildelonr
+    )(statsReloncelonivelonr.scopelon("UnifielondUselonrActionToUselonrAdGraphBuildelonr"))
 
-    val unifiedUserActionToUserTweetGraphPlusBuilder =
-      new UnifiedUserActionToUserTweetGraphPlusBuilder(
-        userTweetEntityEdgeBuilder = userTweetEntityEdgeBuilder
-      )(statsReceiver.scope("UnifiedUserActionToUserTweetGraphPlusBuilder"))
+    val unifielondUselonrActionToUselonrTwelonelontGraphPlusBuildelonr =
+      nelonw UnifielondUselonrActionToUselonrTwelonelontGraphPlusBuildelonr(
+        uselonrTwelonelontelonntityelondgelonBuildelonr = uselonrTwelonelontelonntityelondgelonBuildelonr
+      )(statsReloncelonivelonr.scopelon("UnifielondUselonrActionToUselonrTwelonelontGraphPlusBuildelonr"))
 
-    // Processors
-    val tweetEventProcessor = new TweetEventProcessor(
-      eventBusStreamName = s"recos_injector_tweet_events_$environment",
-      thriftStruct = TweetEvent,
-      serviceIdentifier = serviceIdentifier,
-      userUserGraphMessageBuilder = tweetToUserUserMessageBuilder,
-      userUserGraphTopic = KafkaEventPublisher.UserUserTopic,
-      userTweetEntityGraphMessageBuilder = tweetEventToUserTweetEntityGraphBuilder,
-      userTweetEntityGraphTopic = KafkaEventPublisher.UserTweetEntityTopic,
-      kafkaEventPublisher = kafkaEventPublisher,
+    // Procelonssors
+    val twelonelontelonvelonntProcelonssor = nelonw TwelonelontelonvelonntProcelonssor(
+      elonvelonntBusStrelonamNamelon = s"reloncos_injelonctor_twelonelont_elonvelonnts_$elonnvironmelonnt",
+      thriftStruct = Twelonelontelonvelonnt,
+      selonrvicelonIdelonntifielonr = selonrvicelonIdelonntifielonr,
+      uselonrUselonrGraphMelonssagelonBuildelonr = twelonelontToUselonrUselonrMelonssagelonBuildelonr,
+      uselonrUselonrGraphTopic = KafkaelonvelonntPublishelonr.UselonrUselonrTopic,
+      uselonrTwelonelontelonntityGraphMelonssagelonBuildelonr = twelonelontelonvelonntToUselonrTwelonelontelonntityGraphBuildelonr,
+      uselonrTwelonelontelonntityGraphTopic = KafkaelonvelonntPublishelonr.UselonrTwelonelontelonntityTopic,
+      kafkaelonvelonntPublishelonr = kafkaelonvelonntPublishelonr,
       socialGraph = socialGraph,
-      tweetypie = tweetypie,
+      twelonelontypielon = twelonelontypielon,
       gizmoduck = gizmoduck
-    )(statsReceiver.scope("TweetEventProcessor"))
+    )(statsReloncelonivelonr.scopelon("TwelonelontelonvelonntProcelonssor"))
 
-    val timelineEventProcessor = new TimelineEventProcessor(
-      eventBusStreamName = s"recos_injector_timeline_events_prototype_$environment",
-      thriftStruct = TimelineEvent,
-      serviceIdentifier = serviceIdentifier,
-      kafkaEventPublisher = kafkaEventPublisher,
-      userTweetEntityGraphTopic = KafkaEventPublisher.UserTweetEntityTopic,
-      userTweetEntityGraphMessageBuilder = timelineToUserTweetEntityMessageBuilder,
-      decider = config.recosInjectorDecider,
+    val timelonlinelonelonvelonntProcelonssor = nelonw TimelonlinelonelonvelonntProcelonssor(
+      elonvelonntBusStrelonamNamelon = s"reloncos_injelonctor_timelonlinelon_elonvelonnts_prototypelon_$elonnvironmelonnt",
+      thriftStruct = Timelonlinelonelonvelonnt,
+      selonrvicelonIdelonntifielonr = selonrvicelonIdelonntifielonr,
+      kafkaelonvelonntPublishelonr = kafkaelonvelonntPublishelonr,
+      uselonrTwelonelontelonntityGraphTopic = KafkaelonvelonntPublishelonr.UselonrTwelonelontelonntityTopic,
+      uselonrTwelonelontelonntityGraphMelonssagelonBuildelonr = timelonlinelonToUselonrTwelonelontelonntityMelonssagelonBuildelonr,
+      deloncidelonr = config.reloncosInjelonctorDeloncidelonr,
       gizmoduck = gizmoduck,
-      tweetypie = tweetypie
-    )(statsReceiver.scope("TimelineEventProcessor"))
+      twelonelontypielon = twelonelontypielon
+    )(statsReloncelonivelonr.scopelon("TimelonlinelonelonvelonntProcelonssor"))
 
-    val eventBusProcessors = Seq(
-      timelineEventProcessor,
-      socialWriteEventProcessor,
-      tweetEventProcessor
+    val elonvelonntBusProcelonssors = Selonq(
+      timelonlinelonelonvelonntProcelonssor,
+      socialWritelonelonvelonntProcelonssor,
+      twelonelontelonvelonntProcelonssor
     )
 
-    val uuaProcessor = new UnifiedUserActionProcessor(
+    val uuaProcelonssor = nelonw UnifielondUselonrActionProcelonssor(
       gizmoduck = gizmoduck,
-      tweetypie = tweetypie,
-      kafkaEventPublisher = kafkaEventPublisher,
-      userVideoGraphTopic = KafkaEventPublisher.UserVideoTopic,
-      userVideoGraphBuilder = unifiedUserActionToUserVideoGraphBuilder,
-      userAdGraphTopic = KafkaEventPublisher.UserAdTopic,
-      userAdGraphBuilder = unifiedUserActionToUserAdGraphBuilder,
-      userTweetGraphPlusTopic = KafkaEventPublisher.UserTweetPlusTopic,
-      userTweetGraphPlusBuilder = unifiedUserActionToUserTweetGraphPlusBuilder)(
-      statsReceiver.scope("UnifiedUserActionProcessor"))
+      twelonelontypielon = twelonelontypielon,
+      kafkaelonvelonntPublishelonr = kafkaelonvelonntPublishelonr,
+      uselonrVidelonoGraphTopic = KafkaelonvelonntPublishelonr.UselonrVidelonoTopic,
+      uselonrVidelonoGraphBuildelonr = unifielondUselonrActionToUselonrVidelonoGraphBuildelonr,
+      uselonrAdGraphTopic = KafkaelonvelonntPublishelonr.UselonrAdTopic,
+      uselonrAdGraphBuildelonr = unifielondUselonrActionToUselonrAdGraphBuildelonr,
+      uselonrTwelonelontGraphPlusTopic = KafkaelonvelonntPublishelonr.UselonrTwelonelontPlusTopic,
+      uselonrTwelonelontGraphPlusBuildelonr = unifielondUselonrActionToUselonrTwelonelontGraphPlusBuildelonr)(
+      statsReloncelonivelonr.scopelon("UnifielondUselonrActionProcelonssor"))
 
-    val uuaConsumer = new UnifiedUserActionsConsumer(uuaProcessor, truststoreLocation())
+    val uuaConsumelonr = nelonw UnifielondUselonrActionsConsumelonr(uuaProcelonssor, truststorelonLocation())
 
-    // Start-up init and graceful shutdown setup
+    // Start-up init and gracelonful shutdown selontup
 
-    // wait a bit for services to be ready
-    Thread.sleep(5000L)
+    // wait a bit for selonrvicelons to belon relonady
+    Threlonad.slelonelonp(5000L)
 
-    log.info("Starting the event processors")
-    eventBusProcessors.foreach(_.start())
+    log.info("Starting thelon elonvelonnt procelonssors")
+    elonvelonntBusProcelonssors.forelonach(_.start())
 
-    log.info("Starting the uua processors")
-    uuaConsumer.atLeastOnceProcessor.start()
+    log.info("Starting thelon uua procelonssors")
+    uuaConsumelonr.atLelonastOncelonProcelonssor.start()
 
-    this.addAdminRoute(ElfOwlFilter.getPostbackRoute())
+    this.addAdminRoutelon(elonlfOwlFiltelonr.gelontPostbackRoutelon())
 
-    onExit {
-      log.info("Shutting down the event processors")
-      eventBusProcessors.foreach(_.stop())
-      log.info("Shutting down the uua processors")
-      uuaConsumer.atLeastOnceProcessor.close()
-      log.info("done exit")
+    onelonxit {
+      log.info("Shutting down thelon elonvelonnt procelonssors")
+      elonvelonntBusProcelonssors.forelonach(_.stop())
+      log.info("Shutting down thelon uua procelonssors")
+      uuaConsumelonr.atLelonastOncelonProcelonssor.closelon()
+      log.info("donelon elonxit")
     }
 
-    // Wait on the thriftServer so that shutdownTimeout is respected.
-    Await.result(adminHttpServer)
+    // Wait on thelon thriftSelonrvelonr so that shutdownTimelonout is relonspelonctelond.
+    Await.relonsult(adminHttpSelonrvelonr)
   }
 }

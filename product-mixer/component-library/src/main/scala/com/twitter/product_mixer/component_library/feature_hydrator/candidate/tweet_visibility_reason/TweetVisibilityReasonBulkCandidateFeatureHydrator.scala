@@ -1,98 +1,98 @@
-package com.twitter.product_mixer.component_library.feature_hydrator.candidate.tweet_visibility_reason
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.felonaturelon_hydrator.candidatelon.twelonelont_visibility_relonason
 
-import com.twitter.product_mixer.component_library.model.candidate.BaseTweetCandidate
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BulkCandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.spam.rtf.{thriftscala => SPAM}
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.tweetypie.{TweetyPie => TweetypieStitchClient}
-import com.twitter.tweetypie.{thriftscala => TP}
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import com.twitter.util.Try
-import com.twitter.util.logging.Logging
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.BaselonTwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.TwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.FelonaturelonWithDelonfaultOnFailurelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMapBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator.BulkCandidatelonFelonaturelonHydrator
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.FelonaturelonHydratorIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.spam.rtf.{thriftscala => SPAM}
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.stitch.twelonelontypielon.{TwelonelontyPielon => TwelonelontypielonStitchClielonnt}
+import com.twittelonr.twelonelontypielon.{thriftscala => TP}
+import com.twittelonr.util.Relonturn
+import com.twittelonr.util.Throw
+import com.twittelonr.util.Try
+import com.twittelonr.util.logging.Logging
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-object VisibilityReason
-    extends FeatureWithDefaultOnFailure[TweetCandidate, Option[SPAM.FilteredReason]] {
-  override val defaultValue = None
+objelonct VisibilityRelonason
+    elonxtelonnds FelonaturelonWithDelonfaultOnFailurelon[TwelonelontCandidatelon, Option[SPAM.FiltelonrelondRelonason]] {
+  ovelonrridelon val delonfaultValuelon = Nonelon
 }
 
 /**
- * A [[BulkCandidateFeatureHydrator]] that hydrates TweetCandidates with VisibilityReason features
- * by [[SPAM.SafetyLevel]] when present. The [[VisibilityReason]] feature represents a VisibilityFiltering
- * [[SPAM.FilteredReason]], which contains safety filtering verdict information including action (e.g.
- * Drop, Avoid) and reason (e.g. Misinformation, Abuse). This feature can inform downstream services'
- * handling and presentation of Tweets (e.g. ad avoidance).
+ * A [[BulkCandidatelonFelonaturelonHydrator]] that hydratelons TwelonelontCandidatelons with VisibilityRelonason felonaturelons
+ * by [[SPAM.SafelontyLelonvelonl]] whelonn prelonselonnt. Thelon [[VisibilityRelonason]] felonaturelon relonprelonselonnts a VisibilityFiltelonring
+ * [[SPAM.FiltelonrelondRelonason]], which contains safelonty filtelonring velonrdict information including action (elon.g.
+ * Drop, Avoid) and relonason (elon.g. Misinformation, Abuselon). This felonaturelon can inform downstrelonam selonrvicelons'
+ * handling and prelonselonntation of Twelonelonts (elon.g. ad avoidancelon).
  *
- * @param tweetypieStitchClient used to retrieve Tweet fields for BaseTweetCandidates
- * @param safetyLevel specifies VisibilityFiltering SafetyLabel
+ * @param twelonelontypielonStitchClielonnt uselond to relontrielonvelon Twelonelont fielonlds for BaselonTwelonelontCandidatelons
+ * @param safelontyLelonvelonl speloncifielons VisibilityFiltelonring SafelontyLabelonl
  */
 
-@Singleton
-case class TweetVisibilityReasonBulkCandidateFeatureHydrator @Inject() (
-  tweetypieStitchClient: TweetypieStitchClient,
-  safetyLevel: SPAM.SafetyLevel)
-    extends BulkCandidateFeatureHydrator[PipelineQuery, BaseTweetCandidate]
+@Singlelonton
+caselon class TwelonelontVisibilityRelonasonBulkCandidatelonFelonaturelonHydrator @Injelonct() (
+  twelonelontypielonStitchClielonnt: TwelonelontypielonStitchClielonnt,
+  safelontyLelonvelonl: SPAM.SafelontyLelonvelonl)
+    elonxtelonnds BulkCandidatelonFelonaturelonHydrator[PipelonlinelonQuelonry, BaselonTwelonelontCandidatelon]
     with Logging {
 
-  override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier(
-    "TweetVisibilityReason")
+  ovelonrridelon val idelonntifielonr: FelonaturelonHydratorIdelonntifielonr = FelonaturelonHydratorIdelonntifielonr(
+    "TwelonelontVisibilityRelonason")
 
-  override def features: Set[Feature[_, _]] = Set(VisibilityReason)
+  ovelonrridelon delonf felonaturelons: Selont[Felonaturelon[_, _]] = Selont(VisibilityRelonason)
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[BaseTweetCandidate]]
-  ): Stitch[Seq[FeatureMap]] = {
+  ovelonrridelon delonf apply(
+    quelonry: PipelonlinelonQuelonry,
+    candidatelons: Selonq[CandidatelonWithFelonaturelons[BaselonTwelonelontCandidatelon]]
+  ): Stitch[Selonq[FelonaturelonMap]] = {
     Stitch
-      .traverse(candidates.map(_.candidate.id)) { tweetId =>
-        tweetypieStitchClient
-          .getTweetFields(
-            tweetId = tweetId,
-            options = TP.GetTweetFieldsOptions(
-              forUserId = query.getOptionalUserId,
-              tweetIncludes = Set.empty,
-              doNotCache = true,
-              visibilityPolicy = TP.TweetVisibilityPolicy.UserVisible,
-              safetyLevel = Some(safetyLevel)
+      .travelonrselon(candidatelons.map(_.candidatelon.id)) { twelonelontId =>
+        twelonelontypielonStitchClielonnt
+          .gelontTwelonelontFielonlds(
+            twelonelontId = twelonelontId,
+            options = TP.GelontTwelonelontFielonldsOptions(
+              forUselonrId = quelonry.gelontOptionalUselonrId,
+              twelonelontIncludelons = Selont.elonmpty,
+              doNotCachelon = truelon,
+              visibilityPolicy = TP.TwelonelontVisibilityPolicy.UselonrVisiblelon,
+              safelontyLelonvelonl = Somelon(safelontyLelonvelonl)
             )
           ).liftToTry
-      }.map { getTweetFieldsResults: Seq[Try[TP.GetTweetFieldsResult]] =>
-        val tweetFields: Seq[Try[TP.TweetFieldsResultFound]] = getTweetFieldsResults.map {
-          case Return(TP.GetTweetFieldsResult(_, TP.TweetFieldsResultState.Found(found), _, _)) =>
-            Return(found)
-          case Return(TP.GetTweetFieldsResult(_, resultState, _, _)) =>
+      }.map { gelontTwelonelontFielonldsRelonsults: Selonq[Try[TP.GelontTwelonelontFielonldsRelonsult]] =>
+        val twelonelontFielonlds: Selonq[Try[TP.TwelonelontFielonldsRelonsultFound]] = gelontTwelonelontFielonldsRelonsults.map {
+          caselon Relonturn(TP.GelontTwelonelontFielonldsRelonsult(_, TP.TwelonelontFielonldsRelonsultStatelon.Found(found), _, _)) =>
+            Relonturn(found)
+          caselon Relonturn(TP.GelontTwelonelontFielonldsRelonsult(_, relonsultStatelon, _, _)) =>
             Throw(
-              VisibilityReasonFeatureHydrationFailure(
-                s"Unexpected tweet result state: ${resultState}"))
-          case Throw(e) =>
-            Throw(e)
+              VisibilityRelonasonFelonaturelonHydrationFailurelon(
+                s"Unelonxpelonctelond twelonelont relonsult statelon: ${relonsultStatelon}"))
+          caselon Throw(elon) =>
+            Throw(elon)
         }
 
-        tweetFields.map { tweetFieldTry =>
-          val tweetFilteredReason = tweetFieldTry.map { tweetField =>
-            tweetField.suppressReason match {
-              case Some(suppressReason) => Some(suppressReason)
-              case _ => None
+        twelonelontFielonlds.map { twelonelontFielonldTry =>
+          val twelonelontFiltelonrelondRelonason = twelonelontFielonldTry.map { twelonelontFielonld =>
+            twelonelontFielonld.supprelonssRelonason match {
+              caselon Somelon(supprelonssRelonason) => Somelon(supprelonssRelonason)
+              caselon _ => Nonelon
             }
           }
 
-          FeatureMapBuilder()
-            .add(VisibilityReason, tweetFilteredReason)
+          FelonaturelonMapBuildelonr()
+            .add(VisibilityRelonason, twelonelontFiltelonrelondRelonason)
             .build()
         }
       }
   }
 }
 
-case class VisibilityReasonFeatureHydrationFailure(message: String)
-    extends Exception(s"VisibilityReasonFeatureHydrationFailure($message)")
+caselon class VisibilityRelonasonFelonaturelonHydrationFailurelon(melonssagelon: String)
+    elonxtelonnds elonxcelonption(s"VisibilityRelonasonFelonaturelonHydrationFailurelon($melonssagelon)")

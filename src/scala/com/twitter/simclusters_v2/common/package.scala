@@ -1,17 +1,17 @@
-package com.twitter.simclusters_v2
+packagelon com.twittelonr.simclustelonrs_v2
 
-package object common {
+packagelon objelonct common {
 
-  type TweetId = Long
-  type UserId = Long
-  type ClusterId = Int
-  type SemanticCoreEntityId = Long // Use TopicId if it's a Topic related project.
-  type UTTEntityId = Long
-  type Timestamp = Long
-  type Language = String
-  type Country = String
-  type LocaleEntity = (Long, Language)
-  type TopicId = Long
-  type GroupId = Long
-  type SpaceId = String
+  typelon TwelonelontId = Long
+  typelon UselonrId = Long
+  typelon ClustelonrId = Int
+  typelon SelonmanticCorelonelonntityId = Long // Uselon TopicId if it's a Topic relonlatelond projelonct.
+  typelon UTTelonntityId = Long
+  typelon Timelonstamp = Long
+  typelon Languagelon = String
+  typelon Country = String
+  typelon Localelonelonntity = (Long, Languagelon)
+  typelon TopicId = Long
+  typelon GroupId = Long
+  typelon SpacelonId = String
 }

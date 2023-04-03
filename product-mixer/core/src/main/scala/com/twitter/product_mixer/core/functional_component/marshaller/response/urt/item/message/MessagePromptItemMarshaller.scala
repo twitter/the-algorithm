@@ -1,22 +1,22 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.message
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.itelonm.melonssagelon
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.CallbackMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.MessagePromptItem
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.melontadata.CallbackMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.melonssagelon.MelonssagelonPromptItelonm
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class MessagePromptItemMarshaller @Inject() (
-  messageContentMarshaller: MessageContentMarshaller,
-  callbackMarshaller: CallbackMarshaller) {
+@Singlelonton
+class MelonssagelonPromptItelonmMarshallelonr @Injelonct() (
+  melonssagelonContelonntMarshallelonr: MelonssagelonContelonntMarshallelonr,
+  callbackMarshallelonr: CallbackMarshallelonr) {
 
-  def apply(messagePromptItem: MessagePromptItem): urt.TimelineItemContent =
-    urt.TimelineItemContent.Message(
-      urt.MessagePrompt(
-        content = messageContentMarshaller(messagePromptItem.content),
-        impressionCallbacks = messagePromptItem.impressionCallbacks.map { callbackList =>
-          callbackList.map(callbackMarshaller(_))
+  delonf apply(melonssagelonPromptItelonm: MelonssagelonPromptItelonm): urt.TimelonlinelonItelonmContelonnt =
+    urt.TimelonlinelonItelonmContelonnt.Melonssagelon(
+      urt.MelonssagelonPrompt(
+        contelonnt = melonssagelonContelonntMarshallelonr(melonssagelonPromptItelonm.contelonnt),
+        imprelonssionCallbacks = melonssagelonPromptItelonm.imprelonssionCallbacks.map { callbackList =>
+          callbackList.map(callbackMarshallelonr(_))
         }
       )
     )

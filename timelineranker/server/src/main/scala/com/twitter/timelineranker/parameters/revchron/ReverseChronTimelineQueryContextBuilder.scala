@@ -1,71 +1,71 @@
-package com.twitter.timelineranker.parameters.revchron
+packagelon com.twittelonr.timelonlinelonrankelonr.paramelontelonrs.relonvchron
 
-import com.twitter.timelineranker.config.RuntimeConfiguration
-import com.twitter.timelineranker.decider.DeciderKey
-import com.twitter.timelineranker.model._
-import com.twitter.timelineranker.parameters.util.RequestContextBuilder
-import com.twitter.timelines.configapi.Config
-import com.twitter.timelines.decider.FeatureValue
-import com.twitter.util.Future
+import com.twittelonr.timelonlinelonrankelonr.config.RuntimelonConfiguration
+import com.twittelonr.timelonlinelonrankelonr.deloncidelonr.DeloncidelonrKelony
+import com.twittelonr.timelonlinelonrankelonr.modelonl._
+import com.twittelonr.timelonlinelonrankelonr.paramelontelonrs.util.RelonquelonstContelonxtBuildelonr
+import com.twittelonr.timelonlinelons.configapi.Config
+import com.twittelonr.timelonlinelons.deloncidelonr.FelonaturelonValuelon
+import com.twittelonr.util.Futurelon
 
-object ReverseChronTimelineQueryContextBuilder {
-  val MaxCountLimitKey: Seq[String] = Seq("search_request_max_count_limit")
+objelonct RelonvelonrselonChronTimelonlinelonQuelonryContelonxtBuildelonr {
+  val MaxCountLimitKelony: Selonq[String] = Selonq("selonarch_relonquelonst_max_count_limit")
 }
 
-class ReverseChronTimelineQueryContextBuilder(
+class RelonvelonrselonChronTimelonlinelonQuelonryContelonxtBuildelonr(
   config: Config,
-  runtimeConfig: RuntimeConfiguration,
-  requestContextBuilder: RequestContextBuilder) {
+  runtimelonConfig: RuntimelonConfiguration,
+  relonquelonstContelonxtBuildelonr: RelonquelonstContelonxtBuildelonr) {
 
-  import ReverseChronTimelineQueryContext._
-  import ReverseChronTimelineQueryContextBuilder._
+  import RelonvelonrselonChronTimelonlinelonQuelonryContelonxt._
+  import RelonvelonrselonChronTimelonlinelonQuelonryContelonxtBuildelonr._
 
-  private val maxCountMultiplier = FeatureValue(
-    runtimeConfig.deciderGateBuilder,
-    DeciderKey.MultiplierOfMaterializationTweetsFetched,
-    MaxCountMultiplier,
-    value => (value / 100.0)
+  privatelon val maxCountMultiplielonr = FelonaturelonValuelon(
+    runtimelonConfig.deloncidelonrGatelonBuildelonr,
+    DeloncidelonrKelony.MultiplielonrOfMatelonrializationTwelonelontsFelontchelond,
+    MaxCountMultiplielonr,
+    valuelon => (valuelon / 100.0)
   )
 
-  private val backfillFilteredEntriesGate =
-    runtimeConfig.deciderGateBuilder.linearGate(DeciderKey.BackfillFilteredEntries)
+  privatelon val backfillFiltelonrelondelonntrielonsGatelon =
+    runtimelonConfig.deloncidelonrGatelonBuildelonr.linelonarGatelon(DeloncidelonrKelony.BackfillFiltelonrelondelonntrielons)
 
-  private val tweetsFilteringLossageThresholdPercent = FeatureValue(
-    runtimeConfig.deciderGateBuilder,
-    DeciderKey.TweetsFilteringLossageThreshold,
-    TweetsFilteringLossageThresholdPercent,
-    value => (value / 100)
+  privatelon val twelonelontsFiltelonringLossagelonThrelonsholdPelonrcelonnt = FelonaturelonValuelon(
+    runtimelonConfig.deloncidelonrGatelonBuildelonr,
+    DeloncidelonrKelony.TwelonelontsFiltelonringLossagelonThrelonshold,
+    TwelonelontsFiltelonringLossagelonThrelonsholdPelonrcelonnt,
+    valuelon => (valuelon / 100)
   )
 
-  private val tweetsFilteringLossageLimitPercent = FeatureValue(
-    runtimeConfig.deciderGateBuilder,
-    DeciderKey.TweetsFilteringLossageLimit,
-    TweetsFilteringLossageLimitPercent,
-    value => (value / 100)
+  privatelon val twelonelontsFiltelonringLossagelonLimitPelonrcelonnt = FelonaturelonValuelon(
+    runtimelonConfig.deloncidelonrGatelonBuildelonr,
+    DeloncidelonrKelony.TwelonelontsFiltelonringLossagelonLimit,
+    TwelonelontsFiltelonringLossagelonLimitPelonrcelonnt,
+    valuelon => (valuelon / 100)
   )
 
-  private def getMaxCountFromConfigStore(): Int = {
-    runtimeConfig.configStore.getAsInt(MaxCountLimitKey).getOrElse(MaxCount.default)
+  privatelon delonf gelontMaxCountFromConfigStorelon(): Int = {
+    runtimelonConfig.configStorelon.gelontAsInt(MaxCountLimitKelony).gelontOrelonlselon(MaxCount.delonfault)
   }
 
-  def apply(query: ReverseChronTimelineQuery): Future[ReverseChronTimelineQueryContext] = {
-    requestContextBuilder(Some(query.userId), deviceContext = None).map { baseContext =>
-      val params = config(baseContext, runtimeConfig.statsReceiver)
+  delonf apply(quelonry: RelonvelonrselonChronTimelonlinelonQuelonry): Futurelon[RelonvelonrselonChronTimelonlinelonQuelonryContelonxt] = {
+    relonquelonstContelonxtBuildelonr(Somelon(quelonry.uselonrId), delonvicelonContelonxt = Nonelon).map { baselonContelonxt =>
+      val params = config(baselonContelonxt, runtimelonConfig.statsReloncelonivelonr)
 
-      new ReverseChronTimelineQueryContextImpl(
-        query,
-        getMaxCount = () => getMaxCountFromConfigStore(),
-        getMaxCountMultiplier = () => maxCountMultiplier(),
-        getMaxFollowedUsers = () => params(ReverseChronParams.MaxFollowedUsersParam),
-        getReturnEmptyWhenOverMaxFollows =
-          () => params(ReverseChronParams.ReturnEmptyWhenOverMaxFollowsParam),
-        getDirectedAtNarrowastingViaSearch =
-          () => params(ReverseChronParams.DirectedAtNarrowcastingViaSearchParam),
-        getPostFilteringBasedOnSearchMetadataEnabled =
-          () => params(ReverseChronParams.PostFilteringBasedOnSearchMetadataEnabledParam),
-        getBackfillFilteredEntries = () => backfillFilteredEntriesGate(),
-        getTweetsFilteringLossageThresholdPercent = () => tweetsFilteringLossageThresholdPercent(),
-        getTweetsFilteringLossageLimitPercent = () => tweetsFilteringLossageLimitPercent()
+      nelonw RelonvelonrselonChronTimelonlinelonQuelonryContelonxtImpl(
+        quelonry,
+        gelontMaxCount = () => gelontMaxCountFromConfigStorelon(),
+        gelontMaxCountMultiplielonr = () => maxCountMultiplielonr(),
+        gelontMaxFollowelondUselonrs = () => params(RelonvelonrselonChronParams.MaxFollowelondUselonrsParam),
+        gelontRelonturnelonmptyWhelonnOvelonrMaxFollows =
+          () => params(RelonvelonrselonChronParams.RelonturnelonmptyWhelonnOvelonrMaxFollowsParam),
+        gelontDirelonctelondAtNarrowastingViaSelonarch =
+          () => params(RelonvelonrselonChronParams.DirelonctelondAtNarrowcastingViaSelonarchParam),
+        gelontPostFiltelonringBaselondOnSelonarchMelontadataelonnablelond =
+          () => params(RelonvelonrselonChronParams.PostFiltelonringBaselondOnSelonarchMelontadataelonnablelondParam),
+        gelontBackfillFiltelonrelondelonntrielons = () => backfillFiltelonrelondelonntrielonsGatelon(),
+        gelontTwelonelontsFiltelonringLossagelonThrelonsholdPelonrcelonnt = () => twelonelontsFiltelonringLossagelonThrelonsholdPelonrcelonnt(),
+        gelontTwelonelontsFiltelonringLossagelonLimitPelonrcelonnt = () => twelonelontsFiltelonringLossagelonLimitPelonrcelonnt()
       )
     }
   }

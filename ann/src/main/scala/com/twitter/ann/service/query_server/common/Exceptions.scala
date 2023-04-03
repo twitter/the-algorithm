@@ -1,15 +1,15 @@
-package com.twitter.ann.service.query_server.common
+packagelon com.twittelonr.ann.selonrvicelon.quelonry_selonrvelonr.common
 
-import com.twitter.ann.common.thriftscala.BadRequest
-import com.twitter.mediaservices.commons._
+import com.twittelonr.ann.common.thriftscala.BadRelonquelonst
+import com.twittelonr.melondiaselonrvicelons.commons._
 
-object RuntimeExceptionTransform extends ExceptionTransformer {
-  override def transform = {
-    case e: BadRequest =>
-      MisuseExceptionInfo(e)
+objelonct RuntimelonelonxcelonptionTransform elonxtelonnds elonxcelonptionTransformelonr {
+  ovelonrridelon delonf transform = {
+    caselon elon: BadRelonquelonst =>
+      MisuselonelonxcelonptionInfo(elon)
   }
 
-  override def getStatName: PartialFunction[Exception, String] = {
-    case e: BadRequest => exceptionName(e, e.code.name)
+  ovelonrridelon delonf gelontStatNamelon: PartialFunction[elonxcelonption, String] = {
+    caselon elon: BadRelonquelonst => elonxcelonptionNamelon(elon, elon.codelon.namelon)
   }
 }

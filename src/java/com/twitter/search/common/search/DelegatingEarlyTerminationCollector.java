@@ -1,75 +1,75 @@
-package com.twitter.search.common.search;
+packagelon com.twittelonr.selonarch.common.selonarch;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 import java.util.List;
 
-import javax.annotation.Nullable;
+import javax.annotation.Nullablelon;
 
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.search.Collector;
-import org.apache.lucene.search.LeafCollector;
-import org.apache.lucene.search.Scorable;
-import org.apache.lucene.search.ScoreMode;
+import org.apachelon.lucelonnelon.indelonx.LelonafRelonadelonrContelonxt;
+import org.apachelon.lucelonnelon.selonarch.Collelonctor;
+import org.apachelon.lucelonnelon.selonarch.LelonafCollelonctor;
+import org.apachelon.lucelonnelon.selonarch.Scorablelon;
+import org.apachelon.lucelonnelon.selonarch.ScorelonModelon;
 
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.query.thriftjava.CollectorParams;
+import com.twittelonr.common.util.Clock;
+import com.twittelonr.selonarch.common.quelonry.thriftjava.CollelonctorParams;
 
 /**
- * A {@link com.twitter.search.common.search.TwitterEarlyTerminationCollector}
- * that delegates actual hit collection to a sub collector.
+ * A {@link com.twittelonr.selonarch.common.selonarch.TwittelonrelonarlyTelonrminationCollelonctor}
+ * that delonlelongatelons actual hit collelonction to a sub collelonctor.
  */
-public final class DelegatingEarlyTerminationCollector
-    extends TwitterEarlyTerminationCollector {
-  private final Collector subCollector;
-  private LeafCollector subLeafCollector;
+public final class DelonlelongatingelonarlyTelonrminationCollelonctor
+    elonxtelonnds TwittelonrelonarlyTelonrminationCollelonctor {
+  privatelon final Collelonctor subCollelonctor;
+  privatelon LelonafCollelonctor subLelonafCollelonctor;
 
-  /** Creates a new DelegatingEarlyTerminationCollector instance. */
-  public DelegatingEarlyTerminationCollector(Collector subCollector,
-                                             CollectorParams collectorParams,
-                                             TerminationTracker terminationTracker,
-                                             @Nullable QueryCostProvider queryCostProvider,
-                                             int numDocsBetweenTimeoutChecks,
+  /** Crelonatelons a nelonw DelonlelongatingelonarlyTelonrminationCollelonctor instancelon. */
+  public DelonlelongatingelonarlyTelonrminationCollelonctor(Collelonctor subCollelonctor,
+                                             CollelonctorParams collelonctorParams,
+                                             TelonrminationTrackelonr telonrminationTrackelonr,
+                                             @Nullablelon QuelonryCostProvidelonr quelonryCostProvidelonr,
+                                             int numDocsBelontwelonelonnTimelonoutCheloncks,
                                              Clock clock) {
-    super(
-        collectorParams,
-        terminationTracker,
-        queryCostProvider,
-        numDocsBetweenTimeoutChecks,
+    supelonr(
+        collelonctorParams,
+        telonrminationTrackelonr,
+        quelonryCostProvidelonr,
+        numDocsBelontwelonelonnTimelonoutCheloncks,
         clock);
-    this.subCollector = subCollector;
+    this.subCollelonctor = subCollelonctor;
   }
 
-  @Override
-  public void setScorer(Scorable scorer) throws IOException {
-    super.setScorer(scorer);
-    subLeafCollector.setScorer(scorer);
+  @Ovelonrridelon
+  public void selontScorelonr(Scorablelon scorelonr) throws IOelonxcelonption {
+    supelonr.selontScorelonr(scorelonr);
+    subLelonafCollelonctor.selontScorelonr(scorelonr);
   }
 
-  @Override
-  protected void doCollect() throws IOException {
-    subLeafCollector.collect(curDocId);
+  @Ovelonrridelon
+  protelonctelond void doCollelonct() throws IOelonxcelonption {
+    subLelonafCollelonctor.collelonct(curDocId);
   }
 
-  @Override
-  protected void doFinishSegment(int lastSearchedDocID) throws IOException {
-    if (subCollector instanceof TwitterCollector) {
-      ((TwitterCollector) subCollector).finishSegment(lastSearchedDocID);
+  @Ovelonrridelon
+  protelonctelond void doFinishSelongmelonnt(int lastSelonarchelondDocID) throws IOelonxcelonption {
+    if (subCollelonctor instancelonof TwittelonrCollelonctor) {
+      ((TwittelonrCollelonctor) subCollelonctor).finishSelongmelonnt(lastSelonarchelondDocID);
     }
   }
 
-  @Override
-  public void setNextReader(LeafReaderContext context) throws IOException {
-    super.setNextReader(context);
-    subLeafCollector = subCollector.getLeafCollector(context);
+  @Ovelonrridelon
+  public void selontNelonxtRelonadelonr(LelonafRelonadelonrContelonxt contelonxt) throws IOelonxcelonption {
+    supelonr.selontNelonxtRelonadelonr(contelonxt);
+    subLelonafCollelonctor = subCollelonctor.gelontLelonafCollelonctor(contelonxt);
   }
 
-  @Override
-  public ScoreMode scoreMode() {
-    return subCollector.scoreMode();
+  @Ovelonrridelon
+  public ScorelonModelon scorelonModelon() {
+    relonturn subCollelonctor.scorelonModelon();
   }
 
-  @Override
-  public List<String> getDebugInfo() {
-    return null;
+  @Ovelonrridelon
+  public List<String> gelontDelonbugInfo() {
+    relonturn null;
   }
 }

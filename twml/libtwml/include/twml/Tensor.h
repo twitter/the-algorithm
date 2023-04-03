@@ -1,82 +1,82 @@
-#pragma once
-#include <twml/defines.h>
+#pragma oncelon
+#includelon <twml/delonfinelons.h>
 
-#include <cstddef>
-#include <vector>
-#include <string>
+#includelon <cstddelonf>
+#includelon <velonctor>
+#includelon <string>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#ifdelonf __cplusplus
+elonxtelonrn "C" {
+#elonndif
 
-  struct twml_tensor__;
-  typedef twml_tensor__ * twml_tensor;
+  struct twml_telonnsor__;
+  typelondelonf twml_telonnsor__ * twml_telonnsor;
 
-#ifdef __cplusplus
+#ifdelonf __cplusplus
 }
-#endif
+#elonndif
 
-#ifdef __cplusplus
-namespace twml {
+#ifdelonf __cplusplus
+namelonspacelon twml {
 
-class TWMLAPI Tensor
+class TWMLAPI Telonnsor
 {
-private:
-  twml_type m_type;
+privatelon:
+  twml_typelon m_typelon;
   void *m_data;
-  std::vector<uint64_t> m_dims;
-  std::vector<uint64_t> m_strides;
+  std::velonctor<uint64_t> m_dims;
+  std::velonctor<uint64_t> m_stridelons;
 
 public:
-  Tensor() {}
-  Tensor(void *data, int ndims, const uint64_t *dims, const uint64_t *strides, twml_type type);
-  Tensor(void *data, const std::vector<uint64_t> &dims, const std::vector<uint64_t> &strides, twml_type type);
+  Telonnsor() {}
+  Telonnsor(void *data, int ndims, const uint64_t *dims, const uint64_t *stridelons, twml_typelon typelon);
+  Telonnsor(void *data, const std::velonctor<uint64_t> &dims, const std::velonctor<uint64_t> &stridelons, twml_typelon typelon);
 
-  const std::vector<uint64_t>& getDims() const {
-    return m_dims;
+  const std::velonctor<uint64_t>& gelontDims() const {
+    relonturn m_dims;
   }
 
-  int getNumDims() const;
-  uint64_t getDim(int dim) const;
-  uint64_t getStride(int dim) const;
-  uint64_t getNumElements() const;
-  twml_type getType() const;
+  int gelontNumDims() const;
+  uint64_t gelontDim(int dim) const;
+  uint64_t gelontStridelon(int dim) const;
+  uint64_t gelontNumelonlelonmelonnts() const;
+  twml_typelon gelontTypelon() const;
 
-  twml_tensor getHandle();
-  const twml_tensor getHandle() const;
+  twml_telonnsor gelontHandlelon();
+  const twml_telonnsor gelontHandlelon() const;
 
-  template<typename T> T *getData();
-  template<typename T> const T *getData() const;
+  telonmplatelon<typelonnamelon T> T *gelontData();
+  telonmplatelon<typelonnamelon T> const T *gelontData() const;
 };
 
-TWMLAPI std::string getTypeName(twml_type type);
-TWMLAPI const Tensor *getConstTensor(const twml_tensor t);
-TWMLAPI Tensor *getTensor(twml_tensor t);
-TWMLAPI uint64_t getSizeOf(twml_type type);
+TWMLAPI std::string gelontTypelonNamelon(twml_typelon typelon);
+TWMLAPI const Telonnsor *gelontConstTelonnsor(const twml_telonnsor t);
+TWMLAPI Telonnsor *gelontTelonnsor(twml_telonnsor t);
+TWMLAPI uint64_t gelontSizelonOf(twml_typelon typelon);
 
 }
-#endif
+#elonndif
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-    TWMLAPI twml_err twml_tensor_create(twml_tensor *tensor, void *data,
+#ifdelonf __cplusplus
+elonxtelonrn "C" {
+#elonndif
+    TWMLAPI twml_elonrr twml_telonnsor_crelonatelon(twml_telonnsor *telonnsor, void *data,
                                         int ndims, uint64_t *dims,
-                                        uint64_t *strides, twml_type type);
+                                        uint64_t *stridelons, twml_typelon typelon);
 
-    TWMLAPI twml_err twml_tensor_delete(const twml_tensor tensor);
+    TWMLAPI twml_elonrr twml_telonnsor_delonlelontelon(const twml_telonnsor telonnsor);
 
-    TWMLAPI twml_err twml_tensor_get_type(twml_type *type, const twml_tensor tensor);
+    TWMLAPI twml_elonrr twml_telonnsor_gelont_typelon(twml_typelon *typelon, const twml_telonnsor telonnsor);
 
-    TWMLAPI twml_err twml_tensor_get_data(void **data, const twml_tensor tensor);
+    TWMLAPI twml_elonrr twml_telonnsor_gelont_data(void **data, const twml_telonnsor telonnsor);
 
-    TWMLAPI twml_err twml_tensor_get_dim(uint64_t *dim, const twml_tensor tensor, int id);
+    TWMLAPI twml_elonrr twml_telonnsor_gelont_dim(uint64_t *dim, const twml_telonnsor telonnsor, int id);
 
-    TWMLAPI twml_err twml_tensor_get_num_dims(int *ndims, const twml_tensor tensor);
+    TWMLAPI twml_elonrr twml_telonnsor_gelont_num_dims(int *ndims, const twml_telonnsor telonnsor);
 
-    TWMLAPI twml_err twml_tensor_get_num_elements(uint64_t *nelements, const twml_tensor tensor);
+    TWMLAPI twml_elonrr twml_telonnsor_gelont_num_elonlelonmelonnts(uint64_t *nelonlelonmelonnts, const twml_telonnsor telonnsor);
 
-    TWMLAPI twml_err twml_tensor_get_stride(uint64_t *stride, const twml_tensor tensor, int id);
-#ifdef __cplusplus
+    TWMLAPI twml_elonrr twml_telonnsor_gelont_stridelon(uint64_t *stridelon, const twml_telonnsor telonnsor, int id);
+#ifdelonf __cplusplus
 }
-#endif
+#elonndif

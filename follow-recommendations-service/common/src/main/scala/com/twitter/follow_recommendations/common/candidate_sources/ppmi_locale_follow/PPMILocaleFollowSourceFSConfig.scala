@@ -1,24 +1,24 @@
-package com.twitter.follow_recommendations.common.candidate_sources.ppmi_locale_follow
+packagelon com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.ppmi_localelon_follow
 
-import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.Param
+import com.twittelonr.follow_reloncommelonndations.configapi.common.FelonaturelonSwitchConfig
+import com.twittelonr.timelonlinelons.configapi.FSBoundelondParam
+import com.twittelonr.timelonlinelons.configapi.FSNamelon
+import com.twittelonr.timelonlinelons.configapi.Param
 
-import javax.inject.Inject
-import javax.inject.Singleton
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class PPMILocaleFollowSourceFSConfig @Inject() () extends FeatureSwitchConfig {
-  override val booleanFSParams: Seq[Param[Boolean] with FSName] = Seq(
-    PPMILocaleFollowSourceParams.CandidateSourceEnabled,
+@Singlelonton
+class PPMILocalelonFollowSourcelonFSConfig @Injelonct() () elonxtelonnds FelonaturelonSwitchConfig {
+  ovelonrridelon val boolelonanFSParams: Selonq[Param[Boolelonan] with FSNamelon] = Selonq(
+    PPMILocalelonFollowSourcelonParams.CandidatelonSourcelonelonnablelond,
   )
 
-  override val stringSeqFSParams: Seq[Param[Seq[String]] with FSName] = Seq(
-    PPMILocaleFollowSourceParams.LocaleToExcludeFromRecommendation,
+  ovelonrridelon val stringSelonqFSParams: Selonq[Param[Selonq[String]] with FSNamelon] = Selonq(
+    PPMILocalelonFollowSourcelonParams.LocalelonToelonxcludelonFromReloncommelonndation,
   )
 
-  override val doubleFSParams: Seq[FSBoundedParam[Double]] = Seq(
-    PPMILocaleFollowSourceParams.CandidateSourceWeight,
+  ovelonrridelon val doublelonFSParams: Selonq[FSBoundelondParam[Doublelon]] = Selonq(
+    PPMILocalelonFollowSourcelonParams.CandidatelonSourcelonWelonight,
   )
 }

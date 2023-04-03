@@ -1,5 +1,5 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.message
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.melonssagelon
 
-case class MessageTextAction(
-  text: String,
-  action: MessageAction)
+caselon class MelonssagelonTelonxtAction(
+  telonxt: String,
+  action: MelonssagelonAction)

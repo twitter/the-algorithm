@@ -1,17 +1,17 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urp
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urp
 
-import com.twitter.pages.render.{thriftscala => urp}
-import com.twitter.product_mixer.core.model.marshalling.response.urp.PageHeader
-import com.twitter.product_mixer.core.model.marshalling.response.urp.TopicPageHeader
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.pagelons.relonndelonr.{thriftscala => urp}
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urp.PagelonHelonadelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urp.TopicPagelonHelonadelonr
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class PageHeaderMarshaller @Inject() (
-  topicPageHeaderMarshaller: TopicPageHeaderMarshaller) {
+@Singlelonton
+class PagelonHelonadelonrMarshallelonr @Injelonct() (
+  topicPagelonHelonadelonrMarshallelonr: TopicPagelonHelonadelonrMarshallelonr) {
 
-  def apply(pageHeader: PageHeader): urp.PageHeader = pageHeader match {
-    case pageHeader: TopicPageHeader =>
-      urp.PageHeader.TopicPageHeader(topicPageHeaderMarshaller(pageHeader))
+  delonf apply(pagelonHelonadelonr: PagelonHelonadelonr): urp.PagelonHelonadelonr = pagelonHelonadelonr match {
+    caselon pagelonHelonadelonr: TopicPagelonHelonadelonr =>
+      urp.PagelonHelonadelonr.TopicPagelonHelonadelonr(topicPagelonHelonadelonrMarshallelonr(pagelonHelonadelonr))
   }
 }

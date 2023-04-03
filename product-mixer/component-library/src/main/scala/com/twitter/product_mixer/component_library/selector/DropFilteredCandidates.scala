@@ -1,48 +1,48 @@
-package com.twitter.product_mixer.component_library.selector
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.selonlelonctor
 
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.functional_component.common.SpecificPipeline
-import com.twitter.product_mixer.core.functional_component.common.SpecificPipelines
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.functional_component.selector.SelectorResult
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-
-/**
- * Predicate which will be applied to each candidate. True indicates that the candidate will be
- * kept.
- */
-trait ShouldKeepCandidate {
-  def apply(candidateWithDetails: CandidateWithDetails): Boolean
-}
-
-object DropFilteredCandidates {
-  def apply(candidatePipeline: CandidatePipelineIdentifier, filter: ShouldKeepCandidate) =
-    new DropFilteredCandidates(SpecificPipeline(candidatePipeline), filter)
-
-  def apply(candidatePipelines: Set[CandidatePipelineIdentifier], filter: ShouldKeepCandidate) =
-    new DropFilteredCandidates(SpecificPipelines(candidatePipelines), filter)
-}
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.CandidatelonScopelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.SpeloncificPipelonlinelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.SpeloncificPipelonlinelons
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.selonlelonctor.Selonlelonctor
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.selonlelonctor.SelonlelonctorRelonsult
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonPipelonlinelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
 /**
- * Limit candidates from certain candidates sources to those which satisfy the provided predicate.
+ * Prelondicatelon which will belon applielond to elonach candidatelon. Truelon indicatelons that thelon candidatelon will belon
+ * kelonpt.
  */
-case class DropFilteredCandidates(
-  override val pipelineScope: CandidateScope,
-  filter: ShouldKeepCandidate)
-    extends Selector[PipelineQuery] {
+trait ShouldKelonelonpCandidatelon {
+  delonf apply(candidatelonWithDelontails: CandidatelonWithDelontails): Boolelonan
+}
 
-  override def apply(
-    query: PipelineQuery,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
-  ): SelectorResult = {
-    val candidatesUpdated = remainingCandidates.filter { candidate =>
-      if (pipelineScope.contains(candidate)) filter.apply(candidate)
-      else true
+objelonct DropFiltelonrelondCandidatelons {
+  delonf apply(candidatelonPipelonlinelon: CandidatelonPipelonlinelonIdelonntifielonr, filtelonr: ShouldKelonelonpCandidatelon) =
+    nelonw DropFiltelonrelondCandidatelons(SpeloncificPipelonlinelon(candidatelonPipelonlinelon), filtelonr)
+
+  delonf apply(candidatelonPipelonlinelons: Selont[CandidatelonPipelonlinelonIdelonntifielonr], filtelonr: ShouldKelonelonpCandidatelon) =
+    nelonw DropFiltelonrelondCandidatelons(SpeloncificPipelonlinelons(candidatelonPipelonlinelons), filtelonr)
+}
+
+/**
+ * Limit candidatelons from celonrtain candidatelons sourcelons to thoselon which satisfy thelon providelond prelondicatelon.
+ */
+caselon class DropFiltelonrelondCandidatelons(
+  ovelonrridelon val pipelonlinelonScopelon: CandidatelonScopelon,
+  filtelonr: ShouldKelonelonpCandidatelon)
+    elonxtelonnds Selonlelonctor[PipelonlinelonQuelonry] {
+
+  ovelonrridelon delonf apply(
+    quelonry: PipelonlinelonQuelonry,
+    relonmainingCandidatelons: Selonq[CandidatelonWithDelontails],
+    relonsult: Selonq[CandidatelonWithDelontails]
+  ): SelonlelonctorRelonsult = {
+    val candidatelonsUpdatelond = relonmainingCandidatelons.filtelonr { candidatelon =>
+      if (pipelonlinelonScopelon.contains(candidatelon)) filtelonr.apply(candidatelon)
+      elonlselon truelon
     }
 
-    SelectorResult(remainingCandidates = candidatesUpdated, result = result)
+    SelonlelonctorRelonsult(relonmainingCandidatelons = candidatelonsUpdatelond, relonsult = relonsult)
   }
 }

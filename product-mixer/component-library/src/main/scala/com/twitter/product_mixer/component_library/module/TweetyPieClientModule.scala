@@ -1,58 +1,58 @@
-package com.twitter.product_mixer.component_library.module
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.modulelon
 
-import com.google.inject.Provides
-import com.twitter.conversions.DurationOps._
-import com.twitter.conversions.PercentOps._
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.finagle.thriftmux.MethodBuilder
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsClient
-import com.twitter.inject.Injector
-import com.twitter.inject.thrift.modules.ThriftMethodBuilderClientModule
-import com.twitter.stitch.tweetypie.TweetyPie
-import com.twitter.tweetypie.thriftscala.TweetService
-import com.twitter.util.Duration
-import javax.inject.Singleton
+import com.googlelon.injelonct.Providelons
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.convelonrsions.PelonrcelonntOps._
+import com.twittelonr.finaglelon.mtls.authelonntication.SelonrvicelonIdelonntifielonr
+import com.twittelonr.finaglelon.thrift.ClielonntId
+import com.twittelonr.finaglelon.thriftmux.MelonthodBuildelonr
+import com.twittelonr.finatra.mtls.thriftmux.modulelons.MtlsClielonnt
+import com.twittelonr.injelonct.Injelonctor
+import com.twittelonr.injelonct.thrift.modulelons.ThriftMelonthodBuildelonrClielonntModulelon
+import com.twittelonr.stitch.twelonelontypielon.TwelonelontyPielon
+import com.twittelonr.twelonelontypielon.thriftscala.TwelonelontSelonrvicelon
+import com.twittelonr.util.Duration
+import javax.injelonct.Singlelonton
 
 /**
- * Implementation with reasonable defaults for an idempotent TweetyPie Thrift and Stitch client.
+ * Implelonmelonntation with relonasonablelon delonfaults for an idelonmpotelonnt TwelonelontyPielon Thrift and Stitch clielonnt.
  *
- * Note that the per request and total timeouts are meant to represent a reasonable starting point
- * only. These were selected based on common practice, and should not be assumed to be optimal for
- * any particular use case. If you are interested in further tuning the settings in this module,
- * it is recommended to create local copy for your service.
+ * Notelon that thelon pelonr relonquelonst and total timelonouts arelon melonant to relonprelonselonnt a relonasonablelon starting point
+ * only. Thelonselon welonrelon selonlelonctelond baselond on common practicelon, and should not belon assumelond to belon optimal for
+ * any particular uselon caselon. If you arelon intelonrelonstelond in furthelonr tuning thelon selonttings in this modulelon,
+ * it is reloncommelonndelond to crelonatelon local copy for your selonrvicelon.
  */
-object TweetyPieClientModule
-    extends ThriftMethodBuilderClientModule[
-      TweetService.ServicePerEndpoint,
-      TweetService.MethodPerEndpoint
+objelonct TwelonelontyPielonClielonntModulelon
+    elonxtelonnds ThriftMelonthodBuildelonrClielonntModulelon[
+      TwelonelontSelonrvicelon.SelonrvicelonPelonrelonndpoint,
+      TwelonelontSelonrvicelon.MelonthodPelonrelonndpoint
     ]
-    with MtlsClient {
-  override val label: String = "tweetypie"
-  override val dest: String = "/s/tweetypie/tweetypie"
+    with MtlsClielonnt {
+  ovelonrridelon val labelonl: String = "twelonelontypielon"
+  ovelonrridelon val delonst: String = "/s/twelonelontypielon/twelonelontypielon"
 
-  @Singleton
-  @Provides
-  def providesTweetypieStitchClient(tweetService: TweetService.MethodPerEndpoint): TweetyPie =
-    new TweetyPie(tweetService)
+  @Singlelonton
+  @Providelons
+  delonf providelonsTwelonelontypielonStitchClielonnt(twelonelontSelonrvicelon: TwelonelontSelonrvicelon.MelonthodPelonrelonndpoint): TwelonelontyPielon =
+    nelonw TwelonelontyPielon(twelonelontSelonrvicelon)
 
   /**
-   * TweetyPie client id must be in the form of {service.env} or it will not be treated as an
-   * unauthorized client
+   * TwelonelontyPielon clielonnt id must belon in thelon form of {selonrvicelon.elonnv} or it will not belon trelonatelond as an
+   * unauthorizelond clielonnt
    */
-  override protected def clientId(injector: Injector): ClientId = {
-    val serviceIdentifier = injector.instance[ServiceIdentifier]
-    ClientId(s"${serviceIdentifier.service}.${serviceIdentifier.environment}")
+  ovelonrridelon protelonctelond delonf clielonntId(injelonctor: Injelonctor): ClielonntId = {
+    val selonrvicelonIdelonntifielonr = injelonctor.instancelon[SelonrvicelonIdelonntifielonr]
+    ClielonntId(s"${selonrvicelonIdelonntifielonr.selonrvicelon}.${selonrvicelonIdelonntifielonr.elonnvironmelonnt}")
   }
 
-  override protected def configureMethodBuilder(
-    injector: Injector,
-    methodBuilder: MethodBuilder
-  ): MethodBuilder =
-    methodBuilder
-      .withTimeoutPerRequest(200.milliseconds)
-      .withTimeoutTotal(400.milliseconds)
-      .idempotent(1.percent)
+  ovelonrridelon protelonctelond delonf configurelonMelonthodBuildelonr(
+    injelonctor: Injelonctor,
+    melonthodBuildelonr: MelonthodBuildelonr
+  ): MelonthodBuildelonr =
+    melonthodBuildelonr
+      .withTimelonoutPelonrRelonquelonst(200.milliselonconds)
+      .withTimelonoutTotal(400.milliselonconds)
+      .idelonmpotelonnt(1.pelonrcelonnt)
 
-  override protected def sessionAcquisitionTimeout: Duration = 500.milliseconds
+  ovelonrridelon protelonctelond delonf selonssionAcquisitionTimelonout: Duration = 500.milliselonconds
 }

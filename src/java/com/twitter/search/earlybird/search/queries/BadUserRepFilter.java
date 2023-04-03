@@ -1,115 +1,115 @@
-package com.twitter.search.earlybird.search.queries;
+packagelon com.twittelonr.selonarch.elonarlybird.selonarch.quelonrielons;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 
-import org.apache.lucene.index.LeafReader;
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.index.NumericDocValues;
-import org.apache.lucene.search.BooleanClause;
-import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.ScoreMode;
-import org.apache.lucene.search.Weight;
+import org.apachelon.lucelonnelon.indelonx.LelonafRelonadelonr;
+import org.apachelon.lucelonnelon.indelonx.LelonafRelonadelonrContelonxt;
+import org.apachelon.lucelonnelon.indelonx.NumelonricDocValuelons;
+import org.apachelon.lucelonnelon.selonarch.BoolelonanClauselon;
+import org.apachelon.lucelonnelon.selonarch.BoolelonanQuelonry;
+import org.apachelon.lucelonnelon.selonarch.DocIdSelontItelonrator;
+import org.apachelon.lucelonnelon.selonarch.IndelonxSelonarchelonr;
+import org.apachelon.lucelonnelon.selonarch.Quelonry;
+import org.apachelon.lucelonnelon.selonarch.ScorelonModelon;
+import org.apachelon.lucelonnelon.selonarch.Welonight;
 
-import com.twitter.search.common.query.DefaultFilterWeight;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
-import com.twitter.search.core.earlybird.index.util.AllDocsIterator;
-import com.twitter.search.core.earlybird.index.util.RangeFilterDISI;
+import com.twittelonr.selonarch.common.quelonry.DelonfaultFiltelonrWelonight;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdFielonldConstants.elonarlybirdFielonldConstant;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.util.AllDocsItelonrator;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.util.RangelonFiltelonrDISI;
 
-public final class BadUserRepFilter extends Query {
+public final class BadUselonrRelonpFiltelonr elonxtelonnds Quelonry {
   /**
-   * Creates a query that filters out results coming from users with bad reputation.
+   * Crelonatelons a quelonry that filtelonrs out relonsults coming from uselonrs with bad relonputation.
    *
-   * @param minTweepCred The lowest acceptable user reputation.
-   * @return A query that filters out results from bad reputation users.
+   * @param minTwelonelonpCrelond Thelon lowelonst accelonptablelon uselonr relonputation.
+   * @relonturn A quelonry that filtelonrs out relonsults from bad relonputation uselonrs.
    */
-  public static Query getBadUserRepFilter(int minTweepCred) {
-    if (minTweepCred <= 0) {
-      return null;
+  public static Quelonry gelontBadUselonrRelonpFiltelonr(int minTwelonelonpCrelond) {
+    if (minTwelonelonpCrelond <= 0) {
+      relonturn null;
     }
 
-    return new BooleanQuery.Builder()
-        .add(new BadUserRepFilter(minTweepCred), BooleanClause.Occur.FILTER)
+    relonturn nelonw BoolelonanQuelonry.Buildelonr()
+        .add(nelonw BadUselonrRelonpFiltelonr(minTwelonelonpCrelond), BoolelonanClauselon.Occur.FILTelonR)
         .build();
   }
 
-  private final int minTweepCred;
+  privatelon final int minTwelonelonpCrelond;
 
-  private BadUserRepFilter(int minTweepCred) {
-    this.minTweepCred = minTweepCred;
+  privatelon BadUselonrRelonpFiltelonr(int minTwelonelonpCrelond) {
+    this.minTwelonelonpCrelond = minTwelonelonpCrelond;
   }
 
-  @Override
-  public int hashCode() {
-    return minTweepCred;
+  @Ovelonrridelon
+  public int hashCodelon() {
+    relonturn minTwelonelonpCrelond;
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (!(obj instanceof BadUserRepFilter)) {
-      return false;
+  @Ovelonrridelon
+  public boolelonan elonquals(Objelonct obj) {
+    if (!(obj instancelonof BadUselonrRelonpFiltelonr)) {
+      relonturn falselon;
     }
 
-    return minTweepCred == BadUserRepFilter.class.cast(obj).minTweepCred;
+    relonturn minTwelonelonpCrelond == BadUselonrRelonpFiltelonr.class.cast(obj).minTwelonelonpCrelond;
   }
 
-  @Override
-  public String toString(String field) {
-    return "BadUserRepFilter:" + minTweepCred;
+  @Ovelonrridelon
+  public String toString(String fielonld) {
+    relonturn "BadUselonrRelonpFiltelonr:" + minTwelonelonpCrelond;
   }
 
-  @Override
-  public Weight createWeight(IndexSearcher searcher, ScoreMode scoreMode, float boost) {
-    return new DefaultFilterWeight(this) {
-      @Override
-      protected DocIdSetIterator getDocIdSetIterator(LeafReaderContext context) throws IOException {
-        LeafReader reader = context.reader();
-        if (!(reader instanceof EarlybirdIndexSegmentAtomicReader)) {
-          return new AllDocsIterator(reader);
+  @Ovelonrridelon
+  public Welonight crelonatelonWelonight(IndelonxSelonarchelonr selonarchelonr, ScorelonModelon scorelonModelon, float boost) {
+    relonturn nelonw DelonfaultFiltelonrWelonight(this) {
+      @Ovelonrridelon
+      protelonctelond DocIdSelontItelonrator gelontDocIdSelontItelonrator(LelonafRelonadelonrContelonxt contelonxt) throws IOelonxcelonption {
+        LelonafRelonadelonr relonadelonr = contelonxt.relonadelonr();
+        if (!(relonadelonr instancelonof elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr)) {
+          relonturn nelonw AllDocsItelonrator(relonadelonr);
         }
 
-        return new BadUserExcludeDocIdSetIterator(
-            (EarlybirdIndexSegmentAtomicReader) context.reader(), minTweepCred);
+        relonturn nelonw BadUselonrelonxcludelonDocIdSelontItelonrator(
+            (elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr) contelonxt.relonadelonr(), minTwelonelonpCrelond);
       }
     };
   }
 
-  private static final class BadUserExcludeDocIdSetIterator extends RangeFilterDISI {
-    private final NumericDocValues userReputationDocValues;
-    private final int minTweepCred;
+  privatelon static final class BadUselonrelonxcludelonDocIdSelontItelonrator elonxtelonnds RangelonFiltelonrDISI {
+    privatelon final NumelonricDocValuelons uselonrRelonputationDocValuelons;
+    privatelon final int minTwelonelonpCrelond;
 
-    BadUserExcludeDocIdSetIterator(EarlybirdIndexSegmentAtomicReader indexReader,
-                                   int minTweepCred) throws IOException {
-      super(indexReader);
-      this.userReputationDocValues =
-          indexReader.getNumericDocValues(EarlybirdFieldConstant.USER_REPUTATION.getFieldName());
-      this.minTweepCred = minTweepCred;
+    BadUselonrelonxcludelonDocIdSelontItelonrator(elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr indelonxRelonadelonr,
+                                   int minTwelonelonpCrelond) throws IOelonxcelonption {
+      supelonr(indelonxRelonadelonr);
+      this.uselonrRelonputationDocValuelons =
+          indelonxRelonadelonr.gelontNumelonricDocValuelons(elonarlybirdFielonldConstant.USelonR_RelonPUTATION.gelontFielonldNamelon());
+      this.minTwelonelonpCrelond = minTwelonelonpCrelond;
     }
 
-    @Override
-    public boolean shouldReturnDoc() throws IOException {
-      // We need this explicit casting to byte, because of how we encode and decode features in our
-      // encoded_tweet_features field. If a feature is an int (uses all 32 bits of the int), then
-      // encoding the feature and then decoding it preserves its original value. However, if the
-      // feature does not use the entire int (and especially if it uses bits somewhere in the middle
-      // of the int), then the feature value is assumed to be unsigned when it goes through this
-      // process of encoding and decoding. So a user rep of
-      // RelevanceSignalConstants.UNSET_REPUTATION_SENTINEL (-128) will be correctly encoded as the
-      // binary value 10000000, but will be treated as an unsigned value when decoded, and therefore
-      // the decoded value will be 128.
+    @Ovelonrridelon
+    public boolelonan shouldRelonturnDoc() throws IOelonxcelonption {
+      // Welon nelonelond this elonxplicit casting to bytelon, beloncauselon of how welon elonncodelon and deloncodelon felonaturelons in our
+      // elonncodelond_twelonelont_felonaturelons fielonld. If a felonaturelon is an int (uselons all 32 bits of thelon int), thelonn
+      // elonncoding thelon felonaturelon and thelonn deloncoding it prelonselonrvelons its original valuelon. Howelonvelonr, if thelon
+      // felonaturelon doelons not uselon thelon elonntirelon int (and elonspeloncially if it uselons bits somelonwhelonrelon in thelon middlelon
+      // of thelon int), thelonn thelon felonaturelon valuelon is assumelond to belon unsignelond whelonn it goelons through this
+      // procelonss of elonncoding and deloncoding. So a uselonr relonp of
+      // RelonlelonvancelonSignalConstants.UNSelonT_RelonPUTATION_SelonNTINelonL (-128) will belon correlonctly elonncodelond as thelon
+      // binary valuelon 10000000, but will belon trelonatelond as an unsignelond valuelon whelonn deloncodelond, and thelonrelonforelon
+      // thelon deloncodelond valuelon will belon 128.
       //
-      // In retrospect, this seems like a really poor design decision. It seems like it would be
-      // better if all feature values were considered to be signed, even if most features can never
-      // have negative values. Unfortunately, making this change is not easy, because some features
-      // store normalized values, so we would also need to change the range of allowed values
-      // produced by those normalizers, as well as all code that depends on those values.
+      // In relontrospelonct, this selonelonms likelon a relonally poor delonsign deloncision. It selonelonms likelon it would belon
+      // belonttelonr if all felonaturelon valuelons welonrelon considelonrelond to belon signelond, elonvelonn if most felonaturelons can nelonvelonr
+      // havelon nelongativelon valuelons. Unfortunatelonly, making this changelon is not elonasy, beloncauselon somelon felonaturelons
+      // storelon normalizelond valuelons, so welon would also nelonelond to changelon thelon rangelon of allowelond valuelons
+      // producelond by thoselon normalizelonrs, as welonll as all codelon that delonpelonnds on thoselon valuelons.
       //
-      // So for now, just cast this value to a byte, to get the proper negative value.
-      return userReputationDocValues.advanceExact(docID())
-          && ((byte) userReputationDocValues.longValue() >= minTweepCred);
+      // So for now, just cast this valuelon to a bytelon, to gelont thelon propelonr nelongativelon valuelon.
+      relonturn uselonrRelonputationDocValuelons.advancelonelonxact(docID())
+          && ((bytelon) uselonrRelonputationDocValuelons.longValuelon() >= minTwelonelonpCrelond);
     }
   }
 }

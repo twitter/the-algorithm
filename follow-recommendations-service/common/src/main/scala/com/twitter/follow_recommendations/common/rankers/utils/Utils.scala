@@ -1,28 +1,28 @@
-package com.twitter.follow_recommendations.common.rankers.utils
+packagelon com.twittelonr.follow_reloncommelonndations.common.rankelonrs.utils
 
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.Score
-import com.twitter.follow_recommendations.common.rankers.common.RankerId.RankerId
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.CandidatelonUselonr
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.Scorelon
+import com.twittelonr.follow_reloncommelonndations.common.rankelonrs.common.RankelonrId.RankelonrId
 
-object Utils {
+objelonct Utils {
 
   /**
-   * Add the ranking and scoring info for a list of candidates on a given ranking stage.
-   * @param candidates A list of CandidateUser
-   * @param rankingStage Should use `Ranker.name` as the ranking stage.
-   * @return The list of CandidateUser with ranking/scoring info added.
+   * Add thelon ranking and scoring info for a list of candidatelons on a givelonn ranking stagelon.
+   * @param candidatelons A list of CandidatelonUselonr
+   * @param rankingStagelon Should uselon `Rankelonr.namelon` as thelon ranking stagelon.
+   * @relonturn Thelon list of CandidatelonUselonr with ranking/scoring info addelond.
    */
-  def addRankingInfo(candidates: Seq[CandidateUser], rankingStage: String): Seq[CandidateUser] = {
-    candidates.zipWithIndex.map {
-      case (candidate, rank) =>
-        // 1-based ranking for better readability
-        candidate.addInfoPerRankingStage(rankingStage, candidate.scores, rank + 1)
+  delonf addRankingInfo(candidatelons: Selonq[CandidatelonUselonr], rankingStagelon: String): Selonq[CandidatelonUselonr] = {
+    candidatelons.zipWithIndelonx.map {
+      caselon (candidatelon, rank) =>
+        // 1-baselond ranking for belonttelonr relonadability
+        candidatelon.addInfoPelonrRankingStagelon(rankingStagelon, candidatelon.scorelons, rank + 1)
     }
   }
 
-  def getCandidateScoreByRankerId(candidate: CandidateUser, rankerId: RankerId): Option[Score] =
-    candidate.scores.flatMap { ss => ss.scores.find(_.rankerId.contains(rankerId)) }
+  delonf gelontCandidatelonScorelonByRankelonrId(candidatelon: CandidatelonUselonr, rankelonrId: RankelonrId): Option[Scorelon] =
+    candidatelon.scorelons.flatMap { ss => ss.scorelons.find(_.rankelonrId.contains(rankelonrId)) }
 
-  def getAllRankerIds(candidates: Seq[CandidateUser]): Seq[RankerId] =
-    candidates.flatMap(_.scores.map(_.scores.flatMap(_.rankerId))).flatten.distinct
+  delonf gelontAllRankelonrIds(candidatelons: Selonq[CandidatelonUselonr]): Selonq[RankelonrId] =
+    candidatelons.flatMap(_.scorelons.map(_.scorelons.flatMap(_.rankelonrId))).flattelonn.distinct
 }

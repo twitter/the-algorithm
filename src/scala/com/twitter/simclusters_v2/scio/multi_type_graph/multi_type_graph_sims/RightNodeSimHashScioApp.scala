@@ -1,43 +1,43 @@
-package com.twitter.simclusters_v2.scio
-package multi_type_graph.multi_type_graph_sims
+packagelon com.twittelonr.simclustelonrs_v2.scio
+packagelon multi_typelon_graph.multi_typelon_graph_sims
 
-import com.twitter.dal.client.dataset.SnapshotDALDataset
-import com.twitter.simclusters_v2.hdfs_sources.RightNodeSimHashScioScalaDataset
-import com.twitter.simclusters_v2.thriftscala.RightNodeSimHashSketch
+import com.twittelonr.dal.clielonnt.dataselont.SnapshotDALDataselont
+import com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.RightNodelonSimHashScioScalaDataselont
+import com.twittelonr.simclustelonrs_v2.thriftscala.RightNodelonSimHashSkelontch
 
 /**
 Build:
-./bazel bundle src/scala/com/twitter/simclusters_v2/scio/multi_type_graph/multi_type_graph_sims:multi-type-graph-sim-hash-scio-adhoc-app
+./bazelonl bundlelon src/scala/com/twittelonr/simclustelonrs_v2/scio/multi_typelon_graph/multi_typelon_graph_sims:multi-typelon-graph-sim-hash-scio-adhoc-app
 
 To kick off an adhoc run:
-bin/d6w create \
-  ${GCP_PROJECT_NAME}/us-central1/multi-type-graph-sim-hash-scio-adhoc-app \
-  src/scala/com/twitter/simclusters_v2/scio/multi_type_graph/multi_type_graph_sims/sim-hash-scio-adhoc.d6w \
-  --jar dist/multi-type-graph-sim-hash-scio-adhoc-app.jar \
-  --bind=profile.project=${GCP_PROJECT_NAME} \
-  --bind=profile.user_name=${USER} \
-  --bind=profile.date="2021-12-01" \
-  --bind=profile.machine="n2d-highmem-16" --ignore-existing
+bin/d6w crelonatelon \
+  ${GCP_PROJelonCT_NAMelon}/us-celonntral1/multi-typelon-graph-sim-hash-scio-adhoc-app \
+  src/scala/com/twittelonr/simclustelonrs_v2/scio/multi_typelon_graph/multi_typelon_graph_sims/sim-hash-scio-adhoc.d6w \
+  --jar dist/multi-typelon-graph-sim-hash-scio-adhoc-app.jar \
+  --bind=profilelon.projelonct=${GCP_PROJelonCT_NAMelon} \
+  --bind=profilelon.uselonr_namelon=${USelonR} \
+  --bind=profilelon.datelon="2021-12-01" \
+  --bind=profilelon.machinelon="n2d-highmelonm-16" --ignorelon-elonxisting
  */
-object RightNodeSimHashScioAdhocApp extends RightNodeSimHashScioBaseApp {
-  override val isAdhoc: Boolean = true
-  override val rightNodeSimHashSnapshotDataset: SnapshotDALDataset[RightNodeSimHashSketch] =
-    RightNodeSimHashScioAdhocScalaDataset
+objelonct RightNodelonSimHashScioAdhocApp elonxtelonnds RightNodelonSimHashScioBaselonApp {
+  ovelonrridelon val isAdhoc: Boolelonan = truelon
+  ovelonrridelon val rightNodelonSimHashSnapshotDataselont: SnapshotDALDataselont[RightNodelonSimHashSkelontch] =
+    RightNodelonSimHashScioAdhocScalaDataselont
 }
 
 /**
-To deploy the job:
+To delonploy thelon job:
 
-bin/d6w schedule \
-  ${GCP_PROJECT_NAME}/us-central1/multi-type-graph-sim-hash-scio-batch-app \
-  src/scala/com/twitter/simclusters_v2/scio/multi_type_graph/multi_type_graph_sims/sim-hash-scio-batch.d6w \
-  --bind=profile.project=${GCP_PROJECT_NAME} \
-  --bind=profile.user_name=recos-platform \
-  --bind=profile.date="2021-12-01" \
-  --bind=profile.machine="n2d-highmem-16"
+bin/d6w schelondulelon \
+  ${GCP_PROJelonCT_NAMelon}/us-celonntral1/multi-typelon-graph-sim-hash-scio-batch-app \
+  src/scala/com/twittelonr/simclustelonrs_v2/scio/multi_typelon_graph/multi_typelon_graph_sims/sim-hash-scio-batch.d6w \
+  --bind=profilelon.projelonct=${GCP_PROJelonCT_NAMelon} \
+  --bind=profilelon.uselonr_namelon=reloncos-platform \
+  --bind=profilelon.datelon="2021-12-01" \
+  --bind=profilelon.machinelon="n2d-highmelonm-16"
  */
-object RightNodeSimHashScioBatchApp extends RightNodeSimHashScioBaseApp {
-  override val isAdhoc: Boolean = false
-  override val rightNodeSimHashSnapshotDataset: SnapshotDALDataset[RightNodeSimHashSketch] =
-    RightNodeSimHashScioScalaDataset
+objelonct RightNodelonSimHashScioBatchApp elonxtelonnds RightNodelonSimHashScioBaselonApp {
+  ovelonrridelon val isAdhoc: Boolelonan = falselon
+  ovelonrridelon val rightNodelonSimHashSnapshotDataselont: SnapshotDALDataselont[RightNodelonSimHashSkelontch] =
+    RightNodelonSimHashScioScalaDataselont
 }

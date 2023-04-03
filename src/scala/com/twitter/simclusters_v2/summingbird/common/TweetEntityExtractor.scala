@@ -1,65 +1,65 @@
-package com.twitter.simclusters_v2.summingbird.common
+packagelon com.twittelonr.simclustelonrs_v2.summingbird.common
 
-import com.twitter.recos.entities.thriftscala.NamedEntity
-import com.twitter.simclusters_v2.thriftscala.{
-  NerKey,
-  PenguinKey,
-  SimClusterEntity,
-  TweetTextEntity
+import com.twittelonr.reloncos.elonntitielons.thriftscala.Namelondelonntity
+import com.twittelonr.simclustelonrs_v2.thriftscala.{
+  NelonrKelony,
+  PelonnguinKelony,
+  SimClustelonrelonntity,
+  TwelonelontTelonxtelonntity
 }
-import com.twitter.taxi.util.text.{TweetFeatureExtractor, TweetTextFeatures}
-import com.twitter.tweetypie.thriftscala.Tweet
+import com.twittelonr.taxi.util.telonxt.{TwelonelontFelonaturelonelonxtractor, TwelonelontTelonxtFelonaturelons}
+import com.twittelonr.twelonelontypielon.thriftscala.Twelonelont
 
-object TweetEntityExtractor {
+objelonct Twelonelontelonntityelonxtractor {
 
-  private val MaxHashtagsPerTweet: Int = 4
+  privatelon val MaxHashtagsPelonrTwelonelont: Int = 4
 
-  private val MaxNersPerTweet: Int = 4
+  privatelon val MaxNelonrsPelonrTwelonelont: Int = 4
 
-  private val MaxPenguinsPerTweet: Int = 4
+  privatelon val MaxPelonnguinsPelonrTwelonelont: Int = 4
 
-  private val tweetFeatureExtractor: TweetFeatureExtractor = TweetFeatureExtractor.Default
+  privatelon val twelonelontFelonaturelonelonxtractor: TwelonelontFelonaturelonelonxtractor = TwelonelontFelonaturelonelonxtractor.Delonfault
 
-  private def extractTweetTextFeatures(
-    text: String,
-    languageCode: Option[String]
-  ): TweetTextFeatures = {
-    if (languageCode.isDefined) {
-      tweetFeatureExtractor.extract(text, languageCode.get)
-    } else {
-      tweetFeatureExtractor.extract(text)
+  privatelon delonf elonxtractTwelonelontTelonxtFelonaturelons(
+    telonxt: String,
+    languagelonCodelon: Option[String]
+  ): TwelonelontTelonxtFelonaturelons = {
+    if (languagelonCodelon.isDelonfinelond) {
+      twelonelontFelonaturelonelonxtractor.elonxtract(telonxt, languagelonCodelon.gelont)
+    } elonlselon {
+      twelonelontFelonaturelonelonxtractor.elonxtract(telonxt)
     }
   }
 
-  def extractEntitiesFromText(
-    tweet: Option[Tweet],
-    nerEntitiesOpt: Option[Seq[NamedEntity]]
-  ): Seq[SimClusterEntity.TweetEntity] = {
+  delonf elonxtractelonntitielonsFromTelonxt(
+    twelonelont: Option[Twelonelont],
+    nelonrelonntitielonsOpt: Option[Selonq[Namelondelonntity]]
+  ): Selonq[SimClustelonrelonntity.Twelonelontelonntity] = {
 
-    val hashtagEntities = tweet
-      .flatMap(_.hashtags.map(_.map(_.text))).getOrElse(Nil)
-      .map { hashtag => TweetTextEntity.Hashtag(hashtag.toLowerCase) }.take(MaxHashtagsPerTweet)
+    val hashtagelonntitielons = twelonelont
+      .flatMap(_.hashtags.map(_.map(_.telonxt))).gelontOrelonlselon(Nil)
+      .map { hashtag => TwelonelontTelonxtelonntity.Hashtag(hashtag.toLowelonrCaselon) }.takelon(MaxHashtagsPelonrTwelonelont)
 
-    val nerEntities = nerEntitiesOpt
-      .getOrElse(Nil).map { namedEntity =>
-        TweetTextEntity
-          .Ner(NerKey(namedEntity.namedEntity.toLowerCase, namedEntity.entityType.getValue))
-      }.take(MaxNersPerTweet)
+    val nelonrelonntitielons = nelonrelonntitielonsOpt
+      .gelontOrelonlselon(Nil).map { namelondelonntity =>
+        TwelonelontTelonxtelonntity
+          .Nelonr(NelonrKelony(namelondelonntity.namelondelonntity.toLowelonrCaselon, namelondelonntity.elonntityTypelon.gelontValuelon))
+      }.takelon(MaxNelonrsPelonrTwelonelont)
 
-    val nerEntitySet = nerEntities.map(_.ner.textEntity).toSet
+    val nelonrelonntitySelont = nelonrelonntitielons.map(_.nelonr.telonxtelonntity).toSelont
 
-    val penguinEntities =
-      extractTweetTextFeatures(
-        tweet.flatMap(_.coreData.map(_.text)).getOrElse(""),
-        tweet.flatMap(_.language.map(_.language))
-      ).phrases
-        .map(_.normalizedOrOriginal)
-        .filter { s =>
-          s.charAt(0) != '#' && !nerEntitySet.contains(s) // not included in hashtags and NER
+    val pelonnguinelonntitielons =
+      elonxtractTwelonelontTelonxtFelonaturelons(
+        twelonelont.flatMap(_.corelonData.map(_.telonxt)).gelontOrelonlselon(""),
+        twelonelont.flatMap(_.languagelon.map(_.languagelon))
+      ).phraselons
+        .map(_.normalizelondOrOriginal)
+        .filtelonr { s =>
+          s.charAt(0) != '#' && !nelonrelonntitySelont.contains(s) // not includelond in hashtags and NelonR
         }
-        .map { penguinStr => TweetTextEntity.Penguin(PenguinKey(penguinStr.toLowerCase)) }.take(
-          MaxPenguinsPerTweet)
+        .map { pelonnguinStr => TwelonelontTelonxtelonntity.Pelonnguin(PelonnguinKelony(pelonnguinStr.toLowelonrCaselon)) }.takelon(
+          MaxPelonnguinsPelonrTwelonelont)
 
-    (hashtagEntities ++ penguinEntities ++ nerEntities).map(e => SimClusterEntity.TweetEntity(e))
+    (hashtagelonntitielons ++ pelonnguinelonntitielons ++ nelonrelonntitielons).map(elon => SimClustelonrelonntity.Twelonelontelonntity(elon))
   }
 }

@@ -1,114 +1,114 @@
-package com.twitter.product_mixer.core.controllers
+packagelon com.twittelonr.product_mixelonr.corelon.controllelonrs
 
-import com.twitter.finagle.http.Request
-import com.twitter.inject.Injector
-import com.twitter.product_mixer.core.functional_component.common.access_policy.AccessPolicy
-import com.twitter.product_mixer.core.functional_component.common.access_policy.WithDebugAccessPolicies
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
-import com.twitter.product_mixer.core.pipeline.Pipeline
-import com.twitter.product_mixer.core.pipeline.mixer.MixerPipelineConfig
-import com.twitter.product_mixer.core.pipeline.product.ProductPipelineConfig
-import com.twitter.product_mixer.core.pipeline.recommendation.RecommendationPipelineConfig
-import com.twitter.product_mixer.core.quality_factor.QualityFactorConfig
-import com.twitter.product_mixer.core.service.component_registry
-import com.twitter.product_mixer.core.service.component_registry.ComponentRegistry
-import com.twitter.product_mixer.core.service.component_registry.ComponentRegistrySnapshot
-import com.twitter.util.Future
+import com.twittelonr.finaglelon.http.Relonquelonst
+import com.twittelonr.injelonct.Injelonctor
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.accelonss_policy.AccelonssPolicy
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.accelonss_policy.WithDelonbugAccelonssPolicielons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.ComponelonntIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.Pipelonlinelon
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.mixelonr.MixelonrPipelonlinelonConfig
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.product.ProductPipelonlinelonConfig
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.reloncommelonndation.ReloncommelonndationPipelonlinelonConfig
+import com.twittelonr.product_mixelonr.corelon.quality_factor.QualityFactorConfig
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.componelonnt_relongistry
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.componelonnt_relongistry.ComponelonntRelongistry
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.componelonnt_relongistry.ComponelonntRelongistrySnapshot
+import com.twittelonr.util.Futurelon
 
-case class GetComponentRegistryHandler(injector: Injector) {
-  lazy val componentRegistry: ComponentRegistry = injector.instance[ComponentRegistry]
+caselon class GelontComponelonntRelongistryHandlelonr(injelonctor: Injelonctor) {
+  lazy val componelonntRelongistry: ComponelonntRelongistry = injelonctor.instancelon[ComponelonntRelongistry]
 
-  def apply(request: Request): Future[ComponentRegistryResponse] = {
-    componentRegistry.get.map { currentComponentRegistry: ComponentRegistrySnapshot =>
-      val registeredComponents = currentComponentRegistry.getAllRegisteredComponents.map {
-        registeredComponent =>
-          val componentIdentifier = registeredComponent.identifier
-          val childComponents = currentComponentRegistry
-            .getChildComponents(componentIdentifier)
-            .map { childComponent =>
-              ChildComponent(
-                componentType = childComponent.componentType,
-                name = childComponent.name,
-                relativeScopes = componentIdentifier.toScopes ++ childComponent.toScopes,
+  delonf apply(relonquelonst: Relonquelonst): Futurelon[ComponelonntRelongistryRelonsponselon] = {
+    componelonntRelongistry.gelont.map { currelonntComponelonntRelongistry: ComponelonntRelongistrySnapshot =>
+      val relongistelonrelondComponelonnts = currelonntComponelonntRelongistry.gelontAllRelongistelonrelondComponelonnts.map {
+        relongistelonrelondComponelonnt =>
+          val componelonntIdelonntifielonr = relongistelonrelondComponelonnt.idelonntifielonr
+          val childComponelonnts = currelonntComponelonntRelongistry
+            .gelontChildComponelonnts(componelonntIdelonntifielonr)
+            .map { childComponelonnt =>
+              ChildComponelonnt(
+                componelonntTypelon = childComponelonnt.componelonntTypelon,
+                namelon = childComponelonnt.namelon,
+                relonlativelonScopelons = componelonntIdelonntifielonr.toScopelons ++ childComponelonnt.toScopelons,
                 qualityFactorMonitoringConfig =
-                  buildQualityFactoringMonitoringConfig(registeredComponent, childComponent)
+                  buildQualityFactoringMonitoringConfig(relongistelonrelondComponelonnt, childComponelonnt)
               )
             }
 
-          RegisteredComponent(
-            componentType = componentIdentifier.componentType,
-            name = componentIdentifier.name,
-            scopes = componentIdentifier.toScopes,
-            children = childComponents,
-            alertConfig = Some(registeredComponent.component.alerts.map(AlertConfig.apply)),
-            sourceFile = Some(registeredComponent.sourceFile),
-            debugAccessPolicies = Some(registeredComponent.component match {
-              case withDebugAccessPolicies: WithDebugAccessPolicies =>
-                withDebugAccessPolicies.debugAccessPolicies
-              case _ => Set.empty
+          RelongistelonrelondComponelonnt(
+            componelonntTypelon = componelonntIdelonntifielonr.componelonntTypelon,
+            namelon = componelonntIdelonntifielonr.namelon,
+            scopelons = componelonntIdelonntifielonr.toScopelons,
+            childrelonn = childComponelonnts,
+            alelonrtConfig = Somelon(relongistelonrelondComponelonnt.componelonnt.alelonrts.map(AlelonrtConfig.apply)),
+            sourcelonFilelon = Somelon(relongistelonrelondComponelonnt.sourcelonFilelon),
+            delonbugAccelonssPolicielons = Somelon(relongistelonrelondComponelonnt.componelonnt match {
+              caselon withDelonbugAccelonssPolicielons: WithDelonbugAccelonssPolicielons =>
+                withDelonbugAccelonssPolicielons.delonbugAccelonssPolicielons
+              caselon _ => Selont.elonmpty
             })
           )
       }
 
-      ComponentRegistryResponse(registeredComponents)
+      ComponelonntRelongistryRelonsponselon(relongistelonrelondComponelonnts)
     }
   }
 
-  private def buildQualityFactoringMonitoringConfig(
-    parent: component_registry.RegisteredComponent,
-    child: ComponentIdentifier
+  privatelon delonf buildQualityFactoringMonitoringConfig(
+    parelonnt: componelonnt_relongistry.RelongistelonrelondComponelonnt,
+    child: ComponelonntIdelonntifielonr
   ): Option[QualityFactorMonitoringConfig] = {
-    val qualityFactorConfigs: Option[Map[ComponentIdentifier, QualityFactorConfig]] =
-      parent.component match {
-        case pipeline: Pipeline[_, _] =>
-          pipeline.config match {
-            case config: RecommendationPipelineConfig[_, _, _, _] =>
-              Some(config.qualityFactorConfigs)
-            case config: MixerPipelineConfig[_, _, _] =>
-              Some(
+    val qualityFactorConfigs: Option[Map[ComponelonntIdelonntifielonr, QualityFactorConfig]] =
+      parelonnt.componelonnt match {
+        caselon pipelonlinelon: Pipelonlinelon[_, _] =>
+          pipelonlinelon.config match {
+            caselon config: ReloncommelonndationPipelonlinelonConfig[_, _, _, _] =>
+              Somelon(config.qualityFactorConfigs)
+            caselon config: MixelonrPipelonlinelonConfig[_, _, _] =>
+              Somelon(
                 config.qualityFactorConfigs
-                  .asInstanceOf[Map[ComponentIdentifier, QualityFactorConfig]])
-            case config: ProductPipelineConfig[_, _, _] =>
-              Some(config.qualityFactorConfigs)
-            case _ => None
+                  .asInstancelonOf[Map[ComponelonntIdelonntifielonr, QualityFactorConfig]])
+            caselon config: ProductPipelonlinelonConfig[_, _, _] =>
+              Somelon(config.qualityFactorConfigs)
+            caselon _ => Nonelon
           }
-        case _ => None
+        caselon _ => Nonelon
       }
 
-    val qfConfigForChild: Option[QualityFactorConfig] = qualityFactorConfigs.flatMap(_.get(child))
+    val qfConfigForChild: Option[QualityFactorConfig] = qualityFactorConfigs.flatMap(_.gelont(child))
 
     qfConfigForChild.map { qfConfig =>
       QualityFactorMonitoringConfig(
-        boundMin = qfConfig.qualityFactorBounds.bounds.minInclusive,
-        boundMax = qfConfig.qualityFactorBounds.bounds.maxInclusive
+        boundMin = qfConfig.qualityFactorBounds.bounds.minInclusivelon,
+        boundMax = qfConfig.qualityFactorBounds.bounds.maxInclusivelon
       )
     }
   }
 }
 
-case class RegisteredComponent(
-  componentType: String,
-  name: String,
-  scopes: Seq[String],
-  children: Seq[ChildComponent],
-  alertConfig: Option[Seq[AlertConfig]],
-  sourceFile: Option[String],
-  debugAccessPolicies: Option[Set[AccessPolicy]])
+caselon class RelongistelonrelondComponelonnt(
+  componelonntTypelon: String,
+  namelon: String,
+  scopelons: Selonq[String],
+  childrelonn: Selonq[ChildComponelonnt],
+  alelonrtConfig: Option[Selonq[AlelonrtConfig]],
+  sourcelonFilelon: Option[String],
+  delonbugAccelonssPolicielons: Option[Selont[AccelonssPolicy]])
 
-case class ChildComponent(
-  componentType: String,
-  name: String,
-  relativeScopes: Seq[String],
+caselon class ChildComponelonnt(
+  componelonntTypelon: String,
+  namelon: String,
+  relonlativelonScopelons: Selonq[String],
   qualityFactorMonitoringConfig: Option[QualityFactorMonitoringConfig])
 
 /**
- * The shape of the data returned to callers after hitting the `component-registry` endpoint
+ * Thelon shapelon of thelon data relonturnelond to callelonrs aftelonr hitting thelon `componelonnt-relongistry` elonndpoint
  *
- * @note changes to [[ComponentRegistryResponse]] or contained types should be reflected
- *       in dashboard generation code in the `monitoring-configs/product_mixer` directory.
+ * @notelon changelons to [[ComponelonntRelongistryRelonsponselon]] or containelond typelons should belon relonflelonctelond
+ *       in dashboard gelonnelonration codelon in thelon `monitoring-configs/product_mixelonr` direlonctory.
  */
-case class ComponentRegistryResponse(
-  registeredComponents: Seq[RegisteredComponent])
+caselon class ComponelonntRelongistryRelonsponselon(
+  relongistelonrelondComponelonnts: Selonq[RelongistelonrelondComponelonnt])
 
-case class ProductPipeline(identifier: String)
-case class ProductPipelinesResponse(productPipelines: Seq[ProductPipeline])
+caselon class ProductPipelonlinelon(idelonntifielonr: String)
+caselon class ProductPipelonlinelonsRelonsponselon(productPipelonlinelons: Selonq[ProductPipelonlinelon])

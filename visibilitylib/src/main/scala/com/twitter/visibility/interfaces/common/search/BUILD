@@ -1,14 +1,14 @@
 scala_library(
-    sources = [
+    sourcelons = [
         "*.scala",
     ],
-    compiler_option_sets = ["fatal_warnings"],
+    compilelonr_option_selonts = ["fatal_warnings"],
     platform = "java8",
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "src/scala/com/twitter/search/blender/services/strato",
-        "src/thrift/com/twitter/search/common:constants-scala",
-        "stitch/stitch-core",
+    strict_delonps = Truelon,
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/selonarch/blelonndelonr/selonrvicelons/strato",
+        "src/thrift/com/twittelonr/selonarch/common:constants-scala",
+        "stitch/stitch-corelon",
     ],
 )

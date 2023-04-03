@@ -1,9 +1,9 @@
-package com.twitter.product_mixer.core.functional_component.feature_hydrator
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator
 
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.model.common.Component
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.Componelonnt
 
-/** Hydrates a [[com.twitter.product_mixer.core.feature.featuremap.FeatureMap]] for a given input */
-trait FeatureHydrator[FeatureType <: Feature[_, _]] extends Component {
-  def features: Set[FeatureType]
+/** Hydratelons a [[com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap]] for a givelonn input */
+trait FelonaturelonHydrator[FelonaturelonTypelon <: Felonaturelon[_, _]] elonxtelonnds Componelonnt {
+  delonf felonaturelons: Selont[FelonaturelonTypelon]
 }

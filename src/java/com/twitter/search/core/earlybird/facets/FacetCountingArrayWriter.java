@@ -1,55 +1,55 @@
-package com.twitter.search.core.earlybird.facets;
+packagelon com.twittelonr.selonarch.corelon.elonarlybird.facelonts;
 
-import com.twitter.search.core.earlybird.index.inverted.IntBlockPool;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.invelonrtelond.IntBlockPool;
 
-public class FacetCountingArrayWriter {
-  private final AbstractFacetCountingArray facetCountingArray;
-  private int previousDocID = -1;
+public class FacelontCountingArrayWritelonr {
+  privatelon final AbstractFacelontCountingArray facelontCountingArray;
+  privatelon int prelonviousDocID = -1;
 
-  public FacetCountingArrayWriter(AbstractFacetCountingArray array) {
-    facetCountingArray = array;
+  public FacelontCountingArrayWritelonr(AbstractFacelontCountingArray array) {
+    facelontCountingArray = array;
   }
 
   /**
-   * Adds a facet for the given doc, field and term tuple.
+   * Adds a facelont for thelon givelonn doc, fielonld and telonrm tuplelon.
    *
-   * The layout of the packedValues in the term pool is:
+   * Thelon layout of thelon packelondValuelons in thelon telonrm pool is:
    *
-   * index |0 |1 |2 |3 |4 |5 |6 |7 |8 |9 |
-   * value |U |1a|1b|1c|U |2b|2c|P3|1d|1f|
+   * indelonx |0 |1 |2 |3 |4 |5 |6 |7 |8 |9 |
+   * valuelon |U |1a|1b|1c|U |2b|2c|P3|1d|1f|
    *
-   * Where U is UNASSIGNED, P+X is a pointer to index X (e.g. P3 means pointer to index 3),
-   * or a doc ID and facet (e.g. doc ID 1 and facet a would be 1a).
+   * Whelonrelon U is UNASSIGNelonD, P+X is a pointelonr to indelonx X (elon.g. P3 melonans pointelonr to indelonx 3),
+   * or a doc ID and facelont (elon.g. doc ID 1 and facelont a would belon 1a).
    */
-  public void addFacet(int docID, int fieldID, int termID) {
-    IntBlockPool facetsPool = facetCountingArray.getFacetsPool();
-    int packedValue = facetCountingArray.getFacet(docID);
+  public void addFacelont(int docID, int fielonldID, int telonrmID) {
+    IntBlockPool facelontsPool = facelontCountingArray.gelontFacelontsPool();
+    int packelondValuelon = facelontCountingArray.gelontFacelont(docID);
 
-    if (packedValue == AbstractFacetCountingArray.UNASSIGNED) {
-      // first facet for this doc.
-      // keep it in the array and don't add it to the map.
-      facetCountingArray.setFacet(docID, AbstractFacetCountingArray.encodeFacetID(fieldID, termID));
-      return;
+    if (packelondValuelon == AbstractFacelontCountingArray.UNASSIGNelonD) {
+      // first facelont for this doc.
+      // kelonelonp it in thelon array and don't add it to thelon map.
+      facelontCountingArray.selontFacelont(docID, AbstractFacelontCountingArray.elonncodelonFacelontID(fielonldID, telonrmID));
+      relonturn;
     }
 
-    if (!FacetCountingArray.isPointer(packedValue)) {
-      // If the packedValue is not a pointer, we know that we have exactly one facet in the index
-      // for this document, so copy the existing facet into the pool.
-      facetsPool.add(AbstractFacetCountingArray.UNASSIGNED);
-      facetsPool.add(packedValue);
-    } else if (previousDocID != docID) {
-      // We have seen this document ID in a different document. Store the pointer to the first facet
-      // for this doc ID in the pool so that we can traverse the linked list.
-      facetsPool.add(packedValue);
+    if (!FacelontCountingArray.isPointelonr(packelondValuelon)) {
+      // If thelon packelondValuelon is not a pointelonr, welon know that welon havelon elonxactly onelon facelont in thelon indelonx
+      // for this documelonnt, so copy thelon elonxisting facelont into thelon pool.
+      facelontsPool.add(AbstractFacelontCountingArray.UNASSIGNelonD);
+      facelontsPool.add(packelondValuelon);
+    } elonlselon if (prelonviousDocID != docID) {
+      // Welon havelon selonelonn this documelonnt ID in a diffelonrelonnt documelonnt. Storelon thelon pointelonr to thelon first facelont
+      // for this doc ID in thelon pool so that welon can travelonrselon thelon linkelond list.
+      facelontsPool.add(packelondValuelon);
     }
 
-    previousDocID = docID;
+    prelonviousDocID = docID;
 
-    // Add the new facet to the end of the FacetCountingArray.
-    facetsPool.add(AbstractFacetCountingArray.encodeFacetID(fieldID, termID));
+    // Add thelon nelonw facelont to thelon elonnd of thelon FacelontCountingArray.
+    facelontsPool.add(AbstractFacelontCountingArray.elonncodelonFacelontID(fielonldID, telonrmID));
 
-    // Set the facetValue for this document to the pointer to the facet we just added to the array.
-    int poolPointer = AbstractFacetCountingArray.encodePointer(facetsPool.length() - 1);
-    facetCountingArray.setFacet(docID, poolPointer);
+    // Selont thelon facelontValuelon for this documelonnt to thelon pointelonr to thelon facelont welon just addelond to thelon array.
+    int poolPointelonr = AbstractFacelontCountingArray.elonncodelonPointelonr(facelontsPool.lelonngth() - 1);
+    facelontCountingArray.selontFacelont(docID, poolPointelonr);
   }
 }

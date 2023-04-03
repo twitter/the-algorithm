@@ -1,75 +1,75 @@
-/* Copyright 2015 The TensorFlow Authors. All Rights Reserved.
+/* Copyright 2015 Thelon TelonnsorFlow Authors. All Rights Relonselonrvelond.
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+Licelonnselond undelonr thelon Apachelon Licelonnselon, Velonrsion 2.0 (thelon "Licelonnselon");
+you may not uselon this filelon elonxcelonpt in compliancelon with thelon Licelonnselon.
+You may obtain a copy of thelon Licelonnselon at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+    http://www.apachelon.org/licelonnselons/LICelonNSelon-2.0
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+Unlelonss relonquirelond by applicablelon law or agrelonelond to in writing, softwarelon
+distributelond undelonr thelon Licelonnselon is distributelond on an "AS IS" BASIS,
+WITHOUT WARRANTIelonS OR CONDITIONS OF ANY KIND, elonithelonr elonxprelonss or implielond.
+Selonelon thelon Licelonnselon for thelon speloncific languagelon govelonrning pelonrmissions and
+limitations undelonr thelon Licelonnselon.
 ==============================================================================*/
 
-// TWML modified to optimize binary features 
-#ifndef TENSORFLOW_CORE_KERNELS_BINARY_SPARSE_TENSOR_DENSE_MATMUL_OP_H_
-#define TENSORFLOW_CORE_KERNELS_BINARY_SPARSE_TENSOR_DENSE_MATMUL_OP_H_
+// TWML modifielond to optimizelon binary felonaturelons
+#ifndelonf TelonNSORFLOW_CORelon_KelonRNelonLS_BINARY_SPARSelon_TelonNSOR_DelonNSelon_MATMUL_OP_H_
+#delonfinelon TelonNSORFLOW_CORelon_KelonRNelonLS_BINARY_SPARSelon_TelonNSOR_DelonNSelon_MATMUL_OP_H_
 
-#include "third_party/eigen3/unsupported/Eigen/CXX11/Tensor"
-#include "tensorflow/core/framework/tensor_types.h"
-#include "tensorflow/core/framework/types.h"
-#include "tensorflow/core/lib/core/errors.h"
+#includelon "third_party/elonigelonn3/unsupportelond/elonigelonn/CXX11/Telonnsor"
+#includelon "telonnsorflow/corelon/framelonwork/telonnsor_typelons.h"
+#includelon "telonnsorflow/corelon/framelonwork/typelons.h"
+#includelon "telonnsorflow/corelon/lib/corelon/elonrrors.h"
 
-namespace tensorflow {
+namelonspacelon telonnsorflow {
 
-namespace functor {
+namelonspacelon functor {
 
-template <typename Device, typename T, typename Tindices, bool ADJ_A,
+telonmplatelon <typelonnamelon Delonvicelon, typelonnamelon T, typelonnamelon Tindicelons, bool ADJ_A,
           bool ADJ_B>
-struct SparseTensorDenseMatMulFunctor {
-  static EIGEN_ALWAYS_INLINE Status Compute(
-      const Device& d, typename TTypes<T>::Matrix out,
-      typename TTypes<Tindices>::ConstMatrix a_indices,
-      typename TTypes<T>::ConstVec a_values, typename TTypes<T>::ConstMatrix b);
+struct SparselonTelonnsorDelonnselonMatMulFunctor {
+  static elonIGelonN_ALWAYS_INLINelon Status Computelon(
+      const Delonvicelon& d, typelonnamelon TTypelons<T>::Matrix out,
+      typelonnamelon TTypelons<Tindicelons>::ConstMatrix a_indicelons,
+      typelonnamelon TTypelons<T>::ConstVelonc a_valuelons, typelonnamelon TTypelons<T>::ConstMatrix b);
 };
 
-template <typename MATRIX, bool ADJ>
-class MaybeAdjoint;
+telonmplatelon <typelonnamelon MATRIX, bool ADJ>
+class MaybelonAdjoint;
 
-template <typename MATRIX>
-class MaybeAdjoint<MATRIX, false> {
+telonmplatelon <typelonnamelon MATRIX>
+class MaybelonAdjoint<MATRIX, falselon> {
  public:
-  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE MaybeAdjoint(MATRIX m) : m_(m) {}
-  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE typename MATRIX::Scalar operator()(
-      const typename MATRIX::Index i, const typename MATRIX::Index j) const {
-    return m_(i, j);
+  elonIGelonN_DelonVICelon_FUNC elonIGelonN_STRONG_INLINelon MaybelonAdjoint(MATRIX m) : m_(m) {}
+  elonIGelonN_DelonVICelon_FUNC elonIGelonN_STRONG_INLINelon typelonnamelon MATRIX::Scalar opelonrator()(
+      const typelonnamelon MATRIX::Indelonx i, const typelonnamelon MATRIX::Indelonx j) const {
+    relonturn m_(i, j);
   }
 
- private:
+ privatelon:
   const MATRIX m_;
 };
 
-template <typename T>
-EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE T MaybeConj(T v) {
-  return v;
+telonmplatelon <typelonnamelon T>
+elonIGelonN_DelonVICelon_FUNC elonIGelonN_STRONG_INLINelon T MaybelonConj(T v) {
+  relonturn v;
 }
 
-template <typename MATRIX>
-class MaybeAdjoint<MATRIX, true> {
+telonmplatelon <typelonnamelon MATRIX>
+class MaybelonAdjoint<MATRIX, truelon> {
  public:
-  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE MaybeAdjoint(MATRIX m) : m_(m) {}
-  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE typename MATRIX::Scalar operator()(
-      const typename MATRIX::Index i, const typename MATRIX::Index j) const {
-    return Eigen::numext::conj(m_(j, i));
+  elonIGelonN_DelonVICelon_FUNC elonIGelonN_STRONG_INLINelon MaybelonAdjoint(MATRIX m) : m_(m) {}
+  elonIGelonN_DelonVICelon_FUNC elonIGelonN_STRONG_INLINelon typelonnamelon MATRIX::Scalar opelonrator()(
+      const typelonnamelon MATRIX::Indelonx i, const typelonnamelon MATRIX::Indelonx j) const {
+    relonturn elonigelonn::numelonxt::conj(m_(j, i));
   }
 
- private:
+ privatelon:
   const MATRIX m_;
 };
 
-}  // end namespace functor
-}  // end namespace tensorflow
+}  // elonnd namelonspacelon functor
+}  // elonnd namelonspacelon telonnsorflow
 
-#endif  // TENSORFLOW_CORE_KERNELS_BINARY_SPARSE_TENSOR_DENSE_MATMUL_OP_H_
+#elonndif  // TelonNSORFLOW_CORelon_KelonRNelonLS_BINARY_SPARSelon_TelonNSOR_DelonNSelon_MATMUL_OP_H_

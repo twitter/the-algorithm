@@ -1,98 +1,98 @@
-package com.twitter.cr_mixer.param
+packagelon com.twittelonr.cr_mixelonr.param
 
-import com.twitter.timelines.configapi.BaseConfig
-import com.twitter.timelines.configapi.BaseConfigBuilder
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil
-import com.twitter.timelines.configapi.Param
+import com.twittelonr.timelonlinelons.configapi.BaselonConfig
+import com.twittelonr.timelonlinelons.configapi.BaselonConfigBuildelonr
+import com.twittelonr.timelonlinelons.configapi.FSBoundelondParam
+import com.twittelonr.timelonlinelons.configapi.FSNamelon
+import com.twittelonr.timelonlinelons.configapi.FSParam
+import com.twittelonr.timelonlinelons.configapi.FelonaturelonSwitchOvelonrridelonUtil
+import com.twittelonr.timelonlinelons.configapi.Param
 
-object BypassInterleaveAndRankParams {
-  object EnableTwhinCollabFilterBypassParam
-      extends FSParam[Boolean](
-        name = "bypass_interleave_and_rank_twhin_collab_filter",
-        default = false
+objelonct BypassIntelonrlelonavelonAndRankParams {
+  objelonct elonnablelonTwhinCollabFiltelonrBypassParam
+      elonxtelonnds FSParam[Boolelonan](
+        namelon = "bypass_intelonrlelonavelon_and_rank_twhin_collab_filtelonr",
+        delonfault = falselon
       )
 
-  object EnableTwoTowerBypassParam
-      extends FSParam[Boolean](
-        name = "bypass_interleave_and_rank_two_tower",
-        default = false
+  objelonct elonnablelonTwoTowelonrBypassParam
+      elonxtelonnds FSParam[Boolelonan](
+        namelon = "bypass_intelonrlelonavelon_and_rank_two_towelonr",
+        delonfault = falselon
       )
 
-  object EnableConsumerBasedTwhinBypassParam
-      extends FSParam[Boolean](
-        name = "bypass_interleave_and_rank_consumer_based_twhin",
-        default = false
+  objelonct elonnablelonConsumelonrBaselondTwhinBypassParam
+      elonxtelonnds FSParam[Boolelonan](
+        namelon = "bypass_intelonrlelonavelon_and_rank_consumelonr_baselond_twhin",
+        delonfault = falselon
       )
 
-  object EnableConsumerBasedWalsBypassParam
-      extends FSParam[Boolean](
-        name = "bypass_interleave_and_rank_consumer_based_wals",
-        default = false
+  objelonct elonnablelonConsumelonrBaselondWalsBypassParam
+      elonxtelonnds FSParam[Boolelonan](
+        namelon = "bypass_intelonrlelonavelon_and_rank_consumelonr_baselond_wals",
+        delonfault = falselon
       )
 
-  object TwhinCollabFilterBypassPercentageParam
-      extends FSBoundedParam[Double](
-        name = "bypass_interleave_and_rank_twhin_collab_filter_percentage",
-        default = 0.0,
+  objelonct TwhinCollabFiltelonrBypassPelonrcelonntagelonParam
+      elonxtelonnds FSBoundelondParam[Doublelon](
+        namelon = "bypass_intelonrlelonavelon_and_rank_twhin_collab_filtelonr_pelonrcelonntagelon",
+        delonfault = 0.0,
         min = 0.0,
         max = 1.0
       )
 
-  object TwoTowerBypassPercentageParam
-      extends FSBoundedParam[Double](
-        name = "bypass_interleave_and_rank_two_tower_percentage",
-        default = 0.0,
+  objelonct TwoTowelonrBypassPelonrcelonntagelonParam
+      elonxtelonnds FSBoundelondParam[Doublelon](
+        namelon = "bypass_intelonrlelonavelon_and_rank_two_towelonr_pelonrcelonntagelon",
+        delonfault = 0.0,
         min = 0.0,
         max = 1.0
       )
 
-  object ConsumerBasedTwhinBypassPercentageParam
-      extends FSBoundedParam[Double](
-        name = "bypass_interleave_and_rank_consumer_based_twhin_percentage",
-        default = 0.0,
+  objelonct ConsumelonrBaselondTwhinBypassPelonrcelonntagelonParam
+      elonxtelonnds FSBoundelondParam[Doublelon](
+        namelon = "bypass_intelonrlelonavelon_and_rank_consumelonr_baselond_twhin_pelonrcelonntagelon",
+        delonfault = 0.0,
         min = 0.0,
         max = 1.0
       )
 
-  object ConsumerBasedWalsBypassPercentageParam
-      extends FSBoundedParam[Double](
-        name = "bypass_interleave_and_rank_consumer_based_wals_percentage",
-        default = 0.0,
+  objelonct ConsumelonrBaselondWalsBypassPelonrcelonntagelonParam
+      elonxtelonnds FSBoundelondParam[Doublelon](
+        namelon = "bypass_intelonrlelonavelon_and_rank_consumelonr_baselond_wals_pelonrcelonntagelon",
+        delonfault = 0.0,
         min = 0.0,
         max = 1.0
       )
 
-  val AllParams: Seq[Param[_] with FSName] = Seq(
-    EnableTwhinCollabFilterBypassParam,
-    EnableTwoTowerBypassParam,
-    EnableConsumerBasedTwhinBypassParam,
-    EnableConsumerBasedWalsBypassParam,
-    TwhinCollabFilterBypassPercentageParam,
-    TwoTowerBypassPercentageParam,
-    ConsumerBasedTwhinBypassPercentageParam,
-    ConsumerBasedWalsBypassPercentageParam,
+  val AllParams: Selonq[Param[_] with FSNamelon] = Selonq(
+    elonnablelonTwhinCollabFiltelonrBypassParam,
+    elonnablelonTwoTowelonrBypassParam,
+    elonnablelonConsumelonrBaselondTwhinBypassParam,
+    elonnablelonConsumelonrBaselondWalsBypassParam,
+    TwhinCollabFiltelonrBypassPelonrcelonntagelonParam,
+    TwoTowelonrBypassPelonrcelonntagelonParam,
+    ConsumelonrBaselondTwhinBypassPelonrcelonntagelonParam,
+    ConsumelonrBaselondWalsBypassPelonrcelonntagelonParam,
   )
 
-  lazy val config: BaseConfig = {
-    val booleanOverrides = FeatureSwitchOverrideUtil.getBooleanFSOverrides(
-      EnableTwhinCollabFilterBypassParam,
-      EnableTwoTowerBypassParam,
-      EnableConsumerBasedTwhinBypassParam,
-      EnableConsumerBasedWalsBypassParam,
+  lazy val config: BaselonConfig = {
+    val boolelonanOvelonrridelons = FelonaturelonSwitchOvelonrridelonUtil.gelontBoolelonanFSOvelonrridelons(
+      elonnablelonTwhinCollabFiltelonrBypassParam,
+      elonnablelonTwoTowelonrBypassParam,
+      elonnablelonConsumelonrBaselondTwhinBypassParam,
+      elonnablelonConsumelonrBaselondWalsBypassParam,
     )
 
-    val doubleOverrides = FeatureSwitchOverrideUtil.getBoundedDoubleFSOverrides(
-      TwhinCollabFilterBypassPercentageParam,
-      TwoTowerBypassPercentageParam,
-      ConsumerBasedTwhinBypassPercentageParam,
-      ConsumerBasedWalsBypassPercentageParam,
+    val doublelonOvelonrridelons = FelonaturelonSwitchOvelonrridelonUtil.gelontBoundelondDoublelonFSOvelonrridelons(
+      TwhinCollabFiltelonrBypassPelonrcelonntagelonParam,
+      TwoTowelonrBypassPelonrcelonntagelonParam,
+      ConsumelonrBaselondTwhinBypassPelonrcelonntagelonParam,
+      ConsumelonrBaselondWalsBypassPelonrcelonntagelonParam,
     )
-    BaseConfigBuilder()
-      .set(booleanOverrides: _*)
-      .set(doubleOverrides: _*)
+    BaselonConfigBuildelonr()
+      .selont(boolelonanOvelonrridelons: _*)
+      .selont(doublelonOvelonrridelons: _*)
       .build()
   }
 }

@@ -1,54 +1,54 @@
-package com.twitter.product_mixer.component_library.premarshaller.urt.builder
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.prelonmarshallelonr.urt.buildelonr
 
-import com.twitter.product_mixer.component_library.model.cursor.UrtOrderedCursor
-import com.twitter.product_mixer.component_library.premarshaller.cursor.UrtCursorSerializer
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.CursorType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.GapCursor
-import com.twitter.product_mixer.core.pipeline.HasPipelineCursor
-import com.twitter.product_mixer.core.pipeline.PipelineCursorSerializer
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.cursor.UrtOrdelonrelondCursor
+import com.twittelonr.product_mixelonr.componelonnt_library.prelonmarshallelonr.cursor.UrtCursorSelonrializelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.Timelonlinelonelonntry
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.opelonration.CursorTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.opelonration.GapCursor
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.HasPipelonlinelonCursor
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonCursorSelonrializelonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
 /**
- * Builds [[UrtOrderedCursor]] in the Bottom position as a Gap cursor.
+ * Builds [[UrtOrdelonrelondCursor]] in thelon Bottom position as a Gap cursor.
  *
- * @param idSelector Specifies the entry from which to derive the `id` field
- * @param includeOperation Logic to determine whether or not to build the gap cursor, which should
- *                         always be the inverse of the logic used to decide whether or not to build
- *                         the bottom cursor via [[OrderedBottomCursorBuilder]], since either the
- *                         gap or the bottom cursor must always be returned.
- * @param serializer Converts the cursor to an encoded string
+ * @param idSelonlelonctor Speloncifielons thelon elonntry from which to delonrivelon thelon `id` fielonld
+ * @param includelonOpelonration Logic to delontelonrminelon whelonthelonr or not to build thelon gap cursor, which should
+ *                         always belon thelon invelonrselon of thelon logic uselond to deloncidelon whelonthelonr or not to build
+ *                         thelon bottom cursor via [[OrdelonrelondBottomCursorBuildelonr]], sincelon elonithelonr thelon
+ *                         gap or thelon bottom cursor must always belon relonturnelond.
+ * @param selonrializelonr Convelonrts thelon cursor to an elonncodelond string
  */
-case class OrderedGapCursorBuilder[
-  -Query <: PipelineQuery with HasPipelineCursor[UrtOrderedCursor]
+caselon class OrdelonrelondGapCursorBuildelonr[
+  -Quelonry <: PipelonlinelonQuelonry with HasPipelonlinelonCursor[UrtOrdelonrelondCursor]
 ](
-  idSelector: PartialFunction[TimelineEntry, Long],
-  override val includeOperation: IncludeInstruction[Query],
-  serializer: PipelineCursorSerializer[UrtOrderedCursor] = UrtCursorSerializer)
-    extends UrtCursorBuilder[Query] {
-  override val cursorType: CursorType = GapCursor
+  idSelonlelonctor: PartialFunction[Timelonlinelonelonntry, Long],
+  ovelonrridelon val includelonOpelonration: IncludelonInstruction[Quelonry],
+  selonrializelonr: PipelonlinelonCursorSelonrializelonr[UrtOrdelonrelondCursor] = UrtCursorSelonrializelonr)
+    elonxtelonnds UrtCursorBuildelonr[Quelonry] {
+  ovelonrridelon val cursorTypelon: CursorTypelon = GapCursor
 
-  override def cursorValue(
-    query: Query,
-    timelineEntries: Seq[TimelineEntry]
+  ovelonrridelon delonf cursorValuelon(
+    quelonry: Quelonry,
+    timelonlinelonelonntrielons: Selonq[Timelonlinelonelonntry]
   ): String = {
-    // To determine the gap boundary, use any existing cursor gap boundary id (i.e. if submitted
-    // from a previous gap cursor, else use the existing cursor id (i.e. from a previous top cursor)
-    val gapBoundaryId = query.pipelineCursor.flatMap(_.gapBoundaryId).orElse {
-      query.pipelineCursor.flatMap(_.id)
+    // To delontelonrminelon thelon gap boundary, uselon any elonxisting cursor gap boundary id (i.elon. if submittelond
+    // from a prelonvious gap cursor, elonlselon uselon thelon elonxisting cursor id (i.elon. from a prelonvious top cursor)
+    val gapBoundaryId = quelonry.pipelonlinelonCursor.flatMap(_.gapBoundaryId).orelonlselon {
+      quelonry.pipelonlinelonCursor.flatMap(_.id)
     }
 
-    val bottomId = timelineEntries.reverseIterator.collectFirst(idSelector)
+    val bottomId = timelonlinelonelonntrielons.relonvelonrselonItelonrator.collelonctFirst(idSelonlelonctor)
 
-    val id = bottomId.orElse(gapBoundaryId)
+    val id = bottomId.orelonlselon(gapBoundaryId)
 
-    val cursor = UrtOrderedCursor(
-      initialSortIndex = nextBottomInitialSortIndex(query, timelineEntries),
+    val cursor = UrtOrdelonrelondCursor(
+      initialSortIndelonx = nelonxtBottomInitialSortIndelonx(quelonry, timelonlinelonelonntrielons),
       id = id,
-      cursorType = Some(cursorType),
+      cursorTypelon = Somelon(cursorTypelon),
       gapBoundaryId = gapBoundaryId
     )
 
-    serializer.serializeCursor(cursor)
+    selonrializelonr.selonrializelonCursor(cursor)
   }
 }

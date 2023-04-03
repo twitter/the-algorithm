@@ -1,8 +1,8 @@
-package com.twitter.ann.service.query_server.common
+packagelon com.twittelonr.ann.selonrvicelon.quelonry_selonrvelonr.common
 
-import com.twitter.ann.common.{Distance, Queryable, RuntimeParams}
-import com.twitter.search.common.file.AbstractFile
+import com.twittelonr.ann.common.{Distancelon, Quelonryablelon, RuntimelonParams}
+import com.twittelonr.selonarch.common.filelon.AbstractFilelon
 
-trait QueryableProvider[T, P <: RuntimeParams, D <: Distance[D]] {
-  def provideQueryable(indexDir: AbstractFile): Queryable[T, P, D]
+trait QuelonryablelonProvidelonr[T, P <: RuntimelonParams, D <: Distancelon[D]] {
+  delonf providelonQuelonryablelon(indelonxDir: AbstractFilelon): Quelonryablelon[T, P, D]
 }

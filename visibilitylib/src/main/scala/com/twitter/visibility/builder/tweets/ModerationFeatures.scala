@@ -1,23 +1,23 @@
-package com.twitter.visibility.builder.tweets
+packagelon com.twittelonr.visibility.buildelonr.twelonelonts
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.features.TweetIsModerated
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.visibility.buildelonr.FelonaturelonMapBuildelonr
+import com.twittelonr.visibility.felonaturelons.TwelonelontIsModelonratelond
 
-class ModerationFeatures(moderationSource: Long => Boolean, statsReceiver: StatsReceiver) {
+class ModelonrationFelonaturelons(modelonrationSourcelon: Long => Boolelonan, statsReloncelonivelonr: StatsReloncelonivelonr) {
 
-  private[this] val scopedStatsReceiver: StatsReceiver =
-    statsReceiver.scope("moderation_features")
+  privatelon[this] val scopelondStatsReloncelonivelonr: StatsReloncelonivelonr =
+    statsReloncelonivelonr.scopelon("modelonration_felonaturelons")
 
-  private[this] val requests = scopedStatsReceiver.counter("requests")
+  privatelon[this] val relonquelonsts = scopelondStatsReloncelonivelonr.countelonr("relonquelonsts")
 
-  private[this] val tweetIsModerated =
-    scopedStatsReceiver.scope(TweetIsModerated.name).counter("requests")
+  privatelon[this] val twelonelontIsModelonratelond =
+    scopelondStatsReloncelonivelonr.scopelon(TwelonelontIsModelonratelond.namelon).countelonr("relonquelonsts")
 
-  def forTweetId(tweetId: Long): FeatureMapBuilder => FeatureMapBuilder = { featureMapBuilder =>
-    requests.incr()
-    tweetIsModerated.incr()
+  delonf forTwelonelontId(twelonelontId: Long): FelonaturelonMapBuildelonr => FelonaturelonMapBuildelonr = { felonaturelonMapBuildelonr =>
+    relonquelonsts.incr()
+    twelonelontIsModelonratelond.incr()
 
-    featureMapBuilder.withConstantFeature(TweetIsModerated, moderationSource(tweetId))
+    felonaturelonMapBuildelonr.withConstantFelonaturelon(TwelonelontIsModelonratelond, modelonrationSourcelon(twelonelontId))
   }
 }

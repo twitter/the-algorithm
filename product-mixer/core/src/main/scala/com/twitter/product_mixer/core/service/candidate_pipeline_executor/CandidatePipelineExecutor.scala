@@ -1,82 +1,82 @@
-package com.twitter.product_mixer.core.service.candidate_pipeline_executor
+packagelon com.twittelonr.product_mixelonr.corelon.selonrvicelon.candidatelon_pipelonlinelon_elonxeloncutor
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
-import com.twitter.product_mixer.core.pipeline.CandidatePipelineResults
-import com.twitter.product_mixer.core.pipeline.FailOpenPolicy
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.candidate.CandidatePipeline
-import com.twitter.product_mixer.core.pipeline.candidate.CandidatePipelineResult
-import com.twitter.product_mixer.core.quality_factor.QualityFactorObserver
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.stitch.Arrow
-import com.twitter.util.logging.Logging
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMapBuildelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonPipelonlinelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.ComponelonntIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.CandidatelonPipelonlinelonRelonsults
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.FailOpelonnPolicy
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.candidatelon.CandidatelonPipelonlinelon
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.candidatelon.CandidatelonPipelonlinelonRelonsult
+import com.twittelonr.product_mixelonr.corelon.quality_factor.QualityFactorObselonrvelonr
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.elonxeloncutor
+import com.twittelonr.stitch.Arrow
+import com.twittelonr.util.logging.Logging
 
-import javax.inject.Inject
-import javax.inject.Singleton
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class CandidatePipelineExecutor @Inject() (override val statsReceiver: StatsReceiver)
-    extends Executor
+@Singlelonton
+class CandidatelonPipelonlinelonelonxeloncutor @Injelonct() (ovelonrridelon val statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds elonxeloncutor
     with Logging {
 
-  def arrow[Query <: PipelineQuery](
-    candidatePipelines: Seq[CandidatePipeline[Query]],
-    defaultFailOpenPolicy: FailOpenPolicy,
-    failOpenPolicies: Map[CandidatePipelineIdentifier, FailOpenPolicy],
-    qualityFactorObserverByPipeline: Map[ComponentIdentifier, QualityFactorObserver],
-    context: Executor.Context
-  ): Arrow[CandidatePipeline.Inputs[Query], CandidatePipelineExecutorResult] = {
+  delonf arrow[Quelonry <: PipelonlinelonQuelonry](
+    candidatelonPipelonlinelons: Selonq[CandidatelonPipelonlinelon[Quelonry]],
+    delonfaultFailOpelonnPolicy: FailOpelonnPolicy,
+    failOpelonnPolicielons: Map[CandidatelonPipelonlinelonIdelonntifielonr, FailOpelonnPolicy],
+    qualityFactorObselonrvelonrByPipelonlinelon: Map[ComponelonntIdelonntifielonr, QualityFactorObselonrvelonr],
+    contelonxt: elonxeloncutor.Contelonxt
+  ): Arrow[CandidatelonPipelonlinelon.Inputs[Quelonry], CandidatelonPipelonlinelonelonxeloncutorRelonsult] = {
 
-    // Get the `.arrow` of each Candidate Pipeline, and wrap it in a ResultObserver
-    val observedArrows: Seq[Arrow[CandidatePipeline.Inputs[Query], CandidatePipelineResult]] =
-      candidatePipelines.map { pipeline =>
-        wrapPipelineWithExecutorBookkeeping(
-          context = context,
-          currentComponentIdentifier = pipeline.identifier,
-          qualityFactorObserver = qualityFactorObserverByPipeline.get(pipeline.identifier),
-          failOpenPolicy = failOpenPolicies.getOrElse(pipeline.identifier, defaultFailOpenPolicy)
-        )(pipeline.arrow)
+    // Gelont thelon `.arrow` of elonach Candidatelon Pipelonlinelon, and wrap it in a RelonsultObselonrvelonr
+    val obselonrvelondArrows: Selonq[Arrow[CandidatelonPipelonlinelon.Inputs[Quelonry], CandidatelonPipelonlinelonRelonsult]] =
+      candidatelonPipelonlinelons.map { pipelonlinelon =>
+        wrapPipelonlinelonWithelonxeloncutorBookkelonelonping(
+          contelonxt = contelonxt,
+          currelonntComponelonntIdelonntifielonr = pipelonlinelon.idelonntifielonr,
+          qualityFactorObselonrvelonr = qualityFactorObselonrvelonrByPipelonlinelon.gelont(pipelonlinelon.idelonntifielonr),
+          failOpelonnPolicy = failOpelonnPolicielons.gelontOrelonlselon(pipelonlinelon.idelonntifielonr, delonfaultFailOpelonnPolicy)
+        )(pipelonlinelon.arrow)
       }
 
-    // Collect the results from all the candidate pipelines together
-    Arrow.zipWithArg(Arrow.collect(observedArrows)).map {
-      case (input: CandidatePipeline.Inputs[Query], results: Seq[CandidatePipelineResult]) =>
-        val candidateWithDetails = results.flatMap(_.result.getOrElse(Seq.empty))
-        val previousCandidateWithDetails = input.query.features
-          .map(_.getOrElse(CandidatePipelineResults, Seq.empty))
-          .getOrElse(Seq.empty)
+    // Collelonct thelon relonsults from all thelon candidatelon pipelonlinelons togelonthelonr
+    Arrow.zipWithArg(Arrow.collelonct(obselonrvelondArrows)).map {
+      caselon (input: CandidatelonPipelonlinelon.Inputs[Quelonry], relonsults: Selonq[CandidatelonPipelonlinelonRelonsult]) =>
+        val candidatelonWithDelontails = relonsults.flatMap(_.relonsult.gelontOrelonlselon(Selonq.elonmpty))
+        val prelonviousCandidatelonWithDelontails = input.quelonry.felonaturelons
+          .map(_.gelontOrelonlselon(CandidatelonPipelonlinelonRelonsults, Selonq.elonmpty))
+          .gelontOrelonlselon(Selonq.elonmpty)
 
-        val featureMapWithCandidates = FeatureMapBuilder()
-          .add(CandidatePipelineResults, previousCandidateWithDetails ++ candidateWithDetails)
+        val felonaturelonMapWithCandidatelons = FelonaturelonMapBuildelonr()
+          .add(CandidatelonPipelonlinelonRelonsults, prelonviousCandidatelonWithDelontails ++ candidatelonWithDelontails)
           .build()
 
-        // Merge the query feature hydrator and candidate source query features back in. While this
-        // is done internally in the pipeline, we have to pass it back since we don't expose the
-        // updated pipeline query today.
-        val queryFeatureHydratorFeatureMaps =
-          results
-            .flatMap(result => Seq(result.queryFeatures, result.queryFeaturesPhase2))
-            .collect { case Some(result) => result.featureMap }
-        val asyncFeatureHydratorFeatureMaps =
-          results
-            .flatMap(_.asyncFeatureHydrationResults)
-            .flatMap(_.featureMapsByStep.values)
+        // Melonrgelon thelon quelonry felonaturelon hydrator and candidatelon sourcelon quelonry felonaturelons back in. Whilelon this
+        // is donelon intelonrnally in thelon pipelonlinelon, welon havelon to pass it back sincelon welon don't elonxposelon thelon
+        // updatelond pipelonlinelon quelonry today.
+        val quelonryFelonaturelonHydratorFelonaturelonMaps =
+          relonsults
+            .flatMap(relonsult => Selonq(relonsult.quelonryFelonaturelons, relonsult.quelonryFelonaturelonsPhaselon2))
+            .collelonct { caselon Somelon(relonsult) => relonsult.felonaturelonMap }
+        val asyncFelonaturelonHydratorFelonaturelonMaps =
+          relonsults
+            .flatMap(_.asyncFelonaturelonHydrationRelonsults)
+            .flatMap(_.felonaturelonMapsByStelonp.valuelons)
 
-        val candidateSourceFeatureMaps =
-          results
-            .flatMap(_.candidateSourceResult)
-            .map(_.candidateSourceFeatureMap)
+        val candidatelonSourcelonFelonaturelonMaps =
+          relonsults
+            .flatMap(_.candidatelonSourcelonRelonsult)
+            .map(_.candidatelonSourcelonFelonaturelonMap)
 
-        val featureMaps =
-          (featureMapWithCandidates +: queryFeatureHydratorFeatureMaps) ++ asyncFeatureHydratorFeatureMaps ++ candidateSourceFeatureMaps
-        val mergedFeatureMap = FeatureMap.merge(featureMaps)
-        CandidatePipelineExecutorResult(
-          candidatePipelineResults = results,
-          queryFeatureMap = mergedFeatureMap)
+        val felonaturelonMaps =
+          (felonaturelonMapWithCandidatelons +: quelonryFelonaturelonHydratorFelonaturelonMaps) ++ asyncFelonaturelonHydratorFelonaturelonMaps ++ candidatelonSourcelonFelonaturelonMaps
+        val melonrgelondFelonaturelonMap = FelonaturelonMap.melonrgelon(felonaturelonMaps)
+        CandidatelonPipelonlinelonelonxeloncutorRelonsult(
+          candidatelonPipelonlinelonRelonsults = relonsults,
+          quelonryFelonaturelonMap = melonrgelondFelonaturelonMap)
     }
   }
 }

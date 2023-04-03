@@ -1,25 +1,25 @@
-package com.twitter.timelineranker.visibility
+packagelon com.twittelonr.timelonlinelonrankelonr.visibility
 
-import com.twitter.timelineranker.core.FollowGraphData
-import com.twitter.timelineranker.core.FollowGraphDataFuture
-import com.twitter.timelines.model.UserId
-import com.twitter.util.Future
+import com.twittelonr.timelonlinelonrankelonr.corelon.FollowGraphData
+import com.twittelonr.timelonlinelonrankelonr.corelon.FollowGraphDataFuturelon
+import com.twittelonr.timelonlinelons.modelonl.UselonrId
+import com.twittelonr.util.Futurelon
 
-trait FollowGraphDataProvider {
+trait FollowGraphDataProvidelonr {
 
   /**
-   * Gets follow graph data for the given user.
+   * Gelonts follow graph data for thelon givelonn uselonr.
    *
-   * @param userId user whose follow graph details are to be obtained.
-   * @param maxFollowingCount Maximum number of followed user IDs to fetch.
-   *          If the given user follows more than these many users,
-   *          then the most recent maxFollowingCount users are returned.
+   * @param uselonrId uselonr whoselon follow graph delontails arelon to belon obtainelond.
+   * @param maxFollowingCount Maximum numbelonr of followelond uselonr IDs to felontch.
+   *          If thelon givelonn uselonr follows morelon than thelonselon many uselonrs,
+   *          thelonn thelon most reloncelonnt maxFollowingCount uselonrs arelon relonturnelond.
    */
-  def get(userId: UserId, maxFollowingCount: Int): Future[FollowGraphData]
+  delonf gelont(uselonrId: UselonrId, maxFollowingCount: Int): Futurelon[FollowGraphData]
 
-  def getAsync(userId: UserId, maxFollowingCount: Int): FollowGraphDataFuture
+  delonf gelontAsync(uselonrId: UselonrId, maxFollowingCount: Int): FollowGraphDataFuturelon
 
-  def getFollowing(userId: UserId, maxFollowingCount: Int): Future[Seq[UserId]]
+  delonf gelontFollowing(uselonrId: UselonrId, maxFollowingCount: Int): Futurelon[Selonq[UselonrId]]
 
-  def getMutuallyFollowingUserIds(userId: UserId, followingIds: Seq[UserId]): Future[Set[UserId]]
+  delonf gelontMutuallyFollowingUselonrIds(uselonrId: UselonrId, followingIds: Selonq[UselonrId]): Futurelon[Selont[UselonrId]]
 }

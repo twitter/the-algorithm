@@ -1,18 +1,18 @@
-package com.twitter.search.earlybird_root;
+packagelon com.twittelonr.selonarch.elonarlybird_root;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import javax.injelonct.Injelonct;
+import javax.injelonct.Singlelonton;
 
-import com.twitter.finagle.Service;
-import com.twitter.search.common.root.SearchRootServer;
-import com.twitter.search.earlybird.thrift.EarlybirdService;
+import com.twittelonr.finaglelon.Selonrvicelon;
+import com.twittelonr.selonarch.common.root.SelonarchRootSelonrvelonr;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdSelonrvicelon;
 
-@Singleton
-public class RealtimeCgRootServer extends SearchRootServer<EarlybirdService.ServiceIface> {
+@Singlelonton
+public class RelonaltimelonCgRootSelonrvelonr elonxtelonnds SelonarchRootSelonrvelonr<elonarlybirdSelonrvicelon.SelonrvicelonIfacelon> {
 
-  @Inject
-  public RealtimeCgRootServer(RealtimeCgRootService svc, Service<byte[], byte[]> byteSvc) {
-    super(svc, byteSvc);
+  @Injelonct
+  public RelonaltimelonCgRootSelonrvelonr(RelonaltimelonCgRootSelonrvicelon svc, Selonrvicelon<bytelon[], bytelon[]> bytelonSvc) {
+    supelonr(svc, bytelonSvc);
   }
 
 }

@@ -1,172 +1,172 @@
-namespace java com.twitter.recos.user_tweet_graph.thriftjava
-namespace py gen.twitter.recos.user_tweet_graph
-#@namespace scala com.twitter.recos.user_tweet_graph.thriftscala
-#@namespace strato com.twitter.recos.user_tweet_graph
-namespace rb UserTweetGraph
+namelonspacelon java com.twittelonr.reloncos.uselonr_twelonelont_graph.thriftjava
+namelonspacelon py gelonn.twittelonr.reloncos.uselonr_twelonelont_graph
+#@namelonspacelon scala com.twittelonr.reloncos.uselonr_twelonelont_graph.thriftscala
+#@namelonspacelon strato com.twittelonr.reloncos.uselonr_twelonelont_graph
+namelonspacelon rb UselonrTwelonelontGraph
 
-include "com/twitter/recos/features/tweet.thrift"
-include "com/twitter/recos/recos_common.thrift"
+includelon "com/twittelonr/reloncos/felonaturelons/twelonelont.thrift"
+includelon "com/twittelonr/reloncos/reloncos_common.thrift"
 
-enum TweetType {
+elonnum TwelonelontTypelon {
   Summary    = 0
   Photo      = 1
-  Player     = 2
-  Promote    = 3
-  Regular    = 4
+  Playelonr     = 2
+  Promotelon    = 3
+  Relongular    = 4
 }
 
-enum Algorithm {
+elonnum Algorithm {
   Salsa              = 0
   SubGraphSalsa      = 1
 }
 
-enum RecommendTweetDisplayLocation {
-  HomeTimeline       = 0
-  WelcomeFlow        = 1
-  NetworkDigest      = 2
-  BackfillDigest     = 3
-  HttpEndpoint       = 4
+elonnum ReloncommelonndTwelonelontDisplayLocation {
+  HomelonTimelonlinelon       = 0
+  WelonlcomelonFlow        = 1
+  NelontworkDigelonst      = 2
+  BackfillDigelonst     = 3
+  Httpelonndpoint       = 4
   Poptart            = 5
-  InstantTimeline    = 6
-  Explore            = 7
-  MagicRecs          = 8
-  LoggedOutProfile   = 9
-  LoggedOutPermalink = 10
-  VideoHome          = 11
+  InstantTimelonlinelon    = 6
+  elonxplorelon            = 7
+  MagicReloncs          = 8
+  LoggelondOutProfilelon   = 9
+  LoggelondOutPelonrmalink = 10
+  VidelonoHomelon          = 11
 }
 
-struct RecommendTweetRequest {
-  1: required i64                                      requesterId              // user id of the requesting user
-  2: required RecommendTweetDisplayLocation            displayLocation          // display location from the client
-  3: required i32                                      maxResults               // number of suggested results to return
-  4: required list<i64>                                excludedTweetIds         // list of tweet ids to exclude from response
-  5: required map<i64,double>                          seeds                    // seeds used in salsa random walk
-  6: required i64                                      tweetRecency             // the tweet recency threshold
-  7: required i32                                      minInteraction           // minimum interaction threshold
-  8: required list<TweetType>                          includeTweetTypes        // summary, photo, player, promote, other
-  9: required double                                   resetProbability         // reset probability to query node
-  10: required double                                  queryNodeWeightFraction  // the percentage of weights assigned to query node in seeding
-  11: required i32                                     numRandomWalks           // number of random walks
-  12: required i32                                     maxRandomWalkLength      // max random walk length
-  13: required i32                                     maxSocialProofSize       // max social proof size
-  14: required Algorithm                               algorithm                // algorithm type
-  15: optional list<recos_common.SocialProofType>      socialProofTypes         // the list of social proof types to return
+struct ReloncommelonndTwelonelontRelonquelonst {
+  1: relonquirelond i64                                      relonquelonstelonrId              // uselonr id of thelon relonquelonsting uselonr
+  2: relonquirelond ReloncommelonndTwelonelontDisplayLocation            displayLocation          // display location from thelon clielonnt
+  3: relonquirelond i32                                      maxRelonsults               // numbelonr of suggelonstelond relonsults to relonturn
+  4: relonquirelond list<i64>                                elonxcludelondTwelonelontIds         // list of twelonelont ids to elonxcludelon from relonsponselon
+  5: relonquirelond map<i64,doublelon>                          selonelonds                    // selonelonds uselond in salsa random walk
+  6: relonquirelond i64                                      twelonelontReloncelonncy             // thelon twelonelont reloncelonncy threlonshold
+  7: relonquirelond i32                                      minIntelonraction           // minimum intelonraction threlonshold
+  8: relonquirelond list<TwelonelontTypelon>                          includelonTwelonelontTypelons        // summary, photo, playelonr, promotelon, othelonr
+  9: relonquirelond doublelon                                   relonselontProbability         // relonselont probability to quelonry nodelon
+  10: relonquirelond doublelon                                  quelonryNodelonWelonightFraction  // thelon pelonrcelonntagelon of welonights assignelond to quelonry nodelon in selonelonding
+  11: relonquirelond i32                                     numRandomWalks           // numbelonr of random walks
+  12: relonquirelond i32                                     maxRandomWalkLelonngth      // max random walk lelonngth
+  13: relonquirelond i32                                     maxSocialProofSizelon       // max social proof sizelon
+  14: relonquirelond Algorithm                               algorithm                // algorithm typelon
+  15: optional list<reloncos_common.SocialProofTypelon>      socialProofTypelons         // thelon list of social proof typelons to relonturn
 }
 
-struct RecommendedTweet {
-  1: required i64                                                tweetId
-  2: required double                                             score
-  3: optional list<i64>                                          socialProof              // social proof in aggregate
-  4: optional map<recos_common.SocialProofType, list<i64>>       socialProofPerType       // social proofs per engagement type
+struct ReloncommelonndelondTwelonelont {
+  1: relonquirelond i64                                                twelonelontId
+  2: relonquirelond doublelon                                             scorelon
+  3: optional list<i64>                                          socialProof              // social proof in aggrelongatelon
+  4: optional map<reloncos_common.SocialProofTypelon, list<i64>>       socialProofPelonrTypelon       // social proofs pelonr elonngagelonmelonnt typelon
 }
 
-struct RecommendTweetResponse {
-  1: required list<RecommendedTweet> tweets
+struct ReloncommelonndTwelonelontRelonsponselon {
+  1: relonquirelond list<ReloncommelonndelondTwelonelont> twelonelonts
 }
 
-enum RelatedTweetDisplayLocation {
-  Permalink       = 0
-  Permalink1      = 1
-  MobilePermalink = 2
-  Permalink3      = 3
-  Permalink4      = 4
-  RelatedTweets   = 5
-  RelatedTweets1  = 6
-  RelatedTweets2  = 7
-  RelatedTweets3  = 8
-  RelatedTweets4  = 9
-  LoggedOutProfile = 10
-  LoggedOutPermalink = 11
+elonnum RelonlatelondTwelonelontDisplayLocation {
+  Pelonrmalink       = 0
+  Pelonrmalink1      = 1
+  MobilelonPelonrmalink = 2
+  Pelonrmalink3      = 3
+  Pelonrmalink4      = 4
+  RelonlatelondTwelonelonts   = 5
+  RelonlatelondTwelonelonts1  = 6
+  RelonlatelondTwelonelonts2  = 7
+  RelonlatelondTwelonelonts3  = 8
+  RelonlatelondTwelonelonts4  = 9
+  LoggelondOutProfilelon = 10
+  LoggelondOutPelonrmalink = 11
 }
 
-struct UserTweetFeatureResponse {
-  1: optional double                                favAdamicAdarAvg
-  2: optional double                                favAdamicAdarMax 
-  3: optional double                                favLogCosineAvg
-  4: optional double                                favLogCosineMax
-  5: optional double                                retweetAdamicAdarAvg
-  6: optional double                                retweetAdamicAdarMax 
-  7: optional double                                retweetLogCosineAvg
-  8: optional double                                retweetLogCosineMax
+struct UselonrTwelonelontFelonaturelonRelonsponselon {
+  1: optional doublelon                                favAdamicAdarAvg
+  2: optional doublelon                                favAdamicAdarMax
+  3: optional doublelon                                favLogCosinelonAvg
+  4: optional doublelon                                favLogCosinelonMax
+  5: optional doublelon                                relontwelonelontAdamicAdarAvg
+  6: optional doublelon                                relontwelonelontAdamicAdarMax
+  7: optional doublelon                                relontwelonelontLogCosinelonAvg
+  8: optional doublelon                                relontwelonelontLogCosinelonMax
 }
 
-struct RelatedTweetRequest {
-  1: required i64                                   tweetId               // original tweet id
-  2: required RelatedTweetDisplayLocation           displayLocation       // display location from the client
-  3: optional string                                algorithm             // additional parameter that the system can interpret
-  4: optional i64                                   requesterId           // user id of the requesting user
-  5: optional i32                                   maxResults            // number of suggested results to return
-  6: optional list<i64>                             excludeTweetIds       // list of tweet ids to exclude from response
-  7: optional i32                                   maxNumNeighbors
-  8: optional i32                                   minNeighborDegree
-  9: optional i32                                   maxNumSamplesPerNeighbor
-  10: optional i32                                  minCooccurrence
-  11: optional i32                                  minQueryDegree
-  12: optional double                               maxLowerMultiplicativeDeviation
-  13: optional double                               maxUpperMultiplicativeDeviation
-  14: optional bool                                 populateTweetFeatures // whether to populate graph features
-  15: optional i32                                  minResultDegree
-  16: optional list<i64>                            additionalTweetIds
-  17: optional double                               minScore
-  18: optional i32                                  maxTweetAgeInHours
+struct RelonlatelondTwelonelontRelonquelonst {
+  1: relonquirelond i64                                   twelonelontId               // original twelonelont id
+  2: relonquirelond RelonlatelondTwelonelontDisplayLocation           displayLocation       // display location from thelon clielonnt
+  3: optional string                                algorithm             // additional paramelontelonr that thelon systelonm can intelonrprelont
+  4: optional i64                                   relonquelonstelonrId           // uselonr id of thelon relonquelonsting uselonr
+  5: optional i32                                   maxRelonsults            // numbelonr of suggelonstelond relonsults to relonturn
+  6: optional list<i64>                             elonxcludelonTwelonelontIds       // list of twelonelont ids to elonxcludelon from relonsponselon
+  7: optional i32                                   maxNumNelonighbors
+  8: optional i32                                   minNelonighborDelongrelonelon
+  9: optional i32                                   maxNumSamplelonsPelonrNelonighbor
+  10: optional i32                                  minCooccurrelonncelon
+  11: optional i32                                  minQuelonryDelongrelonelon
+  12: optional doublelon                               maxLowelonrMultiplicativelonDelonviation
+  13: optional doublelon                               maxUppelonrMultiplicativelonDelonviation
+  14: optional bool                                 populatelonTwelonelontFelonaturelons // whelonthelonr to populatelon graph felonaturelons
+  15: optional i32                                  minRelonsultDelongrelonelon
+  16: optional list<i64>                            additionalTwelonelontIds
+  17: optional doublelon                               minScorelon
+  18: optional i32                                  maxTwelonelontAgelonInHours
 }
 
-struct TweetBasedRelatedTweetRequest {
-  1: required i64                                   tweetId               // query tweet id
-  2: optional i32                                   maxResults            // number of suggested results to return
-  3: optional list<i64>                             excludeTweetIds       // list of tweet ids to exclude from response
-  4: optional i32                                   minQueryDegree        // min degree of query tweet
-  5: optional i32                                   maxNumSamplesPerNeighbor // max number of sampled users who engaged with the query tweet
-  6: optional i32                                   minCooccurrence       // min co-occurrence of related tweet candidate 
-  7: optional i32                                   minResultDegree       // min degree of related tweet candidate 
-  8: optional double                                minScore              // min score of related tweet candidate
-  9: optional i32                                   maxTweetAgeInHours    // max tweet age in hours of related tweet candidate 
+struct TwelonelontBaselondRelonlatelondTwelonelontRelonquelonst {
+  1: relonquirelond i64                                   twelonelontId               // quelonry twelonelont id
+  2: optional i32                                   maxRelonsults            // numbelonr of suggelonstelond relonsults to relonturn
+  3: optional list<i64>                             elonxcludelonTwelonelontIds       // list of twelonelont ids to elonxcludelon from relonsponselon
+  4: optional i32                                   minQuelonryDelongrelonelon        // min delongrelonelon of quelonry twelonelont
+  5: optional i32                                   maxNumSamplelonsPelonrNelonighbor // max numbelonr of samplelond uselonrs who elonngagelond with thelon quelonry twelonelont
+  6: optional i32                                   minCooccurrelonncelon       // min co-occurrelonncelon of relonlatelond twelonelont candidatelon
+  7: optional i32                                   minRelonsultDelongrelonelon       // min delongrelonelon of relonlatelond twelonelont candidatelon
+  8: optional doublelon                                minScorelon              // min scorelon of relonlatelond twelonelont candidatelon
+  9: optional i32                                   maxTwelonelontAgelonInHours    // max twelonelont agelon in hours of relonlatelond twelonelont candidatelon
 }
 
-struct ProducerBasedRelatedTweetRequest {
-  1: required i64                                   producerId            // query producer id
-  2: optional i32                                   maxResults            // number of suggested results to return
-  3: optional list<i64>                             excludeTweetIds       // list of tweet ids to exclude from response
-  4: optional i32                                   minQueryDegree        // min degree of query producer, e.g. number of followers
-  5: optional i32                                   maxNumFollowers       // max number of sampled users who follow the query producer 
-  6: optional i32                                   minCooccurrence       // min co-occurrence of related tweet candidate 
-  7: optional i32                                   minResultDegree       // min degree of related tweet candidate 
-  8: optional double                                minScore              // min score of related tweet candidate
-  9: optional i32                                   maxTweetAgeInHours    // max tweet age in hours of related tweet candidate 
+struct ProducelonrBaselondRelonlatelondTwelonelontRelonquelonst {
+  1: relonquirelond i64                                   producelonrId            // quelonry producelonr id
+  2: optional i32                                   maxRelonsults            // numbelonr of suggelonstelond relonsults to relonturn
+  3: optional list<i64>                             elonxcludelonTwelonelontIds       // list of twelonelont ids to elonxcludelon from relonsponselon
+  4: optional i32                                   minQuelonryDelongrelonelon        // min delongrelonelon of quelonry producelonr, elon.g. numbelonr of followelonrs
+  5: optional i32                                   maxNumFollowelonrs       // max numbelonr of samplelond uselonrs who follow thelon quelonry producelonr
+  6: optional i32                                   minCooccurrelonncelon       // min co-occurrelonncelon of relonlatelond twelonelont candidatelon
+  7: optional i32                                   minRelonsultDelongrelonelon       // min delongrelonelon of relonlatelond twelonelont candidatelon
+  8: optional doublelon                                minScorelon              // min scorelon of relonlatelond twelonelont candidatelon
+  9: optional i32                                   maxTwelonelontAgelonInHours    // max twelonelont agelon in hours of relonlatelond twelonelont candidatelon
 }
 
-struct ConsumersBasedRelatedTweetRequest {
-  1: required list<i64>                             consumerSeedSet       // query consumer userId set 
-  2: optional i32                                   maxResults            // number of suggested results to return
-  3: optional list<i64>                             excludeTweetIds       // list of tweet ids to exclude from response 
-  4: optional i32                                   minCooccurrence       // min co-occurrence of related tweet candidate 
-  5: optional i32                                   minResultDegree       // min degree of related tweet candidate 
-  6: optional double                                minScore              // min score of related tweet candidate
-  7: optional i32                                   maxTweetAgeInHours    // max tweet age in hours of related tweet candidate 
+struct ConsumelonrsBaselondRelonlatelondTwelonelontRelonquelonst {
+  1: relonquirelond list<i64>                             consumelonrSelonelondSelont       // quelonry consumelonr uselonrId selont
+  2: optional i32                                   maxRelonsults            // numbelonr of suggelonstelond relonsults to relonturn
+  3: optional list<i64>                             elonxcludelonTwelonelontIds       // list of twelonelont ids to elonxcludelon from relonsponselon
+  4: optional i32                                   minCooccurrelonncelon       // min co-occurrelonncelon of relonlatelond twelonelont candidatelon
+  5: optional i32                                   minRelonsultDelongrelonelon       // min delongrelonelon of relonlatelond twelonelont candidatelon
+  6: optional doublelon                                minScorelon              // min scorelon of relonlatelond twelonelont candidatelon
+  7: optional i32                                   maxTwelonelontAgelonInHours    // max twelonelont agelon in hours of relonlatelond twelonelont candidatelon
 }
 
-struct RelatedTweet {
-  1: required i64                          tweetId
-  2: required double                       score
-  3: optional tweet.GraphFeaturesForTweet  relatedTweetGraphFeatures
+struct RelonlatelondTwelonelont {
+  1: relonquirelond i64                          twelonelontId
+  2: relonquirelond doublelon                       scorelon
+  3: optional twelonelont.GraphFelonaturelonsForTwelonelont  relonlatelondTwelonelontGraphFelonaturelons
 }
 
-struct RelatedTweetResponse {
-  1: required list<RelatedTweet>           tweets
-  2: optional tweet.GraphFeaturesForQuery  queryTweetGraphFeatures
+struct RelonlatelondTwelonelontRelonsponselon {
+  1: relonquirelond list<RelonlatelondTwelonelont>           twelonelonts
+  2: optional twelonelont.GraphFelonaturelonsForQuelonry  quelonryTwelonelontGraphFelonaturelons
 }
 
 /**
- * The main interface-definition for UserTweetGraph.
+ * Thelon main intelonrfacelon-delonfinition for UselonrTwelonelontGraph.
  */
-service UserTweetGraph {
-  RecommendTweetResponse recommendTweets (RecommendTweetRequest request)
-  recos_common.GetRecentEdgesResponse getLeftNodeEdges (recos_common.GetRecentEdgesRequest request)
-  recos_common.NodeInfo getRightNode (i64 node)
-  RelatedTweetResponse relatedTweets (RelatedTweetRequest request)
-  RelatedTweetResponse tweetBasedRelatedTweets (TweetBasedRelatedTweetRequest request)
-  RelatedTweetResponse producerBasedRelatedTweets (ProducerBasedRelatedTweetRequest request)
-  RelatedTweetResponse consumersBasedRelatedTweets (ConsumersBasedRelatedTweetRequest request)
-  UserTweetFeatureResponse userTweetFeatures (1: required i64 userId, 2: required i64 tweetId)
+selonrvicelon UselonrTwelonelontGraph {
+  ReloncommelonndTwelonelontRelonsponselon reloncommelonndTwelonelonts (ReloncommelonndTwelonelontRelonquelonst relonquelonst)
+  reloncos_common.GelontReloncelonntelondgelonsRelonsponselon gelontLelonftNodelonelondgelons (reloncos_common.GelontReloncelonntelondgelonsRelonquelonst relonquelonst)
+  reloncos_common.NodelonInfo gelontRightNodelon (i64 nodelon)
+  RelonlatelondTwelonelontRelonsponselon relonlatelondTwelonelonts (RelonlatelondTwelonelontRelonquelonst relonquelonst)
+  RelonlatelondTwelonelontRelonsponselon twelonelontBaselondRelonlatelondTwelonelonts (TwelonelontBaselondRelonlatelondTwelonelontRelonquelonst relonquelonst)
+  RelonlatelondTwelonelontRelonsponselon producelonrBaselondRelonlatelondTwelonelonts (ProducelonrBaselondRelonlatelondTwelonelontRelonquelonst relonquelonst)
+  RelonlatelondTwelonelontRelonsponselon consumelonrsBaselondRelonlatelondTwelonelonts (ConsumelonrsBaselondRelonlatelondTwelonelontRelonquelonst relonquelonst)
+  UselonrTwelonelontFelonaturelonRelonsponselon uselonrTwelonelontFelonaturelons (1: relonquirelond i64 uselonrId, 2: relonquirelond i64 twelonelontId)
 }
 

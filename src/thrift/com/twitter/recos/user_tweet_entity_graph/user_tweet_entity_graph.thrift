@@ -1,187 +1,187 @@
-namespace java com.twitter.recos.user_tweet_entity_graph.thriftjava
-namespace py gen.twitter.recos.user_tweet_entity_graph
-#@namespace scala com.twitter.recos.user_tweet_entity_graph.thriftscala
-#@namespace strato com.twitter.recos.user_tweet_entity_graph
-namespace rb UserTweetEntityGraph
+namelonspacelon java com.twittelonr.reloncos.uselonr_twelonelont_elonntity_graph.thriftjava
+namelonspacelon py gelonn.twittelonr.reloncos.uselonr_twelonelont_elonntity_graph
+#@namelonspacelon scala com.twittelonr.reloncos.uselonr_twelonelont_elonntity_graph.thriftscala
+#@namelonspacelon strato com.twittelonr.reloncos.uselonr_twelonelont_elonntity_graph
+namelonspacelon rb UselonrTwelonelontelonntityGraph
 
-include "com/twitter/recos/features/tweet.thrift"
-include "com/twitter/recos/recos_common.thrift"
+includelon "com/twittelonr/reloncos/felonaturelons/twelonelont.thrift"
+includelon "com/twittelonr/reloncos/reloncos_common.thrift"
 
-enum TweetType {
+elonnum TwelonelontTypelon {
   Summary    = 0
   Photo      = 1
-  Player     = 2
-  Promote    = 3
-  Regular    = 4
+  Playelonr     = 2
+  Promotelon    = 3
+  Relongular    = 4
 }
 
-enum RecommendationType {
-  Tweet      = 0
-  Hashtag    = 1 // Entity type
-  Url        = 2 // Entity type
+elonnum ReloncommelonndationTypelon {
+  Twelonelont      = 0
+  Hashtag    = 1 // elonntity typelon
+  Url        = 2 // elonntity typelon
 }
 
-enum TweetEntityDisplayLocation {
-  MagicRecs                 = 0
-  HomeTimeline              = 1
-  HighlightsEmailUrlRecs    = 2
+elonnum TwelonelontelonntityDisplayLocation {
+  MagicReloncs                 = 0
+  HomelonTimelonlinelon              = 1
+  HighlightselonmailUrlReloncs    = 2
   Highlights                = 3
-  Email                     = 4
-  MagicRecsF1               = 5
-  GuideVideo                = 6
-  MagicRecsRareTweet        = 7
-  TopArticles               = 8 // Twitter Blue most shared articles page
-  ContentRecommender        = 9
-  FrigateNTab               = 10
+  elonmail                     = 4
+  MagicReloncsF1               = 5
+  GuidelonVidelono                = 6
+  MagicReloncsRarelonTwelonelont        = 7
+  TopArticlelons               = 8 // Twittelonr Bluelon most sharelond articlelons pagelon
+  ContelonntReloncommelonndelonr        = 9
+  FrigatelonNTab               = 10
 }
 
-struct RecommendTweetEntityRequest {
-  // user id of the requesting user
-  1: required i64                                        requesterId
+struct ReloncommelonndTwelonelontelonntityRelonquelonst {
+  // uselonr id of thelon relonquelonsting uselonr
+  1: relonquirelond i64                                        relonquelonstelonrId
 
-  // display location from the client
-  2: required TweetEntityDisplayLocation                 displayLocation
+  // display location from thelon clielonnt
+  2: relonquirelond TwelonelontelonntityDisplayLocation                 displayLocation
 
-  // the recommendation entity types to return
-  3: required list<RecommendationType>                   recommendationTypes
+  // thelon reloncommelonndation elonntity typelons to relonturn
+  3: relonquirelond list<ReloncommelonndationTypelon>                   reloncommelonndationTypelons
 
-  // seed ids and weights used in left hand side
-  4: required map<i64,double>                            seedsWithWeights
+  // selonelond ids and welonights uselond in lelonft hand sidelon
+  4: relonquirelond map<i64,doublelon>                            selonelondsWithWelonights
 
-  // number of suggested results per recommendation entity type
-  5: optional map<RecommendationType, i32>               maxResultsByType
+  // numbelonr of suggelonstelond relonsults pelonr reloncommelonndation elonntity typelon
+  5: optional map<ReloncommelonndationTypelon, i32>               maxRelonsultsByTypelon
 
-  // the tweet age threshold in milliseconds
-  6: optional i64                                        maxTweetAgeInMillis
+  // thelon twelonelont agelon threlonshold in milliselonconds
+  6: optional i64                                        maxTwelonelontAgelonInMillis
 
-  // list of tweet ids to exclude from response
-  7: optional list<i64>                                  excludedTweetIds
+  // list of twelonelont ids to elonxcludelon from relonsponselon
+  7: optional list<i64>                                  elonxcludelondTwelonelontIds
 
-  // max user social proof size per engagement type
-  8: optional i32                                        maxUserSocialProofSize
+  // max uselonr social proof sizelon pelonr elonngagelonmelonnt typelon
+  8: optional i32                                        maxUselonrSocialProofSizelon
 
-  // max tweet social proof size per user
-  9: optional i32                                        maxTweetSocialProofSize
+  // max twelonelont social proof sizelon pelonr uselonr
+  9: optional i32                                        maxTwelonelontSocialProofSizelon
 
-  // min user social proof size per each recommendation entity type
-  10: optional map<RecommendationType, i32>              minUserSocialProofSizes
+  // min uselonr social proof sizelon pelonr elonach reloncommelonndation elonntity typelon
+  10: optional map<ReloncommelonndationTypelon, i32>              minUselonrSocialProofSizelons
 
-  // summary, photo, player, promote, regular
-  11: optional list<TweetType>                           tweetTypes
+  // summary, photo, playelonr, promotelon, relongular
+  11: optional list<TwelonelontTypelon>                           twelonelontTypelons
 
-  // the list of social proof types to return
-  12: optional list<recos_common.SocialProofType>        socialProofTypes
+  // thelon list of social proof typelons to relonturn
+  12: optional list<reloncos_common.SocialProofTypelon>        socialProofTypelons
 
-  // set of groups of social proof types allowed to be combined for comparison against minUserSocialProofSizes.
-  // e.g. if the input is set<list<Tweet, Favorite>>, then the union of those two social proofs
-  // will be compared against the minUserSocialProofSize of Tweet RecommendationType.
-  13: optional set<list<recos_common.SocialProofType>>   socialProofTypeUnions
+  // selont of groups of social proof typelons allowelond to belon combinelond for comparison against minUselonrSocialProofSizelons.
+  // elon.g. if thelon input is selont<list<Twelonelont, Favoritelon>>, thelonn thelon union of thoselon two social proofs
+  // will belon comparelond against thelon minUselonrSocialProofSizelon of Twelonelont ReloncommelonndationTypelon.
+  13: optional selont<list<reloncos_common.SocialProofTypelon>>   socialProofTypelonUnions
 
-  // the recommendations returned in the response are authored by the following users
-  14: optional set<i64>                                  tweetAuthors
+  // thelon reloncommelonndations relonturnelond in thelon relonsponselon arelon authorelond by thelon following uselonrs
+  14: optional selont<i64>                                  twelonelontAuthors
 
-  // the tweet engagement age threshold in milliseconds
-  15: optional i64                                       maxEngagementAgeInMillis
+  // thelon twelonelont elonngagelonmelonnt agelon threlonshold in milliselonconds
+  15: optional i64                                       maxelonngagelonmelonntAgelonInMillis
 
-  // the recommendations will not return any tweet authored by the following users
-  16: optional set<i64>                                  excludedTweetAuthors
+  // thelon reloncommelonndations will not relonturn any twelonelont authorelond by thelon following uselonrs
+  16: optional selont<i64>                                  elonxcludelondTwelonelontAuthors
 }
 
-struct TweetRecommendation {
-  // tweet id
-  1: required i64                                                               tweetId
-  // sum of weights of seed users who engaged with the tweet.
-  // If a user engaged with the same tweet twice, liked it and retweeted it, then his/her weight was counted twice.
-  2: required double                                                            score
-    // user social proofs per engagement type
-  3: required map<recos_common.SocialProofType, list<i64>>                      socialProofByType
-  // user social proofs along with edge metadata per engagement type. The value of the map is a list of SocialProofs.
-  4: optional map<recos_common.SocialProofType, list<recos_common.SocialProof>> socialProofs
+struct TwelonelontReloncommelonndation {
+  // twelonelont id
+  1: relonquirelond i64                                                               twelonelontId
+  // sum of welonights of selonelond uselonrs who elonngagelond with thelon twelonelont.
+  // If a uselonr elonngagelond with thelon samelon twelonelont twicelon, likelond it and relontwelonelontelond it, thelonn his/helonr welonight was countelond twicelon.
+  2: relonquirelond doublelon                                                            scorelon
+    // uselonr social proofs pelonr elonngagelonmelonnt typelon
+  3: relonquirelond map<reloncos_common.SocialProofTypelon, list<i64>>                      socialProofByTypelon
+  // uselonr social proofs along with elondgelon melontadata pelonr elonngagelonmelonnt typelon. Thelon valuelon of thelon map is a list of SocialProofs.
+  4: optional map<reloncos_common.SocialProofTypelon, list<reloncos_common.SocialProof>> socialProofs
 }
 
-struct HashtagRecommendation {
-  1: required i32                                       id                   // integer hashtag id, which will be converted to hashtag string by client library.
-  2: required double                                    score
-  // sum of weights of seed users who engaged with the hashtag.
-  // If a user engaged with the same hashtag twice, liked it and retweeted it, then his/her weight was counted twice.
-  3: required map<recos_common.SocialProofType, map<i64, list<i64>>> socialProofByType
-  // user and tweet social proofs per engagement type. The key of inner map is user id, and the value of inner map is
-  // a list of tweet ids that the user engaged with.
+struct HashtagReloncommelonndation {
+  1: relonquirelond i32                                       id                   // intelongelonr hashtag id, which will belon convelonrtelond to hashtag string by clielonnt library.
+  2: relonquirelond doublelon                                    scorelon
+  // sum of welonights of selonelond uselonrs who elonngagelond with thelon hashtag.
+  // If a uselonr elonngagelond with thelon samelon hashtag twicelon, likelond it and relontwelonelontelond it, thelonn his/helonr welonight was countelond twicelon.
+  3: relonquirelond map<reloncos_common.SocialProofTypelon, map<i64, list<i64>>> socialProofByTypelon
+  // uselonr and twelonelont social proofs pelonr elonngagelonmelonnt typelon. Thelon kelony of innelonr map is uselonr id, and thelon valuelon of innelonr map is
+  // a list of twelonelont ids that thelon uselonr elonngagelond with.
 }
 
-struct UrlRecommendation {
-  1: required i32                                       id                   // integer url id, which will be converted to url string by client library.
-  2: required double                                    score
-  // sum of weights of seed users who engaged with the url.
-  // If a user engaged with the same url twice, liked it and retweeted it, then his/her weight was counted twice.
-  3: required map<recos_common.SocialProofType, map<i64, list<i64>>> socialProofByType
-  // user and tweet social proofs per engagement type. The key of inner map is user id, and the value of inner map is
-  // a list of tweet ids that the user engaged with.
+struct UrlReloncommelonndation {
+  1: relonquirelond i32                                       id                   // intelongelonr url id, which will belon convelonrtelond to url string by clielonnt library.
+  2: relonquirelond doublelon                                    scorelon
+  // sum of welonights of selonelond uselonrs who elonngagelond with thelon url.
+  // If a uselonr elonngagelond with thelon samelon url twicelon, likelond it and relontwelonelontelond it, thelonn his/helonr welonight was countelond twicelon.
+  3: relonquirelond map<reloncos_common.SocialProofTypelon, map<i64, list<i64>>> socialProofByTypelon
+  // uselonr and twelonelont social proofs pelonr elonngagelonmelonnt typelon. Thelon kelony of innelonr map is uselonr id, and thelon valuelon of innelonr map is
+  // a list of twelonelont ids that thelon uselonr elonngagelond with.
 }
 
-union UserTweetEntityRecommendationUnion {
-  1: TweetRecommendation tweetRec
-  2: HashtagRecommendation hashtagRec
-  3: UrlRecommendation urlRec
+union UselonrTwelonelontelonntityReloncommelonndationUnion {
+  1: TwelonelontReloncommelonndation twelonelontRelonc
+  2: HashtagReloncommelonndation hashtagRelonc
+  3: UrlReloncommelonndation urlRelonc
 }
 
-struct RecommendTweetEntityResponse {
-  1: required list<UserTweetEntityRecommendationUnion> recommendations
+struct ReloncommelonndTwelonelontelonntityRelonsponselon {
+  1: relonquirelond list<UselonrTwelonelontelonntityReloncommelonndationUnion> reloncommelonndations
 }
 
-struct SocialProofRequest {
-  1: required list<i64>                                  inputTweets             // Only for some tweets we need requst its social proofs.
-  2: required map<i64, double>                           seedsWithWeights        // a set of seed users with weights
-  3: optional i64                                        requesterId             // id of the requesting user
-  4: optional list<recos_common.SocialProofType>         socialProofTypes        // the list of social proof types to return
+struct SocialProofRelonquelonst {
+  1: relonquirelond list<i64>                                  inputTwelonelonts             // Only for somelon twelonelonts welon nelonelond relonqust its social proofs.
+  2: relonquirelond map<i64, doublelon>                           selonelondsWithWelonights        // a selont of selonelond uselonrs with welonights
+  3: optional i64                                        relonquelonstelonrId             // id of thelon relonquelonsting uselonr
+  4: optional list<reloncos_common.SocialProofTypelon>         socialProofTypelons        // thelon list of social proof typelons to relonturn
 }
 
-struct SocialProofResponse {
-  1: required list<TweetRecommendation> socialProofResults
+struct SocialProofRelonsponselon {
+  1: relonquirelond list<TwelonelontReloncommelonndation> socialProofRelonsults
 }
 
-struct RecommendationSocialProofRequest {
+struct ReloncommelonndationSocialProofRelonquelonst {
   /**
-   * Clients can request social proof from multiple recommendation types in a single request.
-   * NOTE: Avoid mixing tweet social proof requests with entity social proof requests as the
-   * underlying library call retrieves these differently.
+   * Clielonnts can relonquelonst social proof from multiplelon reloncommelonndation typelons in a singlelon relonquelonst.
+   * NOTelon: Avoid mixing twelonelont social proof relonquelonsts with elonntity social proof relonquelonsts as thelon
+   * undelonrlying library call relontrielonvelons thelonselon diffelonrelonntly.
    */
-  1: required map<RecommendationType, set<i64>>           recommendationIdsForSocialProof
-  // These will be the only valid LHS nodes used to fetch social proof.
-  2: required map<i64, double>                            seedsWithWeights
-  3: optional i64                                         requesterId
-  // The list of valid social proof types to return, e.g. we may only want Favorite and Tweet proofs.
-  4: optional list<recos_common.SocialProofType>          socialProofTypes
+  1: relonquirelond map<ReloncommelonndationTypelon, selont<i64>>           reloncommelonndationIdsForSocialProof
+  // Thelonselon will belon thelon only valid LHS nodelons uselond to felontch social proof.
+  2: relonquirelond map<i64, doublelon>                            selonelondsWithWelonights
+  3: optional i64                                         relonquelonstelonrId
+  // Thelon list of valid social proof typelons to relonturn, elon.g. welon may only want Favoritelon and Twelonelont proofs.
+  4: optional list<reloncos_common.SocialProofTypelon>          socialProofTypelons
 }
 
-struct RecommendationSocialProofResponse {
-  1: required list<UserTweetEntityRecommendationUnion> socialProofResults
+struct ReloncommelonndationSocialProofRelonsponselon {
+  1: relonquirelond list<UselonrTwelonelontelonntityReloncommelonndationUnion> socialProofRelonsults
 }
 
 /**
- * The main interface-definition for UserTweetEntityGraph.
+ * Thelon main intelonrfacelon-delonfinition for UselonrTwelonelontelonntityGraph.
  */
-service UserTweetEntityGraph {
-  RecommendTweetEntityResponse recommendTweets (RecommendTweetEntityRequest request)
+selonrvicelon UselonrTwelonelontelonntityGraph {
+  ReloncommelonndTwelonelontelonntityRelonsponselon reloncommelonndTwelonelonts (ReloncommelonndTwelonelontelonntityRelonquelonst relonquelonst)
 
   /**
-   * Given a query user, its seed users, and a set of input tweets, return the social proofs of
-   * input tweets if any.
+   * Givelonn a quelonry uselonr, its selonelond uselonrs, and a selont of input twelonelonts, relonturn thelon social proofs of
+   * input twelonelonts if any.
    *
-   * Currently this supports clients such as Email Recommendations, MagicRecs, and HomeTimeline.
-   * In order to avoid heavy migration work, we are retaining this endpoint.
+   * Currelonntly this supports clielonnts such as elonmail Reloncommelonndations, MagicReloncs, and HomelonTimelonlinelon.
+   * In ordelonr to avoid helonavy migration work, welon arelon relontaining this elonndpoint.
    */
-  SocialProofResponse findTweetSocialProofs(SocialProofRequest request)
+  SocialProofRelonsponselon findTwelonelontSocialProofs(SocialProofRelonquelonst relonquelonst)
 
   /**
-   * Find social proof for the specified RecommendationType given a set of input ids of that type.
-   * Only find social proofs from the specified seed users with the specified social proof types.
+   * Find social proof for thelon speloncifielond ReloncommelonndationTypelon givelonn a selont of input ids of that typelon.
+   * Only find social proofs from thelon speloncifielond selonelond uselonrs with thelon speloncifielond social proof typelons.
    *
-   * Currently this supports url social proof generation for Guide.
+   * Currelonntly this supports url social proof gelonnelonration for Guidelon.
    *
-   * This endpoint is flexible enough to support social proof generation for all recommendation
-   * types, and should be used for all future clients of this service.
+   * This elonndpoint is flelonxiblelon elonnough to support social proof gelonnelonration for all reloncommelonndation
+   * typelons, and should belon uselond for all futurelon clielonnts of this selonrvicelon.
    */
-  RecommendationSocialProofResponse findRecommendationSocialProofs(RecommendationSocialProofRequest request)
+  ReloncommelonndationSocialProofRelonsponselon findReloncommelonndationSocialProofs(ReloncommelonndationSocialProofRelonquelonst relonquelonst)
 }
 

@@ -1,129 +1,129 @@
-package com.twitter.simclusters_v2.score
+packagelon com.twittelonr.simclustelonrs_v2.scorelon
 
-import com.twitter.simclusters_v2.common.SimClustersEmbeddingId._
-import com.twitter.simclusters_v2.thriftscala.{
-  InternalId,
-  ScoreInternalId,
+import com.twittelonr.simclustelonrs_v2.common.SimClustelonrselonmbelonddingId._
+import com.twittelonr.simclustelonrs_v2.thriftscala.{
+  IntelonrnalId,
+  ScorelonIntelonrnalId,
   ScoringAlgorithm,
-  SimClustersEmbeddingId,
-  GenericPairScoreId => ThriftGenericPairScoreId,
-  ScoreId => ThriftScoreId,
-  SimClustersEmbeddingPairScoreId => ThriftSimClustersEmbeddingPairScoreId
+  SimClustelonrselonmbelonddingId,
+  GelonnelonricPairScorelonId => ThriftGelonnelonricPairScorelonId,
+  ScorelonId => ThriftScorelonId,
+  SimClustelonrselonmbelonddingPairScorelonId => ThriftSimClustelonrselonmbelonddingPairScorelonId
 }
 
 /**
- * A uniform Identifier type for all kinds of Calculation Score.
+ * A uniform Idelonntifielonr typelon for all kinds of Calculation Scorelon.
  **/
-trait ScoreId {
+trait ScorelonId {
 
-  def algorithm: ScoringAlgorithm
+  delonf algorithm: ScoringAlgorithm
 
   /**
-   * Convert to a Thrift object. Throw a exception if the operation is not override.
+   * Convelonrt to a Thrift objelonct. Throw a elonxcelonption if thelon opelonration is not ovelonrridelon.
    */
-  implicit def toThrift: ThriftScoreId =
-    throw new UnsupportedOperationException(s"ScoreId $this doesn't support Thrift format")
+  implicit delonf toThrift: ThriftScorelonId =
+    throw nelonw UnsupportelondOpelonrationelonxcelonption(s"ScorelonId $this doelonsn't support Thrift format")
 }
 
-object ScoreId {
+objelonct ScorelonId {
 
-  implicit val fromThriftScoreId: ThriftScoreId => ScoreId = {
-    case scoreId @ ThriftScoreId(_, ScoreInternalId.GenericPairScoreId(_)) =>
-      PairScoreId.fromThriftScoreId(scoreId)
-    case scoreId @ ThriftScoreId(_, ScoreInternalId.SimClustersEmbeddingPairScoreId(_)) =>
-      SimClustersEmbeddingPairScoreId.fromThriftScoreId(scoreId)
+  implicit val fromThriftScorelonId: ThriftScorelonId => ScorelonId = {
+    caselon scorelonId @ ThriftScorelonId(_, ScorelonIntelonrnalId.GelonnelonricPairScorelonId(_)) =>
+      PairScorelonId.fromThriftScorelonId(scorelonId)
+    caselon scorelonId @ ThriftScorelonId(_, ScorelonIntelonrnalId.SimClustelonrselonmbelonddingPairScorelonId(_)) =>
+      SimClustelonrselonmbelonddingPairScorelonId.fromThriftScorelonId(scorelonId)
   }
 
 }
 
 /**
- * Generic Internal pairwise id. Support all the subtypes in InternalId, which includes TweetId,
- * UserId, EntityId and more combination ids.
+ * Gelonnelonric Intelonrnal pairwiselon id. Support all thelon subtypelons in IntelonrnalId, which includelons TwelonelontId,
+ * UselonrId, elonntityId and morelon combination ids.
  **/
-trait PairScoreId extends ScoreId {
+trait PairScorelonId elonxtelonnds ScorelonId {
 
-  def id1: InternalId
-  def id2: InternalId
+  delonf id1: IntelonrnalId
+  delonf id2: IntelonrnalId
 
-  override implicit lazy val toThrift: ThriftScoreId = {
-    ThriftScoreId(
+  ovelonrridelon implicit lazy val toThrift: ThriftScorelonId = {
+    ThriftScorelonId(
       algorithm,
-      ScoreInternalId.GenericPairScoreId(ThriftGenericPairScoreId(id1, id2))
+      ScorelonIntelonrnalId.GelonnelonricPairScorelonId(ThriftGelonnelonricPairScorelonId(id1, id2))
     )
   }
 }
 
-object PairScoreId {
+objelonct PairScorelonId {
 
-  // The default PairScoreId assume id1 <= id2. It used to increase the cache hit rate.
-  def apply(algorithm: ScoringAlgorithm, id1: InternalId, id2: InternalId): PairScoreId = {
-    if (internalIdOrdering.lteq(id1, id2)) {
-      DefaultPairScoreId(algorithm, id1, id2)
-    } else {
-      DefaultPairScoreId(algorithm, id2, id1)
+  // Thelon delonfault PairScorelonId assumelon id1 <= id2. It uselond to increlonaselon thelon cachelon hit ratelon.
+  delonf apply(algorithm: ScoringAlgorithm, id1: IntelonrnalId, id2: IntelonrnalId): PairScorelonId = {
+    if (intelonrnalIdOrdelonring.ltelonq(id1, id2)) {
+      DelonfaultPairScorelonId(algorithm, id1, id2)
+    } elonlselon {
+      DelonfaultPairScorelonId(algorithm, id2, id1)
     }
   }
 
-  private case class DefaultPairScoreId(
+  privatelon caselon class DelonfaultPairScorelonId(
     algorithm: ScoringAlgorithm,
-    id1: InternalId,
-    id2: InternalId)
-      extends PairScoreId
+    id1: IntelonrnalId,
+    id2: IntelonrnalId)
+      elonxtelonnds PairScorelonId
 
-  implicit val fromThriftScoreId: ThriftScoreId => PairScoreId = {
-    case ThriftScoreId(algorithm, ScoreInternalId.GenericPairScoreId(pairScoreId)) =>
-      DefaultPairScoreId(algorithm, pairScoreId.id1, pairScoreId.id2)
-    case ThriftScoreId(algorithm, ScoreInternalId.SimClustersEmbeddingPairScoreId(pairScoreId)) =>
-      SimClustersEmbeddingPairScoreId(algorithm, pairScoreId.id1, pairScoreId.id2)
+  implicit val fromThriftScorelonId: ThriftScorelonId => PairScorelonId = {
+    caselon ThriftScorelonId(algorithm, ScorelonIntelonrnalId.GelonnelonricPairScorelonId(pairScorelonId)) =>
+      DelonfaultPairScorelonId(algorithm, pairScorelonId.id1, pairScorelonId.id2)
+    caselon ThriftScorelonId(algorithm, ScorelonIntelonrnalId.SimClustelonrselonmbelonddingPairScorelonId(pairScorelonId)) =>
+      SimClustelonrselonmbelonddingPairScorelonId(algorithm, pairScorelonId.id1, pairScorelonId.id2)
   }
 
 }
 
 /**
- * ScoreId for a pair of SimClustersEmbedding.
- * Used for dot product, cosine similarity and other basic embedding operations.
+ * ScorelonId for a pair of SimClustelonrselonmbelondding.
+ * Uselond for dot product, cosinelon similarity and othelonr basic elonmbelondding opelonrations.
  */
-trait SimClustersEmbeddingPairScoreId extends PairScoreId {
-  def embeddingId1: SimClustersEmbeddingId
+trait SimClustelonrselonmbelonddingPairScorelonId elonxtelonnds PairScorelonId {
+  delonf elonmbelonddingId1: SimClustelonrselonmbelonddingId
 
-  def embeddingId2: SimClustersEmbeddingId
+  delonf elonmbelonddingId2: SimClustelonrselonmbelonddingId
 
-  override def id1: InternalId = embeddingId1.internalId
+  ovelonrridelon delonf id1: IntelonrnalId = elonmbelonddingId1.intelonrnalId
 
-  override def id2: InternalId = embeddingId2.internalId
+  ovelonrridelon delonf id2: IntelonrnalId = elonmbelonddingId2.intelonrnalId
 
-  override implicit lazy val toThrift: ThriftScoreId = {
-    ThriftScoreId(
+  ovelonrridelon implicit lazy val toThrift: ThriftScorelonId = {
+    ThriftScorelonId(
       algorithm,
-      ScoreInternalId.SimClustersEmbeddingPairScoreId(
-        ThriftSimClustersEmbeddingPairScoreId(embeddingId1, embeddingId2))
+      ScorelonIntelonrnalId.SimClustelonrselonmbelonddingPairScorelonId(
+        ThriftSimClustelonrselonmbelonddingPairScorelonId(elonmbelonddingId1, elonmbelonddingId2))
     )
   }
 }
 
-object SimClustersEmbeddingPairScoreId {
+objelonct SimClustelonrselonmbelonddingPairScorelonId {
 
-  // The default PairScoreId assume id1 <= id2. It used to increase the cache hit rate.
-  def apply(
+  // Thelon delonfault PairScorelonId assumelon id1 <= id2. It uselond to increlonaselon thelon cachelon hit ratelon.
+  delonf apply(
     algorithm: ScoringAlgorithm,
-    id1: SimClustersEmbeddingId,
-    id2: SimClustersEmbeddingId
-  ): SimClustersEmbeddingPairScoreId = {
-    if (simClustersEmbeddingIdOrdering.lteq(id1, id2)) {
-      DefaultSimClustersEmbeddingPairScoreId(algorithm, id1, id2)
-    } else {
-      DefaultSimClustersEmbeddingPairScoreId(algorithm, id2, id1)
+    id1: SimClustelonrselonmbelonddingId,
+    id2: SimClustelonrselonmbelonddingId
+  ): SimClustelonrselonmbelonddingPairScorelonId = {
+    if (simClustelonrselonmbelonddingIdOrdelonring.ltelonq(id1, id2)) {
+      DelonfaultSimClustelonrselonmbelonddingPairScorelonId(algorithm, id1, id2)
+    } elonlselon {
+      DelonfaultSimClustelonrselonmbelonddingPairScorelonId(algorithm, id2, id1)
     }
   }
 
-  private case class DefaultSimClustersEmbeddingPairScoreId(
+  privatelon caselon class DelonfaultSimClustelonrselonmbelonddingPairScorelonId(
     algorithm: ScoringAlgorithm,
-    embeddingId1: SimClustersEmbeddingId,
-    embeddingId2: SimClustersEmbeddingId)
-      extends SimClustersEmbeddingPairScoreId
+    elonmbelonddingId1: SimClustelonrselonmbelonddingId,
+    elonmbelonddingId2: SimClustelonrselonmbelonddingId)
+      elonxtelonnds SimClustelonrselonmbelonddingPairScorelonId
 
-  implicit val fromThriftScoreId: ThriftScoreId => SimClustersEmbeddingPairScoreId = {
-    case ThriftScoreId(algorithm, ScoreInternalId.SimClustersEmbeddingPairScoreId(pairScoreId)) =>
-      SimClustersEmbeddingPairScoreId(algorithm, pairScoreId.id1, pairScoreId.id2)
+  implicit val fromThriftScorelonId: ThriftScorelonId => SimClustelonrselonmbelonddingPairScorelonId = {
+    caselon ThriftScorelonId(algorithm, ScorelonIntelonrnalId.SimClustelonrselonmbelonddingPairScorelonId(pairScorelonId)) =>
+      SimClustelonrselonmbelonddingPairScorelonId(algorithm, pairScorelonId.id1, pairScorelonId.id2)
   }
 }

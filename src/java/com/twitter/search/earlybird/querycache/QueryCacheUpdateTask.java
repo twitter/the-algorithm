@@ -1,283 +1,283 @@
-package com.twitter.search.earlybird.querycache;
+packagelon com.twittelonr.selonarch.elonarlybird.quelonrycachelon;
 
-import java.io.IOException;
-import java.util.concurrent.TimeUnit;
+import java.io.IOelonxcelonption;
+import java.util.concurrelonnt.TimelonUnit;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import com.googlelon.common.cachelon.CachelonBuildelonr;
+import com.googlelon.common.cachelon.CachelonLoadelonr;
+import com.googlelon.common.cachelon.LoadingCachelon;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.common.quantity.Amount;
-import com.twitter.common.quantity.Time;
-import com.twitter.common.util.Clock;
-import com.twitter.decider.Decider;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchLongGauge;
-import com.twitter.search.common.metrics.Timer;
-import com.twitter.search.common.search.TerminationTracker;
-import com.twitter.search.core.earlybird.index.QueryCacheResultForSegment;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.common.userupdates.UserTable;
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
-import com.twitter.search.earlybird.exception.EarlybirdException;
-import com.twitter.search.earlybird.index.EarlybirdSegment;
-import com.twitter.search.earlybird.index.EarlybirdSingleSegmentSearcher;
-import com.twitter.search.earlybird.partition.SegmentInfo;
-import com.twitter.search.earlybird.search.SearchResultsInfo;
-import com.twitter.search.earlybird.stats.EarlybirdSearcherStats;
-import com.twitter.search.earlybird.util.ScheduledExecutorTask;
+import com.twittelonr.common.quantity.Amount;
+import com.twittelonr.common.quantity.Timelon;
+import com.twittelonr.common.util.Clock;
+import com.twittelonr.deloncidelonr.Deloncidelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchLongGaugelon;
+import com.twittelonr.selonarch.common.melontrics.Timelonr;
+import com.twittelonr.selonarch.common.selonarch.TelonrminationTrackelonr;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.QuelonryCachelonRelonsultForSelongmelonnt;
+import com.twittelonr.selonarch.elonarlybird.common.config.elonarlybirdConfig;
+import com.twittelonr.selonarch.elonarlybird.common.uselonrupdatelons.UselonrTablelon;
+import com.twittelonr.selonarch.elonarlybird.elonxcelonption.CriticalelonxcelonptionHandlelonr;
+import com.twittelonr.selonarch.elonarlybird.elonxcelonption.elonarlybirdelonxcelonption;
+import com.twittelonr.selonarch.elonarlybird.indelonx.elonarlybirdSelongmelonnt;
+import com.twittelonr.selonarch.elonarlybird.indelonx.elonarlybirdSinglelonSelongmelonntSelonarchelonr;
+import com.twittelonr.selonarch.elonarlybird.partition.SelongmelonntInfo;
+import com.twittelonr.selonarch.elonarlybird.selonarch.SelonarchRelonsultsInfo;
+import com.twittelonr.selonarch.elonarlybird.stats.elonarlybirdSelonarchelonrStats;
+import com.twittelonr.selonarch.elonarlybird.util.SchelondulelondelonxeloncutorTask;
 
 /**
- * Each task is responsible for one filter on one segment. We should have a total
- * of num_of_filter * num_of_segments tasks
+ * elonach task is relonsponsiblelon for onelon filtelonr on onelon selongmelonnt. Welon should havelon a total
+ * of num_of_filtelonr * num_of_selongmelonnts tasks
  */
-@VisibleForTesting
-class QueryCacheUpdateTask extends ScheduledExecutorTask {
-  private static final Logger LOG =  LoggerFactory.getLogger(QueryCacheUpdateTask.class);
+@VisiblelonForTelonsting
+class QuelonryCachelonUpdatelonTask elonxtelonnds SchelondulelondelonxeloncutorTask {
+  privatelon static final Loggelonr LOG =  LoggelonrFactory.gelontLoggelonr(QuelonryCachelonUpdatelonTask.class);
 
-  // See OBSERVE-10347
-  private static final boolean EXPORT_STATS =
-      EarlybirdConfig.getBool("export_query_cache_update_task_stats", false);
+  // Selonelon OBSelonRVelon-10347
+  privatelon static final boolelonan elonXPORT_STATS =
+      elonarlybirdConfig.gelontBool("elonxport_quelonry_cachelon_updatelon_task_stats", falselon);
 
-  private static final LoadingCache<String, TaskStats> TASK_STATS =
-      CacheBuilder.newBuilder().build(new CacheLoader<String, TaskStats>() {
-        @Override
-        public TaskStats load(String statNamePrefix) {
-          return new TaskStats(statNamePrefix, EXPORT_STATS);
+  privatelon static final LoadingCachelon<String, TaskStats> TASK_STATS =
+      CachelonBuildelonr.nelonwBuildelonr().build(nelonw CachelonLoadelonr<String, TaskStats>() {
+        @Ovelonrridelon
+        public TaskStats load(String statNamelonPrelonfix) {
+          relonturn nelonw TaskStats(statNamelonPrelonfix, elonXPORT_STATS);
         }
       });
 
-  private static final SearchCounter FINISHED_TASKS = SearchCounter.export(
-      "querycache_finished_tasks");
+  privatelon static final SelonarchCountelonr FINISHelonD_TASKS = SelonarchCountelonr.elonxport(
+      "quelonrycachelon_finishelond_tasks");
 
-  private final QueryCacheFilter filter;
+  privatelon final QuelonryCachelonFiltelonr filtelonr;
 
-  // Info/data of the segment this task is responsible for
-  private final SegmentInfo segmentInfo;
+  // Info/data of thelon selongmelonnt this task is relonsponsiblelon for
+  privatelon final SelongmelonntInfo selongmelonntInfo;
 
-  private final UserTable userTable;
+  privatelon final UselonrTablelon uselonrTablelon;
 
-  private volatile boolean ranOnce;
-  private final TaskStats stats;
-  private Amount<Long, Time> lastRunFinishTime;
+  privatelon volatilelon boolelonan ranOncelon;
+  privatelon final TaskStats stats;
+  privatelon Amount<Long, Timelon> lastRunFinishTimelon;
 
-  // See SEARCH-4346
-  private final String filterAndSegment;
+  // Selonelon SelonARCH-4346
+  privatelon final String filtelonrAndSelongmelonnt;
 
-  private final Decider decider;
+  privatelon final Deloncidelonr deloncidelonr;
 
-  private static final class TaskStats {
-    private final SearchLongGauge numHitsStat;
-    private final SearchLongGauge updateLatencyStat;
-    private final SearchCounter updateSuccessCountStat;
-    private final SearchCounter updateFailureCountStat;
+  privatelon static final class TaskStats {
+    privatelon final SelonarchLongGaugelon numHitsStat;
+    privatelon final SelonarchLongGaugelon updatelonLatelonncyStat;
+    privatelon final SelonarchCountelonr updatelonSuccelonssCountStat;
+    privatelon final SelonarchCountelonr updatelonFailurelonCountStat;
 
-    private TaskStats(String statNamePrefix, boolean exportStats) {
-      // See SEARCH-3698
-      numHitsStat = exportStats ? SearchLongGauge.export(statNamePrefix + "numhit")
-          : new SearchLongGauge(statNamePrefix + "numhit");
-      updateLatencyStat = exportStats
-          ? SearchLongGauge.export(statNamePrefix + "update_latency_ms")
-          : new SearchLongGauge(statNamePrefix + "update_latency_ms");
-      updateSuccessCountStat = exportStats
-          ? SearchCounter.export(statNamePrefix + "update_success_count")
-          : SearchCounter.create(statNamePrefix + "update_success_count");
-      updateFailureCountStat = exportStats
-          ? SearchCounter.export(statNamePrefix + "update_failure_count")
-          : SearchCounter.create(statNamePrefix + "update_failure_count");
+    privatelon TaskStats(String statNamelonPrelonfix, boolelonan elonxportStats) {
+      // Selonelon SelonARCH-3698
+      numHitsStat = elonxportStats ? SelonarchLongGaugelon.elonxport(statNamelonPrelonfix + "numhit")
+          : nelonw SelonarchLongGaugelon(statNamelonPrelonfix + "numhit");
+      updatelonLatelonncyStat = elonxportStats
+          ? SelonarchLongGaugelon.elonxport(statNamelonPrelonfix + "updatelon_latelonncy_ms")
+          : nelonw SelonarchLongGaugelon(statNamelonPrelonfix + "updatelon_latelonncy_ms");
+      updatelonSuccelonssCountStat = elonxportStats
+          ? SelonarchCountelonr.elonxport(statNamelonPrelonfix + "updatelon_succelonss_count")
+          : SelonarchCountelonr.crelonatelon(statNamelonPrelonfix + "updatelon_succelonss_count");
+      updatelonFailurelonCountStat = elonxportStats
+          ? SelonarchCountelonr.elonxport(statNamelonPrelonfix + "updatelon_failurelon_count")
+          : SelonarchCountelonr.crelonatelon(statNamelonPrelonfix + "updatelon_failurelon_count");
     }
   }
 
-  private final Amount<Long, Time> updateInterval;
-  private final Amount<Long, Time> initialDelay;
+  privatelon final Amount<Long, Timelon> updatelonIntelonrval;
+  privatelon final Amount<Long, Timelon> initialDelonlay;
 
-  private final EarlybirdSearcherStats searcherStats;
-  private final CriticalExceptionHandler criticalExceptionHandler;
+  privatelon final elonarlybirdSelonarchelonrStats selonarchelonrStats;
+  privatelon final CriticalelonxcelonptionHandlelonr criticalelonxcelonptionHandlelonr;
 
   /**
    * Constructor
-   * @param filter Filter to be used to populate the cache
-   * @param segmentInfo Segment this task is responsible for
-   * @param updateInterval Time between successive updates
-   * @param initialDelay Time before the first update
-   * @param updateIterationCounter
-   * @param decider
+   * @param filtelonr Filtelonr to belon uselond to populatelon thelon cachelon
+   * @param selongmelonntInfo Selongmelonnt this task is relonsponsiblelon for
+   * @param updatelonIntelonrval Timelon belontwelonelonn succelonssivelon updatelons
+   * @param initialDelonlay Timelon belonforelon thelon first updatelon
+   * @param updatelonItelonrationCountelonr
+   * @param deloncidelonr
    */
-  public QueryCacheUpdateTask(QueryCacheFilter filter,
-                              SegmentInfo segmentInfo,
-                              UserTable userTable,
-                              Amount<Long, Time> updateInterval,
-                              Amount<Long, Time> initialDelay,
-                              SearchCounter updateIterationCounter,
-                              EarlybirdSearcherStats searcherStats,
-                              Decider decider,
-                              CriticalExceptionHandler criticalExceptionHandler,
+  public QuelonryCachelonUpdatelonTask(QuelonryCachelonFiltelonr filtelonr,
+                              SelongmelonntInfo selongmelonntInfo,
+                              UselonrTablelon uselonrTablelon,
+                              Amount<Long, Timelon> updatelonIntelonrval,
+                              Amount<Long, Timelon> initialDelonlay,
+                              SelonarchCountelonr updatelonItelonrationCountelonr,
+                              elonarlybirdSelonarchelonrStats selonarchelonrStats,
+                              Deloncidelonr deloncidelonr,
+                              CriticalelonxcelonptionHandlelonr criticalelonxcelonptionHandlelonr,
                               Clock clock) {
-    super(updateIterationCounter, clock);
-    this.filter = filter;
-    this.segmentInfo = segmentInfo;
-    this.userTable = userTable;
-    this.ranOnce = false;
-    this.updateInterval = updateInterval;
-    this.initialDelay = initialDelay;
-    this.stats = setupStats();
-    this.filterAndSegment = String.format(
-        "QueryCacheFilter: %s | Segment: %d",
-        filter.getFilterName(), segmentInfo.getTimeSliceID());
-    this.searcherStats = searcherStats;
-    this.criticalExceptionHandler = criticalExceptionHandler;
-    this.decider = decider;
+    supelonr(updatelonItelonrationCountelonr, clock);
+    this.filtelonr = filtelonr;
+    this.selongmelonntInfo = selongmelonntInfo;
+    this.uselonrTablelon = uselonrTablelon;
+    this.ranOncelon = falselon;
+    this.updatelonIntelonrval = updatelonIntelonrval;
+    this.initialDelonlay = initialDelonlay;
+    this.stats = selontupStats();
+    this.filtelonrAndSelongmelonnt = String.format(
+        "QuelonryCachelonFiltelonr: %s | Selongmelonnt: %d",
+        filtelonr.gelontFiltelonrNamelon(), selongmelonntInfo.gelontTimelonSlicelonID());
+    this.selonarchelonrStats = selonarchelonrStats;
+    this.criticalelonxcelonptionHandlelonr = criticalelonxcelonptionHandlelonr;
+    this.deloncidelonr = deloncidelonr;
   }
 
-  @Override
-  protected void runOneIteration() {
+  @Ovelonrridelon
+  protelonctelond void runOnelonItelonration() {
     try {
-      if (LOG.isDebugEnabled()) {
-        LOG.debug(
-            "[{}] Updating with query [{}] for the {} th time.",
-            filterAndSegment,
-            filter.getQueryString(),
-            stats.updateSuccessCountStat.get() + stats.updateFailureCountStat.get() + 1
+      if (LOG.isDelonbugelonnablelond()) {
+        LOG.delonbug(
+            "[{}] Updating with quelonry [{}] for thelon {} th timelon.",
+            filtelonrAndSelongmelonnt,
+            filtelonr.gelontQuelonryString(),
+            stats.updatelonSuccelonssCountStat.gelont() + stats.updatelonFailurelonCountStat.gelont() + 1
         );
-        if (lastRunFinishTime != null) {
-          LOG.debug(
-              "[{}] Last run, {} th time, finished {} secs ago. Should run every {} secs",
-              filterAndSegment,
-              stats.updateSuccessCountStat.get() + stats.updateFailureCountStat.get(),
-              TimeUnit.NANOSECONDS.toSeconds(
-                  System.nanoTime() - lastRunFinishTime.as(Time.NANOSECONDS)),
-              updateInterval.as(Time.SECONDS)
+        if (lastRunFinishTimelon != null) {
+          LOG.delonbug(
+              "[{}] Last run, {} th timelon, finishelond {} seloncs ago. Should run elonvelonry {} seloncs",
+              filtelonrAndSelongmelonnt,
+              stats.updatelonSuccelonssCountStat.gelont() + stats.updatelonFailurelonCountStat.gelont(),
+              TimelonUnit.NANOSelonCONDS.toSelonconds(
+                  Systelonm.nanoTimelon() - lastRunFinishTimelon.as(Timelon.NANOSelonCONDS)),
+              updatelonIntelonrval.as(Timelon.SelonCONDS)
           );
         }
       }
 
-      Timer timer = new Timer(TimeUnit.MILLISECONDS);
-      SearchResultsInfo result = null;
+      Timelonr timelonr = nelonw Timelonr(TimelonUnit.MILLISelonCONDS);
+      SelonarchRelonsultsInfo relonsult = null;
       try {
-        result = update();
-      } catch (Exception e) {
-        String msg = "Failed to update query cache entry [" + filter.getFilterName()
-            + "] on segment [" + segmentInfo.getTimeSliceID() + "]";
-        LOG.warn(msg, e);
+        relonsult = updatelon();
+      } catch (elonxcelonption elon) {
+        String msg = "Failelond to updatelon quelonry cachelon elonntry [" + filtelonr.gelontFiltelonrNamelon()
+            + "] on selongmelonnt [" + selongmelonntInfo.gelontTimelonSlicelonID() + "]";
+        LOG.warn(msg, elon);
       }
 
-      long endTime = timer.stop();
-      updateStats(result, endTime);
+      long elonndTimelon = timelonr.stop();
+      updatelonStats(relonsult, elonndTimelon);
 
-      if (LOG.isDebugEnabled()) {
-        LOG.debug("[{}] Updated in {} ms, hit {} docs.",
-            filterAndSegment, endTime, stats.numHitsStat.read());
+      if (LOG.isDelonbugelonnablelond()) {
+        LOG.delonbug("[{}] Updatelond in {} ms, hit {} docs.",
+            filtelonrAndSelongmelonnt, elonndTimelon, stats.numHitsStat.relonad());
       }
-      // Need to catch throwable here instead of exception so we handle errors like OutOfMemory
-      // See RB=528695 and SEARCH-4402
-    } catch (Throwable t) {
-      String message = String.format("Got unexpected throwable in %s", getClass().getName());
-      LOG.error(message, t);
+      // Nelonelond to catch throwablelon helonrelon instelonad of elonxcelonption so welon handlelon elonrrors likelon OutOfMelonmory
+      // Selonelon RB=528695 and SelonARCH-4402
+    } catch (Throwablelon t) {
+      String melonssagelon = String.format("Got unelonxpelonctelond throwablelon in %s", gelontClass().gelontNamelon());
+      LOG.elonrror(melonssagelon, t);
 
-      // Wrap the Throwable in a FatalEarlybirdException to categorize it and ensure it's
-      // handled as a fatal exception
-      criticalExceptionHandler.handle(this,
-          new EarlybirdException(message, t));
+      // Wrap thelon Throwablelon in a Fatalelonarlybirdelonxcelonption to catelongorizelon it and elonnsurelon it's
+      // handlelond as a fatal elonxcelonption
+      criticalelonxcelonptionHandlelonr.handlelon(this,
+          nelonw elonarlybirdelonxcelonption(melonssagelon, t));
     } finally {
-      // Earlybird won't become CURRENT until all tasks are run at least once. We don't want
-      // failed "run" (update) to prevent Earlybird from becoming CURRENT. As long as all tasks
-      // got a chance to run at least once, we are good to go.
-      ranOnce = true;
+      // elonarlybird won't beloncomelon CURRelonNT until all tasks arelon run at lelonast oncelon. Welon don't want
+      // failelond "run" (updatelon) to prelonvelonnt elonarlybird from beloncoming CURRelonNT. As long as all tasks
+      // got a chancelon to run at lelonast oncelon, welon arelon good to go.
+      ranOncelon = truelon;
 
-      lastRunFinishTime = Amount.of(System.nanoTime(), Time.NANOSECONDS);
+      lastRunFinishTimelon = Amount.of(Systelonm.nanoTimelon(), Timelon.NANOSelonCONDS);
     }
   }
 
-  public boolean ranOnce() {
-    return ranOnce;
+  public boolelonan ranOncelon() {
+    relonturn ranOncelon;
   }
 
-  private TaskStats setupStats() {
-    return TASK_STATS.getUnchecked(statNamePrefix());
+  privatelon TaskStats selontupStats() {
+    relonturn TASK_STATS.gelontUnchelonckelond(statNamelonPrelonfix());
   }
 
-  private SearchResultsInfo update() throws IOException {
-    // There's a chance that the EarlybirdSegment of a SegmentInfo to change at any
-    // time. Therefore, it's not safe to operate segments on the SegmentInfo level.
-    // On the archive clusters we create a new EarlybirdSegment and then swap it in when there's
-    // new data instead of appending to an existing EarlybirdSegment.
-    EarlybirdSegment earlybirdSegment = segmentInfo.getIndexSegment();
+  privatelon SelonarchRelonsultsInfo updatelon() throws IOelonxcelonption {
+    // Thelonrelon's a chancelon that thelon elonarlybirdSelongmelonnt of a SelongmelonntInfo to changelon at any
+    // timelon. Thelonrelonforelon, it's not safelon to opelonratelon selongmelonnts on thelon SelongmelonntInfo lelonvelonl.
+    // On thelon archivelon clustelonrs welon crelonatelon a nelonw elonarlybirdSelongmelonnt and thelonn swap it in whelonn thelonrelon's
+    // nelonw data instelonad of appelonnding to an elonxisting elonarlybirdSelongmelonnt.
+    elonarlybirdSelongmelonnt elonarlybirdSelongmelonnt = selongmelonntInfo.gelontIndelonxSelongmelonnt();
 
-    EarlybirdSingleSegmentSearcher searcher = earlybirdSegment.getSearcher(userTable);
-    if (searcher == null) {
-      LOG.warn("Unable to get searcher from TwitterIndexManager for segment ["
-          + segmentInfo.getTimeSliceID() + "]. Has it been dropped?");
-      return null;
+    elonarlybirdSinglelonSelongmelonntSelonarchelonr selonarchelonr = elonarlybirdSelongmelonnt.gelontSelonarchelonr(uselonrTablelon);
+    if (selonarchelonr == null) {
+      LOG.warn("Unablelon to gelont selonarchelonr from TwittelonrIndelonxManagelonr for selongmelonnt ["
+          + selongmelonntInfo.gelontTimelonSlicelonID() + "]. Has it belonelonn droppelond?");
+      relonturn null;
     }
 
-    QueryCacheResultCollector collector = new QueryCacheResultCollector(
-        searcher.getSchemaSnapshot(), filter, searcherStats, decider, clock, 0);
-    searcher.search(filter.getLuceneQuery(), collector);
+    QuelonryCachelonRelonsultCollelonctor collelonctor = nelonw QuelonryCachelonRelonsultCollelonctor(
+        selonarchelonr.gelontSchelonmaSnapshot(), filtelonr, selonarchelonrStats, deloncidelonr, clock, 0);
+    selonarchelonr.selonarch(filtelonr.gelontLucelonnelonQuelonry(), collelonctor);
 
-    QueryCacheResultForSegment cacheResult = collector.getCachedResult();
-    searcher.getTwitterIndexReader().getSegmentData().updateQueryCacheResult(
-        filter.getFilterName(), cacheResult);
+    QuelonryCachelonRelonsultForSelongmelonnt cachelonRelonsult = collelonctor.gelontCachelondRelonsult();
+    selonarchelonr.gelontTwittelonrIndelonxRelonadelonr().gelontSelongmelonntData().updatelonQuelonryCachelonRelonsult(
+        filtelonr.gelontFiltelonrNamelon(), cachelonRelonsult);
 
-    FINISHED_TASKS.increment();
+    FINISHelonD_TASKS.increlonmelonnt();
 
-    if (LOG.isDebugEnabled()) {
-      TerminationTracker tracker = collector.getSearchRequestInfo().getTerminationTracker();
-      LOG.debug(
-          "[{}] Updating query finished, start time ms is {}, termination reason is {}",
-          filterAndSegment,
-          tracker.getLocalStartTimeMillis(),
-          tracker.getEarlyTerminationState().getTerminationReason());
+    if (LOG.isDelonbugelonnablelond()) {
+      TelonrminationTrackelonr trackelonr = collelonctor.gelontSelonarchRelonquelonstInfo().gelontTelonrminationTrackelonr();
+      LOG.delonbug(
+          "[{}] Updating quelonry finishelond, start timelon ms is {}, telonrmination relonason is {}",
+          filtelonrAndSelongmelonnt,
+          trackelonr.gelontLocalStartTimelonMillis(),
+          trackelonr.gelontelonarlyTelonrminationStatelon().gelontTelonrminationRelonason());
     }
 
-    return collector.getResults();
+    relonturn collelonctor.gelontRelonsults();
   }
 
-  private void updateStats(SearchResultsInfo result, long endTime) {
-    if (result != null) {
-      stats.numHitsStat.set(result.getNumHitsProcessed());
-      stats.updateSuccessCountStat.increment();
-    } else {
-      stats.updateFailureCountStat.increment();
+  privatelon void updatelonStats(SelonarchRelonsultsInfo relonsult, long elonndTimelon) {
+    if (relonsult != null) {
+      stats.numHitsStat.selont(relonsult.gelontNumHitsProcelonsselond());
+      stats.updatelonSuccelonssCountStat.increlonmelonnt();
+    } elonlselon {
+      stats.updatelonFailurelonCountStat.increlonmelonnt();
     }
-    stats.updateLatencyStat.set(endTime);
+    stats.updatelonLatelonncyStat.selont(elonndTimelon);
   }
 
-  @VisibleForTesting
-  String statNamePrefix() {
-    // If we use this and try to display in monviz "ts(partition, single_instance, querycache*)",
-    // the UI shows "Really expensive query" message. We can keep this around for times when we
-    // want to start things manually and debug.
-    return "querycache_" + filter.getFilterName() + "_" + segmentInfo.getTimeSliceID() + "_";
+  @VisiblelonForTelonsting
+  String statNamelonPrelonfix() {
+    // If welon uselon this and try to display in monviz "ts(partition, singlelon_instancelon, quelonrycachelon*)",
+    // thelon UI shows "Relonally elonxpelonnsivelon quelonry" melonssagelon. Welon can kelonelonp this around for timelons whelonn welon
+    // want to start things manually and delonbug.
+    relonturn "quelonrycachelon_" + filtelonr.gelontFiltelonrNamelon() + "_" + selongmelonntInfo.gelontTimelonSlicelonID() + "_";
   }
 
-  public long getTimeSliceID() {
-    return segmentInfo.getTimeSliceID();
+  public long gelontTimelonSlicelonID() {
+    relonturn selongmelonntInfo.gelontTimelonSlicelonID();
   }
 
   //////////////////////////
-  // for unit tests only
+  // for unit telonsts only
   //////////////////////////
-  @VisibleForTesting
-  String getFilterNameForTest() {
-    return filter.getFilterName();
+  @VisiblelonForTelonsting
+  String gelontFiltelonrNamelonForTelonst() {
+    relonturn filtelonr.gelontFiltelonrNamelon();
   }
 
-  @VisibleForTesting
-  Amount<Long, Time> getUpdateIntervalForTest() {
-    return updateInterval;
+  @VisiblelonForTelonsting
+  Amount<Long, Timelon> gelontUpdatelonIntelonrvalForTelonst() {
+    relonturn updatelonIntelonrval;
   }
 
-  @VisibleForTesting
-  Amount<Long, Time> getInitialDelayForTest() {
-    return initialDelay;
+  @VisiblelonForTelonsting
+  Amount<Long, Timelon> gelontInitialDelonlayForTelonst() {
+    relonturn initialDelonlay;
   }
 
-  @VisibleForTesting
-  TaskStats getTaskStatsForTest() {
-    return stats;
+  @VisiblelonForTelonsting
+  TaskStats gelontTaskStatsForTelonst() {
+    relonturn stats;
   }
 }

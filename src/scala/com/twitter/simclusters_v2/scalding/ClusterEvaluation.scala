@@ -1,209 +1,209 @@
-package com.twitter.simclusters_v2.scalding
+packagelon com.twittelonr.simclustelonrs_v2.scalding
 
-import com.twitter.algebird.Monoid
-import com.twitter.algebird.mutable.PriorityQueueMonoid
-import com.twitter.dal.client.dataset.KeyValDALDataset
-import com.twitter.pluck.source.cassowary.FollowingsCosineSimilaritiesManhattanSource
-import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.job.TwitterExecutionApp
-import com.twitter.scalding_internal.job.analytics_batch._
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.ModelVersions
-import com.twitter.simclusters_v2.hdfs_sources._
-import com.twitter.simclusters_v2.scalding.common.TypedRichPipe._
-import com.twitter.simclusters_v2.scalding.common.Util
-import com.twitter.simclusters_v2.scalding.common.Util.Distribution
-import com.twitter.simclusters_v2.thriftscala.ClusterQuality
-import com.twitter.simclusters_v2.thriftscala.ClustersUserIsKnownFor
-import com.twitter.usersource.snapshot.flat.UsersourceFlatScalaDataset
-import java.util.PriorityQueue
-import scala.collection.JavaConverters._
+import com.twittelonr.algelonbird.Monoid
+import com.twittelonr.algelonbird.mutablelon.PriorityQuelonuelonMonoid
+import com.twittelonr.dal.clielonnt.dataselont.KelonyValDALDataselont
+import com.twittelonr.pluck.sourcelon.cassowary.FollowingsCosinelonSimilaritielonsManhattanSourcelon
+import com.twittelonr.scalding._
+import com.twittelonr.scalding_intelonrnal.dalv2.DAL
+import com.twittelonr.scalding_intelonrnal.job.TwittelonrelonxeloncutionApp
+import com.twittelonr.scalding_intelonrnal.job.analytics_batch._
+import com.twittelonr.scalding_intelonrnal.multiformat.format.kelonyval.KelonyVal
+import com.twittelonr.simclustelonrs_v2.common.ModelonlVelonrsions
+import com.twittelonr.simclustelonrs_v2.hdfs_sourcelons._
+import com.twittelonr.simclustelonrs_v2.scalding.common.TypelondRichPipelon._
+import com.twittelonr.simclustelonrs_v2.scalding.common.Util
+import com.twittelonr.simclustelonrs_v2.scalding.common.Util.Distribution
+import com.twittelonr.simclustelonrs_v2.thriftscala.ClustelonrQuality
+import com.twittelonr.simclustelonrs_v2.thriftscala.ClustelonrsUselonrIsKnownFor
+import com.twittelonr.uselonrsourcelon.snapshot.flat.UselonrsourcelonFlatScalaDataselont
+import java.util.PriorityQuelonuelon
+import scala.collelonction.JavaConvelonrtelonrs._
 
-object ClusterEvaluation {
+objelonct Clustelonrelonvaluation {
 
-  val samplerMonoid: PriorityQueueMonoid[((Long, Long), (Double, Double))] =
-    Util.reservoirSamplerMonoidForPairs[(Long, Long), (Double, Double)](5000)(Util.edgeOrdering)
+  val samplelonrMonoid: PriorityQuelonuelonMonoid[((Long, Long), (Doublelon, Doublelon))] =
+    Util.relonselonrvoirSamplelonrMonoidForPairs[(Long, Long), (Doublelon, Doublelon)](5000)(Util.elondgelonOrdelonring)
 
-  case class ClusterResults(
-    numEdgesInsideCluster: Int,
-    wtOfEdgesInsideCluster: Double,
-    numEdgesOutsideCluster: Int,
-    wtOfEdgesOutsideCluster: Double,
-    originalWtAndProductOfNodeScoresSample: PriorityQueue[((Long, Long), (Double, Double))]) {
-    def clusterQuality(clusterSize: Int, averagePrecisionWholeGraph: Double): ClusterQuality = {
-      val unweightedRecallDenominator = numEdgesInsideCluster + numEdgesOutsideCluster
-      val unweightedRecall = if (unweightedRecallDenominator > 0) {
-        numEdgesInsideCluster.toDouble / unweightedRecallDenominator.toDouble
-      } else 0.0
+  caselon class ClustelonrRelonsults(
+    numelondgelonsInsidelonClustelonr: Int,
+    wtOfelondgelonsInsidelonClustelonr: Doublelon,
+    numelondgelonsOutsidelonClustelonr: Int,
+    wtOfelondgelonsOutsidelonClustelonr: Doublelon,
+    originalWtAndProductOfNodelonScorelonsSamplelon: PriorityQuelonuelon[((Long, Long), (Doublelon, Doublelon))]) {
+    delonf clustelonrQuality(clustelonrSizelon: Int, avelonragelonPreloncisionWholelonGraph: Doublelon): ClustelonrQuality = {
+      val unwelonightelondReloncallDelonnominator = numelondgelonsInsidelonClustelonr + numelondgelonsOutsidelonClustelonr
+      val unwelonightelondReloncall = if (unwelonightelondReloncallDelonnominator > 0) {
+        numelondgelonsInsidelonClustelonr.toDoublelon / unwelonightelondReloncallDelonnominator.toDoublelon
+      } elonlselon 0.0
 
-      val weightedRecallDenominator = wtOfEdgesInsideCluster + wtOfEdgesOutsideCluster
-      val weightedRecall = if (weightedRecallDenominator > 0) {
-        wtOfEdgesInsideCluster / weightedRecallDenominator
-      } else 0.0
+      val welonightelondReloncallDelonnominator = wtOfelondgelonsInsidelonClustelonr + wtOfelondgelonsOutsidelonClustelonr
+      val welonightelondReloncall = if (welonightelondReloncallDelonnominator > 0) {
+        wtOfelondgelonsInsidelonClustelonr / welonightelondReloncallDelonnominator
+      } elonlselon 0.0
 
-      val precision = if (clusterSize > 1) {
-        Some(wtOfEdgesInsideCluster / (clusterSize * (clusterSize - 1)))
-      } else Some(0.0)
+      val preloncision = if (clustelonrSizelon > 1) {
+        Somelon(wtOfelondgelonsInsidelonClustelonr / (clustelonrSizelon * (clustelonrSizelon - 1)))
+      } elonlselon Somelon(0.0)
 
-      val relativePrecision = if (averagePrecisionWholeGraph > 0) {
-        precision.flatMap { p => Some(p / averagePrecisionWholeGraph) }
-      } else Some(0.0)
+      val relonlativelonPreloncision = if (avelonragelonPreloncisionWholelonGraph > 0) {
+        preloncision.flatMap { p => Somelon(p / avelonragelonPreloncisionWholelonGraph) }
+      } elonlselon Somelon(0.0)
 
-      ClusterQuality(
-        unweightedRecall = Some(unweightedRecall),
-        weightedRecall = Some(weightedRecall),
-        unweightedRecallDenominator = Some(unweightedRecallDenominator),
-        weightedRecallDenominator = Some(weightedRecallDenominator),
-        relativePrecisionNumerator = precision,
-        relativePrecision = relativePrecision,
-        weightAndProductOfNodeScoresCorrelation = Some(
-          Util.computeCorrelation(
-            originalWtAndProductOfNodeScoresSample.iterator.asScala.map(_._2)))
+      ClustelonrQuality(
+        unwelonightelondReloncall = Somelon(unwelonightelondReloncall),
+        welonightelondReloncall = Somelon(welonightelondReloncall),
+        unwelonightelondReloncallDelonnominator = Somelon(unwelonightelondReloncallDelonnominator),
+        welonightelondReloncallDelonnominator = Somelon(welonightelondReloncallDelonnominator),
+        relonlativelonPreloncisionNumelonrator = preloncision,
+        relonlativelonPreloncision = relonlativelonPreloncision,
+        welonightAndProductOfNodelonScorelonsCorrelonlation = Somelon(
+          Util.computelonCorrelonlation(
+            originalWtAndProductOfNodelonScorelonsSamplelon.itelonrator.asScala.map(_._2)))
       )
     }
   }
 
-  object ClusterResultsMonoid extends Monoid[ClusterResults] {
-    override def zero = ClusterResults(0, 0, 0, 0, samplerMonoid.zero)
-    override def plus(l: ClusterResults, r: ClusterResults) = ClusterResults(
-      l.numEdgesInsideCluster + r.numEdgesInsideCluster,
-      l.wtOfEdgesInsideCluster + r.wtOfEdgesInsideCluster,
-      l.numEdgesOutsideCluster + r.numEdgesOutsideCluster,
-      l.wtOfEdgesOutsideCluster + r.wtOfEdgesOutsideCluster,
-      samplerMonoid
-        .plus(l.originalWtAndProductOfNodeScoresSample, r.originalWtAndProductOfNodeScoresSample)
+  objelonct ClustelonrRelonsultsMonoid elonxtelonnds Monoid[ClustelonrRelonsults] {
+    ovelonrridelon delonf zelonro = ClustelonrRelonsults(0, 0, 0, 0, samplelonrMonoid.zelonro)
+    ovelonrridelon delonf plus(l: ClustelonrRelonsults, r: ClustelonrRelonsults) = ClustelonrRelonsults(
+      l.numelondgelonsInsidelonClustelonr + r.numelondgelonsInsidelonClustelonr,
+      l.wtOfelondgelonsInsidelonClustelonr + r.wtOfelondgelonsInsidelonClustelonr,
+      l.numelondgelonsOutsidelonClustelonr + r.numelondgelonsOutsidelonClustelonr,
+      l.wtOfelondgelonsOutsidelonClustelonr + r.wtOfelondgelonsOutsidelonClustelonr,
+      samplelonrMonoid
+        .plus(l.originalWtAndProductOfNodelonScorelonsSamplelon, r.originalWtAndProductOfNodelonScorelonsSamplelon)
     )
   }
 
   /**
-   * Evaluate the quality of a cluster.
-   * @param memberScores A map with the members of the cluster as the keys and their scores
-   *                     inside the cluster as values. The more central a member is inside the score,
-   *                     the higher it's score is.
-   * @param membersAdjLists A map that gives the weighted neighbors of each member in the cluster.
+   * elonvaluatelon thelon quality of a clustelonr.
+   * @param melonmbelonrScorelons A map with thelon melonmbelonrs of thelon clustelonr as thelon kelonys and thelonir scorelons
+   *                     insidelon thelon clustelonr as valuelons. Thelon morelon celonntral a melonmbelonr is insidelon thelon scorelon,
+   *                     thelon highelonr it's scorelon is.
+   * @param melonmbelonrsAdjLists A map that givelons thelon welonightelond nelonighbors of elonach melonmbelonr in thelon clustelonr.
    */
-  def evaluateCluster(
-    memberScores: Map[Long, Double],
-    membersAdjLists: Map[Long, Map[Long, Float]]
-  ): ClusterResults = {
-    val resultsIter = membersAdjLists.flatMap {
-      case (fromNodeId, adjList) =>
-        val fromNodeWt = memberScores.getOrElse(fromNodeId, 0.0)
+  delonf elonvaluatelonClustelonr(
+    melonmbelonrScorelons: Map[Long, Doublelon],
+    melonmbelonrsAdjLists: Map[Long, Map[Long, Float]]
+  ): ClustelonrRelonsults = {
+    val relonsultsItelonr = melonmbelonrsAdjLists.flatMap {
+      caselon (fromNodelonId, adjList) =>
+        val fromNodelonWt = melonmbelonrScorelons.gelontOrelonlselon(fromNodelonId, 0.0)
         adjList.map {
-          case (toNodeId, edgeWt) =>
-            if (memberScores.contains(toNodeId)) {
-              val productOfMembershipScores = fromNodeWt * memberScores(toNodeId)
-              ClusterResults(
+          caselon (toNodelonId, elondgelonWt) =>
+            if (melonmbelonrScorelons.contains(toNodelonId)) {
+              val productOfMelonmbelonrshipScorelons = fromNodelonWt * melonmbelonrScorelons(toNodelonId)
+              ClustelonrRelonsults(
                 1,
-                edgeWt,
+                elondgelonWt,
                 0,
                 0,
-                samplerMonoid.build(
-                  ((fromNodeId, toNodeId), (edgeWt.toDouble, productOfMembershipScores))))
-            } else {
-              ClusterResults(0, 0, 1, edgeWt, samplerMonoid.zero)
+                samplelonrMonoid.build(
+                  ((fromNodelonId, toNodelonId), (elondgelonWt.toDoublelon, productOfMelonmbelonrshipScorelons))))
+            } elonlselon {
+              ClustelonrRelonsults(0, 0, 1, elondgelonWt, samplelonrMonoid.zelonro)
             }
         }
     }
-    Monoid.sum(resultsIter)(ClusterResultsMonoid)
+    Monoid.sum(relonsultsItelonr)(ClustelonrRelonsultsMonoid)
   }
 
   /**
-   * Evaluate each cluster with respect to the provided graph.
-   * @param graph graph represented via the adjacency lists of each node, needs to be symmetrized i.e. if u is in v's adjlist, then v needs to be in u's adjlist as well
-   * @param clusters cluster memberships of each node.
-   * @param statsPrefix convenience argument to act as prefix for stats counters
-   * @return key-value pipe with clusterId as key and (size of the cluster, quality struct) as value
+   * elonvaluatelon elonach clustelonr with relonspelonct to thelon providelond graph.
+   * @param graph graph relonprelonselonntelond via thelon adjacelonncy lists of elonach nodelon, nelonelonds to belon symmelontrizelond i.elon. if u is in v's adjlist, thelonn v nelonelonds to belon in u's adjlist as welonll
+   * @param clustelonrs clustelonr melonmbelonrships of elonach nodelon.
+   * @param statsPrelonfix convelonnielonncelon argumelonnt to act as prelonfix for stats countelonrs
+   * @relonturn kelony-valuelon pipelon with clustelonrId as kelony and (sizelon of thelon clustelonr, quality struct) as valuelon
    */
-  def clusterLevelEvaluation(
-    graph: TypedPipe[(Long, Map[Long, Float])],
-    clusters: TypedPipe[(Long, Array[(Int, Float)])],
-    statsPrefix: String = ""
+  delonf clustelonrLelonvelonlelonvaluation(
+    graph: TypelondPipelon[(Long, Map[Long, Float])],
+    clustelonrs: TypelondPipelon[(Long, Array[(Int, Float)])],
+    statsPrelonfix: String = ""
   )(
-    implicit uniqueId: UniqueID
-  ): Execution[TypedPipe[(Int, (Int, ClusterQuality))]] = {
-    val numRealClusters = Stat(s"${statsPrefix}/numRealClusters")
-    val numFakeClusters = Stat(s"${statsPrefix}/numFakeClusters")
+    implicit uniquelonId: UniquelonID
+  ): elonxeloncution[TypelondPipelon[(Int, (Int, ClustelonrQuality))]] = {
+    val numRelonalClustelonrs = Stat(s"${statsPrelonfix}/numRelonalClustelonrs")
+    val numFakelonClustelonrs = Stat(s"${statsPrelonfix}/numFakelonClustelonrs")
 
-    val numNodesAndEdgesExec = graph
+    val numNodelonsAndelondgelonselonxelonc = graph
       .map {
-        case (nId, nbrMap) =>
-          (1L, nbrMap.size.toLong, nbrMap.values.sum.toDouble)
-      }.sum.getExecution
+        caselon (nId, nbrMap) =>
+          (1L, nbrMap.sizelon.toLong, nbrMap.valuelons.sum.toDoublelon)
+      }.sum.gelontelonxeloncution
 
-    numNodesAndEdgesExec.map {
-      case (numNodes, numEdges, sumOfAllEdgeWts) =>
-        println("numNodes " + numNodes)
-        println("numEdges " + numEdges)
-        println("sumOfAllEdgeWts " + sumOfAllEdgeWts)
+    numNodelonsAndelondgelonselonxelonc.map {
+      caselon (numNodelons, numelondgelons, sumOfAllelondgelonWts) =>
+        println("numNodelons " + numNodelons)
+        println("numelondgelons " + numelondgelons)
+        println("sumOfAllelondgelonWts " + sumOfAllelondgelonWts)
 
-        val numFakeClustersForUnassignedNodes = numNodes / 1e4
+        val numFakelonClustelonrsForUnassignelondNodelons = numNodelons / 1elon4
 
-        val averagePrecisionWholeGraph = sumOfAllEdgeWts / (numNodes * (numNodes - 1))
+        val avelonragelonPreloncisionWholelonGraph = sumOfAllelondgelonWts / (numNodelons * (numNodelons - 1))
         graph
-          .leftJoin(clusters)
-          // uncomment for adhoc job
-          .withReducers(200)
+          .lelonftJoin(clustelonrs)
+          // uncommelonnt for adhoc job
+          .withRelonducelonrs(200)
           .flatMap {
-            case (nodeId, (adjList, assignedClustersOpt)) =>
-              val nodeDegree = adjList.size.toLong
-              val nodeWeightedDegree = adjList.values.sum
-              assignedClustersOpt match {
-                case Some(assignedClusters) if assignedClusters.nonEmpty =>
-                  assignedClusters.toList.map {
-                    case (clusterId, scoreOfNodeInCluster) =>
+            caselon (nodelonId, (adjList, assignelondClustelonrsOpt)) =>
+              val nodelonDelongrelonelon = adjList.sizelon.toLong
+              val nodelonWelonightelondDelongrelonelon = adjList.valuelons.sum
+              assignelondClustelonrsOpt match {
+                caselon Somelon(assignelondClustelonrs) if assignelondClustelonrs.nonelonmpty =>
+                  assignelondClustelonrs.toList.map {
+                    caselon (clustelonrId, scorelonOfNodelonInClustelonr) =>
                       (
-                        clusterId,
+                        clustelonrId,
                         (
-                          Map(nodeId -> (scoreOfNodeInCluster.toDouble, adjList)),
+                          Map(nodelonId -> (scorelonOfNodelonInClustelonr.toDoublelon, adjList)),
                           1,
-                          nodeDegree,
-                          nodeWeightedDegree))
+                          nodelonDelongrelonelon,
+                          nodelonWelonightelondDelongrelonelon))
                   }
-                case _ =>
-                  // For nodes that don't belong to any cluster, create a fake clusterId (0 or lesser)
-                  // and add the node's statistics to that clusterId. We don't need the adjacency lists for
-                  // unassigned nodes, we'll simply track how many edges are incident on those nodes and their weighted sum etc
-                  val fakeClusterId =
+                caselon _ =>
+                  // For nodelons that don't belonlong to any clustelonr, crelonatelon a fakelon clustelonrId (0 or lelonsselonr)
+                  // and add thelon nodelon's statistics to that clustelonrId. Welon don't nelonelond thelon adjacelonncy lists for
+                  // unassignelond nodelons, welon'll simply track how many elondgelons arelon incidelonnt on thoselon nodelons and thelonir welonightelond sum elontc
+                  val fakelonClustelonrId =
                     (-1 * (math.abs(
-                      Util.hashToLong(nodeId)) % numFakeClustersForUnassignedNodes)).toInt
+                      Util.hashToLong(nodelonId)) % numFakelonClustelonrsForUnassignelondNodelons)).toInt
                   List(
                     (
-                      fakeClusterId,
+                      fakelonClustelonrId,
                       (
-                        Map.empty[Long, (Double, Map[Long, Float])],
+                        Map.elonmpty[Long, (Doublelon, Map[Long, Float])],
                         1,
-                        nodeDegree,
-                        nodeWeightedDegree)))
+                        nodelonDelongrelonelon,
+                        nodelonWelonightelondDelongrelonelon)))
               }
           }
-          .sumByKey
-          // uncomment for adhoc job
-          .withReducers(60)
+          .sumByKelony
+          // uncommelonnt for adhoc job
+          .withRelonducelonrs(60)
           .map {
-            case (clusterId, (membersMap, clusterSize, volumeOfCluster, weightedVolumeOfCluster)) =>
-              if (clusterId > 0) {
-                numRealClusters.inc()
+            caselon (clustelonrId, (melonmbelonrsMap, clustelonrSizelon, volumelonOfClustelonr, welonightelondVolumelonOfClustelonr)) =>
+              if (clustelonrId > 0) {
+                numRelonalClustelonrs.inc()
 
-                val scoresMap =
-                  if (clusterId > 0) membersMap.mapValues(_._1) else Map.empty[Long, Double]
-                val adjListsMap = membersMap.mapValues(_._2)
+                val scorelonsMap =
+                  if (clustelonrId > 0) melonmbelonrsMap.mapValuelons(_._1) elonlselon Map.elonmpty[Long, Doublelon]
+                val adjListsMap = melonmbelonrsMap.mapValuelons(_._2)
 
-                val quality = evaluateCluster(scoresMap, adjListsMap)
-                  .clusterQuality(clusterSize, averagePrecisionWholeGraph)
+                val quality = elonvaluatelonClustelonr(scorelonsMap, adjListsMap)
+                  .clustelonrQuality(clustelonrSizelon, avelonragelonPreloncisionWholelonGraph)
 
-                (clusterId, (clusterSize, quality))
-              } else {
-                // clusterId <= 0 means that this is a fake cluster.
-                numFakeClusters.inc()
+                (clustelonrId, (clustelonrSizelon, quality))
+              } elonlselon {
+                // clustelonrId <= 0 melonans that this is a fakelon clustelonr.
+                numFakelonClustelonrs.inc()
                 (
-                  clusterId,
+                  clustelonrId,
                   (
-                    clusterSize,
-                    ClusterQuality(
-                      unweightedRecallDenominator = Some(volumeOfCluster),
-                      weightedRecallDenominator = Some(weightedVolumeOfCluster)
+                    clustelonrSizelon,
+                    ClustelonrQuality(
+                      unwelonightelondReloncallDelonnominator = Somelon(volumelonOfClustelonr),
+                      welonightelondReloncallDelonnominator = Somelon(welonightelondVolumelonOfClustelonr)
                     )
                   )
                 )
@@ -212,351 +212,351 @@ object ClusterEvaluation {
     }
   }
 
-  case class OverallResults(
-    unweightedRecall: Double,
-    edgesInsideClusters: Long,
-    allEdges: Long,
-    allNodes: Int,
-    weightedRecall: Double,
-    wtOnEdgesInsideClusters: Double,
-    wtOnAllEdges: Double,
-    weightCorrelation: Double,
-    relativePrecision: Double,
-    numUnassignedNodes: Int,
-    numAssignedNodes: Int,
-    sizeDist: Distribution,
-    recallDist: Distribution,
-    weightedRecallDist: Distribution,
-    relativePrecisionDist: Distribution,
-    weightCorrelationDist: Distribution,
-    numClustersWithNegativeCorrelation: Double,
-    numClustersWithZeroRecall: Double,
-    numClustersWithLessThanOneRelativePrecision: Double,
-    numSingletonClusters: Int)
+  caselon class OvelonrallRelonsults(
+    unwelonightelondReloncall: Doublelon,
+    elondgelonsInsidelonClustelonrs: Long,
+    allelondgelons: Long,
+    allNodelons: Int,
+    welonightelondReloncall: Doublelon,
+    wtOnelondgelonsInsidelonClustelonrs: Doublelon,
+    wtOnAllelondgelons: Doublelon,
+    welonightCorrelonlation: Doublelon,
+    relonlativelonPreloncision: Doublelon,
+    numUnassignelondNodelons: Int,
+    numAssignelondNodelons: Int,
+    sizelonDist: Distribution,
+    reloncallDist: Distribution,
+    welonightelondReloncallDist: Distribution,
+    relonlativelonPreloncisionDist: Distribution,
+    welonightCorrelonlationDist: Distribution,
+    numClustelonrsWithNelongativelonCorrelonlation: Doublelon,
+    numClustelonrsWithZelonroReloncall: Doublelon,
+    numClustelonrsWithLelonssThanOnelonRelonlativelonPreloncision: Doublelon,
+    numSinglelontonClustelonrs: Int)
 
-  def summarizePerClusterResults(
-    perClusterResults: TypedPipe[(Int, (Int, ClusterQuality))]
-  ): Execution[Option[OverallResults]] = {
-    perClusterResults
+  delonf summarizelonPelonrClustelonrRelonsults(
+    pelonrClustelonrRelonsults: TypelondPipelon[(Int, (Int, ClustelonrQuality))]
+  ): elonxeloncution[Option[OvelonrallRelonsults]] = {
+    pelonrClustelonrRelonsults
       .map {
-        case (clusterId, (size, quality)) =>
-          val unweightedRecallDen = quality.unweightedRecallDenominator.getOrElse(0.0)
-          val unweightedRecallNum = quality.unweightedRecall.getOrElse(0.0) * unweightedRecallDen
-          val weightedRecallDen = quality.weightedRecallDenominator.getOrElse(0.0)
-          val weightedRecallNum = quality.weightedRecall.getOrElse(0.0) * weightedRecallDen
+        caselon (clustelonrId, (sizelon, quality)) =>
+          val unwelonightelondReloncallDelonn = quality.unwelonightelondReloncallDelonnominator.gelontOrelonlselon(0.0)
+          val unwelonightelondReloncallNum = quality.unwelonightelondReloncall.gelontOrelonlselon(0.0) * unwelonightelondReloncallDelonn
+          val welonightelondReloncallDelonn = quality.welonightelondReloncallDelonnominator.gelontOrelonlselon(0.0)
+          val welonightelondReloncallNum = quality.welonightelondReloncall.gelontOrelonlselon(0.0) * welonightelondReloncallDelonn
 
-          val weightCorrelationDen = size
-          val weightCorrelationNum =
-            weightCorrelationDen * quality.weightAndProductOfNodeScoresCorrelation
-              .getOrElse(0.0)
+          val welonightCorrelonlationDelonn = sizelon
+          val welonightCorrelonlationNum =
+            welonightCorrelonlationDelonn * quality.welonightAndProductOfNodelonScorelonsCorrelonlation
+              .gelontOrelonlselon(0.0)
 
-          val relativePrecisionDen = size
-          val relativePrecisionNum = relativePrecisionDen * quality.relativePrecision.getOrElse(0.0)
+          val relonlativelonPreloncisionDelonn = sizelon
+          val relonlativelonPreloncisionNum = relonlativelonPreloncisionDelonn * quality.relonlativelonPreloncision.gelontOrelonlselon(0.0)
 
-          val numClustersWithNegativeCorrelation =
-            if (weightCorrelationNum < 0 && clusterId > 0) 1 else 0
-          val numClustersWithLessThanOneRelativePrecision =
-            if (quality.relativePrecision.getOrElse(0.0) < 1 && clusterId > 0) 1 else 0
-          val numClustersWithZeroRecall = if (weightedRecallNum < 1e-5 && clusterId > 0) 1 else 0
-          val numUnassignedNodes = if (clusterId < 1) size else 0
-          val numAssignedNodes = if (clusterId > 0) size else 0
-          val numSingletonClusters = if (clusterId > 0 && size == 1) 1 else 0
+          val numClustelonrsWithNelongativelonCorrelonlation =
+            if (welonightCorrelonlationNum < 0 && clustelonrId > 0) 1 elonlselon 0
+          val numClustelonrsWithLelonssThanOnelonRelonlativelonPreloncision =
+            if (quality.relonlativelonPreloncision.gelontOrelonlselon(0.0) < 1 && clustelonrId > 0) 1 elonlselon 0
+          val numClustelonrsWithZelonroReloncall = if (welonightelondReloncallNum < 1elon-5 && clustelonrId > 0) 1 elonlselon 0
+          val numUnassignelondNodelons = if (clustelonrId < 1) sizelon elonlselon 0
+          val numAssignelondNodelons = if (clustelonrId > 0) sizelon elonlselon 0
+          val numSinglelontonClustelonrs = if (clustelonrId > 0 && sizelon == 1) 1 elonlselon 0
 
           (
-            unweightedRecallDen,
-            unweightedRecallNum,
-            weightedRecallDen,
-            weightedRecallNum,
-            weightCorrelationDen,
-            weightCorrelationNum,
-            relativePrecisionDen,
-            relativePrecisionNum,
-            numClustersWithNegativeCorrelation,
-            numClustersWithLessThanOneRelativePrecision,
-            numClustersWithZeroRecall,
-            List(size.toDouble),
-            List(quality.unweightedRecall.getOrElse(0.0)),
-            List(quality.weightedRecall.getOrElse(0.0)),
-            List(quality.relativePrecision.getOrElse(0.0)),
-            List(quality.weightAndProductOfNodeScoresCorrelation.getOrElse(0.0)),
-            numUnassignedNodes,
-            numAssignedNodes,
-            numSingletonClusters
+            unwelonightelondReloncallDelonn,
+            unwelonightelondReloncallNum,
+            welonightelondReloncallDelonn,
+            welonightelondReloncallNum,
+            welonightCorrelonlationDelonn,
+            welonightCorrelonlationNum,
+            relonlativelonPreloncisionDelonn,
+            relonlativelonPreloncisionNum,
+            numClustelonrsWithNelongativelonCorrelonlation,
+            numClustelonrsWithLelonssThanOnelonRelonlativelonPreloncision,
+            numClustelonrsWithZelonroReloncall,
+            List(sizelon.toDoublelon),
+            List(quality.unwelonightelondReloncall.gelontOrelonlselon(0.0)),
+            List(quality.welonightelondReloncall.gelontOrelonlselon(0.0)),
+            List(quality.relonlativelonPreloncision.gelontOrelonlselon(0.0)),
+            List(quality.welonightAndProductOfNodelonScorelonsCorrelonlation.gelontOrelonlselon(0.0)),
+            numUnassignelondNodelons,
+            numAssignelondNodelons,
+            numSinglelontonClustelonrs
           )
       }
       .sum
-      .toOptionExecution
+      .toOptionelonxeloncution
       .map { opt =>
         opt.map {
-          case (
-                unweightedRecallDen,
-                unweightedRecallNum,
-                weightedRecallDen,
-                weightedRecallNum,
-                weightCorrelationDen,
-                weightCorrelationNum,
-                relativePrecisionDen,
-                relativePrecisionNum,
-                numClustersWithNegativeCorrelation,
-                numClustersWithLessThanOneRelativePrecision,
-                numClustersWithZeroRecall,
-                sizeList,
-                unweightedRecallList,
-                weightedRecallList,
-                relativePrecisionList,
-                weightCorrelationList,
-                numUnassignedNodes,
-                numAssignedNodes,
-                numSingletonClusters) =>
-            OverallResults(
-              unweightedRecall = unweightedRecallNum / unweightedRecallDen,
-              edgesInsideClusters = unweightedRecallNum.toLong,
-              allEdges = unweightedRecallDen.toLong,
-              allNodes = numAssignedNodes + numUnassignedNodes,
-              weightedRecall = weightedRecallNum / weightedRecallDen,
-              wtOnEdgesInsideClusters = weightedRecallNum,
-              wtOnAllEdges = weightedRecallDen,
-              weightCorrelation = weightCorrelationNum / weightCorrelationDen,
-              relativePrecision = relativePrecisionNum / relativePrecisionDen,
-              numAssignedNodes = numAssignedNodes,
-              numUnassignedNodes = numUnassignedNodes,
-              sizeDist = Util.distributionFromArray(sizeList.toArray),
-              recallDist = Util.distributionFromArray(unweightedRecallList.toArray),
-              weightedRecallDist = Util.distributionFromArray(weightedRecallList.toArray),
-              weightCorrelationDist = Util.distributionFromArray(weightCorrelationList.toArray),
-              relativePrecisionDist = Util.distributionFromArray(relativePrecisionList.toArray),
-              numClustersWithNegativeCorrelation = numClustersWithNegativeCorrelation,
-              numClustersWithLessThanOneRelativePrecision =
-                numClustersWithLessThanOneRelativePrecision,
-              numClustersWithZeroRecall = numClustersWithZeroRecall,
-              numSingletonClusters = numSingletonClusters
+          caselon (
+                unwelonightelondReloncallDelonn,
+                unwelonightelondReloncallNum,
+                welonightelondReloncallDelonn,
+                welonightelondReloncallNum,
+                welonightCorrelonlationDelonn,
+                welonightCorrelonlationNum,
+                relonlativelonPreloncisionDelonn,
+                relonlativelonPreloncisionNum,
+                numClustelonrsWithNelongativelonCorrelonlation,
+                numClustelonrsWithLelonssThanOnelonRelonlativelonPreloncision,
+                numClustelonrsWithZelonroReloncall,
+                sizelonList,
+                unwelonightelondReloncallList,
+                welonightelondReloncallList,
+                relonlativelonPreloncisionList,
+                welonightCorrelonlationList,
+                numUnassignelondNodelons,
+                numAssignelondNodelons,
+                numSinglelontonClustelonrs) =>
+            OvelonrallRelonsults(
+              unwelonightelondReloncall = unwelonightelondReloncallNum / unwelonightelondReloncallDelonn,
+              elondgelonsInsidelonClustelonrs = unwelonightelondReloncallNum.toLong,
+              allelondgelons = unwelonightelondReloncallDelonn.toLong,
+              allNodelons = numAssignelondNodelons + numUnassignelondNodelons,
+              welonightelondReloncall = welonightelondReloncallNum / welonightelondReloncallDelonn,
+              wtOnelondgelonsInsidelonClustelonrs = welonightelondReloncallNum,
+              wtOnAllelondgelons = welonightelondReloncallDelonn,
+              welonightCorrelonlation = welonightCorrelonlationNum / welonightCorrelonlationDelonn,
+              relonlativelonPreloncision = relonlativelonPreloncisionNum / relonlativelonPreloncisionDelonn,
+              numAssignelondNodelons = numAssignelondNodelons,
+              numUnassignelondNodelons = numUnassignelondNodelons,
+              sizelonDist = Util.distributionFromArray(sizelonList.toArray),
+              reloncallDist = Util.distributionFromArray(unwelonightelondReloncallList.toArray),
+              welonightelondReloncallDist = Util.distributionFromArray(welonightelondReloncallList.toArray),
+              welonightCorrelonlationDist = Util.distributionFromArray(welonightCorrelonlationList.toArray),
+              relonlativelonPreloncisionDist = Util.distributionFromArray(relonlativelonPreloncisionList.toArray),
+              numClustelonrsWithNelongativelonCorrelonlation = numClustelonrsWithNelongativelonCorrelonlation,
+              numClustelonrsWithLelonssThanOnelonRelonlativelonPreloncision =
+                numClustelonrsWithLelonssThanOnelonRelonlativelonPreloncision,
+              numClustelonrsWithZelonroReloncall = numClustelonrsWithZelonroReloncall,
+              numSinglelontonClustelonrs = numSinglelontonClustelonrs
             )
         }
       }
   }
 
   /**
-   * @param graph Input similarity graph, needs to be symmetrized i.e. if u is in v's adjlist, then v needs to be in u's adjlist as well
-   * @param clusters cluster assignments to be evaluated
-   * @return summary of results
+   * @param graph Input similarity graph, nelonelonds to belon symmelontrizelond i.elon. if u is in v's adjlist, thelonn v nelonelonds to belon in u's adjlist as welonll
+   * @param clustelonrs clustelonr assignmelonnts to belon elonvaluatelond
+   * @relonturn summary of relonsults
    */
-  def overallEvaluation(
-    graph: TypedPipe[(Long, Map[Long, Float])],
-    clusters: TypedPipe[(Long, Array[(Int, Float)])],
-    statsPrefix: String
+  delonf ovelonrallelonvaluation(
+    graph: TypelondPipelon[(Long, Map[Long, Float])],
+    clustelonrs: TypelondPipelon[(Long, Array[(Int, Float)])],
+    statsPrelonfix: String
   )(
-    implicit uniqueId: UniqueID
-  ): Execution[Option[OverallResults]] = {
-    clusterLevelEvaluation(graph, clusters, statsPrefix).flatMap(summarizePerClusterResults)
+    implicit uniquelonId: UniquelonID
+  ): elonxeloncution[Option[OvelonrallRelonsults]] = {
+    clustelonrLelonvelonlelonvaluation(graph, clustelonrs, statsPrelonfix).flatMap(summarizelonPelonrClustelonrRelonsults)
   }
 }
 
 /**
- * ./bazel bundle src/scala/com/twitter/simclusters_v2/scalding:cluster_evaluation && \
- * oscar hdfs --user frigate --host hadoopnest1.atla.twitter.com --bundle cluster_evaluation \
- * --tool com.twitter.simclusters_v2.scalding.ClusterEvaluationAdhoc --screen --screen-detached \
- * --tee logs/clusterQualityFor_updatedUnnormalizedInputScores_usingSims20190318  -- \
- * --simsInputDir /user/frigate/your_ldap/commonDirForClusterEvaluation/classifiedSims_20190314_copiedFromAtlaProc \
- * --topK 20000000 --date 2019-03-18 --minActiveFollowers 400 \
- * --topUsersDir /user/frigate/your_ldap/commonDirForClusterEvaluation/top20MUsers_minActiveFollowers400_20190215 \
- * --maxSimsNeighborsForEval 40 \
- * --preparedSimsGraph /user/frigate/your_ldap/commonDirForClusterEvaluation/symmetrized_classifiedSims20190318_top20MUsers \
- * --outputDir /user/frigate/your_ldap/dirFor_updatedKnownFor20M_145K_dec11_usingSims20190127_unnormalizedInputScores/knownForClusterEvaluation \
- * --knownForDir /user/frigate/your_ldap/dirFor_updatedKnownFor20M_145K_dec11_usingSims20190127_unnormalizedInputScores/knownFor
+ * ./bazelonl bundlelon src/scala/com/twittelonr/simclustelonrs_v2/scalding:clustelonr_elonvaluation && \
+ * oscar hdfs --uselonr frigatelon --host hadoopnelonst1.atla.twittelonr.com --bundlelon clustelonr_elonvaluation \
+ * --tool com.twittelonr.simclustelonrs_v2.scalding.ClustelonrelonvaluationAdhoc --screlonelonn --screlonelonn-delontachelond \
+ * --telonelon logs/clustelonrQualityFor_updatelondUnnormalizelondInputScorelons_usingSims20190318  -- \
+ * --simsInputDir /uselonr/frigatelon/your_ldap/commonDirForClustelonrelonvaluation/classifielondSims_20190314_copielondFromAtlaProc \
+ * --topK 20000000 --datelon 2019-03-18 --minActivelonFollowelonrs 400 \
+ * --topUselonrsDir /uselonr/frigatelon/your_ldap/commonDirForClustelonrelonvaluation/top20MUselonrs_minActivelonFollowelonrs400_20190215 \
+ * --maxSimsNelonighborsForelonval 40 \
+ * --prelonparelondSimsGraph /uselonr/frigatelon/your_ldap/commonDirForClustelonrelonvaluation/symmelontrizelond_classifielondSims20190318_top20MUselonrs \
+ * --outputDir /uselonr/frigatelon/your_ldap/dirFor_updatelondKnownFor20M_145K_delonc11_usingSims20190127_unnormalizelondInputScorelons/knownForClustelonrelonvaluation \
+ * --knownForDir /uselonr/frigatelon/your_ldap/dirFor_updatelondKnownFor20M_145K_delonc11_usingSims20190127_unnormalizelondInputScorelons/knownFor
  */
-object ClusterEvaluationAdhoc extends TwitterExecutionApp {
-  implicit val tz: java.util.TimeZone = DateOps.UTC
-  implicit val dp = DateParser.default
+objelonct ClustelonrelonvaluationAdhoc elonxtelonnds TwittelonrelonxeloncutionApp {
+  implicit val tz: java.util.TimelonZonelon = DatelonOps.UTC
+  implicit val dp = DatelonParselonr.delonfault
 
-  def job: Execution[Unit] =
-    Execution.getConfigMode.flatMap {
-      case (config, mode) =>
-        Execution.withId { implicit uniqueId =>
-          val args = config.getArgs
+  delonf job: elonxeloncution[Unit] =
+    elonxeloncution.gelontConfigModelon.flatMap {
+      caselon (config, modelon) =>
+        elonxeloncution.withId { implicit uniquelonId =>
+          val args = config.gelontArgs
           val knownFor = args
             .optional("knownForDir").map { location =>
-              KnownForSources.readKnownFor(location)
-            }.getOrElse(KnownForSources.knownFor_20M_Dec11_145K)
+              KnownForSourcelons.relonadKnownFor(location)
+            }.gelontOrelonlselon(KnownForSourcelons.knownFor_20M_Delonc11_145K)
 
-          val minActiveFollowers = args.int("minActiveFollowers", 400)
+          val minActivelonFollowelonrs = args.int("minActivelonFollowelonrs", 400)
           val topK = args.int("topK")
-          val date = DateRange.parse(args("date"))
+          val datelon = DatelonRangelon.parselon(args("datelon"))
 
-          val topUsersExec =
-            TopUsersSimilarityGraph
-              .topUsers(
-                DAL.readMostRecentSnapshot(UsersourceFlatScalaDataset, date).toTypedPipe,
-                minActiveFollowers,
+          val topUselonrselonxelonc =
+            TopUselonrsSimilarityGraph
+              .topUselonrs(
+                DAL.relonadMostReloncelonntSnapshot(UselonrsourcelonFlatScalaDataselont, datelon).toTypelondPipelon,
+                minActivelonFollowelonrs,
                 topK
               )
               .map(_.id)
-              .count("num_top_users")
-              .make(TypedTsv(args("topUsersDir")))
+              .count("num_top_uselonrs")
+              .makelon(TypelondTsv(args("topUselonrsDir")))
 
-          val simsGraphExec = topUsersExec.flatMap { topUsers =>
-            TopUsersSimilarityGraph.makeGraph(
-              TopUsersSimilarityGraph.getSubgraphFromUserGroupedInput(
-                TypedPipe.from(WTFCandidatesSource(args("simsInputDir"))),
-                topUsers,
-                args.int("maxSimsNeighborsForEval", 40),
-                degreeThresholdForStat = 5
+          val simsGraphelonxelonc = topUselonrselonxelonc.flatMap { topUselonrs =>
+            TopUselonrsSimilarityGraph.makelonGraph(
+              TopUselonrsSimilarityGraph.gelontSubgraphFromUselonrGroupelondInput(
+                TypelondPipelon.from(WTFCandidatelonsSourcelon(args("simsInputDir"))),
+                topUselonrs,
+                args.int("maxSimsNelonighborsForelonval", 40),
+                delongrelonelonThrelonsholdForStat = 5
               ),
-              args("preparedSimsGraph")
+              args("prelonparelondSimsGraph")
             )
           }
 
-          val fullExec = simsGraphExec.flatMap { sims =>
-            ClusterEvaluation
-              .clusterLevelEvaluation(sims, knownFor, "eval")
-              .flatMap { clusterResultsPipe =>
-                val clusterResults = clusterResultsPipe.forceToDiskExecution
-                val outputExec = clusterResults.flatMap { pipe =>
-                  pipe
+          val fullelonxelonc = simsGraphelonxelonc.flatMap { sims =>
+            Clustelonrelonvaluation
+              .clustelonrLelonvelonlelonvaluation(sims, knownFor, "elonval")
+              .flatMap { clustelonrRelonsultsPipelon =>
+                val clustelonrRelonsults = clustelonrRelonsultsPipelon.forcelonToDiskelonxeloncution
+                val outputelonxelonc = clustelonrRelonsults.flatMap { pipelon =>
+                  pipelon
                     .map {
-                      case (clusterId, (clusterSize, quality)) =>
+                      caselon (clustelonrId, (clustelonrSizelon, quality)) =>
                         "%d\t%d\t%.2g\t%.2g\t%.1f\t%.2g\t%.2f\t%.2g\t%.2g"
                           .format(
-                            clusterId,
-                            clusterSize,
-                            quality.unweightedRecall.getOrElse(0.0),
-                            quality.weightedRecall.getOrElse(0.0),
-                            quality.unweightedRecallDenominator.getOrElse(0.0),
-                            quality.weightedRecallDenominator.getOrElse(0.0),
-                            quality.relativePrecision.getOrElse(0.0),
-                            quality.relativePrecisionNumerator.getOrElse(0.0),
-                            quality.weightAndProductOfNodeScoresCorrelation.getOrElse(0.0)
+                            clustelonrId,
+                            clustelonrSizelon,
+                            quality.unwelonightelondReloncall.gelontOrelonlselon(0.0),
+                            quality.welonightelondReloncall.gelontOrelonlselon(0.0),
+                            quality.unwelonightelondReloncallDelonnominator.gelontOrelonlselon(0.0),
+                            quality.welonightelondReloncallDelonnominator.gelontOrelonlselon(0.0),
+                            quality.relonlativelonPreloncision.gelontOrelonlselon(0.0),
+                            quality.relonlativelonPreloncisionNumelonrator.gelontOrelonlselon(0.0),
+                            quality.welonightAndProductOfNodelonScorelonsCorrelonlation.gelontOrelonlselon(0.0)
                           )
-                    }.writeExecution(TypedTsv(args("outputDir")))
+                    }.writelonelonxeloncution(TypelondTsv(args("outputDir")))
                 }
 
-                val printExec = clusterResults.flatMap { pipe =>
-                  ClusterEvaluation.summarizePerClusterResults(pipe).map {
-                    case Some(res) =>
-                      println("Overall results: " + Util.prettyJsonMapper.writeValueAsString(res))
-                    case None =>
-                      println("No overall results!!! Probably cluster results pipe is empty.")
+                val printelonxelonc = clustelonrRelonsults.flatMap { pipelon =>
+                  Clustelonrelonvaluation.summarizelonPelonrClustelonrRelonsults(pipelon).map {
+                    caselon Somelon(relons) =>
+                      println("Ovelonrall relonsults: " + Util.prelonttyJsonMappelonr.writelonValuelonAsString(relons))
+                    caselon Nonelon =>
+                      println("No ovelonrall relonsults!!! Probably clustelonr relonsults pipelon is elonmpty.")
                   }
                 }
 
-                Execution.zip(outputExec, printExec)
+                elonxeloncution.zip(outputelonxelonc, printelonxelonc)
               }
           }
 
-          Util.printCounters(fullExec)
+          Util.printCountelonrs(fullelonxelonc)
         }
     }
 }
 
-trait ClusterEvaluationBatch extends TwitterScheduledExecutionApp {
-  implicit val tz: java.util.TimeZone = DateOps.UTC
-  implicit val dp = DateParser.default
+trait ClustelonrelonvaluationBatch elonxtelonnds TwittelonrSchelondulelondelonxeloncutionApp {
+  implicit val tz: java.util.TimelonZonelon = DatelonOps.UTC
+  implicit val dp = DatelonParselonr.delonfault
 
-  def firstTime: String
+  delonf firstTimelon: String
 
-  def batchDescription: String
+  delonf batchDelonscription: String
 
-  def batchIncrement: Duration
+  delonf batchIncrelonmelonnt: Duration
 
-  private lazy val execArgs = AnalyticsBatchExecutionArgs(
-    batchDesc = BatchDescription(batchDescription),
-    firstTime = BatchFirstTime(RichDate(firstTime)),
-    lastTime = None,
-    batchIncrement = BatchIncrement(batchIncrement)
+  privatelon lazy val elonxeloncArgs = AnalyticsBatchelonxeloncutionArgs(
+    batchDelonsc = BatchDelonscription(batchDelonscription),
+    firstTimelon = BatchFirstTimelon(RichDatelon(firstTimelon)),
+    lastTimelon = Nonelon,
+    batchIncrelonmelonnt = BatchIncrelonmelonnt(batchIncrelonmelonnt)
   )
 
-  val emailAddress: String = "no-reply@twitter.com"
+  val elonmailAddrelonss: String = "no-relonply@twittelonr.com"
 
-  def knownForDALDataset: KeyValDALDataset[KeyVal[Long, ClustersUserIsKnownFor]]
+  delonf knownForDALDataselont: KelonyValDALDataselont[KelonyVal[Long, ClustelonrsUselonrIsKnownFor]]
 
-  def knownForModelVersion: String
+  delonf knownForModelonlVelonrsion: String
 
-  def baselineKnownForDALDataset: KeyValDALDataset[KeyVal[Long, ClustersUserIsKnownFor]]
+  delonf baselonlinelonKnownForDALDataselont: KelonyValDALDataselont[KelonyVal[Long, ClustelonrsUselonrIsKnownFor]]
 
-  def baselineKnownForModelVersion: String
+  delonf baselonlinelonKnownForModelonlVelonrsion: String
 
-  override def scheduledJob: Execution[Unit] =
-    AnalyticsBatchExecution(execArgs) { implicit dateRange =>
-      Execution.withId { implicit uniqueId =>
-        Execution.withArgs { args =>
-          val baselineKnownFor =
-            KnownForSources.fromKeyVal(
+  ovelonrridelon delonf schelondulelondJob: elonxeloncution[Unit] =
+    AnalyticsBatchelonxeloncution(elonxeloncArgs) { implicit datelonRangelon =>
+      elonxeloncution.withId { implicit uniquelonId =>
+        elonxeloncution.withArgs { args =>
+          val baselonlinelonKnownFor =
+            KnownForSourcelons.fromKelonyVal(
               DAL
-                .readMostRecentSnapshot(baselineKnownForDALDataset, dateRange.prepend(Days(7)))
-                .toTypedPipe,
-              baselineKnownForModelVersion
+                .relonadMostReloncelonntSnapshot(baselonlinelonKnownForDALDataselont, datelonRangelon.prelonpelonnd(Days(7)))
+                .toTypelondPipelon,
+              baselonlinelonKnownForModelonlVelonrsion
             )
 
           val knownFor =
-            KnownForSources.fromKeyVal(
+            KnownForSourcelons.fromKelonyVal(
               DAL
-                .readMostRecentSnapshot(knownForDALDataset, dateRange.prepend(Days(7)))
-                .toTypedPipe,
-              knownForModelVersion
+                .relonadMostReloncelonntSnapshot(knownForDALDataselont, datelonRangelon.prelonpelonnd(Days(7)))
+                .toTypelondPipelon,
+              knownForModelonlVelonrsion
             )
 
-          val inputSimsGraph = TypedPipe
-            .from(FollowingsCosineSimilaritiesManhattanSource())
+          val inputSimsGraph = TypelondPipelon
+            .from(FollowingsCosinelonSimilaritielonsManhattanSourcelon())
             .map(_._2)
 
-          val minActiveFollowers = args.int("minActiveFollowers")
+          val minActivelonFollowelonrs = args.int("minActivelonFollowelonrs")
           val topK = args.int("topK")
-          val maxSimsNeighborsForEval =
-            args.int("maxSimsNeighborsForEval", 40)
+          val maxSimsNelonighborsForelonval =
+            args.int("maxSimsNelonighborsForelonval", 40)
 
-          val topUsers = TopUsersSimilarityGraph
-            .topUsers(
+          val topUselonrs = TopUselonrsSimilarityGraph
+            .topUselonrs(
               DAL
-                .readMostRecentSnapshot(UsersourceFlatScalaDataset, dateRange)
-                .toTypedPipe,
-              minActiveFollowers,
+                .relonadMostReloncelonntSnapshot(UselonrsourcelonFlatScalaDataselont, datelonRangelon)
+                .toTypelondPipelon,
+              minActivelonFollowelonrs,
               topK
             )
             .map(_.id)
-            .count("num_top_users")
+            .count("num_top_uselonrs")
 
-          TopUsersSimilarityGraph
-            .getSubgraphFromUserGroupedInput(
+          TopUselonrsSimilarityGraph
+            .gelontSubgraphFromUselonrGroupelondInput(
               fullGraph = inputSimsGraph,
-              usersToInclude = topUsers,
-              maxNeighborsPerNode = maxSimsNeighborsForEval,
-              degreeThresholdForStat = 2
+              uselonrsToIncludelon = topUselonrs,
+              maxNelonighborsPelonrNodelon = maxSimsNelonighborsForelonval,
+              delongrelonelonThrelonsholdForStat = 2
             )
-            .forceToDiskExecution
-            .flatMap { symmetrizedSims =>
-              val baselineResultsExec = ClusterEvaluation
-                .overallEvaluation(symmetrizedSims, baselineKnownFor, "baselineKnownForEval")
-              val newResultsExec = ClusterEvaluation
-                .overallEvaluation(symmetrizedSims, knownFor, "newKnownForEval")
-              val minSizeOfBiggerClusterForComparison = 10
-              val compareExec = CompareClusters.summarize(
-                CompareClusters.compare(
-                  KnownForSources.transpose(baselineKnownFor),
-                  KnownForSources.transpose(knownFor),
-                  minSizeOfBiggerCluster = minSizeOfBiggerClusterForComparison
+            .forcelonToDiskelonxeloncution
+            .flatMap { symmelontrizelondSims =>
+              val baselonlinelonRelonsultselonxelonc = Clustelonrelonvaluation
+                .ovelonrallelonvaluation(symmelontrizelondSims, baselonlinelonKnownFor, "baselonlinelonKnownForelonval")
+              val nelonwRelonsultselonxelonc = Clustelonrelonvaluation
+                .ovelonrallelonvaluation(symmelontrizelondSims, knownFor, "nelonwKnownForelonval")
+              val minSizelonOfBiggelonrClustelonrForComparison = 10
+              val comparelonelonxelonc = ComparelonClustelonrs.summarizelon(
+                ComparelonClustelonrs.comparelon(
+                  KnownForSourcelons.transposelon(baselonlinelonKnownFor),
+                  KnownForSourcelons.transposelon(knownFor),
+                  minSizelonOfBiggelonrClustelonr = minSizelonOfBiggelonrClustelonrForComparison
                 ))
 
-              Execution
-                .zip(baselineResultsExec, newResultsExec, compareExec)
+              elonxeloncution
+                .zip(baselonlinelonRelonsultselonxelonc, nelonwRelonsultselonxelonc, comparelonelonxelonc)
                 .map {
-                  case (oldResults, newResults, compareResults) =>
-                    val emailText =
-                      s"Evaluation Results for baseline knownFor: $baselineKnownForModelVersion \n" +
-                        Util.prettyJsonMapper.writeValueAsString(oldResults) +
+                  caselon (oldRelonsults, nelonwRelonsults, comparelonRelonsults) =>
+                    val elonmailTelonxt =
+                      s"elonvaluation Relonsults for baselonlinelon knownFor: $baselonlinelonKnownForModelonlVelonrsion \n" +
+                        Util.prelonttyJsonMappelonr.writelonValuelonAsString(oldRelonsults) +
                         "\n\n-------------------\n\n" +
-                        s"Evaluation Results for new knownFor:$knownForModelVersion\n" +
-                        Util.prettyJsonMapper.writeValueAsString(newResults) +
+                        s"elonvaluation Relonsults for nelonw knownFor:$knownForModelonlVelonrsion\n" +
+                        Util.prelonttyJsonMappelonr.writelonValuelonAsString(nelonwRelonsults) +
                         "\n\n-------------------\n\n" +
-                        s"Cosine similarity distribution between $baselineKnownForModelVersion and " +
-                        s"$knownForModelVersion cluster membership vectors for " +
-                        s"clusters with at least $minSizeOfBiggerClusterForComparison members:\n" +
-                        Util.prettyJsonMapper
-                          .writeValueAsString(compareResults)
+                        s"Cosinelon similarity distribution belontwelonelonn $baselonlinelonKnownForModelonlVelonrsion and " +
+                        s"$knownForModelonlVelonrsion clustelonr melonmbelonrship velonctors for " +
+                        s"clustelonrs with at lelonast $minSizelonOfBiggelonrClustelonrForComparison melonmbelonrs:\n" +
+                        Util.prelonttyJsonMappelonr
+                          .writelonValuelonAsString(comparelonRelonsults)
 
                     Util
-                      .sendEmail(
-                        emailText,
-                        s"Evaluation results comparing $knownForModelVersion with baseline $baselineKnownForModelVersion",
-                        emailAddress)
+                      .selonndelonmail(
+                        elonmailTelonxt,
+                        s"elonvaluation relonsults comparing $knownForModelonlVelonrsion with baselonlinelon $baselonlinelonKnownForModelonlVelonrsion",
+                        elonmailAddrelonss)
                     ()
                 }
             }
@@ -566,42 +566,42 @@ trait ClusterEvaluationBatch extends TwitterScheduledExecutionApp {
 }
 
 /**
- * capesospy-v2 update --build_locally --start_cron cluster_evaluation_for_20M_145k \
- * src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc.yaml
+ * capelonsospy-v2 updatelon --build_locally --start_cron clustelonr_elonvaluation_for_20M_145k \
+ * src/scala/com/twittelonr/simclustelonrs_v2/capelonsos_config/atla_proc.yaml
  */
-object ClusterEvaluationFor20M145K extends ClusterEvaluationBatch {
-  override val firstTime: String = "2019-06-11"
+objelonct ClustelonrelonvaluationFor20M145K elonxtelonnds ClustelonrelonvaluationBatch {
+  ovelonrridelon val firstTimelon: String = "2019-06-11"
 
-  override val batchIncrement: Duration = Days(7)
+  ovelonrridelon val batchIncrelonmelonnt: Duration = Days(7)
 
-  override val batchDescription = "com.twitter.simclusters_v2.scalding.ClusterEvaluationFor20M145K"
+  ovelonrridelon val batchDelonscription = "com.twittelonr.simclustelonrs_v2.scalding.ClustelonrelonvaluationFor20M145K"
 
-  override val knownForDALDataset = SimclustersV2KnownFor20M145KUpdatedScalaDataset
+  ovelonrridelon val knownForDALDataselont = SimclustelonrsV2KnownFor20M145KUpdatelondScalaDataselont
 
-  override val knownForModelVersion = ModelVersions.Model20M145KUpdated
+  ovelonrridelon val knownForModelonlVelonrsion = ModelonlVelonrsions.Modelonl20M145KUpdatelond
 
-  override val baselineKnownForDALDataset = SimclustersV2KnownFor20M145KDec11ScalaDataset
+  ovelonrridelon val baselonlinelonKnownForDALDataselont = SimclustelonrsV2KnownFor20M145KDelonc11ScalaDataselont
 
-  override val baselineKnownForModelVersion = ModelVersions.Model20M145KDec11
+  ovelonrridelon val baselonlinelonKnownForModelonlVelonrsion = ModelonlVelonrsions.Modelonl20M145KDelonc11
 }
 
 /**
- * capesospy-v2 update --build_locally --start_cron cluster_evaluation_for_20M_145k_2020 \
- * src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc.yaml
+ * capelonsospy-v2 updatelon --build_locally --start_cron clustelonr_elonvaluation_for_20M_145k_2020 \
+ * src/scala/com/twittelonr/simclustelonrs_v2/capelonsos_config/atla_proc.yaml
  */
-object ClusterEvaluationFor20M145K2020 extends ClusterEvaluationBatch {
-  override val firstTime: String = "2021-01-25"
+objelonct ClustelonrelonvaluationFor20M145K2020 elonxtelonnds ClustelonrelonvaluationBatch {
+  ovelonrridelon val firstTimelon: String = "2021-01-25"
 
-  override val batchIncrement: Duration = Days(7)
+  ovelonrridelon val batchIncrelonmelonnt: Duration = Days(7)
 
-  override val batchDescription =
-    "com.twitter.simclusters_v2.scalding.ClusterEvaluationFor20M145K2020"
+  ovelonrridelon val batchDelonscription =
+    "com.twittelonr.simclustelonrs_v2.scalding.ClustelonrelonvaluationFor20M145K2020"
 
-  override val knownForDALDataset = SimclustersV2KnownFor20M145K2020ScalaDataset
+  ovelonrridelon val knownForDALDataselont = SimclustelonrsV2KnownFor20M145K2020ScalaDataselont
 
-  override val knownForModelVersion = ModelVersions.Model20M145K2020
+  ovelonrridelon val knownForModelonlVelonrsion = ModelonlVelonrsions.Modelonl20M145K2020
 
-  override val baselineKnownForDALDataset = SimclustersV2KnownFor20M145KUpdatedScalaDataset
+  ovelonrridelon val baselonlinelonKnownForDALDataselont = SimclustelonrsV2KnownFor20M145KUpdatelondScalaDataselont
 
-  override val baselineKnownForModelVersion = ModelVersions.Model20M145KUpdated
+  ovelonrridelon val baselonlinelonKnownForModelonlVelonrsion = ModelonlVelonrsions.Modelonl20M145KUpdatelond
 }

@@ -1,31 +1,31 @@
-package com.twitter.search.earlybird_root.caching;
+packagelon com.twittelonr.selonarch.elonarlybird_root.caching;
 
-import com.google.common.base.Optional;
+import com.googlelon.common.baselon.Optional;
 
-import com.twitter.search.common.caching.CacheUtil;
-import com.twitter.search.common.caching.SearchQueryNormalizer;
-import com.twitter.search.common.caching.filter.CacheRequestNormalizer;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
+import com.twittelonr.selonarch.common.caching.CachelonUtil;
+import com.twittelonr.selonarch.common.caching.SelonarchQuelonryNormalizelonr;
+import com.twittelonr.selonarch.common.caching.filtelonr.CachelonRelonquelonstNormalizelonr;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonquelonst;
+import com.twittelonr.selonarch.elonarlybird_root.common.elonarlybirdRelonquelonstContelonxt;
 
-public class RelevanceZeroResultsCacheRequestNormalizer
-    extends CacheRequestNormalizer<EarlybirdRequestContext, EarlybirdRequest> {
-  @Override
-  public Optional<EarlybirdRequest> normalizeRequest(EarlybirdRequestContext requestContext) {
-    // If the query is not personalized, it means that:
-    //   - RelevanceCacheRequestNormalizer has already normalized it into a cacheable query.
-    //   - RelevanceCacheFilter could not find a response for this query in the cache.
+public class RelonlelonvancelonZelonroRelonsultsCachelonRelonquelonstNormalizelonr
+    elonxtelonnds CachelonRelonquelonstNormalizelonr<elonarlybirdRelonquelonstContelonxt, elonarlybirdRelonquelonst> {
+  @Ovelonrridelon
+  public Optional<elonarlybirdRelonquelonst> normalizelonRelonquelonst(elonarlybirdRelonquelonstContelonxt relonquelonstContelonxt) {
+    // If thelon quelonry is not pelonrsonalizelond, it melonans that:
+    //   - RelonlelonvancelonCachelonRelonquelonstNormalizelonr has alrelonady normalizelond it into a cachelonablelon quelonry.
+    //   - RelonlelonvancelonCachelonFiltelonr could not find a relonsponselon for this quelonry in thelon cachelon.
     //
-    // So if we try to normalize it here again, we will succeed, but then
-    // RelevanceZeroResultsCacheFilter will do the same look up in the cache, which will again
-    // result in a cache miss. There is no need to do this look up twice, so if the query is not
-    // personalized, return Optional.absent().
+    // So if welon try to normalizelon it helonrelon again, welon will succelonelond, but thelonn
+    // RelonlelonvancelonZelonroRelonsultsCachelonFiltelonr will do thelon samelon look up in thelon cachelon, which will again
+    // relonsult in a cachelon miss. Thelonrelon is no nelonelond to do this look up twicelon, so if thelon quelonry is not
+    // pelonrsonalizelond, relonturn Optional.abselonnt().
     //
-    // If the query is personalized, strip all personalization fields and normalize the request.
-    if (!SearchQueryNormalizer.queryIsPersonalized(requestContext.getRequest().getSearchQuery())) {
-      return Optional.absent();
+    // If thelon quelonry is pelonrsonalizelond, strip all pelonrsonalization fielonlds and normalizelon thelon relonquelonst.
+    if (!SelonarchQuelonryNormalizelonr.quelonryIsPelonrsonalizelond(relonquelonstContelonxt.gelontRelonquelonst().gelontSelonarchQuelonry())) {
+      relonturn Optional.abselonnt();
     }
-    return Optional.fromNullable(
-        CacheUtil.normalizeRequestForCache(requestContext.getRequest(), true));
+    relonturn Optional.fromNullablelon(
+        CachelonUtil.normalizelonRelonquelonstForCachelon(relonquelonstContelonxt.gelontRelonquelonst(), truelon));
   }
 }

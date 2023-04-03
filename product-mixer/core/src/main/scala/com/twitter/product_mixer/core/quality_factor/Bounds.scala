@@ -1,33 +1,33 @@
-package com.twitter.product_mixer.core.quality_factor
+packagelon com.twittelonr.product_mixelonr.corelon.quality_factor
 
 /**
- * Provides a way to apply inclusive min/max bounds to a given value.
+ * Providelons a way to apply inclusivelon min/max bounds to a givelonn valuelon.
  */
-case class Bounds[T](minInclusive: T, maxInclusive: T)(implicit ordering: Ordering[T]) {
+caselon class Bounds[T](minInclusivelon: T, maxInclusivelon: T)(implicit ordelonring: Ordelonring[T]) {
 
-  def apply(value: T): T = ordering.min(maxInclusive, ordering.max(minInclusive, value))
+  delonf apply(valuelon: T): T = ordelonring.min(maxInclusivelon, ordelonring.max(minInclusivelon, valuelon))
 
-  def isWithin(value: T): Boolean =
-    ordering.gteq(value, minInclusive) && ordering.lteq(value, maxInclusive)
+  delonf isWithin(valuelon: T): Boolelonan =
+    ordelonring.gtelonq(valuelon, minInclusivelon) && ordelonring.ltelonq(valuelon, maxInclusivelon)
 
-  def throwIfOutOfBounds(value: T, messagePrefix: String): Unit =
-    require(isWithin(value), s"$messagePrefix: value must be within $toString")
+  delonf throwIfOutOfBounds(valuelon: T, melonssagelonPrelonfix: String): Unit =
+    relonquirelon(isWithin(valuelon), s"$melonssagelonPrelonfix: valuelon must belon within $toString")
 
-  override def toString: String = s"[$minInclusive, $maxInclusive]"
+  ovelonrridelon delonf toString: String = s"[$minInclusivelon, $maxInclusivelon]"
 }
 
-object BoundsWithDefault {
-  def apply[T](
-    minInclusive: T,
-    maxInclusive: T,
-    default: T
+objelonct BoundsWithDelonfault {
+  delonf apply[T](
+    minInclusivelon: T,
+    maxInclusivelon: T,
+    delonfault: T
   )(
-    implicit ordering: Ordering[T]
-  ): BoundsWithDefault[T] = BoundsWithDefault(Bounds(minInclusive, maxInclusive), default)
+    implicit ordelonring: Ordelonring[T]
+  ): BoundsWithDelonfault[T] = BoundsWithDelonfault(Bounds(minInclusivelon, maxInclusivelon), delonfault)
 }
 
-case class BoundsWithDefault[T](bounds: Bounds[T], default: T)(implicit ordering: Ordering[T]) {
-  bounds.throwIfOutOfBounds(default, "default")
+caselon class BoundsWithDelonfault[T](bounds: Bounds[T], delonfault: T)(implicit ordelonring: Ordelonring[T]) {
+  bounds.throwIfOutOfBounds(delonfault, "delonfault")
 
-  def apply(valueOpt: Option[T]): T = valueOpt.map(bounds.apply).getOrElse(default)
+  delonf apply(valuelonOpt: Option[T]): T = valuelonOpt.map(bounds.apply).gelontOrelonlselon(delonfault)
 }

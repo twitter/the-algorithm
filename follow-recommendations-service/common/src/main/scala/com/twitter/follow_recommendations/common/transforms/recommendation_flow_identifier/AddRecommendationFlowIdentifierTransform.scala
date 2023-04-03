@@ -1,20 +1,20 @@
-package com.twitter.follow_recommendations.common.transforms.recommendation_flow_identifier
+packagelon com.twittelonr.follow_reloncommelonndations.common.transforms.reloncommelonndation_flow_idelonntifielonr
 
-import com.google.inject.Inject
-import com.twitter.follow_recommendations.common.base.Transform
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.HasRecommendationFlowIdentifier
-import com.twitter.stitch.Stitch
+import com.googlelon.injelonct.Injelonct
+import com.twittelonr.follow_reloncommelonndations.common.baselon.Transform
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.CandidatelonUselonr
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.HasReloncommelonndationFlowIdelonntifielonr
+import com.twittelonr.stitch.Stitch
 
-class AddRecommendationFlowIdentifierTransform @Inject()
-    extends Transform[HasRecommendationFlowIdentifier, CandidateUser] {
+class AddReloncommelonndationFlowIdelonntifielonrTransform @Injelonct()
+    elonxtelonnds Transform[HasReloncommelonndationFlowIdelonntifielonr, CandidatelonUselonr] {
 
-  override def transform(
-    target: HasRecommendationFlowIdentifier,
-    items: Seq[CandidateUser]
-  ): Stitch[Seq[CandidateUser]] = {
-    Stitch.value(items.map { candidateUser =>
-      candidateUser.copy(recommendationFlowIdentifier = target.recommendationFlowIdentifier)
+  ovelonrridelon delonf transform(
+    targelont: HasReloncommelonndationFlowIdelonntifielonr,
+    itelonms: Selonq[CandidatelonUselonr]
+  ): Stitch[Selonq[CandidatelonUselonr]] = {
+    Stitch.valuelon(itelonms.map { candidatelonUselonr =>
+      candidatelonUselonr.copy(reloncommelonndationFlowIdelonntifielonr = targelont.reloncommelonndationFlowIdelonntifielonr)
     })
   }
 }

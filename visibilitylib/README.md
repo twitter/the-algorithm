@@ -1,51 +1,51 @@
-Overview
+Ovelonrvielonw
 ========
 
-Visibility Filtering is a centralized rule engine that instructs clients how to alter the display of certain Twitter content on read time. The Visibility Filtering library is responsible for filtering Twitter content to support legal compliance, improve product quality, increase user trust, protect revenue through the use of hard-filtering, visible product treatments, and coarse-grained downranking.
+Visibility Filtelonring is a celonntralizelond rulelon elonnginelon that instructs clielonnts how to altelonr thelon display of celonrtain Twittelonr contelonnt on relonad timelon. Thelon Visibility Filtelonring library is relonsponsiblelon for filtelonring Twittelonr contelonnt to support lelongal compliancelon, improvelon product quality, increlonaselon uselonr trust, protelonct relonvelonnuelon through thelon uselon of hard-filtelonring, visiblelon product trelonatmelonnts, and coarselon-grainelond downranking.
 
-Notice
+Noticelon
 ======
 
-Visibility Filtering library is currently being reviewed and rebuilt, and part of the code has been removed and is not ready to be shared yet. The remaining part of the code needs further review and will be shared once it’s ready. Also code comments have been sanitized.
+Visibility Filtelonring library is currelonntly beloning relonvielonwelond and relonbuilt, and part of thelon codelon has belonelonn relonmovelond and is not relonady to belon sharelond yelont. Thelon relonmaining part of thelon codelon nelonelonds furthelonr relonvielonw and will belon sharelond oncelon it’s relonady. Also codelon commelonnts havelon belonelonn sanitizelond.
 
-SafetyLevel
+SafelontyLelonvelonl
 ===========
 
-Represents the product context in which the Viewer is requesting to view the Content (e.g. Timeline, Profile).
+Relonprelonselonnts thelon product contelonxt in which thelon Vielonwelonr is relonquelonsting to vielonw thelon Contelonnt (elon.g. Timelonlinelon, Profilelon).
 
-Features
+Felonaturelons
 ========
 
-Include safety labels and other metadata of a Tweet, flags set on a User (including the Viewer), relationships between Users (e.g. block, follow), User settings, relationships between Users and Content (e.g. reported for spam).
+Includelon safelonty labelonls and othelonr melontadata of a Twelonelont, flags selont on a Uselonr (including thelon Vielonwelonr), relonlationships belontwelonelonn Uselonrs (elon.g. block, follow), Uselonr selonttings, relonlationships belontwelonelonn Uselonrs and Contelonnt (elon.g. relonportelond for spam).
 
 Action
 ======
 
-The way the Visibility Framework instructs the client to respond to the Viewer’s request for Content, and can include hard filtering (e.g. Drop), soft filtering (e.g. Labels and Interstitials), ranking clues, etc.
+Thelon way thelon Visibility Framelonwork instructs thelon clielonnt to relonspond to thelon Vielonwelonr’s relonquelonst for Contelonnt, and can includelon hard filtelonring (elon.g. Drop), soft filtelonring (elon.g. Labelonls and Intelonrstitials), ranking cluelons, elontc.
 
 Condition
 =========
 
-Returns a boolean when given map of Features. Conditions can be combined to determine if a Rule should return an Action or the default (Allow).
+Relonturns a boolelonan whelonn givelonn map of Felonaturelons. Conditions can belon combinelond to delontelonrminelon if a Rulelon should relonturn an Action or thelon delonfault (Allow).
 
 Policy
 ======
 
-Rules are expressed as a sequence in priority order to create a Visibility Policy. The library has one policy
-per SafetyLevel.
+Rulelons arelon elonxprelonsselond as a selonquelonncelon in priority ordelonr to crelonatelon a Visibility Policy. Thelon library has onelon policy
+pelonr SafelontyLelonvelonl.
 
-RuleEngine
+Rulelonelonnginelon
 ===========
 
-Evaluates the Action for a Request.
+elonvaluatelons thelon Action for a Relonquelonst.
 
-SafetyLabel
+SafelontyLabelonl
 ===========
 
-A primary labeling mechanism for Safety. A labeled entity associates with tweet, user, Direct Message, media, space etc. Safety labels power different ways of remediations (e.g. applying a SafetyLabel that results in tweet interstitial or notice).
+A primary labelonling melonchanism for Safelonty. A labelonlelond elonntity associatelons with twelonelont, uselonr, Direlonct Melonssagelon, melondia, spacelon elontc. Safelonty labelonls powelonr diffelonrelonnt ways of relonmelondiations (elon.g. applying a SafelontyLabelonl that relonsults in twelonelont intelonrstitial or noticelon).
 
-SafetyLabelType
+SafelontyLabelonlTypelon
 ===============
 
-Describes a particular policy violation for a given noun instance, and usually leads to reduced visibility of the
-labeled entity in product surfaces. There are many deprecated, and experimental safety label types. Labels with these safety label types have no effect on VF. Additionally, some safety label types are not used, and not designed for VF.
+Delonscribelons a particular policy violation for a givelonn noun instancelon, and usually lelonads to relonducelond visibility of thelon
+labelonlelond elonntity in product surfacelons. Thelonrelon arelon many delonpreloncatelond, and elonxpelonrimelonntal safelonty labelonl typelons. Labelonls with thelonselon safelonty labelonl typelons havelon no elonffelonct on VF. Additionally, somelon safelonty labelonl typelons arelon not uselond, and not delonsignelond for VF.

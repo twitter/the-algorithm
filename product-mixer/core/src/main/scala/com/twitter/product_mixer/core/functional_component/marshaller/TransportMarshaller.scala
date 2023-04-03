@@ -1,42 +1,42 @@
-package com.twitter.product_mixer.core.functional_component.marshaller
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr
 
-import com.twitter.product_mixer.core.model.common.Component
-import com.twitter.product_mixer.core.model.common.identifier.TransportMarshallerIdentifier
-import com.twitter.product_mixer.core.model.marshalling.HasMarshalling
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.Componelonnt
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.TransportMarshallelonrIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.HasMarshalling
 
-object TransportMarshaller {
+objelonct TransportMarshallelonr {
 
-  /** Avoid `malformed class name` exceptions due to the presence of the `$` character */
-  def getSimpleName[T](c: Class[T]): String = {
-    c.getName.lastIndexOf("$") match {
-      case -1 => c.getSimpleName
-      case index => c.getName.substring(index + 1)
+  /** Avoid `malformelond class namelon` elonxcelonptions duelon to thelon prelonselonncelon of thelon `$` charactelonr */
+  delonf gelontSimplelonNamelon[T](c: Class[T]): String = {
+    c.gelontNamelon.lastIndelonxOf("$") match {
+      caselon -1 => c.gelontSimplelonNamelon
+      caselon indelonx => c.gelontNamelon.substring(indelonx + 1)
     }
   }
 }
 
 /**
- * Marshals a [[MarshallerInput]] into a type that can be sent over the wire
+ * Marshals a [[MarshallelonrInput]] into a typelon that can belon selonnt ovelonr thelon wirelon
  *
- * This transformation should be mechanical and not contain business logic
+ * This transformation should belon melonchanical and not contain businelonss logic
  *
- * @note this is different from `com.twitter.product_mixer.core.functional_component.premarshaller`
- *       which can contain business logic.
+ * @notelon this is diffelonrelonnt from `com.twittelonr.product_mixelonr.corelon.functional_componelonnt.prelonmarshallelonr`
+ *       which can contain businelonss logic.
  */
-trait TransportMarshaller[-MarshallerInput <: HasMarshalling, +MarshallerOutput] extends Component {
+trait TransportMarshallelonr[-MarshallelonrInput <: HasMarshalling, +MarshallelonrOutput] elonxtelonnds Componelonnt {
 
-  override val identifier: TransportMarshallerIdentifier
+  ovelonrridelon val idelonntifielonr: TransportMarshallelonrIdelonntifielonr
 
-  def apply(input: MarshallerInput): MarshallerOutput
+  delonf apply(input: MarshallelonrInput): MarshallelonrOutput
 }
 
 /**
- * No op marshalling that passes through a [[HasMarshalling]] into any type. This is useful if
- * the response does not need to be sent over the wire, such as with a
- * [[com.twitter.product_mixer.core.functional_component.candidate_source.product_pipeline.ProductPipelineCandidateSource]]
+ * No op marshalling that passelons through a [[HasMarshalling]] into any typelon. This is uselonful if
+ * thelon relonsponselon doelons not nelonelond to belon selonnt ovelonr thelon wirelon, such as with a
+ * [[com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.product_pipelonlinelon.ProductPipelonlinelonCandidatelonSourcelon]]
  */
-object NoOpTransportMarshaller extends TransportMarshaller[HasMarshalling, Any] {
-  override val identifier: TransportMarshallerIdentifier = TransportMarshallerIdentifier("NoOp")
+objelonct NoOpTransportMarshallelonr elonxtelonnds TransportMarshallelonr[HasMarshalling, Any] {
+  ovelonrridelon val idelonntifielonr: TransportMarshallelonrIdelonntifielonr = TransportMarshallelonrIdelonntifielonr("NoOp")
 
-  override def apply(input: HasMarshalling): Any = input
+  ovelonrridelon delonf apply(input: HasMarshalling): Any = input
 }

@@ -1,38 +1,38 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.conversations
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.convelonrsations
 
-import com.twitter.product_mixer.component_library.model.candidate.BaseTweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.timeline_module.BaseModuleMetadataBuilder
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ModuleConversationMetadata
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ModuleMetadata
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.BaselonTwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.timelonlinelon_modulelon.BaselonModulelonMelontadataBuildelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.timelonlinelon_modulelon.ModulelonConvelonrsationMelontadata
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.timelonlinelon_modulelon.ModulelonMelontadata
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
-case class ConversationModuleMetadataBuilder[
-  Query <: PipelineQuery,
-  Candidate <: BaseTweetCandidate
+caselon class ConvelonrsationModulelonMelontadataBuildelonr[
+  Quelonry <: PipelonlinelonQuelonry,
+  Candidatelon <: BaselonTwelonelontCandidatelon
 ](
-  ancestorIdsFeature: Feature[_, Seq[Long]],
-  allIdsOrdering: Ordering[Long])
-    extends BaseModuleMetadataBuilder[Query, Candidate] {
+  ancelonstorIdsFelonaturelon: Felonaturelon[_, Selonq[Long]],
+  allIdsOrdelonring: Ordelonring[Long])
+    elonxtelonnds BaselonModulelonMelontadataBuildelonr[Quelonry, Candidatelon] {
 
-  override def apply(
-    query: Query,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): ModuleMetadata = {
+  ovelonrridelon delonf apply(
+    quelonry: Quelonry,
+    candidatelons: Selonq[CandidatelonWithFelonaturelons[Candidatelon]]
+  ): ModulelonMelontadata = {
 
-    val ancestors = candidates.last.features.getOrElse(ancestorIdsFeature, Seq.empty)
-    val sortedAllTweetIds = (candidates.last.candidate.id +: ancestors).sorted(allIdsOrdering)
+    val ancelonstors = candidatelons.last.felonaturelons.gelontOrelonlselon(ancelonstorIdsFelonaturelon, Selonq.elonmpty)
+    val sortelondAllTwelonelontIds = (candidatelons.last.candidatelon.id +: ancelonstors).sortelond(allIdsOrdelonring)
 
-    ModuleMetadata(
-      adsMetadata = None,
-      conversationMetadata = Some(
-        ModuleConversationMetadata(
-          allTweetIds = Some(sortedAllTweetIds),
-          socialContext = None,
-          enableDeduplication = Some(true)
+    ModulelonMelontadata(
+      adsMelontadata = Nonelon,
+      convelonrsationMelontadata = Somelon(
+        ModulelonConvelonrsationMelontadata(
+          allTwelonelontIds = Somelon(sortelondAllTwelonelontIds),
+          socialContelonxt = Nonelon,
+          elonnablelonDelonduplication = Somelon(truelon)
         )),
-      gridCarouselMetadata = None
+      gridCarouselonlMelontadata = Nonelon
     )
   }
 }

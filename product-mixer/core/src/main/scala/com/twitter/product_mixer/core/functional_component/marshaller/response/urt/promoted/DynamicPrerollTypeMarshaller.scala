@@ -1,20 +1,20 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.promotelond
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.Amplify
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.DynamicPrerollType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.LiveTvEvent
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.Marketplace
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.promotelond.Amplify
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.promotelond.DynamicPrelonrollTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.promotelond.LivelonTvelonvelonnt
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.promotelond.Markelontplacelon
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class DynamicPrerollTypeMarshaller @Inject() () {
+@Singlelonton
+class DynamicPrelonrollTypelonMarshallelonr @Injelonct() () {
 
-  def apply(dynamicPrerollType: DynamicPrerollType): urt.DynamicPrerollType =
-    dynamicPrerollType match {
-      case Amplify => urt.DynamicPrerollType.Amplify
-      case Marketplace => urt.DynamicPrerollType.Marketplace
-      case LiveTvEvent => urt.DynamicPrerollType.LiveTvEvent
+  delonf apply(dynamicPrelonrollTypelon: DynamicPrelonrollTypelon): urt.DynamicPrelonrollTypelon =
+    dynamicPrelonrollTypelon match {
+      caselon Amplify => urt.DynamicPrelonrollTypelon.Amplify
+      caselon Markelontplacelon => urt.DynamicPrelonrollTypelon.Markelontplacelon
+      caselon LivelonTvelonvelonnt => urt.DynamicPrelonrollTypelon.LivelonTvelonvelonnt
     }
 }

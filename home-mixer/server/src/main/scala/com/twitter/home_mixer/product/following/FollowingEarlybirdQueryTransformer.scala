@@ -1,84 +1,84 @@
-package com.twitter.home_mixer.product.following
+packagelon com.twittelonr.homelon_mixelonr.product.following
 
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.finagle.tracing.Trace
-import com.twitter.home_mixer.functional_component.feature_hydrator.SGSFollowedUsersFeature
-import com.twitter.home_mixer.model.HomeFeatures.RealGraphInNetworkScoresFeature
-import com.twitter.home_mixer.product.following.model.FollowingQuery
-import com.twitter.home_mixer.product.following.param.FollowingParam.ServerMaxResultsParam
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.BottomCursor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.GapCursor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.TopCursor
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.MalformedCursor
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant
-import com.twitter.search.earlybird.{thriftscala => t}
-import com.twitter.search.queryparser.query.Conjunction
-import com.twitter.search.queryparser.query.search.SearchOperator
-import javax.inject.Inject
-import javax.inject.Singleton
-import scala.jdk.CollectionConverters.asJavaIterableConverter
+import com.twittelonr.finaglelon.thrift.ClielonntId
+import com.twittelonr.finaglelon.tracing.Tracelon
+import com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator.SGSFollowelondUselonrsFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.RelonalGraphInNelontworkScorelonsFelonaturelon
+import com.twittelonr.homelon_mixelonr.product.following.modelonl.FollowingQuelonry
+import com.twittelonr.homelon_mixelonr.product.following.param.FollowingParam.SelonrvelonrMaxRelonsultsParam
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.transformelonr.CandidatelonPipelonlinelonQuelonryTransformelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.opelonration.BottomCursor
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.opelonration.GapCursor
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.opelonration.TopCursor
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.MalformelondCursor
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.PipelonlinelonFailurelon
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdFielonldConstants.elonarlybirdFielonldConstant
+import com.twittelonr.selonarch.elonarlybird.{thriftscala => t}
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.Conjunction
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.selonarch.SelonarchOpelonrator
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
+import scala.jdk.CollelonctionConvelonrtelonrs.asJavaItelonrablelonConvelonrtelonr
 
-@Singleton
-case class FollowingEarlybirdQueryTransformer @Inject() (clientId: ClientId)
-    extends CandidatePipelineQueryTransformer[FollowingQuery, t.EarlybirdRequest] {
+@Singlelonton
+caselon class FollowingelonarlybirdQuelonryTransformelonr @Injelonct() (clielonntId: ClielonntId)
+    elonxtelonnds CandidatelonPipelonlinelonQuelonryTransformelonr[FollowingQuelonry, t.elonarlybirdRelonquelonst] {
 
-  override def transform(query: FollowingQuery): t.EarlybirdRequest = {
-    val followedUserIds =
-      query.features.map(_.get(SGSFollowedUsersFeature)).getOrElse(Seq.empty).toSet
-    val realGraphInNetworkFollowedUserIds =
-      query.features.map(_.get(RealGraphInNetworkScoresFeature)).getOrElse(Map.empty).keySet
-    val userId = query.getRequiredUserId
-    val combinedUserIds = userId +: (followedUserIds ++ realGraphInNetworkFollowedUserIds).toSeq
+  ovelonrridelon delonf transform(quelonry: FollowingQuelonry): t.elonarlybirdRelonquelonst = {
+    val followelondUselonrIds =
+      quelonry.felonaturelons.map(_.gelont(SGSFollowelondUselonrsFelonaturelon)).gelontOrelonlselon(Selonq.elonmpty).toSelont
+    val relonalGraphInNelontworkFollowelondUselonrIds =
+      quelonry.felonaturelons.map(_.gelont(RelonalGraphInNelontworkScorelonsFelonaturelon)).gelontOrelonlselon(Map.elonmpty).kelonySelont
+    val uselonrId = quelonry.gelontRelonquirelondUselonrId
+    val combinelondUselonrIds = uselonrId +: (followelondUselonrIds ++ relonalGraphInNelontworkFollowelondUselonrIds).toSelonq
 
-    val baseFollowedUsersSearchOperator = new SearchOperator.Builder()
-      .setType(SearchOperator.Type.FEATURE_VALUE_IN_ACCEPT_LIST_OR_UNSET)
-      .addOperand(EarlybirdFieldConstant.DIRECTED_AT_USER_ID_CSF.getFieldName)
+    val baselonFollowelondUselonrsSelonarchOpelonrator = nelonw SelonarchOpelonrator.Buildelonr()
+      .selontTypelon(SelonarchOpelonrator.Typelon.FelonATURelon_VALUelon_IN_ACCelonPT_LIST_OR_UNSelonT)
+      .addOpelonrand(elonarlybirdFielonldConstant.DIRelonCTelonD_AT_USelonR_ID_CSF.gelontFielonldNamelon)
 
-    val followedUsersQuery =
-      baseFollowedUsersSearchOperator.addOperands(combinedUserIds.map(_.toString).asJava).build()
+    val followelondUselonrsQuelonry =
+      baselonFollowelondUselonrsSelonarchOpelonrator.addOpelonrands(combinelondUselonrIds.map(_.toString).asJava).build()
 
-    val searchQuery = query.pipelineCursor
+    val selonarchQuelonry = quelonry.pipelonlinelonCursor
       .map { cursor =>
-        val sinceIdQuery =
-          (id: Long) => new SearchOperator(SearchOperator.Type.SINCE_ID, id.toString)
-        val maxIdQuery = // max ID is inclusive, so subtract 1
-          (id: Long) => new SearchOperator(SearchOperator.Type.MAX_ID, (id - 1).toString)
+        val sincelonIdQuelonry =
+          (id: Long) => nelonw SelonarchOpelonrator(SelonarchOpelonrator.Typelon.SINCelon_ID, id.toString)
+        val maxIdQuelonry = // max ID is inclusivelon, so subtract 1
+          (id: Long) => nelonw SelonarchOpelonrator(SelonarchOpelonrator.Typelon.MAX_ID, (id - 1).toString)
 
-        (cursor.cursorType, cursor.id, cursor.gapBoundaryId) match {
-          case (Some(TopCursor), Some(sinceId), _) =>
-            new Conjunction(sinceIdQuery(sinceId), followedUsersQuery)
-          case (Some(BottomCursor), Some(maxId), _) =>
-            new Conjunction(maxIdQuery(maxId), followedUsersQuery)
-          case (Some(GapCursor), Some(maxId), Some(sinceId)) =>
-            new Conjunction(sinceIdQuery(sinceId), maxIdQuery(maxId), followedUsersQuery)
-          case (Some(GapCursor), _, _) =>
-            throw PipelineFailure(MalformedCursor, "Invalid cursor " + cursor.toString)
-          case _ => followedUsersQuery
+        (cursor.cursorTypelon, cursor.id, cursor.gapBoundaryId) match {
+          caselon (Somelon(TopCursor), Somelon(sincelonId), _) =>
+            nelonw Conjunction(sincelonIdQuelonry(sincelonId), followelondUselonrsQuelonry)
+          caselon (Somelon(BottomCursor), Somelon(maxId), _) =>
+            nelonw Conjunction(maxIdQuelonry(maxId), followelondUselonrsQuelonry)
+          caselon (Somelon(GapCursor), Somelon(maxId), Somelon(sincelonId)) =>
+            nelonw Conjunction(sincelonIdQuelonry(sincelonId), maxIdQuelonry(maxId), followelondUselonrsQuelonry)
+          caselon (Somelon(GapCursor), _, _) =>
+            throw PipelonlinelonFailurelon(MalformelondCursor, "Invalid cursor " + cursor.toString)
+          caselon _ => followelondUselonrsQuelonry
         }
-      }.getOrElse(followedUsersQuery)
+      }.gelontOrelonlselon(followelondUselonrsQuelonry)
 
-    val metadataOptions = t.ThriftSearchResultMetadataOptions(
-      getInReplyToStatusId = true,
-      getReferencedTweetAuthorId = true,
-      getFromUserId = true
+    val melontadataOptions = t.ThriftSelonarchRelonsultMelontadataOptions(
+      gelontInRelonplyToStatusId = truelon,
+      gelontRelonfelonrelonncelondTwelonelontAuthorId = truelon,
+      gelontFromUselonrId = truelon
     )
 
-    t.EarlybirdRequest(
-      searchQuery = t.ThriftSearchQuery(
-        serializedQuery = Some(searchQuery.serialize),
-        fromUserIDFilter64 = Some(combinedUserIds),
-        numResults = query.requestedMaxResults.getOrElse(query.params(ServerMaxResultsParam)),
-        rankingMode = t.ThriftSearchRankingMode.Recency,
-        resultMetadataOptions = Some(metadataOptions),
-        searcherId = query.getOptionalUserId,
+    t.elonarlybirdRelonquelonst(
+      selonarchQuelonry = t.ThriftSelonarchQuelonry(
+        selonrializelondQuelonry = Somelon(selonarchQuelonry.selonrializelon),
+        fromUselonrIDFiltelonr64 = Somelon(combinelondUselonrIds),
+        numRelonsults = quelonry.relonquelonstelondMaxRelonsults.gelontOrelonlselon(quelonry.params(SelonrvelonrMaxRelonsultsParam)),
+        rankingModelon = t.ThriftSelonarchRankingModelon.Reloncelonncy,
+        relonsultMelontadataOptions = Somelon(melontadataOptions),
+        selonarchelonrId = quelonry.gelontOptionalUselonrId,
       ),
-      getOlderResults = Some(true), // needed for archive access to older tweets
-      clientRequestID = Some(s"${Trace.id.traceId}"),
-      followedUserIds = Some(combinedUserIds),
-      numResultsToReturnAtRoot = Some(query.params(ServerMaxResultsParam)),
-      clientId = Some(clientId.name),
+      gelontOldelonrRelonsults = Somelon(truelon), // nelonelondelond for archivelon accelonss to oldelonr twelonelonts
+      clielonntRelonquelonstID = Somelon(s"${Tracelon.id.tracelonId}"),
+      followelondUselonrIds = Somelon(combinelondUselonrIds),
+      numRelonsultsToRelonturnAtRoot = Somelon(quelonry.params(SelonrvelonrMaxRelonsultsParam)),
+      clielonntId = Somelon(clielonntId.namelon),
     )
   }
 }

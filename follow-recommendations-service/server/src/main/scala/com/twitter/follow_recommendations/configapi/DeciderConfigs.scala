@@ -1,52 +1,52 @@
-package com.twitter.follow_recommendations.configapi
+packagelon com.twittelonr.follow_reloncommelonndations.configapi
 
-import com.twitter.decider.Recipient
-import com.twitter.decider.SimpleRecipient
-import com.twitter.follow_recommendations.configapi.deciders.DeciderKey
-import com.twitter.follow_recommendations.configapi.deciders.DeciderParams
-import com.twitter.follow_recommendations.products.home_timeline_tweet_recs.configapi.HomeTimelineTweetRecsParams
-import com.twitter.servo.decider.DeciderGateBuilder
-import com.twitter.timelines.configapi._
-import com.twitter.timelines.configapi.decider.DeciderSwitchOverrideValue
-import com.twitter.timelines.configapi.decider.GuestRecipient
-import com.twitter.timelines.configapi.decider.RecipientBuilder
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.deloncidelonr.Reloncipielonnt
+import com.twittelonr.deloncidelonr.SimplelonReloncipielonnt
+import com.twittelonr.follow_reloncommelonndations.configapi.deloncidelonrs.DeloncidelonrKelony
+import com.twittelonr.follow_reloncommelonndations.configapi.deloncidelonrs.DeloncidelonrParams
+import com.twittelonr.follow_reloncommelonndations.products.homelon_timelonlinelon_twelonelont_reloncs.configapi.HomelonTimelonlinelonTwelonelontReloncsParams
+import com.twittelonr.selonrvo.deloncidelonr.DeloncidelonrGatelonBuildelonr
+import com.twittelonr.timelonlinelons.configapi._
+import com.twittelonr.timelonlinelons.configapi.deloncidelonr.DeloncidelonrSwitchOvelonrridelonValuelon
+import com.twittelonr.timelonlinelons.configapi.deloncidelonr.GuelonstReloncipielonnt
+import com.twittelonr.timelonlinelons.configapi.deloncidelonr.ReloncipielonntBuildelonr
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class DeciderConfigs @Inject() (deciderGateBuilder: DeciderGateBuilder) {
-  val overrides: Seq[OptionalOverride[_]] = DeciderConfigs.ParamsToDeciderMap.map {
-    case (params, deciderKey) =>
-      params.optionalOverrideValue(
-        DeciderSwitchOverrideValue(
-          feature = deciderGateBuilder.keyToFeature(deciderKey),
-          enabledValue = true,
-          recipientBuilder = DeciderConfigs.UserOrGuestOrRequest
+@Singlelonton
+class DeloncidelonrConfigs @Injelonct() (deloncidelonrGatelonBuildelonr: DeloncidelonrGatelonBuildelonr) {
+  val ovelonrridelons: Selonq[OptionalOvelonrridelon[_]] = DeloncidelonrConfigs.ParamsToDeloncidelonrMap.map {
+    caselon (params, deloncidelonrKelony) =>
+      params.optionalOvelonrridelonValuelon(
+        DeloncidelonrSwitchOvelonrridelonValuelon(
+          felonaturelon = deloncidelonrGatelonBuildelonr.kelonyToFelonaturelon(deloncidelonrKelony),
+          elonnablelondValuelon = truelon,
+          reloncipielonntBuildelonr = DeloncidelonrConfigs.UselonrOrGuelonstOrRelonquelonst
         )
       )
-  }.toSeq
+  }.toSelonq
 
-  val config: BaseConfig = BaseConfigBuilder(overrides).build("FollowRecommendationServiceDeciders")
+  val config: BaselonConfig = BaselonConfigBuildelonr(ovelonrridelons).build("FollowReloncommelonndationSelonrvicelonDeloncidelonrs")
 }
 
-object DeciderConfigs {
-  val ParamsToDeciderMap = Map(
-    DeciderParams.EnableRecommendations -> DeciderKey.EnableRecommendations,
-    DeciderParams.EnableScoreUserCandidates -> DeciderKey.EnableScoreUserCandidates,
-    HomeTimelineTweetRecsParams.EnableProduct -> DeciderKey.EnableHomeTimelineTweetRecsProduct,
+objelonct DeloncidelonrConfigs {
+  val ParamsToDeloncidelonrMap = Map(
+    DeloncidelonrParams.elonnablelonReloncommelonndations -> DeloncidelonrKelony.elonnablelonReloncommelonndations,
+    DeloncidelonrParams.elonnablelonScorelonUselonrCandidatelons -> DeloncidelonrKelony.elonnablelonScorelonUselonrCandidatelons,
+    HomelonTimelonlinelonTwelonelontReloncsParams.elonnablelonProduct -> DeloncidelonrKelony.elonnablelonHomelonTimelonlinelonTwelonelontReloncsProduct,
   )
 
-  object UserOrGuestOrRequest extends RecipientBuilder {
+  objelonct UselonrOrGuelonstOrRelonquelonst elonxtelonnds ReloncipielonntBuildelonr {
 
-    def apply(requestContext: BaseRequestContext): Option[Recipient] = requestContext match {
-      case c: WithUserId if c.userId.isDefined =>
-        c.userId.map(SimpleRecipient)
-      case c: WithGuestId if c.guestId.isDefined =>
-        c.guestId.map(GuestRecipient)
-      case c: WithGuestId =>
-        RecipientBuilder.Request(c)
-      case _ =>
-        throw new UndefinedUserIdNorGuestIDException(requestContext)
+    delonf apply(relonquelonstContelonxt: BaselonRelonquelonstContelonxt): Option[Reloncipielonnt] = relonquelonstContelonxt match {
+      caselon c: WithUselonrId if c.uselonrId.isDelonfinelond =>
+        c.uselonrId.map(SimplelonReloncipielonnt)
+      caselon c: WithGuelonstId if c.guelonstId.isDelonfinelond =>
+        c.guelonstId.map(GuelonstReloncipielonnt)
+      caselon c: WithGuelonstId =>
+        ReloncipielonntBuildelonr.Relonquelonst(c)
+      caselon _ =>
+        throw nelonw UndelonfinelondUselonrIdNorGuelonstIDelonxcelonption(relonquelonstContelonxt)
     }
   }
 }

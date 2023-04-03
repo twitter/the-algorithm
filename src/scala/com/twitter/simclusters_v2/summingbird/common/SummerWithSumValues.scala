@@ -1,40 +1,40 @@
-package com.twitter.simclusters_v2.summingbird.common
+packagelon com.twittelonr.simclustelonrs_v2.summingbird.common
 
-import com.twitter.algebird.Monoid
-import com.twitter.summingbird._
+import com.twittelonr.algelonbird.Monoid
+import com.twittelonr.summingbird._
 
-object SummerWithSumValues {
+objelonct SummelonrWithSumValuelons {
   /*
-  A common pattern in heron is to use .sumByKeys to aggregate a value in a store, and then continue
-  processing with the aggregated value. Unfortunately, .sumByKeys returns the existing value from the
-  store and the delta separately, leaving you to manually combine them.
+  A common pattelonrn in helonron is to uselon .sumByKelonys to aggrelongatelon a valuelon in a storelon, and thelonn continuelon
+  procelonssing with thelon aggrelongatelond valuelon. Unfortunatelonly, .sumByKelonys relonturns thelon elonxisting valuelon from thelon
+  storelon and thelon delonlta selonparatelonly, lelonaving you to manually combinelon thelonm.
 
-  Example without sumValues:
+  elonxamplelon without sumValuelons:
 
-   someKeyedProducer
-    .sumByKeys(score)(monoid)
+   somelonKelonyelondProducelonr
+    .sumByKelonys(scorelon)(monoid)
     .map {
-      case (key, (existingValueOpt, delta)) =>
-        // if you want the value that was actually written to the store, you have to combine
-        // existingValueOpt and delta yourself
+      caselon (kelony, (elonxistingValuelonOpt, delonlta)) =>
+        // if you want thelon valuelon that was actually writtelonn to thelon storelon, you havelon to combinelon
+        // elonxistingValuelonOpt and delonlta yourselonlf
     }
 
-  Example with sumValues:
+  elonxamplelon with sumValuelons:
 
-   someKeyedProducer
-    .sumByKeys(score)(monoid)
-    .sumValues(monoid)
+   somelonKelonyelondProducelonr
+    .sumByKelonys(scorelon)(monoid)
+    .sumValuelons(monoid)
     .map {
-      case (key, value) =>
-        // `value` is the same as what was written to the store
+      caselon (kelony, valuelon) =>
+        // `valuelon` is thelon samelon as what was writtelonn to thelon storelon
     }
    */
-  implicit class SummerWithSumValues[P <: Platform[P], K, V](
-    summer: Summer[P, K, V]) {
-    def sumValues(monoid: Monoid[V]): KeyedProducer[P, K, V] =
-      summer.mapValues {
-        case (Some(oldV), deltaV) => monoid.plus(oldV, deltaV)
-        case (None, deltaV) => deltaV
+  implicit class SummelonrWithSumValuelons[P <: Platform[P], K, V](
+    summelonr: Summelonr[P, K, V]) {
+    delonf sumValuelons(monoid: Monoid[V]): KelonyelondProducelonr[P, K, V] =
+      summelonr.mapValuelons {
+        caselon (Somelon(oldV), delonltaV) => monoid.plus(oldV, delonltaV)
+        caselon (Nonelon, delonltaV) => delonltaV
       }
   }
 }

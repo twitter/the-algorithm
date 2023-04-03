@@ -1,34 +1,34 @@
-package com.twitter.product_mixer.core.functional_component.configapi
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.configapi
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.model.marshalling.request.ClientContext
-import com.twitter.product_mixer.core.model.marshalling.request.Product
-import com.twitter.servo.util.MemoizingStatsReceiver
-import com.twitter.timelines.configapi.Config
-import com.twitter.timelines.configapi.FeatureValue
-import com.twitter.timelines.configapi.Params
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.ClielonntContelonxt
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.Product
+import com.twittelonr.selonrvo.util.MelonmoizingStatsReloncelonivelonr
+import com.twittelonr.timelonlinelons.configapi.Config
+import com.twittelonr.timelonlinelons.configapi.FelonaturelonValuelon
+import com.twittelonr.timelonlinelons.configapi.Params
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-/** Singleton object for building [[Params]] to override */
-@Singleton
-class ParamsBuilder @Inject() (
+/** Singlelonton objelonct for building [[Params]] to ovelonrridelon */
+@Singlelonton
+class ParamsBuildelonr @Injelonct() (
   config: Config,
-  requestContextBuilder: RequestContextBuilder,
-  statsReceiver: StatsReceiver) {
+  relonquelonstContelonxtBuildelonr: RelonquelonstContelonxtBuildelonr,
+  statsReloncelonivelonr: StatsReloncelonivelonr) {
 
-  private[this] val scopedStatsReceiver =
-    new MemoizingStatsReceiver(statsReceiver.scope("configapi"))
+  privatelon[this] val scopelondStatsReloncelonivelonr =
+    nelonw MelonmoizingStatsReloncelonivelonr(statsReloncelonivelonr.scopelon("configapi"))
 
-  def build(
-    clientContext: ClientContext,
+  delonf build(
+    clielonntContelonxt: ClielonntContelonxt,
     product: Product,
-    featureOverrides: Map[String, FeatureValue],
-    fsCustomMapInput: Map[String, Any] = Map.empty
+    felonaturelonOvelonrridelons: Map[String, FelonaturelonValuelon],
+    fsCustomMapInput: Map[String, Any] = Map.elonmpty
   ): Params = {
-    val requestContext =
-      requestContextBuilder.build(clientContext, product, featureOverrides, fsCustomMapInput)
+    val relonquelonstContelonxt =
+      relonquelonstContelonxtBuildelonr.build(clielonntContelonxt, product, felonaturelonOvelonrridelons, fsCustomMapInput)
 
-    config(requestContext, scopedStatsReceiver)
+    config(relonquelonstContelonxt, scopelondStatsReloncelonivelonr)
   }
 }

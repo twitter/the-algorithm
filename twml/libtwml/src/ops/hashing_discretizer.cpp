@@ -1,260 +1,260 @@
-#include "tensorflow/core/framework/op.h"
-#include "tensorflow/core/framework/shape_inference.h"
-#include "tensorflow/core/framework/op_kernel.h"
-#include "tensorflow/core/util/work_sharder.h"
+#includelon "telonnsorflow/corelon/framelonwork/op.h"
+#includelon "telonnsorflow/corelon/framelonwork/shapelon_infelonrelonncelon.h"
+#includelon "telonnsorflow/corelon/framelonwork/op_kelonrnelonl.h"
+#includelon "telonnsorflow/corelon/util/work_shardelonr.h"
 
-#include <twml.h>
-#include "tensorflow_utils.h"
+#includelon <twml.h>
+#includelon "telonnsorflow_utils.h"
 
-using namespace tensorflow;
+using namelonspacelon telonnsorflow;
 
-void ComputeHashingDiscretizer(
-  OpKernelContext*,
+void ComputelonHashingDiscrelontizelonr(
+  OpKelonrnelonlContelonxt*,
   int64_t,
   const twml::Map<int64_t, int64_t> &,
   int64_t,
   int64_t,
   int64_t);
 
-REGISTER_OP("HashingDiscretizer")
-.Attr("T: {float, double}")
+RelonGISTelonR_OP("HashingDiscrelontizelonr")
+.Attr("T: {float, doublelon}")
 .Input("input_ids: int64")
 .Input("input_vals: T")
 .Input("bin_vals: T")
-.Attr("feature_ids: tensor = { dtype: DT_INT64 }")
+.Attr("felonaturelon_ids: telonnsor = { dtypelon: DT_INT64 }")
 .Attr("n_bin: int")
 .Attr("output_bits: int")
-.Attr("cost_per_unit: int")
+.Attr("cost_pelonr_unit: int")
 .Attr("options: int")
-.Output("new_keys: int64")
-.Output("new_vals: T")
-.SetShapeFn(
-  [](::tensorflow::shape_inference::InferenceContext* c) {
-    c->set_output(0, c->input(0));
-    c->set_output(1, c->input(1));
-    return Status::OK();
+.Output("nelonw_kelonys: int64")
+.Output("nelonw_vals: T")
+.SelontShapelonFn(
+  [](::telonnsorflow::shapelon_infelonrelonncelon::InfelonrelonncelonContelonxt* c) {
+    c->selont_output(0, c->input(0));
+    c->selont_output(1, c->input(1));
+    relonturn Status::OK();
   }
 )
 .Doc(R"doc(
 
-This operation discretizes a tensor containing continuous features (if calibrated).
-  - note - choice of float or double should be consistent among inputs/output
+This opelonration discrelontizelons a telonnsor containing continuous felonaturelons (if calibratelond).
+  - notelon - choicelon of float or doublelon should belon consistelonnt among inputs/output
 
 Input
-  input_ids(int64): A tensor containing input feature ids (direct from data record).
-  input_vals(float/double): A tensor containing input values at corresponding feature ids.
-    - i.e. input_ids[i] <-> input_vals[i] for each i
-  bin_vals(float/double): A tensor containing the bin boundaries for values of a given feature.
-    - float or double, matching input_vals
-  feature_ids(int64 attr): 1D TensorProto of feature IDs seen during calibration
-    -> hint: look up make_tensor_proto:
-       proto_init = np.array(values, dtype=np.int64)
-       tensor_attr = tf.make_tensor_proto(proto_init)
-  n_bin(int): The number of bin boundary values per feature
-    -> hence, n_bin + 1 buckets for each feature
-  output_bits(int): The maximum number of bits to use for the output IDs.
-  cost_per_unit(int): An estimate of the number of CPU cycles (or nanoseconds
-    if not CPU-bound) to complete a unit of work. Overestimating creates too
-    many shards and CPU time will be dominated by per-shard overhead, such as
-    Context creation. Underestimating may not fully make use of the specified
-    parallelism.
-  options(int): selects behavior of the op.
-    0x00 in bits{1:0} for std::lower_bound bucket search.
-    0x01 in bits{1:0} for linear bucket search
-    0x02 in bits{1:0} for std::upper_bound bucket search
-    0x00 in bits{4:2} for integer_multiplicative_hashing
-    0x01 in bits{4:2} for integer64_multiplicative_hashing
-    higher bits/other values are reserved for future extensions
+  input_ids(int64): A telonnsor containing input felonaturelon ids (direlonct from data reloncord).
+  input_vals(float/doublelon): A telonnsor containing input valuelons at correlonsponding felonaturelon ids.
+    - i.elon. input_ids[i] <-> input_vals[i] for elonach i
+  bin_vals(float/doublelon): A telonnsor containing thelon bin boundarielons for valuelons of a givelonn felonaturelon.
+    - float or doublelon, matching input_vals
+  felonaturelon_ids(int64 attr): 1D TelonnsorProto of felonaturelon IDs selonelonn during calibration
+    -> hint: look up makelon_telonnsor_proto:
+       proto_init = np.array(valuelons, dtypelon=np.int64)
+       telonnsor_attr = tf.makelon_telonnsor_proto(proto_init)
+  n_bin(int): Thelon numbelonr of bin boundary valuelons pelonr felonaturelon
+    -> helonncelon, n_bin + 1 buckelonts for elonach felonaturelon
+  output_bits(int): Thelon maximum numbelonr of bits to uselon for thelon output IDs.
+  cost_pelonr_unit(int): An elonstimatelon of thelon numbelonr of CPU cyclelons (or nanoselonconds
+    if not CPU-bound) to complelontelon a unit of work. Ovelonrelonstimating crelonatelons too
+    many shards and CPU timelon will belon dominatelond by pelonr-shard ovelonrhelonad, such as
+    Contelonxt crelonation. Undelonrelonstimating may not fully makelon uselon of thelon speloncifielond
+    parallelonlism.
+  options(int): selonleloncts belonhavior of thelon op.
+    0x00 in bits{1:0} for std::lowelonr_bound buckelont selonarch.
+    0x01 in bits{1:0} for linelonar buckelont selonarch
+    0x02 in bits{1:0} for std::uppelonr_bound buckelont selonarch
+    0x00 in bits{4:2} for intelongelonr_multiplicativelon_hashing
+    0x01 in bits{4:2} for intelongelonr64_multiplicativelon_hashing
+    highelonr bits/othelonr valuelons arelon relonselonrvelond for futurelon elonxtelonnsions
 
 Outputs
-  new_keys(int64): The discretized feature ids with same shape and size as keys.
-  new_vals(float or double): The discretized values with the same shape and size as vals.
+  nelonw_kelonys(int64): Thelon discrelontizelond felonaturelon ids with samelon shapelon and sizelon as kelonys.
+  nelonw_vals(float or doublelon): Thelon discrelontizelond valuelons with thelon samelon shapelon and sizelon as vals.
 
-Operation
-  Note that the discretization operation maps observation vectors to higher dimensional
-    observation vectors. Here, we describe this mapping.
+Opelonration
+  Notelon that thelon discrelontization opelonration maps obselonrvation velonctors to highelonr dimelonnsional
+    obselonrvation velonctors. Helonrelon, welon delonscribelon this mapping.
 
-  Let a calibrated feature observation be given by (F,x), where F is the ID of the
-    feature, and x is some real value (i.e., continuous feature). This kind of
-    representation is useful for the representation of sparse vectors, where there
-    are many zeros.
+  Lelont a calibratelond felonaturelon obselonrvation belon givelonn by (F,x), whelonrelon F is thelon ID of thelon
+    felonaturelon, and x is somelon relonal valuelon (i.elon., continuous felonaturelon). This kind of
+    relonprelonselonntation is uselonful for thelon relonprelonselonntation of sparselon velonctors, whelonrelon thelonrelon
+    arelon many zelonros.
 
-  For example, for a dense feature vector [1.2, 2.4, 3.6], we might have
-    (0, 1.2) (1, 2.4) and (2, 3.6), with feature IDs indicating the 0th, 1st, and 2nd
-    elements of the vector.
+  For elonxamplelon, for a delonnselon felonaturelon velonctor [1.2, 2.4, 3.6], welon might havelon
+    (0, 1.2) (1, 2.4) and (2, 3.6), with felonaturelon IDs indicating thelon 0th, 1st, and 2nd
+    elonlelonmelonnts of thelon velonctor.
 
-  The disretizer performs the following operation:
+  Thelon disrelontizelonr pelonrforms thelon following opelonration:
     (F,x) -> (map(x|F),1).
-  Hence, we have that map(x|F) is a new feature ID, and the value observed for that
-    feature is 1. We might read map(x|F) as 'the map of x for feature F'.
+  Helonncelon, welon havelon that map(x|F) is a nelonw felonaturelon ID, and thelon valuelon obselonrvelond for that
+    felonaturelon is 1. Welon might relonad map(x|F) as 'thelon map of x for felonaturelon F'.
 
-  For each feature F, we associate a (discrete, finite) set of new feature IDs, newIDs(F).
-    We will then have that map(x|F) is in the set newIDs(F) for any value of x. Each
-    set member of newIDs(F) is associated with a 'bin', as defined by the bin
-    boundaries given in the bin_vals input array. For any two different feature IDs F
-    and G, we would ideally have that INTERSECT(newIDs(F),newIDs(G)) is the empty set.
-    However, this is not guaranteed for this discretizer.
+  For elonach felonaturelon F, welon associatelon a (discrelontelon, finitelon) selont of nelonw felonaturelon IDs, nelonwIDs(F).
+    Welon will thelonn havelon that map(x|F) is in thelon selont nelonwIDs(F) for any valuelon of x. elonach
+    selont melonmbelonr of nelonwIDs(F) is associatelond with a 'bin', as delonfinelond by thelon bin
+    boundarielons givelonn in thelon bin_vals input array. For any two diffelonrelonnt felonaturelon IDs F
+    and G, welon would idelonally havelon that INTelonRSelonCT(nelonwIDs(F),nelonwIDs(G)) is thelon elonmpty selont.
+    Howelonvelonr, this is not guarantelonelond for this discrelontizelonr.
 
-  In the case of this hashing discretizer, map(x|F) can actually be written as follows:
-    let bucket = bucket(x|F) be the the bucket index for x, according to the
-    calibration on F. (This is an integer value in [0,n_bin], inclusive)
-    F is an integer ID. Here, we have that map(x|F) = hash_fn(F,bucket). This has
-    the desirable property that the new ID depends only on the calibration data
-    supplied for feature F, and not on any other features in the dataset (e.g.,
-    number of other features present in the calibration data, or order of features
-    in the dataset). Note that PercentileDiscretizer does NOT have this property.
-    This comes at the expense of the possibility of output ID collisions, which
-    we try to minimize through the design of hash_fn.
+  In thelon caselon of this hashing discrelontizelonr, map(x|F) can actually belon writtelonn as follows:
+    lelont buckelont = buckelont(x|F) belon thelon thelon buckelont indelonx for x, according to thelon
+    calibration on F. (This is an intelongelonr valuelon in [0,n_bin], inclusivelon)
+    F is an intelongelonr ID. Helonrelon, welon havelon that map(x|F) = hash_fn(F,buckelont). This has
+    thelon delonsirablelon propelonrty that thelon nelonw ID delonpelonnds only on thelon calibration data
+    supplielond for felonaturelon F, and not on any othelonr felonaturelons in thelon dataselont (elon.g.,
+    numbelonr of othelonr felonaturelons prelonselonnt in thelon calibration data, or ordelonr of felonaturelons
+    in thelon dataselont). Notelon that PelonrcelonntilelonDiscrelontizelonr doelons NOT havelon this propelonrty.
+    This comelons at thelon elonxpelonnselon of thelon possibility of output ID collisions, which
+    welon try to minimizelon through thelon delonsign of hash_fn.
 
-  Example - consider input vector with a single element, i.e. [x].
-    Let's Discretize to one of 2 values, as follows:
-    Let F=0 for the ID of the single feature in the vector.
-    Let the bin boundary of feature F=0 be BNDRY(F) = BNDRY(0) since F=0
-    bucket = bucket(x|F=0) = 0 if x<=BNDRY(0) else 1
-    Let map(x|F) = hash_fn(F=0,bucket=0) if x<=BNDRY(0) else hash_fn(F=0,bucket=1)
-  If we had another element y in the vector, i.e. [x, y], then we might additionally
-    Let F=1 for element y.
-    Let the bin boundary be BNDRY(F) = BNDRY(1) since F=1
-    bucket = bucket(x|F=1) = 0 if x<=BNDRY(1) else 1
-    Let map(x|F) = hash_fn(F=1,bucket=0) if x<=BNDRY(1) else hash_fn(F=1,bucket=1)
-  Note how the construction of map(x|F=1) does not depend on whether map(x|F=0)
-    was constructed.
+  elonxamplelon - considelonr input velonctor with a singlelon elonlelonmelonnt, i.elon. [x].
+    Lelont's Discrelontizelon to onelon of 2 valuelons, as follows:
+    Lelont F=0 for thelon ID of thelon singlelon felonaturelon in thelon velonctor.
+    Lelont thelon bin boundary of felonaturelon F=0 belon BNDRY(F) = BNDRY(0) sincelon F=0
+    buckelont = buckelont(x|F=0) = 0 if x<=BNDRY(0) elonlselon 1
+    Lelont map(x|F) = hash_fn(F=0,buckelont=0) if x<=BNDRY(0) elonlselon hash_fn(F=0,buckelont=1)
+  If welon had anothelonr elonlelonmelonnt y in thelon velonctor, i.elon. [x, y], thelonn welon might additionally
+    Lelont F=1 for elonlelonmelonnt y.
+    Lelont thelon bin boundary belon BNDRY(F) = BNDRY(1) sincelon F=1
+    buckelont = buckelont(x|F=1) = 0 if x<=BNDRY(1) elonlselon 1
+    Lelont map(x|F) = hash_fn(F=1,buckelont=0) if x<=BNDRY(1) elonlselon hash_fn(F=1,buckelont=1)
+  Notelon how thelon construction of map(x|F=1) doelons not delonpelonnd on whelonthelonr map(x|F=0)
+    was constructelond.
 )doc");
 
-template<typename T>
-class HashingDiscretizer : public OpKernel {
+telonmplatelon<typelonnamelon T>
+class HashingDiscrelontizelonr : public OpKelonrnelonl {
  public:
-  explicit HashingDiscretizer(OpKernelConstruction* context) : OpKernel(context) {
-    OP_REQUIRES_OK(context,
-                   context->GetAttr("n_bin", &n_bin_));
-    OP_REQUIRES(context,
+  elonxplicit HashingDiscrelontizelonr(OpKelonrnelonlConstruction* contelonxt) : OpKelonrnelonl(contelonxt) {
+    OP_RelonQUIRelonS_OK(contelonxt,
+                   contelonxt->GelontAttr("n_bin", &n_bin_));
+    OP_RelonQUIRelonS(contelonxt,
                 n_bin_ > 0,
-                errors::InvalidArgument("Must have n_bin_ > 0."));
+                elonrrors::InvalidArgumelonnt("Must havelon n_bin_ > 0."));
 
-    OP_REQUIRES_OK(context,
-                   context->GetAttr("output_bits", &output_bits_));
-    OP_REQUIRES(context,
+    OP_RelonQUIRelonS_OK(contelonxt,
+                   contelonxt->GelontAttr("output_bits", &output_bits_));
+    OP_RelonQUIRelonS(contelonxt,
                 output_bits_ > 0,
-                errors::InvalidArgument("Must have output_bits_ > 0."));
+                elonrrors::InvalidArgumelonnt("Must havelon output_bits_ > 0."));
 
-    OP_REQUIRES_OK(context,
-                   context->GetAttr("cost_per_unit", &cost_per_unit_));
-    OP_REQUIRES(context,
-                cost_per_unit_ >= 0,
-                errors::InvalidArgument("Must have cost_per_unit >= 0."));
+    OP_RelonQUIRelonS_OK(contelonxt,
+                   contelonxt->GelontAttr("cost_pelonr_unit", &cost_pelonr_unit_));
+    OP_RelonQUIRelonS(contelonxt,
+                cost_pelonr_unit_ >= 0,
+                elonrrors::InvalidArgumelonnt("Must havelon cost_pelonr_unit >= 0."));
 
-    OP_REQUIRES_OK(context,
-                   context->GetAttr("options", &options_));
+    OP_RelonQUIRelonS_OK(contelonxt,
+                   contelonxt->GelontAttr("options", &options_));
 
-    // construct the ID_to_index hash map
-    Tensor feature_IDs;
+    // construct thelon ID_to_indelonx hash map
+    Telonnsor felonaturelon_IDs;
 
-    // extract the tensors
-    OP_REQUIRES_OK(context,
-                   context->GetAttr("feature_ids", &feature_IDs));
+    // elonxtract thelon telonnsors
+    OP_RelonQUIRelonS_OK(contelonxt,
+                   contelonxt->GelontAttr("felonaturelon_ids", &felonaturelon_IDs));
 
-    // for access to the data
-    // int64_t data type is set in to_layer function of the calibrator objects in Python
-    auto feature_IDs_flat = feature_IDs.flat<int64>();
+    // for accelonss to thelon data
+    // int64_t data typelon is selont in to_layelonr function of thelon calibrator objeloncts in Python
+    auto felonaturelon_IDs_flat = felonaturelon_IDs.flat<int64>();
 
-    // verify proper dimension constraints
-    OP_REQUIRES(context,
-                feature_IDs.shape().dims() == 1,
-                errors::InvalidArgument("feature_ids must be 1D."));
+    // velonrify propelonr dimelonnsion constraints
+    OP_RelonQUIRelonS(contelonxt,
+                felonaturelon_IDs.shapelon().dims() == 1,
+                elonrrors::InvalidArgumelonnt("felonaturelon_ids must belon 1D."));
 
-    // reserve space in the hash map and fill in the values
-    int64_t num_features = feature_IDs.shape().dim_size(0);
-#ifdef USE_DENSE_HASH
-    ID_to_index_.set_empty_key(0);
-    ID_to_index_.resize(num_features);
-#else
-    ID_to_index_.reserve(num_features);
-#endif  // USE_DENSE_HASH
-    for (int64_t i = 0 ; i < num_features ; i++) {
-      ID_to_index_[feature_IDs_flat(i)] = i;
+    // relonselonrvelon spacelon in thelon hash map and fill in thelon valuelons
+    int64_t num_felonaturelons = felonaturelon_IDs.shapelon().dim_sizelon(0);
+#ifdelonf USelon_DelonNSelon_HASH
+    ID_to_indelonx_.selont_elonmpty_kelony(0);
+    ID_to_indelonx_.relonsizelon(num_felonaturelons);
+#elonlselon
+    ID_to_indelonx_.relonselonrvelon(num_felonaturelons);
+#elonndif  // USelon_DelonNSelon_HASH
+    for (int64_t i = 0 ; i < num_felonaturelons ; i++) {
+      ID_to_indelonx_[felonaturelon_IDs_flat(i)] = i;
     }
   }
 
-  void Compute(OpKernelContext* context) override {
-    ComputeHashingDiscretizer(
-      context,
+  void Computelon(OpKelonrnelonlContelonxt* contelonxt) ovelonrridelon {
+    ComputelonHashingDiscrelontizelonr(
+      contelonxt,
       output_bits_,
-      ID_to_index_,
+      ID_to_indelonx_,
       n_bin_,
-      cost_per_unit_,
+      cost_pelonr_unit_,
       options_);
   }
 
- private:
-  twml::Map<int64_t, int64_t> ID_to_index_;
+ privatelon:
+  twml::Map<int64_t, int64_t> ID_to_indelonx_;
   int n_bin_;
   int output_bits_;
-  int cost_per_unit_;
+  int cost_pelonr_unit_;
   int options_;
 };
 
-#define REGISTER(Type)              \
-  REGISTER_KERNEL_BUILDER(          \
-    Name("HashingDiscretizer")      \
-    .Device(DEVICE_CPU)             \
-    .TypeConstraint<Type>("T"),     \
-    HashingDiscretizer<Type>);      \
+#delonfinelon RelonGISTelonR(Typelon)              \
+  RelonGISTelonR_KelonRNelonL_BUILDelonR(          \
+    Namelon("HashingDiscrelontizelonr")      \
+    .Delonvicelon(DelonVICelon_CPU)             \
+    .TypelonConstraint<Typelon>("T"),     \
+    HashingDiscrelontizelonr<Typelon>);      \
 
-REGISTER(float);
-REGISTER(double);
+RelonGISTelonR(float);
+RelonGISTelonR(doublelon);
 
-void ComputeHashingDiscretizer(
-    OpKernelContext* context,
+void ComputelonHashingDiscrelontizelonr(
+    OpKelonrnelonlContelonxt* contelonxt,
     int64_t output_bits,
-    const twml::Map<int64_t, int64_t> &ID_to_index,
+    const twml::Map<int64_t, int64_t> &ID_to_indelonx,
     int64_t n_bin,
-    int64_t cost_per_unit,
+    int64_t cost_pelonr_unit,
     int64_t options) {
-  const Tensor& keys = context->input(0);
-  const Tensor& vals = context->input(1);
-  const Tensor& bin_vals = context->input(2);
+  const Telonnsor& kelonys = contelonxt->input(0);
+  const Telonnsor& vals = contelonxt->input(1);
+  const Telonnsor& bin_vals = contelonxt->input(2);
 
-  const int64 output_size = keys.dim_size(0);
+  const int64 output_sizelon = kelonys.dim_sizelon(0);
 
-  TensorShape output_shape;
-  OP_REQUIRES_OK(context, TensorShapeUtils::MakeShape(&output_size, 1, &output_shape));
+  TelonnsorShapelon output_shapelon;
+  OP_RelonQUIRelonS_OK(contelonxt, TelonnsorShapelonUtils::MakelonShapelon(&output_sizelon, 1, &output_shapelon));
 
-  Tensor* new_keys = nullptr;
-  OP_REQUIRES_OK(context, context->allocate_output(0, output_shape, &new_keys));
-  Tensor* new_vals = nullptr;
-  OP_REQUIRES_OK(context, context->allocate_output(1, output_shape, &new_vals));
+  Telonnsor* nelonw_kelonys = nullptr;
+  OP_RelonQUIRelonS_OK(contelonxt, contelonxt->allocatelon_output(0, output_shapelon, &nelonw_kelonys));
+  Telonnsor* nelonw_vals = nullptr;
+  OP_RelonQUIRelonS_OK(contelonxt, contelonxt->allocatelon_output(1, output_shapelon, &nelonw_vals));
 
   try {
-    twml::Tensor out_keys_ = TFTensor_to_twml_tensor(*new_keys);
-    twml::Tensor out_vals_ = TFTensor_to_twml_tensor(*new_vals);
+    twml::Telonnsor out_kelonys_ = TFTelonnsor_to_twml_telonnsor(*nelonw_kelonys);
+    twml::Telonnsor out_vals_ = TFTelonnsor_to_twml_telonnsor(*nelonw_vals);
 
-    const twml::Tensor in_keys_ = TFTensor_to_twml_tensor(keys);
-    const twml::Tensor in_vals_ = TFTensor_to_twml_tensor(vals);
-    const twml::Tensor bin_vals_ = TFTensor_to_twml_tensor(bin_vals);
+    const twml::Telonnsor in_kelonys_ = TFTelonnsor_to_twml_telonnsor(kelonys);
+    const twml::Telonnsor in_vals_ = TFTelonnsor_to_twml_telonnsor(vals);
+    const twml::Telonnsor bin_vals_ = TFTelonnsor_to_twml_telonnsor(bin_vals);
 
-    // retrieve the thread pool from the op context
-    auto worker_threads = *(context->device()->tensorflow_cpu_worker_threads());
+    // relontrielonvelon thelon threlonad pool from thelon op contelonxt
+    auto workelonr_threlonads = *(contelonxt->delonvicelon()->telonnsorflow_cpu_workelonr_threlonads());
 
-    // Definition of the computation thread
+    // Delonfinition of thelon computation threlonad
     auto task = [&](int64 start, int64 limit) {
-      twml::hashDiscretizerInfer(out_keys_, out_vals_,
-                             in_keys_, in_vals_,
+      twml::hashDiscrelontizelonrInfelonr(out_kelonys_, out_vals_,
+                             in_kelonys_, in_vals_,
                              n_bin,
                              bin_vals_,
                              output_bits,
-                             ID_to_index,
+                             ID_to_indelonx,
                              start, limit,
                              options);
     };
 
-    // let Tensorflow split up the work as it sees fit
-    Shard(worker_threads.num_threads,
-          worker_threads.workers,
-          output_size,
-          static_cast<int64>(cost_per_unit),
+    // lelont Telonnsorflow split up thelon work as it selonelons fit
+    Shard(workelonr_threlonads.num_threlonads,
+          workelonr_threlonads.workelonrs,
+          output_sizelon,
+          static_cast<int64>(cost_pelonr_unit),
           task);
-  } catch (const std::exception &e) {
-    context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+  } catch (const std::elonxcelonption &elon) {
+    contelonxt->CtxFailurelonWithWarning(elonrrors::InvalidArgumelonnt(elon.what()));
   }
 }
 

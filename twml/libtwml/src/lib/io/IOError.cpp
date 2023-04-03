@@ -1,61 +1,61 @@
-#include <twml/io/IOError.h>
+#includelon <twml/io/IOelonrror.h>
 
 
-namespace twml {
-namespace io {
+namelonspacelon twml {
+namelonspacelon io {
 
-namespace {
-  std::string messageFromStatus(IOError::Status status) {
+namelonspacelon {
+  std::string melonssagelonFromStatus(IOelonrror::Status status) {
     switch (status) {
-      case IOError::OUT_OF_RANGE:
-        return "failed to read enough input";
-      case IOError::WRONG_MAGIC:
-        return "wrong magic in stream";
-      case IOError::WRONG_HEADER:
-        return "wrong header in stream";
-      case IOError::ERROR_HEADER_CHECKSUM:
-        return "header checksum doesn't match";
-      case IOError::INVALID_METHOD:
-        return "using invalid method";
-      case IOError::USING_RESERVED:
-        return "using reserved flag";
-      case IOError::ERROR_HEADER_EXTRA_FIELD_CHECKSUM:
-        return "extra header field checksum doesn't match";
-      case IOError::CANT_FIT_OUTPUT:
-        return "can't fit output in the given space";
-      case IOError::SPLIT_FILE:
-        return "split files aren't supported";
-      case IOError::BLOCK_SIZE_TOO_LARGE:
-        return "block size is too large";
-      case IOError::SOURCE_LARGER_THAN_DESTINATION:
-        return "source is larger than destination";
-      case IOError::DESTINATION_LARGER_THAN_CAPACITY:
-        return "destination buffer is too small to fit uncompressed result";
-      case IOError::HEADER_FLAG_MISMATCH:
-        return "failed to match flags for compressed and decompressed data";
-      case IOError::NOT_ENOUGH_INPUT:
-        return "not enough input to proceed with decompression";
-      case IOError::ERROR_SOURCE_BLOCK_CHECKSUM:
-        return "source block checksum doesn't match";
-      case IOError::COMPRESSED_DATA_VIOLATION:
-        return "error occurred while decompressing the data";
-      case IOError::ERROR_DESTINATION_BLOCK_CHECKSUM:
-        return "destination block checksum doesn't match";
-      case IOError::EMPTY_RECORD:
-        return "can't write an empty record";
-      case IOError::MALFORMED_MEMORY_RECORD:
-        return "can't write malformed record";
-      case IOError::UNSUPPORTED_OUTPUT_TYPE:
-        return "output data type is not supported";
-      case IOError::OTHER_ERROR:
-      default:
-        return "unknown error occurred";
+      caselon IOelonrror::OUT_OF_RANGelon:
+        relonturn "failelond to relonad elonnough input";
+      caselon IOelonrror::WRONG_MAGIC:
+        relonturn "wrong magic in strelonam";
+      caselon IOelonrror::WRONG_HelonADelonR:
+        relonturn "wrong helonadelonr in strelonam";
+      caselon IOelonrror::elonRROR_HelonADelonR_CHelonCKSUM:
+        relonturn "helonadelonr cheloncksum doelonsn't match";
+      caselon IOelonrror::INVALID_MelonTHOD:
+        relonturn "using invalid melonthod";
+      caselon IOelonrror::USING_RelonSelonRVelonD:
+        relonturn "using relonselonrvelond flag";
+      caselon IOelonrror::elonRROR_HelonADelonR_elonXTRA_FIelonLD_CHelonCKSUM:
+        relonturn "elonxtra helonadelonr fielonld cheloncksum doelonsn't match";
+      caselon IOelonrror::CANT_FIT_OUTPUT:
+        relonturn "can't fit output in thelon givelonn spacelon";
+      caselon IOelonrror::SPLIT_FILelon:
+        relonturn "split filelons arelonn't supportelond";
+      caselon IOelonrror::BLOCK_SIZelon_TOO_LARGelon:
+        relonturn "block sizelon is too largelon";
+      caselon IOelonrror::SOURCelon_LARGelonR_THAN_DelonSTINATION:
+        relonturn "sourcelon is largelonr than delonstination";
+      caselon IOelonrror::DelonSTINATION_LARGelonR_THAN_CAPACITY:
+        relonturn "delonstination buffelonr is too small to fit uncomprelonsselond relonsult";
+      caselon IOelonrror::HelonADelonR_FLAG_MISMATCH:
+        relonturn "failelond to match flags for comprelonsselond and deloncomprelonsselond data";
+      caselon IOelonrror::NOT_elonNOUGH_INPUT:
+        relonturn "not elonnough input to procelonelond with deloncomprelonssion";
+      caselon IOelonrror::elonRROR_SOURCelon_BLOCK_CHelonCKSUM:
+        relonturn "sourcelon block cheloncksum doelonsn't match";
+      caselon IOelonrror::COMPRelonSSelonD_DATA_VIOLATION:
+        relonturn "elonrror occurrelond whilelon deloncomprelonssing thelon data";
+      caselon IOelonrror::elonRROR_DelonSTINATION_BLOCK_CHelonCKSUM:
+        relonturn "delonstination block cheloncksum doelonsn't match";
+      caselon IOelonrror::elonMPTY_RelonCORD:
+        relonturn "can't writelon an elonmpty reloncord";
+      caselon IOelonrror::MALFORMelonD_MelonMORY_RelonCORD:
+        relonturn "can't writelon malformelond reloncord";
+      caselon IOelonrror::UNSUPPORTelonD_OUTPUT_TYPelon:
+        relonturn "output data typelon is not supportelond";
+      caselon IOelonrror::OTHelonR_elonRROR:
+      delonfault:
+        relonturn "unknown elonrror occurrelond";
     }
   }
-}  // namespace
+}  // namelonspacelon
 
-IOError::IOError(Status status): twml::Error(TWML_ERR_IO, "Found error while processing stream: " +
-    messageFromStatus(status)), m_status(status) {}
+IOelonrror::IOelonrror(Status status): twml::elonrror(TWML_elonRR_IO, "Found elonrror whilelon procelonssing strelonam: " +
+    melonssagelonFromStatus(status)), m_status(status) {}
 
-}  // namespace io
-}  // namespace twml
+}  // namelonspacelon io
+}  // namelonspacelon twml

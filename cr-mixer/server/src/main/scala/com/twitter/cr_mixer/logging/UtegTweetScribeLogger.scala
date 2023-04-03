@@ -1,146 +1,146 @@
-package com.twitter.cr_mixer.logging
+packagelon com.twittelonr.cr_mixelonr.logging
 
-import com.twitter.cr_mixer.logging.ScribeLoggerUtils._
-import com.twitter.cr_mixer.model.UtegTweetCandidateGeneratorQuery
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.cr_mixer.model.TweetWithScoreAndSocialProof
-import com.twitter.cr_mixer.param.decider.CrMixerDecider
-import com.twitter.cr_mixer.param.decider.DeciderConstants
-import com.twitter.cr_mixer.thriftscala.UtegTweetRequest
-import com.twitter.cr_mixer.thriftscala.UtegTweetResponse
-import com.twitter.cr_mixer.thriftscala.FetchCandidatesResult
-import com.twitter.cr_mixer.thriftscala.GetUtegTweetsScribe
-import com.twitter.cr_mixer.thriftscala.PerformanceMetrics
-import com.twitter.cr_mixer.thriftscala.UtegTweetResult
-import com.twitter.cr_mixer.thriftscala.UtegTweetTopLevelApiResult
-import com.twitter.cr_mixer.thriftscala.TweetCandidateWithMetadata
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.tracing.Trace
-import com.twitter.logging.Logger
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.util.Future
-import com.twitter.util.Stopwatch
-import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Singleton
+import com.twittelonr.cr_mixelonr.logging.ScribelonLoggelonrUtils._
+import com.twittelonr.cr_mixelonr.modelonl.UtelongTwelonelontCandidatelonGelonnelonratorQuelonry
+import com.twittelonr.cr_mixelonr.modelonl.ModulelonNamelons
+import com.twittelonr.cr_mixelonr.modelonl.TwelonelontWithScorelonAndSocialProof
+import com.twittelonr.cr_mixelonr.param.deloncidelonr.CrMixelonrDeloncidelonr
+import com.twittelonr.cr_mixelonr.param.deloncidelonr.DeloncidelonrConstants
+import com.twittelonr.cr_mixelonr.thriftscala.UtelongTwelonelontRelonquelonst
+import com.twittelonr.cr_mixelonr.thriftscala.UtelongTwelonelontRelonsponselon
+import com.twittelonr.cr_mixelonr.thriftscala.FelontchCandidatelonsRelonsult
+import com.twittelonr.cr_mixelonr.thriftscala.GelontUtelongTwelonelontsScribelon
+import com.twittelonr.cr_mixelonr.thriftscala.PelonrformancelonMelontrics
+import com.twittelonr.cr_mixelonr.thriftscala.UtelongTwelonelontRelonsult
+import com.twittelonr.cr_mixelonr.thriftscala.UtelongTwelonelontTopLelonvelonlApiRelonsult
+import com.twittelonr.cr_mixelonr.thriftscala.TwelonelontCandidatelonWithMelontadata
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.finaglelon.tracing.Tracelon
+import com.twittelonr.logging.Loggelonr
+import com.twittelonr.simclustelonrs_v2.common.UselonrId
+import com.twittelonr.util.Futurelon
+import com.twittelonr.util.Stopwatch
+import javax.injelonct.Injelonct
+import javax.injelonct.Namelond
+import javax.injelonct.Singlelonton
 
-@Singleton
-case class UtegTweetScribeLogger @Inject() (
-  decider: CrMixerDecider,
-  statsReceiver: StatsReceiver,
-  @Named(ModuleNames.UtegTweetsLogger) utegTweetScribeLogger: Logger) {
+@Singlelonton
+caselon class UtelongTwelonelontScribelonLoggelonr @Injelonct() (
+  deloncidelonr: CrMixelonrDeloncidelonr,
+  statsReloncelonivelonr: StatsReloncelonivelonr,
+  @Namelond(ModulelonNamelons.UtelongTwelonelontsLoggelonr) utelongTwelonelontScribelonLoggelonr: Loggelonr) {
 
-  private val scopedStats = statsReceiver.scope("UtegTweetScribeLogger")
-  private val topLevelApiStats = scopedStats.scope("TopLevelApi")
-  private val upperFunnelsStats = scopedStats.scope("UpperFunnels")
+  privatelon val scopelondStats = statsReloncelonivelonr.scopelon("UtelongTwelonelontScribelonLoggelonr")
+  privatelon val topLelonvelonlApiStats = scopelondStats.scopelon("TopLelonvelonlApi")
+  privatelon val uppelonrFunnelonlsStats = scopelondStats.scopelon("UppelonrFunnelonls")
 
-  def scribeInitialCandidates(
-    query: UtegTweetCandidateGeneratorQuery,
-    getResultFn: => Future[Seq[TweetWithScoreAndSocialProof]]
-  ): Future[Seq[TweetWithScoreAndSocialProof]] = {
-    scribeResultsAndPerformanceMetrics(
-      ScribeMetadata.from(query),
-      getResultFn,
-      convertToResultFn = convertFetchCandidatesResult
+  delonf scribelonInitialCandidatelons(
+    quelonry: UtelongTwelonelontCandidatelonGelonnelonratorQuelonry,
+    gelontRelonsultFn: => Futurelon[Selonq[TwelonelontWithScorelonAndSocialProof]]
+  ): Futurelon[Selonq[TwelonelontWithScorelonAndSocialProof]] = {
+    scribelonRelonsultsAndPelonrformancelonMelontrics(
+      ScribelonMelontadata.from(quelonry),
+      gelontRelonsultFn,
+      convelonrtToRelonsultFn = convelonrtFelontchCandidatelonsRelonsult
     )
   }
 
   /**
-   * Scribe Top Level API Request / Response and performance metrics
-   * for the GetUtegTweetRecommendations() endpoint.
+   * Scribelon Top Lelonvelonl API Relonquelonst / Relonsponselon and pelonrformancelon melontrics
+   * for thelon GelontUtelongTwelonelontReloncommelonndations() elonndpoint.
    */
-  def scribeGetUtegTweetRecommendations(
-    request: UtegTweetRequest,
-    startTime: Long,
-    scribeMetadata: ScribeMetadata,
-    getResultFn: => Future[UtegTweetResponse]
-  ): Future[UtegTweetResponse] = {
-    val timer = Stopwatch.start()
-    getResultFn.onSuccess { response =>
-      if (decider.isAvailableForId(
-          scribeMetadata.userId,
-          DeciderConstants.upperFunnelPerStepScribeRate)) {
-        topLevelApiStats.counter(scribeMetadata.product.originalName).incr()
-        val latencyMs = timer().inMilliseconds
-        val result = convertTopLevelAPIResult(request, response, startTime)
-        val traceId = Trace.id.traceId.toLong
-        val scribeMsg =
-          buildScribeMessage(result, scribeMetadata, latencyMs, traceId)
+  delonf scribelonGelontUtelongTwelonelontReloncommelonndations(
+    relonquelonst: UtelongTwelonelontRelonquelonst,
+    startTimelon: Long,
+    scribelonMelontadata: ScribelonMelontadata,
+    gelontRelonsultFn: => Futurelon[UtelongTwelonelontRelonsponselon]
+  ): Futurelon[UtelongTwelonelontRelonsponselon] = {
+    val timelonr = Stopwatch.start()
+    gelontRelonsultFn.onSuccelonss { relonsponselon =>
+      if (deloncidelonr.isAvailablelonForId(
+          scribelonMelontadata.uselonrId,
+          DeloncidelonrConstants.uppelonrFunnelonlPelonrStelonpScribelonRatelon)) {
+        topLelonvelonlApiStats.countelonr(scribelonMelontadata.product.originalNamelon).incr()
+        val latelonncyMs = timelonr().inMilliselonconds
+        val relonsult = convelonrtTopLelonvelonlAPIRelonsult(relonquelonst, relonsponselon, startTimelon)
+        val tracelonId = Tracelon.id.tracelonId.toLong
+        val scribelonMsg =
+          buildScribelonMelonssagelon(relonsult, scribelonMelontadata, latelonncyMs, tracelonId)
 
-        scribeResult(scribeMsg)
+        scribelonRelonsult(scribelonMsg)
       }
     }
   }
 
-  private def convertTopLevelAPIResult(
-    request: UtegTweetRequest,
-    response: UtegTweetResponse,
-    startTime: Long
-  ): UtegTweetResult = {
-    UtegTweetResult.UtegTweetTopLevelApiResult(
-      UtegTweetTopLevelApiResult(
-        timestamp = startTime,
-        request = request,
-        response = response
+  privatelon delonf convelonrtTopLelonvelonlAPIRelonsult(
+    relonquelonst: UtelongTwelonelontRelonquelonst,
+    relonsponselon: UtelongTwelonelontRelonsponselon,
+    startTimelon: Long
+  ): UtelongTwelonelontRelonsult = {
+    UtelongTwelonelontRelonsult.UtelongTwelonelontTopLelonvelonlApiRelonsult(
+      UtelongTwelonelontTopLelonvelonlApiRelonsult(
+        timelonstamp = startTimelon,
+        relonquelonst = relonquelonst,
+        relonsponselon = relonsponselon
       ))
   }
 
-  private def buildScribeMessage(
-    utegTweetResult: UtegTweetResult,
-    scribeMetadata: ScribeMetadata,
-    latencyMs: Long,
-    traceId: Long
-  ): GetUtegTweetsScribe = {
-    GetUtegTweetsScribe(
-      uuid = scribeMetadata.requestUUID,
-      userId = scribeMetadata.userId,
-      utegTweetResult = utegTweetResult,
-      traceId = Some(traceId),
-      performanceMetrics = Some(PerformanceMetrics(Some(latencyMs))),
-      impressedBuckets = getImpressedBuckets(scopedStats)
+  privatelon delonf buildScribelonMelonssagelon(
+    utelongTwelonelontRelonsult: UtelongTwelonelontRelonsult,
+    scribelonMelontadata: ScribelonMelontadata,
+    latelonncyMs: Long,
+    tracelonId: Long
+  ): GelontUtelongTwelonelontsScribelon = {
+    GelontUtelongTwelonelontsScribelon(
+      uuid = scribelonMelontadata.relonquelonstUUID,
+      uselonrId = scribelonMelontadata.uselonrId,
+      utelongTwelonelontRelonsult = utelongTwelonelontRelonsult,
+      tracelonId = Somelon(tracelonId),
+      pelonrformancelonMelontrics = Somelon(PelonrformancelonMelontrics(Somelon(latelonncyMs))),
+      imprelonsselondBuckelonts = gelontImprelonsselondBuckelonts(scopelondStats)
     )
   }
 
-  private def scribeResult(
-    scribeMsg: GetUtegTweetsScribe
+  privatelon delonf scribelonRelonsult(
+    scribelonMsg: GelontUtelongTwelonelontsScribelon
   ): Unit = {
-    publish(logger = utegTweetScribeLogger, codec = GetUtegTweetsScribe, message = scribeMsg)
+    publish(loggelonr = utelongTwelonelontScribelonLoggelonr, codelonc = GelontUtelongTwelonelontsScribelon, melonssagelon = scribelonMsg)
   }
 
-  private def convertFetchCandidatesResult(
-    candidates: Seq[TweetWithScoreAndSocialProof],
-    requestUserId: UserId
-  ): UtegTweetResult = {
-    val tweetCandidatesWithMetadata = candidates.map { candidate =>
-      TweetCandidateWithMetadata(
-        tweetId = candidate.tweetId,
-        candidateGenerationKey = None
-      ) // do not hydrate candidateGenerationKey to save cost
+  privatelon delonf convelonrtFelontchCandidatelonsRelonsult(
+    candidatelons: Selonq[TwelonelontWithScorelonAndSocialProof],
+    relonquelonstUselonrId: UselonrId
+  ): UtelongTwelonelontRelonsult = {
+    val twelonelontCandidatelonsWithMelontadata = candidatelons.map { candidatelon =>
+      TwelonelontCandidatelonWithMelontadata(
+        twelonelontId = candidatelon.twelonelontId,
+        candidatelonGelonnelonrationKelony = Nonelon
+      ) // do not hydratelon candidatelonGelonnelonrationKelony to savelon cost
     }
-    UtegTweetResult.FetchCandidatesResult(FetchCandidatesResult(Some(tweetCandidatesWithMetadata)))
+    UtelongTwelonelontRelonsult.FelontchCandidatelonsRelonsult(FelontchCandidatelonsRelonsult(Somelon(twelonelontCandidatelonsWithMelontadata)))
   }
 
   /**
-   * Scribe Per-step intermediate results and performance metrics
-   * for each step: fetch candidates, filters.
+   * Scribelon Pelonr-stelonp intelonrmelondiatelon relonsults and pelonrformancelon melontrics
+   * for elonach stelonp: felontch candidatelons, filtelonrs.
    */
-  private def scribeResultsAndPerformanceMetrics[T](
-    scribeMetadata: ScribeMetadata,
-    getResultFn: => Future[T],
-    convertToResultFn: (T, UserId) => UtegTweetResult
-  ): Future[T] = {
-    val timer = Stopwatch.start()
-    getResultFn.onSuccess { input =>
-      if (decider.isAvailableForId(
-          scribeMetadata.userId,
-          DeciderConstants.upperFunnelPerStepScribeRate)) {
-        upperFunnelsStats.counter(scribeMetadata.product.originalName).incr()
-        val latencyMs = timer().inMilliseconds
-        val result = convertToResultFn(input, scribeMetadata.userId)
-        val traceId = Trace.id.traceId.toLong
-        val scribeMsg =
-          buildScribeMessage(result, scribeMetadata, latencyMs, traceId)
-        scribeResult(scribeMsg)
+  privatelon delonf scribelonRelonsultsAndPelonrformancelonMelontrics[T](
+    scribelonMelontadata: ScribelonMelontadata,
+    gelontRelonsultFn: => Futurelon[T],
+    convelonrtToRelonsultFn: (T, UselonrId) => UtelongTwelonelontRelonsult
+  ): Futurelon[T] = {
+    val timelonr = Stopwatch.start()
+    gelontRelonsultFn.onSuccelonss { input =>
+      if (deloncidelonr.isAvailablelonForId(
+          scribelonMelontadata.uselonrId,
+          DeloncidelonrConstants.uppelonrFunnelonlPelonrStelonpScribelonRatelon)) {
+        uppelonrFunnelonlsStats.countelonr(scribelonMelontadata.product.originalNamelon).incr()
+        val latelonncyMs = timelonr().inMilliselonconds
+        val relonsult = convelonrtToRelonsultFn(input, scribelonMelontadata.uselonrId)
+        val tracelonId = Tracelon.id.tracelonId.toLong
+        val scribelonMsg =
+          buildScribelonMelonssagelon(relonsult, scribelonMelontadata, latelonncyMs, tracelonId)
+        scribelonRelonsult(scribelonMsg)
       }
     }
   }

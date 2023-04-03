@@ -1,54 +1,54 @@
-namespace java com.twitter.recos.recos_common.thriftjava
-namespace py gen.twitter.recos.recos_common
-#@namespace scala com.twitter.recos.recos_common.thriftscala
-#@namespace strato com.twitter.recos.recos_common
-namespace rb Recos
+namelonspacelon java com.twittelonr.reloncos.reloncos_common.thriftjava
+namelonspacelon py gelonn.twittelonr.reloncos.reloncos_common
+#@namelonspacelon scala com.twittelonr.reloncos.reloncos_common.thriftscala
+#@namelonspacelon strato com.twittelonr.reloncos.reloncos_common
+namelonspacelon rb Reloncos
 
-// Social proof types for user moment recommendations
-enum MomentSocialProofType {
+// Social proof typelons for uselonr momelonnt reloncommelonndations
+elonnum MomelonntSocialProofTypelon {
   PUBLISH         = 0
-  LIKE            = 1
-  CAPSULE_OPEN    = 2
+  LIKelon            = 1
+  CAPSULelon_OPelonN    = 2
 }
 
-// Social proof types for tweet/entity recommendations
-enum SocialProofType {
+// Social proof typelons for twelonelont/elonntity reloncommelonndations
+elonnum SocialProofTypelon {
   CLICK           = 0
-  FAVORITE        = 1
-  RETWEET         = 2
-  REPLY           = 3
-  TWEET           = 4
-  IS_MENTIONED    = 5
-  IS_MEDIATAGGED  = 6
-  QUOTE           = 7
+  FAVORITelon        = 1
+  RelonTWelonelonT         = 2
+  RelonPLY           = 3
+  TWelonelonT           = 4
+  IS_MelonNTIONelonD    = 5
+  IS_MelonDIATAGGelonD  = 6
+  QUOTelon           = 7
 }
 
 struct SocialProof {
-  1: required i64 userId
-  2: optional i64 metadata
+  1: relonquirelond i64 uselonrId
+  2: optional i64 melontadata
 }
 
-// Social proof types for user recommendations
-enum UserSocialProofType {
+// Social proof typelons for uselonr reloncommelonndations
+elonnum UselonrSocialProofTypelon {
   FOLLOW     = 0
-  MENTION    = 1
-  MEDIATAG   = 2
+  MelonNTION    = 1
+  MelonDIATAG   = 2
 }
 
-struct GetRecentEdgesRequest {
-  1: required i64                          requestId        // the node to query from
-  2: optional i32                          maxNumEdges      // the max number of recent edges
+struct GelontReloncelonntelondgelonsRelonquelonst {
+  1: relonquirelond i64                          relonquelonstId        // thelon nodelon to quelonry from
+  2: optional i32                          maxNumelondgelons      // thelon max numbelonr of reloncelonnt elondgelons
 }
 
-struct RecentEdge {
-  1: required i64                          nodeId           // the connecting node id
-  2: required SocialProofType              engagementType   // the engagement type of the edge
+struct Reloncelonntelondgelon {
+  1: relonquirelond i64                          nodelonId           // thelon conneloncting nodelon id
+  2: relonquirelond SocialProofTypelon              elonngagelonmelonntTypelon   // thelon elonngagelonmelonnt typelon of thelon elondgelon
 }
 
-struct GetRecentEdgesResponse {
-  1: required list<RecentEdge>             edges            // the _ most recent edges from the query node
+struct GelontReloncelonntelondgelonsRelonsponselon {
+  1: relonquirelond list<Reloncelonntelondgelon>             elondgelons            // thelon _ most reloncelonnt elondgelons from thelon quelonry nodelon
 }
 
-struct NodeInfo {
-  1: required list<i64> edges
+struct NodelonInfo {
+  1: relonquirelond list<i64> elondgelons
 }

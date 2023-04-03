@@ -1,145 +1,145 @@
-package com.twitter.visibility.builder.users
+packagelon com.twittelonr.visibility.buildelonr.uselonrs
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.common.user_result.UserVisibilityResultHelper
-import com.twitter.visibility.features.AuthorBlocksViewer
-import com.twitter.visibility.features.AuthorIsDeactivated
-import com.twitter.visibility.features.AuthorIsErased
-import com.twitter.visibility.features.AuthorIsOffboarded
-import com.twitter.visibility.features.AuthorIsProtected
-import com.twitter.visibility.features.AuthorIsSuspended
-import com.twitter.visibility.features.AuthorIsUnavailable
-import com.twitter.visibility.features.ViewerBlocksAuthor
-import com.twitter.visibility.features.ViewerMutesAuthor
-import com.twitter.visibility.models.UserUnavailableStateEnum
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.visibility.buildelonr.FelonaturelonMapBuildelonr
+import com.twittelonr.visibility.common.uselonr_relonsult.UselonrVisibilityRelonsultHelonlpelonr
+import com.twittelonr.visibility.felonaturelons.AuthorBlocksVielonwelonr
+import com.twittelonr.visibility.felonaturelons.AuthorIsDelonactivatelond
+import com.twittelonr.visibility.felonaturelons.AuthorIselonraselond
+import com.twittelonr.visibility.felonaturelons.AuthorIsOffboardelond
+import com.twittelonr.visibility.felonaturelons.AuthorIsProtelonctelond
+import com.twittelonr.visibility.felonaturelons.AuthorIsSuspelonndelond
+import com.twittelonr.visibility.felonaturelons.AuthorIsUnavailablelon
+import com.twittelonr.visibility.felonaturelons.VielonwelonrBlocksAuthor
+import com.twittelonr.visibility.felonaturelons.VielonwelonrMutelonsAuthor
+import com.twittelonr.visibility.modelonls.UselonrUnavailablelonStatelonelonnum
 
-case class UserUnavailableFeatures(statsReceiver: StatsReceiver) {
+caselon class UselonrUnavailablelonFelonaturelons(statsReloncelonivelonr: StatsReloncelonivelonr) {
 
-  private[this] val scopedStatsReceiver = statsReceiver.scope("user_unavailable_features")
-  private[this] val suspendedAuthorStats = scopedStatsReceiver.scope("suspended_author")
-  private[this] val deactivatedAuthorStats = scopedStatsReceiver.scope("deactivated_author")
-  private[this] val offboardedAuthorStats = scopedStatsReceiver.scope("offboarded_author")
-  private[this] val erasedAuthorStats = scopedStatsReceiver.scope("erased_author")
-  private[this] val protectedAuthorStats = scopedStatsReceiver.scope("protected_author")
-  private[this] val authorBlocksViewerStats = scopedStatsReceiver.scope("author_blocks_viewer")
-  private[this] val viewerBlocksAuthorStats = scopedStatsReceiver.scope("viewer_blocks_author")
-  private[this] val viewerMutesAuthorStats = scopedStatsReceiver.scope("viewer_mutes_author")
-  private[this] val unavailableStats = scopedStatsReceiver.scope("unavailable")
+  privatelon[this] val scopelondStatsReloncelonivelonr = statsReloncelonivelonr.scopelon("uselonr_unavailablelon_felonaturelons")
+  privatelon[this] val suspelonndelondAuthorStats = scopelondStatsReloncelonivelonr.scopelon("suspelonndelond_author")
+  privatelon[this] val delonactivatelondAuthorStats = scopelondStatsReloncelonivelonr.scopelon("delonactivatelond_author")
+  privatelon[this] val offboardelondAuthorStats = scopelondStatsReloncelonivelonr.scopelon("offboardelond_author")
+  privatelon[this] val elonraselondAuthorStats = scopelondStatsReloncelonivelonr.scopelon("elonraselond_author")
+  privatelon[this] val protelonctelondAuthorStats = scopelondStatsReloncelonivelonr.scopelon("protelonctelond_author")
+  privatelon[this] val authorBlocksVielonwelonrStats = scopelondStatsReloncelonivelonr.scopelon("author_blocks_vielonwelonr")
+  privatelon[this] val vielonwelonrBlocksAuthorStats = scopelondStatsReloncelonivelonr.scopelon("vielonwelonr_blocks_author")
+  privatelon[this] val vielonwelonrMutelonsAuthorStats = scopelondStatsReloncelonivelonr.scopelon("vielonwelonr_mutelons_author")
+  privatelon[this] val unavailablelonStats = scopelondStatsReloncelonivelonr.scopelon("unavailablelon")
 
-  def forState(state: UserUnavailableStateEnum): FeatureMapBuilder => FeatureMapBuilder = {
-    builder =>
-      builder
-        .withConstantFeature(AuthorIsSuspended, isSuspended(state))
-        .withConstantFeature(AuthorIsDeactivated, isDeactivated(state))
-        .withConstantFeature(AuthorIsOffboarded, isOffboarded(state))
-        .withConstantFeature(AuthorIsErased, isErased(state))
-        .withConstantFeature(AuthorIsProtected, isProtected(state))
-        .withConstantFeature(AuthorBlocksViewer, authorBlocksViewer(state))
-        .withConstantFeature(ViewerBlocksAuthor, viewerBlocksAuthor(state))
-        .withConstantFeature(ViewerMutesAuthor, viewerMutesAuthor(state))
-        .withConstantFeature(AuthorIsUnavailable, isUnavailable(state))
+  delonf forStatelon(statelon: UselonrUnavailablelonStatelonelonnum): FelonaturelonMapBuildelonr => FelonaturelonMapBuildelonr = {
+    buildelonr =>
+      buildelonr
+        .withConstantFelonaturelon(AuthorIsSuspelonndelond, isSuspelonndelond(statelon))
+        .withConstantFelonaturelon(AuthorIsDelonactivatelond, isDelonactivatelond(statelon))
+        .withConstantFelonaturelon(AuthorIsOffboardelond, isOffboardelond(statelon))
+        .withConstantFelonaturelon(AuthorIselonraselond, iselonraselond(statelon))
+        .withConstantFelonaturelon(AuthorIsProtelonctelond, isProtelonctelond(statelon))
+        .withConstantFelonaturelon(AuthorBlocksVielonwelonr, authorBlocksVielonwelonr(statelon))
+        .withConstantFelonaturelon(VielonwelonrBlocksAuthor, vielonwelonrBlocksAuthor(statelon))
+        .withConstantFelonaturelon(VielonwelonrMutelonsAuthor, vielonwelonrMutelonsAuthor(statelon))
+        .withConstantFelonaturelon(AuthorIsUnavailablelon, isUnavailablelon(statelon))
   }
 
-  private[this] def isSuspended(state: UserUnavailableStateEnum): Boolean =
-    state match {
-      case UserUnavailableStateEnum.Suspended =>
-        suspendedAuthorStats.counter().incr()
-        true
-      case UserUnavailableStateEnum.Filtered(result)
-          if UserVisibilityResultHelper.isDropSuspendedAuthor(result) =>
-        suspendedAuthorStats.counter().incr()
-        suspendedAuthorStats.counter("filtered").incr()
-        true
-      case _ => false
+  privatelon[this] delonf isSuspelonndelond(statelon: UselonrUnavailablelonStatelonelonnum): Boolelonan =
+    statelon match {
+      caselon UselonrUnavailablelonStatelonelonnum.Suspelonndelond =>
+        suspelonndelondAuthorStats.countelonr().incr()
+        truelon
+      caselon UselonrUnavailablelonStatelonelonnum.Filtelonrelond(relonsult)
+          if UselonrVisibilityRelonsultHelonlpelonr.isDropSuspelonndelondAuthor(relonsult) =>
+        suspelonndelondAuthorStats.countelonr().incr()
+        suspelonndelondAuthorStats.countelonr("filtelonrelond").incr()
+        truelon
+      caselon _ => falselon
     }
 
-  private[this] def isDeactivated(state: UserUnavailableStateEnum): Boolean =
-    state match {
-      case UserUnavailableStateEnum.Deactivated =>
-        deactivatedAuthorStats.counter().incr()
-        true
-      case _ => false
+  privatelon[this] delonf isDelonactivatelond(statelon: UselonrUnavailablelonStatelonelonnum): Boolelonan =
+    statelon match {
+      caselon UselonrUnavailablelonStatelonelonnum.Delonactivatelond =>
+        delonactivatelondAuthorStats.countelonr().incr()
+        truelon
+      caselon _ => falselon
     }
 
-  private[this] def isOffboarded(state: UserUnavailableStateEnum): Boolean =
-    state match {
-      case UserUnavailableStateEnum.Offboarded =>
-        offboardedAuthorStats.counter().incr()
-        true
-      case _ => false
+  privatelon[this] delonf isOffboardelond(statelon: UselonrUnavailablelonStatelonelonnum): Boolelonan =
+    statelon match {
+      caselon UselonrUnavailablelonStatelonelonnum.Offboardelond =>
+        offboardelondAuthorStats.countelonr().incr()
+        truelon
+      caselon _ => falselon
     }
 
-  private[this] def isErased(state: UserUnavailableStateEnum): Boolean =
-    state match {
-      case UserUnavailableStateEnum.Erased =>
-        erasedAuthorStats.counter().incr()
-        true
-      case _ => false
+  privatelon[this] delonf iselonraselond(statelon: UselonrUnavailablelonStatelonelonnum): Boolelonan =
+    statelon match {
+      caselon UselonrUnavailablelonStatelonelonnum.elonraselond =>
+        elonraselondAuthorStats.countelonr().incr()
+        truelon
+      caselon _ => falselon
     }
 
-  private[this] def isProtected(state: UserUnavailableStateEnum): Boolean =
-    state match {
-      case UserUnavailableStateEnum.Protected =>
-        protectedAuthorStats.counter().incr()
-        true
-      case UserUnavailableStateEnum.Filtered(result)
-          if UserVisibilityResultHelper.isDropProtectedAuthor(result) =>
-        protectedAuthorStats.counter().incr()
-        protectedAuthorStats.counter("filtered").incr()
-        true
-      case _ => false
+  privatelon[this] delonf isProtelonctelond(statelon: UselonrUnavailablelonStatelonelonnum): Boolelonan =
+    statelon match {
+      caselon UselonrUnavailablelonStatelonelonnum.Protelonctelond =>
+        protelonctelondAuthorStats.countelonr().incr()
+        truelon
+      caselon UselonrUnavailablelonStatelonelonnum.Filtelonrelond(relonsult)
+          if UselonrVisibilityRelonsultHelonlpelonr.isDropProtelonctelondAuthor(relonsult) =>
+        protelonctelondAuthorStats.countelonr().incr()
+        protelonctelondAuthorStats.countelonr("filtelonrelond").incr()
+        truelon
+      caselon _ => falselon
     }
 
-  private[this] def authorBlocksViewer(state: UserUnavailableStateEnum): Boolean =
-    state match {
-      case UserUnavailableStateEnum.AuthorBlocksViewer =>
-        authorBlocksViewerStats.counter().incr()
-        true
-      case UserUnavailableStateEnum.Filtered(result)
-          if UserVisibilityResultHelper.isDropAuthorBlocksViewer(result) =>
-        authorBlocksViewerStats.counter().incr()
-        authorBlocksViewerStats.counter("filtered").incr()
-        true
-      case _ => false
+  privatelon[this] delonf authorBlocksVielonwelonr(statelon: UselonrUnavailablelonStatelonelonnum): Boolelonan =
+    statelon match {
+      caselon UselonrUnavailablelonStatelonelonnum.AuthorBlocksVielonwelonr =>
+        authorBlocksVielonwelonrStats.countelonr().incr()
+        truelon
+      caselon UselonrUnavailablelonStatelonelonnum.Filtelonrelond(relonsult)
+          if UselonrVisibilityRelonsultHelonlpelonr.isDropAuthorBlocksVielonwelonr(relonsult) =>
+        authorBlocksVielonwelonrStats.countelonr().incr()
+        authorBlocksVielonwelonrStats.countelonr("filtelonrelond").incr()
+        truelon
+      caselon _ => falselon
     }
 
-  private[this] def viewerBlocksAuthor(state: UserUnavailableStateEnum): Boolean =
-    state match {
-      case UserUnavailableStateEnum.ViewerBlocksAuthor =>
-        viewerBlocksAuthorStats.counter().incr()
-        true
-      case UserUnavailableStateEnum.Filtered(result)
-          if UserVisibilityResultHelper.isDropViewerBlocksAuthor(result) =>
-        viewerBlocksAuthorStats.counter().incr()
-        viewerBlocksAuthorStats.counter("filtered").incr()
-        true
-      case _ => false
+  privatelon[this] delonf vielonwelonrBlocksAuthor(statelon: UselonrUnavailablelonStatelonelonnum): Boolelonan =
+    statelon match {
+      caselon UselonrUnavailablelonStatelonelonnum.VielonwelonrBlocksAuthor =>
+        vielonwelonrBlocksAuthorStats.countelonr().incr()
+        truelon
+      caselon UselonrUnavailablelonStatelonelonnum.Filtelonrelond(relonsult)
+          if UselonrVisibilityRelonsultHelonlpelonr.isDropVielonwelonrBlocksAuthor(relonsult) =>
+        vielonwelonrBlocksAuthorStats.countelonr().incr()
+        vielonwelonrBlocksAuthorStats.countelonr("filtelonrelond").incr()
+        truelon
+      caselon _ => falselon
     }
 
-  private[this] def viewerMutesAuthor(state: UserUnavailableStateEnum): Boolean =
-    state match {
-      case UserUnavailableStateEnum.ViewerMutesAuthor =>
-        viewerMutesAuthorStats.counter().incr()
-        true
-      case UserUnavailableStateEnum.Filtered(result)
-          if UserVisibilityResultHelper.isDropViewerMutesAuthor(result) =>
-        viewerMutesAuthorStats.counter().incr()
-        viewerMutesAuthorStats.counter("filtered").incr()
-        true
-      case _ => false
+  privatelon[this] delonf vielonwelonrMutelonsAuthor(statelon: UselonrUnavailablelonStatelonelonnum): Boolelonan =
+    statelon match {
+      caselon UselonrUnavailablelonStatelonelonnum.VielonwelonrMutelonsAuthor =>
+        vielonwelonrMutelonsAuthorStats.countelonr().incr()
+        truelon
+      caselon UselonrUnavailablelonStatelonelonnum.Filtelonrelond(relonsult)
+          if UselonrVisibilityRelonsultHelonlpelonr.isDropVielonwelonrMutelonsAuthor(relonsult) =>
+        vielonwelonrMutelonsAuthorStats.countelonr().incr()
+        vielonwelonrMutelonsAuthorStats.countelonr("filtelonrelond").incr()
+        truelon
+      caselon _ => falselon
     }
 
-  private[this] def isUnavailable(state: UserUnavailableStateEnum): Boolean =
-    state match {
-      case UserUnavailableStateEnum.Unavailable =>
-        unavailableStats.counter().incr()
-        true
-      case UserUnavailableStateEnum.Filtered(result)
-          if UserVisibilityResultHelper.isDropUnspecifiedAuthor(result) =>
-        unavailableStats.counter().incr()
-        unavailableStats.counter("filtered").incr()
-        true
-      case _ => false
+  privatelon[this] delonf isUnavailablelon(statelon: UselonrUnavailablelonStatelonelonnum): Boolelonan =
+    statelon match {
+      caselon UselonrUnavailablelonStatelonelonnum.Unavailablelon =>
+        unavailablelonStats.countelonr().incr()
+        truelon
+      caselon UselonrUnavailablelonStatelonelonnum.Filtelonrelond(relonsult)
+          if UselonrVisibilityRelonsultHelonlpelonr.isDropUnspeloncifielondAuthor(relonsult) =>
+        unavailablelonStats.countelonr().incr()
+        unavailablelonStats.countelonr("filtelonrelond").incr()
+        truelon
+      caselon _ => falselon
     }
 }

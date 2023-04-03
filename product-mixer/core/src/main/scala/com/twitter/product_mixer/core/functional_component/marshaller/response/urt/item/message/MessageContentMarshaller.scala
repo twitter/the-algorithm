@@ -1,25 +1,25 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.message
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.itelonm.melonssagelon
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.CompactPromptMessageContent
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.InlinePromptMessageContent
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.HeaderImagePromptMessageContent
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.MessageContent
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.melonssagelon.CompactPromptMelonssagelonContelonnt
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.melonssagelon.InlinelonPromptMelonssagelonContelonnt
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.melonssagelon.HelonadelonrImagelonPromptMelonssagelonContelonnt
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.melonssagelon.MelonssagelonContelonnt
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class MessageContentMarshaller @Inject() (
-  inlinePromptMessageContentMarshaller: InlinePromptMessageContentMarshaller,
-  headerImagePromptMessageContentMarshaller: HeaderImagePromptMessageContentMarshaller,
-  compactPromptMessageContentMarshaller: CompactPromptMessageContentMarshaller) {
+@Singlelonton
+class MelonssagelonContelonntMarshallelonr @Injelonct() (
+  inlinelonPromptMelonssagelonContelonntMarshallelonr: InlinelonPromptMelonssagelonContelonntMarshallelonr,
+  helonadelonrImagelonPromptMelonssagelonContelonntMarshallelonr: HelonadelonrImagelonPromptMelonssagelonContelonntMarshallelonr,
+  compactPromptMelonssagelonContelonntMarshallelonr: CompactPromptMelonssagelonContelonntMarshallelonr) {
 
-  def apply(messageContent: MessageContent): urt.MessageContent = messageContent match {
-    case inlinePromptMessageContent: InlinePromptMessageContent =>
-      inlinePromptMessageContentMarshaller(inlinePromptMessageContent)
-    case headerImagePromptMessageContent: HeaderImagePromptMessageContent =>
-      headerImagePromptMessageContentMarshaller(headerImagePromptMessageContent)
-    case compactPromptMessageContent: CompactPromptMessageContent =>
-      compactPromptMessageContentMarshaller(compactPromptMessageContent)
+  delonf apply(melonssagelonContelonnt: MelonssagelonContelonnt): urt.MelonssagelonContelonnt = melonssagelonContelonnt match {
+    caselon inlinelonPromptMelonssagelonContelonnt: InlinelonPromptMelonssagelonContelonnt =>
+      inlinelonPromptMelonssagelonContelonntMarshallelonr(inlinelonPromptMelonssagelonContelonnt)
+    caselon helonadelonrImagelonPromptMelonssagelonContelonnt: HelonadelonrImagelonPromptMelonssagelonContelonnt =>
+      helonadelonrImagelonPromptMelonssagelonContelonntMarshallelonr(helonadelonrImagelonPromptMelonssagelonContelonnt)
+    caselon compactPromptMelonssagelonContelonnt: CompactPromptMelonssagelonContelonnt =>
+      compactPromptMelonssagelonContelonntMarshallelonr(compactPromptMelonssagelonContelonnt)
   }
 }

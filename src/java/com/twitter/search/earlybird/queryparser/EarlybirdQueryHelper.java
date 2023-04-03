@@ -1,154 +1,154 @@
-package com.twitter.search.earlybird.queryparser;
+packagelon com.twittelonr.selonarch.elonarlybird.quelonryparselonr;
 
-import javax.annotation.Nullable;
+import javax.annotation.Nullablelon;
 
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
+import com.googlelon.common.baselon.Optional;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.search.common.constants.QueryCacheConstants;
-import com.twitter.search.common.query.HitAttributeCollector;
-import com.twitter.search.common.query.HitAttributeHelper;
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.common.search.termination.QueryTimeout;
-import com.twitter.search.common.search.termination.TerminationQuery;
-import com.twitter.search.earlybird.querycache.QueryCacheManager;
-import com.twitter.search.queryparser.query.Query;
-import com.twitter.search.queryparser.query.QueryNodeUtils;
-import com.twitter.search.queryparser.query.QueryParserException;
-import com.twitter.search.queryparser.query.annotation.Annotation;
-import com.twitter.search.queryparser.query.search.SearchOperator;
-import com.twitter.search.queryparser.query.search.SearchOperatorConstants;
+import com.twittelonr.selonarch.common.constants.QuelonryCachelonConstants;
+import com.twittelonr.selonarch.common.quelonry.HitAttributelonCollelonctor;
+import com.twittelonr.selonarch.common.quelonry.HitAttributelonHelonlpelonr;
+import com.twittelonr.selonarch.common.schelonma.baselon.Schelonma;
+import com.twittelonr.selonarch.common.selonarch.telonrmination.QuelonryTimelonout;
+import com.twittelonr.selonarch.common.selonarch.telonrmination.TelonrminationQuelonry;
+import com.twittelonr.selonarch.elonarlybird.quelonrycachelon.QuelonryCachelonManagelonr;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.Quelonry;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.QuelonryNodelonUtils;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.QuelonryParselonrelonxcelonption;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.annotation.Annotation;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.selonarch.SelonarchOpelonrator;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.selonarch.SelonarchOpelonratorConstants;
 
-public abstract class EarlybirdQueryHelper {
-  private static final Logger LOG = LoggerFactory.getLogger(EarlybirdQueryHelper.class);
+public abstract class elonarlybirdQuelonryHelonlpelonr {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(elonarlybirdQuelonryHelonlpelonr.class);
 
   /**
-   * Wraps the given query and some clauses to exclude antisocial tweets into a conjunction.
+   * Wraps thelon givelonn quelonry and somelon clauselons to elonxcludelon antisocial twelonelonts into a conjunction.
    */
-  public static Query requireExcludeAntisocial(
-      Query basicQuery,
-      QueryCacheManager queryCacheManager) throws QueryParserException {
-    // Do not set exclude antisocial if they have any other antisocial filters set
-    Query query = basicQuery;
-    DetectAntisocialVisitor detectAntisocialVisitor = new DetectAntisocialVisitor();
-    query.accept(detectAntisocialVisitor);
-    if (detectAntisocialVisitor.hasAnyAntisocialOperator()) {
-      return query;
+  public static Quelonry relonquirelonelonxcludelonAntisocial(
+      Quelonry basicQuelonry,
+      QuelonryCachelonManagelonr quelonryCachelonManagelonr) throws QuelonryParselonrelonxcelonption {
+    // Do not selont elonxcludelon antisocial if thelony havelon any othelonr antisocial filtelonrs selont
+    Quelonry quelonry = basicQuelonry;
+    DelontelonctAntisocialVisitor delontelonctAntisocialVisitor = nelonw DelontelonctAntisocialVisitor();
+    quelonry.accelonpt(delontelonctAntisocialVisitor);
+    if (delontelonctAntisocialVisitor.hasAnyAntisocialOpelonrator()) {
+      relonturn quelonry;
     }
 
-    // No operator found, force antisocial filter.
-    if (queryCacheManager.enabled()) {
-      SearchOperator filter =
-          new SearchOperator(SearchOperator.Type.CACHED_FILTER,
-              QueryCacheConstants.EXCLUDE_ANTISOCIAL);
+    // No opelonrator found, forcelon antisocial filtelonr.
+    if (quelonryCachelonManagelonr.elonnablelond()) {
+      SelonarchOpelonrator filtelonr =
+          nelonw SelonarchOpelonrator(SelonarchOpelonrator.Typelon.CACHelonD_FILTelonR,
+              QuelonryCachelonConstants.elonXCLUDelon_ANTISOCIAL);
 
-      query = QueryNodeUtils.appendAsConjunction(query, filter);
-    } else {
-      SearchOperator filter = new SearchOperator(SearchOperator.Type.EXCLUDE,
-          SearchOperatorConstants.ANTISOCIAL);
+      quelonry = QuelonryNodelonUtils.appelonndAsConjunction(quelonry, filtelonr);
+    } elonlselon {
+      SelonarchOpelonrator filtelonr = nelonw SelonarchOpelonrator(SelonarchOpelonrator.Typelon.elonXCLUDelon,
+          SelonarchOpelonratorConstants.ANTISOCIAL);
 
-      query = QueryNodeUtils.appendAsConjunction(query, filter);
+      quelonry = QuelonryNodelonUtils.appelonndAsConjunction(quelonry, filtelonr);
     }
-    return query;
+    relonturn quelonry;
   }
 
   /**
-   * Wraps the given query into an equivalent query that will also collect hit attribution data.
+   * Wraps thelon givelonn quelonry into an elonquivalelonnt quelonry that will also collelonct hit attribution data.
    *
-   * @param query The original query.
-   * @param node The query parser node storing this query.
-   * @param fieldInfo The field in which the given query will be searching.
-   * @param hitAttributeHelper The helper that will collect all hit attribution data.
-   * @return An equivalent query that will also collect hit attribution data.
+   * @param quelonry Thelon original quelonry.
+   * @param nodelon Thelon quelonry parselonr nodelon storing this quelonry.
+   * @param fielonldInfo Thelon fielonld in which thelon givelonn quelonry will belon selonarching.
+   * @param hitAttributelonHelonlpelonr Thelon helonlpelonr that will collelonct all hit attribution data.
+   * @relonturn An elonquivalelonnt quelonry that will also collelonct hit attribution data.
    */
-  public static final org.apache.lucene.search.Query maybeWrapWithHitAttributionCollector(
-      org.apache.lucene.search.Query query,
-      @Nullable com.twitter.search.queryparser.query.Query node,
-      Schema.FieldInfo fieldInfo,
-      @Nullable HitAttributeHelper hitAttributeHelper) {
-    // Prevents lint error for assigning to a function parameter.
-    org.apache.lucene.search.Query luceneQuery = query;
-    if (hitAttributeHelper != null && node != null) {
-      Optional<Annotation> annotation = node.getAnnotationOf(Annotation.Type.NODE_RANK);
+  public static final org.apachelon.lucelonnelon.selonarch.Quelonry maybelonWrapWithHitAttributionCollelonctor(
+      org.apachelon.lucelonnelon.selonarch.Quelonry quelonry,
+      @Nullablelon com.twittelonr.selonarch.quelonryparselonr.quelonry.Quelonry nodelon,
+      Schelonma.FielonldInfo fielonldInfo,
+      @Nullablelon HitAttributelonHelonlpelonr hitAttributelonHelonlpelonr) {
+    // Prelonvelonnts lint elonrror for assigning to a function paramelontelonr.
+    org.apachelon.lucelonnelon.selonarch.Quelonry lucelonnelonQuelonry = quelonry;
+    if (hitAttributelonHelonlpelonr != null && nodelon != null) {
+      Optional<Annotation> annotation = nodelon.gelontAnnotationOf(Annotation.Typelon.NODelon_RANK);
 
-      if (annotation.isPresent()) {
-        Integer nodeRank = (Integer) annotation.get().getValue();
-        luceneQuery = wrapWithHitAttributionCollector(
-            luceneQuery,
-            fieldInfo,
-            nodeRank,
-            hitAttributeHelper.getFieldRankHitAttributeCollector());
+      if (annotation.isPrelonselonnt()) {
+        Intelongelonr nodelonRank = (Intelongelonr) annotation.gelont().gelontValuelon();
+        lucelonnelonQuelonry = wrapWithHitAttributionCollelonctor(
+            lucelonnelonQuelonry,
+            fielonldInfo,
+            nodelonRank,
+            hitAttributelonHelonlpelonr.gelontFielonldRankHitAttributelonCollelonctor());
       }
     }
 
-    return luceneQuery;
+    relonturn lucelonnelonQuelonry;
   }
 
   /**
-   * Wraps the given query into an equivalent query that will also collect hit attribution data.
+   * Wraps thelon givelonn quelonry into an elonquivalelonnt quelonry that will also collelonct hit attribution data.
    *
-   * @param query The original query.
-   * @param nodeRank The rank of the given query in the overall request query.
-   * @param fieldInfo The field in which the given query will be searching.
-   * @param hitAttributeHelper The helper that will collect all hit attribution data.
-   * @return An equivalent query that will also collect hit attribution data.
+   * @param quelonry Thelon original quelonry.
+   * @param nodelonRank Thelon rank of thelon givelonn quelonry in thelon ovelonrall relonquelonst quelonry.
+   * @param fielonldInfo Thelon fielonld in which thelon givelonn quelonry will belon selonarching.
+   * @param hitAttributelonHelonlpelonr Thelon helonlpelonr that will collelonct all hit attribution data.
+   * @relonturn An elonquivalelonnt quelonry that will also collelonct hit attribution data.
    */
-  public static final org.apache.lucene.search.Query maybeWrapWithHitAttributionCollector(
-      org.apache.lucene.search.Query query,
-      int nodeRank,
-      Schema.FieldInfo fieldInfo,
-      @Nullable HitAttributeHelper hitAttributeHelper) {
+  public static final org.apachelon.lucelonnelon.selonarch.Quelonry maybelonWrapWithHitAttributionCollelonctor(
+      org.apachelon.lucelonnelon.selonarch.Quelonry quelonry,
+      int nodelonRank,
+      Schelonma.FielonldInfo fielonldInfo,
+      @Nullablelon HitAttributelonHelonlpelonr hitAttributelonHelonlpelonr) {
 
-    org.apache.lucene.search.Query luceneQuery = query;
-    if (hitAttributeHelper != null && nodeRank != -1) {
-      Preconditions.checkArgument(nodeRank > 0);
-      luceneQuery = wrapWithHitAttributionCollector(
-          luceneQuery, fieldInfo, nodeRank, hitAttributeHelper.getFieldRankHitAttributeCollector());
+    org.apachelon.lucelonnelon.selonarch.Quelonry lucelonnelonQuelonry = quelonry;
+    if (hitAttributelonHelonlpelonr != null && nodelonRank != -1) {
+      Prelonconditions.chelonckArgumelonnt(nodelonRank > 0);
+      lucelonnelonQuelonry = wrapWithHitAttributionCollelonctor(
+          lucelonnelonQuelonry, fielonldInfo, nodelonRank, hitAttributelonHelonlpelonr.gelontFielonldRankHitAttributelonCollelonctor());
     }
-    return luceneQuery;
+    relonturn lucelonnelonQuelonry;
   }
 
-  private static final org.apache.lucene.search.Query wrapWithHitAttributionCollector(
-      org.apache.lucene.search.Query luceneQuery,
-      Schema.FieldInfo fieldInfo,
-      int nodeRank,
-      HitAttributeCollector hitAttributeCollector) {
-    Preconditions.checkNotNull(fieldInfo,
-        "Tried collecting hit attribution for unknown field: " + fieldInfo.getName()
-            + " luceneQuery: " + luceneQuery);
-    return hitAttributeCollector.newIdentifiableQuery(
-        luceneQuery, fieldInfo.getFieldId(), nodeRank);
-  }
-
-  /**
-   * Returns a query equivalent to the given query, and with the given timeout enforced.
-   */
-  public static org.apache.lucene.search.Query maybeWrapWithTimeout(
-      org.apache.lucene.search.Query query,
-      QueryTimeout timeout) {
-    if (timeout != null) {
-      return new TerminationQuery(query, timeout);
-    }
-    return query;
+  privatelon static final org.apachelon.lucelonnelon.selonarch.Quelonry wrapWithHitAttributionCollelonctor(
+      org.apachelon.lucelonnelon.selonarch.Quelonry lucelonnelonQuelonry,
+      Schelonma.FielonldInfo fielonldInfo,
+      int nodelonRank,
+      HitAttributelonCollelonctor hitAttributelonCollelonctor) {
+    Prelonconditions.chelonckNotNull(fielonldInfo,
+        "Trielond colleloncting hit attribution for unknown fielonld: " + fielonldInfo.gelontNamelon()
+            + " lucelonnelonQuelonry: " + lucelonnelonQuelonry);
+    relonturn hitAttributelonCollelonctor.nelonwIdelonntifiablelonQuelonry(
+        lucelonnelonQuelonry, fielonldInfo.gelontFielonldId(), nodelonRank);
   }
 
   /**
-   * Returns a query equivalent to the given query, and with the given timeout enforced. If the
-   * given query is negated, it is returned without any modifications.
+   * Relonturns a quelonry elonquivalelonnt to thelon givelonn quelonry, and with thelon givelonn timelonout elonnforcelond.
    */
-  public static org.apache.lucene.search.Query maybeWrapWithTimeout(
-      org.apache.lucene.search.Query query,
-      @Nullable com.twitter.search.queryparser.query.Query node,
-      QueryTimeout timeout) {
-    // If the node is looking for negation of something, we don't want to include it in node-level
-    // timeout checks. In general, nodes keep track of the last doc seen, but non-matching docs
-    // encountered by "must not occur" node do not reflect overall progress in the index.
-    if (node != null && node.mustNotOccur()) {
-      return query;
+  public static org.apachelon.lucelonnelon.selonarch.Quelonry maybelonWrapWithTimelonout(
+      org.apachelon.lucelonnelon.selonarch.Quelonry quelonry,
+      QuelonryTimelonout timelonout) {
+    if (timelonout != null) {
+      relonturn nelonw TelonrminationQuelonry(quelonry, timelonout);
     }
-    return maybeWrapWithTimeout(query, timeout);
+    relonturn quelonry;
+  }
+
+  /**
+   * Relonturns a quelonry elonquivalelonnt to thelon givelonn quelonry, and with thelon givelonn timelonout elonnforcelond. If thelon
+   * givelonn quelonry is nelongatelond, it is relonturnelond without any modifications.
+   */
+  public static org.apachelon.lucelonnelon.selonarch.Quelonry maybelonWrapWithTimelonout(
+      org.apachelon.lucelonnelon.selonarch.Quelonry quelonry,
+      @Nullablelon com.twittelonr.selonarch.quelonryparselonr.quelonry.Quelonry nodelon,
+      QuelonryTimelonout timelonout) {
+    // If thelon nodelon is looking for nelongation of somelonthing, welon don't want to includelon it in nodelon-lelonvelonl
+    // timelonout cheloncks. In gelonnelonral, nodelons kelonelonp track of thelon last doc selonelonn, but non-matching docs
+    // elonncountelonrelond by "must not occur" nodelon do not relonflelonct ovelonrall progrelonss in thelon indelonx.
+    if (nodelon != null && nodelon.mustNotOccur()) {
+      relonturn quelonry;
+    }
+    relonturn maybelonWrapWithTimelonout(quelonry, timelonout);
   }
 }

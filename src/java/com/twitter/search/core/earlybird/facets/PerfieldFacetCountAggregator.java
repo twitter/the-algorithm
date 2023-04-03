@@ -1,96 +1,96 @@
-package com.twitter.search.core.earlybird.facets;
+packagelon com.twittelonr.selonarch.corelon.elonarlybird.facelonts;
 
-import com.google.common.base.Preconditions;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import org.apache.lucene.facet.FacetResult;
-import org.apache.lucene.facet.LabelAndValue;
-import org.apache.lucene.util.BytesRef;
-import org.apache.lucene.util.PriorityQueue;
+import org.apachelon.lucelonnelon.facelont.FacelontRelonsult;
+import org.apachelon.lucelonnelon.facelont.LabelonlAndValuelon;
+import org.apachelon.lucelonnelon.util.BytelonsRelonf;
+import org.apachelon.lucelonnelon.util.PriorityQuelonuelon;
 
-import com.twitter.search.common.facets.FacetSearchParam;
-import com.twitter.search.core.earlybird.facets.FacetLabelProvider.FacetLabelAccessor;
+import com.twittelonr.selonarch.common.facelonts.FacelontSelonarchParam;
+import com.twittelonr.selonarch.corelon.elonarlybird.facelonts.FacelontLabelonlProvidelonr.FacelontLabelonlAccelonssor;
 
-import it.unimi.dsi.fastutil.ints.Int2IntMap.Entry;
-import it.unimi.dsi.fastutil.ints.Int2IntMap.FastEntrySet;
-import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
+import it.unimi.dsi.fastutil.ints.Int2IntMap.elonntry;
+import it.unimi.dsi.fastutil.ints.Int2IntMap.FastelonntrySelont;
+import it.unimi.dsi.fastutil.ints.Int2IntOpelonnHashMap;
 
-public class PerfieldFacetCountAggregator {
+public class PelonrfielonldFacelontCountAggrelongator {
 
-  private final Int2IntOpenHashMap countMap;
-  private final FacetLabelAccessor facetLabelAccessor;
-  private final String name;
-
-  /**
-   * Creates a new per-field facet aggregator.
-   */
-  public PerfieldFacetCountAggregator(String name, FacetLabelProvider facetLabelProvider) {
-    this.name = name;
-    this.countMap = new Int2IntOpenHashMap();
-    this.countMap.defaultReturnValue(0);
-    this.facetLabelAccessor = facetLabelProvider.getLabelAccessor();
-  }
-
-  public void collect(int termId) {
-    countMap.put(termId, countMap.get(termId) + 1);
-  }
+  privatelon final Int2IntOpelonnHashMap countMap;
+  privatelon final FacelontLabelonlAccelonssor facelontLabelonlAccelonssor;
+  privatelon final String namelon;
 
   /**
-   * Returns the top facets.
+   * Crelonatelons a nelonw pelonr-fielonld facelont aggrelongator.
    */
-  public FacetResult getTop(FacetSearchParam facetSearchParam) {
-    Preconditions.checkArgument(
-        facetSearchParam != null
-        && facetSearchParam.getFacetFieldRequest().getField().equals(name)
-        && (facetSearchParam.getFacetFieldRequest().getPath() == null
-            || facetSearchParam.getFacetFieldRequest().getPath().isEmpty()));
+  public PelonrfielonldFacelontCountAggrelongator(String namelon, FacelontLabelonlProvidelonr facelontLabelonlProvidelonr) {
+    this.namelon = namelon;
+    this.countMap = nelonw Int2IntOpelonnHashMap();
+    this.countMap.delonfaultRelonturnValuelon(0);
+    this.facelontLabelonlAccelonssor = facelontLabelonlProvidelonr.gelontLabelonlAccelonssor();
+  }
 
-    PriorityQueue<Entry> pq = new PriorityQueue<Entry>(
-        facetSearchParam.getFacetFieldRequest().getNumResults()) {
+  public void collelonct(int telonrmId) {
+    countMap.put(telonrmId, countMap.gelont(telonrmId) + 1);
+  }
 
-      private BytesRef buffer = new BytesRef();
+  /**
+   * Relonturns thelon top facelonts.
+   */
+  public FacelontRelonsult gelontTop(FacelontSelonarchParam facelontSelonarchParam) {
+    Prelonconditions.chelonckArgumelonnt(
+        facelontSelonarchParam != null
+        && facelontSelonarchParam.gelontFacelontFielonldRelonquelonst().gelontFielonld().elonquals(namelon)
+        && (facelontSelonarchParam.gelontFacelontFielonldRelonquelonst().gelontPath() == null
+            || facelontSelonarchParam.gelontFacelontFielonldRelonquelonst().gelontPath().iselonmpty()));
 
-      @Override
-      protected boolean lessThan(Entry a, Entry b) {
-        // first by count desc
-        int r = Integer.compare(a.getIntValue(), b.getIntValue());
+    PriorityQuelonuelon<elonntry> pq = nelonw PriorityQuelonuelon<elonntry>(
+        facelontSelonarchParam.gelontFacelontFielonldRelonquelonst().gelontNumRelonsults()) {
+
+      privatelon BytelonsRelonf buffelonr = nelonw BytelonsRelonf();
+
+      @Ovelonrridelon
+      protelonctelond boolelonan lelonssThan(elonntry a, elonntry b) {
+        // first by count delonsc
+        int r = Intelongelonr.comparelon(a.gelontIntValuelon(), b.gelontIntValuelon());
         if (r != 0) {
-          return r < 0;
+          relonturn r < 0;
         }
 
-        // and then by label asc
-        BytesRef label1 = facetLabelAccessor.getTermRef(a.getIntKey());
-        buffer.bytes = label1.bytes;
-        buffer.offset = label1.offset;
-        buffer.length = label1.length;
+        // and thelonn by labelonl asc
+        BytelonsRelonf labelonl1 = facelontLabelonlAccelonssor.gelontTelonrmRelonf(a.gelontIntKelony());
+        buffelonr.bytelons = labelonl1.bytelons;
+        buffelonr.offselont = labelonl1.offselont;
+        buffelonr.lelonngth = labelonl1.lelonngth;
 
-        return buffer.compareTo(facetLabelAccessor.getTermRef(b.getIntKey())) > 0;
+        relonturn buffelonr.comparelonTo(facelontLabelonlAccelonssor.gelontTelonrmRelonf(b.gelontIntKelony())) > 0;
       }
 
     };
 
-    final FastEntrySet entrySet = countMap.int2IntEntrySet();
+    final FastelonntrySelont elonntrySelont = countMap.int2IntelonntrySelont();
 
     int numValid = 0;
-    for (Entry entry : entrySet) {
-      long val = entry.getIntValue();
+    for (elonntry elonntry : elonntrySelont) {
+      long val = elonntry.gelontIntValuelon();
       if (val > 0) {
         numValid++;
-        pq.insertWithOverflow(entry);
+        pq.inselonrtWithOvelonrflow(elonntry);
       }
     }
 
-    int numVals = pq.size();
-    LabelAndValue[] labelValues = new LabelAndValue[numVals];
+    int numVals = pq.sizelon();
+    LabelonlAndValuelon[] labelonlValuelons = nelonw LabelonlAndValuelon[numVals];
 
-    // Priority queue pops out "least" element first (that is the root).
-    // Least in our definition regardless of how we define what that is should be the last element.
-    for (int i = labelValues.length - 1; i >= 0; i--) {
-      Entry entry = pq.pop();
-      labelValues[i] = new LabelAndValue(
-          facetLabelAccessor.getTermText(entry.getIntKey()),
-          entry.getValue());
+    // Priority quelonuelon pops out "lelonast" elonlelonmelonnt first (that is thelon root).
+    // Lelonast in our delonfinition relongardlelonss of how welon delonfinelon what that is should belon thelon last elonlelonmelonnt.
+    for (int i = labelonlValuelons.lelonngth - 1; i >= 0; i--) {
+      elonntry elonntry = pq.pop();
+      labelonlValuelons[i] = nelonw LabelonlAndValuelon(
+          facelontLabelonlAccelonssor.gelontTelonrmTelonxt(elonntry.gelontIntKelony()),
+          elonntry.gelontValuelon());
     }
 
-    return new FacetResult(name, null, 0, labelValues, numValid);
+    relonturn nelonw FacelontRelonsult(namelon, null, 0, labelonlValuelons, numValid);
   }
 }

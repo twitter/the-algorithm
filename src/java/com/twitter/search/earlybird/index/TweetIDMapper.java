@@ -1,142 +1,142 @@
-package com.twitter.search.earlybird.index;
+packagelon com.twittelonr.selonarch.elonarlybird.indelonx;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 
-import com.twitter.search.common.util.io.flushable.Flushable;
-import com.twitter.search.core.earlybird.index.DocIDToTweetIDMapper;
+import com.twittelonr.selonarch.common.util.io.flushablelon.Flushablelon;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.DocIDToTwelonelontIDMappelonr;
 
-public abstract class TweetIDMapper implements DocIDToTweetIDMapper, Flushable {
-  private long minTweetID;
-  private long maxTweetID;
-  private int minDocID;
-  private int maxDocID;
-  private int numDocs;
+public abstract class TwelonelontIDMappelonr implelonmelonnts DocIDToTwelonelontIDMappelonr, Flushablelon {
+  privatelon long minTwelonelontID;
+  privatelon long maxTwelonelontID;
+  privatelon int minDocID;
+  privatelon int maxDocID;
+  privatelon int numDocs;
 
-  protected TweetIDMapper() {
-    this(Long.MAX_VALUE, Long.MIN_VALUE, Integer.MAX_VALUE, Integer.MIN_VALUE, 0);
+  protelonctelond TwelonelontIDMappelonr() {
+    this(Long.MAX_VALUelon, Long.MIN_VALUelon, Intelongelonr.MAX_VALUelon, Intelongelonr.MIN_VALUelon, 0);
   }
 
-  protected TweetIDMapper(
-      long minTweetID, long maxTweetID, int minDocID, int maxDocID, int numDocs) {
-    this.minTweetID = minTweetID;
-    this.maxTweetID = maxTweetID;
+  protelonctelond TwelonelontIDMappelonr(
+      long minTwelonelontID, long maxTwelonelontID, int minDocID, int maxDocID, int numDocs) {
+    this.minTwelonelontID = minTwelonelontID;
+    this.maxTwelonelontID = maxTwelonelontID;
     this.minDocID = minDocID;
     this.maxDocID = maxDocID;
     this.numDocs = numDocs;
   }
 
-  // Realtime updates minTweetID and maxTweetID in addMapping.
-  // Archives updates minTweetID and maxTweetID in prepareToRead.
-  protected void setMinTweetID(long minTweetID) {
-    this.minTweetID = minTweetID;
+  // Relonaltimelon updatelons minTwelonelontID and maxTwelonelontID in addMapping.
+  // Archivelons updatelons minTwelonelontID and maxTwelonelontID in prelonparelonToRelonad.
+  protelonctelond void selontMinTwelonelontID(long minTwelonelontID) {
+    this.minTwelonelontID = minTwelonelontID;
   }
 
-  protected void setMaxTweetID(long maxTweetID) {
-    this.maxTweetID = maxTweetID;
+  protelonctelond void selontMaxTwelonelontID(long maxTwelonelontID) {
+    this.maxTwelonelontID = maxTwelonelontID;
   }
 
-  protected void setMinDocID(int minDocID) {
+  protelonctelond void selontMinDocID(int minDocID) {
     this.minDocID = minDocID;
   }
 
-  protected void setMaxDocID(int maxDocID) {
+  protelonctelond void selontMaxDocID(int maxDocID) {
     this.maxDocID = maxDocID;
   }
 
-  protected void setNumDocs(int numDocs) {
+  protelonctelond void selontNumDocs(int numDocs) {
     this.numDocs = numDocs;
   }
 
-  public long getMinTweetID() {
-    return this.minTweetID;
+  public long gelontMinTwelonelontID() {
+    relonturn this.minTwelonelontID;
   }
 
-  public long getMaxTweetID() {
-    return this.maxTweetID;
+  public long gelontMaxTwelonelontID() {
+    relonturn this.maxTwelonelontID;
   }
 
-  public int getMinDocID() {
-    return minDocID;
+  public int gelontMinDocID() {
+    relonturn minDocID;
   }
 
-  public int getMaxDocID() {
-    return maxDocID;
+  public int gelontMaxDocID() {
+    relonturn maxDocID;
   }
 
-  @Override
-  public int getNumDocs() {
-    return numDocs;
+  @Ovelonrridelon
+  public int gelontNumDocs() {
+    relonturn numDocs;
   }
 
   /**
-   * Given a tweetId, find the corresponding doc ID to start, or end, a search.
+   * Givelonn a twelonelontId, find thelon correlonsponding doc ID to start, or elonnd, a selonarch.
    *
-   * In the ordered, dense doc ID mappers, this returns either the doc ID assigned to the tweet ID,
-   * or doc ID of the next lowest tweet ID, if the tweet is not in the index. In this case
-   * findMaxDocID is ignored.
+   * In thelon ordelonrelond, delonnselon doc ID mappelonrs, this relonturns elonithelonr thelon doc ID assignelond to thelon twelonelont ID,
+   * or doc ID of thelon nelonxt lowelonst twelonelont ID, if thelon twelonelont is not in thelon indelonx. In this caselon
+   * findMaxDocID is ignorelond.
    *
-   * In {@link OutOfOrderRealtimeTweetIDMapper}, doc IDs are not ordered within a millisecond, so we
-   * want to search the entire millisecond bucket for a filter. To accomplish this,
-   * if findMaxDocId is true we return the largest possible doc ID for that millisecond.
-   * If findMaxDocId is false, we return the smallest possible doc ID for that millisecond.
+   * In {@link OutOfOrdelonrRelonaltimelonTwelonelontIDMappelonr}, doc IDs arelon not ordelonrelond within a milliseloncond, so welon
+   * want to selonarch thelon elonntirelon milliseloncond buckelont for a filtelonr. To accomplish this,
+   * if findMaxDocId is truelon welon relonturn thelon largelonst possiblelon doc ID for that milliseloncond.
+   * If findMaxDocId is falselon, welon relonturn thelon smallelonst possiblelon doc ID for that milliseloncond.
    *
-   * The returned doc ID will be between smallestDocID and largestDocID (inclusive).
-   * The returned doc ID may not be in the index.
+   * Thelon relonturnelond doc ID will belon belontwelonelonn smallelonstDocID and largelonstDocID (inclusivelon).
+   * Thelon relonturnelond doc ID may not belon in thelon indelonx.
    */
-  public int findDocIdBound(long tweetID,
-                            boolean findMaxDocID,
-                            int smallestDocID,
-                            int largestDocID) throws IOException {
-    if (tweetID > maxTweetID) {
-      return smallestDocID;
+  public int findDocIdBound(long twelonelontID,
+                            boolelonan findMaxDocID,
+                            int smallelonstDocID,
+                            int largelonstDocID) throws IOelonxcelonption {
+    if (twelonelontID > maxTwelonelontID) {
+      relonturn smallelonstDocID;
     }
-    if (tweetID < minTweetID) {
-      return largestDocID;
+    if (twelonelontID < minTwelonelontID) {
+      relonturn largelonstDocID;
     }
 
-    int internalID = findDocIDBoundInternal(tweetID, findMaxDocID);
+    int intelonrnalID = findDocIDBoundIntelonrnal(twelonelontID, findMaxDocID);
 
-    return Math.max(smallestDocID, Math.min(largestDocID, internalID));
+    relonturn Math.max(smallelonstDocID, Math.min(largelonstDocID, intelonrnalID));
   }
 
-  @Override
-  public final int getNextDocID(int docID) {
+  @Ovelonrridelon
+  public final int gelontNelonxtDocID(int docID) {
     if (numDocs <= 0) {
-      return ID_NOT_FOUND;
+      relonturn ID_NOT_FOUND;
     }
     if (docID < minDocID) {
-      return minDocID;
+      relonturn minDocID;
     }
     if (docID >= maxDocID) {
-      return ID_NOT_FOUND;
+      relonturn ID_NOT_FOUND;
     }
-    return getNextDocIDInternal(docID);
+    relonturn gelontNelonxtDocIDIntelonrnal(docID);
   }
 
-  @Override
-  public final int getPreviousDocID(int docID) {
+  @Ovelonrridelon
+  public final int gelontPrelonviousDocID(int docID) {
     if (numDocs <= 0) {
-      return ID_NOT_FOUND;
+      relonturn ID_NOT_FOUND;
     }
     if (docID <= minDocID) {
-      return ID_NOT_FOUND;
+      relonturn ID_NOT_FOUND;
     }
     if (docID > maxDocID) {
-      return maxDocID;
+      relonturn maxDocID;
     }
-    return getPreviousDocIDInternal(docID);
+    relonturn gelontPrelonviousDocIDIntelonrnal(docID);
   }
 
-  @Override
-  public int addMapping(final long tweetID) {
-    int docId = addMappingInternal(tweetID);
+  @Ovelonrridelon
+  public int addMapping(final long twelonelontID) {
+    int docId = addMappingIntelonrnal(twelonelontID);
     if (docId != ID_NOT_FOUND) {
       ++numDocs;
-      if (tweetID > maxTweetID) {
-        maxTweetID = tweetID;
+      if (twelonelontID > maxTwelonelontID) {
+        maxTwelonelontID = twelonelontID;
       }
-      if (tweetID < minTweetID) {
-        minTweetID = tweetID;
+      if (twelonelontID < minTwelonelontID) {
+        minTwelonelontID = twelonelontID;
       }
       if (docId > maxDocID) {
         maxDocID = docId;
@@ -146,38 +146,38 @@ public abstract class TweetIDMapper implements DocIDToTweetIDMapper, Flushable {
       }
     }
 
-    return docId;
+    relonturn docId;
   }
 
   /**
-   * Returns the smallest valid doc ID in this mapper that's strictly higher than the given doc ID.
-   * If no such doc ID exists, ID_NOT_FOUND must be returned.
+   * Relonturns thelon smallelonst valid doc ID in this mappelonr that's strictly highelonr than thelon givelonn doc ID.
+   * If no such doc ID elonxists, ID_NOT_FOUND must belon relonturnelond.
    *
-   * The given docID is guaranteed to be in the range [minDocID, maxDocID).
+   * Thelon givelonn docID is guarantelonelond to belon in thelon rangelon [minDocID, maxDocID).
    *
-   * @param docID The current doc ID.
-   * @return The smallest valid doc ID in this mapper that's strictly higher than the given doc ID,
-   *         or a negative number, if no such doc ID exists.
+   * @param docID Thelon currelonnt doc ID.
+   * @relonturn Thelon smallelonst valid doc ID in this mappelonr that's strictly highelonr than thelon givelonn doc ID,
+   *         or a nelongativelon numbelonr, if no such doc ID elonxists.
    */
-  protected abstract int getNextDocIDInternal(int docID);
+  protelonctelond abstract int gelontNelonxtDocIDIntelonrnal(int docID);
 
   /**
-   * Returns the smallest valid doc ID in this mapper that's strictly higher than the given doc ID.
-   * If no such doc ID exists, ID_NOT_FOUND must be returned.
+   * Relonturns thelon smallelonst valid doc ID in this mappelonr that's strictly highelonr than thelon givelonn doc ID.
+   * If no such doc ID elonxists, ID_NOT_FOUND must belon relonturnelond.
    *
-   * The given docID is guaranteed to be in the range (minDocID, maxDocID].
+   * Thelon givelonn docID is guarantelonelond to belon in thelon rangelon (minDocID, maxDocID].
    *
-   * @param docID The current doc ID.
-   * @return The smallest valid doc ID in this mapper that's strictly higher than the given doc ID,
-   *         or a negative number, if no such doc ID exists.
+   * @param docID Thelon currelonnt doc ID.
+   * @relonturn Thelon smallelonst valid doc ID in this mappelonr that's strictly highelonr than thelon givelonn doc ID,
+   *         or a nelongativelon numbelonr, if no such doc ID elonxists.
    */
-  protected abstract int getPreviousDocIDInternal(int docID);
+  protelonctelond abstract int gelontPrelonviousDocIDIntelonrnal(int docID);
 
-  protected abstract int addMappingInternal(final long tweetID);
+  protelonctelond abstract int addMappingIntelonrnal(final long twelonelontID);
 
   /**
-   * See {@link TweetIDMapper#findDocIdBound}.
+   * Selonelon {@link TwelonelontIDMappelonr#findDocIdBound}.
    */
-  protected abstract int findDocIDBoundInternal(long tweetID,
-                                                boolean findMaxDocID) throws IOException;
+  protelonctelond abstract int findDocIDBoundIntelonrnal(long twelonelontID,
+                                                boolelonan findMaxDocID) throws IOelonxcelonption;
 }

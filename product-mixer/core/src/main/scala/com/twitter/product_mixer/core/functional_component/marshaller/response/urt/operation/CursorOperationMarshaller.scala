@@ -1,21 +1,21 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.operation
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.opelonration
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.CursorOperation
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.opelonration.CursorOpelonration
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class CursorOperationMarshaller @Inject() (
-  cursorTypeMarshaller: CursorTypeMarshaller,
-  cursorDisplayTreatmentMarshaller: CursorDisplayTreatmentMarshaller) {
+@Singlelonton
+class CursorOpelonrationMarshallelonr @Injelonct() (
+  cursorTypelonMarshallelonr: CursorTypelonMarshallelonr,
+  cursorDisplayTrelonatmelonntMarshallelonr: CursorDisplayTrelonatmelonntMarshallelonr) {
 
-  def apply(cursorOperation: CursorOperation): urt.TimelineOperation.Cursor =
-    urt.TimelineOperation.Cursor(
-      urt.TimelineCursor(
-        value = cursorOperation.value,
-        cursorType = cursorTypeMarshaller(cursorOperation.cursorType),
-        displayTreatment = cursorOperation.displayTreatment.map(cursorDisplayTreatmentMarshaller(_))
+  delonf apply(cursorOpelonration: CursorOpelonration): urt.TimelonlinelonOpelonration.Cursor =
+    urt.TimelonlinelonOpelonration.Cursor(
+      urt.TimelonlinelonCursor(
+        valuelon = cursorOpelonration.valuelon,
+        cursorTypelon = cursorTypelonMarshallelonr(cursorOpelonration.cursorTypelon),
+        displayTrelonatmelonnt = cursorOpelonration.displayTrelonatmelonnt.map(cursorDisplayTrelonatmelonntMarshallelonr(_))
       )
     )
 }

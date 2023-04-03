@@ -1,361 +1,361 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.flexible_injection_pipeline
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.flelonxiblelon_injelonction_pipelonlinelon
 
-import com.twitter.onboarding.injections.{thriftscala => onboardingthrift}
-import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.CenterCoverHalfCoverDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.CoverBehaviorDismiss
-import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.CoverBehaviorNavigate
-import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.CoverCta
-import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.CoverCtaBehavior
-import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.CoverHalfCoverDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.CoverImage
-import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.HalfCoverDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.icon._
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.FollowAllMessageActionType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.LargeUserFacepileDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.MessageAction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.MessageActionType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.MessageImage
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.MessageTextAction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.UserFacepile
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Bounce
-import com.twitter.product_mixer.core.model.marshalling.response.urt.button.ButtonStyle
-import com.twitter.product_mixer.core.model.marshalling.response.urt.button.Default
-import com.twitter.product_mixer.core.model.marshalling.response.urt.button.Primary
-import com.twitter.product_mixer.core.model.marshalling.response.urt.button.Secondary
-import com.twitter.product_mixer.core.model.marshalling.response.urt.button.Text
-import com.twitter.product_mixer.core.model.marshalling.response.urt.button.Destructive
-import com.twitter.product_mixer.core.model.marshalling.response.urt.button.Neutral
-import com.twitter.product_mixer.core.model.marshalling.response.urt.button.DestructiveSecondary
-import com.twitter.product_mixer.core.model.marshalling.response.urt.button.DestructiveText
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Callback
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.DeepLink
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Dismiss
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.DismissInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ExternalUrl
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackAction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackActionInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FollowGeneralContextType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.GeneralContext
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ImageAnimationType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ImageDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ImageVariant
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FullWidth
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Icon
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.IconSmall
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.SocialContext
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Url
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.UrtEndpoint
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.UrtEndpointOptions
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.Center
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.Natural
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.Plain
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.ReferenceObject
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichText
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextAlignment
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextEntity
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextFormat
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextCashtag
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextHashtag
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextList
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextMention
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextUser
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.Strong
+import com.twittelonr.onboarding.injelonctions.{thriftscala => onboardingthrift}
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.covelonr.CelonntelonrCovelonrHalfCovelonrDisplayTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.covelonr.CovelonrBelonhaviorDismiss
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.covelonr.CovelonrBelonhaviorNavigatelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.covelonr.CovelonrCta
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.covelonr.CovelonrCtaBelonhavior
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.covelonr.CovelonrHalfCovelonrDisplayTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.covelonr.CovelonrImagelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.covelonr.HalfCovelonrDisplayTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.icon._
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.melonssagelon.FollowAllMelonssagelonActionTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.melonssagelon.LargelonUselonrFacelonpilelonDisplayTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.melonssagelon.MelonssagelonAction
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.melonssagelon.MelonssagelonActionTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.melonssagelon.MelonssagelonImagelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.melonssagelon.MelonssagelonTelonxtAction
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.melonssagelon.UselonrFacelonpilelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.Bouncelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.button.ButtonStylelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.button.Delonfault
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.button.Primary
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.button.Seloncondary
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.button.Telonxt
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.button.Delonstructivelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.button.Nelonutral
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.button.DelonstructivelonSeloncondary
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.button.DelonstructivelonTelonxt
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.Callback
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.ClielonntelonvelonntInfo
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.DelonelonpLink
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.Dismiss
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.DismissInfo
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.elonxtelonrnalUrl
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.FelonelondbackAction
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.FelonelondbackActionInfo
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.FollowGelonnelonralContelonxtTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.GelonnelonralContelonxt
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.ImagelonAnimationTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.ImagelonDisplayTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.ImagelonVariant
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.FullWidth
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.Icon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.IconSmall
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.SocialContelonxt
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.Url
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.Urtelonndpoint
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.UrtelonndpointOptions
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.richtelonxt.Celonntelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.richtelonxt.Natural
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.richtelonxt.Plain
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.richtelonxt.RelonfelonrelonncelonObjelonct
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.richtelonxt.RichTelonxt
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.richtelonxt.RichTelonxtAlignmelonnt
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.richtelonxt.RichTelonxtelonntity
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.richtelonxt.RichTelonxtFormat
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.richtelonxt.RichTelonxtCashtag
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.richtelonxt.RichTelonxtHashtag
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.richtelonxt.RichTelonxtList
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.richtelonxt.RichTelonxtMelonntion
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.richtelonxt.RichTelonxtUselonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.richtelonxt.Strong
 
 /***
- * Helper class to convert onboarding thrift to product-mixer models
+ * Helonlpelonr class to convelonrt onboarding thrift to product-mixelonr modelonls
  */
-object OnboardingInjectionConversions {
+objelonct OnboardingInjelonctionConvelonrsions {
 
-  def convertFeedbackInfo(
-    feedbackInfo: onboardingthrift.FeedbackInfo
-  ): FeedbackActionInfo = {
-    val actions = feedbackInfo.actions.map {
-      case onboardingthrift.FeedbackAction.DismissAction(dismissAction) =>
-        FeedbackAction(
+  delonf convelonrtFelonelondbackInfo(
+    felonelondbackInfo: onboardingthrift.FelonelondbackInfo
+  ): FelonelondbackActionInfo = {
+    val actions = felonelondbackInfo.actions.map {
+      caselon onboardingthrift.FelonelondbackAction.DismissAction(dismissAction) =>
+        FelonelondbackAction(
           Dismiss,
           prompt = dismissAction.prompt,
           confirmation = dismissAction.confirmation,
           hasUndoAction = dismissAction.hasUndoAction,
-          feedbackUrl = dismissAction.feedbackUrl,
-          childFeedbackActions =
-            None, 
-          confirmationDisplayType = None,
-          clientEventInfo = None,
-          icon = None,
-          richBehavior = None,
-          subprompt = None,
-          encodedFeedbackRequest = None
+          felonelondbackUrl = dismissAction.felonelondbackUrl,
+          childFelonelondbackActions =
+            Nonelon,
+          confirmationDisplayTypelon = Nonelon,
+          clielonntelonvelonntInfo = Nonelon,
+          icon = Nonelon,
+          richBelonhavior = Nonelon,
+          subprompt = Nonelon,
+          elonncodelondFelonelondbackRelonquelonst = Nonelon
         )
-      case onboardingthrift.FeedbackAction.UnknownUnionField(value) =>
-        throw new UnsupportedOperationException(s"Unknown product: $value")
+      caselon onboardingthrift.FelonelondbackAction.UnknownUnionFielonld(valuelon) =>
+        throw nelonw UnsupportelondOpelonrationelonxcelonption(s"Unknown product: $valuelon")
     }
 
-    FeedbackActionInfo(
-      feedbackActions = actions,
-      feedbackMetadata = None,
-      displayContext = None,
-      clientEventInfo = None)
+    FelonelondbackActionInfo(
+      felonelondbackActions = actions,
+      felonelondbackMelontadata = Nonelon,
+      displayContelonxt = Nonelon,
+      clielonntelonvelonntInfo = Nonelon)
   }
 
-  def convertClientEventInfo(input: onboardingthrift.ClientEventInfo): ClientEventInfo =
-    ClientEventInfo(
-      component = input.component,
-      element = input.element,
-      details = None,
+  delonf convelonrtClielonntelonvelonntInfo(input: onboardingthrift.ClielonntelonvelonntInfo): ClielonntelonvelonntInfo =
+    ClielonntelonvelonntInfo(
+      componelonnt = input.componelonnt,
+      elonlelonmelonnt = input.elonlelonmelonnt,
+      delontails = Nonelon,
       action = input.action,
-      entityToken = None)
+      elonntityTokelonn = Nonelon)
 
-  def convertCallback(callback: onboardingthrift.Callback): Callback =
-    Callback(callback.endpoint)
+  delonf convelonrtCallback(callback: onboardingthrift.Callback): Callback =
+    Callback(callback.elonndpoint)
 
-  def convertImage(image: onboardingthrift.Image): MessageImage =
-    MessageImage(
-      Set(convertImageVariant(image.image)),
+  delonf convelonrtImagelon(imagelon: onboardingthrift.Imagelon): MelonssagelonImagelon =
+    MelonssagelonImagelon(
+      Selont(convelonrtImagelonVariant(imagelon.imagelon)),
       backgroundColor =
-        None 
+        Nonelon
     )
 
-  def convertCoverImage(image: onboardingthrift.Image): CoverImage =
-    CoverImage(
-      convertImageVariant(image.image),
-      imageDisplayType = convertImageDisplayType(image.imageDisplayType),
-      imageAnimationType = image.imageAnimationType.map(convertImageAnimationType),
+  delonf convelonrtCovelonrImagelon(imagelon: onboardingthrift.Imagelon): CovelonrImagelon =
+    CovelonrImagelon(
+      convelonrtImagelonVariant(imagelon.imagelon),
+      imagelonDisplayTypelon = convelonrtImagelonDisplayTypelon(imagelon.imagelonDisplayTypelon),
+      imagelonAnimationTypelon = imagelon.imagelonAnimationTypelon.map(convelonrtImagelonAnimationTypelon),
     )
 
-  def convertImageDisplayType(
-    imageDisplayType: onboardingthrift.ImageDisplayType
-  ): ImageDisplayType =
-    imageDisplayType match {
-      case onboardingthrift.ImageDisplayType.Icon => Icon
-      case onboardingthrift.ImageDisplayType.FullWidth => FullWidth
-      case onboardingthrift.ImageDisplayType.IconSmall => IconSmall
-      case onboardingthrift.ImageDisplayType.EnumUnknownImageDisplayType(value) =>
-        throw new UnsupportedOperationException(s"Unknown product: $value")
+  delonf convelonrtImagelonDisplayTypelon(
+    imagelonDisplayTypelon: onboardingthrift.ImagelonDisplayTypelon
+  ): ImagelonDisplayTypelon =
+    imagelonDisplayTypelon match {
+      caselon onboardingthrift.ImagelonDisplayTypelon.Icon => Icon
+      caselon onboardingthrift.ImagelonDisplayTypelon.FullWidth => FullWidth
+      caselon onboardingthrift.ImagelonDisplayTypelon.IconSmall => IconSmall
+      caselon onboardingthrift.ImagelonDisplayTypelon.elonnumUnknownImagelonDisplayTypelon(valuelon) =>
+        throw nelonw UnsupportelondOpelonrationelonxcelonption(s"Unknown product: $valuelon")
     }
 
-  private def convertImageAnimationType(
-    imageAnimationType: onboardingthrift.ImageAnimationType
-  ): ImageAnimationType =
-    imageAnimationType match {
-      case onboardingthrift.ImageAnimationType.Bounce => Bounce
-      case onboardingthrift.ImageAnimationType.EnumUnknownImageAnimationType(value) =>
-        throw new UnsupportedOperationException(s"Unknown product: $value")
+  privatelon delonf convelonrtImagelonAnimationTypelon(
+    imagelonAnimationTypelon: onboardingthrift.ImagelonAnimationTypelon
+  ): ImagelonAnimationTypelon =
+    imagelonAnimationTypelon match {
+      caselon onboardingthrift.ImagelonAnimationTypelon.Bouncelon => Bouncelon
+      caselon onboardingthrift.ImagelonAnimationTypelon.elonnumUnknownImagelonAnimationTypelon(valuelon) =>
+        throw nelonw UnsupportelondOpelonrationelonxcelonption(s"Unknown product: $valuelon")
     }
 
-  def convertImageVariant(imageVariant: onboardingthrift.ImageVariant): ImageVariant =
-    ImageVariant(
-      url = imageVariant.url,
-      width = imageVariant.width,
-      height = imageVariant.height,
-      palette = None)
+  delonf convelonrtImagelonVariant(imagelonVariant: onboardingthrift.ImagelonVariant): ImagelonVariant =
+    ImagelonVariant(
+      url = imagelonVariant.url,
+      width = imagelonVariant.width,
+      helonight = imagelonVariant.helonight,
+      palelonttelon = Nonelon)
 
-  def convertButtonAction(
+  delonf convelonrtButtonAction(
     buttonAction: onboardingthrift.ButtonAction
-  ): MessageTextAction =
-    MessageTextAction(
-      buttonAction.text,
-      MessageAction(
-        dismissOnClick = buttonAction.dismissOnClick.getOrElse(true),
-        url = getActionUrl(buttonAction),
-        clientEventInfo = Some(convertClientEventInfo(buttonAction.clientEventInfo)),
-        onClickCallbacks = buttonAction.callbacks.map(_.map(convertCallback).toList)
+  ): MelonssagelonTelonxtAction =
+    MelonssagelonTelonxtAction(
+      buttonAction.telonxt,
+      MelonssagelonAction(
+        dismissOnClick = buttonAction.dismissOnClick.gelontOrelonlselon(truelon),
+        url = gelontActionUrl(buttonAction),
+        clielonntelonvelonntInfo = Somelon(convelonrtClielonntelonvelonntInfo(buttonAction.clielonntelonvelonntInfo)),
+        onClickCallbacks = buttonAction.callbacks.map(_.map(convelonrtCallback).toList)
       )
     )
 
-  private def getActionUrl(buttonAction: onboardingthrift.ButtonAction) =
-    buttonAction.buttonBehavior match {
-      case onboardingthrift.ButtonBehavior.Navigate(navigate) => Some(navigate.url.url)
-      case onboardingthrift.ButtonBehavior.Dismiss(_) => None
-      case onboardingthrift.ButtonBehavior.UnknownUnionField(value) =>
-        throw new UnsupportedOperationException(s"Unknown product: $value")
+  privatelon delonf gelontActionUrl(buttonAction: onboardingthrift.ButtonAction) =
+    buttonAction.buttonBelonhavior match {
+      caselon onboardingthrift.ButtonBelonhavior.Navigatelon(navigatelon) => Somelon(navigatelon.url.url)
+      caselon onboardingthrift.ButtonBelonhavior.Dismiss(_) => Nonelon
+      caselon onboardingthrift.ButtonBelonhavior.UnknownUnionFielonld(valuelon) =>
+        throw nelonw UnsupportelondOpelonrationelonxcelonption(s"Unknown product: $valuelon")
     }
 
-  def convertRichText(
-    richText: com.twitter.onboarding.injections.thriftscala.RichText
-  ): RichText = {
-    val entities = richText.entities.map(entity =>
-      RichTextEntity(
-        entity.fromIndex,
-        entity.toIndex,
-        entity.ref.map(convertRef),
-        entity.format.map(convertFormat)))
-    RichText(
-      text = richText.text,
-      entities = entities.toList,
-      rtl = richText.rtl,
-      alignment = richText.alignment.map(convertAlignment))
+  delonf convelonrtRichTelonxt(
+    richTelonxt: com.twittelonr.onboarding.injelonctions.thriftscala.RichTelonxt
+  ): RichTelonxt = {
+    val elonntitielons = richTelonxt.elonntitielons.map(elonntity =>
+      RichTelonxtelonntity(
+        elonntity.fromIndelonx,
+        elonntity.toIndelonx,
+        elonntity.relonf.map(convelonrtRelonf),
+        elonntity.format.map(convelonrtFormat)))
+    RichTelonxt(
+      telonxt = richTelonxt.telonxt,
+      elonntitielons = elonntitielons.toList,
+      rtl = richTelonxt.rtl,
+      alignmelonnt = richTelonxt.alignmelonnt.map(convelonrtAlignmelonnt))
   }
 
-  private def convertAlignment(alignment: onboardingthrift.RichTextAlignment): RichTextAlignment =
-    alignment match {
-      case onboardingthrift.RichTextAlignment.Natural => Natural
-      case onboardingthrift.RichTextAlignment.Center => Center
-      case onboardingthrift.RichTextAlignment.EnumUnknownRichTextAlignment(value) =>
-        throw new UnsupportedOperationException(s"Unknown product: $value")
+  privatelon delonf convelonrtAlignmelonnt(alignmelonnt: onboardingthrift.RichTelonxtAlignmelonnt): RichTelonxtAlignmelonnt =
+    alignmelonnt match {
+      caselon onboardingthrift.RichTelonxtAlignmelonnt.Natural => Natural
+      caselon onboardingthrift.RichTelonxtAlignmelonnt.Celonntelonr => Celonntelonr
+      caselon onboardingthrift.RichTelonxtAlignmelonnt.elonnumUnknownRichTelonxtAlignmelonnt(valuelon) =>
+        throw nelonw UnsupportelondOpelonrationelonxcelonption(s"Unknown product: $valuelon")
     }
 
-  private def convertRef(ref: onboardingthrift.ReferenceObject): ReferenceObject =
-    ref match {
-      case onboardingthrift.ReferenceObject.User(user) => RichTextUser(user.id)
-      case onboardingthrift.ReferenceObject.Mention(mention) =>
-        RichTextMention(mention.id, mention.screenName)
-      case onboardingthrift.ReferenceObject.Hashtag(hashtag) => RichTextHashtag(hashtag.text)
+  privatelon delonf convelonrtRelonf(relonf: onboardingthrift.RelonfelonrelonncelonObjelonct): RelonfelonrelonncelonObjelonct =
+    relonf match {
+      caselon onboardingthrift.RelonfelonrelonncelonObjelonct.Uselonr(uselonr) => RichTelonxtUselonr(uselonr.id)
+      caselon onboardingthrift.RelonfelonrelonncelonObjelonct.Melonntion(melonntion) =>
+        RichTelonxtMelonntion(melonntion.id, melonntion.screlonelonnNamelon)
+      caselon onboardingthrift.RelonfelonrelonncelonObjelonct.Hashtag(hashtag) => RichTelonxtHashtag(hashtag.telonxt)
 
-      case onboardingthrift.ReferenceObject.Cashtag(cashtag) => RichTextCashtag(cashtag.text)
-      case onboardingthrift.ReferenceObject.TwitterList(twList) =>
-        RichTextList(twList.id, twList.url)
-      case onboardingthrift.ReferenceObject.Url(url) => RichTextHashtag(url.url)
-      case onboardingthrift.ReferenceObject.UnknownUnionField(value) =>
-        throw new UnsupportedOperationException(s"Unknown product: $value")
+      caselon onboardingthrift.RelonfelonrelonncelonObjelonct.Cashtag(cashtag) => RichTelonxtCashtag(cashtag.telonxt)
+      caselon onboardingthrift.RelonfelonrelonncelonObjelonct.TwittelonrList(twList) =>
+        RichTelonxtList(twList.id, twList.url)
+      caselon onboardingthrift.RelonfelonrelonncelonObjelonct.Url(url) => RichTelonxtHashtag(url.url)
+      caselon onboardingthrift.RelonfelonrelonncelonObjelonct.UnknownUnionFielonld(valuelon) =>
+        throw nelonw UnsupportelondOpelonrationelonxcelonption(s"Unknown product: $valuelon")
     }
 
-  private def convertFormat(format: onboardingthrift.RichTextFormat): RichTextFormat =
+  privatelon delonf convelonrtFormat(format: onboardingthrift.RichTelonxtFormat): RichTelonxtFormat =
     format match {
-      case onboardingthrift.RichTextFormat.Plain => Plain
-      case onboardingthrift.RichTextFormat.Strong => Strong
-      case onboardingthrift.RichTextFormat.EnumUnknownRichTextFormat(value) =>
-        throw new UnsupportedOperationException(s"Unknown product: $value")
+      caselon onboardingthrift.RichTelonxtFormat.Plain => Plain
+      caselon onboardingthrift.RichTelonxtFormat.Strong => Strong
+      caselon onboardingthrift.RichTelonxtFormat.elonnumUnknownRichTelonxtFormat(valuelon) =>
+        throw nelonw UnsupportelondOpelonrationelonxcelonption(s"Unknown product: $valuelon")
     }
 
-  // Specific to Message prompt
-  def convertSocialContext(socialContext: onboardingthrift.RichText): SocialContext =
-    GeneralContext(
-      contextType = FollowGeneralContextType,
-      text = socialContext.text,
-      url = None,
-      contextImageUrls = None,
-      landingUrl = None)
+  // Speloncific to Melonssagelon prompt
+  delonf convelonrtSocialContelonxt(socialContelonxt: onboardingthrift.RichTelonxt): SocialContelonxt =
+    GelonnelonralContelonxt(
+      contelonxtTypelon = FollowGelonnelonralContelonxtTypelon,
+      telonxt = socialContelonxt.telonxt,
+      url = Nonelon,
+      contelonxtImagelonUrls = Nonelon,
+      landingUrl = Nonelon)
 
-  def convertUserFacePile(
-    userFacepile: onboardingthrift.PromptUserFacepile
-  ): UserFacepile =
-    UserFacepile(
-      userIds = userFacepile.userIds.toList,
-      featuredUserIds = userFacepile.featuredUserIds.toList,
-      action = userFacepile.action.map(convertButtonAction),
-      actionType = userFacepile.actionType.map(convertUserFacePileActionType),
-      displaysFeaturingText = userFacepile.displaysFeaturingText,
-      displayType = Some(LargeUserFacepileDisplayType)
+  delonf convelonrtUselonrFacelonPilelon(
+    uselonrFacelonpilelon: onboardingthrift.PromptUselonrFacelonpilelon
+  ): UselonrFacelonpilelon =
+    UselonrFacelonpilelon(
+      uselonrIds = uselonrFacelonpilelon.uselonrIds.toList,
+      felonaturelondUselonrIds = uselonrFacelonpilelon.felonaturelondUselonrIds.toList,
+      action = uselonrFacelonpilelon.action.map(convelonrtButtonAction),
+      actionTypelon = uselonrFacelonpilelon.actionTypelon.map(convelonrtUselonrFacelonPilelonActionTypelon),
+      displaysFelonaturingTelonxt = uselonrFacelonpilelon.displaysFelonaturingTelonxt,
+      displayTypelon = Somelon(LargelonUselonrFacelonpilelonDisplayTypelon)
     )
 
-  private def convertUserFacePileActionType(
-    actionType: onboardingthrift.FacepileActionType
-  ): MessageActionType =
-    actionType match {
-      case onboardingthrift.FacepileActionType.FollowAll => FollowAllMessageActionType
-      case onboardingthrift.FacepileActionType.EnumUnknownFacepileActionType(value) =>
-        throw new UnsupportedOperationException(s"Unknown product: $value")
+  privatelon delonf convelonrtUselonrFacelonPilelonActionTypelon(
+    actionTypelon: onboardingthrift.FacelonpilelonActionTypelon
+  ): MelonssagelonActionTypelon =
+    actionTypelon match {
+      caselon onboardingthrift.FacelonpilelonActionTypelon.FollowAll => FollowAllMelonssagelonActionTypelon
+      caselon onboardingthrift.FacelonpilelonActionTypelon.elonnumUnknownFacelonpilelonActionTypelon(valuelon) =>
+        throw nelonw UnsupportelondOpelonrationelonxcelonption(s"Unknown product: $valuelon")
     }
 
-  // Specific to Cover
+  // Speloncific to Covelonr
 
-  def convertHalfCoverDisplayType(
-    displayType: onboardingthrift.HalfCoverDisplayType
-  ): HalfCoverDisplayType =
-    displayType match {
-      case onboardingthrift.HalfCoverDisplayType.Cover => CoverHalfCoverDisplayType
-      case onboardingthrift.HalfCoverDisplayType.CenterCover =>
-        CenterCoverHalfCoverDisplayType
-      case onboardingthrift.HalfCoverDisplayType.EnumUnknownHalfCoverDisplayType(value) =>
-        throw new UnsupportedOperationException(s"Unknown product: $value")
+  delonf convelonrtHalfCovelonrDisplayTypelon(
+    displayTypelon: onboardingthrift.HalfCovelonrDisplayTypelon
+  ): HalfCovelonrDisplayTypelon =
+    displayTypelon match {
+      caselon onboardingthrift.HalfCovelonrDisplayTypelon.Covelonr => CovelonrHalfCovelonrDisplayTypelon
+      caselon onboardingthrift.HalfCovelonrDisplayTypelon.CelonntelonrCovelonr =>
+        CelonntelonrCovelonrHalfCovelonrDisplayTypelon
+      caselon onboardingthrift.HalfCovelonrDisplayTypelon.elonnumUnknownHalfCovelonrDisplayTypelon(valuelon) =>
+        throw nelonw UnsupportelondOpelonrationelonxcelonption(s"Unknown product: $valuelon")
     }
 
-  def convertDismissInfo(dismissInfo: onboardingthrift.DismissInfo): DismissInfo =
-    DismissInfo(dismissInfo.callbacks.map(_.map(convertCallback)))
+  delonf convelonrtDismissInfo(dismissInfo: onboardingthrift.DismissInfo): DismissInfo =
+    DismissInfo(dismissInfo.callbacks.map(_.map(convelonrtCallback)))
 
-  def convertCoverCta(
+  delonf convelonrtCovelonrCta(
     buttonAction: onboardingthrift.ButtonAction
-  ): CoverCta =
-    CoverCta(
-      buttonAction.text,
-      ctaBehavior = convertCoverCtaBehavior(buttonAction.buttonBehavior),
-      callbacks = buttonAction.callbacks.map(_.map(convertCallback).toList),
-      clientEventInfo = Some(convertClientEventInfo(buttonAction.clientEventInfo)),
-      icon = buttonAction.icon.map(covertHorizonIcon),
-      buttonStyle = buttonAction.buttonStyle.map(covertButtonStyle)
+  ): CovelonrCta =
+    CovelonrCta(
+      buttonAction.telonxt,
+      ctaBelonhavior = convelonrtCovelonrCtaBelonhavior(buttonAction.buttonBelonhavior),
+      callbacks = buttonAction.callbacks.map(_.map(convelonrtCallback).toList),
+      clielonntelonvelonntInfo = Somelon(convelonrtClielonntelonvelonntInfo(buttonAction.clielonntelonvelonntInfo)),
+      icon = buttonAction.icon.map(covelonrtHorizonIcon),
+      buttonStylelon = buttonAction.buttonStylelon.map(covelonrtButtonStylelon)
     )
 
-  private def convertCoverCtaBehavior(
-    behavior: onboardingthrift.ButtonBehavior
-  ): CoverCtaBehavior =
-    behavior match {
-      case onboardingthrift.ButtonBehavior.Navigate(navigate) =>
-        CoverBehaviorNavigate(convertUrl(navigate.url))
-      case onboardingthrift.ButtonBehavior.Dismiss(dismiss) =>
-        CoverBehaviorDismiss(dismiss.feedbackMessage.map(convertRichText))
-      case onboardingthrift.ButtonBehavior.UnknownUnionField(value) =>
-        throw new UnsupportedOperationException(s"Unknown product: $value")
+  privatelon delonf convelonrtCovelonrCtaBelonhavior(
+    belonhavior: onboardingthrift.ButtonBelonhavior
+  ): CovelonrCtaBelonhavior =
+    belonhavior match {
+      caselon onboardingthrift.ButtonBelonhavior.Navigatelon(navigatelon) =>
+        CovelonrBelonhaviorNavigatelon(convelonrtUrl(navigatelon.url))
+      caselon onboardingthrift.ButtonBelonhavior.Dismiss(dismiss) =>
+        CovelonrBelonhaviorDismiss(dismiss.felonelondbackMelonssagelon.map(convelonrtRichTelonxt))
+      caselon onboardingthrift.ButtonBelonhavior.UnknownUnionFielonld(valuelon) =>
+        throw nelonw UnsupportelondOpelonrationelonxcelonption(s"Unknown product: $valuelon")
     }
 
-  private def covertButtonStyle(bStyle: onboardingthrift.CtaButtonStyle): ButtonStyle =
-    bStyle match {
-      case onboardingthrift.CtaButtonStyle.Default => Default
-      case onboardingthrift.CtaButtonStyle.Primary => Primary
-      case onboardingthrift.CtaButtonStyle.Secondary => Secondary
-      case onboardingthrift.CtaButtonStyle.Text => Text
-      case onboardingthrift.CtaButtonStyle.Destructive => Destructive
-      case onboardingthrift.CtaButtonStyle.Neutral => Neutral
-      case onboardingthrift.CtaButtonStyle.DestructiveSecondary => DestructiveSecondary
-      case onboardingthrift.CtaButtonStyle.DestructiveText => DestructiveText
-      case onboardingthrift.CtaButtonStyle.EnumUnknownCtaButtonStyle(value) =>
-        throw new UnsupportedOperationException(s"Unknown product: $value")
+  privatelon delonf covelonrtButtonStylelon(bStylelon: onboardingthrift.CtaButtonStylelon): ButtonStylelon =
+    bStylelon match {
+      caselon onboardingthrift.CtaButtonStylelon.Delonfault => Delonfault
+      caselon onboardingthrift.CtaButtonStylelon.Primary => Primary
+      caselon onboardingthrift.CtaButtonStylelon.Seloncondary => Seloncondary
+      caselon onboardingthrift.CtaButtonStylelon.Telonxt => Telonxt
+      caselon onboardingthrift.CtaButtonStylelon.Delonstructivelon => Delonstructivelon
+      caselon onboardingthrift.CtaButtonStylelon.Nelonutral => Nelonutral
+      caselon onboardingthrift.CtaButtonStylelon.DelonstructivelonSeloncondary => DelonstructivelonSeloncondary
+      caselon onboardingthrift.CtaButtonStylelon.DelonstructivelonTelonxt => DelonstructivelonTelonxt
+      caselon onboardingthrift.CtaButtonStylelon.elonnumUnknownCtaButtonStylelon(valuelon) =>
+        throw nelonw UnsupportelondOpelonrationelonxcelonption(s"Unknown product: $valuelon")
     }
 
-  private def covertHorizonIcon(icon: onboardingthrift.HorizonIcon): HorizonIcon =
+  privatelon delonf covelonrtHorizonIcon(icon: onboardingthrift.HorizonIcon): HorizonIcon =
     icon match {
-      case onboardingthrift.HorizonIcon.Bookmark => Bookmark
-      case onboardingthrift.HorizonIcon.Moment => Moment
-      case onboardingthrift.HorizonIcon.Debug => Debug
-      case onboardingthrift.HorizonIcon.Error => Error
-      case onboardingthrift.HorizonIcon.Follow => Follow
-      case onboardingthrift.HorizonIcon.Unfollow => Unfollow
-      case onboardingthrift.HorizonIcon.Smile => Smile
-      case onboardingthrift.HorizonIcon.Frown => Frown
-      case onboardingthrift.HorizonIcon.Help => Help
-      case onboardingthrift.HorizonIcon.Link => Link
-      case onboardingthrift.HorizonIcon.Message => Message
-      case onboardingthrift.HorizonIcon.No => No
-      case onboardingthrift.HorizonIcon.Outgoing => Outgoing
-      case onboardingthrift.HorizonIcon.Pin => Pin
-      case onboardingthrift.HorizonIcon.Retweet => Retweet
-      case onboardingthrift.HorizonIcon.Speaker => Speaker
-      case onboardingthrift.HorizonIcon.Trashcan => Trashcan
-      case onboardingthrift.HorizonIcon.Feedback => Feedback
-      case onboardingthrift.HorizonIcon.FeedbackClose => FeedbackClose
-      case onboardingthrift.HorizonIcon.EyeOff => EyeOff
-      case onboardingthrift.HorizonIcon.Moderation => Moderation
-      case onboardingthrift.HorizonIcon.Topic => Topic
-      case onboardingthrift.HorizonIcon.TopicClose => TopicClose
-      case onboardingthrift.HorizonIcon.Flag => Flag
-      case onboardingthrift.HorizonIcon.TopicFilled => TopicFilled
-      case onboardingthrift.HorizonIcon.NotificationsFollow => NotificationsFollow
-      case onboardingthrift.HorizonIcon.Person => Person
-      case onboardingthrift.HorizonIcon.Logo => Logo
-      case onboardingthrift.HorizonIcon.EnumUnknownHorizonIcon(value) =>
-        throw new UnsupportedOperationException(s"Unknown product: $value")
+      caselon onboardingthrift.HorizonIcon.Bookmark => Bookmark
+      caselon onboardingthrift.HorizonIcon.Momelonnt => Momelonnt
+      caselon onboardingthrift.HorizonIcon.Delonbug => Delonbug
+      caselon onboardingthrift.HorizonIcon.elonrror => elonrror
+      caselon onboardingthrift.HorizonIcon.Follow => Follow
+      caselon onboardingthrift.HorizonIcon.Unfollow => Unfollow
+      caselon onboardingthrift.HorizonIcon.Smilelon => Smilelon
+      caselon onboardingthrift.HorizonIcon.Frown => Frown
+      caselon onboardingthrift.HorizonIcon.Helonlp => Helonlp
+      caselon onboardingthrift.HorizonIcon.Link => Link
+      caselon onboardingthrift.HorizonIcon.Melonssagelon => Melonssagelon
+      caselon onboardingthrift.HorizonIcon.No => No
+      caselon onboardingthrift.HorizonIcon.Outgoing => Outgoing
+      caselon onboardingthrift.HorizonIcon.Pin => Pin
+      caselon onboardingthrift.HorizonIcon.Relontwelonelont => Relontwelonelont
+      caselon onboardingthrift.HorizonIcon.Spelonakelonr => Spelonakelonr
+      caselon onboardingthrift.HorizonIcon.Trashcan => Trashcan
+      caselon onboardingthrift.HorizonIcon.Felonelondback => Felonelondback
+      caselon onboardingthrift.HorizonIcon.FelonelondbackCloselon => FelonelondbackCloselon
+      caselon onboardingthrift.HorizonIcon.elonyelonOff => elonyelonOff
+      caselon onboardingthrift.HorizonIcon.Modelonration => Modelonration
+      caselon onboardingthrift.HorizonIcon.Topic => Topic
+      caselon onboardingthrift.HorizonIcon.TopicCloselon => TopicCloselon
+      caselon onboardingthrift.HorizonIcon.Flag => Flag
+      caselon onboardingthrift.HorizonIcon.TopicFillelond => TopicFillelond
+      caselon onboardingthrift.HorizonIcon.NotificationsFollow => NotificationsFollow
+      caselon onboardingthrift.HorizonIcon.Pelonrson => Pelonrson
+      caselon onboardingthrift.HorizonIcon.Logo => Logo
+      caselon onboardingthrift.HorizonIcon.elonnumUnknownHorizonIcon(valuelon) =>
+        throw nelonw UnsupportelondOpelonrationelonxcelonption(s"Unknown product: $valuelon")
 
     }
 
-  def convertUrl(url: onboardingthrift.Url): Url = {
-    val urlType = url.urlType match {
-      case onboardingthrift.UrlType.ExternalUrl => ExternalUrl
-      case onboardingthrift.UrlType.DeepLink => DeepLink
-      case onboardingthrift.UrlType.UrtEndpoint => UrtEndpoint
-      case onboardingthrift.UrlType.EnumUnknownUrlType(value) =>
-        throw new UnsupportedOperationException(s"Unknown product: $value")
+  delonf convelonrtUrl(url: onboardingthrift.Url): Url = {
+    val urlTypelon = url.urlTypelon match {
+      caselon onboardingthrift.UrlTypelon.elonxtelonrnalUrl => elonxtelonrnalUrl
+      caselon onboardingthrift.UrlTypelon.DelonelonpLink => DelonelonpLink
+      caselon onboardingthrift.UrlTypelon.Urtelonndpoint => Urtelonndpoint
+      caselon onboardingthrift.UrlTypelon.elonnumUnknownUrlTypelon(valuelon) =>
+        throw nelonw UnsupportelondOpelonrationelonxcelonption(s"Unknown product: $valuelon")
     }
-    Url(urlType, url.url, url.urtEndpointOptions.map(convertUrtEndpointOptions))
+    Url(urlTypelon, url.url, url.urtelonndpointOptions.map(convelonrtUrtelonndpointOptions))
   }
 
-  private def convertUrtEndpointOptions(
-    urtEndpointOptions: onboardingthrift.UrtEndpointOptions
-  ): UrtEndpointOptions =
-    UrtEndpointOptions(
-      requestParams = urtEndpointOptions.requestParams.map(_.toMap),
-      title = urtEndpointOptions.title,
-      cacheId = urtEndpointOptions.cacheId,
-      subtitle = urtEndpointOptions.subtitle
+  privatelon delonf convelonrtUrtelonndpointOptions(
+    urtelonndpointOptions: onboardingthrift.UrtelonndpointOptions
+  ): UrtelonndpointOptions =
+    UrtelonndpointOptions(
+      relonquelonstParams = urtelonndpointOptions.relonquelonstParams.map(_.toMap),
+      titlelon = urtelonndpointOptions.titlelon,
+      cachelonId = urtelonndpointOptions.cachelonId,
+      subtitlelon = urtelonndpointOptions.subtitlelon
     )
 
 }

@@ -1,296 +1,296 @@
-package com.twitter.graph_feature_service.scalding
+packagelon com.twittelonr.graph_felonaturelon_selonrvicelon.scalding
 
-import com.twitter.bijection.Injection
-import com.twitter.frigate.common.constdb_util.Injections
-import com.twitter.frigate.common.constdb_util.ScaldingUtil
-import com.twitter.graph_feature_service.common.Configs
-import com.twitter.graph_feature_service.common.Configs._
-import com.twitter.interaction_graph.scio.agg_all.InteractionGraphHistoryAggregatedEdgeSnapshotScalaDataset
-import com.twitter.interaction_graph.scio.ml.scores.RealGraphInScoresScalaDataset
-import com.twitter.interaction_graph.thriftscala.FeatureName
-import com.twitter.interaction_graph.thriftscala.{EdgeFeature => TEdgeFeature}
-import com.twitter.pluck.source.user_audits.UserAuditFinalScalaDataset
-import com.twitter.scalding.DateRange
-import com.twitter.scalding.Days
-import com.twitter.scalding.Execution
-import com.twitter.scalding.Stat
-import com.twitter.scalding.UniqueID
-import com.twitter.scalding.typed.TypedPipe
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.remote_access.AllowCrossClusterSameDC
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.util.Time
-import com.twitter.wtf.candidate.thriftscala.CandidateSeq
-import java.nio.ByteBuffer
-import java.util.TimeZone
+import com.twittelonr.bijelonction.Injelonction
+import com.twittelonr.frigatelon.common.constdb_util.Injelonctions
+import com.twittelonr.frigatelon.common.constdb_util.ScaldingUtil
+import com.twittelonr.graph_felonaturelon_selonrvicelon.common.Configs
+import com.twittelonr.graph_felonaturelon_selonrvicelon.common.Configs._
+import com.twittelonr.intelonraction_graph.scio.agg_all.IntelonractionGraphHistoryAggrelongatelondelondgelonSnapshotScalaDataselont
+import com.twittelonr.intelonraction_graph.scio.ml.scorelons.RelonalGraphInScorelonsScalaDataselont
+import com.twittelonr.intelonraction_graph.thriftscala.FelonaturelonNamelon
+import com.twittelonr.intelonraction_graph.thriftscala.{elondgelonFelonaturelon => TelondgelonFelonaturelon}
+import com.twittelonr.pluck.sourcelon.uselonr_audits.UselonrAuditFinalScalaDataselont
+import com.twittelonr.scalding.DatelonRangelon
+import com.twittelonr.scalding.Days
+import com.twittelonr.scalding.elonxeloncution
+import com.twittelonr.scalding.Stat
+import com.twittelonr.scalding.UniquelonID
+import com.twittelonr.scalding.typelond.TypelondPipelon
+import com.twittelonr.scalding_intelonrnal.dalv2.DAL
+import com.twittelonr.scalding_intelonrnal.dalv2.relonmotelon_accelonss.AllowCrossClustelonrSamelonDC
+import com.twittelonr.scalding_intelonrnal.multiformat.format.kelonyval.KelonyVal
+import com.twittelonr.util.Timelon
+import com.twittelonr.wtf.candidatelon.thriftscala.CandidatelonSelonq
+import java.nio.BytelonBuffelonr
+import java.util.TimelonZonelon
 
-trait GraphFeatureServiceMainJob extends GraphFeatureServiceBaseJob {
+trait GraphFelonaturelonSelonrvicelonMainJob elonxtelonnds GraphFelonaturelonSelonrvicelonBaselonJob {
 
-  // keeping hdfsPath as a separate variable in order to override it in unit tests
-  protected val hdfsPath: String = BaseHdfsPath
+  // kelonelonping hdfsPath as a selonparatelon variablelon in ordelonr to ovelonrridelon it in unit telonsts
+  protelonctelond val hdfsPath: String = BaselonHdfsPath
 
-  protected def getShardIdForUser(userId: Long): Int = shardForUser(userId)
+  protelonctelond delonf gelontShardIdForUselonr(uselonrId: Long): Int = shardForUselonr(uselonrId)
 
-  protected implicit val keyInj: Injection[Long, ByteBuffer] = Injections.long2Varint
+  protelonctelond implicit val kelonyInj: Injelonction[Long, BytelonBuffelonr] = Injelonctions.long2Varint
 
-  protected implicit val valueInj: Injection[Long, ByteBuffer] = Injections.long2ByteBuffer
+  protelonctelond implicit val valuelonInj: Injelonction[Long, BytelonBuffelonr] = Injelonctions.long2BytelonBuffelonr
 
-  protected val bufferSize: Int = 1 << 26
+  protelonctelond val buffelonrSizelon: Int = 1 << 26
 
-  protected val maxNumKeys: Int = 1 << 24
+  protelonctelond val maxNumKelonys: Int = 1 << 24
 
-  protected val numReducers: Int = NumGraphShards
+  protelonctelond val numRelonducelonrs: Int = NumGraphShards
 
-  protected val outputStreamBufferSize: Int = 1 << 26
+  protelonctelond val outputStrelonamBuffelonrSizelon: Int = 1 << 26
 
-  protected final val shardingByKey = { (k: Long, _: Long) =>
-    getShardIdForUser(k)
+  protelonctelond final val shardingByKelony = { (k: Long, _: Long) =>
+    gelontShardIdForUselonr(k)
   }
 
-  protected final val shardingByValue = { (_: Long, v: Long) =>
-    getShardIdForUser(v)
+  protelonctelond final val shardingByValuelon = { (_: Long, v: Long) =>
+    gelontShardIdForUselonr(v)
   }
 
-  private def writeGraphToDB(
-    graph: TypedPipe[(Long, Long)],
+  privatelon delonf writelonGraphToDB(
+    graph: TypelondPipelon[(Long, Long)],
     shardingFunction: (Long, Long) => Int,
     path: String
   )(
-    implicit dateRange: DateRange
-  ): Execution[TypedPipe[(Int, Unit)]] = {
+    implicit datelonRangelon: DatelonRangelon
+  ): elonxeloncution[TypelondPipelon[(Int, Unit)]] = {
     ScaldingUtil
-      .writeConstDB[Long, Long](
-        graph.withDescription(s"sharding $path"),
+      .writelonConstDB[Long, Long](
+        graph.withDelonscription(s"sharding $path"),
         shardingFunction,
         shardId =>
-          getTimedHdfsShardPath(
+          gelontTimelondHdfsShardPath(
             shardId,
-            getHdfsPath(path, Some(hdfsPath)),
-            Time.fromMilliseconds(dateRange.end.timestamp)
+            gelontHdfsPath(path, Somelon(hdfsPath)),
+            Timelon.fromMilliselonconds(datelonRangelon.elonnd.timelonstamp)
           ),
-        Int.MaxValue,
-        bufferSize,
-        maxNumKeys,
-        numReducers,
-        outputStreamBufferSize
+        Int.MaxValuelon,
+        buffelonrSizelon,
+        maxNumKelonys,
+        numRelonducelonrs,
+        outputStrelonamBuffelonrSizelon
       )(
-        keyInj,
-        valueInj,
-        Ordering[(Long, Long)]
+        kelonyInj,
+        valuelonInj,
+        Ordelonring[(Long, Long)]
       )
-      .forceToDiskExecution
+      .forcelonToDiskelonxeloncution
   }
 
-  def extractFeature(
-    featureList: Seq[TEdgeFeature],
-    featureName: FeatureName
+  delonf elonxtractFelonaturelon(
+    felonaturelonList: Selonq[TelondgelonFelonaturelon],
+    felonaturelonNamelon: FelonaturelonNamelon
   ): Option[Float] = {
-    featureList
-      .find(_.name == featureName)
-      .map(_.tss.ewma.toFloat)
-      .filter(_ > 0.0)
+    felonaturelonList
+      .find(_.namelon == felonaturelonNamelon)
+      .map(_.tss.elonwma.toFloat)
+      .filtelonr(_ > 0.0)
   }
 
   /**
-   * Function to extract a subgraph (e.g., follow graph) from real graph and take top K by real graph
-   * weight.
+   * Function to elonxtract a subgraph (elon.g., follow graph) from relonal graph and takelon top K by relonal graph
+   * welonight.
    *
-   * @param input input real graph
-   * @param edgeFilter filter function to only get the edges needed (e.g., only follow edges)
-   * @param counter counter
-   * @return a subgroup that contains topK, e.g., follow graph for each user.
+   * @param input input relonal graph
+   * @param elondgelonFiltelonr filtelonr function to only gelont thelon elondgelons nelonelondelond (elon.g., only follow elondgelons)
+   * @param countelonr countelonr
+   * @relonturn a subgroup that contains topK, elon.g., follow graph for elonach uselonr.
    */
-  private def getSubGraph(
-    input: TypedPipe[(Long, Long, EdgeFeature)],
-    edgeFilter: EdgeFeature => Boolean,
-    counter: Stat
-  ): TypedPipe[(Long, Long)] = {
+  privatelon delonf gelontSubGraph(
+    input: TypelondPipelon[(Long, Long, elondgelonFelonaturelon)],
+    elondgelonFiltelonr: elondgelonFelonaturelon => Boolelonan,
+    countelonr: Stat
+  ): TypelondPipelon[(Long, Long)] = {
     input
-      .filter(c => edgeFilter(c._3))
+      .filtelonr(c => elondgelonFiltelonr(c._3))
       .map {
-        case (srcId, destId, features) =>
-          (srcId, (destId, features.realGraphScore))
+        caselon (srcId, delonstId, felonaturelons) =>
+          (srcId, (delonstId, felonaturelons.relonalGraphScorelon))
       }
       .group
-      // auto reducer estimation only allocates 15 reducers, so setting an explicit number here
-      .withReducers(2000)
-      .sortedReverseTake(TopKRealGraph)(Ordering.by(_._2))
+      // auto relonducelonr elonstimation only allocatelons 15 relonducelonrs, so selontting an elonxplicit numbelonr helonrelon
+      .withRelonducelonrs(2000)
+      .sortelondRelonvelonrselonTakelon(TopKRelonalGraph)(Ordelonring.by(_._2))
       .flatMap {
-        case (srcId, topKNeighbors) =>
-          counter.inc()
-          topKNeighbors.map {
-            case (destId, _) =>
-              (srcId, destId)
+        caselon (srcId, topKNelonighbors) =>
+          countelonr.inc()
+          topKNelonighbors.map {
+            caselon (delonstId, _) =>
+              (srcId, delonstId)
           }
       }
   }
 
-  def getMauIds()(implicit dateRange: DateRange, uniqueID: UniqueID): TypedPipe[Long] = {
+  delonf gelontMauIds()(implicit datelonRangelon: DatelonRangelon, uniquelonID: UniquelonID): TypelondPipelon[Long] = {
     val numMAUs = Stat("NUM_MAUS")
-    val uniqueMAUs = Stat("UNIQUE_MAUS")
+    val uniquelonMAUs = Stat("UNIQUelon_MAUS")
 
     DAL
-      .read(UserAuditFinalScalaDataset)
-      .withRemoteReadPolicy(AllowCrossClusterSameDC)
-      .toTypedPipe
-      .collect {
-        case user_audit if user_audit.isValid =>
+      .relonad(UselonrAuditFinalScalaDataselont)
+      .withRelonmotelonRelonadPolicy(AllowCrossClustelonrSamelonDC)
+      .toTypelondPipelon
+      .collelonct {
+        caselon uselonr_audit if uselonr_audit.isValid =>
           numMAUs.inc()
-          user_audit.userId
+          uselonr_audit.uselonrId
       }
       .distinct
       .map { u =>
-        uniqueMAUs.inc()
+        uniquelonMAUs.inc()
         u
       }
   }
 
-  def getRealGraphWithMAUOnly(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): TypedPipe[(Long, Long, EdgeFeature)] = {
+  delonf gelontRelonalGraphWithMAUOnly(
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon,
+    uniquelonID: UniquelonID
+  ): TypelondPipelon[(Long, Long, elondgelonFelonaturelon)] = {
     val numMAUs = Stat("NUM_MAUS")
-    val uniqueMAUs = Stat("UNIQUE_MAUS")
+    val uniquelonMAUs = Stat("UNIQUelon_MAUS")
 
-    val monthlyActiveUsers = DAL
-      .read(UserAuditFinalScalaDataset)
-      .withRemoteReadPolicy(AllowCrossClusterSameDC)
-      .toTypedPipe
-      .collect {
-        case user_audit if user_audit.isValid =>
+    val monthlyActivelonUselonrs = DAL
+      .relonad(UselonrAuditFinalScalaDataselont)
+      .withRelonmotelonRelonadPolicy(AllowCrossClustelonrSamelonDC)
+      .toTypelondPipelon
+      .collelonct {
+        caselon uselonr_audit if uselonr_audit.isValid =>
           numMAUs.inc()
-          user_audit.userId
+          uselonr_audit.uselonrId
       }
       .distinct
       .map { u =>
-        uniqueMAUs.inc()
+        uniquelonMAUs.inc()
         u
       }
-      .asKeys
+      .asKelonys
 
-    val realGraphAggregates = DAL
-      .readMostRecentSnapshot(
-        InteractionGraphHistoryAggregatedEdgeSnapshotScalaDataset,
-        dateRange.embiggen(Days(5)))
-      .withRemoteReadPolicy(AllowCrossClusterSameDC)
-      .toTypedPipe
-      .map { edge =>
-        val featureList = edge.features
-        val edgeFeature = EdgeFeature(
-          edge.weight.getOrElse(0.0).toFloat,
-          extractFeature(featureList, FeatureName.NumMutualFollows),
-          extractFeature(featureList, FeatureName.NumFavorites),
-          extractFeature(featureList, FeatureName.NumRetweets),
-          extractFeature(featureList, FeatureName.NumMentions)
+    val relonalGraphAggrelongatelons = DAL
+      .relonadMostReloncelonntSnapshot(
+        IntelonractionGraphHistoryAggrelongatelondelondgelonSnapshotScalaDataselont,
+        datelonRangelon.elonmbiggelonn(Days(5)))
+      .withRelonmotelonRelonadPolicy(AllowCrossClustelonrSamelonDC)
+      .toTypelondPipelon
+      .map { elondgelon =>
+        val felonaturelonList = elondgelon.felonaturelons
+        val elondgelonFelonaturelon = elondgelonFelonaturelon(
+          elondgelon.welonight.gelontOrelonlselon(0.0).toFloat,
+          elonxtractFelonaturelon(felonaturelonList, FelonaturelonNamelon.NumMutualFollows),
+          elonxtractFelonaturelon(felonaturelonList, FelonaturelonNamelon.NumFavoritelons),
+          elonxtractFelonaturelon(felonaturelonList, FelonaturelonNamelon.NumRelontwelonelonts),
+          elonxtractFelonaturelon(felonaturelonList, FelonaturelonNamelon.NumMelonntions)
         )
-        (edge.sourceId, (edge.destinationId, edgeFeature))
+        (elondgelon.sourcelonId, (elondgelon.delonstinationId, elondgelonFelonaturelon))
       }
-      .join(monthlyActiveUsers)
+      .join(monthlyActivelonUselonrs)
       .map {
-        case (srcId, ((destId, feature), _)) =>
-          (destId, (srcId, feature))
+        caselon (srcId, ((delonstId, felonaturelon), _)) =>
+          (delonstId, (srcId, felonaturelon))
       }
-      .join(monthlyActiveUsers)
+      .join(monthlyActivelonUselonrs)
       .map {
-        case (destId, ((srcId, feature), _)) =>
-          (srcId, destId, feature)
+        caselon (delonstId, ((srcId, felonaturelon), _)) =>
+          (srcId, delonstId, felonaturelon)
       }
-    realGraphAggregates
+    relonalGraphAggrelongatelons
   }
 
-  def getTopKFollowGraph(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): TypedPipe[(Long, Long)] = {
-    val followGraphMauStat = Stat("NumFollowEdges_MAU")
-    val mau: TypedPipe[Long] = getMauIds()
+  delonf gelontTopKFollowGraph(
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon,
+    uniquelonID: UniquelonID
+  ): TypelondPipelon[(Long, Long)] = {
+    val followGraphMauStat = Stat("NumFollowelondgelons_MAU")
+    val mau: TypelondPipelon[Long] = gelontMauIds()
     DAL
-      .readMostRecentSnapshot(RealGraphInScoresScalaDataset, dateRange.embiggen(Days(7)))
-      .withRemoteReadPolicy(AllowCrossClusterSameDC)
-      .toTypedPipe
-      .groupBy(_.key)
-      .join(mau.asKeys)
-      .withDescription("filtering srcId by mau")
+      .relonadMostReloncelonntSnapshot(RelonalGraphInScorelonsScalaDataselont, datelonRangelon.elonmbiggelonn(Days(7)))
+      .withRelonmotelonRelonadPolicy(AllowCrossClustelonrSamelonDC)
+      .toTypelondPipelon
+      .groupBy(_.kelony)
+      .join(mau.asKelonys)
+      .withDelonscription("filtelonring srcId by mau")
       .flatMap {
-        case (_, (KeyVal(srcId, CandidateSeq(candidates)), _)) =>
+        caselon (_, (KelonyVal(srcId, CandidatelonSelonq(candidatelons)), _)) =>
           followGraphMauStat.inc()
-          val topK = candidates.sortBy(-_.score).take(TopKRealGraph)
-          topK.map { c => (srcId, c.userId) }
+          val topK = candidatelons.sortBy(-_.scorelon).takelon(TopKRelonalGraph)
+          topK.map { c => (srcId, c.uselonrId) }
       }
   }
 
-  override def runOnDateRange(
-    enableValueGraphs: Option[Boolean],
-    enableKeyGraphs: Option[Boolean]
+  ovelonrridelon delonf runOnDatelonRangelon(
+    elonnablelonValuelonGraphs: Option[Boolelonan],
+    elonnablelonKelonyGraphs: Option[Boolelonan]
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon,
+    uniquelonID: UniquelonID
+  ): elonxeloncution[Unit] = {
 
-    val processValueGraphs = enableValueGraphs.getOrElse(Configs.EnableValueGraphs)
-    val processKeyGraphs = enableKeyGraphs.getOrElse(Configs.EnableKeyGraphs)
+    val procelonssValuelonGraphs = elonnablelonValuelonGraphs.gelontOrelonlselon(Configs.elonnablelonValuelonGraphs)
+    val procelonssKelonyGraphs = elonnablelonKelonyGraphs.gelontOrelonlselon(Configs.elonnablelonKelonyGraphs)
 
-    if (!processKeyGraphs && !processValueGraphs) {
-      // Skip the batch job
-      Execution.unit
-    } else {
-      // val favoriteGraphStat = Stat("NumFavoriteEdges")
-      // val retweetGraphStat = Stat("NumRetweetEdges")
-      // val mentionGraphStat = Stat("NumMentionEdges")
+    if (!procelonssKelonyGraphs && !procelonssValuelonGraphs) {
+      // Skip thelon batch job
+      elonxeloncution.unit
+    } elonlselon {
+      // val favoritelonGraphStat = Stat("NumFavoritelonelondgelons")
+      // val relontwelonelontGraphStat = Stat("NumRelontwelonelontelondgelons")
+      // val melonntionGraphStat = Stat("NumMelonntionelondgelons")
 
-      // val realGraphAggregates = getRealGraphWithMAUOnly
+      // val relonalGraphAggrelongatelons = gelontRelonalGraphWithMAUOnly
 
-      val followGraph = getTopKFollowGraph
-      // val mutualFollowGraph = followGraph.asKeys.join(followGraph.swap.asKeys).keys
+      val followGraph = gelontTopKFollowGraph
+      // val mutualFollowGraph = followGraph.asKelonys.join(followGraph.swap.asKelonys).kelonys
 
-      // val favoriteGraph =
-      //   getSubGraph(realGraphAggregates, _.favoriteScore.isDefined, favoriteGraphStat)
+      // val favoritelonGraph =
+      //   gelontSubGraph(relonalGraphAggrelongatelons, _.favoritelonScorelon.isDelonfinelond, favoritelonGraphStat)
 
-      // val retweetGraph =
-      //   getSubGraph(realGraphAggregates, _.retweetScore.isDefined, retweetGraphStat)
+      // val relontwelonelontGraph =
+      //   gelontSubGraph(relonalGraphAggrelongatelons, _.relontwelonelontScorelon.isDelonfinelond, relontwelonelontGraphStat)
 
-      // val mentionGraph =
-      //   getSubGraph(realGraphAggregates, _.mentionScore.isDefined, mentionGraphStat)
+      // val melonntionGraph =
+      //   gelontSubGraph(relonalGraphAggrelongatelons, _.melonntionScorelon.isDelonfinelond, melonntionGraphStat)
 
-      val writeValDataSetExecutions = if (processValueGraphs) {
-        Seq(
-          (followGraph, shardingByValue, FollowOutValPath),
-          (followGraph.swap, shardingByValue, FollowInValPath)
-          // (mutualFollowGraph, shardingByValue, MutualFollowValPath),
-          // (favoriteGraph, shardingByValue, FavoriteOutValPath),
-          // (favoriteGraph.swap, shardingByValue, FavoriteInValPath),
-          // (retweetGraph, shardingByValue, RetweetOutValPath),
-          // (retweetGraph.swap, shardingByValue, RetweetInValPath),
-          // (mentionGraph, shardingByValue, MentionOutValPath),
-          // (mentionGraph.swap, shardingByValue, MentionInValPath)
+      val writelonValDataSelontelonxeloncutions = if (procelonssValuelonGraphs) {
+        Selonq(
+          (followGraph, shardingByValuelon, FollowOutValPath),
+          (followGraph.swap, shardingByValuelon, FollowInValPath)
+          // (mutualFollowGraph, shardingByValuelon, MutualFollowValPath),
+          // (favoritelonGraph, shardingByValuelon, FavoritelonOutValPath),
+          // (favoritelonGraph.swap, shardingByValuelon, FavoritelonInValPath),
+          // (relontwelonelontGraph, shardingByValuelon, RelontwelonelontOutValPath),
+          // (relontwelonelontGraph.swap, shardingByValuelon, RelontwelonelontInValPath),
+          // (melonntionGraph, shardingByValuelon, MelonntionOutValPath),
+          // (melonntionGraph.swap, shardingByValuelon, MelonntionInValPath)
         )
-      } else {
-        Seq.empty
+      } elonlselon {
+        Selonq.elonmpty
       }
 
-      val writeKeyDataSetExecutions = if (processKeyGraphs) {
-        Seq(
-          (followGraph, shardingByKey, FollowOutKeyPath),
-          (followGraph.swap, shardingByKey, FollowInKeyPath)
-          // (favoriteGraph, shardingByKey, FavoriteOutKeyPath),
-          // (favoriteGraph.swap, shardingByKey, FavoriteInKeyPath),
-          // (retweetGraph, shardingByKey, RetweetOutKeyPath),
-          // (retweetGraph.swap, shardingByKey, RetweetInKeyPath),
-          // (mentionGraph, shardingByKey, MentionOutKeyPath),
-          // (mentionGraph.swap, shardingByKey, MentionInKeyPath),
-          // (mutualFollowGraph, shardingByKey, MutualFollowKeyPath)
+      val writelonKelonyDataSelontelonxeloncutions = if (procelonssKelonyGraphs) {
+        Selonq(
+          (followGraph, shardingByKelony, FollowOutKelonyPath),
+          (followGraph.swap, shardingByKelony, FollowInKelonyPath)
+          // (favoritelonGraph, shardingByKelony, FavoritelonOutKelonyPath),
+          // (favoritelonGraph.swap, shardingByKelony, FavoritelonInKelonyPath),
+          // (relontwelonelontGraph, shardingByKelony, RelontwelonelontOutKelonyPath),
+          // (relontwelonelontGraph.swap, shardingByKelony, RelontwelonelontInKelonyPath),
+          // (melonntionGraph, shardingByKelony, MelonntionOutKelonyPath),
+          // (melonntionGraph.swap, shardingByKelony, MelonntionInKelonyPath),
+          // (mutualFollowGraph, shardingByKelony, MutualFollowKelonyPath)
         )
-      } else {
-        Seq.empty
+      } elonlselon {
+        Selonq.elonmpty
       }
 
-      Execution
-        .sequence((writeValDataSetExecutions ++ writeKeyDataSetExecutions).map {
-          case (graph, shardingMethod, path) =>
-            writeGraphToDB(graph, shardingMethod, path)
+      elonxeloncution
+        .selonquelonncelon((writelonValDataSelontelonxeloncutions ++ writelonKelonyDataSelontelonxeloncutions).map {
+          caselon (graph, shardingMelonthod, path) =>
+            writelonGraphToDB(graph, shardingMelonthod, path)
         }).unit
     }
   }

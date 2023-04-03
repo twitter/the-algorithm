@@ -1,438 +1,438 @@
-package com.twitter.ann.scalding.offline
+packagelon com.twittelonr.ann.scalding.offlinelon
 
-import com.twitter.ann.common._
-import com.twitter.ann.hnsw.{HnswParams, TypedHnswIndex}
-import com.twitter.bijection.Injection
-import com.twitter.cortex.ml.embeddings.common.{EntityKind, Helpers, UserKind}
-import com.twitter.entityembeddings.neighbors.thriftscala.{EntityKey, NearestNeighbors, Neighbor}
-import com.twitter.ml.api.embedding.Embedding
-import com.twitter.ml.api.embedding.EmbeddingMath.{Float => math}
-import com.twitter.ml.featurestore.lib.embedding.EmbeddingWithEntity
-import com.twitter.ml.featurestore.lib.{EntityId, UserId}
-import com.twitter.scalding.typed.{TypedPipe, UnsortedGrouped}
-import com.twitter.scalding.{Args, DateRange, Stat, TextLine, UniqueID}
-import com.twitter.search.common.file.AbstractFile
-import com.twitter.util.{Await, FuturePool}
+import com.twittelonr.ann.common._
+import com.twittelonr.ann.hnsw.{HnswParams, TypelondHnswIndelonx}
+import com.twittelonr.bijelonction.Injelonction
+import com.twittelonr.cortelonx.ml.elonmbelonddings.common.{elonntityKind, Helonlpelonrs, UselonrKind}
+import com.twittelonr.elonntityelonmbelonddings.nelonighbors.thriftscala.{elonntityKelony, NelonarelonstNelonighbors, Nelonighbor}
+import com.twittelonr.ml.api.elonmbelondding.elonmbelondding
+import com.twittelonr.ml.api.elonmbelondding.elonmbelonddingMath.{Float => math}
+import com.twittelonr.ml.felonaturelonstorelon.lib.elonmbelondding.elonmbelonddingWithelonntity
+import com.twittelonr.ml.felonaturelonstorelon.lib.{elonntityId, UselonrId}
+import com.twittelonr.scalding.typelond.{TypelondPipelon, UnsortelondGroupelond}
+import com.twittelonr.scalding.{Args, DatelonRangelon, Stat, TelonxtLinelon, UniquelonID}
+import com.twittelonr.selonarch.common.filelon.AbstractFilelon
+import com.twittelonr.util.{Await, FuturelonPool}
 import scala.util.Random
 
-case class Index[T, D <: Distance[D]](
-  injection: Injection[T, Array[Byte]],
-  metric: Metric[D],
-  dimension: Int,
-  directory: AbstractFile) {
-  lazy val annIndex = TypedHnswIndex.loadIndex[T, D](
-    dimension,
-    metric,
-    injection,
-    ReadWriteFuturePool(FuturePool.immediatePool),
-    directory
+caselon class Indelonx[T, D <: Distancelon[D]](
+  injelonction: Injelonction[T, Array[Bytelon]],
+  melontric: Melontric[D],
+  dimelonnsion: Int,
+  direlonctory: AbstractFilelon) {
+  lazy val annIndelonx = TypelondHnswIndelonx.loadIndelonx[T, D](
+    dimelonnsion,
+    melontric,
+    injelonction,
+    RelonadWritelonFuturelonPool(FuturelonPool.immelondiatelonPool),
+    direlonctory
   )
 }
 
-object KnnHelper {
-  def getFilteredUserEmbeddings(
+objelonct KnnHelonlpelonr {
+  delonf gelontFiltelonrelondUselonrelonmbelonddings(
     args: Args,
-    filterPath: Option[String],
-    reducers: Int,
-    useHashJoin: Boolean
+    filtelonrPath: Option[String],
+    relonducelonrs: Int,
+    uselonHashJoin: Boolelonan
   )(
-    implicit dateRange: DateRange
-  ): TypedPipe[EmbeddingWithEntity[UserId]] = {
-    val userEmbeddings: TypedPipe[EmbeddingWithEntity[UserId]] =
-      UserKind.parser.getEmbeddingFormat(args, "consumer").getEmbeddings
-    filterPath match {
-      case Some(fileName: String) =>
-        val filterUserIds: TypedPipe[UserId] = TypedPipe
-          .from(TextLine(fileName))
-          .flatMap { idLine =>
-            Helpers.optionalToLong(idLine)
+    implicit datelonRangelon: DatelonRangelon
+  ): TypelondPipelon[elonmbelonddingWithelonntity[UselonrId]] = {
+    val uselonrelonmbelonddings: TypelondPipelon[elonmbelonddingWithelonntity[UselonrId]] =
+      UselonrKind.parselonr.gelontelonmbelonddingFormat(args, "consumelonr").gelontelonmbelonddings
+    filtelonrPath match {
+      caselon Somelon(filelonNamelon: String) =>
+        val filtelonrUselonrIds: TypelondPipelon[UselonrId] = TypelondPipelon
+          .from(TelonxtLinelon(filelonNamelon))
+          .flatMap { idLinelon =>
+            Helonlpelonrs.optionalToLong(idLinelon)
           }
           .map { id =>
-            UserId(id)
+            UselonrId(id)
           }
-        Helpers
-          .adjustableJoin(
-            left = userEmbeddings.groupBy(_.entityId),
-            right = filterUserIds.asKeys,
-            useHashJoin = useHashJoin,
-            reducers = Some(reducers)
+        Helonlpelonrs
+          .adjustablelonJoin(
+            lelonft = uselonrelonmbelonddings.groupBy(_.elonntityId),
+            right = filtelonrUselonrIds.asKelonys,
+            uselonHashJoin = uselonHashJoin,
+            relonducelonrs = Somelon(relonducelonrs)
           ).map {
-            case (_, (embedding, _)) => embedding
+            caselon (_, (elonmbelondding, _)) => elonmbelondding
           }
-      case None => userEmbeddings
+      caselon Nonelon => uselonrelonmbelonddings
     }
   }
 
-  def getNeighborsPipe[T <: EntityId, D <: Distance[D]](
+  delonf gelontNelonighborsPipelon[T <: elonntityId, D <: Distancelon[D]](
     args: Args,
-    uncastEntityKind: EntityKind[_],
-    uncastMetric: Metric[_],
-    ef: Int,
-    consumerEmbeddings: TypedPipe[EmbeddingWithEntity[UserId]],
-    abstractFile: Option[AbstractFile],
-    reducers: Int,
-    numNeighbors: Int,
-    dimension: Int
+    uncastelonntityKind: elonntityKind[_],
+    uncastMelontric: Melontric[_],
+    elonf: Int,
+    consumelonrelonmbelonddings: TypelondPipelon[elonmbelonddingWithelonntity[UselonrId]],
+    abstractFilelon: Option[AbstractFilelon],
+    relonducelonrs: Int,
+    numNelonighbors: Int,
+    dimelonnsion: Int
   )(
-    implicit dateRange: DateRange
-  ): TypedPipe[(EntityKey, NearestNeighbors)] = {
-    val entityKind = uncastEntityKind.asInstanceOf[EntityKind[T]]
-    val injection = entityKind.byteInjection
-    val metric = uncastMetric.asInstanceOf[Metric[D]]
-    abstractFile match {
-      case Some(directory: AbstractFile) =>
-        val index = Index(injection, metric, dimension, directory)
-        consumerEmbeddings
-          .map { embedding =>
-            val knn = Await.result(
-              index.annIndex.queryWithDistance(
-                Embedding(embedding.embedding.toArray),
-                numNeighbors,
-                HnswParams(ef)
+    implicit datelonRangelon: DatelonRangelon
+  ): TypelondPipelon[(elonntityKelony, NelonarelonstNelonighbors)] = {
+    val elonntityKind = uncastelonntityKind.asInstancelonOf[elonntityKind[T]]
+    val injelonction = elonntityKind.bytelonInjelonction
+    val melontric = uncastMelontric.asInstancelonOf[Melontric[D]]
+    abstractFilelon match {
+      caselon Somelon(direlonctory: AbstractFilelon) =>
+        val indelonx = Indelonx(injelonction, melontric, dimelonnsion, direlonctory)
+        consumelonrelonmbelonddings
+          .map { elonmbelondding =>
+            val knn = Await.relonsult(
+              indelonx.annIndelonx.quelonryWithDistancelon(
+                elonmbelondding(elonmbelondding.elonmbelondding.toArray),
+                numNelonighbors,
+                HnswParams(elonf)
               )
             )
-            val neighborList = knn
-              .filter(_.neighbor.toString != embedding.entityId.userId.toString)
+            val nelonighborList = knn
+              .filtelonr(_.nelonighbor.toString != elonmbelondding.elonntityId.uselonrId.toString)
               .map(nn =>
-                Neighbor(
-                  neighbor = EntityKey(nn.neighbor.toString),
-                  similarity = Some(1 - nn.distance.distance)))
-            EntityKey(embedding.entityId.toString) -> NearestNeighbors(neighborList)
+                Nelonighbor(
+                  nelonighbor = elonntityKelony(nn.nelonighbor.toString),
+                  similarity = Somelon(1 - nn.distancelon.distancelon)))
+            elonntityKelony(elonmbelondding.elonntityId.toString) -> NelonarelonstNelonighbors(nelonighborList)
           }
-      case None =>
-        val producerEmbeddings: TypedPipe[EmbeddingWithEntity[UserId]] =
-          UserKind.parser.getEmbeddingFormat(args, "producer").getEmbeddings
+      caselon Nonelon =>
+        val producelonrelonmbelonddings: TypelondPipelon[elonmbelonddingWithelonntity[UselonrId]] =
+          UselonrKind.parselonr.gelontelonmbelonddingFormat(args, "producelonr").gelontelonmbelonddings
 
-        bruteForceNearestNeighbors(
-          consumerEmbeddings,
-          producerEmbeddings,
-          numNeighbors,
-          reducers
+        brutelonForcelonNelonarelonstNelonighbors(
+          consumelonrelonmbelonddings,
+          producelonrelonmbelonddings,
+          numNelonighbors,
+          relonducelonrs
         )
     }
   }
 
-  def bruteForceNearestNeighbors(
-    consumerEmbeddings: TypedPipe[EmbeddingWithEntity[UserId]],
-    producerEmbeddings: TypedPipe[EmbeddingWithEntity[UserId]],
-    numNeighbors: Int,
-    reducers: Int
-  ): TypedPipe[(EntityKey, NearestNeighbors)] = {
-    consumerEmbeddings
-      .cross(producerEmbeddings)
+  delonf brutelonForcelonNelonarelonstNelonighbors(
+    consumelonrelonmbelonddings: TypelondPipelon[elonmbelonddingWithelonntity[UselonrId]],
+    producelonrelonmbelonddings: TypelondPipelon[elonmbelonddingWithelonntity[UselonrId]],
+    numNelonighbors: Int,
+    relonducelonrs: Int
+  ): TypelondPipelon[(elonntityKelony, NelonarelonstNelonighbors)] = {
+    consumelonrelonmbelonddings
+      .cross(producelonrelonmbelonddings)
       .map {
-        case (cEmbed: EmbeddingWithEntity[UserId], pEmbed: EmbeddingWithEntity[UserId]) =>
-          // Cosine similarity
-          val cEmbedNorm = math.l2Norm(cEmbed.embedding).toFloat
-          val pEmbedNorm = math.l2Norm(pEmbed.embedding).toFloat
-          val distance: Float = -math.dotProduct(
-            (math.scalarProduct(cEmbed.embedding, 1 / cEmbedNorm)),
-            math.scalarProduct(pEmbed.embedding, 1 / pEmbedNorm))
+        caselon (celonmbelond: elonmbelonddingWithelonntity[UselonrId], pelonmbelond: elonmbelonddingWithelonntity[UselonrId]) =>
+          // Cosinelon similarity
+          val celonmbelondNorm = math.l2Norm(celonmbelond.elonmbelondding).toFloat
+          val pelonmbelondNorm = math.l2Norm(pelonmbelond.elonmbelondding).toFloat
+          val distancelon: Float = -math.dotProduct(
+            (math.scalarProduct(celonmbelond.elonmbelondding, 1 / celonmbelondNorm)),
+            math.scalarProduct(pelonmbelond.elonmbelondding, 1 / pelonmbelondNorm))
           (
-            UserKind.stringInjection(cEmbed.entityId),
-            (distance, UserKind.stringInjection(pEmbed.entityId)))
+            UselonrKind.stringInjelonction(celonmbelond.elonntityId),
+            (distancelon, UselonrKind.stringInjelonction(pelonmbelond.elonntityId)))
       }
-      .groupBy(_._1).withReducers(reducers)
-      .sortWithTake(numNeighbors) {
-        case ((_: String, (sim1: Float, _: String)), (_: String, (sim2: Float, _: String))) =>
+      .groupBy(_._1).withRelonducelonrs(relonducelonrs)
+      .sortWithTakelon(numNelonighbors) {
+        caselon ((_: String, (sim1: Float, _: String)), (_: String, (sim2: Float, _: String))) =>
           sim1 < sim2
       }
       .map {
-        case (consumerId: String, (prodSims: Seq[(String, (Float, String))])) =>
-          EntityKey(consumerId) -> NearestNeighbors(
+        caselon (consumelonrId: String, (prodSims: Selonq[(String, (Float, String))])) =>
+          elonntityKelony(consumelonrId) -> NelonarelonstNelonighbors(
             prodSims.map {
-              case (consumerId: String, (sim: Float, prodId: String)) =>
-                Neighbor(neighbor = EntityKey(prodId), similarity = Some(-sim.toDouble))
+              caselon (consumelonrId: String, (sim: Float, prodId: String)) =>
+                Nelonighbor(nelonighbor = elonntityKelony(prodId), similarity = Somelon(-sim.toDoublelon))
             }
           )
       }
   }
 
   /**
-   * Calculate the nearest neighbors exhaustively between two entity embeddings using one as query and other as the search space.
-   * @param queryEmbeddings entity embeddings for queries
-   * @param searchSpaceEmbeddings entity embeddings for search space
-   * @param metric distance metric
-   * @param numNeighbors number of neighbors
-   * @param queryIdsFilter optional query ids to filter to query entity embeddings
-   * @param reducers number of reducers for grouping
-   * @param isSearchSpaceLarger Used for optimization: Is the search space larger than the query space? Ignored if numOfSearchGroups > 1.
-   * @param numOfSearchGroups we divide the search space into these groups (randomly). Useful when the search space is too large. Overrides isSearchSpaceLarger.
-   * @param numReplicas Each search group will be responsible for 1/numReplicas queryEmebeddings.
-   *                    This might speed up the search when the size of the index embeddings is
-   *                    large.
-   * @tparam A type of query entity
-   * @tparam B type of search space entity
-   * @tparam D type of distance
+   * Calculatelon thelon nelonarelonst nelonighbors elonxhaustivelonly belontwelonelonn two elonntity elonmbelonddings using onelon as quelonry and othelonr as thelon selonarch spacelon.
+   * @param quelonryelonmbelonddings elonntity elonmbelonddings for quelonrielons
+   * @param selonarchSpacelonelonmbelonddings elonntity elonmbelonddings for selonarch spacelon
+   * @param melontric distancelon melontric
+   * @param numNelonighbors numbelonr of nelonighbors
+   * @param quelonryIdsFiltelonr optional quelonry ids to filtelonr to quelonry elonntity elonmbelonddings
+   * @param relonducelonrs numbelonr of relonducelonrs for grouping
+   * @param isSelonarchSpacelonLargelonr Uselond for optimization: Is thelon selonarch spacelon largelonr than thelon quelonry spacelon? Ignorelond if numOfSelonarchGroups > 1.
+   * @param numOfSelonarchGroups welon dividelon thelon selonarch spacelon into thelonselon groups (randomly). Uselonful whelonn thelon selonarch spacelon is too largelon. Ovelonrridelons isSelonarchSpacelonLargelonr.
+   * @param numRelonplicas elonach selonarch group will belon relonsponsiblelon for 1/numRelonplicas quelonryelonmelonbelonddings.
+   *                    This might spelonelond up thelon selonarch whelonn thelon sizelon of thelon indelonx elonmbelonddings is
+   *                    largelon.
+   * @tparam A typelon of quelonry elonntity
+   * @tparam B typelon of selonarch spacelon elonntity
+   * @tparam D typelon of distancelon
    */
-  def findNearestNeighbours[A <: EntityId, B <: EntityId, D <: Distance[D]](
-    queryEmbeddings: TypedPipe[EmbeddingWithEntity[A]],
-    searchSpaceEmbeddings: TypedPipe[EmbeddingWithEntity[B]],
-    metric: Metric[D],
-    numNeighbors: Int = 10,
-    queryIdsFilter: Option[TypedPipe[A]] = Option.empty,
-    reducers: Int = 100,
-    mappers: Int = 100,
-    isSearchSpaceLarger: Boolean = true,
-    numOfSearchGroups: Int = 1,
-    numReplicas: Int = 1,
-    useCounters: Boolean = true
+  delonf findNelonarelonstNelonighbours[A <: elonntityId, B <: elonntityId, D <: Distancelon[D]](
+    quelonryelonmbelonddings: TypelondPipelon[elonmbelonddingWithelonntity[A]],
+    selonarchSpacelonelonmbelonddings: TypelondPipelon[elonmbelonddingWithelonntity[B]],
+    melontric: Melontric[D],
+    numNelonighbors: Int = 10,
+    quelonryIdsFiltelonr: Option[TypelondPipelon[A]] = Option.elonmpty,
+    relonducelonrs: Int = 100,
+    mappelonrs: Int = 100,
+    isSelonarchSpacelonLargelonr: Boolelonan = truelon,
+    numOfSelonarchGroups: Int = 1,
+    numRelonplicas: Int = 1,
+    uselonCountelonrs: Boolelonan = truelon
   )(
-    implicit ordering: Ordering[A],
-    uid: UniqueID
-  ): TypedPipe[(A, Seq[(B, D)])] = {
-    val filteredQueryEmbeddings = queryIdsFilter match {
-      case Some(filter) => {
-        queryEmbeddings.groupBy(_.entityId).hashJoin(filter.asKeys).map {
-          case (x, (embedding, _)) => embedding
+    implicit ordelonring: Ordelonring[A],
+    uid: UniquelonID
+  ): TypelondPipelon[(A, Selonq[(B, D)])] = {
+    val filtelonrelondQuelonryelonmbelonddings = quelonryIdsFiltelonr match {
+      caselon Somelon(filtelonr) => {
+        quelonryelonmbelonddings.groupBy(_.elonntityId).hashJoin(filtelonr.asKelonys).map {
+          caselon (x, (elonmbelondding, _)) => elonmbelondding
         }
       }
-      case None => queryEmbeddings
+      caselon Nonelon => quelonryelonmbelonddings
     }
 
-    if (numOfSearchGroups > 1) {
-      val indexingStrategy = BruteForceIndexingStrategy(metric)
-      findNearestNeighboursWithIndexingStrategy(
-        queryEmbeddings,
-        searchSpaceEmbeddings,
-        numNeighbors,
-        numOfSearchGroups,
-        indexingStrategy,
-        numReplicas,
-        Some(reducers),
-        useCounters = useCounters
+    if (numOfSelonarchGroups > 1) {
+      val indelonxingStratelongy = BrutelonForcelonIndelonxingStratelongy(melontric)
+      findNelonarelonstNelonighboursWithIndelonxingStratelongy(
+        quelonryelonmbelonddings,
+        selonarchSpacelonelonmbelonddings,
+        numNelonighbors,
+        numOfSelonarchGroups,
+        indelonxingStratelongy,
+        numRelonplicas,
+        Somelon(relonducelonrs),
+        uselonCountelonrs = uselonCountelonrs
       )
-    } else {
-      findNearestNeighboursViaCross(
-        filteredQueryEmbeddings,
-        searchSpaceEmbeddings,
-        metric,
-        numNeighbors,
-        reducers,
-        mappers,
-        isSearchSpaceLarger)
+    } elonlselon {
+      findNelonarelonstNelonighboursViaCross(
+        filtelonrelondQuelonryelonmbelonddings,
+        selonarchSpacelonelonmbelonddings,
+        melontric,
+        numNelonighbors,
+        relonducelonrs,
+        mappelonrs,
+        isSelonarchSpacelonLargelonr)
     }
   }
 
   /**
-   * Calculate the nearest neighbors using the specified indexing strategy between two entity
-   * embeddings using one as query and other as the search space.
-   * @param queryEmbeddings entity embeddings for queries
-   * @param searchSpaceEmbeddings entity embeddings for search space. You should be able to fit
-   *                              searchSpaceEmbeddings.size / numOfSearchGroups into memory.
-   * @param numNeighbors number of neighbors
-   * @param reducersOption number of reducers for the final sortedTake.
-   * @param numOfSearchGroups we divide the search space into these groups (randomly). Useful when
-   *                          the search space is too large. Search groups are shards. Choose this
-   *                          number by ensuring searchSpaceEmbeddings.size / numOfSearchGroups
-   *                          embeddings will fit into memory.
-   * @param numReplicas Each search group will be responsible for 1/numReplicas queryEmebeddings.
-   *                    By increasing this number, we can parallelize the work and reduce end to end
-   *                    running times.
-   * @param indexingStrategy How we will search for nearest neighbors within a search group
-   * @param queryShards one step we have is to fan out the query embeddings. We create one entry
-   *                    per search group. If numOfSearchGroups is large, then this fan out can take
-   *                    a long time. You can shard the query shard first to parallelize this
-   *                    process. One way to estimate what value to use:
-   *                    queryEmbeddings.size * numOfSearchGroups / queryShards should be around 1GB.
-   * @param searchSpaceShards this param is similar to queryShards. Except it shards the search
-   *                          space when numReplicas is too large. One way to estimate what value
-   *                          to use: searchSpaceEmbeddings.size * numReplicas / searchSpaceShards
-   *                          should be around 1GB.
-   * @tparam A type of query entity
-   * @tparam B type of search space entity
-   * @tparam D type of distance
-   * @return a pipe keyed by the index embedding. The values are the list of numNeighbors nearest
-   *         neighbors along with their distances.
+   * Calculatelon thelon nelonarelonst nelonighbors using thelon speloncifielond indelonxing stratelongy belontwelonelonn two elonntity
+   * elonmbelonddings using onelon as quelonry and othelonr as thelon selonarch spacelon.
+   * @param quelonryelonmbelonddings elonntity elonmbelonddings for quelonrielons
+   * @param selonarchSpacelonelonmbelonddings elonntity elonmbelonddings for selonarch spacelon. You should belon ablelon to fit
+   *                              selonarchSpacelonelonmbelonddings.sizelon / numOfSelonarchGroups into melonmory.
+   * @param numNelonighbors numbelonr of nelonighbors
+   * @param relonducelonrsOption numbelonr of relonducelonrs for thelon final sortelondTakelon.
+   * @param numOfSelonarchGroups welon dividelon thelon selonarch spacelon into thelonselon groups (randomly). Uselonful whelonn
+   *                          thelon selonarch spacelon is too largelon. Selonarch groups arelon shards. Chooselon this
+   *                          numbelonr by elonnsuring selonarchSpacelonelonmbelonddings.sizelon / numOfSelonarchGroups
+   *                          elonmbelonddings will fit into melonmory.
+   * @param numRelonplicas elonach selonarch group will belon relonsponsiblelon for 1/numRelonplicas quelonryelonmelonbelonddings.
+   *                    By increlonasing this numbelonr, welon can parallelonlizelon thelon work and relonducelon elonnd to elonnd
+   *                    running timelons.
+   * @param indelonxingStratelongy How welon will selonarch for nelonarelonst nelonighbors within a selonarch group
+   * @param quelonryShards onelon stelonp welon havelon is to fan out thelon quelonry elonmbelonddings. Welon crelonatelon onelon elonntry
+   *                    pelonr selonarch group. If numOfSelonarchGroups is largelon, thelonn this fan out can takelon
+   *                    a long timelon. You can shard thelon quelonry shard first to parallelonlizelon this
+   *                    procelonss. Onelon way to elonstimatelon what valuelon to uselon:
+   *                    quelonryelonmbelonddings.sizelon * numOfSelonarchGroups / quelonryShards should belon around 1GB.
+   * @param selonarchSpacelonShards this param is similar to quelonryShards. elonxcelonpt it shards thelon selonarch
+   *                          spacelon whelonn numRelonplicas is too largelon. Onelon way to elonstimatelon what valuelon
+   *                          to uselon: selonarchSpacelonelonmbelonddings.sizelon * numRelonplicas / selonarchSpacelonShards
+   *                          should belon around 1GB.
+   * @tparam A typelon of quelonry elonntity
+   * @tparam B typelon of selonarch spacelon elonntity
+   * @tparam D typelon of distancelon
+   * @relonturn a pipelon kelonyelond by thelon indelonx elonmbelondding. Thelon valuelons arelon thelon list of numNelonighbors nelonarelonst
+   *         nelonighbors along with thelonir distancelons.
    */
-  def findNearestNeighboursWithIndexingStrategy[A <: EntityId, B <: EntityId, D <: Distance[D]](
-    queryEmbeddings: TypedPipe[EmbeddingWithEntity[A]],
-    searchSpaceEmbeddings: TypedPipe[EmbeddingWithEntity[B]],
-    numNeighbors: Int,
-    numOfSearchGroups: Int,
-    indexingStrategy: IndexingStrategy[D],
-    numReplicas: Int = 1,
-    reducersOption: Option[Int] = None,
-    queryShards: Option[Int] = None,
-    searchSpaceShards: Option[Int] = None,
-    useCounters: Boolean = true
+  delonf findNelonarelonstNelonighboursWithIndelonxingStratelongy[A <: elonntityId, B <: elonntityId, D <: Distancelon[D]](
+    quelonryelonmbelonddings: TypelondPipelon[elonmbelonddingWithelonntity[A]],
+    selonarchSpacelonelonmbelonddings: TypelondPipelon[elonmbelonddingWithelonntity[B]],
+    numNelonighbors: Int,
+    numOfSelonarchGroups: Int,
+    indelonxingStratelongy: IndelonxingStratelongy[D],
+    numRelonplicas: Int = 1,
+    relonducelonrsOption: Option[Int] = Nonelon,
+    quelonryShards: Option[Int] = Nonelon,
+    selonarchSpacelonShards: Option[Int] = Nonelon,
+    uselonCountelonrs: Boolelonan = truelon
   )(
-    implicit ordering: Ordering[A],
-    uid: UniqueID
-  ): UnsortedGrouped[A, Seq[(B, D)]] = {
+    implicit ordelonring: Ordelonring[A],
+    uid: UniquelonID
+  ): UnsortelondGroupelond[A, Selonq[(B, D)]] = {
 
-    implicit val ord: Ordering[NNKey] = Ordering.by(NNKey.unapply)
+    implicit val ord: Ordelonring[NNKelony] = Ordelonring.by(NNKelony.unapply)
 
-    val entityEmbeddings = searchSpaceEmbeddings.map { embedding: EmbeddingWithEntity[B] =>
-      val entityEmbedding =
-        EntityEmbedding(embedding.entityId, Embedding(embedding.embedding.toArray))
-      entityEmbedding
+    val elonntityelonmbelonddings = selonarchSpacelonelonmbelonddings.map { elonmbelondding: elonmbelonddingWithelonntity[B] =>
+      val elonntityelonmbelondding =
+        elonntityelonmbelondding(elonmbelondding.elonntityId, elonmbelondding(elonmbelondding.elonmbelondding.toArray))
+      elonntityelonmbelondding
     }
 
-    val shardedSearchSpace = shard(entityEmbeddings, searchSpaceShards)
+    val shardelondSelonarchSpacelon = shard(elonntityelonmbelonddings, selonarchSpacelonShards)
 
-    val groupedSearchSpaceEmbeddings = shardedSearchSpace
-      .flatMap { entityEmbedding =>
-        val searchGroup = Random.nextInt(numOfSearchGroups)
-        (0 until numReplicas).map { replica =>
-          (NNKey(searchGroup, replica, Some(numReplicas)), entityEmbedding)
+    val groupelondSelonarchSpacelonelonmbelonddings = shardelondSelonarchSpacelon
+      .flatMap { elonntityelonmbelondding =>
+        val selonarchGroup = Random.nelonxtInt(numOfSelonarchGroups)
+        (0 until numRelonplicas).map { relonplica =>
+          (NNKelony(selonarchGroup, relonplica, Somelon(numRelonplicas)), elonntityelonmbelondding)
         }
       }
 
-    val shardedQueries = shard(queryEmbeddings, queryShards)
+    val shardelondQuelonrielons = shard(quelonryelonmbelonddings, quelonryShards)
 
-    val groupedQueryEmbeddings = shardedQueries
-      .flatMap { entity =>
-        val replica = Random.nextInt(numReplicas)
-        (0 until numOfSearchGroups).map { searchGroup =>
-          (NNKey(searchGroup, replica, Some(numReplicas)), entity)
+    val groupelondQuelonryelonmbelonddings = shardelondQuelonrielons
+      .flatMap { elonntity =>
+        val relonplica = Random.nelonxtInt(numRelonplicas)
+        (0 until numOfSelonarchGroups).map { selonarchGroup =>
+          (NNKelony(selonarchGroup, relonplica, Somelon(numRelonplicas)), elonntity)
         }
       }.group
-      .withReducers(reducersOption.getOrElse(numOfSearchGroups * numReplicas))
+      .withRelonducelonrs(relonducelonrsOption.gelontOrelonlselon(numOfSelonarchGroups * numRelonplicas))
 
-    val numberAnnIndexQueries = Stat("NumberAnnIndexQueries")
-    val annIndexQueryTotalMs = Stat("AnnIndexQueryTotalMs")
-    val numberIndexBuilds = Stat("NumberIndexBuilds")
-    val annIndexBuildTotalMs = Stat("AnnIndexBuildTotalMs")
-    val groupedKnn = groupedQueryEmbeddings
-      .cogroup(groupedSearchSpaceEmbeddings) {
-        case (_, queryIter, searchSpaceIter) =>
-          // This index build happens numReplicas times. Ideally we could serialize the queryable.
-          // And only build the index once per search group.
-          // The issues with that now are:
-          // - The HNSW queryable is not serializable in scalding
-          // - The way that map reduce works requires that there is a job that write out the search
-          //   space embeddings numReplicas times. In the current setup, we can do that by sharding
-          //   the embeddings first and then fanning out. But if we had a single queryable, we would
-          //   not be able to shard it easily and writing this out would take a long time.
-          val indexBuildStartTime = System.currentTimeMillis()
-          val queryable = indexingStrategy.buildIndex(searchSpaceIter)
-          if (useCounters) {
-            numberIndexBuilds.inc()
-            annIndexBuildTotalMs.incBy(System.currentTimeMillis() - indexBuildStartTime)
+    val numbelonrAnnIndelonxQuelonrielons = Stat("NumbelonrAnnIndelonxQuelonrielons")
+    val annIndelonxQuelonryTotalMs = Stat("AnnIndelonxQuelonryTotalMs")
+    val numbelonrIndelonxBuilds = Stat("NumbelonrIndelonxBuilds")
+    val annIndelonxBuildTotalMs = Stat("AnnIndelonxBuildTotalMs")
+    val groupelondKnn = groupelondQuelonryelonmbelonddings
+      .cogroup(groupelondSelonarchSpacelonelonmbelonddings) {
+        caselon (_, quelonryItelonr, selonarchSpacelonItelonr) =>
+          // This indelonx build happelonns numRelonplicas timelons. Idelonally welon could selonrializelon thelon quelonryablelon.
+          // And only build thelon indelonx oncelon pelonr selonarch group.
+          // Thelon issuelons with that now arelon:
+          // - Thelon HNSW quelonryablelon is not selonrializablelon in scalding
+          // - Thelon way that map relonducelon works relonquirelons that thelonrelon is a job that writelon out thelon selonarch
+          //   spacelon elonmbelonddings numRelonplicas timelons. In thelon currelonnt selontup, welon can do that by sharding
+          //   thelon elonmbelonddings first and thelonn fanning out. But if welon had a singlelon quelonryablelon, welon would
+          //   not belon ablelon to shard it elonasily and writing this out would takelon a long timelon.
+          val indelonxBuildStartTimelon = Systelonm.currelonntTimelonMillis()
+          val quelonryablelon = indelonxingStratelongy.buildIndelonx(selonarchSpacelonItelonr)
+          if (uselonCountelonrs) {
+            numbelonrIndelonxBuilds.inc()
+            annIndelonxBuildTotalMs.incBy(Systelonm.currelonntTimelonMillis() - indelonxBuildStartTimelon)
           }
-          queryIter.flatMap { query =>
-            val queryStartTime = System.currentTimeMillis()
-            val embedding = Embedding(query.embedding.toArray)
-            val result = Await.result(
-              queryable.queryWithDistance(embedding, numNeighbors)
+          quelonryItelonr.flatMap { quelonry =>
+            val quelonryStartTimelon = Systelonm.currelonntTimelonMillis()
+            val elonmbelondding = elonmbelondding(quelonry.elonmbelondding.toArray)
+            val relonsult = Await.relonsult(
+              quelonryablelon.quelonryWithDistancelon(elonmbelondding, numNelonighbors)
             )
-            val queryToTopNeighbors = result
-              .map { neighbor =>
-                (query.entityId, (neighbor.neighbor, neighbor.distance))
+            val quelonryToTopNelonighbors = relonsult
+              .map { nelonighbor =>
+                (quelonry.elonntityId, (nelonighbor.nelonighbor, nelonighbor.distancelon))
               }
-            if (useCounters) {
-              numberAnnIndexQueries.inc()
-              annIndexQueryTotalMs.incBy(System.currentTimeMillis() - queryStartTime)
+            if (uselonCountelonrs) {
+              numbelonrAnnIndelonxQuelonrielons.inc()
+              annIndelonxQuelonryTotalMs.incBy(Systelonm.currelonntTimelonMillis() - quelonryStartTimelon)
             }
-            queryToTopNeighbors
+            quelonryToTopNelonighbors
           }
       }
-      .values
+      .valuelons
       .group
 
-    val groupedKnnWithReducers = reducersOption
-      .map { reducers =>
-        groupedKnn
-          .withReducers(reducers)
-      }.getOrElse(groupedKnn)
+    val groupelondKnnWithRelonducelonrs = relonducelonrsOption
+      .map { relonducelonrs =>
+        groupelondKnn
+          .withRelonducelonrs(relonducelonrs)
+      }.gelontOrelonlselon(groupelondKnn)
 
-    groupedKnnWithReducers
-      .sortedTake(numNeighbors) {
-        Ordering
+    groupelondKnnWithRelonducelonrs
+      .sortelondTakelon(numNelonighbors) {
+        Ordelonring
           .by[(B, D), D] {
-            case (_, distance) => distance
+            caselon (_, distancelon) => distancelon
           }
       }
   }
 
-  private[this] def shard[T](
-    pipe: TypedPipe[T],
-    numberOfShards: Option[Int]
-  ): TypedPipe[T] = {
-    numberOfShards
+  privatelon[this] delonf shard[T](
+    pipelon: TypelondPipelon[T],
+    numbelonrOfShards: Option[Int]
+  ): TypelondPipelon[T] = {
+    numbelonrOfShards
       .map { shards =>
-        pipe.shard(shards)
-      }.getOrElse(pipe)
+        pipelon.shard(shards)
+      }.gelontOrelonlselon(pipelon)
   }
 
-  private[this] def findNearestNeighboursViaCross[A <: EntityId, B <: EntityId, D <: Distance[D]](
-    queryEmbeddings: TypedPipe[EmbeddingWithEntity[A]],
-    searchSpaceEmbeddings: TypedPipe[EmbeddingWithEntity[B]],
-    metric: Metric[D],
-    numNeighbors: Int,
-    reducers: Int,
-    mappers: Int,
-    isSearchSpaceLarger: Boolean
+  privatelon[this] delonf findNelonarelonstNelonighboursViaCross[A <: elonntityId, B <: elonntityId, D <: Distancelon[D]](
+    quelonryelonmbelonddings: TypelondPipelon[elonmbelonddingWithelonntity[A]],
+    selonarchSpacelonelonmbelonddings: TypelondPipelon[elonmbelonddingWithelonntity[B]],
+    melontric: Melontric[D],
+    numNelonighbors: Int,
+    relonducelonrs: Int,
+    mappelonrs: Int,
+    isSelonarchSpacelonLargelonr: Boolelonan
   )(
-    implicit ordering: Ordering[A]
-  ): TypedPipe[(A, Seq[(B, D)])] = {
+    implicit ordelonring: Ordelonring[A]
+  ): TypelondPipelon[(A, Selonq[(B, D)])] = {
 
-    val crossed: TypedPipe[(A, (B, D))] = if (isSearchSpaceLarger) {
-      searchSpaceEmbeddings
-        .shard(mappers)
-        .cross(queryEmbeddings).map {
-          case (searchSpaceEmbedding, queryEmbedding) =>
-            val distance = metric.distance(searchSpaceEmbedding.embedding, queryEmbedding.embedding)
-            (queryEmbedding.entityId, (searchSpaceEmbedding.entityId, distance))
+    val crosselond: TypelondPipelon[(A, (B, D))] = if (isSelonarchSpacelonLargelonr) {
+      selonarchSpacelonelonmbelonddings
+        .shard(mappelonrs)
+        .cross(quelonryelonmbelonddings).map {
+          caselon (selonarchSpacelonelonmbelondding, quelonryelonmbelondding) =>
+            val distancelon = melontric.distancelon(selonarchSpacelonelonmbelondding.elonmbelondding, quelonryelonmbelondding.elonmbelondding)
+            (quelonryelonmbelondding.elonntityId, (selonarchSpacelonelonmbelondding.elonntityId, distancelon))
         }
-    } else {
-      queryEmbeddings
-        .shard(mappers)
-        .cross(searchSpaceEmbeddings).map {
-          case (queryEmbedding, searchSpaceEmbedding) =>
-            val distance = metric.distance(searchSpaceEmbedding.embedding, queryEmbedding.embedding)
-            (queryEmbedding.entityId, (searchSpaceEmbedding.entityId, distance))
+    } elonlselon {
+      quelonryelonmbelonddings
+        .shard(mappelonrs)
+        .cross(selonarchSpacelonelonmbelonddings).map {
+          caselon (quelonryelonmbelondding, selonarchSpacelonelonmbelondding) =>
+            val distancelon = melontric.distancelon(selonarchSpacelonelonmbelondding.elonmbelondding, quelonryelonmbelondding.elonmbelondding)
+            (quelonryelonmbelondding.elonntityId, (selonarchSpacelonelonmbelondding.elonntityId, distancelon))
         }
     }
 
-    crossed
+    crosselond
       .groupBy(_._1)
-      .withReducers(reducers)
-      .sortedTake(numNeighbors) {
-        Ordering
+      .withRelonducelonrs(relonducelonrs)
+      .sortelondTakelon(numNelonighbors) {
+        Ordelonring
           .by[(A, (B, D)), D] {
-            case (_, (_, distance)) => distance
-          } // Sort by distance metric in ascending order
+            caselon (_, (_, distancelon)) => distancelon
+          } // Sort by distancelon melontric in ascelonnding ordelonr
       }.map {
-        case (queryId, neighbors) =>
-          (queryId, neighbors.map(_._2))
+        caselon (quelonryId, nelonighbors) =>
+          (quelonryId, nelonighbors.map(_._2))
       }
   }
 
   /**
-   * Convert nearest neighbors to string format.
-   * By default format would be (queryId  neighbourId:distance  neighbourId:distance .....) in ascending order of distance.
-   * @param nearestNeighbors nearest neighbors tuple in form of (queryId, Seq[(neighborId, distance)]
-   * @param queryEntityKind entity kind of query
-   * @param neighborEntityKind entity kind of search space/neighbors
-   * @param idDistanceSeparator String separator to separate a single neighborId and distance. Default to colon (:)
-   * @param neighborSeparator String operator to separate neighbors. Default to tab
-   * @tparam A type of query entity
-   * @tparam B type of search space entity
-   * @tparam D type of distance
+   * Convelonrt nelonarelonst nelonighbors to string format.
+   * By delonfault format would belon (quelonryId  nelonighbourId:distancelon  nelonighbourId:distancelon .....) in ascelonnding ordelonr of distancelon.
+   * @param nelonarelonstNelonighbors nelonarelonst nelonighbors tuplelon in form of (quelonryId, Selonq[(nelonighborId, distancelon)]
+   * @param quelonryelonntityKind elonntity kind of quelonry
+   * @param nelonighborelonntityKind elonntity kind of selonarch spacelon/nelonighbors
+   * @param idDistancelonSelonparator String selonparator to selonparatelon a singlelon nelonighborId and distancelon. Delonfault to colon (:)
+   * @param nelonighborSelonparator String opelonrator to selonparatelon nelonighbors. Delonfault to tab
+   * @tparam A typelon of quelonry elonntity
+   * @tparam B typelon of selonarch spacelon elonntity
+   * @tparam D typelon of distancelon
    */
-  def nearestNeighborsToString[A <: EntityId, B <: EntityId, D <: Distance[D]](
-    nearestNeighbors: (A, Seq[(B, D)]),
-    queryEntityKind: EntityKind[A],
-    neighborEntityKind: EntityKind[B],
-    idDistanceSeparator: String = ":",
-    neighborSeparator: String = "\t"
+  delonf nelonarelonstNelonighborsToString[A <: elonntityId, B <: elonntityId, D <: Distancelon[D]](
+    nelonarelonstNelonighbors: (A, Selonq[(B, D)]),
+    quelonryelonntityKind: elonntityKind[A],
+    nelonighborelonntityKind: elonntityKind[B],
+    idDistancelonSelonparator: String = ":",
+    nelonighborSelonparator: String = "\t"
   ): String = {
-    val (queryId, neighbors) = nearestNeighbors
-    val formattedNeighbors = neighbors.map {
-      case (neighbourId, distance) =>
-        s"${neighborEntityKind.stringInjection.apply(neighbourId)}$idDistanceSeparator${distance.distance}"
+    val (quelonryId, nelonighbors) = nelonarelonstNelonighbors
+    val formattelondNelonighbors = nelonighbors.map {
+      caselon (nelonighbourId, distancelon) =>
+        s"${nelonighborelonntityKind.stringInjelonction.apply(nelonighbourId)}$idDistancelonSelonparator${distancelon.distancelon}"
     }
-    (queryEntityKind.stringInjection.apply(queryId) +: formattedNeighbors)
-      .mkString(neighborSeparator)
+    (quelonryelonntityKind.stringInjelonction.apply(quelonryId) +: formattelondNelonighbors)
+      .mkString(nelonighborSelonparator)
   }
 
-  private[this] case class NNKey(
-    searchGroup: Int,
-    replica: Int,
-    maxReplica: Option[Int] = None) {
-    override def hashCode(): Int =
-      maxReplica.map(_ * searchGroup + replica).getOrElse(super.hashCode())
+  privatelon[this] caselon class NNKelony(
+    selonarchGroup: Int,
+    relonplica: Int,
+    maxRelonplica: Option[Int] = Nonelon) {
+    ovelonrridelon delonf hashCodelon(): Int =
+      maxRelonplica.map(_ * selonarchGroup + relonplica).gelontOrelonlselon(supelonr.hashCodelon())
   }
 }

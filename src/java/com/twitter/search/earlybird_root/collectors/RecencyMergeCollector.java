@@ -1,75 +1,75 @@
-package com.twitter.search.earlybird_root.collectors;
+packagelon com.twittelonr.selonarch.elonarlybird_root.collelonctors;
 
 import java.util.Comparator;
 import java.util.List;
 
-import com.twitter.search.common.relevance.utils.ResultComparators;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.ThriftSearchResult;
-import com.twitter.search.earlybird.thrift.ThriftSearchResults;
+import com.twittelonr.selonarch.common.relonlelonvancelon.utils.RelonsultComparators;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsult;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsults;
 
 /**
- * {@link RecencyMergeCollector} inherits {@link MultiwayMergeCollector} for the type
- * {@link com.twitter.search.earlybird.thrift.ThriftSearchResult} as the result type.
+ * {@link ReloncelonncyMelonrgelonCollelonctor} inhelonrits {@link MultiwayMelonrgelonCollelonctor} for thelon typelon
+ * {@link com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsult} as thelon relonsult typelon.
  * <p/>
- * It also implements two public methods to retrieve the top-k or all results.
+ * It also implelonmelonnts two public melonthods to relontrielonvelon thelon top-k or all relonsults.
  */
-public class RecencyMergeCollector extends MultiwayMergeCollector<ThriftSearchResult> {
+public class ReloncelonncyMelonrgelonCollelonctor elonxtelonnds MultiwayMelonrgelonCollelonctor<ThriftSelonarchRelonsult> {
 
-  // Container for the final results array and also stats like numHitsProcessed etc...
-  protected final ThriftSearchResults finalResults = new ThriftSearchResults();
+  // Containelonr for thelon final relonsults array and also stats likelon numHitsProcelonsselond elontc...
+  protelonctelond final ThriftSelonarchRelonsults finalRelonsults = nelonw ThriftSelonarchRelonsults();
 
-  public RecencyMergeCollector(int numResponses) {
-    this(numResponses, ResultComparators.ID_COMPARATOR);
+  public ReloncelonncyMelonrgelonCollelonctor(int numRelonsponselons) {
+    this(numRelonsponselons, RelonsultComparators.ID_COMPARATOR);
   }
 
-  protected RecencyMergeCollector(int numResponses, Comparator<ThriftSearchResult> comparator) {
-    super(numResponses, comparator);
+  protelonctelond ReloncelonncyMelonrgelonCollelonctor(int numRelonsponselons, Comparator<ThriftSelonarchRelonsult> comparator) {
+    supelonr(numRelonsponselons, comparator);
   }
 
-  @Override
-  protected void collectStats(EarlybirdResponse response) {
-    super.collectStats(response);
+  @Ovelonrridelon
+  protelonctelond void collelonctStats(elonarlybirdRelonsponselon relonsponselon) {
+    supelonr.collelonctStats(relonsponselon);
 
-    ThriftSearchResults searchResults = response.getSearchResults();
-    if (searchResults.isSetNumHitsProcessed()) {
-      finalResults.setNumHitsProcessed(
-          finalResults.getNumHitsProcessed() + searchResults.getNumHitsProcessed());
+    ThriftSelonarchRelonsults selonarchRelonsults = relonsponselon.gelontSelonarchRelonsults();
+    if (selonarchRelonsults.isSelontNumHitsProcelonsselond()) {
+      finalRelonsults.selontNumHitsProcelonsselond(
+          finalRelonsults.gelontNumHitsProcelonsselond() + selonarchRelonsults.gelontNumHitsProcelonsselond());
     }
-    if (searchResults.isSetNumPartitionsEarlyTerminated()) {
-      finalResults.setNumPartitionsEarlyTerminated(
-              finalResults.getNumPartitionsEarlyTerminated()
-                      + searchResults.getNumPartitionsEarlyTerminated());
+    if (selonarchRelonsults.isSelontNumPartitionselonarlyTelonrminatelond()) {
+      finalRelonsults.selontNumPartitionselonarlyTelonrminatelond(
+              finalRelonsults.gelontNumPartitionselonarlyTelonrminatelond()
+                      + selonarchRelonsults.gelontNumPartitionselonarlyTelonrminatelond());
     }
   }
 
-  @Override
-  protected final List<ThriftSearchResult> collectResults(EarlybirdResponse response) {
-    if (response != null
-        && response.isSetSearchResults()
-        && response.getSearchResults().getResultsSize() > 0) {
-      return response.getSearchResults().getResults();
-    } else {
-      return null;
+  @Ovelonrridelon
+  protelonctelond final List<ThriftSelonarchRelonsult> collelonctRelonsults(elonarlybirdRelonsponselon relonsponselon) {
+    if (relonsponselon != null
+        && relonsponselon.isSelontSelonarchRelonsults()
+        && relonsponselon.gelontSelonarchRelonsults().gelontRelonsultsSizelon() > 0) {
+      relonturn relonsponselon.gelontSelonarchRelonsults().gelontRelonsults();
+    } elonlselon {
+      relonturn null;
     }
   }
 
   /**
-   * Gets all the results that has been collected.
+   * Gelonts all thelon relonsults that has belonelonn collelonctelond.
    *
-   * @return {@link ThriftSearchResults} containing a list of results sorted by provided
-   *         comparator in descending order.
+   * @relonturn {@link ThriftSelonarchRelonsults} containing a list of relonsults sortelond by providelond
+   *         comparator in delonscelonnding ordelonr.
    */
-  public final ThriftSearchResults getAllSearchResults() {
-    return finalResults.setResults(getResultsList());
+  public final ThriftSelonarchRelonsults gelontAllSelonarchRelonsults() {
+    relonturn finalRelonsults.selontRelonsults(gelontRelonsultsList());
   }
 
-  @Override
-  protected final boolean isResponseValid(EarlybirdResponse response) {
-    if (response == null || !response.isSetSearchResults()) {
-      LOG.warn("searchResults was null: " + response);
-      return false;
+  @Ovelonrridelon
+  protelonctelond final boolelonan isRelonsponselonValid(elonarlybirdRelonsponselon relonsponselon) {
+    if (relonsponselon == null || !relonsponselon.isSelontSelonarchRelonsults()) {
+      LOG.warn("selonarchRelonsults was null: " + relonsponselon);
+      relonturn falselon;
     }
-    return true;
+    relonturn truelon;
   }
 }

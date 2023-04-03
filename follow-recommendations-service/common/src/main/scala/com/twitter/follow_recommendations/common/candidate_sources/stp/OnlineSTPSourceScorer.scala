@@ -1,29 +1,29 @@
-package com.twitter.follow_recommendations.common.candidate_sources.stp
+packagelon com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.stp
 
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.HasRecentFollowedUserIds
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.CandidatelonUselonr
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.HasReloncelonntFollowelondUselonrIds
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.CandidatelonSourcelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonSourcelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.HasClielonntContelonxt
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.timelonlinelons.configapi.HasParams
 
-import javax.inject.Inject
-import javax.inject.Singleton
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class OnlineSTPSourceScorer @Inject() (
-  onlineSTPSourceWithEPScorer: OnlineSTPSourceWithEPScorer)
-    extends CandidateSource[
-      HasClientContext with HasParams with HasRecentFollowedUserIds,
-      CandidateUser
+@Singlelonton
+class OnlinelonSTPSourcelonScorelonr @Injelonct() (
+  onlinelonSTPSourcelonWithelonPScorelonr: OnlinelonSTPSourcelonWithelonPScorelonr)
+    elonxtelonnds CandidatelonSourcelon[
+      HasClielonntContelonxt with HasParams with HasReloncelonntFollowelondUselonrIds,
+      CandidatelonUselonr
     ] {
 
-  override def apply(
-    request: HasClientContext with HasParams with HasRecentFollowedUserIds
-  ): Stitch[Seq[CandidateUser]] = {
-    onlineSTPSourceWithEPScorer(request)
+  ovelonrridelon delonf apply(
+    relonquelonst: HasClielonntContelonxt with HasParams with HasReloncelonntFollowelondUselonrIds
+  ): Stitch[Selonq[CandidatelonUselonr]] = {
+    onlinelonSTPSourcelonWithelonPScorelonr(relonquelonst)
   }
 
-  override val identifier: CandidateSourceIdentifier = BaseOnlineSTPSource.Identifier
+  ovelonrridelon val idelonntifielonr: CandidatelonSourcelonIdelonntifielonr = BaselonOnlinelonSTPSourcelon.Idelonntifielonr
 }

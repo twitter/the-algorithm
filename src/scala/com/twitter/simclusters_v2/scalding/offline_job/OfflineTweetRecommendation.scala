@@ -1,176 +1,176 @@
-package com.twitter.simclusters_v2.scalding.offline_job
+packagelon com.twittelonr.simclustelonrs_v2.scalding.offlinelon_job
 
-import com.twitter.algebird.Aggregator.size
-import com.twitter.algebird.{Aggregator, QTreeAggregatorLowerBound}
-import com.twitter.scalding.{Execution, Stat, TypedPipe, UniqueID}
-import com.twitter.simclusters_v2.candidate_source._
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.thriftscala.{
-  ClusterTopKTweetsWithScores,
-  ClustersUserIsInterestedIn
+import com.twittelonr.algelonbird.Aggrelongator.sizelon
+import com.twittelonr.algelonbird.{Aggrelongator, QTrelonelonAggrelongatorLowelonrBound}
+import com.twittelonr.scalding.{elonxeloncution, Stat, TypelondPipelon, UniquelonID}
+import com.twittelonr.simclustelonrs_v2.candidatelon_sourcelon._
+import com.twittelonr.simclustelonrs_v2.common.TwelonelontId
+import com.twittelonr.simclustelonrs_v2.thriftscala.{
+  ClustelonrTopKTwelonelontsWithScorelons,
+  ClustelonrsUselonrIsIntelonrelonstelondIn
 }
-import java.nio.ByteBuffer
+import java.nio.BytelonBuffelonr
 
-case class OfflineRecConfig(
-  maxTweetRecs: Int, // total number of tweet recs.
-  maxTweetsPerUser: Int,
-  maxClustersToQuery: Int,
-  minTweetScoreThreshold: Double,
-  rankClustersBy: ClusterRanker.Value)
+caselon class OfflinelonReloncConfig(
+  maxTwelonelontReloncs: Int, // total numbelonr of twelonelont reloncs.
+  maxTwelonelontsPelonrUselonr: Int,
+  maxClustelonrsToQuelonry: Int,
+  minTwelonelontScorelonThrelonshold: Doublelon,
+  rankClustelonrsBy: ClustelonrRankelonr.Valuelon)
 
 /**
- * An offline simulation of the tweet rec logic in [[InterestedInTweetCandidateStore]].
- * The main difference is that instead of using Memcache, it uses an offline clusterTopK store as
- * the tweet source.
- * Also, instead of taking a single userId as input, it processes a pipe of users altogether.
+ * An offlinelon simulation of thelon twelonelont relonc logic in [[IntelonrelonstelondInTwelonelontCandidatelonStorelon]].
+ * Thelon main diffelonrelonncelon is that instelonad of using Melonmcachelon, it uselons an offlinelon clustelonrTopK storelon as
+ * thelon twelonelont sourcelon.
+ * Also, instelonad of taking a singlelon uselonrId as input, it procelonsselons a pipelon of uselonrs altogelonthelonr.
  */
-object OfflineTweetRecommendation {
+objelonct OfflinelonTwelonelontReloncommelonndation {
 
-  case class ScoredTweet(tweetId: TweetId, score: Double) {
+  caselon class ScorelondTwelonelont(twelonelontId: TwelonelontId, scorelon: Doublelon) {
 
-    def toTuple: (TweetId, Double) = {
-      (tweetId, score)
+    delonf toTuplelon: (TwelonelontId, Doublelon) = {
+      (twelonelontId, scorelon)
     }
   }
 
-  object ScoredTweet {
-    def apply(tuple: (TweetId, Double)): ScoredTweet = new ScoredTweet(tuple._1, tuple._2)
-    implicit val scoredOrdering: Ordering[ScoredTweet] = (x: ScoredTweet, y: ScoredTweet) => {
-      Ordering.Double.compare(x.score, y.score)
+  objelonct ScorelondTwelonelont {
+    delonf apply(tuplelon: (TwelonelontId, Doublelon)): ScorelondTwelonelont = nelonw ScorelondTwelonelont(tuplelon._1, tuplelon._2)
+    implicit val scorelondOrdelonring: Ordelonring[ScorelondTwelonelont] = (x: ScorelondTwelonelont, y: ScorelondTwelonelont) => {
+      Ordelonring.Doublelon.comparelon(x.scorelon, y.scorelon)
     }
   }
 
-  def getTopTweets(
-    config: OfflineRecConfig,
-    targetUsersPipe: TypedPipe[Long],
-    userIsInterestedInPipe: TypedPipe[(Long, ClustersUserIsInterestedIn)],
-    clusterTopKTweetsPipe: TypedPipe[ClusterTopKTweetsWithScores]
+  delonf gelontTopTwelonelonts(
+    config: OfflinelonReloncConfig,
+    targelontUselonrsPipelon: TypelondPipelon[Long],
+    uselonrIsIntelonrelonstelondInPipelon: TypelondPipelon[(Long, ClustelonrsUselonrIsIntelonrelonstelondIn)],
+    clustelonrTopKTwelonelontsPipelon: TypelondPipelon[ClustelonrTopKTwelonelontsWithScorelons]
   )(
-    implicit uniqueID: UniqueID
-  ): Execution[TypedPipe[(Long, Seq[ScoredTweet])]] = {
-    val tweetRecommendedCount = Stat("NumTweetsRecomended")
-    val targetUserCount = Stat("NumTargetUsers")
-    val userWithRecsCount = Stat("NumUsersWithAtLeastTweetRec")
+    implicit uniquelonID: UniquelonID
+  ): elonxeloncution[TypelondPipelon[(Long, Selonq[ScorelondTwelonelont])]] = {
+    val twelonelontReloncommelonndelondCount = Stat("NumTwelonelontsReloncomelonndelond")
+    val targelontUselonrCount = Stat("NumTargelontUselonrs")
+    val uselonrWithReloncsCount = Stat("NumUselonrsWithAtLelonastTwelonelontRelonc")
 
-    // For every user, read the user's interested-in clusters and cluster's weights
-    val userClusterWeightPipe: TypedPipe[(Int, (Long, Double))] =
-      targetUsersPipe.asKeys
-        .join(userIsInterestedInPipe)
+    // For elonvelonry uselonr, relonad thelon uselonr's intelonrelonstelond-in clustelonrs and clustelonr's welonights
+    val uselonrClustelonrWelonightPipelon: TypelondPipelon[(Int, (Long, Doublelon))] =
+      targelontUselonrsPipelon.asKelonys
+        .join(uselonrIsIntelonrelonstelondInPipelon)
         .flatMap {
-          case (userId, (_, clustersWithScores)) =>
-            targetUserCount.inc()
-            val topClusters = ClusterRanker
-              .getTopKClustersByScore(
-                clustersWithScores.clusterIdToScores.toMap,
-                ClusterRanker.RankByNormalizedFavScore,
-                config.maxClustersToQuery
+          caselon (uselonrId, (_, clustelonrsWithScorelons)) =>
+            targelontUselonrCount.inc()
+            val topClustelonrs = ClustelonrRankelonr
+              .gelontTopKClustelonrsByScorelon(
+                clustelonrsWithScorelons.clustelonrIdToScorelons.toMap,
+                ClustelonrRankelonr.RankByNormalizelondFavScorelon,
+                config.maxClustelonrsToQuelonry
               ).toList
-            topClusters.map {
-              case (clusterId, clusterWeightForUser) =>
-                (clusterId, (userId, clusterWeightForUser))
+            topClustelonrs.map {
+              caselon (clustelonrId, clustelonrWelonightForUselonr) =>
+                (clustelonrId, (uselonrId, clustelonrWelonightForUselonr))
             }
         }
 
-    // For every cluster, read the top tweets in the cluster, and their weights
-    val clusterTweetWeightPipe: TypedPipe[(Int, List[(Long, Double)])] =
-      clusterTopKTweetsPipe
-        .flatMap { cluster =>
-          val tweets =
-            cluster.topKTweets.toList // Convert to a List, otherwise .flatMap dedups by clusterIds
+    // For elonvelonry clustelonr, relonad thelon top twelonelonts in thelon clustelonr, and thelonir welonights
+    val clustelonrTwelonelontWelonightPipelon: TypelondPipelon[(Int, List[(Long, Doublelon)])] =
+      clustelonrTopKTwelonelontsPipelon
+        .flatMap { clustelonr =>
+          val twelonelonts =
+            clustelonr.topKTwelonelonts.toList // Convelonrt to a List, othelonrwiselon .flatMap delondups by clustelonrIds
               .flatMap {
-                case (tid, persistedScores) =>
-                  val tweetWeight = persistedScores.score.map(_.value).getOrElse(0.0)
-                  if (tweetWeight > 0) {
-                    Some((tid, tweetWeight))
-                  } else {
-                    None
+                caselon (tid, pelonrsistelondScorelons) =>
+                  val twelonelontWelonight = pelonrsistelondScorelons.scorelon.map(_.valuelon).gelontOrelonlselon(0.0)
+                  if (twelonelontWelonight > 0) {
+                    Somelon((tid, twelonelontWelonight))
+                  } elonlselon {
+                    Nonelon
                   }
               }
-          if (tweets.nonEmpty) {
-            Some((cluster.clusterId, tweets))
-          } else {
-            None
+          if (twelonelonts.nonelonmpty) {
+            Somelon((clustelonr.clustelonrId, twelonelonts))
+          } elonlselon {
+            Nonelon
           }
         }
 
-    // Collect all the tweets from clusters user is interested in
-    val recommendedTweetsPipe = userClusterWeightPipe
-      .sketch(4000)(cid => ByteBuffer.allocate(4).putInt(cid).array(), Ordering.Int)
-      .join(clusterTweetWeightPipe)
+    // Collelonct all thelon twelonelonts from clustelonrs uselonr is intelonrelonstelond in
+    val reloncommelonndelondTwelonelontsPipelon = uselonrClustelonrWelonightPipelon
+      .skelontch(4000)(cid => BytelonBuffelonr.allocatelon(4).putInt(cid).array(), Ordelonring.Int)
+      .join(clustelonrTwelonelontWelonightPipelon)
       .flatMap {
-        case (_, ((userId, clusterWeight), tweetsPerCluster)) =>
-          tweetsPerCluster.map {
-            case (tid, tweetWeight) =>
-              val contribution = clusterWeight * tweetWeight
-              ((userId, tid), contribution)
+        caselon (_, ((uselonrId, clustelonrWelonight), twelonelontsPelonrClustelonr)) =>
+          twelonelontsPelonrClustelonr.map {
+            caselon (tid, twelonelontWelonight) =>
+              val contribution = clustelonrWelonight * twelonelontWelonight
+              ((uselonrId, tid), contribution)
           }
       }
-      .sumByKey
-      .withReducers(5000)
+      .sumByKelony
+      .withRelonducelonrs(5000)
 
-    // Filter by minimum score threshold
-    val scoreFilteredTweetsPipe = recommendedTweetsPipe
-      .collect {
-        case ((userId, tid), score) if score >= config.minTweetScoreThreshold =>
-          (userId, ScoredTweet(tid, score))
+    // Filtelonr by minimum scorelon threlonshold
+    val scorelonFiltelonrelondTwelonelontsPipelon = reloncommelonndelondTwelonelontsPipelon
+      .collelonct {
+        caselon ((uselonrId, tid), scorelon) if scorelon >= config.minTwelonelontScorelonThrelonshold =>
+          (uselonrId, ScorelondTwelonelont(tid, scorelon))
       }
 
-    // Rank top tweets for each user
-    val topTweetsPerUserPipe = scoreFilteredTweetsPipe.group
-      .sortedReverseTake(config.maxTweetsPerUser)(ScoredTweet.scoredOrdering)
+    // Rank top twelonelonts for elonach uselonr
+    val topTwelonelontsPelonrUselonrPipelon = scorelonFiltelonrelondTwelonelontsPipelon.group
+      .sortelondRelonvelonrselonTakelon(config.maxTwelonelontsPelonrUselonr)(ScorelondTwelonelont.scorelondOrdelonring)
       .flatMap {
-        case (userId, tweets) =>
-          userWithRecsCount.inc()
-          tweetRecommendedCount.incBy(tweets.size)
+        caselon (uselonrId, twelonelonts) =>
+          uselonrWithReloncsCount.inc()
+          twelonelontReloncommelonndelondCount.incBy(twelonelonts.sizelon)
 
-          tweets.map { t => (userId, t) }
+          twelonelonts.map { t => (uselonrId, t) }
       }
-      .forceToDiskExecution
+      .forcelonToDiskelonxeloncution
 
-    val topTweetsPipe = topTweetsPerUserPipe
-      .flatMap { tweets =>
-        approximateScoreAtTopK(tweets.map(_._2.score), config.maxTweetRecs).map { threshold =>
-          tweets
-            .collect {
-              case (userId, tweet) if tweet.score >= threshold =>
-                (userId, List(tweet))
+    val topTwelonelontsPipelon = topTwelonelontsPelonrUselonrPipelon
+      .flatMap { twelonelonts =>
+        approximatelonScorelonAtTopK(twelonelonts.map(_._2.scorelon), config.maxTwelonelontReloncs).map { threlonshold =>
+          twelonelonts
+            .collelonct {
+              caselon (uselonrId, twelonelont) if twelonelont.scorelon >= threlonshold =>
+                (uselonrId, List(twelonelont))
             }
-            .sumByKey
-            .toTypedPipe
+            .sumByKelony
+            .toTypelondPipelon
         }
       }
-    topTweetsPipe
+    topTwelonelontsPipelon
   }
 
   /**
-   * Returns the approximate score at the k'th top ranked record using sampling.
-   * This score can then be used to filter for the top K elements in a big pipe where
-   * K is too big to fit in memory.
+   * Relonturns thelon approximatelon scorelon at thelon k'th top rankelond reloncord using sampling.
+   * This scorelon can thelonn belon uselond to filtelonr for thelon top K elonlelonmelonnts in a big pipelon whelonrelon
+   * K is too big to fit in melonmory.
    *
    */
-  def approximateScoreAtTopK(pipe: TypedPipe[Double], topK: Int): Execution[Double] = {
-    val defaultScore = 0.0
-    println("approximateScoreAtTopK: topK=" + topK)
-    pipe
-      .aggregate(size)
-      .getOrElseExecution(0L)
-      .flatMap { len =>
-        println("approximateScoreAtTopK: len=" + len)
-        val topKPercentile = if (len == 0 || topK > len) 0 else 1 - topK.toDouble / len.toDouble
-        val randomSample = Aggregator.reservoirSample[Double](Math.max(100000, topK / 100))
-        pipe
-          .aggregate(randomSample)
-          .getOrElseExecution(List.empty)
-          .flatMap { sample =>
-            TypedPipe
-              .from(sample)
-              .aggregate(QTreeAggregatorLowerBound[Double](topKPercentile))
-              .getOrElseExecution(defaultScore)
+  delonf approximatelonScorelonAtTopK(pipelon: TypelondPipelon[Doublelon], topK: Int): elonxeloncution[Doublelon] = {
+    val delonfaultScorelon = 0.0
+    println("approximatelonScorelonAtTopK: topK=" + topK)
+    pipelon
+      .aggrelongatelon(sizelon)
+      .gelontOrelonlselonelonxeloncution(0L)
+      .flatMap { lelonn =>
+        println("approximatelonScorelonAtTopK: lelonn=" + lelonn)
+        val topKPelonrcelonntilelon = if (lelonn == 0 || topK > lelonn) 0 elonlselon 1 - topK.toDoublelon / lelonn.toDoublelon
+        val randomSamplelon = Aggrelongator.relonselonrvoirSamplelon[Doublelon](Math.max(100000, topK / 100))
+        pipelon
+          .aggrelongatelon(randomSamplelon)
+          .gelontOrelonlselonelonxeloncution(List.elonmpty)
+          .flatMap { samplelon =>
+            TypelondPipelon
+              .from(samplelon)
+              .aggrelongatelon(QTrelonelonAggrelongatorLowelonrBound[Doublelon](topKPelonrcelonntilelon))
+              .gelontOrelonlselonelonxeloncution(delonfaultScorelon)
           }
       }
-      .map { score =>
-        println("approximateScoreAtTopK: topK percentile score=" + score)
-        score
+      .map { scorelon =>
+        println("approximatelonScorelonAtTopK: topK pelonrcelonntilelon scorelon=" + scorelon)
+        scorelon
       }
   }
 }

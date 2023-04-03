@@ -1,205 +1,205 @@
-package com.twitter.search.earlybird_root.filters;
+packagelon com.twittelonr.selonarch.elonarlybird_root.filtelonrs;
 
-import java.util.Collections;
+import java.util.Collelonctions;
 import java.util.Map;
 import java.util.Optional;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.Maps;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import com.googlelon.common.collelonct.Maps;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.util.earlybird.EarlybirdResponseUtil;
-import com.twitter.search.earlybird.config.ServingRange;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.search.earlybird.thrift.ThriftSearchResults;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestType;
-import com.twitter.search.queryparser.query.Query;
-import com.twitter.search.queryparser.query.QueryParserException;
-import com.twitter.search.queryparser.util.IdTimeRanges;
-import com.twitter.util.Future;
+import com.twittelonr.finaglelon.Selonrvicelon;
+import com.twittelonr.finaglelon.SimplelonFiltelonr;
+import com.twittelonr.selonarch.common.deloncidelonr.SelonarchDeloncidelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.common.util.elonarlybird.elonarlybirdRelonsponselonUtil;
+import com.twittelonr.selonarch.elonarlybird.config.SelonrvingRangelon;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselonCodelon;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsults;
+import com.twittelonr.selonarch.elonarlybird_root.common.elonarlybirdRelonquelonstContelonxt;
+import com.twittelonr.selonarch.elonarlybird_root.common.elonarlybirdRelonquelonstTypelon;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.Quelonry;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.QuelonryParselonrelonxcelonption;
+import com.twittelonr.selonarch.quelonryparselonr.util.IdTimelonRangelons;
+import com.twittelonr.util.Futurelon;
 
 /**
- * A Finagle filter used to filter requests to tiers.
- * Parses serialized query on Earlybird request, and extracts since / until / since_id / max_id
- * operators. This filter then tests whether the request overlaps with the given tier. If there
- * is no overlap, an empty response is returned without actually forwarding the requests to the
- * underlying service.
+ * A Finaglelon filtelonr uselond to filtelonr relonquelonsts to tielonrs.
+ * Parselons selonrializelond quelonry on elonarlybird relonquelonst, and elonxtracts sincelon / until / sincelon_id / max_id
+ * opelonrators. This filtelonr thelonn telonsts whelonthelonr thelon relonquelonst ovelonrlaps with thelon givelonn tielonr. If thelonrelon
+ * is no ovelonrlap, an elonmpty relonsponselon is relonturnelond without actually forwarding thelon relonquelonsts to thelon
+ * undelonrlying selonrvicelon.
  */
-public class EarlybirdTimeRangeFilter extends
-    SimpleFilter<EarlybirdRequestContext, EarlybirdResponse> {
+public class elonarlybirdTimelonRangelonFiltelonr elonxtelonnds
+    SimplelonFiltelonr<elonarlybirdRelonquelonstContelonxt, elonarlybirdRelonsponselon> {
 
-  private static final Logger LOG = LoggerFactory.getLogger(EarlybirdTimeRangeFilter.class);
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(elonarlybirdTimelonRangelonFiltelonr.class);
 
-  private static final EarlybirdResponse ERROR_RESPONSE =
-      new EarlybirdResponse(EarlybirdResponseCode.PERSISTENT_ERROR, 0)
-          .setSearchResults(new ThriftSearchResults());
+  privatelon static final elonarlybirdRelonsponselon elonRROR_RelonSPONSelon =
+      nelonw elonarlybirdRelonsponselon(elonarlybirdRelonsponselonCodelon.PelonRSISTelonNT_elonRROR, 0)
+          .selontSelonarchRelonsults(nelonw ThriftSelonarchRelonsults());
 
-  private final ServingRangeProvider servingRangeProvider;
-  private final Optional<EarlybirdTimeFilterQueryRewriter> queryRewriter;
+  privatelon final SelonrvingRangelonProvidelonr selonrvingRangelonProvidelonr;
+  privatelon final Optional<elonarlybirdTimelonFiltelonrQuelonryRelonwritelonr> quelonryRelonwritelonr;
 
-  private static final Map<EarlybirdRequestType, SearchCounter> FAILED_REQUESTS;
+  privatelon static final Map<elonarlybirdRelonquelonstTypelon, SelonarchCountelonr> FAILelonD_RelonQUelonSTS;
   static {
-    final Map<EarlybirdRequestType, SearchCounter> tempMap =
-      Maps.newEnumMap(EarlybirdRequestType.class);
-    for (EarlybirdRequestType requestType : EarlybirdRequestType.values()) {
-      tempMap.put(requestType, SearchCounter.export(
-          "time_range_filter_" + requestType.getNormalizedName() + "_failed_requests"));
+    final Map<elonarlybirdRelonquelonstTypelon, SelonarchCountelonr> telonmpMap =
+      Maps.nelonwelonnumMap(elonarlybirdRelonquelonstTypelon.class);
+    for (elonarlybirdRelonquelonstTypelon relonquelonstTypelon : elonarlybirdRelonquelonstTypelon.valuelons()) {
+      telonmpMap.put(relonquelonstTypelon, SelonarchCountelonr.elonxport(
+          "timelon_rangelon_filtelonr_" + relonquelonstTypelon.gelontNormalizelondNamelon() + "_failelond_relonquelonsts"));
     }
-    FAILED_REQUESTS = Collections.unmodifiableMap(tempMap);
+    FAILelonD_RelonQUelonSTS = Collelonctions.unmodifiablelonMap(telonmpMap);
   }
 
-  public static EarlybirdTimeRangeFilter newTimeRangeFilterWithQueryRewriter(
-      ServingRangeProvider servingRangeProvider,
-      SearchDecider decider) {
+  public static elonarlybirdTimelonRangelonFiltelonr nelonwTimelonRangelonFiltelonrWithQuelonryRelonwritelonr(
+      SelonrvingRangelonProvidelonr selonrvingRangelonProvidelonr,
+      SelonarchDeloncidelonr deloncidelonr) {
 
-    return new EarlybirdTimeRangeFilter(servingRangeProvider,
-        Optional.of(new EarlybirdTimeFilterQueryRewriter(servingRangeProvider, decider)));
+    relonturn nelonw elonarlybirdTimelonRangelonFiltelonr(selonrvingRangelonProvidelonr,
+        Optional.of(nelonw elonarlybirdTimelonFiltelonrQuelonryRelonwritelonr(selonrvingRangelonProvidelonr, deloncidelonr)));
   }
 
-  public static EarlybirdTimeRangeFilter newTimeRangeFilterWithoutQueryRewriter(
-      ServingRangeProvider servingRangeProvider) {
+  public static elonarlybirdTimelonRangelonFiltelonr nelonwTimelonRangelonFiltelonrWithoutQuelonryRelonwritelonr(
+      SelonrvingRangelonProvidelonr selonrvingRangelonProvidelonr) {
 
-    return new EarlybirdTimeRangeFilter(servingRangeProvider, Optional.empty());
+    relonturn nelonw elonarlybirdTimelonRangelonFiltelonr(selonrvingRangelonProvidelonr, Optional.elonmpty());
   }
 
   /**
-   * Construct a filter that avoids forwarding requests to unrelated tiers
-   * based on requests' since / until / since_id / max_id.
-   * @param provider Holds the boundary information.
+   * Construct a filtelonr that avoids forwarding relonquelonsts to unrelonlatelond tielonrs
+   * baselond on relonquelonsts' sincelon / until / sincelon_id / max_id.
+   * @param providelonr Holds thelon boundary information.
    */
-  EarlybirdTimeRangeFilter(
-      ServingRangeProvider provider,
-      Optional<EarlybirdTimeFilterQueryRewriter> rewriter) {
+  elonarlybirdTimelonRangelonFiltelonr(
+      SelonrvingRangelonProvidelonr providelonr,
+      Optional<elonarlybirdTimelonFiltelonrQuelonryRelonwritelonr> relonwritelonr) {
 
-    this.servingRangeProvider = provider;
-    this.queryRewriter = rewriter;
+    this.selonrvingRangelonProvidelonr = providelonr;
+    this.quelonryRelonwritelonr = relonwritelonr;
   }
 
-  public ServingRangeProvider getServingRangeProvider() {
-    return servingRangeProvider;
+  public SelonrvingRangelonProvidelonr gelontSelonrvingRangelonProvidelonr() {
+    relonturn selonrvingRangelonProvidelonr;
   }
 
-  @Override
-  public Future<EarlybirdResponse> apply(
-      EarlybirdRequestContext requestContext,
-      Service<EarlybirdRequestContext, EarlybirdResponse> service) {
+  @Ovelonrridelon
+  public Futurelon<elonarlybirdRelonsponselon> apply(
+      elonarlybirdRelonquelonstContelonxt relonquelonstContelonxt,
+      Selonrvicelon<elonarlybirdRelonquelonstContelonxt, elonarlybirdRelonsponselon> selonrvicelon) {
 
-    Query parsedQuery = requestContext.getParsedQuery();
-    if (parsedQuery != null) {
-      // Only perform filtering if serialized query is set.
+    Quelonry parselondQuelonry = relonquelonstContelonxt.gelontParselondQuelonry();
+    if (parselondQuelonry != null) {
+      // Only pelonrform filtelonring if selonrializelond quelonry is selont.
       try {
-        IdTimeRanges queryRanges = IdTimeRanges.fromQuery(parsedQuery);
-        if (queryRanges == null) {
-          // No time ranges in query.
-          return issueServiceRequest(service, requestContext);
+        IdTimelonRangelons quelonryRangelons = IdTimelonRangelons.fromQuelonry(parselondQuelonry);
+        if (quelonryRangelons == null) {
+          // No timelon rangelons in quelonry.
+          relonturn issuelonSelonrvicelonRelonquelonst(selonrvicelon, relonquelonstContelonxt);
         }
 
-        ServingRange servingRange =
-            servingRangeProvider.getServingRange(
-                requestContext, requestContext.useOverrideTierConfig());
+        SelonrvingRangelon selonrvingRangelon =
+            selonrvingRangelonProvidelonr.gelontSelonrvingRangelon(
+                relonquelonstContelonxt, relonquelonstContelonxt.uselonOvelonrridelonTielonrConfig());
 
-        if (queryDoesNotOverlapWithServingRange(queryRanges, servingRange)) {
-          return Future.value(tierSkippedResponse(requestContext.getEarlybirdRequestType(),
-                                                  servingRange));
-        } else {
-          return issueServiceRequest(service, requestContext);
+        if (quelonryDoelonsNotOvelonrlapWithSelonrvingRangelon(quelonryRangelons, selonrvingRangelon)) {
+          relonturn Futurelon.valuelon(tielonrSkippelondRelonsponselon(relonquelonstContelonxt.gelontelonarlybirdRelonquelonstTypelon(),
+                                                  selonrvingRangelon));
+        } elonlselon {
+          relonturn issuelonSelonrvicelonRelonquelonst(selonrvicelon, relonquelonstContelonxt);
         }
-      } catch (QueryParserException e) {
-        LOG.warn("Unable to get IdTimeRanges from query: " + parsedQuery.serialize());
-        // The failure here is not due to a miss-formed query from the client, since we already
-        // were able to successfully get a parsed Query from the request.
-        // If we can't determine the time ranges, pass the query along to the tier, and just
-        // restrict it to the timeranges of the tier.
-        return issueServiceRequest(service, requestContext);
+      } catch (QuelonryParselonrelonxcelonption elon) {
+        LOG.warn("Unablelon to gelont IdTimelonRangelons from quelonry: " + parselondQuelonry.selonrializelon());
+        // Thelon failurelon helonrelon is not duelon to a miss-formelond quelonry from thelon clielonnt, sincelon welon alrelonady
+        // welonrelon ablelon to succelonssfully gelont a parselond Quelonry from thelon relonquelonst.
+        // If welon can't delontelonrminelon thelon timelon rangelons, pass thelon quelonry along to thelon tielonr, and just
+        // relonstrict it to thelon timelonrangelons of thelon tielonr.
+        relonturn issuelonSelonrvicelonRelonquelonst(selonrvicelon, relonquelonstContelonxt);
       }
-    } else {
-      // There's no serialized query. Just pass through like an identity filter.
-      return issueServiceRequest(service, requestContext);
+    } elonlselon {
+      // Thelonrelon's no selonrializelond quelonry. Just pass through likelon an idelonntity filtelonr.
+      relonturn issuelonSelonrvicelonRelonquelonst(selonrvicelon, relonquelonstContelonxt);
     }
   }
 
-  private boolean queryDoesNotOverlapWithServingRange(IdTimeRanges queryRanges,
-        ServingRange servingRange) {
-    // As long as a query overlaps with the tier serving range on either side,
-    // the request is not filtered. I.e. we want to be conservative when doing this filtering,
-    // because it is just an optimization. We ignore the inclusiveness / exclusiveness of the
-    // boundaries. If the tier boundary and the query boundry happen to be the same, we do not
-    // filter the request.
-    return queryRanges.getSinceIDExclusive().or(0L)
-          > servingRange.getServingRangeMaxId()
-      || queryRanges.getMaxIDInclusive().or(Long.MAX_VALUE)
-          < servingRange.getServingRangeSinceId()
-      || queryRanges.getSinceTimeInclusive().or(0)
-          > servingRange.getServingRangeUntilTimeSecondsFromEpoch()
-      || queryRanges.getUntilTimeExclusive().or(Integer.MAX_VALUE)
-          < servingRange.getServingRangeSinceTimeSecondsFromEpoch();
+  privatelon boolelonan quelonryDoelonsNotOvelonrlapWithSelonrvingRangelon(IdTimelonRangelons quelonryRangelons,
+        SelonrvingRangelon selonrvingRangelon) {
+    // As long as a quelonry ovelonrlaps with thelon tielonr selonrving rangelon on elonithelonr sidelon,
+    // thelon relonquelonst is not filtelonrelond. I.elon. welon want to belon conselonrvativelon whelonn doing this filtelonring,
+    // beloncauselon it is just an optimization. Welon ignorelon thelon inclusivelonnelonss / elonxclusivelonnelonss of thelon
+    // boundarielons. If thelon tielonr boundary and thelon quelonry boundry happelonn to belon thelon samelon, welon do not
+    // filtelonr thelon relonquelonst.
+    relonturn quelonryRangelons.gelontSincelonIDelonxclusivelon().or(0L)
+          > selonrvingRangelon.gelontSelonrvingRangelonMaxId()
+      || quelonryRangelons.gelontMaxIDInclusivelon().or(Long.MAX_VALUelon)
+          < selonrvingRangelon.gelontSelonrvingRangelonSincelonId()
+      || quelonryRangelons.gelontSincelonTimelonInclusivelon().or(0)
+          > selonrvingRangelon.gelontSelonrvingRangelonUntilTimelonSeloncondsFromelonpoch()
+      || quelonryRangelons.gelontUntilTimelonelonxclusivelon().or(Intelongelonr.MAX_VALUelon)
+          < selonrvingRangelon.gelontSelonrvingRangelonSincelonTimelonSeloncondsFromelonpoch();
   }
 
-  private Future<EarlybirdResponse> issueServiceRequest(
-      Service<EarlybirdRequestContext, EarlybirdResponse> service,
-      EarlybirdRequestContext requestContext) {
+  privatelon Futurelon<elonarlybirdRelonsponselon> issuelonSelonrvicelonRelonquelonst(
+      Selonrvicelon<elonarlybirdRelonquelonstContelonxt, elonarlybirdRelonsponselon> selonrvicelon,
+      elonarlybirdRelonquelonstContelonxt relonquelonstContelonxt) {
 
     try {
-      EarlybirdRequestContext request = requestContext;
-      if (queryRewriter.isPresent()) {
-        request = queryRewriter.get().rewriteRequest(requestContext);
+      elonarlybirdRelonquelonstContelonxt relonquelonst = relonquelonstContelonxt;
+      if (quelonryRelonwritelonr.isPrelonselonnt()) {
+        relonquelonst = quelonryRelonwritelonr.gelont().relonwritelonRelonquelonst(relonquelonstContelonxt);
       }
-      return service.apply(request);
-    } catch (QueryParserException e) {
-      FAILED_REQUESTS.get(requestContext.getEarlybirdRequestType()).increment();
-      String msg = "Failed to add time filter operators";
-      LOG.error(msg, e);
+      relonturn selonrvicelon.apply(relonquelonst);
+    } catch (QuelonryParselonrelonxcelonption elon) {
+      FAILelonD_RelonQUelonSTS.gelont(relonquelonstContelonxt.gelontelonarlybirdRelonquelonstTypelon()).increlonmelonnt();
+      String msg = "Failelond to add timelon filtelonr opelonrators";
+      LOG.elonrror(msg, elon);
 
-      // Note that in this case it is not clear whether the error is the client's fault or our
-      // fault, so we don't necessarily return a CLIENT_ERROR here.
-      // Currently this actually returns a PERSISTENT_ERROR.
-      if (requestContext.getRequest().getDebugMode() > 0) {
-        return Future.value(
-            ERROR_RESPONSE.deepCopy().setDebugString(msg + ": " + e.getMessage()));
-      } else {
-        return Future.value(ERROR_RESPONSE);
+      // Notelon that in this caselon it is not clelonar whelonthelonr thelon elonrror is thelon clielonnt's fault or our
+      // fault, so welon don't neloncelonssarily relonturn a CLIelonNT_elonRROR helonrelon.
+      // Currelonntly this actually relonturns a PelonRSISTelonNT_elonRROR.
+      if (relonquelonstContelonxt.gelontRelonquelonst().gelontDelonbugModelon() > 0) {
+        relonturn Futurelon.valuelon(
+            elonRROR_RelonSPONSelon.delonelonpCopy().selontDelonbugString(msg + ": " + elon.gelontMelonssagelon()));
+      } elonlselon {
+        relonturn Futurelon.valuelon(elonRROR_RelonSPONSelon);
       }
     }
   }
 
   /**
-   * Creates a tier skipped response, based on the given request type.
+   * Crelonatelons a tielonr skippelond relonsponselon, baselond on thelon givelonn relonquelonst typelon.
    *
-   * For recency, relevance, facets and top tweets requests, this method returns a SUCCESS response
-   * with no search results and the minSearchedStatusID and maxSearchedStatusID appropriately set.
-   * For term stats response, it returns a TIER_SKIPPED response, but we need to revisit this.
+   * For reloncelonncy, relonlelonvancelon, facelonts and top twelonelonts relonquelonsts, this melonthod relonturns a SUCCelonSS relonsponselon
+   * with no selonarch relonsults and thelon minSelonarchelondStatusID and maxSelonarchelondStatusID appropriatelonly selont.
+   * For telonrm stats relonsponselon, it relonturns a TIelonR_SKIPPelonD relonsponselon, but welon nelonelond to relonvisit this.
    *
-   * @param requestType The type of the request.
-   * @param servingRange The serving range of the tier that we're skipping.
+   * @param relonquelonstTypelon Thelon typelon of thelon relonquelonst.
+   * @param selonrvingRangelon Thelon selonrving rangelon of thelon tielonr that welon'relon skipping.
    */
-  @VisibleForTesting
-  public static EarlybirdResponse tierSkippedResponse(
-      EarlybirdRequestType requestType,
-      ServingRange servingRange) {
-    String debugMessage =
-      "Tier skipped because it does not intersect with query time boundaries.";
-    if (requestType == EarlybirdRequestType.TERM_STATS) {
-      // If it's a term stats request, return a TIER_SKIPPED response for now.
-      // But we need to figure out the right thing to do here.
-      return new EarlybirdResponse(EarlybirdResponseCode.TIER_SKIPPED, 0)
-        .setDebugString(debugMessage);
-    } else {
-      // minIds in ServingRange instances are set to tierLowerBoundary - 1, because the
-      // since_id operator is exclusive. The max_id operator on the other hand is inclusive,
-      // so maxIds in ServingRange instances are also set to tierUpperBoundary - 1.
-      // Here we want both of them to be inclusive, so we need to increment the minId by 1.
-      return EarlybirdResponseUtil.tierSkippedRootResponse(
-          servingRange.getServingRangeSinceId() + 1,
-          servingRange.getServingRangeMaxId(),
-          debugMessage);
+  @VisiblelonForTelonsting
+  public static elonarlybirdRelonsponselon tielonrSkippelondRelonsponselon(
+      elonarlybirdRelonquelonstTypelon relonquelonstTypelon,
+      SelonrvingRangelon selonrvingRangelon) {
+    String delonbugMelonssagelon =
+      "Tielonr skippelond beloncauselon it doelons not intelonrselonct with quelonry timelon boundarielons.";
+    if (relonquelonstTypelon == elonarlybirdRelonquelonstTypelon.TelonRM_STATS) {
+      // If it's a telonrm stats relonquelonst, relonturn a TIelonR_SKIPPelonD relonsponselon for now.
+      // But welon nelonelond to figurelon out thelon right thing to do helonrelon.
+      relonturn nelonw elonarlybirdRelonsponselon(elonarlybirdRelonsponselonCodelon.TIelonR_SKIPPelonD, 0)
+        .selontDelonbugString(delonbugMelonssagelon);
+    } elonlselon {
+      // minIds in SelonrvingRangelon instancelons arelon selont to tielonrLowelonrBoundary - 1, beloncauselon thelon
+      // sincelon_id opelonrator is elonxclusivelon. Thelon max_id opelonrator on thelon othelonr hand is inclusivelon,
+      // so maxIds in SelonrvingRangelon instancelons arelon also selont to tielonrUppelonrBoundary - 1.
+      // Helonrelon welon want both of thelonm to belon inclusivelon, so welon nelonelond to increlonmelonnt thelon minId by 1.
+      relonturn elonarlybirdRelonsponselonUtil.tielonrSkippelondRootRelonsponselon(
+          selonrvingRangelon.gelontSelonrvingRangelonSincelonId() + 1,
+          selonrvingRangelon.gelontSelonrvingRangelonMaxId(),
+          delonbugMelonssagelon);
     }
   }
 }

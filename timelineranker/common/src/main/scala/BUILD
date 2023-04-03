@@ -1,6 +1,6 @@
-target(
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "timelineranker/common/src/main/scala/com/twitter/timelineranker/model",
+targelont(
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        "timelonlinelonrankelonr/common/src/main/scala/com/twittelonr/timelonlinelonrankelonr/modelonl",
     ],
 )

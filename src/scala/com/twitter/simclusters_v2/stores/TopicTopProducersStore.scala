@@ -1,86 +1,86 @@
-package com.twitter.simclusters_v2.stores
+packagelon com.twittelonr.simclustelonrs_v2.storelons
 
-import com.twitter.bijection.scrooge.CompactScalaCodec
-import com.twitter.recos.entities.thriftscala.{SemanticCoreEntityWithLocale, UserScoreList}
-import com.twitter.storage.client.manhattan.kv.ManhattanKVClientMtlsParams
-import com.twitter.storehaus.ReadableStore
-import com.twitter.storehaus_internal.manhattan.{Athena, ManhattanRO, ManhattanROConfig}
-import com.twitter.storehaus_internal.util.{ApplicationID, DatasetName, HDFSPath}
+import com.twittelonr.bijelonction.scroogelon.CompactScalaCodelonc
+import com.twittelonr.reloncos.elonntitielons.thriftscala.{SelonmanticCorelonelonntityWithLocalelon, UselonrScorelonList}
+import com.twittelonr.storagelon.clielonnt.manhattan.kv.ManhattanKVClielonntMtlsParams
+import com.twittelonr.storelonhaus.RelonadablelonStorelon
+import com.twittelonr.storelonhaus_intelonrnal.manhattan.{Athelonna, ManhattanRO, ManhattanROConfig}
+import com.twittelonr.storelonhaus_intelonrnal.util.{ApplicationID, DataselontNamelon, HDFSPath}
 
-object TopicTopProducersStore {
-  val appIdDevel = "recos_platform_dev"
-  val v2DatasetNameDevel = "topic_producers_em"
-  val v3DatasetNameDevel = "topic_producers_agg"
-  val v4DatasetNameDevel = "topic_producers_em_erg"
+objelonct TopicTopProducelonrsStorelon {
+  val appIdDelonvelonl = "reloncos_platform_delonv"
+  val v2DataselontNamelonDelonvelonl = "topic_producelonrs_elonm"
+  val v3DataselontNamelonDelonvelonl = "topic_producelonrs_agg"
+  val v4DataselontNamelonDelonvelonl = "topic_producelonrs_elonm_elonrg"
 
-  val appIdProd = "simclusters_v2"
-  val v1DatasetNameProd = "top_producers_for_topic_from_topic_follow_graph"
-  val v2DatasetNameProd = "top_producers_for_topic_em"
+  val appIdProd = "simclustelonrs_v2"
+  val v1DataselontNamelonProd = "top_producelonrs_for_topic_from_topic_follow_graph"
+  val v2DataselontNamelonProd = "top_producelonrs_for_topic_elonm"
 
-  implicit val keyInj = CompactScalaCodec(SemanticCoreEntityWithLocale)
-  implicit val valInj = CompactScalaCodec(UserScoreList)
+  implicit val kelonyInj = CompactScalaCodelonc(SelonmanticCorelonelonntityWithLocalelon)
+  implicit val valInj = CompactScalaCodelonc(UselonrScorelonList)
 
-  def getTopicTopProducerStoreV1Prod(
-    mhMtlsParams: ManhattanKVClientMtlsParams
-  ): ReadableStore[SemanticCoreEntityWithLocale, UserScoreList] =
-    ManhattanRO.getReadableStoreWithMtls[SemanticCoreEntityWithLocale, UserScoreList](
+  delonf gelontTopicTopProducelonrStorelonV1Prod(
+    mhMtlsParams: ManhattanKVClielonntMtlsParams
+  ): RelonadablelonStorelon[SelonmanticCorelonelonntityWithLocalelon, UselonrScorelonList] =
+    ManhattanRO.gelontRelonadablelonStorelonWithMtls[SelonmanticCorelonelonntityWithLocalelon, UselonrScorelonList](
       ManhattanROConfig(
         HDFSPath(""),
         ApplicationID(appIdProd),
-        DatasetName(v1DatasetNameProd),
-        Athena
+        DataselontNamelon(v1DataselontNamelonProd),
+        Athelonna
       ),
       mhMtlsParams
     )
 
-  def getTopicTopProducerStoreV2Devel(
-    mhMtlsParams: ManhattanKVClientMtlsParams
-  ): ReadableStore[SemanticCoreEntityWithLocale, UserScoreList] =
-    ManhattanRO.getReadableStoreWithMtls[SemanticCoreEntityWithLocale, UserScoreList](
+  delonf gelontTopicTopProducelonrStorelonV2Delonvelonl(
+    mhMtlsParams: ManhattanKVClielonntMtlsParams
+  ): RelonadablelonStorelon[SelonmanticCorelonelonntityWithLocalelon, UselonrScorelonList] =
+    ManhattanRO.gelontRelonadablelonStorelonWithMtls[SelonmanticCorelonelonntityWithLocalelon, UselonrScorelonList](
       ManhattanROConfig(
         HDFSPath(""),
-        ApplicationID(appIdDevel),
-        DatasetName(v2DatasetNameDevel),
-        Athena
+        ApplicationID(appIdDelonvelonl),
+        DataselontNamelon(v2DataselontNamelonDelonvelonl),
+        Athelonna
       ),
       mhMtlsParams
     )
 
-  def getTopicTopProducerStoreV2Prod(
-    mhMtlsParams: ManhattanKVClientMtlsParams
-  ): ReadableStore[SemanticCoreEntityWithLocale, UserScoreList] =
-    ManhattanRO.getReadableStoreWithMtls[SemanticCoreEntityWithLocale, UserScoreList](
+  delonf gelontTopicTopProducelonrStorelonV2Prod(
+    mhMtlsParams: ManhattanKVClielonntMtlsParams
+  ): RelonadablelonStorelon[SelonmanticCorelonelonntityWithLocalelon, UselonrScorelonList] =
+    ManhattanRO.gelontRelonadablelonStorelonWithMtls[SelonmanticCorelonelonntityWithLocalelon, UselonrScorelonList](
       ManhattanROConfig(
         HDFSPath(""),
         ApplicationID(appIdProd),
-        DatasetName(v2DatasetNameProd),
-        Athena
+        DataselontNamelon(v2DataselontNamelonProd),
+        Athelonna
       ),
       mhMtlsParams
     )
 
-  def getTopicTopProducerStoreV3Devel(
-    mhMtlsParams: ManhattanKVClientMtlsParams
-  ): ReadableStore[SemanticCoreEntityWithLocale, UserScoreList] =
-    ManhattanRO.getReadableStoreWithMtls[SemanticCoreEntityWithLocale, UserScoreList](
+  delonf gelontTopicTopProducelonrStorelonV3Delonvelonl(
+    mhMtlsParams: ManhattanKVClielonntMtlsParams
+  ): RelonadablelonStorelon[SelonmanticCorelonelonntityWithLocalelon, UselonrScorelonList] =
+    ManhattanRO.gelontRelonadablelonStorelonWithMtls[SelonmanticCorelonelonntityWithLocalelon, UselonrScorelonList](
       ManhattanROConfig(
         HDFSPath(""),
-        ApplicationID(appIdDevel),
-        DatasetName(v3DatasetNameDevel),
-        Athena
+        ApplicationID(appIdDelonvelonl),
+        DataselontNamelon(v3DataselontNamelonDelonvelonl),
+        Athelonna
       ),
       mhMtlsParams
     )
 
-  def getTopicTopProducerStoreV4Devel(
-    mhMtlsParams: ManhattanKVClientMtlsParams
-  ): ReadableStore[SemanticCoreEntityWithLocale, UserScoreList] =
-    ManhattanRO.getReadableStoreWithMtls[SemanticCoreEntityWithLocale, UserScoreList](
+  delonf gelontTopicTopProducelonrStorelonV4Delonvelonl(
+    mhMtlsParams: ManhattanKVClielonntMtlsParams
+  ): RelonadablelonStorelon[SelonmanticCorelonelonntityWithLocalelon, UselonrScorelonList] =
+    ManhattanRO.gelontRelonadablelonStorelonWithMtls[SelonmanticCorelonelonntityWithLocalelon, UselonrScorelonList](
       ManhattanROConfig(
         HDFSPath(""),
-        ApplicationID(appIdDevel),
-        DatasetName(v4DatasetNameDevel),
-        Athena
+        ApplicationID(appIdDelonvelonl),
+        DataselontNamelon(v4DataselontNamelonDelonvelonl),
+        Athelonna
       ),
       mhMtlsParams
     )

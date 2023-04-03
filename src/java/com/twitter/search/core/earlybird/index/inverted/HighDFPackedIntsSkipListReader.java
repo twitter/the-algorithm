@@ -1,200 +1,200 @@
-package com.twitter.search.core.earlybird.index.inverted;
+packagelon com.twittelonr.selonarch.corelon.elonarlybird.indelonx.invelonrtelond;
 
-import org.apache.lucene.search.DocIdSetIterator;
+import org.apachelon.lucelonnelon.selonarch.DocIdSelontItelonrator;
 
 /**
- * A skip list reader of a single term used {@link HighDFPackedIntsDocsEnum}.
- * @see HighDFPackedIntsPostingLists
+ * A skip list relonadelonr of a singlelon telonrm uselond {@link HighDFPackelondIntsDocselonnum}.
+ * @selonelon HighDFPackelondIntsPostingLists
  */
-class HighDFPackedIntsSkipListReader {
+class HighDFPackelondIntsSkipListRelonadelonr {
   /** Skip lists int pool. */
-  private final IntBlockPool skipLists;
+  privatelon final IntBlockPool skipLists;
 
-  /** Whether positions are omitted in the posting list having the read skip list. */
-  private final boolean omitPositions;
+  /** Whelonthelonr positions arelon omittelond in thelon posting list having thelon relonad skip list. */
+  privatelon final boolelonan omitPositions;
 
   /**
-   * Last doc in the previous slice relative to the current delta-freq slice. This value is 0 if
-   * the current slice is the first delta-freq slice.
+   * Last doc in thelon prelonvious slicelon relonlativelon to thelon currelonnt delonlta-frelonq slicelon. This valuelon is 0 if
+   * thelon currelonnt slicelon is thelon first delonlta-frelonq slicelon.
    */
-  private int previousDocIDCurrentSlice;
+  privatelon int prelonviousDocIDCurrelonntSlicelon;
 
-  /** Encoded metadata of the current delta-freq slice.*/
-  private int encodedMetadataCurrentSlice;
+  /** elonncodelond melontadata of thelon currelonnt delonlta-frelonq slicelon.*/
+  privatelon int elonncodelondMelontadataCurrelonntSlicelon;
 
   /**
-   * Pointer to the first int (contains the position slice header) of the position slice that has
-   * the first position of the first doc in the current delta-freq slice.
+   * Pointelonr to thelon first int (contains thelon position slicelon helonadelonr) of thelon position slicelon that has
+   * thelon first position of thelon first doc in thelon currelonnt delonlta-frelonq slicelon.
    */
-  private int positionCurrentSliceIndex;
+  privatelon int positionCurrelonntSlicelonIndelonx;
 
-  /** Pointer to the first int in the current delta-freq slice. */
-  private int deltaFreqCurrentSlicePointer;
+  /** Pointelonr to thelon first int in thelon currelonnt delonlta-frelonq slicelon. */
+  privatelon int delonltaFrelonqCurrelonntSlicelonPointelonr;
 
-  /** Data of next slice. */
-  private int previousDocIDNextSlice;
-  private int encodedMetadataNextSlice;
-  private int positionNextSliceIndex;
-  private int deltaFreqNextSlicePointer;
+  /** Data of nelonxt slicelon. */
+  privatelon int prelonviousDocIDNelonxtSlicelon;
+  privatelon int elonncodelondMelontadataNelonxtSlicelon;
+  privatelon int positionNelonxtSlicelonIndelonx;
+  privatelon int delonltaFrelonqNelonxtSlicelonPointelonr;
 
-  /** Used to load blocks and read ints from skip lists int pool. */
-  private int[] currentSkipListBlock;
-  private int skipListBlockStart;
-  private int skipListBlockIndex;
+  /** Uselond to load blocks and relonad ints from skip lists int pool. */
+  privatelon int[] currelonntSkipListBlock;
+  privatelon int skipListBlockStart;
+  privatelon int skipListBlockIndelonx;
 
-  /** Number of remaining skip entries for the read skip list. */
-  private int numSkipListEntriesRemaining;
+  /** Numbelonr of relonmaining skip elonntrielons for thelon relonad skip list. */
+  privatelon int numSkipListelonntrielonsRelonmaining;
 
-  /** Largest doc ID in the posting list having the read skip list. */
-  private final int largestDocID;
+  /** Largelonst doc ID in thelon posting list having thelon relonad skip list. */
+  privatelon final int largelonstDocID;
 
-  /** Pointer to the first int in the first slice that stores positions for this term. */
-  private final int positionListPointer;
+  /** Pointelonr to thelon first int in thelon first slicelon that storelons positions for this telonrm. */
+  privatelon final int positionListPointelonr;
 
-  /** Total number of docs in the posting list having the read skip list. */
-  private final int numDocsTotal;
+  /** Total numbelonr of docs in thelon posting list having thelon relonad skip list. */
+  privatelon final int numDocsTotal;
 
   /**
-   * Create a skip list reader specified by the given skip list pointer in the given skip lists int
+   * Crelonatelon a skip list relonadelonr speloncifielond by thelon givelonn skip list pointelonr in thelon givelonn skip lists int
    * pool.
    *
-   * @param skipLists int pool where the read skip list exists
-   * @param skipListPointer pointer to the read skip list
-   * @param omitPositions whether positions are omitted in the positing list to which the read skip
-   *                      list belongs
+   * @param skipLists int pool whelonrelon thelon relonad skip list elonxists
+   * @param skipListPointelonr pointelonr to thelon relonad skip list
+   * @param omitPositions whelonthelonr positions arelon omittelond in thelon positing list to which thelon relonad skip
+   *                      list belonlongs
    */
-  public HighDFPackedIntsSkipListReader(
+  public HighDFPackelondIntsSkipListRelonadelonr(
       final IntBlockPool skipLists,
-      final int skipListPointer,
-      final boolean omitPositions) {
+      final int skipListPointelonr,
+      final boolelonan omitPositions) {
     this.skipLists = skipLists;
     this.omitPositions = omitPositions;
 
-    this.skipListBlockStart = IntBlockPool.getBlockStart(skipListPointer);
-    this.skipListBlockIndex = IntBlockPool.getOffsetInBlock(skipListPointer);
-    this.currentSkipListBlock = skipLists.getBlock(skipListBlockStart);
+    this.skipListBlockStart = IntBlockPool.gelontBlockStart(skipListPointelonr);
+    this.skipListBlockIndelonx = IntBlockPool.gelontOffselontInBlock(skipListPointelonr);
+    this.currelonntSkipListBlock = skipLists.gelontBlock(skipListBlockStart);
 
-    // Read skip list header.
-    this.numSkipListEntriesRemaining = readNextValueFromSkipListBlock();
-    this.largestDocID = readNextValueFromSkipListBlock();
-    this.numDocsTotal = readNextValueFromSkipListBlock();
-    int deltaFreqListPointer = readNextValueFromSkipListBlock();
-    this.positionListPointer = omitPositions ? -1 : readNextValueFromSkipListBlock();
+    // Relonad skip list helonadelonr.
+    this.numSkipListelonntrielonsRelonmaining = relonadNelonxtValuelonFromSkipListBlock();
+    this.largelonstDocID = relonadNelonxtValuelonFromSkipListBlock();
+    this.numDocsTotal = relonadNelonxtValuelonFromSkipListBlock();
+    int delonltaFrelonqListPointelonr = relonadNelonxtValuelonFromSkipListBlock();
+    this.positionListPointelonr = omitPositions ? -1 : relonadNelonxtValuelonFromSkipListBlock();
 
-    // Set it back by one slice for fetchNextSkipEntry() to advance correctly.
-    this.deltaFreqNextSlicePointer = deltaFreqListPointer - HighDFPackedIntsPostingLists.SLICE_SIZE;
-    fetchNextSkipEntry();
+    // Selont it back by onelon slicelon for felontchNelonxtSkipelonntry() to advancelon correlonctly.
+    this.delonltaFrelonqNelonxtSlicelonPointelonr = delonltaFrelonqListPointelonr - HighDFPackelondIntsPostingLists.SLICelon_SIZelon;
+    felontchNelonxtSkipelonntry();
   }
 
   /**
-   * Load already fetched data in next skip entry into current data variables, and pre-fetch again.
+   * Load alrelonady felontchelond data in nelonxt skip elonntry into currelonnt data variablelons, and prelon-felontch again.
    */
-  public void getNextSkipEntry() {
-    previousDocIDCurrentSlice = previousDocIDNextSlice;
-    encodedMetadataCurrentSlice = encodedMetadataNextSlice;
-    positionCurrentSliceIndex = positionNextSliceIndex;
-    deltaFreqCurrentSlicePointer = deltaFreqNextSlicePointer;
-    fetchNextSkipEntry();
+  public void gelontNelonxtSkipelonntry() {
+    prelonviousDocIDCurrelonntSlicelon = prelonviousDocIDNelonxtSlicelon;
+    elonncodelondMelontadataCurrelonntSlicelon = elonncodelondMelontadataNelonxtSlicelon;
+    positionCurrelonntSlicelonIndelonx = positionNelonxtSlicelonIndelonx;
+    delonltaFrelonqCurrelonntSlicelonPointelonr = delonltaFrelonqNelonxtSlicelonPointelonr;
+    felontchNelonxtSkipelonntry();
   }
 
   /**
-   * Fetch data for next skip entry if skip list is not exhausted; otherwise, set docIDNextSlice
-   * to NO_MORE_DOCS.
+   * Felontch data for nelonxt skip elonntry if skip list is not elonxhaustelond; othelonrwiselon, selont docIDNelonxtSlicelon
+   * to NO_MORelon_DOCS.
    */
-  private void fetchNextSkipEntry() {
-    if (numSkipListEntriesRemaining == 0) {
-      previousDocIDNextSlice = DocIdSetIterator.NO_MORE_DOCS;
-      return;
+  privatelon void felontchNelonxtSkipelonntry() {
+    if (numSkipListelonntrielonsRelonmaining == 0) {
+      prelonviousDocIDNelonxtSlicelon = DocIdSelontItelonrator.NO_MORelon_DOCS;
+      relonturn;
     }
 
-    previousDocIDNextSlice = readNextValueFromSkipListBlock();
-    encodedMetadataNextSlice = readNextValueFromSkipListBlock();
+    prelonviousDocIDNelonxtSlicelon = relonadNelonxtValuelonFromSkipListBlock();
+    elonncodelondMelontadataNelonxtSlicelon = relonadNelonxtValuelonFromSkipListBlock();
     if (!omitPositions) {
-      positionNextSliceIndex = readNextValueFromSkipListBlock();
+      positionNelonxtSlicelonIndelonx = relonadNelonxtValuelonFromSkipListBlock();
     }
-    deltaFreqNextSlicePointer += HighDFPackedIntsPostingLists.SLICE_SIZE;
-    numSkipListEntriesRemaining--;
+    delonltaFrelonqNelonxtSlicelonPointelonr += HighDFPackelondIntsPostingLists.SLICelon_SIZelon;
+    numSkipListelonntrielonsRelonmaining--;
   }
 
   /**************************************
-   * Getters of data in skip list entry *
+   * Gelonttelonrs of data in skip list elonntry *
    **************************************/
 
   /**
-   * In the context of a current slice, this is the docID of the last document in the previous
-   * slice (or 0 if the current slice is the first slice).
+   * In thelon contelonxt of a currelonnt slicelon, this is thelon docID of thelon last documelonnt in thelon prelonvious
+   * slicelon (or 0 if thelon currelonnt slicelon is thelon first slicelon).
    *
-   * @see HighDFPackedIntsPostingLists#SKIPLIST_ENTRY_SIZE
+   * @selonelon HighDFPackelondIntsPostingLists#SKIPLIST_elonNTRY_SIZelon
    */
-  public int getPreviousDocIDCurrentSlice() {
-    return previousDocIDCurrentSlice;
+  public int gelontPrelonviousDocIDCurrelonntSlicelon() {
+    relonturn prelonviousDocIDCurrelonntSlicelon;
   }
 
   /**
-   * Get the encoded metadata of the current delta-freq slice.
+   * Gelont thelon elonncodelond melontadata of thelon currelonnt delonlta-frelonq slicelon.
    *
-   * @see HighDFPackedIntsPostingLists#SKIPLIST_ENTRY_SIZE
+   * @selonelon HighDFPackelondIntsPostingLists#SKIPLIST_elonNTRY_SIZelon
    */
-  public int getEncodedMetadataCurrentSlice() {
-    return encodedMetadataCurrentSlice;
+  public int gelontelonncodelondMelontadataCurrelonntSlicelon() {
+    relonturn elonncodelondMelontadataCurrelonntSlicelon;
   }
 
   /**
-   * Get the pointer to the first int, WHICH CONTAINS THE POSITION SLICE HEADER, of the position
-   * slice that contains the first position of the first doc in the delta-freq slice that
-   * is corresponding to the current skip list entry.
+   * Gelont thelon pointelonr to thelon first int, WHICH CONTAINS THelon POSITION SLICelon HelonADelonR, of thelon position
+   * slicelon that contains thelon first position of thelon first doc in thelon delonlta-frelonq slicelon that
+   * is correlonsponding to thelon currelonnt skip list elonntry.
    *
-   * @see HighDFPackedIntsPostingLists#SKIPLIST_ENTRY_SIZE
+   * @selonelon HighDFPackelondIntsPostingLists#SKIPLIST_elonNTRY_SIZelon
    */
-  public int getPositionCurrentSlicePointer() {
-    assert !omitPositions;
-    return positionListPointer
-        + positionCurrentSliceIndex * HighDFPackedIntsPostingLists.SLICE_SIZE;
+  public int gelontPositionCurrelonntSlicelonPointelonr() {
+    asselonrt !omitPositions;
+    relonturn positionListPointelonr
+        + positionCurrelonntSlicelonIndelonx * HighDFPackelondIntsPostingLists.SLICelon_SIZelon;
   }
 
   /**
-   * Get the pointer to the first int in the current delta-freq slice.
+   * Gelont thelon pointelonr to thelon first int in thelon currelonnt delonlta-frelonq slicelon.
    */
-  public int getDeltaFreqCurrentSlicePointer() {
-    return deltaFreqCurrentSlicePointer;
+  public int gelontDelonltaFrelonqCurrelonntSlicelonPointelonr() {
+    relonturn delonltaFrelonqCurrelonntSlicelonPointelonr;
   }
 
   /**
-   * In the context of next slice, get the last doc ID in the previous slice. This is used to skip
-   * over slices.
+   * In thelon contelonxt of nelonxt slicelon, gelont thelon last doc ID in thelon prelonvious slicelon. This is uselond to skip
+   * ovelonr slicelons.
    *
-   * @see HighDFPackedIntsDocsEnum#skipTo(int)
+   * @selonelon HighDFPackelondIntsDocselonnum#skipTo(int)
    */
-  public int peekPreviousDocIDNextSlice() {
-    return previousDocIDNextSlice;
+  public int pelonelonkPrelonviousDocIDNelonxtSlicelon() {
+    relonturn prelonviousDocIDNelonxtSlicelon;
   }
 
   /***************************************
-   * Getters of data in skip list header *
+   * Gelonttelonrs of data in skip list helonadelonr *
    ***************************************/
 
-  public int getLargestDocID() {
-    return largestDocID;
+  public int gelontLargelonstDocID() {
+    relonturn largelonstDocID;
   }
 
-  public int getNumDocsTotal() {
-    return numDocsTotal;
+  public int gelontNumDocsTotal() {
+    relonturn numDocsTotal;
   }
 
   /***************************************************
-   * Methods helping loading int block and read ints *
+   * Melonthods helonlping loading int block and relonad ints *
    ***************************************************/
 
-  private int readNextValueFromSkipListBlock() {
-    if (skipListBlockIndex == IntBlockPool.BLOCK_SIZE) {
+  privatelon int relonadNelonxtValuelonFromSkipListBlock() {
+    if (skipListBlockIndelonx == IntBlockPool.BLOCK_SIZelon) {
       loadSkipListBlock();
     }
-    return currentSkipListBlock[skipListBlockIndex++];
+    relonturn currelonntSkipListBlock[skipListBlockIndelonx++];
   }
 
-  private void loadSkipListBlock() {
-    skipListBlockStart += IntBlockPool.BLOCK_SIZE;
-    currentSkipListBlock = skipLists.getBlock(skipListBlockStart);
-    skipListBlockIndex = 0;
+  privatelon void loadSkipListBlock() {
+    skipListBlockStart += IntBlockPool.BLOCK_SIZelon;
+    currelonntSkipListBlock = skipLists.gelontBlock(skipListBlockStart);
+    skipListBlockIndelonx = 0;
   }
 }

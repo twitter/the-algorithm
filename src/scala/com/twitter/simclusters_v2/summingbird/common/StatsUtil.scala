@@ -1,19 +1,19 @@
-package com.twitter.simclusters_v2.summingbird.common
+packagelon com.twittelonr.simclustelonrs_v2.summingbird.common
 
-import com.twitter.summingbird.{Counter, Group, Name, Platform, Producer}
-import com.twitter.summingbird.option.JobId
+import com.twittelonr.summingbird.{Countelonr, Group, Namelon, Platform, Producelonr}
+import com.twittelonr.summingbird.option.JobId
 
-object StatsUtil {
+objelonct StatsUtil {
 
-  // for adding stats in Producer.
-  // this enables us to add new stats by just calling producer.observer("name")
-  implicit class EnrichedProducer[P <: Platform[P], T](
-    producer: Producer[P, T]
+  // for adding stats in Producelonr.
+  // this elonnablelons us to add nelonw stats by just calling producelonr.obselonrvelonr("namelon")
+  implicit class elonnrichelondProducelonr[P <: Platform[P], T](
+    producelonr: Producelonr[P, T]
   )(
     implicit jobId: JobId) {
-    def observe(counter: String): Producer[P, T] = {
-      val stat = Counter(Group(jobId.get), Name(counter))
-      producer.map { v =>
+    delonf obselonrvelon(countelonr: String): Producelonr[P, T] = {
+      val stat = Countelonr(Group(jobId.gelont), Namelon(countelonr))
+      producelonr.map { v =>
         stat.incr()
         v
       }

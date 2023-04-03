@@ -1,8 +1,8 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.richtext
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.richtelonxt
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.ReferenceObject
-import com.twitter.twittertext.Extractor
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.richtelonxt.RelonfelonrelonncelonObjelonct
+import com.twittelonr.twittelonrtelonxt.elonxtractor
 
-trait RichTextReferenceObjectBuilder {
-  def apply(entity: Extractor.Entity): Option[ReferenceObject]
+trait RichTelonxtRelonfelonrelonncelonObjelonctBuildelonr {
+  delonf apply(elonntity: elonxtractor.elonntity): Option[RelonfelonrelonncelonObjelonct]
 }

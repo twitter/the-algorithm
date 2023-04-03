@@ -1,94 +1,94 @@
-package com.twitter.search.earlybird.queryparser;
+packagelon com.twittelonr.selonarch.elonarlybird.quelonryparselonr;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
+import java.util.Selont;
 
-import com.google.common.collect.Sets;
+import com.googlelon.common.collelonct.Selonts;
 
 /**
- * Used to store information relevant to processing query groups for HighFrequencyTermPairExtractor
- * and HighFrequencyTermPairRewriter
+ * Uselond to storelon information relonlelonvant to procelonssing quelonry groups for HighFrelonquelonncyTelonrmPairelonxtractor
+ * and HighFrelonquelonncyTelonrmPairRelonwritelonr
  */
-public class HighFrequencyTermQueryGroup {
-  protected final int groupIdx;
-  protected final int parentGroupIdx;
-  // The number of nodes in this group.
-  protected int numMembers = 0;
-  // For the rewrite visitor: Incremented once at the end of each of this group's nodes' visits.
-  protected int numVisits = 0;
+public class HighFrelonquelonncyTelonrmQuelonryGroup {
+  protelonctelond final int groupIdx;
+  protelonctelond final int parelonntGroupIdx;
+  // Thelon numbelonr of nodelons in this group.
+  protelonctelond int numMelonmbelonrs = 0;
+  // For thelon relonwritelon visitor: Increlonmelonntelond oncelon at thelon elonnd of elonach of this group's nodelons' visits.
+  protelonctelond int numVisits = 0;
 
-  // The set of tokens that should be removed from the query if seen as an individual term and
-  // rewritten in the query as a hf term pair.
-  protected final Set<String> hfTokens = Sets.newTreeSet();
+  // Thelon selont of tokelonns that should belon relonmovelond from thelon quelonry if selonelonn as an individual telonrm and
+  // relonwrittelonn in thelon quelonry as a hf telonrm pair.
+  protelonctelond final Selont<String> hfTokelonns = Selonts.nelonwTrelonelonSelont();
 
-  // Tokens that can be used to restrict searches but should not be scored. They will be given a
-  // weight of 0.
-  protected final Set<String> preusedHFTokens = Sets.newTreeSet();
+  // Tokelonns that can belon uselond to relonstrict selonarchelons but should not belon scorelond. Thelony will belon givelonn a
+  // welonight of 0.
+  protelonctelond final Selont<String> prelonuselondHFTokelonns = Selonts.nelonwTrelonelonSelont();
 
-  // Set of phrases that should be removed from the query if seen as an individual phrase and
-  // rewritten in the query as a hf term phrase pair.
-  protected final Set<String> hfPhrases = Sets.newTreeSet();
+  // Selont of phraselons that should belon relonmovelond from thelon quelonry if selonelonn as an individual phraselon and
+  // relonwrittelonn in thelon quelonry as a hf telonrm phraselon pair.
+  protelonctelond final Selont<String> hfPhraselons = Selonts.nelonwTrelonelonSelont();
 
-  // Phrases that can be used to restrict searches but should not be scored. They will be given a
-  // weight of 0.
-  protected final Set<String> preusedHFPhrases = Sets.newTreeSet();
+  // Phraselons that can belon uselond to relonstrict selonarchelons but should not belon scorelond. Thelony will belon givelonn a
+  // welonight of 0.
+  protelonctelond final Selont<String> prelonuselondHFPhraselons = Selonts.nelonwTrelonelonSelont();
 
-  // The first found hf_term, or the hf_term of an ancestor with the same isPositive value.
-  protected String distributiveToken = null;
+  // Thelon first found hf_telonrm, or thelon hf_telonrm of an ancelonstor with thelon samelon isPositivelon valuelon.
+  protelonctelond String distributivelonTokelonn = null;
 
-  // If it is a single node group, isPositive is true iff that node is true.
-  // Otherwise, isPositive is false iff the root of the group is a disjunction.
-  protected final boolean isPositive;
+  // If it is a singlelon nodelon group, isPositivelon is truelon iff that nodelon is truelon.
+  // Othelonrwiselon, isPositivelon is falselon iff thelon root of thelon group is a disjunction.
+  protelonctelond final boolelonan isPositivelon;
 
-  public HighFrequencyTermQueryGroup(int groupIdx, boolean positive) {
-    this(groupIdx, -1, positive);
+  public HighFrelonquelonncyTelonrmQuelonryGroup(int groupIdx, boolelonan positivelon) {
+    this(groupIdx, -1, positivelon);
   }
 
-  public HighFrequencyTermQueryGroup(int groupIdx, int parentGroupIdx, boolean positive) {
+  public HighFrelonquelonncyTelonrmQuelonryGroup(int groupIdx, int parelonntGroupIdx, boolelonan positivelon) {
     this.groupIdx = groupIdx;
-    this.parentGroupIdx = parentGroupIdx;
-    isPositive = positive;
+    this.parelonntGroupIdx = parelonntGroupIdx;
+    isPositivelon = positivelon;
   }
 
-  public boolean hasPhrases() {
-    return !hfPhrases.isEmpty() || !preusedHFPhrases.isEmpty();
+  public boolelonan hasPhraselons() {
+    relonturn !hfPhraselons.iselonmpty() || !prelonuselondHFPhraselons.iselonmpty();
   }
 
-  protected List<String> tokensFromPhrases() {
-    if (!hasPhrases()) {
-      return null;
+  protelonctelond List<String> tokelonnsFromPhraselons() {
+    if (!hasPhraselons()) {
+      relonturn null;
     }
-    List<String> tokens = new ArrayList<>();
-    for (String phrase : hfPhrases) {
-      for (String term : phrase.split(" ")) {
-        tokens.add(term);
+    List<String> tokelonns = nelonw ArrayList<>();
+    for (String phraselon : hfPhraselons) {
+      for (String telonrm : phraselon.split(" ")) {
+        tokelonns.add(telonrm);
       }
     }
-    for (String phrase : preusedHFPhrases) {
-      for (String term : phrase.split(" ")) {
-        tokens.add(term);
+    for (String phraselon : prelonuselondHFPhraselons) {
+      for (String telonrm : phraselon.split(" ")) {
+        tokelonns.add(telonrm);
       }
     }
-    return tokens;
+    relonturn tokelonns;
   }
 
-  protected void removePreusedTokens() {
-    hfTokens.removeAll(preusedHFTokens);
-    List<String> phraseTokens = tokensFromPhrases();
-    if (phraseTokens != null) {
-      hfTokens.removeAll(phraseTokens);
-      preusedHFTokens.removeAll(phraseTokens);
+  protelonctelond void relonmovelonPrelonuselondTokelonns() {
+    hfTokelonns.relonmovelonAll(prelonuselondHFTokelonns);
+    List<String> phraselonTokelonns = tokelonnsFromPhraselons();
+    if (phraselonTokelonns != null) {
+      hfTokelonns.relonmovelonAll(phraselonTokelonns);
+      prelonuselondHFTokelonns.relonmovelonAll(phraselonTokelonns);
     }
-    hfPhrases.removeAll(preusedHFPhrases);
+    hfPhraselons.relonmovelonAll(prelonuselondHFPhraselons);
   }
 
-  protected String getTokenFromPhrase() {
-    List<String> phraseTokens = tokensFromPhrases();
-    if (phraseTokens != null) {
-      return phraseTokens.get(0);
-    } else {
-      return null;
+  protelonctelond String gelontTokelonnFromPhraselon() {
+    List<String> phraselonTokelonns = tokelonnsFromPhraselons();
+    if (phraselonTokelonns != null) {
+      relonturn phraselonTokelonns.gelont(0);
+    } elonlselon {
+      relonturn null;
     }
   }
 }

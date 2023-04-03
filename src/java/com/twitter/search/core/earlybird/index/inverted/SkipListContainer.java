@@ -1,735 +1,735 @@
-package com.twitter.search.core.earlybird.index.inverted;
+packagelon com.twittelonr.selonarch.corelon.elonarlybird.indelonx.invelonrtelond;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 import java.util.Random;
 
-import javax.annotation.Nullable;
+import javax.annotation.Nullablelon;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import com.twitter.search.common.util.io.flushable.DataDeserializer;
-import com.twitter.search.common.util.io.flushable.DataSerializer;
-import com.twitter.search.common.util.io.flushable.FlushInfo;
-import com.twitter.search.common.util.io.flushable.Flushable;
+import com.twittelonr.selonarch.common.util.io.flushablelon.DataDelonselonrializelonr;
+import com.twittelonr.selonarch.common.util.io.flushablelon.DataSelonrializelonr;
+import com.twittelonr.selonarch.common.util.io.flushablelon.FlushInfo;
+import com.twittelonr.selonarch.common.util.io.flushablelon.Flushablelon;
 
-import static com.twitter.search.core.earlybird.index.inverted.PayloadUtil.EMPTY_PAYLOAD;
+import static com.twittelonr.selonarch.corelon.elonarlybird.indelonx.invelonrtelond.PayloadUtil.elonMPTY_PAYLOAD;
 
 /**
- * This is a skip list container implementation backed by {@link IntBlockPool}.
+ * This is a skip list containelonr implelonmelonntation backelond by {@link IntBlockPool}.
  *
- * Skip list is a data structure similar to linked list, but with a hierarchy of lists
- * each skipping over fewer elements, and the bottom hierarchy does NOT skip any elements.
- * @see <a href="http://en.wikipedia.org/wiki/Skip_list">Skip List Wikipedia</a>
+ * Skip list is a data structurelon similar to linkelond list, but with a hielonrarchy of lists
+ * elonach skipping ovelonr felonwelonr elonlelonmelonnts, and thelon bottom hielonrarchy doelons NOT skip any elonlelonmelonnts.
+ * @selonelon <a hrelonf="http://elonn.wikipelondia.org/wiki/Skip_list">Skip List Wikipelondia</a>
  *
- * This implementation is lock free and thread safe with ONE writer thread and MULTIPLE reader
- * threads.
+ * This implelonmelonntation is lock frelonelon and threlonad safelon with ONelon writelonr threlonad and MULTIPLelon relonadelonr
+ * threlonads.
  *
- * This implementation could contain one or more skip lists, and they are all backed by
- * the same {@link IntBlockPool}.
+ * This implelonmelonntation could contain onelon or morelon skip lists, and thelony arelon all backelond by
+ * thelon samelon {@link IntBlockPool}.
  *
- * Values are actually stored as integers; however search key is implemented as a generic type.
- * Inserts of values that already exist are stored as subsequent elements. This is used to support
- * positions and term frequency.
+ * Valuelons arelon actually storelond as intelongelonrs; howelonvelonr selonarch kelony is implelonmelonntelond as a gelonnelonric typelon.
+ * Inselonrts of valuelons that alrelonady elonxist arelon storelond as subselonquelonnt elonlelonmelonnts. This is uselond to support
+ * positions and telonrm frelonquelonncy.
  *
- * Also reserve the integer after value to store next ordinal pointer information. We avoid storing
- * pointers to the next element in the tower by allocating them contiguously. To descend the tower,
- * we just increment the pointer.
+ * Also relonselonrvelon thelon intelongelonr aftelonr valuelon to storelon nelonxt ordinal pointelonr information. Welon avoid storing
+ * pointelonrs to thelon nelonxt elonlelonmelonnt in thelon towelonr by allocating thelonm contiguously. To delonscelonnd thelon towelonr,
+ * welon just increlonmelonnt thelon pointelonr.
  *
- * This skip list can also store positions as integers. It allocates them before it allocates the
- * value (the value is a doc ID if we are using positions). This means that we can access the
- * position by simply decrementing the value pointer.
+ * This skip list can also storelon positions as intelongelonrs. It allocatelons thelonm belonforelon it allocatelons thelon
+ * valuelon (thelon valuelon is a doc ID if welon arelon using positions). This melonans that welon can accelonss thelon
+ * position by simply deloncrelonmelonnting thelon valuelon pointelonr.
  *
- * To understand how the skip list works, first understand how insert works, then the rest will be
- * more comprehendable.
+ * To undelonrstand how thelon skip list works, first undelonrstand how inselonrt works, thelonn thelon relonst will belon
+ * morelon comprelonhelonndablelon.
  *
- * A skip list will be implemented in a circle linked way:
- *   - the list head node will have the sentinel value, which is the advisory greatest value
- *     provided by comparator.
- *   - Real first value will be pointed by the list head node.
- *   - Real last value will point to the list head.
+ * A skip list will belon implelonmelonntelond in a circlelon linkelond way:
+ *   - thelon list helonad nodelon will havelon thelon selonntinelonl valuelon, which is thelon advisory grelonatelonst valuelon
+ *     providelond by comparator.
+ *   - Relonal first valuelon will belon pointelond by thelon list helonad nodelon.
+ *   - Relonal last valuelon will point to thelon list helonad.
  *
  * Constraints:
- *   - Does NOT support negative value.
+ *   - Doelons NOT support nelongativelon valuelon.
  *
- * Simple Viz:
+ * Simplelon Viz:
  *
- * Empty list with max tower height 5. S = Sentinel value, I = Initial value.
+ * elonmpty list with max towelonr helonight 5. S = Selonntinelonl valuelon, I = Initial valuelon.
  *    | s| 0| 0| 0| 0| 0| i| i| i| i| i| i| i| i| i| i|
  *
- * One possible situation after inserting 4, 6, 5.
+ * Onelon possiblelon situation aftelonr inselonrting 4, 6, 5.
  *    | s| 6| 6| 9| 0| 0| 4|13|13| 6| 0| 0| 0| 5| 9| 9|
  */
-public class SkipListContainer<K> implements Flushable {
+public class SkipListContainelonr<K> implelonmelonnts Flushablelon {
   /**
-   * The list head of first skip list in the container, this is for convenient usage,
-   * so application use only one skip list does not need to keep track of the list head.
+   * Thelon list helonad of first skip list in thelon containelonr, this is for convelonnielonnt usagelon,
+   * so application uselon only onelon skip list doelons not nelonelond to kelonelonp track of thelon list helonad.
    */
-  static final int FIRST_LIST_HEAD = 0;
+  static final int FIRST_LIST_HelonAD = 0;
 
   /**
-   * Initial value used when initialize int block pool. Notice -1 is not used here in order to give
-   * application more freedom because -1 is a special value when doing bit manipulations.
+   * Initial valuelon uselond whelonn initializelon int block pool. Noticelon -1 is not uselond helonrelon in ordelonr to givelon
+   * application morelon frelonelondom beloncauselon -1 is a speloncial valuelon whelonn doing bit manipulations.
    */
-  static final int INITIAL_VALUE = -2;
+  static final int INITIAL_VALUelon = -2;
 
   /**
-   *  Maximum tower height of this skip list and chance to grow tower by level.
+   *  Maximum towelonr helonight of this skip list and chancelon to grow towelonr by lelonvelonl.
    *
-   *  Notice these two values could affect the memory usage and the performance.
-   *  Ideally they should be calculated based on the potential size of the skip list.
+   *  Noticelon thelonselon two valuelons could affelonct thelon melonmory usagelon and thelon pelonrformancelon.
+   *  Idelonally thelony should belon calculatelond baselond on thelon potelonntial sizelon of thelon skip list.
    *
-   *  Given n is the number of elements in the skip list, the memory usage is in O(n).
+   *  Givelonn n is thelon numbelonr of elonlelonmelonnts in thelon skip list, thelon melonmory usagelon is in O(n).
    *
-   *  More precisely,
+   *  Morelon prelonciselonly,
    *
-   *  the memory is mainly used for the following data:
+   *  thelon melonmory is mainly uselond for thelon following data:
    *
-   *  header_tower  = O(maxTowerHeight + 1)
-   *  value         = O(n)
-   *  next_pointers = O(n * (1 - growTowerChance^(maxTowerHeight + 1)) / (1 - growTowerChance))
+   *  helonadelonr_towelonr  = O(maxTowelonrHelonight + 1)
+   *  valuelon         = O(n)
+   *  nelonxt_pointelonrs = O(n * (1 - growTowelonrChancelon^(maxTowelonrHelonight + 1)) / (1 - growTowelonrChancelon))
    *
-   * thus, the total memory usage is in O(header_tower + value + next_pointers).
+   * thus, thelon total melonmory usagelon is in O(helonadelonr_towelonr + valuelon + nelonxt_pointelonrs).
    *
-   * Default value for maximum tower height and grow tower chance, these two numbers are chosen
+   * Delonfault valuelon for maximum towelonr helonight and grow towelonr chancelon, thelonselon two numbelonrs arelon choselonn
    * arbitrarily now.
    */
-  @VisibleForTesting
-  public static final int MAX_TOWER_HEIGHT = 10;
-  private static final float GROW_TOWER_CHANCE = 0.2f;
+  @VisiblelonForTelonsting
+  public static final int MAX_TOWelonR_HelonIGHT = 10;
+  privatelon static final float GROW_TOWelonR_CHANCelon = 0.2f;
 
-  public enum HasPositions {
-    YES,
+  public elonnum HasPositions {
+    YelonS,
     NO
   }
 
-  public enum HasPayloads {
-    YES,
+  public elonnum HasPayloads {
+    YelonS,
     NO
   }
 
   static final int INVALID_POSITION = -3;
 
-  /** Memory barrier. */
-  private volatile int maxPoolPointer;
+  /** Melonmory barrielonr. */
+  privatelon volatilelon int maxPoolPointelonr;
 
-  /** Actual storage data structure. */
-  private final IntBlockPool blockPool;
+  /** Actual storagelon data structurelon. */
+  privatelon final IntBlockPool blockPool;
 
   /**
-   * Default comparator used to determine the order between two given values or between one key and
-   * another value.
+   * Delonfault comparator uselond to delontelonrminelon thelon ordelonr belontwelonelonn two givelonn valuelons or belontwelonelonn onelon kelony and
+   * anothelonr valuelon.
    *
-   * Notice this comparator is shared by all threads using this skip list, so it is not thread safe
-   * if it is maintaining some states. However, {@link #search}, {@link #insert}, and
-   * {@link #searchCeil} support passed in comparator as a parameter, which should be thread safe if
-   * managed by the caller properly.
+   * Noticelon this comparator is sharelond by all threlonads using this skip list, so it is not threlonad safelon
+   * if it is maintaining somelon statelons. Howelonvelonr, {@link #selonarch}, {@link #inselonrt}, and
+   * {@link #selonarchCelonil} support passelond in comparator as a paramelontelonr, which should belon threlonad safelon if
+   * managelond by thelon callelonr propelonrly.
    */
-  private final SkipListComparator<K> defaultComparator;
+  privatelon final SkipListComparator<K> delonfaultComparator;
 
-  /** Random generator used to decide if to grow tower by one level or not. */
-  private final Random random = new Random();
+  /** Random gelonnelonrator uselond to deloncidelon if to grow towelonr by onelon lelonvelonl or not. */
+  privatelon final Random random = nelonw Random();
 
   /**
-   * Used by writer thread to record last pointers at each level. Notice it is ok to have it as an
-   * instance field because we would only have one writer thread.
+   * Uselond by writelonr threlonad to reloncord last pointelonrs at elonach lelonvelonl. Noticelon it is ok to havelon it as an
+   * instancelon fielonld beloncauselon welon would only havelon onelon writelonr threlonad.
    */
-  private final int[] lastPointers;
+  privatelon final int[] lastPointelonrs;
 
   /**
-   * Whether the skip list contains positions. Used for text fields.
+   * Whelonthelonr thelon skip list contains positions. Uselond for telonxt fielonlds.
    */
-  private final HasPositions hasPositions;
+  privatelon final HasPositions hasPositions;
 
-  private final HasPayloads hasPayloads;
+  privatelon final HasPayloads hasPayloads;
 
   /**
-   * Creates a new probabilistic skip list, using the provided comparator to compare keys
-   * of type K.
+   * Crelonatelons a nelonw probabilistic skip list, using thelon providelond comparator to comparelon kelonys
+   * of typelon K.
    *
-   * @param comparator a comparator used to compare integer values.
+   * @param comparator a comparator uselond to comparelon intelongelonr valuelons.
    */
-  public SkipListContainer(
+  public SkipListContainelonr(
       SkipListComparator<K> comparator,
       HasPositions hasPositions,
       HasPayloads hasPayloads,
-      String name
+      String namelon
   ) {
-    this(comparator, new IntBlockPool(INITIAL_VALUE, name), hasPositions, hasPayloads);
+    this(comparator, nelonw IntBlockPool(INITIAL_VALUelon, namelon), hasPositions, hasPayloads);
   }
 
   /**
-   * Base constructor, also used by flush handler.
+   * Baselon constructor, also uselond by flush handlelonr.
    */
-  private SkipListContainer(
+  privatelon SkipListContainelonr(
       SkipListComparator<K> comparator,
       IntBlockPool blockPool,
       HasPositions hasPositions,
       HasPayloads hasPayloads) {
-    // Sentinel value specified by the comparator cannot equal to INITIAL_VALUE.
-    Preconditions.checkArgument(comparator.getSentinelValue() != INITIAL_VALUE);
+    // Selonntinelonl valuelon speloncifielond by thelon comparator cannot elonqual to INITIAL_VALUelon.
+    Prelonconditions.chelonckArgumelonnt(comparator.gelontSelonntinelonlValuelon() != INITIAL_VALUelon);
 
-    this.defaultComparator = comparator;
-    this.lastPointers = new int[MAX_TOWER_HEIGHT];
+    this.delonfaultComparator = comparator;
+    this.lastPointelonrs = nelonw int[MAX_TOWelonR_HelonIGHT];
     this.blockPool = blockPool;
     this.hasPositions = hasPositions;
     this.hasPayloads = hasPayloads;
   }
 
   /**
-   * Search for the index of the greatest value which has key less than or equal to the given key.
+   * Selonarch for thelon indelonx of thelon grelonatelonst valuelon which has kelony lelonss than or elonqual to thelon givelonn kelony.
    *
-   * This is more like a floor search function. See {@link #searchCeil} for ceil search.
+   * This is morelon likelon a floor selonarch function. Selonelon {@link #selonarchCelonil} for celonil selonarch.
    *
-   * @param key target key will be searched.
-   * @param skipListHead index of the header tower of the skip list will be searched.
-   * @param comparator comparator used for comparison when traversing through the skip list.
-   * @param searchFinger {@link SkipListSearchFinger} to accelerate search speed,
-   *                     notice the search finger must be before the key.
-   * @return the index of the greatest value which is less than or equal to given value,
-   *         will return skipListHead if given value has no greater or equal values.
+   * @param kelony targelont kelony will belon selonarchelond.
+   * @param skipListHelonad indelonx of thelon helonadelonr towelonr of thelon skip list will belon selonarchelond.
+   * @param comparator comparator uselond for comparison whelonn travelonrsing through thelon skip list.
+   * @param selonarchFingelonr {@link SkipListSelonarchFingelonr} to accelonlelonratelon selonarch spelonelond,
+   *                     noticelon thelon selonarch fingelonr must belon belonforelon thelon kelony.
+   * @relonturn thelon indelonx of thelon grelonatelonst valuelon which is lelonss than or elonqual to givelonn valuelon,
+   *         will relonturn skipListHelonad if givelonn valuelon has no grelonatelonr or elonqual valuelons.
    */
-  public int search(
-      K key,
-      int skipListHead,
+  public int selonarch(
+      K kelony,
+      int skipListHelonad,
       SkipListComparator<K> comparator,
-      @Nullable SkipListSearchFinger searchFinger) {
-    assert comparator != null;
-    // Start at the header tower.
-    int currentPointer = skipListHead;
+      @Nullablelon SkipListSelonarchFingelonr selonarchFingelonr) {
+    asselonrt comparator != null;
+    // Start at thelon helonadelonr towelonr.
+    int currelonntPointelonr = skipListHelonad;
 
-    // Instantiate nextPointer and nextValue outside of the for loop so we can use the value
-    // directly after for loop.
-    int nextPointer = getForwardPointer(currentPointer, MAX_TOWER_HEIGHT - 1);
-    int nextValue = getValue(nextPointer);
+    // Instantiatelon nelonxtPointelonr and nelonxtValuelon outsidelon of thelon for loop so welon can uselon thelon valuelon
+    // direlonctly aftelonr for loop.
+    int nelonxtPointelonr = gelontForwardPointelonr(currelonntPointelonr, MAX_TOWelonR_HelonIGHT - 1);
+    int nelonxtValuelon = gelontValuelon(nelonxtPointelonr);
 
-    // Top down traversal.
-    for (int currentLevel = MAX_TOWER_HEIGHT - 1; currentLevel >= 0; currentLevel--) {
-      nextPointer = getForwardPointer(currentPointer, currentLevel);
-      nextValue = getValue(nextPointer);
+    // Top down travelonrsal.
+    for (int currelonntLelonvelonl = MAX_TOWelonR_HelonIGHT - 1; currelonntLelonvelonl >= 0; currelonntLelonvelonl--) {
+      nelonxtPointelonr = gelontForwardPointelonr(currelonntPointelonr, currelonntLelonvelonl);
+      nelonxtValuelon = gelontValuelon(nelonxtPointelonr);
 
-      // Jump to search finger at current level.
-      if (searchFinger != null) {
-        final int fingerPointer = searchFinger.getPointer(currentLevel);
-         assert searchFinger.isInitialPointer(fingerPointer)
-            || comparator.compareKeyWithValue(key, getValue(fingerPointer), INVALID_POSITION) >= 0;
+      // Jump to selonarch fingelonr at currelonnt lelonvelonl.
+      if (selonarchFingelonr != null) {
+        final int fingelonrPointelonr = selonarchFingelonr.gelontPointelonr(currelonntLelonvelonl);
+         asselonrt selonarchFingelonr.isInitialPointelonr(fingelonrPointelonr)
+            || comparator.comparelonKelonyWithValuelon(kelony, gelontValuelon(fingelonrPointelonr), INVALID_POSITION) >= 0;
 
-        if (!searchFinger.isInitialPointer(fingerPointer)
-            && comparator.compareValues(getValue(fingerPointer), nextValue) >= 0) {
-          currentPointer = fingerPointer;
-          nextPointer = getForwardPointer(currentPointer, currentLevel);
-          nextValue = getValue(nextPointer);
+        if (!selonarchFingelonr.isInitialPointelonr(fingelonrPointelonr)
+            && comparator.comparelonValuelons(gelontValuelon(fingelonrPointelonr), nelonxtValuelon) >= 0) {
+          currelonntPointelonr = fingelonrPointelonr;
+          nelonxtPointelonr = gelontForwardPointelonr(currelonntPointelonr, currelonntLelonvelonl);
+          nelonxtValuelon = gelontValuelon(nelonxtPointelonr);
         }
       }
 
-      // Move forward.
-      while (comparator.compareKeyWithValue(key, nextValue, INVALID_POSITION) > 0) {
-        currentPointer = nextPointer;
+      // Movelon forward.
+      whilelon (comparator.comparelonKelonyWithValuelon(kelony, nelonxtValuelon, INVALID_POSITION) > 0) {
+        currelonntPointelonr = nelonxtPointelonr;
 
-        nextPointer = getForwardPointer(currentPointer, currentLevel);
-        nextValue = getValue(nextPointer);
+        nelonxtPointelonr = gelontForwardPointelonr(currelonntPointelonr, currelonntLelonvelonl);
+        nelonxtValuelon = gelontValuelon(nelonxtPointelonr);
       }
 
-      // Advance search finger.
-      if (searchFinger != null && currentPointer != skipListHead) {
-        final int currentValue = getValue(currentPointer);
-        final int fingerPointer = searchFinger.getPointer(currentLevel);
+      // Advancelon selonarch fingelonr.
+      if (selonarchFingelonr != null && currelonntPointelonr != skipListHelonad) {
+        final int currelonntValuelon = gelontValuelon(currelonntPointelonr);
+        final int fingelonrPointelonr = selonarchFingelonr.gelontPointelonr(currelonntLelonvelonl);
 
-        if (searchFinger.isInitialPointer(fingerPointer)
-            || comparator.compareValues(currentValue, getValue(fingerPointer)) > 0) {
-          searchFinger.setPointer(currentLevel, currentPointer);
+        if (selonarchFingelonr.isInitialPointelonr(fingelonrPointelonr)
+            || comparator.comparelonValuelons(currelonntValuelon, gelontValuelon(fingelonrPointelonr)) > 0) {
+          selonarchFingelonr.selontPointelonr(currelonntLelonvelonl, currelonntPointelonr);
         }
       }
     }
 
-    // Return next pointer if next value matches searched value; otherwise return currentPointer.
-    return comparator.compareKeyWithValue(key, nextValue, INVALID_POSITION) == 0
-        ? nextPointer : currentPointer;
+    // Relonturn nelonxt pointelonr if nelonxt valuelon matchelons selonarchelond valuelon; othelonrwiselon relonturn currelonntPointelonr.
+    relonturn comparator.comparelonKelonyWithValuelon(kelony, nelonxtValuelon, INVALID_POSITION) == 0
+        ? nelonxtPointelonr : currelonntPointelonr;
   }
 
   /**
-   * Perform search with {@link #defaultComparator}.
-   * Notice {@link #defaultComparator} is not thread safe if it is keeping some states.
+   * Pelonrform selonarch with {@link #delonfaultComparator}.
+   * Noticelon {@link #delonfaultComparator} is not threlonad safelon if it is kelonelonping somelon statelons.
    */
-  public int search(K key, int skipListHead, @Nullable SkipListSearchFinger searchFinger) {
-    return search(key, skipListHead, this.defaultComparator, searchFinger);
+  public int selonarch(K kelony, int skipListHelonad, @Nullablelon SkipListSelonarchFingelonr selonarchFingelonr) {
+    relonturn selonarch(kelony, skipListHelonad, this.delonfaultComparator, selonarchFingelonr);
   }
 
   /**
-   * Ceil search on given {@param key}.
+   * Celonil selonarch on givelonn {@param kelony}.
    *
-   * @param key target key will be searched.
-   * @param skipListHead index of the header tower of the skip list will be searched.
-   * @param comparator comparator used for comparison when traversing through the skip list.
-   * @param searchFinger {@link SkipListSearchFinger} to accelerate search speed.
-   * @return index of the smallest value with key greater or equal to the given key.
+   * @param kelony targelont kelony will belon selonarchelond.
+   * @param skipListHelonad indelonx of thelon helonadelonr towelonr of thelon skip list will belon selonarchelond.
+   * @param comparator comparator uselond for comparison whelonn travelonrsing through thelon skip list.
+   * @param selonarchFingelonr {@link SkipListSelonarchFingelonr} to accelonlelonratelon selonarch spelonelond.
+   * @relonturn indelonx of thelon smallelonst valuelon with kelony grelonatelonr or elonqual to thelon givelonn kelony.
    */
-  public int searchCeil(
-      K key,
-      int skipListHead,
+  public int selonarchCelonil(
+      K kelony,
+      int skipListHelonad,
       SkipListComparator<K> comparator,
-      @Nullable SkipListSearchFinger searchFinger) {
-    assert comparator != null;
+      @Nullablelon SkipListSelonarchFingelonr selonarchFingelonr) {
+    asselonrt comparator != null;
 
-    // Perform regular search.
-    final int foundPointer = search(key, skipListHead, comparator, searchFinger);
+    // Pelonrform relongular selonarch.
+    final int foundPointelonr = selonarch(kelony, skipListHelonad, comparator, selonarchFingelonr);
 
-    // Return foundPointer if it is not the list head and the pointed value has key equal to the
-    // given key; otherwise, return next pointer.
-    if (foundPointer != skipListHead
-        && comparator.compareKeyWithValue(key, getValue(foundPointer), INVALID_POSITION) == 0) {
-      return foundPointer;
-    } else {
-      return getNextPointer(foundPointer);
+    // Relonturn foundPointelonr if it is not thelon list helonad and thelon pointelond valuelon has kelony elonqual to thelon
+    // givelonn kelony; othelonrwiselon, relonturn nelonxt pointelonr.
+    if (foundPointelonr != skipListHelonad
+        && comparator.comparelonKelonyWithValuelon(kelony, gelontValuelon(foundPointelonr), INVALID_POSITION) == 0) {
+      relonturn foundPointelonr;
+    } elonlselon {
+      relonturn gelontNelonxtPointelonr(foundPointelonr);
     }
   }
 
   /**
-   * Perform searchCeil with {@link #defaultComparator}.
-   * Notice {@link #defaultComparator} is not thread safe if it is keeping some states.
+   * Pelonrform selonarchCelonil with {@link #delonfaultComparator}.
+   * Noticelon {@link #delonfaultComparator} is not threlonad safelon if it is kelonelonping somelon statelons.
    */
-  public int searchCeil(
-      K key, int skipListHead, @Nullable SkipListSearchFinger searchFinger) {
-    return searchCeil(key, skipListHead, this.defaultComparator, searchFinger);
+  public int selonarchCelonil(
+      K kelony, int skipListHelonad, @Nullablelon SkipListSelonarchFingelonr selonarchFingelonr) {
+    relonturn selonarchCelonil(kelony, skipListHelonad, this.delonfaultComparator, selonarchFingelonr);
   }
 
   /**
-   * Insert a new value into the skip list.
+   * Inselonrt a nelonw valuelon into thelon skip list.
    *
-   * Notice inserting supports duplicate keys and duplicate values.
+   * Noticelon inselonrting supports duplicatelon kelonys and duplicatelon valuelons.
    *
-   * Duplicate keys with different values or positions will be inserted consecutively.
-   * Duplciate keys with identical values will be ignored, and the duplicate will not be stored in
-   * the posting list.
+   * Duplicatelon kelonys with diffelonrelonnt valuelons or positions will belon inselonrtelond conseloncutivelonly.
+   * Duplciatelon kelonys with idelonntical valuelons will belon ignorelond, and thelon duplicatelon will not belon storelond in
+   * thelon posting list.
    *
-   * @param key is the key of the given value.
-   * @param value is the value will be inserted, cannot be {@link #getSentinelValue()}.
-   * @param skipListHead index of the header tower of the skip list will accept the new value.
-   * @param comparator comparator used for comparison when traversing through the skip list.
-   * @return whether this value exists in the posting list. Note that this will return true even
-   * if it is a new position.
+   * @param kelony is thelon kelony of thelon givelonn valuelon.
+   * @param valuelon is thelon valuelon will belon inselonrtelond, cannot belon {@link #gelontSelonntinelonlValuelon()}.
+   * @param skipListHelonad indelonx of thelon helonadelonr towelonr of thelon skip list will accelonpt thelon nelonw valuelon.
+   * @param comparator comparator uselond for comparison whelonn travelonrsing through thelon skip list.
+   * @relonturn whelonthelonr this valuelon elonxists in thelon posting list. Notelon that this will relonturn truelon elonvelonn
+   * if it is a nelonw position.
    */
-  public boolean insert(K key, int value, int position, int[] payload, int skipListHead,
+  public boolelonan inselonrt(K kelony, int valuelon, int position, int[] payload, int skipListHelonad,
                     SkipListComparator<K> comparator) {
-    Preconditions.checkArgument(comparator != null);
-    Preconditions.checkArgument(value != getSentinelValue());
+    Prelonconditions.chelonckArgumelonnt(comparator != null);
+    Prelonconditions.chelonckArgumelonnt(valuelon != gelontSelonntinelonlValuelon());
 
-    // Start at the header tower.
-    int currentPointer = skipListHead;
+    // Start at thelon helonadelonr towelonr.
+    int currelonntPointelonr = skipListHelonad;
 
-    // Initialize lastPointers.
-    for (int i = 0; i < MAX_TOWER_HEIGHT; i++) {
-      this.lastPointers[i] = INITIAL_VALUE;
+    // Initializelon lastPointelonrs.
+    for (int i = 0; i < MAX_TOWelonR_HelonIGHT; i++) {
+      this.lastPointelonrs[i] = INITIAL_VALUelon;
     }
-    int nextPointer = INITIAL_VALUE;
+    int nelonxtPointelonr = INITIAL_VALUelon;
 
-    // Top down traversal.
-    for (int currentLevel = MAX_TOWER_HEIGHT - 1; currentLevel >= 0; currentLevel--) {
-      nextPointer = getForwardPointer(currentPointer, currentLevel);
-      int nextValue = getValue(nextPointer);
+    // Top down travelonrsal.
+    for (int currelonntLelonvelonl = MAX_TOWelonR_HelonIGHT - 1; currelonntLelonvelonl >= 0; currelonntLelonvelonl--) {
+      nelonxtPointelonr = gelontForwardPointelonr(currelonntPointelonr, currelonntLelonvelonl);
+      int nelonxtValuelon = gelontValuelon(nelonxtPointelonr);
 
-      int nextPosition = getPosition(nextPointer);
-      while (comparator.compareKeyWithValue(key, nextValue, nextPosition) > 0) {
-        currentPointer = nextPointer;
+      int nelonxtPosition = gelontPosition(nelonxtPointelonr);
+      whilelon (comparator.comparelonKelonyWithValuelon(kelony, nelonxtValuelon, nelonxtPosition) > 0) {
+        currelonntPointelonr = nelonxtPointelonr;
 
-        nextPointer = getForwardPointer(currentPointer, currentLevel);
-        nextValue = getValue(nextPointer);
-        nextPosition = getPosition(nextPointer);
+        nelonxtPointelonr = gelontForwardPointelonr(currelonntPointelonr, currelonntLelonvelonl);
+        nelonxtValuelon = gelontValuelon(nelonxtPointelonr);
+        nelonxtPosition = gelontPosition(nelonxtPointelonr);
       }
 
-      // Store last pointers.
-      lastPointers[currentLevel] = currentPointer;
+      // Storelon last pointelonrs.
+      lastPointelonrs[currelonntLelonvelonl] = currelonntPointelonr;
     }
 
-    // we use isDuplicateValue to determine if a value already exists in a posting list (even if it
-    // is a new position). We need to check both current pointer and next pointer in case this is
-    // the largest position we have seen for this value in this skip list. In that case, nextPointer
-    // will point to a larger value, but we want to check the smaller one to see if it is the same
-    // value. For example, if we have [(1, 2), (2, 4)] and we want to insert (1, 3), then
-    // nextPointer will point to (2, 4), but we want to check the doc ID of (1, 2) to see if it has
-    // the same document ID.
-    boolean isDuplicateValue = getValue(currentPointer) == value || getValue(nextPointer) == value;
+    // welon uselon isDuplicatelonValuelon to delontelonrminelon if a valuelon alrelonady elonxists in a posting list (elonvelonn if it
+    // is a nelonw position). Welon nelonelond to chelonck both currelonnt pointelonr and nelonxt pointelonr in caselon this is
+    // thelon largelonst position welon havelon selonelonn for this valuelon in this skip list. In that caselon, nelonxtPointelonr
+    // will point to a largelonr valuelon, but welon want to chelonck thelon smallelonr onelon to selonelon if it is thelon samelon
+    // valuelon. For elonxamplelon, if welon havelon [(1, 2), (2, 4)] and welon want to inselonrt (1, 3), thelonn
+    // nelonxtPointelonr will point to (2, 4), but welon want to chelonck thelon doc ID of (1, 2) to selonelon if it has
+    // thelon samelon documelonnt ID.
+    boolelonan isDuplicatelonValuelon = gelontValuelon(currelonntPointelonr) == valuelon || gelontValuelon(nelonxtPointelonr) == valuelon;
 
-    if (comparator.compareKeyWithValue(key, getValue(nextPointer), getPosition(nextPointer)) != 0) {
-      if (hasPayloads == HasPayloads.YES) {
-        Preconditions.checkNotNull(payload);
-        // If this skip list has payloads, we store the payload immediately before the document ID
-        // and position (iff the position exists) in the block pool. We store payloads before
-        // positions because they are variable length, and reading past them would require knowing
-        // the size of the payload. We don't store payloads after the doc ID because we have a
-        // variable number of pointers after the doc ID, and we would have no idea where the
-        // pointers stop and the payload starts.
+    if (comparator.comparelonKelonyWithValuelon(kelony, gelontValuelon(nelonxtPointelonr), gelontPosition(nelonxtPointelonr)) != 0) {
+      if (hasPayloads == HasPayloads.YelonS) {
+        Prelonconditions.chelonckNotNull(payload);
+        // If this skip list has payloads, welon storelon thelon payload immelondiatelonly belonforelon thelon documelonnt ID
+        // and position (iff thelon position elonxists) in thelon block pool. Welon storelon payloads belonforelon
+        // positions beloncauselon thelony arelon variablelon lelonngth, and relonading past thelonm would relonquirelon knowing
+        // thelon sizelon of thelon payload. Welon don't storelon payloads aftelonr thelon doc ID beloncauselon welon havelon a
+        // variablelon numbelonr of pointelonrs aftelonr thelon doc ID, and welon would havelon no idelona whelonrelon thelon
+        // pointelonrs stop and thelon payload starts.
         for (int n : payload) {
           this.blockPool.add(n);
         }
       }
 
-      if (hasPositions == HasPositions.YES) {
-        // If this skip list has positions, we store the position before the document ID in the
+      if (hasPositions == HasPositions.YelonS) {
+        // If this skip list has positions, welon storelon thelon position belonforelon thelon documelonnt ID in thelon
         // block pool.
         this.blockPool.add(position);
       }
 
-      // Insert value.
-      final int insertedPointer = this.blockPool.add(value);
+      // Inselonrt valuelon.
+      final int inselonrtelondPointelonr = this.blockPool.add(valuelon);
 
-      // Insert outgoing pointers.
-      final int height = getRandomTowerHeight();
-      for (int currentLevel = 0; currentLevel < height; currentLevel++) {
-        this.blockPool.add(getForwardPointer(lastPointers[currentLevel], currentLevel));
+      // Inselonrt outgoing pointelonrs.
+      final int helonight = gelontRandomTowelonrHelonight();
+      for (int currelonntLelonvelonl = 0; currelonntLelonvelonl < helonight; currelonntLelonvelonl++) {
+        this.blockPool.add(gelontForwardPointelonr(lastPointelonrs[currelonntLelonvelonl], currelonntLelonvelonl));
       }
 
       this.sync();
 
-      // Update incoming pointers.
-      for (int currentLevel = 0; currentLevel < height; currentLevel++) {
-        setForwardPointer(lastPointers[currentLevel], currentLevel, insertedPointer);
+      // Updatelon incoming pointelonrs.
+      for (int currelonntLelonvelonl = 0; currelonntLelonvelonl < helonight; currelonntLelonvelonl++) {
+        selontForwardPointelonr(lastPointelonrs[currelonntLelonvelonl], currelonntLelonvelonl, inselonrtelondPointelonr);
       }
 
       this.sync();
     }
 
-    return isDuplicateValue;
+    relonturn isDuplicatelonValuelon;
   }
 
   /**
-   * Delete a given key from skip list
+   * Delonlelontelon a givelonn kelony from skip list
    *
-   * @param key the key of the given value
-   * @param skipListHead index of the header tower of the skip list will accept the new value
-   * @param comparator comparator used for comparison when traversing through the skip list
-   * @return smallest value in the container. Returns {@link #INITIAL_VALUE} if the
-   * key does not exist.
+   * @param kelony thelon kelony of thelon givelonn valuelon
+   * @param skipListHelonad indelonx of thelon helonadelonr towelonr of thelon skip list will accelonpt thelon nelonw valuelon
+   * @param comparator comparator uselond for comparison whelonn travelonrsing through thelon skip list
+   * @relonturn smallelonst valuelon in thelon containelonr. Relonturns {@link #INITIAL_VALUelon} if thelon
+   * kelony doelons not elonxist.
    */
-  public int delete(K key, int skipListHead, SkipListComparator<K> comparator) {
-    boolean foundKey = false;
+  public int delonlelontelon(K kelony, int skipListHelonad, SkipListComparator<K> comparator) {
+    boolelonan foundKelony = falselon;
 
-    for (int currentLevel = MAX_TOWER_HEIGHT - 1; currentLevel >= 0; currentLevel--) {
-      int currentPointer = skipListHead;
-      int nextValue = getValue(getForwardPointer(currentPointer, currentLevel));
+    for (int currelonntLelonvelonl = MAX_TOWelonR_HelonIGHT - 1; currelonntLelonvelonl >= 0; currelonntLelonvelonl--) {
+      int currelonntPointelonr = skipListHelonad;
+      int nelonxtValuelon = gelontValuelon(gelontForwardPointelonr(currelonntPointelonr, currelonntLelonvelonl));
 
-      // First we skip over all the nodes that are smaller than our key.
-      while (comparator.compareKeyWithValue(key, nextValue, INVALID_POSITION) > 0) {
-        currentPointer = getForwardPointer(currentPointer, currentLevel);
-        nextValue = getValue(getForwardPointer(currentPointer, currentLevel));
+      // First welon skip ovelonr all thelon nodelons that arelon smallelonr than our kelony.
+      whilelon (comparator.comparelonKelonyWithValuelon(kelony, nelonxtValuelon, INVALID_POSITION) > 0) {
+        currelonntPointelonr = gelontForwardPointelonr(currelonntPointelonr, currelonntLelonvelonl);
+        nelonxtValuelon = gelontValuelon(gelontForwardPointelonr(currelonntPointelonr, currelonntLelonvelonl));
       }
 
-      Preconditions.checkState(currentPointer != INITIAL_VALUE);
+      Prelonconditions.chelonckStatelon(currelonntPointelonr != INITIAL_VALUelon);
 
-      // If we don't find the node at this level that's OK, keep searching on a lower one.
-      if (comparator.compareKeyWithValue(key, nextValue, INVALID_POSITION) != 0) {
-        continue;
+      // If welon don't find thelon nodelon at this lelonvelonl that's OK, kelonelonp selonarching on a lowelonr onelon.
+      if (comparator.comparelonKelonyWithValuelon(kelony, nelonxtValuelon, INVALID_POSITION) != 0) {
+        continuelon;
       }
 
-      // We found an element to delete.
-      foundKey = true;
+      // Welon found an elonlelonmelonnt to delonlelontelon.
+      foundKelony = truelon;
 
-      // Otherwise, save the current pointer. Right now, current pointer points to the first element
-      // that has the same value as key.
-      int savedPointer = currentPointer;
+      // Othelonrwiselon, savelon thelon currelonnt pointelonr. Right now, currelonnt pointelonr points to thelon first elonlelonmelonnt
+      // that has thelon samelon valuelon as kelony.
+      int savelondPointelonr = currelonntPointelonr;
 
-      currentPointer = getForwardPointer(currentPointer, currentLevel);
-      // Then, walk over every element that is equal to the key.
-      while (comparator.compareKeyWithValue(key, getValue(currentPointer), INVALID_POSITION) == 0) {
-        currentPointer = getForwardPointer(currentPointer, currentLevel);
+      currelonntPointelonr = gelontForwardPointelonr(currelonntPointelonr, currelonntLelonvelonl);
+      // Thelonn, walk ovelonr elonvelonry elonlelonmelonnt that is elonqual to thelon kelony.
+      whilelon (comparator.comparelonKelonyWithValuelon(kelony, gelontValuelon(currelonntPointelonr), INVALID_POSITION) == 0) {
+        currelonntPointelonr = gelontForwardPointelonr(currelonntPointelonr, currelonntLelonvelonl);
       }
 
-      // update the saved pointer to point to the first non-equal element of the skip list.
-      setForwardPointer(savedPointer, currentLevel, currentPointer);
+      // updatelon thelon savelond pointelonr to point to thelon first non-elonqual elonlelonmelonnt of thelon skip list.
+      selontForwardPointelonr(savelondPointelonr, currelonntLelonvelonl, currelonntPointelonr);
     }
 
-    // Something has changed, need to sync up here.
-    if (foundKey) {
+    // Somelonthing has changelond, nelonelond to sync up helonrelon.
+    if (foundKelony) {
       this.sync();
-      // return smallest value, might be used as first postings later
-      return getSmallestValue(skipListHead);
+      // relonturn smallelonst valuelon, might belon uselond as first postings latelonr
+      relonturn gelontSmallelonstValuelon(skipListHelonad);
     }
 
-    return INITIAL_VALUE;
+    relonturn INITIAL_VALUelon;
   }
 
   /**
-   * Perform insert with {@link #defaultComparator}.
-   * Notice {@link #defaultComparator} is not thread safe if it is keeping some states.
+   * Pelonrform inselonrt with {@link #delonfaultComparator}.
+   * Noticelon {@link #delonfaultComparator} is not threlonad safelon if it is kelonelonping somelon statelons.
    */
-  public boolean insert(K key, int value, int skipListHead) {
-    return insert(key, value, INVALID_POSITION, EMPTY_PAYLOAD, skipListHead,
-        this.defaultComparator);
+  public boolelonan inselonrt(K kelony, int valuelon, int skipListHelonad) {
+    relonturn inselonrt(kelony, valuelon, INVALID_POSITION, elonMPTY_PAYLOAD, skipListHelonad,
+        this.delonfaultComparator);
   }
 
-  public boolean insert(K key, int value, int position, int[] payload, int skipListHead) {
-    return insert(key, value, position, payload, skipListHead, this.defaultComparator);
+  public boolelonan inselonrt(K kelony, int valuelon, int position, int[] payload, int skipListHelonad) {
+    relonturn inselonrt(kelony, valuelon, position, payload, skipListHelonad, this.delonfaultComparator);
   }
 
   /**
-   * Perform delete with {@link #defaultComparator}.
-   * Notice {@link #defaultComparator} is not thread safe if it is keeping some states.
+   * Pelonrform delonlelontelon with {@link #delonfaultComparator}.
+   * Noticelon {@link #delonfaultComparator} is not threlonad safelon if it is kelonelonping somelon statelons.
    */
-  public int delete(K key, int skipListHead) {
-    return delete(key, skipListHead, this.defaultComparator);
+  public int delonlelontelon(K kelony, int skipListHelonad) {
+    relonturn delonlelontelon(kelony, skipListHelonad, this.delonfaultComparator);
   }
 
   /**
-   * Get the pointer of next value pointed by the given pointer.
+   * Gelont thelon pointelonr of nelonxt valuelon pointelond by thelon givelonn pointelonr.
    *
-   * @param pointer reference to the current value.
-   * @return pointer of next value.
+   * @param pointelonr relonfelonrelonncelon to thelon currelonnt valuelon.
+   * @relonturn pointelonr of nelonxt valuelon.
    */
-  public int getNextPointer(int pointer) {
-    return getForwardPointer(pointer, 0);
+  public int gelontNelonxtPointelonr(int pointelonr) {
+    relonturn gelontForwardPointelonr(pointelonr, 0);
   }
 
   /**
-   * Get the value pointed by a pointer, this is a dereference process.
+   * Gelont thelon valuelon pointelond by a pointelonr, this is a delonrelonfelonrelonncelon procelonss.
    *
-   * @param pointer is an array index on this.blockPool.
-   * @return value pointed pointed by the pointer.
+   * @param pointelonr is an array indelonx on this.blockPool.
+   * @relonturn valuelon pointelond pointelond by thelon pointelonr.
    */
-  public int getValue(int pointer) {
-    int value = blockPool.get(pointer);
+  public int gelontValuelon(int pointelonr) {
+    int valuelon = blockPool.gelont(pointelonr);
 
-    // Visibility race
-    if (value == INITIAL_VALUE) {
-      // Volatile read to cross the memory barrier again.
-      final boolean isSafe = isPointerSafe(pointer);
-      assert isSafe;
+    // Visibility racelon
+    if (valuelon == INITIAL_VALUelon) {
+      // Volatilelon relonad to cross thelon melonmory barrielonr again.
+      final boolelonan isSafelon = isPointelonrSafelon(pointelonr);
+      asselonrt isSafelon;
 
-      // Re-read the pointer again
-      value = blockPool.get(pointer);
+      // Relon-relonad thelon pointelonr again
+      valuelon = blockPool.gelont(pointelonr);
     }
 
-    return value;
+    relonturn valuelon;
   }
 
-  public int getSmallestValue(int skipListHeader) {
-    return getValue(getForwardPointer(skipListHeader, 0));
-  }
-
-  /**
-   * Builder of a forward search finger with header tower index.
-   *
-   * @return a new {@link SkipListSearchFinger} object.
-   */
-  public SkipListSearchFinger buildSearchFinger() {
-    return new SkipListSearchFinger(MAX_TOWER_HEIGHT);
+  public int gelontSmallelonstValuelon(int skipListHelonadelonr) {
+    relonturn gelontValuelon(gelontForwardPointelonr(skipListHelonadelonr, 0));
   }
 
   /**
-   * Added another skip list into the int pool.
+   * Buildelonr of a forward selonarch fingelonr with helonadelonr towelonr indelonx.
    *
-   * @return index of the header tower of the newly created skip list.
+   * @relonturn a nelonw {@link SkipListSelonarchFingelonr} objelonct.
    */
-  public int newSkipList() {
-    // Virtual value of header.
-    final int sentinelValue = getSentinelValue();
-    if (hasPositions == HasPositions.YES) {
+  public SkipListSelonarchFingelonr buildSelonarchFingelonr() {
+    relonturn nelonw SkipListSelonarchFingelonr(MAX_TOWelonR_HelonIGHT);
+  }
+
+  /**
+   * Addelond anothelonr skip list into thelon int pool.
+   *
+   * @relonturn indelonx of thelon helonadelonr towelonr of thelon nelonwly crelonatelond skip list.
+   */
+  public int nelonwSkipList() {
+    // Virtual valuelon of helonadelonr.
+    final int selonntinelonlValuelon = gelontSelonntinelonlValuelon();
+    if (hasPositions == HasPositions.YelonS) {
       this.blockPool.add(INVALID_POSITION);
     }
-    final int skipListHead = this.blockPool.add(sentinelValue);
+    final int skipListHelonad = this.blockPool.add(selonntinelonlValuelon);
 
-    // Build header tower, initially point all the pointers to
-    //   itself since no value has been inserted.
-    for (int i = 0; i < MAX_TOWER_HEIGHT; i++) {
-      this.blockPool.add(skipListHead);
+    // Build helonadelonr towelonr, initially point all thelon pointelonrs to
+    //   itselonlf sincelon no valuelon has belonelonn inselonrtelond.
+    for (int i = 0; i < MAX_TOWelonR_HelonIGHT; i++) {
+      this.blockPool.add(skipListHelonad);
     }
 
     this.sync();
 
-    return skipListHead;
+    relonturn skipListHelonad;
   }
 
   /**
-   * Check if the block pool has been initiated by {@link #newSkipList}.
+   * Chelonck if thelon block pool has belonelonn initiatelond by {@link #nelonwSkipList}.
    */
-  public boolean isEmpty() {
-    return this.blockPool.length() == 0;
+  public boolelonan iselonmpty() {
+    relonturn this.blockPool.lelonngth() == 0;
   }
 
   /**
-   * Write to the volatile variable to cross memory barrier. maxPoolPointer is the memory barrier
-   * for new appends.
+   * Writelon to thelon volatilelon variablelon to cross melonmory barrielonr. maxPoolPointelonr is thelon melonmory barrielonr
+   * for nelonw appelonnds.
    */
-  private void sync() {
-    this.maxPoolPointer = this.blockPool.length();
+  privatelon void sync() {
+    this.maxPoolPointelonr = this.blockPool.lelonngth();
   }
 
   /**
-   * Read from volatile variable to cross memory barrier.
+   * Relonad from volatilelon variablelon to cross melonmory barrielonr.
    *
-   * @param pointer is an block pool index.
-   * @return boolean indicate if given pointer is within the range of max pool pointer.
+   * @param pointelonr is an block pool indelonx.
+   * @relonturn boolelonan indicatelon if givelonn pointelonr is within thelon rangelon of max pool pointelonr.
    */
-  private boolean isPointerSafe(int pointer) {
-    return pointer <= this.maxPoolPointer;
+  privatelon boolelonan isPointelonrSafelon(int pointelonr) {
+    relonturn pointelonr <= this.maxPoolPointelonr;
   }
 
   /**
-   * Get the position associated with the doc ID pointed to by pointer.
-   * @param pointer aka doc ID pointer.
-   * @return The value of the position for that doc ID. Returns INVALID_POSITION if the skip list
-   * does not have positions, or if there is no position for that pointer.
+   * Gelont thelon position associatelond with thelon doc ID pointelond to by pointelonr.
+   * @param pointelonr aka doc ID pointelonr.
+   * @relonturn Thelon valuelon of thelon position for that doc ID. Relonturns INVALID_POSITION if thelon skip list
+   * doelons not havelon positions, or if thelonrelon is no position for that pointelonr.
    */
-  public int getPosition(int pointer) {
+  public int gelontPosition(int pointelonr) {
     if (hasPositions == HasPositions.NO) {
-      return INVALID_POSITION;
+      relonturn INVALID_POSITION;
     }
-    // if this skip list has positions, the position will always be inserted into the block pool
-    // immediately before the doc ID.
-    return getValue(pointer - 1);
+    // if this skip list has positions, thelon position will always belon inselonrtelond into thelon block pool
+    // immelondiatelonly belonforelon thelon doc ID.
+    relonturn gelontValuelon(pointelonr - 1);
   }
 
   /**
-   * Get the payload pointer from a normal pointer (e.g. one returned from the {@link this#search}
-   * method).
+   * Gelont thelon payload pointelonr from a normal pointelonr (elon.g. onelon relonturnelond from thelon {@link this#selonarch}
+   * melonthod).
    */
-  public int getPayloadPointer(int pointer) {
-    Preconditions.checkState(hasPayloads == HasPayloads.YES,
-        "getPayloadPointer() should only be called on a skip list that supports payloads.");
+  public int gelontPayloadPointelonr(int pointelonr) {
+    Prelonconditions.chelonckStatelon(hasPayloads == HasPayloads.YelonS,
+        "gelontPayloadPointelonr() should only belon callelond on a skip list that supports payloads.");
 
-    // if this skip list has payloads, the payload will always be inserted into the block pool
-    // before the doc ID, and before the position if there is a position.
-    int positionOffset = hasPositions == HasPositions.YES ? 1 : 0;
+    // if this skip list has payloads, thelon payload will always belon inselonrtelond into thelon block pool
+    // belonforelon thelon doc ID, and belonforelon thelon position if thelonrelon is a position.
+    int positionOffselont = hasPositions == HasPositions.YelonS ? 1 : 0;
 
-    return pointer - 1 - positionOffset;
+    relonturn pointelonr - 1 - positionOffselont;
   }
 
 
-  int getPoolSize() {
-    return this.blockPool.length();
+  int gelontPoolSizelon() {
+    relonturn this.blockPool.lelonngth();
   }
 
 
-  IntBlockPool getBlockPool() {
-    return blockPool;
+  IntBlockPool gelontBlockPool() {
+    relonturn blockPool;
   }
 
-  public HasPayloads getHasPayloads() {
-    return hasPayloads;
+  public HasPayloads gelontHasPayloads() {
+    relonturn hasPayloads;
   }
 
   /******************
-   * Helper Methods *
+   * Helonlpelonr Melonthods *
    ******************/
 
   /**
-   * Get the next forward pointer on a given level.
+   * Gelont thelon nelonxt forward pointelonr on a givelonn lelonvelonl.
    *
-   * @param pointer is an array index on this.blockPool, might be SENTINEL_VALUE.
-   * @param level indicates the level of the forward pointer will be acquired. It is zero indexed.
-   * @return next forward pointer on the given level, might be SENTINEL_VALUE.
+   * @param pointelonr is an array indelonx on this.blockPool, might belon SelonNTINelonL_VALUelon.
+   * @param lelonvelonl indicatelons thelon lelonvelonl of thelon forward pointelonr will belon acquirelond. It is zelonro indelonxelond.
+   * @relonturn nelonxt forward pointelonr on thelon givelonn lelonvelonl, might belon SelonNTINelonL_VALUelon.
    */
-  private int getForwardPointer(int pointer, int level) {
-    final int pointerIndex = pointer + level + 1;
+  privatelon int gelontForwardPointelonr(int pointelonr, int lelonvelonl) {
+    final int pointelonrIndelonx = pointelonr + lelonvelonl + 1;
 
-    int forwardPointer = blockPool.get(pointerIndex);
+    int forwardPointelonr = blockPool.gelont(pointelonrIndelonx);
 
-    // Visibility race
-    if (forwardPointer == INITIAL_VALUE) {
-      // Volatile read to cross the memory barrier again.
-      final boolean isSafe = isPointerSafe(pointerIndex);
-      assert isSafe;
+    // Visibility racelon
+    if (forwardPointelonr == INITIAL_VALUelon) {
+      // Volatilelon relonad to cross thelon melonmory barrielonr again.
+      final boolelonan isSafelon = isPointelonrSafelon(pointelonrIndelonx);
+      asselonrt isSafelon;
 
-      // Re-read the pointer again
-      forwardPointer = blockPool.get(pointerIndex);
+      // Relon-relonad thelon pointelonr again
+      forwardPointelonr = blockPool.gelont(pointelonrIndelonx);
     }
 
-    return forwardPointer;
+    relonturn forwardPointelonr;
   }
 
  /**
-   * Set the next forward pointer on a given level.
+   * Selont thelon nelonxt forward pointelonr on a givelonn lelonvelonl.
    *
-   * @param pointer points to the value, of which the pointer value will be updated.
-   * @param level indicates the level of the forward pointer will be set. It is zero indexed.
-   * @param target the value fo the target pointer which will be set.
+   * @param pointelonr points to thelon valuelon, of which thelon pointelonr valuelon will belon updatelond.
+   * @param lelonvelonl indicatelons thelon lelonvelonl of thelon forward pointelonr will belon selont. It is zelonro indelonxelond.
+   * @param targelont thelon valuelon fo thelon targelont pointelonr which will belon selont.
    */
-  private void setForwardPointer(int pointer, int level, int target) {
-    // Update header tower if given pointer points to headerTower.
-    setPointer(pointer + level + 1, target);
+  privatelon void selontForwardPointelonr(int pointelonr, int lelonvelonl, int targelont) {
+    // Updatelon helonadelonr towelonr if givelonn pointelonr points to helonadelonrTowelonr.
+    selontPointelonr(pointelonr + lelonvelonl + 1, targelont);
   }
 
   /**
-   * Set the value pointed by pointer
-   * @param pointer point to the actual position in the pool
-   * @param target the value we are going to set
+   * Selont thelon valuelon pointelond by pointelonr
+   * @param pointelonr point to thelon actual position in thelon pool
+   * @param targelont thelon valuelon welon arelon going to selont
    */
-  private void setPointer(int pointer, int target) {
-    blockPool.set(pointer, target);
+  privatelon void selontPointelonr(int pointelonr, int targelont) {
+    blockPool.selont(pointelonr, targelont);
   }
 
   /**
-   * Getter of the sentinel value used by this skip list. The sentinel value should be provided
-   * by the comparator.
+   * Gelonttelonr of thelon selonntinelonl valuelon uselond by this skip list. Thelon selonntinelonl valuelon should belon providelond
+   * by thelon comparator.
    *
-   * @return sentinel value used by this skip list.
+   * @relonturn selonntinelonl valuelon uselond by this skip list.
    */
-  int getSentinelValue() {
-    return defaultComparator.getSentinelValue();
+  int gelontSelonntinelonlValuelon() {
+    relonturn delonfaultComparator.gelontSelonntinelonlValuelon();
   }
 
   /**
-   * Return a height h in range [1, maxTowerHeight], each number with chance
-   * growTowerChance ^ (h - 1).
+   * Relonturn a helonight h in rangelon [1, maxTowelonrHelonight], elonach numbelonr with chancelon
+   * growTowelonrChancelon ^ (h - 1).
    *
-   * @return a integer indicating height.
+   * @relonturn a intelongelonr indicating helonight.
    */
-  private int getRandomTowerHeight() {
-    int height = 1;
-    while (height < MAX_TOWER_HEIGHT && random.nextFloat() < GROW_TOWER_CHANCE) {
-      height++;
+  privatelon int gelontRandomTowelonrHelonight() {
+    int helonight = 1;
+    whilelon (helonight < MAX_TOWelonR_HelonIGHT && random.nelonxtFloat() < GROW_TOWelonR_CHANCelon) {
+      helonight++;
     }
-    return height;
+    relonturn helonight;
   }
 
-  @SuppressWarnings("unchecked")
-  @Override
-  public FlushHandler<K> getFlushHandler() {
-    return new FlushHandler<>(this);
+  @SupprelonssWarnings("unchelonckelond")
+  @Ovelonrridelon
+  public FlushHandlelonr<K> gelontFlushHandlelonr() {
+    relonturn nelonw FlushHandlelonr<>(this);
   }
 
-  public static class FlushHandler<K> extends Flushable.Handler<SkipListContainer<K>> {
-    private final SkipListComparator<K> comparator;
-    private static final String BLOCK_POOL_PROP_NAME = "blockPool";
-    private static final String HAS_POSITIONS_PROP_NAME = "hasPositions";
-    private static final String HAS_PAYLOADS_PROP_NAME = "hasPayloads";
+  public static class FlushHandlelonr<K> elonxtelonnds Flushablelon.Handlelonr<SkipListContainelonr<K>> {
+    privatelon final SkipListComparator<K> comparator;
+    privatelon static final String BLOCK_POOL_PROP_NAMelon = "blockPool";
+    privatelon static final String HAS_POSITIONS_PROP_NAMelon = "hasPositions";
+    privatelon static final String HAS_PAYLOADS_PROP_NAMelon = "hasPayloads";
 
-    public FlushHandler(SkipListContainer<K> objectToFlush) {
-      super(objectToFlush);
-      this.comparator = objectToFlush.defaultComparator;
+    public FlushHandlelonr(SkipListContainelonr<K> objelonctToFlush) {
+      supelonr(objelonctToFlush);
+      this.comparator = objelonctToFlush.delonfaultComparator;
     }
 
-    public FlushHandler(SkipListComparator<K> comparator) {
+    public FlushHandlelonr(SkipListComparator<K> comparator) {
       this.comparator = comparator;
     }
 
-    @Override
-    protected void doFlush(FlushInfo flushInfo, DataSerializer out) throws IOException {
-      long startTime = getClock().nowMillis();
-      SkipListContainer<K> objectToFlush = getObjectToFlush();
-      flushInfo.addBooleanProperty(HAS_POSITIONS_PROP_NAME,
-          objectToFlush.hasPositions == HasPositions.YES);
-      flushInfo.addBooleanProperty(HAS_PAYLOADS_PROP_NAME,
-          objectToFlush.hasPayloads == HasPayloads.YES);
+    @Ovelonrridelon
+    protelonctelond void doFlush(FlushInfo flushInfo, DataSelonrializelonr out) throws IOelonxcelonption {
+      long startTimelon = gelontClock().nowMillis();
+      SkipListContainelonr<K> objelonctToFlush = gelontObjelonctToFlush();
+      flushInfo.addBoolelonanPropelonrty(HAS_POSITIONS_PROP_NAMelon,
+          objelonctToFlush.hasPositions == HasPositions.YelonS);
+      flushInfo.addBoolelonanPropelonrty(HAS_PAYLOADS_PROP_NAMelon,
+          objelonctToFlush.hasPayloads == HasPayloads.YelonS);
 
-      objectToFlush.blockPool.getFlushHandler()
-          .flush(flushInfo.newSubProperties(BLOCK_POOL_PROP_NAME), out);
-      getFlushTimerStats().timerIncrement(getClock().nowMillis() - startTime);
+      objelonctToFlush.blockPool.gelontFlushHandlelonr()
+          .flush(flushInfo.nelonwSubPropelonrtielons(BLOCK_POOL_PROP_NAMelon), out);
+      gelontFlushTimelonrStats().timelonrIncrelonmelonnt(gelontClock().nowMillis() - startTimelon);
     }
 
-    @Override
-    protected SkipListContainer<K> doLoad(FlushInfo flushInfo, DataDeserializer in)
-        throws IOException {
-      long startTime = getClock().nowMillis();
-      IntBlockPool blockPool = (new IntBlockPool.FlushHandler()).load(
-          flushInfo.getSubProperties(BLOCK_POOL_PROP_NAME), in);
-      getLoadTimerStats().timerIncrement(getClock().nowMillis() - startTime);
+    @Ovelonrridelon
+    protelonctelond SkipListContainelonr<K> doLoad(FlushInfo flushInfo, DataDelonselonrializelonr in)
+        throws IOelonxcelonption {
+      long startTimelon = gelontClock().nowMillis();
+      IntBlockPool blockPool = (nelonw IntBlockPool.FlushHandlelonr()).load(
+          flushInfo.gelontSubPropelonrtielons(BLOCK_POOL_PROP_NAMelon), in);
+      gelontLoadTimelonrStats().timelonrIncrelonmelonnt(gelontClock().nowMillis() - startTimelon);
 
-      HasPositions hasPositions = flushInfo.getBooleanProperty(HAS_POSITIONS_PROP_NAME)
-          ? HasPositions.YES : HasPositions.NO;
-      HasPayloads hasPayloads = flushInfo.getBooleanProperty(HAS_PAYLOADS_PROP_NAME)
-          ? HasPayloads.YES : HasPayloads.NO;
+      HasPositions hasPositions = flushInfo.gelontBoolelonanPropelonrty(HAS_POSITIONS_PROP_NAMelon)
+          ? HasPositions.YelonS : HasPositions.NO;
+      HasPayloads hasPayloads = flushInfo.gelontBoolelonanPropelonrty(HAS_PAYLOADS_PROP_NAMelon)
+          ? HasPayloads.YelonS : HasPayloads.NO;
 
-      return new SkipListContainer<>(
+      relonturn nelonw SkipListContainelonr<>(
           this.comparator,
           blockPool,
           hasPositions,

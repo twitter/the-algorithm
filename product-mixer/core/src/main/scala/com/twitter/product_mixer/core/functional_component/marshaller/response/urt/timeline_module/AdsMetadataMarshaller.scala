@@ -1,13 +1,13 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.timeline_module
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.timelonlinelon_modulelon
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.AdsMetadata
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.timelonlinelon_modulelon.AdsMelontadata
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class AdsMetadataMarshaller @Inject() () {
+@Singlelonton
+class AdsMelontadataMarshallelonr @Injelonct() () {
 
-  def apply(adsMetadata: AdsMetadata): urt.AdsMetadata =
-    urt.AdsMetadata(carouselId = adsMetadata.carouselId)
+  delonf apply(adsMelontadata: AdsMelontadata): urt.AdsMelontadata =
+    urt.AdsMelontadata(carouselonlId = adsMelontadata.carouselonlId)
 }

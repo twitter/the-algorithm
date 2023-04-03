@@ -1,59 +1,59 @@
-package com.twitter.home_mixer.functional_component.feature_hydrator.adapters.author_features
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator.adaptelonrs.author_felonaturelons
 
-import com.twitter.ml.api.DataRecordMerger
-import com.twitter.ml.api.Feature
-import com.twitter.ml.api.FeatureContext
-import com.twitter.ml.api.RichDataRecord
-import com.twitter.ml.api.util.CompactDataRecordConverter
-import com.twitter.ml.api.util.FDsl._
-import com.twitter.timelines.author_features.v1.{thriftjava => af}
-import com.twitter.timelines.prediction.common.adapters.TimelinesMutatingAdapterBase
-import com.twitter.timelines.prediction.common.aggregates.TimelinesAggregationConfig
-import com.twitter.timelines.prediction.features.user_health.UserHealthFeatures
+import com.twittelonr.ml.api.DataReloncordMelonrgelonr
+import com.twittelonr.ml.api.Felonaturelon
+import com.twittelonr.ml.api.FelonaturelonContelonxt
+import com.twittelonr.ml.api.RichDataReloncord
+import com.twittelonr.ml.api.util.CompactDataReloncordConvelonrtelonr
+import com.twittelonr.ml.api.util.FDsl._
+import com.twittelonr.timelonlinelons.author_felonaturelons.v1.{thriftjava => af}
+import com.twittelonr.timelonlinelons.prelondiction.common.adaptelonrs.TimelonlinelonsMutatingAdaptelonrBaselon
+import com.twittelonr.timelonlinelons.prelondiction.common.aggrelongatelons.TimelonlinelonsAggrelongationConfig
+import com.twittelonr.timelonlinelons.prelondiction.felonaturelons.uselonr_helonalth.UselonrHelonalthFelonaturelons
 
-object AuthorFeaturesAdapter extends TimelinesMutatingAdapterBase[Option[af.AuthorFeatures]] {
+objelonct AuthorFelonaturelonsAdaptelonr elonxtelonnds TimelonlinelonsMutatingAdaptelonrBaselon[Option[af.AuthorFelonaturelons]] {
 
-  private val originalAuthorAggregatesFeatures =
-    TimelinesAggregationConfig.originalAuthorReciprocalEngagementAggregates
-      .buildTypedAggregateGroups().flatMap(_.allOutputFeatures)
-  private val authorFeatures = originalAuthorAggregatesFeatures ++
-    Seq(
-      UserHealthFeatures.AuthorState,
-      UserHealthFeatures.NumAuthorFollowers,
-      UserHealthFeatures.NumAuthorConnectDays,
-      UserHealthFeatures.NumAuthorConnect)
-  private val featureContext = new FeatureContext(authorFeatures: _*)
+  privatelon val originalAuthorAggrelongatelonsFelonaturelons =
+    TimelonlinelonsAggrelongationConfig.originalAuthorRelonciprocalelonngagelonmelonntAggrelongatelons
+      .buildTypelondAggrelongatelonGroups().flatMap(_.allOutputFelonaturelons)
+  privatelon val authorFelonaturelons = originalAuthorAggrelongatelonsFelonaturelons ++
+    Selonq(
+      UselonrHelonalthFelonaturelons.AuthorStatelon,
+      UselonrHelonalthFelonaturelons.NumAuthorFollowelonrs,
+      UselonrHelonalthFelonaturelons.NumAuthorConnelonctDays,
+      UselonrHelonalthFelonaturelons.NumAuthorConnelonct)
+  privatelon val felonaturelonContelonxt = nelonw FelonaturelonContelonxt(authorFelonaturelons: _*)
 
-  override def getFeatureContext: FeatureContext = featureContext
+  ovelonrridelon delonf gelontFelonaturelonContelonxt: FelonaturelonContelonxt = felonaturelonContelonxt
 
-  override val commonFeatures: Set[Feature[_]] = Set.empty
+  ovelonrridelon val commonFelonaturelons: Selont[Felonaturelon[_]] = Selont.elonmpty
 
-  private val compactDataRecordConverter = new CompactDataRecordConverter()
-  private val drMerger = new DataRecordMerger()
+  privatelon val compactDataReloncordConvelonrtelonr = nelonw CompactDataReloncordConvelonrtelonr()
+  privatelon val drMelonrgelonr = nelonw DataReloncordMelonrgelonr()
 
-  override def setFeatures(
-    authorFeaturesOpt: Option[af.AuthorFeatures],
-    richDataRecord: RichDataRecord
+  ovelonrridelon delonf selontFelonaturelons(
+    authorFelonaturelonsOpt: Option[af.AuthorFelonaturelons],
+    richDataReloncord: RichDataReloncord
   ): Unit = {
-    authorFeaturesOpt.foreach { authorFeatures =>
-      val dataRecord = richDataRecord.getRecord
+    authorFelonaturelonsOpt.forelonach { authorFelonaturelons =>
+      val dataReloncord = richDataReloncord.gelontReloncord
 
-      dataRecord.setFeatureValue(
-        UserHealthFeatures.AuthorState,
-        authorFeatures.user_health.user_state.getValue.toLong)
-      dataRecord.setFeatureValue(
-        UserHealthFeatures.NumAuthorFollowers,
-        authorFeatures.user_health.num_followers.toDouble)
-      dataRecord.setFeatureValue(
-        UserHealthFeatures.NumAuthorConnectDays,
-        authorFeatures.user_health.num_connect_days.toDouble)
-      dataRecord.setFeatureValue(
-        UserHealthFeatures.NumAuthorConnect,
-        authorFeatures.user_health.num_connect.toDouble)
+      dataReloncord.selontFelonaturelonValuelon(
+        UselonrHelonalthFelonaturelons.AuthorStatelon,
+        authorFelonaturelons.uselonr_helonalth.uselonr_statelon.gelontValuelon.toLong)
+      dataReloncord.selontFelonaturelonValuelon(
+        UselonrHelonalthFelonaturelons.NumAuthorFollowelonrs,
+        authorFelonaturelons.uselonr_helonalth.num_followelonrs.toDoublelon)
+      dataReloncord.selontFelonaturelonValuelon(
+        UselonrHelonalthFelonaturelons.NumAuthorConnelonctDays,
+        authorFelonaturelons.uselonr_helonalth.num_connelonct_days.toDoublelon)
+      dataReloncord.selontFelonaturelonValuelon(
+        UselonrHelonalthFelonaturelons.NumAuthorConnelonct,
+        authorFelonaturelons.uselonr_helonalth.num_connelonct.toDoublelon)
 
-      val originalAuthorAggregatesDataRecord =
-        compactDataRecordConverter.compactDataRecordToDataRecord(authorFeatures.aggregates)
-      drMerger.merge(dataRecord, originalAuthorAggregatesDataRecord)
+      val originalAuthorAggrelongatelonsDataReloncord =
+        compactDataReloncordConvelonrtelonr.compactDataReloncordToDataReloncord(authorFelonaturelons.aggrelongatelons)
+      drMelonrgelonr.melonrgelon(dataReloncord, originalAuthorAggrelongatelonsDataReloncord)
     }
   }
 }

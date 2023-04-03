@@ -1,5 +1,5 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.metadata
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata
 
-case class ArticleDetails(
-  articlePosition: Int,
-  shareCount: Int)
+caselon class ArticlelonDelontails(
+  articlelonPosition: Int,
+  sharelonCount: Int)

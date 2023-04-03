@@ -1,60 +1,60 @@
-package com.twitter.product_mixer.component_library.module
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.modulelon
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.conversions.PercentOps._
-import com.twitter.finagle.ThriftMux
-import com.twitter.finagle.thriftmux.MethodBuilder
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsClient
-import com.twitter.inject.Injector
-import com.twitter.inject.annotations.Flags
-import com.twitter.inject.thrift.modules.ThriftMethodBuilderClientModule
-import com.twitter.search.earlybird.{thriftscala => t}
-import com.twitter.util.Duration
-import org.apache.thrift.protocol.TCompactProtocol
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.convelonrsions.PelonrcelonntOps._
+import com.twittelonr.finaglelon.ThriftMux
+import com.twittelonr.finaglelon.thriftmux.MelonthodBuildelonr
+import com.twittelonr.finatra.mtls.thriftmux.modulelons.MtlsClielonnt
+import com.twittelonr.injelonct.Injelonctor
+import com.twittelonr.injelonct.annotations.Flags
+import com.twittelonr.injelonct.thrift.modulelons.ThriftMelonthodBuildelonrClielonntModulelon
+import com.twittelonr.selonarch.elonarlybird.{thriftscala => t}
+import com.twittelonr.util.Duration
+import org.apachelon.thrift.protocol.TCompactProtocol
 
-object EarlybirdModule
-    extends ThriftMethodBuilderClientModule[
-      t.EarlybirdService.ServicePerEndpoint,
-      t.EarlybirdService.MethodPerEndpoint
+objelonct elonarlybirdModulelon
+    elonxtelonnds ThriftMelonthodBuildelonrClielonntModulelon[
+      t.elonarlybirdSelonrvicelon.SelonrvicelonPelonrelonndpoint,
+      t.elonarlybirdSelonrvicelon.MelonthodPelonrelonndpoint
     ]
-    with MtlsClient {
-  final val EarlybirdTimeoutPerRequest = "earlybird.timeout_per_request"
-  final val EarlybirdTimeoutTotal = "earlybird.timeout_total"
+    with MtlsClielonnt {
+  final val elonarlybirdTimelonoutPelonrRelonquelonst = "elonarlybird.timelonout_pelonr_relonquelonst"
+  final val elonarlybirdTimelonoutTotal = "elonarlybird.timelonout_total"
 
   flag[Duration](
-    name = EarlybirdTimeoutPerRequest,
-    default = 200.milliseconds,
-    help = "Timeout per request for Earlybird")
+    namelon = elonarlybirdTimelonoutPelonrRelonquelonst,
+    delonfault = 200.milliselonconds,
+    helonlp = "Timelonout pelonr relonquelonst for elonarlybird")
 
   flag[Duration](
-    name = EarlybirdTimeoutTotal,
-    default = 400.milliseconds,
-    help = "Timeout total for Earlybird")
+    namelon = elonarlybirdTimelonoutTotal,
+    delonfault = 400.milliselonconds,
+    helonlp = "Timelonout total for elonarlybird")
 
-  override val dest = "/s/earlybird-root-superroot/root-superroot"
-  override val label = "earlybird"
+  ovelonrridelon val delonst = "/s/elonarlybird-root-supelonrroot/root-supelonrroot"
+  ovelonrridelon val labelonl = "elonarlybird"
 
-  override protected def configureMethodBuilder(
-    injector: Injector,
-    methodBuilder: MethodBuilder
-  ): MethodBuilder = {
-    val timeOutPerRequest: Duration = injector
-      .instance[Duration](Flags.named(EarlybirdTimeoutPerRequest))
-    val timeOutTotal: Duration = injector.instance[Duration](Flags.named(EarlybirdTimeoutTotal))
-    methodBuilder
-    // See TL-14313 for load testing details that led to 200ms being selected as request timeout
-      .withTimeoutPerRequest(timeOutPerRequest)
-      .withTimeoutTotal(timeOutTotal)
-      .idempotent(5.percent)
+  ovelonrridelon protelonctelond delonf configurelonMelonthodBuildelonr(
+    injelonctor: Injelonctor,
+    melonthodBuildelonr: MelonthodBuildelonr
+  ): MelonthodBuildelonr = {
+    val timelonOutPelonrRelonquelonst: Duration = injelonctor
+      .instancelon[Duration](Flags.namelond(elonarlybirdTimelonoutPelonrRelonquelonst))
+    val timelonOutTotal: Duration = injelonctor.instancelon[Duration](Flags.namelond(elonarlybirdTimelonoutTotal))
+    melonthodBuildelonr
+    // Selonelon TL-14313 for load telonsting delontails that lelond to 200ms beloning selonlelonctelond as relonquelonst timelonout
+      .withTimelonoutPelonrRelonquelonst(timelonOutPelonrRelonquelonst)
+      .withTimelonoutTotal(timelonOutTotal)
+      .idelonmpotelonnt(5.pelonrcelonnt)
   }
 
-  override def configureThriftMuxClient(
-    injector: Injector,
-    client: ThriftMux.Client
-  ): ThriftMux.Client =
-    super
-      .configureThriftMuxClient(injector, client)
-      .withProtocolFactory(new TCompactProtocol.Factory())
+  ovelonrridelon delonf configurelonThriftMuxClielonnt(
+    injelonctor: Injelonctor,
+    clielonnt: ThriftMux.Clielonnt
+  ): ThriftMux.Clielonnt =
+    supelonr
+      .configurelonThriftMuxClielonnt(injelonctor, clielonnt)
+      .withProtocolFactory(nelonw TCompactProtocol.Factory())
 
-  override protected def sessionAcquisitionTimeout: Duration = 1.seconds
+  ovelonrridelon protelonctelond delonf selonssionAcquisitionTimelonout: Duration = 1.selonconds
 }

@@ -1,9 +1,9 @@
-package com.twitter.product_mixer.core.pipeline.state
+packagelon com.twittelonr.product_mixelonr.corelon.pipelonlinelon.statelon
 
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
 
-trait HasCandidatesWithFeatures[Candidate <: UniversalNoun[Any], T] {
-  def candidatesWithFeatures: Seq[CandidateWithFeatures[Candidate]]
-  def updateCandidatesWithFeatures(newCandidates: Seq[CandidateWithFeatures[Candidate]]): T
+trait HasCandidatelonsWithFelonaturelons[Candidatelon <: UnivelonrsalNoun[Any], T] {
+  delonf candidatelonsWithFelonaturelons: Selonq[CandidatelonWithFelonaturelons[Candidatelon]]
+  delonf updatelonCandidatelonsWithFelonaturelons(nelonwCandidatelons: Selonq[CandidatelonWithFelonaturelons[Candidatelon]]): T
 }

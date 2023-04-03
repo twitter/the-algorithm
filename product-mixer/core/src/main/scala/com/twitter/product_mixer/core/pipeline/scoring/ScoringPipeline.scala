@@ -1,32 +1,32 @@
-package com.twitter.product_mixer.core.pipeline.scoring
+packagelon com.twittelonr.product_mixelonr.corelon.pipelonlinelon.scoring
 
-import com.twitter.product_mixer.core.functional_component.scorer.ScoredCandidateResult
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.ScoringPipelineIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.ItemCandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.Pipeline
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Arrow
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.scorelonr.ScorelondCandidatelonRelonsult
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.ScoringPipelonlinelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.ItelonmCandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.Pipelonlinelon
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stitch.Arrow
 
 /**
- * A Scoring Pipeline
+ * A Scoring Pipelonlinelon
  *
- * This is an abstract class, as we only construct these via the [[ScoringPipelineBuilder]].
+ * This is an abstract class, as welon only construct thelonselon via thelon [[ScoringPipelonlinelonBuildelonr]].
  *
- * A [[ScoringPipeline]] is capable of pre-filtering candidates for scoring, performing the scoring
- * then running selection heuristics (ranking, dropping, etc) based off of the score.
- * @tparam Query the domain model for the query or request
- * @tparam Candidate the domain model for the candidate being scored
+ * A [[ScoringPipelonlinelon]] is capablelon of prelon-filtelonring candidatelons for scoring, pelonrforming thelon scoring
+ * thelonn running selonlelonction helonuristics (ranking, dropping, elontc) baselond off of thelon scorelon.
+ * @tparam Quelonry thelon domain modelonl for thelon quelonry or relonquelonst
+ * @tparam Candidatelon thelon domain modelonl for thelon candidatelon beloning scorelond
  */
-abstract class ScoringPipeline[-Query <: PipelineQuery, Candidate <: UniversalNoun[Any]]
-    extends Pipeline[ScoringPipeline.Inputs[Query], Seq[ScoredCandidateResult[Candidate]]] {
-  override private[core] val config: ScoringPipelineConfig[Query, Candidate]
-  override val arrow: Arrow[ScoringPipeline.Inputs[Query], ScoringPipelineResult[Candidate]]
-  override val identifier: ScoringPipelineIdentifier
+abstract class ScoringPipelonlinelon[-Quelonry <: PipelonlinelonQuelonry, Candidatelon <: UnivelonrsalNoun[Any]]
+    elonxtelonnds Pipelonlinelon[ScoringPipelonlinelon.Inputs[Quelonry], Selonq[ScorelondCandidatelonRelonsult[Candidatelon]]] {
+  ovelonrridelon privatelon[corelon] val config: ScoringPipelonlinelonConfig[Quelonry, Candidatelon]
+  ovelonrridelon val arrow: Arrow[ScoringPipelonlinelon.Inputs[Quelonry], ScoringPipelonlinelonRelonsult[Candidatelon]]
+  ovelonrridelon val idelonntifielonr: ScoringPipelonlinelonIdelonntifielonr
 }
 
-object ScoringPipeline {
-  case class Inputs[+Query <: PipelineQuery](
-    query: Query,
-    candidates: Seq[ItemCandidateWithDetails])
+objelonct ScoringPipelonlinelon {
+  caselon class Inputs[+Quelonry <: PipelonlinelonQuelonry](
+    quelonry: Quelonry,
+    candidatelons: Selonq[ItelonmCandidatelonWithDelontails])
 }

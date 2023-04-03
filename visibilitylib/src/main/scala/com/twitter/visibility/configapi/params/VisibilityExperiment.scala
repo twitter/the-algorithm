@@ -1,19 +1,19 @@
-package com.twitter.visibility.configapi.params
+packagelon com.twittelonr.visibility.configapi.params
 
-import com.twitter.timelines.configapi.BucketName
-import com.twitter.timelines.configapi.Experiment
-import com.twitter.timelines.configapi.UseFeatureContext
+import com.twittelonr.timelonlinelons.configapi.BuckelontNamelon
+import com.twittelonr.timelonlinelons.configapi.elonxpelonrimelonnt
+import com.twittelonr.timelonlinelons.configapi.UselonFelonaturelonContelonxt
 
-object VisibilityExperiment {
+objelonct Visibilityelonxpelonrimelonnt {
   val Control = "control"
-  val Treatment = "treatment"
+  val Trelonatmelonnt = "trelonatmelonnt"
 }
 
-abstract class VisibilityExperiment(experimentKey: String)
-    extends Experiment(experimentKey)
-    with UseFeatureContext {
-  val TreatmentBucket: String = VisibilityExperiment.Treatment
-  override def experimentBuckets: Set[BucketName] = Set(TreatmentBucket)
-  val ControlBucket: String = VisibilityExperiment.Control
-  override def controlBuckets: Set[BucketName] = Set(ControlBucket)
+abstract class Visibilityelonxpelonrimelonnt(elonxpelonrimelonntKelony: String)
+    elonxtelonnds elonxpelonrimelonnt(elonxpelonrimelonntKelony)
+    with UselonFelonaturelonContelonxt {
+  val TrelonatmelonntBuckelont: String = Visibilityelonxpelonrimelonnt.Trelonatmelonnt
+  ovelonrridelon delonf elonxpelonrimelonntBuckelonts: Selont[BuckelontNamelon] = Selont(TrelonatmelonntBuckelont)
+  val ControlBuckelont: String = Visibilityelonxpelonrimelonnt.Control
+  ovelonrridelon delonf controlBuckelonts: Selont[BuckelontNamelon] = Selont(ControlBuckelont)
 }

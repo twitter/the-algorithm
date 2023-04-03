@@ -1,5 +1,5 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.media
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melondia
 
-case class AspectRatio(
-  numerator: Short,
-  denominator: Short)
+caselon class AspelonctRatio(
+  numelonrator: Short,
+  delonnominator: Short)

@@ -1,5 +1,5 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.operation
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.opelonration
 
-case class CursorDisplayTreatment(
-  actionText: Option[String],
-  labelText: Option[String])
+caselon class CursorDisplayTrelonatmelonnt(
+  actionTelonxt: Option[String],
+  labelonlTelonxt: Option[String])

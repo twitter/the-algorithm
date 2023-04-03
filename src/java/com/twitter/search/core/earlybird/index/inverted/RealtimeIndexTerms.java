@@ -1,365 +1,365 @@
-package com.twitter.search.core.earlybird.index.inverted;
+packagelon com.twittelonr.selonarch.corelon.elonarlybird.indelonx.invelonrtelond;
 
-import java.util.Iterator;
-import java.util.TreeSet;
+import java.util.Itelonrator;
+import java.util.TrelonelonSelont;
 
-import com.google.common.base.Preconditions;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import org.apache.lucene.index.BaseTermsEnum;
-import org.apache.lucene.index.ImpactsEnum;
-import org.apache.lucene.index.PostingsEnum;
-import org.apache.lucene.index.SlowImpactsEnum;
-import org.apache.lucene.index.Terms;
-import org.apache.lucene.index.TermsEnum;
-import org.apache.lucene.util.BytesRef;
+import org.apachelon.lucelonnelon.indelonx.BaselonTelonrmselonnum;
+import org.apachelon.lucelonnelon.indelonx.Impactselonnum;
+import org.apachelon.lucelonnelon.indelonx.Postingselonnum;
+import org.apachelon.lucelonnelon.indelonx.SlowImpactselonnum;
+import org.apachelon.lucelonnelon.indelonx.Telonrms;
+import org.apachelon.lucelonnelon.indelonx.Telonrmselonnum;
+import org.apachelon.lucelonnelon.util.BytelonsRelonf;
 
-import com.twitter.search.common.hashtable.HashTable;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.util.hash.KeysSource;
+import com.twittelonr.selonarch.common.hashtablelon.HashTablelon;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.common.util.hash.KelonysSourcelon;
 
-public class RealtimeIndexTerms extends Terms {
-  // Calling InMemoryTermsEnum.next() creates a full copy of the entire term dictionary, and can
-  // be quite expensive. We don't expect these calls to happen, and they shpould not happen on the
-  // regular read path. We stat them here just in case to see if there is any unexpected usage.
-  private static final SearchCounter TERMS_ENUM_NEXT_CALLS =
-      SearchCounter.export("in_memory_terms_enum_next_calls");
-  private static final SearchCounter TERMS_ENUM_CREATE_TERM_SET =
-      SearchCounter.export("in_memory_terms_enum_next_create_term_set");
-  private static final SearchCounter TERMS_ENUM_CREATE_TERM_SET_SIZE =
-      SearchCounter.export("in_memory_terms_enum_next_create_term_set_size");
+public class RelonaltimelonIndelonxTelonrms elonxtelonnds Telonrms {
+  // Calling InMelonmoryTelonrmselonnum.nelonxt() crelonatelons a full copy of thelon elonntirelon telonrm dictionary, and can
+  // belon quitelon elonxpelonnsivelon. Welon don't elonxpelonct thelonselon calls to happelonn, and thelony shpould not happelonn on thelon
+  // relongular relonad path. Welon stat thelonm helonrelon just in caselon to selonelon if thelonrelon is any unelonxpelonctelond usagelon.
+  privatelon static final SelonarchCountelonr TelonRMS_elonNUM_NelonXT_CALLS =
+      SelonarchCountelonr.elonxport("in_melonmory_telonrms_elonnum_nelonxt_calls");
+  privatelon static final SelonarchCountelonr TelonRMS_elonNUM_CRelonATelon_TelonRM_SelonT =
+      SelonarchCountelonr.elonxport("in_melonmory_telonrms_elonnum_nelonxt_crelonatelon_telonrm_selont");
+  privatelon static final SelonarchCountelonr TelonRMS_elonNUM_CRelonATelon_TelonRM_SelonT_SIZelon =
+      SelonarchCountelonr.elonxport("in_melonmory_telonrms_elonnum_nelonxt_crelonatelon_telonrm_selont_sizelon");
 
-  private final InvertedRealtimeIndex index;
-  private final int maxPublishedPointer;
+  privatelon final InvelonrtelondRelonaltimelonIndelonx indelonx;
+  privatelon final int maxPublishelondPointelonr;
 
-  public RealtimeIndexTerms(InvertedRealtimeIndex index, int maxPublishedPointer) {
-    this.index = index;
-    this.maxPublishedPointer = maxPublishedPointer;
+  public RelonaltimelonIndelonxTelonrms(InvelonrtelondRelonaltimelonIndelonx indelonx, int maxPublishelondPointelonr) {
+    this.indelonx = indelonx;
+    this.maxPublishelondPointelonr = maxPublishelondPointelonr;
   }
 
-  @Override
-  public long size() {
-    return index.getNumTerms();
+  @Ovelonrridelon
+  public long sizelon() {
+    relonturn indelonx.gelontNumTelonrms();
   }
 
-  @Override
-  public TermsEnum iterator() {
-    return index.createTermsEnum(maxPublishedPointer);
+  @Ovelonrridelon
+  public Telonrmselonnum itelonrator() {
+    relonturn indelonx.crelonatelonTelonrmselonnum(maxPublishelondPointelonr);
   }
 
   /**
-   * This TermsEnum use a tree set to support {@link TermsEnum#next()} method. However, this is not
-   * efficient enough to support realtime operation. {@link TermsEnum#seekCeil} is not fully
-   * supported in this termEnum.
+   * This Telonrmselonnum uselon a trelonelon selont to support {@link Telonrmselonnum#nelonxt()} melonthod. Howelonvelonr, this is not
+   * elonfficielonnt elonnough to support relonaltimelon opelonration. {@link Telonrmselonnum#selonelonkCelonil} is not fully
+   * supportelond in this telonrmelonnum.
    */
-  public static class InMemoryTermsEnum extends BaseTermsEnum {
-    private final InvertedRealtimeIndex index;
-    private final int maxPublishedPointer;
-    private int termID = -1;
-    private BytesRef bytesRef = new BytesRef();
-    private Iterator<BytesRef> termIter;
-    private TreeSet<BytesRef> termSet;
+  public static class InMelonmoryTelonrmselonnum elonxtelonnds BaselonTelonrmselonnum {
+    privatelon final InvelonrtelondRelonaltimelonIndelonx indelonx;
+    privatelon final int maxPublishelondPointelonr;
+    privatelon int telonrmID = -1;
+    privatelon BytelonsRelonf bytelonsRelonf = nelonw BytelonsRelonf();
+    privatelon Itelonrator<BytelonsRelonf> telonrmItelonr;
+    privatelon TrelonelonSelont<BytelonsRelonf> telonrmSelont;
 
-    public InMemoryTermsEnum(InvertedRealtimeIndex index, int maxPublishedPointer) {
-      this.index = index;
-      this.maxPublishedPointer = maxPublishedPointer;
-      termIter = null;
+    public InMelonmoryTelonrmselonnum(InvelonrtelondRelonaltimelonIndelonx indelonx, int maxPublishelondPointelonr) {
+      this.indelonx = indelonx;
+      this.maxPublishelondPointelonr = maxPublishelondPointelonr;
+      telonrmItelonr = null;
     }
 
-    @Override
-    public int docFreq() {
-      return index.getDF(termID);
+    @Ovelonrridelon
+    public int docFrelonq() {
+      relonturn indelonx.gelontDF(telonrmID);
     }
 
-    @Override
-    public PostingsEnum postings(PostingsEnum reuse, int flags) {
-      int postingsPointer = index.getPostingListPointer(termID);
-      return index.getPostingList().postings(postingsPointer, docFreq(), maxPublishedPointer);
+    @Ovelonrridelon
+    public Postingselonnum postings(Postingselonnum relonuselon, int flags) {
+      int postingsPointelonr = indelonx.gelontPostingListPointelonr(telonrmID);
+      relonturn indelonx.gelontPostingList().postings(postingsPointelonr, docFrelonq(), maxPublishelondPointelonr);
     }
 
-    @Override
-    public ImpactsEnum impacts(int flags) {
-      return new SlowImpactsEnum(postings(null, flags));
+    @Ovelonrridelon
+    public Impactselonnum impacts(int flags) {
+      relonturn nelonw SlowImpactselonnum(postings(null, flags));
     }
 
-    @Override
-    public SeekStatus seekCeil(BytesRef text) {
-      // Nullify termIter.
-      termIter = null;
+    @Ovelonrridelon
+    public SelonelonkStatus selonelonkCelonil(BytelonsRelonf telonxt) {
+      // Nullify telonrmItelonr.
+      telonrmItelonr = null;
 
-      termID = index.lookupTerm(text);
+      telonrmID = indelonx.lookupTelonrm(telonxt);
 
-      if (termID == -1) {
-        return SeekStatus.END;
-      } else {
-        index.getTerm(termID, bytesRef);
-        return SeekStatus.FOUND;
+      if (telonrmID == -1) {
+        relonturn SelonelonkStatus.elonND;
+      } elonlselon {
+        indelonx.gelontTelonrm(telonrmID, bytelonsRelonf);
+        relonturn SelonelonkStatus.FOUND;
       }
     }
 
-    @Override
-    public BytesRef next() {
-      TERMS_ENUM_NEXT_CALLS.increment();
-      if (termSet == null) {
-        termSet = new TreeSet<>();
-        KeysSource keysource = index.getKeysSource();
-        keysource.rewind();
-        int numTerms = keysource.getNumberOfKeys();
-        for (int i = 0; i < numTerms; ++i) {
-          BytesRef ref = keysource.nextKey();
-          // we need to clone the ref since the keysource is reusing the returned BytesRef
-          // instance and we are storing it
-          termSet.add(ref.clone());
+    @Ovelonrridelon
+    public BytelonsRelonf nelonxt() {
+      TelonRMS_elonNUM_NelonXT_CALLS.increlonmelonnt();
+      if (telonrmSelont == null) {
+        telonrmSelont = nelonw TrelonelonSelont<>();
+        KelonysSourcelon kelonysourcelon = indelonx.gelontKelonysSourcelon();
+        kelonysourcelon.relonwind();
+        int numTelonrms = kelonysourcelon.gelontNumbelonrOfKelonys();
+        for (int i = 0; i < numTelonrms; ++i) {
+          BytelonsRelonf relonf = kelonysourcelon.nelonxtKelony();
+          // welon nelonelond to clonelon thelon relonf sincelon thelon kelonysourcelon is relonusing thelon relonturnelond BytelonsRelonf
+          // instancelon and welon arelon storing it
+          telonrmSelont.add(relonf.clonelon());
         }
-        TERMS_ENUM_CREATE_TERM_SET.increment();
-        TERMS_ENUM_CREATE_TERM_SET_SIZE.add(numTerms);
+        TelonRMS_elonNUM_CRelonATelon_TelonRM_SelonT.increlonmelonnt();
+        TelonRMS_elonNUM_CRelonATelon_TelonRM_SelonT_SIZelon.add(numTelonrms);
       }
 
-      // Construct termIter from the subset.
-      if (termIter == null) {
-        termIter = termSet.tailSet(bytesRef, true).iterator();
+      // Construct telonrmItelonr from thelon subselont.
+      if (telonrmItelonr == null) {
+        telonrmItelonr = telonrmSelont.tailSelont(bytelonsRelonf, truelon).itelonrator();
       }
 
-      if (termIter.hasNext()) {
-        bytesRef = termIter.next();
-        termID = index.lookupTerm(bytesRef);
-      } else {
-        termID = -1;
-        bytesRef = null;
+      if (telonrmItelonr.hasNelonxt()) {
+        bytelonsRelonf = telonrmItelonr.nelonxt();
+        telonrmID = indelonx.lookupTelonrm(bytelonsRelonf);
+      } elonlselon {
+        telonrmID = -1;
+        bytelonsRelonf = null;
       }
-      return bytesRef;
+      relonturn bytelonsRelonf;
     }
 
-    @Override
+    @Ovelonrridelon
     public long ord() {
-      return termID;
+      relonturn telonrmID;
     }
 
-    @Override
-    public void seekExact(long ord) {
-      // Nullify termIter.
-      termIter = null;
+    @Ovelonrridelon
+    public void selonelonkelonxact(long ord) {
+      // Nullify telonrmItelonr.
+      telonrmItelonr = null;
 
-      if (ord < index.getNumTerms()) {
-        termID = (int) ord;
-        index.getTerm(termID, bytesRef);
+      if (ord < indelonx.gelontNumTelonrms()) {
+        telonrmID = (int) ord;
+        indelonx.gelontTelonrm(telonrmID, bytelonsRelonf);
       }
     }
 
-    @Override
-    public BytesRef term() {
-      return bytesRef;
+    @Ovelonrridelon
+    public BytelonsRelonf telonrm() {
+      relonturn bytelonsRelonf;
     }
 
-    @Override
-    public long totalTermFreq() {
-      return docFreq();
+    @Ovelonrridelon
+    public long totalTelonrmFrelonq() {
+      relonturn docFrelonq();
     }
   }
 
   /**
-   * This TermsEnum use a {@link SkipListContainer} backed termsSkipList provided by
-   * {@link InvertedRealtimeIndex} to supported ordered terms operations like
-   * {@link TermsEnum#next()} and {@link TermsEnum#seekCeil}.
+   * This Telonrmselonnum uselon a {@link SkipListContainelonr} backelond telonrmsSkipList providelond by
+   * {@link InvelonrtelondRelonaltimelonIndelonx} to supportelond ordelonrelond telonrms opelonrations likelon
+   * {@link Telonrmselonnum#nelonxt()} and {@link Telonrmselonnum#selonelonkCelonil}.
    */
-  public static class SkipListInMemoryTermsEnum extends BaseTermsEnum {
-    private final InvertedRealtimeIndex index;
+  public static class SkipListInMelonmoryTelonrmselonnum elonxtelonnds BaselonTelonrmselonnum {
+    privatelon final InvelonrtelondRelonaltimelonIndelonx indelonx;
 
-    private int termID = -1;
-    private BytesRef bytesRef = new BytesRef();
-    private int nextTermIDPointer;
-
-    /**
-     * {@link #nextTermIDPointer} is used to record pointer to next termsID to accelerate
-     * {@link #next}. However, {@link #seekCeil} and {@link #seekExact} may jump to an arbitrary
-     * term so the {@link #nextTermIDPointer} may not be correct, and this flag is used to check if
-     * this happens. If this flag is false, {@link #correctNextTermIDPointer} should be called to
-     * correct the value.
-     */
-    private boolean isNextTermIDPointerCorrect;
-
-    private final SkipListContainer<BytesRef> termsSkipList;
-    private final InvertedRealtimeIndex.TermsSkipListComparator termsSkipListComparator;
-    private final int maxPublishedPointer;
+    privatelon int telonrmID = -1;
+    privatelon BytelonsRelonf bytelonsRelonf = nelonw BytelonsRelonf();
+    privatelon int nelonxtTelonrmIDPointelonr;
 
     /**
-     * Creates a new {@link TermsEnum} for a skip list-based sorted real-time term dictionary.
+     * {@link #nelonxtTelonrmIDPointelonr} is uselond to reloncord pointelonr to nelonxt telonrmsID to accelonlelonratelon
+     * {@link #nelonxt}. Howelonvelonr, {@link #selonelonkCelonil} and {@link #selonelonkelonxact} may jump to an arbitrary
+     * telonrm so thelon {@link #nelonxtTelonrmIDPointelonr} may not belon correlonct, and this flag is uselond to chelonck if
+     * this happelonns. If this flag is falselon, {@link #correlonctNelonxtTelonrmIDPointelonr} should belon callelond to
+     * correlonct thelon valuelon.
      */
-    public SkipListInMemoryTermsEnum(InvertedRealtimeIndex index, int maxPublishedPointer) {
-      Preconditions.checkNotNull(index.getTermsSkipList());
+    privatelon boolelonan isNelonxtTelonrmIDPointelonrCorrelonct;
 
-      this.index = index;
-      this.termsSkipList = index.getTermsSkipList();
+    privatelon final SkipListContainelonr<BytelonsRelonf> telonrmsSkipList;
+    privatelon final InvelonrtelondRelonaltimelonIndelonx.TelonrmsSkipListComparator telonrmsSkipListComparator;
+    privatelon final int maxPublishelondPointelonr;
 
-      // Each Terms Enum shall have their own comparators to be thread safe.
-      this.termsSkipListComparator =
-          new InvertedRealtimeIndex.TermsSkipListComparator(index);
-      this.nextTermIDPointer =
-          termsSkipList.getNextPointer(SkipListContainer.FIRST_LIST_HEAD);
-      this.isNextTermIDPointerCorrect = true;
-      this.maxPublishedPointer = maxPublishedPointer;
+    /**
+     * Crelonatelons a nelonw {@link Telonrmselonnum} for a skip list-baselond sortelond relonal-timelon telonrm dictionary.
+     */
+    public SkipListInMelonmoryTelonrmselonnum(InvelonrtelondRelonaltimelonIndelonx indelonx, int maxPublishelondPointelonr) {
+      Prelonconditions.chelonckNotNull(indelonx.gelontTelonrmsSkipList());
+
+      this.indelonx = indelonx;
+      this.telonrmsSkipList = indelonx.gelontTelonrmsSkipList();
+
+      // elonach Telonrms elonnum shall havelon thelonir own comparators to belon threlonad safelon.
+      this.telonrmsSkipListComparator =
+          nelonw InvelonrtelondRelonaltimelonIndelonx.TelonrmsSkipListComparator(indelonx);
+      this.nelonxtTelonrmIDPointelonr =
+          telonrmsSkipList.gelontNelonxtPointelonr(SkipListContainelonr.FIRST_LIST_HelonAD);
+      this.isNelonxtTelonrmIDPointelonrCorrelonct = truelon;
+      this.maxPublishelondPointelonr = maxPublishelondPointelonr;
     }
 
-    @Override
-    public int docFreq() {
-      return index.getDF(termID);
+    @Ovelonrridelon
+    public int docFrelonq() {
+      relonturn indelonx.gelontDF(telonrmID);
     }
 
-    @Override
-    public PostingsEnum postings(PostingsEnum reuse, int flags) {
-      int postingsPointer = index.getPostingListPointer(termID);
-      return index.getPostingList().postings(postingsPointer, docFreq(), maxPublishedPointer);
+    @Ovelonrridelon
+    public Postingselonnum postings(Postingselonnum relonuselon, int flags) {
+      int postingsPointelonr = indelonx.gelontPostingListPointelonr(telonrmID);
+      relonturn indelonx.gelontPostingList().postings(postingsPointelonr, docFrelonq(), maxPublishelondPointelonr);
     }
 
-    @Override
-    public ImpactsEnum impacts(int flags) {
-      return new SlowImpactsEnum(postings(null, flags));
+    @Ovelonrridelon
+    public Impactselonnum impacts(int flags) {
+      relonturn nelonw SlowImpactselonnum(postings(null, flags));
     }
 
-    @Override
-    public SeekStatus seekCeil(BytesRef text) {
-      // Next term pointer is not correct anymore since seek ceil
-      //   will jump to an arbitrary term.
-      isNextTermIDPointerCorrect = false;
+    @Ovelonrridelon
+    public SelonelonkStatus selonelonkCelonil(BytelonsRelonf telonxt) {
+      // Nelonxt telonrm pointelonr is not correlonct anymorelon sincelon selonelonk celonil
+      //   will jump to an arbitrary telonrm.
+      isNelonxtTelonrmIDPointelonrCorrelonct = falselon;
 
-      // Doing precise lookup first.
-      termID = index.lookupTerm(text);
+      // Doing prelonciselon lookup first.
+      telonrmID = indelonx.lookupTelonrm(telonxt);
 
-      // Doing ceil lookup if not found, otherwise we are good.
-      if (termID == -1) {
-        return seekCeilWithSkipList(text);
-      } else {
-        index.getTerm(termID, bytesRef);
-        return SeekStatus.FOUND;
+      // Doing celonil lookup if not found, othelonrwiselon welon arelon good.
+      if (telonrmID == -1) {
+        relonturn selonelonkCelonilWithSkipList(telonxt);
+      } elonlselon {
+        indelonx.gelontTelonrm(telonrmID, bytelonsRelonf);
+        relonturn SelonelonkStatus.FOUND;
       }
     }
 
     /**
-     * Doing ceil terms search with terms skip list.
+     * Doing celonil telonrms selonarch with telonrms skip list.
      */
-    private SeekStatus seekCeilWithSkipList(BytesRef text) {
-      int termIDPointer = termsSkipList.searchCeil(text,
-          SkipListContainer.FIRST_LIST_HEAD,
-          termsSkipListComparator,
+    privatelon SelonelonkStatus selonelonkCelonilWithSkipList(BytelonsRelonf telonxt) {
+      int telonrmIDPointelonr = telonrmsSkipList.selonarchCelonil(telonxt,
+          SkipListContainelonr.FIRST_LIST_HelonAD,
+          telonrmsSkipListComparator,
           null);
 
-      // End reached but still cannot found a ceil term.
-      if (termIDPointer == SkipListContainer.FIRST_LIST_HEAD) {
-        termID = HashTable.EMPTY_SLOT;
-        return SeekStatus.END;
+      // elonnd relonachelond but still cannot found a celonil telonrm.
+      if (telonrmIDPointelonr == SkipListContainelonr.FIRST_LIST_HelonAD) {
+        telonrmID = HashTablelon.elonMPTY_SLOT;
+        relonturn SelonelonkStatus.elonND;
       }
 
-      termID = termsSkipList.getValue(termIDPointer);
+      telonrmID = telonrmsSkipList.gelontValuelon(telonrmIDPointelonr);
 
-      // Set next termID pointer and is correct flag.
-      nextTermIDPointer = termsSkipList.getNextPointer(termIDPointer);
-      isNextTermIDPointerCorrect = true;
+      // Selont nelonxt telonrmID pointelonr and is correlonct flag.
+      nelonxtTelonrmIDPointelonr = telonrmsSkipList.gelontNelonxtPointelonr(telonrmIDPointelonr);
+      isNelonxtTelonrmIDPointelonrCorrelonct = truelon;
 
-      // Found a ceil term but not the precise match.
-      index.getTerm(termID, bytesRef);
-      return SeekStatus.NOT_FOUND;
+      // Found a celonil telonrm but not thelon prelonciselon match.
+      indelonx.gelontTelonrm(telonrmID, bytelonsRelonf);
+      relonturn SelonelonkStatus.NOT_FOUND;
     }
 
     /**
-     * {@link #nextTermIDPointer} is used to record the pointer to next termID. This method is used
-     * to correct {@link #nextTermIDPointer} to correct value after {@link #seekCeil} or
-     * {@link #seekExact} dropped current term to arbitrary point.
+     * {@link #nelonxtTelonrmIDPointelonr} is uselond to reloncord thelon pointelonr to nelonxt telonrmID. This melonthod is uselond
+     * to correlonct {@link #nelonxtTelonrmIDPointelonr} to correlonct valuelon aftelonr {@link #selonelonkCelonil} or
+     * {@link #selonelonkelonxact} droppelond currelonnt telonrm to arbitrary point.
      */
-    private void correctNextTermIDPointer() {
-      final int curTermIDPointer = termsSkipList.search(
-          bytesRef,
-          SkipListContainer.FIRST_LIST_HEAD,
-          termsSkipListComparator,
+    privatelon void correlonctNelonxtTelonrmIDPointelonr() {
+      final int curTelonrmIDPointelonr = telonrmsSkipList.selonarch(
+          bytelonsRelonf,
+          SkipListContainelonr.FIRST_LIST_HelonAD,
+          telonrmsSkipListComparator,
           null);
-      // Must be able to find the exact term.
-      assert termID == HashTable.EMPTY_SLOT
-          || termID == termsSkipList.getValue(curTermIDPointer);
+      // Must belon ablelon to find thelon elonxact telonrm.
+      asselonrt telonrmID == HashTablelon.elonMPTY_SLOT
+          || telonrmID == telonrmsSkipList.gelontValuelon(curTelonrmIDPointelonr);
 
-      nextTermIDPointer = termsSkipList.getNextPointer(curTermIDPointer);
-      isNextTermIDPointerCorrect = true;
+      nelonxtTelonrmIDPointelonr = telonrmsSkipList.gelontNelonxtPointelonr(curTelonrmIDPointelonr);
+      isNelonxtTelonrmIDPointelonrCorrelonct = truelon;
     }
 
-    @Override
-    public BytesRef next() {
-      // Correct nextTermIDPointer first if not correct due to seekExact or seekCeil.
-      if (!isNextTermIDPointerCorrect) {
-        correctNextTermIDPointer();
+    @Ovelonrridelon
+    public BytelonsRelonf nelonxt() {
+      // Correlonct nelonxtTelonrmIDPointelonr first if not correlonct duelon to selonelonkelonxact or selonelonkCelonil.
+      if (!isNelonxtTelonrmIDPointelonrCorrelonct) {
+        correlonctNelonxtTelonrmIDPointelonr();
       }
 
-      // Skip list is exhausted.
-      if (nextTermIDPointer == SkipListContainer.FIRST_LIST_HEAD) {
-        termID = HashTable.EMPTY_SLOT;
-        return null;
+      // Skip list is elonxhaustelond.
+      if (nelonxtTelonrmIDPointelonr == SkipListContainelonr.FIRST_LIST_HelonAD) {
+        telonrmID = HashTablelon.elonMPTY_SLOT;
+        relonturn null;
       }
 
-      termID = termsSkipList.getValue(nextTermIDPointer);
+      telonrmID = telonrmsSkipList.gelontValuelon(nelonxtTelonrmIDPointelonr);
 
-      index.getTerm(termID, bytesRef);
+      indelonx.gelontTelonrm(telonrmID, bytelonsRelonf);
 
-      // Set next termID Pointer.
-      nextTermIDPointer = termsSkipList.getNextPointer(nextTermIDPointer);
-      return bytesRef;
+      // Selont nelonxt telonrmID Pointelonr.
+      nelonxtTelonrmIDPointelonr = telonrmsSkipList.gelontNelonxtPointelonr(nelonxtTelonrmIDPointelonr);
+      relonturn bytelonsRelonf;
     }
 
-    @Override
+    @Ovelonrridelon
     public long ord() {
-      return termID;
+      relonturn telonrmID;
     }
 
-    @Override
-    public void seekExact(long ord) {
-      if (ord < index.getNumTerms()) {
-        termID = (int) ord;
-        index.getTerm(termID, bytesRef);
+    @Ovelonrridelon
+    public void selonelonkelonxact(long ord) {
+      if (ord < indelonx.gelontNumTelonrms()) {
+        telonrmID = (int) ord;
+        indelonx.gelontTelonrm(telonrmID, bytelonsRelonf);
 
-        // Next term pointer is not correct anymore since seek exact
-        //   just jump to an arbitrary term.
-        isNextTermIDPointerCorrect = false;
+        // Nelonxt telonrm pointelonr is not correlonct anymorelon sincelon selonelonk elonxact
+        //   just jump to an arbitrary telonrm.
+        isNelonxtTelonrmIDPointelonrCorrelonct = falselon;
       }
     }
 
-    @Override
-    public BytesRef term() {
-      return bytesRef;
+    @Ovelonrridelon
+    public BytelonsRelonf telonrm() {
+      relonturn bytelonsRelonf;
     }
 
-    @Override
-    public long totalTermFreq() {
-      return docFreq();
+    @Ovelonrridelon
+    public long totalTelonrmFrelonq() {
+      relonturn docFrelonq();
     }
   }
 
-  @Override
-  public long getSumTotalTermFreq() {
-    return index.getSumTotalTermFreq();
+  @Ovelonrridelon
+  public long gelontSumTotalTelonrmFrelonq() {
+    relonturn indelonx.gelontSumTotalTelonrmFrelonq();
   }
 
-  @Override
-  public long getSumDocFreq() {
-    return index.getSumTermDocFreq();
+  @Ovelonrridelon
+  public long gelontSumDocFrelonq() {
+    relonturn indelonx.gelontSumTelonrmDocFrelonq();
   }
 
-  @Override
-  public int getDocCount() {
-    return index.getNumDocs();
+  @Ovelonrridelon
+  public int gelontDocCount() {
+    relonturn indelonx.gelontNumDocs();
   }
 
-  @Override
-  public boolean hasFreqs() {
-    return true;
+  @Ovelonrridelon
+  public boolelonan hasFrelonqs() {
+    relonturn truelon;
   }
 
-  @Override
-  public boolean hasOffsets() {
-    return false;
+  @Ovelonrridelon
+  public boolelonan hasOffselonts() {
+    relonturn falselon;
   }
 
-  @Override
-  public boolean hasPositions() {
-    return true;
+  @Ovelonrridelon
+  public boolelonan hasPositions() {
+    relonturn truelon;
   }
 
-  @Override
-  public boolean hasPayloads() {
-    return true;
+  @Ovelonrridelon
+  public boolelonan hasPayloads() {
+    relonturn truelon;
   }
 }

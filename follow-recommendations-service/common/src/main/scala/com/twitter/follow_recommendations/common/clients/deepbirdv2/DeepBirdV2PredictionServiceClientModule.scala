@@ -1,67 +1,67 @@
-package com.twitter.follow_recommendations.common.clients.deepbirdv2
+packagelon com.twittelonr.follow_reloncommelonndations.common.clielonnts.delonelonpbirdv2
 
-import com.google.inject.Provides
-import com.google.inject.name.Named
-import com.twitter.bijection.scrooge.TBinaryProtocol
-import com.twitter.conversions.DurationOps._
-import com.twitter.cortex.deepbird.thriftjava.DeepbirdPredictionService
-import com.twitter.finagle.ThriftMux
-import com.twitter.finagle.builder.ClientBuilder
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.mtls.client.MtlsStackClient._
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.finagle.thrift.RichClientParam
-import com.twitter.follow_recommendations.common.constants.GuiceNamedConstants
-import com.twitter.inject.TwitterModule
+import com.googlelon.injelonct.Providelons
+import com.googlelon.injelonct.namelon.Namelond
+import com.twittelonr.bijelonction.scroogelon.TBinaryProtocol
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.cortelonx.delonelonpbird.thriftjava.DelonelonpbirdPrelondictionSelonrvicelon
+import com.twittelonr.finaglelon.ThriftMux
+import com.twittelonr.finaglelon.buildelonr.ClielonntBuildelonr
+import com.twittelonr.finaglelon.mtls.authelonntication.SelonrvicelonIdelonntifielonr
+import com.twittelonr.finaglelon.mtls.clielonnt.MtlsStackClielonnt._
+import com.twittelonr.finaglelon.stats.NullStatsReloncelonivelonr
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.finaglelon.thrift.ClielonntId
+import com.twittelonr.finaglelon.thrift.RichClielonntParam
+import com.twittelonr.follow_reloncommelonndations.common.constants.GuicelonNamelondConstants
+import com.twittelonr.injelonct.TwittelonrModulelon
 
 /**
- * Module that provides multiple deepbirdv2 prediction service clients
- * We use the java api since data records are native java objects and we want to reduce overhead
- * while serializing/deserializing data.
+ * Modulelon that providelons multiplelon delonelonpbirdv2 prelondiction selonrvicelon clielonnts
+ * Welon uselon thelon java api sincelon data reloncords arelon nativelon java objeloncts and welon want to relonducelon ovelonrhelonad
+ * whilelon selonrializing/delonselonrializing data.
  */
-object DeepBirdV2PredictionServiceClientModule extends TwitterModule {
+objelonct DelonelonpBirdV2PrelondictionSelonrvicelonClielonntModulelon elonxtelonnds TwittelonrModulelon {
 
-  val RequestTimeout = 300.millis
+  val RelonquelonstTimelonout = 300.millis
 
-  private def getDeepbirdPredictionServiceClient(
-    clientId: ClientId,
-    label: String,
-    dest: String,
-    statsReceiver: StatsReceiver,
-    serviceIdentifier: ServiceIdentifier
-  ): DeepbirdPredictionService.ServiceToClient = {
-    val clientStatsReceiver = statsReceiver.scope("clnt")
-    val mTlsClient = ThriftMux.client.withClientId(clientId).withMutualTls(serviceIdentifier)
-    new DeepbirdPredictionService.ServiceToClient(
-      ClientBuilder()
-        .name(label)
-        .stack(mTlsClient)
-        .dest(dest)
-        .requestTimeout(RequestTimeout)
-        .reportHostStats(NullStatsReceiver)
+  privatelon delonf gelontDelonelonpbirdPrelondictionSelonrvicelonClielonnt(
+    clielonntId: ClielonntId,
+    labelonl: String,
+    delonst: String,
+    statsReloncelonivelonr: StatsReloncelonivelonr,
+    selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr
+  ): DelonelonpbirdPrelondictionSelonrvicelon.SelonrvicelonToClielonnt = {
+    val clielonntStatsReloncelonivelonr = statsReloncelonivelonr.scopelon("clnt")
+    val mTlsClielonnt = ThriftMux.clielonnt.withClielonntId(clielonntId).withMutualTls(selonrvicelonIdelonntifielonr)
+    nelonw DelonelonpbirdPrelondictionSelonrvicelon.SelonrvicelonToClielonnt(
+      ClielonntBuildelonr()
+        .namelon(labelonl)
+        .stack(mTlsClielonnt)
+        .delonst(delonst)
+        .relonquelonstTimelonout(RelonquelonstTimelonout)
+        .relonportHostStats(NullStatsReloncelonivelonr)
         .build(),
-      RichClientParam(
-        new TBinaryProtocol.Factory(),
-        clientStats = clientStatsReceiver
+      RichClielonntParam(
+        nelonw TBinaryProtocol.Factory(),
+        clielonntStats = clielonntStatsReloncelonivelonr
       )
     )
   }
 
-  @Provides
-  @Named(GuiceNamedConstants.WTF_PROD_DEEPBIRDV2_CLIENT)
-  def providesWtfProdDeepbirdV2PredictionService(
-    clientId: ClientId,
-    statsReceiver: StatsReceiver,
-    serviceIdentifier: ServiceIdentifier
-  ): DeepbirdPredictionService.ServiceToClient = {
-    getDeepbirdPredictionServiceClient(
-      clientId = clientId,
-      label = "WtfProdDeepbirdV2PredictionService",
-      dest = "/s/cassowary/deepbirdv2-hermit-wtf",
-      statsReceiver = statsReceiver,
-      serviceIdentifier = serviceIdentifier
+  @Providelons
+  @Namelond(GuicelonNamelondConstants.WTF_PROD_DelonelonPBIRDV2_CLIelonNT)
+  delonf providelonsWtfProdDelonelonpbirdV2PrelondictionSelonrvicelon(
+    clielonntId: ClielonntId,
+    statsReloncelonivelonr: StatsReloncelonivelonr,
+    selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr
+  ): DelonelonpbirdPrelondictionSelonrvicelon.SelonrvicelonToClielonnt = {
+    gelontDelonelonpbirdPrelondictionSelonrvicelonClielonnt(
+      clielonntId = clielonntId,
+      labelonl = "WtfProdDelonelonpbirdV2PrelondictionSelonrvicelon",
+      delonst = "/s/cassowary/delonelonpbirdv2-helonrmit-wtf",
+      statsReloncelonivelonr = statsReloncelonivelonr,
+      selonrvicelonIdelonntifielonr = selonrvicelonIdelonntifielonr
     )
   }
 }

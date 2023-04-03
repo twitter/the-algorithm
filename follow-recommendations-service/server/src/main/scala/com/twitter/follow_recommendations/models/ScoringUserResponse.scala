@@ -1,15 +1,15 @@
-package com.twitter.follow_recommendations.models
+packagelon com.twittelonr.follow_reloncommelonndations.modelonls
 
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.logging.{thriftscala => offline}
-import com.twitter.follow_recommendations.{thriftscala => t}
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.CandidatelonUselonr
+import com.twittelonr.follow_reloncommelonndations.logging.{thriftscala => offlinelon}
+import com.twittelonr.follow_reloncommelonndations.{thriftscala => t}
 
-case class ScoringUserResponse(candidates: Seq[CandidateUser]) {
-  lazy val toThrift: t.ScoringUserResponse =
-    t.ScoringUserResponse(candidates.map(_.toUserThrift))
+caselon class ScoringUselonrRelonsponselon(candidatelons: Selonq[CandidatelonUselonr]) {
+  lazy val toThrift: t.ScoringUselonrRelonsponselon =
+    t.ScoringUselonrRelonsponselon(candidatelons.map(_.toUselonrThrift))
 
-  lazy val toRecommendationResponse: RecommendationResponse = RecommendationResponse(candidates)
+  lazy val toReloncommelonndationRelonsponselon: ReloncommelonndationRelonsponselon = ReloncommelonndationRelonsponselon(candidatelons)
 
-  lazy val toOfflineThrift: offline.OfflineScoringUserResponse =
-    offline.OfflineScoringUserResponse(candidates.map(_.toOfflineUserThrift))
+  lazy val toOfflinelonThrift: offlinelon.OfflinelonScoringUselonrRelonsponselon =
+    offlinelon.OfflinelonScoringUselonrRelonsponselon(candidatelons.map(_.toOfflinelonUselonrThrift))
 }

@@ -1,70 +1,70 @@
-package com.twitter.product_mixer.component_library.side_effect
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.sidelon_elonffelonct
 
-import com.twitter.product_mixer.core.functional_component.side_effect.PipelineResultSideEffect
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.marshalling.HasMarshalling
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.strato.client.Inserter
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.sidelon_elonffelonct.PipelonlinelonRelonsultSidelonelonffelonct
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.HasMarshalling
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.strato.clielonnt.Inselonrtelonr
 
 /**
- * Side effect that writes to Strato column's Insert Op. Create an implementation of this trait by
- * defining the `buildEvents` method and providing a Strato Column inserter of type
- * (StratoKeyarg, StratoValue) -> Any.
- * See https://docbird.twitter.biz/strato/ColumnCatalog.html#insert for information about
- * the Insert operation in Strato.
+ * Sidelon elonffelonct that writelons to Strato column's Inselonrt Op. Crelonatelon an implelonmelonntation of this trait by
+ * delonfining thelon `buildelonvelonnts` melonthod and providing a Strato Column inselonrtelonr of typelon
+ * (StratoKelonyarg, StratoValuelon) -> Any.
+ * Selonelon https://docbird.twittelonr.biz/strato/ColumnCatalog.html#inselonrt for information about
+ * thelon Inselonrt opelonration in Strato.
  *
- * @tparam StratoKeyarg Argument used as a key for Strato column. Could be Unit for common use-cases.
- * @tparam StratoValue Value that is inserted at the Strato column.
- * @tparam Query PipelineQuery
- * @tparam DomainResponseType Timeline response that is marshalled to domain model (e.g. URT, Slice etc).
+ * @tparam StratoKelonyarg Argumelonnt uselond as a kelony for Strato column. Could belon Unit for common uselon-caselons.
+ * @tparam StratoValuelon Valuelon that is inselonrtelond at thelon Strato column.
+ * @tparam Quelonry PipelonlinelonQuelonry
+ * @tparam DomainRelonsponselonTypelon Timelonlinelon relonsponselon that is marshallelond to domain modelonl (elon.g. URT, Slicelon elontc).
  */
-trait StratoInsertSideEffect[
-  StratoKeyarg,
-  StratoValue,
-  Query <: PipelineQuery,
-  DomainResponseType <: HasMarshalling]
-    extends PipelineResultSideEffect[Query, DomainResponseType] {
+trait StratoInselonrtSidelonelonffelonct[
+  StratoKelonyarg,
+  StratoValuelon,
+  Quelonry <: PipelonlinelonQuelonry,
+  DomainRelonsponselonTypelon <: HasMarshalling]
+    elonxtelonnds PipelonlinelonRelonsultSidelonelonffelonct[Quelonry, DomainRelonsponselonTypelon] {
 
   /**
-   * Inserter for the InsertOp on a StratoColumn. In Strato, the InsertOp is represented as
-   * (Keyarg, Value) => Key, where Key represents the result returned by the Insert operation.
-   * For the side-effect behavior, we do not need the return value and use Any instead.
+   * Inselonrtelonr for thelon InselonrtOp on a StratoColumn. In Strato, thelon InselonrtOp is relonprelonselonntelond as
+   * (Kelonyarg, Valuelon) => Kelony, whelonrelon Kelony relonprelonselonnts thelon relonsult relonturnelond by thelon Inselonrt opelonration.
+   * For thelon sidelon-elonffelonct belonhavior, welon do not nelonelond thelon relonturn valuelon and uselon Any instelonad.
    */
-  val stratoInserter: Inserter[StratoKeyarg, StratoValue, Any]
+  val stratoInselonrtelonr: Inselonrtelonr[StratoKelonyarg, StratoValuelon, Any]
 
   /**
-   * Builds the events that are inserted to the Strato column. This method supports generating
-   * multiple events for a single side-effect invocation.
+   * Builds thelon elonvelonnts that arelon inselonrtelond to thelon Strato column. This melonthod supports gelonnelonrating
+   * multiplelon elonvelonnts for a singlelon sidelon-elonffelonct invocation.
    *
-   * @param query PipelineQuery
-   * @param selectedCandidates Result after Selectors are executed
-   * @param remainingCandidates Candidates which were not selected
-   * @param droppedCandidates Candidates dropped during selection
-   * @param response Timeline response that is marshalled to domain model (e.g. URT, Slice etc).
-   * @return Tuples of (StratoKeyArg, StratoValue) that are used to call the stratoInserter.
+   * @param quelonry PipelonlinelonQuelonry
+   * @param selonlelonctelondCandidatelons Relonsult aftelonr Selonlelonctors arelon elonxeloncutelond
+   * @param relonmainingCandidatelons Candidatelons which welonrelon not selonlelonctelond
+   * @param droppelondCandidatelons Candidatelons droppelond during selonlelonction
+   * @param relonsponselon Timelonlinelon relonsponselon that is marshallelond to domain modelonl (elon.g. URT, Slicelon elontc).
+   * @relonturn Tuplelons of (StratoKelonyArg, StratoValuelon) that arelon uselond to call thelon stratoInselonrtelonr.
    */
-  def buildEvents(
-    query: Query,
-    selectedCandidates: Seq[CandidateWithDetails],
-    remainingCandidates: Seq[CandidateWithDetails],
-    droppedCandidates: Seq[CandidateWithDetails],
-    response: DomainResponseType
-  ): Seq[(StratoKeyarg, StratoValue)]
+  delonf buildelonvelonnts(
+    quelonry: Quelonry,
+    selonlelonctelondCandidatelons: Selonq[CandidatelonWithDelontails],
+    relonmainingCandidatelons: Selonq[CandidatelonWithDelontails],
+    droppelondCandidatelons: Selonq[CandidatelonWithDelontails],
+    relonsponselon: DomainRelonsponselonTypelon
+  ): Selonq[(StratoKelonyarg, StratoValuelon)]
 
-  final override def apply(
-    inputs: PipelineResultSideEffect.Inputs[Query, DomainResponseType]
+  final ovelonrridelon delonf apply(
+    inputs: PipelonlinelonRelonsultSidelonelonffelonct.Inputs[Quelonry, DomainRelonsponselonTypelon]
   ): Stitch[Unit] = {
-    val events = buildEvents(
-      query = inputs.query,
-      selectedCandidates = inputs.selectedCandidates,
-      remainingCandidates = inputs.remainingCandidates,
-      droppedCandidates = inputs.droppedCandidates,
-      response = inputs.response
+    val elonvelonnts = buildelonvelonnts(
+      quelonry = inputs.quelonry,
+      selonlelonctelondCandidatelons = inputs.selonlelonctelondCandidatelons,
+      relonmainingCandidatelons = inputs.relonmainingCandidatelons,
+      droppelondCandidatelons = inputs.droppelondCandidatelons,
+      relonsponselon = inputs.relonsponselon
     )
 
     Stitch
-      .traverse(events) { case (keyarg, value) => stratoInserter.insert(keyarg, value) }
+      .travelonrselon(elonvelonnts) { caselon (kelonyarg, valuelon) => stratoInselonrtelonr.inselonrt(kelonyarg, valuelon) }
       .unit
   }
 }

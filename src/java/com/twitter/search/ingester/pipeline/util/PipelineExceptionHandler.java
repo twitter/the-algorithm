@@ -1,15 +1,15 @@
-package com.twitter.search.ingester.pipeline.util;
+packagelon com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.util;
 
-import com.twitter.util.Duration;
+import com.twittelonr.util.Duration;
 
-public interface PipelineExceptionHandler {
+public intelonrfacelon PipelonlinelonelonxcelonptionHandlelonr {
   /**
-   * Logs the given message and waits the given duration.
+   * Logs thelon givelonn melonssagelon and waits thelon givelonn duration.
    */
-  void logAndWait(String msg, Duration waitTime) throws InterruptedException;
+  void logAndWait(String msg, Duration waitTimelon) throws Intelonrruptelondelonxcelonption;
 
   /**
-   * Logs the given message and shutdowns the application.
+   * Logs thelon givelonn melonssagelon and shutdowns thelon application.
    */
   void logAndShutdown(String msg);
 }

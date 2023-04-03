@@ -1,138 +1,138 @@
-package com.twitter.follow_recommendations.configapi
+packagelon com.twittelonr.follow_reloncommelonndations.configapi
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.candidate_sources.base.SocialProofEnforcedCandidateSourceFSConfig
-import com.twitter.follow_recommendations.common.candidate_sources.crowd_search_accounts.CrowdSearchAccountsFSConfig
-import com.twitter.follow_recommendations.common.candidate_sources.geo.PopGeoQualityFollowSourceFSConfig
-import com.twitter.follow_recommendations.common.candidate_sources.top_organic_follows_accounts.TopOrganicFollowsAccountsFSConfig
-import com.twitter.follow_recommendations.common.candidate_sources.geo.PopGeoSourceFSConfig
-import com.twitter.follow_recommendations.common.candidate_sources.ppmi_locale_follow.PPMILocaleFollowSourceFSConfig
-import com.twitter.follow_recommendations.common.candidate_sources.real_graph.RealGraphOonFSConfig
-import com.twitter.follow_recommendations.common.candidate_sources.recent_engagement.RepeatedProfileVisitsFSConfig
-import com.twitter.follow_recommendations.common.candidate_sources.sims.SimsSourceFSConfig
-import com.twitter.follow_recommendations.common.candidate_sources.sims_expansion.RecentEngagementSimilarUsersFSConfig
-import com.twitter.follow_recommendations.common.candidate_sources.sims_expansion.SimsExpansionFSConfig
-import com.twitter.follow_recommendations.common.candidate_sources.socialgraph.RecentFollowingRecentFollowingExpansionSourceFSConfig
-import com.twitter.follow_recommendations.common.candidate_sources.stp.OfflineStpSourceFsConfig
-import com.twitter.follow_recommendations.common.candidate_sources.stp.OnlineSTPSourceFSConfig
-import com.twitter.follow_recommendations.common.candidate_sources.triangular_loops.TriangularLoopsFSConfig
-import com.twitter.follow_recommendations.common.candidate_sources.user_user_graph.UserUserGraphFSConfig
-import com.twitter.follow_recommendations.common.feature_hydration.sources.FeatureHydrationSourcesFSConfig
-import com.twitter.follow_recommendations.common.rankers.weighted_candidate_source_ranker.WeightedCandidateSourceRankerFSConfig
-import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
-import com.twitter.follow_recommendations.flows.content_recommender_flow.ContentRecommenderFlowFSConfig
-import com.twitter.follow_recommendations.common.predicates.gizmoduck.GizmoduckPredicateFSConfig
-import com.twitter.follow_recommendations.common.predicates.hss.HssPredicateFSConfig
-import com.twitter.follow_recommendations.common.predicates.sgs.SgsPredicateFSConfig
-import com.twitter.follow_recommendations.flows.post_nux_ml.PostNuxMlFlowFSConfig
-import com.twitter.logging.Logger
-import com.twitter.timelines.configapi.BaseConfigBuilder
-import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.baselon.SocialProofelonnforcelondCandidatelonSourcelonFSConfig
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.crowd_selonarch_accounts.CrowdSelonarchAccountsFSConfig
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.gelono.PopGelonoQualityFollowSourcelonFSConfig
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.top_organic_follows_accounts.TopOrganicFollowsAccountsFSConfig
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.gelono.PopGelonoSourcelonFSConfig
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.ppmi_localelon_follow.PPMILocalelonFollowSourcelonFSConfig
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.relonal_graph.RelonalGraphOonFSConfig
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.reloncelonnt_elonngagelonmelonnt.RelonpelonatelondProfilelonVisitsFSConfig
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.sims.SimsSourcelonFSConfig
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.sims_elonxpansion.ReloncelonntelonngagelonmelonntSimilarUselonrsFSConfig
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.sims_elonxpansion.SimselonxpansionFSConfig
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.socialgraph.ReloncelonntFollowingReloncelonntFollowingelonxpansionSourcelonFSConfig
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.stp.OfflinelonStpSourcelonFsConfig
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.stp.OnlinelonSTPSourcelonFSConfig
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.triangular_loops.TriangularLoopsFSConfig
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.uselonr_uselonr_graph.UselonrUselonrGraphFSConfig
+import com.twittelonr.follow_reloncommelonndations.common.felonaturelon_hydration.sourcelons.FelonaturelonHydrationSourcelonsFSConfig
+import com.twittelonr.follow_reloncommelonndations.common.rankelonrs.welonightelond_candidatelon_sourcelon_rankelonr.WelonightelondCandidatelonSourcelonRankelonrFSConfig
+import com.twittelonr.follow_reloncommelonndations.configapi.common.FelonaturelonSwitchConfig
+import com.twittelonr.follow_reloncommelonndations.flows.contelonnt_reloncommelonndelonr_flow.ContelonntReloncommelonndelonrFlowFSConfig
+import com.twittelonr.follow_reloncommelonndations.common.prelondicatelons.gizmoduck.GizmoduckPrelondicatelonFSConfig
+import com.twittelonr.follow_reloncommelonndations.common.prelondicatelons.hss.HssPrelondicatelonFSConfig
+import com.twittelonr.follow_reloncommelonndations.common.prelondicatelons.sgs.SgsPrelondicatelonFSConfig
+import com.twittelonr.follow_reloncommelonndations.flows.post_nux_ml.PostNuxMlFlowFSConfig
+import com.twittelonr.logging.Loggelonr
+import com.twittelonr.timelonlinelons.configapi.BaselonConfigBuildelonr
+import com.twittelonr.timelonlinelons.configapi.FelonaturelonSwitchOvelonrridelonUtil
 
-import javax.inject.Inject
-import javax.inject.Singleton
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class FeatureSwitchConfigs @Inject() (
-  globalFeatureSwitchConfig: GlobalFeatureSwitchConfig,
-  featureHydrationSourcesFSConfig: FeatureHydrationSourcesFSConfig,
-  weightedCandidateSourceRankerFSConfig: WeightedCandidateSourceRankerFSConfig,
-  // Flow related config
-  contentRecommenderFlowFSConfig: ContentRecommenderFlowFSConfig,
+@Singlelonton
+class FelonaturelonSwitchConfigs @Injelonct() (
+  globalFelonaturelonSwitchConfig: GlobalFelonaturelonSwitchConfig,
+  felonaturelonHydrationSourcelonsFSConfig: FelonaturelonHydrationSourcelonsFSConfig,
+  welonightelondCandidatelonSourcelonRankelonrFSConfig: WelonightelondCandidatelonSourcelonRankelonrFSConfig,
+  // Flow relonlatelond config
+  contelonntReloncommelonndelonrFlowFSConfig: ContelonntReloncommelonndelonrFlowFSConfig,
   postNuxMlFlowFSConfig: PostNuxMlFlowFSConfig,
-  // Candidate source related config
-  crowdSearchAccountsFSConfig: CrowdSearchAccountsFSConfig,
-  offlineStpSourceFsConfig: OfflineStpSourceFsConfig,
-  onlineSTPSourceFSConfig: OnlineSTPSourceFSConfig,
-  popGeoSourceFSConfig: PopGeoSourceFSConfig,
-  popGeoQualityFollowFSConfig: PopGeoQualityFollowSourceFSConfig,
-  realGraphOonFSConfig: RealGraphOonFSConfig,
-  repeatedProfileVisitsFSConfig: RepeatedProfileVisitsFSConfig,
-  recentEngagementSimilarUsersFSConfig: RecentEngagementSimilarUsersFSConfig,
-  recentFollowingRecentFollowingExpansionSourceFSConfig: RecentFollowingRecentFollowingExpansionSourceFSConfig,
-  simsExpansionFSConfig: SimsExpansionFSConfig,
-  simsSourceFSConfig: SimsSourceFSConfig,
-  socialProofEnforcedCandidateSourceFSConfig: SocialProofEnforcedCandidateSourceFSConfig,
+  // Candidatelon sourcelon relonlatelond config
+  crowdSelonarchAccountsFSConfig: CrowdSelonarchAccountsFSConfig,
+  offlinelonStpSourcelonFsConfig: OfflinelonStpSourcelonFsConfig,
+  onlinelonSTPSourcelonFSConfig: OnlinelonSTPSourcelonFSConfig,
+  popGelonoSourcelonFSConfig: PopGelonoSourcelonFSConfig,
+  popGelonoQualityFollowFSConfig: PopGelonoQualityFollowSourcelonFSConfig,
+  relonalGraphOonFSConfig: RelonalGraphOonFSConfig,
+  relonpelonatelondProfilelonVisitsFSConfig: RelonpelonatelondProfilelonVisitsFSConfig,
+  reloncelonntelonngagelonmelonntSimilarUselonrsFSConfig: ReloncelonntelonngagelonmelonntSimilarUselonrsFSConfig,
+  reloncelonntFollowingReloncelonntFollowingelonxpansionSourcelonFSConfig: ReloncelonntFollowingReloncelonntFollowingelonxpansionSourcelonFSConfig,
+  simselonxpansionFSConfig: SimselonxpansionFSConfig,
+  simsSourcelonFSConfig: SimsSourcelonFSConfig,
+  socialProofelonnforcelondCandidatelonSourcelonFSConfig: SocialProofelonnforcelondCandidatelonSourcelonFSConfig,
   triangularLoopsFSConfig: TriangularLoopsFSConfig,
-  userUserGraphFSConfig: UserUserGraphFSConfig,
-  // Predicate related configs
-  gizmoduckPredicateFSConfig: GizmoduckPredicateFSConfig,
-  hssPredicateFSConfig: HssPredicateFSConfig,
-  sgsPredicateFSConfig: SgsPredicateFSConfig,
-  ppmiLocaleSourceFSConfig: PPMILocaleFollowSourceFSConfig,
+  uselonrUselonrGraphFSConfig: UselonrUselonrGraphFSConfig,
+  // Prelondicatelon relonlatelond configs
+  gizmoduckPrelondicatelonFSConfig: GizmoduckPrelondicatelonFSConfig,
+  hssPrelondicatelonFSConfig: HssPrelondicatelonFSConfig,
+  sgsPrelondicatelonFSConfig: SgsPrelondicatelonFSConfig,
+  ppmiLocalelonSourcelonFSConfig: PPMILocalelonFollowSourcelonFSConfig,
   topOrganicFollowsAccountsFSConfig: TopOrganicFollowsAccountsFSConfig,
-  statsReceiver: StatsReceiver) {
+  statsReloncelonivelonr: StatsReloncelonivelonr) {
 
-  val logger = Logger(classOf[FeatureSwitchConfigs])
+  val loggelonr = Loggelonr(classOf[FelonaturelonSwitchConfigs])
 
-  val mergedFSConfig =
-    FeatureSwitchConfig.merge(
-      Seq(
-        globalFeatureSwitchConfig,
-        featureHydrationSourcesFSConfig,
-        weightedCandidateSourceRankerFSConfig,
-        // Flow related config
-        contentRecommenderFlowFSConfig,
+  val melonrgelondFSConfig =
+    FelonaturelonSwitchConfig.melonrgelon(
+      Selonq(
+        globalFelonaturelonSwitchConfig,
+        felonaturelonHydrationSourcelonsFSConfig,
+        welonightelondCandidatelonSourcelonRankelonrFSConfig,
+        // Flow relonlatelond config
+        contelonntReloncommelonndelonrFlowFSConfig,
         postNuxMlFlowFSConfig,
-        // Candidate source related config
-        crowdSearchAccountsFSConfig,
-        offlineStpSourceFsConfig,
-        onlineSTPSourceFSConfig,
-        popGeoSourceFSConfig,
-        popGeoQualityFollowFSConfig,
-        realGraphOonFSConfig,
-        repeatedProfileVisitsFSConfig,
-        recentEngagementSimilarUsersFSConfig,
-        recentFollowingRecentFollowingExpansionSourceFSConfig,
-        simsExpansionFSConfig,
-        simsSourceFSConfig,
-        socialProofEnforcedCandidateSourceFSConfig,
+        // Candidatelon sourcelon relonlatelond config
+        crowdSelonarchAccountsFSConfig,
+        offlinelonStpSourcelonFsConfig,
+        onlinelonSTPSourcelonFSConfig,
+        popGelonoSourcelonFSConfig,
+        popGelonoQualityFollowFSConfig,
+        relonalGraphOonFSConfig,
+        relonpelonatelondProfilelonVisitsFSConfig,
+        reloncelonntelonngagelonmelonntSimilarUselonrsFSConfig,
+        reloncelonntFollowingReloncelonntFollowingelonxpansionSourcelonFSConfig,
+        simselonxpansionFSConfig,
+        simsSourcelonFSConfig,
+        socialProofelonnforcelondCandidatelonSourcelonFSConfig,
         triangularLoopsFSConfig,
-        userUserGraphFSConfig,
-        // Predicate related configs:
-        gizmoduckPredicateFSConfig,
-        hssPredicateFSConfig,
-        sgsPredicateFSConfig,
-        ppmiLocaleSourceFSConfig,
+        uselonrUselonrGraphFSConfig,
+        // Prelondicatelon relonlatelond configs:
+        gizmoduckPrelondicatelonFSConfig,
+        hssPrelondicatelonFSConfig,
+        sgsPrelondicatelonFSConfig,
+        ppmiLocalelonSourcelonFSConfig,
         topOrganicFollowsAccountsFSConfig,
       )
     )
 
   /**
-   * enum params have to be listed in this main file together as otherwise we'll have to pass in
-   * some signature like `Seq[FSEnumParams[_]]` which are generics of generics and won't compile.
-   * we only have enumFsParams from globalFeatureSwitchConfig at the moment
+   * elonnum params havelon to belon listelond in this main filelon togelonthelonr as othelonrwiselon welon'll havelon to pass in
+   * somelon signaturelon likelon `Selonq[FSelonnumParams[_]]` which arelon gelonnelonrics of gelonnelonrics and won't compilelon.
+   * welon only havelon elonnumFsParams from globalFelonaturelonSwitchConfig at thelon momelonnt
    */
-  val enumOverrides = globalFeatureSwitchConfig.enumFsParams.flatMap { enumParam =>
-    FeatureSwitchOverrideUtil.getEnumFSOverrides(statsReceiver, logger, enumParam)
+  val elonnumOvelonrridelons = globalFelonaturelonSwitchConfig.elonnumFsParams.flatMap { elonnumParam =>
+    FelonaturelonSwitchOvelonrridelonUtil.gelontelonnumFSOvelonrridelons(statsReloncelonivelonr, loggelonr, elonnumParam)
   }
 
-  val gatedOverrides = mergedFSConfig.gatedOverridesMap.flatMap {
-    case (fsName, overrides) =>
-      FeatureSwitchOverrideUtil.gatedOverrides(fsName, overrides: _*)
+  val gatelondOvelonrridelons = melonrgelondFSConfig.gatelondOvelonrridelonsMap.flatMap {
+    caselon (fsNamelon, ovelonrridelons) =>
+      FelonaturelonSwitchOvelonrridelonUtil.gatelondOvelonrridelons(fsNamelon, ovelonrridelons: _*)
   }
 
-  val enumSeqOverrides = globalFeatureSwitchConfig.enumSeqFsParams.flatMap { enumSeqParam =>
-    FeatureSwitchOverrideUtil.getEnumSeqFSOverrides(statsReceiver, logger, enumSeqParam)
+  val elonnumSelonqOvelonrridelons = globalFelonaturelonSwitchConfig.elonnumSelonqFsParams.flatMap { elonnumSelonqParam =>
+    FelonaturelonSwitchOvelonrridelonUtil.gelontelonnumSelonqFSOvelonrridelons(statsReloncelonivelonr, loggelonr, elonnumSelonqParam)
   }
 
-  val overrides =
-    FeatureSwitchOverrideUtil
-      .getBooleanFSOverrides(mergedFSConfig.booleanFSParams: _*) ++
-      FeatureSwitchOverrideUtil
-        .getBoundedIntFSOverrides(mergedFSConfig.intFSParams: _*) ++
-      FeatureSwitchOverrideUtil
-        .getBoundedLongFSOverrides(mergedFSConfig.longFSParams: _*) ++
-      FeatureSwitchOverrideUtil
-        .getBoundedDoubleFSOverrides(mergedFSConfig.doubleFSParams: _*) ++
-      FeatureSwitchOverrideUtil
-        .getDurationFSOverrides(mergedFSConfig.durationFSParams: _*) ++
-      FeatureSwitchOverrideUtil
-        .getBoundedOptionalDoubleOverrides(mergedFSConfig.optionalDoubleFSParams: _*) ++
-      FeatureSwitchOverrideUtil.getStringSeqFSOverrides(mergedFSConfig.stringSeqFSParams: _*) ++
-      enumOverrides ++
-      gatedOverrides ++
-      enumSeqOverrides
+  val ovelonrridelons =
+    FelonaturelonSwitchOvelonrridelonUtil
+      .gelontBoolelonanFSOvelonrridelons(melonrgelondFSConfig.boolelonanFSParams: _*) ++
+      FelonaturelonSwitchOvelonrridelonUtil
+        .gelontBoundelondIntFSOvelonrridelons(melonrgelondFSConfig.intFSParams: _*) ++
+      FelonaturelonSwitchOvelonrridelonUtil
+        .gelontBoundelondLongFSOvelonrridelons(melonrgelondFSConfig.longFSParams: _*) ++
+      FelonaturelonSwitchOvelonrridelonUtil
+        .gelontBoundelondDoublelonFSOvelonrridelons(melonrgelondFSConfig.doublelonFSParams: _*) ++
+      FelonaturelonSwitchOvelonrridelonUtil
+        .gelontDurationFSOvelonrridelons(melonrgelondFSConfig.durationFSParams: _*) ++
+      FelonaturelonSwitchOvelonrridelonUtil
+        .gelontBoundelondOptionalDoublelonOvelonrridelons(melonrgelondFSConfig.optionalDoublelonFSParams: _*) ++
+      FelonaturelonSwitchOvelonrridelonUtil.gelontStringSelonqFSOvelonrridelons(melonrgelondFSConfig.stringSelonqFSParams: _*) ++
+      elonnumOvelonrridelons ++
+      gatelondOvelonrridelons ++
+      elonnumSelonqOvelonrridelons
 
-  val config = BaseConfigBuilder(overrides).build("FollowRecommendationServiceFeatureSwitches")
+  val config = BaselonConfigBuildelonr(ovelonrridelons).build("FollowReloncommelonndationSelonrvicelonFelonaturelonSwitchelons")
 }

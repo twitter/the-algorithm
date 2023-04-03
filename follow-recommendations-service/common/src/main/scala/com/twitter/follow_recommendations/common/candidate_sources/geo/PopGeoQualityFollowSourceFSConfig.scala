@@ -1,24 +1,24 @@
-package com.twitter.follow_recommendations.common.candidate_sources.geo
+packagelon com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.gelono
 
-import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.FSParam
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.follow_reloncommelonndations.configapi.common.FelonaturelonSwitchConfig
+import com.twittelonr.timelonlinelons.configapi.FSBoundelondParam
+import com.twittelonr.timelonlinelons.configapi.FSNamelon
+import com.twittelonr.timelonlinelons.configapi.FSParam
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class PopGeoQualityFollowSourceFSConfig @Inject() () extends FeatureSwitchConfig {
-  override val intFSParams: Seq[FSBoundedParam[Int] with FSName] = Seq(
-    PopGeoQualityFollowSourceParams.PopGeoSourceGeoHashMaxPrecision,
-    PopGeoQualityFollowSourceParams.PopGeoSourceGeoHashMinPrecision,
-    PopGeoQualityFollowSourceParams.PopGeoSourceMaxResultsPerPrecision
+@Singlelonton
+class PopGelonoQualityFollowSourcelonFSConfig @Injelonct() () elonxtelonnds FelonaturelonSwitchConfig {
+  ovelonrridelon val intFSParams: Selonq[FSBoundelondParam[Int] with FSNamelon] = Selonq(
+    PopGelonoQualityFollowSourcelonParams.PopGelonoSourcelonGelonoHashMaxPreloncision,
+    PopGelonoQualityFollowSourcelonParams.PopGelonoSourcelonGelonoHashMinPreloncision,
+    PopGelonoQualityFollowSourcelonParams.PopGelonoSourcelonMaxRelonsultsPelonrPreloncision
   )
-  override val doubleFSParams: Seq[FSBoundedParam[Double] with FSName] = Seq(
-    PopGeoQualityFollowSourceParams.CandidateSourceWeight
+  ovelonrridelon val doublelonFSParams: Selonq[FSBoundelondParam[Doublelon] with FSNamelon] = Selonq(
+    PopGelonoQualityFollowSourcelonParams.CandidatelonSourcelonWelonight
   )
-  override val booleanFSParams: Seq[FSParam[Boolean] with FSName] = Seq(
-    PopGeoQualityFollowSourceParams.CandidateSourceEnabled,
-    PopGeoQualityFollowSourceParams.PopGeoSourceReturnFromAllPrecisions
+  ovelonrridelon val boolelonanFSParams: Selonq[FSParam[Boolelonan] with FSNamelon] = Selonq(
+    PopGelonoQualityFollowSourcelonParams.CandidatelonSourcelonelonnablelond,
+    PopGelonoQualityFollowSourcelonParams.PopGelonoSourcelonRelonturnFromAllPreloncisions
   )
 }

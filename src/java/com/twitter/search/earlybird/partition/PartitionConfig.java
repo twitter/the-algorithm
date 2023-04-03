@@ -1,171 +1,171 @@
-package com.twitter.search.earlybird.partition;
+packagelon com.twittelonr.selonarch.elonarlybird.partition;
 
-import java.util.Date;
+import java.util.Datelon;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apachelon.commons.lang3.buildelonr.ToStringBuildelonr;
 
-import com.twitter.search.common.config.Config;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.config.TierConfig;
+import com.twittelonr.selonarch.common.config.Config;
+import com.twittelonr.selonarch.elonarlybird.common.config.elonarlybirdConfig;
+import com.twittelonr.selonarch.elonarlybird.config.TielonrConfig;
 
 public class PartitionConfig {
-  // Which sub-cluster this host belongs to
-  private final String tierName;
+  // Which sub-clustelonr this host belonlongs to
+  privatelon final String tielonrNamelon;
 
-  // Which cluster this host belongs to
-  private final String clusterName;
+  // Which clustelonr this host belonlongs to
+  privatelon final String clustelonrNamelon;
 
-  public static final String DEFAULT_TIER_NAME = "all";
+  public static final String DelonFAULT_TIelonR_NAMelon = "all";
 
-  // the date range of the timeslices this tier will load. The start date is inclusive, while
-  // the end date is exclusive.
-  private final Date tierStartDate;
-  private final Date tierEndDate;
+  // thelon datelon rangelon of thelon timelonslicelons this tielonr will load. Thelon start datelon is inclusivelon, whilelon
+  // thelon elonnd datelon is elonxclusivelon.
+  privatelon final Datelon tielonrStartDatelon;
+  privatelon final Datelon tielonrelonndDatelon;
 
-  private final int indexingHashPartitionID; // Hash Partition ID assigned for this EB
-  private final int maxEnabledLocalSegments; // Number of segments to keep
-  // The position of this host in the ordered list of hosts serving this hash partition
-  private final int hostPositionWithinHashPartition;
-  private volatile int numReplicasInHashPartition;
+  privatelon final int indelonxingHashPartitionID; // Hash Partition ID assignelond for this elonB
+  privatelon final int maxelonnablelondLocalSelongmelonnts; // Numbelonr of selongmelonnts to kelonelonp
+  // Thelon position of this host in thelon ordelonrelond list of hosts selonrving this hash partition
+  privatelon final int hostPositionWithinHashPartition;
+  privatelon volatilelon int numRelonplicasInHashPartition;
 
-  private final int numPartitions; // Total number of partitions in the current cluster
+  privatelon final int numPartitions; // Total numbelonr of partitions in thelon currelonnt clustelonr
 
   public PartitionConfig(
-      int indexingHashPartitionID,
-      int maxEnabledLocalSegments,
+      int indelonxingHashPartitionID,
+      int maxelonnablelondLocalSelongmelonnts,
       int hostPositionWithinHashPartition,
-      int numReplicasInHashPartition,
+      int numRelonplicasInHashPartition,
       int numPartitions) {
-    this(DEFAULT_TIER_NAME,
-        TierConfig.DEFAULT_TIER_START_DATE,
-        TierConfig.DEFAULT_TIER_END_DATE,
-        indexingHashPartitionID,
-        maxEnabledLocalSegments,
+    this(DelonFAULT_TIelonR_NAMelon,
+        TielonrConfig.DelonFAULT_TIelonR_START_DATelon,
+        TielonrConfig.DelonFAULT_TIelonR_elonND_DATelon,
+        indelonxingHashPartitionID,
+        maxelonnablelondLocalSelongmelonnts,
         hostPositionWithinHashPartition,
-        numReplicasInHashPartition,
+        numRelonplicasInHashPartition,
         numPartitions);
   }
 
-  public PartitionConfig(String tierName,
-                         Date tierStartDate,
-                         Date tierEndDate,
-                         int indexingHashPartitionID,
-                         int maxEnabledLocalSegments,
+  public PartitionConfig(String tielonrNamelon,
+                         Datelon tielonrStartDatelon,
+                         Datelon tielonrelonndDatelon,
+                         int indelonxingHashPartitionID,
+                         int maxelonnablelondLocalSelongmelonnts,
                          int hostPositionWithinHashPartition,
-                         int numReplicasInHashPartition,
+                         int numRelonplicasInHashPartition,
                          int numPartitions) {
-    this(tierName, tierStartDate, tierEndDate, indexingHashPartitionID, maxEnabledLocalSegments,
-        hostPositionWithinHashPartition, numReplicasInHashPartition, Config.getEnvironment(),
+    this(tielonrNamelon, tielonrStartDatelon, tielonrelonndDatelon, indelonxingHashPartitionID, maxelonnablelondLocalSelongmelonnts,
+        hostPositionWithinHashPartition, numRelonplicasInHashPartition, Config.gelontelonnvironmelonnt(),
         numPartitions);
   }
 
-  public PartitionConfig(String tierName,
-                         Date tierStartDate,
-                         Date tierEndDate,
-                         int indexingHashPartitionID,
-                         int maxEnabledLocalSegments,
+  public PartitionConfig(String tielonrNamelon,
+                         Datelon tielonrStartDatelon,
+                         Datelon tielonrelonndDatelon,
+                         int indelonxingHashPartitionID,
+                         int maxelonnablelondLocalSelongmelonnts,
                          int hostPositionWithinHashPartition,
-                         int numReplicasInHashPartition,
-                         String clusterName,
+                         int numRelonplicasInHashPartition,
+                         String clustelonrNamelon,
                          int numPartitions) {
-    this.tierName = Preconditions.checkNotNull(tierName);
-    this.clusterName = Preconditions.checkNotNull(clusterName);
-    this.tierStartDate = Preconditions.checkNotNull(tierStartDate);
-    this.tierEndDate = Preconditions.checkNotNull(tierEndDate);
-    this.indexingHashPartitionID = indexingHashPartitionID;
-    this.maxEnabledLocalSegments = maxEnabledLocalSegments;
+    this.tielonrNamelon = Prelonconditions.chelonckNotNull(tielonrNamelon);
+    this.clustelonrNamelon = Prelonconditions.chelonckNotNull(clustelonrNamelon);
+    this.tielonrStartDatelon = Prelonconditions.chelonckNotNull(tielonrStartDatelon);
+    this.tielonrelonndDatelon = Prelonconditions.chelonckNotNull(tielonrelonndDatelon);
+    this.indelonxingHashPartitionID = indelonxingHashPartitionID;
+    this.maxelonnablelondLocalSelongmelonnts = maxelonnablelondLocalSelongmelonnts;
     this.hostPositionWithinHashPartition = hostPositionWithinHashPartition;
-    this.numReplicasInHashPartition = numReplicasInHashPartition;
+    this.numRelonplicasInHashPartition = numRelonplicasInHashPartition;
     this.numPartitions = numPartitions;
   }
 
-  public String getTierName() {
-    return tierName;
+  public String gelontTielonrNamelon() {
+    relonturn tielonrNamelon;
   }
 
-  public String getClusterName() {
-    return clusterName;
+  public String gelontClustelonrNamelon() {
+    relonturn clustelonrNamelon;
   }
 
-  public Date getTierStartDate() {
-    return tierStartDate;
+  public Datelon gelontTielonrStartDatelon() {
+    relonturn tielonrStartDatelon;
   }
 
-  public Date getTierEndDate() {
-    return tierEndDate;
+  public Datelon gelontTielonrelonndDatelon() {
+    relonturn tielonrelonndDatelon;
   }
 
-  public int getIndexingHashPartitionID() {
-    return indexingHashPartitionID;
+  public int gelontIndelonxingHashPartitionID() {
+    relonturn indelonxingHashPartitionID;
   }
 
-  public int getMaxEnabledLocalSegments() {
-    return maxEnabledLocalSegments;
+  public int gelontMaxelonnablelondLocalSelongmelonnts() {
+    relonturn maxelonnablelondLocalSelongmelonnts;
   }
 
-  public int getHostPositionWithinHashPartition() {
-    return hostPositionWithinHashPartition;
+  public int gelontHostPositionWithinHashPartition() {
+    relonturn hostPositionWithinHashPartition;
   }
 
-  public int getNumReplicasInHashPartition() {
-    return numReplicasInHashPartition;
+  public int gelontNumRelonplicasInHashPartition() {
+    relonturn numRelonplicasInHashPartition;
   }
 
   /**
-   * The number of ways the Tweet and/or user data is partitioned (or sharded) in this Earlybird, in
-   * this tier.
+   * Thelon numbelonr of ways thelon Twelonelont and/or uselonr data is partitionelond (or shardelond) in this elonarlybird, in
+   * this tielonr.
    */
-  public int getNumPartitions() {
-    return numPartitions;
+  public int gelontNumPartitions() {
+    relonturn numPartitions;
   }
 
-  public String getPartitionConfigDescription() {
-    return ToStringBuilder.reflectionToString(this);
+  public String gelontPartitionConfigDelonscription() {
+    relonturn ToStringBuildelonr.relonflelonctionToString(this);
   }
 
-  public void setNumReplicasInHashPartition(int numReplicas) {
-    numReplicasInHashPartition = numReplicas;
+  public void selontNumRelonplicasInHashPartition(int numRelonplicas) {
+    numRelonplicasInHashPartition = numRelonplicas;
   }
 
-  public static final int DEFAULT_NUM_SERVING_TIMESLICES_FOR_TEST = 18;
-  public static PartitionConfig getPartitionConfigForTests() {
-    return getPartitionConfigForTests(
-        TierConfig.DEFAULT_TIER_START_DATE,
-        TierConfig.DEFAULT_TIER_END_DATE);
+  public static final int DelonFAULT_NUM_SelonRVING_TIMelonSLICelonS_FOR_TelonST = 18;
+  public static PartitionConfig gelontPartitionConfigForTelonsts() {
+    relonturn gelontPartitionConfigForTelonsts(
+        TielonrConfig.DelonFAULT_TIelonR_START_DATelon,
+        TielonrConfig.DelonFAULT_TIelonR_elonND_DATelon);
   }
 
-  public static PartitionConfig getPartitionConfigForTests(Date tierStartDate, Date tierEndDate) {
-    return getPartitionConfigForTests(
-        DEFAULT_NUM_SERVING_TIMESLICES_FOR_TEST, tierStartDate, tierEndDate, 1);
+  public static PartitionConfig gelontPartitionConfigForTelonsts(Datelon tielonrStartDatelon, Datelon tielonrelonndDatelon) {
+    relonturn gelontPartitionConfigForTelonsts(
+        DelonFAULT_NUM_SelonRVING_TIMelonSLICelonS_FOR_TelonST, tielonrStartDatelon, tielonrelonndDatelon, 1);
   }
 
   /**
-   * Returns a PartitionConfig instance configured for tests.
+   * Relonturns a PartitionConfig instancelon configurelond for telonsts.
    *
-   * @param numServingTimeslices The number of timeslices that should be served.
-   * @param tierStartDate The tier's start date. Used only in the full archive earlybirds.
-   * @param tierEndDate The tier's end date. Used only by in the full archive earlybirds.
-   * @param numReplicasInHashPartition The number of replicas for each partition.
-   * @return A PartitionConfig instance configured for tests.
+   * @param numSelonrvingTimelonslicelons Thelon numbelonr of timelonslicelons that should belon selonrvelond.
+   * @param tielonrStartDatelon Thelon tielonr's start datelon. Uselond only in thelon full archivelon elonarlybirds.
+   * @param tielonrelonndDatelon Thelon tielonr's elonnd datelon. Uselond only by in thelon full archivelon elonarlybirds.
+   * @param numRelonplicasInHashPartition Thelon numbelonr of relonplicas for elonach partition.
+   * @relonturn A PartitionConfig instancelon configurelond for telonsts.
    */
-  @VisibleForTesting
-  public static PartitionConfig getPartitionConfigForTests(
-      int numServingTimeslices,
-      Date tierStartDate,
-      Date tierEndDate,
-      int numReplicasInHashPartition) {
-    return new PartitionConfig(
-        EarlybirdConfig.getString("sub_tiers_for_tests", "test"),
-        tierStartDate,
-        tierEndDate,
-        EarlybirdConfig.getInt("hash_partition_for_tests", -1),
-        numServingTimeslices,
+  @VisiblelonForTelonsting
+  public static PartitionConfig gelontPartitionConfigForTelonsts(
+      int numSelonrvingTimelonslicelons,
+      Datelon tielonrStartDatelon,
+      Datelon tielonrelonndDatelon,
+      int numRelonplicasInHashPartition) {
+    relonturn nelonw PartitionConfig(
+        elonarlybirdConfig.gelontString("sub_tielonrs_for_telonsts", "telonst"),
+        tielonrStartDatelon,
+        tielonrelonndDatelon,
+        elonarlybirdConfig.gelontInt("hash_partition_for_telonsts", -1),
+        numSelonrvingTimelonslicelons,
         0, // hostPositionWithinHashPartition
-        numReplicasInHashPartition,
-        EarlybirdConfig.getInt("num_partitions_for_tests", -1)
+        numRelonplicasInHashPartition,
+        elonarlybirdConfig.gelontInt("num_partitions_for_telonsts", -1)
     );
   }
 }

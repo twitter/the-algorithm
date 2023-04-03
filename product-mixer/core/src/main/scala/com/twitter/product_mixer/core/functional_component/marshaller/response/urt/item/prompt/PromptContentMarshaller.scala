@@ -1,17 +1,17 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.prompt
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.itelonm.prompt
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.prompt.PromptContent
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.prompt.RelevancePromptContent
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.prompt.PromptContelonnt
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.prompt.RelonlelonvancelonPromptContelonnt
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class PromptContentMarshaller @Inject() (
-  relevancePromptContentMarshaller: RelevancePromptContentMarshaller) {
+@Singlelonton
+class PromptContelonntMarshallelonr @Injelonct() (
+  relonlelonvancelonPromptContelonntMarshallelonr: RelonlelonvancelonPromptContelonntMarshallelonr) {
 
-  def apply(promptContent: PromptContent): urt.PromptContent = promptContent match {
-    case relevancePromptContent: RelevancePromptContent =>
-      urt.PromptContent.RelevancePrompt(relevancePromptContentMarshaller(relevancePromptContent))
+  delonf apply(promptContelonnt: PromptContelonnt): urt.PromptContelonnt = promptContelonnt match {
+    caselon relonlelonvancelonPromptContelonnt: RelonlelonvancelonPromptContelonnt =>
+      urt.PromptContelonnt.RelonlelonvancelonPrompt(relonlelonvancelonPromptContelonntMarshallelonr(relonlelonvancelonPromptContelonnt))
   }
 }

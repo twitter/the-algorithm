@@ -1,64 +1,64 @@
-package com.twitter.product_mixer.core.pipeline.step.filter
+packagelon com.twittelonr.product_mixelonr.corelon.pipelonlinelon.stelonp.filtelonr
 
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.state.HasCandidatesWithFeatures
-import com.twitter.product_mixer.core.pipeline.state.HasQuery
-import com.twitter.product_mixer.core.pipeline.step.Step
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.product_mixer.core.service.filter_executor.FilterExecutor
-import com.twitter.product_mixer.core.service.filter_executor.FilterExecutorResult
-import com.twitter.stitch.Arrow
-import javax.inject.Inject
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.filtelonr.Filtelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.statelon.HasCandidatelonsWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.statelon.HasQuelonry
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.stelonp.Stelonp
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.elonxeloncutor
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.filtelonr_elonxeloncutor.Filtelonrelonxeloncutor
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.filtelonr_elonxeloncutor.FiltelonrelonxeloncutorRelonsult
+import com.twittelonr.stitch.Arrow
+import javax.injelonct.Injelonct
 
 /**
- * A candidate filter step, it takes the input list of candidates and the given filter and applies
- * the filters on the candidates in sequence, returning the final kept candidates list to State.
+ * A candidatelon filtelonr stelonp, it takelons thelon input list of candidatelons and thelon givelonn filtelonr and applielons
+ * thelon filtelonrs on thelon candidatelons in selonquelonncelon, relonturning thelon final kelonpt candidatelons list to Statelon.
  *
- * @param filterExecutor Filter Executor
- * @tparam Query Type of PipelineQuery domain model
- * @tparam Candidate Type of Candidates to filter
- * @tparam State The pipeline state domain model.
+ * @param filtelonrelonxeloncutor Filtelonr elonxeloncutor
+ * @tparam Quelonry Typelon of PipelonlinelonQuelonry domain modelonl
+ * @tparam Candidatelon Typelon of Candidatelons to filtelonr
+ * @tparam Statelon Thelon pipelonlinelon statelon domain modelonl.
  */
-case class FilterStep[
-  Query <: PipelineQuery,
-  Candidate <: UniversalNoun[Any],
-  State <: HasQuery[Query, State] with HasCandidatesWithFeatures[
-    Candidate,
-    State
-  ]] @Inject() (filterExecutor: FilterExecutor)
-    extends Step[State, Seq[
-      Filter[Query, Candidate]
-    ], (Query, Seq[CandidateWithFeatures[Candidate]]), FilterExecutorResult[Candidate]] {
+caselon class FiltelonrStelonp[
+  Quelonry <: PipelonlinelonQuelonry,
+  Candidatelon <: UnivelonrsalNoun[Any],
+  Statelon <: HasQuelonry[Quelonry, Statelon] with HasCandidatelonsWithFelonaturelons[
+    Candidatelon,
+    Statelon
+  ]] @Injelonct() (filtelonrelonxeloncutor: Filtelonrelonxeloncutor)
+    elonxtelonnds Stelonp[Statelon, Selonq[
+      Filtelonr[Quelonry, Candidatelon]
+    ], (Quelonry, Selonq[CandidatelonWithFelonaturelons[Candidatelon]]), FiltelonrelonxeloncutorRelonsult[Candidatelon]] {
 
-  override def isEmpty(config: Seq[Filter[Query, Candidate]]): Boolean = config.isEmpty
+  ovelonrridelon delonf iselonmpty(config: Selonq[Filtelonr[Quelonry, Candidatelon]]): Boolelonan = config.iselonmpty
 
-  override def adaptInput(
-    state: State,
-    config: Seq[Filter[Query, Candidate]]
-  ): (Query, Seq[CandidateWithFeatures[Candidate]]) =
-    (state.query, state.candidatesWithFeatures)
+  ovelonrridelon delonf adaptInput(
+    statelon: Statelon,
+    config: Selonq[Filtelonr[Quelonry, Candidatelon]]
+  ): (Quelonry, Selonq[CandidatelonWithFelonaturelons[Candidatelon]]) =
+    (statelon.quelonry, statelon.candidatelonsWithFelonaturelons)
 
-  override def arrow(
-    config: Seq[Filter[Query, Candidate]],
-    context: Executor.Context
-  ): Arrow[(Query, Seq[CandidateWithFeatures[Candidate]]), FilterExecutorResult[Candidate]] =
-    filterExecutor.arrow(config, context)
+  ovelonrridelon delonf arrow(
+    config: Selonq[Filtelonr[Quelonry, Candidatelon]],
+    contelonxt: elonxeloncutor.Contelonxt
+  ): Arrow[(Quelonry, Selonq[CandidatelonWithFelonaturelons[Candidatelon]]), FiltelonrelonxeloncutorRelonsult[Candidatelon]] =
+    filtelonrelonxeloncutor.arrow(config, contelonxt)
 
-  override def updateState(
-    state: State,
-    executorResult: FilterExecutorResult[Candidate],
-    config: Seq[Filter[Query, Candidate]]
-  ): State = {
-    val keptCandidates = executorResult.result
-    val candidatesMap = state.candidatesWithFeatures.map { candidatesWithFeatures =>
-      candidatesWithFeatures.candidate -> candidatesWithFeatures
+  ovelonrridelon delonf updatelonStatelon(
+    statelon: Statelon,
+    elonxeloncutorRelonsult: FiltelonrelonxeloncutorRelonsult[Candidatelon],
+    config: Selonq[Filtelonr[Quelonry, Candidatelon]]
+  ): Statelon = {
+    val kelonptCandidatelons = elonxeloncutorRelonsult.relonsult
+    val candidatelonsMap = statelon.candidatelonsWithFelonaturelons.map { candidatelonsWithFelonaturelons =>
+      candidatelonsWithFelonaturelons.candidatelon -> candidatelonsWithFelonaturelons
     }.toMap
-    val newCandidates = keptCandidates.flatMap { candidate =>
-      candidatesMap.get(candidate)
+    val nelonwCandidatelons = kelonptCandidatelons.flatMap { candidatelon =>
+      candidatelonsMap.gelont(candidatelon)
     }
-    state.updateCandidatesWithFeatures(newCandidates)
+    statelon.updatelonCandidatelonsWithFelonaturelons(nelonwCandidatelons)
   }
 }

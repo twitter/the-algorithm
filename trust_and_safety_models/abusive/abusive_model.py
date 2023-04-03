@@ -1,276 +1,276 @@
-import tensorflow as tf
+import telonnsorflow as tf
 
-physical_devices = tf.config.list_physical_devices('GPU') 
-for device in physical_devices:
-    tf.config.experimental.set_memory_growth(device, True)
+physical_delonvicelons = tf.config.list_physical_delonvicelons('GPU')
+for delonvicelon in physical_delonvicelons:
+    tf.config.elonxpelonrimelonntal.selont_melonmory_growth(delonvicelon, Truelon)
 
-from twitter.hmli.nimbus.modeling.model_config import FeatureType, EncodingType, Feature, Model, LogType
-from twitter.hmli.nimbus.modeling.feature_loader import BigQueryFeatureLoader
-from twitter.cuad.representation.models.text_encoder import TextEncoder
-from twitter.cuad.representation.models.optimization import create_optimizer
-from twitter.hmli.nimbus.modeling.feature_encoder import FeatureEncoder
+from twittelonr.hmli.nimbus.modelonling.modelonl_config import FelonaturelonTypelon, elonncodingTypelon, Felonaturelon, Modelonl, LogTypelon
+from twittelonr.hmli.nimbus.modelonling.felonaturelon_loadelonr import BigQuelonryFelonaturelonLoadelonr
+from twittelonr.cuad.relonprelonselonntation.modelonls.telonxt_elonncodelonr import Telonxtelonncodelonr
+from twittelonr.cuad.relonprelonselonntation.modelonls.optimization import crelonatelon_optimizelonr
+from twittelonr.hmli.nimbus.modelonling.felonaturelon_elonncodelonr import Felonaturelonelonncodelonr
 
 import numpy as np
 import pandas as pd
 import utils
 
-cat_names = [
+cat_namelons = [
 ...
 ]
 
-category_features = [Feature(name=cat_name, ftype=FeatureType.CONTINUOUS) for cat_name in cat_names]
-features = [
-  Feature(name="tweet_text_with_media_annotations", ftype=FeatureType.STRING, encoding=EncodingType.BERT),
-  Feature(name="precision_nsfw", ftype=FeatureType.CONTINUOUS),
-  Feature(name="has_media", ftype=FeatureType.BINARY),
-  Feature(name="num_media", ftype=FeatureType.DISCRETE)
-] + category_features
+catelongory_felonaturelons = [Felonaturelon(namelon=cat_namelon, ftypelon=FelonaturelonTypelon.CONTINUOUS) for cat_namelon in cat_namelons]
+felonaturelons = [
+  Felonaturelon(namelon="twelonelont_telonxt_with_melondia_annotations", ftypelon=FelonaturelonTypelon.STRING, elonncoding=elonncodingTypelon.BelonRT),
+  Felonaturelon(namelon="preloncision_nsfw", ftypelon=FelonaturelonTypelon.CONTINUOUS),
+  Felonaturelon(namelon="has_melondia", ftypelon=FelonaturelonTypelon.BINARY),
+  Felonaturelon(namelon="num_melondia", ftypelon=FelonaturelonTypelon.DISCRelonTelon)
+] + catelongory_felonaturelons
 
-ptos_prototype = Model(
-  name='ptos_prototype',
-  export_path="...",
-  features=features,
+ptos_prototypelon = Modelonl(
+  namelon='ptos_prototypelon',
+  elonxport_path="...",
+  felonaturelons=felonaturelons,
 )
-print(ptos_prototype)
+print(ptos_prototypelon)
 
-cq_loader = BigQueryFeatureLoader(gcp_project=COMPUTE_PROJECT)
-labels = [
-  "has_non_punitive_action",
-  "has_punitive_action",
-  "has_punitive_action_contains_self_harm",
-  "has_punitive_action_encourage_self_harm",
-  "has_punitive_action_episodic",
-  "has_punitive_action_episodic_hateful_conduct",
-  "has_punitive_action_other_abuse_policy",
-  "has_punitive_action_without_self_harm"
+cq_loadelonr = BigQuelonryFelonaturelonLoadelonr(gcp_projelonct=COMPUTelon_PROJelonCT)
+labelonls = [
+  "has_non_punitivelon_action",
+  "has_punitivelon_action",
+  "has_punitivelon_action_contains_selonlf_harm",
+  "has_punitivelon_action_elonncouragelon_selonlf_harm",
+  "has_punitivelon_action_elonpisodic",
+  "has_punitivelon_action_elonpisodic_hatelonful_conduct",
+  "has_punitivelon_action_othelonr_abuselon_policy",
+  "has_punitivelon_action_without_selonlf_harm"
 ]
 
-train_query = f"""
-SELECT 
-  {{feature_names}},
-  {",".join(labels)},
+train_quelonry = f"""
+SelonLelonCT 
+  {{felonaturelon_namelons}},
+  {",".join(labelonls)},
 ...
 """
-val_query = f"""
-SELECT 
-  {{feature_names}},
-  {",".join(labels)},
+val_quelonry = f"""
+SelonLelonCT 
+  {{felonaturelon_namelons}},
+  {",".join(labelonls)},
 ...
 """
 
-print(train_query)
-train = cq_loader.load_features(ptos_prototype, "", "", custom_query=train_query)
-val = cq_loader.load_features(ptos_prototype, "", "", custom_query=val_query)
-print(train.describe(model=ptos_prototype))
+print(train_quelonry)
+train = cq_loadelonr.load_felonaturelons(ptos_prototypelon, "", "", custom_quelonry=train_quelonry)
+val = cq_loadelonr.load_felonaturelons(ptos_prototypelon, "", "", custom_quelonry=val_quelonry)
+print(train.delonscribelon(modelonl=ptos_prototypelon))
 
 params = {
-  'max_seq_lengths': 128,
-  'batch_size': 196,
-  'lr': 1e-5,
-  'optimizer_type': 'adamw',
-  'warmup_steps': 0,
-  'cls_dropout_rate': 0.1,
-  'epochs': 30,
-  'steps_per_epoch': 5000,
-  'model_type': 'twitter_multilingual_bert_base_cased_mlm', 
-  'mixed_precision': True,
+  'max_selonq_lelonngths': 128,
+  'batch_sizelon': 196,
+  'lr': 1elon-5,
+  'optimizelonr_typelon': 'adamw',
+  'warmup_stelonps': 0,
+  'cls_dropout_ratelon': 0.1,
+  'elonpochs': 30,
+  'stelonps_pelonr_elonpoch': 5000,
+  'modelonl_typelon': 'twittelonr_multilingual_belonrt_baselon_caselond_mlm',
+  'mixelond_preloncision': Truelon,
 }
 params
 
-def parse_labeled_data(row_dict):
-  label = [row_dict.pop(l) for l in labels]
-  return row_dict, label
+delonf parselon_labelonlelond_data(row_dict):
+  labelonl = [row_dict.pop(l) for l in labelonls]
+  relonturn row_dict, labelonl
 
-mirrored_strategy = tf.distribute.MirroredStrategy()
-BATCH_SIZE = params['batch_size'] * mirrored_strategy.num_replicas_in_sync
+mirrorelond_stratelongy = tf.distributelon.MirrorelondStratelongy()
+BATCH_SIZelon = params['batch_sizelon'] * mirrorelond_stratelongy.num_relonplicas_in_sync
 
-train_ds = train.to_tf_dataset().map(parse_labeled_data).shuffle(BATCH_SIZE*100).batch(BATCH_SIZE).repeat()
-val_ds = val.to_tf_dataset().map(parse_labeled_data).batch(BATCH_SIZE)
+train_ds = train.to_tf_dataselont().map(parselon_labelonlelond_data).shufflelon(BATCH_SIZelon*100).batch(BATCH_SIZelon).relonpelonat()
+val_ds = val.to_tf_dataselont().map(parselon_labelonlelond_data).batch(BATCH_SIZelon)
 
-for record in train_ds:
-  tf.print(record)
-  break
+for reloncord in train_ds:
+  tf.print(reloncord)
+  brelonak
 
-def get_positive_weights():
-  """Computes positive weights used for class imbalance from training data."""
-  label_weights_df = utils.get_label_weights(
-      "tos-data-media-full",
-      project_id="twttr-abusive-interact-prod",
-      dataset_id="tos_policy"
+delonf gelont_positivelon_welonights():
+  """Computelons positivelon welonights uselond for class imbalancelon from training data."""
+  labelonl_welonights_df = utils.gelont_labelonl_welonights(
+      "tos-data-melondia-full",
+      projelonct_id="twttr-abusivelon-intelonract-prod",
+      dataselont_id="tos_policy"
   )
-  pos_weight_tensor = tf.cast(
-      label_weights_df.sort_values(by='label').positive_class_weight,
-      dtype=tf.float32
+  pos_welonight_telonnsor = tf.cast(
+      labelonl_welonights_df.sort_valuelons(by='labelonl').positivelon_class_welonight,
+      dtypelon=tf.float32
   )
-  return pos_weight_tensor
+  relonturn pos_welonight_telonnsor
 
-pos_weight_tensor = get_positive_weights()
-print(pos_weight_tensor)
+pos_welonight_telonnsor = gelont_positivelon_welonights()
+print(pos_welonight_telonnsor)
 
-class TextEncoderPooledOutput(TextEncoder):
-  def call(self, x):
-    return super().call([x])["pooled_output"]  
+class TelonxtelonncodelonrPoolelondOutput(Telonxtelonncodelonr):
+  delonf call(selonlf, x):
+    relonturn supelonr().call([x])["poolelond_output"]
 
-  def get_config(self):
-    return super().get_config()
+  delonf gelont_config(selonlf):
+    relonturn supelonr().gelont_config()
 
-with mirrored_strategy.scope():
-  text_encoder_pooled_output = TextEncoderPooledOutput(
-                                params['max_seq_lengths'], 
-                                model_type=params['model_type'],
-                                trainable=True
+with mirrorelond_stratelongy.scopelon():
+  telonxt_elonncodelonr_poolelond_output = TelonxtelonncodelonrPoolelondOutput(
+                                params['max_selonq_lelonngths'],
+                                modelonl_typelon=params['modelonl_typelon'],
+                                trainablelon=Truelon
                               )
 
-  fe = FeatureEncoder(train)
-  inputs, preprocessing_head = fe.build_model_head(model=ptos_prototype, text_encoder=text_encoder_pooled_output)
+  felon = Felonaturelonelonncodelonr(train)
+  inputs, prelonprocelonssing_helonad = felon.build_modelonl_helonad(modelonl=ptos_prototypelon, telonxt_elonncodelonr=telonxt_elonncodelonr_poolelond_output)
 
-  cls_dropout = tf.keras.layers.Dropout(params['cls_dropout_rate'], name="cls_dropout")
-  outputs = cls_dropout(preprocessing_head)
-  outputs = tf.keras.layers.Dense(8, name="output", dtype="float32")(outputs)
+  cls_dropout = tf.kelonras.layelonrs.Dropout(params['cls_dropout_ratelon'], namelon="cls_dropout")
+  outputs = cls_dropout(prelonprocelonssing_helonad)
+  outputs = tf.kelonras.layelonrs.Delonnselon(8, namelon="output", dtypelon="float32")(outputs)
 
-  model = tf.keras.Model(
+  modelonl = tf.kelonras.Modelonl(
       inputs=inputs,
       outputs=outputs
   )
-  pr_auc = tf.keras.metrics.AUC(curve="PR", num_thresholds=1000, multi_label=True, from_logits=True)
+  pr_auc = tf.kelonras.melontrics.AUC(curvelon="PR", num_threlonsholds=1000, multi_labelonl=Truelon, from_logits=Truelon)
 
-  custom_loss = lambda y_true, y_pred: utils.multilabel_weighted_loss(y_true, y_pred, weights=pos_weight_tensor)
-  optimizer = create_optimizer(
+  custom_loss = lambda y_truelon, y_prelond: utils.multilabelonl_welonightelond_loss(y_truelon, y_prelond, welonights=pos_welonight_telonnsor)
+  optimizelonr = crelonatelon_optimizelonr(
     init_lr=params["lr"], 
-    num_train_steps=(params["epochs"] * params["steps_per_epoch"]),
-    num_warmup_steps=params["warmup_steps"],
-    optimizer_type=params["optimizer_type"],
+    num_train_stelonps=(params["elonpochs"] * params["stelonps_pelonr_elonpoch"]),
+    num_warmup_stelonps=params["warmup_stelonps"],
+    optimizelonr_typelon=params["optimizelonr_typelon"],
   )
-  if params.get("mixed_precision"):
-      optimizer = tf.train.experimental.enable_mixed_precision_graph_rewrite(optimizer)
+  if params.gelont("mixelond_preloncision"):
+      optimizelonr = tf.train.elonxpelonrimelonntal.elonnablelon_mixelond_preloncision_graph_relonwritelon(optimizelonr)
       
-  model.compile(
-    optimizer=optimizer,
+  modelonl.compilelon(
+    optimizelonr=optimizelonr,
     loss=custom_loss,
-    metrics=[pr_auc]
+    melontrics=[pr_auc]
   )
 
-model.weights
-model.summary()
-pr_auc.name
+modelonl.welonights
+modelonl.summary()
+pr_auc.namelon
 
-import getpass
+import gelontpass
 import wandb
-from wandb.keras import WandbCallback
+from wandb.kelonras import WandbCallback
 try:
-  wandb_key = ...
+  wandb_kelony = ...
   wandb.login(...)
-  run = wandb.init(project='ptos_with_media',
-             group='new-split-trains',
-             notes='tweet text with only (num_media, precision_nsfw). on full train set, new split.',
-             entity='absv',
+  run = wandb.init(projelonct='ptos_with_melondia',
+             group='nelonw-split-trains',
+             notelons='twelonelont telonxt with only (num_melondia, preloncision_nsfw). on full train selont, nelonw split.',
+             elonntity='absv',
              config=params,
-             name='tweet-text-w-nsfw-1.1',
-             sync_tensorboard=True)
-except FileNotFoundError:
-  print('Wandb key not found')
-  run = wandb.init(mode='disabled')
-import datetime
+             namelon='twelonelont-telonxt-w-nsfw-1.1',
+             sync_telonnsorboard=Truelon)
+elonxcelonpt FilelonNotFoundelonrror:
+  print('Wandb kelony not found')
+  run = wandb.init(modelon='disablelond')
+import datelontimelon
 import os
 
-start_train_time = datetime.datetime.now()
-print(start_train_time.strftime("%m-%d-%Y (%H:%M:%S)"))
-checkpoint_path = os.path.join("...")
-print("Saving model checkpoints here: ", checkpoint_path)
+start_train_timelon = datelontimelon.datelontimelon.now()
+print(start_train_timelon.strftimelon("%m-%d-%Y (%H:%M:%S)"))
+chelonckpoint_path = os.path.join("...")
+print("Saving modelonl chelonckpoints helonrelon: ", chelonckpoint_path)
 
-cp_callback = tf.keras.callbacks.ModelCheckpoint(
-  filepath=os.path.join(checkpoint_path, "model.{epoch:04d}.tf"),
-  verbose=1,
-  monitor=f'val_{pr_auc.name}',
-  mode='max',
-  save_freq='epoch',
-  save_best_only=True
+cp_callback = tf.kelonras.callbacks.ModelonlChelonckpoint(
+  filelonpath=os.path.join(chelonckpoint_path, "modelonl.{elonpoch:04d}.tf"),
+  velonrboselon=1,
+  monitor=f'val_{pr_auc.namelon}',
+  modelon='max',
+  savelon_frelonq='elonpoch',
+  savelon_belonst_only=Truelon
 )
 
-early_stopping_callback = tf.keras.callbacks.EarlyStopping(patience=7,
-                                                           monitor=f"val_{pr_auc.name}",
-                                                           mode="max")
+elonarly_stopping_callback = tf.kelonras.callbacks.elonarlyStopping(patielonncelon=7,
+                                                           monitor=f"val_{pr_auc.namelon}",
+                                                           modelon="max")
 
-model.fit(train_ds, epochs=params["epochs"], validation_data=val_ds, callbacks=[cp_callback, early_stopping_callback],
-        steps_per_epoch=params["steps_per_epoch"], 
-        verbose=2)
+modelonl.fit(train_ds, elonpochs=params["elonpochs"], validation_data=val_ds, callbacks=[cp_callback, elonarly_stopping_callback],
+        stelonps_pelonr_elonpoch=params["stelonps_pelonr_elonpoch"],
+        velonrboselon=2)
 
-import tensorflow_hub as hub
+import telonnsorflow_hub as hub
 
-gs_model_path = ...
-reloaded_keras_layer = hub.KerasLayer(gs_model_path)
-inputs = tf.keras.layers.Input(name="tweet__core__tweet__text", shape=(1,), dtype=tf.string)
-output = reloaded_keras_layer(inputs)
-v7_model = tf.keras.models.Model(inputs=inputs, outputs=output)
-pr_auc = tf.keras.metrics.AUC(curve="PR", name="pr_auc")
-roc_auc = tf.keras.metrics.AUC(curve="ROC", name="roc_auc")
-v7_model.compile(metrics=[pr_auc, roc_auc])
+gs_modelonl_path = ...
+relonloadelond_kelonras_layelonr = hub.KelonrasLayelonr(gs_modelonl_path)
+inputs = tf.kelonras.layelonrs.Input(namelon="twelonelont__corelon__twelonelont__telonxt", shapelon=(1,), dtypelon=tf.string)
+output = relonloadelond_kelonras_layelonr(inputs)
+v7_modelonl = tf.kelonras.modelonls.Modelonl(inputs=inputs, outputs=output)
+pr_auc = tf.kelonras.melontrics.AUC(curvelon="PR", namelon="pr_auc")
+roc_auc = tf.kelonras.melontrics.AUC(curvelon="ROC", namelon="roc_auc")
+v7_modelonl.compilelon(melontrics=[pr_auc, roc_auc])
 
-model.load_weights("...")
-candidate_model = model
+modelonl.load_welonights("...")
+candidatelon_modelonl = modelonl
 
-with mirrored_strategy.scope():
-  candidate_eval = candidate_model.evaluate(val_ds)
+with mirrorelond_stratelongy.scopelon():
+  candidatelon_elonval = candidatelon_modelonl.elonvaluatelon(val_ds)
 
-test_query = f"""
-SELECT 
-  {",".join(ptos_prototype.feature_names())},
-  has_media,
-  precision_nsfw,
-  {",".join(labels)},
+telonst_quelonry = f"""
+SelonLelonCT 
+  {",".join(ptos_prototypelon.felonaturelon_namelons())},
+  has_melondia,
+  preloncision_nsfw,
+  {",".join(labelonls)},
 ...
 """
 
-test = cq_loader.load_features(ptos_prototype, "", "", custom_query=test_query)
-test = test.to_tf_dataset().map(parse_labeled_data)
+telonst = cq_loadelonr.load_felonaturelons(ptos_prototypelon, "", "", custom_quelonry=telonst_quelonry)
+telonst = telonst.to_tf_dataselont().map(parselon_labelonlelond_data)
 
-print(test)
+print(telonst)
 
-test_only_media = test.filter(lambda x, y: tf.equal(x["has_media"], True))
-test_only_nsfw = test.filter(lambda x, y: tf.greater_equal(x["precision_nsfw"], 0.95))
-test_no_media = test.filter(lambda x, y: tf.equal(x["has_media"], False))
-test_media_not_nsfw = test.filter(lambda x, y: tf.logical_and(tf.equal(x["has_media"], True), tf.less(x["precision_nsfw"], 0.95)))
-for d in [test, test_only_media, test_only_nsfw, test_no_media, test_media_not_nsfw]:
-  print(d.reduce(0, lambda x, _: x + 1).numpy())
+telonst_only_melondia = telonst.filtelonr(lambda x, y: tf.elonqual(x["has_melondia"], Truelon))
+telonst_only_nsfw = telonst.filtelonr(lambda x, y: tf.grelonatelonr_elonqual(x["preloncision_nsfw"], 0.95))
+telonst_no_melondia = telonst.filtelonr(lambda x, y: tf.elonqual(x["has_melondia"], Falselon))
+telonst_melondia_not_nsfw = telonst.filtelonr(lambda x, y: tf.logical_and(tf.elonqual(x["has_melondia"], Truelon), tf.lelonss(x["preloncision_nsfw"], 0.95)))
+for d in [telonst, telonst_only_melondia, telonst_only_nsfw, telonst_no_melondia, telonst_melondia_not_nsfw]:
+  print(d.relonducelon(0, lambda x, _: x + 1).numpy())
 
-from notebook_eval_utils import SparseMultilabelEvaluator, EvalConfig
-from dataclasses import asdict
+from notelonbook_elonval_utils import SparselonMultilabelonlelonvaluator, elonvalConfig
+from dataclasselons import asdict
 
-def display_metrics(probs, targets, labels=labels):
-  eval_config = EvalConfig(prediction_threshold=0.5, precision_k=0.9)
-  for eval_mode, y_mask in [("implicit", np.ones(targets.shape))]:
-    print("Evaluation mode", eval_mode)
-    metrics = SparseMultilabelEvaluator.evaluate(
-        targets, np.array(probs), y_mask, classes=labels, eval_config=eval_config
+delonf display_melontrics(probs, targelonts, labelonls=labelonls):
+  elonval_config = elonvalConfig(prelondiction_threlonshold=0.5, preloncision_k=0.9)
+  for elonval_modelon, y_mask in [("implicit", np.onelons(targelonts.shapelon))]:
+    print("elonvaluation modelon", elonval_modelon)
+    melontrics = SparselonMultilabelonlelonvaluator.elonvaluatelon(
+        targelonts, np.array(probs), y_mask, classelons=labelonls, elonval_config=elonval_config
     )
-    metrics_df = pd.DataFrame.from_dict(asdict(metrics)["per_topic_metrics"]).transpose()
-    metrics_df["pos_to_neg"] = metrics_df["num_pos_samples"] / (metrics_df["num_neg_samples"] + 1)
-    display(metrics_df.median())    
-    display(metrics_df)
-    return metrics_df
+    melontrics_df = pd.DataFramelon.from_dict(asdict(melontrics)["pelonr_topic_melontrics"]).transposelon()
+    melontrics_df["pos_to_nelong"] = melontrics_df["num_pos_samplelons"] / (melontrics_df["num_nelong_samplelons"] + 1)
+    display(melontrics_df.melondian())
+    display(melontrics_df)
+    relonturn melontrics_df
 
 
-def eval_model(model, df):
-  with mirrored_strategy.scope():
-    targets = np.stack(list(df.map(lambda x, y: y).as_numpy_iterator()), axis=0)
-    df = df.padded_batch(BATCH_SIZE)
-    preds = model.predict(df)
-    return display_metrics(preds, targets)
+delonf elonval_modelonl(modelonl, df):
+  with mirrorelond_stratelongy.scopelon():
+    targelonts = np.stack(list(df.map(lambda x, y: y).as_numpy_itelonrator()), axis=0)
+    df = df.paddelond_batch(BATCH_SIZelon)
+    prelonds = modelonl.prelondict(df)
+    relonturn display_melontrics(prelonds, targelonts)
 
-subsets = {"test": test,
-          "test_only_media": test_only_media,
-          "test_only_nsfw": test_only_nsfw,
-          "test_no_media": test_no_media,
-          "test_media_not_nsfw": test_media_not_nsfw}
+subselonts = {"telonst": telonst,
+          "telonst_only_melondia": telonst_only_melondia,
+          "telonst_only_nsfw": telonst_only_nsfw,
+          "telonst_no_melondia": telonst_no_melondia,
+          "telonst_melondia_not_nsfw": telonst_melondia_not_nsfw}
 
-metrics = {}
-for name, df in subsets.items():
-  metrics[name] = eval_model(candidate_model, df)
-[(name, m.pr_auc) for name, m in metrics.items()]
-for name, x in [(name, m.pr_auc.to_string(index=False).strip().split("\n")) for name, m in metrics.items()]:
-  print(name)
+melontrics = {}
+for namelon, df in subselonts.itelonms():
+  melontrics[namelon] = elonval_modelonl(candidatelon_modelonl, df)
+[(namelon, m.pr_auc) for namelon, m in melontrics.itelonms()]
+for namelon, x in [(namelon, m.pr_auc.to_string(indelonx=Falselon).strip().split("\n")) for namelon, m in melontrics.itelonms()]:
+  print(namelon)
   for y in x:
-    print(y.strip(), end="\t")
+    print(y.strip(), elonnd="\t")
   print(".")
-for d in [test, test_only_media, test_only_nsfw, test_no_media, test_media_not_nsfw]:
-  print(d.reduce(0, lambda x, _: x + 1).numpy())
+for d in [telonst, telonst_only_melondia, telonst_only_nsfw, telonst_no_melondia, telonst_melondia_not_nsfw]:
+  print(d.relonducelon(0, lambda x, _: x + 1).numpy())

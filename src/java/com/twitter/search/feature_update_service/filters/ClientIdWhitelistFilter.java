@@ -1,59 +1,59 @@
-package com.twitter.search.feature_update_service.filters;
+packagelon com.twittelonr.selonarch.felonaturelon_updatelon_selonrvicelon.filtelonrs;
 
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
+import com.googlelon.injelonct.Injelonct;
+import com.googlelon.injelonct.Singlelonton;
 
-import com.twitter.finagle.Service;
-import com.twitter.finatra.thrift.AbstractThriftFilter;
-import com.twitter.finatra.thrift.ThriftRequest;
-import com.twitter.inject.annotations.Flag;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.feature_update_service.thriftjava.FeatureUpdateResponse;
-import com.twitter.search.feature_update_service.thriftjava.FeatureUpdateResponseCode;
-import com.twitter.search.feature_update_service.whitelist.ClientIdWhitelist;
-import com.twitter.util.Future;
+import com.twittelonr.finaglelon.Selonrvicelon;
+import com.twittelonr.finatra.thrift.AbstractThriftFiltelonr;
+import com.twittelonr.finatra.thrift.ThriftRelonquelonst;
+import com.twittelonr.injelonct.annotations.Flag;
+import com.twittelonr.selonarch.common.melontrics.SelonarchRatelonCountelonr;
+import com.twittelonr.selonarch.felonaturelon_updatelon_selonrvicelon.thriftjava.FelonaturelonUpdatelonRelonsponselon;
+import com.twittelonr.selonarch.felonaturelon_updatelon_selonrvicelon.thriftjava.FelonaturelonUpdatelonRelonsponselonCodelon;
+import com.twittelonr.selonarch.felonaturelon_updatelon_selonrvicelon.whitelonlist.ClielonntIdWhitelonlist;
+import com.twittelonr.util.Futurelon;
 
-@Singleton
-public class ClientIdWhitelistFilter extends AbstractThriftFilter {
-  private final boolean enabled;
-  private final ClientIdWhitelist whitelist;
+@Singlelonton
+public class ClielonntIdWhitelonlistFiltelonr elonxtelonnds AbstractThriftFiltelonr {
+  privatelon final boolelonan elonnablelond;
+  privatelon final ClielonntIdWhitelonlist whitelonlist;
 
-  private final SearchRateCounter unknownClientIdStat =
-      SearchRateCounter.export("unknown_client_id");
-  private final SearchRateCounter noClientIdStat =
-      SearchRateCounter.export("no_client_id");
+  privatelon final SelonarchRatelonCountelonr unknownClielonntIdStat =
+      SelonarchRatelonCountelonr.elonxport("unknown_clielonnt_id");
+  privatelon final SelonarchRatelonCountelonr noClielonntIdStat =
+      SelonarchRatelonCountelonr.elonxport("no_clielonnt_id");
 
-  @Inject
-  public ClientIdWhitelistFilter(
-      ClientIdWhitelist whitelist,
-      @Flag("client.whitelist.enable") Boolean enabled
+  @Injelonct
+  public ClielonntIdWhitelonlistFiltelonr(
+      ClielonntIdWhitelonlist whitelonlist,
+      @Flag("clielonnt.whitelonlist.elonnablelon") Boolelonan elonnablelond
   ) {
-    this.whitelist = whitelist;
-    this.enabled = enabled;
+    this.whitelonlist = whitelonlist;
+    this.elonnablelond = elonnablelond;
   }
 
-  @Override
-  @SuppressWarnings("unchecked")
-  public <T, R> Future<R> apply(ThriftRequest<T> request, Service<ThriftRequest<T>, R> svc) {
-    if (!enabled) {
-      return svc.apply(request);
+  @Ovelonrridelon
+  @SupprelonssWarnings("unchelonckelond")
+  public <T, R> Futurelon<R> apply(ThriftRelonquelonst<T> relonquelonst, Selonrvicelon<ThriftRelonquelonst<T>, R> svc) {
+    if (!elonnablelond) {
+      relonturn svc.apply(relonquelonst);
     }
-    if (request.clientId().isEmpty()) {
-      noClientIdStat.increment();
-      return (Future<R>) Future.value(
-          new FeatureUpdateResponse(FeatureUpdateResponseCode.MISSING_CLIENT_ERROR)
-              .setDetailMessage("finagle clientId is required in request"));
+    if (relonquelonst.clielonntId().iselonmpty()) {
+      noClielonntIdStat.increlonmelonnt();
+      relonturn (Futurelon<R>) Futurelon.valuelon(
+          nelonw FelonaturelonUpdatelonRelonsponselon(FelonaturelonUpdatelonRelonsponselonCodelon.MISSING_CLIelonNT_elonRROR)
+              .selontDelontailMelonssagelon("finaglelon clielonntId is relonquirelond in relonquelonst"));
 
-    } else if (!whitelist.isClientAllowed(request.clientId().get())) {
-      // It's safe to use get() in the above condition because
-      // clientId was already checked for emptiness
-      unknownClientIdStat.increment();
-      return (Future<R>) Future.value(
-          new FeatureUpdateResponse(FeatureUpdateResponseCode.UNKNOWN_CLIENT_ERROR)
-              .setDetailMessage(String.format(
-                  "request contains unknown finagle clientId: %s", request.clientId().toString())));
-    } else {
-      return svc.apply(request);
+    } elonlselon if (!whitelonlist.isClielonntAllowelond(relonquelonst.clielonntId().gelont())) {
+      // It's safelon to uselon gelont() in thelon abovelon condition beloncauselon
+      // clielonntId was alrelonady chelonckelond for elonmptinelonss
+      unknownClielonntIdStat.increlonmelonnt();
+      relonturn (Futurelon<R>) Futurelon.valuelon(
+          nelonw FelonaturelonUpdatelonRelonsponselon(FelonaturelonUpdatelonRelonsponselonCodelon.UNKNOWN_CLIelonNT_elonRROR)
+              .selontDelontailMelonssagelon(String.format(
+                  "relonquelonst contains unknown finaglelon clielonntId: %s", relonquelonst.clielonntId().toString())));
+    } elonlselon {
+      relonturn svc.apply(relonquelonst);
     }
   }
 }

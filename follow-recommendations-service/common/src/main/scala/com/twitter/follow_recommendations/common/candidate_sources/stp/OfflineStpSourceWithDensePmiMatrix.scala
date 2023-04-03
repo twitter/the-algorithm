@@ -1,22 +1,22 @@
-package com.twitter.follow_recommendations.common.candidate_sources.stp
+packagelon com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.stp
 
-import com.google.inject.Singleton
-import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.strato.generated.client.hub.PpmiDenseMatrixCandidatesClientColumn
-import javax.inject.Inject
+import com.googlelon.injelonct.Singlelonton
+import com.twittelonr.helonrmit.modelonl.Algorithm
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonSourcelonIdelonntifielonr
+import com.twittelonr.strato.gelonnelonratelond.clielonnt.hub.PpmiDelonnselonMatrixCandidatelonsClielonntColumn
+import javax.injelonct.Injelonct
 
 /**
- * Main source for strong-tie-prediction candidates generated offline.
+ * Main sourcelon for strong-tielon-prelondiction candidatelons gelonnelonratelond offlinelon.
  */
-@Singleton
-class OfflineStpSourceWithDensePmiMatrix @Inject() (
-  stpColumn: PpmiDenseMatrixCandidatesClientColumn)
-    extends OfflineStrongTiePredictionBaseSource(stpColumn.fetcher) {
-  override val identifier: CandidateSourceIdentifier = OfflineStpSourceWithDensePmiMatrix.Identifier
+@Singlelonton
+class OfflinelonStpSourcelonWithDelonnselonPmiMatrix @Injelonct() (
+  stpColumn: PpmiDelonnselonMatrixCandidatelonsClielonntColumn)
+    elonxtelonnds OfflinelonStrongTielonPrelondictionBaselonSourcelon(stpColumn.felontchelonr) {
+  ovelonrridelon val idelonntifielonr: CandidatelonSourcelonIdelonntifielonr = OfflinelonStpSourcelonWithDelonnselonPmiMatrix.Idelonntifielonr
 }
 
-object OfflineStpSourceWithDensePmiMatrix {
-  val Identifier: CandidateSourceIdentifier =
-    CandidateSourceIdentifier(Algorithm.StrongTiePredictionRec.toString)
+objelonct OfflinelonStpSourcelonWithDelonnselonPmiMatrix {
+  val Idelonntifielonr: CandidatelonSourcelonIdelonntifielonr =
+    CandidatelonSourcelonIdelonntifielonr(Algorithm.StrongTielonPrelondictionRelonc.toString)
 }

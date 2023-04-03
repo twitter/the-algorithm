@@ -1,85 +1,85 @@
-package com.twitter.simclusters_v2.hdfs_sources
+packagelon com.twittelonr.simclustelonrs_v2.hdfs_sourcelons
 
-import com.twitter.scalding.DateRange
-import com.twitter.scalding.TypedPipe
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.remote_access.AllowCrossClusterSameDC
-import com.twitter.scalding_internal.dalv2.remote_access.ExplicitLocation
-import com.twitter.scalding_internal.dalv2.remote_access.Proc3Atla
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbedding
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId
-import com.twitter.simclusters_v2.thriftscala.TopSimClustersWithScore
+import com.twittelonr.scalding.DatelonRangelon
+import com.twittelonr.scalding.TypelondPipelon
+import com.twittelonr.scalding_intelonrnal.dalv2.DAL
+import com.twittelonr.scalding_intelonrnal.dalv2.relonmotelon_accelonss.AllowCrossClustelonrSamelonDC
+import com.twittelonr.scalding_intelonrnal.dalv2.relonmotelon_accelonss.elonxplicitLocation
+import com.twittelonr.scalding_intelonrnal.dalv2.relonmotelon_accelonss.Proc3Atla
+import com.twittelonr.scalding_intelonrnal.multiformat.format.kelonyval.KelonyVal
+import com.twittelonr.simclustelonrs_v2.thriftscala.elonmbelonddingTypelon
+import com.twittelonr.simclustelonrs_v2.thriftscala.IntelonrnalId
+import com.twittelonr.simclustelonrs_v2.thriftscala.ModelonlVelonrsion
+import com.twittelonr.simclustelonrs_v2.thriftscala.SimClustelonrselonmbelondding
+import com.twittelonr.simclustelonrs_v2.thriftscala.SimClustelonrselonmbelonddingId
+import com.twittelonr.simclustelonrs_v2.thriftscala.TopSimClustelonrsWithScorelon
 
-object ProducerEmbeddingSources {
+objelonct ProducelonrelonmbelonddingSourcelons {
 
   /**
-   * Helper function to retrieve producer SimClusters embeddings with the legacy `TopSimClustersWithScore`
-   * value type.
+   * Helonlpelonr function to relontrielonvelon producelonr SimClustelonrs elonmbelonddings with thelon lelongacy `TopSimClustelonrsWithScorelon`
+   * valuelon typelon.
    */
-  def producerEmbeddingSourceLegacy(
-    embeddingType: EmbeddingType,
-    modelVersion: ModelVersion
+  delonf producelonrelonmbelonddingSourcelonLelongacy(
+    elonmbelonddingTypelon: elonmbelonddingTypelon,
+    modelonlVelonrsion: ModelonlVelonrsion
   )(
-    implicit dateRange: DateRange
-  ): TypedPipe[(Long, TopSimClustersWithScore)] = {
-    val producerEmbeddingDataset = (embeddingType, modelVersion) match {
-      case (EmbeddingType.ProducerFollowBasedSemanticCoreEntity, ModelVersion.Model20m145kDec11) =>
-        ProducerTopKSimclusterEmbeddingsByFollowScoreScalaDataset
-      case (EmbeddingType.ProducerFavBasedSemanticCoreEntity, ModelVersion.Model20m145kDec11) =>
-        ProducerTopKSimclusterEmbeddingsByFavScoreScalaDataset
-      case (
-            EmbeddingType.ProducerFollowBasedSemanticCoreEntity,
-            ModelVersion.Model20m145kUpdated) =>
-        ProducerTopKSimclusterEmbeddingsByFollowScoreUpdatedScalaDataset
-      case (EmbeddingType.ProducerFavBasedSemanticCoreEntity, ModelVersion.Model20m145kUpdated) =>
-        ProducerTopKSimclusterEmbeddingsByFavScoreUpdatedScalaDataset
-      case (_, _) =>
-        throw new ClassNotFoundException(
-          "Unsupported embedding type: " + embeddingType + " and model version: " + modelVersion)
+    implicit datelonRangelon: DatelonRangelon
+  ): TypelondPipelon[(Long, TopSimClustelonrsWithScorelon)] = {
+    val producelonrelonmbelonddingDataselont = (elonmbelonddingTypelon, modelonlVelonrsion) match {
+      caselon (elonmbelonddingTypelon.ProducelonrFollowBaselondSelonmanticCorelonelonntity, ModelonlVelonrsion.Modelonl20m145kDelonc11) =>
+        ProducelonrTopKSimclustelonrelonmbelonddingsByFollowScorelonScalaDataselont
+      caselon (elonmbelonddingTypelon.ProducelonrFavBaselondSelonmanticCorelonelonntity, ModelonlVelonrsion.Modelonl20m145kDelonc11) =>
+        ProducelonrTopKSimclustelonrelonmbelonddingsByFavScorelonScalaDataselont
+      caselon (
+            elonmbelonddingTypelon.ProducelonrFollowBaselondSelonmanticCorelonelonntity,
+            ModelonlVelonrsion.Modelonl20m145kUpdatelond) =>
+        ProducelonrTopKSimclustelonrelonmbelonddingsByFollowScorelonUpdatelondScalaDataselont
+      caselon (elonmbelonddingTypelon.ProducelonrFavBaselondSelonmanticCorelonelonntity, ModelonlVelonrsion.Modelonl20m145kUpdatelond) =>
+        ProducelonrTopKSimclustelonrelonmbelonddingsByFavScorelonUpdatelondScalaDataselont
+      caselon (_, _) =>
+        throw nelonw ClassNotFoundelonxcelonption(
+          "Unsupportelond elonmbelondding typelon: " + elonmbelonddingTypelon + " and modelonl velonrsion: " + modelonlVelonrsion)
     }
 
     DAL
-      .readMostRecentSnapshot(producerEmbeddingDataset).withRemoteReadPolicy(
-        AllowCrossClusterSameDC)
-      .toTypedPipe.map {
-        case KeyVal(producerId, topSimClustersWithScore) =>
-          (producerId, topSimClustersWithScore)
+      .relonadMostReloncelonntSnapshot(producelonrelonmbelonddingDataselont).withRelonmotelonRelonadPolicy(
+        AllowCrossClustelonrSamelonDC)
+      .toTypelondPipelon.map {
+        caselon KelonyVal(producelonrId, topSimClustelonrsWithScorelon) =>
+          (producelonrId, topSimClustelonrsWithScorelon)
       }
   }
 
-  def producerEmbeddingSource(
-    embeddingType: EmbeddingType,
-    modelVersion: ModelVersion
+  delonf producelonrelonmbelonddingSourcelon(
+    elonmbelonddingTypelon: elonmbelonddingTypelon,
+    modelonlVelonrsion: ModelonlVelonrsion
   )(
-    implicit dateRange: DateRange
-  ): TypedPipe[(Long, SimClustersEmbedding)] = {
-    val producerEmbeddingDataset = (embeddingType, modelVersion) match {
-      case (EmbeddingType.AggregatableLogFavBasedProducer, ModelVersion.Model20m145k2020) =>
-        AggregatableProducerSimclustersEmbeddingsByLogFavScore2020ScalaDataset
-      case (EmbeddingType.AggregatableFollowBasedProducer, ModelVersion.Model20m145k2020) =>
-        AggregatableProducerSimclustersEmbeddingsByFollowScore2020ScalaDataset
-      case (EmbeddingType.RelaxedAggregatableLogFavBasedProducer, ModelVersion.Model20m145k2020) =>
-        AggregatableProducerSimclustersEmbeddingsByLogFavScoreRelaxedFavEngagementThreshold2020ScalaDataset
-      case (_, _) =>
-        throw new ClassNotFoundException(
-          "Unsupported embedding type: " + embeddingType + " and model version: " + modelVersion)
+    implicit datelonRangelon: DatelonRangelon
+  ): TypelondPipelon[(Long, SimClustelonrselonmbelondding)] = {
+    val producelonrelonmbelonddingDataselont = (elonmbelonddingTypelon, modelonlVelonrsion) match {
+      caselon (elonmbelonddingTypelon.AggrelongatablelonLogFavBaselondProducelonr, ModelonlVelonrsion.Modelonl20m145k2020) =>
+        AggrelongatablelonProducelonrSimclustelonrselonmbelonddingsByLogFavScorelon2020ScalaDataselont
+      caselon (elonmbelonddingTypelon.AggrelongatablelonFollowBaselondProducelonr, ModelonlVelonrsion.Modelonl20m145k2020) =>
+        AggrelongatablelonProducelonrSimclustelonrselonmbelonddingsByFollowScorelon2020ScalaDataselont
+      caselon (elonmbelonddingTypelon.RelonlaxelondAggrelongatablelonLogFavBaselondProducelonr, ModelonlVelonrsion.Modelonl20m145k2020) =>
+        AggrelongatablelonProducelonrSimclustelonrselonmbelonddingsByLogFavScorelonRelonlaxelondFavelonngagelonmelonntThrelonshold2020ScalaDataselont
+      caselon (_, _) =>
+        throw nelonw ClassNotFoundelonxcelonption(
+          "Unsupportelond elonmbelondding typelon: " + elonmbelonddingTypelon + " and modelonl velonrsion: " + modelonlVelonrsion)
     }
 
     DAL
-      .readMostRecentSnapshot(
-        producerEmbeddingDataset
+      .relonadMostReloncelonntSnapshot(
+        producelonrelonmbelonddingDataselont
       )
-      .withRemoteReadPolicy(ExplicitLocation(Proc3Atla))
-      .toTypedPipe
+      .withRelonmotelonRelonadPolicy(elonxplicitLocation(Proc3Atla))
+      .toTypelondPipelon
       .map {
-        case KeyVal(
-              SimClustersEmbeddingId(_, _, InternalId.UserId(producerId: Long)),
-              embedding: SimClustersEmbedding) =>
-          (producerId, embedding)
+        caselon KelonyVal(
+              SimClustelonrselonmbelonddingId(_, _, IntelonrnalId.UselonrId(producelonrId: Long)),
+              elonmbelondding: SimClustelonrselonmbelondding) =>
+          (producelonrId, elonmbelondding)
       }
   }
 

@@ -1,15 +1,15 @@
-package com.twitter.home_mixer.util
+packagelon com.twittelonr.homelon_mixelonr.util
 
-import com.twitter.home_mixer.model.HomeFeatures.TweetImpressionsFeature
-import com.twitter.product_mixer.component_library.feature_hydrator.query.impressed_tweets.ImpressedTweets
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.TwelonelontImprelonssionsFelonaturelon
+import com.twittelonr.product_mixelonr.componelonnt_library.felonaturelon_hydrator.quelonry.imprelonsselond_twelonelonts.ImprelonsselondTwelonelonts
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
 
-object TweetImpressionsHelper {
-  def tweetImpressions(features: FeatureMap): Set[Long] = {
-    val manhattanImpressions =
-      features.getOrElse(TweetImpressionsFeature, Seq.empty).flatMap(_.tweetIds)
-    val memcacheImpressions = features.getOrElse(ImpressedTweets, Seq.empty)
+objelonct TwelonelontImprelonssionsHelonlpelonr {
+  delonf twelonelontImprelonssions(felonaturelons: FelonaturelonMap): Selont[Long] = {
+    val manhattanImprelonssions =
+      felonaturelons.gelontOrelonlselon(TwelonelontImprelonssionsFelonaturelon, Selonq.elonmpty).flatMap(_.twelonelontIds)
+    val melonmcachelonImprelonssions = felonaturelons.gelontOrelonlselon(ImprelonsselondTwelonelonts, Selonq.elonmpty)
 
-    (manhattanImpressions ++ memcacheImpressions).toSet
+    (manhattanImprelonssions ++ melonmcachelonImprelonssions).toSelont
   }
 }

@@ -1,31 +1,31 @@
-namespace java com.twitter.cr_mixer.thriftjava
-#@namespace scala com.twitter.cr_mixer.thriftscala
-#@namespace strato com.twitter.cr_mixer
+namelonspacelon java com.twittelonr.cr_mixelonr.thriftjava
+#@namelonspacelon scala com.twittelonr.cr_mixelonr.thriftscala
+#@namelonspacelon strato com.twittelonr.cr_mixelonr
 
-include "product.thrift"
-include "product_context.thrift"
+includelon "product.thrift"
+includelon "product_contelonxt.thrift"
 
-include "com/twitter/product_mixer/core/client_context.thrift"
-include "com/twitter/recos/recos_common.thrift"
+includelon "com/twittelonr/product_mixelonr/corelon/clielonnt_contelonxt.thrift"
+includelon "com/twittelonr/reloncos/reloncos_common.thrift"
 
-struct UtegTweetRequest {
-	1: required client_context.ClientContext clientContext
-	2: required product.Product product
-	# Product-specific parameters should be placed in the Product Context
-	3: optional product_context.ProductContext productContext
-	4: optional list<i64> excludedTweetIds (personalDataType = 'TweetId')
-} (persisted='true', hasPersonalData='true')
+struct UtelongTwelonelontRelonquelonst {
+	1: relonquirelond clielonnt_contelonxt.ClielonntContelonxt clielonntContelonxt
+	2: relonquirelond product.Product product
+	# Product-speloncific paramelontelonrs should belon placelond in thelon Product Contelonxt
+	3: optional product_contelonxt.ProductContelonxt productContelonxt
+	4: optional list<i64> elonxcludelondTwelonelontIds (pelonrsonalDataTypelon = 'TwelonelontId')
+} (pelonrsistelond='truelon', hasPelonrsonalData='truelon')
 
-struct UtegTweet {
-  // tweet id
-  1: required i64 tweetId(personalDataType = 'TweetId')
-  // sum of weights of seed users who engaged with the tweet.
-  // If a user engaged with the same tweet twice, liked it and retweeted it, then his/her weight was counted twice.
-  2: required double score
-  // user social proofs per engagement type
-  3: required map<recos_common.SocialProofType, list<i64>> socialProofByType(personalDataTypeKey='EngagementTypePrivate', personalDataTypeValue='UserId')
-} (persisted='true', hasPersonalData = 'true')
+struct UtelongTwelonelont {
+  // twelonelont id
+  1: relonquirelond i64 twelonelontId(pelonrsonalDataTypelon = 'TwelonelontId')
+  // sum of welonights of selonelond uselonrs who elonngagelond with thelon twelonelont.
+  // If a uselonr elonngagelond with thelon samelon twelonelont twicelon, likelond it and relontwelonelontelond it, thelonn his/helonr welonight was countelond twicelon.
+  2: relonquirelond doublelon scorelon
+  // uselonr social proofs pelonr elonngagelonmelonnt typelon
+  3: relonquirelond map<reloncos_common.SocialProofTypelon, list<i64>> socialProofByTypelon(pelonrsonalDataTypelonKelony='elonngagelonmelonntTypelonPrivatelon', pelonrsonalDataTypelonValuelon='UselonrId')
+} (pelonrsistelond='truelon', hasPelonrsonalData = 'truelon')
 
-struct UtegTweetResponse {
-  1: required list<UtegTweet> tweets
-} (persisted='true')
+struct UtelongTwelonelontRelonsponselon {
+  1: relonquirelond list<UtelongTwelonelont> twelonelonts
+} (pelonrsistelond='truelon')

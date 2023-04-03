@@ -1,116 +1,116 @@
-package com.twitter.follow_recommendations.flows.content_recommender_flow
+packagelon com.twittelonr.follow_reloncommelonndations.flows.contelonnt_reloncommelonndelonr_flow
 
-import com.twitter.timelines.configapi.FSBoundedParam
+import com.twittelonr.timelonlinelons.configapi.FSBoundelondParam
 
-object ContentRecommenderFlowCandidateSourceWeightsParams {
-  // Social based
-  case object ForwardPhoneBookSourceWeight
-      extends FSBoundedParam[Double](
-        ContentRecommenderFlowFeatureSwitchKeys.ForwardPhoneBookSourceWeight,
+objelonct ContelonntReloncommelonndelonrFlowCandidatelonSourcelonWelonightsParams {
+  // Social baselond
+  caselon objelonct ForwardPhonelonBookSourcelonWelonight
+      elonxtelonnds FSBoundelondParam[Doublelon](
+        ContelonntReloncommelonndelonrFlowFelonaturelonSwitchKelonys.ForwardPhonelonBookSourcelonWelonight,
         1d,
         0d,
         1000d)
-  case object ForwardEmailBookSourceWeight
-      extends FSBoundedParam[Double](
-        ContentRecommenderFlowFeatureSwitchKeys.ForwardEmailBookSourceWeight,
+  caselon objelonct ForwardelonmailBookSourcelonWelonight
+      elonxtelonnds FSBoundelondParam[Doublelon](
+        ContelonntReloncommelonndelonrFlowFelonaturelonSwitchKelonys.ForwardelonmailBookSourcelonWelonight,
         1d,
         0d,
         1000d)
-  case object ReversePhoneBookSourceWeight
-      extends FSBoundedParam[Double](
-        ContentRecommenderFlowFeatureSwitchKeys.ReversePhoneBookSourceWeight,
+  caselon objelonct RelonvelonrselonPhonelonBookSourcelonWelonight
+      elonxtelonnds FSBoundelondParam[Doublelon](
+        ContelonntReloncommelonndelonrFlowFelonaturelonSwitchKelonys.RelonvelonrselonPhonelonBookSourcelonWelonight,
         1d,
         0d,
         1000d)
-  case object ReverseEmailBookSourceWeight
-      extends FSBoundedParam[Double](
-        ContentRecommenderFlowFeatureSwitchKeys.ReverseEmailBookSourceWeight,
+  caselon objelonct RelonvelonrselonelonmailBookSourcelonWelonight
+      elonxtelonnds FSBoundelondParam[Doublelon](
+        ContelonntReloncommelonndelonrFlowFelonaturelonSwitchKelonys.RelonvelonrselonelonmailBookSourcelonWelonight,
         1d,
         0d,
         1000d)
-  case object OfflineStrongTiePredictionSourceWeight
-      extends FSBoundedParam[Double](
-        ContentRecommenderFlowFeatureSwitchKeys.OfflineStrongTiePredictionSourceWeight,
+  caselon objelonct OfflinelonStrongTielonPrelondictionSourcelonWelonight
+      elonxtelonnds FSBoundelondParam[Doublelon](
+        ContelonntReloncommelonndelonrFlowFelonaturelonSwitchKelonys.OfflinelonStrongTielonPrelondictionSourcelonWelonight,
         1d,
         0d,
         1000d)
-  case object TriangularLoopsSourceWeight
-      extends FSBoundedParam[Double](
-        ContentRecommenderFlowFeatureSwitchKeys.TriangularLoopsSourceWeight,
+  caselon objelonct TriangularLoopsSourcelonWelonight
+      elonxtelonnds FSBoundelondParam[Doublelon](
+        ContelonntReloncommelonndelonrFlowFelonaturelonSwitchKelonys.TriangularLoopsSourcelonWelonight,
         1d,
         0d,
         1000d)
-  case object UserUserGraphSourceWeight
-      extends FSBoundedParam[Double](
-        ContentRecommenderFlowFeatureSwitchKeys.UserUserGraphSourceWeight,
+  caselon objelonct UselonrUselonrGraphSourcelonWelonight
+      elonxtelonnds FSBoundelondParam[Doublelon](
+        ContelonntReloncommelonndelonrFlowFelonaturelonSwitchKelonys.UselonrUselonrGraphSourcelonWelonight,
         1d,
         0d,
         1000d)
-  case object NewFollowingNewFollowingExpansionSourceWeight
-      extends FSBoundedParam[Double](
-        ContentRecommenderFlowFeatureSwitchKeys.NewFollowingNewFollowingExpansionSourceWeight,
+  caselon objelonct NelonwFollowingNelonwFollowingelonxpansionSourcelonWelonight
+      elonxtelonnds FSBoundelondParam[Doublelon](
+        ContelonntReloncommelonndelonrFlowFelonaturelonSwitchKelonys.NelonwFollowingNelonwFollowingelonxpansionSourcelonWelonight,
         1d,
         0d,
         1000d)
-  // Activity based
-  case object NewFollowingSimilarUserSourceWeight
-      extends FSBoundedParam[Double](
-        ContentRecommenderFlowFeatureSwitchKeys.NewFollowingSimilarUserSourceWeight,
+  // Activity baselond
+  caselon objelonct NelonwFollowingSimilarUselonrSourcelonWelonight
+      elonxtelonnds FSBoundelondParam[Doublelon](
+        ContelonntReloncommelonndelonrFlowFelonaturelonSwitchKelonys.NelonwFollowingSimilarUselonrSourcelonWelonight,
         1d,
         0d,
         1000d)
-  case object RecentEngagementSimilarUserSourceWeight
-      extends FSBoundedParam[Double](
-        ContentRecommenderFlowFeatureSwitchKeys.RecentEngagementSimilarUserSourceWeight,
+  caselon objelonct ReloncelonntelonngagelonmelonntSimilarUselonrSourcelonWelonight
+      elonxtelonnds FSBoundelondParam[Doublelon](
+        ContelonntReloncommelonndelonrFlowFelonaturelonSwitchKelonys.ReloncelonntelonngagelonmelonntSimilarUselonrSourcelonWelonight,
         1d,
         0d,
         1000d)
-  case object RepeatedProfileVisitsSourceWeight
-      extends FSBoundedParam[Double](
-        ContentRecommenderFlowFeatureSwitchKeys.RepeatedProfileVisitsSourceWeight,
+  caselon objelonct RelonpelonatelondProfilelonVisitsSourcelonWelonight
+      elonxtelonnds FSBoundelondParam[Doublelon](
+        ContelonntReloncommelonndelonrFlowFelonaturelonSwitchKelonys.RelonpelonatelondProfilelonVisitsSourcelonWelonight,
         1d,
         0d,
         1000d)
-  case object RealGraphOonSourceWeight
-      extends FSBoundedParam[Double](
-        ContentRecommenderFlowFeatureSwitchKeys.RealGraphOonSourceWeight,
+  caselon objelonct RelonalGraphOonSourcelonWelonight
+      elonxtelonnds FSBoundelondParam[Doublelon](
+        ContelonntReloncommelonndelonrFlowFelonaturelonSwitchKelonys.RelonalGraphOonSourcelonWelonight,
         1d,
         0d,
         1000d)
-  // Geo based
-  case object PopCountrySourceWeight
-      extends FSBoundedParam[Double](
-        ContentRecommenderFlowFeatureSwitchKeys.PopCountrySourceWeight,
+  // Gelono baselond
+  caselon objelonct PopCountrySourcelonWelonight
+      elonxtelonnds FSBoundelondParam[Doublelon](
+        ContelonntReloncommelonndelonrFlowFelonaturelonSwitchKelonys.PopCountrySourcelonWelonight,
         1d,
         0d,
         1000d)
-  case object PopGeohashSourceWeight
-      extends FSBoundedParam[Double](
-        ContentRecommenderFlowFeatureSwitchKeys.PopGeohashSourceWeight,
+  caselon objelonct PopGelonohashSourcelonWelonight
+      elonxtelonnds FSBoundelondParam[Doublelon](
+        ContelonntReloncommelonndelonrFlowFelonaturelonSwitchKelonys.PopGelonohashSourcelonWelonight,
         1d,
         0d,
         1000d)
-  case object PopCountryBackfillSourceWeight
-      extends FSBoundedParam[Double](
-        ContentRecommenderFlowFeatureSwitchKeys.PopCountryBackfillSourceWeight,
+  caselon objelonct PopCountryBackfillSourcelonWelonight
+      elonxtelonnds FSBoundelondParam[Doublelon](
+        ContelonntReloncommelonndelonrFlowFelonaturelonSwitchKelonys.PopCountryBackfillSourcelonWelonight,
         1d,
         0d,
         1000d)
-  case object PPMILocaleFollowSourceWeight
-      extends FSBoundedParam[Double](
-        ContentRecommenderFlowFeatureSwitchKeys.PPMILocaleFollowSourceWeight,
+  caselon objelonct PPMILocalelonFollowSourcelonWelonight
+      elonxtelonnds FSBoundelondParam[Doublelon](
+        ContelonntReloncommelonndelonrFlowFelonaturelonSwitchKelonys.PPMILocalelonFollowSourcelonWelonight,
         1d,
         0d,
         1000d)
-  case object TopOrganicFollowsAccountsSourceWeight
-      extends FSBoundedParam[Double](
-        ContentRecommenderFlowFeatureSwitchKeys.TopOrganicFollowsAccountsSourceWeight,
+  caselon objelonct TopOrganicFollowsAccountsSourcelonWelonight
+      elonxtelonnds FSBoundelondParam[Doublelon](
+        ContelonntReloncommelonndelonrFlowFelonaturelonSwitchKelonys.TopOrganicFollowsAccountsSourcelonWelonight,
         1d,
         0d,
         1000d)
-  case object CrowdSearchAccountSourceWeight
-      extends FSBoundedParam[Double](
-        ContentRecommenderFlowFeatureSwitchKeys.CrowdSearchAccountSourceWeight,
+  caselon objelonct CrowdSelonarchAccountSourcelonWelonight
+      elonxtelonnds FSBoundelondParam[Doublelon](
+        ContelonntReloncommelonndelonrFlowFelonaturelonSwitchKelonys.CrowdSelonarchAccountSourcelonWelonight,
         1d,
         0d,
         1000d)

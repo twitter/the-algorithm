@@ -1,44 +1,44 @@
-package com.twitter.product_mixer.component_library.decorator.urt
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt
 
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.tweet.TweetCandidateUrtItemBuilder
-import com.twitter.product_mixer.component_library.model.candidate.BaseTweetCandidate
-import com.twitter.product_mixer.component_library.model.presentation.urt.ConversationModuleItem
-import com.twitter.product_mixer.component_library.model.presentation.urt.UrtItemPresentation
-import com.twitter.product_mixer.core.functional_component.decorator.CandidateDecorator
-import com.twitter.product_mixer.core.functional_component.decorator.Decoration
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.DecoratorIdentifier
-import com.twitter.product_mixer.core.model.marshalling.response.urt.ModuleItemTreeDisplay
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+import com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.itelonm.twelonelont.TwelonelontCandidatelonUrtItelonmBuildelonr
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.BaselonTwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.prelonselonntation.urt.ConvelonrsationModulelonItelonm
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.prelonselonntation.urt.UrtItelonmPrelonselonntation
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.CandidatelonDeloncorator
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.Deloncoration
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.DeloncoratorIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.ModulelonItelonmTrelonelonDisplay
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stitch.Stitch
 
-case class UrtConversationItemCandidateDecorator[
-  Query <: PipelineQuery,
-  Candidate <: BaseTweetCandidate
+caselon class UrtConvelonrsationItelonmCandidatelonDeloncorator[
+  Quelonry <: PipelonlinelonQuelonry,
+  Candidatelon <: BaselonTwelonelontCandidatelon
 ](
-  tweetCandidateUrtItemBuilder: TweetCandidateUrtItemBuilder[Query, Candidate],
-  override val identifier: DecoratorIdentifier = DecoratorIdentifier("UrtConversationItem"))
-    extends CandidateDecorator[Query, Candidate] {
+  twelonelontCandidatelonUrtItelonmBuildelonr: TwelonelontCandidatelonUrtItelonmBuildelonr[Quelonry, Candidatelon],
+  ovelonrridelon val idelonntifielonr: DeloncoratorIdelonntifielonr = DeloncoratorIdelonntifielonr("UrtConvelonrsationItelonm"))
+    elonxtelonnds CandidatelonDeloncorator[Quelonry, Candidatelon] {
 
-  override def apply(
-    query: Query,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): Stitch[Seq[Decoration]] = {
-    val candidatePresentations = candidates.view.zipWithIndex.map {
-      case (candidate, index) =>
-        val itemPresentation = new UrtItemPresentation(
-          timelineItem = tweetCandidateUrtItemBuilder(
-            pipelineQuery = query,
-            tweetCandidate = candidate.candidate,
-            candidateFeatures = candidate.features)
-        ) with ConversationModuleItem {
-          override val treeDisplay: Option[ModuleItemTreeDisplay] = None
-          override val dispensable: Boolean = index < candidates.length - 1
+  ovelonrridelon delonf apply(
+    quelonry: Quelonry,
+    candidatelons: Selonq[CandidatelonWithFelonaturelons[Candidatelon]]
+  ): Stitch[Selonq[Deloncoration]] = {
+    val candidatelonPrelonselonntations = candidatelons.vielonw.zipWithIndelonx.map {
+      caselon (candidatelon, indelonx) =>
+        val itelonmPrelonselonntation = nelonw UrtItelonmPrelonselonntation(
+          timelonlinelonItelonm = twelonelontCandidatelonUrtItelonmBuildelonr(
+            pipelonlinelonQuelonry = quelonry,
+            twelonelontCandidatelon = candidatelon.candidatelon,
+            candidatelonFelonaturelons = candidatelon.felonaturelons)
+        ) with ConvelonrsationModulelonItelonm {
+          ovelonrridelon val trelonelonDisplay: Option[ModulelonItelonmTrelonelonDisplay] = Nonelon
+          ovelonrridelon val dispelonnsablelon: Boolelonan = indelonx < candidatelons.lelonngth - 1
         }
 
-        Decoration(candidate.candidate, itemPresentation)
+        Deloncoration(candidatelon.candidatelon, itelonmPrelonselonntation)
     }
 
-    Stitch.value(candidatePresentations)
+    Stitch.valuelon(candidatelonPrelonselonntations)
   }
 }

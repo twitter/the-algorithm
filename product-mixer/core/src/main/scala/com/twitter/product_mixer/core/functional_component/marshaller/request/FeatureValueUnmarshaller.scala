@@ -1,31 +1,31 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.request
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonquelonst
 
-import com.twitter.product_mixer.core.{thriftscala => t}
-import com.twitter.timelines.configapi.BooleanFeatureValue
-import com.twitter.timelines.configapi.FeatureValue
-import com.twitter.timelines.configapi.NumberFeatureValue
-import com.twitter.timelines.configapi.StringFeatureValue
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.{thriftscala => t}
+import com.twittelonr.timelonlinelons.configapi.BoolelonanFelonaturelonValuelon
+import com.twittelonr.timelonlinelons.configapi.FelonaturelonValuelon
+import com.twittelonr.timelonlinelons.configapi.NumbelonrFelonaturelonValuelon
+import com.twittelonr.timelonlinelons.configapi.StringFelonaturelonValuelon
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class FeatureValueUnmarshaller @Inject() () {
+@Singlelonton
+class FelonaturelonValuelonUnmarshallelonr @Injelonct() () {
 
-  def apply(featureValue: t.FeatureValue): FeatureValue = featureValue match {
-    case t.FeatureValue.PrimitiveValue(t.PrimitiveFeatureValue.BoolValue(bool)) =>
-      BooleanFeatureValue(bool)
-    case t.FeatureValue.PrimitiveValue(t.PrimitiveFeatureValue.StrValue(string)) =>
-      StringFeatureValue(string)
-    case t.FeatureValue.PrimitiveValue(t.PrimitiveFeatureValue.IntValue(int)) =>
-      NumberFeatureValue(int)
-    case t.FeatureValue.PrimitiveValue(t.PrimitiveFeatureValue.LongValue(long)) =>
-      NumberFeatureValue(long)
-    case t.FeatureValue.PrimitiveValue(t.PrimitiveFeatureValue.DoubleValue(double)) =>
-      NumberFeatureValue(double)
-    case t.FeatureValue.PrimitiveValue(t.PrimitiveFeatureValue.UnknownUnionField(field)) =>
-      throw new UnsupportedOperationException(
-        s"Unknown feature value primitive: ${field.field.name}")
-    case t.FeatureValue.UnknownUnionField(field) =>
-      throw new UnsupportedOperationException(s"Unknown feature value: ${field.field.name}")
+  delonf apply(felonaturelonValuelon: t.FelonaturelonValuelon): FelonaturelonValuelon = felonaturelonValuelon match {
+    caselon t.FelonaturelonValuelon.PrimitivelonValuelon(t.PrimitivelonFelonaturelonValuelon.BoolValuelon(bool)) =>
+      BoolelonanFelonaturelonValuelon(bool)
+    caselon t.FelonaturelonValuelon.PrimitivelonValuelon(t.PrimitivelonFelonaturelonValuelon.StrValuelon(string)) =>
+      StringFelonaturelonValuelon(string)
+    caselon t.FelonaturelonValuelon.PrimitivelonValuelon(t.PrimitivelonFelonaturelonValuelon.IntValuelon(int)) =>
+      NumbelonrFelonaturelonValuelon(int)
+    caselon t.FelonaturelonValuelon.PrimitivelonValuelon(t.PrimitivelonFelonaturelonValuelon.LongValuelon(long)) =>
+      NumbelonrFelonaturelonValuelon(long)
+    caselon t.FelonaturelonValuelon.PrimitivelonValuelon(t.PrimitivelonFelonaturelonValuelon.DoublelonValuelon(doublelon)) =>
+      NumbelonrFelonaturelonValuelon(doublelon)
+    caselon t.FelonaturelonValuelon.PrimitivelonValuelon(t.PrimitivelonFelonaturelonValuelon.UnknownUnionFielonld(fielonld)) =>
+      throw nelonw UnsupportelondOpelonrationelonxcelonption(
+        s"Unknown felonaturelon valuelon primitivelon: ${fielonld.fielonld.namelon}")
+    caselon t.FelonaturelonValuelon.UnknownUnionFielonld(fielonld) =>
+      throw nelonw UnsupportelondOpelonrationelonxcelonption(s"Unknown felonaturelon valuelon: ${fielonld.fielonld.namelon}")
   }
 }

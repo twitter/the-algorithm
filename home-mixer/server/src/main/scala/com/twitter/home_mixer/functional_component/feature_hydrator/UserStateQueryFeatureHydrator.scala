@@ -1,54 +1,54 @@
-package com.twitter.home_mixer.functional_component.feature_hydrator
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator
 
-import com.twitter.home_mixer.model.HomeFeatures.UserStateFeature
-import com.twitter.home_mixer.service.HomeMixerAlertConfig
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.QueryFeatureHydrator
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.user_health.{thriftscala => uh}
-import com.twitter.timelines.user_health.v1.{thriftscala => uhv1}
-import com.twitter.user_session_store.ReadOnlyUserSessionStore
-import com.twitter.user_session_store.ReadRequest
-import com.twitter.user_session_store.UserSessionDataset
-import com.twitter.user_session_store.UserSessionDataset.UserSessionDataset
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.UselonrStatelonFelonaturelon
+import com.twittelonr.homelon_mixelonr.selonrvicelon.HomelonMixelonrAlelonrtConfig
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMapBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator.QuelonryFelonaturelonHydrator
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.FelonaturelonHydratorIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.timelonlinelons.uselonr_helonalth.{thriftscala => uh}
+import com.twittelonr.timelonlinelons.uselonr_helonalth.v1.{thriftscala => uhv1}
+import com.twittelonr.uselonr_selonssion_storelon.RelonadOnlyUselonrSelonssionStorelon
+import com.twittelonr.uselonr_selonssion_storelon.RelonadRelonquelonst
+import com.twittelonr.uselonr_selonssion_storelon.UselonrSelonssionDataselont
+import com.twittelonr.uselonr_selonssion_storelon.UselonrSelonssionDataselont.UselonrSelonssionDataselont
 
-import javax.inject.Inject
-import javax.inject.Singleton
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-case class UserStateQueryFeatureHydrator @Inject() (
-  userSessionStore: ReadOnlyUserSessionStore)
-    extends QueryFeatureHydrator[PipelineQuery] {
+@Singlelonton
+caselon class UselonrStatelonQuelonryFelonaturelonHydrator @Injelonct() (
+  uselonrSelonssionStorelon: RelonadOnlyUselonrSelonssionStorelon)
+    elonxtelonnds QuelonryFelonaturelonHydrator[PipelonlinelonQuelonry] {
 
-  override val identifier: FeatureHydratorIdentifier =
-    FeatureHydratorIdentifier("UserState")
+  ovelonrridelon val idelonntifielonr: FelonaturelonHydratorIdelonntifielonr =
+    FelonaturelonHydratorIdelonntifielonr("UselonrStatelon")
 
-  override val features: Set[Feature[_, _]] = Set(UserStateFeature)
+  ovelonrridelon val felonaturelons: Selont[Felonaturelon[_, _]] = Selont(UselonrStatelonFelonaturelon)
 
-  private val datasets: Set[UserSessionDataset] = Set(UserSessionDataset.UserHealth)
+  privatelon val dataselonts: Selont[UselonrSelonssionDataselont] = Selont(UselonrSelonssionDataselont.UselonrHelonalth)
 
-  override def hydrate(query: PipelineQuery): Stitch[FeatureMap] = {
-    userSessionStore
-      .read(ReadRequest(query.getRequiredUserId, datasets))
-      .map { userSession =>
-        val userState = userSession.flatMap {
-          _.userHealth match {
-            case Some(uh.UserHealth.V1(uhv1.UserHealth(userState))) => userState
-            case _ => None
+  ovelonrridelon delonf hydratelon(quelonry: PipelonlinelonQuelonry): Stitch[FelonaturelonMap] = {
+    uselonrSelonssionStorelon
+      .relonad(RelonadRelonquelonst(quelonry.gelontRelonquirelondUselonrId, dataselonts))
+      .map { uselonrSelonssion =>
+        val uselonrStatelon = uselonrSelonssion.flatMap {
+          _.uselonrHelonalth match {
+            caselon Somelon(uh.UselonrHelonalth.V1(uhv1.UselonrHelonalth(uselonrStatelon))) => uselonrStatelon
+            caselon _ => Nonelon
           }
         }
 
-        FeatureMapBuilder()
-          .add(UserStateFeature, userState)
+        FelonaturelonMapBuildelonr()
+          .add(UselonrStatelonFelonaturelon, uselonrStatelon)
           .build()
       }
   }
 
-  override val alerts = Seq(
-    HomeMixerAlertConfig.BusinessHours.defaultSuccessRateAlert(99.9)
+  ovelonrridelon val alelonrts = Selonq(
+    HomelonMixelonrAlelonrtConfig.BusinelonssHours.delonfaultSuccelonssRatelonAlelonrt(99.9)
   )
 }

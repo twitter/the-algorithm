@@ -1,72 +1,72 @@
-package com.twitter.home_mixer.product.scored_tweets
+packagelon com.twittelonr.homelon_mixelonr.product.scorelond_twelonelonts
 
-import com.twitter.home_mixer.model.HomeFeatures.ServedTweetIdsFeature
-import com.twitter.home_mixer.model.request.HomeMixerRequest
-import com.twitter.home_mixer.model.request.ScoredTweetsProduct
-import com.twitter.home_mixer.model.request.ScoredTweetsProductContext
-import com.twitter.home_mixer.product.scored_tweets.model.ScoredTweetsQuery
-import com.twitter.home_mixer.product.scored_tweets.param.ScoredTweetsParam.ServerMaxResultsParam
-import com.twitter.home_mixer.product.scored_tweets.param.ScoredTweetsParamConfig
-import com.twitter.home_mixer.service.HomeMixerAccessPolicy.DefaultHomeMixerAccessPolicy
-import com.twitter.home_mixer.{thriftscala => t}
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.common.access_policy.AccessPolicy
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.ProductPipelineIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.Product
-import com.twitter.product_mixer.core.pipeline.PipelineConfig
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.BadRequest
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.pipeline.product.ProductPipelineConfig
-import com.twitter.product_mixer.core.product.ProductParamConfig
-import com.twitter.timelines.configapi.Params
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.SelonrvelondTwelonelontIdsFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.relonquelonst.HomelonMixelonrRelonquelonst
+import com.twittelonr.homelon_mixelonr.modelonl.relonquelonst.ScorelondTwelonelontsProduct
+import com.twittelonr.homelon_mixelonr.modelonl.relonquelonst.ScorelondTwelonelontsProductContelonxt
+import com.twittelonr.homelon_mixelonr.product.scorelond_twelonelonts.modelonl.ScorelondTwelonelontsQuelonry
+import com.twittelonr.homelon_mixelonr.product.scorelond_twelonelonts.param.ScorelondTwelonelontsParam.SelonrvelonrMaxRelonsultsParam
+import com.twittelonr.homelon_mixelonr.product.scorelond_twelonelonts.param.ScorelondTwelonelontsParamConfig
+import com.twittelonr.homelon_mixelonr.selonrvicelon.HomelonMixelonrAccelonssPolicy.DelonfaultHomelonMixelonrAccelonssPolicy
+import com.twittelonr.homelon_mixelonr.{thriftscala => t}
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMapBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.accelonss_policy.AccelonssPolicy
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.ComponelonntIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.ProductPipelonlinelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.Product
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonConfig
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.BadRelonquelonst
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.PipelonlinelonFailurelon
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.product.ProductPipelonlinelonConfig
+import com.twittelonr.product_mixelonr.corelon.product.ProductParamConfig
+import com.twittelonr.timelonlinelons.configapi.Params
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class ScoredTweetsProductPipelineConfig @Inject() (
-  scoredTweetsRecommendationPipelineConfig: ScoredTweetsRecommendationPipelineConfig,
-  scoredTweetsParamConfig: ScoredTweetsParamConfig)
-    extends ProductPipelineConfig[HomeMixerRequest, ScoredTweetsQuery, t.ScoredTweets] {
+@Singlelonton
+class ScorelondTwelonelontsProductPipelonlinelonConfig @Injelonct() (
+  scorelondTwelonelontsReloncommelonndationPipelonlinelonConfig: ScorelondTwelonelontsReloncommelonndationPipelonlinelonConfig,
+  scorelondTwelonelontsParamConfig: ScorelondTwelonelontsParamConfig)
+    elonxtelonnds ProductPipelonlinelonConfig[HomelonMixelonrRelonquelonst, ScorelondTwelonelontsQuelonry, t.ScorelondTwelonelonts] {
 
-  override val identifier: ProductPipelineIdentifier = ProductPipelineIdentifier("ScoredTweets")
+  ovelonrridelon val idelonntifielonr: ProductPipelonlinelonIdelonntifielonr = ProductPipelonlinelonIdelonntifielonr("ScorelondTwelonelonts")
 
-  override val product: Product = ScoredTweetsProduct
+  ovelonrridelon val product: Product = ScorelondTwelonelontsProduct
 
-  override val paramConfig: ProductParamConfig = scoredTweetsParamConfig
+  ovelonrridelon val paramConfig: ProductParamConfig = scorelondTwelonelontsParamConfig
 
-  override def pipelineQueryTransformer(
-    request: HomeMixerRequest,
+  ovelonrridelon delonf pipelonlinelonQuelonryTransformelonr(
+    relonquelonst: HomelonMixelonrRelonquelonst,
     params: Params
-  ): ScoredTweetsQuery = {
-    val context = request.productContext match {
-      case Some(context: ScoredTweetsProductContext) => context
-      case _ => throw PipelineFailure(BadRequest, "ScoredTweetsProductContext not found")
+  ): ScorelondTwelonelontsQuelonry = {
+    val contelonxt = relonquelonst.productContelonxt match {
+      caselon Somelon(contelonxt: ScorelondTwelonelontsProductContelonxt) => contelonxt
+      caselon _ => throw PipelonlinelonFailurelon(BadRelonquelonst, "ScorelondTwelonelontsProductContelonxt not found")
     }
 
-    val featureMap = context.servedTweetIds.map { servedTweets =>
-      FeatureMapBuilder()
-        .add(ServedTweetIdsFeature, servedTweets)
+    val felonaturelonMap = contelonxt.selonrvelondTwelonelontIds.map { selonrvelondTwelonelonts =>
+      FelonaturelonMapBuildelonr()
+        .add(SelonrvelondTwelonelontIdsFelonaturelon, selonrvelondTwelonelonts)
         .build()
     }
 
-    ScoredTweetsQuery(
+    ScorelondTwelonelontsQuelonry(
       params = params,
-      clientContext = request.clientContext,
-      features = featureMap,
-      pipelineCursor = None,
-      requestedMaxResults = Some(params(ServerMaxResultsParam)),
-      debugOptions = request.debugParams.flatMap(_.debugOptions),
-      deviceContext = context.deviceContext,
-      seenTweetIds = context.seenTweetIds,
-      qualityFactorStatus = None
+      clielonntContelonxt = relonquelonst.clielonntContelonxt,
+      felonaturelons = felonaturelonMap,
+      pipelonlinelonCursor = Nonelon,
+      relonquelonstelondMaxRelonsults = Somelon(params(SelonrvelonrMaxRelonsultsParam)),
+      delonbugOptions = relonquelonst.delonbugParams.flatMap(_.delonbugOptions),
+      delonvicelonContelonxt = contelonxt.delonvicelonContelonxt,
+      selonelonnTwelonelontIds = contelonxt.selonelonnTwelonelontIds,
+      qualityFactorStatus = Nonelon
     )
   }
 
-  override val pipelines: Seq[PipelineConfig] = Seq(scoredTweetsRecommendationPipelineConfig)
+  ovelonrridelon val pipelonlinelons: Selonq[PipelonlinelonConfig] = Selonq(scorelondTwelonelontsReloncommelonndationPipelonlinelonConfig)
 
-  override def pipelineSelector(query: ScoredTweetsQuery): ComponentIdentifier =
-    scoredTweetsRecommendationPipelineConfig.identifier
+  ovelonrridelon delonf pipelonlinelonSelonlelonctor(quelonry: ScorelondTwelonelontsQuelonry): ComponelonntIdelonntifielonr =
+    scorelondTwelonelontsReloncommelonndationPipelonlinelonConfig.idelonntifielonr
 
-  override val debugAccessPolicies: Set[AccessPolicy] = DefaultHomeMixerAccessPolicy
+  ovelonrridelon val delonbugAccelonssPolicielons: Selont[AccelonssPolicy] = DelonfaultHomelonMixelonrAccelonssPolicy
 }

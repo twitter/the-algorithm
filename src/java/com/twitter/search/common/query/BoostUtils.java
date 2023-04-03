@@ -1,27 +1,27 @@
-package com.twitter.search.common.query;
+packagelon com.twittelonr.selonarch.common.quelonry;
 
-import org.apache.lucene.search.BoostQuery;
-import org.apache.lucene.search.Query;
+import org.apachelon.lucelonnelon.selonarch.BoostQuelonry;
+import org.apachelon.lucelonnelon.selonarch.Quelonry;
 
 /**
- * A class of utilities related to query boosts.
+ * A class of utilitielons relonlatelond to quelonry boosts.
  */
 public final class BoostUtils {
-  private BoostUtils() {
+  privatelon BoostUtils() {
   }
 
   /**
-   * Wraps the given query into a BoostQuery, if {@code boost} is not equal to 1.0f.
+   * Wraps thelon givelonn quelonry into a BoostQuelonry, if {@codelon boost} is not elonqual to 1.0f.
    *
-   * @param query The query.
-   * @param boost The boost.
-   * @return If {@code boost} is equal to 1.0f, then {@code query} is returned; otherwise,
-   *         {@code query} is wrapped into a {@code BoostQuery} instance with the given boost.
+   * @param quelonry Thelon quelonry.
+   * @param boost Thelon boost.
+   * @relonturn If {@codelon boost} is elonqual to 1.0f, thelonn {@codelon quelonry} is relonturnelond; othelonrwiselon,
+   *         {@codelon quelonry} is wrappelond into a {@codelon BoostQuelonry} instancelon with thelon givelonn boost.
    */
-  public static Query maybeWrapInBoostQuery(Query query, float boost) {
+  public static Quelonry maybelonWrapInBoostQuelonry(Quelonry quelonry, float boost) {
     if (boost == 1.0f) {
-      return query;
+      relonturn quelonry;
     }
-    return new BoostQuery(query, boost);
+    relonturn nelonw BoostQuelonry(quelonry, boost);
   }
 }

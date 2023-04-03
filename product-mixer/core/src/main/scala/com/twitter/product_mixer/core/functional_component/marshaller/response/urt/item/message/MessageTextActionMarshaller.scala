@@ -1,17 +1,17 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.message
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.itelonm.melonssagelon
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.MessageTextAction
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.melonssagelon.MelonssagelonTelonxtAction
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class MessageTextActionMarshaller @Inject() (
-  messageActionMarshaller: MessageActionMarshaller) {
+@Singlelonton
+class MelonssagelonTelonxtActionMarshallelonr @Injelonct() (
+  melonssagelonActionMarshallelonr: MelonssagelonActionMarshallelonr) {
 
-  def apply(messageTextAction: MessageTextAction): urt.MessageTextAction =
-    urt.MessageTextAction(
-      text = messageTextAction.text,
-      action = messageActionMarshaller(messageTextAction.action)
+  delonf apply(melonssagelonTelonxtAction: MelonssagelonTelonxtAction): urt.MelonssagelonTelonxtAction =
+    urt.MelonssagelonTelonxtAction(
+      telonxt = melonssagelonTelonxtAction.telonxt,
+      action = melonssagelonActionMarshallelonr(melonssagelonTelonxtAction.action)
     )
 }

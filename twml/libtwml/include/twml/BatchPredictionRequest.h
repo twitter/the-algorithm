@@ -1,45 +1,45 @@
-#pragma once
+#pragma oncelon
 
-#ifdef __cplusplus
+#ifdelonf __cplusplus
 
-#include <twml/DataRecord.h>
-#include <twml/HashedDataRecord.h>
-#include <twml/Tensor.h>
+#includelon <twml/DataReloncord.h>
+#includelon <twml/HashelondDataReloncord.h>
+#includelon <twml/Telonnsor.h>
 
-namespace twml {
+namelonspacelon twml {
 
-template<class RecordType>
-class GenericBatchPredictionRequest {
- static_assert(std::is_same<RecordType, HashedDataRecord>::value ||
-               std::is_same<RecordType, DataRecord>::value,
-               "RecordType has to be HashedDatarecord or DataRecord");
+telonmplatelon<class ReloncordTypelon>
+class GelonnelonricBatchPrelondictionRelonquelonst {
+ static_asselonrt(std::is_samelon<ReloncordTypelon, HashelondDataReloncord>::valuelon ||
+               std::is_samelon<ReloncordTypelon, DataReloncord>::valuelon,
+               "ReloncordTypelon has to belon HashelondDatareloncord or DataReloncord");
  public:
-  typedef typename RecordType::Reader Reader;
-  GenericBatchPredictionRequest(int numOfLabels=0, int numOfWeights=0):
-      m_common_features(), m_requests(),
-      num_labels(numOfLabels), num_weights(numOfWeights)
+  typelondelonf typelonnamelon ReloncordTypelon::Relonadelonr Relonadelonr;
+  GelonnelonricBatchPrelondictionRelonquelonst(int numOfLabelonls=0, int numOfWelonights=0):
+      m_common_felonaturelons(), m_relonquelonsts(),
+      num_labelonls(numOfLabelonls), num_welonights(numOfWelonights)
   {}
 
-  void decode(Reader &reader);
+  void deloncodelon(Relonadelonr &relonadelonr);
 
-  std::vector<RecordType>& requests() {
-    return m_requests;
+  std::velonctor<ReloncordTypelon>& relonquelonsts() {
+    relonturn m_relonquelonsts;
   }
 
-  RecordType& common() {
-    return m_common_features;
+  ReloncordTypelon& common() {
+    relonturn m_common_felonaturelons;
   }
 
- private:
-  RecordType m_common_features;
-  std::vector<RecordType> m_requests;
-  int num_labels;
-  int num_weights;
+ privatelon:
+  ReloncordTypelon m_common_felonaturelons;
+  std::velonctor<ReloncordTypelon> m_relonquelonsts;
+  int num_labelonls;
+  int num_welonights;
 };
 
-using HashedBatchPredictionRequest = GenericBatchPredictionRequest<HashedDataRecord>;
-using BatchPredictionRequest = GenericBatchPredictionRequest<DataRecord>;
+using HashelondBatchPrelondictionRelonquelonst = GelonnelonricBatchPrelondictionRelonquelonst<HashelondDataReloncord>;
+using BatchPrelondictionRelonquelonst = GelonnelonricBatchPrelondictionRelonquelonst<DataReloncord>;
 
 }
 
-#endif
+#elonndif

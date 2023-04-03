@@ -1,14 +1,14 @@
-package com.twitter.visibility.configapi
+packagelon com.twittelonr.visibility.configapi
 
-import com.twitter.timelines.configapi._
+import com.twittelonr.timelonlinelons.configapi._
 
-case class VisibilityRequestContext(
-  userId: Option[Long],
-  guestId: Option[Long],
-  experimentContext: ExperimentContext = NullExperimentContext,
-  featureContext: FeatureContext = NullFeatureContext)
-    extends BaseRequestContext
-    with WithUserId
-    with WithGuestId
-    with WithExperimentContext
-    with WithFeatureContext
+caselon class VisibilityRelonquelonstContelonxt(
+  uselonrId: Option[Long],
+  guelonstId: Option[Long],
+  elonxpelonrimelonntContelonxt: elonxpelonrimelonntContelonxt = NullelonxpelonrimelonntContelonxt,
+  felonaturelonContelonxt: FelonaturelonContelonxt = NullFelonaturelonContelonxt)
+    elonxtelonnds BaselonRelonquelonstContelonxt
+    with WithUselonrId
+    with WithGuelonstId
+    with WithelonxpelonrimelonntContelonxt
+    with WithFelonaturelonContelonxt

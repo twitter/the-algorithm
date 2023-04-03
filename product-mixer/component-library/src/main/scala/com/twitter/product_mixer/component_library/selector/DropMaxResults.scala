@@ -1,40 +1,40 @@
-package com.twitter.product_mixer.component_library.selector
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.selonlelonctor
 
-import com.twitter.product_mixer.core.functional_component.common.AllPipelines
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.functional_component.selector.SelectorResult
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.configapi.Param
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.AllPipelonlinelons
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.CandidatelonScopelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.selonlelonctor.Selonlelonctor
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.selonlelonctor.SelonlelonctorRelonsult
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.timelonlinelons.configapi.Param
 
 /**
- * Limit the number of results
+ * Limit thelon numbelonr of relonsults
  *
- * For example, if maxResultsParam is 3, and the results contain 10 items, then these items will be
- * reduced to the first 3 selected items. Note that the ordering of results is determined by the
- * selector configuration.
+ * For elonxamplelon, if maxRelonsultsParam is 3, and thelon relonsults contain 10 itelonms, thelonn thelonselon itelonms will belon
+ * relonducelond to thelon first 3 selonlelonctelond itelonms. Notelon that thelon ordelonring of relonsults is delontelonrminelond by thelon
+ * selonlelonctor configuration.
  *
- * Another example, if maxResultsParam is 3, and the results contain 10 modules, then these will be
- * reduced to the first 3 modules. The items inside the modules will not be affected by this
- * selector.
+ * Anothelonr elonxamplelon, if maxRelonsultsParam is 3, and thelon relonsults contain 10 modulelons, thelonn thelonselon will belon
+ * relonducelond to thelon first 3 modulelons. Thelon itelonms insidelon thelon modulelons will not belon affelonctelond by this
+ * selonlelonctor.
  */
-case class DropMaxResults(
-  maxResultsParam: Param[Int])
-    extends Selector[PipelineQuery] {
+caselon class DropMaxRelonsults(
+  maxRelonsultsParam: Param[Int])
+    elonxtelonnds Selonlelonctor[PipelonlinelonQuelonry] {
 
-  override val pipelineScope: CandidateScope = AllPipelines
+  ovelonrridelon val pipelonlinelonScopelon: CandidatelonScopelon = AllPipelonlinelons
 
-  override def apply(
-    query: PipelineQuery,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
-  ): SelectorResult = {
-    val maxResults = query.params(maxResultsParam)
-    assert(maxResults > 0, "Max results must be greater than zero")
+  ovelonrridelon delonf apply(
+    quelonry: PipelonlinelonQuelonry,
+    relonmainingCandidatelons: Selonq[CandidatelonWithDelontails],
+    relonsult: Selonq[CandidatelonWithDelontails]
+  ): SelonlelonctorRelonsult = {
+    val maxRelonsults = quelonry.params(maxRelonsultsParam)
+    asselonrt(maxRelonsults > 0, "Max relonsults must belon grelonatelonr than zelonro")
 
-    val resultUpdated = DropSelector.takeUntil(maxResults, result)
+    val relonsultUpdatelond = DropSelonlelonctor.takelonUntil(maxRelonsults, relonsult)
 
-    SelectorResult(remainingCandidates = remainingCandidates, result = resultUpdated)
+    SelonlelonctorRelonsult(relonmainingCandidatelons = relonmainingCandidatelons, relonsult = relonsultUpdatelond)
   }
 }

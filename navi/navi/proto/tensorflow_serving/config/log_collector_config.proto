@@ -1,12 +1,12 @@
 syntax = "proto3";
 
-package tensorflow.serving;
-option cc_enable_arenas = true;
+packagelon telonnsorflow.selonrving;
+option cc_elonnablelon_arelonnas = truelon;
 
-message LogCollectorConfig {
-  // Identifies the type of the LogCollector we will use to collect these logs.
-  string type = 1;
+melonssagelon LogCollelonctorConfig {
+  // Idelonntifielons thelon typelon of thelon LogCollelonctor welon will uselon to collelonct thelonselon logs.
+  string typelon = 1;
 
-  // The prefix to use for the filenames of the logs.
-  string filename_prefix = 2;
+  // Thelon prelonfix to uselon for thelon filelonnamelons of thelon logs.
+  string filelonnamelon_prelonfix = 2;
 }

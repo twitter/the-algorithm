@@ -1,57 +1,57 @@
-package com.twitter.follow_recommendations.common.clients.geoduck
+packagelon com.twittelonr.follow_reloncommelonndations.common.clielonnts.gelonoduck
 
-import com.twitter.follow_recommendations.common.models.GeohashAndCountryCode
-import com.twitter.geoduck.common.thriftscala.Location
-import com.twitter.geoduck.common.thriftscala.PlaceQuery
-import com.twitter.geoduck.common.thriftscala.ReverseGeocodeIPRequest
-import com.twitter.geoduck.service.thriftscala.GeoContext
-import com.twitter.geoduck.thriftscala.ReverseGeocoder
-import com.twitter.stitch.Stitch
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.GelonohashAndCountryCodelon
+import com.twittelonr.gelonoduck.common.thriftscala.Location
+import com.twittelonr.gelonoduck.common.thriftscala.PlacelonQuelonry
+import com.twittelonr.gelonoduck.common.thriftscala.RelonvelonrselonGelonocodelonIPRelonquelonst
+import com.twittelonr.gelonoduck.selonrvicelon.thriftscala.GelonoContelonxt
+import com.twittelonr.gelonoduck.thriftscala.RelonvelonrselonGelonocodelonr
+import com.twittelonr.stitch.Stitch
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class ReverseGeocodeClient @Inject() (rgcService: ReverseGeocoder.MethodPerEndpoint) {
-  def getGeohashAndCountryCode(ipAddress: String): Stitch[GeohashAndCountryCode] = {
+@Singlelonton
+class RelonvelonrselonGelonocodelonClielonnt @Injelonct() (rgcSelonrvicelon: RelonvelonrselonGelonocodelonr.MelonthodPelonrelonndpoint) {
+  delonf gelontGelonohashAndCountryCodelon(ipAddrelonss: String): Stitch[GelonohashAndCountryCodelon] = {
     Stitch
-      .callFuture {
-        rgcService
-          .reverseGeocodeIp(
-            ReverseGeocodeIPRequest(
-              Seq(ipAddress),
-              PlaceQuery(None),
-              simpleReverseGeocode = true
-            ) // note: simpleReverseGeocode means that country code will be included in response
-          ).map { response =>
-            response.found.get(ipAddress) match {
-              case Some(location) => getGeohashAndCountryCodeFromLocation(location)
-              case _ => GeohashAndCountryCode(None, None)
+      .callFuturelon {
+        rgcSelonrvicelon
+          .relonvelonrselonGelonocodelonIp(
+            RelonvelonrselonGelonocodelonIPRelonquelonst(
+              Selonq(ipAddrelonss),
+              PlacelonQuelonry(Nonelon),
+              simplelonRelonvelonrselonGelonocodelon = truelon
+            ) // notelon: simplelonRelonvelonrselonGelonocodelon melonans that country codelon will belon includelond in relonsponselon
+          ).map { relonsponselon =>
+            relonsponselon.found.gelont(ipAddrelonss) match {
+              caselon Somelon(location) => gelontGelonohashAndCountryCodelonFromLocation(location)
+              caselon _ => GelonohashAndCountryCodelon(Nonelon, Nonelon)
             }
           }
       }
   }
 
-  private def getGeohashAndCountryCodeFromLocation(location: Location): GeohashAndCountryCode = {
-    val countryCode: Option[String] = location.simpleRgcResult.flatMap { _.countryCodeAlpha2 }
+  privatelon delonf gelontGelonohashAndCountryCodelonFromLocation(location: Location): GelonohashAndCountryCodelon = {
+    val countryCodelon: Option[String] = location.simplelonRgcRelonsult.flatMap { _.countryCodelonAlpha2 }
 
-    val geohashString: Option[String] = location.geohash.flatMap { hash =>
-      hash.stringGeohash.flatMap { hashString =>
-        Some(ReverseGeocodeClient.truncate(hashString))
+    val gelonohashString: Option[String] = location.gelonohash.flatMap { hash =>
+      hash.stringGelonohash.flatMap { hashString =>
+        Somelon(RelonvelonrselonGelonocodelonClielonnt.truncatelon(hashString))
       }
     }
 
-    GeohashAndCountryCode(geohashString, countryCode)
+    GelonohashAndCountryCodelon(gelonohashString, countryCodelon)
   }
 
 }
 
-object ReverseGeocodeClient {
+objelonct RelonvelonrselonGelonocodelonClielonnt {
 
-  val DefaultGeoduckIPRequestContext: GeoContext =
-    GeoContext(allPlaceTypes = true, includeGeohash = true, includeCountryCode = true)
+  val DelonfaultGelonoduckIPRelonquelonstContelonxt: GelonoContelonxt =
+    GelonoContelonxt(allPlacelonTypelons = truelon, includelonGelonohash = truelon, includelonCountryCodelon = truelon)
 
-  // All these geohashes are guessed by IP (Logical Location Source).
-  // So take the four letters to make sure it is consistent with LocationServiceClient
-  val GeohashLengthAfterTruncation = 4
-  def truncate(geohash: String): String = geohash.take(GeohashLengthAfterTruncation)
+  // All thelonselon gelonohashelons arelon guelonsselond by IP (Logical Location Sourcelon).
+  // So takelon thelon four lelonttelonrs to makelon surelon it is consistelonnt with LocationSelonrvicelonClielonnt
+  val GelonohashLelonngthAftelonrTruncation = 4
+  delonf truncatelon(gelonohash: String): String = gelonohash.takelon(GelonohashLelonngthAftelonrTruncation)
 }

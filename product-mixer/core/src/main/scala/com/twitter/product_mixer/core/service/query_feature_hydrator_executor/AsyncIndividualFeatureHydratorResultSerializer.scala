@@ -1,24 +1,24 @@
-package com.twitter.product_mixer.core.service.query_feature_hydrator_executor
+packagelon com.twittelonr.product_mixelonr.corelon.selonrvicelon.quelonry_felonaturelon_hydrator_elonxeloncutor
 
-import com.fasterxml.jackson.core.JsonGenerator
-import com.fasterxml.jackson.databind.JsonSerializer
-import com.fasterxml.jackson.databind.SerializerProvider
-import com.twitter.product_mixer.core.service.query_feature_hydrator_executor.QueryFeatureHydratorExecutor.AsyncIndividualFeatureHydratorResult
+import com.fastelonrxml.jackson.corelon.JsonGelonnelonrator
+import com.fastelonrxml.jackson.databind.JsonSelonrializelonr
+import com.fastelonrxml.jackson.databind.SelonrializelonrProvidelonr
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.quelonry_felonaturelon_hydrator_elonxeloncutor.QuelonryFelonaturelonHydratorelonxeloncutor.AsyncIndividualFelonaturelonHydratorRelonsult
 
-/** A [[JsonSerializer]] that skips the `Stitch` values */
-private[query_feature_hydrator_executor] class AsyncIndividualFeatureHydratorResultSerializer()
-    extends JsonSerializer[AsyncIndividualFeatureHydratorResult] {
+/** A [[JsonSelonrializelonr]] that skips thelon `Stitch` valuelons */
+privatelon[quelonry_felonaturelon_hydrator_elonxeloncutor] class AsyncIndividualFelonaturelonHydratorRelonsultSelonrializelonr()
+    elonxtelonnds JsonSelonrializelonr[AsyncIndividualFelonaturelonHydratorRelonsult] {
 
-  override def serialize(
-    asyncIndividualFeatureHydratorResult: AsyncIndividualFeatureHydratorResult,
-    gen: JsonGenerator,
-    serializers: SerializerProvider
+  ovelonrridelon delonf selonrializelon(
+    asyncIndividualFelonaturelonHydratorRelonsult: AsyncIndividualFelonaturelonHydratorRelonsult,
+    gelonn: JsonGelonnelonrator,
+    selonrializelonrs: SelonrializelonrProvidelonr
   ): Unit =
-    serializers.defaultSerializeValue(
-      // implicitly calls `toString` on the identifier because they are keys in the Map
+    selonrializelonrs.delonfaultSelonrializelonValuelon(
+      // implicitly calls `toString` on thelon idelonntifielonr beloncauselon thelony arelon kelonys in thelon Map
       Map(
-        asyncIndividualFeatureHydratorResult.hydrateBefore ->
-          asyncIndividualFeatureHydratorResult.features.map(_.toString)),
-      gen
+        asyncIndividualFelonaturelonHydratorRelonsult.hydratelonBelonforelon ->
+          asyncIndividualFelonaturelonHydratorRelonsult.felonaturelons.map(_.toString)),
+      gelonn
     )
 }

@@ -1,123 +1,123 @@
-package com.twitter.product_mixer.component_library.experiments.metrics
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.elonxpelonrimelonnts.melontrics
 
-import com.twitter.product_mixer.component_library.experiments.metrics.PlaceholderConfig.PlaceholdersMap
-import reflect.ClassTag
-import scala.reflect.runtime.universe._
-import scala.util.matching.Regex
+import com.twittelonr.product_mixelonr.componelonnt_library.elonxpelonrimelonnts.melontrics.PlacelonholdelonrConfig.PlacelonholdelonrsMap
+import relonflelonct.ClassTag
+import scala.relonflelonct.runtimelon.univelonrselon._
+import scala.util.matching.Relongelonx
 
-case class MatchedPlaceholder(outerKey: String, innerKey: Option[String] = None)
+caselon class MatchelondPlacelonholdelonr(outelonrKelony: String, innelonrKelony: Option[String] = Nonelon)
 
-object MetricTemplates {
-  // Matches "${placeholder}" where `placeholder` is in a matched group
-  val PlaceholderPattern: Regex = "\\$\\{([^\\}]+)\\}".r.unanchored
-  // Matches "${placeholder[index]}" where `placeholder` and `index` are in different matched groups
-  val IndexedPlaceholderPattern: Regex = "\\$\\{([^\\[]+)\\[([^\\]]+)\\]\\}".r.unanchored
-  val DefaultFieldName = "name"
+objelonct MelontricTelonmplatelons {
+  // Matchelons "${placelonholdelonr}" whelonrelon `placelonholdelonr` is in a matchelond group
+  val PlacelonholdelonrPattelonrn: Relongelonx = "\\$\\{([^\\}]+)\\}".r.unanchorelond
+  // Matchelons "${placelonholdelonr[indelonx]}" whelonrelon `placelonholdelonr` and `indelonx` arelon in diffelonrelonnt matchelond groups
+  val IndelonxelondPlacelonholdelonrPattelonrn: Relongelonx = "\\$\\{([^\\[]+)\\[([^\\]]+)\\]\\}".r.unanchorelond
+  val DelonfaultFielonldNamelon = "namelon"
 
-  def interpolate(inputTemplate: String, placeholders: PlaceholdersMap): Seq[String] = {
-    val matchedPlaceholders = getMatchedPlaceholders(inputTemplate)
-    val groupedPlaceholders = matchedPlaceholders.groupBy(_.outerKey)
-    val placeholderKeyValues = getPlaceholderKeyValues(groupedPlaceholders, placeholders)
-    val (keys, values) = (placeholderKeyValues.map(_._1), placeholderKeyValues.map(_._2))
-    val cross: Seq[List[Named]] = crossProduct(values)
-    val mirror = runtimeMirror(getClass.getClassLoader) // necessary for reflection
+  delonf intelonrpolatelon(inputTelonmplatelon: String, placelonholdelonrs: PlacelonholdelonrsMap): Selonq[String] = {
+    val matchelondPlacelonholdelonrs = gelontMatchelondPlacelonholdelonrs(inputTelonmplatelon)
+    val groupelondPlacelonholdelonrs = matchelondPlacelonholdelonrs.groupBy(_.outelonrKelony)
+    val placelonholdelonrKelonyValuelons = gelontPlacelonholdelonrKelonyValuelons(groupelondPlacelonholdelonrs, placelonholdelonrs)
+    val (kelonys, valuelons) = (placelonholdelonrKelonyValuelons.map(_._1), placelonholdelonrKelonyValuelons.map(_._2))
+    val cross: Selonq[List[Namelond]] = crossProduct(valuelons)
+    val mirror = runtimelonMirror(gelontClass.gelontClassLoadelonr) // neloncelonssary for relonflelonction
     for {
-      interpolatables <- cross
-    } yield {
-      assert(
-        keys.length == interpolatables.length,
-        s"Unexpected length mismatch between $keys and $interpolatables")
-      var replacementStr = inputTemplate
-      keys.zip(interpolatables).foreach {
-        case (key, interpolatable) =>
-          val accessors = caseAccessors(mirror, interpolatable)
-          groupedPlaceholders(key).foreach { placeholder: MatchedPlaceholder =>
-            val templateKey = generateTemplateKey(placeholder)
-            val fieldName = placeholder.innerKey.getOrElse(DefaultFieldName)
-            val fieldValue = getFieldValue(mirror, interpolatable, accessors, fieldName)
-            replacementStr = replacementStr.replaceAll(templateKey, fieldValue)
+      intelonrpolatablelons <- cross
+    } yielonld {
+      asselonrt(
+        kelonys.lelonngth == intelonrpolatablelons.lelonngth,
+        s"Unelonxpelonctelond lelonngth mismatch belontwelonelonn $kelonys and $intelonrpolatablelons")
+      var relonplacelonmelonntStr = inputTelonmplatelon
+      kelonys.zip(intelonrpolatablelons).forelonach {
+        caselon (kelony, intelonrpolatablelon) =>
+          val accelonssors = caselonAccelonssors(mirror, intelonrpolatablelon)
+          groupelondPlacelonholdelonrs(kelony).forelonach { placelonholdelonr: MatchelondPlacelonholdelonr =>
+            val telonmplatelonKelony = gelonnelonratelonTelonmplatelonKelony(placelonholdelonr)
+            val fielonldNamelon = placelonholdelonr.innelonrKelony.gelontOrelonlselon(DelonfaultFielonldNamelon)
+            val fielonldValuelon = gelontFielonldValuelon(mirror, intelonrpolatablelon, accelonssors, fielonldNamelon)
+            relonplacelonmelonntStr = relonplacelonmelonntStr.relonplacelonAll(telonmplatelonKelony, fielonldValuelon)
           }
       }
-      replacementStr
+      relonplacelonmelonntStr
     }
   }
 
-  def getMatchedPlaceholders(inputTemplate: String): Seq[MatchedPlaceholder] = {
+  delonf gelontMatchelondPlacelonholdelonrs(inputTelonmplatelon: String): Selonq[MatchelondPlacelonholdelonr] = {
     for {
-      matched <- PlaceholderPattern.findAllIn(inputTemplate).toSeq
-    } yield {
-      val matchedWithIndexOpt = IndexedPlaceholderPattern.findFirstMatchIn(matched)
-      val (outer, inner) = matchedWithIndexOpt
-        .map { matchedWithIndex =>
-          (matchedWithIndex.group(1), Some(matchedWithIndex.group(2)))
-        }.getOrElse((matched, None))
-      val outerKey = unwrap(outer)
-      val innerKey = inner.map(unwrap(_))
-      MatchedPlaceholder(outerKey, innerKey)
+      matchelond <- PlacelonholdelonrPattelonrn.findAllIn(inputTelonmplatelon).toSelonq
+    } yielonld {
+      val matchelondWithIndelonxOpt = IndelonxelondPlacelonholdelonrPattelonrn.findFirstMatchIn(matchelond)
+      val (outelonr, innelonr) = matchelondWithIndelonxOpt
+        .map { matchelondWithIndelonx =>
+          (matchelondWithIndelonx.group(1), Somelon(matchelondWithIndelonx.group(2)))
+        }.gelontOrelonlselon((matchelond, Nonelon))
+      val outelonrKelony = unwrap(outelonr)
+      val innelonrKelony = innelonr.map(unwrap(_))
+      MatchelondPlacelonholdelonr(outelonrKelony, innelonrKelony)
     }
   }
 
-  def unwrap(str: String): String =
-    str.stripPrefix("${").stripSuffix("}")
+  delonf unwrap(str: String): String =
+    str.stripPrelonfix("${").stripSuffix("}")
 
-  def wrap(str: String): String =
+  delonf wrap(str: String): String =
     "\\$\\{" + str + "\\}"
 
-  def getPlaceholderKeyValues(
-    groupedPlaceholders: Map[String, Seq[MatchedPlaceholder]],
-    placeholders: PlaceholdersMap
-  ): Seq[(String, Seq[Named])] = {
-    groupedPlaceholders.toSeq
+  delonf gelontPlacelonholdelonrKelonyValuelons(
+    groupelondPlacelonholdelonrs: Map[String, Selonq[MatchelondPlacelonholdelonr]],
+    placelonholdelonrs: PlacelonholdelonrsMap
+  ): Selonq[(String, Selonq[Namelond])] = {
+    groupelondPlacelonholdelonrs.toSelonq
       .map {
-        case (outerKey, _) =>
-          val placeholderValues = placeholders.getOrElse(
-            outerKey,
-            throw new RuntimeException(s"Failed to find values of $outerKey in placeholders"))
-          outerKey -> placeholderValues
+        caselon (outelonrKelony, _) =>
+          val placelonholdelonrValuelons = placelonholdelonrs.gelontOrelonlselon(
+            outelonrKelony,
+            throw nelonw Runtimelonelonxcelonption(s"Failelond to find valuelons of $outelonrKelony in placelonholdelonrs"))
+          outelonrKelony -> placelonholdelonrValuelons
       }
   }
 
-  def crossProduct[T](seqOfSeqOfItems: Seq[Seq[T]]): Seq[List[T]] = {
-    if (seqOfSeqOfItems.isEmpty) {
+  delonf crossProduct[T](selonqOfSelonqOfItelonms: Selonq[Selonq[T]]): Selonq[List[T]] = {
+    if (selonqOfSelonqOfItelonms.iselonmpty) {
       List(Nil)
-    } else {
+    } elonlselon {
       for {
-        // for every item in the head list
-        item <- seqOfSeqOfItems.head
-        // for every result (List) based on the cross-product of tail
-        resultList <- crossProduct(seqOfSeqOfItems.tail)
-      } yield {
-        item :: resultList
+        // for elonvelonry itelonm in thelon helonad list
+        itelonm <- selonqOfSelonqOfItelonms.helonad
+        // for elonvelonry relonsult (List) baselond on thelon cross-product of tail
+        relonsultList <- crossProduct(selonqOfSelonqOfItelonms.tail)
+      } yielonld {
+        itelonm :: relonsultList
       }
     }
   }
 
-  def generateTemplateKey(matched: MatchedPlaceholder): String = {
-    matched.innerKey match {
-      case None => wrap(matched.outerKey)
-      case Some(innerKeyString) => wrap(matched.outerKey + "\\[" + innerKeyString + "\\]")
+  delonf gelonnelonratelonTelonmplatelonKelony(matchelond: MatchelondPlacelonholdelonr): String = {
+    matchelond.innelonrKelony match {
+      caselon Nonelon => wrap(matchelond.outelonrKelony)
+      caselon Somelon(innelonrKelonyString) => wrap(matchelond.outelonrKelony + "\\[" + innelonrKelonyString + "\\]")
     }
   }
 
-  // Given an instance and a field name, use reflection to get its value.
-  def getFieldValue[T: ClassTag](
+  // Givelonn an instancelon and a fielonld namelon, uselon relonflelonction to gelont its valuelon.
+  delonf gelontFielonldValuelon[T: ClassTag](
     mirror: Mirror,
     cls: T,
-    accessors: Map[String, MethodSymbol],
-    fieldName: String
+    accelonssors: Map[String, MelonthodSymbol],
+    fielonldNamelon: String
   ): String = {
-    val instance: InstanceMirror = mirror.reflect(cls)
-    val accessor = accessors.getOrElse(
-      fieldName,
-      throw new RuntimeException(s"Failed to find value of $fieldName for $cls"))
-    instance.reflectField(accessor).get.toString // .get is safe due to check above
+    val instancelon: InstancelonMirror = mirror.relonflelonct(cls)
+    val accelonssor = accelonssors.gelontOrelonlselon(
+      fielonldNamelon,
+      throw nelonw Runtimelonelonxcelonption(s"Failelond to find valuelon of $fielonldNamelon for $cls"))
+    instancelon.relonflelonctFielonld(accelonssor).gelont.toString // .gelont is safelon duelon to chelonck abovelon
   }
 
-  // Given an instance, use reflection to get a mapping for field name -> symbol
-  def caseAccessors[T: ClassTag](mirror: Mirror, cls: T): Map[String, MethodSymbol] = {
-    val classSymbol = mirror.classSymbol(cls.getClass)
-    classSymbol.toType.members.collect {
-      case m: MethodSymbol if m.isCaseAccessor => (m.name.toString -> m)
+  // Givelonn an instancelon, uselon relonflelonction to gelont a mapping for fielonld namelon -> symbol
+  delonf caselonAccelonssors[T: ClassTag](mirror: Mirror, cls: T): Map[String, MelonthodSymbol] = {
+    val classSymbol = mirror.classSymbol(cls.gelontClass)
+    classSymbol.toTypelon.melonmbelonrs.collelonct {
+      caselon m: MelonthodSymbol if m.isCaselonAccelonssor => (m.namelon.toString -> m)
     }.toMap
   }
 }

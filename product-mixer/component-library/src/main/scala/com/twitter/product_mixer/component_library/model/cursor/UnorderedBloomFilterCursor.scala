@@ -1,25 +1,25 @@
-package com.twitter.product_mixer.component_library.model.cursor
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.modelonl.cursor
 
-import com.twitter.product_mixer.core.pipeline.PipelineCursor
-import com.twitter.product_mixer.core.pipeline.UrtPipelineCursor
-import com.twitter.search.common.util.bloomfilter.AdaptiveLongIntBloomFilter
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonCursor
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.UrtPipelonlinelonCursor
+import com.twittelonr.selonarch.common.util.bloomfiltelonr.AdaptivelonLongIntBloomFiltelonr
 
 /**
- * Cursor model that may be used when cursoring over a unordered candidate source. On each server
- * round-trip, the server will add the IDs of the candidates into a space efficient bloom filter.
- * Then on subsequent requests the client will return the cursor, and the bloom filter can be sent to
- * the downstream's bloom filter parameter in serialized form, or exclude candidates locally via a
- * filter on the candidate source pipeline.
+ * Cursor modelonl that may belon uselond whelonn cursoring ovelonr a unordelonrelond candidatelon sourcelon. On elonach selonrvelonr
+ * round-trip, thelon selonrvelonr will add thelon IDs of thelon candidatelons into a spacelon elonfficielonnt bloom filtelonr.
+ * Thelonn on subselonquelonnt relonquelonsts thelon clielonnt will relonturn thelon cursor, and thelon bloom filtelonr can belon selonnt to
+ * thelon downstrelonam's bloom filtelonr paramelontelonr in selonrializelond form, or elonxcludelon candidatelons locally via a
+ * filtelonr on thelon candidatelon sourcelon pipelonlinelon.
  *
- * @param initialSortIndex See [[UrtPipelineCursor]]
- * @param longIntBloomFilter the bloom filter to use to dedup candidate from the candidate list
+ * @param initialSortIndelonx Selonelon [[UrtPipelonlinelonCursor]]
+ * @param longIntBloomFiltelonr thelon bloom filtelonr to uselon to delondup candidatelon from thelon candidatelon list
  */
-case class UrtUnorderedBloomFilterCursor(
-  override val initialSortIndex: Long,
-  // space-efficient and mutable variant of the BloomFilter class used for storing long integers.
-  longIntBloomFilter: AdaptiveLongIntBloomFilter)
-    extends UrtPipelineCursor
+caselon class UrtUnordelonrelondBloomFiltelonrCursor(
+  ovelonrridelon val initialSortIndelonx: Long,
+  // spacelon-elonfficielonnt and mutablelon variant of thelon BloomFiltelonr class uselond for storing long intelongelonrs.
+  longIntBloomFiltelonr: AdaptivelonLongIntBloomFiltelonr)
+    elonxtelonnds UrtPipelonlinelonCursor
 
-case class UnorderedBloomFilterCursor(
-  longIntBloomFilter: AdaptiveLongIntBloomFilter)
-    extends PipelineCursor
+caselon class UnordelonrelondBloomFiltelonrCursor(
+  longIntBloomFiltelonr: AdaptivelonLongIntBloomFiltelonr)
+    elonxtelonnds PipelonlinelonCursor

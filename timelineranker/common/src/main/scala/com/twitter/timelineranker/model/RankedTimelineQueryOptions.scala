@@ -1,29 +1,29 @@
-package com.twitter.timelineranker.model
+packagelon com.twittelonr.timelonlinelonrankelonr.modelonl
 
-import com.twitter.timelineranker.{thriftscala => thrift}
+import com.twittelonr.timelonlinelonrankelonr.{thriftscala => thrift}
 
-object RankedTimelineQueryOptions {
-  def fromThrift(options: thrift.RankedTimelineQueryOptions): RankedTimelineQueryOptions = {
-    RankedTimelineQueryOptions(
-      seenEntries = options.seenEntries.map(PriorSeenEntries.fromThrift)
+objelonct RankelondTimelonlinelonQuelonryOptions {
+  delonf fromThrift(options: thrift.RankelondTimelonlinelonQuelonryOptions): RankelondTimelonlinelonQuelonryOptions = {
+    RankelondTimelonlinelonQuelonryOptions(
+      selonelonnelonntrielons = options.selonelonnelonntrielons.map(PriorSelonelonnelonntrielons.fromThrift)
     )
   }
 }
 
-case class RankedTimelineQueryOptions(seenEntries: Option[PriorSeenEntries])
-    extends TimelineQueryOptions {
+caselon class RankelondTimelonlinelonQuelonryOptions(selonelonnelonntrielons: Option[PriorSelonelonnelonntrielons])
+    elonxtelonnds TimelonlinelonQuelonryOptions {
 
   throwIfInvalid()
 
-  def toThrift: thrift.RankedTimelineQueryOptions = {
-    thrift.RankedTimelineQueryOptions(seenEntries = seenEntries.map(_.toThrift))
+  delonf toThrift: thrift.RankelondTimelonlinelonQuelonryOptions = {
+    thrift.RankelondTimelonlinelonQuelonryOptions(selonelonnelonntrielons = selonelonnelonntrielons.map(_.toThrift))
   }
 
-  def toTimelineQueryOptionsThrift: thrift.TimelineQueryOptions = {
-    thrift.TimelineQueryOptions.RankedTimelineQueryOptions(toThrift)
+  delonf toTimelonlinelonQuelonryOptionsThrift: thrift.TimelonlinelonQuelonryOptions = {
+    thrift.TimelonlinelonQuelonryOptions.RankelondTimelonlinelonQuelonryOptions(toThrift)
   }
 
-  def throwIfInvalid(): Unit = {
-    seenEntries.foreach(_.throwIfInvalid)
+  delonf throwIfInvalid(): Unit = {
+    selonelonnelonntrielons.forelonach(_.throwIfInvalid)
   }
 }

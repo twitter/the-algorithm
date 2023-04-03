@@ -1,14 +1,14 @@
-package com.twitter.simclusters_v2.summingbird.common
+packagelon com.twittelonr.simclustelonrs_v2.summingbird.common
 
 /**
- * Provides int to int hash function. Used to batch clusterIds together.
+ * Providelons int to int hash function. Uselond to batch clustelonrIds togelonthelonr.
  */
-object SimClustersHashUtil {
-  def clusterIdToBucket(clusterId: Int): Int = {
-    clusterId % numBuckets
+objelonct SimClustelonrsHashUtil {
+  delonf clustelonrIdToBuckelont(clustelonrId: Int): Int = {
+    clustelonrId % numBuckelonts
   }
 
-  val numBuckets: Int = 200
+  val numBuckelonts: Int = 200
 
-  val getAllBuckets: Seq[Int] = 0.until(numBuckets)
+  val gelontAllBuckelonts: Selonq[Int] = 0.until(numBuckelonts)
 }

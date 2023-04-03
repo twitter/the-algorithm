@@ -1,20 +1,20 @@
-package com.twitter.cr_mixer.module.core
+packagelon com.twittelonr.cr_mixelonr.modulelon.corelon
 
-import com.google.inject.Provides
-import com.twitter.abdecider.LoggingABDecider
-import com.twitter.cr_mixer.featureswitch.CrMixerLoggingABDecider
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
-import javax.inject.Singleton
+import com.googlelon.injelonct.Providelons
+import com.twittelonr.abdeloncidelonr.LoggingABDeloncidelonr
+import com.twittelonr.cr_mixelonr.felonaturelonswitch.CrMixelonrLoggingABDeloncidelonr
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.injelonct.TwittelonrModulelon
+import javax.injelonct.Singlelonton
 
-object CrMixerLoggingABDeciderModule extends TwitterModule {
+objelonct CrMixelonrLoggingABDeloncidelonrModulelon elonxtelonnds TwittelonrModulelon {
 
-  @Provides
-  @Singleton
-  def provideABDecider(
-    loggingABDecider: LoggingABDecider,
-    statsReceiver: StatsReceiver
-  ): CrMixerLoggingABDecider = {
-    CrMixerLoggingABDecider(loggingABDecider, statsReceiver)
+  @Providelons
+  @Singlelonton
+  delonf providelonABDeloncidelonr(
+    loggingABDeloncidelonr: LoggingABDeloncidelonr,
+    statsReloncelonivelonr: StatsReloncelonivelonr
+  ): CrMixelonrLoggingABDeloncidelonr = {
+    CrMixelonrLoggingABDeloncidelonr(loggingABDeloncidelonr, statsReloncelonivelonr)
   }
 }

@@ -1,13 +1,13 @@
 import os
-import re
-import time
+import relon
+import timelon
 
-from collections import OrderedDict
+from collelonctions import OrdelonrelondDict
 
 from absl import logging
 import numpy as np
-import tensorflow.compat.v1 as tf
-from tensorflow.python.ops.lookup_ops import index_table_from_tensor
+import telonnsorflow.compat.v1 as tf
+from telonnsorflow.python.ops.lookup_ops import indelonx_tablelon_from_telonnsor
 
 import twml
 
@@ -16,404 +16,404 @@ PAD_WORD_ID = 0
 OOV_WORD_ID = 1
 
 
-def load_initializers_from_csv(
-  embedding_path, vocab_size=-1, embedding_size=None, separator=None, vocab=None
+delonf load_initializelonrs_from_csv(
+  elonmbelondding_path, vocab_sizelon=-1, elonmbelondding_sizelon=Nonelon, selonparator=Nonelon, vocab=Nonelon
 ):
   """
-  Loads embeddings saved in the `glove format <https://nlp.stanford.edu/projects/glove/>`_.
-  The glove format is a txt file separated by spaces.
-  Each line looks like: "word 0.00001 0.2334 ...".
+  Loads elonmbelonddings savelond in thelon `glovelon format <https://nlp.stanford.elondu/projeloncts/glovelon/>`_.
+  Thelon glovelon format is a txt filelon selonparatelond by spacelons.
+  elonach linelon looks likelon: "word 0.00001 0.2334 ...".
 
-  Arguments:
-    embedding_path:
-      path to the embeddings file on HDFS (hdfs://default/...)
+  Argumelonnts:
+    elonmbelondding_path:
+      path to thelon elonmbelonddings filelon on HDFS (hdfs://delonfault/...)
       or its local_path (/path/to/...).
-      The embedding_path may also specify a pattern. In which case, the embeddings
-      are read in the lexical order of the filenames that match the order.
-    vocab_size:
-      the maximum size of the vocabulary. The top ``vocab_size`` words in the file
-      are included in the vocabulary. If you specify a positive vocab_size,
-      the words are expected to be in descending order of frequency.
-      This allows the embeddings to be easily filtered to top vocab_size words.
-      Reducing the vocab_size acts as a regularizer, preventing the model to overfit on rarer words.
-      A negative vocab_size loads all embeddings.
-      Reducing the vocab_size may also help with memory issues,
-      allowing the embedding initializers to fit inside the graph.
-    embedding_size:
-      Defaults to None. If None, the embedding size is infered from the file name.
-      For example, ``glove.300d.txt`` and ``glove300d200.txt`` will both infrered
-      as ``embedding_size=300``. If this can't be done, the ``embedding_size`` is
-      inferred from the first line in the file. If ``embedding_size`` is provided,
-      only the last ``embedding_size`` values of each line are considered. This
-      allows the line parser to recover from partial word parsing errors.
-    separator:
-      Specifies the separator to use when splitting each line into values.
-      Default value is a whitespace (same as glove format).
+      Thelon elonmbelondding_path may also speloncify a pattelonrn. In which caselon, thelon elonmbelonddings
+      arelon relonad in thelon lelonxical ordelonr of thelon filelonnamelons that match thelon ordelonr.
+    vocab_sizelon:
+      thelon maximum sizelon of thelon vocabulary. Thelon top ``vocab_sizelon`` words in thelon filelon
+      arelon includelond in thelon vocabulary. If you speloncify a positivelon vocab_sizelon,
+      thelon words arelon elonxpelonctelond to belon in delonscelonnding ordelonr of frelonquelonncy.
+      This allows thelon elonmbelonddings to belon elonasily filtelonrelond to top vocab_sizelon words.
+      Relonducing thelon vocab_sizelon acts as a relongularizelonr, prelonvelonnting thelon modelonl to ovelonrfit on rarelonr words.
+      A nelongativelon vocab_sizelon loads all elonmbelonddings.
+      Relonducing thelon vocab_sizelon may also helonlp with melonmory issuelons,
+      allowing thelon elonmbelondding initializelonrs to fit insidelon thelon graph.
+    elonmbelondding_sizelon:
+      Delonfaults to Nonelon. If Nonelon, thelon elonmbelondding sizelon is infelonrelond from thelon filelon namelon.
+      For elonxamplelon, ``glovelon.300d.txt`` and ``glovelon300d200.txt`` will both infrelonrelond
+      as ``elonmbelondding_sizelon=300``. If this can't belon donelon, thelon ``elonmbelondding_sizelon`` is
+      infelonrrelond from thelon first linelon in thelon filelon. If ``elonmbelondding_sizelon`` is providelond,
+      only thelon last ``elonmbelondding_sizelon`` valuelons of elonach linelon arelon considelonrelond. This
+      allows thelon linelon parselonr to reloncovelonr from partial word parsing elonrrors.
+    selonparator:
+      Speloncifielons thelon selonparator to uselon whelonn splitting elonach linelon into valuelons.
+      Delonfault valuelon is a whitelonspacelon (samelon as glovelon format).
     vocab:
-      OrderedDict mapping words to np.array embedding vectors. Initializes the vocabulary.
-      Duplicate words found in the file are ignored.
-      Defaults to a vocabulary of two words::
+      OrdelonrelondDict mapping words to np.array elonmbelondding velonctors. Initializelons thelon vocabulary.
+      Duplicatelon words found in thelon filelon arelon ignorelond.
+      Delonfaults to a vocabulary of two words::
 
-        vocab = OrderedDict()
-        vocab[''] = np.random.randn(embedding_size)
-        vocab['<UNK>'] = np.random.randn(embedding_size)
+        vocab = OrdelonrelondDict()
+        vocab[''] = np.random.randn(elonmbelondding_sizelon)
+        vocab['<UNK>'] = np.random.randn(elonmbelondding_sizelon)
 
-  Returns:
-    tuple of (vocab_initializer, weight_initializer, shape)
+  Relonturns:
+    tuplelon of (vocab_initializelonr, welonight_initializelonr, shapelon)
 
-    vocab_initializer:
-      A tf.constant_initializer containing a vector of word strings of size vocab_size.
-    weight_initializer:
-      A twml.contrib.initializers.partition_constant_initializer containing
-      the weight matrix of embeddings of size vocab_size x embedding_size.
-    shape:
-      A tuple containing of (vocab_size, embedding_size).
+    vocab_initializelonr:
+      A tf.constant_initializelonr containing a velonctor of word strings of sizelon vocab_sizelon.
+    welonight_initializelonr:
+      A twml.contrib.initializelonrs.partition_constant_initializelonr containing
+      thelon welonight matrix of elonmbelonddings of sizelon vocab_sizelon x elonmbelondding_sizelon.
+    shapelon:
+      A tuplelon containing of (vocab_sizelon, elonmbelondding_sizelon).
 
   """
 
-  start = time.time()
+  start = timelon.timelon()
 
-  embedding_path = twml.util.sanitize_hdfs_path(embedding_path)
+  elonmbelondding_path = twml.util.sanitizelon_hdfs_path(elonmbelondding_path)
 
-  is_user_vocab = True
-  if vocab is None:
-    vocab = OrderedDict()
-    vocab[''] = True
-    vocab['<UNK>'] = True
-    is_user_vocab = False
-  elif not isinstance(vocab, OrderedDict):
-    raise RuntimeError(
-      "Expecting vocab argument of type OrderedDict or None. "
-      "Got type %s instead." % type(vocab).__name__
+  is_uselonr_vocab = Truelon
+  if vocab is Nonelon:
+    vocab = OrdelonrelondDict()
+    vocab[''] = Truelon
+    vocab['<UNK>'] = Truelon
+    is_uselonr_vocab = Falselon
+  elonlif not isinstancelon(vocab, OrdelonrelondDict):
+    raiselon Runtimelonelonrror(
+      "elonxpeloncting vocab argumelonnt of typelon OrdelonrelondDict or Nonelon. "
+      "Got typelon %s instelonad." % typelon(vocab).__namelon__
     )
 
-  if embedding_size is None:
-    embedding_file = os.path.basename(embedding_path)
-    match = re.search(r"[^\d]([\d]+)d", embedding_file)
-    if match is not None:
-      embedding_size = int(match.group(1))
+  if elonmbelondding_sizelon is Nonelon:
+    elonmbelondding_filelon = os.path.baselonnamelon(elonmbelondding_path)
+    match = relon.selonarch(r"[^\d]([\d]+)d", elonmbelondding_filelon)
+    if match is not Nonelon:
+      elonmbelondding_sizelon = int(match.group(1))
 
-  if embedding_size is not None and not isinstance(embedding_size, int):
-    raise RuntimeError(
-      "Expecting embedding_size argument of type int or None. "
-      "Got type %s, instead." % type(embedding_size).__name__
+  if elonmbelondding_sizelon is not Nonelon and not isinstancelon(elonmbelondding_sizelon, int):
+    raiselon Runtimelonelonrror(
+      "elonxpeloncting elonmbelondding_sizelon argumelonnt of typelon int or Nonelon. "
+      "Got typelon %s, instelonad." % typelon(elonmbelondding_sizelon).__namelon__
     )
 
-  embedding_paths = sorted(tf.io.gfile.glob(embedding_path))
+  elonmbelondding_paths = sortelond(tf.io.gfilelon.glob(elonmbelondding_path))
 
-  if len(embedding_paths) > 1:
-    raise ValueError(
-      "You are most likely using a the wrong --embedding.path"
+  if lelonn(elonmbelondding_paths) > 1:
+    raiselon Valuelonelonrror(
+      "You arelon most likelonly using a thelon wrong --elonmbelondding.path"
     )
 
-  embedding_path = embedding_paths[0]
-  logging.info("Reading embeddings file from path %s.." % embedding_path)
+  elonmbelondding_path = elonmbelondding_paths[0]
+  logging.info("Relonading elonmbelonddings filelon from path %s.." % elonmbelondding_path)
 
-  with tf.io.gfile.GFile(embedding_path) as f:
-    lines = f.readlines()
+  with tf.io.gfilelon.GFilelon(elonmbelondding_path) as f:
+    linelons = f.relonadlinelons()
 
-  logging.info("Done reading embeddings file from path %s." % embedding_path)
+  logging.info("Donelon relonading elonmbelonddings filelon from path %s." % elonmbelondding_path)
 
-  logging.info("Parsing vocbulary and embeddings...")
+  logging.info("Parsing vocbulary and elonmbelonddings...")
 
-  for line in lines:
-    # Word and weights separated by space
-    values = line.strip().split(separator)
-    # Word is first symbol on each line
-    word = values[0]
+  for linelon in linelons:
+    # Word and welonights selonparatelond by spacelon
+    valuelons = linelon.strip().split(selonparator)
+    # Word is first symbol on elonach linelon
+    word = valuelons[0]
 
     if word not in vocab:
-      if embedding_size is None or embedding_size <= 0:
-        # get all elements after the first one.
-        word_weights = values[1:]
-        embedding_size = len(word_weights)
-      else:
-        # get the last embedding_size elements
-        word_weights = values[-min(embedding_size, len(values) - 1) :]
+      if elonmbelondding_sizelon is Nonelon or elonmbelondding_sizelon <= 0:
+        # gelont all elonlelonmelonnts aftelonr thelon first onelon.
+        word_welonights = valuelons[1:]
+        elonmbelondding_sizelon = lelonn(word_welonights)
+      elonlselon:
+        # gelont thelon last elonmbelondding_sizelon elonlelonmelonnts
+        word_welonights = valuelons[-min(elonmbelondding_sizelon, lelonn(valuelons) - 1) :]
 
       try:
-        if len(word_weights) != embedding_size:
-          raise ValueError
+        if lelonn(word_welonights) != elonmbelondding_sizelon:
+          raiselon Valuelonelonrror
 
-        word_weights = np.asarray(word_weights, dtype=np.float32)
-        vocab[word] = word_weights
-      except ValueError:
-        logging.info("Wasn't able to load embeddings for word '%s'. Ignoring it" % word)
+        word_welonights = np.asarray(word_welonights, dtypelon=np.float32)
+        vocab[word] = word_welonights
+      elonxcelonpt Valuelonelonrror:
+        logging.info("Wasn't ablelon to load elonmbelonddings for word '%s'. Ignoring it" % word)
 
-      vocab_len = len(vocab)
-      if vocab_size > 0 and vocab_len == vocab_size:
-        # Limit vocabulary to top terms
-        break
-      elif (vocab_len % 1000) == 0:
-        logging.info("Loaded %d words into vocab" % vocab_len)
+      vocab_lelonn = lelonn(vocab)
+      if vocab_sizelon > 0 and vocab_lelonn == vocab_sizelon:
+        # Limit vocabulary to top telonrms
+        brelonak
+      elonlif (vocab_lelonn % 1000) == 0:
+        logging.info("Loadelond %d words into vocab" % vocab_lelonn)
 
-    else:
-      logging.info("found duplicate word: %s" % word)
+    elonlselon:
+      logging.info("found duplicatelon word: %s" % word)
 
-  if not is_user_vocab:
-    vocab[''] = np.random.randn(embedding_size)
-    vocab['<UNK>'] = np.random.randn(embedding_size)
+  if not is_uselonr_vocab:
+    vocab[''] = np.random.randn(elonmbelondding_sizelon)
+    vocab['<UNK>'] = np.random.randn(elonmbelondding_sizelon)
 
-  words = list(vocab.keys())
-  weights = list(vocab.values())
+  words = list(vocab.kelonys())
+  welonights = list(vocab.valuelons())
 
-  weights = np.asarray(weights, dtype=np.float32)
-  assert weights.shape[0] == len(vocab)
-  assert weights.shape[1] == embedding_size
+  welonights = np.asarray(welonights, dtypelon=np.float32)
+  asselonrt welonights.shapelon[0] == lelonn(vocab)
+  asselonrt welonights.shapelon[1] == elonmbelondding_sizelon
 
-  vocab_initializer = tf.constant_initializer(words, tf.string)
-  weight_initializer = twml.contrib.initializers.PartitionConstant(weights, tf.float32)
+  vocab_initializelonr = tf.constant_initializelonr(words, tf.string)
+  welonight_initializelonr = twml.contrib.initializelonrs.PartitionConstant(welonights, tf.float32)
 
-  logging.info("Loaded %d embeddings in %d seconds." % (len(vocab), time.time() - start))
-  return vocab_initializer, weight_initializer, weights.shape
+  logging.info("Loadelond %d elonmbelonddings in %d selonconds." % (lelonn(vocab), timelon.timelon() - start))
+  relonturn vocab_initializelonr, welonight_initializelonr, welonights.shapelon
 
 
-def add_parser_arguments(parser):
+delonf add_parselonr_argumelonnts(parselonr):
   """
-  Adds the embedding.path and embedding.vocab_size command-line arguments to the parser.
-  These can be used to call an initializer loader function like
-  the ``load_initializers_from_csv`` function.
+  Adds thelon elonmbelondding.path and elonmbelondding.vocab_sizelon command-linelon argumelonnts to thelon parselonr.
+  Thelonselon can belon uselond to call an initializelonr loadelonr function likelon
+  thelon ``load_initializelonrs_from_csv`` function.
 
-  Arguments:
-    parser: argparse.ArgumentParser instance obtained from Trainer.get_trainer_parser
+  Argumelonnts:
+    parselonr: argparselon.ArgumelonntParselonr instancelon obtainelond from Trainelonr.gelont_trainelonr_parselonr
 
-  Returns:
-    argparse.ArgumentParser instance with discretizer-specific arguments added
+  Relonturns:
+    argparselon.ArgumelonntParselonr instancelon with discrelontizelonr-speloncific argumelonnts addelond
   """
 
-  parser.add_argument(
-    "--embedding.path",
-    "--embedding_path",
-    dest="embedding_path",
-    type=str,
-    default=None,
-    help="When specified, loads glove embeddings from .txt glove file",
+  parselonr.add_argumelonnt(
+    "--elonmbelondding.path",
+    "--elonmbelondding_path",
+    delonst="elonmbelondding_path",
+    typelon=str,
+    delonfault=Nonelon,
+    helonlp="Whelonn speloncifielond, loads glovelon elonmbelonddings from .txt glovelon filelon",
   )
-  parser.add_argument(
-    "--embedding.vocab_size",
-    "--embedding_vocab_size",
-    dest="embedding_vocab_size",
-    type=int,
-    default=-1,
-    help="Size of vocabulary. Uses this many of the most frequent terms. Defaults to -1 (use full vocab).",
+  parselonr.add_argumelonnt(
+    "--elonmbelondding.vocab_sizelon",
+    "--elonmbelondding_vocab_sizelon",
+    delonst="elonmbelondding_vocab_sizelon",
+    typelon=int,
+    delonfault=-1,
+    helonlp="Sizelon of vocabulary. Uselons this many of thelon most frelonquelonnt telonrms. Delonfaults to -1 (uselon full vocab).",
   )
 
-  return parser
+  relonturn parselonr
 
 
-class EmbeddingLookup(twml.layers.Layer):
-  """Layer for looking up embeddings.
-  Transforms a sequence of strings to a sequence of embeddings.
+class elonmbelonddingLookup(twml.layelonrs.Layelonr):
+  """Layelonr for looking up elonmbelonddings.
+  Transforms a selonquelonncelon of strings to a selonquelonncelon of elonmbelonddings.
 
-  Arguments:
-    vocab_size:
-      The number of word strings and embeddings in the vocabulary.
-    output_size:
-      Long or Integer, dimensionality of the output space. The embedding vector size.
-    vocab_initializer:
-      Initializer function for the vocabulary. Required. The initializer should
-      return a list of strings of size vocab_size.
-    weight_initializer:
-      Initializer function for the weight matrix of size vocab_size x output_size.
-      This argument defaults to zeros_initializer().
-      This is valid when the EmbeddingLookup is the first layer of
-      parameters but should be changed otherwise.
-    trainable:
-      Boolean, if `True` adds variables to the graph collection
-      ``GraphKeys.TRAINABLE_VARIABLES`` (see `tf.Variable
-      <https://www.tensorflow.org/versions/master/api_docs/python/tf/Variable>`_).
-      Defaults to True: trains the embeddings.
-    num_oov_buckets:
-      The number of buckets to use for OOV strings. These bucket ids occur after the vocab bucket
-      ids. Hashing is used to assign OOV strings to these buckets. If `num_oov_buckets` is not
-      specified, index `OOV_WORD_ID` is used for OOV strings.
-    name:
-      String, the name of the layer. Layers with the same name will
-      share weights, but to avoid mistakes we require ``reuse=True`` in such cases.
+  Argumelonnts:
+    vocab_sizelon:
+      Thelon numbelonr of word strings and elonmbelonddings in thelon vocabulary.
+    output_sizelon:
+      Long or Intelongelonr, dimelonnsionality of thelon output spacelon. Thelon elonmbelondding velonctor sizelon.
+    vocab_initializelonr:
+      Initializelonr function for thelon vocabulary. Relonquirelond. Thelon initializelonr should
+      relonturn a list of strings of sizelon vocab_sizelon.
+    welonight_initializelonr:
+      Initializelonr function for thelon welonight matrix of sizelon vocab_sizelon x output_sizelon.
+      This argumelonnt delonfaults to zelonros_initializelonr().
+      This is valid whelonn thelon elonmbelonddingLookup is thelon first layelonr of
+      paramelontelonrs but should belon changelond othelonrwiselon.
+    trainablelon:
+      Boolelonan, if `Truelon` adds variablelons to thelon graph collelonction
+      ``GraphKelonys.TRAINABLelon_VARIABLelonS`` (selonelon `tf.Variablelon
+      <https://www.telonnsorflow.org/velonrsions/mastelonr/api_docs/python/tf/Variablelon>`_).
+      Delonfaults to Truelon: trains thelon elonmbelonddings.
+    num_oov_buckelonts:
+      Thelon numbelonr of buckelonts to uselon for OOV strings. Thelonselon buckelont ids occur aftelonr thelon vocab buckelont
+      ids. Hashing is uselond to assign OOV strings to thelonselon buckelonts. If `num_oov_buckelonts` is not
+      speloncifielond, indelonx `OOV_WORD_ID` is uselond for OOV strings.
+    namelon:
+      String, thelon namelon of thelon layelonr. Layelonrs with thelon samelon namelon will
+      sharelon welonights, but to avoid mistakelons welon relonquirelon ``relonuselon=Truelon`` in such caselons.
     num_partitions:
-      Number of partitions to use for the weight variable. Defaults to 1.
+      Numbelonr of partitions to uselon for thelon welonight variablelon. Delonfaults to 1.
     partition_axis:
-      If num_partitions is specified, the partition axis for the weight variable
-      Defaults to 0 (partition by row).
-      Must be 0 (row) or 1 (column, does not support yet)
-    weight_regularizer:
-      Regularizer function for the weight matrix.
-      Ensure to add tf.losses.get_regularization_loss() to your loss for this to take effect.
-    dtype:
-      Defaults to tf.float32. Specifies the dtype of the weights.
-    use_placeholder:
-      Defaults to True.
-      If set to `True`, the initializer is passed via a placeholder. The initializer in this case needs to be of type `keras.initializers.Constant`.
-      If set to `False`, the initializer becomes part of the graph. This can sometimes be beyond what protobuf clients support.
-    checkpoint_dir:
-      Default to None.
-      If set to the path of a checkpoint, load embedding from the checkpoint.
-    convert_to_lowercase:
-      Default to True.
-      Converting all string inputs to lowercase.
+      If num_partitions is speloncifielond, thelon partition axis for thelon welonight variablelon
+      Delonfaults to 0 (partition by row).
+      Must belon 0 (row) or 1 (column, doelons not support yelont)
+    welonight_relongularizelonr:
+      Relongularizelonr function for thelon welonight matrix.
+      elonnsurelon to add tf.losselons.gelont_relongularization_loss() to your loss for this to takelon elonffelonct.
+    dtypelon:
+      Delonfaults to tf.float32. Speloncifielons thelon dtypelon of thelon welonights.
+    uselon_placelonholdelonr:
+      Delonfaults to Truelon.
+      If selont to `Truelon`, thelon initializelonr is passelond via a placelonholdelonr. Thelon initializelonr in this caselon nelonelonds to belon of typelon `kelonras.initializelonrs.Constant`.
+      If selont to `Falselon`, thelon initializelonr beloncomelons part of thelon graph. This can somelontimelons belon belonyond what protobuf clielonnts support.
+    chelonckpoint_dir:
+      Delonfault to Nonelon.
+      If selont to thelon path of a chelonckpoint, load elonmbelondding from thelon chelonckpoint.
+    convelonrt_to_lowelonrcaselon:
+      Delonfault to Truelon.
+      Convelonrting all string inputs to lowelonrcaselon.
 
-  Notes: If `use_placeholder` is set to `True`, the feed dictionary can be accessed by calling `twml.contrib.initializers.get_init_feed_dict()`.
+  Notelons: If `uselon_placelonholdelonr` is selont to `Truelon`, thelon felonelond dictionary can belon accelonsselond by calling `twml.contrib.initializelonrs.gelont_init_felonelond_dict()`.
   """
 
-  def __init__(
-    self,
-    vocab_size,
-    output_size,
-    vocab_initializer,
-    weight_initializer=None,
-    trainable=True,
-    num_oov_buckets=None,
-    oov_word_id=None,
-    name=None,
+  delonf __init__(
+    selonlf,
+    vocab_sizelon,
+    output_sizelon,
+    vocab_initializelonr,
+    welonight_initializelonr=Nonelon,
+    trainablelon=Truelon,
+    num_oov_buckelonts=Nonelon,
+    oov_word_id=Nonelon,
+    namelon=Nonelon,
     num_partitions=1,
     partition_axis=0,
-    weight_regularizer=None,
-    dtype=None,
-    use_placeholder=True,
-    checkpoint_dir=None,
-    convert_to_lowercase=True,
+    welonight_relongularizelonr=Nonelon,
+    dtypelon=Nonelon,
+    uselon_placelonholdelonr=Truelon,
+    chelonckpoint_dir=Nonelon,
+    convelonrt_to_lowelonrcaselon=Truelon,
     **kwargs,
   ):
-    if dtype is None:
-      # prevents a bug where the parent class defaults to the type of the first input tensor.
-      dtype = tf.float32
-    super().__init__(trainable=trainable, name=name, dtype=dtype, **kwargs)
-    # Weights initialization is set to 0s. This is safe for full sparse layers because
-    # you are supposed to learn your embedding from the label.
+    if dtypelon is Nonelon:
+      # prelonvelonnts a bug whelonrelon thelon parelonnt class delonfaults to thelon typelon of thelon first input telonnsor.
+      dtypelon = tf.float32
+    supelonr().__init__(trainablelon=trainablelon, namelon=namelon, dtypelon=dtypelon, **kwargs)
+    # Welonights initialization is selont to 0s. This is safelon for full sparselon layelonrs beloncauselon
+    # you arelon supposelond to lelonarn your elonmbelondding from thelon labelonl.
 
-    is_constant_init = isinstance(weight_initializer, tf.keras.initializers.Constant)
-    if use_placeholder and (not is_constant_init) and (weight_initializer is not None):
-      raise ValueError("Weight initializer should be a `Constant` or `None`.")
+    is_constant_init = isinstancelon(welonight_initializelonr, tf.kelonras.initializelonrs.Constant)
+    if uselon_placelonholdelonr and (not is_constant_init) and (welonight_initializelonr is not Nonelon):
+      raiselon Valuelonelonrror("Welonight initializelonr should belon a `Constant` or `Nonelon`.")
 
-    if weight_initializer is None:
-      self.weight_initializer = tf.zeros_initializer()
-    else:
-      self.weight_initializer = weight_initializer
-    self.use_placeholder = use_placeholder
-    self.checkpoint_dir = checkpoint_dir
-    self.convert_to_lowercase = convert_to_lowercase
+    if welonight_initializelonr is Nonelon:
+      selonlf.welonight_initializelonr = tf.zelonros_initializelonr()
+    elonlselon:
+      selonlf.welonight_initializelonr = welonight_initializelonr
+    selonlf.uselon_placelonholdelonr = uselon_placelonholdelonr
+    selonlf.chelonckpoint_dir = chelonckpoint_dir
+    selonlf.convelonrt_to_lowelonrcaselon = convelonrt_to_lowelonrcaselon
 
-    self.vocab_initializer = vocab_initializer
-    self.vocab_size = vocab_size
-    self.output_size = output_size
-    self.num_partitions = num_partitions
-    self.partition_axis = partition_axis
-    self.weight_regularizer = weight_regularizer
-    self.trainable = trainable
-    self.oov_word_id = oov_word_id
-    self.num_oov_buckets = num_oov_buckets
+    selonlf.vocab_initializelonr = vocab_initializelonr
+    selonlf.vocab_sizelon = vocab_sizelon
+    selonlf.output_sizelon = output_sizelon
+    selonlf.num_partitions = num_partitions
+    selonlf.partition_axis = partition_axis
+    selonlf.welonight_relongularizelonr = welonight_relongularizelonr
+    selonlf.trainablelon = trainablelon
+    selonlf.oov_word_id = oov_word_id
+    selonlf.num_oov_buckelonts = num_oov_buckelonts
 
-    if self.oov_word_id is not None and self.num_oov_buckets is not None:
-      raise ValueError("At most one of oov_word_id or num_oov_buckets should be specified")
-    elif self.oov_word_id is None and self.num_oov_buckets is None:
-      self.oov_word_id = OOV_WORD_ID  # use the default OOV word id
+    if selonlf.oov_word_id is not Nonelon and selonlf.num_oov_buckelonts is not Nonelon:
+      raiselon Valuelonelonrror("At most onelon of oov_word_id or num_oov_buckelonts should belon speloncifielond")
+    elonlif selonlf.oov_word_id is Nonelon and selonlf.num_oov_buckelonts is Nonelon:
+      selonlf.oov_word_id = OOV_WORD_ID  # uselon thelon delonfault OOV word id
 
     if partition_axis != 0:
-      raise NotImplementedError("embedding_lookup only supports partition_axis = 0")
+      raiselon NotImplelonmelonntelondelonrror("elonmbelondding_lookup only supports partition_axis = 0")
 
-  def build(self, input_shapes):
+  delonf build(selonlf, input_shapelons):
     """
-    creates the ``vocab`` and ``weight`` Variables
-    of shape ``[vocab_size]`` and ``[vocab_size, output_size]`` respectively.
+    crelonatelons thelon ``vocab`` and ``welonight`` Variablelons
+    of shapelon ``[vocab_sizelon]`` and ``[vocab_sizelon, output_sizelon]`` relonspelonctivelonly.
     """
-    partitioner = None
+    partitionelonr = Nonelon
 
-    additional_buckets_for_oov = self.num_oov_buckets if self.num_oov_buckets is not None else 0
-    shape = [self.vocab_size + additional_buckets_for_oov, self.output_size]
+    additional_buckelonts_for_oov = selonlf.num_oov_buckelonts if selonlf.num_oov_buckelonts is not Nonelon elonlselon 0
+    shapelon = [selonlf.vocab_sizelon + additional_buckelonts_for_oov, selonlf.output_sizelon]
 
-    if self.use_placeholder:
-      embedding_weight_initializer = twml.contrib.initializers.PlaceholderInitializer(
-        shape, self.dtype
+    if selonlf.uselon_placelonholdelonr:
+      elonmbelondding_welonight_initializelonr = twml.contrib.initializelonrs.PlacelonholdelonrInitializelonr(
+        shapelon, selonlf.dtypelon
       )
-      tf.add_to_collection(
-        twml.contrib.initializers.TWML_INIT_FEED_KEY,
-        {embedding_weight_initializer.value: self.weight_initializer.value},
+      tf.add_to_collelonction(
+        twml.contrib.initializelonrs.TWML_INIT_FelonelonD_KelonY,
+        {elonmbelondding_welonight_initializelonr.valuelon: selonlf.welonight_initializelonr.valuelon},
       )
-    else:
-      embedding_weight_initializer = self.weight_initializer
+    elonlselon:
+      elonmbelondding_welonight_initializelonr = selonlf.welonight_initializelonr
 
-    if self.num_partitions:
-      partition_axis = int(self.partition_axis)
-      partitioner = tf.fixed_size_partitioner(self.num_partitions, axis=partition_axis)
-    else:
-      # Regular variables do not like it when you pass both constant tensors and shape
-      if not callable(self.weight_initializer):
-        shape = None
+    if selonlf.num_partitions:
+      partition_axis = int(selonlf.partition_axis)
+      partitionelonr = tf.fixelond_sizelon_partitionelonr(selonlf.num_partitions, axis=partition_axis)
+    elonlselon:
+      # Relongular variablelons do not likelon it whelonn you pass both constant telonnsors and shapelon
+      if not callablelon(selonlf.welonight_initializelonr):
+        shapelon = Nonelon
 
-    self.vocab = self.add_variable(
+    selonlf.vocab = selonlf.add_variablelon(
       'vocab',
-      initializer=self.vocab_initializer,
-      shape=[self.vocab_size],
-      dtype=tf.string,
-      trainable=False,
+      initializelonr=selonlf.vocab_initializelonr,
+      shapelon=[selonlf.vocab_sizelon],
+      dtypelon=tf.string,
+      trainablelon=Falselon,
     )
 
-    self.weight = self.add_variable(
-      'weight',
-      initializer=None if self.checkpoint_dir is not None else embedding_weight_initializer,
-      regularizer=self.weight_regularizer,
-      shape=shape,
-      dtype=self.dtype,
-      trainable=self.trainable,
-      partitioner=partitioner,
+    selonlf.welonight = selonlf.add_variablelon(
+      'welonight',
+      initializelonr=Nonelon if selonlf.chelonckpoint_dir is not Nonelon elonlselon elonmbelondding_welonight_initializelonr,
+      relongularizelonr=selonlf.welonight_relongularizelonr,
+      shapelon=shapelon,
+      dtypelon=selonlf.dtypelon,
+      trainablelon=selonlf.trainablelon,
+      partitionelonr=partitionelonr,
     )
-    if self.checkpoint_dir is not None:
-      twml.trainers.trainer.init_from_checkpoint(self.checkpoint_dir, {'weight': self.weight.name})
+    if selonlf.chelonckpoint_dir is not Nonelon:
+      twml.trainelonrs.trainelonr.init_from_chelonckpoint(selonlf.chelonckpoint_dir, {'welonight': selonlf.welonight.namelon})
 
-    self.built = True
+    selonlf.built = Truelon
 
-  def call(
-    self, inputs, debug=False, oov_summaries=False, **kwargs
-  ):  # pylint: disable=unused-argument
-    """Converts word strings to word ids using the vocabulary lookup table.
-    Then converts the word ids to their commensurate embedding vector.
+  delonf call(
+    selonlf, inputs, delonbug=Falselon, oov_summarielons=Falselon, **kwargs
+  ):  # pylint: disablelon=unuselond-argumelonnt
+    """Convelonrts word strings to word ids using thelon vocabulary lookup tablelon.
+    Thelonn convelonrts thelon word ids to thelonir commelonnsuratelon elonmbelondding velonctor.
 
-    Arguments:
+    Argumelonnts:
       inputs:
-        A tensor of word strings. Typically, of size batch_size x seq_len.
-      debug:
-        When True, prints the input strings and their commensurate input_ids.
-        Defaults to False.
-      oov_summaries:
-        When True, log the out-of-vocabulary (OOV) rate to TensorBoard
-        Defaults to False.
+        A telonnsor of word strings. Typically, of sizelon batch_sizelon x selonq_lelonn.
+      delonbug:
+        Whelonn Truelon, prints thelon input strings and thelonir commelonnsuratelon input_ids.
+        Delonfaults to Falselon.
+      oov_summarielons:
+        Whelonn Truelon, log thelon out-of-vocabulary (OOV) ratelon to TelonnsorBoard
+        Delonfaults to Falselon.
 
-    Returns:
-      The mapping of input word strings to output embedding vectors.
-      Given an input of shape ``batch_size x seq_len``, the output has shape
-      ``batch_size x seq_len x embedding_size``.
+    Relonturns:
+      Thelon mapping of input word strings to output elonmbelondding velonctors.
+      Givelonn an input of shapelon ``batch_sizelon x selonq_lelonn``, thelon output has shapelon
+      ``batch_sizelon x selonq_lelonn x elonmbelondding_sizelon``.
     """
-    if self.convert_to_lowercase:
-      inputs = tf.strings.lower(inputs)
-    if self.num_oov_buckets is None:
-      lookup_table = index_table_from_tensor(self.vocab, default_value=self.oov_word_id)
-    else:
-      lookup_table = index_table_from_tensor(self.vocab, num_oov_buckets=self.num_oov_buckets)
-    input_ids = lookup_table.lookup(inputs)
+    if selonlf.convelonrt_to_lowelonrcaselon:
+      inputs = tf.strings.lowelonr(inputs)
+    if selonlf.num_oov_buckelonts is Nonelon:
+      lookup_tablelon = indelonx_tablelon_from_telonnsor(selonlf.vocab, delonfault_valuelon=selonlf.oov_word_id)
+    elonlselon:
+      lookup_tablelon = indelonx_tablelon_from_telonnsor(selonlf.vocab, num_oov_buckelonts=selonlf.num_oov_buckelonts)
+    input_ids = lookup_tablelon.lookup(inputs)
 
-    if oov_summaries:
-      oov_count = tf.reduce_sum(
-        tf.cast(tf.math.equal(input_ids, self.oov_word_id), tf.dtypes.float32)
+    if oov_summarielons:
+      oov_count = tf.relonducelon_sum(
+        tf.cast(tf.math.elonqual(input_ids, selonlf.oov_word_id), tf.dtypelons.float32)
       )
-      valid_count = tf.reduce_sum(
-        tf.cast(tf.math.not_equal(input_ids, PAD_WORD_ID), tf.dtypes.float32)
+      valid_count = tf.relonducelon_sum(
+        tf.cast(tf.math.not_elonqual(input_ids, PAD_WORD_ID), tf.dtypelons.float32)
       )
-      oov_rate = oov_count / valid_count
-      tf.summary.scalar('OOV_rate', oov_rate)
+      oov_ratelon = oov_count / valid_count
+      tf.summary.scalar('OOV_ratelon', oov_ratelon)
 
-    if debug:
+    if delonbug:
 
-      def print_debug():
-        return tf.print("input_strings:", inputs, "\ninput_ids: ", input_ids, summarize=140)
+      delonf print_delonbug():
+        relonturn tf.print("input_strings:", inputs, "\ninput_ids: ", input_ids, summarizelon=140)
 
-      with tf.control_dependencies([twml.util.do_every_n_steps(print_debug, 1000)]):
-        input_ids = tf.identity(input_ids)
+      with tf.control_delonpelonndelonncielons([twml.util.do_elonvelonry_n_stelonps(print_delonbug, 1000)]):
+        input_ids = tf.idelonntity(input_ids)
 
-    output_embeddings = tf.nn.embedding_lookup(
-      params=self.weight, ids=input_ids, partition_strategy='div'
+    output_elonmbelonddings = tf.nn.elonmbelondding_lookup(
+      params=selonlf.welonight, ids=input_ids, partition_stratelongy='div'
     )
 
-    output_shape = inputs.shape.concatenate(tf.TensorShape([self.output_size]))
-    output_embeddings.set_shape(output_shape)
+    output_shapelon = inputs.shapelon.concatelonnatelon(tf.TelonnsorShapelon([selonlf.output_sizelon]))
+    output_elonmbelonddings.selont_shapelon(output_shapelon)
 
-    return output_embeddings
+    relonturn output_elonmbelonddings

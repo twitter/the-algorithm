@@ -1,14 +1,14 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.suggestion
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.suggelonstion
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.highlight.HighlightedSection
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.highlight.HighlightelondSelonction
 
 /**
- * Represents text with hit-highlights used for returning search query suggestions.
+ * Relonprelonselonnts telonxt with hit-highlights uselond for relonturning selonarch quelonry suggelonstions.
  *
- * URT API Reference: https://docbird.twitter.biz/unified_rich_timelines_urt/gen/com/twitter/timelines/render/thriftscala/TextResult.html
+ * URT API Relonfelonrelonncelon: https://docbird.twittelonr.biz/unifielond_rich_timelonlinelons_urt/gelonn/com/twittelonr/timelonlinelons/relonndelonr/thriftscala/TelonxtRelonsult.html
  */
-case class TextResult(
-  text: String,
-  hitHighlights: Option[Seq[HighlightedSection]],
-  score: Option[Double],
-  querySource: Option[String])
+caselon class TelonxtRelonsult(
+  telonxt: String,
+  hitHighlights: Option[Selonq[HighlightelondSelonction]],
+  scorelon: Option[Doublelon],
+  quelonrySourcelon: Option[String])

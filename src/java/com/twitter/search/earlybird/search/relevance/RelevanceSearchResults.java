@@ -1,37 +1,37 @@
-package com.twitter.search.earlybird.search.relevance;
+packagelon com.twittelonr.selonarch.elonarlybird.selonarch.relonlelonvancelon;
 
-import com.twitter.search.earlybird.search.Hit;
-import com.twitter.search.earlybird.search.SimpleSearchResults;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultMetadata;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultsRelevanceStats;
+import com.twittelonr.selonarch.elonarlybird.selonarch.Hit;
+import com.twittelonr.selonarch.elonarlybird.selonarch.SimplelonSelonarchRelonsults;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsultMelontadata;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsultsRelonlelonvancelonStats;
 
-public class RelevanceSearchResults extends SimpleSearchResults {
-  public final ThriftSearchResultMetadata[] resultMetadata;
-  private ThriftSearchResultsRelevanceStats relevanceStats = null;
-  private long scoringTimeNanos = 0;
+public class RelonlelonvancelonSelonarchRelonsults elonxtelonnds SimplelonSelonarchRelonsults {
+  public final ThriftSelonarchRelonsultMelontadata[] relonsultMelontadata;
+  privatelon ThriftSelonarchRelonsultsRelonlelonvancelonStats relonlelonvancelonStats = null;
+  privatelon long scoringTimelonNanos = 0;
 
-  public RelevanceSearchResults(int size) {
-    super(size);
-    this.resultMetadata = new ThriftSearchResultMetadata[size];
+  public RelonlelonvancelonSelonarchRelonsults(int sizelon) {
+    supelonr(sizelon);
+    this.relonsultMelontadata = nelonw ThriftSelonarchRelonsultMelontadata[sizelon];
   }
 
-  public void setHit(Hit hit, int hitIndex) {
-    hits[hitIndex] = hit;
-    resultMetadata[hitIndex] = hit.getMetadata();
+  public void selontHit(Hit hit, int hitIndelonx) {
+    hits[hitIndelonx] = hit;
+    relonsultMelontadata[hitIndelonx] = hit.gelontMelontadata();
   }
 
-  public void setRelevanceStats(ThriftSearchResultsRelevanceStats relevanceStats) {
-    this.relevanceStats = relevanceStats;
+  public void selontRelonlelonvancelonStats(ThriftSelonarchRelonsultsRelonlelonvancelonStats relonlelonvancelonStats) {
+    this.relonlelonvancelonStats = relonlelonvancelonStats;
   }
-  public ThriftSearchResultsRelevanceStats getRelevanceStats() {
-    return relevanceStats;
-  }
-
-  public void setScoringTimeNanos(long scoringTimeNanos) {
-    this.scoringTimeNanos = scoringTimeNanos;
+  public ThriftSelonarchRelonsultsRelonlelonvancelonStats gelontRelonlelonvancelonStats() {
+    relonturn relonlelonvancelonStats;
   }
 
-  public long getScoringTimeNanos() {
-    return scoringTimeNanos;
+  public void selontScoringTimelonNanos(long scoringTimelonNanos) {
+    this.scoringTimelonNanos = scoringTimelonNanos;
+  }
+
+  public long gelontScoringTimelonNanos() {
+    relonturn scoringTimelonNanos;
   }
 }

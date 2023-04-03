@@ -1,44 +1,44 @@
-package com.twitter.home_mixer.util.tweetypie.content
+packagelon com.twittelonr.homelon_mixelonr.util.twelonelontypielon.contelonnt
 
-import com.twitter.home_mixer.model.ContentFeatures
-import com.twitter.tweetypie.{thriftscala => tp}
+import com.twittelonr.homelon_mixelonr.modelonl.ContelonntFelonaturelons
+import com.twittelonr.twelonelontypielon.{thriftscala => tp}
 
-object TweetTextFeaturesExtractor {
+objelonct TwelonelontTelonxtFelonaturelonselonxtractor {
 
-  private val QUESTION_MARK_CHARS = Set(
-    '\u003F', '\u00BF', '\u037E', '\u055E', '\u061F', '\u1367', '\u1945', '\u2047', '\u2048',
-    '\u2049', '\u2753', '\u2754', '\u2CFA', '\u2CFB', '\u2E2E', '\uA60F', '\uA6F7', '\uFE16',
-    '\uFE56', '\uFF1F', '\u1114', '\u1E95'
+  privatelon val QUelonSTION_MARK_CHARS = Selont(
+    '\u003F', '\u00BF', '\u037elon', '\u055elon', '\u061F', '\u1367', '\u1945', '\u2047', '\u2048',
+    '\u2049', '\u2753', '\u2754', '\u2CFA', '\u2CFB', '\u2elon2elon', '\uA60F', '\uA6F7', '\uFelon16',
+    '\uFelon56', '\uFF1F', '\u1114', '\u1elon95'
   )
-  private val NEW_LINE_REGEX = "\r\n|\r|\n".r
+  privatelon val NelonW_LINelon_RelonGelonX = "\r\n|\r|\n".r
 
-  def addTextFeaturesFromTweet(
-    inputFeatures: ContentFeatures,
-    tweet: tp.Tweet
-  ): ContentFeatures = {
-    tweet.coreData
-      .map { coreData =>
-        val tweetText = coreData.text
+  delonf addTelonxtFelonaturelonsFromTwelonelont(
+    inputFelonaturelons: ContelonntFelonaturelons,
+    twelonelont: tp.Twelonelont
+  ): ContelonntFelonaturelons = {
+    twelonelont.corelonData
+      .map { corelonData =>
+        val twelonelontTelonxt = corelonData.telonxt
 
-        inputFeatures.copy(
-          hasQuestion = hasQuestionCharacter(tweetText),
-          length = getLength(tweetText).toShort,
-          numCaps = getCaps(tweetText).toShort,
-          numWhiteSpaces = getSpaces(tweetText).toShort,
-          numNewlines = Some(getNumNewlines(tweetText)),
+        inputFelonaturelons.copy(
+          hasQuelonstion = hasQuelonstionCharactelonr(twelonelontTelonxt),
+          lelonngth = gelontLelonngth(twelonelontTelonxt).toShort,
+          numCaps = gelontCaps(twelonelontTelonxt).toShort,
+          numWhitelonSpacelons = gelontSpacelons(twelonelontTelonxt).toShort,
+          numNelonwlinelons = Somelon(gelontNumNelonwlinelons(twelonelontTelonxt)),
         )
       }
-      .getOrElse(inputFeatures)
+      .gelontOrelonlselon(inputFelonaturelons)
   }
 
-  def getLength(text: String): Int =
-    text.codePointCount(0, text.length())
+  delonf gelontLelonngth(telonxt: String): Int =
+    telonxt.codelonPointCount(0, telonxt.lelonngth())
 
-  def getCaps(text: String): Int = text.count(Character.isUpperCase)
+  delonf gelontCaps(telonxt: String): Int = telonxt.count(Charactelonr.isUppelonrCaselon)
 
-  def getSpaces(text: String): Int = text.count(Character.isWhitespace)
+  delonf gelontSpacelons(telonxt: String): Int = telonxt.count(Charactelonr.isWhitelonspacelon)
 
-  def hasQuestionCharacter(text: String): Boolean = text.exists(QUESTION_MARK_CHARS.contains)
+  delonf hasQuelonstionCharactelonr(telonxt: String): Boolelonan = telonxt.elonxists(QUelonSTION_MARK_CHARS.contains)
 
-  def getNumNewlines(text: String): Short = NEW_LINE_REGEX.findAllIn(text).length.toShort
+  delonf gelontNumNelonwlinelons(telonxt: String): Short = NelonW_LINelon_RelonGelonX.findAllIn(telonxt).lelonngth.toShort
 }

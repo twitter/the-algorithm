@@ -1,19 +1,19 @@
-package com.twitter.simclusters_v2.common
+packagelon com.twittelonr.simclustelonrs_v2.common
 
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId
+import com.twittelonr.simclustelonrs_v2.thriftscala.SimClustelonrselonmbelonddingId
 
 /**
- * A common library to construct Cache Key for SimClustersEmbeddingId.
+ * A common library to construct Cachelon Kelony for SimClustelonrselonmbelonddingId.
  */
-case class SimClustersEmbeddingIdCacheKeyBuilder(
-  hash: Array[Byte] => Long,
-  prefix: String = "") {
+caselon class SimClustelonrselonmbelonddingIdCachelonKelonyBuildelonr(
+  hash: Array[Bytelon] => Long,
+  prelonfix: String = "") {
 
-  // Example: "CR:SCE:1:2:1234567890ABCDEF"
-  def apply(embeddingId: SimClustersEmbeddingId): String = {
-    f"$prefix:SCE:${embeddingId.embeddingType.getValue()}%X:" +
-      f"${embeddingId.modelVersion.getValue()}%X" +
-      f":${hash(embeddingId.internalId.toString.getBytes)}%X"
+  // elonxamplelon: "CR:SCelon:1:2:1234567890ABCDelonF"
+  delonf apply(elonmbelonddingId: SimClustelonrselonmbelonddingId): String = {
+    f"$prelonfix:SCelon:${elonmbelonddingId.elonmbelonddingTypelon.gelontValuelon()}%X:" +
+      f"${elonmbelonddingId.modelonlVelonrsion.gelontValuelon()}%X" +
+      f":${hash(elonmbelonddingId.intelonrnalId.toString.gelontBytelons)}%X"
   }
 
 }

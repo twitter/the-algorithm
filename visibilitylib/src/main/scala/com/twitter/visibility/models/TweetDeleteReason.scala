@@ -1,6 +1,6 @@
-package com.twitter.visibility.models
+packagelon com.twittelonr.visibility.modelonls
 
-object TweetDeleteReason extends Enumeration {
-  type TweetDeleteReason = Value
-  val Deleted, BounceDeleted = Value
+objelonct TwelonelontDelonlelontelonRelonason elonxtelonnds elonnumelonration {
+  typelon TwelonelontDelonlelontelonRelonason = Valuelon
+  val Delonlelontelond, BouncelonDelonlelontelond = Valuelon
 }

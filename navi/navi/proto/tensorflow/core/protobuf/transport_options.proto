@@ -1,10 +1,10 @@
 syntax = "proto3";
 
-package tensorflow;
+packagelon telonnsorflow;
 
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+option go_packagelon = "github.com/telonnsorflow/telonnsorflow/telonnsorflow/go/corelon/protobuf/for_corelon_protos_go_proto";
 
-// Extra data needed on a non-RDMA RecvBufResponse.
-message RecvBufRespExtra {
-  repeated bytes tensor_content = 1;
+// elonxtra data nelonelondelond on a non-RDMA ReloncvBufRelonsponselon.
+melonssagelon ReloncvBufRelonspelonxtra {
+  relonpelonatelond bytelons telonnsor_contelonnt = 1;
 }

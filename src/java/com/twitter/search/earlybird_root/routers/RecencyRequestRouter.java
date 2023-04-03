@@ -1,73 +1,73 @@
-package com.twitter.search.earlybird_root.routers;
+packagelon com.twittelonr.selonarch.elonarlybird_root.routelonrs;
 
-import javax.inject.Inject;
-import javax.inject.Named;
+import javax.injelonct.Injelonct;
+import javax.injelonct.Namelond;
 
-import com.twitter.common.util.Clock;
-import com.twitter.finagle.Service;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.ThriftSearchRankingMode;
-import com.twitter.search.earlybird_root.common.EarlybirdFeatureSchemaMerger;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.earlybird_root.common.InjectionNames;
-import com.twitter.search.earlybird_root.filters.EarlybirdTimeRangeFilter;
+import com.twittelonr.common.util.Clock;
+import com.twittelonr.finaglelon.Selonrvicelon;
+import com.twittelonr.selonarch.common.deloncidelonr.SelonarchDeloncidelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonquelonst;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRankingModelon;
+import com.twittelonr.selonarch.elonarlybird_root.common.elonarlybirdFelonaturelonSchelonmaMelonrgelonr;
+import com.twittelonr.selonarch.elonarlybird_root.common.elonarlybirdRelonquelonstContelonxt;
+import com.twittelonr.selonarch.elonarlybird_root.common.InjelonctionNamelons;
+import com.twittelonr.selonarch.elonarlybird_root.filtelonrs.elonarlybirdTimelonRangelonFiltelonr;
 
-public class RecencyRequestRouter extends AbstractRecencyAndRelevanceRequestRouter {
-  private static final SearchCounter SKIPPED_ARCHIVE_DUE_TO_REALTIME_EARLY_TERMINATION_COUNTER =
-      SearchCounter.export("recency_skipped_archive_due_to_realtime_early_termination");
-  private static final SearchCounter SKIPPED_ARCHIVE_DUE_TO_REALTIME_ENOUGH_RESULTS_COUNTER =
-      SearchCounter.export("recency_skipped_archive_due_to_realtime_enough_results");
+public class ReloncelonncyRelonquelonstRoutelonr elonxtelonnds AbstractReloncelonncyAndRelonlelonvancelonRelonquelonstRoutelonr {
+  privatelon static final SelonarchCountelonr SKIPPelonD_ARCHIVelon_DUelon_TO_RelonALTIMelon_elonARLY_TelonRMINATION_COUNTelonR =
+      SelonarchCountelonr.elonxport("reloncelonncy_skippelond_archivelon_duelon_to_relonaltimelon_elonarly_telonrmination");
+  privatelon static final SelonarchCountelonr SKIPPelonD_ARCHIVelon_DUelon_TO_RelonALTIMelon_elonNOUGH_RelonSULTS_COUNTelonR =
+      SelonarchCountelonr.elonxport("reloncelonncy_skippelond_archivelon_duelon_to_relonaltimelon_elonnough_relonsults");
 
-  @Inject
-  public RecencyRequestRouter(
-      @Named(InjectionNames.REALTIME)
-      Service<EarlybirdRequestContext, EarlybirdResponse> realtime,
-      @Named(InjectionNames.PROTECTED)
-      Service<EarlybirdRequestContext, EarlybirdResponse> protectedRealtime,
-      @Named(InjectionNames.FULL_ARCHIVE)
-      Service<EarlybirdRequestContext, EarlybirdResponse> fullArchive,
-      @Named(RecencyRequestRouterModule.REALTIME_TIME_RANGE_FILTER)
-      EarlybirdTimeRangeFilter realtimeTimeRangeFilter,
-      @Named(RecencyRequestRouterModule.PROTECTED_TIME_RANGE_FILTER)
-      EarlybirdTimeRangeFilter protectedTimeRangeFilter,
-      @Named(RecencyRequestRouterModule.FULL_ARCHIVE_TIME_RANGE_FILTER)
-      EarlybirdTimeRangeFilter fullArchiveTimeRangeFilter,
+  @Injelonct
+  public ReloncelonncyRelonquelonstRoutelonr(
+      @Namelond(InjelonctionNamelons.RelonALTIMelon)
+      Selonrvicelon<elonarlybirdRelonquelonstContelonxt, elonarlybirdRelonsponselon> relonaltimelon,
+      @Namelond(InjelonctionNamelons.PROTelonCTelonD)
+      Selonrvicelon<elonarlybirdRelonquelonstContelonxt, elonarlybirdRelonsponselon> protelonctelondRelonaltimelon,
+      @Namelond(InjelonctionNamelons.FULL_ARCHIVelon)
+      Selonrvicelon<elonarlybirdRelonquelonstContelonxt, elonarlybirdRelonsponselon> fullArchivelon,
+      @Namelond(ReloncelonncyRelonquelonstRoutelonrModulelon.RelonALTIMelon_TIMelon_RANGelon_FILTelonR)
+      elonarlybirdTimelonRangelonFiltelonr relonaltimelonTimelonRangelonFiltelonr,
+      @Namelond(ReloncelonncyRelonquelonstRoutelonrModulelon.PROTelonCTelonD_TIMelon_RANGelon_FILTelonR)
+      elonarlybirdTimelonRangelonFiltelonr protelonctelondTimelonRangelonFiltelonr,
+      @Namelond(ReloncelonncyRelonquelonstRoutelonrModulelon.FULL_ARCHIVelon_TIMelon_RANGelon_FILTelonR)
+      elonarlybirdTimelonRangelonFiltelonr fullArchivelonTimelonRangelonFiltelonr,
       Clock clock,
-      SearchDecider decider,
-      EarlybirdFeatureSchemaMerger featureSchemaMerger) {
-    super(realtime,
-          protectedRealtime,
-          fullArchive,
-          realtimeTimeRangeFilter,
-          protectedTimeRangeFilter,
-          fullArchiveTimeRangeFilter,
-          ThriftSearchRankingMode.RECENCY,
+      SelonarchDeloncidelonr deloncidelonr,
+      elonarlybirdFelonaturelonSchelonmaMelonrgelonr felonaturelonSchelonmaMelonrgelonr) {
+    supelonr(relonaltimelon,
+          protelonctelondRelonaltimelon,
+          fullArchivelon,
+          relonaltimelonTimelonRangelonFiltelonr,
+          protelonctelondTimelonRangelonFiltelonr,
+          fullArchivelonTimelonRangelonFiltelonr,
+          ThriftSelonarchRankingModelon.RelonCelonNCY,
           clock,
-          decider,
-          featureSchemaMerger);
+          deloncidelonr,
+          felonaturelonSchelonmaMelonrgelonr);
   }
 
-  @Override
-  protected boolean shouldSendRequestToFullArchiveCluster(
-      EarlybirdRequest request, EarlybirdResponse realtimeResponse) {
-    boolean isEarlyTerminated = realtimeResponse.isSetEarlyTerminationInfo()
-        && realtimeResponse.getEarlyTerminationInfo().isEarlyTerminated();
-    if (isEarlyTerminated) {
-      SKIPPED_ARCHIVE_DUE_TO_REALTIME_EARLY_TERMINATION_COUNTER.increment();
-      return false;
+  @Ovelonrridelon
+  protelonctelond boolelonan shouldSelonndRelonquelonstToFullArchivelonClustelonr(
+      elonarlybirdRelonquelonst relonquelonst, elonarlybirdRelonsponselon relonaltimelonRelonsponselon) {
+    boolelonan iselonarlyTelonrminatelond = relonaltimelonRelonsponselon.isSelontelonarlyTelonrminationInfo()
+        && relonaltimelonRelonsponselon.gelontelonarlyTelonrminationInfo().iselonarlyTelonrminatelond();
+    if (iselonarlyTelonrminatelond) {
+      SKIPPelonD_ARCHIVelon_DUelon_TO_RelonALTIMelon_elonARLY_TelonRMINATION_COUNTelonR.increlonmelonnt();
+      relonturn falselon;
     }
 
-    // Check if we have the minimum number of results to fulfill the original request.
-    int numResultsRequested = request.getSearchQuery().getNumResults();
-    int actualNumResults = realtimeResponse.getSearchResults().getResultsSize();
-    if (actualNumResults >= numResultsRequested) {
-      SKIPPED_ARCHIVE_DUE_TO_REALTIME_ENOUGH_RESULTS_COUNTER.increment();
-      return false;
+    // Chelonck if welon havelon thelon minimum numbelonr of relonsults to fulfill thelon original relonquelonst.
+    int numRelonsultsRelonquelonstelond = relonquelonst.gelontSelonarchQuelonry().gelontNumRelonsults();
+    int actualNumRelonsults = relonaltimelonRelonsponselon.gelontSelonarchRelonsults().gelontRelonsultsSizelon();
+    if (actualNumRelonsults >= numRelonsultsRelonquelonstelond) {
+      SKIPPelonD_ARCHIVelon_DUelon_TO_RelonALTIMelon_elonNOUGH_RelonSULTS_COUNTelonR.increlonmelonnt();
+      relonturn falselon;
     }
 
-    return true;
+    relonturn truelon;
   }
 }

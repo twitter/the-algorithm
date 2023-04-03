@@ -1,8 +1,8 @@
 scala_library(
-    compiler_option_sets = ["fatal_warnings"],
+    compilelonr_option_selonts = ["fatal_warnings"],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "configapi/configapi-core",
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        "configapi/configapi-corelon",
     ],
 )

@@ -1,128 +1,128 @@
-package com.twitter.home_mixer.product.scored_tweets.scorer
+packagelon com.twittelonr.homelon_mixelonr.product.scorelond_twelonelonts.scorelonr
 
-import com.twitter.dal.personal_data.{thriftjava => pd}
-import com.twitter.finagle.stats.Stat
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.home_mixer.product.scored_tweets.param.ScoredTweetsParam.Scoring.ModelWeights
-import com.twitter.ml.api.DataRecord
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure
-import com.twitter.product_mixer.core.feature.datarecord.BaseDataRecordFeature
-import com.twitter.product_mixer.core.feature.datarecord.DataRecordInAFeature
-import com.twitter.product_mixer.core.feature.datarecord.DataRecordOptionalFeature
-import com.twitter.product_mixer.core.feature.datarecord.DoubleDataRecordCompatible
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.datarecord.AllFeatures
-import com.twitter.product_mixer.core.feature.featuremap.datarecord.DataRecordConverter
-import com.twitter.product_mixer.core.feature.featuremap.datarecord.DataRecordExtractor
-import com.twitter.product_mixer.core.feature.featuremap.datarecord.FeaturesScope
-import com.twitter.product_mixer.core.functional_component.scorer.Scorer
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.ScorerIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.IllegalStateFailure
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.util.OffloadFuturePools
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.clients.predictionservice.PredictionServiceGRPCClient
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.prediction.features.recap.RecapFeatures
-import com.twitter.util.Future
-import com.twitter.util.Return
+import com.twittelonr.dal.pelonrsonal_data.{thriftjava => pd}
+import com.twittelonr.finaglelon.stats.Stat
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.homelon_mixelonr.product.scorelond_twelonelonts.param.ScorelondTwelonelontsParam.Scoring.ModelonlWelonights
+import com.twittelonr.ml.api.DataReloncord
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.TwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.FelonaturelonWithDelonfaultOnFailurelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.datareloncord.BaselonDataReloncordFelonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.datareloncord.DataReloncordInAFelonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.datareloncord.DataReloncordOptionalFelonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.datareloncord.DoublelonDataReloncordCompatiblelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.datareloncord.AllFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.datareloncord.DataReloncordConvelonrtelonr
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.datareloncord.DataReloncordelonxtractor
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.datareloncord.FelonaturelonsScopelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.scorelonr.Scorelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.ScorelonrIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.IllelongalStatelonFailurelon
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.PipelonlinelonFailurelon
+import com.twittelonr.product_mixelonr.corelon.util.OffloadFuturelonPools
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.timelonlinelons.clielonnts.prelondictionselonrvicelon.PrelondictionSelonrvicelonGRPCClielonnt
+import com.twittelonr.timelonlinelons.configapi.FSBoundelondParam
+import com.twittelonr.timelonlinelons.prelondiction.felonaturelons.reloncap.ReloncapFelonaturelons
+import com.twittelonr.util.Futurelon
+import com.twittelonr.util.Relonturn
 
-object CommonFeaturesDataRecordFeature
-    extends DataRecordInAFeature[PipelineQuery]
-    with FeatureWithDefaultOnFailure[PipelineQuery, DataRecord] {
-  override def defaultValue: DataRecord = new DataRecord()
+objelonct CommonFelonaturelonsDataReloncordFelonaturelon
+    elonxtelonnds DataReloncordInAFelonaturelon[PipelonlinelonQuelonry]
+    with FelonaturelonWithDelonfaultOnFailurelon[PipelonlinelonQuelonry, DataReloncord] {
+  ovelonrridelon delonf delonfaultValuelon: DataReloncord = nelonw DataReloncord()
 }
 
-object CandidateFeaturesDataRecordFeature
-    extends DataRecordInAFeature[TweetCandidate]
-    with FeatureWithDefaultOnFailure[TweetCandidate, DataRecord] {
-  override def defaultValue: DataRecord = new DataRecord()
+objelonct CandidatelonFelonaturelonsDataReloncordFelonaturelon
+    elonxtelonnds DataReloncordInAFelonaturelon[TwelonelontCandidatelon]
+    with FelonaturelonWithDelonfaultOnFailurelon[TwelonelontCandidatelon, DataReloncord] {
+  ovelonrridelon delonf delonfaultValuelon: DataReloncord = nelonw DataReloncord()
 }
 
-case class HomeNaviModelDataRecordScorer[
-  Query <: PipelineQuery,
-  Candidate <: UniversalNoun[Any],
-  CandidateFeatures <: BaseDataRecordFeature[Candidate, _],
-  ResultFeatures <: BaseDataRecordFeature[Candidate, _]
+caselon class HomelonNaviModelonlDataReloncordScorelonr[
+  Quelonry <: PipelonlinelonQuelonry,
+  Candidatelon <: UnivelonrsalNoun[Any],
+  CandidatelonFelonaturelons <: BaselonDataReloncordFelonaturelon[Candidatelon, _],
+  RelonsultFelonaturelons <: BaselonDataReloncordFelonaturelon[Candidatelon, _]
 ](
-  override val identifier: ScorerIdentifier,
-  modelClient: PredictionServiceGRPCClient,
-  candidateFeatures: FeaturesScope[CandidateFeatures],
-  resultFeatures: Set[ResultFeatures],
-  statsReceiver: StatsReceiver)
-    extends Scorer[Query, Candidate] {
+  ovelonrridelon val idelonntifielonr: ScorelonrIdelonntifielonr,
+  modelonlClielonnt: PrelondictionSelonrvicelonGRPCClielonnt,
+  candidatelonFelonaturelons: FelonaturelonsScopelon[CandidatelonFelonaturelons],
+  relonsultFelonaturelons: Selont[RelonsultFelonaturelons],
+  statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds Scorelonr[Quelonry, Candidatelon] {
 
-  require(resultFeatures.nonEmpty, "Result features cannot be empty")
+  relonquirelon(relonsultFelonaturelons.nonelonmpty, "Relonsult felonaturelons cannot belon elonmpty")
 
-  override val features: Set[Feature[_, _]] =
-    resultFeatures.asInstanceOf[
-      Set[Feature[_, _]]] + CommonFeaturesDataRecordFeature + CandidateFeaturesDataRecordFeature
+  ovelonrridelon val felonaturelons: Selont[Felonaturelon[_, _]] =
+    relonsultFelonaturelons.asInstancelonOf[
+      Selont[Felonaturelon[_, _]]] + CommonFelonaturelonsDataReloncordFelonaturelon + CandidatelonFelonaturelonsDataReloncordFelonaturelon
 
-  private val queryDataRecordAdapter = new DataRecordConverter(AllFeatures())
-  private val candidatesDataRecordAdapter = new DataRecordConverter(candidateFeatures)
-  private val resultDataRecordExtractor = new DataRecordExtractor(resultFeatures)
+  privatelon val quelonryDataReloncordAdaptelonr = nelonw DataReloncordConvelonrtelonr(AllFelonaturelons())
+  privatelon val candidatelonsDataReloncordAdaptelonr = nelonw DataReloncordConvelonrtelonr(candidatelonFelonaturelons)
+  privatelon val relonsultDataReloncordelonxtractor = nelonw DataReloncordelonxtractor(relonsultFelonaturelons)
 
-  private val scopedStatsReceiver = statsReceiver.scope(getClass.getSimpleName)
-  private val failuresStat = scopedStatsReceiver.stat("failures")
-  private val responsesStat = scopedStatsReceiver.stat("responses")
-  private val invalidResponsesSizeCounter = scopedStatsReceiver.counter("invalidResponsesSize")
-  private val candidatesDataRecordAdapterLatencyStat =
-    scopedStatsReceiver.scope("candidatesDataRecordAdapter").stat("latency_ms")
+  privatelon val scopelondStatsReloncelonivelonr = statsReloncelonivelonr.scopelon(gelontClass.gelontSimplelonNamelon)
+  privatelon val failurelonsStat = scopelondStatsReloncelonivelonr.stat("failurelons")
+  privatelon val relonsponselonsStat = scopelondStatsReloncelonivelonr.stat("relonsponselons")
+  privatelon val invalidRelonsponselonsSizelonCountelonr = scopelondStatsReloncelonivelonr.countelonr("invalidRelonsponselonsSizelon")
+  privatelon val candidatelonsDataReloncordAdaptelonrLatelonncyStat =
+    scopelondStatsReloncelonivelonr.scopelon("candidatelonsDataReloncordAdaptelonr").stat("latelonncy_ms")
 
-  private val DataRecordConstructionParallelism = 32
+  privatelon val DataReloncordConstructionParallelonlism = 32
 
-  override def apply(
-    query: Query,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): Stitch[Seq[FeatureMap]] = {
-    val commonRecord = query.features.map(queryDataRecordAdapter.toDataRecord)
-    val candidateRecords: Future[Seq[DataRecord]] =
-      Stat.time(candidatesDataRecordAdapterLatencyStat) {
-        OffloadFuturePools.parallelize[FeatureMap, DataRecord](
-          candidates.map(_.features),
-          candidatesDataRecordAdapter.toDataRecord(_),
-          DataRecordConstructionParallelism,
-          new DataRecord
+  ovelonrridelon delonf apply(
+    quelonry: Quelonry,
+    candidatelons: Selonq[CandidatelonWithFelonaturelons[Candidatelon]]
+  ): Stitch[Selonq[FelonaturelonMap]] = {
+    val commonReloncord = quelonry.felonaturelons.map(quelonryDataReloncordAdaptelonr.toDataReloncord)
+    val candidatelonReloncords: Futurelon[Selonq[DataReloncord]] =
+      Stat.timelon(candidatelonsDataReloncordAdaptelonrLatelonncyStat) {
+        OffloadFuturelonPools.parallelonlizelon[FelonaturelonMap, DataReloncord](
+          candidatelons.map(_.felonaturelons),
+          candidatelonsDataReloncordAdaptelonr.toDataReloncord(_),
+          DataReloncordConstructionParallelonlism,
+          nelonw DataReloncord
         )
       }
 
-    Stitch.callFuture {
-      candidateRecords.flatMap { records =>
-        val predictionResponses =
-          modelClient.getPredictions(
-            records = records,
-            commonFeatures = commonRecord,
-            modelId = Some("Home")
+    Stitch.callFuturelon {
+      candidatelonReloncords.flatMap { reloncords =>
+        val prelondictionRelonsponselons =
+          modelonlClielonnt.gelontPrelondictions(
+            reloncords = reloncords,
+            commonFelonaturelons = commonReloncord,
+            modelonlId = Somelon("Homelon")
           )
 
-        predictionResponses.map { responses =>
-          failuresStat.add(responses.count(_.isThrow))
-          responsesStat.add(responses.size)
+        prelondictionRelonsponselons.map { relonsponselons =>
+          failurelonsStat.add(relonsponselons.count(_.isThrow))
+          relonsponselonsStat.add(relonsponselons.sizelon)
 
-          if (responses.size == candidates.size) {
-            val predictedScoreFeatureMaps = responses.map {
-              case Return(dataRecord) =>
-                resultDataRecordExtractor.fromDataRecord(dataRecord)
-              case _ =>
-                resultDataRecordExtractor.fromDataRecord(new DataRecord())
+          if (relonsponselons.sizelon == candidatelons.sizelon) {
+            val prelondictelondScorelonFelonaturelonMaps = relonsponselons.map {
+              caselon Relonturn(dataReloncord) =>
+                relonsultDataReloncordelonxtractor.fromDataReloncord(dataReloncord)
+              caselon _ =>
+                relonsultDataReloncordelonxtractor.fromDataReloncord(nelonw DataReloncord())
             }
 
-            // add Data Record to feature map, which will be used for logging in later stage
-            predictedScoreFeatureMaps.zip(records).map {
-              case (predictedScoreFeatureMap, candidateRecord) =>
-                predictedScoreFeatureMap +
-                  (key = CandidateFeaturesDataRecordFeature, value = candidateRecord) +
-                  (key = CommonFeaturesDataRecordFeature, value =
-                    commonRecord.getOrElse(new DataRecord()))
+            // add Data Reloncord to felonaturelon map, which will belon uselond for logging in latelonr stagelon
+            prelondictelondScorelonFelonaturelonMaps.zip(reloncords).map {
+              caselon (prelondictelondScorelonFelonaturelonMap, candidatelonReloncord) =>
+                prelondictelondScorelonFelonaturelonMap +
+                  (kelony = CandidatelonFelonaturelonsDataReloncordFelonaturelon, valuelon = candidatelonReloncord) +
+                  (kelony = CommonFelonaturelonsDataReloncordFelonaturelon, valuelon =
+                    commonReloncord.gelontOrelonlselon(nelonw DataReloncord()))
             }
-          } else {
-            invalidResponsesSizeCounter.incr()
-            throw PipelineFailure(IllegalStateFailure, "Result Size mismatched candidates size")
+          } elonlselon {
+            invalidRelonsponselonsSizelonCountelonr.incr()
+            throw PipelonlinelonFailurelon(IllelongalStatelonFailurelon, "Relonsult Sizelon mismatchelond candidatelons sizelon")
           }
         }
       }
@@ -131,103 +131,103 @@ case class HomeNaviModelDataRecordScorer[
 }
 
 /**
- * Features for results returned by Navi user-tweet prediction models.
+ * Felonaturelons for relonsults relonturnelond by Navi uselonr-twelonelont prelondiction modelonls.
  */
-object HomeNaviModelDataRecordScorer {
-  val RequestBatchSize = 32
+objelonct HomelonNaviModelonlDataReloncordScorelonr {
+  val RelonquelonstBatchSizelon = 32
 
-  sealed trait PredictedScoreFeature
-      extends DataRecordOptionalFeature[TweetCandidate, Double]
-      with DoubleDataRecordCompatible {
-    def statName: String
+  selonalelond trait PrelondictelondScorelonFelonaturelon
+      elonxtelonnds DataReloncordOptionalFelonaturelon[TwelonelontCandidatelon, Doublelon]
+      with DoublelonDataReloncordCompatiblelon {
+    delonf statNamelon: String
 
-    def modelWeightParam: FSBoundedParam[Double]
+    delonf modelonlWelonightParam: FSBoundelondParam[Doublelon]
   }
 
-  object PredictedFavoriteScoreFeature extends PredictedScoreFeature {
-    override val featureName: String = RecapFeatures.PREDICTED_IS_FAVORITED.getFeatureName
-    override val personalDataTypes: Set[pd.PersonalDataType] = Set.empty
-    override val statName = "fav"
-    override val modelWeightParam = ModelWeights.FavParam
+  objelonct PrelondictelondFavoritelonScorelonFelonaturelon elonxtelonnds PrelondictelondScorelonFelonaturelon {
+    ovelonrridelon val felonaturelonNamelon: String = ReloncapFelonaturelons.PRelonDICTelonD_IS_FAVORITelonD.gelontFelonaturelonNamelon
+    ovelonrridelon val pelonrsonalDataTypelons: Selont[pd.PelonrsonalDataTypelon] = Selont.elonmpty
+    ovelonrridelon val statNamelon = "fav"
+    ovelonrridelon val modelonlWelonightParam = ModelonlWelonights.FavParam
   }
 
-  object PredictedReplyScoreFeature extends PredictedScoreFeature {
-    override val featureName: String = RecapFeatures.PREDICTED_IS_REPLIED.getFeatureName
-    override val personalDataTypes: Set[pd.PersonalDataType] = Set.empty
-    override val statName = "reply"
-    override val modelWeightParam = ModelWeights.ReplyParam
+  objelonct PrelondictelondRelonplyScorelonFelonaturelon elonxtelonnds PrelondictelondScorelonFelonaturelon {
+    ovelonrridelon val felonaturelonNamelon: String = ReloncapFelonaturelons.PRelonDICTelonD_IS_RelonPLIelonD.gelontFelonaturelonNamelon
+    ovelonrridelon val pelonrsonalDataTypelons: Selont[pd.PelonrsonalDataTypelon] = Selont.elonmpty
+    ovelonrridelon val statNamelon = "relonply"
+    ovelonrridelon val modelonlWelonightParam = ModelonlWelonights.RelonplyParam
   }
 
-  object PredictedRetweetScoreFeature extends PredictedScoreFeature {
-    override val featureName: String = RecapFeatures.PREDICTED_IS_RETWEETED.getFeatureName
-    override val personalDataTypes: Set[pd.PersonalDataType] = Set.empty
-    override val statName = "retweet"
-    override val modelWeightParam = ModelWeights.RetweetParam
+  objelonct PrelondictelondRelontwelonelontScorelonFelonaturelon elonxtelonnds PrelondictelondScorelonFelonaturelon {
+    ovelonrridelon val felonaturelonNamelon: String = ReloncapFelonaturelons.PRelonDICTelonD_IS_RelonTWelonelonTelonD.gelontFelonaturelonNamelon
+    ovelonrridelon val pelonrsonalDataTypelons: Selont[pd.PelonrsonalDataTypelon] = Selont.elonmpty
+    ovelonrridelon val statNamelon = "relontwelonelont"
+    ovelonrridelon val modelonlWelonightParam = ModelonlWelonights.RelontwelonelontParam
   }
 
-  object PredictedReplyEngagedByAuthorScoreFeature extends PredictedScoreFeature {
-    override val featureName: String =
-      RecapFeatures.PREDICTED_IS_REPLIED_REPLY_ENGAGED_BY_AUTHOR.getFeatureName
-    override val personalDataTypes: Set[pd.PersonalDataType] = Set.empty
-    override val statName = "reply_engaged_by_author"
-    override val modelWeightParam = ModelWeights.ReplyEngagedByAuthorParam
+  objelonct PrelondictelondRelonplyelonngagelondByAuthorScorelonFelonaturelon elonxtelonnds PrelondictelondScorelonFelonaturelon {
+    ovelonrridelon val felonaturelonNamelon: String =
+      ReloncapFelonaturelons.PRelonDICTelonD_IS_RelonPLIelonD_RelonPLY_elonNGAGelonD_BY_AUTHOR.gelontFelonaturelonNamelon
+    ovelonrridelon val pelonrsonalDataTypelons: Selont[pd.PelonrsonalDataTypelon] = Selont.elonmpty
+    ovelonrridelon val statNamelon = "relonply_elonngagelond_by_author"
+    ovelonrridelon val modelonlWelonightParam = ModelonlWelonights.RelonplyelonngagelondByAuthorParam
   }
 
-  object PredictedGoodClickConvoDescFavoritedOrRepliedScoreFeature extends PredictedScoreFeature {
-    override val featureName: String = RecapFeatures.PREDICTED_IS_GOOD_CLICKED_V1.getFeatureName
-    override val personalDataTypes: Set[pd.PersonalDataType] = Set.empty
-    override val statName = "good_click_convo_desc_favorited_or_replied"
-    override val modelWeightParam = ModelWeights.GoodClickParam
+  objelonct PrelondictelondGoodClickConvoDelonscFavoritelondOrRelonplielondScorelonFelonaturelon elonxtelonnds PrelondictelondScorelonFelonaturelon {
+    ovelonrridelon val felonaturelonNamelon: String = ReloncapFelonaturelons.PRelonDICTelonD_IS_GOOD_CLICKelonD_V1.gelontFelonaturelonNamelon
+    ovelonrridelon val pelonrsonalDataTypelons: Selont[pd.PelonrsonalDataTypelon] = Selont.elonmpty
+    ovelonrridelon val statNamelon = "good_click_convo_delonsc_favoritelond_or_relonplielond"
+    ovelonrridelon val modelonlWelonightParam = ModelonlWelonights.GoodClickParam
   }
 
-  object PredictedGoodClickConvoDescUamGt2ScoreFeature extends PredictedScoreFeature {
-    override val featureName: String = RecapFeatures.PREDICTED_IS_GOOD_CLICKED_V2.getFeatureName
-    override val personalDataTypes: Set[pd.PersonalDataType] = Set.empty
-    override val statName = "good_click_convo_desc_uam_gt_2"
-    override val modelWeightParam = ModelWeights.GoodClickV2Param
+  objelonct PrelondictelondGoodClickConvoDelonscUamGt2ScorelonFelonaturelon elonxtelonnds PrelondictelondScorelonFelonaturelon {
+    ovelonrridelon val felonaturelonNamelon: String = ReloncapFelonaturelons.PRelonDICTelonD_IS_GOOD_CLICKelonD_V2.gelontFelonaturelonNamelon
+    ovelonrridelon val pelonrsonalDataTypelons: Selont[pd.PelonrsonalDataTypelon] = Selont.elonmpty
+    ovelonrridelon val statNamelon = "good_click_convo_delonsc_uam_gt_2"
+    ovelonrridelon val modelonlWelonightParam = ModelonlWelonights.GoodClickV2Param
   }
 
-  object PredictedNegativeFeedbackV2ScoreFeature extends PredictedScoreFeature {
-    override val featureName: String =
-      RecapFeatures.PREDICTED_IS_NEGATIVE_FEEDBACK_V2.getFeatureName
-    override val personalDataTypes: Set[pd.PersonalDataType] = Set.empty
-    override val statName = "negative_feedback_v2"
-    override val modelWeightParam = ModelWeights.NegativeFeedbackV2Param
+  objelonct PrelondictelondNelongativelonFelonelondbackV2ScorelonFelonaturelon elonxtelonnds PrelondictelondScorelonFelonaturelon {
+    ovelonrridelon val felonaturelonNamelon: String =
+      ReloncapFelonaturelons.PRelonDICTelonD_IS_NelonGATIVelon_FelonelonDBACK_V2.gelontFelonaturelonNamelon
+    ovelonrridelon val pelonrsonalDataTypelons: Selont[pd.PelonrsonalDataTypelon] = Selont.elonmpty
+    ovelonrridelon val statNamelon = "nelongativelon_felonelondback_v2"
+    ovelonrridelon val modelonlWelonightParam = ModelonlWelonights.NelongativelonFelonelondbackV2Param
   }
 
-  object PredictedGoodProfileClickScoreFeature extends PredictedScoreFeature {
-    override val featureName: String =
-      RecapFeatures.PREDICTED_IS_PROFILE_CLICKED_AND_PROFILE_ENGAGED.getFeatureName
-    override val personalDataTypes: Set[pd.PersonalDataType] = Set.empty
-    override val statName = "good_profile_click"
-    override val modelWeightParam = ModelWeights.GoodProfileClickParam
+  objelonct PrelondictelondGoodProfilelonClickScorelonFelonaturelon elonxtelonnds PrelondictelondScorelonFelonaturelon {
+    ovelonrridelon val felonaturelonNamelon: String =
+      ReloncapFelonaturelons.PRelonDICTelonD_IS_PROFILelon_CLICKelonD_AND_PROFILelon_elonNGAGelonD.gelontFelonaturelonNamelon
+    ovelonrridelon val pelonrsonalDataTypelons: Selont[pd.PelonrsonalDataTypelon] = Selont.elonmpty
+    ovelonrridelon val statNamelon = "good_profilelon_click"
+    ovelonrridelon val modelonlWelonightParam = ModelonlWelonights.GoodProfilelonClickParam
   }
 
-  object PredictedReportedScoreFeature extends PredictedScoreFeature {
-    override val featureName: String =
-      RecapFeatures.PREDICTED_IS_REPORT_TWEET_CLICKED.getFeatureName
-    override val personalDataTypes: Set[pd.PersonalDataType] = Set.empty
-    override val statName = "reported"
-    override val modelWeightParam = ModelWeights.ReportParam
+  objelonct PrelondictelondRelonportelondScorelonFelonaturelon elonxtelonnds PrelondictelondScorelonFelonaturelon {
+    ovelonrridelon val felonaturelonNamelon: String =
+      ReloncapFelonaturelons.PRelonDICTelonD_IS_RelonPORT_TWelonelonT_CLICKelonD.gelontFelonaturelonNamelon
+    ovelonrridelon val pelonrsonalDataTypelons: Selont[pd.PelonrsonalDataTypelon] = Selont.elonmpty
+    ovelonrridelon val statNamelon = "relonportelond"
+    ovelonrridelon val modelonlWelonightParam = ModelonlWelonights.RelonportParam
   }
 
-  object PredictedVideoPlayback50ScoreFeature extends PredictedScoreFeature {
-    override val featureName: String = RecapFeatures.PREDICTED_IS_VIDEO_PLAYBACK_50.getFeatureName
-    override val personalDataTypes: Set[pd.PersonalDataType] = Set.empty
-    override val statName = "video_playback_50"
-    override val modelWeightParam = ModelWeights.VideoPlayback50Param
+  objelonct PrelondictelondVidelonoPlayback50ScorelonFelonaturelon elonxtelonnds PrelondictelondScorelonFelonaturelon {
+    ovelonrridelon val felonaturelonNamelon: String = ReloncapFelonaturelons.PRelonDICTelonD_IS_VIDelonO_PLAYBACK_50.gelontFelonaturelonNamelon
+    ovelonrridelon val pelonrsonalDataTypelons: Selont[pd.PelonrsonalDataTypelon] = Selont.elonmpty
+    ovelonrridelon val statNamelon = "videlono_playback_50"
+    ovelonrridelon val modelonlWelonightParam = ModelonlWelonights.VidelonoPlayback50Param
   }
 
-  val PredictedScoreFeatures: Seq[PredictedScoreFeature] = Seq(
-    PredictedFavoriteScoreFeature,
-    PredictedReplyScoreFeature,
-    PredictedRetweetScoreFeature,
-    PredictedReplyEngagedByAuthorScoreFeature,
-    PredictedGoodClickConvoDescFavoritedOrRepliedScoreFeature,
-    PredictedGoodClickConvoDescUamGt2ScoreFeature,
-    PredictedNegativeFeedbackV2ScoreFeature,
-    PredictedGoodProfileClickScoreFeature,
-    PredictedReportedScoreFeature,
-    PredictedVideoPlayback50ScoreFeature,
+  val PrelondictelondScorelonFelonaturelons: Selonq[PrelondictelondScorelonFelonaturelon] = Selonq(
+    PrelondictelondFavoritelonScorelonFelonaturelon,
+    PrelondictelondRelonplyScorelonFelonaturelon,
+    PrelondictelondRelontwelonelontScorelonFelonaturelon,
+    PrelondictelondRelonplyelonngagelondByAuthorScorelonFelonaturelon,
+    PrelondictelondGoodClickConvoDelonscFavoritelondOrRelonplielondScorelonFelonaturelon,
+    PrelondictelondGoodClickConvoDelonscUamGt2ScorelonFelonaturelon,
+    PrelondictelondNelongativelonFelonelondbackV2ScorelonFelonaturelon,
+    PrelondictelondGoodProfilelonClickScorelonFelonaturelon,
+    PrelondictelondRelonportelondScorelonFelonaturelon,
+    PrelondictelondVidelonoPlayback50ScorelonFelonaturelon,
   )
 }

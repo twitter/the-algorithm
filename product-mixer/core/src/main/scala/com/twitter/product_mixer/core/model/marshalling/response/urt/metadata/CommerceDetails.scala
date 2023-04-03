@@ -1,8 +1,8 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.metadata
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata
 
-case class CommerceDetails(
+caselon class CommelonrcelonDelontails(
   dropId: Option[Long],
   shopV2Id: Option[Long],
-  productKey: Option[Long],
-  merchantId: Option[Long],
-  productIndex: Option[Int])
+  productKelony: Option[Long],
+  melonrchantId: Option[Long],
+  productIndelonx: Option[Int])

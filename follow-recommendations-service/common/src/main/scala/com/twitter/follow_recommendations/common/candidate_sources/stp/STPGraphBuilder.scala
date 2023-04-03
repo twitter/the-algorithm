@@ -1,32 +1,32 @@
-package com.twitter.follow_recommendations.common.candidate_sources.stp
+packagelon com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.stp
 
-import com.twitter.finagle.stats.Stat
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.models.HasRecentFollowedUserIds
-import com.twitter.follow_recommendations.common.models.STPGraph
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.finaglelon.stats.Stat
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.HasReloncelonntFollowelondUselonrIds
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.STPGraph
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.HasClielonntContelonxt
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.timelonlinelons.configapi.HasParams
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class STPGraphBuilder @Inject() (
-  stpFirstDegreeFetcher: STPFirstDegreeFetcher,
-  stpSecondDegreeFetcher: STPSecondDegreeFetcher,
-  statsReceiver: StatsReceiver) {
-  private val stats: StatsReceiver = statsReceiver.scope(this.getClass.getSimpleName)
-  private val firstDegreeStat: Stat = stats.stat("first_degree_edges")
-  private val secondDegreeStat: Stat = stats.stat("second_degree_edges")
-  def apply(
-    target: HasClientContext with HasParams with HasRecentFollowedUserIds
-  ): Stitch[STPGraph] = stpFirstDegreeFetcher
-    .getFirstDegreeEdges(target).flatMap { firstDegreeEdges =>
-      firstDegreeStat.add(firstDegreeEdges.size)
-      stpSecondDegreeFetcher
-        .getSecondDegreeEdges(target, firstDegreeEdges).map { secondDegreeEdges =>
-          secondDegreeStat.add(firstDegreeEdges.size)
-          STPGraph(firstDegreeEdges.toList, secondDegreeEdges.toList)
+@Singlelonton
+class STPGraphBuildelonr @Injelonct() (
+  stpFirstDelongrelonelonFelontchelonr: STPFirstDelongrelonelonFelontchelonr,
+  stpSeloncondDelongrelonelonFelontchelonr: STPSeloncondDelongrelonelonFelontchelonr,
+  statsReloncelonivelonr: StatsReloncelonivelonr) {
+  privatelon val stats: StatsReloncelonivelonr = statsReloncelonivelonr.scopelon(this.gelontClass.gelontSimplelonNamelon)
+  privatelon val firstDelongrelonelonStat: Stat = stats.stat("first_delongrelonelon_elondgelons")
+  privatelon val seloncondDelongrelonelonStat: Stat = stats.stat("seloncond_delongrelonelon_elondgelons")
+  delonf apply(
+    targelont: HasClielonntContelonxt with HasParams with HasReloncelonntFollowelondUselonrIds
+  ): Stitch[STPGraph] = stpFirstDelongrelonelonFelontchelonr
+    .gelontFirstDelongrelonelonelondgelons(targelont).flatMap { firstDelongrelonelonelondgelons =>
+      firstDelongrelonelonStat.add(firstDelongrelonelonelondgelons.sizelon)
+      stpSeloncondDelongrelonelonFelontchelonr
+        .gelontSeloncondDelongrelonelonelondgelons(targelont, firstDelongrelonelonelondgelons).map { seloncondDelongrelonelonelondgelons =>
+          seloncondDelongrelonelonStat.add(firstDelongrelonelonelondgelons.sizelon)
+          STPGraph(firstDelongrelonelonelondgelons.toList, seloncondDelongrelonelonelondgelons.toList)
         }
     }
 }

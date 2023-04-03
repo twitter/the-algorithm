@@ -1,20 +1,20 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.prompt
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.itelonm.prompt
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.CallbackMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.prompt.RelevancePromptFollowUpTextInput
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.melontadata.CallbackMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.prompt.RelonlelonvancelonPromptFollowUpTelonxtInput
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class RelevancePromptFollowUpTextInputMarshaller @Inject() (
-  callbackMarshaller: CallbackMarshaller) {
+@Singlelonton
+class RelonlelonvancelonPromptFollowUpTelonxtInputMarshallelonr @Injelonct() (
+  callbackMarshallelonr: CallbackMarshallelonr) {
 
-  def apply(
-    relevancePromptFollowUpTextInput: RelevancePromptFollowUpTextInput
-  ): urt.RelevancePromptFollowUpTextInput = urt.RelevancePromptFollowUpTextInput(
-    context = relevancePromptFollowUpTextInput.context,
-    textFieldPlaceholder = relevancePromptFollowUpTextInput.textFieldPlaceholder,
-    sendTextCallback = callbackMarshaller(relevancePromptFollowUpTextInput.sendTextCallback)
+  delonf apply(
+    relonlelonvancelonPromptFollowUpTelonxtInput: RelonlelonvancelonPromptFollowUpTelonxtInput
+  ): urt.RelonlelonvancelonPromptFollowUpTelonxtInput = urt.RelonlelonvancelonPromptFollowUpTelonxtInput(
+    contelonxt = relonlelonvancelonPromptFollowUpTelonxtInput.contelonxt,
+    telonxtFielonldPlacelonholdelonr = relonlelonvancelonPromptFollowUpTelonxtInput.telonxtFielonldPlacelonholdelonr,
+    selonndTelonxtCallback = callbackMarshallelonr(relonlelonvancelonPromptFollowUpTelonxtInput.selonndTelonxtCallback)
   )
 }

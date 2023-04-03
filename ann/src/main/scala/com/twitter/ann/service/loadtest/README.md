@@ -1,218 +1,218 @@
-# Loadtest ANN query service with random embeddings
+# Loadtelonst ANN quelonry selonrvicelon with random elonmbelonddings
 
-An ANN query service can be load-tested with random embeddings as queries, generated automatically by loadtest tool.
-Example script to load test a ANN query service with random embeddings:
-
-```bash
-$ aurora job create smf1/<role>/staging/ann-loadtest-service ann/src/main/aurora/loadtest/loadtest.aurora \
-  --bind=profile.name=ann-loadtest-service \
-  --bind=profile.role=<role> \
-  --bind=profile.duration_sec=10 \
-  --bind=profile.number_of_neighbors=10 \
-  --bind=profile.qps=200 \
-  --bind=profile.algo=hnsw \
-  --bind=profile.metric=Cosine \
-  --bind=profile.index_id_type=int \
-  --bind=profile.hnsw_ef=400,600,800 \
-  --bind=profile.embedding_dimension=3 \
-  --bind=profile.concurrency_level=8 \
-  --bind=profile.loadtest_type=remote \
-  --bind=profile.service_destination=/srv#/staging/local/apoorvs/ann-server-test \
-  --bind=profile.with_random_queries=True \
-  --bind=profile.random_queries_count=50000 \
-  --bind=profile.random_embedding_min_value=-10.0 \
-  --bind=profile.random_embedding_max_value=10.0
-```
-
-It will run the loadtest with `50000` random embeddings, where each embedding value will be range bounded between `random_embedding_min_value` and `random_embedding_max_value`.
-In the above the case it will be bounded between `-10.0` and `10.0`.
-If `random_embedding_min_value` and `random_embedding_max_value` are not supplied default value of `-1.0` and `1.0` will be used.
-
-## Results
-
-Load test results will be printed to stdout of an aurora job.
-
-# Loadtest ANN query service with query set
-
-An ANN query service can be load-tested with sample queries drawn from the embeddings dataset.
-For creating sample queries i.e `query_set` refer this [section](#query-set-generator).
-
-Test is run with `live` version of loadtest binary that is already available in packer.
-Example script to load test a ANN query service:
+An ANN quelonry selonrvicelon can belon load-telonstelond with random elonmbelonddings as quelonrielons, gelonnelonratelond automatically by loadtelonst tool.
+elonxamplelon script to load telonst a ANN quelonry selonrvicelon with random elonmbelonddings:
 
 ```bash
-$ aurora job create smf1/<role>/staging/ann-loadtest-service ann/src/main/aurora/loadtest/loadtest.aurora \
-  --bind=profile.name=ann-loadtest-service \
-  --bind=profile.role=<role> \
-  --bind=profile.duration_sec=10 \
-  --bind=profile.query_set_dir=hdfs:///user/cortex/ann_example/dataset/search/query_knn/query_set \
-  --bind=profile.number_of_neighbors=10 \
-  --bind=profile.qps=200 \
-  --bind=profile.algo=hnsw \
-  --bind=profile.query_id_type=string \
-  --bind=profile.index_id_type=string \
-  --bind=profile.metric=Cosine \
-  --bind=profile.hnsw_ef=400,600,800 \
-  --bind=profile.embedding_dimension=100 \
-  --bind=profile.concurrency_level=8 \
-  --bind=profile.loadtest_type=remote \
-  --bind=profile.service_destination=/srv#/staging/local/apoorvs/ann-server-test
+$ aurora job crelonatelon smf1/<rolelon>/staging/ann-loadtelonst-selonrvicelon ann/src/main/aurora/loadtelonst/loadtelonst.aurora \
+  --bind=profilelon.namelon=ann-loadtelonst-selonrvicelon \
+  --bind=profilelon.rolelon=<rolelon> \
+  --bind=profilelon.duration_selonc=10 \
+  --bind=profilelon.numbelonr_of_nelonighbors=10 \
+  --bind=profilelon.qps=200 \
+  --bind=profilelon.algo=hnsw \
+  --bind=profilelon.melontric=Cosinelon \
+  --bind=profilelon.indelonx_id_typelon=int \
+  --bind=profilelon.hnsw_elonf=400,600,800 \
+  --bind=profilelon.elonmbelondding_dimelonnsion=3 \
+  --bind=profilelon.concurrelonncy_lelonvelonl=8 \
+  --bind=profilelon.loadtelonst_typelon=relonmotelon \
+  --bind=profilelon.selonrvicelon_delonstination=/srv#/staging/local/apoorvs/ann-selonrvelonr-telonst \
+  --bind=profilelon.with_random_quelonrielons=Truelon \
+  --bind=profilelon.random_quelonrielons_count=50000 \
+  --bind=profilelon.random_elonmbelondding_min_valuelon=-10.0 \
+  --bind=profilelon.random_elonmbelondding_max_valuelon=10.0
 ```
 
-# In-Memory based loadtest for measuring recall
+It will run thelon loadtelonst with `50000` random elonmbelonddings, whelonrelon elonach elonmbelondding valuelon will belon rangelon boundelond belontwelonelonn `random_elonmbelondding_min_valuelon` and `random_elonmbelondding_max_valuelon`.
+In thelon abovelon thelon caselon it will belon boundelond belontwelonelonn `-10.0` and `10.0`.
+If `random_elonmbelondding_min_valuelon` and `random_elonmbelondding_max_valuelon` arelon not supplielond delonfault valuelon of `-1.0` and `1.0` will belon uselond.
 
-Load test can be with the above created dataset in memory.
-For running in in-memory mode, index is created in memory, and for that you need `query_set/index_set/truth_set`.
-For creating this dataset refer this [section](#knn-truth-set-generator).
+## Relonsults
 
-Test is run with `live` version loadtest binary that is already available in packer.
-Example script In-Memory index building and benchmarking:
+Load telonst relonsults will belon printelond to stdout of an aurora job.
+
+# Loadtelonst ANN quelonry selonrvicelon with quelonry selont
+
+An ANN quelonry selonrvicelon can belon load-telonstelond with samplelon quelonrielons drawn from thelon elonmbelonddings dataselont.
+For crelonating samplelon quelonrielons i.elon `quelonry_selont` relonfelonr this [selonction](#quelonry-selont-gelonnelonrator).
+
+Telonst is run with `livelon` velonrsion of loadtelonst binary that is alrelonady availablelon in packelonr.
+elonxamplelon script to load telonst a ANN quelonry selonrvicelon:
 
 ```bash
-$ aurora job create smf1/<role>/staging/ann-loadtest ann/src/main/aurora/loadtest/loadtest.aurora \
-  --bind=profile.name=ann-loadtest \
-  --bind=profile.role=<role> \
-  --bind=profile.duration_sec=10 \
-  --bind=profile.truth_set_dir=hdfs:///user/cortex/ann_example/dataset/search/query_knn/true_knn \
-  --bind=profile.query_set_dir=hdfs:///user/cortex/ann_example/dataset/search/query_knn/query_set \
-  --bind=profile.index_set_dir=hdfs:///user/cortex/ann_example/dataset/search/query_knn/index_set \
-  --bind=profile.number_of_neighbors=10 \
-  --bind=profile.qps=200 \
-  --bind=profile.algo=hnsw \
-  --bind=profile.query_id_type=string \
-  --bind=profile.index_id_type=string \
-  --bind=profile.metric=Cosine \
-  --bind=profile.hnsw_ef_construction=15 \
-  --bind=profile.hnsw_max_m=10 \
-  --bind=profile.hnsw_ef=400,600,800 \
-  --bind=profile.embedding_dimension=100 \
-  --bind=profile.concurrency_level=8 \
-  --bind=profile.loadtest_type=local
+$ aurora job crelonatelon smf1/<rolelon>/staging/ann-loadtelonst-selonrvicelon ann/src/main/aurora/loadtelonst/loadtelonst.aurora \
+  --bind=profilelon.namelon=ann-loadtelonst-selonrvicelon \
+  --bind=profilelon.rolelon=<rolelon> \
+  --bind=profilelon.duration_selonc=10 \
+  --bind=profilelon.quelonry_selont_dir=hdfs:///uselonr/cortelonx/ann_elonxamplelon/dataselont/selonarch/quelonry_knn/quelonry_selont \
+  --bind=profilelon.numbelonr_of_nelonighbors=10 \
+  --bind=profilelon.qps=200 \
+  --bind=profilelon.algo=hnsw \
+  --bind=profilelon.quelonry_id_typelon=string \
+  --bind=profilelon.indelonx_id_typelon=string \
+  --bind=profilelon.melontric=Cosinelon \
+  --bind=profilelon.hnsw_elonf=400,600,800 \
+  --bind=profilelon.elonmbelondding_dimelonnsion=100 \
+  --bind=profilelon.concurrelonncy_lelonvelonl=8 \
+  --bind=profilelon.loadtelonst_typelon=relonmotelon \
+  --bind=profilelon.selonrvicelon_delonstination=/srv#/staging/local/apoorvs/ann-selonrvelonr-telonst
 ```
 
-# Loadtest faiss
+# In-Melonmory baselond loadtelonst for melonasuring reloncall
+
+Load telonst can belon with thelon abovelon crelonatelond dataselont in melonmory.
+For running in in-melonmory modelon, indelonx is crelonatelond in melonmory, and for that you nelonelond `quelonry_selont/indelonx_selont/truth_selont`.
+For crelonating this dataselont relonfelonr this [selonction](#knn-truth-selont-gelonnelonrator).
+
+Telonst is run with `livelon` velonrsion loadtelonst binary that is alrelonady availablelon in packelonr.
+elonxamplelon script In-Melonmory indelonx building and belonnchmarking:
 
 ```bash
-$ aurora job create smf1/<role>/staging/ann-loadtest-service ann/src/main/aurora/loadtest/loadtest.aurora \
-  --bind=profile.name=ann-loadtest-service \
-  --bind=profile.role=<role> \
-  --bind=profile.duration_sec=10 \
-  --bind=profile.number_of_neighbors=10 \
-  --bind=profile.qps=200 \
-  --bind=profile.algo=faiss \ # Changed to faiss
-  --bind=profile.faiss_nprobe=1,3,9,27,81,128,256,512 \ # Added
-  --bind=profile.faiss_quantizerKfactorRF=1,2 \ # Pass a list to do grid search
-  --bind=profile.faiss_quantizerNprobe=128 \ # Added
-  --bind=profile.metric=Cosine \
-  --bind=profile.index_id_type=int \
-  --bind=profile.embedding_dimension=3 \
-  --bind=profile.concurrency_level=8 \
-  --bind=profile.loadtest_type=remote \
-  --bind=profile.service_destination=/srv#/staging/local/apoorvs/ann-server-test \
-  --bind=profile.with_random_queries=True \
-  --bind=profile.random_queries_count=50000 \
-  --bind=profile.random_embedding_min_value=-10.0 \
-  --bind=profile.random_embedding_max_value=10.0
+$ aurora job crelonatelon smf1/<rolelon>/staging/ann-loadtelonst ann/src/main/aurora/loadtelonst/loadtelonst.aurora \
+  --bind=profilelon.namelon=ann-loadtelonst \
+  --bind=profilelon.rolelon=<rolelon> \
+  --bind=profilelon.duration_selonc=10 \
+  --bind=profilelon.truth_selont_dir=hdfs:///uselonr/cortelonx/ann_elonxamplelon/dataselont/selonarch/quelonry_knn/truelon_knn \
+  --bind=profilelon.quelonry_selont_dir=hdfs:///uselonr/cortelonx/ann_elonxamplelon/dataselont/selonarch/quelonry_knn/quelonry_selont \
+  --bind=profilelon.indelonx_selont_dir=hdfs:///uselonr/cortelonx/ann_elonxamplelon/dataselont/selonarch/quelonry_knn/indelonx_selont \
+  --bind=profilelon.numbelonr_of_nelonighbors=10 \
+  --bind=profilelon.qps=200 \
+  --bind=profilelon.algo=hnsw \
+  --bind=profilelon.quelonry_id_typelon=string \
+  --bind=profilelon.indelonx_id_typelon=string \
+  --bind=profilelon.melontric=Cosinelon \
+  --bind=profilelon.hnsw_elonf_construction=15 \
+  --bind=profilelon.hnsw_max_m=10 \
+  --bind=profilelon.hnsw_elonf=400,600,800 \
+  --bind=profilelon.elonmbelondding_dimelonnsion=100 \
+  --bind=profilelon.concurrelonncy_lelonvelonl=8 \
+  --bind=profilelon.loadtelonst_typelon=local
 ```
 
-Full list of faiss specific parameters. [Exact definition of all available parameters](https://github.com/facebookresearch/faiss/blob/36f2998a6469280cef3b0afcde2036935a29aa1f/faiss/AutoTune.cpp#L444). Please reach out if you need to use parameters which aren't shown below
-
-```
-faiss_nprobe                = Default(String, '1')
-faiss_quantizerEf           = Default(String, '0')
-faiss_quantizerKfactorRF    = Default(String, '0')
-faiss_quantizerNprobe       = Default(String, '0')
-faiss_ht                    = Default(String, '0')
-```
-
-# Query Set Generator
-
-Sample queries can be generated from the embeddings dataset and can be used directly with load test in tab format.
-To generate sample queries `EmbeddingSamplingJob` can be used as follows.
+# Loadtelonst faiss
 
 ```bash
-$ ./bazel bundle cortex-core/entity-embeddings/src/scala/main/com/twitter/scalding/util/EmbeddingFormat:embeddingformat-deploy
+$ aurora job crelonatelon smf1/<rolelon>/staging/ann-loadtelonst-selonrvicelon ann/src/main/aurora/loadtelonst/loadtelonst.aurora \
+  --bind=profilelon.namelon=ann-loadtelonst-selonrvicelon \
+  --bind=profilelon.rolelon=<rolelon> \
+  --bind=profilelon.duration_selonc=10 \
+  --bind=profilelon.numbelonr_of_nelonighbors=10 \
+  --bind=profilelon.qps=200 \
+  --bind=profilelon.algo=faiss \ # Changelond to faiss
+  --bind=profilelon.faiss_nprobelon=1,3,9,27,81,128,256,512 \ # Addelond
+  --bind=profilelon.faiss_quantizelonrKfactorRF=1,2 \ # Pass a list to do grid selonarch
+  --bind=profilelon.faiss_quantizelonrNprobelon=128 \ # Addelond
+  --bind=profilelon.melontric=Cosinelon \
+  --bind=profilelon.indelonx_id_typelon=int \
+  --bind=profilelon.elonmbelondding_dimelonnsion=3 \
+  --bind=profilelon.concurrelonncy_lelonvelonl=8 \
+  --bind=profilelon.loadtelonst_typelon=relonmotelon \
+  --bind=profilelon.selonrvicelon_delonstination=/srv#/staging/local/apoorvs/ann-selonrvelonr-telonst \
+  --bind=profilelon.with_random_quelonrielons=Truelon \
+  --bind=profilelon.random_quelonrielons_count=50000 \
+  --bind=profilelon.random_elonmbelondding_min_valuelon=-10.0 \
+  --bind=profilelon.random_elonmbelondding_max_valuelon=10.0
+```
 
-$ export INPUT_PATH=/user/cortex/embeddings/user/tfwproducersg/embedding_datarecords_on_data/2018/05/01
-$ export ENTITY_KIND=user
-$ export EMBEDDING_INPUT_FORMAT=usertensor
-$ export OUTPUT_PATH=/user/$USER/sample_embeddings
-$ export SAMPLE_PERCENT=0.1
+Full list of faiss speloncific paramelontelonrs. [elonxact delonfinition of all availablelon paramelontelonrs](https://github.com/facelonbookrelonselonarch/faiss/blob/36f2998a6469280celonf3b0afcdelon2036935a29aa1f/faiss/AutoTunelon.cpp#L444). Plelonaselon relonach out if you nelonelond to uselon paramelontelonrs which arelonn't shown belonlow
+
+```
+faiss_nprobelon                = Delonfault(String, '1')
+faiss_quantizelonrelonf           = Delonfault(String, '0')
+faiss_quantizelonrKfactorRF    = Delonfault(String, '0')
+faiss_quantizelonrNprobelon       = Delonfault(String, '0')
+faiss_ht                    = Delonfault(String, '0')
+```
+
+# Quelonry Selont Gelonnelonrator
+
+Samplelon quelonrielons can belon gelonnelonratelond from thelon elonmbelonddings dataselont and can belon uselond direlonctly with load telonst in tab format.
+To gelonnelonratelon samplelon quelonrielons `elonmbelonddingSamplingJob` can belon uselond as follows.
+
+```bash
+$ ./bazelonl bundlelon cortelonx-corelon/elonntity-elonmbelonddings/src/scala/main/com/twittelonr/scalding/util/elonmbelonddingFormat:elonmbelonddingformat-delonploy
+
+$ elonxport INPUT_PATH=/uselonr/cortelonx/elonmbelonddings/uselonr/tfwproducelonrsg/elonmbelondding_datareloncords_on_data/2018/05/01
+$ elonxport elonNTITY_KIND=uselonr
+$ elonxport elonMBelonDDING_INPUT_FORMAT=uselonrtelonnsor
+$ elonxport OUTPUT_PATH=/uselonr/$USelonR/samplelon_elonmbelonddings
+$ elonxport SAMPLelon_PelonRCelonNT=0.1
 
 $ oscar hdfs \
-    --screen --tee log.txt \
-    --hadoop-client-memory 6000 \
-    --hadoop-properties "yarn.app.mapreduce.am.resource.mb=6000;yarn.app.mapreduce.am.command-opts='-Xmx7500m';mapreduce.map.memory.mb=7500;mapreduce.reduce.java.opts='-Xmx6000m';mapreduce.reduce.memory.mb=7500;mapred.task.timeout=36000000;" \
-    --min-split-size 284217728 \
-    --bundle embeddingformat-deploy \
-    --host hadoopnest1.smf1.twitter.com \
-    --tool com.twitter.scalding.entityembeddings.util.EmbeddingFormat.EmbeddingSamplingJob -- \
-    --entity_kind $ENTITY_KIND \
-    --input.embedding_path $INPUT_PATH \
-    --input.embedding_format $EMBEDDING_INPUT_FORMAT \
-    --output.embedding_path $OUTPUT_PATH \
-    --output.embedding_format tab \
-    --sample_percent $SAMPLE_PERCENT
+    --screlonelonn --telonelon log.txt \
+    --hadoop-clielonnt-melonmory 6000 \
+    --hadoop-propelonrtielons "yarn.app.maprelonducelon.am.relonsourcelon.mb=6000;yarn.app.maprelonducelon.am.command-opts='-Xmx7500m';maprelonducelon.map.melonmory.mb=7500;maprelonducelon.relonducelon.java.opts='-Xmx6000m';maprelonducelon.relonducelon.melonmory.mb=7500;maprelond.task.timelonout=36000000;" \
+    --min-split-sizelon 284217728 \
+    --bundlelon elonmbelonddingformat-delonploy \
+    --host hadoopnelonst1.smf1.twittelonr.com \
+    --tool com.twittelonr.scalding.elonntityelonmbelonddings.util.elonmbelonddingFormat.elonmbelonddingSamplingJob -- \
+    --elonntity_kind $elonNTITY_KIND \
+    --input.elonmbelondding_path $INPUT_PATH \
+    --input.elonmbelondding_format $elonMBelonDDING_INPUT_FORMAT \
+    --output.elonmbelondding_path $OUTPUT_PATH \
+    --output.elonmbelondding_format tab \
+    --samplelon_pelonrcelonnt $SAMPLelon_PelonRCelonNT
 ```
 
-It will sample 0.1% of embeddings and store them in `tab` format to hdfs that can be direcly used as `query_set` for loadtest.
+It will samplelon 0.1% of elonmbelonddings and storelon thelonm in `tab` format to hdfs that can belon direloncly uselond as `quelonry_selont` for loadtelonst.
 
-# Knn Truth Set Generator
+# Knn Truth Selont Gelonnelonrator
 
-To use load test framework to benchmark recall, you need to split your data set into index_set, query_set and knn_truth
+To uselon load telonst framelonwork to belonnchmark reloncall, you nelonelond to split your data selont into indelonx_selont, quelonry_selont and knn_truth
 
-- index_set: data that will be indexed for ann
-- query_set: data that will be used for queries
-- truth_set: the real nearest neighbor used as truth to compute recall
+- indelonx_selont: data that will belon indelonxelond for ann
+- quelonry_selont: data that will belon uselond for quelonrielons
+- truth_selont: thelon relonal nelonarelonst nelonighbor uselond as truth to computelon reloncall
 
-And also you need to figure out the dimension for your embedding vectors.
+And also you nelonelond to figurelon out thelon dimelonnsion for your elonmbelondding velonctors.
 
-KnnTruthSetGenerator can help to prepare data sets:
+KnnTruthSelontGelonnelonrator can helonlp to prelonparelon data selonts:
 
 ```bash
-$ ./bazel bundle ann/src/main/scala/com/twitter/ann/scalding/offline:ann-offline-deploy
+$ ./bazelonl bundlelon ann/src/main/scala/com/twittelonr/ann/scalding/offlinelon:ann-offlinelon-delonploy
 
-$ export QUERY_EMBEDDINGS_PATH=/user/cortex-mlx/official_examples/ann/non_pii_random_user_embeddings_tab_format
-$ export INDEX_EMBEDDINGS_PATH=/user/cortex-mlx/official_examples/ann/non_pii_random_user_embeddings_tab_format
-$ export TRUTH_SET_PATH=/user/$USER/truth_set
-$ export INDEX_SET_PATH=/user/$USER/index_set
-$ export QUERY_SET_PATH=/user/$USER/query_set
-$ export METRIC=InnerProduct
-$ export QUERY_ENTITY_KIND=user
-$ export INDEX_ENTITY_KIND=user
-$ export NEIGHBOURS=10
+$ elonxport QUelonRY_elonMBelonDDINGS_PATH=/uselonr/cortelonx-mlx/official_elonxamplelons/ann/non_pii_random_uselonr_elonmbelonddings_tab_format
+$ elonxport INDelonX_elonMBelonDDINGS_PATH=/uselonr/cortelonx-mlx/official_elonxamplelons/ann/non_pii_random_uselonr_elonmbelonddings_tab_format
+$ elonxport TRUTH_SelonT_PATH=/uselonr/$USelonR/truth_selont
+$ elonxport INDelonX_SelonT_PATH=/uselonr/$USelonR/indelonx_selont
+$ elonxport QUelonRY_SelonT_PATH=/uselonr/$USelonR/quelonry_selont
+$ elonxport MelonTRIC=InnelonrProduct
+$ elonxport QUelonRY_elonNTITY_KIND=uselonr
+$ elonxport INDelonX_elonNTITY_KIND=uselonr
+$ elonxport NelonIGHBOURS=10
 
 $ oscar hdfs \
-  --screen --tee log.txt \
-  --hadoop-client-memory 6000 \
-  --hadoop-properties "yarn.app.mapreduce.am.resource.mb=6000;yarn.app.mapreduce.am.command-opts='-Xmx7500m';mapreduce.map.memory.mb=7500;mapreduce.reduce.java.opts='-Xmx6000m';mapreduce.reduce.memory.mb=7500;mapred.task.timeout=36000000;" \
-  --bundle ann-offline-deploy \
-  --min-split-size 284217728 \
-  --host hadoopnest1.smf1.twitter.com \
-  --tool com.twitter.ann.scalding.offline.KnnTruthSetGenerator -- \
-  --neighbors $NEIGHBOURS \
-  --metric $METRIC \
-  --query_entity_kind $QUERY_ENTITY_KIND \
-  --query.embedding_path $QUERY_EMBEDDINGS_PATH \
-  --query.embedding_format tab \
-  --query_sample_percent 50.0 \
-  --index_entity_kind $INDEX_ENTITY_KIND \
-  --index.embedding_path $INDEX_EMBEDDINGS_PATH \
-  --index.embedding_format tab \
-  --index_sample_percent 90.0 \
-  --query_set_output.embedding_path $QUERY_SET_PATH \
-  --query_set_output.embedding_format tab \
-  --index_set_output.embedding_path $INDEX_SET_PATH \
-  --index_set_output.embedding_format tab \
-  --truth_set_output_path $TRUTH_SET_PATH \
-  --reducers 100
+  --screlonelonn --telonelon log.txt \
+  --hadoop-clielonnt-melonmory 6000 \
+  --hadoop-propelonrtielons "yarn.app.maprelonducelon.am.relonsourcelon.mb=6000;yarn.app.maprelonducelon.am.command-opts='-Xmx7500m';maprelonducelon.map.melonmory.mb=7500;maprelonducelon.relonducelon.java.opts='-Xmx6000m';maprelonducelon.relonducelon.melonmory.mb=7500;maprelond.task.timelonout=36000000;" \
+  --bundlelon ann-offlinelon-delonploy \
+  --min-split-sizelon 284217728 \
+  --host hadoopnelonst1.smf1.twittelonr.com \
+  --tool com.twittelonr.ann.scalding.offlinelon.KnnTruthSelontGelonnelonrator -- \
+  --nelonighbors $NelonIGHBOURS \
+  --melontric $MelonTRIC \
+  --quelonry_elonntity_kind $QUelonRY_elonNTITY_KIND \
+  --quelonry.elonmbelondding_path $QUelonRY_elonMBelonDDINGS_PATH \
+  --quelonry.elonmbelondding_format tab \
+  --quelonry_samplelon_pelonrcelonnt 50.0 \
+  --indelonx_elonntity_kind $INDelonX_elonNTITY_KIND \
+  --indelonx.elonmbelondding_path $INDelonX_elonMBelonDDINGS_PATH \
+  --indelonx.elonmbelondding_format tab \
+  --indelonx_samplelon_pelonrcelonnt 90.0 \
+  --quelonry_selont_output.elonmbelondding_path $QUelonRY_SelonT_PATH \
+  --quelonry_selont_output.elonmbelondding_format tab \
+  --indelonx_selont_output.elonmbelondding_path $INDelonX_SelonT_PATH \
+  --indelonx_selont_output.elonmbelondding_format tab \
+  --truth_selont_output_path $TRUTH_SelonT_PATH \
+  --relonducelonrs 100
 ```
 
-It will sample 90% of index set embeddings and 50% of query embeddings from total and then it will generate 3 datasets from the same that are index set, query set and true nearest neighbours from query to index in the tab format.
-`Note`: The reason for using high sample percent is due to the fact the sample embeddings dataset is small. For real use cases query set should be really small.
-Set `--reducers` according to the embeddings dataset size.
+It will samplelon 90% of indelonx selont elonmbelonddings and 50% of quelonry elonmbelonddings from total and thelonn it will gelonnelonratelon 3 dataselonts from thelon samelon that arelon indelonx selont, quelonry selont and truelon nelonarelonst nelonighbours from quelonry to indelonx in thelon tab format.
+`Notelon`: Thelon relonason for using high samplelon pelonrcelonnt is duelon to thelon fact thelon samplelon elonmbelonddings dataselont is small. For relonal uselon caselons quelonry selont should belon relonally small.
+Selont `--relonducelonrs` according to thelon elonmbelonddings dataselont sizelon.
 
 # FAQ
 
-There are multiple type of `query_id_type` and `index_id_type` that can be used. Some native types like string/int/long or related to entity embeddings
-like tweet/word/user/url... for more info: [Link](https://cgit.twitter.biz/source/tree/src/scala/com/twitter/cortex/ml/embeddings/common/EntityKind.scala#n8)
+Thelonrelon arelon multiplelon typelon of `quelonry_id_typelon` and `indelonx_id_typelon` that can belon uselond. Somelon nativelon typelons likelon string/int/long or relonlatelond to elonntity elonmbelonddings
+likelon twelonelont/word/uselonr/url... for morelon info: [Link](https://cgit.twittelonr.biz/sourcelon/trelonelon/src/scala/com/twittelonr/cortelonx/ml/elonmbelonddings/common/elonntityKind.scala#n8)

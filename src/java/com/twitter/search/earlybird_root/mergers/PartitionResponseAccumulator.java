@@ -1,44 +1,44 @@
-package com.twitter.search.earlybird_root.mergers;
+packagelon com.twittelonr.selonarch.elonarlybird_root.melonrgelonrs;
 
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselonCodelon;
 
 
-public final class PartitionResponseAccumulator extends ResponseAccumulator {
-  private static final String TARGET_TYPE_PARTITION = "partition";
+public final class PartitionRelonsponselonAccumulator elonxtelonnds RelonsponselonAccumulator {
+  privatelon static final String TARGelonT_TYPelon_PARTITION = "partition";
 
-  @Override
-  public String getNameForLogging(int responseIndex, int numTotalResponses) {
-    return TARGET_TYPE_PARTITION + responseIndex;
+  @Ovelonrridelon
+  public String gelontNamelonForLogging(int relonsponselonIndelonx, int numTotalRelonsponselons) {
+    relonturn TARGelonT_TYPelon_PARTITION + relonsponselonIndelonx;
   }
 
-  @Override
-  public String getNameForEarlybirdResponseCodeStats(int responseIndex, int numTotalResponses) {
-    // We do not need to differentiate between partitions: we just want to get the number of
-    // responses returned by Earlybirds, for each EarlybirdResponseCode.
-    return TARGET_TYPE_PARTITION;
+  @Ovelonrridelon
+  public String gelontNamelonForelonarlybirdRelonsponselonCodelonStats(int relonsponselonIndelonx, int numTotalRelonsponselons) {
+    // Welon do not nelonelond to diffelonrelonntiatelon belontwelonelonn partitions: welon just want to gelont thelon numbelonr of
+    // relonsponselons relonturnelond by elonarlybirds, for elonach elonarlybirdRelonsponselonCodelon.
+    relonturn TARGelonT_TYPelon_PARTITION;
   }
 
-  @Override
-  boolean shouldEarlyTerminateMerge(EarlyTerminateTierMergePredicate merger) {
-    return false;
+  @Ovelonrridelon
+  boolelonan shouldelonarlyTelonrminatelonMelonrgelon(elonarlyTelonrminatelonTielonrMelonrgelonPrelondicatelon melonrgelonr) {
+    relonturn falselon;
   }
 
-  @Override
-  public void handleSkippedResponse(EarlybirdResponseCode responseCode) { }
+  @Ovelonrridelon
+  public void handlelonSkippelondRelonsponselon(elonarlybirdRelonsponselonCodelon relonsponselonCodelon) { }
 
-  @Override
-  public void handleErrorResponse(EarlybirdResponse response) {
+  @Ovelonrridelon
+  public void handlelonelonrrorRelonsponselon(elonarlybirdRelonsponselon relonsponselon) {
   }
 
-  @Override
-  public AccumulatedResponses.PartitionCounts getPartitionCounts() {
-    return new AccumulatedResponses.PartitionCounts(getNumResponses(),
-        getSuccessResponses().size() + getSuccessfulEmptyResponseCount(), null);
+  @Ovelonrridelon
+  public AccumulatelondRelonsponselons.PartitionCounts gelontPartitionCounts() {
+    relonturn nelonw AccumulatelondRelonsponselons.PartitionCounts(gelontNumRelonsponselons(),
+        gelontSuccelonssRelonsponselons().sizelon() + gelontSuccelonssfulelonmptyRelonsponselonCount(), null);
   }
 
-  @Override
-  protected boolean isMergingAcrossTiers() {
-    return false;
+  @Ovelonrridelon
+  protelonctelond boolelonan isMelonrgingAcrossTielonrs() {
+    relonturn falselon;
   }
 }

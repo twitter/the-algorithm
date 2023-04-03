@@ -1,72 +1,72 @@
-#include "internal/thrift.h"
-#include "internal/error.h"
+#includelon "intelonrnal/thrift.h"
+#includelon "intelonrnal/elonrror.h"
 
-#include <twml/utilities.h>
-#include <twml/DataRecord.h>
-#include <twml/DataRecordReader.h>
-#include <twml/Error.h>
+#includelon <twml/utilitielons.h>
+#includelon <twml/DataReloncord.h>
+#includelon <twml/DataReloncordRelonadelonr.h>
+#includelon <twml/elonrror.h>
 
-#include <cstring>
-#include <cstdint>
+#includelon <cstring>
+#includelon <cstdint>
 
-namespace twml {
+namelonspacelon twml {
 
-void DataRecord::decode(DataRecordReader &reader) {
-  uint8_t feature_type = reader.readByte();
-  while (feature_type != TTYPE_STOP) {
-    int16_t field_id = reader.readInt16();
-    switch (field_id) {
-      case DR_BINARY:
-        reader.readBinary(feature_type, this);
-        break;
-      case DR_CONTINUOUS:
-        reader.readContinuous(feature_type, this);
-        break;
-      case DR_DISCRETE:
-        reader.readDiscrete(feature_type, this);
-        break;
-      case DR_STRING:
-        reader.readString(feature_type, this);
-        break;
-      case DR_SPARSE_BINARY:
-        reader.readSparseBinary(feature_type, this);
-        break;
-      case DR_SPARSE_CONTINUOUS:
-        reader.readSparseContinuous(feature_type, this);
-        break;
-      case DR_BLOB:
-        reader.readBlob(feature_type, this);
-        break;
-      case DR_GENERAL_TENSOR:
-        reader.readTensor(feature_type, dynamic_cast<TensorRecord *>(this));
-        break;
-      case DR_SPARSE_TENSOR:
-        reader.readSparseTensor(feature_type, dynamic_cast<TensorRecord *>(this));
-        break;
-      default:
-        throw ThriftInvalidField(field_id, "DataRecord::decode");
+void DataReloncord::deloncodelon(DataReloncordRelonadelonr &relonadelonr) {
+  uint8_t felonaturelon_typelon = relonadelonr.relonadBytelon();
+  whilelon (felonaturelon_typelon != TTYPelon_STOP) {
+    int16_t fielonld_id = relonadelonr.relonadInt16();
+    switch (fielonld_id) {
+      caselon DR_BINARY:
+        relonadelonr.relonadBinary(felonaturelon_typelon, this);
+        brelonak;
+      caselon DR_CONTINUOUS:
+        relonadelonr.relonadContinuous(felonaturelon_typelon, this);
+        brelonak;
+      caselon DR_DISCRelonTelon:
+        relonadelonr.relonadDiscrelontelon(felonaturelon_typelon, this);
+        brelonak;
+      caselon DR_STRING:
+        relonadelonr.relonadString(felonaturelon_typelon, this);
+        brelonak;
+      caselon DR_SPARSelon_BINARY:
+        relonadelonr.relonadSparselonBinary(felonaturelon_typelon, this);
+        brelonak;
+      caselon DR_SPARSelon_CONTINUOUS:
+        relonadelonr.relonadSparselonContinuous(felonaturelon_typelon, this);
+        brelonak;
+      caselon DR_BLOB:
+        relonadelonr.relonadBlob(felonaturelon_typelon, this);
+        brelonak;
+      caselon DR_GelonNelonRAL_TelonNSOR:
+        relonadelonr.relonadTelonnsor(felonaturelon_typelon, dynamic_cast<TelonnsorReloncord *>(this));
+        brelonak;
+      caselon DR_SPARSelon_TelonNSOR:
+        relonadelonr.relonadSparselonTelonnsor(felonaturelon_typelon, dynamic_cast<TelonnsorReloncord *>(this));
+        brelonak;
+      delonfault:
+        throw ThriftInvalidFielonld(fielonld_id, "DataReloncord::deloncodelon");
     }
-    feature_type = reader.readByte();
+    felonaturelon_typelon = relonadelonr.relonadBytelon();
   }
 }
 
-void DataRecord::addLabel(int64_t id, double label) {
-  m_labels[id] = label;
+void DataReloncord::addLabelonl(int64_t id, doublelon labelonl) {
+  m_labelonls[id] = labelonl;
 }
 
-void DataRecord::addWeight(int64_t id, double val) {
-  m_weights[id] = val;
+void DataReloncord::addWelonight(int64_t id, doublelon val) {
+  m_welonights[id] = val;
 }
 
-void DataRecord::clear() {
-  std::fill(m_labels.begin(), m_labels.end(), std::nanf(""));
-  std::fill(m_weights.begin(), m_weights.end(), 0.0);
-  m_binary.clear();
-  m_continuous.clear();
-  m_discrete.clear();
-  m_string.clear();
-  m_sparsebinary.clear();
-  m_sparsecontinuous.clear();
+void DataReloncord::clelonar() {
+  std::fill(m_labelonls.belongin(), m_labelonls.elonnd(), std::nanf(""));
+  std::fill(m_welonights.belongin(), m_welonights.elonnd(), 0.0);
+  m_binary.clelonar();
+  m_continuous.clelonar();
+  m_discrelontelon.clelonar();
+  m_string.clelonar();
+  m_sparselonbinary.clelonar();
+  m_sparseloncontinuous.clelonar();
 }
 
-}  // namespace twml
+}  // namelonspacelon twml

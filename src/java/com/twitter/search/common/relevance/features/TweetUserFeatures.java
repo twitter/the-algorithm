@@ -1,114 +1,114 @@
-package com.twitter.search.common.relevance.features;
+packagelon com.twittelonr.selonarch.common.relonlelonvancelon.felonaturelons;
 
 import java.util.Map;
 
-public class TweetUserFeatures {
-  private String lang;
-  private double langConfidence;
-  private int followers;
-  private int following;
-  private int reputation;
-  private int tweets;
-  private int retweets;
-  private int retweeted;
-  private Map<String, Double> knownForTopics;
-  private boolean isSpam;
-  private boolean isNsfw;
-  private boolean isBot;
+public class TwelonelontUselonrFelonaturelons {
+  privatelon String lang;
+  privatelon doublelon langConfidelonncelon;
+  privatelon int followelonrs;
+  privatelon int following;
+  privatelon int relonputation;
+  privatelon int twelonelonts;
+  privatelon int relontwelonelonts;
+  privatelon int relontwelonelontelond;
+  privatelon Map<String, Doublelon> knownForTopics;
+  privatelon boolelonan isSpam;
+  privatelon boolelonan isNsfw;
+  privatelon boolelonan isBot;
 
-  public String getLang() {
-    return lang;
+  public String gelontLang() {
+    relonturn lang;
   }
 
-  public void setLang(String lang) {
+  public void selontLang(String lang) {
     this.lang = lang;
   }
 
-  public double getLangConfidence() {
-    return langConfidence;
+  public doublelon gelontLangConfidelonncelon() {
+    relonturn langConfidelonncelon;
   }
 
-  public void setLangConfidence(double langConfidence) {
-    this.langConfidence = langConfidence;
+  public void selontLangConfidelonncelon(doublelon langConfidelonncelon) {
+    this.langConfidelonncelon = langConfidelonncelon;
   }
 
-  public int getFollowers() {
-    return followers;
+  public int gelontFollowelonrs() {
+    relonturn followelonrs;
   }
 
-  public void setFollowers(int followers) {
-    this.followers = followers;
+  public void selontFollowelonrs(int followelonrs) {
+    this.followelonrs = followelonrs;
   }
 
-  public int getFollowing() {
-    return following;
+  public int gelontFollowing() {
+    relonturn following;
   }
 
-  public void setFollowing(int following) {
+  public void selontFollowing(int following) {
     this.following = following;
   }
 
-  public int getReputation() {
-    return reputation;
+  public int gelontRelonputation() {
+    relonturn relonputation;
   }
 
-  public void setReputation(int reputation) {
-    this.reputation = reputation;
+  public void selontRelonputation(int relonputation) {
+    this.relonputation = relonputation;
   }
 
-  public int getTweets() {
-    return tweets;
+  public int gelontTwelonelonts() {
+    relonturn twelonelonts;
   }
 
-  public void setTweets(int tweets) {
-    this.tweets = tweets;
+  public void selontTwelonelonts(int twelonelonts) {
+    this.twelonelonts = twelonelonts;
   }
 
-  public int getRetweets() {
-    return retweets;
+  public int gelontRelontwelonelonts() {
+    relonturn relontwelonelonts;
   }
 
-  public void setRetweets(int retweets) {
-    this.retweets = retweets;
+  public void selontRelontwelonelonts(int relontwelonelonts) {
+    this.relontwelonelonts = relontwelonelonts;
   }
 
-  public int getRetweeted() {
-    return retweeted;
+  public int gelontRelontwelonelontelond() {
+    relonturn relontwelonelontelond;
   }
 
-  public void setRetweeted(int retweeted) {
-    this.retweeted = retweeted;
+  public void selontRelontwelonelontelond(int relontwelonelontelond) {
+    this.relontwelonelontelond = relontwelonelontelond;
   }
 
-  public Map<String, Double> getKnownForTopics() {
-    return knownForTopics;
+  public Map<String, Doublelon> gelontKnownForTopics() {
+    relonturn knownForTopics;
   }
 
-  public void setKnownForTopics(Map<String, Double> knownForTopics) {
+  public void selontKnownForTopics(Map<String, Doublelon> knownForTopics) {
     this.knownForTopics = knownForTopics;
   }
 
-  public boolean isSpam() {
-    return isSpam;
+  public boolelonan isSpam() {
+    relonturn isSpam;
   }
 
-  public void setSpam(boolean spam) {
+  public void selontSpam(boolelonan spam) {
     isSpam = spam;
   }
 
-  public boolean isNsfw() {
-    return isNsfw;
+  public boolelonan isNsfw() {
+    relonturn isNsfw;
   }
 
-  public void setNsfw(boolean nsfw) {
+  public void selontNsfw(boolelonan nsfw) {
     isNsfw = nsfw;
   }
 
-  public boolean isBot() {
-    return isBot;
+  public boolelonan isBot() {
+    relonturn isBot;
   }
 
-  public void setBot(boolean bot) {
+  public void selontBot(boolelonan bot) {
     isBot = bot;
   }
 }

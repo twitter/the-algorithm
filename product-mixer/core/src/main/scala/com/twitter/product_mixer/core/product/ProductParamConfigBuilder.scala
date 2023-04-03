@@ -1,21 +1,21 @@
-package com.twitter.product_mixer.core.product
+packagelon com.twittelonr.product_mixelonr.corelon.product
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.functional_component.configapi.registry.ParamConfigBuilder
-import com.twitter.servo.decider.DeciderGateBuilder
-import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil
-import com.twitter.timelines.configapi.OptionalOverride
-import com.twitter.timelines.configapi.decider.DeciderUtils
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.configapi.relongistry.ParamConfigBuildelonr
+import com.twittelonr.selonrvo.deloncidelonr.DeloncidelonrGatelonBuildelonr
+import com.twittelonr.timelonlinelons.configapi.FelonaturelonSwitchOvelonrridelonUtil
+import com.twittelonr.timelonlinelons.configapi.OptionalOvelonrridelon
+import com.twittelonr.timelonlinelons.configapi.deloncidelonr.DeloncidelonrUtils
 
-trait ProductParamConfigBuilder extends ParamConfigBuilder {
+trait ProductParamConfigBuildelonr elonxtelonnds ParamConfigBuildelonr {
   productParamConfig: ProductParamConfig =>
 
-  override def build(
-    deciderGateBuilder: DeciderGateBuilder,
-    statsReceiver: StatsReceiver
-  ): Seq[OptionalOverride[_]] = {
-    DeciderUtils.getBooleanDeciderOverrides(deciderGateBuilder, EnabledDeciderParam) ++
-      FeatureSwitchOverrideUtil.getBooleanFSOverrides(SupportedClientParam) ++
-      super.build(deciderGateBuilder, statsReceiver)
+  ovelonrridelon delonf build(
+    deloncidelonrGatelonBuildelonr: DeloncidelonrGatelonBuildelonr,
+    statsReloncelonivelonr: StatsReloncelonivelonr
+  ): Selonq[OptionalOvelonrridelon[_]] = {
+    DeloncidelonrUtils.gelontBoolelonanDeloncidelonrOvelonrridelons(deloncidelonrGatelonBuildelonr, elonnablelondDeloncidelonrParam) ++
+      FelonaturelonSwitchOvelonrridelonUtil.gelontBoolelonanFSOvelonrridelons(SupportelondClielonntParam) ++
+      supelonr.build(deloncidelonrGatelonBuildelonr, statsReloncelonivelonr)
   }
 }

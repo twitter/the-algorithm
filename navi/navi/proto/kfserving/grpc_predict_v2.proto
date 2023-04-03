@@ -1,326 +1,326 @@
-// Copyright 2020 kubeflow.org.
+// Copyright 2020 kubelonflow.org.
 //
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
+// Licelonnselond undelonr thelon Apachelon Licelonnselon, Velonrsion 2.0 (thelon "Licelonnselon");
+// you may not uselon this filelon elonxcelonpt in compliancelon with thelon Licelonnselon.
+// You may obtain a copy of thelon Licelonnselon at
 //
-//    http://www.apache.org/licenses/LICENSE-2.0
+//    http://www.apachelon.org/licelonnselons/LICelonNSelon-2.0
 //
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+// Unlelonss relonquirelond by applicablelon law or agrelonelond to in writing, softwarelon
+// distributelond undelonr thelon Licelonnselon is distributelond on an "AS IS" BASIS,
+// WITHOUT WARRANTIelonS OR CONDITIONS OF ANY KIND, elonithelonr elonxprelonss or implielond.
+// Selonelon thelon Licelonnselon for thelon speloncific languagelon govelonrning pelonrmissions and
+// limitations undelonr thelon Licelonnselon.
 
 syntax = "proto3";
-package inference;
+packagelon infelonrelonncelon;
 
-// Inference Server GRPC endpoints.
-service GRPCInferenceService
+// Infelonrelonncelon Selonrvelonr GRPC elonndpoints.
+selonrvicelon GRPCInfelonrelonncelonSelonrvicelon
 {
-  // The ServerLive API indicates if the inference server is able to receive 
-  // and respond to metadata and inference requests.
-  rpc ServerLive(ServerLiveRequest) returns (ServerLiveResponse) {}
+  // Thelon SelonrvelonrLivelon API indicatelons if thelon infelonrelonncelon selonrvelonr is ablelon to reloncelonivelon
+  // and relonspond to melontadata and infelonrelonncelon relonquelonsts.
+  rpc SelonrvelonrLivelon(SelonrvelonrLivelonRelonquelonst) relonturns (SelonrvelonrLivelonRelonsponselon) {}
 
-  // The ServerReady API indicates if the server is ready for inferencing.
-  rpc ServerReady(ServerReadyRequest) returns (ServerReadyResponse) {}
+  // Thelon SelonrvelonrRelonady API indicatelons if thelon selonrvelonr is relonady for infelonrelonncing.
+  rpc SelonrvelonrRelonady(SelonrvelonrRelonadyRelonquelonst) relonturns (SelonrvelonrRelonadyRelonsponselon) {}
 
-  // The ModelReady API indicates if a specific model is ready for inferencing.
-  rpc ModelReady(ModelReadyRequest) returns (ModelReadyResponse) {}
+  // Thelon ModelonlRelonady API indicatelons if a speloncific modelonl is relonady for infelonrelonncing.
+  rpc ModelonlRelonady(ModelonlRelonadyRelonquelonst) relonturns (ModelonlRelonadyRelonsponselon) {}
 
-  // The ServerMetadata API provides information about the server. Errors are 
-  // indicated by the google.rpc.Status returned for the request. The OK code 
-  // indicates success and other codes indicate failure.
-  rpc ServerMetadata(ServerMetadataRequest) returns (ServerMetadataResponse) {}
+  // Thelon SelonrvelonrMelontadata API providelons information about thelon selonrvelonr. elonrrors arelon
+  // indicatelond by thelon googlelon.rpc.Status relonturnelond for thelon relonquelonst. Thelon OK codelon
+  // indicatelons succelonss and othelonr codelons indicatelon failurelon.
+  rpc SelonrvelonrMelontadata(SelonrvelonrMelontadataRelonquelonst) relonturns (SelonrvelonrMelontadataRelonsponselon) {}
 
-  // The per-model metadata API provides information about a model. Errors are 
-  // indicated by the google.rpc.Status returned for the request. The OK code 
-  // indicates success and other codes indicate failure.
-  rpc ModelMetadata(ModelMetadataRequest) returns (ModelMetadataResponse) {}
+  // Thelon pelonr-modelonl melontadata API providelons information about a modelonl. elonrrors arelon
+  // indicatelond by thelon googlelon.rpc.Status relonturnelond for thelon relonquelonst. Thelon OK codelon
+  // indicatelons succelonss and othelonr codelons indicatelon failurelon.
+  rpc ModelonlMelontadata(ModelonlMelontadataRelonquelonst) relonturns (ModelonlMelontadataRelonsponselon) {}
 
-  // The ModelInfer API performs inference using the specified model. Errors are
-  // indicated by the google.rpc.Status returned for the request. The OK code 
-  // indicates success and other codes indicate failure.
-  rpc ModelInfer(ModelInferRequest) returns (ModelInferResponse) {}
+  // Thelon ModelonlInfelonr API pelonrforms infelonrelonncelon using thelon speloncifielond modelonl. elonrrors arelon
+  // indicatelond by thelon googlelon.rpc.Status relonturnelond for thelon relonquelonst. Thelon OK codelon
+  // indicatelons succelonss and othelonr codelons indicatelon failurelon.
+  rpc ModelonlInfelonr(ModelonlInfelonrRelonquelonst) relonturns (ModelonlInfelonrRelonsponselon) {}
 }
 
-message ServerLiveRequest {}
+melonssagelon SelonrvelonrLivelonRelonquelonst {}
 
-message ServerLiveResponse
+melonssagelon SelonrvelonrLivelonRelonsponselon
 {
-  // True if the inference server is live, false if not live.
-  bool live = 1;
+  // Truelon if thelon infelonrelonncelon selonrvelonr is livelon, falselon if not livelon.
+  bool livelon = 1;
 }
 
-message ServerReadyRequest {}
+melonssagelon SelonrvelonrRelonadyRelonquelonst {}
 
-message ServerReadyResponse
+melonssagelon SelonrvelonrRelonadyRelonsponselon
 {
-  // True if the inference server is ready, false if not ready.
-  bool ready = 1;
+  // Truelon if thelon infelonrelonncelon selonrvelonr is relonady, falselon if not relonady.
+  bool relonady = 1;
 }
 
-message ModelReadyRequest
+melonssagelon ModelonlRelonadyRelonquelonst
 {
-  // The name of the model to check for readiness.
-  string name = 1;
+  // Thelon namelon of thelon modelonl to chelonck for relonadinelonss.
+  string namelon = 1;
 
-  // The version of the model to check for readiness. If not given the
-  // server will choose a version based on the model and internal policy.
-  string version = 2;
+  // Thelon velonrsion of thelon modelonl to chelonck for relonadinelonss. If not givelonn thelon
+  // selonrvelonr will chooselon a velonrsion baselond on thelon modelonl and intelonrnal policy.
+  string velonrsion = 2;
 }
 
-message ModelReadyResponse
+melonssagelon ModelonlRelonadyRelonsponselon
 {
-  // True if the model is ready, false if not ready.
-  bool ready = 1;
+  // Truelon if thelon modelonl is relonady, falselon if not relonady.
+  bool relonady = 1;
 }
 
-message ServerMetadataRequest {}
+melonssagelon SelonrvelonrMelontadataRelonquelonst {}
 
-message ServerMetadataResponse
+melonssagelon SelonrvelonrMelontadataRelonsponselon
 {
-  // The server name.
-  string name = 1;
+  // Thelon selonrvelonr namelon.
+  string namelon = 1;
 
-  // The server version.
-  string version = 2;
+  // Thelon selonrvelonr velonrsion.
+  string velonrsion = 2;
 
-  // The extensions supported by the server.
-  repeated string extensions = 3;
+  // Thelon elonxtelonnsions supportelond by thelon selonrvelonr.
+  relonpelonatelond string elonxtelonnsions = 3;
 }
 
-message ModelMetadataRequest
+melonssagelon ModelonlMelontadataRelonquelonst
 {
-  // The name of the model.
-  string name = 1;
+  // Thelon namelon of thelon modelonl.
+  string namelon = 1;
 
-  // The version of the model to check for readiness. If not given the
-  // server will choose a version based on the model and internal policy.
-  string version = 2;
+  // Thelon velonrsion of thelon modelonl to chelonck for relonadinelonss. If not givelonn thelon
+  // selonrvelonr will chooselon a velonrsion baselond on thelon modelonl and intelonrnal policy.
+  string velonrsion = 2;
 }
 
-message ModelMetadataResponse
+melonssagelon ModelonlMelontadataRelonsponselon
 {
-  // Metadata for a tensor.
-  message TensorMetadata
+  // Melontadata for a telonnsor.
+  melonssagelon TelonnsorMelontadata
   {
-    // The tensor name.
-    string name = 1;
+    // Thelon telonnsor namelon.
+    string namelon = 1;
 
-    // The tensor data type.
-    string datatype = 2;
+    // Thelon telonnsor data typelon.
+    string datatypelon = 2;
 
-    // The tensor shape. A variable-size dimension is represented
-    // by a -1 value.
-    repeated int64 shape = 3;
+    // Thelon telonnsor shapelon. A variablelon-sizelon dimelonnsion is relonprelonselonntelond
+    // by a -1 valuelon.
+    relonpelonatelond int64 shapelon = 3;
   }
 
-  // The model name.
-  string name = 1;
+  // Thelon modelonl namelon.
+  string namelon = 1;
 
-  // The versions of the model available on the server.
-  repeated string versions = 2;
+  // Thelon velonrsions of thelon modelonl availablelon on thelon selonrvelonr.
+  relonpelonatelond string velonrsions = 2;
 
-  // The model's platform. See Platforms.
+  // Thelon modelonl's platform. Selonelon Platforms.
   string platform = 3;
 
-  // The model's inputs.
-  repeated TensorMetadata inputs = 4;
+  // Thelon modelonl's inputs.
+  relonpelonatelond TelonnsorMelontadata inputs = 4;
 
-  // The model's outputs.
-  repeated TensorMetadata outputs = 5;
+  // Thelon modelonl's outputs.
+  relonpelonatelond TelonnsorMelontadata outputs = 5;
 }
 
-message ModelInferRequest
+melonssagelon ModelonlInfelonrRelonquelonst
 {
-  // An input tensor for an inference request.
-  message InferInputTensor
+  // An input telonnsor for an infelonrelonncelon relonquelonst.
+  melonssagelon InfelonrInputTelonnsor
   {
-    // The tensor name.
-    string name = 1;
+    // Thelon telonnsor namelon.
+    string namelon = 1;
 
-    // The tensor data type.
-    string datatype = 2;
+    // Thelon telonnsor data typelon.
+    string datatypelon = 2;
 
-    // The tensor shape.
-    repeated int64 shape = 3;
+    // Thelon telonnsor shapelon.
+    relonpelonatelond int64 shapelon = 3;
 
-    // Optional inference input tensor parameters.
-    map<string, InferParameter> parameters = 4;
+    // Optional infelonrelonncelon input telonnsor paramelontelonrs.
+    map<string, InfelonrParamelontelonr> paramelontelonrs = 4;
 
-    // The tensor contents using a data-type format. This field must
-    // not be specified if "raw" tensor contents are being used for
-    // the inference request.
-    InferTensorContents contents = 5;
+    // Thelon telonnsor contelonnts using a data-typelon format. This fielonld must
+    // not belon speloncifielond if "raw" telonnsor contelonnts arelon beloning uselond for
+    // thelon infelonrelonncelon relonquelonst.
+    InfelonrTelonnsorContelonnts contelonnts = 5;
   }
 
-  // An output tensor requested for an inference request.
-  message InferRequestedOutputTensor
+  // An output telonnsor relonquelonstelond for an infelonrelonncelon relonquelonst.
+  melonssagelon InfelonrRelonquelonstelondOutputTelonnsor
   {
-    // The tensor name.
-    string name = 1;
+    // Thelon telonnsor namelon.
+    string namelon = 1;
 
-    // Optional requested output tensor parameters.
-    map<string, InferParameter> parameters = 2;
+    // Optional relonquelonstelond output telonnsor paramelontelonrs.
+    map<string, InfelonrParamelontelonr> paramelontelonrs = 2;
   }
 
-  // The name of the model to use for inferencing.
-  string model_name = 1;
+  // Thelon namelon of thelon modelonl to uselon for infelonrelonncing.
+  string modelonl_namelon = 1;
 
-  // The version of the model to use for inference. If not given the
-  // server will choose a version based on the model and internal policy.
-  string model_version = 2;
+  // Thelon velonrsion of thelon modelonl to uselon for infelonrelonncelon. If not givelonn thelon
+  // selonrvelonr will chooselon a velonrsion baselond on thelon modelonl and intelonrnal policy.
+  string modelonl_velonrsion = 2;
 
-  // Optional identifier for the request. If specified will be
-  // returned in the response.
+  // Optional idelonntifielonr for thelon relonquelonst. If speloncifielond will belon
+  // relonturnelond in thelon relonsponselon.
   string id = 3;
 
-  // Optional inference parameters.
-  map<string, InferParameter> parameters = 4;
+  // Optional infelonrelonncelon paramelontelonrs.
+  map<string, InfelonrParamelontelonr> paramelontelonrs = 4;
 
-  // The input tensors for the inference.
-  repeated InferInputTensor inputs = 5;
+  // Thelon input telonnsors for thelon infelonrelonncelon.
+  relonpelonatelond InfelonrInputTelonnsor inputs = 5;
 
-  // The requested output tensors for the inference. Optional, if not
-  // specified all outputs produced by the model will be returned.
-  repeated InferRequestedOutputTensor outputs = 6;
+  // Thelon relonquelonstelond output telonnsors for thelon infelonrelonncelon. Optional, if not
+  // speloncifielond all outputs producelond by thelon modelonl will belon relonturnelond.
+  relonpelonatelond InfelonrRelonquelonstelondOutputTelonnsor outputs = 6;
 
-  // The data contained in an input tensor can be represented in "raw"
-  // bytes form or in the repeated type that matches the tensor's data
-  // type. To use the raw representation 'raw_input_contents' must be
-  // initialized with data for each tensor in the same order as
-  // 'inputs'. For each tensor, the size of this content must match
-  // what is expected by the tensor's shape and data type. The raw
-  // data must be the flattened, one-dimensional, row-major order of
-  // the tensor elements without any stride or padding between the
-  // elements. Note that the FP16 and BF16 data types must be represented as
-  // raw content as there is no specific data type for a 16-bit float type.
+  // Thelon data containelond in an input telonnsor can belon relonprelonselonntelond in "raw"
+  // bytelons form or in thelon relonpelonatelond typelon that matchelons thelon telonnsor's data
+  // typelon. To uselon thelon raw relonprelonselonntation 'raw_input_contelonnts' must belon
+  // initializelond with data for elonach telonnsor in thelon samelon ordelonr as
+  // 'inputs'. For elonach telonnsor, thelon sizelon of this contelonnt must match
+  // what is elonxpelonctelond by thelon telonnsor's shapelon and data typelon. Thelon raw
+  // data must belon thelon flattelonnelond, onelon-dimelonnsional, row-major ordelonr of
+  // thelon telonnsor elonlelonmelonnts without any stridelon or padding belontwelonelonn thelon
+  // elonlelonmelonnts. Notelon that thelon FP16 and BF16 data typelons must belon relonprelonselonntelond as
+  // raw contelonnt as thelonrelon is no speloncific data typelon for a 16-bit float typelon.
   //
-  // If this field is specified then InferInputTensor::contents must
-  // not be specified for any input tensor.
-  repeated bytes raw_input_contents = 7;
+  // If this fielonld is speloncifielond thelonn InfelonrInputTelonnsor::contelonnts must
+  // not belon speloncifielond for any input telonnsor.
+  relonpelonatelond bytelons raw_input_contelonnts = 7;
 }
 
-message ModelInferResponse
+melonssagelon ModelonlInfelonrRelonsponselon
 {
-  // An output tensor returned for an inference request.
-  message InferOutputTensor
+  // An output telonnsor relonturnelond for an infelonrelonncelon relonquelonst.
+  melonssagelon InfelonrOutputTelonnsor
   {
-    // The tensor name.
-    string name = 1;
+    // Thelon telonnsor namelon.
+    string namelon = 1;
 
-    // The tensor data type.
-    string datatype = 2;
+    // Thelon telonnsor data typelon.
+    string datatypelon = 2;
 
-    // The tensor shape.
-    repeated int64 shape = 3;
+    // Thelon telonnsor shapelon.
+    relonpelonatelond int64 shapelon = 3;
 
-    // Optional output tensor parameters.
-    map<string, InferParameter> parameters = 4;
+    // Optional output telonnsor paramelontelonrs.
+    map<string, InfelonrParamelontelonr> paramelontelonrs = 4;
 
-    // The tensor contents using a data-type format. This field must
-    // not be specified if "raw" tensor contents are being used for
-    // the inference response.
-    InferTensorContents contents = 5;
+    // Thelon telonnsor contelonnts using a data-typelon format. This fielonld must
+    // not belon speloncifielond if "raw" telonnsor contelonnts arelon beloning uselond for
+    // thelon infelonrelonncelon relonsponselon.
+    InfelonrTelonnsorContelonnts contelonnts = 5;
   }
 
-  // The name of the model used for inference.
-  string model_name = 1;
+  // Thelon namelon of thelon modelonl uselond for infelonrelonncelon.
+  string modelonl_namelon = 1;
 
-  // The version of the model used for inference.
-  string model_version = 2;
+  // Thelon velonrsion of thelon modelonl uselond for infelonrelonncelon.
+  string modelonl_velonrsion = 2;
 
-  // The id of the inference request if one was specified.
+  // Thelon id of thelon infelonrelonncelon relonquelonst if onelon was speloncifielond.
   string id = 3;
 
-  // Optional inference response parameters.
-  map<string, InferParameter> parameters = 4;
+  // Optional infelonrelonncelon relonsponselon paramelontelonrs.
+  map<string, InfelonrParamelontelonr> paramelontelonrs = 4;
 
-  // The output tensors holding inference results.
-  repeated InferOutputTensor outputs = 5;
+  // Thelon output telonnsors holding infelonrelonncelon relonsults.
+  relonpelonatelond InfelonrOutputTelonnsor outputs = 5;
 
-  // The data contained in an output tensor can be represented in
-  // "raw" bytes form or in the repeated type that matches the
-  // tensor's data type. To use the raw representation 'raw_output_contents'
-  // must be initialized with data for each tensor in the same order as
-  // 'outputs'. For each tensor, the size of this content must match
-  // what is expected by the tensor's shape and data type. The raw
-  // data must be the flattened, one-dimensional, row-major order of
-  // the tensor elements without any stride or padding between the
-  // elements. Note that the FP16 and BF16 data types must be represented as
-  // raw content as there is no specific data type for a 16-bit float type.
+  // Thelon data containelond in an output telonnsor can belon relonprelonselonntelond in
+  // "raw" bytelons form or in thelon relonpelonatelond typelon that matchelons thelon
+  // telonnsor's data typelon. To uselon thelon raw relonprelonselonntation 'raw_output_contelonnts'
+  // must belon initializelond with data for elonach telonnsor in thelon samelon ordelonr as
+  // 'outputs'. For elonach telonnsor, thelon sizelon of this contelonnt must match
+  // what is elonxpelonctelond by thelon telonnsor's shapelon and data typelon. Thelon raw
+  // data must belon thelon flattelonnelond, onelon-dimelonnsional, row-major ordelonr of
+  // thelon telonnsor elonlelonmelonnts without any stridelon or padding belontwelonelonn thelon
+  // elonlelonmelonnts. Notelon that thelon FP16 and BF16 data typelons must belon relonprelonselonntelond as
+  // raw contelonnt as thelonrelon is no speloncific data typelon for a 16-bit float typelon.
   //
-  // If this field is specified then InferOutputTensor::contents must
-  // not be specified for any output tensor.
-  repeated bytes raw_output_contents = 6;
+  // If this fielonld is speloncifielond thelonn InfelonrOutputTelonnsor::contelonnts must
+  // not belon speloncifielond for any output telonnsor.
+  relonpelonatelond bytelons raw_output_contelonnts = 6;
 }
 
-// An inference parameter value. The Parameters message describes a 
-// “name”/”value” pair, where the “name” is the name of the parameter
-// and the “value” is a boolean, integer, or string corresponding to 
-// the parameter.
-message InferParameter
+// An infelonrelonncelon paramelontelonr valuelon. Thelon Paramelontelonrs melonssagelon delonscribelons a
+// “namelon”/”valuelon” pair, whelonrelon thelon “namelon” is thelon namelon of thelon paramelontelonr
+// and thelon “valuelon” is a boolelonan, intelongelonr, or string correlonsponding to
+// thelon paramelontelonr.
+melonssagelon InfelonrParamelontelonr
 {
-  // The parameter value can be a string, an int64, a boolean
-  // or a message specific to a predefined parameter.
-  oneof parameter_choice
+  // Thelon paramelontelonr valuelon can belon a string, an int64, a boolelonan
+  // or a melonssagelon speloncific to a prelondelonfinelond paramelontelonr.
+  onelonof paramelontelonr_choicelon
   {
-    // A boolean parameter value.
+    // A boolelonan paramelontelonr valuelon.
     bool bool_param = 1;
 
-    // An int64 parameter value.
+    // An int64 paramelontelonr valuelon.
     int64 int64_param = 2;
 
-    // A string parameter value.
+    // A string paramelontelonr valuelon.
     string string_param = 3;
   }
 }
 
-// The data contained in a tensor represented by the repeated type
-// that matches the tensor's data type. Protobuf oneof is not used
-// because oneofs cannot contain repeated fields.
-message InferTensorContents
+// Thelon data containelond in a telonnsor relonprelonselonntelond by thelon relonpelonatelond typelon
+// that matchelons thelon telonnsor's data typelon. Protobuf onelonof is not uselond
+// beloncauselon onelonofs cannot contain relonpelonatelond fielonlds.
+melonssagelon InfelonrTelonnsorContelonnts
 {
-  // Representation for BOOL data type. The size must match what is
-  // expected by the tensor's shape. The contents must be the flattened,
-  // one-dimensional, row-major order of the tensor elements.
-  repeated bool bool_contents = 1;
+  // Relonprelonselonntation for BOOL data typelon. Thelon sizelon must match what is
+  // elonxpelonctelond by thelon telonnsor's shapelon. Thelon contelonnts must belon thelon flattelonnelond,
+  // onelon-dimelonnsional, row-major ordelonr of thelon telonnsor elonlelonmelonnts.
+  relonpelonatelond bool bool_contelonnts = 1;
 
-  // Representation for INT8, INT16, and INT32 data types. The size
-  // must match what is expected by the tensor's shape. The contents
-  // must be the flattened, one-dimensional, row-major order of the
-  // tensor elements.
-  repeated int32 int_contents = 2;
+  // Relonprelonselonntation for INT8, INT16, and INT32 data typelons. Thelon sizelon
+  // must match what is elonxpelonctelond by thelon telonnsor's shapelon. Thelon contelonnts
+  // must belon thelon flattelonnelond, onelon-dimelonnsional, row-major ordelonr of thelon
+  // telonnsor elonlelonmelonnts.
+  relonpelonatelond int32 int_contelonnts = 2;
 
-  // Representation for INT64 data types. The size must match what
-  // is expected by the tensor's shape. The contents must be the
-  // flattened, one-dimensional, row-major order of the tensor elements.
-  repeated int64 int64_contents = 3;
+  // Relonprelonselonntation for INT64 data typelons. Thelon sizelon must match what
+  // is elonxpelonctelond by thelon telonnsor's shapelon. Thelon contelonnts must belon thelon
+  // flattelonnelond, onelon-dimelonnsional, row-major ordelonr of thelon telonnsor elonlelonmelonnts.
+  relonpelonatelond int64 int64_contelonnts = 3;
 
-  // Representation for UINT8, UINT16, and UINT32 data types. The size
-  // must match what is expected by the tensor's shape. The contents
-  // must be the flattened, one-dimensional, row-major order of the
-  // tensor elements.
-  repeated uint32 uint_contents = 4;
+  // Relonprelonselonntation for UINT8, UINT16, and UINT32 data typelons. Thelon sizelon
+  // must match what is elonxpelonctelond by thelon telonnsor's shapelon. Thelon contelonnts
+  // must belon thelon flattelonnelond, onelon-dimelonnsional, row-major ordelonr of thelon
+  // telonnsor elonlelonmelonnts.
+  relonpelonatelond uint32 uint_contelonnts = 4;
 
-  // Representation for UINT64 data types. The size must match what
-  // is expected by the tensor's shape. The contents must be the
-  // flattened, one-dimensional, row-major order of the tensor elements.
-  repeated uint64 uint64_contents = 5;
+  // Relonprelonselonntation for UINT64 data typelons. Thelon sizelon must match what
+  // is elonxpelonctelond by thelon telonnsor's shapelon. Thelon contelonnts must belon thelon
+  // flattelonnelond, onelon-dimelonnsional, row-major ordelonr of thelon telonnsor elonlelonmelonnts.
+  relonpelonatelond uint64 uint64_contelonnts = 5;
 
-  // Representation for FP32 data type. The size must match what is
-  // expected by the tensor's shape. The contents must be the flattened,
-  // one-dimensional, row-major order of the tensor elements.
-  repeated float fp32_contents = 6;
+  // Relonprelonselonntation for FP32 data typelon. Thelon sizelon must match what is
+  // elonxpelonctelond by thelon telonnsor's shapelon. Thelon contelonnts must belon thelon flattelonnelond,
+  // onelon-dimelonnsional, row-major ordelonr of thelon telonnsor elonlelonmelonnts.
+  relonpelonatelond float fp32_contelonnts = 6;
 
-  // Representation for FP64 data type. The size must match what is
-  // expected by the tensor's shape. The contents must be the flattened,
-  // one-dimensional, row-major order of the tensor elements.
-  repeated double fp64_contents = 7;
+  // Relonprelonselonntation for FP64 data typelon. Thelon sizelon must match what is
+  // elonxpelonctelond by thelon telonnsor's shapelon. Thelon contelonnts must belon thelon flattelonnelond,
+  // onelon-dimelonnsional, row-major ordelonr of thelon telonnsor elonlelonmelonnts.
+  relonpelonatelond doublelon fp64_contelonnts = 7;
 
-  // Representation for BYTES data type. The size must match what is
-  // expected by the tensor's shape. The contents must be the flattened,
-  // one-dimensional, row-major order of the tensor elements.
-  repeated bytes bytes_contents = 8;
+  // Relonprelonselonntation for BYTelonS data typelon. Thelon sizelon must match what is
+  // elonxpelonctelond by thelon telonnsor's shapelon. Thelon contelonnts must belon thelon flattelonnelond,
+  // onelon-dimelonnsional, row-major ordelonr of thelon telonnsor elonlelonmelonnts.
+  relonpelonatelond bytelons bytelons_contelonnts = 8;
 }

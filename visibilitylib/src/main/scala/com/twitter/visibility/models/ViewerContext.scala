@@ -1,53 +1,53 @@
-package com.twitter.visibility.models
+packagelon com.twittelonr.visibility.modelonls
 
-import com.twitter.context.TwitterContext
-import com.twitter.context.thriftscala.Viewer
-import com.twitter.featureswitches.{UserAgent => FSUserAgent}
-import com.twitter.finatra.request.util.AddressUtils
+import com.twittelonr.contelonxt.TwittelonrContelonxt
+import com.twittelonr.contelonxt.thriftscala.Vielonwelonr
+import com.twittelonr.felonaturelonswitchelons.{UselonrAgelonnt => FSUselonrAgelonnt}
+import com.twittelonr.finatra.relonquelonst.util.AddrelonssUtils
 
-case class ViewerContext(
-  userId: Option[Long] = None,
-  guestId: Option[Long] = None,
-  userAgentStr: Option[String] = None,
-  clientApplicationId: Option[Long] = None,
+caselon class VielonwelonrContelonxt(
+  uselonrId: Option[Long] = Nonelon,
+  guelonstId: Option[Long] = Nonelon,
+  uselonrAgelonntStr: Option[String] = Nonelon,
+  clielonntApplicationId: Option[Long] = Nonelon,
   auditIp: String = "0.0.0.0",
-  requestCountryCode: Option[String] = None,
-  requestLanguageCode: Option[String] = None,
-  deviceId: Option[String] = None,
-  ipTags: Set[String] = Set.empty,
-  isVerifiedCrawler: Boolean = false,
-  userRoles: Option[Set[String]] = None) {
-  val fsUserAgent: Option[FSUserAgent] = userAgentStr.flatMap(ua => FSUserAgent(userAgent = ua))
+  relonquelonstCountryCodelon: Option[String] = Nonelon,
+  relonquelonstLanguagelonCodelon: Option[String] = Nonelon,
+  delonvicelonId: Option[String] = Nonelon,
+  ipTags: Selont[String] = Selont.elonmpty,
+  isVelonrifielondCrawlelonr: Boolelonan = falselon,
+  uselonrRolelons: Option[Selont[String]] = Nonelon) {
+  val fsUselonrAgelonnt: Option[FSUselonrAgelonnt] = uselonrAgelonntStr.flatMap(ua => FSUselonrAgelonnt(uselonrAgelonnt = ua))
 
-  val isTwOffice: Boolean = ipTags.contains(AddressUtils.TwofficeIpTag)
+  val isTwOfficelon: Boolelonan = ipTags.contains(AddrelonssUtils.TwofficelonIpTag)
 }
 
-object ViewerContext {
-  def fromContext: ViewerContext = viewerContext.getOrElse(ViewerContext())
+objelonct VielonwelonrContelonxt {
+  delonf fromContelonxt: VielonwelonrContelonxt = vielonwelonrContelonxt.gelontOrelonlselon(VielonwelonrContelonxt())
 
-  def fromContextWithViewerIdFallback(viewerId: Option[Long]): ViewerContext =
-    viewerContext
-      .map { viewer =>
-        if (viewer.userId.isEmpty) {
-          viewer.copy(userId = viewerId)
-        } else {
-          viewer
+  delonf fromContelonxtWithVielonwelonrIdFallback(vielonwelonrId: Option[Long]): VielonwelonrContelonxt =
+    vielonwelonrContelonxt
+      .map { vielonwelonr =>
+        if (vielonwelonr.uselonrId.iselonmpty) {
+          vielonwelonr.copy(uselonrId = vielonwelonrId)
+        } elonlselon {
+          vielonwelonr
         }
-      }.getOrElse(ViewerContext(viewerId))
+      }.gelontOrelonlselon(VielonwelonrContelonxt(vielonwelonrId))
 
-  private def viewerContext: Option[ViewerContext] =
-    TwitterContext(TwitterContextPermit)().map(apply)
+  privatelon delonf vielonwelonrContelonxt: Option[VielonwelonrContelonxt] =
+    TwittelonrContelonxt(TwittelonrContelonxtPelonrmit)().map(apply)
 
-  def apply(viewer: Viewer): ViewerContext = new ViewerContext(
-    userId = viewer.userId,
-    guestId = viewer.guestId,
-    userAgentStr = viewer.userAgent,
-    clientApplicationId = viewer.clientApplicationId,
-    auditIp = viewer.auditIp.getOrElse("0.0.0.0"),
-    requestCountryCode = viewer.requestCountryCode collect { case value => value.toLowerCase },
-    requestLanguageCode = viewer.requestLanguageCode collect { case value => value.toLowerCase },
-    deviceId = viewer.deviceId,
-    ipTags = viewer.ipTags.toSet,
-    isVerifiedCrawler = viewer.isVerifiedCrawler.getOrElse(false)
+  delonf apply(vielonwelonr: Vielonwelonr): VielonwelonrContelonxt = nelonw VielonwelonrContelonxt(
+    uselonrId = vielonwelonr.uselonrId,
+    guelonstId = vielonwelonr.guelonstId,
+    uselonrAgelonntStr = vielonwelonr.uselonrAgelonnt,
+    clielonntApplicationId = vielonwelonr.clielonntApplicationId,
+    auditIp = vielonwelonr.auditIp.gelontOrelonlselon("0.0.0.0"),
+    relonquelonstCountryCodelon = vielonwelonr.relonquelonstCountryCodelon collelonct { caselon valuelon => valuelon.toLowelonrCaselon },
+    relonquelonstLanguagelonCodelon = vielonwelonr.relonquelonstLanguagelonCodelon collelonct { caselon valuelon => valuelon.toLowelonrCaselon },
+    delonvicelonId = vielonwelonr.delonvicelonId,
+    ipTags = vielonwelonr.ipTags.toSelont,
+    isVelonrifielondCrawlelonr = vielonwelonr.isVelonrifielondCrawlelonr.gelontOrelonlselon(falselon)
   )
 }

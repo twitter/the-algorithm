@@ -1,65 +1,65 @@
-package com.twitter.home_mixer.functional_component.side_effect
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.sidelon_elonffelonct
 
-import com.twitter.home_mixer.model.HomeFeatures.TweetImpressionsFeature
-import com.twitter.home_mixer.model.request.HasSeenTweetIds
-import com.twitter.home_mixer.service.HomeMixerAlertConfig
-import com.twitter.product_mixer.core.functional_component.side_effect.PipelineResultSideEffect
-import com.twitter.product_mixer.core.model.common.identifier.SideEffectIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.marshalling.HasMarshalling
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.impression.{thriftscala => t}
-import com.twitter.timelines.impressionstore.store.ManhattanTweetImpressionStoreClient
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.TwelonelontImprelonssionsFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.relonquelonst.HasSelonelonnTwelonelontIds
+import com.twittelonr.homelon_mixelonr.selonrvicelon.HomelonMixelonrAlelonrtConfig
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.sidelon_elonffelonct.PipelonlinelonRelonsultSidelonelonffelonct
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.SidelonelonffelonctIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.HasMarshalling
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.timelonlinelons.imprelonssion.{thriftscala => t}
+import com.twittelonr.timelonlinelons.imprelonssionstorelon.storelon.ManhattanTwelonelontImprelonssionStorelonClielonnt
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
 /**
- * Side effect that updates the timelines tweet impression
- * store (Manhattan) with seen tweet IDs sent from clients
+ * Sidelon elonffelonct that updatelons thelon timelonlinelons twelonelont imprelonssion
+ * storelon (Manhattan) with selonelonn twelonelont IDs selonnt from clielonnts
  */
-@Singleton
-class PublishClientSentImpressionsManhattanSideEffect @Inject() (
-  manhattanTweetImpressionStoreClient: ManhattanTweetImpressionStoreClient)
-    extends PipelineResultSideEffect[PipelineQuery with HasSeenTweetIds, HasMarshalling]
-    with PipelineResultSideEffect.Conditionally[
-      PipelineQuery with HasSeenTweetIds,
+@Singlelonton
+class PublishClielonntSelonntImprelonssionsManhattanSidelonelonffelonct @Injelonct() (
+  manhattanTwelonelontImprelonssionStorelonClielonnt: ManhattanTwelonelontImprelonssionStorelonClielonnt)
+    elonxtelonnds PipelonlinelonRelonsultSidelonelonffelonct[PipelonlinelonQuelonry with HasSelonelonnTwelonelontIds, HasMarshalling]
+    with PipelonlinelonRelonsultSidelonelonffelonct.Conditionally[
+      PipelonlinelonQuelonry with HasSelonelonnTwelonelontIds,
       HasMarshalling
     ] {
 
-  override val identifier: SideEffectIdentifier =
-    SideEffectIdentifier("PublishClientSentImpressionsManhattan")
+  ovelonrridelon val idelonntifielonr: SidelonelonffelonctIdelonntifielonr =
+    SidelonelonffelonctIdelonntifielonr("PublishClielonntSelonntImprelonssionsManhattan")
 
-  override def onlyIf(
-    query: PipelineQuery with HasSeenTweetIds,
-    selectedCandidates: Seq[CandidateWithDetails],
-    remainingCandidates: Seq[CandidateWithDetails],
-    droppedCandidates: Seq[CandidateWithDetails],
-    response: HasMarshalling
-  ): Boolean = query.seenTweetIds.exists(_.nonEmpty)
+  ovelonrridelon delonf onlyIf(
+    quelonry: PipelonlinelonQuelonry with HasSelonelonnTwelonelontIds,
+    selonlelonctelondCandidatelons: Selonq[CandidatelonWithDelontails],
+    relonmainingCandidatelons: Selonq[CandidatelonWithDelontails],
+    droppelondCandidatelons: Selonq[CandidatelonWithDelontails],
+    relonsponselon: HasMarshalling
+  ): Boolelonan = quelonry.selonelonnTwelonelontIds.elonxists(_.nonelonmpty)
 
-  def buildEvents(query: PipelineQuery): Option[(Long, t.TweetImpressionsEntries)] = {
-    query.features.flatMap { featureMap =>
-      val impressions = featureMap.getOrElse(TweetImpressionsFeature, Seq.empty)
-      if (impressions.nonEmpty)
-        Some((query.getRequiredUserId, t.TweetImpressionsEntries(impressions)))
-      else None
+  delonf buildelonvelonnts(quelonry: PipelonlinelonQuelonry): Option[(Long, t.TwelonelontImprelonssionselonntrielons)] = {
+    quelonry.felonaturelons.flatMap { felonaturelonMap =>
+      val imprelonssions = felonaturelonMap.gelontOrelonlselon(TwelonelontImprelonssionsFelonaturelon, Selonq.elonmpty)
+      if (imprelonssions.nonelonmpty)
+        Somelon((quelonry.gelontRelonquirelondUselonrId, t.TwelonelontImprelonssionselonntrielons(imprelonssions)))
+      elonlselon Nonelon
     }
   }
 
-  final override def apply(
-    inputs: PipelineResultSideEffect.Inputs[PipelineQuery with HasSeenTweetIds, HasMarshalling]
+  final ovelonrridelon delonf apply(
+    inputs: PipelonlinelonRelonsultSidelonelonffelonct.Inputs[PipelonlinelonQuelonry with HasSelonelonnTwelonelontIds, HasMarshalling]
   ): Stitch[Unit] = {
-    val events = buildEvents(inputs.query)
+    val elonvelonnts = buildelonvelonnts(inputs.quelonry)
 
     Stitch
-      .traverse(events) {
-        case (key, value) => manhattanTweetImpressionStoreClient.write(key, value)
+      .travelonrselon(elonvelonnts) {
+        caselon (kelony, valuelon) => manhattanTwelonelontImprelonssionStorelonClielonnt.writelon(kelony, valuelon)
       }
       .unit
   }
 
-  override val alerts = Seq(
-    HomeMixerAlertConfig.BusinessHours.defaultSuccessRateAlert(99.4)
+  ovelonrridelon val alelonrts = Selonq(
+    HomelonMixelonrAlelonrtConfig.BusinelonssHours.delonfaultSuccelonssRatelonAlelonrt(99.4)
   )
 }

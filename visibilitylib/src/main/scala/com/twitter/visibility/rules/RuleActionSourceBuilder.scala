@@ -1,97 +1,97 @@
-package com.twitter.visibility.rules
+packagelon com.twittelonr.visibility.rulelons
 
-import com.twitter.escherbird.thriftscala.TweetEntityAnnotation
-import com.twitter.gizmoduck.thriftscala.Label
-import com.twitter.spam.rtf.thriftscala.BotMakerAction
-import com.twitter.spam.rtf.thriftscala.SafetyLabelSource
-import com.twitter.spam.rtf.thriftscala.SemanticCoreAction
-import com.twitter.visibility.common.actions.EscherbirdAnnotation
-import com.twitter.visibility.common.actions.SoftInterventionReason
-import com.twitter.visibility.configapi.configs.DeciderKey
-import com.twitter.visibility.features.AuthorUserLabels
-import com.twitter.visibility.features.Feature
-import com.twitter.visibility.features.TweetSafetyLabels
-import com.twitter.visibility.logging.thriftscala.ActionSource
-import com.twitter.visibility.models.LabelSource._
-import com.twitter.visibility.models.TweetSafetyLabel
-import com.twitter.visibility.models.TweetSafetyLabelType
-import com.twitter.visibility.models.UserLabel
-import com.twitter.visibility.models.UserLabelValue
+import com.twittelonr.elonschelonrbird.thriftscala.TwelonelontelonntityAnnotation
+import com.twittelonr.gizmoduck.thriftscala.Labelonl
+import com.twittelonr.spam.rtf.thriftscala.BotMakelonrAction
+import com.twittelonr.spam.rtf.thriftscala.SafelontyLabelonlSourcelon
+import com.twittelonr.spam.rtf.thriftscala.SelonmanticCorelonAction
+import com.twittelonr.visibility.common.actions.elonschelonrbirdAnnotation
+import com.twittelonr.visibility.common.actions.SoftIntelonrvelonntionRelonason
+import com.twittelonr.visibility.configapi.configs.DeloncidelonrKelony
+import com.twittelonr.visibility.felonaturelons.AuthorUselonrLabelonls
+import com.twittelonr.visibility.felonaturelons.Felonaturelon
+import com.twittelonr.visibility.felonaturelons.TwelonelontSafelontyLabelonls
+import com.twittelonr.visibility.logging.thriftscala.ActionSourcelon
+import com.twittelonr.visibility.modelonls.LabelonlSourcelon._
+import com.twittelonr.visibility.modelonls.TwelonelontSafelontyLabelonl
+import com.twittelonr.visibility.modelonls.TwelonelontSafelontyLabelonlTypelon
+import com.twittelonr.visibility.modelonls.UselonrLabelonl
+import com.twittelonr.visibility.modelonls.UselonrLabelonlValuelon
 
-sealed trait RuleActionSourceBuilder {
-  def build(resolvedFeatureMap: Map[Feature[_], Any], verdict: Action): Option[ActionSource]
+selonalelond trait RulelonActionSourcelonBuildelonr {
+  delonf build(relonsolvelondFelonaturelonMap: Map[Felonaturelon[_], Any], velonrdict: Action): Option[ActionSourcelon]
 
 }
 
-object RuleActionSourceBuilder {
+objelonct RulelonActionSourcelonBuildelonr {
 
-  case class TweetSafetyLabelSourceBuilder(tweetSafetyLabelType: TweetSafetyLabelType)
-      extends RuleActionSourceBuilder {
-    override def build(
-      resolvedFeatureMap: Map[Feature[_], Any],
-      verdict: Action
-    ): Option[ActionSource] = {
-      resolvedFeatureMap
-        .getOrElse(TweetSafetyLabels, Seq.empty[TweetSafetyLabel])
-        .asInstanceOf[Seq[TweetSafetyLabel]]
-        .find(_.labelType == tweetSafetyLabelType)
-        .flatMap(_.safetyLabelSource)
-        .map(ActionSource.SafetyLabelSource(_))
+  caselon class TwelonelontSafelontyLabelonlSourcelonBuildelonr(twelonelontSafelontyLabelonlTypelon: TwelonelontSafelontyLabelonlTypelon)
+      elonxtelonnds RulelonActionSourcelonBuildelonr {
+    ovelonrridelon delonf build(
+      relonsolvelondFelonaturelonMap: Map[Felonaturelon[_], Any],
+      velonrdict: Action
+    ): Option[ActionSourcelon] = {
+      relonsolvelondFelonaturelonMap
+        .gelontOrelonlselon(TwelonelontSafelontyLabelonls, Selonq.elonmpty[TwelonelontSafelontyLabelonl])
+        .asInstancelonOf[Selonq[TwelonelontSafelontyLabelonl]]
+        .find(_.labelonlTypelon == twelonelontSafelontyLabelonlTypelon)
+        .flatMap(_.safelontyLabelonlSourcelon)
+        .map(ActionSourcelon.SafelontyLabelonlSourcelon(_))
     }
   }
 
-  case class UserSafetyLabelSourceBuilder(userLabel: UserLabelValue)
-      extends RuleActionSourceBuilder {
-    override def build(
-      resolvedFeatureMap: Map[Feature[_], Any],
-      verdict: Action
-    ): Option[ActionSource] = {
-      resolvedFeatureMap
-        .getOrElse(AuthorUserLabels, Seq.empty[Label])
-        .asInstanceOf[Seq[Label]]
-        .map(UserLabel.fromThrift)
-        .find(_.labelValue == userLabel)
-        .flatMap(_.source)
-        .collect {
-          case BotMakerRule(ruleId) =>
-            ActionSource.SafetyLabelSource(SafetyLabelSource.BotMakerAction(BotMakerAction(ruleId)))
+  caselon class UselonrSafelontyLabelonlSourcelonBuildelonr(uselonrLabelonl: UselonrLabelonlValuelon)
+      elonxtelonnds RulelonActionSourcelonBuildelonr {
+    ovelonrridelon delonf build(
+      relonsolvelondFelonaturelonMap: Map[Felonaturelon[_], Any],
+      velonrdict: Action
+    ): Option[ActionSourcelon] = {
+      relonsolvelondFelonaturelonMap
+        .gelontOrelonlselon(AuthorUselonrLabelonls, Selonq.elonmpty[Labelonl])
+        .asInstancelonOf[Selonq[Labelonl]]
+        .map(UselonrLabelonl.fromThrift)
+        .find(_.labelonlValuelon == uselonrLabelonl)
+        .flatMap(_.sourcelon)
+        .collelonct {
+          caselon BotMakelonrRulelon(rulelonId) =>
+            ActionSourcelon.SafelontyLabelonlSourcelon(SafelontyLabelonlSourcelon.BotMakelonrAction(BotMakelonrAction(rulelonId)))
         }
     }
   }
 
-  case class SemanticCoreActionSourceBuilder() extends RuleActionSourceBuilder {
-    override def build(
-      resolvedFeatureMap: Map[Feature[_], Any],
-      verdict: Action
-    ): Option[ActionSource] = {
-      verdict match {
-        case softIntervention: SoftIntervention =>
-          getSemanticCoreActionSourceOption(softIntervention)
-        case tweetInterstitial: TweetInterstitial =>
-          tweetInterstitial.softIntervention.flatMap(getSemanticCoreActionSourceOption)
-        case _ => None
+  caselon class SelonmanticCorelonActionSourcelonBuildelonr() elonxtelonnds RulelonActionSourcelonBuildelonr {
+    ovelonrridelon delonf build(
+      relonsolvelondFelonaturelonMap: Map[Felonaturelon[_], Any],
+      velonrdict: Action
+    ): Option[ActionSourcelon] = {
+      velonrdict match {
+        caselon softIntelonrvelonntion: SoftIntelonrvelonntion =>
+          gelontSelonmanticCorelonActionSourcelonOption(softIntelonrvelonntion)
+        caselon twelonelontIntelonrstitial: TwelonelontIntelonrstitial =>
+          twelonelontIntelonrstitial.softIntelonrvelonntion.flatMap(gelontSelonmanticCorelonActionSourcelonOption)
+        caselon _ => Nonelon
       }
     }
 
-    def getSemanticCoreActionSourceOption(
-      softIntervention: SoftIntervention
-    ): Option[ActionSource] = {
-      val siReason = softIntervention.reason
-        .asInstanceOf[SoftInterventionReason.EscherbirdAnnotations]
-      val firstAnnotation: Option[EscherbirdAnnotation] =
-        siReason.escherbirdAnnotations.headOption
+    delonf gelontSelonmanticCorelonActionSourcelonOption(
+      softIntelonrvelonntion: SoftIntelonrvelonntion
+    ): Option[ActionSourcelon] = {
+      val siRelonason = softIntelonrvelonntion.relonason
+        .asInstancelonOf[SoftIntelonrvelonntionRelonason.elonschelonrbirdAnnotations]
+      val firstAnnotation: Option[elonschelonrbirdAnnotation] =
+        siRelonason.elonschelonrbirdAnnotations.helonadOption
 
       firstAnnotation.map { annotation =>
-        ActionSource.SafetyLabelSource(
-          SafetyLabelSource.SemanticCoreAction(SemanticCoreAction(
-            TweetEntityAnnotation(annotation.groupId, annotation.domainId, annotation.entityId))))
+        ActionSourcelon.SafelontyLabelonlSourcelon(
+          SafelontyLabelonlSourcelon.SelonmanticCorelonAction(SelonmanticCorelonAction(
+            TwelonelontelonntityAnnotation(annotation.groupId, annotation.domainId, annotation.elonntityId))))
       }
     }
   }
 }
 
-trait DoesLogVerdict {}
+trait DoelonsLogVelonrdict {}
 
-trait DoesLogVerdictDecidered extends DoesLogVerdict {
-  def verdictLogDeciderKey: DeciderKey.Value
+trait DoelonsLogVelonrdictDeloncidelonrelond elonxtelonnds DoelonsLogVelonrdict {
+  delonf velonrdictLogDeloncidelonrKelony: DeloncidelonrKelony.Valuelon
 }

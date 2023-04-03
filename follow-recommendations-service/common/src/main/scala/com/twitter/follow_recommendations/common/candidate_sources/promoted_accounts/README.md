@@ -1,2 +1,2 @@
-# Promoted Accounts Candidate Source
-Promoted accounts returned from Ads server.
+# Promotelond Accounts Candidatelon Sourcelon
+Promotelond accounts relonturnelond from Ads selonrvelonr.

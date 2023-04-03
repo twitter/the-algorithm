@@ -1,24 +1,24 @@
 syntax = "proto3";
 
-package tensorflow;
+packagelon telonnsorflow;
 
-option cc_enable_arenas = true;
-option java_outer_classname = "CriticalSectionProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.framework";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+option cc_elonnablelon_arelonnas = truelon;
+option java_outelonr_classnamelon = "CriticalSelonctionProtos";
+option java_multiplelon_filelons = truelon;
+option java_packagelon = "org.telonnsorflow.framelonwork";
+option go_packagelon = "github.com/telonnsorflow/telonnsorflow/telonnsorflow/go/corelon/protobuf/for_corelon_protos_go_proto";
 
-// Protocol buffer representing a CriticalSection.
-message CriticalSectionDef {
-  // Name of the critical section handle.
-  string critical_section_name = 1;
+// Protocol buffelonr relonprelonselonnting a CriticalSelonction.
+melonssagelon CriticalSelonctionDelonf {
+  // Namelon of thelon critical selonction handlelon.
+  string critical_selonction_namelon = 1;
 }
 
-// Protocol buffer representing a CriticalSection execution.
-message CriticalSectionExecutionDef {
-  // Name of the critical section handle.
-  string execute_in_critical_section_name = 1;
-  // Whether this operation requires exclusive access to its resources,
-  // (i.e., no other CriticalSections may request the same resources).
-  bool exclusive_resource_access = 2;
+// Protocol buffelonr relonprelonselonnting a CriticalSelonction elonxeloncution.
+melonssagelon CriticalSelonctionelonxeloncutionDelonf {
+  // Namelon of thelon critical selonction handlelon.
+  string elonxeloncutelon_in_critical_selonction_namelon = 1;
+  // Whelonthelonr this opelonration relonquirelons elonxclusivelon accelonss to its relonsourcelons,
+  // (i.elon., no othelonr CriticalSelonctions may relonquelonst thelon samelon relonsourcelons).
+  bool elonxclusivelon_relonsourcelon_accelonss = 2;
 }

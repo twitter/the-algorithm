@@ -1,49 +1,49 @@
-package com.twitter.product_mixer.component_library.candidate_source.audiospace
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.candidatelon_sourcelon.audiospacelon
 
-import com.twitter.periscope.audio_space.thriftscala.CreatedSpacesView
-import com.twitter.periscope.audio_space.thriftscala.SpaceSlice
-import com.twitter.product_mixer.component_library.model.cursor.NextCursorFeature
-import com.twitter.product_mixer.component_library.model.cursor.PreviousCursorFeature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.candidate_source.strato.StratoKeyViewFetcherWithSourceFeaturesSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.strato.client.Fetcher
-import com.twitter.strato.generated.client.periscope.CreatedSpacesSliceOnUserClientColumn
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.pelonriscopelon.audio_spacelon.thriftscala.CrelonatelondSpacelonsVielonw
+import com.twittelonr.pelonriscopelon.audio_spacelon.thriftscala.SpacelonSlicelon
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.cursor.NelonxtCursorFelonaturelon
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.cursor.PrelonviousCursorFelonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMapBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.strato.StratoKelonyVielonwFelontchelonrWithSourcelonFelonaturelonsSourcelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonSourcelonIdelonntifielonr
+import com.twittelonr.strato.clielonnt.Felontchelonr
+import com.twittelonr.strato.gelonnelonratelond.clielonnt.pelonriscopelon.CrelonatelondSpacelonsSlicelonOnUselonrClielonntColumn
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class CreatedSpacesCandidateSource @Inject() (
-  column: CreatedSpacesSliceOnUserClientColumn)
-    extends StratoKeyViewFetcherWithSourceFeaturesSource[
+@Singlelonton
+class CrelonatelondSpacelonsCandidatelonSourcelon @Injelonct() (
+  column: CrelonatelondSpacelonsSlicelonOnUselonrClielonntColumn)
+    elonxtelonnds StratoKelonyVielonwFelontchelonrWithSourcelonFelonaturelonsSourcelon[
       Long,
-      CreatedSpacesView,
-      SpaceSlice,
+      CrelonatelondSpacelonsVielonw,
+      SpacelonSlicelon,
       String
     ] {
 
-  override val identifier: CandidateSourceIdentifier = CandidateSourceIdentifier("CreatedSpaces")
+  ovelonrridelon val idelonntifielonr: CandidatelonSourcelonIdelonntifielonr = CandidatelonSourcelonIdelonntifielonr("CrelonatelondSpacelons")
 
-  override val fetcher: Fetcher[Long, CreatedSpacesView, SpaceSlice] = column.fetcher
+  ovelonrridelon val felontchelonr: Felontchelonr[Long, CrelonatelondSpacelonsVielonw, SpacelonSlicelon] = column.felontchelonr
 
-  override def stratoResultTransformer(
-    stratoKey: Long,
-    stratoResult: SpaceSlice
-  ): Seq[String] =
-    stratoResult.items
+  ovelonrridelon delonf stratoRelonsultTransformelonr(
+    stratoKelony: Long,
+    stratoRelonsult: SpacelonSlicelon
+  ): Selonq[String] =
+    stratoRelonsult.itelonms
 
-  override protected def extractFeaturesFromStratoResult(
-    stratoKey: Long,
-    stratoResult: SpaceSlice
-  ): FeatureMap = {
-    val featureMapBuilder = FeatureMapBuilder()
-    stratoResult.sliceInfo.previousCursor.foreach { cursor =>
-      featureMapBuilder.add(PreviousCursorFeature, cursor)
+  ovelonrridelon protelonctelond delonf elonxtractFelonaturelonsFromStratoRelonsult(
+    stratoKelony: Long,
+    stratoRelonsult: SpacelonSlicelon
+  ): FelonaturelonMap = {
+    val felonaturelonMapBuildelonr = FelonaturelonMapBuildelonr()
+    stratoRelonsult.slicelonInfo.prelonviousCursor.forelonach { cursor =>
+      felonaturelonMapBuildelonr.add(PrelonviousCursorFelonaturelon, cursor)
     }
-    stratoResult.sliceInfo.nextCursor.foreach { cursor =>
-      featureMapBuilder.add(NextCursorFeature, cursor)
+    stratoRelonsult.slicelonInfo.nelonxtCursor.forelonach { cursor =>
+      felonaturelonMapBuildelonr.add(NelonxtCursorFelonaturelon, cursor)
     }
-    featureMapBuilder.build()
+    felonaturelonMapBuildelonr.build()
   }
 }

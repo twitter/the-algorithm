@@ -1,19 +1,19 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.melontadata
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.DeepLink
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ExternalUrl
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.UrlType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.UrtEndpoint
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.DelonelonpLink
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.elonxtelonrnalUrl
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.UrlTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.Urtelonndpoint
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class UrlTypeMarshaller @Inject() () {
+@Singlelonton
+class UrlTypelonMarshallelonr @Injelonct() () {
 
-  def apply(urlType: UrlType): urt.UrlType = urlType match {
-    case ExternalUrl => urt.UrlType.ExternalUrl
-    case DeepLink => urt.UrlType.DeepLink
-    case UrtEndpoint => urt.UrlType.UrtEndpoint
+  delonf apply(urlTypelon: UrlTypelon): urt.UrlTypelon = urlTypelon match {
+    caselon elonxtelonrnalUrl => urt.UrlTypelon.elonxtelonrnalUrl
+    caselon DelonelonpLink => urt.UrlTypelon.DelonelonpLink
+    caselon Urtelonndpoint => urt.UrlTypelon.Urtelonndpoint
   }
 }

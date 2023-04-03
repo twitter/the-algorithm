@@ -1,107 +1,107 @@
-package com.twitter.cr_mixer.module.thrift_client
+packagelon com.twittelonr.cr_mixelonr.modulelon.thrift_clielonnt
 
-import com.google.inject.Provides
-import com.twitter.ann.common.thriftscala.AnnQueryService
-import com.twitter.conversions.DurationOps._
-import com.twitter.conversions.PercentOps._
-import com.twitter.cr_mixer.config.TimeoutConfig
-import com.twitter.finagle.ThriftMux
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.mtls.client.MtlsStackClient._
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.inject.TwitterModule
-import javax.inject.Named
-import javax.inject.Singleton
+import com.googlelon.injelonct.Providelons
+import com.twittelonr.ann.common.thriftscala.AnnQuelonrySelonrvicelon
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.convelonrsions.PelonrcelonntOps._
+import com.twittelonr.cr_mixelonr.config.TimelonoutConfig
+import com.twittelonr.finaglelon.ThriftMux
+import com.twittelonr.finaglelon.mtls.authelonntication.SelonrvicelonIdelonntifielonr
+import com.twittelonr.finaglelon.mtls.clielonnt.MtlsStackClielonnt._
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.finaglelon.thrift.ClielonntId
+import com.twittelonr.injelonct.TwittelonrModulelon
+import javax.injelonct.Namelond
+import javax.injelonct.Singlelonton
 
-object AnnQueryServiceClientModule extends TwitterModule {
-  final val DebuggerDemoAnnServiceClientName = "DebuggerDemoAnnServiceClient"
+objelonct AnnQuelonrySelonrvicelonClielonntModulelon elonxtelonnds TwittelonrModulelon {
+  final val DelonbuggelonrDelonmoAnnSelonrvicelonClielonntNamelon = "DelonbuggelonrDelonmoAnnSelonrvicelonClielonnt"
 
-  @Provides
-  @Singleton
-  @Named(DebuggerDemoAnnServiceClientName)
-  def debuggerDemoAnnServiceClient(
-    serviceIdentifier: ServiceIdentifier,
-    clientId: ClientId,
-    statsReceiver: StatsReceiver,
-    timeoutConfig: TimeoutConfig,
-  ): AnnQueryService.MethodPerEndpoint = {
-    // This ANN is built from the embeddings in src/scala/com/twitter/wtf/beam/bq_embedding_export/sql/MlfExperimentalTweetEmbeddingScalaDataset.sql
-    // Change the above sql if you want to build the index from a diff embedding
-    val dest = "/s/cassowary/mlf-experimental-ann-service"
-    val label = "experimental-ann"
-    buildClient(serviceIdentifier, clientId, timeoutConfig, statsReceiver, dest, label)
+  @Providelons
+  @Singlelonton
+  @Namelond(DelonbuggelonrDelonmoAnnSelonrvicelonClielonntNamelon)
+  delonf delonbuggelonrDelonmoAnnSelonrvicelonClielonnt(
+    selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr,
+    clielonntId: ClielonntId,
+    statsReloncelonivelonr: StatsReloncelonivelonr,
+    timelonoutConfig: TimelonoutConfig,
+  ): AnnQuelonrySelonrvicelon.MelonthodPelonrelonndpoint = {
+    // This ANN is built from thelon elonmbelonddings in src/scala/com/twittelonr/wtf/belonam/bq_elonmbelondding_elonxport/sql/MlfelonxpelonrimelonntalTwelonelontelonmbelonddingScalaDataselont.sql
+    // Changelon thelon abovelon sql if you want to build thelon indelonx from a diff elonmbelondding
+    val delonst = "/s/cassowary/mlf-elonxpelonrimelonntal-ann-selonrvicelon"
+    val labelonl = "elonxpelonrimelonntal-ann"
+    buildClielonnt(selonrvicelonIdelonntifielonr, clielonntId, timelonoutConfig, statsReloncelonivelonr, delonst, labelonl)
   }
 
-  final val TwHINUuaAnnServiceClientName = "TwHINUuaAnnServiceClient"
-  @Provides
-  @Singleton
-  @Named(TwHINUuaAnnServiceClientName)
-  def twhinUuaAnnServiceClient(
-    serviceIdentifier: ServiceIdentifier,
-    clientId: ClientId,
-    statsReceiver: StatsReceiver,
-    timeoutConfig: TimeoutConfig,
-  ): AnnQueryService.MethodPerEndpoint = {
-    val dest = "/s/cassowary/twhin-uua-ann-service"
-    val label = "twhin_uua_ann"
+  final val TwHINUuaAnnSelonrvicelonClielonntNamelon = "TwHINUuaAnnSelonrvicelonClielonnt"
+  @Providelons
+  @Singlelonton
+  @Namelond(TwHINUuaAnnSelonrvicelonClielonntNamelon)
+  delonf twhinUuaAnnSelonrvicelonClielonnt(
+    selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr,
+    clielonntId: ClielonntId,
+    statsReloncelonivelonr: StatsReloncelonivelonr,
+    timelonoutConfig: TimelonoutConfig,
+  ): AnnQuelonrySelonrvicelon.MelonthodPelonrelonndpoint = {
+    val delonst = "/s/cassowary/twhin-uua-ann-selonrvicelon"
+    val labelonl = "twhin_uua_ann"
 
-    buildClient(serviceIdentifier, clientId, timeoutConfig, statsReceiver, dest, label)
+    buildClielonnt(selonrvicelonIdelonntifielonr, clielonntId, timelonoutConfig, statsReloncelonivelonr, delonst, labelonl)
   }
 
-  final val TwHINRegularUpdateAnnServiceClientName = "TwHINRegularUpdateAnnServiceClient"
-  @Provides
-  @Singleton
-  @Named(TwHINRegularUpdateAnnServiceClientName)
-  def twHINRegularUpdateAnnServiceClient(
-    serviceIdentifier: ServiceIdentifier,
-    clientId: ClientId,
-    statsReceiver: StatsReceiver,
-    timeoutConfig: TimeoutConfig,
-  ): AnnQueryService.MethodPerEndpoint = {
-    val dest = "/s/cassowary/twhin-regular-update-ann-service"
-    val label = "twhin_regular_update"
+  final val TwHINRelongularUpdatelonAnnSelonrvicelonClielonntNamelon = "TwHINRelongularUpdatelonAnnSelonrvicelonClielonnt"
+  @Providelons
+  @Singlelonton
+  @Namelond(TwHINRelongularUpdatelonAnnSelonrvicelonClielonntNamelon)
+  delonf twHINRelongularUpdatelonAnnSelonrvicelonClielonnt(
+    selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr,
+    clielonntId: ClielonntId,
+    statsReloncelonivelonr: StatsReloncelonivelonr,
+    timelonoutConfig: TimelonoutConfig,
+  ): AnnQuelonrySelonrvicelon.MelonthodPelonrelonndpoint = {
+    val delonst = "/s/cassowary/twhin-relongular-updatelon-ann-selonrvicelon"
+    val labelonl = "twhin_relongular_updatelon"
 
-    buildClient(serviceIdentifier, clientId, timeoutConfig, statsReceiver, dest, label)
+    buildClielonnt(selonrvicelonIdelonntifielonr, clielonntId, timelonoutConfig, statsReloncelonivelonr, delonst, labelonl)
   }
 
-  final val TwoTowerFavAnnServiceClientName = "TwoTowerFavAnnServiceClient"
-  @Provides
-  @Singleton
-  @Named(TwoTowerFavAnnServiceClientName)
-  def twoTowerFavAnnServiceClient(
-    serviceIdentifier: ServiceIdentifier,
-    clientId: ClientId,
-    statsReceiver: StatsReceiver,
-    timeoutConfig: TimeoutConfig,
-  ): AnnQueryService.MethodPerEndpoint = {
-    val dest = "/s/cassowary/tweet-rec-two-tower-fav-ann"
-    val label = "tweet_rec_two_tower_fav_ann"
+  final val TwoTowelonrFavAnnSelonrvicelonClielonntNamelon = "TwoTowelonrFavAnnSelonrvicelonClielonnt"
+  @Providelons
+  @Singlelonton
+  @Namelond(TwoTowelonrFavAnnSelonrvicelonClielonntNamelon)
+  delonf twoTowelonrFavAnnSelonrvicelonClielonnt(
+    selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr,
+    clielonntId: ClielonntId,
+    statsReloncelonivelonr: StatsReloncelonivelonr,
+    timelonoutConfig: TimelonoutConfig,
+  ): AnnQuelonrySelonrvicelon.MelonthodPelonrelonndpoint = {
+    val delonst = "/s/cassowary/twelonelont-relonc-two-towelonr-fav-ann"
+    val labelonl = "twelonelont_relonc_two_towelonr_fav_ann"
 
-    buildClient(serviceIdentifier, clientId, timeoutConfig, statsReceiver, dest, label)
+    buildClielonnt(selonrvicelonIdelonntifielonr, clielonntId, timelonoutConfig, statsReloncelonivelonr, delonst, labelonl)
   }
 
-  private def buildClient(
-    serviceIdentifier: ServiceIdentifier,
-    clientId: ClientId,
-    timeoutConfig: TimeoutConfig,
-    statsReceiver: StatsReceiver,
-    dest: String,
-    label: String
-  ): AnnQueryService.MethodPerEndpoint = {
-    val thriftClient = ThriftMux.client
-      .withMutualTls(serviceIdentifier)
-      .withClientId(clientId)
-      .withLabel(label)
-      .withStatsReceiver(statsReceiver)
-      .withTransport.connectTimeout(500.milliseconds)
-      .withSession.acquisitionTimeout(500.milliseconds)
-      .methodBuilder(dest)
-      .withTimeoutPerRequest(timeoutConfig.annServiceClientTimeout)
-      .withRetryDisabled
-      .idempotent(5.percent)
-      .servicePerEndpoint[AnnQueryService.ServicePerEndpoint]
+  privatelon delonf buildClielonnt(
+    selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr,
+    clielonntId: ClielonntId,
+    timelonoutConfig: TimelonoutConfig,
+    statsReloncelonivelonr: StatsReloncelonivelonr,
+    delonst: String,
+    labelonl: String
+  ): AnnQuelonrySelonrvicelon.MelonthodPelonrelonndpoint = {
+    val thriftClielonnt = ThriftMux.clielonnt
+      .withMutualTls(selonrvicelonIdelonntifielonr)
+      .withClielonntId(clielonntId)
+      .withLabelonl(labelonl)
+      .withStatsReloncelonivelonr(statsReloncelonivelonr)
+      .withTransport.connelonctTimelonout(500.milliselonconds)
+      .withSelonssion.acquisitionTimelonout(500.milliselonconds)
+      .melonthodBuildelonr(delonst)
+      .withTimelonoutPelonrRelonquelonst(timelonoutConfig.annSelonrvicelonClielonntTimelonout)
+      .withRelontryDisablelond
+      .idelonmpotelonnt(5.pelonrcelonnt)
+      .selonrvicelonPelonrelonndpoint[AnnQuelonrySelonrvicelon.SelonrvicelonPelonrelonndpoint]
 
-    ThriftMux.Client.methodPerEndpoint(thriftClient)
+    ThriftMux.Clielonnt.melonthodPelonrelonndpoint(thriftClielonnt)
   }
 }

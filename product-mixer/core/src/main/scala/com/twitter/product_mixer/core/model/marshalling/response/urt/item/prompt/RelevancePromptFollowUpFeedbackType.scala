@@ -1,16 +1,16 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.prompt
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.prompt
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Callback
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.Callback
 
 /**
- * Different kinds of follow-ups after a positive-negative feedback on a prompt button.
+ * Diffelonrelonnt kinds of follow-ups aftelonr a positivelon-nelongativelon felonelondback on a prompt button.
  *
- * URT API Reference: https://docbird.twitter.biz/unified_rich_timelines_urt/gen/com/twitter/timelines/render/thriftscala/RelevancePromptFollowUpFeedbackType.html
+ * URT API Relonfelonrelonncelon: https://docbird.twittelonr.biz/unifielond_rich_timelonlinelons_urt/gelonn/com/twittelonr/timelonlinelons/relonndelonr/thriftscala/RelonlelonvancelonPromptFollowUpFelonelondbackTypelon.html
  */
-sealed trait RelevancePromptFollowUpFeedbackType
+selonalelond trait RelonlelonvancelonPromptFollowUpFelonelondbackTypelon
 
-case class RelevancePromptFollowUpTextInput(
-  context: String,
-  textFieldPlaceholder: String,
-  sendTextCallback: Callback)
-    extends RelevancePromptFollowUpFeedbackType
+caselon class RelonlelonvancelonPromptFollowUpTelonxtInput(
+  contelonxt: String,
+  telonxtFielonldPlacelonholdelonr: String,
+  selonndTelonxtCallback: Callback)
+    elonxtelonnds RelonlelonvancelonPromptFollowUpFelonelondbackTypelon

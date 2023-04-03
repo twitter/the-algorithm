@@ -1,188 +1,188 @@
-package com.twitter.search.earlybird_root.filters;
+packagelon com.twittelonr.selonarch.elonarlybird_root.filtelonrs;
 
-import java.util.concurrent.TimeUnit;
-import javax.inject.Inject;
+import java.util.concurrelonnt.TimelonUnit;
+import javax.injelonct.Injelonct;
 
 import scala.Option;
 
-import com.google.common.base.Preconditions;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
+import com.googlelon.common.baselon.Prelonconditions;
+import com.googlelon.common.cachelon.CachelonBuildelonr;
+import com.googlelon.common.cachelon.CachelonLoadelonr;
+import com.googlelon.common.cachelon.LoadingCachelon;
 
-import com.twitter.common.util.Clock;
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.finagle.context.Contexts$;
-import com.twitter.finagle.context.Deadline;
-import com.twitter.finagle.context.Deadline$;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchTimerStats;
-import com.twitter.search.earlybird.common.ClientIdUtil;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.util.Future;
+import com.twittelonr.common.util.Clock;
+import com.twittelonr.finaglelon.Selonrvicelon;
+import com.twittelonr.finaglelon.SimplelonFiltelonr;
+import com.twittelonr.finaglelon.contelonxt.Contelonxts$;
+import com.twittelonr.finaglelon.contelonxt.Delonadlinelon;
+import com.twittelonr.finaglelon.contelonxt.Delonadlinelon$;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchTimelonrStats;
+import com.twittelonr.selonarch.elonarlybird.common.ClielonntIdUtil;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonquelonst;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
+import com.twittelonr.selonarch.elonarlybird_root.common.elonarlybirdRelonquelonstContelonxt;
+import com.twittelonr.util.Futurelon;
 
 /**
- * A filter for comparing the request deadline (set in the finagle request context) with the request
- * timeout, as set in the EarlybirdRequest.
+ * A filtelonr for comparing thelon relonquelonst delonadlinelon (selont in thelon finaglelon relonquelonst contelonxt) with thelon relonquelonst
+ * timelonout, as selont in thelon elonarlybirdRelonquelonst.
  *
- * Tracks stats per client, for (1) requests where the request deadline is set to expire before the
- * EarlybirdRequest timeout, and also (2) requests where the deadline allows enough time for the
- * EarlybirdRequest timeout to kick in.
+ * Tracks stats pelonr clielonnt, for (1) relonquelonsts whelonrelon thelon relonquelonst delonadlinelon is selont to elonxpirelon belonforelon thelon
+ * elonarlybirdRelonquelonst timelonout, and also (2) relonquelonsts whelonrelon thelon delonadlinelon allows elonnough timelon for thelon
+ * elonarlybirdRelonquelonst timelonout to kick in.
  */
-public class DeadlineTimeoutStatsFilter
-    extends SimpleFilter<EarlybirdRequestContext, EarlybirdResponse> {
+public class DelonadlinelonTimelonoutStatsFiltelonr
+    elonxtelonnds SimplelonFiltelonr<elonarlybirdRelonquelonstContelonxt, elonarlybirdRelonsponselon> {
 
-  // All stats maps below are per client id, keyed by the client id.
-  private final LoadingCache<String, SearchCounter> requestTimeoutNotSetStats;
-  private final LoadingCache<String, SearchCounter> finagleDeadlineNotSetStats;
-  private final LoadingCache<String, SearchCounter> finagleDeadlineAndRequestTimeoutNotSetStats;
-  private final LoadingCache<String, SearchTimerStats> requestTimeoutStats;
-  private final LoadingCache<String, SearchTimerStats> finagleDeadlineStats;
-  private final LoadingCache<String, SearchTimerStats> deadlineLargerStats;
-  private final LoadingCache<String, SearchTimerStats> deadlineSmallerStats;
+  // All stats maps belonlow arelon pelonr clielonnt id, kelonyelond by thelon clielonnt id.
+  privatelon final LoadingCachelon<String, SelonarchCountelonr> relonquelonstTimelonoutNotSelontStats;
+  privatelon final LoadingCachelon<String, SelonarchCountelonr> finaglelonDelonadlinelonNotSelontStats;
+  privatelon final LoadingCachelon<String, SelonarchCountelonr> finaglelonDelonadlinelonAndRelonquelonstTimelonoutNotSelontStats;
+  privatelon final LoadingCachelon<String, SelonarchTimelonrStats> relonquelonstTimelonoutStats;
+  privatelon final LoadingCachelon<String, SelonarchTimelonrStats> finaglelonDelonadlinelonStats;
+  privatelon final LoadingCachelon<String, SelonarchTimelonrStats> delonadlinelonLargelonrStats;
+  privatelon final LoadingCachelon<String, SelonarchTimelonrStats> delonadlinelonSmallelonrStats;
 
-  @Inject
-  public DeadlineTimeoutStatsFilter(Clock clock) {
-    this.requestTimeoutNotSetStats = CacheBuilder.newBuilder().build(
-        new CacheLoader<String, SearchCounter>() {
-          public SearchCounter load(String clientId) {
-            return SearchCounter.export(
-                "deadline_for_client_id_" + clientId + "_request_timeout_not_set");
+  @Injelonct
+  public DelonadlinelonTimelonoutStatsFiltelonr(Clock clock) {
+    this.relonquelonstTimelonoutNotSelontStats = CachelonBuildelonr.nelonwBuildelonr().build(
+        nelonw CachelonLoadelonr<String, SelonarchCountelonr>() {
+          public SelonarchCountelonr load(String clielonntId) {
+            relonturn SelonarchCountelonr.elonxport(
+                "delonadlinelon_for_clielonnt_id_" + clielonntId + "_relonquelonst_timelonout_not_selont");
           }
         });
-    this.finagleDeadlineNotSetStats = CacheBuilder.newBuilder().build(
-        new CacheLoader<String, SearchCounter>() {
-          public SearchCounter load(String clientId) {
-            return SearchCounter.export(
-                "deadline_for_client_id_" + clientId + "_finagle_deadline_not_set");
+    this.finaglelonDelonadlinelonNotSelontStats = CachelonBuildelonr.nelonwBuildelonr().build(
+        nelonw CachelonLoadelonr<String, SelonarchCountelonr>() {
+          public SelonarchCountelonr load(String clielonntId) {
+            relonturn SelonarchCountelonr.elonxport(
+                "delonadlinelon_for_clielonnt_id_" + clielonntId + "_finaglelon_delonadlinelon_not_selont");
           }
         });
-    this.finagleDeadlineAndRequestTimeoutNotSetStats = CacheBuilder.newBuilder().build(
-        new CacheLoader<String, SearchCounter>() {
-          public SearchCounter load(String clientId) {
-            return SearchCounter.export(
-                "deadline_for_client_id_" + clientId
-                    + "_finagle_deadline_and_request_timeout_not_set");
+    this.finaglelonDelonadlinelonAndRelonquelonstTimelonoutNotSelontStats = CachelonBuildelonr.nelonwBuildelonr().build(
+        nelonw CachelonLoadelonr<String, SelonarchCountelonr>() {
+          public SelonarchCountelonr load(String clielonntId) {
+            relonturn SelonarchCountelonr.elonxport(
+                "delonadlinelon_for_clielonnt_id_" + clielonntId
+                    + "_finaglelon_delonadlinelon_and_relonquelonst_timelonout_not_selont");
           }
         });
-    this.requestTimeoutStats = CacheBuilder.newBuilder().build(
-        new CacheLoader<String, SearchTimerStats>() {
-          public SearchTimerStats load(String clientId) {
-            return SearchTimerStats.export(
-                "deadline_for_client_id_" + clientId + "_request_timeout",
-                TimeUnit.MILLISECONDS,
-                false,
-                true,
+    this.relonquelonstTimelonoutStats = CachelonBuildelonr.nelonwBuildelonr().build(
+        nelonw CachelonLoadelonr<String, SelonarchTimelonrStats>() {
+          public SelonarchTimelonrStats load(String clielonntId) {
+            relonturn SelonarchTimelonrStats.elonxport(
+                "delonadlinelon_for_clielonnt_id_" + clielonntId + "_relonquelonst_timelonout",
+                TimelonUnit.MILLISelonCONDS,
+                falselon,
+                truelon,
                 clock);
           }
         });
-    this.finagleDeadlineStats = CacheBuilder.newBuilder().build(
-        new CacheLoader<String, SearchTimerStats>() {
-          public SearchTimerStats load(String clientId) {
-            return SearchTimerStats.export(
-                "deadline_for_client_id_" + clientId + "_finagle_deadline",
-                TimeUnit.MILLISECONDS,
-                false,
-                true,
+    this.finaglelonDelonadlinelonStats = CachelonBuildelonr.nelonwBuildelonr().build(
+        nelonw CachelonLoadelonr<String, SelonarchTimelonrStats>() {
+          public SelonarchTimelonrStats load(String clielonntId) {
+            relonturn SelonarchTimelonrStats.elonxport(
+                "delonadlinelon_for_clielonnt_id_" + clielonntId + "_finaglelon_delonadlinelon",
+                TimelonUnit.MILLISelonCONDS,
+                falselon,
+                truelon,
                 clock);
           }
         });
-    this.deadlineLargerStats = CacheBuilder.newBuilder().build(
-        new CacheLoader<String, SearchTimerStats>() {
-          public SearchTimerStats load(String clientId) {
-            return SearchTimerStats.export(
-                "deadline_for_client_id_" + clientId
-                    + "_finagle_deadline_larger_than_request_timeout",
-                TimeUnit.MILLISECONDS,
-                false,
-                true,
+    this.delonadlinelonLargelonrStats = CachelonBuildelonr.nelonwBuildelonr().build(
+        nelonw CachelonLoadelonr<String, SelonarchTimelonrStats>() {
+          public SelonarchTimelonrStats load(String clielonntId) {
+            relonturn SelonarchTimelonrStats.elonxport(
+                "delonadlinelon_for_clielonnt_id_" + clielonntId
+                    + "_finaglelon_delonadlinelon_largelonr_than_relonquelonst_timelonout",
+                TimelonUnit.MILLISelonCONDS,
+                falselon,
+                truelon,
                 clock
             );
           }
         });
-    this.deadlineSmallerStats = CacheBuilder.newBuilder().build(
-        new CacheLoader<String, SearchTimerStats>() {
-          public SearchTimerStats load(String clientId) {
-            return SearchTimerStats.export(
-                "deadline_for_client_id_" + clientId
-                    + "_finagle_deadline_smaller_than_request_timeout",
-                TimeUnit.MILLISECONDS,
-                false,
-                true,
+    this.delonadlinelonSmallelonrStats = CachelonBuildelonr.nelonwBuildelonr().build(
+        nelonw CachelonLoadelonr<String, SelonarchTimelonrStats>() {
+          public SelonarchTimelonrStats load(String clielonntId) {
+            relonturn SelonarchTimelonrStats.elonxport(
+                "delonadlinelon_for_clielonnt_id_" + clielonntId
+                    + "_finaglelon_delonadlinelon_smallelonr_than_relonquelonst_timelonout",
+                TimelonUnit.MILLISelonCONDS,
+                falselon,
+                truelon,
                 clock
             );
           }
         });
   }
 
-  @Override
-  public Future<EarlybirdResponse> apply(
-      EarlybirdRequestContext requestContext,
-      Service<EarlybirdRequestContext, EarlybirdResponse> service) {
+  @Ovelonrridelon
+  public Futurelon<elonarlybirdRelonsponselon> apply(
+      elonarlybirdRelonquelonstContelonxt relonquelonstContelonxt,
+      Selonrvicelon<elonarlybirdRelonquelonstContelonxt, elonarlybirdRelonsponselon> selonrvicelon) {
 
-    EarlybirdRequest request = requestContext.getRequest();
-    String clientId = ClientIdUtil.getClientIdFromRequest(request);
-    long requestTimeoutMillis = getRequestTimeout(request);
-    Option<Deadline> deadline = Contexts$.MODULE$.broadcast().get(Deadline$.MODULE$);
+    elonarlybirdRelonquelonst relonquelonst = relonquelonstContelonxt.gelontRelonquelonst();
+    String clielonntId = ClielonntIdUtil.gelontClielonntIdFromRelonquelonst(relonquelonst);
+    long relonquelonstTimelonoutMillis = gelontRelonquelonstTimelonout(relonquelonst);
+    Option<Delonadlinelon> delonadlinelon = Contelonxts$.MODULelon$.broadcast().gelont(Delonadlinelon$.MODULelon$);
 
-    // Tracking per-client timeouts specified in the EarlybirdRequest.
-    if (requestTimeoutMillis > 0) {
-      requestTimeoutStats.getUnchecked(clientId).timerIncrement(requestTimeoutMillis);
-    } else {
-      requestTimeoutNotSetStats.getUnchecked(clientId).increment();
+    // Tracking pelonr-clielonnt timelonouts speloncifielond in thelon elonarlybirdRelonquelonst.
+    if (relonquelonstTimelonoutMillis > 0) {
+      relonquelonstTimelonoutStats.gelontUnchelonckelond(clielonntId).timelonrIncrelonmelonnt(relonquelonstTimelonoutMillis);
+    } elonlselon {
+      relonquelonstTimelonoutNotSelontStats.gelontUnchelonckelond(clielonntId).increlonmelonnt();
     }
 
-    // How much time does this request have, from its deadline start, to the effective deadline.
-    if (deadline.isDefined()) {
-      long deadlineEndTimeMillis = deadline.get().deadline().inMillis();
-      long deadlineStartTimeMillis = deadline.get().timestamp().inMillis();
-      long finagleDeadlineTimeMillis = deadlineEndTimeMillis - deadlineStartTimeMillis;
-      finagleDeadlineStats.getUnchecked(clientId).timerIncrement(finagleDeadlineTimeMillis);
-    } else {
-      finagleDeadlineNotSetStats.getUnchecked(clientId).increment();
+    // How much timelon doelons this relonquelonst havelon, from its delonadlinelon start, to thelon elonffelonctivelon delonadlinelon.
+    if (delonadlinelon.isDelonfinelond()) {
+      long delonadlinelonelonndTimelonMillis = delonadlinelon.gelont().delonadlinelon().inMillis();
+      long delonadlinelonStartTimelonMillis = delonadlinelon.gelont().timelonstamp().inMillis();
+      long finaglelonDelonadlinelonTimelonMillis = delonadlinelonelonndTimelonMillis - delonadlinelonStartTimelonMillis;
+      finaglelonDelonadlinelonStats.gelontUnchelonckelond(clielonntId).timelonrIncrelonmelonnt(finaglelonDelonadlinelonTimelonMillis);
+    } elonlselon {
+      finaglelonDelonadlinelonNotSelontStats.gelontUnchelonckelond(clielonntId).increlonmelonnt();
     }
 
-    // Explicitly track when both are not set.
-    if (requestTimeoutMillis <= 0 && deadline.isEmpty()) {
-      finagleDeadlineAndRequestTimeoutNotSetStats.getUnchecked(clientId).increment();
+    // elonxplicitly track whelonn both arelon not selont.
+    if (relonquelonstTimelonoutMillis <= 0 && delonadlinelon.iselonmpty()) {
+      finaglelonDelonadlinelonAndRelonquelonstTimelonoutNotSelontStats.gelontUnchelonckelond(clielonntId).increlonmelonnt();
     }
 
-    // If both timeout and the deadline are set, track how much over / under we are, when
-    // comparing the deadline, and the EarlybirdRequest timeout.
-    if (requestTimeoutMillis > 0 && deadline.isDefined()) {
-      long deadlineEndTimeMillis = deadline.get().deadline().inMillis();
-      Preconditions.checkState(request.isSetClientRequestTimeMs(),
-          "Expect ClientRequestTimeFilter to always set the clientRequestTimeMs field. Request: %s",
-          request);
-      long requestStartTimeMillis = request.getClientRequestTimeMs();
-      long requestEndTimeMillis = requestStartTimeMillis + requestTimeoutMillis;
+    // If both timelonout and thelon delonadlinelon arelon selont, track how much ovelonr / undelonr welon arelon, whelonn
+    // comparing thelon delonadlinelon, and thelon elonarlybirdRelonquelonst timelonout.
+    if (relonquelonstTimelonoutMillis > 0 && delonadlinelon.isDelonfinelond()) {
+      long delonadlinelonelonndTimelonMillis = delonadlinelon.gelont().delonadlinelon().inMillis();
+      Prelonconditions.chelonckStatelon(relonquelonst.isSelontClielonntRelonquelonstTimelonMs(),
+          "elonxpelonct ClielonntRelonquelonstTimelonFiltelonr to always selont thelon clielonntRelonquelonstTimelonMs fielonld. Relonquelonst: %s",
+          relonquelonst);
+      long relonquelonstStartTimelonMillis = relonquelonst.gelontClielonntRelonquelonstTimelonMs();
+      long relonquelonstelonndTimelonMillis = relonquelonstStartTimelonMillis + relonquelonstTimelonoutMillis;
 
-      long deadlineDiffMillis = deadlineEndTimeMillis - requestEndTimeMillis;
-      if (deadlineDiffMillis >= 0) {
-        deadlineLargerStats.getUnchecked(clientId).timerIncrement(deadlineDiffMillis);
-      } else {
-        // Track "deadline is smaller" as positive values.
-        deadlineSmallerStats.getUnchecked(clientId).timerIncrement(-deadlineDiffMillis);
+      long delonadlinelonDiffMillis = delonadlinelonelonndTimelonMillis - relonquelonstelonndTimelonMillis;
+      if (delonadlinelonDiffMillis >= 0) {
+        delonadlinelonLargelonrStats.gelontUnchelonckelond(clielonntId).timelonrIncrelonmelonnt(delonadlinelonDiffMillis);
+      } elonlselon {
+        // Track "delonadlinelon is smallelonr" as positivelon valuelons.
+        delonadlinelonSmallelonrStats.gelontUnchelonckelond(clielonntId).timelonrIncrelonmelonnt(-delonadlinelonDiffMillis);
       }
     }
 
-    return service.apply(requestContext);
+    relonturn selonrvicelon.apply(relonquelonstContelonxt);
   }
 
-  private long getRequestTimeout(EarlybirdRequest request) {
-    if (request.isSetSearchQuery()
-        && request.getSearchQuery().isSetCollectorParams()
-        && request.getSearchQuery().getCollectorParams().isSetTerminationParams()
-        && request.getSearchQuery().getCollectorParams().getTerminationParams().isSetTimeoutMs()) {
+  privatelon long gelontRelonquelonstTimelonout(elonarlybirdRelonquelonst relonquelonst) {
+    if (relonquelonst.isSelontSelonarchQuelonry()
+        && relonquelonst.gelontSelonarchQuelonry().isSelontCollelonctorParams()
+        && relonquelonst.gelontSelonarchQuelonry().gelontCollelonctorParams().isSelontTelonrminationParams()
+        && relonquelonst.gelontSelonarchQuelonry().gelontCollelonctorParams().gelontTelonrminationParams().isSelontTimelonoutMs()) {
 
-      return request.getSearchQuery().getCollectorParams().getTerminationParams().getTimeoutMs();
-    } else if (request.isSetTimeoutMs()) {
-      return request.getTimeoutMs();
-    } else {
-      return -1;
+      relonturn relonquelonst.gelontSelonarchQuelonry().gelontCollelonctorParams().gelontTelonrminationParams().gelontTimelonoutMs();
+    } elonlselon if (relonquelonst.isSelontTimelonoutMs()) {
+      relonturn relonquelonst.gelontTimelonoutMs();
+    } elonlselon {
+      relonturn -1;
     }
   }
 }

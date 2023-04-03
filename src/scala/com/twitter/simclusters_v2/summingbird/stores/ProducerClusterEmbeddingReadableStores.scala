@@ -1,98 +1,98 @@
-package com.twitter.simclusters_v2.summingbird.stores
+packagelon com.twittelonr.simclustelonrs_v2.summingbird.storelons
 
-import com.twitter.bijection.Injection
-import com.twitter.bijection.scrooge.CompactScalaCodec
-import com.twitter.simclusters_v2.thriftscala.PersistedFullClusterId
-import com.twitter.simclusters_v2.thriftscala.TopProducersWithScore
-import com.twitter.simclusters_v2.thriftscala.TopSimClustersWithScore
-import com.twitter.storage.client.manhattan.kv.ManhattanKVClientMtlsParams
-import com.twitter.storehaus.ReadableStore
-import com.twitter.storehaus_internal.manhattan.Athena
-import com.twitter.storehaus_internal.manhattan.ManhattanRO
-import com.twitter.storehaus_internal.manhattan.ManhattanROConfig
-import com.twitter.storehaus_internal.util.ApplicationID
-import com.twitter.storehaus_internal.util.DatasetName
-import com.twitter.storehaus_internal.util.HDFSPath
+import com.twittelonr.bijelonction.Injelonction
+import com.twittelonr.bijelonction.scroogelon.CompactScalaCodelonc
+import com.twittelonr.simclustelonrs_v2.thriftscala.PelonrsistelondFullClustelonrId
+import com.twittelonr.simclustelonrs_v2.thriftscala.TopProducelonrsWithScorelon
+import com.twittelonr.simclustelonrs_v2.thriftscala.TopSimClustelonrsWithScorelon
+import com.twittelonr.storagelon.clielonnt.manhattan.kv.ManhattanKVClielonntMtlsParams
+import com.twittelonr.storelonhaus.RelonadablelonStorelon
+import com.twittelonr.storelonhaus_intelonrnal.manhattan.Athelonna
+import com.twittelonr.storelonhaus_intelonrnal.manhattan.ManhattanRO
+import com.twittelonr.storelonhaus_intelonrnal.manhattan.ManhattanROConfig
+import com.twittelonr.storelonhaus_intelonrnal.util.ApplicationID
+import com.twittelonr.storelonhaus_intelonrnal.util.DataselontNamelon
+import com.twittelonr.storelonhaus_intelonrnal.util.HDFSPath
 
-object ProducerClusterEmbeddingReadableStores {
+objelonct ProducelonrClustelonrelonmbelonddingRelonadablelonStorelons {
 
-  implicit val longInject: Injection[Long, Array[Byte]] = Injection.long2BigEndian
-  implicit val clusterInject: Injection[TopSimClustersWithScore, Array[Byte]] =
-    CompactScalaCodec(TopSimClustersWithScore)
-  implicit val producerInject: Injection[TopProducersWithScore, Array[Byte]] =
-    CompactScalaCodec(TopProducersWithScore)
-  implicit val clusterIdInject: Injection[PersistedFullClusterId, Array[Byte]] =
-    CompactScalaCodec(PersistedFullClusterId)
+  implicit val longInjelonct: Injelonction[Long, Array[Bytelon]] = Injelonction.long2Bigelonndian
+  implicit val clustelonrInjelonct: Injelonction[TopSimClustelonrsWithScorelon, Array[Bytelon]] =
+    CompactScalaCodelonc(TopSimClustelonrsWithScorelon)
+  implicit val producelonrInjelonct: Injelonction[TopProducelonrsWithScorelon, Array[Bytelon]] =
+    CompactScalaCodelonc(TopProducelonrsWithScorelon)
+  implicit val clustelonrIdInjelonct: Injelonction[PelonrsistelondFullClustelonrId, Array[Bytelon]] =
+    CompactScalaCodelonc(PelonrsistelondFullClustelonrId)
 
-  private val appId = "simclusters_v2"
+  privatelon val appId = "simclustelonrs_v2"
 
-  def getSimClusterEmbeddingTopKProducersStore(
-    mhMtlsParams: ManhattanKVClientMtlsParams
-  ): ReadableStore[PersistedFullClusterId, TopProducersWithScore] = {
-    ManhattanRO.getReadableStoreWithMtls[PersistedFullClusterId, TopProducersWithScore](
+  delonf gelontSimClustelonrelonmbelonddingTopKProducelonrsStorelon(
+    mhMtlsParams: ManhattanKVClielonntMtlsParams
+  ): RelonadablelonStorelon[PelonrsistelondFullClustelonrId, TopProducelonrsWithScorelon] = {
+    ManhattanRO.gelontRelonadablelonStorelonWithMtls[PelonrsistelondFullClustelonrId, TopProducelonrsWithScorelon](
       ManhattanROConfig(
         HDFSPath(""),
         ApplicationID(appId),
-        DatasetName("simcluster_embedding_top_k_producers_by_fav_score_20m_145k_updated"),
-        Athena
+        DataselontNamelon("simclustelonr_elonmbelondding_top_k_producelonrs_by_fav_scorelon_20m_145k_updatelond"),
+        Athelonna
       ),
       mhMtlsParams
     )
   }
 
-  def getProducerTopKSimClustersEmbeddingsStore(
-    mhMtlsParams: ManhattanKVClientMtlsParams
-  ): ReadableStore[Long, TopSimClustersWithScore] = {
-    val datasetName = "producer_top_k_simcluster_embeddings_by_fav_score_20m_145k_updated"
-    ManhattanRO.getReadableStoreWithMtls[Long, TopSimClustersWithScore](
+  delonf gelontProducelonrTopKSimClustelonrselonmbelonddingsStorelon(
+    mhMtlsParams: ManhattanKVClielonntMtlsParams
+  ): RelonadablelonStorelon[Long, TopSimClustelonrsWithScorelon] = {
+    val dataselontNamelon = "producelonr_top_k_simclustelonr_elonmbelonddings_by_fav_scorelon_20m_145k_updatelond"
+    ManhattanRO.gelontRelonadablelonStorelonWithMtls[Long, TopSimClustelonrsWithScorelon](
       ManhattanROConfig(
         HDFSPath(""),
         ApplicationID(appId),
-        DatasetName(datasetName),
-        Athena
+        DataselontNamelon(dataselontNamelon),
+        Athelonna
       ),
       mhMtlsParams
     )
   }
 
-  def getProducerTopKSimClusters2020EmbeddingsStore(
-    mhMtlsParams: ManhattanKVClientMtlsParams
-  ): ReadableStore[Long, TopSimClustersWithScore] = {
-    val datasetName = "producer_top_k_simcluster_embeddings_by_fav_score_20m_145k_2020"
-    ManhattanRO.getReadableStoreWithMtls[Long, TopSimClustersWithScore](
+  delonf gelontProducelonrTopKSimClustelonrs2020elonmbelonddingsStorelon(
+    mhMtlsParams: ManhattanKVClielonntMtlsParams
+  ): RelonadablelonStorelon[Long, TopSimClustelonrsWithScorelon] = {
+    val dataselontNamelon = "producelonr_top_k_simclustelonr_elonmbelonddings_by_fav_scorelon_20m_145k_2020"
+    ManhattanRO.gelontRelonadablelonStorelonWithMtls[Long, TopSimClustelonrsWithScorelon](
       ManhattanROConfig(
         HDFSPath(""),
         ApplicationID(appId),
-        DatasetName(datasetName),
-        Athena
+        DataselontNamelon(dataselontNamelon),
+        Athelonna
       ),
       mhMtlsParams
     )
   }
 
-  def getSimClusterEmbeddingTopKProducersByFollowStore(
-    mhMtlsParams: ManhattanKVClientMtlsParams
-  ): ReadableStore[PersistedFullClusterId, TopProducersWithScore] = {
-    ManhattanRO.getReadableStoreWithMtls[PersistedFullClusterId, TopProducersWithScore](
+  delonf gelontSimClustelonrelonmbelonddingTopKProducelonrsByFollowStorelon(
+    mhMtlsParams: ManhattanKVClielonntMtlsParams
+  ): RelonadablelonStorelon[PelonrsistelondFullClustelonrId, TopProducelonrsWithScorelon] = {
+    ManhattanRO.gelontRelonadablelonStorelonWithMtls[PelonrsistelondFullClustelonrId, TopProducelonrsWithScorelon](
       ManhattanROConfig(
         HDFSPath(""),
         ApplicationID(appId),
-        DatasetName("simcluster_embedding_top_k_producers_by_follow_score_20m_145k_updated"),
-        Athena
+        DataselontNamelon("simclustelonr_elonmbelondding_top_k_producelonrs_by_follow_scorelon_20m_145k_updatelond"),
+        Athelonna
       ),
       mhMtlsParams
     )
   }
 
-  def getProducerTopKSimClustersEmbeddingsByFollowStore(
-    mhMtlsParams: ManhattanKVClientMtlsParams
-  ): ReadableStore[Long, TopSimClustersWithScore] = {
-    ManhattanRO.getReadableStoreWithMtls[Long, TopSimClustersWithScore](
+  delonf gelontProducelonrTopKSimClustelonrselonmbelonddingsByFollowStorelon(
+    mhMtlsParams: ManhattanKVClielonntMtlsParams
+  ): RelonadablelonStorelon[Long, TopSimClustelonrsWithScorelon] = {
+    ManhattanRO.gelontRelonadablelonStorelonWithMtls[Long, TopSimClustelonrsWithScorelon](
       ManhattanROConfig(
         HDFSPath(""),
         ApplicationID(appId),
-        DatasetName("producer_top_k_simcluster_embeddings_by_follow_score_20m_145k_2020"),
-        Athena
+        DataselontNamelon("producelonr_top_k_simclustelonr_elonmbelonddings_by_follow_scorelon_20m_145k_2020"),
+        Athelonna
       ),
       mhMtlsParams
     )

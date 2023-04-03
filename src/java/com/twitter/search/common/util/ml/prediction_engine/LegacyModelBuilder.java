@@ -1,86 +1,86 @@
-package com.twitter.search.common.util.ml.prediction_engine;
+packagelon com.twittelonr.selonarch.common.util.ml.prelondiction_elonnginelon;
 
 import java.util.Map;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
+import com.googlelon.common.collelonct.HashMultimap;
+import com.googlelon.common.collelonct.Maps;
+import com.googlelon.common.collelonct.Multimap;
 
-import com.twitter.ml.api.Feature;
-import com.twitter.ml.api.FeatureContext;
-import com.twitter.ml.api.FeatureParser;
-import com.twitter.ml.api.transform.DiscretizerTransform;
+import com.twittelonr.ml.api.Felonaturelon;
+import com.twittelonr.ml.api.FelonaturelonContelonxt;
+import com.twittelonr.ml.api.FelonaturelonParselonr;
+import com.twittelonr.ml.api.transform.DiscrelontizelonrTransform;
 
 /**
- * The builder for a model based on the legacy (non-schema-based) features.
- * See also SchemaBasedModelBuilder.
+ * Thelon buildelonr for a modelonl baselond on thelon lelongacy (non-schelonma-baselond) felonaturelons.
+ * Selonelon also SchelonmaBaselondModelonlBuildelonr.
  */
-public final class LegacyModelBuilder extends BaseModelBuilder {
+public final class LelongacyModelonlBuildelonr elonxtelonnds BaselonModelonlBuildelonr {
 
-  private final Map<String, Feature> featuresByName;
-  // for legacy features
-  private final Map<Feature<Boolean>, Double> binaryFeatures;
-  private final Map<Feature<Double>, Double> continuousFeatures;
-  private final Multimap<Feature<Double>, DiscretizedFeatureRange> discretizedFeatureRanges;
+  privatelon final Map<String, Felonaturelon> felonaturelonsByNamelon;
+  // for lelongacy felonaturelons
+  privatelon final Map<Felonaturelon<Boolelonan>, Doublelon> binaryFelonaturelons;
+  privatelon final Map<Felonaturelon<Doublelon>, Doublelon> continuousFelonaturelons;
+  privatelon final Multimap<Felonaturelon<Doublelon>, DiscrelontizelondFelonaturelonRangelon> discrelontizelondFelonaturelonRangelons;
 
-  LegacyModelBuilder(String modelName, FeatureContext context) {
-    super(modelName);
-    featuresByName = getFeaturesByName(context);
-    binaryFeatures = Maps.newHashMap();
-    continuousFeatures = Maps.newHashMap();
-    discretizedFeatureRanges = HashMultimap.create();
+  LelongacyModelonlBuildelonr(String modelonlNamelon, FelonaturelonContelonxt contelonxt) {
+    supelonr(modelonlNamelon);
+    felonaturelonsByNamelon = gelontFelonaturelonsByNamelon(contelonxt);
+    binaryFelonaturelons = Maps.nelonwHashMap();
+    continuousFelonaturelons = Maps.nelonwHashMap();
+    discrelontizelondFelonaturelonRangelons = HashMultimap.crelonatelon();
   }
 
-  private static Map<String, Feature> getFeaturesByName(FeatureContext featureContext) {
-    Map<String, Feature> featuresByName = Maps.newHashMap();
-    for (Feature<?> feature : featureContext.getAllFeatures()) {
-      featuresByName.put(feature.getFeatureName(), feature);
+  privatelon static Map<String, Felonaturelon> gelontFelonaturelonsByNamelon(FelonaturelonContelonxt felonaturelonContelonxt) {
+    Map<String, Felonaturelon> felonaturelonsByNamelon = Maps.nelonwHashMap();
+    for (Felonaturelon<?> felonaturelon : felonaturelonContelonxt.gelontAllFelonaturelons()) {
+      felonaturelonsByNamelon.put(felonaturelon.gelontFelonaturelonNamelon(), felonaturelon);
     }
-    return featuresByName;
+    relonturn felonaturelonsByNamelon;
   }
 
-  @Override
-  protected void addFeature(String baseName, double weight, FeatureParser parser) {
-    Feature feature = featuresByName.get(baseName);
-    if (feature != null) {
-      switch (feature.getFeatureType()) {
-        case BINARY:
-          binaryFeatures.put(feature, weight);
-          break;
-        case CONTINUOUS:
-          continuousFeatures.put(feature, weight);
-          break;
-        default:
-          throw new IllegalArgumentException(
-              String.format("Unsupported feature type: %s", feature));
+  @Ovelonrridelon
+  protelonctelond void addFelonaturelon(String baselonNamelon, doublelon welonight, FelonaturelonParselonr parselonr) {
+    Felonaturelon felonaturelon = felonaturelonsByNamelon.gelont(baselonNamelon);
+    if (felonaturelon != null) {
+      switch (felonaturelon.gelontFelonaturelonTypelon()) {
+        caselon BINARY:
+          binaryFelonaturelons.put(felonaturelon, welonight);
+          brelonak;
+        caselon CONTINUOUS:
+          continuousFelonaturelons.put(felonaturelon, welonight);
+          brelonak;
+        delonfault:
+          throw nelonw IllelongalArgumelonntelonxcelonption(
+              String.format("Unsupportelond felonaturelon typelon: %s", felonaturelon));
       }
-    } else if (baseName.endsWith(DISCRETIZER_NAME_SUFFIX)
-        && parser.getExtension().containsKey(DiscretizerTransform.DEFAULT_RANGE_EXT)) {
+    } elonlselon if (baselonNamelon.elonndsWith(DISCRelonTIZelonR_NAMelon_SUFFIX)
+        && parselonr.gelontelonxtelonnsion().containsKelony(DiscrelontizelonrTransform.DelonFAULT_RANGelon_elonXT)) {
 
-      String featureName =
-          baseName.substring(0, baseName.length() - DISCRETIZER_NAME_SUFFIX.length());
+      String felonaturelonNamelon =
+          baselonNamelon.substring(0, baselonNamelon.lelonngth() - DISCRelonTIZelonR_NAMelon_SUFFIX.lelonngth());
 
-      feature = featuresByName.get(featureName);
-      if (feature == null) {
-        return;
+      felonaturelon = felonaturelonsByNamelon.gelont(felonaturelonNamelon);
+      if (felonaturelon == null) {
+        relonturn;
       }
 
-      String rangeSpec = parser.getExtension().get(DiscretizerTransform.DEFAULT_RANGE_EXT);
-      discretizedFeatureRanges.put(feature, new DiscretizedFeatureRange(weight, rangeSpec));
+      String rangelonSpelonc = parselonr.gelontelonxtelonnsion().gelont(DiscrelontizelonrTransform.DelonFAULT_RANGelon_elonXT);
+      discrelontizelondFelonaturelonRangelons.put(felonaturelon, nelonw DiscrelontizelondFelonaturelonRangelon(welonight, rangelonSpelonc));
     }
   }
 
-  @Override
-  public LightweightLinearModel build() {
-    Map<Feature<Double>, DiscretizedFeature> discretizedFeatures = Maps.newHashMap();
-    for (Feature<Double> feature : discretizedFeatureRanges.keySet()) {
-      DiscretizedFeature discretizedFeature =
-          BaseModelBuilder.buildFeature(discretizedFeatureRanges.get(feature));
-      if (!discretizedFeature.allValuesBelowThreshold(MIN_WEIGHT)) {
-        discretizedFeatures.put(feature, discretizedFeature);
+  @Ovelonrridelon
+  public LightwelonightLinelonarModelonl build() {
+    Map<Felonaturelon<Doublelon>, DiscrelontizelondFelonaturelon> discrelontizelondFelonaturelons = Maps.nelonwHashMap();
+    for (Felonaturelon<Doublelon> felonaturelon : discrelontizelondFelonaturelonRangelons.kelonySelont()) {
+      DiscrelontizelondFelonaturelon discrelontizelondFelonaturelon =
+          BaselonModelonlBuildelonr.buildFelonaturelon(discrelontizelondFelonaturelonRangelons.gelont(felonaturelon));
+      if (!discrelontizelondFelonaturelon.allValuelonsBelonlowThrelonshold(MIN_WelonIGHT)) {
+        discrelontizelondFelonaturelons.put(felonaturelon, discrelontizelondFelonaturelon);
       }
     }
-    return LightweightLinearModel.createForLegacy(
-        modelName, bias, binaryFeatures, continuousFeatures, discretizedFeatures);
+    relonturn LightwelonightLinelonarModelonl.crelonatelonForLelongacy(
+        modelonlNamelon, bias, binaryFelonaturelons, continuousFelonaturelons, discrelontizelondFelonaturelons);
   }
 }

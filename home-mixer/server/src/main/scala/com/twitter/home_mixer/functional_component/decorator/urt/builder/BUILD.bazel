@@ -1,12 +1,12 @@
 scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/decorator/urt",
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/premarshaller/urt/builder",
-        "src/thrift/com/twitter/timelines/service:thrift-scala",
-        "src/thrift/com/twitter/timelineservice/server/internal:thrift-scala",
+    sourcelons = ["*.scala"],
+    compilelonr_option_selonts = ["fatal_warnings"],
+    strict_delonps = Truelon,
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        "product-mixelonr/componelonnt-library/src/main/scala/com/twittelonr/product_mixelonr/componelonnt_library/deloncorator/urt",
+        "product-mixelonr/componelonnt-library/src/main/scala/com/twittelonr/product_mixelonr/componelonnt_library/prelonmarshallelonr/urt/buildelonr",
+        "src/thrift/com/twittelonr/timelonlinelons/selonrvicelon:thrift-scala",
+        "src/thrift/com/twittelonr/timelonlinelonselonrvicelon/selonrvelonr/intelonrnal:thrift-scala",
     ],
 )

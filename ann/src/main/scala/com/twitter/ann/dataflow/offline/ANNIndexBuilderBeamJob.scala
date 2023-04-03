@@ -1,460 +1,460 @@
-package com.twitter.ann.dataflow.offline
+packagelon com.twittelonr.ann.dataflow.offlinelon
 
-import com.spotify.scio.ScioContext
-import com.spotify.scio.ScioMetrics
-import com.twitter.ann.annoy.TypedAnnoyIndex
-import com.twitter.ann.brute_force.SerializableBruteForceIndex
-import com.twitter.ann.common.thriftscala.AnnIndexMetadata
-import com.twitter.ann.common.Distance
-import com.twitter.ann.common.Cosine
-import com.twitter.ann.common.EntityEmbedding
-import com.twitter.ann.common.IndexOutputFile
-import com.twitter.ann.common.Metric
-import com.twitter.ann.common.ReadWriteFuturePool
-import com.twitter.ann.faiss.FaissIndexer
-import com.twitter.ann.hnsw.TypedHnswIndex
-import com.twitter.ann.serialization.PersistedEmbeddingInjection
-import com.twitter.ann.serialization.ThriftIteratorIO
-import com.twitter.ann.serialization.thriftscala.PersistedEmbedding
-import com.twitter.ann.util.IndexBuilderUtils
-import com.twitter.beam.io.bigquery.BigQueryIO
-import com.twitter.beam.io.dal.DalObservedDatasetRegistration
-import com.twitter.beam.job.DateRange
-import com.twitter.beam.job.DateRangeOptions
-import com.twitter.cortex.ml.embeddings.common._
-import com.twitter.ml.api.embedding.Embedding
-import com.twitter.ml.api.embedding.EmbeddingMath
-import com.twitter.ml.api.embedding.EmbeddingSerDe
-import com.twitter.ml.api.thriftscala.{Embedding => TEmbedding}
-import com.twitter.ml.featurestore.lib.EntityId
-import com.twitter.ml.featurestore.lib.SemanticCoreId
-import com.twitter.ml.featurestore.lib.TfwId
-import com.twitter.ml.featurestore.lib.TweetId
-import com.twitter.ml.featurestore.lib.UserId
-import com.twitter.scalding.DateOps
-import com.twitter.scalding.RichDate
-import com.twitter.scio_internal.job.ScioBeamJob
-import com.twitter.statebird.v2.thriftscala.{Environment => StatebirdEnvironment}
-import com.twitter.util.Await
-import com.twitter.util.FuturePool
-import com.twitter.wtf.beam.bq_embedding_export.BQQueryUtils
-import java.time.Instant
-import java.util.TimeZone
-import java.util.concurrent.Executors
-import org.apache.beam.sdk.io.FileSystems
-import org.apache.beam.sdk.io.fs.ResolveOptions
-import org.apache.beam.sdk.io.fs.ResourceId
-import org.apache.beam.sdk.io.gcp.bigquery.BigQueryIO.TypedRead
-import org.apache.beam.sdk.options.Default
-import org.apache.beam.sdk.options.Description
-import org.apache.beam.sdk.transforms.DoFn
-import org.apache.beam.sdk.transforms.DoFn._
-import org.apache.beam.sdk.transforms.PTransform
-import org.apache.beam.sdk.transforms.ParDo
-import org.apache.beam.sdk.values.KV
-import org.apache.beam.sdk.values.PCollection
-import org.apache.beam.sdk.values.PDone
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
+import com.spotify.scio.ScioContelonxt
+import com.spotify.scio.ScioMelontrics
+import com.twittelonr.ann.annoy.TypelondAnnoyIndelonx
+import com.twittelonr.ann.brutelon_forcelon.SelonrializablelonBrutelonForcelonIndelonx
+import com.twittelonr.ann.common.thriftscala.AnnIndelonxMelontadata
+import com.twittelonr.ann.common.Distancelon
+import com.twittelonr.ann.common.Cosinelon
+import com.twittelonr.ann.common.elonntityelonmbelondding
+import com.twittelonr.ann.common.IndelonxOutputFilelon
+import com.twittelonr.ann.common.Melontric
+import com.twittelonr.ann.common.RelonadWritelonFuturelonPool
+import com.twittelonr.ann.faiss.FaissIndelonxelonr
+import com.twittelonr.ann.hnsw.TypelondHnswIndelonx
+import com.twittelonr.ann.selonrialization.PelonrsistelondelonmbelonddingInjelonction
+import com.twittelonr.ann.selonrialization.ThriftItelonratorIO
+import com.twittelonr.ann.selonrialization.thriftscala.Pelonrsistelondelonmbelondding
+import com.twittelonr.ann.util.IndelonxBuildelonrUtils
+import com.twittelonr.belonam.io.bigquelonry.BigQuelonryIO
+import com.twittelonr.belonam.io.dal.DalObselonrvelondDataselontRelongistration
+import com.twittelonr.belonam.job.DatelonRangelon
+import com.twittelonr.belonam.job.DatelonRangelonOptions
+import com.twittelonr.cortelonx.ml.elonmbelonddings.common._
+import com.twittelonr.ml.api.elonmbelondding.elonmbelondding
+import com.twittelonr.ml.api.elonmbelondding.elonmbelonddingMath
+import com.twittelonr.ml.api.elonmbelondding.elonmbelonddingSelonrDelon
+import com.twittelonr.ml.api.thriftscala.{elonmbelondding => Telonmbelondding}
+import com.twittelonr.ml.felonaturelonstorelon.lib.elonntityId
+import com.twittelonr.ml.felonaturelonstorelon.lib.SelonmanticCorelonId
+import com.twittelonr.ml.felonaturelonstorelon.lib.TfwId
+import com.twittelonr.ml.felonaturelonstorelon.lib.TwelonelontId
+import com.twittelonr.ml.felonaturelonstorelon.lib.UselonrId
+import com.twittelonr.scalding.DatelonOps
+import com.twittelonr.scalding.RichDatelon
+import com.twittelonr.scio_intelonrnal.job.ScioBelonamJob
+import com.twittelonr.statelonbird.v2.thriftscala.{elonnvironmelonnt => Statelonbirdelonnvironmelonnt}
+import com.twittelonr.util.Await
+import com.twittelonr.util.FuturelonPool
+import com.twittelonr.wtf.belonam.bq_elonmbelondding_elonxport.BQQuelonryUtils
+import java.timelon.Instant
+import java.util.TimelonZonelon
+import java.util.concurrelonnt.elonxeloncutors
+import org.apachelon.belonam.sdk.io.FilelonSystelonms
+import org.apachelon.belonam.sdk.io.fs.RelonsolvelonOptions
+import org.apachelon.belonam.sdk.io.fs.RelonsourcelonId
+import org.apachelon.belonam.sdk.io.gcp.bigquelonry.BigQuelonryIO.TypelondRelonad
+import org.apachelon.belonam.sdk.options.Delonfault
+import org.apachelon.belonam.sdk.options.Delonscription
+import org.apachelon.belonam.sdk.transforms.DoFn
+import org.apachelon.belonam.sdk.transforms.DoFn._
+import org.apachelon.belonam.sdk.transforms.PTransform
+import org.apachelon.belonam.sdk.transforms.ParDo
+import org.apachelon.belonam.sdk.valuelons.KV
+import org.apachelon.belonam.sdk.valuelons.PCollelonction
+import org.apachelon.belonam.sdk.valuelons.PDonelon
+import org.slf4j.Loggelonr
+import org.slf4j.LoggelonrFactory
 
-trait ANNOptions extends DateRangeOptions {
-  @Description("Output GCS path for the generated index")
-  def getOutputPath(): String
-  def setOutputPath(value: String): Unit
+trait ANNOptions elonxtelonnds DatelonRangelonOptions {
+  @Delonscription("Output GCS path for thelon gelonnelonratelond indelonx")
+  delonf gelontOutputPath(): String
+  delonf selontOutputPath(valuelon: String): Unit
 
-  @Description("If set, the index is grouped")
-  @Default.Boolean(false)
-  def getGrouped: Boolean
-  def setGrouped(value: Boolean): Unit
+  @Delonscription("If selont, thelon indelonx is groupelond")
+  @Delonfault.Boolelonan(falselon)
+  delonf gelontGroupelond: Boolelonan
+  delonf selontGroupelond(valuelon: Boolelonan): Unit
 
-  @Description(
-    "If set, a segment will be registered for the provided DAL dataset module which will trigger " +
-      "DAL registration.")
-  @Default.Boolean(false)
-  def getEnableDalRegistration: Boolean
-  def setEnableDalRegistration(value: Boolean): Unit
+  @Delonscription(
+    "If selont, a selongmelonnt will belon relongistelonrelond for thelon providelond DAL dataselont modulelon which will triggelonr " +
+      "DAL relongistration.")
+  @Delonfault.Boolelonan(falselon)
+  delonf gelontelonnablelonDalRelongistration: Boolelonan
+  delonf selontelonnablelonDalRelongistration(valuelon: Boolelonan): Unit
 
-  @Description(
-    "Output GCS path for the generated index. The OutputPath should be of the format " +
-      "'gs://user.{{user_name}}.dp.gcp.twttr.net/subDir/outputDir' and OutputDALPath will be " +
+  @Delonscription(
+    "Output GCS path for thelon gelonnelonratelond indelonx. Thelon OutputPath should belon of thelon format " +
+      "'gs://uselonr.{{uselonr_namelon}}.dp.gcp.twttr.nelont/subDir/outputDir' and OutputDALPath will belon " +
       "'subDir/outputDir' for this to work")
-  def getOutputDALPath: String
-  def setOutputDALPath(value: String): Unit
+  delonf gelontOutputDALPath: String
+  delonf selontOutputDALPath(valuelon: String): Unit
 
-  @Description("Get ANN index dataset name")
-  def getDatasetModuleName: String
-  def setDatasetModuleName(value: String): Unit
+  @Delonscription("Gelont ANN indelonx dataselont namelon")
+  delonf gelontDataselontModulelonNamelon: String
+  delonf selontDataselontModulelonNamelon(valuelon: String): Unit
 
-  @Description("Get ANN index dataset owner role")
-  def getDatasetOwnerRole: String
-  def setDatasetOwnerRole(value: String): Unit
+  @Delonscription("Gelont ANN indelonx dataselont ownelonr rolelon")
+  delonf gelontDataselontOwnelonrRolelon: String
+  delonf selontDataselontOwnelonrRolelon(valuelon: String): Unit
 
-  @Description("If set, index is written in <output>/<timestamp>")
-  @Default.Boolean(false)
-  def getOutputWithTimestamp: Boolean
-  def setOutputWithTimestamp(value: Boolean): Unit
+  @Delonscription("If selont, indelonx is writtelonn in <output>/<timelonstamp>")
+  @Delonfault.Boolelonan(falselon)
+  delonf gelontOutputWithTimelonstamp: Boolelonan
+  delonf selontOutputWithTimelonstamp(valuelon: Boolelonan): Unit
 
-  @Description("File which contains a SQL query to retrieve embeddings from BQ")
-  def getDatasetSqlPath: String
-  def setDatasetSqlPath(value: String): Unit
+  @Delonscription("Filelon which contains a SQL quelonry to relontrielonvelon elonmbelonddings from BQ")
+  delonf gelontDataselontSqlPath: String
+  delonf selontDataselontSqlPath(valuelon: String): Unit
 
-  @Description("Dimension of embedding in the input data. See go/ann")
-  def getDimension: Int
-  def setDimension(value: Int): Unit
+  @Delonscription("Dimelonnsion of elonmbelondding in thelon input data. Selonelon go/ann")
+  delonf gelontDimelonnsion: Int
+  delonf selontDimelonnsion(valuelon: Int): Unit
 
-  @Description("The type of entity ID that is used with the embeddings. See go/ann")
-  def getEntityKind: String
-  def setEntityKind(value: String): Unit
+  @Delonscription("Thelon typelon of elonntity ID that is uselond with thelon elonmbelonddings. Selonelon go/ann")
+  delonf gelontelonntityKind: String
+  delonf selontelonntityKind(valuelon: String): Unit
 
-  @Description("The kind of index you want to generate (HNSW/Annoy/Brute Force/faiss). See go/ann")
-  def getAlgo: String
-  def setAlgo(value: String): Unit
+  @Delonscription("Thelon kind of indelonx you want to gelonnelonratelon (HNSW/Annoy/Brutelon Forcelon/faiss). Selonelon go/ann")
+  delonf gelontAlgo: String
+  delonf selontAlgo(valuelon: String): Unit
 
-  @Description("Distance metric (InnerProduct/Cosine/L2). See go/ann")
-  def getMetric: String
-  def setMetric(value: String): Unit
+  @Delonscription("Distancelon melontric (InnelonrProduct/Cosinelon/L2). Selonelon go/ann")
+  delonf gelontMelontric: String
+  delonf selontMelontric(valuelon: String): Unit
 
-  @Description("Specifies how many parallel inserts happen to the index. See go/ann")
-  def getConcurrencyLevel: Int
-  def setConcurrencyLevel(value: Int): Unit
+  @Delonscription("Speloncifielons how many parallelonl inselonrts happelonn to thelon indelonx. Selonelon go/ann")
+  delonf gelontConcurrelonncyLelonvelonl: Int
+  delonf selontConcurrelonncyLelonvelonl(valuelon: Int): Unit
 
-  @Description(
-    "Used by HNSW algo. Larger value increases build time but will give better recall. See go/ann")
-  def getEfConstruction: Int
-  def setEfConstruction(value: Int): Unit
+  @Delonscription(
+    "Uselond by HNSW algo. Largelonr valuelon increlonaselons build timelon but will givelon belonttelonr reloncall. Selonelon go/ann")
+  delonf gelontelonfConstruction: Int
+  delonf selontelonfConstruction(valuelon: Int): Unit
 
-  @Description(
-    "Used by HNSW algo. Larger value increases the index size but will give better recall. " +
-      "See go/ann")
-  def getMaxM: Int
-  def setMaxM(value: Int): Unit
+  @Delonscription(
+    "Uselond by HNSW algo. Largelonr valuelon increlonaselons thelon indelonx sizelon but will givelon belonttelonr reloncall. " +
+      "Selonelon go/ann")
+  delonf gelontMaxM: Int
+  delonf selontMaxM(valuelon: Int): Unit
 
-  @Description("Used by HNSW algo. Approximate number of elements that will be indexed. See go/ann")
-  def getExpectedElements: Int
-  def setExpectedElements(value: Int): Unit
+  @Delonscription("Uselond by HNSW algo. Approximatelon numbelonr of elonlelonmelonnts that will belon indelonxelond. Selonelon go/ann")
+  delonf gelontelonxpelonctelondelonlelonmelonnts: Int
+  delonf selontelonxpelonctelondelonlelonmelonnts(valuelon: Int): Unit
 
-  @Description(
-    "Used by Annoy. num_trees is provided during build time and affects the build time and the " +
-      "index size. A larger value will give more accurate results, but larger indexes. See go/ann")
-  def getAnnoyNumTrees: Int
-  def setAnnoyNumTrees(value: Int): Unit
+  @Delonscription(
+    "Uselond by Annoy. num_trelonelons is providelond during build timelon and affeloncts thelon build timelon and thelon " +
+      "indelonx sizelon. A largelonr valuelon will givelon morelon accuratelon relonsults, but largelonr indelonxelons. Selonelon go/ann")
+  delonf gelontAnnoyNumTrelonelons: Int
+  delonf selontAnnoyNumTrelonelons(valuelon: Int): Unit
 
-  @Description(
-    "FAISS factory string determines the ANN algorithm and compression. " +
-      "See https://github.com/facebookresearch/faiss/wiki/The-index-factory")
-  def getFAISSFactoryString: String
-  def setFAISSFactoryString(value: String): Unit
+  @Delonscription(
+    "FAISS factory string delontelonrminelons thelon ANN algorithm and comprelonssion. " +
+      "Selonelon https://github.com/facelonbookrelonselonarch/faiss/wiki/Thelon-indelonx-factory")
+  delonf gelontFAISSFactoryString: String
+  delonf selontFAISSFactoryString(valuelon: String): Unit
 
-  @Description("Sample rate for training during creation of FAISS index. Default is 0.05f")
-  @Default.Float(0.05f)
-  def getTrainingSampleRate: Float
-  def setTrainingSampleRate(value: Float): Unit
+  @Delonscription("Samplelon ratelon for training during crelonation of FAISS indelonx. Delonfault is 0.05f")
+  @Delonfault.Float(0.05f)
+  delonf gelontTrainingSamplelonRatelon: Float
+  delonf selontTrainingSamplelonRatelon(valuelon: Float): Unit
 }
 
 /**
- * Builds ANN index.
+ * Builds ANN indelonx.
  *
- * The input embeddings are read from BigQuery using the input SQL query. The output from this SQL
- * query needs to have two columns, "entityID" [Long] and "embedding" [List[Double]]
+ * Thelon input elonmbelonddings arelon relonad from BigQuelonry using thelon input SQL quelonry. Thelon output from this SQL
+ * quelonry nelonelonds to havelon two columns, "elonntityID" [Long] and "elonmbelondding" [List[Doublelon]]
  *
- * Output directory supported is GCS bucket
+ * Output direlonctory supportelond is GCS buckelont
  */
-object ANNIndexBuilderBeamJob extends ScioBeamJob[ANNOptions] {
-  val counterNameSpace = "ANNIndexBuilderBeamJob"
-  val LOG: Logger = LoggerFactory.getLogger(this.getClass)
-  implicit val timeZone: TimeZone = DateOps.UTC
+objelonct ANNIndelonxBuildelonrBelonamJob elonxtelonnds ScioBelonamJob[ANNOptions] {
+  val countelonrNamelonSpacelon = "ANNIndelonxBuildelonrBelonamJob"
+  val LOG: Loggelonr = LoggelonrFactory.gelontLoggelonr(this.gelontClass)
+  implicit val timelonZonelon: TimelonZonelon = DatelonOps.UTC
 
-  def configurePipeline(sc: ScioContext, opts: ANNOptions): Unit = {
-    val startDate: RichDate = RichDate(opts.interval.getStart.toDate)
-    val endDate: RichDate = RichDate(opts.interval.getEnd.toDate)
+  delonf configurelonPipelonlinelon(sc: ScioContelonxt, opts: ANNOptions): Unit = {
+    val startDatelon: RichDatelon = RichDatelon(opts.intelonrval.gelontStart.toDatelon)
+    val elonndDatelon: RichDatelon = RichDatelon(opts.intelonrval.gelontelonnd.toDatelon)
     val instant = Instant.now()
     val out = {
-      val base = FileSystems.matchNewResource(opts.getOutputPath, /*isDirectory=*/ true)
-      if (opts.getOutputWithTimestamp) {
-        base.resolve(
-          instant.toEpochMilli.toString,
-          ResolveOptions.StandardResolveOptions.RESOLVE_DIRECTORY)
-      } else {
-        base
+      val baselon = FilelonSystelonms.matchNelonwRelonsourcelon(opts.gelontOutputPath, /*isDirelonctory=*/ truelon)
+      if (opts.gelontOutputWithTimelonstamp) {
+        baselon.relonsolvelon(
+          instant.toelonpochMilli.toString,
+          RelonsolvelonOptions.StandardRelonsolvelonOptions.RelonSOLVelon_DIRelonCTORY)
+      } elonlselon {
+        baselon
       }
     }
 
-    // Define template variables which we would like to be replaced in the corresponding sql file
-    val templateVariables =
+    // Delonfinelon telonmplatelon variablelons which welon would likelon to belon relonplacelond in thelon correlonsponding sql filelon
+    val telonmplatelonVariablelons =
       Map(
-        "START_DATE" -> startDate.toString(DateOps.DATETIME_HMS_WITH_DASH),
-        "END_DATE" -> endDate.toString(DateOps.DATETIME_HMS_WITH_DASH)
+        "START_DATelon" -> startDatelon.toString(DatelonOps.DATelonTIMelon_HMS_WITH_DASH),
+        "elonND_DATelon" -> elonndDatelon.toString(DatelonOps.DATelonTIMelon_HMS_WITH_DASH)
       )
 
-    val embeddingFetchQuery =
-      BQQueryUtils.getBQQueryFromSqlFile(opts.getDatasetSqlPath, templateVariables)
+    val elonmbelonddingFelontchQuelonry =
+      BQQuelonryUtils.gelontBQQuelonryFromSqlFilelon(opts.gelontDataselontSqlPath, telonmplatelonVariablelons)
 
-    val sCollection = if (opts.getGrouped) {
+    val sCollelonction = if (opts.gelontGroupelond) {
       sc.customInput(
-        "Read grouped data from BQ",
-        BigQueryIO
-          .readClass[GroupedEmbeddingData]()
-          .fromQuery(embeddingFetchQuery).usingStandardSql()
-          .withMethod(TypedRead.Method.DIRECT_READ)
+        "Relonad groupelond data from BQ",
+        BigQuelonryIO
+          .relonadClass[GroupelondelonmbelonddingData]()
+          .fromQuelonry(elonmbelonddingFelontchQuelonry).usingStandardSql()
+          .withMelonthod(TypelondRelonad.Melonthod.DIRelonCT_RelonAD)
       )
-    } else {
+    } elonlselon {
       sc.customInput(
-        "Read flat data from BQ",
-        BigQueryIO
-          .readClass[FlatEmbeddingData]().fromQuery(embeddingFetchQuery).usingStandardSql()
-          .withMethod(TypedRead.Method.DIRECT_READ)
+        "Relonad flat data from BQ",
+        BigQuelonryIO
+          .relonadClass[FlatelonmbelonddingData]().fromQuelonry(elonmbelonddingFelontchQuelonry).usingStandardSql()
+          .withMelonthod(TypelondRelonad.Melonthod.DIRelonCT_RelonAD)
       )
     }
 
-    val processedCollection =
-      sCollection
-        .flatMap(transformTableRowToKeyVal)
-        .groupBy(_.getKey)
+    val procelonsselondCollelonction =
+      sCollelonction
+        .flatMap(transformTablelonRowToKelonyVal)
+        .groupBy(_.gelontKelony)
         .map {
-          case (groupName, groupValue) =>
-            Map(groupName -> groupValue.map(_.getValue))
+          caselon (groupNamelon, groupValuelon) =>
+            Map(groupNamelon -> groupValuelon.map(_.gelontValuelon))
         }
 
-    val annIndexMetadata =
-      AnnIndexMetadata(timestamp = Some(instant.getEpochSecond), withGroups = Some(opts.getGrouped))
+    val annIndelonxMelontadata =
+      AnnIndelonxMelontadata(timelonstamp = Somelon(instant.gelontelonpochSeloncond), withGroups = Somelon(opts.gelontGroupelond))
 
-    // Count the number of groups and output the ANN index metadata
-    processedCollection.count.map(count => {
-      val annGroupedIndexMetadata = annIndexMetadata.copy(
-        numGroups = Some(count.intValue())
+    // Count thelon numbelonr of groups and output thelon ANN indelonx melontadata
+    procelonsselondCollelonction.count.map(count => {
+      val annGroupelondIndelonxMelontadata = annIndelonxMelontadata.copy(
+        numGroups = Somelon(count.intValuelon())
       )
-      val indexOutDir = new IndexOutputFile(out)
-      indexOutDir.writeIndexMetadata(annGroupedIndexMetadata)
+      val indelonxOutDir = nelonw IndelonxOutputFilelon(out)
+      indelonxOutDir.writelonIndelonxMelontadata(annGroupelondIndelonxMelontadata)
     })
 
-    // Generate Index
-    processedCollection.saveAsCustomOutput(
-      "Serialise to Disk",
+    // Gelonnelonratelon Indelonx
+    procelonsselondCollelonction.savelonAsCustomOutput(
+      "Selonrialiselon to Disk",
       OutputSink(
         out,
-        opts.getAlgo.equals("faiss"),
-        opts.getOutputDALPath,
-        opts.getEnableDalRegistration,
-        opts.getDatasetModuleName,
-        opts.getDatasetOwnerRole,
+        opts.gelontAlgo.elonquals("faiss"),
+        opts.gelontOutputDALPath,
+        opts.gelontelonnablelonDalRelongistration,
+        opts.gelontDataselontModulelonNamelon,
+        opts.gelontDataselontOwnelonrRolelon,
         instant,
-        opts.getDate(),
-        counterNameSpace
+        opts.gelontDatelon(),
+        countelonrNamelonSpacelon
       )
     )
   }
 
-  def transformTableRowToKeyVal(
-    data: BaseEmbeddingData
-  ): Option[KV[String, KV[Long, TEmbedding]]] = {
-    val transformTable = ScioMetrics.counter(counterNameSpace, "transform_table_row_to_kv")
+  delonf transformTablelonRowToKelonyVal(
+    data: BaselonelonmbelonddingData
+  ): Option[KV[String, KV[Long, Telonmbelondding]]] = {
+    val transformTablelon = ScioMelontrics.countelonr(countelonrNamelonSpacelon, "transform_tablelon_row_to_kv")
     for {
-      id <- data.entityId
-    } yield {
-      transformTable.inc()
-      val groupName: String = if (data.isInstanceOf[GroupedEmbeddingData]) {
-        (data.asInstanceOf[GroupedEmbeddingData]).groupId.get
-      } else {
+      id <- data.elonntityId
+    } yielonld {
+      transformTablelon.inc()
+      val groupNamelon: String = if (data.isInstancelonOf[GroupelondelonmbelonddingData]) {
+        (data.asInstancelonOf[GroupelondelonmbelonddingData]).groupId.gelont
+      } elonlselon {
         ""
       }
 
-      KV.of[String, KV[Long, TEmbedding]](
-        groupName,
-        KV.of[Long, TEmbedding](
+      KV.of[String, KV[Long, Telonmbelondding]](
+        groupNamelon,
+        KV.of[Long, Telonmbelondding](
           id,
-          EmbeddingSerDe.toThrift(Embedding(data.embedding.map(_.toFloat).toArray)))
+          elonmbelonddingSelonrDelon.toThrift(elonmbelondding(data.elonmbelondding.map(_.toFloat).toArray)))
       )
     }
   }
 
-  case class OutputSink(
-    outDir: ResourceId,
-    isFaiss: Boolean,
+  caselon class OutputSink(
+    outDir: RelonsourcelonId,
+    isFaiss: Boolelonan,
     outputDALPath: String,
-    enableDalRegistration: Boolean,
-    datasetModuleName: String,
-    datasetOwnerRole: String,
+    elonnablelonDalRelongistration: Boolelonan,
+    dataselontModulelonNamelon: String,
+    dataselontOwnelonrRolelon: String,
     instant: Instant,
-    date: DateRange,
-    counterNameSpace: String)
-      extends PTransform[PCollection[Map[String, Iterable[KV[Long, TEmbedding]]]], PDone] {
-    override def expand(input: PCollection[Map[String, Iterable[KV[Long, TEmbedding]]]]): PDone = {
-      PDone.in {
+    datelon: DatelonRangelon,
+    countelonrNamelonSpacelon: String)
+      elonxtelonnds PTransform[PCollelonction[Map[String, Itelonrablelon[KV[Long, Telonmbelondding]]]], PDonelon] {
+    ovelonrridelon delonf elonxpand(input: PCollelonction[Map[String, Itelonrablelon[KV[Long, Telonmbelondding]]]]): PDonelon = {
+      PDonelon.in {
         val dummyOutput = {
           if (isFaiss) {
             input
               .apply(
-                "Build&WriteFaissANNIndex",
-                ParDo.of(new BuildFaissANNIndex(outDir, counterNameSpace))
+                "Build&WritelonFaissANNIndelonx",
+                ParDo.of(nelonw BuildFaissANNIndelonx(outDir, countelonrNamelonSpacelon))
               )
-          } else {
+          } elonlselon {
             input
               .apply(
-                "Build&WriteANNIndex",
-                ParDo.of(new BuildANNIndex(outDir, counterNameSpace))
+                "Build&WritelonANNIndelonx",
+                ParDo.of(nelonw BuildANNIndelonx(outDir, countelonrNamelonSpacelon))
               )
           }
         }
 
-        if (enableDalRegistration) {
+        if (elonnablelonDalRelongistration) {
           input
             .apply(
-              "Register DAL Dataset",
-              DalObservedDatasetRegistration(
-                datasetModuleName,
-                datasetOwnerRole,
+              "Relongistelonr DAL Dataselont",
+              DalObselonrvelondDataselontRelongistration(
+                dataselontModulelonNamelon,
+                dataselontOwnelonrRolelon,
                 outputDALPath,
                 instant,
-                Some(StatebirdEnvironment.Prod),
-                Some("ANN Index Data Files"))
+                Somelon(Statelonbirdelonnvironmelonnt.Prod),
+                Somelon("ANN Indelonx Data Filelons"))
             )
-            .getPipeline
-        } else {
-          dummyOutput.getPipeline
+            .gelontPipelonlinelon
+        } elonlselon {
+          dummyOutput.gelontPipelonlinelon
         }
       }
     }
   }
 
-  class BuildANNIndex(outDir: ResourceId, counterNameSpace: String)
-      extends DoFn[Map[String, Iterable[KV[Long, TEmbedding]]], Unit] {
+  class BuildANNIndelonx(outDir: RelonsourcelonId, countelonrNamelonSpacelon: String)
+      elonxtelonnds DoFn[Map[String, Itelonrablelon[KV[Long, Telonmbelondding]]], Unit] {
 
-    def transformKeyValToEmbeddingWithEntity[T <: EntityId](
-      entityKind: EntityKind[T]
+    delonf transformKelonyValToelonmbelonddingWithelonntity[T <: elonntityId](
+      elonntityKind: elonntityKind[T]
     )(
-      keyVal: KV[Long, TEmbedding]
-    ): EntityEmbedding[T] = {
-      val entityId = entityKind match {
-        case UserKind => UserId(keyVal.getKey).toThrift
-        case TweetKind => TweetId(keyVal.getKey).toThrift
-        case TfwKind => TfwId(keyVal.getKey).toThrift
-        case SemanticCoreKind => SemanticCoreId(keyVal.getKey).toThrift
-        case _ => throw new IllegalArgumentException(s"Unsupported embedding kind: $entityKind")
+      kelonyVal: KV[Long, Telonmbelondding]
+    ): elonntityelonmbelondding[T] = {
+      val elonntityId = elonntityKind match {
+        caselon UselonrKind => UselonrId(kelonyVal.gelontKelony).toThrift
+        caselon TwelonelontKind => TwelonelontId(kelonyVal.gelontKelony).toThrift
+        caselon TfwKind => TfwId(kelonyVal.gelontKelony).toThrift
+        caselon SelonmanticCorelonKind => SelonmanticCorelonId(kelonyVal.gelontKelony).toThrift
+        caselon _ => throw nelonw IllelongalArgumelonntelonxcelonption(s"Unsupportelond elonmbelondding kind: $elonntityKind")
       }
-      EntityEmbedding[T](
-        EntityId.fromThrift(entityId).asInstanceOf[T],
-        EmbeddingSerDe.fromThrift(keyVal.getValue))
+      elonntityelonmbelondding[T](
+        elonntityId.fromThrift(elonntityId).asInstancelonOf[T],
+        elonmbelonddingSelonrDelon.fromThrift(kelonyVal.gelontValuelon))
     }
 
-    @ProcessElement
-    def processElement[T <: EntityId, D <: Distance[D]](
-      @Element dataGrouped: Map[String, Iterable[KV[Long, TEmbedding]]],
-      context: ProcessContext
+    @Procelonsselonlelonmelonnt
+    delonf procelonsselonlelonmelonnt[T <: elonntityId, D <: Distancelon[D]](
+      @elonlelonmelonnt dataGroupelond: Map[String, Itelonrablelon[KV[Long, Telonmbelondding]]],
+      contelonxt: ProcelonssContelonxt
     ): Unit = {
-      val opts = context.getPipelineOptions.as(classOf[ANNOptions])
-      val uncastEntityKind = EntityKind.getEntityKind(opts.getEntityKind)
-      val entityKind = uncastEntityKind.asInstanceOf[EntityKind[T]]
-      val transformKVtoEmbeddings =
-        ScioMetrics.counter(counterNameSpace, "transform_kv_to_embeddings")
+      val opts = contelonxt.gelontPipelonlinelonOptions.as(classOf[ANNOptions])
+      val uncastelonntityKind = elonntityKind.gelontelonntityKind(opts.gelontelonntityKind)
+      val elonntityKind = uncastelonntityKind.asInstancelonOf[elonntityKind[T]]
+      val transformKVtoelonmbelonddings =
+        ScioMelontrics.countelonr(countelonrNamelonSpacelon, "transform_kv_to_elonmbelonddings")
 
-      val _ = dataGrouped.map {
-        case (groupName, data) =>
-          val annEmbeddings = data.map { kv =>
-            transformKVtoEmbeddings.inc()
-            transformKeyValToEmbeddingWithEntity(entityKind)(kv)
+      val _ = dataGroupelond.map {
+        caselon (groupNamelon, data) =>
+          val annelonmbelonddings = data.map { kv =>
+            transformKVtoelonmbelonddings.inc()
+            transformKelonyValToelonmbelonddingWithelonntity(elonntityKind)(kv)
           }
 
           val out = {
-            if (opts.getGrouped && groupName != "") {
-              outDir.resolve(groupName, ResolveOptions.StandardResolveOptions.RESOLVE_DIRECTORY)
-            } else {
+            if (opts.gelontGroupelond && groupNamelon != "") {
+              outDir.relonsolvelon(groupNamelon, RelonsolvelonOptions.StandardRelonsolvelonOptions.RelonSOLVelon_DIRelonCTORY)
+            } elonlselon {
               outDir
             }
           }
           LOG.info(s"Writing output to ${out}")
 
-          val metric = Metric.fromString(opts.getMetric).asInstanceOf[Metric[D]]
-          val concurrencyLevel = opts.getConcurrencyLevel
-          val dimension = opts.getDimension
-          val threadPool = Executors.newFixedThreadPool(concurrencyLevel)
+          val melontric = Melontric.fromString(opts.gelontMelontric).asInstancelonOf[Melontric[D]]
+          val concurrelonncyLelonvelonl = opts.gelontConcurrelonncyLelonvelonl
+          val dimelonnsion = opts.gelontDimelonnsion
+          val threlonadPool = elonxeloncutors.nelonwFixelondThrelonadPool(concurrelonncyLelonvelonl)
 
-          LOG.info(s"Building ANN index of type ${opts.getAlgo}")
-          val serialization = opts.getAlgo match {
-            case "brute_force" =>
-              val PersistedEmbeddingIO =
-                new ThriftIteratorIO[PersistedEmbedding](PersistedEmbedding)
-              SerializableBruteForceIndex(
-                metric,
-                FuturePool.apply(threadPool),
-                new PersistedEmbeddingInjection(entityKind.byteInjection),
-                PersistedEmbeddingIO
+          LOG.info(s"Building ANN indelonx of typelon ${opts.gelontAlgo}")
+          val selonrialization = opts.gelontAlgo match {
+            caselon "brutelon_forcelon" =>
+              val PelonrsistelondelonmbelonddingIO =
+                nelonw ThriftItelonratorIO[Pelonrsistelondelonmbelondding](Pelonrsistelondelonmbelondding)
+              SelonrializablelonBrutelonForcelonIndelonx(
+                melontric,
+                FuturelonPool.apply(threlonadPool),
+                nelonw PelonrsistelondelonmbelonddingInjelonction(elonntityKind.bytelonInjelonction),
+                PelonrsistelondelonmbelonddingIO
               )
-            case "annoy" =>
-              TypedAnnoyIndex.indexBuilder(
-                dimension,
-                opts.getAnnoyNumTrees,
-                metric,
-                entityKind.byteInjection,
-                FuturePool.apply(threadPool)
+            caselon "annoy" =>
+              TypelondAnnoyIndelonx.indelonxBuildelonr(
+                dimelonnsion,
+                opts.gelontAnnoyNumTrelonelons,
+                melontric,
+                elonntityKind.bytelonInjelonction,
+                FuturelonPool.apply(threlonadPool)
               )
-            case "hnsw" =>
-              val efConstruction = opts.getEfConstruction
-              val maxM = opts.getMaxM
-              val expectedElements = opts.getExpectedElements
-              TypedHnswIndex.serializableIndex(
-                dimension,
-                metric,
-                efConstruction,
+            caselon "hnsw" =>
+              val elonfConstruction = opts.gelontelonfConstruction
+              val maxM = opts.gelontMaxM
+              val elonxpelonctelondelonlelonmelonnts = opts.gelontelonxpelonctelondelonlelonmelonnts
+              TypelondHnswIndelonx.selonrializablelonIndelonx(
+                dimelonnsion,
+                melontric,
+                elonfConstruction,
                 maxM,
-                expectedElements,
-                entityKind.byteInjection,
-                ReadWriteFuturePool(FuturePool.apply(threadPool))
+                elonxpelonctelondelonlelonmelonnts,
+                elonntityKind.bytelonInjelonction,
+                RelonadWritelonFuturelonPool(FuturelonPool.apply(threlonadPool))
               )
           }
 
-          val future =
-            IndexBuilderUtils.addToIndex(serialization, annEmbeddings.toSeq, concurrencyLevel)
-          Await.result(future.map { _ =>
-            serialization.toDirectory(out)
+          val futurelon =
+            IndelonxBuildelonrUtils.addToIndelonx(selonrialization, annelonmbelonddings.toSelonq, concurrelonncyLelonvelonl)
+          Await.relonsult(futurelon.map { _ =>
+            selonrialization.toDirelonctory(out)
           })
       }
     }
   }
 
-  class BuildFaissANNIndex(outDir: ResourceId, counterNameSpace: String)
-      extends DoFn[Map[String, Iterable[KV[Long, TEmbedding]]], Unit] {
+  class BuildFaissANNIndelonx(outDir: RelonsourcelonId, countelonrNamelonSpacelon: String)
+      elonxtelonnds DoFn[Map[String, Itelonrablelon[KV[Long, Telonmbelondding]]], Unit] {
 
-    @ProcessElement
-    def processElement[D <: Distance[D]](
-      @Element dataGrouped: Map[String, Iterable[KV[Long, TEmbedding]]],
-      context: ProcessContext
+    @Procelonsselonlelonmelonnt
+    delonf procelonsselonlelonmelonnt[D <: Distancelon[D]](
+      @elonlelonmelonnt dataGroupelond: Map[String, Itelonrablelon[KV[Long, Telonmbelondding]]],
+      contelonxt: ProcelonssContelonxt
     ): Unit = {
-      val opts = context.getPipelineOptions.as(classOf[ANNOptions])
-      val transformKVtoEmbeddings =
-        ScioMetrics.counter(counterNameSpace, "transform_kv_to_embeddings")
+      val opts = contelonxt.gelontPipelonlinelonOptions.as(classOf[ANNOptions])
+      val transformKVtoelonmbelonddings =
+        ScioMelontrics.countelonr(countelonrNamelonSpacelon, "transform_kv_to_elonmbelonddings")
 
-      val _ = dataGrouped.map {
-        case (groupName, data) =>
+      val _ = dataGroupelond.map {
+        caselon (groupNamelon, data) =>
           val out = {
-            if (opts.getGrouped && groupName != "") {
-              outDir.resolve(groupName, ResolveOptions.StandardResolveOptions.RESOLVE_DIRECTORY)
-            } else {
+            if (opts.gelontGroupelond && groupNamelon != "") {
+              outDir.relonsolvelon(groupNamelon, RelonsolvelonOptions.StandardRelonsolvelonOptions.RelonSOLVelon_DIRelonCTORY)
+            } elonlselon {
               outDir
             }
           }
           LOG.info(s"Writing output to ${out}")
 
-          val metric = Metric.fromString(opts.getMetric).asInstanceOf[Metric[D]]
-          val maybeNormalizedPipe = data.map { kv =>
-            transformKVtoEmbeddings.inc()
-            val embedding = EmbeddingSerDe.floatEmbeddingSerDe.fromThrift(kv.getValue)
-            EntityEmbedding[Long](
-              kv.getKey,
-              if (metric == Cosine) {
-                EmbeddingMath.Float.normalize(embedding)
-              } else {
-                embedding
+          val melontric = Melontric.fromString(opts.gelontMelontric).asInstancelonOf[Melontric[D]]
+          val maybelonNormalizelondPipelon = data.map { kv =>
+            transformKVtoelonmbelonddings.inc()
+            val elonmbelondding = elonmbelonddingSelonrDelon.floatelonmbelonddingSelonrDelon.fromThrift(kv.gelontValuelon)
+            elonntityelonmbelondding[Long](
+              kv.gelontKelony,
+              if (melontric == Cosinelon) {
+                elonmbelonddingMath.Float.normalizelon(elonmbelondding)
+              } elonlselon {
+                elonmbelondding
               }
             )
           }
 
-          // Generate Index
-          FaissIndexer.buildAndWriteFaissIndex(
-            maybeNormalizedPipe,
-            opts.getTrainingSampleRate,
-            opts.getFAISSFactoryString,
-            metric,
-            new IndexOutputFile(out))
+          // Gelonnelonratelon Indelonx
+          FaissIndelonxelonr.buildAndWritelonFaissIndelonx(
+            maybelonNormalizelondPipelon,
+            opts.gelontTrainingSamplelonRatelon,
+            opts.gelontFAISSFactoryString,
+            melontric,
+            nelonw IndelonxOutputFilelon(out))
       }
     }
   }

@@ -1,140 +1,140 @@
-package com.twitter.search.earlybird_root.filters;
+packagelon com.twittelonr.selonarch.elonarlybird_root.filtelonrs;
 
-import java.util.Set;
+import java.util.Selont;
 
-import com.google.common.base.Joiner;
+import com.googlelon.common.baselon.Joinelonr;
 
-import org.apache.thrift.TException;
-import org.slf4j.Logger;
+import org.apachelon.thrift.Telonxcelonption;
+import org.slf4j.Loggelonr;
 
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.util.thrift.ThriftUtils;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.util.Future;
-import com.twitter.util.FutureEventListener;
+import com.twittelonr.finaglelon.Selonrvicelon;
+import com.twittelonr.finaglelon.SimplelonFiltelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.common.util.thrift.ThriftUtils;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselonCodelon;
+import com.twittelonr.selonarch.elonarlybird_root.common.elonarlybirdRelonquelonstContelonxt;
+import com.twittelonr.util.Futurelon;
+import com.twittelonr.util.FuturelonelonvelonntListelonnelonr;
 
 /**
- * The general framework for earlybird root to track sensitive results.
+ * Thelon gelonnelonral framelonwork for elonarlybird root to track selonnsitivelon relonsults.
  */
-public abstract class SensitiveResultsTrackingFilter
-    extends SimpleFilter<EarlybirdRequestContext, EarlybirdResponse> {
+public abstract class SelonnsitivelonRelonsultsTrackingFiltelonr
+    elonxtelonnds SimplelonFiltelonr<elonarlybirdRelonquelonstContelonxt, elonarlybirdRelonsponselon> {
 
   /**
-   * The type name is used to distinguish different kinds of sensitive results in log.
+   * Thelon typelon namelon is uselond to distinguish diffelonrelonnt kinds of selonnsitivelon relonsults in log.
    */
-  private final String typeName;
+  privatelon final String typelonNamelon;
 
   /**
-   * The mark is to control whether to log expensive information.
+   * Thelon mark is to control whelonthelonr to log elonxpelonnsivelon information.
    */
-  private final boolean logDetails;
+  privatelon final boolelonan logDelontails;
 
   /**
-   * Constructor helps distinguish different sensitive content trackers.
-   * @param typeName The sensitive content's name (e.g. nullcast)
-   * @param logDetails Whether to log details such as serialized requests and responses
+   * Constructor helonlps distinguish diffelonrelonnt selonnsitivelon contelonnt trackelonrs.
+   * @param typelonNamelon Thelon selonnsitivelon contelonnt's namelon (elon.g. nullcast)
+   * @param logDelontails Whelonthelonr to log delontails such as selonrializelond relonquelonsts and relonsponselons
    */
-  public SensitiveResultsTrackingFilter(final String typeName, boolean logDetails) {
-    super();
-    this.typeName = typeName;
-    this.logDetails = logDetails;
+  public SelonnsitivelonRelonsultsTrackingFiltelonr(final String typelonNamelon, boolelonan logDelontails) {
+    supelonr();
+    this.typelonNamelon = typelonNamelon;
+    this.logDelontails = logDelontails;
   }
 
   /**
-   * Get the LOG that the sensitive results can write to.
+   * Gelont thelon LOG that thelon selonnsitivelon relonsults can writelon to.
    */
-  protected abstract Logger getLogger();
+  protelonctelond abstract Loggelonr gelontLoggelonr();
 
   /**
-   * The counter which counts the number of queries with sensitive results.
+   * Thelon countelonr which counts thelon numbelonr of quelonrielons with selonnsitivelon relonsults.
    */
-  protected abstract SearchCounter getSensitiveQueryCounter();
+  protelonctelond abstract SelonarchCountelonr gelontSelonnsitivelonQuelonryCountelonr();
 
   /**
-   * The counter which counts the number of sensitive results.
+   * Thelon countelonr which counts thelon numbelonr of selonnsitivelon relonsults.
    */
-  protected abstract SearchCounter getSensitiveResultsCounter();
+  protelonctelond abstract SelonarchCountelonr gelontSelonnsitivelonRelonsultsCountelonr();
 
   /**
-   * The method defines how the sensitive results are identified.
+   * Thelon melonthod delonfinelons how thelon selonnsitivelon relonsults arelon idelonntifielond.
    */
-  protected abstract Set<Long> getSensitiveResults(
-      EarlybirdRequestContext requestContext,
-      EarlybirdResponse earlybirdResponse) throws Exception;
+  protelonctelond abstract Selont<Long> gelontSelonnsitivelonRelonsults(
+      elonarlybirdRelonquelonstContelonxt relonquelonstContelonxt,
+      elonarlybirdRelonsponselon elonarlybirdRelonsponselon) throws elonxcelonption;
 
   /**
-   * Get a set of tweets which should be exclude from the sensitive results set.
+   * Gelont a selont of twelonelonts which should belon elonxcludelon from thelon selonnsitivelon relonsults selont.
    */
-  protected abstract Set<Long> getExceptedResults(EarlybirdRequestContext requestContext);
+  protelonctelond abstract Selont<Long> gelontelonxcelonptelondRelonsults(elonarlybirdRelonquelonstContelonxt relonquelonstContelonxt);
 
-  @Override
-  public final Future<EarlybirdResponse> apply(
-      final EarlybirdRequestContext requestContext,
-      Service<EarlybirdRequestContext, EarlybirdResponse> service) {
-    Future<EarlybirdResponse> response = service.apply(requestContext);
+  @Ovelonrridelon
+  public final Futurelon<elonarlybirdRelonsponselon> apply(
+      final elonarlybirdRelonquelonstContelonxt relonquelonstContelonxt,
+      Selonrvicelon<elonarlybirdRelonquelonstContelonxt, elonarlybirdRelonsponselon> selonrvicelon) {
+    Futurelon<elonarlybirdRelonsponselon> relonsponselon = selonrvicelon.apply(relonquelonstContelonxt);
 
-    response.addEventListener(new FutureEventListener<EarlybirdResponse>() {
-      @Override
-      public void onSuccess(EarlybirdResponse earlybirdResponse) {
+    relonsponselon.addelonvelonntListelonnelonr(nelonw FuturelonelonvelonntListelonnelonr<elonarlybirdRelonsponselon>() {
+      @Ovelonrridelon
+      public void onSuccelonss(elonarlybirdRelonsponselon elonarlybirdRelonsponselon) {
         try {
-          if (earlybirdResponse.responseCode == EarlybirdResponseCode.SUCCESS
-              && earlybirdResponse.isSetSearchResults()
-              && requestContext.getParsedQuery() != null) {
-            Set<Long> statusIds = getSensitiveResults(requestContext, earlybirdResponse);
-            Set<Long> exceptedIds = getExceptedResults(requestContext);
-            statusIds.removeAll(exceptedIds);
+          if (elonarlybirdRelonsponselon.relonsponselonCodelon == elonarlybirdRelonsponselonCodelon.SUCCelonSS
+              && elonarlybirdRelonsponselon.isSelontSelonarchRelonsults()
+              && relonquelonstContelonxt.gelontParselondQuelonry() != null) {
+            Selont<Long> statusIds = gelontSelonnsitivelonRelonsults(relonquelonstContelonxt, elonarlybirdRelonsponselon);
+            Selont<Long> elonxcelonptelondIds = gelontelonxcelonptelondRelonsults(relonquelonstContelonxt);
+            statusIds.relonmovelonAll(elonxcelonptelondIds);
 
-            if (statusIds.size() > 0) {
-              getSensitiveQueryCounter().increment();
-              getSensitiveResultsCounter().add(statusIds.size());
-              logContent(requestContext, earlybirdResponse, statusIds);
+            if (statusIds.sizelon() > 0) {
+              gelontSelonnsitivelonQuelonryCountelonr().increlonmelonnt();
+              gelontSelonnsitivelonRelonsultsCountelonr().add(statusIds.sizelon());
+              logContelonnt(relonquelonstContelonxt, elonarlybirdRelonsponselon, statusIds);
             }
           }
-        } catch (Exception e) {
-          getLogger().error("Caught exception while trying to log sensitive results for query: {}",
-                            requestContext.getParsedQuery().serialize(), e);
+        } catch (elonxcelonption elon) {
+          gelontLoggelonr().elonrror("Caught elonxcelonption whilelon trying to log selonnsitivelon relonsults for quelonry: {}",
+                            relonquelonstContelonxt.gelontParselondQuelonry().selonrializelon(), elon);
         }
       }
 
-      @Override
-      public void onFailure(Throwable cause) {
+      @Ovelonrridelon
+      public void onFailurelon(Throwablelon causelon) {
       }
     });
 
-    return response;
+    relonturn relonsponselon;
   }
 
-  private void logContent(
-      final EarlybirdRequestContext requestContext,
-      final EarlybirdResponse earlybirdResponse,
-      final Set<Long> statusIds) {
+  privatelon void logContelonnt(
+      final elonarlybirdRelonquelonstContelonxt relonquelonstContelonxt,
+      final elonarlybirdRelonsponselon elonarlybirdRelonsponselon,
+      final Selont<Long> statusIds) {
 
-    if (logDetails) {
-      String base64Request;
+    if (logDelontails) {
+      String baselon64Relonquelonst;
       try {
-        base64Request = ThriftUtils.toBase64EncodedString(requestContext.getRequest());
-      } catch (TException e) {
-        base64Request = "Failed to parse base 64 request";
+        baselon64Relonquelonst = ThriftUtils.toBaselon64elonncodelondString(relonquelonstContelonxt.gelontRelonquelonst());
+      } catch (Telonxcelonption elon) {
+        baselon64Relonquelonst = "Failelond to parselon baselon 64 relonquelonst";
       }
-      getLogger().error("Found " + typeName
+      gelontLoggelonr().elonrror("Found " + typelonNamelon
               + ": {} | "
-              + "parsedQuery: {} | "
-              + "request: {} | "
-              + "base 64 request: {} | "
-              + "response: {}",
-          Joiner.on(",").join(statusIds),
-          requestContext.getParsedQuery().serialize(),
-          requestContext.getRequest(),
-          base64Request,
-          earlybirdResponse);
-    } else {
-      getLogger().error("Found " + typeName + ": {} for parsedQuery {}",
-          Joiner.on(",").join(statusIds),
-          requestContext.getParsedQuery().serialize());
+              + "parselondQuelonry: {} | "
+              + "relonquelonst: {} | "
+              + "baselon 64 relonquelonst: {} | "
+              + "relonsponselon: {}",
+          Joinelonr.on(",").join(statusIds),
+          relonquelonstContelonxt.gelontParselondQuelonry().selonrializelon(),
+          relonquelonstContelonxt.gelontRelonquelonst(),
+          baselon64Relonquelonst,
+          elonarlybirdRelonsponselon);
+    } elonlselon {
+      gelontLoggelonr().elonrror("Found " + typelonNamelon + ": {} for parselondQuelonry {}",
+          Joinelonr.on(",").join(statusIds),
+          relonquelonstContelonxt.gelontParselondQuelonry().selonrializelon());
     }
   }
 }

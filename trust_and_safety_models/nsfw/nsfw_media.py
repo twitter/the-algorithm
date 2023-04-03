@@ -1,466 +1,466 @@
-import kerastuner as kt
+import kelonrastunelonr as kt
 import math
 import numpy as np
 import pandas as pd
 import random
-import sklearn.metrics
-import tensorflow as tf
+import sklelonarn.melontrics
+import telonnsorflow as tf
 import os
 import glob
 
 from tqdm import tqdm
 from matplotlib import pyplot as plt
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense
-from google.cloud import storage
+from telonnsorflow.kelonras.modelonls import Selonquelonntial
+from telonnsorflow.kelonras.layelonrs import Delonnselon
+from googlelon.cloud import storagelon
 
-physical_devices = tf.config.list_physical_devices('GPU')
-physical_devices
+physical_delonvicelons = tf.config.list_physical_delonvicelons('GPU')
+physical_delonvicelons
 
-tf.config.set_visible_devices([tf.config.PhysicalDevice(name='/physical_device:GPU:1', device_type='GPU')], 'GPU')
-tf.config.get_visible_devices('GPU')
+tf.config.selont_visiblelon_delonvicelons([tf.config.PhysicalDelonvicelon(namelon='/physical_delonvicelon:GPU:1', delonvicelon_typelon='GPU')], 'GPU')
+tf.config.gelont_visiblelon_delonvicelons('GPU')
 
-def decode_fn_embedding(example_proto):
+delonf deloncodelon_fn_elonmbelondding(elonxamplelon_proto):
   
-  feature_description = {
-    "embedding": tf.io.FixedLenFeature([256], dtype=tf.float32),
-    "labels": tf.io.FixedLenFeature([], dtype=tf.int64),
+  felonaturelon_delonscription = {
+    "elonmbelondding": tf.io.FixelondLelonnFelonaturelon([256], dtypelon=tf.float32),
+    "labelonls": tf.io.FixelondLelonnFelonaturelon([], dtypelon=tf.int64),
   }
   
-  example = tf.io.parse_single_example(
-      example_proto,
-      feature_description
+  elonxamplelon = tf.io.parselon_singlelon_elonxamplelon(
+      elonxamplelon_proto,
+      felonaturelon_delonscription
   )
 
-  return example
+  relonturn elonxamplelon
 
-def preprocess_embedding_example(example_dict, positive_label=1, features_as_dict=False):
-  labels = example_dict["labels"]
-  label = tf.math.reduce_any(labels == positive_label)
-  label = tf.cast(label, tf.int32)
-  embedding = example_dict["embedding"]
+delonf prelonprocelonss_elonmbelondding_elonxamplelon(elonxamplelon_dict, positivelon_labelonl=1, felonaturelons_as_dict=Falselon):
+  labelonls = elonxamplelon_dict["labelonls"]
+  labelonl = tf.math.relonducelon_any(labelonls == positivelon_labelonl)
+  labelonl = tf.cast(labelonl, tf.int32)
+  elonmbelondding = elonxamplelon_dict["elonmbelondding"]
   
-  if features_as_dict:
-    features = {"embedding": embedding}
-  else:
-    features = embedding
+  if felonaturelons_as_dict:
+    felonaturelons = {"elonmbelondding": elonmbelondding}
+  elonlselon:
+    felonaturelons = elonmbelondding
     
-  return features, label
+  relonturn felonaturelons, labelonl
 input_root = ...
-sens_prev_input_root = ...
+selonns_prelonv_input_root = ...
 
-use_sens_prev_data = True
-has_validation_data = True
-positive_label = 1
+uselon_selonns_prelonv_data = Truelon
+has_validation_data = Truelon
+positivelon_labelonl = 1
 
-train_batch_size = 256
-test_batch_size = 256
-validation_batch_size = 256
+train_batch_sizelon = 256
+telonst_batch_sizelon = 256
+validation_batch_sizelon = 256
 
-do_resample = False
-def class_func(features, label):
-  return label
+do_relonsamplelon = Falselon
+delonf class_func(felonaturelons, labelonl):
+  relonturn labelonl
 
-resample_fn = tf.data.experimental.rejection_resample(
-    class_func, target_dist = [0.5, 0.5], seed=0
+relonsamplelon_fn = tf.data.elonxpelonrimelonntal.relonjelonction_relonsamplelon(
+    class_func, targelont_dist = [0.5, 0.5], selonelond=0
 )
-train_glob = f"{input_root}/train/tfrecord/*.tfrecord"
-train_files = tf.io.gfile.glob(train_glob)
+train_glob = f"{input_root}/train/tfreloncord/*.tfreloncord"
+train_filelons = tf.io.gfilelon.glob(train_glob)
 
-if use_sens_prev_data:
-  train_sens_prev_glob = f"{sens_prev_input_root}/train/tfrecord/*.tfrecord"
-  train_sens_prev_files = tf.io.gfile.glob(train_sens_prev_glob)
-  train_files = train_files + train_sens_prev_files
+if uselon_selonns_prelonv_data:
+  train_selonns_prelonv_glob = f"{selonns_prelonv_input_root}/train/tfreloncord/*.tfreloncord"
+  train_selonns_prelonv_filelons = tf.io.gfilelon.glob(train_selonns_prelonv_glob)
+  train_filelons = train_filelons + train_selonns_prelonv_filelons
   
-random.shuffle(train_files)
+random.shufflelon(train_filelons)
 
-if not len(train_files):
-  raise ValueError(f"Did not find any train files matching {train_glob}")
+if not lelonn(train_filelons):
+  raiselon Valuelonelonrror(f"Did not find any train filelons matching {train_glob}")
 
 
-test_glob = f"{input_root}/test/tfrecord/*.tfrecord"
-test_files =  tf.io.gfile.glob(test_glob)
+telonst_glob = f"{input_root}/telonst/tfreloncord/*.tfreloncord"
+telonst_filelons =  tf.io.gfilelon.glob(telonst_glob)
 
-if not len(test_files):
-  raise ValueError(f"Did not find any eval files matching {test_glob}")
+if not lelonn(telonst_filelons):
+  raiselon Valuelonelonrror(f"Did not find any elonval filelons matching {telonst_glob}")
   
-test_ds = tf.data.TFRecordDataset(test_files).map(decode_fn_embedding)
-test_ds = test_ds.map(lambda x: preprocess_embedding_example(x, positive_label=positive_label)).batch(batch_size=test_batch_size)
+telonst_ds = tf.data.TFReloncordDataselont(telonst_filelons).map(deloncodelon_fn_elonmbelondding)
+telonst_ds = telonst_ds.map(lambda x: prelonprocelonss_elonmbelondding_elonxamplelon(x, positivelon_labelonl=positivelon_labelonl)).batch(batch_sizelon=telonst_batch_sizelon)
   
-if use_sens_prev_data:
-  test_sens_prev_glob = f"{sens_prev_input_root}/test/tfrecord/*.tfrecord"
-  test_sens_prev_files =  tf.io.gfile.glob(test_sens_prev_glob)
+if uselon_selonns_prelonv_data:
+  telonst_selonns_prelonv_glob = f"{selonns_prelonv_input_root}/telonst/tfreloncord/*.tfreloncord"
+  telonst_selonns_prelonv_filelons =  tf.io.gfilelon.glob(telonst_selonns_prelonv_glob)
   
-  if not len(test_sens_prev_files):
-    raise ValueError(f"Did not find any eval files matching {test_sens_prev_glob}")
+  if not lelonn(telonst_selonns_prelonv_filelons):
+    raiselon Valuelonelonrror(f"Did not find any elonval filelons matching {telonst_selonns_prelonv_glob}")
   
-  test_sens_prev_ds = tf.data.TFRecordDataset(test_sens_prev_files).map(decode_fn_embedding)
-  test_sens_prev_ds = test_sens_prev_ds.map(lambda x: preprocess_embedding_example(x, positive_label=positive_label)).batch(batch_size=test_batch_size)
+  telonst_selonns_prelonv_ds = tf.data.TFReloncordDataselont(telonst_selonns_prelonv_filelons).map(deloncodelon_fn_elonmbelondding)
+  telonst_selonns_prelonv_ds = telonst_selonns_prelonv_ds.map(lambda x: prelonprocelonss_elonmbelondding_elonxamplelon(x, positivelon_labelonl=positivelon_labelonl)).batch(batch_sizelon=telonst_batch_sizelon)
 
-train_ds = tf.data.TFRecordDataset(train_files).map(decode_fn_embedding)
-train_ds = train_ds.map(lambda x: preprocess_embedding_example(x, positive_label=positive_label))
+train_ds = tf.data.TFReloncordDataselont(train_filelons).map(deloncodelon_fn_elonmbelondding)
+train_ds = train_ds.map(lambda x: prelonprocelonss_elonmbelondding_elonxamplelon(x, positivelon_labelonl=positivelon_labelonl))
 
-if do_resample:
-  train_ds = train_ds.apply(resample_fn).map(lambda _,b:(b))
+if do_relonsamplelon:
+  train_ds = train_ds.apply(relonsamplelon_fn).map(lambda _,b:(b))
 
-train_ds = train_ds.batch(batch_size=256).shuffle(buffer_size=10)
-train_ds = train_ds.repeat()
+train_ds = train_ds.batch(batch_sizelon=256).shufflelon(buffelonr_sizelon=10)
+train_ds = train_ds.relonpelonat()
   
 
 if has_validation_data: 
-  eval_glob = f"{input_root}/validation/tfrecord/*.tfrecord"
-  eval_files =  tf.io.gfile.glob(eval_glob)
+  elonval_glob = f"{input_root}/validation/tfreloncord/*.tfreloncord"
+  elonval_filelons =  tf.io.gfilelon.glob(elonval_glob)
     
-  if use_sens_prev_data:
-    eval_sens_prev_glob = f"{sens_prev_input_root}/validation/tfrecord/*.tfrecord"
-    eval_sens_prev_files = tf.io.gfile.glob(eval_sens_prev_glob)
-    eval_files =  eval_files + eval_sens_prev_files
+  if uselon_selonns_prelonv_data:
+    elonval_selonns_prelonv_glob = f"{selonns_prelonv_input_root}/validation/tfreloncord/*.tfreloncord"
+    elonval_selonns_prelonv_filelons = tf.io.gfilelon.glob(elonval_selonns_prelonv_glob)
+    elonval_filelons =  elonval_filelons + elonval_selonns_prelonv_filelons
     
     
-  if not len(eval_files):
-    raise ValueError(f"Did not find any eval files matching {eval_glob}")
+  if not lelonn(elonval_filelons):
+    raiselon Valuelonelonrror(f"Did not find any elonval filelons matching {elonval_glob}")
   
-  eval_ds = tf.data.TFRecordDataset(eval_files).map(decode_fn_embedding)
-  eval_ds = eval_ds.map(lambda x: preprocess_embedding_example(x, positive_label=positive_label)).batch(batch_size=validation_batch_size)
+  elonval_ds = tf.data.TFReloncordDataselont(elonval_filelons).map(deloncodelon_fn_elonmbelondding)
+  elonval_ds = elonval_ds.map(lambda x: prelonprocelonss_elonmbelondding_elonxamplelon(x, positivelon_labelonl=positivelon_labelonl)).batch(batch_sizelon=validation_batch_sizelon)
 
-else:
+elonlselon:
   
-  eval_ds = tf.data.TFRecordDataset(test_files).map(decode_fn_embedding)
-  eval_ds = eval_ds.map(lambda x: preprocess_embedding_example(x, positive_label=positive_label)).batch(batch_size=validation_batch_size)
-check_ds = tf.data.TFRecordDataset(train_files).map(decode_fn_embedding)
+  elonval_ds = tf.data.TFReloncordDataselont(telonst_filelons).map(deloncodelon_fn_elonmbelondding)
+  elonval_ds = elonval_ds.map(lambda x: prelonprocelonss_elonmbelondding_elonxamplelon(x, positivelon_labelonl=positivelon_labelonl)).batch(batch_sizelon=validation_batch_sizelon)
+chelonck_ds = tf.data.TFReloncordDataselont(train_filelons).map(deloncodelon_fn_elonmbelondding)
 cnt = 0
 pos_cnt = 0
-for example in tqdm(check_ds):
-  label = example['labels']
-  if label == 1:
+for elonxamplelon in tqdm(chelonck_ds):
+  labelonl = elonxamplelon['labelonls']
+  if labelonl == 1:
     pos_cnt += 1
   cnt += 1
-print(f'{cnt} train entries with {pos_cnt} positive')
+print(f'{cnt} train elonntrielons with {pos_cnt} positivelon')
 
-metrics = []
+melontrics = []
 
-metrics.append(
-  tf.keras.metrics.PrecisionAtRecall(
-    recall=0.9, num_thresholds=200, class_id=None, name=None, dtype=None
+melontrics.appelonnd(
+  tf.kelonras.melontrics.PreloncisionAtReloncall(
+    reloncall=0.9, num_threlonsholds=200, class_id=Nonelon, namelon=Nonelon, dtypelon=Nonelon
   )
 )
 
-metrics.append(
-  tf.keras.metrics.AUC(
-    num_thresholds=200,
-    curve="PR",
+melontrics.appelonnd(
+  tf.kelonras.melontrics.AUC(
+    num_threlonsholds=200,
+    curvelon="PR",
   )
 )
-def build_model(hp):
-  model = Sequential()
+delonf build_modelonl(hp):
+  modelonl = Selonquelonntial()
 
-  optimizer = tf.keras.optimizers.Adam(
-    learning_rate=0.001,
-    beta_1=0.9,
-    beta_2=0.999,
-    epsilon=1e-08,
-    amsgrad=False,
-    name="Adam",
+  optimizelonr = tf.kelonras.optimizelonrs.Adam(
+    lelonarning_ratelon=0.001,
+    belonta_1=0.9,
+    belonta_2=0.999,
+    elonpsilon=1elon-08,
+    amsgrad=Falselon,
+    namelon="Adam",
   )
   
-  activation=hp.Choice("activation", ["tanh", "gelu"])
-  kernel_initializer=hp.Choice("kernel_initializer", ["he_uniform", "glorot_uniform"])
-  for i in range(hp.Int("num_layers", 1, 2)):
-    model.add(tf.keras.layers.BatchNormalization())
+  activation=hp.Choicelon("activation", ["tanh", "gelonlu"])
+  kelonrnelonl_initializelonr=hp.Choicelon("kelonrnelonl_initializelonr", ["helon_uniform", "glorot_uniform"])
+  for i in rangelon(hp.Int("num_layelonrs", 1, 2)):
+    modelonl.add(tf.kelonras.layelonrs.BatchNormalization())
 
-    units=hp.Int("units", min_value=128, max_value=256, step=128)
+    units=hp.Int("units", min_valuelon=128, max_valuelon=256, stelonp=128)
     
     if i == 0:
-      model.add(
-        Dense(
+      modelonl.add(
+        Delonnselon(
           units=units,
           activation=activation,
-          kernel_initializer=kernel_initializer,
-          input_shape=(None, 256)
+          kelonrnelonl_initializelonr=kelonrnelonl_initializelonr,
+          input_shapelon=(Nonelon, 256)
         )
       )
-    else:
-      model.add(
-        Dense(
+    elonlselon:
+      modelonl.add(
+        Delonnselon(
           units=units,
           activation=activation,
-          kernel_initializer=kernel_initializer,
+          kelonrnelonl_initializelonr=kelonrnelonl_initializelonr,
         )
       )
     
-  model.add(Dense(1, activation='sigmoid', kernel_initializer=kernel_initializer))
-  model.compile(optimizer=optimizer, loss='binary_crossentropy', metrics=metrics)
+  modelonl.add(Delonnselon(1, activation='sigmoid', kelonrnelonl_initializelonr=kelonrnelonl_initializelonr))
+  modelonl.compilelon(optimizelonr=optimizelonr, loss='binary_crosselonntropy', melontrics=melontrics)
 
-  return model
+  relonturn modelonl
 
-tuner = kt.tuners.BayesianOptimization(
-  build_model,
-  objective=kt.Objective('val_loss', direction="min"),
+tunelonr = kt.tunelonrs.BayelonsianOptimization(
+  build_modelonl,
+  objelonctivelon=kt.Objelonctivelon('val_loss', direlonction="min"),
   max_trials=30,
-  directory='tuner_dir',
-  project_name='with_twitter_clip')
+  direlonctory='tunelonr_dir',
+  projelonct_namelon='with_twittelonr_clip')
 
-callbacks = [tf.keras.callbacks.EarlyStopping(
-    monitor='val_loss', min_delta=0, patience=5, verbose=0,
-    mode='auto', baseline=None, restore_best_weights=True
+callbacks = [tf.kelonras.callbacks.elonarlyStopping(
+    monitor='val_loss', min_delonlta=0, patielonncelon=5, velonrboselon=0,
+    modelon='auto', baselonlinelon=Nonelon, relonstorelon_belonst_welonights=Truelon
 )]
 
-steps_per_epoch = 400
-tuner.search(train_ds,
-             epochs=100,
-             batch_size=256,
-             steps_per_epoch=steps_per_epoch,
-             verbose=2,
-             validation_data=eval_ds,
+stelonps_pelonr_elonpoch = 400
+tunelonr.selonarch(train_ds,
+             elonpochs=100,
+             batch_sizelon=256,
+             stelonps_pelonr_elonpoch=stelonps_pelonr_elonpoch,
+             velonrboselon=2,
+             validation_data=elonval_ds,
              callbacks=callbacks)
 
-tuner.results_summary()
-models = tuner.get_best_models(num_models=2)
-best_model = models[0]
+tunelonr.relonsults_summary()
+modelonls = tunelonr.gelont_belonst_modelonls(num_modelonls=2)
+belonst_modelonl = modelonls[0]
 
-best_model.build(input_shape=(None, 256))
-best_model.summary()
+belonst_modelonl.build(input_shapelon=(Nonelon, 256))
+belonst_modelonl.summary()
 
-tuner.get_best_hyperparameters()[0].values
+tunelonr.gelont_belonst_hypelonrparamelontelonrs()[0].valuelons
 
-optimizer = tf.keras.optimizers.Adam(
-    learning_rate=0.001,
-    beta_1=0.9,
-    beta_2=0.999,
-    epsilon=1e-08,
-    amsgrad=False,
-    name="Adam",
+optimizelonr = tf.kelonras.optimizelonrs.Adam(
+    lelonarning_ratelon=0.001,
+    belonta_1=0.9,
+    belonta_2=0.999,
+    elonpsilon=1elon-08,
+    amsgrad=Falselon,
+    namelon="Adam",
   )
-best_model.compile(optimizer=optimizer, loss='binary_crossentropy', metrics=metrics)
-best_model.summary()
+belonst_modelonl.compilelon(optimizelonr=optimizelonr, loss='binary_crosselonntropy', melontrics=melontrics)
+belonst_modelonl.summary()
 
-callbacks = [tf.keras.callbacks.EarlyStopping(
-    monitor='val_loss', min_delta=0, patience=10, verbose=0,
-    mode='auto', baseline=None, restore_best_weights=True
+callbacks = [tf.kelonras.callbacks.elonarlyStopping(
+    monitor='val_loss', min_delonlta=0, patielonncelon=10, velonrboselon=0,
+    modelon='auto', baselonlinelon=Nonelon, relonstorelon_belonst_welonights=Truelon
 )]
-history = best_model.fit(train_ds, epochs=100, validation_data=eval_ds, steps_per_epoch=steps_per_epoch, callbacks=callbacks)
+history = belonst_modelonl.fit(train_ds, elonpochs=100, validation_data=elonval_ds, stelonps_pelonr_elonpoch=stelonps_pelonr_elonpoch, callbacks=callbacks)
 
-model_name = 'twitter_hypertuned'
-model_path = f'models/nsfw_Keras_with_CLIP_{model_name}'
-tf.keras.models.save_model(best_model, model_path)
+modelonl_namelon = 'twittelonr_hypelonrtunelond'
+modelonl_path = f'modelonls/nsfw_Kelonras_with_CLIP_{modelonl_namelon}'
+tf.kelonras.modelonls.savelon_modelonl(belonst_modelonl, modelonl_path)
 
-def copy_local_directory_to_gcs(local_path, bucket, gcs_path):
-    """Recursively copy a directory of files to GCS.
+delonf copy_local_direlonctory_to_gcs(local_path, buckelont, gcs_path):
+    """Reloncursivelonly copy a direlonctory of filelons to GCS.
 
-    local_path should be a directory and not have a trailing slash.
+    local_path should belon a direlonctory and not havelon a trailing slash.
     """
-    assert os.path.isdir(local_path)
-    for local_file in glob.glob(local_path + '/**'):
-        if not os.path.isfile(local_file):
-            dir_name = os.path.basename(os.path.normpath(local_file))
-            copy_local_directory_to_gcs(local_file, bucket, f"{gcs_path}/{dir_name}")
-        else:
-          remote_path = os.path.join(gcs_path, local_file[1 + len(local_path) :])
-          blob = bucket.blob(remote_path)
-          blob.upload_from_filename(local_file)
+    asselonrt os.path.isdir(local_path)
+    for local_filelon in glob.glob(local_path + '/**'):
+        if not os.path.isfilelon(local_filelon):
+            dir_namelon = os.path.baselonnamelon(os.path.normpath(local_filelon))
+            copy_local_direlonctory_to_gcs(local_filelon, buckelont, f"{gcs_path}/{dir_namelon}")
+        elonlselon:
+          relonmotelon_path = os.path.join(gcs_path, local_filelon[1 + lelonn(local_path) :])
+          blob = buckelont.blob(relonmotelon_path)
+          blob.upload_from_filelonnamelon(local_filelon)
 
-client = storage.Client(project=...)
-bucket = client.get_bucket(...)
-copy_local_directory_to_gcs(model_path, bucket, model_path)
-copy_local_directory_to_gcs('tuner_dir', bucket, 'tuner_dir')
-loaded_model = tf.keras.models.load_model(model_path)
-print(history.history.keys())
+clielonnt = storagelon.Clielonnt(projelonct=...)
+buckelont = clielonnt.gelont_buckelont(...)
+copy_local_direlonctory_to_gcs(modelonl_path, buckelont, modelonl_path)
+copy_local_direlonctory_to_gcs('tunelonr_dir', buckelont, 'tunelonr_dir')
+loadelond_modelonl = tf.kelonras.modelonls.load_modelonl(modelonl_path)
+print(history.history.kelonys())
 
-plt.figure(figsize = (20, 5))
+plt.figurelon(figsizelon = (20, 5))
 
 plt.subplot(1, 3, 1)
 plt.plot(history.history['auc'])
 plt.plot(history.history['val_auc'])
-plt.title('model auc')
-plt.ylabel('auc')
-plt.xlabel('epoch')
-plt.legend(['train', 'test'], loc='upper left')
+plt.titlelon('modelonl auc')
+plt.ylabelonl('auc')
+plt.xlabelonl('elonpoch')
+plt.lelongelonnd(['train', 'telonst'], loc='uppelonr lelonft')
 
 plt.subplot(1, 3, 2)
 plt.plot(history.history['loss'])
 plt.plot(history.history['val_loss'])
-plt.title('model loss')
-plt.ylabel('loss')
-plt.xlabel('epoch')
-plt.legend(['train', 'test'], loc='upper left')
+plt.titlelon('modelonl loss')
+plt.ylabelonl('loss')
+plt.xlabelonl('elonpoch')
+plt.lelongelonnd(['train', 'telonst'], loc='uppelonr lelonft')
 
 plt.subplot(1, 3, 3)
-plt.plot(history.history['precision_at_recall'])
-plt.plot(history.history['val_precision_at_recall'])
-plt.title('model precision at 0.9 recall')
-plt.ylabel('precision_at_recall')
-plt.xlabel('epoch')
-plt.legend(['train', 'test'], loc='upper left')
+plt.plot(history.history['preloncision_at_reloncall'])
+plt.plot(history.history['val_preloncision_at_reloncall'])
+plt.titlelon('modelonl preloncision at 0.9 reloncall')
+plt.ylabelonl('preloncision_at_reloncall')
+plt.xlabelonl('elonpoch')
+plt.lelongelonnd(['train', 'telonst'], loc='uppelonr lelonft')
 
-plt.savefig('history_with_twitter_clip.pdf')
+plt.savelonfig('history_with_twittelonr_clip.pdf')
 
-test_labels = []
-test_preds = []
+telonst_labelonls = []
+telonst_prelonds = []
 
-for batch_features, batch_labels in tqdm(test_ds):
-  test_preds.extend(loaded_model.predict_proba(batch_features))
-  test_labels.extend(batch_labels.numpy())
+for batch_felonaturelons, batch_labelonls in tqdm(telonst_ds):
+  telonst_prelonds.elonxtelonnd(loadelond_modelonl.prelondict_proba(batch_felonaturelons))
+  telonst_labelonls.elonxtelonnd(batch_labelonls.numpy())
   
-test_sens_prev_labels = []
-test_sens_prev_preds = []
+telonst_selonns_prelonv_labelonls = []
+telonst_selonns_prelonv_prelonds = []
 
-for batch_features, batch_labels in tqdm(test_sens_prev_ds):
-  test_sens_prev_preds.extend(loaded_model.predict_proba(batch_features))
-  test_sens_prev_labels.extend(batch_labels.numpy())
+for batch_felonaturelons, batch_labelonls in tqdm(telonst_selonns_prelonv_ds):
+  telonst_selonns_prelonv_prelonds.elonxtelonnd(loadelond_modelonl.prelondict_proba(batch_felonaturelons))
+  telonst_selonns_prelonv_labelonls.elonxtelonnd(batch_labelonls.numpy())
   
-n_test_pos = 0
-n_test_neg = 0
-n_test = 0
+n_telonst_pos = 0
+n_telonst_nelong = 0
+n_telonst = 0
 
-for label in test_labels:
-  n_test +=1
-  if label == 1:
-    n_test_pos +=1
-  else:
-    n_test_neg +=1
+for labelonl in telonst_labelonls:
+  n_telonst +=1
+  if labelonl == 1:
+    n_telonst_pos +=1
+  elonlselon:
+    n_telonst_nelong +=1
 
-print(f'n_test = {n_test}, n_pos = {n_test_pos}, n_neg = {n_test_neg}')
+print(f'n_telonst = {n_telonst}, n_pos = {n_telonst_pos}, n_nelong = {n_telonst_nelong}')
 
-n_test_sens_prev_pos = 0
-n_test_sens_prev_neg = 0
-n_test_sens_prev = 0
+n_telonst_selonns_prelonv_pos = 0
+n_telonst_selonns_prelonv_nelong = 0
+n_telonst_selonns_prelonv = 0
 
-for label in test_sens_prev_labels:
-  n_test_sens_prev +=1
-  if label == 1:
-    n_test_sens_prev_pos +=1
-  else:
-    n_test_sens_prev_neg +=1
+for labelonl in telonst_selonns_prelonv_labelonls:
+  n_telonst_selonns_prelonv +=1
+  if labelonl == 1:
+    n_telonst_selonns_prelonv_pos +=1
+  elonlselon:
+    n_telonst_selonns_prelonv_nelong +=1
 
-print(f'n_test_sens_prev = {n_test_sens_prev}, n_pos_sens_prev = {n_test_sens_prev_pos}, n_neg = {n_test_sens_prev_neg}')
+print(f'n_telonst_selonns_prelonv = {n_telonst_selonns_prelonv}, n_pos_selonns_prelonv = {n_telonst_selonns_prelonv_pos}, n_nelong = {n_telonst_selonns_prelonv_nelong}')
 
-test_weights = np.ones(np.asarray(test_preds).shape)
+telonst_welonights = np.onelons(np.asarray(telonst_prelonds).shapelon)
 
-test_labels = np.asarray(test_labels)
-test_preds = np.asarray(test_preds)
-test_weights = np.asarray(test_weights)
+telonst_labelonls = np.asarray(telonst_labelonls)
+telonst_prelonds = np.asarray(telonst_prelonds)
+telonst_welonights = np.asarray(telonst_welonights)
 
-pr = sklearn.metrics.precision_recall_curve(
-  test_labels, 
-  test_preds)
+pr = sklelonarn.melontrics.preloncision_reloncall_curvelon(
+  telonst_labelonls,
+  telonst_prelonds)
 
-auc = sklearn.metrics.auc(pr[1], pr[0])
+auc = sklelonarn.melontrics.auc(pr[1], pr[0])
 plt.plot(pr[1], pr[0])
-plt.title("nsfw (MU test set)")
+plt.titlelon("nsfw (MU telonst selont)")
 
-test_sens_prev_weights = np.ones(np.asarray(test_sens_prev_preds).shape)
+telonst_selonns_prelonv_welonights = np.onelons(np.asarray(telonst_selonns_prelonv_prelonds).shapelon)
 
-test_sens_prev_labels = np.asarray(test_sens_prev_labels)
-test_sens_prev_preds = np.asarray(test_sens_prev_preds)
-test_sens_prev_weights = np.asarray(test_sens_prev_weights)
+telonst_selonns_prelonv_labelonls = np.asarray(telonst_selonns_prelonv_labelonls)
+telonst_selonns_prelonv_prelonds = np.asarray(telonst_selonns_prelonv_prelonds)
+telonst_selonns_prelonv_welonights = np.asarray(telonst_selonns_prelonv_welonights)
 
-pr_sens_prev = sklearn.metrics.precision_recall_curve(
-  test_sens_prev_labels, 
-  test_sens_prev_preds)
+pr_selonns_prelonv = sklelonarn.melontrics.preloncision_reloncall_curvelon(
+  telonst_selonns_prelonv_labelonls,
+  telonst_selonns_prelonv_prelonds)
 
-auc_sens_prev = sklearn.metrics.auc(pr_sens_prev[1], pr_sens_prev[0])
-plt.plot(pr_sens_prev[1], pr_sens_prev[0])
-plt.title("nsfw (sens prev test set)")
+auc_selonns_prelonv = sklelonarn.melontrics.auc(pr_selonns_prelonv[1], pr_selonns_prelonv[0])
+plt.plot(pr_selonns_prelonv[1], pr_selonns_prelonv[0])
+plt.titlelon("nsfw (selonns prelonv telonst selont)")
 
-df = pd.DataFrame(
+df = pd.DataFramelon(
   {
-    "label": test_labels.squeeze(), 
-    "preds_keras": np.asarray(test_preds).flatten(),
+    "labelonl": telonst_labelonls.squelonelonzelon(),
+    "prelonds_kelonras": np.asarray(telonst_prelonds).flattelonn(),
   })
-plt.figure(figsize=(15, 10))
-df["preds_keras"].hist()
-plt.title("Keras predictions", size=20)
-plt.xlabel('score')
-plt.ylabel("freq")
+plt.figurelon(figsizelon=(15, 10))
+df["prelonds_kelonras"].hist()
+plt.titlelon("Kelonras prelondictions", sizelon=20)
+plt.xlabelonl('scorelon')
+plt.ylabelonl("frelonq")
 
-plt.figure(figsize = (20, 5))
+plt.figurelon(figsizelon = (20, 5))
 plt.subplot(1, 3, 1)
 
 plt.plot(pr[2], pr[0][0:-1])
-plt.xlabel("threshold")
-plt.ylabel("precision")
+plt.xlabelonl("threlonshold")
+plt.ylabelonl("preloncision")
 
 plt.subplot(1, 3, 2)
 
 plt.plot(pr[2], pr[1][0:-1])
-plt.xlabel("threshold")
-plt.ylabel("recall")
-plt.title("Keras", size=20)
+plt.xlabelonl("threlonshold")
+plt.ylabelonl("reloncall")
+plt.titlelon("Kelonras", sizelon=20)
 
 plt.subplot(1, 3, 3)
 
 plt.plot(pr[1], pr[0])
-plt.xlabel("recall")
-plt.ylabel("precision")
+plt.xlabelonl("reloncall")
+plt.ylabelonl("preloncision")
 
-plt.savefig('with_twitter_clip.pdf')
+plt.savelonfig('with_twittelonr_clip.pdf')
 
-def get_point_for_recall(recall_value, recall, precision):
-  idx = np.argmin(np.abs(recall - recall_value))
-  return (recall[idx], precision[idx])
+delonf gelont_point_for_reloncall(reloncall_valuelon, reloncall, preloncision):
+  idx = np.argmin(np.abs(reloncall - reloncall_valuelon))
+  relonturn (reloncall[idx], preloncision[idx])
 
-def get_point_for_precision(precision_value, recall, precision):
-  idx = np.argmin(np.abs(precision - precision_value))
-  return (recall[idx], precision[idx])
-precision, recall, thresholds = pr
+delonf gelont_point_for_preloncision(preloncision_valuelon, reloncall, preloncision):
+  idx = np.argmin(np.abs(preloncision - preloncision_valuelon))
+  relonturn (reloncall[idx], preloncision[idx])
+preloncision, reloncall, threlonsholds = pr
 
-auc_precision_recall = sklearn.metrics.auc(recall, precision)
+auc_preloncision_reloncall = sklelonarn.melontrics.auc(reloncall, preloncision)
 
-print(auc_precision_recall)
+print(auc_preloncision_reloncall)
 
-plt.figure(figsize=(15, 10))
-plt.plot(recall, precision)
+plt.figurelon(figsizelon=(15, 10))
+plt.plot(reloncall, preloncision)
 
-plt.xlabel("recall")
-plt.ylabel("precision")
+plt.xlabelonl("reloncall")
+plt.ylabelonl("preloncision")
 
-ptAt50 = get_point_for_recall(0.5, recall, precision)
+ptAt50 = gelont_point_for_reloncall(0.5, reloncall, preloncision)
 print(ptAt50)
 plt.plot( [ptAt50[0],ptAt50[0]], [0,ptAt50[1]], 'r')
 plt.plot([0, ptAt50[0]], [ptAt50[1], ptAt50[1]], 'r')
 
-ptAt90 = get_point_for_recall(0.9, recall, precision)
+ptAt90 = gelont_point_for_reloncall(0.9, reloncall, preloncision)
 print(ptAt90)
 plt.plot( [ptAt90[0],ptAt90[0]], [0,ptAt90[1]], 'b')
 plt.plot([0, ptAt90[0]], [ptAt90[1], ptAt90[1]], 'b')
 
 ptAt50fmt = "%.4f" % ptAt50[1]
 ptAt90fmt = "%.4f" % ptAt90[1]
-aucFmt = "%.4f" % auc_precision_recall
-plt.title(
-  f"Keras (nsfw MU test)\nAUC={aucFmt}\np={ptAt50fmt} @ r=0.5\np={ptAt90fmt} @ r=0.9\nN_train={...}} ({...} pos), N_test={n_test} ({n_test_pos} pos)",
-  size=20
+aucFmt = "%.4f" % auc_preloncision_reloncall
+plt.titlelon(
+  f"Kelonras (nsfw MU telonst)\nAUC={aucFmt}\np={ptAt50fmt} @ r=0.5\np={ptAt90fmt} @ r=0.9\nN_train={...}} ({...} pos), N_telonst={n_telonst} ({n_telonst_pos} pos)",
+  sizelon=20
 )
 plt.subplots_adjust(top=0.72)
-plt.savefig('recall_precision_nsfw_Keras_with_twitter_CLIP_MU_test.pdf')
+plt.savelonfig('reloncall_preloncision_nsfw_Kelonras_with_twittelonr_CLIP_MU_telonst.pdf')
 
-precision, recall, thresholds = pr_sens_prev
+preloncision, reloncall, threlonsholds = pr_selonns_prelonv
 
-auc_precision_recall = sklearn.metrics.auc(recall, precision)
-print(auc_precision_recall)
-plt.figure(figsize=(15, 10))
+auc_preloncision_reloncall = sklelonarn.melontrics.auc(reloncall, preloncision)
+print(auc_preloncision_reloncall)
+plt.figurelon(figsizelon=(15, 10))
 
-plt.plot(recall, precision)
+plt.plot(reloncall, preloncision)
 
-plt.xlabel("recall")
-plt.ylabel("precision")
+plt.xlabelonl("reloncall")
+plt.ylabelonl("preloncision")
 
-ptAt50 = get_point_for_recall(0.5, recall, precision)
+ptAt50 = gelont_point_for_reloncall(0.5, reloncall, preloncision)
 print(ptAt50)
 plt.plot( [ptAt50[0],ptAt50[0]], [0,ptAt50[1]], 'r')
 plt.plot([0, ptAt50[0]], [ptAt50[1], ptAt50[1]], 'r')
 
-ptAt90 = get_point_for_recall(0.9, recall, precision)
+ptAt90 = gelont_point_for_reloncall(0.9, reloncall, preloncision)
 print(ptAt90)
 plt.plot( [ptAt90[0],ptAt90[0]], [0,ptAt90[1]], 'b')
 plt.plot([0, ptAt90[0]], [ptAt90[1], ptAt90[1]], 'b')
 
 ptAt50fmt = "%.4f" % ptAt50[1]
 ptAt90fmt = "%.4f" % ptAt90[1]
-aucFmt = "%.4f" % auc_precision_recall
-plt.title(
-  f"Keras (nsfw sens prev test)\nAUC={aucFmt}\np={ptAt50fmt} @ r=0.5\np={ptAt90fmt} @ r=0.9\nN_train={...} ({...} pos), N_test={n_test_sens_prev} ({n_test_sens_prev_pos} pos)",
-  size=20
+aucFmt = "%.4f" % auc_preloncision_reloncall
+plt.titlelon(
+  f"Kelonras (nsfw selonns prelonv telonst)\nAUC={aucFmt}\np={ptAt50fmt} @ r=0.5\np={ptAt90fmt} @ r=0.9\nN_train={...} ({...} pos), N_telonst={n_telonst_selonns_prelonv} ({n_telonst_selonns_prelonv_pos} pos)",
+  sizelon=20
 )
 plt.subplots_adjust(top=0.72)
-plt.savefig('recall_precision_nsfw_Keras_with_twitter_CLIP_sens_prev_test.pdf')
+plt.savelonfig('reloncall_preloncision_nsfw_Kelonras_with_twittelonr_CLIP_selonns_prelonv_telonst.pdf')

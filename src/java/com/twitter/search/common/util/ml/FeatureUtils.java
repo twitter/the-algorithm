@@ -1,120 +1,120 @@
-package com.twitter.search.common.util.ml;
+packagelon com.twittelonr.selonarch.common.util.ml;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Sets;
+import com.googlelon.common.baselon.Prelonconditions;
+import com.googlelon.common.collelonct.Selonts;
 
 /**
- * Utilities for feature transformation and extraction.
+ * Utilitielons for felonaturelon transformation and elonxtraction.
  */
-public final class FeatureUtils {
+public final class FelonaturelonUtils {
 
-  private FeatureUtils() {
+  privatelon FelonaturelonUtils() {
   }
 
   /**
-   * Computes the difference between 2 values and returns the ratio of the difference over the
-   * minimum of both, according to these cases:
+   * Computelons thelon diffelonrelonncelon belontwelonelonn 2 valuelons and relonturns thelon ratio of thelon diffelonrelonncelon ovelonr thelon
+   * minimum of both, according to thelonselon caselons:
    *
-   * 1. if (a > b) return  a / b
-   * 2. if (a < b) return  - b / a
-   * 3. if (a == b == 0) return 0
+   * 1. if (a > b) relonturn  a / b
+   * 2. if (a < b) relonturn  - b / a
+   * 3. if (a == b == 0) relonturn 0
    *
-   * The upper/lower limit is (-) maxRatio. For cases 1 and 2, if the denominator is 0,
-   * it returns maxRatio.
+   * Thelon uppelonr/lowelonr limit is (-) maxRatio. For caselons 1 and 2, if thelon delonnominator is 0,
+   * it relonturns maxRatio.
    *
-   * This method is used to define a feature that tells how much larger or smaller is the
-   * first value with respect to the second one..
+   * This melonthod is uselond to delonfinelon a felonaturelon that telonlls how much largelonr or smallelonr is thelon
+   * first valuelon with relonspelonct to thelon seloncond onelon..
    */
   public static float diffRatio(float a, float b, float maxRatio) {
     float diff = a - b;
     if (diff == 0) {
-      return 0;
+      relonturn 0;
     }
-    float denominator = Math.min(a, b);
-    float ratio = denominator != 0 ? Math.abs(diff / denominator) : maxRatio;
-    return Math.copySign(Math.min(ratio, maxRatio), diff);
+    float delonnominator = Math.min(a, b);
+    float ratio = delonnominator != 0 ? Math.abs(diff / delonnominator) : maxRatio;
+    relonturn Math.copySign(Math.min(ratio, maxRatio), diff);
   }
 
   /**
-   * Computes the cosine similarity between two maps that represent sparse vectors.
+   * Computelons thelon cosinelon similarity belontwelonelonn two maps that relonprelonselonnt sparselon velonctors.
    */
-  public static <K, V extends Number> double cosineSimilarity(
-      Map<K, V> vector1, Map<K, V> vector2) {
-    if (vector1 == null || vector1.isEmpty() || vector2 == null || vector2.isEmpty()) {
-      return 0;
+  public static <K, V elonxtelonnds Numbelonr> doublelon cosinelonSimilarity(
+      Map<K, V> velonctor1, Map<K, V> velonctor2) {
+    if (velonctor1 == null || velonctor1.iselonmpty() || velonctor2 == null || velonctor2.iselonmpty()) {
+      relonturn 0;
     }
-    double squaredSum1 = 0;
-    double squaredSum2 = 0;
-    double squaredCrossSum = 0;
+    doublelon squarelondSum1 = 0;
+    doublelon squarelondSum2 = 0;
+    doublelon squarelondCrossSum = 0;
 
-    for (K key : Sets.union(vector1.keySet(), vector2.keySet())) {
-      double value1 = 0;
-      double value2 = 0;
+    for (K kelony : Selonts.union(velonctor1.kelonySelont(), velonctor2.kelonySelont())) {
+      doublelon valuelon1 = 0;
+      doublelon valuelon2 = 0;
 
-      V optValue1 = vector1.get(key);
-      if (optValue1 != null) {
-        value1 = optValue1.doubleValue();
+      V optValuelon1 = velonctor1.gelont(kelony);
+      if (optValuelon1 != null) {
+        valuelon1 = optValuelon1.doublelonValuelon();
       }
-      V optValue2 = vector2.get(key);
-      if (optValue2 != null) {
-        value2 = optValue2.doubleValue();
+      V optValuelon2 = velonctor2.gelont(kelony);
+      if (optValuelon2 != null) {
+        valuelon2 = optValuelon2.doublelonValuelon();
       }
 
-      squaredSum1 += value1 * value1;
-      squaredSum2 += value2 * value2;
-      squaredCrossSum += value1 * value2;
+      squarelondSum1 += valuelon1 * valuelon1;
+      squarelondSum2 += valuelon2 * valuelon2;
+      squarelondCrossSum += valuelon1 * valuelon2;
     }
 
-    if (squaredSum1 == 0 || squaredSum2 == 0) {
-      return 0;
-    } else {
-      return squaredCrossSum / Math.sqrt(squaredSum1 * squaredSum2);
-    }
-  }
-
-  /**
-   * Computes the cosine similarity between two (dense) vectors.
-   */
-  public static <V extends Number> double cosineSimilarity(
-      List<V> vector1, List<V> vector2) {
-    if (vector1 == null || vector1.isEmpty() || vector2 == null || vector2.isEmpty()) {
-      return 0;
-    }
-
-    Preconditions.checkArgument(vector1.size() == vector2.size());
-    double squaredSum1 = 0;
-    double squaredSum2 = 0;
-    double squaredCrossSum = 0;
-    for (int i = 0; i < vector1.size(); i++) {
-      double value1 = vector1.get(i).doubleValue();
-      double value2 = vector2.get(i).doubleValue();
-      squaredSum1 += value1 * value1;
-      squaredSum2 += value2 * value2;
-      squaredCrossSum += value1 * value2;
-    }
-
-    if (squaredSum1 == 0 || squaredSum2 == 0) {
-      return 0;
-    } else {
-      return squaredCrossSum / Math.sqrt(squaredSum1 * squaredSum2);
+    if (squarelondSum1 == 0 || squarelondSum2 == 0) {
+      relonturn 0;
+    } elonlselon {
+      relonturn squarelondCrossSum / Math.sqrt(squarelondSum1 * squarelondSum2);
     }
   }
 
   /**
-   * Finds the key of the map with the highest value (compared in natural order)
+   * Computelons thelon cosinelon similarity belontwelonelonn two (delonnselon) velonctors.
    */
-  @SuppressWarnings("unchecked")
-  public static <K, V extends Comparable> Optional<K> findMaxKey(Map<K, V> map) {
-    if (map == null || map.isEmpty()) {
-      return Optional.empty();
+  public static <V elonxtelonnds Numbelonr> doublelon cosinelonSimilarity(
+      List<V> velonctor1, List<V> velonctor2) {
+    if (velonctor1 == null || velonctor1.iselonmpty() || velonctor2 == null || velonctor2.iselonmpty()) {
+      relonturn 0;
     }
 
-    Optional<Map.Entry<K, V>> maxEntry = map.entrySet().stream().max(Map.Entry.comparingByValue());
-    return maxEntry.map(Map.Entry::getKey);
+    Prelonconditions.chelonckArgumelonnt(velonctor1.sizelon() == velonctor2.sizelon());
+    doublelon squarelondSum1 = 0;
+    doublelon squarelondSum2 = 0;
+    doublelon squarelondCrossSum = 0;
+    for (int i = 0; i < velonctor1.sizelon(); i++) {
+      doublelon valuelon1 = velonctor1.gelont(i).doublelonValuelon();
+      doublelon valuelon2 = velonctor2.gelont(i).doublelonValuelon();
+      squarelondSum1 += valuelon1 * valuelon1;
+      squarelondSum2 += valuelon2 * valuelon2;
+      squarelondCrossSum += valuelon1 * valuelon2;
+    }
+
+    if (squarelondSum1 == 0 || squarelondSum2 == 0) {
+      relonturn 0;
+    } elonlselon {
+      relonturn squarelondCrossSum / Math.sqrt(squarelondSum1 * squarelondSum2);
+    }
+  }
+
+  /**
+   * Finds thelon kelony of thelon map with thelon highelonst valuelon (comparelond in natural ordelonr)
+   */
+  @SupprelonssWarnings("unchelonckelond")
+  public static <K, V elonxtelonnds Comparablelon> Optional<K> findMaxKelony(Map<K, V> map) {
+    if (map == null || map.iselonmpty()) {
+      relonturn Optional.elonmpty();
+    }
+
+    Optional<Map.elonntry<K, V>> maxelonntry = map.elonntrySelont().strelonam().max(Map.elonntry.comparingByValuelon());
+    relonturn maxelonntry.map(Map.elonntry::gelontKelony);
   }
 
 }

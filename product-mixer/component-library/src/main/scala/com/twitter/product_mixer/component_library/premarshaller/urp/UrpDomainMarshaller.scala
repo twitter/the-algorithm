@@ -1,52 +1,52 @@
-package com.twitter.product_mixer.component_library.premarshaller.urp
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.prelonmarshallelonr.urp
 
-import com.twitter.product_mixer.component_library.premarshaller.urp.builder.PageBodyBuilder
-import com.twitter.product_mixer.component_library.premarshaller.urp.builder.PageHeaderBuilder
-import com.twitter.product_mixer.component_library.premarshaller.urp.builder.PageNavBarBuilder
-import com.twitter.product_mixer.component_library.premarshaller.urp.builder.TimelineScribeConfigBuilder
-import com.twitter.product_mixer.core.functional_component.premarshaller.DomainMarshaller
-import com.twitter.product_mixer.core.model.common.identifier.DomainMarshallerIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.marshalling.response.urp._
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.product_mixelonr.componelonnt_library.prelonmarshallelonr.urp.buildelonr.PagelonBodyBuildelonr
+import com.twittelonr.product_mixelonr.componelonnt_library.prelonmarshallelonr.urp.buildelonr.PagelonHelonadelonrBuildelonr
+import com.twittelonr.product_mixelonr.componelonnt_library.prelonmarshallelonr.urp.buildelonr.PagelonNavBarBuildelonr
+import com.twittelonr.product_mixelonr.componelonnt_library.prelonmarshallelonr.urp.buildelonr.TimelonlinelonScribelonConfigBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.prelonmarshallelonr.DomainMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.DomainMarshallelonrIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urp._
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
-object UrpDomainMarshaller {
-  val PageIdSuffix = "-Page"
+objelonct UrpDomainMarshallelonr {
+  val PagelonIdSuffix = "-Pagelon"
 }
 
 /**
- * Domain marshaller that given the builders for the body, header and navbar will generate a URP Page
+ * Domain marshallelonr that givelonn thelon buildelonrs for thelon body, helonadelonr and navbar will gelonnelonratelon a URP Pagelon
  *
- * @param pageBodyBuilder     PageBody builder that generates a PageBody with the query and selections
- * @param scribeConfigBuilder Scribe Config builder that generates the configuration for scribing of the page
- * @param pageHeaderBuilder   PageHeader builder that generates a PageHeader with the query and selections
- * @param pageNavBarBuilder   PageNavBar builder that generates a PageNavBar with the query and selections
- * @tparam Query The type of Query that this Marshaller operates with
+ * @param pagelonBodyBuildelonr     PagelonBody buildelonr that gelonnelonratelons a PagelonBody with thelon quelonry and selonlelonctions
+ * @param scribelonConfigBuildelonr Scribelon Config buildelonr that gelonnelonratelons thelon configuration for scribing of thelon pagelon
+ * @param pagelonHelonadelonrBuildelonr   PagelonHelonadelonr buildelonr that gelonnelonratelons a PagelonHelonadelonr with thelon quelonry and selonlelonctions
+ * @param pagelonNavBarBuildelonr   PagelonNavBar buildelonr that gelonnelonratelons a PagelonNavBar with thelon quelonry and selonlelonctions
+ * @tparam Quelonry Thelon typelon of Quelonry that this Marshallelonr opelonratelons with
  */
-case class UrpDomainMarshaller[-Query <: PipelineQuery](
-  pageBodyBuilder: PageBodyBuilder[Query],
-  pageHeaderBuilder: Option[PageHeaderBuilder[Query]] = None,
-  pageNavBarBuilder: Option[PageNavBarBuilder[Query]] = None,
-  scribeConfigBuilder: Option[TimelineScribeConfigBuilder[Query]] = None,
-  override val identifier: DomainMarshallerIdentifier =
-    DomainMarshallerIdentifier("UnifiedRichPage"))
-    extends DomainMarshaller[Query, Page] {
+caselon class UrpDomainMarshallelonr[-Quelonry <: PipelonlinelonQuelonry](
+  pagelonBodyBuildelonr: PagelonBodyBuildelonr[Quelonry],
+  pagelonHelonadelonrBuildelonr: Option[PagelonHelonadelonrBuildelonr[Quelonry]] = Nonelon,
+  pagelonNavBarBuildelonr: Option[PagelonNavBarBuildelonr[Quelonry]] = Nonelon,
+  scribelonConfigBuildelonr: Option[TimelonlinelonScribelonConfigBuildelonr[Quelonry]] = Nonelon,
+  ovelonrridelon val idelonntifielonr: DomainMarshallelonrIdelonntifielonr =
+    DomainMarshallelonrIdelonntifielonr("UnifielondRichPagelon"))
+    elonxtelonnds DomainMarshallelonr[Quelonry, Pagelon] {
 
-  override def apply(
-    query: Query,
-    selections: Seq[CandidateWithDetails]
-  ): Page = {
-    val pageBody = pageBodyBuilder.build(query, selections)
-    val pageHeader = pageHeaderBuilder.flatMap(_.build(query, selections))
-    val pageNavBar = pageNavBarBuilder.flatMap(_.build(query, selections))
-    val scribeConfig = scribeConfigBuilder.flatMap(_.build(query, pageBody, pageHeader, pageNavBar))
+  ovelonrridelon delonf apply(
+    quelonry: Quelonry,
+    selonlelonctions: Selonq[CandidatelonWithDelontails]
+  ): Pagelon = {
+    val pagelonBody = pagelonBodyBuildelonr.build(quelonry, selonlelonctions)
+    val pagelonHelonadelonr = pagelonHelonadelonrBuildelonr.flatMap(_.build(quelonry, selonlelonctions))
+    val pagelonNavBar = pagelonNavBarBuildelonr.flatMap(_.build(quelonry, selonlelonctions))
+    val scribelonConfig = scribelonConfigBuildelonr.flatMap(_.build(quelonry, pagelonBody, pagelonHelonadelonr, pagelonNavBar))
 
-    Page(
-      id = query.product.identifier.toString + UrpDomainMarshaller.PageIdSuffix,
-      pageBody = pageBody,
-      scribeConfig = scribeConfig,
-      pageHeader = pageHeader,
-      pageNavBar = pageNavBar
+    Pagelon(
+      id = quelonry.product.idelonntifielonr.toString + UrpDomainMarshallelonr.PagelonIdSuffix,
+      pagelonBody = pagelonBody,
+      scribelonConfig = scribelonConfig,
+      pagelonHelonadelonr = pagelonHelonadelonr,
+      pagelonNavBar = pagelonNavBar
     )
   }
 }

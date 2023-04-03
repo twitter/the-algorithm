@@ -1,38 +1,38 @@
 import os
 
 
-TEAM_PROJECT = "twttr-toxicity-prod"
+TelonAM_PROJelonCT = "twttr-toxicity-prod"
 try:
-  from google.cloud import bigquery
-except (ModuleNotFoundError, ImportError):
-  print("No Google packages")
-  CLIENT = None
-else:
-  from google.auth.exceptions import DefaultCredentialsError
+  from googlelon.cloud import bigquelonry
+elonxcelonpt (ModulelonNotFoundelonrror, Importelonrror):
+  print("No Googlelon packagelons")
+  CLIelonNT = Nonelon
+elonlselon:
+  from googlelon.auth.elonxcelonptions import DelonfaultCrelondelonntialselonrror
 
   try:
-    CLIENT = bigquery.Client(project=TEAM_PROJECT)
-  except DefaultCredentialsError as e:
-    CLIENT = None
-    print("Issue at logging time", e)
+    CLIelonNT = bigquelonry.Clielonnt(projelonct=TelonAM_PROJelonCT)
+  elonxcelonpt DelonfaultCrelondelonntialselonrror as elon:
+    CLIelonNT = Nonelon
+    print("Issuelon at logging timelon", elon)
 
 TRAINING_DATA_LOCATION = f"..."
-GCS_ADDRESS = "..."
-LOCAL_DIR = os.getcwd()
-REMOTE_LOGDIR = "{GCS_ADDRESS}/logs"
-MODEL_DIR = "{GCS_ADDRESS}/models"
+GCS_ADDRelonSS = "..."
+LOCAL_DIR = os.gelontcwd()
+RelonMOTelon_LOGDIR = "{GCS_ADDRelonSS}/logs"
+MODelonL_DIR = "{GCS_ADDRelonSS}/modelonls"
 
-EXISTING_TASK_VERSIONS = {3, 3.5}
+elonXISTING_TASK_VelonRSIONS = {3, 3.5}
 
-RANDOM_SEED = ...
-TRAIN_EPOCHS = 4
-MINI_BATCH_SIZE = 32
-TARGET_POS_PER_EPOCH = 5000
-PERC_TRAINING_TOX = ...
-MAX_SEQ_LENGTH = 100
+RANDOM_SelonelonD = ...
+TRAIN_elonPOCHS = 4
+MINI_BATCH_SIZelon = 32
+TARGelonT_POS_PelonR_elonPOCH = 5000
+PelonRC_TRAINING_TOX = ...
+MAX_SelonQ_LelonNGTH = 100
 
-WARM_UP_PERC = 0.1
-OUTER_CV = 5
-INNER_CV = 5
-NUM_PREFETCH = 5
-NUM_WORKERS = 10
+WARM_UP_PelonRC = 0.1
+OUTelonR_CV = 5
+INNelonR_CV = 5
+NUM_PRelonFelonTCH = 5
+NUM_WORKelonRS = 10

@@ -1,40 +1,40 @@
-package com.twitter.simclusters_v2.summingbird.common
+packagelon com.twittelonr.simclustelonrs_v2.summingbird.common
 
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType
-import com.twitter.util.Duration
-import com.twitter.conversions.DurationOps._
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
+import com.twittelonr.simclustelonrs_v2.thriftscala.elonmbelonddingTypelon
+import com.twittelonr.util.Duration
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.simclustelonrs_v2.thriftscala.ModelonlVelonrsion
 
-case class ModelVersionProfile(
-  modelVersion: ModelVersion,
-  usingLogFavScore: Boolean,
-  // redundant in the current models because the above parameter does the same currently.
-  coreEmbeddingType: EmbeddingType,
-  favScoreThresholdForUserInterest: Double,
-  // these values are shared between all profiles so lets set up defaults
-  halfLife: Duration = 8.hours,
-  scoreThresholdForEntityTopKClustersCache: Double = 0.2,
-  scoreThresholdForTweetTopKClustersCache: Double = 0.02,
-  scoreThresholdForClusterTopKTweetsCache: Double = 0.001,
-  scoreThresholdForClusterTopKEntitiesCache: Double = 0.001)
+caselon class ModelonlVelonrsionProfilelon(
+  modelonlVelonrsion: ModelonlVelonrsion,
+  usingLogFavScorelon: Boolelonan,
+  // relondundant in thelon currelonnt modelonls beloncauselon thelon abovelon paramelontelonr doelons thelon samelon currelonntly.
+  corelonelonmbelonddingTypelon: elonmbelonddingTypelon,
+  favScorelonThrelonsholdForUselonrIntelonrelonst: Doublelon,
+  // thelonselon valuelons arelon sharelond belontwelonelonn all profilelons so lelonts selont up delonfaults
+  halfLifelon: Duration = 8.hours,
+  scorelonThrelonsholdForelonntityTopKClustelonrsCachelon: Doublelon = 0.2,
+  scorelonThrelonsholdForTwelonelontTopKClustelonrsCachelon: Doublelon = 0.02,
+  scorelonThrelonsholdForClustelonrTopKTwelonelontsCachelon: Doublelon = 0.001,
+  scorelonThrelonsholdForClustelonrTopKelonntitielonsCachelon: Doublelon = 0.001)
 
-object ModelVersionProfiles {
-  final val ModelVersion20M145KUpdated = ModelVersionProfile(
-    ModelVersion.Model20m145kUpdated,
-    usingLogFavScore = true,
-    coreEmbeddingType = EmbeddingType.LogFavBasedTweet,
-    favScoreThresholdForUserInterest = 1.0
+objelonct ModelonlVelonrsionProfilelons {
+  final val ModelonlVelonrsion20M145KUpdatelond = ModelonlVelonrsionProfilelon(
+    ModelonlVelonrsion.Modelonl20m145kUpdatelond,
+    usingLogFavScorelon = truelon,
+    corelonelonmbelonddingTypelon = elonmbelonddingTypelon.LogFavBaselondTwelonelont,
+    favScorelonThrelonsholdForUselonrIntelonrelonst = 1.0
   )
 
-  final val ModelVersion20M145K2020 = ModelVersionProfile(
-    ModelVersion.Model20m145k2020,
-    usingLogFavScore = true,
-    coreEmbeddingType = EmbeddingType.LogFavBasedTweet,
-    favScoreThresholdForUserInterest = 0.3
+  final val ModelonlVelonrsion20M145K2020 = ModelonlVelonrsionProfilelon(
+    ModelonlVelonrsion.Modelonl20m145k2020,
+    usingLogFavScorelon = truelon,
+    corelonelonmbelonddingTypelon = elonmbelonddingTypelon.LogFavBaselondTwelonelont,
+    favScorelonThrelonsholdForUselonrIntelonrelonst = 0.3
   )
 
-  final val ModelVersionProfiles: Map[ModelVersion, ModelVersionProfile] = Map(
-    ModelVersion.Model20m145kUpdated -> ModelVersion20M145KUpdated,
-    ModelVersion.Model20m145k2020 -> ModelVersion20M145K2020
+  final val ModelonlVelonrsionProfilelons: Map[ModelonlVelonrsion, ModelonlVelonrsionProfilelon] = Map(
+    ModelonlVelonrsion.Modelonl20m145kUpdatelond -> ModelonlVelonrsion20M145KUpdatelond,
+    ModelonlVelonrsion.Modelonl20m145k2020 -> ModelonlVelonrsion20M145K2020
   )
 }

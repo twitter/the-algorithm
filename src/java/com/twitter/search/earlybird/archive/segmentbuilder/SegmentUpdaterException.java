@@ -1,13 +1,13 @@
-package com.twitter.search.earlybird.archive.segmentbuilder;
+packagelon com.twittelonr.selonarch.elonarlybird.archivelon.selongmelonntbuildelonr;
 
-import com.google.common.annotations.VisibleForTesting;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
 
 /**
- * Used when when SegmentUpdater fails processing segments.
+ * Uselond whelonn whelonn SelongmelonntUpdatelonr fails procelonssing selongmelonnts.
  */
-@VisibleForTesting
-class SegmentUpdaterException extends Exception {
-  SegmentUpdaterException(String msg) {
-    super(msg);
+@VisiblelonForTelonsting
+class SelongmelonntUpdatelonrelonxcelonption elonxtelonnds elonxcelonption {
+  SelongmelonntUpdatelonrelonxcelonption(String msg) {
+    supelonr(msg);
   }
 }

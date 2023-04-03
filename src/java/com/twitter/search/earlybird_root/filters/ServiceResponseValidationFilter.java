@@ -1,80 +1,80 @@
-package com.twitter.search.earlybird_root.filters;
+packagelon com.twittelonr.selonarch.elonarlybird_root.filtelonrs;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.common.util.earlybird.EarlybirdResponseMergeUtil;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestType;
-import com.twitter.search.earlybird_root.validators.FacetsResponseValidator;
-import com.twitter.search.earlybird_root.validators.PassThroughResponseValidator;
-import com.twitter.search.earlybird_root.validators.ServiceResponseValidator;
-import com.twitter.search.earlybird_root.validators.TermStatsResultsValidator;
-import com.twitter.search.earlybird_root.validators.TopTweetsResultsValidator;
-import com.twitter.util.Function;
-import com.twitter.util.Future;
+import com.twittelonr.finaglelon.Selonrvicelon;
+import com.twittelonr.finaglelon.SimplelonFiltelonr;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdClustelonr;
+import com.twittelonr.selonarch.common.util.elonarlybird.elonarlybirdRelonsponselonMelonrgelonUtil;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselonCodelon;
+import com.twittelonr.selonarch.elonarlybird_root.common.elonarlybirdRelonquelonstContelonxt;
+import com.twittelonr.selonarch.elonarlybird_root.common.elonarlybirdRelonquelonstTypelon;
+import com.twittelonr.selonarch.elonarlybird_root.validators.FacelontsRelonsponselonValidator;
+import com.twittelonr.selonarch.elonarlybird_root.validators.PassThroughRelonsponselonValidator;
+import com.twittelonr.selonarch.elonarlybird_root.validators.SelonrvicelonRelonsponselonValidator;
+import com.twittelonr.selonarch.elonarlybird_root.validators.TelonrmStatsRelonsultsValidator;
+import com.twittelonr.selonarch.elonarlybird_root.validators.TopTwelonelontsRelonsultsValidator;
+import com.twittelonr.util.Function;
+import com.twittelonr.util.Futurelon;
 
 /**
- * Filter responsible for handling invalid response returned by downstream services, and
- * translating them into EarlybirdResponseExceptions.
+ * Filtelonr relonsponsiblelon for handling invalid relonsponselon relonturnelond by downstrelonam selonrvicelons, and
+ * translating thelonm into elonarlybirdRelonsponselonelonxcelonptions.
  */
-public class ServiceResponseValidationFilter
-    extends SimpleFilter<EarlybirdRequestContext, EarlybirdResponse> {
+public class SelonrvicelonRelonsponselonValidationFiltelonr
+    elonxtelonnds SimplelonFiltelonr<elonarlybirdRelonquelonstContelonxt, elonarlybirdRelonsponselon> {
 
-  private final Map<EarlybirdRequestType, ServiceResponseValidator<EarlybirdResponse>>
-      requestTypeToResponseValidators = new HashMap<>();
-  private final EarlybirdCluster cluster;
+  privatelon final Map<elonarlybirdRelonquelonstTypelon, SelonrvicelonRelonsponselonValidator<elonarlybirdRelonsponselon>>
+      relonquelonstTypelonToRelonsponselonValidators = nelonw HashMap<>();
+  privatelon final elonarlybirdClustelonr clustelonr;
 
   /**
-   * Creates a new filter for handling invalid response
+   * Crelonatelons a nelonw filtelonr for handling invalid relonsponselon
    */
-  public ServiceResponseValidationFilter(EarlybirdCluster cluster) {
-    this.cluster = cluster;
+  public SelonrvicelonRelonsponselonValidationFiltelonr(elonarlybirdClustelonr clustelonr) {
+    this.clustelonr = clustelonr;
 
-    ServiceResponseValidator<EarlybirdResponse> passThroughValidator =
-        new PassThroughResponseValidator();
+    SelonrvicelonRelonsponselonValidator<elonarlybirdRelonsponselon> passThroughValidator =
+        nelonw PassThroughRelonsponselonValidator();
 
-    requestTypeToResponseValidators
-        .put(EarlybirdRequestType.FACETS, new FacetsResponseValidator(cluster));
-    requestTypeToResponseValidators
-        .put(EarlybirdRequestType.RECENCY, passThroughValidator);
-    requestTypeToResponseValidators
-        .put(EarlybirdRequestType.RELEVANCE, passThroughValidator);
-    requestTypeToResponseValidators
-        .put(EarlybirdRequestType.STRICT_RECENCY, passThroughValidator);
-    requestTypeToResponseValidators
-        .put(EarlybirdRequestType.TERM_STATS, new TermStatsResultsValidator(cluster));
-    requestTypeToResponseValidators
-        .put(EarlybirdRequestType.TOP_TWEETS, new TopTweetsResultsValidator(cluster));
+    relonquelonstTypelonToRelonsponselonValidators
+        .put(elonarlybirdRelonquelonstTypelon.FACelonTS, nelonw FacelontsRelonsponselonValidator(clustelonr));
+    relonquelonstTypelonToRelonsponselonValidators
+        .put(elonarlybirdRelonquelonstTypelon.RelonCelonNCY, passThroughValidator);
+    relonquelonstTypelonToRelonsponselonValidators
+        .put(elonarlybirdRelonquelonstTypelon.RelonLelonVANCelon, passThroughValidator);
+    relonquelonstTypelonToRelonsponselonValidators
+        .put(elonarlybirdRelonquelonstTypelon.STRICT_RelonCelonNCY, passThroughValidator);
+    relonquelonstTypelonToRelonsponselonValidators
+        .put(elonarlybirdRelonquelonstTypelon.TelonRM_STATS, nelonw TelonrmStatsRelonsultsValidator(clustelonr));
+    relonquelonstTypelonToRelonsponselonValidators
+        .put(elonarlybirdRelonquelonstTypelon.TOP_TWelonelonTS, nelonw TopTwelonelontsRelonsultsValidator(clustelonr));
   }
 
-  @Override
-  public Future<EarlybirdResponse> apply(
-      final EarlybirdRequestContext requestContext,
-      Service<EarlybirdRequestContext, EarlybirdResponse> service) {
-    return service.apply(requestContext).flatMap(
-        new Function<EarlybirdResponse, Future<EarlybirdResponse>>() {
-          @Override
-          public Future<EarlybirdResponse> apply(EarlybirdResponse response) {
-            if (response == null) {
-              return Future.exception(new IllegalStateException(
-                                          cluster + " returned null response"));
+  @Ovelonrridelon
+  public Futurelon<elonarlybirdRelonsponselon> apply(
+      final elonarlybirdRelonquelonstContelonxt relonquelonstContelonxt,
+      Selonrvicelon<elonarlybirdRelonquelonstContelonxt, elonarlybirdRelonsponselon> selonrvicelon) {
+    relonturn selonrvicelon.apply(relonquelonstContelonxt).flatMap(
+        nelonw Function<elonarlybirdRelonsponselon, Futurelon<elonarlybirdRelonsponselon>>() {
+          @Ovelonrridelon
+          public Futurelon<elonarlybirdRelonsponselon> apply(elonarlybirdRelonsponselon relonsponselon) {
+            if (relonsponselon == null) {
+              relonturn Futurelon.elonxcelonption(nelonw IllelongalStatelonelonxcelonption(
+                                          clustelonr + " relonturnelond null relonsponselon"));
             }
 
-            if (response.getResponseCode() == EarlybirdResponseCode.SUCCESS) {
-              return requestTypeToResponseValidators
-                .get(requestContext.getEarlybirdRequestType())
-                .validate(response);
+            if (relonsponselon.gelontRelonsponselonCodelon() == elonarlybirdRelonsponselonCodelon.SUCCelonSS) {
+              relonturn relonquelonstTypelonToRelonsponselonValidators
+                .gelont(relonquelonstContelonxt.gelontelonarlybirdRelonquelonstTypelon())
+                .validatelon(relonsponselon);
             }
 
-            return Future.value(EarlybirdResponseMergeUtil.transformInvalidResponse(
-                response,
-                String.format("Failure from %s (%s)", cluster, response.getResponseCode())));
+            relonturn Futurelon.valuelon(elonarlybirdRelonsponselonMelonrgelonUtil.transformInvalidRelonsponselon(
+                relonsponselon,
+                String.format("Failurelon from %s (%s)", clustelonr, relonsponselon.gelontRelonsponselonCodelon())));
           }
         });
   }

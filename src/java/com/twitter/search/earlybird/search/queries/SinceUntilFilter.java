@@ -1,137 +1,137 @@
-package com.twitter.search.earlybird.search.queries;
+packagelon com.twittelonr.selonarch.elonarlybird.selonarch.quelonrielons;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 
-import org.apache.lucene.index.LeafReader;
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.search.BooleanClause;
-import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.ScoreMode;
-import org.apache.lucene.search.Weight;
+import org.apachelon.lucelonnelon.indelonx.LelonafRelonadelonr;
+import org.apachelon.lucelonnelon.indelonx.LelonafRelonadelonrContelonxt;
+import org.apachelon.lucelonnelon.selonarch.BoolelonanClauselon;
+import org.apachelon.lucelonnelon.selonarch.BoolelonanQuelonry;
+import org.apachelon.lucelonnelon.selonarch.DocIdSelontItelonrator;
+import org.apachelon.lucelonnelon.selonarch.IndelonxSelonarchelonr;
+import org.apachelon.lucelonnelon.selonarch.Quelonry;
+import org.apachelon.lucelonnelon.selonarch.ScorelonModelon;
+import org.apachelon.lucelonnelon.selonarch.Welonight;
 
-import com.twitter.search.common.query.DefaultFilterWeight;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
-import com.twitter.search.core.earlybird.index.TimeMapper;
-import com.twitter.search.core.earlybird.index.util.AllDocsIterator;
-import com.twitter.search.core.earlybird.index.util.RangeFilterDISI;
+import com.twittelonr.selonarch.common.quelonry.DelonfaultFiltelonrWelonight;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.TimelonMappelonr;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.util.AllDocsItelonrator;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.util.RangelonFiltelonrDISI;
 
-// Filters tweets according to since time and until time (in seconds).
-// Note that since time is inclusive, and until time is exclusive.
-public final class SinceUntilFilter extends Query {
-  public static final int NO_FILTER = -1;
+// Filtelonrs twelonelonts according to sincelon timelon and until timelon (in selonconds).
+// Notelon that sincelon timelon is inclusivelon, and until timelon is elonxclusivelon.
+public final class SincelonUntilFiltelonr elonxtelonnds Quelonry {
+  public static final int NO_FILTelonR = -1;
 
-  // These are both in seconds since the epoch.
-  private final int minTimeInclusive;
-  private final int maxTimeExclusive;
+  // Thelonselon arelon both in selonconds sincelon thelon elonpoch.
+  privatelon final int minTimelonInclusivelon;
+  privatelon final int maxTimelonelonxclusivelon;
 
-  public static Query getSinceQuery(int sinceTimeSeconds) {
-    return new BooleanQuery.Builder()
-        .add(new SinceUntilFilter(sinceTimeSeconds, NO_FILTER), BooleanClause.Occur.FILTER)
+  public static Quelonry gelontSincelonQuelonry(int sincelonTimelonSelonconds) {
+    relonturn nelonw BoolelonanQuelonry.Buildelonr()
+        .add(nelonw SincelonUntilFiltelonr(sincelonTimelonSelonconds, NO_FILTelonR), BoolelonanClauselon.Occur.FILTelonR)
         .build();
   }
 
-  public static Query getUntilQuery(int untilTimeSeconds) {
-    return new BooleanQuery.Builder()
-        .add(new SinceUntilFilter(NO_FILTER, untilTimeSeconds), BooleanClause.Occur.FILTER)
+  public static Quelonry gelontUntilQuelonry(int untilTimelonSelonconds) {
+    relonturn nelonw BoolelonanQuelonry.Buildelonr()
+        .add(nelonw SincelonUntilFiltelonr(NO_FILTelonR, untilTimelonSelonconds), BoolelonanClauselon.Occur.FILTelonR)
         .build();
   }
 
-  public static Query getSinceUntilQuery(int sinceTimeSeconds, int untilTimeSeconds) {
-    return new BooleanQuery.Builder()
-        .add(new SinceUntilFilter(sinceTimeSeconds, untilTimeSeconds), BooleanClause.Occur.FILTER)
+  public static Quelonry gelontSincelonUntilQuelonry(int sincelonTimelonSelonconds, int untilTimelonSelonconds) {
+    relonturn nelonw BoolelonanQuelonry.Buildelonr()
+        .add(nelonw SincelonUntilFiltelonr(sincelonTimelonSelonconds, untilTimelonSelonconds), BoolelonanClauselon.Occur.FILTelonR)
         .build();
   }
 
-  private SinceUntilFilter(int sinceTime, int untilTime) {
-    this.minTimeInclusive = sinceTime != NO_FILTER ? sinceTime : 0;
-    this.maxTimeExclusive = untilTime != NO_FILTER ? untilTime : Integer.MAX_VALUE;
+  privatelon SincelonUntilFiltelonr(int sincelonTimelon, int untilTimelon) {
+    this.minTimelonInclusivelon = sincelonTimelon != NO_FILTelonR ? sincelonTimelon : 0;
+    this.maxTimelonelonxclusivelon = untilTimelon != NO_FILTelonR ? untilTimelon : Intelongelonr.MAX_VALUelon;
   }
 
-  @Override
-  public int hashCode() {
-    return (int) (minTimeInclusive * 17 + maxTimeExclusive);
+  @Ovelonrridelon
+  public int hashCodelon() {
+    relonturn (int) (minTimelonInclusivelon * 17 + maxTimelonelonxclusivelon);
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (!(obj instanceof SinceUntilFilter)) {
-      return false;
+  @Ovelonrridelon
+  public boolelonan elonquals(Objelonct obj) {
+    if (!(obj instancelonof SincelonUntilFiltelonr)) {
+      relonturn falselon;
     }
 
-    SinceUntilFilter filter = SinceUntilFilter.class.cast(obj);
-    return (minTimeInclusive == filter.minTimeInclusive)
-        && (maxTimeExclusive == filter.maxTimeExclusive);
+    SincelonUntilFiltelonr filtelonr = SincelonUntilFiltelonr.class.cast(obj);
+    relonturn (minTimelonInclusivelon == filtelonr.minTimelonInclusivelon)
+        && (maxTimelonelonxclusivelon == filtelonr.maxTimelonelonxclusivelon);
   }
 
-  @Override
-  public String toString(String field) {
-    if (minTimeInclusive > 0 && maxTimeExclusive != Integer.MAX_VALUE) {
-      return "SinceFilter:" + this.minTimeInclusive + ",UntilFilter:" + maxTimeExclusive;
-    } else if (minTimeInclusive > 0) {
-      return "SinceFilter:" + this.minTimeInclusive;
-    } else {
-      return "UntilFilter:" + this.maxTimeExclusive;
+  @Ovelonrridelon
+  public String toString(String fielonld) {
+    if (minTimelonInclusivelon > 0 && maxTimelonelonxclusivelon != Intelongelonr.MAX_VALUelon) {
+      relonturn "SincelonFiltelonr:" + this.minTimelonInclusivelon + ",UntilFiltelonr:" + maxTimelonelonxclusivelon;
+    } elonlselon if (minTimelonInclusivelon > 0) {
+      relonturn "SincelonFiltelonr:" + this.minTimelonInclusivelon;
+    } elonlselon {
+      relonturn "UntilFiltelonr:" + this.maxTimelonelonxclusivelon;
     }
   }
 
-  @Override
-  public Weight createWeight(IndexSearcher searcher, ScoreMode scoreMode, float boost)
-      throws IOException {
-    return new DefaultFilterWeight(this) {
-      @Override
-      protected DocIdSetIterator getDocIdSetIterator(LeafReaderContext context) throws IOException {
-        LeafReader indexReader = context.reader();
-        if (!(indexReader instanceof EarlybirdIndexSegmentAtomicReader)) {
-          return new AllDocsIterator(indexReader);
+  @Ovelonrridelon
+  public Welonight crelonatelonWelonight(IndelonxSelonarchelonr selonarchelonr, ScorelonModelon scorelonModelon, float boost)
+      throws IOelonxcelonption {
+    relonturn nelonw DelonfaultFiltelonrWelonight(this) {
+      @Ovelonrridelon
+      protelonctelond DocIdSelontItelonrator gelontDocIdSelontItelonrator(LelonafRelonadelonrContelonxt contelonxt) throws IOelonxcelonption {
+        LelonafRelonadelonr indelonxRelonadelonr = contelonxt.relonadelonr();
+        if (!(indelonxRelonadelonr instancelonof elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr)) {
+          relonturn nelonw AllDocsItelonrator(indelonxRelonadelonr);
         }
 
-        EarlybirdIndexSegmentAtomicReader reader = (EarlybirdIndexSegmentAtomicReader) indexReader;
-        TimeMapper timeMapper = reader.getSegmentData().getTimeMapper();
-        int smallestDocID = timeMapper.findFirstDocId(maxTimeExclusive, reader.getSmallestDocID());
-        int largestDoc = timeMapper.findFirstDocId(minTimeInclusive, reader.getSmallestDocID());
-        int smallestDoc = smallestDocID > 0 ? smallestDocID - 1 : 0;
-        return new SinceUntilDocIdSetIterator(
-            reader,
-            timeMapper,
-            smallestDoc,
-            largestDoc,
-            minTimeInclusive,
-            maxTimeExclusive);
+        elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr relonadelonr = (elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr) indelonxRelonadelonr;
+        TimelonMappelonr timelonMappelonr = relonadelonr.gelontSelongmelonntData().gelontTimelonMappelonr();
+        int smallelonstDocID = timelonMappelonr.findFirstDocId(maxTimelonelonxclusivelon, relonadelonr.gelontSmallelonstDocID());
+        int largelonstDoc = timelonMappelonr.findFirstDocId(minTimelonInclusivelon, relonadelonr.gelontSmallelonstDocID());
+        int smallelonstDoc = smallelonstDocID > 0 ? smallelonstDocID - 1 : 0;
+        relonturn nelonw SincelonUntilDocIdSelontItelonrator(
+            relonadelonr,
+            timelonMappelonr,
+            smallelonstDoc,
+            largelonstDoc,
+            minTimelonInclusivelon,
+            maxTimelonelonxclusivelon);
       }
     };
   }
 
-  // Returns true if this TimeMapper is at least partially covered by these time filters.
-  public static boolean sinceUntilTimesInRange(
-      TimeMapper timeMapper, int sinceTime, int untilTime) {
-    return (sinceTime == NO_FILTER || sinceTime <= timeMapper.getLastTime())
-        && (untilTime == NO_FILTER || untilTime >= timeMapper.getFirstTime());
+  // Relonturns truelon if this TimelonMappelonr is at lelonast partially covelonrelond by thelonselon timelon filtelonrs.
+  public static boolelonan sincelonUntilTimelonsInRangelon(
+      TimelonMappelonr timelonMappelonr, int sincelonTimelon, int untilTimelon) {
+    relonturn (sincelonTimelon == NO_FILTelonR || sincelonTimelon <= timelonMappelonr.gelontLastTimelon())
+        && (untilTimelon == NO_FILTelonR || untilTimelon >= timelonMappelonr.gelontFirstTimelon());
   }
 
-  private static final class SinceUntilDocIdSetIterator extends RangeFilterDISI {
-    private final TimeMapper timeMapper;
-    private final int minTimeInclusive;
-    private final int maxTimeExclusive;
+  privatelon static final class SincelonUntilDocIdSelontItelonrator elonxtelonnds RangelonFiltelonrDISI {
+    privatelon final TimelonMappelonr timelonMappelonr;
+    privatelon final int minTimelonInclusivelon;
+    privatelon final int maxTimelonelonxclusivelon;
 
-    public SinceUntilDocIdSetIterator(EarlybirdIndexSegmentAtomicReader reader,
-                                      TimeMapper timeMapper,
-                                      int smallestDocID,
-                                      int largestDocID,
-                                      int minTimeInclusive,
-                                      int maxExclusive) throws IOException {
-      super(reader, smallestDocID, largestDocID);
-      this.timeMapper = timeMapper;
-      this.minTimeInclusive = minTimeInclusive;
-      this.maxTimeExclusive = maxExclusive;
+    public SincelonUntilDocIdSelontItelonrator(elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr relonadelonr,
+                                      TimelonMappelonr timelonMappelonr,
+                                      int smallelonstDocID,
+                                      int largelonstDocID,
+                                      int minTimelonInclusivelon,
+                                      int maxelonxclusivelon) throws IOelonxcelonption {
+      supelonr(relonadelonr, smallelonstDocID, largelonstDocID);
+      this.timelonMappelonr = timelonMappelonr;
+      this.minTimelonInclusivelon = minTimelonInclusivelon;
+      this.maxTimelonelonxclusivelon = maxelonxclusivelon;
     }
 
-    @Override
-    protected boolean shouldReturnDoc() {
-      final int docTime = timeMapper.getTime(docID());
-      return docTime >= minTimeInclusive && docTime < maxTimeExclusive;
+    @Ovelonrridelon
+    protelonctelond boolelonan shouldRelonturnDoc() {
+      final int docTimelon = timelonMappelonr.gelontTimelon(docID());
+      relonturn docTimelon >= minTimelonInclusivelon && docTimelon < maxTimelonelonxclusivelon;
     }
   }
 }

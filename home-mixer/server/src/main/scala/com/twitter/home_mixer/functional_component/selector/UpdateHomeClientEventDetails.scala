@@ -1,137 +1,137 @@
-package com.twitter.home_mixer.functional_component.selector
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.selonlelonctor
 
-import com.twitter.home_mixer.functional_component.decorator.HomeClientEventDetailsBuilder
-import com.twitter.home_mixer.model.HomeFeatures.AncestorsFeature
-import com.twitter.home_mixer.model.HomeFeatures.ConversationModule2DisplayedTweetsFeature
-import com.twitter.home_mixer.model.HomeFeatures.ConversationModuleHasGapFeature
-import com.twitter.home_mixer.model.HomeFeatures.HasRandomTweetFeature
-import com.twitter.home_mixer.model.HomeFeatures.IsRandomTweetAboveFeature
-import com.twitter.home_mixer.model.HomeFeatures.IsRandomTweetFeature
-import com.twitter.home_mixer.model.HomeFeatures.PositionFeature
-import com.twitter.home_mixer.model.HomeFeatures.ServedInConversationModuleFeature
-import com.twitter.home_mixer.model.HomeFeatures.ServedSizeFeature
-import com.twitter.product_mixer.component_library.model.presentation.urt.UrtItemPresentation
-import com.twitter.product_mixer.component_library.model.presentation.urt.UrtModulePresentation
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.functional_component.common.SpecificPipelines
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.functional_component.selector.SelectorResult
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ItemCandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ModuleCandidateWithDetails
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet.TweetItem
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.homelon_mixelonr.functional_componelonnt.deloncorator.HomelonClielonntelonvelonntDelontailsBuildelonr
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.AncelonstorsFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.ConvelonrsationModulelon2DisplayelondTwelonelontsFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.ConvelonrsationModulelonHasGapFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.HasRandomTwelonelontFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.IsRandomTwelonelontAbovelonFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.IsRandomTwelonelontFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.PositionFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.SelonrvelondInConvelonrsationModulelonFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.SelonrvelondSizelonFelonaturelon
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.prelonselonntation.urt.UrtItelonmPrelonselonntation
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.prelonselonntation.urt.UrtModulelonPrelonselonntation
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMapBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.CandidatelonScopelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.SpeloncificPipelonlinelons
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.selonlelonctor.Selonlelonctor
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.selonlelonctor.SelonlelonctorRelonsult
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonPipelonlinelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.ItelonmCandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.ModulelonCandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.twelonelont.TwelonelontItelonm
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
 /**
- * Builds serialized tweet type metrics controller data and updates Client Event Details
- * and Candidate Presentations with this info.
+ * Builds selonrializelond twelonelont typelon melontrics controllelonr data and updatelons Clielonnt elonvelonnt Delontails
+ * and Candidatelon Prelonselonntations with this info.
  *
- * Currently only updates presentation of Item Candidates. This needs to be updated
- * when modules are added.
+ * Currelonntly only updatelons prelonselonntation of Itelonm Candidatelons. This nelonelonds to belon updatelond
+ * whelonn modulelons arelon addelond.
  *
- * This is implemented as a Selector instead of a Decorator in the Candidate Pipeline
- * because we need to add controller data that looks at the final timeline as a whole
- * (e.g. served size, final candidate positions).
+ * This is implelonmelonntelond as a Selonlelonctor instelonad of a Deloncorator in thelon Candidatelon Pipelonlinelon
+ * beloncauselon welon nelonelond to add controllelonr data that looks at thelon final timelonlinelon as a wholelon
+ * (elon.g. selonrvelond sizelon, final candidatelon positions).
  *
- * @param candidatePipelines - only candidates from the specified pipeline will be updated
+ * @param candidatelonPipelonlinelons - only candidatelons from thelon speloncifielond pipelonlinelon will belon updatelond
  */
-case class UpdateHomeClientEventDetails(candidatePipelines: Set[CandidatePipelineIdentifier])
-    extends Selector[PipelineQuery] {
+caselon class UpdatelonHomelonClielonntelonvelonntDelontails(candidatelonPipelonlinelons: Selont[CandidatelonPipelonlinelonIdelonntifielonr])
+    elonxtelonnds Selonlelonctor[PipelonlinelonQuelonry] {
 
-  override val pipelineScope: CandidateScope = SpecificPipelines(candidatePipelines)
+  ovelonrridelon val pipelonlinelonScopelon: CandidatelonScopelon = SpeloncificPipelonlinelons(candidatelonPipelonlinelons)
 
-  private val detailsBuilder = HomeClientEventDetailsBuilder()
+  privatelon val delontailsBuildelonr = HomelonClielonntelonvelonntDelontailsBuildelonr()
 
-  override def apply(
-    query: PipelineQuery,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
-  ): SelectorResult = {
-    val selectedCandidates = result.filter(pipelineScope.contains)
+  ovelonrridelon delonf apply(
+    quelonry: PipelonlinelonQuelonry,
+    relonmainingCandidatelons: Selonq[CandidatelonWithDelontails],
+    relonsult: Selonq[CandidatelonWithDelontails]
+  ): SelonlelonctorRelonsult = {
+    val selonlelonctelondCandidatelons = relonsult.filtelonr(pipelonlinelonScopelon.contains)
 
-    val randomTweetsByPosition = result
-      .map(_.features.getOrElse(IsRandomTweetFeature, false))
-      .zipWithIndex.map(_.swap).toMap
+    val randomTwelonelontsByPosition = relonsult
+      .map(_.felonaturelons.gelontOrelonlselon(IsRandomTwelonelontFelonaturelon, falselon))
+      .zipWithIndelonx.map(_.swap).toMap
 
-    val resultFeatures = FeatureMapBuilder()
-      .add(ServedSizeFeature, Some(selectedCandidates.size))
-      .add(HasRandomTweetFeature, randomTweetsByPosition.valuesIterator.contains(true))
+    val relonsultFelonaturelons = FelonaturelonMapBuildelonr()
+      .add(SelonrvelondSizelonFelonaturelon, Somelon(selonlelonctelondCandidatelons.sizelon))
+      .add(HasRandomTwelonelontFelonaturelon, randomTwelonelontsByPosition.valuelonsItelonrator.contains(truelon))
       .build()
 
-    val updatedResult = result.zipWithIndex.map {
-      case (item @ ItemCandidateWithDetails(candidate, _, _), position)
-          if pipelineScope.contains(item) =>
-        val resultCandidateFeatures = FeatureMapBuilder()
-          .add(PositionFeature, Some(position))
-          .add(IsRandomTweetAboveFeature, randomTweetsByPosition.getOrElse(position - 1, false))
+    val updatelondRelonsult = relonsult.zipWithIndelonx.map {
+      caselon (itelonm @ ItelonmCandidatelonWithDelontails(candidatelon, _, _), position)
+          if pipelonlinelonScopelon.contains(itelonm) =>
+        val relonsultCandidatelonFelonaturelons = FelonaturelonMapBuildelonr()
+          .add(PositionFelonaturelon, Somelon(position))
+          .add(IsRandomTwelonelontAbovelonFelonaturelon, randomTwelonelontsByPosition.gelontOrelonlselon(position - 1, falselon))
           .build()
 
-        updateItemPresentation(query, item, resultFeatures, resultCandidateFeatures)
+        updatelonItelonmPrelonselonntation(quelonry, itelonm, relonsultFelonaturelons, relonsultCandidatelonFelonaturelons)
 
-      case (module @ ModuleCandidateWithDetails(candidates, presentation, features), position)
-          if pipelineScope.contains(module) =>
-        val resultCandidateFeatures = FeatureMapBuilder()
-          .add(PositionFeature, Some(position))
-          .add(IsRandomTweetAboveFeature, randomTweetsByPosition.getOrElse(position - 1, false))
-          .add(ServedInConversationModuleFeature, true)
-          .add(ConversationModule2DisplayedTweetsFeature, module.candidates.size == 2)
+      caselon (modulelon @ ModulelonCandidatelonWithDelontails(candidatelons, prelonselonntation, felonaturelons), position)
+          if pipelonlinelonScopelon.contains(modulelon) =>
+        val relonsultCandidatelonFelonaturelons = FelonaturelonMapBuildelonr()
+          .add(PositionFelonaturelon, Somelon(position))
+          .add(IsRandomTwelonelontAbovelonFelonaturelon, randomTwelonelontsByPosition.gelontOrelonlselon(position - 1, falselon))
+          .add(SelonrvelondInConvelonrsationModulelonFelonaturelon, truelon)
+          .add(ConvelonrsationModulelon2DisplayelondTwelonelontsFelonaturelon, modulelon.candidatelons.sizelon == 2)
           .add(
-            ConversationModuleHasGapFeature,
-            module.candidates.last.features.getOrElse(AncestorsFeature, Seq.empty).size > 2)
+            ConvelonrsationModulelonHasGapFelonaturelon,
+            modulelon.candidatelons.last.felonaturelons.gelontOrelonlselon(AncelonstorsFelonaturelon, Selonq.elonmpty).sizelon > 2)
           .build()
 
-        val updatedItemCandidates =
-          candidates.map(updateItemPresentation(query, _, resultFeatures, resultCandidateFeatures))
+        val updatelondItelonmCandidatelons =
+          candidatelons.map(updatelonItelonmPrelonselonntation(quelonry, _, relonsultFelonaturelons, relonsultCandidatelonFelonaturelons))
 
-        val updatedCandidateFeatures = features ++ resultFeatures ++ resultCandidateFeatures
+        val updatelondCandidatelonFelonaturelons = felonaturelons ++ relonsultFelonaturelons ++ relonsultCandidatelonFelonaturelons
 
-        val updatedPresentation = presentation.map {
-          case urtModule @ UrtModulePresentation(timelineModule) =>
-            val clientEventDetails =
-              detailsBuilder(
-                query,
-                candidates.last.candidate,
-                query.features.get ++ updatedCandidateFeatures)
-            val updatedClientEventInfo =
-              timelineModule.clientEventInfo.map(_.copy(details = clientEventDetails))
-            val updatedTimelineModule =
-              timelineModule.copy(clientEventInfo = updatedClientEventInfo)
-            urtModule.copy(timelineModule = updatedTimelineModule)
+        val updatelondPrelonselonntation = prelonselonntation.map {
+          caselon urtModulelon @ UrtModulelonPrelonselonntation(timelonlinelonModulelon) =>
+            val clielonntelonvelonntDelontails =
+              delontailsBuildelonr(
+                quelonry,
+                candidatelons.last.candidatelon,
+                quelonry.felonaturelons.gelont ++ updatelondCandidatelonFelonaturelons)
+            val updatelondClielonntelonvelonntInfo =
+              timelonlinelonModulelon.clielonntelonvelonntInfo.map(_.copy(delontails = clielonntelonvelonntDelontails))
+            val updatelondTimelonlinelonModulelon =
+              timelonlinelonModulelon.copy(clielonntelonvelonntInfo = updatelondClielonntelonvelonntInfo)
+            urtModulelon.copy(timelonlinelonModulelon = updatelondTimelonlinelonModulelon)
         }
 
-        module.copy(
-          candidates = updatedItemCandidates,
-          presentation = updatedPresentation,
-          features = updatedCandidateFeatures
+        modulelon.copy(
+          candidatelons = updatelondItelonmCandidatelons,
+          prelonselonntation = updatelondPrelonselonntation,
+          felonaturelons = updatelondCandidatelonFelonaturelons
         )
 
-      case (any, position) => any
+      caselon (any, position) => any
     }
 
-    SelectorResult(remainingCandidates = remainingCandidates, result = updatedResult)
+    SelonlelonctorRelonsult(relonmainingCandidatelons = relonmainingCandidatelons, relonsult = updatelondRelonsult)
   }
 
-  private def updateItemPresentation(
-    query: PipelineQuery,
-    item: ItemCandidateWithDetails,
-    resultCandidateFeatures: FeatureMap,
-    resultFeatures: FeatureMap,
-  ): ItemCandidateWithDetails = {
-    val updatedItemCandidateFeatures = item.features ++ resultFeatures ++ resultCandidateFeatures
+  privatelon delonf updatelonItelonmPrelonselonntation(
+    quelonry: PipelonlinelonQuelonry,
+    itelonm: ItelonmCandidatelonWithDelontails,
+    relonsultCandidatelonFelonaturelons: FelonaturelonMap,
+    relonsultFelonaturelons: FelonaturelonMap,
+  ): ItelonmCandidatelonWithDelontails = {
+    val updatelondItelonmCandidatelonFelonaturelons = itelonm.felonaturelons ++ relonsultFelonaturelons ++ relonsultCandidatelonFelonaturelons
 
-    val updatedPresentation = item.presentation.map {
-      case urtItem @ UrtItemPresentation(timelineItem: TweetItem, _) =>
-        val clientEventDetails =
-          detailsBuilder(query, item.candidate, query.features.get ++ updatedItemCandidateFeatures)
-        val updatedClientEventInfo =
-          timelineItem.clientEventInfo.map(_.copy(details = clientEventDetails))
-        val updatedTimelineItem = timelineItem.copy(clientEventInfo = updatedClientEventInfo)
-        urtItem.copy(timelineItem = updatedTimelineItem)
-      case any => any
+    val updatelondPrelonselonntation = itelonm.prelonselonntation.map {
+      caselon urtItelonm @ UrtItelonmPrelonselonntation(timelonlinelonItelonm: TwelonelontItelonm, _) =>
+        val clielonntelonvelonntDelontails =
+          delontailsBuildelonr(quelonry, itelonm.candidatelon, quelonry.felonaturelons.gelont ++ updatelondItelonmCandidatelonFelonaturelons)
+        val updatelondClielonntelonvelonntInfo =
+          timelonlinelonItelonm.clielonntelonvelonntInfo.map(_.copy(delontails = clielonntelonvelonntDelontails))
+        val updatelondTimelonlinelonItelonm = timelonlinelonItelonm.copy(clielonntelonvelonntInfo = updatelondClielonntelonvelonntInfo)
+        urtItelonm.copy(timelonlinelonItelonm = updatelondTimelonlinelonItelonm)
+      caselon any => any
     }
-    item.copy(presentation = updatedPresentation, features = updatedItemCandidateFeatures)
+    itelonm.copy(prelonselonntation = updatelondPrelonselonntation, felonaturelons = updatelondItelonmCandidatelonFelonaturelons)
   }
 }

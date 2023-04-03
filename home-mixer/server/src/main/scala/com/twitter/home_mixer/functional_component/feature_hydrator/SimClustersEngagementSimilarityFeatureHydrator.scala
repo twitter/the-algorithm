@@ -1,83 +1,83 @@
-package com.twitter.home_mixer.functional_component.feature_hydrator
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.home_mixer.product.scored_tweets.param.ScoredTweetsParam
-import com.twitter.ml.api.DataRecord
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure
-import com.twitter.product_mixer.core.feature.datarecord.DataRecordInAFeature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BulkCandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.Conditionally
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.clients.strato.twistly.SimClustersRecentEngagementSimilarityClient
-import com.twitter.timelines.configapi.decider.BooleanDeciderParam
-import com.twitter.timelines.prediction.adapters.twistly.SimClustersRecentEngagementSimilarityFeaturesAdapter
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.homelon_mixelonr.product.scorelond_twelonelonts.param.ScorelondTwelonelontsParam
+import com.twittelonr.ml.api.DataReloncord
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.TwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.FelonaturelonWithDelonfaultOnFailurelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.datareloncord.DataReloncordInAFelonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMapBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator.BulkCandidatelonFelonaturelonHydrator
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.Conditionally
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.FelonaturelonHydratorIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.timelonlinelons.clielonnts.strato.twistly.SimClustelonrsReloncelonntelonngagelonmelonntSimilarityClielonnt
+import com.twittelonr.timelonlinelons.configapi.deloncidelonr.BoolelonanDeloncidelonrParam
+import com.twittelonr.timelonlinelons.prelondiction.adaptelonrs.twistly.SimClustelonrsReloncelonntelonngagelonmelonntSimilarityFelonaturelonsAdaptelonr
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-object SimClustersEngagementSimilarityFeature
-    extends DataRecordInAFeature[PipelineQuery]
-    with FeatureWithDefaultOnFailure[PipelineQuery, DataRecord] {
-  override def defaultValue: DataRecord = new DataRecord()
+objelonct SimClustelonrselonngagelonmelonntSimilarityFelonaturelon
+    elonxtelonnds DataReloncordInAFelonaturelon[PipelonlinelonQuelonry]
+    with FelonaturelonWithDelonfaultOnFailurelon[PipelonlinelonQuelonry, DataReloncord] {
+  ovelonrridelon delonf delonfaultValuelon: DataReloncord = nelonw DataReloncord()
 }
 
-@Singleton
-class SimClustersEngagementSimilarityFeatureHydrator @Inject() (
-  simClustersEngagementSimilarityClient: SimClustersRecentEngagementSimilarityClient,
-  statsReceiver: StatsReceiver)
-    extends BulkCandidateFeatureHydrator[PipelineQuery, TweetCandidate]
-    with Conditionally[PipelineQuery] {
+@Singlelonton
+class SimClustelonrselonngagelonmelonntSimilarityFelonaturelonHydrator @Injelonct() (
+  simClustelonrselonngagelonmelonntSimilarityClielonnt: SimClustelonrsReloncelonntelonngagelonmelonntSimilarityClielonnt,
+  statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds BulkCandidatelonFelonaturelonHydrator[PipelonlinelonQuelonry, TwelonelontCandidatelon]
+    with Conditionally[PipelonlinelonQuelonry] {
 
-  override val identifier: FeatureHydratorIdentifier =
-    FeatureHydratorIdentifier("SimClustersEngagementSimilarity")
+  ovelonrridelon val idelonntifielonr: FelonaturelonHydratorIdelonntifielonr =
+    FelonaturelonHydratorIdelonntifielonr("SimClustelonrselonngagelonmelonntSimilarity")
 
-  override val features: Set[Feature[_, _]] = Set(SimClustersEngagementSimilarityFeature)
+  ovelonrridelon val felonaturelons: Selont[Felonaturelon[_, _]] = Selont(SimClustelonrselonngagelonmelonntSimilarityFelonaturelon)
 
-  private val scopedStatsReceiver = statsReceiver.scope(identifier.toString)
+  privatelon val scopelondStatsReloncelonivelonr = statsReloncelonivelonr.scopelon(idelonntifielonr.toString)
 
-  private val hydratedCandidatesSizeStat = scopedStatsReceiver.stat("hydratedCandidatesSize")
+  privatelon val hydratelondCandidatelonsSizelonStat = scopelondStatsReloncelonivelonr.stat("hydratelondCandidatelonsSizelon")
 
-  private val simClustersRecentEngagementSimilarityFeaturesAdapter =
-    new SimClustersRecentEngagementSimilarityFeaturesAdapter
+  privatelon val simClustelonrsReloncelonntelonngagelonmelonntSimilarityFelonaturelonsAdaptelonr =
+    nelonw SimClustelonrsReloncelonntelonngagelonmelonntSimilarityFelonaturelonsAdaptelonr
 
-  override def onlyIf(query: PipelineQuery): Boolean = {
-    val param: BooleanDeciderParam =
-      ScoredTweetsParam.EnableSimClustersSimilarityFeatureHydrationDeciderParam
-    query.params.apply(param)
+  ovelonrridelon delonf onlyIf(quelonry: PipelonlinelonQuelonry): Boolelonan = {
+    val param: BoolelonanDeloncidelonrParam =
+      ScorelondTwelonelontsParam.elonnablelonSimClustelonrsSimilarityFelonaturelonHydrationDeloncidelonrParam
+    quelonry.params.apply(param)
   }
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[Seq[FeatureMap]] = {
-    val tweetToCandidates = candidates.map(candidate => candidate.candidate.id -> candidate).toMap
-    val tweetIds = tweetToCandidates.keySet.toSeq
-    val userId = query.getRequiredUserId
-    val userTweetEdges = tweetIds.map(tweetId => (userId, tweetId))
-    val resultFuture = simClustersEngagementSimilarityClient
-      .getSimClustersRecentEngagementSimilarityScores(userTweetEdges).map {
-        simClustersRecentEngagementSimilarityScoresMap =>
-          hydratedCandidatesSizeStat.add(simClustersRecentEngagementSimilarityScoresMap.size)
-          candidates.map { candidate =>
-            val similarityFeatureOpt = simClustersRecentEngagementSimilarityScoresMap
-              .get(userId -> candidate.candidate.id).flatten
-            val dataRecordOpt = similarityFeatureOpt.map { similarityFeature =>
-              simClustersRecentEngagementSimilarityFeaturesAdapter
-                .adaptToDataRecords(similarityFeature)
-                .get(0)
+  ovelonrridelon delonf apply(
+    quelonry: PipelonlinelonQuelonry,
+    candidatelons: Selonq[CandidatelonWithFelonaturelons[TwelonelontCandidatelon]]
+  ): Stitch[Selonq[FelonaturelonMap]] = {
+    val twelonelontToCandidatelons = candidatelons.map(candidatelon => candidatelon.candidatelon.id -> candidatelon).toMap
+    val twelonelontIds = twelonelontToCandidatelons.kelonySelont.toSelonq
+    val uselonrId = quelonry.gelontRelonquirelondUselonrId
+    val uselonrTwelonelontelondgelons = twelonelontIds.map(twelonelontId => (uselonrId, twelonelontId))
+    val relonsultFuturelon = simClustelonrselonngagelonmelonntSimilarityClielonnt
+      .gelontSimClustelonrsReloncelonntelonngagelonmelonntSimilarityScorelons(uselonrTwelonelontelondgelons).map {
+        simClustelonrsReloncelonntelonngagelonmelonntSimilarityScorelonsMap =>
+          hydratelondCandidatelonsSizelonStat.add(simClustelonrsReloncelonntelonngagelonmelonntSimilarityScorelonsMap.sizelon)
+          candidatelons.map { candidatelon =>
+            val similarityFelonaturelonOpt = simClustelonrsReloncelonntelonngagelonmelonntSimilarityScorelonsMap
+              .gelont(uselonrId -> candidatelon.candidatelon.id).flattelonn
+            val dataReloncordOpt = similarityFelonaturelonOpt.map { similarityFelonaturelon =>
+              simClustelonrsReloncelonntelonngagelonmelonntSimilarityFelonaturelonsAdaptelonr
+                .adaptToDataReloncords(similarityFelonaturelon)
+                .gelont(0)
             }
-            FeatureMapBuilder()
-              .add(SimClustersEngagementSimilarityFeature, dataRecordOpt.getOrElse(new DataRecord))
+            FelonaturelonMapBuildelonr()
+              .add(SimClustelonrselonngagelonmelonntSimilarityFelonaturelon, dataReloncordOpt.gelontOrelonlselon(nelonw DataReloncord))
               .build()
           }
       }
-    Stitch.callFuture(resultFuture)
+    Stitch.callFuturelon(relonsultFuturelon)
   }
 
 }

@@ -1,444 +1,444 @@
-package com.twitter.search.common.relevance.entities;
+packagelon com.twittelonr.selonarch.common.relonlelonvancelon.elonntitielons;
 
-import java.text.Normalizer;
+import java.telonxt.Normalizelonr;
 import java.util.Map;
-import java.util.NavigableMap;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.concurrent.ConcurrentMap;
+import java.util.NavigablelonMap;
+import java.util.Selont;
+import java.util.TrelonelonMap;
+import java.util.concurrelonnt.ConcurrelonntMap;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Maps;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import com.googlelon.common.baselon.Prelonconditions;
+import com.googlelon.common.collelonct.Maps;
 
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apachelon.commons.lang.StringUtils;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.common.text.transformer.HTMLTagRemovalTransformer;
-import com.twitter.common_internal.text.extractor.EmojiExtractor;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.partitioning.snowflakeparser.SnowflakeIdParser;
+import com.twittelonr.common.telonxt.transformelonr.HTMLTagRelonmovalTransformelonr;
+import com.twittelonr.common_intelonrnal.telonxt.elonxtractor.elonmojielonxtractor;
+import com.twittelonr.selonarch.common.melontrics.SelonarchRatelonCountelonr;
+import com.twittelonr.selonarch.common.partitioning.snowflakelonparselonr.SnowflakelonIdParselonr;
 
-public final class TwitterMessageUtil {
-  private static final Logger LOG = LoggerFactory.getLogger(TwitterMessageUtil.class);
+public final class TwittelonrMelonssagelonUtil {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(TwittelonrMelonssagelonUtil.class);
 
-  private TwitterMessageUtil() {
+  privatelon TwittelonrMelonssagelonUtil() {
   }
 
-  @VisibleForTesting
-  static final ConcurrentMap<Field, Counters> COUNTERS_MAP = Maps.newConcurrentMap();
-  // We truncate the location string because we used to use a MySQL table to store the geocoding
-  // information.  In the MySQL table, the location string was fix width of 30 characters.
-  // We have migrated to Manhattan and the location string is no longer limited to 30 character.
-  // However, in order to correctly lookup location geocode from Manhattan, we still need to
-  // truncate the location just like we did before.
-  private static final int MAX_LOCATION_LEN = 30;
+  @VisiblelonForTelonsting
+  static final ConcurrelonntMap<Fielonld, Countelonrs> COUNTelonRS_MAP = Maps.nelonwConcurrelonntMap();
+  // Welon truncatelon thelon location string beloncauselon welon uselond to uselon a MySQL tablelon to storelon thelon gelonocoding
+  // information.  In thelon MySQL tablelon, thelon location string was fix width of 30 charactelonrs.
+  // Welon havelon migratelond to Manhattan and thelon location string is no longelonr limitelond to 30 charactelonr.
+  // Howelonvelonr, in ordelonr to correlonctly lookup location gelonocodelon from Manhattan, welon still nelonelond to
+  // truncatelon thelon location just likelon welon did belonforelon.
+  privatelon static final int MAX_LOCATION_LelonN = 30;
 
-  // Note: we strip tags to index source, as typically source contains <a href=...> tags.
-  // Sometimes we get a source where stripping fails, as the URL in the tag was
-  // excessively long.  We drop these sources, as there is little reason to index them.
-  private static final int MAX_SOURCE_LEN = 64;
+  // Notelon: welon strip tags to indelonx sourcelon, as typically sourcelon contains <a hrelonf=...> tags.
+  // Somelontimelons welon gelont a sourcelon whelonrelon stripping fails, as thelon URL in thelon tag was
+  // elonxcelonssivelonly long.  Welon drop thelonselon sourcelons, as thelonrelon is littlelon relonason to indelonx thelonm.
+  privatelon static final int MAX_SOURCelon_LelonN = 64;
 
-  private static HTMLTagRemovalTransformer tagRemovalTransformer = new HTMLTagRemovalTransformer();
+  privatelon static HTMLTagRelonmovalTransformelonr tagRelonmovalTransformelonr = nelonw HTMLTagRelonmovalTransformelonr();
 
-  private static final String STAT_PREFIX = "twitter_message_";
+  privatelon static final String STAT_PRelonFIX = "twittelonr_melonssagelon_";
 
-  public enum Field {
-    FROM_USER_DISPLAY_NAME,
-    NORMALIZED_LOCATION,
+  public elonnum Fielonld {
+    FROM_USelonR_DISPLAY_NAMelon,
+    NORMALIZelonD_LOCATION,
     ORIG_LOCATION,
-    ORIG_SOURCE,
-    SHARED_USER_DISPLAY_NAME,
-    SOURCE,
-    TEXT,
-    TO_USER_SCREEN_NAME;
+    ORIG_SOURCelon,
+    SHARelonD_USelonR_DISPLAY_NAMelon,
+    SOURCelon,
+    TelonXT,
+    TO_USelonR_SCRelonelonN_NAMelon;
 
-    public String getNameForStats() {
-      return name().toLowerCase();
+    public String gelontNamelonForStats() {
+      relonturn namelon().toLowelonrCaselon();
     }
   }
 
-  @VisibleForTesting
-  static class Counters {
-    private final SearchRateCounter truncatedCounter;
-    private final SearchRateCounter tweetsWithStrippedSupplementaryCharsCounter;
-    private final SearchRateCounter strippedSupplementaryCharsCounter;
-    private final SearchRateCounter nonStrippedEmojiCharsCounter;
-    private final SearchRateCounter emojisAtTruncateBoundaryCounter;
+  @VisiblelonForTelonsting
+  static class Countelonrs {
+    privatelon final SelonarchRatelonCountelonr truncatelondCountelonr;
+    privatelon final SelonarchRatelonCountelonr twelonelontsWithStrippelondSupplelonmelonntaryCharsCountelonr;
+    privatelon final SelonarchRatelonCountelonr strippelondSupplelonmelonntaryCharsCountelonr;
+    privatelon final SelonarchRatelonCountelonr nonStrippelondelonmojiCharsCountelonr;
+    privatelon final SelonarchRatelonCountelonr elonmojisAtTruncatelonBoundaryCountelonr;
 
-    Counters(Field field) {
-      String fieldNameForStats = field.getNameForStats();
-      truncatedCounter = SearchRateCounter.export(
-          STAT_PREFIX + "truncated_" + fieldNameForStats);
-      tweetsWithStrippedSupplementaryCharsCounter = SearchRateCounter.export(
-          STAT_PREFIX + "tweets_with_stripped_supplementary_chars_" + fieldNameForStats);
-      strippedSupplementaryCharsCounter = SearchRateCounter.export(
-          STAT_PREFIX + "stripped_supplementary_chars_" + fieldNameForStats);
-      nonStrippedEmojiCharsCounter = SearchRateCounter.export(
-          STAT_PREFIX + "non_stripped_emoji_chars_" + fieldNameForStats);
-      emojisAtTruncateBoundaryCounter = SearchRateCounter.export(
-          STAT_PREFIX + "emojis_at_truncate_boundary_" + fieldNameForStats);
+    Countelonrs(Fielonld fielonld) {
+      String fielonldNamelonForStats = fielonld.gelontNamelonForStats();
+      truncatelondCountelonr = SelonarchRatelonCountelonr.elonxport(
+          STAT_PRelonFIX + "truncatelond_" + fielonldNamelonForStats);
+      twelonelontsWithStrippelondSupplelonmelonntaryCharsCountelonr = SelonarchRatelonCountelonr.elonxport(
+          STAT_PRelonFIX + "twelonelonts_with_strippelond_supplelonmelonntary_chars_" + fielonldNamelonForStats);
+      strippelondSupplelonmelonntaryCharsCountelonr = SelonarchRatelonCountelonr.elonxport(
+          STAT_PRelonFIX + "strippelond_supplelonmelonntary_chars_" + fielonldNamelonForStats);
+      nonStrippelondelonmojiCharsCountelonr = SelonarchRatelonCountelonr.elonxport(
+          STAT_PRelonFIX + "non_strippelond_elonmoji_chars_" + fielonldNamelonForStats);
+      elonmojisAtTruncatelonBoundaryCountelonr = SelonarchRatelonCountelonr.elonxport(
+          STAT_PRelonFIX + "elonmojis_at_truncatelon_boundary_" + fielonldNamelonForStats);
     }
 
-    SearchRateCounter getTruncatedCounter() {
-      return truncatedCounter;
+    SelonarchRatelonCountelonr gelontTruncatelondCountelonr() {
+      relonturn truncatelondCountelonr;
     }
 
-    SearchRateCounter getTweetsWithStrippedSupplementaryCharsCounter() {
-      return tweetsWithStrippedSupplementaryCharsCounter;
+    SelonarchRatelonCountelonr gelontTwelonelontsWithStrippelondSupplelonmelonntaryCharsCountelonr() {
+      relonturn twelonelontsWithStrippelondSupplelonmelonntaryCharsCountelonr;
     }
 
-    SearchRateCounter getStrippedSupplementaryCharsCounter() {
-      return strippedSupplementaryCharsCounter;
+    SelonarchRatelonCountelonr gelontStrippelondSupplelonmelonntaryCharsCountelonr() {
+      relonturn strippelondSupplelonmelonntaryCharsCountelonr;
     }
 
-    SearchRateCounter getNonStrippedEmojiCharsCounter() {
-      return nonStrippedEmojiCharsCounter;
+    SelonarchRatelonCountelonr gelontNonStrippelondelonmojiCharsCountelonr() {
+      relonturn nonStrippelondelonmojiCharsCountelonr;
     }
 
-    SearchRateCounter getEmojisAtTruncateBoundaryCounter() {
-      return emojisAtTruncateBoundaryCounter;
+    SelonarchRatelonCountelonr gelontelonmojisAtTruncatelonBoundaryCountelonr() {
+      relonturn elonmojisAtTruncatelonBoundaryCountelonr;
     }
   }
 
   static {
-    for (Field field : Field.values()) {
-      COUNTERS_MAP.put(field, new Counters(field));
+    for (Fielonld fielonld : Fielonld.valuelons()) {
+      COUNTelonRS_MAP.put(fielonld, nelonw Countelonrs(fielonld));
     }
   }
 
-  // Note: the monorail enforces a limit of 15 characters for screen names,
-  // but some users with up to 20 character names were grandfathered-in.  To allow
-  // those users to be searchable, support up to 20 chars.
-  private static final int MAX_SCREEN_NAME_LEN = 20;
+  // Notelon: thelon monorail elonnforcelons a limit of 15 charactelonrs for screlonelonn namelons,
+  // but somelon uselonrs with up to 20 charactelonr namelons welonrelon grandfathelonrelond-in.  To allow
+  // thoselon uselonrs to belon selonarchablelon, support up to 20 chars.
+  privatelon static final int MAX_SCRelonelonN_NAMelon_LelonN = 20;
 
-  // Note: we expect the current limit to be 10K. Also, all supplementary unicode characters (with
-  // the exception of emojis, maybe) will be removed and not counted as total length. Added alert
-  // for text truncation rate as well. SEARCH-9512
-  private static final int MAX_TWEET_TEXT_LEN = 10000;
+  // Notelon: welon elonxpelonct thelon currelonnt limit to belon 10K. Also, all supplelonmelonntary unicodelon charactelonrs (with
+  // thelon elonxcelonption of elonmojis, maybelon) will belon relonmovelond and not countelond as total lelonngth. Addelond alelonrt
+  // for telonxt truncation ratelon as welonll. SelonARCH-9512
+  privatelon static final int MAX_TWelonelonT_TelonXT_LelonN = 10000;
 
-  @VisibleForTesting
-  static final SearchRateCounter FILTERED_NO_STATUS_ID =
-      SearchRateCounter.export(STAT_PREFIX + "filtered_no_status_id");
-  @VisibleForTesting
-  static final SearchRateCounter FILTERED_NO_FROM_USER =
-      SearchRateCounter.export(STAT_PREFIX + "filtered_no_from_user");
-  @VisibleForTesting
-  static final SearchRateCounter FILTERED_LONG_SCREEN_NAME =
-      SearchRateCounter.export(STAT_PREFIX + "filtered_long_screen_name");
-  @VisibleForTesting
-  static final SearchRateCounter FILTERED_NO_TEXT =
-      SearchRateCounter.export(STAT_PREFIX + "filtered_no_text");
-  @VisibleForTesting
-  static final SearchRateCounter FILTERED_NO_DATE =
-      SearchRateCounter.export(STAT_PREFIX + "filtered_no_date");
-  @VisibleForTesting
-  static final SearchRateCounter NULLCAST_TWEET =
-      SearchRateCounter.export(STAT_PREFIX + "filter_nullcast_tweet");
-  @VisibleForTesting
-  static final SearchRateCounter NULLCAST_TWEET_ACCEPTED =
-      SearchRateCounter.export(STAT_PREFIX + "nullcast_tweet_accepted");
-  @VisibleForTesting
-  static final SearchRateCounter INCONSISTENT_TWEET_ID_AND_CREATED_AT =
-      SearchRateCounter.export(STAT_PREFIX + "inconsistent_tweet_id_and_created_at_ms");
+  @VisiblelonForTelonsting
+  static final SelonarchRatelonCountelonr FILTelonRelonD_NO_STATUS_ID =
+      SelonarchRatelonCountelonr.elonxport(STAT_PRelonFIX + "filtelonrelond_no_status_id");
+  @VisiblelonForTelonsting
+  static final SelonarchRatelonCountelonr FILTelonRelonD_NO_FROM_USelonR =
+      SelonarchRatelonCountelonr.elonxport(STAT_PRelonFIX + "filtelonrelond_no_from_uselonr");
+  @VisiblelonForTelonsting
+  static final SelonarchRatelonCountelonr FILTelonRelonD_LONG_SCRelonelonN_NAMelon =
+      SelonarchRatelonCountelonr.elonxport(STAT_PRelonFIX + "filtelonrelond_long_screlonelonn_namelon");
+  @VisiblelonForTelonsting
+  static final SelonarchRatelonCountelonr FILTelonRelonD_NO_TelonXT =
+      SelonarchRatelonCountelonr.elonxport(STAT_PRelonFIX + "filtelonrelond_no_telonxt");
+  @VisiblelonForTelonsting
+  static final SelonarchRatelonCountelonr FILTelonRelonD_NO_DATelon =
+      SelonarchRatelonCountelonr.elonxport(STAT_PRelonFIX + "filtelonrelond_no_datelon");
+  @VisiblelonForTelonsting
+  static final SelonarchRatelonCountelonr NULLCAST_TWelonelonT =
+      SelonarchRatelonCountelonr.elonxport(STAT_PRelonFIX + "filtelonr_nullcast_twelonelont");
+  @VisiblelonForTelonsting
+  static final SelonarchRatelonCountelonr NULLCAST_TWelonelonT_ACCelonPTelonD =
+      SelonarchRatelonCountelonr.elonxport(STAT_PRelonFIX + "nullcast_twelonelont_accelonptelond");
+  @VisiblelonForTelonsting
+  static final SelonarchRatelonCountelonr INCONSISTelonNT_TWelonelonT_ID_AND_CRelonATelonD_AT =
+      SelonarchRatelonCountelonr.elonxport(STAT_PRelonFIX + "inconsistelonnt_twelonelont_id_and_crelonatelond_at_ms");
 
-  /** Strips the given source from the message with the given ID. */
-  private static String stripSource(String source, Long messageId) {
-    if (source == null) {
-      return null;
+  /** Strips thelon givelonn sourcelon from thelon melonssagelon with thelon givelonn ID. */
+  privatelon static String stripSourcelon(String sourcelon, Long melonssagelonId) {
+    if (sourcelon == null) {
+      relonturn null;
     }
-    // Always strip emojis from sources: they don't really make sense in this field.
-    String strippedSource = stripSupplementaryChars(
-        tagRemovalTransformer.transform(source).toString(), Field.SOURCE, true);
-    if (strippedSource.length() > MAX_SOURCE_LEN) {
-      LOG.warn("Message "
-          + messageId
-          + " contains stripped source that exceeds MAX_SOURCE_LEN. Removing: "
-          + strippedSource);
-      COUNTERS_MAP.get(Field.SOURCE).getTruncatedCounter().increment();
-      return null;
+    // Always strip elonmojis from sourcelons: thelony don't relonally makelon selonnselon in this fielonld.
+    String strippelondSourcelon = stripSupplelonmelonntaryChars(
+        tagRelonmovalTransformelonr.transform(sourcelon).toString(), Fielonld.SOURCelon, truelon);
+    if (strippelondSourcelon.lelonngth() > MAX_SOURCelon_LelonN) {
+      LOG.warn("Melonssagelon "
+          + melonssagelonId
+          + " contains strippelond sourcelon that elonxcelonelonds MAX_SOURCelon_LelonN. Relonmoving: "
+          + strippelondSourcelon);
+      COUNTelonRS_MAP.gelont(Fielonld.SOURCelon).gelontTruncatelondCountelonr().increlonmelonnt();
+      relonturn null;
     }
-    return strippedSource;
+    relonturn strippelondSourcelon;
   }
 
   /**
-   * Strips and truncates the location of the message with the given ID.
+   * Strips and truncatelons thelon location of thelon melonssagelon with thelon givelonn ID.
    *
    */
-  private static String stripAndTruncateLocation(String location) {
-    // Always strip emojis from locations: they don't really make sense in this field.
-    String strippedLocation = stripSupplementaryChars(location, Field.NORMALIZED_LOCATION, true);
-    return truncateString(strippedLocation, MAX_LOCATION_LEN, Field.NORMALIZED_LOCATION, true);
+  privatelon static String stripAndTruncatelonLocation(String location) {
+    // Always strip elonmojis from locations: thelony don't relonally makelon selonnselon in this fielonld.
+    String strippelondLocation = stripSupplelonmelonntaryChars(location, Fielonld.NORMALIZelonD_LOCATION, truelon);
+    relonturn truncatelonString(strippelondLocation, MAX_LOCATION_LelonN, Fielonld.NORMALIZelonD_LOCATION, truelon);
   }
 
   /**
-   * Sets the origSource and strippedSource fields on a TwitterMessage
+   * Selonts thelon origSourcelon and strippelondSourcelon fielonlds on a TwittelonrMelonssagelon
    *
    */
-  public static void setSourceOnMessage(TwitterMessage message, String modifiedDeviceSource) {
-    // Always strip emojis from sources: they don't really make sense in this field.
-    message.setOrigSource(stripSupplementaryChars(modifiedDeviceSource, Field.ORIG_SOURCE, true));
-    message.setStrippedSource(stripSource(modifiedDeviceSource, message.getId()));
+  public static void selontSourcelonOnMelonssagelon(TwittelonrMelonssagelon melonssagelon, String modifielondDelonvicelonSourcelon) {
+    // Always strip elonmojis from sourcelons: thelony don't relonally makelon selonnselon in this fielonld.
+    melonssagelon.selontOrigSourcelon(stripSupplelonmelonntaryChars(modifielondDelonvicelonSourcelon, Fielonld.ORIG_SOURCelon, truelon));
+    melonssagelon.selontStrippelondSourcelon(stripSourcelon(modifielondDelonvicelonSourcelon, melonssagelon.gelontId()));
   }
 
   /**
-   * Sets the origLocation to the stripped location, and sets
-   * the truncatedNormalizedLocation to the truncated and normalized location.
+   * Selonts thelon origLocation to thelon strippelond location, and selonts
+   * thelon truncatelondNormalizelondLocation to thelon truncatelond and normalizelond location.
    */
-  public static void setAndTruncateLocationOnMessage(
-      TwitterMessage message,
-      String newOrigLocation) {
-    // Always strip emojis from locations: they don't really make sense in this field.
-    message.setOrigLocation(stripSupplementaryChars(newOrigLocation, Field.ORIG_LOCATION, true));
+  public static void selontAndTruncatelonLocationOnMelonssagelon(
+      TwittelonrMelonssagelon melonssagelon,
+      String nelonwOrigLocation) {
+    // Always strip elonmojis from locations: thelony don't relonally makelon selonnselon in this fielonld.
+    melonssagelon.selontOrigLocation(stripSupplelonmelonntaryChars(nelonwOrigLocation, Fielonld.ORIG_LOCATION, truelon));
 
-    // Locations in the new locations table require additional normalization. It can also change
-    // the length of the string, so we must do this before truncation.
-    if (newOrigLocation != null) {
-      String normalized =
-          Normalizer.normalize(newOrigLocation, Normalizer.Form.NFKC).toLowerCase().trim();
-      message.setTruncatedNormalizedLocation(stripAndTruncateLocation(normalized));
-    } else {
-      message.setTruncatedNormalizedLocation(null);
+    // Locations in thelon nelonw locations tablelon relonquirelon additional normalization. It can also changelon
+    // thelon lelonngth of thelon string, so welon must do this belonforelon truncation.
+    if (nelonwOrigLocation != null) {
+      String normalizelond =
+          Normalizelonr.normalizelon(nelonwOrigLocation, Normalizelonr.Form.NFKC).toLowelonrCaselon().trim();
+      melonssagelon.selontTruncatelondNormalizelondLocation(stripAndTruncatelonLocation(normalizelond));
+    } elonlselon {
+      melonssagelon.selontTruncatelondNormalizelondLocation(null);
     }
   }
 
   /**
-   * Validates the given TwitterMessage.
+   * Validatelons thelon givelonn TwittelonrMelonssagelon.
    *
-   * @param message The message to validate.
-   * @param stripEmojisForFields The set of fields for which emojis should be stripped.
-   * @param acceptNullcastMessage Determines if this message should be accepted, if it's a nullcast
-   *                              message.
-   * @return {@code true} if the given message is valid; {@code false} otherwise.
+   * @param melonssagelon Thelon melonssagelon to validatelon.
+   * @param stripelonmojisForFielonlds Thelon selont of fielonlds for which elonmojis should belon strippelond.
+   * @param accelonptNullcastMelonssagelon Delontelonrminelons if this melonssagelon should belon accelonptelond, if it's a nullcast
+   *                              melonssagelon.
+   * @relonturn {@codelon truelon} if thelon givelonn melonssagelon is valid; {@codelon falselon} othelonrwiselon.
    */
-  public static boolean validateTwitterMessage(
-      TwitterMessage message,
-      Set<Field> stripEmojisForFields,
-      boolean acceptNullcastMessage) {
-    if (message.getNullcast()) {
-      NULLCAST_TWEET.increment();
-      if (!acceptNullcastMessage) {
-        LOG.info("Dropping nullcasted message " + message.getId());
-        return false;
+  public static boolelonan validatelonTwittelonrMelonssagelon(
+      TwittelonrMelonssagelon melonssagelon,
+      Selont<Fielonld> stripelonmojisForFielonlds,
+      boolelonan accelonptNullcastMelonssagelon) {
+    if (melonssagelon.gelontNullcast()) {
+      NULLCAST_TWelonelonT.increlonmelonnt();
+      if (!accelonptNullcastMelonssagelon) {
+        LOG.info("Dropping nullcastelond melonssagelon " + melonssagelon.gelontId());
+        relonturn falselon;
       }
-      NULLCAST_TWEET_ACCEPTED.increment();
+      NULLCAST_TWelonelonT_ACCelonPTelonD.increlonmelonnt();
     }
 
-    if (!message.getFromUserScreenName().isPresent()
-        || StringUtils.isBlank(message.getFromUserScreenName().get())) {
-      LOG.error("Message " + message.getId() + " contains no from user. Skipping.");
-      FILTERED_NO_FROM_USER.increment();
-      return false;
+    if (!melonssagelon.gelontFromUselonrScrelonelonnNamelon().isPrelonselonnt()
+        || StringUtils.isBlank(melonssagelon.gelontFromUselonrScrelonelonnNamelon().gelont())) {
+      LOG.elonrror("Melonssagelon " + melonssagelon.gelontId() + " contains no from uselonr. Skipping.");
+      FILTelonRelonD_NO_FROM_USelonR.increlonmelonnt();
+      relonturn falselon;
     }
-    String fromUserScreenName = message.getFromUserScreenName().get();
+    String fromUselonrScrelonelonnNamelon = melonssagelon.gelontFromUselonrScrelonelonnNamelon().gelont();
 
-    if (fromUserScreenName.length() > MAX_SCREEN_NAME_LEN) {
-      LOG.warn("Message " + message.getId() + " has a user screen name longer than "
-               + MAX_SCREEN_NAME_LEN + " characters: " + message.getFromUserScreenName()
+    if (fromUselonrScrelonelonnNamelon.lelonngth() > MAX_SCRelonelonN_NAMelon_LelonN) {
+      LOG.warn("Melonssagelon " + melonssagelon.gelontId() + " has a uselonr screlonelonn namelon longelonr than "
+               + MAX_SCRelonelonN_NAMelon_LelonN + " charactelonrs: " + melonssagelon.gelontFromUselonrScrelonelonnNamelon()
                + ". Skipping.");
-      FILTERED_LONG_SCREEN_NAME.increment();
-      return false;
+      FILTelonRelonD_LONG_SCRelonelonN_NAMelon.increlonmelonnt();
+      relonturn falselon;
     }
 
-    // Remove supplementary characters and truncate these text fields.
-    if (message.getFromUserDisplayName().isPresent()) {
-      message.setFromUserDisplayName(stripSupplementaryChars(
-          message.getFromUserDisplayName().get(),
-          Field.FROM_USER_DISPLAY_NAME,
-          stripEmojisForFields.contains(Field.FROM_USER_DISPLAY_NAME)));
+    // Relonmovelon supplelonmelonntary charactelonrs and truncatelon thelonselon telonxt fielonlds.
+    if (melonssagelon.gelontFromUselonrDisplayNamelon().isPrelonselonnt()) {
+      melonssagelon.selontFromUselonrDisplayNamelon(stripSupplelonmelonntaryChars(
+          melonssagelon.gelontFromUselonrDisplayNamelon().gelont(),
+          Fielonld.FROM_USelonR_DISPLAY_NAMelon,
+          stripelonmojisForFielonlds.contains(Fielonld.FROM_USelonR_DISPLAY_NAMelon)));
     }
-    if (message.getToUserScreenName().isPresent()) {
-      String strippedToUserScreenName = stripSupplementaryChars(
-          message.getToUserLowercasedScreenName().get(),
-          Field.TO_USER_SCREEN_NAME,
-          stripEmojisForFields.contains(Field.TO_USER_SCREEN_NAME));
-      message.setToUserScreenName(
-          truncateString(
-              strippedToUserScreenName,
-              MAX_SCREEN_NAME_LEN,
-              Field.TO_USER_SCREEN_NAME,
-              stripEmojisForFields.contains(Field.TO_USER_SCREEN_NAME)));
-    }
-
-    String strippedText = stripSupplementaryChars(
-        message.getText(),
-        Field.TEXT,
-        stripEmojisForFields.contains(Field.TEXT));
-    message.setText(truncateString(
-        strippedText,
-        MAX_TWEET_TEXT_LEN,
-        Field.TEXT,
-        stripEmojisForFields.contains(Field.TEXT)));
-
-    if (StringUtils.isBlank(message.getText())) {
-      FILTERED_NO_TEXT.increment();
-      return false;
+    if (melonssagelon.gelontToUselonrScrelonelonnNamelon().isPrelonselonnt()) {
+      String strippelondToUselonrScrelonelonnNamelon = stripSupplelonmelonntaryChars(
+          melonssagelon.gelontToUselonrLowelonrcaselondScrelonelonnNamelon().gelont(),
+          Fielonld.TO_USelonR_SCRelonelonN_NAMelon,
+          stripelonmojisForFielonlds.contains(Fielonld.TO_USelonR_SCRelonelonN_NAMelon));
+      melonssagelon.selontToUselonrScrelonelonnNamelon(
+          truncatelonString(
+              strippelondToUselonrScrelonelonnNamelon,
+              MAX_SCRelonelonN_NAMelon_LelonN,
+              Fielonld.TO_USelonR_SCRelonelonN_NAMelon,
+              stripelonmojisForFielonlds.contains(Fielonld.TO_USelonR_SCRelonelonN_NAMelon)));
     }
 
-    if (message.getDate() == null) {
-      LOG.error("Message " + message.getId() + " contains no date. Skipping.");
-      FILTERED_NO_DATE.increment();
-      return false;
+    String strippelondTelonxt = stripSupplelonmelonntaryChars(
+        melonssagelon.gelontTelonxt(),
+        Fielonld.TelonXT,
+        stripelonmojisForFielonlds.contains(Fielonld.TelonXT));
+    melonssagelon.selontTelonxt(truncatelonString(
+        strippelondTelonxt,
+        MAX_TWelonelonT_TelonXT_LelonN,
+        Fielonld.TelonXT,
+        stripelonmojisForFielonlds.contains(Fielonld.TelonXT)));
+
+    if (StringUtils.isBlank(melonssagelon.gelontTelonxt())) {
+      FILTelonRelonD_NO_TelonXT.increlonmelonnt();
+      relonturn falselon;
     }
 
-    if (message.isRetweet()) {
-      return validateRetweetMessage(message.getRetweetMessage(), stripEmojisForFields);
+    if (melonssagelon.gelontDatelon() == null) {
+      LOG.elonrror("Melonssagelon " + melonssagelon.gelontId() + " contains no datelon. Skipping.");
+      FILTelonRelonD_NO_DATelon.increlonmelonnt();
+      relonturn falselon;
     }
 
-    // Track if both the snowflake ID and created at timestamp are consistent.
-    if (!SnowflakeIdParser.isTweetIDAndCreatedAtConsistent(message.getId(), message.getDate())) {
-      LOG.error("Found inconsistent tweet ID and created at timestamp: [messageID="
-                + message.getId() + "], [messageDate=" + message.getDate() + "].");
-      INCONSISTENT_TWEET_ID_AND_CREATED_AT.increment();
+    if (melonssagelon.isRelontwelonelont()) {
+      relonturn validatelonRelontwelonelontMelonssagelon(melonssagelon.gelontRelontwelonelontMelonssagelon(), stripelonmojisForFielonlds);
     }
 
-    return true;
+    // Track if both thelon snowflakelon ID and crelonatelond at timelonstamp arelon consistelonnt.
+    if (!SnowflakelonIdParselonr.isTwelonelontIDAndCrelonatelondAtConsistelonnt(melonssagelon.gelontId(), melonssagelon.gelontDatelon())) {
+      LOG.elonrror("Found inconsistelonnt twelonelont ID and crelonatelond at timelonstamp: [melonssagelonID="
+                + melonssagelon.gelontId() + "], [melonssagelonDatelon=" + melonssagelon.gelontDatelon() + "].");
+      INCONSISTelonNT_TWelonelonT_ID_AND_CRelonATelonD_AT.increlonmelonnt();
+    }
+
+    relonturn truelon;
   }
 
-  private static boolean validateRetweetMessage(
-      TwitterRetweetMessage message, Set<Field> stripEmojisForFields) {
-    if (message.getSharedId() == null || message.getRetweetId() == null) {
-      LOG.error("Retweet Message contains a null twitter id. Skipping.");
-      FILTERED_NO_STATUS_ID.increment();
-      return false;
+  privatelon static boolelonan validatelonRelontwelonelontMelonssagelon(
+      TwittelonrRelontwelonelontMelonssagelon melonssagelon, Selont<Fielonld> stripelonmojisForFielonlds) {
+    if (melonssagelon.gelontSharelondId() == null || melonssagelon.gelontRelontwelonelontId() == null) {
+      LOG.elonrror("Relontwelonelont Melonssagelon contains a null twittelonr id. Skipping.");
+      FILTelonRelonD_NO_STATUS_ID.increlonmelonnt();
+      relonturn falselon;
     }
 
-    if (message.getSharedDate() == null) {
-      LOG.error("Retweet Message " + message.getRetweetId() + " contains no date. Skipping.");
-      return false;
+    if (melonssagelon.gelontSharelondDatelon() == null) {
+      LOG.elonrror("Relontwelonelont Melonssagelon " + melonssagelon.gelontRelontwelonelontId() + " contains no datelon. Skipping.");
+      relonturn falselon;
     }
 
-    // Remove supplementary characters from these text fields.
-    message.setSharedUserDisplayName(stripSupplementaryChars(
-        message.getSharedUserDisplayName(),
-        Field.SHARED_USER_DISPLAY_NAME,
-        stripEmojisForFields.contains(Field.SHARED_USER_DISPLAY_NAME)));
+    // Relonmovelon supplelonmelonntary charactelonrs from thelonselon telonxt fielonlds.
+    melonssagelon.selontSharelondUselonrDisplayNamelon(stripSupplelonmelonntaryChars(
+        melonssagelon.gelontSharelondUselonrDisplayNamelon(),
+        Fielonld.SHARelonD_USelonR_DISPLAY_NAMelon,
+        stripelonmojisForFielonlds.contains(Fielonld.SHARelonD_USelonR_DISPLAY_NAMelon)));
 
-    return true;
+    relonturn truelon;
   }
 
   /**
-   * Strips non indexable chars from the text.
+   * Strips non indelonxablelon chars from thelon telonxt.
    *
-   * Returns the resulting string, which may be the same object as the text argument when
-   * no stripping or truncation is necessary.
+   * Relonturns thelon relonsulting string, which may belon thelon samelon objelonct as thelon telonxt argumelonnt whelonn
+   * no stripping or truncation is neloncelonssary.
    *
-   * Non-indexed characters are "supplementary unicode" that are not emojis. Note that
-   * supplementary unicode are still characters that seem worth indexing, as many characters
-   * in CJK languages are supplementary. However this would make the size of our index
-   * explode (~186k supplementary characters exist), so it's not feasible.
+   * Non-indelonxelond charactelonrs arelon "supplelonmelonntary unicodelon" that arelon not elonmojis. Notelon that
+   * supplelonmelonntary unicodelon arelon still charactelonrs that selonelonm worth indelonxing, as many charactelonrs
+   * in CJK languagelons arelon supplelonmelonntary. Howelonvelonr this would makelon thelon sizelon of our indelonx
+   * elonxplodelon (~186k supplelonmelonntary charactelonrs elonxist), so it's not felonasiblelon.
    *
-   * @param text The text to strip
-   * @param field The field this text is from
-   * @param stripSupplementaryEmojis Whether or not to strip supplementary emojis. Note that this
-   * parameter name isn't 100% accurate. This parameter is meant to replicate behavior prior to
-   * adding support for *not* stripping supplementary emojis. The prior behavior would turn an
-   * emoji such as a keycap "1\uFE0F\u20E3" (http://www.iemoji.com/view/emoji/295/symbols/keycap-1)
-   * into just '1'. So the keycap emoji is not completely stripped, only the portion after the '1'.
+   * @param telonxt Thelon telonxt to strip
+   * @param fielonld Thelon fielonld this telonxt is from
+   * @param stripSupplelonmelonntaryelonmojis Whelonthelonr or not to strip supplelonmelonntary elonmojis. Notelon that this
+   * paramelontelonr namelon isn't 100% accuratelon. This paramelontelonr is melonant to relonplicatelon belonhavior prior to
+   * adding support for *not* stripping supplelonmelonntary elonmojis. Thelon prior belonhavior would turn an
+   * elonmoji such as a kelonycap "1\uFelon0F\u20elon3" (http://www.ielonmoji.com/vielonw/elonmoji/295/symbols/kelonycap-1)
+   * into just '1'. So thelon kelonycap elonmoji is not complelontelonly strippelond, only thelon portion aftelonr thelon '1'.
    *
    */
-  @VisibleForTesting
-  public static String stripSupplementaryChars(
-      String text,
-      Field field,
-      boolean stripSupplementaryEmojis) {
-    if (text == null || text.isEmpty()) {
-      return text;
+  @VisiblelonForTelonsting
+  public static String stripSupplelonmelonntaryChars(
+      String telonxt,
+      Fielonld fielonld,
+      boolelonan stripSupplelonmelonntaryelonmojis) {
+    if (telonxt == null || telonxt.iselonmpty()) {
+      relonturn telonxt;
     }
 
-    // Initialize an empty map so that if we choose not to strip emojis,
-    // then no emojipositions will be found and we don't need a null
-    // check before checking if an emoji is at a certain spot.
-    NavigableMap<Integer, Integer> emojiPositions = new TreeMap<>();
+    // Initializelon an elonmpty map so that if welon chooselon not to strip elonmojis,
+    // thelonn no elonmojipositions will belon found and welon don't nelonelond a null
+    // chelonck belonforelon cheloncking if an elonmoji is at a celonrtain spot.
+    NavigablelonMap<Intelongelonr, Intelongelonr> elonmojiPositions = nelonw TrelonelonMap<>();
 
-    if (!stripSupplementaryEmojis) {
-      emojiPositions = EmojiExtractor.getEmojiPositions(text);
+    if (!stripSupplelonmelonntaryelonmojis) {
+      elonmojiPositions = elonmojielonxtractor.gelontelonmojiPositions(telonxt);
     }
 
-    StringBuilder strippedTextBuilder = new StringBuilder();
-    int sequenceStart = 0;
+    StringBuildelonr strippelondTelonxtBuildelonr = nelonw StringBuildelonr();
+    int selonquelonncelonStart = 0;
     int i = 0;
-    while (i < text.length()) {
-      if (Character.isSupplementaryCodePoint(text.codePointAt(i))) {
-        // Check if this supplementary character is an emoji
-        if (!emojiPositions.containsKey(i)) {
-          // It's not an emoji, or we want to strip emojis, so strip it
+    whilelon (i < telonxt.lelonngth()) {
+      if (Charactelonr.isSupplelonmelonntaryCodelonPoint(telonxt.codelonPointAt(i))) {
+        // Chelonck if this supplelonmelonntary charactelonr is an elonmoji
+        if (!elonmojiPositions.containsKelony(i)) {
+          // It's not an elonmoji, or welon want to strip elonmojis, so strip it
 
-          // text[i] and text[i + 1] are part of a supplementary code point.
-          strippedTextBuilder.append(text.substring(sequenceStart, i));
-          sequenceStart = i + 2;  // skip 2 chars
-          i = sequenceStart;
-          COUNTERS_MAP.get(field).getStrippedSupplementaryCharsCounter().increment();
-        } else {
-          // It's an emoji, keep it
-          i += emojiPositions.get(i);
-          COUNTERS_MAP.get(field).getNonStrippedEmojiCharsCounter().increment();
+          // telonxt[i] and telonxt[i + 1] arelon part of a supplelonmelonntary codelon point.
+          strippelondTelonxtBuildelonr.appelonnd(telonxt.substring(selonquelonncelonStart, i));
+          selonquelonncelonStart = i + 2;  // skip 2 chars
+          i = selonquelonncelonStart;
+          COUNTelonRS_MAP.gelont(fielonld).gelontStrippelondSupplelonmelonntaryCharsCountelonr().increlonmelonnt();
+        } elonlselon {
+          // It's an elonmoji, kelonelonp it
+          i += elonmojiPositions.gelont(i);
+          COUNTelonRS_MAP.gelont(fielonld).gelontNonStrippelondelonmojiCharsCountelonr().increlonmelonnt();
         }
-      } else {
+      } elonlselon {
         ++i;
       }
     }
-    if (sequenceStart < text.length()) {
-      strippedTextBuilder.append(text.substring(sequenceStart));
+    if (selonquelonncelonStart < telonxt.lelonngth()) {
+      strippelondTelonxtBuildelonr.appelonnd(telonxt.substring(selonquelonncelonStart));
     }
 
-    String strippedText = strippedTextBuilder.toString();
-    if (strippedText.length() < text.length()) {
-      COUNTERS_MAP.get(field).getTweetsWithStrippedSupplementaryCharsCounter().increment();
+    String strippelondTelonxt = strippelondTelonxtBuildelonr.toString();
+    if (strippelondTelonxt.lelonngth() < telonxt.lelonngth()) {
+      COUNTelonRS_MAP.gelont(fielonld).gelontTwelonelontsWithStrippelondSupplelonmelonntaryCharsCountelonr().increlonmelonnt();
     }
-    return strippedText;
+    relonturn strippelondTelonxt;
   }
 
   /**
-   * Truncates the given string to the given length.
+   * Truncatelons thelon givelonn string to thelon givelonn lelonngth.
    *
-   * Note that we are truncating based on the # of UTF-16 characters a given emoji takes up.
-   * So if a single emoji takes up 4 UTF-16 characters, that counts as 4 for the truncation,
+   * Notelon that welon arelon truncating baselond on thelon # of UTF-16 charactelonrs a givelonn elonmoji takelons up.
+   * So if a singlelon elonmoji takelons up 4 UTF-16 charactelonrs, that counts as 4 for thelon truncation,
    * not just 1.
    *
-   * @param text The text to truncate
-   * @param maxLength The maximum length of the string after truncation
-   * @param field The field from which this string cames
-   * @param splitEmojisAtMaxLength If true, don't worry about emojis and just truncate at maxLength,
-   * potentially splitting them. If false, truncate before the emoji if truncating at maxLength
-   * would cause the emoji to be split.
+   * @param telonxt Thelon telonxt to truncatelon
+   * @param maxLelonngth Thelon maximum lelonngth of thelon string aftelonr truncation
+   * @param fielonld Thelon fielonld from which this string camelons
+   * @param splitelonmojisAtMaxLelonngth If truelon, don't worry about elonmojis and just truncatelon at maxLelonngth,
+   * potelonntially splitting thelonm. If falselon, truncatelon belonforelon thelon elonmoji if truncating at maxLelonngth
+   * would causelon thelon elonmoji to belon split.
    */
-  @VisibleForTesting
-  static String truncateString(
-      String text,
-      int maxLength,
-      Field field,
-      boolean splitEmojisAtMaxLength) {
-    Preconditions.checkArgument(maxLength > 0);
+  @VisiblelonForTelonsting
+  static String truncatelonString(
+      String telonxt,
+      int maxLelonngth,
+      Fielonld fielonld,
+      boolelonan splitelonmojisAtMaxLelonngth) {
+    Prelonconditions.chelonckArgumelonnt(maxLelonngth > 0);
 
-    if ((text == null) || (text.length() <= maxLength)) {
-      return text;
+    if ((telonxt == null) || (telonxt.lelonngth() <= maxLelonngth)) {
+      relonturn telonxt;
     }
 
-    int truncatePoint = maxLength;
-    NavigableMap<Integer, Integer> emojiPositions;
-    // If we want to consider emojis we should not strip on an emoji boundary.
-    if (!splitEmojisAtMaxLength) {
-      emojiPositions = EmojiExtractor.getEmojiPositions(text);
+    int truncatelonPoint = maxLelonngth;
+    NavigablelonMap<Intelongelonr, Intelongelonr> elonmojiPositions;
+    // If welon want to considelonr elonmojis welon should not strip on an elonmoji boundary.
+    if (!splitelonmojisAtMaxLelonngth) {
+      elonmojiPositions = elonmojielonxtractor.gelontelonmojiPositions(telonxt);
 
-      // Get the last emoji before maxlength.
-      Map.Entry<Integer, Integer> lastEmojiBeforeMaxLengthEntry =
-          emojiPositions.lowerEntry(maxLength);
+      // Gelont thelon last elonmoji belonforelon maxlelonngth.
+      Map.elonntry<Intelongelonr, Intelongelonr> lastelonmojiBelonforelonMaxLelonngthelonntry =
+          elonmojiPositions.lowelonrelonntry(maxLelonngth);
 
-      if (lastEmojiBeforeMaxLengthEntry != null) {
-        int lowerEmojiEnd = lastEmojiBeforeMaxLengthEntry.getKey()
-            + lastEmojiBeforeMaxLengthEntry.getValue();
+      if (lastelonmojiBelonforelonMaxLelonngthelonntry != null) {
+        int lowelonrelonmojielonnd = lastelonmojiBelonforelonMaxLelonngthelonntry.gelontKelony()
+            + lastelonmojiBelonforelonMaxLelonngthelonntry.gelontValuelon();
 
-        // If the last emoji would be truncated, truncate before the last emoji.
-        if (lowerEmojiEnd > truncatePoint) {
-          truncatePoint = lastEmojiBeforeMaxLengthEntry.getKey();
-          COUNTERS_MAP.get(field).getEmojisAtTruncateBoundaryCounter().increment();
+        // If thelon last elonmoji would belon truncatelond, truncatelon belonforelon thelon last elonmoji.
+        if (lowelonrelonmojielonnd > truncatelonPoint) {
+          truncatelonPoint = lastelonmojiBelonforelonMaxLelonngthelonntry.gelontKelony();
+          COUNTelonRS_MAP.gelont(fielonld).gelontelonmojisAtTruncatelonBoundaryCountelonr().increlonmelonnt();
         }
       }
     }
 
-    COUNTERS_MAP.get(field).getTruncatedCounter().increment();
-    return text.substring(0, truncatePoint);
+    COUNTelonRS_MAP.gelont(fielonld).gelontTruncatelondCountelonr().increlonmelonnt();
+    relonturn telonxt.substring(0, truncatelonPoint);
   }
 }

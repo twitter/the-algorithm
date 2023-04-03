@@ -1,26 +1,26 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.timeline_module
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.timelonlinelon_modulelon
 
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.timeline_module.BaseModuleFooterBuilder
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ModuleFooter
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.configapi.Param
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.timelonlinelon_modulelon.BaselonModulelonFootelonrBuildelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.timelonlinelon_modulelon.ModulelonFootelonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.timelonlinelons.configapi.Param
 
-case class ParamGatedModuleFooterBuilder[-Query <: PipelineQuery, -Candidate <: UniversalNoun[Any]](
-  enableParam: Param[Boolean],
-  enabledBuilder: BaseModuleFooterBuilder[Query, Candidate],
-  defaultBuilder: Option[BaseModuleFooterBuilder[Query, Candidate]] = None)
-    extends BaseModuleFooterBuilder[Query, Candidate] {
+caselon class ParamGatelondModulelonFootelonrBuildelonr[-Quelonry <: PipelonlinelonQuelonry, -Candidatelon <: UnivelonrsalNoun[Any]](
+  elonnablelonParam: Param[Boolelonan],
+  elonnablelondBuildelonr: BaselonModulelonFootelonrBuildelonr[Quelonry, Candidatelon],
+  delonfaultBuildelonr: Option[BaselonModulelonFootelonrBuildelonr[Quelonry, Candidatelon]] = Nonelon)
+    elonxtelonnds BaselonModulelonFootelonrBuildelonr[Quelonry, Candidatelon] {
 
-  def apply(
-    query: Query,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): Option[ModuleFooter] = {
-    if (query.params(enableParam)) {
-      enabledBuilder(query, candidates)
-    } else {
-      defaultBuilder.flatMap(_.apply(query, candidates))
+  delonf apply(
+    quelonry: Quelonry,
+    candidatelons: Selonq[CandidatelonWithFelonaturelons[Candidatelon]]
+  ): Option[ModulelonFootelonr] = {
+    if (quelonry.params(elonnablelonParam)) {
+      elonnablelondBuildelonr(quelonry, candidatelons)
+    } elonlselon {
+      delonfaultBuildelonr.flatMap(_.apply(quelonry, candidatelons))
     }
   }
 }

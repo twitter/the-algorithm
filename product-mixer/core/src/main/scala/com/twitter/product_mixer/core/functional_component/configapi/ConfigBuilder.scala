@@ -1,17 +1,17 @@
-package com.twitter.product_mixer.core.functional_component.configapi
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.configapi
 
-import com.twitter.product_mixer.core.functional_component.configapi.registry.GlobalParamRegistry
-import com.twitter.product_mixer.core.product.registry.ProductParamRegistry
-import com.twitter.timelines.configapi.CompositeConfig
-import com.twitter.timelines.configapi.Config
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.configapi.relongistry.GlobalParamRelongistry
+import com.twittelonr.product_mixelonr.corelon.product.relongistry.ProductParamRelongistry
+import com.twittelonr.timelonlinelons.configapi.CompositelonConfig
+import com.twittelonr.timelonlinelons.configapi.Config
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class ConfigBuilder @Inject() (
-  productParamRegistry: ProductParamRegistry,
-  globalParamRegistry: GlobalParamRegistry) {
+@Singlelonton
+class ConfigBuildelonr @Injelonct() (
+  productParamRelongistry: ProductParamRelongistry,
+  globalParamRelongistry: GlobalParamRelongistry) {
 
-  def build(): Config =
-    new CompositeConfig(productParamRegistry.build() ++ Seq(globalParamRegistry.build()))
+  delonf build(): Config =
+    nelonw CompositelonConfig(productParamRelongistry.build() ++ Selonq(globalParamRelongistry.build()))
 }

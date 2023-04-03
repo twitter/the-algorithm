@@ -1,132 +1,132 @@
 ********
-Overview
+Ovelonrvielonw
 ********
-This job reads embedding data from HDFS in the embedding formats supported by the cortex MLX team. It converts that data into the ANN format and adds it to an ANN index. The ANN index is serialized and save to disk.
+This job relonads elonmbelondding data from HDFS in thelon elonmbelondding formats supportelond by thelon cortelonx MLX telonam. It convelonrts that data into thelon ANN format and adds it to an ANN indelonx. Thelon ANN indelonx is selonrializelond and savelon to disk.
 
 *****************
 Running In Aurora
 *****************
 
-Set up example
+Selont up elonxamplelon
 ==============
-This job builds an ANN index based on hnsw algorithm using user embeddings available in hdfs.
+This job builds an ANN indelonx baselond on hnsw algorithm using uselonr elonmbelonddings availablelon in hdfs.
 
-.. code-block:: bash
+.. codelon-block:: bash
 
-  $ export JOB_NAME=ann_index_builder
-  $ export OUTPUT_PATH=hdfs:///user/$USER/${JOB_NAME}_test
+  $ elonxport JOB_NAMelon=ann_indelonx_buildelonr
+  $ elonxport OUTPUT_PATH=hdfs:///uselonr/$USelonR/${JOB_NAMelon}_telonst
 
-  $ CPU=32 RAM_GB=150 DISK_GB=60 aurora job create smf1/$USER/devel/$JOB_NAME ann/src/main/aurora/index_builder/aurora_builder.aurora \
-    --bind=profile.name=$JOB_NAME \
-    --bind=profile.role=$USER \
-    --bind=profile.output_dir=$OUTPUT_PATH \
-    --bind=profile.entity_kind=user \
-    --bind=profile.embedding_args='--input.embedding_format tab --input.embedding_path /user/cortex-mlx/official_examples/ann/non_pii_random_user_embeddings_tab_format' \
-    --bind=profile.num_dimensions=300 \
-    --bind=profile.algo=hnsw \
-    --bind=profile.ef_construction=200 \
-    --bind=profile.max_m=16 \
-    --bind=profile.expected_elements=10000000 \
-    --bind=profile.metric=InnerProduct \
-    --bind=profile.concurrency_level=32 \
-    --bind=profile.hadoop_cluster=dw2-smf1
+  $ CPU=32 RAM_GB=150 DISK_GB=60 aurora job crelonatelon smf1/$USelonR/delonvelonl/$JOB_NAMelon ann/src/main/aurora/indelonx_buildelonr/aurora_buildelonr.aurora \
+    --bind=profilelon.namelon=$JOB_NAMelon \
+    --bind=profilelon.rolelon=$USelonR \
+    --bind=profilelon.output_dir=$OUTPUT_PATH \
+    --bind=profilelon.elonntity_kind=uselonr \
+    --bind=profilelon.elonmbelondding_args='--input.elonmbelondding_format tab --input.elonmbelondding_path /uselonr/cortelonx-mlx/official_elonxamplelons/ann/non_pii_random_uselonr_elonmbelonddings_tab_format' \
+    --bind=profilelon.num_dimelonnsions=300 \
+    --bind=profilelon.algo=hnsw \
+    --bind=profilelon.elonf_construction=200 \
+    --bind=profilelon.max_m=16 \
+    --bind=profilelon.elonxpelonctelond_elonlelonmelonnts=10000000 \
+    --bind=profilelon.melontric=InnelonrProduct \
+    --bind=profilelon.concurrelonncy_lelonvelonl=32 \
+    --bind=profilelon.hadoop_clustelonr=dw2-smf1
 
-This job builds an ANN index based on hnsw algorithm using producer embeddings (Major version 1546473691) available in feature store.
+This job builds an ANN indelonx baselond on hnsw algorithm using producelonr elonmbelonddings (Major velonrsion 1546473691) availablelon in felonaturelon storelon.
 
-.. code-block:: bash
+.. codelon-block:: bash
 
-  $ export JOB_NAME=ann_index_builder
-  $ export OUTPUT_PATH=hdfs:///user/$USER/${JOB_NAME}_test
+  $ elonxport JOB_NAMelon=ann_indelonx_buildelonr
+  $ elonxport OUTPUT_PATH=hdfs:///uselonr/$USelonR/${JOB_NAMelon}_telonst
 
-  $ CPU=32 RAM_GB=150 DISK_GB=60 aurora job create smf1/$USER/devel/$JOB_NAME ann/src/main/aurora/index_builder/aurora_builder.aurora \
-    --bind=profile.name=$JOB_NAME \
-    --bind=profile.role=$USER \
-    --bind=profile.output_dir=$OUTPUT_PATH \
-    --bind=profile.entity_kind=user \
-    --bind=profile.embedding_args='--input.feature_store_embedding ProducerFollowEmbedding300Dataset --input.feature_store_major_version 1546473691 --input.date_range 2019-01-02' \
-    --bind=profile.num_dimensions=300 \
-    --bind=profile.algo=hnsw \
-    --bind=profile.ef_construction=200 \
-    --bind=profile.max_m=16 \
-    --bind=profile.expected_elements=10000000 \
-    --bind=profile.metric=InnerProduct \
-    --bind=profile.concurrency_level=32 \
-    --bind=profile.hadoop_cluster=dw2-smf1
+  $ CPU=32 RAM_GB=150 DISK_GB=60 aurora job crelonatelon smf1/$USelonR/delonvelonl/$JOB_NAMelon ann/src/main/aurora/indelonx_buildelonr/aurora_buildelonr.aurora \
+    --bind=profilelon.namelon=$JOB_NAMelon \
+    --bind=profilelon.rolelon=$USelonR \
+    --bind=profilelon.output_dir=$OUTPUT_PATH \
+    --bind=profilelon.elonntity_kind=uselonr \
+    --bind=profilelon.elonmbelondding_args='--input.felonaturelon_storelon_elonmbelondding ProducelonrFollowelonmbelondding300Dataselont --input.felonaturelon_storelon_major_velonrsion 1546473691 --input.datelon_rangelon 2019-01-02' \
+    --bind=profilelon.num_dimelonnsions=300 \
+    --bind=profilelon.algo=hnsw \
+    --bind=profilelon.elonf_construction=200 \
+    --bind=profilelon.max_m=16 \
+    --bind=profilelon.elonxpelonctelond_elonlelonmelonnts=10000000 \
+    --bind=profilelon.melontric=InnelonrProduct \
+    --bind=profilelon.concurrelonncy_lelonvelonl=32 \
+    --bind=profilelon.hadoop_clustelonr=dw2-smf1
 
 
 *************
-Job arguments
+Job argumelonnts
 *************
 
-Enviroment variables (resources):
+elonnviromelonnt variablelons (relonsourcelons):
 ==============
-- **CPU** Number of cpu cores (default: 32)
-- **RAM_GB** RAM in gigabytes (default: 150)
-- **DISK_GB** Disk in gigabytes (default: 60)
+- **CPU** Numbelonr of cpu corelons (delonfault: 32)
+- **RAM_GB** RAM in gigabytelons (delonfault: 150)
+- **DISK_GB** Disk in gigabytelons (delonfault: 60)
 
-General arguments (specified as **--profile.{options}**):
+Gelonnelonral argumelonnts (speloncifielond as **--profilelon.{options}**):
 ==============
-- **name** Aurora job name
-- **role** Aurora role
-- **hadoop_cluster** Hadoop cluster for data. dw2-smf1/proc-atla.
-- **input_dir** Path of saved embeddings in hdfs without prefixing `hdfs://`
-- **entity_kind** The type of entity id that is use with the embeddings. Possible options:
+- **namelon** Aurora job namelon
+- **rolelon** Aurora rolelon
+- **hadoop_clustelonr** Hadoop clustelonr for data. dw2-smf1/proc-atla.
+- **input_dir** Path of savelond elonmbelonddings in hdfs without prelonfixing `hdfs://`
+- **elonntity_kind** Thelon typelon of elonntity id that is uselon with thelon elonmbelonddings. Possiblelon options:
 
   - word
   - url
-  - user
-  - tweet
+  - uselonr
+  - twelonelont
   - tfwId
 
-- **embedding_args** Embedding format args. See the documentation in `com.twitter.cortex.ml.embeddings.common.EmbeddingFormatArgsParser` for a full explanation of the input options. Possible options:
+- **elonmbelondding_args** elonmbelondding format args. Selonelon thelon documelonntation in `com.twittelonr.cortelonx.ml.elonmbelonddings.common.elonmbelonddingFormatArgsParselonr` for a full elonxplanation of thelon input options. Possiblelon options:
 
-  1. **input.embedding_format** Format of the serialized embedding.
+  1. **input.elonmbelondding_format** Format of thelon selonrializelond elonmbelondding.
 
-     - usertensor
-     - usercontinuous
+     - uselonrtelonnsor
+     - uselonrcontinuous
      - comma
      - tab
 
-  2. **input.embedding_path** Path of saved embeddings in hdfs without prefixing `hdfs://`
+  2. **input.elonmbelondding_path** Path of savelond elonmbelonddings in hdfs without prelonfixing `hdfs://`
 
-  3. **input.{feature_store_args}** For feature store related args like `feature_store_embedding`, `feature_store_major_version`, `date_range`:
+  3. **input.{felonaturelon_storelon_args}** For felonaturelon storelon relonlatelond args likelon `felonaturelon_storelon_elonmbelondding`, `felonaturelon_storelon_major_velonrsion`, `datelon_rangelon`:
 
-- **output_dir** Where to save the produced serialized ann index. Save to HDFS by specifying the full URI. e.g `hdfs://hadoop-dw2-nn.smf1.twitter.com/user/<user>/index_file` or using the default cluster `hdfs:///user/<user>/index_file`.
-- **num_dimensions** Dimension of embedding in the input data. An exception will be thrown if any entry does not have a number of dimensions equal to this number.
-- **metric** Distance metric (InnerProduct/Cosine/L2)
-- **concurrency_level** Specifies how many parallel inserts happen to the index. This should probably be set to the number of cores on the machine.
-- **algo** The kind of index you want to ouput. The supported options right now are:
+- **output_dir** Whelonrelon to savelon thelon producelond selonrializelond ann indelonx. Savelon to HDFS by speloncifying thelon full URI. elon.g `hdfs://hadoop-dw2-nn.smf1.twittelonr.com/uselonr/<uselonr>/indelonx_filelon` or using thelon delonfault clustelonr `hdfs:///uselonr/<uselonr>/indelonx_filelon`.
+- **num_dimelonnsions** Dimelonnsion of elonmbelondding in thelon input data. An elonxcelonption will belon thrown if any elonntry doelons not havelon a numbelonr of dimelonnsions elonqual to this numbelonr.
+- **melontric** Distancelon melontric (InnelonrProduct/Cosinelon/L2)
+- **concurrelonncy_lelonvelonl** Speloncifielons how many parallelonl inselonrts happelonn to thelon indelonx. This should probably belon selont to thelon numbelonr of corelons on thelon machinelon.
+- **algo** Thelon kind of indelonx you want to ouput. Thelon supportelond options right now arelon:
 
-  1. **hnsw** (Metric supported: Cosine, L2, InnerProduct)
+  1. **hnsw** (Melontric supportelond: Cosinelon, L2, InnelonrProduct)
 
      .. _hnsw: https://arxiv.org/abs/1603.09320
 
-     - **ef\_construction** : Larger value increases build time but will give better recall. Good start value : 200
-     - **max\_m** : Larger value increases will increase the index size but will give better recall. Optimal Range : 6-48. Good starting value 16.
-     - **expected\_elements** : Approximate number of elements that will be indexed.
+     - **elonf\_construction** : Largelonr valuelon increlonaselons build timelon but will givelon belonttelonr reloncall. Good start valuelon : 200
+     - **max\_m** : Largelonr valuelon increlonaselons will increlonaselon thelon indelonx sizelon but will givelon belonttelonr reloncall. Optimal Rangelon : 6-48. Good starting valuelon 16.
+     - **elonxpelonctelond\_elonlelonmelonnts** : Approximatelon numbelonr of elonlelonmelonnts that will belon indelonxelond.
 
-  2. **annoy** (Metric supported: Cosine, L2)
+  2. **annoy** (Melontric supportelond: Cosinelon, L2)
 
      .. _annoy: https://github.com/spotify/annoy
 
-     - **annoy\_num\_trees** This parameter is required for annoy. From the annoy documentation: num_trees is provided during build time and affects the build time and the index size. A larger value will give more accurate results, but larger indexes.
+     - **annoy\_num\_trelonelons** This paramelontelonr is relonquirelond for annoy. From thelon annoy documelonntation: num_trelonelons is providelond during build timelon and affeloncts thelon build timelon and thelon indelonx sizelon. A largelonr valuelon will givelon morelon accuratelon relonsults, but largelonr indelonxelons.
 
-  3. **brute_force** (Metric supported: Cosine, L2, InnerProduct)
+  3. **brutelon_forcelon** (Melontric supportelond: Cosinelon, L2, InnelonrProduct)
 
 
-Developing locally
+Delonvelonloping locally
 ===================
 
-For building and testing custom ann index builder job,
-You can create job bundle locally, upload to packer and then it can be used with the job using `profile.packer_package` for name,  `profile.packer_role` for role and `profile.packer_version` for bundle version.
+For building and telonsting custom ann indelonx buildelonr job,
+You can crelonatelon job bundlelon locally, upload to packelonr and thelonn it can belon uselond with thelon job using `profilelon.packelonr_packagelon` for namelon,  `profilelon.packelonr_rolelon` for rolelon and `profilelon.packelonr_velonrsion` for bundlelon velonrsion.
 
-.. code-block:: bash
+.. codelon-block:: bash
 
-  ./bazel bundle ann/src/main/scala/com/twitter/ann/scalding/offline/indexbuilder:indexbuilder-deploy \
-  --bundle-jvm-archive=zip
+  ./bazelonl bundlelon ann/src/main/scala/com/twittelonr/ann/scalding/offlinelon/indelonxbuildelonr:indelonxbuildelonr-delonploy \
+  --bundlelon-jvm-archivelon=zip
 
-.. code-block:: bash
+.. codelon-block:: bash
 
-  packer add_version --cluster=atla <role> <package_name> dist/indexbuilder-deploy.zip
+  packelonr add_velonrsion --clustelonr=atla <rolelon> <packagelon_namelon> dist/indelonxbuildelonr-delonploy.zip
 
 

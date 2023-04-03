@@ -1,164 +1,164 @@
-package com.twitter.simclusters_v2.hdfs_sources
+packagelon com.twittelonr.simclustelonrs_v2.hdfs_sourcelons
 
-import com.twitter.bijection.scrooge.BinaryScalaCodec
-import com.twitter.bijection.scrooge.CompactScalaCodec
-import com.twitter.bijection.Bufferable
-import com.twitter.bijection.Injection
-import com.twitter.hermit.candidate.thriftscala.Candidates
-import com.twitter.scalding.DateRange
-import com.twitter.scalding.commons.source.VersionedKeyValSource
-import com.twitter.scalding_internal.source.lzo_scrooge.DailySuffixMostRecentLzoScrooge
-import com.twitter.scalding_internal.source.lzo_scrooge.FixedPathLzoScrooge
-import com.twitter.scalding_internal.source.lzo_scrooge.HourlySuffixMostRecentLzoScrooge
-import com.twitter.simclusters_v2.thriftscala._
+import com.twittelonr.bijelonction.scroogelon.BinaryScalaCodelonc
+import com.twittelonr.bijelonction.scroogelon.CompactScalaCodelonc
+import com.twittelonr.bijelonction.Buffelonrablelon
+import com.twittelonr.bijelonction.Injelonction
+import com.twittelonr.helonrmit.candidatelon.thriftscala.Candidatelons
+import com.twittelonr.scalding.DatelonRangelon
+import com.twittelonr.scalding.commons.sourcelon.VelonrsionelondKelonyValSourcelon
+import com.twittelonr.scalding_intelonrnal.sourcelon.lzo_scroogelon.DailySuffixMostReloncelonntLzoScroogelon
+import com.twittelonr.scalding_intelonrnal.sourcelon.lzo_scroogelon.FixelondPathLzoScroogelon
+import com.twittelonr.scalding_intelonrnal.sourcelon.lzo_scroogelon.HourlySuffixMostReloncelonntLzoScroogelon
+import com.twittelonr.simclustelonrs_v2.thriftscala._
 
-case class EdgeWithDecayedWtsFixedPathSource(path: String)
-    extends FixedPathLzoScrooge[EdgeWithDecayedWeights](path, EdgeWithDecayedWeights)
+caselon class elondgelonWithDeloncayelondWtsFixelondPathSourcelon(path: String)
+    elonxtelonnds FixelondPathLzoScroogelon[elondgelonWithDeloncayelondWelonights](path, elondgelonWithDeloncayelondWelonights)
 
-case class UserAndNeighborsFixedPathSource(path: String)
-    extends FixedPathLzoScrooge[UserAndNeighbors](path, UserAndNeighbors)
+caselon class UselonrAndNelonighborsFixelondPathSourcelon(path: String)
+    elonxtelonnds FixelondPathLzoScroogelon[UselonrAndNelonighbors](path, UselonrAndNelonighbors)
 
-case class NormsAndCountsFixedPathSource(path: String)
-    extends FixedPathLzoScrooge[NormsAndCounts](path, NormsAndCounts)
+caselon class NormsAndCountsFixelondPathSourcelon(path: String)
+    elonxtelonnds FixelondPathLzoScroogelon[NormsAndCounts](path, NormsAndCounts)
 
-case class UserToInterestedInClustersFixedPathSource(path: String)
-    extends FixedPathLzoScrooge[UserToInterestedInClusters](path, UserToInterestedInClusters)
+caselon class UselonrToIntelonrelonstelondInClustelonrsFixelondPathSourcelon(path: String)
+    elonxtelonnds FixelondPathLzoScroogelon[UselonrToIntelonrelonstelondInClustelonrs](path, UselonrToIntelonrelonstelondInClustelonrs)
 
-case class TimelineDataExtractorFixedPathSource(path: String)
-    extends FixedPathLzoScrooge[ReferenceTweets](path, ReferenceTweets)
+caselon class TimelonlinelonDataelonxtractorFixelondPathSourcelon(path: String)
+    elonxtelonnds FixelondPathLzoScroogelon[RelonfelonrelonncelonTwelonelonts](path, RelonfelonrelonncelonTwelonelonts)
 
-case class TweetClusterScoresHourlySuffixSource(path: String, override val dateRange: DateRange)
-    extends HourlySuffixMostRecentLzoScrooge[TweetAndClusterScores](path, dateRange)
+caselon class TwelonelontClustelonrScorelonsHourlySuffixSourcelon(path: String, ovelonrridelon val datelonRangelon: DatelonRangelon)
+    elonxtelonnds HourlySuffixMostReloncelonntLzoScroogelon[TwelonelontAndClustelonrScorelons](path, datelonRangelon)
 
-case class TweetTopKClustersHourlySuffixSource(path: String, override val dateRange: DateRange)
-    extends HourlySuffixMostRecentLzoScrooge[TweetTopKClustersWithScores](
+caselon class TwelonelontTopKClustelonrsHourlySuffixSourcelon(path: String, ovelonrridelon val datelonRangelon: DatelonRangelon)
+    elonxtelonnds HourlySuffixMostReloncelonntLzoScroogelon[TwelonelontTopKClustelonrsWithScorelons](
       path,
-      dateRange
+      datelonRangelon
     )
 
-case class ClusterTopKTweetsHourlySuffixSource(path: String, override val dateRange: DateRange)
-    extends HourlySuffixMostRecentLzoScrooge[ClusterTopKTweetsWithScores](
+caselon class ClustelonrTopKTwelonelontsHourlySuffixSourcelon(path: String, ovelonrridelon val datelonRangelon: DatelonRangelon)
+    elonxtelonnds HourlySuffixMostReloncelonntLzoScroogelon[ClustelonrTopKTwelonelontsWithScorelons](
       path,
-      dateRange
+      datelonRangelon
     )
 
-case class TweetSimilarityUnhydratedPairsSource(path: String, override val dateRange: DateRange)
-    extends DailySuffixMostRecentLzoScrooge[LabelledTweetPairs](
+caselon class TwelonelontSimilarityUnhydratelondPairsSourcelon(path: String, ovelonrridelon val datelonRangelon: DatelonRangelon)
+    elonxtelonnds DailySuffixMostReloncelonntLzoScroogelon[LabelonllelondTwelonelontPairs](
       path,
-      dateRange
+      datelonRangelon
     )
 
-case class WTFCandidatesSource(path: String)
-    extends FixedPathLzoScrooge[Candidates](path, Candidates)
+caselon class WTFCandidatelonsSourcelon(path: String)
+    elonxtelonnds FixelondPathLzoScroogelon[Candidatelons](path, Candidatelons)
 
-case class EmbeddingsLiteSource(path: String)
-    extends FixedPathLzoScrooge[EmbeddingsLite](path, EmbeddingsLite)
+caselon class elonmbelonddingsLitelonSourcelon(path: String)
+    elonxtelonnds FixelondPathLzoScroogelon[elonmbelonddingsLitelon](path, elonmbelonddingsLitelon)
 
-object AdhocKeyValSources {
-  def interestedInSource(path: String): VersionedKeyValSource[Long, ClustersUserIsInterestedIn] = {
-    implicit val keyInject: Injection[Long, Array[Byte]] = Injection.long2BigEndian
-    implicit val valInject: Injection[ClustersUserIsInterestedIn, Array[Byte]] =
-      CompactScalaCodec(ClustersUserIsInterestedIn)
-    VersionedKeyValSource[Long, ClustersUserIsInterestedIn](path)
+objelonct AdhocKelonyValSourcelons {
+  delonf intelonrelonstelondInSourcelon(path: String): VelonrsionelondKelonyValSourcelon[Long, ClustelonrsUselonrIsIntelonrelonstelondIn] = {
+    implicit val kelonyInjelonct: Injelonction[Long, Array[Bytelon]] = Injelonction.long2Bigelonndian
+    implicit val valInjelonct: Injelonction[ClustelonrsUselonrIsIntelonrelonstelondIn, Array[Bytelon]] =
+      CompactScalaCodelonc(ClustelonrsUselonrIsIntelonrelonstelondIn)
+    VelonrsionelondKelonyValSourcelon[Long, ClustelonrsUselonrIsIntelonrelonstelondIn](path)
   }
 
-  def clusterDetailsSource(path: String): VersionedKeyValSource[(String, Int), ClusterDetails] = {
-    implicit val keyInject: Injection[(String, Int), Array[Byte]] =
-      Bufferable.injectionOf[(String, Int)]
-    implicit val valInject: Injection[ClusterDetails, Array[Byte]] =
-      CompactScalaCodec(ClusterDetails)
-    VersionedKeyValSource[(String, Int), ClusterDetails](path)
+  delonf clustelonrDelontailsSourcelon(path: String): VelonrsionelondKelonyValSourcelon[(String, Int), ClustelonrDelontails] = {
+    implicit val kelonyInjelonct: Injelonction[(String, Int), Array[Bytelon]] =
+      Buffelonrablelon.injelonctionOf[(String, Int)]
+    implicit val valInjelonct: Injelonction[ClustelonrDelontails, Array[Bytelon]] =
+      CompactScalaCodelonc(ClustelonrDelontails)
+    VelonrsionelondKelonyValSourcelon[(String, Int), ClustelonrDelontails](path)
   }
 
-  def bipartiteQualitySource(
+  delonf bipartitelonQualitySourcelon(
     path: String
-  ): VersionedKeyValSource[(String, Int), BipartiteClusterQuality] = {
-    implicit val keyInject: Injection[(String, Int), Array[Byte]] =
-      Bufferable.injectionOf[(String, Int)]
-    implicit val valInject: Injection[BipartiteClusterQuality, Array[Byte]] =
-      CompactScalaCodec(BipartiteClusterQuality)
-    VersionedKeyValSource[(String, Int), BipartiteClusterQuality](path)
+  ): VelonrsionelondKelonyValSourcelon[(String, Int), BipartitelonClustelonrQuality] = {
+    implicit val kelonyInjelonct: Injelonction[(String, Int), Array[Bytelon]] =
+      Buffelonrablelon.injelonctionOf[(String, Int)]
+    implicit val valInjelonct: Injelonction[BipartitelonClustelonrQuality, Array[Bytelon]] =
+      CompactScalaCodelonc(BipartitelonClustelonrQuality)
+    VelonrsionelondKelonyValSourcelon[(String, Int), BipartitelonClustelonrQuality](path)
   }
 
-  def entityToClustersSource(
+  delonf elonntityToClustelonrsSourcelon(
     path: String
-  ): VersionedKeyValSource[SimClustersEmbeddingId, SimClustersEmbedding] = {
-    implicit val keyInject: Injection[SimClustersEmbeddingId, Array[Byte]] =
-      BinaryScalaCodec(SimClustersEmbeddingId)
-    implicit val valInject: Injection[SimClustersEmbedding, Array[Byte]] =
-      BinaryScalaCodec(SimClustersEmbedding)
-    VersionedKeyValSource[SimClustersEmbeddingId, SimClustersEmbedding](path)
+  ): VelonrsionelondKelonyValSourcelon[SimClustelonrselonmbelonddingId, SimClustelonrselonmbelondding] = {
+    implicit val kelonyInjelonct: Injelonction[SimClustelonrselonmbelonddingId, Array[Bytelon]] =
+      BinaryScalaCodelonc(SimClustelonrselonmbelonddingId)
+    implicit val valInjelonct: Injelonction[SimClustelonrselonmbelondding, Array[Bytelon]] =
+      BinaryScalaCodelonc(SimClustelonrselonmbelondding)
+    VelonrsionelondKelonyValSourcelon[SimClustelonrselonmbelonddingId, SimClustelonrselonmbelondding](path)
   }
 
-  def clusterToEntitiesSource(
+  delonf clustelonrToelonntitielonsSourcelon(
     path: String
-  ): VersionedKeyValSource[SimClustersEmbeddingId, InternalIdEmbedding] = {
-    implicit val keyInject: Injection[SimClustersEmbeddingId, Array[Byte]] = BinaryScalaCodec(
-      SimClustersEmbeddingId)
-    implicit val valInject: Injection[InternalIdEmbedding, Array[Byte]] =
-      BinaryScalaCodec(InternalIdEmbedding)
-    VersionedKeyValSource[SimClustersEmbeddingId, InternalIdEmbedding](path)
+  ): VelonrsionelondKelonyValSourcelon[SimClustelonrselonmbelonddingId, IntelonrnalIdelonmbelondding] = {
+    implicit val kelonyInjelonct: Injelonction[SimClustelonrselonmbelonddingId, Array[Bytelon]] = BinaryScalaCodelonc(
+      SimClustelonrselonmbelonddingId)
+    implicit val valInjelonct: Injelonction[IntelonrnalIdelonmbelondding, Array[Bytelon]] =
+      BinaryScalaCodelonc(IntelonrnalIdelonmbelondding)
+    VelonrsionelondKelonyValSourcelon[SimClustelonrselonmbelonddingId, IntelonrnalIdelonmbelondding](path)
   }
 
-  // For storing producer-simclusters embeddings
-  def topProducerToClusterEmbeddingsSource(
+  // For storing producelonr-simclustelonrs elonmbelonddings
+  delonf topProducelonrToClustelonrelonmbelonddingsSourcelon(
     path: String
-  ): VersionedKeyValSource[Long, TopSimClustersWithScore] = {
-    implicit val keyInject: Injection[Long, Array[Byte]] = Injection.long2BigEndian
-    implicit val valInject: Injection[TopSimClustersWithScore, Array[Byte]] =
-      CompactScalaCodec(TopSimClustersWithScore)
-    VersionedKeyValSource[Long, TopSimClustersWithScore](path)
+  ): VelonrsionelondKelonyValSourcelon[Long, TopSimClustelonrsWithScorelon] = {
+    implicit val kelonyInjelonct: Injelonction[Long, Array[Bytelon]] = Injelonction.long2Bigelonndian
+    implicit val valInjelonct: Injelonction[TopSimClustelonrsWithScorelon, Array[Bytelon]] =
+      CompactScalaCodelonc(TopSimClustelonrsWithScorelon)
+    VelonrsionelondKelonyValSourcelon[Long, TopSimClustelonrsWithScorelon](path)
   }
 
-  // For storing producer-simclusters embeddings
-  def topClusterEmbeddingsToProducerSource(
+  // For storing producelonr-simclustelonrs elonmbelonddings
+  delonf topClustelonrelonmbelonddingsToProducelonrSourcelon(
     path: String
-  ): VersionedKeyValSource[PersistedFullClusterId, TopProducersWithScore] = {
-    implicit val keyInject: Injection[PersistedFullClusterId, Array[Byte]] =
-      CompactScalaCodec(PersistedFullClusterId)
-    implicit val valInject: Injection[TopProducersWithScore, Array[Byte]] =
-      CompactScalaCodec(TopProducersWithScore)
-    VersionedKeyValSource[PersistedFullClusterId, TopProducersWithScore](path)
+  ): VelonrsionelondKelonyValSourcelon[PelonrsistelondFullClustelonrId, TopProducelonrsWithScorelon] = {
+    implicit val kelonyInjelonct: Injelonction[PelonrsistelondFullClustelonrId, Array[Bytelon]] =
+      CompactScalaCodelonc(PelonrsistelondFullClustelonrId)
+    implicit val valInjelonct: Injelonction[TopProducelonrsWithScorelon, Array[Bytelon]] =
+      CompactScalaCodelonc(TopProducelonrsWithScorelon)
+    VelonrsionelondKelonyValSourcelon[PelonrsistelondFullClustelonrId, TopProducelonrsWithScorelon](path)
   }
 
-  def userToInferredEntitiesSource(
+  delonf uselonrToInfelonrrelondelonntitielonsSourcelon(
     path: String
-  ): VersionedKeyValSource[Long, SimClustersInferredEntities] = {
-    implicit val keyInject: Injection[Long, Array[Byte]] = Injection.long2BigEndian
-    implicit val valInject: Injection[SimClustersInferredEntities, Array[Byte]] =
-      CompactScalaCodec(SimClustersInferredEntities)
-    VersionedKeyValSource[Long, SimClustersInferredEntities](path)
+  ): VelonrsionelondKelonyValSourcelon[Long, SimClustelonrsInfelonrrelondelonntitielons] = {
+    implicit val kelonyInjelonct: Injelonction[Long, Array[Bytelon]] = Injelonction.long2Bigelonndian
+    implicit val valInjelonct: Injelonction[SimClustelonrsInfelonrrelondelonntitielons, Array[Bytelon]] =
+      CompactScalaCodelonc(SimClustelonrsInfelonrrelondelonntitielons)
+    VelonrsionelondKelonyValSourcelon[Long, SimClustelonrsInfelonrrelondelonntitielons](path)
   }
 
-  def knownForAdhocSource(path: String): VersionedKeyValSource[Long, ClustersUserIsKnownFor] = {
-    implicit val keyInject: Injection[Long, Array[Byte]] = Injection.long2BigEndian
-    implicit val valInject: Injection[ClustersUserIsKnownFor, Array[Byte]] =
-      CompactScalaCodec(ClustersUserIsKnownFor)
-    VersionedKeyValSource[Long, ClustersUserIsKnownFor](path)
+  delonf knownForAdhocSourcelon(path: String): VelonrsionelondKelonyValSourcelon[Long, ClustelonrsUselonrIsKnownFor] = {
+    implicit val kelonyInjelonct: Injelonction[Long, Array[Bytelon]] = Injelonction.long2Bigelonndian
+    implicit val valInjelonct: Injelonction[ClustelonrsUselonrIsKnownFor, Array[Bytelon]] =
+      CompactScalaCodelonc(ClustelonrsUselonrIsKnownFor)
+    VelonrsionelondKelonyValSourcelon[Long, ClustelonrsUselonrIsKnownFor](path)
   }
 
-  def knownForSBFResultsDevelSource(
+  delonf knownForSBFRelonsultsDelonvelonlSourcelon(
     path: String
-  ): VersionedKeyValSource[Long, Array[(Int, Float)]] = {
-    implicit val keyInject: Injection[Long, Array[Byte]] = Injection.long2BigEndian
-    implicit val valInject: Injection[Array[(Int, Float)], Array[Byte]] =
-      Bufferable.injectionOf[Array[(Int, Float)]]
-    VersionedKeyValSource[Long, Array[(Int, Float)]](path)
+  ): VelonrsionelondKelonyValSourcelon[Long, Array[(Int, Float)]] = {
+    implicit val kelonyInjelonct: Injelonction[Long, Array[Bytelon]] = Injelonction.long2Bigelonndian
+    implicit val valInjelonct: Injelonction[Array[(Int, Float)], Array[Bytelon]] =
+      Buffelonrablelon.injelonctionOf[Array[(Int, Float)]]
+    VelonrsionelondKelonyValSourcelon[Long, Array[(Int, Float)]](path)
   }
 
-  // injection to store adjlist in the mapped indices space for users
-  def intermediateSBFResultsDevelSource(
+  // injelonction to storelon adjlist in thelon mappelond indicelons spacelon for uselonrs
+  delonf intelonrmelondiatelonSBFRelonsultsDelonvelonlSourcelon(
     path: String
-  ): VersionedKeyValSource[Int, List[(Int, Float)]] = {
-    implicit val keyInject: Injection[Int, Array[Byte]] = Injection.int2BigEndian
-    implicit val valInject: Injection[List[(Int, Float)], Array[Byte]] =
-      Bufferable.injectionOf[List[(Int, Float)]]
-    VersionedKeyValSource[Int, List[(Int, Float)]](path)
+  ): VelonrsionelondKelonyValSourcelon[Int, List[(Int, Float)]] = {
+    implicit val kelonyInjelonct: Injelonction[Int, Array[Bytelon]] = Injelonction.int2Bigelonndian
+    implicit val valInjelonct: Injelonction[List[(Int, Float)], Array[Bytelon]] =
+      Buffelonrablelon.injelonctionOf[List[(Int, Float)]]
+    VelonrsionelondKelonyValSourcelon[Int, List[(Int, Float)]](path)
   }
 
-  def mappedIndicesDevelSource(path: String): VersionedKeyValSource[Int, Long] = {
-    implicit val keyInject: Injection[Int, Array[Byte]] = Injection.int2BigEndian
-    implicit val valInject: Injection[Long, Array[Byte]] = Injection.long2BigEndian
-    VersionedKeyValSource[Int, Long](path)
+  delonf mappelondIndicelonsDelonvelonlSourcelon(path: String): VelonrsionelondKelonyValSourcelon[Int, Long] = {
+    implicit val kelonyInjelonct: Injelonction[Int, Array[Bytelon]] = Injelonction.int2Bigelonndian
+    implicit val valInjelonct: Injelonction[Long, Array[Bytelon]] = Injelonction.long2Bigelonndian
+    VelonrsionelondKelonyValSourcelon[Int, Long](path)
   }
 }

@@ -1,62 +1,62 @@
 WITH
   vars AS (
-    SELECT
-      TIMESTAMP("{START_TIME}") AS start_date,
-      TIMESTAMP("{END_TIME}") AS end_date,
+    SelonLelonCT
+      TIMelonSTAMP("{START_TIMelon}") AS start_datelon,
+      TIMelonSTAMP("{elonND_TIMelon}") AS elonnd_datelon,
   ),
 
-  -- Get raw user-tweet interaction events from UUA
-  raw_engagements AS (
-    SELECT
-      userIdentifier.userId AS userId,
-      eventMetadata.sourceTimestampMs AS tsMillis,
-      CASE
-          WHEN actionType IN ({CONTRIBUTING_ACTION_TYPES_STR}) THEN {CONTRIBUTING_ACTION_TWEET_ID_COLUMN}
-          WHEN actionType IN ({UNDO_ACTION_TYPES_STR}) THEN {UNDO_ACTION_TWEET_ID_COLUMN}
-      END AS tweetId,
-      CASE
-        WHEN actionType IN ({CONTRIBUTING_ACTION_TYPES_STR}) THEN 1
-        WHEN actionType IN ({UNDO_ACTION_TYPES_STR}) THEN -1
-      END AS doOrUndo
-    FROM `twttr-bql-unified-prod.unified_user_actions_engagements.streaming_unified_user_actions_engagements`, vars
-    WHERE (DATE(dateHour) >= DATE(vars.start_date) AND DATE(dateHour) <= DATE(vars.end_date))
-      AND eventMetadata.sourceTimestampMs >= UNIX_MILLIS(vars.start_date)
-      AND eventMetadata.sourceTimestampMs <= UNIX_MILLIS(vars.end_date)
-      AND (actionType IN ({CONTRIBUTING_ACTION_TYPES_STR})
-            OR actionType IN ({UNDO_ACTION_TYPES_STR}))
+  -- Gelont raw uselonr-twelonelont intelonraction elonvelonnts from UUA
+  raw_elonngagelonmelonnts AS (
+    SelonLelonCT
+      uselonrIdelonntifielonr.uselonrId AS uselonrId,
+      elonvelonntMelontadata.sourcelonTimelonstampMs AS tsMillis,
+      CASelon
+          WHelonN actionTypelon IN ({CONTRIBUTING_ACTION_TYPelonS_STR}) THelonN {CONTRIBUTING_ACTION_TWelonelonT_ID_COLUMN}
+          WHelonN actionTypelon IN ({UNDO_ACTION_TYPelonS_STR}) THelonN {UNDO_ACTION_TWelonelonT_ID_COLUMN}
+      elonND AS twelonelontId,
+      CASelon
+        WHelonN actionTypelon IN ({CONTRIBUTING_ACTION_TYPelonS_STR}) THelonN 1
+        WHelonN actionTypelon IN ({UNDO_ACTION_TYPelonS_STR}) THelonN -1
+      elonND AS doOrUndo
+    FROM `twttr-bql-unifielond-prod.unifielond_uselonr_actions_elonngagelonmelonnts.strelonaming_unifielond_uselonr_actions_elonngagelonmelonnts`, vars
+    WHelonRelon (DATelon(datelonHour) >= DATelon(vars.start_datelon) AND DATelon(datelonHour) <= DATelon(vars.elonnd_datelon))
+      AND elonvelonntMelontadata.sourcelonTimelonstampMs >= UNIX_MILLIS(vars.start_datelon)
+      AND elonvelonntMelontadata.sourcelonTimelonstampMs <= UNIX_MILLIS(vars.elonnd_datelon)
+      AND (actionTypelon IN ({CONTRIBUTING_ACTION_TYPelonS_STR})
+            OR actionTypelon IN ({UNDO_ACTION_TYPelonS_STR}))
   ),
 
-  -- Get evergreen tweet ids
-  evergreen_tweet_ids AS (
-    SELECT
-        tweetId
-    FROM `twttr-recos-ml-prod.simclusters.evergreen_content_data`
-    WHERE TIMESTAMP(ts) =
-        (  -- Get latest partition time
-        SELECT MAX(TIMESTAMP(ts)) latest_partition
-        FROM `twttr-recos-ml-prod.simclusters.evergreen_content_data`
-        WHERE DATE(ts) BETWEEN
-            DATE_SUB(DATE("{END_TIME}"),
-            INTERVAL 14 DAY) AND DATE("{END_TIME}")
+  -- Gelont elonvelonrgrelonelonn twelonelont ids
+  elonvelonrgrelonelonn_twelonelont_ids AS (
+    SelonLelonCT
+        twelonelontId
+    FROM `twttr-reloncos-ml-prod.simclustelonrs.elonvelonrgrelonelonn_contelonnt_data`
+    WHelonRelon TIMelonSTAMP(ts) =
+        (  -- Gelont latelonst partition timelon
+        SelonLelonCT MAX(TIMelonSTAMP(ts)) latelonst_partition
+        FROM `twttr-reloncos-ml-prod.simclustelonrs.elonvelonrgrelonelonn_contelonnt_data`
+        WHelonRelon DATelon(ts) BelonTWelonelonN
+            DATelon_SUB(DATelon("{elonND_TIMelon}"),
+            INTelonRVAL 14 DAY) AND DATelon("{elonND_TIMelon}")
         )
   ),
 
-  -- Join evergreen content table
-  evergreen_tweets_engagements AS (
-      SELECT raw_engagements.*
-      FROM raw_engagements JOIN evergreen_tweet_ids USING(tweetId)
+  -- Join elonvelonrgrelonelonn contelonnt tablelon
+  elonvelonrgrelonelonn_twelonelonts_elonngagelonmelonnts AS (
+      SelonLelonCT raw_elonngagelonmelonnts.*
+      FROM raw_elonngagelonmelonnts JOIN elonvelonrgrelonelonn_twelonelont_ids USING(twelonelontId)
   ),
 
-  -- Group by userId and tweetId
-  user_tweet_engagement_pairs AS (
-    SELECT userId, tweetId, ARRAY_AGG(STRUCT(doOrUndo, tsMillis) ORDER BY tsMillis DESC LIMIT 1) AS details, COUNT(*) AS cnt
-    FROM evergreen_tweets_engagements
-    GROUP BY userId, tweetId
+  -- Group by uselonrId and twelonelontId
+  uselonr_twelonelont_elonngagelonmelonnt_pairs AS (
+    SelonLelonCT uselonrId, twelonelontId, ARRAY_AGG(STRUCT(doOrUndo, tsMillis) ORDelonR BY tsMillis DelonSC LIMIT 1) AS delontails, COUNT(*) AS cnt
+    FROM elonvelonrgrelonelonn_twelonelonts_elonngagelonmelonnts
+    GROUP BY uselonrId, twelonelontId
   )
 
--- Remove undo events
-SELECT userId, tweetId, CAST(dt.tsMillis  AS FLOAT64) AS tsMillis
-FROM user_tweet_engagement_pairs, vars
-CROSS JOIN UNNEST(details) AS dt
-WHERE cnt <= 10
+-- Relonmovelon undo elonvelonnts
+SelonLelonCT uselonrId, twelonelontId, CAST(dt.tsMillis  AS FLOAT64) AS tsMillis
+FROM uselonr_twelonelont_elonngagelonmelonnt_pairs, vars
+CROSS JOIN UNNelonST(delontails) AS dt
+WHelonRelon cnt <= 10
   AND dt.doOrUndo = 1

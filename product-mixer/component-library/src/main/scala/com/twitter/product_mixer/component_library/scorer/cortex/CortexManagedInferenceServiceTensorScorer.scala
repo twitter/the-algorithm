@@ -1,97 +1,97 @@
-package com.twitter.product_mixer.component_library.scorer.cortex
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.scorelonr.cortelonx
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.component_library.scorer.common.MLModelInferenceClient
-import com.twitter.product_mixer.component_library.scorer.tensorbuilder.ModelInferRequestBuilder
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.scorer.Scorer
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.ScorerIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.IllegalStateFailure
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.stitch.Stitch
-import com.twitter.util.logging.Logging
-import inference.GrpcService.ModelInferRequest
-import inference.GrpcService.ModelInferResponse.InferOutputTensor
-import scala.collection.convert.ImplicitConversions.`collection AsScalaIterable`
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.product_mixelonr.componelonnt_library.scorelonr.common.MLModelonlInfelonrelonncelonClielonnt
+import com.twittelonr.product_mixelonr.componelonnt_library.scorelonr.telonnsorbuildelonr.ModelonlInfelonrRelonquelonstBuildelonr
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMapBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.scorelonr.Scorelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.ScorelonrIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.IllelongalStatelonFailurelon
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.PipelonlinelonFailurelon
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.util.logging.Logging
+import infelonrelonncelon.GrpcSelonrvicelon.ModelonlInfelonrRelonquelonst
+import infelonrelonncelon.GrpcSelonrvicelon.ModelonlInfelonrRelonsponselon.InfelonrOutputTelonnsor
+import scala.collelonction.convelonrt.ImplicitConvelonrsions.`collelonction AsScalaItelonrablelon`
 
-private[scorer] class CortexManagedInferenceServiceTensorScorer[
-  Query <: PipelineQuery,
-  Candidate <: UniversalNoun[Any]
+privatelon[scorelonr] class CortelonxManagelondInfelonrelonncelonSelonrvicelonTelonnsorScorelonr[
+  Quelonry <: PipelonlinelonQuelonry,
+  Candidatelon <: UnivelonrsalNoun[Any]
 ](
-  override val identifier: ScorerIdentifier,
-  modelInferRequestBuilder: ModelInferRequestBuilder[
-    Query,
-    Candidate
+  ovelonrridelon val idelonntifielonr: ScorelonrIdelonntifielonr,
+  modelonlInfelonrRelonquelonstBuildelonr: ModelonlInfelonrRelonquelonstBuildelonr[
+    Quelonry,
+    Candidatelon
   ],
-  resultFeatureExtractors: Seq[FeatureWithExtractor[Query, Candidate, _]],
-  client: MLModelInferenceClient,
-  statsReceiver: StatsReceiver)
-    extends Scorer[Query, Candidate]
+  relonsultFelonaturelonelonxtractors: Selonq[FelonaturelonWithelonxtractor[Quelonry, Candidatelon, _]],
+  clielonnt: MLModelonlInfelonrelonncelonClielonnt,
+  statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds Scorelonr[Quelonry, Candidatelon]
     with Logging {
 
-  require(resultFeatureExtractors.nonEmpty, "Result Extractors cannot be empty")
+  relonquirelon(relonsultFelonaturelonelonxtractors.nonelonmpty, "Relonsult elonxtractors cannot belon elonmpty")
 
-  private val managedServiceRequestFailures = statsReceiver.counter("managedServiceRequestFailures")
-  override val features: Set[Feature[_, _]] =
-    resultFeatureExtractors.map(_.feature).toSet.asInstanceOf[Set[Feature[_, _]]]
+  privatelon val managelondSelonrvicelonRelonquelonstFailurelons = statsReloncelonivelonr.countelonr("managelondSelonrvicelonRelonquelonstFailurelons")
+  ovelonrridelon val felonaturelons: Selont[Felonaturelon[_, _]] =
+    relonsultFelonaturelonelonxtractors.map(_.felonaturelon).toSelont.asInstancelonOf[Selont[Felonaturelon[_, _]]]
 
-  override def apply(
-    query: Query,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): Stitch[Seq[FeatureMap]] = {
-    val batchInferRequest: ModelInferRequest = modelInferRequestBuilder(query, candidates)
+  ovelonrridelon delonf apply(
+    quelonry: Quelonry,
+    candidatelons: Selonq[CandidatelonWithFelonaturelons[Candidatelon]]
+  ): Stitch[Selonq[FelonaturelonMap]] = {
+    val batchInfelonrRelonquelonst: ModelonlInfelonrRelonquelonst = modelonlInfelonrRelonquelonstBuildelonr(quelonry, candidatelons)
 
-    val managedServiceResponse: Stitch[Seq[InferOutputTensor]] =
-      client.score(batchInferRequest).map(_.getOutputsList.toSeq).onFailure { e =>
-        error(s"request to ML Managed Service Failed: $e")
-        managedServiceRequestFailures.incr()
+    val managelondSelonrvicelonRelonsponselon: Stitch[Selonq[InfelonrOutputTelonnsor]] =
+      clielonnt.scorelon(batchInfelonrRelonquelonst).map(_.gelontOutputsList.toSelonq).onFailurelon { elon =>
+        elonrror(s"relonquelonst to ML Managelond Selonrvicelon Failelond: $elon")
+        managelondSelonrvicelonRelonquelonstFailurelons.incr()
       }
 
-    managedServiceResponse.map { responses =>
-      extractResponse(query, candidates.map(_.candidate), responses)
+    managelondSelonrvicelonRelonsponselon.map { relonsponselons =>
+      elonxtractRelonsponselon(quelonry, candidatelons.map(_.candidatelon), relonsponselons)
     }
   }
 
-  def extractResponse(
-    query: Query,
-    candidates: Seq[Candidate],
-    tensorOutput: Seq[InferOutputTensor]
-  ): Seq[FeatureMap] = {
-    val featureMapBuilders = candidates.map { _ => FeatureMapBuilder.apply() }
-    // Extract the feature for each candidate from the tensor outputs
-    resultFeatureExtractors.foreach {
-      case FeatureWithExtractor(feature, extractor) =>
-        val extractedValues = extractor.apply(query, tensorOutput)
-        if (candidates.size != extractedValues.size) {
-          throw PipelineFailure(
-            IllegalStateFailure,
-            s"Managed Service returned a different number of $feature than the number of candidates." +
-              s"Returned ${extractedValues.size} scores but there were ${candidates.size} candidates."
+  delonf elonxtractRelonsponselon(
+    quelonry: Quelonry,
+    candidatelons: Selonq[Candidatelon],
+    telonnsorOutput: Selonq[InfelonrOutputTelonnsor]
+  ): Selonq[FelonaturelonMap] = {
+    val felonaturelonMapBuildelonrs = candidatelons.map { _ => FelonaturelonMapBuildelonr.apply() }
+    // elonxtract thelon felonaturelon for elonach candidatelon from thelon telonnsor outputs
+    relonsultFelonaturelonelonxtractors.forelonach {
+      caselon FelonaturelonWithelonxtractor(felonaturelon, elonxtractor) =>
+        val elonxtractelondValuelons = elonxtractor.apply(quelonry, telonnsorOutput)
+        if (candidatelons.sizelon != elonxtractelondValuelons.sizelon) {
+          throw PipelonlinelonFailurelon(
+            IllelongalStatelonFailurelon,
+            s"Managelond Selonrvicelon relonturnelond a diffelonrelonnt numbelonr of $felonaturelon than thelon numbelonr of candidatelons." +
+              s"Relonturnelond ${elonxtractelondValuelons.sizelon} scorelons but thelonrelon welonrelon ${candidatelons.sizelon} candidatelons."
           )
         }
-        // Go through the extracted features list one by one and update the feature map result for each candidate.
-        featureMapBuilders.zip(extractedValues).foreach {
-          case (builder, value) =>
-            builder.add(feature, Some(value))
+        // Go through thelon elonxtractelond felonaturelons list onelon by onelon and updatelon thelon felonaturelon map relonsult for elonach candidatelon.
+        felonaturelonMapBuildelonrs.zip(elonxtractelondValuelons).forelonach {
+          caselon (buildelonr, valuelon) =>
+            buildelonr.add(felonaturelon, Somelon(valuelon))
         }
     }
 
-    featureMapBuilders.map(_.build())
+    felonaturelonMapBuildelonrs.map(_.build())
   }
 }
 
-case class FeatureWithExtractor[
-  -Query <: PipelineQuery,
-  -Candidate <: UniversalNoun[Any],
-  ResultType
+caselon class FelonaturelonWithelonxtractor[
+  -Quelonry <: PipelonlinelonQuelonry,
+  -Candidatelon <: UnivelonrsalNoun[Any],
+  RelonsultTypelon
 ](
-  feature: Feature[Candidate, Option[ResultType]],
-  featureExtractor: ModelFeatureExtractor[Query, ResultType])
+  felonaturelon: Felonaturelon[Candidatelon, Option[RelonsultTypelon]],
+  felonaturelonelonxtractor: ModelonlFelonaturelonelonxtractor[Quelonry, RelonsultTypelon])
 
-class UnexpectedFeatureTypeException(feature: Feature[_, _])
-    extends UnsupportedOperationException(s"Unsupported Feature type passed in $feature")
+class UnelonxpelonctelondFelonaturelonTypelonelonxcelonption(felonaturelon: Felonaturelon[_, _])
+    elonxtelonnds UnsupportelondOpelonrationelonxcelonption(s"Unsupportelond Felonaturelon typelon passelond in $felonaturelon")

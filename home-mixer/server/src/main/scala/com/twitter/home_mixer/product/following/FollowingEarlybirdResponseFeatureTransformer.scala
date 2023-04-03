@@ -1,38 +1,38 @@
-package com.twitter.home_mixer.candidate_pipeline
+packagelon com.twittelonr.homelon_mixelonr.candidatelon_pipelonlinelon
 
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.InReplyToTweetIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.IsRetweetFeature
-import com.twitter.home_mixer.model.HomeFeatures.SourceTweetIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.SourceUserIdFeature
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
-import com.twitter.product_mixer.core.model.common.identifier.TransformerIdentifier
-import com.twitter.search.earlybird.{thriftscala => t}
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.AuthorIdFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.InRelonplyToTwelonelontIdFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.IsRelontwelonelontFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.SourcelonTwelonelontIdFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.SourcelonUselonrIdFelonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMapBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.transformelonr.CandidatelonFelonaturelonTransformelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.TransformelonrIdelonntifielonr
+import com.twittelonr.selonarch.elonarlybird.{thriftscala => t}
 
-object FollowingEarlybirdResponseFeatureTransformer
-    extends CandidateFeatureTransformer[t.ThriftSearchResult] {
+objelonct FollowingelonarlybirdRelonsponselonFelonaturelonTransformelonr
+    elonxtelonnds CandidatelonFelonaturelonTransformelonr[t.ThriftSelonarchRelonsult] {
 
-  override val identifier: TransformerIdentifier =
-    TransformerIdentifier("FollowingEarlybirdResponse")
+  ovelonrridelon val idelonntifielonr: TransformelonrIdelonntifielonr =
+    TransformelonrIdelonntifielonr("FollowingelonarlybirdRelonsponselon")
 
-  override val features: Set[Feature[_, _]] = Set(
-    AuthorIdFeature,
-    InReplyToTweetIdFeature,
-    IsRetweetFeature,
-    SourceTweetIdFeature,
-    SourceUserIdFeature,
+  ovelonrridelon val felonaturelons: Selont[Felonaturelon[_, _]] = Selont(
+    AuthorIdFelonaturelon,
+    InRelonplyToTwelonelontIdFelonaturelon,
+    IsRelontwelonelontFelonaturelon,
+    SourcelonTwelonelontIdFelonaturelon,
+    SourcelonUselonrIdFelonaturelon,
   )
 
-  override def transform(candidate: t.ThriftSearchResult): FeatureMap = FeatureMapBuilder()
-    .add(AuthorIdFeature, candidate.tweetypieTweet.flatMap(_.coreData.map(_.userId)))
+  ovelonrridelon delonf transform(candidatelon: t.ThriftSelonarchRelonsult): FelonaturelonMap = FelonaturelonMapBuildelonr()
+    .add(AuthorIdFelonaturelon, candidatelon.twelonelontypielonTwelonelont.flatMap(_.corelonData.map(_.uselonrId)))
     .add(
-      InReplyToTweetIdFeature,
-      candidate.tweetypieTweet.flatMap(_.coreData.flatMap(_.reply.flatMap(_.inReplyToStatusId))))
-    .add(IsRetweetFeature, candidate.metadata.exists(_.isRetweet.contains(true)))
-    .add(SourceTweetIdFeature, candidate.sourceTweetypieTweet.map(_.id))
-    .add(SourceUserIdFeature, candidate.sourceTweetypieTweet.flatMap(_.coreData.map(_.userId)))
+      InRelonplyToTwelonelontIdFelonaturelon,
+      candidatelon.twelonelontypielonTwelonelont.flatMap(_.corelonData.flatMap(_.relonply.flatMap(_.inRelonplyToStatusId))))
+    .add(IsRelontwelonelontFelonaturelon, candidatelon.melontadata.elonxists(_.isRelontwelonelont.contains(truelon)))
+    .add(SourcelonTwelonelontIdFelonaturelon, candidatelon.sourcelonTwelonelontypielonTwelonelont.map(_.id))
+    .add(SourcelonUselonrIdFelonaturelon, candidatelon.sourcelonTwelonelontypielonTwelonelont.flatMap(_.corelonData.map(_.uselonrId)))
     .build()
 }

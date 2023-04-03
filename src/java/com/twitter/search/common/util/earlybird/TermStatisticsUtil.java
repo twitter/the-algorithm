@@ -1,47 +1,47 @@
-package com.twitter.search.common.util.earlybird;
+packagelon com.twittelonr.selonarch.common.util.elonarlybird;
 
-import java.util.concurrent.TimeUnit;
+import java.util.concurrelonnt.TimelonUnit;
 
-import com.twitter.search.earlybird.thrift.ThriftHistogramSettings;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftHistogramSelonttings;
 
 /**
- * A utility class to provide some functions for TermStatistics request processing
+ * A utility class to providelon somelon functions for TelonrmStatistics relonquelonst procelonssing
  */
-public final class TermStatisticsUtil {
+public final class TelonrmStatisticsUtil {
 
-  private static final org.slf4j.Logger LOG =
-      org.slf4j.LoggerFactory.getLogger(TermStatisticsUtil.class);
+  privatelon static final org.slf4j.Loggelonr LOG =
+      org.slf4j.LoggelonrFactory.gelontLoggelonr(TelonrmStatisticsUtil.class);
 
-  private TermStatisticsUtil() {
+  privatelon TelonrmStatisticsUtil() {
   }
 
   /**
-   * Determine the binsize base on settings in ThriftHistogramSettings.granularity
+   * Delontelonrminelon thelon binsizelon baselon on selonttings in ThriftHistogramSelonttings.granularity
    */
-  public static int determineBinSize(ThriftHistogramSettings histogramSettings) {
-    final int DEFAULT_BINSIZE = (int) TimeUnit.HOURS.toSeconds(1);
-    int binSize;
-    switch (histogramSettings.getGranularity()) {
-      case DAYS:
-        binSize = (int) TimeUnit.DAYS.toSeconds(1);
-        break;
-      case HOURS:
-        binSize = (int) TimeUnit.HOURS.toSeconds(1);
-        break;
-      case MINUTES:
-        binSize = (int) TimeUnit.MINUTES.toSeconds(1);
-        break;
-      case CUSTOM:
-        binSize = histogramSettings.isSetBinSizeInSeconds()
-                      ? histogramSettings.getBinSizeInSeconds()
-                      : DEFAULT_BINSIZE;
-        break;
-      default:
-        binSize = DEFAULT_BINSIZE;
-        LOG.warn("Unknown ThriftHistogramGranularityType {} using default binsize: {}",
-                 histogramSettings.getGranularity(), DEFAULT_BINSIZE);
+  public static int delontelonrminelonBinSizelon(ThriftHistogramSelonttings histogramSelonttings) {
+    final int DelonFAULT_BINSIZelon = (int) TimelonUnit.HOURS.toSelonconds(1);
+    int binSizelon;
+    switch (histogramSelonttings.gelontGranularity()) {
+      caselon DAYS:
+        binSizelon = (int) TimelonUnit.DAYS.toSelonconds(1);
+        brelonak;
+      caselon HOURS:
+        binSizelon = (int) TimelonUnit.HOURS.toSelonconds(1);
+        brelonak;
+      caselon MINUTelonS:
+        binSizelon = (int) TimelonUnit.MINUTelonS.toSelonconds(1);
+        brelonak;
+      caselon CUSTOM:
+        binSizelon = histogramSelonttings.isSelontBinSizelonInSelonconds()
+                      ? histogramSelonttings.gelontBinSizelonInSelonconds()
+                      : DelonFAULT_BINSIZelon;
+        brelonak;
+      delonfault:
+        binSizelon = DelonFAULT_BINSIZelon;
+        LOG.warn("Unknown ThriftHistogramGranularityTypelon {} using delonfault binsizelon: {}",
+                 histogramSelonttings.gelontGranularity(), DelonFAULT_BINSIZelon);
     }
 
-    return binSize;
+    relonturn binSizelon;
   }
 }

@@ -1,55 +1,55 @@
-namespace java com.twitter.follow_recommendations.thriftjava
-#@namespace scala com.twitter.follow_recommendations.thriftscala
-#@namespace strato com.twitter.follow_recommendations
+namelonspacelon java com.twittelonr.follow_reloncommelonndations.thriftjava
+#@namelonspacelon scala com.twittelonr.follow_reloncommelonndations.thriftscala
+#@namelonspacelon strato com.twittelonr.follow_reloncommelonndations
 
-enum DisplayLocation {
-    SIDEBAR = 0
-    PROFILE_SIDEBAR = 2
-    CLUSTER_FOLLOW = 7
-    NEW_USER_SARUS_BACKFILL = 12
-    PROFILE_DEVICE_FOLLOW = 23
-    RECOS_BACKFILL = 32
-    HOME_TIMELINE = 39    # HOME_TIMELINE_WTF in Hermit
-    PROFILE_TOP_FOLLOWING = 42
-    PROFILE_TOP_FOLLOWERS = 43
-    PEOPLE_PLUS_PLUS = 47
-    EXPLORE_TAB = 57
-    MagicRecs = 59        # Account recommendation in notification
-    AB_UPLOAD_INJECTION = 60
+elonnum DisplayLocation {
+    SIDelonBAR = 0
+    PROFILelon_SIDelonBAR = 2
+    CLUSTelonR_FOLLOW = 7
+    NelonW_USelonR_SARUS_BACKFILL = 12
+    PROFILelon_DelonVICelon_FOLLOW = 23
+    RelonCOS_BACKFILL = 32
+    HOMelon_TIMelonLINelon = 39    # HOMelon_TIMelonLINelon_WTF in Helonrmit
+    PROFILelon_TOP_FOLLOWING = 42
+    PROFILelon_TOP_FOLLOWelonRS = 43
+    PelonOPLelon_PLUS_PLUS = 47
+    elonXPLORelon_TAB = 57
+    MagicReloncs = 59        # Account reloncommelonndation in notification
+    AB_UPLOAD_INJelonCTION = 60
     /**
-     * To prevent setting 2 display locations with the same index in FRS.
+     * To prelonvelonnt selontting 2 display locations with thelon samelon indelonx in FRS.
      *
-     * The display location should be added to the following files:
-     *  - follow-recommendations-service/thrift/src/main/thrift/display_location.thrift
-     *  - follow-recommendations-service/thrift/src/main/thrift/logging/display_location.thrift
-     *  - follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/models/DisplayLocation.scala
+     * Thelon display location should belon addelond to thelon following filelons:
+     *  - follow-reloncommelonndations-selonrvicelon/thrift/src/main/thrift/display_location.thrift
+     *  - follow-reloncommelonndations-selonrvicelon/thrift/src/main/thrift/logging/display_location.thrift
+     *  - follow-reloncommelonndations-selonrvicelon/common/src/main/scala/com/twittelonr/follow_reloncommelonndations/common/modelonls/DisplayLocation.scala
    */
     CAMPAIGN_FORM = 61
-    RUX_LANDING_PAGE = 62
-    PROFILE_BONUS_FOLLOW = 63
-    ELECTION_EXPLORE_WTF = 64
+    RUX_LANDING_PAGelon = 62
+    PROFILelon_BONUS_FOLLOW = 63
+    elonLelonCTION_elonXPLORelon_WTF = 64
     HTL_BONUS_FOLLOW = 65
-    TOPIC_LANDING_PAGE_HEADER = 66
+    TOPIC_LANDING_PAGelon_HelonADelonR = 66
     NUX_PYMK = 67
-    NUX_INTERESTS = 68
-    REACTIVE_FOLLOW = 69
+    NUX_INTelonRelonSTS = 68
+    RelonACTIVelon_FOLLOW = 69
     RUX_PYMK = 70
-    INDIA_COVID19_CURATED_ACCOUNTS_WTF = 71
+    INDIA_COVID19_CURATelonD_ACCOUNTS_WTF = 71
     NUX_TOPIC_BONUS_FOLLOW = 72
-    TWEET_NOTIFICATION_RECS = 73
-    HTL_SPACE_HOSTS = 74
+    TWelonelonT_NOTIFICATION_RelonCS = 73
+    HTL_SPACelon_HOSTS = 74
     POST_NUX_FOLLOW_TASK = 75
-    TOPIC_LANDING_PAGE = 76
-    USER_TYPEAHEAD_PREFETCH = 77
-    HOME_TIMELINE_RELATABLE_ACCOUNTS = 78
-    NUX_GEO_CATEGORY = 79
-    NUX_INTERESTS_CATEGORY = 80
-    NUX_PYMK_CATEGORY = 81
-    TOP_ARTICLES = 82
-    HOME_TIMELINE_TWEET_RECS = 83
-    HTL_BULK_FRIEND_FOLLOWS = 84
+    TOPIC_LANDING_PAGelon = 76
+    USelonR_TYPelonAHelonAD_PRelonFelonTCH = 77
+    HOMelon_TIMelonLINelon_RelonLATABLelon_ACCOUNTS = 78
+    NUX_GelonO_CATelonGORY = 79
+    NUX_INTelonRelonSTS_CATelonGORY = 80
+    NUX_PYMK_CATelonGORY = 81
+    TOP_ARTICLelonS = 82
+    HOMelon_TIMelonLINelon_TWelonelonT_RelonCS = 83
+    HTL_BULK_FRIelonND_FOLLOWS = 84
     NUX_AUTO_FOLLOW = 85
-    SEARCH_BONUS_FOLLOW = 86
-    CONTENT_RECOMMENDER = 87
-    HOME_TIMELINE_REVERSE_CHRON = 88
+    SelonARCH_BONUS_FOLLOW = 86
+    CONTelonNT_RelonCOMMelonNDelonR = 87
+    HOMelon_TIMelonLINelon_RelonVelonRSelon_CHRON = 88
 }

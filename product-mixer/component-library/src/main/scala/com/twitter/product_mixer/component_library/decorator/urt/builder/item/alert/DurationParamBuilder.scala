@@ -1,20 +1,20 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.alert
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.itelonm.alelonrt
 
-import com.twitter.product_mixer.component_library.model.candidate.ShowAlertCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.item.alert.BaseDurationBuilder
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.configapi.Param
-import com.twitter.util.Duration
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.ShowAlelonrtCandidatelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.itelonm.alelonrt.BaselonDurationBuildelonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.timelonlinelons.configapi.Param
+import com.twittelonr.util.Duration
 
-case class DurationParamBuilder(
+caselon class DurationParamBuildelonr(
   durationParam: Param[Duration])
-    extends BaseDurationBuilder[PipelineQuery] {
+    elonxtelonnds BaselonDurationBuildelonr[PipelonlinelonQuelonry] {
 
-  def apply(
-    query: PipelineQuery,
-    candidate: ShowAlertCandidate,
-    features: FeatureMap
+  delonf apply(
+    quelonry: PipelonlinelonQuelonry,
+    candidatelon: ShowAlelonrtCandidatelon,
+    felonaturelons: FelonaturelonMap
   ): Option[Duration] =
-    Some(query.params(durationParam))
+    Somelon(quelonry.params(durationParam))
 }

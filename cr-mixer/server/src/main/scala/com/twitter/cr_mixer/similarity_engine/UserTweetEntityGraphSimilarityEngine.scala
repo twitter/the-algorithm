@@ -1,108 +1,108 @@
-package com.twitter.cr_mixer.similarity_engine
+packagelon com.twittelonr.cr_mixelonr.similarity_elonnginelon
 
-import com.twitter.recos.recos_common.thriftscala.SocialProofType
-import com.twitter.cr_mixer.model.SimilarityEngineInfo
-import com.twitter.cr_mixer.model.TweetWithScoreAndSocialProof
-import com.twitter.cr_mixer.param.UtegTweetGlobalParams
-import com.twitter.cr_mixer.thriftscala.SimilarityEngineType
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.recos.user_tweet_entity_graph.thriftscala.TweetEntityDisplayLocation
-import com.twitter.recos.user_tweet_entity_graph.thriftscala.UserTweetEntityGraph
-import com.twitter.recos.user_tweet_entity_graph.thriftscala.RecommendTweetEntityRequest
-import com.twitter.recos.user_tweet_entity_graph.thriftscala.RecommendationType
-import com.twitter.recos.user_tweet_entity_graph.thriftscala.UserTweetEntityRecommendationUnion.TweetRec
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.timelines.configapi
-import com.twitter.util.Duration
-import com.twitter.util.Future
-import javax.inject.Singleton
+import com.twittelonr.reloncos.reloncos_common.thriftscala.SocialProofTypelon
+import com.twittelonr.cr_mixelonr.modelonl.SimilarityelonnginelonInfo
+import com.twittelonr.cr_mixelonr.modelonl.TwelonelontWithScorelonAndSocialProof
+import com.twittelonr.cr_mixelonr.param.UtelongTwelonelontGlobalParams
+import com.twittelonr.cr_mixelonr.thriftscala.SimilarityelonnginelonTypelon
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.reloncos.uselonr_twelonelont_elonntity_graph.thriftscala.TwelonelontelonntityDisplayLocation
+import com.twittelonr.reloncos.uselonr_twelonelont_elonntity_graph.thriftscala.UselonrTwelonelontelonntityGraph
+import com.twittelonr.reloncos.uselonr_twelonelont_elonntity_graph.thriftscala.ReloncommelonndTwelonelontelonntityRelonquelonst
+import com.twittelonr.reloncos.uselonr_twelonelont_elonntity_graph.thriftscala.ReloncommelonndationTypelon
+import com.twittelonr.reloncos.uselonr_twelonelont_elonntity_graph.thriftscala.UselonrTwelonelontelonntityReloncommelonndationUnion.TwelonelontRelonc
+import com.twittelonr.simclustelonrs_v2.common.UselonrId
+import com.twittelonr.simclustelonrs_v2.common.TwelonelontId
+import com.twittelonr.storelonhaus.RelonadablelonStorelon
+import com.twittelonr.timelonlinelons.configapi
+import com.twittelonr.util.Duration
+import com.twittelonr.util.Futurelon
+import javax.injelonct.Singlelonton
 
-@Singleton
-case class UserTweetEntityGraphSimilarityEngine(
-  userTweetEntityGraph: UserTweetEntityGraph.MethodPerEndpoint,
-  statsReceiver: StatsReceiver)
-    extends ReadableStore[
-      UserTweetEntityGraphSimilarityEngine.Query,
-      Seq[TweetWithScoreAndSocialProof]
+@Singlelonton
+caselon class UselonrTwelonelontelonntityGraphSimilarityelonnginelon(
+  uselonrTwelonelontelonntityGraph: UselonrTwelonelontelonntityGraph.MelonthodPelonrelonndpoint,
+  statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds RelonadablelonStorelon[
+      UselonrTwelonelontelonntityGraphSimilarityelonnginelon.Quelonry,
+      Selonq[TwelonelontWithScorelonAndSocialProof]
     ] {
 
-  override def get(
-    query: UserTweetEntityGraphSimilarityEngine.Query
-  ): Future[Option[Seq[TweetWithScoreAndSocialProof]]] = {
-    val recommendTweetEntityRequest =
-      RecommendTweetEntityRequest(
-        requesterId = query.userId,
-        displayLocation = TweetEntityDisplayLocation.HomeTimeline,
-        recommendationTypes = Seq(RecommendationType.Tweet),
-        seedsWithWeights = query.seedsWithWeights,
-        maxResultsByType = Some(Map(RecommendationType.Tweet -> query.maxUtegCandidates)),
-        maxTweetAgeInMillis = Some(query.maxTweetAge.inMilliseconds),
-        excludedTweetIds = query.excludedTweetIds,
-        maxUserSocialProofSize = Some(UserTweetEntityGraphSimilarityEngine.MaxUserSocialProofSize),
-        maxTweetSocialProofSize =
-          Some(UserTweetEntityGraphSimilarityEngine.MaxTweetSocialProofSize),
-        minUserSocialProofSizes = Some(Map(RecommendationType.Tweet -> 1)),
-        tweetTypes = None,
-        socialProofTypes = query.socialProofTypes,
-        socialProofTypeUnions = None,
-        tweetAuthors = None,
-        maxEngagementAgeInMillis = None,
-        excludedTweetAuthors = None,
+  ovelonrridelon delonf gelont(
+    quelonry: UselonrTwelonelontelonntityGraphSimilarityelonnginelon.Quelonry
+  ): Futurelon[Option[Selonq[TwelonelontWithScorelonAndSocialProof]]] = {
+    val reloncommelonndTwelonelontelonntityRelonquelonst =
+      ReloncommelonndTwelonelontelonntityRelonquelonst(
+        relonquelonstelonrId = quelonry.uselonrId,
+        displayLocation = TwelonelontelonntityDisplayLocation.HomelonTimelonlinelon,
+        reloncommelonndationTypelons = Selonq(ReloncommelonndationTypelon.Twelonelont),
+        selonelondsWithWelonights = quelonry.selonelondsWithWelonights,
+        maxRelonsultsByTypelon = Somelon(Map(ReloncommelonndationTypelon.Twelonelont -> quelonry.maxUtelongCandidatelons)),
+        maxTwelonelontAgelonInMillis = Somelon(quelonry.maxTwelonelontAgelon.inMilliselonconds),
+        elonxcludelondTwelonelontIds = quelonry.elonxcludelondTwelonelontIds,
+        maxUselonrSocialProofSizelon = Somelon(UselonrTwelonelontelonntityGraphSimilarityelonnginelon.MaxUselonrSocialProofSizelon),
+        maxTwelonelontSocialProofSizelon =
+          Somelon(UselonrTwelonelontelonntityGraphSimilarityelonnginelon.MaxTwelonelontSocialProofSizelon),
+        minUselonrSocialProofSizelons = Somelon(Map(ReloncommelonndationTypelon.Twelonelont -> 1)),
+        twelonelontTypelons = Nonelon,
+        socialProofTypelons = quelonry.socialProofTypelons,
+        socialProofTypelonUnions = Nonelon,
+        twelonelontAuthors = Nonelon,
+        maxelonngagelonmelonntAgelonInMillis = Nonelon,
+        elonxcludelondTwelonelontAuthors = Nonelon,
       )
 
-    userTweetEntityGraph
-      .recommendTweets(recommendTweetEntityRequest)
-      .map { recommendTweetsResponse =>
-        val candidates = recommendTweetsResponse.recommendations.flatMap {
-          case TweetRec(recommendation) =>
-            Some(
-              TweetWithScoreAndSocialProof(
-                recommendation.tweetId,
-                recommendation.score,
-                recommendation.socialProofByType.toMap))
-          case _ => None
+    uselonrTwelonelontelonntityGraph
+      .reloncommelonndTwelonelonts(reloncommelonndTwelonelontelonntityRelonquelonst)
+      .map { reloncommelonndTwelonelontsRelonsponselon =>
+        val candidatelons = reloncommelonndTwelonelontsRelonsponselon.reloncommelonndations.flatMap {
+          caselon TwelonelontRelonc(reloncommelonndation) =>
+            Somelon(
+              TwelonelontWithScorelonAndSocialProof(
+                reloncommelonndation.twelonelontId,
+                reloncommelonndation.scorelon,
+                reloncommelonndation.socialProofByTypelon.toMap))
+          caselon _ => Nonelon
         }
-        Some(candidates)
+        Somelon(candidatelons)
       }
   }
 }
 
-object UserTweetEntityGraphSimilarityEngine {
+objelonct UselonrTwelonelontelonntityGraphSimilarityelonnginelon {
 
-  private val MaxUserSocialProofSize = 10
-  private val MaxTweetSocialProofSize = 10
+  privatelon val MaxUselonrSocialProofSizelon = 10
+  privatelon val MaxTwelonelontSocialProofSizelon = 10
 
-  def toSimilarityEngineInfo(score: Double): SimilarityEngineInfo = {
-    SimilarityEngineInfo(
-      similarityEngineType = SimilarityEngineType.Uteg,
-      modelId = None,
-      score = Some(score))
+  delonf toSimilarityelonnginelonInfo(scorelon: Doublelon): SimilarityelonnginelonInfo = {
+    SimilarityelonnginelonInfo(
+      similarityelonnginelonTypelon = SimilarityelonnginelonTypelon.Utelong,
+      modelonlId = Nonelon,
+      scorelon = Somelon(scorelon))
   }
 
-  case class Query(
-    userId: UserId,
-    seedsWithWeights: Map[UserId, Double],
-    excludedTweetIds: Option[Seq[Long]] = None,
-    maxUtegCandidates: Int,
-    maxTweetAge: Duration,
-    socialProofTypes: Option[Seq[SocialProofType]])
+  caselon class Quelonry(
+    uselonrId: UselonrId,
+    selonelondsWithWelonights: Map[UselonrId, Doublelon],
+    elonxcludelondTwelonelontIds: Option[Selonq[Long]] = Nonelon,
+    maxUtelongCandidatelons: Int,
+    maxTwelonelontAgelon: Duration,
+    socialProofTypelons: Option[Selonq[SocialProofTypelon]])
 
-  def fromParams(
-    userId: UserId,
-    seedsWithWeights: Map[UserId, Double],
-    excludedTweetIds: Option[Seq[TweetId]] = None,
+  delonf fromParams(
+    uselonrId: UselonrId,
+    selonelondsWithWelonights: Map[UselonrId, Doublelon],
+    elonxcludelondTwelonelontIds: Option[Selonq[TwelonelontId]] = Nonelon,
     params: configapi.Params,
-  ): EngineQuery[Query] = {
-    EngineQuery(
-      Query(
-        userId = userId,
-        seedsWithWeights = seedsWithWeights,
-        excludedTweetIds = excludedTweetIds,
-        maxUtegCandidates = params(UtegTweetGlobalParams.MaxUtegCandidatesToRequestParam),
-        maxTweetAge = params(UtegTweetGlobalParams.CandidateRefreshSinceTimeOffsetHoursParam),
-        socialProofTypes = Some(Seq(SocialProofType.Favorite))
+  ): elonnginelonQuelonry[Quelonry] = {
+    elonnginelonQuelonry(
+      Quelonry(
+        uselonrId = uselonrId,
+        selonelondsWithWelonights = selonelondsWithWelonights,
+        elonxcludelondTwelonelontIds = elonxcludelondTwelonelontIds,
+        maxUtelongCandidatelons = params(UtelongTwelonelontGlobalParams.MaxUtelongCandidatelonsToRelonquelonstParam),
+        maxTwelonelontAgelon = params(UtelongTwelonelontGlobalParams.CandidatelonRelonfrelonshSincelonTimelonOffselontHoursParam),
+        socialProofTypelons = Somelon(Selonq(SocialProofTypelon.Favoritelon))
       ),
       params
     )

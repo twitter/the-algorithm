@@ -1,168 +1,168 @@
 scala_library(
-    sources = ["*.scala"],
+    sourcelons = ["*.scala"],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "escherbird/src/scala/com/twitter/escherbird/scalding/jobs/exportentities:entities-scala",
-        "escherbird/src/scala/com/twitter/escherbird/scalding/source/utt:utt_source-scala",
-        "interests-ds/src/main/scala/com/twitter/interests_ds/jobs/interests_service",
-        "interests-ds/src/main/scala/com/twitter/interests_ds/jobs/interests_service:user_topic_relation_snapshot-scala",
-        "src/scala/com/twitter/scalding_internal/dalv2",
-        "src/scala/com/twitter/scalding_internal/job",
-        "src/scala/com/twitter/scalding_internal/job/analytics_batch",
-        "src/scala/com/twitter/scalding_internal/source",
-        "src/scala/com/twitter/scalding_internal/source/lzo_scrooge",
-        "src/scala/com/twitter/simclusters_v2/candidate_source",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources",
-        "src/scala/com/twitter/simclusters_v2/scalding",
-        "src/scala/com/twitter/wtf/scalding/jobs/common:em_util",
-        "timelines/data_processing/jobs/metrics/per_topic_metrics:per_topic_aggregate_engagement-scala",
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        "elonschelonrbird/src/scala/com/twittelonr/elonschelonrbird/scalding/jobs/elonxportelonntitielons:elonntitielons-scala",
+        "elonschelonrbird/src/scala/com/twittelonr/elonschelonrbird/scalding/sourcelon/utt:utt_sourcelon-scala",
+        "intelonrelonsts-ds/src/main/scala/com/twittelonr/intelonrelonsts_ds/jobs/intelonrelonsts_selonrvicelon",
+        "intelonrelonsts-ds/src/main/scala/com/twittelonr/intelonrelonsts_ds/jobs/intelonrelonsts_selonrvicelon:uselonr_topic_relonlation_snapshot-scala",
+        "src/scala/com/twittelonr/scalding_intelonrnal/dalv2",
+        "src/scala/com/twittelonr/scalding_intelonrnal/job",
+        "src/scala/com/twittelonr/scalding_intelonrnal/job/analytics_batch",
+        "src/scala/com/twittelonr/scalding_intelonrnal/sourcelon",
+        "src/scala/com/twittelonr/scalding_intelonrnal/sourcelon/lzo_scroogelon",
+        "src/scala/com/twittelonr/simclustelonrs_v2/candidatelon_sourcelon",
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons",
+        "src/scala/com/twittelonr/simclustelonrs_v2/scalding",
+        "src/scala/com/twittelonr/wtf/scalding/jobs/common:elonm_util",
+        "timelonlinelons/data_procelonssing/jobs/melontrics/pelonr_topic_melontrics:pelonr_topic_aggrelongatelon_elonngagelonmelonnt-scala",
     ],
 )
 
 hadoop_binary(
-    name = "geopopular_top_tweets_impressed_topics",
-    main = "com.twitter.simclusters_v2.scalding.topic_recommendations.GeoPopularTopicsBatchApp",
+    namelon = "gelonopopular_top_twelonelonts_imprelonsselond_topics",
+    main = "com.twittelonr.simclustelonrs_v2.scalding.topic_reloncommelonndations.GelonoPopularTopicsBatchApp",
     platform = "java8",
-    runtime_platform = "java8",
+    runtimelon_platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
+        "bazelonl-compatiblelon",
+        "bazelonl-compatiblelon:migratelond",
+        "bazelonl-only",
     ],
-    dependencies = [
-        ":topic_recommendations",
+    delonpelonndelonncielons = [
+        ":topic_reloncommelonndations",
     ],
 )
 
 hadoop_binary(
-    name = "geopopular_top_tweets_impressed_topics_adhoc",
-    main = "com.twitter.simclusters_v2.scalding.topic_recommendations.GeoPopularTopicsAdhocApp",
+    namelon = "gelonopopular_top_twelonelonts_imprelonsselond_topics_adhoc",
+    main = "com.twittelonr.simclustelonrs_v2.scalding.topic_reloncommelonndations.GelonoPopularTopicsAdhocApp",
     platform = "java8",
-    runtime_platform = "java8",
+    runtimelon_platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
+        "bazelonl-compatiblelon",
+        "bazelonl-compatiblelon:migratelond",
+        "bazelonl-only",
     ],
-    dependencies = [
-        ":topic_recommendations",
+    delonpelonndelonncielons = [
+        ":topic_reloncommelonndations",
     ],
 )
 
 hadoop_binary(
-    name = "similar_topics_from_topic_follow_graph",
-    main = "com.twitter.simclusters_v2.scalding.topic_recommendations.SimilarTopicsFromTopicFollowGraphScheduledApp",
+    namelon = "similar_topics_from_topic_follow_graph",
+    main = "com.twittelonr.simclustelonrs_v2.scalding.topic_reloncommelonndations.SimilarTopicsFromTopicFollowGraphSchelondulelondApp",
     platform = "java8",
-    runtime_platform = "java8",
+    runtimelon_platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
+        "bazelonl-compatiblelon",
+        "bazelonl-compatiblelon:migratelond",
+        "bazelonl-only",
     ],
-    dependencies = [
-        ":topic_recommendations",
+    delonpelonndelonncielons = [
+        ":topic_reloncommelonndations",
     ],
 )
 
 hadoop_binary(
-    name = "similar_topics_from_topic_follow_graph-adhoc",
-    main = "com.twitter.simclusters_v2.scalding.topic_recommendations.SimilarTopicsFromTopicFollowGraphAdhocApp",
+    namelon = "similar_topics_from_topic_follow_graph-adhoc",
+    main = "com.twittelonr.simclustelonrs_v2.scalding.topic_reloncommelonndations.SimilarTopicsFromTopicFollowGraphAdhocApp",
     platform = "java8",
-    runtime_platform = "java8",
+    runtimelon_platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
+        "bazelonl-compatiblelon",
+        "bazelonl-compatiblelon:migratelond",
+        "bazelonl-only",
     ],
-    dependencies = [
-        ":topic_recommendations",
+    delonpelonndelonncielons = [
+        ":topic_reloncommelonndations",
     ],
 )
 
 hadoop_binary(
-    name = "top_topics_for_producers_from_em",
-    main = "com.twitter.simclusters_v2.scalding.topic_recommendations.TopicsForProducersFromEMBatchApp",
+    namelon = "top_topics_for_producelonrs_from_elonm",
+    main = "com.twittelonr.simclustelonrs_v2.scalding.topic_reloncommelonndations.TopicsForProducelonrsFromelonMBatchApp",
     platform = "java8",
-    runtime_platform = "java8",
+    runtimelon_platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
+        "bazelonl-compatiblelon",
+        "bazelonl-compatiblelon:migratelond",
+        "bazelonl-only",
     ],
-    dependencies = [
-        ":topic_recommendations",
+    delonpelonndelonncielons = [
+        ":topic_reloncommelonndations",
     ],
 )
 
 hadoop_binary(
-    name = "top_topics_for_producers_from_em-adhoc",
-    main = "com.twitter.simclusters_v2.scalding.topic_recommendations.TopicsForProducersFromEMAdhocApp",
+    namelon = "top_topics_for_producelonrs_from_elonm-adhoc",
+    main = "com.twittelonr.simclustelonrs_v2.scalding.topic_reloncommelonndations.TopicsForProducelonrsFromelonMAdhocApp",
     platform = "java8",
-    runtime_platform = "java8",
+    runtimelon_platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
+        "bazelonl-compatiblelon",
+        "bazelonl-compatiblelon:migratelond",
+        "bazelonl-only",
     ],
-    dependencies = [
-        ":topic_recommendations",
+    delonpelonndelonncielons = [
+        ":topic_reloncommelonndations",
     ],
 )
 
 hadoop_binary(
-    name = "top_producers_for_topics_from_topic_follow_graph",
-    main = "com.twitter.simclusters_v2.scalding.topic_recommendations.ProducersForTopicsFromTopicFollowGraphBatchApp",
+    namelon = "top_producelonrs_for_topics_from_topic_follow_graph",
+    main = "com.twittelonr.simclustelonrs_v2.scalding.topic_reloncommelonndations.ProducelonrsForTopicsFromTopicFollowGraphBatchApp",
     platform = "java8",
-    runtime_platform = "java8",
+    runtimelon_platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
+        "bazelonl-compatiblelon",
+        "bazelonl-compatiblelon:migratelond",
+        "bazelonl-only",
     ],
-    dependencies = [
-        ":topic_recommendations",
+    delonpelonndelonncielons = [
+        ":topic_reloncommelonndations",
     ],
 )
 
 hadoop_binary(
-    name = "top_producers_for_topics_from_topic_follow_graph-adhoc",
-    main = "com.twitter.simclusters_v2.scalding.topic_recommendations.ProducersForTopicsFromTopicFollowGraphAdhocApp",
+    namelon = "top_producelonrs_for_topics_from_topic_follow_graph-adhoc",
+    main = "com.twittelonr.simclustelonrs_v2.scalding.topic_reloncommelonndations.ProducelonrsForTopicsFromTopicFollowGraphAdhocApp",
     platform = "java8",
-    runtime_platform = "java8",
+    runtimelon_platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
+        "bazelonl-compatiblelon",
+        "bazelonl-compatiblelon:migratelond",
+        "bazelonl-only",
     ],
-    dependencies = [
-        ":topic_recommendations",
+    delonpelonndelonncielons = [
+        ":topic_reloncommelonndations",
     ],
 )
 
-# Generated with `capesospy-v2 create_target popular_topics_per_country src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml`, config hash beffad.
+# Gelonnelonratelond with `capelonsospy-v2 crelonatelon_targelont popular_topics_pelonr_country src/scala/com/twittelonr/simclustelonrs_v2/capelonsos_config/atla_proc3.yaml`, config hash belonffad.
 scalding_job(
-    name = "popular_topics_per_country",
-    main = "com.twitter.simclusters_v2.scalding.topic_recommendations.GeoPopularTopicsBatchApp",
+    namelon = "popular_topics_pelonr_country",
+    main = "com.twittelonr.simclustelonrs_v2.scalding.topic_reloncommelonndations.GelonoPopularTopicsBatchApp",
     args = ["--maxTopics 100"],
     config = [
-        ("hadoop.combine-input", "true"),
-        ("hadoop.map.jvm.total-memory", "3072m"),
-        ("hadoop.queue", "cassowary.default"),
-        ("hadoop.reduce.jvm.total-memory", "3072m"),
-        ("hadoop.submitter.jvm.total-memory", "5120m"),
-        ("submitter.tier", "preemptible"),
+        ("hadoop.combinelon-input", "truelon"),
+        ("hadoop.map.jvm.total-melonmory", "3072m"),
+        ("hadoop.quelonuelon", "cassowary.delonfault"),
+        ("hadoop.relonducelon.jvm.total-melonmory", "3072m"),
+        ("hadoop.submittelonr.jvm.total-melonmory", "5120m"),
+        ("submittelonr.tielonr", "prelonelonmptiblelon"),
     ],
     cron = "16 * * * *",
-    hadoop_cluster = "atla-proc3",
+    hadoop_clustelonr = "atla-proc3",
     platform = "java8",
-    role = "cassowary",
-    runtime_platform = "java8",
+    rolelon = "cassowary",
+    runtimelon_platform = "java8",
     tags = [
-        "bazel-compatible:migrated",
-        "bazel-only",
+        "bazelonl-compatiblelon:migratelond",
+        "bazelonl-only",
     ],
-    dependencies = [
-        ":topic_recommendations",
+    delonpelonndelonncielons = [
+        ":topic_reloncommelonndations",
     ],
 )

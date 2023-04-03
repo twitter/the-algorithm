@@ -1,175 +1,175 @@
-package com.twitter.follow_recommendations.flows.post_nux_ml
+packagelon com.twittelonr.follow_reloncommelonndations.flows.post_nux_ml
 
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.Param
+import com.twittelonr.timelonlinelons.configapi.FSBoundelondParam
+import com.twittelonr.timelonlinelons.configapi.Param
 
-abstract class PostNuxMlCandidateSourceWeightParams[A](default: A) extends Param[A](default) {
-  override val statName: String = "post_nux_ml/" + this.getClass.getSimpleName
+abstract class PostNuxMlCandidatelonSourcelonWelonightParams[A](delonfault: A) elonxtelonnds Param[A](delonfault) {
+  ovelonrridelon val statNamelon: String = "post_nux_ml/" + this.gelontClass.gelontSimplelonNamelon
 }
 
-object PostNuxMlCandidateSourceWeightParams {
+objelonct PostNuxMlCandidatelonSourcelonWelonightParams {
 
-  case object CandidateWeightCrowdSearch
-      extends FSBoundedParam[Double](
-        PostNuxMlFlowCandidateSourceWeightsFeatureSwitchKeys.CandidateWeightCrowdSearch,
-        1.0,
-        0.0,
-        1000.0
-      )
-
-  case object CandidateWeightTopOrganicFollow
-      extends FSBoundedParam[Double](
-        PostNuxMlFlowCandidateSourceWeightsFeatureSwitchKeys.CandidateWeightTopOrganicFollow,
-        1.0,
-        0.0,
-        1000.0
-      )
-  case object CandidateWeightPPMILocaleFollow
-      extends FSBoundedParam[Double](
-        PostNuxMlFlowCandidateSourceWeightsFeatureSwitchKeys.CandidateWeightPPMILocaleFollow,
+  caselon objelonct CandidatelonWelonightCrowdSelonarch
+      elonxtelonnds FSBoundelondParam[Doublelon](
+        PostNuxMlFlowCandidatelonSourcelonWelonightsFelonaturelonSwitchKelonys.CandidatelonWelonightCrowdSelonarch,
         1.0,
         0.0,
         1000.0
       )
 
-  case object CandidateWeightForwardEmailBook
-      extends FSBoundedParam[Double](
-        PostNuxMlFlowCandidateSourceWeightsFeatureSwitchKeys.CandidateWeightForwardEmailBook,
+  caselon objelonct CandidatelonWelonightTopOrganicFollow
+      elonxtelonnds FSBoundelondParam[Doublelon](
+        PostNuxMlFlowCandidatelonSourcelonWelonightsFelonaturelonSwitchKelonys.CandidatelonWelonightTopOrganicFollow,
         1.0,
         0.0,
         1000.0
       )
-  case object CandidateWeightForwardPhoneBook
-      extends FSBoundedParam[Double](
-        PostNuxMlFlowCandidateSourceWeightsFeatureSwitchKeys.CandidateWeightForwardPhoneBook,
+  caselon objelonct CandidatelonWelonightPPMILocalelonFollow
+      elonxtelonnds FSBoundelondParam[Doublelon](
+        PostNuxMlFlowCandidatelonSourcelonWelonightsFelonaturelonSwitchKelonys.CandidatelonWelonightPPMILocalelonFollow,
         1.0,
         0.0,
         1000.0
       )
 
-  case object CandidateWeightOfflineStrongTiePrediction
-      extends FSBoundedParam[Double](
-        PostNuxMlFlowCandidateSourceWeightsFeatureSwitchKeys.CandidateWeightOfflineStrongTiePrediction,
+  caselon objelonct CandidatelonWelonightForwardelonmailBook
+      elonxtelonnds FSBoundelondParam[Doublelon](
+        PostNuxMlFlowCandidatelonSourcelonWelonightsFelonaturelonSwitchKelonys.CandidatelonWelonightForwardelonmailBook,
         1.0,
         0.0,
         1000.0
       )
-  case object CandidateWeightOnlineStp
-      extends FSBoundedParam[Double](
-        PostNuxMlFlowCandidateSourceWeightsFeatureSwitchKeys.CandidateWeightOnlineStp,
+  caselon objelonct CandidatelonWelonightForwardPhonelonBook
+      elonxtelonnds FSBoundelondParam[Doublelon](
+        PostNuxMlFlowCandidatelonSourcelonWelonightsFelonaturelonSwitchKelonys.CandidatelonWelonightForwardPhonelonBook,
         1.0,
         0.0,
         1000.0
       )
-  case object CandidateWeightPopCountry
-      extends FSBoundedParam[Double](
-        PostNuxMlFlowCandidateSourceWeightsFeatureSwitchKeys.CandidateWeightPopCountry,
+
+  caselon objelonct CandidatelonWelonightOfflinelonStrongTielonPrelondiction
+      elonxtelonnds FSBoundelondParam[Doublelon](
+        PostNuxMlFlowCandidatelonSourcelonWelonightsFelonaturelonSwitchKelonys.CandidatelonWelonightOfflinelonStrongTielonPrelondiction,
         1.0,
         0.0,
         1000.0
       )
-  case object CandidateWeightPopGeohash
-      extends FSBoundedParam[Double](
-        PostNuxMlFlowCandidateSourceWeightsFeatureSwitchKeys.CandidateWeightPopGeohash,
+  caselon objelonct CandidatelonWelonightOnlinelonStp
+      elonxtelonnds FSBoundelondParam[Doublelon](
+        PostNuxMlFlowCandidatelonSourcelonWelonightsFelonaturelonSwitchKelonys.CandidatelonWelonightOnlinelonStp,
         1.0,
         0.0,
         1000.0
       )
-  case object CandidateWeightPopGeohashQualityFollow
-      extends FSBoundedParam[Double](
-        PostNuxMlFlowCandidateSourceWeightsFeatureSwitchKeys.CandidateWeightPopGeohashQualityFollow,
+  caselon objelonct CandidatelonWelonightPopCountry
+      elonxtelonnds FSBoundelondParam[Doublelon](
+        PostNuxMlFlowCandidatelonSourcelonWelonightsFelonaturelonSwitchKelonys.CandidatelonWelonightPopCountry,
         1.0,
         0.0,
         1000.0
       )
-  case object CandidateWeightPopGeoBackfill
-      extends FSBoundedParam[Double](
-        PostNuxMlFlowCandidateSourceWeightsFeatureSwitchKeys.CandidateWeightPopGeoBackfill,
+  caselon objelonct CandidatelonWelonightPopGelonohash
+      elonxtelonnds FSBoundelondParam[Doublelon](
+        PostNuxMlFlowCandidatelonSourcelonWelonightsFelonaturelonSwitchKelonys.CandidatelonWelonightPopGelonohash,
+        1.0,
+        0.0,
+        1000.0
+      )
+  caselon objelonct CandidatelonWelonightPopGelonohashQualityFollow
+      elonxtelonnds FSBoundelondParam[Doublelon](
+        PostNuxMlFlowCandidatelonSourcelonWelonightsFelonaturelonSwitchKelonys.CandidatelonWelonightPopGelonohashQualityFollow,
+        1.0,
+        0.0,
+        1000.0
+      )
+  caselon objelonct CandidatelonWelonightPopGelonoBackfill
+      elonxtelonnds FSBoundelondParam[Doublelon](
+        PostNuxMlFlowCandidatelonSourcelonWelonightsFelonaturelonSwitchKelonys.CandidatelonWelonightPopGelonoBackfill,
         1,
         0.0,
         1000.0
       )
-  case object CandidateWeightRecentFollowingSimilarUsers
-      extends FSBoundedParam[Double](
-        PostNuxMlFlowCandidateSourceWeightsFeatureSwitchKeys.CandidateWeightRecentFollowingSimilarUsers,
+  caselon objelonct CandidatelonWelonightReloncelonntFollowingSimilarUselonrs
+      elonxtelonnds FSBoundelondParam[Doublelon](
+        PostNuxMlFlowCandidatelonSourcelonWelonightsFelonaturelonSwitchKelonys.CandidatelonWelonightReloncelonntFollowingSimilarUselonrs,
         1.0,
         0.0,
         1000.0
       )
-  case object CandidateWeightRecentEngagementDirectFollowSalsaExpansion
-      extends FSBoundedParam[Double](
-        PostNuxMlFlowCandidateSourceWeightsFeatureSwitchKeys.CandidateWeightRecentEngagementDirectFollowSalsaExpansion,
+  caselon objelonct CandidatelonWelonightReloncelonntelonngagelonmelonntDirelonctFollowSalsaelonxpansion
+      elonxtelonnds FSBoundelondParam[Doublelon](
+        PostNuxMlFlowCandidatelonSourcelonWelonightsFelonaturelonSwitchKelonys.CandidatelonWelonightReloncelonntelonngagelonmelonntDirelonctFollowSalsaelonxpansion,
         1.0,
         0.0,
         1000.0
       )
-  case object CandidateWeightRecentEngagementNonDirectFollow
-      extends FSBoundedParam[Double](
-        PostNuxMlFlowCandidateSourceWeightsFeatureSwitchKeys.CandidateWeightRecentEngagementNonDirectFollow,
+  caselon objelonct CandidatelonWelonightReloncelonntelonngagelonmelonntNonDirelonctFollow
+      elonxtelonnds FSBoundelondParam[Doublelon](
+        PostNuxMlFlowCandidatelonSourcelonWelonightsFelonaturelonSwitchKelonys.CandidatelonWelonightReloncelonntelonngagelonmelonntNonDirelonctFollow,
         1.0,
         0.0,
         1000.0
       )
-  case object CandidateWeightRecentEngagementSimilarUsers
-      extends FSBoundedParam[Double](
-        PostNuxMlFlowCandidateSourceWeightsFeatureSwitchKeys.CandidateWeightRecentEngagementSimilarUsers,
+  caselon objelonct CandidatelonWelonightReloncelonntelonngagelonmelonntSimilarUselonrs
+      elonxtelonnds FSBoundelondParam[Doublelon](
+        PostNuxMlFlowCandidatelonSourcelonWelonightsFelonaturelonSwitchKelonys.CandidatelonWelonightReloncelonntelonngagelonmelonntSimilarUselonrs,
         1.0,
         0.0,
         1000.0
       )
-  case object CandidateWeightRepeatedProfileVisits
-      extends FSBoundedParam[Double](
-        PostNuxMlFlowCandidateSourceWeightsFeatureSwitchKeys.CandidateWeightRepeatedProfileVisits,
+  caselon objelonct CandidatelonWelonightRelonpelonatelondProfilelonVisits
+      elonxtelonnds FSBoundelondParam[Doublelon](
+        PostNuxMlFlowCandidatelonSourcelonWelonightsFelonaturelonSwitchKelonys.CandidatelonWelonightRelonpelonatelondProfilelonVisits,
         1.0,
         0.0,
         1000.0
       )
-  case object CandidateWeightFollow2vecNearestNeighbors
-      extends FSBoundedParam[Double](
-        PostNuxMlFlowCandidateSourceWeightsFeatureSwitchKeys.CandidateWeightFollow2vecNearestNeighbors,
+  caselon objelonct CandidatelonWelonightFollow2veloncNelonarelonstNelonighbors
+      elonxtelonnds FSBoundelondParam[Doublelon](
+        PostNuxMlFlowCandidatelonSourcelonWelonightsFelonaturelonSwitchKelonys.CandidatelonWelonightFollow2veloncNelonarelonstNelonighbors,
         1.0,
         0.0,
         1000.0
       )
-  case object CandidateWeightReverseEmailBook
-      extends FSBoundedParam[Double](
-        PostNuxMlFlowCandidateSourceWeightsFeatureSwitchKeys.CandidateWeightReverseEmailBook,
+  caselon objelonct CandidatelonWelonightRelonvelonrselonelonmailBook
+      elonxtelonnds FSBoundelondParam[Doublelon](
+        PostNuxMlFlowCandidatelonSourcelonWelonightsFelonaturelonSwitchKelonys.CandidatelonWelonightRelonvelonrselonelonmailBook,
         1.0,
         0.0,
         1000.0
       )
-  case object CandidateWeightReversePhoneBook
-      extends FSBoundedParam[Double](
-        PostNuxMlFlowCandidateSourceWeightsFeatureSwitchKeys.CandidateWeightReversePhoneBook,
+  caselon objelonct CandidatelonWelonightRelonvelonrselonPhonelonBook
+      elonxtelonnds FSBoundelondParam[Doublelon](
+        PostNuxMlFlowCandidatelonSourcelonWelonightsFelonaturelonSwitchKelonys.CandidatelonWelonightRelonvelonrselonPhonelonBook,
         1.0,
         0.0,
         1000.0
       )
-  case object CandidateWeightTriangularLoops
-      extends FSBoundedParam[Double](
-        PostNuxMlFlowCandidateSourceWeightsFeatureSwitchKeys.CandidateWeightTriangularLoops,
+  caselon objelonct CandidatelonWelonightTriangularLoops
+      elonxtelonnds FSBoundelondParam[Doublelon](
+        PostNuxMlFlowCandidatelonSourcelonWelonightsFelonaturelonSwitchKelonys.CandidatelonWelonightTriangularLoops,
         1.0,
         0.0,
         1000.0
       )
-  case object CandidateWeightTwoHopRandomWalk
-      extends FSBoundedParam[Double](
-        PostNuxMlFlowCandidateSourceWeightsFeatureSwitchKeys.CandidateWeightTwoHopRandomWalk,
+  caselon objelonct CandidatelonWelonightTwoHopRandomWalk
+      elonxtelonnds FSBoundelondParam[Doublelon](
+        PostNuxMlFlowCandidatelonSourcelonWelonightsFelonaturelonSwitchKelonys.CandidatelonWelonightTwoHopRandomWalk,
         1.0,
         0.0,
         1000.0
       )
-  case object CandidateWeightUserUserGraph
-      extends FSBoundedParam[Double](
-        PostNuxMlFlowCandidateSourceWeightsFeatureSwitchKeys.CandidateWeightUserUserGraph,
+  caselon objelonct CandidatelonWelonightUselonrUselonrGraph
+      elonxtelonnds FSBoundelondParam[Doublelon](
+        PostNuxMlFlowCandidatelonSourcelonWelonightsFelonaturelonSwitchKelonys.CandidatelonWelonightUselonrUselonrGraph,
         1.0,
         0.0,
         1000.0
       )
 
-  case object CandidateWeightRealGraphOonV2
-      extends FSBoundedParam[Double](
-        PostNuxMlFlowCandidateSourceWeightsFeatureSwitchKeys.CandidateWeightRealGraphOonV2,
+  caselon objelonct CandidatelonWelonightRelonalGraphOonV2
+      elonxtelonnds FSBoundelondParam[Doublelon](
+        PostNuxMlFlowCandidatelonSourcelonWelonightsFelonaturelonSwitchKelonys.CandidatelonWelonightRelonalGraphOonV2,
         1.0,
         0.0,
         2000.0

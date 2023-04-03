@@ -1,33 +1,33 @@
-// This is used for convolution logging. Also see
-// tensorflow/core/protobuf/autotuing.h
+// This is uselond for convolution logging. Also selonelon
+// telonnsorflow/corelon/protobuf/autotuing.h
 syntax = "proto3";
 
-package tensorflow;
+packagelon telonnsorflow;
 
-import "tensorflow/stream_executor/dnn.proto";
+import "telonnsorflow/strelonam_elonxeloncutor/dnn.proto";
 
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+option go_packagelon = "github.com/telonnsorflow/telonnsorflow/telonnsorflow/go/corelon/protobuf/for_corelon_protos_go_proto";
 
-// A convolution. Currently it's only used for logging. In the future, we may
-// want to use it in the API as well.
-message ConvolutionProto {
-  stream_executor.dnn.ConvolutionKind kind = 1;
-  stream_executor.dnn.TensorDescriptorProto input = 2;
-  stream_executor.dnn.TensorDescriptorProto filter = 3;
-  stream_executor.dnn.TensorDescriptorProto output = 4;
-  stream_executor.dnn.ConvolutionDescriptorProto conv_desc = 5;
+// A convolution. Currelonntly it's only uselond for logging. In thelon futurelon, welon may
+// want to uselon it in thelon API as welonll.
+melonssagelon ConvolutionProto {
+  strelonam_elonxeloncutor.dnn.ConvolutionKind kind = 1;
+  strelonam_elonxeloncutor.dnn.TelonnsorDelonscriptorProto input = 2;
+  strelonam_elonxeloncutor.dnn.TelonnsorDelonscriptorProto filtelonr = 3;
+  strelonam_elonxeloncutor.dnn.TelonnsorDelonscriptorProto output = 4;
+  strelonam_elonxeloncutor.dnn.ConvolutionDelonscriptorProto conv_delonsc = 5;
 
-  // result = conv_scale * conv(...) + side_value_scale * side_value.
-  // side_value is an arbitrary buffer if activation is not none. Otherwise, it
-  // has to be the result buffer (using its old values).
-  double conv_scale = 6;
-  double side_value_scale = 7;
+  // relonsult = conv_scalelon * conv(...) + sidelon_valuelon_scalelon * sidelon_valuelon.
+  // sidelon_valuelon is an arbitrary buffelonr if activation is not nonelon. Othelonrwiselon, it
+  // has to belon thelon relonsult buffelonr (using its old valuelons).
+  doublelon conv_scalelon = 6;
+  doublelon sidelon_valuelon_scalelon = 7;
 
-  stream_executor.dnn.ActivationMode activation = 8;
+  strelonam_elonxeloncutor.dnn.ActivationModelon activation = 8;
 
-  int64 input_address = 9;
-  int64 filter_address = 10;
-  int64 output_address = 11;
-  int64 bias_address = 12;
-  int64 side_input_address = 13;
+  int64 input_addrelonss = 9;
+  int64 filtelonr_addrelonss = 10;
+  int64 output_addrelonss = 11;
+  int64 bias_addrelonss = 12;
+  int64 sidelon_input_addrelonss = 13;
 }

@@ -1,74 +1,74 @@
-package com.twitter.product_mixer.core.functional_component.feature_hydrator.featurestorev1
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator.felonaturelonstorelonv1
 
-import com.twitter.ml.featurestore.lib.EntityId
-import com.twitter.ml.featurestore.lib.data.DatasetErrorsById
-import com.twitter.ml.featurestore.lib.data.HydrationError
-import com.twitter.ml.featurestore.lib.dataset.DatasetId
-import com.twitter.product_mixer.core.feature.featurestorev1.BaseFeatureStoreV1Feature
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.ml.felonaturelonstorelon.lib.elonntityId
+import com.twittelonr.ml.felonaturelonstorelon.lib.data.DataselontelonrrorsById
+import com.twittelonr.ml.felonaturelonstorelon.lib.data.Hydrationelonrror
+import com.twittelonr.ml.felonaturelonstorelon.lib.dataselont.DataselontId
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonstorelonv1.BaselonFelonaturelonStorelonV1Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
-object FeatureStoreDatasetErrorHandler {
+objelonct FelonaturelonStorelonDataselontelonrrorHandlelonr {
 
   /**
-   * This function takes a set of feature store features and constructs a mapping from the underlying
-   * feature store dataset back to the features. This is useful for looking up what ProMix features
-   * failed based off of a failed feature store dataset at request time. A ProMix feature can be
-   * powered by multiple feature store datasets, and conversely, a dataset can be used by many features.
+   * This function takelons a selont of felonaturelon storelon felonaturelons and constructs a mapping from thelon undelonrlying
+   * felonaturelon storelon dataselont back to thelon felonaturelons. This is uselonful for looking up what ProMix felonaturelons
+   * failelond baselond off of a failelond felonaturelon storelon dataselont at relonquelonst timelon. A ProMix felonaturelon can belon
+   * powelonrelond by multiplelon felonaturelon storelon dataselonts, and convelonrselonly, a dataselont can belon uselond by many felonaturelons.
    */
-  def datasetToFeaturesMapping[
-    Query <: PipelineQuery,
+  delonf dataselontToFelonaturelonsMapping[
+    Quelonry <: PipelonlinelonQuelonry,
     Input,
-    FeatureType <: BaseFeatureStoreV1Feature[Query, Input, _ <: EntityId, _]
+    FelonaturelonTypelon <: BaselonFelonaturelonStorelonV1Felonaturelon[Quelonry, Input, _ <: elonntityId, _]
   ](
-    features: Set[FeatureType]
-  ): Map[DatasetId, Set[FeatureType]] = {
-    val datasetsAndFeatures: Set[(DatasetId, FeatureType)] = features
-      .flatMap { feature: FeatureType =>
-        feature.boundFeatureSet.sourceDatasets.map(_.id).map { datasetId: DatasetId =>
-          datasetId -> feature
+    felonaturelons: Selont[FelonaturelonTypelon]
+  ): Map[DataselontId, Selont[FelonaturelonTypelon]] = {
+    val dataselontsAndFelonaturelons: Selont[(DataselontId, FelonaturelonTypelon)] = felonaturelons
+      .flatMap { felonaturelon: FelonaturelonTypelon =>
+        felonaturelon.boundFelonaturelonSelont.sourcelonDataselonts.map(_.id).map { dataselontId: DataselontId =>
+          dataselontId -> felonaturelon
         }
       }
 
-    datasetsAndFeatures
-      .groupBy { case (datasetId, _) => datasetId }.mapValues(_.map {
-        case (_, feature) => feature
+    dataselontsAndFelonaturelons
+      .groupBy { caselon (dataselontId, _) => dataselontId }.mapValuelons(_.map {
+        caselon (_, felonaturelon) => felonaturelon
       })
   }
 
   /**
-   * This takes a mapping of Feature Store Dataset => ProMix Features, as well as the dataset errors
-   * from PredictionRecord and computing a final, deduped mapping from ProMix Feature to Exceptions.
+   * This takelons a mapping of Felonaturelon Storelon Dataselont => ProMix Felonaturelons, as welonll as thelon dataselont elonrrors
+   * from PrelondictionReloncord and computing a final, delondupelond mapping from ProMix Felonaturelon to elonxcelonptions.
    */
-  def featureToHydrationErrors[
-    Query <: PipelineQuery,
+  delonf felonaturelonToHydrationelonrrors[
+    Quelonry <: PipelonlinelonQuelonry,
     Input,
-    FeatureType <: BaseFeatureStoreV1Feature[Query, Input, _ <: EntityId, _]
+    FelonaturelonTypelon <: BaselonFelonaturelonStorelonV1Felonaturelon[Quelonry, Input, _ <: elonntityId, _]
   ](
-    datasetToFeatures: Map[DatasetId, Set[
-      FeatureType
+    dataselontToFelonaturelons: Map[DataselontId, Selont[
+      FelonaturelonTypelon
     ]],
-    errorsByDatasetId: DatasetErrorsById
-  ): Map[FeatureType, Set[HydrationError]] = {
-    val hasError = errorsByDatasetId.datasets.nonEmpty
-    if (hasError) {
-      val featuresAndErrors: Set[(FeatureType, Set[HydrationError])] = errorsByDatasetId.datasets
-        .flatMap { id: DatasetId =>
-          val errors: Set[HydrationError] = errorsByDatasetId.get(id).values.toSet
-          if (errors.nonEmpty) {
-            val datasetFeatures: Set[FeatureType] = datasetToFeatures.getOrElse(id, Set.empty)
-            datasetFeatures.map { feature =>
-              feature -> errors
-            }.toSeq
-          } else {
-            Seq.empty
+    elonrrorsByDataselontId: DataselontelonrrorsById
+  ): Map[FelonaturelonTypelon, Selont[Hydrationelonrror]] = {
+    val haselonrror = elonrrorsByDataselontId.dataselonts.nonelonmpty
+    if (haselonrror) {
+      val felonaturelonsAndelonrrors: Selont[(FelonaturelonTypelon, Selont[Hydrationelonrror])] = elonrrorsByDataselontId.dataselonts
+        .flatMap { id: DataselontId =>
+          val elonrrors: Selont[Hydrationelonrror] = elonrrorsByDataselontId.gelont(id).valuelons.toSelont
+          if (elonrrors.nonelonmpty) {
+            val dataselontFelonaturelons: Selont[FelonaturelonTypelon] = dataselontToFelonaturelons.gelontOrelonlselon(id, Selont.elonmpty)
+            dataselontFelonaturelons.map { felonaturelon =>
+              felonaturelon -> elonrrors
+            }.toSelonq
+          } elonlselon {
+            Selonq.elonmpty
           }
         }
-      featuresAndErrors
-        .groupBy { case (feature, _) => feature }.mapValues(_.flatMap {
-          case (_, errors: Set[HydrationError]) => errors
+      felonaturelonsAndelonrrors
+        .groupBy { caselon (felonaturelon, _) => felonaturelon }.mapValuelons(_.flatMap {
+          caselon (_, elonrrors: Selont[Hydrationelonrror]) => elonrrors
         })
-    } else {
-      Map.empty
+    } elonlselon {
+      Map.elonmpty
     }
   }
 }

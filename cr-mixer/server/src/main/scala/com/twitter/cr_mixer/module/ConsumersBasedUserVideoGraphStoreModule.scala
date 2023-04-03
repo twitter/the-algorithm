@@ -1,29 +1,29 @@
-package com.twitter.cr_mixer.module
+packagelon com.twittelonr.cr_mixelonr.modulelon
 
-import com.google.inject.Provides
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.inject.TwitterModule
-import com.twitter.recos.user_video_graph.thriftscala.ConsumersBasedRelatedTweetRequest
-import com.twitter.recos.user_video_graph.thriftscala.RelatedTweetResponse
-import com.twitter.recos.user_video_graph.thriftscala.UserVideoGraph
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
-import javax.inject.Named
-import javax.inject.Singleton
+import com.googlelon.injelonct.Providelons
+import com.twittelonr.cr_mixelonr.modelonl.ModulelonNamelons
+import com.twittelonr.injelonct.TwittelonrModulelon
+import com.twittelonr.reloncos.uselonr_videlono_graph.thriftscala.ConsumelonrsBaselondRelonlatelondTwelonelontRelonquelonst
+import com.twittelonr.reloncos.uselonr_videlono_graph.thriftscala.RelonlatelondTwelonelontRelonsponselon
+import com.twittelonr.reloncos.uselonr_videlono_graph.thriftscala.UselonrVidelonoGraph
+import com.twittelonr.storelonhaus.RelonadablelonStorelon
+import com.twittelonr.util.Futurelon
+import javax.injelonct.Namelond
+import javax.injelonct.Singlelonton
 
-object ConsumersBasedUserVideoGraphStoreModule extends TwitterModule {
+objelonct ConsumelonrsBaselondUselonrVidelonoGraphStorelonModulelon elonxtelonnds TwittelonrModulelon {
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.ConsumerBasedUserVideoGraphStore)
-  def providesConsumerBasedUserVideoGraphStore(
-    userVideoGraphService: UserVideoGraph.MethodPerEndpoint
-  ): ReadableStore[ConsumersBasedRelatedTweetRequest, RelatedTweetResponse] = {
-    new ReadableStore[ConsumersBasedRelatedTweetRequest, RelatedTweetResponse] {
-      override def get(
-        k: ConsumersBasedRelatedTweetRequest
-      ): Future[Option[RelatedTweetResponse]] = {
-        userVideoGraphService.consumersBasedRelatedTweets(k).map(Some(_))
+  @Providelons
+  @Singlelonton
+  @Namelond(ModulelonNamelons.ConsumelonrBaselondUselonrVidelonoGraphStorelon)
+  delonf providelonsConsumelonrBaselondUselonrVidelonoGraphStorelon(
+    uselonrVidelonoGraphSelonrvicelon: UselonrVidelonoGraph.MelonthodPelonrelonndpoint
+  ): RelonadablelonStorelon[ConsumelonrsBaselondRelonlatelondTwelonelontRelonquelonst, RelonlatelondTwelonelontRelonsponselon] = {
+    nelonw RelonadablelonStorelon[ConsumelonrsBaselondRelonlatelondTwelonelontRelonquelonst, RelonlatelondTwelonelontRelonsponselon] {
+      ovelonrridelon delonf gelont(
+        k: ConsumelonrsBaselondRelonlatelondTwelonelontRelonquelonst
+      ): Futurelon[Option[RelonlatelondTwelonelontRelonsponselon]] = {
+        uselonrVidelonoGraphSelonrvicelon.consumelonrsBaselondRelonlatelondTwelonelonts(k).map(Somelon(_))
       }
     }
   }

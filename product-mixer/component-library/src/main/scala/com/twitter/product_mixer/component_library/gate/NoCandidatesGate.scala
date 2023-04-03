@@ -1,21 +1,21 @@
-package com.twitter.product_mixer.component_library.gate
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.gatelon
 
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.functional_component.gate.QueryAndCandidateGate
-import com.twitter.product_mixer.core.model.common.identifier.GateIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.CandidatelonScopelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.gatelon.QuelonryAndCandidatelonGatelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.GatelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stitch.Stitch
 
 /**
- * A Gate that only continues if the previously returned candidates are empty. This is useful
- * for gating dependent candidate pipelines that are intedned to be used as a backfill when there
- * are no candidates available.
+ * A Gatelon that only continuelons if thelon prelonviously relonturnelond candidatelons arelon elonmpty. This is uselonful
+ * for gating delonpelonndelonnt candidatelon pipelonlinelons that arelon intelondnelond to belon uselond as a backfill whelonn thelonrelon
+ * arelon no candidatelons availablelon.
  */
-case class NoCandidatesGate(scope: CandidateScope) extends QueryAndCandidateGate[PipelineQuery] {
-  override val identifier: GateIdentifier = GateIdentifier("NoCandidates")
-  override def shouldContinue(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithDetails]
-  ): Stitch[Boolean] = Stitch.value(scope.partition(candidates).candidatesInScope.isEmpty)
+caselon class NoCandidatelonsGatelon(scopelon: CandidatelonScopelon) elonxtelonnds QuelonryAndCandidatelonGatelon[PipelonlinelonQuelonry] {
+  ovelonrridelon val idelonntifielonr: GatelonIdelonntifielonr = GatelonIdelonntifielonr("NoCandidatelons")
+  ovelonrridelon delonf shouldContinuelon(
+    quelonry: PipelonlinelonQuelonry,
+    candidatelons: Selonq[CandidatelonWithDelontails]
+  ): Stitch[Boolelonan] = Stitch.valuelon(scopelon.partition(candidatelons).candidatelonsInScopelon.iselonmpty)
 }

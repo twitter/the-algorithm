@@ -1,52 +1,52 @@
-package com.twitter.product_mixer.core.pipeline.step
+packagelon com.twittelonr.product_mixelonr.corelon.pipelonlinelon.stelonp
 
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.product_mixer.core.service.ExecutorResult
-import com.twitter.stitch.Arrow
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.elonxeloncutor
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.elonxeloncutorRelonsult
+import com.twittelonr.stitch.Arrow
 
 /**
- * A Step within a Pipeline, a Step is a unitary phase within an entire chain that makes up a pipeline.
- * @tparam State The request domain model.
- * @tparam ExecutorConfig The configs that should be passed into the executor at build time.
- * @tparam ExecutorInput The input type that an executor takes at request time.
- * @tparam ExResult The result that a step's executor will return.
- * @tparam OutputState The final/updated state a step would output, this is typically taking the ExResult
- *                     and mutating/transforming the State.
+ * A Stelonp within a Pipelonlinelon, a Stelonp is a unitary phaselon within an elonntirelon chain that makelons up a pipelonlinelon.
+ * @tparam Statelon Thelon relonquelonst domain modelonl.
+ * @tparam elonxeloncutorConfig Thelon configs that should belon passelond into thelon elonxeloncutor at build timelon.
+ * @tparam elonxeloncutorInput Thelon input typelon that an elonxeloncutor takelons at relonquelonst timelon.
+ * @tparam elonxRelonsult Thelon relonsult that a stelonp's elonxeloncutor will relonturn.
+ * @tparam OutputStatelon Thelon final/updatelond statelon a stelonp would output, this is typically taking thelon elonxRelonsult
+ *                     and mutating/transforming thelon Statelon.
  */
-trait Step[State, -Config, ExecutorInput, ExResult <: ExecutorResult] {
+trait Stelonp[Statelon, -Config, elonxeloncutorInput, elonxRelonsult <: elonxeloncutorRelonsult] {
 
   /**
-   * Adapt the state into the expected input for the Step's Arrow.
+   * Adapt thelon statelon into thelon elonxpelonctelond input for thelon Stelonp's Arrow.
    *
-   * @param state State object passed into the Step.
-   * @param config The config object used to build the executor arrow or input.
-   * @return ExecutorInput that is used in the arrow of the underlying executor.
+   * @param statelon Statelon objelonct passelond into thelon Stelonp.
+   * @param config Thelon config objelonct uselond to build thelon elonxeloncutor arrow or input.
+   * @relonturn elonxeloncutorInput that is uselond in thelon arrow of thelon undelonrlying elonxeloncutor.
    */
-  def adaptInput(state: State, config: Config): ExecutorInput
+  delonf adaptInput(statelon: Statelon, config: Config): elonxeloncutorInput
 
   /**
-   * The actual arrow to be executed for the step, taking in the adapted input from [[adaptInput]]
-   * and returning the expected result.
-   * @param config Runtime configurations to configure the arrow with.
-   * @param context Context of Executor.
+   * Thelon actual arrow to belon elonxeloncutelond for thelon stelonp, taking in thelon adaptelond input from [[adaptInput]]
+   * and relonturning thelon elonxpelonctelond relonsult.
+   * @param config Runtimelon configurations to configurelon thelon arrow with.
+   * @param contelonxt Contelonxt of elonxeloncutor.
    */
-  def arrow(
+  delonf arrow(
     config: Config,
-    context: Executor.Context
-  ): Arrow[ExecutorInput, ExResult]
+    contelonxt: elonxeloncutor.Contelonxt
+  ): Arrow[elonxeloncutorInput, elonxRelonsult]
 
   /**
-   * Whether the step is considered a noop/empty based off of input being passed in. Empty
-   * steps are skipped when being executed.
+   * Whelonthelonr thelon stelonp is considelonrelond a noop/elonmpty baselond off of input beloning passelond in. elonmpty
+   * stelonps arelon skippelond whelonn beloning elonxeloncutelond.
    */
-  def isEmpty(config: Config): Boolean
+  delonf iselonmpty(config: Config): Boolelonan
 
   /**
-   * Update the passed in state based off of the result from [[arrow]]
-   * @param state State object passed into the Step.
-   * @param executorResult Executor result returned from [[arrow]]
-   * @param config The config object used to build the executor arrow or input.
-   * @return Updated state object passed.
+   * Updatelon thelon passelond in statelon baselond off of thelon relonsult from [[arrow]]
+   * @param statelon Statelon objelonct passelond into thelon Stelonp.
+   * @param elonxeloncutorRelonsult elonxeloncutor relonsult relonturnelond from [[arrow]]
+   * @param config Thelon config objelonct uselond to build thelon elonxeloncutor arrow or input.
+   * @relonturn Updatelond statelon objelonct passelond.
    */
-  def updateState(state: State, executorResult: ExResult, config: Config): State
+  delonf updatelonStatelon(statelon: Statelon, elonxeloncutorRelonsult: elonxRelonsult, config: Config): Statelon
 }

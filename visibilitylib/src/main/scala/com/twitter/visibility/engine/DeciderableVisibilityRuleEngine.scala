@@ -1,26 +1,26 @@
-package com.twitter.visibility.engine
+packagelon com.twittelonr.visibility.elonnginelon
 
-import com.twitter.servo.util.Gate
-import com.twitter.spam.rtf.thriftscala.{SafetyLevel => ThriftSafetyLevel}
-import com.twitter.stitch.Stitch
-import com.twitter.visibility.builder.VisibilityResult
-import com.twitter.visibility.builder.VisibilityResultBuilder
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.rules.EvaluationContext
-import com.twitter.visibility.rules.Rule
+import com.twittelonr.selonrvo.util.Gatelon
+import com.twittelonr.spam.rtf.thriftscala.{SafelontyLelonvelonl => ThriftSafelontyLelonvelonl}
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.visibility.buildelonr.VisibilityRelonsult
+import com.twittelonr.visibility.buildelonr.VisibilityRelonsultBuildelonr
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl
+import com.twittelonr.visibility.rulelons.elonvaluationContelonxt
+import com.twittelonr.visibility.rulelons.Rulelon
 
-trait DeciderableVisibilityRuleEngine {
-  def apply(
-    evaluationContext: EvaluationContext,
-    safetyLevel: SafetyLevel,
-    visibilityResultBuilder: VisibilityResultBuilder,
-    enableShortCircuiting: Gate[Unit] = Gate.True,
-    preprocessedRules: Option[Seq[Rule]] = None
-  ): Stitch[VisibilityResult]
+trait DeloncidelonrablelonVisibilityRulelonelonnginelon {
+  delonf apply(
+    elonvaluationContelonxt: elonvaluationContelonxt,
+    safelontyLelonvelonl: SafelontyLelonvelonl,
+    visibilityRelonsultBuildelonr: VisibilityRelonsultBuildelonr,
+    elonnablelonShortCircuiting: Gatelon[Unit] = Gatelon.Truelon,
+    prelonprocelonsselondRulelons: Option[Selonq[Rulelon]] = Nonelon
+  ): Stitch[VisibilityRelonsult]
 
-  def apply(
-    evaluationContext: EvaluationContext,
-    thriftSafetyLevel: ThriftSafetyLevel,
-    visibilityResultBuilder: VisibilityResultBuilder
-  ): Stitch[VisibilityResult]
+  delonf apply(
+    elonvaluationContelonxt: elonvaluationContelonxt,
+    thriftSafelontyLelonvelonl: ThriftSafelontyLelonvelonl,
+    visibilityRelonsultBuildelonr: VisibilityRelonsultBuildelonr
+  ): Stitch[VisibilityRelonsult]
 }

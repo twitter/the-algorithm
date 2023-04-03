@@ -1,22 +1,22 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.tweet
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.itelonm.twelonelont
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.highlight.HighlightedSectionMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet.TweetHighlights
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.itelonm.highlight.HighlightelondSelonctionMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.twelonelont.TwelonelontHighlights
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class TweetHighlightsMarshaller @Inject() (
-  highlightedSectionMarshaller: HighlightedSectionMarshaller) {
+@Singlelonton
+class TwelonelontHighlightsMarshallelonr @Injelonct() (
+  highlightelondSelonctionMarshallelonr: HighlightelondSelonctionMarshallelonr) {
 
-  def apply(tweetHighlights: TweetHighlights): urt.TweetHighlights =
-    urt.TweetHighlights(
-      textHighlights = tweetHighlights.textHighlights
-        .map(_.map(highlightedSectionMarshaller(_))),
-      cardTitleHighlights = tweetHighlights.cardTitleHighlights
-        .map(_.map(highlightedSectionMarshaller(_))),
-      cardDescriptionHighlights = tweetHighlights.cardDescriptionHighlights
-        .map(_.map(highlightedSectionMarshaller(_)))
+  delonf apply(twelonelontHighlights: TwelonelontHighlights): urt.TwelonelontHighlights =
+    urt.TwelonelontHighlights(
+      telonxtHighlights = twelonelontHighlights.telonxtHighlights
+        .map(_.map(highlightelondSelonctionMarshallelonr(_))),
+      cardTitlelonHighlights = twelonelontHighlights.cardTitlelonHighlights
+        .map(_.map(highlightelondSelonctionMarshallelonr(_))),
+      cardDelonscriptionHighlights = twelonelontHighlights.cardDelonscriptionHighlights
+        .map(_.map(highlightelondSelonctionMarshallelonr(_)))
     )
 }

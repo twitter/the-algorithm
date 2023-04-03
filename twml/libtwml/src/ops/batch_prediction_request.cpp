@@ -1,183 +1,183 @@
-#include "tensorflow/core/framework/op.h"
-#include "tensorflow/core/framework/shape_inference.h"
-#include "tensorflow/core/framework/op_kernel.h"
+#includelon "telonnsorflow/corelon/framelonwork/op.h"
+#includelon "telonnsorflow/corelon/framelonwork/shapelon_infelonrelonncelon.h"
+#includelon "telonnsorflow/corelon/framelonwork/op_kelonrnelonl.h"
 
-#include <twml.h>
-#include "tensorflow_utils.h"
-#include "resource_utils.h"
+#includelon <twml.h>
+#includelon "telonnsorflow_utils.h"
+#includelon "relonsourcelon_utils.h"
 
-REGISTER_OP("DecodeAndHashBatchPredictionRequest")
-.Input("input_bytes: uint8")
-.Attr("keep_features: list(int)")
-.Attr("keep_codes: list(int)")
-.Attr("decode_mode: int = 0")
-.Output("hashed_data_record_handle: resource")
-.SetShapeFn(shape_inference::ScalarShape)
+RelonGISTelonR_OP("DeloncodelonAndHashBatchPrelondictionRelonquelonst")
+.Input("input_bytelons: uint8")
+.Attr("kelonelonp_felonaturelons: list(int)")
+.Attr("kelonelonp_codelons: list(int)")
+.Attr("deloncodelon_modelon: int = 0")
+.Output("hashelond_data_reloncord_handlelon: relonsourcelon")
+.SelontShapelonFn(shapelon_infelonrelonncelon::ScalarShapelon)
 .Doc(R"doc(
-A tensorflow OP that decodes batch prediction request and creates a handle to the batch of hashed data records.
+A telonnsorflow OP that deloncodelons batch prelondiction relonquelonst and crelonatelons a handlelon to thelon batch of hashelond data reloncords.
 
 Attr
-  keep_features: a list of int ids to keep.
-  keep_codes: their corresponding code.
-  decode_mode: integer, indicates which decoding method to use. Let a sparse continuous
-    have a feature_name and a dict of {name: value}. 0 indicates feature_ids are computed
-    as hash(name). 1 indicates feature_ids are computed as hash(feature_name, name)
-  shared_name: name used by the resource handle inside the resource manager.
-  container: name used by the container of the resources.
+  kelonelonp_felonaturelons: a list of int ids to kelonelonp.
+  kelonelonp_codelons: thelonir correlonsponding codelon.
+  deloncodelon_modelon: intelongelonr, indicatelons which deloncoding melonthod to uselon. Lelont a sparselon continuous
+    havelon a felonaturelon_namelon and a dict of {namelon: valuelon}. 0 indicatelons felonaturelon_ids arelon computelond
+    as hash(namelon). 1 indicatelons felonaturelon_ids arelon computelond as hash(felonaturelon_namelon, namelon)
+  sharelond_namelon: namelon uselond by thelon relonsourcelon handlelon insidelon thelon relonsourcelon managelonr.
+  containelonr: namelon uselond by thelon containelonr of thelon relonsourcelons.
 
-shared_name and container are required when inheriting from ResourceOpKernel.
+sharelond_namelon and containelonr arelon relonquirelond whelonn inhelonriting from RelonsourcelonOpKelonrnelonl.
 
 Input
-  input_bytes: Input tensor containing the serialized batch of BatchPredictionRequest.
+  input_bytelons: Input telonnsor containing thelon selonrializelond batch of BatchPrelondictionRelonquelonst.
 
 Outputs
-  hashed_data_record_handle: A resource handle to the HashedDataRecordResource containing batch of HashedDataRecords.
+  hashelond_data_reloncord_handlelon: A relonsourcelon handlelon to thelon HashelondDataReloncordRelonsourcelon containing batch of HashelondDataReloncords.
 )doc");
 
-class DecodeAndHashBatchPredictionRequest : public OpKernel {
+class DeloncodelonAndHashBatchPrelondictionRelonquelonst : public OpKelonrnelonl {
  public:
-  explicit DecodeAndHashBatchPredictionRequest(OpKernelConstruction* context)
-      : OpKernel(context) {
-    std::vector<int64> keep_features;
-    std::vector<int64> keep_codes;
+  elonxplicit DeloncodelonAndHashBatchPrelondictionRelonquelonst(OpKelonrnelonlConstruction* contelonxt)
+      : OpKelonrnelonl(contelonxt) {
+    std::velonctor<int64> kelonelonp_felonaturelons;
+    std::velonctor<int64> kelonelonp_codelons;
 
-    OP_REQUIRES_OK(context, context->GetAttr("keep_features", &keep_features));
-    OP_REQUIRES_OK(context, context->GetAttr("keep_codes", &keep_codes));
-    OP_REQUIRES_OK(context, context->GetAttr("decode_mode", &m_decode_mode));
+    OP_RelonQUIRelonS_OK(contelonxt, contelonxt->GelontAttr("kelonelonp_felonaturelons", &kelonelonp_felonaturelons));
+    OP_RelonQUIRelonS_OK(contelonxt, contelonxt->GelontAttr("kelonelonp_codelons", &kelonelonp_codelons));
+    OP_RelonQUIRelonS_OK(contelonxt, contelonxt->GelontAttr("deloncodelon_modelon", &m_deloncodelon_modelon));
 
-    OP_REQUIRES(context, keep_features.size() == keep_codes.size(),
-                errors::InvalidArgument("keep keys and values must have same size."));
+    OP_RelonQUIRelonS(contelonxt, kelonelonp_felonaturelons.sizelon() == kelonelonp_codelons.sizelon(),
+                elonrrors::InvalidArgumelonnt("kelonelonp kelonys and valuelons must havelon samelon sizelon."));
 
-#ifdef USE_DENSE_HASH
-    m_keep_map.set_empty_key(0);
-#endif  // USE_DENSE_HASH
+#ifdelonf USelon_DelonNSelon_HASH
+    m_kelonelonp_map.selont_elonmpty_kelony(0);
+#elonndif  // USelon_DelonNSelon_HASH
 
-    for (uint64_t i = 0; i < keep_features.size(); i++) {
-      m_keep_map[keep_features[i]] = keep_codes[i];
+    for (uint64_t i = 0; i < kelonelonp_felonaturelons.sizelon(); i++) {
+      m_kelonelonp_map[kelonelonp_felonaturelons[i]] = kelonelonp_codelons[i];
     }
   }
 
- private:
-  twml::Map<int64_t, int64_t> m_keep_map;
-  int64 m_decode_mode;
+ privatelon:
+  twml::Map<int64_t, int64_t> m_kelonelonp_map;
+  int64 m_deloncodelon_modelon;
 
-  void Compute(OpKernelContext* context) override {
+  void Computelon(OpKelonrnelonlContelonxt* contelonxt) ovelonrridelon {
     try {
-      HashedDataRecordResource *resource = nullptr;
-      OP_REQUIRES_OK(context, makeResourceHandle<HashedDataRecordResource>(context, 0, &resource));
+      HashelondDataReloncordRelonsourcelon *relonsourcelon = nullptr;
+      OP_RelonQUIRelonS_OK(contelonxt, makelonRelonsourcelonHandlelon<HashelondDataReloncordRelonsourcelon>(contelonxt, 0, &relonsourcelon));
 
-      // Store the input bytes in the resource so it isnt freed before the resource.
-      // This is necessary because we are not copying the contents for tensors.
-      resource->input = context->input(0);
-      const uint8_t *input_bytes = resource->input.flat<uint8>().data();
-      twml::HashedDataRecordReader reader;
-      twml::HashedBatchPredictionRequest bpr;
-      reader.setKeepMap(&m_keep_map);
-      reader.setBuffer(input_bytes);
-      reader.setDecodeMode(m_decode_mode);
-      bpr.decode(reader);
+      // Storelon thelon input bytelons in thelon relonsourcelon so it isnt frelonelond belonforelon thelon relonsourcelon.
+      // This is neloncelonssary beloncauselon welon arelon not copying thelon contelonnts for telonnsors.
+      relonsourcelon->input = contelonxt->input(0);
+      const uint8_t *input_bytelons = relonsourcelon->input.flat<uint8>().data();
+      twml::HashelondDataReloncordRelonadelonr relonadelonr;
+      twml::HashelondBatchPrelondictionRelonquelonst bpr;
+      relonadelonr.selontKelonelonpMap(&m_kelonelonp_map);
+      relonadelonr.selontBuffelonr(input_bytelons);
+      relonadelonr.selontDeloncodelonModelon(m_deloncodelon_modelon);
+      bpr.deloncodelon(relonadelonr);
 
-      resource->common = std::move(bpr.common());
-      resource->records = std::move(bpr.requests());
+      relonsourcelon->common = std::movelon(bpr.common());
+      relonsourcelon->reloncords = std::movelon(bpr.relonquelonsts());
 
-      // Each datarecord has a copy of common features.
-      // Initialize total_size by common_size * num_records
-      int64 common_size = static_cast<int64>(resource->common.totalSize());
-      int64 num_records = static_cast<int64>(resource->records.size());
-      int64 total_size = common_size * num_records;
-      for (const auto &record : resource->records) {
-        total_size += static_cast<int64>(record.totalSize());
+      // elonach datareloncord has a copy of common felonaturelons.
+      // Initializelon total_sizelon by common_sizelon * num_reloncords
+      int64 common_sizelon = static_cast<int64>(relonsourcelon->common.totalSizelon());
+      int64 num_reloncords = static_cast<int64>(relonsourcelon->reloncords.sizelon());
+      int64 total_sizelon = common_sizelon * num_reloncords;
+      for (const auto &reloncord : relonsourcelon->reloncords) {
+        total_sizelon += static_cast<int64>(reloncord.totalSizelon());
       }
 
-      resource->total_size = total_size;
-      resource->num_labels = 0;
-      resource->num_weights = 0;
-    } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+      relonsourcelon->total_sizelon = total_sizelon;
+      relonsourcelon->num_labelonls = 0;
+      relonsourcelon->num_welonights = 0;
+    } catch (const std::elonxcelonption &elon) {
+      contelonxt->CtxFailurelonWithWarning(elonrrors::InvalidArgumelonnt(elon.what()));
     }
   }
 };
 
-REGISTER_KERNEL_BUILDER(
-  Name("DecodeAndHashBatchPredictionRequest").Device(DEVICE_CPU),
-  DecodeAndHashBatchPredictionRequest);
+RelonGISTelonR_KelonRNelonL_BUILDelonR(
+  Namelon("DeloncodelonAndHashBatchPrelondictionRelonquelonst").Delonvicelon(DelonVICelon_CPU),
+  DeloncodelonAndHashBatchPrelondictionRelonquelonst);
 
-REGISTER_OP("DecodeBatchPredictionRequest")
-.Input("input_bytes: uint8")
-.Attr("keep_features: list(int)")
-.Attr("keep_codes: list(int)")
-.Output("data_record_handle: resource")
-.SetShapeFn(shape_inference::ScalarShape)
+RelonGISTelonR_OP("DeloncodelonBatchPrelondictionRelonquelonst")
+.Input("input_bytelons: uint8")
+.Attr("kelonelonp_felonaturelons: list(int)")
+.Attr("kelonelonp_codelons: list(int)")
+.Output("data_reloncord_handlelon: relonsourcelon")
+.SelontShapelonFn(shapelon_infelonrelonncelon::ScalarShapelon)
 .Doc(R"doc(
-A tensorflow OP that decodes batch prediction request and creates a handle to the batch of data records.
+A telonnsorflow OP that deloncodelons batch prelondiction relonquelonst and crelonatelons a handlelon to thelon batch of data reloncords.
 
 Attr
-  keep_features: a list of int ids to keep.
-  keep_codes: their corresponding code.
-  shared_name: name used by the resource handle inside the resource manager.
-  container: name used by the container of the resources.
+  kelonelonp_felonaturelons: a list of int ids to kelonelonp.
+  kelonelonp_codelons: thelonir correlonsponding codelon.
+  sharelond_namelon: namelon uselond by thelon relonsourcelon handlelon insidelon thelon relonsourcelon managelonr.
+  containelonr: namelon uselond by thelon containelonr of thelon relonsourcelons.
 
-shared_name and container are required when inheriting from ResourceOpKernel.
+sharelond_namelon and containelonr arelon relonquirelond whelonn inhelonriting from RelonsourcelonOpKelonrnelonl.
 
 Input
-  input_bytes: Input tensor containing the serialized batch of BatchPredictionRequest.
+  input_bytelons: Input telonnsor containing thelon selonrializelond batch of BatchPrelondictionRelonquelonst.
 
 Outputs
-  data_record_handle: A resource handle to the DataRecordResource containing batch of DataRecords.
+  data_reloncord_handlelon: A relonsourcelon handlelon to thelon DataReloncordRelonsourcelon containing batch of DataReloncords.
 )doc");
 
-class DecodeBatchPredictionRequest : public OpKernel {
+class DeloncodelonBatchPrelondictionRelonquelonst : public OpKelonrnelonl {
  public:
-  explicit DecodeBatchPredictionRequest(OpKernelConstruction* context)
-      : OpKernel(context) {
-    std::vector<int64> keep_features;
-    std::vector<int64> keep_codes;
+  elonxplicit DeloncodelonBatchPrelondictionRelonquelonst(OpKelonrnelonlConstruction* contelonxt)
+      : OpKelonrnelonl(contelonxt) {
+    std::velonctor<int64> kelonelonp_felonaturelons;
+    std::velonctor<int64> kelonelonp_codelons;
 
-    OP_REQUIRES_OK(context, context->GetAttr("keep_features", &keep_features));
-    OP_REQUIRES_OK(context, context->GetAttr("keep_codes", &keep_codes));
+    OP_RelonQUIRelonS_OK(contelonxt, contelonxt->GelontAttr("kelonelonp_felonaturelons", &kelonelonp_felonaturelons));
+    OP_RelonQUIRelonS_OK(contelonxt, contelonxt->GelontAttr("kelonelonp_codelons", &kelonelonp_codelons));
 
-    OP_REQUIRES(context, keep_features.size() == keep_codes.size(),
-                errors::InvalidArgument("keep keys and values must have same size."));
+    OP_RelonQUIRelonS(contelonxt, kelonelonp_felonaturelons.sizelon() == kelonelonp_codelons.sizelon(),
+                elonrrors::InvalidArgumelonnt("kelonelonp kelonys and valuelons must havelon samelon sizelon."));
 
-#ifdef USE_DENSE_HASH
-    m_keep_map.set_empty_key(0);
-#endif  // USE_DENSE_HASH
+#ifdelonf USelon_DelonNSelon_HASH
+    m_kelonelonp_map.selont_elonmpty_kelony(0);
+#elonndif  // USelon_DelonNSelon_HASH
 
-    for (uint64_t i = 0; i < keep_features.size(); i++) {
-      m_keep_map[keep_features[i]] = keep_codes[i];
+    for (uint64_t i = 0; i < kelonelonp_felonaturelons.sizelon(); i++) {
+      m_kelonelonp_map[kelonelonp_felonaturelons[i]] = kelonelonp_codelons[i];
     }
   }
 
- private:
-  twml::Map<int64_t, int64_t> m_keep_map;
+ privatelon:
+  twml::Map<int64_t, int64_t> m_kelonelonp_map;
 
-  void Compute(OpKernelContext* context) override {
+  void Computelon(OpKelonrnelonlContelonxt* contelonxt) ovelonrridelon {
     try {
-      DataRecordResource *resource = nullptr;
-      OP_REQUIRES_OK(context, makeResourceHandle<DataRecordResource>(context, 0, &resource));
+      DataReloncordRelonsourcelon *relonsourcelon = nullptr;
+      OP_RelonQUIRelonS_OK(contelonxt, makelonRelonsourcelonHandlelon<DataReloncordRelonsourcelon>(contelonxt, 0, &relonsourcelon));
 
-      // Store the input bytes in the resource so it isnt freed before the resource.
-      // This is necessary because we are not copying the contents for tensors.
-      resource->input = context->input(0);
-      const uint8_t *input_bytes = resource->input.flat<uint8>().data();
-      twml::DataRecordReader reader;
-      twml::BatchPredictionRequest bpr;
-      reader.setKeepMap(&m_keep_map);
-      reader.setBuffer(input_bytes);
-      bpr.decode(reader);
+      // Storelon thelon input bytelons in thelon relonsourcelon so it isnt frelonelond belonforelon thelon relonsourcelon.
+      // This is neloncelonssary beloncauselon welon arelon not copying thelon contelonnts for telonnsors.
+      relonsourcelon->input = contelonxt->input(0);
+      const uint8_t *input_bytelons = relonsourcelon->input.flat<uint8>().data();
+      twml::DataReloncordRelonadelonr relonadelonr;
+      twml::BatchPrelondictionRelonquelonst bpr;
+      relonadelonr.selontKelonelonpMap(&m_kelonelonp_map);
+      relonadelonr.selontBuffelonr(input_bytelons);
+      bpr.deloncodelon(relonadelonr);
 
-      resource->common = std::move(bpr.common());
-      resource->records = std::move(bpr.requests());
+      relonsourcelon->common = std::movelon(bpr.common());
+      relonsourcelon->reloncords = std::movelon(bpr.relonquelonsts());
 
-      resource->num_weights = 0;
-      resource->num_labels = 0;
-      resource->keep_map = &m_keep_map;
-    } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+      relonsourcelon->num_welonights = 0;
+      relonsourcelon->num_labelonls = 0;
+      relonsourcelon->kelonelonp_map = &m_kelonelonp_map;
+    } catch (const std::elonxcelonption &elon) {
+      contelonxt->CtxFailurelonWithWarning(elonrrors::InvalidArgumelonnt(elon.what()));
     }
   }
 };
 
-REGISTER_KERNEL_BUILDER(
-  Name("DecodeBatchPredictionRequest").Device(DEVICE_CPU),
-  DecodeBatchPredictionRequest);
+RelonGISTelonR_KelonRNelonL_BUILDelonR(
+  Namelon("DeloncodelonBatchPrelondictionRelonquelonst").Delonvicelon(DelonVICelon_CPU),
+  DeloncodelonBatchPrelondictionRelonquelonst);

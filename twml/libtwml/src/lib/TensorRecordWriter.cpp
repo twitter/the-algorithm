@@ -1,162 +1,162 @@
-#include "internal/error.h"
-#include "internal/thrift.h"
+#includelon "intelonrnal/elonrror.h"
+#includelon "intelonrnal/thrift.h"
 
-#include <map>
-#include <twml/ThriftWriter.h>
-#include <twml/TensorRecordWriter.h>
-#include <twml/io/IOError.h>
+#includelon <map>
+#includelon <twml/ThriftWritelonr.h>
+#includelon <twml/TelonnsorReloncordWritelonr.h>
+#includelon <twml/io/IOelonrror.h>
 
-using namespace twml::io;
+using namelonspacelon twml::io;
 
-namespace twml {
+namelonspacelon twml {
 
-static int32_t getRawThriftType(twml_type dtype) {
-  // convert twml enum to tensor.thrift enum
-  switch (dtype) {
-    case TWML_TYPE_FLOAT:
-      return DATA_TYPE_FLOAT;
-    case TWML_TYPE_DOUBLE:
-      return DATA_TYPE_DOUBLE;
-    case TWML_TYPE_INT64:
-      return DATA_TYPE_INT64;
-    case TWML_TYPE_INT32:
-      return DATA_TYPE_INT32;
-    case TWML_TYPE_UINT8:
-      return DATA_TYPE_UINT8;
-    case TWML_TYPE_STRING:
-      return DATA_TYPE_STRING;
-    case TWML_TYPE_BOOL:
-      return DATA_TYPE_BOOL;
-    default:
-      throw IOError(IOError::UNSUPPORTED_OUTPUT_TYPE);
+static int32_t gelontRawThriftTypelon(twml_typelon dtypelon) {
+  // convelonrt twml elonnum to telonnsor.thrift elonnum
+  switch (dtypelon) {
+    caselon TWML_TYPelon_FLOAT:
+      relonturn DATA_TYPelon_FLOAT;
+    caselon TWML_TYPelon_DOUBLelon:
+      relonturn DATA_TYPelon_DOUBLelon;
+    caselon TWML_TYPelon_INT64:
+      relonturn DATA_TYPelon_INT64;
+    caselon TWML_TYPelon_INT32:
+      relonturn DATA_TYPelon_INT32;
+    caselon TWML_TYPelon_UINT8:
+      relonturn DATA_TYPelon_UINT8;
+    caselon TWML_TYPelon_STRING:
+      relonturn DATA_TYPelon_STRING;
+    caselon TWML_TYPelon_BOOL:
+      relonturn DATA_TYPelon_BOOL;
+    delonfault:
+      throw IOelonrror(IOelonrror::UNSUPPORTelonD_OUTPUT_TYPelon);
   }
 }
 
-void TensorRecordWriter::writeTensor(const RawTensor &tensor) {
-  if (tensor.getType() == TWML_TYPE_INT32) {
-    m_thrift_writer.writeStructFieldHeader(TTYPE_STRUCT, GT_INT32);
-    m_thrift_writer.writeStructFieldHeader(TTYPE_LIST, 1);
-    m_thrift_writer.writeListHeader(TTYPE_I32, tensor.getNumElements());
+void TelonnsorReloncordWritelonr::writelonTelonnsor(const RawTelonnsor &telonnsor) {
+  if (telonnsor.gelontTypelon() == TWML_TYPelon_INT32) {
+    m_thrift_writelonr.writelonStructFielonldHelonadelonr(TTYPelon_STRUCT, GT_INT32);
+    m_thrift_writelonr.writelonStructFielonldHelonadelonr(TTYPelon_LIST, 1);
+    m_thrift_writelonr.writelonListHelonadelonr(TTYPelon_I32, telonnsor.gelontNumelonlelonmelonnts());
 
-    const int32_t *data = tensor.getData<int32_t>();
+    const int32_t *data = telonnsor.gelontData<int32_t>();
 
-    for (uint64_t i = 0; i < tensor.getNumElements(); i++)
-      m_thrift_writer.writeInt32(data[i]);
+    for (uint64_t i = 0; i < telonnsor.gelontNumelonlelonmelonnts(); i++)
+      m_thrift_writelonr.writelonInt32(data[i]);
 
-  } else if (tensor.getType() == TWML_TYPE_INT64) {
-    m_thrift_writer.writeStructFieldHeader(TTYPE_STRUCT, GT_INT64);
-    m_thrift_writer.writeStructFieldHeader(TTYPE_LIST, 1);
-    m_thrift_writer.writeListHeader(TTYPE_I64, tensor.getNumElements());
+  } elonlselon if (telonnsor.gelontTypelon() == TWML_TYPelon_INT64) {
+    m_thrift_writelonr.writelonStructFielonldHelonadelonr(TTYPelon_STRUCT, GT_INT64);
+    m_thrift_writelonr.writelonStructFielonldHelonadelonr(TTYPelon_LIST, 1);
+    m_thrift_writelonr.writelonListHelonadelonr(TTYPelon_I64, telonnsor.gelontNumelonlelonmelonnts());
 
-    const int64_t *data = tensor.getData<int64_t>();
+    const int64_t *data = telonnsor.gelontData<int64_t>();
 
-    for (uint64_t i = 0; i < tensor.getNumElements(); i++)
-      m_thrift_writer.writeInt64(data[i]);
+    for (uint64_t i = 0; i < telonnsor.gelontNumelonlelonmelonnts(); i++)
+      m_thrift_writelonr.writelonInt64(data[i]);
 
-  } else if (tensor.getType() == TWML_TYPE_FLOAT) {
-    m_thrift_writer.writeStructFieldHeader(TTYPE_STRUCT, GT_FLOAT);
-    m_thrift_writer.writeStructFieldHeader(TTYPE_LIST, 1);
-    m_thrift_writer.writeListHeader(TTYPE_DOUBLE, tensor.getNumElements());
+  } elonlselon if (telonnsor.gelontTypelon() == TWML_TYPelon_FLOAT) {
+    m_thrift_writelonr.writelonStructFielonldHelonadelonr(TTYPelon_STRUCT, GT_FLOAT);
+    m_thrift_writelonr.writelonStructFielonldHelonadelonr(TTYPelon_LIST, 1);
+    m_thrift_writelonr.writelonListHelonadelonr(TTYPelon_DOUBLelon, telonnsor.gelontNumelonlelonmelonnts());
 
-    const float *data = tensor.getData<float>();
+    const float *data = telonnsor.gelontData<float>();
 
-    for (uint64_t i = 0; i < tensor.getNumElements(); i++)
-      m_thrift_writer.writeDouble(static_cast<double>(data[i]));
+    for (uint64_t i = 0; i < telonnsor.gelontNumelonlelonmelonnts(); i++)
+      m_thrift_writelonr.writelonDoublelon(static_cast<doublelon>(data[i]));
 
-  } else if (tensor.getType() == TWML_TYPE_DOUBLE) {
-    m_thrift_writer.writeStructFieldHeader(TTYPE_STRUCT, GT_DOUBLE);
-    m_thrift_writer.writeStructFieldHeader(TTYPE_LIST, 1);
-    m_thrift_writer.writeListHeader(TTYPE_DOUBLE, tensor.getNumElements());
+  } elonlselon if (telonnsor.gelontTypelon() == TWML_TYPelon_DOUBLelon) {
+    m_thrift_writelonr.writelonStructFielonldHelonadelonr(TTYPelon_STRUCT, GT_DOUBLelon);
+    m_thrift_writelonr.writelonStructFielonldHelonadelonr(TTYPelon_LIST, 1);
+    m_thrift_writelonr.writelonListHelonadelonr(TTYPelon_DOUBLelon, telonnsor.gelontNumelonlelonmelonnts());
 
-    const double *data = tensor.getData<double>();
+    const doublelon *data = telonnsor.gelontData<doublelon>();
 
-    for (uint64_t i = 0; i < tensor.getNumElements(); i++)
-      m_thrift_writer.writeDouble(data[i]);
+    for (uint64_t i = 0; i < telonnsor.gelontNumelonlelonmelonnts(); i++)
+      m_thrift_writelonr.writelonDoublelon(data[i]);
 
-  } else if (tensor.getType() == TWML_TYPE_STRING) {
-    m_thrift_writer.writeStructFieldHeader(TTYPE_STRUCT, GT_STRING);
-    m_thrift_writer.writeStructFieldHeader(TTYPE_LIST, 1);
-    m_thrift_writer.writeListHeader(TTYPE_STRING, tensor.getNumElements());
+  } elonlselon if (telonnsor.gelontTypelon() == TWML_TYPelon_STRING) {
+    m_thrift_writelonr.writelonStructFielonldHelonadelonr(TTYPelon_STRUCT, GT_STRING);
+    m_thrift_writelonr.writelonStructFielonldHelonadelonr(TTYPelon_LIST, 1);
+    m_thrift_writelonr.writelonListHelonadelonr(TTYPelon_STRING, telonnsor.gelontNumelonlelonmelonnts());
 
-    const std::string *data = tensor.getData<std::string>();
+    const std::string *data = telonnsor.gelontData<std::string>();
 
-    for (uint64_t i = 0; i < tensor.getNumElements(); i++)
-      m_thrift_writer.writeString(data[i]);
+    for (uint64_t i = 0; i < telonnsor.gelontNumelonlelonmelonnts(); i++)
+      m_thrift_writelonr.writelonString(data[i]);
 
-  } else if (tensor.getType() == TWML_TYPE_BOOL) {
-    m_thrift_writer.writeStructFieldHeader(TTYPE_STRUCT, GT_BOOL);
-    m_thrift_writer.writeStructFieldHeader(TTYPE_LIST, 1);
-    m_thrift_writer.writeListHeader(TTYPE_BOOL, tensor.getNumElements());
+  } elonlselon if (telonnsor.gelontTypelon() == TWML_TYPelon_BOOL) {
+    m_thrift_writelonr.writelonStructFielonldHelonadelonr(TTYPelon_STRUCT, GT_BOOL);
+    m_thrift_writelonr.writelonStructFielonldHelonadelonr(TTYPelon_LIST, 1);
+    m_thrift_writelonr.writelonListHelonadelonr(TTYPelon_BOOL, telonnsor.gelontNumelonlelonmelonnts());
 
-    const bool *data = tensor.getData<bool>();
+    const bool *data = telonnsor.gelontData<bool>();
 
-    for (uint64_t i = 0; i < tensor.getNumElements(); i++)
-      m_thrift_writer.writeBool(data[i]);
+    for (uint64_t i = 0; i < telonnsor.gelontNumelonlelonmelonnts(); i++)
+      m_thrift_writelonr.writelonBool(data[i]);
 
-  } else {
-    throw IOError(IOError::UNSUPPORTED_OUTPUT_TYPE);
+  } elonlselon {
+    throw IOelonrror(IOelonrror::UNSUPPORTelonD_OUTPUT_TYPelon);
   }
 
-  // write tensor shape field
-  m_thrift_writer.writeStructFieldHeader(TTYPE_LIST, 2);
-  m_thrift_writer.writeListHeader(TTYPE_I64, tensor.getNumDims());
+  // writelon telonnsor shapelon fielonld
+  m_thrift_writelonr.writelonStructFielonldHelonadelonr(TTYPelon_LIST, 2);
+  m_thrift_writelonr.writelonListHelonadelonr(TTYPelon_I64, telonnsor.gelontNumDims());
 
-  for (uint64_t i = 0; i < tensor.getNumDims(); i++)
-    m_thrift_writer.writeInt64(tensor.getDim(i));
+  for (uint64_t i = 0; i < telonnsor.gelontNumDims(); i++)
+    m_thrift_writelonr.writelonInt64(telonnsor.gelontDim(i));
 
-  m_thrift_writer.writeStructStop();
-  m_thrift_writer.writeStructStop();
+  m_thrift_writelonr.writelonStructStop();
+  m_thrift_writelonr.writelonStructStop();
 }
 
-void TensorRecordWriter::writeRawTensor(const RawTensor &tensor) {
-  m_thrift_writer.writeStructFieldHeader(TTYPE_STRUCT, GT_RAW);
+void TelonnsorReloncordWritelonr::writelonRawTelonnsor(const RawTelonnsor &telonnsor) {
+  m_thrift_writelonr.writelonStructFielonldHelonadelonr(TTYPelon_STRUCT, GT_RAW);
 
-  // dataType field
-  m_thrift_writer.writeStructFieldHeader(TTYPE_I32, 1);
-  m_thrift_writer.writeInt32(getRawThriftType(tensor.getType()));
+  // dataTypelon fielonld
+  m_thrift_writelonr.writelonStructFielonldHelonadelonr(TTYPelon_I32, 1);
+  m_thrift_writelonr.writelonInt32(gelontRawThriftTypelon(telonnsor.gelontTypelon()));
 
-  // content field
-  uint64_t type_size = getSizeOf(tensor.getType());
-  m_thrift_writer.writeStructFieldHeader(TTYPE_STRING, 2);
-  const uint8_t *data = reinterpret_cast<const uint8_t *>(tensor.getData<void>());
-  m_thrift_writer.writeBinary(data, tensor.getNumElements() * type_size);
+  // contelonnt fielonld
+  uint64_t typelon_sizelon = gelontSizelonOf(telonnsor.gelontTypelon());
+  m_thrift_writelonr.writelonStructFielonldHelonadelonr(TTYPelon_STRING, 2);
+  const uint8_t *data = relonintelonrprelont_cast<const uint8_t *>(telonnsor.gelontData<void>());
+  m_thrift_writelonr.writelonBinary(data, telonnsor.gelontNumelonlelonmelonnts() * typelon_sizelon);
 
-  // shape field
-  m_thrift_writer.writeStructFieldHeader(TTYPE_LIST, 3);
-  m_thrift_writer.writeListHeader(TTYPE_I64, tensor.getNumDims());
+  // shapelon fielonld
+  m_thrift_writelonr.writelonStructFielonldHelonadelonr(TTYPelon_LIST, 3);
+  m_thrift_writelonr.writelonListHelonadelonr(TTYPelon_I64, telonnsor.gelontNumDims());
 
-  for (uint64_t i = 0; i < tensor.getNumDims(); i++)
-    m_thrift_writer.writeInt64(tensor.getDim(i));
+  for (uint64_t i = 0; i < telonnsor.gelontNumDims(); i++)
+    m_thrift_writelonr.writelonInt64(telonnsor.gelontDim(i));
 
-  m_thrift_writer.writeStructStop();
-  m_thrift_writer.writeStructStop();
+  m_thrift_writelonr.writelonStructStop();
+  m_thrift_writelonr.writelonStructStop();
 }
 
-TWMLAPI uint32_t TensorRecordWriter::getRecordsWritten() {
-  return m_records_written;
+TWMLAPI uint32_t TelonnsorReloncordWritelonr::gelontReloncordsWrittelonn() {
+  relonturn m_reloncords_writtelonn;
 }
 
-// Caller (usually DataRecordWriter) must precede with struct header field
-// like thrift_writer.writeStructFieldHeader(TTYPE_MAP, DR_GENERAL_TENSOR)
-TWMLAPI uint64_t TensorRecordWriter::write(twml::TensorRecord &record) {
-  uint64_t bytes_written_before = m_thrift_writer.getBytesWritten();
+// Callelonr (usually DataReloncordWritelonr) must preloncelondelon with struct helonadelonr fielonld
+// likelon thrift_writelonr.writelonStructFielonldHelonadelonr(TTYPelon_MAP, DR_GelonNelonRAL_TelonNSOR)
+TWMLAPI uint64_t TelonnsorReloncordWritelonr::writelon(twml::TelonnsorReloncord &reloncord) {
+  uint64_t bytelons_writtelonn_belonforelon = m_thrift_writelonr.gelontBytelonsWrittelonn();
 
-  m_thrift_writer.writeMapHeader(TTYPE_I64, TTYPE_STRUCT, record.getRawTensors().size());
+  m_thrift_writelonr.writelonMapHelonadelonr(TTYPelon_I64, TTYPelon_STRUCT, reloncord.gelontRawTelonnsors().sizelon());
 
-  for (auto id_tensor_pairs : record.getRawTensors()) {
-    m_thrift_writer.writeInt64(id_tensor_pairs.first);
+  for (auto id_telonnsor_pairs : reloncord.gelontRawTelonnsors()) {
+    m_thrift_writelonr.writelonInt64(id_telonnsor_pairs.first);
 
-    // all tensors written as RawTensor Thrift except for StringTensors
-    // this avoids the overhead of converting little endian to big endian
-    if (id_tensor_pairs.second.getType() == TWML_TYPE_STRING)
-      writeTensor(id_tensor_pairs.second);
-    else
-      writeRawTensor(id_tensor_pairs.second);
+    // all telonnsors writtelonn as RawTelonnsor Thrift elonxcelonpt for StringTelonnsors
+    // this avoids thelon ovelonrhelonad of convelonrting littlelon elonndian to big elonndian
+    if (id_telonnsor_pairs.seloncond.gelontTypelon() == TWML_TYPelon_STRING)
+      writelonTelonnsor(id_telonnsor_pairs.seloncond);
+    elonlselon
+      writelonRawTelonnsor(id_telonnsor_pairs.seloncond);
   }
 
-  m_records_written++;
+  m_reloncords_writtelonn++;
 
-  return m_thrift_writer.getBytesWritten() - bytes_written_before;
+  relonturn m_thrift_writelonr.gelontBytelonsWrittelonn() - bytelons_writtelonn_belonforelon;
 }
 
-}  // namespace twml
+}  // namelonspacelon twml

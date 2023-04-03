@@ -1,49 +1,49 @@
-package com.twitter.home_mixer.controller
+packagelon com.twittelonr.homelon_mixelonr.controllelonr
 
-import com.twitter.finatra.thrift.Controller
-import com.twitter.home_mixer.marshaller.request.HomeMixerRequestUnmarshaller
-import com.twitter.home_mixer.model.request.HomeMixerRequest
-import com.twitter.home_mixer.service.ScoredTweetsService
-import com.twitter.home_mixer.{thriftscala => t}
-import com.twitter.product_mixer.core.controllers.DebugTwitterContext
-import com.twitter.product_mixer.core.functional_component.configapi.ParamsBuilder
-import com.twitter.product_mixer.core.service.urt.UrtService
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.Params
-import javax.inject.Inject
+import com.twittelonr.finatra.thrift.Controllelonr
+import com.twittelonr.homelon_mixelonr.marshallelonr.relonquelonst.HomelonMixelonrRelonquelonstUnmarshallelonr
+import com.twittelonr.homelon_mixelonr.modelonl.relonquelonst.HomelonMixelonrRelonquelonst
+import com.twittelonr.homelon_mixelonr.selonrvicelon.ScorelondTwelonelontsSelonrvicelon
+import com.twittelonr.homelon_mixelonr.{thriftscala => t}
+import com.twittelonr.product_mixelonr.corelon.controllelonrs.DelonbugTwittelonrContelonxt
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.configapi.ParamsBuildelonr
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.urt.UrtSelonrvicelon
+import com.twittelonr.snowflakelon.id.SnowflakelonId
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.timelonlinelons.configapi.Params
+import javax.injelonct.Injelonct
 
-class HomeThriftController @Inject() (
-  homeRequestUnmarshaller: HomeMixerRequestUnmarshaller,
-  urtService: UrtService,
-  scoredTweetsService: ScoredTweetsService,
-  paramsBuilder: ParamsBuilder)
-    extends Controller(t.HomeMixer)
-    with DebugTwitterContext {
+class HomelonThriftControllelonr @Injelonct() (
+  homelonRelonquelonstUnmarshallelonr: HomelonMixelonrRelonquelonstUnmarshallelonr,
+  urtSelonrvicelon: UrtSelonrvicelon,
+  scorelondTwelonelontsSelonrvicelon: ScorelondTwelonelontsSelonrvicelon,
+  paramsBuildelonr: ParamsBuildelonr)
+    elonxtelonnds Controllelonr(t.HomelonMixelonr)
+    with DelonbugTwittelonrContelonxt {
 
-  handle(t.HomeMixer.GetUrtResponse) { args: t.HomeMixer.GetUrtResponse.Args =>
-    val request = homeRequestUnmarshaller(args.request)
-    val params = buildParams(request)
-    Stitch.run(urtService.getUrtResponse[HomeMixerRequest](request, params))
+  handlelon(t.HomelonMixelonr.GelontUrtRelonsponselon) { args: t.HomelonMixelonr.GelontUrtRelonsponselon.Args =>
+    val relonquelonst = homelonRelonquelonstUnmarshallelonr(args.relonquelonst)
+    val params = buildParams(relonquelonst)
+    Stitch.run(urtSelonrvicelon.gelontUrtRelonsponselon[HomelonMixelonrRelonquelonst](relonquelonst, params))
   }
 
-  handle(t.HomeMixer.GetScoredTweetsResponse) { args: t.HomeMixer.GetScoredTweetsResponse.Args =>
-    val request = homeRequestUnmarshaller(args.request)
-    val params = buildParams(request)
-    withDebugTwitterContext(request.clientContext) {
-      Stitch.run(scoredTweetsService.getScoredTweetsResponse[HomeMixerRequest](request, params))
+  handlelon(t.HomelonMixelonr.GelontScorelondTwelonelontsRelonsponselon) { args: t.HomelonMixelonr.GelontScorelondTwelonelontsRelonsponselon.Args =>
+    val relonquelonst = homelonRelonquelonstUnmarshallelonr(args.relonquelonst)
+    val params = buildParams(relonquelonst)
+    withDelonbugTwittelonrContelonxt(relonquelonst.clielonntContelonxt) {
+      Stitch.run(scorelondTwelonelontsSelonrvicelon.gelontScorelondTwelonelontsRelonsponselon[HomelonMixelonrRelonquelonst](relonquelonst, params))
     }
   }
 
-  private def buildParams(request: HomeMixerRequest): Params = {
-    val userAgeOpt = request.clientContext.userId.map { userId =>
-      SnowflakeId.timeFromIdOpt(userId).map(_.untilNow.inDays).getOrElse(Int.MaxValue)
+  privatelon delonf buildParams(relonquelonst: HomelonMixelonrRelonquelonst): Params = {
+    val uselonrAgelonOpt = relonquelonst.clielonntContelonxt.uselonrId.map { uselonrId =>
+      SnowflakelonId.timelonFromIdOpt(uselonrId).map(_.untilNow.inDays).gelontOrelonlselon(Int.MaxValuelon)
     }
-    val fsCustomMapInput = userAgeOpt.map("account_age_in_days" -> _).toMap
-    paramsBuilder.build(
-      clientContext = request.clientContext,
-      product = request.product,
-      featureOverrides = request.debugParams.flatMap(_.featureOverrides).getOrElse(Map.empty),
+    val fsCustomMapInput = uselonrAgelonOpt.map("account_agelon_in_days" -> _).toMap
+    paramsBuildelonr.build(
+      clielonntContelonxt = relonquelonst.clielonntContelonxt,
+      product = relonquelonst.product,
+      felonaturelonOvelonrridelons = relonquelonst.delonbugParams.flatMap(_.felonaturelonOvelonrridelons).gelontOrelonlselon(Map.elonmpty),
       fsCustomMapInput = fsCustomMapInput
     )
   }

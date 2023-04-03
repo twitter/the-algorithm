@@ -1,136 +1,136 @@
-package com.twitter.product_mixer.core.service.feature_hydrator_observer
+packagelon com.twittelonr.product_mixelonr.corelon.selonrvicelon.felonaturelon_hydrator_obselonrvelonr
 
-import com.twitter.finagle.stats.BroadcastStatsReceiver
-import com.twitter.finagle.stats.Counter
-import com.twitter.finagle.stats.RollupStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.ml.featurestore.lib.data.HydrationError
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featurestorev1.featurevalue.FeatureStoreV1ResponseFeature
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.FeatureHydrator
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.featurestorev1.FeatureStoreV1CandidateFeatureHydrator
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.featurestorev1.FeatureStoreV1QueryFeatureHydrator
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.product_mixer.shared_library.observer.Observer
-import com.twitter.servo.util.CancelledExceptionExtractor
-import com.twitter.util.Throw
-import com.twitter.util.Throwables
+import com.twittelonr.finaglelon.stats.BroadcastStatsReloncelonivelonr
+import com.twittelonr.finaglelon.stats.Countelonr
+import com.twittelonr.finaglelon.stats.RollupStatsReloncelonivelonr
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.ml.felonaturelonstorelon.lib.data.Hydrationelonrror
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonstorelonv1.felonaturelonvaluelon.FelonaturelonStorelonV1RelonsponselonFelonaturelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator.FelonaturelonHydrator
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator.felonaturelonstorelonv1.FelonaturelonStorelonV1CandidatelonFelonaturelonHydrator
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator.felonaturelonstorelonv1.FelonaturelonStorelonV1QuelonryFelonaturelonHydrator
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.ComponelonntIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.elonxeloncutor
+import com.twittelonr.product_mixelonr.sharelond_library.obselonrvelonr.Obselonrvelonr
+import com.twittelonr.selonrvo.util.Cancelonllelondelonxcelonptionelonxtractor
+import com.twittelonr.util.Throw
+import com.twittelonr.util.Throwablelons
 
-class FeatureHydratorObserver(
-  statsReceiver: StatsReceiver,
-  hydrators: Seq[FeatureHydrator[_]],
-  context: Executor.Context) {
+class FelonaturelonHydratorObselonrvelonr(
+  statsReloncelonivelonr: StatsReloncelonivelonr,
+  hydrators: Selonq[FelonaturelonHydrator[_]],
+  contelonxt: elonxeloncutor.Contelonxt) {
 
-  private val hydratorAndFeatureToStats: Map[
-    ComponentIdentifier,
-    Map[Feature[_, _], FeatureCounters]
+  privatelon val hydratorAndFelonaturelonToStats: Map[
+    ComponelonntIdelonntifielonr,
+    Map[Felonaturelon[_, _], FelonaturelonCountelonrs]
   ] =
     hydrators.map { hydrator =>
-      val hydratorScope = Executor.buildScopes(context, hydrator.identifier)
-      val featureToCounterMap: Map[Feature[_, _], FeatureCounters] = hydrator.features
-        .asInstanceOf[Set[Feature[_, _]]].map { feature =>
-          val scopedStats = scopedBroadcastStats(hydratorScope, feature)
-          // Initialize so we have them registered
-          val requestsCounter = scopedStats.counter(Observer.Requests)
-          val successCounter = scopedStats.counter(Observer.Success)
-          // These are dynamic so we can't really cache them
-          scopedStats.counter(Observer.Failures)
-          scopedStats.counter(Observer.Cancelled)
-          feature -> FeatureCounters(requestsCounter, successCounter, scopedStats)
+      val hydratorScopelon = elonxeloncutor.buildScopelons(contelonxt, hydrator.idelonntifielonr)
+      val felonaturelonToCountelonrMap: Map[Felonaturelon[_, _], FelonaturelonCountelonrs] = hydrator.felonaturelons
+        .asInstancelonOf[Selont[Felonaturelon[_, _]]].map { felonaturelon =>
+          val scopelondStats = scopelondBroadcastStats(hydratorScopelon, felonaturelon)
+          // Initializelon so welon havelon thelonm relongistelonrelond
+          val relonquelonstsCountelonr = scopelondStats.countelonr(Obselonrvelonr.Relonquelonsts)
+          val succelonssCountelonr = scopelondStats.countelonr(Obselonrvelonr.Succelonss)
+          // Thelonselon arelon dynamic so welon can't relonally cachelon thelonm
+          scopelondStats.countelonr(Obselonrvelonr.Failurelons)
+          scopelondStats.countelonr(Obselonrvelonr.Cancelonllelond)
+          felonaturelon -> FelonaturelonCountelonrs(relonquelonstsCountelonr, succelonssCountelonr, scopelondStats)
         }.toMap
-      hydrator.identifier -> featureToCounterMap
+      hydrator.idelonntifielonr -> felonaturelonToCountelonrMap
     }.toMap
 
-  def observeFeatureSuccessAndFailures(
-    hydrator: FeatureHydrator[_],
-    featureMaps: Seq[FeatureMap]
+  delonf obselonrvelonFelonaturelonSuccelonssAndFailurelons(
+    hydrator: FelonaturelonHydrator[_],
+    felonaturelonMaps: Selonq[FelonaturelonMap]
   ): Unit = {
 
-    val features = hydrator.features.asInstanceOf[Set[Feature[_, _]]]
+    val felonaturelons = hydrator.felonaturelons.asInstancelonOf[Selont[Felonaturelon[_, _]]]
 
-    val failedFeaturesWithErrorNames: Map[Feature[_, _], Seq[Seq[String]]] = hydrator match {
-      case _: FeatureStoreV1QueryFeatureHydrator[_] |
-          _: FeatureStoreV1CandidateFeatureHydrator[_, _] =>
-        featureMaps.toIterator
-          .flatMap(_.getTry(FeatureStoreV1ResponseFeature).toOption.map(_.failedFeatures)).flatMap {
-            failureMap: Map[_ <: Feature[_, _], Set[HydrationError]] =>
-              failureMap.flatMap {
-                case (feature, errors: Set[HydrationError]) =>
-                  errors.headOption.map { error =>
-                    feature -> Seq(Observer.Failures, error.errorType)
+    val failelondFelonaturelonsWithelonrrorNamelons: Map[Felonaturelon[_, _], Selonq[Selonq[String]]] = hydrator match {
+      caselon _: FelonaturelonStorelonV1QuelonryFelonaturelonHydrator[_] |
+          _: FelonaturelonStorelonV1CandidatelonFelonaturelonHydrator[_, _] =>
+        felonaturelonMaps.toItelonrator
+          .flatMap(_.gelontTry(FelonaturelonStorelonV1RelonsponselonFelonaturelon).toOption.map(_.failelondFelonaturelons)).flatMap {
+            failurelonMap: Map[_ <: Felonaturelon[_, _], Selont[Hydrationelonrror]] =>
+              failurelonMap.flatMap {
+                caselon (felonaturelon, elonrrors: Selont[Hydrationelonrror]) =>
+                  elonrrors.helonadOption.map { elonrror =>
+                    felonaturelon -> Selonq(Obselonrvelonr.Failurelons, elonrror.elonrrorTypelon)
                   }
-              }.toIterator
-          }.toSeq.groupBy { case (feature, _) => feature }.mapValues { seqOfTuples =>
-            seqOfTuples.map { case (_, error) => error }
+              }.toItelonrator
+          }.toSelonq.groupBy { caselon (felonaturelon, _) => felonaturelon }.mapValuelons { selonqOfTuplelons =>
+            selonqOfTuplelons.map { caselon (_, elonrror) => elonrror }
           }
 
-      case _: FeatureHydrator[_] =>
-        features.toIterator
-          .flatMap { feature =>
-            featureMaps
-              .flatMap(_.underlyingMap
-                .get(feature).collect {
-                  case Throw(CancelledExceptionExtractor(throwable)) =>
-                    (feature, Observer.Cancelled +: Throwables.mkString(throwable))
-                  case Throw(throwable) =>
-                    (feature, Observer.Failures +: Throwables.mkString(throwable))
+      caselon _: FelonaturelonHydrator[_] =>
+        felonaturelons.toItelonrator
+          .flatMap { felonaturelon =>
+            felonaturelonMaps
+              .flatMap(_.undelonrlyingMap
+                .gelont(felonaturelon).collelonct {
+                  caselon Throw(Cancelonllelondelonxcelonptionelonxtractor(throwablelon)) =>
+                    (felonaturelon, Obselonrvelonr.Cancelonllelond +: Throwablelons.mkString(throwablelon))
+                  caselon Throw(throwablelon) =>
+                    (felonaturelon, Obselonrvelonr.Failurelons +: Throwablelons.mkString(throwablelon))
                 })
-          }.toSeq.groupBy { case (feature, _) => feature }.mapValues { seqOfTuples =>
-            seqOfTuples.map { case (_, error) => error }
+          }.toSelonq.groupBy { caselon (felonaturelon, _) => felonaturelon }.mapValuelons { selonqOfTuplelons =>
+            selonqOfTuplelons.map { caselon (_, elonrror) => elonrror }
           }
     }
 
-    val failedFeaturesWithErrorCountsMap: Map[Feature[_, _], Map[Seq[String], Int]] =
-      failedFeaturesWithErrorNames.mapValues(_.groupBy { statKey => statKey }.mapValues(_.size))
+    val failelondFelonaturelonsWithelonrrorCountsMap: Map[Felonaturelon[_, _], Map[Selonq[String], Int]] =
+      failelondFelonaturelonsWithelonrrorNamelons.mapValuelons(_.groupBy { statKelony => statKelony }.mapValuelons(_.sizelon))
 
-    val featuresToCounterMap = hydratorAndFeatureToStats.getOrElse(
-      hydrator.identifier,
-      throw new MissingHydratorException(hydrator.identifier))
-    features.foreach { feature =>
-      val hydratorFeatureCounters: FeatureCounters = featuresToCounterMap.getOrElse(
-        feature,
-        throw new MissingFeatureException(hydrator.identifier, feature))
-      val failedMapsCount = failedFeaturesWithErrorNames.getOrElse(feature, Seq.empty).size
-      val failedFeatureErrorCounts = failedFeaturesWithErrorCountsMap.getOrElse(feature, Map.empty)
+    val felonaturelonsToCountelonrMap = hydratorAndFelonaturelonToStats.gelontOrelonlselon(
+      hydrator.idelonntifielonr,
+      throw nelonw MissingHydratorelonxcelonption(hydrator.idelonntifielonr))
+    felonaturelons.forelonach { felonaturelon =>
+      val hydratorFelonaturelonCountelonrs: FelonaturelonCountelonrs = felonaturelonsToCountelonrMap.gelontOrelonlselon(
+        felonaturelon,
+        throw nelonw MissingFelonaturelonelonxcelonption(hydrator.idelonntifielonr, felonaturelon))
+      val failelondMapsCount = failelondFelonaturelonsWithelonrrorNamelons.gelontOrelonlselon(felonaturelon, Selonq.elonmpty).sizelon
+      val failelondFelonaturelonelonrrorCounts = failelondFelonaturelonsWithelonrrorCountsMap.gelontOrelonlselon(felonaturelon, Map.elonmpty)
 
-      hydratorFeatureCounters.requestsCounter.incr(featureMaps.size)
-      hydratorFeatureCounters.successCounter.incr(featureMaps.size - failedMapsCount)
-      failedFeatureErrorCounts.foreach {
-        case (failure, count) =>
-          hydratorFeatureCounters.scopedStats.counter(failure: _*).incr(count)
+      hydratorFelonaturelonCountelonrs.relonquelonstsCountelonr.incr(felonaturelonMaps.sizelon)
+      hydratorFelonaturelonCountelonrs.succelonssCountelonr.incr(felonaturelonMaps.sizelon - failelondMapsCount)
+      failelondFelonaturelonelonrrorCounts.forelonach {
+        caselon (failurelon, count) =>
+          hydratorFelonaturelonCountelonrs.scopelondStats.countelonr(failurelon: _*).incr(count)
       }
     }
   }
 
-  private def scopedBroadcastStats(
-    hydratorScope: Executor.Scopes,
-    feature: Feature[_, _],
-  ): StatsReceiver = {
-    val suffix = Seq("Feature", feature.toString)
-    val localScope = hydratorScope.componentScopes ++ suffix
-    val relativeScope = hydratorScope.relativeScope ++ suffix
-    new RollupStatsReceiver(
-      BroadcastStatsReceiver(
-        Seq(
-          statsReceiver.scope(localScope: _*),
-          statsReceiver.scope(relativeScope: _*),
+  privatelon delonf scopelondBroadcastStats(
+    hydratorScopelon: elonxeloncutor.Scopelons,
+    felonaturelon: Felonaturelon[_, _],
+  ): StatsReloncelonivelonr = {
+    val suffix = Selonq("Felonaturelon", felonaturelon.toString)
+    val localScopelon = hydratorScopelon.componelonntScopelons ++ suffix
+    val relonlativelonScopelon = hydratorScopelon.relonlativelonScopelon ++ suffix
+    nelonw RollupStatsReloncelonivelonr(
+      BroadcastStatsReloncelonivelonr(
+        Selonq(
+          statsReloncelonivelonr.scopelon(localScopelon: _*),
+          statsReloncelonivelonr.scopelon(relonlativelonScopelon: _*),
         )
       ))
   }
 }
 
-case class FeatureCounters(
-  requestsCounter: Counter,
-  successCounter: Counter,
-  scopedStats: StatsReceiver)
+caselon class FelonaturelonCountelonrs(
+  relonquelonstsCountelonr: Countelonr,
+  succelonssCountelonr: Countelonr,
+  scopelondStats: StatsReloncelonivelonr)
 
-class MissingHydratorException(featureHydratorIdentifier: ComponentIdentifier)
-    extends Exception(s"Missing Feature Hydrator in Stats Map: ${featureHydratorIdentifier.name}")
+class MissingHydratorelonxcelonption(felonaturelonHydratorIdelonntifielonr: ComponelonntIdelonntifielonr)
+    elonxtelonnds elonxcelonption(s"Missing Felonaturelon Hydrator in Stats Map: ${felonaturelonHydratorIdelonntifielonr.namelon}")
 
-class MissingFeatureException(
-  featureHydratorIdentifier: ComponentIdentifier,
-  feature: Feature[_, _])
-    extends Exception(
-      s"Missing Feature in Stats Map: ${feature.toString} for ${featureHydratorIdentifier.name}")
+class MissingFelonaturelonelonxcelonption(
+  felonaturelonHydratorIdelonntifielonr: ComponelonntIdelonntifielonr,
+  felonaturelon: Felonaturelon[_, _])
+    elonxtelonnds elonxcelonption(
+      s"Missing Felonaturelon in Stats Map: ${felonaturelon.toString} for ${felonaturelonHydratorIdelonntifielonr.namelon}")

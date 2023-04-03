@@ -1,43 +1,43 @@
-package com.twitter.home_mixer.model
+packagelon com.twittelonr.homelon_mixelonr.modelonl
 
-import com.twitter.home_mixer.model.request.DeviceContext.RequestContext
-import com.twitter.home_mixer.model.request.HasDeviceContext
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.IncludeInstruction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineModule
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet.TweetItem
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSParam
+import com.twittelonr.homelon_mixelonr.modelonl.relonquelonst.DelonvicelonContelonxt.RelonquelonstContelonxt
+import com.twittelonr.homelon_mixelonr.modelonl.relonquelonst.HasDelonvicelonContelonxt
+import com.twittelonr.product_mixelonr.componelonnt_library.prelonmarshallelonr.urt.buildelonr.IncludelonInstruction
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.Timelonlinelonelonntry
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.TimelonlinelonModulelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.twelonelont.TwelonelontItelonm
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.timelonlinelons.configapi.FSBoundelondParam
+import com.twittelonr.timelonlinelons.configapi.FSParam
 
 /**
- * Include a clear cache timeline instruction when we satisfy these criteria:
- * - Request Provenance is "pull to refresh"
- * - Atleast N non-ad tweet entries in the response
+ * Includelon a clelonar cachelon timelonlinelon instruction whelonn welon satisfy thelonselon critelonria:
+ * - Relonquelonst Provelonnancelon is "pull to relonfrelonsh"
+ * - Atlelonast N non-ad twelonelont elonntrielons in thelon relonsponselon
  *
- * This is to ensure that we have sufficient new content to justify jumping users to the
- * top of the new timelines response and don't add unnecessary load to backend systems
+ * This is to elonnsurelon that welon havelon sufficielonnt nelonw contelonnt to justify jumping uselonrs to thelon
+ * top of thelon nelonw timelonlinelons relonsponselon and don't add unneloncelonssary load to backelonnd systelonms
  */
-case class ClearCacheIncludeInstruction(
-  enableParam: FSParam[Boolean],
-  minEntriesParam: FSBoundedParam[Int])
-    extends IncludeInstruction[PipelineQuery with HasDeviceContext] {
+caselon class ClelonarCachelonIncludelonInstruction(
+  elonnablelonParam: FSParam[Boolelonan],
+  minelonntrielonsParam: FSBoundelondParam[Int])
+    elonxtelonnds IncludelonInstruction[PipelonlinelonQuelonry with HasDelonvicelonContelonxt] {
 
-  override def apply(
-    query: PipelineQuery with HasDeviceContext,
-    entries: Seq[TimelineEntry]
-  ): Boolean = {
-    val enabled = query.params(enableParam)
+  ovelonrridelon delonf apply(
+    quelonry: PipelonlinelonQuelonry with HasDelonvicelonContelonxt,
+    elonntrielons: Selonq[Timelonlinelonelonntry]
+  ): Boolelonan = {
+    val elonnablelond = quelonry.params(elonnablelonParam)
 
     val ptr =
-      query.deviceContext.flatMap(_.requestContextValue).contains(RequestContext.PullToRefresh)
+      quelonry.delonvicelonContelonxt.flatMap(_.relonquelonstContelonxtValuelon).contains(RelonquelonstContelonxt.PullToRelonfrelonsh)
 
-    val minTweets = query.params(minEntriesParam) <= entries.collect {
-      case item: TweetItem if item.promotedMetadata.isEmpty => 1
-      case module: TimelineModule if module.items.head.item.isInstanceOf[TweetItem] =>
-        module.items.size
+    val minTwelonelonts = quelonry.params(minelonntrielonsParam) <= elonntrielons.collelonct {
+      caselon itelonm: TwelonelontItelonm if itelonm.promotelondMelontadata.iselonmpty => 1
+      caselon modulelon: TimelonlinelonModulelon if modulelon.itelonms.helonad.itelonm.isInstancelonOf[TwelonelontItelonm] =>
+        modulelon.itelonms.sizelon
     }.sum
 
-    enabled && ptr && minTweets
+    elonnablelond && ptr && minTwelonelonts
   }
 }

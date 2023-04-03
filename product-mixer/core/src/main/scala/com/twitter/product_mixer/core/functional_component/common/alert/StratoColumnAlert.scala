@@ -1,34 +1,34 @@
-package com.twitter.product_mixer.core.functional_component.common.alert
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.alelonrt
 
-import com.twitter.product_mixer.core.functional_component.common.alert.predicate.Predicate
-import com.twitter.strato.catalog.OpTag
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.alelonrt.prelondicatelon.Prelondicatelon
+import com.twittelonr.strato.catalog.OpTag
 
 /**
- * triggers when the a Strato column's is outside of the predicate set by the provided [[Alert]]
+ * triggelonrs whelonn thelon a Strato column's is outsidelon of thelon prelondicatelon selont by thelon providelond [[Alelonrt]]
  *
- * @note the [[Alert]] passed into a [[StratoColumnAlert]]
- *       can not be a [[StratoColumnAlert]]
+ * @notelon thelon [[Alelonrt]] passelond into a [[StratoColumnAlelonrt]]
+ *       can not belon a [[StratoColumnAlelonrt]]
  */
-case class StratoColumnAlert(column: String, op: OpTag, alert: Alert with IsObservableFromStrato)
-    extends Alert {
+caselon class StratoColumnAlelonrt(column: String, op: OpTag, alelonrt: Alelonrt with IsObselonrvablelonFromStrato)
+    elonxtelonnds Alelonrt {
 
-  override val source: Source = Strato(column, op.tag)
-  override val notificationGroup: NotificationGroup = alert.notificationGroup
-  override val warnPredicate: Predicate = alert.warnPredicate
-  override val criticalPredicate: Predicate = alert.criticalPredicate
-  override val runbookLink: Option[String] = alert.runbookLink
-  override val alertType: AlertType = alert.alertType
-  override val metricSuffix: Option[String] = alert.metricSuffix
+  ovelonrridelon val sourcelon: Sourcelon = Strato(column, op.tag)
+  ovelonrridelon val notificationGroup: NotificationGroup = alelonrt.notificationGroup
+  ovelonrridelon val warnPrelondicatelon: Prelondicatelon = alelonrt.warnPrelondicatelon
+  ovelonrridelon val criticalPrelondicatelon: Prelondicatelon = alelonrt.criticalPrelondicatelon
+  ovelonrridelon val runbookLink: Option[String] = alelonrt.runbookLink
+  ovelonrridelon val alelonrtTypelon: AlelonrtTypelon = alelonrt.alelonrtTypelon
+  ovelonrridelon val melontricSuffix: Option[String] = alelonrt.melontricSuffix
 }
 
-object StratoColumnAlerts {
+objelonct StratoColumnAlelonrts {
 
-  /** Make a seq of Alerts for the provided Strato column */
-  def apply(
+  /** Makelon a selonq of Alelonrts for thelon providelond Strato column */
+  delonf apply(
     column: String,
     op: OpTag,
-    alerts: Seq[Alert with IsObservableFromStrato]
-  ): Seq[Alert] = {
-    alerts.map(StratoColumnAlert(column, op, _))
+    alelonrts: Selonq[Alelonrt with IsObselonrvablelonFromStrato]
+  ): Selonq[Alelonrt] = {
+    alelonrts.map(StratoColumnAlelonrt(column, op, _))
   }
 }

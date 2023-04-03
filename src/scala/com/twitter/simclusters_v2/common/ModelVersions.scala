@@ -1,48 +1,48 @@
-package com.twitter.simclusters_v2.common
+packagelon com.twittelonr.simclustelonrs_v2.common
 
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
+import com.twittelonr.simclustelonrs_v2.thriftscala.ModelonlVelonrsion
 
 /**
- * The utility to convert SimClusters Model version into different forms.
- * Required to register any new SimClusters Model version here.
+ * Thelon utility to convelonrt SimClustelonrs Modelonl velonrsion into diffelonrelonnt forms.
+ * Relonquirelond to relongistelonr any nelonw SimClustelonrs Modelonl velonrsion helonrelon.
  */
-object ModelVersions {
+objelonct ModelonlVelonrsions {
 
-  val Model20M145KDec11 = "20M_145K_dec11"
-  val Model20M145KUpdated = "20M_145K_updated"
-  val Model20M145K2020 = "20M_145K_2020"
+  val Modelonl20M145KDelonc11 = "20M_145K_delonc11"
+  val Modelonl20M145KUpdatelond = "20M_145K_updatelond"
+  val Modelonl20M145K2020 = "20M_145K_2020"
 
-  // Use Enum for feature switch
-  object Enum extends Enumeration {
-    val Model20M145K2020, Model20M145KUpdated: Value = Value
-    val enumToSimClustersModelVersionMap: Map[Enum.Value, ModelVersion] = Map(
-      Model20M145K2020 -> ModelVersion.Model20m145k2020,
-      Model20M145KUpdated -> ModelVersion.Model20m145kUpdated
+  // Uselon elonnum for felonaturelon switch
+  objelonct elonnum elonxtelonnds elonnumelonration {
+    val Modelonl20M145K2020, Modelonl20M145KUpdatelond: Valuelon = Valuelon
+    val elonnumToSimClustelonrsModelonlVelonrsionMap: Map[elonnum.Valuelon, ModelonlVelonrsion] = Map(
+      Modelonl20M145K2020 -> ModelonlVelonrsion.Modelonl20m145k2020,
+      Modelonl20M145KUpdatelond -> ModelonlVelonrsion.Modelonl20m145kUpdatelond
     )
   }
 
-  // Add the new model version into this map
-  private val StringToThriftModelVersions: Map[String, ModelVersion] =
+  // Add thelon nelonw modelonl velonrsion into this map
+  privatelon val StringToThriftModelonlVelonrsions: Map[String, ModelonlVelonrsion] =
     Map(
-      Model20M145KDec11 -> ModelVersion.Model20m145kDec11,
-      Model20M145KUpdated -> ModelVersion.Model20m145kUpdated,
-      Model20M145K2020 -> ModelVersion.Model20m145k2020
+      Modelonl20M145KDelonc11 -> ModelonlVelonrsion.Modelonl20m145kDelonc11,
+      Modelonl20M145KUpdatelond -> ModelonlVelonrsion.Modelonl20m145kUpdatelond,
+      Modelonl20M145K2020 -> ModelonlVelonrsion.Modelonl20m145k2020
     )
 
-  private val ThriftModelVersionToStrings = StringToThriftModelVersions.map(_.swap)
+  privatelon val ThriftModelonlVelonrsionToStrings = StringToThriftModelonlVelonrsions.map(_.swap)
 
-  val AllModelVersions: Set[String] = StringToThriftModelVersions.keySet
+  val AllModelonlVelonrsions: Selont[String] = StringToThriftModelonlVelonrsions.kelonySelont
 
-  def toModelVersionOption(modelVersionStr: String): Option[ModelVersion] = {
-    StringToThriftModelVersions.get(modelVersionStr)
+  delonf toModelonlVelonrsionOption(modelonlVelonrsionStr: String): Option[ModelonlVelonrsion] = {
+    StringToThriftModelonlVelonrsions.gelont(modelonlVelonrsionStr)
   }
 
-  implicit def toModelVersion(modelVersionStr: String): ModelVersion = {
-    StringToThriftModelVersions(modelVersionStr)
+  implicit delonf toModelonlVelonrsion(modelonlVelonrsionStr: String): ModelonlVelonrsion = {
+    StringToThriftModelonlVelonrsions(modelonlVelonrsionStr)
   }
 
-  implicit def toKnownForModelVersion(modelVersion: ModelVersion): String = {
-    ThriftModelVersionToStrings(modelVersion)
+  implicit delonf toKnownForModelonlVelonrsion(modelonlVelonrsion: ModelonlVelonrsion): String = {
+    ThriftModelonlVelonrsionToStrings(modelonlVelonrsion)
   }
 
 }

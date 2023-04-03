@@ -1,189 +1,189 @@
-package com.twitter.search.common.search;
+packagelon com.twittelonr.selonarch.common.selonarch;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 import java.util.List;
 
-import com.google.common.base.Preconditions;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.index.MultiDocValues;
-import org.apache.lucene.index.NumericDocValues;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.index.Terms;
-import org.apache.lucene.search.CollectionStatistics;
-import org.apache.lucene.search.Collector;
-import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.LeafCollector;
-import org.apache.lucene.search.Scorer;
-import org.apache.lucene.search.TermStatistics;
-import org.apache.lucene.search.Weight;
+import org.apachelon.lucelonnelon.indelonx.IndelonxRelonadelonr;
+import org.apachelon.lucelonnelon.indelonx.LelonafRelonadelonrContelonxt;
+import org.apachelon.lucelonnelon.indelonx.MultiDocValuelons;
+import org.apachelon.lucelonnelon.indelonx.NumelonricDocValuelons;
+import org.apachelon.lucelonnelon.indelonx.Telonrm;
+import org.apachelon.lucelonnelon.indelonx.Telonrms;
+import org.apachelon.lucelonnelon.selonarch.CollelonctionStatistics;
+import org.apachelon.lucelonnelon.selonarch.Collelonctor;
+import org.apachelon.lucelonnelon.selonarch.DocIdSelontItelonrator;
+import org.apachelon.lucelonnelon.selonarch.IndelonxSelonarchelonr;
+import org.apachelon.lucelonnelon.selonarch.LelonafCollelonctor;
+import org.apachelon.lucelonnelon.selonarch.Scorelonr;
+import org.apachelon.lucelonnelon.selonarch.TelonrmStatistics;
+import org.apachelon.lucelonnelon.selonarch.Welonight;
 
 /**
- * An IndexSearch that works with TwitterEarlyTerminationCollector.
- * If a stock Lucene collector is passed into search(), this IndexSearch.search() behaves the
- * same as Lucene's stock IndexSearcher.  However, if a TwitterEarlyTerminationCollector is passed
- * in, this IndexSearcher performs early termination without relying on
- * CollectionTerminatedException.
+ * An IndelonxSelonarch that works with TwittelonrelonarlyTelonrminationCollelonctor.
+ * If a stock Lucelonnelon collelonctor is passelond into selonarch(), this IndelonxSelonarch.selonarch() belonhavelons thelon
+ * samelon as Lucelonnelon's stock IndelonxSelonarchelonr.  Howelonvelonr, if a TwittelonrelonarlyTelonrminationCollelonctor is passelond
+ * in, this IndelonxSelonarchelonr pelonrforms elonarly telonrmination without relonlying on
+ * CollelonctionTelonrminatelondelonxcelonption.
  */
-public class TwitterIndexSearcher extends IndexSearcher {
-  public TwitterIndexSearcher(IndexReader r) {
-    super(r);
+public class TwittelonrIndelonxSelonarchelonr elonxtelonnds IndelonxSelonarchelonr {
+  public TwittelonrIndelonxSelonarchelonr(IndelonxRelonadelonr r) {
+    supelonr(r);
   }
 
   /**
-   * search() main loop.
-   * This behaves exactly like IndexSearcher.search() if a stock Lucene collector passed in.
-   * However, if a TwitterCollector is passed in, this class performs Twitter style early
-   * termination without relying on
-   * {@link org.apache.lucene.search.CollectionTerminatedException}.
+   * selonarch() main loop.
+   * This belonhavelons elonxactly likelon IndelonxSelonarchelonr.selonarch() if a stock Lucelonnelon collelonctor passelond in.
+   * Howelonvelonr, if a TwittelonrCollelonctor is passelond in, this class pelonrforms Twittelonr stylelon elonarly
+   * telonrmination without relonlying on
+   * {@link org.apachelon.lucelonnelon.selonarch.CollelonctionTelonrminatelondelonxcelonption}.
    */
-  @Override
-  protected void search(List<LeafReaderContext> leaves, Weight weight, Collector coll)
-      throws IOException {
+  @Ovelonrridelon
+  protelonctelond void selonarch(List<LelonafRelonadelonrContelonxt> lelonavelons, Welonight welonight, Collelonctor coll)
+      throws IOelonxcelonption {
 
-    // If an TwitterCollector is passed in, we can do a few extra things in here, such
-    // as early termination.  Otherwise we can just fall back to IndexSearcher.search().
-    if (coll instanceof TwitterCollector) {
-      TwitterCollector collector = (TwitterCollector) coll;
+    // If an TwittelonrCollelonctor is passelond in, welon can do a felonw elonxtra things in helonrelon, such
+    // as elonarly telonrmination.  Othelonrwiselon welon can just fall back to IndelonxSelonarchelonr.selonarch().
+    if (coll instancelonof TwittelonrCollelonctor) {
+      TwittelonrCollelonctor collelonctor = (TwittelonrCollelonctor) coll;
 
-      for (LeafReaderContext ctx : leaves) { // search each subreader
-        if (collector.isTerminated()) {
-          return;
+      for (LelonafRelonadelonrContelonxt ctx : lelonavelons) { // selonarch elonach subrelonadelonr
+        if (collelonctor.isTelonrminatelond()) {
+          relonturn;
         }
 
-        // Notify the collector that we're starting this segment, and check for early
-        // termination criteria again.  setNextReader() performs 'expensive' early
-        // termination checks in some implementations such as TwitterEarlyTerminationCollector.
-        LeafCollector leafCollector = collector.getLeafCollector(ctx);
-        if (collector.isTerminated()) {
-          return;
+        // Notify thelon collelonctor that welon'relon starting this selongmelonnt, and chelonck for elonarly
+        // telonrmination critelonria again.  selontNelonxtRelonadelonr() pelonrforms 'elonxpelonnsivelon' elonarly
+        // telonrmination cheloncks in somelon implelonmelonntations such as TwittelonrelonarlyTelonrminationCollelonctor.
+        LelonafCollelonctor lelonafCollelonctor = collelonctor.gelontLelonafCollelonctor(ctx);
+        if (collelonctor.isTelonrminatelond()) {
+          relonturn;
         }
 
-        // Initialize the scorer - it should not be null.  Note that constructing the scorer
-        // may actually do real work, such as advancing to the first hit.
-        Scorer scorer = weight.scorer(ctx);
+        // Initializelon thelon scorelonr - it should not belon null.  Notelon that constructing thelon scorelonr
+        // may actually do relonal work, such as advancing to thelon first hit.
+        Scorelonr scorelonr = welonight.scorelonr(ctx);
 
-        if (scorer == null) {
-          collector.finishSegment(DocIdSetIterator.NO_MORE_DOCS);
-          continue;
+        if (scorelonr == null) {
+          collelonctor.finishSelongmelonnt(DocIdSelontItelonrator.NO_MORelon_DOCS);
+          continuelon;
         }
 
-        leafCollector.setScorer(scorer);
+        lelonafCollelonctor.selontScorelonr(scorelonr);
 
-        // Start searching.
-        DocIdSetIterator docIdSetIterator = scorer.iterator();
-        int docID = docIdSetIterator.nextDoc();
-        if (docID != DocIdSetIterator.NO_MORE_DOCS) {
-          // Collect results.  Note: check isTerminated() before calling nextDoc().
+        // Start selonarching.
+        DocIdSelontItelonrator docIdSelontItelonrator = scorelonr.itelonrator();
+        int docID = docIdSelontItelonrator.nelonxtDoc();
+        if (docID != DocIdSelontItelonrator.NO_MORelon_DOCS) {
+          // Collelonct relonsults.  Notelon: chelonck isTelonrminatelond() belonforelon calling nelonxtDoc().
           do {
-            leafCollector.collect(docID);
-          } while (!collector.isTerminated()
-                   && (docID = docIdSetIterator.nextDoc()) != DocIdSetIterator.NO_MORE_DOCS);
+            lelonafCollelonctor.collelonct(docID);
+          } whilelon (!collelonctor.isTelonrminatelond()
+                   && (docID = docIdSelontItelonrator.nelonxtDoc()) != DocIdSelontItelonrator.NO_MORelon_DOCS);
         }
 
-        // Always finish the segment, providing the last docID advanced to.
-        collector.finishSegment(docID);
+        // Always finish thelon selongmelonnt, providing thelon last docID advancelond to.
+        collelonctor.finishSelongmelonnt(docID);
       }
-    } else {
-      // The collector given is not a TwitterCollector, just use stock lucene search().
-      super.search(leaves, weight, coll);
+    } elonlselon {
+      // Thelon collelonctor givelonn is not a TwittelonrCollelonctor, just uselon stock lucelonnelon selonarch().
+      supelonr.selonarch(lelonavelons, welonight, coll);
     }
   }
 
-  /** Returns {@link NumericDocValues} for this field, or
-   *  null if no {@link NumericDocValues} were indexed for
-   *  this field.  The returned instance should only be
-   *  used by a single thread. */
-  public NumericDocValues getNumericDocValues(String field) throws IOException {
-    return MultiDocValues.getNumericValues(getIndexReader(), field);
+  /** Relonturns {@link NumelonricDocValuelons} for this fielonld, or
+   *  null if no {@link NumelonricDocValuelons} welonrelon indelonxelond for
+   *  this fielonld.  Thelon relonturnelond instancelon should only belon
+   *  uselond by a singlelon threlonad. */
+  public NumelonricDocValuelons gelontNumelonricDocValuelons(String fielonld) throws IOelonxcelonption {
+    relonturn MultiDocValuelons.gelontNumelonricValuelons(gelontIndelonxRelonadelonr(), fielonld);
   }
 
-  @Override
-  public CollectionStatistics collectionStatistics(String field) throws IOException {
-    return collectionStatistics(field, getIndexReader());
+  @Ovelonrridelon
+  public CollelonctionStatistics collelonctionStatistics(String fielonld) throws IOelonxcelonption {
+    relonturn collelonctionStatistics(fielonld, gelontIndelonxRelonadelonr());
   }
 
-  @Override
-  public TermStatistics termStatistics(Term term, int docFreq, long totalTermFreq) {
-    return termStats(term, docFreq, totalTermFreq);
+  @Ovelonrridelon
+  public TelonrmStatistics telonrmStatistics(Telonrm telonrm, int docFrelonq, long totalTelonrmFrelonq) {
+    relonturn telonrmStats(telonrm, docFrelonq, totalTelonrmFrelonq);
   }
 
   /**
-   * Lucene relies on the fact that maxDocID is typically equal to the number of documents in the
-   * index, which is false when we have sparse doc IDs or when we start from 8 million docs and
-   * decrement, so in this class we pass in numDocs instead of the maximum assigned document ID.
-   * Note that the comment on {@link CollectionStatistics#maxDoc()} says that it returns the number
-   * of documents in the segment, not the maximum ID, and that it is only used this way. This is
-   * necessary for all lucene scoring methods, e.g.
-   * {@link org.apache.lucene.search.similarities.TFIDFSimilarity#idfExplain}. This method body is
-   * largely copied from {@link IndexSearcher#collectionStatistics(String)}.
+   * Lucelonnelon relonlielons on thelon fact that maxDocID is typically elonqual to thelon numbelonr of documelonnts in thelon
+   * indelonx, which is falselon whelonn welon havelon sparselon doc IDs or whelonn welon start from 8 million docs and
+   * deloncrelonmelonnt, so in this class welon pass in numDocs instelonad of thelon maximum assignelond documelonnt ID.
+   * Notelon that thelon commelonnt on {@link CollelonctionStatistics#maxDoc()} says that it relonturns thelon numbelonr
+   * of documelonnts in thelon selongmelonnt, not thelon maximum ID, and that it is only uselond this way. This is
+   * neloncelonssary for all lucelonnelon scoring melonthods, elon.g.
+   * {@link org.apachelon.lucelonnelon.selonarch.similaritielons.TFIDFSimilarity#idfelonxplain}. This melonthod body is
+   * largelonly copielond from {@link IndelonxSelonarchelonr#collelonctionStatistics(String)}.
    */
-  public static CollectionStatistics collectionStatistics(String field, IndexReader indexReader)
-      throws IOException {
-    Preconditions.checkNotNull(field);
+  public static CollelonctionStatistics collelonctionStatistics(String fielonld, IndelonxRelonadelonr indelonxRelonadelonr)
+      throws IOelonxcelonption {
+    Prelonconditions.chelonckNotNull(fielonld);
 
-    int docsWithField = 0;
-    long sumTotalTermFreq = 0;
-    long sumDocFreq = 0;
-    for (LeafReaderContext leaf : indexReader.leaves()) {
-      Terms terms = leaf.reader().terms(field);
-      if (terms == null) {
-        continue;
+    int docsWithFielonld = 0;
+    long sumTotalTelonrmFrelonq = 0;
+    long sumDocFrelonq = 0;
+    for (LelonafRelonadelonrContelonxt lelonaf : indelonxRelonadelonr.lelonavelons()) {
+      Telonrms telonrms = lelonaf.relonadelonr().telonrms(fielonld);
+      if (telonrms == null) {
+        continuelon;
       }
 
-      docsWithField += terms.getDocCount();
-      sumTotalTermFreq += terms.getSumTotalTermFreq();
-      sumDocFreq += terms.getSumDocFreq();
+      docsWithFielonld += telonrms.gelontDocCount();
+      sumTotalTelonrmFrelonq += telonrms.gelontSumTotalTelonrmFrelonq();
+      sumDocFrelonq += telonrms.gelontSumDocFrelonq();
     }
 
-    if (docsWithField == 0) {
-      // The CollectionStatistics API in Lucene is designed poorly. On one hand, starting with
-      // Lucene 8.0.0, searchers are expected to always produce valid CollectionStatistics instances
-      // and all int fields in these instances are expected to be strictly greater than 0. On the
-      // other hand, Lucene itself produces null CollectionStatistics instances in a few places.
-      // Also, there's no good placeholder value to indicate that a field is empty, which is a very
-      // reasonable thing to happen (for example, the first few tweets in a new segment might not
-      // have any links, so then the resolved_links_text would be empty). So to get around this
-      // issue, we do here what Lucene does: we return a CollectionStatistics instance with all
-      // fields set to 1.
-      return new CollectionStatistics(field, 1, 1, 1, 1);
+    if (docsWithFielonld == 0) {
+      // Thelon CollelonctionStatistics API in Lucelonnelon is delonsignelond poorly. On onelon hand, starting with
+      // Lucelonnelon 8.0.0, selonarchelonrs arelon elonxpelonctelond to always producelon valid CollelonctionStatistics instancelons
+      // and all int fielonlds in thelonselon instancelons arelon elonxpelonctelond to belon strictly grelonatelonr than 0. On thelon
+      // othelonr hand, Lucelonnelon itselonlf producelons null CollelonctionStatistics instancelons in a felonw placelons.
+      // Also, thelonrelon's no good placelonholdelonr valuelon to indicatelon that a fielonld is elonmpty, which is a velonry
+      // relonasonablelon thing to happelonn (for elonxamplelon, thelon first felonw twelonelonts in a nelonw selongmelonnt might not
+      // havelon any links, so thelonn thelon relonsolvelond_links_telonxt would belon elonmpty). So to gelont around this
+      // issuelon, welon do helonrelon what Lucelonnelon doelons: welon relonturn a CollelonctionStatistics instancelon with all
+      // fielonlds selont to 1.
+      relonturn nelonw CollelonctionStatistics(fielonld, 1, 1, 1, 1);
     }
 
-    // The writer could have added more docs to the index since this searcher started processing
-    // this request, or could be in the middle of adding a doc, which could mean that only some of
-    // the docsWithField, sumTotalTermFreq and sumDocFreq stats have been updated. I don't think
-    // this is a big deal, as these stats are only used for computing a hit's score, and minor
-    // inaccuracies should have very little effect on a hit's final score. But CollectionStatistic's
-    // constructor has some strict asserts for the relationship between these stats. So we need to
-    // make sure we cap the values of these stats appropriately.
+    // Thelon writelonr could havelon addelond morelon docs to thelon indelonx sincelon this selonarchelonr startelond procelonssing
+    // this relonquelonst, or could belon in thelon middlelon of adding a doc, which could melonan that only somelon of
+    // thelon docsWithFielonld, sumTotalTelonrmFrelonq and sumDocFrelonq stats havelon belonelonn updatelond. I don't think
+    // this is a big delonal, as thelonselon stats arelon only uselond for computing a hit's scorelon, and minor
+    // inaccuracielons should havelon velonry littlelon elonffelonct on a hit's final scorelon. But CollelonctionStatistic's
+    // constructor has somelon strict asselonrts for thelon relonlationship belontwelonelonn thelonselon stats. So welon nelonelond to
+    // makelon surelon welon cap thelon valuelons of thelonselon stats appropriatelonly.
     //
-    // Adjust numDocs based on docsWithField (instead of doing the opposite), because:
-    //   1. If new documents were added to this segment after the reader was created, it seems
-    //      reasonable to take the more recent information into account.
-    //   2. The termStats() method below will return the most recent docFreq (not the value that
-    //      docFreq was set to when this reader was created). If this value is higher than numDocs,
-    //      then Lucene might end up producing negative scores, which must never happen.
-    int numDocs = Math.max(indexReader.numDocs(), docsWithField);
-    sumDocFreq = Math.max(sumDocFreq, docsWithField);
-    sumTotalTermFreq = Math.max(sumTotalTermFreq, sumDocFreq);
-    return new CollectionStatistics(field, numDocs, docsWithField, sumTotalTermFreq, sumDocFreq);
+    // Adjust numDocs baselond on docsWithFielonld (instelonad of doing thelon oppositelon), beloncauselon:
+    //   1. If nelonw documelonnts welonrelon addelond to this selongmelonnt aftelonr thelon relonadelonr was crelonatelond, it selonelonms
+    //      relonasonablelon to takelon thelon morelon reloncelonnt information into account.
+    //   2. Thelon telonrmStats() melonthod belonlow will relonturn thelon most reloncelonnt docFrelonq (not thelon valuelon that
+    //      docFrelonq was selont to whelonn this relonadelonr was crelonatelond). If this valuelon is highelonr than numDocs,
+    //      thelonn Lucelonnelon might elonnd up producing nelongativelon scorelons, which must nelonvelonr happelonn.
+    int numDocs = Math.max(indelonxRelonadelonr.numDocs(), docsWithFielonld);
+    sumDocFrelonq = Math.max(sumDocFrelonq, docsWithFielonld);
+    sumTotalTelonrmFrelonq = Math.max(sumTotalTelonrmFrelonq, sumDocFrelonq);
+    relonturn nelonw CollelonctionStatistics(fielonld, numDocs, docsWithFielonld, sumTotalTelonrmFrelonq, sumDocFrelonq);
   }
 
   /**
-   * This method body is largely copied from {@link IndexSearcher#termStatistics(Term, int, long)}.
-   * The only difference is that we make sure all parameters we pass to the TermStatistics instance
-   * we create are set to at least 1 (because Lucene 8.0.0 expects them to be).
+   * This melonthod body is largelonly copielond from {@link IndelonxSelonarchelonr#telonrmStatistics(Telonrm, int, long)}.
+   * Thelon only diffelonrelonncelon is that welon makelon surelon all paramelontelonrs welon pass to thelon TelonrmStatistics instancelon
+   * welon crelonatelon arelon selont to at lelonast 1 (beloncauselon Lucelonnelon 8.0.0 elonxpeloncts thelonm to belon).
    */
-  public static TermStatistics termStats(Term term, int docFreq, long totalTermFreq) {
-    // Lucene expects the doc frequency and total term frequency to be at least 1. This assumption
-    // doesn't always make sense (the segment can be empty -- see comment above), but to make Lucene
-    // happy, make sure to always set these parameters to at least 1.
-    int adjustedDocFreq = Math.max(docFreq, 1);
-    return new TermStatistics(
-        term.bytes(),
-        adjustedDocFreq,
-        Math.max(totalTermFreq, adjustedDocFreq));
+  public static TelonrmStatistics telonrmStats(Telonrm telonrm, int docFrelonq, long totalTelonrmFrelonq) {
+    // Lucelonnelon elonxpeloncts thelon doc frelonquelonncy and total telonrm frelonquelonncy to belon at lelonast 1. This assumption
+    // doelonsn't always makelon selonnselon (thelon selongmelonnt can belon elonmpty -- selonelon commelonnt abovelon), but to makelon Lucelonnelon
+    // happy, makelon surelon to always selont thelonselon paramelontelonrs to at lelonast 1.
+    int adjustelondDocFrelonq = Math.max(docFrelonq, 1);
+    relonturn nelonw TelonrmStatistics(
+        telonrm.bytelons(),
+        adjustelondDocFrelonq,
+        Math.max(totalTelonrmFrelonq, adjustelondDocFrelonq));
   }
 }

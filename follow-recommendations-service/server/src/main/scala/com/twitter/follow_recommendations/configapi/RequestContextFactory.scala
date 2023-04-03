@@ -1,74 +1,74 @@
-package com.twitter.follow_recommendations.configapi
+packagelon com.twittelonr.follow_reloncommelonndations.configapi
 
-import com.google.common.annotations.VisibleForTesting
-import com.google.inject.Inject
-import com.twitter.decider.Decider
-import com.twitter.featureswitches.v2.FeatureSwitches
-import com.twitter.featureswitches.{Recipient => FeatureSwitchRecipient}
-import com.twitter.follow_recommendations.common.models.DisplayLocation
-import com.twitter.product_mixer.core.model.marshalling.request.ClientContext
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.timelines.configapi.FeatureContext
-import com.twitter.timelines.configapi.FeatureValue
-import com.twitter.timelines.configapi.ForcedFeatureContext
-import com.twitter.timelines.configapi.OrElseFeatureContext
-import com.twitter.timelines.configapi.featureswitches.v2.FeatureSwitchResultsFeatureContext
-import javax.inject.Singleton
+import com.googlelon.common.annotations.VisiblelonForTelonsting
+import com.googlelon.injelonct.Injelonct
+import com.twittelonr.deloncidelonr.Deloncidelonr
+import com.twittelonr.felonaturelonswitchelons.v2.FelonaturelonSwitchelons
+import com.twittelonr.felonaturelonswitchelons.{Reloncipielonnt => FelonaturelonSwitchReloncipielonnt}
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.DisplayLocation
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.ClielonntContelonxt
+import com.twittelonr.snowflakelon.id.SnowflakelonId
+import com.twittelonr.timelonlinelons.configapi.FelonaturelonContelonxt
+import com.twittelonr.timelonlinelons.configapi.FelonaturelonValuelon
+import com.twittelonr.timelonlinelons.configapi.ForcelondFelonaturelonContelonxt
+import com.twittelonr.timelonlinelons.configapi.OrelonlselonFelonaturelonContelonxt
+import com.twittelonr.timelonlinelons.configapi.felonaturelonswitchelons.v2.FelonaturelonSwitchRelonsultsFelonaturelonContelonxt
+import javax.injelonct.Singlelonton
 
 /*
- * Request Context Factory is used to build RequestContext objects which are used
- * by the config api to determine the param overrides to apply to the request.
- * The param overrides are determined per request by configs which specify which
- * FS/Deciders/AB translate to what param overrides.
+ * Relonquelonst Contelonxt Factory is uselond to build RelonquelonstContelonxt objeloncts which arelon uselond
+ * by thelon config api to delontelonrminelon thelon param ovelonrridelons to apply to thelon relonquelonst.
+ * Thelon param ovelonrridelons arelon delontelonrminelond pelonr relonquelonst by configs which speloncify which
+ * FS/Deloncidelonrs/AB translatelon to what param ovelonrridelons.
  */
-@Singleton
-class RequestContextFactory @Inject() (featureSwitches: FeatureSwitches, decider: Decider) {
-  def apply(
-    clientContext: ClientContext,
+@Singlelonton
+class RelonquelonstContelonxtFactory @Injelonct() (felonaturelonSwitchelons: FelonaturelonSwitchelons, deloncidelonr: Deloncidelonr) {
+  delonf apply(
+    clielonntContelonxt: ClielonntContelonxt,
     displayLocation: DisplayLocation,
-    featureOverrides: Map[String, FeatureValue]
-  ): RequestContext = {
-    val featureContext = getFeatureContext(clientContext, displayLocation, featureOverrides)
-    RequestContext(clientContext.userId, clientContext.guestId, featureContext)
+    felonaturelonOvelonrridelons: Map[String, FelonaturelonValuelon]
+  ): RelonquelonstContelonxt = {
+    val felonaturelonContelonxt = gelontFelonaturelonContelonxt(clielonntContelonxt, displayLocation, felonaturelonOvelonrridelons)
+    RelonquelonstContelonxt(clielonntContelonxt.uselonrId, clielonntContelonxt.guelonstId, felonaturelonContelonxt)
   }
 
-  private[configapi] def getFeatureContext(
-    clientContext: ClientContext,
+  privatelon[configapi] delonf gelontFelonaturelonContelonxt(
+    clielonntContelonxt: ClielonntContelonxt,
     displayLocation: DisplayLocation,
-    featureOverrides: Map[String, FeatureValue]
-  ): FeatureContext = {
-    val recipient =
-      getFeatureSwitchRecipient(clientContext)
-        .withCustomFields("display_location" -> displayLocation.toFsName)
+    felonaturelonOvelonrridelons: Map[String, FelonaturelonValuelon]
+  ): FelonaturelonContelonxt = {
+    val reloncipielonnt =
+      gelontFelonaturelonSwitchReloncipielonnt(clielonntContelonxt)
+        .withCustomFielonlds("display_location" -> displayLocation.toFsNamelon)
 
-    // userAgeOpt is going to be set to None for logged out users and defaulted to Some(Int.MaxValue) for non-snowflake users
-    val userAgeOpt = clientContext.userId.map { userId =>
-      SnowflakeId.timeFromIdOpt(userId).map(_.untilNow.inDays).getOrElse(Int.MaxValue)
+    // uselonrAgelonOpt is going to belon selont to Nonelon for loggelond out uselonrs and delonfaultelond to Somelon(Int.MaxValuelon) for non-snowflakelon uselonrs
+    val uselonrAgelonOpt = clielonntContelonxt.uselonrId.map { uselonrId =>
+      SnowflakelonId.timelonFromIdOpt(uselonrId).map(_.untilNow.inDays).gelontOrelonlselon(Int.MaxValuelon)
     }
-    val recipientWithAccountAge =
-      userAgeOpt
-        .map(age => recipient.withCustomFields("account_age_in_days" -> age)).getOrElse(recipient)
+    val reloncipielonntWithAccountAgelon =
+      uselonrAgelonOpt
+        .map(agelon => reloncipielonnt.withCustomFielonlds("account_agelon_in_days" -> agelon)).gelontOrelonlselon(reloncipielonnt)
 
-    val results = featureSwitches.matchRecipient(recipientWithAccountAge)
-    OrElseFeatureContext(
-      ForcedFeatureContext(featureOverrides),
-      new FeatureSwitchResultsFeatureContext(results))
+    val relonsults = felonaturelonSwitchelons.matchReloncipielonnt(reloncipielonntWithAccountAgelon)
+    OrelonlselonFelonaturelonContelonxt(
+      ForcelondFelonaturelonContelonxt(felonaturelonOvelonrridelons),
+      nelonw FelonaturelonSwitchRelonsultsFelonaturelonContelonxt(relonsults))
   }
 
-  @VisibleForTesting
-  private[configapi] def getFeatureSwitchRecipient(
-    clientContext: ClientContext
-  ): FeatureSwitchRecipient = {
-    FeatureSwitchRecipient(
-      userId = clientContext.userId,
-      userRoles = clientContext.userRoles,
-      deviceId = clientContext.deviceId,
-      guestId = clientContext.guestId,
-      languageCode = clientContext.languageCode,
-      countryCode = clientContext.countryCode,
-      isVerified = None,
-      clientApplicationId = clientContext.appId,
-      isTwoffice = clientContext.isTwoffice
+  @VisiblelonForTelonsting
+  privatelon[configapi] delonf gelontFelonaturelonSwitchReloncipielonnt(
+    clielonntContelonxt: ClielonntContelonxt
+  ): FelonaturelonSwitchReloncipielonnt = {
+    FelonaturelonSwitchReloncipielonnt(
+      uselonrId = clielonntContelonxt.uselonrId,
+      uselonrRolelons = clielonntContelonxt.uselonrRolelons,
+      delonvicelonId = clielonntContelonxt.delonvicelonId,
+      guelonstId = clielonntContelonxt.guelonstId,
+      languagelonCodelon = clielonntContelonxt.languagelonCodelon,
+      countryCodelon = clielonntContelonxt.countryCodelon,
+      isVelonrifielond = Nonelon,
+      clielonntApplicationId = clielonntContelonxt.appId,
+      isTwofficelon = clielonntContelonxt.isTwofficelon
     )
   }
 }

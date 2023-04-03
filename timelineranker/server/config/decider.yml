@@ -1,153 +1,153 @@
-# Deciders that can be used to control load on TLR or its backends.
-enable_max_concurrency_limiting:
-  comment: "When enabled, limit maxConcurrency filter. Note: Requires system property maxConcurrency to be set."
-  default_availability: 0
+# Deloncidelonrs that can belon uselond to control load on TLR or its backelonnds.
+elonnablelon_max_concurrelonncy_limiting:
+  commelonnt: "Whelonn elonnablelond, limit maxConcurrelonncy filtelonr. Notelon: Relonquirelons systelonm propelonrty maxConcurrelonncy to belon selont."
+  delonfault_availability: 0
 
-# Deciders related to testing / debugging.
-enable_routing_to_ranker_dev_proxy:
-  comment: "Route dark traffic to the TimelineRanker development proxy. 100% means ~100% of requests to a host."
-  default_availability: 0
+# Deloncidelonrs relonlatelond to telonsting / delonbugging.
+elonnablelon_routing_to_rankelonr_delonv_proxy:
+  commelonnt: "Routelon dark traffic to thelon TimelonlinelonRankelonr delonvelonlopmelonnt proxy. 100% melonans ~100% of relonquelonsts to a host."
+  delonfault_availability: 0
 
-# Deciders related to authorization.
-client_request_authorization:
-  comment: "Enable client request authorization and rate limiting"
-  default_availability: 10000
-client_write_whitelist:
-  comment: "Enable authorization of write protected requests from only whitelisted clients"
-  default_availability: 0
-allow_timeline_mixer_recap_prod:
-  comment: "Allow requests from production TimelineMixer/recap"
-  default_availability: 10000
-allow_timeline_mixer_recycled_prod:
-  comment: "Allow requests from production TimelineMixer/recycled"
-  default_availability: 10000
-allow_timeline_mixer_hydrate_prod:
-  comment: "Allow requests from production TimelineMixer/hydrate"
-  default_availability: 10000
-allow_timeline_mixer_hydrate_recos_prod:
-  comment: "Allow requests from production TimelineMixer/hydrate_recos"
-  default_availability: 10000
-allow_timeline_mixer_seed_authors_prod:
-  comment: "Allow requests from production TimelineMixer/seed_author_ids"
-  default_availability: 10000
-allow_timeline_mixer_simcluster_prod:
-  comment: "Allow requests from production TimelineMixer/simcluster"
-  default_availability: 10000
-allow_timeline_mixer_entity_tweets_prod:
-  comment: "Allow requests from production TimelineMixer/entity_tweets"
-  default_availability: 10000
-allow_timeline_mixer_list_prod:
-  comment: "Allow requests from production TimelineMixer/list"
-  default_availability: 10000
-allow_timeline_mixer_list_tweet_prod:
-  comment: "Allow requests from production TimelineMixer/list_tweet"
-  default_availability: 10000
-allow_timeline_mixer_uteg_liked_by_tweets_prod:
-  comment: "Allow requests from production TimelineMixer/uteg_liked_by_tweets"
-  default_availability: 10000
-allow_timeline_mixer_community_prod:
-  comment: "Allow requests from production TimelineMixer/community"
-  default_availability: 10000
-allow_timeline_mixer_community_tweet_prod:
-  comment: "Allow requests from production TimelineMixer/community_tweet"
-  default_availability: 10000
-allow_timeline_scorer_recommended_trend_tweet_prod:
-  comment: "Allow requests from production TimelineMixer/recommended_trend_tweet"
-  default_availability: 10000
+# Deloncidelonrs relonlatelond to authorization.
+clielonnt_relonquelonst_authorization:
+  commelonnt: "elonnablelon clielonnt relonquelonst authorization and ratelon limiting"
+  delonfault_availability: 10000
+clielonnt_writelon_whitelonlist:
+  commelonnt: "elonnablelon authorization of writelon protelonctelond relonquelonsts from only whitelonlistelond clielonnts"
+  delonfault_availability: 0
+allow_timelonlinelon_mixelonr_reloncap_prod:
+  commelonnt: "Allow relonquelonsts from production TimelonlinelonMixelonr/reloncap"
+  delonfault_availability: 10000
+allow_timelonlinelon_mixelonr_reloncyclelond_prod:
+  commelonnt: "Allow relonquelonsts from production TimelonlinelonMixelonr/reloncyclelond"
+  delonfault_availability: 10000
+allow_timelonlinelon_mixelonr_hydratelon_prod:
+  commelonnt: "Allow relonquelonsts from production TimelonlinelonMixelonr/hydratelon"
+  delonfault_availability: 10000
+allow_timelonlinelon_mixelonr_hydratelon_reloncos_prod:
+  commelonnt: "Allow relonquelonsts from production TimelonlinelonMixelonr/hydratelon_reloncos"
+  delonfault_availability: 10000
+allow_timelonlinelon_mixelonr_selonelond_authors_prod:
+  commelonnt: "Allow relonquelonsts from production TimelonlinelonMixelonr/selonelond_author_ids"
+  delonfault_availability: 10000
+allow_timelonlinelon_mixelonr_simclustelonr_prod:
+  commelonnt: "Allow relonquelonsts from production TimelonlinelonMixelonr/simclustelonr"
+  delonfault_availability: 10000
+allow_timelonlinelon_mixelonr_elonntity_twelonelonts_prod:
+  commelonnt: "Allow relonquelonsts from production TimelonlinelonMixelonr/elonntity_twelonelonts"
+  delonfault_availability: 10000
+allow_timelonlinelon_mixelonr_list_prod:
+  commelonnt: "Allow relonquelonsts from production TimelonlinelonMixelonr/list"
+  delonfault_availability: 10000
+allow_timelonlinelon_mixelonr_list_twelonelont_prod:
+  commelonnt: "Allow relonquelonsts from production TimelonlinelonMixelonr/list_twelonelont"
+  delonfault_availability: 10000
+allow_timelonlinelon_mixelonr_utelong_likelond_by_twelonelonts_prod:
+  commelonnt: "Allow relonquelonsts from production TimelonlinelonMixelonr/utelong_likelond_by_twelonelonts"
+  delonfault_availability: 10000
+allow_timelonlinelon_mixelonr_community_prod:
+  commelonnt: "Allow relonquelonsts from production TimelonlinelonMixelonr/community"
+  delonfault_availability: 10000
+allow_timelonlinelon_mixelonr_community_twelonelont_prod:
+  commelonnt: "Allow relonquelonsts from production TimelonlinelonMixelonr/community_twelonelont"
+  delonfault_availability: 10000
+allow_timelonlinelon_scorelonr_reloncommelonndelond_trelonnd_twelonelont_prod:
+  commelonnt: "Allow relonquelonsts from production TimelonlinelonMixelonr/reloncommelonndelond_trelonnd_twelonelont"
+  delonfault_availability: 10000
 
-allow_timeline_scorer_rec_topic_tweets_prod:
-  comment: "Allow requests from production TimelineScorer/rec_topic_tweets"
-  default_availability: 10000
-allow_timeline_scorer_popular_topic_tweets_prod:
-  comment: "Allow requests from production TimelineScorer/popular_topic_tweets"
-  default_availability: 10000
+allow_timelonlinelon_scorelonr_relonc_topic_twelonelonts_prod:
+  commelonnt: "Allow relonquelonsts from production TimelonlinelonScorelonr/relonc_topic_twelonelonts"
+  delonfault_availability: 10000
+allow_timelonlinelon_scorelonr_popular_topic_twelonelonts_prod:
+  commelonnt: "Allow relonquelonsts from production TimelonlinelonScorelonr/popular_topic_twelonelonts"
+  delonfault_availability: 10000
 
-allow_timelinescorer_hydrate_tweet_scoring_prod:
-  comment: "Allow requests from production TimelineScorer/hydrate_tweet_scoring"
-  default_availability: 10000
+allow_timelonlinelonscorelonr_hydratelon_twelonelont_scoring_prod:
+  commelonnt: "Allow relonquelonsts from production TimelonlinelonScorelonr/hydratelon_twelonelont_scoring"
+  delonfault_availability: 10000
 
-allow_timeline_mixer_staging:
-  comment: "Allow requests from staging TimelineMixer"
-  default_availability: 10000
-allow_timeline_ranker_warmup:
-  comment: "Allow warmup requests from the TLR cluster"
-  default_availability: 10000
-allow_timeline_ranker_proxy:
-  comment: "Allow warmup requests from the TimelineRanker proxy"
-  default_availability: 10000
-allow_timeline_service_prod:
-  comment: "Allow requests from production TimelineService"
-  default_availability: 10000
-allow_timeline_service_staging:
-  comment: "Allow requests from staging TimelineService"
-  default_availability: 10000
-rate_limit_override_unknown:
-  comment: "Override the rate limit for unknown clients"
-  default_availability: 0
+allow_timelonlinelon_mixelonr_staging:
+  commelonnt: "Allow relonquelonsts from staging TimelonlinelonMixelonr"
+  delonfault_availability: 10000
+allow_timelonlinelon_rankelonr_warmup:
+  commelonnt: "Allow warmup relonquelonsts from thelon TLR clustelonr"
+  delonfault_availability: 10000
+allow_timelonlinelon_rankelonr_proxy:
+  commelonnt: "Allow warmup relonquelonsts from thelon TimelonlinelonRankelonr proxy"
+  delonfault_availability: 10000
+allow_timelonlinelon_selonrvicelon_prod:
+  commelonnt: "Allow relonquelonsts from production TimelonlinelonSelonrvicelon"
+  delonfault_availability: 10000
+allow_timelonlinelon_selonrvicelon_staging:
+  commelonnt: "Allow relonquelonsts from staging TimelonlinelonSelonrvicelon"
+  delonfault_availability: 10000
+ratelon_limit_ovelonrridelon_unknown:
+  commelonnt: "Ovelonrridelon thelon ratelon limit for unknown clielonnts"
+  delonfault_availability: 0
 
-# Deciders related to reverse-chron home timeline materialization.
-multiplier_of_materialization_tweets_fetched:
-  comment: "Multiplier applied to the number of tweets fetched from search expressed as percentage. 100 means 100%. It can be used to fetch more than the number tweets requested by a caller (to improve similarity) or to fetch less than requested to reduce load."
-  default_availability: 100
-enable_backfill_filtered_entries:
-  comment: "Controls whether to back-fill timeline entries that get filtered out by TweetsPostFilter during home timeline materialization."
-  default_availability: 0
-tweets_filtering_lossage_threshold:
-  comment: "If back-filling filtered entries is enabled and if percentage of tweets that get filtered out exceeds this value then we will issue a second call to get more tweets. Default value 2000 == 20%"
-  default_availability: 2000
-tweets_filtering_lossage_limit:
-  comment: "We need to ensure that the number of tweets requested by the second call are not unbounded (for example, if everything is filtered out in the first call) therefore we limit the actual filtered out percentage to be no greater than the value below. Default value 6000 == 60%. That is, even if the actual lossage is 90% we will consider it to be only 60% for the purpose of back-filling."
-  default_availability: 6000
-supplement_follows_with_real_graph:
-  comment: "Whether to fetch additional follows from RealGraph for users with more than the max follows fetched from SGS during home timeline materialization."
-  default_availability: 0
+# Deloncidelonrs relonlatelond to relonvelonrselon-chron homelon timelonlinelon matelonrialization.
+multiplielonr_of_matelonrialization_twelonelonts_felontchelond:
+  commelonnt: "Multiplielonr applielond to thelon numbelonr of twelonelonts felontchelond from selonarch elonxprelonsselond as pelonrcelonntagelon. 100 melonans 100%. It can belon uselond to felontch morelon than thelon numbelonr twelonelonts relonquelonstelond by a callelonr (to improvelon similarity) or to felontch lelonss than relonquelonstelond to relonducelon load."
+  delonfault_availability: 100
+elonnablelon_backfill_filtelonrelond_elonntrielons:
+  commelonnt: "Controls whelonthelonr to back-fill timelonlinelon elonntrielons that gelont filtelonrelond out by TwelonelontsPostFiltelonr during homelon timelonlinelon matelonrialization."
+  delonfault_availability: 0
+twelonelonts_filtelonring_lossagelon_threlonshold:
+  commelonnt: "If back-filling filtelonrelond elonntrielons is elonnablelond and if pelonrcelonntagelon of twelonelonts that gelont filtelonrelond out elonxcelonelonds this valuelon thelonn welon will issuelon a seloncond call to gelont morelon twelonelonts. Delonfault valuelon 2000 == 20%"
+  delonfault_availability: 2000
+twelonelonts_filtelonring_lossagelon_limit:
+  commelonnt: "Welon nelonelond to elonnsurelon that thelon numbelonr of twelonelonts relonquelonstelond by thelon seloncond call arelon not unboundelond (for elonxamplelon, if elonvelonrything is filtelonrelond out in thelon first call) thelonrelonforelon welon limit thelon actual filtelonrelond out pelonrcelonntagelon to belon no grelonatelonr than thelon valuelon belonlow. Delonfault valuelon 6000 == 60%. That is, elonvelonn if thelon actual lossagelon is 90% welon will considelonr it to belon only 60% for thelon purposelon of back-filling."
+  delonfault_availability: 6000
+supplelonmelonnt_follows_with_relonal_graph:
+  commelonnt: "Whelonthelonr to felontch additional follows from RelonalGraph for uselonrs with morelon than thelon max follows felontchelond from SGS during homelon timelonlinelon matelonrialization."
+  delonfault_availability: 0
 
-# Deciders related to recap.
-recap_enable_content_features_hydration:
-  comment: "If true, semantic core, penguin, and tweetypie based expensive features will be hydrated for recap Tweets. Otherwise those features are not set"
-  default_availability: 10000
-recap_max_count_multiplier:
-  comment: "We multiply maxCount (caller supplied value) by this multiplier and fetch those many candidates from search so that we are left with sufficient number of candidates after hydration and filtering. 100 == 1.0"
-  default_availability: 100
-recap_enable_extra_sorting_in_results:
-  comment: "If TLR will do extra sorting in search results"
-  default_availability: 10000
+# Deloncidelonrs relonlatelond to reloncap.
+reloncap_elonnablelon_contelonnt_felonaturelons_hydration:
+  commelonnt: "If truelon, selonmantic corelon, pelonnguin, and twelonelontypielon baselond elonxpelonnsivelon felonaturelons will belon hydratelond for reloncap Twelonelonts. Othelonrwiselon thoselon felonaturelons arelon not selont"
+  delonfault_availability: 10000
+reloncap_max_count_multiplielonr:
+  commelonnt: "Welon multiply maxCount (callelonr supplielond valuelon) by this multiplielonr and felontch thoselon many candidatelons from selonarch so that welon arelon lelonft with sufficielonnt numbelonr of candidatelons aftelonr hydration and filtelonring. 100 == 1.0"
+  delonfault_availability: 100
+reloncap_elonnablelon_elonxtra_sorting_in_relonsults:
+  commelonnt: "If TLR will do elonxtra sorting in selonarch relonsults"
+  delonfault_availability: 10000
 
-# Deciders related to recycled tweets.
-recycled_enable_content_features_hydration:
-  comment: "If true, semantic core, penguin, and tweetypie based expensive features will be hydrated for recycled Tweets. Otherwise those features are not set"
-  default_availability: 0
-recycled_max_count_multiplier:
-  comment: "We multiply maxCount (caller supplied value) by this multiplier and fetch those many candidates from search so that we are left with sufficient number of candidates after hydration and filtering. 100 == 1.0"
-  default_availability: 100
+# Deloncidelonrs relonlatelond to reloncyclelond twelonelonts.
+reloncyclelond_elonnablelon_contelonnt_felonaturelons_hydration:
+  commelonnt: "If truelon, selonmantic corelon, pelonnguin, and twelonelontypielon baselond elonxpelonnsivelon felonaturelons will belon hydratelond for reloncyclelond Twelonelonts. Othelonrwiselon thoselon felonaturelons arelon not selont"
+  delonfault_availability: 0
+reloncyclelond_max_count_multiplielonr:
+  commelonnt: "Welon multiply maxCount (callelonr supplielond valuelon) by this multiplielonr and felontch thoselon many candidatelons from selonarch so that welon arelon lelonft with sufficielonnt numbelonr of candidatelons aftelonr hydration and filtelonring. 100 == 1.0"
+  delonfault_availability: 100
 
-# Deciders related to entity tweets.
-entity_tweets_enable_content_features_hydration:
-  comment: "If true, semantic core, penguin, and tweetypie based expensive features will be hydrated for entity Tweets. Otherwise those features are not set"
-  default_availability: 10000
+# Deloncidelonrs relonlatelond to elonntity twelonelonts.
+elonntity_twelonelonts_elonnablelon_contelonnt_felonaturelons_hydration:
+  commelonnt: "If truelon, selonmantic corelon, pelonnguin, and twelonelontypielon baselond elonxpelonnsivelon felonaturelons will belon hydratelond for elonntity Twelonelonts. Othelonrwiselon thoselon felonaturelons arelon not selont"
+  delonfault_availability: 10000
 
-# Deciders related to both recap and recycled tweets
-enable_real_graph_users:
-  comment: "This is used only if user follows >= 1000. If true, expands user seedset with real graph users and recent followed users. Otherwise, user seedset only includes followed users."
-  default_availability: 0
-max_real_graph_and_followed_users:
-  comment: "Maximum number of combined real graph users and recent followed users in the user seedset for recap and recycled tweets if enable_real_graph_users is true and only_real_graph_users is false. This is upper bounded by 2000."
-  default_availability: 1000
+# Deloncidelonrs relonlatelond to both reloncap and reloncyclelond twelonelonts
+elonnablelon_relonal_graph_uselonrs:
+  commelonnt: "This is uselond only if uselonr follows >= 1000. If truelon, elonxpands uselonr selonelondselont with relonal graph uselonrs and reloncelonnt followelond uselonrs. Othelonrwiselon, uselonr selonelondselont only includelons followelond uselonrs."
+  delonfault_availability: 0
+max_relonal_graph_and_followelond_uselonrs:
+  commelonnt: "Maximum numbelonr of combinelond relonal graph uselonrs and reloncelonnt followelond uselonrs in thelon uselonr selonelondselont for reloncap and reloncyclelond twelonelonts if elonnablelon_relonal_graph_uselonrs is truelon and only_relonal_graph_uselonrs is falselon. This is uppelonr boundelond by 2000."
+  delonfault_availability: 1000
 
-# Deciders related to recap author
-recap_author_enable_new_pipeline:
-  comment: "Enable new recap author pipeline"
-  default_availability: 0
-recap_author_enable_content_features_hydration:
-  comment: "If true, semantic core, penguin, and tweetypie based expensive features will be hydrated for PYLE Tweets. Otherwise those features are not set"
-  default_availability: 0
+# Deloncidelonrs relonlatelond to reloncap author
+reloncap_author_elonnablelon_nelonw_pipelonlinelon:
+  commelonnt: "elonnablelon nelonw reloncap author pipelonlinelon"
+  delonfault_availability: 0
+reloncap_author_elonnablelon_contelonnt_felonaturelons_hydration:
+  commelonnt: "If truelon, selonmantic corelon, pelonnguin, and twelonelontypielon baselond elonxpelonnsivelon felonaturelons will belon hydratelond for PYLelon Twelonelonts. Othelonrwiselon thoselon felonaturelons arelon not selont"
+  delonfault_availability: 0
 
-# Deciders related to recap hydration(rectweet+ranked organic).
-recap_hydration_enable_content_features_hydration:
-  comment: "If true, semantic core, penguin, and tweetypie based expensive features will be hydrated for rectweet+ranked organic Tweets. Otherwise those features are not set"
-  default_availability: 0
+# Deloncidelonrs relonlatelond to reloncap hydration(relonctwelonelont+rankelond organic).
+reloncap_hydration_elonnablelon_contelonnt_felonaturelons_hydration:
+  commelonnt: "If truelon, selonmantic corelon, pelonnguin, and twelonelontypielon baselond elonxpelonnsivelon felonaturelons will belon hydratelond for relonctwelonelont+rankelond organic Twelonelonts. Othelonrwiselon thoselon felonaturelons arelon not selont"
+  delonfault_availability: 0
 
-# Deciders related to uteg liked by tweets
-uteg_liked_by_tweets_enable_content_features_hydration:
-  comment: "If true, semantic core, penguin, and tweetypie based expensive features will be hydrated for rectweet+recycled utegLikedBy Tweets. Otherwise those features are not set"
-  default_availability: 0
+# Deloncidelonrs relonlatelond to utelong likelond by twelonelonts
+utelong_likelond_by_twelonelonts_elonnablelon_contelonnt_felonaturelons_hydration:
+  commelonnt: "If truelon, selonmantic corelon, pelonnguin, and twelonelontypielon baselond elonxpelonnsivelon felonaturelons will belon hydratelond for relonctwelonelont+reloncyclelond utelongLikelondBy Twelonelonts. Othelonrwiselon thoselon felonaturelons arelon not selont"
+  delonfault_availability: 0

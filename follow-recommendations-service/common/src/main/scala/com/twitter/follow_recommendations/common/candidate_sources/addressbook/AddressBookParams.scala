@@ -1,9 +1,9 @@
-package com.twitter.follow_recommendations.common.candidate_sources.addressbook
+packagelon com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.addrelonssbook
 
-import com.twitter.timelines.configapi.FSParam
+import com.twittelonr.timelonlinelons.configapi.FSParam
 
-object AddressBookParams {
-  // Used by display locations that want only to read from the ABV2 Client and ignore Manhattan
-  // Currently the only display location that does this is the ABUploadInjection DisplayLocation
-  object ReadFromABV2Only extends FSParam[Boolean]("addressbook_read_only_from_abv2", false)
+objelonct AddrelonssBookParams {
+  // Uselond by display locations that want only to relonad from thelon ABV2 Clielonnt and ignorelon Manhattan
+  // Currelonntly thelon only display location that doelons this is thelon ABUploadInjelonction DisplayLocation
+  objelonct RelonadFromABV2Only elonxtelonnds FSParam[Boolelonan]("addrelonssbook_relonad_only_from_abv2", falselon)
 }

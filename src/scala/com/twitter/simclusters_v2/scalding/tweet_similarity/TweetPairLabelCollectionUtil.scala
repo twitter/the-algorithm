@@ -1,490 +1,490 @@
-package com.twitter.simclusters_v2.scalding.tweet_similarity
+packagelon com.twittelonr.simclustelonrs_v2.scalding.twelonelont_similarity
 
-import com.twitter.ads.entities.db.thriftscala.PromotedTweet
-import com.twitter.dataproducts.estimation.ReservoirSampler
-import com.twitter.scalding.typed.TypedPipe
-import com.twitter.scalding.{DateRange, Execution, TypedTsv}
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.remote_access.{ExplicitLocation, Proc3Atla, ProcAtla}
-import com.twitter.simclusters_v2.common.{SimClustersEmbedding, Timestamp, TweetId, UserId}
-import com.twitter.simclusters_v2.scalding.common.Util
-import com.twitter.simclusters_v2.scalding.embedding.common.ExternalDataSources
-import com.twitter.simclusters_v2.thriftscala.{
-  TweetTopKTweetsWithScore,
-  TweetWithScore,
-  TweetsWithScore
+import com.twittelonr.ads.elonntitielons.db.thriftscala.PromotelondTwelonelont
+import com.twittelonr.dataproducts.elonstimation.RelonselonrvoirSamplelonr
+import com.twittelonr.scalding.typelond.TypelondPipelon
+import com.twittelonr.scalding.{DatelonRangelon, elonxeloncution, TypelondTsv}
+import com.twittelonr.scalding_intelonrnal.dalv2.DAL
+import com.twittelonr.scalding_intelonrnal.dalv2.relonmotelon_accelonss.{elonxplicitLocation, Proc3Atla, ProcAtla}
+import com.twittelonr.simclustelonrs_v2.common.{SimClustelonrselonmbelondding, Timelonstamp, TwelonelontId, UselonrId}
+import com.twittelonr.simclustelonrs_v2.scalding.common.Util
+import com.twittelonr.simclustelonrs_v2.scalding.elonmbelondding.common.elonxtelonrnalDataSourcelons
+import com.twittelonr.simclustelonrs_v2.thriftscala.{
+  TwelonelontTopKTwelonelontsWithScorelon,
+  TwelonelontWithScorelon,
+  TwelonelontsWithScorelon
 }
-import com.twitter.timelineservice.thriftscala.{ContextualizedFavoriteEvent, FavoriteEventUnion}
-import com.twitter.wtf.scalding.client_event_processing.thriftscala.{
-  InteractionDetails,
-  InteractionType,
-  TweetImpressionDetails
+import com.twittelonr.timelonlinelonselonrvicelon.thriftscala.{ContelonxtualizelondFavoritelonelonvelonnt, FavoritelonelonvelonntUnion}
+import com.twittelonr.wtf.scalding.clielonnt_elonvelonnt_procelonssing.thriftscala.{
+  IntelonractionDelontails,
+  IntelonractionTypelon,
+  TwelonelontImprelonssionDelontails
 }
-import com.twitter.wtf.scalding.jobs.client_event_processing.UserInteractionScalaDataset
+import com.twittelonr.wtf.scalding.jobs.clielonnt_elonvelonnt_procelonssing.UselonrIntelonractionScalaDataselont
 import java.util.Random
-import scala.collection.mutable.ArrayBuffer
-import scala.util.control.Breaks._
-import twadoop_config.configuration.log_categories.group.timeline.TimelineServiceFavoritesScalaDataset
+import scala.collelonction.mutablelon.ArrayBuffelonr
+import scala.util.control.Brelonaks._
+import twadoop_config.configuration.log_catelongorielons.group.timelonlinelon.TimelonlinelonSelonrvicelonFavoritelonsScalaDataselont
 
-object TweetPairLabelCollectionUtil {
+objelonct TwelonelontPairLabelonlCollelonctionUtil {
 
-  case class FeaturedTweet(
-    tweet: TweetId,
-    timestamp: Timestamp, //engagement or impression time
-    author: Option[UserId],
-    embedding: Option[SimClustersEmbedding])
-      extends Ordered[FeaturedTweet] {
+  caselon class FelonaturelondTwelonelont(
+    twelonelont: TwelonelontId,
+    timelonstamp: Timelonstamp, //elonngagelonmelonnt or imprelonssion timelon
+    author: Option[UselonrId],
+    elonmbelondding: Option[SimClustelonrselonmbelondding])
+      elonxtelonnds Ordelonrelond[FelonaturelondTwelonelont] {
 
-    import scala.math.Ordered.orderingToOrdered
+    import scala.math.Ordelonrelond.ordelonringToOrdelonrelond
 
-    def compare(that: FeaturedTweet): Int =
-      (this.tweet, this.timestamp, this.author) compare (that.tweet, that.timestamp, that.author)
+    delonf comparelon(that: FelonaturelondTwelonelont): Int =
+      (this.twelonelont, this.timelonstamp, this.author) comparelon (that.twelonelont, that.timelonstamp, that.author)
   }
 
-  val MaxFavPerUser: Int = 100
+  val MaxFavPelonrUselonr: Int = 100
 
   /**
-   * Get all fav events within the given dateRange and where all users' out-degree <= maxOutDegree
-   * from TimelineServiceFavoritesScalaDataset
+   * Gelont all fav elonvelonnts within thelon givelonn datelonRangelon and whelonrelon all uselonrs' out-delongrelonelon <= maxOutDelongrelonelon
+   * from TimelonlinelonSelonrvicelonFavoritelonsScalaDataselont
    *
-   * @param dateRange         date of interest
-   * @param maxOutgoingDegree max #degrees for the users of interests
+   * @param datelonRangelon         datelon of intelonrelonst
+   * @param maxOutgoingDelongrelonelon max #delongrelonelons for thelon uselonrs of intelonrelonsts
    *
-   * @return Filtered fav events, TypedPipe of (userid, tweetid, timestamp) tuples
+   * @relonturn Filtelonrelond fav elonvelonnts, TypelondPipelon of (uselonrid, twelonelontid, timelonstamp) tuplelons
    */
-  def getFavEvents(
-    dateRange: DateRange,
-    maxOutgoingDegree: Int
-  ): TypedPipe[(UserId, TweetId, Timestamp)] = {
-    val fullTimelineFavData: TypedPipe[ContextualizedFavoriteEvent] =
+  delonf gelontFavelonvelonnts(
+    datelonRangelon: DatelonRangelon,
+    maxOutgoingDelongrelonelon: Int
+  ): TypelondPipelon[(UselonrId, TwelonelontId, Timelonstamp)] = {
+    val fullTimelonlinelonFavData: TypelondPipelon[ContelonxtualizelondFavoritelonelonvelonnt] =
       DAL
-        .read(TimelineServiceFavoritesScalaDataset, dateRange)
-        .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-        .toTypedPipe
+        .relonad(TimelonlinelonSelonrvicelonFavoritelonsScalaDataselont, datelonRangelon)
+        .withRelonmotelonRelonadPolicy(elonxplicitLocation(ProcAtla))
+        .toTypelondPipelon
 
-    val userTweetTuples = fullTimelineFavData
-      .flatMap { cfe: ContextualizedFavoriteEvent =>
-        cfe.event match {
-          case FavoriteEventUnion.Favorite(fav) =>
-            Some((fav.userId, (fav.tweetId, fav.eventTimeMs)))
-          case _ =>
-            None
+    val uselonrTwelonelontTuplelons = fullTimelonlinelonFavData
+      .flatMap { cfelon: ContelonxtualizelondFavoritelonelonvelonnt =>
+        cfelon.elonvelonnt match {
+          caselon FavoritelonelonvelonntUnion.Favoritelon(fav) =>
+            Somelon((fav.uselonrId, (fav.twelonelontId, fav.elonvelonntTimelonMs)))
+          caselon _ =>
+            Nonelon
         }
       }
-    //Get users with the out-degree <= maxOutDegree first
-    val usersWithValidOutDegree = userTweetTuples
+    //Gelont uselonrs with thelon out-delongrelonelon <= maxOutDelongrelonelon first
+    val uselonrsWithValidOutDelongrelonelon = uselonrTwelonelontTuplelons
       .groupBy(_._1)
-      .withReducers(1000)
-      .size
-      .filter(_._2 <= maxOutgoingDegree)
+      .withRelonducelonrs(1000)
+      .sizelon
+      .filtelonr(_._2 <= maxOutgoingDelongrelonelon)
 
-    // Keep only usersWithValidOutDegree in the graph
-    userTweetTuples
-      .join(usersWithValidOutDegree).map {
-        case (userId, ((tweetId, eventTime), _)) => (userId, tweetId, eventTime)
-      }.forceToDisk
+    // Kelonelonp only uselonrsWithValidOutDelongrelonelon in thelon graph
+    uselonrTwelonelontTuplelons
+      .join(uselonrsWithValidOutDelongrelonelon).map {
+        caselon (uselonrId, ((twelonelontId, elonvelonntTimelon), _)) => (uselonrId, twelonelontId, elonvelonntTimelon)
+      }.forcelonToDisk
   }
 
   /**
-   * Get impression events where users stay at the tweets for more than one minute
+   * Gelont imprelonssion elonvelonnts whelonrelon uselonrs stay at thelon twelonelonts for morelon than onelon minutelon
    *
-   * @param dateRange time range of interest
+   * @param datelonRangelon timelon rangelon of intelonrelonst
    *
-   * @return
+   * @relonturn
    */
-  def getImpressionEvents(dateRange: DateRange): TypedPipe[(UserId, TweetId, Timestamp)] = {
+  delonf gelontImprelonssionelonvelonnts(datelonRangelon: DatelonRangelon): TypelondPipelon[(UselonrId, TwelonelontId, Timelonstamp)] = {
     DAL
-      .read(UserInteractionScalaDataset, dateRange)
-      .withRemoteReadPolicy(ExplicitLocation(Proc3Atla))
-      .toTypedPipe
+      .relonad(UselonrIntelonractionScalaDataselont, datelonRangelon)
+      .withRelonmotelonRelonadPolicy(elonxplicitLocation(Proc3Atla))
+      .toTypelondPipelon
       .flatMap {
-        case userInteraction
-            if userInteraction.interactionType == InteractionType.TweetImpressions =>
-          userInteraction.interactionDetails match {
-            case InteractionDetails.TweetImpressionDetails(
-                  TweetImpressionDetails(tweetId, _, dwellTimeInSecOpt))
-                if dwellTimeInSecOpt.exists(_ >= 1) =>
-              Some(userInteraction.userId, tweetId, userInteraction.timeStamp)
-            case _ =>
-              None
+        caselon uselonrIntelonraction
+            if uselonrIntelonraction.intelonractionTypelon == IntelonractionTypelon.TwelonelontImprelonssions =>
+          uselonrIntelonraction.intelonractionDelontails match {
+            caselon IntelonractionDelontails.TwelonelontImprelonssionDelontails(
+                  TwelonelontImprelonssionDelontails(twelonelontId, _, dwelonllTimelonInSeloncOpt))
+                if dwelonllTimelonInSeloncOpt.elonxists(_ >= 1) =>
+              Somelon(uselonrIntelonraction.uselonrId, twelonelontId, uselonrIntelonraction.timelonStamp)
+            caselon _ =>
+              Nonelon
           }
-        case _ => None
+        caselon _ => Nonelon
       }
-      .forceToDisk
+      .forcelonToDisk
   }
 
   /**
-   * Given an events dataset, return a filtered events limited to a given set of tweets
+   * Givelonn an elonvelonnts dataselont, relonturn a filtelonrelond elonvelonnts limitelond to a givelonn selont of twelonelonts
    *
-   * @param events user fav events, a TypedPipe of (userid, tweetid, timestamp) tuples
-   * @param tweets tweets of interest
+   * @param elonvelonnts uselonr fav elonvelonnts, a TypelondPipelon of (uselonrid, twelonelontid, timelonstamp) tuplelons
+   * @param twelonelonts twelonelonts of intelonrelonst
    *
-   * @return Filtered fav events on the given tweets of interest only, TypedPipe of (userid, tweetid, timestamp) tuples
+   * @relonturn Filtelonrelond fav elonvelonnts on thelon givelonn twelonelonts of intelonrelonst only, TypelondPipelon of (uselonrid, twelonelontid, timelonstamp) tuplelons
    */
-  def getFilteredEvents(
-    events: TypedPipe[(UserId, TweetId, Timestamp)],
-    tweets: TypedPipe[TweetId]
-  ): TypedPipe[(UserId, TweetId, Timestamp)] = {
-    events
+  delonf gelontFiltelonrelondelonvelonnts(
+    elonvelonnts: TypelondPipelon[(UselonrId, TwelonelontId, Timelonstamp)],
+    twelonelonts: TypelondPipelon[TwelonelontId]
+  ): TypelondPipelon[(UselonrId, TwelonelontId, Timelonstamp)] = {
+    elonvelonnts
       .map {
-        case (userId, tweetId, eventTime) => (tweetId, (userId, eventTime))
+        caselon (uselonrId, twelonelontId, elonvelonntTimelon) => (twelonelontId, (uselonrId, elonvelonntTimelon))
       }
-      .join(tweets.asKeys)
-      .withReducers(1000)
+      .join(twelonelonts.asKelonys)
+      .withRelonducelonrs(1000)
       .map {
-        case (tweetId, ((userId, eventTime), _)) => (userId, tweetId, eventTime)
+        caselon (twelonelontId, ((uselonrId, elonvelonntTimelon), _)) => (uselonrId, twelonelontId, elonvelonntTimelon)
       }
   }
 
-  /** Get (tweetId, author userId) of a given dateRange
+  /** Gelont (twelonelontId, author uselonrId) of a givelonn datelonRangelon
    *
-   * @param dateRange time range of interest
+   * @param datelonRangelon timelon rangelon of intelonrelonst
    *
-   * @return TypedPipe of (tweetId, userId)
+   * @relonturn TypelondPipelon of (twelonelontId, uselonrId)
    */
-  def getTweetAuthorPairs(dateRange: DateRange): TypedPipe[(TweetId, UserId)] = {
-    ExternalDataSources
-      .flatTweetsSource(dateRange)
-      .collect {
-        // Exclude retweets and quoted tweets
-        case record if record.shareSourceTweetId.isEmpty && record.quotedTweetTweetId.isEmpty =>
-          (record.tweetId, record.userId)
+  delonf gelontTwelonelontAuthorPairs(datelonRangelon: DatelonRangelon): TypelondPipelon[(TwelonelontId, UselonrId)] = {
+    elonxtelonrnalDataSourcelons
+      .flatTwelonelontsSourcelon(datelonRangelon)
+      .collelonct {
+        // elonxcludelon relontwelonelonts and quotelond twelonelonts
+        caselon reloncord if reloncord.sharelonSourcelonTwelonelontId.iselonmpty && reloncord.quotelondTwelonelontTwelonelontId.iselonmpty =>
+          (reloncord.twelonelontId, reloncord.uselonrId)
       }
   }
 
-  /** Given a set of tweets, get all non-promoted tweets from the given set
+  /** Givelonn a selont of twelonelonts, gelont all non-promotelond twelonelonts from thelon givelonn selont
    *
-   * @param promotedTweets TypedPipe of promoted tweets
-   * @param tweets         tweets of interest
+   * @param promotelondTwelonelonts TypelondPipelon of promotelond twelonelonts
+   * @param twelonelonts         twelonelonts of intelonrelonst
    *
-   * @return TypedPipe of tweetId
+   * @relonturn TypelondPipelon of twelonelontId
    */
-  def getNonPromotedTweets(
-    promotedTweets: TypedPipe[PromotedTweet],
-    tweets: TypedPipe[TweetId]
-  ): TypedPipe[TweetId] = {
-    promotedTweets
-      .collect {
-        case promotedTweet if promotedTweet.tweetId.isDefined => promotedTweet.tweetId.get
+  delonf gelontNonPromotelondTwelonelonts(
+    promotelondTwelonelonts: TypelondPipelon[PromotelondTwelonelont],
+    twelonelonts: TypelondPipelon[TwelonelontId]
+  ): TypelondPipelon[TwelonelontId] = {
+    promotelondTwelonelonts
+      .collelonct {
+        caselon promotelondTwelonelont if promotelondTwelonelont.twelonelontId.isDelonfinelond => promotelondTwelonelont.twelonelontId.gelont
       }
-      .asKeys
-      .rightJoin(tweets.asKeys)
-      .withReducers(1000)
-      .filterNot(joined => joined._2._1.isDefined) //filter out those in promotedTweets
-      .keys
+      .asKelonys
+      .rightJoin(twelonelonts.asKelonys)
+      .withRelonducelonrs(1000)
+      .filtelonrNot(joinelond => joinelond._2._1.isDelonfinelond) //filtelonr out thoselon in promotelondTwelonelonts
+      .kelonys
   }
 
   /**
-   * Given a fav events dataset, return all distinct ordered tweet pairs, labelled by whether they are co-engaged or not
-   * Note we distinguish between (t1, t2) and (t2, t1) because o.w we introduce bias to training samples
+   * Givelonn a fav elonvelonnts dataselont, relonturn all distinct ordelonrelond twelonelont pairs, labelonllelond by whelonthelonr thelony arelon co-elonngagelond or not
+   * Notelon welon distinguish belontwelonelonn (t1, t2) and (t2, t1) beloncauselon o.w welon introducelon bias to training samplelons
    *
-   * @param events      user fav events, a TypedPipe of (userid, featuredTweet) tuples
-   * @param timeframe   two tweets will be considered co-engaged if they are fav-ed within coengagementTimeframe
-   * @param isCoengaged if pairs are co-engaged
+   * @param elonvelonnts      uselonr fav elonvelonnts, a TypelondPipelon of (uselonrid, felonaturelondTwelonelont) tuplelons
+   * @param timelonframelon   two twelonelonts will belon considelonrelond co-elonngagelond if thelony arelon fav-elond within coelonngagelonmelonntTimelonframelon
+   * @param isCoelonngagelond if pairs arelon co-elonngagelond
    *
-   * @return labelled tweet pairs, TypedPipe of (userid, featuredTweet1, featuredTweet2, isCoengaged) tuples
+   * @relonturn labelonllelond twelonelont pairs, TypelondPipelon of (uselonrid, felonaturelondTwelonelont1, felonaturelondTwelonelont2, isCoelonngagelond) tuplelons
    */
-  def getTweetPairs(
-    events: TypedPipe[(UserId, FeaturedTweet)],
-    timeframe: Long,
-    isCoengaged: Boolean
-  ): TypedPipe[(UserId, FeaturedTweet, FeaturedTweet, Boolean)] = {
-    events
+  delonf gelontTwelonelontPairs(
+    elonvelonnts: TypelondPipelon[(UselonrId, FelonaturelondTwelonelont)],
+    timelonframelon: Long,
+    isCoelonngagelond: Boolelonan
+  ): TypelondPipelon[(UselonrId, FelonaturelondTwelonelont, FelonaturelondTwelonelont, Boolelonan)] = {
+    elonvelonnts
       .map {
-        case (userId, featuredTweet) => (userId, Seq(featuredTweet))
+        caselon (uselonrId, felonaturelondTwelonelont) => (uselonrId, Selonq(felonaturelondTwelonelont))
       }
-      .sumByKey
+      .sumByKelony
       .flatMap {
-        case (userId, featuredTweets) if featuredTweets.size > 1 =>
-          val sortedFeaturedTweet = featuredTweets.sortBy(_.timestamp)
-          // Get all distinct ordered pairs that happen within coengagementTimeframe
-          val distinctPairs = ArrayBuffer[(UserId, FeaturedTweet, FeaturedTweet, Boolean)]()
-          breakable {
-            for (i <- sortedFeaturedTweet.indices) {
-              for (j <- i + 1 until sortedFeaturedTweet.size) {
-                val featuredTweet1 = sortedFeaturedTweet(i)
-                val featuredTweet2 = sortedFeaturedTweet(j)
-                if (math.abs(featuredTweet1.timestamp - featuredTweet2.timestamp) <= timeframe)
-                  distinctPairs ++= Seq(
-                    (userId, featuredTweet1, featuredTweet2, isCoengaged),
-                    (userId, featuredTweet2, featuredTweet1, isCoengaged))
-                else
-                  break
+        caselon (uselonrId, felonaturelondTwelonelonts) if felonaturelondTwelonelonts.sizelon > 1 =>
+          val sortelondFelonaturelondTwelonelont = felonaturelondTwelonelonts.sortBy(_.timelonstamp)
+          // Gelont all distinct ordelonrelond pairs that happelonn within coelonngagelonmelonntTimelonframelon
+          val distinctPairs = ArrayBuffelonr[(UselonrId, FelonaturelondTwelonelont, FelonaturelondTwelonelont, Boolelonan)]()
+          brelonakablelon {
+            for (i <- sortelondFelonaturelondTwelonelont.indicelons) {
+              for (j <- i + 1 until sortelondFelonaturelondTwelonelont.sizelon) {
+                val felonaturelondTwelonelont1 = sortelondFelonaturelondTwelonelont(i)
+                val felonaturelondTwelonelont2 = sortelondFelonaturelondTwelonelont(j)
+                if (math.abs(felonaturelondTwelonelont1.timelonstamp - felonaturelondTwelonelont2.timelonstamp) <= timelonframelon)
+                  distinctPairs ++= Selonq(
+                    (uselonrId, felonaturelondTwelonelont1, felonaturelondTwelonelont2, isCoelonngagelond),
+                    (uselonrId, felonaturelondTwelonelont2, felonaturelondTwelonelont1, isCoelonngagelond))
+                elonlselon
+                  brelonak
               }
             }
           }
           distinctPairs
-        case _ => Nil
+        caselon _ => Nil
       }
   }
 
   /**
-   * Get co-engaged tweet pairs
+   * Gelont co-elonngagelond twelonelont pairs
    *
-   * @param favEvents             user fav events, TypedPipe of (userid, tweetid, timestamp)
-   * @param tweets                tweets to be considered
-   * @param coengagementTimeframe time window for two tweets to be considered as co-engaged
+   * @param favelonvelonnts             uselonr fav elonvelonnts, TypelondPipelon of (uselonrid, twelonelontid, timelonstamp)
+   * @param twelonelonts                twelonelonts to belon considelonrelond
+   * @param coelonngagelonmelonntTimelonframelon timelon window for two twelonelonts to belon considelonrelond as co-elonngagelond
    *
-   * @return TypedPipe of co-engaged tweet pairs
+   * @relonturn TypelondPipelon of co-elonngagelond twelonelont pairs
    */
-  def getCoengagedPairs(
-    favEvents: TypedPipe[(UserId, TweetId, Timestamp)],
-    tweets: TypedPipe[TweetId],
-    coengagementTimeframe: Long
-  ): TypedPipe[(UserId, FeaturedTweet, FeaturedTweet, Boolean)] = {
-    val userFeaturedTweetPairs =
-      getFilteredEvents(favEvents, tweets)
+  delonf gelontCoelonngagelondPairs(
+    favelonvelonnts: TypelondPipelon[(UselonrId, TwelonelontId, Timelonstamp)],
+    twelonelonts: TypelondPipelon[TwelonelontId],
+    coelonngagelonmelonntTimelonframelon: Long
+  ): TypelondPipelon[(UselonrId, FelonaturelondTwelonelont, FelonaturelondTwelonelont, Boolelonan)] = {
+    val uselonrFelonaturelondTwelonelontPairs =
+      gelontFiltelonrelondelonvelonnts(favelonvelonnts, twelonelonts)
         .map {
-          case (user, tweet, timestamp) => (user, FeaturedTweet(tweet, timestamp, None, None))
+          caselon (uselonr, twelonelont, timelonstamp) => (uselonr, FelonaturelondTwelonelont(twelonelont, timelonstamp, Nonelon, Nonelon))
         }
 
-    getTweetPairs(userFeaturedTweetPairs, coengagementTimeframe, isCoengaged = true)
+    gelontTwelonelontPairs(uselonrFelonaturelondTwelonelontPairs, coelonngagelonmelonntTimelonframelon, isCoelonngagelond = truelon)
   }
 
   /**
-   * Get co-impressed tweet pairs
+   * Gelont co-imprelonsselond twelonelont pairs
    *
-   * @param impressionEvents tweet impression events, TypedPipe of (userid, tweetid, timestamp)
-   * @param tweets           set of tweets considered to be part of co-impressed tweet pairs
-   * @param timeframe        time window for two tweets to be considered as co-impressed
+   * @param imprelonssionelonvelonnts twelonelont imprelonssion elonvelonnts, TypelondPipelon of (uselonrid, twelonelontid, timelonstamp)
+   * @param twelonelonts           selont of twelonelonts considelonrelond to belon part of co-imprelonsselond twelonelont pairs
+   * @param timelonframelon        timelon window for two twelonelonts to belon considelonrelond as co-imprelonsselond
    *
-   * @return TypedPipe of co-impressed tweet pairs
+   * @relonturn TypelondPipelon of co-imprelonsselond twelonelont pairs
    */
-  def getCoimpressedPairs(
-    impressionEvents: TypedPipe[(UserId, TweetId, Timestamp)],
-    tweets: TypedPipe[TweetId],
-    timeframe: Long
-  ): TypedPipe[(UserId, FeaturedTweet, FeaturedTweet, Boolean)] = {
-    val userFeaturedTweetPairs = getFilteredEvents(impressionEvents, tweets)
+  delonf gelontCoimprelonsselondPairs(
+    imprelonssionelonvelonnts: TypelondPipelon[(UselonrId, TwelonelontId, Timelonstamp)],
+    twelonelonts: TypelondPipelon[TwelonelontId],
+    timelonframelon: Long
+  ): TypelondPipelon[(UselonrId, FelonaturelondTwelonelont, FelonaturelondTwelonelont, Boolelonan)] = {
+    val uselonrFelonaturelondTwelonelontPairs = gelontFiltelonrelondelonvelonnts(imprelonssionelonvelonnts, twelonelonts)
       .map {
-        case (user, tweet, timestamp) => (user, FeaturedTweet(tweet, timestamp, None, None))
+        caselon (uselonr, twelonelont, timelonstamp) => (uselonr, FelonaturelondTwelonelont(twelonelont, timelonstamp, Nonelon, Nonelon))
       }
 
-    getTweetPairs(userFeaturedTweetPairs, timeframe, isCoengaged = false)
+    gelontTwelonelontPairs(uselonrFelonaturelondTwelonelontPairs, timelonframelon, isCoelonngagelond = falselon)
   }
 
   /**
-   * Consolidate co-engaged pairs and co-impressed pairs, and compute all the labelled tweet pairs
-   * Given a pair:
-   * label = 1 if co-engaged (whether or not it's co-impressed)
-   * label = 0 if co-impressed and not co-engaged
+   * Consolidatelon co-elonngagelond pairs and co-imprelonsselond pairs, and computelon all thelon labelonllelond twelonelont pairs
+   * Givelonn a pair:
+   * labelonl = 1 if co-elonngagelond (whelonthelonr or not it's co-imprelonsselond)
+   * labelonl = 0 if co-imprelonsselond and not co-elonngagelond
    *
-   * @param coengagedPairs   co-engaged tweet pairs, TypedPipe of (user, queryFeaturedTweet, candidateFeaturedTweet, label)
-   * @param coimpressedPairs co-impressed tweet pairs, TypedPipe of (user, queryFeaturedTweet, candidateFeaturedTweet, label)
+   * @param coelonngagelondPairs   co-elonngagelond twelonelont pairs, TypelondPipelon of (uselonr, quelonryFelonaturelondTwelonelont, candidatelonFelonaturelondTwelonelont, labelonl)
+   * @param coimprelonsselondPairs co-imprelonsselond twelonelont pairs, TypelondPipelon of (uselonr, quelonryFelonaturelondTwelonelont, candidatelonFelonaturelondTwelonelont, labelonl)
    *
-   * @return labelled tweet pairs, TypedPipe of (queryFeaturedTweet, candidateFeaturedTweet, label) tuples
+   * @relonturn labelonllelond twelonelont pairs, TypelondPipelon of (quelonryFelonaturelondTwelonelont, candidatelonFelonaturelondTwelonelont, labelonl) tuplelons
    */
-  def computeLabelledTweetPairs(
-    coengagedPairs: TypedPipe[(UserId, FeaturedTweet, FeaturedTweet, Boolean)],
-    coimpressedPairs: TypedPipe[(UserId, FeaturedTweet, FeaturedTweet, Boolean)]
-  ): TypedPipe[(FeaturedTweet, FeaturedTweet, Boolean)] = {
-    (coengagedPairs ++ coimpressedPairs)
+  delonf computelonLabelonllelondTwelonelontPairs(
+    coelonngagelondPairs: TypelondPipelon[(UselonrId, FelonaturelondTwelonelont, FelonaturelondTwelonelont, Boolelonan)],
+    coimprelonsselondPairs: TypelondPipelon[(UselonrId, FelonaturelondTwelonelont, FelonaturelondTwelonelont, Boolelonan)]
+  ): TypelondPipelon[(FelonaturelondTwelonelont, FelonaturelondTwelonelont, Boolelonan)] = {
+    (coelonngagelondPairs ++ coimprelonsselondPairs)
       .groupBy {
-        case (userId, queryFeaturedTweet, candidateFeaturedTweet, _) =>
-          (userId, queryFeaturedTweet.tweet, candidateFeaturedTweet.tweet)
+        caselon (uselonrId, quelonryFelonaturelondTwelonelont, candidatelonFelonaturelondTwelonelont, _) =>
+          (uselonrId, quelonryFelonaturelondTwelonelont.twelonelont, candidatelonFelonaturelondTwelonelont.twelonelont)
       }
-      // consolidate all the labelled pairs into one with the max label
-      // (label order: co-engagement = true > co-impression = false)
+      // consolidatelon all thelon labelonllelond pairs into onelon with thelon max labelonl
+      // (labelonl ordelonr: co-elonngagelonmelonnt = truelon > co-imprelonssion = falselon)
       .maxBy {
-        case (_, _, _, label) => label
+        caselon (_, _, _, labelonl) => labelonl
       }
-      .values
-      .map { case (_, queryTweet, candidateTweet, label) => (queryTweet, candidateTweet, label) }
+      .valuelons
+      .map { caselon (_, quelonryTwelonelont, candidatelonTwelonelont, labelonl) => (quelonryTwelonelont, candidatelonTwelonelont, labelonl) }
   }
 
   /**
-   * Get a balanced-class sampling of tweet pairs.
-   * For each query tweet, we make sure the numbers of positives and negatives are equal.
+   * Gelont a balancelond-class sampling of twelonelont pairs.
+   * For elonach quelonry twelonelont, welon makelon surelon thelon numbelonrs of positivelons and nelongativelons arelon elonqual.
    *
-   * @param labelledPairs      labelled tweet pairs, TypedPipe of (queryFeaturedTweet, candidateFeaturedTweet, label) tuples
-   * @param maxSamplesPerClass max number of samples per class
+   * @param labelonllelondPairs      labelonllelond twelonelont pairs, TypelondPipelon of (quelonryFelonaturelondTwelonelont, candidatelonFelonaturelondTwelonelont, labelonl) tuplelons
+   * @param maxSamplelonsPelonrClass max numbelonr of samplelons pelonr class
    *
-   * @return sampled labelled pairs after balanced-class sampling
+   * @relonturn samplelond labelonllelond pairs aftelonr balancelond-class sampling
    */
-  def getQueryTweetBalancedClassPairs(
-    labelledPairs: TypedPipe[(FeaturedTweet, FeaturedTweet, Boolean)],
-    maxSamplesPerClass: Int
-  ): TypedPipe[(FeaturedTweet, FeaturedTweet, Boolean)] = {
-    val queryTweetToSampleCount = labelledPairs
+  delonf gelontQuelonryTwelonelontBalancelondClassPairs(
+    labelonllelondPairs: TypelondPipelon[(FelonaturelondTwelonelont, FelonaturelondTwelonelont, Boolelonan)],
+    maxSamplelonsPelonrClass: Int
+  ): TypelondPipelon[(FelonaturelondTwelonelont, FelonaturelondTwelonelont, Boolelonan)] = {
+    val quelonryTwelonelontToSamplelonCount = labelonllelondPairs
       .map {
-        case (queryTweet, _, label) =>
-          if (label) (queryTweet.tweet, (1, 0)) else (queryTweet.tweet, (0, 1))
+        caselon (quelonryTwelonelont, _, labelonl) =>
+          if (labelonl) (quelonryTwelonelont.twelonelont, (1, 0)) elonlselon (quelonryTwelonelont.twelonelont, (0, 1))
       }
-      .sumByKey
+      .sumByKelony
       .map {
-        case (queryTweet, (posCount, negCount)) =>
-          (queryTweet, Math.min(Math.min(posCount, negCount), maxSamplesPerClass))
+        caselon (quelonryTwelonelont, (posCount, nelongCount)) =>
+          (quelonryTwelonelont, Math.min(Math.min(posCount, nelongCount), maxSamplelonsPelonrClass))
       }
 
-    labelledPairs
-      .groupBy { case (queryTweet, _, _) => queryTweet.tweet }
-      .join(queryTweetToSampleCount)
-      .values
+    labelonllelondPairs
+      .groupBy { caselon (quelonryTwelonelont, _, _) => quelonryTwelonelont.twelonelont }
+      .join(quelonryTwelonelontToSamplelonCount)
+      .valuelons
       .map {
-        case ((queryTweet, candidateTweet, label), samplePerClass) =>
-          ((queryTweet.tweet, label, samplePerClass), (queryTweet, candidateTweet, label))
+        caselon ((quelonryTwelonelont, candidatelonTwelonelont, labelonl), samplelonPelonrClass) =>
+          ((quelonryTwelonelont.twelonelont, labelonl, samplelonPelonrClass), (quelonryTwelonelont, candidatelonTwelonelont, labelonl))
       }
       .group
       .mapGroup {
-        case ((_, _, samplePerClass), iter) =>
-          val random = new Random(123L)
-          val sampler =
-            new ReservoirSampler[(FeaturedTweet, FeaturedTweet, Boolean)](samplePerClass, random)
-          iter.foreach { pair => sampler.sampleItem(pair) }
-          sampler.sample.toIterator
+        caselon ((_, _, samplelonPelonrClass), itelonr) =>
+          val random = nelonw Random(123L)
+          val samplelonr =
+            nelonw RelonselonrvoirSamplelonr[(FelonaturelondTwelonelont, FelonaturelondTwelonelont, Boolelonan)](samplelonPelonrClass, random)
+          itelonr.forelonach { pair => samplelonr.samplelonItelonm(pair) }
+          samplelonr.samplelon.toItelonrator
       }
-      .values
+      .valuelons
   }
 
   /**
-   * Given a user fav dataset, computes the similarity scores (based on engagers) between every tweet pairs
+   * Givelonn a uselonr fav dataselont, computelons thelon similarity scorelons (baselond on elonngagelonrs) belontwelonelonn elonvelonry twelonelont pairs
    *
-   * @param events                user fav events, a TypedPipe of (userid, tweetid, timestamp) tuples
-   * @param minInDegree           min number of engagement count for the tweets
-   * @param coengagementTimeframe two tweets will be considered co-engaged if they are fav-ed within coengagementTimeframe
+   * @param elonvelonnts                uselonr fav elonvelonnts, a TypelondPipelon of (uselonrid, twelonelontid, timelonstamp) tuplelons
+   * @param minInDelongrelonelon           min numbelonr of elonngagelonmelonnt count for thelon twelonelonts
+   * @param coelonngagelonmelonntTimelonframelon two twelonelonts will belon considelonrelond co-elonngagelond if thelony arelon fav-elond within coelonngagelonmelonntTimelonframelon
    *
-   * @return tweet similarity based on engagers, a TypedPipe of (tweet1, tweet2, similarity_score) tuples
+   * @relonturn twelonelont similarity baselond on elonngagelonrs, a TypelondPipelon of (twelonelont1, twelonelont2, similarity_scorelon) tuplelons
    **/
-  def getScoredCoengagedTweetPairs(
-    events: TypedPipe[(UserId, TweetId, Timestamp)],
-    minInDegree: Int,
-    coengagementTimeframe: Long
+  delonf gelontScorelondCoelonngagelondTwelonelontPairs(
+    elonvelonnts: TypelondPipelon[(UselonrId, TwelonelontId, Timelonstamp)],
+    minInDelongrelonelon: Int,
+    coelonngagelonmelonntTimelonframelon: Long
   )(
-  ): TypedPipe[(TweetId, TweetWithScore)] = {
+  ): TypelondPipelon[(TwelonelontId, TwelonelontWithScorelon)] = {
 
-    // compute tweet norms (based on engagers)
-    // only keep tweets whose indegree >= minInDegree
-    val tweetNorms = events
-      .map { case (_, tweetId, _) => (tweetId, 1.0) }
-      .sumByKey //the number of engagers per tweetId
-      .filter(_._2 >= minInDegree)
-      .mapValues(math.sqrt)
+    // computelon twelonelont norms (baselond on elonngagelonrs)
+    // only kelonelonp twelonelonts whoselon indelongrelonelon >= minInDelongrelonelon
+    val twelonelontNorms = elonvelonnts
+      .map { caselon (_, twelonelontId, _) => (twelonelontId, 1.0) }
+      .sumByKelony //thelon numbelonr of elonngagelonrs pelonr twelonelontId
+      .filtelonr(_._2 >= minInDelongrelonelon)
+      .mapValuelons(math.sqrt)
 
-    val edgesWithWeight = events
+    val elondgelonsWithWelonight = elonvelonnts
       .map {
-        case (userId, tweetId, eventTime) => (tweetId, (userId, eventTime))
+        caselon (uselonrId, twelonelontId, elonvelonntTimelon) => (twelonelontId, (uselonrId, elonvelonntTimelon))
       }
-      .join(tweetNorms)
+      .join(twelonelontNorms)
       .map {
-        case (tweetId, ((userId, eventTime), norm)) =>
-          (userId, Seq((tweetId, eventTime, 1 / norm)))
+        caselon (twelonelontId, ((uselonrId, elonvelonntTimelon), norm)) =>
+          (uselonrId, Selonq((twelonelontId, elonvelonntTimelon, 1 / norm)))
       }
 
-    // get cosine similarity
-    val tweetPairsWithWeight = edgesWithWeight.sumByKey
+    // gelont cosinelon similarity
+    val twelonelontPairsWithWelonight = elondgelonsWithWelonight.sumByKelony
       .flatMap {
-        case (_, tweets) if tweets.size > 1 =>
-          allUniquePairs(tweets).flatMap {
-            case ((tweetId1, eventTime1, weight1), (tweetId2, eventTime2, weight2)) =>
-              // consider only co-engagement happened within the given timeframe
-              if ((eventTime1 - eventTime2).abs <= coengagementTimeframe) {
-                if (tweetId1 > tweetId2) // each worker generate allUniquePairs in different orders, hence should standardize the pairs
-                  Some(((tweetId2, tweetId1), weight1 * weight2))
-                else
-                  Some(((tweetId1, tweetId2), weight1 * weight2))
-              } else {
-                None
+        caselon (_, twelonelonts) if twelonelonts.sizelon > 1 =>
+          allUniquelonPairs(twelonelonts).flatMap {
+            caselon ((twelonelontId1, elonvelonntTimelon1, welonight1), (twelonelontId2, elonvelonntTimelon2, welonight2)) =>
+              // considelonr only co-elonngagelonmelonnt happelonnelond within thelon givelonn timelonframelon
+              if ((elonvelonntTimelon1 - elonvelonntTimelon2).abs <= coelonngagelonmelonntTimelonframelon) {
+                if (twelonelontId1 > twelonelontId2) // elonach workelonr gelonnelonratelon allUniquelonPairs in diffelonrelonnt ordelonrs, helonncelon should standardizelon thelon pairs
+                  Somelon(((twelonelontId2, twelonelontId1), welonight1 * welonight2))
+                elonlselon
+                  Somelon(((twelonelontId1, twelonelontId2), welonight1 * welonight2))
+              } elonlselon {
+                Nonelon
               }
-            case _ =>
-              None
+            caselon _ =>
+              Nonelon
           }
-        case _ => Nil
+        caselon _ => Nil
       }
-    tweetPairsWithWeight.sumByKey
+    twelonelontPairsWithWelonight.sumByKelony
       .flatMap {
-        case ((tweetId1, tweetId2), weight) =>
-          Seq(
-            (tweetId1, TweetWithScore(tweetId2, weight)),
-            (tweetId2, TweetWithScore(tweetId1, weight))
+        caselon ((twelonelontId1, twelonelontId2), welonight) =>
+          Selonq(
+            (twelonelontId1, TwelonelontWithScorelon(twelonelontId2, welonight)),
+            (twelonelontId2, TwelonelontWithScorelon(twelonelontId1, welonight))
           )
-        case _ => Nil
+        caselon _ => Nil
       }
   }
 
   /**
-   * Get the write exec for per-query stats
+   * Gelont thelon writelon elonxelonc for pelonr-quelonry stats
    *
-   * @param tweetPairs input dataset
-   * @param outputPath output path for the per-query stats
-   * @param identifier identifier for the tweetPairs dataset
+   * @param twelonelontPairs input dataselont
+   * @param outputPath output path for thelon pelonr-quelonry stats
+   * @param idelonntifielonr idelonntifielonr for thelon twelonelontPairs dataselont
    *
-   * @return execution of the the writing exec
+   * @relonturn elonxeloncution of thelon thelon writing elonxelonc
    */
-  def getPerQueryStatsExec(
-    tweetPairs: TypedPipe[(FeaturedTweet, FeaturedTweet, Boolean)],
+  delonf gelontPelonrQuelonryStatselonxelonc(
+    twelonelontPairs: TypelondPipelon[(FelonaturelondTwelonelont, FelonaturelondTwelonelont, Boolelonan)],
     outputPath: String,
-    identifier: String
-  ): Execution[Unit] = {
-    val queryTweetsToCounts = tweetPairs
+    idelonntifielonr: String
+  ): elonxeloncution[Unit] = {
+    val quelonryTwelonelontsToCounts = twelonelontPairs
       .map {
-        case (queryTweet, _, label) =>
-          if (label) (queryTweet.tweet, (1, 0)) else (queryTweet.tweet, (0, 1))
+        caselon (quelonryTwelonelont, _, labelonl) =>
+          if (labelonl) (quelonryTwelonelont.twelonelont, (1, 0)) elonlselon (quelonryTwelonelont.twelonelont, (0, 1))
       }
-      .sumByKey
-      .map { case (queryTweet, (posCount, negCount)) => (queryTweet, posCount, negCount) }
+      .sumByKelony
+      .map { caselon (quelonryTwelonelont, (posCount, nelongCount)) => (quelonryTwelonelont, posCount, nelongCount) }
 
-    Execution
+    elonxeloncution
       .zip(
-        queryTweetsToCounts.writeExecution(
-          TypedTsv[(TweetId, Int, Int)](s"${outputPath}_$identifier")),
-        Util.printSummaryOfNumericColumn(
-          queryTweetsToCounts
-            .map { case (_, posCount, _) => posCount },
-          Some(s"Per-query Positive Count ($identifier)")),
-        Util.printSummaryOfNumericColumn(
-          queryTweetsToCounts
-            .map { case (_, _, negCount) => negCount },
-          Some(s"Per-query Negative Count ($identifier)"))
+        quelonryTwelonelontsToCounts.writelonelonxeloncution(
+          TypelondTsv[(TwelonelontId, Int, Int)](s"${outputPath}_$idelonntifielonr")),
+        Util.printSummaryOfNumelonricColumn(
+          quelonryTwelonelontsToCounts
+            .map { caselon (_, posCount, _) => posCount },
+          Somelon(s"Pelonr-quelonry Positivelon Count ($idelonntifielonr)")),
+        Util.printSummaryOfNumelonricColumn(
+          quelonryTwelonelontsToCounts
+            .map { caselon (_, _, nelongCount) => nelongCount },
+          Somelon(s"Pelonr-quelonry Nelongativelon Count ($idelonntifielonr)"))
       ).unit
   }
 
   /**
-   * Get the top K similar tweets key-val dataset
+   * Gelont thelon top K similar twelonelonts kelony-val dataselont
    *
-   * @param allTweetPairs all tweet pairs with their similarity scores
-   * @param k             the maximum number of top results for each user
+   * @param allTwelonelontPairs all twelonelont pairs with thelonir similarity scorelons
+   * @param k             thelon maximum numbelonr of top relonsults for elonach uselonr
    *
-   * @return key-val top K results for each tweet
+   * @relonturn kelony-val top K relonsults for elonach twelonelont
    */
-  def getKeyValTopKSimilarTweets(
-    allTweetPairs: TypedPipe[(TweetId, TweetWithScore)],
+  delonf gelontKelonyValTopKSimilarTwelonelonts(
+    allTwelonelontPairs: TypelondPipelon[(TwelonelontId, TwelonelontWithScorelon)],
     k: Int
   )(
-  ): TypedPipe[(TweetId, TweetsWithScore)] = {
-    allTweetPairs.group
-      .sortedReverseTake(k)(Ordering.by(_.score))
-      .map { case (tweetId, tweetWithScoreSeq) => (tweetId, TweetsWithScore(tweetWithScoreSeq)) }
+  ): TypelondPipelon[(TwelonelontId, TwelonelontsWithScorelon)] = {
+    allTwelonelontPairs.group
+      .sortelondRelonvelonrselonTakelon(k)(Ordelonring.by(_.scorelon))
+      .map { caselon (twelonelontId, twelonelontWithScorelonSelonq) => (twelonelontId, TwelonelontsWithScorelon(twelonelontWithScorelonSelonq)) }
   }
 
   /**
-   * Get the top K similar tweets dataset.
+   * Gelont thelon top K similar twelonelonts dataselont.
    *
-   * @param allTweetPairs all tweet pairs with their similarity scores
-   * @param k             the maximum number of top results for each user
+   * @param allTwelonelontPairs all twelonelont pairs with thelonir similarity scorelons
+   * @param k             thelon maximum numbelonr of top relonsults for elonach uselonr
    *
-   * @return top K results for each tweet
+   * @relonturn top K relonsults for elonach twelonelont
    */
-  def getTopKSimilarTweets(
-    allTweetPairs: TypedPipe[(TweetId, TweetWithScore)],
+  delonf gelontTopKSimilarTwelonelonts(
+    allTwelonelontPairs: TypelondPipelon[(TwelonelontId, TwelonelontWithScorelon)],
     k: Int
   )(
-  ): TypedPipe[TweetTopKTweetsWithScore] = {
-    allTweetPairs.group
-      .sortedReverseTake(k)(Ordering.by(_.score))
+  ): TypelondPipelon[TwelonelontTopKTwelonelontsWithScorelon] = {
+    allTwelonelontPairs.group
+      .sortelondRelonvelonrselonTakelon(k)(Ordelonring.by(_.scorelon))
       .map {
-        case (tweetId, tweetWithScoreSeq) =>
-          TweetTopKTweetsWithScore(tweetId, TweetsWithScore(tweetWithScoreSeq))
+        caselon (twelonelontId, twelonelontWithScorelonSelonq) =>
+          TwelonelontTopKTwelonelontsWithScorelon(twelonelontId, TwelonelontsWithScorelon(twelonelontWithScorelonSelonq))
       }
   }
 
   /**
-   * Given a input sequence, output all unique pairs in this sequence.
+   * Givelonn a input selonquelonncelon, output all uniquelon pairs in this selonquelonncelon.
    */
-  def allUniquePairs[T](input: Seq[T]): Stream[(T, T)] = {
+  delonf allUniquelonPairs[T](input: Selonq[T]): Strelonam[(T, T)] = {
     input match {
-      case Nil => Stream.empty
-      case seq =>
-        seq.tail.toStream.map(a => (seq.head, a)) #::: allUniquePairs(seq.tail)
+      caselon Nil => Strelonam.elonmpty
+      caselon selonq =>
+        selonq.tail.toStrelonam.map(a => (selonq.helonad, a)) #::: allUniquelonPairs(selonq.tail)
     }
   }
 }

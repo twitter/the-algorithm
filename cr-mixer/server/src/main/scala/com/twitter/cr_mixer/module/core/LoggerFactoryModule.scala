@@ -1,153 +1,153 @@
-package com.twitter.cr_mixer.module.core
+packagelon com.twittelonr.cr_mixelonr.modulelon.corelon
 
-import com.google.inject.Provides
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.cr_mixer.scribe.ScribeCategories
-import com.twitter.cr_mixer.scribe.ScribeCategory
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
-import com.twitter.logging.BareFormatter
-import com.twitter.logging.Level
-import com.twitter.logging.Logger
-import com.twitter.logging.NullHandler
-import com.twitter.logging.QueueingHandler
-import com.twitter.logging.ScribeHandler
-import com.twitter.logging.{LoggerFactory => TwitterLoggerFactory}
-import javax.inject.Named
-import javax.inject.Singleton
+import com.googlelon.injelonct.Providelons
+import com.twittelonr.cr_mixelonr.modelonl.ModulelonNamelons
+import com.twittelonr.cr_mixelonr.scribelon.ScribelonCatelongorielons
+import com.twittelonr.cr_mixelonr.scribelon.ScribelonCatelongory
+import com.twittelonr.finaglelon.mtls.authelonntication.SelonrvicelonIdelonntifielonr
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.injelonct.TwittelonrModulelon
+import com.twittelonr.logging.BarelonFormattelonr
+import com.twittelonr.logging.Lelonvelonl
+import com.twittelonr.logging.Loggelonr
+import com.twittelonr.logging.NullHandlelonr
+import com.twittelonr.logging.QuelonueloningHandlelonr
+import com.twittelonr.logging.ScribelonHandlelonr
+import com.twittelonr.logging.{LoggelonrFactory => TwittelonrLoggelonrFactory}
+import javax.injelonct.Namelond
+import javax.injelonct.Singlelonton
 
-object LoggerFactoryModule extends TwitterModule {
+objelonct LoggelonrFactoryModulelon elonxtelonnds TwittelonrModulelon {
 
-  private val DefaultQueueSize = 10000
+  privatelon val DelonfaultQuelonuelonSizelon = 10000
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.AbDeciderLogger)
-  def provideAbDeciderLogger(
-    serviceIdentifier: ServiceIdentifier,
-    statsReceiver: StatsReceiver
-  ): Logger = {
-    buildLoggerFactory(
-      ScribeCategories.AbDecider,
-      serviceIdentifier.environment,
-      statsReceiver.scope("ScribeLogger"))
+  @Providelons
+  @Singlelonton
+  @Namelond(ModulelonNamelons.AbDeloncidelonrLoggelonr)
+  delonf providelonAbDeloncidelonrLoggelonr(
+    selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr,
+    statsReloncelonivelonr: StatsReloncelonivelonr
+  ): Loggelonr = {
+    buildLoggelonrFactory(
+      ScribelonCatelongorielons.AbDeloncidelonr,
+      selonrvicelonIdelonntifielonr.elonnvironmelonnt,
+      statsReloncelonivelonr.scopelon("ScribelonLoggelonr"))
       .apply()
   }
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.TopLevelApiDdgMetricsLogger)
-  def provideTopLevelApiDdgMetricsLogger(
-    serviceIdentifier: ServiceIdentifier,
-    statsReceiver: StatsReceiver
-  ): Logger = {
-    buildLoggerFactory(
-      ScribeCategories.TopLevelApiDdgMetrics,
-      serviceIdentifier.environment,
-      statsReceiver.scope("ScribeLogger"))
+  @Providelons
+  @Singlelonton
+  @Namelond(ModulelonNamelons.TopLelonvelonlApiDdgMelontricsLoggelonr)
+  delonf providelonTopLelonvelonlApiDdgMelontricsLoggelonr(
+    selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr,
+    statsReloncelonivelonr: StatsReloncelonivelonr
+  ): Loggelonr = {
+    buildLoggelonrFactory(
+      ScribelonCatelongorielons.TopLelonvelonlApiDdgMelontrics,
+      selonrvicelonIdelonntifielonr.elonnvironmelonnt,
+      statsReloncelonivelonr.scopelon("ScribelonLoggelonr"))
       .apply()
   }
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.TweetRecsLogger)
-  def provideTweetRecsLogger(
-    serviceIdentifier: ServiceIdentifier,
-    statsReceiver: StatsReceiver
-  ): Logger = {
-    buildLoggerFactory(
-      ScribeCategories.TweetsRecs,
-      serviceIdentifier.environment,
-      statsReceiver.scope("ScribeLogger"))
+  @Providelons
+  @Singlelonton
+  @Namelond(ModulelonNamelons.TwelonelontReloncsLoggelonr)
+  delonf providelonTwelonelontReloncsLoggelonr(
+    selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr,
+    statsReloncelonivelonr: StatsReloncelonivelonr
+  ): Loggelonr = {
+    buildLoggelonrFactory(
+      ScribelonCatelongorielons.TwelonelontsReloncs,
+      selonrvicelonIdelonntifielonr.elonnvironmelonnt,
+      statsReloncelonivelonr.scopelon("ScribelonLoggelonr"))
       .apply()
   }
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.BlueVerifiedTweetRecsLogger)
-  def provideVITTweetRecsLogger(
-    serviceIdentifier: ServiceIdentifier,
-    statsReceiver: StatsReceiver
-  ): Logger = {
-    buildLoggerFactory(
-      ScribeCategories.VITTweetsRecs,
-      serviceIdentifier.environment,
-      statsReceiver.scope("ScribeLogger"))
+  @Providelons
+  @Singlelonton
+  @Namelond(ModulelonNamelons.BluelonVelonrifielondTwelonelontReloncsLoggelonr)
+  delonf providelonVITTwelonelontReloncsLoggelonr(
+    selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr,
+    statsReloncelonivelonr: StatsReloncelonivelonr
+  ): Loggelonr = {
+    buildLoggelonrFactory(
+      ScribelonCatelongorielons.VITTwelonelontsReloncs,
+      selonrvicelonIdelonntifielonr.elonnvironmelonnt,
+      statsReloncelonivelonr.scopelon("ScribelonLoggelonr"))
       .apply()
   }
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.RelatedTweetsLogger)
-  def provideRelatedTweetsLogger(
-    serviceIdentifier: ServiceIdentifier,
-    statsReceiver: StatsReceiver
-  ): Logger = {
-    buildLoggerFactory(
-      ScribeCategories.RelatedTweets,
-      serviceIdentifier.environment,
-      statsReceiver.scope("ScribeLogger"))
+  @Providelons
+  @Singlelonton
+  @Namelond(ModulelonNamelons.RelonlatelondTwelonelontsLoggelonr)
+  delonf providelonRelonlatelondTwelonelontsLoggelonr(
+    selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr,
+    statsReloncelonivelonr: StatsReloncelonivelonr
+  ): Loggelonr = {
+    buildLoggelonrFactory(
+      ScribelonCatelongorielons.RelonlatelondTwelonelonts,
+      selonrvicelonIdelonntifielonr.elonnvironmelonnt,
+      statsReloncelonivelonr.scopelon("ScribelonLoggelonr"))
       .apply()
   }
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.UtegTweetsLogger)
-  def provideUtegTweetsLogger(
-    serviceIdentifier: ServiceIdentifier,
-    statsReceiver: StatsReceiver
-  ): Logger = {
-    buildLoggerFactory(
-      ScribeCategories.UtegTweets,
-      serviceIdentifier.environment,
-      statsReceiver.scope("ScribeLogger"))
+  @Providelons
+  @Singlelonton
+  @Namelond(ModulelonNamelons.UtelongTwelonelontsLoggelonr)
+  delonf providelonUtelongTwelonelontsLoggelonr(
+    selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr,
+    statsReloncelonivelonr: StatsReloncelonivelonr
+  ): Loggelonr = {
+    buildLoggelonrFactory(
+      ScribelonCatelongorielons.UtelongTwelonelonts,
+      selonrvicelonIdelonntifielonr.elonnvironmelonnt,
+      statsReloncelonivelonr.scopelon("ScribelonLoggelonr"))
       .apply()
   }
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.AdsRecommendationsLogger)
-  def provideAdsRecommendationsLogger(
-    serviceIdentifier: ServiceIdentifier,
-    statsReceiver: StatsReceiver
-  ): Logger = {
-    buildLoggerFactory(
-      ScribeCategories.AdsRecommendations,
-      serviceIdentifier.environment,
-      statsReceiver.scope("ScribeLogger"))
+  @Providelons
+  @Singlelonton
+  @Namelond(ModulelonNamelons.AdsReloncommelonndationsLoggelonr)
+  delonf providelonAdsReloncommelonndationsLoggelonr(
+    selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr,
+    statsReloncelonivelonr: StatsReloncelonivelonr
+  ): Loggelonr = {
+    buildLoggelonrFactory(
+      ScribelonCatelongorielons.AdsReloncommelonndations,
+      selonrvicelonIdelonntifielonr.elonnvironmelonnt,
+      statsReloncelonivelonr.scopelon("ScribelonLoggelonr"))
       .apply()
   }
 
-  private def buildLoggerFactory(
-    category: ScribeCategory,
-    environment: String,
-    statsReceiver: StatsReceiver
-  ): TwitterLoggerFactory = {
-    environment match {
-      case "prod" =>
-        TwitterLoggerFactory(
-          node = category.getProdLoggerFactoryNode,
-          level = Some(Level.INFO),
-          useParents = false,
-          handlers = List(
-            QueueingHandler(
-              maxQueueSize = DefaultQueueSize,
-              handler = ScribeHandler(
-                category = category.scribeCategory,
-                formatter = BareFormatter,
-                statsReceiver = statsReceiver.scope(category.getProdLoggerFactoryNode)
+  privatelon delonf buildLoggelonrFactory(
+    catelongory: ScribelonCatelongory,
+    elonnvironmelonnt: String,
+    statsReloncelonivelonr: StatsReloncelonivelonr
+  ): TwittelonrLoggelonrFactory = {
+    elonnvironmelonnt match {
+      caselon "prod" =>
+        TwittelonrLoggelonrFactory(
+          nodelon = catelongory.gelontProdLoggelonrFactoryNodelon,
+          lelonvelonl = Somelon(Lelonvelonl.INFO),
+          uselonParelonnts = falselon,
+          handlelonrs = List(
+            QuelonueloningHandlelonr(
+              maxQuelonuelonSizelon = DelonfaultQuelonuelonSizelon,
+              handlelonr = ScribelonHandlelonr(
+                catelongory = catelongory.scribelonCatelongory,
+                formattelonr = BarelonFormattelonr,
+                statsReloncelonivelonr = statsReloncelonivelonr.scopelon(catelongory.gelontProdLoggelonrFactoryNodelon)
               )
             )
           )
         )
-      case _ =>
-        TwitterLoggerFactory(
-          node = category.getStagingLoggerFactoryNode,
-          level = Some(Level.DEBUG),
-          useParents = false,
-          handlers = List(
-            { () => NullHandler }
+      caselon _ =>
+        TwittelonrLoggelonrFactory(
+          nodelon = catelongory.gelontStagingLoggelonrFactoryNodelon,
+          lelonvelonl = Somelon(Lelonvelonl.DelonBUG),
+          uselonParelonnts = falselon,
+          handlelonrs = List(
+            { () => NullHandlelonr }
           )
         )
     }

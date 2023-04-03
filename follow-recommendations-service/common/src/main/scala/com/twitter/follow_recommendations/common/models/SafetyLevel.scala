@@ -1,17 +1,17 @@
-package com.twitter.follow_recommendations.common.models
+packagelon com.twittelonr.follow_reloncommelonndations.common.modelonls
 
-import com.twitter.spam.rtf.thriftscala.{SafetyLevel => ThriftSafetyLevel}
+import com.twittelonr.spam.rtf.thriftscala.{SafelontyLelonvelonl => ThriftSafelontyLelonvelonl}
 
-sealed trait SafetyLevel {
-  def toThrift: ThriftSafetyLevel
+selonalelond trait SafelontyLelonvelonl {
+  delonf toThrift: ThriftSafelontyLelonvelonl
 }
 
-object SafetyLevel {
-  case object Recommendations extends SafetyLevel {
-    override val toThrift = ThriftSafetyLevel.Recommendations
+objelonct SafelontyLelonvelonl {
+  caselon objelonct Reloncommelonndations elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val toThrift = ThriftSafelontyLelonvelonl.Reloncommelonndations
   }
 
-  case object TopicsLandingPageTopicRecommendations extends SafetyLevel {
-    override val toThrift = ThriftSafetyLevel.TopicsLandingPageTopicRecommendations
+  caselon objelonct TopicsLandingPagelonTopicReloncommelonndations elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val toThrift = ThriftSafelontyLelonvelonl.TopicsLandingPagelonTopicReloncommelonndations
   }
 }

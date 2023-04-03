@@ -1,80 +1,80 @@
-package com.twitter.recosinjector.clients
+packagelon com.twittelonr.reloncosinjelonctor.clielonnts
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.logging.Logger
-import com.twitter.socialgraph.thriftscala._
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.logging.Loggelonr
+import com.twittelonr.socialgraph.thriftscala._
+import com.twittelonr.storelonhaus.RelonadablelonStorelon
+import com.twittelonr.util.Futurelon
 
 class SocialGraph(
-  socialGraphIdStore: ReadableStore[IdsRequest, IdsResult]
+  socialGraphIdStorelon: RelonadablelonStorelon[IdsRelonquelonst, IdsRelonsult]
 )(
-  implicit statsReceiver: StatsReceiver) {
+  implicit statsReloncelonivelonr: StatsReloncelonivelonr) {
   import SocialGraph._
-  private val log = Logger()
+  privatelon val log = Loggelonr()
 
-  private val followedByNotMutedByStats = statsReceiver.scope("followedByNotMutedBy")
+  privatelon val followelondByNotMutelondByStats = statsReloncelonivelonr.scopelon("followelondByNotMutelondBy")
 
-  private def fetchIdsFromSocialGraph(
-    userId: Long,
-    ids: Seq[Long],
-    relationshipTypes: Map[RelationshipType, Boolean],
-    lookupContext: Option[LookupContext] = IncludeInactiveUnionLookupContext,
-    stats: StatsReceiver
-  ): Future[Seq[Long]] = {
-    if (ids.isEmpty) {
-      stats.counter("fetchIdsEmpty").incr()
-      Future.Nil
-    } else {
-      val relationships = relationshipTypes.map {
-        case (relationshipType, hasRelationship) =>
-          SrcRelationship(
-            source = userId,
-            relationshipType = relationshipType,
-            hasRelationship = hasRelationship,
-            targets = Some(ids)
+  privatelon delonf felontchIdsFromSocialGraph(
+    uselonrId: Long,
+    ids: Selonq[Long],
+    relonlationshipTypelons: Map[RelonlationshipTypelon, Boolelonan],
+    lookupContelonxt: Option[LookupContelonxt] = IncludelonInactivelonUnionLookupContelonxt,
+    stats: StatsReloncelonivelonr
+  ): Futurelon[Selonq[Long]] = {
+    if (ids.iselonmpty) {
+      stats.countelonr("felontchIdselonmpty").incr()
+      Futurelon.Nil
+    } elonlselon {
+      val relonlationships = relonlationshipTypelons.map {
+        caselon (relonlationshipTypelon, hasRelonlationship) =>
+          SrcRelonlationship(
+            sourcelon = uselonrId,
+            relonlationshipTypelon = relonlationshipTypelon,
+            hasRelonlationship = hasRelonlationship,
+            targelonts = Somelon(ids)
           )
-      }.toSeq
-      val idsRequest = IdsRequest(
-        relationships = relationships,
-        pageRequest = SelectAllPageRequest,
-        context = lookupContext
+      }.toSelonq
+      val idsRelonquelonst = IdsRelonquelonst(
+        relonlationships = relonlationships,
+        pagelonRelonquelonst = SelonlelonctAllPagelonRelonquelonst,
+        contelonxt = lookupContelonxt
       )
-      socialGraphIdStore
-        .get(idsRequest)
-        .map { _.map(_.ids).getOrElse(Nil) }
-        .rescue {
-          case e =>
-            stats.scope("fetchIdsFailure").counter(e.getClass.getSimpleName).incr()
-            log.error(s"Failed with message ${e.toString}")
-            Future.Nil
+      socialGraphIdStorelon
+        .gelont(idsRelonquelonst)
+        .map { _.map(_.ids).gelontOrelonlselon(Nil) }
+        .relonscuelon {
+          caselon elon =>
+            stats.scopelon("felontchIdsFailurelon").countelonr(elon.gelontClass.gelontSimplelonNamelon).incr()
+            log.elonrror(s"Failelond with melonssagelon ${elon.toString}")
+            Futurelon.Nil
         }
     }
   }
 
-  // which of the users in candidates follow userId and have not muted userId
-  def followedByNotMutedBy(userId: Long, candidates: Seq[Long]): Future[Seq[Long]] = {
-    fetchIdsFromSocialGraph(
-      userId,
-      candidates,
-      FollowedByNotMutedRelationships,
-      IncludeInactiveLookupContext,
-      followedByNotMutedByStats
+  // which of thelon uselonrs in candidatelons follow uselonrId and havelon not mutelond uselonrId
+  delonf followelondByNotMutelondBy(uselonrId: Long, candidatelons: Selonq[Long]): Futurelon[Selonq[Long]] = {
+    felontchIdsFromSocialGraph(
+      uselonrId,
+      candidatelons,
+      FollowelondByNotMutelondRelonlationships,
+      IncludelonInactivelonLookupContelonxt,
+      followelondByNotMutelondByStats
     )
   }
 
 }
 
-object SocialGraph {
-  val SelectAllPageRequest = Some(PageRequest(selectAll = Some(true)))
+objelonct SocialGraph {
+  val SelonlelonctAllPagelonRelonquelonst = Somelon(PagelonRelonquelonst(selonlelonctAll = Somelon(truelon)))
 
-  val IncludeInactiveLookupContext = Some(LookupContext(includeInactive = true))
-  val IncludeInactiveUnionLookupContext = Some(
-    LookupContext(includeInactive = true, performUnion = Some(true))
+  val IncludelonInactivelonLookupContelonxt = Somelon(LookupContelonxt(includelonInactivelon = truelon))
+  val IncludelonInactivelonUnionLookupContelonxt = Somelon(
+    LookupContelonxt(includelonInactivelon = truelon, pelonrformUnion = Somelon(truelon))
   )
 
-  val FollowedByNotMutedRelationships: Map[RelationshipType, Boolean] = Map(
-    RelationshipType.FollowedBy -> true,
-    RelationshipType.MutedBy -> false
+  val FollowelondByNotMutelondRelonlationships: Map[RelonlationshipTypelon, Boolelonan] = Map(
+    RelonlationshipTypelon.FollowelondBy -> truelon,
+    RelonlationshipTypelon.MutelondBy -> falselon
   )
 }

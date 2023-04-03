@@ -1,70 +1,70 @@
-package com.twitter.search.earlybird_root;
+packagelon com.twittelonr.selonarch.elonarlybird_root;
 
-import javax.inject.Inject;
-import javax.inject.Named;
+import javax.injelonct.Injelonct;
+import javax.injelonct.Namelond;
 
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.root.SearchRootModule;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestType;
+import com.twittelonr.selonarch.common.deloncidelonr.SelonarchDeloncidelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.common.root.SelonarchRootModulelon;
+import com.twittelonr.selonarch.elonarlybird_root.common.elonarlybirdRelonquelonstTypelon;
 
 /**
- * Determines if a root should send requests to certain partitions based on if they have been turned
- * off by decider.
+ * Delontelonrminelons if a root should selonnd relonquelonsts to celonrtain partitions baselond on if thelony havelon belonelonn turnelond
+ * off by deloncidelonr.
  */
-public class PartitionAccessController {
-  private final String clusterName;
-  private final SearchDecider decider;
+public class PartitionAccelonssControllelonr {
+  privatelon final String clustelonrNamelon;
+  privatelon final SelonarchDeloncidelonr deloncidelonr;
 
-  @Inject
-  public PartitionAccessController(
-      @Named(SearchRootModule.NAMED_SEARCH_ROOT_NAME) String clusterName,
-      @Named(SearchRootModule.NAMED_PARTITION_DECIDER) SearchDecider partitionDecider) {
-    this.clusterName = clusterName;
-    this.decider = partitionDecider;
+  @Injelonct
+  public PartitionAccelonssControllelonr(
+      @Namelond(SelonarchRootModulelon.NAMelonD_SelonARCH_ROOT_NAMelon) String clustelonrNamelon,
+      @Namelond(SelonarchRootModulelon.NAMelonD_PARTITION_DelonCIDelonR) SelonarchDeloncidelonr partitionDeloncidelonr) {
+    this.clustelonrNamelon = clustelonrNamelon;
+    this.deloncidelonr = partitionDeloncidelonr;
   }
 
   /**
-   * Should root send requests to a given partition
-   * Designed to be used to quickly stop hitting a partition of there are problems with it.
+   * Should root selonnd relonquelonsts to a givelonn partition
+   * Delonsignelond to belon uselond to quickly stop hitting a partition of thelonrelon arelon problelonms with it.
    */
-  public boolean canAccessPartition(
-      String tierName, int partitionNum, String clientId, EarlybirdRequestType requestType) {
+  public boolelonan canAccelonssPartition(
+      String tielonrNamelon, int partitionNum, String clielonntId, elonarlybirdRelonquelonstTypelon relonquelonstTypelon) {
 
-    String partitionDeciderName =
-        String.format("cluster_%s_skip_tier_%s_partition_%s", clusterName, tierName, partitionNum);
-    if (decider.isAvailable(partitionDeciderName)) {
-      SearchCounter.export(partitionDeciderName).increment();
-      return false;
+    String partitionDeloncidelonrNamelon =
+        String.format("clustelonr_%s_skip_tielonr_%s_partition_%s", clustelonrNamelon, tielonrNamelon, partitionNum);
+    if (deloncidelonr.isAvailablelon(partitionDeloncidelonrNamelon)) {
+      SelonarchCountelonr.elonxport(partitionDeloncidelonrNamelon).increlonmelonnt();
+      relonturn falselon;
     }
 
-    String clientDeciderName = String.format("cluster_%s_skip_tier_%s_partition_%s_client_id_%s",
-        clusterName, tierName, partitionNum, clientId);
-    if (decider.isAvailable(clientDeciderName)) {
-      SearchCounter.export(clientDeciderName).increment();
-      return false;
+    String clielonntDeloncidelonrNamelon = String.format("clustelonr_%s_skip_tielonr_%s_partition_%s_clielonnt_id_%s",
+        clustelonrNamelon, tielonrNamelon, partitionNum, clielonntId);
+    if (deloncidelonr.isAvailablelon(clielonntDeloncidelonrNamelon)) {
+      SelonarchCountelonr.elonxport(clielonntDeloncidelonrNamelon).increlonmelonnt();
+      relonturn falselon;
     }
 
-    String requestTypeDeciderName = String.format(
-        "cluster_%s_skip_tier_%s_partition_%s_request_type_%s",
-        clusterName, tierName, partitionNum, requestType.getNormalizedName());
-    if (decider.isAvailable(requestTypeDeciderName)) {
-      SearchCounter.export(requestTypeDeciderName).increment();
-      return false;
+    String relonquelonstTypelonDeloncidelonrNamelon = String.format(
+        "clustelonr_%s_skip_tielonr_%s_partition_%s_relonquelonst_typelon_%s",
+        clustelonrNamelon, tielonrNamelon, partitionNum, relonquelonstTypelon.gelontNormalizelondNamelon());
+    if (deloncidelonr.isAvailablelon(relonquelonstTypelonDeloncidelonrNamelon)) {
+      SelonarchCountelonr.elonxport(relonquelonstTypelonDeloncidelonrNamelon).increlonmelonnt();
+      relonturn falselon;
     }
 
-    String clientRequestTypeDeciderName = String.format(
-        "cluster_%s_skip_tier_%s_partition_%s_client_id_%s_request_type_%s",
-        clusterName, tierName, partitionNum, clientId, requestType.getNormalizedName());
-    if (decider.isAvailable(clientRequestTypeDeciderName)) {
-      SearchCounter.export(clientRequestTypeDeciderName).increment();
-      return false;
+    String clielonntRelonquelonstTypelonDeloncidelonrNamelon = String.format(
+        "clustelonr_%s_skip_tielonr_%s_partition_%s_clielonnt_id_%s_relonquelonst_typelon_%s",
+        clustelonrNamelon, tielonrNamelon, partitionNum, clielonntId, relonquelonstTypelon.gelontNormalizelondNamelon());
+    if (deloncidelonr.isAvailablelon(clielonntRelonquelonstTypelonDeloncidelonrNamelon)) {
+      SelonarchCountelonr.elonxport(clielonntRelonquelonstTypelonDeloncidelonrNamelon).increlonmelonnt();
+      relonturn falselon;
     }
 
-    return true;
+    relonturn truelon;
   }
 
-  public String getClusterName() {
-    return clusterName;
+  public String gelontClustelonrNamelon() {
+    relonturn clustelonrNamelon;
   }
 }

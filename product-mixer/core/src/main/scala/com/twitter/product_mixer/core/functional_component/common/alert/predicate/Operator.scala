@@ -1,14 +1,14 @@
-package com.twitter.product_mixer.core.functional_component.common.alert.predicate
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.alelonrt.prelondicatelon
 
 /**
- * Used for building [[Predicate]]s
+ * Uselond for building [[Prelondicatelon]]s
  *
- * @see [[https://docbird.twitter.biz/mon/reference.html#predicate OPERATOR]]
+ * @selonelon [[https://docbird.twittelonr.biz/mon/relonfelonrelonncelon.html#prelondicatelon OPelonRATOR]]
  */
-private[alert] sealed trait Operator
-private[alert] case object `>` extends Operator
-private[alert] case object `>=` extends Operator
-private[alert] case object `<` extends Operator
-private[alert] case object `<=` extends Operator
-private[alert] case object `!=` extends Operator
-private[alert] case object `=` extends Operator
+privatelon[alelonrt] selonalelond trait Opelonrator
+privatelon[alelonrt] caselon objelonct `>` elonxtelonnds Opelonrator
+privatelon[alelonrt] caselon objelonct `>=` elonxtelonnds Opelonrator
+privatelon[alelonrt] caselon objelonct `<` elonxtelonnds Opelonrator
+privatelon[alelonrt] caselon objelonct `<=` elonxtelonnds Opelonrator
+privatelon[alelonrt] caselon objelonct `!=` elonxtelonnds Opelonrator
+privatelon[alelonrt] caselon objelonct `=` elonxtelonnds Opelonrator

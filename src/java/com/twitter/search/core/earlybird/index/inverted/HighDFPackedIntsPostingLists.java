@@ -1,827 +1,827 @@
-package com.twitter.search.core.earlybird.index.inverted;
+packagelon com.twittelonr.selonarch.corelon.elonarlybird.indelonx.invelonrtelond;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 
-import javax.annotation.Nullable;
+import javax.annotation.Nullablelon;
 
-import org.apache.lucene.index.PostingsEnum;
-import org.apache.lucene.search.DocIdSetIterator;
+import org.apachelon.lucelonnelon.indelonx.Postingselonnum;
+import org.apachelon.lucelonnelon.selonarch.DocIdSelontItelonrator;
 
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.util.io.flushable.DataDeserializer;
-import com.twitter.search.common.util.io.flushable.DataSerializer;
-import com.twitter.search.common.util.io.flushable.FlushInfo;
-import com.twitter.search.common.util.io.flushable.Flushable;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.common.util.io.flushablelon.DataDelonselonrializelonr;
+import com.twittelonr.selonarch.common.util.io.flushablelon.DataSelonrializelonr;
+import com.twittelonr.selonarch.common.util.io.flushablelon.FlushInfo;
+import com.twittelonr.selonarch.common.util.io.flushablelon.Flushablelon;
 
 /**
- * An optimized posting lists implementation storing doc deltas, doc freqs, and positions as packed
- * ints in a 64 ints slice backed by {@link IntBlockPool}.
+ * An optimizelond posting lists implelonmelonntation storing doc delonltas, doc frelonqs, and positions as packelond
+ * ints in a 64 ints slicelon backelond by {@link IntBlockPool}.
  *
- * There are three inner data structures used to store values used by a posting lists instance:
+ * Thelonrelon arelon threlonelon innelonr data structurelons uselond to storelon valuelons uselond by a posting lists instancelon:
  *
- * - Skip lists, used for fast {@link PostingsEnum#advance(int)}, are stored in {@link #skipLists}
+ * - Skip lists, uselond for fast {@link Postingselonnum#advancelon(int)}, arelon storelond in {@link #skipLists}
  *   int block pool.
- * - Doc deltas and freqs are stored in {@link #deltaFreqLists} int block pool.
- * - Positions are stored in {@link #positionLists} int block pool.
+ * - Doc delonltas and frelonqs arelon storelond in {@link #delonltaFrelonqLists} int block pool.
+ * - Positions arelon storelond in {@link #positionLists} int block pool.
  *
- * For detail layout and configuration, please refer to the Javadoc of {@link #skipLists},
- * {@link #deltaFreqLists} and {@link #positionLists}.
+ * For delontail layout and configuration, plelonaselon relonfelonr to thelon Javadoc of {@link #skipLists},
+ * {@link #delonltaFrelonqLists} and {@link #positionLists}.
  *
- * <b>This implementation designed for posting lists with a LARGE number of postings.</b>
+ * <b>This implelonmelonntation delonsignelond for posting lists with a LARGelon numbelonr of postings.</b>
  *
- * <i>Acknowledgement</i>: the concepts of slice based packed ints encoding/decoding is borrowed
- *                         from {@code HighDFCompressedPostinglists}, which will be deprecated due
- *                         to not supporting positions that are greater than 255.
+ * <i>Acknowlelondgelonmelonnt</i>: thelon concelonpts of slicelon baselond packelond ints elonncoding/deloncoding is borrowelond
+ *                         from {@codelon HighDFComprelonsselondPostinglists}, which will belon delonpreloncatelond duelon
+ *                         to not supporting positions that arelon grelonatelonr than 255.
  */
-public class HighDFPackedIntsPostingLists extends OptimizedPostingLists {
+public class HighDFPackelondIntsPostingLists elonxtelonnds OptimizelondPostingLists {
   /**
-   * A counter used to track when positions enum is required and a posting lists instance is set
+   * A countelonr uselond to track whelonn positions elonnum is relonquirelond and a posting lists instancelon is selont
    * to omit positions.
    *
-   * @see #postings(int, int, int)
+   * @selonelon #postings(int, int, int)
    */
-  private static final SearchCounter GETTING_POSITIONS_WITH_OMIT_POSITIONS =
-      SearchCounter.export(
-          "high_df_packed_ints_posting_list_getting_positions_with_omit_positions");
+  privatelon static final SelonarchCountelonr GelonTTING_POSITIONS_WITH_OMIT_POSITIONS =
+      SelonarchCountelonr.elonxport(
+          "high_df_packelond_ints_posting_list_gelontting_positions_with_omit_positions");
 
   /**
-   * Information related to size of a slice.
+   * Information relonlatelond to sizelon of a slicelon.
    */
-  static final int SLICE_SIZE_BIT = 6;
-  static final int SLICE_SIZE = 1 << SLICE_SIZE_BIT;                 //   64 ints per block
-  static final int NUM_BITS_PER_SLICE = SLICE_SIZE * Integer.SIZE;   // 2048 bits per block
+  static final int SLICelon_SIZelon_BIT = 6;
+  static final int SLICelon_SIZelon = 1 << SLICelon_SIZelon_BIT;                 //   64 ints pelonr block
+  static final int NUM_BITS_PelonR_SLICelon = SLICelon_SIZelon * Intelongelonr.SIZelon;   // 2048 bits pelonr block
 
   /**
-   * A skip list has ONE skip list header that contains 5 ints (4 ints if positions are omitted):
-   * - 1st int: number of skip entries in this skip list.
-   * - 2nd int: largest doc ID in this posting list.
-   * - 3rd int: number of docs in this posting list.
-   * - 4th int: pointer to the start of the delta-freq list of this posting list.
-   * - 5th int: (OPTIONAL) pointer to the start of the position list of this posting list.
+   * A skip list has ONelon skip list helonadelonr that contains 5 ints (4 ints if positions arelon omittelond):
+   * - 1st int: numbelonr of skip elonntrielons in this skip list.
+   * - 2nd int: largelonst doc ID in this posting list.
+   * - 3rd int: numbelonr of docs in this posting list.
+   * - 4th int: pointelonr to thelon start of thelon delonlta-frelonq list of this posting list.
+   * - 5th int: (OPTIONAL) pointelonr to thelon start of thelon position list of this posting list.
    */
-  static final int SKIPLIST_HEADER_SIZE = 5;
-  static final int SKIPLIST_HEADER_SIZE_WITHOUT_POSITIONS = SKIPLIST_HEADER_SIZE - 1;
+  static final int SKIPLIST_HelonADelonR_SIZelon = 5;
+  static final int SKIPLIST_HelonADelonR_SIZelon_WITHOUT_POSITIONS = SKIPLIST_HelonADelonR_SIZelon - 1;
 
   /**
-   * A skip list has MANY skip entries. Each skip entry is for one slice in delta-freq list.
-   * There are 3 ints in every skip entry (2 ints if positions are omitted):
-   * - 1st int: last doc ID in previous slice (0 for the first slice), this is mainly used during
-   *            skipping because deltas, not absolute doc IDs, are stored in a slice.
-   * - 2nd int: encoded metadata of the corresponding delta-freq slice. There are 4 piece of
-   *            information from the LOWEST bits to HIGHEST bits of this int:
-   *            11 bits: number of docs (delta-freq pairs) in this slice.
-   *             5 bits: number of bits used to encode each freq.
-   *             5 bits: number of bits used to encode each delta.
-   *            11 bits: POSITION SLICE OFFSET: an index of number of positions; this is where the
-   *                     first position of the first doc (in this delta-freq slice) is in the
-   *                     position slice. The position slice is identified by the 3rd int below.
-   *                     These two piece information uniquely identified the location of the start
-   *                     position of this delta-freq slice. This value is always 0 if position is
-   *                     omitted.
-   * - 3rd int: (OPTIONAL) POSITION SLICE INDEX: an index of of number of slices; this value
-   *            identifies the slice in which the first position of the first doc (in this
-   *            delta-freq slice) exists. The exact location inside the position slice is identified
-   *            by POSITION SLICE OFFSET that is stored in the 2nd int above.
-   *            Notice: this is not the absolute address in the block pool, but instead a relative
-   *            offset (in number of slices) on top of this term's first position slice.
-   *            This value DOES NOT EXIST if position is omitted.
+   * A skip list has MANY skip elonntrielons. elonach skip elonntry is for onelon slicelon in delonlta-frelonq list.
+   * Thelonrelon arelon 3 ints in elonvelonry skip elonntry (2 ints if positions arelon omittelond):
+   * - 1st int: last doc ID in prelonvious slicelon (0 for thelon first slicelon), this is mainly uselond during
+   *            skipping beloncauselon delonltas, not absolutelon doc IDs, arelon storelond in a slicelon.
+   * - 2nd int: elonncodelond melontadata of thelon correlonsponding delonlta-frelonq slicelon. Thelonrelon arelon 4 pieloncelon of
+   *            information from thelon LOWelonST bits to HIGHelonST bits of this int:
+   *            11 bits: numbelonr of docs (delonlta-frelonq pairs) in this slicelon.
+   *             5 bits: numbelonr of bits uselond to elonncodelon elonach frelonq.
+   *             5 bits: numbelonr of bits uselond to elonncodelon elonach delonlta.
+   *            11 bits: POSITION SLICelon OFFSelonT: an indelonx of numbelonr of positions; this is whelonrelon thelon
+   *                     first position of thelon first doc (in this delonlta-frelonq slicelon) is in thelon
+   *                     position slicelon. Thelon position slicelon is idelonntifielond by thelon 3rd int belonlow.
+   *                     Thelonselon two pieloncelon information uniquelonly idelonntifielond thelon location of thelon start
+   *                     position of this delonlta-frelonq slicelon. This valuelon is always 0 if position is
+   *                     omittelond.
+   * - 3rd int: (OPTIONAL) POSITION SLICelon INDelonX: an indelonx of of numbelonr of slicelons; this valuelon
+   *            idelonntifielons thelon slicelon in which thelon first position of thelon first doc (in this
+   *            delonlta-frelonq slicelon) elonxists. Thelon elonxact location insidelon thelon position slicelon is idelonntifielond
+   *            by POSITION SLICelon OFFSelonT that is storelond in thelon 2nd int abovelon.
+   *            Noticelon: this is not thelon absolutelon addrelonss in thelon block pool, but instelonad a relonlativelon
+   *            offselont (in numbelonr of slicelons) on top of this telonrm's first position slicelon.
+   *            This valuelon DOelonS NOT elonXIST if position is omittelond.
    */
-  static final int SKIPLIST_ENTRY_SIZE = 3;
-  static final int SKIPLIST_ENTRY_SIZE_WITHOUT_POSITIONS = SKIPLIST_ENTRY_SIZE - 1;
+  static final int SKIPLIST_elonNTRY_SIZelon = 3;
+  static final int SKIPLIST_elonNTRY_SIZelon_WITHOUT_POSITIONS = SKIPLIST_elonNTRY_SIZelon - 1;
 
   /**
-   * Shifts and masks used to encode/decode metadata from the 2nd int of a skip list entry.
-   * @see #SKIPLIST_ENTRY_SIZE
-   * @see #encodeSkipListEntryMetadata(int, int, int, int)
-   * @see #getNumBitsForDelta(int)
-   * @see #getNumBitsForFreq(int)
-   * @see #getNumDocsInSlice(int)
-   * @see #getPositionOffsetInSlice(int)
+   * Shifts and masks uselond to elonncodelon/deloncodelon melontadata from thelon 2nd int of a skip list elonntry.
+   * @selonelon #SKIPLIST_elonNTRY_SIZelon
+   * @selonelon #elonncodelonSkipListelonntryMelontadata(int, int, int, int)
+   * @selonelon #gelontNumBitsForDelonlta(int)
+   * @selonelon #gelontNumBitsForFrelonq(int)
+   * @selonelon #gelontNumDocsInSlicelon(int)
+   * @selonelon #gelontPositionOffselontInSlicelon(int)
    */
-  static final int SKIPLIST_ENTRY_POSITION_OFFSET_SHIFT = 21;
-  static final int SKIPLIST_ENTRY_NUM_BITS_DELTA_SHIFT = 16;
-  static final int SKIPLIST_ENTRY_NUM_BITS_FREQ_SHIFT = 11;
-  static final int SKIPLIST_ENTRY_POSITION_OFFSET_MASK = (1 << 11) - 1;
-  static final int SKIPLIST_ENTRY_NUM_BITS_DELTA_MASK = (1 << 5) - 1;
-  static final int SKIPLIST_ENTRY_NUM_BITS_FREQ_MASK = (1 << 5) - 1;
-  static final int SKIPLIST_ENTRY_NUM_DOCS_MASK = (1 << 11) - 1;
+  static final int SKIPLIST_elonNTRY_POSITION_OFFSelonT_SHIFT = 21;
+  static final int SKIPLIST_elonNTRY_NUM_BITS_DelonLTA_SHIFT = 16;
+  static final int SKIPLIST_elonNTRY_NUM_BITS_FRelonQ_SHIFT = 11;
+  static final int SKIPLIST_elonNTRY_POSITION_OFFSelonT_MASK = (1 << 11) - 1;
+  static final int SKIPLIST_elonNTRY_NUM_BITS_DelonLTA_MASK = (1 << 5) - 1;
+  static final int SKIPLIST_elonNTRY_NUM_BITS_FRelonQ_MASK = (1 << 5) - 1;
+  static final int SKIPLIST_elonNTRY_NUM_DOCS_MASK = (1 << 11) - 1;
 
   /**
-   * Each position slice has a header that is the 1st int in this position slice. From LOWEST bits
-   * to HIGHEST bits, there are 2 pieces of information encoded in this single int:
-   * 11 bits: number of positions in this slice.
-   *  5 bits: number of bits used to encode each position.
+   * elonach position slicelon has a helonadelonr that is thelon 1st int in this position slicelon. From LOWelonST bits
+   * to HIGHelonST bits, thelonrelon arelon 2 pieloncelons of information elonncodelond in this singlelon int:
+   * 11 bits: numbelonr of positions in this slicelon.
+   *  5 bits: numbelonr of bits uselond to elonncodelon elonach position.
    */
-  static final int POSITION_SLICE_HEADER_SIZE = 1;
+  static final int POSITION_SLICelon_HelonADelonR_SIZelon = 1;
 
   /**
-   * Information related to size of a position slice. The actual size is the same as
-   * {@link #SLICE_SIZE}, but there is 1 int used for position slice header.
+   * Information relonlatelond to sizelon of a position slicelon. Thelon actual sizelon is thelon samelon as
+   * {@link #SLICelon_SIZelon}, but thelonrelon is 1 int uselond for position slicelon helonadelonr.
    */
-  static final int POSITION_SLICE_SIZE_WITHOUT_HEADER = SLICE_SIZE - POSITION_SLICE_HEADER_SIZE;
-  static final int POSITION_SLICE_NUM_BITS_WITHOUT_HEADER =
-      POSITION_SLICE_SIZE_WITHOUT_HEADER * Integer.SIZE;
+  static final int POSITION_SLICelon_SIZelon_WITHOUT_HelonADelonR = SLICelon_SIZelon - POSITION_SLICelon_HelonADelonR_SIZelon;
+  static final int POSITION_SLICelon_NUM_BITS_WITHOUT_HelonADelonR =
+      POSITION_SLICelon_SIZelon_WITHOUT_HelonADelonR * Intelongelonr.SIZelon;
 
   /**
-   * Shifts and masks used to encode/decode metadata from the position slice header.
-   * @see #POSITION_SLICE_HEADER_SIZE
-   * @see #encodePositionEntryHeader(int, int)
-   * @see #getNumPositionsInSlice(int)
-   * @see #getNumBitsForPosition(int)
+   * Shifts and masks uselond to elonncodelon/deloncodelon melontadata from thelon position slicelon helonadelonr.
+   * @selonelon #POSITION_SLICelon_HelonADelonR_SIZelon
+   * @selonelon #elonncodelonPositionelonntryHelonadelonr(int, int)
+   * @selonelon #gelontNumPositionsInSlicelon(int)
+   * @selonelon #gelontNumBitsForPosition(int)
    */
-  static final int POSITION_SLICE_HEADER_BITS_POSITION_SHIFT = 11;
-  static final int POSITION_SLICE_HEADER_BITS_POSITION_MASK = (1 << 5) - 1;
-  static final int POSITION_SLICE_HEADER_NUM_POSITIONS_MASK = (1 << 11) - 1;
+  static final int POSITION_SLICelon_HelonADelonR_BITS_POSITION_SHIFT = 11;
+  static final int POSITION_SLICelon_HelonADelonR_BITS_POSITION_MASK = (1 << 5) - 1;
+  static final int POSITION_SLICelon_HelonADelonR_NUM_POSITIONS_MASK = (1 << 11) - 1;
 
   /**
-   * Stores skip list for each posting list.
+   * Storelons skip list for elonach posting list.
    *
-   * A skip list consists of ONE skip list header and MANY skip list entries, and each skip entry
-   * corresponds to one delta-freq slice. Also, unlike {@link #deltaFreqLists} and
-   * {@link #positionLists}, values in skip lists int pool are NOT stored in unit of slices.
+   * A skip list consists of ONelon skip list helonadelonr and MANY skip list elonntrielons, and elonach skip elonntry
+   * correlonsponds to onelon delonlta-frelonq slicelon. Also, unlikelon {@link #delonltaFrelonqLists} and
+   * {@link #positionLists}, valuelons in skip lists int pool arelon NOT storelond in unit of slicelons.
    *
-   * Example:
-   * H: skip list header int
-   * E: skip list entry int
+   * elonxamplelon:
+   * H: skip list helonadelonr int
+   * elon: skip list elonntry int
    * ': int boundary
-   * |: header/entry boundary (also a boundary of int)
+   * |: helonadelonr/elonntry boundary (also a boundary of int)
    *
    *  <----- skip list A -----> <- skip list B ->
-   * |H'H'H'H'H|E'E|E'E|E'E|E'E|H'H'H'H'H|E'E|E'E|
+   * |H'H'H'H'H|elon'elon|elon'elon|elon'elon|elon'elon|H'H'H'H'H|elon'elon|elon'elon|
    */
-  private final IntBlockPool skipLists;
+  privatelon final IntBlockPool skipLists;
 
   /**
-   * Stores delta-freq list for each posting list.
+   * Storelons delonlta-frelonq list for elonach posting list.
    *
-   * A delta-freq list consists of MANY 64-int slices, and delta-freq pairs are stored compactly
-   * with a fixed number of bits within a single slice. Each slice has a corresponding skip list
-   * entry in {@link #skipLists} storing metadata about this slice.
+   * A delonlta-frelonq list consists of MANY 64-int slicelons, and delonlta-frelonq pairs arelon storelond compactly
+   * with a fixelond numbelonr of bits within a singlelon slicelon. elonach slicelon has a correlonsponding skip list
+   * elonntry in {@link #skipLists} storing melontadata about this slicelon.
    *
-   * Example:
-   * |: slice boundary
+   * elonxamplelon:
+   * |: slicelon boundary
    *
-   *  <----------------- delta-freq list A -----------------> <--- delta-freq list B --->
-   * |64 ints slice|64 ints slice|64 ints slice|64 ints slice|64 ints slice|64 ints slice|
+   *  <----------------- delonlta-frelonq list A -----------------> <--- delonlta-frelonq list B --->
+   * |64 ints slicelon|64 ints slicelon|64 ints slicelon|64 ints slicelon|64 ints slicelon|64 ints slicelon|
    */
-  private final IntBlockPool deltaFreqLists;
+  privatelon final IntBlockPool delonltaFrelonqLists;
 
   /**
-   * Stores position list for each posting list.
+   * Storelons position list for elonach posting list.
    *
-   * A position list consists of MANY 64 ints slices, and positions are stored compactly with a
-   * fixed number of bits within a single slice. The first int in each slice is used as a header to
-   * store the metadata about this position slice.
+   * A position list consists of MANY 64 ints slicelons, and positions arelon storelond compactly with a
+   * fixelond numbelonr of bits within a singlelon slicelon. Thelon first int in elonach slicelon is uselond as a helonadelonr to
+   * storelon thelon melontadata about this position slicelon.
    *
-   * Example:
-   * H: position header int
+   * elonxamplelon:
+   * H: position helonadelonr int
    * ': int boundary
-   * |: slice boundary
+   * |: slicelon boundary
    *
    *  <--------------- position list A ---------------> <---------- position list B ---------->
    * |H'63 ints|H'63 ints|H'63 ints|H'63 ints|H'63 ints|H'63 ints|H'63 ints|H'63 ints|H'63 ints|
    */
-  private final IntBlockPool positionLists;
+  privatelon final IntBlockPool positionLists;
 
   /**
-   * Whether positions are omitted in this optimized posting lists.
+   * Whelonthelonr positions arelon omittelond in this optimizelond posting lists.
    */
-  private final boolean omitPositions;
+  privatelon final boolelonan omitPositions;
 
   /**
-   * Skip list header and entry size for this posting lists, could be different depends on whether
-   * position is omitted or not.
+   * Skip list helonadelonr and elonntry sizelon for this posting lists, could belon diffelonrelonnt delonpelonnds on whelonthelonr
+   * position is omittelond or not.
    *
-   * @see #SKIPLIST_HEADER_SIZE
-   * @see #SKIPLIST_HEADER_SIZE_WITHOUT_POSITIONS
-   * @see #SKIPLIST_ENTRY_SIZE
-   * @see #SKIPLIST_ENTRY_SIZE_WITHOUT_POSITIONS
+   * @selonelon #SKIPLIST_HelonADelonR_SIZelon
+   * @selonelon #SKIPLIST_HelonADelonR_SIZelon_WITHOUT_POSITIONS
+   * @selonelon #SKIPLIST_elonNTRY_SIZelon
+   * @selonelon #SKIPLIST_elonNTRY_SIZelon_WITHOUT_POSITIONS
    */
-  private final int skipListHeaderSize;
-  private final int skiplistEntrySize;
+  privatelon final int skipListHelonadelonrSizelon;
+  privatelon final int skiplistelonntrySizelon;
 
   /**
-   * Buffer used in {@link #copyPostingList(PostingsEnum, int)}
-   * to queue up values needed for a slice.
-   * Loaded posting lists have them set as null.
+   * Buffelonr uselond in {@link #copyPostingList(Postingselonnum, int)}
+   * to quelonuelon up valuelons nelonelondelond for a slicelon.
+   * Loadelond posting lists havelon thelonm selont as null.
    */
-  private final PostingsBufferQueue docFreqQueue;
-  private final PostingsBufferQueue positionQueue;
+  privatelon final PostingsBuffelonrQuelonuelon docFrelonqQuelonuelon;
+  privatelon final PostingsBuffelonrQuelonuelon positionQuelonuelon;
 
   /**
-   * Packed ints writer used to write into delta-freq int pool and position int pool.
-   * Loaded posting lists have them set as null.
+   * Packelond ints writelonr uselond to writelon into delonlta-frelonq int pool and position int pool.
+   * Loadelond posting lists havelon thelonm selont as null.
    */
-  private final IntBlockPoolPackedLongsWriter deltaFreqListsWriter;
-  private final IntBlockPoolPackedLongsWriter positionListsWriter;
+  privatelon final IntBlockPoolPackelondLongsWritelonr delonltaFrelonqListsWritelonr;
+  privatelon final IntBlockPoolPackelondLongsWritelonr positionListsWritelonr;
 
   /**
-   * Default constructor.
+   * Delonfault constructor.
    *
-   * @param omitPositions whether positions will be omitted in these posting lists.
+   * @param omitPositions whelonthelonr positions will belon omittelond in thelonselon posting lists.
    */
-  public HighDFPackedIntsPostingLists(boolean omitPositions) {
+  public HighDFPackelondIntsPostingLists(boolelonan omitPositions) {
     this(
-        new IntBlockPool("high_df_packed_ints_skip_lists"),
-        new IntBlockPool("high_df_packed_ints_delta_freq_lists"),
-        new IntBlockPool("high_df_packed_ints_position_lists"),
+        nelonw IntBlockPool("high_df_packelond_ints_skip_lists"),
+        nelonw IntBlockPool("high_df_packelond_ints_delonlta_frelonq_lists"),
+        nelonw IntBlockPool("high_df_packelond_ints_position_lists"),
         omitPositions,
-        new PostingsBufferQueue(NUM_BITS_PER_SLICE),
-        new PostingsBufferQueue(POSITION_SLICE_NUM_BITS_WITHOUT_HEADER));
+        nelonw PostingsBuffelonrQuelonuelon(NUM_BITS_PelonR_SLICelon),
+        nelonw PostingsBuffelonrQuelonuelon(POSITION_SLICelon_NUM_BITS_WITHOUT_HelonADelonR));
   }
 
   /**
-   * Constructors used by loader.
+   * Constructors uselond by loadelonr.
    *
-   * @param skipLists loaded int block pool represents skip lists
-   * @param deltaFreqLists loaded int block pool represents delta-freq lists
-   * @param positionLists loaded int block pool represents position lists
-   * @param omitPositions whether positions will be omitted in these posting lists
-   * @param docFreqQueue buffer used to queue up values used for a doc freq slice, null if loaded
-   * @param positionQueue buffer used to queue up values used for a position slice, null if loaded
-   * @see FlushHandler#doLoad(FlushInfo, DataDeserializer)
+   * @param skipLists loadelond int block pool relonprelonselonnts skip lists
+   * @param delonltaFrelonqLists loadelond int block pool relonprelonselonnts delonlta-frelonq lists
+   * @param positionLists loadelond int block pool relonprelonselonnts position lists
+   * @param omitPositions whelonthelonr positions will belon omittelond in thelonselon posting lists
+   * @param docFrelonqQuelonuelon buffelonr uselond to quelonuelon up valuelons uselond for a doc frelonq slicelon, null if loadelond
+   * @param positionQuelonuelon buffelonr uselond to quelonuelon up valuelons uselond for a position slicelon, null if loadelond
+   * @selonelon FlushHandlelonr#doLoad(FlushInfo, DataDelonselonrializelonr)
    */
-  private HighDFPackedIntsPostingLists(
+  privatelon HighDFPackelondIntsPostingLists(
       IntBlockPool skipLists,
-      IntBlockPool deltaFreqLists,
+      IntBlockPool delonltaFrelonqLists,
       IntBlockPool positionLists,
-      boolean omitPositions,
-      @Nullable PostingsBufferQueue docFreqQueue,
-      @Nullable PostingsBufferQueue positionQueue) {
+      boolelonan omitPositions,
+      @Nullablelon PostingsBuffelonrQuelonuelon docFrelonqQuelonuelon,
+      @Nullablelon PostingsBuffelonrQuelonuelon positionQuelonuelon) {
     this.skipLists = skipLists;
-    this.deltaFreqLists = deltaFreqLists;
+    this.delonltaFrelonqLists = delonltaFrelonqLists;
     this.positionLists = positionLists;
     this.omitPositions = omitPositions;
 
-    this.docFreqQueue = docFreqQueue;
-    this.positionQueue = positionQueue;
+    this.docFrelonqQuelonuelon = docFrelonqQuelonuelon;
+    this.positionQuelonuelon = positionQuelonuelon;
 
-    // docFreqQueue is null if this postingLists is loaded,
-    // we don't need to create writer at that case.
-    if (docFreqQueue == null) {
-      assert positionQueue == null;
-      this.deltaFreqListsWriter = null;
-      this.positionListsWriter = null;
-    } else {
-      this.deltaFreqListsWriter = new IntBlockPoolPackedLongsWriter(deltaFreqLists);
-      this.positionListsWriter = new IntBlockPoolPackedLongsWriter(positionLists);
+    // docFrelonqQuelonuelon is null if this postingLists is loadelond,
+    // welon don't nelonelond to crelonatelon writelonr at that caselon.
+    if (docFrelonqQuelonuelon == null) {
+      asselonrt positionQuelonuelon == null;
+      this.delonltaFrelonqListsWritelonr = null;
+      this.positionListsWritelonr = null;
+    } elonlselon {
+      this.delonltaFrelonqListsWritelonr = nelonw IntBlockPoolPackelondLongsWritelonr(delonltaFrelonqLists);
+      this.positionListsWritelonr = nelonw IntBlockPoolPackelondLongsWritelonr(positionLists);
     }
 
     if (omitPositions) {
-      skipListHeaderSize = SKIPLIST_HEADER_SIZE_WITHOUT_POSITIONS;
-      skiplistEntrySize = SKIPLIST_ENTRY_SIZE_WITHOUT_POSITIONS;
-    } else {
-      skipListHeaderSize = SKIPLIST_HEADER_SIZE;
-      skiplistEntrySize = SKIPLIST_ENTRY_SIZE;
+      skipListHelonadelonrSizelon = SKIPLIST_HelonADelonR_SIZelon_WITHOUT_POSITIONS;
+      skiplistelonntrySizelon = SKIPLIST_elonNTRY_SIZelon_WITHOUT_POSITIONS;
+    } elonlselon {
+      skipListHelonadelonrSizelon = SKIPLIST_HelonADelonR_SIZelon;
+      skiplistelonntrySizelon = SKIPLIST_elonNTRY_SIZelon;
     }
   }
 
   /**
-   * A simple wrapper around assorted states used when coping positions in a posting enum.
-   * @see #copyPostingList(PostingsEnum, int)
+   * A simplelon wrappelonr around assortelond statelons uselond whelonn coping positions in a posting elonnum.
+   * @selonelon #copyPostingList(Postingselonnum, int)
    */
-  private static class PositionsState {
-    /** Max position has been seen for the current position slice. */
-    private int maxPosition = 0;
+  privatelon static class PositionsStatelon {
+    /** Max position has belonelonn selonelonn for thelon currelonnt position slicelon. */
+    privatelon int maxPosition = 0;
 
-    /** Bits needed to encode/decode positions in the current position slice. */
-    private int bitsNeededForPosition = 0;
+    /** Bits nelonelondelond to elonncodelon/deloncodelon positions in thelon currelonnt position slicelon. */
+    privatelon int bitsNelonelondelondForPosition = 0;
 
-    /** Total number of position slices created for current posting list. */
-    private int numPositionsSlices = 0;
-
-    /**
-     * Whenever a slice of doc/freq pairs is written, this will point to the first position
-     * associated with the first doc in the doc/freq slice.
-     */
-    private int currentPositionsSliceIndex = 0;
-    private int currentPositionsSliceOffset = 0;
+    /** Total numbelonr of position slicelons crelonatelond for currelonnt posting list. */
+    privatelon int numPositionsSlicelons = 0;
 
     /**
-     * Whenever a new document is processed, this points to the first position for this doc.
-     * This is used if this doc ends up being chosen as the first doc in a doc/freq slice.
+     * Whelonnelonvelonr a slicelon of doc/frelonq pairs is writtelonn, this will point to thelon first position
+     * associatelond with thelon first doc in thelon doc/frelonq slicelon.
      */
-    private int nextPositionsSliceIndex = 0;
-    private int nextPositionsSliceOffset = 0;
+    privatelon int currelonntPositionsSlicelonIndelonx = 0;
+    privatelon int currelonntPositionsSlicelonOffselont = 0;
+
+    /**
+     * Whelonnelonvelonr a nelonw documelonnt is procelonsselond, this points to thelon first position for this doc.
+     * This is uselond if this doc elonnds up beloning choselonn as thelon first doc in a doc/frelonq slicelon.
+     */
+    privatelon int nelonxtPositionsSlicelonIndelonx = 0;
+    privatelon int nelonxtPositionsSlicelonOffselont = 0;
   }
 
   /**
-   * Copies postings in the given postings enum into this posting lists instance.
+   * Copielons postings in thelon givelonn postings elonnum into this posting lists instancelon.
    *
-   * @param postingsEnum enumerator of the posting list that needs to be copied
-   * @param numPostings number of postings in the posting list that needs to be copied
-   * @return pointer to the copied posting list in this posting lists instance
+   * @param postingselonnum elonnumelonrator of thelon posting list that nelonelonds to belon copielond
+   * @param numPostings numbelonr of postings in thelon posting list that nelonelonds to belon copielond
+   * @relonturn pointelonr to thelon copielond posting list in this posting lists instancelon
    */
-  @Override
-  public int copyPostingList(PostingsEnum postingsEnum, int numPostings) throws IOException {
-    assert docFreqQueue.isEmpty() : "each new posting list should start with an empty queue";
-    assert positionQueue.isEmpty() : "each new posting list should start with an empty queue";
+  @Ovelonrridelon
+  public int copyPostingList(Postingselonnum postingselonnum, int numPostings) throws IOelonxcelonption {
+    asselonrt docFrelonqQuelonuelon.iselonmpty() : "elonach nelonw posting list should start with an elonmpty quelonuelon";
+    asselonrt positionQuelonuelon.iselonmpty() : "elonach nelonw posting list should start with an elonmpty quelonuelon";
 
-    final int skipListPointer = skipLists.length();
-    final int deltaFreqListPointer = deltaFreqLists.length();
-    final int positionListPointer = positionLists.length();
-    assert isSliceStart(deltaFreqListPointer) : "each new posting list should start at a new slice";
-    assert isSliceStart(positionListPointer) : "each new posting list should start at a new slice";
+    final int skipListPointelonr = skipLists.lelonngth();
+    final int delonltaFrelonqListPointelonr = delonltaFrelonqLists.lelonngth();
+    final int positionListPointelonr = positionLists.lelonngth();
+    asselonrt isSlicelonStart(delonltaFrelonqListPointelonr) : "elonach nelonw posting list should start at a nelonw slicelon";
+    asselonrt isSlicelonStart(positionListPointelonr) : "elonach nelonw posting list should start at a nelonw slicelon";
 
-    // Make room for skip list HEADER.
-    for (int i = 0; i < skipListHeaderSize; i++) {
+    // Makelon room for skip list HelonADelonR.
+    for (int i = 0; i < skipListHelonadelonrSizelon; i++) {
       skipLists.add(-1);
     }
 
     int doc;
-    int prevDoc = 0;
-    int prevWrittenDoc = 0;
+    int prelonvDoc = 0;
+    int prelonvWrittelonnDoc = 0;
 
-    int maxDelta = 0;
-    int maxFreq = 0;
+    int maxDelonlta = 0;
+    int maxFrelonq = 0;
 
-    int bitsNeededForDelta = 0;
-    int bitsNeededForFreq = 0;
+    int bitsNelonelondelondForDelonlta = 0;
+    int bitsNelonelondelondForFrelonq = 0;
 
-    // Keep tracking positions related info for this posting list.
-    PositionsState positionsState = new PositionsState();
+    // Kelonelonp tracking positions relonlatelond info for this posting list.
+    PositionsStatelon positionsStatelon = nelonw PositionsStatelon();
 
     int numDocs = 0;
-    int numDeltaFreqSlices = 0;
-    while ((doc = postingsEnum.nextDoc()) != DocIdSetIterator.NO_MORE_DOCS) {
+    int numDelonltaFrelonqSlicelons = 0;
+    whilelon ((doc = postingselonnum.nelonxtDoc()) != DocIdSelontItelonrator.NO_MORelon_DOCS) {
       numDocs++;
 
-      int delta = doc - prevDoc;
-      assert delta <= MAX_DOC_ID;
+      int delonlta = doc - prelonvDoc;
+      asselonrt delonlta <= MAX_DOC_ID;
 
-      int newBitsForDelta = bitsNeededForDelta;
-      if (delta > maxDelta) {
-        maxDelta = delta;
-        newBitsForDelta = log(maxDelta, 2);
-        assert newBitsForDelta <= MAX_DOC_ID_BIT;
+      int nelonwBitsForDelonlta = bitsNelonelondelondForDelonlta;
+      if (delonlta > maxDelonlta) {
+        maxDelonlta = delonlta;
+        nelonwBitsForDelonlta = log(maxDelonlta, 2);
+        asselonrt nelonwBitsForDelonlta <= MAX_DOC_ID_BIT;
       }
 
       /**
-       * Optimization: store freq - 1 since a freq must be positive. Save bits and improve decoding
-       * speed. At read side, the read frequency will plus 1.
-       * @see HighDFPackedIntsDocsEnum#loadNextPosting()
+       * Optimization: storelon frelonq - 1 sincelon a frelonq must belon positivelon. Savelon bits and improvelon deloncoding
+       * spelonelond. At relonad sidelon, thelon relonad frelonquelonncy will plus 1.
+       * @selonelon HighDFPackelondIntsDocselonnum#loadNelonxtPosting()
        */
-      int freq = postingsEnum.freq() - 1;
-      assert freq >= 0;
+      int frelonq = postingselonnum.frelonq() - 1;
+      asselonrt frelonq >= 0;
 
-      int newBitsForFreq = bitsNeededForFreq;
-      if (freq > maxFreq) {
-        maxFreq = freq;
-        newBitsForFreq = log(maxFreq, 2);
-        assert newBitsForFreq <= MAX_FREQ_BIT;
+      int nelonwBitsForFrelonq = bitsNelonelondelondForFrelonq;
+      if (frelonq > maxFrelonq) {
+        maxFrelonq = frelonq;
+        nelonwBitsForFrelonq = log(maxFrelonq, 2);
+        asselonrt nelonwBitsForFrelonq <= MAX_FRelonQ_BIT;
       }
 
-      // Write positions for this doc if not omit positions.
+      // Writelon positions for this doc if not omit positions.
       if (!omitPositions) {
-        writePositionsForDoc(postingsEnum, positionsState);
+        writelonPositionsForDoc(postingselonnum, positionsStatelon);
       }
 
-      if ((newBitsForDelta + newBitsForFreq) * (docFreqQueue.size() + 1) > NUM_BITS_PER_SLICE) {
-        //The latest doc does not fit into this slice.
-        assert (bitsNeededForDelta + bitsNeededForFreq) * docFreqQueue.size()
-            <= NUM_BITS_PER_SLICE;
+      if ((nelonwBitsForDelonlta + nelonwBitsForFrelonq) * (docFrelonqQuelonuelon.sizelon() + 1) > NUM_BITS_PelonR_SLICelon) {
+        //Thelon latelonst doc doelons not fit into this slicelon.
+        asselonrt (bitsNelonelondelondForDelonlta + bitsNelonelondelondForFrelonq) * docFrelonqQuelonuelon.sizelon()
+            <= NUM_BITS_PelonR_SLICelon;
 
-        prevWrittenDoc = writeDeltaFreqSlice(
-            bitsNeededForDelta,
-            bitsNeededForFreq,
-            positionsState,
-            prevWrittenDoc);
-        numDeltaFreqSlices++;
+        prelonvWrittelonnDoc = writelonDelonltaFrelonqSlicelon(
+            bitsNelonelondelondForDelonlta,
+            bitsNelonelondelondForFrelonq,
+            positionsStatelon,
+            prelonvWrittelonnDoc);
+        numDelonltaFrelonqSlicelons++;
 
-        maxDelta = delta;
-        maxFreq = freq;
-        bitsNeededForDelta = log(maxDelta, 2);
-        bitsNeededForFreq = log(maxFreq, 2);
-      } else {
-        bitsNeededForDelta = newBitsForDelta;
-        bitsNeededForFreq = newBitsForFreq;
+        maxDelonlta = delonlta;
+        maxFrelonq = frelonq;
+        bitsNelonelondelondForDelonlta = log(maxDelonlta, 2);
+        bitsNelonelondelondForFrelonq = log(maxFrelonq, 2);
+      } elonlselon {
+        bitsNelonelondelondForDelonlta = nelonwBitsForDelonlta;
+        bitsNelonelondelondForFrelonq = nelonwBitsForFrelonq;
       }
 
-      docFreqQueue.offer(doc, freq);
+      docFrelonqQuelonuelon.offelonr(doc, frelonq);
 
-      prevDoc = doc;
+      prelonvDoc = doc;
     }
 
-    // Some positions may be left in the buffer queue.
-    if (!positionQueue.isEmpty()) {
-      writePositionSlice(positionsState.bitsNeededForPosition);
+    // Somelon positions may belon lelonft in thelon buffelonr quelonuelon.
+    if (!positionQuelonuelon.iselonmpty()) {
+      writelonPositionSlicelon(positionsStatelon.bitsNelonelondelondForPosition);
     }
 
-    // Some docs may be left in the buffer queue.
-    if (!docFreqQueue.isEmpty()) {
-      writeDeltaFreqSlice(
-          bitsNeededForDelta,
-          bitsNeededForFreq,
-          positionsState,
-          prevWrittenDoc);
-      numDeltaFreqSlices++;
+    // Somelon docs may belon lelonft in thelon buffelonr quelonuelon.
+    if (!docFrelonqQuelonuelon.iselonmpty()) {
+      writelonDelonltaFrelonqSlicelon(
+          bitsNelonelondelondForDelonlta,
+          bitsNelonelondelondForFrelonq,
+          positionsStatelon,
+          prelonvWrittelonnDoc);
+      numDelonltaFrelonqSlicelons++;
     }
 
-    // Write skip list header.
-    int skipListHeaderPointer = skipListPointer;
-    final int numSkipListEntries =
-        (skipLists.length() - (skipListPointer + skipListHeaderSize)) / skiplistEntrySize;
-    assert numSkipListEntries == numDeltaFreqSlices
-        : "number of delta freq slices should be the same as number of skip list entries";
-    skipLists.set(skipListHeaderPointer++, numSkipListEntries);
-    skipLists.set(skipListHeaderPointer++, prevDoc);
-    skipLists.set(skipListHeaderPointer++, numDocs);
-    skipLists.set(skipListHeaderPointer++, deltaFreqListPointer);
+    // Writelon skip list helonadelonr.
+    int skipListHelonadelonrPointelonr = skipListPointelonr;
+    final int numSkipListelonntrielons =
+        (skipLists.lelonngth() - (skipListPointelonr + skipListHelonadelonrSizelon)) / skiplistelonntrySizelon;
+    asselonrt numSkipListelonntrielons == numDelonltaFrelonqSlicelons
+        : "numbelonr of delonlta frelonq slicelons should belon thelon samelon as numbelonr of skip list elonntrielons";
+    skipLists.selont(skipListHelonadelonrPointelonr++, numSkipListelonntrielons);
+    skipLists.selont(skipListHelonadelonrPointelonr++, prelonvDoc);
+    skipLists.selont(skipListHelonadelonrPointelonr++, numDocs);
+    skipLists.selont(skipListHelonadelonrPointelonr++, delonltaFrelonqListPointelonr);
     if (!omitPositions) {
-      skipLists.set(skipListHeaderPointer, positionListPointer);
+      skipLists.selont(skipListHelonadelonrPointelonr, positionListPointelonr);
     }
 
-    return skipListPointer;
+    relonturn skipListPointelonr;
   }
 
   /**
-   * Write positions for current doc into {@link #positionLists}.
+   * Writelon positions for currelonnt doc into {@link #positionLists}.
    *
-   * @param postingsEnum postings enumerator containing the positions need to be written
-   * @param positionsState some states about {@link #positionLists} and {@link #positionQueue}
-   * @see #copyPostingList(PostingsEnum, int)
+   * @param postingselonnum postings elonnumelonrator containing thelon positions nelonelond to belon writtelonn
+   * @param positionsStatelon somelon statelons about {@link #positionLists} and {@link #positionQuelonuelon}
+   * @selonelon #copyPostingList(Postingselonnum, int)
    */
-  private void writePositionsForDoc(
-      PostingsEnum postingsEnum,
-      PositionsState positionsState) throws IOException {
-    assert !omitPositions : "this method should not be called if positions are omitted";
+  privatelon void writelonPositionsForDoc(
+      Postingselonnum postingselonnum,
+      PositionsStatelon positionsStatelon) throws IOelonxcelonption {
+    asselonrt !omitPositions : "this melonthod should not belon callelond if positions arelon omittelond";
 
-    for (int i = 0; i < postingsEnum.freq(); i++) {
-      int pos = postingsEnum.nextPosition();
+    for (int i = 0; i < postingselonnum.frelonq(); i++) {
+      int pos = postingselonnum.nelonxtPosition();
 
-      int newBitsForPosition = positionsState.bitsNeededForPosition;
-      if (pos > positionsState.maxPosition) {
-        positionsState.maxPosition = pos;
-        newBitsForPosition = log(positionsState.maxPosition, 2);
-        assert newBitsForPosition <= MAX_POSITION_BIT;
+      int nelonwBitsForPosition = positionsStatelon.bitsNelonelondelondForPosition;
+      if (pos > positionsStatelon.maxPosition) {
+        positionsStatelon.maxPosition = pos;
+        nelonwBitsForPosition = log(positionsStatelon.maxPosition, 2);
+        asselonrt nelonwBitsForPosition <= MAX_POSITION_BIT;
       }
 
-      if (newBitsForPosition * (positionQueue.size() + 1)
-          > POSITION_SLICE_NUM_BITS_WITHOUT_HEADER
-          || positionQueue.isFull()) {
-        assert positionsState.bitsNeededForPosition * positionQueue.size()
-            <= POSITION_SLICE_NUM_BITS_WITHOUT_HEADER;
+      if (nelonwBitsForPosition * (positionQuelonuelon.sizelon() + 1)
+          > POSITION_SLICelon_NUM_BITS_WITHOUT_HelonADelonR
+          || positionQuelonuelon.isFull()) {
+        asselonrt positionsStatelon.bitsNelonelondelondForPosition * positionQuelonuelon.sizelon()
+            <= POSITION_SLICelon_NUM_BITS_WITHOUT_HelonADelonR;
 
-        writePositionSlice(positionsState.bitsNeededForPosition);
-        positionsState.numPositionsSlices++;
+        writelonPositionSlicelon(positionsStatelon.bitsNelonelondelondForPosition);
+        positionsStatelon.numPositionsSlicelons++;
 
-        positionsState.maxPosition = pos;
-        positionsState.bitsNeededForPosition = log(positionsState.maxPosition, 2);
-      } else {
-        positionsState.bitsNeededForPosition = newBitsForPosition;
+        positionsStatelon.maxPosition = pos;
+        positionsStatelon.bitsNelonelondelondForPosition = log(positionsStatelon.maxPosition, 2);
+      } elonlselon {
+        positionsStatelon.bitsNelonelondelondForPosition = nelonwBitsForPosition;
       }
 
-      // Update first position pointer if this position is the first position of a doc
+      // Updatelon first position pointelonr if this position is thelon first position of a doc
       if (i == 0) {
-        positionsState.nextPositionsSliceIndex = positionsState.numPositionsSlices;
-        positionsState.nextPositionsSliceOffset = positionQueue.size();
+        positionsStatelon.nelonxtPositionsSlicelonIndelonx = positionsStatelon.numPositionsSlicelons;
+        positionsStatelon.nelonxtPositionsSlicelonOffselont = positionQuelonuelon.sizelon();
       }
 
-      // Stores a dummy doc -1 since doc is unused in position list.
-      positionQueue.offer(-1, pos);
+      // Storelons a dummy doc -1 sincelon doc is unuselond in position list.
+      positionQuelonuelon.offelonr(-1, pos);
     }
   }
 
   /**
-   * Write out all the buffered positions in {@link #positionQueue} into a position slice.
+   * Writelon out all thelon buffelonrelond positions in {@link #positionQuelonuelon} into a position slicelon.
    *
-   * @param bitsNeededForPosition number of bits used for each position in this position slice
+   * @param bitsNelonelondelondForPosition numbelonr of bits uselond for elonach position in this position slicelon
    */
-  private void writePositionSlice(final int bitsNeededForPosition) {
-    assert !omitPositions;
-    assert 0 <= bitsNeededForPosition && bitsNeededForPosition <= MAX_POSITION_BIT;
+  privatelon void writelonPositionSlicelon(final int bitsNelonelondelondForPosition) {
+    asselonrt !omitPositions;
+    asselonrt 0 <= bitsNelonelondelondForPosition && bitsNelonelondelondForPosition <= MAX_POSITION_BIT;
 
-    final int lengthBefore = positionLists.length();
-    assert isSliceStart(lengthBefore);
+    final int lelonngthBelonforelon = positionLists.lelonngth();
+    asselonrt isSlicelonStart(lelonngthBelonforelon);
 
-    // First int in this slice stores number of bits needed for position
-    // and number of positions in this slice..
-    positionLists.add(encodePositionEntryHeader(bitsNeededForPosition, positionQueue.size()));
+    // First int in this slicelon storelons numbelonr of bits nelonelondelond for position
+    // and numbelonr of positions in this slicelon..
+    positionLists.add(elonncodelonPositionelonntryHelonadelonr(bitsNelonelondelondForPosition, positionQuelonuelon.sizelon()));
 
-    positionListsWriter.jumpToInt(positionLists.length(), bitsNeededForPosition);
-    while (!positionQueue.isEmpty()) {
-      int pos = PostingsBufferQueue.getSecondValue(positionQueue.poll());
-      assert log(pos, 2) <= bitsNeededForPosition;
+    positionListsWritelonr.jumpToInt(positionLists.lelonngth(), bitsNelonelondelondForPosition);
+    whilelon (!positionQuelonuelon.iselonmpty()) {
+      int pos = PostingsBuffelonrQuelonuelon.gelontSeloncondValuelon(positionQuelonuelon.poll());
+      asselonrt log(pos, 2) <= bitsNelonelondelondForPosition;
 
-      positionListsWriter.writePackedInt(pos);
+      positionListsWritelonr.writelonPackelondInt(pos);
     }
 
-    // Fill up this slice in case it is only partially filled.
-    while (positionLists.length() < lengthBefore + SLICE_SIZE) {
+    // Fill up this slicelon in caselon it is only partially fillelond.
+    whilelon (positionLists.lelonngth() < lelonngthBelonforelon + SLICelon_SIZelon) {
       positionLists.add(0);
     }
 
-    assert positionLists.length() - lengthBefore == SLICE_SIZE;
+    asselonrt positionLists.lelonngth() - lelonngthBelonforelon == SLICelon_SIZelon;
   }
 
   /**
-   * Write out all the buffered docs and frequencies in {@link #docFreqQueue} into a delta-freq
-   * slice and update the skip list entry of this slice.
+   * Writelon out all thelon buffelonrelond docs and frelonquelonncielons in {@link #docFrelonqQuelonuelon} into a delonlta-frelonq
+   * slicelon and updatelon thelon skip list elonntry of this slicelon.
    *
-   * @param bitsNeededForDelta number of bits used for each delta in this delta-freq slice
-   * @param bitsNeededForFreq number of bits used for each freq in this delta-freq slice
-   * @param positionsState some states about {@link #positionLists} and {@link #positionQueue}
-   * @param prevWrittenDoc last doc written in previous slice
-   * @return last doc written in this slice
+   * @param bitsNelonelondelondForDelonlta numbelonr of bits uselond for elonach delonlta in this delonlta-frelonq slicelon
+   * @param bitsNelonelondelondForFrelonq numbelonr of bits uselond for elonach frelonq in this delonlta-frelonq slicelon
+   * @param positionsStatelon somelon statelons about {@link #positionLists} and {@link #positionQuelonuelon}
+   * @param prelonvWrittelonnDoc last doc writtelonn in prelonvious slicelon
+   * @relonturn last doc writtelonn in this slicelon
    */
-  private int writeDeltaFreqSlice(
-      final int bitsNeededForDelta,
-      final int bitsNeededForFreq,
-      final PositionsState positionsState,
-      final int prevWrittenDoc) {
-    assert 0 <= bitsNeededForDelta && bitsNeededForDelta <= MAX_DOC_ID_BIT;
-    assert 0 <= bitsNeededForFreq && bitsNeededForFreq <= MAX_FREQ_BIT;
+  privatelon int writelonDelonltaFrelonqSlicelon(
+      final int bitsNelonelondelondForDelonlta,
+      final int bitsNelonelondelondForFrelonq,
+      final PositionsStatelon positionsStatelon,
+      final int prelonvWrittelonnDoc) {
+    asselonrt 0 <= bitsNelonelondelondForDelonlta && bitsNelonelondelondForDelonlta <= MAX_DOC_ID_BIT;
+    asselonrt 0 <= bitsNelonelondelondForFrelonq && bitsNelonelondelondForFrelonq <= MAX_FRelonQ_BIT;
 
-    final int lengthBefore = deltaFreqLists.length();
-    assert isSliceStart(lengthBefore);
+    final int lelonngthBelonforelon = delonltaFrelonqLists.lelonngth();
+    asselonrt isSlicelonStart(lelonngthBelonforelon);
 
-    writeSkipListEntry(prevWrittenDoc, bitsNeededForDelta, bitsNeededForFreq, positionsState);
+    writelonSkipListelonntry(prelonvWrittelonnDoc, bitsNelonelondelondForDelonlta, bitsNelonelondelondForFrelonq, positionsStatelon);
 
-    // Keep track of previous docID so that we compute the docID deltas.
-    int prevDoc = prevWrittenDoc;
+    // Kelonelonp track of prelonvious docID so that welon computelon thelon docID delonltas.
+    int prelonvDoc = prelonvWrittelonnDoc;
 
-    // A <delta|freq> pair is stored as a packed value.
-    final int bitsPerPackedValue = bitsNeededForDelta + bitsNeededForFreq;
-    deltaFreqListsWriter.jumpToInt(deltaFreqLists.length(), bitsPerPackedValue);
-    while (!docFreqQueue.isEmpty()) {
-      long value = docFreqQueue.poll();
-      int doc = PostingsBufferQueue.getDocID(value);
-      int delta = doc - prevDoc;
-      assert log(delta, 2) <= bitsNeededForDelta;
+    // A <delonlta|frelonq> pair is storelond as a packelond valuelon.
+    final int bitsPelonrPackelondValuelon = bitsNelonelondelondForDelonlta + bitsNelonelondelondForFrelonq;
+    delonltaFrelonqListsWritelonr.jumpToInt(delonltaFrelonqLists.lelonngth(), bitsPelonrPackelondValuelon);
+    whilelon (!docFrelonqQuelonuelon.iselonmpty()) {
+      long valuelon = docFrelonqQuelonuelon.poll();
+      int doc = PostingsBuffelonrQuelonuelon.gelontDocID(valuelon);
+      int delonlta = doc - prelonvDoc;
+      asselonrt log(delonlta, 2) <= bitsNelonelondelondForDelonlta;
 
-      int freq = PostingsBufferQueue.getSecondValue(value);
-      assert log(freq, 2) <= bitsNeededForFreq;
+      int frelonq = PostingsBuffelonrQuelonuelon.gelontSeloncondValuelon(valuelon);
+      asselonrt log(frelonq, 2) <= bitsNelonelondelondForFrelonq;
 
-      // Cast the delta to long before left shift to avoid overflow.
-      final long deltaFreqPair = (((long) delta) << bitsNeededForFreq) + freq;
-      deltaFreqListsWriter.writePackedLong(deltaFreqPair);
-      prevDoc = doc;
+      // Cast thelon delonlta to long belonforelon lelonft shift to avoid ovelonrflow.
+      final long delonltaFrelonqPair = (((long) delonlta) << bitsNelonelondelondForFrelonq) + frelonq;
+      delonltaFrelonqListsWritelonr.writelonPackelondLong(delonltaFrelonqPair);
+      prelonvDoc = doc;
     }
 
-    // Fill up this slice in case it is only partially filled.
-    while (deltaFreqLists.length() <  lengthBefore + SLICE_SIZE) {
-      deltaFreqLists.add(0);
+    // Fill up this slicelon in caselon it is only partially fillelond.
+    whilelon (delonltaFrelonqLists.lelonngth() <  lelonngthBelonforelon + SLICelon_SIZelon) {
+      delonltaFrelonqLists.add(0);
     }
 
-    positionsState.currentPositionsSliceIndex = positionsState.nextPositionsSliceIndex;
-    positionsState.currentPositionsSliceOffset = positionsState.nextPositionsSliceOffset;
+    positionsStatelon.currelonntPositionsSlicelonIndelonx = positionsStatelon.nelonxtPositionsSlicelonIndelonx;
+    positionsStatelon.currelonntPositionsSlicelonOffselont = positionsStatelon.nelonxtPositionsSlicelonOffselont;
 
-    assert deltaFreqLists.length() - lengthBefore == SLICE_SIZE;
-    return prevDoc;
+    asselonrt delonltaFrelonqLists.lelonngth() - lelonngthBelonforelon == SLICelon_SIZelon;
+    relonturn prelonvDoc;
   }
 
   /**
-   * Write the skip list entry for a delta-freq slice.
+   * Writelon thelon skip list elonntry for a delonlta-frelonq slicelon.
    *
-   * @param prevWrittenDoc last doc written in previous slice
-   * @param bitsNeededForDelta number of bits used for each delta in this delta-freq slice
-   * @param bitsNeededForFreq number of bits used for each freq in this delta-freq slice
-   * @param positionsState some states about {@link #positionLists} and {@link #positionQueue}
-   * @see #writeDeltaFreqSlice(int, int, PositionsState, int)
-   * @see #SKIPLIST_ENTRY_SIZE
+   * @param prelonvWrittelonnDoc last doc writtelonn in prelonvious slicelon
+   * @param bitsNelonelondelondForDelonlta numbelonr of bits uselond for elonach delonlta in this delonlta-frelonq slicelon
+   * @param bitsNelonelondelondForFrelonq numbelonr of bits uselond for elonach frelonq in this delonlta-frelonq slicelon
+   * @param positionsStatelon somelon statelons about {@link #positionLists} and {@link #positionQuelonuelon}
+   * @selonelon #writelonDelonltaFrelonqSlicelon(int, int, PositionsStatelon, int)
+   * @selonelon #SKIPLIST_elonNTRY_SIZelon
    */
-  private void writeSkipListEntry(
-      int prevWrittenDoc,
-      int bitsNeededForDelta,
-      int bitsNeededForFreq,
-      PositionsState positionsState) {
-    // 1st int: last written doc ID in previous slice
-    skipLists.add(prevWrittenDoc);
+  privatelon void writelonSkipListelonntry(
+      int prelonvWrittelonnDoc,
+      int bitsNelonelondelondForDelonlta,
+      int bitsNelonelondelondForFrelonq,
+      PositionsStatelon positionsStatelon) {
+    // 1st int: last writtelonn doc ID in prelonvious slicelon
+    skipLists.add(prelonvWrittelonnDoc);
 
-    // 2nd int: encoded metadata
+    // 2nd int: elonncodelond melontadata
     skipLists.add(
-        encodeSkipListEntryMetadata(
-            positionsState.currentPositionsSliceOffset,
-            bitsNeededForDelta,
-            bitsNeededForFreq,
-            docFreqQueue.size()));
+        elonncodelonSkipListelonntryMelontadata(
+            positionsStatelon.currelonntPositionsSlicelonOffselont,
+            bitsNelonelondelondForDelonlta,
+            bitsNelonelondelondForFrelonq,
+            docFrelonqQuelonuelon.sizelon()));
 
-    // 3rd int: optional, position slice index
+    // 3rd int: optional, position slicelon indelonx
     if (!omitPositions) {
-      skipLists.add(positionsState.currentPositionsSliceIndex);
+      skipLists.add(positionsStatelon.currelonntPositionsSlicelonIndelonx);
     }
   }
 
   /**
-   * Create and return a docs enumerator or docs-positions enumerator based on input flag.
+   * Crelonatelon and relonturn a docs elonnumelonrator or docs-positions elonnumelonrator baselond on input flag.
    *
-   * @see org.apache.lucene.index.PostingsEnum
+   * @selonelon org.apachelon.lucelonnelon.indelonx.Postingselonnum
    */
-  @Override
-  public EarlybirdPostingsEnum postings(
-      int postingListPointer, int numPostings, int flags) throws IOException {
-    // Positions are omitted but position enumerator are requried.
-    if (omitPositions && PostingsEnum.featureRequested(flags, PostingsEnum.POSITIONS)) {
-      GETTING_POSITIONS_WITH_OMIT_POSITIONS.increment();
+  @Ovelonrridelon
+  public elonarlybirdPostingselonnum postings(
+      int postingListPointelonr, int numPostings, int flags) throws IOelonxcelonption {
+    // Positions arelon omittelond but position elonnumelonrator arelon relonqurielond.
+    if (omitPositions && Postingselonnum.felonaturelonRelonquelonstelond(flags, Postingselonnum.POSITIONS)) {
+      GelonTTING_POSITIONS_WITH_OMIT_POSITIONS.increlonmelonnt();
     }
 
-    if (!omitPositions && PostingsEnum.featureRequested(flags, PostingsEnum.POSITIONS)) {
-      return new HighDFPackedIntsDocsAndPositionsEnum(
+    if (!omitPositions && Postingselonnum.felonaturelonRelonquelonstelond(flags, Postingselonnum.POSITIONS)) {
+      relonturn nelonw HighDFPackelondIntsDocsAndPositionselonnum(
           skipLists,
-          deltaFreqLists,
+          delonltaFrelonqLists,
           positionLists,
-          postingListPointer,
+          postingListPointelonr,
           numPostings,
-          false);
-    } else {
-      return new HighDFPackedIntsDocsEnum(
+          falselon);
+    } elonlselon {
+      relonturn nelonw HighDFPackelondIntsDocselonnum(
           skipLists,
-          deltaFreqLists,
-          postingListPointer,
+          delonltaFrelonqLists,
+          postingListPointelonr,
           numPostings,
           omitPositions);
     }
   }
 
   /******************************************************
-   * Skip list entry encoded data encoding and decoding *
+   * Skip list elonntry elonncodelond data elonncoding and deloncoding *
    ******************************************************/
 
   /**
-   * Encode a skip list entry metadata, which is stored in the 2nd int of the skip list entry.
+   * elonncodelon a skip list elonntry melontadata, which is storelond in thelon 2nd int of thelon skip list elonntry.
    *
-   * @see #SKIPLIST_ENTRY_SIZE
+   * @selonelon #SKIPLIST_elonNTRY_SIZelon
    */
-  private static int encodeSkipListEntryMetadata(
-      int positionOffsetInSlice, int numBitsForDelta, int numBitsForFreq, int numDocsInSlice) {
-    assert 0 <= positionOffsetInSlice
-        && positionOffsetInSlice < POSITION_SLICE_NUM_BITS_WITHOUT_HEADER;
-    assert 0 <= numBitsForDelta && numBitsForDelta <= MAX_DOC_ID_BIT;
-    assert 0 <= numBitsForFreq && numBitsForFreq <= MAX_FREQ_BIT;
-    assert 0 < numDocsInSlice && numDocsInSlice <= NUM_BITS_PER_SLICE;
-    return (positionOffsetInSlice << SKIPLIST_ENTRY_POSITION_OFFSET_SHIFT)
-        + (numBitsForDelta << SKIPLIST_ENTRY_NUM_BITS_DELTA_SHIFT)
-        + (numBitsForFreq << SKIPLIST_ENTRY_NUM_BITS_FREQ_SHIFT)
-        // stores numDocsInSlice - 1 to avoid over flow since numDocsInSlice ranges in [1, 2048]
-        // and 11 bits are used to store number docs in slice
-        + (numDocsInSlice - 1);
+  privatelon static int elonncodelonSkipListelonntryMelontadata(
+      int positionOffselontInSlicelon, int numBitsForDelonlta, int numBitsForFrelonq, int numDocsInSlicelon) {
+    asselonrt 0 <= positionOffselontInSlicelon
+        && positionOffselontInSlicelon < POSITION_SLICelon_NUM_BITS_WITHOUT_HelonADelonR;
+    asselonrt 0 <= numBitsForDelonlta && numBitsForDelonlta <= MAX_DOC_ID_BIT;
+    asselonrt 0 <= numBitsForFrelonq && numBitsForFrelonq <= MAX_FRelonQ_BIT;
+    asselonrt 0 < numDocsInSlicelon && numDocsInSlicelon <= NUM_BITS_PelonR_SLICelon;
+    relonturn (positionOffselontInSlicelon << SKIPLIST_elonNTRY_POSITION_OFFSelonT_SHIFT)
+        + (numBitsForDelonlta << SKIPLIST_elonNTRY_NUM_BITS_DelonLTA_SHIFT)
+        + (numBitsForFrelonq << SKIPLIST_elonNTRY_NUM_BITS_FRelonQ_SHIFT)
+        // storelons numDocsInSlicelon - 1 to avoid ovelonr flow sincelon numDocsInSlicelon rangelons in [1, 2048]
+        // and 11 bits arelon uselond to storelon numbelonr docs in slicelon
+        + (numDocsInSlicelon - 1);
   }
 
   /**
-   * Decode POSITION_SLICE_OFFSET of the delta-freq slice having the given skip entry encoded data.
+   * Deloncodelon POSITION_SLICelon_OFFSelonT of thelon delonlta-frelonq slicelon having thelon givelonn skip elonntry elonncodelond data.
    *
-   * @see #SKIPLIST_ENTRY_SIZE
+   * @selonelon #SKIPLIST_elonNTRY_SIZelon
    */
-  static int getPositionOffsetInSlice(int skipListEntryEncodedMetadata) {
-    return (skipListEntryEncodedMetadata >>> SKIPLIST_ENTRY_POSITION_OFFSET_SHIFT)
-        & SKIPLIST_ENTRY_POSITION_OFFSET_MASK;
+  static int gelontPositionOffselontInSlicelon(int skipListelonntryelonncodelondMelontadata) {
+    relonturn (skipListelonntryelonncodelondMelontadata >>> SKIPLIST_elonNTRY_POSITION_OFFSelonT_SHIFT)
+        & SKIPLIST_elonNTRY_POSITION_OFFSelonT_MASK;
   }
 
   /**
-   * Decode number of bits used for delta in the slice having the given skip entry encoded data.
+   * Deloncodelon numbelonr of bits uselond for delonlta in thelon slicelon having thelon givelonn skip elonntry elonncodelond data.
    *
-   * @see #SKIPLIST_ENTRY_SIZE
+   * @selonelon #SKIPLIST_elonNTRY_SIZelon
    */
-  static int getNumBitsForDelta(int skipListEntryEncodedMetadata) {
-    return (skipListEntryEncodedMetadata >>> SKIPLIST_ENTRY_NUM_BITS_DELTA_SHIFT)
-        & SKIPLIST_ENTRY_NUM_BITS_DELTA_MASK;
+  static int gelontNumBitsForDelonlta(int skipListelonntryelonncodelondMelontadata) {
+    relonturn (skipListelonntryelonncodelondMelontadata >>> SKIPLIST_elonNTRY_NUM_BITS_DelonLTA_SHIFT)
+        & SKIPLIST_elonNTRY_NUM_BITS_DelonLTA_MASK;
   }
 
   /**
-   * Decode number of bits used for freqs in the slice having the given skip entry encoded data.
+   * Deloncodelon numbelonr of bits uselond for frelonqs in thelon slicelon having thelon givelonn skip elonntry elonncodelond data.
    *
-   * @see #SKIPLIST_ENTRY_SIZE
+   * @selonelon #SKIPLIST_elonNTRY_SIZelon
    */
-  static int getNumBitsForFreq(int skipListEntryEncodedMetadata) {
-    return (skipListEntryEncodedMetadata >>> SKIPLIST_ENTRY_NUM_BITS_FREQ_SHIFT)
-        & SKIPLIST_ENTRY_NUM_BITS_FREQ_MASK;
+  static int gelontNumBitsForFrelonq(int skipListelonntryelonncodelondMelontadata) {
+    relonturn (skipListelonntryelonncodelondMelontadata >>> SKIPLIST_elonNTRY_NUM_BITS_FRelonQ_SHIFT)
+        & SKIPLIST_elonNTRY_NUM_BITS_FRelonQ_MASK;
   }
 
   /**
-   * Decode number of delta-freq pairs stored in the slice having the given skip entry encoded data.
+   * Deloncodelon numbelonr of delonlta-frelonq pairs storelond in thelon slicelon having thelon givelonn skip elonntry elonncodelond data.
    *
-   * @see #SKIPLIST_ENTRY_SIZE
+   * @selonelon #SKIPLIST_elonNTRY_SIZelon
    */
-  static int getNumDocsInSlice(int skipListEntryEncodedMetadata) {
+  static int gelontNumDocsInSlicelon(int skipListelonntryelonncodelondMelontadata) {
     /**
-     * Add 1 to the decode value since the stored value is subtracted by 1.
-     * @see #encodeSkipListEntryMetadata(int, int, int, int)
+     * Add 1 to thelon deloncodelon valuelon sincelon thelon storelond valuelon is subtractelond by 1.
+     * @selonelon #elonncodelonSkipListelonntryMelontadata(int, int, int, int)
      */
-    return (skipListEntryEncodedMetadata & SKIPLIST_ENTRY_NUM_DOCS_MASK) + 1;
+    relonturn (skipListelonntryelonncodelondMelontadata & SKIPLIST_elonNTRY_NUM_DOCS_MASK) + 1;
   }
 
   /*****************************************************
-   * Position slice entry header encoding and decoding *
+   * Position slicelon elonntry helonadelonr elonncoding and deloncoding *
    *****************************************************/
 
   /**
-   * Encode a position slice entry header.
+   * elonncodelon a position slicelon elonntry helonadelonr.
    *
-   * @param numBitsForPosition number of bits used to encode positions in this slice.
-   * @param numPositionsInSlice number of positions in this slice.
-   * @return an int as the encoded header.
-   * @see #POSITION_SLICE_HEADER_SIZE
+   * @param numBitsForPosition numbelonr of bits uselond to elonncodelon positions in this slicelon.
+   * @param numPositionsInSlicelon numbelonr of positions in this slicelon.
+   * @relonturn an int as thelon elonncodelond helonadelonr.
+   * @selonelon #POSITION_SLICelon_HelonADelonR_SIZelon
    */
-  private static int encodePositionEntryHeader(int numBitsForPosition, int numPositionsInSlice) {
-    assert 0 <= numBitsForPosition && numBitsForPosition <= MAX_POSITION_BIT;
-    assert 0 < numPositionsInSlice && numPositionsInSlice <= POSITION_SLICE_NUM_BITS_WITHOUT_HEADER;
-    return (numBitsForPosition << POSITION_SLICE_HEADER_BITS_POSITION_SHIFT) + numPositionsInSlice;
+  privatelon static int elonncodelonPositionelonntryHelonadelonr(int numBitsForPosition, int numPositionsInSlicelon) {
+    asselonrt 0 <= numBitsForPosition && numBitsForPosition <= MAX_POSITION_BIT;
+    asselonrt 0 < numPositionsInSlicelon && numPositionsInSlicelon <= POSITION_SLICelon_NUM_BITS_WITHOUT_HelonADelonR;
+    relonturn (numBitsForPosition << POSITION_SLICelon_HelonADelonR_BITS_POSITION_SHIFT) + numPositionsInSlicelon;
   }
 
   /**
-   * Decode number of bits used for position in the slice having the given header.
+   * Deloncodelon numbelonr of bits uselond for position in thelon slicelon having thelon givelonn helonadelonr.
    *
-   * @param positionEntryHeader entry header will be decoded.
-   * @see #POSITION_SLICE_HEADER_SIZE
+   * @param positionelonntryHelonadelonr elonntry helonadelonr will belon deloncodelond.
+   * @selonelon #POSITION_SLICelon_HelonADelonR_SIZelon
    */
-  static int getNumBitsForPosition(int positionEntryHeader) {
-    return (positionEntryHeader >>> POSITION_SLICE_HEADER_BITS_POSITION_SHIFT)
-        & POSITION_SLICE_HEADER_BITS_POSITION_MASK;
+  static int gelontNumBitsForPosition(int positionelonntryHelonadelonr) {
+    relonturn (positionelonntryHelonadelonr >>> POSITION_SLICelon_HelonADelonR_BITS_POSITION_SHIFT)
+        & POSITION_SLICelon_HelonADelonR_BITS_POSITION_MASK;
   }
 
   /**
-   * Decode number of positions stored in the slice having the given header.
+   * Deloncodelon numbelonr of positions storelond in thelon slicelon having thelon givelonn helonadelonr.
    *
-   * @param positionEntryHeader entry header will be decoded.
-   * @see #POSITION_SLICE_HEADER_SIZE
+   * @param positionelonntryHelonadelonr elonntry helonadelonr will belon deloncodelond.
+   * @selonelon #POSITION_SLICelon_HelonADelonR_SIZelon
    */
-  static int getNumPositionsInSlice(int positionEntryHeader) {
-    return positionEntryHeader & POSITION_SLICE_HEADER_NUM_POSITIONS_MASK;
+  static int gelontNumPositionsInSlicelon(int positionelonntryHelonadelonr) {
+    relonturn positionelonntryHelonadelonr & POSITION_SLICelon_HelonADelonR_NUM_POSITIONS_MASK;
   }
 
   /******************
-   * Helper methods *
+   * Helonlpelonr melonthods *
    ******************/
 
   /**
-   * Check if given pointer is pointing to the slice start.
+   * Chelonck if givelonn pointelonr is pointing to thelon slicelon start.
    *
-   * @param pointer the index will be checked.
+   * @param pointelonr thelon indelonx will belon chelonckelond.
    */
-  static boolean isSliceStart(int pointer) {
-    return pointer % HighDFPackedIntsPostingLists.SLICE_SIZE == 0;
+  static boolelonan isSlicelonStart(int pointelonr) {
+    relonturn pointelonr % HighDFPackelondIntsPostingLists.SLICelon_SIZelon == 0;
   }
 
   /**
-   * Ceil of log of x in the given base.
+   * Celonil of log of x in thelon givelonn baselon.
    *
-   * @return x == 0 ? 0 : Math.ceil(Math.log(x) / Math.log(base))
+   * @relonturn x == 0 ? 0 : Math.celonil(Math.log(x) / Math.log(baselon))
    */
-  private static int log(int x, int base) {
-    assert base >= 2;
+  privatelon static int log(int x, int baselon) {
+    asselonrt baselon >= 2;
     if (x == 0) {
-      return 0;
+      relonturn 0;
     }
-    int ret = 1;
-    long n = base; // needs to be a long to avoid overflow
-    while (x >= n) {
-      n *= base;
-      ret++;
+    int relont = 1;
+    long n = baselon; // nelonelonds to belon a long to avoid ovelonrflow
+    whilelon (x >= n) {
+      n *= baselon;
+      relont++;
     }
-    return ret;
+    relonturn relont;
   }
 
   /**********************
    * For flush and load *
    **********************/
 
-  @SuppressWarnings("unchecked")
-  @Override
-  public FlushHandler getFlushHandler() {
-    return new FlushHandler(this);
+  @SupprelonssWarnings("unchelonckelond")
+  @Ovelonrridelon
+  public FlushHandlelonr gelontFlushHandlelonr() {
+    relonturn nelonw FlushHandlelonr(this);
   }
 
-  public static class FlushHandler extends Flushable.Handler<HighDFPackedIntsPostingLists> {
-    private static final String OMIT_POSITIONS_PROP_NAME = "omitPositions";
-    private static final String SKIP_LISTS_PROP_NAME = "skipLists";
-    private static final String DELTA_FREQ_LISTS_PROP_NAME = "deltaFreqLists";
-    private static final String POSITION_LISTS_PROP_NAME = "positionLists";
+  public static class FlushHandlelonr elonxtelonnds Flushablelon.Handlelonr<HighDFPackelondIntsPostingLists> {
+    privatelon static final String OMIT_POSITIONS_PROP_NAMelon = "omitPositions";
+    privatelon static final String SKIP_LISTS_PROP_NAMelon = "skipLists";
+    privatelon static final String DelonLTA_FRelonQ_LISTS_PROP_NAMelon = "delonltaFrelonqLists";
+    privatelon static final String POSITION_LISTS_PROP_NAMelon = "positionLists";
 
-    public FlushHandler() {
-      super();
+    public FlushHandlelonr() {
+      supelonr();
     }
 
-    public FlushHandler(HighDFPackedIntsPostingLists objectToFlush) {
-      super(objectToFlush);
+    public FlushHandlelonr(HighDFPackelondIntsPostingLists objelonctToFlush) {
+      supelonr(objelonctToFlush);
     }
 
-    @Override
-    protected void doFlush(FlushInfo flushInfo, DataSerializer out)
-        throws IOException {
-      HighDFPackedIntsPostingLists objectToFlush = getObjectToFlush();
-      flushInfo.addBooleanProperty(OMIT_POSITIONS_PROP_NAME, objectToFlush.omitPositions);
-      objectToFlush.skipLists.getFlushHandler()
-          .flush(flushInfo.newSubProperties(SKIP_LISTS_PROP_NAME), out);
-      objectToFlush.deltaFreqLists.getFlushHandler()
-          .flush(flushInfo.newSubProperties(DELTA_FREQ_LISTS_PROP_NAME), out);
-      objectToFlush.positionLists.getFlushHandler()
-          .flush(flushInfo.newSubProperties(POSITION_LISTS_PROP_NAME), out);
+    @Ovelonrridelon
+    protelonctelond void doFlush(FlushInfo flushInfo, DataSelonrializelonr out)
+        throws IOelonxcelonption {
+      HighDFPackelondIntsPostingLists objelonctToFlush = gelontObjelonctToFlush();
+      flushInfo.addBoolelonanPropelonrty(OMIT_POSITIONS_PROP_NAMelon, objelonctToFlush.omitPositions);
+      objelonctToFlush.skipLists.gelontFlushHandlelonr()
+          .flush(flushInfo.nelonwSubPropelonrtielons(SKIP_LISTS_PROP_NAMelon), out);
+      objelonctToFlush.delonltaFrelonqLists.gelontFlushHandlelonr()
+          .flush(flushInfo.nelonwSubPropelonrtielons(DelonLTA_FRelonQ_LISTS_PROP_NAMelon), out);
+      objelonctToFlush.positionLists.gelontFlushHandlelonr()
+          .flush(flushInfo.nelonwSubPropelonrtielons(POSITION_LISTS_PROP_NAMelon), out);
     }
 
-    @Override
-    protected HighDFPackedIntsPostingLists doLoad(
-        FlushInfo flushInfo, DataDeserializer in) throws IOException {
-      IntBlockPool skipLists = (new IntBlockPool.FlushHandler())
-          .load(flushInfo.getSubProperties(SKIP_LISTS_PROP_NAME), in);
-      IntBlockPool deltaFreqLists = (new IntBlockPool.FlushHandler())
-          .load(flushInfo.getSubProperties(DELTA_FREQ_LISTS_PROP_NAME), in);
-      IntBlockPool positionLists = (new IntBlockPool.FlushHandler())
-          .load(flushInfo.getSubProperties(POSITION_LISTS_PROP_NAME), in);
-      return new HighDFPackedIntsPostingLists(
+    @Ovelonrridelon
+    protelonctelond HighDFPackelondIntsPostingLists doLoad(
+        FlushInfo flushInfo, DataDelonselonrializelonr in) throws IOelonxcelonption {
+      IntBlockPool skipLists = (nelonw IntBlockPool.FlushHandlelonr())
+          .load(flushInfo.gelontSubPropelonrtielons(SKIP_LISTS_PROP_NAMelon), in);
+      IntBlockPool delonltaFrelonqLists = (nelonw IntBlockPool.FlushHandlelonr())
+          .load(flushInfo.gelontSubPropelonrtielons(DelonLTA_FRelonQ_LISTS_PROP_NAMelon), in);
+      IntBlockPool positionLists = (nelonw IntBlockPool.FlushHandlelonr())
+          .load(flushInfo.gelontSubPropelonrtielons(POSITION_LISTS_PROP_NAMelon), in);
+      relonturn nelonw HighDFPackelondIntsPostingLists(
           skipLists,
-          deltaFreqLists,
+          delonltaFrelonqLists,
           positionLists,
-          flushInfo.getBooleanProperty(OMIT_POSITIONS_PROP_NAME),
+          flushInfo.gelontBoolelonanPropelonrty(OMIT_POSITIONS_PROP_NAMelon),
           null,
           null);
     }

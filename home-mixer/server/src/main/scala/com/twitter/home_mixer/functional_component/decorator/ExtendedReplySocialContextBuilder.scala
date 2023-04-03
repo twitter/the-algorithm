@@ -1,78 +1,78 @@
-package com.twitter.home_mixer.functional_component.decorator
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.deloncorator
 
-import com.twitter.home_mixer.model.HomeFeatures.FocalTweetAuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.FocalTweetInNetworkFeature
-import com.twitter.home_mixer.model.HomeFeatures.FocalTweetRealNamesFeature
-import com.twitter.home_mixer.model.HomeFeatures.InNetworkFeature
-import com.twitter.home_mixer.product.following.model.HomeMixerExternalStrings
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.social_context.BaseSocialContextBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.SocialContext
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata._
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.product.guice.scope.ProductScoped
-import com.twitter.stringcenter.client.StringCenter
-import javax.inject.Inject
-import javax.inject.Provider
-import javax.inject.Singleton
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.FocalTwelonelontAuthorIdFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.FocalTwelonelontInNelontworkFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.FocalTwelonelontRelonalNamelonsFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.InNelontworkFelonaturelon
+import com.twittelonr.homelon_mixelonr.product.following.modelonl.HomelonMixelonrelonxtelonrnalStrings
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.TwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.social_contelonxt.BaselonSocialContelonxtBuildelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.SocialContelonxt
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata._
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.product_mixelonr.corelon.product.guicelon.scopelon.ProductScopelond
+import com.twittelonr.stringcelonntelonr.clielonnt.StringCelonntelonr
+import javax.injelonct.Injelonct
+import javax.injelonct.Providelonr
+import javax.injelonct.Singlelonton
 
 /**
- * Use '@A replied' when the root tweet is out-of-network and the reply is in network.
+ * Uselon '@A relonplielond' whelonn thelon root twelonelont is out-of-nelontwork and thelon relonply is in nelontwork.
  *
- * This function should only be called for the root Tweet of convo modules. This is enforced by
- * [[HomeTweetSocialContextBuilder]].
+ * This function should only belon callelond for thelon root Twelonelont of convo modulelons. This is elonnforcelond by
+ * [[HomelonTwelonelontSocialContelonxtBuildelonr]].
  */
-@Singleton
-case class ExtendedReplySocialContextBuilder @Inject() (
-  externalStrings: HomeMixerExternalStrings,
-  @ProductScoped stringCenterProvider: Provider[StringCenter])
-    extends BaseSocialContextBuilder[PipelineQuery, TweetCandidate] {
+@Singlelonton
+caselon class elonxtelonndelondRelonplySocialContelonxtBuildelonr @Injelonct() (
+  elonxtelonrnalStrings: HomelonMixelonrelonxtelonrnalStrings,
+  @ProductScopelond stringCelonntelonrProvidelonr: Providelonr[StringCelonntelonr])
+    elonxtelonnds BaselonSocialContelonxtBuildelonr[PipelonlinelonQuelonry, TwelonelontCandidatelon] {
 
-  private val stringCenter = stringCenterProvider.get()
-  private val extendedReplyString = externalStrings.socialContextExtendedReply
+  privatelon val stringCelonntelonr = stringCelonntelonrProvidelonr.gelont()
+  privatelon val elonxtelonndelondRelonplyString = elonxtelonrnalStrings.socialContelonxtelonxtelonndelondRelonply
 
-  def apply(
-    query: PipelineQuery,
-    candidate: TweetCandidate,
-    candidateFeatures: FeatureMap
-  ): Option[SocialContext] = {
+  delonf apply(
+    quelonry: PipelonlinelonQuelonry,
+    candidatelon: TwelonelontCandidatelon,
+    candidatelonFelonaturelons: FelonaturelonMap
+  ): Option[SocialContelonxt] = {
 
-    // If these values are missing default to not showing an extended reply banner
-    val inNetworkRoot = candidateFeatures.getOrElse(InNetworkFeature, true)
+    // If thelonselon valuelons arelon missing delonfault to not showing an elonxtelonndelond relonply bannelonr
+    val inNelontworkRoot = candidatelonFelonaturelons.gelontOrelonlselon(InNelontworkFelonaturelon, truelon)
 
-    val inNetworkFocalTweet =
-      candidateFeatures.getOrElse(FocalTweetInNetworkFeature, None).getOrElse(false)
+    val inNelontworkFocalTwelonelont =
+      candidatelonFelonaturelons.gelontOrelonlselon(FocalTwelonelontInNelontworkFelonaturelon, Nonelon).gelontOrelonlselon(falselon)
 
-    if (!inNetworkRoot && inNetworkFocalTweet) {
+    if (!inNelontworkRoot && inNelontworkFocalTwelonelont) {
 
-      val focalTweetAuthorIdOpt = candidateFeatures.getOrElse(FocalTweetAuthorIdFeature, None)
-      val focalTweetRealNames =
-        candidateFeatures
-          .getOrElse(FocalTweetRealNamesFeature, None).getOrElse(Map.empty[Long, String])
-      val focalTweetAuthorNameOpt = focalTweetAuthorIdOpt.flatMap(focalTweetRealNames.get)
+      val focalTwelonelontAuthorIdOpt = candidatelonFelonaturelons.gelontOrelonlselon(FocalTwelonelontAuthorIdFelonaturelon, Nonelon)
+      val focalTwelonelontRelonalNamelons =
+        candidatelonFelonaturelons
+          .gelontOrelonlselon(FocalTwelonelontRelonalNamelonsFelonaturelon, Nonelon).gelontOrelonlselon(Map.elonmpty[Long, String])
+      val focalTwelonelontAuthorNamelonOpt = focalTwelonelontAuthorIdOpt.flatMap(focalTwelonelontRelonalNamelons.gelont)
 
-      (focalTweetAuthorIdOpt, focalTweetAuthorNameOpt) match {
-        case (Some(focalTweetAuthorId), Some(focalTweetAuthorName)) =>
-          Some(
-            GeneralContext(
-              contextType = ConversationGeneralContextType,
-              text = stringCenter
-                .prepare(extendedReplyString, placeholders = Map("user1" -> focalTweetAuthorName)),
-              url = None,
-              contextImageUrls = None,
-              landingUrl = Some(
+      (focalTwelonelontAuthorIdOpt, focalTwelonelontAuthorNamelonOpt) match {
+        caselon (Somelon(focalTwelonelontAuthorId), Somelon(focalTwelonelontAuthorNamelon)) =>
+          Somelon(
+            GelonnelonralContelonxt(
+              contelonxtTypelon = ConvelonrsationGelonnelonralContelonxtTypelon,
+              telonxt = stringCelonntelonr
+                .prelonparelon(elonxtelonndelondRelonplyString, placelonholdelonrs = Map("uselonr1" -> focalTwelonelontAuthorNamelon)),
+              url = Nonelon,
+              contelonxtImagelonUrls = Nonelon,
+              landingUrl = Somelon(
                 Url(
-                  urlType = DeepLink,
+                  urlTypelon = DelonelonpLink,
                   url = "",
-                  urtEndpointOptions = None
+                  urtelonndpointOptions = Nonelon
                 ))
             ))
-        case _ =>
-          None
+        caselon _ =>
+          Nonelon
       }
-    } else {
-      None
+    } elonlselon {
+      Nonelon
     }
   }
 }

@@ -1,82 +1,82 @@
-package com.twitter.simclusters_v2.scio.bq_generation.simclusters_index_generation
+packagelon com.twittelonr.simclustelonrs_v2.scio.bq_gelonnelonration.simclustelonrs_indelonx_gelonnelonration
 
-object Config {
+objelonct Config {
   // Common Root Path
-  val RootMHPath: String = "manhattan_sequence_files/simclusters_to_tweet_index/"
-  val RootThriftPath: String = "processed/simclusters_to_tweet_index/"
-  val AdhocRootPath = "adhoc/simclusters_to_tweet_index/"
-  // cluster-to-tweet KeyVal Dataset Output Path
-  val FavBasedClusterToTweetIndexOutputPath = "fav_based_index"
-  val FavBasedEvergreenContentClusterToTweetIndexOutputPath = "fav_based_evergreen_index"
-  val FavBasedVideoClusterToTweetIndexOutputPath = "fav_based_video_index"
-  val VideoViewBasedClusterToTweetIndexOutputPath = "video_view_based_index"
-  val RetweetBasedClusterToTweetIndexOutputPath = "retweet_based_index"
-  val ReplyBasedClusterToTweetIndexOutputPath = "reply_based_index"
-  val PushOpenBasedClusterToTweetIndexOutputPath = "push_open_based_index"
-  val AdsFavBasedClusterToTweetIndexOutputPath = "ads_fav_based_index"
-  val AdsFavClickBasedClusterToTweetIndexOutputPath = "ads_fav_click_based_index"
+  val RootMHPath: String = "manhattan_selonquelonncelon_filelons/simclustelonrs_to_twelonelont_indelonx/"
+  val RootThriftPath: String = "procelonsselond/simclustelonrs_to_twelonelont_indelonx/"
+  val AdhocRootPath = "adhoc/simclustelonrs_to_twelonelont_indelonx/"
+  // clustelonr-to-twelonelont KelonyVal Dataselont Output Path
+  val FavBaselondClustelonrToTwelonelontIndelonxOutputPath = "fav_baselond_indelonx"
+  val FavBaselondelonvelonrgrelonelonnContelonntClustelonrToTwelonelontIndelonxOutputPath = "fav_baselond_elonvelonrgrelonelonn_indelonx"
+  val FavBaselondVidelonoClustelonrToTwelonelontIndelonxOutputPath = "fav_baselond_videlono_indelonx"
+  val VidelonoVielonwBaselondClustelonrToTwelonelontIndelonxOutputPath = "videlono_vielonw_baselond_indelonx"
+  val RelontwelonelontBaselondClustelonrToTwelonelontIndelonxOutputPath = "relontwelonelont_baselond_indelonx"
+  val RelonplyBaselondClustelonrToTwelonelontIndelonxOutputPath = "relonply_baselond_indelonx"
+  val PushOpelonnBaselondClustelonrToTwelonelontIndelonxOutputPath = "push_opelonn_baselond_indelonx"
+  val AdsFavBaselondClustelonrToTwelonelontIndelonxOutputPath = "ads_fav_baselond_indelonx"
+  val AdsFavClickBaselondClustelonrToTwelonelontIndelonxOutputPath = "ads_fav_click_baselond_indelonx"
 
-  // SQL file path
-  val simclustersEngagementBasedIndexGenerationSQLPath =
-    s"/com/twitter/simclusters_v2/scio/bq_generation/sql/engagement_based_index_generation.sql"
-  val unifiedUserTweetActionPairGenerationSQLPath =
-    s"/com/twitter/simclusters_v2/scio/bq_generation/sql/unified_user_tweet_action_pair_generation.sql"
-  val combinedUserTweetActionPairGenerationSQLPath =
-    s"/com/twitter/simclusters_v2/scio/bq_generation/sql/combined_user_tweet_action_pair_generation.sql"
-  val adsUserTweetActionPairGenerationSQLPath =
-    s"/com/twitter/simclusters_v2/scio/bq_generation/sql/ads_user_tweet_action_pair_generation.sql"
-  val evergreenContentUserTweetActionPairGenerationSQLPath =
-    s"/com/twitter/simclusters_v2/scio/bq_generation/sql/evergreen_content_user_tweet_action_pair_generation.sql"
-  val favBasedVideoTweetActionPairGenerationSQLPath =
-    s"/com/twitter/simclusters_v2/scio/bq_generation/sql/user_video_tweet_fav_engagement_generation.sql"
+  // SQL filelon path
+  val simclustelonrselonngagelonmelonntBaselondIndelonxGelonnelonrationSQLPath =
+    s"/com/twittelonr/simclustelonrs_v2/scio/bq_gelonnelonration/sql/elonngagelonmelonnt_baselond_indelonx_gelonnelonration.sql"
+  val unifielondUselonrTwelonelontActionPairGelonnelonrationSQLPath =
+    s"/com/twittelonr/simclustelonrs_v2/scio/bq_gelonnelonration/sql/unifielond_uselonr_twelonelont_action_pair_gelonnelonration.sql"
+  val combinelondUselonrTwelonelontActionPairGelonnelonrationSQLPath =
+    s"/com/twittelonr/simclustelonrs_v2/scio/bq_gelonnelonration/sql/combinelond_uselonr_twelonelont_action_pair_gelonnelonration.sql"
+  val adsUselonrTwelonelontActionPairGelonnelonrationSQLPath =
+    s"/com/twittelonr/simclustelonrs_v2/scio/bq_gelonnelonration/sql/ads_uselonr_twelonelont_action_pair_gelonnelonration.sql"
+  val elonvelonrgrelonelonnContelonntUselonrTwelonelontActionPairGelonnelonrationSQLPath =
+    s"/com/twittelonr/simclustelonrs_v2/scio/bq_gelonnelonration/sql/elonvelonrgrelonelonn_contelonnt_uselonr_twelonelont_action_pair_gelonnelonration.sql"
+  val favBaselondVidelonoTwelonelontActionPairGelonnelonrationSQLPath =
+    s"/com/twittelonr/simclustelonrs_v2/scio/bq_gelonnelonration/sql/uselonr_videlono_twelonelont_fav_elonngagelonmelonnt_gelonnelonration.sql"
 
-  // Table name for server/client engagements
-  val clientEngagementTableName: String = "twttr-bq-iesource-prod.user.client_engagements"
-  val serverEngagementTableName: String = "twttr-bq-iesource-prod.user.server_engagements"
+  // Tablelon namelon for selonrvelonr/clielonnt elonngagelonmelonnts
+  val clielonntelonngagelonmelonntTablelonNamelon: String = "twttr-bq-ielonsourcelon-prod.uselonr.clielonnt_elonngagelonmelonnts"
+  val selonrvelonrelonngagelonmelonntTablelonNamelon: String = "twttr-bq-ielonsourcelon-prod.uselonr.selonrvelonr_elonngagelonmelonnts"
 
-  // Tweet id column names from UUA
-  val actionTweetIdColumn: String = "item.tweetInfo.actionTweetId"
-  val retweetTweetIdColumn: String = "item.tweetInfo.retweetedTweetId"
-  val replyTweetIdColumn: String = "item.tweetInfo.inReplyToTweetId"
-  val pushTweetIdColumn: String = "item.notificationInfo.content.tweetNotification.tweetId"
+  // Twelonelont id column namelons from UUA
+  val actionTwelonelontIdColumn: String = "itelonm.twelonelontInfo.actionTwelonelontId"
+  val relontwelonelontTwelonelontIdColumn: String = "itelonm.twelonelontInfo.relontwelonelontelondTwelonelontId"
+  val relonplyTwelonelontIdColumn: String = "itelonm.twelonelontInfo.inRelonplyToTwelonelontId"
+  val pushTwelonelontIdColumn: String = "itelonm.notificationInfo.contelonnt.twelonelontNotification.twelonelontId"
 
-  // Do not enable health or video filters by default
-  val enableHealthAndVideoFilters: Boolean = false
+  // Do not elonnablelon helonalth or videlono filtelonrs by delonfault
+  val elonnablelonHelonalthAndVidelonoFiltelonrs: Boolelonan = falselon
 
-  // Do not enable top k tweets per cluster intersection with fav-based clusters
-  val enableIntersectionWithFavBasedClusterTopKTweetsIndex: Boolean = false
+  // Do not elonnablelon top k twelonelonts pelonr clustelonr intelonrselonction with fav-baselond clustelonrs
+  val elonnablelonIntelonrselonctionWithFavBaselondClustelonrTopKTwelonelontsIndelonx: Boolelonan = falselon
 
-  // Min fav/interaction threshold
-  val minInteractionCount: Int = 50
+  // Min fav/intelonraction threlonshold
+  val minIntelonractionCount: Int = 50
   val minFavCount: Int = 50
 
-  // Tweet Embeddings configs
-  val tweetEmbeddingsLength: Int = 50
-  val tweetEmbeddingsHalfLife: Int = 28800000
+  // Twelonelont elonmbelonddings configs
+  val twelonelontelonmbelonddingsLelonngth: Int = 50
+  val twelonelontelonmbelonddingsHalfLifelon: Int = 28800000
 
-  // Cluster-to-tweet index configs
-  val clusterTopKTweets: Int = 2000
-  val maxTweetAgeHours: Int = 24
-  val minEngagementPerCluster: Int = 0
+  // Clustelonr-to-twelonelont indelonx configs
+  val clustelonrTopKTwelonelonts: Int = 2000
+  val maxTwelonelontAgelonHours: Int = 24
+  val minelonngagelonmelonntPelonrClustelonr: Int = 0
 
-  // Placeholder action type for interactions that don't have undo events (e.g. video views)
-  val PlaceholderActionType: String = "PLACEHOLDER_ACTION_TYPE"
+  // Placelonholdelonr action typelon for intelonractions that don't havelon undo elonvelonnts (elon.g. videlono vielonws)
+  val PlacelonholdelonrActionTypelon: String = "PLACelonHOLDelonR_ACTION_TYPelon"
 
-  // Ads event engagement type ids
-  val AdsFavEngagementTypeIds = Seq(8) // Fav promoted tweet
-  val AdsClickEngagementTypeIds = Seq(
+  // Ads elonvelonnt elonngagelonmelonnt typelon ids
+  val AdsFavelonngagelonmelonntTypelonIds = Selonq(8) // Fav promotelond twelonelont
+  val AdsClickelonngagelonmelonntTypelonIds = Selonq(
     1, //URL
     42, // CARD_URL_CLICK
-    53, // WEBSITE_CARD_CONTAINER_CLICK
-    54, // WEBSITE_CARD_BUTTON_CLICK
-    55, // WEBSITE_CARD_IMAGE_CLICK
-    56, // WEBSITE_CARD_TITLE_CLICK
+    53, // WelonBSITelon_CARD_CONTAINelonR_CLICK
+    54, // WelonBSITelon_CARD_BUTTON_CLICK
+    55, // WelonBSITelon_CARD_IMAGelon_CLICK
+    56, // WelonBSITelon_CARD_TITLelon_CLICK
     69, // BUYNOW_CARD_CLICK
-    70, // BUYNOW_PURCHASE_SUCCESS
-    72, // VIDEO_CTA_URL_CLICK
-    76, // VIDEO_AD_CTA_URL_CLICK
-    80, // VIDEO_CONTENT_CTA_URL_CLICK
-    84, // CL_OFFER_CARD_CLICK
+    70, // BUYNOW_PURCHASelon_SUCCelonSS
+    72, // VIDelonO_CTA_URL_CLICK
+    76, // VIDelonO_AD_CTA_URL_CLICK
+    80, // VIDelonO_CONTelonNT_CTA_URL_CLICK
+    84, // CL_OFFelonR_CARD_CLICK
   )
 
 }

@@ -1,8 +1,8 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.twitter_list
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.twittelonr_list
 
-sealed trait TwitterListDisplayType
+selonalelond trait TwittelonrListDisplayTypelon
 
-case object List extends TwitterListDisplayType
-case object ListTile extends TwitterListDisplayType
-case object ListWithPin extends TwitterListDisplayType
-case object ListWithSubscribe extends TwitterListDisplayType
+caselon objelonct List elonxtelonnds TwittelonrListDisplayTypelon
+caselon objelonct ListTilelon elonxtelonnds TwittelonrListDisplayTypelon
+caselon objelonct ListWithPin elonxtelonnds TwittelonrListDisplayTypelon
+caselon objelonct ListWithSubscribelon elonxtelonnds TwittelonrListDisplayTypelon

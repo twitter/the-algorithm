@@ -1,8 +1,8 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.vertical_grid_item
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.velonrtical_grid_itelonm
 
-sealed trait VerticalGridItemTopicFunctionalityType
+selonalelond trait VelonrticalGridItelonmTopicFunctionalityTypelon
 
-case object PivotVerticalGridItemTopicFunctionalityType
-    extends VerticalGridItemTopicFunctionalityType
-case object RecommendationVerticalGridItemTopicFunctionalityType
-    extends VerticalGridItemTopicFunctionalityType
+caselon objelonct PivotVelonrticalGridItelonmTopicFunctionalityTypelon
+    elonxtelonnds VelonrticalGridItelonmTopicFunctionalityTypelon
+caselon objelonct ReloncommelonndationVelonrticalGridItelonmTopicFunctionalityTypelon
+    elonxtelonnds VelonrticalGridItelonmTopicFunctionalityTypelon

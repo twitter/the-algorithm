@@ -1,6 +1,6 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.metadata
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata
 
-case class TimelinesDetails(
-  injectionType: Option[String],
-  controllerData: Option[String],
-  sourceData: Option[String])
+caselon class TimelonlinelonsDelontails(
+  injelonctionTypelon: Option[String],
+  controllelonrData: Option[String],
+  sourcelonData: Option[String])

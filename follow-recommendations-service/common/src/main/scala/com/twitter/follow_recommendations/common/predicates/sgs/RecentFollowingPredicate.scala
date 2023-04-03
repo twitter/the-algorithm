@@ -1,33 +1,33 @@
-package com.twitter.follow_recommendations.common.predicates.sgs
+packagelon com.twittelonr.follow_reloncommelonndations.common.prelondicatelons.sgs
 
-import com.twitter.follow_recommendations.common.base.Predicate
-import com.twitter.follow_recommendations.common.base.PredicateResult
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.FilterReason
-import com.twitter.follow_recommendations.common.models.HasRecentFollowedUserIds
-import com.twitter.stitch.Stitch
-import javax.inject.Singleton
+import com.twittelonr.follow_reloncommelonndations.common.baselon.Prelondicatelon
+import com.twittelonr.follow_reloncommelonndations.common.baselon.PrelondicatelonRelonsult
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.CandidatelonUselonr
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.FiltelonrRelonason
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.HasReloncelonntFollowelondUselonrIds
+import com.twittelonr.stitch.Stitch
+import javax.injelonct.Singlelonton
 
-@Singleton
-class RecentFollowingPredicate extends Predicate[(HasRecentFollowedUserIds, CandidateUser)] {
+@Singlelonton
+class ReloncelonntFollowingPrelondicatelon elonxtelonnds Prelondicatelon[(HasReloncelonntFollowelondUselonrIds, CandidatelonUselonr)] {
 
-  override def apply(pair: (HasRecentFollowedUserIds, CandidateUser)): Stitch[PredicateResult] = {
+  ovelonrridelon delonf apply(pair: (HasReloncelonntFollowelondUselonrIds, CandidatelonUselonr)): Stitch[PrelondicatelonRelonsult] = {
 
-    val (targetUser, candidate) = pair
-    targetUser.recentFollowedUserIdsSet match {
-      case Some(users) =>
-        if (!users.contains(candidate.id)) {
-          RecentFollowingPredicate.ValidStitch
-        } else {
-          RecentFollowingPredicate.AlreadyFollowedStitch
+    val (targelontUselonr, candidatelon) = pair
+    targelontUselonr.reloncelonntFollowelondUselonrIdsSelont match {
+      caselon Somelon(uselonrs) =>
+        if (!uselonrs.contains(candidatelon.id)) {
+          ReloncelonntFollowingPrelondicatelon.ValidStitch
+        } elonlselon {
+          ReloncelonntFollowingPrelondicatelon.AlrelonadyFollowelondStitch
         }
-      case None => RecentFollowingPredicate.ValidStitch
+      caselon Nonelon => ReloncelonntFollowingPrelondicatelon.ValidStitch
     }
   }
 }
 
-object RecentFollowingPredicate {
-  val ValidStitch: Stitch[PredicateResult.Valid.type] = Stitch.value(PredicateResult.Valid)
-  val AlreadyFollowedStitch: Stitch[PredicateResult.Invalid] =
-    Stitch.value(PredicateResult.Invalid(Set(FilterReason.AlreadyFollowed)))
+objelonct ReloncelonntFollowingPrelondicatelon {
+  val ValidStitch: Stitch[PrelondicatelonRelonsult.Valid.typelon] = Stitch.valuelon(PrelondicatelonRelonsult.Valid)
+  val AlrelonadyFollowelondStitch: Stitch[PrelondicatelonRelonsult.Invalid] =
+    Stitch.valuelon(PrelondicatelonRelonsult.Invalid(Selont(FiltelonrRelonason.AlrelonadyFollowelond)))
 }

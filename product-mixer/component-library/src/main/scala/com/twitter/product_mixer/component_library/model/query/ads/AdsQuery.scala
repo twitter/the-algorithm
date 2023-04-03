@@ -1,59 +1,59 @@
-package com.twitter.product_mixer.component_library.model.query.ads
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.modelonl.quelonry.ads
 
-import com.twitter.adserver.{thriftscala => ads}
-import com.twitter.dspbidder.commons.{thriftscala => dsp}
+import com.twittelonr.adselonrvelonr.{thriftscala => ads}
+import com.twittelonr.dspbiddelonr.commons.{thriftscala => dsp}
 
 /**
- * AdsQuery holds request-time fields required by our ads candidate pipelines
+ * AdsQuelonry holds relonquelonst-timelon fielonlds relonquirelond by our ads candidatelon pipelonlinelons
  */
-trait AdsQuery {
+trait AdsQuelonry {
 
   /**
-   * Timelines-specific context.
+   * Timelonlinelons-speloncific contelonxt.
    *
-   * @note used in Home Timelines
+   * @notelon uselond in Homelon Timelonlinelons
    */
-  def timelineRequestParams: Option[ads.TimelineRequestParams] = None
+  delonf timelonlinelonRelonquelonstParams: Option[ads.TimelonlinelonRelonquelonstParams] = Nonelon
 
   /**
-   * Navigation action trigger-type
+   * Navigation action triggelonr-typelon
    *
-   * @note used in Home Timelines
+   * @notelon uselond in Homelon Timelonlinelons
    */
-  def requestTriggerType: Option[ads.RequestTriggerType] = None
+  delonf relonquelonstTriggelonrTypelon: Option[ads.RelonquelonstTriggelonrTypelon] = Nonelon
 
   /**
-   * Autoplay setting
+   * Autoplay selontting
    *
-   * @note used in Home Timelines
+   * @notelon uselond in Homelon Timelonlinelons
    */
-  def autoplayEnabled: Option[Boolean] = None
+  delonf autoplayelonnablelond: Option[Boolelonan] = Nonelon
 
   /**
-   * Disable NSFW avoidance for ads mixing
+   * Disablelon NSFW avoidancelon for ads mixing
    *
-   * @note used in Home Timelines
+   * @notelon uselond in Homelon Timelonlinelons
    */
-  def disableNsfwAvoidance: Option[Boolean] = None
+  delonf disablelonNsfwAvoidancelon: Option[Boolelonan] = Nonelon
 
   /**
-   * DSP context for adwords
+   * DSP contelonxt for adwords
    *
-   * @note used in Home Timelines
+   * @notelon uselond in Homelon Timelonlinelons
    */
-  def dspClientContext: Option[dsp.DspClientContext] = None
+  delonf dspClielonntContelonxt: Option[dsp.DspClielonntContelonxt] = Nonelon
 
   /**
-   * User ID for the User Profile being viewed.
+   * Uselonr ID for thelon Uselonr Profilelon beloning vielonwelond.
    *
-   * @note used in Profile Timelines
+   * @notelon uselond in Profilelon Timelonlinelons
    */
-  def userProfileViewedUserId: Option[Long] = None
+  delonf uselonrProfilelonVielonwelondUselonrId: Option[Long] = Nonelon
 
   /**
-   * Search-specific context.
+   * Selonarch-speloncific contelonxt.
    *
-   * @note used in Search Timelines
+   * @notelon uselond in Selonarch Timelonlinelons
    */
-  def searchRequestContext: Option[ads.SearchRequestContext] = None
+  delonf selonarchRelonquelonstContelonxt: Option[ads.SelonarchRelonquelonstContelonxt] = Nonelon
 }

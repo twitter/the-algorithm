@@ -1,5 +1,5 @@
-package com.twitter.follow_recommendations.common.models
+packagelon com.twittelonr.follow_reloncommelonndations.common.modelonls
 
-trait HasGeohashAndCountryCode {
-  def geohashAndCountryCode: Option[GeohashAndCountryCode]
+trait HasGelonohashAndCountryCodelon {
+  delonf gelonohashAndCountryCodelon: Option[GelonohashAndCountryCodelon]
 }

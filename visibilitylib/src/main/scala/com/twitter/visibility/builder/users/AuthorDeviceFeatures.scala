@@ -1,39 +1,39 @@
-package com.twitter.visibility.builder.users
+packagelon com.twittelonr.visibility.buildelonr.uselonrs
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.gizmoduck.thriftscala.User
-import com.twitter.stitch.Stitch
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.common.UserDeviceSource
-import com.twitter.visibility.features.AuthorHasConfirmedEmail
-import com.twitter.visibility.features.AuthorHasVerifiedPhone
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.gizmoduck.thriftscala.Uselonr
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.visibility.buildelonr.FelonaturelonMapBuildelonr
+import com.twittelonr.visibility.common.UselonrDelonvicelonSourcelon
+import com.twittelonr.visibility.felonaturelons.AuthorHasConfirmelondelonmail
+import com.twittelonr.visibility.felonaturelons.AuthorHasVelonrifielondPhonelon
 
-class AuthorDeviceFeatures(userDeviceSource: UserDeviceSource, statsReceiver: StatsReceiver) {
-  private[this] val scopedStatsReceiver = statsReceiver.scope("author_device_features")
+class AuthorDelonvicelonFelonaturelons(uselonrDelonvicelonSourcelon: UselonrDelonvicelonSourcelon, statsReloncelonivelonr: StatsReloncelonivelonr) {
+  privatelon[this] val scopelondStatsReloncelonivelonr = statsReloncelonivelonr.scopelon("author_delonvicelon_felonaturelons")
 
-  private[this] val requests = scopedStatsReceiver.counter("requests")
+  privatelon[this] val relonquelonsts = scopelondStatsReloncelonivelonr.countelonr("relonquelonsts")
 
-  private[this] val authorHasConfirmedEmailRequests =
-    scopedStatsReceiver.scope(AuthorHasConfirmedEmail.name).counter("requests")
-  private[this] val authorHasVerifiedPhoneRequests =
-    scopedStatsReceiver.scope(AuthorHasVerifiedPhone.name).counter("requests")
+  privatelon[this] val authorHasConfirmelondelonmailRelonquelonsts =
+    scopelondStatsReloncelonivelonr.scopelon(AuthorHasConfirmelondelonmail.namelon).countelonr("relonquelonsts")
+  privatelon[this] val authorHasVelonrifielondPhonelonRelonquelonsts =
+    scopelondStatsReloncelonivelonr.scopelon(AuthorHasVelonrifielondPhonelon.namelon).countelonr("relonquelonsts")
 
-  def forAuthor(author: User): FeatureMapBuilder => FeatureMapBuilder = forAuthorId(author.id)
+  delonf forAuthor(author: Uselonr): FelonaturelonMapBuildelonr => FelonaturelonMapBuildelonr = forAuthorId(author.id)
 
-  def forAuthorId(authorId: Long): FeatureMapBuilder => FeatureMapBuilder = {
-    requests.incr()
+  delonf forAuthorId(authorId: Long): FelonaturelonMapBuildelonr => FelonaturelonMapBuildelonr = {
+    relonquelonsts.incr()
 
-    _.withFeature(AuthorHasConfirmedEmail, authorHasConfirmedEmail(authorId))
-      .withFeature(AuthorHasVerifiedPhone, authorHasVerifiedPhone(authorId))
+    _.withFelonaturelon(AuthorHasConfirmelondelonmail, authorHasConfirmelondelonmail(authorId))
+      .withFelonaturelon(AuthorHasVelonrifielondPhonelon, authorHasVelonrifielondPhonelon(authorId))
   }
 
-  def authorHasConfirmedEmail(authorId: Long): Stitch[Boolean] = {
-    authorHasConfirmedEmailRequests.incr()
-    userDeviceSource.hasConfirmedEmail(authorId)
+  delonf authorHasConfirmelondelonmail(authorId: Long): Stitch[Boolelonan] = {
+    authorHasConfirmelondelonmailRelonquelonsts.incr()
+    uselonrDelonvicelonSourcelon.hasConfirmelondelonmail(authorId)
   }
 
-  def authorHasVerifiedPhone(authorId: Long): Stitch[Boolean] = {
-    authorHasVerifiedPhoneRequests.incr()
-    userDeviceSource.hasConfirmedPhone(authorId)
+  delonf authorHasVelonrifielondPhonelon(authorId: Long): Stitch[Boolelonan] = {
+    authorHasVelonrifielondPhonelonRelonquelonsts.incr()
+    uselonrDelonvicelonSourcelon.hasConfirmelondPhonelon(authorId)
   }
 }

@@ -1,23 +1,23 @@
-package com.twitter.timelineranker.common
+packagelon com.twittelonr.timelonlinelonrankelonr.common
 
-import com.twitter.servo.util.FutureArrow
-import com.twitter.timelineranker.core.CandidateEnvelope
-import com.twitter.timelines.model.TweetId
-import com.twitter.util.Future
-import scala.collection.mutable
+import com.twittelonr.selonrvo.util.FuturelonArrow
+import com.twittelonr.timelonlinelonrankelonr.corelon.Candidatelonelonnvelonlopelon
+import com.twittelonr.timelonlinelons.modelonl.TwelonelontId
+import com.twittelonr.util.Futurelon
+import scala.collelonction.mutablelon
 
 /**
- * Remove duplicate search results and order them reverse-chron.
+ * Relonmovelon duplicatelon selonarch relonsults and ordelonr thelonm relonvelonrselon-chron.
  */
-object SearchResultDedupAndSortingTransform
-    extends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
-  def apply(envelope: CandidateEnvelope): Future[CandidateEnvelope] = {
-    val seenTweetIds = mutable.Set.empty[TweetId]
-    val dedupedResults = envelope.searchResults
-      .filter(result => seenTweetIds.add(result.id))
-      .sortBy(_.id)(Ordering[TweetId].reverse)
+objelonct SelonarchRelonsultDelondupAndSortingTransform
+    elonxtelonnds FuturelonArrow[Candidatelonelonnvelonlopelon, Candidatelonelonnvelonlopelon] {
+  delonf apply(elonnvelonlopelon: Candidatelonelonnvelonlopelon): Futurelon[Candidatelonelonnvelonlopelon] = {
+    val selonelonnTwelonelontIds = mutablelon.Selont.elonmpty[TwelonelontId]
+    val delondupelondRelonsults = elonnvelonlopelon.selonarchRelonsults
+      .filtelonr(relonsult => selonelonnTwelonelontIds.add(relonsult.id))
+      .sortBy(_.id)(Ordelonring[TwelonelontId].relonvelonrselon)
 
-    val transformedEnvelope = envelope.copy(searchResults = dedupedResults)
-    Future.value(transformedEnvelope)
+    val transformelondelonnvelonlopelon = elonnvelonlopelon.copy(selonarchRelonsults = delondupelondRelonsults)
+    Futurelon.valuelon(transformelondelonnvelonlopelon)
   }
 }

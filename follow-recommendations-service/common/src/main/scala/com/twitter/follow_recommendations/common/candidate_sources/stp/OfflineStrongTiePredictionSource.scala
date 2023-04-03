@@ -1,44 +1,44 @@
-package com.twitter.follow_recommendations.common.candidate_sources.stp
+packagelon com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.stp
 
-import com.google.inject.Singleton
-import com.twitter.follow_recommendations.common.candidate_sources.stp.OfflineStpSourceParams.UseDenserPmiMatrix
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.component_library.model.candidate.UserCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.util.logging.Logging
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
-import javax.inject.Inject
+import com.googlelon.injelonct.Singlelonton
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.stp.OfflinelonStpSourcelonParams.UselonDelonnselonrPmiMatrix
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.CandidatelonUselonr
+import com.twittelonr.helonrmit.modelonl.Algorithm
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.UselonrCandidatelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.util.logging.Logging
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.CandidatelonSourcelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonSourcelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.HasClielonntContelonxt
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.timelonlinelons.configapi.HasParams
+import javax.injelonct.Injelonct
 
-object OfflineStpScore extends Feature[UserCandidate, Option[Double]]
+objelonct OfflinelonStpScorelon elonxtelonnds Felonaturelon[UselonrCandidatelon, Option[Doublelon]]
 
 /**
- * Main source for strong-tie-prediction candidates generated offline.
+ * Main sourcelon for strong-tielon-prelondiction candidatelons gelonnelonratelond offlinelon.
  */
-@Singleton
-class OfflineStrongTiePredictionSource @Inject() (
-  offlineStpSourceWithLegacyPmiMatrix: OfflineStpSourceWithLegacyPmiMatrix,
-  offlineStpSourceWithDensePmiMatrix: OfflineStpSourceWithDensePmiMatrix)
-    extends CandidateSource[HasParams with HasClientContext, CandidateUser]
+@Singlelonton
+class OfflinelonStrongTielonPrelondictionSourcelon @Injelonct() (
+  offlinelonStpSourcelonWithLelongacyPmiMatrix: OfflinelonStpSourcelonWithLelongacyPmiMatrix,
+  offlinelonStpSourcelonWithDelonnselonPmiMatrix: OfflinelonStpSourcelonWithDelonnselonPmiMatrix)
+    elonxtelonnds CandidatelonSourcelon[HasParams with HasClielonntContelonxt, CandidatelonUselonr]
     with Logging {
-  override val identifier: CandidateSourceIdentifier = OfflineStrongTiePredictionSource.Identifier
+  ovelonrridelon val idelonntifielonr: CandidatelonSourcelonIdelonntifielonr = OfflinelonStrongTielonPrelondictionSourcelon.Idelonntifielonr
 
-  override def apply(request: HasParams with HasClientContext): Stitch[Seq[CandidateUser]] = {
-    if (request.params(UseDenserPmiMatrix)) {
-      logger.info("Using dense PMI matrix.")
-      offlineStpSourceWithDensePmiMatrix(request)
-    } else {
-      logger.info("Using legacy PMI matrix.")
-      offlineStpSourceWithLegacyPmiMatrix(request)
+  ovelonrridelon delonf apply(relonquelonst: HasParams with HasClielonntContelonxt): Stitch[Selonq[CandidatelonUselonr]] = {
+    if (relonquelonst.params(UselonDelonnselonrPmiMatrix)) {
+      loggelonr.info("Using delonnselon PMI matrix.")
+      offlinelonStpSourcelonWithDelonnselonPmiMatrix(relonquelonst)
+    } elonlselon {
+      loggelonr.info("Using lelongacy PMI matrix.")
+      offlinelonStpSourcelonWithLelongacyPmiMatrix(relonquelonst)
     }
   }
 }
 
-object OfflineStrongTiePredictionSource {
-  val Identifier: CandidateSourceIdentifier =
-    CandidateSourceIdentifier(Algorithm.StrongTiePredictionRec.toString)
+objelonct OfflinelonStrongTielonPrelondictionSourcelon {
+  val Idelonntifielonr: CandidatelonSourcelonIdelonntifielonr =
+    CandidatelonSourcelonIdelonntifielonr(Algorithm.StrongTielonPrelondictionRelonc.toString)
 }

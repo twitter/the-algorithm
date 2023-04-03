@@ -1,5 +1,5 @@
-resources(
-    sources = [
+relonsourcelons(
+    sourcelons = [
         "*.tsv",
         "*.xml",
         "**/*",
@@ -7,11 +7,11 @@ resources(
     ],
 )
 
-# Created for Bazel compatibility.
-# In Bazel, loose files must be part of a target to be included into a bundle.
-files(
-    name = "frs_resources",
-    sources = [
+# Crelonatelond for Bazelonl compatibility.
+# In Bazelonl, looselon filelons must belon part of a targelont to belon includelond into a bundlelon.
+filelons(
+    namelon = "frs_relonsourcelons",
+    sourcelons = [
         "*.tsv",
         "*.xml",
         "*.yml",

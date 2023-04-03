@@ -1,59 +1,59 @@
-package com.twitter.product_mixer.component_library.feature_hydrator.candidate.qualityfactor_gated
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.felonaturelon_hydrator.candidatelon.qualityfactor_gatelond
 
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.common.alert.Alert
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.CandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.Conditionally
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.quality_factor.HasQualityFactorStatus
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.Param
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.alelonrt.Alelonrt
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator.CandidatelonFelonaturelonHydrator
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.Conditionally
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.ComponelonntIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.FelonaturelonHydratorIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.product_mixelonr.corelon.quality_factor.HasQualityFactorStatus
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.timelonlinelons.configapi.Param
 
-object QualityFactorGatedCandidateFeatureHydrator {
-  val IdentifierPrefix = "QfGated"
+objelonct QualityFactorGatelondCandidatelonFelonaturelonHydrator {
+  val IdelonntifielonrPrelonfix = "QfGatelond"
 }
 
 /**
- * A [[CandidateFeatureHydrator]] with [[Conditionally]] based on a qualityFactor threshold.
- * @param pipelineIdentifier identifier of the pipeline that associated with observed quality factor
- * @param qualityFactorInclusiveThreshold the inclusive threshold of quality factor that value below it results in
- *                                        the underlying hydrator being turned off
- * @param candidateFeatureHydrator the underlying [[CandidateFeatureHydrator]] to run when quality factor value
- *                                 is above the given inclusive threshold
- * @tparam Query The domain model for the query or request
- * @tparam Result The type of the candidates
+ * A [[CandidatelonFelonaturelonHydrator]] with [[Conditionally]] baselond on a qualityFactor threlonshold.
+ * @param pipelonlinelonIdelonntifielonr idelonntifielonr of thelon pipelonlinelon that associatelond with obselonrvelond quality factor
+ * @param qualityFactorInclusivelonThrelonshold thelon inclusivelon threlonshold of quality factor that valuelon belonlow it relonsults in
+ *                                        thelon undelonrlying hydrator beloning turnelond off
+ * @param candidatelonFelonaturelonHydrator thelon undelonrlying [[CandidatelonFelonaturelonHydrator]] to run whelonn quality factor valuelon
+ *                                 is abovelon thelon givelonn inclusivelon threlonshold
+ * @tparam Quelonry Thelon domain modelonl for thelon quelonry or relonquelonst
+ * @tparam Relonsult Thelon typelon of thelon candidatelons
  */
-case class QualityFactorGatedCandidateFeatureHydrator[
-  -Query <: PipelineQuery with HasQualityFactorStatus,
-  Result <: UniversalNoun[Any]
+caselon class QualityFactorGatelondCandidatelonFelonaturelonHydrator[
+  -Quelonry <: PipelonlinelonQuelonry with HasQualityFactorStatus,
+  Relonsult <: UnivelonrsalNoun[Any]
 ](
-  pipelineIdentifier: ComponentIdentifier,
-  qualityFactorInclusiveThreshold: Param[Double],
-  candidateFeatureHydrator: CandidateFeatureHydrator[Query, Result])
-    extends CandidateFeatureHydrator[Query, Result]
-    with Conditionally[Query] {
-  import QualityFactorGatedCandidateFeatureHydrator._
+  pipelonlinelonIdelonntifielonr: ComponelonntIdelonntifielonr,
+  qualityFactorInclusivelonThrelonshold: Param[Doublelon],
+  candidatelonFelonaturelonHydrator: CandidatelonFelonaturelonHydrator[Quelonry, Relonsult])
+    elonxtelonnds CandidatelonFelonaturelonHydrator[Quelonry, Relonsult]
+    with Conditionally[Quelonry] {
+  import QualityFactorGatelondCandidatelonFelonaturelonHydrator._
 
-  override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier(
-    IdentifierPrefix + candidateFeatureHydrator.identifier.name)
+  ovelonrridelon val idelonntifielonr: FelonaturelonHydratorIdelonntifielonr = FelonaturelonHydratorIdelonntifielonr(
+    IdelonntifielonrPrelonfix + candidatelonFelonaturelonHydrator.idelonntifielonr.namelon)
 
-  override val alerts: Seq[Alert] = candidateFeatureHydrator.alerts
+  ovelonrridelon val alelonrts: Selonq[Alelonrt] = candidatelonFelonaturelonHydrator.alelonrts
 
-  override val features: Set[Feature[_, _]] = candidateFeatureHydrator.features
+  ovelonrridelon val felonaturelons: Selont[Felonaturelon[_, _]] = candidatelonFelonaturelonHydrator.felonaturelons
 
-  override def onlyIf(query: Query): Boolean = Conditionally.and(
-    query,
-    candidateFeatureHydrator,
-    query.getQualityFactorCurrentValue(pipelineIdentifier) >= query.params(
-      qualityFactorInclusiveThreshold))
+  ovelonrridelon delonf onlyIf(quelonry: Quelonry): Boolelonan = Conditionally.and(
+    quelonry,
+    candidatelonFelonaturelonHydrator,
+    quelonry.gelontQualityFactorCurrelonntValuelon(pipelonlinelonIdelonntifielonr) >= quelonry.params(
+      qualityFactorInclusivelonThrelonshold))
 
-  override def apply(
-    query: Query,
-    candidate: Result,
-    existingFeatures: FeatureMap
-  ): Stitch[FeatureMap] = candidateFeatureHydrator.apply(query, candidate, existingFeatures)
+  ovelonrridelon delonf apply(
+    quelonry: Quelonry,
+    candidatelon: Relonsult,
+    elonxistingFelonaturelons: FelonaturelonMap
+  ): Stitch[FelonaturelonMap] = candidatelonFelonaturelonHydrator.apply(quelonry, candidatelon, elonxistingFelonaturelons)
 }

@@ -1,42 +1,42 @@
-package com.twitter.follow_recommendations.common.feature_hydration.sources
+packagelon com.twittelonr.follow_reloncommelonndations.common.felonaturelon_hydration.sourcelons
 
-import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.HasDurationConversion
-import com.twitter.timelines.configapi.Param
-import com.twitter.util.Duration
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.follow_reloncommelonndations.configapi.common.FelonaturelonSwitchConfig
+import com.twittelonr.timelonlinelons.configapi.FSBoundelondParam
+import com.twittelonr.timelonlinelons.configapi.FSNamelon
+import com.twittelonr.timelonlinelons.configapi.HasDurationConvelonrsion
+import com.twittelonr.timelonlinelons.configapi.Param
+import com.twittelonr.util.Duration
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class FeatureHydrationSourcesFSConfig @Inject() () extends FeatureSwitchConfig {
-  override val booleanFSParams: Seq[Param[Boolean] with FSName] = Seq(
-    FeatureStoreSourceParams.EnableAlgorithmAggregateFeatures,
-    FeatureStoreSourceParams.EnableAuthorTopicAggregateFeatures,
-    FeatureStoreSourceParams.EnableCandidateClientFeatures,
-    FeatureStoreSourceParams.EnableCandidatePrecomputedNotificationFeatures,
-    FeatureStoreSourceParams.EnableCandidateUserAuthorRealTimeAggregateFeatures,
-    FeatureStoreSourceParams.EnableCandidateUserFeatures,
-    FeatureStoreSourceParams.EnableCandidateUserResurrectionFeatures,
-    FeatureStoreSourceParams.EnableCandidateUserTimelinesAuthorAggregateFeatures,
-    FeatureStoreSourceParams.EnableSeparateClientForTimelinesAuthors,
-    FeatureStoreSourceParams.EnableSeparateClientForGizmoduck,
-    FeatureStoreSourceParams.EnableSeparateClientForMetricCenterUserCounting,
-    FeatureStoreSourceParams.EnableSeparateClientForNotifications,
-    FeatureStoreSourceParams.EnableSimilarToUserFeatures,
-    FeatureStoreSourceParams.EnableTargetUserFeatures,
-    FeatureStoreSourceParams.EnableTargetUserResurrectionFeatures,
-    FeatureStoreSourceParams.EnableTargetUserWtfImpressionFeatures,
-    FeatureStoreSourceParams.EnableTopicAggregateFeatures,
-    FeatureStoreSourceParams.EnableUserCandidateEdgeFeatures,
-    FeatureStoreSourceParams.EnableUserCandidateWtfImpressionCandidateFeatures,
-    FeatureStoreSourceParams.EnableUserClientFeatures,
-    FeatureStoreSourceParams.EnableUserTopicFeatures,
-    FeatureStoreSourceParams.EnableUserWtfAlgEdgeFeatures,
+@Singlelonton
+class FelonaturelonHydrationSourcelonsFSConfig @Injelonct() () elonxtelonnds FelonaturelonSwitchConfig {
+  ovelonrridelon val boolelonanFSParams: Selonq[Param[Boolelonan] with FSNamelon] = Selonq(
+    FelonaturelonStorelonSourcelonParams.elonnablelonAlgorithmAggrelongatelonFelonaturelons,
+    FelonaturelonStorelonSourcelonParams.elonnablelonAuthorTopicAggrelongatelonFelonaturelons,
+    FelonaturelonStorelonSourcelonParams.elonnablelonCandidatelonClielonntFelonaturelons,
+    FelonaturelonStorelonSourcelonParams.elonnablelonCandidatelonPreloncomputelondNotificationFelonaturelons,
+    FelonaturelonStorelonSourcelonParams.elonnablelonCandidatelonUselonrAuthorRelonalTimelonAggrelongatelonFelonaturelons,
+    FelonaturelonStorelonSourcelonParams.elonnablelonCandidatelonUselonrFelonaturelons,
+    FelonaturelonStorelonSourcelonParams.elonnablelonCandidatelonUselonrRelonsurrelonctionFelonaturelons,
+    FelonaturelonStorelonSourcelonParams.elonnablelonCandidatelonUselonrTimelonlinelonsAuthorAggrelongatelonFelonaturelons,
+    FelonaturelonStorelonSourcelonParams.elonnablelonSelonparatelonClielonntForTimelonlinelonsAuthors,
+    FelonaturelonStorelonSourcelonParams.elonnablelonSelonparatelonClielonntForGizmoduck,
+    FelonaturelonStorelonSourcelonParams.elonnablelonSelonparatelonClielonntForMelontricCelonntelonrUselonrCounting,
+    FelonaturelonStorelonSourcelonParams.elonnablelonSelonparatelonClielonntForNotifications,
+    FelonaturelonStorelonSourcelonParams.elonnablelonSimilarToUselonrFelonaturelons,
+    FelonaturelonStorelonSourcelonParams.elonnablelonTargelontUselonrFelonaturelons,
+    FelonaturelonStorelonSourcelonParams.elonnablelonTargelontUselonrRelonsurrelonctionFelonaturelons,
+    FelonaturelonStorelonSourcelonParams.elonnablelonTargelontUselonrWtfImprelonssionFelonaturelons,
+    FelonaturelonStorelonSourcelonParams.elonnablelonTopicAggrelongatelonFelonaturelons,
+    FelonaturelonStorelonSourcelonParams.elonnablelonUselonrCandidatelonelondgelonFelonaturelons,
+    FelonaturelonStorelonSourcelonParams.elonnablelonUselonrCandidatelonWtfImprelonssionCandidatelonFelonaturelons,
+    FelonaturelonStorelonSourcelonParams.elonnablelonUselonrClielonntFelonaturelons,
+    FelonaturelonStorelonSourcelonParams.elonnablelonUselonrTopicFelonaturelons,
+    FelonaturelonStorelonSourcelonParams.elonnablelonUselonrWtfAlgelondgelonFelonaturelons,
   )
 
-  override val durationFSParams: Seq[FSBoundedParam[Duration] with HasDurationConversion] = Seq(
-    FeatureStoreSourceParams.GlobalFetchTimeout
+  ovelonrridelon val durationFSParams: Selonq[FSBoundelondParam[Duration] with HasDurationConvelonrsion] = Selonq(
+    FelonaturelonStorelonSourcelonParams.GlobalFelontchTimelonout
   )
 }

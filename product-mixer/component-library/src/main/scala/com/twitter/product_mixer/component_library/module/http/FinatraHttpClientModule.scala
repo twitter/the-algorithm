@@ -1,79 +1,79 @@
-package com.twitter.product_mixer.component_library.module.http
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.modulelon.http
 
-import com.google.inject.Provides
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finatra.httpclient.HttpClient
-import com.twitter.inject.TwitterModule
-import com.twitter.inject.annotations.Flag
-import com.twitter.product_mixer.component_library.module.http.FinagleHttpClientModule.HttpClientAcquisitionTimeout
-import com.twitter.product_mixer.component_library.module.http.FinagleHttpClientModule.HttpClientConnectTimeout
-import com.twitter.product_mixer.component_library.module.http.FinagleHttpClientModule.HttpClientRequestTimeout
-import com.twitter.product_mixer.shared_library.http_client.FinagleHttpClientBuilder.buildFinagleHttpClientMutualTls
-import com.twitter.product_mixer.shared_library.http_client.HttpHostPort
-import com.twitter.util.Duration
-import com.twitter.util.jackson.ScalaObjectMapper
-import javax.inject.Named
-import javax.inject.Singleton
+import com.googlelon.injelonct.Providelons
+import com.twittelonr.finaglelon.mtls.authelonntication.SelonrvicelonIdelonntifielonr
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.finatra.httpclielonnt.HttpClielonnt
+import com.twittelonr.injelonct.TwittelonrModulelon
+import com.twittelonr.injelonct.annotations.Flag
+import com.twittelonr.product_mixelonr.componelonnt_library.modulelon.http.FinaglelonHttpClielonntModulelon.HttpClielonntAcquisitionTimelonout
+import com.twittelonr.product_mixelonr.componelonnt_library.modulelon.http.FinaglelonHttpClielonntModulelon.HttpClielonntConnelonctTimelonout
+import com.twittelonr.product_mixelonr.componelonnt_library.modulelon.http.FinaglelonHttpClielonntModulelon.HttpClielonntRelonquelonstTimelonout
+import com.twittelonr.product_mixelonr.sharelond_library.http_clielonnt.FinaglelonHttpClielonntBuildelonr.buildFinaglelonHttpClielonntMutualTls
+import com.twittelonr.product_mixelonr.sharelond_library.http_clielonnt.HttpHostPort
+import com.twittelonr.util.Duration
+import com.twittelonr.util.jackson.ScalaObjelonctMappelonr
+import javax.injelonct.Namelond
+import javax.injelonct.Singlelonton
 
-object FinatraHttpClientModule extends TwitterModule {
+objelonct FinatraHttpClielonntModulelon elonxtelonnds TwittelonrModulelon {
 
-  final val HttpClientHost = "http_client.host"
-  final val HttpClientPort = "http_client.port"
+  final val HttpClielonntHost = "http_clielonnt.host"
+  final val HttpClielonntPort = "http_clielonnt.port"
 
-  flag[String](HttpClientHost, "Host that the client will connect to")
+  flag[String](HttpClielonntHost, "Host that thelon clielonnt will connelonct to")
 
-  flag[Int](HttpClientPort, 443, "Port that the client will connect to")
+  flag[Int](HttpClielonntPort, 443, "Port that thelon clielonnt will connelonct to")
 
-  final val FinatraHttpClient = "FinatraHttpClient"
+  final val FinatraHttpClielonnt = "FinatraHttpClielonnt"
 
   /**
-   * Build a Finatra HTTP client for a host. The Finatra HTTP client can be helpful (as opposed to
-   * the base Finagle HTTP Client), as it provides built-in JSON response parsing and other
-   * convenience methods
+   * Build a Finatra HTTP clielonnt for a host. Thelon Finatra HTTP clielonnt can belon helonlpful (as opposelond to
+   * thelon baselon Finaglelon HTTP Clielonnt), as it providelons built-in JSON relonsponselon parsing and othelonr
+   * convelonnielonncelon melonthods
    *
-   * Note that the timeouts configured in this module are meant to be a reasonable starting point
-   * only. To further tuning the settings, either override the flags or create local copy of the module.
+   * Notelon that thelon timelonouts configurelond in this modulelon arelon melonant to belon a relonasonablelon starting point
+   * only. To furthelonr tuning thelon selonttings, elonithelonr ovelonrridelon thelon flags or crelonatelon local copy of thelon modulelon.
    *
-   * @param requestTimeout     HTTP client request timeout
-   * @param connectTimeout     HTTP client transport connect timeout
-   * @param acquisitionTimeout HTTP client session acquisition timeout
-   * @param host               Host to build Finatra client
-   * @param port               Port to build Finatra client
-   * @param scalaObjectMapper  Object mapper used by the built-in JSON response parsing
-   * @param serviceIdentifier  Service ID used to S2S Auth
-   * @param statsReceiver      Stats
+   * @param relonquelonstTimelonout     HTTP clielonnt relonquelonst timelonout
+   * @param connelonctTimelonout     HTTP clielonnt transport connelonct timelonout
+   * @param acquisitionTimelonout HTTP clielonnt selonssion acquisition timelonout
+   * @param host               Host to build Finatra clielonnt
+   * @param port               Port to build Finatra clielonnt
+   * @param scalaObjelonctMappelonr  Objelonct mappelonr uselond by thelon built-in JSON relonsponselon parsing
+   * @param selonrvicelonIdelonntifielonr  Selonrvicelon ID uselond to S2S Auth
+   * @param statsReloncelonivelonr      Stats
    *
-   * @return Finatra HTTP client
+   * @relonturn Finatra HTTP clielonnt
    */
-  @Provides
-  @Singleton
-  @Named(FinatraHttpClient)
-  def providesFinatraHttpClient(
-    @Flag(HttpClientRequestTimeout) requestTimeout: Duration,
-    @Flag(HttpClientConnectTimeout) connectTimeout: Duration,
-    @Flag(HttpClientAcquisitionTimeout) acquisitionTimeout: Duration,
-    @Flag(HttpClientHost) host: String,
-    @Flag(HttpClientPort) port: Int,
-    scalaObjectMapper: ScalaObjectMapper,
-    serviceIdentifier: ServiceIdentifier,
-    statsReceiver: StatsReceiver
-  ): HttpClient = {
-    val finagleHttpClient = buildFinagleHttpClientMutualTls(
-      requestTimeout = requestTimeout,
-      connectTimeout = connectTimeout,
-      acquisitionTimeout = acquisitionTimeout,
-      serviceIdentifier = serviceIdentifier,
-      statsReceiver = statsReceiver
+  @Providelons
+  @Singlelonton
+  @Namelond(FinatraHttpClielonnt)
+  delonf providelonsFinatraHttpClielonnt(
+    @Flag(HttpClielonntRelonquelonstTimelonout) relonquelonstTimelonout: Duration,
+    @Flag(HttpClielonntConnelonctTimelonout) connelonctTimelonout: Duration,
+    @Flag(HttpClielonntAcquisitionTimelonout) acquisitionTimelonout: Duration,
+    @Flag(HttpClielonntHost) host: String,
+    @Flag(HttpClielonntPort) port: Int,
+    scalaObjelonctMappelonr: ScalaObjelonctMappelonr,
+    selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr,
+    statsReloncelonivelonr: StatsReloncelonivelonr
+  ): HttpClielonnt = {
+    val finaglelonHttpClielonnt = buildFinaglelonHttpClielonntMutualTls(
+      relonquelonstTimelonout = relonquelonstTimelonout,
+      connelonctTimelonout = connelonctTimelonout,
+      acquisitionTimelonout = acquisitionTimelonout,
+      selonrvicelonIdelonntifielonr = selonrvicelonIdelonntifielonr,
+      statsReloncelonivelonr = statsReloncelonivelonr
     )
 
     val hostPort = HttpHostPort(host, port)
-    val finagleHttpService = finagleHttpClient.newService(hostPort.toString)
+    val finaglelonHttpSelonrvicelon = finaglelonHttpClielonnt.nelonwSelonrvicelon(hostPort.toString)
 
-    new HttpClient(
-      hostname = hostPort.host,
-      httpService = finagleHttpService,
-      mapper = scalaObjectMapper
+    nelonw HttpClielonnt(
+      hostnamelon = hostPort.host,
+      httpSelonrvicelon = finaglelonHttpSelonrvicelon,
+      mappelonr = scalaObjelonctMappelonr
     )
   }
 }

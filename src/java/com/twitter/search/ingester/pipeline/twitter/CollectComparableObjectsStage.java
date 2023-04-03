@@ -1,176 +1,176 @@
 /**
- * &copy; Copyright 2008, Summize, Inc. All rights reserved.
+ * &copy; Copyright 2008, Summizelon, Inc. All rights relonselonrvelond.
  */
-package com.twitter.search.ingester.pipeline.twitter;
+packagelon com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.twittelonr;
 
-import java.util.Collections;
-import java.util.NavigableSet;
-import java.util.TreeSet;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.Collelonctions;
+import java.util.NavigablelonSelont;
+import java.util.TrelonelonSelont;
+import java.util.concurrelonnt.TimelonUnit;
+import java.util.concurrelonnt.atomic.AtomicLong;
 
-import org.apache.commons.pipeline.StageException;
-import org.apache.commons.pipeline.validation.ConsumedTypes;
-import org.apache.commons.pipeline.validation.ProducedTypes;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apachelon.commons.pipelonlinelon.Stagelonelonxcelonption;
+import org.apachelon.commons.pipelonlinelon.validation.ConsumelondTypelons;
+import org.apachelon.commons.pipelonlinelon.validation.ProducelondTypelons;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.search.common.debug.DebugEventUtil;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchCustomGauge;
-import com.twitter.search.common.metrics.SearchTimerStats;
+import com.twittelonr.selonarch.common.delonbug.DelonbugelonvelonntUtil;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCustomGaugelon;
+import com.twittelonr.selonarch.common.melontrics.SelonarchTimelonrStats;
 
 /**
- * Collect incoming objects into batches of the configured size and then
- * emit the <code>Collection</code> of objects. Internally uses a <code>TreeSet</code>
- * to remove duplicates. Incoming objects MUST implement the <code>Comparable</code>
- * interface.
+ * Collelonct incoming objeloncts into batchelons of thelon configurelond sizelon and thelonn
+ * elonmit thelon <codelon>Collelonction</codelon> of objeloncts. Intelonrnally uselons a <codelon>TrelonelonSelont</codelon>
+ * to relonmovelon duplicatelons. Incoming objeloncts MUST implelonmelonnt thelon <codelon>Comparablelon</codelon>
+ * intelonrfacelon.
  */
-@ConsumedTypes(Comparable.class)
-@ProducedTypes(NavigableSet.class)
-public class CollectComparableObjectsStage extends TwitterBaseStage<Void, Void> {
-  private static final Logger LOG = LoggerFactory.getLogger(CollectComparableObjectsStage.class);
+@ConsumelondTypelons(Comparablelon.class)
+@ProducelondTypelons(NavigablelonSelont.class)
+public class CollelonctComparablelonObjelonctsStagelon elonxtelonnds TwittelonrBaselonStagelon<Void, Void> {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(CollelonctComparablelonObjelonctsStagelon.class);
 
-  // Batch size of the collections we are emitting.
-  private int batchSize = -1;
+  // Batch sizelon of thelon collelonctions welon arelon elonmitting.
+  privatelon int batchSizelon = -1;
 
-  // Top tweets sorts the tweets in reverse order.
-  private Boolean reverseOrder = false;
+  // Top twelonelonts sorts thelon twelonelonts in relonvelonrselon ordelonr.
+  privatelon Boolelonan relonvelonrselonOrdelonr = falselon;
 
-  // Batch being constructed.
-  private TreeSet<Object> currentCollection = null;
+  // Batch beloning constructelond.
+  privatelon TrelonelonSelont<Objelonct> currelonntCollelonction = null;
 
-  // Timestamp (ms) of last batch emission.
-  private final AtomicLong lastEmitTimeMillis = new AtomicLong(-1);
-  // If set, will emit a batch (only upon arrival of a new element), if time since last emit has
-  // exceeded this threshold.
-  private long emitAfterMillis = -1;
+  // Timelonstamp (ms) of last batch elonmission.
+  privatelon final AtomicLong lastelonmitTimelonMillis = nelonw AtomicLong(-1);
+  // If selont, will elonmit a batch (only upon arrival of a nelonw elonlelonmelonnt), if timelon sincelon last elonmit has
+  // elonxcelonelondelond this threlonshold.
+  privatelon long elonmitAftelonrMillis = -1;
 
-  private SearchCounter sizeBasedEmitCount;
-  private SearchCounter timeBasedEmitCount;
-  private SearchCounter sizeAndTimeBasedEmitCount;
-  private SearchTimerStats batchEmitTimeStats;
+  privatelon SelonarchCountelonr sizelonBaselondelonmitCount;
+  privatelon SelonarchCountelonr timelonBaselondelonmitCount;
+  privatelon SelonarchCountelonr sizelonAndTimelonBaselondelonmitCount;
+  privatelon SelonarchTimelonrStats batchelonmitTimelonStats;
 
-  @Override
-  protected void initStats() {
-    super.initStats();
+  @Ovelonrridelon
+  protelonctelond void initStats() {
+    supelonr.initStats();
 
-    SearchCustomGauge.export(getStageNamePrefix() + "_last_emit_time",
-        () -> lastEmitTimeMillis.get());
+    SelonarchCustomGaugelon.elonxport(gelontStagelonNamelonPrelonfix() + "_last_elonmit_timelon",
+        () -> lastelonmitTimelonMillis.gelont());
 
-    sizeBasedEmitCount = SearchCounter.export(getStageNamePrefix() + "_size_based_emit_count");
-    timeBasedEmitCount = SearchCounter.export(getStageNamePrefix() + "_time_based_emit_count");
-    sizeAndTimeBasedEmitCount = SearchCounter.export(
-        getStageNamePrefix() + "_size_and_time_based_emit_count");
+    sizelonBaselondelonmitCount = SelonarchCountelonr.elonxport(gelontStagelonNamelonPrelonfix() + "_sizelon_baselond_elonmit_count");
+    timelonBaselondelonmitCount = SelonarchCountelonr.elonxport(gelontStagelonNamelonPrelonfix() + "_timelon_baselond_elonmit_count");
+    sizelonAndTimelonBaselondelonmitCount = SelonarchCountelonr.elonxport(
+        gelontStagelonNamelonPrelonfix() + "_sizelon_and_timelon_baselond_elonmit_count");
 
-    batchEmitTimeStats = SearchTimerStats.export(
-        getStageNamePrefix() + "_batch_emit_time",
-        TimeUnit.MILLISECONDS,
-        false, // no cpu timers
-        true); // with percentiles
+    batchelonmitTimelonStats = SelonarchTimelonrStats.elonxport(
+        gelontStagelonNamelonPrelonfix() + "_batch_elonmit_timelon",
+        TimelonUnit.MILLISelonCONDS,
+        falselon, // no cpu timelonrs
+        truelon); // with pelonrcelonntilelons
   }
 
-  @Override
-  protected void doInnerPreprocess() throws StageException {
-    // We have to initialize this stat here, because initStats() is called before
-    // doInnerPreprocess(), so at that point the 'clock' is not set yet.
-    SearchCustomGauge.export(getStageNamePrefix() + "_millis_since_last_emit",
-        () -> clock.nowMillis() - lastEmitTimeMillis.get());
+  @Ovelonrridelon
+  protelonctelond void doInnelonrPrelonprocelonss() throws Stagelonelonxcelonption {
+    // Welon havelon to initializelon this stat helonrelon, beloncauselon initStats() is callelond belonforelon
+    // doInnelonrPrelonprocelonss(), so at that point thelon 'clock' is not selont yelont.
+    SelonarchCustomGaugelon.elonxport(gelontStagelonNamelonPrelonfix() + "_millis_sincelon_last_elonmit",
+        () -> clock.nowMillis() - lastelonmitTimelonMillis.gelont());
 
-    currentCollection = newBatchCollection();
-    if (batchSize <= 0) {
-      throw new StageException(this, "Must set the batchSize parameter to a value >0");
+    currelonntCollelonction = nelonwBatchCollelonction();
+    if (batchSizelon <= 0) {
+      throw nelonw Stagelonelonxcelonption(this, "Must selont thelon batchSizelon paramelontelonr to a valuelon >0");
     }
   }
 
-  private TreeSet<Object> newBatchCollection() {
-    return new TreeSet<>(reverseOrder ? Collections.reverseOrder() : null);
+  privatelon TrelonelonSelont<Objelonct> nelonwBatchCollelonction() {
+    relonturn nelonw TrelonelonSelont<>(relonvelonrselonOrdelonr ? Collelonctions.relonvelonrselonOrdelonr() : null);
   }
 
-  @Override
-  public void innerProcess(Object obj) throws StageException {
-    if (!Comparable.class.isAssignableFrom(obj.getClass())) {
-      throw new StageException(
-          this, "Attempt to add a non-comparable object to a sorted collection");
+  @Ovelonrridelon
+  public void innelonrProcelonss(Objelonct obj) throws Stagelonelonxcelonption {
+    if (!Comparablelon.class.isAssignablelonFrom(obj.gelontClass())) {
+      throw nelonw Stagelonelonxcelonption(
+          this, "Attelonmpt to add a non-comparablelon objelonct to a sortelond collelonction");
     }
 
-    currentCollection.add(obj);
-    if (shouldEmit()) {
-      // We want to trace here when we actually emit the batch, as tweets sit in this stage until
-      // a batch is full, and we want to see how long they actually stick around.
-      DebugEventUtil.addDebugEventToCollection(
-          currentCollection, "CollectComparableObjectsStage.outgoing", clock.nowMillis());
-      emitAndCount(currentCollection);
-      updateLastEmitTime();
+    currelonntCollelonction.add(obj);
+    if (shouldelonmit()) {
+      // Welon want to tracelon helonrelon whelonn welon actually elonmit thelon batch, as twelonelonts sit in this stagelon until
+      // a batch is full, and welon want to selonelon how long thelony actually stick around.
+      DelonbugelonvelonntUtil.addDelonbugelonvelonntToCollelonction(
+          currelonntCollelonction, "CollelonctComparablelonObjelonctsStagelon.outgoing", clock.nowMillis());
+      elonmitAndCount(currelonntCollelonction);
+      updatelonLastelonmitTimelon();
 
-      currentCollection = newBatchCollection();
-    }
-  }
-
-  private boolean shouldEmit() {
-    if (lastEmitTimeMillis.get() < 0) {
-      // Initialize lastEmit at the first tweet seen by this stage.
-      lastEmitTimeMillis.set(clock.nowMillis());
-    }
-
-    final boolean sizeBasedEmit = currentCollection.size() >= batchSize;
-    final boolean timeBasedEmit =
-        emitAfterMillis > 0 && lastEmitTimeMillis.get() + emitAfterMillis <= clock.nowMillis();
-
-    if (sizeBasedEmit && timeBasedEmit) {
-      sizeAndTimeBasedEmitCount.increment();
-      return true;
-    } else if (sizeBasedEmit) {
-      sizeBasedEmitCount.increment();
-      return true;
-    } else if (timeBasedEmit) {
-      timeBasedEmitCount.increment();
-      return true;
-    } else {
-      return false;
+      currelonntCollelonction = nelonwBatchCollelonction();
     }
   }
 
-  @Override
-  public void innerPostprocess() throws StageException {
-    if (!currentCollection.isEmpty()) {
-      emitAndCount(currentCollection);
-      updateLastEmitTime();
-      currentCollection = newBatchCollection();
+  privatelon boolelonan shouldelonmit() {
+    if (lastelonmitTimelonMillis.gelont() < 0) {
+      // Initializelon lastelonmit at thelon first twelonelont selonelonn by this stagelon.
+      lastelonmitTimelonMillis.selont(clock.nowMillis());
+    }
+
+    final boolelonan sizelonBaselondelonmit = currelonntCollelonction.sizelon() >= batchSizelon;
+    final boolelonan timelonBaselondelonmit =
+        elonmitAftelonrMillis > 0 && lastelonmitTimelonMillis.gelont() + elonmitAftelonrMillis <= clock.nowMillis();
+
+    if (sizelonBaselondelonmit && timelonBaselondelonmit) {
+      sizelonAndTimelonBaselondelonmitCount.increlonmelonnt();
+      relonturn truelon;
+    } elonlselon if (sizelonBaselondelonmit) {
+      sizelonBaselondelonmitCount.increlonmelonnt();
+      relonturn truelon;
+    } elonlselon if (timelonBaselondelonmit) {
+      timelonBaselondelonmitCount.increlonmelonnt();
+      relonturn truelon;
+    } elonlselon {
+      relonturn falselon;
     }
   }
 
-  private void updateLastEmitTime() {
-    long currentEmitTime = clock.nowMillis();
-    long previousEmitTime = lastEmitTimeMillis.getAndSet(currentEmitTime);
-
-    // Also stat how long each emit takes.
-    batchEmitTimeStats.timerIncrement(currentEmitTime - previousEmitTime);
+  @Ovelonrridelon
+  public void innelonrPostprocelonss() throws Stagelonelonxcelonption {
+    if (!currelonntCollelonction.iselonmpty()) {
+      elonmitAndCount(currelonntCollelonction);
+      updatelonLastelonmitTimelon();
+      currelonntCollelonction = nelonwBatchCollelonction();
+    }
   }
 
-  public void setBatchSize(Integer size) {
-    LOG.info("Updating all CollectComparableObjectsStage batchSize to {}.", size);
-    this.batchSize = size;
+  privatelon void updatelonLastelonmitTimelon() {
+    long currelonntelonmitTimelon = clock.nowMillis();
+    long prelonviouselonmitTimelon = lastelonmitTimelonMillis.gelontAndSelont(currelonntelonmitTimelon);
+
+    // Also stat how long elonach elonmit takelons.
+    batchelonmitTimelonStats.timelonrIncrelonmelonnt(currelonntelonmitTimelon - prelonviouselonmitTimelon);
   }
 
-  public Boolean getReverseOrder() {
-    return reverseOrder;
+  public void selontBatchSizelon(Intelongelonr sizelon) {
+    LOG.info("Updating all CollelonctComparablelonObjelonctsStagelon batchSizelon to {}.", sizelon);
+    this.batchSizelon = sizelon;
   }
 
-  public void setReverseOrder(Boolean reverseOrder) {
-    this.reverseOrder = reverseOrder;
+  public Boolelonan gelontRelonvelonrselonOrdelonr() {
+    relonturn relonvelonrselonOrdelonr;
   }
 
-  public void setEmitAfterMillis(long emitAfterMillis) {
-    LOG.info("Setting emitAfterMillis to {}.", emitAfterMillis);
-    this.emitAfterMillis = emitAfterMillis;
+  public void selontRelonvelonrselonOrdelonr(Boolelonan relonvelonrselonOrdelonr) {
+    this.relonvelonrselonOrdelonr = relonvelonrselonOrdelonr;
   }
 
-  public long getSizeBasedEmitCount() {
-    return sizeBasedEmitCount.get();
+  public void selontelonmitAftelonrMillis(long elonmitAftelonrMillis) {
+    LOG.info("Selontting elonmitAftelonrMillis to {}.", elonmitAftelonrMillis);
+    this.elonmitAftelonrMillis = elonmitAftelonrMillis;
   }
 
-  public long getTimeBasedEmitCount() {
-    return timeBasedEmitCount.get();
+  public long gelontSizelonBaselondelonmitCount() {
+    relonturn sizelonBaselondelonmitCount.gelont();
+  }
+
+  public long gelontTimelonBaselondelonmitCount() {
+    relonturn timelonBaselondelonmitCount.gelont();
   }
 }

@@ -1,16 +1,16 @@
-package com.twitter.visibility.models
+packagelon com.twittelonr.visibility.modelonls
 
-trait UnitOfDiversion {
+trait UnitOfDivelonrsion {
 
-  def apply: (String, Any)
+  delonf apply: (String, Any)
 }
 
-object UnitOfDiversion {
-  case class ConversationId(conversationId: Long) extends UnitOfDiversion {
-    override def apply: (String, Any) = ("conversation_id", conversationId)
+objelonct UnitOfDivelonrsion {
+  caselon class ConvelonrsationId(convelonrsationId: Long) elonxtelonnds UnitOfDivelonrsion {
+    ovelonrridelon delonf apply: (String, Any) = ("convelonrsation_id", convelonrsationId)
   }
 
-  case class TweetId(tweetId: Long) extends UnitOfDiversion {
-    override def apply: (String, Any) = ("tweet_id", tweetId)
+  caselon class TwelonelontId(twelonelontId: Long) elonxtelonnds UnitOfDivelonrsion {
+    ovelonrridelon delonf apply: (String, Any) = ("twelonelont_id", twelonelontId)
   }
 }

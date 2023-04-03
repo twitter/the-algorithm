@@ -1,15 +1,15 @@
 scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "src/thrift/com/twitter/timelineranker/server/model:thrift-scala",
-        "timelineranker/common:model",
-        "timelines:observe",
-        "timelines/src/main/scala/com/twitter/timelines/authorization",
-        "timelines/src/main/scala/com/twitter/timelines/features",
-        "timelines/src/main/scala/com/twitter/timelines/model/types",
-        "util/util-core:util-core-util",
+    sourcelons = ["*.scala"],
+    compilelonr_option_selonts = ["fatal_warnings"],
+    strict_delonps = Truelon,
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/timelonlinelonrankelonr/selonrvelonr/modelonl:thrift-scala",
+        "timelonlinelonrankelonr/common:modelonl",
+        "timelonlinelons:obselonrvelon",
+        "timelonlinelons/src/main/scala/com/twittelonr/timelonlinelons/authorization",
+        "timelonlinelons/src/main/scala/com/twittelonr/timelonlinelons/felonaturelons",
+        "timelonlinelons/src/main/scala/com/twittelonr/timelonlinelons/modelonl/typelons",
+        "util/util-corelon:util-corelon-util",
     ],
 )

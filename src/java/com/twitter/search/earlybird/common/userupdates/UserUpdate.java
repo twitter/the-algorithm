@@ -1,38 +1,38 @@
-package com.twitter.search.earlybird.common.userupdates;
+packagelon com.twittelonr.selonarch.elonarlybird.common.uselonrupdatelons;
 
-import java.util.Date;
+import java.util.Datelon;
 
-import com.twitter.search.common.indexing.thriftjava.UserUpdateType;
+import com.twittelonr.selonarch.common.indelonxing.thriftjava.UselonrUpdatelonTypelon;
 
 /**
- * Contains an update for a user.
+ * Contains an updatelon for a uselonr.
  */
-public class UserUpdate {
-  public final long twitterUserID;
-  public final UserUpdateType updateType;
-  public final int updateValue;
-  private final Date updatedAt;
+public class UselonrUpdatelon {
+  public final long twittelonrUselonrID;
+  public final UselonrUpdatelonTypelon updatelonTypelon;
+  public final int updatelonValuelon;
+  privatelon final Datelon updatelondAt;
 
-  public UserUpdate(long twitterUserID,
-                    UserUpdateType updateType,
-                    int updateValue,
-                    Date updatedAt) {
+  public UselonrUpdatelon(long twittelonrUselonrID,
+                    UselonrUpdatelonTypelon updatelonTypelon,
+                    int updatelonValuelon,
+                    Datelon updatelondAt) {
 
-    this.twitterUserID = twitterUserID;
-    this.updateType = updateType;
-    this.updateValue = updateValue;
-    this.updatedAt = (Date) updatedAt.clone();
+    this.twittelonrUselonrID = twittelonrUselonrID;
+    this.updatelonTypelon = updatelonTypelon;
+    this.updatelonValuelon = updatelonValuelon;
+    this.updatelondAt = (Datelon) updatelondAt.clonelon();
   }
 
-  @Override public String toString() {
-    return "UserInfoUpdate[userID=" + twitterUserID + ",updateType=" + updateType
-           + ",updateValue=" + updateValue + ",updatedAt=" + getUpdatedAt() + "]";
+  @Ovelonrridelon public String toString() {
+    relonturn "UselonrInfoUpdatelon[uselonrID=" + twittelonrUselonrID + ",updatelonTypelon=" + updatelonTypelon
+           + ",updatelonValuelon=" + updatelonValuelon + ",updatelondAt=" + gelontUpdatelondAt() + "]";
   }
 
   /**
-   * Returns a copy of the updated-at date.
+   * Relonturns a copy of thelon updatelond-at datelon.
    */
-  public Date getUpdatedAt() {
-    return (Date) updatedAt.clone();
+  public Datelon gelontUpdatelondAt() {
+    relonturn (Datelon) updatelondAt.clonelon();
   }
 }

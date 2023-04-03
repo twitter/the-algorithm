@@ -1,67 +1,67 @@
-package com.twitter.cr_mixer.module
+packagelon com.twittelonr.cr_mixelonr.modulelon
 
-import com.google.inject.Provides
-import com.google.inject.Singleton
-import com.google.inject.name.Named
-import com.twitter.inject.TwitterModule
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.conversions.DurationOps._
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.cr_mixer.param.decider.CrMixerDecider
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.memcached.{Client => MemcachedClient}
-import com.twitter.storage.client.manhattan.kv.ManhattanKVClientMtlsParams
-import com.twitter.storehaus.ReadableStore
-import com.twitter.storehaus_internal.manhattan.Apollo
-import com.twitter.storehaus_internal.manhattan.ManhattanRO
-import com.twitter.storehaus_internal.manhattan.ManhattanROConfig
-import com.twitter.storehaus_internal.util.ApplicationID
-import com.twitter.storehaus_internal.util.DatasetName
-import com.twitter.storehaus_internal.util.HDFSPath
-import com.twitter.bijection.scrooge.BinaryScalaCodec
-import com.twitter.cr_mixer.param.decider.DeciderKey
-import com.twitter.hermit.store.common.DeciderableReadableStore
-import com.twitter.hermit.store.common.ObservedMemcachedReadableStore
-import com.twitter.wtf.candidate.thriftscala.CandidateSeq
+import com.googlelon.injelonct.Providelons
+import com.googlelon.injelonct.Singlelonton
+import com.googlelon.injelonct.namelon.Namelond
+import com.twittelonr.injelonct.TwittelonrModulelon
+import com.twittelonr.simclustelonrs_v2.common.UselonrId
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.cr_mixelonr.modelonl.ModulelonNamelons
+import com.twittelonr.cr_mixelonr.param.deloncidelonr.CrMixelonrDeloncidelonr
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.finaglelon.melonmcachelond.{Clielonnt => MelonmcachelondClielonnt}
+import com.twittelonr.storagelon.clielonnt.manhattan.kv.ManhattanKVClielonntMtlsParams
+import com.twittelonr.storelonhaus.RelonadablelonStorelon
+import com.twittelonr.storelonhaus_intelonrnal.manhattan.Apollo
+import com.twittelonr.storelonhaus_intelonrnal.manhattan.ManhattanRO
+import com.twittelonr.storelonhaus_intelonrnal.manhattan.ManhattanROConfig
+import com.twittelonr.storelonhaus_intelonrnal.util.ApplicationID
+import com.twittelonr.storelonhaus_intelonrnal.util.DataselontNamelon
+import com.twittelonr.storelonhaus_intelonrnal.util.HDFSPath
+import com.twittelonr.bijelonction.scroogelon.BinaryScalaCodelonc
+import com.twittelonr.cr_mixelonr.param.deloncidelonr.DeloncidelonrKelony
+import com.twittelonr.helonrmit.storelon.common.DeloncidelonrablelonRelonadablelonStorelon
+import com.twittelonr.helonrmit.storelon.common.ObselonrvelondMelonmcachelondRelonadablelonStorelon
+import com.twittelonr.wtf.candidatelon.thriftscala.CandidatelonSelonq
 
-object RealGraphStoreMhModule extends TwitterModule {
+objelonct RelonalGraphStorelonMhModulelon elonxtelonnds TwittelonrModulelon {
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.RealGraphInStore)
-  def providesRealGraphStoreMh(
-    decider: CrMixerDecider,
-    statsReceiver: StatsReceiver,
-    manhattanKVClientMtlsParams: ManhattanKVClientMtlsParams,
-    @Named(ModuleNames.UnifiedCache) crMixerUnifiedCacheClient: MemcachedClient,
-  ): ReadableStore[UserId, CandidateSeq] = {
+  @Providelons
+  @Singlelonton
+  @Namelond(ModulelonNamelons.RelonalGraphInStorelon)
+  delonf providelonsRelonalGraphStorelonMh(
+    deloncidelonr: CrMixelonrDeloncidelonr,
+    statsReloncelonivelonr: StatsReloncelonivelonr,
+    manhattanKVClielonntMtlsParams: ManhattanKVClielonntMtlsParams,
+    @Namelond(ModulelonNamelons.UnifielondCachelon) crMixelonrUnifielondCachelonClielonnt: MelonmcachelondClielonnt,
+  ): RelonadablelonStorelon[UselonrId, CandidatelonSelonq] = {
 
-    implicit val valueCodec = new BinaryScalaCodec(CandidateSeq)
-    val underlyingStore = ManhattanRO
-      .getReadableStoreWithMtls[UserId, CandidateSeq](
+    implicit val valuelonCodelonc = nelonw BinaryScalaCodelonc(CandidatelonSelonq)
+    val undelonrlyingStorelon = ManhattanRO
+      .gelontRelonadablelonStorelonWithMtls[UselonrId, CandidatelonSelonq](
         ManhattanROConfig(
           HDFSPath(""),
-          ApplicationID("cr_mixer_apollo"),
-          DatasetName("real_graph_scores_apollo"),
+          ApplicationID("cr_mixelonr_apollo"),
+          DataselontNamelon("relonal_graph_scorelons_apollo"),
           Apollo),
-        manhattanKVClientMtlsParams
+        manhattanKVClielonntMtlsParams
       )
 
-    val memCachedStore = ObservedMemcachedReadableStore
-      .fromCacheClient(
-        backingStore = underlyingStore,
-        cacheClient = crMixerUnifiedCacheClient,
+    val melonmCachelondStorelon = ObselonrvelondMelonmcachelondRelonadablelonStorelon
+      .fromCachelonClielonnt(
+        backingStorelon = undelonrlyingStorelon,
+        cachelonClielonnt = crMixelonrUnifielondCachelonClielonnt,
         ttl = 24.hours,
       )(
-        valueInjection = valueCodec,
-        statsReceiver = statsReceiver.scope("memCachedUserRealGraphMh"),
-        keyToString = { k: UserId => s"uRGraph/$k" }
+        valuelonInjelonction = valuelonCodelonc,
+        statsReloncelonivelonr = statsReloncelonivelonr.scopelon("melonmCachelondUselonrRelonalGraphMh"),
+        kelonyToString = { k: UselonrId => s"uRGraph/$k" }
       )
 
-    DeciderableReadableStore(
-      memCachedStore,
-      decider.deciderGateBuilder.idGate(DeciderKey.enableRealGraphMhStoreDeciderKey),
-      statsReceiver.scope("RealGraphMh")
+    DeloncidelonrablelonRelonadablelonStorelon(
+      melonmCachelondStorelon,
+      deloncidelonr.deloncidelonrGatelonBuildelonr.idGatelon(DeloncidelonrKelony.elonnablelonRelonalGraphMhStorelonDeloncidelonrKelony),
+      statsReloncelonivelonr.scopelon("RelonalGraphMh")
     )
   }
 }

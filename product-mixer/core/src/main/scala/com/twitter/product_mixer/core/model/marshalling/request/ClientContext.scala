@@ -1,94 +1,94 @@
-package com.twitter.product_mixer.core.model.marshalling.request
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst
 
-import com.fasterxml.jackson.annotation.JsonIgnore
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.BadRequest
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
+import com.fastelonrxml.jackson.annotation.JsonIgnorelon
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.BadRelonquelonst
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.PipelonlinelonFailurelon
 
 /**
- * ClientContext contains fields related to the client making the request.
+ * ClielonntContelonxt contains fielonlds relonlatelond to thelon clielonnt making thelon relonquelonst.
  */
-case class ClientContext(
-  userId: Option[Long],
-  guestId: Option[Long],
-  guestIdAds: Option[Long],
-  guestIdMarketing: Option[Long],
+caselon class ClielonntContelonxt(
+  uselonrId: Option[Long],
+  guelonstId: Option[Long],
+  guelonstIdAds: Option[Long],
+  guelonstIdMarkelonting: Option[Long],
   appId: Option[Long],
-  ipAddress: Option[String],
-  userAgent: Option[String],
-  countryCode: Option[String],
-  languageCode: Option[String],
-  isTwoffice: Option[Boolean],
-  userRoles: Option[Set[String]],
-  deviceId: Option[String],
-  mobileDeviceId: Option[String],
-  mobileDeviceAdId: Option[String],
-  limitAdTracking: Option[Boolean])
+  ipAddrelonss: Option[String],
+  uselonrAgelonnt: Option[String],
+  countryCodelon: Option[String],
+  languagelonCodelon: Option[String],
+  isTwofficelon: Option[Boolelonan],
+  uselonrRolelons: Option[Selont[String]],
+  delonvicelonId: Option[String],
+  mobilelonDelonvicelonId: Option[String],
+  mobilelonDelonvicelonAdId: Option[String],
+  limitAdTracking: Option[Boolelonan])
 
-object ClientContext {
-  val empty: ClientContext = ClientContext(
-    userId = None,
-    guestId = None,
-    guestIdAds = None,
-    guestIdMarketing = None,
-    appId = None,
-    ipAddress = None,
-    userAgent = None,
-    countryCode = None,
-    languageCode = None,
-    isTwoffice = None,
-    userRoles = None,
-    deviceId = None,
-    mobileDeviceId = None,
-    mobileDeviceAdId = None,
-    limitAdTracking = None
+objelonct ClielonntContelonxt {
+  val elonmpty: ClielonntContelonxt = ClielonntContelonxt(
+    uselonrId = Nonelon,
+    guelonstId = Nonelon,
+    guelonstIdAds = Nonelon,
+    guelonstIdMarkelonting = Nonelon,
+    appId = Nonelon,
+    ipAddrelonss = Nonelon,
+    uselonrAgelonnt = Nonelon,
+    countryCodelon = Nonelon,
+    languagelonCodelon = Nonelon,
+    isTwofficelon = Nonelon,
+    uselonrRolelons = Nonelon,
+    delonvicelonId = Nonelon,
+    mobilelonDelonvicelonId = Nonelon,
+    mobilelonDelonvicelonAdId = Nonelon,
+    limitAdTracking = Nonelon
   )
 }
 
 /**
- * HasClientContext indicates that a request has [[ClientContext]] and adds helper functions for
- * accessing [[ClientContext]] fields.
+ * HasClielonntContelonxt indicatelons that a relonquelonst has [[ClielonntContelonxt]] and adds helonlpelonr functions for
+ * accelonssing [[ClielonntContelonxt]] fielonlds.
  */
-trait HasClientContext {
-  def clientContext: ClientContext
+trait HasClielonntContelonxt {
+  delonf clielonntContelonxt: ClielonntContelonxt
 
   /**
-   * getRequiredUserId returns a userId and throw if it's missing.
+   * gelontRelonquirelondUselonrId relonturns a uselonrId and throw if it's missing.
    *
-   * @note logged out requests are disabled by default so this is safe for most products
+   * @notelon loggelond out relonquelonsts arelon disablelond by delonfault so this is safelon for most products
    */
-  @JsonIgnore /** Jackson tries to serialize this method, throwing an exception for guest products */
-  def getRequiredUserId: Long = clientContext.userId.getOrElse(
-    throw PipelineFailure(BadRequest, "Missing required field: userId"))
+  @JsonIgnorelon /** Jackson trielons to selonrializelon this melonthod, throwing an elonxcelonption for guelonst products */
+  delonf gelontRelonquirelondUselonrId: Long = clielonntContelonxt.uselonrId.gelontOrelonlselon(
+    throw PipelonlinelonFailurelon(BadRelonquelonst, "Missing relonquirelond fielonld: uselonrId"))
 
   /**
-   * getOptionalUserId returns a userId if one is set
+   * gelontOptionalUselonrId relonturns a uselonrId if onelon is selont
    */
-  def getOptionalUserId: Option[Long] = clientContext.userId
+  delonf gelontOptionalUselonrId: Option[Long] = clielonntContelonxt.uselonrId
 
   /**
-   * getUserIdLoggedOutSupport returns a userId and falls back to 0 if none is set
+   * gelontUselonrIdLoggelondOutSupport relonturns a uselonrId and falls back to 0 if nonelon is selont
    */
-  def getUserIdLoggedOutSupport: Long = clientContext.userId.getOrElse(0L)
+  delonf gelontUselonrIdLoggelondOutSupport: Long = clielonntContelonxt.uselonrId.gelontOrelonlselon(0L)
 
   /**
-   * getUserOrGuestId returns a userId or a guestId if no userId has been set
+   * gelontUselonrOrGuelonstId relonturns a uselonrId or a guelonstId if no uselonrId has belonelonn selont
    */
-  def getUserOrGuestId: Option[Long] = clientContext.userId.orElse(clientContext.guestId)
+  delonf gelontUselonrOrGuelonstId: Option[Long] = clielonntContelonxt.uselonrId.orelonlselon(clielonntContelonxt.guelonstId)
 
   /**
-   * getCountryCode returns a country code if one is set
+   * gelontCountryCodelon relonturns a country codelon if onelon is selont
    */
-  def getCountryCode: Option[String] = clientContext.countryCode
+  delonf gelontCountryCodelon: Option[String] = clielonntContelonxt.countryCodelon
 
   /**
-   * getLanguageCode returns a language code if one is set
+   * gelontLanguagelonCodelon relonturns a languagelon codelon if onelon is selont
    */
-  def getLanguageCode: Option[String] = clientContext.languageCode
+  delonf gelontLanguagelonCodelon: Option[String] = clielonntContelonxt.languagelonCodelon
 
   /**
-   * isLoggedOut returns true if the user is logged out (no userId present).
+   * isLoggelondOut relonturns truelon if thelon uselonr is loggelond out (no uselonrId prelonselonnt).
    *
-   * @note this can be useful in conjunction with [[getUserIdLoggedOutSupport]]
+   * @notelon this can belon uselonful in conjunction with [[gelontUselonrIdLoggelondOutSupport]]
    */
-  def isLoggedOut: Boolean = clientContext.userId.isEmpty
+  delonf isLoggelondOut: Boolelonan = clielonntContelonxt.uselonrId.iselonmpty
 }

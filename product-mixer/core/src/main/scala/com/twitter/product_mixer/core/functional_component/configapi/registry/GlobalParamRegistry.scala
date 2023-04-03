@@ -1,21 +1,21 @@
-package com.twitter.product_mixer.core.functional_component.configapi.registry
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.configapi.relongistry
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.servo.decider.DeciderGateBuilder
-import com.twitter.timelines.configapi.BaseConfigBuilder
-import com.twitter.timelines.configapi.Config
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.selonrvo.deloncidelonr.DeloncidelonrGatelonBuildelonr
+import com.twittelonr.timelonlinelons.configapi.BaselonConfigBuildelonr
+import com.twittelonr.timelonlinelons.configapi.Config
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class GlobalParamRegistry @Inject() (
+@Singlelonton
+class GlobalParamRelongistry @Injelonct() (
   globalParamConfig: GlobalParamConfig,
-  deciderGateBuilder: DeciderGateBuilder,
-  statsReceiver: StatsReceiver) {
+  deloncidelonrGatelonBuildelonr: DeloncidelonrGatelonBuildelonr,
+  statsReloncelonivelonr: StatsReloncelonivelonr) {
 
-  def build(): Config = {
-    val globalConfigs = globalParamConfig.build(deciderGateBuilder, statsReceiver)
+  delonf build(): Config = {
+    val globalConfigs = globalParamConfig.build(deloncidelonrGatelonBuildelonr, statsReloncelonivelonr)
 
-    BaseConfigBuilder(globalConfigs).build("GlobalParamRegistry")
+    BaselonConfigBuildelonr(globalConfigs).build("GlobalParamRelongistry")
   }
 }

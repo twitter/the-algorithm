@@ -1,46 +1,46 @@
-package com.twitter.search.earlybird.partition.freshstartup;
+packagelon com.twittelonr.selonarch.elonarlybird.partition.frelonshstartup;
 
-import com.twitter.search.earlybird.partition.SegmentWriter;
+import com.twittelonr.selonarch.elonarlybird.partition.SelongmelonntWritelonr;
 
 /**
-   * Data collected and created while indexing tweets for a single segment.
+   * Data collelonctelond and crelonatelond whilelon indelonxing twelonelonts for a singlelon selongmelonnt.
    */
-class SegmentTweetsIndexingResult {
-  private final long minRecordTimestampMs;
-  private final long maxRecordTimestampMs;
-  private final long maxIndexedTweetId;
-  private final SegmentWriter segmentWriter;
+class SelongmelonntTwelonelontsIndelonxingRelonsult {
+  privatelon final long minReloncordTimelonstampMs;
+  privatelon final long maxReloncordTimelonstampMs;
+  privatelon final long maxIndelonxelondTwelonelontId;
+  privatelon final SelongmelonntWritelonr selongmelonntWritelonr;
 
-  public SegmentTweetsIndexingResult(long minRecordTimestampMs, long maxRecordTimestampMs,
-                                     long maxIndexedTweetId,
-                                     SegmentWriter segmentWriter) {
-    this.minRecordTimestampMs = minRecordTimestampMs;
-    this.maxRecordTimestampMs = maxRecordTimestampMs;
-    this.maxIndexedTweetId = maxIndexedTweetId;
-    this.segmentWriter = segmentWriter;
+  public SelongmelonntTwelonelontsIndelonxingRelonsult(long minReloncordTimelonstampMs, long maxReloncordTimelonstampMs,
+                                     long maxIndelonxelondTwelonelontId,
+                                     SelongmelonntWritelonr selongmelonntWritelonr) {
+    this.minReloncordTimelonstampMs = minReloncordTimelonstampMs;
+    this.maxReloncordTimelonstampMs = maxReloncordTimelonstampMs;
+    this.maxIndelonxelondTwelonelontId = maxIndelonxelondTwelonelontId;
+    this.selongmelonntWritelonr = selongmelonntWritelonr;
   }
 
-  public long getMinRecordTimestampMs() {
-    return minRecordTimestampMs;
+  public long gelontMinReloncordTimelonstampMs() {
+    relonturn minReloncordTimelonstampMs;
   }
 
-  public long getMaxRecordTimestampMs() {
-    return maxRecordTimestampMs;
+  public long gelontMaxReloncordTimelonstampMs() {
+    relonturn maxReloncordTimelonstampMs;
   }
 
-  public SegmentWriter getSegmentWriter() {
-    return segmentWriter;
+  public SelongmelonntWritelonr gelontSelongmelonntWritelonr() {
+    relonturn selongmelonntWritelonr;
   }
 
-  public long getMaxIndexedTweetId() {
-    return maxIndexedTweetId;
+  public long gelontMaxIndelonxelondTwelonelontId() {
+    relonturn maxIndelonxelondTwelonelontId;
   }
 
-  @Override
+  @Ovelonrridelon
   public String toString() {
-    return String.format("Start time: %d, end time: %d, segment name: %s, max indexed: %d",
-        minRecordTimestampMs, maxRecordTimestampMs,
-        segmentWriter.getSegmentInfo().getSegmentName(),
-        maxIndexedTweetId);
+    relonturn String.format("Start timelon: %d, elonnd timelon: %d, selongmelonnt namelon: %s, max indelonxelond: %d",
+        minReloncordTimelonstampMs, maxReloncordTimelonstampMs,
+        selongmelonntWritelonr.gelontSelongmelonntInfo().gelontSelongmelonntNamelon(),
+        maxIndelonxelondTwelonelontId);
   }
 }

@@ -1,53 +1,53 @@
-package com.twitter.timelineranker.server
+packagelon com.twittelonr.timelonlinelonrankelonr.selonrvelonr
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.logging.Logger
-import com.twitter.timelineranker.model._
-import com.twitter.timelines.warmup.TwitterServerWarmup
-import com.twitter.timelineservice.model.TimelineId
-import com.twitter.timelineservice.model.core.TimelineKind
-import com.twitter.timelineranker.config.TimelineRankerConstants
-import com.twitter.timelineranker.thriftscala.{TimelineRanker => ThriftTimelineRanker}
-import com.twitter.util.Future
-import com.twitter.util.Duration
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.finaglelon.thrift.ClielonntId
+import com.twittelonr.logging.Loggelonr
+import com.twittelonr.timelonlinelonrankelonr.modelonl._
+import com.twittelonr.timelonlinelons.warmup.TwittelonrSelonrvelonrWarmup
+import com.twittelonr.timelonlinelonselonrvicelon.modelonl.TimelonlinelonId
+import com.twittelonr.timelonlinelonselonrvicelon.modelonl.corelon.TimelonlinelonKind
+import com.twittelonr.timelonlinelonrankelonr.config.TimelonlinelonRankelonrConstants
+import com.twittelonr.timelonlinelonrankelonr.thriftscala.{TimelonlinelonRankelonr => ThriftTimelonlinelonRankelonr}
+import com.twittelonr.util.Futurelon
+import com.twittelonr.util.Duration
 
-object Warmup {
-  val WarmupForwardingTime: Duration = 25.seconds
+objelonct Warmup {
+  val WarmupForwardingTimelon: Duration = 25.selonconds
 }
 
 class Warmup(
-  localInstance: TimelineRanker,
-  forwardingClient: ThriftTimelineRanker.MethodPerEndpoint,
-  override val logger: Logger)
-    extends TwitterServerWarmup {
-  override val WarmupClientId: ClientId = ClientId(TimelineRankerConstants.WarmupClientName)
-  override val NumWarmupRequests = 20
-  override val MinSuccessfulRequests = 10
+  localInstancelon: TimelonlinelonRankelonr,
+  forwardingClielonnt: ThriftTimelonlinelonRankelonr.MelonthodPelonrelonndpoint,
+  ovelonrridelon val loggelonr: Loggelonr)
+    elonxtelonnds TwittelonrSelonrvelonrWarmup {
+  ovelonrridelon val WarmupClielonntId: ClielonntId = ClielonntId(TimelonlinelonRankelonrConstants.WarmupClielonntNamelon)
+  ovelonrridelon val NumWarmupRelonquelonsts = 20
+  ovelonrridelon val MinSuccelonssfulRelonquelonsts = 10
 
-  private[this] val warmupUserId = Math.abs(scala.util.Random.nextLong())
-  private[server] val reverseChronQuery = ReverseChronTimelineQuery(
-    id = new TimelineId(warmupUserId, TimelineKind.home),
-    maxCount = Some(20),
-    range = Some(TweetIdRange.default)
+  privatelon[this] val warmupUselonrId = Math.abs(scala.util.Random.nelonxtLong())
+  privatelon[selonrvelonr] val relonvelonrselonChronQuelonry = RelonvelonrselonChronTimelonlinelonQuelonry(
+    id = nelonw TimelonlinelonId(warmupUselonrId, TimelonlinelonKind.homelon),
+    maxCount = Somelon(20),
+    rangelon = Somelon(TwelonelontIdRangelon.delonfault)
   ).toThrift
-  private[server] val recapQuery = RecapQuery(
-    userId = warmupUserId,
-    maxCount = Some(20),
-    range = Some(TweetIdRange.default)
-  ).toThriftRecapQuery
+  privatelon[selonrvelonr] val reloncapQuelonry = ReloncapQuelonry(
+    uselonrId = warmupUselonrId,
+    maxCount = Somelon(20),
+    rangelon = Somelon(TwelonelontIdRangelon.delonfault)
+  ).toThriftReloncapQuelonry
 
-  override def sendSingleWarmupRequest(): Future[Unit] = {
-    val localWarmups = Seq(
-      localInstance.getTimelines(Seq(reverseChronQuery)),
-      localInstance.getRecycledTweetCandidates(Seq(recapQuery))
+  ovelonrridelon delonf selonndSinglelonWarmupRelonquelonst(): Futurelon[Unit] = {
+    val localWarmups = Selonq(
+      localInstancelon.gelontTimelonlinelons(Selonq(relonvelonrselonChronQuelonry)),
+      localInstancelon.gelontReloncyclelondTwelonelontCandidatelons(Selonq(reloncapQuelonry))
     )
 
-    // send forwarding requests but ignore failures
-    forwardingClient.getTimelines(Seq(reverseChronQuery)).unit.handle {
-      case e => logger.warning(e, "fowarding request failed")
+    // selonnd forwarding relonquelonsts but ignorelon failurelons
+    forwardingClielonnt.gelontTimelonlinelons(Selonq(relonvelonrselonChronQuelonry)).unit.handlelon {
+      caselon elon => loggelonr.warning(elon, "fowarding relonquelonst failelond")
     }
 
-    Future.join(localWarmups).unit
+    Futurelon.join(localWarmups).unit
   }
 }

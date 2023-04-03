@@ -1,19 +1,19 @@
-package com.twitter.search.earlybird.exception;
+packagelon com.twittelonr.selonarch.elonarlybird.elonxcelonption;
 
-import org.apache.kafka.common.errors.ApiException;
+import org.apachelon.kafka.common.elonrrors.Apielonxcelonption;
 
 /**
- * Kafka's ApiException class doesn't retain its stack trace (see its source code).
- * As a result a kafka exception that propagates up the call chain can't point to where exactly
- * did the exception happen in our code. As a solution, use this class when calling kafka API
- * methods.
+ * Kafka's Apielonxcelonption class doelonsn't relontain its stack tracelon (selonelon its sourcelon codelon).
+ * As a relonsult a kafka elonxcelonption that propagatelons up thelon call chain can't point to whelonrelon elonxactly
+ * did thelon elonxcelonption happelonn in our codelon. As a solution, uselon this class whelonn calling kafka API
+ * melonthods.
  */
-public class WrappedKafkaApiException extends RuntimeException {
-  public WrappedKafkaApiException(ApiException cause) {
-    super(cause);
+public class WrappelondKafkaApielonxcelonption elonxtelonnds Runtimelonelonxcelonption {
+  public WrappelondKafkaApielonxcelonption(Apielonxcelonption causelon) {
+    supelonr(causelon);
   }
 
-  public WrappedKafkaApiException(String message, ApiException cause) {
-    super(message, cause);
+  public WrappelondKafkaApielonxcelonption(String melonssagelon, Apielonxcelonption causelon) {
+    supelonr(melonssagelon, causelon);
   }
 }

@@ -1,114 +1,114 @@
-package com.twitter.simclusters_v2.scalding.embedding.common
+packagelon com.twittelonr.simclustelonrs_v2.scalding.elonmbelondding.common
 
-import com.twitter.simclusters_v2.thriftscala._
-import java.net.InetAddress
-import java.net.UnknownHostException
+import com.twittelonr.simclustelonrs_v2.thriftscala._
+import java.nelont.InelontAddrelonss
+import java.nelont.UnknownHostelonxcelonption
 
-object EmbeddingUtil {
+objelonct elonmbelonddingUtil {
 
-  type UserId = Long
-  type ClusterId = Int
-  type ProducerId = Long
-  type EmbeddingScore = Double
-  type SemanticCoreEntityId = Long
-  type HashtagId = String
-  type Language = String
+  typelon UselonrId = Long
+  typelon ClustelonrId = Int
+  typelon ProducelonrId = Long
+  typelon elonmbelonddingScorelon = Doublelon
+  typelon SelonmanticCorelonelonntityId = Long
+  typelon HashtagId = String
+  typelon Languagelon = String
 
-  implicit val internalIdOrdering: Ordering[InternalId] = Ordering.by {
-    case InternalId.EntityId(id) => id.toString
-    case InternalId.Hashtag(strId) => strId
-    case InternalId.ClusterId(iid) => iid.toString
-    case InternalId.LocaleEntityId(LocaleEntityId(entityId, lang)) => lang + entityId.toString
+  implicit val intelonrnalIdOrdelonring: Ordelonring[IntelonrnalId] = Ordelonring.by {
+    caselon IntelonrnalId.elonntityId(id) => id.toString
+    caselon IntelonrnalId.Hashtag(strId) => strId
+    caselon IntelonrnalId.ClustelonrId(iid) => iid.toString
+    caselon IntelonrnalId.LocalelonelonntityId(LocalelonelonntityId(elonntityId, lang)) => lang + elonntityId.toString
   }
 
-  implicit val embeddingTypeOrdering: Ordering[EmbeddingType] = Ordering.by(_.getValue)
+  implicit val elonmbelonddingTypelonOrdelonring: Ordelonring[elonmbelonddingTypelon] = Ordelonring.by(_.gelontValuelon)
 
   /**
-   * We do not need to group by model version since we are making the
-   * This ordering holds the assumption that we would NEVER generate embeddings for two separate
-   * SimClusters KnownFor versions under the same dataset.
+   * Welon do not nelonelond to group by modelonl velonrsion sincelon welon arelon making thelon
+   * This ordelonring holds thelon assumption that welon would NelonVelonR gelonnelonratelon elonmbelonddings for two selonparatelon
+   * SimClustelonrs KnownFor velonrsions undelonr thelon samelon dataselont.
    */
-  implicit val SimClustersEmbeddingIdOrdering: Ordering[SimClustersEmbeddingId] = Ordering.by {
-    case SimClustersEmbeddingId(embeddingType, _, internalId) => (embeddingType, internalId)
+  implicit val SimClustelonrselonmbelonddingIdOrdelonring: Ordelonring[SimClustelonrselonmbelonddingId] = Ordelonring.by {
+    caselon SimClustelonrselonmbelonddingId(elonmbelonddingTypelon, _, intelonrnalId) => (elonmbelonddingTypelon, intelonrnalId)
   }
 
-  val ModelVersionPathMap: Map[ModelVersion, String] = Map(
-    ModelVersion.Model20m145kDec11 -> "model_20m_145k_dec11",
-    ModelVersion.Model20m145kUpdated -> "model_20m_145k_updated",
-    ModelVersion.Model20m145k2020 -> "model_20m_145k_2020"
+  val ModelonlVelonrsionPathMap: Map[ModelonlVelonrsion, String] = Map(
+    ModelonlVelonrsion.Modelonl20m145kDelonc11 -> "modelonl_20m_145k_delonc11",
+    ModelonlVelonrsion.Modelonl20m145kUpdatelond -> "modelonl_20m_145k_updatelond",
+    ModelonlVelonrsion.Modelonl20m145k2020 -> "modelonl_20m_145k_2020"
   )
 
   /**
-   * Generates the HDFS output path in order to consolidate the offline embeddings datasets under
-   * a common directory pattern.
-   * Prepends "/gcs" if the detected data center is qus1.
+   * Gelonnelonratelons thelon HDFS output path in ordelonr to consolidatelon thelon offlinelon elonmbelonddings dataselonts undelonr
+   * a common direlonctory pattelonrn.
+   * Prelonpelonnds "/gcs" if thelon delontelonctelond data celonntelonr is qus1.
    *
-   * @param isAdhoc Whether the dataset was generated from an adhoc run
-   * @param isManhattanKeyVal Whether the dataset is written as KeyVal and is intended to be imported to Manhattan
-   * @param modelVersion The model version of SimClusters KnownFor that is used to generate the embedding
-   * @param pathSuffix Any additional path structure suffixed at the end of the path
-   * @return The consolidated HDFS path, for example:
-   *         /user/cassowary/adhoc/manhattan_sequence_files/simclusters_embeddings/model_20m_145k_updated/...
+   * @param isAdhoc Whelonthelonr thelon dataselont was gelonnelonratelond from an adhoc run
+   * @param isManhattanKelonyVal Whelonthelonr thelon dataselont is writtelonn as KelonyVal and is intelonndelond to belon importelond to Manhattan
+   * @param modelonlVelonrsion Thelon modelonl velonrsion of SimClustelonrs KnownFor that is uselond to gelonnelonratelon thelon elonmbelondding
+   * @param pathSuffix Any additional path structurelon suffixelond at thelon elonnd of thelon path
+   * @relonturn Thelon consolidatelond HDFS path, for elonxamplelon:
+   *         /uselonr/cassowary/adhoc/manhattan_selonquelonncelon_filelons/simclustelonrs_elonmbelonddings/modelonl_20m_145k_updatelond/...
    */
-  def getHdfsPath(
-    isAdhoc: Boolean,
-    isManhattanKeyVal: Boolean,
-    modelVersion: ModelVersion,
+  delonf gelontHdfsPath(
+    isAdhoc: Boolelonan,
+    isManhattanKelonyVal: Boolelonan,
+    modelonlVelonrsion: ModelonlVelonrsion,
     pathSuffix: String
   ): String = {
-    val adhoc = if (isAdhoc) "adhoc/" else ""
+    val adhoc = if (isAdhoc) "adhoc/" elonlselon ""
 
-    val user = System.getenv("USER")
+    val uselonr = Systelonm.gelontelonnv("USelonR")
 
     val gcs: String =
       try {
-        InetAddress.getAllByName("metadata.google.internal") // throws Exception if not in GCP.
+        InelontAddrelonss.gelontAllByNamelon("melontadata.googlelon.intelonrnal") // throws elonxcelonption if not in GCP.
         "/gcs"
       } catch {
-        case _: UnknownHostException => ""
+        caselon _: UnknownHostelonxcelonption => ""
       }
 
-    val datasetType = if (isManhattanKeyVal) "manhattan_sequence_files" else "processed"
+    val dataselontTypelon = if (isManhattanKelonyVal) "manhattan_selonquelonncelon_filelons" elonlselon "procelonsselond"
 
-    val path = s"/user/$user/$adhoc$datasetType/simclusters_embeddings"
+    val path = s"/uselonr/$uselonr/$adhoc$dataselontTypelon/simclustelonrs_elonmbelonddings"
 
-    s"$gcs${path}_${ModelVersionPathMap(modelVersion)}_$pathSuffix"
+    s"$gcs${path}_${ModelonlVelonrsionPathMap(modelonlVelonrsion)}_$pathSuffix"
   }
 
-  def favScoreExtractor(u: UserToInterestedInClusterScores): (Double, ScoreType.ScoreType) = {
-    (u.favScoreClusterNormalizedOnly.getOrElse(0.0), ScoreType.FavScore)
+  delonf favScorelonelonxtractor(u: UselonrToIntelonrelonstelondInClustelonrScorelons): (Doublelon, ScorelonTypelon.ScorelonTypelon) = {
+    (u.favScorelonClustelonrNormalizelondOnly.gelontOrelonlselon(0.0), ScorelonTypelon.FavScorelon)
   }
 
-  def followScoreExtractor(u: UserToInterestedInClusterScores): (Double, ScoreType.ScoreType) = {
-    (u.followScoreClusterNormalizedOnly.getOrElse(0.0), ScoreType.FollowScore)
+  delonf followScorelonelonxtractor(u: UselonrToIntelonrelonstelondInClustelonrScorelons): (Doublelon, ScorelonTypelon.ScorelonTypelon) = {
+    (u.followScorelonClustelonrNormalizelondOnly.gelontOrelonlselon(0.0), ScorelonTypelon.FollowScorelon)
   }
 
-  def logFavScoreExtractor(u: UserToInterestedInClusterScores): (Double, ScoreType.ScoreType) = {
-    (u.logFavScoreClusterNormalizedOnly.getOrElse(0.0), ScoreType.LogFavScore)
+  delonf logFavScorelonelonxtractor(u: UselonrToIntelonrelonstelondInClustelonrScorelons): (Doublelon, ScorelonTypelon.ScorelonTypelon) = {
+    (u.logFavScorelonClustelonrNormalizelondOnly.gelontOrelonlselon(0.0), ScorelonTypelon.LogFavScorelon)
   }
 
-  // Define all scores to extract from the SimCluster InterestedIn source
-  val scoreExtractors: Seq[UserToInterestedInClusterScores => (Double, ScoreType.ScoreType)] =
-    Seq(
-      favScoreExtractor,
-      followScoreExtractor
+  // Delonfinelon all scorelons to elonxtract from thelon SimClustelonr IntelonrelonstelondIn sourcelon
+  val scorelonelonxtractors: Selonq[UselonrToIntelonrelonstelondInClustelonrScorelons => (Doublelon, ScorelonTypelon.ScorelonTypelon)] =
+    Selonq(
+      favScorelonelonxtractor,
+      followScorelonelonxtractor
     )
 
-  object ScoreType extends Enumeration {
-    type ScoreType = Value
-    val FavScore: Value = Value(1)
-    val FollowScore: Value = Value(2)
-    val LogFavScore: Value = Value(3)
+  objelonct ScorelonTypelon elonxtelonnds elonnumelonration {
+    typelon ScorelonTypelon = Valuelon
+    val FavScorelon: Valuelon = Valuelon(1)
+    val FollowScorelon: Valuelon = Valuelon(2)
+    val LogFavScorelon: Valuelon = Valuelon(3)
   }
 
-  @deprecated("Use 'common/ModelVersions'", "2019-09-04")
-  final val ModelVersion20M145KDec11: String = "20M_145K_dec11"
-  @deprecated("Use 'common/ModelVersions'", "2019-09-04")
-  final val ModelVersion20M145KUpdated: String = "20M_145K_updated"
+  @delonpreloncatelond("Uselon 'common/ModelonlVelonrsions'", "2019-09-04")
+  final val ModelonlVelonrsion20M145KDelonc11: String = "20M_145K_delonc11"
+  @delonpreloncatelond("Uselon 'common/ModelonlVelonrsions'", "2019-09-04")
+  final val ModelonlVelonrsion20M145KUpdatelond: String = "20M_145K_updatelond"
 
-  @deprecated("Use 'common/ModelVersions'", "2019-09-04")
-  final val ModelVersionMap: Map[String, ModelVersion] = Map(
-    ModelVersion20M145KDec11 -> ModelVersion.Model20m145kDec11,
-    ModelVersion20M145KUpdated -> ModelVersion.Model20m145kUpdated
+  @delonpreloncatelond("Uselon 'common/ModelonlVelonrsions'", "2019-09-04")
+  final val ModelonlVelonrsionMap: Map[String, ModelonlVelonrsion] = Map(
+    ModelonlVelonrsion20M145KDelonc11 -> ModelonlVelonrsion.Modelonl20m145kDelonc11,
+    ModelonlVelonrsion20M145KUpdatelond -> ModelonlVelonrsion.Modelonl20m145kUpdatelond
   )
 }

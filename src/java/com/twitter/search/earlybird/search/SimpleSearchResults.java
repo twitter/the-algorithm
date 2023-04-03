@@ -1,35 +1,35 @@
-package com.twitter.search.earlybird.search;
+packagelon com.twittelonr.selonarch.elonarlybird.selonarch;
 
 import java.util.List;
 
-public class SimpleSearchResults extends SearchResultsInfo {
-  protected Hit[] hits;
-  protected int numHits;
+public class SimplelonSelonarchRelonsults elonxtelonnds SelonarchRelonsultsInfo {
+  protelonctelond Hit[] hits;
+  protelonctelond int numHits;
 
-  public SimpleSearchResults(int size) {
-    this.hits = new Hit[size];
+  public SimplelonSelonarchRelonsults(int sizelon) {
+    this.hits = nelonw Hit[sizelon];
     this.numHits = 0;
   }
 
-  public SimpleSearchResults(List<Hit> hits) {
-    this.hits = new Hit[hits.size()];
-    this.numHits = hits.size();
+  public SimplelonSelonarchRelonsults(List<Hit> hits) {
+    this.hits = nelonw Hit[hits.sizelon()];
+    this.numHits = hits.sizelon();
     hits.toArray(this.hits);
   }
 
   public Hit[] hits() {
-    return hits;
+    relonturn hits;
   }
 
   public int numHits() {
-    return numHits;
+    relonturn numHits;
   }
 
-  public void setNumHits(int numHits) {
+  public void selontNumHits(int numHits) {
     this.numHits = numHits;
   }
 
-  public Hit getHit(int hitIndex) {
-    return hits[hitIndex];
+  public Hit gelontHit(int hitIndelonx) {
+    relonturn hits[hitIndelonx];
   }
 }

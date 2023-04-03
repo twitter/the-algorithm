@@ -1,307 +1,307 @@
-package com.twitter.simclusters_v2.scalding
+packagelon com.twittelonr.simclustelonrs_v2.scalding
 
-import com.twitter.dal.client.dataset.KeyValDALDataset
-import com.twitter.hermit.candidate.thriftscala.Candidates
-import com.twitter.pluck.source.cassowary.FollowingsCosineSimilaritiesManhattanSource
-import com.twitter.pluck.source.cassowary.SimsCandidatesSource
-import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.scalding_internal.job.TwitterExecutionApp
-import com.twitter.scalding_internal.job.analytics_batch.AnalyticsBatchExecution
-import com.twitter.scalding_internal.job.analytics_batch.AnalyticsBatchExecutionArgs
-import com.twitter.scalding_internal.job.analytics_batch.BatchDescription
-import com.twitter.scalding_internal.job.analytics_batch.BatchFirstTime
-import com.twitter.scalding_internal.job.analytics_batch.BatchIncrement
-import com.twitter.scalding_internal.job.analytics_batch.TwitterScheduledExecutionApp
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.ModelVersions
-import com.twitter.simclusters_v2.hdfs_sources._
-import com.twitter.simclusters_v2.scalding.UpdateKnownFor.ClusterScoresForNode
-import com.twitter.simclusters_v2.scalding.UpdateKnownFor.NeighborhoodInformation
-import com.twitter.simclusters_v2.scalding.common.TypedRichPipe._
-import com.twitter.simclusters_v2.scalding.common.Util
-import com.twitter.simclusters_v2.thriftscala.ClustersUserIsKnownFor
-import com.twitter.usersource.snapshot.flat.UsersourceFlatScalaDataset
-import scala.util.Success
+import com.twittelonr.dal.clielonnt.dataselont.KelonyValDALDataselont
+import com.twittelonr.helonrmit.candidatelon.thriftscala.Candidatelons
+import com.twittelonr.pluck.sourcelon.cassowary.FollowingsCosinelonSimilaritielonsManhattanSourcelon
+import com.twittelonr.pluck.sourcelon.cassowary.SimsCandidatelonsSourcelon
+import com.twittelonr.scalding._
+import com.twittelonr.scalding_intelonrnal.dalv2.DAL
+import com.twittelonr.scalding_intelonrnal.dalv2.DALWritelon._
+import com.twittelonr.scalding_intelonrnal.job.TwittelonrelonxeloncutionApp
+import com.twittelonr.scalding_intelonrnal.job.analytics_batch.AnalyticsBatchelonxeloncution
+import com.twittelonr.scalding_intelonrnal.job.analytics_batch.AnalyticsBatchelonxeloncutionArgs
+import com.twittelonr.scalding_intelonrnal.job.analytics_batch.BatchDelonscription
+import com.twittelonr.scalding_intelonrnal.job.analytics_batch.BatchFirstTimelon
+import com.twittelonr.scalding_intelonrnal.job.analytics_batch.BatchIncrelonmelonnt
+import com.twittelonr.scalding_intelonrnal.job.analytics_batch.TwittelonrSchelondulelondelonxeloncutionApp
+import com.twittelonr.scalding_intelonrnal.multiformat.format.kelonyval.KelonyVal
+import com.twittelonr.simclustelonrs_v2.common.ModelonlVelonrsions
+import com.twittelonr.simclustelonrs_v2.hdfs_sourcelons._
+import com.twittelonr.simclustelonrs_v2.scalding.UpdatelonKnownFor.ClustelonrScorelonsForNodelon
+import com.twittelonr.simclustelonrs_v2.scalding.UpdatelonKnownFor.NelonighborhoodInformation
+import com.twittelonr.simclustelonrs_v2.scalding.common.TypelondRichPipelon._
+import com.twittelonr.simclustelonrs_v2.scalding.common.Util
+import com.twittelonr.simclustelonrs_v2.thriftscala.ClustelonrsUselonrIsKnownFor
+import com.twittelonr.uselonrsourcelon.snapshot.flat.UselonrsourcelonFlatScalaDataselont
+import scala.util.Succelonss
 
-object UpdateKnownForApps {
+objelonct UpdatelonKnownForApps {
 
   /**
-   * Average edge weight of an input graph
-   * @param graph a TypedPipe with nodeId as key and adjacency list as value. We don't care about
-   *              the keys in this method.
-   * @return avg edge weight wrapped in an option in an execution
+   * Avelonragelon elondgelon welonight of an input graph
+   * @param graph a TypelondPipelon with nodelonId as kelony and adjacelonncy list as valuelon. Welon don't carelon about
+   *              thelon kelonys in this melonthod.
+   * @relonturn avg elondgelon welonight wrappelond in an option in an elonxeloncution
    */
-  def getGlobalAvgWeight(graph: TypedPipe[(Long, Map[Long, Float])]): Execution[Option[Double]] = {
-    graph.values
-      .flatMap(_.values)
-      .map { x => (x.toDouble, 1L) }
+  delonf gelontGlobalAvgWelonight(graph: TypelondPipelon[(Long, Map[Long, Float])]): elonxeloncution[Option[Doublelon]] = {
+    graph.valuelons
+      .flatMap(_.valuelons)
+      .map { x => (x.toDoublelon, 1L) }
       .sum
-      .toOptionExecution
+      .toOptionelonxeloncution
       .map {
-        case Some((sum, cnt)) =>
-          val res = sum / cnt
-          println("globalAvgWeight is " + res)
-          Some(res)
-        case _ =>
-          println("Input graph to globalAvgWeight seems to be empty")
-          None
+        caselon Somelon((sum, cnt)) =>
+          val relons = sum / cnt
+          println("globalAvgWelonight is " + relons)
+          Somelon(relons)
+        caselon _ =>
+          println("Input graph to globalAvgWelonight selonelonms to belon elonmpty")
+          Nonelon
       }
   }
 
   /**
-   * Average membership score for a particular knownFor assignment
-   * @param knownFor TypedPipe from nodeId to the clusters it's been assigned to along with
-   *                 membership scores. We don't care about the keys in this method.
-   * @return average membership score
+   * Avelonragelon melonmbelonrship scorelon for a particular knownFor assignmelonnt
+   * @param knownFor TypelondPipelon from nodelonId to thelon clustelonrs it's belonelonn assignelond to along with
+   *                 melonmbelonrship scorelons. Welon don't carelon about thelon kelonys in this melonthod.
+   * @relonturn avelonragelon melonmbelonrship scorelon
    */
-  def getAvgMembershipScore(knownFor: TypedPipe[(Long, Array[(Int, Float)])]): Execution[Double] = {
-    knownFor.values
+  delonf gelontAvgMelonmbelonrshipScorelon(knownFor: TypelondPipelon[(Long, Array[(Int, Float)])]): elonxeloncution[Doublelon] = {
+    knownFor.valuelons
       .flatMap(_.map(_._2))
       .map { x => (x, 1L) }
       .sum
-      .map { case (num, den) => num / den.toDouble }
-      .getExecution
-      .onComplete {
-        case Success(x) => println("Avg. membership score is " + x)
-        case _ => println("Failed to calculate avg. membership score")
+      .map { caselon (num, delonn) => num / delonn.toDoublelon }
+      .gelontelonxeloncution
+      .onComplelontelon {
+        caselon Succelonss(x) => println("Avg. melonmbelonrship scorelon is " + x)
+        caselon _ => println("Failelond to calculatelon avg. melonmbelonrship scorelon")
       }
   }
 
   /**
-   * For each cluster, get two statistics about it: the number of nodes assigned to it, and the
-   * sum of the membership scores
+   * For elonach clustelonr, gelont two statistics about it: thelon numbelonr of nodelons assignelond to it, and thelon
+   * sum of thelon melonmbelonrship scorelons
    *
-   * @param knownFor TypedPipe from nodeId to the clusters it's been assigned to along with
-   *                 membership scores.
-   * @return Map giving the NeighborhoodInformation for each cluster. The nodeCount and
-   *         sumOfMembershipWeights fields in NeighborhoodInformation are populated, others are 0.
+   * @param knownFor TypelondPipelon from nodelonId to thelon clustelonrs it's belonelonn assignelond to along with
+   *                 melonmbelonrship scorelons.
+   * @relonturn Map giving thelon NelonighborhoodInformation for elonach clustelonr. Thelon nodelonCount and
+   *         sumOfMelonmbelonrshipWelonights fielonlds in NelonighborhoodInformation arelon populatelond, othelonrs arelon 0.
    */
-  def getClusterStats(
-    knownFor: TypedPipe[(Long, Array[(Int, Float)])]
-  ): Execution[Map[Int, NeighborhoodInformation]] = {
+  delonf gelontClustelonrStats(
+    knownFor: TypelondPipelon[(Long, Array[(Int, Float)])]
+  ): elonxeloncution[Map[Int, NelonighborhoodInformation]] = {
     knownFor
       .flatMap {
-        case (_, clusterArray) =>
-          clusterArray.map {
-            case (clusterId, score) =>
-              Map(clusterId -> (1, score))
+        caselon (_, clustelonrArray) =>
+          clustelonrArray.map {
+            caselon (clustelonrId, scorelon) =>
+              Map(clustelonrId -> (1, scorelon))
           }
       }
       .sum
-      .getExecution
+      .gelontelonxeloncution
       .map { map =>
-        map.mapValues {
-          case (count, sum) =>
-            NeighborhoodInformation(count, 0, 0, sum)
+        map.mapValuelons {
+          caselon (count, sum) =>
+            NelonighborhoodInformation(count, 0, 0, sum)
         }
       }
   }
 
   /**
-   * Adds self-loops and also potentially raises all edge weights to an exponent
-   * (typically exponent > 1, and has the effect of increasing inequality in edge weights to
-   * "clarify" structure in the graph - currently we just set exponent to 1).
-   * @param symmetrizedSims input symmetrized similarity graph
-   * @param exponentForEdgeWeight exponent to raise all edge weights to.
-   *                              Set to 1.0 to make this a no-op
-   * @param maxWtToSelfLoopWtMultFactor What to multiply the max wt among non-self-loop edges to
-   *                                    derive the weight on the self-loop edge.
-   * @return New graph
+   * Adds selonlf-loops and also potelonntially raiselons all elondgelon welonights to an elonxponelonnt
+   * (typically elonxponelonnt > 1, and has thelon elonffelonct of increlonasing inelonquality in elondgelon welonights to
+   * "clarify" structurelon in thelon graph - currelonntly welon just selont elonxponelonnt to 1).
+   * @param symmelontrizelondSims input symmelontrizelond similarity graph
+   * @param elonxponelonntForelondgelonWelonight elonxponelonnt to raiselon all elondgelon welonights to.
+   *                              Selont to 1.0 to makelon this a no-op
+   * @param maxWtToSelonlfLoopWtMultFactor What to multiply thelon max wt among non-selonlf-loop elondgelons to
+   *                                    delonrivelon thelon welonight on thelon selonlf-loop elondgelon.
+   * @relonturn Nelonw graph
    */
-  def simsGraphForUpdateFromSymmetrizedSims(
-    symmetrizedSims: TypedPipe[(Long, Map[Long, Float])],
-    exponentForEdgeWeight: Float,
-    maxWtToSelfLoopWtMultFactor: Float
-  ): TypedPipe[(Long, Map[Long, Float])] = {
-    val expWeighted = symmetrizedSims.mapValues { y =>
-      y.mapValues { x => math.pow(x, exponentForEdgeWeight).toFloat }
+  delonf simsGraphForUpdatelonFromSymmelontrizelondSims(
+    symmelontrizelondSims: TypelondPipelon[(Long, Map[Long, Float])],
+    elonxponelonntForelondgelonWelonight: Float,
+    maxWtToSelonlfLoopWtMultFactor: Float
+  ): TypelondPipelon[(Long, Map[Long, Float])] = {
+    val elonxpWelonightelond = symmelontrizelondSims.mapValuelons { y =>
+      y.mapValuelons { x => math.pow(x, elonxponelonntForelondgelonWelonight).toFloat }
     }
 
-    TopUsersSimilarityGraph.addSelfLoop(
-      input = expWeighted,
-      maxToSelfLoopWeight = { x: Float => x * maxWtToSelfLoopWtMultFactor }
+    TopUselonrsSimilarityGraph.addSelonlfLoop(
+      input = elonxpWelonightelond,
+      maxToSelonlfLoopWelonight = { x: Float => x * maxWtToSelonlfLoopWtMultFactor }
     )
   }
 
   /**
-   * Runs the job
-   * @param args args which specify many parameters
+   * Runs thelon job
+   * @param args args which speloncify many paramelontelonrs
    * @param inputKnownFor
    * @param inputSimsGraph
-   * @param defaultEmailAddress by default, the email address to send an to email to, which has
-   *                            a bunch of evaluation metrics
-   * @param writeKnownForFunction function that takes a knownFor and writes to some
-   *                              persistent location
-   * @param readKnownForFunction function that reads the knownFor which was written to using the
-   *                             writeKnownForFunction
-   * @param dateRange dateRange, used for reading UserSource
-   * @param uniqueID need for creating stats
-   * @return Execution[Unit] encapsulating the whole job
+   * @param delonfaultelonmailAddrelonss by delonfault, thelon elonmail addrelonss to selonnd an to elonmail to, which has
+   *                            a bunch of elonvaluation melontrics
+   * @param writelonKnownForFunction function that takelons a knownFor and writelons to somelon
+   *                              pelonrsistelonnt location
+   * @param relonadKnownForFunction function that relonads thelon knownFor which was writtelonn to using thelon
+   *                             writelonKnownForFunction
+   * @param datelonRangelon datelonRangelon, uselond for relonading UselonrSourcelon
+   * @param uniquelonID nelonelond for crelonating stats
+   * @relonturn elonxeloncution[Unit] elonncapsulating thelon wholelon job
    */
-  def runUpdateKnownForGeneric(
+  delonf runUpdatelonKnownForGelonnelonric(
     args: Args,
-    inputKnownFor: TypedPipe[(Long, Array[(Int, Float)])],
-    inputSimsGraph: TypedPipe[Candidates],
-    defaultEmailAddress: String,
-    writeKnownForFunction: TypedPipe[(Long, Array[(Int, Float)])] => Execution[Unit],
-    readKnownForFunction: => TypedPipe[(Long, Array[(Int, Float)])],
-    includeEvaluationResultsInEmail: Boolean
+    inputKnownFor: TypelondPipelon[(Long, Array[(Int, Float)])],
+    inputSimsGraph: TypelondPipelon[Candidatelons],
+    delonfaultelonmailAddrelonss: String,
+    writelonKnownForFunction: TypelondPipelon[(Long, Array[(Int, Float)])] => elonxeloncution[Unit],
+    relonadKnownForFunction: => TypelondPipelon[(Long, Array[(Int, Float)])],
+    includelonelonvaluationRelonsultsInelonmail: Boolelonan
   )(
-    implicit dateRange: DateRange,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
-    val minActiveFollowers = args.int("minActiveFollowers", 400)
+    implicit datelonRangelon: DatelonRangelon,
+    uniquelonID: UniquelonID
+  ): elonxeloncution[Unit] = {
+    val minActivelonFollowelonrs = args.int("minActivelonFollowelonrs", 400)
     val topK = args.int("topK")
-    val maxSimsNeighborsForUpdate =
-      args.int("maxSimsNeighborsForUpdate", 40)
-    val minNeighborsInCluster = args.int("minNeighborsInCluster", 2)
-    val maxWtToSelfLoopWtMultFactor =
-      args.float("maxWtToSelfLoopWtMultFactor", 2)
-    val exponentForEdgeWeight = args.float("exponentForEdgeWeights", 1.0f)
-    val updateMethod: ClusterScoresForNode => Double = args("updateMethod") match {
-      case "sumScoreIgnoringMembershipScores" => { x: ClusterScoresForNode =>
-        x.sumScoreIgnoringMembershipScores
+    val maxSimsNelonighborsForUpdatelon =
+      args.int("maxSimsNelonighborsForUpdatelon", 40)
+    val minNelonighborsInClustelonr = args.int("minNelonighborsInClustelonr", 2)
+    val maxWtToSelonlfLoopWtMultFactor =
+      args.float("maxWtToSelonlfLoopWtMultFactor", 2)
+    val elonxponelonntForelondgelonWelonight = args.float("elonxponelonntForelondgelonWelonights", 1.0f)
+    val updatelonMelonthod: ClustelonrScorelonsForNodelon => Doublelon = args("updatelonMelonthod") match {
+      caselon "sumScorelonIgnoringMelonmbelonrshipScorelons" => { x: ClustelonrScorelonsForNodelon =>
+        x.sumScorelonIgnoringMelonmbelonrshipScorelons
       }
-      case "ratioScoreIgnoringMembershipScores" => { x: ClusterScoresForNode =>
-        x.ratioScoreIgnoringMembershipScores
+      caselon "ratioScorelonIgnoringMelonmbelonrshipScorelons" => { x: ClustelonrScorelonsForNodelon =>
+        x.ratioScorelonIgnoringMelonmbelonrshipScorelons
       }
-      case "ratioScoreUsingMembershipScores" => { x: ClusterScoresForNode =>
-        x.ratioScoreUsingMembershipScores
+      caselon "ratioScorelonUsingMelonmbelonrshipScorelons" => { x: ClustelonrScorelonsForNodelon =>
+        x.ratioScorelonUsingMelonmbelonrshipScorelons
       }
-      case x @ _ =>
-        throw new Exception(s"value for --updateMethod $x is unknown. It must be one of " +
-          s"[sumScoreIgnoringMembershipScores, ratioScoreIgnoringMembershipScores, ratioScoreUsingMembershipScores]")
+      caselon x @ _ =>
+        throw nelonw elonxcelonption(s"valuelon for --updatelonMelonthod $x is unknown. It must belon onelon of " +
+          s"[sumScorelonIgnoringMelonmbelonrshipScorelons, ratioScorelonIgnoringMelonmbelonrshipScorelons, ratioScorelonUsingMelonmbelonrshipScorelons]")
     }
-    val truePositiveWtFactor = args.float("truePositiveWtFactor", 10)
-    val modelVersion = args("outputModelVersion")
-    val emailAddress =
-      args.optional("emailAddress").getOrElse(defaultEmailAddress)
+    val truelonPositivelonWtFactor = args.float("truelonPositivelonWtFactor", 10)
+    val modelonlVelonrsion = args("outputModelonlVelonrsion")
+    val elonmailAddrelonss =
+      args.optional("elonmailAddrelonss").gelontOrelonlselon(delonfaultelonmailAddrelonss)
 
-    val topUsers = TopUsersSimilarityGraph
-      .topUserIds(
+    val topUselonrs = TopUselonrsSimilarityGraph
+      .topUselonrIds(
         DAL
-          .readMostRecentSnapshot(UsersourceFlatScalaDataset, dateRange)
-          .toTypedPipe,
-        minActiveFollowers,
-        topK).count("num_top_users")
+          .relonadMostReloncelonntSnapshot(UselonrsourcelonFlatScalaDataselont, datelonRangelon)
+          .toTypelondPipelon,
+        minActivelonFollowelonrs,
+        topK).count("num_top_uselonrs")
 
-    TopUsersSimilarityGraph
-      .getSubgraphFromUserGroupedInput(
+    TopUselonrsSimilarityGraph
+      .gelontSubgraphFromUselonrGroupelondInput(
         fullGraph = inputSimsGraph,
-        usersToInclude = topUsers,
-        maxNeighborsPerNode = maxSimsNeighborsForUpdate,
-        degreeThresholdForStat = minNeighborsInCluster
+        uselonrsToIncludelon = topUselonrs,
+        maxNelonighborsPelonrNodelon = maxSimsNelonighborsForUpdatelon,
+        delongrelonelonThrelonsholdForStat = minNelonighborsInClustelonr
       )
-      .forceToDiskExecution
-      .flatMap { symmetrizedSims =>
-        val modifiedSims =
-          UpdateKnownForApps.simsGraphForUpdateFromSymmetrizedSims(
-            symmetrizedSims = symmetrizedSims,
-            exponentForEdgeWeight = exponentForEdgeWeight,
-            maxWtToSelfLoopWtMultFactor = maxWtToSelfLoopWtMultFactor
+      .forcelonToDiskelonxeloncution
+      .flatMap { symmelontrizelondSims =>
+        val modifielondSims =
+          UpdatelonKnownForApps.simsGraphForUpdatelonFromSymmelontrizelondSims(
+            symmelontrizelondSims = symmelontrizelondSims,
+            elonxponelonntForelondgelonWelonight = elonxponelonntForelondgelonWelonight,
+            maxWtToSelonlfLoopWtMultFactor = maxWtToSelonlfLoopWtMultFactor
           )
 
-        val previouslyFamousUsersExec = inputKnownFor
-          .leftJoin(topUsers.asKeys)
-          .collect { case (userId, (clusters, None)) => userId }
-          .getSummaryString(
-            "Users previously in known for but not in topUsers anymore",
-            numRecords = 20)
+        val prelonviouslyFamousUselonrselonxelonc = inputKnownFor
+          .lelonftJoin(topUselonrs.asKelonys)
+          .collelonct { caselon (uselonrId, (clustelonrs, Nonelon)) => uselonrId }
+          .gelontSummaryString(
+            "Uselonrs prelonviously in known for but not in topUselonrs anymorelon",
+            numReloncords = 20)
 
-        val clusterStatsExec = UpdateKnownForApps.getClusterStats(inputKnownFor)
+        val clustelonrStatselonxelonc = UpdatelonKnownForApps.gelontClustelonrStats(inputKnownFor)
 
-        val globalAvgWeightExec =
-          UpdateKnownForApps.getGlobalAvgWeight(modifiedSims)
+        val globalAvgWelonightelonxelonc =
+          UpdatelonKnownForApps.gelontGlobalAvgWelonight(modifielondSims)
 
-        val globalAvgMembershipScoreExec = UpdateKnownForApps.getAvgMembershipScore(inputKnownFor)
+        val globalAvgMelonmbelonrshipScorelonelonxelonc = UpdatelonKnownForApps.gelontAvgMelonmbelonrshipScorelon(inputKnownFor)
 
-        Execution.zip(globalAvgWeightExec, clusterStatsExec, globalAvgMembershipScoreExec).flatMap {
-          case (Some(globalAvgWeight), clusterStats, globalAvgMembershipScore) =>
-            println("Size of clusterStats: " + clusterStats.size)
-            println("First few entries from clusterStats: " + clusterStats.take(5))
-            println("globalAvgWeight: " + globalAvgWeight)
-            println("globalAvgMembershipScore: " + globalAvgMembershipScore)
+        elonxeloncution.zip(globalAvgWelonightelonxelonc, clustelonrStatselonxelonc, globalAvgMelonmbelonrshipScorelonelonxelonc).flatMap {
+          caselon (Somelon(globalAvgWelonight), clustelonrStats, globalAvgMelonmbelonrshipScorelon) =>
+            println("Sizelon of clustelonrStats: " + clustelonrStats.sizelon)
+            println("First felonw elonntrielons from clustelonrStats: " + clustelonrStats.takelon(5))
+            println("globalAvgWelonight: " + globalAvgWelonight)
+            println("globalAvgMelonmbelonrshipScorelon: " + globalAvgMelonmbelonrshipScorelon)
 
-            val knownForWithUnnormalizedScores = UpdateKnownFor
-              .newKnownForScores(
+            val knownForWithUnnormalizelondScorelons = UpdatelonKnownFor
+              .nelonwKnownForScorelons(
                 inputKnownFor,
-                modifiedSims,
-                globalAvgWeight,
-                clusterStats,
-                globalAvgMembershipScore
+                modifielondSims,
+                globalAvgWelonight,
+                clustelonrStats,
+                globalAvgMelonmbelonrshipScorelon
               )
-            val writeNewKnownForExec = writeKnownForFunction(
-              UpdateKnownFor.updateGeneric(
-                modifiedSims,
-                knownForWithUnnormalizedScores,
-                clusterStats,
-                minNeighborsInCluster,
-                globalAvgWeight,
-                globalAvgMembershipScore,
-                truePositiveWtFactor,
-                updateMethod
+            val writelonNelonwKnownForelonxelonc = writelonKnownForFunction(
+              UpdatelonKnownFor.updatelonGelonnelonric(
+                modifielondSims,
+                knownForWithUnnormalizelondScorelons,
+                clustelonrStats,
+                minNelonighborsInClustelonr,
+                globalAvgWelonight,
+                globalAvgMelonmbelonrshipScorelon,
+                truelonPositivelonWtFactor,
+                updatelonMelonthod
               )
             )
 
-            writeNewKnownForExec.flatMap { _ =>
-              Util.getCustomCountersString(writeNewKnownForExec).flatMap { customCountersString =>
-                if (includeEvaluationResultsInEmail) {
-                  // It's unfortunate that we're not using the newKnownFor directly, but are instead
-                  // first writing it out and then reading it back in. The reason for doing it in this
-                  // convoluted way is that when we directly use the newKnownFor, the clusterEvaluation
-                  // metrics are being incorrectly computed.
+            writelonNelonwKnownForelonxelonc.flatMap { _ =>
+              Util.gelontCustomCountelonrsString(writelonNelonwKnownForelonxelonc).flatMap { customCountelonrsString =>
+                if (includelonelonvaluationRelonsultsInelonmail) {
+                  // It's unfortunatelon that welon'relon not using thelon nelonwKnownFor direlonctly, but arelon instelonad
+                  // first writing it out and thelonn relonading it back in. Thelon relonason for doing it in this
+                  // convolutelond way is that whelonn welon direlonctly uselon thelon nelonwKnownFor, thelon clustelonrelonvaluation
+                  // melontrics arelon beloning incorrelonctly computelond.
 
-                  val newKnownFor = readKnownForFunction
+                  val nelonwKnownFor = relonadKnownForFunction
 
-                  val newResultsExec =
-                    ClusterEvaluation
-                      .overallEvaluation(symmetrizedSims, newKnownFor, "newKnownForEval")
-                  val oldResultsExec =
-                    ClusterEvaluation
-                      .overallEvaluation(symmetrizedSims, inputKnownFor, "oldKnownForEval")
-                  val minSizeOfBiggerClusterForComparison = 10
-                  val compareExec = CompareClusters.summarize(
-                    CompareClusters.compare(
-                      KnownForSources.transpose(inputKnownFor),
-                      KnownForSources.transpose(newKnownFor),
-                      minSizeOfBiggerCluster = minSizeOfBiggerClusterForComparison
+                  val nelonwRelonsultselonxelonc =
+                    Clustelonrelonvaluation
+                      .ovelonrallelonvaluation(symmelontrizelondSims, nelonwKnownFor, "nelonwKnownForelonval")
+                  val oldRelonsultselonxelonc =
+                    Clustelonrelonvaluation
+                      .ovelonrallelonvaluation(symmelontrizelondSims, inputKnownFor, "oldKnownForelonval")
+                  val minSizelonOfBiggelonrClustelonrForComparison = 10
+                  val comparelonelonxelonc = ComparelonClustelonrs.summarizelon(
+                    ComparelonClustelonrs.comparelon(
+                      KnownForSourcelons.transposelon(inputKnownFor),
+                      KnownForSourcelons.transposelon(nelonwKnownFor),
+                      minSizelonOfBiggelonrClustelonr = minSizelonOfBiggelonrClustelonrForComparison
                     ))
 
-                  Execution
-                    .zip(oldResultsExec, newResultsExec, compareExec, previouslyFamousUsersExec)
+                  elonxeloncution
+                    .zip(oldRelonsultselonxelonc, nelonwRelonsultselonxelonc, comparelonelonxelonc, prelonviouslyFamousUselonrselonxelonc)
                     .map {
-                      case (oldResults, newResults, compareResults, previouslyFamousUsersString) =>
-                        val emailText = "Evaluation Results for existing knownFor:\n" +
-                          Util.prettyJsonMapper.writeValueAsString(oldResults) +
+                      caselon (oldRelonsults, nelonwRelonsults, comparelonRelonsults, prelonviouslyFamousUselonrsString) =>
+                        val elonmailTelonxt = "elonvaluation Relonsults for elonxisting knownFor:\n" +
+                          Util.prelonttyJsonMappelonr.writelonValuelonAsString(oldRelonsults) +
                           "\n\n-------------------\n\n" +
-                          "Evaluation Results for new knownFor:\n" +
-                          Util.prettyJsonMapper.writeValueAsString(newResults) +
+                          "elonvaluation Relonsults for nelonw knownFor:\n" +
+                          Util.prelonttyJsonMappelonr.writelonValuelonAsString(nelonwRelonsults) +
                           "\n\n-------------------\n\n" +
-                          s"Cosine similarity distribution between cluster membership vectors for " +
-                          s"clusters with at least $minSizeOfBiggerClusterForComparison members\n" +
-                          Util.prettyJsonMapper
-                            .writeValueAsString(compareResults) +
+                          s"Cosinelon similarity distribution belontwelonelonn clustelonr melonmbelonrship velonctors for " +
+                          s"clustelonrs with at lelonast $minSizelonOfBiggelonrClustelonrForComparison melonmbelonrs\n" +
+                          Util.prelonttyJsonMappelonr
+                            .writelonValuelonAsString(comparelonRelonsults) +
                           "\n\n-------------------\n\n" +
-                          "Custom counters:\n" + customCountersString +
+                          "Custom countelonrs:\n" + customCountelonrsString +
                           "\n\n-------------------\n\n" +
-                          previouslyFamousUsersString
+                          prelonviouslyFamousUselonrsString
 
                         Util
-                          .sendEmail(
-                            emailText,
-                            s"Evaluation results of new knownFor $modelVersion",
-                            emailAddress)
+                          .selonndelonmail(
+                            elonmailTelonxt,
+                            s"elonvaluation relonsults of nelonw knownFor $modelonlVelonrsion",
+                            elonmailAddrelonss)
                     }
-                } else {
+                } elonlselon {
                   Util
-                    .sendEmail(
-                      customCountersString,
-                      s"Change in cluster assignments for update of knownFor $modelVersion",
-                      emailAddress
+                    .selonndelonmail(
+                      customCountelonrsString,
+                      s"Changelon in clustelonr assignmelonnts for updatelon of knownFor $modelonlVelonrsion",
+                      elonmailAddrelonss
                     )
-                  Execution.unit
+                  elonxeloncution.unit
                 }
 
               }
@@ -311,66 +311,66 @@ object UpdateKnownForApps {
   }
 }
 
-trait UpdateKnownForBatch extends TwitterScheduledExecutionApp {
-  implicit val tz: java.util.TimeZone = DateOps.UTC
-  implicit val dp = DateParser.default
+trait UpdatelonKnownForBatch elonxtelonnds TwittelonrSchelondulelondelonxeloncutionApp {
+  implicit val tz: java.util.TimelonZonelon = DatelonOps.UTC
+  implicit val dp = DatelonParselonr.delonfault
 
-  def firstTime: String
+  delonf firstTimelon: String
 
-  val batchIncrement: Duration = Days(30)
+  val batchIncrelonmelonnt: Duration = Days(30)
 
-  def batchDescription: String
+  delonf batchDelonscription: String
 
-  private lazy val execArgs = AnalyticsBatchExecutionArgs(
-    batchDesc = BatchDescription(batchDescription),
-    firstTime = BatchFirstTime(RichDate(firstTime)),
-    lastTime = None,
-    batchIncrement = BatchIncrement(batchIncrement)
+  privatelon lazy val elonxeloncArgs = AnalyticsBatchelonxeloncutionArgs(
+    batchDelonsc = BatchDelonscription(batchDelonscription),
+    firstTimelon = BatchFirstTimelon(RichDatelon(firstTimelon)),
+    lastTimelon = Nonelon,
+    batchIncrelonmelonnt = BatchIncrelonmelonnt(batchIncrelonmelonnt)
   )
 
-  val emailAddress: String = "no-reply@twitter.com"
+  val elonmailAddrelonss: String = "no-relonply@twittelonr.com"
 
-  def inputDALDataset: KeyValDALDataset[KeyVal[Long, ClustersUserIsKnownFor]]
+  delonf inputDALDataselont: KelonyValDALDataselont[KelonyVal[Long, ClustelonrsUselonrIsKnownFor]]
 
-  def inputModelVersion: String
+  delonf inputModelonlVelonrsion: String
 
-  def outputModelVersion: String
+  delonf outputModelonlVelonrsion: String
 
-  def outputPath: String
+  delonf outputPath: String
 
-  def outputDALDataset: KeyValDALDataset[KeyVal[Long, ClustersUserIsKnownFor]]
+  delonf outputDALDataselont: KelonyValDALDataselont[KelonyVal[Long, ClustelonrsUselonrIsKnownFor]]
 
-  override def scheduledJob: Execution[Unit] =
-    AnalyticsBatchExecution(execArgs) { implicit dateRange =>
-      Execution.withId { implicit uniqueId =>
-        Execution.withArgs { args =>
+  ovelonrridelon delonf schelondulelondJob: elonxeloncution[Unit] =
+    AnalyticsBatchelonxeloncution(elonxeloncArgs) { implicit datelonRangelon =>
+      elonxeloncution.withId { implicit uniquelonId =>
+        elonxeloncution.withArgs { args =>
           val inputKnownFor =
-            KnownForSources.readDALDataset(inputDALDataset, Days(30), inputModelVersion)
+            KnownForSourcelons.relonadDALDataselont(inputDALDataselont, Days(30), inputModelonlVelonrsion)
 
-          val inputSimsGraph = TypedPipe
-            .from(FollowingsCosineSimilaritiesManhattanSource())
+          val inputSimsGraph = TypelondPipelon
+            .from(FollowingsCosinelonSimilaritielonsManhattanSourcelon())
             .map(_._2)
 
-          def writeKnownFor(knownFor: TypedPipe[(Long, Array[(Int, Float)])]): Execution[Unit] = {
-            KnownForSources
-              .toKeyVal(knownFor, outputModelVersion)
-              .writeDALVersionedKeyValExecution(
-                outputDALDataset,
+          delonf writelonKnownFor(knownFor: TypelondPipelon[(Long, Array[(Int, Float)])]): elonxeloncution[Unit] = {
+            KnownForSourcelons
+              .toKelonyVal(knownFor, outputModelonlVelonrsion)
+              .writelonDALVelonrsionelondKelonyValelonxeloncution(
+                outputDALDataselont,
                 D.Suffix(outputPath)
               )
           }
 
-          def readKnownFor =
-            KnownForSources.readDALDataset(outputDALDataset, Days(1), outputModelVersion)
+          delonf relonadKnownFor =
+            KnownForSourcelons.relonadDALDataselont(outputDALDataselont, Days(1), outputModelonlVelonrsion)
 
-          UpdateKnownForApps.runUpdateKnownForGeneric(
+          UpdatelonKnownForApps.runUpdatelonKnownForGelonnelonric(
             args,
             inputKnownFor,
             inputSimsGraph,
-            emailAddress,
-            writeKnownFor,
-            readKnownFor,
-            includeEvaluationResultsInEmail = false
+            elonmailAddrelonss,
+            writelonKnownFor,
+            relonadKnownFor,
+            includelonelonvaluationRelonsultsInelonmail = falselon
           )
         }
       }
@@ -378,65 +378,65 @@ trait UpdateKnownForBatch extends TwitterScheduledExecutionApp {
 }
 
 /**
-capesospy-v2 update --build_locally --start_cron update_known_for_20M_145k \
- src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc.yaml
+capelonsospy-v2 updatelon --build_locally --start_cron updatelon_known_for_20M_145k \
+ src/scala/com/twittelonr/simclustelonrs_v2/capelonsos_config/atla_proc.yaml
  */
-object UpdateKnownFor20M145K extends UpdateKnownForBatch {
-  override val firstTime: String = "2019-06-06"
+objelonct UpdatelonKnownFor20M145K elonxtelonnds UpdatelonKnownForBatch {
+  ovelonrridelon val firstTimelon: String = "2019-06-06"
 
-  override val batchIncrement: Duration = Days(7)
+  ovelonrridelon val batchIncrelonmelonnt: Duration = Days(7)
 
-  override val batchDescription: String =
-    "com.twitter.simclusters_v2.scalding.UpdateKnownFor20M145K"
+  ovelonrridelon val batchDelonscription: String =
+    "com.twittelonr.simclustelonrs_v2.scalding.UpdatelonKnownFor20M145K"
 
-  override val inputModelVersion: String = ModelVersions.Model20M145KUpdated
+  ovelonrridelon val inputModelonlVelonrsion: String = ModelonlVelonrsions.Modelonl20M145KUpdatelond
 
-  override val inputDALDataset: KeyValDALDataset[KeyVal[Long, ClustersUserIsKnownFor]] =
-    SimclustersV2RawKnownFor20M145KUpdatedScalaDataset
+  ovelonrridelon val inputDALDataselont: KelonyValDALDataselont[KelonyVal[Long, ClustelonrsUselonrIsKnownFor]] =
+    SimclustelonrsV2RawKnownFor20M145KUpdatelondScalaDataselont
 
-  override val outputModelVersion: String = ModelVersions.Model20M145KUpdated
+  ovelonrridelon val outputModelonlVelonrsion: String = ModelonlVelonrsions.Modelonl20M145KUpdatelond
 
-  override val outputDALDataset: KeyValDALDataset[KeyVal[Long, ClustersUserIsKnownFor]] =
-    SimclustersV2RawKnownFor20M145KUpdatedScalaDataset
+  ovelonrridelon val outputDALDataselont: KelonyValDALDataselont[KelonyVal[Long, ClustelonrsUselonrIsKnownFor]] =
+    SimclustelonrsV2RawKnownFor20M145KUpdatelondScalaDataselont
 
-  override val outputPath: String = InternalDataPaths.RawKnownForUpdatedPath
+  ovelonrridelon val outputPath: String = IntelonrnalDataPaths.RawKnownForUpdatelondPath
 }
 
-/** This one's end-to-end, doesn't save any intermediate data etc. **/
-object UpdateKnownForAdhoc extends TwitterExecutionApp {
-  implicit val tz: java.util.TimeZone = DateOps.UTC
-  implicit val dp = DateParser.default
+/** This onelon's elonnd-to-elonnd, doelonsn't savelon any intelonrmelondiatelon data elontc. **/
+objelonct UpdatelonKnownForAdhoc elonxtelonnds TwittelonrelonxeloncutionApp {
+  implicit val tz: java.util.TimelonZonelon = DatelonOps.UTC
+  implicit val dp = DatelonParselonr.delonfault
 
-  def job: Execution[Unit] =
-    Execution.getConfigMode.flatMap {
-      case (config, mode) =>
-        Execution.withId { implicit uniqueId =>
-          val args = config.getArgs
-          implicit val date: DateRange = DateRange.parse(args("date"))
-          val defaultEmailAddress = "your_ldap@twitter.com"
+  delonf job: elonxeloncution[Unit] =
+    elonxeloncution.gelontConfigModelon.flatMap {
+      caselon (config, modelon) =>
+        elonxeloncution.withId { implicit uniquelonId =>
+          val args = config.gelontArgs
+          implicit val datelon: DatelonRangelon = DatelonRangelon.parselon(args("datelon"))
+          val delonfaultelonmailAddrelonss = "your_ldap@twittelonr.com"
 
           val inputKnownFor = args.optional("inputKnownForDir") match {
-            case Some(inputKnownForDir) => KnownForSources.readKnownFor(inputKnownForDir)
-            case None => KnownForSources.knownFor_20M_Dec11_145K
+            caselon Somelon(inputKnownForDir) => KnownForSourcelons.relonadKnownFor(inputKnownForDir)
+            caselon Nonelon => KnownForSourcelons.knownFor_20M_Delonc11_145K
           }
 
-          val inputSimsGraph = TopUsersSimilarityGraph.readSimsInput(
-            args.boolean("simsInputIsKeyValSource"),
+          val inputSimsGraph = TopUselonrsSimilarityGraph.relonadSimsInput(
+            args.boolelonan("simsInputIsKelonyValSourcelon"),
             args("simsInputDir")
           )
 
-          def readKnownFor() = KnownForSources.readKnownFor(args("outputDir"))
+          delonf relonadKnownFor() = KnownForSourcelons.relonadKnownFor(args("outputDir"))
 
-          UpdateKnownForApps.runUpdateKnownForGeneric(
+          UpdatelonKnownForApps.runUpdatelonKnownForGelonnelonric(
             args,
             inputKnownFor,
             inputSimsGraph,
-            defaultEmailAddress,
-            { input: TypedPipe[(Long, Array[(Int, Float)])] =>
-              KnownForSources.writeKnownForTypedTsv(input, args("outputDir"))
+            delonfaultelonmailAddrelonss,
+            { input: TypelondPipelon[(Long, Array[(Int, Float)])] =>
+              KnownForSourcelons.writelonKnownForTypelondTsv(input, args("outputDir"))
             },
-            readKnownFor,
-            includeEvaluationResultsInEmail = true
+            relonadKnownFor,
+            includelonelonvaluationRelonsultsInelonmail = truelon
           )
         }
     }

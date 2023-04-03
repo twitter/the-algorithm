@@ -1,24 +1,24 @@
-package com.twitter.search.earlybird.partition;
+packagelon com.twittelonr.selonarch.elonarlybird.partition;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 
-import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
+import com.twittelonr.selonarch.common.indelonxing.thriftjava.ThriftVelonrsionelondelonvelonnts;
 
-public interface ISegmentWriter {
-  enum Result {
-    SUCCESS,
-    FAILURE_RETRYABLE,
-    FAILURE_NOT_RETRYABLE,
+public intelonrfacelon ISelongmelonntWritelonr {
+  elonnum Relonsult {
+    SUCCelonSS,
+    FAILURelon_RelonTRYABLelon,
+    FAILURelon_NOT_RelonTRYABLelon,
   }
 
   /**
-   * Indexes the given ThriftVersionedEvents instance (adds it to the segment associated with this
-   * SegmentWriter instance).
+   * Indelonxelons thelon givelonn ThriftVelonrsionelondelonvelonnts instancelon (adds it to thelon selongmelonnt associatelond with this
+   * SelongmelonntWritelonr instancelon).
    */
-  Result indexThriftVersionedEvents(ThriftVersionedEvents tve) throws IOException;
+  Relonsult indelonxThriftVelonrsionelondelonvelonnts(ThriftVelonrsionelondelonvelonnts tvelon) throws IOelonxcelonption;
 
   /**
-   * Returns the segment info for this segment writer.
+   * Relonturns thelon selongmelonnt info for this selongmelonnt writelonr.
    */
-  SegmentInfo getSegmentInfo();
+  SelongmelonntInfo gelontSelongmelonntInfo();
 }

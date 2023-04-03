@@ -1,348 +1,348 @@
-package com.twitter.search.earlybird.partition;
+packagelon com.twittelonr.selonarch.elonarlybird.partition;
 
-import java.io.IOException;
-import java.util.Iterator;
+import java.io.IOelonxcelonption;
+import java.util.Itelonrator;
 import java.util.List;
-import java.util.function.Supplier;
+import java.util.function.Supplielonr;
 
-import com.google.common.collect.Lists;
+import com.googlelon.common.collelonct.Lists;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.common.util.io.recordreader.RecordReader;
-import com.twitter.search.common.util.zktrylock.ZooKeeperTryLockFactory;
-import com.twitter.search.earlybird.EarlybirdStatus;
-import com.twitter.search.earlybird.common.config.EarlybirdProperty;
-import com.twitter.search.earlybird.document.TweetDocument;
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
-import com.twitter.search.earlybird.segment.SegmentDataProvider;
+import com.twittelonr.common.util.Clock;
+import com.twittelonr.selonarch.common.indelonxing.thriftjava.ThriftVelonrsionelondelonvelonnts;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdClustelonr;
+import com.twittelonr.selonarch.common.util.io.reloncordrelonadelonr.ReloncordRelonadelonr;
+import com.twittelonr.selonarch.common.util.zktrylock.ZooKelonelonpelonrTryLockFactory;
+import com.twittelonr.selonarch.elonarlybird.elonarlybirdStatus;
+import com.twittelonr.selonarch.elonarlybird.common.config.elonarlybirdPropelonrty;
+import com.twittelonr.selonarch.elonarlybird.documelonnt.TwelonelontDocumelonnt;
+import com.twittelonr.selonarch.elonarlybird.elonxcelonption.CriticalelonxcelonptionHandlelonr;
+import com.twittelonr.selonarch.elonarlybird.selongmelonnt.SelongmelonntDataProvidelonr;
 
 /**
- * CompleteSegmentManager is used to parallelize indexing of complete (not partial) segments
- * on startup.  It also populates the fields used by the PartitionManager.
+ * ComplelontelonSelongmelonntManagelonr is uselond to parallelonlizelon indelonxing of complelontelon (not partial) selongmelonnts
+ * on startup.  It also populatelons thelon fielonlds uselond by thelon PartitionManagelonr.
  */
-public class CompleteSegmentManager {
-  private static final Logger LOG = LoggerFactory.getLogger(CompleteSegmentManager.class);
+public class ComplelontelonSelongmelonntManagelonr {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(ComplelontelonSelongmelonntManagelonr.class);
 
-  private static final String INDEX_COMPLETED_SEGMENTS =
-      "indexing, optimizing and flushing complete segments";
-  private static final String LOAD_COMPLETED_SEGMENTS = "loading complete segments";
-  private static final String INDEX_UPDATES_FOR_COMPLETED_SEGMENTS =
-      "indexing updates for complete segments";
-  private static final String BUILD_MULTI_SEGMENT_TERM_DICT =
-      "build multi segment term dictionaries";
+  privatelon static final String INDelonX_COMPLelonTelonD_SelonGMelonNTS =
+      "indelonxing, optimizing and flushing complelontelon selongmelonnts";
+  privatelon static final String LOAD_COMPLelonTelonD_SelonGMelonNTS = "loading complelontelon selongmelonnts";
+  privatelon static final String INDelonX_UPDATelonS_FOR_COMPLelonTelonD_SelonGMelonNTS =
+      "indelonxing updatelons for complelontelon selongmelonnts";
+  privatelon static final String BUILD_MULTI_SelonGMelonNT_TelonRM_DICT =
+      "build multi selongmelonnt telonrm dictionarielons";
 
-  // Max number of segments being loaded / indexed concurrently.
-  private final int maxConcurrentSegmentIndexers =
-      EarlybirdProperty.MAX_CONCURRENT_SEGMENT_INDEXERS.get(3);
+  // Max numbelonr of selongmelonnts beloning loadelond / indelonxelond concurrelonntly.
+  privatelon final int maxConcurrelonntSelongmelonntIndelonxelonrs =
+      elonarlybirdPropelonrty.MAX_CONCURRelonNT_SelonGMelonNT_INDelonXelonRS.gelont(3);
 
-  // The state we are building.
-  protected final SegmentDataProvider segmentDataProvider;
-  private final InstrumentedQueue<ThriftVersionedEvents> retryQueue;
+  // Thelon statelon welon arelon building.
+  protelonctelond final SelongmelonntDataProvidelonr selongmelonntDataProvidelonr;
+  privatelon final InstrumelonntelondQuelonuelon<ThriftVelonrsionelondelonvelonnts> relontryQuelonuelon;
 
-  private final UserUpdatesStreamIndexer userUpdatesStreamIndexer;
-  private final UserScrubGeoEventStreamIndexer userScrubGeoEventStreamIndexer;
+  privatelon final UselonrUpdatelonsStrelonamIndelonxelonr uselonrUpdatelonsStrelonamIndelonxelonr;
+  privatelon final UselonrScrubGelonoelonvelonntStrelonamIndelonxelonr uselonrScrubGelonoelonvelonntStrelonamIndelonxelonr;
 
-  private final SegmentManager segmentManager;
-  private final ZooKeeperTryLockFactory zkTryLockFactory;
-  private final SearchIndexingMetricSet searchIndexingMetricSet;
-  private final Clock clock;
-  private MultiSegmentTermDictionaryManager multiSegmentTermDictionaryManager;
-  private final SegmentSyncConfig segmentSyncConfig;
+  privatelon final SelongmelonntManagelonr selongmelonntManagelonr;
+  privatelon final ZooKelonelonpelonrTryLockFactory zkTryLockFactory;
+  privatelon final SelonarchIndelonxingMelontricSelont selonarchIndelonxingMelontricSelont;
+  privatelon final Clock clock;
+  privatelon MultiSelongmelonntTelonrmDictionaryManagelonr multiSelongmelonntTelonrmDictionaryManagelonr;
+  privatelon final SelongmelonntSyncConfig selongmelonntSyncConfig;
 
-  private final CriticalExceptionHandler criticalExceptionHandler;
+  privatelon final CriticalelonxcelonptionHandlelonr criticalelonxcelonptionHandlelonr;
 
-  private boolean interrupted = false;
+  privatelon boolelonan intelonrruptelond = falselon;
 
-  public CompleteSegmentManager(
-      ZooKeeperTryLockFactory zooKeeperTryLockFactory,
-      SegmentDataProvider segmentDataProvider,
-      UserUpdatesStreamIndexer userUpdatesStreamIndexer,
-      UserScrubGeoEventStreamIndexer userScrubGeoEventStreamIndexer,
-      SegmentManager segmentManager,
-      InstrumentedQueue<ThriftVersionedEvents> retryQueue,
-      SearchIndexingMetricSet searchIndexingMetricSet,
+  public ComplelontelonSelongmelonntManagelonr(
+      ZooKelonelonpelonrTryLockFactory zooKelonelonpelonrTryLockFactory,
+      SelongmelonntDataProvidelonr selongmelonntDataProvidelonr,
+      UselonrUpdatelonsStrelonamIndelonxelonr uselonrUpdatelonsStrelonamIndelonxelonr,
+      UselonrScrubGelonoelonvelonntStrelonamIndelonxelonr uselonrScrubGelonoelonvelonntStrelonamIndelonxelonr,
+      SelongmelonntManagelonr selongmelonntManagelonr,
+      InstrumelonntelondQuelonuelon<ThriftVelonrsionelondelonvelonnts> relontryQuelonuelon,
+      SelonarchIndelonxingMelontricSelont selonarchIndelonxingMelontricSelont,
       Clock clock,
-      MultiSegmentTermDictionaryManager multiSegmentTermDictionaryManager,
-      SegmentSyncConfig segmentSyncConfig,
-      CriticalExceptionHandler criticalExceptionHandler) {
-    this.zkTryLockFactory = zooKeeperTryLockFactory;
-    this.segmentDataProvider = segmentDataProvider;
-    this.userUpdatesStreamIndexer = userUpdatesStreamIndexer;
-    this.userScrubGeoEventStreamIndexer = userScrubGeoEventStreamIndexer;
-    this.segmentManager = segmentManager;
-    this.searchIndexingMetricSet = searchIndexingMetricSet;
+      MultiSelongmelonntTelonrmDictionaryManagelonr multiSelongmelonntTelonrmDictionaryManagelonr,
+      SelongmelonntSyncConfig selongmelonntSyncConfig,
+      CriticalelonxcelonptionHandlelonr criticalelonxcelonptionHandlelonr) {
+    this.zkTryLockFactory = zooKelonelonpelonrTryLockFactory;
+    this.selongmelonntDataProvidelonr = selongmelonntDataProvidelonr;
+    this.uselonrUpdatelonsStrelonamIndelonxelonr = uselonrUpdatelonsStrelonamIndelonxelonr;
+    this.uselonrScrubGelonoelonvelonntStrelonamIndelonxelonr = uselonrScrubGelonoelonvelonntStrelonamIndelonxelonr;
+    this.selongmelonntManagelonr = selongmelonntManagelonr;
+    this.selonarchIndelonxingMelontricSelont = selonarchIndelonxingMelontricSelont;
     this.clock = clock;
-    this.multiSegmentTermDictionaryManager = multiSegmentTermDictionaryManager;
-    this.segmentSyncConfig = segmentSyncConfig;
-    this.retryQueue = retryQueue;
-    this.criticalExceptionHandler = criticalExceptionHandler;
+    this.multiSelongmelonntTelonrmDictionaryManagelonr = multiSelongmelonntTelonrmDictionaryManagelonr;
+    this.selongmelonntSyncConfig = selongmelonntSyncConfig;
+    this.relontryQuelonuelon = relontryQuelonuelon;
+    this.criticalelonxcelonptionHandlelonr = criticalelonxcelonptionHandlelonr;
   }
 
   /**
-   * Indexes all user events.
+   * Indelonxelons all uselonr elonvelonnts.
    */
-  public void indexUserEvents() {
-    LOG.info("Loading/indexing user events.");
-    StartupUserEventIndexer startupUserEventIndexer = new StartupUserEventIndexer(
-        searchIndexingMetricSet,
-        userUpdatesStreamIndexer,
-        userScrubGeoEventStreamIndexer,
-        segmentManager,
+  public void indelonxUselonrelonvelonnts() {
+    LOG.info("Loading/indelonxing uselonr elonvelonnts.");
+    StartupUselonrelonvelonntIndelonxelonr startupUselonrelonvelonntIndelonxelonr = nelonw StartupUselonrelonvelonntIndelonxelonr(
+        selonarchIndelonxingMelontricSelont,
+        uselonrUpdatelonsStrelonamIndelonxelonr,
+        uselonrScrubGelonoelonvelonntStrelonamIndelonxelonr,
+        selongmelonntManagelonr,
         clock
     );
 
-    startupUserEventIndexer.indexAllEvents();
-    LOG.info("Finished loading/indexing user events.");
+    startupUselonrelonvelonntIndelonxelonr.indelonxAllelonvelonnts();
+    LOG.info("Finishelond loading/indelonxing uselonr elonvelonnts.");
   }
 
   /**
-   * Loads or indexes from scratch all complete segments.
+   * Loads or indelonxelons from scratch all complelontelon selongmelonnts.
    *
-   * @param segmentsToIndexProvider A supplier that provides the list of all complete segments.
+   * @param selongmelonntsToIndelonxProvidelonr A supplielonr that providelons thelon list of all complelontelon selongmelonnts.
    */
-  public void indexCompleteSegments(
-      Supplier<Iterable<SegmentInfo>> segmentsToIndexProvider) throws Exception {
-    List<Thread> segmentIndexers = Lists.newArrayList();
+  public void indelonxComplelontelonSelongmelonnts(
+      Supplielonr<Itelonrablelon<SelongmelonntInfo>> selongmelonntsToIndelonxProvidelonr) throws elonxcelonption {
+    List<Threlonad> selongmelonntIndelonxelonrs = Lists.nelonwArrayList();
 
-    EarlybirdStatus.beginEvent(
-        INDEX_COMPLETED_SEGMENTS, searchIndexingMetricSet.startupInIndexCompletedSegments);
-    while (!interrupted && !Thread.currentThread().isInterrupted()) {
+    elonarlybirdStatus.belonginelonvelonnt(
+        INDelonX_COMPLelonTelonD_SelonGMelonNTS, selonarchIndelonxingMelontricSelont.startupInIndelonxComplelontelondSelongmelonnts);
+    whilelon (!intelonrruptelond && !Threlonad.currelonntThrelonad().isIntelonrruptelond()) {
       try {
-        // Get the refreshed list of local segment databases.
-        segmentManager.updateSegments(segmentDataProvider.newSegmentList());
-        Iterator<SegmentInfo> segmentsToIndex = segmentsToIndexProvider.get().iterator();
+        // Gelont thelon relonfrelonshelond list of local selongmelonnt databaselons.
+        selongmelonntManagelonr.updatelonSelongmelonnts(selongmelonntDataProvidelonr.nelonwSelongmelonntList());
+        Itelonrator<SelongmelonntInfo> selongmelonntsToIndelonx = selongmelonntsToIndelonxProvidelonr.gelont().itelonrator();
 
-        // Start up to max concurrent segment indexers.
-        segmentIndexers.clear();
-        while (segmentsToIndex.hasNext() && segmentIndexers.size() < maxConcurrentSegmentIndexers) {
-          SegmentInfo nextSegment = segmentsToIndex.next();
-          if (!nextSegment.isComplete()) {
-            Thread thread = new Thread(new SingleSegmentIndexer(nextSegment),
-                                       "startup-segment-indexer-" + nextSegment.getSegmentName());
-            thread.start();
-            segmentIndexers.add(thread);
+        // Start up to max concurrelonnt selongmelonnt indelonxelonrs.
+        selongmelonntIndelonxelonrs.clelonar();
+        whilelon (selongmelonntsToIndelonx.hasNelonxt() && selongmelonntIndelonxelonrs.sizelon() < maxConcurrelonntSelongmelonntIndelonxelonrs) {
+          SelongmelonntInfo nelonxtSelongmelonnt = selongmelonntsToIndelonx.nelonxt();
+          if (!nelonxtSelongmelonnt.isComplelontelon()) {
+            Threlonad threlonad = nelonw Threlonad(nelonw SinglelonSelongmelonntIndelonxelonr(nelonxtSelongmelonnt),
+                                       "startup-selongmelonnt-indelonxelonr-" + nelonxtSelongmelonnt.gelontSelongmelonntNamelon());
+            threlonad.start();
+            selongmelonntIndelonxelonrs.add(threlonad);
           }
         }
 
-        // No remaining indexer threads, we're done.
-        if (segmentIndexers.size() == 0) {
-          LOG.info("Finished indexing complete segments");
-          EarlybirdStatus.endEvent(
-              INDEX_COMPLETED_SEGMENTS, searchIndexingMetricSet.startupInIndexCompletedSegments);
-          break;
+        // No relonmaining indelonxelonr threlonads, welon'relon donelon.
+        if (selongmelonntIndelonxelonrs.sizelon() == 0) {
+          LOG.info("Finishelond indelonxing complelontelon selongmelonnts");
+          elonarlybirdStatus.elonndelonvelonnt(
+              INDelonX_COMPLelonTelonD_SelonGMelonNTS, selonarchIndelonxingMelontricSelont.startupInIndelonxComplelontelondSelongmelonnts);
+          brelonak;
         }
 
-        // Wait for threads to complete fully.
-        LOG.info("Started {} indexing threads", segmentIndexers.size());
-        for (Thread thread : segmentIndexers) {
-          thread.join();
+        // Wait for threlonads to complelontelon fully.
+        LOG.info("Startelond {} indelonxing threlonads", selongmelonntIndelonxelonrs.sizelon());
+        for (Threlonad threlonad : selongmelonntIndelonxelonrs) {
+          threlonad.join();
         }
-        LOG.info("Joined all {} indexing threads", segmentIndexers.size());
-      } catch (IOException e) {
-        LOG.error("IOException in SegmentStartupManager loop", e);
-      } catch (InterruptedException e) {
-        interrupted = true;
-        LOG.error("Interrupted joining segment indexer thread", e);
+        LOG.info("Joinelond all {} indelonxing threlonads", selongmelonntIndelonxelonrs.sizelon());
+      } catch (IOelonxcelonption elon) {
+        LOG.elonrror("IOelonxcelonption in SelongmelonntStartupManagelonr loop", elon);
+      } catch (Intelonrruptelondelonxcelonption elon) {
+        intelonrruptelond = truelon;
+        LOG.elonrror("Intelonrruptelond joining selongmelonnt indelonxelonr threlonad", elon);
       }
     }
   }
 
   /**
-   * Loads all given complete segments.
+   * Loads all givelonn complelontelon selongmelonnts.
    *
-   * @param completeSegments The list of all complete segments to be loaded.
+   * @param complelontelonSelongmelonnts Thelon list of all complelontelon selongmelonnts to belon loadelond.
    */
-  public void loadCompleteSegments(List<SegmentInfo> completeSegments) throws Exception {
-    if (!interrupted && !Thread.currentThread().isInterrupted()) {
-      LOG.info("Starting to load {} complete segments.", completeSegments.size());
-      EarlybirdStatus.beginEvent(
-          LOAD_COMPLETED_SEGMENTS, searchIndexingMetricSet.startupInLoadCompletedSegments);
+  public void loadComplelontelonSelongmelonnts(List<SelongmelonntInfo> complelontelonSelongmelonnts) throws elonxcelonption {
+    if (!intelonrruptelond && !Threlonad.currelonntThrelonad().isIntelonrruptelond()) {
+      LOG.info("Starting to load {} complelontelon selongmelonnts.", complelontelonSelongmelonnts.sizelon());
+      elonarlybirdStatus.belonginelonvelonnt(
+          LOAD_COMPLelonTelonD_SelonGMelonNTS, selonarchIndelonxingMelontricSelont.startupInLoadComplelontelondSelongmelonnts);
 
-      List<Thread> segmentThreads = Lists.newArrayList();
-      List<SegmentInfo> segmentsToBeLoaded = Lists.newArrayList();
-      for (SegmentInfo segmentInfo : completeSegments) {
-        if (segmentInfo.isEnabled()) {
-          segmentsToBeLoaded.add(segmentInfo);
-          Thread segmentLoaderThread = new Thread(
-              () -> new SegmentLoader(segmentSyncConfig, criticalExceptionHandler)
-                  .load(segmentInfo),
-              "startup-segment-loader-" + segmentInfo.getSegmentName());
-          segmentThreads.add(segmentLoaderThread);
-          segmentLoaderThread.start();
-        } else {
-          LOG.info("Will not load segment {} because it's disabled.", segmentInfo.getSegmentName());
+      List<Threlonad> selongmelonntThrelonads = Lists.nelonwArrayList();
+      List<SelongmelonntInfo> selongmelonntsToBelonLoadelond = Lists.nelonwArrayList();
+      for (SelongmelonntInfo selongmelonntInfo : complelontelonSelongmelonnts) {
+        if (selongmelonntInfo.iselonnablelond()) {
+          selongmelonntsToBelonLoadelond.add(selongmelonntInfo);
+          Threlonad selongmelonntLoadelonrThrelonad = nelonw Threlonad(
+              () -> nelonw SelongmelonntLoadelonr(selongmelonntSyncConfig, criticalelonxcelonptionHandlelonr)
+                  .load(selongmelonntInfo),
+              "startup-selongmelonnt-loadelonr-" + selongmelonntInfo.gelontSelongmelonntNamelon());
+          selongmelonntThrelonads.add(selongmelonntLoadelonrThrelonad);
+          selongmelonntLoadelonrThrelonad.start();
+        } elonlselon {
+          LOG.info("Will not load selongmelonnt {} beloncauselon it's disablelond.", selongmelonntInfo.gelontSelongmelonntNamelon());
         }
       }
 
-      for (Thread segmentLoaderThread : segmentThreads) {
-        segmentLoaderThread.join();
+      for (Threlonad selongmelonntLoadelonrThrelonad : selongmelonntThrelonads) {
+        selongmelonntLoadelonrThrelonad.join();
       }
 
-      for (SegmentInfo segmentInfo : segmentsToBeLoaded) {
-        if (!segmentInfo.getSyncInfo().isLoaded()) {
-          // Throw an exception if a segment could not be loaded: We do not want earlybirds to
-          // startup with missing segments.
-          throw new RuntimeException("Could not load segment " + segmentInfo.getSegmentName());
+      for (SelongmelonntInfo selongmelonntInfo : selongmelonntsToBelonLoadelond) {
+        if (!selongmelonntInfo.gelontSyncInfo().isLoadelond()) {
+          // Throw an elonxcelonption if a selongmelonnt could not belon loadelond: Welon do not want elonarlybirds to
+          // startup with missing selongmelonnts.
+          throw nelonw Runtimelonelonxcelonption("Could not load selongmelonnt " + selongmelonntInfo.gelontSelongmelonntNamelon());
         }
       }
 
-      LOG.info("Loaded all complete segments, starting indexing all updates.");
-      EarlybirdStatus.beginEvent(
-          INDEX_UPDATES_FOR_COMPLETED_SEGMENTS,
-          searchIndexingMetricSet.startupInIndexUpdatesForCompletedSegments);
+      LOG.info("Loadelond all complelontelon selongmelonnts, starting indelonxing all updatelons.");
+      elonarlybirdStatus.belonginelonvelonnt(
+          INDelonX_UPDATelonS_FOR_COMPLelonTelonD_SelonGMelonNTS,
+          selonarchIndelonxingMelontricSelont.startupInIndelonxUpdatelonsForComplelontelondSelongmelonnts);
 
-      // Index all updates for all complete segments until we're fully caught up.
-      if (!EarlybirdCluster.isArchive(segmentManager.getEarlybirdIndexConfig().getCluster())) {
-        segmentThreads.clear();
-        for (SegmentInfo segmentInfo : completeSegments) {
-          if (segmentInfo.isEnabled()) {
-            Thread segmentUpdatesThread = new Thread(
-                () -> new SimpleUpdateIndexer(
-                    segmentDataProvider.getSegmentDataReaderSet(),
-                    searchIndexingMetricSet,
-                    retryQueue,
-                    criticalExceptionHandler).indexAllUpdates(segmentInfo),
-                "startup-complete-segment-update-indexer-" + segmentInfo.getSegmentName());
-            segmentThreads.add(segmentUpdatesThread);
-            segmentUpdatesThread.start();
-          } else {
-            LOG.info("Will not index updates for segment {} because it's disabled.",
-                     segmentInfo.getSegmentName());
+      // Indelonx all updatelons for all complelontelon selongmelonnts until welon'relon fully caught up.
+      if (!elonarlybirdClustelonr.isArchivelon(selongmelonntManagelonr.gelontelonarlybirdIndelonxConfig().gelontClustelonr())) {
+        selongmelonntThrelonads.clelonar();
+        for (SelongmelonntInfo selongmelonntInfo : complelontelonSelongmelonnts) {
+          if (selongmelonntInfo.iselonnablelond()) {
+            Threlonad selongmelonntUpdatelonsThrelonad = nelonw Threlonad(
+                () -> nelonw SimplelonUpdatelonIndelonxelonr(
+                    selongmelonntDataProvidelonr.gelontSelongmelonntDataRelonadelonrSelont(),
+                    selonarchIndelonxingMelontricSelont,
+                    relontryQuelonuelon,
+                    criticalelonxcelonptionHandlelonr).indelonxAllUpdatelons(selongmelonntInfo),
+                "startup-complelontelon-selongmelonnt-updatelon-indelonxelonr-" + selongmelonntInfo.gelontSelongmelonntNamelon());
+            selongmelonntThrelonads.add(selongmelonntUpdatelonsThrelonad);
+            selongmelonntUpdatelonsThrelonad.start();
+          } elonlselon {
+            LOG.info("Will not indelonx updatelons for selongmelonnt {} beloncauselon it's disablelond.",
+                     selongmelonntInfo.gelontSelongmelonntNamelon());
           }
         }
 
-        for (Thread segmentUpdatesThread : segmentThreads) {
-          segmentUpdatesThread.join();
+        for (Threlonad selongmelonntUpdatelonsThrelonad : selongmelonntThrelonads) {
+          selongmelonntUpdatelonsThrelonad.join();
         }
       }
-      LOG.info("Indexed updates for all complete segments.");
-      EarlybirdStatus.endEvent(
-          INDEX_UPDATES_FOR_COMPLETED_SEGMENTS,
-          searchIndexingMetricSet.startupInIndexUpdatesForCompletedSegments);
+      LOG.info("Indelonxelond updatelons for all complelontelon selongmelonnts.");
+      elonarlybirdStatus.elonndelonvelonnt(
+          INDelonX_UPDATelonS_FOR_COMPLelonTelonD_SelonGMelonNTS,
+          selonarchIndelonxingMelontricSelont.startupInIndelonxUpdatelonsForComplelontelondSelongmelonnts);
 
-      EarlybirdStatus.endEvent(
-          LOAD_COMPLETED_SEGMENTS, searchIndexingMetricSet.startupInLoadCompletedSegments);
+      elonarlybirdStatus.elonndelonvelonnt(
+          LOAD_COMPLelonTelonD_SelonGMelonNTS, selonarchIndelonxingMelontricSelont.startupInLoadComplelontelondSelongmelonnts);
     }
   }
 
   /**
-   * Builds the term dictionary that spans all earlybird segments. Some fields share the term
-   * dictionary across segments as an optimization.
+   * Builds thelon telonrm dictionary that spans all elonarlybird selongmelonnts. Somelon fielonlds sharelon thelon telonrm
+   * dictionary across selongmelonnts as an optimization.
    */
-  public void buildMultiSegmentTermDictionary() {
-    EarlybirdStatus.beginEvent(
-        BUILD_MULTI_SEGMENT_TERM_DICT,
-        searchIndexingMetricSet.startupInMultiSegmentTermDictionaryUpdates);
-    if (!interrupted && !Thread.currentThread().isInterrupted()) {
-      LOG.info("Building multi segment term dictionaries.");
-      boolean built = multiSegmentTermDictionaryManager.buildDictionary();
-      LOG.info("Done building multi segment term dictionaries, result: {}", built);
+  public void buildMultiSelongmelonntTelonrmDictionary() {
+    elonarlybirdStatus.belonginelonvelonnt(
+        BUILD_MULTI_SelonGMelonNT_TelonRM_DICT,
+        selonarchIndelonxingMelontricSelont.startupInMultiSelongmelonntTelonrmDictionaryUpdatelons);
+    if (!intelonrruptelond && !Threlonad.currelonntThrelonad().isIntelonrruptelond()) {
+      LOG.info("Building multi selongmelonnt telonrm dictionarielons.");
+      boolelonan built = multiSelongmelonntTelonrmDictionaryManagelonr.buildDictionary();
+      LOG.info("Donelon building multi selongmelonnt telonrm dictionarielons, relonsult: {}", built);
     }
-    EarlybirdStatus.endEvent(
-        BUILD_MULTI_SEGMENT_TERM_DICT,
-        searchIndexingMetricSet.startupInMultiSegmentTermDictionaryUpdates);
+    elonarlybirdStatus.elonndelonvelonnt(
+        BUILD_MULTI_SelonGMelonNT_TelonRM_DICT,
+        selonarchIndelonxingMelontricSelont.startupInMultiSelongmelonntTelonrmDictionaryUpdatelons);
   }
 
   /**
-   * Warms up the data in the given segments. The warm up will usually make sure that all necessary
-   * is loaded in RAM and all relevant data structures are created before the segments starts
-   * serving real requests.
+   * Warms up thelon data in thelon givelonn selongmelonnts. Thelon warm up will usually makelon surelon that all neloncelonssary
+   * is loadelond in RAM and all relonlelonvant data structurelons arelon crelonatelond belonforelon thelon selongmelonnts starts
+   * selonrving relonal relonquelonsts.
    *
-   * @param segments The list of segments to warm up.
+   * @param selongmelonnts Thelon list of selongmelonnts to warm up.
    */
-  public final void warmSegments(Iterable<SegmentInfo> segments) throws InterruptedException {
-    int threadId = 1;
-    Iterator<SegmentInfo> it = segments.iterator();
+  public final void warmSelongmelonnts(Itelonrablelon<SelongmelonntInfo> selongmelonnts) throws Intelonrruptelondelonxcelonption {
+    int threlonadId = 1;
+    Itelonrator<SelongmelonntInfo> it = selongmelonnts.itelonrator();
 
     try {
-      List<Thread> segmentWarmers = Lists.newLinkedList();
-      while (it.hasNext()) {
+      List<Threlonad> selongmelonntWarmelonrs = Lists.nelonwLinkelondList();
+      whilelon (it.hasNelonxt()) {
 
-        segmentWarmers.clear();
-        while (it.hasNext() && segmentWarmers.size() < maxConcurrentSegmentIndexers) {
-          final SegmentInfo segment = it.next();
-          Thread t = new Thread(() ->
-            new SegmentWarmer(criticalExceptionHandler).warmSegmentIfNecessary(segment),
-              "startup-warmer-" + threadId++);
+        selongmelonntWarmelonrs.clelonar();
+        whilelon (it.hasNelonxt() && selongmelonntWarmelonrs.sizelon() < maxConcurrelonntSelongmelonntIndelonxelonrs) {
+          final SelongmelonntInfo selongmelonnt = it.nelonxt();
+          Threlonad t = nelonw Threlonad(() ->
+            nelonw SelongmelonntWarmelonr(criticalelonxcelonptionHandlelonr).warmSelongmelonntIfNeloncelonssary(selongmelonnt),
+              "startup-warmelonr-" + threlonadId++);
 
           t.start();
-          segmentWarmers.add(t);
+          selongmelonntWarmelonrs.add(t);
         }
 
-        for (Thread t : segmentWarmers) {
+        for (Threlonad t : selongmelonntWarmelonrs) {
           t.join();
         }
       }
-    } catch (InterruptedException e) {
-      LOG.error("Interrupted segment warmer thread", e);
-      Thread.currentThread().interrupt();
-      throw e;
+    } catch (Intelonrruptelondelonxcelonption elon) {
+      LOG.elonrror("Intelonrruptelond selongmelonnt warmelonr threlonad", elon);
+      Threlonad.currelonntThrelonad().intelonrrupt();
+      throw elon;
     }
   }
 
   /**
-   * Indexes a complete segment.
+   * Indelonxelons a complelontelon selongmelonnt.
    */
-  private class SingleSegmentIndexer implements Runnable {
-    private final SegmentInfo segmentInfo;
+  privatelon class SinglelonSelongmelonntIndelonxelonr implelonmelonnts Runnablelon {
+    privatelon final SelongmelonntInfo selongmelonntInfo;
 
-    public SingleSegmentIndexer(SegmentInfo segmentInfo) {
-      this.segmentInfo = segmentInfo;
+    public SinglelonSelongmelonntIndelonxelonr(SelongmelonntInfo selongmelonntInfo) {
+      this.selongmelonntInfo = selongmelonntInfo;
     }
 
-    @Override
+    @Ovelonrridelon
     public void run() {
-      // 0) Check if the segment can be loaded. This might copy the segment from HDFS.
-      if (new SegmentLoader(segmentSyncConfig, criticalExceptionHandler)
-          .downloadSegment(segmentInfo)) {
-        LOG.info("Will not index segment {} because it was downloaded from HDFS.",
-                 segmentInfo.getSegmentName());
-        segmentInfo.setComplete(true);
-        return;
+      // 0) Chelonck if thelon selongmelonnt can belon loadelond. This might copy thelon selongmelonnt from HDFS.
+      if (nelonw SelongmelonntLoadelonr(selongmelonntSyncConfig, criticalelonxcelonptionHandlelonr)
+          .downloadSelongmelonnt(selongmelonntInfo)) {
+        LOG.info("Will not indelonx selongmelonnt {} beloncauselon it was downloadelond from HDFS.",
+                 selongmelonntInfo.gelontSelongmelonntNamelon());
+        selongmelonntInfo.selontComplelontelon(truelon);
+        relonturn;
       }
 
-      LOG.info("SingleSegmentIndexer starting for segment: " + segmentInfo);
+      LOG.info("SinglelonSelongmelonntIndelonxelonr starting for selongmelonnt: " + selongmelonntInfo);
 
-      // 1) Index all tweets in this segment.
-      RecordReader<TweetDocument> tweetReader;
+      // 1) Indelonx all twelonelonts in this selongmelonnt.
+      ReloncordRelonadelonr<TwelonelontDocumelonnt> twelonelontRelonadelonr;
       try {
-        tweetReader = segmentDataProvider.getSegmentDataReaderSet().newDocumentReader(segmentInfo);
-        if (tweetReader != null) {
-          tweetReader.setExhaustStream(true);
+        twelonelontRelonadelonr = selongmelonntDataProvidelonr.gelontSelongmelonntDataRelonadelonrSelont().nelonwDocumelonntRelonadelonr(selongmelonntInfo);
+        if (twelonelontRelonadelonr != null) {
+          twelonelontRelonadelonr.selontelonxhaustStrelonam(truelon);
         }
-      } catch (Exception e) {
-        throw new RuntimeException("Could not create tweet reader for segment: " + segmentInfo, e);
+      } catch (elonxcelonption elon) {
+        throw nelonw Runtimelonelonxcelonption("Could not crelonatelon twelonelont relonadelonr for selongmelonnt: " + selongmelonntInfo, elon);
       }
 
-      new SimpleSegmentIndexer(tweetReader, searchIndexingMetricSet).indexSegment(segmentInfo);
+      nelonw SimplelonSelongmelonntIndelonxelonr(twelonelontRelonadelonr, selonarchIndelonxingMelontricSelont).indelonxSelongmelonnt(selongmelonntInfo);
 
-      if (!segmentInfo.isComplete() || segmentInfo.isIndexing()) {
-        throw new RuntimeException("Segment does not appear to be complete: " + segmentInfo);
+      if (!selongmelonntInfo.isComplelontelon() || selongmelonntInfo.isIndelonxing()) {
+        throw nelonw Runtimelonelonxcelonption("Selongmelonnt doelons not appelonar to belon complelontelon: " + selongmelonntInfo);
       }
 
-      // 2) Index all updates in this segment (archive earlybirds don't have updates).
-      if (!EarlybirdCluster.isArchive(segmentManager.getEarlybirdIndexConfig().getCluster())) {
-        new SimpleUpdateIndexer(
-            segmentDataProvider.getSegmentDataReaderSet(),
-            searchIndexingMetricSet,
-            retryQueue,
-            criticalExceptionHandler).indexAllUpdates(segmentInfo);
+      // 2) Indelonx all updatelons in this selongmelonnt (archivelon elonarlybirds don't havelon updatelons).
+      if (!elonarlybirdClustelonr.isArchivelon(selongmelonntManagelonr.gelontelonarlybirdIndelonxConfig().gelontClustelonr())) {
+        nelonw SimplelonUpdatelonIndelonxelonr(
+            selongmelonntDataProvidelonr.gelontSelongmelonntDataRelonadelonrSelont(),
+            selonarchIndelonxingMelontricSelont,
+            relontryQuelonuelon,
+            criticalelonxcelonptionHandlelonr).indelonxAllUpdatelons(selongmelonntInfo);
       }
 
-      // 3) Optimize the segment.
-      SegmentOptimizer.optimize(segmentInfo);
+      // 3) Optimizelon thelon selongmelonnt.
+      SelongmelonntOptimizelonr.optimizelon(selongmelonntInfo);
 
-      // 4) Flush to HDFS if necessary.
-      new SegmentHdfsFlusher(zkTryLockFactory, segmentSyncConfig)
-          .flushSegmentToDiskAndHDFS(segmentInfo);
+      // 4) Flush to HDFS if neloncelonssary.
+      nelonw SelongmelonntHdfsFlushelonr(zkTryLockFactory, selongmelonntSyncConfig)
+          .flushSelongmelonntToDiskAndHDFS(selongmelonntInfo);
 
-      // 5) Unload the segment from memory.
-      segmentInfo.getIndexSegment().close();
+      // 5) Unload thelon selongmelonnt from melonmory.
+      selongmelonntInfo.gelontIndelonxSelongmelonnt().closelon();
     }
   }
 

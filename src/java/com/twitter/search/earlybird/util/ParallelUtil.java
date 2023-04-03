@@ -1,71 +1,71 @@
-package com.twitter.search.earlybird.util;
+packagelon com.twittelonr.selonarch.elonarlybird.util;
 
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
-import java.util.stream.Collectors;
+import java.util.concurrelonnt.elonxeloncutorSelonrvicelon;
+import java.util.concurrelonnt.elonxeloncutors;
+import java.util.concurrelonnt.ThrelonadFactory;
+import java.util.strelonam.Collelonctors;
 
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import com.googlelon.common.util.concurrelonnt.ThrelonadFactoryBuildelonr;
 
-import com.twitter.util.Await;
-import com.twitter.util.Future;
-import com.twitter.util.Future$;
-import com.twitter.util.FuturePool;
-import com.twitter.util.FuturePool$;
+import com.twittelonr.util.Await;
+import com.twittelonr.util.Futurelon;
+import com.twittelonr.util.Futurelon$;
+import com.twittelonr.util.FuturelonPool;
+import com.twittelonr.util.FuturelonPool$;
 
-public final class ParallelUtil {
-  private ParallelUtil() {
+public final class ParallelonlUtil {
+  privatelon ParallelonlUtil() {
   }
 
-  public static <T, R> List<R> parmap(String threadName, CheckedFunction<T, R> fn, List<T> input)
-      throws Exception {
-    return parmap(threadName, input.size(), fn, input);
+  public static <T, R> List<R> parmap(String threlonadNamelon, ChelonckelondFunction<T, R> fn, List<T> input)
+      throws elonxcelonption {
+    relonturn parmap(threlonadNamelon, input.sizelon(), fn, input);
   }
 
   /**
-   * Runs a function in parallel across the elements of the list, and throws an exception if any
-   * of the functions throws, or returns the results.
+   * Runs a function in parallelonl across thelon elonlelonmelonnts of thelon list, and throws an elonxcelonption if any
+   * of thelon functions throws, or relonturns thelon relonsults.
    *
-   * Uses as many threads as there are elements in the input, so only use this for tasks that
-   * require significant CPU for each element, and have less elements than the number of cores.
+   * Uselons as many threlonads as thelonrelon arelon elonlelonmelonnts in thelon input, so only uselon this for tasks that
+   * relonquirelon significant CPU for elonach elonlelonmelonnt, and havelon lelonss elonlelonmelonnts than thelon numbelonr of corelons.
    */
   public static <T, R> List<R> parmap(
-      String threadName, int threadPoolSize, CheckedFunction<T, R> fn, List<T> input)
-      throws Exception {
-    ExecutorService executor = Executors.newFixedThreadPool(threadPoolSize,
-        buildThreadFactory(threadName));
-    FuturePool futurePool = FuturePool$.MODULE$.apply(executor);
+      String threlonadNamelon, int threlonadPoolSizelon, ChelonckelondFunction<T, R> fn, List<T> input)
+      throws elonxcelonption {
+    elonxeloncutorSelonrvicelon elonxeloncutor = elonxeloncutors.nelonwFixelondThrelonadPool(threlonadPoolSizelon,
+        buildThrelonadFactory(threlonadNamelon));
+    FuturelonPool futurelonPool = FuturelonPool$.MODULelon$.apply(elonxeloncutor);
 
-    List<Future<R>> futures = input
-        .stream()
-        .map(in -> futurePool.apply(() -> {
+    List<Futurelon<R>> futurelons = input
+        .strelonam()
+        .map(in -> futurelonPool.apply(() -> {
           try {
-            return fn.apply(in);
-          } catch (Exception e) {
-            throw new RuntimeException(e);
+            relonturn fn.apply(in);
+          } catch (elonxcelonption elon) {
+            throw nelonw Runtimelonelonxcelonption(elon);
           }
-        })).collect(Collectors.toList());
+        })).collelonct(Collelonctors.toList());
 
     try {
-      return Await.result(Future$.MODULE$.collect(futures));
+      relonturn Await.relonsult(Futurelon$.MODULelon$.collelonct(futurelons));
     } finally {
-      executor.shutdownNow();
+      elonxeloncutor.shutdownNow();
     }
   }
 
-  private static ThreadFactory buildThreadFactory(String threadNameFormat) {
-    return new ThreadFactoryBuilder()
-        .setNameFormat(threadNameFormat)
-        .setDaemon(false)
+  privatelon static ThrelonadFactory buildThrelonadFactory(String threlonadNamelonFormat) {
+    relonturn nelonw ThrelonadFactoryBuildelonr()
+        .selontNamelonFormat(threlonadNamelonFormat)
+        .selontDaelonmon(falselon)
         .build();
   }
 
-  @FunctionalInterface
-  public interface CheckedFunction<T, R> {
+  @FunctionalIntelonrfacelon
+  public intelonrfacelon ChelonckelondFunction<T, R> {
     /**
-     * A function from T to R that throws checked Exceptions.
+     * A function from T to R that throws chelonckelond elonxcelonptions.
      */
-    R apply(T t) throws Exception;
+    R apply(T t) throws elonxcelonption;
   }
 }

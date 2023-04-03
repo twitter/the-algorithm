@@ -1,48 +1,48 @@
-package com.twitter.home_mixer.functional_component.scorer
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.scorelonr
 
-import com.twitter.home_mixer.model.HomeFeatures.InNetworkFeature
-import com.twitter.home_mixer.model.HomeFeatures.IsRetweetFeature
-import com.twitter.home_mixer.model.HomeFeatures.ScoreFeature
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.scorer.Scorer
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.ScorerIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.InNelontworkFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.IsRelontwelonelontFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.ScorelonFelonaturelon
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.TwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMapBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.scorelonr.Scorelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.ScorelonrIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stitch.Stitch
 
 /**
- * Scales scores of each out-of-network tweet by the specified scale factor
+ * Scalelons scorelons of elonach out-of-nelontwork twelonelont by thelon speloncifielond scalelon factor
  */
-object OONTweetScalingScorer extends Scorer[PipelineQuery, TweetCandidate] {
+objelonct OONTwelonelontScalingScorelonr elonxtelonnds Scorelonr[PipelonlinelonQuelonry, TwelonelontCandidatelon] {
 
-  override val identifier: ScorerIdentifier = ScorerIdentifier("OONTweetScaling")
+  ovelonrridelon val idelonntifielonr: ScorelonrIdelonntifielonr = ScorelonrIdelonntifielonr("OONTwelonelontScaling")
 
-  override val features: Set[Feature[_, _]] = Set(ScoreFeature)
+  ovelonrridelon val felonaturelons: Selont[Felonaturelon[_, _]] = Selont(ScorelonFelonaturelon)
 
-  private val ScaleFactor = 0.75
+  privatelon val ScalelonFactor = 0.75
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[Seq[FeatureMap]] = {
-    Stitch.value {
-      candidates.map { candidate =>
-        val score = candidate.features.getOrElse(ScoreFeature, None)
-        val updatedScore = if (selector(candidate)) score.map(_ * ScaleFactor) else score
-        FeatureMapBuilder().add(ScoreFeature, updatedScore).build()
+  ovelonrridelon delonf apply(
+    quelonry: PipelonlinelonQuelonry,
+    candidatelons: Selonq[CandidatelonWithFelonaturelons[TwelonelontCandidatelon]]
+  ): Stitch[Selonq[FelonaturelonMap]] = {
+    Stitch.valuelon {
+      candidatelons.map { candidatelon =>
+        val scorelon = candidatelon.felonaturelons.gelontOrelonlselon(ScorelonFelonaturelon, Nonelon)
+        val updatelondScorelon = if (selonlelonctor(candidatelon)) scorelon.map(_ * ScalelonFactor) elonlselon scorelon
+        FelonaturelonMapBuildelonr().add(ScorelonFelonaturelon, updatelondScorelon).build()
       }
     }
   }
 
   /**
-   * We should only be applying this multiplier to Out-Of-Network tweets.
-   * In-Network Retweets of Out-Of-Network tweets should not have this multiplier applied
+   * Welon should only belon applying this multiplielonr to Out-Of-Nelontwork twelonelonts.
+   * In-Nelontwork Relontwelonelonts of Out-Of-Nelontwork twelonelonts should not havelon this multiplielonr applielond
    */
-  private def selector(candidate: CandidateWithFeatures[TweetCandidate]): Boolean = {
-    !candidate.features.getOrElse(InNetworkFeature, false) &&
-    !candidate.features.getOrElse(IsRetweetFeature, false)
+  privatelon delonf selonlelonctor(candidatelon: CandidatelonWithFelonaturelons[TwelonelontCandidatelon]): Boolelonan = {
+    !candidatelon.felonaturelons.gelontOrelonlselon(InNelontworkFelonaturelon, falselon) &&
+    !candidatelon.felonaturelons.gelontOrelonlselon(IsRelontwelonelontFelonaturelon, falselon)
   }
 }

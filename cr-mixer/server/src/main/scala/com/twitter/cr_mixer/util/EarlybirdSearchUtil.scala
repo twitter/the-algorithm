@@ -1,130 +1,130 @@
-package com.twitter.cr_mixer.util
+packagelon com.twittelonr.cr_mixelonr.util
 
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant
-import com.twitter.search.queryparser.query.search.SearchOperator
-import com.twitter.search.queryparser.query.search.SearchOperatorConstants
-import com.twitter.search.queryparser.query.{Query => EbQuery}
-import com.twitter.search.queryparser.query.Conjunction
-import scala.collection.JavaConverters._
-import com.twitter.search.earlybird.thriftscala.ThriftSearchResultMetadataOptions
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.search.queryparser.query.Query
-import com.twitter.util.Duration
-import com.twitter.search.common.query.thriftjava.thriftscala.CollectorTerminationParams
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdFielonldConstants.elonarlybirdFielonldConstant
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.selonarch.SelonarchOpelonrator
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.selonarch.SelonarchOpelonratorConstants
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.{Quelonry => elonbQuelonry}
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.Conjunction
+import scala.collelonction.JavaConvelonrtelonrs._
+import com.twittelonr.selonarch.elonarlybird.thriftscala.ThriftSelonarchRelonsultMelontadataOptions
+import com.twittelonr.simclustelonrs_v2.common.TwelonelontId
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.Quelonry
+import com.twittelonr.util.Duration
+import com.twittelonr.selonarch.common.quelonry.thriftjava.thriftscala.CollelonctorTelonrminationParams
 
-object EarlybirdSearchUtil {
-  val EarlybirdClientId: String = "cr-mixer.prod"
+objelonct elonarlybirdSelonarchUtil {
+  val elonarlybirdClielonntId: String = "cr-mixelonr.prod"
 
-  val Mentions: String = EarlybirdFieldConstant.MENTIONS_FACET
-  val Hashtags: String = EarlybirdFieldConstant.HASHTAGS_FACET
-  val FacetsToFetch: Seq[String] = Seq(Mentions, Hashtags)
+  val Melonntions: String = elonarlybirdFielonldConstant.MelonNTIONS_FACelonT
+  val Hashtags: String = elonarlybirdFielonldConstant.HASHTAGS_FACelonT
+  val FacelontsToFelontch: Selonq[String] = Selonq(Melonntions, Hashtags)
 
-  val MetadataOptions: ThriftSearchResultMetadataOptions = ThriftSearchResultMetadataOptions(
-    getTweetUrls = true,
-    getResultLocation = false,
-    getLuceneScore = false,
-    getInReplyToStatusId = true,
-    getReferencedTweetAuthorId = true,
-    getMediaBits = true,
-    getAllFeatures = true,
-    getFromUserId = true,
-    returnSearchResultFeatures = true,
-    // Set getExclusiveConversationAuthorId in order to retrieve Exclusive / SuperFollow tweets.
-    getExclusiveConversationAuthorId = true
+  val MelontadataOptions: ThriftSelonarchRelonsultMelontadataOptions = ThriftSelonarchRelonsultMelontadataOptions(
+    gelontTwelonelontUrls = truelon,
+    gelontRelonsultLocation = falselon,
+    gelontLucelonnelonScorelon = falselon,
+    gelontInRelonplyToStatusId = truelon,
+    gelontRelonfelonrelonncelondTwelonelontAuthorId = truelon,
+    gelontMelondiaBits = truelon,
+    gelontAllFelonaturelons = truelon,
+    gelontFromUselonrId = truelon,
+    relonturnSelonarchRelonsultFelonaturelons = truelon,
+    // Selont gelontelonxclusivelonConvelonrsationAuthorId in ordelonr to relontrielonvelon elonxclusivelon / SupelonrFollow twelonelonts.
+    gelontelonxclusivelonConvelonrsationAuthorId = truelon
   )
 
-  // Filter out retweets and replies
-  val TweetTypesToExclude: Seq[String] =
-    Seq(
-      SearchOperatorConstants.NATIVE_RETWEETS,
-      SearchOperatorConstants.REPLIES)
+  // Filtelonr out relontwelonelonts and relonplielons
+  val TwelonelontTypelonsToelonxcludelon: Selonq[String] =
+    Selonq(
+      SelonarchOpelonratorConstants.NATIVelon_RelonTWelonelonTS,
+      SelonarchOpelonratorConstants.RelonPLIelonS)
 
-  def GetCollectorTerminationParams(
-    maxNumHitsPerShard: Int,
-    processingTimeout: Duration
-  ): Option[CollectorTerminationParams] = {
-    Some(
-      CollectorTerminationParams(
-        // maxHitsToProcess is used for early termination on each EB shard
-        maxHitsToProcess = Some(maxNumHitsPerShard),
-        timeoutMs = processingTimeout.inMilliseconds.toInt
+  delonf GelontCollelonctorTelonrminationParams(
+    maxNumHitsPelonrShard: Int,
+    procelonssingTimelonout: Duration
+  ): Option[CollelonctorTelonrminationParams] = {
+    Somelon(
+      CollelonctorTelonrminationParams(
+        // maxHitsToProcelonss is uselond for elonarly telonrmination on elonach elonB shard
+        maxHitsToProcelonss = Somelon(maxNumHitsPelonrShard),
+        timelonoutMs = procelonssingTimelonout.inMilliselonconds.toInt
       ))
   }
 
   /**
-   * Get EarlybirdQuery
-   * This function creates a EBQuery based on the search input
+   * Gelont elonarlybirdQuelonry
+   * This function crelonatelons a elonBQuelonry baselond on thelon selonarch input
    */
-  def GetEarlybirdQuery(
-    beforeTweetIdExclusive: Option[TweetId],
-    afterTweetIdExclusive: Option[TweetId],
-    excludedTweetIds: Set[TweetId],
-    filterOutRetweetsAndReplies: Boolean
-  ): Option[EbQuery] =
-    CreateConjunction(
-      Seq(
-        CreateRangeQuery(beforeTweetIdExclusive, afterTweetIdExclusive),
-        CreateExcludedTweetIdsQuery(excludedTweetIds),
-        CreateTweetTypesFilters(filterOutRetweetsAndReplies)
-      ).flatten)
+  delonf GelontelonarlybirdQuelonry(
+    belonforelonTwelonelontIdelonxclusivelon: Option[TwelonelontId],
+    aftelonrTwelonelontIdelonxclusivelon: Option[TwelonelontId],
+    elonxcludelondTwelonelontIds: Selont[TwelonelontId],
+    filtelonrOutRelontwelonelontsAndRelonplielons: Boolelonan
+  ): Option[elonbQuelonry] =
+    CrelonatelonConjunction(
+      Selonq(
+        CrelonatelonRangelonQuelonry(belonforelonTwelonelontIdelonxclusivelon, aftelonrTwelonelontIdelonxclusivelon),
+        CrelonatelonelonxcludelondTwelonelontIdsQuelonry(elonxcludelondTwelonelontIds),
+        CrelonatelonTwelonelontTypelonsFiltelonrs(filtelonrOutRelontwelonelontsAndRelonplielons)
+      ).flattelonn)
 
-  def CreateRangeQuery(
-    beforeTweetIdExclusive: Option[TweetId],
-    afterTweetIdExclusive: Option[TweetId]
-  ): Option[EbQuery] = {
-    val beforeIdClause = beforeTweetIdExclusive.map { beforeId =>
-      // MAX_ID is an inclusive value therefore we subtract 1 from beforeId.
-      new SearchOperator(SearchOperator.Type.MAX_ID, (beforeId - 1).toString)
+  delonf CrelonatelonRangelonQuelonry(
+    belonforelonTwelonelontIdelonxclusivelon: Option[TwelonelontId],
+    aftelonrTwelonelontIdelonxclusivelon: Option[TwelonelontId]
+  ): Option[elonbQuelonry] = {
+    val belonforelonIdClauselon = belonforelonTwelonelontIdelonxclusivelon.map { belonforelonId =>
+      // MAX_ID is an inclusivelon valuelon thelonrelonforelon welon subtract 1 from belonforelonId.
+      nelonw SelonarchOpelonrator(SelonarchOpelonrator.Typelon.MAX_ID, (belonforelonId - 1).toString)
     }
-    val afterIdClause = afterTweetIdExclusive.map { afterId =>
-      new SearchOperator(SearchOperator.Type.SINCE_ID, afterId.toString)
+    val aftelonrIdClauselon = aftelonrTwelonelontIdelonxclusivelon.map { aftelonrId =>
+      nelonw SelonarchOpelonrator(SelonarchOpelonrator.Typelon.SINCelon_ID, aftelonrId.toString)
     }
-    CreateConjunction(Seq(beforeIdClause, afterIdClause).flatten)
+    CrelonatelonConjunction(Selonq(belonforelonIdClauselon, aftelonrIdClauselon).flattelonn)
   }
 
-  def CreateTweetTypesFilters(filterOutRetweetsAndReplies: Boolean): Option[EbQuery] = {
-    if (filterOutRetweetsAndReplies) {
-      val tweetTypeFilters = TweetTypesToExclude.map { searchOperator =>
-        new SearchOperator(SearchOperator.Type.EXCLUDE, searchOperator)
+  delonf CrelonatelonTwelonelontTypelonsFiltelonrs(filtelonrOutRelontwelonelontsAndRelonplielons: Boolelonan): Option[elonbQuelonry] = {
+    if (filtelonrOutRelontwelonelontsAndRelonplielons) {
+      val twelonelontTypelonFiltelonrs = TwelonelontTypelonsToelonxcludelon.map { selonarchOpelonrator =>
+        nelonw SelonarchOpelonrator(SelonarchOpelonrator.Typelon.elonXCLUDelon, selonarchOpelonrator)
       }
-      CreateConjunction(tweetTypeFilters)
-    } else None
+      CrelonatelonConjunction(twelonelontTypelonFiltelonrs)
+    } elonlselon Nonelon
   }
 
-  def CreateConjunction(clauses: Seq[EbQuery]): Option[EbQuery] = {
-    clauses.size match {
-      case 0 => None
-      case 1 => Some(clauses.head)
-      case _ => Some(new Conjunction(clauses.asJava))
+  delonf CrelonatelonConjunction(clauselons: Selonq[elonbQuelonry]): Option[elonbQuelonry] = {
+    clauselons.sizelon match {
+      caselon 0 => Nonelon
+      caselon 1 => Somelon(clauselons.helonad)
+      caselon _ => Somelon(nelonw Conjunction(clauselons.asJava))
     }
   }
 
-  def CreateExcludedTweetIdsQuery(tweetIds: Set[TweetId]): Option[EbQuery] = {
-    if (tweetIds.nonEmpty) {
-      Some(
-        new SearchOperator.Builder()
-          .setType(SearchOperator.Type.NAMED_MULTI_TERM_DISJUNCTION)
-          .addOperand(EarlybirdFieldConstant.ID_FIELD.getFieldName)
-          .addOperand(EXCLUDE_TWEET_IDS)
-          .setOccur(Query.Occur.MUST_NOT)
+  delonf CrelonatelonelonxcludelondTwelonelontIdsQuelonry(twelonelontIds: Selont[TwelonelontId]): Option[elonbQuelonry] = {
+    if (twelonelontIds.nonelonmpty) {
+      Somelon(
+        nelonw SelonarchOpelonrator.Buildelonr()
+          .selontTypelon(SelonarchOpelonrator.Typelon.NAMelonD_MULTI_TelonRM_DISJUNCTION)
+          .addOpelonrand(elonarlybirdFielonldConstant.ID_FIelonLD.gelontFielonldNamelon)
+          .addOpelonrand(elonXCLUDelon_TWelonelonT_IDS)
+          .selontOccur(Quelonry.Occur.MUST_NOT)
           .build())
-    } else None
+    } elonlselon Nonelon
   }
 
   /**
-   * Get NamedDisjunctions with excludedTweetIds
+   * Gelont NamelondDisjunctions with elonxcludelondTwelonelontIds
    */
-  def GetNamedDisjunctions(excludedTweetIds: Set[TweetId]): Option[Map[String, Seq[Long]]] =
-    if (excludedTweetIds.nonEmpty)
-      createNamedDisjunctionsExcludedTweetIds(excludedTweetIds)
-    else None
+  delonf GelontNamelondDisjunctions(elonxcludelondTwelonelontIds: Selont[TwelonelontId]): Option[Map[String, Selonq[Long]]] =
+    if (elonxcludelondTwelonelontIds.nonelonmpty)
+      crelonatelonNamelondDisjunctionselonxcludelondTwelonelontIds(elonxcludelondTwelonelontIds)
+    elonlselon Nonelon
 
-  val EXCLUDE_TWEET_IDS = "exclude_tweet_ids"
-  private def createNamedDisjunctionsExcludedTweetIds(
-    tweetIds: Set[TweetId]
-  ): Option[Map[String, Seq[Long]]] = {
-    if (tweetIds.nonEmpty) {
-      Some(Map(EXCLUDE_TWEET_IDS -> tweetIds.toSeq))
-    } else None
+  val elonXCLUDelon_TWelonelonT_IDS = "elonxcludelon_twelonelont_ids"
+  privatelon delonf crelonatelonNamelondDisjunctionselonxcludelondTwelonelontIds(
+    twelonelontIds: Selont[TwelonelontId]
+  ): Option[Map[String, Selonq[Long]]] = {
+    if (twelonelontIds.nonelonmpty) {
+      Somelon(Map(elonXCLUDelon_TWelonelonT_IDS -> twelonelontIds.toSelonq))
+    } elonlselon Nonelon
   }
 }

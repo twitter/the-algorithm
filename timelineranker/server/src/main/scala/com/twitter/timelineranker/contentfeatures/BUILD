@@ -1,13 +1,13 @@
 scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
+    sourcelons = ["*.scala"],
+    compilelonr_option_selonts = ["fatal_warnings"],
     platform = "java8",
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "timelineranker/common/src/main/scala/com/twitter/timelineranker/model",
-        "timelineranker/server/src/main/scala/com/twitter/timelineranker/core",
-        "timelineranker/server/src/main/scala/com/twitter/timelineranker/recap/model",
-        "timelines/src/main/scala/com/twitter/timelines/model/types",
+    strict_delonps = Truelon,
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        "timelonlinelonrankelonr/common/src/main/scala/com/twittelonr/timelonlinelonrankelonr/modelonl",
+        "timelonlinelonrankelonr/selonrvelonr/src/main/scala/com/twittelonr/timelonlinelonrankelonr/corelon",
+        "timelonlinelonrankelonr/selonrvelonr/src/main/scala/com/twittelonr/timelonlinelonrankelonr/reloncap/modelonl",
+        "timelonlinelons/src/main/scala/com/twittelonr/timelonlinelons/modelonl/typelons",
     ],
 )

@@ -1,54 +1,54 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.flexible_injection_pipeline
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.flelonxiblelon_injelonction_pipelonlinelon
 
-import com.twitter.onboarding.injections.thriftscala.Injection
-import com.twitter.onboarding.injections.{thriftscala => onboardingthrift}
-import com.twitter.product_mixer.component_library.decorator.urt.builder.timeline_module.AutomaticUniqueModuleId
-import com.twitter.product_mixer.component_library.decorator.urt.builder.timeline_module.ModuleIdGeneration
-import com.twitter.product_mixer.component_library.model.candidate.BasePromptCandidate
-import com.twitter.product_mixer.component_library.pipeline.candidate.flexible_injection_pipeline.transformer.FlipPromptInjectionsFeature
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.timeline_module.BaseTimelineModuleBuilder
-import com.twitter.product_mixer.core.functional_component.marshaller.TransportMarshaller
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.marshalling.response.urt.EntryNamespace
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineModule
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.Carousel
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.onboarding.injelonctions.thriftscala.Injelonction
+import com.twittelonr.onboarding.injelonctions.{thriftscala => onboardingthrift}
+import com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.timelonlinelon_modulelon.AutomaticUniquelonModulelonId
+import com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.timelonlinelon_modulelon.ModulelonIdGelonnelonration
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.BaselonPromptCandidatelon
+import com.twittelonr.product_mixelonr.componelonnt_library.pipelonlinelon.candidatelon.flelonxiblelon_injelonction_pipelonlinelon.transformelonr.FlipPromptInjelonctionsFelonaturelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.timelonlinelon_modulelon.BaselonTimelonlinelonModulelonBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.TransportMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.elonntryNamelonspacelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.TimelonlinelonModulelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.timelonlinelon_modulelon.Carouselonl
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
-case class FlipPromptUrtModuleBuilder[-Query <: PipelineQuery](
-  moduleIdGeneration: ModuleIdGeneration = AutomaticUniqueModuleId())
-    extends BaseTimelineModuleBuilder[Query, BasePromptCandidate[Any]] {
+caselon class FlipPromptUrtModulelonBuildelonr[-Quelonry <: PipelonlinelonQuelonry](
+  modulelonIdGelonnelonration: ModulelonIdGelonnelonration = AutomaticUniquelonModulelonId())
+    elonxtelonnds BaselonTimelonlinelonModulelonBuildelonr[Quelonry, BaselonPromptCandidatelon[Any]] {
 
-  override def apply(
-    query: Query,
-    candidates: Seq[CandidateWithFeatures[BasePromptCandidate[Any]]]
-  ): TimelineModule = {
-    val firstCandidate = candidates.head
-    val injection = firstCandidate.features.get(FlipPromptInjectionsFeature)
-    injection match {
-      case Injection.TilesCarousel(candidate) =>
-        TimelineModule(
-          id = moduleIdGeneration.moduleId,
-          sortIndex = None,
-          entryNamespace = EntryNamespace("flip-timeline-module"),
-          clientEventInfo =
-            Some(OnboardingInjectionConversions.convertClientEventInfo(candidate.clientEventInfo)),
-          feedbackActionInfo =
-            candidate.feedbackInfo.map(OnboardingInjectionConversions.convertFeedbackInfo),
-          isPinned = Some(candidate.isPinnedEntry),
-          // Items are automatically set in the domain marshaller phase
-          items = Seq.empty,
-          displayType = Carousel,
-          header = candidate.header.map(TilesCarouselConversions.convertModuleHeader),
-          footer = None,
-          metadata = None,
-          showMoreBehavior = None
+  ovelonrridelon delonf apply(
+    quelonry: Quelonry,
+    candidatelons: Selonq[CandidatelonWithFelonaturelons[BaselonPromptCandidatelon[Any]]]
+  ): TimelonlinelonModulelon = {
+    val firstCandidatelon = candidatelons.helonad
+    val injelonction = firstCandidatelon.felonaturelons.gelont(FlipPromptInjelonctionsFelonaturelon)
+    injelonction match {
+      caselon Injelonction.TilelonsCarouselonl(candidatelon) =>
+        TimelonlinelonModulelon(
+          id = modulelonIdGelonnelonration.modulelonId,
+          sortIndelonx = Nonelon,
+          elonntryNamelonspacelon = elonntryNamelonspacelon("flip-timelonlinelon-modulelon"),
+          clielonntelonvelonntInfo =
+            Somelon(OnboardingInjelonctionConvelonrsions.convelonrtClielonntelonvelonntInfo(candidatelon.clielonntelonvelonntInfo)),
+          felonelondbackActionInfo =
+            candidatelon.felonelondbackInfo.map(OnboardingInjelonctionConvelonrsions.convelonrtFelonelondbackInfo),
+          isPinnelond = Somelon(candidatelon.isPinnelondelonntry),
+          // Itelonms arelon automatically selont in thelon domain marshallelonr phaselon
+          itelonms = Selonq.elonmpty,
+          displayTypelon = Carouselonl,
+          helonadelonr = candidatelon.helonadelonr.map(TilelonsCarouselonlConvelonrsions.convelonrtModulelonHelonadelonr),
+          footelonr = Nonelon,
+          melontadata = Nonelon,
+          showMorelonBelonhavior = Nonelon
         )
-      case _ => throw new UnsupportedFlipPromptInModuleException(injection)
+      caselon _ => throw nelonw UnsupportelondFlipPromptInModulelonelonxcelonption(injelonction)
     }
   }
 }
 
-class UnsupportedFlipPromptInModuleException(injection: onboardingthrift.Injection)
-    extends UnsupportedOperationException(
-      "Unsupported timeline item in a Flip prompt module " + TransportMarshaller.getSimpleName(
-        injection.getClass))
+class UnsupportelondFlipPromptInModulelonelonxcelonption(injelonction: onboardingthrift.Injelonction)
+    elonxtelonnds UnsupportelondOpelonrationelonxcelonption(
+      "Unsupportelond timelonlinelon itelonm in a Flip prompt modulelon " + TransportMarshallelonr.gelontSimplelonNamelon(
+        injelonction.gelontClass))

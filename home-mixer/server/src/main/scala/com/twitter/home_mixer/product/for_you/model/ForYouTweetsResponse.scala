@@ -1,5 +1,5 @@
-package com.twitter.home_mixer.product.for_you.model
+packagelon com.twittelonr.homelon_mixelonr.product.for_you.modelonl
 
-import com.twitter.product_mixer.core.model.marshalling.HasMarshalling
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.HasMarshalling
 
-case class ForYouTweetsResponse(tweetCandidates: Seq[Long]) extends HasMarshalling
+caselon class ForYouTwelonelontsRelonsponselon(twelonelontCandidatelons: Selonq[Long]) elonxtelonnds HasMarshalling

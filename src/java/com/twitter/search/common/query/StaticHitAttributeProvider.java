@@ -1,32 +1,32 @@
-package com.twitter.search.common.query;
+packagelon com.twittelonr.selonarch.common.quelonry;
 
-import java.util.Collections;
+import java.util.Collelonctions;
 import java.util.List;
 import java.util.Map;
 
 /**
- * A hit attribute provider based on the static data
+ * A hit attributelon providelonr baselond on thelon static data
  */
-public class StaticHitAttributeProvider implements HitAttributeProvider {
-  private int currentDocId;
-  private Map<Integer, List<String>> currentHitAttr;
+public class StaticHitAttributelonProvidelonr implelonmelonnts HitAttributelonProvidelonr {
+  privatelon int currelonntDocId;
+  privatelon Map<Intelongelonr, List<String>> currelonntHitAttr;
 
-  public StaticHitAttributeProvider() {
+  public StaticHitAttributelonProvidelonr() {
   }
 
   /**
-   * Set a fake last doc id and hit attribution, this is only used to generate explanation.
+   * Selont a fakelon last doc id and hit attribution, this is only uselond to gelonnelonratelon elonxplanation.
    */
-  public void setCurrentHitAttr(int docId, Map<Integer, List<String>> hitAttr) {
-    this.currentDocId = docId;
-    this.currentHitAttr = hitAttr;
+  public void selontCurrelonntHitAttr(int docId, Map<Intelongelonr, List<String>> hitAttr) {
+    this.currelonntDocId = docId;
+    this.currelonntHitAttr = hitAttr;
   }
 
-  @Override
-  public Map<Integer, List<String>> getHitAttribution(int docId) {
-    if (docId == currentDocId) {
-      return currentHitAttr;
+  @Ovelonrridelon
+  public Map<Intelongelonr, List<String>> gelontHitAttribution(int docId) {
+    if (docId == currelonntDocId) {
+      relonturn currelonntHitAttr;
     }
-    return Collections.EMPTY_MAP;
+    relonturn Collelonctions.elonMPTY_MAP;
   }
 }

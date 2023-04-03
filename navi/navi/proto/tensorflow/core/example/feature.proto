@@ -1,110 +1,110 @@
-// Protocol messages for describing features for machine learning model
-// training or inference.
+// Protocol melonssagelons for delonscribing felonaturelons for machinelon lelonarning modelonl
+// training or infelonrelonncelon.
 //
-// There are three base Feature types:
-//   - bytes
+// Thelonrelon arelon threlonelon baselon Felonaturelon typelons:
+//   - bytelons
 //   - float
 //   - int64
 //
-// A Feature contains Lists which may hold zero or more values.  These
-// lists are the base values BytesList, FloatList, Int64List.
+// A Felonaturelon contains Lists which may hold zelonro or morelon valuelons.  Thelonselon
+// lists arelon thelon baselon valuelons BytelonsList, FloatList, Int64List.
 //
-// Features are organized into categories by name.  The Features message
-// contains the mapping from name to Feature.
+// Felonaturelons arelon organizelond into catelongorielons by namelon.  Thelon Felonaturelons melonssagelon
+// contains thelon mapping from namelon to Felonaturelon.
 //
-// Example Features for a movie recommendation application:
-//   feature {
-//     key: "age"
-//     value { float_list {
-//       value: 29.0
+// elonxamplelon Felonaturelons for a movielon reloncommelonndation application:
+//   felonaturelon {
+//     kelony: "agelon"
+//     valuelon { float_list {
+//       valuelon: 29.0
 //     }}
 //   }
-//   feature {
-//     key: "movie"
-//     value { bytes_list {
-//       value: "The Shawshank Redemption"
-//       value: "Fight Club"
+//   felonaturelon {
+//     kelony: "movielon"
+//     valuelon { bytelons_list {
+//       valuelon: "Thelon Shawshank Relondelonmption"
+//       valuelon: "Fight Club"
 //     }}
 //   }
-//   feature {
-//     key: "movie_ratings"
-//     value { float_list {
-//       value: 9.0
-//       value: 9.7
+//   felonaturelon {
+//     kelony: "movielon_ratings"
+//     valuelon { float_list {
+//       valuelon: 9.0
+//       valuelon: 9.7
 //     }}
 //   }
-//   feature {
-//     key: "suggestion"
-//     value { bytes_list {
-//       value: "Inception"
+//   felonaturelon {
+//     kelony: "suggelonstion"
+//     valuelon { bytelons_list {
+//       valuelon: "Incelonption"
 //     }}
 //   }
-//   feature {
-//     key: "suggestion_purchased"
-//     value { int64_list {
-//       value: 1
+//   felonaturelon {
+//     kelony: "suggelonstion_purchaselond"
+//     valuelon { int64_list {
+//       valuelon: 1
 //     }}
 //   }
-//   feature {
-//     key: "purchase_price"
-//     value { float_list {
-//       value: 9.99
+//   felonaturelon {
+//     kelony: "purchaselon_pricelon"
+//     valuelon { float_list {
+//       valuelon: 9.99
 //     }}
 //   }
 //
 
 syntax = "proto3";
 
-package tensorflow;
+packagelon telonnsorflow;
 
-option cc_enable_arenas = true;
-option java_outer_classname = "FeatureProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.example";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/example";
+option cc_elonnablelon_arelonnas = truelon;
+option java_outelonr_classnamelon = "FelonaturelonProtos";
+option java_multiplelon_filelons = truelon;
+option java_packagelon = "org.telonnsorflow.elonxamplelon";
+option go_packagelon = "github.com/telonnsorflow/telonnsorflow/telonnsorflow/go/corelon/elonxamplelon";
 
-// LINT.IfChange
-// Containers to hold repeated fundamental values.
-message BytesList {
-  repeated bytes value = 1;
+// LINT.IfChangelon
+// Containelonrs to hold relonpelonatelond fundamelonntal valuelons.
+melonssagelon BytelonsList {
+  relonpelonatelond bytelons valuelon = 1;
 }
-message FloatList {
-  repeated float value = 1 [packed = true];
+melonssagelon FloatList {
+  relonpelonatelond float valuelon = 1 [packelond = truelon];
 }
-message Int64List {
-  repeated int64 value = 1 [packed = true];
+melonssagelon Int64List {
+  relonpelonatelond int64 valuelon = 1 [packelond = truelon];
 }
 
-// Containers for non-sequential data.
-message Feature {
-  // Each feature can be exactly one kind.
-  oneof kind {
-    BytesList bytes_list = 1;
+// Containelonrs for non-selonquelonntial data.
+melonssagelon Felonaturelon {
+  // elonach felonaturelon can belon elonxactly onelon kind.
+  onelonof kind {
+    BytelonsList bytelons_list = 1;
     FloatList float_list = 2;
     Int64List int64_list = 3;
   }
 }
 
-message Features {
-  // Map from feature name to feature.
-  map<string, Feature> feature = 1;
+melonssagelon Felonaturelons {
+  // Map from felonaturelon namelon to felonaturelon.
+  map<string, Felonaturelon> felonaturelon = 1;
 }
 
-// Containers for sequential data.
+// Containelonrs for selonquelonntial data.
 //
-// A FeatureList contains lists of Features.  These may hold zero or more
-// Feature values.
+// A FelonaturelonList contains lists of Felonaturelons.  Thelonselon may hold zelonro or morelon
+// Felonaturelon valuelons.
 //
-// FeatureLists are organized into categories by name.  The FeatureLists message
-// contains the mapping from name to FeatureList.
+// FelonaturelonLists arelon organizelond into catelongorielons by namelon.  Thelon FelonaturelonLists melonssagelon
+// contains thelon mapping from namelon to FelonaturelonList.
 //
-message FeatureList {
-  repeated Feature feature = 1;
+melonssagelon FelonaturelonList {
+  relonpelonatelond Felonaturelon felonaturelon = 1;
 }
 
-message FeatureLists {
-  // Map from feature name to feature list.
-  map<string, FeatureList> feature_list = 1;
+melonssagelon FelonaturelonLists {
+  // Map from felonaturelon namelon to felonaturelon list.
+  map<string, FelonaturelonList> felonaturelon_list = 1;
 }
-// LINT.ThenChange(
-//     https://www.tensorflow.org/code/tensorflow/python/training/training.py)
+// LINT.ThelonnChangelon(
+//     https://www.telonnsorflow.org/codelon/telonnsorflow/python/training/training.py)

@@ -1,29 +1,29 @@
-package com.twitter.product_mixer.core.pipeline.recommendation
+packagelon com.twittelonr.product_mixelonr.corelon.pipelonlinelon.reloncommelonndation
 
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.RecommendationPipelineIdentifier
-import com.twitter.product_mixer.core.pipeline.Pipeline
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Arrow
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.ReloncommelonndationPipelonlinelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.Pipelonlinelon
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stitch.Arrow
 
 /**
- * A Recommendation Pipeline
+ * A Reloncommelonndation Pipelonlinelon
  *
- * This is an abstract class, as we only construct these via the [[RecommendationPipelineBuilder]].
+ * This is an abstract class, as welon only construct thelonselon via thelon [[ReloncommelonndationPipelonlinelonBuildelonr]].
  *
- * A [[RecommendationPipeline]] is capable of processing requests (queries) and returning responses (results)
- * in the correct format to directly send to users.
+ * A [[ReloncommelonndationPipelonlinelon]] is capablelon of procelonssing relonquelonsts (quelonrielons) and relonturning relonsponselons (relonsults)
+ * in thelon correlonct format to direlonctly selonnd to uselonrs.
  *
- * @tparam Query the domain model for the query or request
- * @tparam Candidate the type of the candidates
- * @tparam Result the final marshalled result type
+ * @tparam Quelonry thelon domain modelonl for thelon quelonry or relonquelonst
+ * @tparam Candidatelon thelon typelon of thelon candidatelons
+ * @tparam Relonsult thelon final marshallelond relonsult typelon
  */
-abstract class RecommendationPipeline[
-  Query <: PipelineQuery,
-  Candidate <: UniversalNoun[Any],
-  Result]
-    extends Pipeline[Query, Result] {
-  override private[core] val config: RecommendationPipelineConfig[Query, Candidate, _, Result]
-  override val arrow: Arrow[Query, RecommendationPipelineResult[Candidate, Result]]
-  override val identifier: RecommendationPipelineIdentifier
+abstract class ReloncommelonndationPipelonlinelon[
+  Quelonry <: PipelonlinelonQuelonry,
+  Candidatelon <: UnivelonrsalNoun[Any],
+  Relonsult]
+    elonxtelonnds Pipelonlinelon[Quelonry, Relonsult] {
+  ovelonrridelon privatelon[corelon] val config: ReloncommelonndationPipelonlinelonConfig[Quelonry, Candidatelon, _, Relonsult]
+  ovelonrridelon val arrow: Arrow[Quelonry, ReloncommelonndationPipelonlinelonRelonsult[Candidatelon, Relonsult]]
+  ovelonrridelon val idelonntifielonr: ReloncommelonndationPipelonlinelonIdelonntifielonr
 }

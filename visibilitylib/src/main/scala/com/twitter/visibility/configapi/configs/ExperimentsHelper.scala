@@ -1,26 +1,26 @@
-package com.twitter.visibility.configapi.configs
+packagelon com.twittelonr.visibility.configapi.configs
 
-import com.twitter.timelines.configapi.Config
-import com.twitter.timelines.configapi.ExperimentConfigBuilder
-import com.twitter.timelines.configapi.Param
-import com.twitter.visibility.configapi.params.VisibilityExperiment
-import com.twitter.visibility.models.SafetyLevel
+import com.twittelonr.timelonlinelons.configapi.Config
+import com.twittelonr.timelonlinelons.configapi.elonxpelonrimelonntConfigBuildelonr
+import com.twittelonr.timelonlinelons.configapi.Param
+import com.twittelonr.visibility.configapi.params.Visibilityelonxpelonrimelonnt
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl
 
-object ExperimentsHelper {
+objelonct elonxpelonrimelonntsHelonlpelonr {
 
-  def mkABExperimentConfig(experiment: VisibilityExperiment, param: Param[Boolean]): Config = {
-    ExperimentConfigBuilder(experiment)
-      .addBucket(
-        experiment.ControlBucket,
-        param := true
+  delonf mkABelonxpelonrimelonntConfig(elonxpelonrimelonnt: Visibilityelonxpelonrimelonnt, param: Param[Boolelonan]): Config = {
+    elonxpelonrimelonntConfigBuildelonr(elonxpelonrimelonnt)
+      .addBuckelont(
+        elonxpelonrimelonnt.ControlBuckelont,
+        param := truelon
       )
-      .addBucket(
-        experiment.TreatmentBucket,
-        param := false
+      .addBuckelont(
+        elonxpelonrimelonnt.TrelonatmelonntBuckelont,
+        param := falselon
       )
       .build
   }
 
-  def mkABExperimentConfig(experiment: VisibilityExperiment, safetyLevel: SafetyLevel): Config =
-    mkABExperimentConfig(experiment, safetyLevel.enabledParam)
+  delonf mkABelonxpelonrimelonntConfig(elonxpelonrimelonnt: Visibilityelonxpelonrimelonnt, safelontyLelonvelonl: SafelontyLelonvelonl): Config =
+    mkABelonxpelonrimelonntConfig(elonxpelonrimelonnt, safelontyLelonvelonl.elonnablelondParam)
 }

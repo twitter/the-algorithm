@@ -1,57 +1,57 @@
-package com.twitter.search.feature_update_service.modules;
+packagelon com.twittelonr.selonarch.felonaturelon_updatelon_selonrvicelon.modulelons;
 
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrelonnt.LinkelondBlockingQuelonuelon;
+import java.util.concurrelonnt.ThrelonadPoolelonxeloncutor;
+import java.util.concurrelonnt.TimelonUnit;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.inject.Provides;
-import com.google.inject.Singleton;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import com.googlelon.injelonct.Providelons;
+import com.googlelon.injelonct.Singlelonton;
 
-import com.twitter.inject.TwitterModule;
-import com.twitter.search.common.metrics.SearchCustomGauge;
-import com.twitter.search.feature_update_service.stats.FeatureUpdateStats;
-import com.twitter.util.ExecutorServiceFuturePool;
-import com.twitter.util.InterruptibleExecutorServiceFuturePool;
+import com.twittelonr.injelonct.TwittelonrModulelon;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCustomGaugelon;
+import com.twittelonr.selonarch.felonaturelon_updatelon_selonrvicelon.stats.FelonaturelonUpdatelonStats;
+import com.twittelonr.util.elonxeloncutorSelonrvicelonFuturelonPool;
+import com.twittelonr.util.IntelonrruptiblelonelonxeloncutorSelonrvicelonFuturelonPool;
 
-public class FuturePoolModule extends TwitterModule {
+public class FuturelonPoolModulelon elonxtelonnds TwittelonrModulelon {
   /**
-   * Provide future pool backed by executor service, with bounded thread pool and bounded backing
-   * queue.
+   * Providelon futurelon pool backelond by elonxeloncutor selonrvicelon, with boundelond threlonad pool and boundelond backing
+   * quelonuelon.
    */
-  @Provides
-  @Singleton
-  public ExecutorServiceFuturePool futurePool() {
-    // These limits are based on service capacity estimates and testing on staging,
-    // attempting to give the pool as many resources as possible without overloading anything.
-    // 100-200 threads is manageable, and the 2000 queue size is based on a conservative upper
-    // limit that tasks in the queue take 1 MB each, meaning queue maxes out at 2 GB, which should
-    // be okay given 4 GB RAM with 3 GB reserved heap.
-    return createFuturePool(100, 200, 2000);
+  @Providelons
+  @Singlelonton
+  public elonxeloncutorSelonrvicelonFuturelonPool futurelonPool() {
+    // Thelonselon limits arelon baselond on selonrvicelon capacity elonstimatelons and telonsting on staging,
+    // attelonmpting to givelon thelon pool as many relonsourcelons as possiblelon without ovelonrloading anything.
+    // 100-200 threlonads is managelonablelon, and thelon 2000 quelonuelon sizelon is baselond on a conselonrvativelon uppelonr
+    // limit that tasks in thelon quelonuelon takelon 1 MB elonach, melonaning quelonuelon maxelons out at 2 GB, which should
+    // belon okay givelonn 4 GB RAM with 3 GB relonselonrvelond helonap.
+    relonturn crelonatelonFuturelonPool(100, 200, 2000);
   }
 
   /**
-   * Create a future pool backed by executor service, with bounded thread pool and bounded backing
-   * queue. ONLY VISIBILE FOR TESTING; don't invoke outside this class.
+   * Crelonatelon a futurelon pool backelond by elonxeloncutor selonrvicelon, with boundelond threlonad pool and boundelond backing
+   * quelonuelon. ONLY VISIBILelon FOR TelonSTING; don't invokelon outsidelon this class.
    */
-  @VisibleForTesting
-  public static ExecutorServiceFuturePool createFuturePool(
-      int corePoolSize, int maximumPoolSize, int queueCapacity) {
-    final LinkedBlockingQueue<Runnable> queue = new LinkedBlockingQueue<>(queueCapacity);
+  @VisiblelonForTelonsting
+  public static elonxeloncutorSelonrvicelonFuturelonPool crelonatelonFuturelonPool(
+      int corelonPoolSizelon, int maximumPoolSizelon, int quelonuelonCapacity) {
+    final LinkelondBlockingQuelonuelon<Runnablelon> quelonuelon = nelonw LinkelondBlockingQuelonuelon<>(quelonuelonCapacity);
 
-    ExecutorServiceFuturePool futurePool = new InterruptibleExecutorServiceFuturePool(
-        new ThreadPoolExecutor(
-            corePoolSize,
-            maximumPoolSize,
+    elonxeloncutorSelonrvicelonFuturelonPool futurelonPool = nelonw IntelonrruptiblelonelonxeloncutorSelonrvicelonFuturelonPool(
+        nelonw ThrelonadPoolelonxeloncutor(
+            corelonPoolSizelon,
+            maximumPoolSizelon,
             60L,
-            TimeUnit.SECONDS,
-            queue));
+            TimelonUnit.SelonCONDS,
+            quelonuelon));
 
-    SearchCustomGauge.export(FeatureUpdateStats.PREFIX + "thread_pool_size",
-        futurePool::poolSize);
-    SearchCustomGauge.export(FeatureUpdateStats.PREFIX + "work_queue_size",
-        queue::size);
+    SelonarchCustomGaugelon.elonxport(FelonaturelonUpdatelonStats.PRelonFIX + "threlonad_pool_sizelon",
+        futurelonPool::poolSizelon);
+    SelonarchCustomGaugelon.elonxport(FelonaturelonUpdatelonStats.PRelonFIX + "work_quelonuelon_sizelon",
+        quelonuelon::sizelon);
 
-    return futurePool;
+    relonturn futurelonPool;
   }
 }

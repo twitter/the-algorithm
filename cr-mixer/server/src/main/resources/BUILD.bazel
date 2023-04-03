@@ -1,8 +1,8 @@
-resources(
-    sources = [
+relonsourcelons(
+    sourcelons = [
         "*.xml",
         "*.yml",
         "config/*.yml",
     ],
-    tags = ["bazel-compatible"],
+    tags = ["bazelonl-compatiblelon"],
 )

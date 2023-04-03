@@ -1,164 +1,164 @@
-package com.twitter.follow_recommendations.common.base
+packagelon com.twittelonr.follow_reloncommelonndations.common.baselon
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.stitch.Stitch
-import com.twitter.util.Duration
-import com.twitter.util.TimeoutException
-import scala.language.implicitConversions
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.CandidatelonSourcelon
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.util.Duration
+import com.twittelonr.util.Timelonoutelonxcelonption
+import scala.languagelon.implicitConvelonrsions
 
-class EnrichedCandidateSource[Target, Candidate](original: CandidateSource[Target, Candidate]) {
+class elonnrichelondCandidatelonSourcelon[Targelont, Candidatelon](original: CandidatelonSourcelon[Targelont, Candidatelon]) {
 
   /**
-   * Gate the candidate source based on the Predicate of target.
-   * It returns results only if the predicate returns Valid.
+   * Gatelon thelon candidatelon sourcelon baselond on thelon Prelondicatelon of targelont.
+   * It relonturns relonsults only if thelon prelondicatelon relonturns Valid.
    *
-   * @param predicate
-   * @return
+   * @param prelondicatelon
+   * @relonturn
    */
-  def gate(predicate: Predicate[Target]): CandidateSource[Target, Candidate] = {
-    throw new UnsupportedOperationException()
+  delonf gatelon(prelondicatelon: Prelondicatelon[Targelont]): CandidatelonSourcelon[Targelont, Candidatelon] = {
+    throw nelonw UnsupportelondOpelonrationelonxcelonption()
   }
 
-  def observe(statsReceiver: StatsReceiver): CandidateSource[Target, Candidate] = {
-    val originalIdentifier = original.identifier
-    val stats = statsReceiver.scope(originalIdentifier.name)
-    new CandidateSource[Target, Candidate] {
-      val identifier = originalIdentifier
-      override def apply(target: Target): Stitch[Seq[Candidate]] = {
-        StatsUtil.profileStitchSeqResults[Candidate](original(target), stats)
+  delonf obselonrvelon(statsReloncelonivelonr: StatsReloncelonivelonr): CandidatelonSourcelon[Targelont, Candidatelon] = {
+    val originalIdelonntifielonr = original.idelonntifielonr
+    val stats = statsReloncelonivelonr.scopelon(originalIdelonntifielonr.namelon)
+    nelonw CandidatelonSourcelon[Targelont, Candidatelon] {
+      val idelonntifielonr = originalIdelonntifielonr
+      ovelonrridelon delonf apply(targelont: Targelont): Stitch[Selonq[Candidatelon]] = {
+        StatsUtil.profilelonStitchSelonqRelonsults[Candidatelon](original(targelont), stats)
       }
     }
   }
 
   /**
-   * Map target type into new target type (1 to optional mapping)
+   * Map targelont typelon into nelonw targelont typelon (1 to optional mapping)
    */
-  def stitchMapKey[Target2](
-    targetMapper: Target2 => Stitch[Option[Target]]
-  ): CandidateSource[Target2, Candidate] = {
-    val targetsMapper: Target2 => Stitch[Seq[Target]] = { target =>
-      targetMapper(target).map(_.toSeq)
+  delonf stitchMapKelony[Targelont2](
+    targelontMappelonr: Targelont2 => Stitch[Option[Targelont]]
+  ): CandidatelonSourcelon[Targelont2, Candidatelon] = {
+    val targelontsMappelonr: Targelont2 => Stitch[Selonq[Targelont]] = { targelont =>
+      targelontMappelonr(targelont).map(_.toSelonq)
     }
-    stitchMapKeys(targetsMapper)
+    stitchMapKelonys(targelontsMappelonr)
   }
 
   /**
-   * Map target type into new target type (1 to many mapping)
+   * Map targelont typelon into nelonw targelont typelon (1 to many mapping)
    */
-  def stitchMapKeys[Target2](
-    targetMapper: Target2 => Stitch[Seq[Target]]
-  ): CandidateSource[Target2, Candidate] = {
-    new CandidateSource[Target2, Candidate] {
-      val identifier = original.identifier
-      override def apply(target: Target2): Stitch[Seq[Candidate]] = {
+  delonf stitchMapKelonys[Targelont2](
+    targelontMappelonr: Targelont2 => Stitch[Selonq[Targelont]]
+  ): CandidatelonSourcelon[Targelont2, Candidatelon] = {
+    nelonw CandidatelonSourcelon[Targelont2, Candidatelon] {
+      val idelonntifielonr = original.idelonntifielonr
+      ovelonrridelon delonf apply(targelont: Targelont2): Stitch[Selonq[Candidatelon]] = {
         for {
-          mappedTargets <- targetMapper(target)
-          results <- Stitch.traverse(mappedTargets)(original(_))
-        } yield results.flatten
+          mappelondTargelonts <- targelontMappelonr(targelont)
+          relonsults <- Stitch.travelonrselon(mappelondTargelonts)(original(_))
+        } yielonld relonsults.flattelonn
       }
     }
   }
 
   /**
-   * Map target type into new target type (1 to many mapping)
+   * Map targelont typelon into nelonw targelont typelon (1 to many mapping)
    */
-  def mapKeys[Target2](
-    targetMapper: Target2 => Seq[Target]
-  ): CandidateSource[Target2, Candidate] = {
-    val stitchMapper: Target2 => Stitch[Seq[Target]] = { target =>
-      Stitch.value(targetMapper(target))
+  delonf mapKelonys[Targelont2](
+    targelontMappelonr: Targelont2 => Selonq[Targelont]
+  ): CandidatelonSourcelon[Targelont2, Candidatelon] = {
+    val stitchMappelonr: Targelont2 => Stitch[Selonq[Targelont]] = { targelont =>
+      Stitch.valuelon(targelontMappelonr(targelont))
     }
-    stitchMapKeys(stitchMapper)
+    stitchMapKelonys(stitchMappelonr)
   }
 
   /**
-   * Map candidate types to new type based on candidateMapper
+   * Map candidatelon typelons to nelonw typelon baselond on candidatelonMappelonr
    */
-  def mapValues[Candidate2](
-    candidateMapper: Candidate => Stitch[Option[Candidate2]]
-  ): CandidateSource[Target, Candidate2] = {
+  delonf mapValuelons[Candidatelon2](
+    candidatelonMappelonr: Candidatelon => Stitch[Option[Candidatelon2]]
+  ): CandidatelonSourcelon[Targelont, Candidatelon2] = {
 
-    new CandidateSource[Target, Candidate2] {
-      val identifier = original.identifier
-      override def apply(target: Target): Stitch[Seq[Candidate2]] = {
-        original(target).flatMap { candidates =>
-          val results = Stitch.traverse(candidates)(candidateMapper(_))
-          results.map(_.flatten)
+    nelonw CandidatelonSourcelon[Targelont, Candidatelon2] {
+      val idelonntifielonr = original.idelonntifielonr
+      ovelonrridelon delonf apply(targelont: Targelont): Stitch[Selonq[Candidatelon2]] = {
+        original(targelont).flatMap { candidatelons =>
+          val relonsults = Stitch.travelonrselon(candidatelons)(candidatelonMappelonr(_))
+          relonsults.map(_.flattelonn)
         }
       }
     }
   }
 
   /**
-   * Map candidate types to new type based on candidateMapper
+   * Map candidatelon typelons to nelonw typelon baselond on candidatelonMappelonr
    */
-  def mapValue[Candidate2](
-    candidateMapper: Candidate => Candidate2
-  ): CandidateSource[Target, Candidate2] = {
-    val stitchMapper: Candidate => Stitch[Option[Candidate2]] = { c =>
-      Stitch.value(Some(candidateMapper(c)))
+  delonf mapValuelon[Candidatelon2](
+    candidatelonMappelonr: Candidatelon => Candidatelon2
+  ): CandidatelonSourcelon[Targelont, Candidatelon2] = {
+    val stitchMappelonr: Candidatelon => Stitch[Option[Candidatelon2]] = { c =>
+      Stitch.valuelon(Somelon(candidatelonMappelonr(c)))
     }
-    mapValues(stitchMapper)
+    mapValuelons(stitchMappelonr)
   }
 
   /**
-   * This method wraps the candidate source in a designated timeout so that a single candidate
-   * source does not result in a timeout for the entire flow
+   * This melonthod wraps thelon candidatelon sourcelon in a delonsignatelond timelonout so that a singlelon candidatelon
+   * sourcelon doelons not relonsult in a timelonout for thelon elonntirelon flow
    */
-  def within(
-    candidateTimeout: Duration,
-    statsReceiver: StatsReceiver
-  ): CandidateSource[Target, Candidate] = {
-    val originalIdentifier = original.identifier
-    val timeoutCounter =
-      statsReceiver.counter(originalIdentifier.name, "timeout")
+  delonf within(
+    candidatelonTimelonout: Duration,
+    statsReloncelonivelonr: StatsReloncelonivelonr
+  ): CandidatelonSourcelon[Targelont, Candidatelon] = {
+    val originalIdelonntifielonr = original.idelonntifielonr
+    val timelonoutCountelonr =
+      statsReloncelonivelonr.countelonr(originalIdelonntifielonr.namelon, "timelonout")
 
-    new CandidateSource[Target, Candidate] {
-      val identifier = originalIdentifier
-      override def apply(target: Target): Stitch[Seq[Candidate]] = {
+    nelonw CandidatelonSourcelon[Targelont, Candidatelon] {
+      val idelonntifielonr = originalIdelonntifielonr
+      ovelonrridelon delonf apply(targelont: Targelont): Stitch[Selonq[Candidatelon]] = {
         original
-          .apply(target)
-          .within(candidateTimeout)(com.twitter.finagle.util.DefaultTimer)
-          .rescue {
-            case _: TimeoutException =>
-              timeoutCounter.incr()
+          .apply(targelont)
+          .within(candidatelonTimelonout)(com.twittelonr.finaglelon.util.DelonfaultTimelonr)
+          .relonscuelon {
+            caselon _: Timelonoutelonxcelonption =>
+              timelonoutCountelonr.incr()
               Stitch.Nil
           }
       }
     }
   }
 
-  def failOpenWithin(
-    candidateTimeout: Duration,
-    statsReceiver: StatsReceiver
-  ): CandidateSource[Target, Candidate] = {
-    val originalIdentifier = original.identifier
-    val timeoutCounter =
-      statsReceiver.counter(originalIdentifier.name, "timeout")
+  delonf failOpelonnWithin(
+    candidatelonTimelonout: Duration,
+    statsReloncelonivelonr: StatsReloncelonivelonr
+  ): CandidatelonSourcelon[Targelont, Candidatelon] = {
+    val originalIdelonntifielonr = original.idelonntifielonr
+    val timelonoutCountelonr =
+      statsReloncelonivelonr.countelonr(originalIdelonntifielonr.namelon, "timelonout")
 
-    new CandidateSource[Target, Candidate] {
-      val identifier = originalIdentifier
-      override def apply(target: Target): Stitch[Seq[Candidate]] = {
+    nelonw CandidatelonSourcelon[Targelont, Candidatelon] {
+      val idelonntifielonr = originalIdelonntifielonr
+      ovelonrridelon delonf apply(targelont: Targelont): Stitch[Selonq[Candidatelon]] = {
         original
-          .apply(target)
-          .within(candidateTimeout)(com.twitter.finagle.util.DefaultTimer)
-          .handle {
-            case _: TimeoutException =>
-              timeoutCounter.incr()
-              Seq.empty
-            case e: Exception =>
-              statsReceiver
-                .scope("candidate_source_error").scope(originalIdentifier.name).counter(
-                  e.getClass.getSimpleName).incr
-              Seq.empty
+          .apply(targelont)
+          .within(candidatelonTimelonout)(com.twittelonr.finaglelon.util.DelonfaultTimelonr)
+          .handlelon {
+            caselon _: Timelonoutelonxcelonption =>
+              timelonoutCountelonr.incr()
+              Selonq.elonmpty
+            caselon elon: elonxcelonption =>
+              statsReloncelonivelonr
+                .scopelon("candidatelon_sourcelon_elonrror").scopelon(originalIdelonntifielonr.namelon).countelonr(
+                  elon.gelontClass.gelontSimplelonNamelon).incr
+              Selonq.elonmpty
           }
       }
     }
   }
 }
 
-object EnrichedCandidateSource {
-  implicit def toEnriched[K, V](original: CandidateSource[K, V]): EnrichedCandidateSource[K, V] =
-    new EnrichedCandidateSource(original)
+objelonct elonnrichelondCandidatelonSourcelon {
+  implicit delonf toelonnrichelond[K, V](original: CandidatelonSourcelon[K, V]): elonnrichelondCandidatelonSourcelon[K, V] =
+    nelonw elonnrichelondCandidatelonSourcelon(original)
 }

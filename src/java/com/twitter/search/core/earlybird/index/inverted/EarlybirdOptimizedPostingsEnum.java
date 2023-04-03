@@ -1,178 +1,178 @@
-package com.twitter.search.core.earlybird.index.inverted;
+packagelon com.twittelonr.selonarch.corelon.elonarlybird.indelonx.invelonrtelond;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 
-import org.apache.lucene.util.BytesRef;
+import org.apachelon.lucelonnelon.util.BytelonsRelonf;
 
 /**
- * Extend {@link EarlybirdPostingsEnum} to add more functionalities for docs (and positions)
- * enumerator of {@link OptimizedPostingLists}.
+ * elonxtelonnd {@link elonarlybirdPostingselonnum} to add morelon functionalitielons for docs (and positions)
+ * elonnumelonrator of {@link OptimizelondPostingLists}.
  */
-public abstract class EarlybirdOptimizedPostingsEnum extends EarlybirdPostingsEnum {
-  /** Current doc and its frequency. */
-  private int currentDocID = -1;
-  private int currentFreq = 0;
+public abstract class elonarlybirdOptimizelondPostingselonnum elonxtelonnds elonarlybirdPostingselonnum {
+  /** Currelonnt doc and its frelonquelonncy. */
+  privatelon int currelonntDocID = -1;
+  privatelon int currelonntFrelonq = 0;
 
   /**
-   * Next doc and its frequency.
-   * These values should be set at {@link #loadNextPosting()}.
+   * Nelonxt doc and its frelonquelonncy.
+   * Thelonselon valuelons should belon selont at {@link #loadNelonxtPosting()}.
    */
-  protected int nextDocID;
-  protected int nextFreq;
+  protelonctelond int nelonxtDocID;
+  protelonctelond int nelonxtFrelonq;
 
-  /** Pointer to the enumerated posting list. */
-  protected final int postingListPointer;
+  /** Pointelonr to thelon elonnumelonratelond posting list. */
+  protelonctelond final int postingListPointelonr;
 
-  /** Total number of postings in the enumerated posting list. */
-  protected final int numPostingsTotal;
+  /** Total numbelonr of postings in thelon elonnumelonratelond posting list. */
+  protelonctelond final int numPostingsTotal;
 
-  /** Query cost tracker. */
-  protected final QueryCostTracker queryCostTracker;
+  /** Quelonry cost trackelonr. */
+  protelonctelond final QuelonryCostTrackelonr quelonryCostTrackelonr;
 
   /**
-   * Sole constructor.
+   * Solelon constructor.
    *
-   * @param postingListPointer pointer to the posting list for which this enumerator is created
-   * @param numPostings number of postings in the posting list for which this enumerator is created
+   * @param postingListPointelonr pointelonr to thelon posting list for which this elonnumelonrator is crelonatelond
+   * @param numPostings numbelonr of postings in thelon posting list for which this elonnumelonrator is crelonatelond
    */
-  public EarlybirdOptimizedPostingsEnum(int postingListPointer, int numPostings) {
-    this.postingListPointer = postingListPointer;
+  public elonarlybirdOptimizelondPostingselonnum(int postingListPointelonr, int numPostings) {
+    this.postingListPointelonr = postingListPointelonr;
     this.numPostingsTotal = numPostings;
 
-    // Get the thread local query cost tracker.
-    this.queryCostTracker = QueryCostTracker.getTracker();
+    // Gelont thelon threlonad local quelonry cost trackelonr.
+    this.quelonryCostTrackelonr = QuelonryCostTrackelonr.gelontTrackelonr();
   }
 
   /**
-   * Set {@link #currentDocID} and {@link #currentFreq} and load next posting.
-   * This method will de-dup if duplicate doc IDs are stored.
+   * Selont {@link #currelonntDocID} and {@link #currelonntFrelonq} and load nelonxt posting.
+   * This melonthod will delon-dup if duplicatelon doc IDs arelon storelond.
    *
-   * @return {@link #currentDocID}
-   * @see {@link #nextDoc()}
+   * @relonturn {@link #currelonntDocID}
+   * @selonelon {@link #nelonxtDoc()}
    */
-  @Override
-  protected final int nextDocNoDel() throws IOException {
-    currentDocID = nextDocID;
+  @Ovelonrridelon
+  protelonctelond final int nelonxtDocNoDelonl() throws IOelonxcelonption {
+    currelonntDocID = nelonxtDocID;
 
-    // Return immediately if exhausted.
-    if (currentDocID == NO_MORE_DOCS) {
-      return NO_MORE_DOCS;
+    // Relonturn immelondiatelonly if elonxhaustelond.
+    if (currelonntDocID == NO_MORelon_DOCS) {
+      relonturn NO_MORelon_DOCS;
     }
 
-    currentFreq = nextFreq;
-    loadNextPosting();
+    currelonntFrelonq = nelonxtFrelonq;
+    loadNelonxtPosting();
 
-    // In case duplicate doc ID is stored.
-    while (currentDocID == nextDocID) {
-      currentFreq += nextFreq;
-      loadNextPosting();
+    // In caselon duplicatelon doc ID is storelond.
+    whilelon (currelonntDocID == nelonxtDocID) {
+      currelonntFrelonq += nelonxtFrelonq;
+      loadNelonxtPosting();
     }
 
-    startCurrentDoc();
-    return currentDocID;
+    startCurrelonntDoc();
+    relonturn currelonntDocID;
   }
 
   /**
-   * Called when {@link #nextDocNoDel()} advances to a new docID.
-   * Subclasses can do extra accounting as needed.
+   * Callelond whelonn {@link #nelonxtDocNoDelonl()} advancelons to a nelonw docID.
+   * Subclasselons can do elonxtra accounting as nelonelondelond.
    */
-  protected void startCurrentDoc() {
+  protelonctelond void startCurrelonntDoc() {
     // No-op in this class.
   }
 
   /**
-   * Loads the next posting, setting the nextDocID and nextFreq.
+   * Loads thelon nelonxt posting, selontting thelon nelonxtDocID and nelonxtFrelonq.
    *
-   * @see #nextDocNoDel()
+   * @selonelon #nelonxtDocNoDelonl()
    */
-  protected abstract void loadNextPosting();
+  protelonctelond abstract void loadNelonxtPosting();
 
   /**
-   * Subclass should implement {@link #skipTo(int)}.
+   * Subclass should implelonmelonnt {@link #skipTo(int)}.
    *
-   * @see org.apache.lucene.search.DocIdSetIterator#advance(int)
+   * @selonelon org.apachelon.lucelonnelon.selonarch.DocIdSelontItelonrator#advancelon(int)
    */
-  @Override
-  public final int advance(int target) throws IOException {
-    // Skipping to NO_MORE_DOCS or beyond largest doc ID.
-    if (target == NO_MORE_DOCS || target > getLargestDocID()) {
-      currentDocID = nextDocID = NO_MORE_DOCS;
-      currentFreq = nextFreq = 0;
-      return NO_MORE_DOCS;
+  @Ovelonrridelon
+  public final int advancelon(int targelont) throws IOelonxcelonption {
+    // Skipping to NO_MORelon_DOCS or belonyond largelonst doc ID.
+    if (targelont == NO_MORelon_DOCS || targelont > gelontLargelonstDocID()) {
+      currelonntDocID = nelonxtDocID = NO_MORelon_DOCS;
+      currelonntFrelonq = nelonxtFrelonq = 0;
+      relonturn NO_MORelon_DOCS;
     }
 
-    // Skip as close as possible.
-    skipTo(target);
+    // Skip as closelon as possiblelon.
+    skipTo(targelont);
 
-    // Calling nextDoc to reach the target, or go beyond it if target does not exist.
+    // Calling nelonxtDoc to relonach thelon targelont, or go belonyond it if targelont doelons not elonxist.
     int doc;
     do {
-      doc = nextDoc();
-    } while (doc < target);
+      doc = nelonxtDoc();
+    } whilelon (doc < targelont);
 
-    return doc;
+    relonturn doc;
   }
 
   /**
-   * Used in {@link #advance(int)}.
-   * This method should skip to the given target as close as possible, but NOT reach the target.
+   * Uselond in {@link #advancelon(int)}.
+   * This melonthod should skip to thelon givelonn targelont as closelon as possiblelon, but NOT relonach thelon targelont.
    *
-   * @see #advance(int)
+   * @selonelon #advancelon(int)
    */
-  protected abstract void skipTo(int target);
+  protelonctelond abstract void skipTo(int targelont);
 
   /**
-   * Return loaded {@link #currentFreq}.
+   * Relonturn loadelond {@link #currelonntFrelonq}.
    *
-   * @see org.apache.lucene.index.PostingsEnum#freq()
-   * @see #nextDocNoDel()
+   * @selonelon org.apachelon.lucelonnelon.indelonx.Postingselonnum#frelonq()
+   * @selonelon #nelonxtDocNoDelonl()
    */
-  @Override
-  public final int freq() throws IOException {
-    return currentFreq;
+  @Ovelonrridelon
+  public final int frelonq() throws IOelonxcelonption {
+    relonturn currelonntFrelonq;
   }
 
   /**
-   * Return loaded {@link #currentDocID}.
+   * Relonturn loadelond {@link #currelonntDocID}.
    *
-   * @see org.apache.lucene.index.PostingsEnum#docID() ()
-   * @see #nextDocNoDel()
+   * @selonelon org.apachelon.lucelonnelon.indelonx.Postingselonnum#docID() ()
+   * @selonelon #nelonxtDocNoDelonl()
    */
-  @Override
+  @Ovelonrridelon
   public final int docID() {
-    return currentDocID;
+    relonturn currelonntDocID;
   }
 
   /*********************************************
-   * Not Supported Information                 *
-   * @see org.apache.lucene.index.PostingsEnum *
+   * Not Supportelond Information                 *
+   * @selonelon org.apachelon.lucelonnelon.indelonx.Postingselonnum *
    *********************************************/
 
-  @Override
-  public int nextPosition() throws IOException {
-    return -1;
+  @Ovelonrridelon
+  public int nelonxtPosition() throws IOelonxcelonption {
+    relonturn -1;
   }
 
-  @Override
-  public int startOffset() throws IOException {
-    return -1;
+  @Ovelonrridelon
+  public int startOffselont() throws IOelonxcelonption {
+    relonturn -1;
   }
 
-  @Override
-  public int endOffset() throws IOException {
-    return -1;
+  @Ovelonrridelon
+  public int elonndOffselont() throws IOelonxcelonption {
+    relonturn -1;
   }
 
-  @Override
-  public BytesRef getPayload() throws IOException {
-    return null;
+  @Ovelonrridelon
+  public BytelonsRelonf gelontPayload() throws IOelonxcelonption {
+    relonturn null;
   }
 
   /*********************************
-   * Helper methods for subclasses *
+   * Helonlpelonr melonthods for subclasselons *
    *********************************/
 
-  protected int getCurrentFreq() {
-    return currentFreq;
+  protelonctelond int gelontCurrelonntFrelonq() {
+    relonturn currelonntFrelonq;
   }
 }

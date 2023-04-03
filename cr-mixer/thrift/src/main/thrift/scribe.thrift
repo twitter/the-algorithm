@@ -1,168 +1,168 @@
-namespace java com.twitter.cr_mixer.thriftjava
-#@namespace scala com.twitter.cr_mixer.thriftscala
-#@namespace strato com.twitter.cr_mixer
+namelonspacelon java com.twittelonr.cr_mixelonr.thriftjava
+#@namelonspacelon scala com.twittelonr.cr_mixelonr.thriftscala
+#@namelonspacelon strato com.twittelonr.cr_mixelonr
 
-include "ads.thrift"
-include "candidate_generation_key.thrift"
-include "cr_mixer.thrift"
-include "metric_tags.thrift"
-include "product.thrift"
-include "related_tweet.thrift"
-include "source_type.thrift"
-include "uteg.thrift"
-include "com/twitter/ml/api/data.thrift"
-include "com/twitter/simclusters_v2/identifier.thrift"
+includelon "ads.thrift"
+includelon "candidatelon_gelonnelonration_kelony.thrift"
+includelon "cr_mixelonr.thrift"
+includelon "melontric_tags.thrift"
+includelon "product.thrift"
+includelon "relonlatelond_twelonelont.thrift"
+includelon "sourcelon_typelon.thrift"
+includelon "utelong.thrift"
+includelon "com/twittelonr/ml/api/data.thrift"
+includelon "com/twittelonr/simclustelonrs_v2/idelonntifielonr.thrift"
 
-struct VITTweetCandidatesScribe {
-  1: required i64 uuid (personalDataType = 'UniversallyUniqueIdentifierUuid') # RequestUUID - unique scribe id for every request that comes in. Same request but different stages of scribe log (FetchCandidate, Filter, etc) share the same uuid
-  2: required i64 userId (personalDataType = 'UserId')
-  3: required list<VITTweetCandidateScribe> candidates
-  7: required product.Product product
-  8: required list<ImpressesedBucketInfo> impressedBuckets
-} (persisted='true', hasPersonalData = 'true')
+struct VITTwelonelontCandidatelonsScribelon {
+  1: relonquirelond i64 uuid (pelonrsonalDataTypelon = 'UnivelonrsallyUniquelonIdelonntifielonrUuid') # RelonquelonstUUID - uniquelon scribelon id for elonvelonry relonquelonst that comelons in. Samelon relonquelonst but diffelonrelonnt stagelons of scribelon log (FelontchCandidatelon, Filtelonr, elontc) sharelon thelon samelon uuid
+  2: relonquirelond i64 uselonrId (pelonrsonalDataTypelon = 'UselonrId')
+  3: relonquirelond list<VITTwelonelontCandidatelonScribelon> candidatelons
+  7: relonquirelond product.Product product
+  8: relonquirelond list<ImprelonsselonselondBuckelontInfo> imprelonsselondBuckelonts
+} (pelonrsistelond='truelon', hasPelonrsonalData = 'truelon')
 
-struct VITTweetCandidateScribe {
-  1: required i64 tweetId (personalDataType = 'TweetId')
-  2: required i64 authorId (personalDataType = 'UserId')
-  3: required double score
-  4: required list<metric_tags.MetricTag> metricTags
-} (persisted='true', hasPersonalData = 'true')
+struct VITTwelonelontCandidatelonScribelon {
+  1: relonquirelond i64 twelonelontId (pelonrsonalDataTypelon = 'TwelonelontId')
+  2: relonquirelond i64 authorId (pelonrsonalDataTypelon = 'UselonrId')
+  3: relonquirelond doublelon scorelon
+  4: relonquirelond list<melontric_tags.MelontricTag> melontricTags
+} (pelonrsistelond='truelon', hasPelonrsonalData = 'truelon')
 
-struct GetTweetsRecommendationsScribe {
-  1: required i64 uuid (personalDataType = 'UniversallyUniqueIdentifierUuid') # RequestUUID - unique scribe id for every request that comes in. Same request but different stages of scribe log (FetchCandidate, Filter, etc) share the same uuid
-  2: required i64 userId (personalDataType = 'UserId')
-  3: required Result result
-  4: optional i64 traceId
-  5: optional PerformanceMetrics performanceMetrics
-  6: optional list<ImpressesedBucketInfo> impressedBuckets
-} (persisted='true', hasPersonalData = 'true')
+struct GelontTwelonelontsReloncommelonndationsScribelon {
+  1: relonquirelond i64 uuid (pelonrsonalDataTypelon = 'UnivelonrsallyUniquelonIdelonntifielonrUuid') # RelonquelonstUUID - uniquelon scribelon id for elonvelonry relonquelonst that comelons in. Samelon relonquelonst but diffelonrelonnt stagelons of scribelon log (FelontchCandidatelon, Filtelonr, elontc) sharelon thelon samelon uuid
+  2: relonquirelond i64 uselonrId (pelonrsonalDataTypelon = 'UselonrId')
+  3: relonquirelond Relonsult relonsult
+  4: optional i64 tracelonId
+  5: optional PelonrformancelonMelontrics pelonrformancelonMelontrics
+  6: optional list<ImprelonsselonselondBuckelontInfo> imprelonsselondBuckelonts
+} (pelonrsistelond='truelon', hasPelonrsonalData = 'truelon')
 
-struct SourceSignal {
-  # optional, since that the next step covers all info here
-  1: optional identifier.InternalId id
-} (persisted='true')
+struct SourcelonSignal {
+  # optional, sincelon that thelon nelonxt stelonp covelonrs all info helonrelon
+  1: optional idelonntifielonr.IntelonrnalId id
+} (pelonrsistelond='truelon')
 
-struct PerformanceMetrics {
-  1: optional i64 latencyMs
-} (persisted='true')
+struct PelonrformancelonMelontrics {
+  1: optional i64 latelonncyMs
+} (pelonrsistelond='truelon')
 
-struct TweetCandidateWithMetadata {
-  1: required i64 tweetId (personalDataType = 'TweetId')
-  2: optional candidate_generation_key.CandidateGenerationKey candidateGenerationKey
-  3: optional i64 authorId (personalDataType = 'UserId') # only for InterleaveResult for hydrating training data
-  4: optional double score # score with respect to candidateGenerationKey
-  5: optional data.DataRecord dataRecord # attach any features to this candidate
-  6: optional i32 numCandidateGenerationKeys # num CandidateGenerationKeys generating this tweetId  
-} (persisted='true')
+struct TwelonelontCandidatelonWithMelontadata {
+  1: relonquirelond i64 twelonelontId (pelonrsonalDataTypelon = 'TwelonelontId')
+  2: optional candidatelon_gelonnelonration_kelony.CandidatelonGelonnelonrationKelony candidatelonGelonnelonrationKelony
+  3: optional i64 authorId (pelonrsonalDataTypelon = 'UselonrId') # only for IntelonrlelonavelonRelonsult for hydrating training data
+  4: optional doublelon scorelon # scorelon with relonspelonct to candidatelonGelonnelonrationKelony
+  5: optional data.DataReloncord dataReloncord # attach any felonaturelons to this candidatelon
+  6: optional i32 numCandidatelonGelonnelonrationKelonys # num CandidatelonGelonnelonrationKelonys gelonnelonrating this twelonelontId
+} (pelonrsistelond='truelon')
 
-struct FetchSignalSourcesResult { 
-  1: optional set<SourceSignal> signals
-} (persisted='true')
+struct FelontchSignalSourcelonsRelonsult {
+  1: optional selont<SourcelonSignal> signals
+} (pelonrsistelond='truelon')
 
-struct FetchCandidatesResult {
-  1: optional list<TweetCandidateWithMetadata> tweets
-} (persisted='true')
+struct FelontchCandidatelonsRelonsult {
+  1: optional list<TwelonelontCandidatelonWithMelontadata> twelonelonts
+} (pelonrsistelond='truelon')
 
-struct PreRankFilterResult {
-  1: optional list<TweetCandidateWithMetadata> tweets
-} (persisted='true')
+struct PrelonRankFiltelonrRelonsult {
+  1: optional list<TwelonelontCandidatelonWithMelontadata> twelonelonts
+} (pelonrsistelond='truelon')
 
-struct InterleaveResult {
-  1: optional list<TweetCandidateWithMetadata> tweets
-} (persisted='true')
+struct IntelonrlelonavelonRelonsult {
+  1: optional list<TwelonelontCandidatelonWithMelontadata> twelonelonts
+} (pelonrsistelond='truelon')
 
-struct RankResult {
-  1: optional list<TweetCandidateWithMetadata> tweets
-} (persisted='true')
+struct RankRelonsult {
+  1: optional list<TwelonelontCandidatelonWithMelontadata> twelonelonts
+} (pelonrsistelond='truelon')
 
-struct TopLevelApiResult {
-  1: required i64 timestamp (personalDataType = 'PrivateTimestamp')
-  2: required cr_mixer.CrMixerTweetRequest request
-  3: required cr_mixer.CrMixerTweetResponse response
-} (persisted='true')
+struct TopLelonvelonlApiRelonsult {
+  1: relonquirelond i64 timelonstamp (pelonrsonalDataTypelon = 'PrivatelonTimelonstamp')
+  2: relonquirelond cr_mixelonr.CrMixelonrTwelonelontRelonquelonst relonquelonst
+  3: relonquirelond cr_mixelonr.CrMixelonrTwelonelontRelonsponselon relonsponselon
+} (pelonrsistelond='truelon')
 
-union Result {
-  1: FetchSignalSourcesResult fetchSignalSourcesResult
-  2: FetchCandidatesResult fetchCandidatesResult
-  3: PreRankFilterResult preRankFilterResult
-  4: InterleaveResult interleaveResult
-  5: RankResult rankResult
-  6: TopLevelApiResult topLevelApiResult
-} (persisted='true', hasPersonalData = 'true')
+union Relonsult {
+  1: FelontchSignalSourcelonsRelonsult felontchSignalSourcelonsRelonsult
+  2: FelontchCandidatelonsRelonsult felontchCandidatelonsRelonsult
+  3: PrelonRankFiltelonrRelonsult prelonRankFiltelonrRelonsult
+  4: IntelonrlelonavelonRelonsult intelonrlelonavelonRelonsult
+  5: RankRelonsult rankRelonsult
+  6: TopLelonvelonlApiRelonsult topLelonvelonlApiRelonsult
+} (pelonrsistelond='truelon', hasPelonrsonalData = 'truelon')
 
-struct ImpressesedBucketInfo {
-  1: required i64 experimentId (personalDataType = 'ExperimentId')
-  2: required string bucketName
-  3: required i32 version
-} (persisted='true')
+struct ImprelonsselonselondBuckelontInfo {
+  1: relonquirelond i64 elonxpelonrimelonntId (pelonrsonalDataTypelon = 'elonxpelonrimelonntId')
+  2: relonquirelond string buckelontNamelon
+  3: relonquirelond i32 velonrsion
+} (pelonrsistelond='truelon')
 
-############# RelatedTweets Scribe #############
+############# RelonlatelondTwelonelonts Scribelon #############
 
-struct GetRelatedTweetsScribe {
-  1: required i64 uuid (personalDataType = 'UniversallyUniqueIdentifierUuid') # RequestUUID - unique scribe id for every request that comes in. Same request but different stages of scribe log (FetchCandidate, Filter, etc) share the same uuid
-  2: required identifier.InternalId internalId
-  3: required RelatedTweetResult relatedTweetResult
-  4: optional i64 requesterId (personalDataType = 'UserId')
-  5: optional i64 guestId (personalDataType = 'GuestId')
-  6: optional i64 traceId
-  7: optional PerformanceMetrics performanceMetrics
-  8: optional list<ImpressesedBucketInfo> impressedBuckets
-} (persisted='true', hasPersonalData = 'true')
+struct GelontRelonlatelondTwelonelontsScribelon {
+  1: relonquirelond i64 uuid (pelonrsonalDataTypelon = 'UnivelonrsallyUniquelonIdelonntifielonrUuid') # RelonquelonstUUID - uniquelon scribelon id for elonvelonry relonquelonst that comelons in. Samelon relonquelonst but diffelonrelonnt stagelons of scribelon log (FelontchCandidatelon, Filtelonr, elontc) sharelon thelon samelon uuid
+  2: relonquirelond idelonntifielonr.IntelonrnalId intelonrnalId
+  3: relonquirelond RelonlatelondTwelonelontRelonsult relonlatelondTwelonelontRelonsult
+  4: optional i64 relonquelonstelonrId (pelonrsonalDataTypelon = 'UselonrId')
+  5: optional i64 guelonstId (pelonrsonalDataTypelon = 'GuelonstId')
+  6: optional i64 tracelonId
+  7: optional PelonrformancelonMelontrics pelonrformancelonMelontrics
+  8: optional list<ImprelonsselonselondBuckelontInfo> imprelonsselondBuckelonts
+} (pelonrsistelond='truelon', hasPelonrsonalData = 'truelon')
 
-struct RelatedTweetTopLevelApiResult {
-  1: required i64 timestamp (personalDataType = 'PrivateTimestamp')
-  2: required related_tweet.RelatedTweetRequest request
-  3: required related_tweet.RelatedTweetResponse response
-} (persisted='true')
+struct RelonlatelondTwelonelontTopLelonvelonlApiRelonsult {
+  1: relonquirelond i64 timelonstamp (pelonrsonalDataTypelon = 'PrivatelonTimelonstamp')
+  2: relonquirelond relonlatelond_twelonelont.RelonlatelondTwelonelontRelonquelonst relonquelonst
+  3: relonquirelond relonlatelond_twelonelont.RelonlatelondTwelonelontRelonsponselon relonsponselon
+} (pelonrsistelond='truelon')
 
-union RelatedTweetResult {
-  1: RelatedTweetTopLevelApiResult relatedTweetTopLevelApiResult
-  2: FetchCandidatesResult fetchCandidatesResult
-  3: PreRankFilterResult preRankFilterResult # results after seqential filters
-  # if later we need rankResult, we can add it here
-} (persisted='true', hasPersonalData = 'true')
+union RelonlatelondTwelonelontRelonsult {
+  1: RelonlatelondTwelonelontTopLelonvelonlApiRelonsult relonlatelondTwelonelontTopLelonvelonlApiRelonsult
+  2: FelontchCandidatelonsRelonsult felontchCandidatelonsRelonsult
+  3: PrelonRankFiltelonrRelonsult prelonRankFiltelonrRelonsult # relonsults aftelonr selonqelonntial filtelonrs
+  # if latelonr welon nelonelond rankRelonsult, welon can add it helonrelon
+} (pelonrsistelond='truelon', hasPelonrsonalData = 'truelon')
 
-############# UtegTweets Scribe #############
+############# UtelongTwelonelonts Scribelon #############
 
-struct GetUtegTweetsScribe {
-  1: required i64 uuid (personalDataType = 'UniversallyUniqueIdentifierUuid') # RequestUUID - unique scribe id for every request that comes in. Same request but different stages of scribe log (FetchCandidate, Filter, etc) share the same uuid
-  2: required i64 userId (personalDataType = 'UserId')
-  3: required UtegTweetResult utegTweetResult
-  4: optional i64 traceId
-  5: optional PerformanceMetrics performanceMetrics
-  6: optional list<ImpressesedBucketInfo> impressedBuckets
-} (persisted='true', hasPersonalData = 'true')
+struct GelontUtelongTwelonelontsScribelon {
+  1: relonquirelond i64 uuid (pelonrsonalDataTypelon = 'UnivelonrsallyUniquelonIdelonntifielonrUuid') # RelonquelonstUUID - uniquelon scribelon id for elonvelonry relonquelonst that comelons in. Samelon relonquelonst but diffelonrelonnt stagelons of scribelon log (FelontchCandidatelon, Filtelonr, elontc) sharelon thelon samelon uuid
+  2: relonquirelond i64 uselonrId (pelonrsonalDataTypelon = 'UselonrId')
+  3: relonquirelond UtelongTwelonelontRelonsult utelongTwelonelontRelonsult
+  4: optional i64 tracelonId
+  5: optional PelonrformancelonMelontrics pelonrformancelonMelontrics
+  6: optional list<ImprelonsselonselondBuckelontInfo> imprelonsselondBuckelonts
+} (pelonrsistelond='truelon', hasPelonrsonalData = 'truelon')
 
-struct UtegTweetTopLevelApiResult {
-  1: required i64 timestamp (personalDataType = 'PrivateTimestamp')
-  2: required uteg.UtegTweetRequest request
-  3: required uteg.UtegTweetResponse response
-} (persisted='true')
+struct UtelongTwelonelontTopLelonvelonlApiRelonsult {
+  1: relonquirelond i64 timelonstamp (pelonrsonalDataTypelon = 'PrivatelonTimelonstamp')
+  2: relonquirelond utelong.UtelongTwelonelontRelonquelonst relonquelonst
+  3: relonquirelond utelong.UtelongTwelonelontRelonsponselon relonsponselon
+} (pelonrsistelond='truelon')
 
-union UtegTweetResult {
-  1: UtegTweetTopLevelApiResult utegTweetTopLevelApiResult
-  2: FetchCandidatesResult fetchCandidatesResult
-  # if later we need rankResult, we can add it here
-} (persisted='true', hasPersonalData = 'true')
+union UtelongTwelonelontRelonsult {
+  1: UtelongTwelonelontTopLelonvelonlApiRelonsult utelongTwelonelontTopLelonvelonlApiRelonsult
+  2: FelontchCandidatelonsRelonsult felontchCandidatelonsRelonsult
+  # if latelonr welon nelonelond rankRelonsult, welon can add it helonrelon
+} (pelonrsistelond='truelon', hasPelonrsonalData = 'truelon')
 
-############# getAdsRecommendations() Scribe #############
+############# gelontAdsReloncommelonndations() Scribelon #############
 
-struct GetAdsRecommendationsScribe {
-  1: required i64 uuid (personalDataType = 'UniversallyUniqueIdentifierUuid') # RequestUUID - unique scribe id for every request that comes in. Same request but different stages of scribe log (FetchCandidate, Filter, etc) share the same uuid
-  2: required i64 userId (personalDataType = 'UserId')
-  3: required AdsRecommendationsResult result
-  4: optional i64 traceId
-  5: optional PerformanceMetrics performanceMetrics
-  6: optional list<ImpressesedBucketInfo> impressedBuckets
-} (persisted='true', hasPersonalData = 'true')
+struct GelontAdsReloncommelonndationsScribelon {
+  1: relonquirelond i64 uuid (pelonrsonalDataTypelon = 'UnivelonrsallyUniquelonIdelonntifielonrUuid') # RelonquelonstUUID - uniquelon scribelon id for elonvelonry relonquelonst that comelons in. Samelon relonquelonst but diffelonrelonnt stagelons of scribelon log (FelontchCandidatelon, Filtelonr, elontc) sharelon thelon samelon uuid
+  2: relonquirelond i64 uselonrId (pelonrsonalDataTypelon = 'UselonrId')
+  3: relonquirelond AdsReloncommelonndationsRelonsult relonsult
+  4: optional i64 tracelonId
+  5: optional PelonrformancelonMelontrics pelonrformancelonMelontrics
+  6: optional list<ImprelonsselonselondBuckelontInfo> imprelonsselondBuckelonts
+} (pelonrsistelond='truelon', hasPelonrsonalData = 'truelon')
 
-struct AdsRecommendationTopLevelApiResult {
-  1: required i64 timestamp (personalDataType = 'PrivateTimestamp')
-  2: required ads.AdsRequest request
-  3: required ads.AdsResponse response
-} (persisted='true')
+struct AdsReloncommelonndationTopLelonvelonlApiRelonsult {
+  1: relonquirelond i64 timelonstamp (pelonrsonalDataTypelon = 'PrivatelonTimelonstamp')
+  2: relonquirelond ads.AdsRelonquelonst relonquelonst
+  3: relonquirelond ads.AdsRelonsponselon relonsponselon
+} (pelonrsistelond='truelon')
 
-union AdsRecommendationsResult{
-  1: AdsRecommendationTopLevelApiResult adsRecommendationTopLevelApiResult
-  2: FetchCandidatesResult fetchCandidatesResult
-}(persisted='true', hasPersonalData = 'true')
+union AdsReloncommelonndationsRelonsult{
+  1: AdsReloncommelonndationTopLelonvelonlApiRelonsult adsReloncommelonndationTopLelonvelonlApiRelonsult
+  2: FelontchCandidatelonsRelonsult felontchCandidatelonsRelonsult
+}(pelonrsistelond='truelon', hasPelonrsonalData = 'truelon')

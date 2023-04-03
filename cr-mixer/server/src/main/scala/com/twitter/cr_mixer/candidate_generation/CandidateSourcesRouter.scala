@@ -1,536 +1,536 @@
-package com.twitter.cr_mixer.candidate_generation
+packagelon com.twittelonr.cr_mixelonr.candidatelon_gelonnelonration
 
-import com.twitter.contentrecommender.thriftscala.TweetInfo
-import com.twitter.cr_mixer.model.CandidateGenerationInfo
-import com.twitter.cr_mixer.model.GraphSourceInfo
-import com.twitter.cr_mixer.model.InitialCandidate
-import com.twitter.cr_mixer.model.ModelConfig
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.cr_mixer.model.SimilarityEngineInfo
-import com.twitter.cr_mixer.model.SourceInfo
-import com.twitter.cr_mixer.model.TripTweetWithScore
-import com.twitter.cr_mixer.model.TweetWithCandidateGenerationInfo
-import com.twitter.cr_mixer.model.TweetWithScore
-import com.twitter.cr_mixer.model.TweetWithScoreAndSocialProof
-import com.twitter.cr_mixer.param.ConsumerBasedWalsParams
-import com.twitter.cr_mixer.param.ConsumerEmbeddingBasedCandidateGenerationParams
-import com.twitter.cr_mixer.param.ConsumersBasedUserVideoGraphParams
-import com.twitter.cr_mixer.param.GlobalParams
-import com.twitter.cr_mixer.similarity_engine.ConsumersBasedUserVideoGraphSimilarityEngine
-import com.twitter.cr_mixer.similarity_engine.ConsumerBasedWalsSimilarityEngine
-import com.twitter.cr_mixer.similarity_engine.ConsumerEmbeddingBasedTripSimilarityEngine
-import com.twitter.cr_mixer.similarity_engine.ConsumerEmbeddingBasedTwHINSimilarityEngine
-import com.twitter.cr_mixer.similarity_engine.ConsumerEmbeddingBasedTwoTowerSimilarityEngine
-import com.twitter.cr_mixer.similarity_engine.EngineQuery
-import com.twitter.cr_mixer.similarity_engine.FilterUtil
-import com.twitter.cr_mixer.similarity_engine.HnswANNEngineQuery
-import com.twitter.cr_mixer.similarity_engine.HnswANNSimilarityEngine
-import com.twitter.cr_mixer.similarity_engine.ProducerBasedUnifiedSimilarityEngine
-import com.twitter.cr_mixer.similarity_engine.StandardSimilarityEngine
-import com.twitter.cr_mixer.similarity_engine.TripEngineQuery
-import com.twitter.cr_mixer.similarity_engine.TweetBasedUnifiedSimilarityEngine
-import com.twitter.cr_mixer.similarity_engine.UserTweetEntityGraphSimilarityEngine
-import com.twitter.cr_mixer.thriftscala.SimilarityEngineType
-import com.twitter.cr_mixer.thriftscala.SourceType
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.timelines.configapi
-import com.twitter.util.Future
-import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Singleton
+import com.twittelonr.contelonntreloncommelonndelonr.thriftscala.TwelonelontInfo
+import com.twittelonr.cr_mixelonr.modelonl.CandidatelonGelonnelonrationInfo
+import com.twittelonr.cr_mixelonr.modelonl.GraphSourcelonInfo
+import com.twittelonr.cr_mixelonr.modelonl.InitialCandidatelon
+import com.twittelonr.cr_mixelonr.modelonl.ModelonlConfig
+import com.twittelonr.cr_mixelonr.modelonl.ModulelonNamelons
+import com.twittelonr.cr_mixelonr.modelonl.SimilarityelonnginelonInfo
+import com.twittelonr.cr_mixelonr.modelonl.SourcelonInfo
+import com.twittelonr.cr_mixelonr.modelonl.TripTwelonelontWithScorelon
+import com.twittelonr.cr_mixelonr.modelonl.TwelonelontWithCandidatelonGelonnelonrationInfo
+import com.twittelonr.cr_mixelonr.modelonl.TwelonelontWithScorelon
+import com.twittelonr.cr_mixelonr.modelonl.TwelonelontWithScorelonAndSocialProof
+import com.twittelonr.cr_mixelonr.param.ConsumelonrBaselondWalsParams
+import com.twittelonr.cr_mixelonr.param.ConsumelonrelonmbelonddingBaselondCandidatelonGelonnelonrationParams
+import com.twittelonr.cr_mixelonr.param.ConsumelonrsBaselondUselonrVidelonoGraphParams
+import com.twittelonr.cr_mixelonr.param.GlobalParams
+import com.twittelonr.cr_mixelonr.similarity_elonnginelon.ConsumelonrsBaselondUselonrVidelonoGraphSimilarityelonnginelon
+import com.twittelonr.cr_mixelonr.similarity_elonnginelon.ConsumelonrBaselondWalsSimilarityelonnginelon
+import com.twittelonr.cr_mixelonr.similarity_elonnginelon.ConsumelonrelonmbelonddingBaselondTripSimilarityelonnginelon
+import com.twittelonr.cr_mixelonr.similarity_elonnginelon.ConsumelonrelonmbelonddingBaselondTwHINSimilarityelonnginelon
+import com.twittelonr.cr_mixelonr.similarity_elonnginelon.ConsumelonrelonmbelonddingBaselondTwoTowelonrSimilarityelonnginelon
+import com.twittelonr.cr_mixelonr.similarity_elonnginelon.elonnginelonQuelonry
+import com.twittelonr.cr_mixelonr.similarity_elonnginelon.FiltelonrUtil
+import com.twittelonr.cr_mixelonr.similarity_elonnginelon.HnswANNelonnginelonQuelonry
+import com.twittelonr.cr_mixelonr.similarity_elonnginelon.HnswANNSimilarityelonnginelon
+import com.twittelonr.cr_mixelonr.similarity_elonnginelon.ProducelonrBaselondUnifielondSimilarityelonnginelon
+import com.twittelonr.cr_mixelonr.similarity_elonnginelon.StandardSimilarityelonnginelon
+import com.twittelonr.cr_mixelonr.similarity_elonnginelon.TripelonnginelonQuelonry
+import com.twittelonr.cr_mixelonr.similarity_elonnginelon.TwelonelontBaselondUnifielondSimilarityelonnginelon
+import com.twittelonr.cr_mixelonr.similarity_elonnginelon.UselonrTwelonelontelonntityGraphSimilarityelonnginelon
+import com.twittelonr.cr_mixelonr.thriftscala.SimilarityelonnginelonTypelon
+import com.twittelonr.cr_mixelonr.thriftscala.SourcelonTypelon
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.simclustelonrs_v2.common.TwelonelontId
+import com.twittelonr.simclustelonrs_v2.common.UselonrId
+import com.twittelonr.simclustelonrs_v2.thriftscala.IntelonrnalId
+import com.twittelonr.storelonhaus.RelonadablelonStorelon
+import com.twittelonr.timelonlinelons.configapi
+import com.twittelonr.util.Futurelon
+import javax.injelonct.Injelonct
+import javax.injelonct.Namelond
+import javax.injelonct.Singlelonton
 
 /**
- * Route the SourceInfo to the associated Candidate Engines.
+ * Routelon thelon SourcelonInfo to thelon associatelond Candidatelon elonnginelons.
  */
-@Singleton
-case class CandidateSourcesRouter @Inject() (
-  customizedRetrievalCandidateGeneration: CustomizedRetrievalCandidateGeneration,
-  simClustersInterestedInCandidateGeneration: SimClustersInterestedInCandidateGeneration,
-  @Named(ModuleNames.TweetBasedUnifiedSimilarityEngine)
-  tweetBasedUnifiedSimilarityEngine: StandardSimilarityEngine[
-    TweetBasedUnifiedSimilarityEngine.Query,
-    TweetWithCandidateGenerationInfo
+@Singlelonton
+caselon class CandidatelonSourcelonsRoutelonr @Injelonct() (
+  customizelondRelontrielonvalCandidatelonGelonnelonration: CustomizelondRelontrielonvalCandidatelonGelonnelonration,
+  simClustelonrsIntelonrelonstelondInCandidatelonGelonnelonration: SimClustelonrsIntelonrelonstelondInCandidatelonGelonnelonration,
+  @Namelond(ModulelonNamelons.TwelonelontBaselondUnifielondSimilarityelonnginelon)
+  twelonelontBaselondUnifielondSimilarityelonnginelon: StandardSimilarityelonnginelon[
+    TwelonelontBaselondUnifielondSimilarityelonnginelon.Quelonry,
+    TwelonelontWithCandidatelonGelonnelonrationInfo
   ],
-  @Named(ModuleNames.ProducerBasedUnifiedSimilarityEngine)
-  producerBasedUnifiedSimilarityEngine: StandardSimilarityEngine[
-    ProducerBasedUnifiedSimilarityEngine.Query,
-    TweetWithCandidateGenerationInfo
+  @Namelond(ModulelonNamelons.ProducelonrBaselondUnifielondSimilarityelonnginelon)
+  producelonrBaselondUnifielondSimilarityelonnginelon: StandardSimilarityelonnginelon[
+    ProducelonrBaselondUnifielondSimilarityelonnginelon.Quelonry,
+    TwelonelontWithCandidatelonGelonnelonrationInfo
   ],
-  @Named(ModuleNames.ConsumerEmbeddingBasedTripSimilarityEngine)
-  consumerEmbeddingBasedTripSimilarityEngine: StandardSimilarityEngine[
-    TripEngineQuery,
-    TripTweetWithScore
+  @Namelond(ModulelonNamelons.ConsumelonrelonmbelonddingBaselondTripSimilarityelonnginelon)
+  consumelonrelonmbelonddingBaselondTripSimilarityelonnginelon: StandardSimilarityelonnginelon[
+    TripelonnginelonQuelonry,
+    TripTwelonelontWithScorelon
   ],
-  @Named(ModuleNames.ConsumerEmbeddingBasedTwHINANNSimilarityEngine)
-  consumerBasedTwHINANNSimilarityEngine: HnswANNSimilarityEngine,
-  @Named(ModuleNames.ConsumerEmbeddingBasedTwoTowerANNSimilarityEngine)
-  consumerBasedTwoTowerSimilarityEngine: HnswANNSimilarityEngine,
-  @Named(ModuleNames.ConsumersBasedUserVideoGraphSimilarityEngine)
-  consumersBasedUserVideoGraphSimilarityEngine: StandardSimilarityEngine[
-    ConsumersBasedUserVideoGraphSimilarityEngine.Query,
-    TweetWithScore
+  @Namelond(ModulelonNamelons.ConsumelonrelonmbelonddingBaselondTwHINANNSimilarityelonnginelon)
+  consumelonrBaselondTwHINANNSimilarityelonnginelon: HnswANNSimilarityelonnginelon,
+  @Namelond(ModulelonNamelons.ConsumelonrelonmbelonddingBaselondTwoTowelonrANNSimilarityelonnginelon)
+  consumelonrBaselondTwoTowelonrSimilarityelonnginelon: HnswANNSimilarityelonnginelon,
+  @Namelond(ModulelonNamelons.ConsumelonrsBaselondUselonrVidelonoGraphSimilarityelonnginelon)
+  consumelonrsBaselondUselonrVidelonoGraphSimilarityelonnginelon: StandardSimilarityelonnginelon[
+    ConsumelonrsBaselondUselonrVidelonoGraphSimilarityelonnginelon.Quelonry,
+    TwelonelontWithScorelon
   ],
-  @Named(ModuleNames.UserTweetEntityGraphSimilarityEngine) userTweetEntityGraphSimilarityEngine: StandardSimilarityEngine[
-    UserTweetEntityGraphSimilarityEngine.Query,
-    TweetWithScoreAndSocialProof
+  @Namelond(ModulelonNamelons.UselonrTwelonelontelonntityGraphSimilarityelonnginelon) uselonrTwelonelontelonntityGraphSimilarityelonnginelon: StandardSimilarityelonnginelon[
+    UselonrTwelonelontelonntityGraphSimilarityelonnginelon.Quelonry,
+    TwelonelontWithScorelonAndSocialProof
   ],
-  @Named(ModuleNames.ConsumerBasedWalsSimilarityEngine)
-  consumerBasedWalsSimilarityEngine: StandardSimilarityEngine[
-    ConsumerBasedWalsSimilarityEngine.Query,
-    TweetWithScore
+  @Namelond(ModulelonNamelons.ConsumelonrBaselondWalsSimilarityelonnginelon)
+  consumelonrBaselondWalsSimilarityelonnginelon: StandardSimilarityelonnginelon[
+    ConsumelonrBaselondWalsSimilarityelonnginelon.Quelonry,
+    TwelonelontWithScorelon
   ],
-  tweetInfoStore: ReadableStore[TweetId, TweetInfo],
-  globalStats: StatsReceiver,
+  twelonelontInfoStorelon: RelonadablelonStorelon[TwelonelontId, TwelonelontInfo],
+  globalStats: StatsReloncelonivelonr,
 ) {
 
-  import CandidateSourcesRouter._
-  val stats: StatsReceiver = globalStats.scope(this.getClass.getSimpleName)
+  import CandidatelonSourcelonsRoutelonr._
+  val stats: StatsReloncelonivelonr = globalStats.scopelon(this.gelontClass.gelontSimplelonNamelon)
 
-  def fetchCandidates(
-    requestUserId: UserId,
-    sourceSignals: Set[SourceInfo],
-    sourceGraphs: Map[String, Option[GraphSourceInfo]],
+  delonf felontchCandidatelons(
+    relonquelonstUselonrId: UselonrId,
+    sourcelonSignals: Selont[SourcelonInfo],
+    sourcelonGraphs: Map[String, Option[GraphSourcelonInfo]],
     params: configapi.Params,
-  ): Future[Seq[Seq[InitialCandidate]]] = {
+  ): Futurelon[Selonq[Selonq[InitialCandidatelon]]] = {
 
-    val tweetBasedCandidatesFuture = getCandidates(
-      getTweetBasedSourceInfo(sourceSignals),
+    val twelonelontBaselondCandidatelonsFuturelon = gelontCandidatelons(
+      gelontTwelonelontBaselondSourcelonInfo(sourcelonSignals),
       params,
-      TweetBasedUnifiedSimilarityEngine.fromParams,
-      tweetBasedUnifiedSimilarityEngine.getCandidates)
+      TwelonelontBaselondUnifielondSimilarityelonnginelon.fromParams,
+      twelonelontBaselondUnifielondSimilarityelonnginelon.gelontCandidatelons)
 
-    val producerBasedCandidatesFuture =
-      getCandidates(
-        getProducerBasedSourceInfo(sourceSignals),
+    val producelonrBaselondCandidatelonsFuturelon =
+      gelontCandidatelons(
+        gelontProducelonrBaselondSourcelonInfo(sourcelonSignals),
         params,
-        ProducerBasedUnifiedSimilarityEngine.fromParams(_, _),
-        producerBasedUnifiedSimilarityEngine.getCandidates
+        ProducelonrBaselondUnifielondSimilarityelonnginelon.fromParams(_, _),
+        producelonrBaselondUnifielondSimilarityelonnginelon.gelontCandidatelons
       )
 
-    val simClustersInterestedInBasedCandidatesFuture =
-      getCandidatesPerSimilarityEngineModel(
-        requestUserId,
+    val simClustelonrsIntelonrelonstelondInBaselondCandidatelonsFuturelon =
+      gelontCandidatelonsPelonrSimilarityelonnginelonModelonl(
+        relonquelonstUselonrId,
         params,
-        SimClustersInterestedInCandidateGeneration.fromParams,
-        simClustersInterestedInCandidateGeneration.get)
+        SimClustelonrsIntelonrelonstelondInCandidatelonGelonnelonration.fromParams,
+        simClustelonrsIntelonrelonstelondInCandidatelonGelonnelonration.gelont)
 
-    val consumerEmbeddingBasedLogFavBasedTripCandidatesFuture =
+    val consumelonrelonmbelonddingBaselondLogFavBaselondTripCandidatelonsFuturelon =
       if (params(
-          ConsumerEmbeddingBasedCandidateGenerationParams.EnableLogFavBasedSimClustersTripParam)) {
-        getSimClustersTripCandidates(
+          ConsumelonrelonmbelonddingBaselondCandidatelonGelonnelonrationParams.elonnablelonLogFavBaselondSimClustelonrsTripParam)) {
+        gelontSimClustelonrsTripCandidatelons(
           params,
-          ConsumerEmbeddingBasedTripSimilarityEngine.fromParams(
-            ModelConfig.ConsumerLogFavBasedInterestedInEmbedding,
-            InternalId.UserId(requestUserId),
+          ConsumelonrelonmbelonddingBaselondTripSimilarityelonnginelon.fromParams(
+            ModelonlConfig.ConsumelonrLogFavBaselondIntelonrelonstelondInelonmbelondding,
+            IntelonrnalId.UselonrId(relonquelonstUselonrId),
             params
           ),
-          consumerEmbeddingBasedTripSimilarityEngine
+          consumelonrelonmbelonddingBaselondTripSimilarityelonnginelon
         ).map {
-          Seq(_)
+          Selonq(_)
         }
-      } else
-        Future.Nil
+      } elonlselon
+        Futurelon.Nil
 
-    val consumersBasedUvgRealGraphInCandidatesFuture =
-      if (params(ConsumersBasedUserVideoGraphParams.EnableSourceParam)) {
-        val realGraphInGraphSourceInfoOpt =
-          getGraphSourceInfoBySourceType(SourceType.RealGraphIn.name, sourceGraphs)
+    val consumelonrsBaselondUvgRelonalGraphInCandidatelonsFuturelon =
+      if (params(ConsumelonrsBaselondUselonrVidelonoGraphParams.elonnablelonSourcelonParam)) {
+        val relonalGraphInGraphSourcelonInfoOpt =
+          gelontGraphSourcelonInfoBySourcelonTypelon(SourcelonTypelon.RelonalGraphIn.namelon, sourcelonGraphs)
 
-        getGraphBasedCandidates(
+        gelontGraphBaselondCandidatelons(
           params,
-          ConsumersBasedUserVideoGraphSimilarityEngine
-            .fromParamsForRealGraphIn(
-              realGraphInGraphSourceInfoOpt
-                .map { graphSourceInfo => graphSourceInfo.seedWithScores }.getOrElse(Map.empty),
+          ConsumelonrsBaselondUselonrVidelonoGraphSimilarityelonnginelon
+            .fromParamsForRelonalGraphIn(
+              relonalGraphInGraphSourcelonInfoOpt
+                .map { graphSourcelonInfo => graphSourcelonInfo.selonelondWithScorelons }.gelontOrelonlselon(Map.elonmpty),
               params),
-          consumersBasedUserVideoGraphSimilarityEngine,
-          ConsumersBasedUserVideoGraphSimilarityEngine.toSimilarityEngineInfo,
-          realGraphInGraphSourceInfoOpt
+          consumelonrsBaselondUselonrVidelonoGraphSimilarityelonnginelon,
+          ConsumelonrsBaselondUselonrVidelonoGraphSimilarityelonnginelon.toSimilarityelonnginelonInfo,
+          relonalGraphInGraphSourcelonInfoOpt
         ).map {
-          Seq(_)
+          Selonq(_)
         }
-      } else Future.Nil
+      } elonlselon Futurelon.Nil
 
-    val consumerEmbeddingBasedFollowBasedTripCandidatesFuture =
+    val consumelonrelonmbelonddingBaselondFollowBaselondTripCandidatelonsFuturelon =
       if (params(
-          ConsumerEmbeddingBasedCandidateGenerationParams.EnableFollowBasedSimClustersTripParam)) {
-        getSimClustersTripCandidates(
+          ConsumelonrelonmbelonddingBaselondCandidatelonGelonnelonrationParams.elonnablelonFollowBaselondSimClustelonrsTripParam)) {
+        gelontSimClustelonrsTripCandidatelons(
           params,
-          ConsumerEmbeddingBasedTripSimilarityEngine.fromParams(
-            ModelConfig.ConsumerFollowBasedInterestedInEmbedding,
-            InternalId.UserId(requestUserId),
+          ConsumelonrelonmbelonddingBaselondTripSimilarityelonnginelon.fromParams(
+            ModelonlConfig.ConsumelonrFollowBaselondIntelonrelonstelondInelonmbelondding,
+            IntelonrnalId.UselonrId(relonquelonstUselonrId),
             params
           ),
-          consumerEmbeddingBasedTripSimilarityEngine
+          consumelonrelonmbelonddingBaselondTripSimilarityelonnginelon
         ).map {
-          Seq(_)
+          Selonq(_)
         }
-      } else
-        Future.Nil
+      } elonlselon
+        Futurelon.Nil
 
-    val consumerBasedWalsCandidatesFuture =
+    val consumelonrBaselondWalsCandidatelonsFuturelon =
       if (params(
-          ConsumerBasedWalsParams.EnableSourceParam
+          ConsumelonrBaselondWalsParams.elonnablelonSourcelonParam
         )) {
-        getConsumerBasedWalsCandidates(sourceSignals, params)
-      }.map { Seq(_) }
-      else Future.Nil
+        gelontConsumelonrBaselondWalsCandidatelons(sourcelonSignals, params)
+      }.map { Selonq(_) }
+      elonlselon Futurelon.Nil
 
-    val consumerEmbeddingBasedTwHINCandidatesFuture =
-      if (params(ConsumerEmbeddingBasedCandidateGenerationParams.EnableTwHINParam)) {
-        getHnswCandidates(
+    val consumelonrelonmbelonddingBaselondTwHINCandidatelonsFuturelon =
+      if (params(ConsumelonrelonmbelonddingBaselondCandidatelonGelonnelonrationParams.elonnablelonTwHINParam)) {
+        gelontHnswCandidatelons(
           params,
-          ConsumerEmbeddingBasedTwHINSimilarityEngine.fromParams(
-            InternalId.UserId(requestUserId),
+          ConsumelonrelonmbelonddingBaselondTwHINSimilarityelonnginelon.fromParams(
+            IntelonrnalId.UselonrId(relonquelonstUselonrId),
             params),
-          consumerBasedTwHINANNSimilarityEngine
-        ).map { Seq(_) }
-      } else Future.Nil
+          consumelonrBaselondTwHINANNSimilarityelonnginelon
+        ).map { Selonq(_) }
+      } elonlselon Futurelon.Nil
 
-    val consumerEmbeddingBasedTwoTowerCandidatesFuture =
-      if (params(ConsumerEmbeddingBasedCandidateGenerationParams.EnableTwoTowerParam)) {
-        getHnswCandidates(
+    val consumelonrelonmbelonddingBaselondTwoTowelonrCandidatelonsFuturelon =
+      if (params(ConsumelonrelonmbelonddingBaselondCandidatelonGelonnelonrationParams.elonnablelonTwoTowelonrParam)) {
+        gelontHnswCandidatelons(
           params,
-          ConsumerEmbeddingBasedTwoTowerSimilarityEngine.fromParams(
-            InternalId.UserId(requestUserId),
+          ConsumelonrelonmbelonddingBaselondTwoTowelonrSimilarityelonnginelon.fromParams(
+            IntelonrnalId.UselonrId(relonquelonstUselonrId),
             params),
-          consumerBasedTwoTowerSimilarityEngine
+          consumelonrBaselondTwoTowelonrSimilarityelonnginelon
         ).map {
-          Seq(_)
+          Selonq(_)
         }
-      } else Future.Nil
+      } elonlselon Futurelon.Nil
 
-    val customizedRetrievalBasedCandidatesFuture =
-      getCandidatesPerSimilarityEngineModel(
-        requestUserId,
+    val customizelondRelontrielonvalBaselondCandidatelonsFuturelon =
+      gelontCandidatelonsPelonrSimilarityelonnginelonModelonl(
+        relonquelonstUselonrId,
         params,
-        CustomizedRetrievalCandidateGeneration.fromParams,
-        customizedRetrievalCandidateGeneration.get)
+        CustomizelondRelontrielonvalCandidatelonGelonnelonration.fromParams,
+        customizelondRelontrielonvalCandidatelonGelonnelonration.gelont)
 
-    Future
-      .collect(
-        Seq(
-          tweetBasedCandidatesFuture,
-          producerBasedCandidatesFuture,
-          simClustersInterestedInBasedCandidatesFuture,
-          consumerBasedWalsCandidatesFuture,
-          consumerEmbeddingBasedLogFavBasedTripCandidatesFuture,
-          consumerEmbeddingBasedFollowBasedTripCandidatesFuture,
-          consumerEmbeddingBasedTwHINCandidatesFuture,
-          consumerEmbeddingBasedTwoTowerCandidatesFuture,
-          consumersBasedUvgRealGraphInCandidatesFuture,
-          customizedRetrievalBasedCandidatesFuture
-        )).map { candidatesList =>
-        // remove empty innerSeq
-        val result = candidatesList.flatten.filter(_.nonEmpty)
-        stats.stat("numOfSequences").add(result.size)
-        stats.stat("flattenCandidatesWithDup").add(result.flatten.size)
+    Futurelon
+      .collelonct(
+        Selonq(
+          twelonelontBaselondCandidatelonsFuturelon,
+          producelonrBaselondCandidatelonsFuturelon,
+          simClustelonrsIntelonrelonstelondInBaselondCandidatelonsFuturelon,
+          consumelonrBaselondWalsCandidatelonsFuturelon,
+          consumelonrelonmbelonddingBaselondLogFavBaselondTripCandidatelonsFuturelon,
+          consumelonrelonmbelonddingBaselondFollowBaselondTripCandidatelonsFuturelon,
+          consumelonrelonmbelonddingBaselondTwHINCandidatelonsFuturelon,
+          consumelonrelonmbelonddingBaselondTwoTowelonrCandidatelonsFuturelon,
+          consumelonrsBaselondUvgRelonalGraphInCandidatelonsFuturelon,
+          customizelondRelontrielonvalBaselondCandidatelonsFuturelon
+        )).map { candidatelonsList =>
+        // relonmovelon elonmpty innelonrSelonq
+        val relonsult = candidatelonsList.flattelonn.filtelonr(_.nonelonmpty)
+        stats.stat("numOfSelonquelonncelons").add(relonsult.sizelon)
+        stats.stat("flattelonnCandidatelonsWithDup").add(relonsult.flattelonn.sizelon)
 
-        result
+        relonsult
       }
   }
 
-  private def getGraphBasedCandidates[QueryType](
+  privatelon delonf gelontGraphBaselondCandidatelons[QuelonryTypelon](
     params: configapi.Params,
-    query: EngineQuery[QueryType],
-    engine: StandardSimilarityEngine[QueryType, TweetWithScore],
-    toSimilarityEngineInfo: Double => SimilarityEngineInfo,
-    graphSourceInfoOpt: Option[GraphSourceInfo] = None
-  ): Future[Seq[InitialCandidate]] = {
-    val candidatesOptFut = engine.getCandidates(query)
-    val tweetsWithCandidateGenerationInfoOptFut = candidatesOptFut.map {
-      _.map { tweetsWithScores =>
-        val sortedCandidates = tweetsWithScores.sortBy(-_.score)
-        engine.getScopedStats.stat("sortedCandidates_size").add(sortedCandidates.size)
-        val tweetsWithCandidateGenerationInfo = sortedCandidates.map { tweetWithScore =>
+    quelonry: elonnginelonQuelonry[QuelonryTypelon],
+    elonnginelon: StandardSimilarityelonnginelon[QuelonryTypelon, TwelonelontWithScorelon],
+    toSimilarityelonnginelonInfo: Doublelon => SimilarityelonnginelonInfo,
+    graphSourcelonInfoOpt: Option[GraphSourcelonInfo] = Nonelon
+  ): Futurelon[Selonq[InitialCandidatelon]] = {
+    val candidatelonsOptFut = elonnginelon.gelontCandidatelons(quelonry)
+    val twelonelontsWithCandidatelonGelonnelonrationInfoOptFut = candidatelonsOptFut.map {
+      _.map { twelonelontsWithScorelons =>
+        val sortelondCandidatelons = twelonelontsWithScorelons.sortBy(-_.scorelon)
+        elonnginelon.gelontScopelondStats.stat("sortelondCandidatelons_sizelon").add(sortelondCandidatelons.sizelon)
+        val twelonelontsWithCandidatelonGelonnelonrationInfo = sortelondCandidatelons.map { twelonelontWithScorelon =>
           {
-            val similarityEngineInfo = toSimilarityEngineInfo(tweetWithScore.score)
-            val sourceInfo = graphSourceInfoOpt.map { graphSourceInfo =>
-              // The internalId is a placeholder value. We do not plan to store the full seedUserId set.
-              SourceInfo(
-                sourceType = graphSourceInfo.sourceType,
-                internalId = InternalId.UserId(0L),
-                sourceEventTime = None
+            val similarityelonnginelonInfo = toSimilarityelonnginelonInfo(twelonelontWithScorelon.scorelon)
+            val sourcelonInfo = graphSourcelonInfoOpt.map { graphSourcelonInfo =>
+              // Thelon intelonrnalId is a placelonholdelonr valuelon. Welon do not plan to storelon thelon full selonelondUselonrId selont.
+              SourcelonInfo(
+                sourcelonTypelon = graphSourcelonInfo.sourcelonTypelon,
+                intelonrnalId = IntelonrnalId.UselonrId(0L),
+                sourcelonelonvelonntTimelon = Nonelon
               )
             }
-            TweetWithCandidateGenerationInfo(
-              tweetWithScore.tweetId,
-              CandidateGenerationInfo(
-                sourceInfo,
-                similarityEngineInfo,
-                Seq.empty // Atomic Similarity Engine. Hence it has no contributing SEs
+            TwelonelontWithCandidatelonGelonnelonrationInfo(
+              twelonelontWithScorelon.twelonelontId,
+              CandidatelonGelonnelonrationInfo(
+                sourcelonInfo,
+                similarityelonnginelonInfo,
+                Selonq.elonmpty // Atomic Similarity elonnginelon. Helonncelon it has no contributing Selons
               )
             )
           }
         }
-        val maxCandidateNum = params(GlobalParams.MaxCandidateNumPerSourceKeyParam)
-        tweetsWithCandidateGenerationInfo.take(maxCandidateNum)
+        val maxCandidatelonNum = params(GlobalParams.MaxCandidatelonNumPelonrSourcelonKelonyParam)
+        twelonelontsWithCandidatelonGelonnelonrationInfo.takelon(maxCandidatelonNum)
       }
     }
     for {
-      tweetsWithCandidateGenerationInfoOpt <- tweetsWithCandidateGenerationInfoOptFut
-      initialCandidates <- convertToInitialCandidates(
-        tweetsWithCandidateGenerationInfoOpt.toSeq.flatten)
-    } yield initialCandidates
+      twelonelontsWithCandidatelonGelonnelonrationInfoOpt <- twelonelontsWithCandidatelonGelonnelonrationInfoOptFut
+      initialCandidatelons <- convelonrtToInitialCandidatelons(
+        twelonelontsWithCandidatelonGelonnelonrationInfoOpt.toSelonq.flattelonn)
+    } yielonld initialCandidatelons
   }
 
-  private def getCandidates[QueryType](
-    sourceSignals: Set[SourceInfo],
+  privatelon delonf gelontCandidatelons[QuelonryTypelon](
+    sourcelonSignals: Selont[SourcelonInfo],
     params: configapi.Params,
-    fromParams: (SourceInfo, configapi.Params) => QueryType,
-    getFunc: QueryType => Future[Option[Seq[TweetWithCandidateGenerationInfo]]]
-  ): Future[Seq[Seq[InitialCandidate]]] = {
-    val queries = sourceSignals.map { sourceInfo =>
-      fromParams(sourceInfo, params)
-    }.toSeq
+    fromParams: (SourcelonInfo, configapi.Params) => QuelonryTypelon,
+    gelontFunc: QuelonryTypelon => Futurelon[Option[Selonq[TwelonelontWithCandidatelonGelonnelonrationInfo]]]
+  ): Futurelon[Selonq[Selonq[InitialCandidatelon]]] = {
+    val quelonrielons = sourcelonSignals.map { sourcelonInfo =>
+      fromParams(sourcelonInfo, params)
+    }.toSelonq
 
-    Future
-      .collect {
-        queries.map { query =>
+    Futurelon
+      .collelonct {
+        quelonrielons.map { quelonry =>
           for {
-            candidates <- getFunc(query)
-            prefilterCandidates <- convertToInitialCandidates(candidates.toSeq.flatten)
-          } yield {
-            prefilterCandidates
+            candidatelons <- gelontFunc(quelonry)
+            prelonfiltelonrCandidatelons <- convelonrtToInitialCandidatelons(candidatelons.toSelonq.flattelonn)
+          } yielonld {
+            prelonfiltelonrCandidatelons
           }
         }
       }
   }
 
-  private def getConsumerBasedWalsCandidates(
-    sourceSignals: Set[SourceInfo],
+  privatelon delonf gelontConsumelonrBaselondWalsCandidatelons(
+    sourcelonSignals: Selont[SourcelonInfo],
     params: configapi.Params
-  ): Future[Seq[InitialCandidate]] = {
-    // Fetch source signals and filter them based on age.
-    val signals = FilterUtil.tweetSourceAgeFilter(
-      getConsumerBasedWalsSourceInfo(sourceSignals).toSeq,
-      params(ConsumerBasedWalsParams.MaxTweetSignalAgeHoursParam))
+  ): Futurelon[Selonq[InitialCandidatelon]] = {
+    // Felontch sourcelon signals and filtelonr thelonm baselond on agelon.
+    val signals = FiltelonrUtil.twelonelontSourcelonAgelonFiltelonr(
+      gelontConsumelonrBaselondWalsSourcelonInfo(sourcelonSignals).toSelonq,
+      params(ConsumelonrBaselondWalsParams.MaxTwelonelontSignalAgelonHoursParam))
 
-    val candidatesOptFut = consumerBasedWalsSimilarityEngine.getCandidates(
-      ConsumerBasedWalsSimilarityEngine.fromParams(signals, params)
+    val candidatelonsOptFut = consumelonrBaselondWalsSimilarityelonnginelon.gelontCandidatelons(
+      ConsumelonrBaselondWalsSimilarityelonnginelon.fromParams(signals, params)
     )
-    val tweetsWithCandidateGenerationInfoOptFut = candidatesOptFut.map {
-      _.map { tweetsWithScores =>
-        val sortedCandidates = tweetsWithScores.sortBy(-_.score)
-        val filteredCandidates =
-          FilterUtil.tweetAgeFilter(sortedCandidates, params(GlobalParams.MaxTweetAgeHoursParam))
-        consumerBasedWalsSimilarityEngine.getScopedStats
-          .stat("filteredCandidates_size").add(filteredCandidates.size)
+    val twelonelontsWithCandidatelonGelonnelonrationInfoOptFut = candidatelonsOptFut.map {
+      _.map { twelonelontsWithScorelons =>
+        val sortelondCandidatelons = twelonelontsWithScorelons.sortBy(-_.scorelon)
+        val filtelonrelondCandidatelons =
+          FiltelonrUtil.twelonelontAgelonFiltelonr(sortelondCandidatelons, params(GlobalParams.MaxTwelonelontAgelonHoursParam))
+        consumelonrBaselondWalsSimilarityelonnginelon.gelontScopelondStats
+          .stat("filtelonrelondCandidatelons_sizelon").add(filtelonrelondCandidatelons.sizelon)
 
-        val tweetsWithCandidateGenerationInfo = filteredCandidates.map { tweetWithScore =>
+        val twelonelontsWithCandidatelonGelonnelonrationInfo = filtelonrelondCandidatelons.map { twelonelontWithScorelon =>
           {
-            val similarityEngineInfo =
-              ConsumerBasedWalsSimilarityEngine.toSimilarityEngineInfo(tweetWithScore.score)
-            TweetWithCandidateGenerationInfo(
-              tweetWithScore.tweetId,
-              CandidateGenerationInfo(
-                None,
-                similarityEngineInfo,
-                Seq.empty // Atomic Similarity Engine. Hence it has no contributing SEs
+            val similarityelonnginelonInfo =
+              ConsumelonrBaselondWalsSimilarityelonnginelon.toSimilarityelonnginelonInfo(twelonelontWithScorelon.scorelon)
+            TwelonelontWithCandidatelonGelonnelonrationInfo(
+              twelonelontWithScorelon.twelonelontId,
+              CandidatelonGelonnelonrationInfo(
+                Nonelon,
+                similarityelonnginelonInfo,
+                Selonq.elonmpty // Atomic Similarity elonnginelon. Helonncelon it has no contributing Selons
               )
             )
           }
         }
-        val maxCandidateNum = params(GlobalParams.MaxCandidateNumPerSourceKeyParam)
-        tweetsWithCandidateGenerationInfo.take(maxCandidateNum)
+        val maxCandidatelonNum = params(GlobalParams.MaxCandidatelonNumPelonrSourcelonKelonyParam)
+        twelonelontsWithCandidatelonGelonnelonrationInfo.takelon(maxCandidatelonNum)
       }
     }
     for {
-      tweetsWithCandidateGenerationInfoOpt <- tweetsWithCandidateGenerationInfoOptFut
-      initialCandidates <- convertToInitialCandidates(
-        tweetsWithCandidateGenerationInfoOpt.toSeq.flatten)
-    } yield initialCandidates
+      twelonelontsWithCandidatelonGelonnelonrationInfoOpt <- twelonelontsWithCandidatelonGelonnelonrationInfoOptFut
+      initialCandidatelons <- convelonrtToInitialCandidatelons(
+        twelonelontsWithCandidatelonGelonnelonrationInfoOpt.toSelonq.flattelonn)
+    } yielonld initialCandidatelons
   }
 
-  private def getSimClustersTripCandidates(
+  privatelon delonf gelontSimClustelonrsTripCandidatelons(
     params: configapi.Params,
-    query: TripEngineQuery,
-    engine: StandardSimilarityEngine[
-      TripEngineQuery,
-      TripTweetWithScore
+    quelonry: TripelonnginelonQuelonry,
+    elonnginelon: StandardSimilarityelonnginelon[
+      TripelonnginelonQuelonry,
+      TripTwelonelontWithScorelon
     ],
-  ): Future[Seq[InitialCandidate]] = {
-    val tweetsWithCandidatesGenerationInfoOptFut =
-      engine.getCandidates(EngineQuery(query, params)).map {
+  ): Futurelon[Selonq[InitialCandidatelon]] = {
+    val twelonelontsWithCandidatelonsGelonnelonrationInfoOptFut =
+      elonnginelon.gelontCandidatelons(elonnginelonQuelonry(quelonry, params)).map {
         _.map {
-          _.map { tweetWithScore =>
-            // define filters
-            TweetWithCandidateGenerationInfo(
-              tweetWithScore.tweetId,
-              CandidateGenerationInfo(
-                None,
-                SimilarityEngineInfo(
-                  SimilarityEngineType.ExploreTripOfflineSimClustersTweets,
-                  None,
-                  Some(tweetWithScore.score)),
-                Seq.empty
+          _.map { twelonelontWithScorelon =>
+            // delonfinelon filtelonrs
+            TwelonelontWithCandidatelonGelonnelonrationInfo(
+              twelonelontWithScorelon.twelonelontId,
+              CandidatelonGelonnelonrationInfo(
+                Nonelon,
+                SimilarityelonnginelonInfo(
+                  SimilarityelonnginelonTypelon.elonxplorelonTripOfflinelonSimClustelonrsTwelonelonts,
+                  Nonelon,
+                  Somelon(twelonelontWithScorelon.scorelon)),
+                Selonq.elonmpty
               )
             )
           }
         }
       }
     for {
-      tweetsWithCandidateGenerationInfoOpt <- tweetsWithCandidatesGenerationInfoOptFut
-      initialCandidates <- convertToInitialCandidates(
-        tweetsWithCandidateGenerationInfoOpt.toSeq.flatten)
-    } yield initialCandidates
+      twelonelontsWithCandidatelonGelonnelonrationInfoOpt <- twelonelontsWithCandidatelonsGelonnelonrationInfoOptFut
+      initialCandidatelons <- convelonrtToInitialCandidatelons(
+        twelonelontsWithCandidatelonGelonnelonrationInfoOpt.toSelonq.flattelonn)
+    } yielonld initialCandidatelons
   }
 
-  private def getHnswCandidates(
+  privatelon delonf gelontHnswCandidatelons(
     params: configapi.Params,
-    query: HnswANNEngineQuery,
-    engine: HnswANNSimilarityEngine,
-  ): Future[Seq[InitialCandidate]] = {
-    val candidatesOptFut = engine.getCandidates(query)
-    val tweetsWithCandidateGenerationInfoOptFut = candidatesOptFut.map {
-      _.map { tweetsWithScores =>
-        val sortedCandidates = tweetsWithScores.sortBy(-_.score)
-        val filteredCandidates =
-          FilterUtil.tweetAgeFilter(sortedCandidates, params(GlobalParams.MaxTweetAgeHoursParam))
-        engine.getScopedStats.stat("filteredCandidates_size").add(filteredCandidates.size)
-        val tweetsWithCandidateGenerationInfo = filteredCandidates.map { tweetWithScore =>
+    quelonry: HnswANNelonnginelonQuelonry,
+    elonnginelon: HnswANNSimilarityelonnginelon,
+  ): Futurelon[Selonq[InitialCandidatelon]] = {
+    val candidatelonsOptFut = elonnginelon.gelontCandidatelons(quelonry)
+    val twelonelontsWithCandidatelonGelonnelonrationInfoOptFut = candidatelonsOptFut.map {
+      _.map { twelonelontsWithScorelons =>
+        val sortelondCandidatelons = twelonelontsWithScorelons.sortBy(-_.scorelon)
+        val filtelonrelondCandidatelons =
+          FiltelonrUtil.twelonelontAgelonFiltelonr(sortelondCandidatelons, params(GlobalParams.MaxTwelonelontAgelonHoursParam))
+        elonnginelon.gelontScopelondStats.stat("filtelonrelondCandidatelons_sizelon").add(filtelonrelondCandidatelons.sizelon)
+        val twelonelontsWithCandidatelonGelonnelonrationInfo = filtelonrelondCandidatelons.map { twelonelontWithScorelon =>
           {
-            val similarityEngineInfo =
-              engine.toSimilarityEngineInfo(query, tweetWithScore.score)
-            TweetWithCandidateGenerationInfo(
-              tweetWithScore.tweetId,
-              CandidateGenerationInfo(
-                None,
-                similarityEngineInfo,
-                Seq.empty // Atomic Similarity Engine. Hence it has no contributing SEs
+            val similarityelonnginelonInfo =
+              elonnginelon.toSimilarityelonnginelonInfo(quelonry, twelonelontWithScorelon.scorelon)
+            TwelonelontWithCandidatelonGelonnelonrationInfo(
+              twelonelontWithScorelon.twelonelontId,
+              CandidatelonGelonnelonrationInfo(
+                Nonelon,
+                similarityelonnginelonInfo,
+                Selonq.elonmpty // Atomic Similarity elonnginelon. Helonncelon it has no contributing Selons
               )
             )
           }
         }
-        val maxCandidateNum = params(GlobalParams.MaxCandidateNumPerSourceKeyParam)
-        tweetsWithCandidateGenerationInfo.take(maxCandidateNum)
+        val maxCandidatelonNum = params(GlobalParams.MaxCandidatelonNumPelonrSourcelonKelonyParam)
+        twelonelontsWithCandidatelonGelonnelonrationInfo.takelon(maxCandidatelonNum)
       }
     }
     for {
-      tweetsWithCandidateGenerationInfoOpt <- tweetsWithCandidateGenerationInfoOptFut
-      initialCandidates <- convertToInitialCandidates(
-        tweetsWithCandidateGenerationInfoOpt.toSeq.flatten)
-    } yield initialCandidates
+      twelonelontsWithCandidatelonGelonnelonrationInfoOpt <- twelonelontsWithCandidatelonGelonnelonrationInfoOptFut
+      initialCandidatelons <- convelonrtToInitialCandidatelons(
+        twelonelontsWithCandidatelonGelonnelonrationInfoOpt.toSelonq.flattelonn)
+    } yielonld initialCandidatelons
   }
 
   /**
-   * Returns candidates from each similarity engine separately.
-   * For 1 requestUserId, it will fetch results from each similarity engine e_i,
-   * and returns Seq[Seq[TweetCandidate]].
+   * Relonturns candidatelons from elonach similarity elonnginelon selonparatelonly.
+   * For 1 relonquelonstUselonrId, it will felontch relonsults from elonach similarity elonnginelon elon_i,
+   * and relonturns Selonq[Selonq[TwelonelontCandidatelon]].
    */
-  private def getCandidatesPerSimilarityEngineModel[QueryType](
-    requestUserId: UserId,
+  privatelon delonf gelontCandidatelonsPelonrSimilarityelonnginelonModelonl[QuelonryTypelon](
+    relonquelonstUselonrId: UselonrId,
     params: configapi.Params,
-    fromParams: (InternalId, configapi.Params) => QueryType,
-    getFunc: QueryType => Future[
-      Option[Seq[Seq[TweetWithCandidateGenerationInfo]]]
+    fromParams: (IntelonrnalId, configapi.Params) => QuelonryTypelon,
+    gelontFunc: QuelonryTypelon => Futurelon[
+      Option[Selonq[Selonq[TwelonelontWithCandidatelonGelonnelonrationInfo]]]
     ]
-  ): Future[Seq[Seq[InitialCandidate]]] = {
-    val query = fromParams(InternalId.UserId(requestUserId), params)
-    getFunc(query).flatMap { candidatesPerSimilarityEngineModelOpt =>
-      val candidatesPerSimilarityEngineModel = candidatesPerSimilarityEngineModelOpt.toSeq.flatten
-      Future.collect {
-        candidatesPerSimilarityEngineModel.map(convertToInitialCandidates)
+  ): Futurelon[Selonq[Selonq[InitialCandidatelon]]] = {
+    val quelonry = fromParams(IntelonrnalId.UselonrId(relonquelonstUselonrId), params)
+    gelontFunc(quelonry).flatMap { candidatelonsPelonrSimilarityelonnginelonModelonlOpt =>
+      val candidatelonsPelonrSimilarityelonnginelonModelonl = candidatelonsPelonrSimilarityelonnginelonModelonlOpt.toSelonq.flattelonn
+      Futurelon.collelonct {
+        candidatelonsPelonrSimilarityelonnginelonModelonl.map(convelonrtToInitialCandidatelons)
       }
     }
   }
 
-  private[candidate_generation] def convertToInitialCandidates(
-    candidates: Seq[TweetWithCandidateGenerationInfo],
-  ): Future[Seq[InitialCandidate]] = {
-    val tweetIds = candidates.map(_.tweetId).toSet
-    Future.collect(tweetInfoStore.multiGet(tweetIds)).map { tweetInfos =>
+  privatelon[candidatelon_gelonnelonration] delonf convelonrtToInitialCandidatelons(
+    candidatelons: Selonq[TwelonelontWithCandidatelonGelonnelonrationInfo],
+  ): Futurelon[Selonq[InitialCandidatelon]] = {
+    val twelonelontIds = candidatelons.map(_.twelonelontId).toSelont
+    Futurelon.collelonct(twelonelontInfoStorelon.multiGelont(twelonelontIds)).map { twelonelontInfos =>
       /***
-       * If tweetInfo does not exist, we will filter out this tweet candidate.
+       * If twelonelontInfo doelons not elonxist, welon will filtelonr out this twelonelont candidatelon.
        */
-      candidates.collect {
-        case candidate if tweetInfos.getOrElse(candidate.tweetId, None).isDefined =>
-          val tweetInfo = tweetInfos(candidate.tweetId)
-            .getOrElse(throw new IllegalStateException("Check previous line's condition"))
+      candidatelons.collelonct {
+        caselon candidatelon if twelonelontInfos.gelontOrelonlselon(candidatelon.twelonelontId, Nonelon).isDelonfinelond =>
+          val twelonelontInfo = twelonelontInfos(candidatelon.twelonelontId)
+            .gelontOrelonlselon(throw nelonw IllelongalStatelonelonxcelonption("Chelonck prelonvious linelon's condition"))
 
-          InitialCandidate(
-            tweetId = candidate.tweetId,
-            tweetInfo = tweetInfo,
-            candidate.candidateGenerationInfo
+          InitialCandidatelon(
+            twelonelontId = candidatelon.twelonelontId,
+            twelonelontInfo = twelonelontInfo,
+            candidatelon.candidatelonGelonnelonrationInfo
           )
       }
     }
   }
 }
 
-object CandidateSourcesRouter {
-  def getGraphSourceInfoBySourceType(
-    sourceTypeStr: String,
-    sourceGraphs: Map[String, Option[GraphSourceInfo]]
-  ): Option[GraphSourceInfo] = {
-    sourceGraphs.getOrElse(sourceTypeStr, None)
+objelonct CandidatelonSourcelonsRoutelonr {
+  delonf gelontGraphSourcelonInfoBySourcelonTypelon(
+    sourcelonTypelonStr: String,
+    sourcelonGraphs: Map[String, Option[GraphSourcelonInfo]]
+  ): Option[GraphSourcelonInfo] = {
+    sourcelonGraphs.gelontOrelonlselon(sourcelonTypelonStr, Nonelon)
   }
 
-  def getTweetBasedSourceInfo(
-    sourceSignals: Set[SourceInfo]
-  ): Set[SourceInfo] = {
-    sourceSignals.collect {
-      case sourceInfo
-          if AllowedSourceTypesForTweetBasedUnifiedSE.contains(sourceInfo.sourceType.value) =>
-        sourceInfo
+  delonf gelontTwelonelontBaselondSourcelonInfo(
+    sourcelonSignals: Selont[SourcelonInfo]
+  ): Selont[SourcelonInfo] = {
+    sourcelonSignals.collelonct {
+      caselon sourcelonInfo
+          if AllowelondSourcelonTypelonsForTwelonelontBaselondUnifielondSelon.contains(sourcelonInfo.sourcelonTypelon.valuelon) =>
+        sourcelonInfo
     }
   }
 
-  def getProducerBasedSourceInfo(
-    sourceSignals: Set[SourceInfo]
-  ): Set[SourceInfo] = {
-    sourceSignals.collect {
-      case sourceInfo
-          if AllowedSourceTypesForProducerBasedUnifiedSE.contains(sourceInfo.sourceType.value) =>
-        sourceInfo
+  delonf gelontProducelonrBaselondSourcelonInfo(
+    sourcelonSignals: Selont[SourcelonInfo]
+  ): Selont[SourcelonInfo] = {
+    sourcelonSignals.collelonct {
+      caselon sourcelonInfo
+          if AllowelondSourcelonTypelonsForProducelonrBaselondUnifielondSelon.contains(sourcelonInfo.sourcelonTypelon.valuelon) =>
+        sourcelonInfo
     }
   }
 
-  def getConsumerBasedWalsSourceInfo(
-    sourceSignals: Set[SourceInfo]
-  ): Set[SourceInfo] = {
-    sourceSignals.collect {
-      case sourceInfo
-          if AllowedSourceTypesForConsumerBasedWalsSE.contains(sourceInfo.sourceType.value) =>
-        sourceInfo
+  delonf gelontConsumelonrBaselondWalsSourcelonInfo(
+    sourcelonSignals: Selont[SourcelonInfo]
+  ): Selont[SourcelonInfo] = {
+    sourcelonSignals.collelonct {
+      caselon sourcelonInfo
+          if AllowelondSourcelonTypelonsForConsumelonrBaselondWalsSelon.contains(sourcelonInfo.sourcelonTypelon.valuelon) =>
+        sourcelonInfo
     }
   }
 
   /***
-   * Signal funneling should not exist in CG or even in any SimilarityEngine.
-   * They will be in Router, or eventually, in CrCandidateGenerator.
+   * Signal funnelonling should not elonxist in CG or elonvelonn in any Similarityelonnginelon.
+   * Thelony will belon in Routelonr, or elonvelonntually, in CrCandidatelonGelonnelonrator.
    */
-  val AllowedSourceTypesForConsumerBasedWalsSE = Set(
-    SourceType.TweetFavorite.value,
-    SourceType.Retweet.value,
-    SourceType.TweetDontLike.value, //currently no-op
-    SourceType.TweetReport.value, //currently no-op
-    SourceType.AccountMute.value, //currently no-op
-    SourceType.AccountBlock.value //currently no-op
+  val AllowelondSourcelonTypelonsForConsumelonrBaselondWalsSelon = Selont(
+    SourcelonTypelon.TwelonelontFavoritelon.valuelon,
+    SourcelonTypelon.Relontwelonelont.valuelon,
+    SourcelonTypelon.TwelonelontDontLikelon.valuelon, //currelonntly no-op
+    SourcelonTypelon.TwelonelontRelonport.valuelon, //currelonntly no-op
+    SourcelonTypelon.AccountMutelon.valuelon, //currelonntly no-op
+    SourcelonTypelon.AccountBlock.valuelon //currelonntly no-op
   )
-  val AllowedSourceTypesForTweetBasedUnifiedSE = Set(
-    SourceType.TweetFavorite.value,
-    SourceType.Retweet.value,
-    SourceType.OriginalTweet.value,
-    SourceType.Reply.value,
-    SourceType.TweetShare.value,
-    SourceType.NotificationClick.value,
-    SourceType.GoodTweetClick.value,
-    SourceType.VideoTweetQualityView.value,
-    SourceType.VideoTweetPlayback50.value,
-    SourceType.TweetAggregation.value,
+  val AllowelondSourcelonTypelonsForTwelonelontBaselondUnifielondSelon = Selont(
+    SourcelonTypelon.TwelonelontFavoritelon.valuelon,
+    SourcelonTypelon.Relontwelonelont.valuelon,
+    SourcelonTypelon.OriginalTwelonelont.valuelon,
+    SourcelonTypelon.Relonply.valuelon,
+    SourcelonTypelon.TwelonelontSharelon.valuelon,
+    SourcelonTypelon.NotificationClick.valuelon,
+    SourcelonTypelon.GoodTwelonelontClick.valuelon,
+    SourcelonTypelon.VidelonoTwelonelontQualityVielonw.valuelon,
+    SourcelonTypelon.VidelonoTwelonelontPlayback50.valuelon,
+    SourcelonTypelon.TwelonelontAggrelongation.valuelon,
   )
-  val AllowedSourceTypesForProducerBasedUnifiedSE = Set(
-    SourceType.UserFollow.value,
-    SourceType.UserRepeatedProfileVisit.value,
-    SourceType.RealGraphOon.value,
-    SourceType.FollowRecommendation.value,
-    SourceType.UserTrafficAttributionProfileVisit.value,
-    SourceType.GoodProfileClick.value,
-    SourceType.ProducerAggregation.value,
+  val AllowelondSourcelonTypelonsForProducelonrBaselondUnifielondSelon = Selont(
+    SourcelonTypelon.UselonrFollow.valuelon,
+    SourcelonTypelon.UselonrRelonpelonatelondProfilelonVisit.valuelon,
+    SourcelonTypelon.RelonalGraphOon.valuelon,
+    SourcelonTypelon.FollowReloncommelonndation.valuelon,
+    SourcelonTypelon.UselonrTrafficAttributionProfilelonVisit.valuelon,
+    SourcelonTypelon.GoodProfilelonClick.valuelon,
+    SourcelonTypelon.ProducelonrAggrelongation.valuelon,
   )
 }

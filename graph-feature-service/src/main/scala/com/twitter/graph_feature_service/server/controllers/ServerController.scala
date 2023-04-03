@@ -1,46 +1,46 @@
-package com.twitter.graph_feature_service.server.controllers
+packagelon com.twittelonr.graph_felonaturelon_selonrvicelon.selonrvelonr.controllelonrs
 
-import com.twitter.discovery.common.stats.DiscoveryStatsFilter
-import com.twitter.finagle.Service
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finatra.thrift.Controller
-import com.twitter.graph_feature_service.server.handlers.ServerGetIntersectionHandler.GetIntersectionRequest
-import com.twitter.graph_feature_service.server.handlers.ServerGetIntersectionHandler
-import com.twitter.graph_feature_service.thriftscala
-import com.twitter.graph_feature_service.thriftscala.Server.GetIntersection
-import com.twitter.graph_feature_service.thriftscala.Server.GetPresetIntersection
-import com.twitter.graph_feature_service.thriftscala._
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.discovelonry.common.stats.DiscovelonryStatsFiltelonr
+import com.twittelonr.finaglelon.Selonrvicelon
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.finatra.thrift.Controllelonr
+import com.twittelonr.graph_felonaturelon_selonrvicelon.selonrvelonr.handlelonrs.SelonrvelonrGelontIntelonrselonctionHandlelonr.GelontIntelonrselonctionRelonquelonst
+import com.twittelonr.graph_felonaturelon_selonrvicelon.selonrvelonr.handlelonrs.SelonrvelonrGelontIntelonrselonctionHandlelonr
+import com.twittelonr.graph_felonaturelon_selonrvicelon.thriftscala
+import com.twittelonr.graph_felonaturelon_selonrvicelon.thriftscala.Selonrvelonr.GelontIntelonrselonction
+import com.twittelonr.graph_felonaturelon_selonrvicelon.thriftscala.Selonrvelonr.GelontPrelonselontIntelonrselonction
+import com.twittelonr.graph_felonaturelon_selonrvicelon.thriftscala._
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class ServerController @Inject() (
-  serverGetIntersectionHandler: ServerGetIntersectionHandler
+@Singlelonton
+class SelonrvelonrControllelonr @Injelonct() (
+  selonrvelonrGelontIntelonrselonctionHandlelonr: SelonrvelonrGelontIntelonrselonctionHandlelonr
 )(
-  implicit statsReceiver: StatsReceiver)
-    extends Controller(thriftscala.Server) {
+  implicit statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds Controllelonr(thriftscala.Selonrvelonr) {
 
-  private val getIntersectionService: Service[GetIntersectionRequest, GfsIntersectionResponse] =
-    new DiscoveryStatsFilter(statsReceiver.scope("srv").scope("get_intersection"))
-      .andThen(Service.mk(serverGetIntersectionHandler))
+  privatelon val gelontIntelonrselonctionSelonrvicelon: Selonrvicelon[GelontIntelonrselonctionRelonquelonst, GfsIntelonrselonctionRelonsponselon] =
+    nelonw DiscovelonryStatsFiltelonr(statsReloncelonivelonr.scopelon("srv").scopelon("gelont_intelonrselonction"))
+      .andThelonn(Selonrvicelon.mk(selonrvelonrGelontIntelonrselonctionHandlelonr))
 
-  val getIntersection: Service[GetIntersection.Args, GfsIntersectionResponse] = { args =>
-    // TODO: Disable updateCache after HTL switch to use PresetIntersection endpoint.
-    getIntersectionService(
-      GetIntersectionRequest.fromGfsIntersectionRequest(args.request, cacheable = true))
+  val gelontIntelonrselonction: Selonrvicelon[GelontIntelonrselonction.Args, GfsIntelonrselonctionRelonsponselon] = { args =>
+    // TODO: Disablelon updatelonCachelon aftelonr HTL switch to uselon PrelonselontIntelonrselonction elonndpoint.
+    gelontIntelonrselonctionSelonrvicelon(
+      GelontIntelonrselonctionRelonquelonst.fromGfsIntelonrselonctionRelonquelonst(args.relonquelonst, cachelonablelon = truelon))
   }
-  handle(GetIntersection) { getIntersection }
+  handlelon(GelontIntelonrselonction) { gelontIntelonrselonction }
 
-  def getPresetIntersection: Service[
-    GetPresetIntersection.Args,
-    GfsIntersectionResponse
+  delonf gelontPrelonselontIntelonrselonction: Selonrvicelon[
+    GelontPrelonselontIntelonrselonction.Args,
+    GfsIntelonrselonctionRelonsponselon
   ] = { args =>
-    // TODO: Refactor after HTL switch to PresetIntersection
-    val cacheable = args.request.presetFeatureTypes == PresetFeatureTypes.HtlTwoHop
-    getIntersectionService(
-      GetIntersectionRequest.fromGfsPresetIntersectionRequest(args.request, cacheable))
+    // TODO: Relonfactor aftelonr HTL switch to PrelonselontIntelonrselonction
+    val cachelonablelon = args.relonquelonst.prelonselontFelonaturelonTypelons == PrelonselontFelonaturelonTypelons.HtlTwoHop
+    gelontIntelonrselonctionSelonrvicelon(
+      GelontIntelonrselonctionRelonquelonst.fromGfsPrelonselontIntelonrselonctionRelonquelonst(args.relonquelonst, cachelonablelon))
   }
 
-  handle(GetPresetIntersection) { getPresetIntersection }
+  handlelon(GelontPrelonselontIntelonrselonction) { gelontPrelonselontIntelonrselonction }
 
 }

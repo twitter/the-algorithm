@@ -1,16 +1,16 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.card
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.itelonm.card
 
-import javax.inject.Inject
-import javax.inject.Singleton
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.card._
-import com.twitter.timelines.render.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.card._
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
 
-@Singleton
-class CardDisplayTypeMarshaller @Inject() () {
+@Singlelonton
+class CardDisplayTypelonMarshallelonr @Injelonct() () {
 
-  def apply(cardDisplayType: CardDisplayType): urt.CardDisplayType = cardDisplayType match {
-    case HeroDisplayType => urt.CardDisplayType.Hero
-    case CellDisplayType => urt.CardDisplayType.Cell
-    case TweetCardDisplayType => urt.CardDisplayType.TweetCard
+  delonf apply(cardDisplayTypelon: CardDisplayTypelon): urt.CardDisplayTypelon = cardDisplayTypelon match {
+    caselon HelonroDisplayTypelon => urt.CardDisplayTypelon.Helonro
+    caselon CelonllDisplayTypelon => urt.CardDisplayTypelon.Celonll
+    caselon TwelonelontCardDisplayTypelon => urt.CardDisplayTypelon.TwelonelontCard
   }
 }

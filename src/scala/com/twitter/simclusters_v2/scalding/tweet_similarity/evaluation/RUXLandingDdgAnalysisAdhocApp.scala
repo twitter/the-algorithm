@@ -1,82 +1,82 @@
-package com.twitter.simclusters_v2.scalding.tweet_similarity.evaluation
+packagelon com.twittelonr.simclustelonrs_v2.scalding.twelonelont_similarity.elonvaluation
 
-import com.twitter.rux.landing_page.data_pipeline.LabeledRuxServiceScribeScalaDataset
-import com.twitter.rux.landing_page.data_pipeline.thriftscala.LandingPageLabel
-import com.twitter.rux.service.thriftscala.FocalObject
-import com.twitter.rux.service.thriftscala.UserContext
-import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.job.TwitterExecutionApp
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.wtf.scalding.jobs.common.DDGUtil
-import java.util.TimeZone
+import com.twittelonr.rux.landing_pagelon.data_pipelonlinelon.LabelonlelondRuxSelonrvicelonScribelonScalaDataselont
+import com.twittelonr.rux.landing_pagelon.data_pipelonlinelon.thriftscala.LandingPagelonLabelonl
+import com.twittelonr.rux.selonrvicelon.thriftscala.FocalObjelonct
+import com.twittelonr.rux.selonrvicelon.thriftscala.UselonrContelonxt
+import com.twittelonr.scalding._
+import com.twittelonr.scalding_intelonrnal.dalv2.DAL
+import com.twittelonr.scalding_intelonrnal.job.TwittelonrelonxeloncutionApp
+import com.twittelonr.simclustelonrs_v2.common.TwelonelontId
+import com.twittelonr.simclustelonrs_v2.common.UselonrId
+import com.twittelonr.wtf.scalding.jobs.common.DDGUtil
+import java.util.TimelonZonelon
 
 /** To run:
-scalding remote run --target src/scala/com/twitter/simclusters_v2/scalding/tweet_similarity/evaluation:rux_landing_ddg_analysis-adhoc \
---user cassowary \
---submitter hadoopnest2.atla.twitter.com \
---main-class com.twitter.simclusters_v2.scalding.tweet_similarity.evaluation.RUXLandingDdgAnalysisAdhocApp -- \
---date 2020-04-06 2020-04-13 \
---ddg model_based_tweet_similarity_10254 \
---version 1 \
---output_path /user/cassowary/adhoc/ddg10254
+scalding relonmotelon run --targelont src/scala/com/twittelonr/simclustelonrs_v2/scalding/twelonelont_similarity/elonvaluation:rux_landing_ddg_analysis-adhoc \
+--uselonr cassowary \
+--submittelonr hadoopnelonst2.atla.twittelonr.com \
+--main-class com.twittelonr.simclustelonrs_v2.scalding.twelonelont_similarity.elonvaluation.RUXLandingDdgAnalysisAdhocApp -- \
+--datelon 2020-04-06 2020-04-13 \
+--ddg modelonl_baselond_twelonelont_similarity_10254 \
+--velonrsion 1 \
+--output_path /uselonr/cassowary/adhoc/ddg10254
  * */
-object RUXLandingDdgAnalysisAdhocApp extends TwitterExecutionApp {
-  override def job: Execution[Unit] =
-    Execution.withId { implicit uniqueId =>
-      Execution.withArgs { args: Args =>
-        implicit val timeZone: TimeZone = DateOps.UTC
-        implicit val dateParser: DateParser = DateParser.default
-        implicit val dateRange: DateRange = DateRange.parse(args.list("date"))
-        val ddgName: String = args("ddg")
-        val ddgVersion: String = args("version")
+objelonct RUXLandingDdgAnalysisAdhocApp elonxtelonnds TwittelonrelonxeloncutionApp {
+  ovelonrridelon delonf job: elonxeloncution[Unit] =
+    elonxeloncution.withId { implicit uniquelonId =>
+      elonxeloncution.withArgs { args: Args =>
+        implicit val timelonZonelon: TimelonZonelon = DatelonOps.UTC
+        implicit val datelonParselonr: DatelonParselonr = DatelonParselonr.delonfault
+        implicit val datelonRangelon: DatelonRangelon = DatelonRangelon.parselon(args.list("datelon"))
+        val ddgNamelon: String = args("ddg")
+        val ddgVelonrsion: String = args("velonrsion")
         val outputPath: String = args("output_path")
-        val now = RichDate.now
+        val now = RichDatelon.now
 
-        val ruxLabels = getLabeledRuxServiceScribe(dateRange).map {
-          case (userId, focalTweet, candidateTweet, impression, fav) =>
-            userId -> (focalTweet, candidateTweet, impression, fav)
+        val ruxLabelonls = gelontLabelonlelondRuxSelonrvicelonScribelon(datelonRangelon).map {
+          caselon (uselonrId, focalTwelonelont, candidatelonTwelonelont, imprelonssion, fav) =>
+            uselonrId -> (focalTwelonelont, candidatelonTwelonelont, imprelonssion, fav)
         }
 
-        // getUsersInDDG reads from a snapshot dataset.
-        // Just prepend dateRange so that we can look back far enough to make sure there is data.
+        // gelontUselonrsInDDG relonads from a snapshot dataselont.
+        // Just prelonpelonnd datelonRangelon so that welon can look back far elonnough to makelon surelon thelonrelon is data.
         DDGUtil
-          .getUsersInDDG(ddgName, ddgVersion.toInt)(DateRange(now - Days(7), now)).map { ddgUser =>
-            ddgUser.userId -> (ddgUser.bucket, ddgUser.enterUserState.getOrElse("no_user_state"))
-          }.join(ruxLabels)
+          .gelontUselonrsInDDG(ddgNamelon, ddgVelonrsion.toInt)(DatelonRangelon(now - Days(7), now)).map { ddgUselonr =>
+            ddgUselonr.uselonrId -> (ddgUselonr.buckelont, ddgUselonr.elonntelonrUselonrStatelon.gelontOrelonlselon("no_uselonr_statelon"))
+          }.join(ruxLabelonls)
           .map {
-            case (userId, ((bucket, state), (focalTweet, candidateTweet, impression, fav))) =>
-              (userId, bucket, state, focalTweet, candidateTweet, impression, fav)
+            caselon (uselonrId, ((buckelont, statelon), (focalTwelonelont, candidatelonTwelonelont, imprelonssion, fav))) =>
+              (uselonrId, buckelont, statelon, focalTwelonelont, candidatelonTwelonelont, imprelonssion, fav)
           }
-          .writeExecution(
-            TypedTsv[(UserId, String, String, TweetId, TweetId, Int, Int)](s"$outputPath"))
+          .writelonelonxeloncution(
+            TypelondTsv[(UselonrId, String, String, TwelonelontId, TwelonelontId, Int, Int)](s"$outputPath"))
       }
     }
 
-  def getLabeledRuxServiceScribe(
-    dateRange: DateRange
-  ): TypedPipe[(UserId, TweetId, TweetId, Int, Int)] = {
+  delonf gelontLabelonlelondRuxSelonrvicelonScribelon(
+    datelonRangelon: DatelonRangelon
+  ): TypelondPipelon[(UselonrId, TwelonelontId, TwelonelontId, Int, Int)] = {
     DAL
-      .read(LabeledRuxServiceScribeScalaDataset, dateRange)
-      .toTypedPipe.map { record =>
+      .relonad(LabelonlelondRuxSelonrvicelonScribelonScalaDataselont, datelonRangelon)
+      .toTypelondPipelon.map { reloncord =>
         (
-          record.ruxServiceScribe.userContext,
-          record.ruxServiceScribe.focalObject,
-          record.landingPageLabel)
+          reloncord.ruxSelonrvicelonScribelon.uselonrContelonxt,
+          reloncord.ruxSelonrvicelonScribelon.focalObjelonct,
+          reloncord.landingPagelonLabelonl)
       }.flatMap {
-        case (
-              Some(UserContext(Some(userId), _, _, _, _, _, _, _)),
-              Some(FocalObject.TweetId(tweet)),
-              Some(labels)) =>
-          labels.map {
-            case LandingPageLabel.LandingPageFavoriteEvent(favEvent) =>
-              //(focal tweet, impressioned tweet, impression, fav)
-              (userId, tweet, favEvent.tweetId, 0, 1)
-            case LandingPageLabel.LandingPageImpressionEvent(impressionEvent) =>
-              (userId, tweet, impressionEvent.tweetId, 1, 0)
+        caselon (
+              Somelon(UselonrContelonxt(Somelon(uselonrId), _, _, _, _, _, _, _)),
+              Somelon(FocalObjelonct.TwelonelontId(twelonelont)),
+              Somelon(labelonls)) =>
+          labelonls.map {
+            caselon LandingPagelonLabelonl.LandingPagelonFavoritelonelonvelonnt(favelonvelonnt) =>
+              //(focal twelonelont, imprelonssionelond twelonelont, imprelonssion, fav)
+              (uselonrId, twelonelont, favelonvelonnt.twelonelontId, 0, 1)
+            caselon LandingPagelonLabelonl.LandingPagelonImprelonssionelonvelonnt(imprelonssionelonvelonnt) =>
+              (uselonrId, twelonelont, imprelonssionelonvelonnt.twelonelontId, 1, 0)
           }
-        case _ => Nil
+        caselon _ => Nil
       }
   }
 }

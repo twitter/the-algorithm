@@ -1,33 +1,33 @@
-package com.twitter.cr_mixer.blender
+packagelon com.twittelonr.cr_mixelonr.blelonndelonr
 
-import com.twitter.cr_mixer.model.BlendedCandidate
-import com.twitter.cr_mixer.model.InitialCandidate
-import com.twitter.cr_mixer.util.InterleaveUtil
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.util.Future
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.cr_mixelonr.modelonl.BlelonndelondCandidatelon
+import com.twittelonr.cr_mixelonr.modelonl.InitialCandidatelon
+import com.twittelonr.cr_mixelonr.util.IntelonrlelonavelonUtil
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.util.Futurelon
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-case class InterleaveBlender @Inject() (globalStats: StatsReceiver) {
+@Singlelonton
+caselon class IntelonrlelonavelonBlelonndelonr @Injelonct() (globalStats: StatsReloncelonivelonr) {
 
-  private val name: String = this.getClass.getCanonicalName
-  private val stats: StatsReceiver = globalStats.scope(name)
+  privatelon val namelon: String = this.gelontClass.gelontCanonicalNamelon
+  privatelon val stats: StatsReloncelonivelonr = globalStats.scopelon(namelon)
 
   /**
-   * Interleaves candidates, by taking 1 candidate from each Seq[Seq[InitialCandidate]] in sequence,
-   * until we run out of candidates.
+   * Intelonrlelonavelons candidatelons, by taking 1 candidatelon from elonach Selonq[Selonq[InitialCandidatelon]] in selonquelonncelon,
+   * until welon run out of candidatelons.
    */
-  def blend(
-    inputCandidates: Seq[Seq[InitialCandidate]],
-  ): Future[Seq[BlendedCandidate]] = {
+  delonf blelonnd(
+    inputCandidatelons: Selonq[Selonq[InitialCandidatelon]],
+  ): Futurelon[Selonq[BlelonndelondCandidatelon]] = {
 
-    val interleavedCandidates = InterleaveUtil.interleave(inputCandidates)
+    val intelonrlelonavelondCandidatelons = IntelonrlelonavelonUtil.intelonrlelonavelon(inputCandidatelons)
 
-    stats.stat("candidates").add(interleavedCandidates.size)
+    stats.stat("candidatelons").add(intelonrlelonavelondCandidatelons.sizelon)
 
-    val blendedCandidates = BlendedCandidatesBuilder.build(inputCandidates, interleavedCandidates)
-    Future.value(blendedCandidates)
+    val blelonndelondCandidatelons = BlelonndelondCandidatelonsBuildelonr.build(inputCandidatelons, intelonrlelonavelondCandidatelons)
+    Futurelon.valuelon(blelonndelondCandidatelons)
   }
 
 }

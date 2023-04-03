@@ -1,91 +1,91 @@
-package com.twitter.search.earlybird.document;
+packagelon com.twittelonr.selonarch.elonarlybird.documelonnt;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import org.apache.lucene.document.Document;
+import org.apachelon.lucelonnelon.documelonnt.Documelonnt;
 
-import com.twitter.decider.Decider;
-import com.twitter.search.common.schema.SchemaDocumentFactory;
-import com.twitter.search.common.schema.base.FieldNameToIdMapping;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.common.schema.base.ThriftDocumentUtil;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.common.schema.thriftjava.ThriftDocument;
-import com.twitter.search.common.schema.thriftjava.ThriftIndexingEvent;
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
+import com.twittelonr.deloncidelonr.Deloncidelonr;
+import com.twittelonr.selonarch.common.schelonma.SchelonmaDocumelonntFactory;
+import com.twittelonr.selonarch.common.schelonma.baselon.FielonldNamelonToIdMapping;
+import com.twittelonr.selonarch.common.schelonma.baselon.ImmutablelonSchelonmaIntelonrfacelon;
+import com.twittelonr.selonarch.common.schelonma.baselon.Schelonma;
+import com.twittelonr.selonarch.common.schelonma.baselon.ThriftDocumelonntUtil;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdClustelonr;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdFielonldConstants;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdFielonldConstants.elonarlybirdFielonldConstant;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftDocumelonnt;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftIndelonxingelonvelonnt;
+import com.twittelonr.selonarch.elonarlybird.elonxcelonption.CriticalelonxcelonptionHandlelonr;
 
 /**
- * Builds a Lucene Document from a ThriftIndexingEvent. A simplified version of
- * {@link ThriftIndexingEventDocumentFactory} that can be used for update events, which exclude
- * many fields that the tweet indexing events contain.
+ * Builds a Lucelonnelon Documelonnt from a ThriftIndelonxingelonvelonnt. A simplifielond velonrsion of
+ * {@link ThriftIndelonxingelonvelonntDocumelonntFactory} that can belon uselond for updatelon elonvelonnts, which elonxcludelon
+ * many fielonlds that thelon twelonelont indelonxing elonvelonnts contain.
  */
-public class ThriftIndexingEventUpdateFactory extends DocumentFactory<ThriftIndexingEvent> {
-  private static final FieldNameToIdMapping ID_MAPPING = new EarlybirdFieldConstants();
+public class ThriftIndelonxingelonvelonntUpdatelonFactory elonxtelonnds DocumelonntFactory<ThriftIndelonxingelonvelonnt> {
+  privatelon static final FielonldNamelonToIdMapping ID_MAPPING = nelonw elonarlybirdFielonldConstants();
 
-  private final SchemaDocumentFactory schemaDocumentFactory;
-  private final EarlybirdCluster cluster;
-  private final Schema schema;
+  privatelon final SchelonmaDocumelonntFactory schelonmaDocumelonntFactory;
+  privatelon final elonarlybirdClustelonr clustelonr;
+  privatelon final Schelonma schelonma;
 
-  public ThriftIndexingEventUpdateFactory(
-      Schema schema,
-      EarlybirdCluster cluster,
-      Decider decider,
-      CriticalExceptionHandler criticalExceptionHandler) {
+  public ThriftIndelonxingelonvelonntUpdatelonFactory(
+      Schelonma schelonma,
+      elonarlybirdClustelonr clustelonr,
+      Deloncidelonr deloncidelonr,
+      CriticalelonxcelonptionHandlelonr criticalelonxcelonptionHandlelonr) {
     this(
-        schema,
-        ThriftIndexingEventDocumentFactory.getSchemaDocumentFactory(schema, cluster, decider),
-        cluster,
-        criticalExceptionHandler
+        schelonma,
+        ThriftIndelonxingelonvelonntDocumelonntFactory.gelontSchelonmaDocumelonntFactory(schelonma, clustelonr, deloncidelonr),
+        clustelonr,
+        criticalelonxcelonptionHandlelonr
     );
   }
 
-  @VisibleForTesting
-  protected ThriftIndexingEventUpdateFactory(
-      Schema schema,
-      SchemaDocumentFactory schemaDocumentFactory,
-      EarlybirdCluster cluster,
-      CriticalExceptionHandler criticalExceptionHandler) {
-    super(criticalExceptionHandler);
-    this.schema = schema;
-    this.schemaDocumentFactory = schemaDocumentFactory;
-    this.cluster = cluster;
+  @VisiblelonForTelonsting
+  protelonctelond ThriftIndelonxingelonvelonntUpdatelonFactory(
+      Schelonma schelonma,
+      SchelonmaDocumelonntFactory schelonmaDocumelonntFactory,
+      elonarlybirdClustelonr clustelonr,
+      CriticalelonxcelonptionHandlelonr criticalelonxcelonptionHandlelonr) {
+    supelonr(criticalelonxcelonptionHandlelonr);
+    this.schelonma = schelonma;
+    this.schelonmaDocumelonntFactory = schelonmaDocumelonntFactory;
+    this.clustelonr = clustelonr;
   }
 
-  @Override
-  public long getStatusId(ThriftIndexingEvent event) {
-    Preconditions.checkNotNull(event);
-    Preconditions.checkState(
-        event.isSetDocument(), "ThriftDocument is null inside ThriftIndexingEvent.");
+  @Ovelonrridelon
+  public long gelontStatusId(ThriftIndelonxingelonvelonnt elonvelonnt) {
+    Prelonconditions.chelonckNotNull(elonvelonnt);
+    Prelonconditions.chelonckStatelon(
+        elonvelonnt.isSelontDocumelonnt(), "ThriftDocumelonnt is null insidelon ThriftIndelonxingelonvelonnt.");
 
-    ThriftDocument thriftDocument;
+    ThriftDocumelonnt thriftDocumelonnt;
     try {
-      // Ideally, we should not call getSchemaSnapshot() here.  But, as this is called only to
-      // retrieve status id and the ID field is static, this is fine for the purpose.
-      thriftDocument = ThriftDocumentPreprocessor.preprocess(
-          event.getDocument(), cluster, schema.getSchemaSnapshot());
-    } catch (IOException e) {
-      throw new IllegalStateException("Unable to obtain tweet ID from ThriftDocument: " + event, e);
+      // Idelonally, welon should not call gelontSchelonmaSnapshot() helonrelon.  But, as this is callelond only to
+      // relontrielonvelon status id and thelon ID fielonld is static, this is finelon for thelon purposelon.
+      thriftDocumelonnt = ThriftDocumelonntPrelonprocelonssor.prelonprocelonss(
+          elonvelonnt.gelontDocumelonnt(), clustelonr, schelonma.gelontSchelonmaSnapshot());
+    } catch (IOelonxcelonption elon) {
+      throw nelonw IllelongalStatelonelonxcelonption("Unablelon to obtain twelonelont ID from ThriftDocumelonnt: " + elonvelonnt, elon);
     }
-    return ThriftDocumentUtil.getLongValue(
-        thriftDocument, EarlybirdFieldConstant.ID_FIELD.getFieldName(), ID_MAPPING);
+    relonturn ThriftDocumelonntUtil.gelontLongValuelon(
+        thriftDocumelonnt, elonarlybirdFielonldConstant.ID_FIelonLD.gelontFielonldNamelon(), ID_MAPPING);
   }
 
-  @Override
-  protected Document innerNewDocument(ThriftIndexingEvent event) throws IOException {
-    Preconditions.checkNotNull(event);
-    Preconditions.checkNotNull(event.getDocument());
+  @Ovelonrridelon
+  protelonctelond Documelonnt innelonrNelonwDocumelonnt(ThriftIndelonxingelonvelonnt elonvelonnt) throws IOelonxcelonption {
+    Prelonconditions.chelonckNotNull(elonvelonnt);
+    Prelonconditions.chelonckNotNull(elonvelonnt.gelontDocumelonnt());
 
-    ImmutableSchemaInterface schemaSnapshot = schema.getSchemaSnapshot();
+    ImmutablelonSchelonmaIntelonrfacelon schelonmaSnapshot = schelonma.gelontSchelonmaSnapshot();
 
-    ThriftDocument document = ThriftDocumentPreprocessor.preprocess(
-        event.getDocument(), cluster, schemaSnapshot);
+    ThriftDocumelonnt documelonnt = ThriftDocumelonntPrelonprocelonssor.prelonprocelonss(
+        elonvelonnt.gelontDocumelonnt(), clustelonr, schelonmaSnapshot);
 
-    return schemaDocumentFactory.newDocument(document);
+    relonturn schelonmaDocumelonntFactory.nelonwDocumelonnt(documelonnt);
   }
 }

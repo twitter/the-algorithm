@@ -1,19 +1,19 @@
-package com.twitter.visibility.interfaces.push_service
+packagelon com.twittelonr.visibility.intelonrfacelons.push_selonrvicelon
 
-import com.twitter.gizmoduck.thriftscala.User
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.models.ViewerContext
+import com.twittelonr.gizmoduck.thriftscala.Uselonr
+import com.twittelonr.twelonelontypielon.thriftscala.Twelonelont
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl
+import com.twittelonr.visibility.modelonls.VielonwelonrContelonxt
 
-case class PushServiceVisibilityRequest(
-  tweet: Tweet,
-  author: User,
-  viewerContext: ViewerContext,
-  safetyLevel: SafetyLevel,
-  sourceTweet: Option[Tweet] = None,
-  quotedTweet: Option[Tweet] = None,
-  isRetweet: Boolean = false,
-  isInnerQuotedTweet: Boolean = false,
-  isSourceTweet: Boolean = false,
-  isOutOfNetworkTweet: Boolean = true,
+caselon class PushSelonrvicelonVisibilityRelonquelonst(
+  twelonelont: Twelonelont,
+  author: Uselonr,
+  vielonwelonrContelonxt: VielonwelonrContelonxt,
+  safelontyLelonvelonl: SafelontyLelonvelonl,
+  sourcelonTwelonelont: Option[Twelonelont] = Nonelon,
+  quotelondTwelonelont: Option[Twelonelont] = Nonelon,
+  isRelontwelonelont: Boolelonan = falselon,
+  isInnelonrQuotelondTwelonelont: Boolelonan = falselon,
+  isSourcelonTwelonelont: Boolelonan = falselon,
+  isOutOfNelontworkTwelonelont: Boolelonan = truelon,
 )

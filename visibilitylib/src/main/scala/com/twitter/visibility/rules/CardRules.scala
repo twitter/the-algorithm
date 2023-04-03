@@ -1,52 +1,52 @@
-package com.twitter.visibility.rules
+packagelon com.twittelonr.visibility.rulelons
 
-import com.twitter.visibility.configapi.params.FSRuleParams.CardUriRootDomainDenyListParam
-import com.twitter.visibility.configapi.params.RuleParam
-import com.twitter.visibility.configapi.params.RuleParams.EnableCardUriRootDomainCardDenylistRule
-import com.twitter.visibility.configapi.params.RuleParams.EnableCommunityNonMemberPollCardRule
-import com.twitter.visibility.configapi.params.RuleParams.EnableCommunityNonMemberPollCardRuleFailClosed
-import com.twitter.visibility.rules.Condition.And
-import com.twitter.visibility.rules.Condition.CardUriHasRootDomain
-import com.twitter.visibility.rules.Condition.CommunityTweetCommunityVisible
-import com.twitter.visibility.rules.Condition.IsPollCard
-import com.twitter.visibility.rules.Condition.LoggedOutOrViewerNotFollowingAuthor
-import com.twitter.visibility.rules.Condition.Not
-import com.twitter.visibility.rules.Condition.Or
-import com.twitter.visibility.rules.Condition.ProtectedAuthor
-import com.twitter.visibility.rules.Condition.TweetIsCommunityTweet
-import com.twitter.visibility.rules.Condition.ViewerIsCommunityMember
+import com.twittelonr.visibility.configapi.params.FSRulelonParams.CardUriRootDomainDelonnyListParam
+import com.twittelonr.visibility.configapi.params.RulelonParam
+import com.twittelonr.visibility.configapi.params.RulelonParams.elonnablelonCardUriRootDomainCardDelonnylistRulelon
+import com.twittelonr.visibility.configapi.params.RulelonParams.elonnablelonCommunityNonMelonmbelonrPollCardRulelon
+import com.twittelonr.visibility.configapi.params.RulelonParams.elonnablelonCommunityNonMelonmbelonrPollCardRulelonFailCloselond
+import com.twittelonr.visibility.rulelons.Condition.And
+import com.twittelonr.visibility.rulelons.Condition.CardUriHasRootDomain
+import com.twittelonr.visibility.rulelons.Condition.CommunityTwelonelontCommunityVisiblelon
+import com.twittelonr.visibility.rulelons.Condition.IsPollCard
+import com.twittelonr.visibility.rulelons.Condition.LoggelondOutOrVielonwelonrNotFollowingAuthor
+import com.twittelonr.visibility.rulelons.Condition.Not
+import com.twittelonr.visibility.rulelons.Condition.Or
+import com.twittelonr.visibility.rulelons.Condition.ProtelonctelondAuthor
+import com.twittelonr.visibility.rulelons.Condition.TwelonelontIsCommunityTwelonelont
+import com.twittelonr.visibility.rulelons.Condition.VielonwelonrIsCommunityMelonmbelonr
 
-object DropProtectedAuthorPollCardRule
-    extends RuleWithConstantAction(
-      Drop(Reason.ProtectedAuthor),
+objelonct DropProtelonctelondAuthorPollCardRulelon
+    elonxtelonnds RulelonWithConstantAction(
+      Drop(Relonason.ProtelonctelondAuthor),
       And(
         IsPollCard,
-        ProtectedAuthor,
-        LoggedOutOrViewerNotFollowingAuthor,
+        ProtelonctelondAuthor,
+        LoggelondOutOrVielonwelonrNotFollowingAuthor,
       )
     )
 
-object DropCardUriRootDomainDenylistRule
-    extends RuleWithConstantAction(
-      Drop(Reason.Unspecified),
-      And(CardUriHasRootDomain(CardUriRootDomainDenyListParam))
+objelonct DropCardUriRootDomainDelonnylistRulelon
+    elonxtelonnds RulelonWithConstantAction(
+      Drop(Relonason.Unspeloncifielond),
+      And(CardUriHasRootDomain(CardUriRootDomainDelonnyListParam))
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableCardUriRootDomainCardDenylistRule)
+  ovelonrridelon delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] = Selonq(elonnablelonCardUriRootDomainCardDelonnylistRulelon)
 }
 
-object DropCommunityNonMemberPollCardRule
-    extends RuleWithConstantAction(
-      Drop(Reason.CommunityNotAMember),
+objelonct DropCommunityNonMelonmbelonrPollCardRulelon
+    elonxtelonnds RulelonWithConstantAction(
+      Drop(Relonason.CommunityNotAMelonmbelonr),
       And(
         IsPollCard,
-        TweetIsCommunityTweet,
+        TwelonelontIsCommunityTwelonelont,
         Or(
-          Not(ViewerIsCommunityMember),
-          Not(CommunityTweetCommunityVisible),
+          Not(VielonwelonrIsCommunityMelonmbelonr),
+          Not(CommunityTwelonelontCommunityVisiblelon),
         )
       ),
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableCommunityNonMemberPollCardRule)
-  override def enableFailClosed: Seq[RuleParam[Boolean]] = Seq(
-    EnableCommunityNonMemberPollCardRuleFailClosed)
+  ovelonrridelon delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] = Selonq(elonnablelonCommunityNonMelonmbelonrPollCardRulelon)
+  ovelonrridelon delonf elonnablelonFailCloselond: Selonq[RulelonParam[Boolelonan]] = Selonq(
+    elonnablelonCommunityNonMelonmbelonrPollCardRulelonFailCloselond)
 }

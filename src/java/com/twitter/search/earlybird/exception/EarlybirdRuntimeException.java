@@ -1,7 +1,7 @@
-package com.twitter.search.earlybird.exception;
+packagelon com.twittelonr.selonarch.elonarlybird.elonxcelonption;
 
-public class EarlybirdRuntimeException extends RuntimeException {
-  public EarlybirdRuntimeException(Throwable cause) {
-    super(cause);
+public class elonarlybirdRuntimelonelonxcelonption elonxtelonnds Runtimelonelonxcelonption {
+  public elonarlybirdRuntimelonelonxcelonption(Throwablelon causelon) {
+    supelonr(causelon);
   }
 }

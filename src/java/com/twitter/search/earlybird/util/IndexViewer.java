@@ -1,798 +1,798 @@
-package com.twitter.search.earlybird.util;
+packagelon com.twittelonr.selonarch.elonarlybird.util;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
+import java.io.IOelonxcelonption;
+import java.io.PrintWritelonr;
+import java.io.Unsupportelondelonncodingelonxcelonption;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Collelonctions;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.Localelon;
+import java.util.Selont;
+import java.util.TrelonelonSelont;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
+import com.googlelon.common.collelonct.ImmutablelonSelont;
+import com.googlelon.common.collelonct.Lists;
 
-import org.apache.lucene.index.IndexOptions;
-import org.apache.lucene.index.NumericDocValues;
-import org.apache.lucene.index.PostingsEnum;
-import org.apache.lucene.index.Terms;
-import org.apache.lucene.index.TermsEnum;
-import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.util.BytesRef;
+import org.apachelon.lucelonnelon.indelonx.IndelonxOptions;
+import org.apachelon.lucelonnelon.indelonx.NumelonricDocValuelons;
+import org.apachelon.lucelonnelon.indelonx.Postingselonnum;
+import org.apachelon.lucelonnelon.indelonx.Telonrms;
+import org.apachelon.lucelonnelon.indelonx.Telonrmselonnum;
+import org.apachelon.lucelonnelon.selonarch.DocIdSelontItelonrator;
+import org.apachelon.lucelonnelon.util.BytelonsRelonf;
 
-import com.twitter.search.common.constants.thriftjava.ThriftLanguage;
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.common.schema.thriftjava.ThriftCSFType;
-import com.twitter.search.common.util.analysis.IntTermAttributeImpl;
-import com.twitter.search.common.util.analysis.LongTermAttributeImpl;
-import com.twitter.search.common.util.analysis.SortableLongTermAttributeImpl;
-import com.twitter.search.common.util.spatial.GeoUtil;
-import com.twitter.search.core.earlybird.index.DocIDToTweetIDMapper;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
-import com.twitter.search.core.earlybird.index.inverted.MPHTermDictionary;
-import com.twitter.search.core.earlybird.index.inverted.RealtimeIndexTerms;
-import com.twitter.search.earlybird.index.EarlybirdSingleSegmentSearcher;
+import com.twittelonr.selonarch.common.constants.thriftjava.ThriftLanguagelon;
+import com.twittelonr.selonarch.common.schelonma.baselon.Schelonma;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdFielonldConstants.elonarlybirdFielonldConstant;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftCSFTypelon;
+import com.twittelonr.selonarch.common.util.analysis.IntTelonrmAttributelonImpl;
+import com.twittelonr.selonarch.common.util.analysis.LongTelonrmAttributelonImpl;
+import com.twittelonr.selonarch.common.util.analysis.SortablelonLongTelonrmAttributelonImpl;
+import com.twittelonr.selonarch.common.util.spatial.GelonoUtil;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.DocIDToTwelonelontIDMappelonr;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.invelonrtelond.MPHTelonrmDictionary;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.invelonrtelond.RelonaltimelonIndelonxTelonrms;
+import com.twittelonr.selonarch.elonarlybird.indelonx.elonarlybirdSinglelonSelongmelonntSelonarchelonr;
 
-import geo.google.datamodel.GeoCoordinate;
+import gelono.googlelon.datamodelonl.GelonoCoordinatelon;
 
-public class IndexViewer {
+public class IndelonxVielonwelonr {
   /**
-   * Fields whose terms are indexed using
-   * {@link com.twitter.search.common.util.analysis.IntTermAttribute}
+   * Fielonlds whoselon telonrms arelon indelonxelond using
+   * {@link com.twittelonr.selonarch.common.util.analysis.IntTelonrmAttributelon}
    */
-  private static final Set<String> INT_TERM_ATTRIBUTE_FIELDS = ImmutableSet.of(
-      EarlybirdFieldConstant.CREATED_AT_FIELD.getFieldName(),
-      EarlybirdFieldConstant.LINK_CATEGORY_FIELD.getFieldName(),
-      EarlybirdFieldConstant
-          .NORMALIZED_FAVORITE_COUNT_GREATER_THAN_OR_EQUAL_TO_FIELD.getFieldName(),
-      EarlybirdFieldConstant
-          .NORMALIZED_REPLY_COUNT_GREATER_THAN_OR_EQUAL_TO_FIELD.getFieldName(),
-      EarlybirdFieldConstant
-          .NORMALIZED_RETWEET_COUNT_GREATER_THAN_OR_EQUAL_TO_FIELD.getFieldName(),
-      EarlybirdFieldConstant.COMPOSER_SOURCE.getFieldName());
-
-  /**
-   * Fields whose terms are indexed using
-   * {@link com.twitter.search.common.util.analysis.LongTermAttribute}
-   */
-  private static final Set<String> LONG_TERM_ATTRIBUTE_FIELDS = ImmutableSet.of(
-      EarlybirdFieldConstant.CONVERSATION_ID_FIELD.getFieldName(),
-      EarlybirdFieldConstant.LIKED_BY_USER_ID_FIELD.getFieldName(),
-      EarlybirdFieldConstant.QUOTED_TWEET_ID_FIELD.getFieldName(),
-      EarlybirdFieldConstant.QUOTED_USER_ID_FIELD.getFieldName(),
-      EarlybirdFieldConstant.REPLIED_TO_BY_USER_ID.getFieldName(),
-      EarlybirdFieldConstant.RETWEETED_BY_USER_ID.getFieldName(),
-      EarlybirdFieldConstant.DIRECTED_AT_USER_ID_FIELD.getFieldName(),
-      EarlybirdFieldConstant.FROM_USER_ID_FIELD.getFieldName(),
-      EarlybirdFieldConstant.IN_REPLY_TO_TWEET_ID_FIELD.getFieldName(),
-      EarlybirdFieldConstant.IN_REPLY_TO_USER_ID_FIELD.getFieldName(),
-      EarlybirdFieldConstant.RETWEET_SOURCE_TWEET_ID_FIELD.getFieldName(),
-      EarlybirdFieldConstant.RETWEET_SOURCE_USER_ID_FIELD.getFieldName());
+  privatelon static final Selont<String> INT_TelonRM_ATTRIBUTelon_FIelonLDS = ImmutablelonSelont.of(
+      elonarlybirdFielonldConstant.CRelonATelonD_AT_FIelonLD.gelontFielonldNamelon(),
+      elonarlybirdFielonldConstant.LINK_CATelonGORY_FIelonLD.gelontFielonldNamelon(),
+      elonarlybirdFielonldConstant
+          .NORMALIZelonD_FAVORITelon_COUNT_GRelonATelonR_THAN_OR_elonQUAL_TO_FIelonLD.gelontFielonldNamelon(),
+      elonarlybirdFielonldConstant
+          .NORMALIZelonD_RelonPLY_COUNT_GRelonATelonR_THAN_OR_elonQUAL_TO_FIelonLD.gelontFielonldNamelon(),
+      elonarlybirdFielonldConstant
+          .NORMALIZelonD_RelonTWelonelonT_COUNT_GRelonATelonR_THAN_OR_elonQUAL_TO_FIelonLD.gelontFielonldNamelon(),
+      elonarlybirdFielonldConstant.COMPOSelonR_SOURCelon.gelontFielonldNamelon());
 
   /**
-   * Fields whose terms index using SORTED
-   * {@link com.twitter.search.common.util.analysis.LongTermAttribute}
+   * Fielonlds whoselon telonrms arelon indelonxelond using
+   * {@link com.twittelonr.selonarch.common.util.analysis.LongTelonrmAttributelon}
    */
-  private static final Set<String> SORTED_LONG_TERM_ATTRIBUTE_FIELDS =
-      ImmutableSet.of(EarlybirdFieldConstant.ID_FIELD.getFieldName());
+  privatelon static final Selont<String> LONG_TelonRM_ATTRIBUTelon_FIelonLDS = ImmutablelonSelont.of(
+      elonarlybirdFielonldConstant.CONVelonRSATION_ID_FIelonLD.gelontFielonldNamelon(),
+      elonarlybirdFielonldConstant.LIKelonD_BY_USelonR_ID_FIelonLD.gelontFielonldNamelon(),
+      elonarlybirdFielonldConstant.QUOTelonD_TWelonelonT_ID_FIelonLD.gelontFielonldNamelon(),
+      elonarlybirdFielonldConstant.QUOTelonD_USelonR_ID_FIelonLD.gelontFielonldNamelon(),
+      elonarlybirdFielonldConstant.RelonPLIelonD_TO_BY_USelonR_ID.gelontFielonldNamelon(),
+      elonarlybirdFielonldConstant.RelonTWelonelonTelonD_BY_USelonR_ID.gelontFielonldNamelon(),
+      elonarlybirdFielonldConstant.DIRelonCTelonD_AT_USelonR_ID_FIelonLD.gelontFielonldNamelon(),
+      elonarlybirdFielonldConstant.FROM_USelonR_ID_FIelonLD.gelontFielonldNamelon(),
+      elonarlybirdFielonldConstant.IN_RelonPLY_TO_TWelonelonT_ID_FIelonLD.gelontFielonldNamelon(),
+      elonarlybirdFielonldConstant.IN_RelonPLY_TO_USelonR_ID_FIelonLD.gelontFielonldNamelon(),
+      elonarlybirdFielonldConstant.RelonTWelonelonT_SOURCelon_TWelonelonT_ID_FIelonLD.gelontFielonldNamelon(),
+      elonarlybirdFielonldConstant.RelonTWelonelonT_SOURCelon_USelonR_ID_FIelonLD.gelontFielonldNamelon());
 
-  private final EarlybirdSingleSegmentSearcher searcher;
-  private final EarlybirdIndexSegmentAtomicReader twitterReader;
+  /**
+   * Fielonlds whoselon telonrms indelonx using SORTelonD
+   * {@link com.twittelonr.selonarch.common.util.analysis.LongTelonrmAttributelon}
+   */
+  privatelon static final Selont<String> SORTelonD_LONG_TelonRM_ATTRIBUTelon_FIelonLDS =
+      ImmutablelonSelont.of(elonarlybirdFielonldConstant.ID_FIelonLD.gelontFielonldNamelon());
 
-  public long getTimeSliceId() {
-    return searcher.getTimeSliceID();
+  privatelon final elonarlybirdSinglelonSelongmelonntSelonarchelonr selonarchelonr;
+  privatelon final elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr twittelonrRelonadelonr;
+
+  public long gelontTimelonSlicelonId() {
+    relonturn selonarchelonr.gelontTimelonSlicelonID();
   }
 
   public static class Options {
-    private boolean dumpHexTerms = false;
-    private String charset;
-    private double[] histogramBuckets;
-    private boolean termLengthHistogram;
+    privatelon boolelonan dumpHelonxTelonrms = falselon;
+    privatelon String charselont;
+    privatelon doublelon[] histogramBuckelonts;
+    privatelon boolelonan telonrmLelonngthHistogram;
 
-    public Options setDumpHexTerms(boolean dumpHexTermsParam) {
-      this.dumpHexTerms = dumpHexTermsParam;
-      return this;
+    public Options selontDumpHelonxTelonrms(boolelonan dumpHelonxTelonrmsParam) {
+      this.dumpHelonxTelonrms = dumpHelonxTelonrmsParam;
+      relonturn this;
     }
 
-    public Options setCharset(String charsetParam) {
-      this.charset = charsetParam;
-      return this;
+    public Options selontCharselont(String charselontParam) {
+      this.charselont = charselontParam;
+      relonturn this;
     }
 
-    public Options setHistogramBuckets(double[] histogramBucketsParam) {
-      this.histogramBuckets = histogramBucketsParam;
-      return this;
+    public Options selontHistogramBuckelonts(doublelon[] histogramBuckelontsParam) {
+      this.histogramBuckelonts = histogramBuckelontsParam;
+      relonturn this;
     }
 
-    public Options setTermLengthHistogram(boolean termLengthHistogramParam) {
-      this.termLengthHistogram = termLengthHistogramParam;
-      return this;
+    public Options selontTelonrmLelonngthHistogram(boolelonan telonrmLelonngthHistogramParam) {
+      this.telonrmLelonngthHistogram = telonrmLelonngthHistogramParam;
+      relonturn this;
     }
   }
 
   /**
-   * Data Transfer Object for Terms, encapsulates the "json" serialization
-   * while maintaining streaming mode
+   * Data Transfelonr Objelonct for Telonrms, elonncapsulatelons thelon "json" selonrialization
+   * whilelon maintaining strelonaming modelon
    */
-  private static class TermDto {
+  privatelon static class TelonrmDto {
 
-    private final String field;
-    private final String term;
-    private final String docFreq;
-    private final String percent;
-    private final PostingsEnum docsEnum;
-    private final TermsEnum termsEnum;
-    private final Integer maxDocs;
+    privatelon final String fielonld;
+    privatelon final String telonrm;
+    privatelon final String docFrelonq;
+    privatelon final String pelonrcelonnt;
+    privatelon final Postingselonnum docselonnum;
+    privatelon final Telonrmselonnum telonrmselonnum;
+    privatelon final Intelongelonr maxDocs;
 
-    public TermDto(String field, String term, String docFreq, String percent,
-                   PostingsEnum docsEnum, TermsEnum termsEnum, Integer maxDocs) {
-      this.field = field;
-      this.term = term;
-      this.docFreq = docFreq;
-      this.percent = percent;
-      this.docsEnum = docsEnum;
-      this.termsEnum = termsEnum;
+    public TelonrmDto(String fielonld, String telonrm, String docFrelonq, String pelonrcelonnt,
+                   Postingselonnum docselonnum, Telonrmselonnum telonrmselonnum, Intelongelonr maxDocs) {
+      this.fielonld = fielonld;
+      this.telonrm = telonrm;
+      this.docFrelonq = docFrelonq;
+      this.pelonrcelonnt = pelonrcelonnt;
+      this.docselonnum = docselonnum;
+      this.telonrmselonnum = telonrmselonnum;
       this.maxDocs = maxDocs;
     }
 
-    public void write(ViewerWriter writer,
-                      EarlybirdIndexSegmentAtomicReader twitterReader) throws IOException {
-      writer.beginObject();
-      writer.name("field").value(field);
-      writer.name("term").value(term);
-      writer.name("docFreq").value(docFreq);
-      writer.name("percent").value(percent);
-      if (docsEnum != null) {
-        appendFrequencyAndPositions(writer, field, docsEnum, twitterReader);
+    public void writelon(VielonwelonrWritelonr writelonr,
+                      elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr twittelonrRelonadelonr) throws IOelonxcelonption {
+      writelonr.belonginObjelonct();
+      writelonr.namelon("fielonld").valuelon(fielonld);
+      writelonr.namelon("telonrm").valuelon(telonrm);
+      writelonr.namelon("docFrelonq").valuelon(docFrelonq);
+      writelonr.namelon("pelonrcelonnt").valuelon(pelonrcelonnt);
+      if (docselonnum != null) {
+        appelonndFrelonquelonncyAndPositions(writelonr, fielonld, docselonnum, twittelonrRelonadelonr);
       }
       if (maxDocs != null) {
-        appendDocs(writer, termsEnum, maxDocs, twitterReader);
+        appelonndDocs(writelonr, telonrmselonnum, maxDocs, twittelonrRelonadelonr);
       }
-      writer.endObject();
+      writelonr.elonndObjelonct();
     }
   }
 
   /**
-   * Data Transfer Object for Terms, encapsulates the "json" serialization
-   * while maintaining streaming mode
+   * Data Transfelonr Objelonct for Telonrms, elonncapsulatelons thelon "json" selonrialization
+   * whilelon maintaining strelonaming modelon
    */
-  private static class StatsDto {
+  privatelon static class StatsDto {
 
-    private final String field;
-    private final String numTerms;
-    private final String terms;
+    privatelon final String fielonld;
+    privatelon final String numTelonrms;
+    privatelon final String telonrms;
 
 
-    public StatsDto(String field, String numTerms, String terms) {
-      this.field = field;
-      this.numTerms = numTerms;
-      this.terms = terms;
+    public StatsDto(String fielonld, String numTelonrms, String telonrms) {
+      this.fielonld = fielonld;
+      this.numTelonrms = numTelonrms;
+      this.telonrms = telonrms;
     }
 
-    public void write(ViewerWriter writer) throws IOException {
-      writer.beginObject();
+    public void writelon(VielonwelonrWritelonr writelonr) throws IOelonxcelonption {
+      writelonr.belonginObjelonct();
 
-      writer.name("field").value(field);
-      writer.name("numTerms").value(numTerms);
-      writer.name("terms").value(terms);
+      writelonr.namelon("fielonld").valuelon(fielonld);
+      writelonr.namelon("numTelonrms").valuelon(numTelonrms);
+      writelonr.namelon("telonrms").valuelon(telonrms);
 
-      writer.endObject();
+      writelonr.elonndObjelonct();
     }
   }
 
-  public IndexViewer(EarlybirdSingleSegmentSearcher searcher) {
-    this.searcher = searcher;
-    this.twitterReader = searcher.getTwitterIndexReader();
+  public IndelonxVielonwelonr(elonarlybirdSinglelonSelongmelonntSelonarchelonr selonarchelonr) {
+    this.selonarchelonr = selonarchelonr;
+    this.twittelonrRelonadelonr = selonarchelonr.gelontTwittelonrIndelonxRelonadelonr();
   }
 
-  private boolean shouldSeekExact(Terms terms, TermsEnum termsEnum) {
-    return terms instanceof RealtimeIndexTerms
-           || termsEnum instanceof MPHTermDictionary.MPHTermsEnum;
+  privatelon boolelonan shouldSelonelonkelonxact(Telonrms telonrms, Telonrmselonnum telonrmselonnum) {
+    relonturn telonrms instancelonof RelonaltimelonIndelonxTelonrms
+           || telonrmselonnum instancelonof MPHTelonrmDictionary.MPHTelonrmselonnum;
   }
 
   /**
-   * Dumps all terms for a given tweet id.
-   * @param writer writer being used
-   * @param tweetId the tweet id to use
+   * Dumps all telonrms for a givelonn twelonelont id.
+   * @param writelonr writelonr beloning uselond
+   * @param twelonelontId thelon twelonelont id to uselon
    */
-  public void dumpTweetDataByTweetId(ViewerWriter writer, long tweetId, Options options)
-      throws IOException {
-    int docId = twitterReader.getSegmentData().getDocIDToTweetIDMapper().getDocID(tweetId);
-    dumpTweetDataByDocId(writer, docId, options);
+  public void dumpTwelonelontDataByTwelonelontId(VielonwelonrWritelonr writelonr, long twelonelontId, Options options)
+      throws IOelonxcelonption {
+    int docId = twittelonrRelonadelonr.gelontSelongmelonntData().gelontDocIDToTwelonelontIDMappelonr().gelontDocID(twelonelontId);
+    dumpTwelonelontDataByDocId(writelonr, docId, options);
   }
 
   /**
-   * Dumps all terms for a given doc id.
-   * @param writer writer being used
-   * @param docId the document id to use.
+   * Dumps all telonrms for a givelonn doc id.
+   * @param writelonr writelonr beloning uselond
+   * @param docId thelon documelonnt id to uselon.
    */
-  public void dumpTweetDataByDocId(ViewerWriter writer, int docId, Options options)
-      throws IOException {
-    writer.beginObject();
+  public void dumpTwelonelontDataByDocId(VielonwelonrWritelonr writelonr, int docId, Options options)
+      throws IOelonxcelonption {
+    writelonr.belonginObjelonct();
 
-    printHeader(writer);
-    long tweetID = twitterReader.getSegmentData().getDocIDToTweetIDMapper().getTweetID(docId);
-    if (docId < twitterReader.maxDoc() && tweetID >= 0) {
-      writer.name("docId").value(Integer.toString(docId));
-      writer.name("tweetId").value(Long.toString(tweetID));
-      dumpIndexedFields(writer, docId, options);
-      dumpCsfFields(writer, docId);
+    printHelonadelonr(writelonr);
+    long twelonelontID = twittelonrRelonadelonr.gelontSelongmelonntData().gelontDocIDToTwelonelontIDMappelonr().gelontTwelonelontID(docId);
+    if (docId < twittelonrRelonadelonr.maxDoc() && twelonelontID >= 0) {
+      writelonr.namelon("docId").valuelon(Intelongelonr.toString(docId));
+      writelonr.namelon("twelonelontId").valuelon(Long.toString(twelonelontID));
+      dumpIndelonxelondFielonlds(writelonr, docId, options);
+      dumpCsfFielonlds(writelonr, docId);
     }
-    writer.endObject();
+    writelonr.elonndObjelonct();
   }
 
   /**
-   * Dumps all tweet IDs in the current segment to the given file.
+   * Dumps all twelonelont IDs in thelon currelonnt selongmelonnt to thelon givelonn filelon.
    */
-  public void dumpTweetIds(ViewerWriter writer, String logFile, PrintWriter logWriter)
-      throws IOException {
-    writeTweetIdsToLogFile(logWriter);
+  public void dumpTwelonelontIds(VielonwelonrWritelonr writelonr, String logFilelon, PrintWritelonr logWritelonr)
+      throws IOelonxcelonption {
+    writelonTwelonelontIdsToLogFilelon(logWritelonr);
 
-    writer.beginObject();
-    writer.name(Long.toString(searcher.getTimeSliceID())).value(logFile);
-    writer.endObject();
+    writelonr.belonginObjelonct();
+    writelonr.namelon(Long.toString(selonarchelonr.gelontTimelonSlicelonID())).valuelon(logFilelon);
+    writelonr.elonndObjelonct();
   }
 
-  private void writeTweetIdsToLogFile(PrintWriter logWriter) {
-    DocIDToTweetIDMapper mapper = twitterReader.getSegmentData().getDocIDToTweetIDMapper();
-    int docId = Integer.MIN_VALUE;
-    while ((docId = mapper.getNextDocID(docId)) != DocIDToTweetIDMapper.ID_NOT_FOUND) {
-      long tweetId = mapper.getTweetID(docId);
+  privatelon void writelonTwelonelontIdsToLogFilelon(PrintWritelonr logWritelonr) {
+    DocIDToTwelonelontIDMappelonr mappelonr = twittelonrRelonadelonr.gelontSelongmelonntData().gelontDocIDToTwelonelontIDMappelonr();
+    int docId = Intelongelonr.MIN_VALUelon;
+    whilelon ((docId = mappelonr.gelontNelonxtDocID(docId)) != DocIDToTwelonelontIDMappelonr.ID_NOT_FOUND) {
+      long twelonelontId = mappelonr.gelontTwelonelontID(docId);
 
-      // Ensure tweet ID is valid and non-deleted
-      if ((tweetId > 0) && !twitterReader.getDeletesView().isDeleted(docId)) {
-        logWriter.println(tweetId);
+      // elonnsurelon twelonelont ID is valid and non-delonlelontelond
+      if ((twelonelontId > 0) && !twittelonrRelonadelonr.gelontDelonlelontelonsVielonw().isDelonlelontelond(docId)) {
+        logWritelonr.println(twelonelontId);
       }
     }
   }
 
-  private void dumpIndexedFields(ViewerWriter writer, int docId,
-                                 Options options) throws IOException {
-    writer.name("indexedFields");
-    writer.beginArray();
-    writer.newline();
-    for (String field : sortedFields()) {
-      dumpTweetData(writer, field, docId, options);
+  privatelon void dumpIndelonxelondFielonlds(VielonwelonrWritelonr writelonr, int docId,
+                                 Options options) throws IOelonxcelonption {
+    writelonr.namelon("indelonxelondFielonlds");
+    writelonr.belonginArray();
+    writelonr.nelonwlinelon();
+    for (String fielonld : sortelondFielonlds()) {
+      dumpTwelonelontData(writelonr, fielonld, docId, options);
     }
-    writer.endArray();
-    writer.newline();
+    writelonr.elonndArray();
+    writelonr.nelonwlinelon();
   }
 
-  private void dumpCsfFields(ViewerWriter writer, int docId) throws IOException {
-    writer.name("csfFields");
-    writer.beginArray();
-    writer.newline();
-    dumpCSFData(writer, docId);
+  privatelon void dumpCsfFielonlds(VielonwelonrWritelonr writelonr, int docId) throws IOelonxcelonption {
+    writelonr.namelon("csfFielonlds");
+    writelonr.belonginArray();
+    writelonr.nelonwlinelon();
+    dumpCSFData(writelonr, docId);
 
-    writer.endArray();
+    writelonr.elonndArray();
   }
 
   /**
-   * Dumps all CSF values for a given doc id.
-   * @param writer writer being used
-   * @param docId the document id to use.
+   * Dumps all CSF valuelons for a givelonn doc id.
+   * @param writelonr writelonr beloning uselond
+   * @param docId thelon documelonnt id to uselon.
    */
-  private void dumpCSFData(ViewerWriter writer, int docId) throws IOException {
-    Schema tweetSchema = twitterReader.getSchema();
+  privatelon void dumpCSFData(VielonwelonrWritelonr writelonr, int docId) throws IOelonxcelonption {
+    Schelonma twelonelontSchelonma = twittelonrRelonadelonr.gelontSchelonma();
 
-    // Sort the FieldInfo objects to generate fixed order to make testing easier
-    List<Schema.FieldInfo> sortedFieldInfos = new ArrayList<>(tweetSchema.getFieldInfos());
-    sortedFieldInfos.sort(Comparator.comparing(Schema.FieldInfo::getFieldId));
+    // Sort thelon FielonldInfo objeloncts to gelonnelonratelon fixelond ordelonr to makelon telonsting elonasielonr
+    List<Schelonma.FielonldInfo> sortelondFielonldInfos = nelonw ArrayList<>(twelonelontSchelonma.gelontFielonldInfos());
+    sortelondFielonldInfos.sort(Comparator.comparing(Schelonma.FielonldInfo::gelontFielonldId));
 
-    for (Schema.FieldInfo fieldInfo: sortedFieldInfos) {
-      String csfFieldInfoName = fieldInfo.getName();
-      ThriftCSFType csfType = tweetSchema.getCSFFieldType(csfFieldInfoName);
-      NumericDocValues csfDocValues = twitterReader.getNumericDocValues(csfFieldInfoName);
-      // If twitterReader.getNumericDocValues(value.getName()) == null,
-      // means no NumericDocValue was indexed for the field so ignore
-      if (csfType != null && csfDocValues != null && csfDocValues.advanceExact(docId)) {
-        long csfValue = csfDocValues.longValue();
-        writer.beginObject();
-        writer.name("field").value(formatField(csfFieldInfoName));
-        writer.name("value");
-        if (csfFieldInfoName.equals(EarlybirdFieldConstant.LAT_LON_CSF_FIELD.getFieldName())) {
-          writer.value(latlongDecode(csfValue));
-        } else if (csfFieldInfoName.equals(EarlybirdFieldConstant.LANGUAGE.getFieldName())) {
-          writer.value(languageDecode(csfValue));
-        } else if (csfFieldInfoName.equals(EarlybirdFieldConstant.CARD_LANG_CSF.getFieldName())) {
-          writer.value(languageDecode(csfValue));
-        } else {
-          writer.value(Long.toString(csfValue));
+    for (Schelonma.FielonldInfo fielonldInfo: sortelondFielonldInfos) {
+      String csfFielonldInfoNamelon = fielonldInfo.gelontNamelon();
+      ThriftCSFTypelon csfTypelon = twelonelontSchelonma.gelontCSFFielonldTypelon(csfFielonldInfoNamelon);
+      NumelonricDocValuelons csfDocValuelons = twittelonrRelonadelonr.gelontNumelonricDocValuelons(csfFielonldInfoNamelon);
+      // If twittelonrRelonadelonr.gelontNumelonricDocValuelons(valuelon.gelontNamelon()) == null,
+      // melonans no NumelonricDocValuelon was indelonxelond for thelon fielonld so ignorelon
+      if (csfTypelon != null && csfDocValuelons != null && csfDocValuelons.advancelonelonxact(docId)) {
+        long csfValuelon = csfDocValuelons.longValuelon();
+        writelonr.belonginObjelonct();
+        writelonr.namelon("fielonld").valuelon(formatFielonld(csfFielonldInfoNamelon));
+        writelonr.namelon("valuelon");
+        if (csfFielonldInfoNamelon.elonquals(elonarlybirdFielonldConstant.LAT_LON_CSF_FIelonLD.gelontFielonldNamelon())) {
+          writelonr.valuelon(latlongDeloncodelon(csfValuelon));
+        } elonlselon if (csfFielonldInfoNamelon.elonquals(elonarlybirdFielonldConstant.LANGUAGelon.gelontFielonldNamelon())) {
+          writelonr.valuelon(languagelonDeloncodelon(csfValuelon));
+        } elonlselon if (csfFielonldInfoNamelon.elonquals(elonarlybirdFielonldConstant.CARD_LANG_CSF.gelontFielonldNamelon())) {
+          writelonr.valuelon(languagelonDeloncodelon(csfValuelon));
+        } elonlselon {
+          writelonr.valuelon(Long.toString(csfValuelon));
         }
-        writer.endObject();
-        writer.newline();
+        writelonr.elonndObjelonct();
+        writelonr.nelonwlinelon();
       }
     }
   }
 
   /**
-   * Decipher long value gotten, put into format (lat, lon)
-   * Decode the stored long value by creating a geocode
+   * Delonciphelonr long valuelon gottelonn, put into format (lat, lon)
+   * Deloncodelon thelon storelond long valuelon by crelonating a gelonocodelon
    */
-  private String latlongDecode(long csfValue) {
-    StringBuilder sb = new StringBuilder();
-    GeoCoordinate geoCoordinate = new GeoCoordinate();
-    if (GeoUtil.decodeLatLonFromInt64(csfValue, geoCoordinate)) {
-      sb.append(geoCoordinate.getLatitude()).append(", ").append(geoCoordinate.getLongitude());
-    } else {
-      sb.append(csfValue).append(" (Value Unset or Invalid Coordinate)");
+  privatelon String latlongDeloncodelon(long csfValuelon) {
+    StringBuildelonr sb = nelonw StringBuildelonr();
+    GelonoCoordinatelon gelonoCoordinatelon = nelonw GelonoCoordinatelon();
+    if (GelonoUtil.deloncodelonLatLonFromInt64(csfValuelon, gelonoCoordinatelon)) {
+      sb.appelonnd(gelonoCoordinatelon.gelontLatitudelon()).appelonnd(", ").appelonnd(gelonoCoordinatelon.gelontLongitudelon());
+    } elonlselon {
+      sb.appelonnd(csfValuelon).appelonnd(" (Valuelon Unselont or Invalid Coordinatelon)");
     }
-    return sb.toString();
+    relonturn sb.toString();
   }
 
   /**
-   * Decipher long value gotten into string of tweet's language
+   * Delonciphelonr long valuelon gottelonn into string of twelonelont's languagelon
    */
-  private String languageDecode(long csfValue) {
-    StringBuilder sb = new StringBuilder();
-    ThriftLanguage languageType = ThriftLanguage.findByValue((int) csfValue);
-    sb.append(csfValue).append(" (").append(languageType).append(")");
-    return sb.toString();
+  privatelon String languagelonDeloncodelon(long csfValuelon) {
+    StringBuildelonr sb = nelonw StringBuildelonr();
+    ThriftLanguagelon languagelonTypelon = ThriftLanguagelon.findByValuelon((int) csfValuelon);
+    sb.appelonnd(csfValuelon).appelonnd(" (").appelonnd(languagelonTypelon).appelonnd(")");
+    relonturn sb.toString();
   }
 
-  private void dumpTweetData(ViewerWriter writer,
-                             String field,
+  privatelon void dumpTwelonelontData(VielonwelonrWritelonr writelonr,
+                             String fielonld,
                              int docId,
-                             Options options) throws IOException {
+                             Options options) throws IOelonxcelonption {
 
-    Terms terms = twitterReader.terms(field);
-    if (terms != null) {
-      TermsEnum termsEnum = terms.iterator();
-      if (shouldSeekExact(terms, termsEnum)) {
-        long numTerms = terms.size();
-        for (int i = 0; i < numTerms; i++) {
-          termsEnum.seekExact(i);
-          dumpTweetDataTerm(writer, field, termsEnum, docId, options);
+    Telonrms telonrms = twittelonrRelonadelonr.telonrms(fielonld);
+    if (telonrms != null) {
+      Telonrmselonnum telonrmselonnum = telonrms.itelonrator();
+      if (shouldSelonelonkelonxact(telonrms, telonrmselonnum)) {
+        long numTelonrms = telonrms.sizelon();
+        for (int i = 0; i < numTelonrms; i++) {
+          telonrmselonnum.selonelonkelonxact(i);
+          dumpTwelonelontDataTelonrm(writelonr, fielonld, telonrmselonnum, docId, options);
         }
-      } else {
-        while (termsEnum.next() != null) {
-          dumpTweetDataTerm(writer, field, termsEnum, docId, options);
+      } elonlselon {
+        whilelon (telonrmselonnum.nelonxt() != null) {
+          dumpTwelonelontDataTelonrm(writelonr, fielonld, telonrmselonnum, docId, options);
         }
       }
     }
   }
 
-  private void dumpTweetDataTerm(ViewerWriter writer, String field, TermsEnum termsEnum,
-                                 int docId, Options options) throws IOException {
-    PostingsEnum docsAndPositionsEnum = termsEnum.postings(null, PostingsEnum.ALL);
-    if (docsAndPositionsEnum != null && docsAndPositionsEnum.advance(docId) == docId) {
-      printTerm(writer, field, termsEnum, docsAndPositionsEnum, null, options);
+  privatelon void dumpTwelonelontDataTelonrm(VielonwelonrWritelonr writelonr, String fielonld, Telonrmselonnum telonrmselonnum,
+                                 int docId, Options options) throws IOelonxcelonption {
+    Postingselonnum docsAndPositionselonnum = telonrmselonnum.postings(null, Postingselonnum.ALL);
+    if (docsAndPositionselonnum != null && docsAndPositionselonnum.advancelon(docId) == docId) {
+      printTelonrm(writelonr, fielonld, telonrmselonnum, docsAndPositionselonnum, null, options);
     }
   }
 
   /**
-   * Prints the histogram for the currently viewed index.
-   * @param writer current viewerWriter
-   * @param field if null, will use all fields
-   * @param options options for dumping out text
+   * Prints thelon histogram for thelon currelonntly vielonwelond indelonx.
+   * @param writelonr currelonnt vielonwelonrWritelonr
+   * @param fielonld if null, will uselon all fielonlds
+   * @param options options for dumping out telonxt
    */
-  public void dumpHistogram(ViewerWriter writer, String field, Options options) throws IOException {
-    writer.beginObject();
-    printHeader(writer);
-    writer.name("histogram");
-    writer.beginArray();
-    writer.newline();
-    if (field == null) {
-      for (String field2 : sortedFields()) {
-        dumpFieldHistogram(writer, field2, options);
+  public void dumpHistogram(VielonwelonrWritelonr writelonr, String fielonld, Options options) throws IOelonxcelonption {
+    writelonr.belonginObjelonct();
+    printHelonadelonr(writelonr);
+    writelonr.namelon("histogram");
+    writelonr.belonginArray();
+    writelonr.nelonwlinelon();
+    if (fielonld == null) {
+      for (String fielonld2 : sortelondFielonlds()) {
+        dumpFielonldHistogram(writelonr, fielonld2, options);
       }
-    } else {
-      dumpFieldHistogram(writer, field, options);
+    } elonlselon {
+      dumpFielonldHistogram(writelonr, fielonld, options);
     }
-    writer.endArray();
-    writer.endObject();
+    writelonr.elonndArray();
+    writelonr.elonndObjelonct();
   }
 
-  private void dumpFieldHistogram(ViewerWriter writer, String field, Options options)
-      throws IOException {
-    Histogram histo = new Histogram(options.histogramBuckets);
+  privatelon void dumpFielonldHistogram(VielonwelonrWritelonr writelonr, String fielonld, Options options)
+      throws IOelonxcelonption {
+    Histogram histo = nelonw Histogram(options.histogramBuckelonts);
 
-    Terms terms = twitterReader.terms(field);
-    if (terms != null) {
-      TermsEnum termsEnum = terms.iterator();
-      if (shouldSeekExact(terms, termsEnum)) {
-        long numTerms = terms.size();
-        for (int i = 0; i < numTerms; i++) {
-          termsEnum.seekExact(i);
-          countHistogram(options, histo, termsEnum);
+    Telonrms telonrms = twittelonrRelonadelonr.telonrms(fielonld);
+    if (telonrms != null) {
+      Telonrmselonnum telonrmselonnum = telonrms.itelonrator();
+      if (shouldSelonelonkelonxact(telonrms, telonrmselonnum)) {
+        long numTelonrms = telonrms.sizelon();
+        for (int i = 0; i < numTelonrms; i++) {
+          telonrmselonnum.selonelonkelonxact(i);
+          countHistogram(options, histo, telonrmselonnum);
         }
-      } else {
-        while (termsEnum.next() != null) {
-          countHistogram(options, histo, termsEnum);
+      } elonlselon {
+        whilelon (telonrmselonnum.nelonxt() != null) {
+          countHistogram(options, histo, telonrmselonnum);
         }
       }
-      printHistogram(writer, field, options, histo);
+      printHistogram(writelonr, fielonld, options, histo);
     }
   }
 
-  private void printHistogram(ViewerWriter writer, String field, Options options,
-                              Histogram histo) throws IOException {
+  privatelon void printHistogram(VielonwelonrWritelonr writelonr, String fielonld, Options options,
+                              Histogram histo) throws IOelonxcelonption {
 
-    String bucket = options.termLengthHistogram ? "termLength" : "df";
-    for (Histogram.Entry histEntry : histo.entries()) {
+    String buckelont = options.telonrmLelonngthHistogram ? "telonrmLelonngth" : "df";
+    for (Histogram.elonntry histelonntry : histo.elonntrielons()) {
       String format =
-          String.format(Locale.US,
-              "field: %s %sBucket: %11s count: %10d "
-                  + "percent: %6.2f%% cumulative: %6.2f%% totalCount: %10d"
-                  + " sum: %15d percent: %6.2f%% cumulative: %6.2f%% totalSum: %15d",
-              formatField(field),
-              bucket,
-              histEntry.getBucketName(),
-              histEntry.getCount(),
-              histEntry.getCountPercent() * 100.0,
-              histEntry.getCountCumulative() * 100.0,
-              histo.getTotalCount(),
-              histEntry.getSum(),
-              histEntry.getSumPercent() * 100.0,
-              histEntry.getSumCumulative() * 100.0,
-              histo.getTotalSum()
+          String.format(Localelon.US,
+              "fielonld: %s %sBuckelont: %11s count: %10d "
+                  + "pelonrcelonnt: %6.2f%% cumulativelon: %6.2f%% totalCount: %10d"
+                  + " sum: %15d pelonrcelonnt: %6.2f%% cumulativelon: %6.2f%% totalSum: %15d",
+              formatFielonld(fielonld),
+              buckelont,
+              histelonntry.gelontBuckelontNamelon(),
+              histelonntry.gelontCount(),
+              histelonntry.gelontCountPelonrcelonnt() * 100.0,
+              histelonntry.gelontCountCumulativelon() * 100.0,
+              histo.gelontTotalCount(),
+              histelonntry.gelontSum(),
+              histelonntry.gelontSumPelonrcelonnt() * 100.0,
+              histelonntry.gelontSumCumulativelon() * 100.0,
+              histo.gelontTotalSum()
           );
-      writer.value(format);
-      writer.newline();
+      writelonr.valuelon(format);
+      writelonr.nelonwlinelon();
     }
   }
 
-  private void countHistogram(Options options, Histogram histo, TermsEnum termsEnum)
-          throws IOException {
-    if (options.termLengthHistogram) {
-      final BytesRef bytesRef = termsEnum.term();
-      histo.addItem(bytesRef.length);
-    } else {
-      histo.addItem(termsEnum.docFreq());
+  privatelon void countHistogram(Options options, Histogram histo, Telonrmselonnum telonrmselonnum)
+          throws IOelonxcelonption {
+    if (options.telonrmLelonngthHistogram) {
+      final BytelonsRelonf bytelonsRelonf = telonrmselonnum.telonrm();
+      histo.addItelonm(bytelonsRelonf.lelonngth);
+    } elonlselon {
+      histo.addItelonm(telonrmselonnum.docFrelonq());
     }
   }
 
 
   /**
-   * Prints terms and optionally documents for the currently viewed index.
-   * @param writer writer being used
-   * @param field if null, will use all fields
-   * @param term if null will use all terms
-   * @param maxTerms will print at most this many terms per field. If null will print 0 terms.
-   * @param maxDocs will print at most this many documents, If null, will not print docs.
-   * @param options options for dumping out text
+   * Prints telonrms and optionally documelonnts for thelon currelonntly vielonwelond indelonx.
+   * @param writelonr writelonr beloning uselond
+   * @param fielonld if null, will uselon all fielonlds
+   * @param telonrm if null will uselon all telonrms
+   * @param maxTelonrms will print at most this many telonrms pelonr fielonld. If null will print 0 telonrms.
+   * @param maxDocs will print at most this many documelonnts, If null, will not print docs.
+   * @param options options for dumping out telonxt
    */
-  public void dumpData(ViewerWriter writer, String field, String term, Integer maxTerms,
-        Integer maxDocs, Options options, boolean shouldSeekToTerm) throws IOException {
+  public void dumpData(VielonwelonrWritelonr writelonr, String fielonld, String telonrm, Intelongelonr maxTelonrms,
+        Intelongelonr maxDocs, Options options, boolelonan shouldSelonelonkToTelonrm) throws IOelonxcelonption {
 
-    writer.beginObject();
-    printHeader(writer);
+    writelonr.belonginObjelonct();
+    printHelonadelonr(writelonr);
 
-    writer.name("terms");
-    writer.beginArray();
-    writer.newline();
-    dumpDataInternal(writer, field, term, maxTerms, maxDocs, options, shouldSeekToTerm);
-    writer.endArray();
-    writer.endObject();
+    writelonr.namelon("telonrms");
+    writelonr.belonginArray();
+    writelonr.nelonwlinelon();
+    dumpDataIntelonrnal(writelonr, fielonld, telonrm, maxTelonrms, maxDocs, options, shouldSelonelonkToTelonrm);
+    writelonr.elonndArray();
+    writelonr.elonndObjelonct();
   }
 
-  private void dumpDataInternal(ViewerWriter writer, String field, String term, Integer maxTerms,
-      Integer maxDocs, Options options, boolean shouldSeekToTerm) throws IOException {
+  privatelon void dumpDataIntelonrnal(VielonwelonrWritelonr writelonr, String fielonld, String telonrm, Intelongelonr maxTelonrms,
+      Intelongelonr maxDocs, Options options, boolelonan shouldSelonelonkToTelonrm) throws IOelonxcelonption {
 
-    if (field == null) {
-      dumpDataForAllFields(writer, term, maxTerms, maxDocs, options);
-      return;
+    if (fielonld == null) {
+      dumpDataForAllFielonlds(writelonr, telonrm, maxTelonrms, maxDocs, options);
+      relonturn;
     }
-    if (term == null) {
-      dumpDataForAllTerms(writer, field, maxTerms, maxDocs, options);
-      return;
+    if (telonrm == null) {
+      dumpDataForAllTelonrms(writelonr, fielonld, maxTelonrms, maxDocs, options);
+      relonturn;
     }
-    Terms terms = twitterReader.terms(field);
-    if (terms != null) {
-      TermsEnum termsEnum = terms.iterator();
-      TermsEnum.SeekStatus status = termsEnum.seekCeil(new BytesRef(term));
-      if (status == TermsEnum.SeekStatus.FOUND) {
-        printTerm(writer, field, termsEnum, null, maxDocs, options);
+    Telonrms telonrms = twittelonrRelonadelonr.telonrms(fielonld);
+    if (telonrms != null) {
+      Telonrmselonnum telonrmselonnum = telonrms.itelonrator();
+      Telonrmselonnum.SelonelonkStatus status = telonrmselonnum.selonelonkCelonil(nelonw BytelonsRelonf(telonrm));
+      if (status == Telonrmselonnum.SelonelonkStatus.FOUND) {
+        printTelonrm(writelonr, fielonld, telonrmselonnum, null, maxDocs, options);
       }
-      if (shouldSeekToTerm) {
-        dumpTermsAfterSeek(writer, field, terms, maxTerms, maxDocs, options, termsEnum, status);
+      if (shouldSelonelonkToTelonrm) {
+        dumpTelonrmsAftelonrSelonelonk(writelonr, fielonld, telonrms, maxTelonrms, maxDocs, options, telonrmselonnum, status);
       }
     }
   }
 
   /**
-   * if term (cursor) is found for an indexed segment - dump the next termsLeft words
-   * starting from the current position in the enum.  For an indexed segment,
-   * seekCeil will place the enum at the word or the next "ceiling" term.  For
-   * a realtime index, if the word is not found we do not paginate anything
-   * We also only paginate if the TermsEnum is not at the end.
+   * if telonrm (cursor) is found for an indelonxelond selongmelonnt - dump thelon nelonxt telonrmsLelonft words
+   * starting from thelon currelonnt position in thelon elonnum.  For an indelonxelond selongmelonnt,
+   * selonelonkCelonil will placelon thelon elonnum at thelon word or thelon nelonxt "celoniling" telonrm.  For
+   * a relonaltimelon indelonx, if thelon word is not found welon do not paginatelon anything
+   * Welon also only paginatelon if thelon Telonrmselonnum is not at thelon elonnd.
    */
-  private void dumpTermsAfterSeek(ViewerWriter writer, String field, Terms terms, Integer maxTerms,
-      Integer maxDocs, Options options, TermsEnum termsEnum, TermsEnum.SeekStatus status)
-      throws IOException {
-    if (status != TermsEnum.SeekStatus.END) {
-      // for realtime, to not repeat the found word
-      if (shouldSeekExact(terms, termsEnum)) {
-        termsEnum.next();
+  privatelon void dumpTelonrmsAftelonrSelonelonk(VielonwelonrWritelonr writelonr, String fielonld, Telonrms telonrms, Intelongelonr maxTelonrms,
+      Intelongelonr maxDocs, Options options, Telonrmselonnum telonrmselonnum, Telonrmselonnum.SelonelonkStatus status)
+      throws IOelonxcelonption {
+    if (status != Telonrmselonnum.SelonelonkStatus.elonND) {
+      // for relonaltimelon, to not relonpelonat thelon found word
+      if (shouldSelonelonkelonxact(telonrms, telonrmselonnum)) {
+        telonrmselonnum.nelonxt();
       }
-      if (status != TermsEnum.SeekStatus.FOUND) {
-        // if not found, print out curr term before calling next()
-        printTerm(writer, field, termsEnum, null, maxDocs, options);
+      if (status != Telonrmselonnum.SelonelonkStatus.FOUND) {
+        // if not found, print out curr telonrm belonforelon calling nelonxt()
+        printTelonrm(writelonr, fielonld, telonrmselonnum, null, maxDocs, options);
       }
-      for (int termsLeft = maxTerms - 1; termsLeft > 0 && termsEnum.next() != null; termsLeft--) {
-        printTerm(writer, field, termsEnum, null, maxDocs, options);
+      for (int telonrmsLelonft = maxTelonrms - 1; telonrmsLelonft > 0 && telonrmselonnum.nelonxt() != null; telonrmsLelonft--) {
+        printTelonrm(writelonr, fielonld, telonrmselonnum, null, maxDocs, options);
       }
     }
   }
 
-  private void dumpDataForAllFields(ViewerWriter writer, String term, Integer maxTerms,
-                                    Integer maxDocs, Options options) throws IOException {
-    for (String field : sortedFields()) {
-      dumpDataInternal(writer, field, term, maxTerms, maxDocs, options, false);
+  privatelon void dumpDataForAllFielonlds(VielonwelonrWritelonr writelonr, String telonrm, Intelongelonr maxTelonrms,
+                                    Intelongelonr maxDocs, Options options) throws IOelonxcelonption {
+    for (String fielonld : sortelondFielonlds()) {
+      dumpDataIntelonrnal(writelonr, fielonld, telonrm, maxTelonrms, maxDocs, options, falselon);
     }
   }
 
-  private List<String> sortedFields() {
-    // Tweet facets are added to a special $facets field, which is not part of the schema.
-    // We include it here, because seeing the facets for a tweet is generally useful.
-    List<String> fields = Lists.newArrayList("$facets");
-    for (Schema.FieldInfo fieldInfo : twitterReader.getSchema().getFieldInfos()) {
-      if (fieldInfo.getFieldType().indexOptions() != IndexOptions.NONE) {
-        fields.add(fieldInfo.getName());
+  privatelon List<String> sortelondFielonlds() {
+    // Twelonelont facelonts arelon addelond to a speloncial $facelonts fielonld, which is not part of thelon schelonma.
+    // Welon includelon it helonrelon, beloncauselon seloneloning thelon facelonts for a twelonelont is gelonnelonrally uselonful.
+    List<String> fielonlds = Lists.nelonwArrayList("$facelonts");
+    for (Schelonma.FielonldInfo fielonldInfo : twittelonrRelonadelonr.gelontSchelonma().gelontFielonldInfos()) {
+      if (fielonldInfo.gelontFielonldTypelon().indelonxOptions() != IndelonxOptions.NONelon) {
+        fielonlds.add(fielonldInfo.gelontNamelon());
       }
     }
-    Collections.sort(fields);
-    return fields;
+    Collelonctions.sort(fielonlds);
+    relonturn fielonlds;
   }
 
-  private void dumpDataForAllTerms(ViewerWriter writer,
-                                   String field,
-                                   Integer maxTerms,
-                                   Integer maxDocs,
-                                   Options options) throws IOException {
-    Terms terms = twitterReader.terms(field);
-    if (terms != null) {
-      TermsEnum termsEnum = terms.iterator();
-      if (shouldSeekExact(terms, termsEnum)) {
-        long numTerms = terms.size();
-        long termToDump = maxTerms == null ? 0 : Math.min(numTerms, maxTerms);
-        for (int i = 0; i < termToDump; i++) {
-          termsEnum.seekExact(i);
-          printTerm(writer, field, termsEnum, null, maxDocs, options);
+  privatelon void dumpDataForAllTelonrms(VielonwelonrWritelonr writelonr,
+                                   String fielonld,
+                                   Intelongelonr maxTelonrms,
+                                   Intelongelonr maxDocs,
+                                   Options options) throws IOelonxcelonption {
+    Telonrms telonrms = twittelonrRelonadelonr.telonrms(fielonld);
+    if (telonrms != null) {
+      Telonrmselonnum telonrmselonnum = telonrms.itelonrator();
+      if (shouldSelonelonkelonxact(telonrms, telonrmselonnum)) {
+        long numTelonrms = telonrms.sizelon();
+        long telonrmToDump = maxTelonrms == null ? 0 : Math.min(numTelonrms, maxTelonrms);
+        for (int i = 0; i < telonrmToDump; i++) {
+          telonrmselonnum.selonelonkelonxact(i);
+          printTelonrm(writelonr, fielonld, telonrmselonnum, null, maxDocs, options);
         }
-      } else {
-        int max = maxTerms == null ? 0 : maxTerms;
-        while (max > 0 && termsEnum.next() != null) {
-          printTerm(writer, field, termsEnum, null, maxDocs, options);
+      } elonlselon {
+        int max = maxTelonrms == null ? 0 : maxTelonrms;
+        whilelon (max > 0 && telonrmselonnum.nelonxt() != null) {
+          printTelonrm(writelonr, fielonld, telonrmselonnum, null, maxDocs, options);
           max--;
         }
       }
     }
   }
 
-  private String termToString(String field, BytesRef bytesTerm, Options options)
-      throws UnsupportedEncodingException {
-    if (INT_TERM_ATTRIBUTE_FIELDS.contains(field)) {
-      return Integer.toString(IntTermAttributeImpl.copyBytesRefToInt(bytesTerm));
-    } else if (LONG_TERM_ATTRIBUTE_FIELDS.contains(field)) {
-      return Long.toString(LongTermAttributeImpl.copyBytesRefToLong(bytesTerm));
-    } else if (SORTED_LONG_TERM_ATTRIBUTE_FIELDS.contains(field)) {
-      return Long.toString(SortableLongTermAttributeImpl.copyBytesRefToLong(bytesTerm));
-    } else {
-      if (options != null && options.charset != null && !options.charset.isEmpty()) {
-        return new String(bytesTerm.bytes, bytesTerm.offset, bytesTerm.length, options.charset);
-      } else {
-        return bytesTerm.utf8ToString();
+  privatelon String telonrmToString(String fielonld, BytelonsRelonf bytelonsTelonrm, Options options)
+      throws Unsupportelondelonncodingelonxcelonption {
+    if (INT_TelonRM_ATTRIBUTelon_FIelonLDS.contains(fielonld)) {
+      relonturn Intelongelonr.toString(IntTelonrmAttributelonImpl.copyBytelonsRelonfToInt(bytelonsTelonrm));
+    } elonlselon if (LONG_TelonRM_ATTRIBUTelon_FIelonLDS.contains(fielonld)) {
+      relonturn Long.toString(LongTelonrmAttributelonImpl.copyBytelonsRelonfToLong(bytelonsTelonrm));
+    } elonlselon if (SORTelonD_LONG_TelonRM_ATTRIBUTelon_FIelonLDS.contains(fielonld)) {
+      relonturn Long.toString(SortablelonLongTelonrmAttributelonImpl.copyBytelonsRelonfToLong(bytelonsTelonrm));
+    } elonlselon {
+      if (options != null && options.charselont != null && !options.charselont.iselonmpty()) {
+        relonturn nelonw String(bytelonsTelonrm.bytelons, bytelonsTelonrm.offselont, bytelonsTelonrm.lelonngth, options.charselont);
+      } elonlselon {
+        relonturn bytelonsTelonrm.utf8ToString();
       }
     }
   }
 
-  private void printTerm(ViewerWriter writer, String field, TermsEnum termsEnum,
-                         PostingsEnum docsEnum, Integer maxDocs, Options options)
-      throws IOException {
-    final BytesRef bytesRef = termsEnum.term();
-    StringBuilder termToString = new StringBuilder();
-    termToString.append(termToString(field, bytesRef, options));
-    if (options != null && options.dumpHexTerms) {
-      termToString.append(" ").append(bytesRef.toString());
+  privatelon void printTelonrm(VielonwelonrWritelonr writelonr, String fielonld, Telonrmselonnum telonrmselonnum,
+                         Postingselonnum docselonnum, Intelongelonr maxDocs, Options options)
+      throws IOelonxcelonption {
+    final BytelonsRelonf bytelonsRelonf = telonrmselonnum.telonrm();
+    StringBuildelonr telonrmToString = nelonw StringBuildelonr();
+    telonrmToString.appelonnd(telonrmToString(fielonld, bytelonsRelonf, options));
+    if (options != null && options.dumpHelonxTelonrms) {
+      telonrmToString.appelonnd(" ").appelonnd(bytelonsRelonf.toString());
     }
-    final int df = termsEnum.docFreq();
-    double dfPercent = ((double) df / this.twitterReader.numDocs()) * 100.0;
-    TermDto termDto = new TermDto(field, termToString.toString(), Integer.toString(df),
-                                   String.format(Locale.US, "%.2f%%", dfPercent),
-                                   docsEnum, termsEnum, maxDocs);
-    termDto.write(writer, twitterReader);
-    writer.newline();
+    final int df = telonrmselonnum.docFrelonq();
+    doublelon dfPelonrcelonnt = ((doublelon) df / this.twittelonrRelonadelonr.numDocs()) * 100.0;
+    TelonrmDto telonrmDto = nelonw TelonrmDto(fielonld, telonrmToString.toString(), Intelongelonr.toString(df),
+                                   String.format(Localelon.US, "%.2f%%", dfPelonrcelonnt),
+                                   docselonnum, telonrmselonnum, maxDocs);
+    telonrmDto.writelon(writelonr, twittelonrRelonadelonr);
+    writelonr.nelonwlinelon();
   }
 
-  private static void appendFrequencyAndPositions(ViewerWriter writer, String field,
-      PostingsEnum docsEnum, EarlybirdIndexSegmentAtomicReader twitterReader) throws IOException {
-    final int frequency = docsEnum.freq();
-    writer.name("freq").value(Integer.toString(frequency));
+  privatelon static void appelonndFrelonquelonncyAndPositions(VielonwelonrWritelonr writelonr, String fielonld,
+      Postingselonnum docselonnum, elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr twittelonrRelonadelonr) throws IOelonxcelonption {
+    final int frelonquelonncy = docselonnum.frelonq();
+    writelonr.namelon("frelonq").valuelon(Intelongelonr.toString(frelonquelonncy));
 
-    Schema schema = twitterReader.getSchema();
-    Schema.FieldInfo fieldInfo = schema.getFieldInfo(field);
+    Schelonma schelonma = twittelonrRelonadelonr.gelontSchelonma();
+    Schelonma.FielonldInfo fielonldInfo = schelonma.gelontFielonldInfo(fielonld);
 
-    if (fieldInfo != null
-            && (fieldInfo.getFieldType().indexOptions() == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS
-            || fieldInfo.getFieldType().indexOptions()
-                == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS)) {
-      appendPositions(writer, docsEnum);
+    if (fielonldInfo != null
+            && (fielonldInfo.gelontFielonldTypelon().indelonxOptions() == IndelonxOptions.DOCS_AND_FRelonQS_AND_POSITIONS
+            || fielonldInfo.gelontFielonldTypelon().indelonxOptions()
+                == IndelonxOptions.DOCS_AND_FRelonQS_AND_POSITIONS_AND_OFFSelonTS)) {
+      appelonndPositions(writelonr, docselonnum);
     }
   }
 
-  private static void appendPositions(ViewerWriter writer, PostingsEnum docsAndPositionsEnum)
-      throws IOException {
-    writer.name("positions");
+  privatelon static void appelonndPositions(VielonwelonrWritelonr writelonr, Postingselonnum docsAndPositionselonnum)
+      throws IOelonxcelonption {
+    writelonr.namelon("positions");
 
-    writer.beginArray();
-    final int frequency = docsAndPositionsEnum.freq();
-    for (int i = 0; i < frequency; i++) {
-      int position = docsAndPositionsEnum.nextPosition();
-      writer.value(Integer.toString(position));
+    writelonr.belonginArray();
+    final int frelonquelonncy = docsAndPositionselonnum.frelonq();
+    for (int i = 0; i < frelonquelonncy; i++) {
+      int position = docsAndPositionselonnum.nelonxtPosition();
+      writelonr.valuelon(Intelongelonr.toString(position));
     }
-    writer.endArray();
+    writelonr.elonndArray();
   }
 
-  private static void appendDocs(ViewerWriter writer, TermsEnum termsEnum, int maxDocs,
-                                 EarlybirdIndexSegmentAtomicReader twitterReader)
-      throws IOException {
-    writer.name("docIds");
+  privatelon static void appelonndDocs(VielonwelonrWritelonr writelonr, Telonrmselonnum telonrmselonnum, int maxDocs,
+                                 elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr twittelonrRelonadelonr)
+      throws IOelonxcelonption {
+    writelonr.namelon("docIds");
 
-    writer.beginArray();
+    writelonr.belonginArray();
 
-    PostingsEnum docs = termsEnum.postings(null, 0);
-    int docsReturned = 0;
+    Postingselonnum docs = telonrmselonnum.postings(null, 0);
+    int docsRelonturnelond = 0;
     int docId;
-    boolean endedEarly = false;
-    DocIDToTweetIDMapper mapper = twitterReader.getSegmentData().getDocIDToTweetIDMapper();
-    while ((docId = docs.nextDoc()) != DocIdSetIterator.NO_MORE_DOCS) {
-      if (docsReturned < maxDocs) {
-        docsReturned++;
-        long tweetID = mapper.getTweetID(docId);
+    boolelonan elonndelondelonarly = falselon;
+    DocIDToTwelonelontIDMappelonr mappelonr = twittelonrRelonadelonr.gelontSelongmelonntData().gelontDocIDToTwelonelontIDMappelonr();
+    whilelon ((docId = docs.nelonxtDoc()) != DocIdSelontItelonrator.NO_MORelon_DOCS) {
+      if (docsRelonturnelond < maxDocs) {
+        docsRelonturnelond++;
+        long twelonelontID = mappelonr.gelontTwelonelontID(docId);
 
-        writer.beginObject();
-        writer.name("docId").value(Long.toString(docId));
-        writer.name("tweetId").value(Long.toString(tweetID));
-        writer.endObject();
-      } else {
-        endedEarly = true;
-        break;
+        writelonr.belonginObjelonct();
+        writelonr.namelon("docId").valuelon(Long.toString(docId));
+        writelonr.namelon("twelonelontId").valuelon(Long.toString(twelonelontID));
+        writelonr.elonndObjelonct();
+      } elonlselon {
+        elonndelondelonarly = truelon;
+        brelonak;
       }
     }
-    if (endedEarly) {
-      writer.beginObject();
-      writer.name("status").value("ended early");
-      writer.endObject();
+    if (elonndelondelonarly) {
+      writelonr.belonginObjelonct();
+      writelonr.namelon("status").valuelon("elonndelond elonarly");
+      writelonr.elonndObjelonct();
     }
-    writer.endArray();
+    writelonr.elonndArray();
   }
 
   /**
-   * Prints generic stats for all fields in the currently viewed index.
+   * Prints gelonnelonric stats for all fielonlds in thelon currelonntly vielonwelond indelonx.
    */
-  public void dumpStats(ViewerWriter writer) throws IOException {
-    writer.beginObject();
+  public void dumpStats(VielonwelonrWritelonr writelonr) throws IOelonxcelonption {
+    writelonr.belonginObjelonct();
 
-    printHeader(writer);
-    // stats section
-    writer.name("stats");
-    writer.beginArray();
-    writer.newline();
-    for (String field : sortedFields()) {
-      Terms terms = twitterReader.terms(field);
-      if (terms != null) {
-        printStats(writer, field, terms);
+    printHelonadelonr(writelonr);
+    // stats selonction
+    writelonr.namelon("stats");
+    writelonr.belonginArray();
+    writelonr.nelonwlinelon();
+    for (String fielonld : sortelondFielonlds()) {
+      Telonrms telonrms = twittelonrRelonadelonr.telonrms(fielonld);
+      if (telonrms != null) {
+        printStats(writelonr, fielonld, telonrms);
       }
     }
-    writer.endArray();
-    writer.endObject();
+    writelonr.elonndArray();
+    writelonr.elonndObjelonct();
   }
 
-  private void printStats(ViewerWriter writer, String field, Terms terms) throws IOException {
-    StatsDto statsDto = new StatsDto(
-        field, String.valueOf(terms.size()), terms.getClass().getCanonicalName());
-    statsDto.write(writer);
-    writer.newline();
+  privatelon void printStats(VielonwelonrWritelonr writelonr, String fielonld, Telonrms telonrms) throws IOelonxcelonption {
+    StatsDto statsDto = nelonw StatsDto(
+        fielonld, String.valuelonOf(telonrms.sizelon()), telonrms.gelontClass().gelontCanonicalNamelon());
+    statsDto.writelon(writelonr);
+    writelonr.nelonwlinelon();
   }
 
-  private void printHeader(ViewerWriter writer) throws IOException {
-    writer.name("timeSliceId").value(Long.toString(this.searcher.getTimeSliceID()));
-    writer.name("maxDocNumber").value(Integer.toString(this.twitterReader.maxDoc()));
-    writer.newline();
+  privatelon void printHelonadelonr(VielonwelonrWritelonr writelonr) throws IOelonxcelonption {
+    writelonr.namelon("timelonSlicelonId").valuelon(Long.toString(this.selonarchelonr.gelontTimelonSlicelonID()));
+    writelonr.namelon("maxDocNumbelonr").valuelon(Intelongelonr.toString(this.twittelonrRelonadelonr.maxDoc()));
+    writelonr.nelonwlinelon();
   }
 
-  private static String formatField(String field) {
-    return String.format("%20s", field);
+  privatelon static String formatFielonld(String fielonld) {
+    relonturn String.format("%20s", fielonld);
   }
 
   /**
-   * Dumps out the schema of the current segment.
-   * @param writer to be used for printing
+   * Dumps out thelon schelonma of thelon currelonnt selongmelonnt.
+   * @param writelonr to belon uselond for printing
    */
-  public void dumpSchema(ViewerWriter writer) throws IOException {
-    writer.beginObject();
-    printHeader(writer);
-    writer.name("schemaFields");
-    writer.beginArray();
-    writer.newline();
-    Schema schema = this.twitterReader.getSchema();
-    // The fields in the schema are not sorted. Sort them so that the output is deterministic
-    Set<String> fieldNameSet = new TreeSet<>();
-    for (Schema.FieldInfo fieldInfo: schema.getFieldInfos()) {
-      fieldNameSet.add(fieldInfo.getName());
+  public void dumpSchelonma(VielonwelonrWritelonr writelonr) throws IOelonxcelonption {
+    writelonr.belonginObjelonct();
+    printHelonadelonr(writelonr);
+    writelonr.namelon("schelonmaFielonlds");
+    writelonr.belonginArray();
+    writelonr.nelonwlinelon();
+    Schelonma schelonma = this.twittelonrRelonadelonr.gelontSchelonma();
+    // Thelon fielonlds in thelon schelonma arelon not sortelond. Sort thelonm so that thelon output is delontelonrministic
+    Selont<String> fielonldNamelonSelont = nelonw TrelonelonSelont<>();
+    for (Schelonma.FielonldInfo fielonldInfo: schelonma.gelontFielonldInfos()) {
+      fielonldNamelonSelont.add(fielonldInfo.gelontNamelon());
     }
-    for (String fieldName : fieldNameSet) {
-      writer.value(fieldName);
-      writer.newline();
+    for (String fielonldNamelon : fielonldNamelonSelont) {
+      writelonr.valuelon(fielonldNamelon);
+      writelonr.nelonwlinelon();
     }
-    writer.endArray();
-    writer.endObject();
+    writelonr.elonndArray();
+    writelonr.elonndObjelonct();
   }
 
   /**
-   * Dumps out the indexed fields inside the current segment.
-   * Mainly used to help the front end populate the fields.
-   * @param writer writer to be used for printing
+   * Dumps out thelon indelonxelond fielonlds insidelon thelon currelonnt selongmelonnt.
+   * Mainly uselond to helonlp thelon front elonnd populatelon thelon fielonlds.
+   * @param writelonr writelonr to belon uselond for printing
    */
-  public void dumpFields(ViewerWriter writer) throws IOException {
-    writer.beginObject();
-    printHeader(writer);
-    writer.name("fields");
-    writer.beginArray();
-    writer.newline();
-    for (String field : sortedFields()) {
-      writer.value(field);
-      writer.newline();
+  public void dumpFielonlds(VielonwelonrWritelonr writelonr) throws IOelonxcelonption {
+    writelonr.belonginObjelonct();
+    printHelonadelonr(writelonr);
+    writelonr.namelon("fielonlds");
+    writelonr.belonginArray();
+    writelonr.nelonwlinelon();
+    for (String fielonld : sortelondFielonlds()) {
+      writelonr.valuelon(fielonld);
+      writelonr.nelonwlinelon();
     }
-    writer.endArray();
-    writer.endObject();
+    writelonr.elonndArray();
+    writelonr.elonndObjelonct();
   }
 
   /**
-   * Dumps out the mapping of the tweet/tweetId to
-   * a docId as well as segment/timeslide pair.
-   * @param writer writer to be used for writing
-   * @param tweetId tweetId that is input by user
+   * Dumps out thelon mapping of thelon twelonelont/twelonelontId to
+   * a docId as welonll as selongmelonnt/timelonslidelon pair.
+   * @param writelonr writelonr to belon uselond for writing
+   * @param twelonelontId twelonelontId that is input by uselonr
    */
-  public void dumpTweetIdToDocIdMapping(ViewerWriter writer, long tweetId) throws IOException {
-    writer.beginObject();
-    printHeader(writer);
-    writer.name("tweetId").value(Long.toString(tweetId));
-    int docId = twitterReader.getSegmentData().getDocIDToTweetIDMapper().getDocID(tweetId);
+  public void dumpTwelonelontIdToDocIdMapping(VielonwelonrWritelonr writelonr, long twelonelontId) throws IOelonxcelonption {
+    writelonr.belonginObjelonct();
+    printHelonadelonr(writelonr);
+    writelonr.namelon("twelonelontId").valuelon(Long.toString(twelonelontId));
+    int docId = twittelonrRelonadelonr.gelontSelongmelonntData().gelontDocIDToTwelonelontIDMappelonr().gelontDocID(twelonelontId);
 
-    writer.name("docId").value(Integer.toString(docId));
-    writer.endObject();
-    writer.newline();
+    writelonr.namelon("docId").valuelon(Intelongelonr.toString(docId));
+    writelonr.elonndObjelonct();
+    writelonr.nelonwlinelon();
   }
 
   /**
-   * Dumps out the mapping of the docId to
-   * tweetId and timeslice/segmentId pairs.
-   * @param writer writer to be used for writing
-   * @param docid docId that is input by user
+   * Dumps out thelon mapping of thelon docId to
+   * twelonelontId and timelonslicelon/selongmelonntId pairs.
+   * @param writelonr writelonr to belon uselond for writing
+   * @param docid docId that is input by uselonr
    */
-  public void dumpDocIdToTweetIdMapping(ViewerWriter writer, int docid) throws IOException {
-    writer.beginObject();
-    printHeader(writer);
-    long tweetId = twitterReader.getSegmentData().getDocIDToTweetIDMapper().getTweetID(docid);
+  public void dumpDocIdToTwelonelontIdMapping(VielonwelonrWritelonr writelonr, int docid) throws IOelonxcelonption {
+    writelonr.belonginObjelonct();
+    printHelonadelonr(writelonr);
+    long twelonelontId = twittelonrRelonadelonr.gelontSelongmelonntData().gelontDocIDToTwelonelontIDMappelonr().gelontTwelonelontID(docid);
 
-    writer.name("tweetId");
-    if (tweetId >= 0) {
-      writer.value(Long.toString(tweetId));
-    } else {
-      writer.value("Does not exist in segment");
+    writelonr.namelon("twelonelontId");
+    if (twelonelontId >= 0) {
+      writelonr.valuelon(Long.toString(twelonelontId));
+    } elonlselon {
+      writelonr.valuelon("Doelons not elonxist in selongmelonnt");
     }
-    writer.name("docid").value(Integer.toString(docid));
-    writer.endObject();
+    writelonr.namelon("docid").valuelon(Intelongelonr.toString(docid));
+    writelonr.elonndObjelonct();
   }
 
   /**
-   * Print a response indicating that the given tweet id is not found in the index.
+   * Print a relonsponselon indicating that thelon givelonn twelonelont id is not found in thelon indelonx.
    *
-   * Note that this method does not actually need the underlying index, and hence is setup as
+   * Notelon that this melonthod doelons not actually nelonelond thelon undelonrlying indelonx, and helonncelon is selontup as
    * a util function.
    */
-  public static void writeTweetDoesNotExistResponse(ViewerWriter writer, long tweetId)
-      throws IOException {
-    writer.beginObject();
-    writer.name("tweetId");
-    writer.value(Long.toString(tweetId));
-    writer.name("docId");
-    writer.value("does not exist on this earlybird.");
-    writer.endObject();
+  public static void writelonTwelonelontDoelonsNotelonxistRelonsponselon(VielonwelonrWritelonr writelonr, long twelonelontId)
+      throws IOelonxcelonption {
+    writelonr.belonginObjelonct();
+    writelonr.namelon("twelonelontId");
+    writelonr.valuelon(Long.toString(twelonelontId));
+    writelonr.namelon("docId");
+    writelonr.valuelon("doelons not elonxist on this elonarlybird.");
+    writelonr.elonndObjelonct();
   }
 }

@@ -1,213 +1,213 @@
-package com.twitter.visibility.configapi.params
+packagelon com.twittelonr.visibility.configapi.params
 
-import com.twitter.timelines.configapi.Bounded
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.FeatureName
-import com.twitter.timelines.configapi.HasTimeConversion
-import com.twitter.timelines.configapi.TimeConversion
-import com.twitter.util.Time
-import com.twitter.visibility.common.ModelScoreThresholds
+import com.twittelonr.timelonlinelons.configapi.Boundelond
+import com.twittelonr.timelonlinelons.configapi.FSBoundelondParam
+import com.twittelonr.timelonlinelons.configapi.FSNamelon
+import com.twittelonr.timelonlinelons.configapi.FelonaturelonNamelon
+import com.twittelonr.timelonlinelons.configapi.HasTimelonConvelonrsion
+import com.twittelonr.timelonlinelons.configapi.TimelonConvelonrsion
+import com.twittelonr.util.Timelon
+import com.twittelonr.visibility.common.ModelonlScorelonThrelonsholds
 
-private[visibility] object FeatureSwitchKey extends Enumeration {
-  type FeatureSwitchKey = String
+privatelon[visibility] objelonct FelonaturelonSwitchKelony elonxtelonnds elonnumelonration {
+  typelon FelonaturelonSwitchKelony = String
 
-  final val HighSpammyTweetContentScoreSearchTopProdTweetLabelDropFuleThreshold =
-    "high_spammy_tweet_content_score_search_top_prod_tweet_label_drop_rule_threshold"
-  final val HighSpammyTweetContentScoreSearchLatestProdTweetLabelDropRuleThreshold =
-    "high_spammy_tweet_content_score_search_latest_prod_tweet_label_drop_rule_threshold"
-  final val HighSpammyTweetContentScoreTrendTopTweetLabelDropRuleThreshold =
-    "high_spammy_tweet_content_score_trend_top_tweet_label_drop_rule_threshold"
-  final val HighSpammyTweetContentScoreTrendLatestTweetLabelDropRuleThreshold =
-    "high_spammy_tweet_content_score_trend_latest_tweet_label_drop_rule_threshold"
-  final val HighSpammyTweetContentScoreConvoDownrankAbusiveQualityThreshold =
-    "high_spammy_tweet_content_score_convos_downranking_abusive_quality_threshold"
+  final val HighSpammyTwelonelontContelonntScorelonSelonarchTopProdTwelonelontLabelonlDropFulelonThrelonshold =
+    "high_spammy_twelonelont_contelonnt_scorelon_selonarch_top_prod_twelonelont_labelonl_drop_rulelon_threlonshold"
+  final val HighSpammyTwelonelontContelonntScorelonSelonarchLatelonstProdTwelonelontLabelonlDropRulelonThrelonshold =
+    "high_spammy_twelonelont_contelonnt_scorelon_selonarch_latelonst_prod_twelonelont_labelonl_drop_rulelon_threlonshold"
+  final val HighSpammyTwelonelontContelonntScorelonTrelonndTopTwelonelontLabelonlDropRulelonThrelonshold =
+    "high_spammy_twelonelont_contelonnt_scorelon_trelonnd_top_twelonelont_labelonl_drop_rulelon_threlonshold"
+  final val HighSpammyTwelonelontContelonntScorelonTrelonndLatelonstTwelonelontLabelonlDropRulelonThrelonshold =
+    "high_spammy_twelonelont_contelonnt_scorelon_trelonnd_latelonst_twelonelont_labelonl_drop_rulelon_threlonshold"
+  final val HighSpammyTwelonelontContelonntScorelonConvoDownrankAbusivelonQualityThrelonshold =
+    "high_spammy_twelonelont_contelonnt_scorelon_convos_downranking_abusivelon_quality_threlonshold"
 
-  final val NsfwAgeBasedDropRulesHoldbackParam =
-    "nsfw_age_based_drop_rules_holdback"
+  final val NsfwAgelonBaselondDropRulelonsHoldbackParam =
+    "nsfw_agelon_baselond_drop_rulelons_holdback"
 
-  final val CommunityTweetDropRuleEnabled =
-    "community_tweet_drop_rule_enabled"
-  final val CommunityTweetDropProtectedRuleEnabled =
-    "community_tweet_drop_protected_rule_enabled"
-  final val CommunityTweetLimitedActionsRulesEnabled =
-    "community_tweet_limited_actions_rules_enabled"
-  final val CommunityTweetMemberRemovedLimitedActionsRulesEnabled =
-    "community_tweet_member_removed_limited_actions_rules_enabled"
-  final val CommunityTweetCommunityUnavailableLimitedActionsRulesEnabled =
-    "community_tweet_community_unavailable_limited_actions_rules_enabled"
-  final val CommunityTweetNonMemberLimitedActionsRuleEnabled =
-    "community_tweet_non_member_limited_actions_rule_enabled"
+  final val CommunityTwelonelontDropRulelonelonnablelond =
+    "community_twelonelont_drop_rulelon_elonnablelond"
+  final val CommunityTwelonelontDropProtelonctelondRulelonelonnablelond =
+    "community_twelonelont_drop_protelonctelond_rulelon_elonnablelond"
+  final val CommunityTwelonelontLimitelondActionsRulelonselonnablelond =
+    "community_twelonelont_limitelond_actions_rulelons_elonnablelond"
+  final val CommunityTwelonelontMelonmbelonrRelonmovelondLimitelondActionsRulelonselonnablelond =
+    "community_twelonelont_melonmbelonr_relonmovelond_limitelond_actions_rulelons_elonnablelond"
+  final val CommunityTwelonelontCommunityUnavailablelonLimitelondActionsRulelonselonnablelond =
+    "community_twelonelont_community_unavailablelon_limitelond_actions_rulelons_elonnablelond"
+  final val CommunityTwelonelontNonMelonmbelonrLimitelondActionsRulelonelonnablelond =
+    "community_twelonelont_non_melonmbelonr_limitelond_actions_rulelon_elonnablelond"
 
-  final val TrustedFriendsTweetLimitedEngagementsRuleEnabled =
-    "trusted_friends_tweet_limited_engagements_rule_enabled"
+  final val TrustelondFrielonndsTwelonelontLimitelondelonngagelonmelonntsRulelonelonnablelond =
+    "trustelond_frielonnds_twelonelont_limitelond_elonngagelonmelonnts_rulelon_elonnablelond"
 
-  final val CountrySpecificNsfwContentGatingCountries =
-    "country_specific_nsfw_content_gating_countries"
+  final val CountrySpeloncificNsfwContelonntGatingCountrielons =
+    "country_speloncific_nsfw_contelonnt_gating_countrielons"
 
-  final val AgeGatingAdultContentExperimentCountries =
-    "age_gating_adult_content_experiment_countries"
-  final val AgeGatingAdultContentExperimentEnabled =
-    "age_gating_adult_content_experiment_enabled"
+  final val AgelonGatingAdultContelonntelonxpelonrimelonntCountrielons =
+    "agelon_gating_adult_contelonnt_elonxpelonrimelonnt_countrielons"
+  final val AgelonGatingAdultContelonntelonxpelonrimelonntelonnablelond =
+    "agelon_gating_adult_contelonnt_elonxpelonrimelonnt_elonnablelond"
 
-  final val HighToxicityModelScoreSpaceThreshold =
-    "high_toxicity_model_score_space_threshold"
+  final val HighToxicityModelonlScorelonSpacelonThrelonshold =
+    "high_toxicity_modelonl_scorelon_spacelon_threlonshold"
 
-  final val CardUriRootDomainDenyList = "card_uri_root_domain_deny_list"
+  final val CardUriRootDomainDelonnyList = "card_uri_root_domain_delonny_list"
 
-  final val SkipTweetDetailLimitedEngagementsRuleEnabled =
-    "skip_tweet_detail_limited_engagements_rule_enabled"
+  final val SkipTwelonelontDelontailLimitelondelonngagelonmelonntsRulelonelonnablelond =
+    "skip_twelonelont_delontail_limitelond_elonngagelonmelonnts_rulelon_elonnablelond"
 
-  final val AdAvoidanceHighToxicityModelScoreThreshold =
-    "ad_avoidance_model_thresholds_high_toxicity_model"
-  final val AdAvoidanceReportedTweetModelScoreThreshold =
-    "ad_avoidance_model_thresholds_reported_tweet_model"
+  final val AdAvoidancelonHighToxicityModelonlScorelonThrelonshold =
+    "ad_avoidancelon_modelonl_threlonsholds_high_toxicity_modelonl"
+  final val AdAvoidancelonRelonportelondTwelonelontModelonlScorelonThrelonshold =
+    "ad_avoidancelon_modelonl_threlonsholds_relonportelond_twelonelont_modelonl"
 
-  final val StaleTweetLimitedActionsRulesEnabled =
-    "stale_tweet_limited_actions_rules_enabled"
+  final val StalelonTwelonelontLimitelondActionsRulelonselonnablelond =
+    "stalelon_twelonelont_limitelond_actions_rulelons_elonnablelond"
 
-  final val FosnrFallbackDropRulesEnabled =
-    "freedom_of_speech_not_reach_fallback_drop_rules_enabled"
-  final val FosnrRulesEnabled =
-    "freedom_of_speech_not_reach_rules_enabled"
+  final val FosnrFallbackDropRulelonselonnablelond =
+    "frelonelondom_of_spelonelonch_not_relonach_fallback_drop_rulelons_elonnablelond"
+  final val FosnrRulelonselonnablelond =
+    "frelonelondom_of_spelonelonch_not_relonach_rulelons_elonnablelond"
 }
 
-abstract class FSRuleParam[T](override val name: FeatureName, override val default: T)
-    extends RuleParam(default)
-    with FSName
+abstract class FSRulelonParam[T](ovelonrridelon val namelon: FelonaturelonNamelon, ovelonrridelon val delonfault: T)
+    elonxtelonnds RulelonParam(delonfault)
+    with FSNamelon
 
-abstract class FSBoundedRuleParam[T](
-  override val name: FeatureName,
-  override val default: T,
-  override val min: T,
-  override val max: T
+abstract class FSBoundelondRulelonParam[T](
+  ovelonrridelon val namelon: FelonaturelonNamelon,
+  ovelonrridelon val delonfault: T,
+  ovelonrridelon val min: T,
+  ovelonrridelon val max: T
 )(
-  implicit override val ordering: Ordering[T])
-    extends RuleParam(default)
-    with Bounded[T]
-    with FSName
+  implicit ovelonrridelon val ordelonring: Ordelonring[T])
+    elonxtelonnds RulelonParam(delonfault)
+    with Boundelond[T]
+    with FSNamelon
 
-abstract class FSTimeRuleParam[T](
-  override val name: FeatureName,
-  override val default: Time,
-  override val timeConversion: TimeConversion[T])
-    extends RuleParam(default)
-    with HasTimeConversion[T]
-    with FSName
+abstract class FSTimelonRulelonParam[T](
+  ovelonrridelon val namelon: FelonaturelonNamelon,
+  ovelonrridelon val delonfault: Timelon,
+  ovelonrridelon val timelonConvelonrsion: TimelonConvelonrsion[T])
+    elonxtelonnds RulelonParam(delonfault)
+    with HasTimelonConvelonrsion[T]
+    with FSNamelon
 
-abstract class FSEnumRuleParam[T <: Enumeration](
-  override val name: FeatureName,
-  override val default: T#Value,
-  override val enum: T)
-    extends EnumRuleParam(default, enum)
-    with FSName
+abstract class FSelonnumRulelonParam[T <: elonnumelonration](
+  ovelonrridelon val namelon: FelonaturelonNamelon,
+  ovelonrridelon val delonfault: T#Valuelon,
+  ovelonrridelon val elonnum: T)
+    elonxtelonnds elonnumRulelonParam(delonfault, elonnum)
+    with FSNamelon
 
-private[visibility] object FSRuleParams {
-  object HighSpammyTweetContentScoreSearchTopProdTweetLabelDropRuleThresholdParam
-      extends FSBoundedParam(
-        FeatureSwitchKey.HighSpammyTweetContentScoreSearchTopProdTweetLabelDropFuleThreshold,
-        default = ModelScoreThresholds.HighSpammyTweetContentScoreDefaultThreshold,
+privatelon[visibility] objelonct FSRulelonParams {
+  objelonct HighSpammyTwelonelontContelonntScorelonSelonarchTopProdTwelonelontLabelonlDropRulelonThrelonsholdParam
+      elonxtelonnds FSBoundelondParam(
+        FelonaturelonSwitchKelony.HighSpammyTwelonelontContelonntScorelonSelonarchTopProdTwelonelontLabelonlDropFulelonThrelonshold,
+        delonfault = ModelonlScorelonThrelonsholds.HighSpammyTwelonelontContelonntScorelonDelonfaultThrelonshold,
         min = 0,
         max = 1)
-  object HighSpammyTweetContentScoreSearchLatestProdTweetLabelDropRuleThresholdParam
-      extends FSBoundedParam(
-        FeatureSwitchKey.HighSpammyTweetContentScoreSearchLatestProdTweetLabelDropRuleThreshold,
-        default = ModelScoreThresholds.HighSpammyTweetContentScoreDefaultThreshold,
+  objelonct HighSpammyTwelonelontContelonntScorelonSelonarchLatelonstProdTwelonelontLabelonlDropRulelonThrelonsholdParam
+      elonxtelonnds FSBoundelondParam(
+        FelonaturelonSwitchKelony.HighSpammyTwelonelontContelonntScorelonSelonarchLatelonstProdTwelonelontLabelonlDropRulelonThrelonshold,
+        delonfault = ModelonlScorelonThrelonsholds.HighSpammyTwelonelontContelonntScorelonDelonfaultThrelonshold,
         min = 0,
         max = 1)
-  object HighSpammyTweetContentScoreTrendTopTweetLabelDropRuleThresholdParam
-      extends FSBoundedParam(
-        FeatureSwitchKey.HighSpammyTweetContentScoreTrendTopTweetLabelDropRuleThreshold,
-        default = ModelScoreThresholds.HighSpammyTweetContentScoreDefaultThreshold,
+  objelonct HighSpammyTwelonelontContelonntScorelonTrelonndTopTwelonelontLabelonlDropRulelonThrelonsholdParam
+      elonxtelonnds FSBoundelondParam(
+        FelonaturelonSwitchKelony.HighSpammyTwelonelontContelonntScorelonTrelonndTopTwelonelontLabelonlDropRulelonThrelonshold,
+        delonfault = ModelonlScorelonThrelonsholds.HighSpammyTwelonelontContelonntScorelonDelonfaultThrelonshold,
         min = 0,
         max = 1)
-  object HighSpammyTweetContentScoreTrendLatestTweetLabelDropRuleThresholdParam
-      extends FSBoundedParam(
-        FeatureSwitchKey.HighSpammyTweetContentScoreTrendLatestTweetLabelDropRuleThreshold,
-        default = ModelScoreThresholds.HighSpammyTweetContentScoreDefaultThreshold,
+  objelonct HighSpammyTwelonelontContelonntScorelonTrelonndLatelonstTwelonelontLabelonlDropRulelonThrelonsholdParam
+      elonxtelonnds FSBoundelondParam(
+        FelonaturelonSwitchKelony.HighSpammyTwelonelontContelonntScorelonTrelonndLatelonstTwelonelontLabelonlDropRulelonThrelonshold,
+        delonfault = ModelonlScorelonThrelonsholds.HighSpammyTwelonelontContelonntScorelonDelonfaultThrelonshold,
         min = 0,
         max = 1)
-  object HighSpammyTweetContentScoreConvoDownrankAbusiveQualityThresholdParam
-      extends FSBoundedParam(
-        FeatureSwitchKey.HighSpammyTweetContentScoreConvoDownrankAbusiveQualityThreshold,
-        default = ModelScoreThresholds.HighSpammyTweetContentScoreDefaultThreshold,
-        min = 0,
-        max = 1)
-
-  object CommunityTweetDropRuleEnabledParam
-      extends FSRuleParam(FeatureSwitchKey.CommunityTweetDropRuleEnabled, true)
-
-  object CommunityTweetDropProtectedRuleEnabledParam
-      extends FSRuleParam(FeatureSwitchKey.CommunityTweetDropProtectedRuleEnabled, true)
-
-  object CommunityTweetLimitedActionsRulesEnabledParam
-      extends FSRuleParam(FeatureSwitchKey.CommunityTweetLimitedActionsRulesEnabled, false)
-
-  object CommunityTweetMemberRemovedLimitedActionsRulesEnabledParam
-      extends FSRuleParam(
-        FeatureSwitchKey.CommunityTweetMemberRemovedLimitedActionsRulesEnabled,
-        false)
-
-  object CommunityTweetCommunityUnavailableLimitedActionsRulesEnabledParam
-      extends FSRuleParam(
-        FeatureSwitchKey.CommunityTweetCommunityUnavailableLimitedActionsRulesEnabled,
-        false)
-
-  object CommunityTweetNonMemberLimitedActionsRuleEnabledParam
-      extends FSRuleParam(FeatureSwitchKey.CommunityTweetNonMemberLimitedActionsRuleEnabled, false)
-
-  object TrustedFriendsTweetLimitedEngagementsRuleEnabledParam
-      extends FSRuleParam(FeatureSwitchKey.TrustedFriendsTweetLimitedEngagementsRuleEnabled, false)
-
-  object SkipTweetDetailLimitedEngagementRuleEnabledParam
-      extends FSRuleParam(FeatureSwitchKey.SkipTweetDetailLimitedEngagementsRuleEnabled, false)
-
-
-  object NsfwAgeBasedDropRulesHoldbackParam
-      extends FSRuleParam(FeatureSwitchKey.NsfwAgeBasedDropRulesHoldbackParam, true)
-
-  object CountrySpecificNsfwContentGatingCountriesParam
-      extends FSRuleParam[Seq[String]](
-        FeatureSwitchKey.CountrySpecificNsfwContentGatingCountries,
-        default = Seq("au"))
-
-  object AgeGatingAdultContentExperimentCountriesParam
-      extends FSRuleParam[Seq[String]](
-        FeatureSwitchKey.AgeGatingAdultContentExperimentCountries,
-        default = Seq.empty)
-  object AgeGatingAdultContentExperimentRuleEnabledParam
-      extends FSRuleParam(FeatureSwitchKey.AgeGatingAdultContentExperimentEnabled, default = false)
-
-  object HighToxicityModelScoreSpaceThresholdParam
-      extends FSBoundedParam(
-        FeatureSwitchKey.HighToxicityModelScoreSpaceThreshold,
-        default = ModelScoreThresholds.HighToxicityModelScoreSpaceDefaultThreshold,
+  objelonct HighSpammyTwelonelontContelonntScorelonConvoDownrankAbusivelonQualityThrelonsholdParam
+      elonxtelonnds FSBoundelondParam(
+        FelonaturelonSwitchKelony.HighSpammyTwelonelontContelonntScorelonConvoDownrankAbusivelonQualityThrelonshold,
+        delonfault = ModelonlScorelonThrelonsholds.HighSpammyTwelonelontContelonntScorelonDelonfaultThrelonshold,
         min = 0,
         max = 1)
 
-  object CardUriRootDomainDenyListParam
-      extends FSRuleParam[Seq[String]](
-        FeatureSwitchKey.CardUriRootDomainDenyList,
-        default = Seq.empty)
+  objelonct CommunityTwelonelontDropRulelonelonnablelondParam
+      elonxtelonnds FSRulelonParam(FelonaturelonSwitchKelony.CommunityTwelonelontDropRulelonelonnablelond, truelon)
 
-  object AdAvoidanceHighToxicityModelScoreThresholdParam
-      extends FSBoundedParam(
-        FeatureSwitchKey.AdAvoidanceHighToxicityModelScoreThreshold,
-        default = ModelScoreThresholds.AdAvoidanceHighToxicityModelScoreDefaultThreshold,
+  objelonct CommunityTwelonelontDropProtelonctelondRulelonelonnablelondParam
+      elonxtelonnds FSRulelonParam(FelonaturelonSwitchKelony.CommunityTwelonelontDropProtelonctelondRulelonelonnablelond, truelon)
+
+  objelonct CommunityTwelonelontLimitelondActionsRulelonselonnablelondParam
+      elonxtelonnds FSRulelonParam(FelonaturelonSwitchKelony.CommunityTwelonelontLimitelondActionsRulelonselonnablelond, falselon)
+
+  objelonct CommunityTwelonelontMelonmbelonrRelonmovelondLimitelondActionsRulelonselonnablelondParam
+      elonxtelonnds FSRulelonParam(
+        FelonaturelonSwitchKelony.CommunityTwelonelontMelonmbelonrRelonmovelondLimitelondActionsRulelonselonnablelond,
+        falselon)
+
+  objelonct CommunityTwelonelontCommunityUnavailablelonLimitelondActionsRulelonselonnablelondParam
+      elonxtelonnds FSRulelonParam(
+        FelonaturelonSwitchKelony.CommunityTwelonelontCommunityUnavailablelonLimitelondActionsRulelonselonnablelond,
+        falselon)
+
+  objelonct CommunityTwelonelontNonMelonmbelonrLimitelondActionsRulelonelonnablelondParam
+      elonxtelonnds FSRulelonParam(FelonaturelonSwitchKelony.CommunityTwelonelontNonMelonmbelonrLimitelondActionsRulelonelonnablelond, falselon)
+
+  objelonct TrustelondFrielonndsTwelonelontLimitelondelonngagelonmelonntsRulelonelonnablelondParam
+      elonxtelonnds FSRulelonParam(FelonaturelonSwitchKelony.TrustelondFrielonndsTwelonelontLimitelondelonngagelonmelonntsRulelonelonnablelond, falselon)
+
+  objelonct SkipTwelonelontDelontailLimitelondelonngagelonmelonntRulelonelonnablelondParam
+      elonxtelonnds FSRulelonParam(FelonaturelonSwitchKelony.SkipTwelonelontDelontailLimitelondelonngagelonmelonntsRulelonelonnablelond, falselon)
+
+
+  objelonct NsfwAgelonBaselondDropRulelonsHoldbackParam
+      elonxtelonnds FSRulelonParam(FelonaturelonSwitchKelony.NsfwAgelonBaselondDropRulelonsHoldbackParam, truelon)
+
+  objelonct CountrySpeloncificNsfwContelonntGatingCountrielonsParam
+      elonxtelonnds FSRulelonParam[Selonq[String]](
+        FelonaturelonSwitchKelony.CountrySpeloncificNsfwContelonntGatingCountrielons,
+        delonfault = Selonq("au"))
+
+  objelonct AgelonGatingAdultContelonntelonxpelonrimelonntCountrielonsParam
+      elonxtelonnds FSRulelonParam[Selonq[String]](
+        FelonaturelonSwitchKelony.AgelonGatingAdultContelonntelonxpelonrimelonntCountrielons,
+        delonfault = Selonq.elonmpty)
+  objelonct AgelonGatingAdultContelonntelonxpelonrimelonntRulelonelonnablelondParam
+      elonxtelonnds FSRulelonParam(FelonaturelonSwitchKelony.AgelonGatingAdultContelonntelonxpelonrimelonntelonnablelond, delonfault = falselon)
+
+  objelonct HighToxicityModelonlScorelonSpacelonThrelonsholdParam
+      elonxtelonnds FSBoundelondParam(
+        FelonaturelonSwitchKelony.HighToxicityModelonlScorelonSpacelonThrelonshold,
+        delonfault = ModelonlScorelonThrelonsholds.HighToxicityModelonlScorelonSpacelonDelonfaultThrelonshold,
         min = 0,
         max = 1)
 
-  object AdAvoidanceReportedTweetModelScoreThresholdParam
-      extends FSBoundedParam(
-        FeatureSwitchKey.AdAvoidanceReportedTweetModelScoreThreshold,
-        default = ModelScoreThresholds.AdAvoidanceReportedTweetModelScoreDefaultThreshold,
+  objelonct CardUriRootDomainDelonnyListParam
+      elonxtelonnds FSRulelonParam[Selonq[String]](
+        FelonaturelonSwitchKelony.CardUriRootDomainDelonnyList,
+        delonfault = Selonq.elonmpty)
+
+  objelonct AdAvoidancelonHighToxicityModelonlScorelonThrelonsholdParam
+      elonxtelonnds FSBoundelondParam(
+        FelonaturelonSwitchKelony.AdAvoidancelonHighToxicityModelonlScorelonThrelonshold,
+        delonfault = ModelonlScorelonThrelonsholds.AdAvoidancelonHighToxicityModelonlScorelonDelonfaultThrelonshold,
         min = 0,
         max = 1)
 
-  object StaleTweetLimitedActionsRulesEnabledParam
-      extends FSRuleParam(FeatureSwitchKey.StaleTweetLimitedActionsRulesEnabled, false)
+  objelonct AdAvoidancelonRelonportelondTwelonelontModelonlScorelonThrelonsholdParam
+      elonxtelonnds FSBoundelondParam(
+        FelonaturelonSwitchKelony.AdAvoidancelonRelonportelondTwelonelontModelonlScorelonThrelonshold,
+        delonfault = ModelonlScorelonThrelonsholds.AdAvoidancelonRelonportelondTwelonelontModelonlScorelonDelonfaultThrelonshold,
+        min = 0,
+        max = 1)
 
-  object FosnrFallbackDropRulesEnabledParam
-      extends FSRuleParam(FeatureSwitchKey.FosnrFallbackDropRulesEnabled, false)
-  object FosnrRulesEnabledParam extends FSRuleParam(FeatureSwitchKey.FosnrRulesEnabled, true)
+  objelonct StalelonTwelonelontLimitelondActionsRulelonselonnablelondParam
+      elonxtelonnds FSRulelonParam(FelonaturelonSwitchKelony.StalelonTwelonelontLimitelondActionsRulelonselonnablelond, falselon)
+
+  objelonct FosnrFallbackDropRulelonselonnablelondParam
+      elonxtelonnds FSRulelonParam(FelonaturelonSwitchKelony.FosnrFallbackDropRulelonselonnablelond, falselon)
+  objelonct FosnrRulelonselonnablelondParam elonxtelonnds FSRulelonParam(FelonaturelonSwitchKelony.FosnrRulelonselonnablelond, truelon)
 }

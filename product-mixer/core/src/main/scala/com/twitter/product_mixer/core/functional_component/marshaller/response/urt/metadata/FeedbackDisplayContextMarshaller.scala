@@ -1,15 +1,15 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.melontadata
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackDisplayContext
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.FelonelondbackDisplayContelonxt
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class FeedbackDisplayContextMarshaller @Inject() () {
+@Singlelonton
+class FelonelondbackDisplayContelonxtMarshallelonr @Injelonct() () {
 
-  def apply(displayContext: FeedbackDisplayContext): urt.FeedbackDisplayContext =
-    urt.FeedbackDisplayContext(
-      reason = displayContext.reason
+  delonf apply(displayContelonxt: FelonelondbackDisplayContelonxt): urt.FelonelondbackDisplayContelonxt =
+    urt.FelonelondbackDisplayContelonxt(
+      relonason = displayContelonxt.relonason
     )
 }

@@ -1,58 +1,58 @@
-package com.twitter.product_mixer.component_library.feature_hydrator.candidate.param_gated.featurestorev1
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.felonaturelon_hydrator.candidatelon.param_gatelond.felonaturelonstorelonv1
 
-import com.twitter.ml.featurestore.lib.EntityId
-import com.twitter.product_mixer.component_library.feature_hydrator.candidate.param_gated.featurestorev1.ParamGatedFeatureStoreV1CandidateFeatureHydrator.IdentifierPrefix
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featurestorev1.BaseFeatureStoreV1CandidateFeature
-import com.twitter.product_mixer.core.functional_component.common.alert.Alert
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.featurestorev1.FeatureStoreV1CandidateFeatureHydrator
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.featurestorev1.FeatureStoreV1DynamicClientBuilder
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.Conditionally
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.Param
+import com.twittelonr.ml.felonaturelonstorelon.lib.elonntityId
+import com.twittelonr.product_mixelonr.componelonnt_library.felonaturelon_hydrator.candidatelon.param_gatelond.felonaturelonstorelonv1.ParamGatelondFelonaturelonStorelonV1CandidatelonFelonaturelonHydrator.IdelonntifielonrPrelonfix
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonstorelonv1.BaselonFelonaturelonStorelonV1CandidatelonFelonaturelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.alelonrt.Alelonrt
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator.felonaturelonstorelonv1.FelonaturelonStorelonV1CandidatelonFelonaturelonHydrator
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator.felonaturelonstorelonv1.FelonaturelonStorelonV1DynamicClielonntBuildelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.Conditionally
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.FelonaturelonHydratorIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.timelonlinelons.configapi.Param
 
 /**
- * A [[FeatureStoreV1CandidateFeatureHydrator]] with [[Conditionally]] based on a [[Param]]
+ * A [[FelonaturelonStorelonV1CandidatelonFelonaturelonHydrator]] with [[Conditionally]] baselond on a [[Param]]
  *
- * @param enabledParam the param to turn this [[FeatureStoreV1CandidateFeatureHydrator]] on and off
- * @param candidateFeatureHydrator the underlying [[FeatureStoreV1CandidateFeatureHydrator]] to run when `enabledParam` is true
- * @tparam Query The domain model for the query or request
- * @tparam Candidate The type of the candidates
+ * @param elonnablelondParam thelon param to turn this [[FelonaturelonStorelonV1CandidatelonFelonaturelonHydrator]] on and off
+ * @param candidatelonFelonaturelonHydrator thelon undelonrlying [[FelonaturelonStorelonV1CandidatelonFelonaturelonHydrator]] to run whelonn `elonnablelondParam` is truelon
+ * @tparam Quelonry Thelon domain modelonl for thelon quelonry or relonquelonst
+ * @tparam Candidatelon Thelon typelon of thelon candidatelons
  */
-case class ParamGatedFeatureStoreV1CandidateFeatureHydrator[
-  Query <: PipelineQuery,
-  Candidate <: UniversalNoun[Any]
+caselon class ParamGatelondFelonaturelonStorelonV1CandidatelonFelonaturelonHydrator[
+  Quelonry <: PipelonlinelonQuelonry,
+  Candidatelon <: UnivelonrsalNoun[Any]
 ](
-  enabledParam: Param[Boolean],
-  candidateFeatureHydrator: FeatureStoreV1CandidateFeatureHydrator[Query, Candidate])
-    extends FeatureStoreV1CandidateFeatureHydrator[Query, Candidate]
-    with Conditionally[Query] {
+  elonnablelondParam: Param[Boolelonan],
+  candidatelonFelonaturelonHydrator: FelonaturelonStorelonV1CandidatelonFelonaturelonHydrator[Quelonry, Candidatelon])
+    elonxtelonnds FelonaturelonStorelonV1CandidatelonFelonaturelonHydrator[Quelonry, Candidatelon]
+    with Conditionally[Quelonry] {
 
-  override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier(
-    IdentifierPrefix + candidateFeatureHydrator.identifier.name)
+  ovelonrridelon val idelonntifielonr: FelonaturelonHydratorIdelonntifielonr = FelonaturelonHydratorIdelonntifielonr(
+    IdelonntifielonrPrelonfix + candidatelonFelonaturelonHydrator.idelonntifielonr.namelon)
 
-  override val alerts: Seq[Alert] = candidateFeatureHydrator.alerts
+  ovelonrridelon val alelonrts: Selonq[Alelonrt] = candidatelonFelonaturelonHydrator.alelonrts
 
-  override val features: Set[
-    BaseFeatureStoreV1CandidateFeature[Query, Candidate, _ <: EntityId, _]
-  ] = candidateFeatureHydrator.features
+  ovelonrridelon val felonaturelons: Selont[
+    BaselonFelonaturelonStorelonV1CandidatelonFelonaturelon[Quelonry, Candidatelon, _ <: elonntityId, _]
+  ] = candidatelonFelonaturelonHydrator.felonaturelons
 
-  override val clientBuilder: FeatureStoreV1DynamicClientBuilder =
-    candidateFeatureHydrator.clientBuilder
+  ovelonrridelon val clielonntBuildelonr: FelonaturelonStorelonV1DynamicClielonntBuildelonr =
+    candidatelonFelonaturelonHydrator.clielonntBuildelonr
 
-  override def onlyIf(query: Query): Boolean =
-    Conditionally.and(query, candidateFeatureHydrator, query.params(enabledParam))
+  ovelonrridelon delonf onlyIf(quelonry: Quelonry): Boolelonan =
+    Conditionally.and(quelonry, candidatelonFelonaturelonHydrator, quelonry.params(elonnablelondParam))
 
-  override def apply(
-    query: Query,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): Stitch[Seq[FeatureMap]] = candidateFeatureHydrator(query, candidates)
+  ovelonrridelon delonf apply(
+    quelonry: Quelonry,
+    candidatelons: Selonq[CandidatelonWithFelonaturelons[Candidatelon]]
+  ): Stitch[Selonq[FelonaturelonMap]] = candidatelonFelonaturelonHydrator(quelonry, candidatelons)
 }
 
-object ParamGatedFeatureStoreV1CandidateFeatureHydrator {
-  val IdentifierPrefix = "ParamGated"
+objelonct ParamGatelondFelonaturelonStorelonV1CandidatelonFelonaturelonHydrator {
+  val IdelonntifielonrPrelonfix = "ParamGatelond"
 }

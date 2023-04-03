@@ -1,82 +1,82 @@
-package com.twitter.search.core.earlybird.facets;
+packagelon com.twittelonr.selonarch.corelon.elonarlybird.facelonts;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 import java.util.Arrays;
 import java.util.Map;
 
-import com.twitter.search.common.util.io.flushable.DataDeserializer;
-import com.twitter.search.common.util.io.flushable.DataSerializer;
-import com.twitter.search.common.util.io.flushable.FlushInfo;
-import com.twitter.search.common.util.io.flushable.Flushable;
-import com.twitter.search.core.earlybird.index.DocIDToTweetIDMapper;
-import com.twitter.search.core.earlybird.index.inverted.IntBlockPool;
+import com.twittelonr.selonarch.common.util.io.flushablelon.DataDelonselonrializelonr;
+import com.twittelonr.selonarch.common.util.io.flushablelon.DataSelonrializelonr;
+import com.twittelonr.selonarch.common.util.io.flushablelon.FlushInfo;
+import com.twittelonr.selonarch.common.util.io.flushablelon.Flushablelon;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.DocIDToTwelonelontIDMappelonr;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.invelonrtelond.IntBlockPool;
 
-public class OptimizedFacetCountingArray extends AbstractFacetCountingArray {
-  private final int[] facetsMap;
+public class OptimizelondFacelontCountingArray elonxtelonnds AbstractFacelontCountingArray {
+  privatelon final int[] facelontsMap;
 
   /**
-   * Creates a new, empty FacetCountingArray with the given size.
+   * Crelonatelons a nelonw, elonmpty FacelontCountingArray with thelon givelonn sizelon.
    */
-  public OptimizedFacetCountingArray(int maxDocIdInclusive) {
-    super();
-    facetsMap = new int[maxDocIdInclusive];
-    Arrays.fill(facetsMap, UNASSIGNED);
+  public OptimizelondFacelontCountingArray(int maxDocIdInclusivelon) {
+    supelonr();
+    facelontsMap = nelonw int[maxDocIdInclusivelon];
+    Arrays.fill(facelontsMap, UNASSIGNelonD);
   }
 
-  private OptimizedFacetCountingArray(int[] facetsMap, IntBlockPool facetsPool) {
-    super(facetsPool);
-    this.facetsMap = facetsMap;
+  privatelon OptimizelondFacelontCountingArray(int[] facelontsMap, IntBlockPool facelontsPool) {
+    supelonr(facelontsPool);
+    this.facelontsMap = facelontsMap;
   }
 
-  @Override
-  protected int getFacet(int docID) {
-    return facetsMap[docID];
+  @Ovelonrridelon
+  protelonctelond int gelontFacelont(int docID) {
+    relonturn facelontsMap[docID];
   }
 
-  @Override
-  protected void setFacet(int docID, int facetID) {
-    facetsMap[docID] = facetID;
+  @Ovelonrridelon
+  protelonctelond void selontFacelont(int docID, int facelontID) {
+    facelontsMap[docID] = facelontID;
   }
 
-  @Override
-  public AbstractFacetCountingArray rewriteAndMapIDs(
-      Map<Integer, int[]> termIDMapper,
-      DocIDToTweetIDMapper originalTweetIdMapper,
-      DocIDToTweetIDMapper optimizedTweetIdMapper) {
-    throw new UnsupportedOperationException(
-        "OptimizedFacetCountingArray instances should never be rewritten.");
+  @Ovelonrridelon
+  public AbstractFacelontCountingArray relonwritelonAndMapIDs(
+      Map<Intelongelonr, int[]> telonrmIDMappelonr,
+      DocIDToTwelonelontIDMappelonr originalTwelonelontIdMappelonr,
+      DocIDToTwelonelontIDMappelonr optimizelondTwelonelontIdMappelonr) {
+    throw nelonw UnsupportelondOpelonrationelonxcelonption(
+        "OptimizelondFacelontCountingArray instancelons should nelonvelonr belon relonwrittelonn.");
   }
 
-  @Override
-  public FlushHandler getFlushHandler() {
-    return new FlushHandler(this);
+  @Ovelonrridelon
+  public FlushHandlelonr gelontFlushHandlelonr() {
+    relonturn nelonw FlushHandlelonr(this);
   }
 
-  public static final class FlushHandler extends Flushable.Handler<OptimizedFacetCountingArray> {
-    private static final String FACETS_POOL_PROP_NAME = "facetsPool";
+  public static final class FlushHandlelonr elonxtelonnds Flushablelon.Handlelonr<OptimizelondFacelontCountingArray> {
+    privatelon static final String FACelonTS_POOL_PROP_NAMelon = "facelontsPool";
 
-    public FlushHandler() {
+    public FlushHandlelonr() {
     }
 
-    public FlushHandler(OptimizedFacetCountingArray objectToFlush) {
-      super(objectToFlush);
+    public FlushHandlelonr(OptimizelondFacelontCountingArray objelonctToFlush) {
+      supelonr(objelonctToFlush);
     }
 
-    @Override
-    public void doFlush(FlushInfo flushInfo, DataSerializer out) throws IOException {
-      OptimizedFacetCountingArray objectToFlush = getObjectToFlush();
-      out.writeIntArray(objectToFlush.facetsMap);
-      objectToFlush.getFacetsPool().getFlushHandler().flush(
-          flushInfo.newSubProperties(FACETS_POOL_PROP_NAME), out);
+    @Ovelonrridelon
+    public void doFlush(FlushInfo flushInfo, DataSelonrializelonr out) throws IOelonxcelonption {
+      OptimizelondFacelontCountingArray objelonctToFlush = gelontObjelonctToFlush();
+      out.writelonIntArray(objelonctToFlush.facelontsMap);
+      objelonctToFlush.gelontFacelontsPool().gelontFlushHandlelonr().flush(
+          flushInfo.nelonwSubPropelonrtielons(FACelonTS_POOL_PROP_NAMelon), out);
     }
 
-    @Override
-    public OptimizedFacetCountingArray doLoad(FlushInfo flushInfo, DataDeserializer in)
-        throws IOException {
-      int[] facetsMap = in.readIntArray();
-      IntBlockPool facetsPool = new IntBlockPool.FlushHandler().load(
-          flushInfo.getSubProperties(FACETS_POOL_PROP_NAME), in);
-      return new OptimizedFacetCountingArray(facetsMap, facetsPool);
+    @Ovelonrridelon
+    public OptimizelondFacelontCountingArray doLoad(FlushInfo flushInfo, DataDelonselonrializelonr in)
+        throws IOelonxcelonption {
+      int[] facelontsMap = in.relonadIntArray();
+      IntBlockPool facelontsPool = nelonw IntBlockPool.FlushHandlelonr().load(
+          flushInfo.gelontSubPropelonrtielons(FACelonTS_POOL_PROP_NAMelon), in);
+      relonturn nelonw OptimizelondFacelontCountingArray(facelontsMap, facelontsPool);
     }
   }
 }

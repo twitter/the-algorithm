@@ -1,46 +1,46 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.ShowAlert.ShowAlertEntryNamespace
-import com.twitter.product_mixer.core.model.marshalling.response.urt.alert.ShowAlertColorConfiguration
-import com.twitter.product_mixer.core.model.marshalling.response.urt.alert.ShowAlertDisplayLocation
-import com.twitter.product_mixer.core.model.marshalling.response.urt.alert.ShowAlertIconDisplayInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.alert.ShowAlertNavigationMetadata
-import com.twitter.product_mixer.core.model.marshalling.response.urt.alert.ShowAlertType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackActionInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichText
-import com.twitter.util.Duration
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.ShowAlelonrt.ShowAlelonrtelonntryNamelonspacelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.alelonrt.ShowAlelonrtColorConfiguration
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.alelonrt.ShowAlelonrtDisplayLocation
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.alelonrt.ShowAlelonrtIconDisplayInfo
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.alelonrt.ShowAlelonrtNavigationMelontadata
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.alelonrt.ShowAlelonrtTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.ClielonntelonvelonntInfo
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.FelonelondbackActionInfo
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.richtelonxt.RichTelonxt
+import com.twittelonr.util.Duration
 
 /**
- * Domain model for the URT ShowAlert [[https://docbird.twitter.biz/unified_rich_timelines_urt/gen/com/twitter/timelines/render/thriftscala/ShowAlert.html]]
+ * Domain modelonl for thelon URT ShowAlelonrt [[https://docbird.twittelonr.biz/unifielond_rich_timelonlinelons_urt/gelonn/com/twittelonr/timelonlinelons/relonndelonr/thriftscala/ShowAlelonrt.html]]
  *
- * @note the text field (id: 2) has been deliberately excluded as it's been deprecated since 2018. Use RichText instead.
+ * @notelon thelon telonxt fielonld (id: 2) has belonelonn delonlibelonratelonly elonxcludelond as it's belonelonn delonpreloncatelond sincelon 2018. Uselon RichTelonxt instelonad.
  */
-case class ShowAlert(
-  override val id: String,
-  override val sortIndex: Option[Long],
-  alertType: ShowAlertType,
-  triggerDelay: Option[Duration],
+caselon class ShowAlelonrt(
+  ovelonrridelon val id: String,
+  ovelonrridelon val sortIndelonx: Option[Long],
+  alelonrtTypelon: ShowAlelonrtTypelon,
+  triggelonrDelonlay: Option[Duration],
   displayDuration: Option[Duration],
-  clientEventInfo: Option[ClientEventInfo],
-  collapseDelay: Option[Duration],
-  userIds: Option[Seq[Long]],
-  richText: Option[RichText],
-  iconDisplayInfo: Option[ShowAlertIconDisplayInfo],
-  colorConfig: ShowAlertColorConfiguration,
-  displayLocation: ShowAlertDisplayLocation,
-  navigationMetadata: Option[ShowAlertNavigationMetadata],
-) extends TimelineItem {
-  override val entryNamespace: EntryNamespace = ShowAlertEntryNamespace
+  clielonntelonvelonntInfo: Option[ClielonntelonvelonntInfo],
+  collapselonDelonlay: Option[Duration],
+  uselonrIds: Option[Selonq[Long]],
+  richTelonxt: Option[RichTelonxt],
+  iconDisplayInfo: Option[ShowAlelonrtIconDisplayInfo],
+  colorConfig: ShowAlelonrtColorConfiguration,
+  displayLocation: ShowAlelonrtDisplayLocation,
+  navigationMelontadata: Option[ShowAlelonrtNavigationMelontadata],
+) elonxtelonnds TimelonlinelonItelonm {
+  ovelonrridelon val elonntryNamelonspacelon: elonntryNamelonspacelon = ShowAlelonrtelonntryNamelonspacelon
 
-  // Note that sort index is not used for ShowAlerts, as they are not TimelineEntry and do not have entryId
-  override def withSortIndex(newSortIndex: Long): TimelineEntry =
-    copy(sortIndex = Some(newSortIndex))
+  // Notelon that sort indelonx is not uselond for ShowAlelonrts, as thelony arelon not Timelonlinelonelonntry and do not havelon elonntryId
+  ovelonrridelon delonf withSortIndelonx(nelonwSortIndelonx: Long): Timelonlinelonelonntry =
+    copy(sortIndelonx = Somelon(nelonwSortIndelonx))
 
-  // Not used for ShowAlerts
-  override def feedbackActionInfo: Option[FeedbackActionInfo] = None
+  // Not uselond for ShowAlelonrts
+  ovelonrridelon delonf felonelondbackActionInfo: Option[FelonelondbackActionInfo] = Nonelon
 }
 
-object ShowAlert {
-  val ShowAlertEntryNamespace: EntryNamespace = EntryNamespace("show-alert")
+objelonct ShowAlelonrt {
+  val ShowAlelonrtelonntryNamelonspacelon: elonntryNamelonspacelon = elonntryNamelonspacelon("show-alelonrt")
 }

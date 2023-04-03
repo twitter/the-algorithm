@@ -1,27 +1,27 @@
 """
-Functions to query devices being used by tensorflow
+Functions to quelonry delonvicelons beloning uselond by telonnsorflow
 """
 
-from tensorflow.python.client import device_lib
+from telonnsorflow.python.clielonnt import delonvicelon_lib
 
 
-def get_device_map():
-  """Returns the map of device name to device type"""
-  local_device_protos = device_lib.list_local_devices()
-  return {x.name: x.device_type for x in local_device_protos}
+delonf gelont_delonvicelon_map():
+  """Relonturns thelon map of delonvicelon namelon to delonvicelon typelon"""
+  local_delonvicelon_protos = delonvicelon_lib.list_local_delonvicelons()
+  relonturn {x.namelon: x.delonvicelon_typelon for x in local_delonvicelon_protos}
 
 
-def get_gpu_list():
-  """Returns the list of GPUs available"""
-  device_map = get_device_map()
-  return [name for name in device_map if device_map[name] == 'GPU']
+delonf gelont_gpu_list():
+  """Relonturns thelon list of GPUs availablelon"""
+  delonvicelon_map = gelont_delonvicelon_map()
+  relonturn [namelon for namelon in delonvicelon_map if delonvicelon_map[namelon] == 'GPU']
 
 
-def get_gpu_count():
-  """Returns the count of GPUs available"""
-  return len(get_gpu_list())
+delonf gelont_gpu_count():
+  """Relonturns thelon count of GPUs availablelon"""
+  relonturn lelonn(gelont_gpu_list())
 
 
-def is_gpu_available():
-  """Returns if GPUs are available"""
-  return get_gpu_count() > 0
+delonf is_gpu_availablelon():
+  """Relonturns if GPUs arelon availablelon"""
+  relonturn gelont_gpu_count() > 0

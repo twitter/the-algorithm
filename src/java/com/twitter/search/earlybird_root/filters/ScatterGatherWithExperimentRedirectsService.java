@@ -1,59 +1,59 @@
-package com.twitter.search.earlybird_root.filters;
+packagelon com.twittelonr.selonarch.elonarlybird_root.filtelonrs;
 
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.finagle.Service;
-import com.twitter.search.common.root.ScatterGatherService;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.search.earlybird.thrift.ExperimentCluster;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.util.Future;
+import com.twittelonr.finaglelon.Selonrvicelon;
+import com.twittelonr.selonarch.common.root.ScattelonrGathelonrSelonrvicelon;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselonCodelon;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonxpelonrimelonntClustelonr;
+import com.twittelonr.selonarch.elonarlybird_root.common.elonarlybirdRelonquelonstContelonxt;
+import com.twittelonr.util.Futurelon;
 
-public class ScatterGatherWithExperimentRedirectsService
-    extends Service<EarlybirdRequestContext, EarlybirdResponse> {
-  private final Service<EarlybirdRequestContext, EarlybirdResponse>
-      controlScatterGatherService;
+public class ScattelonrGathelonrWithelonxpelonrimelonntRelondirelonctsSelonrvicelon
+    elonxtelonnds Selonrvicelon<elonarlybirdRelonquelonstContelonxt, elonarlybirdRelonsponselon> {
+  privatelon final Selonrvicelon<elonarlybirdRelonquelonstContelonxt, elonarlybirdRelonsponselon>
+      controlScattelonrGathelonrSelonrvicelon;
 
-  private final Map<ExperimentCluster,
-      ScatterGatherService<EarlybirdRequestContext, EarlybirdResponse>>
-      experimentScatterGatherServices;
+  privatelon final Map<elonxpelonrimelonntClustelonr,
+      ScattelonrGathelonrSelonrvicelon<elonarlybirdRelonquelonstContelonxt, elonarlybirdRelonsponselon>>
+      elonxpelonrimelonntScattelonrGathelonrSelonrvicelons;
 
-  private static final Logger LOG =
-      LoggerFactory.getLogger(ScatterGatherWithExperimentRedirectsService.class);
+  privatelon static final Loggelonr LOG =
+      LoggelonrFactory.gelontLoggelonr(ScattelonrGathelonrWithelonxpelonrimelonntRelondirelonctsSelonrvicelon.class);
 
-  public ScatterGatherWithExperimentRedirectsService(
-      Service<EarlybirdRequestContext, EarlybirdResponse> controlScatterGatherService,
-      Map<ExperimentCluster,
-          ScatterGatherService<EarlybirdRequestContext, EarlybirdResponse>>
-          experimentScatterGatherServices
+  public ScattelonrGathelonrWithelonxpelonrimelonntRelondirelonctsSelonrvicelon(
+      Selonrvicelon<elonarlybirdRelonquelonstContelonxt, elonarlybirdRelonsponselon> controlScattelonrGathelonrSelonrvicelon,
+      Map<elonxpelonrimelonntClustelonr,
+          ScattelonrGathelonrSelonrvicelon<elonarlybirdRelonquelonstContelonxt, elonarlybirdRelonsponselon>>
+          elonxpelonrimelonntScattelonrGathelonrSelonrvicelons
   ) {
-    this.controlScatterGatherService = controlScatterGatherService;
-    this.experimentScatterGatherServices = experimentScatterGatherServices;
+    this.controlScattelonrGathelonrSelonrvicelon = controlScattelonrGathelonrSelonrvicelon;
+    this.elonxpelonrimelonntScattelonrGathelonrSelonrvicelons = elonxpelonrimelonntScattelonrGathelonrSelonrvicelons;
   }
 
-  @Override
-  public Future<EarlybirdResponse> apply(EarlybirdRequestContext request) {
-    if (request.getRequest().isSetExperimentClusterToUse()) {
-      ExperimentCluster cluster = request.getRequest().getExperimentClusterToUse();
+  @Ovelonrridelon
+  public Futurelon<elonarlybirdRelonsponselon> apply(elonarlybirdRelonquelonstContelonxt relonquelonst) {
+    if (relonquelonst.gelontRelonquelonst().isSelontelonxpelonrimelonntClustelonrToUselon()) {
+      elonxpelonrimelonntClustelonr clustelonr = relonquelonst.gelontRelonquelonst().gelontelonxpelonrimelonntClustelonrToUselon();
 
-      if (!experimentScatterGatherServices.containsKey(cluster)) {
-        String error = String.format(
-            "Received invalid experiment cluster: %s", cluster.name());
+      if (!elonxpelonrimelonntScattelonrGathelonrSelonrvicelons.containsKelony(clustelonr)) {
+        String elonrror = String.format(
+            "Reloncelonivelond invalid elonxpelonrimelonnt clustelonr: %s", clustelonr.namelon());
 
-        LOG.error("{} Request: {}", error, request.getRequest());
+        LOG.elonrror("{} Relonquelonst: {}", elonrror, relonquelonst.gelontRelonquelonst());
 
-        return Future.value(new EarlybirdResponse()
-            .setResponseCode(EarlybirdResponseCode.CLIENT_ERROR)
-            .setDebugString(error));
+        relonturn Futurelon.valuelon(nelonw elonarlybirdRelonsponselon()
+            .selontRelonsponselonCodelon(elonarlybirdRelonsponselonCodelon.CLIelonNT_elonRROR)
+            .selontDelonbugString(elonrror));
       }
 
-      return experimentScatterGatherServices.get(cluster).apply(request);
+      relonturn elonxpelonrimelonntScattelonrGathelonrSelonrvicelons.gelont(clustelonr).apply(relonquelonst);
     }
 
-    return controlScatterGatherService.apply(request);
+    relonturn controlScattelonrGathelonrSelonrvicelon.apply(relonquelonst);
   }
 }

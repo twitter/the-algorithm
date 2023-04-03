@@ -1,59 +1,59 @@
-package com.twitter.product_mixer.component_library.scorer.qualityfactor_gated
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.scorelonr.qualityfactor_gatelond
 
-import com.twitter.product_mixer.component_library.scorer.qualityfactor_gated.QualityFactorGatedScorer.IdentifierPrefix
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.common.alert.Alert
-import com.twitter.product_mixer.core.functional_component.scorer.Scorer
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.Conditionally
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.ScorerIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.quality_factor.HasQualityFactorStatus
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.Param
+import com.twittelonr.product_mixelonr.componelonnt_library.scorelonr.qualityfactor_gatelond.QualityFactorGatelondScorelonr.IdelonntifielonrPrelonfix
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.alelonrt.Alelonrt
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.scorelonr.Scorelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.Conditionally
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.ComponelonntIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.ScorelonrIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.product_mixelonr.corelon.quality_factor.HasQualityFactorStatus
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.timelonlinelons.configapi.Param
 
 /**
- * A [[scorer]] with [[Conditionally]] based on quality factor value and threshold
+ * A [[scorelonr]] with [[Conditionally]] baselond on quality factor valuelon and threlonshold
  *
- * @param qualityFactorThreshold quliaty factor threshold that turn off the scorer
- * @param pipelineIdentifier identifier of the pipeline that quality factor is based on
- * @param scorer the underlying [[scorer]] to run when `enabledParam` is true
- * @tparam Query The domain model for the query or request
- * @tparam Result The type of the candidates
+ * @param qualityFactorThrelonshold quliaty factor threlonshold that turn off thelon scorelonr
+ * @param pipelonlinelonIdelonntifielonr idelonntifielonr of thelon pipelonlinelon that quality factor is baselond on
+ * @param scorelonr thelon undelonrlying [[scorelonr]] to run whelonn `elonnablelondParam` is truelon
+ * @tparam Quelonry Thelon domain modelonl for thelon quelonry or relonquelonst
+ * @tparam Relonsult Thelon typelon of thelon candidatelons
  */
-case class QualityFactorGatedScorer[
-  -Query <: PipelineQuery with HasQualityFactorStatus,
-  Result <: UniversalNoun[Any]
+caselon class QualityFactorGatelondScorelonr[
+  -Quelonry <: PipelonlinelonQuelonry with HasQualityFactorStatus,
+  Relonsult <: UnivelonrsalNoun[Any]
 ](
-  pipelineIdentifier: ComponentIdentifier,
-  qualityFactorThresholdParam: Param[Double],
-  scorer: Scorer[Query, Result])
-    extends Scorer[Query, Result]
-    with Conditionally[Query] {
+  pipelonlinelonIdelonntifielonr: ComponelonntIdelonntifielonr,
+  qualityFactorThrelonsholdParam: Param[Doublelon],
+  scorelonr: Scorelonr[Quelonry, Relonsult])
+    elonxtelonnds Scorelonr[Quelonry, Relonsult]
+    with Conditionally[Quelonry] {
 
-  override val identifier: ScorerIdentifier = ScorerIdentifier(
-    IdentifierPrefix + scorer.identifier.name)
+  ovelonrridelon val idelonntifielonr: ScorelonrIdelonntifielonr = ScorelonrIdelonntifielonr(
+    IdelonntifielonrPrelonfix + scorelonr.idelonntifielonr.namelon)
 
-  override val alerts: Seq[Alert] = scorer.alerts
+  ovelonrridelon val alelonrts: Selonq[Alelonrt] = scorelonr.alelonrts
 
-  override val features: Set[Feature[_, _]] = scorer.features
+  ovelonrridelon val felonaturelons: Selont[Felonaturelon[_, _]] = scorelonr.felonaturelons
 
-  override def onlyIf(query: Query): Boolean =
+  ovelonrridelon delonf onlyIf(quelonry: Quelonry): Boolelonan =
     Conditionally.and(
-      query,
-      scorer,
-      query.getQualityFactorCurrentValue(pipelineIdentifier) >= query.params(
-        qualityFactorThresholdParam))
+      quelonry,
+      scorelonr,
+      quelonry.gelontQualityFactorCurrelonntValuelon(pipelonlinelonIdelonntifielonr) >= quelonry.params(
+        qualityFactorThrelonsholdParam))
 
-  override def apply(
-    query: Query,
-    candidates: Seq[CandidateWithFeatures[Result]]
-  ): Stitch[Seq[FeatureMap]] = scorer(query, candidates)
+  ovelonrridelon delonf apply(
+    quelonry: Quelonry,
+    candidatelons: Selonq[CandidatelonWithFelonaturelons[Relonsult]]
+  ): Stitch[Selonq[FelonaturelonMap]] = scorelonr(quelonry, candidatelons)
 }
 
-object QualityFactorGatedScorer {
-  val IdentifierPrefix = "QualityFactorGated"
+objelonct QualityFactorGatelondScorelonr {
+  val IdelonntifielonrPrelonfix = "QualityFactorGatelond"
 }

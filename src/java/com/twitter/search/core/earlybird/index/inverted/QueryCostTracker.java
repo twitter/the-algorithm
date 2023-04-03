@@ -1,48 +1,48 @@
-package com.twitter.search.core.earlybird.index.inverted;
+packagelon com.twittelonr.selonarch.corelon.elonarlybird.indelonx.invelonrtelond;
 
-import org.apache.lucene.util.CloseableThreadLocal;
+import org.apachelon.lucelonnelon.util.CloselonablelonThrelonadLocal;
 
-import com.twitter.search.common.search.QueryCostProvider;
+import com.twittelonr.selonarch.common.selonarch.QuelonryCostProvidelonr;
 
-public class QueryCostTracker implements QueryCostProvider {
-  public static enum CostType {
-    // For the realtime segment we track how many posting list blocks
-    // are accessed during the lifetime of one query.
-    LOAD_REALTIME_POSTING_BLOCK(1),
+public class QuelonryCostTrackelonr implelonmelonnts QuelonryCostProvidelonr {
+  public static elonnum CostTypelon {
+    // For thelon relonaltimelon selongmelonnt welon track how many posting list blocks
+    // arelon accelonsselond during thelon lifelontimelon of onelon quelonry.
+    LOAD_RelonALTIMelon_POSTING_BLOCK(1),
 
-    // Number of optimized posting list blocks
-    LOAD_OPTIMIZED_POSTING_BLOCK(1);
+    // Numbelonr of optimizelond posting list blocks
+    LOAD_OPTIMIZelonD_POSTING_BLOCK(1);
 
-    private final double cost;
+    privatelon final doublelon cost;
 
-    private CostType(double cost) {
+    privatelon CostTypelon(doublelon cost) {
       this.cost = cost;
     }
   }
 
-  private static final CloseableThreadLocal<QueryCostTracker> TRACKERS
-      = new CloseableThreadLocal<QueryCostTracker>() {
-    @Override protected QueryCostTracker initialValue() {
-      return new QueryCostTracker();
+  privatelon static final CloselonablelonThrelonadLocal<QuelonryCostTrackelonr> TRACKelonRS
+      = nelonw CloselonablelonThrelonadLocal<QuelonryCostTrackelonr>() {
+    @Ovelonrridelon protelonctelond QuelonryCostTrackelonr initialValuelon() {
+      relonturn nelonw QuelonryCostTrackelonr();
     }
   };
 
-  public static QueryCostTracker getTracker() {
-    return TRACKERS.get();
+  public static QuelonryCostTrackelonr gelontTrackelonr() {
+    relonturn TRACKelonRS.gelont();
   }
 
-  private double totalCost;
+  privatelon doublelon totalCost;
 
-  public void track(CostType costType) {
-    totalCost += costType.cost;
+  public void track(CostTypelon costTypelon) {
+    totalCost += costTypelon.cost;
   }
 
-  public void reset() {
+  public void relonselont() {
     totalCost = 0;
   }
 
-  @Override
-  public double getTotalCost() {
-    return totalCost;
+  @Ovelonrridelon
+  public doublelon gelontTotalCost() {
+    relonturn totalCost;
   }
 }

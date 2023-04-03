@@ -1,198 +1,198 @@
-package com.twitter.simclusters_v2.scalding.optout
+packagelon com.twittelonr.simclustelonrs_v2.scalding.optout
 
-import com.twitter.scalding.Args
-import com.twitter.scalding.DateRange
-import com.twitter.scalding.Days
-import com.twitter.scalding.Duration
-import com.twitter.scalding.Execution
-import com.twitter.scalding.RichDate
-import com.twitter.scalding.TypedPipe
-import com.twitter.scalding.TypedTsv
-import com.twitter.scalding.UniqueID
-import com.twitter.simclusters_v2.common.ClusterId
-import com.twitter.simclusters_v2.common.SemanticCoreEntityId
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.scalding_internal.dalv2.remote_access.AllowCrossClusterSameDC
-import com.twitter.scalding_internal.dalv2.remote_access.ExplicitLocation
-import com.twitter.scalding_internal.dalv2.remote_access.ProcAtla
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.hdfs_sources._
-import com.twitter.simclusters_v2.thriftscala.ClusterType
-import com.twitter.simclusters_v2.thriftscala.ClustersUserIsKnownFor
-import com.twitter.simclusters_v2.thriftscala.SemanticCoreEntityWithScore
-import com.twitter.simclusters_v2.thriftscala.UserToKnownForClusters
-import com.twitter.wtf.scalding.jobs.common.AdhocExecutionApp
-import com.twitter.wtf.scalding.jobs.common.ScheduledExecutionApp
-import java.util.TimeZone
-import com.twitter.simclusters_v2.scalding.common.TypedRichPipe._
-import com.twitter.simclusters_v2.scalding.common.Util
-import com.twitter.simclusters_v2.scalding.inferred_entities.InferredEntities
+import com.twittelonr.scalding.Args
+import com.twittelonr.scalding.DatelonRangelon
+import com.twittelonr.scalding.Days
+import com.twittelonr.scalding.Duration
+import com.twittelonr.scalding.elonxeloncution
+import com.twittelonr.scalding.RichDatelon
+import com.twittelonr.scalding.TypelondPipelon
+import com.twittelonr.scalding.TypelondTsv
+import com.twittelonr.scalding.UniquelonID
+import com.twittelonr.simclustelonrs_v2.common.ClustelonrId
+import com.twittelonr.simclustelonrs_v2.common.SelonmanticCorelonelonntityId
+import com.twittelonr.simclustelonrs_v2.common.UselonrId
+import com.twittelonr.scalding_intelonrnal.dalv2.DAL
+import com.twittelonr.scalding_intelonrnal.dalv2.DALWritelon._
+import com.twittelonr.scalding_intelonrnal.dalv2.relonmotelon_accelonss.AllowCrossClustelonrSamelonDC
+import com.twittelonr.scalding_intelonrnal.dalv2.relonmotelon_accelonss.elonxplicitLocation
+import com.twittelonr.scalding_intelonrnal.dalv2.relonmotelon_accelonss.ProcAtla
+import com.twittelonr.scalding_intelonrnal.multiformat.format.kelonyval.KelonyVal
+import com.twittelonr.simclustelonrs_v2.hdfs_sourcelons._
+import com.twittelonr.simclustelonrs_v2.thriftscala.ClustelonrTypelon
+import com.twittelonr.simclustelonrs_v2.thriftscala.ClustelonrsUselonrIsKnownFor
+import com.twittelonr.simclustelonrs_v2.thriftscala.SelonmanticCorelonelonntityWithScorelon
+import com.twittelonr.simclustelonrs_v2.thriftscala.UselonrToKnownForClustelonrs
+import com.twittelonr.wtf.scalding.jobs.common.AdhocelonxeloncutionApp
+import com.twittelonr.wtf.scalding.jobs.common.SchelondulelondelonxeloncutionApp
+import java.util.TimelonZonelon
+import com.twittelonr.simclustelonrs_v2.scalding.common.TypelondRichPipelon._
+import com.twittelonr.simclustelonrs_v2.scalding.common.Util
+import com.twittelonr.simclustelonrs_v2.scalding.infelonrrelond_elonntitielons.Infelonrrelondelonntitielons
 
 /**
- * Creates opt-out compliant KnownFor datasets based on plain user -> KnownFor data and users'
- * opt-out selections from YourTwitterData. In essence, we remove any cluster whose inferred
- * entities were opted out by the user.
- * The opted out KnownFor dataset should be the default dataset to be consumed, instead of the
+ * Crelonatelons opt-out compliant KnownFor dataselonts baselond on plain uselonr -> KnownFor data and uselonrs'
+ * opt-out selonlelonctions from YourTwittelonrData. In elonsselonncelon, welon relonmovelon any clustelonr whoselon infelonrrelond
+ * elonntitielons welonrelon optelond out by thelon uselonr.
+ * Thelon optelond out KnownFor dataselont should belon thelon delonfault dataselont to belon consumelond, instelonad of thelon
  * plain KnownFor, which is not opt-out compliant.
  */
-object KnownForOptOut {
+objelonct KnownForOptOut {
 
-  def filterOptedOutKnownFor(
-    knownForPipe: TypedPipe[(UserId, ClustersUserIsKnownFor)],
-    optedOutEntities: TypedPipe[(UserId, Set[SemanticCoreEntityId])],
-    clusterToEntities: TypedPipe[(ClusterId, Seq[SemanticCoreEntityWithScore])]
-  ): TypedPipe[(UserId, ClustersUserIsKnownFor)] = {
+  delonf filtelonrOptelondOutKnownFor(
+    knownForPipelon: TypelondPipelon[(UselonrId, ClustelonrsUselonrIsKnownFor)],
+    optelondOutelonntitielons: TypelondPipelon[(UselonrId, Selont[SelonmanticCorelonelonntityId])],
+    clustelonrToelonntitielons: TypelondPipelon[(ClustelonrId, Selonq[SelonmanticCorelonelonntityWithScorelon])]
+  ): TypelondPipelon[(UselonrId, ClustelonrsUselonrIsKnownFor)] = {
 
-    val validKnownFor = SimClustersOptOutUtil.filterOptedOutClusters(
-      userToClusters = knownForPipe.mapValues(_.clusterIdToScores.keySet.toSeq),
-      optedOutEntities = optedOutEntities,
-      legibleClusters = clusterToEntities
+    val validKnownFor = SimClustelonrsOptOutUtil.filtelonrOptelondOutClustelonrs(
+      uselonrToClustelonrs = knownForPipelon.mapValuelons(_.clustelonrIdToScorelons.kelonySelont.toSelonq),
+      optelondOutelonntitielons = optelondOutelonntitielons,
+      lelongiblelonClustelonrs = clustelonrToelonntitielons
     )
 
-    knownForPipe
-      .leftJoin(validKnownFor)
-      .mapValues {
-        case (originalKnownFors, validKnownForOpt) =>
-          val validKnownFor = validKnownForOpt.getOrElse(Seq()).toSet
+    knownForPipelon
+      .lelonftJoin(validKnownFor)
+      .mapValuelons {
+        caselon (originalKnownFors, validKnownForOpt) =>
+          val validKnownFor = validKnownForOpt.gelontOrelonlselon(Selonq()).toSelont
 
           originalKnownFors.copy(
-            clusterIdToScores = originalKnownFors.clusterIdToScores.filterKeys(validKnownFor)
+            clustelonrIdToScorelons = originalKnownFors.clustelonrIdToScorelons.filtelonrKelonys(validKnownFor)
           )
       }
-      .filter(_._2.clusterIdToScores.nonEmpty)
+      .filtelonr(_._2.clustelonrIdToScorelons.nonelonmpty)
   }
 }
 
 /**
-capesospy-v2 update --build_locally --start_cron \
+capelonsospy-v2 updatelon --build_locally --start_cron \
   --start_cron known_for_optout_daily \
-  src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc.yaml
+  src/scala/com/twittelonr/simclustelonrs_v2/capelonsos_config/atla_proc.yaml
  */
-object KnownForOptOutDailyBatchJob extends ScheduledExecutionApp {
-  override def firstTime: RichDate = RichDate("2021-03-29")
+objelonct KnownForOptOutDailyBatchJob elonxtelonnds SchelondulelondelonxeloncutionApp {
+  ovelonrridelon delonf firstTimelon: RichDatelon = RichDatelon("2021-03-29")
 
-  override def batchIncrement: Duration = Days(1)
+  ovelonrridelon delonf batchIncrelonmelonnt: Duration = Days(1)
 
-  override def runOnDateRange(
+  ovelonrridelon delonf runOnDatelonRangelon(
     args: Args
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon,
+    uniquelonID: UniquelonID
+  ): elonxeloncution[Unit] = {
 
-    val optedOutEntitiesPipe = SimClustersOptOutUtil
-      .getP13nOptOutSources(dateRange.embiggen(Days(2)), ClusterType.KnownFor)
-      .forceToDisk
+    val optelondOutelonntitielonsPipelon = SimClustelonrsOptOutUtil
+      .gelontP13nOptOutSourcelons(datelonRangelon.elonmbiggelonn(Days(2)), ClustelonrTypelon.KnownFor)
+      .forcelonToDisk
 
-    val clusterToEntitiesPipe = InferredEntities.getLegibleEntityEmbeddings(dateRange, timeZone)
+    val clustelonrToelonntitielonsPipelon = Infelonrrelondelonntitielons.gelontLelongiblelonelonntityelonmbelonddings(datelonRangelon, timelonZonelon)
 
     val knownFor2020 = DAL
-      .readMostRecentSnapshot(
-        SimclustersV2RawKnownFor20M145K2020ScalaDataset,
-        dateRange.embiggen(Days(10)))
-      .withRemoteReadPolicy(AllowCrossClusterSameDC)
-      .toTypedPipe
-      .map { case KeyVal(k, v) => (k, v) }
-      .count("num_users_with_2020_knownfor")
+      .relonadMostReloncelonntSnapshot(
+        SimclustelonrsV2RawKnownFor20M145K2020ScalaDataselont,
+        datelonRangelon.elonmbiggelonn(Days(10)))
+      .withRelonmotelonRelonadPolicy(AllowCrossClustelonrSamelonDC)
+      .toTypelondPipelon
+      .map { caselon KelonyVal(k, v) => (k, v) }
+      .count("num_uselonrs_with_2020_knownfor")
 
-    val filtered2020KnownForExec = {
-      val filtered2020KnownForData = KnownForOptOut
-        .filterOptedOutKnownFor(
-          knownForPipe = knownFor2020,
-          optedOutEntities = optedOutEntitiesPipe,
-          clusterToEntities = clusterToEntitiesPipe
+    val filtelonrelond2020KnownForelonxelonc = {
+      val filtelonrelond2020KnownForData = KnownForOptOut
+        .filtelonrOptelondOutKnownFor(
+          knownForPipelon = knownFor2020,
+          optelondOutelonntitielons = optelondOutelonntitielonsPipelon,
+          clustelonrToelonntitielons = clustelonrToelonntitielonsPipelon
         )
-        .count("num_users_with_compliant_2020_knownfor")
-        .forceToDisk
+        .count("num_uselonrs_with_compliant_2020_knownfor")
+        .forcelonToDisk
 
-      Execution
+      elonxeloncution
         .zip(
-          filtered2020KnownForData
-            .map { case (k, v) => KeyVal(k, v) }
-            .writeDALVersionedKeyValExecution(
-              SimclustersV2KnownFor20M145K2020ScalaDataset,
+          filtelonrelond2020KnownForData
+            .map { caselon (k, v) => KelonyVal(k, v) }
+            .writelonDALVelonrsionelondKelonyValelonxeloncution(
+              SimclustelonrsV2KnownFor20M145K2020ScalaDataselont,
               D.Suffix(DataPaths.KnownFor2020Path)
             ),
-          filtered2020KnownForData
+          filtelonrelond2020KnownForData
             .map {
-              case (userId, ClustersUserIsKnownFor(modelVersion, clusters)) =>
-                UserToKnownForClusters(userId, modelVersion, clusters)
+              caselon (uselonrId, ClustelonrsUselonrIsKnownFor(modelonlVelonrsion, clustelonrs)) =>
+                UselonrToKnownForClustelonrs(uselonrId, modelonlVelonrsion, clustelonrs)
             }
-            .writeDALSnapshotExecution(
-              dataset = SimclustersV2KnownFor20M145K2020ThriftScalaDataset,
-              updateStep = D.Daily,
-              pathLayout = D.Suffix(DataPaths.KnownFor2020ThriftDatasetPath),
-              fmt = D.Parquet,
-              endDate = dateRange.end
+            .writelonDALSnapshotelonxeloncution(
+              dataselont = SimclustelonrsV2KnownFor20M145K2020ThriftScalaDataselont,
+              updatelonStelonp = D.Daily,
+              pathLayout = D.Suffix(DataPaths.KnownFor2020ThriftDataselontPath),
+              fmt = D.Parquelont,
+              elonndDatelon = datelonRangelon.elonnd
             )
         ).unit
     }
 
-    Util.printCounters(filtered2020KnownForExec)
+    Util.printCountelonrs(filtelonrelond2020KnownForelonxelonc)
 
   }
 }
 
 /**
- * For debugging only. Does a filtering run and prints the differences before/after the opt out
-./bazel bundle src/scala/com/twitter/simclusters_v2/scalding/optout:knownfor_optout-adhoc && \
- oscar hdfs --user recos-platform --screen --tee your_ldap \
-  --bundle knownfor_optout-adhoc \
-  --tool com.twitter.simclusters_v2.scalding.optout.KnownForOptOutAdhocJob \
- -- --date 2019-10-12
+ * For delonbugging only. Doelons a filtelonring run and prints thelon diffelonrelonncelons belonforelon/aftelonr thelon opt out
+./bazelonl bundlelon src/scala/com/twittelonr/simclustelonrs_v2/scalding/optout:knownfor_optout-adhoc && \
+ oscar hdfs --uselonr reloncos-platform --screlonelonn --telonelon your_ldap \
+  --bundlelon knownfor_optout-adhoc \
+  --tool com.twittelonr.simclustelonrs_v2.scalding.optout.KnownForOptOutAdhocJob \
+ -- --datelon 2019-10-12
  */
-object KnownForOptOutAdhocJob extends AdhocExecutionApp {
-  override def runOnDateRange(
+objelonct KnownForOptOutAdhocJob elonxtelonnds AdhocelonxeloncutionApp {
+  ovelonrridelon delonf runOnDatelonRangelon(
     args: Args
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
-    val knownForPipe = DAL
-      .readMostRecentSnapshotNoOlderThan(SimclustersV2RawKnownFor20M145KDec11ScalaDataset, Days(30))
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-      .toTypedPipe
-      .map { case KeyVal(k, v) => (k, v) }
-      .count("num_users_with_knownfor")
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon,
+    uniquelonID: UniquelonID
+  ): elonxeloncution[Unit] = {
+    val knownForPipelon = DAL
+      .relonadMostReloncelonntSnapshotNoOldelonrThan(SimclustelonrsV2RawKnownFor20M145KDelonc11ScalaDataselont, Days(30))
+      .withRelonmotelonRelonadPolicy(elonxplicitLocation(ProcAtla))
+      .toTypelondPipelon
+      .map { caselon KelonyVal(k, v) => (k, v) }
+      .count("num_uselonrs_with_knownfor")
 
-    val userOptoutEntities: TypedPipe[(UserId, Set[SemanticCoreEntityId])] =
-      SimClustersOptOutUtil
-        .getP13nOptOutSources(dateRange.embiggen(Days(4)), ClusterType.KnownFor)
-        .count("num_users_with_optouts")
+    val uselonrOptoutelonntitielons: TypelondPipelon[(UselonrId, Selont[SelonmanticCorelonelonntityId])] =
+      SimClustelonrsOptOutUtil
+        .gelontP13nOptOutSourcelons(datelonRangelon.elonmbiggelonn(Days(4)), ClustelonrTypelon.KnownFor)
+        .count("num_uselonrs_with_optouts")
 
-    val clusterToEntities = InferredEntities
-      .getLegibleEntityEmbeddings(dateRange, timeZone)
-      .count("num_cluster_to_entities")
+    val clustelonrToelonntitielons = Infelonrrelondelonntitielons
+      .gelontLelongiblelonelonntityelonmbelonddings(datelonRangelon, timelonZonelon)
+      .count("num_clustelonr_to_elonntitielons")
 
-    val filteredKnownForPipe = KnownForOptOut.filterOptedOutKnownFor(
-      knownForPipe,
-      userOptoutEntities,
-      clusterToEntities
+    val filtelonrelondKnownForPipelon = KnownForOptOut.filtelonrOptelondOutKnownFor(
+      knownForPipelon,
+      uselonrOptoutelonntitielons,
+      clustelonrToelonntitielons
     )
 
-    val output = knownForPipe
-      .join(filteredKnownForPipe)
-      .collect {
-        case (userId, (originalKnownFor, filtered))
-            if originalKnownFor.clusterIdToScores != filtered.clusterIdToScores =>
-          (userId, (originalKnownFor, filtered))
+    val output = knownForPipelon
+      .join(filtelonrelondKnownForPipelon)
+      .collelonct {
+        caselon (uselonrId, (originalKnownFor, filtelonrelond))
+            if originalKnownFor.clustelonrIdToScorelons != filtelonrelond.clustelonrIdToScorelons =>
+          (uselonrId, (originalKnownFor, filtelonrelond))
       }
-      .join(userOptoutEntities)
+      .join(uselonrOptoutelonntitielons)
       .map {
-        case (userId, ((originalKnownFor, filtered), optoutEntities)) =>
-          Seq(
-            "userId=" + userId,
+        caselon (uselonrId, ((originalKnownFor, filtelonrelond), optoutelonntitielons)) =>
+          Selonq(
+            "uselonrId=" + uselonrId,
             "originalKnownFor=" + originalKnownFor,
-            "filteredKnownFor=" + filtered,
-            "optoutEntities=" + optoutEntities
+            "filtelonrelondKnownFor=" + filtelonrelond,
+            "optoutelonntitielons=" + optoutelonntitielons
           ).mkString("\t")
       }
 
-    val outputPath = "/user/recos-platform/adhoc/knownfor_optout"
-    output.writeExecution(TypedTsv(outputPath))
+    val outputPath = "/uselonr/reloncos-platform/adhoc/knownfor_optout"
+    output.writelonelonxeloncution(TypelondTsv(outputPath))
   }
 }

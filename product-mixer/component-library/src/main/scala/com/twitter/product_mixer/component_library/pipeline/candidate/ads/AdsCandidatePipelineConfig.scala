@@ -1,56 +1,56 @@
-package com.twitter.product_mixer.component_library.pipeline.candidate.ads
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.pipelonlinelon.candidatelon.ads
 
-import com.twitter.adserver.{thriftscala => ads}
-import com.twitter.product_mixer.component_library.model.candidate.ads.AdsCandidate
-import com.twitter.product_mixer.component_library.model.query.ads.AdsQuery
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.functional_component.common.alert.Alert
-import com.twitter.product_mixer.core.functional_component.decorator.CandidateDecorator
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BaseCandidateFeatureHydrator
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.gate.Gate
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineResultsTransformer
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.candidate.CandidatePipelineConfig
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.decider.DeciderParam
-import javax.inject.Inject
+import com.twittelonr.adselonrvelonr.{thriftscala => ads}
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.ads.AdsCandidatelon
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.quelonry.ads.AdsQuelonry
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.CandidatelonSourcelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.alelonrt.Alelonrt
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.CandidatelonDeloncorator
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator.BaselonCandidatelonFelonaturelonHydrator
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.filtelonr.Filtelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.gatelon.Gatelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.transformelonr.CandidatelonPipelonlinelonQuelonryTransformelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.transformelonr.CandidatelonPipelonlinelonRelonsultsTransformelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonPipelonlinelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.candidatelon.CandidatelonPipelonlinelonConfig
+import com.twittelonr.timelonlinelons.configapi.FSParam
+import com.twittelonr.timelonlinelons.configapi.deloncidelonr.DeloncidelonrParam
+import javax.injelonct.Injelonct
 
-class AdsCandidatePipelineConfig[Query <: PipelineQuery with AdsQuery] @Inject() (
-  override val identifier: CandidatePipelineIdentifier,
-  override val enabledDeciderParam: Option[DeciderParam[Boolean]],
-  override val supportedClientParam: Option[FSParam[Boolean]],
-  override val gates: Seq[Gate[Query]],
-  override val candidateSource: CandidateSource[
-    ads.AdRequestParams,
-    ads.AdImpression
+class AdsCandidatelonPipelonlinelonConfig[Quelonry <: PipelonlinelonQuelonry with AdsQuelonry] @Injelonct() (
+  ovelonrridelon val idelonntifielonr: CandidatelonPipelonlinelonIdelonntifielonr,
+  ovelonrridelon val elonnablelondDeloncidelonrParam: Option[DeloncidelonrParam[Boolelonan]],
+  ovelonrridelon val supportelondClielonntParam: Option[FSParam[Boolelonan]],
+  ovelonrridelon val gatelons: Selonq[Gatelon[Quelonry]],
+  ovelonrridelon val candidatelonSourcelon: CandidatelonSourcelon[
+    ads.AdRelonquelonstParams,
+    ads.AdImprelonssion
   ],
-  override val filters: Seq[Filter[Query, AdsCandidate]],
-  override val postFilterFeatureHydration: Seq[
-    BaseCandidateFeatureHydrator[Query, AdsCandidate, _]
+  ovelonrridelon val filtelonrs: Selonq[Filtelonr[Quelonry, AdsCandidatelon]],
+  ovelonrridelon val postFiltelonrFelonaturelonHydration: Selonq[
+    BaselonCandidatelonFelonaturelonHydrator[Quelonry, AdsCandidatelon, _]
   ],
-  override val decorator: Option[CandidateDecorator[Query, AdsCandidate]],
-  override val alerts: Seq[Alert],
-  adsDisplayLocationBuilder: AdsDisplayLocationBuilder[Query],
-  estimateNumOrganicItems: EstimateNumOrganicItems[Query],
-  urtRequest: Option[Boolean],
-) extends CandidatePipelineConfig[
-      Query,
-      ads.AdRequestParams,
-      ads.AdImpression,
-      AdsCandidate
+  ovelonrridelon val deloncorator: Option[CandidatelonDeloncorator[Quelonry, AdsCandidatelon]],
+  ovelonrridelon val alelonrts: Selonq[Alelonrt],
+  adsDisplayLocationBuildelonr: AdsDisplayLocationBuildelonr[Quelonry],
+  elonstimatelonNumOrganicItelonms: elonstimatelonNumOrganicItelonms[Quelonry],
+  urtRelonquelonst: Option[Boolelonan],
+) elonxtelonnds CandidatelonPipelonlinelonConfig[
+      Quelonry,
+      ads.AdRelonquelonstParams,
+      ads.AdImprelonssion,
+      AdsCandidatelon
     ] {
 
-  override val queryTransformer: CandidatePipelineQueryTransformer[Query, ads.AdRequestParams] =
-    AdsCandidatePipelineQueryTransformer(
-      adsDisplayLocationBuilder = adsDisplayLocationBuilder,
-      estimatedNumOrganicItems = estimateNumOrganicItems,
-      urtRequest = urtRequest)
+  ovelonrridelon val quelonryTransformelonr: CandidatelonPipelonlinelonQuelonryTransformelonr[Quelonry, ads.AdRelonquelonstParams] =
+    AdsCandidatelonPipelonlinelonQuelonryTransformelonr(
+      adsDisplayLocationBuildelonr = adsDisplayLocationBuildelonr,
+      elonstimatelondNumOrganicItelonms = elonstimatelonNumOrganicItelonms,
+      urtRelonquelonst = urtRelonquelonst)
 
-  override val resultTransformer: CandidatePipelineResultsTransformer[
-    ads.AdImpression,
-    AdsCandidate
-  ] = AdsCandidatePipelineResultsTransformer
+  ovelonrridelon val relonsultTransformelonr: CandidatelonPipelonlinelonRelonsultsTransformelonr[
+    ads.AdImprelonssion,
+    AdsCandidatelon
+  ] = AdsCandidatelonPipelonlinelonRelonsultsTransformelonr
 }

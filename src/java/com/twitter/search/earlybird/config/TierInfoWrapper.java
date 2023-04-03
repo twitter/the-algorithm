@@ -1,89 +1,89 @@
-package com.twitter.search.earlybird.config;
+packagelon com.twittelonr.selonarch.elonarlybird.config;
 
-import java.util.Date;
+import java.util.Datelon;
 
-import com.google.common.base.Preconditions;
+import com.googlelon.common.baselon.Prelonconditions;
 
 /**
- * A simple wrapper around TierInfo that returns the "real" or the "overriden" values from the given
- * {@code TierInfo} instance, based on the given {@code useOverrideTierConfig} flag.
+ * A simplelon wrappelonr around TielonrInfo that relonturns thelon "relonal" or thelon "ovelonrridelonn" valuelons from thelon givelonn
+ * {@codelon TielonrInfo} instancelon, baselond on thelon givelonn {@codelon uselonOvelonrridelonTielonrConfig} flag.
  */
-public class TierInfoWrapper implements ServingRange {
-  private final TierInfo tierInfo;
-  private final boolean useOverrideTierConfig;
+public class TielonrInfoWrappelonr implelonmelonnts SelonrvingRangelon {
+  privatelon final TielonrInfo tielonrInfo;
+  privatelon final boolelonan uselonOvelonrridelonTielonrConfig;
 
-  public TierInfoWrapper(TierInfo tierInfo, boolean useOverrideTierConfig) {
-    this.tierInfo = Preconditions.checkNotNull(tierInfo);
-    this.useOverrideTierConfig = useOverrideTierConfig;
+  public TielonrInfoWrappelonr(TielonrInfo tielonrInfo, boolelonan uselonOvelonrridelonTielonrConfig) {
+    this.tielonrInfo = Prelonconditions.chelonckNotNull(tielonrInfo);
+    this.uselonOvelonrridelonTielonrConfig = uselonOvelonrridelonTielonrConfig;
   }
 
-  public String getTierName() {
-    return tierInfo.getTierName();
+  public String gelontTielonrNamelon() {
+    relonturn tielonrInfo.gelontTielonrNamelon();
   }
 
-  public Date getDataStartDate() {
-    return tierInfo.getDataStartDate();
+  public Datelon gelontDataStartDatelon() {
+    relonturn tielonrInfo.gelontDataStartDatelon();
   }
 
-  public Date getDataEndDate() {
-    return tierInfo.getDataEndDate();
+  public Datelon gelontDataelonndDatelon() {
+    relonturn tielonrInfo.gelontDataelonndDatelon();
   }
 
-  public int getNumPartitions() {
-    return tierInfo.getNumPartitions();
+  public int gelontNumPartitions() {
+    relonturn tielonrInfo.gelontNumPartitions();
   }
 
-  public int getMaxTimeslices() {
-    return tierInfo.getMaxTimeslices();
+  public int gelontMaxTimelonslicelons() {
+    relonturn tielonrInfo.gelontMaxTimelonslicelons();
   }
 
-  public TierConfig.ConfigSource getSource() {
-    return tierInfo.getSource();
+  public TielonrConfig.ConfigSourcelon gelontSourcelon() {
+    relonturn tielonrInfo.gelontSourcelon();
   }
 
-  public boolean isEnabled() {
-    return tierInfo.isEnabled();
+  public boolelonan iselonnablelond() {
+    relonturn tielonrInfo.iselonnablelond();
   }
 
-  public boolean isDarkRead() {
-    return getReadType() == TierInfo.RequestReadType.DARK;
+  public boolelonan isDarkRelonad() {
+    relonturn gelontRelonadTypelon() == TielonrInfo.RelonquelonstRelonadTypelon.DARK;
   }
 
-  public TierInfo.RequestReadType getReadType() {
-    return useOverrideTierConfig ? tierInfo.getReadTypeOverride() : tierInfo.getReadType();
+  public TielonrInfo.RelonquelonstRelonadTypelon gelontRelonadTypelon() {
+    relonturn uselonOvelonrridelonTielonrConfig ? tielonrInfo.gelontRelonadTypelonOvelonrridelon() : tielonrInfo.gelontRelonadTypelon();
   }
 
-  public long getServingRangeSinceId() {
-    return useOverrideTierConfig
-      ? tierInfo.getServingRangeOverrideSinceId()
-      : tierInfo.getServingRangeSinceId();
+  public long gelontSelonrvingRangelonSincelonId() {
+    relonturn uselonOvelonrridelonTielonrConfig
+      ? tielonrInfo.gelontSelonrvingRangelonOvelonrridelonSincelonId()
+      : tielonrInfo.gelontSelonrvingRangelonSincelonId();
   }
 
-  public long getServingRangeMaxId() {
-    return useOverrideTierConfig
-      ? tierInfo.getServingRangeOverrideMaxId()
-      : tierInfo.getServingRangeMaxId();
+  public long gelontSelonrvingRangelonMaxId() {
+    relonturn uselonOvelonrridelonTielonrConfig
+      ? tielonrInfo.gelontSelonrvingRangelonOvelonrridelonMaxId()
+      : tielonrInfo.gelontSelonrvingRangelonMaxId();
   }
 
-  public long getServingRangeSinceTimeSecondsFromEpoch() {
-    return useOverrideTierConfig
-      ? tierInfo.getServingRangeOverrideSinceTimeSecondsFromEpoch()
-      : tierInfo.getServingRangeSinceTimeSecondsFromEpoch();
+  public long gelontSelonrvingRangelonSincelonTimelonSeloncondsFromelonpoch() {
+    relonturn uselonOvelonrridelonTielonrConfig
+      ? tielonrInfo.gelontSelonrvingRangelonOvelonrridelonSincelonTimelonSeloncondsFromelonpoch()
+      : tielonrInfo.gelontSelonrvingRangelonSincelonTimelonSeloncondsFromelonpoch();
   }
 
-  public long getServingRangeUntilTimeSecondsFromEpoch() {
-    return useOverrideTierConfig
-      ? tierInfo.getServingRangeOverrideUntilTimeSecondsFromEpoch()
-      : tierInfo.getServingRangeUntilTimeSecondsFromEpoch();
+  public long gelontSelonrvingRangelonUntilTimelonSeloncondsFromelonpoch() {
+    relonturn uselonOvelonrridelonTielonrConfig
+      ? tielonrInfo.gelontSelonrvingRangelonOvelonrridelonUntilTimelonSeloncondsFromelonpoch()
+      : tielonrInfo.gelontSelonrvingRangelonUntilTimelonSeloncondsFromelonpoch();
   }
 
-  public static boolean servingRangesOverlap(TierInfoWrapper tier1, TierInfoWrapper tier2) {
-    return (tier1.getServingRangeMaxId() > tier2.getServingRangeSinceId())
-      && (tier2.getServingRangeMaxId() > tier1.getServingRangeSinceId());
+  public static boolelonan selonrvingRangelonsOvelonrlap(TielonrInfoWrappelonr tielonr1, TielonrInfoWrappelonr tielonr2) {
+    relonturn (tielonr1.gelontSelonrvingRangelonMaxId() > tielonr2.gelontSelonrvingRangelonSincelonId())
+      && (tielonr2.gelontSelonrvingRangelonMaxId() > tielonr1.gelontSelonrvingRangelonSincelonId());
   }
 
-  public static boolean servingRangesHaveGap(TierInfoWrapper tier1, TierInfoWrapper tier2) {
-    return (tier1.getServingRangeMaxId() < tier2.getServingRangeSinceId())
-      || (tier2.getServingRangeMaxId() < tier1.getServingRangeSinceId());
+  public static boolelonan selonrvingRangelonsHavelonGap(TielonrInfoWrappelonr tielonr1, TielonrInfoWrappelonr tielonr2) {
+    relonturn (tielonr1.gelontSelonrvingRangelonMaxId() < tielonr2.gelontSelonrvingRangelonSincelonId())
+      || (tielonr2.gelontSelonrvingRangelonMaxId() < tielonr1.gelontSelonrvingRangelonSincelonId());
   }
 }

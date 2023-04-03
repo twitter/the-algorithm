@@ -1,65 +1,65 @@
-package com.twitter.search.common.util.ml.prediction_engine;
+packagelon com.twittelonr.selonarch.common.util.ml.prelondiction_elonnginelon;
 
-import java.util.Collections;
+import java.util.Collelonctions;
 import java.util.Map;
-import java.util.function.Supplier;
+import java.util.function.Supplielonr;
 
-import com.google.common.base.Preconditions;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import com.twitter.ml.prediction.core.PredictionEngine;
-import com.twitter.ml.prediction.core.PredictionEngineFactory;
-import com.twitter.ml.prediction.core.PredictionEngineLoadingException;
-import com.twitter.ml.vw.constant.SnapshotConstants;
-import com.twitter.search.common.file.AbstractFile;
-import com.twitter.search.common.util.ml.models_manager.BaseModelsManager;
+import com.twittelonr.ml.prelondiction.corelon.Prelondictionelonnginelon;
+import com.twittelonr.ml.prelondiction.corelon.PrelondictionelonnginelonFactory;
+import com.twittelonr.ml.prelondiction.corelon.PrelondictionelonnginelonLoadingelonxcelonption;
+import com.twittelonr.ml.vw.constant.SnapshotConstants;
+import com.twittelonr.selonarch.common.filelon.AbstractFilelon;
+import com.twittelonr.selonarch.common.util.ml.modelonls_managelonr.BaselonModelonlsManagelonr;
 
 /**
- * Loads PredictionEngine models from a model provider (config or fixed directory)
- * and keeps them in memory. Can also reload models periodically by querying the
- * same model provider source.
+ * Loads Prelondictionelonnginelon modelonls from a modelonl providelonr (config or fixelond direlonctory)
+ * and kelonelonps thelonm in melonmory. Can also relonload modelonls pelonriodically by quelonrying thelon
+ * samelon modelonl providelonr sourcelon.
  */
-public class PredictionEngineModelsManager extends BaseModelsManager<PredictionEngine> {
+public class PrelondictionelonnginelonModelonlsManagelonr elonxtelonnds BaselonModelonlsManagelonr<Prelondictionelonnginelon> {
 
-  PredictionEngineModelsManager(
-      Supplier<Map<String, AbstractFile>> activeModelsSupplier,
-      boolean shouldUnloadInactiveModels,
-      String statsPrefix) {
-    super(activeModelsSupplier, shouldUnloadInactiveModels, statsPrefix);
+  PrelondictionelonnginelonModelonlsManagelonr(
+      Supplielonr<Map<String, AbstractFilelon>> activelonModelonlsSupplielonr,
+      boolelonan shouldUnloadInactivelonModelonls,
+      String statsPrelonfix) {
+    supelonr(activelonModelonlsSupplielonr, shouldUnloadInactivelonModelonls, statsPrelonfix);
   }
 
-  @Override
-  public PredictionEngine readModelFromDirectory(AbstractFile modelBaseDir)
-      throws PredictionEngineLoadingException {
-    // We need to add the 'hdfs://' prefix, otherwise PredictionEngine will treat it as a
-    // path in the local filesystem.
-    PredictionEngine predictionEngine = new PredictionEngineFactory()
-        .createFromSnapshot(
-            "hdfs://" + modelBaseDir.getPath(), SnapshotConstants.FIXED_PATH);
+  @Ovelonrridelon
+  public Prelondictionelonnginelon relonadModelonlFromDirelonctory(AbstractFilelon modelonlBaselonDir)
+      throws PrelondictionelonnginelonLoadingelonxcelonption {
+    // Welon nelonelond to add thelon 'hdfs://' prelonfix, othelonrwiselon Prelondictionelonnginelon will trelonat it as a
+    // path in thelon local filelonsystelonm.
+    Prelondictionelonnginelon prelondictionelonnginelon = nelonw PrelondictionelonnginelonFactory()
+        .crelonatelonFromSnapshot(
+            "hdfs://" + modelonlBaselonDir.gelontPath(), SnapshotConstants.FIXelonD_PATH);
 
-    predictionEngine.initialize();
+    prelondictionelonnginelon.initializelon();
 
-    return predictionEngine;
+    relonturn prelondictionelonnginelon;
   }
 
   /**
-   * Creates an instance that loads the models specified in a configuration file.
+   * Crelonatelons an instancelon that loads thelon modelonls speloncifielond in a configuration filelon.
    *
-   * Note that if the configuration file changes and it doesn't include a model that was present
-   * before, the model will be removed (i.e. it unloads models that are not active anymore).
+   * Notelon that if thelon configuration filelon changelons and it doelonsn't includelon a modelonl that was prelonselonnt
+   * belonforelon, thelon modelonl will belon relonmovelond (i.elon. it unloads modelonls that arelon not activelon anymorelon).
    */
-  public static PredictionEngineModelsManager createUsingConfigFile(
-      AbstractFile configFile, String statsPrefix) {
-    Preconditions.checkArgument(
-        configFile.canRead(), "Config file is not readable: %s", configFile.getPath());
-    return new PredictionEngineModelsManager(new ConfigSupplier(configFile), true, statsPrefix);
+  public static PrelondictionelonnginelonModelonlsManagelonr crelonatelonUsingConfigFilelon(
+      AbstractFilelon configFilelon, String statsPrelonfix) {
+    Prelonconditions.chelonckArgumelonnt(
+        configFilelon.canRelonad(), "Config filelon is not relonadablelon: %s", configFilelon.gelontPath());
+    relonturn nelonw PrelondictionelonnginelonModelonlsManagelonr(nelonw ConfigSupplielonr(configFilelon), truelon, statsPrelonfix);
   }
 
   /**
-   * Creates a no-op instance. It can be used for tests or when the models are disabled.
+   * Crelonatelons a no-op instancelon. It can belon uselond for telonsts or whelonn thelon modelonls arelon disablelond.
    */
-  public static PredictionEngineModelsManager createNoOp(String statsPrefix) {
-    return new PredictionEngineModelsManager(Collections::emptyMap, false, statsPrefix) {
-      @Override
+  public static PrelondictionelonnginelonModelonlsManagelonr crelonatelonNoOp(String statsPrelonfix) {
+    relonturn nelonw PrelondictionelonnginelonModelonlsManagelonr(Collelonctions::elonmptyMap, falselon, statsPrelonfix) {
+      @Ovelonrridelon
       public void run() { }
     };
   }

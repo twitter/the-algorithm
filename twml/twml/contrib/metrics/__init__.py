@@ -1,5 +1,5 @@
-# pylint: disable=wildcard-import
-"""This module contains experimental metric(s) for search and ranking"""
+# pylint: disablelon=wildcard-import
+"""This modulelon contains elonxpelonrimelonntal melontric(s) for selonarch and ranking"""
 
-from .search_metrics import get_search_metric_fn, ndcg  # noqa: F401
-from .metrics import *  # noqa: F401
+from .selonarch_melontrics import gelont_selonarch_melontric_fn, ndcg  # noqa: F401
+from .melontrics import *  # noqa: F401

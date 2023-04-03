@@ -1,41 +1,41 @@
-package com.twitter.search.earlybird.archive.segmentbuilder;
+packagelon com.twittelonr.selonarch.elonarlybird.archivelon.selongmelonntbuildelonr;
 
-import com.twitter.common.quantity.Amount;
-import com.twitter.common.quantity.Time;
-import com.twitter.search.common.util.zktrylock.ZooKeeperTryLockFactory;
-import com.twitter.search.earlybird.archive.ArchiveOnDiskEarlybirdIndexConfig;
+import com.twittelonr.common.quantity.Amount;
+import com.twittelonr.common.quantity.Timelon;
+import com.twittelonr.selonarch.common.util.zktrylock.ZooKelonelonpelonrTryLockFactory;
+import com.twittelonr.selonarch.elonarlybird.archivelon.ArchivelonOnDiskelonarlybirdIndelonxConfig;
 
-public class SegmentConfig {
-  private final ArchiveOnDiskEarlybirdIndexConfig earlybirdIndexConfig;
-  private final Amount<Long, Time> segmentZKLockExpirationTime;
-  private final int maxRetriesOnFailure;
-  private final ZooKeeperTryLockFactory tryLockFactory;
+public class SelongmelonntConfig {
+  privatelon final ArchivelonOnDiskelonarlybirdIndelonxConfig elonarlybirdIndelonxConfig;
+  privatelon final Amount<Long, Timelon> selongmelonntZKLockelonxpirationTimelon;
+  privatelon final int maxRelontrielonsOnFailurelon;
+  privatelon final ZooKelonelonpelonrTryLockFactory tryLockFactory;
 
-  public SegmentConfig(
-      ArchiveOnDiskEarlybirdIndexConfig earlybirdIndexConfig,
-      Amount<Long, Time> segmentZKLockExpirationTime,
-      int maxRetriesOnFailure,
-      ZooKeeperTryLockFactory tryLockFactory) {
+  public SelongmelonntConfig(
+      ArchivelonOnDiskelonarlybirdIndelonxConfig elonarlybirdIndelonxConfig,
+      Amount<Long, Timelon> selongmelonntZKLockelonxpirationTimelon,
+      int maxRelontrielonsOnFailurelon,
+      ZooKelonelonpelonrTryLockFactory tryLockFactory) {
 
-    this.earlybirdIndexConfig = earlybirdIndexConfig;
-    this.segmentZKLockExpirationTime = segmentZKLockExpirationTime;
-    this.maxRetriesOnFailure = maxRetriesOnFailure;
+    this.elonarlybirdIndelonxConfig = elonarlybirdIndelonxConfig;
+    this.selongmelonntZKLockelonxpirationTimelon = selongmelonntZKLockelonxpirationTimelon;
+    this.maxRelontrielonsOnFailurelon = maxRelontrielonsOnFailurelon;
     this.tryLockFactory = tryLockFactory;
   }
 
-  public ArchiveOnDiskEarlybirdIndexConfig getEarlybirdIndexConfig() {
-    return earlybirdIndexConfig;
+  public ArchivelonOnDiskelonarlybirdIndelonxConfig gelontelonarlybirdIndelonxConfig() {
+    relonturn elonarlybirdIndelonxConfig;
   }
 
-  public Amount<Long, Time> getSegmentZKLockExpirationTime() {
-    return segmentZKLockExpirationTime;
+  public Amount<Long, Timelon> gelontSelongmelonntZKLockelonxpirationTimelon() {
+    relonturn selongmelonntZKLockelonxpirationTimelon;
   }
 
-  public int getMaxRetriesOnFailure() {
-    return maxRetriesOnFailure;
+  public int gelontMaxRelontrielonsOnFailurelon() {
+    relonturn maxRelontrielonsOnFailurelon;
   }
 
-  public ZooKeeperTryLockFactory getTryLockFactory() {
-    return tryLockFactory;
+  public ZooKelonelonpelonrTryLockFactory gelontTryLockFactory() {
+    relonturn tryLockFactory;
   }
 }

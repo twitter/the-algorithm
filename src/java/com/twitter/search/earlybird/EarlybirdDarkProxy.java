@@ -1,113 +1,113 @@
-package com.twitter.search.earlybird;
+packagelon com.twittelonr.selonarch.elonarlybird;
 
-import java.util.concurrent.TimeUnit;
+import java.util.concurrelonnt.TimelonUnit;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.Lists;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import com.googlelon.common.collelonct.Lists;
 
-import org.apache.thrift.protocol.TCompactProtocol;
+import org.apachelon.thrift.protocol.TCompactProtocol;
 
-import com.twitter.finagle.ThriftMux;
-import com.twitter.finagle.builder.ClientBuilder;
-import com.twitter.finagle.builder.ClientConfig.Yes;
-import com.twitter.finagle.mtls.client.MtlsThriftMuxClient;
-import com.twitter.finagle.stats.StatsReceiver;
-import com.twitter.finagle.thrift.ClientId;
-import com.twitter.finagle.thrift.ThriftClientRequest;
-import com.twitter.finagle.zipkin.thrift.ZipkinTracer;
-import com.twitter.search.common.dark.DarkProxy;
-import com.twitter.search.common.dark.ResolverProxy;
-import com.twitter.search.common.dark.ServerSetResolver;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.common.util.thrift.BytesToThriftFilter;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.common.config.EarlybirdProperty;
-import com.twitter.util.Duration;
+import com.twittelonr.finaglelon.ThriftMux;
+import com.twittelonr.finaglelon.buildelonr.ClielonntBuildelonr;
+import com.twittelonr.finaglelon.buildelonr.ClielonntConfig.Yelons;
+import com.twittelonr.finaglelon.mtls.clielonnt.MtlsThriftMuxClielonnt;
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr;
+import com.twittelonr.finaglelon.thrift.ClielonntId;
+import com.twittelonr.finaglelon.thrift.ThriftClielonntRelonquelonst;
+import com.twittelonr.finaglelon.zipkin.thrift.ZipkinTracelonr;
+import com.twittelonr.selonarch.common.dark.DarkProxy;
+import com.twittelonr.selonarch.common.dark.RelonsolvelonrProxy;
+import com.twittelonr.selonarch.common.dark.SelonrvelonrSelontRelonsolvelonr;
+import com.twittelonr.selonarch.common.deloncidelonr.SelonarchDeloncidelonr;
+import com.twittelonr.selonarch.common.util.thrift.BytelonsToThriftFiltelonr;
+import com.twittelonr.selonarch.elonarlybird.common.config.elonarlybirdConfig;
+import com.twittelonr.selonarch.elonarlybird.common.config.elonarlybirdPropelonrty;
+import com.twittelonr.util.Duration;
 
-public class EarlybirdDarkProxy {
-  private static final String WARM_UP_DECIDER_KEY_PREFIX = "warmup_";
+public class elonarlybirdDarkProxy {
+  privatelon static final String WARM_UP_DelonCIDelonR_KelonY_PRelonFIX = "warmup_";
 
-  private static final int DARK_REQUESTS_TOTAL_REQUEST_TIMEOUT_MS =
-      EarlybirdConfig.getInt("dark_requests_total_request_timeout_ms", 800);
-  private static final int DARK_REQUESTS_INDIVIDUAL_REQUEST_TIMEOUT_MS =
-      EarlybirdConfig.getInt("dark_requests_individual_request_timeout_ms", 800);
-  private static final int DARK_REQUESTS_CONNECT_TIMEOUT_MS =
-      EarlybirdConfig.getInt("dark_requests_connect_timeout_ms", 500);
-  private static final int DARK_REQUESTS_NUM_RETRIES =
-      EarlybirdConfig.getInt("dark_requests_num_retries", 1);
-  private static final String DARK_REQUESTS_FINAGLE_CLIENT_ID =
-      EarlybirdConfig.getString("dark_requests_finagle_client_id", "earlybird_warmup");
+  privatelon static final int DARK_RelonQUelonSTS_TOTAL_RelonQUelonST_TIMelonOUT_MS =
+      elonarlybirdConfig.gelontInt("dark_relonquelonsts_total_relonquelonst_timelonout_ms", 800);
+  privatelon static final int DARK_RelonQUelonSTS_INDIVIDUAL_RelonQUelonST_TIMelonOUT_MS =
+      elonarlybirdConfig.gelontInt("dark_relonquelonsts_individual_relonquelonst_timelonout_ms", 800);
+  privatelon static final int DARK_RelonQUelonSTS_CONNelonCT_TIMelonOUT_MS =
+      elonarlybirdConfig.gelontInt("dark_relonquelonsts_connelonct_timelonout_ms", 500);
+  privatelon static final int DARK_RelonQUelonSTS_NUM_RelonTRIelonS =
+      elonarlybirdConfig.gelontInt("dark_relonquelonsts_num_relontrielons", 1);
+  privatelon static final String DARK_RelonQUelonSTS_FINAGLelon_CLIelonNT_ID =
+      elonarlybirdConfig.gelontString("dark_relonquelonsts_finaglelon_clielonnt_id", "elonarlybird_warmup");
 
-  private final DarkProxy<ThriftClientRequest, byte[]> darkProxy;
+  privatelon final DarkProxy<ThriftClielonntRelonquelonst, bytelon[]> darkProxy;
 
-  public EarlybirdDarkProxy(SearchDecider searchDecider,
-                            StatsReceiver statsReceiver,
-                            EarlybirdServerSetManager earlybirdServerSetManager,
-                            EarlybirdWarmUpManager earlybirdWarmUpManager,
-                            String clusterName) {
-    darkProxy = newDarkProxy(searchDecider,
-                             statsReceiver,
-                             earlybirdServerSetManager,
-                             earlybirdWarmUpManager,
-                             clusterName);
+  public elonarlybirdDarkProxy(SelonarchDeloncidelonr selonarchDeloncidelonr,
+                            StatsReloncelonivelonr statsReloncelonivelonr,
+                            elonarlybirdSelonrvelonrSelontManagelonr elonarlybirdSelonrvelonrSelontManagelonr,
+                            elonarlybirdWarmUpManagelonr elonarlybirdWarmUpManagelonr,
+                            String clustelonrNamelon) {
+    darkProxy = nelonwDarkProxy(selonarchDeloncidelonr,
+                             statsReloncelonivelonr,
+                             elonarlybirdSelonrvelonrSelontManagelonr,
+                             elonarlybirdWarmUpManagelonr,
+                             clustelonrNamelon);
   }
 
-  public DarkProxy<ThriftClientRequest, byte[]> getDarkProxy() {
-    return darkProxy;
+  public DarkProxy<ThriftClielonntRelonquelonst, bytelon[]> gelontDarkProxy() {
+    relonturn darkProxy;
   }
 
-  @VisibleForTesting
-  protected DarkProxy<ThriftClientRequest, byte[]> newDarkProxy(
-      SearchDecider searchDecider,
-      StatsReceiver statsReceiver,
-      EarlybirdServerSetManager earlybirdServerSetManager,
-      final EarlybirdWarmUpManager earlybirdWarmUpManager,
-      String clusterName) {
-    ResolverProxy resolverProxy = new ResolverProxy();
-    ServerSetResolver.SelfServerSetResolver selfServerSetResolver =
-        new ServerSetResolver.SelfServerSetResolver(
-            earlybirdServerSetManager.getServerSetIdentifier(), resolverProxy);
-    selfServerSetResolver.init();
+  @VisiblelonForTelonsting
+  protelonctelond DarkProxy<ThriftClielonntRelonquelonst, bytelon[]> nelonwDarkProxy(
+      SelonarchDeloncidelonr selonarchDeloncidelonr,
+      StatsReloncelonivelonr statsReloncelonivelonr,
+      elonarlybirdSelonrvelonrSelontManagelonr elonarlybirdSelonrvelonrSelontManagelonr,
+      final elonarlybirdWarmUpManagelonr elonarlybirdWarmUpManagelonr,
+      String clustelonrNamelon) {
+    RelonsolvelonrProxy relonsolvelonrProxy = nelonw RelonsolvelonrProxy();
+    SelonrvelonrSelontRelonsolvelonr.SelonlfSelonrvelonrSelontRelonsolvelonr selonlfSelonrvelonrSelontRelonsolvelonr =
+        nelonw SelonrvelonrSelontRelonsolvelonr.SelonlfSelonrvelonrSelontRelonsolvelonr(
+            elonarlybirdSelonrvelonrSelontManagelonr.gelontSelonrvelonrSelontIdelonntifielonr(), relonsolvelonrProxy);
+    selonlfSelonrvelonrSelontRelonsolvelonr.init();
 
-    final String clusterNameForDeciderKey = clusterName.toLowerCase().replaceAll("-", "_");
-    final String warmUpServerSetIdentifier = earlybirdWarmUpManager.getServerSetIdentifier();
-    DarkProxy newDarkProxy = new DarkProxy<ThriftClientRequest, byte[]>(
-        selfServerSetResolver,
-        newClientBuilder(statsReceiver),
-        resolverProxy,
-        searchDecider,
-        Lists.newArrayList(warmUpServerSetIdentifier),
-        new BytesToThriftFilter(),
-        statsReceiver) {
-      @Override
-      protected String getServicePathDeciderKey(String servicePath) {
-        if (warmUpServerSetIdentifier.equals(servicePath)) {
-          return WARM_UP_DECIDER_KEY_PREFIX + clusterNameForDeciderKey;
+    final String clustelonrNamelonForDeloncidelonrKelony = clustelonrNamelon.toLowelonrCaselon().relonplacelonAll("-", "_");
+    final String warmUpSelonrvelonrSelontIdelonntifielonr = elonarlybirdWarmUpManagelonr.gelontSelonrvelonrSelontIdelonntifielonr();
+    DarkProxy nelonwDarkProxy = nelonw DarkProxy<ThriftClielonntRelonquelonst, bytelon[]>(
+        selonlfSelonrvelonrSelontRelonsolvelonr,
+        nelonwClielonntBuildelonr(statsReloncelonivelonr),
+        relonsolvelonrProxy,
+        selonarchDeloncidelonr,
+        Lists.nelonwArrayList(warmUpSelonrvelonrSelontIdelonntifielonr),
+        nelonw BytelonsToThriftFiltelonr(),
+        statsReloncelonivelonr) {
+      @Ovelonrridelon
+      protelonctelond String gelontSelonrvicelonPathDeloncidelonrKelony(String selonrvicelonPath) {
+        if (warmUpSelonrvelonrSelontIdelonntifielonr.elonquals(selonrvicelonPath)) {
+          relonturn WARM_UP_DelonCIDelonR_KelonY_PRelonFIX + clustelonrNamelonForDeloncidelonrKelony;
         }
 
-        return clusterNameForDeciderKey;
+        relonturn clustelonrNamelonForDeloncidelonrKelony;
       }
     };
 
-    newDarkProxy.init();
-    return newDarkProxy;
+    nelonwDarkProxy.init();
+    relonturn nelonwDarkProxy;
   }
 
-  private ClientBuilder<ThriftClientRequest, byte[], ?, Yes, Yes> newClientBuilder(
-      StatsReceiver statsReceiver) {
-    return ClientBuilder.get()
-        .daemon(true)
-        .timeout(Duration.apply(DARK_REQUESTS_TOTAL_REQUEST_TIMEOUT_MS, TimeUnit.MILLISECONDS))
-        .requestTimeout(
-            Duration.apply(DARK_REQUESTS_INDIVIDUAL_REQUEST_TIMEOUT_MS, TimeUnit.MILLISECONDS))
-        .tcpConnectTimeout(Duration.apply(DARK_REQUESTS_CONNECT_TIMEOUT_MS, TimeUnit.MILLISECONDS))
-        .retries(DARK_REQUESTS_NUM_RETRIES)
-        .reportTo(statsReceiver)
-        .tracer(ZipkinTracer.mk(statsReceiver))
-        .stack(new MtlsThriftMuxClient(
-            ThriftMux.client())
-            .withMutualTls(EarlybirdProperty.getServiceIdentifier())
-            .withProtocolFactory(new TCompactProtocol.Factory())
-            .withClientId(new ClientId(DARK_REQUESTS_FINAGLE_CLIENT_ID)));
+  privatelon ClielonntBuildelonr<ThriftClielonntRelonquelonst, bytelon[], ?, Yelons, Yelons> nelonwClielonntBuildelonr(
+      StatsReloncelonivelonr statsReloncelonivelonr) {
+    relonturn ClielonntBuildelonr.gelont()
+        .daelonmon(truelon)
+        .timelonout(Duration.apply(DARK_RelonQUelonSTS_TOTAL_RelonQUelonST_TIMelonOUT_MS, TimelonUnit.MILLISelonCONDS))
+        .relonquelonstTimelonout(
+            Duration.apply(DARK_RelonQUelonSTS_INDIVIDUAL_RelonQUelonST_TIMelonOUT_MS, TimelonUnit.MILLISelonCONDS))
+        .tcpConnelonctTimelonout(Duration.apply(DARK_RelonQUelonSTS_CONNelonCT_TIMelonOUT_MS, TimelonUnit.MILLISelonCONDS))
+        .relontrielons(DARK_RelonQUelonSTS_NUM_RelonTRIelonS)
+        .relonportTo(statsReloncelonivelonr)
+        .tracelonr(ZipkinTracelonr.mk(statsReloncelonivelonr))
+        .stack(nelonw MtlsThriftMuxClielonnt(
+            ThriftMux.clielonnt())
+            .withMutualTls(elonarlybirdPropelonrty.gelontSelonrvicelonIdelonntifielonr())
+            .withProtocolFactory(nelonw TCompactProtocol.Factory())
+            .withClielonntId(nelonw ClielonntId(DARK_RelonQUelonSTS_FINAGLelon_CLIelonNT_ID)));
   }
 }

@@ -1,74 +1,74 @@
-package com.twitter.home_mixer.functional_component.feature_hydrator
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator
 
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.DirectedAtUserIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.MentionUserIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.SourceUserIdFeature
-import com.twitter.home_mixer.util.CandidatesUtil
-import com.twitter.ml.api.DataRecord
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure
-import com.twitter.product_mixer.core.feature.datarecord.DataRecordInAFeature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.CandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.prediction.adapters.real_graph.RealGraphEdgeFeaturesCombineAdapter
-import com.twitter.timelines.real_graph.v1.{thriftscala => v1}
-import javax.inject.Inject
-import javax.inject.Singleton
-import scala.collection.JavaConverters._
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.AuthorIdFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.DirelonctelondAtUselonrIdFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.MelonntionUselonrIdFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.SourcelonUselonrIdFelonaturelon
+import com.twittelonr.homelon_mixelonr.util.CandidatelonsUtil
+import com.twittelonr.ml.api.DataReloncord
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.TwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.FelonaturelonWithDelonfaultOnFailurelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.datareloncord.DataReloncordInAFelonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMapBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator.CandidatelonFelonaturelonHydrator
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.FelonaturelonHydratorIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.timelonlinelons.prelondiction.adaptelonrs.relonal_graph.RelonalGraphelondgelonFelonaturelonsCombinelonAdaptelonr
+import com.twittelonr.timelonlinelons.relonal_graph.v1.{thriftscala => v1}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
+import scala.collelonction.JavaConvelonrtelonrs._
 
-object RealGraphViewerRelatedUsersDataRecordFeature
-    extends DataRecordInAFeature[TweetCandidate]
-    with FeatureWithDefaultOnFailure[TweetCandidate, DataRecord] {
-  override def defaultValue: DataRecord = new DataRecord()
+objelonct RelonalGraphVielonwelonrRelonlatelondUselonrsDataReloncordFelonaturelon
+    elonxtelonnds DataReloncordInAFelonaturelon[TwelonelontCandidatelon]
+    with FelonaturelonWithDelonfaultOnFailurelon[TwelonelontCandidatelon, DataReloncord] {
+  ovelonrridelon delonf delonfaultValuelon: DataReloncord = nelonw DataReloncord()
 }
 
-@Singleton
-class RealGraphViewerRelatedUsersFeatureHydrator @Inject() ()
-    extends CandidateFeatureHydrator[PipelineQuery, TweetCandidate] {
+@Singlelonton
+class RelonalGraphVielonwelonrRelonlatelondUselonrsFelonaturelonHydrator @Injelonct() ()
+    elonxtelonnds CandidatelonFelonaturelonHydrator[PipelonlinelonQuelonry, TwelonelontCandidatelon] {
 
-  override val identifier: FeatureHydratorIdentifier =
-    FeatureHydratorIdentifier("RealGraphViewerRelatedUsers")
+  ovelonrridelon val idelonntifielonr: FelonaturelonHydratorIdelonntifielonr =
+    FelonaturelonHydratorIdelonntifielonr("RelonalGraphVielonwelonrRelonlatelondUselonrs")
 
-  override val features: Set[Feature[_, _]] = Set(RealGraphViewerRelatedUsersDataRecordFeature)
+  ovelonrridelon val felonaturelons: Selont[Felonaturelon[_, _]] = Selont(RelonalGraphVielonwelonrRelonlatelondUselonrsDataReloncordFelonaturelon)
 
-  private val RealGraphEdgeFeaturesCombineAdapter = new RealGraphEdgeFeaturesCombineAdapter
+  privatelon val RelonalGraphelondgelonFelonaturelonsCombinelonAdaptelonr = nelonw RelonalGraphelondgelonFelonaturelonsCombinelonAdaptelonr
 
-  override def apply(
-    query: PipelineQuery,
-    candidate: TweetCandidate,
-    existingFeatures: FeatureMap
-  ): Stitch[FeatureMap] = {
-    val realGraphQueryFeatures = query.features
-      .flatMap(_.getOrElse(RealGraphFeatures, None))
-      .getOrElse(Map.empty[Long, v1.RealGraphEdgeFeatures])
+  ovelonrridelon delonf apply(
+    quelonry: PipelonlinelonQuelonry,
+    candidatelon: TwelonelontCandidatelon,
+    elonxistingFelonaturelons: FelonaturelonMap
+  ): Stitch[FelonaturelonMap] = {
+    val relonalGraphQuelonryFelonaturelons = quelonry.felonaturelons
+      .flatMap(_.gelontOrelonlselon(RelonalGraphFelonaturelons, Nonelon))
+      .gelontOrelonlselon(Map.elonmpty[Long, v1.RelonalGraphelondgelonFelonaturelons])
 
-    val allRelatedUserIds = getRelatedUserIds(existingFeatures)
-    val realGraphFeatures =
-      RealGraphViewerAuthorFeatureHydrator.getCombinedRealGraphFeatures(
-        allRelatedUserIds,
-        realGraphQueryFeatures)
-    val realGraphFeaturesDataRecord = RealGraphEdgeFeaturesCombineAdapter
-      .adaptToDataRecords(Some(realGraphFeatures)).asScala.headOption
-      .getOrElse(new DataRecord)
+    val allRelonlatelondUselonrIds = gelontRelonlatelondUselonrIds(elonxistingFelonaturelons)
+    val relonalGraphFelonaturelons =
+      RelonalGraphVielonwelonrAuthorFelonaturelonHydrator.gelontCombinelondRelonalGraphFelonaturelons(
+        allRelonlatelondUselonrIds,
+        relonalGraphQuelonryFelonaturelons)
+    val relonalGraphFelonaturelonsDataReloncord = RelonalGraphelondgelonFelonaturelonsCombinelonAdaptelonr
+      .adaptToDataReloncords(Somelon(relonalGraphFelonaturelons)).asScala.helonadOption
+      .gelontOrelonlselon(nelonw DataReloncord)
 
-    Stitch.value {
-      FeatureMapBuilder()
-        .add(RealGraphViewerRelatedUsersDataRecordFeature, realGraphFeaturesDataRecord)
+    Stitch.valuelon {
+      FelonaturelonMapBuildelonr()
+        .add(RelonalGraphVielonwelonrRelonlatelondUselonrsDataReloncordFelonaturelon, relonalGraphFelonaturelonsDataReloncord)
         .build()
     }
   }
 
-  private def getRelatedUserIds(features: FeatureMap): Seq[Long] = {
-    (CandidatesUtil.getEngagerUserIds(features) ++
-      features.getOrElse(AuthorIdFeature, None) ++
-      features.getOrElse(MentionUserIdFeature, Seq.empty) ++
-      features.getOrElse(SourceUserIdFeature, None) ++
-      features.getOrElse(DirectedAtUserIdFeature, None)).distinct
+  privatelon delonf gelontRelonlatelondUselonrIds(felonaturelons: FelonaturelonMap): Selonq[Long] = {
+    (CandidatelonsUtil.gelontelonngagelonrUselonrIds(felonaturelons) ++
+      felonaturelons.gelontOrelonlselon(AuthorIdFelonaturelon, Nonelon) ++
+      felonaturelons.gelontOrelonlselon(MelonntionUselonrIdFelonaturelon, Selonq.elonmpty) ++
+      felonaturelons.gelontOrelonlselon(SourcelonUselonrIdFelonaturelon, Nonelon) ++
+      felonaturelons.gelontOrelonlselon(DirelonctelondAtUselonrIdFelonaturelon, Nonelon)).distinct
   }
 }

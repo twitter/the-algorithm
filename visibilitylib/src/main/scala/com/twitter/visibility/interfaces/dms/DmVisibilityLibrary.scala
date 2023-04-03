@@ -1,88 +1,88 @@
-package com.twitter.visibility.interfaces.dms
+packagelon com.twittelonr.visibility.intelonrfacelons.dms
 
-import com.twitter.servo.util.Gate
-import com.twitter.stitch.Stitch
-import com.twitter.strato.client.{Client => StratoClient}
-import com.twitter.visibility.VisibilityLibrary
-import com.twitter.visibility.builder.VisibilityResult
-import com.twitter.visibility.builder.users.AuthorFeatures
-import com.twitter.visibility.common.DmId
-import com.twitter.visibility.common.UserId
-import com.twitter.visibility.common.UserSource
-import com.twitter.visibility.features.FeatureMap
-import com.twitter.visibility.models.ContentId.{DmId => DmContentId}
-import com.twitter.visibility.models.SafetyLevel.DirectMessages
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.models.ViewerContext
-import com.twitter.visibility.rules.Drop
-import com.twitter.visibility.rules.Reason.DeactivatedAuthor
-import com.twitter.visibility.rules.Reason.ErasedAuthor
-import com.twitter.visibility.rules.Reason.Nsfw
+import com.twittelonr.selonrvo.util.Gatelon
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.strato.clielonnt.{Clielonnt => StratoClielonnt}
+import com.twittelonr.visibility.VisibilityLibrary
+import com.twittelonr.visibility.buildelonr.VisibilityRelonsult
+import com.twittelonr.visibility.buildelonr.uselonrs.AuthorFelonaturelons
+import com.twittelonr.visibility.common.DmId
+import com.twittelonr.visibility.common.UselonrId
+import com.twittelonr.visibility.common.UselonrSourcelon
+import com.twittelonr.visibility.felonaturelons.FelonaturelonMap
+import com.twittelonr.visibility.modelonls.ContelonntId.{DmId => DmContelonntId}
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.DirelonctMelonssagelons
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl
+import com.twittelonr.visibility.modelonls.VielonwelonrContelonxt
+import com.twittelonr.visibility.rulelons.Drop
+import com.twittelonr.visibility.rulelons.Relonason.DelonactivatelondAuthor
+import com.twittelonr.visibility.rulelons.Relonason.elonraselondAuthor
+import com.twittelonr.visibility.rulelons.Relonason.Nsfw
 
-object DmVisibilityLibrary {
-  type Type = DmVisibilityRequest => Stitch[DmVisibilityResponse]
+objelonct DmVisibilityLibrary {
+  typelon Typelon = DmVisibilityRelonquelonst => Stitch[DmVisibilityRelonsponselon]
 
-  case class DmVisibilityRequest(
+  caselon class DmVisibilityRelonquelonst(
     dmId: DmId,
-    dmAuthorUserId: UserId,
-    viewerContext: ViewerContext)
+    dmAuthorUselonrId: UselonrId,
+    vielonwelonrContelonxt: VielonwelonrContelonxt)
 
-  case class DmVisibilityResponse(isMessageNsfw: Boolean)
+  caselon class DmVisibilityRelonsponselon(isMelonssagelonNsfw: Boolelonan)
 
-  val DefaultSafetyLevel: SafetyLevel = DirectMessages
+  val DelonfaultSafelontyLelonvelonl: SafelontyLelonvelonl = DirelonctMelonssagelons
 
-  def apply(
+  delonf apply(
     visibilityLibrary: VisibilityLibrary,
-    stratoClient: StratoClient,
-    userSource: UserSource,
-    enableVfFeatureHydrationInShim: Gate[Unit] = Gate.False
-  ): Type = {
-    val libraryStatsReceiver = visibilityLibrary.statsReceiver
-    val vfEngineCounter = libraryStatsReceiver.counter("vf_engine_requests")
+    stratoClielonnt: StratoClielonnt,
+    uselonrSourcelon: UselonrSourcelon,
+    elonnablelonVfFelonaturelonHydrationInShim: Gatelon[Unit] = Gatelon.Falselon
+  ): Typelon = {
+    val libraryStatsReloncelonivelonr = visibilityLibrary.statsReloncelonivelonr
+    val vfelonnginelonCountelonr = libraryStatsReloncelonivelonr.countelonr("vf_elonnginelon_relonquelonsts")
 
-    val authorFeatures = new AuthorFeatures(userSource, libraryStatsReceiver)
+    val authorFelonaturelons = nelonw AuthorFelonaturelons(uselonrSourcelon, libraryStatsReloncelonivelonr)
 
-    { r: DmVisibilityRequest =>
-      vfEngineCounter.incr()
+    { r: DmVisibilityRelonquelonst =>
+      vfelonnginelonCountelonr.incr()
 
-      val contentId = DmContentId(r.dmId)
-      val dmAuthorUserId = r.dmAuthorUserId
-      val isVfFeatureHydrationEnabled = enableVfFeatureHydrationInShim()
+      val contelonntId = DmContelonntId(r.dmId)
+      val dmAuthorUselonrId = r.dmAuthorUselonrId
+      val isVfFelonaturelonHydrationelonnablelond = elonnablelonVfFelonaturelonHydrationInShim()
 
-      val featureMap =
-        visibilityLibrary.featureMapBuilder(
-          Seq(authorFeatures.forAuthorId(dmAuthorUserId))
+      val felonaturelonMap =
+        visibilityLibrary.felonaturelonMapBuildelonr(
+          Selonq(authorFelonaturelons.forAuthorId(dmAuthorUselonrId))
         )
 
-      val resp = if (isVfFeatureHydrationEnabled) {
-        FeatureMap.resolve(featureMap, libraryStatsReceiver).flatMap { resolvedFeatureMap =>
-          visibilityLibrary.runRuleEngine(
-            contentId,
-            resolvedFeatureMap,
-            r.viewerContext,
-            DefaultSafetyLevel
+      val relonsp = if (isVfFelonaturelonHydrationelonnablelond) {
+        FelonaturelonMap.relonsolvelon(felonaturelonMap, libraryStatsReloncelonivelonr).flatMap { relonsolvelondFelonaturelonMap =>
+          visibilityLibrary.runRulelonelonnginelon(
+            contelonntId,
+            relonsolvelondFelonaturelonMap,
+            r.vielonwelonrContelonxt,
+            DelonfaultSafelontyLelonvelonl
           )
         }
-      } else {
+      } elonlselon {
         visibilityLibrary
-          .runRuleEngine(
-            contentId,
-            featureMap,
-            r.viewerContext,
-            DefaultSafetyLevel
+          .runRulelonelonnginelon(
+            contelonntId,
+            felonaturelonMap,
+            r.vielonwelonrContelonxt,
+            DelonfaultSafelontyLelonvelonl
           )
       }
 
-      resp.map(buildResponse)
+      relonsp.map(buildRelonsponselon)
     }
   }
 
-  private[this] def buildResponse(visibilityResult: VisibilityResult) =
-    visibilityResult.verdict match {
-      case Drop(Nsfw | ErasedAuthor | DeactivatedAuthor, _) =>
-        DmVisibilityResponse(isMessageNsfw = true)
-      case _ =>
-        DmVisibilityResponse(isMessageNsfw = false)
+  privatelon[this] delonf buildRelonsponselon(visibilityRelonsult: VisibilityRelonsult) =
+    visibilityRelonsult.velonrdict match {
+      caselon Drop(Nsfw | elonraselondAuthor | DelonactivatelondAuthor, _) =>
+        DmVisibilityRelonsponselon(isMelonssagelonNsfw = truelon)
+      caselon _ =>
+        DmVisibilityRelonsponselon(isMelonssagelonNsfw = falselon)
     }
 
 }

@@ -1,31 +1,31 @@
-package com.twitter.recosinjector.filters
+packagelon com.twittelonr.reloncosinjelonctor.filtelonrs
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.recosinjector.clients.Tweetypie
-import com.twitter.util.Future
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.reloncosinjelonctor.clielonnts.Twelonelontypielon
+import com.twittelonr.util.Futurelon
 
-class TweetFilter(
-  tweetypie: Tweetypie
+class TwelonelontFiltelonr(
+  twelonelontypielon: Twelonelontypielon
 )(
-  implicit statsReceiver: StatsReceiver) {
-  private val stats = statsReceiver.scope(this.getClass.getSimpleName)
-  private val requests = stats.counter("requests")
-  private val filtered = stats.counter("filtered")
+  implicit statsReloncelonivelonr: StatsReloncelonivelonr) {
+  privatelon val stats = statsReloncelonivelonr.scopelon(this.gelontClass.gelontSimplelonNamelon)
+  privatelon val relonquelonsts = stats.countelonr("relonquelonsts")
+  privatelon val filtelonrelond = stats.countelonr("filtelonrelond")
 
   /**
-   * Query Tweetypie to see if we can fetch a tweet object successfully. TweetyPie applies a safety
-   * filter and will not return the tweet object if the filter does not pass.
+   * Quelonry Twelonelontypielon to selonelon if welon can felontch a twelonelont objelonct succelonssfully. TwelonelontyPielon applielons a safelonty
+   * filtelonr and will not relonturn thelon twelonelont objelonct if thelon filtelonr doelons not pass.
    */
-  def filterForTweetypieSafetyLevel(tweetId: Long): Future[Boolean] = {
-    requests.incr()
-    tweetypie
-      .getTweet(tweetId)
+  delonf filtelonrForTwelonelontypielonSafelontyLelonvelonl(twelonelontId: Long): Futurelon[Boolelonan] = {
+    relonquelonsts.incr()
+    twelonelontypielon
+      .gelontTwelonelont(twelonelontId)
       .map {
-        case Some(_) =>
-          true
-        case _ =>
-          filtered.incr()
-          false
+        caselon Somelon(_) =>
+          truelon
+        caselon _ =>
+          filtelonrelond.incr()
+          falselon
       }
   }
 }

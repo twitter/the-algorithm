@@ -1,66 +1,66 @@
-package com.twitter.search.earlybird_root.filters;
+packagelon com.twittelonr.selonarch.elonarlybird_root.filtelonrs;
 
-import javax.inject.Inject;
+import javax.injelonct.Injelonct;
 
-import com.google.common.annotations.VisibleForTesting;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
 
-import com.twitter.common.util.Clock;
-import com.twitter.finagle.Filter;
-import com.twitter.finagle.Service;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.earlybird.common.EarlybirdRequestUtil;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.earlybird_root.common.QueryParsingUtils;
-import com.twitter.search.earlybird_root.common.TwitterContextProvider;
-import com.twitter.search.queryparser.query.QueryParserException;
-import com.twitter.util.Future;
+import com.twittelonr.common.util.Clock;
+import com.twittelonr.finaglelon.Filtelonr;
+import com.twittelonr.finaglelon.Selonrvicelon;
+import com.twittelonr.selonarch.common.deloncidelonr.SelonarchDeloncidelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.elonarlybird.common.elonarlybirdRelonquelonstUtil;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonquelonst;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
+import com.twittelonr.selonarch.elonarlybird_root.common.elonarlybirdRelonquelonstContelonxt;
+import com.twittelonr.selonarch.elonarlybird_root.common.QuelonryParsingUtils;
+import com.twittelonr.selonarch.elonarlybird_root.common.TwittelonrContelonxtProvidelonr;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.QuelonryParselonrelonxcelonption;
+import com.twittelonr.util.Futurelon;
 
 /**
- * Creates a new RequestContext from an EarlybirdRequest, and passes the RequestContext down to
- * the rest of the filter/service chain.
+ * Crelonatelons a nelonw RelonquelonstContelonxt from an elonarlybirdRelonquelonst, and passelons thelon RelonquelonstContelonxt down to
+ * thelon relonst of thelon filtelonr/selonrvicelon chain.
  */
-public class InitializeRequestContextFilter extends
-    Filter<EarlybirdRequest, EarlybirdResponse, EarlybirdRequestContext, EarlybirdResponse> {
+public class InitializelonRelonquelonstContelonxtFiltelonr elonxtelonnds
+    Filtelonr<elonarlybirdRelonquelonst, elonarlybirdRelonsponselon, elonarlybirdRelonquelonstContelonxt, elonarlybirdRelonsponselon> {
 
-  @VisibleForTesting
-  static final SearchCounter FAILED_QUERY_PARSING =
-      SearchCounter.export("initialize_request_context_filter_query_parsing_failure");
+  @VisiblelonForTelonsting
+  static final SelonarchCountelonr FAILelonD_QUelonRY_PARSING =
+      SelonarchCountelonr.elonxport("initializelon_relonquelonst_contelonxt_filtelonr_quelonry_parsing_failurelon");
 
-  private final SearchDecider decider;
-  private final TwitterContextProvider twitterContextProvider;
-  private final Clock clock;
+  privatelon final SelonarchDeloncidelonr deloncidelonr;
+  privatelon final TwittelonrContelonxtProvidelonr twittelonrContelonxtProvidelonr;
+  privatelon final Clock clock;
 
   /**
-   * The constructor of the filter.
+   * Thelon constructor of thelon filtelonr.
    */
-  @Inject
-  public InitializeRequestContextFilter(SearchDecider decider,
-                                        TwitterContextProvider twitterContextProvider,
+  @Injelonct
+  public InitializelonRelonquelonstContelonxtFiltelonr(SelonarchDeloncidelonr deloncidelonr,
+                                        TwittelonrContelonxtProvidelonr twittelonrContelonxtProvidelonr,
                                         Clock clock) {
-    this.decider = decider;
-    this.twitterContextProvider = twitterContextProvider;
+    this.deloncidelonr = deloncidelonr;
+    this.twittelonrContelonxtProvidelonr = twittelonrContelonxtProvidelonr;
     this.clock = clock;
   }
 
-  @Override
-  public Future<EarlybirdResponse> apply(
-      EarlybirdRequest request,
-      Service<EarlybirdRequestContext, EarlybirdResponse> service) {
+  @Ovelonrridelon
+  public Futurelon<elonarlybirdRelonsponselon> apply(
+      elonarlybirdRelonquelonst relonquelonst,
+      Selonrvicelon<elonarlybirdRelonquelonstContelonxt, elonarlybirdRelonsponselon> selonrvicelon) {
 
-    EarlybirdRequestUtil.recordClientClockDiff(request);
+    elonarlybirdRelonquelonstUtil.reloncordClielonntClockDiff(relonquelonst);
 
-    EarlybirdRequestContext requestContext;
+    elonarlybirdRelonquelonstContelonxt relonquelonstContelonxt;
     try {
-      requestContext = EarlybirdRequestContext.newContext(
-          request, decider, twitterContextProvider.get(), clock);
-    } catch (QueryParserException e) {
-      FAILED_QUERY_PARSING.increment();
-      return QueryParsingUtils.newClientErrorResponse(request, e);
+      relonquelonstContelonxt = elonarlybirdRelonquelonstContelonxt.nelonwContelonxt(
+          relonquelonst, deloncidelonr, twittelonrContelonxtProvidelonr.gelont(), clock);
+    } catch (QuelonryParselonrelonxcelonption elon) {
+      FAILelonD_QUelonRY_PARSING.increlonmelonnt();
+      relonturn QuelonryParsingUtils.nelonwClielonntelonrrorRelonsponselon(relonquelonst, elon);
     }
 
-    return service.apply(requestContext);
+    relonturn selonrvicelon.apply(relonquelonstContelonxt);
   }
 }

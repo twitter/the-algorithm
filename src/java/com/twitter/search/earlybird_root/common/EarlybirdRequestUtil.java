@@ -1,107 +1,107 @@
-package com.twitter.search.earlybird_root.common;
+packagelon com.twittelonr.selonarch.elonarlybird_root.common;
 
-import com.google.common.base.Optional;
+import com.googlelon.common.baselon.Optional;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.search.common.partitioning.snowflakeparser.SnowflakeIdParser;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.queryparser.query.Query;
-import com.twitter.search.queryparser.query.QueryParserException;
-import com.twitter.search.queryparser.util.IdTimeRanges;
+import com.twittelonr.selonarch.common.partitioning.snowflakelonparselonr.SnowflakelonIdParselonr;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonquelonst;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.Quelonry;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.QuelonryParselonrelonxcelonption;
+import com.twittelonr.selonarch.quelonryparselonr.util.IdTimelonRangelons;
 
-public final class EarlybirdRequestUtil {
-  private static final Logger LOG = LoggerFactory.getLogger(EarlybirdRequestUtil.class);
+public final class elonarlybirdRelonquelonstUtil {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(elonarlybirdRelonquelonstUtil.class);
 
-  private EarlybirdRequestUtil() {
+  privatelon elonarlybirdRelonquelonstUtil() {
   }
 
   /**
-   * Returns the max ID specified in the query. The max ID is determined based on the max_id
-   * operator, and the returned value is an inclusive max ID (that is, the returned response is
-   * allowed to have a tweet with this ID).
+   * Relonturns thelon max ID speloncifielond in thelon quelonry. Thelon max ID is delontelonrminelond baselond on thelon max_id
+   * opelonrator, and thelon relonturnelond valuelon is an inclusivelon max ID (that is, thelon relonturnelond relonsponselon is
+   * allowelond to havelon a twelonelont with this ID).
    *
-   * If the query is null, could not be parsed or does not have a max_id operator, Optional.absent()
-   * is returned.
+   * If thelon quelonry is null, could not belon parselond or doelons not havelon a max_id opelonrator, Optional.abselonnt()
+   * is relonturnelond.
    *
-   * @param query The query.
-   * @return The max ID specified in the given query (based on the max_id operator).
+   * @param quelonry Thelon quelonry.
+   * @relonturn Thelon max ID speloncifielond in thelon givelonn quelonry (baselond on thelon max_id opelonrator).
    */
-  public static Optional<Long> getRequestMaxId(Query query) {
-    if (query == null) {
-      return Optional.absent();
+  public static Optional<Long> gelontRelonquelonstMaxId(Quelonry quelonry) {
+    if (quelonry == null) {
+      relonturn Optional.abselonnt();
     }
 
-    IdTimeRanges idTimeRanges = null;
+    IdTimelonRangelons idTimelonRangelons = null;
     try {
-      idTimeRanges = IdTimeRanges.fromQuery(query);
-    } catch (QueryParserException e) {
-      LOG.warn("Exception while getting max_id/until_time from query: " + query, e);
+      idTimelonRangelons = IdTimelonRangelons.fromQuelonry(quelonry);
+    } catch (QuelonryParselonrelonxcelonption elon) {
+      LOG.warn("elonxcelonption whilelon gelontting max_id/until_timelon from quelonry: " + quelonry, elon);
     }
 
-    if (idTimeRanges == null) {
-      // An exception was thrown or the query doesn't accept the boundary operators.
-      return Optional.absent();
+    if (idTimelonRangelons == null) {
+      // An elonxcelonption was thrown or thelon quelonry doelonsn't accelonpt thelon boundary opelonrators.
+      relonturn Optional.abselonnt();
     }
 
-    return idTimeRanges.getMaxIDInclusive();
+    relonturn idTimelonRangelons.gelontMaxIDInclusivelon();
   }
 
   /**
-   * Returns the max ID specified in the query, based on the until_time operator. The returned ID
-   * is inclusive (that is, the returned response is allowed to have a tweet with this ID).
+   * Relonturns thelon max ID speloncifielond in thelon quelonry, baselond on thelon until_timelon opelonrator. Thelon relonturnelond ID
+   * is inclusivelon (that is, thelon relonturnelond relonsponselon is allowelond to havelon a twelonelont with this ID).
    *
-   * If the query is null, could not be parsed or does not have an until_time operator,
-   * Optional.absent() is returned.
+   * If thelon quelonry is null, could not belon parselond or doelons not havelon an until_timelon opelonrator,
+   * Optional.abselonnt() is relonturnelond.
    *
-   * @param query The query.
-   * @return The max ID specified in the given query (based on the until_time operator).
+   * @param quelonry Thelon quelonry.
+   * @relonturn Thelon max ID speloncifielond in thelon givelonn quelonry (baselond on thelon until_timelon opelonrator).
    */
-  public static Optional<Long> getRequestMaxIdFromUntilTime(Query query) {
-    if (query == null) {
-      return Optional.absent();
+  public static Optional<Long> gelontRelonquelonstMaxIdFromUntilTimelon(Quelonry quelonry) {
+    if (quelonry == null) {
+      relonturn Optional.abselonnt();
     }
 
-    IdTimeRanges idTimeRanges = null;
+    IdTimelonRangelons idTimelonRangelons = null;
     try {
-      idTimeRanges = IdTimeRanges.fromQuery(query);
-    } catch (QueryParserException e) {
-      LOG.warn("Exception while getting max_id/until_time from query: " + query, e);
+      idTimelonRangelons = IdTimelonRangelons.fromQuelonry(quelonry);
+    } catch (QuelonryParselonrelonxcelonption elon) {
+      LOG.warn("elonxcelonption whilelon gelontting max_id/until_timelon from quelonry: " + quelonry, elon);
     }
 
-    if (idTimeRanges == null) {
-      // An exception was thrown or the query doesn't accept the boundary operators.
-      return Optional.absent();
+    if (idTimelonRangelons == null) {
+      // An elonxcelonption was thrown or thelon quelonry doelonsn't accelonpt thelon boundary opelonrators.
+      relonturn Optional.abselonnt();
     }
 
-    Optional<Integer> queryUntilTimeExclusive = idTimeRanges.getUntilTimeExclusive();
-    Optional<Long> maxId = Optional.absent();
-    if (queryUntilTimeExclusive.isPresent()) {
-      long timestampMillis = queryUntilTimeExclusive.get() * 1000L;
-      if (SnowflakeIdParser.isUsableSnowflakeTimestamp(timestampMillis)) {
-        // Convert timestampMillis to an ID, and subtract 1, because the until_time operator is
-        // exclusive, and we need to return an inclusive max ID.
-        maxId = Optional.of(SnowflakeIdParser.generateValidStatusId(timestampMillis, 0) - 1);
+    Optional<Intelongelonr> quelonryUntilTimelonelonxclusivelon = idTimelonRangelons.gelontUntilTimelonelonxclusivelon();
+    Optional<Long> maxId = Optional.abselonnt();
+    if (quelonryUntilTimelonelonxclusivelon.isPrelonselonnt()) {
+      long timelonstampMillis = quelonryUntilTimelonelonxclusivelon.gelont() * 1000L;
+      if (SnowflakelonIdParselonr.isUsablelonSnowflakelonTimelonstamp(timelonstampMillis)) {
+        // Convelonrt timelonstampMillis to an ID, and subtract 1, beloncauselon thelon until_timelon opelonrator is
+        // elonxclusivelon, and welon nelonelond to relonturn an inclusivelon max ID.
+        maxId = Optional.of(SnowflakelonIdParselonr.gelonnelonratelonValidStatusId(timelonstampMillis, 0) - 1);
       }
     }
-    return maxId;
+    relonturn maxId;
   }
 
   /**
-   * Creates a copy of the given EarlybirdRequest and unsets all fields that are used
-   * only by the SuperRoot.
+   * Crelonatelons a copy of thelon givelonn elonarlybirdRelonquelonst and unselonts all fielonlds that arelon uselond
+   * only by thelon SupelonrRoot.
    */
-  public static EarlybirdRequest unsetSuperRootFields(
-      EarlybirdRequest request, boolean unsetFollowedUserIds) {
-    EarlybirdRequest newRequest = request.deepCopy();
-    newRequest.unsetGetOlderResults();
-    newRequest.unsetGetProtectedTweetsOnly();
-    if (unsetFollowedUserIds) {
-      newRequest.unsetFollowedUserIds();
+  public static elonarlybirdRelonquelonst unselontSupelonrRootFielonlds(
+      elonarlybirdRelonquelonst relonquelonst, boolelonan unselontFollowelondUselonrIds) {
+    elonarlybirdRelonquelonst nelonwRelonquelonst = relonquelonst.delonelonpCopy();
+    nelonwRelonquelonst.unselontGelontOldelonrRelonsults();
+    nelonwRelonquelonst.unselontGelontProtelonctelondTwelonelontsOnly();
+    if (unselontFollowelondUselonrIds) {
+      nelonwRelonquelonst.unselontFollowelondUselonrIds();
     }
-    newRequest.unsetAdjustedProtectedRequestParams();
-    newRequest.unsetAdjustedFullArchiveRequestParams();
-    return newRequest;
+    nelonwRelonquelonst.unselontAdjustelondProtelonctelondRelonquelonstParams();
+    nelonwRelonquelonst.unselontAdjustelondFullArchivelonRelonquelonstParams();
+    relonturn nelonwRelonquelonst;
   }
 }

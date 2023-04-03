@@ -1,132 +1,132 @@
-package com.twitter.interaction_graph.scio.agg_notifications
+packagelon com.twittelonr.intelonraction_graph.scio.agg_notifications
 
-import com.spotify.scio.ScioMetrics
-import com.twitter.clientapp.thriftscala.EventNamespace
-import com.twitter.clientapp.thriftscala.LogEvent
-import com.twitter.interaction_graph.thriftscala.FeatureName
+import com.spotify.scio.ScioMelontrics
+import com.twittelonr.clielonntapp.thriftscala.elonvelonntNamelonspacelon
+import com.twittelonr.clielonntapp.thriftscala.Logelonvelonnt
+import com.twittelonr.intelonraction_graph.thriftscala.FelonaturelonNamelon
 
-object InteractionGraphNotificationUtil {
+objelonct IntelonractionGraphNotificationUtil {
 
-  val PUSH_OPEN_ACTIONS = Set("open", "background_open")
-  val NTAB_CLICK_ACTIONS = Set("navigate", "click")
-  val STATUS_ID_REGEX = "^twitter:\\/\\/tweet\\?status_id=([0-9]+).*".r
-  val TWEET_ID_REGEX = "^twitter:\\/\\/tweet.id=([0-9]+).*".r
+  val PUSH_OPelonN_ACTIONS = Selont("opelonn", "background_opelonn")
+  val NTAB_CLICK_ACTIONS = Selont("navigatelon", "click")
+  val STATUS_ID_RelonGelonX = "^twittelonr:\\/\\/twelonelont\\?status_id=([0-9]+).*".r
+  val TWelonelonT_ID_RelonGelonX = "^twittelonr:\\/\\/twelonelont.id=([0-9]+).*".r
 
-  def extractTweetIdFromUrl(url: String): Option[Long] = url match {
-    case STATUS_ID_REGEX(statusId) =>
-      ScioMetrics.counter("regex matching", "status_id=").inc()
-      Some(statusId.toLong)
-    case TWEET_ID_REGEX(tweetId) =>
-      ScioMetrics.counter("regex matching", "tweet?id=").inc()
-      Some(tweetId.toLong)
-    case _ => None
+  delonf elonxtractTwelonelontIdFromUrl(url: String): Option[Long] = url match {
+    caselon STATUS_ID_RelonGelonX(statusId) =>
+      ScioMelontrics.countelonr("relongelonx matching", "status_id=").inc()
+      Somelon(statusId.toLong)
+    caselon TWelonelonT_ID_RelonGelonX(twelonelontId) =>
+      ScioMelontrics.countelonr("relongelonx matching", "twelonelont?id=").inc()
+      Somelon(twelonelontId.toLong)
+    caselon _ => Nonelon
   }
 
-  def getPushNtabEvents(e: LogEvent): Seq[(Long, (Long, FeatureName))] = {
+  delonf gelontPushNtabelonvelonnts(elon: Logelonvelonnt): Selonq[(Long, (Long, FelonaturelonNamelon))] = {
     for {
-      logBase <- e.logBase.toSeq
-      userId <- logBase.userId.toSeq
-      namespace <- e.eventNamespace.toSeq
-      (tweetId, featureName) <- namespace match {
-        case EventNamespace(_, _, _, _, _, Some(action)) if PUSH_OPEN_ACTIONS.contains(action) =>
+      logBaselon <- elon.logBaselon.toSelonq
+      uselonrId <- logBaselon.uselonrId.toSelonq
+      namelonspacelon <- elon.elonvelonntNamelonspacelon.toSelonq
+      (twelonelontId, felonaturelonNamelon) <- namelonspacelon match {
+        caselon elonvelonntNamelonspacelon(_, _, _, _, _, Somelon(action)) if PUSH_OPelonN_ACTIONS.contains(action) =>
           (for {
-            details <- e.eventDetails
-            url <- details.url
-            tweetId <- extractTweetIdFromUrl(url)
-          } yield {
-            ScioMetrics.counter("event type", "push open").inc()
-            (tweetId, FeatureName.NumPushOpens)
-          }).toSeq
-        case EventNamespace(_, Some("ntab"), _, _, _, Some("navigate")) =>
-          val tweetIds = for {
-            details <- e.eventDetails.toSeq
-            items <- details.items.toSeq
-            item <- items
-            ntabDetails <- item.notificationTabDetails.toSeq
-            clientEventMetadata <- ntabDetails.clientEventMetadata.toSeq
-            tweetIds <- clientEventMetadata.tweetIds.toSeq
-            tweetId <- tweetIds
-          } yield {
-            ScioMetrics.counter("event type", "ntab navigate").inc()
-            tweetId
+            delontails <- elon.elonvelonntDelontails
+            url <- delontails.url
+            twelonelontId <- elonxtractTwelonelontIdFromUrl(url)
+          } yielonld {
+            ScioMelontrics.countelonr("elonvelonnt typelon", "push opelonn").inc()
+            (twelonelontId, FelonaturelonNamelon.NumPushOpelonns)
+          }).toSelonq
+        caselon elonvelonntNamelonspacelon(_, Somelon("ntab"), _, _, _, Somelon("navigatelon")) =>
+          val twelonelontIds = for {
+            delontails <- elon.elonvelonntDelontails.toSelonq
+            itelonms <- delontails.itelonms.toSelonq
+            itelonm <- itelonms
+            ntabDelontails <- itelonm.notificationTabDelontails.toSelonq
+            clielonntelonvelonntMelontadata <- ntabDelontails.clielonntelonvelonntMelontadata.toSelonq
+            twelonelontIds <- clielonntelonvelonntMelontadata.twelonelontIds.toSelonq
+            twelonelontId <- twelonelontIds
+          } yielonld {
+            ScioMelontrics.countelonr("elonvelonnt typelon", "ntab navigatelon").inc()
+            twelonelontId
           }
-          tweetIds.map((_, FeatureName.NumNtabClicks))
-        case EventNamespace(_, Some("ntab"), _, _, _, Some("click")) =>
-          val tweetIds = for {
-            details <- e.eventDetails.toSeq
-            items <- details.items.toSeq
-            item <- items
-            tweetId <- item.id
-          } yield {
-            ScioMetrics.counter("event type", "ntab click").inc()
-            tweetId
+          twelonelontIds.map((_, FelonaturelonNamelon.NumNtabClicks))
+        caselon elonvelonntNamelonspacelon(_, Somelon("ntab"), _, _, _, Somelon("click")) =>
+          val twelonelontIds = for {
+            delontails <- elon.elonvelonntDelontails.toSelonq
+            itelonms <- delontails.itelonms.toSelonq
+            itelonm <- itelonms
+            twelonelontId <- itelonm.id
+          } yielonld {
+            ScioMelontrics.countelonr("elonvelonnt typelon", "ntab click").inc()
+            twelonelontId
           }
-          tweetIds.map((_, FeatureName.NumNtabClicks))
-        case _ => Nil
+          twelonelontIds.map((_, FelonaturelonNamelon.NumNtabClicks))
+        caselon _ => Nil
       }
-    } yield (tweetId, (userId, featureName))
+    } yielonld (twelonelontId, (uselonrId, felonaturelonNamelon))
   }
 
   /**
-   * Returns events corresponding to ntab clicks. We have the tweet id from ntab clicks and can join
-   * those with public tweets.
+   * Relonturns elonvelonnts correlonsponding to ntab clicks. Welon havelon thelon twelonelont id from ntab clicks and can join
+   * thoselon with public twelonelonts.
    */
-  def getNtabEvents(e: LogEvent): Seq[(Long, (Long, FeatureName))] = {
+  delonf gelontNtabelonvelonnts(elon: Logelonvelonnt): Selonq[(Long, (Long, FelonaturelonNamelon))] = {
     for {
-      logBase <- e.logBase.toSeq
-      userId <- logBase.userId.toSeq
-      namespace <- e.eventNamespace.toSeq
-      (tweetId, featureName) <- namespace match {
-        case EventNamespace(_, Some("ntab"), _, _, _, Some("navigate")) =>
-          val tweetIds = for {
-            details <- e.eventDetails.toSeq
-            items <- details.items.toSeq
-            item <- items
-            ntabDetails <- item.notificationTabDetails.toSeq
-            clientEventMetadata <- ntabDetails.clientEventMetadata.toSeq
-            tweetIds <- clientEventMetadata.tweetIds.toSeq
-            tweetId <- tweetIds
-          } yield {
-            ScioMetrics.counter("event type", "ntab navigate").inc()
-            tweetId
+      logBaselon <- elon.logBaselon.toSelonq
+      uselonrId <- logBaselon.uselonrId.toSelonq
+      namelonspacelon <- elon.elonvelonntNamelonspacelon.toSelonq
+      (twelonelontId, felonaturelonNamelon) <- namelonspacelon match {
+        caselon elonvelonntNamelonspacelon(_, Somelon("ntab"), _, _, _, Somelon("navigatelon")) =>
+          val twelonelontIds = for {
+            delontails <- elon.elonvelonntDelontails.toSelonq
+            itelonms <- delontails.itelonms.toSelonq
+            itelonm <- itelonms
+            ntabDelontails <- itelonm.notificationTabDelontails.toSelonq
+            clielonntelonvelonntMelontadata <- ntabDelontails.clielonntelonvelonntMelontadata.toSelonq
+            twelonelontIds <- clielonntelonvelonntMelontadata.twelonelontIds.toSelonq
+            twelonelontId <- twelonelontIds
+          } yielonld {
+            ScioMelontrics.countelonr("elonvelonnt typelon", "ntab navigatelon").inc()
+            twelonelontId
           }
-          tweetIds.map((_, FeatureName.NumNtabClicks))
-        case EventNamespace(_, Some("ntab"), _, _, _, Some("click")) =>
-          val tweetIds = for {
-            details <- e.eventDetails.toSeq
-            items <- details.items.toSeq
-            item <- items
-            tweetId <- item.id
-          } yield {
-            ScioMetrics.counter("event type", "ntab click").inc()
-            tweetId
+          twelonelontIds.map((_, FelonaturelonNamelon.NumNtabClicks))
+        caselon elonvelonntNamelonspacelon(_, Somelon("ntab"), _, _, _, Somelon("click")) =>
+          val twelonelontIds = for {
+            delontails <- elon.elonvelonntDelontails.toSelonq
+            itelonms <- delontails.itelonms.toSelonq
+            itelonm <- itelonms
+            twelonelontId <- itelonm.id
+          } yielonld {
+            ScioMelontrics.countelonr("elonvelonnt typelon", "ntab click").inc()
+            twelonelontId
           }
-          tweetIds.map((_, FeatureName.NumNtabClicks))
-        case _ => Nil
+          twelonelontIds.map((_, FelonaturelonNamelon.NumNtabClicks))
+        caselon _ => Nil
       }
-    } yield (tweetId, (userId, featureName))
+    } yielonld (twelonelontId, (uselonrId, felonaturelonNamelon))
   }
 
   /**
-   * get push open events, keyed by impressionId (as the client event does not always have the tweetId nor the authorId)
+   * gelont push opelonn elonvelonnts, kelonyelond by imprelonssionId (as thelon clielonnt elonvelonnt doelons not always havelon thelon twelonelontId nor thelon authorId)
    */
-  def getPushOpenEvents(e: LogEvent): Seq[(String, (Long, FeatureName))] = {
+  delonf gelontPushOpelonnelonvelonnts(elon: Logelonvelonnt): Selonq[(String, (Long, FelonaturelonNamelon))] = {
     for {
-      logBase <- e.logBase.toSeq
-      userId <- logBase.userId.toSeq
-      namespace <- e.eventNamespace.toSeq
-      (tweetId, featureName) <- namespace match {
-        case EventNamespace(_, _, _, _, _, Some(action)) if PUSH_OPEN_ACTIONS.contains(action) =>
-          val impressionIdOpt = for {
-            details <- e.notificationDetails
-            impressionId <- details.impressionId
-          } yield {
-            ScioMetrics.counter("event type", "push open").inc()
-            impressionId
+      logBaselon <- elon.logBaselon.toSelonq
+      uselonrId <- logBaselon.uselonrId.toSelonq
+      namelonspacelon <- elon.elonvelonntNamelonspacelon.toSelonq
+      (twelonelontId, felonaturelonNamelon) <- namelonspacelon match {
+        caselon elonvelonntNamelonspacelon(_, _, _, _, _, Somelon(action)) if PUSH_OPelonN_ACTIONS.contains(action) =>
+          val imprelonssionIdOpt = for {
+            delontails <- elon.notificationDelontails
+            imprelonssionId <- delontails.imprelonssionId
+          } yielonld {
+            ScioMelontrics.countelonr("elonvelonnt typelon", "push opelonn").inc()
+            imprelonssionId
           }
-          impressionIdOpt.map((_, FeatureName.NumPushOpens)).toSeq
-        case _ => Nil
+          imprelonssionIdOpt.map((_, FelonaturelonNamelon.NumPushOpelonns)).toSelonq
+        caselon _ => Nil
       }
-    } yield (tweetId, (userId, featureName))
+    } yielonld (twelonelontId, (uselonrId, felonaturelonNamelon))
   }
 }

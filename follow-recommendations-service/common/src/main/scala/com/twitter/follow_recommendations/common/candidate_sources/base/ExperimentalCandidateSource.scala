@@ -1,65 +1,65 @@
-package com.twitter.follow_recommendations.common.candidate_sources.base
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.timelines.configapi.Param
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
+packagelon com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.baselon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.CandidatelonSourcelon
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.timelonlinelons.configapi.HasParams
+import com.twittelonr.timelonlinelons.configapi.Param
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonSourcelonIdelonntifielonr
 
 /**
- * A wrapper of CandidateSource to make it easier to do experimentation
- * on new candidate generation algorithms
+ * A wrappelonr of CandidatelonSourcelon to makelon it elonasielonr to do elonxpelonrimelonntation
+ * on nelonw candidatelon gelonnelonration algorithms
  *
- * @param baseSource base candidate source
- * @param darkreadAlgorithmParam controls whether or not to darkread candidates (fetch them even if they will not be included)
- * @param keepCandidatesParam controls whether or not to keep candidates from the base source
- * @param resultCountThresholdParam controls how many results the source must return to bucket the user and return results (greater-than-or-equal-to)
- * @tparam T request type. it must extend HasParams
- * @tparam V value type
+ * @param baselonSourcelon baselon candidatelon sourcelon
+ * @param darkrelonadAlgorithmParam controls whelonthelonr or not to darkrelonad candidatelons (felontch thelonm elonvelonn if thelony will not belon includelond)
+ * @param kelonelonpCandidatelonsParam controls whelonthelonr or not to kelonelonp candidatelons from thelon baselon sourcelon
+ * @param relonsultCountThrelonsholdParam controls how many relonsults thelon sourcelon must relonturn to buckelont thelon uselonr and relonturn relonsults (grelonatelonr-than-or-elonqual-to)
+ * @tparam T relonquelonst typelon. it must elonxtelonnd HasParams
+ * @tparam V valuelon typelon
  */
-class ExperimentalCandidateSource[T <: HasParams, V](
-  baseSource: CandidateSource[T, V],
-  darkreadAlgorithmParam: Param[Boolean],
-  keepCandidatesParam: Param[Boolean],
-  resultCountThresholdParam: Param[Int],
-  baseStatsReceiver: StatsReceiver)
-    extends CandidateSource[T, V] {
+class elonxpelonrimelonntalCandidatelonSourcelon[T <: HasParams, V](
+  baselonSourcelon: CandidatelonSourcelon[T, V],
+  darkrelonadAlgorithmParam: Param[Boolelonan],
+  kelonelonpCandidatelonsParam: Param[Boolelonan],
+  relonsultCountThrelonsholdParam: Param[Int],
+  baselonStatsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds CandidatelonSourcelon[T, V] {
 
-  override val identifier: CandidateSourceIdentifier = baseSource.identifier
-  private[base] val statsReceiver =
-    baseStatsReceiver.scope(s"Experimental/${identifier.name}")
-  private[base] val requestsCounter = statsReceiver.counter("requests")
-  private[base] val resultCountGreaterThanThresholdCounter =
-    statsReceiver.counter("with_results_at_or_above_count_threshold")
-  private[base] val keepResultsCounter = statsReceiver.counter("keep_results")
-  private[base] val discardResultsCounter = statsReceiver.counter("discard_results")
+  ovelonrridelon val idelonntifielonr: CandidatelonSourcelonIdelonntifielonr = baselonSourcelon.idelonntifielonr
+  privatelon[baselon] val statsReloncelonivelonr =
+    baselonStatsReloncelonivelonr.scopelon(s"elonxpelonrimelonntal/${idelonntifielonr.namelon}")
+  privatelon[baselon] val relonquelonstsCountelonr = statsReloncelonivelonr.countelonr("relonquelonsts")
+  privatelon[baselon] val relonsultCountGrelonatelonrThanThrelonsholdCountelonr =
+    statsReloncelonivelonr.countelonr("with_relonsults_at_or_abovelon_count_threlonshold")
+  privatelon[baselon] val kelonelonpRelonsultsCountelonr = statsReloncelonivelonr.countelonr("kelonelonp_relonsults")
+  privatelon[baselon] val discardRelonsultsCountelonr = statsReloncelonivelonr.countelonr("discard_relonsults")
 
-  override def apply(request: T): Stitch[Seq[V]] = {
-    if (request.params(darkreadAlgorithmParam)) {
-      requestsCounter.incr()
-      fetchFromCandidateSourceAndProcessResults(request)
-    } else {
+  ovelonrridelon delonf apply(relonquelonst: T): Stitch[Selonq[V]] = {
+    if (relonquelonst.params(darkrelonadAlgorithmParam)) {
+      relonquelonstsCountelonr.incr()
+      felontchFromCandidatelonSourcelonAndProcelonssRelonsults(relonquelonst)
+    } elonlselon {
       Stitch.Nil
     }
   }
 
-  private def fetchFromCandidateSourceAndProcessResults(request: T): Stitch[Seq[V]] = {
-    baseSource(request).map { results =>
-      if (results.length >= request.params(resultCountThresholdParam)) {
-        processResults(results, request.params(keepCandidatesParam))
-      } else {
+  privatelon delonf felontchFromCandidatelonSourcelonAndProcelonssRelonsults(relonquelonst: T): Stitch[Selonq[V]] = {
+    baselonSourcelon(relonquelonst).map { relonsults =>
+      if (relonsults.lelonngth >= relonquelonst.params(relonsultCountThrelonsholdParam)) {
+        procelonssRelonsults(relonsults, relonquelonst.params(kelonelonpCandidatelonsParam))
+      } elonlselon {
         Nil
       }
     }
   }
 
-  private def processResults(results: Seq[V], keepResults: Boolean): Seq[V] = {
-    resultCountGreaterThanThresholdCounter.incr()
-    if (keepResults) {
-      keepResultsCounter.incr()
-      results
-    } else {
-      discardResultsCounter.incr()
+  privatelon delonf procelonssRelonsults(relonsults: Selonq[V], kelonelonpRelonsults: Boolelonan): Selonq[V] = {
+    relonsultCountGrelonatelonrThanThrelonsholdCountelonr.incr()
+    if (kelonelonpRelonsults) {
+      kelonelonpRelonsultsCountelonr.incr()
+      relonsults
+    } elonlselon {
+      discardRelonsultsCountelonr.incr()
       Nil
     }
   }

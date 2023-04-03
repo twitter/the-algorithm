@@ -1,6 +1,6 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.topic
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.topic
 
-sealed trait TopicFollowPromptDisplayType
+selonalelond trait TopicFollowPromptDisplayTypelon
 
-case object IncentiveFocusTopicFollowPromptDisplayType extends TopicFollowPromptDisplayType
-case object TopicFocusTopicFollowPromptDisplayType extends TopicFollowPromptDisplayType
+caselon objelonct IncelonntivelonFocusTopicFollowPromptDisplayTypelon elonxtelonnds TopicFollowPromptDisplayTypelon
+caselon objelonct TopicFocusTopicFollowPromptDisplayTypelon elonxtelonnds TopicFollowPromptDisplayTypelon

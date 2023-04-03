@@ -1,19 +1,19 @@
-package com.twitter.home_mixer.marshaller.timeline_logging
+packagelon com.twittelonr.homelon_mixelonr.marshallelonr.timelonlinelon_logging
 
-import com.twitter.product_mixer.component_library.pipeline.candidate.who_to_follow_module.ScoreFeature
-import com.twitter.product_mixer.core.model.common.presentation.ItemCandidateWithDetails
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.user.UserItem
-import com.twitter.timelines.timeline_logging.{thriftscala => thriftlog}
+import com.twittelonr.product_mixelonr.componelonnt_library.pipelonlinelon.candidatelon.who_to_follow_modulelon.ScorelonFelonaturelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.ItelonmCandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.uselonr.UselonrItelonm
+import com.twittelonr.timelonlinelons.timelonlinelon_logging.{thriftscala => thriftlog}
 
-object WhoToFollowEntryMarshaller {
+objelonct WhoToFollowelonntryMarshallelonr {
 
-  def apply(entry: UserItem, candidate: ItemCandidateWithDetails): thriftlog.WhoToFollowEntry =
-    thriftlog.WhoToFollowEntry(
-      userId = entry.id,
-      displayType = Some(entry.displayType.toString),
-      score = candidate.features.getOrElse(ScoreFeature, None),
-      enableReactiveBlending = entry.enableReactiveBlending,
-      impressionId = entry.promotedMetadata.flatMap(_.impressionString),
-      advertiserId = entry.promotedMetadata.map(_.advertiserId)
+  delonf apply(elonntry: UselonrItelonm, candidatelon: ItelonmCandidatelonWithDelontails): thriftlog.WhoToFollowelonntry =
+    thriftlog.WhoToFollowelonntry(
+      uselonrId = elonntry.id,
+      displayTypelon = Somelon(elonntry.displayTypelon.toString),
+      scorelon = candidatelon.felonaturelons.gelontOrelonlselon(ScorelonFelonaturelon, Nonelon),
+      elonnablelonRelonactivelonBlelonnding = elonntry.elonnablelonRelonactivelonBlelonnding,
+      imprelonssionId = elonntry.promotelondMelontadata.flatMap(_.imprelonssionString),
+      advelonrtiselonrId = elonntry.promotelondMelontadata.map(_.advelonrtiselonrId)
     )
 }

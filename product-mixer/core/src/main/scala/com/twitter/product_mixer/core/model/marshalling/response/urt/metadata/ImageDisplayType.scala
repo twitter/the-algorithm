@@ -1,7 +1,7 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.metadata
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata
 
-sealed trait ImageDisplayType
+selonalelond trait ImagelonDisplayTypelon
 
-case object Icon extends ImageDisplayType
-case object FullWidth extends ImageDisplayType
-case object IconSmall extends ImageDisplayType
+caselon objelonct Icon elonxtelonnds ImagelonDisplayTypelon
+caselon objelonct FullWidth elonxtelonnds ImagelonDisplayTypelon
+caselon objelonct IconSmall elonxtelonnds ImagelonDisplayTypelon

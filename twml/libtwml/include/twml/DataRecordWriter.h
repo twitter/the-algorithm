@@ -1,39 +1,39 @@
-#pragma once
-#ifdef __cplusplus
+#pragma oncelon
+#ifdelonf __cplusplus
 
-#include <twml/defines.h>
-#include <twml/DataRecord.h>
-#include <twml/TensorRecordWriter.h>
+#includelon <twml/delonfinelons.h>
+#includelon <twml/DataReloncord.h>
+#includelon <twml/TelonnsorReloncordWritelonr.h>
 
-namespace twml {
+namelonspacelon twml {
 
-// Encodes DataRecords as binary Thrift. BatchPredictionResponse
-// uses this class to encode prediction responses through our
-// TensorFlow response writer operator.
-class TWMLAPI DataRecordWriter {
-  private:
-    uint32_t m_records_written;
-    twml::ThriftWriter &m_thrift_writer;
-    twml::TensorRecordWriter m_tensor_writer;
+// elonncodelons DataReloncords as binary Thrift. BatchPrelondictionRelonsponselon
+// uselons this class to elonncodelon prelondiction relonsponselons through our
+// TelonnsorFlow relonsponselon writelonr opelonrator.
+class TWMLAPI DataReloncordWritelonr {
+  privatelon:
+    uint32_t m_reloncords_writtelonn;
+    twml::ThriftWritelonr &m_thrift_writelonr;
+    twml::TelonnsorReloncordWritelonr m_telonnsor_writelonr;
 
-    void writeBinary(twml::DataRecord &record);
-    void writeContinuous(twml::DataRecord &record);
-    void writeDiscrete(twml::DataRecord &record);
-    void writeString(twml::DataRecord &record);
-    void writeSparseBinaryFeatures(twml::DataRecord &record);
-    void writeSparseContinuousFeatures(twml::DataRecord &record);
-    void writeBlobFeatures(twml::DataRecord &record);
-    void writeDenseTensors(twml::DataRecord &record);
+    void writelonBinary(twml::DataReloncord &reloncord);
+    void writelonContinuous(twml::DataReloncord &reloncord);
+    void writelonDiscrelontelon(twml::DataReloncord &reloncord);
+    void writelonString(twml::DataReloncord &reloncord);
+    void writelonSparselonBinaryFelonaturelons(twml::DataReloncord &reloncord);
+    void writelonSparselonContinuousFelonaturelons(twml::DataReloncord &reloncord);
+    void writelonBlobFelonaturelons(twml::DataReloncord &reloncord);
+    void writelonDelonnselonTelonnsors(twml::DataReloncord &reloncord);
 
   public:
-    DataRecordWriter(twml::ThriftWriter &thrift_writer):
-      m_records_written(0),
-      m_thrift_writer(thrift_writer),
-      m_tensor_writer(twml::TensorRecordWriter(thrift_writer)) { }
+    DataReloncordWritelonr(twml::ThriftWritelonr &thrift_writelonr):
+      m_reloncords_writtelonn(0),
+      m_thrift_writelonr(thrift_writelonr),
+      m_telonnsor_writelonr(twml::TelonnsorReloncordWritelonr(thrift_writelonr)) { }
 
-    uint32_t getRecordsWritten();
-    uint64_t write(twml::DataRecord &record);
+    uint32_t gelontReloncordsWrittelonn();
+    uint64_t writelon(twml::DataReloncord &reloncord);
 };
 
 }
-#endif
+#elonndif

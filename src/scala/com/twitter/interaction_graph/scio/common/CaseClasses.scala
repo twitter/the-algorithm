@@ -1,21 +1,21 @@
-package com.twitter.interaction_graph.scio.common
+packagelon com.twittelonr.intelonraction_graph.scio.common
 
-import com.twitter.interaction_graph.thriftscala.FeatureName
+import com.twittelonr.intelonraction_graph.thriftscala.FelonaturelonNamelon
 
-/** Interaction Graph Raw Input type defines a common type for edge / vertex feature calculation
- * It has fields: (source Id, destination Id, Feature Name, age of this relationship (in days),
- * and value to be aggregated)
+/** Intelonraction Graph Raw Input typelon delonfinelons a common typelon for elondgelon / velonrtelonx felonaturelon calculation
+ * It has fielonlds: (sourcelon Id, delonstination Id, Felonaturelon Namelon, agelon of this relonlationship (in days),
+ * and valuelon to belon aggrelongatelond)
  */
-case class InteractionGraphRawInput(
+caselon class IntelonractionGraphRawInput(
   src: Long,
   dst: Long,
-  name: FeatureName,
-  age: Int,
-  featureValue: Double)
+  namelon: FelonaturelonNamelon,
+  agelon: Int,
+  felonaturelonValuelon: Doublelon)
 
-case class FeatureKey(
+caselon class FelonaturelonKelony(
   src: Long,
-  dest: Long,
-  name: FeatureName)
+  delonst: Long,
+  namelon: FelonaturelonNamelon)
 
-case class Tweepcred(userId: Long, tweepcred: Short)
+caselon class Twelonelonpcrelond(uselonrId: Long, twelonelonpcrelond: Short)

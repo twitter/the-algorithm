@@ -1,110 +1,110 @@
-package com.twitter.simclustersann.modules
+packagelon com.twittelonr.simclustelonrsann.modulelons
 
-import com.google.inject.Provides
-import com.twitter.decider.Decider
-import com.twitter.finagle.memcached.{Client => MemcachedClient}
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
-import com.twitter.representation_manager.StoreBuilder
-import com.twitter.representation_manager.config.{
-  DefaultClientConfig => RepresentationManagerDefaultClientConfig
+import com.googlelon.injelonct.Providelons
+import com.twittelonr.deloncidelonr.Deloncidelonr
+import com.twittelonr.finaglelon.melonmcachelond.{Clielonnt => MelonmcachelondClielonnt}
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.injelonct.TwittelonrModulelon
+import com.twittelonr.relonprelonselonntation_managelonr.StorelonBuildelonr
+import com.twittelonr.relonprelonselonntation_managelonr.config.{
+  DelonfaultClielonntConfig => RelonprelonselonntationManagelonrDelonfaultClielonntConfig
 }
-import com.twitter.representation_manager.thriftscala.SimClustersEmbeddingView
-import com.twitter.simclusters_v2.common.SimClustersEmbedding
-import com.twitter.simclusters_v2.stores.SimClustersEmbeddingStore
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType._
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
-import com.twitter.simclusters_v2.thriftscala.ModelVersion._
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.strato.client.{Client => StratoClient}
-import javax.inject.Singleton
+import com.twittelonr.relonprelonselonntation_managelonr.thriftscala.SimClustelonrselonmbelonddingVielonw
+import com.twittelonr.simclustelonrs_v2.common.SimClustelonrselonmbelondding
+import com.twittelonr.simclustelonrs_v2.storelons.SimClustelonrselonmbelonddingStorelon
+import com.twittelonr.simclustelonrs_v2.thriftscala.elonmbelonddingTypelon
+import com.twittelonr.simclustelonrs_v2.thriftscala.elonmbelonddingTypelon._
+import com.twittelonr.simclustelonrs_v2.thriftscala.ModelonlVelonrsion
+import com.twittelonr.simclustelonrs_v2.thriftscala.ModelonlVelonrsion._
+import com.twittelonr.simclustelonrs_v2.thriftscala.SimClustelonrselonmbelonddingId
+import com.twittelonr.storelonhaus.RelonadablelonStorelon
+import com.twittelonr.strato.clielonnt.{Clielonnt => StratoClielonnt}
+import javax.injelonct.Singlelonton
 
-object EmbeddingStoreModule extends TwitterModule {
+objelonct elonmbelonddingStorelonModulelon elonxtelonnds TwittelonrModulelon {
 
-  val TweetEmbeddings: Set[SimClustersEmbeddingView] = Set(
-    SimClustersEmbeddingView(LogFavLongestL2EmbeddingTweet, Model20m145kUpdated),
-    SimClustersEmbeddingView(LogFavLongestL2EmbeddingTweet, Model20m145k2020)
+  val Twelonelontelonmbelonddings: Selont[SimClustelonrselonmbelonddingVielonw] = Selont(
+    SimClustelonrselonmbelonddingVielonw(LogFavLongelonstL2elonmbelonddingTwelonelont, Modelonl20m145kUpdatelond),
+    SimClustelonrselonmbelonddingVielonw(LogFavLongelonstL2elonmbelonddingTwelonelont, Modelonl20m145k2020)
   )
 
-  val UserEmbeddings: Set[SimClustersEmbeddingView] = Set(
+  val Uselonrelonmbelonddings: Selont[SimClustelonrselonmbelonddingVielonw] = Selont(
     // KnownFor
-    SimClustersEmbeddingView(FavBasedProducer, Model20m145kUpdated),
-    SimClustersEmbeddingView(FavBasedProducer, Model20m145k2020),
-    SimClustersEmbeddingView(FollowBasedProducer, Model20m145k2020),
-    SimClustersEmbeddingView(AggregatableLogFavBasedProducer, Model20m145k2020),
-    // InterestedIn
-    SimClustersEmbeddingView(UnfilteredUserInterestedIn, Model20m145k2020),
-    SimClustersEmbeddingView(
-      LogFavBasedUserInterestedMaxpoolingAddressBookFromIIAPE,
-      Model20m145k2020),
-    SimClustersEmbeddingView(
-      LogFavBasedUserInterestedAverageAddressBookFromIIAPE,
-      Model20m145k2020),
-    SimClustersEmbeddingView(
-      LogFavBasedUserInterestedBooktypeMaxpoolingAddressBookFromIIAPE,
-      Model20m145k2020),
-    SimClustersEmbeddingView(
-      LogFavBasedUserInterestedLargestDimMaxpoolingAddressBookFromIIAPE,
-      Model20m145k2020),
-    SimClustersEmbeddingView(
-      LogFavBasedUserInterestedLouvainMaxpoolingAddressBookFromIIAPE,
-      Model20m145k2020),
-    SimClustersEmbeddingView(
-      LogFavBasedUserInterestedConnectedMaxpoolingAddressBookFromIIAPE,
-      Model20m145k2020),
-    SimClustersEmbeddingView(UserNextInterestedIn, Model20m145k2020),
-    SimClustersEmbeddingView(LogFavBasedUserInterestedInFromAPE, Model20m145k2020)
+    SimClustelonrselonmbelonddingVielonw(FavBaselondProducelonr, Modelonl20m145kUpdatelond),
+    SimClustelonrselonmbelonddingVielonw(FavBaselondProducelonr, Modelonl20m145k2020),
+    SimClustelonrselonmbelonddingVielonw(FollowBaselondProducelonr, Modelonl20m145k2020),
+    SimClustelonrselonmbelonddingVielonw(AggrelongatablelonLogFavBaselondProducelonr, Modelonl20m145k2020),
+    // IntelonrelonstelondIn
+    SimClustelonrselonmbelonddingVielonw(UnfiltelonrelondUselonrIntelonrelonstelondIn, Modelonl20m145k2020),
+    SimClustelonrselonmbelonddingVielonw(
+      LogFavBaselondUselonrIntelonrelonstelondMaxpoolingAddrelonssBookFromIIAPelon,
+      Modelonl20m145k2020),
+    SimClustelonrselonmbelonddingVielonw(
+      LogFavBaselondUselonrIntelonrelonstelondAvelonragelonAddrelonssBookFromIIAPelon,
+      Modelonl20m145k2020),
+    SimClustelonrselonmbelonddingVielonw(
+      LogFavBaselondUselonrIntelonrelonstelondBooktypelonMaxpoolingAddrelonssBookFromIIAPelon,
+      Modelonl20m145k2020),
+    SimClustelonrselonmbelonddingVielonw(
+      LogFavBaselondUselonrIntelonrelonstelondLargelonstDimMaxpoolingAddrelonssBookFromIIAPelon,
+      Modelonl20m145k2020),
+    SimClustelonrselonmbelonddingVielonw(
+      LogFavBaselondUselonrIntelonrelonstelondLouvainMaxpoolingAddrelonssBookFromIIAPelon,
+      Modelonl20m145k2020),
+    SimClustelonrselonmbelonddingVielonw(
+      LogFavBaselondUselonrIntelonrelonstelondConnelonctelondMaxpoolingAddrelonssBookFromIIAPelon,
+      Modelonl20m145k2020),
+    SimClustelonrselonmbelonddingVielonw(UselonrNelonxtIntelonrelonstelondIn, Modelonl20m145k2020),
+    SimClustelonrselonmbelonddingVielonw(LogFavBaselondUselonrIntelonrelonstelondInFromAPelon, Modelonl20m145k2020)
   )
 
-  @Singleton
-  @Provides
-  def providesEmbeddingStore(
-    stratoClient: StratoClient,
-    memCachedClient: MemcachedClient,
-    decider: Decider,
-    stats: StatsReceiver
-  ): ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding] = {
+  @Singlelonton
+  @Providelons
+  delonf providelonselonmbelonddingStorelon(
+    stratoClielonnt: StratoClielonnt,
+    melonmCachelondClielonnt: MelonmcachelondClielonnt,
+    deloncidelonr: Deloncidelonr,
+    stats: StatsReloncelonivelonr
+  ): RelonadablelonStorelon[SimClustelonrselonmbelonddingId, SimClustelonrselonmbelondding] = {
 
-    val rmsStoreBuilder = new StoreBuilder(
-      clientConfig = RepresentationManagerDefaultClientConfig,
-      stratoClient = stratoClient,
-      memCachedClient = memCachedClient,
+    val rmsStorelonBuildelonr = nelonw StorelonBuildelonr(
+      clielonntConfig = RelonprelonselonntationManagelonrDelonfaultClielonntConfig,
+      stratoClielonnt = stratoClielonnt,
+      melonmCachelondClielonnt = melonmCachelondClielonnt,
       globalStats = stats,
     )
 
-    val underlyingStores: Map[
-      (EmbeddingType, ModelVersion),
-      ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding]
+    val undelonrlyingStorelons: Map[
+      (elonmbelonddingTypelon, ModelonlVelonrsion),
+      RelonadablelonStorelon[SimClustelonrselonmbelonddingId, SimClustelonrselonmbelondding]
     ] = {
-      val tweetEmbeddingStores: Map[
-        (EmbeddingType, ModelVersion),
-        ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding]
-      ] = TweetEmbeddings
-        .map(embeddingView =>
+      val twelonelontelonmbelonddingStorelons: Map[
+        (elonmbelonddingTypelon, ModelonlVelonrsion),
+        RelonadablelonStorelon[SimClustelonrselonmbelonddingId, SimClustelonrselonmbelondding]
+      ] = Twelonelontelonmbelonddings
+        .map(elonmbelonddingVielonw =>
           (
-            (embeddingView.embeddingType, embeddingView.modelVersion),
-            rmsStoreBuilder
-              .buildSimclustersTweetEmbeddingStoreWithEmbeddingIdAsKey(embeddingView))).toMap
+            (elonmbelonddingVielonw.elonmbelonddingTypelon, elonmbelonddingVielonw.modelonlVelonrsion),
+            rmsStorelonBuildelonr
+              .buildSimclustelonrsTwelonelontelonmbelonddingStorelonWithelonmbelonddingIdAsKelony(elonmbelonddingVielonw))).toMap
 
-      val userEmbeddingStores: Map[
-        (EmbeddingType, ModelVersion),
-        ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding]
-      ] = UserEmbeddings
-        .map(embeddingView =>
+      val uselonrelonmbelonddingStorelons: Map[
+        (elonmbelonddingTypelon, ModelonlVelonrsion),
+        RelonadablelonStorelon[SimClustelonrselonmbelonddingId, SimClustelonrselonmbelondding]
+      ] = Uselonrelonmbelonddings
+        .map(elonmbelonddingVielonw =>
           (
-            (embeddingView.embeddingType, embeddingView.modelVersion),
-            rmsStoreBuilder
-              .buildSimclustersUserEmbeddingStoreWithEmbeddingIdAsKey(embeddingView))).toMap
+            (elonmbelonddingVielonw.elonmbelonddingTypelon, elonmbelonddingVielonw.modelonlVelonrsion),
+            rmsStorelonBuildelonr
+              .buildSimclustelonrsUselonrelonmbelonddingStorelonWithelonmbelonddingIdAsKelony(elonmbelonddingVielonw))).toMap
 
-      tweetEmbeddingStores ++ userEmbeddingStores
+      twelonelontelonmbelonddingStorelons ++ uselonrelonmbelonddingStorelons
     }
 
-    SimClustersEmbeddingStore.buildWithDecider(
-      underlyingStores = underlyingStores,
-      decider = decider,
-      statsReceiver = stats
+    SimClustelonrselonmbelonddingStorelon.buildWithDeloncidelonr(
+      undelonrlyingStorelons = undelonrlyingStorelons,
+      deloncidelonr = deloncidelonr,
+      statsReloncelonivelonr = stats
     )
   }
 }

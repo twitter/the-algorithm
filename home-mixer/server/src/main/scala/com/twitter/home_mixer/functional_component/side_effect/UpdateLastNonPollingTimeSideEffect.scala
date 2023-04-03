@@ -1,78 +1,78 @@
-package com.twitter.home_mixer.functional_component.side_effect
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.sidelon_elonffelonct
 
-import com.twitter.home_mixer.model.HomeFeatures.FollowingLastNonPollingTimeFeature
-import com.twitter.home_mixer.model.HomeFeatures.NonPollingTimesFeature
-import com.twitter.home_mixer.model.HomeFeatures.PollingFeature
-import com.twitter.home_mixer.model.request.DeviceContext
-import com.twitter.home_mixer.model.request.HasDeviceContext
-import com.twitter.home_mixer.model.request.FollowingProduct
-import com.twitter.home_mixer.service.HomeMixerAlertConfig
-import com.twitter.product_mixer.component_library.side_effect.UserSessionStoreUpdateSideEffect
-import com.twitter.product_mixer.core.model.common.identifier.SideEffectIdentifier
-import com.twitter.product_mixer.core.model.marshalling.HasMarshalling
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelineservice.model.util.FinagleRequestContext
-import com.twitter.user_session_store.ReadWriteUserSessionStore
-import com.twitter.user_session_store.WriteRequest
-import com.twitter.user_session_store.thriftscala.NonPollingTimestamps
-import com.twitter.user_session_store.thriftscala.UserSessionField
-import com.twitter.util.Time
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.FollowingLastNonPollingTimelonFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.NonPollingTimelonsFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.PollingFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.relonquelonst.DelonvicelonContelonxt
+import com.twittelonr.homelon_mixelonr.modelonl.relonquelonst.HasDelonvicelonContelonxt
+import com.twittelonr.homelon_mixelonr.modelonl.relonquelonst.FollowingProduct
+import com.twittelonr.homelon_mixelonr.selonrvicelon.HomelonMixelonrAlelonrtConfig
+import com.twittelonr.product_mixelonr.componelonnt_library.sidelon_elonffelonct.UselonrSelonssionStorelonUpdatelonSidelonelonffelonct
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.SidelonelonffelonctIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.HasMarshalling
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.timelonlinelonselonrvicelon.modelonl.util.FinaglelonRelonquelonstContelonxt
+import com.twittelonr.uselonr_selonssion_storelon.RelonadWritelonUselonrSelonssionStorelon
+import com.twittelonr.uselonr_selonssion_storelon.WritelonRelonquelonst
+import com.twittelonr.uselonr_selonssion_storelon.thriftscala.NonPollingTimelonstamps
+import com.twittelonr.uselonr_selonssion_storelon.thriftscala.UselonrSelonssionFielonld
+import com.twittelonr.util.Timelon
 
-import javax.inject.Inject
-import javax.inject.Singleton
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
 /**
- * Side effect that updates the User Session Store (Manhattan) with the timestamps of non polling requests.
+ * Sidelon elonffelonct that updatelons thelon Uselonr Selonssion Storelon (Manhattan) with thelon timelonstamps of non polling relonquelonsts.
  */
-@Singleton
-class UpdateLastNonPollingTimeSideEffect[
-  Query <: PipelineQuery with HasDeviceContext,
-  ResponseType <: HasMarshalling] @Inject() (
-  override val userSessionStore: ReadWriteUserSessionStore)
-    extends UserSessionStoreUpdateSideEffect[
-      WriteRequest,
-      Query,
-      ResponseType
+@Singlelonton
+class UpdatelonLastNonPollingTimelonSidelonelonffelonct[
+  Quelonry <: PipelonlinelonQuelonry with HasDelonvicelonContelonxt,
+  RelonsponselonTypelon <: HasMarshalling] @Injelonct() (
+  ovelonrridelon val uselonrSelonssionStorelon: RelonadWritelonUselonrSelonssionStorelon)
+    elonxtelonnds UselonrSelonssionStorelonUpdatelonSidelonelonffelonct[
+      WritelonRelonquelonst,
+      Quelonry,
+      RelonsponselonTypelon
     ] {
-  private val MaxNonPollingTimes = 10
+  privatelon val MaxNonPollingTimelons = 10
 
-  override val identifier: SideEffectIdentifier = SideEffectIdentifier("UpdateLastNonPollingTime")
+  ovelonrridelon val idelonntifielonr: SidelonelonffelonctIdelonntifielonr = SidelonelonffelonctIdelonntifielonr("UpdatelonLastNonPollingTimelon")
 
   /**
-   * When the request is non polling and is not a background fetch request, update
-   * the list of non polling timestamps with the timestamp of the current request
+   * Whelonn thelon relonquelonst is non polling and is not a background felontch relonquelonst, updatelon
+   * thelon list of non polling timelonstamps with thelon timelonstamp of thelon currelonnt relonquelonst
    */
-  override def buildWriteRequest(query: Query): Option[WriteRequest] = {
-    val isBackgroundFetch = query.deviceContext
-      .exists(_.requestContextValue.contains(DeviceContext.RequestContext.BackgroundFetch))
+  ovelonrridelon delonf buildWritelonRelonquelonst(quelonry: Quelonry): Option[WritelonRelonquelonst] = {
+    val isBackgroundFelontch = quelonry.delonvicelonContelonxt
+      .elonxists(_.relonquelonstContelonxtValuelon.contains(DelonvicelonContelonxt.RelonquelonstContelonxt.BackgroundFelontch))
 
-    if (!query.features.exists(_.getOrElse(PollingFeature, false)) && !isBackgroundFetch) {
-      val fields = Seq(UserSessionField.NonPollingTimestamps(makeLastNonPollingTimestamps(query)))
-      Some(WriteRequest(query.getRequiredUserId, fields))
-    } else None
+    if (!quelonry.felonaturelons.elonxists(_.gelontOrelonlselon(PollingFelonaturelon, falselon)) && !isBackgroundFelontch) {
+      val fielonlds = Selonq(UselonrSelonssionFielonld.NonPollingTimelonstamps(makelonLastNonPollingTimelonstamps(quelonry)))
+      Somelon(WritelonRelonquelonst(quelonry.gelontRelonquirelondUselonrId, fielonlds))
+    } elonlselon Nonelon
   }
 
-  override val alerts = Seq(
-    HomeMixerAlertConfig.BusinessHours.defaultSuccessRateAlert(99.96)
+  ovelonrridelon val alelonrts = Selonq(
+    HomelonMixelonrAlelonrtConfig.BusinelonssHours.delonfaultSuccelonssRatelonAlelonrt(99.96)
   )
 
-  private def makeLastNonPollingTimestamps(query: Query): NonPollingTimestamps = {
-    val priorNonPollingTimestamps =
-      query.features.map(_.getOrElse(NonPollingTimesFeature, Seq.empty)).toSeq.flatten
+  privatelon delonf makelonLastNonPollingTimelonstamps(quelonry: Quelonry): NonPollingTimelonstamps = {
+    val priorNonPollingTimelonstamps =
+      quelonry.felonaturelons.map(_.gelontOrelonlselon(NonPollingTimelonsFelonaturelon, Selonq.elonmpty)).toSelonq.flattelonn
 
-    val lastNonPollingTimeMs =
-      FinagleRequestContext.default.requestStartTime.get.getOrElse(Time.now).inMillis
+    val lastNonPollingTimelonMs =
+      FinaglelonRelonquelonstContelonxt.delonfault.relonquelonstStartTimelon.gelont.gelontOrelonlselon(Timelon.now).inMillis
 
-    val followingLastNonPollingTime = query.features
-      .flatMap(features => features.getOrElse(FollowingLastNonPollingTimeFeature, None))
+    val followingLastNonPollingTimelon = quelonry.felonaturelons
+      .flatMap(felonaturelons => felonaturelons.gelontOrelonlselon(FollowingLastNonPollingTimelonFelonaturelon, Nonelon))
       .map(_.inMillis)
 
-    NonPollingTimestamps(
-      nonPollingTimestampsMs =
-        (lastNonPollingTimeMs +: priorNonPollingTimestamps).take(MaxNonPollingTimes),
-      mostRecentHomeLatestNonPollingTimestampMs =
-        if (query.product == FollowingProduct) Some(lastNonPollingTimeMs)
-        else followingLastNonPollingTime
+    NonPollingTimelonstamps(
+      nonPollingTimelonstampsMs =
+        (lastNonPollingTimelonMs +: priorNonPollingTimelonstamps).takelon(MaxNonPollingTimelons),
+      mostReloncelonntHomelonLatelonstNonPollingTimelonstampMs =
+        if (quelonry.product == FollowingProduct) Somelon(lastNonPollingTimelonMs)
+        elonlselon followingLastNonPollingTimelon
     )
   }
 }

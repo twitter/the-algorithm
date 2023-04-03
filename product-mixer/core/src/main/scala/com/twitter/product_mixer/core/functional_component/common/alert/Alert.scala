@@ -1,31 +1,31 @@
-package com.twitter.product_mixer.core.functional_component.common.alert
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.alelonrt
 
-import com.twitter.product_mixer.core.functional_component.common.alert.predicate.Predicate
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.alelonrt.prelondicatelon.Prelondicatelon
 
 /**
- * [[Alert]]s will trigger notifications to their [[NotificationGroup]]
- * when the [[Predicate]]s are triggered.
+ * [[Alelonrt]]s will triggelonr notifications to thelonir [[NotificationGroup]]
+ * whelonn thelon [[Prelondicatelon]]s arelon triggelonrelond.
  */
-trait Alert {
+trait Alelonrt {
 
-  /** A group of alert levels and where the alerts for those levels should be sent */
+  /** A group of alelonrt lelonvelonls and whelonrelon thelon alelonrts for thoselon lelonvelonls should belon selonnt */
   val notificationGroup: NotificationGroup
 
-  /** Predicate indicating that the component is in a degraded state */
-  val warnPredicate: Predicate
+  /** Prelondicatelon indicating that thelon componelonnt is in a delongradelond statelon */
+  val warnPrelondicatelon: Prelondicatelon
 
-  /** Predicate indicating that the component is not functioning correctly */
-  val criticalPredicate: Predicate
+  /** Prelondicatelon indicating that thelon componelonnt is not functioning correlonctly */
+  val criticalPrelondicatelon: Prelondicatelon
 
-  /** An optional link to the runbook detailing how to respond to this alert */
+  /** An optional link to thelon runbook delontailing how to relonspond to this alelonrt */
   val runbookLink: Option[String]
 
-  /** Indicates which metrics this [[Alert]] is for */
-  val alertType: AlertType
+  /** Indicatelons which melontrics this [[Alelonrt]] is for */
+  val alelonrtTypelon: AlelonrtTypelon
 
-  /** Where the metrics are from, @see [[Source]] */
-  val source: Source = Server()
+  /** Whelonrelon thelon melontrics arelon from, @selonelon [[Sourcelon]] */
+  val sourcelon: Sourcelon = Selonrvelonr()
 
-  /** A suffix to add to the end of the metric, this is often a [[Percentile]] */
-  val metricSuffix: Option[String] = None
+  /** A suffix to add to thelon elonnd of thelon melontric, this is oftelonn a [[Pelonrcelonntilelon]] */
+  val melontricSuffix: Option[String] = Nonelon
 }

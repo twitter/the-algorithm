@@ -1,194 +1,194 @@
-package com.twitter.timelineranker.client
+packagelon com.twittelonr.timelonlinelonrankelonr.clielonnt
 
-import com.twitter.finagle.SourcedException
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.timelineranker.{thriftscala => thrift}
-import com.twitter.timelineranker.model._
-import com.twitter.timelines.util.stats.RequestStats
-import com.twitter.timelines.util.stats.RequestStatsReceiver
-import com.twitter.util.Future
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import com.twitter.util.Try
+import com.twittelonr.finaglelon.Sourcelondelonxcelonption
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.timelonlinelonrankelonr.{thriftscala => thrift}
+import com.twittelonr.timelonlinelonrankelonr.modelonl._
+import com.twittelonr.timelonlinelons.util.stats.RelonquelonstStats
+import com.twittelonr.timelonlinelons.util.stats.RelonquelonstStatsReloncelonivelonr
+import com.twittelonr.util.Futurelon
+import com.twittelonr.util.Relonturn
+import com.twittelonr.util.Throw
+import com.twittelonr.util.Try
 
-case class TimelineRankerException(message: String)
-    extends Exception(message)
-    with SourcedException {
-  serviceName = "timelineranker"
+caselon class TimelonlinelonRankelonrelonxcelonption(melonssagelon: String)
+    elonxtelonnds elonxcelonption(melonssagelon)
+    with Sourcelondelonxcelonption {
+  selonrvicelonNamelon = "timelonlinelonrankelonr"
 }
 
 /**
- * A timeline ranker client whose methods accept and produce model object instances
- * instead of thrift instances.
+ * A timelonlinelon rankelonr clielonnt whoselon melonthods accelonpt and producelon modelonl objelonct instancelons
+ * instelonad of thrift instancelons.
  */
-class TimelineRankerClient(
-  private val client: thrift.TimelineRanker.MethodPerEndpoint,
-  statsReceiver: StatsReceiver)
-    extends RequestStats {
+class TimelonlinelonRankelonrClielonnt(
+  privatelon val clielonnt: thrift.TimelonlinelonRankelonr.MelonthodPelonrelonndpoint,
+  statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds RelonquelonstStats {
 
-  private[this] val baseScope = statsReceiver.scope("timelineRankerClient")
-  private[this] val timelinesRequestStats = RequestStatsReceiver(baseScope.scope("timelines"))
-  private[this] val recycledTweetRequestStats = RequestStatsReceiver(
-    baseScope.scope("recycledTweet"))
-  private[this] val recapHydrationRequestStats = RequestStatsReceiver(
-    baseScope.scope("recapHydration"))
-  private[this] val recapAuthorRequestStats = RequestStatsReceiver(baseScope.scope("recapAuthor"))
-  private[this] val entityTweetsRequestStats = RequestStatsReceiver(baseScope.scope("entityTweets"))
-  private[this] val utegLikedByTweetsRequestStats = RequestStatsReceiver(
-    baseScope.scope("utegLikedByTweets"))
+  privatelon[this] val baselonScopelon = statsReloncelonivelonr.scopelon("timelonlinelonRankelonrClielonnt")
+  privatelon[this] val timelonlinelonsRelonquelonstStats = RelonquelonstStatsReloncelonivelonr(baselonScopelon.scopelon("timelonlinelons"))
+  privatelon[this] val reloncyclelondTwelonelontRelonquelonstStats = RelonquelonstStatsReloncelonivelonr(
+    baselonScopelon.scopelon("reloncyclelondTwelonelont"))
+  privatelon[this] val reloncapHydrationRelonquelonstStats = RelonquelonstStatsReloncelonivelonr(
+    baselonScopelon.scopelon("reloncapHydration"))
+  privatelon[this] val reloncapAuthorRelonquelonstStats = RelonquelonstStatsReloncelonivelonr(baselonScopelon.scopelon("reloncapAuthor"))
+  privatelon[this] val elonntityTwelonelontsRelonquelonstStats = RelonquelonstStatsReloncelonivelonr(baselonScopelon.scopelon("elonntityTwelonelonts"))
+  privatelon[this] val utelongLikelondByTwelonelontsRelonquelonstStats = RelonquelonstStatsReloncelonivelonr(
+    baselonScopelon.scopelon("utelongLikelondByTwelonelonts"))
 
-  private[this] def fetchRecapQueryResultHead(
-    results: Seq[Try[CandidateTweetsResult]]
-  ): CandidateTweetsResult = {
-    results.head match {
-      case Return(result) => result
-      case Throw(e) => throw e
+  privatelon[this] delonf felontchReloncapQuelonryRelonsultHelonad(
+    relonsults: Selonq[Try[CandidatelonTwelonelontsRelonsult]]
+  ): CandidatelonTwelonelontsRelonsult = {
+    relonsults.helonad match {
+      caselon Relonturn(relonsult) => relonsult
+      caselon Throw(elon) => throw elon
     }
   }
 
-  private[this] def tryResults[Req, Rep](
-    reqs: Seq[Req],
-    stats: RequestStatsReceiver,
-    findError: Req => Option[thrift.TimelineError],
+  privatelon[this] delonf tryRelonsults[Relonq, Relonp](
+    relonqs: Selonq[Relonq],
+    stats: RelonquelonstStatsReloncelonivelonr,
+    findelonrror: Relonq => Option[thrift.Timelonlinelonelonrror],
   )(
-    getRep: (Req, RequestStatsReceiver) => Try[Rep]
-  ): Seq[Try[Rep]] = {
-    reqs.map { req =>
-      findError(req) match {
-        case Some(error) if error.reason.exists { _ == thrift.ErrorReason.OverCapacity } =>
-          // bubble up over capacity error, server shall handle it
-          stats.onFailure(error)
-          Throw(error)
-        case Some(error) =>
-          stats.onFailure(error)
-          Throw(TimelineRankerException(error.message))
-        case None =>
-          getRep(req, stats)
+    gelontRelonp: (Relonq, RelonquelonstStatsReloncelonivelonr) => Try[Relonp]
+  ): Selonq[Try[Relonp]] = {
+    relonqs.map { relonq =>
+      findelonrror(relonq) match {
+        caselon Somelon(elonrror) if elonrror.relonason.elonxists { _ == thrift.elonrrorRelonason.OvelonrCapacity } =>
+          // bubblelon up ovelonr capacity elonrror, selonrvelonr shall handlelon it
+          stats.onFailurelon(elonrror)
+          Throw(elonrror)
+        caselon Somelon(elonrror) =>
+          stats.onFailurelon(elonrror)
+          Throw(TimelonlinelonRankelonrelonxcelonption(elonrror.melonssagelon))
+        caselon Nonelon =>
+          gelontRelonp(relonq, stats)
       }
     }
   }
 
-  private[this] def tryCandidateTweetsResults(
-    responses: Seq[thrift.GetCandidateTweetsResponse],
-    requestScopedStats: RequestStatsReceiver
-  ): Seq[Try[CandidateTweetsResult]] = {
-    def errorInResponse(
-      response: thrift.GetCandidateTweetsResponse
-    ): Option[thrift.TimelineError] = {
-      response.error
+  privatelon[this] delonf tryCandidatelonTwelonelontsRelonsults(
+    relonsponselons: Selonq[thrift.GelontCandidatelonTwelonelontsRelonsponselon],
+    relonquelonstScopelondStats: RelonquelonstStatsReloncelonivelonr
+  ): Selonq[Try[CandidatelonTwelonelontsRelonsult]] = {
+    delonf elonrrorInRelonsponselon(
+      relonsponselon: thrift.GelontCandidatelonTwelonelontsRelonsponselon
+    ): Option[thrift.Timelonlinelonelonrror] = {
+      relonsponselon.elonrror
     }
 
-    tryResults(
-      responses,
-      requestScopedStats,
-      errorInResponse
-    ) { (response, stats) =>
-      stats.onSuccess()
-      Return(CandidateTweetsResult.fromThrift(response))
+    tryRelonsults(
+      relonsponselons,
+      relonquelonstScopelondStats,
+      elonrrorInRelonsponselon
+    ) { (relonsponselon, stats) =>
+      stats.onSuccelonss()
+      Relonturn(CandidatelonTwelonelontsRelonsult.fromThrift(relonsponselon))
     }
   }
 
-  def getTimeline(query: TimelineQuery): Future[Try[Timeline]] = {
-    getTimelines(Seq(query)).map(_.head)
+  delonf gelontTimelonlinelon(quelonry: TimelonlinelonQuelonry): Futurelon[Try[Timelonlinelon]] = {
+    gelontTimelonlinelons(Selonq(quelonry)).map(_.helonad)
   }
 
-  def getTimelines(queries: Seq[TimelineQuery]): Future[Seq[Try[Timeline]]] = {
-    def errorInResponse(response: thrift.GetTimelineResponse): Option[thrift.TimelineError] = {
-      response.error
+  delonf gelontTimelonlinelons(quelonrielons: Selonq[TimelonlinelonQuelonry]): Futurelon[Selonq[Try[Timelonlinelon]]] = {
+    delonf elonrrorInRelonsponselon(relonsponselon: thrift.GelontTimelonlinelonRelonsponselon): Option[thrift.Timelonlinelonelonrror] = {
+      relonsponselon.elonrror
     }
-    val thriftQueries = queries.map(_.toThrift)
-    timelinesRequestStats.latency {
-      client.getTimelines(thriftQueries).map { responses =>
-        tryResults(
-          responses,
-          timelinesRequestStats,
-          errorInResponse
-        ) { (response, stats) =>
-          response.timeline match {
-            case Some(timeline) =>
-              stats.onSuccess()
-              Return(Timeline.fromThrift(timeline))
-            // Should not really happen.
-            case None =>
-              val tlrException =
-                TimelineRankerException("No timeline returned even when no error occurred.")
-              stats.onFailure(tlrException)
-              Throw(tlrException)
+    val thriftQuelonrielons = quelonrielons.map(_.toThrift)
+    timelonlinelonsRelonquelonstStats.latelonncy {
+      clielonnt.gelontTimelonlinelons(thriftQuelonrielons).map { relonsponselons =>
+        tryRelonsults(
+          relonsponselons,
+          timelonlinelonsRelonquelonstStats,
+          elonrrorInRelonsponselon
+        ) { (relonsponselon, stats) =>
+          relonsponselon.timelonlinelon match {
+            caselon Somelon(timelonlinelon) =>
+              stats.onSuccelonss()
+              Relonturn(Timelonlinelon.fromThrift(timelonlinelon))
+            // Should not relonally happelonn.
+            caselon Nonelon =>
+              val tlrelonxcelonption =
+                TimelonlinelonRankelonrelonxcelonption("No timelonlinelon relonturnelond elonvelonn whelonn no elonrror occurrelond.")
+              stats.onFailurelon(tlrelonxcelonption)
+              Throw(tlrelonxcelonption)
           }
         }
       }
     }
   }
 
-  def getRecycledTweetCandidates(query: RecapQuery): Future[CandidateTweetsResult] = {
-    getRecycledTweetCandidates(Seq(query)).map(fetchRecapQueryResultHead)
+  delonf gelontReloncyclelondTwelonelontCandidatelons(quelonry: ReloncapQuelonry): Futurelon[CandidatelonTwelonelontsRelonsult] = {
+    gelontReloncyclelondTwelonelontCandidatelons(Selonq(quelonry)).map(felontchReloncapQuelonryRelonsultHelonad)
   }
 
-  def getRecycledTweetCandidates(
-    queries: Seq[RecapQuery]
-  ): Future[Seq[Try[CandidateTweetsResult]]] = {
-    val thriftQueries = queries.map(_.toThriftRecapQuery)
-    recycledTweetRequestStats.latency {
-      client.getRecycledTweetCandidates(thriftQueries).map {
-        tryCandidateTweetsResults(_, recycledTweetRequestStats)
+  delonf gelontReloncyclelondTwelonelontCandidatelons(
+    quelonrielons: Selonq[ReloncapQuelonry]
+  ): Futurelon[Selonq[Try[CandidatelonTwelonelontsRelonsult]]] = {
+    val thriftQuelonrielons = quelonrielons.map(_.toThriftReloncapQuelonry)
+    reloncyclelondTwelonelontRelonquelonstStats.latelonncy {
+      clielonnt.gelontReloncyclelondTwelonelontCandidatelons(thriftQuelonrielons).map {
+        tryCandidatelonTwelonelontsRelonsults(_, reloncyclelondTwelonelontRelonquelonstStats)
       }
     }
   }
 
-  def hydrateTweetCandidates(query: RecapQuery): Future[CandidateTweetsResult] = {
-    hydrateTweetCandidates(Seq(query)).map(fetchRecapQueryResultHead)
+  delonf hydratelonTwelonelontCandidatelons(quelonry: ReloncapQuelonry): Futurelon[CandidatelonTwelonelontsRelonsult] = {
+    hydratelonTwelonelontCandidatelons(Selonq(quelonry)).map(felontchReloncapQuelonryRelonsultHelonad)
   }
 
-  def hydrateTweetCandidates(queries: Seq[RecapQuery]): Future[Seq[Try[CandidateTweetsResult]]] = {
-    val thriftQueries = queries.map(_.toThriftRecapHydrationQuery)
-    recapHydrationRequestStats.latency {
-      client.hydrateTweetCandidates(thriftQueries).map {
-        tryCandidateTweetsResults(_, recapHydrationRequestStats)
+  delonf hydratelonTwelonelontCandidatelons(quelonrielons: Selonq[ReloncapQuelonry]): Futurelon[Selonq[Try[CandidatelonTwelonelontsRelonsult]]] = {
+    val thriftQuelonrielons = quelonrielons.map(_.toThriftReloncapHydrationQuelonry)
+    reloncapHydrationRelonquelonstStats.latelonncy {
+      clielonnt.hydratelonTwelonelontCandidatelons(thriftQuelonrielons).map {
+        tryCandidatelonTwelonelontsRelonsults(_, reloncapHydrationRelonquelonstStats)
       }
     }
   }
 
-  def getRecapCandidatesFromAuthors(query: RecapQuery): Future[CandidateTweetsResult] = {
-    getRecapCandidatesFromAuthors(Seq(query)).map(fetchRecapQueryResultHead)
+  delonf gelontReloncapCandidatelonsFromAuthors(quelonry: ReloncapQuelonry): Futurelon[CandidatelonTwelonelontsRelonsult] = {
+    gelontReloncapCandidatelonsFromAuthors(Selonq(quelonry)).map(felontchReloncapQuelonryRelonsultHelonad)
   }
 
-  def getRecapCandidatesFromAuthors(
-    queries: Seq[RecapQuery]
-  ): Future[Seq[Try[CandidateTweetsResult]]] = {
-    val thriftQueries = queries.map(_.toThriftRecapQuery)
-    recapAuthorRequestStats.latency {
-      client.getRecapCandidatesFromAuthors(thriftQueries).map {
-        tryCandidateTweetsResults(_, recapAuthorRequestStats)
+  delonf gelontReloncapCandidatelonsFromAuthors(
+    quelonrielons: Selonq[ReloncapQuelonry]
+  ): Futurelon[Selonq[Try[CandidatelonTwelonelontsRelonsult]]] = {
+    val thriftQuelonrielons = quelonrielons.map(_.toThriftReloncapQuelonry)
+    reloncapAuthorRelonquelonstStats.latelonncy {
+      clielonnt.gelontReloncapCandidatelonsFromAuthors(thriftQuelonrielons).map {
+        tryCandidatelonTwelonelontsRelonsults(_, reloncapAuthorRelonquelonstStats)
       }
     }
   }
 
-  def getEntityTweetCandidates(query: RecapQuery): Future[CandidateTweetsResult] = {
-    getEntityTweetCandidates(Seq(query)).map(fetchRecapQueryResultHead)
+  delonf gelontelonntityTwelonelontCandidatelons(quelonry: ReloncapQuelonry): Futurelon[CandidatelonTwelonelontsRelonsult] = {
+    gelontelonntityTwelonelontCandidatelons(Selonq(quelonry)).map(felontchReloncapQuelonryRelonsultHelonad)
   }
 
-  def getEntityTweetCandidates(
-    queries: Seq[RecapQuery]
-  ): Future[Seq[Try[CandidateTweetsResult]]] = {
-    val thriftQueries = queries.map(_.toThriftEntityTweetsQuery)
-    entityTweetsRequestStats.latency {
-      client.getEntityTweetCandidates(thriftQueries).map {
-        tryCandidateTweetsResults(_, entityTweetsRequestStats)
+  delonf gelontelonntityTwelonelontCandidatelons(
+    quelonrielons: Selonq[ReloncapQuelonry]
+  ): Futurelon[Selonq[Try[CandidatelonTwelonelontsRelonsult]]] = {
+    val thriftQuelonrielons = quelonrielons.map(_.toThriftelonntityTwelonelontsQuelonry)
+    elonntityTwelonelontsRelonquelonstStats.latelonncy {
+      clielonnt.gelontelonntityTwelonelontCandidatelons(thriftQuelonrielons).map {
+        tryCandidatelonTwelonelontsRelonsults(_, elonntityTwelonelontsRelonquelonstStats)
       }
     }
   }
 
-  def getUtegLikedByTweetCandidates(query: RecapQuery): Future[CandidateTweetsResult] = {
-    getUtegLikedByTweetCandidates(Seq(query)).map(fetchRecapQueryResultHead)
+  delonf gelontUtelongLikelondByTwelonelontCandidatelons(quelonry: ReloncapQuelonry): Futurelon[CandidatelonTwelonelontsRelonsult] = {
+    gelontUtelongLikelondByTwelonelontCandidatelons(Selonq(quelonry)).map(felontchReloncapQuelonryRelonsultHelonad)
   }
 
-  def getUtegLikedByTweetCandidates(
-    queries: Seq[RecapQuery]
-  ): Future[Seq[Try[CandidateTweetsResult]]] = {
-    val thriftQueries = queries.map(_.toThriftUtegLikedByTweetsQuery)
-    utegLikedByTweetsRequestStats.latency {
-      client.getUtegLikedByTweetCandidates(thriftQueries).map {
-        tryCandidateTweetsResults(_, utegLikedByTweetsRequestStats)
+  delonf gelontUtelongLikelondByTwelonelontCandidatelons(
+    quelonrielons: Selonq[ReloncapQuelonry]
+  ): Futurelon[Selonq[Try[CandidatelonTwelonelontsRelonsult]]] = {
+    val thriftQuelonrielons = quelonrielons.map(_.toThriftUtelongLikelondByTwelonelontsQuelonry)
+    utelongLikelondByTwelonelontsRelonquelonstStats.latelonncy {
+      clielonnt.gelontUtelongLikelondByTwelonelontCandidatelons(thriftQuelonrielons).map {
+        tryCandidatelonTwelonelontsRelonsults(_, utelongLikelondByTwelonelontsRelonquelonstStats)
       }
     }
   }

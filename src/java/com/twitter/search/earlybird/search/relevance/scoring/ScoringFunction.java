@@ -1,213 +1,213 @@
-package com.twitter.search.earlybird.search.relevance.scoring;
+packagelon com.twittelonr.selonarch.elonarlybird.selonarch.relonlelonvancelon.scoring;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 import java.util.List;
 
-import com.google.common.base.Preconditions;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.search.Explanation;
+import org.apachelon.lucelonnelon.indelonx.IndelonxRelonadelonr;
+import org.apachelon.lucelonnelon.selonarch.elonxplanation;
 
-import com.twitter.common.collections.Pair;
-import com.twitter.search.common.constants.thriftjava.ThriftLanguage;
-import com.twitter.search.common.features.thrift.ThriftSearchResultFeatures;
-import com.twitter.search.common.query.HitAttributeHelper;
-import com.twitter.search.common.relevance.features.EarlybirdDocumentFeatures;
-import com.twitter.search.common.results.thriftjava.FieldHitAttribution;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.core.earlybird.index.DocIDToTweetIDMapper;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
-import com.twitter.search.core.earlybird.index.TimeMapper;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.search.relevance.LinearScoringData;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultMetadata;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultMetadataOptions;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultType;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultsRelevanceStats;
-import com.twitter.search.queryparser.query.Query;
+import com.twittelonr.common.collelonctions.Pair;
+import com.twittelonr.selonarch.common.constants.thriftjava.ThriftLanguagelon;
+import com.twittelonr.selonarch.common.felonaturelons.thrift.ThriftSelonarchRelonsultFelonaturelons;
+import com.twittelonr.selonarch.common.quelonry.HitAttributelonHelonlpelonr;
+import com.twittelonr.selonarch.common.relonlelonvancelon.felonaturelons.elonarlybirdDocumelonntFelonaturelons;
+import com.twittelonr.selonarch.common.relonsults.thriftjava.FielonldHitAttribution;
+import com.twittelonr.selonarch.common.schelonma.baselon.ImmutablelonSchelonmaIntelonrfacelon;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdFielonldConstants.elonarlybirdFielonldConstant;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.DocIDToTwelonelontIDMappelonr;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.TimelonMappelonr;
+import com.twittelonr.selonarch.elonarlybird.common.config.elonarlybirdConfig;
+import com.twittelonr.selonarch.elonarlybird.selonarch.relonlelonvancelon.LinelonarScoringData;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsultMelontadata;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsultMelontadataOptions;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsultTypelon;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsultsRelonlelonvancelonStats;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.Quelonry;
 
 /**
- * Defines a ranking function which computes the score of a document that matches a query.
+ * Delonfinelons a ranking function which computelons thelon scorelon of a documelonnt that matchelons a quelonry.
  */
 public abstract class ScoringFunction {
   /**
-   * Returned by a {@link #score(int, float)} to indicate that a hit should be scored below all.
+   * Relonturnelond by a {@link #scorelon(int, float)} to indicatelon that a hit should belon scorelond belonlow all.
    *
-   * We have some equality tests like:
-   *   "if (score == ScoringFunction.SKIP_HIT) {...}" (DefaultScoringFunction#updateRelevanceStats)
-   * We might also have double to float casts.
+   * Welon havelon somelon elonquality telonsts likelon:
+   *   "if (scorelon == ScoringFunction.SKIP_HIT) {...}" (DelonfaultScoringFunction#updatelonRelonlelonvancelonStats)
+   * Welon might also havelon doublelon to float casts.
    *
-   * Such castings seem to work with the equality test, but there might corner cases when casting
-   * this float value to a double (and back) might not work properly.
+   * Such castings selonelonm to work with thelon elonquality telonst, but thelonrelon might cornelonr caselons whelonn casting
+   * this float valuelon to a doublelon (and back) might not work propelonrly.
    *
-   * If possible, we should choose a constant that is not in the valid score range. Then we can
-   * turn the float equality tests into Math.abs(...) < EPSILON tests.
+   * If possiblelon, welon should chooselon a constant that is not in thelon valid scorelon rangelon. Thelonn welon can
+   * turn thelon float elonquality telonsts into Math.abs(...) < elonPSILON telonsts.
    */
-  public static final float SKIP_HIT = -Float.MAX_VALUE;
+  public static final float SKIP_HIT = -Float.MAX_VALUelon;
 
-  private final ImmutableSchemaInterface schema;
+  privatelon final ImmutablelonSchelonmaIntelonrfacelon schelonma;
 
-  // The current doc ID and the reader for the current segment should be private, because we don't
-  // want sub-classes to incorrectly update them. The doc ID should only be updated by the score()
-  // and explain() methods, and the reader should only be updated by the setNextReader() method.
-  private int currentDocID = -1;
+  // Thelon currelonnt doc ID and thelon relonadelonr for thelon currelonnt selongmelonnt should belon privatelon, beloncauselon welon don't
+  // want sub-classelons to incorrelonctly updatelon thelonm. Thelon doc ID should only belon updatelond by thelon scorelon()
+  // and elonxplain() melonthods, and thelon relonadelonr should only belon updatelond by thelon selontNelonxtRelonadelonr() melonthod.
+  privatelon int currelonntDocID = -1;
 
-  protected DocIDToTweetIDMapper tweetIDMapper = null;
-  protected TimeMapper timeMapper = null;
-  protected EarlybirdDocumentFeatures documentFeatures;
+  protelonctelond DocIDToTwelonelontIDMappelonr twelonelontIDMappelonr = null;
+  protelonctelond TimelonMappelonr timelonMappelonr = null;
+  protelonctelond elonarlybirdDocumelonntFelonaturelons documelonntFelonaturelons;
 
-  protected int debugMode = 0;
-  protected HitAttributeHelper hitAttributeHelper;
-  protected Query query;
+  protelonctelond int delonbugModelon = 0;
+  protelonctelond HitAttributelonHelonlpelonr hitAttributelonHelonlpelonr;
+  protelonctelond Quelonry quelonry;
 
-  protected FieldHitAttribution fieldHitAttribution;
+  protelonctelond FielonldHitAttribution fielonldHitAttribution;
 
-  public ScoringFunction(ImmutableSchemaInterface schema) {
-    this.schema = Preconditions.checkNotNull(schema);
+  public ScoringFunction(ImmutablelonSchelonmaIntelonrfacelon schelonma) {
+    this.schelonma = Prelonconditions.chelonckNotNull(schelonma);
   }
 
-  protected ImmutableSchemaInterface getSchema() {
-    return schema;
+  protelonctelond ImmutablelonSchelonmaIntelonrfacelon gelontSchelonma() {
+    relonturn schelonma;
   }
 
   /**
-   * Updates the reader that will be used to retrieve the tweet IDs and creation times associated
-   * with scored doc IDs, as well as the values for various CSFs. Should be called every time the
-   * searcher starts searching in a new segment.
+   * Updatelons thelon relonadelonr that will belon uselond to relontrielonvelon thelon twelonelont IDs and crelonation timelons associatelond
+   * with scorelond doc IDs, as welonll as thelon valuelons for various CSFs. Should belon callelond elonvelonry timelon thelon
+   * selonarchelonr starts selonarching in a nelonw selongmelonnt.
    */
-  public void setNextReader(EarlybirdIndexSegmentAtomicReader reader) throws IOException {
-    tweetIDMapper = reader.getSegmentData().getDocIDToTweetIDMapper();
-    timeMapper = reader.getSegmentData().getTimeMapper();
-    documentFeatures = new EarlybirdDocumentFeatures(reader);
-    initializeNextSegment(reader);
+  public void selontNelonxtRelonadelonr(elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr relonadelonr) throws IOelonxcelonption {
+    twelonelontIDMappelonr = relonadelonr.gelontSelongmelonntData().gelontDocIDToTwelonelontIDMappelonr();
+    timelonMappelonr = relonadelonr.gelontSelongmelonntData().gelontTimelonMappelonr();
+    documelonntFelonaturelons = nelonw elonarlybirdDocumelonntFelonaturelons(relonadelonr);
+    initializelonNelonxtSelongmelonnt(relonadelonr);
   }
 
-  public void setHitAttributeHelperAndQuery(HitAttributeHelper newHitAttributeHelper,
-                                            Query parsedQuery) {
-    this.hitAttributeHelper = newHitAttributeHelper;
-    this.query = parsedQuery;
+  public void selontHitAttributelonHelonlpelonrAndQuelonry(HitAttributelonHelonlpelonr nelonwHitAttributelonHelonlpelonr,
+                                            Quelonry parselondQuelonry) {
+    this.hitAttributelonHelonlpelonr = nelonwHitAttributelonHelonlpelonr;
+    this.quelonry = parselondQuelonry;
   }
 
-  public void setFieldHitAttribution(FieldHitAttribution fieldHitAttribution) {
-    this.fieldHitAttribution = fieldHitAttribution;
+  public void selontFielonldHitAttribution(FielonldHitAttribution fielonldHitAttribution) {
+    this.fielonldHitAttribution = fielonldHitAttribution;
   }
 
-  public void setDebugMode(int debugMode) {
-    this.debugMode = debugMode;
+  public void selontDelonbugModelon(int delonbugModelon) {
+    this.delonbugModelon = delonbugModelon;
   }
 
   /**
-   * Allow scoring functions to perform more per-segment-specific setup.
+   * Allow scoring functions to pelonrform morelon pelonr-selongmelonnt-speloncific selontup.
    */
-  protected void initializeNextSegment(EarlybirdIndexSegmentAtomicReader reader)
-      throws IOException {
-    // Noop by default
+  protelonctelond void initializelonNelonxtSelongmelonnt(elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr relonadelonr)
+      throws IOelonxcelonption {
+    // Noop by delonfault
   }
 
-  // Updates the current document ID and advances all NumericDocValues to this doc ID.
-  private void setCurrentDocID(int currentDocID) throws IOException {
-    this.currentDocID = currentDocID;
-    documentFeatures.advance(currentDocID);
+  // Updatelons thelon currelonnt documelonnt ID and advancelons all NumelonricDocValuelons to this doc ID.
+  privatelon void selontCurrelonntDocID(int currelonntDocID) throws IOelonxcelonption {
+    this.currelonntDocID = currelonntDocID;
+    documelonntFelonaturelons.advancelon(currelonntDocID);
   }
 
   /**
-   * Returns the current doc ID stored in this scoring function.
+   * Relonturns thelon currelonnt doc ID storelond in this scoring function.
    */
-  public int getCurrentDocID() {
-    return currentDocID;
+  public int gelontCurrelonntDocID() {
+    relonturn currelonntDocID;
   }
 
   /**
-   * Compute the score for the current hit.  This is not expected to be thread safe.
+   * Computelon thelon scorelon for thelon currelonnt hit.  This is not elonxpelonctelond to belon threlonad safelon.
    *
-   * @param internalDocID    internal id of the matching hit
-   * @param luceneQueryScore the score that lucene's text query computed for this hit
+   * @param intelonrnalDocID    intelonrnal id of thelon matching hit
+   * @param lucelonnelonQuelonryScorelon thelon scorelon that lucelonnelon's telonxt quelonry computelond for this hit
    */
-  public float score(int internalDocID, float luceneQueryScore) throws IOException {
-    setCurrentDocID(internalDocID);
-    return score(luceneQueryScore);
+  public float scorelon(int intelonrnalDocID, float lucelonnelonQuelonryScorelon) throws IOelonxcelonption {
+    selontCurrelonntDocID(intelonrnalDocID);
+    relonturn scorelon(lucelonnelonQuelonryScorelon);
   }
 
   /**
-   * Compute the score for the current hit.  This is not expected to be thread safe.
+   * Computelon thelon scorelon for thelon currelonnt hit.  This is not elonxpelonctelond to belon threlonad safelon.
    *
-   * @param luceneQueryScore the score that lucene's text query computed for this hit
+   * @param lucelonnelonQuelonryScorelon thelon scorelon that lucelonnelon's telonxt quelonry computelond for this hit
    */
-  protected abstract float score(float luceneQueryScore) throws IOException;
+  protelonctelond abstract float scorelon(float lucelonnelonQuelonryScorelon) throws IOelonxcelonption;
 
-  /** Returns an explanation for the given hit. */
-  public final Explanation explain(IndexReader reader, int internalDocID, float luceneScore)
-      throws IOException {
-    setNextReader((EarlybirdIndexSegmentAtomicReader) reader);
-    setCurrentDocID(internalDocID);
-    return doExplain(luceneScore);
+  /** Relonturns an elonxplanation for thelon givelonn hit. */
+  public final elonxplanation elonxplain(IndelonxRelonadelonr relonadelonr, int intelonrnalDocID, float lucelonnelonScorelon)
+      throws IOelonxcelonption {
+    selontNelonxtRelonadelonr((elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr) relonadelonr);
+    selontCurrelonntDocID(intelonrnalDocID);
+    relonturn doelonxplain(lucelonnelonScorelon);
   }
 
-  /** Returns an explanation for the current document. */
-  protected abstract Explanation doExplain(float luceneScore) throws IOException;
+  /** Relonturns an elonxplanation for thelon currelonnt documelonnt. */
+  protelonctelond abstract elonxplanation doelonxplain(float lucelonnelonScorelon) throws IOelonxcelonption;
 
   /**
-   * Returns the scoring metadata for the current doc ID.
+   * Relonturns thelon scoring melontadata for thelon currelonnt doc ID.
    */
-  public ThriftSearchResultMetadata getResultMetadata(ThriftSearchResultMetadataOptions options)
-      throws IOException {
-    ThriftSearchResultMetadata metadata = new ThriftSearchResultMetadata();
-    metadata.setResultType(ThriftSearchResultType.RELEVANCE);
-    metadata.setPenguinVersion(EarlybirdConfig.getPenguinVersionByte());
-    metadata.setLanguage(ThriftLanguage.findByValue(
-        (int) documentFeatures.getFeatureValue(EarlybirdFieldConstant.LANGUAGE)));
-    metadata.setSignature(
-        (int) documentFeatures.getFeatureValue(EarlybirdFieldConstant.TWEET_SIGNATURE));
-    metadata.setIsNullcast(documentFeatures.isFlagSet(EarlybirdFieldConstant.IS_NULLCAST_FLAG));
-    return metadata;
-  }
-
-  /**
-   * Updates the given ThriftSearchResultsRelevanceStats instance based on the scoring metadata for
-   * the current doc ID.
-   */
-  public abstract void updateRelevanceStats(ThriftSearchResultsRelevanceStats relevanceStats);
-
-  /**
-   * Score a list of hits. Not thread safe.
-   */
-  public float[] batchScore(List<BatchHit> hits) throws IOException {
-    throw new UnsupportedOperationException("This operation (batchScore) is not implemented!");
+  public ThriftSelonarchRelonsultMelontadata gelontRelonsultMelontadata(ThriftSelonarchRelonsultMelontadataOptions options)
+      throws IOelonxcelonption {
+    ThriftSelonarchRelonsultMelontadata melontadata = nelonw ThriftSelonarchRelonsultMelontadata();
+    melontadata.selontRelonsultTypelon(ThriftSelonarchRelonsultTypelon.RelonLelonVANCelon);
+    melontadata.selontPelonnguinVelonrsion(elonarlybirdConfig.gelontPelonnguinVelonrsionBytelon());
+    melontadata.selontLanguagelon(ThriftLanguagelon.findByValuelon(
+        (int) documelonntFelonaturelons.gelontFelonaturelonValuelon(elonarlybirdFielonldConstant.LANGUAGelon)));
+    melontadata.selontSignaturelon(
+        (int) documelonntFelonaturelons.gelontFelonaturelonValuelon(elonarlybirdFielonldConstant.TWelonelonT_SIGNATURelon));
+    melontadata.selontIsNullcast(documelonntFelonaturelons.isFlagSelont(elonarlybirdFielonldConstant.IS_NULLCAST_FLAG));
+    relonturn melontadata;
   }
 
   /**
-   * Collect the features and CSFs for the current document. Used for scoring and generating the
-   * returned metadata.
+   * Updatelons thelon givelonn ThriftSelonarchRelonsultsRelonlelonvancelonStats instancelon baselond on thelon scoring melontadata for
+   * thelon currelonnt doc ID.
    */
-  public Pair<LinearScoringData, ThriftSearchResultFeatures> collectFeatures(
-      float luceneQueryScore) throws IOException {
-    throw new UnsupportedOperationException("This operation (collectFeatures) is not implemented!");
+  public abstract void updatelonRelonlelonvancelonStats(ThriftSelonarchRelonsultsRelonlelonvancelonStats relonlelonvancelonStats);
+
+  /**
+   * Scorelon a list of hits. Not threlonad safelon.
+   */
+  public float[] batchScorelon(List<BatchHit> hits) throws IOelonxcelonption {
+    throw nelonw UnsupportelondOpelonrationelonxcelonption("This opelonration (batchScorelon) is not implelonmelonntelond!");
   }
 
   /**
-   * Implement this function to populate the result metadata based on the given scoring data.
-   * Otherwise, this is a no-op.
+   * Collelonct thelon felonaturelons and CSFs for thelon currelonnt documelonnt. Uselond for scoring and gelonnelonrating thelon
+   * relonturnelond melontadata.
+   */
+  public Pair<LinelonarScoringData, ThriftSelonarchRelonsultFelonaturelons> collelonctFelonaturelons(
+      float lucelonnelonQuelonryScorelon) throws IOelonxcelonption {
+    throw nelonw UnsupportelondOpelonrationelonxcelonption("This opelonration (collelonctFelonaturelons) is not implelonmelonntelond!");
+  }
+
+  /**
+   * Implelonmelonnt this function to populatelon thelon relonsult melontadata baselond on thelon givelonn scoring data.
+   * Othelonrwiselon, this is a no-op.
    *
-   * Scoring functions that implement this should also implement getScoringData().
+   * Scoring functions that implelonmelonnt this should also implelonmelonnt gelontScoringData().
    */
-  public void populateResultMetadataBasedOnScoringData(
-      ThriftSearchResultMetadataOptions options,
-      ThriftSearchResultMetadata metadata,
-      LinearScoringData data) throws IOException {
-    // Make sure that the scoring data passed in is null because getScoringDataForCurrentDocument()
-    // returns null by default and if a subclass overrides one of these two methods, it should
-    // override both.
-    Preconditions.checkState(data == null, "LinearScoringData should be null");
+  public void populatelonRelonsultMelontadataBaselondOnScoringData(
+      ThriftSelonarchRelonsultMelontadataOptions options,
+      ThriftSelonarchRelonsultMelontadata melontadata,
+      LinelonarScoringData data) throws IOelonxcelonption {
+    // Makelon surelon that thelon scoring data passelond in is null beloncauselon gelontScoringDataForCurrelonntDocumelonnt()
+    // relonturns null by delonfault and if a subclass ovelonrridelons onelon of thelonselon two melonthods, it should
+    // ovelonrridelon both.
+    Prelonconditions.chelonckStatelon(data == null, "LinelonarScoringData should belon null");
   }
 
   /**
-   * This should only be called at hit collection time because it relies on the internal doc id.
+   * This should only belon callelond at hit collelonction timelon beloncauselon it relonlielons on thelon intelonrnal doc id.
    *
-   * Scoring functions that implement this should also implement the function
-   * populateResultMetadataBasedOnScoringData().
+   * Scoring functions that implelonmelonnt this should also implelonmelonnt thelon function
+   * populatelonRelonsultMelontadataBaselondOnScoringData().
    */
-  public LinearScoringData getScoringDataForCurrentDocument() {
-    return null;
+  public LinelonarScoringData gelontScoringDataForCurrelonntDocumelonnt() {
+    relonturn null;
   }
 }

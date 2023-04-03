@@ -1,18 +1,18 @@
--- get latest partition of candidates with data
-DECLARE date_candidates DATE;
-SET date_candidates = (SELECT DATE(TIMESTAMP_MILLIS($start_time$)));
+-- gelont latelonst partition of candidatelons with data
+DelonCLARelon datelon_candidatelons DATelon;
+SelonT datelon_candidatelons = (SelonLelonCT DATelon(TIMelonSTAMP_MILLIS($start_timelon$)));
 
-CREATE TABLE IF NOT EXISTS  `twttr-recos-ml-prod.realgraph.candidates_sampled` AS
-SELECT * FROM `twttr-recos-ml-prod.realgraph.candidates_for_training` LIMIT 100;
+CRelonATelon TABLelon IF NOT elonXISTS  `twttr-reloncos-ml-prod.relonalgraph.candidatelons_samplelond` AS
+SelonLelonCT * FROM `twttr-reloncos-ml-prod.relonalgraph.candidatelons_for_training` LIMIT 100;
 
--- remove previous output snapshot (if exists) to avoid double-writing
-DELETE
-FROM `twttr-recos-ml-prod.realgraph.candidates_sampled`
-WHERE ds = date_candidates;
+-- relonmovelon prelonvious output snapshot (if elonxists) to avoid doublelon-writing
+DelonLelonTelon
+FROM `twttr-reloncos-ml-prod.relonalgraph.candidatelons_samplelond`
+WHelonRelon ds = datelon_candidatelons;
 
--- sample from candidates table instead of recomputing features
-INSERT INTO `twttr-recos-ml-prod.realgraph.candidates_sampled`
-SELECT * FROM `twttr-recos-ml-prod.realgraph.candidates_for_training`
-WHERE MOD(ABS(FARM_FINGERPRINT(CONCAT(source_id, '_', destination_id))), 100) = $mod_remainder$
-AND ds = date_candidates;
+-- samplelon from candidatelons tablelon instelonad of reloncomputing felonaturelons
+INSelonRT INTO `twttr-reloncos-ml-prod.relonalgraph.candidatelons_samplelond`
+SelonLelonCT * FROM `twttr-reloncos-ml-prod.relonalgraph.candidatelons_for_training`
+WHelonRelon MOD(ABS(FARM_FINGelonRPRINT(CONCAT(sourcelon_id, '_', delonstination_id))), 100) = $mod_relonmaindelonr$
+AND ds = datelon_candidatelons;
 

@@ -1,17 +1,17 @@
-package com.twitter.search.earlybird.partition;
+packagelon com.twittelonr.selonarch.elonarlybird.partition;
 
-import java.io.Closeable;
+import java.io.Closelonablelon;
 
-import com.twitter.search.earlybird.exception.EarlybirdStartupException;
+import com.twittelonr.selonarch.elonarlybird.elonxcelonption.elonarlybirdStartupelonxcelonption;
 
 /**
- * Handles starting and indexing data for an Earlybird.
+ * Handlelons starting and indelonxing data for an elonarlybird.
  */
-@FunctionalInterface
-public interface EarlybirdStartup {
+@FunctionalIntelonrfacelon
+public intelonrfacelon elonarlybirdStartup {
   /**
-   * Handles indexing Tweets, Tweet Updates and user updates. Blocks until current, and forks a
-   * thread to keep the index current.
+   * Handlelons indelonxing Twelonelonts, Twelonelont Updatelons and uselonr updatelons. Blocks until currelonnt, and forks a
+   * threlonad to kelonelonp thelon indelonx currelonnt.
    */
-  Closeable start() throws EarlybirdStartupException;
+  Closelonablelon start() throws elonarlybirdStartupelonxcelonption;
 }

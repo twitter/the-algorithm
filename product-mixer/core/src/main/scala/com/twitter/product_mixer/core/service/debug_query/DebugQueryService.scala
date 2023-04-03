@@ -1,109 +1,109 @@
-package com.twitter.product_mixer.core.service.debug_query
+packagelon com.twittelonr.product_mixelonr.corelon.selonrvicelon.delonbug_quelonry
 
-import com.fasterxml.jackson.databind.SerializationFeature
-import com.twitter.finagle.Service
-import com.twitter.finagle.context.Contexts
-import com.twitter.finagle.tracing.Trace.traceLocal
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.transport.Transport
-import com.twitter.product_mixer.core.functional_component.configapi.ParamsBuilder
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifierStack
-import com.twitter.product_mixer.core.model.marshalling.request.Product
-import com.twitter.product_mixer.core.model.marshalling.request.Request
-import com.twitter.product_mixer.core.pipeline.product.ProductPipeline
-import com.twitter.product_mixer.core.pipeline.product.ProductPipelineRequest
-import com.twitter.product_mixer.core.product.registry.ProductPipelineRegistry
-import com.twitter.product_mixer.core.{thriftscala => t}
-import com.twitter.scrooge.ThriftStruct
-import com.twitter.scrooge.{Request => ScroogeRequest}
-import com.twitter.scrooge.{Response => ScroogeResponse}
-import com.twitter.stitch.Stitch
-import com.twitter.turntable.context.TurntableRequestContextKey
-import com.twitter.util.jackson.ScalaObjectMapper
-import javax.inject.Inject
-import javax.inject.Singleton
-import scala.reflect.runtime.universe.TypeTag
+import com.fastelonrxml.jackson.databind.SelonrializationFelonaturelon
+import com.twittelonr.finaglelon.Selonrvicelon
+import com.twittelonr.finaglelon.contelonxt.Contelonxts
+import com.twittelonr.finaglelon.tracing.Tracelon.tracelonLocal
+import com.twittelonr.finaglelon.mtls.authelonntication.SelonrvicelonIdelonntifielonr
+import com.twittelonr.finaglelon.transport.Transport
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.configapi.ParamsBuildelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.ComponelonntIdelonntifielonrStack
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.Product
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.Relonquelonst
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.product.ProductPipelonlinelon
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.product.ProductPipelonlinelonRelonquelonst
+import com.twittelonr.product_mixelonr.corelon.product.relongistry.ProductPipelonlinelonRelongistry
+import com.twittelonr.product_mixelonr.corelon.{thriftscala => t}
+import com.twittelonr.scroogelon.ThriftStruct
+import com.twittelonr.scroogelon.{Relonquelonst => ScroogelonRelonquelonst}
+import com.twittelonr.scroogelon.{Relonsponselon => ScroogelonRelonsponselon}
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.turntablelon.contelonxt.TurntablelonRelonquelonstContelonxtKelony
+import com.twittelonr.util.jackson.ScalaObjelonctMappelonr
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
+import scala.relonflelonct.runtimelon.univelonrselon.TypelonTag
 
 /**
- * Returns the complete execution log for a pipeline query. These endpoints are intended for
- * debugging (primarily through Turntable).
+ * Relonturns thelon complelontelon elonxeloncution log for a pipelonlinelon quelonry. Thelonselon elonndpoints arelon intelonndelond for
+ * delonbugging (primarily through Turntablelon).
  */
-@Singleton
-class DebugQueryService @Inject() (
-  productPipelineRegistry: ProductPipelineRegistry,
-  paramsBuilder: ParamsBuilder,
-  authorizationService: AuthorizationService) {
+@Singlelonton
+class DelonbugQuelonrySelonrvicelon @Injelonct() (
+  productPipelonlinelonRelongistry: ProductPipelonlinelonRelongistry,
+  paramsBuildelonr: ParamsBuildelonr,
+  authorizationSelonrvicelon: AuthorizationSelonrvicelon) {
 
-  private val mapper =
-    ScalaObjectMapper.builder
-      .withAdditionalJacksonModules(Seq(ParamsSerializerModule))
-      .withSerializationConfig(
+  privatelon val mappelonr =
+    ScalaObjelonctMappelonr.buildelonr
+      .withAdditionalJacksonModulelons(Selonq(ParamsSelonrializelonrModulelon))
+      .withSelonrializationConfig(
         Map(
-          // These are copied from the default serialization config.
-          SerializationFeature.WRITE_DATES_AS_TIMESTAMPS -> false,
-          SerializationFeature.WRITE_ENUMS_USING_TO_STRING -> true,
-          // Generally we want to be defensive when serializing since we don't control everything that's
-          // serialized. This issue also came up when trying to serialize Unit as part of sync side effects.
-          SerializationFeature.FAIL_ON_EMPTY_BEANS -> false,
+          // Thelonselon arelon copielond from thelon delonfault selonrialization config.
+          SelonrializationFelonaturelon.WRITelon_DATelonS_AS_TIMelonSTAMPS -> falselon,
+          SelonrializationFelonaturelon.WRITelon_elonNUMS_USING_TO_STRING -> truelon,
+          // Gelonnelonrally welon want to belon delonfelonnsivelon whelonn selonrializing sincelon welon don't control elonvelonrything that's
+          // selonrializelond. This issuelon also camelon up whelonn trying to selonrializelon Unit as part of sync sidelon elonffeloncts.
+          SelonrializationFelonaturelon.FAIL_ON_elonMPTY_BelonANS -> falselon,
         ))
-      // The default implementation represents numbers as JSON Numbers (i.e. Double with 53 bit precision
-      // which leads to Snowflake IDs being cropped in the case of tweets.
-      .withNumbersAsStrings(true)
-      .objectMapper
+      // Thelon delonfault implelonmelonntation relonprelonselonnts numbelonrs as JSON Numbelonrs (i.elon. Doublelon with 53 bit preloncision
+      // which lelonads to Snowflakelon IDs beloning croppelond in thelon caselon of twelonelonts.
+      .withNumbelonrsAsStrings(truelon)
+      .objelonctMappelonr
 
-  def apply[
-    ThriftRequest <: ThriftStruct with Product1[MixerServiceRequest],
-    MixerServiceRequest <: ThriftStruct,
-    MixerRequest <: Request
+  delonf apply[
+    ThriftRelonquelonst <: ThriftStruct with Product1[MixelonrSelonrvicelonRelonquelonst],
+    MixelonrSelonrvicelonRelonquelonst <: ThriftStruct,
+    MixelonrRelonquelonst <: Relonquelonst
   ](
-    unmarshaller: MixerServiceRequest => MixerRequest
+    unmarshallelonr: MixelonrSelonrvicelonRelonquelonst => MixelonrRelonquelonst
   )(
-    implicit requestTypeTag: TypeTag[MixerRequest]
-  ): Service[ScroogeRequest[ThriftRequest], ScroogeResponse[t.PipelineExecutionResult]] = {
-    (thriftRequest: ScroogeRequest[ThriftRequest]) =>
+    implicit relonquelonstTypelonTag: TypelonTag[MixelonrRelonquelonst]
+  ): Selonrvicelon[ScroogelonRelonquelonst[ThriftRelonquelonst], ScroogelonRelonsponselon[t.PipelonlinelonelonxeloncutionRelonsult]] = {
+    (thriftRelonquelonst: ScroogelonRelonquelonst[ThriftRelonquelonst]) =>
       {
 
-        val request = unmarshaller(thriftRequest.args._1)
-        val params = paramsBuilder.build(
-          clientContext = request.clientContext,
-          product = request.product,
-          featureOverrides = request.debugParams.flatMap(_.featureOverrides).getOrElse(Map.empty)
+        val relonquelonst = unmarshallelonr(thriftRelonquelonst.args._1)
+        val params = paramsBuildelonr.build(
+          clielonntContelonxt = relonquelonst.clielonntContelonxt,
+          product = relonquelonst.product,
+          felonaturelonOvelonrridelons = relonquelonst.delonbugParams.flatMap(_.felonaturelonOvelonrridelons).gelontOrelonlselon(Map.elonmpty)
         )
 
-        val productPipeline = productPipelineRegistry
-          .getProductPipeline[MixerRequest, Any](request.product)
-        verifyRequestAuthorization(request.product, productPipeline)
-        Contexts.broadcast.letClear(TurntableRequestContextKey) {
+        val productPipelonlinelon = productPipelonlinelonRelongistry
+          .gelontProductPipelonlinelon[MixelonrRelonquelonst, Any](relonquelonst.product)
+        velonrifyRelonquelonstAuthorization(relonquelonst.product, productPipelonlinelon)
+        Contelonxts.broadcast.lelontClelonar(TurntablelonRelonquelonstContelonxtKelony) {
           Stitch
-            .run(productPipeline
-              .arrow(ProductPipelineRequest(request, params)).map { detailedResult =>
-                // Serialization can be slow so a trace is useful both for optimization by the Promix
-                // team and to give visibility to customers.
-                val serializedJSON =
-                  traceLocal("serialize_debug_response")(mapper.writeValueAsString(detailedResult))
-                t.PipelineExecutionResult(serializedJSON)
+            .run(productPipelonlinelon
+              .arrow(ProductPipelonlinelonRelonquelonst(relonquelonst, params)).map { delontailelondRelonsult =>
+                // Selonrialization can belon slow so a tracelon is uselonful both for optimization by thelon Promix
+                // telonam and to givelon visibility to customelonrs.
+                val selonrializelondJSON =
+                  tracelonLocal("selonrializelon_delonbug_relonsponselon")(mappelonr.writelonValuelonAsString(delontailelondRelonsult))
+                t.PipelonlinelonelonxeloncutionRelonsult(selonrializelondJSON)
               })
-            .map(ScroogeResponse(_))
+            .map(ScroogelonRelonsponselon(_))
         }
       }
   }
 
-  private def verifyRequestAuthorization(
+  privatelon delonf velonrifyRelonquelonstAuthorization(
     product: Product,
-    productPipeline: ProductPipeline[_, _]
+    productPipelonlinelon: ProductPipelonlinelon[_, _]
   ): Unit = {
-    val serviceIdentifier = ServiceIdentifier.fromCertificate(Transport.peerCertificate)
-    val requestContext = Contexts.broadcast
-      .get(TurntableRequestContextKey).getOrElse(throw MissingTurntableRequestContextException)
+    val selonrvicelonIdelonntifielonr = SelonrvicelonIdelonntifielonr.fromCelonrtificatelon(Transport.pelonelonrCelonrtificatelon)
+    val relonquelonstContelonxt = Contelonxts.broadcast
+      .gelont(TurntablelonRelonquelonstContelonxtKelony).gelontOrelonlselon(throw MissingTurntablelonRelonquelonstContelonxtelonxcelonption)
 
-    val componentStack = ComponentIdentifierStack(productPipeline.identifier, product.identifier)
-    authorizationService.verifyRequestAuthorization(
-      componentStack,
-      serviceIdentifier,
-      productPipeline.debugAccessPolicies,
-      requestContext)
+    val componelonntStack = ComponelonntIdelonntifielonrStack(productPipelonlinelon.idelonntifielonr, product.idelonntifielonr)
+    authorizationSelonrvicelon.velonrifyRelonquelonstAuthorization(
+      componelonntStack,
+      selonrvicelonIdelonntifielonr,
+      productPipelonlinelon.delonbugAccelonssPolicielons,
+      relonquelonstContelonxt)
   }
 }
 
-object MissingTurntableRequestContextException
-    extends Exception("Request is missing turntable request context")
+objelonct MissingTurntablelonRelonquelonstContelonxtelonxcelonption
+    elonxtelonnds elonxcelonption("Relonquelonst is missing turntablelon relonquelonst contelonxt")

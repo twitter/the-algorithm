@@ -1,20 +1,20 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.user
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.itelonm.uselonr
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.user.PendingFollowUser
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.user.User
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.user.UserDetailed
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.user.UserDisplayType
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.uselonr.PelonndingFollowUselonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.uselonr.Uselonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.uselonr.UselonrDelontailelond
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.uselonr.UselonrDisplayTypelon
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class UserDisplayTypeMarshaller @Inject() () {
+@Singlelonton
+class UselonrDisplayTypelonMarshallelonr @Injelonct() () {
 
-  def apply(userDisplayType: UserDisplayType): urt.UserDisplayType =
-    userDisplayType match {
-      case User => urt.UserDisplayType.User
-      case UserDetailed => urt.UserDisplayType.UserDetailed
-      case PendingFollowUser => urt.UserDisplayType.PendingFollowUser
+  delonf apply(uselonrDisplayTypelon: UselonrDisplayTypelon): urt.UselonrDisplayTypelon =
+    uselonrDisplayTypelon match {
+      caselon Uselonr => urt.UselonrDisplayTypelon.Uselonr
+      caselon UselonrDelontailelond => urt.UselonrDisplayTypelon.UselonrDelontailelond
+      caselon PelonndingFollowUselonr => urt.UselonrDisplayTypelon.PelonndingFollowUselonr
     }
 }

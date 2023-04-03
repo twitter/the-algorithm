@@ -1,67 +1,67 @@
-package com.twitter.search.earlybird.search.facets;
+packagelon com.twittelonr.selonarch.elonarlybird.selonarch.facelonts;
 
 import java.util.Map;
-import java.util.Set;
+import java.util.Selont;
 
-import com.twitter.search.core.earlybird.facets.FacetIDMap;
-import com.twitter.search.core.earlybird.facets.FacetLabelProvider;
-import com.twitter.search.core.earlybird.facets.FacetTermCollector;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
-import com.twitter.search.earlybird.thrift.ThriftSearchResult;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultExtraMetadata;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultMetadata;
+import com.twittelonr.selonarch.corelon.elonarlybird.facelonts.FacelontIDMap;
+import com.twittelonr.selonarch.corelon.elonarlybird.facelonts.FacelontLabelonlProvidelonr;
+import com.twittelonr.selonarch.corelon.elonarlybird.facelonts.FacelontTelonrmCollelonctor;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsult;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsultelonxtraMelontadata;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsultMelontadata;
 
-public abstract class AbstractFacetTermCollector implements FacetTermCollector {
-  private Map<String, FacetLabelProvider> facetLabelProviders;
-  private FacetIDMap facetIdMap;
+public abstract class AbstractFacelontTelonrmCollelonctor implelonmelonnts FacelontTelonrmCollelonctor {
+  privatelon Map<String, FacelontLabelonlProvidelonr> facelontLabelonlProvidelonrs;
+  privatelon FacelontIDMap facelontIdMap;
 
   /**
-   * Populates the given ThriftSearchResult instance with the results collected by this collector
-   * and clears all collected results in this collector.
+   * Populatelons thelon givelonn ThriftSelonarchRelonsult instancelon with thelon relonsults collelonctelond by this collelonctor
+   * and clelonars all collelonctelond relonsults in this collelonctor.
    *
-   * @param result The ThriftSearchResult instance to be populated with the results collected in
-   *               this collector.
+   * @param relonsult Thelon ThriftSelonarchRelonsult instancelon to belon populatelond with thelon relonsults collelonctelond in
+   *               this collelonctor.
    */
-  public abstract void fillResultAndClear(ThriftSearchResult result);
+  public abstract void fillRelonsultAndClelonar(ThriftSelonarchRelonsult relonsult);
 
-  public void resetFacetLabelProviders(
-      Map<String, FacetLabelProvider> facetLabelProvidersToReset, FacetIDMap facetIdMapToReset) {
-    this.facetLabelProviders = facetLabelProvidersToReset;
-    this.facetIdMap = facetIdMapToReset;
+  public void relonselontFacelontLabelonlProvidelonrs(
+      Map<String, FacelontLabelonlProvidelonr> facelontLabelonlProvidelonrsToRelonselont, FacelontIDMap facelontIdMapToRelonselont) {
+    this.facelontLabelonlProvidelonrs = facelontLabelonlProvidelonrsToRelonselont;
+    this.facelontIdMap = facelontIdMapToRelonselont;
   }
 
-  String findFacetName(int fieldId) {
-    return fieldId < 0 ? null : facetIdMap.getFacetFieldByFacetID(fieldId).getFacetName();
+  String findFacelontNamelon(int fielonldId) {
+    relonturn fielonldId < 0 ? null : facelontIdMap.gelontFacelontFielonldByFacelontID(fielonldId).gelontFacelontNamelon();
   }
 
-  protected ThriftSearchResultExtraMetadata getExtraMetadata(ThriftSearchResult result) {
-    ThriftSearchResultMetadata metadata = result.getMetadata();
-    if (!metadata.isSetExtraMetadata()) {
-      metadata.setExtraMetadata(new ThriftSearchResultExtraMetadata());
+  protelonctelond ThriftSelonarchRelonsultelonxtraMelontadata gelontelonxtraMelontadata(ThriftSelonarchRelonsult relonsult) {
+    ThriftSelonarchRelonsultMelontadata melontadata = relonsult.gelontMelontadata();
+    if (!melontadata.isSelontelonxtraMelontadata()) {
+      melontadata.selontelonxtraMelontadata(nelonw ThriftSelonarchRelonsultelonxtraMelontadata());
     }
-    return metadata.getExtraMetadata();
+    relonturn melontadata.gelontelonxtraMelontadata();
   }
 
-  protected String getTermFromProvider(
-      String facetName, long termID, FacetLabelProvider provider) {
-    return provider.getLabelAccessor().getTermText(termID);
+  protelonctelond String gelontTelonrmFromProvidelonr(
+      String facelontNamelon, long telonrmID, FacelontLabelonlProvidelonr providelonr) {
+    relonturn providelonr.gelontLabelonlAccelonssor().gelontTelonrmTelonxt(telonrmID);
   }
 
-  protected String getTermFromFacet(long termID, int fieldID, Set<String> facetsToCollectFrom) {
-    if (termID == EarlybirdIndexSegmentAtomicReader.TERM_NOT_FOUND) {
-      return null;
+  protelonctelond String gelontTelonrmFromFacelont(long telonrmID, int fielonldID, Selont<String> facelontsToCollelonctFrom) {
+    if (telonrmID == elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr.TelonRM_NOT_FOUND) {
+      relonturn null;
     }
 
-    String facetName = findFacetName(fieldID);
-    if (!facetsToCollectFrom.contains(facetName)) {
-      return null;
+    String facelontNamelon = findFacelontNamelon(fielonldID);
+    if (!facelontsToCollelonctFrom.contains(facelontNamelon)) {
+      relonturn null;
     }
 
-    final FacetLabelProvider provider = facetLabelProviders.get(facetName);
-    if (provider == null) {
-      return null;
+    final FacelontLabelonlProvidelonr providelonr = facelontLabelonlProvidelonrs.gelont(facelontNamelon);
+    if (providelonr == null) {
+      relonturn null;
     }
 
-    return getTermFromProvider(facetName, termID, provider);
+    relonturn gelontTelonrmFromProvidelonr(facelontNamelon, telonrmID, providelonr);
   }
 }

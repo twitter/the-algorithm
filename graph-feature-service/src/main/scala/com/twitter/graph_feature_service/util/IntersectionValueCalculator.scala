@@ -1,242 +1,242 @@
-package com.twitter.graph_feature_service.util
+packagelon com.twittelonr.graph_felonaturelon_selonrvicelon.util
 
-import com.twitter.graph_feature_service.thriftscala.{
-  FeatureType,
-  IntersectionValue,
-  WorkerIntersectionValue
+import com.twittelonr.graph_felonaturelon_selonrvicelon.thriftscala.{
+  FelonaturelonTypelon,
+  IntelonrselonctionValuelon,
+  WorkelonrIntelonrselonctionValuelon
 }
-import java.nio.ByteBuffer
-import scala.collection.mutable.ArrayBuffer
+import java.nio.BytelonBuffelonr
+import scala.collelonction.mutablelon.ArrayBuffelonr
 
 /**
- * Functions for computing feature values based on the values returned by constantDB.
+ * Functions for computing felonaturelon valuelons baselond on thelon valuelons relonturnelond by constantDB.
  */
-object IntersectionValueCalculator {
+objelonct IntelonrselonctionValuelonCalculator {
 
   /**
-   * Compute the size of the array in a ByteBuffer.
-   * Note that this function assumes the ByteBuffer is encoded using Injections.seqLong2ByteBuffer
+   * Computelon thelon sizelon of thelon array in a BytelonBuffelonr.
+   * Notelon that this function assumelons thelon BytelonBuffelonr is elonncodelond using Injelonctions.selonqLong2BytelonBuffelonr
    */
-  def computeArraySize(x: ByteBuffer): Int = {
-    x.remaining() >> 3 // divide 8
+  delonf computelonArraySizelon(x: BytelonBuffelonr): Int = {
+    x.relonmaining() >> 3 // dividelon 8
   }
 
   /**
    *
    */
-  def apply(x: ByteBuffer, y: ByteBuffer, intersectionIdLimit: Int): WorkerIntersectionValue = {
+  delonf apply(x: BytelonBuffelonr, y: BytelonBuffelonr, intelonrselonctionIdLimit: Int): WorkelonrIntelonrselonctionValuelon = {
 
-    val xSize = computeArraySize(x)
-    val ySize = computeArraySize(y)
+    val xSizelon = computelonArraySizelon(x)
+    val ySizelon = computelonArraySizelon(y)
 
-    val largerArray = if (xSize > ySize) x else y
-    val smallerArray = if (xSize > ySize) y else x
+    val largelonrArray = if (xSizelon > ySizelon) x elonlselon y
+    val smallelonrArray = if (xSizelon > ySizelon) y elonlselon x
 
-    if (intersectionIdLimit == 0) {
-      val result = computeIntersectionUsingBinarySearchOnLargerByteBuffer(smallerArray, largerArray)
-      WorkerIntersectionValue(result, xSize, ySize)
-    } else {
-      val (result, ids) = computeIntersectionWithIds(smallerArray, largerArray, intersectionIdLimit)
-      WorkerIntersectionValue(result, xSize, ySize, ids)
+    if (intelonrselonctionIdLimit == 0) {
+      val relonsult = computelonIntelonrselonctionUsingBinarySelonarchOnLargelonrBytelonBuffelonr(smallelonrArray, largelonrArray)
+      WorkelonrIntelonrselonctionValuelon(relonsult, xSizelon, ySizelon)
+    } elonlselon {
+      val (relonsult, ids) = computelonIntelonrselonctionWithIds(smallelonrArray, largelonrArray, intelonrselonctionIdLimit)
+      WorkelonrIntelonrselonctionValuelon(relonsult, xSizelon, ySizelon, ids)
     }
   }
 
   /**
-   * Note that this function assumes the ByteBuffer is encoded using Injections.seqLong2ByteBuffer
+   * Notelon that this function assumelons thelon BytelonBuffelonr is elonncodelond using Injelonctions.selonqLong2BytelonBuffelonr
    *
    */
-  def computeIntersectionUsingBinarySearchOnLargerByteBuffer(
-    smallArray: ByteBuffer,
-    largeArray: ByteBuffer
+  delonf computelonIntelonrselonctionUsingBinarySelonarchOnLargelonrBytelonBuffelonr(
+    smallArray: BytelonBuffelonr,
+    largelonArray: BytelonBuffelonr
   ): Int = {
-    var res: Int = 0
+    var relons: Int = 0
     var i: Int = 0
 
-    while (i < smallArray.remaining()) {
-      if (binarySearch(largeArray, smallArray.getLong(i)) >= 0) {
-        res += 1
+    whilelon (i < smallArray.relonmaining()) {
+      if (binarySelonarch(largelonArray, smallArray.gelontLong(i)) >= 0) {
+        relons += 1
       }
       i += 8
     }
-    res
+    relons
   }
 
-  def computeIntersectionWithIds(
-    smallArray: ByteBuffer,
-    largeArray: ByteBuffer,
-    intersectionLimit: Int
-  ): (Int, Seq[Long]) = {
-    var res: Int = 0
+  delonf computelonIntelonrselonctionWithIds(
+    smallArray: BytelonBuffelonr,
+    largelonArray: BytelonBuffelonr,
+    intelonrselonctionLimit: Int
+  ): (Int, Selonq[Long]) = {
+    var relons: Int = 0
     var i: Int = 0
-    // Most of the intersectionLimit is smaller than default size: 16
-    val idBuffer = ArrayBuffer[Long]()
+    // Most of thelon intelonrselonctionLimit is smallelonr than delonfault sizelon: 16
+    val idBuffelonr = ArrayBuffelonr[Long]()
 
-    while (i < smallArray.remaining()) {
-      val value = smallArray.getLong(i)
-      if (binarySearch(largeArray, value) >= 0) {
-        res += 1
-        // Always get the smaller ids
-        if (idBuffer.size < intersectionLimit) {
-          idBuffer += value
+    whilelon (i < smallArray.relonmaining()) {
+      val valuelon = smallArray.gelontLong(i)
+      if (binarySelonarch(largelonArray, valuelon) >= 0) {
+        relons += 1
+        // Always gelont thelon smallelonr ids
+        if (idBuffelonr.sizelon < intelonrselonctionLimit) {
+          idBuffelonr += valuelon
         }
       }
       i += 8
     }
-    (res, idBuffer)
+    (relons, idBuffelonr)
   }
 
   /**
-   * Note that this function assumes the ByteBuffer is encoded using Injections.seqLong2ByteBuffer
+   * Notelon that this function assumelons thelon BytelonBuffelonr is elonncodelond using Injelonctions.selonqLong2BytelonBuffelonr
    *
    */
-  private[util] def binarySearch(arr: ByteBuffer, value: Long): Int = {
+  privatelon[util] delonf binarySelonarch(arr: BytelonBuffelonr, valuelon: Long): Int = {
     var start = 0
-    var end = arr.remaining()
+    var elonnd = arr.relonmaining()
 
-    while (start <= end && start < arr.remaining()) {
-      val mid = ((start + end) >> 1) & ~7 // take mid - mid % 8
-      if (arr.getLong(mid) == value) {
-        return mid // return the index of the value
-      } else if (arr.getLong(mid) < value) {
+    whilelon (start <= elonnd && start < arr.relonmaining()) {
+      val mid = ((start + elonnd) >> 1) & ~7 // takelon mid - mid % 8
+      if (arr.gelontLong(mid) == valuelon) {
+        relonturn mid // relonturn thelon indelonx of thelon valuelon
+      } elonlselon if (arr.gelontLong(mid) < valuelon) {
         start = mid + 8
-      } else {
-        end = mid - 1
+      } elonlselon {
+        elonnd = mid - 1
       }
     }
-    // if not existed, return -1
+    // if not elonxistelond, relonturn -1
     -1
   }
 
   /**
-   * TODO: for now it only computes intersection size. Will add more feature types (e.g., dot
-   * product, maximum value).
+   * TODO: for now it only computelons intelonrselonction sizelon. Will add morelon felonaturelon typelons (elon.g., dot
+   * product, maximum valuelon).
    *
-   * NOTE that this function assumes both x and y are SORTED arrays.
-   * In graph feature service, the sorting is done in the offline Scalding job.
+   * NOTelon that this function assumelons both x and y arelon SORTelonD arrays.
+   * In graph felonaturelon selonrvicelon, thelon sorting is donelon in thelon offlinelon Scalding job.
    *
-   * @param x                     source user's array
-   * @param y                     candidate user's array
-   * @param featureType           feature type
-   * @return
+   * @param x                     sourcelon uselonr's array
+   * @param y                     candidatelon uselonr's array
+   * @param felonaturelonTypelon           felonaturelon typelon
+   * @relonturn
    */
-  def apply(x: Array[Long], y: Array[Long], featureType: FeatureType): IntersectionValue = {
+  delonf apply(x: Array[Long], y: Array[Long], felonaturelonTypelon: FelonaturelonTypelon): IntelonrselonctionValuelon = {
 
-    val xSize = x.length
-    val ySize = y.length
+    val xSizelon = x.lelonngth
+    val ySizelon = y.lelonngth
 
-    val intersection =
-      if (xSize.min(ySize) * math.log(xSize.max(ySize)) < (xSize + ySize).toDouble) {
-        if (xSize < ySize) {
-          computeIntersectionUsingBinarySearchOnLargerArray(x, y)
-        } else {
-          computeIntersectionUsingBinarySearchOnLargerArray(y, x)
+    val intelonrselonction =
+      if (xSizelon.min(ySizelon) * math.log(xSizelon.max(ySizelon)) < (xSizelon + ySizelon).toDoublelon) {
+        if (xSizelon < ySizelon) {
+          computelonIntelonrselonctionUsingBinarySelonarchOnLargelonrArray(x, y)
+        } elonlselon {
+          computelonIntelonrselonctionUsingBinarySelonarchOnLargelonrArray(y, x)
         }
-      } else {
-        computeIntersectionUsingListMerging(x, y)
+      } elonlselon {
+        computelonIntelonrselonctionUsingListMelonrging(x, y)
       }
 
-    IntersectionValue(
-      featureType,
-      Some(intersection.toInt),
-      None, // return None for now
-      Some(xSize),
-      Some(ySize)
+    IntelonrselonctionValuelon(
+      felonaturelonTypelon,
+      Somelon(intelonrselonction.toInt),
+      Nonelon, // relonturn Nonelon for now
+      Somelon(xSizelon),
+      Somelon(ySizelon)
     )
   }
 
   /**
-   * Function for computing the intersections of two SORTED arrays by list merging.
+   * Function for computing thelon intelonrselonctions of two SORTelonD arrays by list melonrging.
    *
-   * @param x one array
-   * @param y another array
-   * @param ordering ordering function for comparing values of T
-   * @tparam T type
-   * @return The intersection size and the list of intersected elements
+   * @param x onelon array
+   * @param y anothelonr array
+   * @param ordelonring ordelonring function for comparing valuelons of T
+   * @tparam T typelon
+   * @relonturn Thelon intelonrselonction sizelon and thelon list of intelonrselonctelond elonlelonmelonnts
    */
-  private[util] def computeIntersectionUsingListMerging[T](
+  privatelon[util] delonf computelonIntelonrselonctionUsingListMelonrging[T](
     x: Array[T],
     y: Array[T]
   )(
-    implicit ordering: Ordering[T]
+    implicit ordelonring: Ordelonring[T]
   ): Int = {
 
-    var res: Int = 0
+    var relons: Int = 0
     var i: Int = 0
     var j: Int = 0
 
-    while (i < x.length && j < y.length) {
-      val comp = ordering.compare(x(i), y(j))
+    whilelon (i < x.lelonngth && j < y.lelonngth) {
+      val comp = ordelonring.comparelon(x(i), y(j))
       if (comp > 0) j += 1
-      else if (comp < 0) i += 1
-      else {
-        res += 1
+      elonlselon if (comp < 0) i += 1
+      elonlselon {
+        relons += 1
         i += 1
         j += 1
       }
     }
-    res
+    relons
   }
 
   /**
-   * Function for computing the intersections of two arrays by binary search on the larger array.
-   * Note that the larger array MUST be SORTED.
+   * Function for computing thelon intelonrselonctions of two arrays by binary selonarch on thelon largelonr array.
+   * Notelon that thelon largelonr array MUST belon SORTelonD.
    *
-   * @param smallArray            smaller array
-   * @param largeArray            larger array
-   * @param ordering ordering function for comparing values of T
-   * @tparam T type
+   * @param smallArray            smallelonr array
+   * @param largelonArray            largelonr array
+   * @param ordelonring ordelonring function for comparing valuelons of T
+   * @tparam T typelon
    *
-   * @return The intersection size and the list of intersected elements
+   * @relonturn Thelon intelonrselonction sizelon and thelon list of intelonrselonctelond elonlelonmelonnts
    */
-  private[util] def computeIntersectionUsingBinarySearchOnLargerArray[T](
+  privatelon[util] delonf computelonIntelonrselonctionUsingBinarySelonarchOnLargelonrArray[T](
     smallArray: Array[T],
-    largeArray: Array[T]
+    largelonArray: Array[T]
   )(
-    implicit ordering: Ordering[T]
+    implicit ordelonring: Ordelonring[T]
   ): Int = {
-    var res: Int = 0
+    var relons: Int = 0
     var i: Int = 0
-    while (i < smallArray.length) {
-      val currentValue: T = smallArray(i)
-      if (binarySearch(largeArray, currentValue) >= 0) {
-        res += 1
+    whilelon (i < smallArray.lelonngth) {
+      val currelonntValuelon: T = smallArray(i)
+      if (binarySelonarch(largelonArray, currelonntValuelon) >= 0) {
+        relons += 1
       }
       i += 1
     }
-    res
+    relons
   }
 
   /**
-   * Function for doing the binary search
+   * Function for doing thelon binary selonarch
    *
    * @param arr array
-   * @param value the target value for searching
-   * @param ordering ordering function
-   * @tparam T type
-   * @return the index of element in the larger array.
-   *         If there is no such element in the array, return -1.
+   * @param valuelon thelon targelont valuelon for selonarching
+   * @param ordelonring ordelonring function
+   * @tparam T typelon
+   * @relonturn thelon indelonx of elonlelonmelonnt in thelon largelonr array.
+   *         If thelonrelon is no such elonlelonmelonnt in thelon array, relonturn -1.
    */
-  private[util] def binarySearch[T](
+  privatelon[util] delonf binarySelonarch[T](
     arr: Array[T],
-    value: T
+    valuelon: T
   )(
-    implicit ordering: Ordering[T]
+    implicit ordelonring: Ordelonring[T]
   ): Int = {
     var start = 0
-    var end = arr.length - 1
+    var elonnd = arr.lelonngth - 1
 
-    while (start <= end) {
-      val mid = (start + end) >> 1
-      val comp = ordering.compare(arr(mid), value)
+    whilelon (start <= elonnd) {
+      val mid = (start + elonnd) >> 1
+      val comp = ordelonring.comparelon(arr(mid), valuelon)
       if (comp == 0) {
-        return mid // return the index of the value
-      } else if (comp < 0) {
+        relonturn mid // relonturn thelon indelonx of thelon valuelon
+      } elonlselon if (comp < 0) {
         start = mid + 1
-      } else {
-        end = mid - 1
+      } elonlselon {
+        elonnd = mid - 1
       }
     }
-    // if not existed, return -1
+    // if not elonxistelond, relonturn -1
     -1
   }
 }

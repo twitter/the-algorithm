@@ -1,18 +1,18 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.alert
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.itelonm.alelonrt
 
-import com.twitter.product_mixer.component_library.model.candidate.ShowAlertCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.item.alert.BaseShowAlertColorConfigurationBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.alert.ShowAlertColorConfiguration
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.ShowAlelonrtCandidatelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.itelonm.alelonrt.BaselonShowAlelonrtColorConfigurationBuildelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.alelonrt.ShowAlelonrtColorConfiguration
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
-case class StaticShowAlertColorConfigurationBuilder[-Query <: PipelineQuery](
-  configuration: ShowAlertColorConfiguration)
-    extends BaseShowAlertColorConfigurationBuilder[Query] {
+caselon class StaticShowAlelonrtColorConfigurationBuildelonr[-Quelonry <: PipelonlinelonQuelonry](
+  configuration: ShowAlelonrtColorConfiguration)
+    elonxtelonnds BaselonShowAlelonrtColorConfigurationBuildelonr[Quelonry] {
 
-  def apply(
-    query: Query,
-    candidate: ShowAlertCandidate,
-    features: FeatureMap
-  ): ShowAlertColorConfiguration = configuration
+  delonf apply(
+    quelonry: Quelonry,
+    candidatelon: ShowAlelonrtCandidatelon,
+    felonaturelons: FelonaturelonMap
+  ): ShowAlelonrtColorConfiguration = configuration
 }

@@ -1,11 +1,11 @@
-package com.twitter.follow_recommendations.common.rankers.common
+packagelon com.twittelonr.follow_reloncommelonndations.common.rankelonrs.common
 
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import scala.collection.mutable
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import scala.collelonction.mutablelon
 
-object DedupCandidates {
-  def apply[C <: UniversalNoun[Long]](input: Seq[C]): Seq[C] = {
-    val seen = mutable.HashSet[Long]()
-    input.filter { candidate => seen.add(candidate.id) }
+objelonct DelondupCandidatelons {
+  delonf apply[C <: UnivelonrsalNoun[Long]](input: Selonq[C]): Selonq[C] = {
+    val selonelonn = mutablelon.HashSelont[Long]()
+    input.filtelonr { candidatelon => selonelonn.add(candidatelon.id) }
   }
 }

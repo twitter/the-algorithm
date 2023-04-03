@@ -1,23 +1,23 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.media
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.melondia
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.ImageVariantMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.media.BroadcastId
-import com.twitter.product_mixer.core.model.marshalling.response.urt.media.Image
-import com.twitter.product_mixer.core.model.marshalling.response.urt.media.MediaEntity
-import com.twitter.product_mixer.core.model.marshalling.response.urt.media.TweetMedia
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.melontadata.ImagelonVariantMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melondia.BroadcastId
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melondia.Imagelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melondia.Melondiaelonntity
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melondia.TwelonelontMelondia
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class MediaEntityMarshaller @Inject() (
-  tweetMediaMarshaller: TweetMediaMarshaller,
-  broadcastIdMarshaller: BroadcastIdMarshaller,
-  imageVariantMarshaller: ImageVariantMarshaller) {
+@Singlelonton
+class MelondiaelonntityMarshallelonr @Injelonct() (
+  twelonelontMelondiaMarshallelonr: TwelonelontMelondiaMarshallelonr,
+  broadcastIdMarshallelonr: BroadcastIdMarshallelonr,
+  imagelonVariantMarshallelonr: ImagelonVariantMarshallelonr) {
 
-  def apply(mediaEntity: MediaEntity): urt.MediaEntity = mediaEntity match {
-    case tweetMedia: TweetMedia => urt.MediaEntity.TweetMedia(tweetMediaMarshaller(tweetMedia))
-    case broadcastId: BroadcastId => urt.MediaEntity.BroadcastId(broadcastIdMarshaller(broadcastId))
-    case image: Image => urt.MediaEntity.Image(imageVariantMarshaller(image.image))
+  delonf apply(melondiaelonntity: Melondiaelonntity): urt.Melondiaelonntity = melondiaelonntity match {
+    caselon twelonelontMelondia: TwelonelontMelondia => urt.Melondiaelonntity.TwelonelontMelondia(twelonelontMelondiaMarshallelonr(twelonelontMelondia))
+    caselon broadcastId: BroadcastId => urt.Melondiaelonntity.BroadcastId(broadcastIdMarshallelonr(broadcastId))
+    caselon imagelon: Imagelon => urt.Melondiaelonntity.Imagelon(imagelonVariantMarshallelonr(imagelon.imagelon))
   }
 }

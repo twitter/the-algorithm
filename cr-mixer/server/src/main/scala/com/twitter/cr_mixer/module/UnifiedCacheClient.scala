@@ -1,83 +1,83 @@
-package com.twitter.cr_mixer.module
+packagelon com.twittelonr.cr_mixelonr.modulelon
 
-import com.google.inject.Provides
-import com.google.inject.Singleton
-import com.twitter.app.Flag
-import com.twitter.conversions.DurationOps._
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.finagle.memcached.Client
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
-import com.twitter.storehaus_internal.memcache.MemcacheStore
-import com.twitter.storehaus_internal.util.ClientName
-import com.twitter.storehaus_internal.util.ZkEndPoint
-import javax.inject.Named
+import com.googlelon.injelonct.Providelons
+import com.googlelon.injelonct.Singlelonton
+import com.twittelonr.app.Flag
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.cr_mixelonr.modelonl.ModulelonNamelons
+import com.twittelonr.finaglelon.melonmcachelond.Clielonnt
+import com.twittelonr.finaglelon.mtls.authelonntication.SelonrvicelonIdelonntifielonr
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.injelonct.TwittelonrModulelon
+import com.twittelonr.storelonhaus_intelonrnal.melonmcachelon.MelonmcachelonStorelon
+import com.twittelonr.storelonhaus_intelonrnal.util.ClielonntNamelon
+import com.twittelonr.storelonhaus_intelonrnal.util.ZkelonndPoint
+import javax.injelonct.Namelond
 
-object UnifiedCacheClient extends TwitterModule {
+objelonct UnifielondCachelonClielonnt elonxtelonnds TwittelonrModulelon {
 
-  private val TIME_OUT = 20.milliseconds
+  privatelon val TIMelon_OUT = 20.milliselonconds
 
-  val crMixerUnifiedCacheDest: Flag[String] = flag[String](
-    name = "crMixer.unifiedCacheDest",
-    default = "/s/cache/content_recommender_unified_v2",
-    help = "Wily path to Content Recommender unified cache"
+  val crMixelonrUnifielondCachelonDelonst: Flag[String] = flag[String](
+    namelon = "crMixelonr.unifielondCachelonDelonst",
+    delonfault = "/s/cachelon/contelonnt_reloncommelonndelonr_unifielond_v2",
+    helonlp = "Wily path to Contelonnt Reloncommelonndelonr unifielond cachelon"
   )
 
-  val tweetRecommendationResultsCacheDest: Flag[String] = flag[String](
-    name = "tweetRecommendationResults.CacheDest",
-    default = "/s/cache/tweet_recommendation_results",
-    help = "Wily path to CrMixer getTweetRecommendations() results cache"
+  val twelonelontReloncommelonndationRelonsultsCachelonDelonst: Flag[String] = flag[String](
+    namelon = "twelonelontReloncommelonndationRelonsults.CachelonDelonst",
+    delonfault = "/s/cachelon/twelonelont_reloncommelonndation_relonsults",
+    helonlp = "Wily path to CrMixelonr gelontTwelonelontReloncommelonndations() relonsults cachelon"
   )
 
-  val earlybirdTweetsCacheDest: Flag[String] = flag[String](
-    name = "earlybirdTweets.CacheDest",
-    default = "/s/cache/crmixer_earlybird_tweets",
-    help = "Wily path to CrMixer Earlybird Recency Based Similarity Engine result cache"
+  val elonarlybirdTwelonelontsCachelonDelonst: Flag[String] = flag[String](
+    namelon = "elonarlybirdTwelonelonts.CachelonDelonst",
+    delonfault = "/s/cachelon/crmixelonr_elonarlybird_twelonelonts",
+    helonlp = "Wily path to CrMixelonr elonarlybird Reloncelonncy Baselond Similarity elonnginelon relonsult cachelon"
   )
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.UnifiedCache)
-  def provideUnifiedCacheClient(
-    serviceIdentifier: ServiceIdentifier,
-    statsReceiver: StatsReceiver,
-  ): Client =
-    MemcacheStore.memcachedClient(
-      name = ClientName("memcache-content-recommender-unified"),
-      dest = ZkEndPoint(crMixerUnifiedCacheDest()),
-      statsReceiver = statsReceiver.scope("cache_client"),
-      serviceIdentifier = serviceIdentifier,
-      timeout = TIME_OUT
+  @Providelons
+  @Singlelonton
+  @Namelond(ModulelonNamelons.UnifielondCachelon)
+  delonf providelonUnifielondCachelonClielonnt(
+    selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr,
+    statsReloncelonivelonr: StatsReloncelonivelonr,
+  ): Clielonnt =
+    MelonmcachelonStorelon.melonmcachelondClielonnt(
+      namelon = ClielonntNamelon("melonmcachelon-contelonnt-reloncommelonndelonr-unifielond"),
+      delonst = ZkelonndPoint(crMixelonrUnifielondCachelonDelonst()),
+      statsReloncelonivelonr = statsReloncelonivelonr.scopelon("cachelon_clielonnt"),
+      selonrvicelonIdelonntifielonr = selonrvicelonIdelonntifielonr,
+      timelonout = TIMelon_OUT
     )
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.TweetRecommendationResultsCache)
-  def providesTweetRecommendationResultsCache(
-    serviceIdentifier: ServiceIdentifier,
-    statsReceiver: StatsReceiver,
-  ): Client =
-    MemcacheStore.memcachedClient(
-      name = ClientName("memcache-tweet-recommendation-results"),
-      dest = ZkEndPoint(tweetRecommendationResultsCacheDest()),
-      statsReceiver = statsReceiver.scope("cache_client"),
-      serviceIdentifier = serviceIdentifier,
-      timeout = TIME_OUT
+  @Providelons
+  @Singlelonton
+  @Namelond(ModulelonNamelons.TwelonelontReloncommelonndationRelonsultsCachelon)
+  delonf providelonsTwelonelontReloncommelonndationRelonsultsCachelon(
+    selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr,
+    statsReloncelonivelonr: StatsReloncelonivelonr,
+  ): Clielonnt =
+    MelonmcachelonStorelon.melonmcachelondClielonnt(
+      namelon = ClielonntNamelon("melonmcachelon-twelonelont-reloncommelonndation-relonsults"),
+      delonst = ZkelonndPoint(twelonelontReloncommelonndationRelonsultsCachelonDelonst()),
+      statsReloncelonivelonr = statsReloncelonivelonr.scopelon("cachelon_clielonnt"),
+      selonrvicelonIdelonntifielonr = selonrvicelonIdelonntifielonr,
+      timelonout = TIMelon_OUT
     )
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.EarlybirdTweetsCache)
-  def providesEarlybirdTweetsCache(
-    serviceIdentifier: ServiceIdentifier,
-    statsReceiver: StatsReceiver,
-  ): Client =
-    MemcacheStore.memcachedClient(
-      name = ClientName("memcache-crmixer-earlybird-tweets"),
-      dest = ZkEndPoint(earlybirdTweetsCacheDest()),
-      statsReceiver = statsReceiver.scope("cache_client"),
-      serviceIdentifier = serviceIdentifier,
-      timeout = TIME_OUT
+  @Providelons
+  @Singlelonton
+  @Namelond(ModulelonNamelons.elonarlybirdTwelonelontsCachelon)
+  delonf providelonselonarlybirdTwelonelontsCachelon(
+    selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr,
+    statsReloncelonivelonr: StatsReloncelonivelonr,
+  ): Clielonnt =
+    MelonmcachelonStorelon.melonmcachelondClielonnt(
+      namelon = ClielonntNamelon("melonmcachelon-crmixelonr-elonarlybird-twelonelonts"),
+      delonst = ZkelonndPoint(elonarlybirdTwelonelontsCachelonDelonst()),
+      statsReloncelonivelonr = statsReloncelonivelonr.scopelon("cachelon_clielonnt"),
+      selonrvicelonIdelonntifielonr = selonrvicelonIdelonntifielonr,
+      timelonout = TIMelon_OUT
     )
 }

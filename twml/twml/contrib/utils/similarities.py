@@ -1,17 +1,17 @@
-import tensorflow.compat.v1 as tf
+import telonnsorflow.compat.v1 as tf
 
 
-def cosine_similarity(x1, x2, axis):
+delonf cosinelon_similarity(x1, x2, axis):
   """
-  cosine similarity of two tensors.
+  cosinelon similarity of two telonnsors.
 
-  Arguments:
+  Argumelonnts:
     x1:
-      A tf.Tensor
+      A tf.Telonnsor
     x2:
-      A tf.Tensor
-    axis: Dimension along which to normalize.
+      A tf.Telonnsor
+    axis: Dimelonnsion along which to normalizelon.
   """
-  normalize_x1 = tf.nn.l2_normalize(x1, axis=axis)
-  normalize_x2 = tf.nn.l2_normalize(x2, axis=axis)
-  return tf.reduce_sum(tf.multiply(normalize_x1, normalize_x2), axis=axis)
+  normalizelon_x1 = tf.nn.l2_normalizelon(x1, axis=axis)
+  normalizelon_x2 = tf.nn.l2_normalizelon(x2, axis=axis)
+  relonturn tf.relonducelon_sum(tf.multiply(normalizelon_x1, normalizelon_x2), axis=axis)

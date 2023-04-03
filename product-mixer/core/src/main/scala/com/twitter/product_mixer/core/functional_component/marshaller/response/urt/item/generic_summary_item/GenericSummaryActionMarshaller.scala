@@ -1,20 +1,20 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.generic_summary_item
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.itelonm.gelonnelonric_summary_itelonm
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.ClientEventInfoMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.UrlMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.generic_summary.GenericSummaryAction
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.melontadata.ClielonntelonvelonntInfoMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.melontadata.UrlMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.gelonnelonric_summary.GelonnelonricSummaryAction
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class GenericSummaryActionMarshaller @Inject() (
-  urlMarshaller: UrlMarshaller,
-  clientEventInfoMarshaller: ClientEventInfoMarshaller) {
+@Singlelonton
+class GelonnelonricSummaryActionMarshallelonr @Injelonct() (
+  urlMarshallelonr: UrlMarshallelonr,
+  clielonntelonvelonntInfoMarshallelonr: ClielonntelonvelonntInfoMarshallelonr) {
 
-  def apply(genericSummaryItemAction: GenericSummaryAction): urt.GenericSummaryAction =
-    urt.GenericSummaryAction(
-      url = urlMarshaller(genericSummaryItemAction.url),
-      clientEventInfo = genericSummaryItemAction.clientEventInfo.map(clientEventInfoMarshaller(_))
+  delonf apply(gelonnelonricSummaryItelonmAction: GelonnelonricSummaryAction): urt.GelonnelonricSummaryAction =
+    urt.GelonnelonricSummaryAction(
+      url = urlMarshallelonr(gelonnelonricSummaryItelonmAction.url),
+      clielonntelonvelonntInfo = gelonnelonricSummaryItelonmAction.clielonntelonvelonntInfo.map(clielonntelonvelonntInfoMarshallelonr(_))
     )
 }

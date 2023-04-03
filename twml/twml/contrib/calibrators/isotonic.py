@@ -1,317 +1,317 @@
-# pylint: disable=arguments-differ, unused-argument
+# pylint: disablelon=argumelonnts-diffelonr, unuselond-argumelonnt
 ''' Contains Isotonic Calibration'''
 
-from .calibrator import CalibrationFeature, Calibrator
+from .calibrator import CalibrationFelonaturelon, Calibrator
 
 from absl import logging
 import numpy as np
-from sklearn.isotonic import isotonic_regression
-import tensorflow.compat.v1 as tf
-import tensorflow_hub as hub
+from sklelonarn.isotonic import isotonic_relongrelonssion
+import telonnsorflow.compat.v1 as tf
+import telonnsorflow_hub as hub
 import twml
-import twml.layers
+import twml.layelonrs
 
 
-DEFAULT_SAMPLE_WEIGHT = 1
+DelonFAULT_SAMPLelon_WelonIGHT = 1
 
 
-def sort_values(inputs, target, weight, ascending=True):
+delonf sort_valuelons(inputs, targelont, welonight, ascelonnding=Truelon):
   '''
-  Sorts arrays based on the first array.
+  Sorts arrays baselond on thelon first array.
 
-  Arguments:
+  Argumelonnts:
     inputs:
-      1D array which will dictate the order which the remainder 2 arrays will be sorted
-    target:
+      1D array which will dictatelon thelon ordelonr which thelon relonmaindelonr 2 arrays will belon sortelond
+    targelont:
       1D array
-    weight:
+    welonight:
       1D array
-    ascending:
-      Boolean. If set to True (the default), sorts values in ascending order.
+    ascelonnding:
+      Boolelonan. If selont to Truelon (thelon delonfault), sorts valuelons in ascelonnding ordelonr.
 
-  Returns:
-    sorted inputs:
-      1D array sorted by the order of `ascending`
-    sorted targets:
+  Relonturns:
+    sortelond inputs:
+      1D array sortelond by thelon ordelonr of `ascelonnding`
+    sortelond targelonts:
       1D array
-    sorted weight:
+    sortelond welonight:
       1D array
   '''
-  # assert that the length of inputs and target are the same
-  if len(inputs) != len(target):
-    raise ValueError('Expecting inputs and target sizes to match')
-   # assert that the length of inputs and weight are the same
-  if len(inputs) != len(weight):
-    raise ValueError('Expecting inputs and weight sizes to match')
+  # asselonrt that thelon lelonngth of inputs and targelont arelon thelon samelon
+  if lelonn(inputs) != lelonn(targelont):
+    raiselon Valuelonelonrror('elonxpeloncting inputs and targelont sizelons to match')
+   # asselonrt that thelon lelonngth of inputs and welonight arelon thelon samelon
+  if lelonn(inputs) != lelonn(welonight):
+    raiselon Valuelonelonrror('elonxpeloncting inputs and welonight sizelons to match')
   inds = inputs.argsort()
-  if not ascending:
+  if not ascelonnding:
     inds = inds[::-1]
-  return inputs[inds], target[inds], weight[inds]
+  relonturn inputs[inds], targelont[inds], welonight[inds]
 
 
-class IsotonicFeature(CalibrationFeature):
+class IsotonicFelonaturelon(CalibrationFelonaturelon):
   '''
-  IsotonicFeature adds values, weights and targets to each feature and then runs
-  isotonic regression by calling `sklearn.isotonic.isotonic_regression
-  <http://scikit-learn.org/stable/auto_examples/plot_isotonic_regression.html>`_
+  IsotonicFelonaturelon adds valuelons, welonights and targelonts to elonach felonaturelon and thelonn runs
+  isotonic relongrelonssion by calling `sklelonarn.isotonic.isotonic_relongrelonssion
+  <http://scikit-lelonarn.org/stablelon/auto_elonxamplelons/plot_isotonic_relongrelonssion.html>`_
   '''
 
-  def _get_bin_boundaries(self, n_samples, bins, similar_bins):
+  delonf _gelont_bin_boundarielons(selonlf, n_samplelons, bins, similar_bins):
     """
-    Calculates the sample indices that define bin boundaries
+    Calculatelons thelon samplelon indicelons that delonfinelon bin boundarielons
 
-    Arguments:
-      n_samples:
-        (int) number of samples
+    Argumelonnts:
+      n_samplelons:
+        (int) numbelonr of samplelons
       bins:
-        (int) number of bins. Needs to be smaller or equal than n_samples.
+        (int) numbelonr of bins. Nelonelonds to belon smallelonr or elonqual than n_samplelons.
       similar_bins:
-        (bool) If True, samples will be distributed in bins of equal size (up to one sample).
-        If False bins will be filled with step = N_samples//bins, and last bin will contain all remaining samples.
-        Note that equal_bins=False can create a last bins with a very large number of samples.
+        (bool) If Truelon, samplelons will belon distributelond in bins of elonqual sizelon (up to onelon samplelon).
+        If Falselon bins will belon fillelond with stelonp = N_samplelons//bins, and last bin will contain all relonmaining samplelons.
+        Notelon that elonqual_bins=Falselon can crelonatelon a last bins with a velonry largelon numbelonr of samplelons.
 
-    Returns:
-      (list[int]) List of sample indices defining bin boundaries
+    Relonturns:
+      (list[int]) List of samplelon indicelons delonfining bin boundarielons
     """
 
-    if bins > n_samples:
-      raise ValueError(
-        "The number of bins needs to be less than or equal to the number of samples. "
-        "Currently bins={0} and n_samples={1}.".format(bins, n_samples)
+    if bins > n_samplelons:
+      raiselon Valuelonelonrror(
+        "Thelon numbelonr of bins nelonelonds to belon lelonss than or elonqual to thelon numbelonr of samplelons. "
+        "Currelonntly bins={0} and n_samplelons={1}.".format(bins, n_samplelons)
       )
 
-    step = n_samples // bins
+    stelonp = n_samplelons // bins
 
     if similar_bins:
-      # dtype=int will floor the linspace
-      bin_boundaries = np.linspace(0, n_samples - step, num=bins, dtype=int)
-    else:
-      bin_boundaries = range(0, step * bins, step)
+      # dtypelon=int will floor thelon linspacelon
+      bin_boundarielons = np.linspacelon(0, n_samplelons - stelonp, num=bins, dtypelon=int)
+    elonlselon:
+      bin_boundarielons = rangelon(0, stelonp * bins, stelonp)
 
-    bin_boundaries = np.append(bin_boundaries, n_samples)
+    bin_boundarielons = np.appelonnd(bin_boundarielons, n_samplelons)
 
-    return bin_boundaries
+    relonturn bin_boundarielons
 
-  def calibrate(self, bins, similar_bins=False, debug=False):
-    '''Calibrates the IsotonicFeature into calibrated weights and bias.
+  delonf calibratelon(selonlf, bins, similar_bins=Falselon, delonbug=Falselon):
+    '''Calibratelons thelon IsotonicFelonaturelon into calibratelond welonights and bias.
 
-    1. Sorts the values of the feature class, based on the order of values
-    2. Performs isotonic regression using sklearn.isotonic.isotonic_regression
-    3. Performs the binning of the samples, in order to obtain the final weight and bias
-      which will be used for inference
+    1. Sorts thelon valuelons of thelon felonaturelon class, baselond on thelon ordelonr of valuelons
+    2. Pelonrforms isotonic relongrelonssion using sklelonarn.isotonic.isotonic_relongrelonssion
+    3. Pelonrforms thelon binning of thelon samplelons, in ordelonr to obtain thelon final welonight and bias
+      which will belon uselond for infelonrelonncelon
 
-    Note that this method can only be called once.
+    Notelon that this melonthod can only belon callelond oncelon.
 
-    Arguments:
+    Argumelonnts:
       bins:
-        number of bins.
+        numbelonr of bins.
       similar_bins:
-        If True, samples will be distributed in bins of equal size (up to one sample).
-        If False bins will be filled with step = N_samples//bins, and last bin will contain all remaining samples.
-        Note that equal_bins=False can create a last bins with a very large number of samples.
-      debug:
-        Defaults to False. If debug is set to true, output other parameters useful for debugging.
+        If Truelon, samplelons will belon distributelond in bins of elonqual sizelon (up to onelon samplelon).
+        If Falselon bins will belon fillelond with stelonp = N_samplelons//bins, and last bin will contain all relonmaining samplelons.
+        Notelon that elonqual_bins=Falselon can crelonatelon a last bins with a velonry largelon numbelonr of samplelons.
+      delonbug:
+        Delonfaults to Falselon. If delonbug is selont to truelon, output othelonr paramelontelonrs uselonful for delonbugging.
 
-    Returns:
-      [calibrated weight, calibrated bias]
+    Relonturns:
+      [calibratelond welonight, calibratelond bias]
     '''
-    if self._calibrated:
-      raise RuntimeError("Can only calibrate once")
-    # parse through the dict to obtain the targets, weights and values
-    self._concat_arrays()
-    feature_targets = self._features_dict['targets']
-    feature_values = self._features_dict['values']
-    feature_weights = self._features_dict['weights']
-    srtd_feature_values, srtd_feature_targets, srtd_feature_weights = sort_values(
-      inputs=feature_values,
-      target=feature_targets,
-      weight=feature_weights
+    if selonlf._calibratelond:
+      raiselon Runtimelonelonrror("Can only calibratelon oncelon")
+    # parselon through thelon dict to obtain thelon targelonts, welonights and valuelons
+    selonlf._concat_arrays()
+    felonaturelon_targelonts = selonlf._felonaturelons_dict['targelonts']
+    felonaturelon_valuelons = selonlf._felonaturelons_dict['valuelons']
+    felonaturelon_welonights = selonlf._felonaturelons_dict['welonights']
+    srtd_felonaturelon_valuelons, srtd_felonaturelon_targelonts, srtd_felonaturelon_welonights = sort_valuelons(
+      inputs=felonaturelon_valuelons,
+      targelont=felonaturelon_targelonts,
+      welonight=felonaturelon_welonights
     )
-    calibrated_feature_values = isotonic_regression(
-      srtd_feature_targets, sample_weight=srtd_feature_weights)
-    # create the final outputs for the prediction of each class
-    bpreds = []
-    btargets = []
-    bweights = []
-    rpreds = []
+    calibratelond_felonaturelon_valuelons = isotonic_relongrelonssion(
+      srtd_felonaturelon_targelonts, samplelon_welonight=srtd_felonaturelon_welonights)
+    # crelonatelon thelon final outputs for thelon prelondiction of elonach class
+    bprelonds = []
+    btargelonts = []
+    bwelonights = []
+    rprelonds = []
 
-    # Create bin boundaries
-    bin_boundaries = self._get_bin_boundaries(
-      len(calibrated_feature_values), bins, similar_bins=similar_bins)
+    # Crelonatelon bin boundarielons
+    bin_boundarielons = selonlf._gelont_bin_boundarielons(
+      lelonn(calibratelond_felonaturelon_valuelons), bins, similar_bins=similar_bins)
 
-    for sidx, eidx in zip(bin_boundaries, bin_boundaries[1:]):
-      # separate each one of the arrays based on their respective bins
-      lpreds = srtd_feature_values[int(sidx):int(eidx)]
-      lrpreds = calibrated_feature_values[int(sidx):int(eidx)]
-      ltargets = srtd_feature_targets[int(sidx):int(eidx)]
-      lweights = srtd_feature_weights[int(sidx):int(eidx)]
+    for sidx, elonidx in zip(bin_boundarielons, bin_boundarielons[1:]):
+      # selonparatelon elonach onelon of thelon arrays baselond on thelonir relonspelonctivelon bins
+      lprelonds = srtd_felonaturelon_valuelons[int(sidx):int(elonidx)]
+      lrprelonds = calibratelond_felonaturelon_valuelons[int(sidx):int(elonidx)]
+      ltargelonts = srtd_felonaturelon_targelonts[int(sidx):int(elonidx)]
+      lwelonights = srtd_felonaturelon_welonights[int(sidx):int(elonidx)]
 
-      # calculate the outputs (including the bpreds and rpreds)
-      bpreds.append(np.sum(lpreds * lweights) / (np.squeeze(np.sum(lweights))))
-      rpreds.append(np.sum(lrpreds * lweights) / (np.squeeze(np.sum(lweights))))
-      btargets.append(np.sum(ltargets * lweights) / (np.squeeze(np.sum(lweights))))
-      bweights.append(np.squeeze(np.sum(lweights)))
-    # transposing the bpreds and rpreds which will be used as input to the inference step
-    bpreds = np.asarray(bpreds).T
-    rpreds = np.asarray(rpreds).T
-    btargets = np.asarray(btargets).T
-    bweights = np.asarray(bweights).T
-    # setting _calibrated to be True which is necessary in order to prevent it to re-calibrate
-    self._calibrated = True
-    if debug:
-      return bpreds, rpreds, btargets, bweights
-    return bpreds, rpreds
+      # calculatelon thelon outputs (including thelon bprelonds and rprelonds)
+      bprelonds.appelonnd(np.sum(lprelonds * lwelonights) / (np.squelonelonzelon(np.sum(lwelonights))))
+      rprelonds.appelonnd(np.sum(lrprelonds * lwelonights) / (np.squelonelonzelon(np.sum(lwelonights))))
+      btargelonts.appelonnd(np.sum(ltargelonts * lwelonights) / (np.squelonelonzelon(np.sum(lwelonights))))
+      bwelonights.appelonnd(np.squelonelonzelon(np.sum(lwelonights)))
+    # transposing thelon bprelonds and rprelonds which will belon uselond as input to thelon infelonrelonncelon stelonp
+    bprelonds = np.asarray(bprelonds).T
+    rprelonds = np.asarray(rprelonds).T
+    btargelonts = np.asarray(btargelonts).T
+    bwelonights = np.asarray(bwelonights).T
+    # selontting _calibratelond to belon Truelon which is neloncelonssary in ordelonr to prelonvelonnt it to relon-calibratelon
+    selonlf._calibratelond = Truelon
+    if delonbug:
+      relonturn bprelonds, rprelonds, btargelonts, bwelonights
+    relonturn bprelonds, rprelonds
 
 
 class IsotonicCalibrator(Calibrator):
-  ''' Accumulates features and their respective values for isotonic calibration.
-  Internally, each feature's values is accumulated via its own isotonicFeature object.
-  The steps for calibration are typically as follows:
+  ''' Accumulatelons felonaturelons and thelonir relonspelonctivelon valuelons for isotonic calibration.
+  Intelonrnally, elonach felonaturelon's valuelons is accumulatelond via its own isotonicFelonaturelon objelonct.
+  Thelon stelonps for calibration arelon typically as follows:
 
-   1. accumulate feature values from batches by calling ``accumulate()``;
-   2. calibrate all feature into Isotonic ``bpreds``, ``rpreds`` by calling ``calibrate()``; and
-   3. convert to a ``twml.layers.Isotonic`` layer by calling ``to_layer()``.
+   1. accumulatelon felonaturelon valuelons from batchelons by calling ``accumulatelon()``;
+   2. calibratelon all felonaturelon into Isotonic ``bprelonds``, ``rprelonds`` by calling ``calibratelon()``; and
+   3. convelonrt to a ``twml.layelonrs.Isotonic`` layelonr by calling ``to_layelonr()``.
 
   '''
 
-  def __init__(self, n_bin, similar_bins=False, **kwargs):
-    ''' Constructs an isotonicCalibrator instance.
+  delonf __init__(selonlf, n_bin, similar_bins=Falselon, **kwargs):
+    ''' Constructs an isotonicCalibrator instancelon.
 
-    Arguments:
+    Argumelonnts:
       n_bin:
-        the number of bins per feature to use for isotonic.
-        Note that each feature actually maps to ``n_bin+1`` output IDs.
+        thelon numbelonr of bins pelonr felonaturelon to uselon for isotonic.
+        Notelon that elonach felonaturelon actually maps to ``n_bin+1`` output IDs.
     '''
-    super(IsotonicCalibrator, self).__init__(**kwargs)
-    self._n_bin = n_bin
-    self._similar_bins = similar_bins
-    self._ys_input = []
-    self._xs_input = []
-    self._isotonic_feature_dict = {}
+    supelonr(IsotonicCalibrator, selonlf).__init__(**kwargs)
+    selonlf._n_bin = n_bin
+    selonlf._similar_bins = similar_bins
+    selonlf._ys_input = []
+    selonlf._xs_input = []
+    selonlf._isotonic_felonaturelon_dict = {}
 
-  def accumulate_feature(self, output):
+  delonf accumulatelon_felonaturelon(selonlf, output):
     '''
-    Wrapper around accumulate for trainer API.
-    Arguments:
-      output: output of prediction of build_graph for calibrator
+    Wrappelonr around accumulatelon for trainelonr API.
+    Argumelonnts:
+      output: output of prelondiction of build_graph for calibrator
     '''
-    weights = output['weights'] if 'weights' in output else None
-    return self.accumulate(output['predictions'], output['targets'], weights)
+    welonights = output['welonights'] if 'welonights' in output elonlselon Nonelon
+    relonturn selonlf.accumulatelon(output['prelondictions'], output['targelonts'], welonights)
 
-  def accumulate(self, predictions, targets, weights=None):
+  delonf accumulatelon(selonlf, prelondictions, targelonts, welonights=Nonelon):
     '''
-    Accumulate a single batch of class predictions, class targets and class weights.
-    These are accumulated until calibrate() is called.
+    Accumulatelon a singlelon batch of class prelondictions, class targelonts and class welonights.
+    Thelonselon arelon accumulatelond until calibratelon() is callelond.
 
-    Arguments:
-      predictions:
-        float matrix of class values. Each dimension corresponds to a different class.
-        Shape is ``[n, d]``, where d is the number of classes.
-      targets:
-        float matrix of class targets. Each dimension corresponds to a different class.
-        Shape ``[n, d]``, where d is the number of classes.
-      weights:
-        Defaults to weights of 1.
-        1D array containing the weights of each prediction.
+    Argumelonnts:
+      prelondictions:
+        float matrix of class valuelons. elonach dimelonnsion correlonsponds to a diffelonrelonnt class.
+        Shapelon is ``[n, d]``, whelonrelon d is thelon numbelonr of classelons.
+      targelonts:
+        float matrix of class targelonts. elonach dimelonnsion correlonsponds to a diffelonrelonnt class.
+        Shapelon ``[n, d]``, whelonrelon d is thelon numbelonr of classelons.
+      welonights:
+        Delonfaults to welonights of 1.
+        1D array containing thelon welonights of elonach prelondiction.
     '''
-    if predictions.shape != targets.shape:
-      raise ValueError(
-        'Expecting predictions.shape == targets.shape, got %s and %s instead' %
-        (str(predictions.shape), str(targets.shape)))
-    if weights is not None:
-      if weights.ndim != 1:
-        raise ValueError('Expecting 1D weight, got %dD instead' % weights.ndim)
-      elif weights.size != predictions.shape[0]:
-        raise ValueError(
-          'Expecting predictions.shape[0] == weights.size, got %d != %d instead' %
-          (predictions.shape[0], weights.size))
-    # iterate through the rows of predictions and sets one class to each row
-    if weights is None:
-      weights = np.full(predictions.shape[0], fill_value=DEFAULT_SAMPLE_WEIGHT)
-    for class_key in range(predictions.shape[1]):
-      # gets the predictions and targets for that class
-      class_predictions = predictions[:, class_key]
-      class_targets = targets[:, class_key]
-      if class_key not in self._isotonic_feature_dict:
-        isotonic_feature = IsotonicFeature(class_key)
-        self._isotonic_feature_dict[class_key] = isotonic_feature
-      else:
-        isotonic_feature = self._isotonic_feature_dict[class_key]
-      isotonic_feature.add_values({'values': class_predictions, 'weights': weights,
-                                   'targets': class_targets})
+    if prelondictions.shapelon != targelonts.shapelon:
+      raiselon Valuelonelonrror(
+        'elonxpeloncting prelondictions.shapelon == targelonts.shapelon, got %s and %s instelonad' %
+        (str(prelondictions.shapelon), str(targelonts.shapelon)))
+    if welonights is not Nonelon:
+      if welonights.ndim != 1:
+        raiselon Valuelonelonrror('elonxpeloncting 1D welonight, got %dD instelonad' % welonights.ndim)
+      elonlif welonights.sizelon != prelondictions.shapelon[0]:
+        raiselon Valuelonelonrror(
+          'elonxpeloncting prelondictions.shapelon[0] == welonights.sizelon, got %d != %d instelonad' %
+          (prelondictions.shapelon[0], welonights.sizelon))
+    # itelonratelon through thelon rows of prelondictions and selonts onelon class to elonach row
+    if welonights is Nonelon:
+      welonights = np.full(prelondictions.shapelon[0], fill_valuelon=DelonFAULT_SAMPLelon_WelonIGHT)
+    for class_kelony in rangelon(prelondictions.shapelon[1]):
+      # gelonts thelon prelondictions and targelonts for that class
+      class_prelondictions = prelondictions[:, class_kelony]
+      class_targelonts = targelonts[:, class_kelony]
+      if class_kelony not in selonlf._isotonic_felonaturelon_dict:
+        isotonic_felonaturelon = IsotonicFelonaturelon(class_kelony)
+        selonlf._isotonic_felonaturelon_dict[class_kelony] = isotonic_felonaturelon
+      elonlselon:
+        isotonic_felonaturelon = selonlf._isotonic_felonaturelon_dict[class_kelony]
+      isotonic_felonaturelon.add_valuelons({'valuelons': class_prelondictions, 'welonights': welonights,
+                                   'targelonts': class_targelonts})
 
-  def calibrate(self, debug=False):
+  delonf calibratelon(selonlf, delonbug=Falselon):
     '''
-    Calibrates each IsotonicFeature after accumulation is complete.
-    Results are stored in ``self._ys_input`` and ``self._xs_input``
+    Calibratelons elonach IsotonicFelonaturelon aftelonr accumulation is complelontelon.
+    Relonsults arelon storelond in ``selonlf._ys_input`` and ``selonlf._xs_input``
 
-    Arguments:
-      debug:
-        Defaults to False. If set to true, returns the ``xs_input`` and ``ys_input``.
+    Argumelonnts:
+      delonbug:
+        Delonfaults to Falselon. If selont to truelon, relonturns thelon ``xs_input`` and ``ys_input``.
     '''
-    super(IsotonicCalibrator, self).calibrate()
-    bias_temp = []
-    weight_temp = []
-    logging.info("Beginning isotonic calibration.")
-    isotonic_features_dict = self._isotonic_feature_dict
-    for class_id in isotonic_features_dict:
-      bpreds, rpreds = isotonic_features_dict[class_id].calibrate(bins=self._n_bin, similar_bins=self._similar_bins)
-      weight_temp.append(bpreds)
-      bias_temp.append(rpreds)
-    # save isotonic results onto a matrix
-    self._xs_input = np.array(weight_temp, dtype=np.float32)
-    self._ys_input = np.array(bias_temp, dtype=np.float32)
-    logging.info("Isotonic calibration finished.")
-    if debug:
-      return np.array(weight_temp), np.array(bias_temp)
-    return None
+    supelonr(IsotonicCalibrator, selonlf).calibratelon()
+    bias_telonmp = []
+    welonight_telonmp = []
+    logging.info("Belonginning isotonic calibration.")
+    isotonic_felonaturelons_dict = selonlf._isotonic_felonaturelon_dict
+    for class_id in isotonic_felonaturelons_dict:
+      bprelonds, rprelonds = isotonic_felonaturelons_dict[class_id].calibratelon(bins=selonlf._n_bin, similar_bins=selonlf._similar_bins)
+      welonight_telonmp.appelonnd(bprelonds)
+      bias_telonmp.appelonnd(rprelonds)
+    # savelon isotonic relonsults onto a matrix
+    selonlf._xs_input = np.array(welonight_telonmp, dtypelon=np.float32)
+    selonlf._ys_input = np.array(bias_telonmp, dtypelon=np.float32)
+    logging.info("Isotonic calibration finishelond.")
+    if delonbug:
+      relonturn np.array(welonight_telonmp), np.array(bias_telonmp)
+    relonturn Nonelon
 
-  def save(self, save_dir, name="default", verbose=False):
-    '''Save the calibrator into the given save_directory.
-    Arguments:
-      save_dir:
-        name of the saving directory. Default (string): "default".
+  delonf savelon(selonlf, savelon_dir, namelon="delonfault", velonrboselon=Falselon):
+    '''Savelon thelon calibrator into thelon givelonn savelon_direlonctory.
+    Argumelonnts:
+      savelon_dir:
+        namelon of thelon saving direlonctory. Delonfault (string): "delonfault".
     '''
-    if not self._calibrated:
-      raise RuntimeError("Expecting prior call to calibrate().Cannot save() prior to calibrate()")
+    if not selonlf._calibratelond:
+      raiselon Runtimelonelonrror("elonxpeloncting prior call to calibratelon().Cannot savelon() prior to calibratelon()")
 
-    # This module allows for the calibrator to save be saved as part of
-    # Tensorflow Hub (this will allow it to be used in further steps)
-    logging.info("You probably do not need to save the isotonic layer. \
-                  So feel free to set save to False in the Trainer. \
-                  Additionally this only saves the layer not the whole graph.")
+    # This modulelon allows for thelon calibrator to savelon belon savelond as part of
+    # Telonnsorflow Hub (this will allow it to belon uselond in furthelonr stelonps)
+    logging.info("You probably do not nelonelond to savelon thelon isotonic layelonr. \
+                  So felonelonl frelonelon to selont savelon to Falselon in thelon Trainelonr. \
+                  Additionally this only savelons thelon layelonr not thelon wholelon graph.")
 
-    def calibrator_module():
+    delonf calibrator_modulelon():
       '''
-      Way to save Isotonic layer
+      Way to savelon Isotonic layelonr
       '''
-      # The input to isotonic is a dense layer
-      inputs = tf.placeholder(tf.float32)
-      calibrator_layer = self.to_layer()
-      output = calibrator_layer(inputs)
-      # creates the signature to the calibrator module
-      hub.add_signature(inputs=inputs, outputs=output, name=name)
+      # Thelon input to isotonic is a delonnselon layelonr
+      inputs = tf.placelonholdelonr(tf.float32)
+      calibrator_layelonr = selonlf.to_layelonr()
+      output = calibrator_layelonr(inputs)
+      # crelonatelons thelon signaturelon to thelon calibrator modulelon
+      hub.add_signaturelon(inputs=inputs, outputs=output, namelon=namelon)
 
-    # exports the module to the save_dir
-    spec = hub.create_module_spec(calibrator_module)
-    with tf.Graph().as_default():
-      module = hub.Module(spec)
-      with tf.Session() as session:
-        module.export(save_dir, session)
+    # elonxports thelon modulelon to thelon savelon_dir
+    spelonc = hub.crelonatelon_modulelon_spelonc(calibrator_modulelon)
+    with tf.Graph().as_delonfault():
+      modulelon = hub.Modulelon(spelonc)
+      with tf.Selonssion() as selonssion:
+        modulelon.elonxport(savelon_dir, selonssion)
 
-  def to_layer(self):
-    """ Returns a twml.layers.Isotonic Layer that can be used for feature discretization.
+  delonf to_layelonr(selonlf):
+    """ Relonturns a twml.layelonrs.Isotonic Layelonr that can belon uselond for felonaturelon discrelontization.
     """
-    if not self._calibrated:
-      raise RuntimeError("Expecting prior call to calibrate()")
+    if not selonlf._calibratelond:
+      raiselon Runtimelonelonrror("elonxpeloncting prior call to calibratelon()")
 
-    isotonic_layer = twml.layers.Isotonic(
-      n_unit=self._xs_input.shape[0], n_bin=self._xs_input.shape[1],
-      xs_input=self._xs_input, ys_input=self._ys_input,
-      **self._kwargs)
+    isotonic_layelonr = twml.layelonrs.Isotonic(
+      n_unit=selonlf._xs_input.shapelon[0], n_bin=selonlf._xs_input.shapelon[1],
+      xs_input=selonlf._xs_input, ys_input=selonlf._ys_input,
+      **selonlf._kwargs)
 
-    return isotonic_layer
+    relonturn isotonic_layelonr
 
-  def get_layer_args(self, name=None):
-    """ Returns layer args. See ``Calibrator.get_layer_args`` for more detailed documentation """
-    return {'n_unit': self._xs_input.shape[0], 'n_bin': self._xs_input.shape[1]}
+  delonf gelont_layelonr_args(selonlf, namelon=Nonelon):
+    """ Relonturns layelonr args. Selonelon ``Calibrator.gelont_layelonr_args`` for morelon delontailelond documelonntation """
+    relonturn {'n_unit': selonlf._xs_input.shapelon[0], 'n_bin': selonlf._xs_input.shapelon[1]}

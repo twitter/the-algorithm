@@ -1,9 +1,9 @@
-package com.twitter.follow_recommendations.products.common
+packagelon com.twittelonr.follow_reloncommelonndations.products.common
 
-import com.twitter.follow_recommendations.common.models.DisplayLocation
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.DisplayLocation
 
-trait ProductRegistry {
-  def products: Seq[Product]
-  def displayLocationProductMap: Map[DisplayLocation, Product]
-  def getProductByDisplayLocation(displayLocation: DisplayLocation): Product
+trait ProductRelongistry {
+  delonf products: Selonq[Product]
+  delonf displayLocationProductMap: Map[DisplayLocation, Product]
+  delonf gelontProductByDisplayLocation(displayLocation: DisplayLocation): Product
 }

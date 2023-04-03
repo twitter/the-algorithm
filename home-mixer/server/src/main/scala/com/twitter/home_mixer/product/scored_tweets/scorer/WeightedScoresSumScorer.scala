@@ -1,91 +1,91 @@
-package com.twitter.home_mixer.product.scored_tweets.scorer
+packagelon com.twittelonr.homelon_mixelonr.product.scorelond_twelonelonts.scorelonr
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.home_mixer.model.HomeFeatures.ScoreFeature
-import com.twitter.home_mixer.model.HomeFeatures.WeightedModelScoreFeature
-import com.twitter.home_mixer.product.scored_tweets.model.ScoredTweetsQuery
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.scorer.Scorer
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.ScorerIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.ScorelonFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.WelonightelondModelonlScorelonFelonaturelon
+import com.twittelonr.homelon_mixelonr.product.scorelond_twelonelonts.modelonl.ScorelondTwelonelontsQuelonry
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.TwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMapBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.scorelonr.Scorelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.ScorelonrIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stitch.Stitch
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class WeightedScoresSumScorer @Inject() (statsReceiver: StatsReceiver)
-    extends Scorer[ScoredTweetsQuery, TweetCandidate] {
+@Singlelonton
+class WelonightelondScorelonsSumScorelonr @Injelonct() (statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds Scorelonr[ScorelondTwelonelontsQuelonry, TwelonelontCandidatelon] {
 
-  override val identifier: ScorerIdentifier = ScorerIdentifier("WeightedScoresSum")
+  ovelonrridelon val idelonntifielonr: ScorelonrIdelonntifielonr = ScorelonrIdelonntifielonr("WelonightelondScorelonsSum")
 
-  override val features: Set[Feature[_, _]] = Set(WeightedModelScoreFeature, ScoreFeature)
+  ovelonrridelon val felonaturelons: Selont[Felonaturelon[_, _]] = Selont(WelonightelondModelonlScorelonFelonaturelon, ScorelonFelonaturelon)
 
-  private val StatsReadabilityMultiplier = 1000
-  private val Epsilon = 0.001
-  private val PredictedScoreStatName = f"predicted_score_${StatsReadabilityMultiplier}x"
-  private val MissingScoreStatName = "missing_score"
+  privatelon val StatsRelonadabilityMultiplielonr = 1000
+  privatelon val elonpsilon = 0.001
+  privatelon val PrelondictelondScorelonStatNamelon = f"prelondictelond_scorelon_${StatsRelonadabilityMultiplielonr}x"
+  privatelon val MissingScorelonStatNamelon = "missing_scorelon"
 
-  private val scopedStatsProvider = statsReceiver.scope(getClass.getSimpleName)
-  private val scoreStat = scopedStatsProvider.stat(f"score_${StatsReadabilityMultiplier}x")
+  privatelon val scopelondStatsProvidelonr = statsReloncelonivelonr.scopelon(gelontClass.gelontSimplelonNamelon)
+  privatelon val scorelonStat = scopelondStatsProvidelonr.stat(f"scorelon_${StatsRelonadabilityMultiplielonr}x")
 
-  override def apply(
-    query: ScoredTweetsQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[Seq[FeatureMap]] = {
-    val features = candidates.map { candidate =>
-      val score = weightedModelScore(query, candidate.features)
-      scoreStat.add((score * StatsReadabilityMultiplier).toFloat)
-      FeatureMapBuilder()
-        .add(WeightedModelScoreFeature, Some(score))
-        .add(ScoreFeature, Some(score))
+  ovelonrridelon delonf apply(
+    quelonry: ScorelondTwelonelontsQuelonry,
+    candidatelons: Selonq[CandidatelonWithFelonaturelons[TwelonelontCandidatelon]]
+  ): Stitch[Selonq[FelonaturelonMap]] = {
+    val felonaturelons = candidatelons.map { candidatelon =>
+      val scorelon = welonightelondModelonlScorelon(quelonry, candidatelon.felonaturelons)
+      scorelonStat.add((scorelon * StatsRelonadabilityMultiplielonr).toFloat)
+      FelonaturelonMapBuildelonr()
+        .add(WelonightelondModelonlScorelonFelonaturelon, Somelon(scorelon))
+        .add(ScorelonFelonaturelon, Somelon(scorelon))
         .build()
     }
 
-    Stitch.value(features)
+    Stitch.valuelon(felonaturelons)
   }
 
   /**
-   * (1) compute weighted sum of predicted scores of all engagements
-   * (2) convert negative score to positive score if needed
+   * (1) computelon welonightelond sum of prelondictelond scorelons of all elonngagelonmelonnts
+   * (2) convelonrt nelongativelon scorelon to positivelon scorelon if nelonelondelond
    */
-  private def weightedModelScore(
-    query: PipelineQuery,
-    features: FeatureMap
-  ): Double = {
-    val weightedScoreAndModelWeightSeq: Seq[(Double, Double)] =
-      HomeNaviModelDataRecordScorer.PredictedScoreFeatures.map { scoreFeature =>
-        val predictedScoreOpt = features.getOrElse(scoreFeature, None)
+  privatelon delonf welonightelondModelonlScorelon(
+    quelonry: PipelonlinelonQuelonry,
+    felonaturelons: FelonaturelonMap
+  ): Doublelon = {
+    val welonightelondScorelonAndModelonlWelonightSelonq: Selonq[(Doublelon, Doublelon)] =
+      HomelonNaviModelonlDataReloncordScorelonr.PrelondictelondScorelonFelonaturelons.map { scorelonFelonaturelon =>
+        val prelondictelondScorelonOpt = felonaturelons.gelontOrelonlselon(scorelonFelonaturelon, Nonelon)
 
-        predictedScoreOpt match {
-          case Some(predictedScore) =>
-            scopedStatsProvider
-              .stat(scoreFeature.statName, PredictedScoreStatName)
-              .add((predictedScore * StatsReadabilityMultiplier).toFloat)
-          case None =>
-            scopedStatsProvider.counter(scoreFeature.statName, MissingScoreStatName).incr()
+        prelondictelondScorelonOpt match {
+          caselon Somelon(prelondictelondScorelon) =>
+            scopelondStatsProvidelonr
+              .stat(scorelonFelonaturelon.statNamelon, PrelondictelondScorelonStatNamelon)
+              .add((prelondictelondScorelon * StatsRelonadabilityMultiplielonr).toFloat)
+          caselon Nonelon =>
+            scopelondStatsProvidelonr.countelonr(scorelonFelonaturelon.statNamelon, MissingScorelonStatNamelon).incr()
         }
 
-        val weight = query.params(scoreFeature.modelWeightParam)
-        (predictedScoreOpt.getOrElse(0.0) * weight, weight)
+        val welonight = quelonry.params(scorelonFelonaturelon.modelonlWelonightParam)
+        (prelondictelondScorelonOpt.gelontOrelonlselon(0.0) * welonight, welonight)
       }
 
-    val (weightedScores, modelWeights) = weightedScoreAndModelWeightSeq.unzip
-    val combinedScoreSum = weightedScores.sum
+    val (welonightelondScorelons, modelonlWelonights) = welonightelondScorelonAndModelonlWelonightSelonq.unzip
+    val combinelondScorelonSum = welonightelondScorelons.sum
 
-    val positiveModelWeightsSum = modelWeights.filter(_ > 0.0).sum
-    val negativeModelWeightsSum = modelWeights.filter(_ < 0).sum.abs
-    val modelWeightsSum = positiveModelWeightsSum + negativeModelWeightsSum
+    val positivelonModelonlWelonightsSum = modelonlWelonights.filtelonr(_ > 0.0).sum
+    val nelongativelonModelonlWelonightsSum = modelonlWelonights.filtelonr(_ < 0).sum.abs
+    val modelonlWelonightsSum = positivelonModelonlWelonightsSum + nelongativelonModelonlWelonightsSum
 
-    val weightedScoresSum =
-      if (modelWeightsSum == 0) combinedScoreSum.max(0.0)
-      else if (combinedScoreSum < 0)
-        (combinedScoreSum + negativeModelWeightsSum) / modelWeightsSum * Epsilon
-      else combinedScoreSum + Epsilon
+    val welonightelondScorelonsSum =
+      if (modelonlWelonightsSum == 0) combinelondScorelonSum.max(0.0)
+      elonlselon if (combinelondScorelonSum < 0)
+        (combinelondScorelonSum + nelongativelonModelonlWelonightsSum) / modelonlWelonightsSum * elonpsilon
+      elonlselon combinelondScorelonSum + elonpsilon
 
-    weightedScoresSum
+    welonightelondScorelonsSum
   }
 }

@@ -1,123 +1,123 @@
-package com.twitter.home_mixer.candidate_pipeline
+packagelon com.twittelonr.homelon_mixelonr.candidatelon_pipelonlinelon
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.home_mixer.functional_component.gate.RequestContextNotGate
-import com.twitter.home_mixer.model.HomeFeatures.GetNewerFeature
-import com.twitter.home_mixer.model.request.DeviceContext
-import com.twitter.home_mixer.model.request.HasDeviceContext
-import com.twitter.home_mixer.service.HomeMixerAlertConfig
-import com.twitter.product_mixer.component_library.decorator.urt.UrtItemCandidateDecorator
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.alert.DurationParamBuilder
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.alert.ShowAlertCandidateUrtItemBuilder
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.alert.StaticShowAlertColorConfigurationBuilder
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.alert.StaticShowAlertDisplayLocationBuilder
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.alert.StaticShowAlertIconDisplayInfoBuilder
-import com.twitter.product_mixer.component_library.gate.FeatureGate
-import com.twitter.product_mixer.component_library.model.candidate.ShowAlertCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.functional_component.candidate_source.StaticCandidateSource
-import com.twitter.product_mixer.core.functional_component.configapi.StaticParam
-import com.twitter.product_mixer.core.functional_component.decorator.CandidateDecorator
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.item.alert.BaseDurationBuilder
-import com.twitter.product_mixer.core.functional_component.gate.Gate
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineResultsTransformer
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.marshalling.response.urt.alert.NewTweets
-import com.twitter.product_mixer.core.model.marshalling.response.urt.alert.ShowAlertColorConfiguration
-import com.twitter.product_mixer.core.model.marshalling.response.urt.alert.ShowAlertIconDisplayInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.alert.Top
-import com.twitter.product_mixer.core.model.marshalling.response.urt.alert.UpArrow
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.TwitterBlueRosettaColor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.WhiteRosettaColor
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.candidate.DependentCandidatePipelineConfig
-import com.twitter.util.Duration
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.homelon_mixelonr.functional_componelonnt.gatelon.RelonquelonstContelonxtNotGatelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.GelontNelonwelonrFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.relonquelonst.DelonvicelonContelonxt
+import com.twittelonr.homelon_mixelonr.modelonl.relonquelonst.HasDelonvicelonContelonxt
+import com.twittelonr.homelon_mixelonr.selonrvicelon.HomelonMixelonrAlelonrtConfig
+import com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.UrtItelonmCandidatelonDeloncorator
+import com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.itelonm.alelonrt.DurationParamBuildelonr
+import com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.itelonm.alelonrt.ShowAlelonrtCandidatelonUrtItelonmBuildelonr
+import com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.itelonm.alelonrt.StaticShowAlelonrtColorConfigurationBuildelonr
+import com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.itelonm.alelonrt.StaticShowAlelonrtDisplayLocationBuildelonr
+import com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.itelonm.alelonrt.StaticShowAlelonrtIconDisplayInfoBuildelonr
+import com.twittelonr.product_mixelonr.componelonnt_library.gatelon.FelonaturelonGatelon
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.ShowAlelonrtCandidatelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.CandidatelonSourcelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.StaticCandidatelonSourcelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.configapi.StaticParam
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.CandidatelonDeloncorator
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.itelonm.alelonrt.BaselonDurationBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.gatelon.Gatelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.transformelonr.CandidatelonPipelonlinelonQuelonryTransformelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.transformelonr.CandidatelonPipelonlinelonRelonsultsTransformelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonPipelonlinelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonSourcelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.alelonrt.NelonwTwelonelonts
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.alelonrt.ShowAlelonrtColorConfiguration
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.alelonrt.ShowAlelonrtIconDisplayInfo
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.alelonrt.Top
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.alelonrt.UpArrow
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.color.TwittelonrBluelonRoselonttaColor
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.color.WhitelonRoselonttaColor
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.candidatelon.DelonpelonndelonntCandidatelonPipelonlinelonConfig
+import com.twittelonr.util.Duration
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
 /**
- * Candidate Pipeline Config that creates the New Tweets Pill
+ * Candidatelon Pipelonlinelon Config that crelonatelons thelon Nelonw Twelonelonts Pill
  */
-@Singleton
-class NewTweetsPillCandidatePipelineConfig[Query <: PipelineQuery with HasDeviceContext] @Inject() (
-) extends DependentCandidatePipelineConfig[
-      Query,
+@Singlelonton
+class NelonwTwelonelontsPillCandidatelonPipelonlinelonConfig[Quelonry <: PipelonlinelonQuelonry with HasDelonvicelonContelonxt] @Injelonct() (
+) elonxtelonnds DelonpelonndelonntCandidatelonPipelonlinelonConfig[
+      Quelonry,
       Unit,
-      ShowAlertCandidate,
-      ShowAlertCandidate
+      ShowAlelonrtCandidatelon,
+      ShowAlelonrtCandidatelon
     ] {
-  import NewTweetsPillCandidatePipelineConfig._
+  import NelonwTwelonelontsPillCandidatelonPipelonlinelonConfig._
 
-  override val identifier: CandidatePipelineIdentifier =
-    CandidatePipelineIdentifier("NewTweetsPill")
+  ovelonrridelon val idelonntifielonr: CandidatelonPipelonlinelonIdelonntifielonr =
+    CandidatelonPipelonlinelonIdelonntifielonr("NelonwTwelonelontsPill")
 
-  override val gates: Seq[Gate[Query]] = Seq(
-    RequestContextNotGate(Seq(DeviceContext.RequestContext.PullToRefresh)),
-    FeatureGate.fromFeature(GetNewerFeature)
+  ovelonrridelon val gatelons: Selonq[Gatelon[Quelonry]] = Selonq(
+    RelonquelonstContelonxtNotGatelon(Selonq(DelonvicelonContelonxt.RelonquelonstContelonxt.PullToRelonfrelonsh)),
+    FelonaturelonGatelon.fromFelonaturelon(GelontNelonwelonrFelonaturelon)
   )
 
-  override val candidateSource: CandidateSource[Unit, ShowAlertCandidate] =
-    StaticCandidateSource(
-      CandidateSourceIdentifier(identifier.name),
-      Seq(ShowAlertCandidate(id = identifier.name, userIds = Seq.empty))
+  ovelonrridelon val candidatelonSourcelon: CandidatelonSourcelon[Unit, ShowAlelonrtCandidatelon] =
+    StaticCandidatelonSourcelon(
+      CandidatelonSourcelonIdelonntifielonr(idelonntifielonr.namelon),
+      Selonq(ShowAlelonrtCandidatelon(id = idelonntifielonr.namelon, uselonrIds = Selonq.elonmpty))
     )
 
-  override val queryTransformer: CandidatePipelineQueryTransformer[Query, Unit] = { _ => Unit }
+  ovelonrridelon val quelonryTransformelonr: CandidatelonPipelonlinelonQuelonryTransformelonr[Quelonry, Unit] = { _ => Unit }
 
-  override val resultTransformer: CandidatePipelineResultsTransformer[
-    ShowAlertCandidate,
-    ShowAlertCandidate
-  ] = { candidate => candidate }
+  ovelonrridelon val relonsultTransformelonr: CandidatelonPipelonlinelonRelonsultsTransformelonr[
+    ShowAlelonrtCandidatelon,
+    ShowAlelonrtCandidatelon
+  ] = { candidatelon => candidatelon }
 
-  override val decorator: Option[CandidateDecorator[Query, ShowAlertCandidate]] = {
-    val triggerDelayBuilder = new BaseDurationBuilder[Query] {
-      override def apply(
-        query: Query,
-        candidate: ShowAlertCandidate,
-        features: FeatureMap
+  ovelonrridelon val deloncorator: Option[CandidatelonDeloncorator[Quelonry, ShowAlelonrtCandidatelon]] = {
+    val triggelonrDelonlayBuildelonr = nelonw BaselonDurationBuildelonr[Quelonry] {
+      ovelonrridelon delonf apply(
+        quelonry: Quelonry,
+        candidatelon: ShowAlelonrtCandidatelon,
+        felonaturelons: FelonaturelonMap
       ): Option[Duration] = {
-        val delay = query.deviceContext.flatMap(_.requestContextValue) match {
-          case Some(DeviceContext.RequestContext.TweetSelfThread) => 0.millis
-          case Some(DeviceContext.RequestContext.ManualRefresh) => 0.millis
-          case _ => TriggerDelay
+        val delonlay = quelonry.delonvicelonContelonxt.flatMap(_.relonquelonstContelonxtValuelon) match {
+          caselon Somelon(DelonvicelonContelonxt.RelonquelonstContelonxt.TwelonelontSelonlfThrelonad) => 0.millis
+          caselon Somelon(DelonvicelonContelonxt.RelonquelonstContelonxt.ManualRelonfrelonsh) => 0.millis
+          caselon _ => TriggelonrDelonlay
         }
 
-        Some(delay)
+        Somelon(delonlay)
       }
     }
 
-    val homeShowAlertCandidateBuilder = ShowAlertCandidateUrtItemBuilder(
-      alertType = NewTweets,
-      colorConfigBuilder = StaticShowAlertColorConfigurationBuilder(DefaultColorConfig),
-      displayLocationBuilder = StaticShowAlertDisplayLocationBuilder(Top),
-      triggerDelayBuilder = Some(triggerDelayBuilder),
-      displayDurationBuilder = Some(DurationParamBuilder(StaticParam(DisplayDuration))),
-      iconDisplayInfoBuilder = Some(StaticShowAlertIconDisplayInfoBuilder(DefaultIconDisplayInfo))
+    val homelonShowAlelonrtCandidatelonBuildelonr = ShowAlelonrtCandidatelonUrtItelonmBuildelonr(
+      alelonrtTypelon = NelonwTwelonelonts,
+      colorConfigBuildelonr = StaticShowAlelonrtColorConfigurationBuildelonr(DelonfaultColorConfig),
+      displayLocationBuildelonr = StaticShowAlelonrtDisplayLocationBuildelonr(Top),
+      triggelonrDelonlayBuildelonr = Somelon(triggelonrDelonlayBuildelonr),
+      displayDurationBuildelonr = Somelon(DurationParamBuildelonr(StaticParam(DisplayDuration))),
+      iconDisplayInfoBuildelonr = Somelon(StaticShowAlelonrtIconDisplayInfoBuildelonr(DelonfaultIconDisplayInfo))
     )
 
-    Some(UrtItemCandidateDecorator(homeShowAlertCandidateBuilder))
+    Somelon(UrtItelonmCandidatelonDeloncorator(homelonShowAlelonrtCandidatelonBuildelonr))
   }
 
-  override val alerts = Seq(
-    HomeMixerAlertConfig.BusinessHours.defaultSuccessRateAlert(),
-    HomeMixerAlertConfig.BusinessHours.defaultEmptyResponseRateAlert()
+  ovelonrridelon val alelonrts = Selonq(
+    HomelonMixelonrAlelonrtConfig.BusinelonssHours.delonfaultSuccelonssRatelonAlelonrt(),
+    HomelonMixelonrAlelonrtConfig.BusinelonssHours.delonfaultelonmptyRelonsponselonRatelonAlelonrt()
   )
 }
 
-object NewTweetsPillCandidatePipelineConfig {
-  val DefaultColorConfig: ShowAlertColorConfiguration = ShowAlertColorConfiguration(
-    background = TwitterBlueRosettaColor,
-    text = WhiteRosettaColor,
-    border = Some(WhiteRosettaColor)
+objelonct NelonwTwelonelontsPillCandidatelonPipelonlinelonConfig {
+  val DelonfaultColorConfig: ShowAlelonrtColorConfiguration = ShowAlelonrtColorConfiguration(
+    background = TwittelonrBluelonRoselonttaColor,
+    telonxt = WhitelonRoselonttaColor,
+    bordelonr = Somelon(WhitelonRoselonttaColor)
   )
 
-  val DefaultIconDisplayInfo: ShowAlertIconDisplayInfo =
-    ShowAlertIconDisplayInfo(icon = UpArrow, tint = WhiteRosettaColor)
+  val DelonfaultIconDisplayInfo: ShowAlelonrtIconDisplayInfo =
+    ShowAlelonrtIconDisplayInfo(icon = UpArrow, tint = WhitelonRoselonttaColor)
 
-  // Unlimited display time (until user takes action)
-  val DisplayDuration = -1.millisecond
-  val TriggerDelay = 4.minutes
+  // Unlimitelond display timelon (until uselonr takelons action)
+  val DisplayDuration = -1.milliseloncond
+  val TriggelonrDelonlay = 4.minutelons
 }

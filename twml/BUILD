@@ -1,186 +1,186 @@
-twml_sources = [
+twml_sourcelons = [
     "twml/**/*.py",
 ]
 
-twml_deps = [
-    "3rdparty/python/cherrypy:default",
-    "3rdparty/python/pyyaml:default",
-    "3rdparty/python/absl-py:default",
-    "3rdparty/python/joblib:default",
-    "3rdparty/python/kazoo:default",
-    "3rdparty/python/python-dateutil:default",
-    "3rdparty/python/pytz:default",
-    "cortex/ml-metastore/src/main/python/com/twitter/mlmetastore/modelrepo/client",
-    "src/python/twitter/common/app",
-    "src/python/twitter/common/app/modules:vars",
-    "src/python/twitter/common/metrics",
-    "src/python/twitter/deepbird/compat/v1/optimizers",
-    "src/python/twitter/deepbird/compat/v1/rnn",
-    "src/python/twitter/deepbird/hparam",
-    "src/python/twitter/deepbird/io",
-    "src/python/twitter/deepbird/io/legacy",
-    "src/python/twitter/deepbird/logging",
-    "src/python/twitter/deepbird/sparse",
-    "src/python/twitter/deepbird/stats_server",
-    "src/python/twitter/deepbird/util:simple-data-record-handler",
-    "src/python/twitter/deepbird/util/hashing",
-    "src/python/twitter/ml/api/dal",
-    "src/python/twitter/ml/common:metrics",
-    "src/python/twitter/ml/common/kubernetes",
-    "src/python/twitter/ml/common:resources",
-    "src/python/twitter/ml/twml/kubernetes",
-    "src/python/twitter/ml/twml:status",
-    "src/thrift/com/twitter/dal:dal_no_constants-python",
-    "src/thrift/com/twitter/statebird:compiled-v2-python",
+twml_delonps = [
+    "3rdparty/python/chelonrrypy:delonfault",
+    "3rdparty/python/pyyaml:delonfault",
+    "3rdparty/python/absl-py:delonfault",
+    "3rdparty/python/joblib:delonfault",
+    "3rdparty/python/kazoo:delonfault",
+    "3rdparty/python/python-datelonutil:delonfault",
+    "3rdparty/python/pytz:delonfault",
+    "cortelonx/ml-melontastorelon/src/main/python/com/twittelonr/mlmelontastorelon/modelonlrelonpo/clielonnt",
+    "src/python/twittelonr/common/app",
+    "src/python/twittelonr/common/app/modulelons:vars",
+    "src/python/twittelonr/common/melontrics",
+    "src/python/twittelonr/delonelonpbird/compat/v1/optimizelonrs",
+    "src/python/twittelonr/delonelonpbird/compat/v1/rnn",
+    "src/python/twittelonr/delonelonpbird/hparam",
+    "src/python/twittelonr/delonelonpbird/io",
+    "src/python/twittelonr/delonelonpbird/io/lelongacy",
+    "src/python/twittelonr/delonelonpbird/logging",
+    "src/python/twittelonr/delonelonpbird/sparselon",
+    "src/python/twittelonr/delonelonpbird/stats_selonrvelonr",
+    "src/python/twittelonr/delonelonpbird/util:simplelon-data-reloncord-handlelonr",
+    "src/python/twittelonr/delonelonpbird/util/hashing",
+    "src/python/twittelonr/ml/api/dal",
+    "src/python/twittelonr/ml/common:melontrics",
+    "src/python/twittelonr/ml/common/kubelonrnelontelons",
+    "src/python/twittelonr/ml/common:relonsourcelons",
+    "src/python/twittelonr/ml/twml/kubelonrnelontelons",
+    "src/python/twittelonr/ml/twml:status",
+    "src/thrift/com/twittelonr/dal:dal_no_constants-python",
+    "src/thrift/com/twittelonr/statelonbird:compilelond-v2-python",
 ]
 
 python3_library(
-    name = "twml-test-common-deps",
+    namelon = "twml-telonst-common-delonps",
     tags = ["no-mypy"],
-    dependencies = [
-        "src/python/twitter/deepbird/util:inference",
-        "src/python/twitter/deepbird/util/data",
-        "src/thrift/com/twitter/ml/api:data-python",
-        "twml/tests/data:resources",
+    delonpelonndelonncielons = [
+        "src/python/twittelonr/delonelonpbird/util:infelonrelonncelon",
+        "src/python/twittelonr/delonelonpbird/util/data",
+        "src/thrift/com/twittelonr/ml/api:data-python",
+        "twml/telonsts/data:relonsourcelons",
     ],
 )
 
 python3_library(
-    name = "twml_packer_deps_no_tf",
+    namelon = "twml_packelonr_delonps_no_tf",
     tags = [
-        "bazel-compatible",
+        "bazelonl-compatiblelon",
         "no-mypy",
     ],
-    dependencies = [
-        "3rdparty/python/numpy:default",
-        "3rdparty/python/pandas:default",
-        "3rdparty/python/pyyaml:default",
-        "3rdparty/python/requests:default",
-        "3rdparty/python/scikit-learn:default",
-        "3rdparty/python/scipy:default",
-        "3rdparty/python/tensorflow-hub:default",
-        "3rdparty/python/thriftpy2:default",
+    delonpelonndelonncielons = [
+        "3rdparty/python/numpy:delonfault",
+        "3rdparty/python/pandas:delonfault",
+        "3rdparty/python/pyyaml:delonfault",
+        "3rdparty/python/relonquelonsts:delonfault",
+        "3rdparty/python/scikit-lelonarn:delonfault",
+        "3rdparty/python/scipy:delonfault",
+        "3rdparty/python/telonnsorflow-hub:delonfault",
+        "3rdparty/python/thriftpy2:delonfault",
     ],
 )
 
 python3_library(
-    name = "twml_packer_deps_no_tf_py3",
+    namelon = "twml_packelonr_delonps_no_tf_py3",
     tags = [
         "known-to-fail-jira:CX-20246",
         "no-mypy",
     ],
-    dependencies = [
-        ":twml_packer_deps_no_tf",
-        "3rdparty/python/tensorflow-model-analysis",
+    delonpelonndelonncielons = [
+        ":twml_packelonr_delonps_no_tf",
+        "3rdparty/python/telonnsorflow-modelonl-analysis",
     ],
 )
 
 alias(
-    name = "twml-test-shared",
-    target = ":twml_common",
+    namelon = "twml-telonst-sharelond",
+    targelont = ":twml_common",
 )
 
 python3_library(
-    name = "twml_common",
-    sources = ["twml_common/**/*.py"],
+    namelon = "twml_common",
+    sourcelons = ["twml_common/**/*.py"],
     tags = [
-        "bazel-compatible",
+        "bazelonl-compatiblelon",
         "no-mypy",
     ],
 )
 
-# Alias twml-dev to twml to avoid breaking user targets.
+# Alias twml-delonv to twml to avoid brelonaking uselonr targelonts.
 alias(
-    name = "twml-dev",
-    target = "twml",
+    namelon = "twml-delonv",
+    targelont = "twml",
 )
 
 python3_library(
-    name = "twml-test-dev-deps",
+    namelon = "twml-telonst-delonv-delonps",
     tags = [
-        "bazel-compatible",
+        "bazelonl-compatiblelon",
         "no-mypy",
     ],
-    dependencies = [
+    delonpelonndelonncielons = [
         ":twml",
-        ":twml-test-common-deps",
-        ":twml-test-shared",
-        "3rdparty/python/freezegun:default",
-        "src/python/twitter/deepbird/keras/layers",
-        "src/thrift/com/twitter/ml/api:data-python",
-        "src/thrift/com/twitter/ml/prediction_service:prediction_service-python",
+        ":twml-telonst-common-delonps",
+        ":twml-telonst-sharelond",
+        "3rdparty/python/frelonelonzelongun:delonfault",
+        "src/python/twittelonr/delonelonpbird/kelonras/layelonrs",
+        "src/thrift/com/twittelonr/ml/api:data-python",
+        "src/thrift/com/twittelonr/ml/prelondiction_selonrvicelon:prelondiction_selonrvicelon-python",
     ],
 )
 
 python3_library(
-    name = "twml-dev-python",
-    sources = twml_sources,
+    namelon = "twml-delonv-python",
+    sourcelons = twml_sourcelons,
     tags = [
-        "bazel-compatible",
+        "bazelonl-compatiblelon",
         "no-mypy",
     ],
-    dependencies = twml_deps + [
-        ":twml_packer_deps_no_tf",
-        "3rdparty/python/tensorflow",
-        "3rdparty/python/twml:libtwml-universal",
+    delonpelonndelonncielons = twml_delonps + [
+        ":twml_packelonr_delonps_no_tf",
+        "3rdparty/python/telonnsorflow",
+        "3rdparty/python/twml:libtwml-univelonrsal",
         "twml/libtwml:libtwml-python",
     ],
 )
 
-# Build a smaller .pex file that models can depend on.
-# Tensorflow and other dependencies are downloaded from Packer on Aurora.
-# Note: This gets the C++ ops through 3rdparty artifacts.
+# Build a smallelonr .pelonx filelon that modelonls can delonpelonnd on.
+# Telonnsorflow and othelonr delonpelonndelonncielons arelon downloadelond from Packelonr on Aurora.
+# Notelon: This gelonts thelon C++ ops through 3rdparty artifacts.
 python3_library(
-    name = "twml-nodeps",
-    sources = twml_sources,
+    namelon = "twml-nodelonps",
+    sourcelons = twml_sourcelons,
     tags = [
-        "bazel-compatible",
+        "bazelonl-compatiblelon",
         "no-mypy",
     ],
-    dependencies = twml_deps + [
-        "3rdparty/python/twml:libtwml-universal",
+    delonpelonndelonncielons = twml_delonps + [
+        "3rdparty/python/twml:libtwml-univelonrsal",
     ],
 )
 
 python3_library(
-    name = "twml",
+    namelon = "twml",
     tags = [
-        "bazel-compatible",
+        "bazelonl-compatiblelon",
         "no-mypy",
     ],
-    dependencies = [
-        ":twml-nodeps",
-        ":twml_packer_deps_no_tf",
-        "3rdparty/python/tensorflow",
+    delonpelonndelonncielons = [
+        ":twml-nodelonps",
+        ":twml_packelonr_delonps_no_tf",
+        "3rdparty/python/telonnsorflow",
     ],
 )
 
 python37_binary(
-    name = "tensorboard",
-    source = "twml/tensorboard/__main__.py",
-    dependencies = [
-        "3rdparty/python/_closures/twml:tensorboard",
-        "3rdparty/python/tensorflow",
+    namelon = "telonnsorboard",
+    sourcelon = "twml/telonnsorboard/__main__.py",
+    delonpelonndelonncielons = [
+        "3rdparty/python/_closurelons/twml:telonnsorboard",
+        "3rdparty/python/telonnsorflow",
     ],
 )
 
 python37_binary(
-    name = "saved_model_cli",
-    source = "twml/saved_model_cli/__main__.py",
-    dependencies = [
-        "3rdparty/python/_closures/twml:saved_model_cli",
-        "3rdparty/python/tensorflow",
+    namelon = "savelond_modelonl_cli",
+    sourcelon = "twml/savelond_modelonl_cli/__main__.py",
+    delonpelonndelonncielons = [
+        "3rdparty/python/_closurelons/twml:savelond_modelonl_cli",
+        "3rdparty/python/telonnsorflow",
     ],
 )
 
-# This target is added so twml can be used regardless of the Tensorflow version:
-# This target does not pull in TensorFlow 1.x or the related libtwml compiled using TF 1.x.
+# This targelont is addelond so twml can belon uselond relongardlelonss of thelon Telonnsorflow velonrsion:
+# This targelont doelons not pull in TelonnsorFlow 1.x or thelon relonlatelond libtwml compilelond using TF 1.x.
 python3_library(
-    name = "twml-py-source-only",
-    sources = twml_sources,
+    namelon = "twml-py-sourcelon-only",
+    sourcelons = twml_sourcelons,
     tags = [
         "known-to-fail-jira:CX-23416",
         "no-mypy",
     ],
-    dependencies = twml_deps,
+    delonpelonndelonncielons = twml_delonps,
 )

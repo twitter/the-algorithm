@@ -1,288 +1,288 @@
-package com.twitter.search.ingester.pipeline.twitter;
+packagelon com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.twittelonr;
 
-import java.net.MalformedURLException;
+import java.nelont.MalformelondURLelonxcelonption;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Collelonctions;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import javax.naming.NamingException;
+import java.util.Selont;
+import javax.naming.Namingelonxcelonption;
 
-import com.google.common.collect.Maps;
+import com.googlelon.common.collelonct.Maps;
 
-import org.apache.commons.pipeline.StageException;
-import org.apache.commons.pipeline.stage.StageTimer;
-import org.apache.commons.pipeline.validation.ConsumedTypes;
-import org.apache.commons.pipeline.validation.ProducesConsumed;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apachelon.commons.pipelonlinelon.Stagelonelonxcelonption;
+import org.apachelon.commons.pipelonlinelon.stagelon.StagelonTimelonr;
+import org.apachelon.commons.pipelonlinelon.validation.ConsumelondTypelons;
+import org.apachelon.commons.pipelonlinelon.validation.ProducelonsConsumelond;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.common.text.language.LocaleUtil;
-import com.twitter.expandodo.thriftjava.Card2;
-import com.twitter.mediaservices.commons.tweetmedia.thrift_java.MediaInfo;
-import com.twitter.search.common.indexing.thriftjava.ThriftExpandedUrl;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.ingester.model.IngesterTwitterMessage;
-import com.twitter.search.ingester.pipeline.util.BatchingClient;
-import com.twitter.search.ingester.pipeline.util.CardFieldUtil;
-import com.twitter.search.ingester.pipeline.util.IngesterStageTimer;
-import com.twitter.search.ingester.pipeline.util.ResponseNotReturnedException;
-import com.twitter.spiderduck.common.URLUtils;
-import com.twitter.tweetypie.thriftjava.GetTweetOptions;
-import com.twitter.tweetypie.thriftjava.GetTweetResult;
-import com.twitter.tweetypie.thriftjava.GetTweetsRequest;
-import com.twitter.tweetypie.thriftjava.MediaEntity;
-import com.twitter.tweetypie.thriftjava.StatusState;
-import com.twitter.tweetypie.thriftjava.Tweet;
-import com.twitter.tweetypie.thriftjava.TweetService;
-import com.twitter.util.Function;
-import com.twitter.util.Future;
+import com.twittelonr.common.telonxt.languagelon.LocalelonUtil;
+import com.twittelonr.elonxpandodo.thriftjava.Card2;
+import com.twittelonr.melondiaselonrvicelons.commons.twelonelontmelondia.thrift_java.MelondiaInfo;
+import com.twittelonr.selonarch.common.indelonxing.thriftjava.ThriftelonxpandelondUrl;
+import com.twittelonr.selonarch.common.melontrics.SelonarchRatelonCountelonr;
+import com.twittelonr.selonarch.ingelonstelonr.modelonl.IngelonstelonrTwittelonrMelonssagelon;
+import com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.util.BatchingClielonnt;
+import com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.util.CardFielonldUtil;
+import com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.util.IngelonstelonrStagelonTimelonr;
+import com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.util.RelonsponselonNotRelonturnelondelonxcelonption;
+import com.twittelonr.spidelonrduck.common.URLUtils;
+import com.twittelonr.twelonelontypielon.thriftjava.GelontTwelonelontOptions;
+import com.twittelonr.twelonelontypielon.thriftjava.GelontTwelonelontRelonsult;
+import com.twittelonr.twelonelontypielon.thriftjava.GelontTwelonelontsRelonquelonst;
+import com.twittelonr.twelonelontypielon.thriftjava.Melondiaelonntity;
+import com.twittelonr.twelonelontypielon.thriftjava.StatusStatelon;
+import com.twittelonr.twelonelontypielon.thriftjava.Twelonelont;
+import com.twittelonr.twelonelontypielon.thriftjava.TwelonelontSelonrvicelon;
+import com.twittelonr.util.Function;
+import com.twittelonr.util.Futurelon;
 
-@ConsumedTypes(IngesterTwitterMessage.class)
-@ProducesConsumed
-public class RetrieveCardBatchedStage extends TwitterBaseStage
-    <IngesterTwitterMessage, IngesterTwitterMessage> {
-  private static final Logger LOG = LoggerFactory.getLogger(RetrieveCardBatchedStage.class);
+@ConsumelondTypelons(IngelonstelonrTwittelonrMelonssagelon.class)
+@ProducelonsConsumelond
+public class RelontrielonvelonCardBatchelondStagelon elonxtelonnds TwittelonrBaselonStagelon
+    <IngelonstelonrTwittelonrMelonssagelon, IngelonstelonrTwittelonrMelonssagelon> {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(RelontrielonvelonCardBatchelondStagelon.class);
 
-  private static final String CARDS_PLATFORM_KEY = "iPhone-13";
-  private int batchSize = 10;
+  privatelon static final String CARDS_PLATFORM_KelonY = "iPhonelon-13";
+  privatelon int batchSizelon = 10;
 
-  private SearchRateCounter totalTweets;
-  private SearchRateCounter tweetsWithCards;
-  private SearchRateCounter tweetsWithoutCards;
-  private SearchRateCounter tweetsWithAnimatedGifMediaInfo;
-  private SearchRateCounter cardsWithName;
-  private SearchRateCounter cardsWithDomain;
-  private SearchRateCounter cardsWithTitles;
-  private SearchRateCounter cardsWithDescriptions;
-  private SearchRateCounter cardsWithUnknownLanguage;
-  private SearchRateCounter tweetsNotFound;
-  private SearchRateCounter malformedUrls;
-  private SearchRateCounter urlMismatches;
-  private SearchRateCounter cardExceptions;
-  private SearchRateCounter cardExceptionTweets;
-  private StageTimer retrieveCardsTimer;
+  privatelon SelonarchRatelonCountelonr totalTwelonelonts;
+  privatelon SelonarchRatelonCountelonr twelonelontsWithCards;
+  privatelon SelonarchRatelonCountelonr twelonelontsWithoutCards;
+  privatelon SelonarchRatelonCountelonr twelonelontsWithAnimatelondGifMelondiaInfo;
+  privatelon SelonarchRatelonCountelonr cardsWithNamelon;
+  privatelon SelonarchRatelonCountelonr cardsWithDomain;
+  privatelon SelonarchRatelonCountelonr cardsWithTitlelons;
+  privatelon SelonarchRatelonCountelonr cardsWithDelonscriptions;
+  privatelon SelonarchRatelonCountelonr cardsWithUnknownLanguagelon;
+  privatelon SelonarchRatelonCountelonr twelonelontsNotFound;
+  privatelon SelonarchRatelonCountelonr malformelondUrls;
+  privatelon SelonarchRatelonCountelonr urlMismatchelons;
+  privatelon SelonarchRatelonCountelonr cardelonxcelonptions;
+  privatelon SelonarchRatelonCountelonr cardelonxcelonptionTwelonelonts;
+  privatelon StagelonTimelonr relontrielonvelonCardsTimelonr;
 
-  private String cardNamePrefix;
-  // Since there is only one thread executing this stage (although that could potentially be
-  // changed in the pipeline config), no need to be thread safe.
-  private static final Map<String, SearchRateCounter> CARD_NAME_STATS = new HashMap<>();
+  privatelon String cardNamelonPrelonfix;
+  // Sincelon thelonrelon is only onelon threlonad elonxeloncuting this stagelon (although that could potelonntially belon
+  // changelond in thelon pipelonlinelon config), no nelonelond to belon threlonad safelon.
+  privatelon static final Map<String, SelonarchRatelonCountelonr> CARD_NAMelon_STATS = nelonw HashMap<>();
 
-  private static TweetService.ServiceToClient tweetyPieService;
-  private BatchingClient<Long, Card2> cardsClient;
+  privatelon static TwelonelontSelonrvicelon.SelonrvicelonToClielonnt twelonelontyPielonSelonrvicelon;
+  privatelon BatchingClielonnt<Long, Card2> cardsClielonnt;
 
-  private String tweetypieClientId = null;
+  privatelon String twelonelontypielonClielonntId = null;
 
-  // Can be overridden in the corresponding pipeline-ingester.*.xml config.
-  // By default protected tweets are filtered out.
-  // Only in the protected ingester pipeline is this set to false.
-  private boolean filterProtected = true;
+  // Can belon ovelonrriddelonn in thelon correlonsponding pipelonlinelon-ingelonstelonr.*.xml config.
+  // By delonfault protelonctelond twelonelonts arelon filtelonrelond out.
+  // Only in thelon protelonctelond ingelonstelonr pipelonlinelon is this selont to falselon.
+  privatelon boolelonan filtelonrProtelonctelond = truelon;
 
-  @Override
+  @Ovelonrridelon
   public void initStats() {
-    super.initStats();
-    cardNamePrefix = getStageNamePrefix() + "_card_name_";
-    totalTweets = SearchRateCounter.export(getStageNamePrefix() + "_total_tweets");
-    tweetsWithCards = SearchRateCounter.export(getStageNamePrefix() + "_tweets_with_cards");
-    tweetsWithoutCards = SearchRateCounter.export(getStageNamePrefix() + "_tweets_without_cards");
-    tweetsWithAnimatedGifMediaInfo =
-        SearchRateCounter.export(getStageNamePrefix() + "_tweets_with_animated_gif_media_info");
-    cardsWithName = SearchRateCounter.export(getStageNamePrefix() + "_tweets_with_card_name");
-    cardsWithDomain = SearchRateCounter.export(getStageNamePrefix() + "_tweets_with_card_domain");
-    cardsWithTitles = SearchRateCounter.export(getStageNamePrefix() + "_tweets_with_card_titles");
-    cardsWithDescriptions =
-        SearchRateCounter.export(getStageNamePrefix() + "_tweets_with_card_descriptions");
-    cardsWithUnknownLanguage =
-        SearchRateCounter.export(getStageNamePrefix() + "_tweets_with_unknown_card_lanuage");
-    tweetsNotFound = SearchRateCounter.export(getStageNamePrefix() + "_tweets_not_found");
-    malformedUrls = SearchRateCounter.export(getStageNamePrefix() + "_malformed_urls");
-    urlMismatches = SearchRateCounter.export(getStageNamePrefix() + "_url_mismatches");
-    cardExceptions = SearchRateCounter.export(getStageNamePrefix() + "_card_exceptions");
-    cardExceptionTweets =
-        SearchRateCounter.export(getStageNamePrefix() + "_card_exception_tweets");
-    retrieveCardsTimer = new IngesterStageTimer(getStageNamePrefix() + "_request_timer");
+    supelonr.initStats();
+    cardNamelonPrelonfix = gelontStagelonNamelonPrelonfix() + "_card_namelon_";
+    totalTwelonelonts = SelonarchRatelonCountelonr.elonxport(gelontStagelonNamelonPrelonfix() + "_total_twelonelonts");
+    twelonelontsWithCards = SelonarchRatelonCountelonr.elonxport(gelontStagelonNamelonPrelonfix() + "_twelonelonts_with_cards");
+    twelonelontsWithoutCards = SelonarchRatelonCountelonr.elonxport(gelontStagelonNamelonPrelonfix() + "_twelonelonts_without_cards");
+    twelonelontsWithAnimatelondGifMelondiaInfo =
+        SelonarchRatelonCountelonr.elonxport(gelontStagelonNamelonPrelonfix() + "_twelonelonts_with_animatelond_gif_melondia_info");
+    cardsWithNamelon = SelonarchRatelonCountelonr.elonxport(gelontStagelonNamelonPrelonfix() + "_twelonelonts_with_card_namelon");
+    cardsWithDomain = SelonarchRatelonCountelonr.elonxport(gelontStagelonNamelonPrelonfix() + "_twelonelonts_with_card_domain");
+    cardsWithTitlelons = SelonarchRatelonCountelonr.elonxport(gelontStagelonNamelonPrelonfix() + "_twelonelonts_with_card_titlelons");
+    cardsWithDelonscriptions =
+        SelonarchRatelonCountelonr.elonxport(gelontStagelonNamelonPrelonfix() + "_twelonelonts_with_card_delonscriptions");
+    cardsWithUnknownLanguagelon =
+        SelonarchRatelonCountelonr.elonxport(gelontStagelonNamelonPrelonfix() + "_twelonelonts_with_unknown_card_lanuagelon");
+    twelonelontsNotFound = SelonarchRatelonCountelonr.elonxport(gelontStagelonNamelonPrelonfix() + "_twelonelonts_not_found");
+    malformelondUrls = SelonarchRatelonCountelonr.elonxport(gelontStagelonNamelonPrelonfix() + "_malformelond_urls");
+    urlMismatchelons = SelonarchRatelonCountelonr.elonxport(gelontStagelonNamelonPrelonfix() + "_url_mismatchelons");
+    cardelonxcelonptions = SelonarchRatelonCountelonr.elonxport(gelontStagelonNamelonPrelonfix() + "_card_elonxcelonptions");
+    cardelonxcelonptionTwelonelonts =
+        SelonarchRatelonCountelonr.elonxport(gelontStagelonNamelonPrelonfix() + "_card_elonxcelonption_twelonelonts");
+    relontrielonvelonCardsTimelonr = nelonw IngelonstelonrStagelonTimelonr(gelontStagelonNamelonPrelonfix() + "_relonquelonst_timelonr");
   }
 
-  @Override
-  protected void doInnerPreprocess() throws StageException, NamingException {
-    super.doInnerPreprocess();
-    tweetyPieService = wireModule.getTweetyPieClient(tweetypieClientId);
-    cardsClient = new BatchingClient<>(this::batchRetrieveURLs, batchSize);
+  @Ovelonrridelon
+  protelonctelond void doInnelonrPrelonprocelonss() throws Stagelonelonxcelonption, Namingelonxcelonption {
+    supelonr.doInnelonrPrelonprocelonss();
+    twelonelontyPielonSelonrvicelon = wirelonModulelon.gelontTwelonelontyPielonClielonnt(twelonelontypielonClielonntId);
+    cardsClielonnt = nelonw BatchingClielonnt<>(this::batchRelontrielonvelonURLs, batchSizelon);
   }
 
-  @Override
-  public void innerProcess(Object obj) throws StageException {
-    if (!(obj instanceof IngesterTwitterMessage)) {
-      throw new StageException(this,
-          "Received object of incorrect type: " + obj.getClass().getName());
+  @Ovelonrridelon
+  public void innelonrProcelonss(Objelonct obj) throws Stagelonelonxcelonption {
+    if (!(obj instancelonof IngelonstelonrTwittelonrMelonssagelon)) {
+      throw nelonw Stagelonelonxcelonption(this,
+          "Reloncelonivelond objelonct of incorrelonct typelon: " + obj.gelontClass().gelontNamelon());
     }
 
-    IngesterTwitterMessage message = (IngesterTwitterMessage) obj;
+    IngelonstelonrTwittelonrMelonssagelon melonssagelon = (IngelonstelonrTwittelonrMelonssagelon) obj;
 
-    cardsClient.call(message.getTweetId())
-        .onSuccess(Function.cons(card -> {
-          updateMessage(message, card);
-          emitAndCount(message);
+    cardsClielonnt.call(melonssagelon.gelontTwelonelontId())
+        .onSuccelonss(Function.cons(card -> {
+          updatelonMelonssagelon(melonssagelon, card);
+          elonmitAndCount(melonssagelon);
         }))
-        .onFailure(Function.cons(exception -> {
-          if (!(exception instanceof ResponseNotReturnedException)) {
-            cardExceptionTweets.increment();
+        .onFailurelon(Function.cons(elonxcelonption -> {
+          if (!(elonxcelonption instancelonof RelonsponselonNotRelonturnelondelonxcelonption)) {
+            cardelonxcelonptionTwelonelonts.increlonmelonnt();
           }
 
-          emitAndCount(message);
+          elonmitAndCount(melonssagelon);
         }));
   }
 
-  private Future<Map<Long, Card2>> batchRetrieveURLs(Set<Long> keys) {
-    retrieveCardsTimer.start();
-    totalTweets.increment(keys.size());
+  privatelon Futurelon<Map<Long, Card2>> batchRelontrielonvelonURLs(Selont<Long> kelonys) {
+    relontrielonvelonCardsTimelonr.start();
+    totalTwelonelonts.increlonmelonnt(kelonys.sizelon());
 
-    GetTweetOptions options = new GetTweetOptions()
-        .setInclude_cards(true)
-        .setCards_platform_key(CARDS_PLATFORM_KEY)
-        .setBypass_visibility_filtering(!filterProtected);
+    GelontTwelonelontOptions options = nelonw GelontTwelonelontOptions()
+        .selontIncludelon_cards(truelon)
+        .selontCards_platform_kelony(CARDS_PLATFORM_KelonY)
+        .selontBypass_visibility_filtelonring(!filtelonrProtelonctelond);
 
-    GetTweetsRequest request = new GetTweetsRequest()
-        .setOptions(options)
-        .setTweet_ids(new ArrayList<>(keys));
+    GelontTwelonelontsRelonquelonst relonquelonst = nelonw GelontTwelonelontsRelonquelonst()
+        .selontOptions(options)
+        .selontTwelonelont_ids(nelonw ArrayList<>(kelonys));
 
-    return tweetyPieService.get_tweets(request)
-        .onFailure(throwable -> {
-          cardExceptions.increment();
-          LOG.error("TweetyPie server threw an exception while requesting tweetIds: "
-              + request.getTweet_ids(), throwable);
-          return null;
+    relonturn twelonelontyPielonSelonrvicelon.gelont_twelonelonts(relonquelonst)
+        .onFailurelon(throwablelon -> {
+          cardelonxcelonptions.increlonmelonnt();
+          LOG.elonrror("TwelonelontyPielon selonrvelonr threlonw an elonxcelonption whilelon relonquelonsting twelonelontIds: "
+              + relonquelonst.gelontTwelonelont_ids(), throwablelon);
+          relonturn null;
         })
-        .map(this::createIdToCardMap);
+        .map(this::crelonatelonIdToCardMap);
   }
 
-  private void updateMessage(IngesterTwitterMessage message, Card2 card) {
-    tweetsWithCards.increment();
+  privatelon void updatelonMelonssagelon(IngelonstelonrTwittelonrMelonssagelon melonssagelon, Card2 card) {
+    twelonelontsWithCards.increlonmelonnt();
 
-    String cardName = card.getName().toLowerCase();
-    addCardNameToStats(cardName);
-    message.setCardName(cardName);
-    cardsWithName.increment();
-    message.setCardUrl(card.getUrl());
+    String cardNamelon = card.gelontNamelon().toLowelonrCaselon();
+    addCardNamelonToStats(cardNamelon);
+    melonssagelon.selontCardNamelon(cardNamelon);
+    cardsWithNamelon.increlonmelonnt();
+    melonssagelon.selontCardUrl(card.gelontUrl());
 
-    String url = getLastHop(message, card.getUrl());
+    String url = gelontLastHop(melonssagelon, card.gelontUrl());
     if (url != null) {
       try {
-        String domain = URLUtils.getDomainFromURL(url);
-        message.setCardDomain(domain.toLowerCase());
-        cardsWithDomain.increment();
-      } catch (MalformedURLException e) {
-        malformedUrls.increment();
-        if (LOG.isDebugEnabled()) {
-          LOG.debug("Tweet ID {} has a malformed card last hop URL: {}", message.getId(), url);
+        String domain = URLUtils.gelontDomainFromURL(url);
+        melonssagelon.selontCardDomain(domain.toLowelonrCaselon());
+        cardsWithDomain.increlonmelonnt();
+      } catch (MalformelondURLelonxcelonption elon) {
+        malformelondUrls.increlonmelonnt();
+        if (LOG.isDelonbugelonnablelond()) {
+          LOG.delonbug("Twelonelont ID {} has a malformelond card last hop URL: {}", melonssagelon.gelontId(), url);
         }
       }
-    } else {
-      // This happens with retweet. Basically when retrieve card for a retweet, we
-      // get a card associated with the original tweet, so the tco won't match.
-      // As of Sep 2014, this seems to be the intended behavior and has been running
-      // like this for over a year.
-      urlMismatches.increment();
+    } elonlselon {
+      // This happelonns with relontwelonelont. Basically whelonn relontrielonvelon card for a relontwelonelont, welon
+      // gelont a card associatelond with thelon original twelonelont, so thelon tco won't match.
+      // As of Selonp 2014, this selonelonms to belon thelon intelonndelond belonhavior and has belonelonn running
+      // likelon this for ovelonr a yelonar.
+      urlMismatchelons.increlonmelonnt();
     }
 
-    message.setCardTitle(
-        CardFieldUtil.extractBindingValue(CardFieldUtil.TITLE_BINDING_KEY, card));
-    if (message.getCardTitle() != null) {
-      cardsWithTitles.increment();
+    melonssagelon.selontCardTitlelon(
+        CardFielonldUtil.elonxtractBindingValuelon(CardFielonldUtil.TITLelon_BINDING_KelonY, card));
+    if (melonssagelon.gelontCardTitlelon() != null) {
+      cardsWithTitlelons.increlonmelonnt();
     }
-    message.setCardDescription(
-        CardFieldUtil.extractBindingValue(CardFieldUtil.DESCRIPTION_BINDING_KEY, card));
-    if (message.getCardDescription() != null) {
-      cardsWithDescriptions.increment();
+    melonssagelon.selontCardDelonscription(
+        CardFielonldUtil.elonxtractBindingValuelon(CardFielonldUtil.DelonSCRIPTION_BINDING_KelonY, card));
+    if (melonssagelon.gelontCardDelonscription() != null) {
+      cardsWithDelonscriptions.increlonmelonnt();
     }
-    CardFieldUtil.deriveCardLang(message);
-    if (LocaleUtil.UNKNOWN.getLanguage().equals(message.getCardLang())) {
-      cardsWithUnknownLanguage.increment();
+    CardFielonldUtil.delonrivelonCardLang(melonssagelon);
+    if (LocalelonUtil.UNKNOWN.gelontLanguagelon().elonquals(melonssagelon.gelontCardLang())) {
+      cardsWithUnknownLanguagelon.increlonmelonnt();
     }
   }
 
-  private Map<Long, Card2> createIdToCardMap(List<GetTweetResult> listResult) {
-    Map<Long, Card2> responseMap = Maps.newHashMap();
-    for (GetTweetResult entry : listResult) {
-      if (entry.isSetTweet()
-          && entry.isSetTweet_state()
-          && (entry.getTweet_state() == StatusState.FOUND)) {
-        long id = entry.getTweet_id();
-        if (entry.getTweet().isSetCard2()) {
-          responseMap.put(id, entry.getTweet().getCard2());
-        } else {
-          // Short-term fix for removal of animated GIF cards --
-          // if the tweet contains an animated GIF, create a card based on media entity data
-          Card2 card = createCardForAnimatedGif(entry.getTweet());
+  privatelon Map<Long, Card2> crelonatelonIdToCardMap(List<GelontTwelonelontRelonsult> listRelonsult) {
+    Map<Long, Card2> relonsponselonMap = Maps.nelonwHashMap();
+    for (GelontTwelonelontRelonsult elonntry : listRelonsult) {
+      if (elonntry.isSelontTwelonelont()
+          && elonntry.isSelontTwelonelont_statelon()
+          && (elonntry.gelontTwelonelont_statelon() == StatusStatelon.FOUND)) {
+        long id = elonntry.gelontTwelonelont_id();
+        if (elonntry.gelontTwelonelont().isSelontCard2()) {
+          relonsponselonMap.put(id, elonntry.gelontTwelonelont().gelontCard2());
+        } elonlselon {
+          // Short-telonrm fix for relonmoval of animatelond GIF cards --
+          // if thelon twelonelont contains an animatelond GIF, crelonatelon a card baselond on melondia elonntity data
+          Card2 card = crelonatelonCardForAnimatelondGif(elonntry.gelontTwelonelont());
           if (card != null) {
-            responseMap.put(id, card);
-            tweetsWithAnimatedGifMediaInfo.increment();
-          } else {
-            tweetsWithoutCards.increment();
+            relonsponselonMap.put(id, card);
+            twelonelontsWithAnimatelondGifMelondiaInfo.increlonmelonnt();
+          } elonlselon {
+            twelonelontsWithoutCards.increlonmelonnt();
           }
         }
-      } else {
-        tweetsNotFound.increment();
+      } elonlselon {
+        twelonelontsNotFound.increlonmelonnt();
       }
     }
-    return responseMap;
+    relonturn relonsponselonMap;
   }
 
-  private Card2 createCardForAnimatedGif(Tweet tweet) {
-    if (tweet.getMediaSize() > 0) {
-      for (MediaEntity mediaEntity : tweet.getMedia()) {
-        MediaInfo mediaInfo = mediaEntity.getMedia_info();
-        if (mediaInfo != null && mediaInfo.getSetField() == MediaInfo._Fields.ANIMATED_GIF_INFO) {
-          Card2 card = new Card2();
-          card.setName("animated_gif");
-          // Use the original compressed URL for the media entity to match existing card URLs
-          card.setUrl(mediaEntity.getUrl());
-          card.setBinding_values(Collections.emptyList());
+  privatelon Card2 crelonatelonCardForAnimatelondGif(Twelonelont twelonelont) {
+    if (twelonelont.gelontMelondiaSizelon() > 0) {
+      for (Melondiaelonntity melondiaelonntity : twelonelont.gelontMelondia()) {
+        MelondiaInfo melondiaInfo = melondiaelonntity.gelontMelondia_info();
+        if (melondiaInfo != null && melondiaInfo.gelontSelontFielonld() == MelondiaInfo._Fielonlds.ANIMATelonD_GIF_INFO) {
+          Card2 card = nelonw Card2();
+          card.selontNamelon("animatelond_gif");
+          // Uselon thelon original comprelonsselond URL for thelon melondia elonntity to match elonxisting card URLs
+          card.selontUrl(melondiaelonntity.gelontUrl());
+          card.selontBinding_valuelons(Collelonctions.elonmptyList());
 
-          return card;
+          relonturn card;
         }
       }
     }
-    return null;
+    relonturn null;
   }
 
-  // Unfortunately the url returned in the card data is not the last hop
-  private String getLastHop(IngesterTwitterMessage message, String url) {
-    if (message.getExpandedUrlMap() != null) {
-      ThriftExpandedUrl expanded = message.getExpandedUrlMap().get(url);
-      if ((expanded != null) && expanded.isSetCanonicalLastHopUrl()) {
-        return expanded.getCanonicalLastHopUrl();
+  // Unfortunatelonly thelon url relonturnelond in thelon card data is not thelon last hop
+  privatelon String gelontLastHop(IngelonstelonrTwittelonrMelonssagelon melonssagelon, String url) {
+    if (melonssagelon.gelontelonxpandelondUrlMap() != null) {
+      ThriftelonxpandelondUrl elonxpandelond = melonssagelon.gelontelonxpandelondUrlMap().gelont(url);
+      if ((elonxpandelond != null) && elonxpandelond.isSelontCanonicalLastHopUrl()) {
+        relonturn elonxpandelond.gelontCanonicalLastHopUrl();
       }
     }
-    return null;
+    relonturn null;
   }
 
-  // Used by commons-pipeline and set via the xml config
-  public void setFilterProtected(boolean filterProtected) {
-    LOG.info("Filtering protected tweets: {}", filterProtected);
-    this.filterProtected = filterProtected;
+  // Uselond by commons-pipelonlinelon and selont via thelon xml config
+  public void selontFiltelonrProtelonctelond(boolelonan filtelonrProtelonctelond) {
+    LOG.info("Filtelonring protelonctelond twelonelonts: {}", filtelonrProtelonctelond);
+    this.filtelonrProtelonctelond = filtelonrProtelonctelond;
   }
 
-  public void setTweetypieClientId(String tweetypieClientId) {
-    LOG.info("Using tweetypieClientId: {}", tweetypieClientId);
-    this.tweetypieClientId = tweetypieClientId;
+  public void selontTwelonelontypielonClielonntId(String twelonelontypielonClielonntId) {
+    LOG.info("Using twelonelontypielonClielonntId: {}", twelonelontypielonClielonntId);
+    this.twelonelontypielonClielonntId = twelonelontypielonClielonntId;
   }
 
-  public void setInternalBatchSize(int internalBatchSize) {
-    this.batchSize = internalBatchSize;
+  public void selontIntelonrnalBatchSizelon(int intelonrnalBatchSizelon) {
+    this.batchSizelon = intelonrnalBatchSizelon;
   }
 
   /**
-   * For each card name, we add a rate counter to observe what kinds of card we're actually
-   * indexing, and with what rate.
+   * For elonach card namelon, welon add a ratelon countelonr to obselonrvelon what kinds of card welon'relon actually
+   * indelonxing, and with what ratelon.
    */
-  private void addCardNameToStats(String cardName) {
-    SearchRateCounter cardNameCounter = CARD_NAME_STATS.get(cardName);
-    if (cardNameCounter == null) {
-      cardNameCounter = SearchRateCounter.export(cardNamePrefix + cardName);
-      CARD_NAME_STATS.put(cardName, cardNameCounter);
+  privatelon void addCardNamelonToStats(String cardNamelon) {
+    SelonarchRatelonCountelonr cardNamelonCountelonr = CARD_NAMelon_STATS.gelont(cardNamelon);
+    if (cardNamelonCountelonr == null) {
+      cardNamelonCountelonr = SelonarchRatelonCountelonr.elonxport(cardNamelonPrelonfix + cardNamelon);
+      CARD_NAMelon_STATS.put(cardNamelon, cardNamelonCountelonr);
     }
-    cardNameCounter.increment();
+    cardNamelonCountelonr.increlonmelonnt();
   }
 }

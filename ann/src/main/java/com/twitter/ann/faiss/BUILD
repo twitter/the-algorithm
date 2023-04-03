@@ -1,15 +1,15 @@
-target(
-    name = "faiss",
-    dependencies = [
-        "ann/src/main/java/com/twitter/ann/faiss/swig:swig-artifactory",
+targelont(
+    namelon = "faiss",
+    delonpelonndelonncielons = [
+        "ann/src/main/java/com/twittelonr/ann/faiss/swig:swig-artifactory",
     ],
 )
 
 java_library(
-    name = "swig-native-utils",
-    sources = ["*.java"],
-    compiler_option_sets = ["fatal_warnings"],
+    namelon = "swig-nativelon-utils",
+    sourcelons = ["*.java"],
+    compilelonr_option_selonts = ["fatal_warnings"],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [],
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [],
 )

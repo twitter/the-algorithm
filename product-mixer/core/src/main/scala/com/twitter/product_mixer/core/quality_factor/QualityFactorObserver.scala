@@ -1,18 +1,18 @@
-package com.twitter.product_mixer.core.quality_factor
+packagelon com.twittelonr.product_mixelonr.corelon.quality_factor
 
-import com.twitter.util.Duration
-import com.twitter.util.Try
+import com.twittelonr.util.Duration
+import com.twittelonr.util.Try
 
-/** Updates the [[QualityFactor]] */
-trait QualityFactorObserver {
+/** Updatelons thelon [[QualityFactor]] */
+trait QualityFactorObselonrvelonr {
 
-  /** The [[QualityFactor]] to update when observing */
-  def qualityFactor: QualityFactor[_]
+  /** Thelon [[QualityFactor]] to updatelon whelonn obselonrving */
+  delonf qualityFactor: QualityFactor[_]
 
   /**
-   * updates the [[qualityFactor]] given the result [[Try]] and the latency
-   * @note implementations must be sure to correctly ignore
-   *       [[QualityFactor.config]]'s [[QualityFactorConfig.ignorableFailures]]
+   * updatelons thelon [[qualityFactor]] givelonn thelon relonsult [[Try]] and thelon latelonncy
+   * @notelon implelonmelonntations must belon surelon to correlonctly ignorelon
+   *       [[QualityFactor.config]]'s [[QualityFactorConfig.ignorablelonFailurelons]]
    */
-  def apply(result: Try[_], latency: Duration): Unit
+  delonf apply(relonsult: Try[_], latelonncy: Duration): Unit
 }

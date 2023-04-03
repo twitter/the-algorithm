@@ -1,633 +1,633 @@
-package com.twitter.visibility.interfaces.conversations
+packagelon com.twittelonr.visibility.intelonrfacelons.convelonrsations
 
-import com.twitter.decider.Decider
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.gizmoduck.thriftscala.User
-import com.twitter.spam.rtf.thriftscala.FilteredReason
-import com.twitter.spam.rtf.thriftscala.FilteredReason.UnspecifiedReason
-import com.twitter.spam.rtf.thriftscala.SafetyLevel
-import com.twitter.spam.rtf.thriftscala.SafetyResult
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.render.thriftscala.RichText
-import com.twitter.timelines.render.thriftscala.TombstoneDisplayType
-import com.twitter.timelines.render.thriftscala.TombstoneInfo
-import com.twitter.tweetypie.thriftscala.GetTweetFieldsResult
-import com.twitter.tweetypie.thriftscala.TweetFieldsResultFailed
-import com.twitter.tweetypie.thriftscala.TweetFieldsResultFiltered
-import com.twitter.tweetypie.thriftscala.TweetFieldsResultFound
-import com.twitter.tweetypie.thriftscala.TweetFieldsResultNotFound
-import com.twitter.tweetypie.thriftscala.TweetFieldsResultState
-import com.twitter.visibility.VisibilityLibrary
-import com.twitter.visibility.builder.tweets.ModerationFeatures
-import com.twitter.visibility.builder.users.AuthorFeatures
-import com.twitter.visibility.builder.users.RelationshipFeatures
-import com.twitter.visibility.builder.users.ViewerFeatures
-import com.twitter.visibility.common.UserRelationshipSource
-import com.twitter.visibility.common.UserSource
-import com.twitter.visibility.common.actions.InterstitialReason
-import com.twitter.visibility.common.actions.LimitedEngagementReason
-import com.twitter.visibility.common.actions.TombstoneReason
-import com.twitter.visibility.common.actions.converter.scala.InterstitialReasonConverter
-import com.twitter.visibility.common.actions.converter.scala.LocalizedMessageConverter
-import com.twitter.visibility.common.actions.converter.scala.TombstoneReasonConverter
-import com.twitter.visibility.common.filtered_reason.FilteredReasonHelper
-import com.twitter.visibility.configapi.configs.VisibilityDeciderGates
-import com.twitter.visibility.features.FocalTweetId
-import com.twitter.visibility.features.TweetId
-import com.twitter.visibility.models.ContentId
-import com.twitter.visibility.models.SafetyLevel.Tombstoning
-import com.twitter.visibility.models.ViewerContext
-import com.twitter.visibility.results.richtext.EpitaphToRichText
-import com.twitter.visibility.results.richtext.LocalizedMessageToRichText
-import com.twitter.visibility.results.urt.ReasonToUrtParser
-import com.twitter.visibility.results.urt.SafetyResultToUrtParser
-import com.twitter.visibility.rules._
-import com.twitter.visibility.{thriftscala => t}
+import com.twittelonr.deloncidelonr.Deloncidelonr
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.gizmoduck.thriftscala.Uselonr
+import com.twittelonr.spam.rtf.thriftscala.FiltelonrelondRelonason
+import com.twittelonr.spam.rtf.thriftscala.FiltelonrelondRelonason.UnspeloncifielondRelonason
+import com.twittelonr.spam.rtf.thriftscala.SafelontyLelonvelonl
+import com.twittelonr.spam.rtf.thriftscala.SafelontyRelonsult
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.timelonlinelons.relonndelonr.thriftscala.RichTelonxt
+import com.twittelonr.timelonlinelons.relonndelonr.thriftscala.TombstonelonDisplayTypelon
+import com.twittelonr.timelonlinelons.relonndelonr.thriftscala.TombstonelonInfo
+import com.twittelonr.twelonelontypielon.thriftscala.GelontTwelonelontFielonldsRelonsult
+import com.twittelonr.twelonelontypielon.thriftscala.TwelonelontFielonldsRelonsultFailelond
+import com.twittelonr.twelonelontypielon.thriftscala.TwelonelontFielonldsRelonsultFiltelonrelond
+import com.twittelonr.twelonelontypielon.thriftscala.TwelonelontFielonldsRelonsultFound
+import com.twittelonr.twelonelontypielon.thriftscala.TwelonelontFielonldsRelonsultNotFound
+import com.twittelonr.twelonelontypielon.thriftscala.TwelonelontFielonldsRelonsultStatelon
+import com.twittelonr.visibility.VisibilityLibrary
+import com.twittelonr.visibility.buildelonr.twelonelonts.ModelonrationFelonaturelons
+import com.twittelonr.visibility.buildelonr.uselonrs.AuthorFelonaturelons
+import com.twittelonr.visibility.buildelonr.uselonrs.RelonlationshipFelonaturelons
+import com.twittelonr.visibility.buildelonr.uselonrs.VielonwelonrFelonaturelons
+import com.twittelonr.visibility.common.UselonrRelonlationshipSourcelon
+import com.twittelonr.visibility.common.UselonrSourcelon
+import com.twittelonr.visibility.common.actions.IntelonrstitialRelonason
+import com.twittelonr.visibility.common.actions.LimitelondelonngagelonmelonntRelonason
+import com.twittelonr.visibility.common.actions.TombstonelonRelonason
+import com.twittelonr.visibility.common.actions.convelonrtelonr.scala.IntelonrstitialRelonasonConvelonrtelonr
+import com.twittelonr.visibility.common.actions.convelonrtelonr.scala.LocalizelondMelonssagelonConvelonrtelonr
+import com.twittelonr.visibility.common.actions.convelonrtelonr.scala.TombstonelonRelonasonConvelonrtelonr
+import com.twittelonr.visibility.common.filtelonrelond_relonason.FiltelonrelondRelonasonHelonlpelonr
+import com.twittelonr.visibility.configapi.configs.VisibilityDeloncidelonrGatelons
+import com.twittelonr.visibility.felonaturelons.FocalTwelonelontId
+import com.twittelonr.visibility.felonaturelons.TwelonelontId
+import com.twittelonr.visibility.modelonls.ContelonntId
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.Tombstoning
+import com.twittelonr.visibility.modelonls.VielonwelonrContelonxt
+import com.twittelonr.visibility.relonsults.richtelonxt.elonpitaphToRichTelonxt
+import com.twittelonr.visibility.relonsults.richtelonxt.LocalizelondMelonssagelonToRichTelonxt
+import com.twittelonr.visibility.relonsults.urt.RelonasonToUrtParselonr
+import com.twittelonr.visibility.relonsults.urt.SafelontyRelonsultToUrtParselonr
+import com.twittelonr.visibility.rulelons._
+import com.twittelonr.visibility.{thriftscala => t}
 
-case class TombstoneVisibilityRequest(
-  conversationId: Long,
-  focalTweetId: Long,
-  tweets: Seq[(GetTweetFieldsResult, Option[SafetyLevel])],
+caselon class TombstonelonVisibilityRelonquelonst(
+  convelonrsationId: Long,
+  focalTwelonelontId: Long,
+  twelonelonts: Selonq[(GelontTwelonelontFielonldsRelonsult, Option[SafelontyLelonvelonl])],
   authorMap: Map[
     Long,
-    User
+    Uselonr
   ],
-  moderatedTweetIds: Seq[Long],
-  viewerContext: ViewerContext,
-  useRichText: Boolean = true)
+  modelonratelondTwelonelontIds: Selonq[Long],
+  vielonwelonrContelonxt: VielonwelonrContelonxt,
+  uselonRichTelonxt: Boolelonan = truelon)
 
-case class TombstoneVisibilityResponse(tweetVerdicts: Map[Long, VfTombstone])
+caselon class TombstonelonVisibilityRelonsponselon(twelonelontVelonrdicts: Map[Long, VfTombstonelon])
 
-case class TombstoneVisibilityLibrary(
+caselon class TombstonelonVisibilityLibrary(
   visibilityLibrary: VisibilityLibrary,
-  statsReceiver: StatsReceiver,
-  decider: Decider) {
+  statsReloncelonivelonr: StatsReloncelonivelonr,
+  deloncidelonr: Deloncidelonr) {
 
-  private case class TombstoneType(
-    tweetId: Long,
-    tombstoneId: Long,
+  privatelon caselon class TombstonelonTypelon(
+    twelonelontId: Long,
+    tombstonelonId: Long,
     action: Action) {
 
-    lazy val isInnerTombstone: Boolean = tweetId != tombstoneId
+    lazy val isInnelonrTombstonelon: Boolelonan = twelonelontId != tombstonelonId
 
-    lazy val tombstoneDisplayType: TombstoneDisplayType = action match {
-      case _: InterstitialLimitedEngagements | _: EmergencyDynamicInterstitial =>
-        TombstoneDisplayType.NonCompliant
-      case _ => TombstoneDisplayType.Inline
+    lazy val tombstonelonDisplayTypelon: TombstonelonDisplayTypelon = action match {
+      caselon _: IntelonrstitialLimitelondelonngagelonmelonnts | _: elonmelonrgelonncyDynamicIntelonrstitial =>
+        TombstonelonDisplayTypelon.NonCompliant
+      caselon _ => TombstonelonDisplayTypelon.Inlinelon
     }
   }
 
-  val En: String = "en"
-  val View: String = "View"
-  val relationshipFeatures =
-    new RelationshipFeatures(
-      statsReceiver)
-  val visibilityDeciderGates = VisibilityDeciderGates(decider)
+  val elonn: String = "elonn"
+  val Vielonw: String = "Vielonw"
+  val relonlationshipFelonaturelons =
+    nelonw RelonlationshipFelonaturelons(
+      statsReloncelonivelonr)
+  val visibilityDeloncidelonrGatelons = VisibilityDeloncidelonrGatelons(deloncidelonr)
 
 
-  def toAction(
-    filteredReason: FilteredReason,
-    actionStatsReceiver: StatsReceiver
+  delonf toAction(
+    filtelonrelondRelonason: FiltelonrelondRelonason,
+    actionStatsReloncelonivelonr: StatsReloncelonivelonr
   ): Option[Action] = {
 
-    val enableLocalizedInterstitials =
-      visibilityDeciderGates.enableConvosLocalizedInterstitial()
-    val enableLegacyInterstitials =
-      visibilityDeciderGates.enableConvosLegacyInterstitial()
+    val elonnablelonLocalizelondIntelonrstitials =
+      visibilityDeloncidelonrGatelons.elonnablelonConvosLocalizelondIntelonrstitial()
+    val elonnablelonLelongacyIntelonrstitials =
+      visibilityDeloncidelonrGatelons.elonnablelonConvosLelongacyIntelonrstitial()
 
-    val tombstoneStatsReceiver = actionStatsReceiver.scope("tombstone")
-    val interstitialLocalStatsReceiver =
-      actionStatsReceiver.scope("interstitial").scope("localized")
-    val interstitialLegacyStatsReceiver =
-      actionStatsReceiver.scope("interstitial").scope("legacy")
+    val tombstonelonStatsReloncelonivelonr = actionStatsReloncelonivelonr.scopelon("tombstonelon")
+    val intelonrstitialLocalStatsReloncelonivelonr =
+      actionStatsReloncelonivelonr.scopelon("intelonrstitial").scopelon("localizelond")
+    val intelonrstitialLelongacyStatsReloncelonivelonr =
+      actionStatsReloncelonivelonr.scopelon("intelonrstitial").scopelon("lelongacy")
 
-    filteredReason match {
-      case _ if FilteredReasonHelper.isTombstone(filteredReason) =>
-        createLocalizedTombstone(filteredReason, tombstoneStatsReceiver) match {
-          case tombstoneOpt @ Some(LocalizedTombstone(_, _)) => tombstoneOpt
-          case _ =>
-            createTombstone(Epitaph.Unavailable, tombstoneStatsReceiver, Some("emptyTombstone"))
+    filtelonrelondRelonason match {
+      caselon _ if FiltelonrelondRelonasonHelonlpelonr.isTombstonelon(filtelonrelondRelonason) =>
+        crelonatelonLocalizelondTombstonelon(filtelonrelondRelonason, tombstonelonStatsReloncelonivelonr) match {
+          caselon tombstonelonOpt @ Somelon(LocalizelondTombstonelon(_, _)) => tombstonelonOpt
+          caselon _ =>
+            crelonatelonTombstonelon(elonpitaph.Unavailablelon, tombstonelonStatsReloncelonivelonr, Somelon("elonmptyTombstonelon"))
         }
 
-      case _
-          if enableLocalizedInterstitials &&
-            FilteredReasonHelper.isLocalizedSuppressedReasonInterstitial(filteredReason) =>
-        FilteredReasonHelper.getLocalizedSuppressedReasonInterstitial(filteredReason) match {
-          case Some(t.Interstitial(reasonOpt, Some(message))) =>
-            InterstitialReasonConverter.fromThrift(reasonOpt).map { interstitialReason =>
-              interstitialLocalStatsReceiver.counter("interstitial").incr()
-              Interstitial(
-                Reason.fromInterstitialReason(interstitialReason),
-                Some(LocalizedMessageConverter.fromThrift(message)))
+      caselon _
+          if elonnablelonLocalizelondIntelonrstitials &&
+            FiltelonrelondRelonasonHelonlpelonr.isLocalizelondSupprelonsselondRelonasonIntelonrstitial(filtelonrelondRelonason) =>
+        FiltelonrelondRelonasonHelonlpelonr.gelontLocalizelondSupprelonsselondRelonasonIntelonrstitial(filtelonrelondRelonason) match {
+          caselon Somelon(t.Intelonrstitial(relonasonOpt, Somelon(melonssagelon))) =>
+            IntelonrstitialRelonasonConvelonrtelonr.fromThrift(relonasonOpt).map { intelonrstitialRelonason =>
+              intelonrstitialLocalStatsReloncelonivelonr.countelonr("intelonrstitial").incr()
+              Intelonrstitial(
+                Relonason.fromIntelonrstitialRelonason(intelonrstitialRelonason),
+                Somelon(LocalizelondMelonssagelonConvelonrtelonr.fromThrift(melonssagelon)))
             }
 
-          case _ => None
+          caselon _ => Nonelon
         }
 
-      case _ if FilteredReasonHelper.containNsfwMedia(filteredReason) =>
-        None
+      caselon _ if FiltelonrelondRelonasonHelonlpelonr.containNsfwMelondia(filtelonrelondRelonason) =>
+        Nonelon
 
-      case _ if FilteredReasonHelper.possiblyUndesirable(filteredReason) =>
-        None
+      caselon _ if FiltelonrelondRelonasonHelonlpelonr.possiblyUndelonsirablelon(filtelonrelondRelonason) =>
+        Nonelon
 
-      case _ if FilteredReasonHelper.reportedTweet(filteredReason) =>
-        filteredReason match {
-          case FilteredReason.ReportedTweet(true) =>
-            interstitialLegacyStatsReceiver.counter("fr_reported").incr()
-            Some(Interstitial(Reason.ViewerReportedAuthor))
+      caselon _ if FiltelonrelondRelonasonHelonlpelonr.relonportelondTwelonelont(filtelonrelondRelonason) =>
+        filtelonrelondRelonason match {
+          caselon FiltelonrelondRelonason.RelonportelondTwelonelont(truelon) =>
+            intelonrstitialLelongacyStatsReloncelonivelonr.countelonr("fr_relonportelond").incr()
+            Somelon(Intelonrstitial(Relonason.VielonwelonrRelonportelondAuthor))
 
-          case FilteredReason.SafetyResult(safetyResult: SafetyResult)
-              if enableLegacyInterstitials =>
-            val safetyResultReported = InterstitialReasonConverter
-              .fromAction(safetyResult.action).collect {
-                case InterstitialReason.ViewerReportedTweet => true
-                case InterstitialReason.ViewerReportedAuthor => true
-              }.getOrElse(false)
+          caselon FiltelonrelondRelonason.SafelontyRelonsult(safelontyRelonsult: SafelontyRelonsult)
+              if elonnablelonLelongacyIntelonrstitials =>
+            val safelontyRelonsultRelonportelond = IntelonrstitialRelonasonConvelonrtelonr
+              .fromAction(safelontyRelonsult.action).collelonct {
+                caselon IntelonrstitialRelonason.VielonwelonrRelonportelondTwelonelont => truelon
+                caselon IntelonrstitialRelonason.VielonwelonrRelonportelondAuthor => truelon
+              }.gelontOrelonlselon(falselon)
 
-            if (safetyResultReported) {
-              interstitialLegacyStatsReceiver.counter("reported_author").incr()
-              Some(Interstitial(Reason.ViewerReportedAuthor))
-            } else None
+            if (safelontyRelonsultRelonportelond) {
+              intelonrstitialLelongacyStatsReloncelonivelonr.countelonr("relonportelond_author").incr()
+              Somelon(Intelonrstitial(Relonason.VielonwelonrRelonportelondAuthor))
+            } elonlselon Nonelon
 
-          case _ => None
+          caselon _ => Nonelon
         }
 
-      case _ if FilteredReasonHelper.tweetMatchesViewerMutedKeyword(filteredReason) =>
-        filteredReason match {
-          case FilteredReason.TweetMatchesViewerMutedKeyword(_) =>
-            interstitialLegacyStatsReceiver.counter("fr_muted_keyword").incr()
-            Some(Interstitial(Reason.MutedKeyword))
+      caselon _ if FiltelonrelondRelonasonHelonlpelonr.twelonelontMatchelonsVielonwelonrMutelondKelonyword(filtelonrelondRelonason) =>
+        filtelonrelondRelonason match {
+          caselon FiltelonrelondRelonason.TwelonelontMatchelonsVielonwelonrMutelondKelonyword(_) =>
+            intelonrstitialLelongacyStatsReloncelonivelonr.countelonr("fr_mutelond_kelonyword").incr()
+            Somelon(Intelonrstitial(Relonason.MutelondKelonyword))
 
-          case FilteredReason.SafetyResult(safetyResult: SafetyResult)
-              if enableLegacyInterstitials =>
-            val safetyResultMutedKeyword = InterstitialReasonConverter
-              .fromAction(safetyResult.action).collect {
-                case _: InterstitialReason.MatchesMutedKeyword => true
-              }.getOrElse(false)
+          caselon FiltelonrelondRelonason.SafelontyRelonsult(safelontyRelonsult: SafelontyRelonsult)
+              if elonnablelonLelongacyIntelonrstitials =>
+            val safelontyRelonsultMutelondKelonyword = IntelonrstitialRelonasonConvelonrtelonr
+              .fromAction(safelontyRelonsult.action).collelonct {
+                caselon _: IntelonrstitialRelonason.MatchelonsMutelondKelonyword => truelon
+              }.gelontOrelonlselon(falselon)
 
-            if (safetyResultMutedKeyword) {
-              interstitialLegacyStatsReceiver.counter("muted_keyword").incr()
-              Some(Interstitial(Reason.MutedKeyword))
-            } else None
+            if (safelontyRelonsultMutelondKelonyword) {
+              intelonrstitialLelongacyStatsReloncelonivelonr.countelonr("mutelond_kelonyword").incr()
+              Somelon(Intelonrstitial(Relonason.MutelondKelonyword))
+            } elonlselon Nonelon
 
-          case _ => None
+          caselon _ => Nonelon
         }
 
-      case _ =>
-        None
+      caselon _ =>
+        Nonelon
     }
   }
 
-  def toAction(
-    tfrs: TweetFieldsResultState,
-    actionStatsReceiver: StatsReceiver
+  delonf toAction(
+    tfrs: TwelonelontFielonldsRelonsultStatelon,
+    actionStatsReloncelonivelonr: StatsReloncelonivelonr
   ): Option[Action] = {
 
-    val enableLocalizedInterstitials = visibilityDeciderGates.enableConvosLocalizedInterstitial()
-    val enableLegacyInterstitials = visibilityDeciderGates.enableConvosLegacyInterstitial()
+    val elonnablelonLocalizelondIntelonrstitials = visibilityDeloncidelonrGatelons.elonnablelonConvosLocalizelondIntelonrstitial()
+    val elonnablelonLelongacyIntelonrstitials = visibilityDeloncidelonrGatelons.elonnablelonConvosLelongacyIntelonrstitial()
 
-    val tombstoneStatsReceiver = actionStatsReceiver.scope("tombstone")
-    val interstitialLocalStatsReceiver =
-      actionStatsReceiver.scope("interstitial").scope("localized")
-    val interstitialLegacyStatsReceiver =
-      actionStatsReceiver.scope("interstitial").scope("legacy")
+    val tombstonelonStatsReloncelonivelonr = actionStatsReloncelonivelonr.scopelon("tombstonelon")
+    val intelonrstitialLocalStatsReloncelonivelonr =
+      actionStatsReloncelonivelonr.scopelon("intelonrstitial").scopelon("localizelond")
+    val intelonrstitialLelongacyStatsReloncelonivelonr =
+      actionStatsReloncelonivelonr.scopelon("intelonrstitial").scopelon("lelongacy")
 
     tfrs match {
 
-      case TweetFieldsResultState.NotFound(TweetFieldsResultNotFound(_, _, Some(filteredReason)))
-          if FilteredReasonHelper.isTombstone(filteredReason) =>
-        createLocalizedTombstone(filteredReason, tombstoneStatsReceiver)
+      caselon TwelonelontFielonldsRelonsultStatelon.NotFound(TwelonelontFielonldsRelonsultNotFound(_, _, Somelon(filtelonrelondRelonason)))
+          if FiltelonrelondRelonasonHelonlpelonr.isTombstonelon(filtelonrelondRelonason) =>
+        crelonatelonLocalizelondTombstonelon(filtelonrelondRelonason, tombstonelonStatsReloncelonivelonr)
 
-      case TweetFieldsResultState.NotFound(tfr: TweetFieldsResultNotFound) if tfr.deleted =>
-        createTombstone(Epitaph.Deleted, tombstoneStatsReceiver)
+      caselon TwelonelontFielonldsRelonsultStatelon.NotFound(tfr: TwelonelontFielonldsRelonsultNotFound) if tfr.delonlelontelond =>
+        crelonatelonTombstonelon(elonpitaph.Delonlelontelond, tombstonelonStatsReloncelonivelonr)
 
-      case TweetFieldsResultState.NotFound(_: TweetFieldsResultNotFound) =>
-        createTombstone(Epitaph.NotFound, tombstoneStatsReceiver)
+      caselon TwelonelontFielonldsRelonsultStatelon.NotFound(_: TwelonelontFielonldsRelonsultNotFound) =>
+        crelonatelonTombstonelon(elonpitaph.NotFound, tombstonelonStatsReloncelonivelonr)
 
-      case TweetFieldsResultState.Failed(TweetFieldsResultFailed(_, _, _)) =>
-        createTombstone(Epitaph.Unavailable, tombstoneStatsReceiver, Some("failed"))
+      caselon TwelonelontFielonldsRelonsultStatelon.Failelond(TwelonelontFielonldsRelonsultFailelond(_, _, _)) =>
+        crelonatelonTombstonelon(elonpitaph.Unavailablelon, tombstonelonStatsReloncelonivelonr, Somelon("failelond"))
 
-      case TweetFieldsResultState.Filtered(TweetFieldsResultFiltered(UnspecifiedReason(true))) =>
-        createTombstone(Epitaph.Unavailable, tombstoneStatsReceiver, Some("filtered"))
+      caselon TwelonelontFielonldsRelonsultStatelon.Filtelonrelond(TwelonelontFielonldsRelonsultFiltelonrelond(UnspeloncifielondRelonason(truelon))) =>
+        crelonatelonTombstonelon(elonpitaph.Unavailablelon, tombstonelonStatsReloncelonivelonr, Somelon("filtelonrelond"))
 
-      case TweetFieldsResultState.Filtered(TweetFieldsResultFiltered(filteredReason)) =>
-        toAction(filteredReason, actionStatsReceiver)
+      caselon TwelonelontFielonldsRelonsultStatelon.Filtelonrelond(TwelonelontFielonldsRelonsultFiltelonrelond(filtelonrelondRelonason)) =>
+        toAction(filtelonrelondRelonason, actionStatsReloncelonivelonr)
 
-      case TweetFieldsResultState.Found(TweetFieldsResultFound(_, _, Some(filteredReason)))
-          if enableLocalizedInterstitials &&
-            FilteredReasonHelper.isSuppressedReasonPublicInterestInterstial(filteredReason) =>
-        interstitialLocalStatsReceiver.counter("ipi").incr()
-        FilteredReasonHelper
-          .getSafetyResult(filteredReason)
-          .flatMap(_.reason)
-          .flatMap(PublicInterest.SafetyResultReasonToReason.get) match {
-          case Some(safetyResultReason) =>
-            FilteredReasonHelper
-              .getSuppressedReasonPublicInterestInterstial(filteredReason)
-              .map(edi => edi.localizedMessage)
-              .map(tlm => LocalizedMessageConverter.fromThrift(tlm))
+      caselon TwelonelontFielonldsRelonsultStatelon.Found(TwelonelontFielonldsRelonsultFound(_, _, Somelon(filtelonrelondRelonason)))
+          if elonnablelonLocalizelondIntelonrstitials &&
+            FiltelonrelondRelonasonHelonlpelonr.isSupprelonsselondRelonasonPublicIntelonrelonstIntelonrstial(filtelonrelondRelonason) =>
+        intelonrstitialLocalStatsReloncelonivelonr.countelonr("ipi").incr()
+        FiltelonrelondRelonasonHelonlpelonr
+          .gelontSafelontyRelonsult(filtelonrelondRelonason)
+          .flatMap(_.relonason)
+          .flatMap(PublicIntelonrelonst.SafelontyRelonsultRelonasonToRelonason.gelont) match {
+          caselon Somelon(safelontyRelonsultRelonason) =>
+            FiltelonrelondRelonasonHelonlpelonr
+              .gelontSupprelonsselondRelonasonPublicIntelonrelonstIntelonrstial(filtelonrelondRelonason)
+              .map(elondi => elondi.localizelondMelonssagelon)
+              .map(tlm => LocalizelondMelonssagelonConvelonrtelonr.fromThrift(tlm))
               .map(lm =>
-                InterstitialLimitedEngagements(
-                  safetyResultReason,
-                  Some(LimitedEngagementReason.NonCompliant),
+                IntelonrstitialLimitelondelonngagelonmelonnts(
+                  safelontyRelonsultRelonason,
+                  Somelon(LimitelondelonngagelonmelonntRelonason.NonCompliant),
                   lm))
-          case _ => None
+          caselon _ => Nonelon
         }
 
-      case TweetFieldsResultState.Found(TweetFieldsResultFound(_, _, Some(filteredReason)))
-          if enableLegacyInterstitials &&
-            FilteredReasonHelper.isSuppressedReasonPublicInterestInterstial(filteredReason) =>
-        interstitialLegacyStatsReceiver.counter("ipi").incr()
-        FilteredReasonHelper
-          .getSafetyResult(filteredReason)
-          .flatMap(_.reason)
-          .flatMap(PublicInterest.SafetyResultReasonToReason.get)
-          .map(InterstitialLimitedEngagements(_, Some(LimitedEngagementReason.NonCompliant)))
+      caselon TwelonelontFielonldsRelonsultStatelon.Found(TwelonelontFielonldsRelonsultFound(_, _, Somelon(filtelonrelondRelonason)))
+          if elonnablelonLelongacyIntelonrstitials &&
+            FiltelonrelondRelonasonHelonlpelonr.isSupprelonsselondRelonasonPublicIntelonrelonstIntelonrstial(filtelonrelondRelonason) =>
+        intelonrstitialLelongacyStatsReloncelonivelonr.countelonr("ipi").incr()
+        FiltelonrelondRelonasonHelonlpelonr
+          .gelontSafelontyRelonsult(filtelonrelondRelonason)
+          .flatMap(_.relonason)
+          .flatMap(PublicIntelonrelonst.SafelontyRelonsultRelonasonToRelonason.gelont)
+          .map(IntelonrstitialLimitelondelonngagelonmelonnts(_, Somelon(LimitelondelonngagelonmelonntRelonason.NonCompliant)))
 
-      case TweetFieldsResultState.Found(TweetFieldsResultFound(_, _, Some(filteredReason)))
-          if enableLocalizedInterstitials &&
-            FilteredReasonHelper.isLocalizedSuppressedReasonEmergencyDynamicInterstitial(
-              filteredReason) =>
-        interstitialLocalStatsReceiver.counter("edi").incr()
-        FilteredReasonHelper
-          .getSuppressedReasonEmergencyDynamicInterstitial(filteredReason)
-          .map(e =>
-            EmergencyDynamicInterstitial(
-              e.copy,
-              e.link,
-              LocalizedMessageConverter.fromThrift(e.localizedMessage)))
+      caselon TwelonelontFielonldsRelonsultStatelon.Found(TwelonelontFielonldsRelonsultFound(_, _, Somelon(filtelonrelondRelonason)))
+          if elonnablelonLocalizelondIntelonrstitials &&
+            FiltelonrelondRelonasonHelonlpelonr.isLocalizelondSupprelonsselondRelonasonelonmelonrgelonncyDynamicIntelonrstitial(
+              filtelonrelondRelonason) =>
+        intelonrstitialLocalStatsReloncelonivelonr.countelonr("elondi").incr()
+        FiltelonrelondRelonasonHelonlpelonr
+          .gelontSupprelonsselondRelonasonelonmelonrgelonncyDynamicIntelonrstitial(filtelonrelondRelonason)
+          .map(elon =>
+            elonmelonrgelonncyDynamicIntelonrstitial(
+              elon.copy,
+              elon.link,
+              LocalizelondMelonssagelonConvelonrtelonr.fromThrift(elon.localizelondMelonssagelon)))
 
-      case TweetFieldsResultState.Found(TweetFieldsResultFound(_, _, Some(filteredReason)))
-          if enableLegacyInterstitials &&
-            FilteredReasonHelper.isSuppressedReasonEmergencyDynamicInterstitial(filteredReason) =>
-        interstitialLegacyStatsReceiver.counter("edi").incr()
-        FilteredReasonHelper
-          .getSuppressedReasonEmergencyDynamicInterstitial(filteredReason)
-          .map(e => EmergencyDynamicInterstitial(e.copy, e.link))
+      caselon TwelonelontFielonldsRelonsultStatelon.Found(TwelonelontFielonldsRelonsultFound(_, _, Somelon(filtelonrelondRelonason)))
+          if elonnablelonLelongacyIntelonrstitials &&
+            FiltelonrelondRelonasonHelonlpelonr.isSupprelonsselondRelonasonelonmelonrgelonncyDynamicIntelonrstitial(filtelonrelondRelonason) =>
+        intelonrstitialLelongacyStatsReloncelonivelonr.countelonr("elondi").incr()
+        FiltelonrelondRelonasonHelonlpelonr
+          .gelontSupprelonsselondRelonasonelonmelonrgelonncyDynamicIntelonrstitial(filtelonrelondRelonason)
+          .map(elon => elonmelonrgelonncyDynamicIntelonrstitial(elon.copy, elon.link))
 
-      case TweetFieldsResultState.Found(TweetFieldsResultFound(tweet, _, _))
-          if tweet.perspective.exists(_.reported) =>
-        interstitialLegacyStatsReceiver.counter("reported").incr()
-        Some(Interstitial(Reason.ViewerReportedAuthor))
+      caselon TwelonelontFielonldsRelonsultStatelon.Found(TwelonelontFielonldsRelonsultFound(twelonelont, _, _))
+          if twelonelont.pelonrspelonctivelon.elonxists(_.relonportelond) =>
+        intelonrstitialLelongacyStatsReloncelonivelonr.countelonr("relonportelond").incr()
+        Somelon(Intelonrstitial(Relonason.VielonwelonrRelonportelondAuthor))
 
-      case TweetFieldsResultState.Found(
-            TweetFieldsResultFound(_, _, Some(UnspecifiedReason(true)))) =>
-        None
+      caselon TwelonelontFielonldsRelonsultStatelon.Found(
+            TwelonelontFielonldsRelonsultFound(_, _, Somelon(UnspeloncifielondRelonason(truelon)))) =>
+        Nonelon
 
-      case TweetFieldsResultState.Found(TweetFieldsResultFound(_, _, Some(filteredReason))) =>
-        toAction(filteredReason, actionStatsReceiver)
+      caselon TwelonelontFielonldsRelonsultStatelon.Found(TwelonelontFielonldsRelonsultFound(_, _, Somelon(filtelonrelondRelonason))) =>
+        toAction(filtelonrelondRelonason, actionStatsReloncelonivelonr)
 
-      case _ =>
-        None
+      caselon _ =>
+        Nonelon
     }
   }
 
-  private[conversations] def shouldTruncateDescendantsWhenFocal(action: Action): Boolean =
+  privatelon[convelonrsations] delonf shouldTruncatelonDelonscelonndantsWhelonnFocal(action: Action): Boolelonan =
     action match {
-      case _: InterstitialLimitedEngagements | _: EmergencyDynamicInterstitial =>
-        true
-      case Tombstone(Epitaph.Bounced, _) | Tombstone(Epitaph.BounceDeleted, _) =>
-        true
-      case LocalizedTombstone(TombstoneReason.Bounced, _) |
-          LocalizedTombstone(TombstoneReason.BounceDeleted, _) =>
-        true
-      case LimitedEngagements(LimitedEngagementReason.NonCompliant, _) =>
-        true
-      case _ => false
+      caselon _: IntelonrstitialLimitelondelonngagelonmelonnts | _: elonmelonrgelonncyDynamicIntelonrstitial =>
+        truelon
+      caselon Tombstonelon(elonpitaph.Bouncelond, _) | Tombstonelon(elonpitaph.BouncelonDelonlelontelond, _) =>
+        truelon
+      caselon LocalizelondTombstonelon(TombstonelonRelonason.Bouncelond, _) |
+          LocalizelondTombstonelon(TombstonelonRelonason.BouncelonDelonlelontelond, _) =>
+        truelon
+      caselon Limitelondelonngagelonmelonnts(LimitelondelonngagelonmelonntRelonason.NonCompliant, _) =>
+        truelon
+      caselon _ => falselon
     }
 
-  def apply(request: TombstoneVisibilityRequest): Stitch[TombstoneVisibilityResponse] = {
+  delonf apply(relonquelonst: TombstonelonVisibilityRelonquelonst): Stitch[TombstonelonVisibilityRelonsponselon] = {
 
-    val moderationFeatures = new ModerationFeatures(
-      moderationSource = request.moderatedTweetIds.contains,
-      statsReceiver = statsReceiver
+    val modelonrationFelonaturelons = nelonw ModelonrationFelonaturelons(
+      modelonrationSourcelon = relonquelonst.modelonratelondTwelonelontIds.contains,
+      statsReloncelonivelonr = statsReloncelonivelonr
     )
 
-    val userSource = UserSource.fromFunction({
-      case (userId, _) =>
-        request.authorMap
-          .get(userId)
-          .map(Stitch.value).getOrElse(Stitch.NotFound)
+    val uselonrSourcelon = UselonrSourcelon.fromFunction({
+      caselon (uselonrId, _) =>
+        relonquelonst.authorMap
+          .gelont(uselonrId)
+          .map(Stitch.valuelon).gelontOrelonlselon(Stitch.NotFound)
     })
 
-    val authorFeatures = new AuthorFeatures(userSource, statsReceiver)
-    val viewerFeatures = new ViewerFeatures(userSource, statsReceiver)
+    val authorFelonaturelons = nelonw AuthorFelonaturelons(uselonrSourcelon, statsReloncelonivelonr)
+    val vielonwelonrFelonaturelons = nelonw VielonwelonrFelonaturelons(uselonrSourcelon, statsReloncelonivelonr)
 
-    val languageTag = request.viewerContext.requestCountryCode.getOrElse(En)
-    val firstRound: Seq[(GetTweetFieldsResult, Option[TombstoneType])] = request.tweets.map {
-      case (gtfr, safetyLevel) =>
-        val actionStats = statsReceiver
-          .scope("action")
-          .scope(safetyLevel.map(_.toString().toLowerCase()).getOrElse("unknown_safety_level"))
-        toAction(gtfr.tweetResult, actionStats) match {
-          case Some(action) =>
-            (gtfr, Some(TombstoneType(gtfr.tweetId, gtfr.tweetId, action)))
+    val languagelonTag = relonquelonst.vielonwelonrContelonxt.relonquelonstCountryCodelon.gelontOrelonlselon(elonn)
+    val firstRound: Selonq[(GelontTwelonelontFielonldsRelonsult, Option[TombstonelonTypelon])] = relonquelonst.twelonelonts.map {
+      caselon (gtfr, safelontyLelonvelonl) =>
+        val actionStats = statsReloncelonivelonr
+          .scopelon("action")
+          .scopelon(safelontyLelonvelonl.map(_.toString().toLowelonrCaselon()).gelontOrelonlselon("unknown_safelonty_lelonvelonl"))
+        toAction(gtfr.twelonelontRelonsult, actionStats) match {
+          caselon Somelon(action) =>
+            (gtfr, Somelon(TombstonelonTypelon(gtfr.twelonelontId, gtfr.twelonelontId, action)))
 
-          case None =>
-            val quotedTweetId: Option[Long] = gtfr.tweetResult match {
-              case TweetFieldsResultState.Found(TweetFieldsResultFound(tweet, _, _)) =>
-                tweet.quotedTweet.map(_.tweetId)
-              case _ => None
+          caselon Nonelon =>
+            val quotelondTwelonelontId: Option[Long] = gtfr.twelonelontRelonsult match {
+              caselon TwelonelontFielonldsRelonsultStatelon.Found(TwelonelontFielonldsRelonsultFound(twelonelont, _, _)) =>
+                twelonelont.quotelondTwelonelont.map(_.twelonelontId)
+              caselon _ => Nonelon
             }
 
-            (quotedTweetId, gtfr.quotedTweetResult) match {
-              case (Some(quotedTweetId), Some(tfrs)) =>
-                val qtActionStats = actionStats.scope("quoted")
+            (quotelondTwelonelontId, gtfr.quotelondTwelonelontRelonsult) match {
+              caselon (Somelon(quotelondTwelonelontId), Somelon(tfrs)) =>
+                val qtActionStats = actionStats.scopelon("quotelond")
                 toAction(tfrs, qtActionStats) match {
-                  case None =>
-                    (gtfr, None)
+                  caselon Nonelon =>
+                    (gtfr, Nonelon)
 
-                  case Some(action) =>
-                    (gtfr, Some(TombstoneType(gtfr.tweetId, quotedTweetId, action)))
+                  caselon Somelon(action) =>
+                    (gtfr, Somelon(TombstonelonTypelon(gtfr.twelonelontId, quotelondTwelonelontId, action)))
                 }
 
-              case _ =>
-                (gtfr, None)
+              caselon _ =>
+                (gtfr, Nonelon)
             }
         }
     }
 
-    val (firstRoundActions, secondRoundInput) = firstRound.partition {
-      case (_, Some(tombstoneType)) =>
-        !tombstoneType.isInnerTombstone
-      case (_, None) => false
+    val (firstRoundActions, seloncondRoundInput) = firstRound.partition {
+      caselon (_, Somelon(tombstonelonTypelon)) =>
+        !tombstonelonTypelon.isInnelonrTombstonelon
+      caselon (_, Nonelon) => falselon
     }
 
-    def invokeVisibilityLibrary(tweetId: Long, author: User): Stitch[Action] = {
+    delonf invokelonVisibilityLibrary(twelonelontId: Long, author: Uselonr): Stitch[Action] = {
       visibilityLibrary
-        .runRuleEngine(
-          ContentId.TweetId(tweetId),
-          visibilityLibrary.featureMapBuilder(
-            Seq(
-              viewerFeatures.forViewerContext(request.viewerContext),
-              moderationFeatures.forTweetId(tweetId),
-              authorFeatures.forAuthor(author),
-              relationshipFeatures
-                .forAuthor(author, request.viewerContext.userId),
-              _.withConstantFeature(TweetId, tweetId),
-              _.withConstantFeature(FocalTweetId, request.focalTweetId)
+        .runRulelonelonnginelon(
+          ContelonntId.TwelonelontId(twelonelontId),
+          visibilityLibrary.felonaturelonMapBuildelonr(
+            Selonq(
+              vielonwelonrFelonaturelons.forVielonwelonrContelonxt(relonquelonst.vielonwelonrContelonxt),
+              modelonrationFelonaturelons.forTwelonelontId(twelonelontId),
+              authorFelonaturelons.forAuthor(author),
+              relonlationshipFelonaturelons
+                .forAuthor(author, relonquelonst.vielonwelonrContelonxt.uselonrId),
+              _.withConstantFelonaturelon(TwelonelontId, twelonelontId),
+              _.withConstantFelonaturelon(FocalTwelonelontId, relonquelonst.focalTwelonelontId)
             )
           ),
-          request.viewerContext,
+          relonquelonst.vielonwelonrContelonxt,
           Tombstoning
-        ).map(_.verdict)
+        ).map(_.velonrdict)
     }
 
-    val secondRoundActions: Stitch[Seq[(GetTweetFieldsResult, Option[TombstoneType])]] =
-      Stitch.traverse(secondRoundInput) {
-        case (gtfr: GetTweetFieldsResult, firstRoundTombstone: Option[TombstoneType]) =>
-          val secondRoundTombstone: Stitch[Option[TombstoneType]] = gtfr.tweetResult match {
-            case TweetFieldsResultState.Found(TweetFieldsResultFound(tweet, _, _)) =>
-              val tweetId = tweet.id
+    val seloncondRoundActions: Stitch[Selonq[(GelontTwelonelontFielonldsRelonsult, Option[TombstonelonTypelon])]] =
+      Stitch.travelonrselon(seloncondRoundInput) {
+        caselon (gtfr: GelontTwelonelontFielonldsRelonsult, firstRoundTombstonelon: Option[TombstonelonTypelon]) =>
+          val seloncondRoundTombstonelon: Stitch[Option[TombstonelonTypelon]] = gtfr.twelonelontRelonsult match {
+            caselon TwelonelontFielonldsRelonsultStatelon.Found(TwelonelontFielonldsRelonsultFound(twelonelont, _, _)) =>
+              val twelonelontId = twelonelont.id
 
-              tweet.coreData
-                .flatMap { coreData => request.authorMap.get(coreData.userId) } match {
-                case Some(author) =>
-                  invokeVisibilityLibrary(tweetId, author).flatMap {
-                    case Allow =>
-                      val quotedTweetId = tweet.quotedTweet.map(_.tweetId)
-                      val quotedTweetAuthor = tweet.quotedTweet.flatMap { qt =>
-                        request.authorMap.get(qt.userId)
+              twelonelont.corelonData
+                .flatMap { corelonData => relonquelonst.authorMap.gelont(corelonData.uselonrId) } match {
+                caselon Somelon(author) =>
+                  invokelonVisibilityLibrary(twelonelontId, author).flatMap {
+                    caselon Allow =>
+                      val quotelondTwelonelontId = twelonelont.quotelondTwelonelont.map(_.twelonelontId)
+                      val quotelondTwelonelontAuthor = twelonelont.quotelondTwelonelont.flatMap { qt =>
+                        relonquelonst.authorMap.gelont(qt.uselonrId)
                       }
 
-                      (quotedTweetId, quotedTweetAuthor) match {
-                        case (Some(quotedTweetId), Some(quotedTweetAuthor)) =>
-                          invokeVisibilityLibrary(quotedTweetId, quotedTweetAuthor).flatMap {
-                            case Allow =>
-                              Stitch.None
+                      (quotelondTwelonelontId, quotelondTwelonelontAuthor) match {
+                        caselon (Somelon(quotelondTwelonelontId), Somelon(quotelondTwelonelontAuthor)) =>
+                          invokelonVisibilityLibrary(quotelondTwelonelontId, quotelondTwelonelontAuthor).flatMap {
+                            caselon Allow =>
+                              Stitch.Nonelon
 
-                            case reason =>
-                              Stitch.value(Some(TombstoneType(tweetId, quotedTweetId, reason)))
+                            caselon relonason =>
+                              Stitch.valuelon(Somelon(TombstonelonTypelon(twelonelontId, quotelondTwelonelontId, relonason)))
                           }
 
-                        case _ =>
-                          Stitch.None
+                        caselon _ =>
+                          Stitch.Nonelon
                       }
 
-                    case reason =>
-                      Stitch.value(Some(TombstoneType(tweetId, tweetId, reason)))
+                    caselon relonason =>
+                      Stitch.valuelon(Somelon(TombstonelonTypelon(twelonelontId, twelonelontId, relonason)))
                   }
 
-                case None =>
-                  Stitch.None
+                caselon Nonelon =>
+                  Stitch.Nonelon
               }
 
-            case _ =>
-              Stitch.None
+            caselon _ =>
+              Stitch.Nonelon
           }
 
-          secondRoundTombstone.map { opt => opt.orElse(firstRoundTombstone) }.map { opt =>
+          seloncondRoundTombstonelon.map { opt => opt.orelonlselon(firstRoundTombstonelon) }.map { opt =>
             (gtfr, opt)
           }
       }
 
-    secondRoundActions.map { secondRound =>
-      val tombstones: Seq[(Long, VfTombstone)] = (firstRoundActions ++ secondRound).flatMap {
-        case (gtfr, tombstoneTypeOpt) => {
+    seloncondRoundActions.map { seloncondRound =>
+      val tombstonelons: Selonq[(Long, VfTombstonelon)] = (firstRoundActions ++ seloncondRound).flatMap {
+        caselon (gtfr, tombstonelonTypelonOpt) => {
 
-          val nonCompliantLimitedEngagementsOpt = gtfr.tweetResult match {
-            case TweetFieldsResultState.Found(TweetFieldsResultFound(_, _, Some(filteredReason)))
-                if FilteredReasonHelper.isLimitedEngagementsNonCompliant(filteredReason) =>
-              Some(LimitedEngagements(LimitedEngagementReason.NonCompliant))
-            case _ => None
+          val nonCompliantLimitelondelonngagelonmelonntsOpt = gtfr.twelonelontRelonsult match {
+            caselon TwelonelontFielonldsRelonsultStatelon.Found(TwelonelontFielonldsRelonsultFound(_, _, Somelon(filtelonrelondRelonason)))
+                if FiltelonrelondRelonasonHelonlpelonr.isLimitelondelonngagelonmelonntsNonCompliant(filtelonrelondRelonason) =>
+              Somelon(Limitelondelonngagelonmelonnts(LimitelondelonngagelonmelonntRelonason.NonCompliant))
+            caselon _ => Nonelon
           }
 
-          (tombstoneTypeOpt, nonCompliantLimitedEngagementsOpt) match {
-            case (Some(tombstoneType), nonCompliantOpt) =>
-              val tombstoneId = tombstoneType.tombstoneId
-              val action = tombstoneType.action
-              val textOpt: Option[RichText] = action match {
+          (tombstonelonTypelonOpt, nonCompliantLimitelondelonngagelonmelonntsOpt) match {
+            caselon (Somelon(tombstonelonTypelon), nonCompliantOpt) =>
+              val tombstonelonId = tombstonelonTypelon.tombstonelonId
+              val action = tombstonelonTypelon.action
+              val telonxtOpt: Option[RichTelonxt] = action match {
 
-                case InterstitialLimitedEngagements(_, _, Some(localizedMessage), _) =>
-                  Some(LocalizedMessageToRichText(localizedMessage))
-                case ipi: InterstitialLimitedEngagements =>
-                  Some(
-                    SafetyResultToUrtParser.fromSafetyResultToRichText(
-                      SafetyResult(
-                        Some(PublicInterest.ReasonToSafetyResultReason(ipi.reason)),
+                caselon IntelonrstitialLimitelondelonngagelonmelonnts(_, _, Somelon(localizelondMelonssagelon), _) =>
+                  Somelon(LocalizelondMelonssagelonToRichTelonxt(localizelondMelonssagelon))
+                caselon ipi: IntelonrstitialLimitelondelonngagelonmelonnts =>
+                  Somelon(
+                    SafelontyRelonsultToUrtParselonr.fromSafelontyRelonsultToRichTelonxt(
+                      SafelontyRelonsult(
+                        Somelon(PublicIntelonrelonst.RelonasonToSafelontyRelonsultRelonason(ipi.relonason)),
                         ipi.toActionThrift()
                       ),
-                      languageTag
+                      languagelonTag
                     )
                   )
 
-                case EmergencyDynamicInterstitial(_, _, Some(localizedMessage), _) =>
-                  Some(LocalizedMessageToRichText(localizedMessage))
-                case edi: EmergencyDynamicInterstitial =>
-                  Some(
-                    SafetyResultToUrtParser.fromSafetyResultToRichText(
-                      SafetyResult(
-                        None,
-                        edi.toActionThrift()
+                caselon elonmelonrgelonncyDynamicIntelonrstitial(_, _, Somelon(localizelondMelonssagelon), _) =>
+                  Somelon(LocalizelondMelonssagelonToRichTelonxt(localizelondMelonssagelon))
+                caselon elondi: elonmelonrgelonncyDynamicIntelonrstitial =>
+                  Somelon(
+                    SafelontyRelonsultToUrtParselonr.fromSafelontyRelonsultToRichTelonxt(
+                      SafelontyRelonsult(
+                        Nonelon,
+                        elondi.toActionThrift()
                       ),
-                      languageTag
+                      languagelonTag
                     )
                   )
 
-                case Tombstone(epitaph, _) =>
-                  if (request.useRichText)
-                    Some(EpitaphToRichText(epitaph, languageTag))
-                  else
-                    Some(EpitaphToRichText(Epitaph.UnavailableWithoutLink, languageTag))
+                caselon Tombstonelon(elonpitaph, _) =>
+                  if (relonquelonst.uselonRichTelonxt)
+                    Somelon(elonpitaphToRichTelonxt(elonpitaph, languagelonTag))
+                  elonlselon
+                    Somelon(elonpitaphToRichTelonxt(elonpitaph.UnavailablelonWithoutLink, languagelonTag))
 
-                case LocalizedTombstone(_, message) =>
-                  if (request.useRichText)
-                    Some(LocalizedMessageToRichText(LocalizedMessageConverter.toThrift(message)))
-                  else
-                    Some(EpitaphToRichText(Epitaph.UnavailableWithoutLink, languageTag))
+                caselon LocalizelondTombstonelon(_, melonssagelon) =>
+                  if (relonquelonst.uselonRichTelonxt)
+                    Somelon(LocalizelondMelonssagelonToRichTelonxt(LocalizelondMelonssagelonConvelonrtelonr.toThrift(melonssagelon)))
+                  elonlselon
+                    Somelon(elonpitaphToRichTelonxt(elonpitaph.UnavailablelonWithoutLink, languagelonTag))
 
-                case Interstitial(_, Some(localizedMessage), _) =>
-                  Some(LocalizedMessageToRichText.apply(localizedMessage))
+                caselon Intelonrstitial(_, Somelon(localizelondMelonssagelon), _) =>
+                  Somelon(LocalizelondMelonssagelonToRichTelonxt.apply(localizelondMelonssagelon))
 
-                case interstitial: Interstitial =>
-                  ReasonToUrtParser.fromReasonToRichText(interstitial.reason, languageTag)
+                caselon intelonrstitial: Intelonrstitial =>
+                  RelonasonToUrtParselonr.fromRelonasonToRichTelonxt(intelonrstitial.relonason, languagelonTag)
 
-                case _ =>
-                  None
+                caselon _ =>
+                  Nonelon
               }
 
-              val isRoot: Boolean = gtfr.tweetId == request.conversationId
-              val isOuter: Boolean = tombstoneId == request.conversationId
-              val revealTextOpt: Option[RichText] = action match {
-                case _: InterstitialLimitedEngagements | _: EmergencyDynamicInterstitial
-                    if isRoot && isOuter =>
-                  None
+              val isRoot: Boolelonan = gtfr.twelonelontId == relonquelonst.convelonrsationId
+              val isOutelonr: Boolelonan = tombstonelonId == relonquelonst.convelonrsationId
+              val relonvelonalTelonxtOpt: Option[RichTelonxt] = action match {
+                caselon _: IntelonrstitialLimitelondelonngagelonmelonnts | _: elonmelonrgelonncyDynamicIntelonrstitial
+                    if isRoot && isOutelonr =>
+                  Nonelon
 
-                case _: Interstitial | _: InterstitialLimitedEngagements |
-                    _: EmergencyDynamicInterstitial =>
-                  Some(ReasonToUrtParser.getRichRevealText(languageTag))
+                caselon _: Intelonrstitial | _: IntelonrstitialLimitelondelonngagelonmelonnts |
+                    _: elonmelonrgelonncyDynamicIntelonrstitial =>
+                  Somelon(RelonasonToUrtParselonr.gelontRichRelonvelonalTelonxt(languagelonTag))
 
-                case _ =>
-                  None
+                caselon _ =>
+                  Nonelon
               }
 
-              val includeTweet = action match {
-                case _: Interstitial | _: InterstitialLimitedEngagements |
-                    _: EmergencyDynamicInterstitial =>
-                  true
-                case _ => false
+              val includelonTwelonelont = action match {
+                caselon _: Intelonrstitial | _: IntelonrstitialLimitelondelonngagelonmelonnts |
+                    _: elonmelonrgelonncyDynamicIntelonrstitial =>
+                  truelon
+                caselon _ => falselon
               }
 
-              val truncateForAction: Boolean =
-                shouldTruncateDescendantsWhenFocal(action)
-              val truncateForNonCompliant: Boolean =
+              val truncatelonForAction: Boolelonan =
+                shouldTruncatelonDelonscelonndantsWhelonnFocal(action)
+              val truncatelonForNonCompliant: Boolelonan =
                 nonCompliantOpt
-                  .map(shouldTruncateDescendantsWhenFocal).getOrElse(false)
-              val truncateDescendants: Boolean =
-                truncateForAction || truncateForNonCompliant
+                  .map(shouldTruncatelonDelonscelonndantsWhelonnFocal).gelontOrelonlselon(falselon)
+              val truncatelonDelonscelonndants: Boolelonan =
+                truncatelonForAction || truncatelonForNonCompliant
 
-              val tombstone = textOpt match {
-                case Some(_) if request.useRichText =>
-                  VfTombstone(
-                    includeTweet = includeTweet,
+              val tombstonelon = telonxtOpt match {
+                caselon Somelon(_) if relonquelonst.uselonRichTelonxt =>
+                  VfTombstonelon(
+                    includelonTwelonelont = includelonTwelonelont,
                     action = action,
-                    tombstoneInfo = Some(
-                      TombstoneInfo(
-                        cta = None,
-                        revealText = None,
-                        richText = textOpt,
-                        richRevealText = revealTextOpt
+                    tombstonelonInfo = Somelon(
+                      TombstonelonInfo(
+                        cta = Nonelon,
+                        relonvelonalTelonxt = Nonelon,
+                        richTelonxt = telonxtOpt,
+                        richRelonvelonalTelonxt = relonvelonalTelonxtOpt
                       )
                     ),
-                    tombstoneDisplayType = tombstoneType.tombstoneDisplayType,
-                    truncateDescendantsWhenFocal = truncateDescendants
+                    tombstonelonDisplayTypelon = tombstonelonTypelon.tombstonelonDisplayTypelon,
+                    truncatelonDelonscelonndantsWhelonnFocal = truncatelonDelonscelonndants
                   )
-                case Some(_) =>
-                  VfTombstone(
-                    includeTweet = includeTweet,
+                caselon Somelon(_) =>
+                  VfTombstonelon(
+                    includelonTwelonelont = includelonTwelonelont,
                     action = action,
-                    tombstoneInfo = Some(
-                      TombstoneInfo(
-                        text = textOpt
-                          .map(richText => richText.text).getOrElse(
+                    tombstonelonInfo = Somelon(
+                      TombstonelonInfo(
+                        telonxt = telonxtOpt
+                          .map(richTelonxt => richTelonxt.telonxt).gelontOrelonlselon(
                             ""
-                        cta = None,
-                        revealText = revealTextOpt.map(_.text),
-                        richText = None,
-                        richRevealText = None
+                        cta = Nonelon,
+                        relonvelonalTelonxt = relonvelonalTelonxtOpt.map(_.telonxt),
+                        richTelonxt = Nonelon,
+                        richRelonvelonalTelonxt = Nonelon
                       )
                     ),
-                    tombstoneDisplayType = tombstoneType.tombstoneDisplayType,
-                    truncateDescendantsWhenFocal = truncateDescendants
+                    tombstonelonDisplayTypelon = tombstonelonTypelon.tombstonelonDisplayTypelon,
+                    truncatelonDelonscelonndantsWhelonnFocal = truncatelonDelonscelonndants
                   )
 
-                case None =>
-                  VfTombstone(
-                    includeTweet = false,
+                caselon Nonelon =>
+                  VfTombstonelon(
+                    includelonTwelonelont = falselon,
                     action = action,
-                    tombstoneInfo = Some(
-                      TombstoneInfo(
-                        cta = None,
-                        revealText = None,
-                        richText = Some(EpitaphToRichText(Epitaph.Unavailable, languageTag)),
-                        richRevealText = None
+                    tombstonelonInfo = Somelon(
+                      TombstonelonInfo(
+                        cta = Nonelon,
+                        relonvelonalTelonxt = Nonelon,
+                        richTelonxt = Somelon(elonpitaphToRichTelonxt(elonpitaph.Unavailablelon, languagelonTag)),
+                        richRelonvelonalTelonxt = Nonelon
                       )
                     ),
-                    tombstoneDisplayType = tombstoneType.tombstoneDisplayType,
-                    truncateDescendantsWhenFocal = truncateDescendants
+                    tombstonelonDisplayTypelon = tombstonelonTypelon.tombstonelonDisplayTypelon,
+                    truncatelonDelonscelonndantsWhelonnFocal = truncatelonDelonscelonndants
                   )
               }
 
-              Some((gtfr.tweetId, tombstone))
+              Somelon((gtfr.twelonelontId, tombstonelon))
 
-            case (None, Some(limitedEngagements))
-                if shouldTruncateDescendantsWhenFocal(limitedEngagements) =>
-              val tombstone = VfTombstone(
-                tombstoneId = gtfr.tweetId,
-                includeTweet = true,
-                action = limitedEngagements,
-                tombstoneInfo = None,
-                tombstoneDisplayType = TombstoneDisplayType.NonCompliant,
-                truncateDescendantsWhenFocal = true
+            caselon (Nonelon, Somelon(limitelondelonngagelonmelonnts))
+                if shouldTruncatelonDelonscelonndantsWhelonnFocal(limitelondelonngagelonmelonnts) =>
+              val tombstonelon = VfTombstonelon(
+                tombstonelonId = gtfr.twelonelontId,
+                includelonTwelonelont = truelon,
+                action = limitelondelonngagelonmelonnts,
+                tombstonelonInfo = Nonelon,
+                tombstonelonDisplayTypelon = TombstonelonDisplayTypelon.NonCompliant,
+                truncatelonDelonscelonndantsWhelonnFocal = truelon
               )
-              Some((gtfr.tweetId, tombstone))
+              Somelon((gtfr.twelonelontId, tombstonelon))
 
-            case _ =>
-              None
+            caselon _ =>
+              Nonelon
           }
         }
       }
 
-      TombstoneVisibilityResponse(
-        tweetVerdicts = tombstones.toMap
+      TombstonelonVisibilityRelonsponselon(
+        twelonelontVelonrdicts = tombstonelons.toMap
       )
     }
   }
 
-  private def createLocalizedTombstone(
-    filteredReason: FilteredReason,
-    tombstoneStats: StatsReceiver,
-  ): Option[LocalizedTombstone] = {
+  privatelon delonf crelonatelonLocalizelondTombstonelon(
+    filtelonrelondRelonason: FiltelonrelondRelonason,
+    tombstonelonStats: StatsReloncelonivelonr,
+  ): Option[LocalizelondTombstonelon] = {
 
-    val tombstoneOpt = FilteredReasonHelper.getTombstone(filteredReason)
-    tombstoneOpt match {
-      case Some(t.Tombstone(reasonOpt, Some(message))) =>
-        TombstoneReasonConverter.fromThrift(reasonOpt).map { localReason =>
-          tombstoneStats
-            .scope("localized").counter(localReason.toString().toLowerCase()).incr()
-          LocalizedTombstone(localReason, LocalizedMessageConverter.fromThrift(message))
+    val tombstonelonOpt = FiltelonrelondRelonasonHelonlpelonr.gelontTombstonelon(filtelonrelondRelonason)
+    tombstonelonOpt match {
+      caselon Somelon(t.Tombstonelon(relonasonOpt, Somelon(melonssagelon))) =>
+        TombstonelonRelonasonConvelonrtelonr.fromThrift(relonasonOpt).map { localRelonason =>
+          tombstonelonStats
+            .scopelon("localizelond").countelonr(localRelonason.toString().toLowelonrCaselon()).incr()
+          LocalizelondTombstonelon(localRelonason, LocalizelondMelonssagelonConvelonrtelonr.fromThrift(melonssagelon))
         }
 
-      case _ => None
+      caselon _ => Nonelon
     }
   }
 
-  private def createTombstone(
-    epitaph: Epitaph,
-    tombstoneStats: StatsReceiver,
-    extraCounterOpt: Option[String] = None
+  privatelon delonf crelonatelonTombstonelon(
+    elonpitaph: elonpitaph,
+    tombstonelonStats: StatsReloncelonivelonr,
+    elonxtraCountelonrOpt: Option[String] = Nonelon
   ): Option[Action] = {
-    tombstoneStats
-      .scope("legacy")
-      .counter(epitaph.toString().toLowerCase())
+    tombstonelonStats
+      .scopelon("lelongacy")
+      .countelonr(elonpitaph.toString().toLowelonrCaselon())
       .incr()
-    extraCounterOpt.map { extraCounter =>
-      tombstoneStats
-        .scope("legacy")
-        .scope(epitaph.toString().toLowerCase())
-        .counter(extraCounter)
+    elonxtraCountelonrOpt.map { elonxtraCountelonr =>
+      tombstonelonStats
+        .scopelon("lelongacy")
+        .scopelon(elonpitaph.toString().toLowelonrCaselon())
+        .countelonr(elonxtraCountelonr)
         .incr()
     }
-    Some(Tombstone(epitaph))
+    Somelon(Tombstonelon(elonpitaph))
   }
 }

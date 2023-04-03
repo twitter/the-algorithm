@@ -1,66 +1,66 @@
-package com.twitter.follow_recommendations.common.predicates
+packagelon com.twittelonr.follow_reloncommelonndations.common.prelondicatelons
 
-import com.google.inject.name.Named
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.base.Predicate
-import com.twitter.follow_recommendations.common.base.PredicateResult
-import com.twitter.follow_recommendations.common.constants.GuiceNamedConstants
-import com.twitter.follow_recommendations.common.models.FilterReason.CuratedAccountsCompetitorList
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.stitch.Stitch
-import com.twitter.strato.client.Fetcher
-import javax.inject.Inject
-import javax.inject.Singleton
-import com.twitter.conversions.DurationOps._
-import com.twitter.escherbird.util.stitchcache.StitchCache
+import com.googlelon.injelonct.namelon.Namelond
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.follow_reloncommelonndations.common.baselon.Prelondicatelon
+import com.twittelonr.follow_reloncommelonndations.common.baselon.PrelondicatelonRelonsult
+import com.twittelonr.follow_reloncommelonndations.common.constants.GuicelonNamelondConstants
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.FiltelonrRelonason.CuratelondAccountsCompelontitorList
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.CandidatelonUselonr
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.strato.clielonnt.Felontchelonr
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.elonschelonrbird.util.stitchcachelon.StitchCachelon
 
-@Singleton
-case class CuratedCompetitorListPredicate @Inject() (
-  statsReceiver: StatsReceiver,
-  @Named(GuiceNamedConstants.CURATED_COMPETITOR_ACCOUNTS_FETCHER) competitorAccountFetcher: Fetcher[
+@Singlelonton
+caselon class CuratelondCompelontitorListPrelondicatelon @Injelonct() (
+  statsReloncelonivelonr: StatsReloncelonivelonr,
+  @Namelond(GuicelonNamelondConstants.CURATelonD_COMPelonTITOR_ACCOUNTS_FelonTCHelonR) compelontitorAccountFelontchelonr: Felontchelonr[
     String,
     Unit,
-    Seq[Long]
-  ]) extends Predicate[CandidateUser] {
+    Selonq[Long]
+  ]) elonxtelonnds Prelondicatelon[CandidatelonUselonr] {
 
-  private val stats: StatsReceiver = statsReceiver.scope(this.getClass.getName)
-  private val cacheStats = stats.scope("cache")
+  privatelon val stats: StatsReloncelonivelonr = statsReloncelonivelonr.scopelon(this.gelontClass.gelontNamelon)
+  privatelon val cachelonStats = stats.scopelon("cachelon")
 
-  private val cache = StitchCache[String, Set[Long]](
-    maxCacheSize = CuratedCompetitorListPredicate.CacheNumberOfEntries,
-    ttl = CuratedCompetitorListPredicate.CacheTTL,
-    statsReceiver = cacheStats,
-    underlyingCall = (competitorListPrefix: String) => query(competitorListPrefix)
+  privatelon val cachelon = StitchCachelon[String, Selont[Long]](
+    maxCachelonSizelon = CuratelondCompelontitorListPrelondicatelon.CachelonNumbelonrOfelonntrielons,
+    ttl = CuratelondCompelontitorListPrelondicatelon.CachelonTTL,
+    statsReloncelonivelonr = cachelonStats,
+    undelonrlyingCall = (compelontitorListPrelonfix: String) => quelonry(compelontitorListPrelonfix)
   )
 
-  private def query(prefix: String): Stitch[Set[Long]] =
-    competitorAccountFetcher.fetch(prefix).map(_.v.getOrElse(Nil).toSet)
+  privatelon delonf quelonry(prelonfix: String): Stitch[Selont[Long]] =
+    compelontitorAccountFelontchelonr.felontch(prelonfix).map(_.v.gelontOrelonlselon(Nil).toSelont)
 
   /**
-   * Caveat here is that though the similarToUserIds allows for a Seq[Long], in practice we would
-   * only return 1 userId. Multiple userId's would result in filtering candidates associated with
-   * a different similarToUserId. For example:
-   *   - similarToUser1 -> candidate1, candidate2
-   *   - similarToUser2 -> candidate3
-   *   and in the competitorList store we have:
-   *   - similarToUser1 -> candidate3
-   *   we'll be filtering candidate3 on account of similarToUser1, even though it was generated
-   *   with similarToUser2. This might still be desirable at a product level (since we don't want
-   *   to show these accounts anyway), but might not achieve what you intend to code-wise.
+   * Cavelonat helonrelon is that though thelon similarToUselonrIds allows for a Selonq[Long], in practicelon welon would
+   * only relonturn 1 uselonrId. Multiplelon uselonrId's would relonsult in filtelonring candidatelons associatelond with
+   * a diffelonrelonnt similarToUselonrId. For elonxamplelon:
+   *   - similarToUselonr1 -> candidatelon1, candidatelon2
+   *   - similarToUselonr2 -> candidatelon3
+   *   and in thelon compelontitorList storelon welon havelon:
+   *   - similarToUselonr1 -> candidatelon3
+   *   welon'll belon filtelonring candidatelon3 on account of similarToUselonr1, elonvelonn though it was gelonnelonratelond
+   *   with similarToUselonr2. This might still belon delonsirablelon at a product lelonvelonl (sincelon welon don't want
+   *   to show thelonselon accounts anyway), but might not achielonvelon what you intelonnd to codelon-wiselon.
    */
-  override def apply(candidate: CandidateUser): Stitch[PredicateResult] = {
-    cache.readThrough(CuratedCompetitorListPredicate.DefaultKey).map { competitorListAccounts =>
-      if (competitorListAccounts.contains(candidate.id)) {
-        PredicateResult.Invalid(Set(CuratedAccountsCompetitorList))
-      } else {
-        PredicateResult.Valid
+  ovelonrridelon delonf apply(candidatelon: CandidatelonUselonr): Stitch[PrelondicatelonRelonsult] = {
+    cachelon.relonadThrough(CuratelondCompelontitorListPrelondicatelon.DelonfaultKelony).map { compelontitorListAccounts =>
+      if (compelontitorListAccounts.contains(candidatelon.id)) {
+        PrelondicatelonRelonsult.Invalid(Selont(CuratelondAccountsCompelontitorList))
+      } elonlselon {
+        PrelondicatelonRelonsult.Valid
       }
     }
   }
 }
 
-object CuratedCompetitorListPredicate {
-  val DefaultKey: String = "default_list"
-  val CacheTTL = 5.minutes
-  val CacheNumberOfEntries = 5
+objelonct CuratelondCompelontitorListPrelondicatelon {
+  val DelonfaultKelony: String = "delonfault_list"
+  val CachelonTTL = 5.minutelons
+  val CachelonNumbelonrOfelonntrielons = 5
 }

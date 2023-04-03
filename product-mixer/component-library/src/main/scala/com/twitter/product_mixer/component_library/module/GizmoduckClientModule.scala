@@ -1,47 +1,47 @@
-package com.twitter.product_mixer.component_library.module
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.modulelon
 
-import com.google.inject.Provides
-import com.twitter.conversions.DurationOps._
-import com.twitter.conversions.PercentOps._
-import com.twitter.finagle.thriftmux.MethodBuilder
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsClient
-import com.twitter.gizmoduck.thriftscala.UserService
-import com.twitter.inject.Injector
-import com.twitter.inject.thrift.modules.ThriftMethodBuilderClientModule
-import com.twitter.stitch.gizmoduck.Gizmoduck
-import com.twitter.util.Duration
-import javax.inject.Singleton
+import com.googlelon.injelonct.Providelons
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.convelonrsions.PelonrcelonntOps._
+import com.twittelonr.finaglelon.thriftmux.MelonthodBuildelonr
+import com.twittelonr.finatra.mtls.thriftmux.modulelons.MtlsClielonnt
+import com.twittelonr.gizmoduck.thriftscala.UselonrSelonrvicelon
+import com.twittelonr.injelonct.Injelonctor
+import com.twittelonr.injelonct.thrift.modulelons.ThriftMelonthodBuildelonrClielonntModulelon
+import com.twittelonr.stitch.gizmoduck.Gizmoduck
+import com.twittelonr.util.Duration
+import javax.injelonct.Singlelonton
 
 /**
- * Implementation with reasonable defaults for an idempotent Gizmoduck Thrift and Stitch client.
+ * Implelonmelonntation with relonasonablelon delonfaults for an idelonmpotelonnt Gizmoduck Thrift and Stitch clielonnt.
  *
- * Note that the per request and total timeouts configured in this module are meant to represent a
- * reasonable starting point only. These were selected based on common practice, and should not be
- * assumed to be optimal for any particular use case. If you are interested in further tuning the
- * settings in this module, it is recommended to create local copy for your service.
+ * Notelon that thelon pelonr relonquelonst and total timelonouts configurelond in this modulelon arelon melonant to relonprelonselonnt a
+ * relonasonablelon starting point only. Thelonselon welonrelon selonlelonctelond baselond on common practicelon, and should not belon
+ * assumelond to belon optimal for any particular uselon caselon. If you arelon intelonrelonstelond in furthelonr tuning thelon
+ * selonttings in this modulelon, it is reloncommelonndelond to crelonatelon local copy for your selonrvicelon.
  */
-object GizmoduckClientModule
-    extends ThriftMethodBuilderClientModule[
-      UserService.ServicePerEndpoint,
-      UserService.MethodPerEndpoint
+objelonct GizmoduckClielonntModulelon
+    elonxtelonnds ThriftMelonthodBuildelonrClielonntModulelon[
+      UselonrSelonrvicelon.SelonrvicelonPelonrelonndpoint,
+      UselonrSelonrvicelon.MelonthodPelonrelonndpoint
     ]
-    with MtlsClient {
-  override val label: String = "gizmoduck"
-  override val dest: String = "/s/gizmoduck/gizmoduck"
+    with MtlsClielonnt {
+  ovelonrridelon val labelonl: String = "gizmoduck"
+  ovelonrridelon val delonst: String = "/s/gizmoduck/gizmoduck"
 
-  @Singleton
-  @Provides
-  def provideGizmoduckStitchClient(userService: UserService.MethodPerEndpoint): Gizmoduck =
-    new Gizmoduck(userService)
+  @Singlelonton
+  @Providelons
+  delonf providelonGizmoduckStitchClielonnt(uselonrSelonrvicelon: UselonrSelonrvicelon.MelonthodPelonrelonndpoint): Gizmoduck =
+    nelonw Gizmoduck(uselonrSelonrvicelon)
 
-  override protected def configureMethodBuilder(
-    injector: Injector,
-    methodBuilder: MethodBuilder
-  ): MethodBuilder =
-    methodBuilder
-      .withTimeoutPerRequest(200.milliseconds)
-      .withTimeoutTotal(400.milliseconds)
-      .idempotent(1.percent)
+  ovelonrridelon protelonctelond delonf configurelonMelonthodBuildelonr(
+    injelonctor: Injelonctor,
+    melonthodBuildelonr: MelonthodBuildelonr
+  ): MelonthodBuildelonr =
+    melonthodBuildelonr
+      .withTimelonoutPelonrRelonquelonst(200.milliselonconds)
+      .withTimelonoutTotal(400.milliselonconds)
+      .idelonmpotelonnt(1.pelonrcelonnt)
 
-  override protected def sessionAcquisitionTimeout: Duration = 500.milliseconds
+  ovelonrridelon protelonctelond delonf selonssionAcquisitionTimelonout: Duration = 500.milliselonconds
 }

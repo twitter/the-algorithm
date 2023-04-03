@@ -1,30 +1,30 @@
-package com.twitter.product_mixer.core.pipeline.candidate
+packagelon com.twittelonr.product_mixelonr.corelon.pipelonlinelon.candidatelon
 
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.Pipeline
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Arrow
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonPipelonlinelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.Pipelonlinelon
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stitch.Arrow
 
 /**
- * A Candidate Pipeline
+ * A Candidatelon Pipelonlinelon
  *
- * This is an abstract class, as we only construct these via the [[CandidatePipelineBuilder]].
+ * This is an abstract class, as welon only construct thelonselon via thelon [[CandidatelonPipelonlinelonBuildelonr]].
  *
- * A [[CandidatePipeline]] is capable of processing requests (queries) and returning candidates
- * in the form of a [[CandidatePipelineResult]]
+ * A [[CandidatelonPipelonlinelon]] is capablelon of procelonssing relonquelonsts (quelonrielons) and relonturning candidatelons
+ * in thelon form of a [[CandidatelonPipelonlinelonRelonsult]]
  *
- * @tparam Query the domain model for the query or request
+ * @tparam Quelonry thelon domain modelonl for thelon quelonry or relonquelonst
  */
-abstract class CandidatePipeline[-Query <: PipelineQuery] private[candidate]
-    extends Pipeline[CandidatePipeline.Inputs[Query], Seq[CandidateWithDetails]] {
-  override private[core] val config: BaseCandidatePipelineConfig[Query, _, _, _]
-  override val arrow: Arrow[CandidatePipeline.Inputs[Query], CandidatePipelineResult]
-  override val identifier: CandidatePipelineIdentifier
+abstract class CandidatelonPipelonlinelon[-Quelonry <: PipelonlinelonQuelonry] privatelon[candidatelon]
+    elonxtelonnds Pipelonlinelon[CandidatelonPipelonlinelon.Inputs[Quelonry], Selonq[CandidatelonWithDelontails]] {
+  ovelonrridelon privatelon[corelon] val config: BaselonCandidatelonPipelonlinelonConfig[Quelonry, _, _, _]
+  ovelonrridelon val arrow: Arrow[CandidatelonPipelonlinelon.Inputs[Quelonry], CandidatelonPipelonlinelonRelonsult]
+  ovelonrridelon val idelonntifielonr: CandidatelonPipelonlinelonIdelonntifielonr
 }
 
-object CandidatePipeline {
-  case class Inputs[+Query <: PipelineQuery](
-    query: Query,
-    existingCandidates: Seq[CandidateWithDetails])
+objelonct CandidatelonPipelonlinelon {
+  caselon class Inputs[+Quelonry <: PipelonlinelonQuelonry](
+    quelonry: Quelonry,
+    elonxistingCandidatelons: Selonq[CandidatelonWithDelontails])
 }

@@ -1,41 +1,41 @@
-package com.twitter.search.earlybird_root.caching;
+packagelon com.twittelonr.selonarch.elonarlybird_root.caching;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.search.common.caching.Cache;
-import com.twitter.search.common.caching.TopTweetsCacheUtil;
-import com.twitter.search.common.caching.filter.ServicePostProcessor;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
+import com.twittelonr.selonarch.common.caching.Cachelon;
+import com.twittelonr.selonarch.common.caching.TopTwelonelontsCachelonUtil;
+import com.twittelonr.selonarch.common.caching.filtelonr.SelonrvicelonPostProcelonssor;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonquelonst;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
+import com.twittelonr.selonarch.elonarlybird_root.common.elonarlybirdRelonquelonstContelonxt;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static com.googlelon.common.baselon.Prelonconditions.chelonckNotNull;
 
-public class TopTweetsServicePostProcessor
-    extends ServicePostProcessor<EarlybirdRequestContext, EarlybirdResponse> {
-  private static final Logger LOG = LoggerFactory.getLogger(TopTweetsServicePostProcessor.class);
+public class TopTwelonelontsSelonrvicelonPostProcelonssor
+    elonxtelonnds SelonrvicelonPostProcelonssor<elonarlybirdRelonquelonstContelonxt, elonarlybirdRelonsponselon> {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(TopTwelonelontsSelonrvicelonPostProcelonssor.class);
 
-  public static final int CACHE_AGE_IN_MS = 600000;
-  public static final int NO_RESULT_CACHE_AGE_IN_MS = 300000;
+  public static final int CACHelon_AGelon_IN_MS = 600000;
+  public static final int NO_RelonSULT_CACHelon_AGelon_IN_MS = 300000;
 
-  private final Cache<EarlybirdRequest, EarlybirdResponse> cache;
+  privatelon final Cachelon<elonarlybirdRelonquelonst, elonarlybirdRelonsponselon> cachelon;
 
-  public TopTweetsServicePostProcessor(Cache<EarlybirdRequest, EarlybirdResponse> cache) {
-    this.cache = checkNotNull(cache);
+  public TopTwelonelontsSelonrvicelonPostProcelonssor(Cachelon<elonarlybirdRelonquelonst, elonarlybirdRelonsponselon> cachelon) {
+    this.cachelon = chelonckNotNull(cachelon);
   }
 
-  @Override
-  public void processServiceResponse(EarlybirdRequestContext requestContext,
-                                     EarlybirdResponse serviceResponse) {
+  @Ovelonrridelon
+  public void procelonssSelonrvicelonRelonsponselon(elonarlybirdRelonquelonstContelonxt relonquelonstContelonxt,
+                                     elonarlybirdRelonsponselon selonrvicelonRelonsponselon) {
 
-    EarlybirdRequest originalRequest = requestContext.getRequest();
-    LOG.debug("Writing to top tweets cache. Request: {}, Response: {}",
-        originalRequest, serviceResponse);
-    TopTweetsCacheUtil.cacheResults(originalRequest,
-        serviceResponse,
-        cache,
-        CACHE_AGE_IN_MS,
-        NO_RESULT_CACHE_AGE_IN_MS);
+    elonarlybirdRelonquelonst originalRelonquelonst = relonquelonstContelonxt.gelontRelonquelonst();
+    LOG.delonbug("Writing to top twelonelonts cachelon. Relonquelonst: {}, Relonsponselon: {}",
+        originalRelonquelonst, selonrvicelonRelonsponselon);
+    TopTwelonelontsCachelonUtil.cachelonRelonsults(originalRelonquelonst,
+        selonrvicelonRelonsponselon,
+        cachelon,
+        CACHelon_AGelon_IN_MS,
+        NO_RelonSULT_CACHelon_AGelon_IN_MS);
   }
 }

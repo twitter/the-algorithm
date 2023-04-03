@@ -1,36 +1,36 @@
-package com.twitter.search.earlybird_root.caching;
+packagelon com.twittelonr.selonarch.elonarlybird_root.caching;
 
-import com.twitter.search.common.caching.Cache;
-import com.twitter.search.common.caching.CacheUtil;
-import com.twitter.search.common.caching.filter.ServicePostProcessor;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
+import com.twittelonr.selonarch.common.caching.Cachelon;
+import com.twittelonr.selonarch.common.caching.CachelonUtil;
+import com.twittelonr.selonarch.common.caching.filtelonr.SelonrvicelonPostProcelonssor;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonquelonst;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
+import com.twittelonr.selonarch.elonarlybird_root.common.elonarlybirdRelonquelonstContelonxt;
 
-public class RelevanceZeroResultsServicePostProcessor
-    extends ServicePostProcessor<EarlybirdRequestContext, EarlybirdResponse> {
+public class RelonlelonvancelonZelonroRelonsultsSelonrvicelonPostProcelonssor
+    elonxtelonnds SelonrvicelonPostProcelonssor<elonarlybirdRelonquelonstContelonxt, elonarlybirdRelonsponselon> {
 
-  private static final SearchCounter RELEVANCE_RESPONSES_WITH_ZERO_RESULTS_COUNTER =
-    SearchCounter.export("relevance_responses_with_zero_results");
+  privatelon static final SelonarchCountelonr RelonLelonVANCelon_RelonSPONSelonS_WITH_ZelonRO_RelonSULTS_COUNTelonR =
+    SelonarchCountelonr.elonxport("relonlelonvancelon_relonsponselons_with_zelonro_relonsults");
 
-  private final Cache<EarlybirdRequest, EarlybirdResponse> cache;
+  privatelon final Cachelon<elonarlybirdRelonquelonst, elonarlybirdRelonsponselon> cachelon;
 
-  public RelevanceZeroResultsServicePostProcessor(
-      Cache<EarlybirdRequest, EarlybirdResponse> cache) {
-    this.cache = cache;
+  public RelonlelonvancelonZelonroRelonsultsSelonrvicelonPostProcelonssor(
+      Cachelon<elonarlybirdRelonquelonst, elonarlybirdRelonsponselon> cachelon) {
+    this.cachelon = cachelon;
   }
 
-  @Override
-  public void processServiceResponse(EarlybirdRequestContext requestContext,
-                                     EarlybirdResponse serviceResponse) {
-    // serviceResponse is the response to a personalized query. If it has zero results, then we can
-    // cache it and reuse it for other requests with the same query. Otherwise, it makes no sense to
-    // cache this response.
-    if (!CacheCommonUtil.hasResults(serviceResponse)) {
-      RELEVANCE_RESPONSES_WITH_ZERO_RESULTS_COUNTER.increment();
-      CacheUtil.cacheResults(
-          cache, requestContext.getRequest(), serviceResponse, Integer.MAX_VALUE);
+  @Ovelonrridelon
+  public void procelonssSelonrvicelonRelonsponselon(elonarlybirdRelonquelonstContelonxt relonquelonstContelonxt,
+                                     elonarlybirdRelonsponselon selonrvicelonRelonsponselon) {
+    // selonrvicelonRelonsponselon is thelon relonsponselon to a pelonrsonalizelond quelonry. If it has zelonro relonsults, thelonn welon can
+    // cachelon it and relonuselon it for othelonr relonquelonsts with thelon samelon quelonry. Othelonrwiselon, it makelons no selonnselon to
+    // cachelon this relonsponselon.
+    if (!CachelonCommonUtil.hasRelonsults(selonrvicelonRelonsponselon)) {
+      RelonLelonVANCelon_RelonSPONSelonS_WITH_ZelonRO_RelonSULTS_COUNTelonR.increlonmelonnt();
+      CachelonUtil.cachelonRelonsults(
+          cachelon, relonquelonstContelonxt.gelontRelonquelonst(), selonrvicelonRelonsponselon, Intelongelonr.MAX_VALUelon);
     }
   }
 }

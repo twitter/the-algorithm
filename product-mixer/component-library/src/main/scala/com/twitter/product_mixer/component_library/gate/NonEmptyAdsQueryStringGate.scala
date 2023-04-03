@@ -1,16 +1,16 @@
-package com.twitter.product_mixer.component_library.gate
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.gatelon
 
-import com.twitter.product_mixer.component_library.model.query.ads.AdsQuery
-import com.twitter.product_mixer.core.functional_component.gate.Gate
-import com.twitter.product_mixer.core.model.common.identifier.GateIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.quelonry.ads.AdsQuelonry
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.gatelon.Gatelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.GatelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stitch.Stitch
 
-object NonEmptyAdsQueryStringGate extends Gate[PipelineQuery with AdsQuery] {
-  override val identifier: GateIdentifier = GateIdentifier("NonEmptyAdsQueryString")
+objelonct NonelonmptyAdsQuelonryStringGatelon elonxtelonnds Gatelon[PipelonlinelonQuelonry with AdsQuelonry] {
+  ovelonrridelon val idelonntifielonr: GatelonIdelonntifielonr = GatelonIdelonntifielonr("NonelonmptyAdsQuelonryString")
 
-  override def shouldContinue(query: PipelineQuery with AdsQuery): Stitch[Boolean] = {
-    val queryString = query.searchRequestContext.flatMap(_.queryString)
-    Stitch.value(queryString.exists(_.trim.nonEmpty))
+  ovelonrridelon delonf shouldContinuelon(quelonry: PipelonlinelonQuelonry with AdsQuelonry): Stitch[Boolelonan] = {
+    val quelonryString = quelonry.selonarchRelonquelonstContelonxt.flatMap(_.quelonryString)
+    Stitch.valuelon(quelonryString.elonxists(_.trim.nonelonmpty))
   }
 }

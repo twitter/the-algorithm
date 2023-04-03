@@ -1,21 +1,21 @@
-package com.twitter.search.ingester.pipeline.util;
+packagelon com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.util;
 
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrelonnt.ComplelontablelonFuturelon;
 
-public class BatchedElement<T, R> {
-  private CompletableFuture<R> completableFuture;
-  private T item;
+public class Batchelondelonlelonmelonnt<T, R> {
+  privatelon ComplelontablelonFuturelon<R> complelontablelonFuturelon;
+  privatelon T itelonm;
 
-  public BatchedElement(T item, CompletableFuture<R> completableFuture) {
-    this.item = item;
-    this.completableFuture = completableFuture;
+  public Batchelondelonlelonmelonnt(T itelonm, ComplelontablelonFuturelon<R> complelontablelonFuturelon) {
+    this.itelonm = itelonm;
+    this.complelontablelonFuturelon = complelontablelonFuturelon;
   }
 
-  public T getItem() {
-    return item;
+  public T gelontItelonm() {
+    relonturn itelonm;
   }
 
-  public CompletableFuture<R> getCompletableFuture() {
-    return completableFuture;
+  public ComplelontablelonFuturelon<R> gelontComplelontablelonFuturelon() {
+    relonturn complelontablelonFuturelon;
   }
 }

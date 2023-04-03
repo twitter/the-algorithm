@@ -1,269 +1,269 @@
-package com.twitter.search.common.util.earlybird;
+packagelon com.twittelonr.selonarch.common.util.elonarlybird;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
+import java.util.concurrelonnt.elonxeloncutionelonxcelonption;
 
-import com.google.common.base.Preconditions;
-import com.google.common.cache.LoadingCache;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
+import com.googlelon.common.baselon.Prelonconditions;
+import com.googlelon.common.cachelon.LoadingCachelon;
+import com.googlelon.common.collelonct.ImmutablelonMap;
+import com.googlelon.common.collelonct.Lists;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.common.collections.Pair;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.search.earlybird.thrift.ThriftSearchQuery;
-import com.twitter.search.earlybird.thrift.ThriftSearchRankingMode;
-import com.twitter.search.earlybird.thrift.ThriftSearchResult;
-import com.twitter.search.earlybird.thrift.ThriftTweetSource;
+import com.twittelonr.common.collelonctions.Pair;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonquelonst;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselonCodelon;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchQuelonry;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRankingModelon;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsult;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftTwelonelontSourcelon;
 
 /**
- * Utility methods to merge EarlybirdResponses.
+ * Utility melonthods to melonrgelon elonarlybirdRelonsponselons.
  */
-public final class EarlybirdResponseMergeUtil {
-  private static final Logger LOG = LoggerFactory.getLogger(EarlybirdResponseMergeUtil.class);
+public final class elonarlybirdRelonsponselonMelonrgelonUtil {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(elonarlybirdRelonsponselonMelonrgelonUtil.class);
 
-  private static final String INVALID_RESPONSE_STATS_PREFIX = "invalid_response_stats_";
+  privatelon static final String INVALID_RelonSPONSelon_STATS_PRelonFIX = "invalid_relonsponselon_stats_";
 
-  // Stats for invalid earlybird response
-  private static final ImmutableMap<EarlybirdResponseCode, SearchCounter> ERROR_EXCEPTIONS;
+  // Stats for invalid elonarlybird relonsponselon
+  privatelon static final ImmutablelonMap<elonarlybirdRelonsponselonCodelon, SelonarchCountelonr> elonRROR_elonXCelonPTIONS;
 
-  public static final SearchCounter NULL_RESPONSE_COUNTER =
-      SearchCounter.export(INVALID_RESPONSE_STATS_PREFIX + "null_response");
-  public static final SearchCounter SEARCH_RESULTS_NOT_SET_COUNTER =
-      SearchCounter.export(INVALID_RESPONSE_STATS_PREFIX + "search_results_not_set");
-  public static final SearchCounter SEARCH_RESULTS_WITH_RESULTS_NOT_SET_COUNTER =
-      SearchCounter.export(INVALID_RESPONSE_STATS_PREFIX + "search_results_with_results_not_set");
-  public static final SearchCounter MAX_SEARCHED_STATUS_ID_NOT_SET_COUNTER =
-      SearchCounter.export(INVALID_RESPONSE_STATS_PREFIX + "max_searched_status_id_not_set");
-  public static final SearchCounter MIN_SEARCHED_STATUS_ID_NOT_SET_COUNTER =
-      SearchCounter.export(INVALID_RESPONSE_STATS_PREFIX + "min_searched_status_id_not_set");
+  public static final SelonarchCountelonr NULL_RelonSPONSelon_COUNTelonR =
+      SelonarchCountelonr.elonxport(INVALID_RelonSPONSelon_STATS_PRelonFIX + "null_relonsponselon");
+  public static final SelonarchCountelonr SelonARCH_RelonSULTS_NOT_SelonT_COUNTelonR =
+      SelonarchCountelonr.elonxport(INVALID_RelonSPONSelon_STATS_PRelonFIX + "selonarch_relonsults_not_selont");
+  public static final SelonarchCountelonr SelonARCH_RelonSULTS_WITH_RelonSULTS_NOT_SelonT_COUNTelonR =
+      SelonarchCountelonr.elonxport(INVALID_RelonSPONSelon_STATS_PRelonFIX + "selonarch_relonsults_with_relonsults_not_selont");
+  public static final SelonarchCountelonr MAX_SelonARCHelonD_STATUS_ID_NOT_SelonT_COUNTelonR =
+      SelonarchCountelonr.elonxport(INVALID_RelonSPONSelon_STATS_PRelonFIX + "max_selonarchelond_status_id_not_selont");
+  public static final SelonarchCountelonr MIN_SelonARCHelonD_STATUS_ID_NOT_SelonT_COUNTelonR =
+      SelonarchCountelonr.elonxport(INVALID_RelonSPONSelon_STATS_PRelonFIX + "min_selonarchelond_status_id_not_selont");
 
   static {
-    ImmutableMap.Builder<EarlybirdResponseCode, SearchCounter> builder = ImmutableMap.builder();
+    ImmutablelonMap.Buildelonr<elonarlybirdRelonsponselonCodelon, SelonarchCountelonr> buildelonr = ImmutablelonMap.buildelonr();
 
-    for (EarlybirdResponseCode responseCode : EarlybirdResponseCode.values()) {
-      if (responseCode != EarlybirdResponseCode.SUCCESS) {
-        builder.put(responseCode, SearchCounter.export(
-            INVALID_RESPONSE_STATS_PREFIX + responseCode.name().toLowerCase()));
+    for (elonarlybirdRelonsponselonCodelon relonsponselonCodelon : elonarlybirdRelonsponselonCodelon.valuelons()) {
+      if (relonsponselonCodelon != elonarlybirdRelonsponselonCodelon.SUCCelonSS) {
+        buildelonr.put(relonsponselonCodelon, SelonarchCountelonr.elonxport(
+            INVALID_RelonSPONSelon_STATS_PRelonFIX + relonsponselonCodelon.namelon().toLowelonrCaselon()));
       }
     }
 
-    ERROR_EXCEPTIONS = builder.build();
+    elonRROR_elonXCelonPTIONS = buildelonr.build();
   }
 
-  private EarlybirdResponseMergeUtil() {
-  }
-
-  /**
-   * Tags the results in the given EarlybirdResponse with the given ThriftTweetSource and adds them
-   * to the given list of results.
-   *
-   * @param results The list of results to which the new results will be added.
-   * @param earlybirdResponse The EarlybirdResponse whose results will be added to {@code results}.
-   * @param tweetSource The ThriftTweetSource that will be used to mark all results in
-   *                    {@code earlybirdResponse}.
-   * @return {@code false} if {@code earlybirdResponse} is {@code null} or doesn't have any results;
-   *         {@code true}, otherwise.
-   */
-  public static boolean addResultsToList(List<ThriftSearchResult> results,
-                                         EarlybirdResponse earlybirdResponse,
-                                         ThriftTweetSource tweetSource) {
-    return EarlybirdResponseUtil.hasResults(earlybirdResponse)
-      && addResultsToList(results,
-                          earlybirdResponse.getSearchResults().getResults(),
-                          tweetSource);
+  privatelon elonarlybirdRelonsponselonMelonrgelonUtil() {
   }
 
   /**
-   * Tags the results in the given list with the given ThriftTweetSource and adds them to the given
-   * list of results.
+   * Tags thelon relonsults in thelon givelonn elonarlybirdRelonsponselon with thelon givelonn ThriftTwelonelontSourcelon and adds thelonm
+   * to thelon givelonn list of relonsults.
    *
-   * @param results The list of results to which the new results will be added.
-   * @param resultsToAdd The list of results to add.
-   * @param tweetSource The ThriftTweetSource that will be used to mark all results in
-   *                    {@code resultsToAdd}.
-   * @return {@code false} if {@code results} is {@code null} or if {@code resultsToAdd} is
-   *         {@code null} or doesn't have any results; {@code true}, otherwise.
+   * @param relonsults Thelon list of relonsults to which thelon nelonw relonsults will belon addelond.
+   * @param elonarlybirdRelonsponselon Thelon elonarlybirdRelonsponselon whoselon relonsults will belon addelond to {@codelon relonsults}.
+   * @param twelonelontSourcelon Thelon ThriftTwelonelontSourcelon that will belon uselond to mark all relonsults in
+   *                    {@codelon elonarlybirdRelonsponselon}.
+   * @relonturn {@codelon falselon} if {@codelon elonarlybirdRelonsponselon} is {@codelon null} or doelonsn't havelon any relonsults;
+   *         {@codelon truelon}, othelonrwiselon.
    */
-  public static boolean addResultsToList(List<ThriftSearchResult> results,
-                                         List<ThriftSearchResult> resultsToAdd,
-                                         ThriftTweetSource tweetSource) {
-    Preconditions.checkNotNull(results);
-    if ((resultsToAdd == null) || resultsToAdd.isEmpty()) {
-      return false;
+  public static boolelonan addRelonsultsToList(List<ThriftSelonarchRelonsult> relonsults,
+                                         elonarlybirdRelonsponselon elonarlybirdRelonsponselon,
+                                         ThriftTwelonelontSourcelon twelonelontSourcelon) {
+    relonturn elonarlybirdRelonsponselonUtil.hasRelonsults(elonarlybirdRelonsponselon)
+      && addRelonsultsToList(relonsults,
+                          elonarlybirdRelonsponselon.gelontSelonarchRelonsults().gelontRelonsults(),
+                          twelonelontSourcelon);
+  }
+
+  /**
+   * Tags thelon relonsults in thelon givelonn list with thelon givelonn ThriftTwelonelontSourcelon and adds thelonm to thelon givelonn
+   * list of relonsults.
+   *
+   * @param relonsults Thelon list of relonsults to which thelon nelonw relonsults will belon addelond.
+   * @param relonsultsToAdd Thelon list of relonsults to add.
+   * @param twelonelontSourcelon Thelon ThriftTwelonelontSourcelon that will belon uselond to mark all relonsults in
+   *                    {@codelon relonsultsToAdd}.
+   * @relonturn {@codelon falselon} if {@codelon relonsults} is {@codelon null} or if {@codelon relonsultsToAdd} is
+   *         {@codelon null} or doelonsn't havelon any relonsults; {@codelon truelon}, othelonrwiselon.
+   */
+  public static boolelonan addRelonsultsToList(List<ThriftSelonarchRelonsult> relonsults,
+                                         List<ThriftSelonarchRelonsult> relonsultsToAdd,
+                                         ThriftTwelonelontSourcelon twelonelontSourcelon) {
+    Prelonconditions.chelonckNotNull(relonsults);
+    if ((relonsultsToAdd == null) || relonsultsToAdd.iselonmpty()) {
+      relonturn falselon;
     }
 
-    markWithTweetSource(resultsToAdd, tweetSource);
+    markWithTwelonelontSourcelon(relonsultsToAdd, twelonelontSourcelon);
 
-    results.addAll(resultsToAdd);
-    return true;
+    relonsults.addAll(relonsultsToAdd);
+    relonturn truelon;
   }
 
   /**
-   * Distinct the input ThriftSearchResult by its status id. If there are duplicates, the first
-   * instance of the duplicates is returned in the distinct result. If the distinct result is the
-   * same as the input result, the initial input result is returned; otherwise, the distinct result
-   * is returned.
+   * Distinct thelon input ThriftSelonarchRelonsult by its status id. If thelonrelon arelon duplicatelons, thelon first
+   * instancelon of thelon duplicatelons is relonturnelond in thelon distinct relonsult. If thelon distinct relonsult is thelon
+   * samelon as thelon input relonsult, thelon initial input relonsult is relonturnelond; othelonrwiselon, thelon distinct relonsult
+   * is relonturnelond.
    *
-   * @param results the input result
-   * @param dupsStats stats counter track duplicates source
-   * @return the input result if there is no duplicate; otherwise, return the distinct result
+   * @param relonsults thelon input relonsult
+   * @param dupsStats stats countelonr track duplicatelons sourcelon
+   * @relonturn thelon input relonsult if thelonrelon is no duplicatelon; othelonrwiselon, relonturn thelon distinct relonsult
    */
-  public static List<ThriftSearchResult> distinctByStatusId(
-      List<ThriftSearchResult> results,
-      LoadingCache<Pair<ThriftTweetSource, ThriftTweetSource>, SearchCounter> dupsStats) {
-    Map<Long, ThriftTweetSource> seenStatusIdToSourceMap = new HashMap<>();
-    List<ThriftSearchResult> distinctResults = Lists.newArrayListWithCapacity(results.size());
-    for (ThriftSearchResult result : results)  {
-      if (seenStatusIdToSourceMap.containsKey(result.getId())) {
-        ThriftTweetSource source1 = seenStatusIdToSourceMap.get(result.getId());
-        ThriftTweetSource source2 = result.getTweetSource();
-        if (source1 != null && source2 != null) {
+  public static List<ThriftSelonarchRelonsult> distinctByStatusId(
+      List<ThriftSelonarchRelonsult> relonsults,
+      LoadingCachelon<Pair<ThriftTwelonelontSourcelon, ThriftTwelonelontSourcelon>, SelonarchCountelonr> dupsStats) {
+    Map<Long, ThriftTwelonelontSourcelon> selonelonnStatusIdToSourcelonMap = nelonw HashMap<>();
+    List<ThriftSelonarchRelonsult> distinctRelonsults = Lists.nelonwArrayListWithCapacity(relonsults.sizelon());
+    for (ThriftSelonarchRelonsult relonsult : relonsults)  {
+      if (selonelonnStatusIdToSourcelonMap.containsKelony(relonsult.gelontId())) {
+        ThriftTwelonelontSourcelon sourcelon1 = selonelonnStatusIdToSourcelonMap.gelont(relonsult.gelontId());
+        ThriftTwelonelontSourcelon sourcelon2 = relonsult.gelontTwelonelontSourcelon();
+        if (sourcelon1 != null && sourcelon2 != null) {
           try {
-            dupsStats.get(Pair.of(source1, source2)).increment();
-          } catch (ExecutionException e) {
-            LOG.warn("Could not increment stat for duplicate results from clusters " + source1
-                + " and " + source2, e);
+            dupsStats.gelont(Pair.of(sourcelon1, sourcelon2)).increlonmelonnt();
+          } catch (elonxeloncutionelonxcelonption elon) {
+            LOG.warn("Could not increlonmelonnt stat for duplicatelon relonsults from clustelonrs " + sourcelon1
+                + " and " + sourcelon2, elon);
           }
         }
-      } else {
-        distinctResults.add(result);
-        seenStatusIdToSourceMap.put(result.getId(), result.getTweetSource());
+      } elonlselon {
+        distinctRelonsults.add(relonsult);
+        selonelonnStatusIdToSourcelonMap.put(relonsult.gelontId(), relonsult.gelontTwelonelontSourcelon());
       }
     }
-    return results.size() == distinctResults.size() ? results : distinctResults;
+    relonturn relonsults.sizelon() == distinctRelonsults.sizelon() ? relonsults : distinctRelonsults;
   }
 
   /**
-   * Tags the given results with the given ThriftTweetSource.
+   * Tags thelon givelonn relonsults with thelon givelonn ThriftTwelonelontSourcelon.
    *
-   * @param results The results to be tagged.
-   * @param tweetSource The ThriftTweetSource to be used to tag the given results.
+   * @param relonsults Thelon relonsults to belon taggelond.
+   * @param twelonelontSourcelon Thelon ThriftTwelonelontSourcelon to belon uselond to tag thelon givelonn relonsults.
    */
-  public static void markWithTweetSource(List<ThriftSearchResult> results,
-                                         ThriftTweetSource tweetSource) {
-    if (results != null) {
-      for (ThriftSearchResult result : results) {
-        result.setTweetSource(tweetSource);
+  public static void markWithTwelonelontSourcelon(List<ThriftSelonarchRelonsult> relonsults,
+                                         ThriftTwelonelontSourcelon twelonelontSourcelon) {
+    if (relonsults != null) {
+      for (ThriftSelonarchRelonsult relonsult : relonsults) {
+        relonsult.selontTwelonelontSourcelon(twelonelontSourcelon);
       }
     }
   }
 
   /**
-   * Check if an Earlybird response is valid
+   * Chelonck if an elonarlybird relonsponselon is valid
    */
-  public static boolean isValidResponse(final EarlybirdResponse response) {
-    if (response == null) {
-      NULL_RESPONSE_COUNTER.increment();
-      return false;
+  public static boolelonan isValidRelonsponselon(final elonarlybirdRelonsponselon relonsponselon) {
+    if (relonsponselon == null) {
+      NULL_RelonSPONSelon_COUNTelonR.increlonmelonnt();
+      relonturn falselon;
     }
 
-    if (!EarlybirdResponseUtil.isSuccessfulResponse(response)) {
-      return false;
+    if (!elonarlybirdRelonsponselonUtil.isSuccelonssfulRelonsponselon(relonsponselon)) {
+      relonturn falselon;
     }
 
-    if (!response.isSetSearchResults()) {
-      SEARCH_RESULTS_NOT_SET_COUNTER.increment();
-      return true;
+    if (!relonsponselon.isSelontSelonarchRelonsults()) {
+      SelonARCH_RelonSULTS_NOT_SelonT_COUNTelonR.increlonmelonnt();
+      relonturn truelon;
     }
 
-    if (!response.getSearchResults().isSetResults()) {
-      SEARCH_RESULTS_WITH_RESULTS_NOT_SET_COUNTER.increment();
+    if (!relonsponselon.gelontSelonarchRelonsults().isSelontRelonsults()) {
+      SelonARCH_RelonSULTS_WITH_RelonSULTS_NOT_SelonT_COUNTelonR.increlonmelonnt();
     }
 
-    // In earlybird, when earlybird terminated, e.g., time out, complex queries - we don't set the
-    // min/max  searched status id.
-    boolean isEarlyTerminated = response.isSetEarlyTerminationInfo()
-        && response.getEarlyTerminationInfo().isEarlyTerminated();
+    // In elonarlybird, whelonn elonarlybird telonrminatelond, elon.g., timelon out, complelonx quelonrielons - welon don't selont thelon
+    // min/max  selonarchelond status id.
+    boolelonan iselonarlyTelonrminatelond = relonsponselon.isSelontelonarlyTelonrminationInfo()
+        && relonsponselon.gelontelonarlyTelonrminationInfo().iselonarlyTelonrminatelond();
 
-    if (!isEarlyTerminated && !response.getSearchResults().isSetMinSearchedStatusID()) {
-      MIN_SEARCHED_STATUS_ID_NOT_SET_COUNTER.increment();
+    if (!iselonarlyTelonrminatelond && !relonsponselon.gelontSelonarchRelonsults().isSelontMinSelonarchelondStatusID()) {
+      MIN_SelonARCHelonD_STATUS_ID_NOT_SelonT_COUNTelonR.increlonmelonnt();
     }
 
-    if (!isEarlyTerminated && !response.getSearchResults().isSetMaxSearchedStatusID()) {
-      MAX_SEARCHED_STATUS_ID_NOT_SET_COUNTER.increment();
+    if (!iselonarlyTelonrminatelond && !relonsponselon.gelontSelonarchRelonsults().isSelontMaxSelonarchelondStatusID()) {
+      MAX_SelonARCHelonD_STATUS_ID_NOT_SelonT_COUNTelonR.increlonmelonnt();
     }
 
-    return true;
+    relonturn truelon;
   }
 
   /**
-   * For invalid successful Earlybird Response, return a failed response with debug msg.
+   * For invalid succelonssful elonarlybird Relonsponselon, relonturn a failelond relonsponselon with delonbug msg.
    */
-  public static EarlybirdResponse transformInvalidResponse(final EarlybirdResponse response,
-                                                           final String debugMsg) {
-    if (response == null) {
-      return failedEarlybirdResponse(EarlybirdResponseCode.PERSISTENT_ERROR,
-          debugMsg + ", msg: null response from downstream");
+  public static elonarlybirdRelonsponselon transformInvalidRelonsponselon(final elonarlybirdRelonsponselon relonsponselon,
+                                                           final String delonbugMsg) {
+    if (relonsponselon == null) {
+      relonturn failelondelonarlybirdRelonsponselon(elonarlybirdRelonsponselonCodelon.PelonRSISTelonNT_elonRROR,
+          delonbugMsg + ", msg: null relonsponselon from downstrelonam");
     }
-    Preconditions.checkState(response.getResponseCode() != EarlybirdResponseCode.SUCCESS);
+    Prelonconditions.chelonckStatelon(relonsponselon.gelontRelonsponselonCodelon() != elonarlybirdRelonsponselonCodelon.SUCCelonSS);
 
-    EarlybirdResponseCode newResponseCode;
-    EarlybirdResponseCode responseCode = response.getResponseCode();
-    switch (responseCode) {
-      case TIER_SKIPPED:
-        ERROR_EXCEPTIONS.get(responseCode).increment();
-        return response;
-      case REQUEST_BLOCKED_ERROR:
-      case CLIENT_ERROR:
-      case SERVER_TIMEOUT_ERROR:
-      case QUOTA_EXCEEDED_ERROR:
-      case CLIENT_CANCEL_ERROR:
-      case TOO_MANY_PARTITIONS_FAILED_ERROR:
-        ERROR_EXCEPTIONS.get(responseCode).increment();
-        newResponseCode = responseCode;
-        break;
-      default:
-        ERROR_EXCEPTIONS.get(responseCode).increment();
-        newResponseCode = EarlybirdResponseCode.PERSISTENT_ERROR;
+    elonarlybirdRelonsponselonCodelon nelonwRelonsponselonCodelon;
+    elonarlybirdRelonsponselonCodelon relonsponselonCodelon = relonsponselon.gelontRelonsponselonCodelon();
+    switch (relonsponselonCodelon) {
+      caselon TIelonR_SKIPPelonD:
+        elonRROR_elonXCelonPTIONS.gelont(relonsponselonCodelon).increlonmelonnt();
+        relonturn relonsponselon;
+      caselon RelonQUelonST_BLOCKelonD_elonRROR:
+      caselon CLIelonNT_elonRROR:
+      caselon SelonRVelonR_TIMelonOUT_elonRROR:
+      caselon QUOTA_elonXCelonelonDelonD_elonRROR:
+      caselon CLIelonNT_CANCelonL_elonRROR:
+      caselon TOO_MANY_PARTITIONS_FAILelonD_elonRROR:
+        elonRROR_elonXCelonPTIONS.gelont(relonsponselonCodelon).increlonmelonnt();
+        nelonwRelonsponselonCodelon = relonsponselonCodelon;
+        brelonak;
+      delonfault:
+        elonRROR_elonXCelonPTIONS.gelont(relonsponselonCodelon).increlonmelonnt();
+        nelonwRelonsponselonCodelon = elonarlybirdRelonsponselonCodelon.PelonRSISTelonNT_elonRROR;
     }
 
-    String newDebugMsg = debugMsg + ", downstream response code: " + responseCode
-      + (response.isSetDebugString() ? ", downstream msg: " + response.getDebugString() : "");
+    String nelonwDelonbugMsg = delonbugMsg + ", downstrelonam relonsponselon codelon: " + relonsponselonCodelon
+      + (relonsponselon.isSelontDelonbugString() ? ", downstrelonam msg: " + relonsponselon.gelontDelonbugString() : "");
 
 
-    return failedEarlybirdResponse(newResponseCode, newDebugMsg);
+    relonturn failelondelonarlybirdRelonsponselon(nelonwRelonsponselonCodelon, nelonwDelonbugMsg);
   }
 
   /**
-   * Create a new EarlybirdResponse with debug msg
+   * Crelonatelon a nelonw elonarlybirdRelonsponselon with delonbug msg
    */
-  public static EarlybirdResponse failedEarlybirdResponse(final EarlybirdResponseCode responseCode,
-                                                          final String debugMsg) {
-    EarlybirdResponse failedResponse = new EarlybirdResponse();
-    failedResponse.setResponseCode(responseCode);
-    failedResponse.setDebugString(debugMsg);
-    return failedResponse;
+  public static elonarlybirdRelonsponselon failelondelonarlybirdRelonsponselon(final elonarlybirdRelonsponselonCodelon relonsponselonCodelon,
+                                                          final String delonbugMsg) {
+    elonarlybirdRelonsponselon failelondRelonsponselon = nelonw elonarlybirdRelonsponselon();
+    failelondRelonsponselon.selontRelonsponselonCodelon(relonsponselonCodelon);
+    failelondRelonsponselon.selontDelonbugString(delonbugMsg);
+    relonturn failelondRelonsponselon;
   }
 
   /**
-   * Returns the number of results to keep as part of merge-collection. Recency mode should ignore
-   * relevance options. In particular, the flag returnAllResults inside relevance options.
+   * Relonturns thelon numbelonr of relonsults to kelonelonp as part of melonrgelon-collelonction. Reloncelonncy modelon should ignorelon
+   * relonlelonvancelon options. In particular, thelon flag relonturnAllRelonsults insidelon relonlelonvancelon options.
    */
-  public static int computeNumResultsToKeep(EarlybirdRequest request) {
-    ThriftSearchQuery searchQuery = request.getSearchQuery();
+  public static int computelonNumRelonsultsToKelonelonp(elonarlybirdRelonquelonst relonquelonst) {
+    ThriftSelonarchQuelonry selonarchQuelonry = relonquelonst.gelontSelonarchQuelonry();
 
-    if (searchQuery.getRankingMode() != ThriftSearchRankingMode.RECENCY
-        && searchQuery.isSetRelevanceOptions()
-        && searchQuery.getRelevanceOptions().isReturnAllResults()) {
-      return Integer.MAX_VALUE;
+    if (selonarchQuelonry.gelontRankingModelon() != ThriftSelonarchRankingModelon.RelonCelonNCY
+        && selonarchQuelonry.isSelontRelonlelonvancelonOptions()
+        && selonarchQuelonry.gelontRelonlelonvancelonOptions().isRelonturnAllRelonsults()) {
+      relonturn Intelongelonr.MAX_VALUelon;
     }
 
-    if (request.isSetNumResultsToReturnAtRoot()) {
-      return request.getNumResultsToReturnAtRoot();
+    if (relonquelonst.isSelontNumRelonsultsToRelonturnAtRoot()) {
+      relonturn relonquelonst.gelontNumRelonsultsToRelonturnAtRoot();
     }
 
-    if (searchQuery.isSetCollectorParams()) {
-      return searchQuery.getCollectorParams().getNumResultsToReturn();
+    if (selonarchQuelonry.isSelontCollelonctorParams()) {
+      relonturn selonarchQuelonry.gelontCollelonctorParams().gelontNumRelonsultsToRelonturn();
     }
 
-    return searchQuery.getNumResults();
+    relonturn selonarchQuelonry.gelontNumRelonsults();
   }
 }

@@ -1,31 +1,31 @@
 scala_library(
-    name = "loadtest",
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "ann/src/main/resources",
-        "ann/src/main/scala/com/twitter/ann/annoy",
-        "ann/src/main/scala/com/twitter/ann/common",
-        "ann/src/main/scala/com/twitter/ann/faiss",
-        "ann/src/main/scala/com/twitter/ann/hnsw",
-        "ann/src/main/scala/com/twitter/ann/util",
-        "ann/src/main/thrift/com/twitter/ann/common:ann-common-scala",
-        "finatra/inject/inject-server/src/main/scala",
-        "src/scala/com/twitter/cortex/ml/embeddings/common:Helpers",
-        "twitter-server-internal/src/main/scala",
+    namelon = "loadtelonst",
+    sourcelons = ["*.scala"],
+    compilelonr_option_selonts = ["fatal_warnings"],
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        "ann/src/main/relonsourcelons",
+        "ann/src/main/scala/com/twittelonr/ann/annoy",
+        "ann/src/main/scala/com/twittelonr/ann/common",
+        "ann/src/main/scala/com/twittelonr/ann/faiss",
+        "ann/src/main/scala/com/twittelonr/ann/hnsw",
+        "ann/src/main/scala/com/twittelonr/ann/util",
+        "ann/src/main/thrift/com/twittelonr/ann/common:ann-common-scala",
+        "finatra/injelonct/injelonct-selonrvelonr/src/main/scala",
+        "src/scala/com/twittelonr/cortelonx/ml/elonmbelonddings/common:Helonlpelonrs",
+        "twittelonr-selonrvelonr-intelonrnal/src/main/scala",
         "util/util-logging/src/main/scala",
     ],
 )
 
 jvm_binary(
-    name = "bin",
-    basename = "ann-loadtest",
-    main = "com.twitter.ann.service.loadtest.AnnLoadTestMain",
-    runtime_platform = "java11",
-    dependencies = [
-        ":loadtest",
+    namelon = "bin",
+    baselonnamelon = "ann-loadtelonst",
+    main = "com.twittelonr.ann.selonrvicelon.loadtelonst.AnnLoadTelonstMain",
+    runtimelon_platform = "java11",
+    delonpelonndelonncielons = [
+        ":loadtelonst",
         "3rdparty/jvm/org/slf4j:slf4j-jdk14",
-        "twitter-server/slf4j-jdk14/src/main/scala",
+        "twittelonr-selonrvelonr/slf4j-jdk14/src/main/scala",
     ],
 )

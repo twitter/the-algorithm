@@ -1,34 +1,34 @@
-package com.twitter.simclusters_v2.common.clustering
+packagelon com.twittelonr.simclustelonrs_v2.common.clustelonring
 
 /**
- * Partitions a set of entities into clusters.
- * NOTE: The selection/construction of the cluster representatives (e.g. medoid, random, average) is implemented in ClusterRepresentativeSelectionMethod.scala
+ * Partitions a selont of elonntitielons into clustelonrs.
+ * NOTelon: Thelon selonlelonction/construction of thelon clustelonr relonprelonselonntativelons (elon.g. melondoid, random, avelonragelon) is implelonmelonntelond in ClustelonrRelonprelonselonntativelonSelonlelonctionMelonthod.scala
  */
-trait ClusteringMethod {
+trait ClustelonringMelonthod {
 
   /**
-   * The main external-facing method. Sub-classes should implement this method.
+   * Thelon main elonxtelonrnal-facing melonthod. Sub-classelons should implelonmelonnt this melonthod.
    *
-   * @param embeddings map of entity IDs and corresponding embeddings
-   * @param similarityFn function that outputs similarity (>=0, the larger, more similar), given two embeddings
-   * @tparam T embedding type. e.g. SimClustersEmbedding
+   * @param elonmbelonddings map of elonntity IDs and correlonsponding elonmbelonddings
+   * @param similarityFn function that outputs similarity (>=0, thelon largelonr, morelon similar), givelonn two elonmbelonddings
+   * @tparam T elonmbelondding typelon. elon.g. SimClustelonrselonmbelondding
    *
-   * @return A set of sets of entity IDs, each set representing a distinct cluster.
+   * @relonturn A selont of selonts of elonntity IDs, elonach selont relonprelonselonnting a distinct clustelonr.
    */
-  def cluster[T](
-    embeddings: Map[Long, T],
-    similarityFn: (T, T) => Double,
-    recordStatCallback: (String, Long) => Unit = (_, _) => ()
-  ): Set[Set[Long]]
+  delonf clustelonr[T](
+    elonmbelonddings: Map[Long, T],
+    similarityFn: (T, T) => Doublelon,
+    reloncordStatCallback: (String, Long) => Unit = (_, _) => ()
+  ): Selont[Selont[Long]]
 
 }
 
-object ClusteringStatistics {
+objelonct ClustelonringStatistics {
 
-  // Statistics, to be imported where recorded.
-  val StatSimilarityGraphTotalBuildTime = "similarity_graph_total_build_time_ms"
-  val StatClusteringAlgorithmRunTime = "clustering_algorithm_total_run_time_ms"
-  val StatMedoidSelectionTime = "medoid_selection_total_time_ms"
-  val StatComputedSimilarityBeforeFilter = "computed_similarity_before_filter"
+  // Statistics, to belon importelond whelonrelon reloncordelond.
+  val StatSimilarityGraphTotalBuildTimelon = "similarity_graph_total_build_timelon_ms"
+  val StatClustelonringAlgorithmRunTimelon = "clustelonring_algorithm_total_run_timelon_ms"
+  val StatMelondoidSelonlelonctionTimelon = "melondoid_selonlelonction_total_timelon_ms"
+  val StatComputelondSimilarityBelonforelonFiltelonr = "computelond_similarity_belonforelon_filtelonr"
 
 }

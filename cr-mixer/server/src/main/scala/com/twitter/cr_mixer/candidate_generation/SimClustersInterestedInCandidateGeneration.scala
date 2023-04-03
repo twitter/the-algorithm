@@ -1,640 +1,640 @@
-package com.twitter.cr_mixer.candidate_generation
+packagelon com.twittelonr.cr_mixelonr.candidatelon_gelonnelonration
 
-import com.twitter.cr_mixer.model.CandidateGenerationInfo
-import com.twitter.cr_mixer.model.TweetWithCandidateGenerationInfo
-import com.twitter.cr_mixer.model.TweetWithScore
-import com.twitter.cr_mixer.param.GlobalParams
-import com.twitter.cr_mixer.param.InterestedInParams
-import com.twitter.cr_mixer.param.SimClustersANNParams
-import com.twitter.cr_mixer.similarity_engine.EngineQuery
-import com.twitter.cr_mixer.similarity_engine.SimClustersANNSimilarityEngine
-import com.twitter.cr_mixer.similarity_engine.StandardSimilarityEngine
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.CandidateSource
-import com.twitter.frigate.common.util.StatsUtil
-import com.twitter.simclusters_v2.common.ModelVersions
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.timelines.configapi
-import com.twitter.util.Future
-import javax.inject.Inject
-import javax.inject.Singleton
-import javax.inject.Named
-import com.twitter.cr_mixer.model.ModuleNames
+import com.twittelonr.cr_mixelonr.modelonl.CandidatelonGelonnelonrationInfo
+import com.twittelonr.cr_mixelonr.modelonl.TwelonelontWithCandidatelonGelonnelonrationInfo
+import com.twittelonr.cr_mixelonr.modelonl.TwelonelontWithScorelon
+import com.twittelonr.cr_mixelonr.param.GlobalParams
+import com.twittelonr.cr_mixelonr.param.IntelonrelonstelondInParams
+import com.twittelonr.cr_mixelonr.param.SimClustelonrsANNParams
+import com.twittelonr.cr_mixelonr.similarity_elonnginelon.elonnginelonQuelonry
+import com.twittelonr.cr_mixelonr.similarity_elonnginelon.SimClustelonrsANNSimilarityelonnginelon
+import com.twittelonr.cr_mixelonr.similarity_elonnginelon.StandardSimilarityelonnginelon
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.frigatelon.common.baselon.CandidatelonSourcelon
+import com.twittelonr.frigatelon.common.util.StatsUtil
+import com.twittelonr.simclustelonrs_v2.common.ModelonlVelonrsions
+import com.twittelonr.simclustelonrs_v2.thriftscala.IntelonrnalId
+import com.twittelonr.timelonlinelons.configapi
+import com.twittelonr.util.Futurelon
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
+import javax.injelonct.Namelond
+import com.twittelonr.cr_mixelonr.modelonl.ModulelonNamelons
 
 /**
- * This store looks for similar tweets for a given UserId that generates UserInterestedIn
- * from SimClustersANN. It will be a standalone CandidateGeneration class moving forward.
+ * This storelon looks for similar twelonelonts for a givelonn UselonrId that gelonnelonratelons UselonrIntelonrelonstelondIn
+ * from SimClustelonrsANN. It will belon a standalonelon CandidatelonGelonnelonration class moving forward.
  *
- * After the abstraction improvement (apply SimilarityEngine trait)
- * these CG will be subjected to change.
+ * Aftelonr thelon abstraction improvelonmelonnt (apply Similarityelonnginelon trait)
+ * thelonselon CG will belon subjelonctelond to changelon.
  */
-@Singleton
-case class SimClustersInterestedInCandidateGeneration @Inject() (
-  @Named(ModuleNames.SimClustersANNSimilarityEngine)
-  simClustersANNSimilarityEngine: StandardSimilarityEngine[
-    SimClustersANNSimilarityEngine.Query,
-    TweetWithScore
+@Singlelonton
+caselon class SimClustelonrsIntelonrelonstelondInCandidatelonGelonnelonration @Injelonct() (
+  @Namelond(ModulelonNamelons.SimClustelonrsANNSimilarityelonnginelon)
+  simClustelonrsANNSimilarityelonnginelon: StandardSimilarityelonnginelon[
+    SimClustelonrsANNSimilarityelonnginelon.Quelonry,
+    TwelonelontWithScorelon
   ],
-  statsReceiver: StatsReceiver)
-    extends CandidateSource[
-      SimClustersInterestedInCandidateGeneration.Query,
-      Seq[TweetWithCandidateGenerationInfo]
+  statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds CandidatelonSourcelon[
+      SimClustelonrsIntelonrelonstelondInCandidatelonGelonnelonration.Quelonry,
+      Selonq[TwelonelontWithCandidatelonGelonnelonrationInfo]
     ] {
 
-  override def name: String = this.getClass.getSimpleName
-  private val stats = statsReceiver.scope(name)
-  private val fetchCandidatesStat = stats.scope("fetchCandidates")
+  ovelonrridelon delonf namelon: String = this.gelontClass.gelontSimplelonNamelon
+  privatelon val stats = statsReloncelonivelonr.scopelon(namelon)
+  privatelon val felontchCandidatelonsStat = stats.scopelon("felontchCandidatelons")
 
-  override def get(
-    query: SimClustersInterestedInCandidateGeneration.Query
-  ): Future[Option[Seq[Seq[TweetWithCandidateGenerationInfo]]]] = {
+  ovelonrridelon delonf gelont(
+    quelonry: SimClustelonrsIntelonrelonstelondInCandidatelonGelonnelonration.Quelonry
+  ): Futurelon[Option[Selonq[Selonq[TwelonelontWithCandidatelonGelonnelonrationInfo]]]] = {
 
-    query.internalId match {
-      case _: InternalId.UserId =>
-        StatsUtil.trackOptionItemsStats(fetchCandidatesStat) {
-          // UserInterestedIn Queries
-          val userInterestedInCandidateResultFut =
-            if (query.enableUserInterestedIn && query.enableProdSimClustersANNSimilarityEngine)
-              getInterestedInCandidateResult(
-                simClustersANNSimilarityEngine,
-                query.interestedInSimClustersANNQuery,
-                query.simClustersInterestedInMinScore)
-            else
-              Future.None
+    quelonry.intelonrnalId match {
+      caselon _: IntelonrnalId.UselonrId =>
+        StatsUtil.trackOptionItelonmsStats(felontchCandidatelonsStat) {
+          // UselonrIntelonrelonstelondIn Quelonrielons
+          val uselonrIntelonrelonstelondInCandidatelonRelonsultFut =
+            if (quelonry.elonnablelonUselonrIntelonrelonstelondIn && quelonry.elonnablelonProdSimClustelonrsANNSimilarityelonnginelon)
+              gelontIntelonrelonstelondInCandidatelonRelonsult(
+                simClustelonrsANNSimilarityelonnginelon,
+                quelonry.intelonrelonstelondInSimClustelonrsANNQuelonry,
+                quelonry.simClustelonrsIntelonrelonstelondInMinScorelon)
+            elonlselon
+              Futurelon.Nonelon
 
-          val userInterestedInExperimentalSANNCandidateResultFut =
-            if (query.enableUserInterestedIn && query.enableExperimentalSimClustersANNSimilarityEngine)
-              getInterestedInCandidateResult(
-                simClustersANNSimilarityEngine,
-                query.interestedInExperimentalSimClustersANNQuery,
-                query.simClustersInterestedInMinScore)
-            else
-              Future.None
+          val uselonrIntelonrelonstelondInelonxpelonrimelonntalSANNCandidatelonRelonsultFut =
+            if (quelonry.elonnablelonUselonrIntelonrelonstelondIn && quelonry.elonnablelonelonxpelonrimelonntalSimClustelonrsANNSimilarityelonnginelon)
+              gelontIntelonrelonstelondInCandidatelonRelonsult(
+                simClustelonrsANNSimilarityelonnginelon,
+                quelonry.intelonrelonstelondInelonxpelonrimelonntalSimClustelonrsANNQuelonry,
+                quelonry.simClustelonrsIntelonrelonstelondInMinScorelon)
+            elonlselon
+              Futurelon.Nonelon
 
-          val userInterestedInSANN1CandidateResultFut =
-            if (query.enableUserInterestedIn && query.enableSimClustersANN1SimilarityEngine)
-              getInterestedInCandidateResult(
-                simClustersANNSimilarityEngine,
-                query.interestedInSimClustersANN1Query,
-                query.simClustersInterestedInMinScore)
-            else
-              Future.None
+          val uselonrIntelonrelonstelondInSANN1CandidatelonRelonsultFut =
+            if (quelonry.elonnablelonUselonrIntelonrelonstelondIn && quelonry.elonnablelonSimClustelonrsANN1Similarityelonnginelon)
+              gelontIntelonrelonstelondInCandidatelonRelonsult(
+                simClustelonrsANNSimilarityelonnginelon,
+                quelonry.intelonrelonstelondInSimClustelonrsANN1Quelonry,
+                quelonry.simClustelonrsIntelonrelonstelondInMinScorelon)
+            elonlselon
+              Futurelon.Nonelon
 
-          val userInterestedInSANN2CandidateResultFut =
-            if (query.enableUserInterestedIn && query.enableSimClustersANN2SimilarityEngine)
-              getInterestedInCandidateResult(
-                simClustersANNSimilarityEngine,
-                query.interestedInSimClustersANN2Query,
-                query.simClustersInterestedInMinScore)
-            else
-              Future.None
+          val uselonrIntelonrelonstelondInSANN2CandidatelonRelonsultFut =
+            if (quelonry.elonnablelonUselonrIntelonrelonstelondIn && quelonry.elonnablelonSimClustelonrsANN2Similarityelonnginelon)
+              gelontIntelonrelonstelondInCandidatelonRelonsult(
+                simClustelonrsANNSimilarityelonnginelon,
+                quelonry.intelonrelonstelondInSimClustelonrsANN2Quelonry,
+                quelonry.simClustelonrsIntelonrelonstelondInMinScorelon)
+            elonlselon
+              Futurelon.Nonelon
 
-          val userInterestedInSANN3CandidateResultFut =
-            if (query.enableUserInterestedIn && query.enableSimClustersANN3SimilarityEngine)
-              getInterestedInCandidateResult(
-                simClustersANNSimilarityEngine,
-                query.interestedInSimClustersANN3Query,
-                query.simClustersInterestedInMinScore)
-            else
-              Future.None
+          val uselonrIntelonrelonstelondInSANN3CandidatelonRelonsultFut =
+            if (quelonry.elonnablelonUselonrIntelonrelonstelondIn && quelonry.elonnablelonSimClustelonrsANN3Similarityelonnginelon)
+              gelontIntelonrelonstelondInCandidatelonRelonsult(
+                simClustelonrsANNSimilarityelonnginelon,
+                quelonry.intelonrelonstelondInSimClustelonrsANN3Quelonry,
+                quelonry.simClustelonrsIntelonrelonstelondInMinScorelon)
+            elonlselon
+              Futurelon.Nonelon
 
-          val userInterestedInSANN5CandidateResultFut =
-            if (query.enableUserInterestedIn && query.enableSimClustersANN5SimilarityEngine)
-              getInterestedInCandidateResult(
-                simClustersANNSimilarityEngine,
-                query.interestedInSimClustersANN5Query,
-                query.simClustersInterestedInMinScore)
-            else
-              Future.None
+          val uselonrIntelonrelonstelondInSANN5CandidatelonRelonsultFut =
+            if (quelonry.elonnablelonUselonrIntelonrelonstelondIn && quelonry.elonnablelonSimClustelonrsANN5Similarityelonnginelon)
+              gelontIntelonrelonstelondInCandidatelonRelonsult(
+                simClustelonrsANNSimilarityelonnginelon,
+                quelonry.intelonrelonstelondInSimClustelonrsANN5Quelonry,
+                quelonry.simClustelonrsIntelonrelonstelondInMinScorelon)
+            elonlselon
+              Futurelon.Nonelon
 
-          val userInterestedInSANN4CandidateResultFut =
-            if (query.enableUserInterestedIn && query.enableSimClustersANN4SimilarityEngine)
-              getInterestedInCandidateResult(
-                simClustersANNSimilarityEngine,
-                query.interestedInSimClustersANN4Query,
-                query.simClustersInterestedInMinScore)
-            else
-              Future.None
-          // UserNextInterestedIn Queries
-          val userNextInterestedInCandidateResultFut =
-            if (query.enableUserNextInterestedIn && query.enableProdSimClustersANNSimilarityEngine)
-              getInterestedInCandidateResult(
-                simClustersANNSimilarityEngine,
-                query.nextInterestedInSimClustersANNQuery,
-                query.simClustersInterestedInMinScore)
-            else
-              Future.None
+          val uselonrIntelonrelonstelondInSANN4CandidatelonRelonsultFut =
+            if (quelonry.elonnablelonUselonrIntelonrelonstelondIn && quelonry.elonnablelonSimClustelonrsANN4Similarityelonnginelon)
+              gelontIntelonrelonstelondInCandidatelonRelonsult(
+                simClustelonrsANNSimilarityelonnginelon,
+                quelonry.intelonrelonstelondInSimClustelonrsANN4Quelonry,
+                quelonry.simClustelonrsIntelonrelonstelondInMinScorelon)
+            elonlselon
+              Futurelon.Nonelon
+          // UselonrNelonxtIntelonrelonstelondIn Quelonrielons
+          val uselonrNelonxtIntelonrelonstelondInCandidatelonRelonsultFut =
+            if (quelonry.elonnablelonUselonrNelonxtIntelonrelonstelondIn && quelonry.elonnablelonProdSimClustelonrsANNSimilarityelonnginelon)
+              gelontIntelonrelonstelondInCandidatelonRelonsult(
+                simClustelonrsANNSimilarityelonnginelon,
+                quelonry.nelonxtIntelonrelonstelondInSimClustelonrsANNQuelonry,
+                quelonry.simClustelonrsIntelonrelonstelondInMinScorelon)
+            elonlselon
+              Futurelon.Nonelon
 
-          val userNextInterestedInExperimentalSANNCandidateResultFut =
-            if (query.enableUserNextInterestedIn && query.enableExperimentalSimClustersANNSimilarityEngine)
-              getInterestedInCandidateResult(
-                simClustersANNSimilarityEngine,
-                query.nextInterestedInExperimentalSimClustersANNQuery,
-                query.simClustersInterestedInMinScore)
-            else
-              Future.None
+          val uselonrNelonxtIntelonrelonstelondInelonxpelonrimelonntalSANNCandidatelonRelonsultFut =
+            if (quelonry.elonnablelonUselonrNelonxtIntelonrelonstelondIn && quelonry.elonnablelonelonxpelonrimelonntalSimClustelonrsANNSimilarityelonnginelon)
+              gelontIntelonrelonstelondInCandidatelonRelonsult(
+                simClustelonrsANNSimilarityelonnginelon,
+                quelonry.nelonxtIntelonrelonstelondInelonxpelonrimelonntalSimClustelonrsANNQuelonry,
+                quelonry.simClustelonrsIntelonrelonstelondInMinScorelon)
+            elonlselon
+              Futurelon.Nonelon
 
-          val userNextInterestedInSANN1CandidateResultFut =
-            if (query.enableUserNextInterestedIn && query.enableSimClustersANN1SimilarityEngine)
-              getInterestedInCandidateResult(
-                simClustersANNSimilarityEngine,
-                query.nextInterestedInSimClustersANN1Query,
-                query.simClustersInterestedInMinScore)
-            else
-              Future.None
+          val uselonrNelonxtIntelonrelonstelondInSANN1CandidatelonRelonsultFut =
+            if (quelonry.elonnablelonUselonrNelonxtIntelonrelonstelondIn && quelonry.elonnablelonSimClustelonrsANN1Similarityelonnginelon)
+              gelontIntelonrelonstelondInCandidatelonRelonsult(
+                simClustelonrsANNSimilarityelonnginelon,
+                quelonry.nelonxtIntelonrelonstelondInSimClustelonrsANN1Quelonry,
+                quelonry.simClustelonrsIntelonrelonstelondInMinScorelon)
+            elonlselon
+              Futurelon.Nonelon
 
-          val userNextInterestedInSANN2CandidateResultFut =
-            if (query.enableUserNextInterestedIn && query.enableSimClustersANN2SimilarityEngine)
-              getInterestedInCandidateResult(
-                simClustersANNSimilarityEngine,
-                query.nextInterestedInSimClustersANN2Query,
-                query.simClustersInterestedInMinScore)
-            else
-              Future.None
+          val uselonrNelonxtIntelonrelonstelondInSANN2CandidatelonRelonsultFut =
+            if (quelonry.elonnablelonUselonrNelonxtIntelonrelonstelondIn && quelonry.elonnablelonSimClustelonrsANN2Similarityelonnginelon)
+              gelontIntelonrelonstelondInCandidatelonRelonsult(
+                simClustelonrsANNSimilarityelonnginelon,
+                quelonry.nelonxtIntelonrelonstelondInSimClustelonrsANN2Quelonry,
+                quelonry.simClustelonrsIntelonrelonstelondInMinScorelon)
+            elonlselon
+              Futurelon.Nonelon
 
-          val userNextInterestedInSANN3CandidateResultFut =
-            if (query.enableUserNextInterestedIn && query.enableSimClustersANN3SimilarityEngine)
-              getInterestedInCandidateResult(
-                simClustersANNSimilarityEngine,
-                query.nextInterestedInSimClustersANN3Query,
-                query.simClustersInterestedInMinScore)
-            else
-              Future.None
+          val uselonrNelonxtIntelonrelonstelondInSANN3CandidatelonRelonsultFut =
+            if (quelonry.elonnablelonUselonrNelonxtIntelonrelonstelondIn && quelonry.elonnablelonSimClustelonrsANN3Similarityelonnginelon)
+              gelontIntelonrelonstelondInCandidatelonRelonsult(
+                simClustelonrsANNSimilarityelonnginelon,
+                quelonry.nelonxtIntelonrelonstelondInSimClustelonrsANN3Quelonry,
+                quelonry.simClustelonrsIntelonrelonstelondInMinScorelon)
+            elonlselon
+              Futurelon.Nonelon
 
-          val userNextInterestedInSANN5CandidateResultFut =
-            if (query.enableUserNextInterestedIn && query.enableSimClustersANN5SimilarityEngine)
-              getInterestedInCandidateResult(
-                simClustersANNSimilarityEngine,
-                query.nextInterestedInSimClustersANN5Query,
-                query.simClustersInterestedInMinScore)
-            else
-              Future.None
+          val uselonrNelonxtIntelonrelonstelondInSANN5CandidatelonRelonsultFut =
+            if (quelonry.elonnablelonUselonrNelonxtIntelonrelonstelondIn && quelonry.elonnablelonSimClustelonrsANN5Similarityelonnginelon)
+              gelontIntelonrelonstelondInCandidatelonRelonsult(
+                simClustelonrsANNSimilarityelonnginelon,
+                quelonry.nelonxtIntelonrelonstelondInSimClustelonrsANN5Quelonry,
+                quelonry.simClustelonrsIntelonrelonstelondInMinScorelon)
+            elonlselon
+              Futurelon.Nonelon
 
-          val userNextInterestedInSANN4CandidateResultFut =
-            if (query.enableUserNextInterestedIn && query.enableSimClustersANN4SimilarityEngine)
-              getInterestedInCandidateResult(
-                simClustersANNSimilarityEngine,
-                query.nextInterestedInSimClustersANN4Query,
-                query.simClustersInterestedInMinScore)
-            else
-              Future.None
+          val uselonrNelonxtIntelonrelonstelondInSANN4CandidatelonRelonsultFut =
+            if (quelonry.elonnablelonUselonrNelonxtIntelonrelonstelondIn && quelonry.elonnablelonSimClustelonrsANN4Similarityelonnginelon)
+              gelontIntelonrelonstelondInCandidatelonRelonsult(
+                simClustelonrsANNSimilarityelonnginelon,
+                quelonry.nelonxtIntelonrelonstelondInSimClustelonrsANN4Quelonry,
+                quelonry.simClustelonrsIntelonrelonstelondInMinScorelon)
+            elonlselon
+              Futurelon.Nonelon
 
-          // AddressBookInterestedIn Queries
-          val userAddressBookInterestedInCandidateResultFut =
-            if (query.enableAddressBookNextInterestedIn && query.enableProdSimClustersANNSimilarityEngine)
-              getInterestedInCandidateResult(
-                simClustersANNSimilarityEngine,
-                query.addressbookInterestedInSimClustersANNQuery,
-                query.simClustersInterestedInMinScore)
-            else
-              Future.None
+          // AddrelonssBookIntelonrelonstelondIn Quelonrielons
+          val uselonrAddrelonssBookIntelonrelonstelondInCandidatelonRelonsultFut =
+            if (quelonry.elonnablelonAddrelonssBookNelonxtIntelonrelonstelondIn && quelonry.elonnablelonProdSimClustelonrsANNSimilarityelonnginelon)
+              gelontIntelonrelonstelondInCandidatelonRelonsult(
+                simClustelonrsANNSimilarityelonnginelon,
+                quelonry.addrelonssbookIntelonrelonstelondInSimClustelonrsANNQuelonry,
+                quelonry.simClustelonrsIntelonrelonstelondInMinScorelon)
+            elonlselon
+              Futurelon.Nonelon
 
-          val userAddressBookExperimentalSANNCandidateResultFut =
-            if (query.enableAddressBookNextInterestedIn && query.enableExperimentalSimClustersANNSimilarityEngine)
-              getInterestedInCandidateResult(
-                simClustersANNSimilarityEngine,
-                query.addressbookInterestedInExperimentalSimClustersANNQuery,
-                query.simClustersInterestedInMinScore)
-            else
-              Future.None
+          val uselonrAddrelonssBookelonxpelonrimelonntalSANNCandidatelonRelonsultFut =
+            if (quelonry.elonnablelonAddrelonssBookNelonxtIntelonrelonstelondIn && quelonry.elonnablelonelonxpelonrimelonntalSimClustelonrsANNSimilarityelonnginelon)
+              gelontIntelonrelonstelondInCandidatelonRelonsult(
+                simClustelonrsANNSimilarityelonnginelon,
+                quelonry.addrelonssbookIntelonrelonstelondInelonxpelonrimelonntalSimClustelonrsANNQuelonry,
+                quelonry.simClustelonrsIntelonrelonstelondInMinScorelon)
+            elonlselon
+              Futurelon.Nonelon
 
-          val userAddressBookSANN1CandidateResultFut =
-            if (query.enableAddressBookNextInterestedIn && query.enableSimClustersANN1SimilarityEngine)
-              getInterestedInCandidateResult(
-                simClustersANNSimilarityEngine,
-                query.addressbookInterestedInSimClustersANN1Query,
-                query.simClustersInterestedInMinScore)
-            else
-              Future.None
+          val uselonrAddrelonssBookSANN1CandidatelonRelonsultFut =
+            if (quelonry.elonnablelonAddrelonssBookNelonxtIntelonrelonstelondIn && quelonry.elonnablelonSimClustelonrsANN1Similarityelonnginelon)
+              gelontIntelonrelonstelondInCandidatelonRelonsult(
+                simClustelonrsANNSimilarityelonnginelon,
+                quelonry.addrelonssbookIntelonrelonstelondInSimClustelonrsANN1Quelonry,
+                quelonry.simClustelonrsIntelonrelonstelondInMinScorelon)
+            elonlselon
+              Futurelon.Nonelon
 
-          val userAddressBookSANN2CandidateResultFut =
-            if (query.enableAddressBookNextInterestedIn && query.enableSimClustersANN2SimilarityEngine)
-              getInterestedInCandidateResult(
-                simClustersANNSimilarityEngine,
-                query.addressbookInterestedInSimClustersANN2Query,
-                query.simClustersInterestedInMinScore)
-            else
-              Future.None
+          val uselonrAddrelonssBookSANN2CandidatelonRelonsultFut =
+            if (quelonry.elonnablelonAddrelonssBookNelonxtIntelonrelonstelondIn && quelonry.elonnablelonSimClustelonrsANN2Similarityelonnginelon)
+              gelontIntelonrelonstelondInCandidatelonRelonsult(
+                simClustelonrsANNSimilarityelonnginelon,
+                quelonry.addrelonssbookIntelonrelonstelondInSimClustelonrsANN2Quelonry,
+                quelonry.simClustelonrsIntelonrelonstelondInMinScorelon)
+            elonlselon
+              Futurelon.Nonelon
 
-          val userAddressBookSANN3CandidateResultFut =
-            if (query.enableAddressBookNextInterestedIn && query.enableSimClustersANN3SimilarityEngine)
-              getInterestedInCandidateResult(
-                simClustersANNSimilarityEngine,
-                query.addressbookInterestedInSimClustersANN3Query,
-                query.simClustersInterestedInMinScore)
-            else
-              Future.None
+          val uselonrAddrelonssBookSANN3CandidatelonRelonsultFut =
+            if (quelonry.elonnablelonAddrelonssBookNelonxtIntelonrelonstelondIn && quelonry.elonnablelonSimClustelonrsANN3Similarityelonnginelon)
+              gelontIntelonrelonstelondInCandidatelonRelonsult(
+                simClustelonrsANNSimilarityelonnginelon,
+                quelonry.addrelonssbookIntelonrelonstelondInSimClustelonrsANN3Quelonry,
+                quelonry.simClustelonrsIntelonrelonstelondInMinScorelon)
+            elonlselon
+              Futurelon.Nonelon
 
-          val userAddressBookSANN5CandidateResultFut =
-            if (query.enableAddressBookNextInterestedIn && query.enableSimClustersANN5SimilarityEngine)
-              getInterestedInCandidateResult(
-                simClustersANNSimilarityEngine,
-                query.addressbookInterestedInSimClustersANN5Query,
-                query.simClustersInterestedInMinScore)
-            else
-              Future.None
+          val uselonrAddrelonssBookSANN5CandidatelonRelonsultFut =
+            if (quelonry.elonnablelonAddrelonssBookNelonxtIntelonrelonstelondIn && quelonry.elonnablelonSimClustelonrsANN5Similarityelonnginelon)
+              gelontIntelonrelonstelondInCandidatelonRelonsult(
+                simClustelonrsANNSimilarityelonnginelon,
+                quelonry.addrelonssbookIntelonrelonstelondInSimClustelonrsANN5Quelonry,
+                quelonry.simClustelonrsIntelonrelonstelondInMinScorelon)
+            elonlselon
+              Futurelon.Nonelon
 
-          val userAddressBookSANN4CandidateResultFut =
-            if (query.enableAddressBookNextInterestedIn && query.enableSimClustersANN4SimilarityEngine)
-              getInterestedInCandidateResult(
-                simClustersANNSimilarityEngine,
-                query.addressbookInterestedInSimClustersANN4Query,
-                query.simClustersInterestedInMinScore)
-            else
-              Future.None
+          val uselonrAddrelonssBookSANN4CandidatelonRelonsultFut =
+            if (quelonry.elonnablelonAddrelonssBookNelonxtIntelonrelonstelondIn && quelonry.elonnablelonSimClustelonrsANN4Similarityelonnginelon)
+              gelontIntelonrelonstelondInCandidatelonRelonsult(
+                simClustelonrsANNSimilarityelonnginelon,
+                quelonry.addrelonssbookIntelonrelonstelondInSimClustelonrsANN4Quelonry,
+                quelonry.simClustelonrsIntelonrelonstelondInMinScorelon)
+            elonlselon
+              Futurelon.Nonelon
 
-          Future
-            .collect(
-              Seq(
-                userInterestedInCandidateResultFut,
-                userNextInterestedInCandidateResultFut,
-                userAddressBookInterestedInCandidateResultFut,
-                userInterestedInExperimentalSANNCandidateResultFut,
-                userNextInterestedInExperimentalSANNCandidateResultFut,
-                userAddressBookExperimentalSANNCandidateResultFut,
-                userInterestedInSANN1CandidateResultFut,
-                userNextInterestedInSANN1CandidateResultFut,
-                userAddressBookSANN1CandidateResultFut,
-                userInterestedInSANN2CandidateResultFut,
-                userNextInterestedInSANN2CandidateResultFut,
-                userAddressBookSANN2CandidateResultFut,
-                userInterestedInSANN3CandidateResultFut,
-                userNextInterestedInSANN3CandidateResultFut,
-                userAddressBookSANN3CandidateResultFut,
-                userInterestedInSANN5CandidateResultFut,
-                userNextInterestedInSANN5CandidateResultFut,
-                userAddressBookSANN5CandidateResultFut,
-                userInterestedInSANN4CandidateResultFut,
-                userNextInterestedInSANN4CandidateResultFut,
-                userAddressBookSANN4CandidateResultFut
+          Futurelon
+            .collelonct(
+              Selonq(
+                uselonrIntelonrelonstelondInCandidatelonRelonsultFut,
+                uselonrNelonxtIntelonrelonstelondInCandidatelonRelonsultFut,
+                uselonrAddrelonssBookIntelonrelonstelondInCandidatelonRelonsultFut,
+                uselonrIntelonrelonstelondInelonxpelonrimelonntalSANNCandidatelonRelonsultFut,
+                uselonrNelonxtIntelonrelonstelondInelonxpelonrimelonntalSANNCandidatelonRelonsultFut,
+                uselonrAddrelonssBookelonxpelonrimelonntalSANNCandidatelonRelonsultFut,
+                uselonrIntelonrelonstelondInSANN1CandidatelonRelonsultFut,
+                uselonrNelonxtIntelonrelonstelondInSANN1CandidatelonRelonsultFut,
+                uselonrAddrelonssBookSANN1CandidatelonRelonsultFut,
+                uselonrIntelonrelonstelondInSANN2CandidatelonRelonsultFut,
+                uselonrNelonxtIntelonrelonstelondInSANN2CandidatelonRelonsultFut,
+                uselonrAddrelonssBookSANN2CandidatelonRelonsultFut,
+                uselonrIntelonrelonstelondInSANN3CandidatelonRelonsultFut,
+                uselonrNelonxtIntelonrelonstelondInSANN3CandidatelonRelonsultFut,
+                uselonrAddrelonssBookSANN3CandidatelonRelonsultFut,
+                uselonrIntelonrelonstelondInSANN5CandidatelonRelonsultFut,
+                uselonrNelonxtIntelonrelonstelondInSANN5CandidatelonRelonsultFut,
+                uselonrAddrelonssBookSANN5CandidatelonRelonsultFut,
+                uselonrIntelonrelonstelondInSANN4CandidatelonRelonsultFut,
+                uselonrNelonxtIntelonrelonstelondInSANN4CandidatelonRelonsultFut,
+                uselonrAddrelonssBookSANN4CandidatelonRelonsultFut
               )
-            ).map { candidateResults =>
-              Some(
-                candidateResults.map(candidateResult => candidateResult.getOrElse(Seq.empty))
+            ).map { candidatelonRelonsults =>
+              Somelon(
+                candidatelonRelonsults.map(candidatelonRelonsult => candidatelonRelonsult.gelontOrelonlselon(Selonq.elonmpty))
               )
             }
         }
-      case _ =>
-        stats.counter("sourceId_is_not_userId_cnt").incr()
-        Future.None
+      caselon _ =>
+        stats.countelonr("sourcelonId_is_not_uselonrId_cnt").incr()
+        Futurelon.Nonelon
     }
   }
 
-  private def simClustersCandidateMinScoreFilter(
-    simClustersAnnCandidates: Seq[TweetWithScore],
-    simClustersInterestedInMinScore: Double,
-    simClustersANNConfigId: String
-  ): Seq[TweetWithScore] = {
-    val filteredCandidates = simClustersAnnCandidates
-      .filter { candidate =>
-        candidate.score > simClustersInterestedInMinScore
+  privatelon delonf simClustelonrsCandidatelonMinScorelonFiltelonr(
+    simClustelonrsAnnCandidatelons: Selonq[TwelonelontWithScorelon],
+    simClustelonrsIntelonrelonstelondInMinScorelon: Doublelon,
+    simClustelonrsANNConfigId: String
+  ): Selonq[TwelonelontWithScorelon] = {
+    val filtelonrelondCandidatelons = simClustelonrsAnnCandidatelons
+      .filtelonr { candidatelon =>
+        candidatelon.scorelon > simClustelonrsIntelonrelonstelondInMinScorelon
       }
 
-    stats.stat(simClustersANNConfigId, "simClustersAnnCandidates_size").add(filteredCandidates.size)
-    stats.counter(simClustersANNConfigId, "simClustersAnnRequests").incr()
-    if (filteredCandidates.isEmpty)
-      stats.counter(simClustersANNConfigId, "emptyFilteredSimClustersAnnCandidates").incr()
+    stats.stat(simClustelonrsANNConfigId, "simClustelonrsAnnCandidatelons_sizelon").add(filtelonrelondCandidatelons.sizelon)
+    stats.countelonr(simClustelonrsANNConfigId, "simClustelonrsAnnRelonquelonsts").incr()
+    if (filtelonrelondCandidatelons.iselonmpty)
+      stats.countelonr(simClustelonrsANNConfigId, "elonmptyFiltelonrelondSimClustelonrsAnnCandidatelons").incr()
 
-    filteredCandidates.map { candidate =>
-      TweetWithScore(candidate.tweetId, candidate.score)
+    filtelonrelondCandidatelons.map { candidatelon =>
+      TwelonelontWithScorelon(candidatelon.twelonelontId, candidatelon.scorelon)
     }
   }
 
-  private def getInterestedInCandidateResult(
-    simClustersANNSimilarityEngine: StandardSimilarityEngine[
-      SimClustersANNSimilarityEngine.Query,
-      TweetWithScore
+  privatelon delonf gelontIntelonrelonstelondInCandidatelonRelonsult(
+    simClustelonrsANNSimilarityelonnginelon: StandardSimilarityelonnginelon[
+      SimClustelonrsANNSimilarityelonnginelon.Quelonry,
+      TwelonelontWithScorelon
     ],
-    simClustersANNQuery: EngineQuery[SimClustersANNSimilarityEngine.Query],
-    simClustersInterestedInMinScore: Double,
-  ): Future[Option[Seq[TweetWithCandidateGenerationInfo]]] = {
-    val interestedInCandidatesFut =
-      simClustersANNSimilarityEngine.getCandidates(simClustersANNQuery)
+    simClustelonrsANNQuelonry: elonnginelonQuelonry[SimClustelonrsANNSimilarityelonnginelon.Quelonry],
+    simClustelonrsIntelonrelonstelondInMinScorelon: Doublelon,
+  ): Futurelon[Option[Selonq[TwelonelontWithCandidatelonGelonnelonrationInfo]]] = {
+    val intelonrelonstelondInCandidatelonsFut =
+      simClustelonrsANNSimilarityelonnginelon.gelontCandidatelons(simClustelonrsANNQuelonry)
 
-    val interestedInCandidateResultFut = interestedInCandidatesFut.map { interestedInCandidates =>
-      stats.stat("candidateSize").add(interestedInCandidates.size)
+    val intelonrelonstelondInCandidatelonRelonsultFut = intelonrelonstelondInCandidatelonsFut.map { intelonrelonstelondInCandidatelons =>
+      stats.stat("candidatelonSizelon").add(intelonrelonstelondInCandidatelons.sizelon)
 
-      val embeddingCandidatesStat = stats.scope(
-        simClustersANNQuery.storeQuery.simClustersANNQuery.sourceEmbeddingId.embeddingType.name)
+      val elonmbelonddingCandidatelonsStat = stats.scopelon(
+        simClustelonrsANNQuelonry.storelonQuelonry.simClustelonrsANNQuelonry.sourcelonelonmbelonddingId.elonmbelonddingTypelon.namelon)
 
-      embeddingCandidatesStat.stat("candidateSize").add(interestedInCandidates.size)
-      if (interestedInCandidates.isEmpty) {
-        embeddingCandidatesStat.counter("empty_results").incr()
+      elonmbelonddingCandidatelonsStat.stat("candidatelonSizelon").add(intelonrelonstelondInCandidatelons.sizelon)
+      if (intelonrelonstelondInCandidatelons.iselonmpty) {
+        elonmbelonddingCandidatelonsStat.countelonr("elonmpty_relonsults").incr()
       }
-      embeddingCandidatesStat.counter("requests").incr()
+      elonmbelonddingCandidatelonsStat.countelonr("relonquelonsts").incr()
 
-      val filteredTweets = simClustersCandidateMinScoreFilter(
-        interestedInCandidates.toSeq.flatten,
-        simClustersInterestedInMinScore,
-        simClustersANNQuery.storeQuery.simClustersANNConfigId)
+      val filtelonrelondTwelonelonts = simClustelonrsCandidatelonMinScorelonFiltelonr(
+        intelonrelonstelondInCandidatelons.toSelonq.flattelonn,
+        simClustelonrsIntelonrelonstelondInMinScorelon,
+        simClustelonrsANNQuelonry.storelonQuelonry.simClustelonrsANNConfigId)
 
-      val interestedInTweetsWithCGInfo = filteredTweets.map { tweetWithScore =>
-        TweetWithCandidateGenerationInfo(
-          tweetWithScore.tweetId,
-          CandidateGenerationInfo(
-            None,
-            SimClustersANNSimilarityEngine
-              .toSimilarityEngineInfo(simClustersANNQuery, tweetWithScore.score),
-            Seq.empty // SANN is an atomic SE, and hence it has no contributing SEs
+      val intelonrelonstelondInTwelonelontsWithCGInfo = filtelonrelondTwelonelonts.map { twelonelontWithScorelon =>
+        TwelonelontWithCandidatelonGelonnelonrationInfo(
+          twelonelontWithScorelon.twelonelontId,
+          CandidatelonGelonnelonrationInfo(
+            Nonelon,
+            SimClustelonrsANNSimilarityelonnginelon
+              .toSimilarityelonnginelonInfo(simClustelonrsANNQuelonry, twelonelontWithScorelon.scorelon),
+            Selonq.elonmpty // SANN is an atomic Selon, and helonncelon it has no contributing Selons
           )
         )
       }
 
-      val interestedInResults = if (interestedInTweetsWithCGInfo.nonEmpty) {
-        Some(interestedInTweetsWithCGInfo)
-      } else None
-      interestedInResults
+      val intelonrelonstelondInRelonsults = if (intelonrelonstelondInTwelonelontsWithCGInfo.nonelonmpty) {
+        Somelon(intelonrelonstelondInTwelonelontsWithCGInfo)
+      } elonlselon Nonelon
+      intelonrelonstelondInRelonsults
     }
-    interestedInCandidateResultFut
+    intelonrelonstelondInCandidatelonRelonsultFut
   }
 }
 
-object SimClustersInterestedInCandidateGeneration {
+objelonct SimClustelonrsIntelonrelonstelondInCandidatelonGelonnelonration {
 
-  case class Query(
-    internalId: InternalId,
-    enableUserInterestedIn: Boolean,
-    enableUserNextInterestedIn: Boolean,
-    enableAddressBookNextInterestedIn: Boolean,
-    enableProdSimClustersANNSimilarityEngine: Boolean,
-    enableExperimentalSimClustersANNSimilarityEngine: Boolean,
-    enableSimClustersANN1SimilarityEngine: Boolean,
-    enableSimClustersANN2SimilarityEngine: Boolean,
-    enableSimClustersANN3SimilarityEngine: Boolean,
-    enableSimClustersANN5SimilarityEngine: Boolean,
-    enableSimClustersANN4SimilarityEngine: Boolean,
-    simClustersInterestedInMinScore: Double,
-    simClustersNextInterestedInMinScore: Double,
-    simClustersAddressBookInterestedInMinScore: Double,
-    interestedInSimClustersANNQuery: EngineQuery[SimClustersANNSimilarityEngine.Query],
-    nextInterestedInSimClustersANNQuery: EngineQuery[SimClustersANNSimilarityEngine.Query],
-    addressbookInterestedInSimClustersANNQuery: EngineQuery[SimClustersANNSimilarityEngine.Query],
-    interestedInExperimentalSimClustersANNQuery: EngineQuery[SimClustersANNSimilarityEngine.Query],
-    nextInterestedInExperimentalSimClustersANNQuery: EngineQuery[
-      SimClustersANNSimilarityEngine.Query
+  caselon class Quelonry(
+    intelonrnalId: IntelonrnalId,
+    elonnablelonUselonrIntelonrelonstelondIn: Boolelonan,
+    elonnablelonUselonrNelonxtIntelonrelonstelondIn: Boolelonan,
+    elonnablelonAddrelonssBookNelonxtIntelonrelonstelondIn: Boolelonan,
+    elonnablelonProdSimClustelonrsANNSimilarityelonnginelon: Boolelonan,
+    elonnablelonelonxpelonrimelonntalSimClustelonrsANNSimilarityelonnginelon: Boolelonan,
+    elonnablelonSimClustelonrsANN1Similarityelonnginelon: Boolelonan,
+    elonnablelonSimClustelonrsANN2Similarityelonnginelon: Boolelonan,
+    elonnablelonSimClustelonrsANN3Similarityelonnginelon: Boolelonan,
+    elonnablelonSimClustelonrsANN5Similarityelonnginelon: Boolelonan,
+    elonnablelonSimClustelonrsANN4Similarityelonnginelon: Boolelonan,
+    simClustelonrsIntelonrelonstelondInMinScorelon: Doublelon,
+    simClustelonrsNelonxtIntelonrelonstelondInMinScorelon: Doublelon,
+    simClustelonrsAddrelonssBookIntelonrelonstelondInMinScorelon: Doublelon,
+    intelonrelonstelondInSimClustelonrsANNQuelonry: elonnginelonQuelonry[SimClustelonrsANNSimilarityelonnginelon.Quelonry],
+    nelonxtIntelonrelonstelondInSimClustelonrsANNQuelonry: elonnginelonQuelonry[SimClustelonrsANNSimilarityelonnginelon.Quelonry],
+    addrelonssbookIntelonrelonstelondInSimClustelonrsANNQuelonry: elonnginelonQuelonry[SimClustelonrsANNSimilarityelonnginelon.Quelonry],
+    intelonrelonstelondInelonxpelonrimelonntalSimClustelonrsANNQuelonry: elonnginelonQuelonry[SimClustelonrsANNSimilarityelonnginelon.Quelonry],
+    nelonxtIntelonrelonstelondInelonxpelonrimelonntalSimClustelonrsANNQuelonry: elonnginelonQuelonry[
+      SimClustelonrsANNSimilarityelonnginelon.Quelonry
     ],
-    addressbookInterestedInExperimentalSimClustersANNQuery: EngineQuery[
-      SimClustersANNSimilarityEngine.Query
+    addrelonssbookIntelonrelonstelondInelonxpelonrimelonntalSimClustelonrsANNQuelonry: elonnginelonQuelonry[
+      SimClustelonrsANNSimilarityelonnginelon.Quelonry
     ],
-    interestedInSimClustersANN1Query: EngineQuery[SimClustersANNSimilarityEngine.Query],
-    nextInterestedInSimClustersANN1Query: EngineQuery[SimClustersANNSimilarityEngine.Query],
-    addressbookInterestedInSimClustersANN1Query: EngineQuery[SimClustersANNSimilarityEngine.Query],
-    interestedInSimClustersANN2Query: EngineQuery[SimClustersANNSimilarityEngine.Query],
-    nextInterestedInSimClustersANN2Query: EngineQuery[SimClustersANNSimilarityEngine.Query],
-    addressbookInterestedInSimClustersANN2Query: EngineQuery[SimClustersANNSimilarityEngine.Query],
-    interestedInSimClustersANN3Query: EngineQuery[SimClustersANNSimilarityEngine.Query],
-    nextInterestedInSimClustersANN3Query: EngineQuery[SimClustersANNSimilarityEngine.Query],
-    addressbookInterestedInSimClustersANN3Query: EngineQuery[SimClustersANNSimilarityEngine.Query],
-    interestedInSimClustersANN5Query: EngineQuery[SimClustersANNSimilarityEngine.Query],
-    nextInterestedInSimClustersANN5Query: EngineQuery[SimClustersANNSimilarityEngine.Query],
-    addressbookInterestedInSimClustersANN5Query: EngineQuery[SimClustersANNSimilarityEngine.Query],
-    interestedInSimClustersANN4Query: EngineQuery[SimClustersANNSimilarityEngine.Query],
-    nextInterestedInSimClustersANN4Query: EngineQuery[SimClustersANNSimilarityEngine.Query],
-    addressbookInterestedInSimClustersANN4Query: EngineQuery[SimClustersANNSimilarityEngine.Query],
+    intelonrelonstelondInSimClustelonrsANN1Quelonry: elonnginelonQuelonry[SimClustelonrsANNSimilarityelonnginelon.Quelonry],
+    nelonxtIntelonrelonstelondInSimClustelonrsANN1Quelonry: elonnginelonQuelonry[SimClustelonrsANNSimilarityelonnginelon.Quelonry],
+    addrelonssbookIntelonrelonstelondInSimClustelonrsANN1Quelonry: elonnginelonQuelonry[SimClustelonrsANNSimilarityelonnginelon.Quelonry],
+    intelonrelonstelondInSimClustelonrsANN2Quelonry: elonnginelonQuelonry[SimClustelonrsANNSimilarityelonnginelon.Quelonry],
+    nelonxtIntelonrelonstelondInSimClustelonrsANN2Quelonry: elonnginelonQuelonry[SimClustelonrsANNSimilarityelonnginelon.Quelonry],
+    addrelonssbookIntelonrelonstelondInSimClustelonrsANN2Quelonry: elonnginelonQuelonry[SimClustelonrsANNSimilarityelonnginelon.Quelonry],
+    intelonrelonstelondInSimClustelonrsANN3Quelonry: elonnginelonQuelonry[SimClustelonrsANNSimilarityelonnginelon.Quelonry],
+    nelonxtIntelonrelonstelondInSimClustelonrsANN3Quelonry: elonnginelonQuelonry[SimClustelonrsANNSimilarityelonnginelon.Quelonry],
+    addrelonssbookIntelonrelonstelondInSimClustelonrsANN3Quelonry: elonnginelonQuelonry[SimClustelonrsANNSimilarityelonnginelon.Quelonry],
+    intelonrelonstelondInSimClustelonrsANN5Quelonry: elonnginelonQuelonry[SimClustelonrsANNSimilarityelonnginelon.Quelonry],
+    nelonxtIntelonrelonstelondInSimClustelonrsANN5Quelonry: elonnginelonQuelonry[SimClustelonrsANNSimilarityelonnginelon.Quelonry],
+    addrelonssbookIntelonrelonstelondInSimClustelonrsANN5Quelonry: elonnginelonQuelonry[SimClustelonrsANNSimilarityelonnginelon.Quelonry],
+    intelonrelonstelondInSimClustelonrsANN4Quelonry: elonnginelonQuelonry[SimClustelonrsANNSimilarityelonnginelon.Quelonry],
+    nelonxtIntelonrelonstelondInSimClustelonrsANN4Quelonry: elonnginelonQuelonry[SimClustelonrsANNSimilarityelonnginelon.Quelonry],
+    addrelonssbookIntelonrelonstelondInSimClustelonrsANN4Quelonry: elonnginelonQuelonry[SimClustelonrsANNSimilarityelonnginelon.Quelonry],
   )
 
-  def fromParams(
-    internalId: InternalId,
+  delonf fromParams(
+    intelonrnalId: IntelonrnalId,
     params: configapi.Params,
-  ): Query = {
-    // SimClusters common configs
-    val simClustersModelVersion =
-      ModelVersions.Enum.enumToSimClustersModelVersionMap(params(GlobalParams.ModelVersionParam))
-    val simClustersANNConfigId = params(SimClustersANNParams.SimClustersANNConfigId)
-    val experimentalSimClustersANNConfigId = params(
-      SimClustersANNParams.ExperimentalSimClustersANNConfigId)
-    val simClustersANN1ConfigId = params(SimClustersANNParams.SimClustersANN1ConfigId)
-    val simClustersANN2ConfigId = params(SimClustersANNParams.SimClustersANN2ConfigId)
-    val simClustersANN3ConfigId = params(SimClustersANNParams.SimClustersANN3ConfigId)
-    val simClustersANN5ConfigId = params(SimClustersANNParams.SimClustersANN5ConfigId)
-    val simClustersANN4ConfigId = params(SimClustersANNParams.SimClustersANN4ConfigId)
+  ): Quelonry = {
+    // SimClustelonrs common configs
+    val simClustelonrsModelonlVelonrsion =
+      ModelonlVelonrsions.elonnum.elonnumToSimClustelonrsModelonlVelonrsionMap(params(GlobalParams.ModelonlVelonrsionParam))
+    val simClustelonrsANNConfigId = params(SimClustelonrsANNParams.SimClustelonrsANNConfigId)
+    val elonxpelonrimelonntalSimClustelonrsANNConfigId = params(
+      SimClustelonrsANNParams.elonxpelonrimelonntalSimClustelonrsANNConfigId)
+    val simClustelonrsANN1ConfigId = params(SimClustelonrsANNParams.SimClustelonrsANN1ConfigId)
+    val simClustelonrsANN2ConfigId = params(SimClustelonrsANNParams.SimClustelonrsANN2ConfigId)
+    val simClustelonrsANN3ConfigId = params(SimClustelonrsANNParams.SimClustelonrsANN3ConfigId)
+    val simClustelonrsANN5ConfigId = params(SimClustelonrsANNParams.SimClustelonrsANN5ConfigId)
+    val simClustelonrsANN4ConfigId = params(SimClustelonrsANNParams.SimClustelonrsANN4ConfigId)
 
-    val simClustersInterestedInMinScore = params(InterestedInParams.MinScoreParam)
-    val simClustersNextInterestedInMinScore = params(
-      InterestedInParams.MinScoreSequentialModelParam)
-    val simClustersAddressBookInterestedInMinScore = params(
-      InterestedInParams.MinScoreAddressBookParam)
+    val simClustelonrsIntelonrelonstelondInMinScorelon = params(IntelonrelonstelondInParams.MinScorelonParam)
+    val simClustelonrsNelonxtIntelonrelonstelondInMinScorelon = params(
+      IntelonrelonstelondInParams.MinScorelonSelonquelonntialModelonlParam)
+    val simClustelonrsAddrelonssBookIntelonrelonstelondInMinScorelon = params(
+      IntelonrelonstelondInParams.MinScorelonAddrelonssBookParam)
 
-    // InterestedIn embeddings parameters
-    val interestedInEmbedding = params(InterestedInParams.InterestedInEmbeddingIdParam)
-    val nextInterestedInEmbedding = params(InterestedInParams.NextInterestedInEmbeddingIdParam)
-    val addressbookInterestedInEmbedding = params(
-      InterestedInParams.AddressBookInterestedInEmbeddingIdParam)
+    // IntelonrelonstelondIn elonmbelonddings paramelontelonrs
+    val intelonrelonstelondInelonmbelondding = params(IntelonrelonstelondInParams.IntelonrelonstelondInelonmbelonddingIdParam)
+    val nelonxtIntelonrelonstelondInelonmbelondding = params(IntelonrelonstelondInParams.NelonxtIntelonrelonstelondInelonmbelonddingIdParam)
+    val addrelonssbookIntelonrelonstelondInelonmbelondding = params(
+      IntelonrelonstelondInParams.AddrelonssBookIntelonrelonstelondInelonmbelonddingIdParam)
 
-    // Prod SimClustersANN Query
-    val interestedInSimClustersANNQuery =
-      SimClustersANNSimilarityEngine.fromParams(
-        internalId,
-        interestedInEmbedding.embeddingType,
-        simClustersModelVersion,
-        simClustersANNConfigId,
+    // Prod SimClustelonrsANN Quelonry
+    val intelonrelonstelondInSimClustelonrsANNQuelonry =
+      SimClustelonrsANNSimilarityelonnginelon.fromParams(
+        intelonrnalId,
+        intelonrelonstelondInelonmbelondding.elonmbelonddingTypelon,
+        simClustelonrsModelonlVelonrsion,
+        simClustelonrsANNConfigId,
         params)
 
-    val nextInterestedInSimClustersANNQuery =
-      SimClustersANNSimilarityEngine.fromParams(
-        internalId,
-        nextInterestedInEmbedding.embeddingType,
-        simClustersModelVersion,
-        simClustersANNConfigId,
+    val nelonxtIntelonrelonstelondInSimClustelonrsANNQuelonry =
+      SimClustelonrsANNSimilarityelonnginelon.fromParams(
+        intelonrnalId,
+        nelonxtIntelonrelonstelondInelonmbelondding.elonmbelonddingTypelon,
+        simClustelonrsModelonlVelonrsion,
+        simClustelonrsANNConfigId,
         params)
 
-    val addressbookInterestedInSimClustersANNQuery =
-      SimClustersANNSimilarityEngine.fromParams(
-        internalId,
-        addressbookInterestedInEmbedding.embeddingType,
-        simClustersModelVersion,
-        simClustersANNConfigId,
+    val addrelonssbookIntelonrelonstelondInSimClustelonrsANNQuelonry =
+      SimClustelonrsANNSimilarityelonnginelon.fromParams(
+        intelonrnalId,
+        addrelonssbookIntelonrelonstelondInelonmbelondding.elonmbelonddingTypelon,
+        simClustelonrsModelonlVelonrsion,
+        simClustelonrsANNConfigId,
         params)
 
-    // Experimental SANN cluster Query
-    val interestedInExperimentalSimClustersANNQuery =
-      SimClustersANNSimilarityEngine.fromParams(
-        internalId,
-        interestedInEmbedding.embeddingType,
-        simClustersModelVersion,
-        experimentalSimClustersANNConfigId,
+    // elonxpelonrimelonntal SANN clustelonr Quelonry
+    val intelonrelonstelondInelonxpelonrimelonntalSimClustelonrsANNQuelonry =
+      SimClustelonrsANNSimilarityelonnginelon.fromParams(
+        intelonrnalId,
+        intelonrelonstelondInelonmbelondding.elonmbelonddingTypelon,
+        simClustelonrsModelonlVelonrsion,
+        elonxpelonrimelonntalSimClustelonrsANNConfigId,
         params)
 
-    val nextInterestedInExperimentalSimClustersANNQuery =
-      SimClustersANNSimilarityEngine.fromParams(
-        internalId,
-        nextInterestedInEmbedding.embeddingType,
-        simClustersModelVersion,
-        experimentalSimClustersANNConfigId,
+    val nelonxtIntelonrelonstelondInelonxpelonrimelonntalSimClustelonrsANNQuelonry =
+      SimClustelonrsANNSimilarityelonnginelon.fromParams(
+        intelonrnalId,
+        nelonxtIntelonrelonstelondInelonmbelondding.elonmbelonddingTypelon,
+        simClustelonrsModelonlVelonrsion,
+        elonxpelonrimelonntalSimClustelonrsANNConfigId,
         params)
 
-    val addressbookInterestedInExperimentalSimClustersANNQuery =
-      SimClustersANNSimilarityEngine.fromParams(
-        internalId,
-        addressbookInterestedInEmbedding.embeddingType,
-        simClustersModelVersion,
-        experimentalSimClustersANNConfigId,
+    val addrelonssbookIntelonrelonstelondInelonxpelonrimelonntalSimClustelonrsANNQuelonry =
+      SimClustelonrsANNSimilarityelonnginelon.fromParams(
+        intelonrnalId,
+        addrelonssbookIntelonrelonstelondInelonmbelondding.elonmbelonddingTypelon,
+        simClustelonrsModelonlVelonrsion,
+        elonxpelonrimelonntalSimClustelonrsANNConfigId,
         params)
 
-    // SimClusters ANN cluster 1 Query
-    val interestedInSimClustersANN1Query =
-      SimClustersANNSimilarityEngine.fromParams(
-        internalId,
-        interestedInEmbedding.embeddingType,
-        simClustersModelVersion,
-        simClustersANN1ConfigId,
+    // SimClustelonrs ANN clustelonr 1 Quelonry
+    val intelonrelonstelondInSimClustelonrsANN1Quelonry =
+      SimClustelonrsANNSimilarityelonnginelon.fromParams(
+        intelonrnalId,
+        intelonrelonstelondInelonmbelondding.elonmbelonddingTypelon,
+        simClustelonrsModelonlVelonrsion,
+        simClustelonrsANN1ConfigId,
         params)
 
-    val nextInterestedInSimClustersANN1Query =
-      SimClustersANNSimilarityEngine.fromParams(
-        internalId,
-        nextInterestedInEmbedding.embeddingType,
-        simClustersModelVersion,
-        simClustersANN1ConfigId,
+    val nelonxtIntelonrelonstelondInSimClustelonrsANN1Quelonry =
+      SimClustelonrsANNSimilarityelonnginelon.fromParams(
+        intelonrnalId,
+        nelonxtIntelonrelonstelondInelonmbelondding.elonmbelonddingTypelon,
+        simClustelonrsModelonlVelonrsion,
+        simClustelonrsANN1ConfigId,
         params)
 
-    val addressbookInterestedInSimClustersANN1Query =
-      SimClustersANNSimilarityEngine.fromParams(
-        internalId,
-        addressbookInterestedInEmbedding.embeddingType,
-        simClustersModelVersion,
-        simClustersANN1ConfigId,
+    val addrelonssbookIntelonrelonstelondInSimClustelonrsANN1Quelonry =
+      SimClustelonrsANNSimilarityelonnginelon.fromParams(
+        intelonrnalId,
+        addrelonssbookIntelonrelonstelondInelonmbelondding.elonmbelonddingTypelon,
+        simClustelonrsModelonlVelonrsion,
+        simClustelonrsANN1ConfigId,
         params)
 
-    // SimClusters ANN cluster 2 Query
-    val interestedInSimClustersANN2Query =
-      SimClustersANNSimilarityEngine.fromParams(
-        internalId,
-        interestedInEmbedding.embeddingType,
-        simClustersModelVersion,
-        simClustersANN2ConfigId,
+    // SimClustelonrs ANN clustelonr 2 Quelonry
+    val intelonrelonstelondInSimClustelonrsANN2Quelonry =
+      SimClustelonrsANNSimilarityelonnginelon.fromParams(
+        intelonrnalId,
+        intelonrelonstelondInelonmbelondding.elonmbelonddingTypelon,
+        simClustelonrsModelonlVelonrsion,
+        simClustelonrsANN2ConfigId,
         params)
 
-    val nextInterestedInSimClustersANN2Query =
-      SimClustersANNSimilarityEngine.fromParams(
-        internalId,
-        nextInterestedInEmbedding.embeddingType,
-        simClustersModelVersion,
-        simClustersANN2ConfigId,
+    val nelonxtIntelonrelonstelondInSimClustelonrsANN2Quelonry =
+      SimClustelonrsANNSimilarityelonnginelon.fromParams(
+        intelonrnalId,
+        nelonxtIntelonrelonstelondInelonmbelondding.elonmbelonddingTypelon,
+        simClustelonrsModelonlVelonrsion,
+        simClustelonrsANN2ConfigId,
         params)
 
-    val addressbookInterestedInSimClustersANN2Query =
-      SimClustersANNSimilarityEngine.fromParams(
-        internalId,
-        addressbookInterestedInEmbedding.embeddingType,
-        simClustersModelVersion,
-        simClustersANN2ConfigId,
+    val addrelonssbookIntelonrelonstelondInSimClustelonrsANN2Quelonry =
+      SimClustelonrsANNSimilarityelonnginelon.fromParams(
+        intelonrnalId,
+        addrelonssbookIntelonrelonstelondInelonmbelondding.elonmbelonddingTypelon,
+        simClustelonrsModelonlVelonrsion,
+        simClustelonrsANN2ConfigId,
         params)
 
-    // SimClusters ANN cluster 3 Query
-    val interestedInSimClustersANN3Query =
-      SimClustersANNSimilarityEngine.fromParams(
-        internalId,
-        interestedInEmbedding.embeddingType,
-        simClustersModelVersion,
-        simClustersANN3ConfigId,
+    // SimClustelonrs ANN clustelonr 3 Quelonry
+    val intelonrelonstelondInSimClustelonrsANN3Quelonry =
+      SimClustelonrsANNSimilarityelonnginelon.fromParams(
+        intelonrnalId,
+        intelonrelonstelondInelonmbelondding.elonmbelonddingTypelon,
+        simClustelonrsModelonlVelonrsion,
+        simClustelonrsANN3ConfigId,
         params)
 
-    val nextInterestedInSimClustersANN3Query =
-      SimClustersANNSimilarityEngine.fromParams(
-        internalId,
-        nextInterestedInEmbedding.embeddingType,
-        simClustersModelVersion,
-        simClustersANN3ConfigId,
+    val nelonxtIntelonrelonstelondInSimClustelonrsANN3Quelonry =
+      SimClustelonrsANNSimilarityelonnginelon.fromParams(
+        intelonrnalId,
+        nelonxtIntelonrelonstelondInelonmbelondding.elonmbelonddingTypelon,
+        simClustelonrsModelonlVelonrsion,
+        simClustelonrsANN3ConfigId,
         params)
 
-    val addressbookInterestedInSimClustersANN3Query =
-      SimClustersANNSimilarityEngine.fromParams(
-        internalId,
-        addressbookInterestedInEmbedding.embeddingType,
-        simClustersModelVersion,
-        simClustersANN3ConfigId,
+    val addrelonssbookIntelonrelonstelondInSimClustelonrsANN3Quelonry =
+      SimClustelonrsANNSimilarityelonnginelon.fromParams(
+        intelonrnalId,
+        addrelonssbookIntelonrelonstelondInelonmbelondding.elonmbelonddingTypelon,
+        simClustelonrsModelonlVelonrsion,
+        simClustelonrsANN3ConfigId,
         params)
 
-    // SimClusters ANN cluster 5 Query
-    val interestedInSimClustersANN5Query =
-      SimClustersANNSimilarityEngine.fromParams(
-        internalId,
-        interestedInEmbedding.embeddingType,
-        simClustersModelVersion,
-        simClustersANN5ConfigId,
+    // SimClustelonrs ANN clustelonr 5 Quelonry
+    val intelonrelonstelondInSimClustelonrsANN5Quelonry =
+      SimClustelonrsANNSimilarityelonnginelon.fromParams(
+        intelonrnalId,
+        intelonrelonstelondInelonmbelondding.elonmbelonddingTypelon,
+        simClustelonrsModelonlVelonrsion,
+        simClustelonrsANN5ConfigId,
         params)
-    // SimClusters ANN cluster 4 Query
-    val interestedInSimClustersANN4Query =
-      SimClustersANNSimilarityEngine.fromParams(
-        internalId,
-        interestedInEmbedding.embeddingType,
-        simClustersModelVersion,
-        simClustersANN4ConfigId,
-        params)
-
-    val nextInterestedInSimClustersANN5Query =
-      SimClustersANNSimilarityEngine.fromParams(
-        internalId,
-        nextInterestedInEmbedding.embeddingType,
-        simClustersModelVersion,
-        simClustersANN5ConfigId,
+    // SimClustelonrs ANN clustelonr 4 Quelonry
+    val intelonrelonstelondInSimClustelonrsANN4Quelonry =
+      SimClustelonrsANNSimilarityelonnginelon.fromParams(
+        intelonrnalId,
+        intelonrelonstelondInelonmbelondding.elonmbelonddingTypelon,
+        simClustelonrsModelonlVelonrsion,
+        simClustelonrsANN4ConfigId,
         params)
 
-    val nextInterestedInSimClustersANN4Query =
-      SimClustersANNSimilarityEngine.fromParams(
-        internalId,
-        nextInterestedInEmbedding.embeddingType,
-        simClustersModelVersion,
-        simClustersANN4ConfigId,
+    val nelonxtIntelonrelonstelondInSimClustelonrsANN5Quelonry =
+      SimClustelonrsANNSimilarityelonnginelon.fromParams(
+        intelonrnalId,
+        nelonxtIntelonrelonstelondInelonmbelondding.elonmbelonddingTypelon,
+        simClustelonrsModelonlVelonrsion,
+        simClustelonrsANN5ConfigId,
         params)
 
-    val addressbookInterestedInSimClustersANN5Query =
-      SimClustersANNSimilarityEngine.fromParams(
-        internalId,
-        addressbookInterestedInEmbedding.embeddingType,
-        simClustersModelVersion,
-        simClustersANN5ConfigId,
+    val nelonxtIntelonrelonstelondInSimClustelonrsANN4Quelonry =
+      SimClustelonrsANNSimilarityelonnginelon.fromParams(
+        intelonrnalId,
+        nelonxtIntelonrelonstelondInelonmbelondding.elonmbelonddingTypelon,
+        simClustelonrsModelonlVelonrsion,
+        simClustelonrsANN4ConfigId,
         params)
 
-    val addressbookInterestedInSimClustersANN4Query =
-      SimClustersANNSimilarityEngine.fromParams(
-        internalId,
-        addressbookInterestedInEmbedding.embeddingType,
-        simClustersModelVersion,
-        simClustersANN4ConfigId,
+    val addrelonssbookIntelonrelonstelondInSimClustelonrsANN5Quelonry =
+      SimClustelonrsANNSimilarityelonnginelon.fromParams(
+        intelonrnalId,
+        addrelonssbookIntelonrelonstelondInelonmbelondding.elonmbelonddingTypelon,
+        simClustelonrsModelonlVelonrsion,
+        simClustelonrsANN5ConfigId,
         params)
 
-    Query(
-      internalId = internalId,
-      enableUserInterestedIn = params(InterestedInParams.EnableSourceParam),
-      enableUserNextInterestedIn = params(InterestedInParams.EnableSourceSequentialModelParam),
-      enableAddressBookNextInterestedIn = params(InterestedInParams.EnableSourceAddressBookParam),
-      enableProdSimClustersANNSimilarityEngine =
-        params(InterestedInParams.EnableProdSimClustersANNParam),
-      enableExperimentalSimClustersANNSimilarityEngine =
-        params(InterestedInParams.EnableExperimentalSimClustersANNParam),
-      enableSimClustersANN1SimilarityEngine = params(InterestedInParams.EnableSimClustersANN1Param),
-      enableSimClustersANN2SimilarityEngine = params(InterestedInParams.EnableSimClustersANN2Param),
-      enableSimClustersANN3SimilarityEngine = params(InterestedInParams.EnableSimClustersANN3Param),
-      enableSimClustersANN5SimilarityEngine = params(InterestedInParams.EnableSimClustersANN5Param),
-      enableSimClustersANN4SimilarityEngine = params(InterestedInParams.EnableSimClustersANN4Param),
-      simClustersInterestedInMinScore = simClustersInterestedInMinScore,
-      simClustersNextInterestedInMinScore = simClustersNextInterestedInMinScore,
-      simClustersAddressBookInterestedInMinScore = simClustersAddressBookInterestedInMinScore,
-      interestedInSimClustersANNQuery = interestedInSimClustersANNQuery,
-      nextInterestedInSimClustersANNQuery = nextInterestedInSimClustersANNQuery,
-      addressbookInterestedInSimClustersANNQuery = addressbookInterestedInSimClustersANNQuery,
-      interestedInExperimentalSimClustersANNQuery = interestedInExperimentalSimClustersANNQuery,
-      nextInterestedInExperimentalSimClustersANNQuery =
-        nextInterestedInExperimentalSimClustersANNQuery,
-      addressbookInterestedInExperimentalSimClustersANNQuery =
-        addressbookInterestedInExperimentalSimClustersANNQuery,
-      interestedInSimClustersANN1Query = interestedInSimClustersANN1Query,
-      nextInterestedInSimClustersANN1Query = nextInterestedInSimClustersANN1Query,
-      addressbookInterestedInSimClustersANN1Query = addressbookInterestedInSimClustersANN1Query,
-      interestedInSimClustersANN2Query = interestedInSimClustersANN2Query,
-      nextInterestedInSimClustersANN2Query = nextInterestedInSimClustersANN2Query,
-      addressbookInterestedInSimClustersANN2Query = addressbookInterestedInSimClustersANN2Query,
-      interestedInSimClustersANN3Query = interestedInSimClustersANN3Query,
-      nextInterestedInSimClustersANN3Query = nextInterestedInSimClustersANN3Query,
-      addressbookInterestedInSimClustersANN3Query = addressbookInterestedInSimClustersANN3Query,
-      interestedInSimClustersANN5Query = interestedInSimClustersANN5Query,
-      nextInterestedInSimClustersANN5Query = nextInterestedInSimClustersANN5Query,
-      addressbookInterestedInSimClustersANN5Query = addressbookInterestedInSimClustersANN5Query,
-      interestedInSimClustersANN4Query = interestedInSimClustersANN4Query,
-      nextInterestedInSimClustersANN4Query = nextInterestedInSimClustersANN4Query,
-      addressbookInterestedInSimClustersANN4Query = addressbookInterestedInSimClustersANN4Query,
+    val addrelonssbookIntelonrelonstelondInSimClustelonrsANN4Quelonry =
+      SimClustelonrsANNSimilarityelonnginelon.fromParams(
+        intelonrnalId,
+        addrelonssbookIntelonrelonstelondInelonmbelondding.elonmbelonddingTypelon,
+        simClustelonrsModelonlVelonrsion,
+        simClustelonrsANN4ConfigId,
+        params)
+
+    Quelonry(
+      intelonrnalId = intelonrnalId,
+      elonnablelonUselonrIntelonrelonstelondIn = params(IntelonrelonstelondInParams.elonnablelonSourcelonParam),
+      elonnablelonUselonrNelonxtIntelonrelonstelondIn = params(IntelonrelonstelondInParams.elonnablelonSourcelonSelonquelonntialModelonlParam),
+      elonnablelonAddrelonssBookNelonxtIntelonrelonstelondIn = params(IntelonrelonstelondInParams.elonnablelonSourcelonAddrelonssBookParam),
+      elonnablelonProdSimClustelonrsANNSimilarityelonnginelon =
+        params(IntelonrelonstelondInParams.elonnablelonProdSimClustelonrsANNParam),
+      elonnablelonelonxpelonrimelonntalSimClustelonrsANNSimilarityelonnginelon =
+        params(IntelonrelonstelondInParams.elonnablelonelonxpelonrimelonntalSimClustelonrsANNParam),
+      elonnablelonSimClustelonrsANN1Similarityelonnginelon = params(IntelonrelonstelondInParams.elonnablelonSimClustelonrsANN1Param),
+      elonnablelonSimClustelonrsANN2Similarityelonnginelon = params(IntelonrelonstelondInParams.elonnablelonSimClustelonrsANN2Param),
+      elonnablelonSimClustelonrsANN3Similarityelonnginelon = params(IntelonrelonstelondInParams.elonnablelonSimClustelonrsANN3Param),
+      elonnablelonSimClustelonrsANN5Similarityelonnginelon = params(IntelonrelonstelondInParams.elonnablelonSimClustelonrsANN5Param),
+      elonnablelonSimClustelonrsANN4Similarityelonnginelon = params(IntelonrelonstelondInParams.elonnablelonSimClustelonrsANN4Param),
+      simClustelonrsIntelonrelonstelondInMinScorelon = simClustelonrsIntelonrelonstelondInMinScorelon,
+      simClustelonrsNelonxtIntelonrelonstelondInMinScorelon = simClustelonrsNelonxtIntelonrelonstelondInMinScorelon,
+      simClustelonrsAddrelonssBookIntelonrelonstelondInMinScorelon = simClustelonrsAddrelonssBookIntelonrelonstelondInMinScorelon,
+      intelonrelonstelondInSimClustelonrsANNQuelonry = intelonrelonstelondInSimClustelonrsANNQuelonry,
+      nelonxtIntelonrelonstelondInSimClustelonrsANNQuelonry = nelonxtIntelonrelonstelondInSimClustelonrsANNQuelonry,
+      addrelonssbookIntelonrelonstelondInSimClustelonrsANNQuelonry = addrelonssbookIntelonrelonstelondInSimClustelonrsANNQuelonry,
+      intelonrelonstelondInelonxpelonrimelonntalSimClustelonrsANNQuelonry = intelonrelonstelondInelonxpelonrimelonntalSimClustelonrsANNQuelonry,
+      nelonxtIntelonrelonstelondInelonxpelonrimelonntalSimClustelonrsANNQuelonry =
+        nelonxtIntelonrelonstelondInelonxpelonrimelonntalSimClustelonrsANNQuelonry,
+      addrelonssbookIntelonrelonstelondInelonxpelonrimelonntalSimClustelonrsANNQuelonry =
+        addrelonssbookIntelonrelonstelondInelonxpelonrimelonntalSimClustelonrsANNQuelonry,
+      intelonrelonstelondInSimClustelonrsANN1Quelonry = intelonrelonstelondInSimClustelonrsANN1Quelonry,
+      nelonxtIntelonrelonstelondInSimClustelonrsANN1Quelonry = nelonxtIntelonrelonstelondInSimClustelonrsANN1Quelonry,
+      addrelonssbookIntelonrelonstelondInSimClustelonrsANN1Quelonry = addrelonssbookIntelonrelonstelondInSimClustelonrsANN1Quelonry,
+      intelonrelonstelondInSimClustelonrsANN2Quelonry = intelonrelonstelondInSimClustelonrsANN2Quelonry,
+      nelonxtIntelonrelonstelondInSimClustelonrsANN2Quelonry = nelonxtIntelonrelonstelondInSimClustelonrsANN2Quelonry,
+      addrelonssbookIntelonrelonstelondInSimClustelonrsANN2Quelonry = addrelonssbookIntelonrelonstelondInSimClustelonrsANN2Quelonry,
+      intelonrelonstelondInSimClustelonrsANN3Quelonry = intelonrelonstelondInSimClustelonrsANN3Quelonry,
+      nelonxtIntelonrelonstelondInSimClustelonrsANN3Quelonry = nelonxtIntelonrelonstelondInSimClustelonrsANN3Quelonry,
+      addrelonssbookIntelonrelonstelondInSimClustelonrsANN3Quelonry = addrelonssbookIntelonrelonstelondInSimClustelonrsANN3Quelonry,
+      intelonrelonstelondInSimClustelonrsANN5Quelonry = intelonrelonstelondInSimClustelonrsANN5Quelonry,
+      nelonxtIntelonrelonstelondInSimClustelonrsANN5Quelonry = nelonxtIntelonrelonstelondInSimClustelonrsANN5Quelonry,
+      addrelonssbookIntelonrelonstelondInSimClustelonrsANN5Quelonry = addrelonssbookIntelonrelonstelondInSimClustelonrsANN5Quelonry,
+      intelonrelonstelondInSimClustelonrsANN4Quelonry = intelonrelonstelondInSimClustelonrsANN4Quelonry,
+      nelonxtIntelonrelonstelondInSimClustelonrsANN4Quelonry = nelonxtIntelonrelonstelondInSimClustelonrsANN4Quelonry,
+      addrelonssbookIntelonrelonstelondInSimClustelonrsANN4Quelonry = addrelonssbookIntelonrelonstelondInSimClustelonrsANN4Quelonry,
     )
   }
 }

@@ -1,365 +1,365 @@
-package com.twitter.search.earlybird.querycache;
+packagelon com.twittelonr.selonarch.elonarlybird.quelonrycachelon;
 
-import java.util.Collection;
-import java.util.Collections;
+import java.util.Collelonction;
+import java.util.Collelonctions;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.base.Stopwatch;
-import com.google.common.collect.Lists;
-import com.google.common.primitives.Longs;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import com.googlelon.common.baselon.Prelonconditions;
+import com.googlelon.common.baselon.Stopwatch;
+import com.googlelon.common.collelonct.Lists;
+import com.googlelon.common.primitivelons.Longs;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.common.quantity.Amount;
-import com.twitter.common.quantity.Time;
-import com.twitter.common.util.Clock;
-import com.twitter.decider.Decider;
-import com.twitter.search.common.concurrent.ScheduledExecutorServiceFactory;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchLongGauge;
-import com.twitter.search.common.metrics.SearchStatsReceiver;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.earlybird.EarlybirdIndexConfig;
-import com.twitter.search.earlybird.EarlybirdStatus;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.common.userupdates.UserScrubGeoMap;
-import com.twitter.search.earlybird.common.userupdates.UserTable;
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
-import com.twitter.search.earlybird.partition.SegmentInfo;
-import com.twitter.search.earlybird.partition.SegmentManager;
-import com.twitter.search.earlybird.partition.SegmentManager.Filter;
-import com.twitter.search.earlybird.partition.SegmentManager.Order;
-import com.twitter.search.earlybird.partition.SegmentManager.SegmentUpdateListener;
-import com.twitter.search.earlybird.stats.EarlybirdSearcherStats;
-import com.twitter.search.earlybird.thrift.EarlybirdStatusCode;
-import com.twitter.search.queryparser.query.QueryParserException;
+import com.twittelonr.common.quantity.Amount;
+import com.twittelonr.common.quantity.Timelon;
+import com.twittelonr.common.util.Clock;
+import com.twittelonr.deloncidelonr.Deloncidelonr;
+import com.twittelonr.selonarch.common.concurrelonnt.SchelondulelondelonxeloncutorSelonrvicelonFactory;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchLongGaugelon;
+import com.twittelonr.selonarch.common.melontrics.SelonarchStatsReloncelonivelonr;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdClustelonr;
+import com.twittelonr.selonarch.elonarlybird.elonarlybirdIndelonxConfig;
+import com.twittelonr.selonarch.elonarlybird.elonarlybirdStatus;
+import com.twittelonr.selonarch.elonarlybird.common.config.elonarlybirdConfig;
+import com.twittelonr.selonarch.elonarlybird.common.uselonrupdatelons.UselonrScrubGelonoMap;
+import com.twittelonr.selonarch.elonarlybird.common.uselonrupdatelons.UselonrTablelon;
+import com.twittelonr.selonarch.elonarlybird.elonxcelonption.CriticalelonxcelonptionHandlelonr;
+import com.twittelonr.selonarch.elonarlybird.partition.SelongmelonntInfo;
+import com.twittelonr.selonarch.elonarlybird.partition.SelongmelonntManagelonr;
+import com.twittelonr.selonarch.elonarlybird.partition.SelongmelonntManagelonr.Filtelonr;
+import com.twittelonr.selonarch.elonarlybird.partition.SelongmelonntManagelonr.Ordelonr;
+import com.twittelonr.selonarch.elonarlybird.partition.SelongmelonntManagelonr.SelongmelonntUpdatelonListelonnelonr;
+import com.twittelonr.selonarch.elonarlybird.stats.elonarlybirdSelonarchelonrStats;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdStatusCodelon;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.QuelonryParselonrelonxcelonption;
 
 /**
- * Main class to manage Earlybird's QueryCache.
+ * Main class to managelon elonarlybird's QuelonryCachelon.
  *
- * Initialize the QueryCache and new segments are notified to the QueryCache subsystem
+ * Initializelon thelon QuelonryCachelon and nelonw selongmelonnts arelon notifielond to thelon QuelonryCachelon subsystelonm
  * through this class.
  *
- * This class is thread-safe when calling methods that modify the list of tasks that
- * we're executing or when we need to traverse all tasks and check something. The way
- * thread-safety is achieved here right now is through making methods synchronized.
+ * This class is threlonad-safelon whelonn calling melonthods that modify thelon list of tasks that
+ * welon'relon elonxeloncuting or whelonn welon nelonelond to travelonrselon all tasks and chelonck somelonthing. Thelon way
+ * threlonad-safelonty is achielonvelond helonrelon right now is through making melonthods synchronizelond.
  */
-public class QueryCacheManager implements SegmentUpdateListener {
-  private static final Logger LOG = LoggerFactory.getLogger(QueryCacheManager.class);
+public class QuelonryCachelonManagelonr implelonmelonnts SelongmelonntUpdatelonListelonnelonr {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(QuelonryCachelonManagelonr.class);
 
-  private static final Amount<Long, Time> ZERO_SECONDS = Amount.of(0L, Time.SECONDS);
+  privatelon static final Amount<Long, Timelon> ZelonRO_SelonCONDS = Amount.of(0L, Timelon.SelonCONDS);
 
-  private final boolean enabled = EarlybirdConfig.getBool("querycache", false);
+  privatelon final boolelonan elonnablelond = elonarlybirdConfig.gelontBool("quelonrycachelon", falselon);
 
-  // segments are removed from SegmentInfoMap lazily, and there may be a wait time.
-  // So, beware that there's short period of time where there's more segments than
-  // maxEnabledSegments.
-  private final int maxEnabledSegments;
+  // selongmelonnts arelon relonmovelond from SelongmelonntInfoMap lazily, and thelonrelon may belon a wait timelon.
+  // So, belonwarelon that thelonrelon's short pelonriod of timelon whelonrelon thelonrelon's morelon selongmelonnts than
+  // maxelonnablelondSelongmelonnts.
+  privatelon final int maxelonnablelondSelongmelonnts;
 
-  private final UserTable userTable;
-  private final UserScrubGeoMap userScrubGeoMap;
-  private final EarlybirdIndexConfig indexConfig;
-  private QueryCacheUpdater updater;
-  private final Map<String, QueryCacheFilter> filters;
-  private final ScheduledExecutorServiceFactory updaterScheduledExecutorServiceFactory;
+  privatelon final UselonrTablelon uselonrTablelon;
+  privatelon final UselonrScrubGelonoMap uselonrScrubGelonoMap;
+  privatelon final elonarlybirdIndelonxConfig indelonxConfig;
+  privatelon QuelonryCachelonUpdatelonr updatelonr;
+  privatelon final Map<String, QuelonryCachelonFiltelonr> filtelonrs;
+  privatelon final SchelondulelondelonxeloncutorSelonrvicelonFactory updatelonrSchelondulelondelonxeloncutorSelonrvicelonFactory;
 
-  private final SearchStatsReceiver searchStatsReceiver;
+  privatelon final SelonarchStatsReloncelonivelonr selonarchStatsReloncelonivelonr;
 
-  private static final SearchLongGauge NUM_CACHE_ENTRY_STAT =
-      SearchLongGauge.export("querycache_num_entries");
+  privatelon static final SelonarchLongGaugelon NUM_CACHelon_elonNTRY_STAT =
+      SelonarchLongGaugelon.elonxport("quelonrycachelon_num_elonntrielons");
 
-  private static final SearchCounter NUM_UPDATE_SEGMENTS_CALLS =
-      SearchCounter.export("querycache_num_update_segments_calls");
+  privatelon static final SelonarchCountelonr NUM_UPDATelon_SelonGMelonNTS_CALLS =
+      SelonarchCountelonr.elonxport("quelonrycachelon_num_updatelon_selongmelonnts_calls");
 
-  private volatile boolean didSetup = false;
+  privatelon volatilelon boolelonan didSelontup = falselon;
 
-  private final EarlybirdSearcherStats searcherStats;
-  private final Decider decider;
-  private final CriticalExceptionHandler criticalExceptionHandler;
-  private final Clock clock;
+  privatelon final elonarlybirdSelonarchelonrStats selonarchelonrStats;
+  privatelon final Deloncidelonr deloncidelonr;
+  privatelon final CriticalelonxcelonptionHandlelonr criticalelonxcelonptionHandlelonr;
+  privatelon final Clock clock;
 
-  public QueryCacheManager(
-      QueryCacheConfig config,
-      EarlybirdIndexConfig indexConfig,
-      int maxEnabledSegments,
-      UserTable userTable,
-      UserScrubGeoMap userScrubGeoMap,
-      ScheduledExecutorServiceFactory updaterScheduledExecutorServiceFactory,
-      SearchStatsReceiver searchStatsReceiver,
-      EarlybirdSearcherStats searcherStats,
-      Decider decider,
-      CriticalExceptionHandler criticalExceptionHandler,
+  public QuelonryCachelonManagelonr(
+      QuelonryCachelonConfig config,
+      elonarlybirdIndelonxConfig indelonxConfig,
+      int maxelonnablelondSelongmelonnts,
+      UselonrTablelon uselonrTablelon,
+      UselonrScrubGelonoMap uselonrScrubGelonoMap,
+      SchelondulelondelonxeloncutorSelonrvicelonFactory updatelonrSchelondulelondelonxeloncutorSelonrvicelonFactory,
+      SelonarchStatsReloncelonivelonr selonarchStatsReloncelonivelonr,
+      elonarlybirdSelonarchelonrStats selonarchelonrStats,
+      Deloncidelonr deloncidelonr,
+      CriticalelonxcelonptionHandlelonr criticalelonxcelonptionHandlelonr,
       Clock clock) {
 
-    Preconditions.checkArgument(maxEnabledSegments > 0);
+    Prelonconditions.chelonckArgumelonnt(maxelonnablelondSelongmelonnts > 0);
 
-    QueryCacheConfig queryCacheConfig = config;
-    if (queryCacheConfig == null) {
-      queryCacheConfig = new QueryCacheConfig(searchStatsReceiver);
+    QuelonryCachelonConfig quelonryCachelonConfig = config;
+    if (quelonryCachelonConfig == null) {
+      quelonryCachelonConfig = nelonw QuelonryCachelonConfig(selonarchStatsReloncelonivelonr);
     }
-    this.indexConfig = indexConfig;
-    this.maxEnabledSegments = maxEnabledSegments;
-    this.userTable = userTable;
-    this.userScrubGeoMap = userScrubGeoMap;
-    this.updaterScheduledExecutorServiceFactory = updaterScheduledExecutorServiceFactory;
-    this.searchStatsReceiver = searchStatsReceiver;
-    this.searcherStats = searcherStats;
-    this.filters = new HashMap<>();
-    this.decider = decider;
-    this.criticalExceptionHandler = criticalExceptionHandler;
+    this.indelonxConfig = indelonxConfig;
+    this.maxelonnablelondSelongmelonnts = maxelonnablelondSelongmelonnts;
+    this.uselonrTablelon = uselonrTablelon;
+    this.uselonrScrubGelonoMap = uselonrScrubGelonoMap;
+    this.updatelonrSchelondulelondelonxeloncutorSelonrvicelonFactory = updatelonrSchelondulelondelonxeloncutorSelonrvicelonFactory;
+    this.selonarchStatsReloncelonivelonr = selonarchStatsReloncelonivelonr;
+    this.selonarchelonrStats = selonarchelonrStats;
+    this.filtelonrs = nelonw HashMap<>();
+    this.deloncidelonr = deloncidelonr;
+    this.criticalelonxcelonptionHandlelonr = criticalelonxcelonptionHandlelonr;
     this.clock = clock;
-    for (QueryCacheFilter filter : queryCacheConfig.filters()) {
-      filters.put(filter.getFilterName(), filter);
+    for (QuelonryCachelonFiltelonr filtelonr : quelonryCachelonConfig.filtelonrs()) {
+      filtelonrs.put(filtelonr.gelontFiltelonrNamelon(), filtelonr);
     }
-    NUM_CACHE_ENTRY_STAT.set(filters.size());
+    NUM_CACHelon_elonNTRY_STAT.selont(filtelonrs.sizelon());
   }
 
-  public EarlybirdIndexConfig getIndexConfig() {
-    return indexConfig;
+  public elonarlybirdIndelonxConfig gelontIndelonxConfig() {
+    relonturn indelonxConfig;
   }
 
-  public UserScrubGeoMap getUserScrubGeoMap() {
-    return userScrubGeoMap;
+  public UselonrScrubGelonoMap gelontUselonrScrubGelonoMap() {
+    relonturn uselonrScrubGelonoMap;
   }
 
-  /** Setup all update tasks at once, should only be called after Earlybird has loaded/indexed all
-   * segments during start-up
+  /** Selontup all updatelon tasks at oncelon, should only belon callelond aftelonr elonarlybird has loadelond/indelonxelond all
+   * selongmelonnts during start-up
    *
-   * Only the first call to the function has effect, subsequent calls are no-ops
+   * Only thelon first call to thelon function has elonffelonct, subselonquelonnt calls arelon no-ops
    */
-  public void setupTasksIfNeeded(SegmentManager segmentManager)
-      throws QueryParserException {
-    setupTasks(
-        segmentManager.getSegmentInfos(Filter.All, Order.OLD_TO_NEW),
-        segmentManager.getEarlybirdIndexConfig().getCluster());
+  public void selontupTasksIfNelonelondelond(SelongmelonntManagelonr selongmelonntManagelonr)
+      throws QuelonryParselonrelonxcelonption {
+    selontupTasks(
+        selongmelonntManagelonr.gelontSelongmelonntInfos(Filtelonr.All, Ordelonr.OLD_TO_NelonW),
+        selongmelonntManagelonr.gelontelonarlybirdIndelonxConfig().gelontClustelonr());
   }
 
-  @VisibleForTesting
-  synchronized void setupTasks(
-      Iterable<SegmentInfo> newSegments,
-      EarlybirdCluster earlybirdCluster) throws QueryParserException {
-    // Setup needs to be done only once after all index caught up.
-    if (didSetup) {
-      return;
+  @VisiblelonForTelonsting
+  synchronizelond void selontupTasks(
+      Itelonrablelon<SelongmelonntInfo> nelonwSelongmelonnts,
+      elonarlybirdClustelonr elonarlybirdClustelonr) throws QuelonryParselonrelonxcelonption {
+    // Selontup nelonelonds to belon donelon only oncelon aftelonr all indelonx caught up.
+    if (didSelontup) {
+      relonturn;
     }
 
-    LOG.info("Setting up {} query cache tasks", filters.values().size());
+    LOG.info("Selontting up {} quelonry cachelon tasks", filtelonrs.valuelons().sizelon());
 
-    for (QueryCacheFilter filter : filters.values()) {
-      filter.setup(this, userTable, earlybirdCluster);
+    for (QuelonryCachelonFiltelonr filtelonr : filtelonrs.valuelons()) {
+      filtelonr.selontup(this, uselonrTablelon, elonarlybirdClustelonr);
     }
 
-    if (!enabled()) {
-      // Note that the definition of disabling the query caches here is "don't compute the caches".
-      // We still load the queries from the .yml, we still rewrite search queries to use
-      // cached queries. The reason we are choosing this definition is that it's somewhat simpler
-      // to implement (no need to turn off rewriting) and because we might get external queries that
-      // contain cached filters (they're listed in go/searchsyntax).
+    if (!elonnablelond()) {
+      // Notelon that thelon delonfinition of disabling thelon quelonry cachelons helonrelon is "don't computelon thelon cachelons".
+      // Welon still load thelon quelonrielons from thelon .yml, welon still relonwritelon selonarch quelonrielons to uselon
+      // cachelond quelonrielons. Thelon relonason welon arelon choosing this delonfinition is that it's somelonwhat simplelonr
+      // to implelonmelonnt (no nelonelond to turn off relonwriting) and beloncauselon welon might gelont elonxtelonrnal quelonrielons that
+      // contain cachelond filtelonrs (thelony'relon listelond in go/selonarchsyntax).
       //
-      // If we need a stricter definition of turning off query caches, we can implement it too, or
-      // just tighten this one.
-      return;
+      // If welon nelonelond a strictelonr delonfinition of turning off quelonry cachelons, welon can implelonmelonnt it too, or
+      // just tightelonn this onelon.
+      relonturn;
     }
 
-    Preconditions.checkState(updater == null);
-    updater = new QueryCacheUpdater(
-        filters.values(),
-        updaterScheduledExecutorServiceFactory,
-        userTable,
-        searchStatsReceiver,
-        searcherStats,
-        decider,
-        criticalExceptionHandler,
+    Prelonconditions.chelonckStatelon(updatelonr == null);
+    updatelonr = nelonw QuelonryCachelonUpdatelonr(
+        filtelonrs.valuelons(),
+        updatelonrSchelondulelondelonxeloncutorSelonrvicelonFactory,
+        uselonrTablelon,
+        selonarchStatsReloncelonivelonr,
+        selonarchelonrStats,
+        deloncidelonr,
+        criticalelonxcelonptionHandlelonr,
         clock);
 
-    LOG.info("Finished setting up query cache updater.");
+    LOG.info("Finishelond selontting up quelonry cachelon updatelonr.");
 
-    scheduleTasks(newSegments, false);
+    schelondulelonTasks(nelonwSelongmelonnts, falselon);
 
-    didSetup = true;
+    didSelontup = truelon;
   }
 
-  private void scheduleTasks(Iterable<SegmentInfo> segments, boolean isCurrent) {
-    List<SegmentInfo> sortedSegments = Lists.newArrayList(segments);
-    Collections.sort(sortedSegments, (o1, o2) -> {
-      // sort new to old (o2 and o1 are reversed here)
-      return Longs.compare(o2.getTimeSliceID(), o1.getTimeSliceID());
+  privatelon void schelondulelonTasks(Itelonrablelon<SelongmelonntInfo> selongmelonnts, boolelonan isCurrelonnt) {
+    List<SelongmelonntInfo> sortelondSelongmelonnts = Lists.nelonwArrayList(selongmelonnts);
+    Collelonctions.sort(sortelondSelongmelonnts, (o1, o2) -> {
+      // sort nelonw to old (o2 and o1 arelon relonvelonrselond helonrelon)
+      relonturn Longs.comparelon(o2.gelontTimelonSlicelonID(), o1.gelontTimelonSlicelonID());
     });
 
-    LOG.info("Scheduling tasks for {} segments.", sortedSegments.size());
+    LOG.info("Schelonduling tasks for {} selongmelonnts.", sortelondSelongmelonnts.sizelon());
 
-    for (int segmentIndex = 0; segmentIndex < sortedSegments.size(); ++segmentIndex) {
-      SegmentInfo segmentInfo = sortedSegments.get(segmentIndex);
-      if (segmentIndex == maxEnabledSegments) {
-        LOG.warn("Tried to add more segments than MaxEnabledSegments (" + maxEnabledSegments
-            + "). Removed oldest segment " + segmentInfo.getTimeSliceID());
-        continue;
+    for (int selongmelonntIndelonx = 0; selongmelonntIndelonx < sortelondSelongmelonnts.sizelon(); ++selongmelonntIndelonx) {
+      SelongmelonntInfo selongmelonntInfo = sortelondSelongmelonnts.gelont(selongmelonntIndelonx);
+      if (selongmelonntIndelonx == maxelonnablelondSelongmelonnts) {
+        LOG.warn("Trielond to add morelon selongmelonnts than MaxelonnablelondSelongmelonnts (" + maxelonnablelondSelongmelonnts
+            + "). Relonmovelond oldelonst selongmelonnt " + selongmelonntInfo.gelontTimelonSlicelonID());
+        continuelon;
       }
-      addQueryCacheTasksForSegment(segmentInfo, segmentIndex, !isCurrent);
+      addQuelonryCachelonTasksForSelongmelonnt(selongmelonntInfo, selongmelonntIndelonx, !isCurrelonnt);
     }
   }
 
   /**
-   * Rebuilds the query cache for the given segment after it was optimized.
+   * Relonbuilds thelon quelonry cachelon for thelon givelonn selongmelonnt aftelonr it was optimizelond.
    */
-  public synchronized void rebuildQueryCachesAfterSegmentOptimization(
-      SegmentInfo optimizedSegment) {
-    Preconditions.checkState(optimizedSegment.getIndexSegment().isOptimized(),
-                             "Segment " + optimizedSegment.getSegmentName() + " is not optimized.");
+  public synchronizelond void relonbuildQuelonryCachelonsAftelonrSelongmelonntOptimization(
+      SelongmelonntInfo optimizelondSelongmelonnt) {
+    Prelonconditions.chelonckStatelon(optimizelondSelongmelonnt.gelontIndelonxSelongmelonnt().isOptimizelond(),
+                             "Selongmelonnt " + optimizelondSelongmelonnt.gelontSelongmelonntNamelon() + " is not optimizelond.");
 
-    if (!didSetup) {
-      // Once our indexing is current, we'll just start tasks for all segments, optimized or not.
-      // Before that event, we don't do anything query cache related.
-      LOG.info("Haven't done initial setup, returning.");
-      return;
+    if (!didSelontup) {
+      // Oncelon our indelonxing is currelonnt, welon'll just start tasks for all selongmelonnts, optimizelond or not.
+      // Belonforelon that elonvelonnt, welon don't do anything quelonry cachelon relonlatelond.
+      LOG.info("Havelonn't donelon initial selontup, relonturning.");
+      relonturn;
     }
 
-    LOG.info("Rebuilding query caches for optimized segment {}",
-        optimizedSegment.getSegmentName());
+    LOG.info("Relonbuilding quelonry cachelons for optimizelond selongmelonnt {}",
+        optimizelondSelongmelonnt.gelontSelongmelonntNamelon());
 
-    // The optimized segment should always be the 1st segment (the current segment has index 0).
-    Stopwatch stopwatch = Stopwatch.createStarted();
-    updater.removeAllTasksForSegment(optimizedSegment);
-    addQueryCacheTasksForSegment(optimizedSegment, 1, true);
+    // Thelon optimizelond selongmelonnt should always belon thelon 1st selongmelonnt (thelon currelonnt selongmelonnt has indelonx 0).
+    Stopwatch stopwatch = Stopwatch.crelonatelonStartelond();
+    updatelonr.relonmovelonAllTasksForSelongmelonnt(optimizelondSelongmelonnt);
+    addQuelonryCachelonTasksForSelongmelonnt(optimizelondSelongmelonnt, 1, truelon);
 
-    while (!updater.allTasksRanForSegment(optimizedSegment)) {
+    whilelon (!updatelonr.allTasksRanForSelongmelonnt(optimizelondSelongmelonnt)) {
       try {
-        Thread.sleep(1000);
-      } catch (InterruptedException e) {
-        // Ignore
+        Threlonad.slelonelonp(1000);
+      } catch (Intelonrruptelondelonxcelonption elon) {
+        // Ignorelon
       }
     }
 
-    LOG.info("Rebuilding all query caches for the optimized segment {} took {}.",
-             optimizedSegment.getSegmentName(), stopwatch);
+    LOG.info("Relonbuilding all quelonry cachelons for thelon optimizelond selongmelonnt {} took {}.",
+             optimizelondSelongmelonnt.gelontSelongmelonntNamelon(), stopwatch);
   }
 
   /**
-   * Block until all the tasks inside this manager have ran at least once.
+   * Block until all thelon tasks insidelon this managelonr havelon ran at lelonast oncelon.
    */
-  public void waitUntilAllQueryCachesAreBuilt() {
-    LOG.info("Waiting until all query caches are built...");
+  public void waitUntilAllQuelonryCachelonsArelonBuilt() {
+    LOG.info("Waiting until all quelonry cachelons arelon built...");
 
-    Stopwatch stopwatch = Stopwatch.createStarted();
-    while (!allTasksRan()) {
+    Stopwatch stopwatch = Stopwatch.crelonatelonStartelond();
+    whilelon (!allTasksRan()) {
       try {
-        Thread.sleep(1000);
-      } catch (InterruptedException ex) {
-        Thread.currentThread().interrupt();
+        Threlonad.slelonelonp(1000);
+      } catch (Intelonrruptelondelonxcelonption elonx) {
+        Threlonad.currelonntThrelonad().intelonrrupt();
       }
     }
 
-    LOG.info("Ran query cache tasks in: {}", stopwatch);
+    LOG.info("Ran quelonry cachelon tasks in: {}", stopwatch);
   }
 
-  private void addQueryCacheTasksForSegment(
-      SegmentInfo segmentInfo, int segmentIndex, boolean scheduleImmediately) {
-    LOG.info("Adding query cache tasks for segment {}.", segmentInfo.getTimeSliceID());
-    double updateIntervalMultiplier =
-        EarlybirdConfig.getDouble("query_cache_update_interval_multiplier", 1.0);
-    for (QueryCacheFilter filter : filters.values()) {
-      Amount<Long, Time> updateIntervalFromConfig = filter.getUpdateInterval(segmentIndex);
-      Amount<Long, Time> updateInterval = Amount.of(
-          (long) (updateIntervalFromConfig.getValue() * updateIntervalMultiplier),
-          updateIntervalFromConfig.getUnit());
+  privatelon void addQuelonryCachelonTasksForSelongmelonnt(
+      SelongmelonntInfo selongmelonntInfo, int selongmelonntIndelonx, boolelonan schelondulelonImmelondiatelonly) {
+    LOG.info("Adding quelonry cachelon tasks for selongmelonnt {}.", selongmelonntInfo.gelontTimelonSlicelonID());
+    doublelon updatelonIntelonrvalMultiplielonr =
+        elonarlybirdConfig.gelontDoublelon("quelonry_cachelon_updatelon_intelonrval_multiplielonr", 1.0);
+    for (QuelonryCachelonFiltelonr filtelonr : filtelonrs.valuelons()) {
+      Amount<Long, Timelon> updatelonIntelonrvalFromConfig = filtelonr.gelontUpdatelonIntelonrval(selongmelonntIndelonx);
+      Amount<Long, Timelon> updatelonIntelonrval = Amount.of(
+          (long) (updatelonIntelonrvalFromConfig.gelontValuelon() * updatelonIntelonrvalMultiplielonr),
+          updatelonIntelonrvalFromConfig.gelontUnit());
 
-      Amount<Long, Time> initialDelay = scheduleImmediately ? ZERO_SECONDS : updateInterval;
-      updater.addTask(filter, segmentInfo, updateInterval, initialDelay);
+      Amount<Long, Timelon> initialDelonlay = schelondulelonImmelondiatelonly ? ZelonRO_SelonCONDS : updatelonIntelonrval;
+      updatelonr.addTask(filtelonr, selongmelonntInfo, updatelonIntelonrval, initialDelonlay);
     }
   }
 
   /**
-   * Notify QueryCacheManager of a new list of segments we currently have, so that cache tasks
-   * can be updated.
+   * Notify QuelonryCachelonManagelonr of a nelonw list of selongmelonnts welon currelonntly havelon, so that cachelon tasks
+   * can belon updatelond.
    *
-   * @param segments fresh list of all segments
+   * @param selongmelonnts frelonsh list of all selongmelonnts
    *
-   * All existing tasks will be canceled/removed/destroyed, new tasks will be created for all
-   * segments.
+   * All elonxisting tasks will belon cancelonlelond/relonmovelond/delonstroyelond, nelonw tasks will belon crelonatelond for all
+   * selongmelonnts.
    */
-  @Override
-  public synchronized void update(Collection<SegmentInfo> segments, String message) {
-    if (!enabled()) {
-      return;
+  @Ovelonrridelon
+  public synchronizelond void updatelon(Collelonction<SelongmelonntInfo> selongmelonnts, String melonssagelon) {
+    if (!elonnablelond()) {
+      relonturn;
     }
 
-    // This manager is created right at the beginning of a startup. Before we set it up,
-    // we'll read tweets and create segments and therefore this method will be called.
-    // We don't want to start computing query caches during that time, so we just return.
-    if (!didSetup) {
-      return;
+    // This managelonr is crelonatelond right at thelon belonginning of a startup. Belonforelon welon selont it up,
+    // welon'll relonad twelonelonts and crelonatelon selongmelonnts and thelonrelonforelon this melonthod will belon callelond.
+    // Welon don't want to start computing quelonry cachelons during that timelon, so welon just relonturn.
+    if (!didSelontup) {
+      relonturn;
     }
 
-    NUM_UPDATE_SEGMENTS_CALLS.increment();
+    NUM_UPDATelon_SelonGMelonNTS_CALLS.increlonmelonnt();
 
-    LOG.info("Rescheduling all query cache tasks ({}). Number of segments received = {}.",
-        message, segments.size());
-    updater.clearTasks(); // cancel and remove all scheduled tasks
+    LOG.info("Relonschelonduling all quelonry cachelon tasks ({}). Numbelonr of selongmelonnts reloncelonivelond = {}.",
+        melonssagelon, selongmelonnts.sizelon());
+    updatelonr.clelonarTasks(); // cancelonl and relonmovelon all schelondulelond tasks
 
-    // If Earlybird is still starting up, and we get a partition roll, don't delay rebuilding
-    // the query cache.
-    boolean isCurrent = EarlybirdStatus.getStatusCode() == EarlybirdStatusCode.CURRENT;
-    scheduleTasks(segments, isCurrent);
+    // If elonarlybird is still starting up, and welon gelont a partition roll, don't delonlay relonbuilding
+    // thelon quelonry cachelon.
+    boolelonan isCurrelonnt = elonarlybirdStatus.gelontStatusCodelon() == elonarlybirdStatusCodelon.CURRelonNT;
+    schelondulelonTasks(selongmelonnts, isCurrelonnt);
   }
 
   /**
-   * Determines if all query cache tasks ran at least once (even if they failed).
+   * Delontelonrminelons if all quelonry cachelon tasks ran at lelonast oncelon (elonvelonn if thelony failelond).
    */
-  public synchronized boolean allTasksRan() {
-    return (!(enabled() && didSetup)) || updater.allTasksRan();
+  public synchronizelond boolelonan allTasksRan() {
+    relonturn (!(elonnablelond() && didSelontup)) || updatelonr.allTasksRan();
   }
 
   /**
-   * Determines if the query cache manager is enabled.
+   * Delontelonrminelons if thelon quelonry cachelon managelonr is elonnablelond.
    */
-  public boolean enabled() {
-    return enabled;
+  public boolelonan elonnablelond() {
+    relonturn elonnablelond;
   }
 
   /**
-   * Returns the query cache filter with the given name.
+   * Relonturns thelon quelonry cachelon filtelonr with thelon givelonn namelon.
    */
-  public QueryCacheFilter getFilter(String filterName) {
-    return filters.get(filterName);
+  public QuelonryCachelonFiltelonr gelontFiltelonr(String filtelonrNamelon) {
+    relonturn filtelonrs.gelont(filtelonrNamelon);
   }
 
   /**
-   * Shuts down the query cache manager.
+   * Shuts down thelon quelonry cachelon managelonr.
    */
-  public synchronized void shutdown() throws InterruptedException {
-    LOG.info("Shutting down QueryCacheManager");
-    if (updater != null) {
-      updater.shutdown();
-      updater = null;
+  public synchronizelond void shutdown() throws Intelonrruptelondelonxcelonption {
+    LOG.info("Shutting down QuelonryCachelonManagelonr");
+    if (updatelonr != null) {
+      updatelonr.shutdown();
+      updatelonr = null;
     }
-    didSetup = false; // needed for unit test
+    didSelontup = falselon; // nelonelondelond for unit telonst
   }
 
   /**
-   * After startup, we want only one thread to update the query cache.
+   * Aftelonr startup, welon want only onelon threlonad to updatelon thelon quelonry cachelon.
    */
-  public void setWorkerPoolSizeAfterStartup() {
-    if (this.updater != null) {
-      this.updater.setWorkerPoolSizeAfterStartup();
+  public void selontWorkelonrPoolSizelonAftelonrStartup() {
+    if (this.updatelonr != null) {
+      this.updatelonr.selontWorkelonrPoolSizelonAftelonrStartup();
     }
   }
 
-  public Decider getDecider() {
-    return this.decider;
+  public Deloncidelonr gelontDeloncidelonr() {
+    relonturn this.deloncidelonr;
   }
 
   //////////////////////////
-  // for unit tests only
+  // for unit telonsts only
   //////////////////////////
-  QueryCacheUpdater getUpdaterForTest() {
-    return updater;
+  QuelonryCachelonUpdatelonr gelontUpdatelonrForTelonst() {
+    relonturn updatelonr;
   }
-  Map<String, QueryCacheFilter> getCacheMapForTest() {
-    return filters;
+  Map<String, QuelonryCachelonFiltelonr> gelontCachelonMapForTelonst() {
+    relonturn filtelonrs;
   }
 }

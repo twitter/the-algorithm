@@ -1,88 +1,88 @@
-package com.twitter.search.earlybird.partition;
+packagelon com.twittelonr.selonarch.elonarlybird.partition;
 
-import com.google.common.annotations.VisibleForTesting;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
 
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apachelon.kafka.clielonnts.consumelonr.ConsumelonrReloncord;
+import org.apachelon.kafka.clielonnts.consumelonr.KafkaConsumelonr;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.metrics.SearchTimer;
-import com.twitter.search.common.util.io.kafka.FinagleKafkaClientUtils;
-import com.twitter.search.common.util.io.kafka.ThriftDeserializer;
-import com.twitter.search.earlybird.common.config.EarlybirdProperty;
-import com.twitter.search.earlybird.exception.MissingKafkaTopicException;
-import com.twitter.tweetypie.thriftjava.TweetEvent;
-import com.twitter.tweetypie.thriftjava.UserScrubGeoEvent;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchRatelonCountelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchTimelonr;
+import com.twittelonr.selonarch.common.util.io.kafka.FinaglelonKafkaClielonntUtils;
+import com.twittelonr.selonarch.common.util.io.kafka.ThriftDelonselonrializelonr;
+import com.twittelonr.selonarch.elonarlybird.common.config.elonarlybirdPropelonrty;
+import com.twittelonr.selonarch.elonarlybird.elonxcelonption.MissingKafkaTopicelonxcelonption;
+import com.twittelonr.twelonelontypielon.thriftjava.Twelonelontelonvelonnt;
+import com.twittelonr.twelonelontypielon.thriftjava.UselonrScrubGelonoelonvelonnt;
 
-public class UserScrubGeoEventStreamIndexer extends SimpleStreamIndexer<Long, TweetEvent> {
-  private static final Logger LOG = LoggerFactory.getLogger(UserScrubGeoEventStreamIndexer.class);
+public class UselonrScrubGelonoelonvelonntStrelonamIndelonxelonr elonxtelonnds SimplelonStrelonamIndelonxelonr<Long, Twelonelontelonvelonnt> {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(UselonrScrubGelonoelonvelonntStrelonamIndelonxelonr.class);
 
-  protected static String kafkaClientId = "earlybird_user_scrub_geo_kafka_consumer";
-  private static final SearchCounter NUM_MISSING_DATA_ERRORS =
-      SearchCounter.export("num_user_scrub_geo_event_kafka_consumer_num_missing_data_errors");
+  protelonctelond static String kafkaClielonntId = "elonarlybird_uselonr_scrub_gelono_kafka_consumelonr";
+  privatelon static final SelonarchCountelonr NUM_MISSING_DATA_elonRRORS =
+      SelonarchCountelonr.elonxport("num_uselonr_scrub_gelono_elonvelonnt_kafka_consumelonr_num_missing_data_elonrrors");
 
-  private final SegmentManager segmentManager;
-  private final SearchIndexingMetricSet searchIndexingMetricSet;
+  privatelon final SelongmelonntManagelonr selongmelonntManagelonr;
+  privatelon final SelonarchIndelonxingMelontricSelont selonarchIndelonxingMelontricSelont;
 
-  public UserScrubGeoEventStreamIndexer(KafkaConsumer<Long, TweetEvent> kafkaConsumer,
+  public UselonrScrubGelonoelonvelonntStrelonamIndelonxelonr(KafkaConsumelonr<Long, Twelonelontelonvelonnt> kafkaConsumelonr,
                                         String topic,
-                                        SearchIndexingMetricSet searchIndexingMetricSet,
-                                        SegmentManager segmentManager)
-      throws MissingKafkaTopicException {
-    super(kafkaConsumer, topic);
+                                        SelonarchIndelonxingMelontricSelont selonarchIndelonxingMelontricSelont,
+                                        SelongmelonntManagelonr selongmelonntManagelonr)
+      throws MissingKafkaTopicelonxcelonption {
+    supelonr(kafkaConsumelonr, topic);
 
-    this.segmentManager = segmentManager;
-    this.searchIndexingMetricSet = searchIndexingMetricSet;
+    this.selongmelonntManagelonr = selongmelonntManagelonr;
+    this.selonarchIndelonxingMelontricSelont = selonarchIndelonxingMelontricSelont;
 
-    indexingSuccesses = SearchRateCounter.export("user_scrub_geo_indexing_successes");
-    indexingFailures = SearchRateCounter.export("user_scrub_geo_indexing_failures");
+    indelonxingSuccelonsselons = SelonarchRatelonCountelonr.elonxport("uselonr_scrub_gelono_indelonxing_succelonsselons");
+    indelonxingFailurelons = SelonarchRatelonCountelonr.elonxport("uselonr_scrub_gelono_indelonxing_failurelons");
   }
 
   /**
-   * Provides UserScrubGeoEvent Kafka Consumer to EarlybirdWireModule.
-   * @return
+   * Providelons UselonrScrubGelonoelonvelonnt Kafka Consumelonr to elonarlybirdWirelonModulelon.
+   * @relonturn
    */
-  public static KafkaConsumer<Long, TweetEvent> provideKafkaConsumer() {
-    return FinagleKafkaClientUtils.newKafkaConsumerForAssigning(
-        EarlybirdProperty.TWEET_EVENTS_KAFKA_PATH.get(),
-        new ThriftDeserializer<>(TweetEvent.class),
-        kafkaClientId,
-        MAX_POLL_RECORDS);
+  public static KafkaConsumelonr<Long, Twelonelontelonvelonnt> providelonKafkaConsumelonr() {
+    relonturn FinaglelonKafkaClielonntUtils.nelonwKafkaConsumelonrForAssigning(
+        elonarlybirdPropelonrty.TWelonelonT_elonVelonNTS_KAFKA_PATH.gelont(),
+        nelonw ThriftDelonselonrializelonr<>(Twelonelontelonvelonnt.class),
+        kafkaClielonntId,
+        MAX_POLL_RelonCORDS);
   }
 
-  @VisibleForTesting
-  protected void validateAndIndexRecord(ConsumerRecord<Long, TweetEvent> record) {
-    TweetEvent event = record.value();
-    UserScrubGeoEvent geoEvent;
+  @VisiblelonForTelonsting
+  protelonctelond void validatelonAndIndelonxReloncord(ConsumelonrReloncord<Long, Twelonelontelonvelonnt> reloncord) {
+    Twelonelontelonvelonnt elonvelonnt = reloncord.valuelon();
+    UselonrScrubGelonoelonvelonnt gelonoelonvelonnt;
     try {
-     geoEvent = event.getData().getUser_scrub_geo_event();
-    } catch (Exception e) {
-      LOG.warn("TweetEventData is null for TweetEvent: " + event.toString());
-      indexingFailures.increment();
-      return;
+     gelonoelonvelonnt = elonvelonnt.gelontData().gelontUselonr_scrub_gelono_elonvelonnt();
+    } catch (elonxcelonption elon) {
+      LOG.warn("TwelonelontelonvelonntData is null for Twelonelontelonvelonnt: " + elonvelonnt.toString());
+      indelonxingFailurelons.increlonmelonnt();
+      relonturn;
     }
 
-    if (geoEvent == null) {
-      LOG.warn("UserScrubGeoEvent is null");
-      indexingFailures.increment();
+    if (gelonoelonvelonnt == null) {
+      LOG.warn("UselonrScrubGelonoelonvelonnt is null");
+      indelonxingFailurelons.increlonmelonnt();
 
-    } else if (!geoEvent.isSetMax_tweet_id() || !geoEvent.isSetUser_id()) {
-      // We should not consume an event that does not contain both a maxTweetId & userId since we
-      // we won't have enough data to properly store them in the map. We should, however, keep
-      // track of these cases since we don't want to miss out on users who have scrubbed their
-      // geo data from their tweets when applying the UserScrubGeoFilter.
-      LOG.warn("UserScrubGeoEvent is missing fields: " + geoEvent.toString());
-      indexingFailures.increment();
-      NUM_MISSING_DATA_ERRORS.increment();
+    } elonlselon if (!gelonoelonvelonnt.isSelontMax_twelonelont_id() || !gelonoelonvelonnt.isSelontUselonr_id()) {
+      // Welon should not consumelon an elonvelonnt that doelons not contain both a maxTwelonelontId & uselonrId sincelon welon
+      // welon won't havelon elonnough data to propelonrly storelon thelonm in thelon map. Welon should, howelonvelonr, kelonelonp
+      // track of thelonselon caselons sincelon welon don't want to miss out on uselonrs who havelon scrubbelond thelonir
+      // gelono data from thelonir twelonelonts whelonn applying thelon UselonrScrubGelonoFiltelonr.
+      LOG.warn("UselonrScrubGelonoelonvelonnt is missing fielonlds: " + gelonoelonvelonnt.toString());
+      indelonxingFailurelons.increlonmelonnt();
+      NUM_MISSING_DATA_elonRRORS.increlonmelonnt();
 
-    } else {
-      SearchTimer timer = searchIndexingMetricSet.userScrubGeoIndexingStats.startNewTimer();
-      segmentManager.indexUserScrubGeoEvent(geoEvent);
-      indexingSuccesses.increment();
-      searchIndexingMetricSet.userScrubGeoIndexingStats.stopTimerAndIncrement(timer);
+    } elonlselon {
+      SelonarchTimelonr timelonr = selonarchIndelonxingMelontricSelont.uselonrScrubGelonoIndelonxingStats.startNelonwTimelonr();
+      selongmelonntManagelonr.indelonxUselonrScrubGelonoelonvelonnt(gelonoelonvelonnt);
+      indelonxingSuccelonsselons.increlonmelonnt();
+      selonarchIndelonxingMelontricSelont.uselonrScrubGelonoIndelonxingStats.stopTimelonrAndIncrelonmelonnt(timelonr);
     }
   }
 }

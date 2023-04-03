@@ -1,9 +1,9 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.message
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.melonssagelon
 
-case class UserFacepile(
-  userIds: Seq[Long],
-  featuredUserIds: Seq[Long],
-  action: Option[MessageTextAction],
-  actionType: Option[MessageActionType],
-  displaysFeaturingText: Option[Boolean],
-  displayType: Option[UserFacepileDisplayType])
+caselon class UselonrFacelonpilelon(
+  uselonrIds: Selonq[Long],
+  felonaturelondUselonrIds: Selonq[Long],
+  action: Option[MelonssagelonTelonxtAction],
+  actionTypelon: Option[MelonssagelonActionTypelon],
+  displaysFelonaturingTelonxt: Option[Boolelonan],
+  displayTypelon: Option[UselonrFacelonpilelonDisplayTypelon])

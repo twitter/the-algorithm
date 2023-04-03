@@ -1,8 +1,8 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.promoted
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.promotelond
 
-sealed trait DisclosureType
+selonalelond trait DisclosurelonTypelon
 
-case object NoDisclosure extends DisclosureType
-case object Political extends DisclosureType
-case object Earned extends DisclosureType
-case object Issue extends DisclosureType
+caselon objelonct NoDisclosurelon elonxtelonnds DisclosurelonTypelon
+caselon objelonct Political elonxtelonnds DisclosurelonTypelon
+caselon objelonct elonarnelond elonxtelonnds DisclosurelonTypelon
+caselon objelonct Issuelon elonxtelonnds DisclosurelonTypelon

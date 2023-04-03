@@ -1,62 +1,62 @@
-package com.twitter.search.earlybird.segment;
+packagelon com.twittelonr.selonarch.elonarlybird.selongmelonnt;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Collelonctions;
 import java.util.List;
-import java.util.Set;
+import java.util.Selont;
 
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.partitioning.base.Segment;
-import com.twitter.search.common.util.io.dl.DLReaderWriterFactory;
-import com.twitter.search.common.util.io.dl.SegmentDLUtil;
-import com.twitter.search.earlybird.EarlybirdIndexConfig;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
+import com.twittelonr.common.util.Clock;
+import com.twittelonr.selonarch.common.partitioning.baselon.Selongmelonnt;
+import com.twittelonr.selonarch.common.util.io.dl.DLRelonadelonrWritelonrFactory;
+import com.twittelonr.selonarch.common.util.io.dl.SelongmelonntDLUtil;
+import com.twittelonr.selonarch.elonarlybird.elonarlybirdIndelonxConfig;
+import com.twittelonr.selonarch.elonarlybird.common.config.elonarlybirdConfig;
 
 /**
- * An implementation of SegmentDataProvider using DistributedLog.
+ * An implelonmelonntation of SelongmelonntDataProvidelonr using DistributelondLog.
  */
-public class DLSegmentDataProvider implements SegmentDataProvider {
-  private final int hashPartitionID;
-  private final DLReaderWriterFactory dlFactory;
-  private final SegmentDataReaderSet readerSet;
+public class DLSelongmelonntDataProvidelonr implelonmelonnts SelongmelonntDataProvidelonr {
+  privatelon final int hashPartitionID;
+  privatelon final DLRelonadelonrWritelonrFactory dlFactory;
+  privatelon final SelongmelonntDataRelonadelonrSelont relonadelonrSelont;
 
-  public DLSegmentDataProvider(
+  public DLSelongmelonntDataProvidelonr(
       int hashPartitionID,
-      EarlybirdIndexConfig earlybirdIndexConfig,
-      DLReaderWriterFactory dlReaderWriterFactory) throws IOException {
-    this(hashPartitionID, earlybirdIndexConfig, dlReaderWriterFactory,
-        Clock.SYSTEM_CLOCK);
+      elonarlybirdIndelonxConfig elonarlybirdIndelonxConfig,
+      DLRelonadelonrWritelonrFactory dlRelonadelonrWritelonrFactory) throws IOelonxcelonption {
+    this(hashPartitionID, elonarlybirdIndelonxConfig, dlRelonadelonrWritelonrFactory,
+        Clock.SYSTelonM_CLOCK);
   }
 
-  public DLSegmentDataProvider(
+  public DLSelongmelonntDataProvidelonr(
     int hashPartitionID,
-    EarlybirdIndexConfig earlybirdIndexConfig,
-    DLReaderWriterFactory dlReaderWriterFactory,
-    Clock clock) throws IOException {
+    elonarlybirdIndelonxConfig elonarlybirdIndelonxConfig,
+    DLRelonadelonrWritelonrFactory dlRelonadelonrWritelonrFactory,
+    Clock clock) throws IOelonxcelonption {
     this.hashPartitionID = hashPartitionID;
-    this.dlFactory = dlReaderWriterFactory;
-    this.readerSet = new DLSegmentDataReaderSet(
+    this.dlFactory = dlRelonadelonrWritelonrFactory;
+    this.relonadelonrSelont = nelonw DLSelongmelonntDataRelonadelonrSelont(
         dlFactory,
-        earlybirdIndexConfig,
+        elonarlybirdIndelonxConfig,
         clock);
   }
 
-  @Override
-  public SegmentDataReaderSet getSegmentDataReaderSet() {
-    return readerSet;
+  @Ovelonrridelon
+  public SelongmelonntDataRelonadelonrSelont gelontSelongmelonntDataRelonadelonrSelont() {
+    relonturn relonadelonrSelont;
   }
 
-  @Override
-  public List<Segment> newSegmentList() throws IOException {
-    Set<String> segmentNames = SegmentDLUtil.getSegmentNames(dlFactory, null, hashPartitionID);
-    List<Segment> segmentList = new ArrayList<>(segmentNames.size());
-    for (String segmentName : segmentNames) {
-      Segment segment = Segment.fromSegmentName(segmentName, EarlybirdConfig.getMaxSegmentSize());
-      segmentList.add(segment);
+  @Ovelonrridelon
+  public List<Selongmelonnt> nelonwSelongmelonntList() throws IOelonxcelonption {
+    Selont<String> selongmelonntNamelons = SelongmelonntDLUtil.gelontSelongmelonntNamelons(dlFactory, null, hashPartitionID);
+    List<Selongmelonnt> selongmelonntList = nelonw ArrayList<>(selongmelonntNamelons.sizelon());
+    for (String selongmelonntNamelon : selongmelonntNamelons) {
+      Selongmelonnt selongmelonnt = Selongmelonnt.fromSelongmelonntNamelon(selongmelonntNamelon, elonarlybirdConfig.gelontMaxSelongmelonntSizelon());
+      selongmelonntList.add(selongmelonnt);
     }
-    // Sort the segments by ID.
-    Collections.sort(segmentList);
-    return segmentList;
+    // Sort thelon selongmelonnts by ID.
+    Collelonctions.sort(selongmelonntList);
+    relonturn selongmelonntList;
   }
 }

@@ -1,50 +1,50 @@
-package com.twitter.search.earlybird.util;
+packagelon com.twittelonr.selonarch.elonarlybird.util;
 
-import com.google.common.annotations.VisibleForTesting;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
 
-import com.twitter.common.base.ExceptionalFunction;
+import com.twittelonr.common.baselon.elonxcelonptionalFunction;
 
-public interface CoordinatedEarlybirdActionInterface {
+public intelonrfacelon CoordinatelondelonarlybirdActionIntelonrfacelon {
     /**
-     * Executes the provided Function associated with the given segment.
-     * @param description a name for the action to be exected.
-     * @param function the function to call in a coordinated manner.
-     *        As input, the function will receive a flag indicating whether or not it is being
-     *        called in a coordinated fashion. true if it is, and false otherwise.
-     * @return true iff the function was executed, and function.apply() returned true;
-     * throws CoordinatedEarlybirdActionLockFailed if function is not executed (because lock
-     * aquisition failed).
+     * elonxeloncutelons thelon providelond Function associatelond with thelon givelonn selongmelonnt.
+     * @param delonscription a namelon for thelon action to belon elonxelonctelond.
+     * @param function thelon function to call in a coordinatelond mannelonr.
+     *        As input, thelon function will reloncelonivelon a flag indicating whelonthelonr or not it is beloning
+     *        callelond in a coordinatelond fashion. truelon if it is, and falselon othelonrwiselon.
+     * @relonturn truelon iff thelon function was elonxeloncutelond, and function.apply() relonturnelond truelon;
+     * throws CoordinatelondelonarlybirdActionLockFailelond if function is not elonxeloncutelond (beloncauselon lock
+     * aquisition failelond).
      */
-    <E extends Exception> boolean execute(
-        String description,
-        ExceptionalFunction<Boolean, Boolean, E> function)
-          throws E, CoordinatedEarlybirdActionLockFailed;
-
-    /**
-     * Set whether this action should be synchronized.
-     * If not, the action is directly applied. If yes, Earlybirds will coordinate executing the
-     * action via ZooKeeperTryLocks.
-     */
-    boolean setShouldSynchronize(boolean shouldSynchronizeParam);
+    <elon elonxtelonnds elonxcelonption> boolelonan elonxeloncutelon(
+        String delonscription,
+        elonxcelonptionalFunction<Boolelonan, Boolelonan, elon> function)
+          throws elon, CoordinatelondelonarlybirdActionLockFailelond;
 
     /**
-     * Number of times this coordinated actions has been executed.
-     * @return
+     * Selont whelonthelonr this action should belon synchronizelond.
+     * If not, thelon action is direlonctly applielond. If yelons, elonarlybirds will coordinatelon elonxeloncuting thelon
+     * action via ZooKelonelonpelonrTryLocks.
      */
-    @VisibleForTesting
-    long getNumCoordinatedFunctionCalls();
+    boolelonan selontShouldSynchronizelon(boolelonan shouldSynchronizelonParam);
 
     /**
-     * Number of times we have left the serverset.
-     * @return
+     * Numbelonr of timelons this coordinatelond actions has belonelonn elonxeloncutelond.
+     * @relonturn
      */
-    @VisibleForTesting
-    long getNumCoordinatedLeaveServersetCalls();
+    @VisiblelonForTelonsting
+    long gelontNumCoordinatelondFunctionCalls();
 
     /**
-     * Retry until we can run an action on a single instance in the serverset.
-     * @param description Text description of the action.
-     * @param action A runnable to be ran.
+     * Numbelonr of timelons welon havelon lelonft thelon selonrvelonrselont.
+     * @relonturn
      */
-    void retryActionUntilRan(String description, Runnable action);
+    @VisiblelonForTelonsting
+    long gelontNumCoordinatelondLelonavelonSelonrvelonrselontCalls();
+
+    /**
+     * Relontry until welon can run an action on a singlelon instancelon in thelon selonrvelonrselont.
+     * @param delonscription Telonxt delonscription of thelon action.
+     * @param action A runnablelon to belon ran.
+     */
+    void relontryActionUntilRan(String delonscription, Runnablelon action);
 }

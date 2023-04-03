@@ -1,350 +1,350 @@
-package com.twitter.interaction_graph.scio.common
+packagelon com.twittelonr.intelonraction_graph.scio.common
 
-import com.spotify.scio.ScioMetrics
-import com.twitter.interaction_graph.thriftscala.Edge
-import com.twitter.interaction_graph.thriftscala.EdgeFeature
-import com.twitter.interaction_graph.thriftscala.FeatureName
-import com.twitter.interaction_graph.thriftscala.TimeSeriesStatistics
+import com.spotify.scio.ScioMelontrics
+import com.twittelonr.intelonraction_graph.thriftscala.elondgelon
+import com.twittelonr.intelonraction_graph.thriftscala.elondgelonFelonaturelon
+import com.twittelonr.intelonraction_graph.thriftscala.FelonaturelonNamelon
+import com.twittelonr.intelonraction_graph.thriftscala.TimelonSelonrielonsStatistics
 
-object EdgeFeatureCombiner {
-  def apply(srcId: Long, destId: Long): EdgeFeatureCombiner = new EdgeFeatureCombiner(
-    instanceEdge = Edge(srcId, destId),
-    featureMap = Map(
-      FeatureName.NumRetweets -> new WeightedAdditiveEdgeCombiner,
-      FeatureName.NumFavorites -> new WeightedAdditiveEdgeCombiner,
-      FeatureName.NumMentions -> new WeightedAdditiveEdgeCombiner,
-      FeatureName.NumTweetClicks -> new WeightedAdditiveEdgeCombiner,
-      FeatureName.NumLinkClicks -> new WeightedAdditiveEdgeCombiner,
-      FeatureName.NumProfileViews -> new WeightedAdditiveEdgeCombiner,
-      FeatureName.NumFollows -> new BooleanOrEdgeCombiner,
-      FeatureName.NumUnfollows -> new BooleanOrEdgeCombiner,
-      FeatureName.NumMutualFollows -> new BooleanOrEdgeCombiner,
-      FeatureName.NumBlocks -> new BooleanOrEdgeCombiner,
-      FeatureName.NumMutes -> new BooleanOrEdgeCombiner,
-      FeatureName.NumReportAsAbuses -> new BooleanOrEdgeCombiner,
-      FeatureName.NumReportAsSpams -> new BooleanOrEdgeCombiner,
-      FeatureName.NumTweetQuotes -> new WeightedAdditiveEdgeCombiner,
-      FeatureName.AddressBookEmail -> new BooleanOrEdgeCombiner,
-      FeatureName.AddressBookPhone -> new BooleanOrEdgeCombiner,
-      FeatureName.AddressBookInBoth -> new BooleanOrEdgeCombiner,
-      FeatureName.AddressBookMutualEdgeEmail -> new BooleanOrEdgeCombiner,
-      FeatureName.AddressBookMutualEdgePhone -> new BooleanOrEdgeCombiner,
-      FeatureName.AddressBookMutualEdgeInBoth -> new BooleanOrEdgeCombiner,
-      FeatureName.TotalDwellTime -> new WeightedAdditiveEdgeCombiner,
-      FeatureName.NumInspectedStatuses -> new WeightedAdditiveEdgeCombiner,
-      FeatureName.NumPhotoTags -> new WeightedAdditiveEdgeCombiner,
-      FeatureName.NumPushOpens -> new WeightedAdditiveEdgeCombiner,
-      FeatureName.NumNtabClicks -> new WeightedAdditiveEdgeCombiner,
-      FeatureName.NumRtMentions -> new WeightedAdditiveEdgeCombiner,
-      FeatureName.NumRtReplies -> new WeightedAdditiveEdgeCombiner,
-      FeatureName.NumRtRetweets -> new WeightedAdditiveEdgeCombiner,
-      FeatureName.NumRtFavories -> new WeightedAdditiveEdgeCombiner,
-      FeatureName.NumRtLinkClicks -> new WeightedAdditiveEdgeCombiner,
-      FeatureName.NumRtTweetClicks -> new WeightedAdditiveEdgeCombiner,
-      FeatureName.NumRtTweetQuotes -> new WeightedAdditiveEdgeCombiner,
-      FeatureName.NumShares -> new WeightedAdditiveEdgeCombiner,
-      FeatureName.NumEmailOpen -> new WeightedAdditiveEdgeCombiner,
-      FeatureName.NumEmailClick -> new WeightedAdditiveEdgeCombiner,
+objelonct elondgelonFelonaturelonCombinelonr {
+  delonf apply(srcId: Long, delonstId: Long): elondgelonFelonaturelonCombinelonr = nelonw elondgelonFelonaturelonCombinelonr(
+    instancelonelondgelon = elondgelon(srcId, delonstId),
+    felonaturelonMap = Map(
+      FelonaturelonNamelon.NumRelontwelonelonts -> nelonw WelonightelondAdditivelonelondgelonCombinelonr,
+      FelonaturelonNamelon.NumFavoritelons -> nelonw WelonightelondAdditivelonelondgelonCombinelonr,
+      FelonaturelonNamelon.NumMelonntions -> nelonw WelonightelondAdditivelonelondgelonCombinelonr,
+      FelonaturelonNamelon.NumTwelonelontClicks -> nelonw WelonightelondAdditivelonelondgelonCombinelonr,
+      FelonaturelonNamelon.NumLinkClicks -> nelonw WelonightelondAdditivelonelondgelonCombinelonr,
+      FelonaturelonNamelon.NumProfilelonVielonws -> nelonw WelonightelondAdditivelonelondgelonCombinelonr,
+      FelonaturelonNamelon.NumFollows -> nelonw BoolelonanOrelondgelonCombinelonr,
+      FelonaturelonNamelon.NumUnfollows -> nelonw BoolelonanOrelondgelonCombinelonr,
+      FelonaturelonNamelon.NumMutualFollows -> nelonw BoolelonanOrelondgelonCombinelonr,
+      FelonaturelonNamelon.NumBlocks -> nelonw BoolelonanOrelondgelonCombinelonr,
+      FelonaturelonNamelon.NumMutelons -> nelonw BoolelonanOrelondgelonCombinelonr,
+      FelonaturelonNamelon.NumRelonportAsAbuselons -> nelonw BoolelonanOrelondgelonCombinelonr,
+      FelonaturelonNamelon.NumRelonportAsSpams -> nelonw BoolelonanOrelondgelonCombinelonr,
+      FelonaturelonNamelon.NumTwelonelontQuotelons -> nelonw WelonightelondAdditivelonelondgelonCombinelonr,
+      FelonaturelonNamelon.AddrelonssBookelonmail -> nelonw BoolelonanOrelondgelonCombinelonr,
+      FelonaturelonNamelon.AddrelonssBookPhonelon -> nelonw BoolelonanOrelondgelonCombinelonr,
+      FelonaturelonNamelon.AddrelonssBookInBoth -> nelonw BoolelonanOrelondgelonCombinelonr,
+      FelonaturelonNamelon.AddrelonssBookMutualelondgelonelonmail -> nelonw BoolelonanOrelondgelonCombinelonr,
+      FelonaturelonNamelon.AddrelonssBookMutualelondgelonPhonelon -> nelonw BoolelonanOrelondgelonCombinelonr,
+      FelonaturelonNamelon.AddrelonssBookMutualelondgelonInBoth -> nelonw BoolelonanOrelondgelonCombinelonr,
+      FelonaturelonNamelon.TotalDwelonllTimelon -> nelonw WelonightelondAdditivelonelondgelonCombinelonr,
+      FelonaturelonNamelon.NumInspelonctelondStatuselons -> nelonw WelonightelondAdditivelonelondgelonCombinelonr,
+      FelonaturelonNamelon.NumPhotoTags -> nelonw WelonightelondAdditivelonelondgelonCombinelonr,
+      FelonaturelonNamelon.NumPushOpelonns -> nelonw WelonightelondAdditivelonelondgelonCombinelonr,
+      FelonaturelonNamelon.NumNtabClicks -> nelonw WelonightelondAdditivelonelondgelonCombinelonr,
+      FelonaturelonNamelon.NumRtMelonntions -> nelonw WelonightelondAdditivelonelondgelonCombinelonr,
+      FelonaturelonNamelon.NumRtRelonplielons -> nelonw WelonightelondAdditivelonelondgelonCombinelonr,
+      FelonaturelonNamelon.NumRtRelontwelonelonts -> nelonw WelonightelondAdditivelonelondgelonCombinelonr,
+      FelonaturelonNamelon.NumRtFavorielons -> nelonw WelonightelondAdditivelonelondgelonCombinelonr,
+      FelonaturelonNamelon.NumRtLinkClicks -> nelonw WelonightelondAdditivelonelondgelonCombinelonr,
+      FelonaturelonNamelon.NumRtTwelonelontClicks -> nelonw WelonightelondAdditivelonelondgelonCombinelonr,
+      FelonaturelonNamelon.NumRtTwelonelontQuotelons -> nelonw WelonightelondAdditivelonelondgelonCombinelonr,
+      FelonaturelonNamelon.NumSharelons -> nelonw WelonightelondAdditivelonelondgelonCombinelonr,
+      FelonaturelonNamelon.NumelonmailOpelonn -> nelonw WelonightelondAdditivelonelondgelonCombinelonr,
+      FelonaturelonNamelon.NumelonmailClick -> nelonw WelonightelondAdditivelonelondgelonCombinelonr,
     )
   )
 }
 
 /**
- * This class can take in a number of input Edge thrift objects, (all of which are assumed to
- * contain information about a single edge) and builds a combined Edge protobuf object, which has
- * the union of all the input.
+ * This class can takelon in a numbelonr of input elondgelon thrift objeloncts, (all of which arelon assumelond to
+ * contain information about a singlelon elondgelon) and builds a combinelond elondgelon protobuf objelonct, which has
+ * thelon union of all thelon input.
  * <p>
- * There are two modes of aggregation: one of them just adds the values in assuming that these are
- * from the same day, and the other adds them in a time-decayed manner using the passed in weights.
+ * Thelonrelon arelon two modelons of aggrelongation: onelon of thelonm just adds thelon valuelons in assuming that thelonselon arelon
+ * from thelon samelon day, and thelon othelonr adds thelonm in a timelon-deloncayelond mannelonr using thelon passelond in welonights.
  * <p>
- * The input objects features must be disjoint. Also, remember that the edge is directed!
+ * Thelon input objeloncts felonaturelons must belon disjoint. Also, relonmelonmbelonr that thelon elondgelon is direlonctelond!
  */
-class EdgeFeatureCombiner(instanceEdge: Edge, featureMap: Map[FeatureName, EFeatureCombiner]) {
+class elondgelonFelonaturelonCombinelonr(instancelonelondgelon: elondgelon, felonaturelonMap: Map[FelonaturelonNamelon, elonFelonaturelonCombinelonr]) {
 
   /**
-   * Adds features without any decay. To be used for the same day.
+   * Adds felonaturelons without any deloncay. To belon uselond for thelon samelon day.
    *
-   * @param edge edge to be added into the combiner
+   * @param elondgelon elondgelon to belon addelond into thelon combinelonr
    */
-  def addFeature(edge: Edge): EdgeFeatureCombiner = {
+  delonf addFelonaturelon(elondgelon: elondgelon): elondgelonFelonaturelonCombinelonr = {
 
-    val newEdge =
-      if (edge.weight.isDefined) instanceEdge.copy(weight = edge.weight) else instanceEdge
-    val newFeatures = featureMap.map {
-      case (featureName, combiner) =>
-        edge.features.find(_.name.equals(featureName)) match {
-          case Some(feature) =>
-            val updatedCombiner =
-              if (combiner.isSet) combiner.updateFeature(feature) else combiner.setFeature(feature)
-            (featureName, updatedCombiner)
-          case _ => (featureName, combiner)
+    val nelonwelondgelon =
+      if (elondgelon.welonight.isDelonfinelond) instancelonelondgelon.copy(welonight = elondgelon.welonight) elonlselon instancelonelondgelon
+    val nelonwFelonaturelons = felonaturelonMap.map {
+      caselon (felonaturelonNamelon, combinelonr) =>
+        elondgelon.felonaturelons.find(_.namelon.elonquals(felonaturelonNamelon)) match {
+          caselon Somelon(felonaturelon) =>
+            val updatelondCombinelonr =
+              if (combinelonr.isSelont) combinelonr.updatelonFelonaturelon(felonaturelon) elonlselon combinelonr.selontFelonaturelon(felonaturelon)
+            (felonaturelonNamelon, updatelondCombinelonr)
+          caselon _ => (felonaturelonNamelon, combinelonr)
         }
     }
 
-    new EdgeFeatureCombiner(newEdge, newFeatures)
+    nelonw elondgelonFelonaturelonCombinelonr(nelonwelondgelon, nelonwFelonaturelons)
 
   }
 
   /**
-   * Adds features with decays. Used for combining multiple days.
+   * Adds felonaturelons with deloncays. Uselond for combining multiplelon days.
    *
-   * @param edge  edge to be added into the combiner
-   * @param alpha parameters for the decay calculation
-   * @param day   number of days from today
+   * @param elondgelon  elondgelon to belon addelond into thelon combinelonr
+   * @param alpha paramelontelonrs for thelon deloncay calculation
+   * @param day   numbelonr of days from today
    */
-  def addFeature(edge: Edge, alpha: Double, day: Int): EdgeFeatureCombiner = {
+  delonf addFelonaturelon(elondgelon: elondgelon, alpha: Doublelon, day: Int): elondgelonFelonaturelonCombinelonr = {
 
-    val newEdge = if (edge.weight.isDefined) edge.copy(weight = edge.weight) else edge
-    val newFeatures = featureMap.map {
-      case (featureName, combiner) =>
-        edge.features.find(_.name.equals(featureName)) match {
-          case Some(feature) =>
-            val updatedCombiner =
-              if (combiner.isSet) combiner.updateFeature(feature, alpha, day)
-              else combiner.setFeature(feature, alpha, day)
-            ScioMetrics.counter("EdgeFeatureCombiner.addFeature", feature.name.name).inc()
-            (featureName, updatedCombiner)
-          case _ => (featureName, combiner)
+    val nelonwelondgelon = if (elondgelon.welonight.isDelonfinelond) elondgelon.copy(welonight = elondgelon.welonight) elonlselon elondgelon
+    val nelonwFelonaturelons = felonaturelonMap.map {
+      caselon (felonaturelonNamelon, combinelonr) =>
+        elondgelon.felonaturelons.find(_.namelon.elonquals(felonaturelonNamelon)) match {
+          caselon Somelon(felonaturelon) =>
+            val updatelondCombinelonr =
+              if (combinelonr.isSelont) combinelonr.updatelonFelonaturelon(felonaturelon, alpha, day)
+              elonlselon combinelonr.selontFelonaturelon(felonaturelon, alpha, day)
+            ScioMelontrics.countelonr("elondgelonFelonaturelonCombinelonr.addFelonaturelon", felonaturelon.namelon.namelon).inc()
+            (felonaturelonNamelon, updatelondCombinelonr)
+          caselon _ => (felonaturelonNamelon, combinelonr)
         }
     }
-    new EdgeFeatureCombiner(newEdge, newFeatures)
+    nelonw elondgelonFelonaturelonCombinelonr(nelonwelondgelon, nelonwFelonaturelons)
   }
 
   /**
-   * Generate the final combined Edge instance
-   * We return a deterministically sorted list of edge features
+   * Gelonnelonratelon thelon final combinelond elondgelon instancelon
+   * Welon relonturn a delontelonrministically sortelond list of elondgelon felonaturelons
    *
-   * @param totalDays total number of days to be combined together
+   * @param totalDays total numbelonr of days to belon combinelond togelonthelonr
    */
-  def getCombinedEdge(totalDays: Int): Edge = {
-    val moreFeatures = featureMap.values
-      .flatMap { combiner =>
-        combiner.getFinalFeature(totalDays)
-      }.toList.sortBy(_.name.value)
-    instanceEdge.copy(
-      features = moreFeatures
+  delonf gelontCombinelondelondgelon(totalDays: Int): elondgelon = {
+    val morelonFelonaturelons = felonaturelonMap.valuelons
+      .flatMap { combinelonr =>
+        combinelonr.gelontFinalFelonaturelon(totalDays)
+      }.toList.sortBy(_.namelon.valuelon)
+    instancelonelondgelon.copy(
+      felonaturelons = morelonFelonaturelons
     )
   }
 
 }
 
 /**
- * This portion contains the actual combination logic. For now, we only implement a simple
- * additive combiner, but in future we'd like to have things like time-weighted (exponential
- * decay, maybe) values.
+ * This portion contains thelon actual combination logic. For now, welon only implelonmelonnt a simplelon
+ * additivelon combinelonr, but in futurelon welon'd likelon to havelon things likelon timelon-welonightelond (elonxponelonntial
+ * deloncay, maybelon) valuelons.
  */
 
-trait EFeatureCombiner {
-  val edgeFeature: Option[EdgeFeature]
+trait elonFelonaturelonCombinelonr {
+  val elondgelonFelonaturelon: Option[elondgelonFelonaturelon]
   val startingDay: Int
-  val endingDay: Int
-  val timeSeriesStatistics: Option[TimeSeriesStatistics]
+  val elonndingDay: Int
+  val timelonSelonrielonsStatistics: Option[TimelonSelonrielonsStatistics]
 
-  def updateTSS(feature: EdgeFeature, alpha: Double): Option[TimeSeriesStatistics]
+  delonf updatelonTSS(felonaturelon: elondgelonFelonaturelon, alpha: Doublelon): Option[TimelonSelonrielonsStatistics]
 
-  def addToTSS(feature: EdgeFeature): Option[TimeSeriesStatistics]
+  delonf addToTSS(felonaturelon: elondgelonFelonaturelon): Option[TimelonSelonrielonsStatistics]
 
-  def updateFeature(feature: EdgeFeature): EFeatureCombiner
+  delonf updatelonFelonaturelon(felonaturelon: elondgelonFelonaturelon): elonFelonaturelonCombinelonr
 
-  def updateFeature(feature: EdgeFeature, alpha: Double, day: Int): EFeatureCombiner
+  delonf updatelonFelonaturelon(felonaturelon: elondgelonFelonaturelon, alpha: Doublelon, day: Int): elonFelonaturelonCombinelonr
 
-  def isSet: Boolean
+  delonf isSelont: Boolelonan
 
-  def dropFeature: Boolean
+  delonf dropFelonaturelon: Boolelonan
 
-  def setFeature(feature: EdgeFeature, alpha: Double, day: Int): EFeatureCombiner
+  delonf selontFelonaturelon(felonaturelon: elondgelonFelonaturelon, alpha: Doublelon, day: Int): elonFelonaturelonCombinelonr
 
-  def setFeature(feature: EdgeFeature): EFeatureCombiner
+  delonf selontFelonaturelon(felonaturelon: elondgelonFelonaturelon): elonFelonaturelonCombinelonr
 
-  def getFinalFeature(totalDays: Int): Option[EdgeFeature]
+  delonf gelontFinalFelonaturelon(totalDays: Int): Option[elondgelonFelonaturelon]
 
 }
 
-case class WeightedAdditiveEdgeCombiner(
-  override val edgeFeature: Option[EdgeFeature] = None,
-  override val startingDay: Int = Integer.MAX_VALUE,
-  override val endingDay: Int = Integer.MIN_VALUE,
-  override val timeSeriesStatistics: Option[TimeSeriesStatistics] = None)
-    extends EFeatureCombiner {
+caselon class WelonightelondAdditivelonelondgelonCombinelonr(
+  ovelonrridelon val elondgelonFelonaturelon: Option[elondgelonFelonaturelon] = Nonelon,
+  ovelonrridelon val startingDay: Int = Intelongelonr.MAX_VALUelon,
+  ovelonrridelon val elonndingDay: Int = Intelongelonr.MIN_VALUelon,
+  ovelonrridelon val timelonSelonrielonsStatistics: Option[TimelonSelonrielonsStatistics] = Nonelon)
+    elonxtelonnds elonFelonaturelonCombinelonr {
 
-  override def updateTSS(
-    feature: EdgeFeature,
-    alpha: Double
-  ): Option[TimeSeriesStatistics] = {
-    timeSeriesStatistics.map(tss =>
-      InteractionGraphUtils.updateTimeSeriesStatistics(tss, feature.tss.mean, alpha))
+  ovelonrridelon delonf updatelonTSS(
+    felonaturelon: elondgelonFelonaturelon,
+    alpha: Doublelon
+  ): Option[TimelonSelonrielonsStatistics] = {
+    timelonSelonrielonsStatistics.map(tss =>
+      IntelonractionGraphUtils.updatelonTimelonSelonrielonsStatistics(tss, felonaturelon.tss.melonan, alpha))
   }
 
-  override def addToTSS(feature: EdgeFeature): Option[TimeSeriesStatistics] = {
-    timeSeriesStatistics.map(tss =>
-      InteractionGraphUtils.addToTimeSeriesStatistics(tss, feature.tss.mean))
+  ovelonrridelon delonf addToTSS(felonaturelon: elondgelonFelonaturelon): Option[TimelonSelonrielonsStatistics] = {
+    timelonSelonrielonsStatistics.map(tss =>
+      IntelonractionGraphUtils.addToTimelonSelonrielonsStatistics(tss, felonaturelon.tss.melonan))
   }
 
-  override def updateFeature(feature: EdgeFeature): WeightedAdditiveEdgeCombiner = {
-    WeightedAdditiveEdgeCombiner(
-      edgeFeature,
+  ovelonrridelon delonf updatelonFelonaturelon(felonaturelon: elondgelonFelonaturelon): WelonightelondAdditivelonelondgelonCombinelonr = {
+    WelonightelondAdditivelonelondgelonCombinelonr(
+      elondgelonFelonaturelon,
       startingDay,
-      endingDay,
-      addToTSS(feature)
+      elonndingDay,
+      addToTSS(felonaturelon)
     )
   }
 
-  def setFeature(feature: EdgeFeature, alpha: Double, day: Int): WeightedAdditiveEdgeCombiner = {
-    val newStartingDay = Math.min(startingDay, day)
-    val newEndingDay = Math.max(endingDay, day)
+  delonf selontFelonaturelon(felonaturelon: elondgelonFelonaturelon, alpha: Doublelon, day: Int): WelonightelondAdditivelonelondgelonCombinelonr = {
+    val nelonwStartingDay = Math.min(startingDay, day)
+    val nelonwelonndingDay = Math.max(elonndingDay, day)
 
-    val numDaysSinceLast =
-      if (feature.tss.numDaysSinceLast.exists(_ > 0))
-        feature.tss.numDaysSinceLast
-      else Some(feature.tss.numElapsedDays - feature.tss.numNonZeroDays + 1)
+    val numDaysSincelonLast =
+      if (felonaturelon.tss.numDaysSincelonLast.elonxists(_ > 0))
+        felonaturelon.tss.numDaysSincelonLast
+      elonlselon Somelon(felonaturelon.tss.numelonlapselondDays - felonaturelon.tss.numNonZelonroDays + 1)
 
-    val tss = feature.tss.copy(
-      numDaysSinceLast = numDaysSinceLast,
-      ewma = alpha * feature.tss.ewma
+    val tss = felonaturelon.tss.copy(
+      numDaysSincelonLast = numDaysSincelonLast,
+      elonwma = alpha * felonaturelon.tss.elonwma
     )
 
-    val newFeature = EdgeFeature(
-      name = feature.name,
+    val nelonwFelonaturelon = elondgelonFelonaturelon(
+      namelon = felonaturelon.namelon,
       tss = tss
     )
 
-    WeightedAdditiveEdgeCombiner(
-      Some(newFeature),
-      newStartingDay,
-      newEndingDay,
-      Some(tss)
+    WelonightelondAdditivelonelondgelonCombinelonr(
+      Somelon(nelonwFelonaturelon),
+      nelonwStartingDay,
+      nelonwelonndingDay,
+      Somelon(tss)
     )
   }
 
-  def getFinalFeature(totalDays: Int): Option[EdgeFeature] = {
-    if (edgeFeature.isEmpty || dropFeature) return None
+  delonf gelontFinalFelonaturelon(totalDays: Int): Option[elondgelonFelonaturelon] = {
+    if (elondgelonFelonaturelon.iselonmpty || dropFelonaturelon) relonturn Nonelon
 
-    val newTss = if (totalDays > 0) {
-      val elapsed =
-        timeSeriesStatistics.map(tss => tss.numElapsedDays + totalDays - 1 - startingDay)
+    val nelonwTss = if (totalDays > 0) {
+      val elonlapselond =
+        timelonSelonrielonsStatistics.map(tss => tss.numelonlapselondDays + totalDays - 1 - startingDay)
 
-      val latest =
-        if (endingDay > 0) Some(totalDays - endingDay)
-        else
-          timeSeriesStatistics.flatMap(tss =>
-            tss.numDaysSinceLast.map(numDaysSinceLast => numDaysSinceLast + totalDays - 1))
+      val latelonst =
+        if (elonndingDay > 0) Somelon(totalDays - elonndingDay)
+        elonlselon
+          timelonSelonrielonsStatistics.flatMap(tss =>
+            tss.numDaysSincelonLast.map(numDaysSincelonLast => numDaysSincelonLast + totalDays - 1))
 
-      timeSeriesStatistics.map(tss =>
+      timelonSelonrielonsStatistics.map(tss =>
         tss.copy(
-          numElapsedDays = elapsed.get,
-          numDaysSinceLast = latest
+          numelonlapselondDays = elonlapselond.gelont,
+          numDaysSincelonLast = latelonst
         ))
-    } else timeSeriesStatistics
+    } elonlselon timelonSelonrielonsStatistics
 
-    edgeFeature.map(ef => ef.copy(tss = newTss.get))
+    elondgelonFelonaturelon.map(elonf => elonf.copy(tss = nelonwTss.gelont))
   }
 
-  override def updateFeature(
-    feature: EdgeFeature,
-    alpha: Double,
+  ovelonrridelon delonf updatelonFelonaturelon(
+    felonaturelon: elondgelonFelonaturelon,
+    alpha: Doublelon,
     day: Int
-  ): WeightedAdditiveEdgeCombiner = copy(
-    endingDay = Math.max(endingDay, day),
-    timeSeriesStatistics = updateTSS(feature, alpha)
+  ): WelonightelondAdditivelonelondgelonCombinelonr = copy(
+    elonndingDay = Math.max(elonndingDay, day),
+    timelonSelonrielonsStatistics = updatelonTSS(felonaturelon, alpha)
   )
 
-  override def dropFeature: Boolean = timeSeriesStatistics.exists(tss =>
-    tss.numDaysSinceLast.exists(_ > InteractionGraphUtils.MAX_DAYS_RETENTION) ||
-      tss.ewma < InteractionGraphUtils.MIN_FEATURE_VALUE)
+  ovelonrridelon delonf dropFelonaturelon: Boolelonan = timelonSelonrielonsStatistics.elonxists(tss =>
+    tss.numDaysSincelonLast.elonxists(_ > IntelonractionGraphUtils.MAX_DAYS_RelonTelonNTION) ||
+      tss.elonwma < IntelonractionGraphUtils.MIN_FelonATURelon_VALUelon)
 
-  override def isSet = edgeFeature.isDefined
+  ovelonrridelon delonf isSelont = elondgelonFelonaturelon.isDelonfinelond
 
-  override def setFeature(feature: EdgeFeature): WeightedAdditiveEdgeCombiner =
-    setFeature(feature, 1.0, 0)
+  ovelonrridelon delonf selontFelonaturelon(felonaturelon: elondgelonFelonaturelon): WelonightelondAdditivelonelondgelonCombinelonr =
+    selontFelonaturelon(felonaturelon, 1.0, 0)
 
 }
 
 /**
- * This combiner resets the value to 0 if the latest event being combined = 0. Ignores time decays.
+ * This combinelonr relonselonts thelon valuelon to 0 if thelon latelonst elonvelonnt beloning combinelond = 0. Ignorelons timelon deloncays.
  */
-case class BooleanOrEdgeCombiner(
-  override val edgeFeature: Option[EdgeFeature] = None,
-  override val startingDay: Int = Integer.MAX_VALUE,
-  override val endingDay: Int = Integer.MIN_VALUE,
-  override val timeSeriesStatistics: Option[TimeSeriesStatistics] = None)
-    extends EFeatureCombiner {
+caselon class BoolelonanOrelondgelonCombinelonr(
+  ovelonrridelon val elondgelonFelonaturelon: Option[elondgelonFelonaturelon] = Nonelon,
+  ovelonrridelon val startingDay: Int = Intelongelonr.MAX_VALUelon,
+  ovelonrridelon val elonndingDay: Int = Intelongelonr.MIN_VALUelon,
+  ovelonrridelon val timelonSelonrielonsStatistics: Option[TimelonSelonrielonsStatistics] = Nonelon)
+    elonxtelonnds elonFelonaturelonCombinelonr {
 
-  override def updateTSS(
-    feature: EdgeFeature,
-    alpha: Double
-  ): Option[TimeSeriesStatistics] = {
-    val value = timeSeriesStatistics.map(tss => Math.floor(tss.ewma))
-    val newValue = if (value.exists(_ == 1.0) || feature.tss.mean > 0.0) 1.0 else 0.0
-    timeSeriesStatistics.map(tss =>
+  ovelonrridelon delonf updatelonTSS(
+    felonaturelon: elondgelonFelonaturelon,
+    alpha: Doublelon
+  ): Option[TimelonSelonrielonsStatistics] = {
+    val valuelon = timelonSelonrielonsStatistics.map(tss => Math.floor(tss.elonwma))
+    val nelonwValuelon = if (valuelon.elonxists(_ == 1.0) || felonaturelon.tss.melonan > 0.0) 1.0 elonlselon 0.0
+    timelonSelonrielonsStatistics.map(tss =>
       tss.copy(
-        mean = newValue,
-        ewma = newValue,
-        numNonZeroDays = tss.numNonZeroDays + 1
+        melonan = nelonwValuelon,
+        elonwma = nelonwValuelon,
+        numNonZelonroDays = tss.numNonZelonroDays + 1
       ))
   }
 
-  override def addToTSS(feature: EdgeFeature): Option[TimeSeriesStatistics] = {
-    val value = timeSeriesStatistics.map(tss => Math.floor(tss.ewma))
-    val newValue = if (value.exists(_ == 1.0) || feature.tss.mean > 0.0) 1.0 else 0.0
-    timeSeriesStatistics.map(tss => tss.copy(mean = newValue, ewma = newValue))
+  ovelonrridelon delonf addToTSS(felonaturelon: elondgelonFelonaturelon): Option[TimelonSelonrielonsStatistics] = {
+    val valuelon = timelonSelonrielonsStatistics.map(tss => Math.floor(tss.elonwma))
+    val nelonwValuelon = if (valuelon.elonxists(_ == 1.0) || felonaturelon.tss.melonan > 0.0) 1.0 elonlselon 0.0
+    timelonSelonrielonsStatistics.map(tss => tss.copy(melonan = nelonwValuelon, elonwma = nelonwValuelon))
   }
 
-  override def updateFeature(feature: EdgeFeature): BooleanOrEdgeCombiner = BooleanOrEdgeCombiner(
-    edgeFeature,
+  ovelonrridelon delonf updatelonFelonaturelon(felonaturelon: elondgelonFelonaturelon): BoolelonanOrelondgelonCombinelonr = BoolelonanOrelondgelonCombinelonr(
+    elondgelonFelonaturelon,
     startingDay,
-    endingDay,
-    addToTSS(feature)
+    elonndingDay,
+    addToTSS(felonaturelon)
   )
 
-  def setFeature(feature: EdgeFeature, alpha: Double, day: Int): BooleanOrEdgeCombiner = {
-    val newStartingDay = Math.min(startingDay, day)
-    val newEndingDay = Math.max(endingDay, day)
+  delonf selontFelonaturelon(felonaturelon: elondgelonFelonaturelon, alpha: Doublelon, day: Int): BoolelonanOrelondgelonCombinelonr = {
+    val nelonwStartingDay = Math.min(startingDay, day)
+    val nelonwelonndingDay = Math.max(elonndingDay, day)
 
-    val numDaysSinceLast =
-      if (feature.tss.numDaysSinceLast.exists(_ > 0))
-        feature.tss.numDaysSinceLast.get
-      else feature.tss.numElapsedDays - feature.tss.numNonZeroDays + 1
+    val numDaysSincelonLast =
+      if (felonaturelon.tss.numDaysSincelonLast.elonxists(_ > 0))
+        felonaturelon.tss.numDaysSincelonLast.gelont
+      elonlselon felonaturelon.tss.numelonlapselondDays - felonaturelon.tss.numNonZelonroDays + 1
 
-    val tss = feature.tss.copy(
-      numDaysSinceLast = Some(numDaysSinceLast),
-      ewma = alpha * feature.tss.ewma
+    val tss = felonaturelon.tss.copy(
+      numDaysSincelonLast = Somelon(numDaysSincelonLast),
+      elonwma = alpha * felonaturelon.tss.elonwma
     )
 
-    val newFeature = EdgeFeature(
-      name = feature.name,
+    val nelonwFelonaturelon = elondgelonFelonaturelon(
+      namelon = felonaturelon.namelon,
       tss = tss
     )
 
-    BooleanOrEdgeCombiner(
-      Some(newFeature),
-      newStartingDay,
-      newEndingDay,
-      Some(tss)
+    BoolelonanOrelondgelonCombinelonr(
+      Somelon(nelonwFelonaturelon),
+      nelonwStartingDay,
+      nelonwelonndingDay,
+      Somelon(tss)
     )
   }
 
-  override def getFinalFeature(totalDays: Int): Option[EdgeFeature] =
-    if (timeSeriesStatistics.exists(tss => tss.ewma < 1.0)) None
-    else {
-      if (edgeFeature.isEmpty || dropFeature) return None
-      edgeFeature.map(ef =>
-        ef.copy(
-          tss = timeSeriesStatistics.get
+  ovelonrridelon delonf gelontFinalFelonaturelon(totalDays: Int): Option[elondgelonFelonaturelon] =
+    if (timelonSelonrielonsStatistics.elonxists(tss => tss.elonwma < 1.0)) Nonelon
+    elonlselon {
+      if (elondgelonFelonaturelon.iselonmpty || dropFelonaturelon) relonturn Nonelon
+      elondgelonFelonaturelon.map(elonf =>
+        elonf.copy(
+          tss = timelonSelonrielonsStatistics.gelont
         ))
     }
 
-  override def updateFeature(
-    feature: EdgeFeature,
-    alpha: Double,
+  ovelonrridelon delonf updatelonFelonaturelon(
+    felonaturelon: elondgelonFelonaturelon,
+    alpha: Doublelon,
     day: Int
-  ): BooleanOrEdgeCombiner = copy(
-    endingDay = Math.max(endingDay, day),
-    timeSeriesStatistics = updateTSS(feature, alpha)
+  ): BoolelonanOrelondgelonCombinelonr = copy(
+    elonndingDay = Math.max(elonndingDay, day),
+    timelonSelonrielonsStatistics = updatelonTSS(felonaturelon, alpha)
   )
 
-  override def dropFeature: Boolean = false // we will keep rolling up status-based features
+  ovelonrridelon delonf dropFelonaturelon: Boolelonan = falselon // welon will kelonelonp rolling up status-baselond felonaturelons
 
-  override def isSet = edgeFeature.isDefined
+  ovelonrridelon delonf isSelont = elondgelonFelonaturelon.isDelonfinelond
 
-  override def setFeature(feature: EdgeFeature): BooleanOrEdgeCombiner = setFeature(feature, 1.0, 0)
+  ovelonrridelon delonf selontFelonaturelon(felonaturelon: elondgelonFelonaturelon): BoolelonanOrelondgelonCombinelonr = selontFelonaturelon(felonaturelon, 1.0, 0)
 }

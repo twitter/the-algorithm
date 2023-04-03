@@ -1,19 +1,19 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.twitter_list
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.itelonm.twittelonr_list
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.twitter_list.TwitterListItem
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.twittelonr_list.TwittelonrListItelonm
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class TwitterListItemMarshaller @Inject() (
-  twitterListDisplayTypeMarshaller: TwitterListDisplayTypeMarshaller) {
+@Singlelonton
+class TwittelonrListItelonmMarshallelonr @Injelonct() (
+  twittelonrListDisplayTypelonMarshallelonr: TwittelonrListDisplayTypelonMarshallelonr) {
 
-  def apply(twitterListItem: TwitterListItem): urt.TimelineItemContent =
-    urt.TimelineItemContent.TwitterList(
-      urt.TwitterList(
-        id = twitterListItem.id,
-        displayType = twitterListItem.displayType.map(twitterListDisplayTypeMarshaller(_))
+  delonf apply(twittelonrListItelonm: TwittelonrListItelonm): urt.TimelonlinelonItelonmContelonnt =
+    urt.TimelonlinelonItelonmContelonnt.TwittelonrList(
+      urt.TwittelonrList(
+        id = twittelonrListItelonm.id,
+        displayTypelon = twittelonrListItelonm.displayTypelon.map(twittelonrListDisplayTypelonMarshallelonr(_))
       )
     )
 }

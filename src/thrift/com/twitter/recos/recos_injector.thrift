@@ -1,22 +1,22 @@
-namespace java com.twitter.recos.recos_injector.thriftjava
-namespace py gen.twitter.recos.recos_injector
-#@namespace scala com.twitter.recos.recos_injector.thriftscala
-namespace rb RecosInjector
+namelonspacelon java com.twittelonr.reloncos.reloncos_injelonctor.thriftjava
+namelonspacelon py gelonn.twittelonr.reloncos.reloncos_injelonctor
+#@namelonspacelon scala com.twittelonr.reloncos.reloncos_injelonctor.thriftscala
+namelonspacelon rb ReloncosInjelonctor
 
-####### FOR RECOS INTERNAL USE ONLY -- please do NOT use this in client code  ########
+####### FOR RelonCOS INTelonRNAL USelon ONLY -- plelonaselon do NOT uselon this in clielonnt codelon  ########
 
-struct UserTweetAuthorGraphMessage {
-  1: required i64 leftId
-  2: required i64 rightId
-  3: required i8 action
+struct UselonrTwelonelontAuthorGraphMelonssagelon {
+  1: relonquirelond i64 lelonftId
+  2: relonquirelond i64 rightId
+  3: relonquirelond i8 action
   4: optional i8 card
   5: optional i64 authorId
-  6: optional Features features
+  6: optional Felonaturelons felonaturelons
 }
 
-struct Features {
+struct Felonaturelons {
   1: optional bool hasPhoto
-  2: optional bool hasVideo
+  2: optional bool hasVidelono
   3: optional bool hasUrl
   4: optional bool hasHashtag
 }

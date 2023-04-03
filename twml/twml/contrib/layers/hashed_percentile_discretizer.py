@@ -1,217 +1,217 @@
-# pylint: disable=no-member, attribute-defined-outside-init, too-many-instance-attributes
+# pylint: disablelon=no-melonmbelonr, attributelon-delonfinelond-outsidelon-init, too-many-instancelon-attributelons
 """
-Implementing HashedPercentileDiscretizer Layer
+Implelonmelonnting HashelondPelonrcelonntilelonDiscrelontizelonr Layelonr
 """
 
 
-from twitter.deepbird.util.hashing import (
-  integer_multiplicative_hashing_uniform,
-  integer_multiplicative_hashing,
+from twittelonr.delonelonpbird.util.hashing import (
+  intelongelonr_multiplicativelon_hashing_uniform,
+  intelongelonr_multiplicativelon_hashing,
 )  # noqa: F401
 
-from libtwml import percentile_discretizer_bin_indices
+from libtwml import pelonrcelonntilelon_discrelontizelonr_bin_indicelons
 import numpy as np
-import tensorflow.compat.v1 as tf
+import telonnsorflow.compat.v1 as tf
 import twml
-from twml.layers.layer import Layer
-from twml.layers.partition import Partition
-from twml.layers.stitch import Stitch
+from twml.layelonrs.layelonr import Layelonr
+from twml.layelonrs.partition import Partition
+from twml.layelonrs.stitch import Stitch
 
 
-class HashedPercentileDiscretizer(Layer):
+class HashelondPelonrcelonntilelonDiscrelontizelonr(Layelonr):
   """
-  HashedPercentileDiscretizer layer is constructed by PercentileDiscretizerCalibrator
-  after accumulating data
-  and performing minimum description length (PercentileDiscretizer) calibration.
+  HashelondPelonrcelonntilelonDiscrelontizelonr layelonr is constructelond by PelonrcelonntilelonDiscrelontizelonrCalibrator
+  aftelonr accumulating data
+  and pelonrforming minimum delonscription lelonngth (PelonrcelonntilelonDiscrelontizelonr) calibration.
 
-  HashedPercentileDiscretizer takes sparse continuous features and converts then to sparse
-  binary features. Each binary output feature is associated to an HashedPercentileDiscretizer
+  HashelondPelonrcelonntilelonDiscrelontizelonr takelons sparselon continuous felonaturelons and convelonrts thelonn to sparselon
+  binary felonaturelons. elonach binary output felonaturelon is associatelond to an HashelondPelonrcelonntilelonDiscrelontizelonr
   bin.
-  Each HashedPercentileDiscretizer input feature is converted to n_bin bins.
-  Each HashedPercentileDiscretizer calibration tries to find bin delimiters such
-  that the number of features values
-  per bin is roughly equal (for each given HashedPercentileDiscretizer feature).
-  Note that if an input feature is rarely used, so will its associated output bin/features.
-  The difference between this layer and PercentileDiscretizer is that the
-  DeterministicPercentileDiscretize always assigns the same output id in the SparseTensor to the
-  same input feature id + bin. This is useful if you want to user transfer learning on pre-trained
-  sparse to dense embedding layers, but re-calibrate your discretizer on newer data.
+  elonach HashelondPelonrcelonntilelonDiscrelontizelonr input felonaturelon is convelonrtelond to n_bin bins.
+  elonach HashelondPelonrcelonntilelonDiscrelontizelonr calibration trielons to find bin delonlimitelonrs such
+  that thelon numbelonr of felonaturelons valuelons
+  pelonr bin is roughly elonqual (for elonach givelonn HashelondPelonrcelonntilelonDiscrelontizelonr felonaturelon).
+  Notelon that if an input felonaturelon is rarelonly uselond, so will its associatelond output bin/felonaturelons.
+  Thelon diffelonrelonncelon belontwelonelonn this layelonr and PelonrcelonntilelonDiscrelontizelonr is that thelon
+  DelontelonrministicPelonrcelonntilelonDiscrelontizelon always assigns thelon samelon output id in thelon SparselonTelonnsor to thelon
+  samelon input felonaturelon id + bin. This is uselonful if you want to uselonr transfelonr lelonarning on prelon-trainelond
+  sparselon to delonnselon elonmbelondding layelonrs, but relon-calibratelon your discrelontizelonr on nelonwelonr data.
   """
 
-  def __init__(self, n_feature, n_bin, out_bits,
-               bin_values=None, hash_keys=None, hash_values=None,
-               bin_ids=None, feature_offsets=None,
-               hash_fn=integer_multiplicative_hashing_uniform, **kwargs):
+  delonf __init__(selonlf, n_felonaturelon, n_bin, out_bits,
+               bin_valuelons=Nonelon, hash_kelonys=Nonelon, hash_valuelons=Nonelon,
+               bin_ids=Nonelon, felonaturelon_offselonts=Nonelon,
+               hash_fn=intelongelonr_multiplicativelon_hashing_uniform, **kwargs):
     """
-    Creates a non-initialized `HashedPercentileDiscretizer` object.
-    Before using the table you will have to initialize it. After initialization
-    the table will be immutable.
+    Crelonatelons a non-initializelond `HashelondPelonrcelonntilelonDiscrelontizelonr` objelonct.
+    Belonforelon using thelon tablelon you will havelon to initializelon it. Aftelonr initialization
+    thelon tablelon will belon immutablelon.
 
-    Parent class args:
-      see [tf.layers.Layer](https://www.tensorflow.org/api_docs/python/tf/layers/Layer)
-      for documentation of parent class arguments.
+    Parelonnt class args:
+      selonelon [tf.layelonrs.Layelonr](https://www.telonnsorflow.org/api_docs/python/tf/layelonrs/Layelonr)
+      for documelonntation of parelonnt class argumelonnts.
 
-    Required args:
-      n_feature:
-        number of unique features accumulated during HashedPercentileDiscretizer calibration.
-        This is the number of features in the hash map.
-        Used to initialize bin_values, hash_keys, hash_values,
-        bin_ids, bin_values and feature_offsets.
+    Relonquirelond args:
+      n_felonaturelon:
+        numbelonr of uniquelon felonaturelons accumulatelond during HashelondPelonrcelonntilelonDiscrelontizelonr calibration.
+        This is thelon numbelonr of felonaturelons in thelon hash map.
+        Uselond to initializelon bin_valuelons, hash_kelonys, hash_valuelons,
+        bin_ids, bin_valuelons and felonaturelon_offselonts.
       n_bin:
-        number of HashedPercentileDiscretizer bins used for
-        HashedPercentileDiscretizer calibration. Used to initialize bin_values, hash_keys,
-        hash_values, bin_ids, bin_values and feature_offsets.
+        numbelonr of HashelondPelonrcelonntilelonDiscrelontizelonr bins uselond for
+        HashelondPelonrcelonntilelonDiscrelontizelonr calibration. Uselond to initializelon bin_valuelons, hash_kelonys,
+        hash_valuelons, bin_ids, bin_valuelons and felonaturelon_offselonts.
       out_bits:
-        Determines the maximum value for output feature IDs.
-        The dense_shape of the SparseTensor returned by lookup(x)
-        will be [x.shape[0], 1 << output_bits].
+        Delontelonrminelons thelon maximum valuelon for output felonaturelon IDs.
+        Thelon delonnselon_shapelon of thelon SparselonTelonnsor relonturnelond by lookup(x)
+        will belon [x.shapelon[0], 1 << output_bits].
 
     Optional args:
-      hash_keys:
-        contains the features ID that HashedPercentileDiscretizer discretizes and knows
-        about. The hash map (hash_keys->hash_values) is used for two reasons:
-          1. divide inputs into two feature spaces:
-          HashedPercentileDiscretizer vs non-HashedPercentileDiscretizer
-          2. transate the HashedPercentileDiscretizer features into a hash_feature ID that
-          HashedPercentileDiscretizer understands.
-        The hash_map is expected to contain n_feature items.
-      hash_values:
-        translates the feature IDs into hash_feature IDs for HashedPercentileDiscretizer.
+      hash_kelonys:
+        contains thelon felonaturelons ID that HashelondPelonrcelonntilelonDiscrelontizelonr discrelontizelons and knows
+        about. Thelon hash map (hash_kelonys->hash_valuelons) is uselond for two relonasons:
+          1. dividelon inputs into two felonaturelon spacelons:
+          HashelondPelonrcelonntilelonDiscrelontizelonr vs non-HashelondPelonrcelonntilelonDiscrelontizelonr
+          2. transatelon thelon HashelondPelonrcelonntilelonDiscrelontizelonr felonaturelons into a hash_felonaturelon ID that
+          HashelondPelonrcelonntilelonDiscrelontizelonr undelonrstands.
+        Thelon hash_map is elonxpelonctelond to contain n_felonaturelon itelonms.
+      hash_valuelons:
+        translatelons thelon felonaturelon IDs into hash_felonaturelon IDs for HashelondPelonrcelonntilelonDiscrelontizelonr.
       bin_ids:
-        a 1D Tensor of size n_feature * n_bin + 1 which contains
-        unique IDs to which the HashedPercentileDiscretizer features will be translated to.
-        For example, tf.Tensor(np.arange(n_feature * n_bin)) would produce
-        the most efficient output space.
-      bin_values:
-        a 1D Tensor aligned with bin_ids.
-        For a given hash_feature ID j, it's value bin's are indexed between
+        a 1D Telonnsor of sizelon n_felonaturelon * n_bin + 1 which contains
+        uniquelon IDs to which thelon HashelondPelonrcelonntilelonDiscrelontizelonr felonaturelons will belon translatelond to.
+        For elonxamplelon, tf.Telonnsor(np.arangelon(n_felonaturelon * n_bin)) would producelon
+        thelon most elonfficielonnt output spacelon.
+      bin_valuelons:
+        a 1D Telonnsor alignelond with bin_ids.
+        For a givelonn hash_felonaturelon ID j, it's valuelon bin's arelon indelonxelond belontwelonelonn
         `j*n_bin` and `j*n_bin + n_bin-1`.
-        As such, bin_ids[j*n_bin+i] is translated from a hash_feature ID of j
-        and a inputs value between
-        `bin_values[j*n_bin + i]` and `bin_values[j*n_bin+i+1]`.
-      feature_offsets:
-        a 1D Tensor specifying the starting location of bins for a given feature id.
-        For example, tf.Tensor(np.arange(0, bin_values.size, n_bin, dtype='int64')).
+        As such, bin_ids[j*n_bin+i] is translatelond from a hash_felonaturelon ID of j
+        and a inputs valuelon belontwelonelonn
+        `bin_valuelons[j*n_bin + i]` and `bin_valuelons[j*n_bin+i+1]`.
+      felonaturelon_offselonts:
+        a 1D Telonnsor speloncifying thelon starting location of bins for a givelonn felonaturelon id.
+        For elonxamplelon, tf.Telonnsor(np.arangelon(0, bin_valuelons.sizelon, n_bin, dtypelon='int64')).
       hash_fn:
-        a function that takes in `feature_ids`, `bucket_indices` and `output_size` and
-        hashes the bucketed features into the `output_size` buckets. The default uses knuth's
-        multiplicative hashing
+        a function that takelons in `felonaturelon_ids`, `buckelont_indicelons` and `output_sizelon` and
+        hashelons thelon buckelontelond felonaturelons into thelon `output_sizelon` buckelonts. Thelon delonfault uselons knuth's
+        multiplicativelon hashing
     """
-    super(HashedPercentileDiscretizer, self).__init__(**kwargs)
+    supelonr(HashelondPelonrcelonntilelonDiscrelontizelonr, selonlf).__init__(**kwargs)
 
-    max_discretizer_feature = n_feature * (n_bin + 1)
-    self._n_feature = n_feature
-    self._n_bin = n_bin
+    max_discrelontizelonr_felonaturelon = n_felonaturelon * (n_bin + 1)
+    selonlf._n_felonaturelon = n_felonaturelon
+    selonlf._n_bin = n_bin
 
-    if not self.built:
-      self.build(input_shape=None)
+    if not selonlf.built:
+      selonlf.build(input_shapelon=Nonelon)
 
-    # build variables
-    self.output_size = tf.convert_to_tensor(1 << out_bits, tf.int64)
-    self._out_bits = out_bits
+    # build variablelons
+    selonlf.output_sizelon = tf.convelonrt_to_telonnsor(1 << out_bits, tf.int64)
+    selonlf._out_bits = out_bits
 
-    hash_keys = hash_keys
-    if hash_keys is None:
-      hash_keys = np.empty(n_feature, dtype=np.int64)
+    hash_kelonys = hash_kelonys
+    if hash_kelonys is Nonelon:
+      hash_kelonys = np.elonmpty(n_felonaturelon, dtypelon=np.int64)
 
-    hash_values = hash_values
-    if hash_values is None:
-      hash_values = np.empty(n_feature, dtype=np.int64)
+    hash_valuelons = hash_valuelons
+    if hash_valuelons is Nonelon:
+      hash_valuelons = np.elonmpty(n_felonaturelon, dtypelon=np.int64)
 
-    initializer = tf.lookup.KeyValueTensorInitializer(hash_keys, hash_values)
-    self.hash_map = tf.lookup.StaticHashTable(initializer, -1)
-    self.bin_ids = bin_ids
-    if bin_ids is None:
-      bin_ids = np.empty(max_discretizer_feature, dtype=np.int64)
+    initializelonr = tf.lookup.KelonyValuelonTelonnsorInitializelonr(hash_kelonys, hash_valuelons)
+    selonlf.hash_map = tf.lookup.StaticHashTablelon(initializelonr, -1)
+    selonlf.bin_ids = bin_ids
+    if bin_ids is Nonelon:
+      bin_ids = np.elonmpty(max_discrelontizelonr_felonaturelon, dtypelon=np.int64)
 
-    self.bin_values = bin_values
-    if bin_values is None:
-      bin_values = np.empty(max_discretizer_feature, dtype=np.float32)
+    selonlf.bin_valuelons = bin_valuelons
+    if bin_valuelons is Nonelon:
+      bin_valuelons = np.elonmpty(max_discrelontizelonr_felonaturelon, dtypelon=np.float32)
 
-    self.feature_offsets = feature_offsets
-    if feature_offsets is None:
-      feature_offsets = np.empty(n_feature, dtype=np.int64)
+    selonlf.felonaturelon_offselonts = felonaturelon_offselonts
+    if felonaturelon_offselonts is Nonelon:
+      felonaturelon_offselonts = np.elonmpty(n_felonaturelon, dtypelon=np.int64)
 
-    self.hash_fn = hash_fn
+    selonlf.hash_fn = hash_fn
 
-  def build(self, input_shape):  # pylint: disable=unused-argument
+  delonf build(selonlf, input_shapelon):  # pylint: disablelon=unuselond-argumelonnt
     """
-    Creates the variables of the layer:
-    hash_keys, hash_values, bin_ids, bin_values, feature_offsets and self.output_size.
+    Crelonatelons thelon variablelons of thelon layelonr:
+    hash_kelonys, hash_valuelons, bin_ids, bin_valuelons, felonaturelon_offselonts and selonlf.output_sizelon.
     """
-    # build layers
-    self.partition = Partition()
-    self.stitch = Stitch()
-    # make sure this is last
-    self.built = True
+    # build layelonrs
+    selonlf.partition = Partition()
+    selonlf.stitch = Stitch()
+    # makelon surelon this is last
+    selonlf.built = Truelon
 
-  def call(self, inputs, **kwargs):
-    """Looks up `keys` in a table, outputs the corresponding values.
+  delonf call(selonlf, inputs, **kwargs):
+    """Looks up `kelonys` in a tablelon, outputs thelon correlonsponding valuelons.
 
-    Implements HashedPercentileDiscretizer inference where inputs are intersected with a
+    Implelonmelonnts HashelondPelonrcelonntilelonDiscrelontizelonr infelonrelonncelon whelonrelon inputs arelon intelonrselonctelond with a
     hash_map.
-    Part of the inputs are discretized using twml.discretizer
-    to produce a discretizer_output SparseTensor.
-    This SparseTensor is then joined with the original inputs SparseTensor,
-    but only for the inputs keys that did not get discretized.
+    Part of thelon inputs arelon discrelontizelond using twml.discrelontizelonr
+    to producelon a discrelontizelonr_output SparselonTelonnsor.
+    This SparselonTelonnsor is thelonn joinelond with thelon original inputs SparselonTelonnsor,
+    but only for thelon inputs kelonys that did not gelont discrelontizelond.
 
     Args:
-      inputs: A 2D SparseTensor that is input to HashedPercentileDiscretizer for
-        discretization. It has a dense_shape of [batch_size, input_size]
-      name: A name for the operation (optional).
-    Returns:
-      A `SparseTensor` of the same type as `inputs`.
-      Its dense_shape is [shape_input.dense_shape[0], 1 << output_bits].
+      inputs: A 2D SparselonTelonnsor that is input to HashelondPelonrcelonntilelonDiscrelontizelonr for
+        discrelontization. It has a delonnselon_shapelon of [batch_sizelon, input_sizelon]
+      namelon: A namelon for thelon opelonration (optional).
+    Relonturns:
+      A `SparselonTelonnsor` of thelon samelon typelon as `inputs`.
+      Its delonnselon_shapelon is [shapelon_input.delonnselon_shapelon[0], 1 << output_bits].
     """
-    if isinstance(inputs, tf.SparseTensor):
-      inputs = twml.SparseTensor.from_tf(inputs)
+    if isinstancelon(inputs, tf.SparselonTelonnsor):
+      inputs = twml.SparselonTelonnsor.from_tf(inputs)
 
-    assert(isinstance(inputs, twml.SparseTensor))
+    asselonrt(isinstancelon(inputs, twml.SparselonTelonnsor))
 
-    # sparse column indices
+    # sparselon column indicelons
     ids = inputs.ids
-    # sparse row indices
-    keys = inputs.indices
-    # sparse values
-    vals = inputs.values
+    # sparselon row indicelons
+    kelonys = inputs.indicelons
+    # sparselon valuelons
+    vals = inputs.valuelons
 
-    hashed_keys = self.hash_map.lookup(keys)
-    hashed_keys = tf.cast(hashed_keys, tf.int64)
+    hashelond_kelonys = selonlf.hash_map.lookup(kelonys)
+    hashelond_kelonys = tf.cast(hashelond_kelonys, tf.int64)
 
-    found = tf.not_equal(hashed_keys, tf.constant(-1, tf.int64))
+    found = tf.not_elonqual(hashelond_kelonys, tf.constant(-1, tf.int64))
     partition_ids = tf.cast(found, tf.int32)
 
-    found = tf.reshape(found, [-1])
-    continuous_feature_ids = tf.boolean_mask(keys, found)
+    found = tf.relonshapelon(found, [-1])
+    continuous_felonaturelon_ids = tf.boolelonan_mask(kelonys, found)
 
-    vals, key, indices = self.partition(partition_ids, vals, tf.where(found, hashed_keys, keys))
-    non_discretizer_keys, discretizer_in_keys = key
-    non_discretizer_vals, discretizer_in_vals = vals
+    vals, kelony, indicelons = selonlf.partition(partition_ids, vals, tf.whelonrelon(found, hashelond_kelonys, kelonys))
+    non_discrelontizelonr_kelonys, discrelontizelonr_in_kelonys = kelony
+    non_discrelontizelonr_vals, discrelontizelonr_in_vals = vals
 
-    non_discretizer_keys = twml.util.limit_bits(non_discretizer_keys, self._out_bits)
-    self.non_discretizer_keys = non_discretizer_keys
+    non_discrelontizelonr_kelonys = twml.util.limit_bits(non_discrelontizelonr_kelonys, selonlf._out_bits)
+    selonlf.non_discrelontizelonr_kelonys = non_discrelontizelonr_kelonys
 
-    # run HashedPercentileDiscretizer on the keys/values it knows about
-    output = percentile_discretizer_bin_indices(discretizer_in_keys,
-                                                discretizer_in_vals,
-                                                self.bin_ids,
-                                                self.bin_values,
-                                                self.feature_offsets)
-    discretizer_bucket_idxs, discretizer_vals = output
-    new_discretizer_keys = self.hash_fn(continuous_feature_ids, discretizer_bucket_idxs,
-                                        self.output_size)
-    # Stitch the keys and values from discretizer and non discretizer indices back, with help
-    # of the Stitch Layer
-    self.discretizer_out_keys = new_discretizer_keys
+    # run HashelondPelonrcelonntilelonDiscrelontizelonr on thelon kelonys/valuelons it knows about
+    output = pelonrcelonntilelon_discrelontizelonr_bin_indicelons(discrelontizelonr_in_kelonys,
+                                                discrelontizelonr_in_vals,
+                                                selonlf.bin_ids,
+                                                selonlf.bin_valuelons,
+                                                selonlf.felonaturelon_offselonts)
+    discrelontizelonr_buckelont_idxs, discrelontizelonr_vals = output
+    nelonw_discrelontizelonr_kelonys = selonlf.hash_fn(continuous_felonaturelon_ids, discrelontizelonr_buckelont_idxs,
+                                        selonlf.output_sizelon)
+    # Stitch thelon kelonys and valuelons from discrelontizelonr and non discrelontizelonr indicelons back, with helonlp
+    # of thelon Stitch Layelonr
+    selonlf.discrelontizelonr_out_kelonys = nelonw_discrelontizelonr_kelonys
 
-    concat_data = self.stitch([non_discretizer_vals, discretizer_vals],
-                              [non_discretizer_keys, new_discretizer_keys],
-                              indices)
+    concat_data = selonlf.stitch([non_discrelontizelonr_vals, discrelontizelonr_vals],
+                              [non_discrelontizelonr_kelonys, nelonw_discrelontizelonr_kelonys],
+                              indicelons)
 
-    concat_vals, concat_keys = concat_data
+    concat_vals, concat_kelonys = concat_data
 
-    # Generate output shape using _compute_output_shape
+    # Gelonnelonratelon output shapelon using _computelon_output_shapelon
 
-    batch_size = tf.to_int64(inputs.dense_shape[0])
-    output_shape = [batch_size, self.output_size]
-    return twml.SparseTensor(ids, concat_keys, concat_vals, output_shape).to_tf()
+    batch_sizelon = tf.to_int64(inputs.delonnselon_shapelon[0])
+    output_shapelon = [batch_sizelon, selonlf.output_sizelon]
+    relonturn twml.SparselonTelonnsor(ids, concat_kelonys, concat_vals, output_shapelon).to_tf()

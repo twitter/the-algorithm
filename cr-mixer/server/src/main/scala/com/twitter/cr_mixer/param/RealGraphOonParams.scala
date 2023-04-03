@@ -1,51 +1,51 @@
-package com.twitter.cr_mixer.param
+packagelon com.twittelonr.cr_mixelonr.param
 
-import com.twitter.timelines.configapi.BaseConfig
-import com.twitter.timelines.configapi.BaseConfigBuilder
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil
-import com.twitter.timelines.configapi.Param
+import com.twittelonr.timelonlinelons.configapi.BaselonConfig
+import com.twittelonr.timelonlinelons.configapi.BaselonConfigBuildelonr
+import com.twittelonr.timelonlinelons.configapi.FSBoundelondParam
+import com.twittelonr.timelonlinelons.configapi.FSNamelon
+import com.twittelonr.timelonlinelons.configapi.FSParam
+import com.twittelonr.timelonlinelons.configapi.FelonaturelonSwitchOvelonrridelonUtil
+import com.twittelonr.timelonlinelons.configapi.Param
 
-object RealGraphOonParams {
-  object EnableSourceParam
-      extends FSParam[Boolean](
-        name = "signal_realgraphoon_enable_source",
-        default = false
+objelonct RelonalGraphOonParams {
+  objelonct elonnablelonSourcelonParam
+      elonxtelonnds FSParam[Boolelonan](
+        namelon = "signal_relonalgraphoon_elonnablelon_sourcelon",
+        delonfault = falselon
       )
 
-  object EnableSourceGraphParam
-      extends FSParam[Boolean](
-        name = "graph_realgraphoon_enable_source",
-        default = false
+  objelonct elonnablelonSourcelonGraphParam
+      elonxtelonnds FSParam[Boolelonan](
+        namelon = "graph_relonalgraphoon_elonnablelon_sourcelon",
+        delonfault = falselon
       )
 
-  object MaxConsumerSeedsNumParam
-      extends FSBoundedParam[Int](
-        name = "graph_realgraphoon_max_user_seeds_num",
-        default = 200,
+  objelonct MaxConsumelonrSelonelondsNumParam
+      elonxtelonnds FSBoundelondParam[Int](
+        namelon = "graph_relonalgraphoon_max_uselonr_selonelonds_num",
+        delonfault = 200,
         min = 0,
         max = 1000
       )
 
-  val AllParams: Seq[Param[_] with FSName] = Seq(
-    EnableSourceParam,
-    EnableSourceGraphParam,
-    MaxConsumerSeedsNumParam
+  val AllParams: Selonq[Param[_] with FSNamelon] = Selonq(
+    elonnablelonSourcelonParam,
+    elonnablelonSourcelonGraphParam,
+    MaxConsumelonrSelonelondsNumParam
   )
 
-  lazy val config: BaseConfig = {
-    val booleanOverrides = FeatureSwitchOverrideUtil.getBooleanFSOverrides(
-      EnableSourceParam,
-      EnableSourceGraphParam
+  lazy val config: BaselonConfig = {
+    val boolelonanOvelonrridelons = FelonaturelonSwitchOvelonrridelonUtil.gelontBoolelonanFSOvelonrridelons(
+      elonnablelonSourcelonParam,
+      elonnablelonSourcelonGraphParam
     )
 
-    val intOverrides = FeatureSwitchOverrideUtil.getBoundedIntFSOverrides(MaxConsumerSeedsNumParam)
+    val intOvelonrridelons = FelonaturelonSwitchOvelonrridelonUtil.gelontBoundelondIntFSOvelonrridelons(MaxConsumelonrSelonelondsNumParam)
 
-    BaseConfigBuilder()
-      .set(booleanOverrides: _*)
-      .set(intOverrides: _*)
+    BaselonConfigBuildelonr()
+      .selont(boolelonanOvelonrridelons: _*)
+      .selont(intOvelonrridelons: _*)
       .build()
   }
 }

@@ -1,88 +1,88 @@
-package com.twitter.cr_mixer.param
+packagelon com.twittelonr.cr_mixelonr.param
 
-import com.twitter.timelines.configapi.BaseConfig
-import com.twitter.timelines.configapi.BaseConfigBuilder
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil
-import com.twitter.timelines.configapi.Param
+import com.twittelonr.timelonlinelons.configapi.BaselonConfig
+import com.twittelonr.timelonlinelons.configapi.BaselonConfigBuildelonr
+import com.twittelonr.timelonlinelons.configapi.FSBoundelondParam
+import com.twittelonr.timelonlinelons.configapi.FSNamelon
+import com.twittelonr.timelonlinelons.configapi.FSParam
+import com.twittelonr.timelonlinelons.configapi.FelonaturelonSwitchOvelonrridelonUtil
+import com.twittelonr.timelonlinelons.configapi.Param
 
-object TweetBasedUserTweetGraphParams {
+objelonct TwelonelontBaselondUselonrTwelonelontGraphParams {
 
-  object MinCoOccurrenceParam
-      extends FSBoundedParam[Int](
-        name = "tweet_based_user_tweet_graph_min_co_occurrence",
-        default = 3,
+  objelonct MinCoOccurrelonncelonParam
+      elonxtelonnds FSBoundelondParam[Int](
+        namelon = "twelonelont_baselond_uselonr_twelonelont_graph_min_co_occurrelonncelon",
+        delonfault = 3,
         min = 0,
         max = 500
       )
 
-  object TweetBasedMinScoreParam
-      extends FSBoundedParam[Double](
-        name = "tweet_based_user_tweet_graph_tweet_based_min_score",
-        default = 0.5,
+  objelonct TwelonelontBaselondMinScorelonParam
+      elonxtelonnds FSBoundelondParam[Doublelon](
+        namelon = "twelonelont_baselond_uselonr_twelonelont_graph_twelonelont_baselond_min_scorelon",
+        delonfault = 0.5,
         min = 0.0,
         max = 10.0
       )
 
-  object ConsumersBasedMinScoreParam
-      extends FSBoundedParam[Double](
-        name = "tweet_based_user_tweet_graph_consumers_based_min_score",
-        default = 4.0,
+  objelonct ConsumelonrsBaselondMinScorelonParam
+      elonxtelonnds FSBoundelondParam[Doublelon](
+        namelon = "twelonelont_baselond_uselonr_twelonelont_graph_consumelonrs_baselond_min_scorelon",
+        delonfault = 4.0,
         min = 0.0,
         max = 10.0
       )
-  object MaxConsumerSeedsNumParam
-      extends FSBoundedParam[Int](
-        name = "tweet_based_user_tweet_graph_max_user_seeds_num",
-        default = 100,
+  objelonct MaxConsumelonrSelonelondsNumParam
+      elonxtelonnds FSBoundelondParam[Int](
+        namelon = "twelonelont_baselond_uselonr_twelonelont_graph_max_uselonr_selonelonds_num",
+        delonfault = 100,
         min = 0,
         max = 300
       )
 
-  object EnableCoverageExpansionOldTweetParam
-      extends FSParam[Boolean](
-        name = "tweet_based_user_tweet_graph_enable_coverage_expansion_old_tweet",
-        default = false
+  objelonct elonnablelonCovelonragelonelonxpansionOldTwelonelontParam
+      elonxtelonnds FSParam[Boolelonan](
+        namelon = "twelonelont_baselond_uselonr_twelonelont_graph_elonnablelon_covelonragelon_elonxpansion_old_twelonelont",
+        delonfault = falselon
       )
 
-  object EnableCoverageExpansionAllTweetParam
-      extends FSParam[Boolean](
-        name = "tweet_based_user_tweet_graph_enable_coverage_expansion_all_tweet",
-        default = false
+  objelonct elonnablelonCovelonragelonelonxpansionAllTwelonelontParam
+      elonxtelonnds FSParam[Boolelonan](
+        namelon = "twelonelont_baselond_uselonr_twelonelont_graph_elonnablelon_covelonragelon_elonxpansion_all_twelonelont",
+        delonfault = falselon
       )
 
-  val AllParams: Seq[Param[_] with FSName] = Seq(
-    EnableCoverageExpansionAllTweetParam,
-    EnableCoverageExpansionOldTweetParam,
-    MinCoOccurrenceParam,
-    MaxConsumerSeedsNumParam,
-    TweetBasedMinScoreParam,
-    ConsumersBasedMinScoreParam
+  val AllParams: Selonq[Param[_] with FSNamelon] = Selonq(
+    elonnablelonCovelonragelonelonxpansionAllTwelonelontParam,
+    elonnablelonCovelonragelonelonxpansionOldTwelonelontParam,
+    MinCoOccurrelonncelonParam,
+    MaxConsumelonrSelonelondsNumParam,
+    TwelonelontBaselondMinScorelonParam,
+    ConsumelonrsBaselondMinScorelonParam
   )
 
-  lazy val config: BaseConfig = {
+  lazy val config: BaselonConfig = {
 
-    val booleanOverrides = FeatureSwitchOverrideUtil.getBooleanFSOverrides(
-      EnableCoverageExpansionAllTweetParam,
-      EnableCoverageExpansionOldTweetParam
+    val boolelonanOvelonrridelons = FelonaturelonSwitchOvelonrridelonUtil.gelontBoolelonanFSOvelonrridelons(
+      elonnablelonCovelonragelonelonxpansionAllTwelonelontParam,
+      elonnablelonCovelonragelonelonxpansionOldTwelonelontParam
     )
 
-    val intOverrides = FeatureSwitchOverrideUtil.getBoundedIntFSOverrides(
-      MinCoOccurrenceParam,
-      MaxConsumerSeedsNumParam
+    val intOvelonrridelons = FelonaturelonSwitchOvelonrridelonUtil.gelontBoundelondIntFSOvelonrridelons(
+      MinCoOccurrelonncelonParam,
+      MaxConsumelonrSelonelondsNumParam
     )
 
-    val doubleOverrides =
-      FeatureSwitchOverrideUtil.getBoundedDoubleFSOverrides(
-        TweetBasedMinScoreParam,
-        ConsumersBasedMinScoreParam)
+    val doublelonOvelonrridelons =
+      FelonaturelonSwitchOvelonrridelonUtil.gelontBoundelondDoublelonFSOvelonrridelons(
+        TwelonelontBaselondMinScorelonParam,
+        ConsumelonrsBaselondMinScorelonParam)
 
-    BaseConfigBuilder()
-      .set(booleanOverrides: _*)
-      .set(intOverrides: _*)
-      .set(doubleOverrides: _*)
+    BaselonConfigBuildelonr()
+      .selont(boolelonanOvelonrridelons: _*)
+      .selont(intOvelonrridelons: _*)
+      .selont(doublelonOvelonrridelons: _*)
       .build()
   }
 

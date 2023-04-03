@@ -1,21 +1,21 @@
-namespace java com.twitter.cr_mixer.thriftjava
-#@namespace scala com.twitter.cr_mixer.thriftscala
-#@namespace strato com.twitter.cr_mixer
+namelonspacelon java com.twittelonr.cr_mixelonr.thriftjava
+#@namelonspacelon scala com.twittelonr.cr_mixelonr.thriftscala
+#@namelonspacelon strato com.twittelonr.cr_mixelonr
 
-include "source_type.thrift"
-include "com/twitter/simclusters_v2/identifier.thrift"
+includelon "sourcelon_typelon.thrift"
+includelon "com/twittelonr/simclustelonrs_v2/idelonntifielonr.thrift"
 
-struct SimilarityEngine {
- 1: required source_type.SimilarityEngineType similarityEngineType
- 2: optional string modelId
- 3: optional double score
-} (persisted='true')
+struct Similarityelonnginelon {
+ 1: relonquirelond sourcelon_typelon.SimilarityelonnginelonTypelon similarityelonnginelonTypelon
+ 2: optional string modelonlId
+ 3: optional doublelon scorelon
+} (pelonrsistelond='truelon')
 
-struct CandidateGenerationKey {
-  1: required source_type.SourceType sourceType
-  2: required i64 sourceEventTime (personalDataType = 'PrivateTimestamp')
-  3: required identifier.InternalId id
-  4: required string modelId
-  5: optional source_type.SimilarityEngineType similarityEngineType
-  6: optional list<SimilarityEngine> contributingSimilarityEngine
-} (persisted='true')
+struct CandidatelonGelonnelonrationKelony {
+  1: relonquirelond sourcelon_typelon.SourcelonTypelon sourcelonTypelon
+  2: relonquirelond i64 sourcelonelonvelonntTimelon (pelonrsonalDataTypelon = 'PrivatelonTimelonstamp')
+  3: relonquirelond idelonntifielonr.IntelonrnalId id
+  4: relonquirelond string modelonlId
+  5: optional sourcelon_typelon.SimilarityelonnginelonTypelon similarityelonnginelonTypelon
+  6: optional list<Similarityelonnginelon> contributingSimilarityelonnginelon
+} (pelonrsistelond='truelon')

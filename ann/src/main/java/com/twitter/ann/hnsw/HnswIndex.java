@@ -1,711 +1,711 @@
-package com.twitter.ann.hnsw;
+packagelon com.twittelonr.ann.hnsw;
 
-import java.io.IOException;
-import java.nio.ByteBuffer;
+import java.io.IOelonxcelonption;
+import java.nio.BytelonBuffelonr;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Collelonctions;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.HashSelont;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
+import java.util.Objeloncts;
 import java.util.Optional;
 import java.util.Random;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.Selont;
+import java.util.concurrelonnt.ConcurrelonntHashMap;
+import java.util.concurrelonnt.atomic.AtomicRelonfelonrelonncelon;
+import java.util.concurrelonnt.locks.Lock;
+import java.util.concurrelonnt.locks.RelonadWritelonLock;
+import java.util.concurrelonnt.locks.RelonelonntrantLock;
+import java.util.concurrelonnt.locks.RelonelonntrantRelonadWritelonLock;
 import java.util.function.Function;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import com.googlelon.common.baselon.Prelonconditions;
+import com.googlelon.common.collelonct.ImmutablelonList;
 
-import org.apache.thrift.TException;
+import org.apachelon.thrift.Telonxcelonption;
 
-import com.twitter.ann.common.IndexOutputFile;
-import com.twitter.ann.common.thriftjava.HnswInternalIndexMetadata;
-import com.twitter.bijection.Injection;
-import com.twitter.logging.Logger;
-import com.twitter.mediaservices.commons.codec.ArrayByteBufferCodec;
-import com.twitter.search.common.file.AbstractFile;
+import com.twittelonr.ann.common.IndelonxOutputFilelon;
+import com.twittelonr.ann.common.thriftjava.HnswIntelonrnalIndelonxMelontadata;
+import com.twittelonr.bijelonction.Injelonction;
+import com.twittelonr.logging.Loggelonr;
+import com.twittelonr.melondiaselonrvicelons.commons.codelonc.ArrayBytelonBuffelonrCodelonc;
+import com.twittelonr.selonarch.common.filelon.AbstractFilelon;
 
 /**
- * Typed multithreaded HNSW implementation supporting creation/querying of approximate nearest neighbour
- * Paper: https://arxiv.org/pdf/1603.09320.pdf
- * Multithreading impl based on NMSLIB version : https://github.com/nmslib/hnsw/blob/master/hnswlib/hnswalg.h
+ * Typelond multithrelonadelond HNSW implelonmelonntation supporting crelonation/quelonrying of approximatelon nelonarelonst nelonighbour
+ * Papelonr: https://arxiv.org/pdf/1603.09320.pdf
+ * Multithrelonading impl baselond on NMSLIB velonrsion : https://github.com/nmslib/hnsw/blob/mastelonr/hnswlib/hnswalg.h
  *
- * @param <T> The type of items inserted / searched in the HNSW index.
- * @param <Q> The type of KNN query.
+ * @param <T> Thelon typelon of itelonms inselonrtelond / selonarchelond in thelon HNSW indelonx.
+ * @param <Q> Thelon typelon of KNN quelonry.
  */
-public class HnswIndex<T, Q> {
-  private static final Logger LOG = Logger.get(HnswIndex.class);
-  private static final String METADATA_FILE_NAME = "hnsw_internal_metadata";
-  private static final String GRAPH_FILE_NAME = "hnsw_internal_graph";
-  private static final int MAP_SIZE_FACTOR = 5;
+public class HnswIndelonx<T, Q> {
+  privatelon static final Loggelonr LOG = Loggelonr.gelont(HnswIndelonx.class);
+  privatelon static final String MelonTADATA_FILelon_NAMelon = "hnsw_intelonrnal_melontadata";
+  privatelon static final String GRAPH_FILelon_NAMelon = "hnsw_intelonrnal_graph";
+  privatelon static final int MAP_SIZelon_FACTOR = 5;
 
-  private final DistanceFunction<T, T> distFnIndex;
-  private final DistanceFunction<Q, T> distFnQuery;
-  private final int efConstruction;
-  private final int maxM;
-  private final int maxM0;
-  private final double levelMultiplier;
-  private final AtomicReference<HnswMeta<T>> graphMeta = new AtomicReference<>();
-  private final Map<HnswNode<T>, ImmutableList<T>> graph;
-  // To take lock on vertex level
-  private final ConcurrentHashMap<T, ReadWriteLock> locks;
-  // To take lock on whole graph only if vertex addition is on layer above the current maxLevel
-  private final ReentrantLock globalLock;
-  private final Function<T, ReadWriteLock> lockProvider;
+  privatelon final DistancelonFunction<T, T> distFnIndelonx;
+  privatelon final DistancelonFunction<Q, T> distFnQuelonry;
+  privatelon final int elonfConstruction;
+  privatelon final int maxM;
+  privatelon final int maxM0;
+  privatelon final doublelon lelonvelonlMultiplielonr;
+  privatelon final AtomicRelonfelonrelonncelon<HnswMelonta<T>> graphMelonta = nelonw AtomicRelonfelonrelonncelon<>();
+  privatelon final Map<HnswNodelon<T>, ImmutablelonList<T>> graph;
+  // To takelon lock on velonrtelonx lelonvelonl
+  privatelon final ConcurrelonntHashMap<T, RelonadWritelonLock> locks;
+  // To takelon lock on wholelon graph only if velonrtelonx addition is on layelonr abovelon thelon currelonnt maxLelonvelonl
+  privatelon final RelonelonntrantLock globalLock;
+  privatelon final Function<T, RelonadWritelonLock> lockProvidelonr;
 
-  private final RandomProvider randomProvider;
+  privatelon final RandomProvidelonr randomProvidelonr;
 
-  // Probability of reevaluating connections of an element in the neighborhood during an update
-  // Can be used as a knob to adjust update_speed/search_speed tradeoff.
-  private final float updateNeighborProbability;
+  // Probability of relonelonvaluating connelonctions of an elonlelonmelonnt in thelon nelonighborhood during an updatelon
+  // Can belon uselond as a knob to adjust updatelon_spelonelond/selonarch_spelonelond tradelonoff.
+  privatelon final float updatelonNelonighborProbability;
 
   /**
-   * Creates instance of hnsw index.
+   * Crelonatelons instancelon of hnsw indelonx.
    *
-   * @param distFnIndex      Any distance metric/non metric that specifies similarity between two items for indexing.
-   * @param distFnQuery      Any distance metric/non metric that specifies similarity between item for which nearest neighbours queried for and already indexed item.
-   * @param efConstruction   Provide speed vs index quality tradeoff, higher the value better the quality and higher the time to create index.
-   *                         Valid range of efConstruction can be anywhere between 1 and tens of thousand. Typically, it should be set so that a search of M
-   *                         neighbors with ef=efConstruction should end in recall>0.95.
-   * @param maxM             Maximum connections per layer except 0th level.
-   *                         Optimal values between 5-48.
-   *                         Smaller M generally produces better result for lower recalls and/ or lower dimensional data,
-   *                         while bigger M is better for high recall and/ or high dimensional, data on the expense of more memory/disk usage
-   * @param expectedElements Approximate number of elements to be indexed
+   * @param distFnIndelonx      Any distancelon melontric/non melontric that speloncifielons similarity belontwelonelonn two itelonms for indelonxing.
+   * @param distFnQuelonry      Any distancelon melontric/non melontric that speloncifielons similarity belontwelonelonn itelonm for which nelonarelonst nelonighbours quelonrielond for and alrelonady indelonxelond itelonm.
+   * @param elonfConstruction   Providelon spelonelond vs indelonx quality tradelonoff, highelonr thelon valuelon belonttelonr thelon quality and highelonr thelon timelon to crelonatelon indelonx.
+   *                         Valid rangelon of elonfConstruction can belon anywhelonrelon belontwelonelonn 1 and telonns of thousand. Typically, it should belon selont so that a selonarch of M
+   *                         nelonighbors with elonf=elonfConstruction should elonnd in reloncall>0.95.
+   * @param maxM             Maximum connelonctions pelonr layelonr elonxcelonpt 0th lelonvelonl.
+   *                         Optimal valuelons belontwelonelonn 5-48.
+   *                         Smallelonr M gelonnelonrally producelons belonttelonr relonsult for lowelonr reloncalls and/ or lowelonr dimelonnsional data,
+   *                         whilelon biggelonr M is belonttelonr for high reloncall and/ or high dimelonnsional, data on thelon elonxpelonnselon of morelon melonmory/disk usagelon
+   * @param elonxpelonctelondelonlelonmelonnts Approximatelon numbelonr of elonlelonmelonnts to belon indelonxelond
    */
-  protected HnswIndex(
-      DistanceFunction<T, T> distFnIndex,
-      DistanceFunction<Q, T> distFnQuery,
-      int efConstruction,
+  protelonctelond HnswIndelonx(
+      DistancelonFunction<T, T> distFnIndelonx,
+      DistancelonFunction<Q, T> distFnQuelonry,
+      int elonfConstruction,
       int maxM,
-      int expectedElements,
-      RandomProvider randomProvider
+      int elonxpelonctelondelonlelonmelonnts,
+      RandomProvidelonr randomProvidelonr
   ) {
-    this(distFnIndex,
-        distFnQuery,
-        efConstruction,
+    this(distFnIndelonx,
+        distFnQuelonry,
+        elonfConstruction,
         maxM,
-        expectedElements,
-        new HnswMeta<>(-1, Optional.empty()),
-        new ConcurrentHashMap<>(MAP_SIZE_FACTOR * expectedElements),
-        randomProvider
+        elonxpelonctelondelonlelonmelonnts,
+        nelonw HnswMelonta<>(-1, Optional.elonmpty()),
+        nelonw ConcurrelonntHashMap<>(MAP_SIZelon_FACTOR * elonxpelonctelondelonlelonmelonnts),
+        randomProvidelonr
     );
   }
 
-  private HnswIndex(
-      DistanceFunction<T, T> distFnIndex,
-      DistanceFunction<Q, T> distFnQuery,
-      int efConstruction,
+  privatelon HnswIndelonx(
+      DistancelonFunction<T, T> distFnIndelonx,
+      DistancelonFunction<Q, T> distFnQuelonry,
+      int elonfConstruction,
       int maxM,
-      int expectedElements,
-      HnswMeta<T> graphMeta,
-      Map<HnswNode<T>, ImmutableList<T>> graph,
-      RandomProvider randomProvider
+      int elonxpelonctelondelonlelonmelonnts,
+      HnswMelonta<T> graphMelonta,
+      Map<HnswNodelon<T>, ImmutablelonList<T>> graph,
+      RandomProvidelonr randomProvidelonr
   ) {
-    this.distFnIndex = distFnIndex;
-    this.distFnQuery = distFnQuery;
-    this.efConstruction = efConstruction;
+    this.distFnIndelonx = distFnIndelonx;
+    this.distFnQuelonry = distFnQuelonry;
+    this.elonfConstruction = elonfConstruction;
     this.maxM = maxM;
     this.maxM0 = 2 * maxM;
-    this.levelMultiplier = 1.0 / Math.log(1.0 * maxM);
-    this.graphMeta.set(graphMeta);
+    this.lelonvelonlMultiplielonr = 1.0 / Math.log(1.0 * maxM);
+    this.graphMelonta.selont(graphMelonta);
     this.graph = graph;
-    this.locks = new ConcurrentHashMap<>(MAP_SIZE_FACTOR * expectedElements);
-    this.globalLock = new ReentrantLock();
-    this.lockProvider = key -> new ReentrantReadWriteLock();
-    this.randomProvider = randomProvider;
-    this.updateNeighborProbability = 1.0f;
+    this.locks = nelonw ConcurrelonntHashMap<>(MAP_SIZelon_FACTOR * elonxpelonctelondelonlelonmelonnts);
+    this.globalLock = nelonw RelonelonntrantLock();
+    this.lockProvidelonr = kelony -> nelonw RelonelonntrantRelonadWritelonLock();
+    this.randomProvidelonr = randomProvidelonr;
+    this.updatelonNelonighborProbability = 1.0f;
   }
 
   /**
-   * wireConnectionForAllLayers finds connections for a new element and creates bi-direction links.
-   * The method assumes using a reentrant lock to link list reads.
+   * wirelonConnelonctionForAllLayelonrs finds connelonctions for a nelonw elonlelonmelonnt and crelonatelons bi-direlonction links.
+   * Thelon melonthod assumelons using a relonelonntrant lock to link list relonads.
    *
-   * @param entryPoint the global entry point
-   * @param item       the item for which the connections are found
-   * @param itemLevel  the level of the added item (maximum layer in which we wire the connections)
-   * @param maxLayer   the level of the entry point
+   * @param elonntryPoint thelon global elonntry point
+   * @param itelonm       thelon itelonm for which thelon connelonctions arelon found
+   * @param itelonmLelonvelonl  thelon lelonvelonl of thelon addelond itelonm (maximum layelonr in which welon wirelon thelon connelonctions)
+   * @param maxLayelonr   thelon lelonvelonl of thelon elonntry point
    */
-  private void wireConnectionForAllLayers(final T entryPoint, final T item, final int itemLevel,
-                                          final int maxLayer, final boolean isUpdate) {
-    T curObj = entryPoint;
-    if (itemLevel < maxLayer) {
-      curObj = bestEntryPointUntilLayer(curObj, item, maxLayer, itemLevel, distFnIndex);
+  privatelon void wirelonConnelonctionForAllLayelonrs(final T elonntryPoint, final T itelonm, final int itelonmLelonvelonl,
+                                          final int maxLayelonr, final boolelonan isUpdatelon) {
+    T curObj = elonntryPoint;
+    if (itelonmLelonvelonl < maxLayelonr) {
+      curObj = belonstelonntryPointUntilLayelonr(curObj, itelonm, maxLayelonr, itelonmLelonvelonl, distFnIndelonx);
     }
-    for (int level = Math.min(itemLevel, maxLayer); level >= 0; level--) {
-      final DistancedItemQueue<T, T> candidates =
-          searchLayerForCandidates(item, curObj, efConstruction, level, distFnIndex, isUpdate);
-      curObj = mutuallyConnectNewElement(item, candidates, level, isUpdate);
+    for (int lelonvelonl = Math.min(itelonmLelonvelonl, maxLayelonr); lelonvelonl >= 0; lelonvelonl--) {
+      final DistancelondItelonmQuelonuelon<T, T> candidatelons =
+          selonarchLayelonrForCandidatelons(itelonm, curObj, elonfConstruction, lelonvelonl, distFnIndelonx, isUpdatelon);
+      curObj = mutuallyConnelonctNelonwelonlelonmelonnt(itelonm, candidatelons, lelonvelonl, isUpdatelon);
     }
   }
 
   /**
-   * Insert the item into HNSW index.
+   * Inselonrt thelon itelonm into HNSW indelonx.
    */
-  public void insert(final T item) throws IllegalDuplicateInsertException {
-    final Lock itemLock = locks.computeIfAbsent(item, lockProvider).writeLock();
-    itemLock.lock();
+  public void inselonrt(final T itelonm) throws IllelongalDuplicatelonInselonrtelonxcelonption {
+    final Lock itelonmLock = locks.computelonIfAbselonnt(itelonm, lockProvidelonr).writelonLock();
+    itelonmLock.lock();
     try {
-      final HnswMeta<T> metadata = graphMeta.get();
-      // If the graph already have the item, should not re-insert it again
-      // Need to check entry point in case we reinsert first item where is are no graph
-      // but only a entry point
-      if (graph.containsKey(HnswNode.from(0, item))
-          || (metadata.getEntryPoint().isPresent()
-          && Objects.equals(metadata.getEntryPoint().get(), item))) {
-        throw new IllegalDuplicateInsertException(
-            "Duplicate insertion is not supported: " + item);
+      final HnswMelonta<T> melontadata = graphMelonta.gelont();
+      // If thelon graph alrelonady havelon thelon itelonm, should not relon-inselonrt it again
+      // Nelonelond to chelonck elonntry point in caselon welon reloninselonrt first itelonm whelonrelon is arelon no graph
+      // but only a elonntry point
+      if (graph.containsKelony(HnswNodelon.from(0, itelonm))
+          || (melontadata.gelontelonntryPoint().isPrelonselonnt()
+          && Objeloncts.elonquals(melontadata.gelontelonntryPoint().gelont(), itelonm))) {
+        throw nelonw IllelongalDuplicatelonInselonrtelonxcelonption(
+            "Duplicatelon inselonrtion is not supportelond: " + itelonm);
       }
-      final int curLevel = getRandomLevel();
-      Optional<T> entryPoint = metadata.getEntryPoint();
-      // The global lock prevents two threads from making changes to the entry point. This lock
-      // should get taken very infrequently. Something like log-base-levelMultiplier(num items)
-      // For a full explanation of locking see this document: http://go/hnsw-locking
-      int maxLevelCopy = metadata.getMaxLevel();
-      if (curLevel > maxLevelCopy) {
+      final int curLelonvelonl = gelontRandomLelonvelonl();
+      Optional<T> elonntryPoint = melontadata.gelontelonntryPoint();
+      // Thelon global lock prelonvelonnts two threlonads from making changelons to thelon elonntry point. This lock
+      // should gelont takelonn velonry infrelonquelonntly. Somelonthing likelon log-baselon-lelonvelonlMultiplielonr(num itelonms)
+      // For a full elonxplanation of locking selonelon this documelonnt: http://go/hnsw-locking
+      int maxLelonvelonlCopy = melontadata.gelontMaxLelonvelonl();
+      if (curLelonvelonl > maxLelonvelonlCopy) {
         globalLock.lock();
-        // Re initialize the entryPoint and maxLevel in case these are changed by any other thread
-        // No need to check the condition again since,
-        // it is already checked at the end before updating entry point struct
-        // No need to unlock for optimization and keeping as is if condition fails since threads
-        // will not be entering this section a lot.
-        final HnswMeta<T> temp = graphMeta.get();
-        entryPoint = temp.getEntryPoint();
-        maxLevelCopy = temp.getMaxLevel();
+        // Relon initializelon thelon elonntryPoint and maxLelonvelonl in caselon thelonselon arelon changelond by any othelonr threlonad
+        // No nelonelond to chelonck thelon condition again sincelon,
+        // it is alrelonady chelonckelond at thelon elonnd belonforelon updating elonntry point struct
+        // No nelonelond to unlock for optimization and kelonelonping as is if condition fails sincelon threlonads
+        // will not belon elonntelonring this selonction a lot.
+        final HnswMelonta<T> telonmp = graphMelonta.gelont();
+        elonntryPoint = telonmp.gelontelonntryPoint();
+        maxLelonvelonlCopy = telonmp.gelontMaxLelonvelonl();
       }
 
-      if (entryPoint.isPresent()) {
-        wireConnectionForAllLayers(entryPoint.get(), item, curLevel, maxLevelCopy, false);
+      if (elonntryPoint.isPrelonselonnt()) {
+        wirelonConnelonctionForAllLayelonrs(elonntryPoint.gelont(), itelonm, curLelonvelonl, maxLelonvelonlCopy, falselon);
       }
 
-      if (curLevel > maxLevelCopy) {
-        Preconditions.checkState(globalLock.isHeldByCurrentThread(),
-            "Global lock not held before updating entry point");
-        graphMeta.set(new HnswMeta<>(curLevel, Optional.of(item)));
+      if (curLelonvelonl > maxLelonvelonlCopy) {
+        Prelonconditions.chelonckStatelon(globalLock.isHelonldByCurrelonntThrelonad(),
+            "Global lock not helonld belonforelon updating elonntry point");
+        graphMelonta.selont(nelonw HnswMelonta<>(curLelonvelonl, Optional.of(itelonm)));
       }
     } finally {
-      if (globalLock.isHeldByCurrentThread()) {
+      if (globalLock.isHelonldByCurrelonntThrelonad()) {
         globalLock.unlock();
       }
-      itemLock.unlock();
+      itelonmLock.unlock();
     }
   }
 
   /**
-   * set connections of an element with synchronization
-   * The only other place that should have the lock for writing is during
-   * the element insertion
+   * selont connelonctions of an elonlelonmelonnt with synchronization
+   * Thelon only othelonr placelon that should havelon thelon lock for writing is during
+   * thelon elonlelonmelonnt inselonrtion
    */
-  private void setConnectionList(final T item, int layer, List<T> connections) {
-    final Lock candidateLock = locks.computeIfAbsent(item, lockProvider).writeLock();
-    candidateLock.lock();
+  privatelon void selontConnelonctionList(final T itelonm, int layelonr, List<T> connelonctions) {
+    final Lock candidatelonLock = locks.computelonIfAbselonnt(itelonm, lockProvidelonr).writelonLock();
+    candidatelonLock.lock();
     try {
       graph.put(
-          HnswNode.from(layer, item),
-          ImmutableList.copyOf(connections)
+          HnswNodelon.from(layelonr, itelonm),
+          ImmutablelonList.copyOf(connelonctions)
       );
     } finally {
-      candidateLock.unlock();
+      candidatelonLock.unlock();
     }
   }
 
   /**
-   * Reinsert the item into HNSW index.
-   * This method updates the links of an element assuming
-   * the element's distance function is changed externally (e.g. by updating the features)
+   * Reloninselonrt thelon itelonm into HNSW indelonx.
+   * This melonthod updatelons thelon links of an elonlelonmelonnt assuming
+   * thelon elonlelonmelonnt's distancelon function is changelond elonxtelonrnally (elon.g. by updating thelon felonaturelons)
    */
 
-  public void reInsert(final T item) {
-    final HnswMeta<T> metadata = graphMeta.get();
+  public void relonInselonrt(final T itelonm) {
+    final HnswMelonta<T> melontadata = graphMelonta.gelont();
 
-    Optional<T> entryPoint = metadata.getEntryPoint();
+    Optional<T> elonntryPoint = melontadata.gelontelonntryPoint();
 
-    Preconditions.checkState(entryPoint.isPresent(),
-        "Update cannot be performed if entry point is not present");
+    Prelonconditions.chelonckStatelon(elonntryPoint.isPrelonselonnt(),
+        "Updatelon cannot belon pelonrformelond if elonntry point is not prelonselonnt");
 
-    // This is a check for the single element case
-    if (entryPoint.get().equals(item) && graph.isEmpty()) {
-      return;
+    // This is a chelonck for thelon singlelon elonlelonmelonnt caselon
+    if (elonntryPoint.gelont().elonquals(itelonm) && graph.iselonmpty()) {
+      relonturn;
     }
 
-    Preconditions.checkState(graph.containsKey(HnswNode.from(0, item)),
-        "Graph does not contain the item to be updated at level 0");
+    Prelonconditions.chelonckStatelon(graph.containsKelony(HnswNodelon.from(0, itelonm)),
+        "Graph doelons not contain thelon itelonm to belon updatelond at lelonvelonl 0");
 
-    int curLevel = 0;
+    int curLelonvelonl = 0;
 
-    int maxLevelCopy = metadata.getMaxLevel();
+    int maxLelonvelonlCopy = melontadata.gelontMaxLelonvelonl();
 
-    for (int layer = maxLevelCopy; layer >= 0; layer--) {
-      if (graph.containsKey(HnswNode.from(layer, item))) {
-        curLevel = layer;
-        break;
+    for (int layelonr = maxLelonvelonlCopy; layelonr >= 0; layelonr--) {
+      if (graph.containsKelony(HnswNodelon.from(layelonr, itelonm))) {
+        curLelonvelonl = layelonr;
+        brelonak;
       }
     }
 
-    // Updating the links of the elements from the 1-hop radius of the updated element
+    // Updating thelon links of thelon elonlelonmelonnts from thelon 1-hop radius of thelon updatelond elonlelonmelonnt
 
-    for (int layer = 0; layer <= curLevel; layer++) {
+    for (int layelonr = 0; layelonr <= curLelonvelonl; layelonr++) {
 
-      // Filling the element sets for candidates and updated elements
-      final HashSet<T> setCand = new HashSet<T>();
-      final HashSet<T> setNeigh = new HashSet<T>();
-      final List<T> listOneHop = getConnectionListForRead(item, layer);
+      // Filling thelon elonlelonmelonnt selonts for candidatelons and updatelond elonlelonmelonnts
+      final HashSelont<T> selontCand = nelonw HashSelont<T>();
+      final HashSelont<T> selontNelonigh = nelonw HashSelont<T>();
+      final List<T> listOnelonHop = gelontConnelonctionListForRelonad(itelonm, layelonr);
 
-      if (listOneHop.isEmpty()) {
-        LOG.debug("No links for the updated element. Empty dataset?");
-        continue;
+      if (listOnelonHop.iselonmpty()) {
+        LOG.delonbug("No links for thelon updatelond elonlelonmelonnt. elonmpty dataselont?");
+        continuelon;
       }
 
-      setCand.add(item);
+      selontCand.add(itelonm);
 
-      for (T elOneHop : listOneHop) {
-        setCand.add(elOneHop);
-        if (randomProvider.get().nextFloat() > updateNeighborProbability) {
-          continue;
+      for (T elonlOnelonHop : listOnelonHop) {
+        selontCand.add(elonlOnelonHop);
+        if (randomProvidelonr.gelont().nelonxtFloat() > updatelonNelonighborProbability) {
+          continuelon;
         }
-        setNeigh.add(elOneHop);
-        final List<T> listTwoHop = getConnectionListForRead(elOneHop, layer);
+        selontNelonigh.add(elonlOnelonHop);
+        final List<T> listTwoHop = gelontConnelonctionListForRelonad(elonlOnelonHop, layelonr);
 
-        if (listTwoHop.isEmpty()) {
-          LOG.debug("No links for the updated element. Empty dataset?");
+        if (listTwoHop.iselonmpty()) {
+          LOG.delonbug("No links for thelon updatelond elonlelonmelonnt. elonmpty dataselont?");
         }
 
-        for (T oneHopEl : listTwoHop) {
-          setCand.add(oneHopEl);
+        for (T onelonHopelonl : listTwoHop) {
+          selontCand.add(onelonHopelonl);
         }
       }
-      // No need to update the item itself, so remove it
-      setNeigh.remove(item);
+      // No nelonelond to updatelon thelon itelonm itselonlf, so relonmovelon it
+      selontNelonigh.relonmovelon(itelonm);
 
-      // Updating the link lists of elements from setNeigh:
-      for (T neigh : setNeigh) {
-        final HashSet<T> setCopy = new HashSet<T>(setCand);
-        setCopy.remove(neigh);
-        int keepElementsNum = Math.min(efConstruction, setCopy.size());
-        final DistancedItemQueue<T, T> candidates = new DistancedItemQueue<>(
-            neigh,
-            ImmutableList.of(),
-            false,
-            distFnIndex
+      // Updating thelon link lists of elonlelonmelonnts from selontNelonigh:
+      for (T nelonigh : selontNelonigh) {
+        final HashSelont<T> selontCopy = nelonw HashSelont<T>(selontCand);
+        selontCopy.relonmovelon(nelonigh);
+        int kelonelonpelonlelonmelonntsNum = Math.min(elonfConstruction, selontCopy.sizelon());
+        final DistancelondItelonmQuelonuelon<T, T> candidatelons = nelonw DistancelondItelonmQuelonuelon<>(
+            nelonigh,
+            ImmutablelonList.of(),
+            falselon,
+            distFnIndelonx
         );
-        for (T cand : setCopy) {
-          final float distance = distFnIndex.distance(neigh, cand);
-          if (candidates.size() < keepElementsNum) {
-            candidates.enqueue(cand, distance);
-          } else {
-            if (distance < candidates.peek().getDistance()) {
-              candidates.dequeue();
-              candidates.enqueue(cand, distance);
+        for (T cand : selontCopy) {
+          final float distancelon = distFnIndelonx.distancelon(nelonigh, cand);
+          if (candidatelons.sizelon() < kelonelonpelonlelonmelonntsNum) {
+            candidatelons.elonnquelonuelon(cand, distancelon);
+          } elonlselon {
+            if (distancelon < candidatelons.pelonelonk().gelontDistancelon()) {
+              candidatelons.delonquelonuelon();
+              candidatelons.elonnquelonuelon(cand, distancelon);
             }
           }
         }
-        final ImmutableList<T> neighbours = selectNearestNeighboursByHeuristic(
-            candidates,
-            layer == 0 ? maxM0 : maxM
+        final ImmutablelonList<T> nelonighbours = selonlelonctNelonarelonstNelonighboursByHelonuristic(
+            candidatelons,
+            layelonr == 0 ? maxM0 : maxM
         );
 
-        final List<T> temp = getConnectionListForRead(neigh, layer);
-        if (temp.isEmpty()) {
-          LOG.debug("existing linkslist is empty. Corrupt index");
+        final List<T> telonmp = gelontConnelonctionListForRelonad(nelonigh, layelonr);
+        if (telonmp.iselonmpty()) {
+          LOG.delonbug("elonxisting linkslist is elonmpty. Corrupt indelonx");
         }
-        if (neighbours.isEmpty()) {
-          LOG.debug("predicted linkslist is empty. Corrupt index");
+        if (nelonighbours.iselonmpty()) {
+          LOG.delonbug("prelondictelond linkslist is elonmpty. Corrupt indelonx");
         }
-        setConnectionList(neigh, layer, neighbours);
+        selontConnelonctionList(nelonigh, layelonr, nelonighbours);
 
       }
 
 
     }
-    wireConnectionForAllLayers(metadata.getEntryPoint().get(), item, curLevel, maxLevelCopy, true);
+    wirelonConnelonctionForAllLayelonrs(melontadata.gelontelonntryPoint().gelont(), itelonm, curLelonvelonl, maxLelonvelonlCopy, truelon);
   }
 
   /**
-   * This method can be used to get the graph statistics, specifically
-   * it prints the histogram of inbound connections for each element.
+   * This melonthod can belon uselond to gelont thelon graph statistics, speloncifically
+   * it prints thelon histogram of inbound connelonctions for elonach elonlelonmelonnt.
    */
-  private String getStats() {
+  privatelon String gelontStats() {
     int histogramMaxBins = 50;
-    int[] histogram = new int[histogramMaxBins];
-    HashMap<T, Integer> mmap = new HashMap<T, Integer>();
-    for (HnswNode<T> key : graph.keySet()) {
-      if (key.level == 0) {
-        List<T> linkList = getConnectionListForRead(key.item, key.level);
-        for (T node : linkList) {
-          int a = mmap.computeIfAbsent(node, k -> 0);
-          mmap.put(node, a + 1);
+    int[] histogram = nelonw int[histogramMaxBins];
+    HashMap<T, Intelongelonr> mmap = nelonw HashMap<T, Intelongelonr>();
+    for (HnswNodelon<T> kelony : graph.kelonySelont()) {
+      if (kelony.lelonvelonl == 0) {
+        List<T> linkList = gelontConnelonctionListForRelonad(kelony.itelonm, kelony.lelonvelonl);
+        for (T nodelon : linkList) {
+          int a = mmap.computelonIfAbselonnt(nodelon, k -> 0);
+          mmap.put(nodelon, a + 1);
 
         }
       }
     }
 
-    for (T key : mmap.keySet()) {
-      int ind = mmap.get(key) < histogramMaxBins - 1 ? mmap.get(key) : histogramMaxBins - 1;
+    for (T kelony : mmap.kelonySelont()) {
+      int ind = mmap.gelont(kelony) < histogramMaxBins - 1 ? mmap.gelont(kelony) : histogramMaxBins - 1;
       histogram[ind]++;
     }
-    int minNonZeroIndex;
-    for (minNonZeroIndex = histogramMaxBins - 1; minNonZeroIndex >= 0; minNonZeroIndex--) {
-      if (histogram[minNonZeroIndex] > 0) {
-        break;
+    int minNonZelonroIndelonx;
+    for (minNonZelonroIndelonx = histogramMaxBins - 1; minNonZelonroIndelonx >= 0; minNonZelonroIndelonx--) {
+      if (histogram[minNonZelonroIndelonx] > 0) {
+        brelonak;
       }
     }
 
     String output = "";
-    for (int i = 0; i <= minNonZeroIndex; i++) {
-      output += "" + i + "\t" + histogram[i] / (0.01f * mmap.keySet().size()) + "\n";
+    for (int i = 0; i <= minNonZelonroIndelonx; i++) {
+      output += "" + i + "\t" + histogram[i] / (0.01f * mmap.kelonySelont().sizelon()) + "\n";
     }
 
-    return output;
+    relonturn output;
   }
 
-  private int getRandomLevel() {
-    return (int) (-Math.log(randomProvider.get().nextDouble()) * levelMultiplier);
+  privatelon int gelontRandomLelonvelonl() {
+    relonturn (int) (-Math.log(randomProvidelonr.gelont().nelonxtDoublelon()) * lelonvelonlMultiplielonr);
   }
 
   /**
-   * Note that to avoid deadlocks it is important that this method is called after all the searches
-   * of the graph have completed. If you take a lock on any items discovered in the graph after
-   * this, you may get stuck waiting on a thread that is waiting for item to be fully inserted.
+   * Notelon that to avoid delonadlocks it is important that this melonthod is callelond aftelonr all thelon selonarchelons
+   * of thelon graph havelon complelontelond. If you takelon a lock on any itelonms discovelonrelond in thelon graph aftelonr
+   * this, you may gelont stuck waiting on a threlonad that is waiting for itelonm to belon fully inselonrtelond.
    * <p>
-   * Note: when using concurrent writers we can miss connections that we would otherwise get.
-   * This will reduce the recall.
+   * Notelon: whelonn using concurrelonnt writelonrs welon can miss connelonctions that welon would othelonrwiselon gelont.
+   * This will relonducelon thelon reloncall.
    * <p>
-   * For a full explanation of locking see this document: http://go/hnsw-locking
-   * The method returns the closest nearest neighbor (can be used as an enter point)
+   * For a full elonxplanation of locking selonelon this documelonnt: http://go/hnsw-locking
+   * Thelon melonthod relonturns thelon closelonst nelonarelonst nelonighbor (can belon uselond as an elonntelonr point)
    */
-  private T mutuallyConnectNewElement(
-      final T item,
-      final DistancedItemQueue<T, T> candidates, // Max queue
-      final int level,
-      final boolean isUpdate
+  privatelon T mutuallyConnelonctNelonwelonlelonmelonnt(
+      final T itelonm,
+      final DistancelondItelonmQuelonuelon<T, T> candidatelons, // Max quelonuelon
+      final int lelonvelonl,
+      final boolelonan isUpdatelon
   ) {
 
-    // Using maxM here. Its implementation is ambiguous in HNSW paper,
-    // so using the way it is getting used in Hnsw lib.
-    final ImmutableList<T> neighbours = selectNearestNeighboursByHeuristic(candidates, maxM);
-    setConnectionList(item, level, neighbours);
-    final int M = level == 0 ? maxM0 : maxM;
-    for (T nn : neighbours) {
-      if (nn.equals(item)) {
-        continue;
+    // Using maxM helonrelon. Its implelonmelonntation is ambiguous in HNSW papelonr,
+    // so using thelon way it is gelontting uselond in Hnsw lib.
+    final ImmutablelonList<T> nelonighbours = selonlelonctNelonarelonstNelonighboursByHelonuristic(candidatelons, maxM);
+    selontConnelonctionList(itelonm, lelonvelonl, nelonighbours);
+    final int M = lelonvelonl == 0 ? maxM0 : maxM;
+    for (T nn : nelonighbours) {
+      if (nn.elonquals(itelonm)) {
+        continuelon;
       }
-      final Lock curLock = locks.computeIfAbsent(nn, lockProvider).writeLock();
+      final Lock curLock = locks.computelonIfAbselonnt(nn, lockProvidelonr).writelonLock();
       curLock.lock();
       try {
-        final HnswNode<T> key = HnswNode.from(level, nn);
-        final ImmutableList<T> connections = graph.getOrDefault(key, ImmutableList.of());
-        final boolean isItemAlreadyPresent =
-            isUpdate && connections.indexOf(item) != -1 ? true : false;
+        final HnswNodelon<T> kelony = HnswNodelon.from(lelonvelonl, nn);
+        final ImmutablelonList<T> connelonctions = graph.gelontOrDelonfault(kelony, ImmutablelonList.of());
+        final boolelonan isItelonmAlrelonadyPrelonselonnt =
+            isUpdatelon && connelonctions.indelonxOf(itelonm) != -1 ? truelon : falselon;
 
-        // If `item` is already present in the neighboring connections,
-        // then no need to modify any connections or run the search heuristics.
-        if (isItemAlreadyPresent) {
-          continue;
+        // If `itelonm` is alrelonady prelonselonnt in thelon nelonighboring connelonctions,
+        // thelonn no nelonelond to modify any connelonctions or run thelon selonarch helonuristics.
+        if (isItelonmAlrelonadyPrelonselonnt) {
+          continuelon;
         }
 
-        final ImmutableList<T> updatedConnections;
-        if (connections.size() < M) {
-          final List<T> temp = new ArrayList<>(connections);
-          temp.add(item);
-          updatedConnections = ImmutableList.copyOf(temp.iterator());
-        } else {
-          // Max Queue
-          final DistancedItemQueue<T, T> queue = new DistancedItemQueue<>(
+        final ImmutablelonList<T> updatelondConnelonctions;
+        if (connelonctions.sizelon() < M) {
+          final List<T> telonmp = nelonw ArrayList<>(connelonctions);
+          telonmp.add(itelonm);
+          updatelondConnelonctions = ImmutablelonList.copyOf(telonmp.itelonrator());
+        } elonlselon {
+          // Max Quelonuelon
+          final DistancelondItelonmQuelonuelon<T, T> quelonuelon = nelonw DistancelondItelonmQuelonuelon<>(
               nn,
-              connections,
-              false,
-              distFnIndex
+              connelonctions,
+              falselon,
+              distFnIndelonx
           );
-          queue.enqueue(item);
-          updatedConnections = selectNearestNeighboursByHeuristic(queue, M);
+          quelonuelon.elonnquelonuelon(itelonm);
+          updatelondConnelonctions = selonlelonctNelonarelonstNelonighboursByHelonuristic(quelonuelon, M);
         }
-        if (updatedConnections.isEmpty()) {
-          LOG.debug("Internal error: predicted linkslist is empty");
+        if (updatelondConnelonctions.iselonmpty()) {
+          LOG.delonbug("Intelonrnal elonrror: prelondictelond linkslist is elonmpty");
         }
 
-        graph.put(key, updatedConnections);
+        graph.put(kelony, updatelondConnelonctions);
       } finally {
         curLock.unlock();
       }
     }
-    return neighbours.get(0);
+    relonturn nelonighbours.gelont(0);
   }
 
   /*
-   *  bestEntryPointUntilLayer starts the graph search for item from the entry point
-   *  until the searches reaches the selectedLayer layer.
-   *  @return a point from selectedLayer layer, was the closest on the (selectedLayer+1) layer
+   *  belonstelonntryPointUntilLayelonr starts thelon graph selonarch for itelonm from thelon elonntry point
+   *  until thelon selonarchelons relonachelons thelon selonlelonctelondLayelonr layelonr.
+   *  @relonturn a point from selonlelonctelondLayelonr layelonr, was thelon closelonst on thelon (selonlelonctelondLayelonr+1) layelonr
    */
-  private <K> T bestEntryPointUntilLayer(
-      final T entryPoint,
-      final K item,
-      int maxLayer,
-      int selectedLayer,
-      DistanceFunction<K, T> distFn
+  privatelon <K> T belonstelonntryPointUntilLayelonr(
+      final T elonntryPoint,
+      final K itelonm,
+      int maxLayelonr,
+      int selonlelonctelondLayelonr,
+      DistancelonFunction<K, T> distFn
   ) {
-    T curObj = entryPoint;
-    if (selectedLayer < maxLayer) {
-      float curDist = distFn.distance(item, curObj);
-      for (int level = maxLayer; level > selectedLayer; level--) {
-        boolean changed = true;
-        while (changed) {
-          changed = false;
-          final List<T> list = getConnectionListForRead(curObj, level);
+    T curObj = elonntryPoint;
+    if (selonlelonctelondLayelonr < maxLayelonr) {
+      float curDist = distFn.distancelon(itelonm, curObj);
+      for (int lelonvelonl = maxLayelonr; lelonvelonl > selonlelonctelondLayelonr; lelonvelonl--) {
+        boolelonan changelond = truelon;
+        whilelon (changelond) {
+          changelond = falselon;
+          final List<T> list = gelontConnelonctionListForRelonad(curObj, lelonvelonl);
           for (T nn : list) {
-            final float tempDist = distFn.distance(item, nn);
-            if (tempDist < curDist) {
-              curDist = tempDist;
+            final float telonmpDist = distFn.distancelon(itelonm, nn);
+            if (telonmpDist < curDist) {
+              curDist = telonmpDist;
               curObj = nn;
-              changed = true;
+              changelond = truelon;
             }
           }
         }
       }
     }
 
-    return curObj;
+    relonturn curObj;
   }
 
 
-  @VisibleForTesting
-  protected ImmutableList<T> selectNearestNeighboursByHeuristic(
-      final DistancedItemQueue<T, T> candidates, // Max queue
-      final int maxConnections
+  @VisiblelonForTelonsting
+  protelonctelond ImmutablelonList<T> selonlelonctNelonarelonstNelonighboursByHelonuristic(
+      final DistancelondItelonmQuelonuelon<T, T> candidatelons, // Max quelonuelon
+      final int maxConnelonctions
   ) {
-    Preconditions.checkState(!candidates.isMinQueue(),
-        "candidates in selectNearestNeighboursByHeuristic should be a max queue");
+    Prelonconditions.chelonckStatelon(!candidatelons.isMinQuelonuelon(),
+        "candidatelons in selonlelonctNelonarelonstNelonighboursByHelonuristic should belon a max quelonuelon");
 
-    final T baseElement = candidates.getOrigin();
-    if (candidates.size() <= maxConnections) {
-      List<T> list = candidates.toListWithItem();
-      list.remove(baseElement);
-      return ImmutableList.copyOf(list);
-    } else {
-      final List<T> resSet = new ArrayList<>(maxConnections);
-      // Min queue for closest elements first
-      final DistancedItemQueue<T, T> minQueue = candidates.reverse();
-      while (minQueue.nonEmpty()) {
-        if (resSet.size() >= maxConnections) {
-          break;
+    final T baselonelonlelonmelonnt = candidatelons.gelontOrigin();
+    if (candidatelons.sizelon() <= maxConnelonctions) {
+      List<T> list = candidatelons.toListWithItelonm();
+      list.relonmovelon(baselonelonlelonmelonnt);
+      relonturn ImmutablelonList.copyOf(list);
+    } elonlselon {
+      final List<T> relonsSelont = nelonw ArrayList<>(maxConnelonctions);
+      // Min quelonuelon for closelonst elonlelonmelonnts first
+      final DistancelondItelonmQuelonuelon<T, T> minQuelonuelon = candidatelons.relonvelonrselon();
+      whilelon (minQuelonuelon.nonelonmpty()) {
+        if (relonsSelont.sizelon() >= maxConnelonctions) {
+          brelonak;
         }
-        final DistancedItem<T> candidate = minQueue.dequeue();
+        final DistancelondItelonm<T> candidatelon = minQuelonuelon.delonquelonuelon();
 
-        // We do not want to creates loops:
-        // While heuristic is used only for creating the links
-        if (candidate.getItem().equals(baseElement)) {
-          continue;
+        // Welon do not want to crelonatelons loops:
+        // Whilelon helonuristic is uselond only for crelonating thelon links
+        if (candidatelon.gelontItelonm().elonquals(baselonelonlelonmelonnt)) {
+          continuelon;
         }
 
-        boolean toInclude = true;
-        for (T e : resSet) {
-          // Do not include candidate if the distance from candidate to any of existing item in
-          // resSet is closer to the distance from the candidate to the item. By doing this, the
-          // connection of graph will be more diverse, and in case of highly clustered data set,
-          // connections will be made between clusters instead of all being in the same cluster.
-          final float dist = distFnIndex.distance(e, candidate.getItem());
-          if (dist < candidate.getDistance()) {
-            toInclude = false;
-            break;
+        boolelonan toIncludelon = truelon;
+        for (T elon : relonsSelont) {
+          // Do not includelon candidatelon if thelon distancelon from candidatelon to any of elonxisting itelonm in
+          // relonsSelont is closelonr to thelon distancelon from thelon candidatelon to thelon itelonm. By doing this, thelon
+          // connelonction of graph will belon morelon divelonrselon, and in caselon of highly clustelonrelond data selont,
+          // connelonctions will belon madelon belontwelonelonn clustelonrs instelonad of all beloning in thelon samelon clustelonr.
+          final float dist = distFnIndelonx.distancelon(elon, candidatelon.gelontItelonm());
+          if (dist < candidatelon.gelontDistancelon()) {
+            toIncludelon = falselon;
+            brelonak;
           }
         }
 
-        if (toInclude) {
-          resSet.add(candidate.getItem());
+        if (toIncludelon) {
+          relonsSelont.add(candidatelon.gelontItelonm());
         }
       }
-      return ImmutableList.copyOf(resSet);
+      relonturn ImmutablelonList.copyOf(relonsSelont);
     }
   }
 
   /**
-   * Search the index for the neighbours.
+   * Selonarch thelon indelonx for thelon nelonighbours.
    *
-   * @param query           Query
-   * @param numOfNeighbours Number of neighbours to search for.
-   * @param ef              This param controls the accuracy of the search.
-   *                        Bigger the ef better the accuracy on the expense of latency.
-   *                        Keep it atleast number of neighbours to find.
-   * @return Neighbours
+   * @param quelonry           Quelonry
+   * @param numOfNelonighbours Numbelonr of nelonighbours to selonarch for.
+   * @param elonf              This param controls thelon accuracy of thelon selonarch.
+   *                        Biggelonr thelon elonf belonttelonr thelon accuracy on thelon elonxpelonnselon of latelonncy.
+   *                        Kelonelonp it atlelonast numbelonr of nelonighbours to find.
+   * @relonturn Nelonighbours
    */
-  public List<DistancedItem<T>> searchKnn(final Q query, final int numOfNeighbours, final int ef) {
-    final HnswMeta<T> metadata = graphMeta.get();
-    if (metadata.getEntryPoint().isPresent()) {
-      T entryPoint = bestEntryPointUntilLayer(metadata.getEntryPoint().get(),
-          query, metadata.getMaxLevel(), 0, distFnQuery);
-      // Get the actual neighbours from 0th layer
-      final List<DistancedItem<T>> neighbours =
-          searchLayerForCandidates(query, entryPoint, Math.max(ef, numOfNeighbours),
-              0, distFnQuery, false).dequeueAll();
-      Collections.reverse(neighbours);
-      return neighbours.size() > numOfNeighbours
-          ? neighbours.subList(0, numOfNeighbours) : neighbours;
-    } else {
-      return Collections.emptyList();
+  public List<DistancelondItelonm<T>> selonarchKnn(final Q quelonry, final int numOfNelonighbours, final int elonf) {
+    final HnswMelonta<T> melontadata = graphMelonta.gelont();
+    if (melontadata.gelontelonntryPoint().isPrelonselonnt()) {
+      T elonntryPoint = belonstelonntryPointUntilLayelonr(melontadata.gelontelonntryPoint().gelont(),
+          quelonry, melontadata.gelontMaxLelonvelonl(), 0, distFnQuelonry);
+      // Gelont thelon actual nelonighbours from 0th layelonr
+      final List<DistancelondItelonm<T>> nelonighbours =
+          selonarchLayelonrForCandidatelons(quelonry, elonntryPoint, Math.max(elonf, numOfNelonighbours),
+              0, distFnQuelonry, falselon).delonquelonuelonAll();
+      Collelonctions.relonvelonrselon(nelonighbours);
+      relonturn nelonighbours.sizelon() > numOfNelonighbours
+          ? nelonighbours.subList(0, numOfNelonighbours) : nelonighbours;
+    } elonlselon {
+      relonturn Collelonctions.elonmptyList();
     }
   }
 
-  // This method is currently not used
-  // It is needed for debugging purposes only
-  private void checkIntegrity(String message) {
-    final HnswMeta<T> metadata = graphMeta.get();
-    for (HnswNode<T> node : graph.keySet()) {
-      List<T> linkList = graph.get(node);
+  // This melonthod is currelonntly not uselond
+  // It is nelonelondelond for delonbugging purposelons only
+  privatelon void chelonckIntelongrity(String melonssagelon) {
+    final HnswMelonta<T> melontadata = graphMelonta.gelont();
+    for (HnswNodelon<T> nodelon : graph.kelonySelont()) {
+      List<T> linkList = graph.gelont(nodelon);
 
-      for (T el : linkList) {
-        if (el.equals(node.item)) {
-          LOG.debug(message);
-          throw new RuntimeException("integrity check failed");
+      for (T elonl : linkList) {
+        if (elonl.elonquals(nodelon.itelonm)) {
+          LOG.delonbug(melonssagelon);
+          throw nelonw Runtimelonelonxcelonption("intelongrity chelonck failelond");
         }
       }
     }
   }
 
-  private <K> DistancedItemQueue<K, T> searchLayerForCandidates(
-      final K item,
-      final T entryPoint,
-      final int ef,
-      final int level,
-      final DistanceFunction<K, T> distFn,
-      boolean isUpdate
+  privatelon <K> DistancelondItelonmQuelonuelon<K, T> selonarchLayelonrForCandidatelons(
+      final K itelonm,
+      final T elonntryPoint,
+      final int elonf,
+      final int lelonvelonl,
+      final DistancelonFunction<K, T> distFn,
+      boolelonan isUpdatelon
   ) {
-    // Min queue
-    final DistancedItemQueue<K, T> cQueue = new DistancedItemQueue<>(
-        item,
-        Collections.singletonList(entryPoint),
-        true,
+    // Min quelonuelon
+    final DistancelondItelonmQuelonuelon<K, T> cQuelonuelon = nelonw DistancelondItelonmQuelonuelon<>(
+        itelonm,
+        Collelonctions.singlelontonList(elonntryPoint),
+        truelon,
         distFn
     );
-    // Max Queue
-    final DistancedItemQueue<K, T> wQueue = cQueue.reverse();
-    final Set<T> visited = new HashSet<>();
-    float lowerBoundDistance = wQueue.peek().getDistance();
-    visited.add(entryPoint);
+    // Max Quelonuelon
+    final DistancelondItelonmQuelonuelon<K, T> wQuelonuelon = cQuelonuelon.relonvelonrselon();
+    final Selont<T> visitelond = nelonw HashSelont<>();
+    float lowelonrBoundDistancelon = wQuelonuelon.pelonelonk().gelontDistancelon();
+    visitelond.add(elonntryPoint);
 
-    while (cQueue.nonEmpty()) {
-      final DistancedItem<T> candidate = cQueue.peek();
-      if (candidate.getDistance() > lowerBoundDistance) {
-        break;
+    whilelon (cQuelonuelon.nonelonmpty()) {
+      final DistancelondItelonm<T> candidatelon = cQuelonuelon.pelonelonk();
+      if (candidatelon.gelontDistancelon() > lowelonrBoundDistancelon) {
+        brelonak;
       }
 
-      cQueue.dequeue();
-      final List<T> list = getConnectionListForRead(candidate.getItem(), level);
+      cQuelonuelon.delonquelonuelon();
+      final List<T> list = gelontConnelonctionListForRelonad(candidatelon.gelontItelonm(), lelonvelonl);
       for (T nn : list) {
-        if (!visited.contains(nn)) {
-          visited.add(nn);
-          final float distance = distFn.distance(item, nn);
-          if (wQueue.size() < ef || distance < wQueue.peek().getDistance()) {
-            cQueue.enqueue(nn, distance);
+        if (!visitelond.contains(nn)) {
+          visitelond.add(nn);
+          final float distancelon = distFn.distancelon(itelonm, nn);
+          if (wQuelonuelon.sizelon() < elonf || distancelon < wQuelonuelon.pelonelonk().gelontDistancelon()) {
+            cQuelonuelon.elonnquelonuelon(nn, distancelon);
 
-            if (isUpdate && item.equals(nn)) {
-              continue;
+            if (isUpdatelon && itelonm.elonquals(nn)) {
+              continuelon;
             }
 
-            wQueue.enqueue(nn, distance);
-            if (wQueue.size() > ef) {
-              wQueue.dequeue();
+            wQuelonuelon.elonnquelonuelon(nn, distancelon);
+            if (wQuelonuelon.sizelon() > elonf) {
+              wQuelonuelon.delonquelonuelon();
             }
 
-            lowerBoundDistance = wQueue.peek().getDistance();
+            lowelonrBoundDistancelon = wQuelonuelon.pelonelonk().gelontDistancelon();
           }
         }
       }
     }
 
-    return wQueue;
+    relonturn wQuelonuelon;
   }
 
   /**
-   * Serialize hnsw index
+   * Selonrializelon hnsw indelonx
    */
-  public void toDirectory(IndexOutputFile indexOutputFile, Injection<T, byte[]> injection)
-    throws IOException, TException {
-  final int totalGraphEntries = HnswIndexIOUtil.saveHnswGraphEntries(
+  public void toDirelonctory(IndelonxOutputFilelon indelonxOutputFilelon, Injelonction<T, bytelon[]> injelonction)
+    throws IOelonxcelonption, Telonxcelonption {
+  final int totalGraphelonntrielons = HnswIndelonxIOUtil.savelonHnswGraphelonntrielons(
       graph,
-      indexOutputFile.createFile(GRAPH_FILE_NAME).getOutputStream(),
-      injection);
+      indelonxOutputFilelon.crelonatelonFilelon(GRAPH_FILelon_NAMelon).gelontOutputStrelonam(),
+      injelonction);
 
-  HnswIndexIOUtil.saveMetadata(
-      graphMeta.get(),
-      efConstruction,
+  HnswIndelonxIOUtil.savelonMelontadata(
+      graphMelonta.gelont(),
+      elonfConstruction,
       maxM,
-      totalGraphEntries,
-      injection,
-      indexOutputFile.createFile(METADATA_FILE_NAME).getOutputStream());
+      totalGraphelonntrielons,
+      injelonction,
+      indelonxOutputFilelon.crelonatelonFilelon(MelonTADATA_FILelon_NAMelon).gelontOutputStrelonam());
 }
 
   /**
-   * Load hnsw index
+   * Load hnsw indelonx
    */
-  public static <T, Q> HnswIndex<T, Q> loadHnswIndex(
-      DistanceFunction<T, T> distFnIndex,
-      DistanceFunction<Q, T> distFnQuery,
-      AbstractFile directory,
-      Injection<T, byte[]> injection,
-      RandomProvider randomProvider) throws IOException, TException {
-    final AbstractFile graphFile = directory.getChild(GRAPH_FILE_NAME);
-    final AbstractFile metadataFile = directory.getChild(METADATA_FILE_NAME);
-    final HnswInternalIndexMetadata metadata = HnswIndexIOUtil.loadMetadata(metadataFile);
-    final Map<HnswNode<T>, ImmutableList<T>> graph =
-        HnswIndexIOUtil.loadHnswGraph(graphFile, injection, metadata.numElements);
-    final ByteBuffer entryPointBB = metadata.entryPoint;
-    final HnswMeta<T> graphMeta = new HnswMeta<>(
-        metadata.maxLevel,
-        entryPointBB == null ? Optional.empty()
-            : Optional.of(injection.invert(ArrayByteBufferCodec.decode(entryPointBB)).get())
+  public static <T, Q> HnswIndelonx<T, Q> loadHnswIndelonx(
+      DistancelonFunction<T, T> distFnIndelonx,
+      DistancelonFunction<Q, T> distFnQuelonry,
+      AbstractFilelon direlonctory,
+      Injelonction<T, bytelon[]> injelonction,
+      RandomProvidelonr randomProvidelonr) throws IOelonxcelonption, Telonxcelonption {
+    final AbstractFilelon graphFilelon = direlonctory.gelontChild(GRAPH_FILelon_NAMelon);
+    final AbstractFilelon melontadataFilelon = direlonctory.gelontChild(MelonTADATA_FILelon_NAMelon);
+    final HnswIntelonrnalIndelonxMelontadata melontadata = HnswIndelonxIOUtil.loadMelontadata(melontadataFilelon);
+    final Map<HnswNodelon<T>, ImmutablelonList<T>> graph =
+        HnswIndelonxIOUtil.loadHnswGraph(graphFilelon, injelonction, melontadata.numelonlelonmelonnts);
+    final BytelonBuffelonr elonntryPointBB = melontadata.elonntryPoint;
+    final HnswMelonta<T> graphMelonta = nelonw HnswMelonta<>(
+        melontadata.maxLelonvelonl,
+        elonntryPointBB == null ? Optional.elonmpty()
+            : Optional.of(injelonction.invelonrt(ArrayBytelonBuffelonrCodelonc.deloncodelon(elonntryPointBB)).gelont())
     );
-    return new HnswIndex<>(
-        distFnIndex,
-        distFnQuery,
-        metadata.efConstruction,
-        metadata.maxM,
-        metadata.numElements,
-        graphMeta,
+    relonturn nelonw HnswIndelonx<>(
+        distFnIndelonx,
+        distFnQuelonry,
+        melontadata.elonfConstruction,
+        melontadata.maxM,
+        melontadata.numelonlelonmelonnts,
+        graphMelonta,
         graph,
-        randomProvider
+        randomProvidelonr
     );
   }
 
-  private List<T> getConnectionListForRead(T node, int level) {
-    final Lock curLock = locks.computeIfAbsent(node, lockProvider).readLock();
+  privatelon List<T> gelontConnelonctionListForRelonad(T nodelon, int lelonvelonl) {
+    final Lock curLock = locks.computelonIfAbselonnt(nodelon, lockProvidelonr).relonadLock();
     curLock.lock();
     final List<T> list;
     try {
       list = graph
-          .getOrDefault(HnswNode.from(level, node), ImmutableList.of());
+          .gelontOrDelonfault(HnswNodelon.from(lelonvelonl, nodelon), ImmutablelonList.of());
     } finally {
       curLock.unlock();
     }
 
-    return list;
+    relonturn list;
   }
 
-  @VisibleForTesting
-  AtomicReference<HnswMeta<T>> getGraphMeta() {
-    return graphMeta;
+  @VisiblelonForTelonsting
+  AtomicRelonfelonrelonncelon<HnswMelonta<T>> gelontGraphMelonta() {
+    relonturn graphMelonta;
   }
 
-  @VisibleForTesting
-  Map<T, ReadWriteLock> getLocks() {
-    return locks;
+  @VisiblelonForTelonsting
+  Map<T, RelonadWritelonLock> gelontLocks() {
+    relonturn locks;
   }
 
-  @VisibleForTesting
-  Map<HnswNode<T>, ImmutableList<T>> getGraph() {
-    return graph;
+  @VisiblelonForTelonsting
+  Map<HnswNodelon<T>, ImmutablelonList<T>> gelontGraph() {
+    relonturn graph;
   }
 
-  public interface RandomProvider {
+  public intelonrfacelon RandomProvidelonr {
     /**
-     * RandomProvider interface made public for scala 2.12 compat
+     * RandomProvidelonr intelonrfacelon madelon public for scala 2.12 compat
      */
-    Random get();
+    Random gelont();
   }
 }

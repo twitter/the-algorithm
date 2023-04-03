@@ -1,63 +1,63 @@
-package com.twitter.simclusters_v2.scio
-package bq_generation.common
+packagelon com.twittelonr.simclustelonrs_v2.scio
+packagelon bq_gelonnelonration.common
 
-import com.twitter.algebird_internal.thriftscala.DecayedValue
-import com.twitter.simclusters_v2.thriftscala.FullClusterId
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
-import com.twitter.simclusters_v2.thriftscala.Scores
-import com.twitter.simclusters_v2.thriftscala.TopKTweetsWithScores
-import com.twitter.snowflake.id.SnowflakeId
-import org.apache.avro.generic.GenericRecord
-import org.apache.beam.sdk.io.gcp.bigquery.SchemaAndRecord
-import org.apache.beam.sdk.transforms.SerializableFunction
-import scala.collection.JavaConverters._
+import com.twittelonr.algelonbird_intelonrnal.thriftscala.DeloncayelondValuelon
+import com.twittelonr.simclustelonrs_v2.thriftscala.FullClustelonrId
+import com.twittelonr.simclustelonrs_v2.thriftscala.ModelonlVelonrsion
+import com.twittelonr.simclustelonrs_v2.thriftscala.Scorelons
+import com.twittelonr.simclustelonrs_v2.thriftscala.TopKTwelonelontsWithScorelons
+import com.twittelonr.snowflakelon.id.SnowflakelonId
+import org.apachelon.avro.gelonnelonric.GelonnelonricReloncord
+import org.apachelon.belonam.sdk.io.gcp.bigquelonry.SchelonmaAndReloncord
+import org.apachelon.belonam.sdk.transforms.SelonrializablelonFunction
+import scala.collelonction.JavaConvelonrtelonrs._
 
-object IndexGenerationUtil {
-  // Function that parses [GenericRecord] results we read from BQ into [TopKTweetsForClusterKey]
-  def parseClusterTopKTweetsFn(tweetEmbeddingsHalfLife: Int) =
-    new SerializableFunction[SchemaAndRecord, TopKTweetsForClusterKey] {
-      override def apply(record: SchemaAndRecord): TopKTweetsForClusterKey = {
-        val genericRecord: GenericRecord = record.getRecord()
-        TopKTweetsForClusterKey(
-          clusterId = FullClusterId(
-            modelVersion = ModelVersion.Model20m145k2020,
-            clusterId = genericRecord.get("clusterId").toString.toInt
+objelonct IndelonxGelonnelonrationUtil {
+  // Function that parselons [GelonnelonricReloncord] relonsults welon relonad from BQ into [TopKTwelonelontsForClustelonrKelony]
+  delonf parselonClustelonrTopKTwelonelontsFn(twelonelontelonmbelonddingsHalfLifelon: Int) =
+    nelonw SelonrializablelonFunction[SchelonmaAndReloncord, TopKTwelonelontsForClustelonrKelony] {
+      ovelonrridelon delonf apply(reloncord: SchelonmaAndReloncord): TopKTwelonelontsForClustelonrKelony = {
+        val gelonnelonricReloncord: GelonnelonricReloncord = reloncord.gelontReloncord()
+        TopKTwelonelontsForClustelonrKelony(
+          clustelonrId = FullClustelonrId(
+            modelonlVelonrsion = ModelonlVelonrsion.Modelonl20m145k2020,
+            clustelonrId = gelonnelonricReloncord.gelont("clustelonrId").toString.toInt
           ),
-          topKTweetsWithScores = parseTopKTweetsForClusterKeyColumn(
-            genericRecord,
-            "topKTweetsForClusterKey",
-            tweetEmbeddingsHalfLife),
+          topKTwelonelontsWithScorelons = parselonTopKTwelonelontsForClustelonrKelonyColumn(
+            gelonnelonricReloncord,
+            "topKTwelonelontsForClustelonrKelony",
+            twelonelontelonmbelonddingsHalfLifelon),
         )
       }
     }
 
-  // Function that parses the topKTweetsForClusterKey column into [TopKTweetsWithScores]
-  def parseTopKTweetsForClusterKeyColumn(
-    genericRecord: GenericRecord,
-    columnName: String,
-    tweetEmbeddingsHalfLife: Int
-  ): TopKTweetsWithScores = {
-    val tweetScorePairs: java.util.List[GenericRecord] =
-      genericRecord.get(columnName).asInstanceOf[java.util.List[GenericRecord]]
-    val tweetIdToScoresMap = tweetScorePairs.asScala
-      .map((gr: GenericRecord) => {
-        // Retrieve the tweetId and tweetScore
-        val tweetId = gr.get("tweetId").toString.toLong
-        val tweetScore = gr.get("tweetScore").toString.toDouble
+  // Function that parselons thelon topKTwelonelontsForClustelonrKelony column into [TopKTwelonelontsWithScorelons]
+  delonf parselonTopKTwelonelontsForClustelonrKelonyColumn(
+    gelonnelonricReloncord: GelonnelonricReloncord,
+    columnNamelon: String,
+    twelonelontelonmbelonddingsHalfLifelon: Int
+  ): TopKTwelonelontsWithScorelons = {
+    val twelonelontScorelonPairs: java.util.List[GelonnelonricReloncord] =
+      gelonnelonricReloncord.gelont(columnNamelon).asInstancelonOf[java.util.List[GelonnelonricReloncord]]
+    val twelonelontIdToScorelonsMap = twelonelontScorelonPairs.asScala
+      .map((gr: GelonnelonricReloncord) => {
+        // Relontrielonvelon thelon twelonelontId and twelonelontScorelon
+        val twelonelontId = gr.gelont("twelonelontId").toString.toLong
+        val twelonelontScorelon = gr.gelont("twelonelontScorelon").toString.toDoublelon
 
-        // Transform tweetScore into DecayedValue
-        // Ref: https://github.com/twitter/algebird/blob/develop/algebird-core/src/main/scala/com/twitter/algebird/DecayedValue.scala
-        val scaledTime =
-          SnowflakeId.unixTimeMillisFromId(tweetId) * math.log(2.0) / tweetEmbeddingsHalfLife
-        val decayedValue = DecayedValue(tweetScore, scaledTime)
+        // Transform twelonelontScorelon into DeloncayelondValuelon
+        // Relonf: https://github.com/twittelonr/algelonbird/blob/delonvelonlop/algelonbird-corelon/src/main/scala/com/twittelonr/algelonbird/DeloncayelondValuelon.scala
+        val scalelondTimelon =
+          SnowflakelonId.unixTimelonMillisFromId(twelonelontId) * math.log(2.0) / twelonelontelonmbelonddingsHalfLifelon
+        val deloncayelondValuelon = DeloncayelondValuelon(twelonelontScorelon, scalelondTimelon)
 
-        // Update the TopTweets Map
-        tweetId -> Scores(favClusterNormalized8HrHalfLifeScore = Some(decayedValue))
+        // Updatelon thelon TopTwelonelonts Map
+        twelonelontId -> Scorelons(favClustelonrNormalizelond8HrHalfLifelonScorelon = Somelon(deloncayelondValuelon))
       }).toMap
-    TopKTweetsWithScores(topTweetsByFavClusterNormalizedScore = Some(tweetIdToScoresMap))
+    TopKTwelonelontsWithScorelons(topTwelonelontsByFavClustelonrNormalizelondScorelon = Somelon(twelonelontIdToScorelonsMap))
   }
-  case class TopKTweetsForClusterKey(
-    clusterId: FullClusterId,
-    topKTweetsWithScores: TopKTweetsWithScores)
+  caselon class TopKTwelonelontsForClustelonrKelony(
+    clustelonrId: FullClustelonrId,
+    topKTwelonelontsWithScorelons: TopKTwelonelontsWithScorelons)
 
 }

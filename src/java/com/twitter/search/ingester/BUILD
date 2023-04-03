@@ -1,30 +1,30 @@
-target(
-    name = "ingester-lib",
-    dependencies = [
-        "src/java/com/twitter/search/common/converter/earlybird",
-        "src/java/com/twitter/search/ingester/model",
-        "src/java/com/twitter/search/ingester/pipeline/app",
-        "src/java/com/twitter/search/ingester/pipeline/twitter",
-        "src/java/com/twitter/search/ingester/pipeline/twitter/engagements",
-        "src/java/com/twitter/search/ingester/pipeline/twitter/filters",
-        "src/java/com/twitter/search/ingester/pipeline/twitter/kafka",
-        "src/java/com/twitter/search/ingester/pipeline/twitter/thriftparse",
-        "src/java/com/twitter/search/ingester/pipeline/twitter/userupdates",
-        "src/java/com/twitter/search/ingester/pipeline/util",
-        "src/java/com/twitter/search/ingester/util/jndi",
+targelont(
+    namelon = "ingelonstelonr-lib",
+    delonpelonndelonncielons = [
+        "src/java/com/twittelonr/selonarch/common/convelonrtelonr/elonarlybird",
+        "src/java/com/twittelonr/selonarch/ingelonstelonr/modelonl",
+        "src/java/com/twittelonr/selonarch/ingelonstelonr/pipelonlinelon/app",
+        "src/java/com/twittelonr/selonarch/ingelonstelonr/pipelonlinelon/twittelonr",
+        "src/java/com/twittelonr/selonarch/ingelonstelonr/pipelonlinelon/twittelonr/elonngagelonmelonnts",
+        "src/java/com/twittelonr/selonarch/ingelonstelonr/pipelonlinelon/twittelonr/filtelonrs",
+        "src/java/com/twittelonr/selonarch/ingelonstelonr/pipelonlinelon/twittelonr/kafka",
+        "src/java/com/twittelonr/selonarch/ingelonstelonr/pipelonlinelon/twittelonr/thriftparselon",
+        "src/java/com/twittelonr/selonarch/ingelonstelonr/pipelonlinelon/twittelonr/uselonrupdatelons",
+        "src/java/com/twittelonr/selonarch/ingelonstelonr/pipelonlinelon/util",
+        "src/java/com/twittelonr/selonarch/ingelonstelonr/util/jndi",
     ],
 )
 
 jvm_binary(
-    name = "ingester-binary",
-    basename = "ingester",
-    main = "com.twitter.search.ingester.pipeline.app.IngesterPipelineApplication\\$Main",
+    namelon = "ingelonstelonr-binary",
+    baselonnamelon = "ingelonstelonr",
+    main = "com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.app.IngelonstelonrPipelonlinelonApplication\\$Main",
     platform = "java8",
     tags = [
-        "bazel-compatible",
+        "bazelonl-compatiblelon",
     ],
-    dependencies = [
-        ":ingester-lib",
-        "src/java/com/twitter/search/common/logging:search-log4j",
+    delonpelonndelonncielons = [
+        ":ingelonstelonr-lib",
+        "src/java/com/twittelonr/selonarch/common/logging:selonarch-log4j",
     ],
 )

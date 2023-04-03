@@ -1,129 +1,129 @@
-package com.twitter.visibility.builder.tweets
+packagelon com.twittelonr.visibility.buildelonr.twelonelonts
 
-import com.twitter.communities.moderation.thriftscala.CommunityTweetModerationState
-import com.twitter.communities.moderation.thriftscala.CommunityUserModerationState
-import com.twitter.communities.visibility.thriftscala.CommunityVisibilityFeatures
-import com.twitter.communities.visibility.thriftscala.CommunityVisibilityFeaturesV1
-import com.twitter.communities.visibility.thriftscala.CommunityVisibilityResult
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.common.CommunitiesSource
-import com.twitter.visibility.features.CommunityTweetAuthorIsRemoved
-import com.twitter.visibility.features.CommunityTweetCommunityNotFound
-import com.twitter.visibility.features.CommunityTweetCommunityDeleted
-import com.twitter.visibility.features.CommunityTweetCommunitySuspended
-import com.twitter.visibility.features.CommunityTweetCommunityVisible
-import com.twitter.visibility.features.CommunityTweetIsHidden
-import com.twitter.visibility.features.TweetIsCommunityTweet
-import com.twitter.visibility.features.ViewerIsCommunityAdmin
-import com.twitter.visibility.features.ViewerIsCommunityMember
-import com.twitter.visibility.features.ViewerIsCommunityModerator
-import com.twitter.visibility.features.ViewerIsInternalCommunitiesAdmin
-import com.twitter.visibility.models.CommunityTweet
-import com.twitter.visibility.models.ViewerContext
+import com.twittelonr.communitielons.modelonration.thriftscala.CommunityTwelonelontModelonrationStatelon
+import com.twittelonr.communitielons.modelonration.thriftscala.CommunityUselonrModelonrationStatelon
+import com.twittelonr.communitielons.visibility.thriftscala.CommunityVisibilityFelonaturelons
+import com.twittelonr.communitielons.visibility.thriftscala.CommunityVisibilityFelonaturelonsV1
+import com.twittelonr.communitielons.visibility.thriftscala.CommunityVisibilityRelonsult
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.twelonelontypielon.thriftscala.Twelonelont
+import com.twittelonr.visibility.buildelonr.FelonaturelonMapBuildelonr
+import com.twittelonr.visibility.common.CommunitielonsSourcelon
+import com.twittelonr.visibility.felonaturelons.CommunityTwelonelontAuthorIsRelonmovelond
+import com.twittelonr.visibility.felonaturelons.CommunityTwelonelontCommunityNotFound
+import com.twittelonr.visibility.felonaturelons.CommunityTwelonelontCommunityDelonlelontelond
+import com.twittelonr.visibility.felonaturelons.CommunityTwelonelontCommunitySuspelonndelond
+import com.twittelonr.visibility.felonaturelons.CommunityTwelonelontCommunityVisiblelon
+import com.twittelonr.visibility.felonaturelons.CommunityTwelonelontIsHiddelonn
+import com.twittelonr.visibility.felonaturelons.TwelonelontIsCommunityTwelonelont
+import com.twittelonr.visibility.felonaturelons.VielonwelonrIsCommunityAdmin
+import com.twittelonr.visibility.felonaturelons.VielonwelonrIsCommunityMelonmbelonr
+import com.twittelonr.visibility.felonaturelons.VielonwelonrIsCommunityModelonrator
+import com.twittelonr.visibility.felonaturelons.VielonwelonrIsIntelonrnalCommunitielonsAdmin
+import com.twittelonr.visibility.modelonls.CommunityTwelonelont
+import com.twittelonr.visibility.modelonls.VielonwelonrContelonxt
 
-class CommunityTweetFeaturesV2(communitiesSource: CommunitiesSource)
-    extends CommunityTweetFeatures {
-  private[this] def forCommunityTweet(
-    communityTweet: CommunityTweet
-  ): FeatureMapBuilder => FeatureMapBuilder = { builder: FeatureMapBuilder =>
+class CommunityTwelonelontFelonaturelonsV2(communitielonsSourcelon: CommunitielonsSourcelon)
+    elonxtelonnds CommunityTwelonelontFelonaturelons {
+  privatelon[this] delonf forCommunityTwelonelont(
+    communityTwelonelont: CommunityTwelonelont
+  ): FelonaturelonMapBuildelonr => FelonaturelonMapBuildelonr = { buildelonr: FelonaturelonMapBuildelonr =>
     {
-      val communityVisibilityFeaturesStitch =
-        communitiesSource.getCommunityVisibilityFeatures(communityTweet.communityId)
-      val communityTweetModerationStateStitch =
-        communitiesSource.getTweetModerationState(communityTweet.tweet.id)
-      val communityTweetAuthorModerationStateStitch =
-        communitiesSource.getUserModerationState(
-          communityTweet.authorId,
-          communityTweet.communityId
+      val communityVisibilityFelonaturelonsStitch =
+        communitielonsSourcelon.gelontCommunityVisibilityFelonaturelons(communityTwelonelont.communityId)
+      val communityTwelonelontModelonrationStatelonStitch =
+        communitielonsSourcelon.gelontTwelonelontModelonrationStatelon(communityTwelonelont.twelonelont.id)
+      val communityTwelonelontAuthorModelonrationStatelonStitch =
+        communitielonsSourcelon.gelontUselonrModelonrationStatelon(
+          communityTwelonelont.authorId,
+          communityTwelonelont.communityId
         )
 
-      def getFlagFromFeatures(f: CommunityVisibilityFeaturesV1 => Boolean): Stitch[Boolean] =
-        communityVisibilityFeaturesStitch.map {
-          case Some(CommunityVisibilityFeatures.V1(v1)) => f(v1)
-          case _ => false
+      delonf gelontFlagFromFelonaturelons(f: CommunityVisibilityFelonaturelonsV1 => Boolelonan): Stitch[Boolelonan] =
+        communityVisibilityFelonaturelonsStitch.map {
+          caselon Somelon(CommunityVisibilityFelonaturelons.V1(v1)) => f(v1)
+          caselon _ => falselon
         }
 
-      def getFlagFromCommunityVisibilityResult(
-        f: CommunityVisibilityResult => Boolean
-      ): Stitch[Boolean] = getFlagFromFeatures { v =>
-        f(v.communityVisibilityResult)
+      delonf gelontFlagFromCommunityVisibilityRelonsult(
+        f: CommunityVisibilityRelonsult => Boolelonan
+      ): Stitch[Boolelonan] = gelontFlagFromFelonaturelons { v =>
+        f(v.communityVisibilityRelonsult)
       }
 
-      builder
-        .withConstantFeature(
-          TweetIsCommunityTweet,
-          true
+      buildelonr
+        .withConstantFelonaturelon(
+          TwelonelontIsCommunityTwelonelont,
+          truelon
         )
-        .withFeature(
-          CommunityTweetCommunityNotFound,
-          getFlagFromCommunityVisibilityResult {
-            case CommunityVisibilityResult.NotFound => true
-            case _ => false
+        .withFelonaturelon(
+          CommunityTwelonelontCommunityNotFound,
+          gelontFlagFromCommunityVisibilityRelonsult {
+            caselon CommunityVisibilityRelonsult.NotFound => truelon
+            caselon _ => falselon
           }
         )
-        .withFeature(
-          CommunityTweetCommunitySuspended,
-          getFlagFromCommunityVisibilityResult {
-            case CommunityVisibilityResult.Suspended => true
-            case _ => false
+        .withFelonaturelon(
+          CommunityTwelonelontCommunitySuspelonndelond,
+          gelontFlagFromCommunityVisibilityRelonsult {
+            caselon CommunityVisibilityRelonsult.Suspelonndelond => truelon
+            caselon _ => falselon
           }
         )
-        .withFeature(
-          CommunityTweetCommunityDeleted,
-          getFlagFromCommunityVisibilityResult {
-            case CommunityVisibilityResult.Deleted => true
-            case _ => false
+        .withFelonaturelon(
+          CommunityTwelonelontCommunityDelonlelontelond,
+          gelontFlagFromCommunityVisibilityRelonsult {
+            caselon CommunityVisibilityRelonsult.Delonlelontelond => truelon
+            caselon _ => falselon
           }
         )
-        .withFeature(
-          CommunityTweetCommunityVisible,
-          getFlagFromCommunityVisibilityResult {
-            case CommunityVisibilityResult.Visible => true
-            case _ => false
+        .withFelonaturelon(
+          CommunityTwelonelontCommunityVisiblelon,
+          gelontFlagFromCommunityVisibilityRelonsult {
+            caselon CommunityVisibilityRelonsult.Visiblelon => truelon
+            caselon _ => falselon
           }
         )
-        .withFeature(
-          ViewerIsInternalCommunitiesAdmin,
-          getFlagFromFeatures { _.viewerIsInternalAdmin }
+        .withFelonaturelon(
+          VielonwelonrIsIntelonrnalCommunitielonsAdmin,
+          gelontFlagFromFelonaturelons { _.vielonwelonrIsIntelonrnalAdmin }
         )
-        .withFeature(
-          ViewerIsCommunityAdmin,
-          getFlagFromFeatures { _.viewerIsCommunityAdmin }
+        .withFelonaturelon(
+          VielonwelonrIsCommunityAdmin,
+          gelontFlagFromFelonaturelons { _.vielonwelonrIsCommunityAdmin }
         )
-        .withFeature(
-          ViewerIsCommunityModerator,
-          getFlagFromFeatures { _.viewerIsCommunityModerator }
+        .withFelonaturelon(
+          VielonwelonrIsCommunityModelonrator,
+          gelontFlagFromFelonaturelons { _.vielonwelonrIsCommunityModelonrator }
         )
-        .withFeature(
-          ViewerIsCommunityMember,
-          getFlagFromFeatures { _.viewerIsCommunityMember }
+        .withFelonaturelon(
+          VielonwelonrIsCommunityMelonmbelonr,
+          gelontFlagFromFelonaturelons { _.vielonwelonrIsCommunityMelonmbelonr }
         )
-        .withFeature(
-          CommunityTweetIsHidden,
-          communityTweetModerationStateStitch.map {
-            case Some(CommunityTweetModerationState.Hidden(_)) => true
-            case _ => false
+        .withFelonaturelon(
+          CommunityTwelonelontIsHiddelonn,
+          communityTwelonelontModelonrationStatelonStitch.map {
+            caselon Somelon(CommunityTwelonelontModelonrationStatelon.Hiddelonn(_)) => truelon
+            caselon _ => falselon
           }
         )
-        .withFeature(
-          CommunityTweetAuthorIsRemoved,
-          communityTweetAuthorModerationStateStitch.map {
-            case Some(CommunityUserModerationState.Removed(_)) => true
-            case _ => false
+        .withFelonaturelon(
+          CommunityTwelonelontAuthorIsRelonmovelond,
+          communityTwelonelontAuthorModelonrationStatelonStitch.map {
+            caselon Somelon(CommunityUselonrModelonrationStatelon.Relonmovelond(_)) => truelon
+            caselon _ => falselon
           }
         )
     }
   }
 
-  def forTweet(
-    tweet: Tweet,
-    viewerContext: ViewerContext
-  ): FeatureMapBuilder => FeatureMapBuilder = {
-    CommunityTweet(tweet) match {
-      case None => forNonCommunityTweet()
-      case Some(communityTweet) => forCommunityTweet(communityTweet)
+  delonf forTwelonelont(
+    twelonelont: Twelonelont,
+    vielonwelonrContelonxt: VielonwelonrContelonxt
+  ): FelonaturelonMapBuildelonr => FelonaturelonMapBuildelonr = {
+    CommunityTwelonelont(twelonelont) match {
+      caselon Nonelon => forNonCommunityTwelonelont()
+      caselon Somelon(communityTwelonelont) => forCommunityTwelonelont(communityTwelonelont)
     }
   }
 }

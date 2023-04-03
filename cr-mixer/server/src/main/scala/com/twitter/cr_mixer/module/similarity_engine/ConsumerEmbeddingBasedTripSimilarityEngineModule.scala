@@ -1,58 +1,58 @@
-package com.twitter.cr_mixer.module.similarity_engine
+packagelon com.twittelonr.cr_mixelonr.modulelon.similarity_elonnginelon
 
-import com.google.inject.Provides
-import com.twitter.cr_mixer.config.TimeoutConfig
-import com.twitter.cr_mixer.model.ModelConfig
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.cr_mixer.model.TripTweetWithScore
-import com.twitter.cr_mixer.similarity_engine.ConsumerEmbeddingBasedTripSimilarityEngine
-import com.twitter.cr_mixer.similarity_engine.SimilarityEngine.GatingConfig
-import com.twitter.cr_mixer.similarity_engine.SimilarityEngine.SimilarityEngineConfig
-import com.twitter.cr_mixer.similarity_engine.StandardSimilarityEngine
-import com.twitter.cr_mixer.similarity_engine.TripEngineQuery
-import com.twitter.cr_mixer.thriftscala.SimilarityEngineType
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.hermit.store.common.ObservedReadableStore
-import com.twitter.inject.TwitterModule
-import com.twitter.simclusters_v2.common.SimClustersEmbedding
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.trends.trip_v1.trip_tweets.thriftscala.TripTweet
-import com.twitter.trends.trip_v1.trip_tweets.thriftscala.TripDomain
-import javax.inject.Named
+import com.googlelon.injelonct.Providelons
+import com.twittelonr.cr_mixelonr.config.TimelonoutConfig
+import com.twittelonr.cr_mixelonr.modelonl.ModelonlConfig
+import com.twittelonr.cr_mixelonr.modelonl.ModulelonNamelons
+import com.twittelonr.cr_mixelonr.modelonl.TripTwelonelontWithScorelon
+import com.twittelonr.cr_mixelonr.similarity_elonnginelon.ConsumelonrelonmbelonddingBaselondTripSimilarityelonnginelon
+import com.twittelonr.cr_mixelonr.similarity_elonnginelon.Similarityelonnginelon.GatingConfig
+import com.twittelonr.cr_mixelonr.similarity_elonnginelon.Similarityelonnginelon.SimilarityelonnginelonConfig
+import com.twittelonr.cr_mixelonr.similarity_elonnginelon.StandardSimilarityelonnginelon
+import com.twittelonr.cr_mixelonr.similarity_elonnginelon.TripelonnginelonQuelonry
+import com.twittelonr.cr_mixelonr.thriftscala.SimilarityelonnginelonTypelon
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.helonrmit.storelon.common.ObselonrvelondRelonadablelonStorelon
+import com.twittelonr.injelonct.TwittelonrModulelon
+import com.twittelonr.simclustelonrs_v2.common.SimClustelonrselonmbelondding
+import com.twittelonr.simclustelonrs_v2.common.UselonrId
+import com.twittelonr.storelonhaus.RelonadablelonStorelon
+import com.twittelonr.trelonnds.trip_v1.trip_twelonelonts.thriftscala.TripTwelonelont
+import com.twittelonr.trelonnds.trip_v1.trip_twelonelonts.thriftscala.TripDomain
+import javax.injelonct.Namelond
 
-object ConsumerEmbeddingBasedTripSimilarityEngineModule extends TwitterModule {
-  @Provides
-  @Named(ModuleNames.ConsumerEmbeddingBasedTripSimilarityEngine)
-  def providesConsumerEmbeddingBasedTripSimilarityEngineModule(
-    @Named(ModuleNames.RmsUserLogFavInterestedInEmbeddingStore)
-    userLogFavInterestedInEmbeddingStore: ReadableStore[UserId, SimClustersEmbedding],
-    @Named(ModuleNames.RmsUserFollowInterestedInEmbeddingStore)
-    userFollowInterestedInEmbeddingStore: ReadableStore[UserId, SimClustersEmbedding],
-    @Named(ModuleNames.TripCandidateStore)
-    tripCandidateStore: ReadableStore[TripDomain, Seq[TripTweet]],
-    timeoutConfig: TimeoutConfig,
-    statsReceiver: StatsReceiver,
-  ): StandardSimilarityEngine[TripEngineQuery, TripTweetWithScore] = {
-    val underlyingStore = ObservedReadableStore(
-      ConsumerEmbeddingBasedTripSimilarityEngine(
-        embeddingStoreLookUpMap = Map(
-          ModelConfig.ConsumerLogFavBasedInterestedInEmbedding -> userLogFavInterestedInEmbeddingStore,
-          ModelConfig.ConsumerFollowBasedInterestedInEmbedding -> userFollowInterestedInEmbeddingStore,
+objelonct ConsumelonrelonmbelonddingBaselondTripSimilarityelonnginelonModulelon elonxtelonnds TwittelonrModulelon {
+  @Providelons
+  @Namelond(ModulelonNamelons.ConsumelonrelonmbelonddingBaselondTripSimilarityelonnginelon)
+  delonf providelonsConsumelonrelonmbelonddingBaselondTripSimilarityelonnginelonModulelon(
+    @Namelond(ModulelonNamelons.RmsUselonrLogFavIntelonrelonstelondInelonmbelonddingStorelon)
+    uselonrLogFavIntelonrelonstelondInelonmbelonddingStorelon: RelonadablelonStorelon[UselonrId, SimClustelonrselonmbelondding],
+    @Namelond(ModulelonNamelons.RmsUselonrFollowIntelonrelonstelondInelonmbelonddingStorelon)
+    uselonrFollowIntelonrelonstelondInelonmbelonddingStorelon: RelonadablelonStorelon[UselonrId, SimClustelonrselonmbelondding],
+    @Namelond(ModulelonNamelons.TripCandidatelonStorelon)
+    tripCandidatelonStorelon: RelonadablelonStorelon[TripDomain, Selonq[TripTwelonelont]],
+    timelonoutConfig: TimelonoutConfig,
+    statsReloncelonivelonr: StatsReloncelonivelonr,
+  ): StandardSimilarityelonnginelon[TripelonnginelonQuelonry, TripTwelonelontWithScorelon] = {
+    val undelonrlyingStorelon = ObselonrvelondRelonadablelonStorelon(
+      ConsumelonrelonmbelonddingBaselondTripSimilarityelonnginelon(
+        elonmbelonddingStorelonLookUpMap = Map(
+          ModelonlConfig.ConsumelonrLogFavBaselondIntelonrelonstelondInelonmbelondding -> uselonrLogFavIntelonrelonstelondInelonmbelonddingStorelon,
+          ModelonlConfig.ConsumelonrFollowBaselondIntelonrelonstelondInelonmbelondding -> uselonrFollowIntelonrelonstelondInelonmbelonddingStorelon,
         ),
-        tripCandidateSource = tripCandidateStore,
-        statsReceiver
-      ))(statsReceiver.scope("TripSimilarityEngine"))
+        tripCandidatelonSourcelon = tripCandidatelonStorelon,
+        statsReloncelonivelonr
+      ))(statsReloncelonivelonr.scopelon("TripSimilarityelonnginelon"))
 
-    new StandardSimilarityEngine[TripEngineQuery, TripTweetWithScore](
-      implementingStore = underlyingStore,
-      identifier = SimilarityEngineType.ExploreTripOfflineSimClustersTweets,
-      globalStats = statsReceiver,
-      engineConfig = SimilarityEngineConfig(
-        timeout = timeoutConfig.similarityEngineTimeout,
+    nelonw StandardSimilarityelonnginelon[TripelonnginelonQuelonry, TripTwelonelontWithScorelon](
+      implelonmelonntingStorelon = undelonrlyingStorelon,
+      idelonntifielonr = SimilarityelonnginelonTypelon.elonxplorelonTripOfflinelonSimClustelonrsTwelonelonts,
+      globalStats = statsReloncelonivelonr,
+      elonnginelonConfig = SimilarityelonnginelonConfig(
+        timelonout = timelonoutConfig.similarityelonnginelonTimelonout,
         gatingConfig = GatingConfig(
-          deciderConfig = None,
-          enableFeatureSwitch = None
+          deloncidelonrConfig = Nonelon,
+          elonnablelonFelonaturelonSwitch = Nonelon
         )
       )
     )

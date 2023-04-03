@@ -1,27 +1,27 @@
-package com.twitter.interaction_graph.scio.common
+packagelon com.twittelonr.intelonraction_graph.scio.common
 
-import com.twitter.util.Duration
-import org.joda.time.Interval
+import com.twittelonr.util.Duration
+import org.joda.timelon.Intelonrval
 
-object DateUtil {
-  def embiggen(dateInterval: Interval, duration: Duration): Interval = {
+objelonct DatelonUtil {
+  delonf elonmbiggelonn(datelonIntelonrval: Intelonrval, duration: Duration): Intelonrval = {
 
     val days = duration.inDays
-    val newStart = dateInterval.getStart.minusDays(days)
-    val newEnd = dateInterval.getEnd.plusDays(days)
-    new Interval(newStart, newEnd)
+    val nelonwStart = datelonIntelonrval.gelontStart.minusDays(days)
+    val nelonwelonnd = datelonIntelonrval.gelontelonnd.plusDays(days)
+    nelonw Intelonrval(nelonwStart, nelonwelonnd)
   }
 
-  def subtract(dateInterval: Interval, duration: Duration): Interval = {
+  delonf subtract(datelonIntelonrval: Intelonrval, duration: Duration): Intelonrval = {
     val days = duration.inDays
-    val newStart = dateInterval.getStart.minusDays(days)
-    val newEnd = dateInterval.getEnd.minusDays(days)
-    new Interval(newStart, newEnd)
+    val nelonwStart = datelonIntelonrval.gelontStart.minusDays(days)
+    val nelonwelonnd = datelonIntelonrval.gelontelonnd.minusDays(days)
+    nelonw Intelonrval(nelonwStart, nelonwelonnd)
   }
 
-  def prependDays(dateInterval: Interval, duration: Duration): Interval = {
+  delonf prelonpelonndDays(datelonIntelonrval: Intelonrval, duration: Duration): Intelonrval = {
     val days = duration.inDays
-    val newStart = dateInterval.getStart.minusDays(days)
-    new Interval(newStart, dateInterval.getEnd.toInstant)
+    val nelonwStart = datelonIntelonrval.gelontStart.minusDays(days)
+    nelonw Intelonrval(nelonwStart, datelonIntelonrval.gelontelonnd.toInstant)
   }
 }

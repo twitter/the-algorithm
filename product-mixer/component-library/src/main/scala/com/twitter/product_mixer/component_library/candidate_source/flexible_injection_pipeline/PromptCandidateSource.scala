@@ -1,50 +1,50 @@
-package com.twitter.product_mixer.component_library.candidate_source.flexible_injection_pipeline
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.candidatelon_sourcelon.flelonxiblelon_injelonction_pipelonlinelon
 
-import com.twitter.inject.Logging
-import com.twitter.onboarding.injections.{thriftscala => injectionsthrift}
-import com.twitter.onboarding.task.service.{thriftscala => servicethrift}
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.stitch.Stitch
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.injelonct.Logging
+import com.twittelonr.onboarding.injelonctions.{thriftscala => injelonctionsthrift}
+import com.twittelonr.onboarding.task.selonrvicelon.{thriftscala => selonrvicelonthrift}
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.CandidatelonSourcelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonSourcelonIdelonntifielonr
+import com.twittelonr.stitch.Stitch
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
 /**
- * Returns a list of prompts to insert into a user's timeline (inline prompt, cover modals, etc)
- * from go/flip (the prompting platform for Twitter).
+ * Relonturns a list of prompts to inselonrt into a uselonr's timelonlinelon (inlinelon prompt, covelonr modals, elontc)
+ * from go/flip (thelon prompting platform for Twittelonr).
  */
-@Singleton
-class PromptCandidateSource @Inject() (taskService: servicethrift.TaskService.MethodPerEndpoint)
-    extends CandidateSource[servicethrift.GetInjectionsRequest, IntermediatePrompt]
+@Singlelonton
+class PromptCandidatelonSourcelon @Injelonct() (taskSelonrvicelon: selonrvicelonthrift.TaskSelonrvicelon.MelonthodPelonrelonndpoint)
+    elonxtelonnds CandidatelonSourcelon[selonrvicelonthrift.GelontInjelonctionsRelonquelonst, IntelonrmelondiatelonPrompt]
     with Logging {
 
-  override val identifier: CandidateSourceIdentifier = CandidateSourceIdentifier(
-    "InjectionPipelinePrompts")
+  ovelonrridelon val idelonntifielonr: CandidatelonSourcelonIdelonntifielonr = CandidatelonSourcelonIdelonntifielonr(
+    "InjelonctionPipelonlinelonPrompts")
 
-  override def apply(
-    request: servicethrift.GetInjectionsRequest
-  ): Stitch[Seq[IntermediatePrompt]] = {
+  ovelonrridelon delonf apply(
+    relonquelonst: selonrvicelonthrift.GelontInjelonctionsRelonquelonst
+  ): Stitch[Selonq[IntelonrmelondiatelonPrompt]] = {
     Stitch
-      .callFuture(taskService.getInjections(request)).map {
-        _.injections.flatMap {
-          // The entire carousel is getting added to each IntermediatePrompt item with a
-          // corresponding index to be unpacked later on to populate its TimelineEntry counterpart.
-          case injection: injectionsthrift.Injection.TilesCarousel =>
-            injection.tilesCarousel.tiles.zipWithIndex.map {
-              case (tile: injectionsthrift.Tile, index: Int) =>
-                IntermediatePrompt(injection, Some(index), Some(tile))
+      .callFuturelon(taskSelonrvicelon.gelontInjelonctions(relonquelonst)).map {
+        _.injelonctions.flatMap {
+          // Thelon elonntirelon carouselonl is gelontting addelond to elonach IntelonrmelondiatelonPrompt itelonm with a
+          // correlonsponding indelonx to belon unpackelond latelonr on to populatelon its Timelonlinelonelonntry countelonrpart.
+          caselon injelonction: injelonctionsthrift.Injelonction.TilelonsCarouselonl =>
+            injelonction.tilelonsCarouselonl.tilelons.zipWithIndelonx.map {
+              caselon (tilelon: injelonctionsthrift.Tilelon, indelonx: Int) =>
+                IntelonrmelondiatelonPrompt(injelonction, Somelon(indelonx), Somelon(tilelon))
             }
-          case injection => Seq(IntermediatePrompt(injection, None, None))
+          caselon injelonction => Selonq(IntelonrmelondiatelonPrompt(injelonction, Nonelon, Nonelon))
         }
       }
   }
 }
 
 /**
- * Gives an intermediate step to help 'explosion' of tile carousel tiles due to TimelineModule
- * not being an extension of TimelineItem
+ * Givelons an intelonrmelondiatelon stelonp to helonlp 'elonxplosion' of tilelon carouselonl tilelons duelon to TimelonlinelonModulelon
+ * not beloning an elonxtelonnsion of TimelonlinelonItelonm
  */
-case class IntermediatePrompt(
-  injection: injectionsthrift.Injection,
-  offsetInModule: Option[Int],
-  carouselTile: Option[injectionsthrift.Tile])
+caselon class IntelonrmelondiatelonPrompt(
+  injelonction: injelonctionsthrift.Injelonction,
+  offselontInModulelon: Option[Int],
+  carouselonlTilelon: Option[injelonctionsthrift.Tilelon])

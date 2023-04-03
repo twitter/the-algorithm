@@ -1,56 +1,56 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.metadata
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.melontadata
 
-import com.twitter.bijection.scrooge.BinaryScalaCodec
-import com.twitter.bijection.Base64String
-import com.twitter.bijection.{Injection => Serializer}
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventDetailsBuilder
-import com.twitter.product_mixer.component_library.model.candidate.BaseTopicCandidate
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventDetails
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.TimelinesDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.suggests.controller_data.thriftscala.ControllerData
-import com.twitter.suggests.controller_data.timelines_topic.thriftscala.TimelinesTopicControllerData
-import com.twitter.suggests.controller_data.timelines_topic.v1.thriftscala.{
-  TimelinesTopicControllerData => TimelinesTopicControllerDataV1
+import com.twittelonr.bijelonction.scroogelon.BinaryScalaCodelonc
+import com.twittelonr.bijelonction.Baselon64String
+import com.twittelonr.bijelonction.{Injelonction => Selonrializelonr}
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.melontadata.BaselonClielonntelonvelonntDelontailsBuildelonr
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.BaselonTopicCandidatelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.ClielonntelonvelonntDelontails
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.TimelonlinelonsDelontails
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.suggelonsts.controllelonr_data.thriftscala.ControllelonrData
+import com.twittelonr.suggelonsts.controllelonr_data.timelonlinelons_topic.thriftscala.TimelonlinelonsTopicControllelonrData
+import com.twittelonr.suggelonsts.controllelonr_data.timelonlinelons_topic.v1.thriftscala.{
+  TimelonlinelonsTopicControllelonrData => TimelonlinelonsTopicControllelonrDataV1
 }
-import com.twitter.suggests.controller_data.v2.thriftscala.{ControllerData => ControllerDataV2}
+import com.twittelonr.suggelonsts.controllelonr_data.v2.thriftscala.{ControllelonrData => ControllelonrDataV2}
 
-object TopicClientEventDetailsBuilder {
-  implicit val ByteSerializer: Serializer[ControllerData, Array[Byte]] =
-    BinaryScalaCodec(ControllerData)
+objelonct TopicClielonntelonvelonntDelontailsBuildelonr {
+  implicit val BytelonSelonrializelonr: Selonrializelonr[ControllelonrData, Array[Bytelon]] =
+    BinaryScalaCodelonc(ControllelonrData)
 
-  val ControllerDataSerializer: Serializer[ControllerData, String] =
-    Serializer.connect[ControllerData, Array[Byte], Base64String, String]
+  val ControllelonrDataSelonrializelonr: Selonrializelonr[ControllelonrData, String] =
+    Selonrializelonr.connelonct[ControllelonrData, Array[Bytelon], Baselon64String, String]
 }
 
-case class TopicClientEventDetailsBuilder[-Query <: PipelineQuery]()
-    extends BaseClientEventDetailsBuilder[Query, BaseTopicCandidate] {
+caselon class TopicClielonntelonvelonntDelontailsBuildelonr[-Quelonry <: PipelonlinelonQuelonry]()
+    elonxtelonnds BaselonClielonntelonvelonntDelontailsBuildelonr[Quelonry, BaselonTopicCandidatelon] {
 
-  import TopicClientEventDetailsBuilder._
+  import TopicClielonntelonvelonntDelontailsBuildelonr._
 
-  override def apply(
-    query: Query,
-    topicCandidate: BaseTopicCandidate,
-    candidateFeatures: FeatureMap
-  ): Option[ClientEventDetails] =
-    Some(
-      ClientEventDetails(
-        conversationDetails = None,
-        timelinesDetails = Some(
-          TimelinesDetails(
-            injectionType = None,
-            controllerData = buildControllerData(topicCandidate.id),
-            sourceData = None)),
-        articleDetails = None,
-        liveEventDetails = None,
-        commerceDetails = None
+  ovelonrridelon delonf apply(
+    quelonry: Quelonry,
+    topicCandidatelon: BaselonTopicCandidatelon,
+    candidatelonFelonaturelons: FelonaturelonMap
+  ): Option[ClielonntelonvelonntDelontails] =
+    Somelon(
+      ClielonntelonvelonntDelontails(
+        convelonrsationDelontails = Nonelon,
+        timelonlinelonsDelontails = Somelon(
+          TimelonlinelonsDelontails(
+            injelonctionTypelon = Nonelon,
+            controllelonrData = buildControllelonrData(topicCandidatelon.id),
+            sourcelonData = Nonelon)),
+        articlelonDelontails = Nonelon,
+        livelonelonvelonntDelontails = Nonelon,
+        commelonrcelonDelontails = Nonelon
       ))
 
-  private def buildControllerData(topicId: Long): Option[String] =
-    Some(
-      ControllerData
-        .V2(ControllerDataV2.TimelinesTopic(TimelinesTopicControllerData.V1(
-          TimelinesTopicControllerDataV1(topicTypesBitmap = 0L, topicId = topicId)))))
-      .map(ControllerDataSerializer)
+  privatelon delonf buildControllelonrData(topicId: Long): Option[String] =
+    Somelon(
+      ControllelonrData
+        .V2(ControllelonrDataV2.TimelonlinelonsTopic(TimelonlinelonsTopicControllelonrData.V1(
+          TimelonlinelonsTopicControllelonrDataV1(topicTypelonsBitmap = 0L, topicId = topicId)))))
+      .map(ControllelonrDataSelonrializelonr)
 }

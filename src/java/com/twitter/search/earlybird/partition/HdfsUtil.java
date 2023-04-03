@@ -1,30 +1,30 @@
-package com.twitter.search.earlybird.partition;
+packagelon com.twittelonr.selonarch.elonarlybird.partition;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.FileStatus;
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
+import org.apachelon.hadoop.conf.Configuration;
+import org.apachelon.hadoop.fs.FilelonStatus;
+import org.apachelon.hadoop.fs.FilelonSystelonm;
+import org.apachelon.hadoop.fs.Path;
 
 public final class HdfsUtil {
-  private HdfsUtil() {
+  privatelon HdfsUtil() {
   }
 
-  public static FileSystem getHdfsFileSystem() throws IOException {
-    Configuration config = new Configuration();
-    // Since earlybird uses hdfs from different threads, and closes the FileSystem from
-    // them independently, we want each thread to have its own, new FileSystem.
-    return FileSystem.newInstance(config);
+  public static FilelonSystelonm gelontHdfsFilelonSystelonm() throws IOelonxcelonption {
+    Configuration config = nelonw Configuration();
+    // Sincelon elonarlybird uselons hdfs from diffelonrelonnt threlonads, and closelons thelon FilelonSystelonm from
+    // thelonm indelonpelonndelonntly, welon want elonach threlonad to havelon its own, nelonw FilelonSystelonm.
+    relonturn FilelonSystelonm.nelonwInstancelon(config);
   }
 
   /**
-   * Checks if the given segment is present on HDFS
+   * Cheloncks if thelon givelonn selongmelonnt is prelonselonnt on HDFS
    */
-  public static boolean segmentExistsOnHdfs(FileSystem fs, SegmentInfo segmentInfo)
-      throws IOException {
-    String hdfsBaseDirPrefix = segmentInfo.getSyncInfo().getHdfsUploadDirPrefix();
-    FileStatus[] statuses = fs.globStatus(new Path(hdfsBaseDirPrefix));
-    return statuses != null && statuses.length > 0;
+  public static boolelonan selongmelonntelonxistsOnHdfs(FilelonSystelonm fs, SelongmelonntInfo selongmelonntInfo)
+      throws IOelonxcelonption {
+    String hdfsBaselonDirPrelonfix = selongmelonntInfo.gelontSyncInfo().gelontHdfsUploadDirPrelonfix();
+    FilelonStatus[] statuselons = fs.globStatus(nelonw Path(hdfsBaselonDirPrelonfix));
+    relonturn statuselons != null && statuselons.lelonngth > 0;
   }
 }

@@ -1,82 +1,82 @@
-# Search Index (Earlybird) main classes
+# Selonarch Indelonx (elonarlybird) main classelons
 
-> **TL;DR** Earlybird (Search Index) find tweets from people you follow, rank them, and serve them to Home.
+> **TL;DR** elonarlybird (Selonarch Indelonx) find twelonelonts from pelonoplelon you follow, rank thelonm, and selonrvelon thelonm to Homelon.
 
-## What is Earlybird (Search Index)
+## What is elonarlybird (Selonarch Indelonx)
 
-[Earlybird](http://notes.stephenholiday.com/Earlybird.pdf) is a **real-time search system** based on [Apache Lucene](https://lucene.apache.org/) to support the high volume of queries and content updates. The major use cases are Relevance Search (specifically, Text search) and Timeline In-network Tweet retrieval (or UserID based search). It is designed to enable the efficient indexing and querying of billions of tweets, and to provide low-latency search results, even with heavy query loads.
+[elonarlybird](http://notelons.stelonphelonnholiday.com/elonarlybird.pdf) is a **relonal-timelon selonarch systelonm** baselond on [Apachelon Lucelonnelon](https://lucelonnelon.apachelon.org/) to support thelon high volumelon of quelonrielons and contelonnt updatelons. Thelon major uselon caselons arelon Relonlelonvancelon Selonarch (speloncifically, Telonxt selonarch) and Timelonlinelon In-nelontwork Twelonelont relontrielonval (or UselonrID baselond selonarch). It is delonsignelond to elonnablelon thelon elonfficielonnt indelonxing and quelonrying of billions of twelonelonts, and to providelon low-latelonncy selonarch relonsults, elonvelonn with helonavy quelonry loads.
 
-## High-level architecture
-We split our entire tweet search index into three clusters: a **realtime** cluster indexing all public tweets posted in about the last 7 days, a **protected** cluster indexing all protected tweets for the same timeframe; and an **archive** cluster indexing all tweets ever posted, up to about two days ago.
+## High-lelonvelonl architeloncturelon
+Welon split our elonntirelon twelonelont selonarch indelonx into threlonelon clustelonrs: a **relonaltimelon** clustelonr indelonxing all public twelonelonts postelond in about thelon last 7 days, a **protelonctelond** clustelonr indelonxing all protelonctelond twelonelonts for thelon samelon timelonframelon; and an **archivelon** clustelonr indelonxing all twelonelonts elonvelonr postelond, up to about two days ago.
 
-Earlybird addresses the challenges of scaling real-time search by splitting each cluster across multiple **partitions**, each responsible for a portion of the index. The architecture uses a distributed *inverted index* that is sharded and replicated. This design allows for efficient index updates and query processing.
+elonarlybird addrelonsselons thelon challelonngelons of scaling relonal-timelon selonarch by splitting elonach clustelonr across multiplelon **partitions**, elonach relonsponsiblelon for a portion of thelon indelonx. Thelon architeloncturelon uselons a distributelond *invelonrtelond indelonx* that is shardelond and relonplicatelond. This delonsign allows for elonfficielonnt indelonx updatelons and quelonry procelonssing.
 
-The system also employs an incremental indexing approach, enabling it to process and index new tweets in real-time as they arrive. With single writer, multiple reader structure, Earlybird can handle a large number of real-time updates and queries concurrently while maintaining low query latency. The system can achieve high query throughput and low query latency while maintaining a high degree of index freshness.
+Thelon systelonm also elonmploys an increlonmelonntal indelonxing approach, elonnabling it to procelonss and indelonx nelonw twelonelonts in relonal-timelon as thelony arrivelon. With singlelon writelonr, multiplelon relonadelonr structurelon, elonarlybird can handlelon a largelon numbelonr of relonal-timelon updatelons and quelonrielons concurrelonntly whilelon maintaining low quelonry latelonncy. Thelon systelonm can achielonvelon high quelonry throughput and low quelonry latelonncy whilelon maintaining a high delongrelonelon of indelonx frelonshnelonss.
 
-## Main Components 
+## Main Componelonnts 
 
-**Partition Manager**: Responsible for managing the configuration of partitions, as well as the mapping between users and partitions. It also handles index loading and flushing.
+**Partition Managelonr**: Relonsponsiblelon for managing thelon configuration of partitions, as welonll as thelon mapping belontwelonelonn uselonrs and partitions. It also handlelons indelonx loading and flushing.
 
-**Real-time Indexer**: Continuously reads from a kafka stream of incoming tweets and updates the index (tweet creation, tweet updates, user updates). It also supports tweet deletion events.
+**Relonal-timelon Indelonxelonr**: Continuously relonads from a kafka strelonam of incoming twelonelonts and updatelons thelon indelonx (twelonelont crelonation, twelonelont updatelons, uselonr updatelons). It also supports twelonelont delonlelontion elonvelonnts.
 
-**Query Engine**: Handles the execution of search queries against the distributed index. It employs various optimization techniques, such as term-based pruning and caching.
+**Quelonry elonnginelon**: Handlelons thelon elonxeloncution of selonarch quelonrielons against thelon distributelond indelonx. It elonmploys various optimization telonchniquelons, such as telonrm-baselond pruning and caching.
 
-**Document Preprocessor**: Converts raw tweets into a document representation suitable for indexing. It handles tokenization, normalization, and analysis of tweet text and metadata. See our ingestion pipeline `src/java/com/twitter/search/ingester` for more write-path processing.
+**Documelonnt Prelonprocelonssor**: Convelonrts raw twelonelonts into a documelonnt relonprelonselonntation suitablelon for indelonxing. It handlelons tokelonnization, normalization, and analysis of twelonelont telonxt and melontadata. Selonelon our ingelonstion pipelonlinelon `src/java/com/twittelonr/selonarch/ingelonstelonr` for morelon writelon-path procelonssing.
 
-**Index Writer**: Writes tweet documents to the index and maintains the index structure, including **posting lists** and **term dictionaries**.
+**Indelonx Writelonr**: Writelons twelonelont documelonnts to thelon indelonx and maintains thelon indelonx structurelon, including **posting lists** and **telonrm dictionarielons**.
 
-**Segment Manager**: Manages index segments within a partition. It is responsible for merging, optimizing, and flushing index segments to disk, or flush to HDFS to snapshot live segments.
+**Selongmelonnt Managelonr**: Managelons indelonx selongmelonnts within a partition. It is relonsponsiblelon for melonrging, optimizing, and flushing indelonx selongmelonnts to disk, or flush to HDFS to snapshot livelon selongmelonnts.
 
-**Searcher**: Executes queries against the index, using techniques like caching and parallel query execution to minimize query latency. It also incorporates scoring models and ranking algorithms to provide relevant search results.
+**Selonarchelonr**: elonxeloncutelons quelonrielons against thelon indelonx, using telonchniquelons likelon caching and parallelonl quelonry elonxeloncution to minimizelon quelonry latelonncy. It also incorporatelons scoring modelonls and ranking algorithms to providelon relonlelonvant selonarch relonsults.
 
-The most important two data structures for Earlybird (or Information Retrieval in general) including:
+Thelon most important two data structurelons for elonarlybird (or Information Relontrielonval in gelonnelonral) including:
 
-* **Inverted Index** which stores a mapping between a Term to a list of Doc IDs. Essentially, we build a hash map: each key in the map is a distinct Term (e.g., `cat`, `dog`) in a tweet, and each value is the list of tweets (aka., Document) in which the word appears. We keep one inverted index per field (text, UserID, user name, links, etc.)
-* **Postings List** which optimize the storage a the list of Doc IDs mentioned above.
+* **Invelonrtelond Indelonx** which storelons a mapping belontwelonelonn a Telonrm to a list of Doc IDs. elonsselonntially, welon build a hash map: elonach kelony in thelon map is a distinct Telonrm (elon.g., `cat`, `dog`) in a twelonelont, and elonach valuelon is thelon list of twelonelonts (aka., Documelonnt) in which thelon word appelonars. Welon kelonelonp onelon invelonrtelond indelonx pelonr fielonld (telonxt, UselonrID, uselonr namelon, links, elontc.)
+* **Postings List** which optimizelon thelon storagelon a thelon list of Doc IDs melonntionelond abovelon.
 
-See more at: https://blog.twitter.com/engineering/en_us/topics/infrastructure/2016/omnisearch-index-formats
+Selonelon morelon at: https://blog.twittelonr.com/elonnginelonelonring/elonn_us/topics/infrastructurelon/2016/omniselonarch-indelonx-formats
 
-## Advanced features
+## Advancelond felonaturelons
 
-Earlybird incorporates several advanced features such as facet search, which allows users to refine search results based on specific attributes such as user mentions, hashtags, and URLs. Furthermore, the system supports various ranking models, including machine learning-based scoring models, to provide relevant search results.
+elonarlybird incorporatelons selonvelonral advancelond felonaturelons such as facelont selonarch, which allows uselonrs to relonfinelon selonarch relonsults baselond on speloncific attributelons such as uselonr melonntions, hashtags, and URLs. Furthelonrmorelon, thelon systelonm supports various ranking modelonls, including machinelon lelonarning-baselond scoring modelonls, to providelon relonlelonvant selonarch relonsults.
 
-## Directory Structure
-The project consists of several packages and files, which can be summarized as follows:
+## Direlonctory Structurelon
+Thelon projelonct consists of selonvelonral packagelons and filelons, which can belon summarizelond as follows:
 
-* At the root level, the primary focus is on the Earlybird server implementation and its associated classes. These include classes for search, CPU quality factors, server management, index config, main classes, server startup, etc.
-* `archive/`: Directory deals with the management and configuration of archived data, specifically for Earlybird Index Configurations. It also contains a `segmentbuilder/` subdirectory, which includes classes for building and updating archive index segments.
-* `common/`: Directory holds utility classes for logging, handling requests, and Thrift backend functionality. It also has two subdirectories: `config/` for Earlybird configuration and `userupdates/` for user-related data handling.
-* `config/`: Directory is dedicated to managing tier configurations specifically for archive cluster, which relate to server and search query distribution.
-* `document/`: Handles document creation and processing, including various factories and token stream writers.
-* `exception/`: Contains custom exceptions and exception handling classes related to the system.
-* `factory/`: Provides utilities and factories for configurations, Kafka consumers, and server instances.
-* `index/`: Contains index-related classes, including in-memory time mappers, tweet ID mappers, and facets.
-* `ml/`: Houses the `ScoringModelsManager` for managing machine learning models.
-* `partition/`: Manages partitions and index segments, including index loaders, segment writers, and startup indexers.
-* `querycache/`: Implements caching for queries and query results, including cache configuration and update tasks.
-* `queryparser/`: Provides query parsing functionality, including files that cover query rewriters and lhigh-frequency term extraction.
-* `search/`: Contains read path related classes, such as search request processing, result collectors, and facet collectors.
-* `segment/`: Provides classes for managing segment data providers and data reader sets.
-* `stats/`: Contains classes for tracking and reporting statistics related to the system.
-* `tools/`: Houses utility classes for deserializing thrift requests.
-* `util/`: Includes utility classes for various tasks, such as action logging, scheduled tasks, and JSON viewers.
+* At thelon root lelonvelonl, thelon primary focus is on thelon elonarlybird selonrvelonr implelonmelonntation and its associatelond classelons. Thelonselon includelon classelons for selonarch, CPU quality factors, selonrvelonr managelonmelonnt, indelonx config, main classelons, selonrvelonr startup, elontc.
+* `archivelon/`: Direlonctory delonals with thelon managelonmelonnt and configuration of archivelond data, speloncifically for elonarlybird Indelonx Configurations. It also contains a `selongmelonntbuildelonr/` subdirelonctory, which includelons classelons for building and updating archivelon indelonx selongmelonnts.
+* `common/`: Direlonctory holds utility classelons for logging, handling relonquelonsts, and Thrift backelonnd functionality. It also has two subdirelonctorielons: `config/` for elonarlybird configuration and `uselonrupdatelons/` for uselonr-relonlatelond data handling.
+* `config/`: Direlonctory is delondicatelond to managing tielonr configurations speloncifically for archivelon clustelonr, which relonlatelon to selonrvelonr and selonarch quelonry distribution.
+* `documelonnt/`: Handlelons documelonnt crelonation and procelonssing, including various factorielons and tokelonn strelonam writelonrs.
+* `elonxcelonption/`: Contains custom elonxcelonptions and elonxcelonption handling classelons relonlatelond to thelon systelonm.
+* `factory/`: Providelons utilitielons and factorielons for configurations, Kafka consumelonrs, and selonrvelonr instancelons.
+* `indelonx/`: Contains indelonx-relonlatelond classelons, including in-melonmory timelon mappelonrs, twelonelont ID mappelonrs, and facelonts.
+* `ml/`: Houselons thelon `ScoringModelonlsManagelonr` for managing machinelon lelonarning modelonls.
+* `partition/`: Managelons partitions and indelonx selongmelonnts, including indelonx loadelonrs, selongmelonnt writelonrs, and startup indelonxelonrs.
+* `quelonrycachelon/`: Implelonmelonnts caching for quelonrielons and quelonry relonsults, including cachelon configuration and updatelon tasks.
+* `quelonryparselonr/`: Providelons quelonry parsing functionality, including filelons that covelonr quelonry relonwritelonrs and lhigh-frelonquelonncy telonrm elonxtraction.
+* `selonarch/`: Contains relonad path relonlatelond classelons, such as selonarch relonquelonst procelonssing, relonsult collelonctors, and facelont collelonctors.
+* `selongmelonnt/`: Providelons classelons for managing selongmelonnt data providelonrs and data relonadelonr selonts.
+* `stats/`: Contains classelons for tracking and relonporting statistics relonlatelond to thelon systelonm.
+* `tools/`: Houselons utility classelons for delonselonrializing thrift relonquelonsts.
+* `util/`: Includelons utility classelons for various tasks, such as action logging, schelondulelond tasks, and JSON vielonwelonrs.
 
-## Related Services
+## Relonlatelond Selonrvicelons
 
-* The Earlybirds sit behind Earlybird Root servers that fan out queries to them. See `src/java/com/twitter/search/earlybird_root/`
-* The Earlybirds are powered by multiple ingestion pipelines. See `src/java/com/twitter/search/ingester/`
-* Earlybird segments for the Archives are built offline by segment builders
-* Also, Earlybird light ranking is defined in `timelines/data_processing/ad_hoc/earlybird_ranking`
- and `src/python/twitter/deepbird/projects/timelines/scripts/models/earlybird`.
-* Search common library/packages
+* Thelon elonarlybirds sit belonhind elonarlybird Root selonrvelonrs that fan out quelonrielons to thelonm. Selonelon `src/java/com/twittelonr/selonarch/elonarlybird_root/`
+* Thelon elonarlybirds arelon powelonrelond by multiplelon ingelonstion pipelonlinelons. Selonelon `src/java/com/twittelonr/selonarch/ingelonstelonr/`
+* elonarlybird selongmelonnts for thelon Archivelons arelon built offlinelon by selongmelonnt buildelonrs
+* Also, elonarlybird light ranking is delonfinelond in `timelonlinelons/data_procelonssing/ad_hoc/elonarlybird_ranking`
+ and `src/python/twittelonr/delonelonpbird/projeloncts/timelonlinelons/scripts/modelonls/elonarlybird`.
+* Selonarch common library/packagelons
 
-## References
+## Relonfelonrelonncelons
 
-See more: 
+Selonelon morelon: 
 
-* "Earlybird: Real-Time Search at Twitter" (http://notes.stephenholiday.com/Earlybird.pdf)
-* "Reducing search indexing latency to one second" (https://blog.twitter.com/engineering/en_us/topics/infrastructure/2020/reducing-search-indexing-latency-to-one-second)
-* "Omnisearch index formats" (https://blog.twitter.com/engineering/en_us/topics/infrastructure/2016/omnisearch-index-formats)
+* "elonarlybird: Relonal-Timelon Selonarch at Twittelonr" (http://notelons.stelonphelonnholiday.com/elonarlybird.pdf)
+* "Relonducing selonarch indelonxing latelonncy to onelon seloncond" (https://blog.twittelonr.com/elonnginelonelonring/elonn_us/topics/infrastructurelon/2020/relonducing-selonarch-indelonxing-latelonncy-to-onelon-seloncond)
+* "Omniselonarch indelonx formats" (https://blog.twittelonr.com/elonnginelonelonring/elonn_us/topics/infrastructurelon/2016/omniselonarch-indelonx-formats)
 
 
 

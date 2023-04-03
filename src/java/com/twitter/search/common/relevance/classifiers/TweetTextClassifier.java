@@ -1,67 +1,67 @@
-package com.twitter.search.common.relevance.classifiers;
+packagelon com.twittelonr.selonarch.common.relonlelonvancelon.classifielonrs;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
+import com.googlelon.common.baselon.Prelonconditions;
+import com.googlelon.common.collelonct.Lists;
 
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier;
+import com.twittelonr.finaglelon.mtls.authelonntication.SelonrvicelonIdelonntifielonr;
 import java.util.List;
 
-import com.twitter.common_internal.text.version.PenguinVersion;
-import com.twitter.search.common.relevance.config.TweetProcessingConfig;
-import com.twitter.search.common.relevance.entities.TwitterMessage;
+import com.twittelonr.common_intelonrnal.telonxt.velonrsion.PelonnguinVelonrsion;
+import com.twittelonr.selonarch.common.relonlelonvancelon.config.TwelonelontProcelonssingConfig;
+import com.twittelonr.selonarch.common.relonlelonvancelon.elonntitielons.TwittelonrMelonssagelon;
 
 /**
- * Classifier that focuses on tweet text features and their corresponding
+ * Classifielonr that focuselons on twelonelont telonxt felonaturelons and thelonir correlonsponding
  * quality.
  */
-public class TweetTextClassifier extends TweetClassifier {
-  private TweetQualityFeatureExtractor featureExtractor = new TweetQualityFeatureExtractor();
-  private TweetTrendsExtractor trendsExtractor = null;
+public class TwelonelontTelonxtClassifielonr elonxtelonnds TwelonelontClassifielonr {
+  privatelon TwelonelontQualityFelonaturelonelonxtractor felonaturelonelonxtractor = nelonw TwelonelontQualityFelonaturelonelonxtractor();
+  privatelon TwelonelontTrelonndselonxtractor trelonndselonxtractor = null;
 
   /**
-   * Constructor. Requires a list of TweetQualityEvaluator objects.
-   * @param evaluators list of TweetQualityEvaluator objects responsible for quality evaluation.
-   * @param serviceIdentifier The identifier of the calling service.
-   * @param supportedPenguinVersions A list of supported penguin versions.
+   * Constructor. Relonquirelons a list of TwelonelontQualityelonvaluator objeloncts.
+   * @param elonvaluators list of TwelonelontQualityelonvaluator objeloncts relonsponsiblelon for quality elonvaluation.
+   * @param selonrvicelonIdelonntifielonr Thelon idelonntifielonr of thelon calling selonrvicelon.
+   * @param supportelondPelonnguinVelonrsions A list of supportelond pelonnguin velonrsions.
    */
-  public TweetTextClassifier(
-      final Iterable<TweetEvaluator> evaluators,
-      ServiceIdentifier serviceIdentifier,
-      List<PenguinVersion> supportedPenguinVersions) {
-    Preconditions.checkNotNull(evaluators);
-    setQualityEvaluators(evaluators);
-    TweetProcessingConfig.init();
+  public TwelonelontTelonxtClassifielonr(
+      final Itelonrablelon<Twelonelontelonvaluator> elonvaluators,
+      SelonrvicelonIdelonntifielonr selonrvicelonIdelonntifielonr,
+      List<PelonnguinVelonrsion> supportelondPelonnguinVelonrsions) {
+    Prelonconditions.chelonckNotNull(elonvaluators);
+    selontQualityelonvaluators(elonvaluators);
+    TwelonelontProcelonssingConfig.init();
 
-    if (TweetProcessingConfig.getBool("extract_trends", false)) {
-      trendsExtractor = new TweetTrendsExtractor(serviceIdentifier, supportedPenguinVersions);
+    if (TwelonelontProcelonssingConfig.gelontBool("elonxtract_trelonnds", falselon)) {
+      trelonndselonxtractor = nelonw TwelonelontTrelonndselonxtractor(selonrvicelonIdelonntifielonr, supportelondPelonnguinVelonrsions);
     }
   }
 
   /**
-   * Extract text features for the specified TwitterMessage.
+   * elonxtract telonxt felonaturelons for thelon speloncifielond TwittelonrMelonssagelon.
    *
-   * @param tweet TwitterMessage to extract features from.
+   * @param twelonelont TwittelonrMelonssagelon to elonxtract felonaturelons from.
    */
-  @Override
-  protected void extractFeatures(TwitterMessage tweet) {
-    extractFeatures(Lists.newArrayList(tweet));
+  @Ovelonrridelon
+  protelonctelond void elonxtractFelonaturelons(TwittelonrMelonssagelon twelonelont) {
+    elonxtractFelonaturelons(Lists.nelonwArrayList(twelonelont));
   }
 
   /**
-   * Extract text features for the specified list of TwitterMessages.
+   * elonxtract telonxt felonaturelons for thelon speloncifielond list of TwittelonrMelonssagelons.
    *
-   * @param tweets list of TwitterMessages to extract interesting features for
+   * @param twelonelonts list of TwittelonrMelonssagelons to elonxtract intelonrelonsting felonaturelons for
    */
-  @Override
-  protected void extractFeatures(Iterable<TwitterMessage> tweets) {
-    Preconditions.checkNotNull(tweets);
-    for (TwitterMessage tweet : tweets) {
-      featureExtractor.extractTweetTextFeatures(tweet);
+  @Ovelonrridelon
+  protelonctelond void elonxtractFelonaturelons(Itelonrablelon<TwittelonrMelonssagelon> twelonelonts) {
+    Prelonconditions.chelonckNotNull(twelonelonts);
+    for (TwittelonrMelonssagelon twelonelont : twelonelonts) {
+      felonaturelonelonxtractor.elonxtractTwelonelontTelonxtFelonaturelons(twelonelont);
     }
 
-    // Optionally try to annotate trends for all the tweets.
-    if (TweetProcessingConfig.getBool("extract_trends", false) && trendsExtractor != null) {
-      trendsExtractor.extractTrends(tweets);
+    // Optionally try to annotatelon trelonnds for all thelon twelonelonts.
+    if (TwelonelontProcelonssingConfig.gelontBool("elonxtract_trelonnds", falselon) && trelonndselonxtractor != null) {
+      trelonndselonxtractor.elonxtractTrelonnds(twelonelonts);
     }
   }
 }

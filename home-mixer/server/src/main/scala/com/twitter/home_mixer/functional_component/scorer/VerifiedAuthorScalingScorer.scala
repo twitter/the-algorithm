@@ -1,61 +1,61 @@
-package com.twitter.home_mixer.functional_component.scorer
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.scorelonr
 
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIsBlueVerifiedFeature
-import com.twitter.home_mixer.model.HomeFeatures.InNetworkFeature
-import com.twitter.home_mixer.model.HomeFeatures.ScoreFeature
-import com.twitter.home_mixer.param.HomeGlobalParams.BlueVerifiedAuthorInNetworkMultiplierParam
-import com.twitter.home_mixer.param.HomeGlobalParams.BlueVerifiedAuthorOutOfNetworkMultiplierParam
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.scorer.Scorer
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.ScorerIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.AuthorIsBluelonVelonrifielondFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.InNelontworkFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.ScorelonFelonaturelon
+import com.twittelonr.homelon_mixelonr.param.HomelonGlobalParams.BluelonVelonrifielondAuthorInNelontworkMultiplielonrParam
+import com.twittelonr.homelon_mixelonr.param.HomelonGlobalParams.BluelonVelonrifielondAuthorOutOfNelontworkMultiplielonrParam
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.TwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMapBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.scorelonr.Scorelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.ScorelonrIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stitch.Stitch
 
 /**
- * Scales scores of tweets whose author is Blue Verified by the provided scale factor
+ * Scalelons scorelons of twelonelonts whoselon author is Bluelon Velonrifielond by thelon providelond scalelon factor
  */
-object VerifiedAuthorScalingScorer extends Scorer[PipelineQuery, TweetCandidate] {
+objelonct VelonrifielondAuthorScalingScorelonr elonxtelonnds Scorelonr[PipelonlinelonQuelonry, TwelonelontCandidatelon] {
 
-  override val identifier: ScorerIdentifier = ScorerIdentifier("VerifiedAuthorScaling")
+  ovelonrridelon val idelonntifielonr: ScorelonrIdelonntifielonr = ScorelonrIdelonntifielonr("VelonrifielondAuthorScaling")
 
-  override val features: Set[Feature[_, _]] = Set(ScoreFeature)
+  ovelonrridelon val felonaturelons: Selont[Felonaturelon[_, _]] = Selont(ScorelonFelonaturelon)
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[Seq[FeatureMap]] = {
-    Stitch.value {
-      candidates.map { candidate =>
-        val score = candidate.features.getOrElse(ScoreFeature, None)
-        val updatedScore = getUpdatedScore(score, candidate, query)
-        FeatureMapBuilder().add(ScoreFeature, updatedScore).build()
+  ovelonrridelon delonf apply(
+    quelonry: PipelonlinelonQuelonry,
+    candidatelons: Selonq[CandidatelonWithFelonaturelons[TwelonelontCandidatelon]]
+  ): Stitch[Selonq[FelonaturelonMap]] = {
+    Stitch.valuelon {
+      candidatelons.map { candidatelon =>
+        val scorelon = candidatelon.felonaturelons.gelontOrelonlselon(ScorelonFelonaturelon, Nonelon)
+        val updatelondScorelon = gelontUpdatelondScorelon(scorelon, candidatelon, quelonry)
+        FelonaturelonMapBuildelonr().add(ScorelonFelonaturelon, updatelondScorelon).build()
       }
     }
   }
 
   /**
-   * We should only be applying this multiplier if the author of the candidate is Blue Verified.
-   * We also treat In-Network vs Out-of-Network differently.
+   * Welon should only belon applying this multiplielonr if thelon author of thelon candidatelon is Bluelon Velonrifielond.
+   * Welon also trelonat In-Nelontwork vs Out-of-Nelontwork diffelonrelonntly.
    */
-  private def getUpdatedScore(
-    score: Option[Double],
-    candidate: CandidateWithFeatures[TweetCandidate],
-    query: PipelineQuery
-  ): Option[Double] = {
-    val isAuthorBlueVerified = candidate.features.getOrElse(AuthorIsBlueVerifiedFeature, false)
+  privatelon delonf gelontUpdatelondScorelon(
+    scorelon: Option[Doublelon],
+    candidatelon: CandidatelonWithFelonaturelons[TwelonelontCandidatelon],
+    quelonry: PipelonlinelonQuelonry
+  ): Option[Doublelon] = {
+    val isAuthorBluelonVelonrifielond = candidatelon.felonaturelons.gelontOrelonlselon(AuthorIsBluelonVelonrifielondFelonaturelon, falselon)
 
-    if (isAuthorBlueVerified) {
-      val isCandidateInNetwork = candidate.features.getOrElse(InNetworkFeature, false)
+    if (isAuthorBluelonVelonrifielond) {
+      val isCandidatelonInNelontwork = candidatelon.felonaturelons.gelontOrelonlselon(InNelontworkFelonaturelon, falselon)
 
-      val scaleFactor =
-        if (isCandidateInNetwork) query.params(BlueVerifiedAuthorInNetworkMultiplierParam)
-        else query.params(BlueVerifiedAuthorOutOfNetworkMultiplierParam)
+      val scalelonFactor =
+        if (isCandidatelonInNelontwork) quelonry.params(BluelonVelonrifielondAuthorInNelontworkMultiplielonrParam)
+        elonlselon quelonry.params(BluelonVelonrifielondAuthorOutOfNelontworkMultiplielonrParam)
 
-      score.map(_ * scaleFactor)
-    } else score
+      scorelon.map(_ * scalelonFactor)
+    } elonlselon scorelon
   }
 }

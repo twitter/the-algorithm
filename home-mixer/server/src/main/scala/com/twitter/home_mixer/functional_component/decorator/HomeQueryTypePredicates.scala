@@ -1,18 +1,18 @@
-package com.twitter.home_mixer.functional_component.decorator
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.deloncorator
 
-import com.twitter.home_mixer.model.HomeFeatures._
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons._
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
 
-object HomeQueryTypePredicates {
-  private[this] val QueryPredicates: Seq[(String, FeatureMap => Boolean)] = Seq(
-    ("request", _ => true),
-    ("get_initial", _.getOrElse(GetInitialFeature, false)),
-    ("get_newer", _.getOrElse(GetNewerFeature, false)),
-    ("get_older", _.getOrElse(GetOlderFeature, false)),
-    ("pull_to_refresh", _.getOrElse(PullToRefreshFeature, false)),
-    ("request_context_launch", _.getOrElse(IsLaunchRequestFeature, false)),
-    ("request_context_foreground", _.getOrElse(IsForegroundRequestFeature, false))
+objelonct HomelonQuelonryTypelonPrelondicatelons {
+  privatelon[this] val QuelonryPrelondicatelons: Selonq[(String, FelonaturelonMap => Boolelonan)] = Selonq(
+    ("relonquelonst", _ => truelon),
+    ("gelont_initial", _.gelontOrelonlselon(GelontInitialFelonaturelon, falselon)),
+    ("gelont_nelonwelonr", _.gelontOrelonlselon(GelontNelonwelonrFelonaturelon, falselon)),
+    ("gelont_oldelonr", _.gelontOrelonlselon(GelontOldelonrFelonaturelon, falselon)),
+    ("pull_to_relonfrelonsh", _.gelontOrelonlselon(PullToRelonfrelonshFelonaturelon, falselon)),
+    ("relonquelonst_contelonxt_launch", _.gelontOrelonlselon(IsLaunchRelonquelonstFelonaturelon, falselon)),
+    ("relonquelonst_contelonxt_forelonground", _.gelontOrelonlselon(IsForelongroundRelonquelonstFelonaturelon, falselon))
   )
 
-  val PredicateMap = QueryPredicates.toMap
+  val PrelondicatelonMap = QuelonryPrelondicatelons.toMap
 }

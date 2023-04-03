@@ -1,154 +1,154 @@
-package com.twitter.home_mixer.product.for_you.candidate_source
+packagelon com.twittelonr.homelon_mixelonr.product.for_you.candidatelon_sourcelon
 
-import com.google.inject.Provider
-import com.twitter.home_mixer.model.HomeFeatures.ServedTweetIdsFeature
-import com.twitter.home_mixer.model.request.HomeMixerRequest
-import com.twitter.home_mixer.model.request.ScoredTweetsProduct
-import com.twitter.home_mixer.model.request.ScoredTweetsProductContext
-import com.twitter.home_mixer.product.for_you.model.ForYouQuery
-import com.twitter.home_mixer.{thriftscala => t}
-import com.twitter.product_mixer.core.functional_component.candidate_source.product_pipeline.ProductPipelineCandidateSource
-import com.twitter.product_mixer.core.functional_component.configapi.ParamsBuilder
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.product.registry.ProductPipelineRegistry
-import com.twitter.timelines.render.{thriftscala => tl}
-import com.twitter.timelineservice.suggests.{thriftscala => st}
-import com.twitter.tweetconvosvc.tweet_ancestor.{thriftscala => ta}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.googlelon.injelonct.Providelonr
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.SelonrvelondTwelonelontIdsFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.relonquelonst.HomelonMixelonrRelonquelonst
+import com.twittelonr.homelon_mixelonr.modelonl.relonquelonst.ScorelondTwelonelontsProduct
+import com.twittelonr.homelon_mixelonr.modelonl.relonquelonst.ScorelondTwelonelontsProductContelonxt
+import com.twittelonr.homelon_mixelonr.product.for_you.modelonl.ForYouQuelonry
+import com.twittelonr.homelon_mixelonr.{thriftscala => t}
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.product_pipelonlinelon.ProductPipelonlinelonCandidatelonSourcelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.configapi.ParamsBuildelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonSourcelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.product.relongistry.ProductPipelonlinelonRelongistry
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => tl}
+import com.twittelonr.timelonlinelonselonrvicelon.suggelonsts.{thriftscala => st}
+import com.twittelonr.twelonelontconvosvc.twelonelont_ancelonstor.{thriftscala => ta}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
 /**
- * [[ScoredTweetWithConversationMetadata]]
+ * [[ScorelondTwelonelontWithConvelonrsationMelontadata]]
  **/
-case class ScoredTweetWithConversationMetadata(
-  tweetId: Long,
+caselon class ScorelondTwelonelontWithConvelonrsationMelontadata(
+  twelonelontId: Long,
   authorId: Long,
-  score: Option[Double] = None,
-  suggestType: Option[st.SuggestType] = None,
-  sourceTweetId: Option[Long] = None,
-  sourceUserId: Option[Long] = None,
-  quotedTweetId: Option[Long] = None,
-  quotedUserId: Option[Long] = None,
-  inReplyToTweetId: Option[Long] = None,
-  inReplyToUserId: Option[Long] = None,
-  directedAtUserId: Option[Long] = None,
-  inNetwork: Option[Boolean] = None,
-  favoritedByUserIds: Option[Seq[Long]] = None,
-  followedByUserIds: Option[Seq[Long]] = None,
-  ancestors: Option[Seq[ta.TweetAncestor]] = None,
-  topicId: Option[Long] = None,
-  topicFunctionalityType: Option[tl.TopicContextFunctionalityType] = None,
-  conversationId: Option[Long] = None,
-  conversationFocalTweetId: Option[Long] = None,
-  isReadFromCache: Option[Boolean] = None,
-  streamToKafka: Option[Boolean] = None)
+  scorelon: Option[Doublelon] = Nonelon,
+  suggelonstTypelon: Option[st.SuggelonstTypelon] = Nonelon,
+  sourcelonTwelonelontId: Option[Long] = Nonelon,
+  sourcelonUselonrId: Option[Long] = Nonelon,
+  quotelondTwelonelontId: Option[Long] = Nonelon,
+  quotelondUselonrId: Option[Long] = Nonelon,
+  inRelonplyToTwelonelontId: Option[Long] = Nonelon,
+  inRelonplyToUselonrId: Option[Long] = Nonelon,
+  direlonctelondAtUselonrId: Option[Long] = Nonelon,
+  inNelontwork: Option[Boolelonan] = Nonelon,
+  favoritelondByUselonrIds: Option[Selonq[Long]] = Nonelon,
+  followelondByUselonrIds: Option[Selonq[Long]] = Nonelon,
+  ancelonstors: Option[Selonq[ta.TwelonelontAncelonstor]] = Nonelon,
+  topicId: Option[Long] = Nonelon,
+  topicFunctionalityTypelon: Option[tl.TopicContelonxtFunctionalityTypelon] = Nonelon,
+  convelonrsationId: Option[Long] = Nonelon,
+  convelonrsationFocalTwelonelontId: Option[Long] = Nonelon,
+  isRelonadFromCachelon: Option[Boolelonan] = Nonelon,
+  strelonamToKafka: Option[Boolelonan] = Nonelon)
 
-@Singleton
-class ScoredTweetsProductCandidateSource @Inject() (
-  override val productPipelineRegistry: Provider[ProductPipelineRegistry],
-  override val paramsBuilder: Provider[ParamsBuilder])
-    extends ProductPipelineCandidateSource[
-      ForYouQuery,
-      HomeMixerRequest,
-      t.ScoredTweetsResponse,
-      ScoredTweetWithConversationMetadata
+@Singlelonton
+class ScorelondTwelonelontsProductCandidatelonSourcelon @Injelonct() (
+  ovelonrridelon val productPipelonlinelonRelongistry: Providelonr[ProductPipelonlinelonRelongistry],
+  ovelonrridelon val paramsBuildelonr: Providelonr[ParamsBuildelonr])
+    elonxtelonnds ProductPipelonlinelonCandidatelonSourcelon[
+      ForYouQuelonry,
+      HomelonMixelonrRelonquelonst,
+      t.ScorelondTwelonelontsRelonsponselon,
+      ScorelondTwelonelontWithConvelonrsationMelontadata
     ] {
 
-  override val identifier: CandidateSourceIdentifier =
-    CandidateSourceIdentifier("ScoredTweetsProduct")
+  ovelonrridelon val idelonntifielonr: CandidatelonSourcelonIdelonntifielonr =
+    CandidatelonSourcelonIdelonntifielonr("ScorelondTwelonelontsProduct")
 
-  private val MaxModuleSize = 3
-  private val MaxAncestorsInConversation = 2
+  privatelon val MaxModulelonSizelon = 3
+  privatelon val MaxAncelonstorsInConvelonrsation = 2
 
-  override def pipelineRequestTransformer(productPipelineQuery: ForYouQuery): HomeMixerRequest = {
-    HomeMixerRequest(
-      clientContext = productPipelineQuery.clientContext,
-      product = ScoredTweetsProduct,
-      productContext = Some(
-        ScoredTweetsProductContext(
-          productPipelineQuery.deviceContext,
-          productPipelineQuery.seenTweetIds,
-          productPipelineQuery.features.map(_.getOrElse(ServedTweetIdsFeature, Seq.empty))
+  ovelonrridelon delonf pipelonlinelonRelonquelonstTransformelonr(productPipelonlinelonQuelonry: ForYouQuelonry): HomelonMixelonrRelonquelonst = {
+    HomelonMixelonrRelonquelonst(
+      clielonntContelonxt = productPipelonlinelonQuelonry.clielonntContelonxt,
+      product = ScorelondTwelonelontsProduct,
+      productContelonxt = Somelon(
+        ScorelondTwelonelontsProductContelonxt(
+          productPipelonlinelonQuelonry.delonvicelonContelonxt,
+          productPipelonlinelonQuelonry.selonelonnTwelonelontIds,
+          productPipelonlinelonQuelonry.felonaturelons.map(_.gelontOrelonlselon(SelonrvelondTwelonelontIdsFelonaturelon, Selonq.elonmpty))
         )),
-      serializedRequestCursor = None,
-      maxResults = productPipelineQuery.requestedMaxResults,
-      debugParams = None,
-      homeRequestParam = false
+      selonrializelondRelonquelonstCursor = Nonelon,
+      maxRelonsults = productPipelonlinelonQuelonry.relonquelonstelondMaxRelonsults,
+      delonbugParams = Nonelon,
+      homelonRelonquelonstParam = falselon
     )
   }
 
-  override def productPipelineResultTransformer(
-    productPipelineResult: t.ScoredTweetsResponse
-  ): Seq[ScoredTweetWithConversationMetadata] = {
-    val scoredTweets = productPipelineResult.scoredTweets.flatMap { focalTweet =>
-      val parentTweets = focalTweet.ancestors.getOrElse(Seq.empty).sortBy(-_.tweetId)
-      val (intermediates, root) = parentTweets.splitAt(parentTweets.size - 1)
-      val truncatedIntermediates =
-        intermediates.take(MaxModuleSize - MaxAncestorsInConversation).reverse
-      val rootScoredTweet: Seq[ScoredTweetWithConversationMetadata] = root.map { ancestor =>
-        ScoredTweetWithConversationMetadata(
-          tweetId = ancestor.tweetId,
-          authorId = ancestor.userId,
-          suggestType = focalTweet.suggestType,
-          conversationId = Some(ancestor.tweetId),
-          conversationFocalTweetId = Some(focalTweet.tweetId)
+  ovelonrridelon delonf productPipelonlinelonRelonsultTransformelonr(
+    productPipelonlinelonRelonsult: t.ScorelondTwelonelontsRelonsponselon
+  ): Selonq[ScorelondTwelonelontWithConvelonrsationMelontadata] = {
+    val scorelondTwelonelonts = productPipelonlinelonRelonsult.scorelondTwelonelonts.flatMap { focalTwelonelont =>
+      val parelonntTwelonelonts = focalTwelonelont.ancelonstors.gelontOrelonlselon(Selonq.elonmpty).sortBy(-_.twelonelontId)
+      val (intelonrmelondiatelons, root) = parelonntTwelonelonts.splitAt(parelonntTwelonelonts.sizelon - 1)
+      val truncatelondIntelonrmelondiatelons =
+        intelonrmelondiatelons.takelon(MaxModulelonSizelon - MaxAncelonstorsInConvelonrsation).relonvelonrselon
+      val rootScorelondTwelonelont: Selonq[ScorelondTwelonelontWithConvelonrsationMelontadata] = root.map { ancelonstor =>
+        ScorelondTwelonelontWithConvelonrsationMelontadata(
+          twelonelontId = ancelonstor.twelonelontId,
+          authorId = ancelonstor.uselonrId,
+          suggelonstTypelon = focalTwelonelont.suggelonstTypelon,
+          convelonrsationId = Somelon(ancelonstor.twelonelontId),
+          convelonrsationFocalTwelonelontId = Somelon(focalTwelonelont.twelonelontId)
         )
       }
-      val conversationId = rootScoredTweet.headOption.map(_.tweetId)
+      val convelonrsationId = rootScorelondTwelonelont.helonadOption.map(_.twelonelontId)
 
-      val tweetsToParents =
-        if (parentTweets.nonEmpty) parentTweets.zip(parentTweets.tail).toMap
-        else Map.empty[ta.TweetAncestor, ta.TweetAncestor]
+      val twelonelontsToParelonnts =
+        if (parelonntTwelonelonts.nonelonmpty) parelonntTwelonelonts.zip(parelonntTwelonelonts.tail).toMap
+        elonlselon Map.elonmpty[ta.TwelonelontAncelonstor, ta.TwelonelontAncelonstor]
 
-      val intermediateScoredTweets = truncatedIntermediates.map { ancestor =>
-        ScoredTweetWithConversationMetadata(
-          tweetId = ancestor.tweetId,
-          authorId = ancestor.userId,
-          suggestType = focalTweet.suggestType,
-          inReplyToTweetId = tweetsToParents.get(ancestor).map(_.tweetId),
-          conversationId = conversationId,
-          conversationFocalTweetId = Some(focalTweet.tweetId)
+      val intelonrmelondiatelonScorelondTwelonelonts = truncatelondIntelonrmelondiatelons.map { ancelonstor =>
+        ScorelondTwelonelontWithConvelonrsationMelontadata(
+          twelonelontId = ancelonstor.twelonelontId,
+          authorId = ancelonstor.uselonrId,
+          suggelonstTypelon = focalTwelonelont.suggelonstTypelon,
+          inRelonplyToTwelonelontId = twelonelontsToParelonnts.gelont(ancelonstor).map(_.twelonelontId),
+          convelonrsationId = convelonrsationId,
+          convelonrsationFocalTwelonelontId = Somelon(focalTwelonelont.twelonelontId)
         )
       }
-      val parentScoredTweets = rootScoredTweet ++ intermediateScoredTweets
+      val parelonntScorelondTwelonelonts = rootScorelondTwelonelont ++ intelonrmelondiatelonScorelondTwelonelonts
 
-      val conversationFocalTweetId =
-        if (parentScoredTweets.nonEmpty) Some(focalTweet.tweetId) else None
+      val convelonrsationFocalTwelonelontId =
+        if (parelonntScorelondTwelonelonts.nonelonmpty) Somelon(focalTwelonelont.twelonelontId) elonlselon Nonelon
 
-      val focalScoredTweet = ScoredTweetWithConversationMetadata(
-        tweetId = focalTweet.tweetId,
-        authorId = focalTweet.authorId,
-        score = focalTweet.score,
-        suggestType = focalTweet.suggestType,
-        sourceTweetId = focalTweet.sourceTweetId,
-        sourceUserId = focalTweet.sourceUserId,
-        quotedTweetId = focalTweet.quotedTweetId,
-        quotedUserId = focalTweet.quotedUserId,
-        inReplyToTweetId = parentScoredTweets.lastOption.map(_.tweetId),
-        inReplyToUserId = focalTweet.inReplyToUserId,
-        directedAtUserId = focalTweet.directedAtUserId,
-        inNetwork = focalTweet.inNetwork,
-        favoritedByUserIds = focalTweet.favoritedByUserIds,
-        followedByUserIds = focalTweet.followedByUserIds,
-        topicId = focalTweet.topicId,
-        topicFunctionalityType = focalTweet.topicFunctionalityType,
-        ancestors = focalTweet.ancestors,
-        conversationId = conversationId,
-        conversationFocalTweetId = conversationFocalTweetId,
-        isReadFromCache = focalTweet.isReadFromCache,
-        streamToKafka = focalTweet.streamToKafka
+      val focalScorelondTwelonelont = ScorelondTwelonelontWithConvelonrsationMelontadata(
+        twelonelontId = focalTwelonelont.twelonelontId,
+        authorId = focalTwelonelont.authorId,
+        scorelon = focalTwelonelont.scorelon,
+        suggelonstTypelon = focalTwelonelont.suggelonstTypelon,
+        sourcelonTwelonelontId = focalTwelonelont.sourcelonTwelonelontId,
+        sourcelonUselonrId = focalTwelonelont.sourcelonUselonrId,
+        quotelondTwelonelontId = focalTwelonelont.quotelondTwelonelontId,
+        quotelondUselonrId = focalTwelonelont.quotelondUselonrId,
+        inRelonplyToTwelonelontId = parelonntScorelondTwelonelonts.lastOption.map(_.twelonelontId),
+        inRelonplyToUselonrId = focalTwelonelont.inRelonplyToUselonrId,
+        direlonctelondAtUselonrId = focalTwelonelont.direlonctelondAtUselonrId,
+        inNelontwork = focalTwelonelont.inNelontwork,
+        favoritelondByUselonrIds = focalTwelonelont.favoritelondByUselonrIds,
+        followelondByUselonrIds = focalTwelonelont.followelondByUselonrIds,
+        topicId = focalTwelonelont.topicId,
+        topicFunctionalityTypelon = focalTwelonelont.topicFunctionalityTypelon,
+        ancelonstors = focalTwelonelont.ancelonstors,
+        convelonrsationId = convelonrsationId,
+        convelonrsationFocalTwelonelontId = convelonrsationFocalTwelonelontId,
+        isRelonadFromCachelon = focalTwelonelont.isRelonadFromCachelon,
+        strelonamToKafka = focalTwelonelont.strelonamToKafka
       )
 
-      parentScoredTweets :+ focalScoredTweet
+      parelonntScorelondTwelonelonts :+ focalScorelondTwelonelont
     }
 
-    val dedupedTweets = scoredTweets.groupBy(_.tweetId).map {
-      case (_, duplicateAncestors) => duplicateAncestors.maxBy(_.score.getOrElse(0.0))
+    val delondupelondTwelonelonts = scorelondTwelonelonts.groupBy(_.twelonelontId).map {
+      caselon (_, duplicatelonAncelonstors) => duplicatelonAncelonstors.maxBy(_.scorelon.gelontOrelonlselon(0.0))
     }
 
-    // Sort by tweet id to prevent issues with future assumptions of the root being the first
-    // tweet and the focal being the last tweet in a module. The tweets as a whole do not need
-    // to be sorted overall, only the relative order within modules must be kept.
-    dedupedTweets.toSeq.sortBy(_.tweetId)
+    // Sort by twelonelont id to prelonvelonnt issuelons with futurelon assumptions of thelon root beloning thelon first
+    // twelonelont and thelon focal beloning thelon last twelonelont in a modulelon. Thelon twelonelonts as a wholelon do not nelonelond
+    // to belon sortelond ovelonrall, only thelon relonlativelon ordelonr within modulelons must belon kelonpt.
+    delondupelondTwelonelonts.toSelonq.sortBy(_.twelonelontId)
   }
 }

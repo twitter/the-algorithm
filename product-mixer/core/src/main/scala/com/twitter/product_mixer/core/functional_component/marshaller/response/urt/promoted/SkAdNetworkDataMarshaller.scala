@@ -1,23 +1,23 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.promotelond
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.SkAdNetworkData
-import javax.inject.Inject
-import javax.inject.Singleton
-import com.twitter.timelines.render.{thriftscala => urt}
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.promotelond.SkAdNelontworkData
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
 
-@Singleton
-class SkAdNetworkDataMarshaller @Inject() () {
+@Singlelonton
+class SkAdNelontworkDataMarshallelonr @Injelonct() () {
 
-  def apply(skAdNetworkData: SkAdNetworkData): urt.SkAdNetworkData =
-    urt.SkAdNetworkData(
-      version = skAdNetworkData.version,
-      srcAppId = skAdNetworkData.srcAppId,
-      dstAppId = skAdNetworkData.dstAppId,
-      adNetworkId = skAdNetworkData.adNetworkId,
-      campaignId = skAdNetworkData.campaignId,
-      impressionTimeInMillis = skAdNetworkData.impressionTimeInMillis,
-      nonce = skAdNetworkData.nonce,
-      signature = skAdNetworkData.signature,
-      fidelityType = skAdNetworkData.fidelityType
+  delonf apply(skAdNelontworkData: SkAdNelontworkData): urt.SkAdNelontworkData =
+    urt.SkAdNelontworkData(
+      velonrsion = skAdNelontworkData.velonrsion,
+      srcAppId = skAdNelontworkData.srcAppId,
+      dstAppId = skAdNelontworkData.dstAppId,
+      adNelontworkId = skAdNelontworkData.adNelontworkId,
+      campaignId = skAdNelontworkData.campaignId,
+      imprelonssionTimelonInMillis = skAdNelontworkData.imprelonssionTimelonInMillis,
+      noncelon = skAdNelontworkData.noncelon,
+      signaturelon = skAdNelontworkData.signaturelon,
+      fidelonlityTypelon = skAdNelontworkData.fidelonlityTypelon
     )
 }

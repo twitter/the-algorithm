@@ -1,21 +1,21 @@
 scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/model/candidate",
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/premarshaller/urp/builder",
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/premarshaller/urt/builder",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/premarshaller",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/selector",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/marshalling/response/urp",
+    sourcelons = ["*.scala"],
+    compilelonr_option_selonts = ["fatal_warnings"],
+    strict_delonps = Truelon,
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        "product-mixelonr/componelonnt-library/src/main/scala/com/twittelonr/product_mixelonr/componelonnt_library/modelonl/candidatelon",
+        "product-mixelonr/componelonnt-library/src/main/scala/com/twittelonr/product_mixelonr/componelonnt_library/prelonmarshallelonr/urp/buildelonr",
+        "product-mixelonr/componelonnt-library/src/main/scala/com/twittelonr/product_mixelonr/componelonnt_library/prelonmarshallelonr/urt/buildelonr",
+        "product-mixelonr/corelon/src/main/scala/com/twittelonr/product_mixelonr/corelon/functional_componelonnt/prelonmarshallelonr",
+        "product-mixelonr/corelon/src/main/scala/com/twittelonr/product_mixelonr/corelon/functional_componelonnt/selonlelonctor",
+        "product-mixelonr/corelon/src/main/scala/com/twittelonr/product_mixelonr/corelon/modelonl/marshalling/relonsponselon/urp",
     ],
-    exports = [
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/model/candidate",
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/premarshaller/urp/builder",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/premarshaller",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/selector",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/marshalling/response/urp",
+    elonxports = [
+        "product-mixelonr/componelonnt-library/src/main/scala/com/twittelonr/product_mixelonr/componelonnt_library/modelonl/candidatelon",
+        "product-mixelonr/componelonnt-library/src/main/scala/com/twittelonr/product_mixelonr/componelonnt_library/prelonmarshallelonr/urp/buildelonr",
+        "product-mixelonr/corelon/src/main/scala/com/twittelonr/product_mixelonr/corelon/functional_componelonnt/prelonmarshallelonr",
+        "product-mixelonr/corelon/src/main/scala/com/twittelonr/product_mixelonr/corelon/functional_componelonnt/selonlelonctor",
+        "product-mixelonr/corelon/src/main/scala/com/twittelonr/product_mixelonr/corelon/modelonl/marshalling/relonsponselon/urp",
     ],
 )

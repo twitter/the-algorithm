@@ -1,22 +1,22 @@
-package com.twitter.follow_recommendations.common.predicates.hss
+packagelon com.twittelonr.follow_reloncommelonndations.common.prelondicatelons.hss
 
-import com.twitter.follow_recommendations.common.predicates.hss.HssPredicateParams._
-import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.HasDurationConversion
-import com.twitter.util.Duration
+import com.twittelonr.follow_reloncommelonndations.common.prelondicatelons.hss.HssPrelondicatelonParams._
+import com.twittelonr.follow_reloncommelonndations.configapi.common.FelonaturelonSwitchConfig
+import com.twittelonr.timelonlinelons.configapi.FSBoundelondParam
+import com.twittelonr.timelonlinelons.configapi.HasDurationConvelonrsion
+import com.twittelonr.util.Duration
 
-import javax.inject.Inject
-import javax.inject.Singleton
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class HssPredicateFSConfig @Inject() () extends FeatureSwitchConfig {
-  override val doubleFSParams: Seq[FSBoundedParam[Double]] = Seq(
-    HssCseScoreThreshold,
-    HssNsfwScoreThreshold,
+@Singlelonton
+class HssPrelondicatelonFSConfig @Injelonct() () elonxtelonnds FelonaturelonSwitchConfig {
+  ovelonrridelon val doublelonFSParams: Selonq[FSBoundelondParam[Doublelon]] = Selonq(
+    HssCselonScorelonThrelonshold,
+    HssNsfwScorelonThrelonshold,
   )
 
-  override val durationFSParams: Seq[FSBoundedParam[Duration] with HasDurationConversion] = Seq(
-    HssApiTimeout
+  ovelonrridelon val durationFSParams: Selonq[FSBoundelondParam[Duration] with HasDurationConvelonrsion] = Selonq(
+    HssApiTimelonout
   )
 }

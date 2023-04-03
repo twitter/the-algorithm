@@ -1,66 +1,66 @@
-package com.twitter.product_mixer.core.functional_component.premarshaller
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.prelonmarshallelonr
 
-import com.twitter.product_mixer.core.functional_component.marshaller.TransportMarshaller
-import com.twitter.product_mixer.core.model.common.Component
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.DomainMarshallerIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ModulePresentation
-import com.twitter.product_mixer.core.model.common.presentation.UniversalPresentation
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.TransportMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.Componelonnt
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.ComponelonntIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.DomainMarshallelonrIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.ModulelonPrelonselonntation
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.UnivelonrsalPrelonselonntation
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
 /**
- * Transforms the `selections` into a [[DomainResponseType]] object (often URT, Slice, etc)
+ * Transforms thelon `selonlelonctions` into a [[DomainRelonsponselonTypelon]] objelonct (oftelonn URT, Slicelon, elontc)
  *
- * [[DomainMarshaller]]s may contain business logic
+ * [[DomainMarshallelonr]]s may contain businelonss logic
  *
- * @note This is different from `com.twitter.product_mixer.core.marshaller`s
- *       which transforms into a wire-compatible type
+ * @notelon This is diffelonrelonnt from `com.twittelonr.product_mixelonr.corelon.marshallelonr`s
+ *       which transforms into a wirelon-compatiblelon typelon
  */
-trait DomainMarshaller[-Query <: PipelineQuery, DomainResponseType] extends Component {
+trait DomainMarshallelonr[-Quelonry <: PipelonlinelonQuelonry, DomainRelonsponselonTypelon] elonxtelonnds Componelonnt {
 
-  override val identifier: DomainMarshallerIdentifier
+  ovelonrridelon val idelonntifielonr: DomainMarshallelonrIdelonntifielonr
 
-  /** Transforms the `selections` into a [[DomainResponseType]] object */
-  def apply(
-    query: Query,
-    selections: Seq[CandidateWithDetails]
-  ): DomainResponseType
+  /** Transforms thelon `selonlelonctions` into a [[DomainRelonsponselonTypelon]] objelonct */
+  delonf apply(
+    quelonry: Quelonry,
+    selonlelonctions: Selonq[CandidatelonWithDelontails]
+  ): DomainRelonsponselonTypelon
 }
 
-class UnsupportedCandidateDomainMarshallerException(
-  candidate: Any,
-  candidateSource: ComponentIdentifier)
-    extends UnsupportedOperationException(
-      s"Domain marshaller does not support candidate ${TransportMarshaller.getSimpleName(
-        candidate.getClass)} from source $candidateSource")
+class UnsupportelondCandidatelonDomainMarshallelonrelonxcelonption(
+  candidatelon: Any,
+  candidatelonSourcelon: ComponelonntIdelonntifielonr)
+    elonxtelonnds UnsupportelondOpelonrationelonxcelonption(
+      s"Domain marshallelonr doelons not support candidatelon ${TransportMarshallelonr.gelontSimplelonNamelon(
+        candidatelon.gelontClass)} from sourcelon $candidatelonSourcelon")
 
-class UndecoratedCandidateDomainMarshallerException(
-  candidate: Any,
-  candidateSource: ComponentIdentifier)
-    extends UnsupportedOperationException(
-      s"Domain marshaller does not support undecorated candidate ${TransportMarshaller
-        .getSimpleName(candidate.getClass)} from source $candidateSource")
+class UndeloncoratelondCandidatelonDomainMarshallelonrelonxcelonption(
+  candidatelon: Any,
+  candidatelonSourcelon: ComponelonntIdelonntifielonr)
+    elonxtelonnds UnsupportelondOpelonrationelonxcelonption(
+      s"Domain marshallelonr doelons not support undeloncoratelond candidatelon ${TransportMarshallelonr
+        .gelontSimplelonNamelon(candidatelon.gelontClass)} from sourcelon $candidatelonSourcelon")
 
-class UnsupportedPresentationDomainMarshallerException(
-  candidate: Any,
-  presentation: UniversalPresentation,
-  candidateSource: ComponentIdentifier)
-    extends UnsupportedOperationException(
-      s"Domain marshaller does not support decorator presentation ${TransportMarshaller
-        .getSimpleName(presentation.getClass)} for candidate ${TransportMarshaller.getSimpleName(
-        candidate.getClass)} from source $candidateSource")
+class UnsupportelondPrelonselonntationDomainMarshallelonrelonxcelonption(
+  candidatelon: Any,
+  prelonselonntation: UnivelonrsalPrelonselonntation,
+  candidatelonSourcelon: ComponelonntIdelonntifielonr)
+    elonxtelonnds UnsupportelondOpelonrationelonxcelonption(
+      s"Domain marshallelonr doelons not support deloncorator prelonselonntation ${TransportMarshallelonr
+        .gelontSimplelonNamelon(prelonselonntation.gelontClass)} for candidatelon ${TransportMarshallelonr.gelontSimplelonNamelon(
+        candidatelon.gelontClass)} from sourcelon $candidatelonSourcelon")
 
-class UnsupportedModuleDomainMarshallerException(
-  presentation: Option[ModulePresentation],
-  candidateSource: ComponentIdentifier)
-    extends UnsupportedOperationException(
-      s"Domain marshaller does not support module presentation ${presentation
+class UnsupportelondModulelonDomainMarshallelonrelonxcelonption(
+  prelonselonntation: Option[ModulelonPrelonselonntation],
+  candidatelonSourcelon: ComponelonntIdelonntifielonr)
+    elonxtelonnds UnsupportelondOpelonrationelonxcelonption(
+      s"Domain marshallelonr doelons not support modulelon prelonselonntation ${prelonselonntation
         .map(p =>
-          TransportMarshaller
-            .getSimpleName(presentation.getClass)).getOrElse("")} but was given a module from source $candidateSource")
+          TransportMarshallelonr
+            .gelontSimplelonNamelon(prelonselonntation.gelontClass)).gelontOrelonlselon("")} but was givelonn a modulelon from sourcelon $candidatelonSourcelon")
 
-class UndecoratedModuleDomainMarshallerException(
-  candidateSource: ComponentIdentifier)
-    extends UnsupportedOperationException(
-      s"Domain marshaller does not support undecorated module from source $candidateSource")
+class UndeloncoratelondModulelonDomainMarshallelonrelonxcelonption(
+  candidatelonSourcelon: ComponelonntIdelonntifielonr)
+    elonxtelonnds UnsupportelondOpelonrationelonxcelonption(
+      s"Domain marshallelonr doelons not support undeloncoratelond modulelon from sourcelon $candidatelonSourcelon")

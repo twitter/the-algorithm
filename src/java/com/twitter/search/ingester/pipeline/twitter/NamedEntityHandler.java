@@ -1,101 +1,101 @@
-package com.twitter.search.ingester.pipeline.twitter;
+packagelon com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.twittelonr;
 
-import java.util.Set;
+import java.util.Selont;
 
 import scala.Option;
 
-import com.google.common.collect.ImmutableSet;
+import com.googlelon.common.collelonct.ImmutablelonSelont;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.cuad.ner.plain.thriftjava.NamedEntities;
-import com.twitter.cuad.ner.plain.thriftjava.NamedEntity;
-import com.twitter.decider.Decider;
-import com.twitter.search.common.decider.DeciderUtil;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.ingester.model.IngesterTwitterMessage;
-import com.twitter.search.ingester.pipeline.strato_fetchers.NamedEntityFetcher;
-import com.twitter.search.ingester.pipeline.util.IngesterStageTimer;
-import com.twitter.strato.catalog.Fetch;
-import com.twitter.util.Future;
+import com.twittelonr.cuad.nelonr.plain.thriftjava.Namelondelonntitielons;
+import com.twittelonr.cuad.nelonr.plain.thriftjava.Namelondelonntity;
+import com.twittelonr.deloncidelonr.Deloncidelonr;
+import com.twittelonr.selonarch.common.deloncidelonr.DeloncidelonrUtil;
+import com.twittelonr.selonarch.common.melontrics.SelonarchRatelonCountelonr;
+import com.twittelonr.selonarch.ingelonstelonr.modelonl.IngelonstelonrTwittelonrMelonssagelon;
+import com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.strato_felontchelonrs.NamelondelonntityFelontchelonr;
+import com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.util.IngelonstelonrStagelonTimelonr;
+import com.twittelonr.strato.catalog.Felontch;
+import com.twittelonr.util.Futurelon;
 
 /**
- * Handles the retrieval and population of named entities in TwitterMessages performed
- * by ingesters.
+ * Handlelons thelon relontrielonval and population of namelond elonntitielons in TwittelonrMelonssagelons pelonrformelond
+ * by ingelonstelonrs.
  */
-class NamedEntityHandler {
-  private static final Logger LOG = LoggerFactory.getLogger(NamedEntityHandler.class);
+class NamelondelonntityHandlelonr {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(NamelondelonntityHandlelonr.class);
 
-  private static final String RETRIEVE_NAMED_ENTITIES_DECIDER_KEY =
-      "ingester_all_retrieve_named_entities_%s";
+  privatelon static final String RelonTRIelonVelon_NAMelonD_elonNTITIelonS_DelonCIDelonR_KelonY =
+      "ingelonstelonr_all_relontrielonvelon_namelond_elonntitielons_%s";
 
-  // Named entities are only extracted in English, Spanish, and Japanese
-  private static final Set<String> NAMED_ENTITY_LANGUAGES = ImmutableSet.of("en", "es", "ja");
+  // Namelond elonntitielons arelon only elonxtractelond in elonnglish, Spanish, and Japanelonselon
+  privatelon static final Selont<String> NAMelonD_elonNTITY_LANGUAGelonS = ImmutablelonSelont.of("elonn", "elons", "ja");
 
-  private final NamedEntityFetcher namedEntityFetcher;
-  private final Decider decider;
-  private final String deciderKey;
+  privatelon final NamelondelonntityFelontchelonr namelondelonntityFelontchelonr;
+  privatelon final Deloncidelonr deloncidelonr;
+  privatelon final String deloncidelonrKelony;
 
-  private SearchRateCounter lookupStat;
-  private SearchRateCounter successStat;
-  private SearchRateCounter namedEntityCountStat;
-  private SearchRateCounter errorStat;
-  private SearchRateCounter emptyResponseStat;
-  private SearchRateCounter deciderSkippedStat;
-  private IngesterStageTimer retrieveNamedEntitiesTimer;
+  privatelon SelonarchRatelonCountelonr lookupStat;
+  privatelon SelonarchRatelonCountelonr succelonssStat;
+  privatelon SelonarchRatelonCountelonr namelondelonntityCountStat;
+  privatelon SelonarchRatelonCountelonr elonrrorStat;
+  privatelon SelonarchRatelonCountelonr elonmptyRelonsponselonStat;
+  privatelon SelonarchRatelonCountelonr deloncidelonrSkippelondStat;
+  privatelon IngelonstelonrStagelonTimelonr relontrielonvelonNamelondelonntitielonsTimelonr;
 
-  NamedEntityHandler(
-      NamedEntityFetcher namedEntityFetcher, Decider decider, String statsPrefix,
-      String deciderSuffix) {
-    this.namedEntityFetcher = namedEntityFetcher;
-    this.decider = decider;
-    this.deciderKey = String.format(RETRIEVE_NAMED_ENTITIES_DECIDER_KEY, deciderSuffix);
+  NamelondelonntityHandlelonr(
+      NamelondelonntityFelontchelonr namelondelonntityFelontchelonr, Deloncidelonr deloncidelonr, String statsPrelonfix,
+      String deloncidelonrSuffix) {
+    this.namelondelonntityFelontchelonr = namelondelonntityFelontchelonr;
+    this.deloncidelonr = deloncidelonr;
+    this.deloncidelonrKelony = String.format(RelonTRIelonVelon_NAMelonD_elonNTITIelonS_DelonCIDelonR_KelonY, deloncidelonrSuffix);
 
-    lookupStat = SearchRateCounter.export(statsPrefix + "_lookups");
-    successStat = SearchRateCounter.export(statsPrefix + "_success");
-    namedEntityCountStat = SearchRateCounter.export(statsPrefix + "_named_entity_count");
-    errorStat = SearchRateCounter.export(statsPrefix + "_error");
-    emptyResponseStat = SearchRateCounter.export(statsPrefix + "_empty_response");
-    deciderSkippedStat = SearchRateCounter.export(statsPrefix + "_decider_skipped");
-    retrieveNamedEntitiesTimer = new IngesterStageTimer(statsPrefix + "_request_timer");
+    lookupStat = SelonarchRatelonCountelonr.elonxport(statsPrelonfix + "_lookups");
+    succelonssStat = SelonarchRatelonCountelonr.elonxport(statsPrelonfix + "_succelonss");
+    namelondelonntityCountStat = SelonarchRatelonCountelonr.elonxport(statsPrelonfix + "_namelond_elonntity_count");
+    elonrrorStat = SelonarchRatelonCountelonr.elonxport(statsPrelonfix + "_elonrror");
+    elonmptyRelonsponselonStat = SelonarchRatelonCountelonr.elonxport(statsPrelonfix + "_elonmpty_relonsponselon");
+    deloncidelonrSkippelondStat = SelonarchRatelonCountelonr.elonxport(statsPrelonfix + "_deloncidelonr_skippelond");
+    relontrielonvelonNamelondelonntitielonsTimelonr = nelonw IngelonstelonrStagelonTimelonr(statsPrelonfix + "_relonquelonst_timelonr");
   }
 
-  Future<Fetch.Result<NamedEntities>> retrieve(IngesterTwitterMessage message) {
-    lookupStat.increment();
-    return namedEntityFetcher.fetch(message.getTweetId());
+  Futurelon<Felontch.Relonsult<Namelondelonntitielons>> relontrielonvelon(IngelonstelonrTwittelonrMelonssagelon melonssagelon) {
+    lookupStat.increlonmelonnt();
+    relonturn namelondelonntityFelontchelonr.felontch(melonssagelon.gelontTwelonelontId());
   }
 
-  void addEntitiesToMessage(IngesterTwitterMessage message, Fetch.Result<NamedEntities> result) {
-    retrieveNamedEntitiesTimer.start();
-    Option<NamedEntities> response = result.v();
-    if (response.isDefined()) {
-      successStat.increment();
-      for (NamedEntity namedEntity : response.get().getEntities()) {
-        namedEntityCountStat.increment();
-        message.addNamedEntity(namedEntity);
+  void addelonntitielonsToMelonssagelon(IngelonstelonrTwittelonrMelonssagelon melonssagelon, Felontch.Relonsult<Namelondelonntitielons> relonsult) {
+    relontrielonvelonNamelondelonntitielonsTimelonr.start();
+    Option<Namelondelonntitielons> relonsponselon = relonsult.v();
+    if (relonsponselon.isDelonfinelond()) {
+      succelonssStat.increlonmelonnt();
+      for (Namelondelonntity namelondelonntity : relonsponselon.gelont().gelontelonntitielons()) {
+        namelondelonntityCountStat.increlonmelonnt();
+        melonssagelon.addNamelondelonntity(namelondelonntity);
       }
-    } else {
-      emptyResponseStat.increment();
-      LOG.debug("Empty NERResponse for named entity query on tweet {}", message.getId());
+    } elonlselon {
+      elonmptyRelonsponselonStat.increlonmelonnt();
+      LOG.delonbug("elonmpty NelonRRelonsponselon for namelond elonntity quelonry on twelonelont {}", melonssagelon.gelontId());
     }
-    retrieveNamedEntitiesTimer.stop();
+    relontrielonvelonNamelondelonntitielonsTimelonr.stop();
   }
 
-  void incrementErrorCount() {
-    errorStat.increment();
+  void increlonmelonntelonrrorCount() {
+    elonrrorStat.increlonmelonnt();
   }
 
-  boolean shouldRetrieve(IngesterTwitterMessage message) {
-    // Use decider to control retrieval of named entities. This allows us to shut off retrieval
-    // if it causes problems.
-    if (!DeciderUtil.isAvailableForRandomRecipient(decider, deciderKey)) {
-      deciderSkippedStat.increment();
-      return false;
+  boolelonan shouldRelontrielonvelon(IngelonstelonrTwittelonrMelonssagelon melonssagelon) {
+    // Uselon deloncidelonr to control relontrielonval of namelond elonntitielons. This allows us to shut off relontrielonval
+    // if it causelons problelonms.
+    if (!DeloncidelonrUtil.isAvailablelonForRandomReloncipielonnt(deloncidelonr, deloncidelonrKelony)) {
+      deloncidelonrSkippelondStat.increlonmelonnt();
+      relonturn falselon;
     }
 
-    // Named entities are only extracted in certain languages, so we can skip tweets
-    // in other languages
-    return NAMED_ENTITY_LANGUAGES.contains(message.getLanguage());
+    // Namelond elonntitielons arelon only elonxtractelond in celonrtain languagelons, so welon can skip twelonelonts
+    // in othelonr languagelons
+    relonturn NAMelonD_elonNTITY_LANGUAGelonS.contains(melonssagelon.gelontLanguagelon());
   }
 }

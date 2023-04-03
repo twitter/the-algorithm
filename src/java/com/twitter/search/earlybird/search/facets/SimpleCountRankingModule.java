@@ -1,30 +1,30 @@
-package com.twitter.search.earlybird.search.facets;
+packagelon com.twittelonr.selonarch.elonarlybird.selonarch.facelonts;
 
-import java.util.Iterator;
+import java.util.Itelonrator;
 
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.core.earlybird.facets.FacetCountState;
-import com.twitter.search.core.earlybird.facets.FacetCountState.FacetFieldResults;
-import com.twitter.search.earlybird.search.EarlybirdLuceneSearcher;
-import com.twitter.search.earlybird.thrift.ThriftFacetFieldResults;
+import com.twittelonr.selonarch.common.schelonma.baselon.Schelonma;
+import com.twittelonr.selonarch.corelon.elonarlybird.facelonts.FacelontCountStatelon;
+import com.twittelonr.selonarch.corelon.elonarlybird.facelonts.FacelontCountStatelon.FacelontFielonldRelonsults;
+import com.twittelonr.selonarch.elonarlybird.selonarch.elonarlybirdLucelonnelonSelonarchelonr;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftFacelontFielonldRelonsults;
 
-public class SimpleCountRankingModule extends FacetRankingModule {
+public class SimplelonCountRankingModulelon elonxtelonnds FacelontRankingModulelon {
 
-  @Override
-  public void prepareResults(
-      EarlybirdLuceneSearcher.FacetSearchResults hits,
-      FacetCountState<ThriftFacetFieldResults> facetCountState) {
-    Iterator<FacetFieldResults<ThriftFacetFieldResults>> fieldResultsIterator =
-            facetCountState.getFacetFieldResultsIterator();
-    while (fieldResultsIterator.hasNext()) {
-      FacetFieldResults<ThriftFacetFieldResults> state = fieldResultsIterator.next();
-      if (!state.isFinished()) {
-        Schema.FieldInfo facetField =
-                facetCountState.getSchema().getFacetFieldByFacetName(state.facetName);
-        state.results = hits.getFacetResults(
-                facetField.getFieldType().getFacetName(), state.numResultsRequested);
-        if (state.results != null) {
-          state.numResultsFound = state.results.getTopFacetsSize();
+  @Ovelonrridelon
+  public void prelonparelonRelonsults(
+      elonarlybirdLucelonnelonSelonarchelonr.FacelontSelonarchRelonsults hits,
+      FacelontCountStatelon<ThriftFacelontFielonldRelonsults> facelontCountStatelon) {
+    Itelonrator<FacelontFielonldRelonsults<ThriftFacelontFielonldRelonsults>> fielonldRelonsultsItelonrator =
+            facelontCountStatelon.gelontFacelontFielonldRelonsultsItelonrator();
+    whilelon (fielonldRelonsultsItelonrator.hasNelonxt()) {
+      FacelontFielonldRelonsults<ThriftFacelontFielonldRelonsults> statelon = fielonldRelonsultsItelonrator.nelonxt();
+      if (!statelon.isFinishelond()) {
+        Schelonma.FielonldInfo facelontFielonld =
+                facelontCountStatelon.gelontSchelonma().gelontFacelontFielonldByFacelontNamelon(statelon.facelontNamelon);
+        statelon.relonsults = hits.gelontFacelontRelonsults(
+                facelontFielonld.gelontFielonldTypelon().gelontFacelontNamelon(), statelon.numRelonsultsRelonquelonstelond);
+        if (statelon.relonsults != null) {
+          statelon.numRelonsultsFound = statelon.relonsults.gelontTopFacelontsSizelon();
         }
       }
     }

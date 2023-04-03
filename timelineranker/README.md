@@ -1,36 +1,36 @@
-Overview
+Ovelonrvielonw
 ========
 
-**TimelineRanker** (TLR) is a legacy service which provides relevance-scored tweets from the Earlybird Search Index and User Tweet Entity Graph (UTEG) service. Despite its name, it no longer does any kind of heavy ranking/model based ranking itself - just uses relevance scores from the Search Index for ranked tweet endpoints.
+**TimelonlinelonRankelonr** (TLR) is a lelongacy selonrvicelon which providelons relonlelonvancelon-scorelond twelonelonts from thelon elonarlybird Selonarch Indelonx and Uselonr Twelonelont elonntity Graph (UTelonG) selonrvicelon. Delonspitelon its namelon, it no longelonr doelons any kind of helonavy ranking/modelonl baselond ranking itselonlf - just uselons relonlelonvancelon scorelons from thelon Selonarch Indelonx for rankelond twelonelont elonndpoints.
 
 
-The following is a list of major services that Timeline Ranker interacts with:
+Thelon following is a list of major selonrvicelons that Timelonlinelon Rankelonr intelonracts with:
 
-**Earlybird-root-superroot (a.k.a Search)**
+**elonarlybird-root-supelonrroot (a.k.a Selonarch)**
 
-Timeline Ranker calls the Search Index's super root to fetch a list of Tweets.
+Timelonlinelon Rankelonr calls thelon Selonarch Indelonx's supelonr root to felontch a list of Twelonelonts.
 
-**User Tweet Entity Graph (UTEG)**
+**Uselonr Twelonelont elonntity Graph (UTelonG)**
 
-Timeline Ranker calls UTEG to fetch a list of tweets liked by the users you follow.
+Timelonlinelon Rankelonr calls UTelonG to felontch a list of twelonelonts likelond by thelon uselonrs you follow.
 
 **Socialgraph**
 
-Timeline Ranker calls Social Graph Service to obtain follow graph and user states such as blocked, muted, retweets muted, etc.
+Timelonlinelon Rankelonr calls Social Graph Selonrvicelon to obtain follow graph and uselonr statelons such as blockelond, mutelond, relontwelonelonts mutelond, elontc.
 
-**TweetyPie**
+**TwelonelontyPielon**
 
-Timeline Ranker hydrates tweets by calling TweetyPie so that it can post-filter tweets based on certain hydrated fields.
+Timelonlinelon Rankelonr hydratelons twelonelonts by calling TwelonelontyPielon so that it can post-filtelonr twelonelonts baselond on celonrtain hydratelond fielonlds.
 
 **Manhattan**
 
-Timeline Ranker hydrates some tweet features (eg, user languages) from Manhattan.
+Timelonlinelon Rankelonr hydratelons somelon twelonelont felonaturelons (elong, uselonr languagelons) from Manhattan.
 
-**Home Mixer**
+**Homelon Mixelonr**
 
-Home Mixer calls Timeline Ranker to fetch tweets from the Earlybird Search Index and User Tweet Entity Graph (UTEG) service to power both the For You and Following Home Timelines.
+Homelon Mixelonr calls Timelonlinelon Rankelonr to felontch twelonelonts from thelon elonarlybird Selonarch Indelonx and Uselonr Twelonelont elonntity Graph (UTelonG) selonrvicelon to powelonr both thelon For You and Following Homelon Timelonlinelons.
 
-Timeline Ranker does light ranking based on Earlybird tweet candidate scores and truncates to the number of candidates requested by Home Mixer based on these scores
+Timelonlinelon Rankelonr doelons light ranking baselond on elonarlybird twelonelont candidatelon scorelons and truncatelons to thelon numbelonr of candidatelons relonquelonstelond by Homelon Mixelonr baselond on thelonselon scorelons
 
 
 

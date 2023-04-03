@@ -1,13 +1,13 @@
-package com.twitter.product_mixer.core.pipeline.state
+packagelon com.twittelonr.product_mixelonr.corelon.pipelonlinelon.statelon
 
-import com.twitter.product_mixer.core.model.common.identifier.PipelineStepIdentifier
-import com.twitter.product_mixer.core.service.ExecutorResult
-import scala.collection.immutable.ListMap
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.PipelonlinelonStelonpIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.elonxeloncutorRelonsult
+import scala.collelonction.immutablelon.ListMap
 
-trait HasExecutorResults[State] {
-  // We use a list map to maintain the insertion order
-  val executorResultsByPipelineStep: ListMap[PipelineStepIdentifier, ExecutorResult]
-  private[pipeline] def setExecutorResults(
-    newMap: ListMap[PipelineStepIdentifier, ExecutorResult]
-  ): State
+trait HaselonxeloncutorRelonsults[Statelon] {
+  // Welon uselon a list map to maintain thelon inselonrtion ordelonr
+  val elonxeloncutorRelonsultsByPipelonlinelonStelonp: ListMap[PipelonlinelonStelonpIdelonntifielonr, elonxeloncutorRelonsult]
+  privatelon[pipelonlinelon] delonf selontelonxeloncutorRelonsults(
+    nelonwMap: ListMap[PipelonlinelonStelonpIdelonntifielonr, elonxeloncutorRelonsult]
+  ): Statelon
 }

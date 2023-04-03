@@ -1,60 +1,60 @@
-package com.twitter.follow_recommendations.flows.content_recommender_flow
+packagelon com.twittelonr.follow_reloncommelonndations.flows.contelonnt_reloncommelonndelonr_flow
 
-import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.Param
+import com.twittelonr.follow_reloncommelonndations.configapi.common.FelonaturelonSwitchConfig
+import com.twittelonr.timelonlinelons.configapi.FSBoundelondParam
+import com.twittelonr.timelonlinelons.configapi.FSNamelon
+import com.twittelonr.timelonlinelons.configapi.Param
 
-import javax.inject.Inject
-import javax.inject.Singleton
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class ContentRecommenderFlowFSConfig @Inject() () extends FeatureSwitchConfig {
-  override val booleanFSParams: Seq[Param[Boolean] with FSName] =
-    Seq(
-      ContentRecommenderParams.IncludeActivityBasedCandidateSource,
-      ContentRecommenderParams.IncludeSocialBasedCandidateSource,
-      ContentRecommenderParams.IncludeGeoBasedCandidateSource,
-      ContentRecommenderParams.IncludeHomeTimelineTweetRecsCandidateSource,
-      ContentRecommenderParams.IncludeSocialProofEnforcedCandidateSource,
-      ContentRecommenderParams.EnableRecentFollowingPredicate,
-      ContentRecommenderParams.EnableGizmoduckPredicate,
-      ContentRecommenderParams.EnableInactivePredicate,
-      ContentRecommenderParams.EnableInvalidTargetCandidateRelationshipPredicate,
-      ContentRecommenderParams.IncludeNewFollowingNewFollowingExpansionCandidateSource,
-      ContentRecommenderParams.IncludeMoreGeoBasedCandidateSource,
-      ContentRecommenderParams.TargetEligibility,
-      ContentRecommenderParams.GetFollowersFromSgs,
-      ContentRecommenderParams.EnableInvalidRelationshipPredicate,
+@Singlelonton
+class ContelonntReloncommelonndelonrFlowFSConfig @Injelonct() () elonxtelonnds FelonaturelonSwitchConfig {
+  ovelonrridelon val boolelonanFSParams: Selonq[Param[Boolelonan] with FSNamelon] =
+    Selonq(
+      ContelonntReloncommelonndelonrParams.IncludelonActivityBaselondCandidatelonSourcelon,
+      ContelonntReloncommelonndelonrParams.IncludelonSocialBaselondCandidatelonSourcelon,
+      ContelonntReloncommelonndelonrParams.IncludelonGelonoBaselondCandidatelonSourcelon,
+      ContelonntReloncommelonndelonrParams.IncludelonHomelonTimelonlinelonTwelonelontReloncsCandidatelonSourcelon,
+      ContelonntReloncommelonndelonrParams.IncludelonSocialProofelonnforcelondCandidatelonSourcelon,
+      ContelonntReloncommelonndelonrParams.elonnablelonReloncelonntFollowingPrelondicatelon,
+      ContelonntReloncommelonndelonrParams.elonnablelonGizmoduckPrelondicatelon,
+      ContelonntReloncommelonndelonrParams.elonnablelonInactivelonPrelondicatelon,
+      ContelonntReloncommelonndelonrParams.elonnablelonInvalidTargelontCandidatelonRelonlationshipPrelondicatelon,
+      ContelonntReloncommelonndelonrParams.IncludelonNelonwFollowingNelonwFollowingelonxpansionCandidatelonSourcelon,
+      ContelonntReloncommelonndelonrParams.IncludelonMorelonGelonoBaselondCandidatelonSourcelon,
+      ContelonntReloncommelonndelonrParams.Targelontelonligibility,
+      ContelonntReloncommelonndelonrParams.GelontFollowelonrsFromSgs,
+      ContelonntReloncommelonndelonrParams.elonnablelonInvalidRelonlationshipPrelondicatelon,
     )
 
-  override val intFSParams: Seq[FSBoundedParam[Int]] =
-    Seq(
-      ContentRecommenderParams.ResultSizeParam,
-      ContentRecommenderParams.BatchSizeParam,
-      ContentRecommenderParams.FetchCandidateSourceBudgetInMillisecond,
-      ContentRecommenderParams.RecentFollowingPredicateBudgetInMillisecond,
+  ovelonrridelon val intFSParams: Selonq[FSBoundelondParam[Int]] =
+    Selonq(
+      ContelonntReloncommelonndelonrParams.RelonsultSizelonParam,
+      ContelonntReloncommelonndelonrParams.BatchSizelonParam,
+      ContelonntReloncommelonndelonrParams.FelontchCandidatelonSourcelonBudgelontInMilliseloncond,
+      ContelonntReloncommelonndelonrParams.ReloncelonntFollowingPrelondicatelonBudgelontInMilliseloncond,
     )
 
-  override val doubleFSParams: Seq[FSBoundedParam[Double]] =
-    Seq(
-      ContentRecommenderFlowCandidateSourceWeightsParams.ForwardPhoneBookSourceWeight,
-      ContentRecommenderFlowCandidateSourceWeightsParams.ForwardEmailBookSourceWeight,
-      ContentRecommenderFlowCandidateSourceWeightsParams.ReversePhoneBookSourceWeight,
-      ContentRecommenderFlowCandidateSourceWeightsParams.ReverseEmailBookSourceWeight,
-      ContentRecommenderFlowCandidateSourceWeightsParams.OfflineStrongTiePredictionSourceWeight,
-      ContentRecommenderFlowCandidateSourceWeightsParams.TriangularLoopsSourceWeight,
-      ContentRecommenderFlowCandidateSourceWeightsParams.UserUserGraphSourceWeight,
-      ContentRecommenderFlowCandidateSourceWeightsParams.NewFollowingNewFollowingExpansionSourceWeight,
-      ContentRecommenderFlowCandidateSourceWeightsParams.NewFollowingSimilarUserSourceWeight,
-      ContentRecommenderFlowCandidateSourceWeightsParams.RecentEngagementSimilarUserSourceWeight,
-      ContentRecommenderFlowCandidateSourceWeightsParams.RepeatedProfileVisitsSourceWeight,
-      ContentRecommenderFlowCandidateSourceWeightsParams.RealGraphOonSourceWeight,
-      ContentRecommenderFlowCandidateSourceWeightsParams.PopCountrySourceWeight,
-      ContentRecommenderFlowCandidateSourceWeightsParams.PopGeohashSourceWeight,
-      ContentRecommenderFlowCandidateSourceWeightsParams.PopCountryBackfillSourceWeight,
-      ContentRecommenderFlowCandidateSourceWeightsParams.PPMILocaleFollowSourceWeight,
-      ContentRecommenderFlowCandidateSourceWeightsParams.TopOrganicFollowsAccountsSourceWeight,
-      ContentRecommenderFlowCandidateSourceWeightsParams.CrowdSearchAccountSourceWeight,
+  ovelonrridelon val doublelonFSParams: Selonq[FSBoundelondParam[Doublelon]] =
+    Selonq(
+      ContelonntReloncommelonndelonrFlowCandidatelonSourcelonWelonightsParams.ForwardPhonelonBookSourcelonWelonight,
+      ContelonntReloncommelonndelonrFlowCandidatelonSourcelonWelonightsParams.ForwardelonmailBookSourcelonWelonight,
+      ContelonntReloncommelonndelonrFlowCandidatelonSourcelonWelonightsParams.RelonvelonrselonPhonelonBookSourcelonWelonight,
+      ContelonntReloncommelonndelonrFlowCandidatelonSourcelonWelonightsParams.RelonvelonrselonelonmailBookSourcelonWelonight,
+      ContelonntReloncommelonndelonrFlowCandidatelonSourcelonWelonightsParams.OfflinelonStrongTielonPrelondictionSourcelonWelonight,
+      ContelonntReloncommelonndelonrFlowCandidatelonSourcelonWelonightsParams.TriangularLoopsSourcelonWelonight,
+      ContelonntReloncommelonndelonrFlowCandidatelonSourcelonWelonightsParams.UselonrUselonrGraphSourcelonWelonight,
+      ContelonntReloncommelonndelonrFlowCandidatelonSourcelonWelonightsParams.NelonwFollowingNelonwFollowingelonxpansionSourcelonWelonight,
+      ContelonntReloncommelonndelonrFlowCandidatelonSourcelonWelonightsParams.NelonwFollowingSimilarUselonrSourcelonWelonight,
+      ContelonntReloncommelonndelonrFlowCandidatelonSourcelonWelonightsParams.ReloncelonntelonngagelonmelonntSimilarUselonrSourcelonWelonight,
+      ContelonntReloncommelonndelonrFlowCandidatelonSourcelonWelonightsParams.RelonpelonatelondProfilelonVisitsSourcelonWelonight,
+      ContelonntReloncommelonndelonrFlowCandidatelonSourcelonWelonightsParams.RelonalGraphOonSourcelonWelonight,
+      ContelonntReloncommelonndelonrFlowCandidatelonSourcelonWelonightsParams.PopCountrySourcelonWelonight,
+      ContelonntReloncommelonndelonrFlowCandidatelonSourcelonWelonightsParams.PopGelonohashSourcelonWelonight,
+      ContelonntReloncommelonndelonrFlowCandidatelonSourcelonWelonightsParams.PopCountryBackfillSourcelonWelonight,
+      ContelonntReloncommelonndelonrFlowCandidatelonSourcelonWelonightsParams.PPMILocalelonFollowSourcelonWelonight,
+      ContelonntReloncommelonndelonrFlowCandidatelonSourcelonWelonightsParams.TopOrganicFollowsAccountsSourcelonWelonight,
+      ContelonntReloncommelonndelonrFlowCandidatelonSourcelonWelonightsParams.CrowdSelonarchAccountSourcelonWelonight,
     )
 }

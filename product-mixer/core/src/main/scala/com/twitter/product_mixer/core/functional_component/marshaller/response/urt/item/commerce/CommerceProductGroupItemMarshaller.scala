@@ -1,14 +1,14 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.commerce
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.commelonrcelon
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.commerce.CommerceProductGroupItem
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.commelonrcelon.CommelonrcelonProductGroupItelonm
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class CommerceProductGroupItemMarshaller @Inject() () {
+@Singlelonton
+class CommelonrcelonProductGroupItelonmMarshallelonr @Injelonct() () {
 
-  def apply(commerceProductGroupItem: CommerceProductGroupItem): urt.TimelineItemContent =
-    urt.TimelineItemContent.CommerceProductGroup(
-      urt.CommerceProductGroup(commerceProductGroupItem.id))
+  delonf apply(commelonrcelonProductGroupItelonm: CommelonrcelonProductGroupItelonm): urt.TimelonlinelonItelonmContelonnt =
+    urt.TimelonlinelonItelonmContelonnt.CommelonrcelonProductGroup(
+      urt.CommelonrcelonProductGroup(commelonrcelonProductGroupItelonm.id))
 }

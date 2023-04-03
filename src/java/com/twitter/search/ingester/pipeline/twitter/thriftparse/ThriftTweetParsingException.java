@@ -1,7 +1,7 @@
-package com.twitter.search.ingester.pipeline.twitter.thriftparse;
+packagelon com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.twittelonr.thriftparselon;
 
-public final class ThriftTweetParsingException extends Exception {
-  public ThriftTweetParsingException(String message) {
-    super(message);
+public final class ThriftTwelonelontParsingelonxcelonption elonxtelonnds elonxcelonption {
+  public ThriftTwelonelontParsingelonxcelonption(String melonssagelon) {
+    supelonr(melonssagelon);
   }
 }

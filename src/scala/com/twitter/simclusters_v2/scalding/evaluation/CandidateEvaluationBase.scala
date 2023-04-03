@@ -1,50 +1,50 @@
-package com.twitter.simclusters_v2.scalding.evaluation
+packagelon com.twittelonr.simclustelonrs_v2.scalding.elonvaluation
 
-import com.twitter.core_workflows.user_model.thriftscala.CondensedUserState
-import com.twitter.core_workflows.user_model.thriftscala.UserState
-import com.twitter.pluck.source.core_workflows.user_model.CondensedUserStateScalaDataset
-import com.twitter.scalding._
-import com.twitter.scalding.source.TypedText
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.job.TwitterExecutionApp
-import com.twitter.simclusters_v2.thriftscala.CandidateTweets
-import com.twitter.simclusters_v2.thriftscala.ReferenceTweets
+import com.twittelonr.corelon_workflows.uselonr_modelonl.thriftscala.CondelonnselondUselonrStatelon
+import com.twittelonr.corelon_workflows.uselonr_modelonl.thriftscala.UselonrStatelon
+import com.twittelonr.pluck.sourcelon.corelon_workflows.uselonr_modelonl.CondelonnselondUselonrStatelonScalaDataselont
+import com.twittelonr.scalding._
+import com.twittelonr.scalding.sourcelon.TypelondTelonxt
+import com.twittelonr.scalding_intelonrnal.dalv2.DAL
+import com.twittelonr.scalding_intelonrnal.job.TwittelonrelonxeloncutionApp
+import com.twittelonr.simclustelonrs_v2.thriftscala.CandidatelonTwelonelonts
+import com.twittelonr.simclustelonrs_v2.thriftscala.RelonfelonrelonncelonTwelonelonts
 import scala.util.Random
 
 /**
- * Helper functions to provide user samples by sampling across user states.
+ * Helonlpelonr functions to providelon uselonr samplelons by sampling across uselonr statelons.
  */
-object UserStateUserSampler {
-  def getSampleUsersByUserState(
-    userStateSource: TypedPipe[CondensedUserState],
-    validStates: Seq[UserState],
-    samplePercentage: Double
-  ): TypedPipe[(UserState, Long)] = {
-    assert(samplePercentage >= 0 && samplePercentage <= 1)
-    val validStateSet = validStates.toSet
+objelonct UselonrStatelonUselonrSamplelonr {
+  delonf gelontSamplelonUselonrsByUselonrStatelon(
+    uselonrStatelonSourcelon: TypelondPipelon[CondelonnselondUselonrStatelon],
+    validStatelons: Selonq[UselonrStatelon],
+    samplelonPelonrcelonntagelon: Doublelon
+  ): TypelondPipelon[(UselonrStatelon, Long)] = {
+    asselonrt(samplelonPelonrcelonntagelon >= 0 && samplelonPelonrcelonntagelon <= 1)
+    val validStatelonSelont = validStatelons.toSelont
 
-    userStateSource
-      .collect {
-        case data if data.userState.isDefined && validStateSet.contains(data.userState.get) =>
-          (data.userState.get, data.uid)
+    uselonrStatelonSourcelon
+      .collelonct {
+        caselon data if data.uselonrStatelon.isDelonfinelond && validStatelonSelont.contains(data.uselonrStatelon.gelont) =>
+          (data.uselonrStatelon.gelont, data.uid)
       }
-      .filter(_ => Random.nextDouble() <= samplePercentage)
-      .forceToDisk
+      .filtelonr(_ => Random.nelonxtDoublelon() <= samplelonPelonrcelonntagelon)
+      .forcelonToDisk
   }
 
   /**
-   * Given a list of string corresponding to user states, convert them to the UserState type.
-   * If the input is empty, default to return all available user states
+   * Givelonn a list of string correlonsponding to uselonr statelons, convelonrt thelonm to thelon UselonrStatelon typelon.
+   * If thelon input is elonmpty, delonfault to relonturn all availablelon uselonr statelons
    */
-  def parseUserStates(strStates: Seq[String]): Seq[UserState] = {
-    if (strStates.isEmpty) {
-      UserState.list
-    } else {
-      strStates.map { str =>
-        UserState
-          .valueOf(str).getOrElse(
-            throw new IllegalArgumentException(
-              s"Input user_states $str is invalid. Valid states are: " + UserState.list
+  delonf parselonUselonrStatelons(strStatelons: Selonq[String]): Selonq[UselonrStatelon] = {
+    if (strStatelons.iselonmpty) {
+      UselonrStatelon.list
+    } elonlselon {
+      strStatelons.map { str =>
+        UselonrStatelon
+          .valuelonOf(str).gelontOrelonlselon(
+            throw nelonw IllelongalArgumelonntelonxcelonption(
+              s"Input uselonr_statelons $str is invalid. Valid statelons arelon: " + UselonrStatelon.list
             )
           )
       }
@@ -53,111 +53,111 @@ object UserStateUserSampler {
 }
 
 /**
- * A variation of the evaluation base where target users are sampled by user states.
- * For each user state of interest (e.x. HEAVY_TWEETER), we run a separate evaluation call, and
- * output the evaluation results per user state. This is helpful when we want to horizontally
- * compare how users in different user states respond to the candidate tweets.
+ * A variation of thelon elonvaluation baselon whelonrelon targelont uselonrs arelon samplelond by uselonr statelons.
+ * For elonach uselonr statelon of intelonrelonst (elon.x. HelonAVY_TWelonelonTelonR), welon run a selonparatelon elonvaluation call, and
+ * output thelon elonvaluation relonsults pelonr uselonr statelon. This is helonlpful whelonn welon want to horizontally
+ * comparelon how uselonrs in diffelonrelonnt uselonr statelons relonspond to thelon candidatelon twelonelonts.
  */
-trait UserStateBasedEvaluationExecutionBase
-    extends CandidateEvaluationBase
-    with TwitterExecutionApp {
+trait UselonrStatelonBaselondelonvaluationelonxeloncutionBaselon
+    elonxtelonnds CandidatelonelonvaluationBaselon
+    with TwittelonrelonxeloncutionApp {
 
-  def referenceTweets: TypedPipe[ReferenceTweets]
-  def candidateTweets: TypedPipe[CandidateTweets]
+  delonf relonfelonrelonncelonTwelonelonts: TypelondPipelon[RelonfelonrelonncelonTwelonelonts]
+  delonf candidatelonTwelonelonts: TypelondPipelon[CandidatelonTwelonelonts]
 
-  override def job: Execution[Unit] = {
-    Execution.withId { implicit uniqueId =>
-      Execution.withArgs { args =>
-        implicit val dateRange: DateRange =
-          DateRange.parse(args.list("date"))(DateOps.UTC, DateParser.default)
+  ovelonrridelon delonf job: elonxeloncution[Unit] = {
+    elonxeloncution.withId { implicit uniquelonId =>
+      elonxeloncution.withArgs { args =>
+        implicit val datelonRangelon: DatelonRangelon =
+          DatelonRangelon.parselon(args.list("datelon"))(DatelonOps.UTC, DatelonParselonr.delonfault)
 
         val outputRootDir = args("outputDir")
-        val userStates: Seq[UserState] =
-          UserStateUserSampler.parseUserStates(args.list("user_states"))
-        val sampleRate = args.double("sample_rate")
+        val uselonrStatelons: Selonq[UselonrStatelon] =
+          UselonrStatelonUselonrSamplelonr.parselonUselonrStatelons(args.list("uselonr_statelons"))
+        val samplelonRatelon = args.doublelon("samplelon_ratelon")
 
-        // For each user state we are interested in, run separate executions and write
-        // the output into individual sub directories
-        val userStateSource = DAL.read(CondensedUserStateScalaDataset).toTypedPipe
-        val userIdsByState =
-          UserStateUserSampler.getSampleUsersByUserState(userStateSource, userStates, sampleRate)
-        val executionsPerUserState = userStates.map { userState =>
-          val sampleUsers = userIdsByState.collect { case data if data._1 == userState => data._2 }
-          val outputPath = outputRootDir + "/" + userState + "/"
+        // For elonach uselonr statelon welon arelon intelonrelonstelond in, run selonparatelon elonxeloncutions and writelon
+        // thelon output into individual sub direlonctorielons
+        val uselonrStatelonSourcelon = DAL.relonad(CondelonnselondUselonrStatelonScalaDataselont).toTypelondPipelon
+        val uselonrIdsByStatelon =
+          UselonrStatelonUselonrSamplelonr.gelontSamplelonUselonrsByUselonrStatelon(uselonrStatelonSourcelon, uselonrStatelons, samplelonRatelon)
+        val elonxeloncutionsPelonrUselonrStatelon = uselonrStatelons.map { uselonrStatelon =>
+          val samplelonUselonrs = uselonrIdsByStatelon.collelonct { caselon data if data._1 == uselonrStatelon => data._2 }
+          val outputPath = outputRootDir + "/" + uselonrStatelon + "/"
 
-          super
-            .runSampledEvaluation(sampleUsers, referenceTweets, candidateTweets)
-            .writeExecution(TypedText.csv(outputPath))
+          supelonr
+            .runSamplelondelonvaluation(samplelonUselonrs, relonfelonrelonncelonTwelonelonts, candidatelonTwelonelonts)
+            .writelonelonxeloncution(TypelondTelonxt.csv(outputPath))
         }
-        // Run evaluation for each user state in parallel
-        Execution.sequence(executionsPerUserState).unit
+        // Run elonvaluation for elonach uselonr statelon in parallelonl
+        elonxeloncution.selonquelonncelon(elonxeloncutionsPelonrUselonrStatelon).unit
       }
     }
   }
 }
 
 /**
- * A basic flow for evaluating the quality of a set of candidate tweets, typically generated by an
- * algorithm (ex. SimClusters), by comparing its engagement rates against a set of reference tweets
- * The job goes through the following steps:
- * 1. Generate a group of target users on which we measure tweet engagements
- * 2. Collect tweets impressed by these users and their engagements on tweets from a labeled
- * tweet source (ex. Home Timeline engagement data), and form a reference set
- * 3. For each candidate tweet, collect the engagement rates from the reference set
- * 4. Run evaluation calculations (ex. percentage of intersection, engagement rate, etc)
+ * A basic flow for elonvaluating thelon quality of a selont of candidatelon twelonelonts, typically gelonnelonratelond by an
+ * algorithm (elonx. SimClustelonrs), by comparing its elonngagelonmelonnt ratelons against a selont of relonfelonrelonncelon twelonelonts
+ * Thelon job goelons through thelon following stelonps:
+ * 1. Gelonnelonratelon a group of targelont uselonrs on which welon melonasurelon twelonelont elonngagelonmelonnts
+ * 2. Collelonct twelonelonts imprelonsselond by thelonselon uselonrs and thelonir elonngagelonmelonnts on twelonelonts from a labelonlelond
+ * twelonelont sourcelon (elonx. Homelon Timelonlinelon elonngagelonmelonnt data), and form a relonfelonrelonncelon selont
+ * 3. For elonach candidatelon twelonelont, collelonct thelon elonngagelonmelonnt ratelons from thelon relonfelonrelonncelon selont
+ * 4. Run elonvaluation calculations (elonx. pelonrcelonntagelon of intelonrselonction, elonngagelonmelonnt ratelon, elontc)
  *
- * Each sub class is expected to provide 3 sets of data sources, which are the sample users,
- * candidate tweet sources, and reference tweet sources.
+ * elonach sub class is elonxpelonctelond to providelon 3 selonts of data sourcelons, which arelon thelon samplelon uselonrs,
+ * candidatelon twelonelont sourcelons, and relonfelonrelonncelon twelonelont sourcelons.
  */
-trait CandidateEvaluationBase {
-  private def getSampledReferenceTweets(
-    referenceTweetEngagements: TypedPipe[ReferenceTweets],
-    sampleUsers: TypedPipe[Long]
-  ): TypedPipe[ReferenceTweets] = {
-    referenceTweetEngagements
-      .groupBy(_.targetUserId)
-      .join(sampleUsers.asKeys)
-      .map { case (targetUserId, (referenceEngagements, _)) => referenceEngagements }
+trait CandidatelonelonvaluationBaselon {
+  privatelon delonf gelontSamplelondRelonfelonrelonncelonTwelonelonts(
+    relonfelonrelonncelonTwelonelontelonngagelonmelonnts: TypelondPipelon[RelonfelonrelonncelonTwelonelonts],
+    samplelonUselonrs: TypelondPipelon[Long]
+  ): TypelondPipelon[RelonfelonrelonncelonTwelonelonts] = {
+    relonfelonrelonncelonTwelonelontelonngagelonmelonnts
+      .groupBy(_.targelontUselonrId)
+      .join(samplelonUselonrs.asKelonys)
+      .map { caselon (targelontUselonrId, (relonfelonrelonncelonelonngagelonmelonnts, _)) => relonfelonrelonncelonelonngagelonmelonnts }
   }
 
-  private def getSampledCandidateTweets(
-    candidateTweets: TypedPipe[CandidateTweets],
-    sampleUsers: TypedPipe[Long]
-  ): TypedPipe[CandidateTweets] = {
-    candidateTweets
-      .groupBy(_.targetUserId)
-      .join(sampleUsers.asKeys)
-      .map { case (_, (tweets, _)) => tweets }
+  privatelon delonf gelontSamplelondCandidatelonTwelonelonts(
+    candidatelonTwelonelonts: TypelondPipelon[CandidatelonTwelonelonts],
+    samplelonUselonrs: TypelondPipelon[Long]
+  ): TypelondPipelon[CandidatelonTwelonelonts] = {
+    candidatelonTwelonelonts
+      .groupBy(_.targelontUselonrId)
+      .join(samplelonUselonrs.asKelonys)
+      .map { caselon (_, (twelonelonts, _)) => twelonelonts }
   }
 
   /**
-   * Evaluation function, should be overridden by implementing sub classes to suit individual
-   * objectives, such as like engagement rates, CRT, etc.
-   * @param sampledReference
-   * @param sampledCandidate
+   * elonvaluation function, should belon ovelonrriddelonn by implelonmelonnting sub classelons to suit individual
+   * objelonctivelons, such as likelon elonngagelonmelonnt ratelons, CRT, elontc.
+   * @param samplelondRelonfelonrelonncelon
+   * @param samplelondCandidatelon
    */
-  def evaluateResults(
-    sampledReference: TypedPipe[ReferenceTweets],
-    sampledCandidate: TypedPipe[CandidateTweets]
-  ): TypedPipe[String]
+  delonf elonvaluatelonRelonsults(
+    samplelondRelonfelonrelonncelon: TypelondPipelon[RelonfelonrelonncelonTwelonelonts],
+    samplelondCandidatelon: TypelondPipelon[CandidatelonTwelonelonts]
+  ): TypelondPipelon[String]
 
   /**
-   * Given a list of target users, the reference tweet set, and the candidate tweet set,
-   * calculate the engagement rates on the reference set and the candidate set by these users.
-   * The evaluation result should be converted into an itemized format
-   * these users.
-   * @param referenceTweets
-   * @param candidateTweets
-   * @return
+   * Givelonn a list of targelont uselonrs, thelon relonfelonrelonncelon twelonelont selont, and thelon candidatelon twelonelont selont,
+   * calculatelon thelon elonngagelonmelonnt ratelons on thelon relonfelonrelonncelon selont and thelon candidatelon selont by thelonselon uselonrs.
+   * Thelon elonvaluation relonsult should belon convelonrtelond into an itelonmizelond format
+   * thelonselon uselonrs.
+   * @param relonfelonrelonncelonTwelonelonts
+   * @param candidatelonTwelonelonts
+   * @relonturn
    */
-  def runSampledEvaluation(
-    targetUserSamples: TypedPipe[Long],
-    referenceTweets: TypedPipe[ReferenceTweets],
-    candidateTweets: TypedPipe[CandidateTweets]
-  ): TypedPipe[String] = {
-    val sampledCandidate = getSampledCandidateTweets(candidateTweets, targetUserSamples)
-    val referencePerUser = getSampledReferenceTweets(referenceTweets, targetUserSamples)
+  delonf runSamplelondelonvaluation(
+    targelontUselonrSamplelons: TypelondPipelon[Long],
+    relonfelonrelonncelonTwelonelonts: TypelondPipelon[RelonfelonrelonncelonTwelonelonts],
+    candidatelonTwelonelonts: TypelondPipelon[CandidatelonTwelonelonts]
+  ): TypelondPipelon[String] = {
+    val samplelondCandidatelon = gelontSamplelondCandidatelonTwelonelonts(candidatelonTwelonelonts, targelontUselonrSamplelons)
+    val relonfelonrelonncelonPelonrUselonr = gelontSamplelondRelonfelonrelonncelonTwelonelonts(relonfelonrelonncelonTwelonelonts, targelontUselonrSamplelons)
 
-    evaluateResults(referencePerUser, sampledCandidate)
+    elonvaluatelonRelonsults(relonfelonrelonncelonPelonrUselonr, samplelondCandidatelon)
   }
 }

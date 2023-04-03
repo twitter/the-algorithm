@@ -1,7 +1,7 @@
-package com.twitter.product_mixer.core.pipeline
+packagelon com.twittelonr.product_mixelonr.corelon.pipelonlinelon
 
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonWithDelontails
 
-private[core] object CandidatePipelineResults
-    extends Feature[PipelineQuery, Seq[CandidateWithDetails]]
+privatelon[corelon] objelonct CandidatelonPipelonlinelonRelonsults
+    elonxtelonnds Felonaturelon[PipelonlinelonQuelonry, Selonq[CandidatelonWithDelontails]]

@@ -1,49 +1,49 @@
-package com.twitter.product_mixer.core.pipeline.mixer
+packagelon com.twittelonr.product_mixelonr.corelon.pipelonlinelon.mixelonr
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.model.marshalling.HasMarshalling
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.candidate.CandidatePipelineBuilderFactory
-import com.twitter.product_mixer.core.service.candidate_pipeline_executor.CandidatePipelineExecutor
-import com.twitter.product_mixer.core.service.domain_marshaller_executor.DomainMarshallerExecutor
-import com.twitter.product_mixer.core.service.gate_executor.GateExecutor
-import com.twitter.product_mixer.core.service.pipeline_result_side_effect_executor.PipelineResultSideEffectExecutor
-import com.twitter.product_mixer.core.service.async_feature_map_executor.AsyncFeatureMapExecutor
-import com.twitter.product_mixer.core.service.query_feature_hydrator_executor.QueryFeatureHydratorExecutor
-import com.twitter.product_mixer.core.service.selector_executor.SelectorExecutor
-import com.twitter.product_mixer.core.service.transport_marshaller_executor.TransportMarshallerExecutor
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.HasMarshalling
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.candidatelon.CandidatelonPipelonlinelonBuildelonrFactory
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.candidatelon_pipelonlinelon_elonxeloncutor.CandidatelonPipelonlinelonelonxeloncutor
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.domain_marshallelonr_elonxeloncutor.DomainMarshallelonrelonxeloncutor
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.gatelon_elonxeloncutor.Gatelonelonxeloncutor
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.pipelonlinelon_relonsult_sidelon_elonffelonct_elonxeloncutor.PipelonlinelonRelonsultSidelonelonffelonctelonxeloncutor
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.async_felonaturelon_map_elonxeloncutor.AsyncFelonaturelonMapelonxeloncutor
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.quelonry_felonaturelon_hydrator_elonxeloncutor.QuelonryFelonaturelonHydratorelonxeloncutor
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.selonlelonctor_elonxeloncutor.Selonlelonctorelonxeloncutor
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.transport_marshallelonr_elonxeloncutor.TransportMarshallelonrelonxeloncutor
 
-import javax.inject.Inject
-import javax.inject.Singleton
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class MixerPipelineBuilderFactory @Inject() (
-  candidatePipelineExecutor: CandidatePipelineExecutor,
-  gateExecutor: GateExecutor,
-  selectorExecutor: SelectorExecutor,
-  queryFeatureHydratorExecutor: QueryFeatureHydratorExecutor,
-  asyncFeatureMapExecutor: AsyncFeatureMapExecutor,
-  domainMarshallerExecutor: DomainMarshallerExecutor,
-  transportMarshallerExecutor: TransportMarshallerExecutor,
-  pipelineResultSideEffectExecutor: PipelineResultSideEffectExecutor,
-  candidatePipelineBuilderFactory: CandidatePipelineBuilderFactory,
-  statsReceiver: StatsReceiver) {
-  def get[
-    Query <: PipelineQuery,
-    DomainResultType <: HasMarshalling,
-    Result
-  ]: MixerPipelineBuilder[Query, DomainResultType, Result] = {
-    new MixerPipelineBuilder[Query, DomainResultType, Result](
-      candidatePipelineExecutor,
-      gateExecutor,
-      selectorExecutor,
-      queryFeatureHydratorExecutor,
-      asyncFeatureMapExecutor,
-      domainMarshallerExecutor,
-      transportMarshallerExecutor,
-      pipelineResultSideEffectExecutor,
-      candidatePipelineBuilderFactory,
-      statsReceiver
+@Singlelonton
+class MixelonrPipelonlinelonBuildelonrFactory @Injelonct() (
+  candidatelonPipelonlinelonelonxeloncutor: CandidatelonPipelonlinelonelonxeloncutor,
+  gatelonelonxeloncutor: Gatelonelonxeloncutor,
+  selonlelonctorelonxeloncutor: Selonlelonctorelonxeloncutor,
+  quelonryFelonaturelonHydratorelonxeloncutor: QuelonryFelonaturelonHydratorelonxeloncutor,
+  asyncFelonaturelonMapelonxeloncutor: AsyncFelonaturelonMapelonxeloncutor,
+  domainMarshallelonrelonxeloncutor: DomainMarshallelonrelonxeloncutor,
+  transportMarshallelonrelonxeloncutor: TransportMarshallelonrelonxeloncutor,
+  pipelonlinelonRelonsultSidelonelonffelonctelonxeloncutor: PipelonlinelonRelonsultSidelonelonffelonctelonxeloncutor,
+  candidatelonPipelonlinelonBuildelonrFactory: CandidatelonPipelonlinelonBuildelonrFactory,
+  statsReloncelonivelonr: StatsReloncelonivelonr) {
+  delonf gelont[
+    Quelonry <: PipelonlinelonQuelonry,
+    DomainRelonsultTypelon <: HasMarshalling,
+    Relonsult
+  ]: MixelonrPipelonlinelonBuildelonr[Quelonry, DomainRelonsultTypelon, Relonsult] = {
+    nelonw MixelonrPipelonlinelonBuildelonr[Quelonry, DomainRelonsultTypelon, Relonsult](
+      candidatelonPipelonlinelonelonxeloncutor,
+      gatelonelonxeloncutor,
+      selonlelonctorelonxeloncutor,
+      quelonryFelonaturelonHydratorelonxeloncutor,
+      asyncFelonaturelonMapelonxeloncutor,
+      domainMarshallelonrelonxeloncutor,
+      transportMarshallelonrelonxeloncutor,
+      pipelonlinelonRelonsultSidelonelonffelonctelonxeloncutor,
+      candidatelonPipelonlinelonBuildelonrFactory,
+      statsReloncelonivelonr
     )
   }
 }

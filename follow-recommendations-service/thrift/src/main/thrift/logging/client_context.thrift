@@ -1,14 +1,14 @@
-namespace java com.twitter.follow_recommendations.logging.thriftjava
-#@namespace scala com.twitter.follow_recommendations.logging.thriftscala
-#@namespace strato com.twitter.follow_recommendations.logging
+namelonspacelon java com.twittelonr.follow_reloncommelonndations.logging.thriftjava
+#@namelonspacelon scala com.twittelonr.follow_reloncommelonndations.logging.thriftscala
+#@namelonspacelon strato com.twittelonr.follow_reloncommelonndations.logging
 
-// Offline equal of ClientContext
-struct OfflineClientContext {
-  1: optional i64 userId(personalDataType='UserId')
-  2: optional i64 guestId(personalDataType='GuestId')
-  3: optional i64 appId(personalDataType='AppId')
-  4: optional string countryCode(personalDataType='InferredCountry')
-  5: optional string languageCode(personalDataType='InferredLanguage')
-  6: optional i64 guestIdAds(personalDataType='GuestId')
-  7: optional i64 guestIdMarketing(personalDataType='GuestId')
-}(persisted='true', hasPersonalData='true')
+// Offlinelon elonqual of ClielonntContelonxt
+struct OfflinelonClielonntContelonxt {
+  1: optional i64 uselonrId(pelonrsonalDataTypelon='UselonrId')
+  2: optional i64 guelonstId(pelonrsonalDataTypelon='GuelonstId')
+  3: optional i64 appId(pelonrsonalDataTypelon='AppId')
+  4: optional string countryCodelon(pelonrsonalDataTypelon='InfelonrrelondCountry')
+  5: optional string languagelonCodelon(pelonrsonalDataTypelon='InfelonrrelondLanguagelon')
+  6: optional i64 guelonstIdAds(pelonrsonalDataTypelon='GuelonstId')
+  7: optional i64 guelonstIdMarkelonting(pelonrsonalDataTypelon='GuelonstId')
+}(pelonrsistelond='truelon', hasPelonrsonalData='truelon')

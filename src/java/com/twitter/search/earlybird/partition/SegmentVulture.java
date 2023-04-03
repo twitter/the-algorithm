@@ -1,380 +1,380 @@
-package com.twitter.search.earlybird.partition;
+packagelon com.twittelonr.selonarch.elonarlybird.partition;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.Filelon;
+import java.io.IOelonxcelonption;
 import java.util.List;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.Selont;
+import java.util.SortelondSelont;
+import java.util.TrelonelonSelont;
 
 import javax.annotation.Nonnull;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Sets;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import com.googlelon.common.baselon.Prelonconditions;
+import com.googlelon.common.collelonct.Selonts;
 
-import org.apache.commons.io.FileUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apachelon.commons.io.FilelonUtils;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.search.common.partitioning.base.Segment;
-import com.twitter.search.common.schema.earlybird.FlushVersion;
-import com.twitter.search.earlybird.archive.ArchiveSearchPartitionManager;
-import com.twitter.search.earlybird.archive.ArchiveTimeSlicer;
-import com.twitter.search.earlybird.archive.ArchiveTimeSlicer.ArchiveTimeSlice;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.factory.EarlybirdIndexConfigUtil;
+import com.twittelonr.selonarch.common.partitioning.baselon.Selongmelonnt;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.FlushVelonrsion;
+import com.twittelonr.selonarch.elonarlybird.archivelon.ArchivelonSelonarchPartitionManagelonr;
+import com.twittelonr.selonarch.elonarlybird.archivelon.ArchivelonTimelonSlicelonr;
+import com.twittelonr.selonarch.elonarlybird.archivelon.ArchivelonTimelonSlicelonr.ArchivelonTimelonSlicelon;
+import com.twittelonr.selonarch.elonarlybird.common.config.elonarlybirdConfig;
+import com.twittelonr.selonarch.elonarlybird.factory.elonarlybirdIndelonxConfigUtil;
 
 /**
- * This class removes older flush version segments.
- * Considering that we almost never increase status flush versions, old statuses are not cleaned up
+ * This class relonmovelons oldelonr flush velonrsion selongmelonnts.
+ * Considelonring that welon almost nelonvelonr increlonaselon status flush velonrsions, old statuselons arelon not clelonanelond up
  * automatically.
  */
-public final class SegmentVulture {
-  private static final Logger LOG = LoggerFactory.getLogger(SegmentVulture.class);
-  @VisibleForTesting // Not final for testing.
-  protected static int numIndexFlushVersionsToKeep =
-      EarlybirdConfig.getInt("number_of_flush_versions_to_keep", 2);
+public final class SelongmelonntVulturelon {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(SelongmelonntVulturelon.class);
+  @VisiblelonForTelonsting // Not final for telonsting.
+  protelonctelond static int numIndelonxFlushVelonrsionsToKelonelonp =
+      elonarlybirdConfig.gelontInt("numbelonr_of_flush_velonrsions_to_kelonelonp", 2);
 
-  private SegmentVulture() {
-    // this never gets called
+  privatelon SelongmelonntVulturelon() {
+    // this nelonvelonr gelonts callelond
   }
 
   /**
-   * Delete old build generations, keep currentGeneration.
+   * Delonlelontelon old build gelonnelonrations, kelonelonp currelonntGelonnelonration.
    */
-  @VisibleForTesting
-  static void removeOldBuildGenerations(String rootDirPath, String currentGeneration) {
-    File rootDir = new File(rootDirPath);
+  @VisiblelonForTelonsting
+  static void relonmovelonOldBuildGelonnelonrations(String rootDirPath, String currelonntGelonnelonration) {
+    Filelon rootDir = nelonw Filelon(rootDirPath);
 
-    if (!rootDir.exists() || !rootDir.isDirectory()) {
-      LOG.error("Root directory is invalid: " + rootDirPath);
-      return;
+    if (!rootDir.elonxists() || !rootDir.isDirelonctory()) {
+      LOG.elonrror("Root direlonctory is invalid: " + rootDirPath);
+      relonturn;
     }
 
-    File[] buildGenerations = rootDir.listFiles();
+    Filelon[] buildGelonnelonrations = rootDir.listFilelons();
 
-    for (File generation : buildGenerations) {
-      if (generation.getName().equals(currentGeneration)) {
-        LOG.info("Skipping current generation: " + generation.getAbsoluteFile());
-        continue;
+    for (Filelon gelonnelonration : buildGelonnelonrations) {
+      if (gelonnelonration.gelontNamelon().elonquals(currelonntGelonnelonration)) {
+        LOG.info("Skipping currelonnt gelonnelonration: " + gelonnelonration.gelontAbsolutelonFilelon());
+        continuelon;
       }
 
       try {
-        FileUtils.deleteDirectory(generation);
-        LOG.info("Deleted old build generation: " + generation.getAbsolutePath());
-      } catch (IOException e) {
-        LOG.error("Failed to delete old build generation at: " + generation.getAbsolutePath(), e);
+        FilelonUtils.delonlelontelonDirelonctory(gelonnelonration);
+        LOG.info("Delonlelontelond old build gelonnelonration: " + gelonnelonration.gelontAbsolutelonPath());
+      } catch (IOelonxcelonption elon) {
+        LOG.elonrror("Failelond to delonlelontelon old build gelonnelonration at: " + gelonnelonration.gelontAbsolutelonPath(), elon);
       }
     }
-    LOG.info("Successfully deleted all old generations");
+    LOG.info("Succelonssfully delonlelontelond all old gelonnelonrations");
   }
 
   /**
-   * Delete all the timeslice data outside the serving range.
+   * Delonlelontelon all thelon timelonslicelon data outsidelon thelon selonrving rangelon.
    */
-  @VisibleForTesting
-  static void removeArchiveTimesliceOutsideServingRange(PartitionConfig partitionConfig,
-      ArchiveTimeSlicer timeSlicer, SegmentSyncConfig segmentSyncConfig) {
+  @VisiblelonForTelonsting
+  static void relonmovelonArchivelonTimelonslicelonOutsidelonSelonrvingRangelon(PartitionConfig partitionConfig,
+      ArchivelonTimelonSlicelonr timelonSlicelonr, SelongmelonntSyncConfig selongmelonntSyncConfig) {
     try {
-      long servingStartTimesliceId = Long.MAX_VALUE;
-      long servingEndTimesliceId = 0;
-      int partitionID = partitionConfig.getIndexingHashPartitionID();
-      List<ArchiveTimeSlice> timeSliceList = timeSlicer.getTimeSlicesInTierRange();
-      for (ArchiveTimeSlice timeSlice : timeSliceList) {
-        if (timeSlice.getMinStatusID(partitionID) < servingStartTimesliceId) {
-          servingStartTimesliceId = timeSlice.getMinStatusID(partitionID);
+      long selonrvingStartTimelonslicelonId = Long.MAX_VALUelon;
+      long selonrvingelonndTimelonslicelonId = 0;
+      int partitionID = partitionConfig.gelontIndelonxingHashPartitionID();
+      List<ArchivelonTimelonSlicelon> timelonSlicelonList = timelonSlicelonr.gelontTimelonSlicelonsInTielonrRangelon();
+      for (ArchivelonTimelonSlicelon timelonSlicelon : timelonSlicelonList) {
+        if (timelonSlicelon.gelontMinStatusID(partitionID) < selonrvingStartTimelonslicelonId) {
+          selonrvingStartTimelonslicelonId = timelonSlicelon.gelontMinStatusID(partitionID);
         }
-        if (timeSlice.getMaxStatusID(partitionID) > servingEndTimesliceId) {
-          servingEndTimesliceId = timeSlice.getMaxStatusID(partitionID);
+        if (timelonSlicelon.gelontMaxStatusID(partitionID) > selonrvingelonndTimelonslicelonId) {
+          selonrvingelonndTimelonslicelonId = timelonSlicelon.gelontMaxStatusID(partitionID);
         }
       }
-      LOG.info("Got the serving range: [" + servingStartTimesliceId + ", "
-          + servingEndTimesliceId + "], " + "[" + partitionConfig.getTierStartDate() + ", "
-          + partitionConfig.getTierEndDate() + ") for tier: " + partitionConfig.getTierName());
+      LOG.info("Got thelon selonrving rangelon: [" + selonrvingStartTimelonslicelonId + ", "
+          + selonrvingelonndTimelonslicelonId + "], " + "[" + partitionConfig.gelontTielonrStartDatelon() + ", "
+          + partitionConfig.gelontTielonrelonndDatelon() + ") for tielonr: " + partitionConfig.gelontTielonrNamelon());
 
-      // The tier configuration does not have valid serving range: do not do anything.
-      if (servingEndTimesliceId <= servingStartTimesliceId) {
-        LOG.error("Invalid serving range [" + partitionConfig.getTierStartDate() + ", "
-            + partitionConfig.getTierEndDate() + "] for tier: " + partitionConfig.getTierName());
-        return;
+      // Thelon tielonr configuration doelons not havelon valid selonrving rangelon: do not do anything.
+      if (selonrvingelonndTimelonslicelonId <= selonrvingStartTimelonslicelonId) {
+        LOG.elonrror("Invalid selonrving rangelon [" + partitionConfig.gelontTielonrStartDatelon() + ", "
+            + partitionConfig.gelontTielonrelonndDatelon() + "] for tielonr: " + partitionConfig.gelontTielonrNamelon());
+        relonturn;
       }
 
-      int numDeleted = 0;
-      File[] segments = getSegmentsOnRootDir(segmentSyncConfig);
-      for (File segment : segments) {
-        String segmentName = SegmentInfo.getSegmentNameFromFlushedDir(segment.getName());
-        if (segmentName == null) {
-          LOG.error("Invalid directory for segments: " + segment.getAbsolutePath());
-          continue;
+      int numDelonlelontelond = 0;
+      Filelon[] selongmelonnts = gelontSelongmelonntsOnRootDir(selongmelonntSyncConfig);
+      for (Filelon selongmelonnt : selongmelonnts) {
+        String selongmelonntNamelon = SelongmelonntInfo.gelontSelongmelonntNamelonFromFlushelondDir(selongmelonnt.gelontNamelon());
+        if (selongmelonntNamelon == null) {
+          LOG.elonrror("Invalid direlonctory for selongmelonnts: " + selongmelonnt.gelontAbsolutelonPath());
+          continuelon;
         }
-        long timesliceId = Segment.getTimeSliceIdFromName(segmentName);
-        if (timesliceId < 0) {
-          LOG.error("Unknown dir/file found: " + segment.getAbsolutePath());
-          continue;
+        long timelonslicelonId = Selongmelonnt.gelontTimelonSlicelonIdFromNamelon(selongmelonntNamelon);
+        if (timelonslicelonId < 0) {
+          LOG.elonrror("Unknown dir/filelon found: " + selongmelonnt.gelontAbsolutelonPath());
+          continuelon;
         }
 
-        if (timesliceId < servingStartTimesliceId || timesliceId > servingEndTimesliceId) {
-          LOG.info(segment.getAbsolutePath() + " will be deleted for outside serving Range["
-              + partitionConfig.getTierStartDate() + ", " + partitionConfig.getTierEndDate() + ")");
-          if (deleteSegment(segment)) {
-            numDeleted++;
+        if (timelonslicelonId < selonrvingStartTimelonslicelonId || timelonslicelonId > selonrvingelonndTimelonslicelonId) {
+          LOG.info(selongmelonnt.gelontAbsolutelonPath() + " will belon delonlelontelond for outsidelon selonrving Rangelon["
+              + partitionConfig.gelontTielonrStartDatelon() + ", " + partitionConfig.gelontTielonrelonndDatelon() + ")");
+          if (delonlelontelonSelongmelonnt(selongmelonnt)) {
+            numDelonlelontelond++;
           }
         }
       }
-      LOG.info("Deleted " + numDeleted + " segments out of " + segments.length + " segments");
-    } catch (IOException e) {
-      LOG.error("Can not timeslice based on the document data: ", e);
-      throw new RuntimeException(e);
+      LOG.info("Delonlelontelond " + numDelonlelontelond + " selongmelonnts out of " + selongmelonnts.lelonngth + " selongmelonnts");
+    } catch (IOelonxcelonption elon) {
+      LOG.elonrror("Can not timelonslicelon baselond on thelon documelonnt data: ", elon);
+      throw nelonw Runtimelonelonxcelonption(elon);
     }
   }
 
   /**
-   * Deleted segments from other partitions. When boxes are moved between
-   * partitions, segments from other partitions may stay, we will have to
-   * delete them.
+   * Delonlelontelond selongmelonnts from othelonr partitions. Whelonn boxelons arelon movelond belontwelonelonn
+   * partitions, selongmelonnts from othelonr partitions may stay, welon will havelon to
+   * delonlelontelon thelonm.
    */
-  @VisibleForTesting
-  static void removeIndexesFromOtherPartitions(int myPartition, int numPartitions,
-        SegmentSyncConfig segmentSyncConfig) {
-    File[] segments = getSegmentsOnRootDir(segmentSyncConfig);
-    int numDeleted = 0;
-    for (File segment : segments) {
-      int segmentNumPartitions = Segment.numPartitionsFromName(segment.getName());
-      int segmentPartition = Segment.getPartitionFromName(segment.getName());
+  @VisiblelonForTelonsting
+  static void relonmovelonIndelonxelonsFromOthelonrPartitions(int myPartition, int numPartitions,
+        SelongmelonntSyncConfig selongmelonntSyncConfig) {
+    Filelon[] selongmelonnts = gelontSelongmelonntsOnRootDir(selongmelonntSyncConfig);
+    int numDelonlelontelond = 0;
+    for (Filelon selongmelonnt : selongmelonnts) {
+      int selongmelonntNumPartitions = Selongmelonnt.numPartitionsFromNamelon(selongmelonnt.gelontNamelon());
+      int selongmelonntPartition = Selongmelonnt.gelontPartitionFromNamelon(selongmelonnt.gelontNamelon());
 
-      if (segmentNumPartitions < 0 || segmentPartition < 0) { // Not a segment file, ignoring
-        LOG.info("Unknown dir/file found: " + segment.getAbsolutePath());
-        continue;
+      if (selongmelonntNumPartitions < 0 || selongmelonntPartition < 0) { // Not a selongmelonnt filelon, ignoring
+        LOG.info("Unknown dir/filelon found: " + selongmelonnt.gelontAbsolutelonPath());
+        continuelon;
       }
 
-      if (segmentNumPartitions != numPartitions || segmentPartition != myPartition) {
-        if (deleteSegment(segment)) {
-          numDeleted++;
+      if (selongmelonntNumPartitions != numPartitions || selongmelonntPartition != myPartition) {
+        if (delonlelontelonSelongmelonnt(selongmelonnt)) {
+          numDelonlelontelond++;
         }
       }
     }
-    LOG.info("Deleted " + numDeleted + " segments out of " + segments.length + " segments");
+    LOG.info("Delonlelontelond " + numDelonlelontelond + " selongmelonnts out of " + selongmelonnts.lelonngth + " selongmelonnts");
   }
 
   /**
-   * Delete flushed segments of older flush versions.
+   * Delonlelontelon flushelond selongmelonnts of oldelonr flush velonrsions.
    */
-  @VisibleForTesting
-  static void removeOldFlushVersionIndexes(int currentFlushVersion,
-                                           SegmentSyncConfig segmentSyncConfig) {
-    SortedSet<Integer> indexFlushVersions =
-        listFlushVersions(segmentSyncConfig, currentFlushVersion);
+  @VisiblelonForTelonsting
+  static void relonmovelonOldFlushVelonrsionIndelonxelons(int currelonntFlushVelonrsion,
+                                           SelongmelonntSyncConfig selongmelonntSyncConfig) {
+    SortelondSelont<Intelongelonr> indelonxFlushVelonrsions =
+        listFlushVelonrsions(selongmelonntSyncConfig, currelonntFlushVelonrsion);
 
-    if (indexFlushVersions == null
-        || indexFlushVersions.size() <= numIndexFlushVersionsToKeep) {
-      return;
+    if (indelonxFlushVelonrsions == null
+        || indelonxFlushVelonrsions.sizelon() <= numIndelonxFlushVelonrsionsToKelonelonp) {
+      relonturn;
     }
 
-    Set<String> suffixesToKeep = Sets.newHashSetWithExpectedSize(numIndexFlushVersionsToKeep);
-    int flushVersionsToKeep = numIndexFlushVersionsToKeep;
-    while (flushVersionsToKeep > 0 && !indexFlushVersions.isEmpty()) {
-      Integer oldestFlushVersion = indexFlushVersions.last();
-      String flushFileExtension = FlushVersion.getVersionFileExtension(oldestFlushVersion);
-      if (flushFileExtension != null) {
-        suffixesToKeep.add(flushFileExtension);
-        flushVersionsToKeep--;
-      } else {
-        LOG.warn("Found unknown flush versions: " + oldestFlushVersion
-            + " Segments with this flush version will be deleted to recover disk space.");
+    Selont<String> suffixelonsToKelonelonp = Selonts.nelonwHashSelontWithelonxpelonctelondSizelon(numIndelonxFlushVelonrsionsToKelonelonp);
+    int flushVelonrsionsToKelonelonp = numIndelonxFlushVelonrsionsToKelonelonp;
+    whilelon (flushVelonrsionsToKelonelonp > 0 && !indelonxFlushVelonrsions.iselonmpty()) {
+      Intelongelonr oldelonstFlushVelonrsion = indelonxFlushVelonrsions.last();
+      String flushFilelonelonxtelonnsion = FlushVelonrsion.gelontVelonrsionFilelonelonxtelonnsion(oldelonstFlushVelonrsion);
+      if (flushFilelonelonxtelonnsion != null) {
+        suffixelonsToKelonelonp.add(flushFilelonelonxtelonnsion);
+        flushVelonrsionsToKelonelonp--;
+      } elonlselon {
+        LOG.warn("Found unknown flush velonrsions: " + oldelonstFlushVelonrsion
+            + " Selongmelonnts with this flush velonrsion will belon delonlelontelond to reloncovelonr disk spacelon.");
       }
-      indexFlushVersions.remove(oldestFlushVersion);
+      indelonxFlushVelonrsions.relonmovelon(oldelonstFlushVelonrsion);
     }
 
-    String segmentSyncRootDir = segmentSyncConfig.getLocalSegmentSyncRootDir();
-    File dir = new File(segmentSyncRootDir);
-    File[] segments = dir.listFiles();
+    String selongmelonntSyncRootDir = selongmelonntSyncConfig.gelontLocalSelongmelonntSyncRootDir();
+    Filelon dir = nelonw Filelon(selongmelonntSyncRootDir);
+    Filelon[] selongmelonnts = dir.listFilelons();
 
-    for (File segment : segments) {
-      boolean keepSegment = false;
-      for (String suffix : suffixesToKeep) {
-        if (segment.getName().endsWith(suffix)) {
-          keepSegment = true;
-          break;
+    for (Filelon selongmelonnt : selongmelonnts) {
+      boolelonan kelonelonpSelongmelonnt = falselon;
+      for (String suffix : suffixelonsToKelonelonp) {
+        if (selongmelonnt.gelontNamelon().elonndsWith(suffix)) {
+          kelonelonpSelongmelonnt = truelon;
+          brelonak;
         }
       }
-      if (!keepSegment) {
+      if (!kelonelonpSelongmelonnt) {
         try {
-          FileUtils.deleteDirectory(segment);
-          LOG.info("Deleted old flushed segment: " + segment.getAbsolutePath());
-        } catch (IOException e) {
-          LOG.error("Failed to delete old flushed segment.", e);
+          FilelonUtils.delonlelontelonDirelonctory(selongmelonnt);
+          LOG.info("Delonlelontelond old flushelond selongmelonnt: " + selongmelonnt.gelontAbsolutelonPath());
+        } catch (IOelonxcelonption elon) {
+          LOG.elonrror("Failelond to delonlelontelon old flushelond selongmelonnt.", elon);
         }
       }
     }
   }
 
-  private static File[] getSegmentsOnRootDir(SegmentSyncConfig segmentSyncConfig) {
-    String segmentSyncRootDir = segmentSyncConfig.getLocalSegmentSyncRootDir();
-    File dir = new File(segmentSyncRootDir);
-    File[] segments = dir.listFiles();
-    if (segments == null) {
-      return new File[0];
-    } else {
-      return segments;
+  privatelon static Filelon[] gelontSelongmelonntsOnRootDir(SelongmelonntSyncConfig selongmelonntSyncConfig) {
+    String selongmelonntSyncRootDir = selongmelonntSyncConfig.gelontLocalSelongmelonntSyncRootDir();
+    Filelon dir = nelonw Filelon(selongmelonntSyncRootDir);
+    Filelon[] selongmelonnts = dir.listFilelons();
+    if (selongmelonnts == null) {
+      relonturn nelonw Filelon[0];
+    } elonlselon {
+      relonturn selongmelonnts;
     }
   }
 
-  private static boolean deleteSegment(File segment) {
+  privatelon static boolelonan delonlelontelonSelongmelonnt(Filelon selongmelonnt) {
     try {
-      FileUtils.deleteDirectory(segment);
-      LOG.info("Deleted segment from other partition: " + segment.getAbsolutePath());
-      return true;
-    } catch (IOException e) {
-      LOG.error("Failed to delete segment from other partition.", e);
-      return false;
+      FilelonUtils.delonlelontelonDirelonctory(selongmelonnt);
+      LOG.info("Delonlelontelond selongmelonnt from othelonr partition: " + selongmelonnt.gelontAbsolutelonPath());
+      relonturn truelon;
+    } catch (IOelonxcelonption elon) {
+      LOG.elonrror("Failelond to delonlelontelon selongmelonnt from othelonr partition.", elon);
+      relonturn falselon;
     }
   }
 
-  // Returns FlushVersions found on disk.
-  // Current FlushVersion is always added into the list, even if segments are not found on disk,
-  // because they may not have appeared yet.
+  // Relonturns FlushVelonrsions found on disk.
+  // Currelonnt FlushVelonrsion is always addelond into thelon list, elonvelonn if selongmelonnts arelon not found on disk,
+  // beloncauselon thelony may not havelon appelonarelond yelont.
   @Nonnull
-  @VisibleForTesting
-  static SortedSet<Integer> listFlushVersions(SegmentSyncConfig sync, int currentFlushVersion) {
-    TreeSet<Integer> flushVersions = Sets.newTreeSet();
+  @VisiblelonForTelonsting
+  static SortelondSelont<Intelongelonr> listFlushVelonrsions(SelongmelonntSyncConfig sync, int currelonntFlushVelonrsion) {
+    TrelonelonSelont<Intelongelonr> flushVelonrsions = Selonts.nelonwTrelonelonSelont();
 
-    // Always add current flush version.
-    // It is possible that on startup when this is run, the current flush version
-    // segments have not appeared yet.
-    flushVersions.add(currentFlushVersion);
+    // Always add currelonnt flush velonrsion.
+    // It is possiblelon that on startup whelonn this is run, thelon currelonnt flush velonrsion
+    // selongmelonnts havelon not appelonarelond yelont.
+    flushVelonrsions.add(currelonntFlushVelonrsion);
 
-    String segmentSyncRootDir = sync.getLocalSegmentSyncRootDir();
-    File dir = new File(segmentSyncRootDir);
-    if (!dir.exists()) {
-      LOG.info("segmentSyncRootDir [" + segmentSyncRootDir
-          + "] does not exist");
-      return flushVersions;
+    String selongmelonntSyncRootDir = sync.gelontLocalSelongmelonntSyncRootDir();
+    Filelon dir = nelonw Filelon(selongmelonntSyncRootDir);
+    if (!dir.elonxists()) {
+      LOG.info("selongmelonntSyncRootDir [" + selongmelonntSyncRootDir
+          + "] doelons not elonxist");
+      relonturn flushVelonrsions;
     }
-    if (!dir.isDirectory()) {
-      LOG.error("segmentSyncRootDir [" + segmentSyncRootDir
-          + "] does not point to a directory");
-      return flushVersions;
+    if (!dir.isDirelonctory()) {
+      LOG.elonrror("selongmelonntSyncRootDir [" + selongmelonntSyncRootDir
+          + "] doelons not point to a direlonctory");
+      relonturn flushVelonrsions;
     }
-    if (!dir.canRead()) {
-      LOG.error("No permission to read from segmentSyncRootDir ["
-          + segmentSyncRootDir + "]");
-      return flushVersions;
+    if (!dir.canRelonad()) {
+      LOG.elonrror("No pelonrmission to relonad from selongmelonntSyncRootDir ["
+          + selongmelonntSyncRootDir + "]");
+      relonturn flushVelonrsions;
     }
-    if (!dir.canWrite()) {
-      LOG.error("No permission to write to segmentSyncRootDir ["
-          + segmentSyncRootDir + "]");
-      return flushVersions;
+    if (!dir.canWritelon()) {
+      LOG.elonrror("No pelonrmission to writelon to selongmelonntSyncRootDir ["
+          + selongmelonntSyncRootDir + "]");
+      relonturn flushVelonrsions;
     }
 
-    File[] segments = dir.listFiles();
-    for (File segment : segments) {
-      String name = segment.getName();
-      if (!name.contains(FlushVersion.DELIMITER)) {
-        // This is a not a segment with a FlushVersion, skip.
-        LOG.info("Found segment directory without a flush version: " + name);
-        continue;
+    Filelon[] selongmelonnts = dir.listFilelons();
+    for (Filelon selongmelonnt : selongmelonnts) {
+      String namelon = selongmelonnt.gelontNamelon();
+      if (!namelon.contains(FlushVelonrsion.DelonLIMITelonR)) {
+        // This is a not a selongmelonnt with a FlushVelonrsion, skip.
+        LOG.info("Found selongmelonnt direlonctory without a flush velonrsion: " + namelon);
+        continuelon;
       }
-      String[] nameSplits = name.split(FlushVersion.DELIMITER);
-      if (nameSplits.length != 2) {
-        LOG.warn("Found segment with bad name: " + segment.getAbsolutePath());
-        continue;
+      String[] namelonSplits = namelon.split(FlushVelonrsion.DelonLIMITelonR);
+      if (namelonSplits.lelonngth != 2) {
+        LOG.warn("Found selongmelonnt with bad namelon: " + selongmelonnt.gelontAbsolutelonPath());
+        continuelon;
       }
 
-      // Second half contains flush version
+      // Seloncond half contains flush velonrsion
       try {
-        int flushVersion = Integer.parseInt(nameSplits[1]);
-        flushVersions.add(flushVersion);
-      } catch (NumberFormatException e) {
-        LOG.warn("Bad flush version number in segment name: " + segment.getAbsolutePath());
+        int flushVelonrsion = Intelongelonr.parselonInt(namelonSplits[1]);
+        flushVelonrsions.add(flushVelonrsion);
+      } catch (NumbelonrFormatelonxcelonption elon) {
+        LOG.warn("Bad flush velonrsion numbelonr in selongmelonnt namelon: " + selongmelonnt.gelontAbsolutelonPath());
       }
     }
-    return flushVersions;
+    relonturn flushVelonrsions;
   }
 
   /**
-   * Removes old segments in the current build gen.
+   * Relonmovelons old selongmelonnts in thelon currelonnt build gelonn.
    */
-  @VisibleForTesting
-  static void removeOldSegments(SegmentSyncConfig sync) {
-    if (!sync.getScrubGen().isPresent()) {
-      return;
+  @VisiblelonForTelonsting
+  static void relonmovelonOldSelongmelonnts(SelongmelonntSyncConfig sync) {
+    if (!sync.gelontScrubGelonn().isPrelonselonnt()) {
+      relonturn;
     }
 
-    File currentScrubGenSegmentDir = new File(sync.getLocalSegmentSyncRootDir());
+    Filelon currelonntScrubGelonnSelongmelonntDir = nelonw Filelon(sync.gelontLocalSelongmelonntSyncRootDir());
 
-    // The unscrubbed segment root directory, used for rebuilds and for segments created before
-    // we introduced scrub gens. The getLocalSegmentSyncRootDir should be something like:
-    // $unscrubbedSegmentDir/scrubbed/$scrub_gen/,
-    // get unscrubbedSegmentDir from string name here in case scrubbed dir does not exist yet
-    File unscrubbedSegmentDir = new File(sync.getLocalSegmentSyncRootDir().split("scrubbed")[0]);
-    if (!unscrubbedSegmentDir.exists()) {
-      // For a new host that swapped in, it might not have flushed_segment dir yet.
-      // return directly in that case.
-      LOG.info(unscrubbedSegmentDir.getAbsoluteFile() + "does not exist, nothing to remove.");
-      return;
+    // Thelon unscrubbelond selongmelonnt root direlonctory, uselond for relonbuilds and for selongmelonnts crelonatelond belonforelon
+    // welon introducelond scrub gelonns. Thelon gelontLocalSelongmelonntSyncRootDir should belon somelonthing likelon:
+    // $unscrubbelondSelongmelonntDir/scrubbelond/$scrub_gelonn/,
+    // gelont unscrubbelondSelongmelonntDir from string namelon helonrelon in caselon scrubbelond dir doelons not elonxist yelont
+    Filelon unscrubbelondSelongmelonntDir = nelonw Filelon(sync.gelontLocalSelongmelonntSyncRootDir().split("scrubbelond")[0]);
+    if (!unscrubbelondSelongmelonntDir.elonxists()) {
+      // For a nelonw host that swappelond in, it might not havelon flushelond_selongmelonnt dir yelont.
+      // relonturn direlonctly in that caselon.
+      LOG.info(unscrubbelondSelongmelonntDir.gelontAbsolutelonFilelon() + "doelons not elonxist, nothing to relonmovelon.");
+      relonturn;
     }
-    Preconditions.checkArgument(unscrubbedSegmentDir.exists());
-    for (File file : unscrubbedSegmentDir.listFiles()) {
-      if (file.getName().matches("scrubbed")) {
-        continue;
+    Prelonconditions.chelonckArgumelonnt(unscrubbelondSelongmelonntDir.elonxists());
+    for (Filelon filelon : unscrubbelondSelongmelonntDir.listFilelons()) {
+      if (filelon.gelontNamelon().matchelons("scrubbelond")) {
+        continuelon;
       }
       try {
-        LOG.info("Deleting old unscrubbed segment: " + file.getAbsolutePath());
-        FileUtils.deleteDirectory(file);
-      } catch (IOException e) {
-        LOG.error("Failed to delete directory: " + file.getPath(), e);
+        LOG.info("Delonlelonting old unscrubbelond selongmelonnt: " + filelon.gelontAbsolutelonPath());
+        FilelonUtils.delonlelontelonDirelonctory(filelon);
+      } catch (IOelonxcelonption elon) {
+        LOG.elonrror("Failelond to delonlelontelon direlonctory: " + filelon.gelontPath(), elon);
       }
     }
 
-    // Delete all segments from previous scrub generations.
-    File allScrubbedSegmentsDir = currentScrubGenSegmentDir.getParentFile();
-    if (allScrubbedSegmentsDir.exists()) {
-      for (File file : allScrubbedSegmentsDir.listFiles()) {
-        if (file.getPath().equals(currentScrubGenSegmentDir.getPath())) {
-          continue;
+    // Delonlelontelon all selongmelonnts from prelonvious scrub gelonnelonrations.
+    Filelon allScrubbelondSelongmelonntsDir = currelonntScrubGelonnSelongmelonntDir.gelontParelonntFilelon();
+    if (allScrubbelondSelongmelonntsDir.elonxists()) {
+      for (Filelon filelon : allScrubbelondSelongmelonntsDir.listFilelons()) {
+        if (filelon.gelontPath().elonquals(currelonntScrubGelonnSelongmelonntDir.gelontPath())) {
+          continuelon;
         }
         try {
-          LOG.info("Deleting old scrubbed segment: " + file.getAbsolutePath());
-          FileUtils.deleteDirectory(file);
-        } catch (IOException e) {
-          LOG.error("Failed to delete directory: " + file.getPath(), e);
+          LOG.info("Delonlelonting old scrubbelond selongmelonnt: " + filelon.gelontAbsolutelonPath());
+          FilelonUtils.delonlelontelonDirelonctory(filelon);
+        } catch (IOelonxcelonption elon) {
+          LOG.elonrror("Failelond to delonlelontelon direlonctory: " + filelon.gelontPath(), elon);
         }
       }
     }
   }
 
   /**
-   * Removes the data for all unused segments from the local disk. This includes:
-   *  - data for old segments
-   *  - data for segments belonging to another partition
-   *  - data for segments belonging to a different flush version.
+   * Relonmovelons thelon data for all unuselond selongmelonnts from thelon local disk. This includelons:
+   *  - data for old selongmelonnts
+   *  - data for selongmelonnts belonlonging to anothelonr partition
+   *  - data for selongmelonnts belonlonging to a diffelonrelonnt flush velonrsion.
    */
-  public static void removeUnusedSegments(
-      PartitionManager partitionManager,
+  public static void relonmovelonUnuselondSelongmelonnts(
+      PartitionManagelonr partitionManagelonr,
       PartitionConfig partitionConfig,
-      int schemaMajorVersion,
-      SegmentSyncConfig segmentSyncConfig) {
+      int schelonmaMajorVelonrsion,
+      SelongmelonntSyncConfig selongmelonntSyncConfig) {
 
-    if (EarlybirdIndexConfigUtil.isArchiveSearch()) {
-      removeOldBuildGenerations(
-          EarlybirdConfig.getString("root_dir"),
-          EarlybirdConfig.getString("offline_segment_build_gen")
+    if (elonarlybirdIndelonxConfigUtil.isArchivelonSelonarch()) {
+      relonmovelonOldBuildGelonnelonrations(
+          elonarlybirdConfig.gelontString("root_dir"),
+          elonarlybirdConfig.gelontString("offlinelon_selongmelonnt_build_gelonn")
       );
-      removeOldSegments(segmentSyncConfig);
+      relonmovelonOldSelongmelonnts(selongmelonntSyncConfig);
 
-      Preconditions.checkState(partitionManager instanceof ArchiveSearchPartitionManager);
-      removeArchiveTimesliceOutsideServingRange(
+      Prelonconditions.chelonckStatelon(partitionManagelonr instancelonof ArchivelonSelonarchPartitionManagelonr);
+      relonmovelonArchivelonTimelonslicelonOutsidelonSelonrvingRangelon(
           partitionConfig,
-          ((ArchiveSearchPartitionManager) partitionManager).getTimeSlicer(), segmentSyncConfig);
+          ((ArchivelonSelonarchPartitionManagelonr) partitionManagelonr).gelontTimelonSlicelonr(), selongmelonntSyncConfig);
     }
 
-    // Remove segments from other partitions
-    removeIndexesFromOtherPartitions(
-        partitionConfig.getIndexingHashPartitionID(),
-        partitionConfig.getNumPartitions(), segmentSyncConfig);
+    // Relonmovelon selongmelonnts from othelonr partitions
+    relonmovelonIndelonxelonsFromOthelonrPartitions(
+        partitionConfig.gelontIndelonxingHashPartitionID(),
+        partitionConfig.gelontNumPartitions(), selongmelonntSyncConfig);
 
-    // Remove old flushed segments
-    removeOldFlushVersionIndexes(schemaMajorVersion, segmentSyncConfig);
+    // Relonmovelon old flushelond selongmelonnts
+    relonmovelonOldFlushVelonrsionIndelonxelons(schelonmaMajorVelonrsion, selongmelonntSyncConfig);
   }
 }

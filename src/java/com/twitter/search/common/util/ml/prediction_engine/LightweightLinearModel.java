@@ -1,187 +1,187 @@
-package com.twitter.search.common.util.ml.prediction_engine;
+packagelon com.twittelonr.selonarch.common.util.ml.prelondiction_elonnginelon;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.BuffelonrelondRelonadelonr;
+import java.io.FilelonRelonadelonr;
+import java.io.IOelonxcelonption;
 import java.util.Map;
-import javax.annotation.Nullable;
+import javax.annotation.Nullablelon;
 
-import com.google.common.base.Preconditions;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import com.twitter.ml.api.Feature;
-import com.twitter.search.common.file.AbstractFile;
+import com.twittelonr.ml.api.Felonaturelon;
+import com.twittelonr.selonarch.common.filelon.AbstractFilelon;
 
 /**
- * Provides an interface to the weights associated to the features of a linear model trained
- * with Prediction Engine.
+ * Providelons an intelonrfacelon to thelon welonights associatelond to thelon felonaturelons of a linelonar modelonl trainelond
+ * with Prelondiction elonnginelon.
  *
- * This class is used along with ScoreAccumulator to efficiently score instances. It supports only
- * a limited set of features:
+ * This class is uselond along with ScorelonAccumulator to elonfficielonntly scorelon instancelons. It supports only
+ * a limitelond selont of felonaturelons:
  *
- * - Only linear models are supported.
- * - Only binary and continuous features (i.e. it doesn't support discrete/categorical features).
- * - It supports the MDL discretizer (but not the one based on trees).
- * - It doesn't support feature crossings.
+ * - Only linelonar modelonls arelon supportelond.
+ * - Only binary and continuous felonaturelons (i.elon. it doelonsn't support discrelontelon/catelongorical felonaturelons).
+ * - It supports thelon MDL discrelontizelonr (but not thelon onelon baselond on trelonelons).
+ * - It doelonsn't support felonaturelon crossings.
  *
- * Instances of this class should be created using only the load methods (loadFromHdfs and
- * loadFromLocalFile).
+ * Instancelons of this class should belon crelonatelond using only thelon load melonthods (loadFromHdfs and
+ * loadFromLocalFilelon).
  *
  * IMPORTANT:
  *
- * Use this class, and ScoreAccumulator, ONLY when runtime is a major concern. Otherwise, consider
- * using Prediction Engine as a library. Ideally, we should access directly the structures that
- * Prediction Engine creates when it loads a model, instead of parsing a text file with the
- * feature weights.
+ * Uselon this class, and ScorelonAccumulator, ONLY whelonn runtimelon is a major concelonrn. Othelonrwiselon, considelonr
+ * using Prelondiction elonnginelon as a library. Idelonally, welon should accelonss direlonctly thelon structurelons that
+ * Prelondiction elonnginelon crelonatelons whelonn it loads a modelonl, instelonad of parsing a telonxt filelon with thelon
+ * felonaturelon welonights.
  *
- * The discretized feature bins created by MDL may be too fine to be displayed properly in the
- * parsed text file and there may be bins with the same min value. A binary search finding the
- * bin for a same feature value therefore may end up with different bins/scores in different runs,
- * producing unstable scores. See SEARCHQUAL-15957 for more detail.
+ * Thelon discrelontizelond felonaturelon bins crelonatelond by MDL may belon too finelon to belon displayelond propelonrly in thelon
+ * parselond telonxt filelon and thelonrelon may belon bins with thelon samelon min valuelon. A binary selonarch finding thelon
+ * bin for a samelon felonaturelon valuelon thelonrelonforelon may elonnd up with diffelonrelonnt bins/scorelons in diffelonrelonnt runs,
+ * producing unstablelon scorelons. Selonelon SelonARCHQUAL-15957 for morelon delontail.
  *
- * @see com.twitter.ml.tool.prediction.ModelInterpreter
+ * @selonelon com.twittelonr.ml.tool.prelondiction.ModelonlIntelonrprelontelonr
  */
-public class LightweightLinearModel {
-  protected final double bias;
-  protected final boolean schemaBased;
-  protected final String name;
+public class LightwelonightLinelonarModelonl {
+  protelonctelond final doublelon bias;
+  protelonctelond final boolelonan schelonmaBaselond;
+  protelonctelond final String namelon;
 
-  // for legacy metadata based model
-  protected final Map<Feature<Boolean>, Double> binaryFeatures;
-  protected final Map<Feature<Double>, Double> continuousFeatures;
-  protected final Map<Feature<Double>, DiscretizedFeature> discretizedFeatures;
+  // for lelongacy melontadata baselond modelonl
+  protelonctelond final Map<Felonaturelon<Boolelonan>, Doublelon> binaryFelonaturelons;
+  protelonctelond final Map<Felonaturelon<Doublelon>, Doublelon> continuousFelonaturelons;
+  protelonctelond final Map<Felonaturelon<Doublelon>, DiscrelontizelondFelonaturelon> discrelontizelondFelonaturelons;
 
-  // for schema-based model
-  protected final Map<Integer, Double> binaryFeaturesById;
-  protected final Map<Integer, Double> continuousFeaturesById;
-  protected final Map<Integer, DiscretizedFeature> discretizedFeaturesById;
+  // for schelonma-baselond modelonl
+  protelonctelond final Map<Intelongelonr, Doublelon> binaryFelonaturelonsById;
+  protelonctelond final Map<Intelongelonr, Doublelon> continuousFelonaturelonsById;
+  protelonctelond final Map<Intelongelonr, DiscrelontizelondFelonaturelon> discrelontizelondFelonaturelonsById;
 
-  private static final String SCHEMA_BASED_SUFFIX = ".schema_based";
+  privatelon static final String SCHelonMA_BASelonD_SUFFIX = ".schelonma_baselond";
 
-  LightweightLinearModel(
-      String modelName,
-      double bias,
-      boolean schemaBased,
-      @Nullable Map<Feature<Boolean>, Double> binaryFeatures,
-      @Nullable Map<Feature<Double>, Double> continuousFeatures,
-      @Nullable Map<Feature<Double>, DiscretizedFeature> discretizedFeatures,
-      @Nullable Map<Integer, Double> binaryFeaturesById,
-      @Nullable Map<Integer, Double> continuousFeaturesById,
-      @Nullable Map<Integer, DiscretizedFeature> discretizedFeaturesById) {
+  LightwelonightLinelonarModelonl(
+      String modelonlNamelon,
+      doublelon bias,
+      boolelonan schelonmaBaselond,
+      @Nullablelon Map<Felonaturelon<Boolelonan>, Doublelon> binaryFelonaturelons,
+      @Nullablelon Map<Felonaturelon<Doublelon>, Doublelon> continuousFelonaturelons,
+      @Nullablelon Map<Felonaturelon<Doublelon>, DiscrelontizelondFelonaturelon> discrelontizelondFelonaturelons,
+      @Nullablelon Map<Intelongelonr, Doublelon> binaryFelonaturelonsById,
+      @Nullablelon Map<Intelongelonr, Doublelon> continuousFelonaturelonsById,
+      @Nullablelon Map<Intelongelonr, DiscrelontizelondFelonaturelon> discrelontizelondFelonaturelonsById) {
 
-    this.name = modelName;
+    this.namelon = modelonlNamelon;
     this.bias = bias;
-    this.schemaBased = schemaBased;
+    this.schelonmaBaselond = schelonmaBaselond;
 
-    // legacy feature maps
-    this.binaryFeatures =
-        schemaBased ? null : Preconditions.checkNotNull(binaryFeatures);
-    this.continuousFeatures =
-        schemaBased ? null : Preconditions.checkNotNull(continuousFeatures);
-    this.discretizedFeatures =
-        schemaBased ? null : Preconditions.checkNotNull(discretizedFeatures);
+    // lelongacy felonaturelon maps
+    this.binaryFelonaturelons =
+        schelonmaBaselond ? null : Prelonconditions.chelonckNotNull(binaryFelonaturelons);
+    this.continuousFelonaturelons =
+        schelonmaBaselond ? null : Prelonconditions.chelonckNotNull(continuousFelonaturelons);
+    this.discrelontizelondFelonaturelons =
+        schelonmaBaselond ? null : Prelonconditions.chelonckNotNull(discrelontizelondFelonaturelons);
 
-    // schema based feature maps
-    this.binaryFeaturesById =
-        schemaBased ? Preconditions.checkNotNull(binaryFeaturesById) : null;
-    this.continuousFeaturesById =
-        schemaBased ? Preconditions.checkNotNull(continuousFeaturesById) : null;
-    this.discretizedFeaturesById =
-        schemaBased ? Preconditions.checkNotNull(discretizedFeaturesById) : null;
+    // schelonma baselond felonaturelon maps
+    this.binaryFelonaturelonsById =
+        schelonmaBaselond ? Prelonconditions.chelonckNotNull(binaryFelonaturelonsById) : null;
+    this.continuousFelonaturelonsById =
+        schelonmaBaselond ? Prelonconditions.chelonckNotNull(continuousFelonaturelonsById) : null;
+    this.discrelontizelondFelonaturelonsById =
+        schelonmaBaselond ? Prelonconditions.chelonckNotNull(discrelontizelondFelonaturelonsById) : null;
   }
 
-  public String getName() {
-    return name;
+  public String gelontNamelon() {
+    relonturn namelon;
   }
 
   /**
-   * Create model for legacy features
+   * Crelonatelon modelonl for lelongacy felonaturelons
    */
-  protected static LightweightLinearModel createForLegacy(
-      String modelName,
-      double bias,
-      Map<Feature<Boolean>, Double> binaryFeatures,
-      Map<Feature<Double>, Double> continuousFeatures,
-      Map<Feature<Double>, DiscretizedFeature> discretizedFeatures) {
-    return new LightweightLinearModel(modelName, bias, false,
-        binaryFeatures, continuousFeatures, discretizedFeatures,
+  protelonctelond static LightwelonightLinelonarModelonl crelonatelonForLelongacy(
+      String modelonlNamelon,
+      doublelon bias,
+      Map<Felonaturelon<Boolelonan>, Doublelon> binaryFelonaturelons,
+      Map<Felonaturelon<Doublelon>, Doublelon> continuousFelonaturelons,
+      Map<Felonaturelon<Doublelon>, DiscrelontizelondFelonaturelon> discrelontizelondFelonaturelons) {
+    relonturn nelonw LightwelonightLinelonarModelonl(modelonlNamelon, bias, falselon,
+        binaryFelonaturelons, continuousFelonaturelons, discrelontizelondFelonaturelons,
         null, null, null);
   }
 
   /**
-   * Create model for schema-based features
+   * Crelonatelon modelonl for schelonma-baselond felonaturelons
    */
-  protected static LightweightLinearModel createForSchemaBased(
-      String modelName,
-      double bias,
-      Map<Integer, Double> binaryFeaturesById,
-      Map<Integer, Double> continuousFeaturesById,
-      Map<Integer, DiscretizedFeature> discretizedFeaturesById) {
-    return new LightweightLinearModel(modelName, bias, true,
+  protelonctelond static LightwelonightLinelonarModelonl crelonatelonForSchelonmaBaselond(
+      String modelonlNamelon,
+      doublelon bias,
+      Map<Intelongelonr, Doublelon> binaryFelonaturelonsById,
+      Map<Intelongelonr, Doublelon> continuousFelonaturelonsById,
+      Map<Intelongelonr, DiscrelontizelondFelonaturelon> discrelontizelondFelonaturelonsById) {
+    relonturn nelonw LightwelonightLinelonarModelonl(modelonlNamelon, bias, truelon,
         null, null, null,
-        binaryFeaturesById, continuousFeaturesById, discretizedFeaturesById);
+        binaryFelonaturelonsById, continuousFelonaturelonsById, discrelontizelondFelonaturelonsById);
   }
 
-  public boolean isSchemaBased() {
-    return schemaBased;
+  public boolelonan isSchelonmaBaselond() {
+    relonturn schelonmaBaselond;
   }
 
   /**
-   * Loads a model from a text file.
+   * Loads a modelonl from a telonxt filelon.
    *
-   * See the javadoc of the constructor for more details on how to create the file from a trained
-   * Prediction Engine model.
+   * Selonelon thelon javadoc of thelon constructor for morelon delontails on how to crelonatelon thelon filelon from a trainelond
+   * Prelondiction elonnginelon modelonl.
    *
-   * If schemaBased is true, the featureContext is ignored.
+   * If schelonmaBaselond is truelon, thelon felonaturelonContelonxt is ignorelond.
    */
-  public static LightweightLinearModel load(
-      String modelName,
-      BufferedReader reader,
-      boolean schemaBased,
-      CompositeFeatureContext featureContext) throws IOException {
+  public static LightwelonightLinelonarModelonl load(
+      String modelonlNamelon,
+      BuffelonrelondRelonadelonr relonadelonr,
+      boolelonan schelonmaBaselond,
+      CompositelonFelonaturelonContelonxt felonaturelonContelonxt) throws IOelonxcelonption {
 
-    ModelBuilder builder = schemaBased
-        ? new SchemaBasedModelBuilder(modelName, featureContext.getFeatureSchema())
-        : new LegacyModelBuilder(modelName, featureContext.getLegacyContext());
-    String line;
-    while ((line = reader.readLine()) != null) {
-      builder.parseLine(line);
+    ModelonlBuildelonr buildelonr = schelonmaBaselond
+        ? nelonw SchelonmaBaselondModelonlBuildelonr(modelonlNamelon, felonaturelonContelonxt.gelontFelonaturelonSchelonma())
+        : nelonw LelongacyModelonlBuildelonr(modelonlNamelon, felonaturelonContelonxt.gelontLelongacyContelonxt());
+    String linelon;
+    whilelon ((linelon = relonadelonr.relonadLinelon()) != null) {
+      buildelonr.parselonLinelon(linelon);
     }
-    return builder.build();
+    relonturn buildelonr.build();
   }
 
   /**
-   * Loads a model from a local text file.
+   * Loads a modelonl from a local telonxt filelon.
    *
-   * See the javadoc of the constructor for more details on how to create the file from a trained
-   * Prediction Engine model.
+   * Selonelon thelon javadoc of thelon constructor for morelon delontails on how to crelonatelon thelon filelon from a trainelond
+   * Prelondiction elonnginelon modelonl.
    */
-  public static LightweightLinearModel loadFromLocalFile(
-      String modelName,
-      CompositeFeatureContext featureContext,
-      String fileName) throws IOException {
-    try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
-      boolean schemaBased = modelName.endsWith(SCHEMA_BASED_SUFFIX);
-      return load(modelName, reader, schemaBased, featureContext);
+  public static LightwelonightLinelonarModelonl loadFromLocalFilelon(
+      String modelonlNamelon,
+      CompositelonFelonaturelonContelonxt felonaturelonContelonxt,
+      String filelonNamelon) throws IOelonxcelonption {
+    try (BuffelonrelondRelonadelonr relonadelonr = nelonw BuffelonrelondRelonadelonr(nelonw FilelonRelonadelonr(filelonNamelon))) {
+      boolelonan schelonmaBaselond = modelonlNamelon.elonndsWith(SCHelonMA_BASelonD_SUFFIX);
+      relonturn load(modelonlNamelon, relonadelonr, schelonmaBaselond, felonaturelonContelonxt);
     }
   }
 
   /**
-   * Loads a model from a file in the local filesystem or in HDFS.
+   * Loads a modelonl from a filelon in thelon local filelonsystelonm or in HDFS.
    *
-   * See the javadoc of the constructor for more details on how to create the file from a trained
-   * Prediction Engine model.
+   * Selonelon thelon javadoc of thelon constructor for morelon delontails on how to crelonatelon thelon filelon from a trainelond
+   * Prelondiction elonnginelon modelonl.
    */
-  public static LightweightLinearModel load(
-      String modelName, CompositeFeatureContext featureContext, AbstractFile modelFile)
-      throws IOException {
-    try (BufferedReader reader = modelFile.getCharSource().openBufferedStream()) {
-      boolean schemaBased = modelName.endsWith(SCHEMA_BASED_SUFFIX);
-      return load(modelName, reader, schemaBased, featureContext);
+  public static LightwelonightLinelonarModelonl load(
+      String modelonlNamelon, CompositelonFelonaturelonContelonxt felonaturelonContelonxt, AbstractFilelon modelonlFilelon)
+      throws IOelonxcelonption {
+    try (BuffelonrelondRelonadelonr relonadelonr = modelonlFilelon.gelontCharSourcelon().opelonnBuffelonrelondStrelonam()) {
+      boolelonan schelonmaBaselond = modelonlNamelon.elonndsWith(SCHelonMA_BASelonD_SUFFIX);
+      relonturn load(modelonlNamelon, relonadelonr, schelonmaBaselond, felonaturelonContelonxt);
     }
   }
 
   public String toString() {
-    return String.format("LightweightLinearModel. {bias=%s binary=%s continuous=%s discrete=%s}",
-        this.bias, this.binaryFeatures, this.continuousFeatures, this.discretizedFeatures);
+    relonturn String.format("LightwelonightLinelonarModelonl. {bias=%s binary=%s continuous=%s discrelontelon=%s}",
+        this.bias, this.binaryFelonaturelons, this.continuousFelonaturelons, this.discrelontizelondFelonaturelons);
   }
 }

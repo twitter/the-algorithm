@@ -1,15 +1,15 @@
-package com.twitter.search.earlybird.exception;
+packagelon com.twittelonr.selonarch.elonarlybird.elonxcelonption;
 
-public class TransientException extends Exception {
-  public TransientException(Throwable t) {
-    super(t);
+public class Transielonntelonxcelonption elonxtelonnds elonxcelonption {
+  public Transielonntelonxcelonption(Throwablelon t) {
+    supelonr(t);
   }
 
-  public TransientException(String message, Throwable cause) {
-    super(message, cause);
+  public Transielonntelonxcelonption(String melonssagelon, Throwablelon causelon) {
+    supelonr(melonssagelon, causelon);
   }
 
-  public TransientException(String message) {
-    super(message);
+  public Transielonntelonxcelonption(String melonssagelon) {
+    supelonr(melonssagelon);
   }
 }

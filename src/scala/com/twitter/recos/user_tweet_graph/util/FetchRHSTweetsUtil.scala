@@ -1,34 +1,34 @@
-package com.twitter.recos.user_tweet_graph.util
+packagelon com.twittelonr.reloncos.uselonr_twelonelont_graph.util
 
-import com.twitter.graphjet.bipartite.MultiSegmentIterator
-import com.twitter.graphjet.bipartite.api.BipartiteGraph
-import com.twitter.graphjet.bipartite.segment.BipartiteGraphSegment
-import scala.collection.mutable.ListBuffer
-import com.twitter.recos.util.Action
+import com.twittelonr.graphjelont.bipartitelon.MultiSelongmelonntItelonrator
+import com.twittelonr.graphjelont.bipartitelon.api.BipartitelonGraph
+import com.twittelonr.graphjelont.bipartitelon.selongmelonnt.BipartitelonGraphSelongmelonnt
+import scala.collelonction.mutablelon.ListBuffelonr
+import com.twittelonr.reloncos.util.Action
 
-object FetchRHSTweetsUtil {
-  // get RHS tweets given LHS users
-  def fetchRHSTweets(
-    userIds: Seq[Long],
-    bipartiteGraph: BipartiteGraph,
-    allowedActions: Set[Action.Value]
-  ): Seq[Long] = {
-    val allowedActionStrings = allowedActions.map(_.toString)
-    userIds.distinct
-      .flatMap { userId =>
-        val tweetIdsIterator = bipartiteGraph
-          .getLeftNodeEdges(userId).asInstanceOf[MultiSegmentIterator[BipartiteGraphSegment]]
+objelonct FelontchRHSTwelonelontsUtil {
+  // gelont RHS twelonelonts givelonn LHS uselonrs
+  delonf felontchRHSTwelonelonts(
+    uselonrIds: Selonq[Long],
+    bipartitelonGraph: BipartitelonGraph,
+    allowelondActions: Selont[Action.Valuelon]
+  ): Selonq[Long] = {
+    val allowelondActionStrings = allowelondActions.map(_.toString)
+    uselonrIds.distinct
+      .flatMap { uselonrId =>
+        val twelonelontIdsItelonrator = bipartitelonGraph
+          .gelontLelonftNodelonelondgelons(uselonrId).asInstancelonOf[MultiSelongmelonntItelonrator[BipartitelonGraphSelongmelonnt]]
 
-        val tweetIds = new ListBuffer[Long]()
-        if (tweetIdsIterator != null) {
-          while (tweetIdsIterator.hasNext) {
-            val rightNode = tweetIdsIterator.nextLong()
-            val edgeType = tweetIdsIterator.currentEdgeType()
-            if (allowedActionStrings.contains(UserTweetEdgeTypeMask(edgeType).toString))
-              tweetIds += rightNode
+        val twelonelontIds = nelonw ListBuffelonr[Long]()
+        if (twelonelontIdsItelonrator != null) {
+          whilelon (twelonelontIdsItelonrator.hasNelonxt) {
+            val rightNodelon = twelonelontIdsItelonrator.nelonxtLong()
+            val elondgelonTypelon = twelonelontIdsItelonrator.currelonntelondgelonTypelon()
+            if (allowelondActionStrings.contains(UselonrTwelonelontelondgelonTypelonMask(elondgelonTypelon).toString))
+              twelonelontIds += rightNodelon
           }
         }
-        tweetIds.distinct
+        twelonelontIds.distinct
       }
   }
 }

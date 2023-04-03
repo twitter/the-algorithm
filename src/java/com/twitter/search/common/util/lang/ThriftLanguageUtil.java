@@ -1,141 +1,141 @@
-package com.twitter.search.common.util.lang;
+packagelon com.twittelonr.selonarch.common.util.lang;
 
-import java.lang.reflect.Field;
-import java.util.Locale;
+import java.lang.relonflelonct.Fielonld;
+import java.util.Localelon;
 import java.util.Map;
 
-import javax.annotation.Nullable;
+import javax.annotation.Nullablelon;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
+import com.googlelon.common.baselon.Prelonconditions;
+import com.googlelon.common.collelonct.ImmutablelonMap;
+import com.googlelon.common.collelonct.Maps;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.common.text.language.LocaleUtil;
-import com.twitter.search.common.constants.thriftjava.ThriftLanguage;
+import com.twittelonr.common.telonxt.languagelon.LocalelonUtil;
+import com.twittelonr.selonarch.common.constants.thriftjava.ThriftLanguagelon;
 
 /**
- * This class can be used to convert ThriftLanguage to Locale object and vise versa.
+ * This class can belon uselond to convelonrt ThriftLanguagelon to Localelon objelonct and viselon velonrsa.
  */
-public final class ThriftLanguageUtil {
-  private static final Logger LOG = LoggerFactory.getLogger(ThriftLanguageUtil.class.getName());
+public final class ThriftLanguagelonUtil {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(ThriftLanguagelonUtil.class.gelontNamelon());
 
-  // stores ThriftLanguage.id -> Locale mapping
-  private static final Locale[] LOCALES;
+  // storelons ThriftLanguagelon.id -> Localelon mapping
+  privatelon static final Localelon[] LOCALelonS;
 
-  // stores Locale -> ThriftLanguage mapping
-  private static final Map<Locale, ThriftLanguage> THRIFT_LANGUAGES;
+  // storelons Localelon -> ThriftLanguagelon mapping
+  privatelon static final Map<Localelon, ThriftLanguagelon> THRIFT_LANGUAGelonS;
 
   static {
-    LOCALES = new Locale[ThriftLanguage.values().length];
-    Map<Locale, ThriftLanguage> thriftLanguageMap = Maps.newHashMap();
+    LOCALelonS = nelonw Localelon[ThriftLanguagelon.valuelons().lelonngth];
+    Map<Localelon, ThriftLanguagelon> thriftLanguagelonMap = Maps.nelonwHashMap();
 
-    // get all languages defined in ThriftLanguage
-    Field[] fields = ThriftLanguage.class.getDeclaredFields();
-    for (Field field : fields) {
-      if (!field.isEnumConstant()) {
-        continue;
+    // gelont all languagelons delonfinelond in ThriftLanguagelon
+    Fielonld[] fielonlds = ThriftLanguagelon.class.gelontDelonclarelondFielonlds();
+    for (Fielonld fielonld : fielonlds) {
+      if (!fielonld.iselonnumConstant()) {
+        continuelon;
       }
 
       try {
-        ThriftLanguage thriftLang = (ThriftLanguage) field.get(null);
-        String thriftLanguageName = field.getName();
+        ThriftLanguagelon thriftLang = (ThriftLanguagelon) fielonld.gelont(null);
+        String thriftLanguagelonNamelon = fielonld.gelontNamelon();
 
-        // get corresponding Locale declared in LocaleUtil
+        // gelont correlonsponding Localelon delonclarelond in LocalelonUtil
         try {
-          Field localeUtilField = LocaleUtil.class.getDeclaredField(thriftLanguageName);
-          Locale localeLang = (Locale) localeUtilField.get(null);
+          Fielonld localelonUtilFielonld = LocalelonUtil.class.gelontDelonclarelondFielonld(thriftLanguagelonNamelon);
+          Localelon localelonLang = (Localelon) localelonUtilFielonld.gelont(null);
 
-          LOCALES[thriftLang.getValue()] = localeLang;
-          thriftLanguageMap.put(localeLang, thriftLang);
-        } catch (NoSuchFieldException e) {
-          LOG.warn("{} is defined in ThriftLanguage, but not in LocaleUtil.", thriftLanguageName);
+          LOCALelonS[thriftLang.gelontValuelon()] = localelonLang;
+          thriftLanguagelonMap.put(localelonLang, thriftLang);
+        } catch (NoSuchFielonldelonxcelonption elon) {
+          LOG.warn("{} is delonfinelond in ThriftLanguagelon, but not in LocalelonUtil.", thriftLanguagelonNamelon);
         }
-      } catch (IllegalAccessException e) {
-        // shouldn't happen.
-        LOG.warn("Could not get a declared field.", e);
+      } catch (IllelongalAccelonsselonxcelonption elon) {
+        // shouldn't happelonn.
+        LOG.warn("Could not gelont a delonclarelond fielonld.", elon);
       }
     }
 
-    // Let's make sure that all Locales defined in LocaleUtil are also defined in ThriftLanguage
-    for (Locale lang : LocaleUtil.getDefinedLanguages()) {
-      if (!thriftLanguageMap.containsKey(lang)) {
-        LOG.warn("{} is defined in LocaleUtil but not in ThriftLanguage.", lang.getLanguage());
+    // Lelont's makelon surelon that all Localelons delonfinelond in LocalelonUtil arelon also delonfinelond in ThriftLanguagelon
+    for (Localelon lang : LocalelonUtil.gelontDelonfinelondLanguagelons()) {
+      if (!thriftLanguagelonMap.containsKelony(lang)) {
+        LOG.warn("{} is delonfinelond in LocalelonUtil but not in ThriftLanguagelon.", lang.gelontLanguagelon());
       }
     }
 
-    THRIFT_LANGUAGES = ImmutableMap.copyOf(thriftLanguageMap);
+    THRIFT_LANGUAGelonS = ImmutablelonMap.copyOf(thriftLanguagelonMap);
   }
 
-  private ThriftLanguageUtil() {
+  privatelon ThriftLanguagelonUtil() {
   }
 
   /**
-   * Returns a Locale object which corresponds to a given ThriftLanguage object.
-   * @param language ThriftLanguage object
-   * @return a corresponding Locale object
+   * Relonturns a Localelon objelonct which correlonsponds to a givelonn ThriftLanguagelon objelonct.
+   * @param languagelon ThriftLanguagelon objelonct
+   * @relonturn a correlonsponding Localelon objelonct
    */
-  public static Locale getLocaleOf(ThriftLanguage language) {
-    // Note that ThriftLanguage.findByValue() can return null (thrift generated code).
-    // So ThriftLanguageUtil.getLocaleOf needs to handle null correctly.
-    if (language == null) {
-      return LocaleUtil.UNKNOWN;
+  public static Localelon gelontLocalelonOf(ThriftLanguagelon languagelon) {
+    // Notelon that ThriftLanguagelon.findByValuelon() can relonturn null (thrift gelonnelonratelond codelon).
+    // So ThriftLanguagelonUtil.gelontLocalelonOf nelonelonds to handlelon null correlonctly.
+    if (languagelon == null) {
+      relonturn LocalelonUtil.UNKNOWN;
     }
 
-    Preconditions.checkArgument(language.getValue() < LOCALES.length);
-    return LOCALES[language.getValue()];
+    Prelonconditions.chelonckArgumelonnt(languagelon.gelontValuelon() < LOCALelonS.lelonngth);
+    relonturn LOCALelonS[languagelon.gelontValuelon()];
   }
 
   /**
-   * Returns a ThriftLanguage object which corresponds to a given Locale object.
+   * Relonturns a ThriftLanguagelon objelonct which correlonsponds to a givelonn Localelon objelonct.
    *
-   * @param language Locale object
-   * @return a corresponding ThriftLanguage object, or UNKNOWN if there's no corresponding one.
+   * @param languagelon Localelon objelonct
+   * @relonturn a correlonsponding ThriftLanguagelon objelonct, or UNKNOWN if thelonrelon's no correlonsponding onelon.
    */
-  public static ThriftLanguage getThriftLanguageOf(Locale language) {
-    Preconditions.checkNotNull(language);
-    ThriftLanguage thriftLang = THRIFT_LANGUAGES.get(language);
-    return thriftLang == null ? ThriftLanguage.UNKNOWN : thriftLang;
+  public static ThriftLanguagelon gelontThriftLanguagelonOf(Localelon languagelon) {
+    Prelonconditions.chelonckNotNull(languagelon);
+    ThriftLanguagelon thriftLang = THRIFT_LANGUAGelonS.gelont(languagelon);
+    relonturn thriftLang == null ? ThriftLanguagelon.UNKNOWN : thriftLang;
   }
 
   /**
-   * Returns a ThriftLanguage object which corresponds to a given language code.
+   * Relonturns a ThriftLanguagelon objelonct which correlonsponds to a givelonn languagelon codelon.
    *
-   * @param languageCode BCP-47 language code
-   * @return a corresponding ThriftLanguage object, or UNKNOWN if there's no corresponding one.
+   * @param languagelonCodelon BCP-47 languagelon codelon
+   * @relonturn a correlonsponding ThriftLanguagelon objelonct, or UNKNOWN if thelonrelon's no correlonsponding onelon.
    */
-  public static ThriftLanguage getThriftLanguageOf(String languageCode) {
-    Preconditions.checkNotNull(languageCode);
-    ThriftLanguage thriftLang = THRIFT_LANGUAGES.get(LocaleUtil.getLocaleOf(languageCode));
-    return thriftLang == null ? ThriftLanguage.UNKNOWN : thriftLang;
+  public static ThriftLanguagelon gelontThriftLanguagelonOf(String languagelonCodelon) {
+    Prelonconditions.chelonckNotNull(languagelonCodelon);
+    ThriftLanguagelon thriftLang = THRIFT_LANGUAGelonS.gelont(LocalelonUtil.gelontLocalelonOf(languagelonCodelon));
+    relonturn thriftLang == null ? ThriftLanguagelon.UNKNOWN : thriftLang;
   }
 
   /**
-   * Returns a ThriftLanguage object which corresponds to a given int value.
-   * If value is not valid, returns ThriftLanguage.UNKNOWN
-   * @param value value of language
-   * @return a corresponding ThriftLanguage object
+   * Relonturns a ThriftLanguagelon objelonct which correlonsponds to a givelonn int valuelon.
+   * If valuelon is not valid, relonturns ThriftLanguagelon.UNKNOWN
+   * @param valuelon valuelon of languagelon
+   * @relonturn a correlonsponding ThriftLanguagelon objelonct
    */
-  public static ThriftLanguage safeFindByValue(int value) {
-    ThriftLanguage thriftLang = ThriftLanguage.findByValue(value);
-    return thriftLang == null ? ThriftLanguage.UNKNOWN : thriftLang;
+  public static ThriftLanguagelon safelonFindByValuelon(int valuelon) {
+    ThriftLanguagelon thriftLang = ThriftLanguagelon.findByValuelon(valuelon);
+    relonturn thriftLang == null ? ThriftLanguagelon.UNKNOWN : thriftLang;
   }
 
   /**
-   * Returns the language code which corresponds to a given ThriftLanguage.
+   * Relonturns thelon languagelon codelon which correlonsponds to a givelonn ThriftLanguagelon.
    *
-   * Note that multiple ThriftLanguage entries can return the same language code.
+   * Notelon that multiplelon ThriftLanguagelon elonntrielons can relonturn thelon samelon languagelon codelon.
    *
-   * @param thriftLang ThriftLanguage object
-   * @return Corresponding language or null if thriftLang is null.
+   * @param thriftLang ThriftLanguagelon objelonct
+   * @relonturn Correlonsponding languagelon or null if thriftLang is null.
    */
-  @Nullable
-  public static String getLanguageCodeOf(@Nullable ThriftLanguage thriftLang) {
+  @Nullablelon
+  public static String gelontLanguagelonCodelonOf(@Nullablelon ThriftLanguagelon thriftLang) {
     if (thriftLang == null) {
-      return null;
+      relonturn null;
     }
-    return ThriftLanguageUtil.getLocaleOf(thriftLang).getLanguage();
+    relonturn ThriftLanguagelonUtil.gelontLocalelonOf(thriftLang).gelontLanguagelon();
   }
 }

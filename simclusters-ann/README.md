@@ -1,99 +1,99 @@
-# SimClusters ANN
+# SimClustelonrs ANN
 
-SimClusters ANN is a service that returns tweet candidate recommendations given a SimClusters embedding. The service implements tweet recommendations based on the Approximate Cosine Similarity algorithm.
+SimClustelonrs ANN is a selonrvicelon that relonturns twelonelont candidatelon reloncommelonndations givelonn a SimClustelonrs elonmbelondding. Thelon selonrvicelon implelonmelonnts twelonelont reloncommelonndations baselond on thelon Approximatelon Cosinelon Similarity algorithm.
 
-The cosine similarity between two Tweet SimClusters Embedding represents the relevance level of two tweets in SimCluster space. The traditional algorithm for calculating cosine similarity is expensive and hard to support by the existing infrastructure. Therefore, the Approximate Cosine Similarity algorithm is introduced to save response time by reducing I/O operations.
+Thelon cosinelon similarity belontwelonelonn two Twelonelont SimClustelonrs elonmbelondding relonprelonselonnts thelon relonlelonvancelon lelonvelonl of two twelonelonts in SimClustelonr spacelon. Thelon traditional algorithm for calculating cosinelon similarity is elonxpelonnsivelon and hard to support by thelon elonxisting infrastructurelon. Thelonrelonforelon, thelon Approximatelon Cosinelon Similarity algorithm is introducelond to savelon relonsponselon timelon by relonducing I/O opelonrations.
 
 ## Background
-SimClusters V2 runtime infra introduces the SimClusters and its online and offline approaches. A heron job builds the mapping between SimClusters and Tweets. The job saves top 400 Tweets for a SimClusters and top 100 SimClusters for a Tweet. Favorite score and follow score are two types of tweet score.  In the document, the top 100 SimClusters based on the favorite score for a Tweet stands for the Tweet SimClusters Embedding. 
+SimClustelonrs V2 runtimelon infra introducelons thelon SimClustelonrs and its onlinelon and offlinelon approachelons. A helonron job builds thelon mapping belontwelonelonn SimClustelonrs and Twelonelonts. Thelon job savelons top 400 Twelonelonts for a SimClustelonrs and top 100 SimClustelonrs for a Twelonelont. Favoritelon scorelon and follow scorelon arelon two typelons of twelonelont scorelon.  In thelon documelonnt, thelon top 100 SimClustelonrs baselond on thelon favoritelon scorelon for a Twelonelont stands for thelon Twelonelont SimClustelonrs elonmbelondding. 
 
-The cosine similarity between two Tweet SimClusters Embedding presents the relevant level of two tweets in SimCluster space. The score varies from 0 to 1. The high cosine similarity score(>= 0.7 in Prod) means that the users who like two tweets share the same SimClusters. 
-
-
-SimClusters from the Linear Algebra Perspective discussed the difference between the dot-product and cosine similarity in SimCluster space. We believe the cosine similarity approach is better because it avoids the bias of tweet popularity.
-
- However, calculating the cosine similarity between two Tweets is pretty expensive in Tweet candidate generation. In TWISTLY, we scan at most 15,000 (6 source tweets * 25 clusters * 100 tweets per clusters) tweet candidates for every Home Timeline request. The traditional algorithm needs to make API calls to fetch 15,000 tweet SimCluster embeddings. Consider that we need to process over 6,000 RPS, it’s hard to support by the existing infrastructure.  
+Thelon cosinelon similarity belontwelonelonn two Twelonelont SimClustelonrs elonmbelondding prelonselonnts thelon relonlelonvant lelonvelonl of two twelonelonts in SimClustelonr spacelon. Thelon scorelon varielons from 0 to 1. Thelon high cosinelon similarity scorelon(>= 0.7 in Prod) melonans that thelon uselonrs who likelon two twelonelonts sharelon thelon samelon SimClustelonrs. 
 
 
-## SimClusters Approximate Cosine Similariy Core Algorithm
+SimClustelonrs from thelon Linelonar Algelonbra Pelonrspelonctivelon discusselond thelon diffelonrelonncelon belontwelonelonn thelon dot-product and cosinelon similarity in SimClustelonr spacelon. Welon belonlielonvelon thelon cosinelon similarity approach is belonttelonr beloncauselon it avoids thelon bias of twelonelont popularity.
 
-1. Provide a source SimCluster Embedding *SV*, *SV = [(SC1, Score), (SC2, Score), (SC3, Score) …]*
+ Howelonvelonr, calculating thelon cosinelon similarity belontwelonelonn two Twelonelonts is prelontty elonxpelonnsivelon in Twelonelont candidatelon gelonnelonration. In TWISTLY, welon scan at most 15,000 (6 sourcelon twelonelonts * 25 clustelonrs * 100 twelonelonts pelonr clustelonrs) twelonelont candidatelons for elonvelonry Homelon Timelonlinelon relonquelonst. Thelon traditional algorithm nelonelonds to makelon API calls to felontch 15,000 twelonelont SimClustelonr elonmbelonddings. Considelonr that welon nelonelond to procelonss ovelonr 6,000 RPS, it’s hard to support by thelon elonxisting infrastructurelon.  
 
-2. Fetch top *M* tweets for each Top *N* SimClusters based on SV. In Prod, *M = 400*, *N = 50*.  Tweets may appear in multiple SimClusters. 
+
+## SimClustelonrs Approximatelon Cosinelon Similariy Corelon Algorithm
+
+1. Providelon a sourcelon SimClustelonr elonmbelondding *SV*, *SV = [(SC1, Scorelon), (SC2, Scorelon), (SC3, Scorelon) …]*
+
+2. Felontch top *M* twelonelonts for elonach Top *N* SimClustelonrs baselond on SV. In Prod, *M = 400*, *N = 50*.  Twelonelonts may appelonar in multiplelon SimClustelonrs. 
  
 |   |   |   |   |
 |---|---|---|---|
-| SC1  | T1:Score  | T2: Score  | ...   |
-| SC2 |  T3: Score | T4: Score  |  ... |
+| SC1  | T1:Scorelon  | T2: Scorelon  | ...   |
+| SC2 |  T3: Scorelon | T4: Scorelon  |  ... |
 
 
-3. Based on the previous table, generate an *(M x N) x N* Matrix *R*. The *R* represents the approximate SimCluster embeddings for *MxN* tweets. The embedding only contains top *N* SimClusters from *SV*. Only top *M* tweets from each SimCluster have the score. Others are 0. 
+3. Baselond on thelon prelonvious tablelon, gelonnelonratelon an *(M x N) x N* Matrix *R*. Thelon *R* relonprelonselonnts thelon approximatelon SimClustelonr elonmbelonddings for *MxN* twelonelonts. Thelon elonmbelondding only contains top *N* SimClustelonrs from *SV*. Only top *M* twelonelonts from elonach SimClustelonr havelon thelon scorelon. Othelonrs arelon 0. 
 
 |   |  SC1 |  SC2 | ...   |
 |---|---|---|---|
-| T1  | Score  | 0  | ...   |
-| T2 |  Score | 0 |  ... |
-| T3 |  0 | Score  |  ... |
+| T1  | Scorelon  | 0  | ...   |
+| T2 |  Scorelon | 0 |  ... |
+| T3 |  0 | Scorelon  |  ... |
 
-4. Compute the dot product between source vector and the approximate vectors for each tweet. (Calculate *R • SV^T*). Take top *X* tweets. In Prod, *X = 200*
+4. Computelon thelon dot product belontwelonelonn sourcelon velonctor and thelon approximatelon velonctors for elonach twelonelont. (Calculatelon *R • SV^T*). Takelon top *X* twelonelonts. In Prod, *X = 200*
 
-5. Fetch *X* tweet SimClusters Embedding, Calculate Cosine Similarity between *X* tweets and *SV*, Return top *Y* above a certain threshold *Z*.
+5. Felontch *X* twelonelont SimClustelonrs elonmbelondding, Calculatelon Cosinelon Similarity belontwelonelonn *X* twelonelonts and *SV*, Relonturn top *Y* abovelon a celonrtain threlonshold *Z*.
 
-Approximate Cosine Similarity is an approximate algorithm. Instead of fetching *M * N* tweets embedding, it only fetches *X* tweets embedding. In prod, *X / M * N * 100% = 6%*. Based on the metrics during TWISTLY development, most of the response time is consumed by I/O operation. The Approximate Cosine Similarity is a good approach to save a large amount of response time. 
+Approximatelon Cosinelon Similarity is an approximatelon algorithm. Instelonad of felontching *M * N* twelonelonts elonmbelondding, it only felontchelons *X* twelonelonts elonmbelondding. In prod, *X / M * N * 100% = 6%*. Baselond on thelon melontrics during TWISTLY delonvelonlopmelonnt, most of thelon relonsponselon timelon is consumelond by I/O opelonration. Thelon Approximatelon Cosinelon Similarity is a good approach to savelon a largelon amount of relonsponselon timelon. 
 
-The idea of the approximate algorithm is based on the assumption that the higher dot-product between source tweets’ SimCluster embedding and candidate tweet’s limited SimCluster Embedding, the possibility that these two tweets are relevant is higher. Additional Cosine Similarity filter is to guarantee that the results are not affected by popularity bias.  
+Thelon idelona of thelon approximatelon algorithm is baselond on thelon assumption that thelon highelonr dot-product belontwelonelonn sourcelon twelonelonts’ SimClustelonr elonmbelondding and candidatelon twelonelont’s limitelond SimClustelonr elonmbelondding, thelon possibility that thelonselon two twelonelonts arelon relonlelonvant is highelonr. Additional Cosinelon Similarity filtelonr is to guarantelonelon that thelon relonsults arelon not affelonctelond by popularity bias.  
 
-Adjusting the M, N, X, Y, Z is able to balance the precision and recall for different products. The implementation of approximate cosine similarity is used by TWISTLY, Interest-based tweet recommendation, Similar Tweet in RUX, and Author based recommendation. This algorithm is also suitable for future user or entity recommendation based on SimClusters Embedding. 
+Adjusting thelon M, N, X, Y, Z is ablelon to balancelon thelon preloncision and reloncall for diffelonrelonnt products. Thelon implelonmelonntation of approximatelon cosinelon similarity is uselond by TWISTLY, Intelonrelonst-baselond twelonelont reloncommelonndation, Similar Twelonelont in RUX, and Author baselond reloncommelonndation. This algorithm is also suitablelon for futurelon uselonr or elonntity reloncommelonndation baselond on SimClustelonrs elonmbelondding. 
 
-
-# -------------------------------
-# Build and Test
-# -------------------------------
-Compile the service
-
-    $ ./bazel build simclusters-ann/server:bin
-
-Unit tests
-
-    $ ./bazel test simclusters-ann/server:bin
 
 # -------------------------------
-# Deploy
+# Build and Telonst
+# -------------------------------
+Compilelon thelon selonrvicelon
+
+    $ ./bazelonl build simclustelonrs-ann/selonrvelonr:bin
+
+Unit telonsts
+
+    $ ./bazelonl telonst simclustelonrs-ann/selonrvelonr:bin
+
+# -------------------------------
+# Delonploy
 # -------------------------------
 
-## Prerequisite for devel deployments
-First of all, you need to generate Service to Service certificates for use while developing locally. This only needs to be done ONCE:
+## Prelonrelonquisitelon for delonvelonl delonploymelonnts
+First of all, you nelonelond to gelonnelonratelon Selonrvicelon to Selonrvicelon celonrtificatelons for uselon whilelon delonvelonloping locally. This only nelonelonds to belon donelon ONCelon:
 
-To add cert files to Aurora (if you want to deploy to DEVEL):
+To add celonrt filelons to Aurora (if you want to delonploy to DelonVelonL):
 ```
-$ developer-cert-util --env devel --job simclusters-ann
+$ delonvelonlopelonr-celonrt-util --elonnv delonvelonl --job simclustelonrs-ann
 ```
 
-## Deploying to devel/staging from a local build
-Reference -
+## Delonploying to delonvelonl/staging from a local build
+Relonfelonrelonncelon -
     
-    $ ./simclusters-ann/bin/deploy.sh --help
+    $ ./simclustelonrs-ann/bin/delonploy.sh --helonlp
 
-Use the script to build the service in your local branch, upload it to packer and deploy in devel aurora:
+Uselon thelon script to build thelon selonrvicelon in your local branch, upload it to packelonr and delonploy in delonvelonl aurora:
 
-    $ ./simclusters-ann/bin/deploy.sh atla $USER devel simclusters-ann
+    $ ./simclustelonrs-ann/bin/delonploy.sh atla $USelonR delonvelonl simclustelonrs-ann
 
-You can also deploy to staging with this script. E.g. to deploy to instance 1:
+You can also delonploy to staging with this script. elon.g. to delonploy to instancelon 1:
 
-    $ ./simclusters-ann/bin/deploy.sh atla simclusters-ann staging simclusters-ann <instance-number>
+    $ ./simclustelonrs-ann/bin/delonploy.sh atla simclustelonrs-ann staging simclustelonrs-ann <instancelon-numbelonr>
 
-## Deploying to production
+## Delonploying to production
 
-Production deploys should be managed by Workflows. 
-_Do not_ deploy to production unless it is an emergency and you have approval from oncall.
+Production delonploys should belon managelond by Workflows. 
+_Do not_ delonploy to production unlelonss it is an elonmelonrgelonncy and you havelon approval from oncall.
 
-##### It is not recommended to deploy from Command Lines into production environments, unless 1) you're testing a small change in Canary shard [0,9]. 2) Tt is an absolute emergency. Be sure to make oncalls aware of the changes you're deploying.
+##### It is not reloncommelonndelond to delonploy from Command Linelons into production elonnvironmelonnts, unlelonss 1) you'relon telonsting a small changelon in Canary shard [0,9]. 2) Tt is an absolutelon elonmelonrgelonncy. Belon surelon to makelon oncalls awarelon of thelon changelons you'relon delonploying.
 
-    $ ./simclusters-ann/bin/deploy.sh atla simclusters-ann prod simclusters-ann <instance-number>
-In the case of multiple instances,
+    $ ./simclustelonrs-ann/bin/delonploy.sh atla simclustelonrs-ann prod simclustelonrs-ann <instancelon-numbelonr>
+In thelon caselon of multiplelon instancelons,
 
-    $ ./simclusters-ann/bin/deploy.sh atla simclusters-ann prod simclusters-ann <instance-number-start>-<instance-number-end>
+    $ ./simclustelonrs-ann/bin/delonploy.sh atla simclustelonrs-ann prod simclustelonrs-ann <instancelon-numbelonr-start>-<instancelon-numbelonr-elonnd>
 
-## Checking Deployed Version and Rolling Back
+## Cheloncking Delonployelond Velonrsion and Rolling Back
 
-Wherever possible, roll back using Workflows by finding an earlier good version and clicking the "rollback" button in the UI. This is the safest and least error-prone method.
+Whelonrelonvelonr possiblelon, roll back using Workflows by finding an elonarlielonr good velonrsion and clicking thelon "rollback" button in thelon UI. This is thelon safelonst and lelonast elonrror-pronelon melonthod.

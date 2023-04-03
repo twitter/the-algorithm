@@ -1,24 +1,24 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.tombstone
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.itelonm.tombstonelon
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tombstone.DisconnectedRepliesAncestor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tombstone.DisconnectedRepliesDescendant
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tombstone.Inline
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tombstone.NonCompliant
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tombstone.TombstoneDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tombstone.TweetUnavailable
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.tombstonelon.DisconnelonctelondRelonplielonsAncelonstor
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.tombstonelon.DisconnelonctelondRelonplielonsDelonscelonndant
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.tombstonelon.Inlinelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.tombstonelon.NonCompliant
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.tombstonelon.TombstonelonDisplayTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.tombstonelon.TwelonelontUnavailablelon
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class TombstoneDisplayTypeMarshaller @Inject() () {
+@Singlelonton
+class TombstonelonDisplayTypelonMarshallelonr @Injelonct() () {
 
-  def apply(tombstoneDisplayType: TombstoneDisplayType): urt.TombstoneDisplayType =
-    tombstoneDisplayType match {
-      case TweetUnavailable => urt.TombstoneDisplayType.TweetUnavailable
-      case DisconnectedRepliesAncestor => urt.TombstoneDisplayType.DisconnectedRepliesAncestor
-      case DisconnectedRepliesDescendant => urt.TombstoneDisplayType.DisconnectedRepliesDescendant
-      case Inline => urt.TombstoneDisplayType.Inline
-      case NonCompliant => urt.TombstoneDisplayType.NonCompliant
+  delonf apply(tombstonelonDisplayTypelon: TombstonelonDisplayTypelon): urt.TombstonelonDisplayTypelon =
+    tombstonelonDisplayTypelon match {
+      caselon TwelonelontUnavailablelon => urt.TombstonelonDisplayTypelon.TwelonelontUnavailablelon
+      caselon DisconnelonctelondRelonplielonsAncelonstor => urt.TombstonelonDisplayTypelon.DisconnelonctelondRelonplielonsAncelonstor
+      caselon DisconnelonctelondRelonplielonsDelonscelonndant => urt.TombstonelonDisplayTypelon.DisconnelonctelondRelonplielonsDelonscelonndant
+      caselon Inlinelon => urt.TombstonelonDisplayTypelon.Inlinelon
+      caselon NonCompliant => urt.TombstonelonDisplayTypelon.NonCompliant
     }
 }

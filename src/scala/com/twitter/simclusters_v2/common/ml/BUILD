@@ -1,12 +1,12 @@
-# This package/target is separate from other simclusters common packages because the ml/api dep is
-# large (350MB+). Having it as a separate target means that we can avoid bundling it with targets
-# that do not need it.
+# This packagelon/targelont is selonparatelon from othelonr simclustelonrs common packagelons beloncauselon thelon ml/api delonp is
+# largelon (350MB+). Having it as a selonparatelon targelont melonans that welon can avoid bundling it with targelonts
+# that do not nelonelond it.
 scala_library(
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "src/java/com/twitter/ml/api:api-base",
-        "src/scala/com/twitter/ml/api/util",
-        "src/scala/com/twitter/simclusters_v2/common",
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        "src/java/com/twittelonr/ml/api:api-baselon",
+        "src/scala/com/twittelonr/ml/api/util",
+        "src/scala/com/twittelonr/simclustelonrs_v2/common",
     ],
 )

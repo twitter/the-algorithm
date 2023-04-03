@@ -1,27 +1,27 @@
-package com.twitter.product_mixer.core.functional_component.transformer
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.transformelonr
 
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.common.identifier.TransformerIdentifier
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.TransformelonrIdelonntifielonr
 
 /**
- * [[FeatureTransformer]] allow you to populate a [[com.twitter.product_mixer.core.feature.Feature]]s
- * value which is already available or can be derived without making an RPC.
+ * [[FelonaturelonTransformelonr]] allow you to populatelon a [[com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon]]s
+ * valuelon which is alrelonady availablelon or can belon delonrivelond without making an RPC.
  *
- * A [[FeatureTransformer]] transforms a given [[Inputs]] into a [[FeatureMap]].
- * The transformer must specify which [[com.twitter.product_mixer.core.feature.Feature]]s it will populate using the `features` field
- * and the returned [[FeatureMap]] must always have the specified [[com.twitter.product_mixer.core.feature.Feature]]s populated.
+ * A [[FelonaturelonTransformelonr]] transforms a givelonn [[Inputs]] into a [[FelonaturelonMap]].
+ * Thelon transformelonr must speloncify which [[com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon]]s it will populatelon using thelon `felonaturelons` fielonld
+ * and thelon relonturnelond [[FelonaturelonMap]] must always havelon thelon speloncifielond [[com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon]]s populatelond.
  *
- * @note Unlike [[com.twitter.product_mixer.core.functional_component.feature_hydrator.FeatureHydrator]] implementations,
- *       an exception thrown in a [[FeatureTransformer]] will not be added to the [[FeatureMap]] and will instead be
- *       bubble up to the calling pipeline's [[com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailureClassifier]].
+ * @notelon Unlikelon [[com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator.FelonaturelonHydrator]] implelonmelonntations,
+ *       an elonxcelonption thrown in a [[FelonaturelonTransformelonr]] will not belon addelond to thelon [[FelonaturelonMap]] and will instelonad belon
+ *       bubblelon up to thelon calling pipelonlinelon's [[com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.PipelonlinelonFailurelonClassifielonr]].
  */
-trait FeatureTransformer[-Inputs] extends Transformer[Inputs, FeatureMap] {
+trait FelonaturelonTransformelonr[-Inputs] elonxtelonnds Transformelonr[Inputs, FelonaturelonMap] {
 
-  def features: Set[Feature[_, _]]
+  delonf felonaturelons: Selont[Felonaturelon[_, _]]
 
-  override val identifier: TransformerIdentifier
+  ovelonrridelon val idelonntifielonr: TransformelonrIdelonntifielonr
 
-  /** Hydrates a [[FeatureMap]] for a given [[Inputs]] */
-  override def transform(input: Inputs): FeatureMap
+  /** Hydratelons a [[FelonaturelonMap]] for a givelonn [[Inputs]] */
+  ovelonrridelon delonf transform(input: Inputs): FelonaturelonMap
 }

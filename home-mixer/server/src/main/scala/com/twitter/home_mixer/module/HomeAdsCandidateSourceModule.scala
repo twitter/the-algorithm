@@ -1,32 +1,32 @@
-package com.twitter.home_mixer.module
+packagelon com.twittelonr.homelon_mixelonr.modulelon
 
-import com.twitter.adserver.thriftscala.NewAdServer
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.thriftmux.MethodBuilder
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsClient
-import com.twitter.inject.Injector
-import com.twitter.inject.thrift.modules.ThriftMethodBuilderClientModule
-import com.twitter.util.Duration
+import com.twittelonr.adselonrvelonr.thriftscala.NelonwAdSelonrvelonr
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.finaglelon.thriftmux.MelonthodBuildelonr
+import com.twittelonr.finatra.mtls.thriftmux.modulelons.MtlsClielonnt
+import com.twittelonr.injelonct.Injelonctor
+import com.twittelonr.injelonct.thrift.modulelons.ThriftMelonthodBuildelonrClielonntModulelon
+import com.twittelonr.util.Duration
 
-object HomeAdsCandidateSourceModule
-    extends ThriftMethodBuilderClientModule[
-      NewAdServer.ServicePerEndpoint,
-      NewAdServer.MethodPerEndpoint
+objelonct HomelonAdsCandidatelonSourcelonModulelon
+    elonxtelonnds ThriftMelonthodBuildelonrClielonntModulelon[
+      NelonwAdSelonrvelonr.SelonrvicelonPelonrelonndpoint,
+      NelonwAdSelonrvelonr.MelonthodPelonrelonndpoint
     ]
-    with MtlsClient {
+    with MtlsClielonnt {
 
-  override val label = "adserver"
-  override val dest = "/s/ads/adserver"
+  ovelonrridelon val labelonl = "adselonrvelonr"
+  ovelonrridelon val delonst = "/s/ads/adselonrvelonr"
 
-  override protected def configureMethodBuilder(
-    injector: Injector,
-    methodBuilder: MethodBuilder
-  ): MethodBuilder = {
-    methodBuilder
-      .withTimeoutPerRequest(1200.milliseconds)
-      .withTimeoutTotal(1200.milliseconds)
-      .withMaxRetries(2)
+  ovelonrridelon protelonctelond delonf configurelonMelonthodBuildelonr(
+    injelonctor: Injelonctor,
+    melonthodBuildelonr: MelonthodBuildelonr
+  ): MelonthodBuildelonr = {
+    melonthodBuildelonr
+      .withTimelonoutPelonrRelonquelonst(1200.milliselonconds)
+      .withTimelonoutTotal(1200.milliselonconds)
+      .withMaxRelontrielons(2)
   }
 
-  override protected def sessionAcquisitionTimeout: Duration = 150.milliseconds
+  ovelonrridelon protelonctelond delonf selonssionAcquisitionTimelonout: Duration = 150.milliselonconds
 }

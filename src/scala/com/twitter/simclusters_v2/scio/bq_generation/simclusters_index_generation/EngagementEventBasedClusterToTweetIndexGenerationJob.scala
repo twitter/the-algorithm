@@ -1,659 +1,659 @@
-package com.twitter.simclusters_v2.scio.bq_generation
-package simclusters_index_generation
+packagelon com.twittelonr.simclustelonrs_v2.scio.bq_gelonnelonration
+packagelon simclustelonrs_indelonx_gelonnelonration
 
-import com.google.api.services.bigquery.model.TimePartitioning
-import com.spotify.scio.ScioContext
-import com.spotify.scio.coders.Coder
-import com.twitter.beam.io.dal.DAL
-import com.twitter.beam.io.fs.multiformat.PathLayout
-import com.twitter.beam.job.DateRangeOptions
-import com.twitter.conversions.DurationOps.richDurationFromInt
-import com.twitter.dal.client.dataset.KeyValDALDataset
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.scio_internal.coders.ThriftStructLazyBinaryScroogeCoder
-import com.twitter.scio_internal.job.ScioBeamJob
-import com.twitter.scrooge.ThriftStruct
-import com.twitter.simclusters_v2.hdfs_sources.AdsFavBasedSimclustersClusterToTweetIndexScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.AdsFavClickBasedSimclustersClusterToTweetIndexScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.FavBasedEvergreenContentSimclustersClusterToTweetIndexScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.FavBasedSimclustersClusterToTweetIndexScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.FavBasedVideoSimclustersClusterToTweetIndexScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.ReplyBasedSimclustersClusterToTweetIndexScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.RetweetBasedSimclustersClusterToTweetIndexScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.VideoViewBasedSimclustersClusterToTweetIndexScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.PushOpenBasedSimclustersClusterToTweetIndexScalaDataset
-import com.twitter.simclusters_v2.scio.bq_generation.common.BQGenerationUtil.buildActionTypesEngagementIndicatorString
-import com.twitter.simclusters_v2.scio.bq_generation.common.BQGenerationUtil.getInterestedIn2020SQL
-import com.twitter.simclusters_v2.scio.bq_generation.common.BQTableDetails
-import com.twitter.simclusters_v2.scio.bq_generation.simclusters_index_generation.Config.AdsClickEngagementTypeIds
-import com.twitter.simclusters_v2.scio.bq_generation.simclusters_index_generation.Config.AdsFavEngagementTypeIds
-import com.twitter.simclusters_v2.scio.bq_generation.simclusters_index_generation.EngagementEventBasedClusterToTweetIndexFromBQ.getTopKTweetsForClusterKeyBQ
-import com.twitter.simclusters_v2.thriftscala.ClusterIdToTopKTweetsWithScores
-import com.twitter.simclusters_v2.thriftscala.FullClusterId
-import com.twitter.simclusters_v2.thriftscala.TopKTweetsWithScores
-import com.twitter.tcdc.bqblaster.beam.syntax._
-import com.twitter.tcdc.bqblaster.core.avro.TypedProjection
-import com.twitter.tcdc.bqblaster.core.transform.RootTransform
-import com.twitter.unified_user_actions.thriftscala.ActionType
-import java.time.Instant
-import org.apache.beam.sdk.io.gcp.bigquery.BigQueryIO
-import org.joda.time.DateTime
+import com.googlelon.api.selonrvicelons.bigquelonry.modelonl.TimelonPartitioning
+import com.spotify.scio.ScioContelonxt
+import com.spotify.scio.codelonrs.Codelonr
+import com.twittelonr.belonam.io.dal.DAL
+import com.twittelonr.belonam.io.fs.multiformat.PathLayout
+import com.twittelonr.belonam.job.DatelonRangelonOptions
+import com.twittelonr.convelonrsions.DurationOps.richDurationFromInt
+import com.twittelonr.dal.clielonnt.dataselont.KelonyValDALDataselont
+import com.twittelonr.scalding_intelonrnal.multiformat.format.kelonyval.KelonyVal
+import com.twittelonr.scio_intelonrnal.codelonrs.ThriftStructLazyBinaryScroogelonCodelonr
+import com.twittelonr.scio_intelonrnal.job.ScioBelonamJob
+import com.twittelonr.scroogelon.ThriftStruct
+import com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.AdsFavBaselondSimclustelonrsClustelonrToTwelonelontIndelonxScalaDataselont
+import com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.AdsFavClickBaselondSimclustelonrsClustelonrToTwelonelontIndelonxScalaDataselont
+import com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.FavBaselondelonvelonrgrelonelonnContelonntSimclustelonrsClustelonrToTwelonelontIndelonxScalaDataselont
+import com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.FavBaselondSimclustelonrsClustelonrToTwelonelontIndelonxScalaDataselont
+import com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.FavBaselondVidelonoSimclustelonrsClustelonrToTwelonelontIndelonxScalaDataselont
+import com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.RelonplyBaselondSimclustelonrsClustelonrToTwelonelontIndelonxScalaDataselont
+import com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.RelontwelonelontBaselondSimclustelonrsClustelonrToTwelonelontIndelonxScalaDataselont
+import com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.VidelonoVielonwBaselondSimclustelonrsClustelonrToTwelonelontIndelonxScalaDataselont
+import com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.PushOpelonnBaselondSimclustelonrsClustelonrToTwelonelontIndelonxScalaDataselont
+import com.twittelonr.simclustelonrs_v2.scio.bq_gelonnelonration.common.BQGelonnelonrationUtil.buildActionTypelonselonngagelonmelonntIndicatorString
+import com.twittelonr.simclustelonrs_v2.scio.bq_gelonnelonration.common.BQGelonnelonrationUtil.gelontIntelonrelonstelondIn2020SQL
+import com.twittelonr.simclustelonrs_v2.scio.bq_gelonnelonration.common.BQTablelonDelontails
+import com.twittelonr.simclustelonrs_v2.scio.bq_gelonnelonration.simclustelonrs_indelonx_gelonnelonration.Config.AdsClickelonngagelonmelonntTypelonIds
+import com.twittelonr.simclustelonrs_v2.scio.bq_gelonnelonration.simclustelonrs_indelonx_gelonnelonration.Config.AdsFavelonngagelonmelonntTypelonIds
+import com.twittelonr.simclustelonrs_v2.scio.bq_gelonnelonration.simclustelonrs_indelonx_gelonnelonration.elonngagelonmelonntelonvelonntBaselondClustelonrToTwelonelontIndelonxFromBQ.gelontTopKTwelonelontsForClustelonrKelonyBQ
+import com.twittelonr.simclustelonrs_v2.thriftscala.ClustelonrIdToTopKTwelonelontsWithScorelons
+import com.twittelonr.simclustelonrs_v2.thriftscala.FullClustelonrId
+import com.twittelonr.simclustelonrs_v2.thriftscala.TopKTwelonelontsWithScorelons
+import com.twittelonr.tcdc.bqblastelonr.belonam.syntax._
+import com.twittelonr.tcdc.bqblastelonr.corelon.avro.TypelondProjelonction
+import com.twittelonr.tcdc.bqblastelonr.corelon.transform.RootTransform
+import com.twittelonr.unifielond_uselonr_actions.thriftscala.ActionTypelon
+import java.timelon.Instant
+import org.apachelon.belonam.sdk.io.gcp.bigquelonry.BigQuelonryIO
+import org.joda.timelon.DatelonTimelon
 
-trait EngagementEventBasedClusterToTweetIndexGenerationJob extends ScioBeamJob[DateRangeOptions] {
-  // Configs to set for different type of embeddings and jobs
-  val isAdhoc: Boolean
-  val getConsumerEmbeddingsSQLFunc: (DateTime, Int) => String
-  val outputTable: BQTableDetails
-  val keyValDatasetOutputPath: String
-  val clusterToTweetIndexSnapshotDataset: KeyValDALDataset[
-    KeyVal[FullClusterId, TopKTweetsWithScores]
+trait elonngagelonmelonntelonvelonntBaselondClustelonrToTwelonelontIndelonxGelonnelonrationJob elonxtelonnds ScioBelonamJob[DatelonRangelonOptions] {
+  // Configs to selont for diffelonrelonnt typelon of elonmbelonddings and jobs
+  val isAdhoc: Boolelonan
+  val gelontConsumelonrelonmbelonddingsSQLFunc: (DatelonTimelon, Int) => String
+  val outputTablelon: BQTablelonDelontails
+  val kelonyValDataselontOutputPath: String
+  val clustelonrToTwelonelontIndelonxSnapshotDataselont: KelonyValDALDataselont[
+    KelonyVal[FullClustelonrId, TopKTwelonelontsWithScorelons]
   ]
-  // Base configs
-  val projectId = "twttr-recos-ml-prod"
-  val environment: DAL.Env = if (isAdhoc) DAL.Environment.Dev else DAL.Environment.Prod
+  // Baselon configs
+  val projelonctId = "twttr-reloncos-ml-prod"
+  val elonnvironmelonnt: DAL.elonnv = if (isAdhoc) DAL.elonnvironmelonnt.Delonv elonlselon DAL.elonnvironmelonnt.Prod
 
-  // Point to different user tweet interaction table generation sql
-  // UUA-supported events: Config.unifiedUserTweetActionPairGenerationSQLPath
-  val userTweetEngagementEventPairSqlPath: String
-  lazy val userTweetEngagementEventPairTemplateVariable: Map[String, String] = Map.empty
+  // Point to diffelonrelonnt uselonr twelonelont intelonraction tablelon gelonnelonration sql
+  // UUA-supportelond elonvelonnts: Config.unifielondUselonrTwelonelontActionPairGelonnelonrationSQLPath
+  val uselonrTwelonelontelonngagelonmelonntelonvelonntPairSqlPath: String
+  lazy val uselonrTwelonelontelonngagelonmelonntelonvelonntPairTelonmplatelonVariablelon: Map[String, String] = Map.elonmpty
 
-  // Enable Video-only filters and health filters (for VideoViewBased embeddings)
-  val enableHealthAndVideoFilters: Boolean = Config.enableHealthAndVideoFilters
+  // elonnablelon Videlono-only filtelonrs and helonalth filtelonrs (for VidelonoVielonwBaselond elonmbelonddings)
+  val elonnablelonHelonalthAndVidelonoFiltelonrs: Boolelonan = Config.elonnablelonHelonalthAndVidelonoFiltelonrs
 
-  val enableFavClusterTopKTweetsIntersection: Boolean =
-    Config.enableIntersectionWithFavBasedClusterTopKTweetsIndex
+  val elonnablelonFavClustelonrTopKTwelonelontsIntelonrselonction: Boolelonan =
+    Config.elonnablelonIntelonrselonctionWithFavBaselondClustelonrTopKTwelonelontsIndelonx
 
-  // Min fav/interaction threshold
-  val minInteractionCount: Int = Config.minInteractionCount
+  // Min fav/intelonraction threlonshold
+  val minIntelonractionCount: Int = Config.minIntelonractionCount
   val minFavCount: Int = Config.minFavCount
 
-  // Tweet embeddings parameters
-  val tweetEmbeddingsLength: Int = Config.tweetEmbeddingsLength
-  val tweetEmbeddingsHalfLife: Int = Config.tweetEmbeddingsHalfLife
+  // Twelonelont elonmbelonddings paramelontelonrs
+  val twelonelontelonmbelonddingsLelonngth: Int = Config.twelonelontelonmbelonddingsLelonngth
+  val twelonelontelonmbelonddingsHalfLifelon: Int = Config.twelonelontelonmbelonddingsHalfLifelon
 
-  // Clusters-to-tweet index parameters
-  val clusterTopKTweets: Int = Config.clusterTopKTweets
-  val maxTweetAgeHours: Int = Config.maxTweetAgeHours
-  val minEngagementPerCluster: Int = Config.minEngagementPerCluster
+  // Clustelonrs-to-twelonelont indelonx paramelontelonrs
+  val clustelonrTopKTwelonelonts: Int = Config.clustelonrTopKTwelonelonts
+  val maxTwelonelontAgelonHours: Int = Config.maxTwelonelontAgelonHours
+  val minelonngagelonmelonntPelonrClustelonr: Int = Config.minelonngagelonmelonntPelonrClustelonr
 
-  override implicit def scroogeCoder[T <: ThriftStruct: Manifest]: Coder[T] =
-    ThriftStructLazyBinaryScroogeCoder.scroogeCoder
+  ovelonrridelon implicit delonf scroogelonCodelonr[T <: ThriftStruct: Manifelonst]: Codelonr[T] =
+    ThriftStructLazyBinaryScroogelonCodelonr.scroogelonCodelonr
 
-  override def configurePipeline(sc: ScioContext, opts: DateRangeOptions): Unit = {
-    // The time when the job is scheduled
-    val queryTimestamp = opts.interval.getEnd
+  ovelonrridelon delonf configurelonPipelonlinelon(sc: ScioContelonxt, opts: DatelonRangelonOptions): Unit = {
+    // Thelon timelon whelonn thelon job is schelondulelond
+    val quelonryTimelonstamp = opts.intelonrval.gelontelonnd
 
-    // Read consumer embeddings SQL
-    val consumerEmbeddingsSQL = getConsumerEmbeddingsSQLFunc(queryTimestamp, 21)
+    // Relonad consumelonr elonmbelonddings SQL
+    val consumelonrelonmbelonddingsSQL = gelontConsumelonrelonmbelonddingsSQLFunc(quelonryTimelonstamp, 21)
 
-    // Generate SimClusters cluster-to-tweet index via BQ
-    val topKtweetsForClusterKey =
-      getTopKTweetsForClusterKeyBQ(
+    // Gelonnelonratelon SimClustelonrs clustelonr-to-twelonelont indelonx via BQ
+    val topKtwelonelontsForClustelonrKelony =
+      gelontTopKTwelonelontsForClustelonrKelonyBQ(
         sc,
-        queryTimestamp,
-        maxTweetAgeHours,
-        consumerEmbeddingsSQL,
-        userTweetEngagementEventPairSqlPath,
-        userTweetEngagementEventPairTemplateVariable,
-        enableHealthAndVideoFilters,
-        enableFavClusterTopKTweetsIntersection,
-        minInteractionCount,
+        quelonryTimelonstamp,
+        maxTwelonelontAgelonHours,
+        consumelonrelonmbelonddingsSQL,
+        uselonrTwelonelontelonngagelonmelonntelonvelonntPairSqlPath,
+        uselonrTwelonelontelonngagelonmelonntelonvelonntPairTelonmplatelonVariablelon,
+        elonnablelonHelonalthAndVidelonoFiltelonrs,
+        elonnablelonFavClustelonrTopKTwelonelontsIntelonrselonction,
+        minIntelonractionCount,
         minFavCount,
-        tweetEmbeddingsLength,
-        tweetEmbeddingsHalfLife,
-        minEngagementPerCluster,
-        clusterTopKTweets
+        twelonelontelonmbelonddingsLelonngth,
+        twelonelontelonmbelonddingsHalfLifelon,
+        minelonngagelonmelonntPelonrClustelonr,
+        clustelonrTopKTwelonelonts
       )
 
-    // Setup BQ writer
-    val ingestionTime = opts.getDate().value.getEnd.toDate
-    val bqFieldsTransform = RootTransform
-      .Builder()
-      .withPrependedFields("dateHour" -> TypedProjection.fromConstant(ingestionTime))
-    val timePartitioning = new TimePartitioning()
-      .setType("HOUR").setField("dateHour").setExpirationMs(3.days.inMilliseconds)
-    val bqWriter = BigQueryIO
-      .write[ClusterIdToTopKTweetsWithScores]
-      .to(outputTable.toString)
-      .withExtendedErrorInfo()
-      .withTimePartitioning(timePartitioning)
-      .withLoadJobProjectId(projectId)
-      .withThriftSupport(bqFieldsTransform.build(), AvroConverter.Legacy)
-      .withCreateDisposition(BigQueryIO.Write.CreateDisposition.CREATE_IF_NEEDED)
-      .withWriteDisposition(BigQueryIO.Write.WriteDisposition.WRITE_APPEND)
+    // Selontup BQ writelonr
+    val ingelonstionTimelon = opts.gelontDatelon().valuelon.gelontelonnd.toDatelon
+    val bqFielonldsTransform = RootTransform
+      .Buildelonr()
+      .withPrelonpelonndelondFielonlds("datelonHour" -> TypelondProjelonction.fromConstant(ingelonstionTimelon))
+    val timelonPartitioning = nelonw TimelonPartitioning()
+      .selontTypelon("HOUR").selontFielonld("datelonHour").selontelonxpirationMs(3.days.inMilliselonconds)
+    val bqWritelonr = BigQuelonryIO
+      .writelon[ClustelonrIdToTopKTwelonelontsWithScorelons]
+      .to(outputTablelon.toString)
+      .withelonxtelonndelondelonrrorInfo()
+      .withTimelonPartitioning(timelonPartitioning)
+      .withLoadJobProjelonctId(projelonctId)
+      .withThriftSupport(bqFielonldsTransform.build(), AvroConvelonrtelonr.Lelongacy)
+      .withCrelonatelonDisposition(BigQuelonryIO.Writelon.CrelonatelonDisposition.CRelonATelon_IF_NelonelonDelonD)
+      .withWritelonDisposition(BigQuelonryIO.Writelon.WritelonDisposition.WRITelon_APPelonND)
 
-    // Save SimClusters index to a BQ table
-    topKtweetsForClusterKey
-      .map { clusterIdToTopKTweets =>
+    // Savelon SimClustelonrs indelonx to a BQ tablelon
+    topKtwelonelontsForClustelonrKelony
+      .map { clustelonrIdToTopKTwelonelonts =>
         {
-          ClusterIdToTopKTweetsWithScores(
-            clusterId = clusterIdToTopKTweets.clusterId,
-            topKTweetsWithScores = clusterIdToTopKTweets.topKTweetsWithScores
+          ClustelonrIdToTopKTwelonelontsWithScorelons(
+            clustelonrId = clustelonrIdToTopKTwelonelonts.clustelonrId,
+            topKTwelonelontsWithScorelons = clustelonrIdToTopKTwelonelonts.topKTwelonelontsWithScorelons
           )
         }
       }
-      .saveAsCustomOutput(s"WriteToBQTable - ${outputTable}", bqWriter)
+      .savelonAsCustomOutput(s"WritelonToBQTablelon - ${outputTablelon}", bqWritelonr)
 
-    // Save SimClusters index as a KeyValSnapshotDataset
-    topKtweetsForClusterKey
-      .map { clusterIdToTopKTweets =>
-        KeyVal(clusterIdToTopKTweets.clusterId, clusterIdToTopKTweets.topKTweetsWithScores)
-      }.saveAsCustomOutput(
-        name = s"WriteClusterToKeyIndexToKeyValDataset at ${keyValDatasetOutputPath}",
-        DAL.writeVersionedKeyVal(
-          clusterToTweetIndexSnapshotDataset,
-          PathLayout.VersionedPath(prefix =
+    // Savelon SimClustelonrs indelonx as a KelonyValSnapshotDataselont
+    topKtwelonelontsForClustelonrKelony
+      .map { clustelonrIdToTopKTwelonelonts =>
+        KelonyVal(clustelonrIdToTopKTwelonelonts.clustelonrId, clustelonrIdToTopKTwelonelonts.topKTwelonelontsWithScorelons)
+      }.savelonAsCustomOutput(
+        namelon = s"WritelonClustelonrToKelonyIndelonxToKelonyValDataselont at ${kelonyValDataselontOutputPath}",
+        DAL.writelonVelonrsionelondKelonyVal(
+          clustelonrToTwelonelontIndelonxSnapshotDataselont,
+          PathLayout.VelonrsionelondPath(prelonfix =
             ((if (!isAdhoc)
                 Config.RootMHPath
-              else
+              elonlselon
                 Config.AdhocRootPath)
-              + keyValDatasetOutputPath)),
-          instant = Instant.ofEpochMilli(opts.interval.getEndMillis - 1L),
-          environmentOverride = environment,
+              + kelonyValDataselontOutputPath)),
+          instant = Instant.ofelonpochMilli(opts.intelonrval.gelontelonndMillis - 1L),
+          elonnvironmelonntOvelonrridelon = elonnvironmelonnt,
         )
       )
   }
 }
 
-// This abstract class is used to define parameters specific to UUA events.
-abstract class UUABasedClusterToTweetIndexGenerationJob
-    extends EngagementEventBasedClusterToTweetIndexGenerationJob {
-  // UUA Action types and column names
-  val contributingActionTypes: Seq[String]
-  val contributingActionReferenceTweetIdColumn: String = Config.actionTweetIdColumn
-  val undoActionTypes: Seq[String]
-  // Default undo tweet id is same as the actionTweetId (e.g. for favs these are the same tweet id)
-  val undoActionReferenceTweetIdColumn: String = Config.actionTweetIdColumn
+// This abstract class is uselond to delonfinelon paramelontelonrs speloncific to UUA elonvelonnts.
+abstract class UUABaselondClustelonrToTwelonelontIndelonxGelonnelonrationJob
+    elonxtelonnds elonngagelonmelonntelonvelonntBaselondClustelonrToTwelonelontIndelonxGelonnelonrationJob {
+  // UUA Action typelons and column namelons
+  val contributingActionTypelons: Selonq[String]
+  val contributingActionRelonfelonrelonncelonTwelonelontIdColumn: String = Config.actionTwelonelontIdColumn
+  val undoActionTypelons: Selonq[String]
+  // Delonfault undo twelonelont id is samelon as thelon actionTwelonelontId (elon.g. for favs thelonselon arelon thelon samelon twelonelont id)
+  val undoActionRelonfelonrelonncelonTwelonelontIdColumn: String = Config.actionTwelonelontIdColumn
 
-  // Get the string that represents the list of undo event ids
-  lazy val undoActionTypesStr: String = {
-    // Populate the action type list with a placeholder action if its empty
-    val actionTypes =
-      if (undoActionTypes.nonEmpty) undoActionTypes
-      else Seq(Config.PlaceholderActionType)
-    convertActionTypesSeqToString(actionTypes)
+  // Gelont thelon string that relonprelonselonnts thelon list of undo elonvelonnt ids
+  lazy val undoActionTypelonsStr: String = {
+    // Populatelon thelon action typelon list with a placelonholdelonr action if its elonmpty
+    val actionTypelons =
+      if (undoActionTypelons.nonelonmpty) undoActionTypelons
+      elonlselon Selonq(Config.PlacelonholdelonrActionTypelon)
+    convelonrtActionTypelonsSelonqToString(actionTypelons)
   }
 
-  override lazy val userTweetEngagementEventPairTemplateVariable: Map[String, String] = {
+  ovelonrridelon lazy val uselonrTwelonelontelonngagelonmelonntelonvelonntPairTelonmplatelonVariablelon: Map[String, String] = {
     Map(
-      "CONTRIBUTING_ACTION_TYPES_STR" -> convertActionTypesSeqToString(contributingActionTypes),
-      "CONTRIBUTING_ACTION_TWEET_ID_COLUMN" -> contributingActionReferenceTweetIdColumn,
-      "UNDO_ACTION_TYPES_STR" -> undoActionTypesStr,
-      "UNDO_ACTION_TWEET_ID_COLUMN" -> undoActionReferenceTweetIdColumn
+      "CONTRIBUTING_ACTION_TYPelonS_STR" -> convelonrtActionTypelonsSelonqToString(contributingActionTypelons),
+      "CONTRIBUTING_ACTION_TWelonelonT_ID_COLUMN" -> contributingActionRelonfelonrelonncelonTwelonelontIdColumn,
+      "UNDO_ACTION_TYPelonS_STR" -> undoActionTypelonsStr,
+      "UNDO_ACTION_TWelonelonT_ID_COLUMN" -> undoActionRelonfelonrelonncelonTwelonelontIdColumn
     )
   }
 
   /***
-   *  Convert a list of actions to a string that could be easily used in SQLs
-   *  Example input: Seq("ServerTweetFav", "ClientTweetFav")
-   *          output: "ServerTweetFav","ClientTweetFav"
-   *  SQL use case: SELECT * FROM table WHERE actionType IN ("ServerTweetFav","ClientTweetFav")
+   *  Convelonrt a list of actions to a string that could belon elonasily uselond in SQLs
+   *  elonxamplelon input: Selonq("SelonrvelonrTwelonelontFav", "ClielonntTwelonelontFav")
+   *          output: "SelonrvelonrTwelonelontFav","ClielonntTwelonelontFav"
+   *  SQL uselon caselon: SelonLelonCT * FROM tablelon WHelonRelon actionTypelon IN ("SelonrvelonrTwelonelontFav","ClielonntTwelonelontFav")
    */
-  private def convertActionTypesSeqToString(actionTypes: Seq[String]): String = {
-    actionTypes.map(action => f"""\"${action}\"""").mkString(",")
+  privatelon delonf convelonrtActionTypelonsSelonqToString(actionTypelons: Selonq[String]): String = {
+    actionTypelons.map(action => f"""\"${action}\"""").mkString(",")
   }
 }
 
-abstract class AdsClusterToTweetIndexGenerationJob
-    extends EngagementEventBasedClusterToTweetIndexGenerationJob {
-  // Ads contributing action types - fav, click, etc
-  val contributingActionTypes: Seq[Int]
+abstract class AdsClustelonrToTwelonelontIndelonxGelonnelonrationJob
+    elonxtelonnds elonngagelonmelonntelonvelonntBaselondClustelonrToTwelonelontIndelonxGelonnelonrationJob {
+  // Ads contributing action typelons - fav, click, elontc
+  val contributingActionTypelons: Selonq[Int]
 
-  override lazy val userTweetEngagementEventPairTemplateVariable: Map[String, String] = {
+  ovelonrridelon lazy val uselonrTwelonelontelonngagelonmelonntelonvelonntPairTelonmplatelonVariablelon: Map[String, String] = {
     Map(
-      "CONTRIBUTING_ACTION_TYPES_STR" -> convertActionTypesSeqToString(contributingActionTypes)
+      "CONTRIBUTING_ACTION_TYPelonS_STR" -> convelonrtActionTypelonsSelonqToString(contributingActionTypelons)
     )
   }
-  private def convertActionTypesSeqToString(actionTypes: Seq[Int]): String = {
-    actionTypes.map(action => f"""${action}""").mkString(",")
+  privatelon delonf convelonrtActionTypelonsSelonqToString(actionTypelons: Selonq[Int]): String = {
+    actionTypelons.map(action => f"""${action}""").mkString(",")
   }
 }
 
-object FavBasedClusterToTweetIndexGenerationAdhocJob
-    extends UUABasedClusterToTweetIndexGenerationJob {
-  override val isAdhoc = true
-  override val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
-  override val userTweetEngagementEventPairSqlPath: String =
-    Config.unifiedUserTweetActionPairGenerationSQLPath
-  override val contributingActionTypes: Seq[String] = Seq(ActionType.ServerTweetFav.name)
-  override val undoActionTypes: Seq[String] = Seq(ActionType.ServerTweetUnfav.name)
-  override val minInteractionCount: Int = 8
-  override val minFavCount: Int = 8
-  override val outputTable =
-    BQTableDetails(
-      "twttr-recos-ml-prod",
-      "simclusters",
-      "simclusters_fav_based_cluster_to_tweet_index")
-  override val keyValDatasetOutputPath = Config.FavBasedClusterToTweetIndexOutputPath
-  override val clusterToTweetIndexSnapshotDataset: KeyValDALDataset[
-    KeyVal[FullClusterId, TopKTweetsWithScores]
+objelonct FavBaselondClustelonrToTwelonelontIndelonxGelonnelonrationAdhocJob
+    elonxtelonnds UUABaselondClustelonrToTwelonelontIndelonxGelonnelonrationJob {
+  ovelonrridelon val isAdhoc = truelon
+  ovelonrridelon val gelontConsumelonrelonmbelonddingsSQLFunc = gelontIntelonrelonstelondIn2020SQL
+  ovelonrridelon val uselonrTwelonelontelonngagelonmelonntelonvelonntPairSqlPath: String =
+    Config.unifielondUselonrTwelonelontActionPairGelonnelonrationSQLPath
+  ovelonrridelon val contributingActionTypelons: Selonq[String] = Selonq(ActionTypelon.SelonrvelonrTwelonelontFav.namelon)
+  ovelonrridelon val undoActionTypelons: Selonq[String] = Selonq(ActionTypelon.SelonrvelonrTwelonelontUnfav.namelon)
+  ovelonrridelon val minIntelonractionCount: Int = 8
+  ovelonrridelon val minFavCount: Int = 8
+  ovelonrridelon val outputTablelon =
+    BQTablelonDelontails(
+      "twttr-reloncos-ml-prod",
+      "simclustelonrs",
+      "simclustelonrs_fav_baselond_clustelonr_to_twelonelont_indelonx")
+  ovelonrridelon val kelonyValDataselontOutputPath = Config.FavBaselondClustelonrToTwelonelontIndelonxOutputPath
+  ovelonrridelon val clustelonrToTwelonelontIndelonxSnapshotDataselont: KelonyValDALDataselont[
+    KelonyVal[FullClustelonrId, TopKTwelonelontsWithScorelons]
   ] =
-    FavBasedSimclustersClusterToTweetIndexScalaDataset
+    FavBaselondSimclustelonrsClustelonrToTwelonelontIndelonxScalaDataselont
 }
 
-object FavBasedClusterToTweetIndexGenerationBatchJob
-    extends UUABasedClusterToTweetIndexGenerationJob {
-  override val isAdhoc = false
-  override val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
-  override val userTweetEngagementEventPairSqlPath: String =
-    Config.unifiedUserTweetActionPairGenerationSQLPath
-  override val contributingActionTypes: Seq[String] = Seq(ActionType.ServerTweetFav.name)
-  override val undoActionTypes: Seq[String] = Seq(ActionType.ServerTweetUnfav.name)
-  override val minInteractionCount: Int = 8
-  override val minFavCount: Int = 8
-  override val outputTable =
-    BQTableDetails(
+objelonct FavBaselondClustelonrToTwelonelontIndelonxGelonnelonrationBatchJob
+    elonxtelonnds UUABaselondClustelonrToTwelonelontIndelonxGelonnelonrationJob {
+  ovelonrridelon val isAdhoc = falselon
+  ovelonrridelon val gelontConsumelonrelonmbelonddingsSQLFunc = gelontIntelonrelonstelondIn2020SQL
+  ovelonrridelon val uselonrTwelonelontelonngagelonmelonntelonvelonntPairSqlPath: String =
+    Config.unifielondUselonrTwelonelontActionPairGelonnelonrationSQLPath
+  ovelonrridelon val contributingActionTypelons: Selonq[String] = Selonq(ActionTypelon.SelonrvelonrTwelonelontFav.namelon)
+  ovelonrridelon val undoActionTypelons: Selonq[String] = Selonq(ActionTypelon.SelonrvelonrTwelonelontUnfav.namelon)
+  ovelonrridelon val minIntelonractionCount: Int = 8
+  ovelonrridelon val minFavCount: Int = 8
+  ovelonrridelon val outputTablelon =
+    BQTablelonDelontails(
       "twttr-bq-cassowary-prod",
-      "user",
-      "simclusters_fav_based_cluster_to_tweet_index")
-  override val keyValDatasetOutputPath = Config.FavBasedClusterToTweetIndexOutputPath
-  override val clusterToTweetIndexSnapshotDataset: KeyValDALDataset[
-    KeyVal[FullClusterId, TopKTweetsWithScores]
+      "uselonr",
+      "simclustelonrs_fav_baselond_clustelonr_to_twelonelont_indelonx")
+  ovelonrridelon val kelonyValDataselontOutputPath = Config.FavBaselondClustelonrToTwelonelontIndelonxOutputPath
+  ovelonrridelon val clustelonrToTwelonelontIndelonxSnapshotDataselont: KelonyValDALDataselont[
+    KelonyVal[FullClustelonrId, TopKTwelonelontsWithScorelons]
   ] =
-    FavBasedSimclustersClusterToTweetIndexScalaDataset
+    FavBaselondSimclustelonrsClustelonrToTwelonelontIndelonxScalaDataselont
 }
 
-object VideoViewBasedClusterToTweetIndexGenerationAdhocJob
-    extends UUABasedClusterToTweetIndexGenerationJob {
-  override val isAdhoc = true
-  override val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
-  override val userTweetEngagementEventPairSqlPath: String =
-    Config.unifiedUserTweetActionPairGenerationSQLPath
-  override val contributingActionTypes: Seq[String] = Seq(
-    ActionType.ClientTweetVideoPlayback50.name)
-  override val undoActionTypes: Seq[String] = Seq.empty
-  override val enableHealthAndVideoFilters: Boolean = true
-  override val outputTable =
-    BQTableDetails(
-      "twttr-recos-ml-prod",
-      "simclusters",
-      "simclusters_video_view_based_cluster_to_tweet_index")
-  override val keyValDatasetOutputPath = Config.VideoViewBasedClusterToTweetIndexOutputPath
-  override val clusterToTweetIndexSnapshotDataset: KeyValDALDataset[
-    KeyVal[FullClusterId, TopKTweetsWithScores]
+objelonct VidelonoVielonwBaselondClustelonrToTwelonelontIndelonxGelonnelonrationAdhocJob
+    elonxtelonnds UUABaselondClustelonrToTwelonelontIndelonxGelonnelonrationJob {
+  ovelonrridelon val isAdhoc = truelon
+  ovelonrridelon val gelontConsumelonrelonmbelonddingsSQLFunc = gelontIntelonrelonstelondIn2020SQL
+  ovelonrridelon val uselonrTwelonelontelonngagelonmelonntelonvelonntPairSqlPath: String =
+    Config.unifielondUselonrTwelonelontActionPairGelonnelonrationSQLPath
+  ovelonrridelon val contributingActionTypelons: Selonq[String] = Selonq(
+    ActionTypelon.ClielonntTwelonelontVidelonoPlayback50.namelon)
+  ovelonrridelon val undoActionTypelons: Selonq[String] = Selonq.elonmpty
+  ovelonrridelon val elonnablelonHelonalthAndVidelonoFiltelonrs: Boolelonan = truelon
+  ovelonrridelon val outputTablelon =
+    BQTablelonDelontails(
+      "twttr-reloncos-ml-prod",
+      "simclustelonrs",
+      "simclustelonrs_videlono_vielonw_baselond_clustelonr_to_twelonelont_indelonx")
+  ovelonrridelon val kelonyValDataselontOutputPath = Config.VidelonoVielonwBaselondClustelonrToTwelonelontIndelonxOutputPath
+  ovelonrridelon val clustelonrToTwelonelontIndelonxSnapshotDataselont: KelonyValDALDataselont[
+    KelonyVal[FullClustelonrId, TopKTwelonelontsWithScorelons]
   ] =
-    VideoViewBasedSimclustersClusterToTweetIndexScalaDataset
+    VidelonoVielonwBaselondSimclustelonrsClustelonrToTwelonelontIndelonxScalaDataselont
 }
 
-object VideoViewBasedClusterToTweetIndexGenerationBatchJob
-    extends UUABasedClusterToTweetIndexGenerationJob {
-  override val isAdhoc = false
-  override val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
-  override val userTweetEngagementEventPairSqlPath: String =
-    Config.unifiedUserTweetActionPairGenerationSQLPath
-  override val contributingActionTypes: Seq[String] = Seq(
-    ActionType.ClientTweetVideoPlayback50.name)
-  override val undoActionTypes: Seq[String] = Seq.empty
-  override val enableHealthAndVideoFilters: Boolean = true
-  override val outputTable =
-    BQTableDetails(
+objelonct VidelonoVielonwBaselondClustelonrToTwelonelontIndelonxGelonnelonrationBatchJob
+    elonxtelonnds UUABaselondClustelonrToTwelonelontIndelonxGelonnelonrationJob {
+  ovelonrridelon val isAdhoc = falselon
+  ovelonrridelon val gelontConsumelonrelonmbelonddingsSQLFunc = gelontIntelonrelonstelondIn2020SQL
+  ovelonrridelon val uselonrTwelonelontelonngagelonmelonntelonvelonntPairSqlPath: String =
+    Config.unifielondUselonrTwelonelontActionPairGelonnelonrationSQLPath
+  ovelonrridelon val contributingActionTypelons: Selonq[String] = Selonq(
+    ActionTypelon.ClielonntTwelonelontVidelonoPlayback50.namelon)
+  ovelonrridelon val undoActionTypelons: Selonq[String] = Selonq.elonmpty
+  ovelonrridelon val elonnablelonHelonalthAndVidelonoFiltelonrs: Boolelonan = truelon
+  ovelonrridelon val outputTablelon =
+    BQTablelonDelontails(
       "twttr-bq-cassowary-prod",
-      "user",
-      "simclusters_video_view_based_cluster_to_tweet_index")
-  override val keyValDatasetOutputPath = Config.VideoViewBasedClusterToTweetIndexOutputPath
-  override val clusterToTweetIndexSnapshotDataset: KeyValDALDataset[
-    KeyVal[FullClusterId, TopKTweetsWithScores]
+      "uselonr",
+      "simclustelonrs_videlono_vielonw_baselond_clustelonr_to_twelonelont_indelonx")
+  ovelonrridelon val kelonyValDataselontOutputPath = Config.VidelonoVielonwBaselondClustelonrToTwelonelontIndelonxOutputPath
+  ovelonrridelon val clustelonrToTwelonelontIndelonxSnapshotDataselont: KelonyValDALDataselont[
+    KelonyVal[FullClustelonrId, TopKTwelonelontsWithScorelons]
   ] =
-    VideoViewBasedSimclustersClusterToTweetIndexScalaDataset
+    VidelonoVielonwBaselondSimclustelonrsClustelonrToTwelonelontIndelonxScalaDataselont
 }
 
-object RetweetBasedClusterToTweetIndexGenerationAdhocJob
-    extends UUABasedClusterToTweetIndexGenerationJob {
-  override val isAdhoc = true
-  override val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
-  override val userTweetEngagementEventPairSqlPath: String =
-    Config.unifiedUserTweetActionPairGenerationSQLPath
-  override val contributingActionTypes: Seq[String] = Seq(ActionType.ServerTweetRetweet.name)
-  override val undoActionTypes: Seq[String] = Seq(ActionType.ServerTweetUnretweet.name)
-  override val undoActionReferenceTweetIdColumn: String = Config.retweetTweetIdColumn
-  override val outputTable =
-    BQTableDetails(
-      "twttr-recos-ml-prod",
-      "simclusters",
-      "simclusters_retweet_based_cluster_to_tweet_index")
-  override val keyValDatasetOutputPath = Config.RetweetBasedClusterToTweetIndexOutputPath
-  override val clusterToTweetIndexSnapshotDataset: KeyValDALDataset[
-    KeyVal[FullClusterId, TopKTweetsWithScores]
+objelonct RelontwelonelontBaselondClustelonrToTwelonelontIndelonxGelonnelonrationAdhocJob
+    elonxtelonnds UUABaselondClustelonrToTwelonelontIndelonxGelonnelonrationJob {
+  ovelonrridelon val isAdhoc = truelon
+  ovelonrridelon val gelontConsumelonrelonmbelonddingsSQLFunc = gelontIntelonrelonstelondIn2020SQL
+  ovelonrridelon val uselonrTwelonelontelonngagelonmelonntelonvelonntPairSqlPath: String =
+    Config.unifielondUselonrTwelonelontActionPairGelonnelonrationSQLPath
+  ovelonrridelon val contributingActionTypelons: Selonq[String] = Selonq(ActionTypelon.SelonrvelonrTwelonelontRelontwelonelont.namelon)
+  ovelonrridelon val undoActionTypelons: Selonq[String] = Selonq(ActionTypelon.SelonrvelonrTwelonelontUnrelontwelonelont.namelon)
+  ovelonrridelon val undoActionRelonfelonrelonncelonTwelonelontIdColumn: String = Config.relontwelonelontTwelonelontIdColumn
+  ovelonrridelon val outputTablelon =
+    BQTablelonDelontails(
+      "twttr-reloncos-ml-prod",
+      "simclustelonrs",
+      "simclustelonrs_relontwelonelont_baselond_clustelonr_to_twelonelont_indelonx")
+  ovelonrridelon val kelonyValDataselontOutputPath = Config.RelontwelonelontBaselondClustelonrToTwelonelontIndelonxOutputPath
+  ovelonrridelon val clustelonrToTwelonelontIndelonxSnapshotDataselont: KelonyValDALDataselont[
+    KelonyVal[FullClustelonrId, TopKTwelonelontsWithScorelons]
   ] =
-    RetweetBasedSimclustersClusterToTweetIndexScalaDataset
+    RelontwelonelontBaselondSimclustelonrsClustelonrToTwelonelontIndelonxScalaDataselont
 }
 
-object RetweetBasedClusterToTweetIndexGenerationBatchJob
-    extends UUABasedClusterToTweetIndexGenerationJob {
-  override val isAdhoc = false
-  override val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
-  override val userTweetEngagementEventPairSqlPath: String =
-    Config.unifiedUserTweetActionPairGenerationSQLPath
-  override val contributingActionTypes: Seq[String] = Seq(ActionType.ServerTweetRetweet.name)
-  override val undoActionTypes: Seq[String] = Seq(ActionType.ServerTweetUnretweet.name)
-  override val undoActionReferenceTweetIdColumn: String = Config.retweetTweetIdColumn
-  override val outputTable =
-    BQTableDetails(
+objelonct RelontwelonelontBaselondClustelonrToTwelonelontIndelonxGelonnelonrationBatchJob
+    elonxtelonnds UUABaselondClustelonrToTwelonelontIndelonxGelonnelonrationJob {
+  ovelonrridelon val isAdhoc = falselon
+  ovelonrridelon val gelontConsumelonrelonmbelonddingsSQLFunc = gelontIntelonrelonstelondIn2020SQL
+  ovelonrridelon val uselonrTwelonelontelonngagelonmelonntelonvelonntPairSqlPath: String =
+    Config.unifielondUselonrTwelonelontActionPairGelonnelonrationSQLPath
+  ovelonrridelon val contributingActionTypelons: Selonq[String] = Selonq(ActionTypelon.SelonrvelonrTwelonelontRelontwelonelont.namelon)
+  ovelonrridelon val undoActionTypelons: Selonq[String] = Selonq(ActionTypelon.SelonrvelonrTwelonelontUnrelontwelonelont.namelon)
+  ovelonrridelon val undoActionRelonfelonrelonncelonTwelonelontIdColumn: String = Config.relontwelonelontTwelonelontIdColumn
+  ovelonrridelon val outputTablelon =
+    BQTablelonDelontails(
       "twttr-bq-cassowary-prod",
-      "user",
-      "simclusters_retweet_based_cluster_to_tweet_index")
-  override val keyValDatasetOutputPath = Config.RetweetBasedClusterToTweetIndexOutputPath
-  override val clusterToTweetIndexSnapshotDataset: KeyValDALDataset[
-    KeyVal[FullClusterId, TopKTweetsWithScores]
+      "uselonr",
+      "simclustelonrs_relontwelonelont_baselond_clustelonr_to_twelonelont_indelonx")
+  ovelonrridelon val kelonyValDataselontOutputPath = Config.RelontwelonelontBaselondClustelonrToTwelonelontIndelonxOutputPath
+  ovelonrridelon val clustelonrToTwelonelontIndelonxSnapshotDataselont: KelonyValDALDataselont[
+    KelonyVal[FullClustelonrId, TopKTwelonelontsWithScorelons]
   ] =
-    RetweetBasedSimclustersClusterToTweetIndexScalaDataset
+    RelontwelonelontBaselondSimclustelonrsClustelonrToTwelonelontIndelonxScalaDataselont
 }
 
-object ReplyBasedClusterToTweetIndexGenerationAdhocJob
-    extends UUABasedClusterToTweetIndexGenerationJob {
-  override val isAdhoc = true
-  override val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
-  override val userTweetEngagementEventPairSqlPath: String =
-    Config.combinedUserTweetActionPairGenerationSQLPath
-  override val contributingActionTypes: Seq[String] = Seq(ActionType.ServerTweetReply.name)
-  override val undoActionTypes: Seq[String] = Seq(ActionType.ServerTweetDelete.name)
-  override val undoActionReferenceTweetIdColumn: String = Config.replyTweetIdColumn
-  override val minInteractionCount: Int = 8
-  override val minFavCount: Int = 8
-  override val minEngagementPerCluster: Int = 3
-  // Add supplemental positive signals to the user tweet engagement event template
-  // We bundle each reply signal with a positive signal (fav or retweet)
-  val supplementalPositiveSignals: Seq[String] =
-    Seq(ActionType.ServerTweetFav.name, ActionType.ServerTweetRetweet.name)
-  override lazy val userTweetEngagementEventPairTemplateVariable: Map[String, String] = {
+objelonct RelonplyBaselondClustelonrToTwelonelontIndelonxGelonnelonrationAdhocJob
+    elonxtelonnds UUABaselondClustelonrToTwelonelontIndelonxGelonnelonrationJob {
+  ovelonrridelon val isAdhoc = truelon
+  ovelonrridelon val gelontConsumelonrelonmbelonddingsSQLFunc = gelontIntelonrelonstelondIn2020SQL
+  ovelonrridelon val uselonrTwelonelontelonngagelonmelonntelonvelonntPairSqlPath: String =
+    Config.combinelondUselonrTwelonelontActionPairGelonnelonrationSQLPath
+  ovelonrridelon val contributingActionTypelons: Selonq[String] = Selonq(ActionTypelon.SelonrvelonrTwelonelontRelonply.namelon)
+  ovelonrridelon val undoActionTypelons: Selonq[String] = Selonq(ActionTypelon.SelonrvelonrTwelonelontDelonlelontelon.namelon)
+  ovelonrridelon val undoActionRelonfelonrelonncelonTwelonelontIdColumn: String = Config.relonplyTwelonelontIdColumn
+  ovelonrridelon val minIntelonractionCount: Int = 8
+  ovelonrridelon val minFavCount: Int = 8
+  ovelonrridelon val minelonngagelonmelonntPelonrClustelonr: Int = 3
+  // Add supplelonmelonntal positivelon signals to thelon uselonr twelonelont elonngagelonmelonnt elonvelonnt telonmplatelon
+  // Welon bundlelon elonach relonply signal with a positivelon signal (fav or relontwelonelont)
+  val supplelonmelonntalPositivelonSignals: Selonq[String] =
+    Selonq(ActionTypelon.SelonrvelonrTwelonelontFav.namelon, ActionTypelon.SelonrvelonrTwelonelontRelontwelonelont.namelon)
+  ovelonrridelon lazy val uselonrTwelonelontelonngagelonmelonntelonvelonntPairTelonmplatelonVariablelon: Map[String, String] = {
     Map(
-      "CONTRIBUTING_ACTION_TYPE_STR" -> contributingActionTypes.head,
-      "UNDO_ACTION_TYPES_STR" -> undoActionTypesStr,
-      "UNDO_ACTION_TWEET_ID_COLUMN" -> undoActionReferenceTweetIdColumn,
-      "SUPPLEMENTAL_ACTION_TYPES_ENGAGEMENT_STR" -> buildActionTypesEngagementIndicatorString(
-        supplementalPositiveSignals)
+      "CONTRIBUTING_ACTION_TYPelon_STR" -> contributingActionTypelons.helonad,
+      "UNDO_ACTION_TYPelonS_STR" -> undoActionTypelonsStr,
+      "UNDO_ACTION_TWelonelonT_ID_COLUMN" -> undoActionRelonfelonrelonncelonTwelonelontIdColumn,
+      "SUPPLelonMelonNTAL_ACTION_TYPelonS_elonNGAGelonMelonNT_STR" -> buildActionTypelonselonngagelonmelonntIndicatorString(
+        supplelonmelonntalPositivelonSignals)
     )
   }
-  override val outputTable =
-    BQTableDetails(
-      "twttr-recos-ml-prod",
-      "simclusters",
-      "simclusters_reply_based_cluster_to_tweet_index")
-  override val keyValDatasetOutputPath = Config.ReplyBasedClusterToTweetIndexOutputPath
-  override val clusterToTweetIndexSnapshotDataset: KeyValDALDataset[
-    KeyVal[FullClusterId, TopKTweetsWithScores]
+  ovelonrridelon val outputTablelon =
+    BQTablelonDelontails(
+      "twttr-reloncos-ml-prod",
+      "simclustelonrs",
+      "simclustelonrs_relonply_baselond_clustelonr_to_twelonelont_indelonx")
+  ovelonrridelon val kelonyValDataselontOutputPath = Config.RelonplyBaselondClustelonrToTwelonelontIndelonxOutputPath
+  ovelonrridelon val clustelonrToTwelonelontIndelonxSnapshotDataselont: KelonyValDALDataselont[
+    KelonyVal[FullClustelonrId, TopKTwelonelontsWithScorelons]
   ] =
-    ReplyBasedSimclustersClusterToTweetIndexScalaDataset
+    RelonplyBaselondSimclustelonrsClustelonrToTwelonelontIndelonxScalaDataselont
 }
 
-object ReplyBasedClusterToTweetIndexGenerationBatchJob
-    extends UUABasedClusterToTweetIndexGenerationJob {
-  override val isAdhoc = false
-  override val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
-  override val userTweetEngagementEventPairSqlPath: String =
-    Config.combinedUserTweetActionPairGenerationSQLPath
-  override val contributingActionTypes: Seq[String] = Seq(ActionType.ServerTweetReply.name)
-  override val undoActionTypes: Seq[String] = Seq(ActionType.ServerTweetDelete.name)
-  override val undoActionReferenceTweetIdColumn: String = Config.replyTweetIdColumn
-  override val minInteractionCount: Int = 8
-  override val minFavCount: Int = 8
-  override val minEngagementPerCluster: Int = 3
-  // Add supplemental positive signals to the user tweet engagement event template
-  // We bundle each reply signal with a positive signal (fav or retweet)
-  val supplementalPositiveSignals: Seq[String] =
-    Seq(ActionType.ServerTweetFav.name, ActionType.ServerTweetRetweet.name)
-  override lazy val userTweetEngagementEventPairTemplateVariable: Map[String, String] = {
+objelonct RelonplyBaselondClustelonrToTwelonelontIndelonxGelonnelonrationBatchJob
+    elonxtelonnds UUABaselondClustelonrToTwelonelontIndelonxGelonnelonrationJob {
+  ovelonrridelon val isAdhoc = falselon
+  ovelonrridelon val gelontConsumelonrelonmbelonddingsSQLFunc = gelontIntelonrelonstelondIn2020SQL
+  ovelonrridelon val uselonrTwelonelontelonngagelonmelonntelonvelonntPairSqlPath: String =
+    Config.combinelondUselonrTwelonelontActionPairGelonnelonrationSQLPath
+  ovelonrridelon val contributingActionTypelons: Selonq[String] = Selonq(ActionTypelon.SelonrvelonrTwelonelontRelonply.namelon)
+  ovelonrridelon val undoActionTypelons: Selonq[String] = Selonq(ActionTypelon.SelonrvelonrTwelonelontDelonlelontelon.namelon)
+  ovelonrridelon val undoActionRelonfelonrelonncelonTwelonelontIdColumn: String = Config.relonplyTwelonelontIdColumn
+  ovelonrridelon val minIntelonractionCount: Int = 8
+  ovelonrridelon val minFavCount: Int = 8
+  ovelonrridelon val minelonngagelonmelonntPelonrClustelonr: Int = 3
+  // Add supplelonmelonntal positivelon signals to thelon uselonr twelonelont elonngagelonmelonnt elonvelonnt telonmplatelon
+  // Welon bundlelon elonach relonply signal with a positivelon signal (fav or relontwelonelont)
+  val supplelonmelonntalPositivelonSignals: Selonq[String] =
+    Selonq(ActionTypelon.SelonrvelonrTwelonelontFav.namelon, ActionTypelon.SelonrvelonrTwelonelontRelontwelonelont.namelon)
+  ovelonrridelon lazy val uselonrTwelonelontelonngagelonmelonntelonvelonntPairTelonmplatelonVariablelon: Map[String, String] = {
     Map(
-      "CONTRIBUTING_ACTION_TYPE_STR" -> contributingActionTypes.head,
-      "UNDO_ACTION_TYPES_STR" -> undoActionTypesStr,
-      "UNDO_ACTION_TWEET_ID_COLUMN" -> undoActionReferenceTweetIdColumn,
-      "SUPPLEMENTAL_ACTION_TYPES_ENGAGEMENT_STR" -> buildActionTypesEngagementIndicatorString(
-        supplementalPositiveSignals)
+      "CONTRIBUTING_ACTION_TYPelon_STR" -> contributingActionTypelons.helonad,
+      "UNDO_ACTION_TYPelonS_STR" -> undoActionTypelonsStr,
+      "UNDO_ACTION_TWelonelonT_ID_COLUMN" -> undoActionRelonfelonrelonncelonTwelonelontIdColumn,
+      "SUPPLelonMelonNTAL_ACTION_TYPelonS_elonNGAGelonMelonNT_STR" -> buildActionTypelonselonngagelonmelonntIndicatorString(
+        supplelonmelonntalPositivelonSignals)
     )
   }
-  override val outputTable =
-    BQTableDetails(
+  ovelonrridelon val outputTablelon =
+    BQTablelonDelontails(
       "twttr-bq-cassowary-prod",
-      "user",
-      "simclusters_reply_based_cluster_to_tweet_index")
-  override val keyValDatasetOutputPath = Config.ReplyBasedClusterToTweetIndexOutputPath
-  override val clusterToTweetIndexSnapshotDataset: KeyValDALDataset[
-    KeyVal[FullClusterId, TopKTweetsWithScores]
+      "uselonr",
+      "simclustelonrs_relonply_baselond_clustelonr_to_twelonelont_indelonx")
+  ovelonrridelon val kelonyValDataselontOutputPath = Config.RelonplyBaselondClustelonrToTwelonelontIndelonxOutputPath
+  ovelonrridelon val clustelonrToTwelonelontIndelonxSnapshotDataselont: KelonyValDALDataselont[
+    KelonyVal[FullClustelonrId, TopKTwelonelontsWithScorelons]
   ] =
-    ReplyBasedSimclustersClusterToTweetIndexScalaDataset
+    RelonplyBaselondSimclustelonrsClustelonrToTwelonelontIndelonxScalaDataselont
 }
 
-object PushOpenBasedClusterToTweetIndexGenerationAdhocJob
-    extends UUABasedClusterToTweetIndexGenerationJob {
-  override val isAdhoc = true
-  override val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
-  override val userTweetEngagementEventPairSqlPath: String =
-    Config.unifiedUserTweetActionPairGenerationSQLPath
-  override val contributingActionTypes: Seq[String] = Seq(ActionType.ClientNotificationOpen.name)
-  override val contributingActionReferenceTweetIdColumn: String = Config.pushTweetIdColumn
-  override val undoActionTypes: Seq[String] = Seq.empty
-  override val minInteractionCount = 1
-  override val minFavCount = 0
-  override val enableFavClusterTopKTweetsIntersection = true
-  override val outputTable =
-    BQTableDetails(
-      "twttr-recos-ml-prod",
-      "simclusters",
-      "simclusters_push_open_based_cluster_to_tweet_index")
-  override val keyValDatasetOutputPath = Config.PushOpenBasedClusterToTweetIndexOutputPath
-  override val clusterToTweetIndexSnapshotDataset: KeyValDALDataset[
-    KeyVal[FullClusterId, TopKTweetsWithScores]
+objelonct PushOpelonnBaselondClustelonrToTwelonelontIndelonxGelonnelonrationAdhocJob
+    elonxtelonnds UUABaselondClustelonrToTwelonelontIndelonxGelonnelonrationJob {
+  ovelonrridelon val isAdhoc = truelon
+  ovelonrridelon val gelontConsumelonrelonmbelonddingsSQLFunc = gelontIntelonrelonstelondIn2020SQL
+  ovelonrridelon val uselonrTwelonelontelonngagelonmelonntelonvelonntPairSqlPath: String =
+    Config.unifielondUselonrTwelonelontActionPairGelonnelonrationSQLPath
+  ovelonrridelon val contributingActionTypelons: Selonq[String] = Selonq(ActionTypelon.ClielonntNotificationOpelonn.namelon)
+  ovelonrridelon val contributingActionRelonfelonrelonncelonTwelonelontIdColumn: String = Config.pushTwelonelontIdColumn
+  ovelonrridelon val undoActionTypelons: Selonq[String] = Selonq.elonmpty
+  ovelonrridelon val minIntelonractionCount = 1
+  ovelonrridelon val minFavCount = 0
+  ovelonrridelon val elonnablelonFavClustelonrTopKTwelonelontsIntelonrselonction = truelon
+  ovelonrridelon val outputTablelon =
+    BQTablelonDelontails(
+      "twttr-reloncos-ml-prod",
+      "simclustelonrs",
+      "simclustelonrs_push_opelonn_baselond_clustelonr_to_twelonelont_indelonx")
+  ovelonrridelon val kelonyValDataselontOutputPath = Config.PushOpelonnBaselondClustelonrToTwelonelontIndelonxOutputPath
+  ovelonrridelon val clustelonrToTwelonelontIndelonxSnapshotDataselont: KelonyValDALDataselont[
+    KelonyVal[FullClustelonrId, TopKTwelonelontsWithScorelons]
   ] =
-    PushOpenBasedSimclustersClusterToTweetIndexScalaDataset
+    PushOpelonnBaselondSimclustelonrsClustelonrToTwelonelontIndelonxScalaDataselont
 }
 
-object PushOpenBasedClusterToTweetIndexGenerationBatchJob
-    extends UUABasedClusterToTweetIndexGenerationJob {
-  override val isAdhoc = false
-  override val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
-  override val userTweetEngagementEventPairSqlPath: String =
-    Config.unifiedUserTweetActionPairGenerationSQLPath
-  override val contributingActionTypes: Seq[String] = Seq(ActionType.ClientNotificationOpen.name)
-  override val contributingActionReferenceTweetIdColumn: String = Config.pushTweetIdColumn
-  override val undoActionTypes: Seq[String] = Seq.empty
-  override val minInteractionCount = 1
-  override val minFavCount = 0
-  override val enableFavClusterTopKTweetsIntersection = true
-  override val outputTable =
-    BQTableDetails(
+objelonct PushOpelonnBaselondClustelonrToTwelonelontIndelonxGelonnelonrationBatchJob
+    elonxtelonnds UUABaselondClustelonrToTwelonelontIndelonxGelonnelonrationJob {
+  ovelonrridelon val isAdhoc = falselon
+  ovelonrridelon val gelontConsumelonrelonmbelonddingsSQLFunc = gelontIntelonrelonstelondIn2020SQL
+  ovelonrridelon val uselonrTwelonelontelonngagelonmelonntelonvelonntPairSqlPath: String =
+    Config.unifielondUselonrTwelonelontActionPairGelonnelonrationSQLPath
+  ovelonrridelon val contributingActionTypelons: Selonq[String] = Selonq(ActionTypelon.ClielonntNotificationOpelonn.namelon)
+  ovelonrridelon val contributingActionRelonfelonrelonncelonTwelonelontIdColumn: String = Config.pushTwelonelontIdColumn
+  ovelonrridelon val undoActionTypelons: Selonq[String] = Selonq.elonmpty
+  ovelonrridelon val minIntelonractionCount = 1
+  ovelonrridelon val minFavCount = 0
+  ovelonrridelon val elonnablelonFavClustelonrTopKTwelonelontsIntelonrselonction = truelon
+  ovelonrridelon val outputTablelon =
+    BQTablelonDelontails(
       "twttr-bq-cassowary-prod",
-      "user",
-      "simclusters_push_open_based_cluster_to_tweet_index")
-  override val keyValDatasetOutputPath = Config.PushOpenBasedClusterToTweetIndexOutputPath
-  override val clusterToTweetIndexSnapshotDataset: KeyValDALDataset[
-    KeyVal[FullClusterId, TopKTweetsWithScores]
+      "uselonr",
+      "simclustelonrs_push_opelonn_baselond_clustelonr_to_twelonelont_indelonx")
+  ovelonrridelon val kelonyValDataselontOutputPath = Config.PushOpelonnBaselondClustelonrToTwelonelontIndelonxOutputPath
+  ovelonrridelon val clustelonrToTwelonelontIndelonxSnapshotDataselont: KelonyValDALDataselont[
+    KelonyVal[FullClustelonrId, TopKTwelonelontsWithScorelons]
   ] =
-    PushOpenBasedSimclustersClusterToTweetIndexScalaDataset
+    PushOpelonnBaselondSimclustelonrsClustelonrToTwelonelontIndelonxScalaDataselont
 }
 
-object AdsFavBasedClusterToTweetIndexGenerationAdhocJob
-    extends AdsClusterToTweetIndexGenerationJob {
-  val isAdhoc: Boolean = true
-  val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
-  override val contributingActionTypes: Seq[Int] = AdsFavEngagementTypeIds // fav
-  override val tweetEmbeddingsHalfLife: Int = 345600000 // 4 days
-  // The earliest user tweet engagement event we consider is 7 days ago
-  // The tweet could be older than 7 days
-  override val maxTweetAgeHours: Int = 168 // 7 days
-  override val minInteractionCount: Int = 3
-  override val minFavCount: Int = 3
-  override val minEngagementPerCluster: Int = 2
-  override val outputTable =
-    BQTableDetails(
-      "twttr-recos-ml-prod",
-      "simclusters",
-      "simclusters_ads_fav_based_cluster_to_tweet_index")
-  val keyValDatasetOutputPath: String = Config.AdsFavBasedClusterToTweetIndexOutputPath
-  val clusterToTweetIndexSnapshotDataset: KeyValDALDataset[
-    KeyVal[FullClusterId, TopKTweetsWithScores]
-  ] = AdsFavBasedSimclustersClusterToTweetIndexScalaDataset
-  val userTweetEngagementEventPairSqlPath: String =
-    Config.adsUserTweetActionPairGenerationSQLPath
+objelonct AdsFavBaselondClustelonrToTwelonelontIndelonxGelonnelonrationAdhocJob
+    elonxtelonnds AdsClustelonrToTwelonelontIndelonxGelonnelonrationJob {
+  val isAdhoc: Boolelonan = truelon
+  val gelontConsumelonrelonmbelonddingsSQLFunc = gelontIntelonrelonstelondIn2020SQL
+  ovelonrridelon val contributingActionTypelons: Selonq[Int] = AdsFavelonngagelonmelonntTypelonIds // fav
+  ovelonrridelon val twelonelontelonmbelonddingsHalfLifelon: Int = 345600000 // 4 days
+  // Thelon elonarlielonst uselonr twelonelont elonngagelonmelonnt elonvelonnt welon considelonr is 7 days ago
+  // Thelon twelonelont could belon oldelonr than 7 days
+  ovelonrridelon val maxTwelonelontAgelonHours: Int = 168 // 7 days
+  ovelonrridelon val minIntelonractionCount: Int = 3
+  ovelonrridelon val minFavCount: Int = 3
+  ovelonrridelon val minelonngagelonmelonntPelonrClustelonr: Int = 2
+  ovelonrridelon val outputTablelon =
+    BQTablelonDelontails(
+      "twttr-reloncos-ml-prod",
+      "simclustelonrs",
+      "simclustelonrs_ads_fav_baselond_clustelonr_to_twelonelont_indelonx")
+  val kelonyValDataselontOutputPath: String = Config.AdsFavBaselondClustelonrToTwelonelontIndelonxOutputPath
+  val clustelonrToTwelonelontIndelonxSnapshotDataselont: KelonyValDALDataselont[
+    KelonyVal[FullClustelonrId, TopKTwelonelontsWithScorelons]
+  ] = AdsFavBaselondSimclustelonrsClustelonrToTwelonelontIndelonxScalaDataselont
+  val uselonrTwelonelontelonngagelonmelonntelonvelonntPairSqlPath: String =
+    Config.adsUselonrTwelonelontActionPairGelonnelonrationSQLPath
 }
-object AdsFavBasedClusterToTweetIndexGenerationBatchJob
-    extends AdsClusterToTweetIndexGenerationJob {
-  val isAdhoc: Boolean = false
-  val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
-  override val contributingActionTypes: Seq[Int] = AdsFavEngagementTypeIds // fav
-  override val tweetEmbeddingsHalfLife: Int = 345600000 // 4 days
-  // The earliest user tweet engagement event we consider is 7 days ago
-  // The tweet could be older than 7 days
-  override val maxTweetAgeHours: Int = 168 // 7 days
-  override val minInteractionCount: Int = 3
-  override val minFavCount: Int = 3
-  override val minEngagementPerCluster: Int = 2
-  override val outputTable =
-    BQTableDetails(
+objelonct AdsFavBaselondClustelonrToTwelonelontIndelonxGelonnelonrationBatchJob
+    elonxtelonnds AdsClustelonrToTwelonelontIndelonxGelonnelonrationJob {
+  val isAdhoc: Boolelonan = falselon
+  val gelontConsumelonrelonmbelonddingsSQLFunc = gelontIntelonrelonstelondIn2020SQL
+  ovelonrridelon val contributingActionTypelons: Selonq[Int] = AdsFavelonngagelonmelonntTypelonIds // fav
+  ovelonrridelon val twelonelontelonmbelonddingsHalfLifelon: Int = 345600000 // 4 days
+  // Thelon elonarlielonst uselonr twelonelont elonngagelonmelonnt elonvelonnt welon considelonr is 7 days ago
+  // Thelon twelonelont could belon oldelonr than 7 days
+  ovelonrridelon val maxTwelonelontAgelonHours: Int = 168 // 7 days
+  ovelonrridelon val minIntelonractionCount: Int = 3
+  ovelonrridelon val minFavCount: Int = 3
+  ovelonrridelon val minelonngagelonmelonntPelonrClustelonr: Int = 2
+  ovelonrridelon val outputTablelon =
+    BQTablelonDelontails(
       "twttr-bq-cassowary-prod",
-      "user",
-      "simclusters_ads_fav_based_cluster_to_tweet_index")
-  val keyValDatasetOutputPath: String = Config.AdsFavBasedClusterToTweetIndexOutputPath
-  val clusterToTweetIndexSnapshotDataset: KeyValDALDataset[
-    KeyVal[FullClusterId, TopKTweetsWithScores]
-  ] = AdsFavBasedSimclustersClusterToTweetIndexScalaDataset
-  val userTweetEngagementEventPairSqlPath: String =
-    Config.adsUserTweetActionPairGenerationSQLPath
+      "uselonr",
+      "simclustelonrs_ads_fav_baselond_clustelonr_to_twelonelont_indelonx")
+  val kelonyValDataselontOutputPath: String = Config.AdsFavBaselondClustelonrToTwelonelontIndelonxOutputPath
+  val clustelonrToTwelonelontIndelonxSnapshotDataselont: KelonyValDALDataselont[
+    KelonyVal[FullClustelonrId, TopKTwelonelontsWithScorelons]
+  ] = AdsFavBaselondSimclustelonrsClustelonrToTwelonelontIndelonxScalaDataselont
+  val uselonrTwelonelontelonngagelonmelonntelonvelonntPairSqlPath: String =
+    Config.adsUselonrTwelonelontActionPairGelonnelonrationSQLPath
 }
 
-object AdsFavClickBasedClusterToTweetIndexGenerationAdhocJob
-    extends AdsClusterToTweetIndexGenerationJob {
-  val isAdhoc: Boolean = true
-  val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
-  override val contributingActionTypes: Seq[Int] =
-    AdsFavEngagementTypeIds ++ AdsClickEngagementTypeIds // fav + click
-  override val tweetEmbeddingsHalfLife: Int = 604800000 // 7 days
-  // The earliest user tweet engagement event we consider is 21 days ago
-  // The tweet could be older than 21 days
-  override val maxTweetAgeHours: Int = 504 // 21 days
-  override val minInteractionCount: Int = 3
-  override val minFavCount: Int = 3
-  override val minEngagementPerCluster: Int = 2
-  override val outputTable =
-    BQTableDetails(
-      "twttr-recos-ml-prod",
-      "simclusters",
-      "simclusters_ads_fav_click_ sbased_cluster_to_tweet_index")
-  val keyValDatasetOutputPath: String = Config.AdsFavClickBasedClusterToTweetIndexOutputPath
-  val clusterToTweetIndexSnapshotDataset: KeyValDALDataset[
-    KeyVal[FullClusterId, TopKTweetsWithScores]
-  ] = AdsFavClickBasedSimclustersClusterToTweetIndexScalaDataset
-  val userTweetEngagementEventPairSqlPath: String =
-    Config.adsUserTweetActionPairGenerationSQLPath
+objelonct AdsFavClickBaselondClustelonrToTwelonelontIndelonxGelonnelonrationAdhocJob
+    elonxtelonnds AdsClustelonrToTwelonelontIndelonxGelonnelonrationJob {
+  val isAdhoc: Boolelonan = truelon
+  val gelontConsumelonrelonmbelonddingsSQLFunc = gelontIntelonrelonstelondIn2020SQL
+  ovelonrridelon val contributingActionTypelons: Selonq[Int] =
+    AdsFavelonngagelonmelonntTypelonIds ++ AdsClickelonngagelonmelonntTypelonIds // fav + click
+  ovelonrridelon val twelonelontelonmbelonddingsHalfLifelon: Int = 604800000 // 7 days
+  // Thelon elonarlielonst uselonr twelonelont elonngagelonmelonnt elonvelonnt welon considelonr is 21 days ago
+  // Thelon twelonelont could belon oldelonr than 21 days
+  ovelonrridelon val maxTwelonelontAgelonHours: Int = 504 // 21 days
+  ovelonrridelon val minIntelonractionCount: Int = 3
+  ovelonrridelon val minFavCount: Int = 3
+  ovelonrridelon val minelonngagelonmelonntPelonrClustelonr: Int = 2
+  ovelonrridelon val outputTablelon =
+    BQTablelonDelontails(
+      "twttr-reloncos-ml-prod",
+      "simclustelonrs",
+      "simclustelonrs_ads_fav_click_ sbaselond_clustelonr_to_twelonelont_indelonx")
+  val kelonyValDataselontOutputPath: String = Config.AdsFavClickBaselondClustelonrToTwelonelontIndelonxOutputPath
+  val clustelonrToTwelonelontIndelonxSnapshotDataselont: KelonyValDALDataselont[
+    KelonyVal[FullClustelonrId, TopKTwelonelontsWithScorelons]
+  ] = AdsFavClickBaselondSimclustelonrsClustelonrToTwelonelontIndelonxScalaDataselont
+  val uselonrTwelonelontelonngagelonmelonntelonvelonntPairSqlPath: String =
+    Config.adsUselonrTwelonelontActionPairGelonnelonrationSQLPath
 }
 
-object AdsFavClickBasedClusterToTweetIndexGenerationBatchJob
-    extends AdsClusterToTweetIndexGenerationJob {
-  val isAdhoc: Boolean = false
-  val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
-  override val contributingActionTypes: Seq[Int] =
-    AdsFavEngagementTypeIds ++ AdsClickEngagementTypeIds // fav + click
-  override val tweetEmbeddingsHalfLife: Int = 604800000 // 7 days
-  // The earliest user tweet engagement event we consider is 21 days ago
-  // The tweet could be older than 21 days
-  override val maxTweetAgeHours: Int = 504 // 21 days
-  override val minInteractionCount: Int = 3
-  override val minFavCount: Int = 3
-  override val minEngagementPerCluster: Int = 2
-  override val outputTable =
-    BQTableDetails(
+objelonct AdsFavClickBaselondClustelonrToTwelonelontIndelonxGelonnelonrationBatchJob
+    elonxtelonnds AdsClustelonrToTwelonelontIndelonxGelonnelonrationJob {
+  val isAdhoc: Boolelonan = falselon
+  val gelontConsumelonrelonmbelonddingsSQLFunc = gelontIntelonrelonstelondIn2020SQL
+  ovelonrridelon val contributingActionTypelons: Selonq[Int] =
+    AdsFavelonngagelonmelonntTypelonIds ++ AdsClickelonngagelonmelonntTypelonIds // fav + click
+  ovelonrridelon val twelonelontelonmbelonddingsHalfLifelon: Int = 604800000 // 7 days
+  // Thelon elonarlielonst uselonr twelonelont elonngagelonmelonnt elonvelonnt welon considelonr is 21 days ago
+  // Thelon twelonelont could belon oldelonr than 21 days
+  ovelonrridelon val maxTwelonelontAgelonHours: Int = 504 // 21 days
+  ovelonrridelon val minIntelonractionCount: Int = 3
+  ovelonrridelon val minFavCount: Int = 3
+  ovelonrridelon val minelonngagelonmelonntPelonrClustelonr: Int = 2
+  ovelonrridelon val outputTablelon =
+    BQTablelonDelontails(
       "twttr-bq-cassowary-prod",
-      "user",
-      "simclusters_ads_fav_click_based_cluster_to_tweet_index")
-  val keyValDatasetOutputPath: String = Config.AdsFavClickBasedClusterToTweetIndexOutputPath
-  val clusterToTweetIndexSnapshotDataset: KeyValDALDataset[
-    KeyVal[FullClusterId, TopKTweetsWithScores]
-  ] = AdsFavClickBasedSimclustersClusterToTweetIndexScalaDataset
-  val userTweetEngagementEventPairSqlPath: String =
-    Config.adsUserTweetActionPairGenerationSQLPath
+      "uselonr",
+      "simclustelonrs_ads_fav_click_baselond_clustelonr_to_twelonelont_indelonx")
+  val kelonyValDataselontOutputPath: String = Config.AdsFavClickBaselondClustelonrToTwelonelontIndelonxOutputPath
+  val clustelonrToTwelonelontIndelonxSnapshotDataselont: KelonyValDALDataselont[
+    KelonyVal[FullClustelonrId, TopKTwelonelontsWithScorelons]
+  ] = AdsFavClickBaselondSimclustelonrsClustelonrToTwelonelontIndelonxScalaDataselont
+  val uselonrTwelonelontelonngagelonmelonntelonvelonntPairSqlPath: String =
+    Config.adsUselonrTwelonelontActionPairGelonnelonrationSQLPath
 }
 
-object FavBasedEvergreenContentClusterToTweetIndexGenerationAdhocJob
-    extends UUABasedClusterToTweetIndexGenerationJob {
-  override val isAdhoc = true
-  override val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
-  override val userTweetEngagementEventPairSqlPath: String =
-    Config.evergreenContentUserTweetActionPairGenerationSQLPath
-  override val contributingActionTypes: Seq[String] = Seq(ActionType.ServerTweetFav.name)
-  override val undoActionTypes: Seq[String] = Seq(ActionType.ServerTweetUnfav.name)
-  override val tweetEmbeddingsHalfLife: Int = 57600000 // 16 hours
-  override val maxTweetAgeHours: Int = 48 // 2 days
-  override val minInteractionCount: Int = 8
-  override val minFavCount: Int = 0
-  override val outputTable =
-    BQTableDetails(
-      "twttr-recos-ml-prod",
-      "simclusters",
-      "simclusters_fav_based_evergreen_content_cluster_to_tweet_index")
-  override val keyValDatasetOutputPath =
-    Config.FavBasedEvergreenContentClusterToTweetIndexOutputPath
-  override val clusterToTweetIndexSnapshotDataset: KeyValDALDataset[
-    KeyVal[FullClusterId, TopKTweetsWithScores]
+objelonct FavBaselondelonvelonrgrelonelonnContelonntClustelonrToTwelonelontIndelonxGelonnelonrationAdhocJob
+    elonxtelonnds UUABaselondClustelonrToTwelonelontIndelonxGelonnelonrationJob {
+  ovelonrridelon val isAdhoc = truelon
+  ovelonrridelon val gelontConsumelonrelonmbelonddingsSQLFunc = gelontIntelonrelonstelondIn2020SQL
+  ovelonrridelon val uselonrTwelonelontelonngagelonmelonntelonvelonntPairSqlPath: String =
+    Config.elonvelonrgrelonelonnContelonntUselonrTwelonelontActionPairGelonnelonrationSQLPath
+  ovelonrridelon val contributingActionTypelons: Selonq[String] = Selonq(ActionTypelon.SelonrvelonrTwelonelontFav.namelon)
+  ovelonrridelon val undoActionTypelons: Selonq[String] = Selonq(ActionTypelon.SelonrvelonrTwelonelontUnfav.namelon)
+  ovelonrridelon val twelonelontelonmbelonddingsHalfLifelon: Int = 57600000 // 16 hours
+  ovelonrridelon val maxTwelonelontAgelonHours: Int = 48 // 2 days
+  ovelonrridelon val minIntelonractionCount: Int = 8
+  ovelonrridelon val minFavCount: Int = 0
+  ovelonrridelon val outputTablelon =
+    BQTablelonDelontails(
+      "twttr-reloncos-ml-prod",
+      "simclustelonrs",
+      "simclustelonrs_fav_baselond_elonvelonrgrelonelonn_contelonnt_clustelonr_to_twelonelont_indelonx")
+  ovelonrridelon val kelonyValDataselontOutputPath =
+    Config.FavBaselondelonvelonrgrelonelonnContelonntClustelonrToTwelonelontIndelonxOutputPath
+  ovelonrridelon val clustelonrToTwelonelontIndelonxSnapshotDataselont: KelonyValDALDataselont[
+    KelonyVal[FullClustelonrId, TopKTwelonelontsWithScorelons]
   ] =
-    FavBasedEvergreenContentSimclustersClusterToTweetIndexScalaDataset
+    FavBaselondelonvelonrgrelonelonnContelonntSimclustelonrsClustelonrToTwelonelontIndelonxScalaDataselont
 }
 
-object FavBasedEvergreenContentClusterToTweetIndexGenerationBatchJob
-    extends UUABasedClusterToTweetIndexGenerationJob {
-  override val isAdhoc = false
-  override val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
-  override val userTweetEngagementEventPairSqlPath: String =
-    Config.evergreenContentUserTweetActionPairGenerationSQLPath
-  override val contributingActionTypes: Seq[String] = Seq(ActionType.ServerTweetFav.name)
-  override val undoActionTypes: Seq[String] = Seq(ActionType.ServerTweetUnfav.name)
-  override val tweetEmbeddingsHalfLife: Int = 57600000 // 16 hours
-  override val maxTweetAgeHours: Int = 48 // 2 days
-  override val minInteractionCount: Int = 8
-  override val minFavCount: Int = 0
-  override val outputTable =
-    BQTableDetails(
+objelonct FavBaselondelonvelonrgrelonelonnContelonntClustelonrToTwelonelontIndelonxGelonnelonrationBatchJob
+    elonxtelonnds UUABaselondClustelonrToTwelonelontIndelonxGelonnelonrationJob {
+  ovelonrridelon val isAdhoc = falselon
+  ovelonrridelon val gelontConsumelonrelonmbelonddingsSQLFunc = gelontIntelonrelonstelondIn2020SQL
+  ovelonrridelon val uselonrTwelonelontelonngagelonmelonntelonvelonntPairSqlPath: String =
+    Config.elonvelonrgrelonelonnContelonntUselonrTwelonelontActionPairGelonnelonrationSQLPath
+  ovelonrridelon val contributingActionTypelons: Selonq[String] = Selonq(ActionTypelon.SelonrvelonrTwelonelontFav.namelon)
+  ovelonrridelon val undoActionTypelons: Selonq[String] = Selonq(ActionTypelon.SelonrvelonrTwelonelontUnfav.namelon)
+  ovelonrridelon val twelonelontelonmbelonddingsHalfLifelon: Int = 57600000 // 16 hours
+  ovelonrridelon val maxTwelonelontAgelonHours: Int = 48 // 2 days
+  ovelonrridelon val minIntelonractionCount: Int = 8
+  ovelonrridelon val minFavCount: Int = 0
+  ovelonrridelon val outputTablelon =
+    BQTablelonDelontails(
       "twttr-bq-cassowary-prod",
-      "user",
-      "simclusters_fav_based_evergreen_content_cluster_to_tweet_index")
-  override val keyValDatasetOutputPath =
-    Config.FavBasedEvergreenContentClusterToTweetIndexOutputPath
-  override val clusterToTweetIndexSnapshotDataset: KeyValDALDataset[
-    KeyVal[FullClusterId, TopKTweetsWithScores]
+      "uselonr",
+      "simclustelonrs_fav_baselond_elonvelonrgrelonelonn_contelonnt_clustelonr_to_twelonelont_indelonx")
+  ovelonrridelon val kelonyValDataselontOutputPath =
+    Config.FavBaselondelonvelonrgrelonelonnContelonntClustelonrToTwelonelontIndelonxOutputPath
+  ovelonrridelon val clustelonrToTwelonelontIndelonxSnapshotDataselont: KelonyValDALDataselont[
+    KelonyVal[FullClustelonrId, TopKTwelonelontsWithScorelons]
   ] =
-    FavBasedEvergreenContentSimclustersClusterToTweetIndexScalaDataset
+    FavBaselondelonvelonrgrelonelonnContelonntSimclustelonrsClustelonrToTwelonelontIndelonxScalaDataselont
 }
 
-object FavBasedVideoClusterToTweetIndexGenerationAdhocJob
-    extends UUABasedClusterToTweetIndexGenerationJob {
-  override val isAdhoc = true
-  override val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
-  override val userTweetEngagementEventPairSqlPath: String =
-    Config.favBasedVideoTweetActionPairGenerationSQLPath
-  override val contributingActionTypes: Seq[String] = Seq(ActionType.ServerTweetFav.name)
-  override val undoActionTypes: Seq[String] = Seq(ActionType.ServerTweetUnfav.name)
-  override val minInteractionCount: Int = 8
-  override val minFavCount: Int = 0
-  override val outputTable =
-    BQTableDetails(
-      "twttr-recos-ml-prod",
-      "simclusters",
-      "simclusters_fav_based_video_cluster_to_tweet_index")
-  override val keyValDatasetOutputPath =
-    Config.FavBasedVideoClusterToTweetIndexOutputPath
-  override val clusterToTweetIndexSnapshotDataset: KeyValDALDataset[
-    KeyVal[FullClusterId, TopKTweetsWithScores]
+objelonct FavBaselondVidelonoClustelonrToTwelonelontIndelonxGelonnelonrationAdhocJob
+    elonxtelonnds UUABaselondClustelonrToTwelonelontIndelonxGelonnelonrationJob {
+  ovelonrridelon val isAdhoc = truelon
+  ovelonrridelon val gelontConsumelonrelonmbelonddingsSQLFunc = gelontIntelonrelonstelondIn2020SQL
+  ovelonrridelon val uselonrTwelonelontelonngagelonmelonntelonvelonntPairSqlPath: String =
+    Config.favBaselondVidelonoTwelonelontActionPairGelonnelonrationSQLPath
+  ovelonrridelon val contributingActionTypelons: Selonq[String] = Selonq(ActionTypelon.SelonrvelonrTwelonelontFav.namelon)
+  ovelonrridelon val undoActionTypelons: Selonq[String] = Selonq(ActionTypelon.SelonrvelonrTwelonelontUnfav.namelon)
+  ovelonrridelon val minIntelonractionCount: Int = 8
+  ovelonrridelon val minFavCount: Int = 0
+  ovelonrridelon val outputTablelon =
+    BQTablelonDelontails(
+      "twttr-reloncos-ml-prod",
+      "simclustelonrs",
+      "simclustelonrs_fav_baselond_videlono_clustelonr_to_twelonelont_indelonx")
+  ovelonrridelon val kelonyValDataselontOutputPath =
+    Config.FavBaselondVidelonoClustelonrToTwelonelontIndelonxOutputPath
+  ovelonrridelon val clustelonrToTwelonelontIndelonxSnapshotDataselont: KelonyValDALDataselont[
+    KelonyVal[FullClustelonrId, TopKTwelonelontsWithScorelons]
   ] =
-    FavBasedVideoSimclustersClusterToTweetIndexScalaDataset
+    FavBaselondVidelonoSimclustelonrsClustelonrToTwelonelontIndelonxScalaDataselont
 }
 
-object FavBasedVideoClusterToTweetIndexGenerationBatchJob
-    extends UUABasedClusterToTweetIndexGenerationJob {
-  override val isAdhoc = false
-  override val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
-  override val userTweetEngagementEventPairSqlPath: String =
-    Config.favBasedVideoTweetActionPairGenerationSQLPath
-  override val contributingActionTypes: Seq[String] = Seq(ActionType.ServerTweetFav.name)
-  override val undoActionTypes: Seq[String] = Seq(ActionType.ServerTweetUnfav.name)
-  override val minInteractionCount: Int = 8
-  override val minFavCount: Int = 0
-  override val outputTable =
-    BQTableDetails(
+objelonct FavBaselondVidelonoClustelonrToTwelonelontIndelonxGelonnelonrationBatchJob
+    elonxtelonnds UUABaselondClustelonrToTwelonelontIndelonxGelonnelonrationJob {
+  ovelonrridelon val isAdhoc = falselon
+  ovelonrridelon val gelontConsumelonrelonmbelonddingsSQLFunc = gelontIntelonrelonstelondIn2020SQL
+  ovelonrridelon val uselonrTwelonelontelonngagelonmelonntelonvelonntPairSqlPath: String =
+    Config.favBaselondVidelonoTwelonelontActionPairGelonnelonrationSQLPath
+  ovelonrridelon val contributingActionTypelons: Selonq[String] = Selonq(ActionTypelon.SelonrvelonrTwelonelontFav.namelon)
+  ovelonrridelon val undoActionTypelons: Selonq[String] = Selonq(ActionTypelon.SelonrvelonrTwelonelontUnfav.namelon)
+  ovelonrridelon val minIntelonractionCount: Int = 8
+  ovelonrridelon val minFavCount: Int = 0
+  ovelonrridelon val outputTablelon =
+    BQTablelonDelontails(
       "twttr-bq-cassowary-prod",
-      "user",
-      "simclusters_fav_based_video_cluster_to_tweet_index")
-  override val keyValDatasetOutputPath =
-    Config.FavBasedVideoClusterToTweetIndexOutputPath
-  override val clusterToTweetIndexSnapshotDataset: KeyValDALDataset[
-    KeyVal[FullClusterId, TopKTweetsWithScores]
+      "uselonr",
+      "simclustelonrs_fav_baselond_videlono_clustelonr_to_twelonelont_indelonx")
+  ovelonrridelon val kelonyValDataselontOutputPath =
+    Config.FavBaselondVidelonoClustelonrToTwelonelontIndelonxOutputPath
+  ovelonrridelon val clustelonrToTwelonelontIndelonxSnapshotDataselont: KelonyValDALDataselont[
+    KelonyVal[FullClustelonrId, TopKTwelonelontsWithScorelons]
   ] =
-    FavBasedVideoSimclustersClusterToTweetIndexScalaDataset
+    FavBaselondVidelonoSimclustelonrsClustelonrToTwelonelontIndelonxScalaDataselont
 }

@@ -1,17 +1,17 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.AddToModuleTimelineInstruction
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.AddToModulelonTimelonlinelonInstruction
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class AddToModuleInstructionMarshaller @Inject() (moduleItemMarshaller: ModuleItemMarshaller) {
+@Singlelonton
+class AddToModulelonInstructionMarshallelonr @Injelonct() (modulelonItelonmMarshallelonr: ModulelonItelonmMarshallelonr) {
 
-  def apply(instruction: AddToModuleTimelineInstruction): urt.AddToModule = urt.AddToModule(
-    moduleItems = instruction.moduleItems.map(moduleItemMarshaller(_, instruction.moduleEntryId)),
-    moduleEntryId = instruction.moduleEntryId,
-    moduleItemEntryId = instruction.moduleItemEntryId,
-    prepend = instruction.prepend
+  delonf apply(instruction: AddToModulelonTimelonlinelonInstruction): urt.AddToModulelon = urt.AddToModulelon(
+    modulelonItelonms = instruction.modulelonItelonms.map(modulelonItelonmMarshallelonr(_, instruction.modulelonelonntryId)),
+    modulelonelonntryId = instruction.modulelonelonntryId,
+    modulelonItelonmelonntryId = instruction.modulelonItelonmelonntryId,
+    prelonpelonnd = instruction.prelonpelonnd
   )
 }

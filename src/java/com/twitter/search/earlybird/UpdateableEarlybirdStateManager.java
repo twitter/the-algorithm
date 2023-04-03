@@ -1,437 +1,437 @@
-package com.twitter.search.earlybird;
+packagelon com.twittelonr.selonarch.elonarlybird;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.Filelon;
+import java.io.IOelonxcelonption;
 import java.util.Random;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicLong;
-import javax.annotation.Nullable;
+import java.util.concurrelonnt.TimelonUnit;
+import java.util.concurrelonnt.atomic.AtomicLong;
+import javax.annotation.Nullablelon;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Charsets;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import com.googlelon.common.baselon.Charselonts;
 
-import org.apache.thrift.TException;
-import org.apache.zookeeper.KeeperException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apachelon.thrift.Telonxcelonption;
+import org.apachelon.zookelonelonpelonr.Kelonelonpelonrelonxcelonption;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.common.util.Clock;
-import com.twitter.common.zookeeper.ZooKeeperClient;
-import com.twitter.search.common.aurora.AuroraSchedulerClient;
-import com.twitter.search.common.concurrent.ScheduledExecutorServiceFactory;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.common.file.LocalFile;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchLongGauge;
-import com.twitter.search.common.metrics.SearchStatsReceiver;
-import com.twitter.search.common.schema.AnalyzerFactory;
-import com.twitter.search.common.schema.DynamicSchema;
-import com.twitter.search.common.schema.ImmutableSchema;
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.common.schema.thriftjava.ThriftSchema;
-import com.twitter.search.common.util.ml.tensorflow_engine.TensorflowModelsManager;
-import com.twitter.search.common.util.thrift.ThriftUtils;
-import com.twitter.search.common.util.zookeeper.ZooKeeperProxy;
-import com.twitter.search.earlybird.common.NonPagingAssert;
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
-import com.twitter.search.earlybird.ml.ScoringModelsManager;
-import com.twitter.search.earlybird.partition.DynamicPartitionConfig;
-import com.twitter.search.earlybird.partition.PartitionConfig;
-import com.twitter.search.earlybird.partition.PartitionConfigLoader;
-import com.twitter.search.earlybird.partition.PartitionConfigLoadingException;
-import com.twitter.search.earlybird.util.OneTaskScheduledExecutorManager;
-import com.twitter.search.earlybird.util.PeriodicActionParams;
-import com.twitter.search.earlybird.util.ShutdownWaitTimeParams;
+import com.twittelonr.common.util.Clock;
+import com.twittelonr.common.zookelonelonpelonr.ZooKelonelonpelonrClielonnt;
+import com.twittelonr.selonarch.common.aurora.AuroraSchelondulelonrClielonnt;
+import com.twittelonr.selonarch.common.concurrelonnt.SchelondulelondelonxeloncutorSelonrvicelonFactory;
+import com.twittelonr.selonarch.common.deloncidelonr.SelonarchDeloncidelonr;
+import com.twittelonr.selonarch.common.filelon.LocalFilelon;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchLongGaugelon;
+import com.twittelonr.selonarch.common.melontrics.SelonarchStatsReloncelonivelonr;
+import com.twittelonr.selonarch.common.schelonma.AnalyzelonrFactory;
+import com.twittelonr.selonarch.common.schelonma.DynamicSchelonma;
+import com.twittelonr.selonarch.common.schelonma.ImmutablelonSchelonma;
+import com.twittelonr.selonarch.common.schelonma.baselon.Schelonma;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftSchelonma;
+import com.twittelonr.selonarch.common.util.ml.telonnsorflow_elonnginelon.TelonnsorflowModelonlsManagelonr;
+import com.twittelonr.selonarch.common.util.thrift.ThriftUtils;
+import com.twittelonr.selonarch.common.util.zookelonelonpelonr.ZooKelonelonpelonrProxy;
+import com.twittelonr.selonarch.elonarlybird.common.NonPagingAsselonrt;
+import com.twittelonr.selonarch.elonarlybird.elonxcelonption.CriticalelonxcelonptionHandlelonr;
+import com.twittelonr.selonarch.elonarlybird.ml.ScoringModelonlsManagelonr;
+import com.twittelonr.selonarch.elonarlybird.partition.DynamicPartitionConfig;
+import com.twittelonr.selonarch.elonarlybird.partition.PartitionConfig;
+import com.twittelonr.selonarch.elonarlybird.partition.PartitionConfigLoadelonr;
+import com.twittelonr.selonarch.elonarlybird.partition.PartitionConfigLoadingelonxcelonption;
+import com.twittelonr.selonarch.elonarlybird.util.OnelonTaskSchelondulelondelonxeloncutorManagelonr;
+import com.twittelonr.selonarch.elonarlybird.util.PelonriodicActionParams;
+import com.twittelonr.selonarch.elonarlybird.util.ShutdownWaitTimelonParams;
 
 /**
- * A class that keeps track of Earlybird state that may change while an Earlybird runs, and keeps
- * that state up to date. Currently keeps track of the current Earlybird schema and partition
- * configuration, and periodically updates them from Zookeeper. It also reloads periodically the
- * scoring models from HDFS.
+ * A class that kelonelonps track of elonarlybird statelon that may changelon whilelon an elonarlybird runs, and kelonelonps
+ * that statelon up to datelon. Currelonntly kelonelonps track of thelon currelonnt elonarlybird schelonma and partition
+ * configuration, and pelonriodically updatelons thelonm from Zookelonelonpelonr. It also relonloads pelonriodically thelon
+ * scoring modelonls from HDFS.
  */
-public class UpdateableEarlybirdStateManager extends OneTaskScheduledExecutorManager {
-  private static final Logger LOG = LoggerFactory.getLogger(UpdateableEarlybirdStateManager.class);
-  public static final String SCHEMA_SUFFIX = ".schema.v";
+public class UpdatelonablelonelonarlybirdStatelonManagelonr elonxtelonnds OnelonTaskSchelondulelondelonxeloncutorManagelonr {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(UpdatelonablelonelonarlybirdStatelonManagelonr.class);
+  public static final String SCHelonMA_SUFFIX = ".schelonma.v";
 
-  private static final String THREAD_NAME_PATTERN = "state_update-%d";
-  private static final boolean THREAD_IS_DAEMON = true;
-  private static final long EXECUTOR_SHUTDOWN_WAIT_SEC = 5;
+  privatelon static final String THRelonAD_NAMelon_PATTelonRN = "statelon_updatelon-%d";
+  privatelon static final boolelonan THRelonAD_IS_DAelonMON = truelon;
+  privatelon static final long elonXelonCUTOR_SHUTDOWN_WAIT_SelonC = 5;
 
-  private static final String DEFAULT_ZK_SCHEMA_LOCATION =
-      "/twitter/search/production/earlybird/schema";
-  private static final String DEFAULT_LOCAL_SCHEMA_LOCATION =
-      "/home/search/earlybird_schema_canary";
-  private static final long DEFAULT_UPDATE_PERIOD_MILLIS =
-      TimeUnit.MINUTES.toMillis(30);
+  privatelon static final String DelonFAULT_ZK_SCHelonMA_LOCATION =
+      "/twittelonr/selonarch/production/elonarlybird/schelonma";
+  privatelon static final String DelonFAULT_LOCAL_SCHelonMA_LOCATION =
+      "/homelon/selonarch/elonarlybird_schelonma_canary";
+  privatelon static final long DelonFAULT_UPDATelon_PelonRIOD_MILLIS =
+      TimelonUnit.MINUTelonS.toMillis(30);
 
-  private static final String SCHEMA_MAJOR_VERSION_NAME =
-      "schema_major_version";
-  private static final String SCHEMA_MINOR_VERSION_NAME =
-      "schema_minor_version";
-  private static final String LAST_SUCCESSFUL_SCHEMA_RELOAD_TIME_MILLIS_NAME =
-      "last_successful_schema_reload_timestamp_millis";
-  @VisibleForTesting
-  static final String FAIL_TO_LOAD_SCHEMA_COUNT_NAME =
-      "fail_to_load_schema_count";
-  @VisibleForTesting
-  static final String HOST_IS_CANARY_SCHEME = "host_is_canary_schema";
-  @VisibleForTesting
-  static final String DID_NOT_FIND_SCHEMA_COUNT_NAME =
-      "did_not_find_schema_count";
-  private static final String LAST_SUCCESSFUL_PARTITION_CONFIG_RELOAD_TIME_MILLIS_NAME =
-      "last_successful_partition_config_reload_timestamp_millis";
-  @VisibleForTesting
-  static final String FAIL_TO_LOAD_PARTITION_CONFIG_COUNT_NAME =
+  privatelon static final String SCHelonMA_MAJOR_VelonRSION_NAMelon =
+      "schelonma_major_velonrsion";
+  privatelon static final String SCHelonMA_MINOR_VelonRSION_NAMelon =
+      "schelonma_minor_velonrsion";
+  privatelon static final String LAST_SUCCelonSSFUL_SCHelonMA_RelonLOAD_TIMelon_MILLIS_NAMelon =
+      "last_succelonssful_schelonma_relonload_timelonstamp_millis";
+  @VisiblelonForTelonsting
+  static final String FAIL_TO_LOAD_SCHelonMA_COUNT_NAMelon =
+      "fail_to_load_schelonma_count";
+  @VisiblelonForTelonsting
+  static final String HOST_IS_CANARY_SCHelonMelon = "host_is_canary_schelonma";
+  @VisiblelonForTelonsting
+  static final String DID_NOT_FIND_SCHelonMA_COUNT_NAMelon =
+      "did_not_find_schelonma_count";
+  privatelon static final String LAST_SUCCelonSSFUL_PARTITION_CONFIG_RelonLOAD_TIMelon_MILLIS_NAMelon =
+      "last_succelonssful_partition_config_relonload_timelonstamp_millis";
+  @VisiblelonForTelonsting
+  static final String FAIL_TO_LOAD_PARTITION_CONFIG_COUNT_NAMelon =
       "fail_to_load_partition_config_count";
-  @VisibleForTesting
-  static final String HOST_IS_IN_LAYOUT_STAT_NAME = "host_is_in_layout";
-  private static final String NOT_IN_LAYOUT_SHUT_DOWN_ATTEMPTED_NAME =
-      "not_in_layout_shut_down_attempted";
+  @VisiblelonForTelonsting
+  static final String HOST_IS_IN_LAYOUT_STAT_NAMelon = "host_is_in_layout";
+  privatelon static final String NOT_IN_LAYOUT_SHUT_DOWN_ATTelonMPTelonD_NAMelon =
+      "not_in_layout_shut_down_attelonmptelond";
 
-  private static final String SHUT_DOWN_EARLYBIRD_WHEN_NOT_IN_LAYOUT_DECIDER_KEY =
-      "shut_down_earlybird_when_not_in_layout";
+  privatelon static final String SHUT_DOWN_elonARLYBIRD_WHelonN_NOT_IN_LAYOUT_DelonCIDelonR_KelonY =
+      "shut_down_elonarlybird_whelonn_not_in_layout";
 
-  private static final String NO_SHUTDOWN_WHEN_NOT_IN_LAYOUT_NAME =
-      "no_shutdown_when_not_in_layout";
+  privatelon static final String NO_SHUTDOWN_WHelonN_NOT_IN_LAYOUT_NAMelon =
+      "no_shutdown_whelonn_not_in_layout";
 
-  private final SearchLongGauge schemaMajorVersion;
-  private final SearchLongGauge schemaMinorVersion;
-  private final SearchLongGauge lastSuccessfulSchemaReloadTimeMillis;
-  private final SearchCounter failToLoadSchemaCount;
-  private final SearchLongGauge hostIsCanarySchema;
-  private final SearchCounter didNotFindSchemaCount;
-  private final SearchLongGauge lastSuccessfulPartitionConfigReloadTimeMillis;
-  private final SearchCounter failToLoadPartitionConfigCount;
-  private final SearchLongGauge hostIsInLayout;
-  private final SearchCounter notInLayoutShutDownAttemptedCount;
-  private final SearchLongGauge noShutdownWhenNotInLayoutGauge;
+  privatelon final SelonarchLongGaugelon schelonmaMajorVelonrsion;
+  privatelon final SelonarchLongGaugelon schelonmaMinorVelonrsion;
+  privatelon final SelonarchLongGaugelon lastSuccelonssfulSchelonmaRelonloadTimelonMillis;
+  privatelon final SelonarchCountelonr failToLoadSchelonmaCount;
+  privatelon final SelonarchLongGaugelon hostIsCanarySchelonma;
+  privatelon final SelonarchCountelonr didNotFindSchelonmaCount;
+  privatelon final SelonarchLongGaugelon lastSuccelonssfulPartitionConfigRelonloadTimelonMillis;
+  privatelon final SelonarchCountelonr failToLoadPartitionConfigCount;
+  privatelon final SelonarchLongGaugelon hostIsInLayout;
+  privatelon final SelonarchCountelonr notInLayoutShutDownAttelonmptelondCount;
+  privatelon final SelonarchLongGaugelon noShutdownWhelonnNotInLayoutGaugelon;
 
-  private final EarlybirdIndexConfig indexConfig;
-  private final DynamicPartitionConfig partitionConfig;
-  private final String schemaLocationOnLocal;
-  private final String schemaLocationOnZK;
-  private final ZooKeeperProxy zkClient;
-  private final AuroraSchedulerClient schedulerClient;
-  private final ScoringModelsManager scoringModelsManager;
-  private final TensorflowModelsManager tensorflowModelsManager;
-  private final SearchDecider searchDecider;
-  private final AtomicLong noShutdownWhenNotInLayout;
-  private EarlybirdServer earlybirdServer;
-  private Clock clock;
+  privatelon final elonarlybirdIndelonxConfig indelonxConfig;
+  privatelon final DynamicPartitionConfig partitionConfig;
+  privatelon final String schelonmaLocationOnLocal;
+  privatelon final String schelonmaLocationOnZK;
+  privatelon final ZooKelonelonpelonrProxy zkClielonnt;
+  privatelon final AuroraSchelondulelonrClielonnt schelondulelonrClielonnt;
+  privatelon final ScoringModelonlsManagelonr scoringModelonlsManagelonr;
+  privatelon final TelonnsorflowModelonlsManagelonr telonnsorflowModelonlsManagelonr;
+  privatelon final SelonarchDeloncidelonr selonarchDeloncidelonr;
+  privatelon final AtomicLong noShutdownWhelonnNotInLayout;
+  privatelon elonarlybirdSelonrvelonr elonarlybirdSelonrvelonr;
+  privatelon Clock clock;
 
-  public UpdateableEarlybirdStateManager(
-      EarlybirdIndexConfig indexConfig,
+  public UpdatelonablelonelonarlybirdStatelonManagelonr(
+      elonarlybirdIndelonxConfig indelonxConfig,
       DynamicPartitionConfig partitionConfig,
-      ZooKeeperProxy zooKeeperClient,
-      @Nullable  AuroraSchedulerClient schedulerClient,
-      ScheduledExecutorServiceFactory executorServiceFactory,
-      ScoringModelsManager scoringModelsManager,
-      TensorflowModelsManager tensorflowModelsManager,
-      SearchStatsReceiver searchStatsReceiver,
-      SearchDecider searchDecider,
-      CriticalExceptionHandler criticalExceptionHandler,
+      ZooKelonelonpelonrProxy zooKelonelonpelonrClielonnt,
+      @Nullablelon  AuroraSchelondulelonrClielonnt schelondulelonrClielonnt,
+      SchelondulelondelonxeloncutorSelonrvicelonFactory elonxeloncutorSelonrvicelonFactory,
+      ScoringModelonlsManagelonr scoringModelonlsManagelonr,
+      TelonnsorflowModelonlsManagelonr telonnsorflowModelonlsManagelonr,
+      SelonarchStatsReloncelonivelonr selonarchStatsReloncelonivelonr,
+      SelonarchDeloncidelonr selonarchDeloncidelonr,
+      CriticalelonxcelonptionHandlelonr criticalelonxcelonptionHandlelonr,
       Clock clock) {
     this(
-        indexConfig,
+        indelonxConfig,
         partitionConfig,
-        DEFAULT_LOCAL_SCHEMA_LOCATION,
-        DEFAULT_ZK_SCHEMA_LOCATION,
-        DEFAULT_UPDATE_PERIOD_MILLIS,
-        zooKeeperClient,
-        schedulerClient,
-        executorServiceFactory,
-        scoringModelsManager,
-        tensorflowModelsManager,
-        searchStatsReceiver,
-        searchDecider,
-        criticalExceptionHandler,
+        DelonFAULT_LOCAL_SCHelonMA_LOCATION,
+        DelonFAULT_ZK_SCHelonMA_LOCATION,
+        DelonFAULT_UPDATelon_PelonRIOD_MILLIS,
+        zooKelonelonpelonrClielonnt,
+        schelondulelonrClielonnt,
+        elonxeloncutorSelonrvicelonFactory,
+        scoringModelonlsManagelonr,
+        telonnsorflowModelonlsManagelonr,
+        selonarchStatsReloncelonivelonr,
+        selonarchDeloncidelonr,
+        criticalelonxcelonptionHandlelonr,
         clock);
   }
 
-  protected UpdateableEarlybirdStateManager(
-      EarlybirdIndexConfig indexConfig,
+  protelonctelond UpdatelonablelonelonarlybirdStatelonManagelonr(
+      elonarlybirdIndelonxConfig indelonxConfig,
       DynamicPartitionConfig partitionConfig,
-      String schemaLocationOnLocal,
-      String schemaLocationOnZK,
-      long updatePeriodMillis,
-      ZooKeeperProxy zkClient,
-      @Nullable  AuroraSchedulerClient schedulerClient,
-      ScheduledExecutorServiceFactory executorServiceFactory,
-      ScoringModelsManager scoringModelsManager,
-      TensorflowModelsManager tensorflowModelsManager,
-      SearchStatsReceiver searchStatsReceiver,
-      SearchDecider searchDecider,
-      CriticalExceptionHandler criticalExceptionHandler,
+      String schelonmaLocationOnLocal,
+      String schelonmaLocationOnZK,
+      long updatelonPelonriodMillis,
+      ZooKelonelonpelonrProxy zkClielonnt,
+      @Nullablelon  AuroraSchelondulelonrClielonnt schelondulelonrClielonnt,
+      SchelondulelondelonxeloncutorSelonrvicelonFactory elonxeloncutorSelonrvicelonFactory,
+      ScoringModelonlsManagelonr scoringModelonlsManagelonr,
+      TelonnsorflowModelonlsManagelonr telonnsorflowModelonlsManagelonr,
+      SelonarchStatsReloncelonivelonr selonarchStatsReloncelonivelonr,
+      SelonarchDeloncidelonr selonarchDeloncidelonr,
+      CriticalelonxcelonptionHandlelonr criticalelonxcelonptionHandlelonr,
       Clock clock) {
-    super(
-        executorServiceFactory,
-        THREAD_NAME_PATTERN,
-        THREAD_IS_DAEMON,
-        PeriodicActionParams.withFixedDelay(
-          updatePeriodMillis,
-          TimeUnit.MILLISECONDS
+    supelonr(
+        elonxeloncutorSelonrvicelonFactory,
+        THRelonAD_NAMelon_PATTelonRN,
+        THRelonAD_IS_DAelonMON,
+        PelonriodicActionParams.withFixelondDelonlay(
+          updatelonPelonriodMillis,
+          TimelonUnit.MILLISelonCONDS
         ),
-        new ShutdownWaitTimeParams(
-          EXECUTOR_SHUTDOWN_WAIT_SEC,
-          TimeUnit.SECONDS
+        nelonw ShutdownWaitTimelonParams(
+          elonXelonCUTOR_SHUTDOWN_WAIT_SelonC,
+          TimelonUnit.SelonCONDS
         ),
-        searchStatsReceiver,
-        criticalExceptionHandler);
-    this.indexConfig = indexConfig;
+        selonarchStatsReloncelonivelonr,
+        criticalelonxcelonptionHandlelonr);
+    this.indelonxConfig = indelonxConfig;
     this.partitionConfig = partitionConfig;
-    this.schemaLocationOnLocal = schemaLocationOnLocal;
-    this.schemaLocationOnZK = schemaLocationOnZK;
-    this.zkClient = zkClient;
-    this.schedulerClient = schedulerClient;
-    this.scoringModelsManager = scoringModelsManager;
-    this.searchDecider = searchDecider;
-    this.noShutdownWhenNotInLayout = new AtomicLong(0);
-    this.tensorflowModelsManager = tensorflowModelsManager;
+    this.schelonmaLocationOnLocal = schelonmaLocationOnLocal;
+    this.schelonmaLocationOnZK = schelonmaLocationOnZK;
+    this.zkClielonnt = zkClielonnt;
+    this.schelondulelonrClielonnt = schelondulelonrClielonnt;
+    this.scoringModelonlsManagelonr = scoringModelonlsManagelonr;
+    this.selonarchDeloncidelonr = selonarchDeloncidelonr;
+    this.noShutdownWhelonnNotInLayout = nelonw AtomicLong(0);
+    this.telonnsorflowModelonlsManagelonr = telonnsorflowModelonlsManagelonr;
     this.clock = clock;
-    this.schemaMajorVersion = getSearchStatsReceiver().getLongGauge(
-        SCHEMA_MAJOR_VERSION_NAME);
-    this.schemaMinorVersion = getSearchStatsReceiver().getLongGauge(
-        SCHEMA_MINOR_VERSION_NAME);
-    this.lastSuccessfulSchemaReloadTimeMillis = getSearchStatsReceiver().getLongGauge(
-        LAST_SUCCESSFUL_SCHEMA_RELOAD_TIME_MILLIS_NAME);
-    this.failToLoadSchemaCount = getSearchStatsReceiver().getCounter(
-        FAIL_TO_LOAD_SCHEMA_COUNT_NAME);
-    this.hostIsCanarySchema = getSearchStatsReceiver().getLongGauge(HOST_IS_CANARY_SCHEME);
-    this.didNotFindSchemaCount = getSearchStatsReceiver().getCounter(
-        DID_NOT_FIND_SCHEMA_COUNT_NAME);
-    this.lastSuccessfulPartitionConfigReloadTimeMillis = getSearchStatsReceiver().getLongGauge(
-        LAST_SUCCESSFUL_PARTITION_CONFIG_RELOAD_TIME_MILLIS_NAME);
-    this.failToLoadPartitionConfigCount = getSearchStatsReceiver().getCounter(
-        FAIL_TO_LOAD_PARTITION_CONFIG_COUNT_NAME);
-    this.hostIsInLayout = getSearchStatsReceiver().getLongGauge(
-        HOST_IS_IN_LAYOUT_STAT_NAME);
-    this.notInLayoutShutDownAttemptedCount = getSearchStatsReceiver().getCounter(
-        NOT_IN_LAYOUT_SHUT_DOWN_ATTEMPTED_NAME);
-    this.noShutdownWhenNotInLayoutGauge = getSearchStatsReceiver().getLongGauge(
-        NO_SHUTDOWN_WHEN_NOT_IN_LAYOUT_NAME, noShutdownWhenNotInLayout);
+    this.schelonmaMajorVelonrsion = gelontSelonarchStatsReloncelonivelonr().gelontLongGaugelon(
+        SCHelonMA_MAJOR_VelonRSION_NAMelon);
+    this.schelonmaMinorVelonrsion = gelontSelonarchStatsReloncelonivelonr().gelontLongGaugelon(
+        SCHelonMA_MINOR_VelonRSION_NAMelon);
+    this.lastSuccelonssfulSchelonmaRelonloadTimelonMillis = gelontSelonarchStatsReloncelonivelonr().gelontLongGaugelon(
+        LAST_SUCCelonSSFUL_SCHelonMA_RelonLOAD_TIMelon_MILLIS_NAMelon);
+    this.failToLoadSchelonmaCount = gelontSelonarchStatsReloncelonivelonr().gelontCountelonr(
+        FAIL_TO_LOAD_SCHelonMA_COUNT_NAMelon);
+    this.hostIsCanarySchelonma = gelontSelonarchStatsReloncelonivelonr().gelontLongGaugelon(HOST_IS_CANARY_SCHelonMelon);
+    this.didNotFindSchelonmaCount = gelontSelonarchStatsReloncelonivelonr().gelontCountelonr(
+        DID_NOT_FIND_SCHelonMA_COUNT_NAMelon);
+    this.lastSuccelonssfulPartitionConfigRelonloadTimelonMillis = gelontSelonarchStatsReloncelonivelonr().gelontLongGaugelon(
+        LAST_SUCCelonSSFUL_PARTITION_CONFIG_RelonLOAD_TIMelon_MILLIS_NAMelon);
+    this.failToLoadPartitionConfigCount = gelontSelonarchStatsReloncelonivelonr().gelontCountelonr(
+        FAIL_TO_LOAD_PARTITION_CONFIG_COUNT_NAMelon);
+    this.hostIsInLayout = gelontSelonarchStatsReloncelonivelonr().gelontLongGaugelon(
+        HOST_IS_IN_LAYOUT_STAT_NAMelon);
+    this.notInLayoutShutDownAttelonmptelondCount = gelontSelonarchStatsReloncelonivelonr().gelontCountelonr(
+        NOT_IN_LAYOUT_SHUT_DOWN_ATTelonMPTelonD_NAMelon);
+    this.noShutdownWhelonnNotInLayoutGaugelon = gelontSelonarchStatsReloncelonivelonr().gelontLongGaugelon(
+        NO_SHUTDOWN_WHelonN_NOT_IN_LAYOUT_NAMelon, noShutdownWhelonnNotInLayout);
 
-    updateSchemaVersionStats(indexConfig.getSchema());
+    updatelonSchelonmaVelonrsionStats(indelonxConfig.gelontSchelonma());
   }
 
-  private void updateSchemaVersionStats(Schema schema) {
-    schemaMajorVersion.set(schema.getMajorVersionNumber());
-    schemaMinorVersion.set(schema.getMinorVersionNumber());
-    lastSuccessfulSchemaReloadTimeMillis.set(System.currentTimeMillis());
-    lastSuccessfulPartitionConfigReloadTimeMillis.set(System.currentTimeMillis());
-    hostIsInLayout.set(1);
+  privatelon void updatelonSchelonmaVelonrsionStats(Schelonma schelonma) {
+    schelonmaMajorVelonrsion.selont(schelonma.gelontMajorVelonrsionNumbelonr());
+    schelonmaMinorVelonrsion.selont(schelonma.gelontMinorVelonrsionNumbelonr());
+    lastSuccelonssfulSchelonmaRelonloadTimelonMillis.selont(Systelonm.currelonntTimelonMillis());
+    lastSuccelonssfulPartitionConfigRelonloadTimelonMillis.selont(Systelonm.currelonntTimelonMillis());
+    hostIsInLayout.selont(1);
   }
 
-  private void updateSchemaVersionWithThriftSchema(ThriftSchema thriftSchema)
-      throws Schema.SchemaValidationException, DynamicSchema.SchemaUpdateException {
+  privatelon void updatelonSchelonmaVelonrsionWithThriftSchelonma(ThriftSchelonma thriftSchelonma)
+      throws Schelonma.SchelonmaValidationelonxcelonption, DynamicSchelonma.SchelonmaUpdatelonelonxcelonption {
 
-      ImmutableSchema newSchema = new ImmutableSchema(
-          thriftSchema, new AnalyzerFactory(), indexConfig.getCluster().getNameForStats());
-      indexConfig.getSchema().updateSchema(newSchema);
-      tensorflowModelsManager.updateFeatureSchemaIdToMlIdMap(newSchema.getSearchFeatureSchema());
-      updateSchemaVersionStats(indexConfig.getSchema());
-      LOG.info("Schema updated. New Schema is: \n" + ThriftUtils.toTextFormatSafe(thriftSchema));
+      ImmutablelonSchelonma nelonwSchelonma = nelonw ImmutablelonSchelonma(
+          thriftSchelonma, nelonw AnalyzelonrFactory(), indelonxConfig.gelontClustelonr().gelontNamelonForStats());
+      indelonxConfig.gelontSchelonma().updatelonSchelonma(nelonwSchelonma);
+      telonnsorflowModelonlsManagelonr.updatelonFelonaturelonSchelonmaIdToMlIdMap(nelonwSchelonma.gelontSelonarchFelonaturelonSchelonma());
+      updatelonSchelonmaVelonrsionStats(indelonxConfig.gelontSchelonma());
+      LOG.info("Schelonma updatelond. Nelonw Schelonma is: \n" + ThriftUtils.toTelonxtFormatSafelon(thriftSchelonma));
   }
 
-  protected void updateSchema(ZooKeeperProxy zkClientToUse) {
-    // There are 3 cases:
-    // 1. Try to locate local schema file to canary, it might fail either because file not exist or
-    // ineligible versions.
-    // 2. Canary local schema failed, lookup schema file from zookeeper.
-    // 3. Both local and zookeeper updates failed, we do not update schema. Either schema not exists
-    // in zookeeper, or this would happened after canary schema: we updated current schema but did
-    // not rollback after finished.
-    if (updateSchemaFromLocal()) {
-      LOG.info("Host is used for schema canary");
-      hostIsCanarySchema.set(1);
-    } else if (updateSchemaFromZooKeeper(zkClientToUse)) {
-      // Host is using schema file from zookeeper
-      hostIsCanarySchema.set(0);
-    } else {
-      // Schema update failed. Please check schema file exists on zookeeper and make sure
-      // rollback after canary. Current version: {}.{}
-      return;
+  protelonctelond void updatelonSchelonma(ZooKelonelonpelonrProxy zkClielonntToUselon) {
+    // Thelonrelon arelon 3 caselons:
+    // 1. Try to locatelon local schelonma filelon to canary, it might fail elonithelonr beloncauselon filelon not elonxist or
+    // inelonligiblelon velonrsions.
+    // 2. Canary local schelonma failelond, lookup schelonma filelon from zookelonelonpelonr.
+    // 3. Both local and zookelonelonpelonr updatelons failelond, welon do not updatelon schelonma. elonithelonr schelonma not elonxists
+    // in zookelonelonpelonr, or this would happelonnelond aftelonr canary schelonma: welon updatelond currelonnt schelonma but did
+    // not rollback aftelonr finishelond.
+    if (updatelonSchelonmaFromLocal()) {
+      LOG.info("Host is uselond for schelonma canary");
+      hostIsCanarySchelonma.selont(1);
+    } elonlselon if (updatelonSchelonmaFromZooKelonelonpelonr(zkClielonntToUselon)) {
+      // Host is using schelonma filelon from zookelonelonpelonr
+      hostIsCanarySchelonma.selont(0);
+    } elonlselon {
+      // Schelonma updatelon failelond. Plelonaselon chelonck schelonma filelon elonxists on zookelonelonpelonr and makelon surelon
+      // rollback aftelonr canary. Currelonnt velonrsion: {}.{}
+      relonturn;
     }
   }
 
-  private boolean updateSchemaFromLocal() {
-    ThriftSchema thriftSchema =
-        loadCanaryThriftSchemaFromLocal(getCanarySchemaFileOnLocal());
-    if (thriftSchema == null) {
-      // It is expected to not find a local schema file. The schema file only exists when the host
-      // is used as canary for schema updates
-      return false;
+  privatelon boolelonan updatelonSchelonmaFromLocal() {
+    ThriftSchelonma thriftSchelonma =
+        loadCanaryThriftSchelonmaFromLocal(gelontCanarySchelonmaFilelonOnLocal());
+    if (thriftSchelonma == null) {
+      // It is elonxpelonctelond to not find a local schelonma filelon. Thelon schelonma filelon only elonxists whelonn thelon host
+      // is uselond as canary for schelonma updatelons
+      relonturn falselon;
     }
-    return updateSchemaFromThriftSchema(thriftSchema);
+    relonturn updatelonSchelonmaFromThriftSchelonma(thriftSchelonma);
   }
 
-  private boolean updateSchemaFromZooKeeper(ZooKeeperProxy zkClientToUse) {
-    ThriftSchema thriftSchema = loadThriftSchemaFromZooKeeper(zkClientToUse);
-    if (thriftSchema == null) {
-      // It is expected to usually not find a schema file on ZooKeeper; one is only uploaded if the
-      // schema changes after the package has been compiled. All the relevant error handling and
-      // logging is expected to be handled by loadThriftSchemaFromZooKeeper().
-      failToLoadSchemaCount.increment();
-      return false;
+  privatelon boolelonan updatelonSchelonmaFromZooKelonelonpelonr(ZooKelonelonpelonrProxy zkClielonntToUselon) {
+    ThriftSchelonma thriftSchelonma = loadThriftSchelonmaFromZooKelonelonpelonr(zkClielonntToUselon);
+    if (thriftSchelonma == null) {
+      // It is elonxpelonctelond to usually not find a schelonma filelon on ZooKelonelonpelonr; onelon is only uploadelond if thelon
+      // schelonma changelons aftelonr thelon packagelon has belonelonn compilelond. All thelon relonlelonvant elonrror handling and
+      // logging is elonxpelonctelond to belon handlelond by loadThriftSchelonmaFromZooKelonelonpelonr().
+      failToLoadSchelonmaCount.increlonmelonnt();
+      relonturn falselon;
     }
-    return updateSchemaFromThriftSchema(thriftSchema);
+    relonturn updatelonSchelonmaFromThriftSchelonma(thriftSchelonma);
   }
 
-  private boolean updateSchemaFromThriftSchema(ThriftSchema thriftSchema) {
-    Schema currentSchema = indexConfig.getSchema();
-    if (thriftSchema.getMajorVersionNumber() != currentSchema.getMajorVersionNumber()) {
+  privatelon boolelonan updatelonSchelonmaFromThriftSchelonma(ThriftSchelonma thriftSchelonma) {
+    Schelonma currelonntSchelonma = indelonxConfig.gelontSchelonma();
+    if (thriftSchelonma.gelontMajorVelonrsionNumbelonr() != currelonntSchelonma.gelontMajorVelonrsionNumbelonr()) {
       LOG.warn(
-          "Major version updates are not allowed. Current major version {}, try to update to {}",
-          currentSchema.getMajorVersionNumber(), thriftSchema.getMajorVersionNumber());
-      return false;
+          "Major velonrsion updatelons arelon not allowelond. Currelonnt major velonrsion {}, try to updatelon to {}",
+          currelonntSchelonma.gelontMajorVelonrsionNumbelonr(), thriftSchelonma.gelontMajorVelonrsionNumbelonr());
+      relonturn falselon;
     }
-    if (thriftSchema.getMinorVersionNumber() > currentSchema.getMinorVersionNumber()) {
+    if (thriftSchelonma.gelontMinorVelonrsionNumbelonr() > currelonntSchelonma.gelontMinorVelonrsionNumbelonr()) {
       try {
-        updateSchemaVersionWithThriftSchema(thriftSchema);
-      } catch (Schema.SchemaValidationException | DynamicSchema.SchemaUpdateException e) {
-        LOG.warn("Exception while updating schema: ", e);
-        return false;
+        updatelonSchelonmaVelonrsionWithThriftSchelonma(thriftSchelonma);
+      } catch (Schelonma.SchelonmaValidationelonxcelonption | DynamicSchelonma.SchelonmaUpdatelonelonxcelonption elon) {
+        LOG.warn("elonxcelonption whilelon updating schelonma: ", elon);
+        relonturn falselon;
       }
-      return true;
-    } else if (thriftSchema.getMinorVersionNumber() == currentSchema.getMinorVersionNumber()) {
-      LOG.info("Schema version to update is same as current one: {}.{}",
-          currentSchema.getMajorVersionNumber(), currentSchema.getMinorVersionNumber());
-      return true;
-    } else {
-      LOG.info("Found schema to update, but not eligible for dynamic update. "
-              + "Current Version: {}.{};  Schema Version for updates: {}.{}",
-          currentSchema.getMajorVersionNumber(),
-          currentSchema.getMinorVersionNumber(),
-          thriftSchema.getMajorVersionNumber(),
-          thriftSchema.getMinorVersionNumber());
-      return false;
+      relonturn truelon;
+    } elonlselon if (thriftSchelonma.gelontMinorVelonrsionNumbelonr() == currelonntSchelonma.gelontMinorVelonrsionNumbelonr()) {
+      LOG.info("Schelonma velonrsion to updatelon is samelon as currelonnt onelon: {}.{}",
+          currelonntSchelonma.gelontMajorVelonrsionNumbelonr(), currelonntSchelonma.gelontMinorVelonrsionNumbelonr());
+      relonturn truelon;
+    } elonlselon {
+      LOG.info("Found schelonma to updatelon, but not elonligiblelon for dynamic updatelon. "
+              + "Currelonnt Velonrsion: {}.{};  Schelonma Velonrsion for updatelons: {}.{}",
+          currelonntSchelonma.gelontMajorVelonrsionNumbelonr(),
+          currelonntSchelonma.gelontMinorVelonrsionNumbelonr(),
+          thriftSchelonma.gelontMajorVelonrsionNumbelonr(),
+          thriftSchelonma.gelontMinorVelonrsionNumbelonr());
+      relonturn falselon;
     }
   }
 
-  void updatePartitionConfig(@Nullable AuroraSchedulerClient schedulerClientToUse) {
+  void updatelonPartitionConfig(@Nullablelon AuroraSchelondulelonrClielonnt schelondulelonrClielonntToUselon) {
     try {
-      if (schedulerClientToUse == null) {
-        NonPagingAssert.assertFailed("aurora_scheduler_client_is_null");
-        throw new PartitionConfigLoadingException("AuroraSchedulerClient can not be null.");
+      if (schelondulelonrClielonntToUselon == null) {
+        NonPagingAsselonrt.asselonrtFailelond("aurora_schelondulelonr_clielonnt_is_null");
+        throw nelonw PartitionConfigLoadingelonxcelonption("AuroraSchelondulelonrClielonnt can not belon null.");
       }
 
-      PartitionConfig newPartitionConfig =
-          PartitionConfigLoader.getPartitionInfoForMesosConfig(schedulerClientToUse);
-      partitionConfig.setCurrentPartitionConfig(newPartitionConfig);
-      lastSuccessfulPartitionConfigReloadTimeMillis.set(System.currentTimeMillis());
-      hostIsInLayout.set(1);
-    } catch (PartitionConfigLoadingException e) {
-      // Do not change hostIsInLayout's value if we could not load the layout.
-      LOG.warn("Failed to load partition config from ZooKeeper.", e);
-      failToLoadPartitionConfigCount.increment();
+      PartitionConfig nelonwPartitionConfig =
+          PartitionConfigLoadelonr.gelontPartitionInfoForMelonsosConfig(schelondulelonrClielonntToUselon);
+      partitionConfig.selontCurrelonntPartitionConfig(nelonwPartitionConfig);
+      lastSuccelonssfulPartitionConfigRelonloadTimelonMillis.selont(Systelonm.currelonntTimelonMillis());
+      hostIsInLayout.selont(1);
+    } catch (PartitionConfigLoadingelonxcelonption elon) {
+      // Do not changelon hostIsInLayout's valuelon if welon could not load thelon layout.
+      LOG.warn("Failelond to load partition config from ZooKelonelonpelonr.", elon);
+      failToLoadPartitionConfigCount.increlonmelonnt();
     }
   }
 
-  @Nullable
-  private ThriftSchema loadCanaryThriftSchemaFromLocal(LocalFile schemaFile) {
-    String schemaString;
-    if (!schemaFile.getFile().exists()) {
-      return null;
+  @Nullablelon
+  privatelon ThriftSchelonma loadCanaryThriftSchelonmaFromLocal(LocalFilelon schelonmaFilelon) {
+    String schelonmaString;
+    if (!schelonmaFilelon.gelontFilelon().elonxists()) {
+      relonturn null;
     }
     try {
-      schemaString = schemaFile.getCharSource().read();
-    } catch (IOException e) {
-      LOG.warn("Fail to read from local schema file.");
-      return null;
+      schelonmaString = schelonmaFilelon.gelontCharSourcelon().relonad();
+    } catch (IOelonxcelonption elon) {
+      LOG.warn("Fail to relonad from local schelonma filelon.");
+      relonturn null;
     }
-    ThriftSchema thriftSchema = new ThriftSchema();
+    ThriftSchelonma thriftSchelonma = nelonw ThriftSchelonma();
     try {
-      ThriftUtils.fromTextFormat(schemaString, thriftSchema);
-      return thriftSchema;
-    } catch (TException e) {
-      LOG.warn("Unable to deserialize ThriftSchema loaded locally from {}.\n{}",
-          schemaFile.getName(), e);
-      return null;
+      ThriftUtils.fromTelonxtFormat(schelonmaString, thriftSchelonma);
+      relonturn thriftSchelonma;
+    } catch (Telonxcelonption elon) {
+      LOG.warn("Unablelon to delonselonrializelon ThriftSchelonma loadelond locally from {}.\n{}",
+          schelonmaFilelon.gelontNamelon(), elon);
+      relonturn null;
     }
   }
 
-  @Nullable
-  private ThriftSchema loadThriftSchemaFromZooKeeper(ZooKeeperProxy zkClientToUse) {
-    String schemaPathOnZk = getFullSchemaPathOnZK();
-    byte[] rawBytes;
+  @Nullablelon
+  privatelon ThriftSchelonma loadThriftSchelonmaFromZooKelonelonpelonr(ZooKelonelonpelonrProxy zkClielonntToUselon) {
+    String schelonmaPathOnZk = gelontFullSchelonmaPathOnZK();
+    bytelon[] rawBytelons;
     try {
-      rawBytes = zkClientToUse.getData(schemaPathOnZk, false, null);
-    } catch (KeeperException.NoNodeException e) {
-      didNotFindSchemaCount.increment();
-      return null;
-    } catch (KeeperException e) {
-      LOG.warn("Exception while loading schema from ZK at {}.\n{}", schemaPathOnZk, e);
-      return null;
-    } catch (InterruptedException e) {
-      Thread.currentThread().interrupt();
-      LOG.warn("Interrupted while loading schema from ZK at {}.\n{}", schemaPathOnZk, e);
-      return null;
-    } catch (ZooKeeperClient.ZooKeeperConnectionException e) {
-      LOG.warn("Exception while loading schema from ZK at {}.\n{}", schemaPathOnZk, e);
-      return null;
+      rawBytelons = zkClielonntToUselon.gelontData(schelonmaPathOnZk, falselon, null);
+    } catch (Kelonelonpelonrelonxcelonption.NoNodelonelonxcelonption elon) {
+      didNotFindSchelonmaCount.increlonmelonnt();
+      relonturn null;
+    } catch (Kelonelonpelonrelonxcelonption elon) {
+      LOG.warn("elonxcelonption whilelon loading schelonma from ZK at {}.\n{}", schelonmaPathOnZk, elon);
+      relonturn null;
+    } catch (Intelonrruptelondelonxcelonption elon) {
+      Threlonad.currelonntThrelonad().intelonrrupt();
+      LOG.warn("Intelonrruptelond whilelon loading schelonma from ZK at {}.\n{}", schelonmaPathOnZk, elon);
+      relonturn null;
+    } catch (ZooKelonelonpelonrClielonnt.ZooKelonelonpelonrConnelonctionelonxcelonption elon) {
+      LOG.warn("elonxcelonption whilelon loading schelonma from ZK at {}.\n{}", schelonmaPathOnZk, elon);
+      relonturn null;
     }
-    if (rawBytes == null) {
-      LOG.warn("Got null schema from ZooKeeper at {}.", schemaPathOnZk);
-      return null;
+    if (rawBytelons == null) {
+      LOG.warn("Got null schelonma from ZooKelonelonpelonr at {}.", schelonmaPathOnZk);
+      relonturn null;
     }
-    String schemaString = new String(rawBytes, Charsets.UTF_8);
-    ThriftSchema thriftSchema = new ThriftSchema();
+    String schelonmaString = nelonw String(rawBytelons, Charselonts.UTF_8);
+    ThriftSchelonma thriftSchelonma = nelonw ThriftSchelonma();
     try {
-      ThriftUtils.fromTextFormat(schemaString, thriftSchema);
-      return thriftSchema;
-    } catch (TException e) {
-      LOG.warn("Unable to deserialize ThriftSchema loaded from ZK at {}.\n{}", schemaPathOnZk, e);
-      return null;
+      ThriftUtils.fromTelonxtFormat(schelonmaString, thriftSchelonma);
+      relonturn thriftSchelonma;
+    } catch (Telonxcelonption elon) {
+      LOG.warn("Unablelon to delonselonrializelon ThriftSchelonma loadelond from ZK at {}.\n{}", schelonmaPathOnZk, elon);
+      relonturn null;
     }
   }
 
-  @VisibleForTesting
-  protected String getSchemaFileName() {
-    return indexConfig.getCluster().name().toLowerCase()
-        + UpdateableEarlybirdStateManager.SCHEMA_SUFFIX
-        + indexConfig.getSchema().getMajorVersionNumber();
+  @VisiblelonForTelonsting
+  protelonctelond String gelontSchelonmaFilelonNamelon() {
+    relonturn indelonxConfig.gelontClustelonr().namelon().toLowelonrCaselon()
+        + UpdatelonablelonelonarlybirdStatelonManagelonr.SCHelonMA_SUFFIX
+        + indelonxConfig.gelontSchelonma().gelontMajorVelonrsionNumbelonr();
   }
 
-  @VisibleForTesting
-  protected String getFullSchemaPathOnZK() {
-    return String.format("%s/%s", schemaLocationOnZK, getSchemaFileName());
+  @VisiblelonForTelonsting
+  protelonctelond String gelontFullSchelonmaPathOnZK() {
+    relonturn String.format("%s/%s", schelonmaLocationOnZK, gelontSchelonmaFilelonNamelon());
   }
 
-  LocalFile getCanarySchemaFileOnLocal() {
-    String canarySchemaFilePath =
-        String.format("%s/%s", schemaLocationOnLocal, getSchemaFileName());
-    return new LocalFile(new File(canarySchemaFilePath));
+  LocalFilelon gelontCanarySchelonmaFilelonOnLocal() {
+    String canarySchelonmaFilelonPath =
+        String.format("%s/%s", schelonmaLocationOnLocal, gelontSchelonmaFilelonNamelon());
+    relonturn nelonw LocalFilelon(nelonw Filelon(canarySchelonmaFilelonPath));
   }
 
-  void setNoShutdownWhenNotInLayout(boolean noShutdown) {
-    noShutdownWhenNotInLayout.set(noShutdown ? 1 : 0);
+  void selontNoShutdownWhelonnNotInLayout(boolelonan noShutdown) {
+    noShutdownWhelonnNotInLayout.selont(noShutdown ? 1 : 0);
   }
 
-  @Override
-  protected void runOneIteration() {
-    updateSchema(zkClient);
-    updatePartitionConfig(schedulerClient);
+  @Ovelonrridelon
+  protelonctelond void runOnelonItelonration() {
+    updatelonSchelonma(zkClielonnt);
+    updatelonPartitionConfig(schelondulelonrClielonnt);
 
-    LOG.info("Reloading models.");
-    scoringModelsManager.reload();
-    tensorflowModelsManager.run();
+    LOG.info("Relonloading modelonls.");
+    scoringModelonlsManagelonr.relonload();
+    telonnsorflowModelonlsManagelonr.run();
 
-    Random random = new Random();
+    Random random = nelonw Random();
 
     try {
-      // We had an issue where HDFS operations were blocking, so reloading these models
-      // was finishing at the same time on each instance and after that every time an instance
-      // was reloading models, it was happening at the same time. This caused issues with HDFS
-      // load. We now place a "guard" waiting time after each reload so that the execution time
-      // on every instance is different and these calls can't easily sync to the same point in time.
-      int sleepSeconds = random.nextInt(30 * 60);
-      LOG.info("Sleeping for {} seconds", sleepSeconds);
-      clock.waitFor(sleepSeconds * 1000);
-    } catch (InterruptedException ex) {
-      LOG.info("Interrupted while sleeping");
+      // Welon had an issuelon whelonrelon HDFS opelonrations welonrelon blocking, so relonloading thelonselon modelonls
+      // was finishing at thelon samelon timelon on elonach instancelon and aftelonr that elonvelonry timelon an instancelon
+      // was relonloading modelonls, it was happelonning at thelon samelon timelon. This causelond issuelons with HDFS
+      // load. Welon now placelon a "guard" waiting timelon aftelonr elonach relonload so that thelon elonxeloncution timelon
+      // on elonvelonry instancelon is diffelonrelonnt and thelonselon calls can't elonasily sync to thelon samelon point in timelon.
+      int slelonelonpSelonconds = random.nelonxtInt(30 * 60);
+      LOG.info("Slelonelonping for {} selonconds", slelonelonpSelonconds);
+      clock.waitFor(slelonelonpSelonconds * 1000);
+    } catch (Intelonrruptelondelonxcelonption elonx) {
+      LOG.info("Intelonrruptelond whilelon slelonelonping");
     }
   }
 
-  public void setEarlybirdServer(EarlybirdServer earlybirdServer) {
-    this.earlybirdServer = earlybirdServer;
+  public void selontelonarlybirdSelonrvelonr(elonarlybirdSelonrvelonr elonarlybirdSelonrvelonr) {
+    this.elonarlybirdSelonrvelonr = elonarlybirdSelonrvelonr;
   }
 }

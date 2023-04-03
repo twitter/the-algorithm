@@ -1,17 +1,17 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.metadata
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.ReferenceObject
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.richtelonxt.RelonfelonrelonncelonObjelonct
 
-sealed trait UrlType
-case object ExternalUrl extends UrlType
-case object DeepLink extends UrlType
-case object UrtEndpoint extends UrlType
+selonalelond trait UrlTypelon
+caselon objelonct elonxtelonrnalUrl elonxtelonnds UrlTypelon
+caselon objelonct DelonelonpLink elonxtelonnds UrlTypelon
+caselon objelonct Urtelonndpoint elonxtelonnds UrlTypelon
 
-case class UrtEndpointOptions(
-  requestParams: Option[Map[String, String]],
-  title: Option[String],
-  cacheId: Option[String],
-  subtitle: Option[String])
+caselon class UrtelonndpointOptions(
+  relonquelonstParams: Option[Map[String, String]],
+  titlelon: Option[String],
+  cachelonId: Option[String],
+  subtitlelon: Option[String])
 
-case class Url(urlType: UrlType, url: String, urtEndpointOptions: Option[UrtEndpointOptions] = None)
-    extends ReferenceObject
+caselon class Url(urlTypelon: UrlTypelon, url: String, urtelonndpointOptions: Option[UrtelonndpointOptions] = Nonelon)
+    elonxtelonnds RelonfelonrelonncelonObjelonct

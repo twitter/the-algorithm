@@ -1,38 +1,38 @@
-namespace java com.twitter.simclusters_v2.thriftjava
-namespace py gen.twitter.simclusters_v2.inferred_entities
-#@namespace scala com.twitter.simclusters_v2.thriftscala
-#@namespace strato com.twitter.simclusters_v2
+namelonspacelon java com.twittelonr.simclustelonrs_v2.thriftjava
+namelonspacelon py gelonn.twittelonr.simclustelonrs_v2.infelonrrelond_elonntitielons
+#@namelonspacelon scala com.twittelonr.simclustelonrs_v2.thriftscala
+#@namelonspacelon strato com.twittelonr.simclustelonrs_v2
 
-// The SimClusters type we use to infer entity interests about a user
-// Currently used for SimClusters Compliance to store a user's inferred interests
+// Thelon SimClustelonrs typelon welon uselon to infelonr elonntity intelonrelonsts about a uselonr
+// Currelonntly uselond for SimClustelonrs Compliancelon to storelon a uselonr's infelonrrelond intelonrelonsts
 
-include "online_store.thrift"
+includelon "onlinelon_storelon.thrift"
 
-enum ClusterType {
+elonnum ClustelonrTypelon {
   KnownFor        = 1,
-  InterestedIn    = 2
-}(persisted = 'true', hasPersonalData = 'false')
+  IntelonrelonstelondIn    = 2
+}(pelonrsistelond = 'truelon', hasPelonrsonalData = 'falselon')
 
-struct SimClustersSource {
-  1: required ClusterType clusterType
-  2: required online_store.ModelVersion modelVersion
-}(persisted = 'true', hasPersonalData = 'false')
+struct SimClustelonrsSourcelon {
+  1: relonquirelond ClustelonrTypelon clustelonrTypelon
+  2: relonquirelond onlinelon_storelon.ModelonlVelonrsion modelonlVelonrsion
+}(pelonrsistelond = 'truelon', hasPelonrsonalData = 'falselon')
 
-// The source of entities we use to infer entity interests about a user
-enum EntitySource {
-  SimClusters20M145KDec11EntityEmbeddingsByFavScore = 1, // deprecated
-  SimClusters20M145KUpdatedEntityEmbeddingsByFavScore = 2, // deprecated
-  UTTAccountRecommendations = 3 # dataset built by Onboarding team
-  SimClusters20M145K2020EntityEmbeddingsByFavScore = 4
-}(persisted = 'true', hasPersonalData = 'false')
+// Thelon sourcelon of elonntitielons welon uselon to infelonr elonntity intelonrelonsts about a uselonr
+elonnum elonntitySourcelon {
+  SimClustelonrs20M145KDelonc11elonntityelonmbelonddingsByFavScorelon = 1, // delonpreloncatelond
+  SimClustelonrs20M145KUpdatelondelonntityelonmbelonddingsByFavScorelon = 2, // delonpreloncatelond
+  UTTAccountReloncommelonndations = 3 # dataselont built by Onboarding telonam
+  SimClustelonrs20M145K2020elonntityelonmbelonddingsByFavScorelon = 4
+}(pelonrsistelond = 'truelon', hasPelonrsonalData = 'falselon')
 
-struct InferredEntity {
-  1: required i64 entityId(personalDataType = 'SemanticcoreClassification')
-  2: required double score(personalDataType = 'EngagementScore')
-  3: optional SimClustersSource simclusterSource
-  4: optional EntitySource entitySource
-}(persisted = 'true', hasPersonalData = 'true')
+struct Infelonrrelondelonntity {
+  1: relonquirelond i64 elonntityId(pelonrsonalDataTypelon = 'SelonmanticcorelonClassification')
+  2: relonquirelond doublelon scorelon(pelonrsonalDataTypelon = 'elonngagelonmelonntScorelon')
+  3: optional SimClustelonrsSourcelon simclustelonrSourcelon
+  4: optional elonntitySourcelon elonntitySourcelon
+}(pelonrsistelond = 'truelon', hasPelonrsonalData = 'truelon')
 
-struct SimClustersInferredEntities {
-  1: required list<InferredEntity> entities
-}(persisted = 'true', hasPersonalData = 'true')
+struct SimClustelonrsInfelonrrelondelonntitielons {
+  1: relonquirelond list<Infelonrrelondelonntity> elonntitielons
+}(pelonrsistelond = 'truelon', hasPelonrsonalData = 'truelon')

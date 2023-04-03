@@ -1,5 +1,5 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.alert
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.alelonrt
 
-sealed trait ShowAlertType
-case object NewTweets extends ShowAlertType
-case object Navigate extends ShowAlertType
+selonalelond trait ShowAlelonrtTypelon
+caselon objelonct NelonwTwelonelonts elonxtelonnds ShowAlelonrtTypelon
+caselon objelonct Navigatelon elonxtelonnds ShowAlelonrtTypelon

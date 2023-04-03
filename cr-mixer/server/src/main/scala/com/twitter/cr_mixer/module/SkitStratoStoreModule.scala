@@ -1,65 +1,65 @@
-package com.twitter.cr_mixer.module
+packagelon com.twittelonr.cr_mixelonr.modulelon
 
-import com.google.inject.Provides
-import com.google.inject.Singleton
-import com.google.inject.name.Named
-import com.twitter.conversions.DurationOps._
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.cr_mixer.similarity_engine.SimilarityEngine.keyHasher
-import com.twitter.finagle.memcached.{Client => MemcachedClient}
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.store.strato.StratoFetchableStore
-import com.twitter.hermit.store.common.ObservedCachedReadableStore
-import com.twitter.hermit.store.common.ObservedMemcachedReadableStore
-import com.twitter.hermit.store.common.ObservedReadableStore
-import com.twitter.inject.TwitterModule
-import com.twitter.relevance_platform.common.injection.LZ4Injection
-import com.twitter.relevance_platform.common.injection.SeqObjectInjection
-import com.twitter.storehaus.ReadableStore
-import com.twitter.strato.client.Client
-import com.twitter.topic_recos.thriftscala.TopicTopTweets
-import com.twitter.topic_recos.thriftscala.TopicTweet
-import com.twitter.topic_recos.thriftscala.TopicTweetPartitionFlatKey
+import com.googlelon.injelonct.Providelons
+import com.googlelon.injelonct.Singlelonton
+import com.googlelon.injelonct.namelon.Namelond
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.cr_mixelonr.modelonl.ModulelonNamelons
+import com.twittelonr.cr_mixelonr.similarity_elonnginelon.Similarityelonnginelon.kelonyHashelonr
+import com.twittelonr.finaglelon.melonmcachelond.{Clielonnt => MelonmcachelondClielonnt}
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.frigatelon.common.storelon.strato.StratoFelontchablelonStorelon
+import com.twittelonr.helonrmit.storelon.common.ObselonrvelondCachelondRelonadablelonStorelon
+import com.twittelonr.helonrmit.storelon.common.ObselonrvelondMelonmcachelondRelonadablelonStorelon
+import com.twittelonr.helonrmit.storelon.common.ObselonrvelondRelonadablelonStorelon
+import com.twittelonr.injelonct.TwittelonrModulelon
+import com.twittelonr.relonlelonvancelon_platform.common.injelonction.LZ4Injelonction
+import com.twittelonr.relonlelonvancelon_platform.common.injelonction.SelonqObjelonctInjelonction
+import com.twittelonr.storelonhaus.RelonadablelonStorelon
+import com.twittelonr.strato.clielonnt.Clielonnt
+import com.twittelonr.topic_reloncos.thriftscala.TopicTopTwelonelonts
+import com.twittelonr.topic_reloncos.thriftscala.TopicTwelonelont
+import com.twittelonr.topic_reloncos.thriftscala.TopicTwelonelontPartitionFlatKelony
 
 /**
- * Strato store that wraps the topic top tweets pipeline indexed from a Summingbird job
+ * Strato storelon that wraps thelon topic top twelonelonts pipelonlinelon indelonxelond from a Summingbird job
  */
-object SkitStratoStoreModule extends TwitterModule {
+objelonct SkitStratoStorelonModulelon elonxtelonnds TwittelonrModulelon {
 
-  val column = "recommendations/topic_recos/topicTopTweets"
+  val column = "reloncommelonndations/topic_reloncos/topicTopTwelonelonts"
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.SkitStratoStoreName)
-  def providesSkitStratoStore(
-    @Named(ModuleNames.UnifiedCache) crMixerUnifiedCacheClient: MemcachedClient,
-    stratoClient: Client,
-    statsReceiver: StatsReceiver
-  ): ReadableStore[TopicTweetPartitionFlatKey, Seq[TopicTweet]] = {
-    val skitStore = ObservedReadableStore(
-      StratoFetchableStore
-        .withUnitView[TopicTweetPartitionFlatKey, TopicTopTweets](stratoClient, column))(
-      statsReceiver.scope(ModuleNames.SkitStratoStoreName)).mapValues { topicTopTweets =>
-      topicTopTweets.topTweets
+  @Providelons
+  @Singlelonton
+  @Namelond(ModulelonNamelons.SkitStratoStorelonNamelon)
+  delonf providelonsSkitStratoStorelon(
+    @Namelond(ModulelonNamelons.UnifielondCachelon) crMixelonrUnifielondCachelonClielonnt: MelonmcachelondClielonnt,
+    stratoClielonnt: Clielonnt,
+    statsReloncelonivelonr: StatsReloncelonivelonr
+  ): RelonadablelonStorelon[TopicTwelonelontPartitionFlatKelony, Selonq[TopicTwelonelont]] = {
+    val skitStorelon = ObselonrvelondRelonadablelonStorelon(
+      StratoFelontchablelonStorelon
+        .withUnitVielonw[TopicTwelonelontPartitionFlatKelony, TopicTopTwelonelonts](stratoClielonnt, column))(
+      statsReloncelonivelonr.scopelon(ModulelonNamelons.SkitStratoStorelonNamelon)).mapValuelons { topicTopTwelonelonts =>
+      topicTopTwelonelonts.topTwelonelonts
     }
 
-    val memCachedStore = ObservedMemcachedReadableStore
-      .fromCacheClient(
-        backingStore = skitStore,
-        cacheClient = crMixerUnifiedCacheClient,
-        ttl = 10.minutes
+    val melonmCachelondStorelon = ObselonrvelondMelonmcachelondRelonadablelonStorelon
+      .fromCachelonClielonnt(
+        backingStorelon = skitStorelon,
+        cachelonClielonnt = crMixelonrUnifielondCachelonClielonnt,
+        ttl = 10.minutelons
       )(
-        valueInjection = LZ4Injection.compose(SeqObjectInjection[TopicTweet]()),
-        statsReceiver = statsReceiver.scope("memcached_skit_store"),
-        keyToString = { k => s"skit:${keyHasher.hashKey(k.toString.getBytes)}" }
+        valuelonInjelonction = LZ4Injelonction.composelon(SelonqObjelonctInjelonction[TopicTwelonelont]()),
+        statsReloncelonivelonr = statsReloncelonivelonr.scopelon("melonmcachelond_skit_storelon"),
+        kelonyToString = { k => s"skit:${kelonyHashelonr.hashKelony(k.toString.gelontBytelons)}" }
       )
 
-    ObservedCachedReadableStore.from[TopicTweetPartitionFlatKey, Seq[TopicTweet]](
-      memCachedStore,
-      ttl = 5.minutes,
-      maxKeys = 100000, // ~150MB max
-      cacheName = "skit_in_memory_cache",
-      windowSize = 10000L
-    )(statsReceiver.scope("skit_in_memory_cache"))
+    ObselonrvelondCachelondRelonadablelonStorelon.from[TopicTwelonelontPartitionFlatKelony, Selonq[TopicTwelonelont]](
+      melonmCachelondStorelon,
+      ttl = 5.minutelons,
+      maxKelonys = 100000, // ~150MB max
+      cachelonNamelon = "skit_in_melonmory_cachelon",
+      windowSizelon = 10000L
+    )(statsReloncelonivelonr.scopelon("skit_in_melonmory_cachelon"))
   }
 }

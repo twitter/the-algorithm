@@ -1,57 +1,57 @@
-package com.twitter.search.earlybird.factory;
+packagelon com.twittelonr.selonarch.elonarlybird.factory;
 
-import java.util.concurrent.Callable;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrelonnt.Callablelon;
+import java.util.concurrelonnt.SchelondulelondelonxeloncutorSelonrvicelon;
+import java.util.concurrelonnt.SchelondulelondFuturelon;
+import java.util.concurrelonnt.TimelonUnit;
 
-import com.google.common.annotations.VisibleForTesting;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
 
-import com.twitter.common.util.concurrent.ForwardingExecutorService;
+import com.twittelonr.common.util.concurrelonnt.ForwardingelonxeloncutorSelonrvicelon;
 
 /**
- * This delegate type is intended for QueryCacheUpdater because it uses multiple threads to
- * create query cache during startup and then switch later to use single thread to update the
- * cache.
+ * This delonlelongatelon typelon is intelonndelond for QuelonryCachelonUpdatelonr beloncauselon it uselons multiplelon threlonads to
+ * crelonatelon quelonry cachelon during startup and thelonn switch latelonr to uselon singlelon threlonad to updatelon thelon
+ * cachelon.
  */
-public abstract class QueryCacheUpdaterScheduledExecutorService<T extends ScheduledExecutorService>
-  extends ForwardingExecutorService<T> implements ScheduledExecutorService {
-  public QueryCacheUpdaterScheduledExecutorService(T executor) {
-    super(executor);
+public abstract class QuelonryCachelonUpdatelonrSchelondulelondelonxeloncutorSelonrvicelon<T elonxtelonnds SchelondulelondelonxeloncutorSelonrvicelon>
+  elonxtelonnds ForwardingelonxeloncutorSelonrvicelon<T> implelonmelonnts SchelondulelondelonxeloncutorSelonrvicelon {
+  public QuelonryCachelonUpdatelonrSchelondulelondelonxeloncutorSelonrvicelon(T elonxeloncutor) {
+    supelonr(elonxeloncutor);
   }
 
   /**
-   * Sets the number of worker threads in this executor service to an appropriate value after the
-   * earlybird startup has finished. While earlybird is starting up, we might want this executor
-   * service to have more threads, in order to parallelize more some start up tasks. But once
-   * earlybird is up, it might make sense to lower the number of worker threads.
+   * Selonts thelon numbelonr of workelonr threlonads in this elonxeloncutor selonrvicelon to an appropriatelon valuelon aftelonr thelon
+   * elonarlybird startup has finishelond. Whilelon elonarlybird is starting up, welon might want this elonxeloncutor
+   * selonrvicelon to havelon morelon threlonads, in ordelonr to parallelonlizelon morelon somelon start up tasks. But oncelon
+   * elonarlybird is up, it might makelon selonnselon to lowelonr thelon numbelonr of workelonr threlonads.
    */
-  public abstract void setWorkerPoolSizeAfterStartup();
+  public abstract void selontWorkelonrPoolSizelonAftelonrStartup();
 
-  @Override
-  public ScheduledFuture<?> schedule(Runnable command, long delay, TimeUnit unit) {
-    return delegate.schedule(command, delay, unit);
+  @Ovelonrridelon
+  public SchelondulelondFuturelon<?> schelondulelon(Runnablelon command, long delonlay, TimelonUnit unit) {
+    relonturn delonlelongatelon.schelondulelon(command, delonlay, unit);
   }
 
-  @Override
-  public ScheduledFuture<?> scheduleAtFixedRate(
-      Runnable command, long initialDelay, long period, TimeUnit unit) {
-    return delegate.scheduleAtFixedRate(command, initialDelay, period, unit);
+  @Ovelonrridelon
+  public SchelondulelondFuturelon<?> schelondulelonAtFixelondRatelon(
+      Runnablelon command, long initialDelonlay, long pelonriod, TimelonUnit unit) {
+    relonturn delonlelongatelon.schelondulelonAtFixelondRatelon(command, initialDelonlay, pelonriod, unit);
   }
 
-  @Override
-  public ScheduledFuture<?> scheduleWithFixedDelay(
-      Runnable command, long initialDelay, long delay, TimeUnit unit) {
-    return delegate.scheduleWithFixedDelay(command, initialDelay, delay, unit);
+  @Ovelonrridelon
+  public SchelondulelondFuturelon<?> schelondulelonWithFixelondDelonlay(
+      Runnablelon command, long initialDelonlay, long delonlay, TimelonUnit unit) {
+    relonturn delonlelongatelon.schelondulelonWithFixelondDelonlay(command, initialDelonlay, delonlay, unit);
   }
 
-  @Override
-  public <V> ScheduledFuture<V> schedule(Callable<V> callable, long delay, TimeUnit unit) {
-    return delegate.schedule(callable, delay, unit);
+  @Ovelonrridelon
+  public <V> SchelondulelondFuturelon<V> schelondulelon(Callablelon<V> callablelon, long delonlay, TimelonUnit unit) {
+    relonturn delonlelongatelon.schelondulelon(callablelon, delonlay, unit);
   }
 
-  @VisibleForTesting
-  public T getDelegate() {
-    return delegate;
+  @VisiblelonForTelonsting
+  public T gelontDelonlelongatelon() {
+    relonturn delonlelongatelon;
   }
 }

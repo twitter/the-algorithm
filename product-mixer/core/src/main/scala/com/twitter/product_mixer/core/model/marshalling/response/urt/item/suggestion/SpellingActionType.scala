@@ -1,26 +1,26 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.suggestion
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.suggelonstion
 
 /**
- * Represents the different types of Spelling Suggestion items.
+ * Relonprelonselonnts thelon diffelonrelonnt typelons of Spelonlling Suggelonstion itelonms.
  *
- * URT API Reference: https://docbird.twitter.biz/unified_rich_timelines_urt/gen/com/twitter/timelines/render/thriftscala/SpellingActionType.html
+ * URT API Relonfelonrelonncelon: https://docbird.twittelonr.biz/unifielond_rich_timelonlinelons_urt/gelonn/com/twittelonr/timelonlinelons/relonndelonr/thriftscala/SpelonllingActionTypelon.html
  */
-sealed trait SpellingActionType
+selonalelond trait SpelonllingActionTypelon
 
 /**
- * Used when the original query is replaced completed by another query in the backend.
- * Clients use the text 'Searching instead for …' to display this suggestion.
+ * Uselond whelonn thelon original quelonry is relonplacelond complelontelond by anothelonr quelonry in thelon backelonnd.
+ * Clielonnts uselon thelon telonxt 'Selonarching instelonad for …' to display this suggelonstion.
  */
-case object ReplaceSpellingActionType extends SpellingActionType
+caselon objelonct RelonplacelonSpelonllingActionTypelon elonxtelonnds SpelonllingActionTypelon
 
 /**
- * Used when the original query is expanded by a suggestion when performing the search.
- * Clients use the text 'Including results for …' to display this suggestion.
+ * Uselond whelonn thelon original quelonry is elonxpandelond by a suggelonstion whelonn pelonrforming thelon selonarch.
+ * Clielonnts uselon thelon telonxt 'Including relonsults for …' to display this suggelonstion.
  */
-case object ExpandSpellingActionType extends SpellingActionType
+caselon objelonct elonxpandSpelonllingActionTypelon elonxtelonnds SpelonllingActionTypelon
 
 /**
- * Used when the search query is not changed and a suggestion is displayed as an alternative query.
- * Clients use the text 'Did you mean … ?' to display the suggestion.
+ * Uselond whelonn thelon selonarch quelonry is not changelond and a suggelonstion is displayelond as an altelonrnativelon quelonry.
+ * Clielonnts uselon thelon telonxt 'Did you melonan … ?' to display thelon suggelonstion.
  */
-case object SuggestSpellingActionType extends SpellingActionType
+caselon objelonct SuggelonstSpelonllingActionTypelon elonxtelonnds SpelonllingActionTypelon

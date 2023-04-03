@@ -1,87 +1,87 @@
-package com.twitter.home_mixer.functional_component.decorator
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.deloncorator
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.home_mixer.model.HomeFeatures.SuggestTypeFeature
-import com.twitter.home_mixer.param.HomeGlobalParams.EnableNahFeedbackInfoParam
-import com.twitter.home_mixer.product.following.model.HomeMixerExternalStrings
-import com.twitter.home_mixer.util.CandidatesUtil
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.marshalling.response.urt.icon.Frown
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.DontLike
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackAction
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.product.guice.scope.ProductScoped
-import com.twitter.stringcenter.client.StringCenter
-import com.twitter.timelines.common.{thriftscala => tlc}
-import com.twitter.timelineservice.model.FeedbackInfo
-import com.twitter.timelineservice.model.FeedbackMetadata
-import com.twitter.timelineservice.{thriftscala => tls}
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.SuggelonstTypelonFelonaturelon
+import com.twittelonr.homelon_mixelonr.param.HomelonGlobalParams.elonnablelonNahFelonelondbackInfoParam
+import com.twittelonr.homelon_mixelonr.product.following.modelonl.HomelonMixelonrelonxtelonrnalStrings
+import com.twittelonr.homelon_mixelonr.util.CandidatelonsUtil
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.TwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.icon.Frown
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.DontLikelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.FelonelondbackAction
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.product_mixelonr.corelon.product.guicelon.scopelon.ProductScopelond
+import com.twittelonr.stringcelonntelonr.clielonnt.StringCelonntelonr
+import com.twittelonr.timelonlinelons.common.{thriftscala => tlc}
+import com.twittelonr.timelonlinelonselonrvicelon.modelonl.FelonelondbackInfo
+import com.twittelonr.timelonlinelonselonrvicelon.modelonl.FelonelondbackMelontadata
+import com.twittelonr.timelonlinelonselonrvicelon.{thriftscala => tls}
 
-import javax.inject.Inject
-import javax.inject.Singleton
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-case class DontLikeFeedbackActionBuilder @Inject() (
-  @ProductScoped stringCenter: StringCenter,
-  externalStrings: HomeMixerExternalStrings,
-  authorChildFeedbackActionBuilder: AuthorChildFeedbackActionBuilder,
-  retweeterChildFeedbackActionBuilder: RetweeterChildFeedbackActionBuilder,
-  notRelevantChildFeedbackActionBuilder: NotRelevantChildFeedbackActionBuilder,
-  unfollowUserChildFeedbackActionBuilder: UnfollowUserChildFeedbackActionBuilder,
-  muteUserChildFeedbackActionBuilder: MuteUserChildFeedbackActionBuilder,
-  blockUserChildFeedbackActionBuilder: BlockUserChildFeedbackActionBuilder,
-  reportTweetChildFeedbackActionBuilder: ReportTweetChildFeedbackActionBuilder) {
+@Singlelonton
+caselon class DontLikelonFelonelondbackActionBuildelonr @Injelonct() (
+  @ProductScopelond stringCelonntelonr: StringCelonntelonr,
+  elonxtelonrnalStrings: HomelonMixelonrelonxtelonrnalStrings,
+  authorChildFelonelondbackActionBuildelonr: AuthorChildFelonelondbackActionBuildelonr,
+  relontwelonelontelonrChildFelonelondbackActionBuildelonr: RelontwelonelontelonrChildFelonelondbackActionBuildelonr,
+  notRelonlelonvantChildFelonelondbackActionBuildelonr: NotRelonlelonvantChildFelonelondbackActionBuildelonr,
+  unfollowUselonrChildFelonelondbackActionBuildelonr: UnfollowUselonrChildFelonelondbackActionBuildelonr,
+  mutelonUselonrChildFelonelondbackActionBuildelonr: MutelonUselonrChildFelonelondbackActionBuildelonr,
+  blockUselonrChildFelonelondbackActionBuildelonr: BlockUselonrChildFelonelondbackActionBuildelonr,
+  relonportTwelonelontChildFelonelondbackActionBuildelonr: RelonportTwelonelontChildFelonelondbackActionBuildelonr) {
 
-  def apply(
-    query: PipelineQuery,
-    candidate: TweetCandidate,
-    candidateFeatures: FeatureMap
-  ): Option[FeedbackAction] = {
-    CandidatesUtil.getOriginalAuthorId(candidateFeatures).map { authorId =>
-      val feedbackEntities = Seq(
-        tlc.FeedbackEntity.TweetId(candidate.id),
-        tlc.FeedbackEntity.UserId(authorId)
+  delonf apply(
+    quelonry: PipelonlinelonQuelonry,
+    candidatelon: TwelonelontCandidatelon,
+    candidatelonFelonaturelons: FelonaturelonMap
+  ): Option[FelonelondbackAction] = {
+    CandidatelonsUtil.gelontOriginalAuthorId(candidatelonFelonaturelons).map { authorId =>
+      val felonelondbackelonntitielons = Selonq(
+        tlc.Felonelondbackelonntity.TwelonelontId(candidatelon.id),
+        tlc.Felonelondbackelonntity.UselonrId(authorId)
       )
-      val feedbackMetadata = FeedbackMetadata(
-        engagementType = None,
-        entityIds = feedbackEntities,
-        ttl = Some(30.days)
+      val felonelondbackMelontadata = FelonelondbackMelontadata(
+        elonngagelonmelonntTypelon = Nonelon,
+        elonntityIds = felonelondbackelonntitielons,
+        ttl = Somelon(30.days)
       )
-      val feedbackUrl = FeedbackInfo.feedbackUrl(
-        feedbackType = tls.FeedbackType.DontLike,
-        feedbackMetadata = feedbackMetadata,
-        injectionType = candidateFeatures.getOrElse(SuggestTypeFeature, None)
+      val felonelondbackUrl = FelonelondbackInfo.felonelondbackUrl(
+        felonelondbackTypelon = tls.FelonelondbackTypelon.DontLikelon,
+        felonelondbackMelontadata = felonelondbackMelontadata,
+        injelonctionTypelon = candidatelonFelonaturelons.gelontOrelonlselon(SuggelonstTypelonFelonaturelon, Nonelon)
       )
-      val childFeedbackActions = if (query.params(EnableNahFeedbackInfoParam)) {
-        Seq(
-          unfollowUserChildFeedbackActionBuilder(candidateFeatures),
-          muteUserChildFeedbackActionBuilder(candidateFeatures),
-          blockUserChildFeedbackActionBuilder(candidateFeatures),
-          reportTweetChildFeedbackActionBuilder(candidate)
-        ).flatten
-      } else {
-        Seq(
-          authorChildFeedbackActionBuilder(candidateFeatures),
-          retweeterChildFeedbackActionBuilder(candidateFeatures),
-          notRelevantChildFeedbackActionBuilder(candidate, candidateFeatures)
-        ).flatten
+      val childFelonelondbackActions = if (quelonry.params(elonnablelonNahFelonelondbackInfoParam)) {
+        Selonq(
+          unfollowUselonrChildFelonelondbackActionBuildelonr(candidatelonFelonaturelons),
+          mutelonUselonrChildFelonelondbackActionBuildelonr(candidatelonFelonaturelons),
+          blockUselonrChildFelonelondbackActionBuildelonr(candidatelonFelonaturelons),
+          relonportTwelonelontChildFelonelondbackActionBuildelonr(candidatelon)
+        ).flattelonn
+      } elonlselon {
+        Selonq(
+          authorChildFelonelondbackActionBuildelonr(candidatelonFelonaturelons),
+          relontwelonelontelonrChildFelonelondbackActionBuildelonr(candidatelonFelonaturelons),
+          notRelonlelonvantChildFelonelondbackActionBuildelonr(candidatelon, candidatelonFelonaturelons)
+        ).flattelonn
       }
 
-      FeedbackAction(
-        feedbackType = DontLike,
-        prompt = Some(stringCenter.prepare(externalStrings.dontLikeString)),
-        confirmation = Some(stringCenter.prepare(externalStrings.dontLikeConfirmationString)),
-        childFeedbackActions =
-          if (childFeedbackActions.nonEmpty) Some(childFeedbackActions) else None,
-        feedbackUrl = Some(feedbackUrl),
-        hasUndoAction = Some(true),
-        confirmationDisplayType = None,
-        clientEventInfo = None,
-        icon = Some(Frown),
-        richBehavior = None,
-        subprompt = None,
-        encodedFeedbackRequest = None
+      FelonelondbackAction(
+        felonelondbackTypelon = DontLikelon,
+        prompt = Somelon(stringCelonntelonr.prelonparelon(elonxtelonrnalStrings.dontLikelonString)),
+        confirmation = Somelon(stringCelonntelonr.prelonparelon(elonxtelonrnalStrings.dontLikelonConfirmationString)),
+        childFelonelondbackActions =
+          if (childFelonelondbackActions.nonelonmpty) Somelon(childFelonelondbackActions) elonlselon Nonelon,
+        felonelondbackUrl = Somelon(felonelondbackUrl),
+        hasUndoAction = Somelon(truelon),
+        confirmationDisplayTypelon = Nonelon,
+        clielonntelonvelonntInfo = Nonelon,
+        icon = Somelon(Frown),
+        richBelonhavior = Nonelon,
+        subprompt = Nonelon,
+        elonncodelondFelonelondbackRelonquelonst = Nonelon
       )
     }
   }

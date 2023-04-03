@@ -1,353 +1,353 @@
-package com.twitter.search.earlybird_root.mergers;
+packagelon com.twittelonr.selonarch.elonarlybird_root.melonrgelonrs;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
+import java.util.Collelonctions;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.HashSelont;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
+import java.util.Selont;
+import java.util.concurrelonnt.TimelonUnit;
 
-import com.google.common.collect.Sets;
+import com.googlelon.common.collelonct.Selonts;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.search.common.logging.DebugMessageBuilder;
-import com.twitter.search.common.metrics.SearchTimerStats;
-import com.twitter.search.common.ranking.thriftjava.ThriftFacetRankingOptions;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.common.util.earlybird.FacetsResultsUtils;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.ThriftFacetCount;
-import com.twitter.search.earlybird.thrift.ThriftFacetCountMetadata;
-import com.twitter.search.earlybird.thrift.ThriftFacetFieldResults;
-import com.twitter.search.earlybird.thrift.ThriftFacetResults;
-import com.twitter.search.earlybird.thrift.ThriftSearchResults;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.util.Future;
+import com.twittelonr.selonarch.common.logging.DelonbugMelonssagelonBuildelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchTimelonrStats;
+import com.twittelonr.selonarch.common.ranking.thriftjava.ThriftFacelontRankingOptions;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdFielonldConstants.elonarlybirdFielonldConstant;
+import com.twittelonr.selonarch.common.util.elonarlybird.FacelontsRelonsultsUtils;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonquelonst;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftFacelontCount;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftFacelontCountMelontadata;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftFacelontFielonldRelonsults;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftFacelontRelonsults;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsults;
+import com.twittelonr.selonarch.elonarlybird_root.common.elonarlybirdRelonquelonstContelonxt;
+import com.twittelonr.util.Futurelon;
 
 /**
- * Merger class to merge facets EarlybirdResponse objects
+ * Melonrgelonr class to melonrgelon facelonts elonarlybirdRelonsponselon objeloncts
  */
-public class FacetResponseMerger extends EarlybirdResponseMerger {
-  private static final Logger LOG = LoggerFactory.getLogger(FacetResponseMerger.class);
+public class FacelontRelonsponselonMelonrgelonr elonxtelonnds elonarlybirdRelonsponselonMelonrgelonr {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(FacelontRelonsponselonMelonrgelonr.class);
 
-  private static final SearchTimerStats TIMER =
-      SearchTimerStats.export("merge_facets", TimeUnit.NANOSECONDS, false, true);
+  privatelon static final SelonarchTimelonrStats TIMelonR =
+      SelonarchTimelonrStats.elonxport("melonrgelon_facelonts", TimelonUnit.NANOSelonCONDS, falselon, truelon);
 
-  private static final double SUCCESSFUL_RESPONSE_THRESHOLD = 0.9;
-  private final DebugMessageBuilder debugMessageBuilder;
+  privatelon static final doublelon SUCCelonSSFUL_RelonSPONSelon_THRelonSHOLD = 0.9;
+  privatelon final DelonbugMelonssagelonBuildelonr delonbugMelonssagelonBuildelonr;
 
 
   /**
-   * Constructor to create the merger
+   * Constructor to crelonatelon thelon melonrgelonr
    */
-  public FacetResponseMerger(EarlybirdRequestContext requestContext,
-                             List<Future<EarlybirdResponse>> responses,
-                             ResponseAccumulator mode) {
-    super(requestContext, responses, mode);
-    debugMessageBuilder = responseMessageBuilder.getDebugMessageBuilder();
-    debugMessageBuilder.verbose("--- Request Received: %s", requestContext.getRequest());
+  public FacelontRelonsponselonMelonrgelonr(elonarlybirdRelonquelonstContelonxt relonquelonstContelonxt,
+                             List<Futurelon<elonarlybirdRelonsponselon>> relonsponselons,
+                             RelonsponselonAccumulator modelon) {
+    supelonr(relonquelonstContelonxt, relonsponselons, modelon);
+    delonbugMelonssagelonBuildelonr = relonsponselonMelonssagelonBuildelonr.gelontDelonbugMelonssagelonBuildelonr();
+    delonbugMelonssagelonBuildelonr.velonrboselon("--- Relonquelonst Reloncelonivelond: %s", relonquelonstContelonxt.gelontRelonquelonst());
   }
 
-  @Override
-  protected SearchTimerStats getMergedResponseTimer() {
-    return TIMER;
+  @Ovelonrridelon
+  protelonctelond SelonarchTimelonrStats gelontMelonrgelondRelonsponselonTimelonr() {
+    relonturn TIMelonR;
   }
 
-  @Override
-  protected double getDefaultSuccessResponseThreshold() {
-    return SUCCESSFUL_RESPONSE_THRESHOLD;
+  @Ovelonrridelon
+  protelonctelond doublelon gelontDelonfaultSuccelonssRelonsponselonThrelonshold() {
+    relonturn SUCCelonSSFUL_RelonSPONSelon_THRelonSHOLD;
   }
 
-  @Override
-  protected EarlybirdResponse internalMerge(EarlybirdResponse facetsResponse) {
+  @Ovelonrridelon
+  protelonctelond elonarlybirdRelonsponselon intelonrnalMelonrgelon(elonarlybirdRelonsponselon facelontsRelonsponselon) {
 
-    final Map<String, FacetsResultsUtils.FacetFieldInfo> facetFieldInfoMap =
-        new HashMap<>();
-    final Set<Long> userIDWhitelist = new HashSet<>();
+    final Map<String, FacelontsRelonsultsUtils.FacelontFielonldInfo> facelontFielonldInfoMap =
+        nelonw HashMap<>();
+    final Selont<Long> uselonrIDWhitelonlist = nelonw HashSelont<>();
 
-    // First, parse the responses and build up our facet info map.
-    boolean termStatsFilteringMode = FacetsResultsUtils.prepareFieldInfoMap(
-        requestContext.getRequest().getFacetRequest(), facetFieldInfoMap);
-    // Iterate through all futures and get results.
-    collectResponsesAndPopulateMap(facetFieldInfoMap, userIDWhitelist);
+    // First, parselon thelon relonsponselons and build up our facelont info map.
+    boolelonan telonrmStatsFiltelonringModelon = FacelontsRelonsultsUtils.prelonparelonFielonldInfoMap(
+        relonquelonstContelonxt.gelontRelonquelonst().gelontFacelontRelonquelonst(), facelontFielonldInfoMap);
+    // Itelonratelon through all futurelons and gelont relonsults.
+    collelonctRelonsponselonsAndPopulatelonMap(facelontFielonldInfoMap, uselonrIDWhitelonlist);
 
-    // Next, aggregate the top facets and update the blender response.
-    facetsResponse
-        .setFacetResults(new ThriftFacetResults()
-            .setFacetFields(new HashMap<>())
-            .setUserIDWhitelist(userIDWhitelist));
+    // Nelonxt, aggrelongatelon thelon top facelonts and updatelon thelon blelonndelonr relonsponselon.
+    facelontsRelonsponselon
+        .selontFacelontRelonsults(nelonw ThriftFacelontRelonsults()
+            .selontFacelontFielonlds(nelonw HashMap<>())
+            .selontUselonrIDWhitelonlist(uselonrIDWhitelonlist));
 
-    // keep track of how many facets a user contributed - this map gets reset for every field
-    Map<Long, Integer> perFieldAntiGamingMap = new HashMap<>();
+    // kelonelonp track of how many facelonts a uselonr contributelond - this map gelonts relonselont for elonvelonry fielonld
+    Map<Long, Intelongelonr> pelonrFielonldAntiGamingMap = nelonw HashMap<>();
 
-    // this one is used for images and twimges
-    Map<Long, Integer> imagesAntiGamingMap = new HashMap<>();
+    // this onelon is uselond for imagelons and twimgelons
+    Map<Long, Intelongelonr> imagelonsAntiGamingMap = nelonw HashMap<>();
 
-    Set<String> twimgDedupSet = null;
+    Selont<String> twimgDelondupSelont = null;
 
-    for (final Map.Entry<String, FacetsResultsUtils.FacetFieldInfo> entry
-        : facetFieldInfoMap.entrySet()) {
-      // reset for each field
-      String field = entry.getKey();
-      final Map<Long, Integer> antiGamingMap;
-      if (field.equals(EarlybirdFieldConstant.IMAGES_FACET)
-          || field.equals(EarlybirdFieldConstant.TWIMG_FACET)) {
-        antiGamingMap = imagesAntiGamingMap;
-      } else {
-        perFieldAntiGamingMap.clear();
-        antiGamingMap = perFieldAntiGamingMap;
+    for (final Map.elonntry<String, FacelontsRelonsultsUtils.FacelontFielonldInfo> elonntry
+        : facelontFielonldInfoMap.elonntrySelont()) {
+      // relonselont for elonach fielonld
+      String fielonld = elonntry.gelontKelony();
+      final Map<Long, Intelongelonr> antiGamingMap;
+      if (fielonld.elonquals(elonarlybirdFielonldConstant.IMAGelonS_FACelonT)
+          || fielonld.elonquals(elonarlybirdFielonldConstant.TWIMG_FACelonT)) {
+        antiGamingMap = imagelonsAntiGamingMap;
+      } elonlselon {
+        pelonrFielonldAntiGamingMap.clelonar();
+        antiGamingMap = pelonrFielonldAntiGamingMap;
       }
 
-      ThriftFacetFieldResults results = new ThriftFacetFieldResults();
-      FacetsResultsUtils.FacetFieldInfo info = entry.getValue();
-      results.setTotalCount(info.totalCounts);
-      results.setTopFacets(new ArrayList<>());
-      FacetsResultsUtils.fillTopLanguages(info, results);
-      if (info.topFacets != null && !info.topFacets.isEmpty()) {
-        fillFacetFieldResults(info, antiGamingMap, results);
+      ThriftFacelontFielonldRelonsults relonsults = nelonw ThriftFacelontFielonldRelonsults();
+      FacelontsRelonsultsUtils.FacelontFielonldInfo info = elonntry.gelontValuelon();
+      relonsults.selontTotalCount(info.totalCounts);
+      relonsults.selontTopFacelonts(nelonw ArrayList<>());
+      FacelontsRelonsultsUtils.fillTopLanguagelons(info, relonsults);
+      if (info.topFacelonts != null && !info.topFacelonts.iselonmpty()) {
+        fillFacelontFielonldRelonsults(info, antiGamingMap, relonsults);
       }
 
-      if (field.equals(EarlybirdFieldConstant.TWIMG_FACET)) {
-        if (twimgDedupSet == null) {
-          twimgDedupSet = Sets.newHashSet();
+      if (fielonld.elonquals(elonarlybirdFielonldConstant.TWIMG_FACelonT)) {
+        if (twimgDelondupSelont == null) {
+          twimgDelondupSelont = Selonts.nelonwHashSelont();
         }
-        FacetsResultsUtils.dedupTwimgFacet(twimgDedupSet, results, debugMessageBuilder);
+        FacelontsRelonsultsUtils.delondupTwimgFacelont(twimgDelondupSelont, relonsults, delonbugMelonssagelonBuildelonr);
       }
 
-      facetsResponse.getFacetResults().putToFacetFields(entry.getKey(), results);
+      facelontsRelonsponselon.gelontFacelontRelonsults().putToFacelontFielonlds(elonntry.gelontKelony(), relonsults);
     }
 
-    if (!termStatsFilteringMode) {
-      // in term stats filtering mode, if doing it here would break term stats filtering
-      FacetsResultsUtils.mergeTwimgResults(
-          facetsResponse.getFacetResults(),
-          Collections.<ThriftFacetCount>reverseOrder(
-              FacetsResultsUtils.getFacetCountComparator(
-                  requestContext.getRequest().getFacetRequest())));
+    if (!telonrmStatsFiltelonringModelon) {
+      // in telonrm stats filtelonring modelon, if doing it helonrelon would brelonak telonrm stats filtelonring
+      FacelontsRelonsultsUtils.melonrgelonTwimgRelonsults(
+          facelontsRelonsponselon.gelontFacelontRelonsults(),
+          Collelonctions.<ThriftFacelontCount>relonvelonrselonOrdelonr(
+              FacelontsRelonsultsUtils.gelontFacelontCountComparator(
+                  relonquelonstContelonxt.gelontRelonquelonst().gelontFacelontRelonquelonst())));
     }
 
-    // Update the numHitsProcessed on ThriftSearchResults.
-    int numHitsProcessed = 0;
-    int numPartitionsEarlyTerminated = 0;
-    for (EarlybirdResponse earlybirdResponse: accumulatedResponses.getSuccessResponses()) {
-      ThriftSearchResults searchResults = earlybirdResponse.getSearchResults();
-      if (searchResults != null) {
-        numHitsProcessed += searchResults.getNumHitsProcessed();
-        numPartitionsEarlyTerminated += searchResults.getNumPartitionsEarlyTerminated();
+    // Updatelon thelon numHitsProcelonsselond on ThriftSelonarchRelonsults.
+    int numHitsProcelonsselond = 0;
+    int numPartitionselonarlyTelonrminatelond = 0;
+    for (elonarlybirdRelonsponselon elonarlybirdRelonsponselon: accumulatelondRelonsponselons.gelontSuccelonssRelonsponselons()) {
+      ThriftSelonarchRelonsults selonarchRelonsults = elonarlybirdRelonsponselon.gelontSelonarchRelonsults();
+      if (selonarchRelonsults != null) {
+        numHitsProcelonsselond += selonarchRelonsults.gelontNumHitsProcelonsselond();
+        numPartitionselonarlyTelonrminatelond += selonarchRelonsults.gelontNumPartitionselonarlyTelonrminatelond();
       }
     }
-    ThriftSearchResults searchResults = new ThriftSearchResults();
-    searchResults.setResults(new ArrayList<>());  // required field
-    searchResults.setNumHitsProcessed(numHitsProcessed);
-    searchResults.setNumPartitionsEarlyTerminated(numPartitionsEarlyTerminated);
-    facetsResponse.setSearchResults(searchResults);
+    ThriftSelonarchRelonsults selonarchRelonsults = nelonw ThriftSelonarchRelonsults();
+    selonarchRelonsults.selontRelonsults(nelonw ArrayList<>());  // relonquirelond fielonld
+    selonarchRelonsults.selontNumHitsProcelonsselond(numHitsProcelonsselond);
+    selonarchRelonsults.selontNumPartitionselonarlyTelonrminatelond(numPartitionselonarlyTelonrminatelond);
+    facelontsRelonsponselon.selontSelonarchRelonsults(selonarchRelonsults);
 
-    LOG.debug("Facets call completed successfully: {}", facetsResponse);
+    LOG.delonbug("Facelonts call complelontelond succelonssfully: {}", facelontsRelonsponselon);
 
-    FacetsResultsUtils.fixNativePhotoUrl(facetsResponse);
-    return facetsResponse;
+    FacelontsRelonsultsUtils.fixNativelonPhotoUrl(facelontsRelonsponselon);
+    relonturn facelontsRelonsponselon;
   }
 
-  private void fillFacetFieldResults(FacetsResultsUtils.FacetFieldInfo facetFieldInfo,
-                                     Map<Long, Integer> antiGamingMap,
-                                     ThriftFacetFieldResults results) {
-    int minWeightedCount = 0;
-    int minSimpleCount = 0;
-    int maxPenaltyCount = Integer.MAX_VALUE;
-    double maxPenaltyCountRatio = 1;
-    boolean excludePossiblySensitiveFacets = false;
-    boolean onlyReturnFacetsWithDisplayTweet = false;
-    int maxHitsPerUser = -1;
+  privatelon void fillFacelontFielonldRelonsults(FacelontsRelonsultsUtils.FacelontFielonldInfo facelontFielonldInfo,
+                                     Map<Long, Intelongelonr> antiGamingMap,
+                                     ThriftFacelontFielonldRelonsults relonsults) {
+    int minWelonightelondCount = 0;
+    int minSimplelonCount = 0;
+    int maxPelonnaltyCount = Intelongelonr.MAX_VALUelon;
+    doublelon maxPelonnaltyCountRatio = 1;
+    boolelonan elonxcludelonPossiblySelonnsitivelonFacelonts = falselon;
+    boolelonan onlyRelonturnFacelontsWithDisplayTwelonelont = falselon;
+    int maxHitsPelonrUselonr = -1;
 
-    EarlybirdRequest request = requestContext.getRequest();
-    if (request.getFacetRequest() != null) {
-      ThriftFacetRankingOptions rankingOptions = request.getFacetRequest().getFacetRankingOptions();
+    elonarlybirdRelonquelonst relonquelonst = relonquelonstContelonxt.gelontRelonquelonst();
+    if (relonquelonst.gelontFacelontRelonquelonst() != null) {
+      ThriftFacelontRankingOptions rankingOptions = relonquelonst.gelontFacelontRelonquelonst().gelontFacelontRankingOptions();
 
-      if (request.getSearchQuery() != null) {
-        maxHitsPerUser = request.getSearchQuery().getMaxHitsPerUser();
+      if (relonquelonst.gelontSelonarchQuelonry() != null) {
+        maxHitsPelonrUselonr = relonquelonst.gelontSelonarchQuelonry().gelontMaxHitsPelonrUselonr();
       }
 
       if (rankingOptions != null) {
-        LOG.debug("FacetsResponseMerger: Using rankingOptions={}", rankingOptions);
+        LOG.delonbug("FacelontsRelonsponselonMelonrgelonr: Using rankingOptions={}", rankingOptions);
 
-        if (rankingOptions.isSetMinCount()) {
-          minWeightedCount = rankingOptions.getMinCount();
+        if (rankingOptions.isSelontMinCount()) {
+          minWelonightelondCount = rankingOptions.gelontMinCount();
         }
-        if (rankingOptions.isSetMinSimpleCount()) {
-          minSimpleCount = rankingOptions.getMinSimpleCount();
+        if (rankingOptions.isSelontMinSimplelonCount()) {
+          minSimplelonCount = rankingOptions.gelontMinSimplelonCount();
         }
-        if (rankingOptions.isSetMaxPenaltyCount()) {
-          maxPenaltyCount = rankingOptions.getMaxPenaltyCount();
+        if (rankingOptions.isSelontMaxPelonnaltyCount()) {
+          maxPelonnaltyCount = rankingOptions.gelontMaxPelonnaltyCount();
         }
-        if (rankingOptions.isSetMaxPenaltyCountRatio()) {
-          maxPenaltyCountRatio = rankingOptions.getMaxPenaltyCountRatio();
+        if (rankingOptions.isSelontMaxPelonnaltyCountRatio()) {
+          maxPelonnaltyCountRatio = rankingOptions.gelontMaxPelonnaltyCountRatio();
         }
-        if (rankingOptions.isSetExcludePossiblySensitiveFacets()) {
-          excludePossiblySensitiveFacets = rankingOptions.isExcludePossiblySensitiveFacets();
+        if (rankingOptions.isSelontelonxcludelonPossiblySelonnsitivelonFacelonts()) {
+          elonxcludelonPossiblySelonnsitivelonFacelonts = rankingOptions.iselonxcludelonPossiblySelonnsitivelonFacelonts();
         }
-        if (rankingOptions.isSetOnlyReturnFacetsWithDisplayTweet()) {
-          onlyReturnFacetsWithDisplayTweet = rankingOptions.isOnlyReturnFacetsWithDisplayTweet();
+        if (rankingOptions.isSelontOnlyRelonturnFacelontsWithDisplayTwelonelont()) {
+          onlyRelonturnFacelontsWithDisplayTwelonelont = rankingOptions.isOnlyRelonturnFacelontsWithDisplayTwelonelont();
         }
       }
-    } else {
-      LOG.warn("earlybirdRequest.getFacetRequest() is null");
+    } elonlselon {
+      LOG.warn("elonarlybirdRelonquelonst.gelontFacelontRelonquelonst() is null");
     }
 
-    ThriftFacetCount[] topFacetsArray = new ThriftFacetCount[facetFieldInfo.topFacets.size()];
+    ThriftFacelontCount[] topFacelontsArray = nelonw ThriftFacelontCount[facelontFielonldInfo.topFacelonts.sizelon()];
 
-    facetFieldInfo.topFacets.values().toArray(topFacetsArray);
-    Arrays.sort(topFacetsArray, Collections.<ThriftFacetCount>reverseOrder(
-        FacetsResultsUtils.getFacetCountComparator(request.getFacetRequest())));
+    facelontFielonldInfo.topFacelonts.valuelons().toArray(topFacelontsArray);
+    Arrays.sort(topFacelontsArray, Collelonctions.<ThriftFacelontCount>relonvelonrselonOrdelonr(
+        FacelontsRelonsultsUtils.gelontFacelontCountComparator(relonquelonst.gelontFacelontRelonquelonst())));
 
-    int numResults = capFacetFieldWidth(facetFieldInfo.fieldRequest.numResults);
+    int numRelonsults = capFacelontFielonldWidth(facelontFielonldInfo.fielonldRelonquelonst.numRelonsults);
 
-    if (topFacetsArray.length < numResults) {
-      numResults = topFacetsArray.length;
+    if (topFacelontsArray.lelonngth < numRelonsults) {
+      numRelonsults = topFacelontsArray.lelonngth;
     }
 
-    int collected = 0;
-    for (int i = 0; i < topFacetsArray.length; ++i) {
-      ThriftFacetCount count = topFacetsArray[i];
+    int collelonctelond = 0;
+    for (int i = 0; i < topFacelontsArray.lelonngth; ++i) {
+      ThriftFacelontCount count = topFacelontsArray[i];
 
-      if (onlyReturnFacetsWithDisplayTweet
-          && (!count.isSetMetadata() || !count.getMetadata().isSetStatusId()
-              || count.getMetadata().getStatusId() == -1)) {
-        // status id must be set
-        continue;
+      if (onlyRelonturnFacelontsWithDisplayTwelonelont
+          && (!count.isSelontMelontadata() || !count.gelontMelontadata().isSelontStatusId()
+              || count.gelontMelontadata().gelontStatusId() == -1)) {
+        // status id must belon selont
+        continuelon;
       }
 
-      if (excludePossiblySensitiveFacets && count.isSetMetadata()
-          && count.getMetadata().isStatusPossiblySensitive()) {
-        // the display tweet may be offensive or NSFW
-        if (DebugMessageBuilder.DEBUG_VERBOSE <= debugMessageBuilder.getDebugLevel()) {
-          debugMessageBuilder.verbose2("[%d] FacetsResponseMerger EXCLUDED: offensive or NSFW %s, "
-                                           + "explanation: %s",
-                                       i, facetCountSummary(count),
-                                       count.getMetadata().getExplanation());
+      if (elonxcludelonPossiblySelonnsitivelonFacelonts && count.isSelontMelontadata()
+          && count.gelontMelontadata().isStatusPossiblySelonnsitivelon()) {
+        // thelon display twelonelont may belon offelonnsivelon or NSFW
+        if (DelonbugMelonssagelonBuildelonr.DelonBUG_VelonRBOSelon <= delonbugMelonssagelonBuildelonr.gelontDelonbugLelonvelonl()) {
+          delonbugMelonssagelonBuildelonr.velonrboselon2("[%d] FacelontsRelonsponselonMelonrgelonr elonXCLUDelonD: offelonnsivelon or NSFW %s, "
+                                           + "elonxplanation: %s",
+                                       i, facelontCountSummary(count),
+                                       count.gelontMelontadata().gelontelonxplanation());
         }
-        continue;
+        continuelon;
       }
 
-      boolean filterOutUser = false;
-      if (maxHitsPerUser != -1 && count.isSetMetadata()) {
-        ThriftFacetCountMetadata metadata = count.getMetadata();
-        if (!metadata.dontFilterUser) {
-          long twitterUserId = metadata.getTwitterUserId();
-          int numResultsFromUser = 1;
-          if (twitterUserId != -1) {
-            Integer perUser = antiGamingMap.get(twitterUserId);
-            if (perUser != null) {
-              numResultsFromUser = perUser + 1;
-              filterOutUser = numResultsFromUser > maxHitsPerUser;
+      boolelonan filtelonrOutUselonr = falselon;
+      if (maxHitsPelonrUselonr != -1 && count.isSelontMelontadata()) {
+        ThriftFacelontCountMelontadata melontadata = count.gelontMelontadata();
+        if (!melontadata.dontFiltelonrUselonr) {
+          long twittelonrUselonrId = melontadata.gelontTwittelonrUselonrId();
+          int numRelonsultsFromUselonr = 1;
+          if (twittelonrUselonrId != -1) {
+            Intelongelonr pelonrUselonr = antiGamingMap.gelont(twittelonrUselonrId);
+            if (pelonrUselonr != null) {
+              numRelonsultsFromUselonr = pelonrUselonr + 1;
+              filtelonrOutUselonr = numRelonsultsFromUselonr > maxHitsPelonrUselonr;
             }
-            antiGamingMap.put(twitterUserId, numResultsFromUser);
+            antiGamingMap.put(twittelonrUselonrId, numRelonsultsFromUselonr);
           }
         }
       }
 
-      // Filter facets those don't meet the basic criteria.
-      if (count.getSimpleCount() < minSimpleCount) {
-        if (DebugMessageBuilder.DEBUG_VERBOSE <= debugMessageBuilder.getDebugLevel()) {
-          debugMessageBuilder.verbose2(
-              "[%d] FacetsResponseMerger EXCLUDED: simpleCount:%d < minSimpleCount:%d, %s",
-              i, count.getSimpleCount(), minSimpleCount, facetCountSummary(count));
+      // Filtelonr facelonts thoselon don't melonelont thelon basic critelonria.
+      if (count.gelontSimplelonCount() < minSimplelonCount) {
+        if (DelonbugMelonssagelonBuildelonr.DelonBUG_VelonRBOSelon <= delonbugMelonssagelonBuildelonr.gelontDelonbugLelonvelonl()) {
+          delonbugMelonssagelonBuildelonr.velonrboselon2(
+              "[%d] FacelontsRelonsponselonMelonrgelonr elonXCLUDelonD: simplelonCount:%d < minSimplelonCount:%d, %s",
+              i, count.gelontSimplelonCount(), minSimplelonCount, facelontCountSummary(count));
         }
-        continue;
+        continuelon;
       }
-      if (count.getWeightedCount() < minWeightedCount) {
-        if (DebugMessageBuilder.DEBUG_VERBOSE <= debugMessageBuilder.getDebugLevel()) {
-          debugMessageBuilder.verbose2(
-              "[%d] FacetsResponseMerger EXCLUDED: weightedCount:%d < minWeightedCount:%d, %s",
-              i, count.getWeightedCount(), minWeightedCount, facetCountSummary(count));
+      if (count.gelontWelonightelondCount() < minWelonightelondCount) {
+        if (DelonbugMelonssagelonBuildelonr.DelonBUG_VelonRBOSelon <= delonbugMelonssagelonBuildelonr.gelontDelonbugLelonvelonl()) {
+          delonbugMelonssagelonBuildelonr.velonrboselon2(
+              "[%d] FacelontsRelonsponselonMelonrgelonr elonXCLUDelonD: welonightelondCount:%d < minWelonightelondCount:%d, %s",
+              i, count.gelontWelonightelondCount(), minWelonightelondCount, facelontCountSummary(count));
         }
-        continue;
+        continuelon;
       }
-      if (filterOutUser) {
-        if (DebugMessageBuilder.DEBUG_VERBOSE <= debugMessageBuilder.getDebugLevel()) {
-          debugMessageBuilder.verbose2(
-              "[%d] FacetsResponseMerger EXCLUDED: antiGaming filterd user: %d: %s",
-              i, count.getMetadata().getTwitterUserId(), facetCountSummary(count));
+      if (filtelonrOutUselonr) {
+        if (DelonbugMelonssagelonBuildelonr.DelonBUG_VelonRBOSelon <= delonbugMelonssagelonBuildelonr.gelontDelonbugLelonvelonl()) {
+          delonbugMelonssagelonBuildelonr.velonrboselon2(
+              "[%d] FacelontsRelonsponselonMelonrgelonr elonXCLUDelonD: antiGaming filtelonrd uselonr: %d: %s",
+              i, count.gelontMelontadata().gelontTwittelonrUselonrId(), facelontCountSummary(count));
         }
-        continue;
+        continuelon;
       }
-      if (count.getPenaltyCount() > maxPenaltyCount) {
-        if (DebugMessageBuilder.DEBUG_VERBOSE <= debugMessageBuilder.getDebugLevel()) {
-          debugMessageBuilder.verbose2(
-              "[%d] FacetsResponseMerger EXCLUCED: penaltyCount:%.3f > maxPenaltyCount:%.3f, %s",
-              i, count.getPenaltyCount(), maxPenaltyCount, facetCountSummary(count));
+      if (count.gelontPelonnaltyCount() > maxPelonnaltyCount) {
+        if (DelonbugMelonssagelonBuildelonr.DelonBUG_VelonRBOSelon <= delonbugMelonssagelonBuildelonr.gelontDelonbugLelonvelonl()) {
+          delonbugMelonssagelonBuildelonr.velonrboselon2(
+              "[%d] FacelontsRelonsponselonMelonrgelonr elonXCLUCelonD: pelonnaltyCount:%.3f > maxPelonnaltyCount:%.3f, %s",
+              i, count.gelontPelonnaltyCount(), maxPelonnaltyCount, facelontCountSummary(count));
         }
-        continue;
+        continuelon;
       }
-      if (((double) count.getPenaltyCount() / count.getSimpleCount()) > maxPenaltyCountRatio) {
-        if (DebugMessageBuilder.DEBUG_VERBOSE <= debugMessageBuilder.getDebugLevel()) {
-          debugMessageBuilder.verbose2(
-              "[%d] FacetsResponseMerger EXCLUDED: penaltyCountRatio: %.3f > "
-                  + "maxPenaltyCountRatio:%.3f, %s",
-              i, (double) count.getPenaltyCount() / count.getSimpleCount(), maxPenaltyCountRatio,
-              facetCountSummary(count));
+      if (((doublelon) count.gelontPelonnaltyCount() / count.gelontSimplelonCount()) > maxPelonnaltyCountRatio) {
+        if (DelonbugMelonssagelonBuildelonr.DelonBUG_VelonRBOSelon <= delonbugMelonssagelonBuildelonr.gelontDelonbugLelonvelonl()) {
+          delonbugMelonssagelonBuildelonr.velonrboselon2(
+              "[%d] FacelontsRelonsponselonMelonrgelonr elonXCLUDelonD: pelonnaltyCountRatio: %.3f > "
+                  + "maxPelonnaltyCountRatio:%.3f, %s",
+              i, (doublelon) count.gelontPelonnaltyCount() / count.gelontSimplelonCount(), maxPelonnaltyCountRatio,
+              facelontCountSummary(count));
         }
-        continue;
+        continuelon;
       }
-      results.addToTopFacets(count);
+      relonsults.addToTopFacelonts(count);
 
-      collected++;
-      if (collected >= numResults) {
-        break;
+      collelonctelond++;
+      if (collelonctelond >= numRelonsults) {
+        brelonak;
       }
     }
   }
 
-  private static int capFacetFieldWidth(int numResults) {
-    int ret = numResults;
-    if (numResults <= 0) {
-      // this in theory should not be allowed, but for now we issue the request with goodwill length
-      ret = 10;  // default to 10 for future merge code to terminate correctly
+  privatelon static int capFacelontFielonldWidth(int numRelonsults) {
+    int relont = numRelonsults;
+    if (numRelonsults <= 0) {
+      // this in thelonory should not belon allowelond, but for now welon issuelon thelon relonquelonst with goodwill lelonngth
+      relont = 10;  // delonfault to 10 for futurelon melonrgelon codelon to telonrminatelon correlonctly
     }
-    if (numResults >= 100) {
-      ret = 100;
+    if (numRelonsults >= 100) {
+      relont = 100;
     }
-    return ret;
+    relonturn relont;
   }
 
-  private static String facetCountSummary(final ThriftFacetCount count) {
-    if (count.isSetMetadata()) {
-      return String.format("Label: %s (s:%d, w:%d, p:%d, score:%.2f, sid:%d (%s))",
-          count.getFacetLabel(), count.getSimpleCount(), count.getWeightedCount(),
-          count.getPenaltyCount(), count.getScore(), count.getMetadata().getStatusId(),
-          count.getMetadata().getStatusLanguage());
-    } else {
-      return String.format("Label: %s (s:%d, w:%d, p:%d, score:%.2f)", count.getFacetLabel(),
-          count.getSimpleCount(), count.getWeightedCount(), count.getPenaltyCount(),
-          count.getScore());
+  privatelon static String facelontCountSummary(final ThriftFacelontCount count) {
+    if (count.isSelontMelontadata()) {
+      relonturn String.format("Labelonl: %s (s:%d, w:%d, p:%d, scorelon:%.2f, sid:%d (%s))",
+          count.gelontFacelontLabelonl(), count.gelontSimplelonCount(), count.gelontWelonightelondCount(),
+          count.gelontPelonnaltyCount(), count.gelontScorelon(), count.gelontMelontadata().gelontStatusId(),
+          count.gelontMelontadata().gelontStatusLanguagelon());
+    } elonlselon {
+      relonturn String.format("Labelonl: %s (s:%d, w:%d, p:%d, scorelon:%.2f)", count.gelontFacelontLabelonl(),
+          count.gelontSimplelonCount(), count.gelontWelonightelondCount(), count.gelontPelonnaltyCount(),
+          count.gelontScorelon());
     }
   }
 
-  // Iterate through the backend responses and fill up the FacetFieldInfo map.
-  private void collectResponsesAndPopulateMap(
-      final Map<String, FacetsResultsUtils.FacetFieldInfo> facetFieldInfoMap,
-      final Set<Long> userIDWhitelist) {
-    // Next, iterate through the backend responses.
+  // Itelonratelon through thelon backelonnd relonsponselons and fill up thelon FacelontFielonldInfo map.
+  privatelon void collelonctRelonsponselonsAndPopulatelonMap(
+      final Map<String, FacelontsRelonsultsUtils.FacelontFielonldInfo> facelontFielonldInfoMap,
+      final Selont<Long> uselonrIDWhitelonlist) {
+    // Nelonxt, itelonratelon through thelon backelonnd relonsponselons.
     int i = 0;
-    for (EarlybirdResponse facetsResponse : accumulatedResponses.getSuccessResponses()) {
-      if (facetsResponse.isSetFacetResults()) {
-        LOG.debug("Facet response from earlybird {} is {} ", i, facetsResponse.getFacetResults());
+    for (elonarlybirdRelonsponselon facelontsRelonsponselon : accumulatelondRelonsponselons.gelontSuccelonssRelonsponselons()) {
+      if (facelontsRelonsponselon.isSelontFacelontRelonsults()) {
+        LOG.delonbug("Facelont relonsponselon from elonarlybird {} is {} ", i, facelontsRelonsponselon.gelontFacelontRelonsults());
         i++;
-        ThriftFacetResults facetResults = facetsResponse.getFacetResults();
-        if (facetResults.isSetUserIDWhitelist()) {
-          userIDWhitelist.addAll(facetResults.getUserIDWhitelist());
+        ThriftFacelontRelonsults facelontRelonsults = facelontsRelonsponselon.gelontFacelontRelonsults();
+        if (facelontRelonsults.isSelontUselonrIDWhitelonlist()) {
+          uselonrIDWhitelonlist.addAll(facelontRelonsults.gelontUselonrIDWhitelonlist());
         }
-        FacetsResultsUtils.fillFacetFieldInfo(
-            facetResults, facetFieldInfoMap,
-            userIDWhitelist);
+        FacelontsRelonsultsUtils.fillFacelontFielonldInfo(
+            facelontRelonsults, facelontFielonldInfoMap,
+            uselonrIDWhitelonlist);
       }
     }
-    LOG.debug("Earlybird facet response total size {}", i);
+    LOG.delonbug("elonarlybird facelont relonsponselon total sizelon {}", i);
   }
 }
 

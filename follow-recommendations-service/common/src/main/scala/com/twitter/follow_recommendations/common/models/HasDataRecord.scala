@@ -1,85 +1,85 @@
-package com.twitter.follow_recommendations.common.models
+packagelon com.twittelonr.follow_reloncommelonndations.common.modelonls
 
-import com.twitter.follow_recommendations.thriftscala.DebugDataRecord
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.FeatureContext
-import com.twitter.util.Try
-import com.twitter.util.logging.Logging
-import scala.collection.convert.ImplicitConversions._
+import com.twittelonr.follow_reloncommelonndations.thriftscala.DelonbugDataReloncord
+import com.twittelonr.ml.api.DataReloncord
+import com.twittelonr.ml.api.FelonaturelonContelonxt
+import com.twittelonr.util.Try
+import com.twittelonr.util.logging.Logging
+import scala.collelonction.convelonrt.ImplicitConvelonrsions._
 
-// contains the standard dataRecord struct, and the debug version if required
-case class RichDataRecord(
-  dataRecord: Option[DataRecord] = None,
-  debugDataRecord: Option[DebugDataRecord] = None,
+// contains thelon standard dataReloncord struct, and thelon delonbug velonrsion if relonquirelond
+caselon class RichDataReloncord(
+  dataReloncord: Option[DataReloncord] = Nonelon,
+  delonbugDataReloncord: Option[DelonbugDataReloncord] = Nonelon,
 )
 
-trait HasDataRecord extends Logging {
-  def dataRecord: Option[RichDataRecord]
+trait HasDataReloncord elonxtelonnds Logging {
+  delonf dataReloncord: Option[RichDataReloncord]
 
-  def toDebugDataRecord(dr: DataRecord, featureContext: FeatureContext): DebugDataRecord = {
+  delonf toDelonbugDataReloncord(dr: DataReloncord, felonaturelonContelonxt: FelonaturelonContelonxt): DelonbugDataReloncord = {
 
-    val binaryFeatures: Option[Set[String]] = if (dr.isSetBinaryFeatures) {
-      Some(dr.getBinaryFeatures.flatMap { id =>
-        Try(featureContext.getFeature(id).getFeatureName).toOption
-      }.toSet)
-    } else None
+    val binaryFelonaturelons: Option[Selont[String]] = if (dr.isSelontBinaryFelonaturelons) {
+      Somelon(dr.gelontBinaryFelonaturelons.flatMap { id =>
+        Try(felonaturelonContelonxt.gelontFelonaturelon(id).gelontFelonaturelonNamelon).toOption
+      }.toSelont)
+    } elonlselon Nonelon
 
-    val continuousFeatures: Option[Map[String, Double]] = if (dr.isSetContinuousFeatures) {
-      Some(dr.getContinuousFeatures.flatMap {
-        case (id, value) =>
-          Try(featureContext.getFeature(id).getFeatureName).toOption.map { id =>
-            id -> value.toDouble
+    val continuousFelonaturelons: Option[Map[String, Doublelon]] = if (dr.isSelontContinuousFelonaturelons) {
+      Somelon(dr.gelontContinuousFelonaturelons.flatMap {
+        caselon (id, valuelon) =>
+          Try(felonaturelonContelonxt.gelontFelonaturelon(id).gelontFelonaturelonNamelon).toOption.map { id =>
+            id -> valuelon.toDoublelon
           }
       }.toMap)
-    } else None
+    } elonlselon Nonelon
 
-    val discreteFeatures: Option[Map[String, Long]] = if (dr.isSetDiscreteFeatures) {
-      Some(dr.getDiscreteFeatures.flatMap {
-        case (id, value) =>
-          Try(featureContext.getFeature(id).getFeatureName).toOption.map { id =>
-            id -> value.toLong
+    val discrelontelonFelonaturelons: Option[Map[String, Long]] = if (dr.isSelontDiscrelontelonFelonaturelons) {
+      Somelon(dr.gelontDiscrelontelonFelonaturelons.flatMap {
+        caselon (id, valuelon) =>
+          Try(felonaturelonContelonxt.gelontFelonaturelon(id).gelontFelonaturelonNamelon).toOption.map { id =>
+            id -> valuelon.toLong
           }
       }.toMap)
-    } else None
+    } elonlselon Nonelon
 
-    val stringFeatures: Option[Map[String, String]] = if (dr.isSetStringFeatures) {
-      Some(dr.getStringFeatures.flatMap {
-        case (id, value) =>
-          Try(featureContext.getFeature(id).getFeatureName).toOption.map { id =>
-            id -> value
+    val stringFelonaturelons: Option[Map[String, String]] = if (dr.isSelontStringFelonaturelons) {
+      Somelon(dr.gelontStringFelonaturelons.flatMap {
+        caselon (id, valuelon) =>
+          Try(felonaturelonContelonxt.gelontFelonaturelon(id).gelontFelonaturelonNamelon).toOption.map { id =>
+            id -> valuelon
           }
       }.toMap)
-    } else None
+    } elonlselon Nonelon
 
-    val sparseBinaryFeatures: Option[Map[String, Set[String]]] = if (dr.isSetSparseBinaryFeatures) {
-      Some(dr.getSparseBinaryFeatures.flatMap {
-        case (id, values) =>
-          Try(featureContext.getFeature(id).getFeatureName).toOption.map { id =>
-            id -> values.toSet
+    val sparselonBinaryFelonaturelons: Option[Map[String, Selont[String]]] = if (dr.isSelontSparselonBinaryFelonaturelons) {
+      Somelon(dr.gelontSparselonBinaryFelonaturelons.flatMap {
+        caselon (id, valuelons) =>
+          Try(felonaturelonContelonxt.gelontFelonaturelon(id).gelontFelonaturelonNamelon).toOption.map { id =>
+            id -> valuelons.toSelont
           }
       }.toMap)
-    } else None
+    } elonlselon Nonelon
 
-    val sparseContinuousFeatures: Option[Map[String, Map[String, Double]]] =
-      if (dr.isSetSparseContinuousFeatures) {
-        Some(dr.getSparseContinuousFeatures.flatMap {
-          case (id, values) =>
-            Try(featureContext.getFeature(id).getFeatureName).toOption.map { id =>
-              id -> values.map {
-                case (str, value) =>
-                  str -> value.toDouble
+    val sparselonContinuousFelonaturelons: Option[Map[String, Map[String, Doublelon]]] =
+      if (dr.isSelontSparselonContinuousFelonaturelons) {
+        Somelon(dr.gelontSparselonContinuousFelonaturelons.flatMap {
+          caselon (id, valuelons) =>
+            Try(felonaturelonContelonxt.gelontFelonaturelon(id).gelontFelonaturelonNamelon).toOption.map { id =>
+              id -> valuelons.map {
+                caselon (str, valuelon) =>
+                  str -> valuelon.toDoublelon
               }.toMap
             }
         }.toMap)
-      } else None
+      } elonlselon Nonelon
 
-    DebugDataRecord(
-      binaryFeatures = binaryFeatures,
-      continuousFeatures = continuousFeatures,
-      discreteFeatures = discreteFeatures,
-      stringFeatures = stringFeatures,
-      sparseBinaryFeatures = sparseBinaryFeatures,
-      sparseContinuousFeatures = sparseContinuousFeatures,
+    DelonbugDataReloncord(
+      binaryFelonaturelons = binaryFelonaturelons,
+      continuousFelonaturelons = continuousFelonaturelons,
+      discrelontelonFelonaturelons = discrelontelonFelonaturelons,
+      stringFelonaturelons = stringFelonaturelons,
+      sparselonBinaryFelonaturelons = sparselonBinaryFelonaturelons,
+      sparselonContinuousFelonaturelons = sparselonContinuousFelonaturelons,
     )
   }
 

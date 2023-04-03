@@ -1,211 +1,211 @@
 WITH vars AS (
-  SELECT
-    TIMESTAMP('{START_TIME}') AS start_time,
-    TIMESTAMP('{END_TIME}') AS end_time,
-    UNIX_MILLIS('{END_TIME}') AS currentTs,
-    {HALFLIFE} AS halfLife,
-    {TWEET_SAMPLE_RATE} AS tweet_sample_rate,
-    {ENG_SAMPLE_RATE} AS eng_user_sample_rate,
-    {MIN_TWEET_FAVS} AS min_tweet_favs,
-    {MIN_TWEET_IMPS} AS min_tweet_imps,
-    {MAX_USER_LOG_N_IMPS} AS max_user_log_n_imps,
-    {MAX_USER_LOG_N_FAVS} AS max_user_log_n_favs,
-    {MAX_USER_FTR} AS max_user_ftr,
-    {MAX_TWEET_FTR} AS max_tweet_ftr,
-    700 AS MAX_EXPONENT, -- this is the maximum exponent one can have in bigquery
+  SelonLelonCT
+    TIMelonSTAMP('{START_TIMelon}') AS start_timelon,
+    TIMelonSTAMP('{elonND_TIMelon}') AS elonnd_timelon,
+    UNIX_MILLIS('{elonND_TIMelon}') AS currelonntTs,
+    {HALFLIFelon} AS halfLifelon,
+    {TWelonelonT_SAMPLelon_RATelon} AS twelonelont_samplelon_ratelon,
+    {elonNG_SAMPLelon_RATelon} AS elonng_uselonr_samplelon_ratelon,
+    {MIN_TWelonelonT_FAVS} AS min_twelonelont_favs,
+    {MIN_TWelonelonT_IMPS} AS min_twelonelont_imps,
+    {MAX_USelonR_LOG_N_IMPS} AS max_uselonr_log_n_imps,
+    {MAX_USelonR_LOG_N_FAVS} AS max_uselonr_log_n_favs,
+    {MAX_USelonR_FTR} AS max_uselonr_ftr,
+    {MAX_TWelonelonT_FTR} AS max_twelonelont_ftr,
+    700 AS MAX_elonXPONelonNT, -- this is thelon maximum elonxponelonnt onelon can havelon in bigquelonry
   ),
-  -- step 1: get impressions and favs
-  impressions AS (
-    SELECT
-      userIdentifier.userId AS user_id,
-      item.tweetInfo.actionTweetId AS tweet_id,
-      item.tweetInfo.actionTweetAuthorInfo.authorId AS author_id,
-      TRUE AS impressed,
-      MIN(eventMetadata.sourceTimestampMs) AS minTsMilli
-    FROM twttr-bql-unified-prod.unified_user_actions.streaming_unified_user_actions, vars
-    WHERE
-      actionType = "ClientTweetLingerImpression"
-      AND DATE(dateHour) BETWEEN DATE(vars.start_time) AND DATE(vars.end_time)
-      AND TIMESTAMP_MILLIS(eventMetadata.sourceTimestampMs) BETWEEN vars.start_time AND vars.end_time
-      AND MOD(ABS(farm_fingerprint(item.tweetInfo.actionTweetId || '')), vars.tweet_sample_rate) = 0
-      AND MOD(ABS(farm_fingerprint(userIdentifier.userId || '')), vars.eng_user_sample_rate) = 0
-     -- Apply tweet age filter here
-     AND timestamp_millis((1288834974657 +
-        ((item.tweetInfo.actionTweetId & 9223372036850581504) >> 22))) >= (vars.start_time)
+  -- stelonp 1: gelont imprelonssions and favs
+  imprelonssions AS (
+    SelonLelonCT
+      uselonrIdelonntifielonr.uselonrId AS uselonr_id,
+      itelonm.twelonelontInfo.actionTwelonelontId AS twelonelont_id,
+      itelonm.twelonelontInfo.actionTwelonelontAuthorInfo.authorId AS author_id,
+      TRUelon AS imprelonsselond,
+      MIN(elonvelonntMelontadata.sourcelonTimelonstampMs) AS minTsMilli
+    FROM twttr-bql-unifielond-prod.unifielond_uselonr_actions.strelonaming_unifielond_uselonr_actions, vars
+    WHelonRelon
+      actionTypelon = "ClielonntTwelonelontLingelonrImprelonssion"
+      AND DATelon(datelonHour) BelonTWelonelonN DATelon(vars.start_timelon) AND DATelon(vars.elonnd_timelon)
+      AND TIMelonSTAMP_MILLIS(elonvelonntMelontadata.sourcelonTimelonstampMs) BelonTWelonelonN vars.start_timelon AND vars.elonnd_timelon
+      AND MOD(ABS(farm_fingelonrprint(itelonm.twelonelontInfo.actionTwelonelontId || '')), vars.twelonelont_samplelon_ratelon) = 0
+      AND MOD(ABS(farm_fingelonrprint(uselonrIdelonntifielonr.uselonrId || '')), vars.elonng_uselonr_samplelon_ratelon) = 0
+     -- Apply twelonelont agelon filtelonr helonrelon
+     AND timelonstamp_millis((1288834974657 +
+        ((itelonm.twelonelontInfo.actionTwelonelontId & 9223372036850581504) >> 22))) >= (vars.start_timelon)
     GROUP BY 1, 2, 3
   ),
   favs AS (
-    SELECT
-      userIdentifier.userId AS user_id,
-      item.tweetInfo.actionTweetId AS tweet_id,
-      item.tweetInfo.actionTweetAuthorInfo.authorId AS author_id,
-      MIN(eventMetadata.sourceTimestampMs) AS minTsMilli,
-      -- get last action, and make sure that it's a fav
-      ARRAY_AGG(actionType ORDER BY eventMetadata.sourceTimestampMs DESC LIMIT 1)[OFFSET(0)] = "ServerTweetFav" AS favorited,
-    FROM `twttr-bql-unified-prod.unified_user_actions_engagements.streaming_unified_user_actions_engagements`, vars
-    WHERE
-      actionType IN ("ServerTweetFav", "ServerTweetUnfav")
-      AND DATE(dateHour) BETWEEN DATE(vars.start_time) AND DATE(vars.end_time)
-      AND TIMESTAMP_MILLIS(eventMetadata.sourceTimestampMs) BETWEEN vars.start_time AND vars.end_time
-      AND MOD(ABS(farm_fingerprint(item.tweetInfo.actionTweetId || '')), vars.tweet_sample_rate) = 0
-      AND MOD(ABS(farm_fingerprint(userIdentifier.userId || '')), vars.eng_user_sample_rate) = 0
-       -- Apply tweet age filter here
-      AND timestamp_millis((1288834974657 +
-        ((item.tweetInfo.actionTweetId & 9223372036850581504) >> 22))) >= (vars.start_time)
+    SelonLelonCT
+      uselonrIdelonntifielonr.uselonrId AS uselonr_id,
+      itelonm.twelonelontInfo.actionTwelonelontId AS twelonelont_id,
+      itelonm.twelonelontInfo.actionTwelonelontAuthorInfo.authorId AS author_id,
+      MIN(elonvelonntMelontadata.sourcelonTimelonstampMs) AS minTsMilli,
+      -- gelont last action, and makelon surelon that it's a fav
+      ARRAY_AGG(actionTypelon ORDelonR BY elonvelonntMelontadata.sourcelonTimelonstampMs DelonSC LIMIT 1)[OFFSelonT(0)] = "SelonrvelonrTwelonelontFav" AS favoritelond,
+    FROM `twttr-bql-unifielond-prod.unifielond_uselonr_actions_elonngagelonmelonnts.strelonaming_unifielond_uselonr_actions_elonngagelonmelonnts`, vars
+    WHelonRelon
+      actionTypelon IN ("SelonrvelonrTwelonelontFav", "SelonrvelonrTwelonelontUnfav")
+      AND DATelon(datelonHour) BelonTWelonelonN DATelon(vars.start_timelon) AND DATelon(vars.elonnd_timelon)
+      AND TIMelonSTAMP_MILLIS(elonvelonntMelontadata.sourcelonTimelonstampMs) BelonTWelonelonN vars.start_timelon AND vars.elonnd_timelon
+      AND MOD(ABS(farm_fingelonrprint(itelonm.twelonelontInfo.actionTwelonelontId || '')), vars.twelonelont_samplelon_ratelon) = 0
+      AND MOD(ABS(farm_fingelonrprint(uselonrIdelonntifielonr.uselonrId || '')), vars.elonng_uselonr_samplelon_ratelon) = 0
+       -- Apply twelonelont agelon filtelonr helonrelon
+      AND timelonstamp_millis((1288834974657 +
+        ((itelonm.twelonelontInfo.actionTwelonelontId & 9223372036850581504) >> 22))) >= (vars.start_timelon)
     GROUP BY 1, 2, 3
-    HAVING favorited
+    HAVING favoritelond
   ),
-  eng_data AS (
-    SELECT
-      user_id, tweet_id, author_id, impressions.minTsMilli, favorited, impressed
-    FROM impressions
-    LEFT JOIN favs USING(user_id, tweet_id, author_id)
+  elonng_data AS (
+    SelonLelonCT
+      uselonr_id, twelonelont_id, author_id, imprelonssions.minTsMilli, favoritelond, imprelonsselond
+    FROM imprelonssions
+    LelonFT JOIN favs USING(uselonr_id, twelonelont_id, author_id)
   ),
-  eligible_tweets AS (
-    SELECT
-      tweet_id,
+  elonligiblelon_twelonelonts AS (
+    SelonLelonCT
+      twelonelont_id,
       author_id,
-      COUNTIF(favorited) num_favs,
-      COUNTIF(impressed) num_imps,
-      COUNTIF(favorited) * 1.0 / COUNTIF(impressed) AS tweet_ftr,
-      ANY_VALUE(vars.min_tweet_favs) min_tweet_favs,
-      ANY_VALUE(vars.min_tweet_imps) min_tweet_imps,
-      ANY_VALUE(vars.max_tweet_ftr) max_tweet_ftr,
-    FROM eng_data, vars
+      COUNTIF(favoritelond) num_favs,
+      COUNTIF(imprelonsselond) num_imps,
+      COUNTIF(favoritelond) * 1.0 / COUNTIF(imprelonsselond) AS twelonelont_ftr,
+      ANY_VALUelon(vars.min_twelonelont_favs) min_twelonelont_favs,
+      ANY_VALUelon(vars.min_twelonelont_imps) min_twelonelont_imps,
+      ANY_VALUelon(vars.max_twelonelont_ftr) max_twelonelont_ftr,
+    FROM elonng_data, vars
     GROUP BY 1, 2
-    HAVING num_favs >= min_tweet_favs -- this is an aggressive filter to make the workflow efficient
-      AND num_imps >= min_tweet_imps
-      AND tweet_ftr <= max_tweet_ftr -- filter to combat spam
+    HAVING num_favs >= min_twelonelont_favs -- this is an aggrelonssivelon filtelonr to makelon thelon workflow elonfficielonnt
+      AND num_imps >= min_twelonelont_imps
+      AND twelonelont_ftr <= max_twelonelont_ftr -- filtelonr to combat spam
   ),
-  eligible_users AS (
-    SELECT
-      user_id,
-      CAST(LOG10(COUNTIF(impressed) + 1) AS INT64) log_n_imps,
-      CAST(LOG10(COUNTIF(favorited) + 1) AS INT64) log_n_favs,
-      ANY_VALUE(vars.max_user_log_n_imps) max_user_log_n_imps,
-      ANY_VALUE(vars.max_user_log_n_favs) max_user_log_n_favs,
-      ANY_VALUE(vars.max_user_ftr) max_user_ftr,
-      COUNTIF(favorited) * 1.0 / COUNTIF(impressed) user_ftr
-    from eng_data, vars
+  elonligiblelon_uselonrs AS (
+    SelonLelonCT
+      uselonr_id,
+      CAST(LOG10(COUNTIF(imprelonsselond) + 1) AS INT64) log_n_imps,
+      CAST(LOG10(COUNTIF(favoritelond) + 1) AS INT64) log_n_favs,
+      ANY_VALUelon(vars.max_uselonr_log_n_imps) max_uselonr_log_n_imps,
+      ANY_VALUelon(vars.max_uselonr_log_n_favs) max_uselonr_log_n_favs,
+      ANY_VALUelon(vars.max_uselonr_ftr) max_uselonr_ftr,
+      COUNTIF(favoritelond) * 1.0 / COUNTIF(imprelonsselond) uselonr_ftr
+    from elonng_data, vars
     GROUP BY 1
     HAVING
-      log_n_imps < max_user_log_n_imps
-      AND log_n_favs < max_user_log_n_favs
-      AND user_ftr < max_user_ftr
+      log_n_imps < max_uselonr_log_n_imps
+      AND log_n_favs < max_uselonr_log_n_favs
+      AND uselonr_ftr < max_uselonr_ftr
   ),
-  eligible_eng_data AS (
-    SELECT
-      user_id,
-      eng_data.author_id,
-      tweet_id,
+  elonligiblelon_elonng_data AS (
+    SelonLelonCT
+      uselonr_id,
+      elonng_data.author_id,
+      twelonelont_id,
       minTsMilli,
-      favorited,
-      impressed
-    FROM eng_data
-    INNER JOIN eligible_tweets USING(tweet_id)
-    INNER JOIN eligible_users USING(user_id)
+      favoritelond,
+      imprelonsselond
+    FROM elonng_data
+    INNelonR JOIN elonligiblelon_twelonelonts USING(twelonelont_id)
+    INNelonR JOIN elonligiblelon_uselonrs USING(uselonr_id)
   ),
   follow_graph AS (
-    SELECT userId, neighbor
-    FROM `twttr-bq-cassowary-prod.user.user_user_normalized_graph` user_user_graph, unnest(user_user_graph.neighbors) as neighbor
-    WHERE DATE(_PARTITIONTIME) =
-          (  -- Get latest partition time
-          SELECT MAX(DATE(_PARTITIONTIME)) latest_partition
-          FROM `twttr-bq-cassowary-prod.user.user_user_normalized_graph`, vars
-          WHERE Date(_PARTITIONTIME) BETWEEN
-            DATE_SUB(Date(vars.end_time),
-              INTERVAL 14 DAY) AND DATE(vars.end_time)
+    SelonLelonCT uselonrId, nelonighbor
+    FROM `twttr-bq-cassowary-prod.uselonr.uselonr_uselonr_normalizelond_graph` uselonr_uselonr_graph, unnelonst(uselonr_uselonr_graph.nelonighbors) as nelonighbor
+    WHelonRelon DATelon(_PARTITIONTIMelon) =
+          (  -- Gelont latelonst partition timelon
+          SelonLelonCT MAX(DATelon(_PARTITIONTIMelon)) latelonst_partition
+          FROM `twttr-bq-cassowary-prod.uselonr.uselonr_uselonr_normalizelond_graph`, vars
+          WHelonRelon Datelon(_PARTITIONTIMelon) BelonTWelonelonN
+            DATelon_SUB(Datelon(vars.elonnd_timelon),
+              INTelonRVAL 14 DAY) AND DATelon(vars.elonnd_timelon)
             )
-    AND neighbor.isFollowed is True
+    AND nelonighbor.isFollowelond is Truelon
   ),
-  extended_eligible_eng_data AS (
-      SELECT
-        user_id,
-        tweet_id,
+  elonxtelonndelond_elonligiblelon_elonng_data AS (
+      SelonLelonCT
+        uselonr_id,
+        twelonelont_id,
         minTsMilli,
-        favorited,
-        impressed,
-        neighbor.neighborId is NULL as is_oon_eng
-      FROM eligible_eng_data  left JOIN follow_graph ON (follow_graph.userId = eligible_eng_data.user_id AND follow_graph.neighbor.neighborId = eligible_eng_data.author_id)
+        favoritelond,
+        imprelonsselond,
+        nelonighbor.nelonighborId is NULL as is_oon_elonng
+      FROM elonligiblelon_elonng_data  lelonft JOIN follow_graph ON (follow_graph.uselonrId = elonligiblelon_elonng_data.uselonr_id AND follow_graph.nelonighbor.nelonighborId = elonligiblelon_elonng_data.author_id)
   ),
-  -- step 2: merge with iikf
+  -- stelonp 2: melonrgelon with iikf
   iikf AS (
-  SELECT
-    userId AS user_id,
+  SelonLelonCT
+    uselonrId AS uselonr_id,
 
-    clusterIdToScore.key AS clusterId,
-    clusterIdToScore.value.favScore AS favScore,
-    clusterIdToScore.value.favScoreClusterNormalizedOnly AS favScoreClusterNormalizedOnly,
-    clusterIdToScore.value.favScoreProducerNormalizedOnly AS favScoreProducerNormalizedOnly,
+    clustelonrIdToScorelon.kelony AS clustelonrId,
+    clustelonrIdToScorelon.valuelon.favScorelon AS favScorelon,
+    clustelonrIdToScorelon.valuelon.favScorelonClustelonrNormalizelondOnly AS favScorelonClustelonrNormalizelondOnly,
+    clustelonrIdToScorelon.valuelon.favScorelonProducelonrNormalizelondOnly AS favScorelonProducelonrNormalizelondOnly,
 
-    clusterIdToScore.value.logFavScore AS logFavScore,
-    clusterIdToScore.value.logfavScoreClusterNormalizedOnly AS logfavScoreClusterNormalizedOnly, -- probably no need for cluster normalization anymore
-    ROW_NUMBER() OVER (PARTITION BY userId ORDER BY clusterIdToScore.value.logFavScore DESC) AS uii_cluster_rank_logfavscore,
-    ROW_NUMBER() OVER (PARTITION BY userId ORDER BY clusterIdToScore.value.logfavScoreClusterNormalizedOnly DESC) AS uii_cluster_rank_logfavscoreclusternormalized,
-  FROM `twttr-bq-cassowary-prod.user.simclusters_v2_user_to_interested_in_20M_145K_2020`, UNNEST(clusterIdToScores) clusterIdToScore, vars
-  WHERE DATE(_PARTITIONTIME) =
-            (-- Get latest partition time
-            SELECT MAX(DATE(_PARTITIONTIME)) latest_partition
-            FROM `twttr-bq-cassowary-prod.user.simclusters_v2_user_to_interested_in_20M_145K_2020`
-            WHERE Date(_PARTITIONTIME) BETWEEN
-            DATE_SUB(Date(vars.end_time),
-              INTERVAL 14 DAY) AND DATE(vars.end_time)
+    clustelonrIdToScorelon.valuelon.logFavScorelon AS logFavScorelon,
+    clustelonrIdToScorelon.valuelon.logfavScorelonClustelonrNormalizelondOnly AS logfavScorelonClustelonrNormalizelondOnly, -- probably no nelonelond for clustelonr normalization anymorelon
+    ROW_NUMBelonR() OVelonR (PARTITION BY uselonrId ORDelonR BY clustelonrIdToScorelon.valuelon.logFavScorelon DelonSC) AS uii_clustelonr_rank_logfavscorelon,
+    ROW_NUMBelonR() OVelonR (PARTITION BY uselonrId ORDelonR BY clustelonrIdToScorelon.valuelon.logfavScorelonClustelonrNormalizelondOnly DelonSC) AS uii_clustelonr_rank_logfavscorelonclustelonrnormalizelond,
+  FROM `twttr-bq-cassowary-prod.uselonr.simclustelonrs_v2_uselonr_to_intelonrelonstelond_in_20M_145K_2020`, UNNelonST(clustelonrIdToScorelons) clustelonrIdToScorelon, vars
+  WHelonRelon DATelon(_PARTITIONTIMelon) =
+            (-- Gelont latelonst partition timelon
+            SelonLelonCT MAX(DATelon(_PARTITIONTIMelon)) latelonst_partition
+            FROM `twttr-bq-cassowary-prod.uselonr.simclustelonrs_v2_uselonr_to_intelonrelonstelond_in_20M_145K_2020`
+            WHelonRelon Datelon(_PARTITIONTIMelon) BelonTWelonelonN
+            DATelon_SUB(Datelon(vars.elonnd_timelon),
+              INTelonRVAL 14 DAY) AND DATelon(vars.elonnd_timelon)
             )
-          AND MOD(ABS(farm_fingerprint(userId || '')), vars.eng_user_sample_rate) = 0
-          AND clusterIdToScore.value.logFavScore != 0
+          AND MOD(ABS(farm_fingelonrprint(uselonrId || '')), vars.elonng_uselonr_samplelon_ratelon) = 0
+          AND clustelonrIdToScorelon.valuelon.logFavScorelon != 0
   ),
-  eng_w_uii AS (
-    SELECT
-      T_IMP_FAV.user_id,
-      T_IMP_FAV.tweet_id,
-      T_IMP_FAV.impressed,
-      T_IMP_FAV.favorited,
+  elonng_w_uii AS (
+    SelonLelonCT
+      T_IMP_FAV.uselonr_id,
+      T_IMP_FAV.twelonelont_id,
+      T_IMP_FAV.imprelonsselond,
+      T_IMP_FAV.favoritelond,
       T_IMP_FAV.minTsMilli,
-      T_IMP_FAV.is_oon_eng,
+      T_IMP_FAV.is_oon_elonng,
 
-      IIKF.clusterId,
-      IIKF.logFavScore,
-      IIKF.logfavScoreClusterNormalizedOnly,
-      IIKF.uii_cluster_rank_logfavscore,
-      IIKF.uii_cluster_rank_logfavscoreclusternormalized,
-    FROM extended_eligible_eng_data T_IMP_FAV, vars
-    INNER JOIN iikf
-      ON T_IMP_FAV.user_id = IIKF.user_id
-    WHERE
-        T_IMP_FAV.impressed
+      IIKF.clustelonrId,
+      IIKF.logFavScorelon,
+      IIKF.logfavScorelonClustelonrNormalizelondOnly,
+      IIKF.uii_clustelonr_rank_logfavscorelon,
+      IIKF.uii_clustelonr_rank_logfavscorelonclustelonrnormalizelond,
+    FROM elonxtelonndelond_elonligiblelon_elonng_data T_IMP_FAV, vars
+    INNelonR JOIN iikf
+      ON T_IMP_FAV.uselonr_id = IIKF.uselonr_id
+    WHelonRelon
+        T_IMP_FAV.imprelonsselond
   ),
-  -- step 3: Calculate tweet embedding
-  tweet_cluster_agg AS (
-    SELECT
-      tweet_id,
-      clusterId,
+  -- stelonp 3: Calculatelon twelonelont elonmbelondding
+  twelonelont_clustelonr_agg AS (
+    SelonLelonCT
+      twelonelont_id,
+      clustelonrId,
 
-      SUM(IF(impressed, logFavScore, 0)) denom_logFavScore,
-      SUM(IF(favorited, logFavScore, 0)) nom_logFavScore,
+      SUM(IF(imprelonsselond, logFavScorelon, 0)) delonnom_logFavScorelon,
+      SUM(IF(favoritelond, logFavScorelon, 0)) nom_logFavScorelon,
 
-      COUNTIF(impressed) n_imps,
-      COUNTIF(favorited) n_favs,
+      COUNTIF(imprelonsselond) n_imps,
+      COUNTIF(favoritelond) n_favs,
 
-      COUNTIF(impressed AND uii_cluster_rank_logfavscore <= 5) n_imps_at_5,
-      COUNTIF(favorited AND uii_cluster_rank_logfavscore <= 5) n_favs_at_5,
+      COUNTIF(imprelonsselond AND uii_clustelonr_rank_logfavscorelon <= 5) n_imps_at_5,
+      COUNTIF(favoritelond AND uii_clustelonr_rank_logfavscorelon <= 5) n_favs_at_5,
 
-      COUNTIF(favorited AND uii_cluster_rank_logfavscore <= 5 AND is_oon_eng) n_oon_favs_at_5,
-      COUNTIF(impressed AND uii_cluster_rank_logfavscore <= 5 AND is_oon_eng) n_oon_imps_at_5,
+      COUNTIF(favoritelond AND uii_clustelonr_rank_logfavscorelon <= 5 AND is_oon_elonng) n_oon_favs_at_5,
+      COUNTIF(imprelonsselond AND uii_clustelonr_rank_logfavscorelon <= 5 AND is_oon_elonng) n_oon_imps_at_5,
 
-      SUM(IF(favorited AND uii_cluster_rank_logfavscore <= 5, 1, 0) * POW(0.5, (currentTs - minTsMilli) / vars.halfLife)) AS decayed_n_favs_at_5,
-      SUM(IF(impressed AND uii_cluster_rank_logfavscore <= 5, 1, 0) * POW(0.5, (currentTs - minTsMilli) / vars.halfLife)) AS decayed_n_imps_at_5,
+      SUM(IF(favoritelond AND uii_clustelonr_rank_logfavscorelon <= 5, 1, 0) * POW(0.5, (currelonntTs - minTsMilli) / vars.halfLifelon)) AS deloncayelond_n_favs_at_5,
+      SUM(IF(imprelonsselond AND uii_clustelonr_rank_logfavscorelon <= 5, 1, 0) * POW(0.5, (currelonntTs - minTsMilli) / vars.halfLifelon)) AS deloncayelond_n_imps_at_5,
 
-      SUM(IF(favorited, logfavScoreClusterNormalizedOnly, 0) * POW(0.5, (currentTs - minTsMilli) / vars.halfLife)) AS dec_sum_logfavScoreClusterNormalizedOnly,
+      SUM(IF(favoritelond, logfavScorelonClustelonrNormalizelondOnly, 0) * POW(0.5, (currelonntTs - minTsMilli) / vars.halfLifelon)) AS delonc_sum_logfavScorelonClustelonrNormalizelondOnly,
 
       MIN(minTsMilli) minTsMilli,
 
-    FROM eng_w_uii, vars
+    FROM elonng_w_uii, vars
     GROUP BY 1, 2
   ),
-  tweet_cluster_intermediate AS (
-    SELECT
-      tweet_id,
-      clusterId,
+  twelonelont_clustelonr_intelonrmelondiatelon AS (
+    SelonLelonCT
+      twelonelont_id,
+      clustelonrId,
       minTsMilli,
 
       n_imps,
@@ -215,66 +215,66 @@ WITH vars AS (
       n_imps_at_5,
       n_oon_favs_at_5,
       n_oon_imps_at_5,
-      decayed_n_favs_at_5,
-      decayed_n_imps_at_5,
+      deloncayelond_n_favs_at_5,
+      deloncayelond_n_imps_at_5,
 
-      denom_logFavScore,
-      nom_logFavScore,
+      delonnom_logFavScorelon,
+      nom_logFavScorelon,
 
-      dec_sum_logfavScoreClusterNormalizedOnly,
+      delonc_sum_logfavScorelonClustelonrNormalizelondOnly,
 
-      SAFE_DIVIDE(n_favs_at_5, n_imps_at_5) AS ftr_at_5,
+      SAFelon_DIVIDelon(n_favs_at_5, n_imps_at_5) AS ftr_at_5,
 
-      SAFE_DIVIDE(n_oon_favs_at_5,  n_oon_imps_at_5) AS ftr_oon_at_5,
+      SAFelon_DIVIDelon(n_oon_favs_at_5,  n_oon_imps_at_5) AS ftr_oon_at_5,
 
-      row_number() OVER (PARTITION BY tweet_id ORDER BY nom_logFavScore DESC) cluster_nom_logFavScore_ranking,
-      row_number() OVER (PARTITION BY tweet_id ORDER BY dec_sum_logfavScoreClusterNormalizedOnly DESC) cluster_decSumLogFavClusterNormalized_ranking,
-    FROM tweet_cluster_agg
+      row_numbelonr() OVelonR (PARTITION BY twelonelont_id ORDelonR BY nom_logFavScorelon DelonSC) clustelonr_nom_logFavScorelon_ranking,
+      row_numbelonr() OVelonR (PARTITION BY twelonelont_id ORDelonR BY delonc_sum_logfavScorelonClustelonrNormalizelondOnly DelonSC) clustelonr_deloncSumLogFavClustelonrNormalizelond_ranking,
+    FROM twelonelont_clustelonr_agg
   ),
-  tweet_e AS (
-    SELECT
-      tweet_id,
+  twelonelont_elon AS (
+    SelonLelonCT
+      twelonelont_id,
 
-      MIN(minTsMilli) first_serve_millis,
-      DATE(TIMESTAMP_MILLIS(MIN(minTsMilli))) date_first_serve,
-
-      ARRAY_AGG(STRUCT(
-          clusterId,
-          -- the division by MAX_EXPONENT is to avoid overflow operation
-          ftr_at_5 * (2 / (1+EXP(-1* (decayed_n_favs_at_5/1000))) - 1) * IF(cluster_decSumLogFavClusterNormalized_ranking > MAX_EXPONENT, 0, 1.0/(POW(1.1, cluster_decSumLogFavClusterNormalized_ranking-1))) AS ftrat5_decayed_pop_bias_1000_rank_decay_1_1
-      ) ORDER BY ftr_at_5 * (2 / (1+EXP(-1* (decayed_n_favs_at_5/1000))) - 1) * IF(cluster_decSumLogFavClusterNormalized_ranking > MAX_EXPONENT, 0, 1.0/(POW(1.1, cluster_decSumLogFavClusterNormalized_ranking-1))) DESC LIMIT {TWEET_EMBEDDING_LENGTH}) ftrat5_decayed_pop_bias_1000_rank_decay_1_1_embedding,
+      MIN(minTsMilli) first_selonrvelon_millis,
+      DATelon(TIMelonSTAMP_MILLIS(MIN(minTsMilli))) datelon_first_selonrvelon,
 
       ARRAY_AGG(STRUCT(
-          clusterId,
-          -- the division by MAX_EXPONENT is to avoid overflow operation
-          ftr_at_5 * (2 / (1+EXP(-1* (decayed_n_favs_at_5/10000))) - 1) * IF(cluster_decSumLogFavClusterNormalized_ranking > MAX_EXPONENT, 0, 1.0/(POW(1.1, cluster_decSumLogFavClusterNormalized_ranking-1))) AS ftrat5_decayed_pop_bias_10000_rank_decay_1_1
-      ) ORDER BY ftr_at_5 * (2 / (1+EXP(-1* (decayed_n_favs_at_5/1000))) - 1) * IF(cluster_decSumLogFavClusterNormalized_ranking > MAX_EXPONENT, 0, 1.0/(POW(1.1, cluster_decSumLogFavClusterNormalized_ranking-1))) DESC LIMIT {TWEET_EMBEDDING_LENGTH}) ftrat5_decayed_pop_bias_10000_rank_decay_1_1_embedding,
+          clustelonrId,
+          -- thelon division by MAX_elonXPONelonNT is to avoid ovelonrflow opelonration
+          ftr_at_5 * (2 / (1+elonXP(-1* (deloncayelond_n_favs_at_5/1000))) - 1) * IF(clustelonr_deloncSumLogFavClustelonrNormalizelond_ranking > MAX_elonXPONelonNT, 0, 1.0/(POW(1.1, clustelonr_deloncSumLogFavClustelonrNormalizelond_ranking-1))) AS ftrat5_deloncayelond_pop_bias_1000_rank_deloncay_1_1
+      ) ORDelonR BY ftr_at_5 * (2 / (1+elonXP(-1* (deloncayelond_n_favs_at_5/1000))) - 1) * IF(clustelonr_deloncSumLogFavClustelonrNormalizelond_ranking > MAX_elonXPONelonNT, 0, 1.0/(POW(1.1, clustelonr_deloncSumLogFavClustelonrNormalizelond_ranking-1))) DelonSC LIMIT {TWelonelonT_elonMBelonDDING_LelonNGTH}) ftrat5_deloncayelond_pop_bias_1000_rank_deloncay_1_1_elonmbelondding,
 
       ARRAY_AGG(STRUCT(
-          clusterId,
-          -- the division by MAX_EXPONENT is to avoid overflow operation
-          ftr_oon_at_5 * (2 / (1+EXP(-1* (decayed_n_favs_at_5/1000))) - 1) * IF(cluster_nom_logFavScore_ranking > MAX_EXPONENT, 0, 1.0/(POW(1.1, cluster_nom_logFavScore_ranking-1))) AS oon_ftrat5_decayed_pop_bias_1000_rank_decay
-      ) ORDER BY ftr_oon_at_5 * (2 / (1+EXP(-1* (decayed_n_favs_at_5/1000))) - 1) * IF(cluster_nom_logFavScore_ranking > MAX_EXPONENT, 0, 1.0/(POW(1.1, cluster_nom_logFavScore_ranking-1))) DESC LIMIT {TWEET_EMBEDDING_LENGTH}) oon_ftrat5_decayed_pop_bias_1000_rank_decay_embedding,
+          clustelonrId,
+          -- thelon division by MAX_elonXPONelonNT is to avoid ovelonrflow opelonration
+          ftr_at_5 * (2 / (1+elonXP(-1* (deloncayelond_n_favs_at_5/10000))) - 1) * IF(clustelonr_deloncSumLogFavClustelonrNormalizelond_ranking > MAX_elonXPONelonNT, 0, 1.0/(POW(1.1, clustelonr_deloncSumLogFavClustelonrNormalizelond_ranking-1))) AS ftrat5_deloncayelond_pop_bias_10000_rank_deloncay_1_1
+      ) ORDelonR BY ftr_at_5 * (2 / (1+elonXP(-1* (deloncayelond_n_favs_at_5/1000))) - 1) * IF(clustelonr_deloncSumLogFavClustelonrNormalizelond_ranking > MAX_elonXPONelonNT, 0, 1.0/(POW(1.1, clustelonr_deloncSumLogFavClustelonrNormalizelond_ranking-1))) DelonSC LIMIT {TWelonelonT_elonMBelonDDING_LelonNGTH}) ftrat5_deloncayelond_pop_bias_10000_rank_deloncay_1_1_elonmbelondding,
 
       ARRAY_AGG(STRUCT(
-          clusterId,
-          dec_sum_logfavScoreClusterNormalizedOnly
-          ) ORDER BY dec_sum_logfavScoreClusterNormalizedOnly DESC LIMIT {TWEET_EMBEDDING_LENGTH}) dec_sum_logfavScoreClusterNormalizedOnly_embedding,
+          clustelonrId,
+          -- thelon division by MAX_elonXPONelonNT is to avoid ovelonrflow opelonration
+          ftr_oon_at_5 * (2 / (1+elonXP(-1* (deloncayelond_n_favs_at_5/1000))) - 1) * IF(clustelonr_nom_logFavScorelon_ranking > MAX_elonXPONelonNT, 0, 1.0/(POW(1.1, clustelonr_nom_logFavScorelon_ranking-1))) AS oon_ftrat5_deloncayelond_pop_bias_1000_rank_deloncay
+      ) ORDelonR BY ftr_oon_at_5 * (2 / (1+elonXP(-1* (deloncayelond_n_favs_at_5/1000))) - 1) * IF(clustelonr_nom_logFavScorelon_ranking > MAX_elonXPONelonNT, 0, 1.0/(POW(1.1, clustelonr_nom_logFavScorelon_ranking-1))) DelonSC LIMIT {TWelonelonT_elonMBelonDDING_LelonNGTH}) oon_ftrat5_deloncayelond_pop_bias_1000_rank_deloncay_elonmbelondding,
 
-    FROM tweet_cluster_intermediate, vars
+      ARRAY_AGG(STRUCT(
+          clustelonrId,
+          delonc_sum_logfavScorelonClustelonrNormalizelondOnly
+          ) ORDelonR BY delonc_sum_logfavScorelonClustelonrNormalizelondOnly DelonSC LIMIT {TWelonelonT_elonMBelonDDING_LelonNGTH}) delonc_sum_logfavScorelonClustelonrNormalizelondOnly_elonmbelondding,
+
+    FROM twelonelont_clustelonr_intelonrmelondiatelon, vars
     GROUP BY 1
   ),
-  tweet_e_unnest AS (
-    SELECT
-        tweet_id AS tweetId,
-        clusterToScores.clusterId AS clusterId,
-        clusterToScores.{SCORE_KEY} tweetScore
-    FROM tweet_e, UNNEST({SCORE_COLUMN}) clusterToScores
-    WHERE clusterToScores.{SCORE_KEY} IS NOT NULL
-      AND clusterToScores.{SCORE_KEY} > 0
+  twelonelont_elon_unnelonst AS (
+    SelonLelonCT
+        twelonelont_id AS twelonelontId,
+        clustelonrToScorelons.clustelonrId AS clustelonrId,
+        clustelonrToScorelons.{SCORelon_KelonY} twelonelontScorelon
+    FROM twelonelont_elon, UNNelonST({SCORelon_COLUMN}) clustelonrToScorelons
+    WHelonRelon clustelonrToScorelons.{SCORelon_KelonY} IS NOT NULL
+      AND clustelonrToScorelons.{SCORelon_KelonY} > 0
   )
-  SELECT
-    tweetId,
-    clusterId,
-    tweetScore
-  FROM tweet_e_unnest
+  SelonLelonCT
+    twelonelontId,
+    clustelonrId,
+    twelonelontScorelon
+  FROM twelonelont_elon_unnelonst

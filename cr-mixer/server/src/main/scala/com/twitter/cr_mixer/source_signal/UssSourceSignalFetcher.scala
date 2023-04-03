@@ -1,160 +1,160 @@
-package com.twitter.cr_mixer.source_signal
+packagelon com.twittelonr.cr_mixelonr.sourcelon_signal
 
-import com.twitter.cr_mixer.config.TimeoutConfig
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.cr_mixer.model.SourceInfo
-import com.twitter.cr_mixer.thriftscala.SourceType
-import com.twitter.cr_mixer.source_signal.SourceFetcher.FetcherQuery
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.storehaus.ReadableStore
-import com.twitter.usersignalservice.thriftscala.{Signal => UssSignal}
-import com.twitter.usersignalservice.thriftscala.SignalType
-import com.twitter.frigate.common.util.StatsUtil.Size
-import com.twitter.frigate.common.util.StatsUtil.Success
-import com.twitter.frigate.common.util.StatsUtil.Empty
-import com.twitter.util.Future
-import com.twitter.util.Time
-import javax.inject.Singleton
-import javax.inject.Inject
-import javax.inject.Named
+import com.twittelonr.cr_mixelonr.config.TimelonoutConfig
+import com.twittelonr.cr_mixelonr.modelonl.ModulelonNamelons
+import com.twittelonr.cr_mixelonr.modelonl.SourcelonInfo
+import com.twittelonr.cr_mixelonr.thriftscala.SourcelonTypelon
+import com.twittelonr.cr_mixelonr.sourcelon_signal.SourcelonFelontchelonr.FelontchelonrQuelonry
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.storelonhaus.RelonadablelonStorelon
+import com.twittelonr.uselonrsignalselonrvicelon.thriftscala.{Signal => UssSignal}
+import com.twittelonr.uselonrsignalselonrvicelon.thriftscala.SignalTypelon
+import com.twittelonr.frigatelon.common.util.StatsUtil.Sizelon
+import com.twittelonr.frigatelon.common.util.StatsUtil.Succelonss
+import com.twittelonr.frigatelon.common.util.StatsUtil.elonmpty
+import com.twittelonr.util.Futurelon
+import com.twittelonr.util.Timelon
+import javax.injelonct.Singlelonton
+import javax.injelonct.Injelonct
+import javax.injelonct.Namelond
 
-@Singleton
-case class UssSourceSignalFetcher @Inject() (
-  @Named(ModuleNames.UssStore) ussStore: ReadableStore[UssStore.Query, Seq[
-    (SignalType, Seq[UssSignal])
+@Singlelonton
+caselon class UssSourcelonSignalFelontchelonr @Injelonct() (
+  @Namelond(ModulelonNamelons.UssStorelon) ussStorelon: RelonadablelonStorelon[UssStorelon.Quelonry, Selonq[
+    (SignalTypelon, Selonq[UssSignal])
   ]],
-  override val timeoutConfig: TimeoutConfig,
-  globalStats: StatsReceiver)
-    extends SourceSignalFetcher {
+  ovelonrridelon val timelonoutConfig: TimelonoutConfig,
+  globalStats: StatsReloncelonivelonr)
+    elonxtelonnds SourcelonSignalFelontchelonr {
 
-  override protected val stats: StatsReceiver = globalStats.scope(identifier)
-  override type SignalConvertType = UssSignal
+  ovelonrridelon protelonctelond val stats: StatsReloncelonivelonr = globalStats.scopelon(idelonntifielonr)
+  ovelonrridelon typelon SignalConvelonrtTypelon = UssSignal
 
-  // always enable USS call. We have fine-grained FS to decider which signal to fetch
-  override def isEnabled(query: FetcherQuery): Boolean = true
+  // always elonnablelon USS call. Welon havelon finelon-grainelond FS to deloncidelonr which signal to felontch
+  ovelonrridelon delonf iselonnablelond(quelonry: FelontchelonrQuelonry): Boolelonan = truelon
 
-  override def fetchAndProcess(
-    query: FetcherQuery,
-  ): Future[Option[Seq[SourceInfo]]] = {
-    // Fetch raw signals
-    val rawSignals = ussStore.get(UssStore.Query(query.userId, query.params, query.product)).map {
+  ovelonrridelon delonf felontchAndProcelonss(
+    quelonry: FelontchelonrQuelonry,
+  ): Futurelon[Option[Selonq[SourcelonInfo]]] = {
+    // Felontch raw signals
+    val rawSignals = ussStorelon.gelont(UssStorelon.Quelonry(quelonry.uselonrId, quelonry.params, quelonry.product)).map {
       _.map {
         _.map {
-          case (signalType, signals) =>
-            trackUssSignalStatsPerSignalType(query, signalType, signals)
-            (signalType, signals)
+          caselon (signalTypelon, signals) =>
+            trackUssSignalStatsPelonrSignalTypelon(quelonry, signalTypelon, signals)
+            (signalTypelon, signals)
         }
       }
     }
 
     /**
-     * Process signals:
-     * Transform a Seq of USS Signals with signalType specified to a Seq of SourceInfo
-     * We do case match to make sure the SignalType can correctly map to a SourceType defined in CrMixer
-     * and it should be simplified.
+     * Procelonss signals:
+     * Transform a Selonq of USS Signals with signalTypelon speloncifielond to a Selonq of SourcelonInfo
+     * Welon do caselon match to makelon surelon thelon SignalTypelon can correlonctly map to a SourcelonTypelon delonfinelond in CrMixelonr
+     * and it should belon simplifielond.
      */
     rawSignals.map {
-      _.map { nestedSignal =>
-        val sourceInfoList = nestedSignal.flatMap {
-          case (signalType, ussSignals) =>
-            signalType match {
-              case SignalType.TweetFavorite =>
-                convertSourceInfo(sourceType = SourceType.TweetFavorite, signals = ussSignals)
-              case SignalType.Retweet =>
-                convertSourceInfo(sourceType = SourceType.Retweet, signals = ussSignals)
-              case SignalType.Reply =>
-                convertSourceInfo(sourceType = SourceType.Reply, signals = ussSignals)
-              case SignalType.OriginalTweet =>
-                convertSourceInfo(sourceType = SourceType.OriginalTweet, signals = ussSignals)
-              case SignalType.AccountFollow =>
-                convertSourceInfo(sourceType = SourceType.UserFollow, signals = ussSignals)
-              case SignalType.RepeatedProfileVisit180dMinVisit6V1 |
-                  SignalType.RepeatedProfileVisit90dMinVisit6V1 |
-                  SignalType.RepeatedProfileVisit14dMinVisit2V1 =>
-                convertSourceInfo(
-                  sourceType = SourceType.UserRepeatedProfileVisit,
+      _.map { nelonstelondSignal =>
+        val sourcelonInfoList = nelonstelondSignal.flatMap {
+          caselon (signalTypelon, ussSignals) =>
+            signalTypelon match {
+              caselon SignalTypelon.TwelonelontFavoritelon =>
+                convelonrtSourcelonInfo(sourcelonTypelon = SourcelonTypelon.TwelonelontFavoritelon, signals = ussSignals)
+              caselon SignalTypelon.Relontwelonelont =>
+                convelonrtSourcelonInfo(sourcelonTypelon = SourcelonTypelon.Relontwelonelont, signals = ussSignals)
+              caselon SignalTypelon.Relonply =>
+                convelonrtSourcelonInfo(sourcelonTypelon = SourcelonTypelon.Relonply, signals = ussSignals)
+              caselon SignalTypelon.OriginalTwelonelont =>
+                convelonrtSourcelonInfo(sourcelonTypelon = SourcelonTypelon.OriginalTwelonelont, signals = ussSignals)
+              caselon SignalTypelon.AccountFollow =>
+                convelonrtSourcelonInfo(sourcelonTypelon = SourcelonTypelon.UselonrFollow, signals = ussSignals)
+              caselon SignalTypelon.RelonpelonatelondProfilelonVisit180dMinVisit6V1 |
+                  SignalTypelon.RelonpelonatelondProfilelonVisit90dMinVisit6V1 |
+                  SignalTypelon.RelonpelonatelondProfilelonVisit14dMinVisit2V1 =>
+                convelonrtSourcelonInfo(
+                  sourcelonTypelon = SourcelonTypelon.UselonrRelonpelonatelondProfilelonVisit,
                   signals = ussSignals)
-              case SignalType.NotificationOpenAndClickV1 =>
-                convertSourceInfo(sourceType = SourceType.NotificationClick, signals = ussSignals)
-              case SignalType.TweetShareV1 =>
-                convertSourceInfo(sourceType = SourceType.TweetShare, signals = ussSignals)
-              case SignalType.RealGraphOon =>
-                convertSourceInfo(sourceType = SourceType.RealGraphOon, signals = ussSignals)
-              case SignalType.GoodTweetClick | SignalType.GoodTweetClick5s |
-                  SignalType.GoodTweetClick10s | SignalType.GoodTweetClick30s =>
-                convertSourceInfo(sourceType = SourceType.GoodTweetClick, signals = ussSignals)
-              case SignalType.VideoView90dPlayback50V1 =>
-                convertSourceInfo(
-                  sourceType = SourceType.VideoTweetPlayback50,
+              caselon SignalTypelon.NotificationOpelonnAndClickV1 =>
+                convelonrtSourcelonInfo(sourcelonTypelon = SourcelonTypelon.NotificationClick, signals = ussSignals)
+              caselon SignalTypelon.TwelonelontSharelonV1 =>
+                convelonrtSourcelonInfo(sourcelonTypelon = SourcelonTypelon.TwelonelontSharelon, signals = ussSignals)
+              caselon SignalTypelon.RelonalGraphOon =>
+                convelonrtSourcelonInfo(sourcelonTypelon = SourcelonTypelon.RelonalGraphOon, signals = ussSignals)
+              caselon SignalTypelon.GoodTwelonelontClick | SignalTypelon.GoodTwelonelontClick5s |
+                  SignalTypelon.GoodTwelonelontClick10s | SignalTypelon.GoodTwelonelontClick30s =>
+                convelonrtSourcelonInfo(sourcelonTypelon = SourcelonTypelon.GoodTwelonelontClick, signals = ussSignals)
+              caselon SignalTypelon.VidelonoVielonw90dPlayback50V1 =>
+                convelonrtSourcelonInfo(
+                  sourcelonTypelon = SourcelonTypelon.VidelonoTwelonelontPlayback50,
                   signals = ussSignals)
-              case SignalType.VideoView90dQualityV1 =>
-                convertSourceInfo(
-                  sourceType = SourceType.VideoTweetQualityView,
+              caselon SignalTypelon.VidelonoVielonw90dQualityV1 =>
+                convelonrtSourcelonInfo(
+                  sourcelonTypelon = SourcelonTypelon.VidelonoTwelonelontQualityVielonw,
                   signals = ussSignals)
-              case SignalType.GoodProfileClick | SignalType.GoodProfileClick20s |
-                  SignalType.GoodProfileClick30s =>
-                convertSourceInfo(sourceType = SourceType.GoodProfileClick, signals = ussSignals)
-              // negative signals
-              case SignalType.AccountBlock =>
-                convertSourceInfo(sourceType = SourceType.AccountBlock, signals = ussSignals)
-              case SignalType.AccountMute =>
-                convertSourceInfo(sourceType = SourceType.AccountMute, signals = ussSignals)
-              case SignalType.TweetReport =>
-                convertSourceInfo(sourceType = SourceType.TweetReport, signals = ussSignals)
-              case SignalType.TweetDontLike =>
-                convertSourceInfo(sourceType = SourceType.TweetDontLike, signals = ussSignals)
-              // Aggregated Signals
-              case SignalType.TweetBasedUnifiedEngagementWeightedSignal |
-                  SignalType.TweetBasedUnifiedUniformSignal =>
-                convertSourceInfo(sourceType = SourceType.TweetAggregation, signals = ussSignals)
-              case SignalType.ProducerBasedUnifiedEngagementWeightedSignal |
-                  SignalType.ProducerBasedUnifiedUniformSignal =>
-                convertSourceInfo(sourceType = SourceType.ProducerAggregation, signals = ussSignals)
+              caselon SignalTypelon.GoodProfilelonClick | SignalTypelon.GoodProfilelonClick20s |
+                  SignalTypelon.GoodProfilelonClick30s =>
+                convelonrtSourcelonInfo(sourcelonTypelon = SourcelonTypelon.GoodProfilelonClick, signals = ussSignals)
+              // nelongativelon signals
+              caselon SignalTypelon.AccountBlock =>
+                convelonrtSourcelonInfo(sourcelonTypelon = SourcelonTypelon.AccountBlock, signals = ussSignals)
+              caselon SignalTypelon.AccountMutelon =>
+                convelonrtSourcelonInfo(sourcelonTypelon = SourcelonTypelon.AccountMutelon, signals = ussSignals)
+              caselon SignalTypelon.TwelonelontRelonport =>
+                convelonrtSourcelonInfo(sourcelonTypelon = SourcelonTypelon.TwelonelontRelonport, signals = ussSignals)
+              caselon SignalTypelon.TwelonelontDontLikelon =>
+                convelonrtSourcelonInfo(sourcelonTypelon = SourcelonTypelon.TwelonelontDontLikelon, signals = ussSignals)
+              // Aggrelongatelond Signals
+              caselon SignalTypelon.TwelonelontBaselondUnifielondelonngagelonmelonntWelonightelondSignal |
+                  SignalTypelon.TwelonelontBaselondUnifielondUniformSignal =>
+                convelonrtSourcelonInfo(sourcelonTypelon = SourcelonTypelon.TwelonelontAggrelongation, signals = ussSignals)
+              caselon SignalTypelon.ProducelonrBaselondUnifielondelonngagelonmelonntWelonightelondSignal |
+                  SignalTypelon.ProducelonrBaselondUnifielondUniformSignal =>
+                convelonrtSourcelonInfo(sourcelonTypelon = SourcelonTypelon.ProducelonrAggrelongation, signals = ussSignals)
 
-              // Default
-              case _ =>
-                Seq.empty[SourceInfo]
+              // Delonfault
+              caselon _ =>
+                Selonq.elonmpty[SourcelonInfo]
             }
         }
-        sourceInfoList
+        sourcelonInfoList
       }
     }
   }
 
-  override def convertSourceInfo(
-    sourceType: SourceType,
-    signals: Seq[SignalConvertType]
-  ): Seq[SourceInfo] = {
+  ovelonrridelon delonf convelonrtSourcelonInfo(
+    sourcelonTypelon: SourcelonTypelon,
+    signals: Selonq[SignalConvelonrtTypelon]
+  ): Selonq[SourcelonInfo] = {
     signals.map { signal =>
-      SourceInfo(
-        sourceType = sourceType,
-        internalId = signal.targetInternalId.getOrElse(
-          throw new IllegalArgumentException(
-            s"${sourceType.toString} Signal does not have internalId")),
-        sourceEventTime =
-          if (signal.timestamp == 0L) None else Some(Time.fromMilliseconds(signal.timestamp))
+      SourcelonInfo(
+        sourcelonTypelon = sourcelonTypelon,
+        intelonrnalId = signal.targelontIntelonrnalId.gelontOrelonlselon(
+          throw nelonw IllelongalArgumelonntelonxcelonption(
+            s"${sourcelonTypelon.toString} Signal doelons not havelon intelonrnalId")),
+        sourcelonelonvelonntTimelon =
+          if (signal.timelonstamp == 0L) Nonelon elonlselon Somelon(Timelon.fromMilliselonconds(signal.timelonstamp))
       )
     }
   }
 
-  private def trackUssSignalStatsPerSignalType(
-    query: FetcherQuery,
-    signalType: SignalType,
-    ussSignals: Seq[UssSignal]
+  privatelon delonf trackUssSignalStatsPelonrSignalTypelon(
+    quelonry: FelontchelonrQuelonry,
+    signalTypelon: SignalTypelon,
+    ussSignals: Selonq[UssSignal]
   ): Unit = {
-    val productScopedStats = stats.scope(query.product.originalName)
-    val productUserStateScopedStats = productScopedStats.scope(query.userState.toString)
-    val productStats = productScopedStats.scope(signalType.toString)
-    val productUserStateStats = productUserStateScopedStats.scope(signalType.toString)
+    val productScopelondStats = stats.scopelon(quelonry.product.originalNamelon)
+    val productUselonrStatelonScopelondStats = productScopelondStats.scopelon(quelonry.uselonrStatelon.toString)
+    val productStats = productScopelondStats.scopelon(signalTypelon.toString)
+    val productUselonrStatelonStats = productUselonrStatelonScopelondStats.scopelon(signalTypelon.toString)
 
-    productStats.counter(Success).incr()
-    productUserStateStats.counter(Success).incr()
-    val size = ussSignals.size
-    productStats.stat(Size).add(size)
-    productUserStateStats.stat(Size).add(size)
-    if (size == 0) {
-      productStats.counter(Empty).incr()
-      productUserStateStats.counter(Empty).incr()
+    productStats.countelonr(Succelonss).incr()
+    productUselonrStatelonStats.countelonr(Succelonss).incr()
+    val sizelon = ussSignals.sizelon
+    productStats.stat(Sizelon).add(sizelon)
+    productUselonrStatelonStats.stat(Sizelon).add(sizelon)
+    if (sizelon == 0) {
+      productStats.countelonr(elonmpty).incr()
+      productUselonrStatelonStats.countelonr(elonmpty).incr()
     }
   }
 }

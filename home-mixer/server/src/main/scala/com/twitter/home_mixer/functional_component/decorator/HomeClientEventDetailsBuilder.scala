@@ -1,92 +1,92 @@
-package com.twitter.home_mixer.functional_component.decorator
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.deloncorator
 
-import com.twitter.bijection.Base64String
-import com.twitter.bijection.scrooge.BinaryScalaCodec
-import com.twitter.bijection.{Injection => Serializer}
-import com.twitter.finagle.tracing.Trace
-import com.twitter.home_mixer.model.HomeFeatures.CandidateSourceIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.PositionFeature
-import com.twitter.home_mixer.model.HomeFeatures.SuggestTypeFeature
-import com.twitter.joinkey.context.RequestJoinKeyContext
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventDetailsBuilder
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventDetails
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.TimelinesDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.suggests.controller_data.Home
-import com.twitter.suggests.controller_data.TweetTypeGenerator
-import com.twitter.suggests.controller_data.home_tweets.v1.{thriftscala => v1ht}
-import com.twitter.suggests.controller_data.home_tweets.{thriftscala => ht}
-import com.twitter.suggests.controller_data.thriftscala.ControllerData
-import com.twitter.suggests.controller_data.v2.thriftscala.{ControllerData => ControllerDataV2}
+import com.twittelonr.bijelonction.Baselon64String
+import com.twittelonr.bijelonction.scroogelon.BinaryScalaCodelonc
+import com.twittelonr.bijelonction.{Injelonction => Selonrializelonr}
+import com.twittelonr.finaglelon.tracing.Tracelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.CandidatelonSourcelonIdFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.PositionFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.SuggelonstTypelonFelonaturelon
+import com.twittelonr.joinkelony.contelonxt.RelonquelonstJoinKelonyContelonxt
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.melontadata.BaselonClielonntelonvelonntDelontailsBuildelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.ClielonntelonvelonntDelontails
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.TimelonlinelonsDelontails
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.suggelonsts.controllelonr_data.Homelon
+import com.twittelonr.suggelonsts.controllelonr_data.TwelonelontTypelonGelonnelonrator
+import com.twittelonr.suggelonsts.controllelonr_data.homelon_twelonelonts.v1.{thriftscala => v1ht}
+import com.twittelonr.suggelonsts.controllelonr_data.homelon_twelonelonts.{thriftscala => ht}
+import com.twittelonr.suggelonsts.controllelonr_data.thriftscala.ControllelonrData
+import com.twittelonr.suggelonsts.controllelonr_data.v2.thriftscala.{ControllelonrData => ControllelonrDataV2}
 
-object HomeClientEventDetailsBuilder {
-  implicit val ByteSerializer: Serializer[ControllerData, Array[Byte]] =
-    BinaryScalaCodec(ControllerData)
+objelonct HomelonClielonntelonvelonntDelontailsBuildelonr {
+  implicit val BytelonSelonrializelonr: Selonrializelonr[ControllelonrData, Array[Bytelon]] =
+    BinaryScalaCodelonc(ControllelonrData)
 
-  val ControllerDataSerializer: Serializer[ControllerData, String] =
-    Serializer.connect[ControllerData, Array[Byte], Base64String, String]
+  val ControllelonrDataSelonrializelonr: Selonrializelonr[ControllelonrData, String] =
+    Selonrializelonr.connelonct[ControllelonrData, Array[Bytelon], Baselon64String, String]
 
   /**
-   * define getRequestJoinId as a method(def) rather than a val because each new request
-   * needs to call the context to update the id.
+   * delonfinelon gelontRelonquelonstJoinId as a melonthod(delonf) rathelonr than a val beloncauselon elonach nelonw relonquelonst
+   * nelonelonds to call thelon contelonxt to updatelon thelon id.
    */
-  private def getRequestJoinId(): Option[Long] =
-    RequestJoinKeyContext.current.flatMap(_.requestJoinId)
+  privatelon delonf gelontRelonquelonstJoinId(): Option[Long] =
+    RelonquelonstJoinKelonyContelonxt.currelonnt.flatMap(_.relonquelonstJoinId)
 }
 
-case class HomeClientEventDetailsBuilder[-Query <: PipelineQuery, -Candidate <: UniversalNoun[Any]](
-) extends BaseClientEventDetailsBuilder[Query, Candidate]
-    with TweetTypeGenerator[FeatureMap] {
+caselon class HomelonClielonntelonvelonntDelontailsBuildelonr[-Quelonry <: PipelonlinelonQuelonry, -Candidatelon <: UnivelonrsalNoun[Any]](
+) elonxtelonnds BaselonClielonntelonvelonntDelontailsBuildelonr[Quelonry, Candidatelon]
+    with TwelonelontTypelonGelonnelonrator[FelonaturelonMap] {
 
-  import HomeClientEventDetailsBuilder._
+  import HomelonClielonntelonvelonntDelontailsBuildelonr._
 
-  override def apply(
-    query: Query,
-    candidate: Candidate,
-    candidateFeatures: FeatureMap
-  ): Option[ClientEventDetails] = {
+  ovelonrridelon delonf apply(
+    quelonry: Quelonry,
+    candidatelon: Candidatelon,
+    candidatelonFelonaturelons: FelonaturelonMap
+  ): Option[ClielonntelonvelonntDelontails] = {
 
-    val tweetTypesBitmaps = mkTweetTypesBitmaps(
-      Home.TweetTypeIdxMap,
-      HomeTweetTypePredicates.PredicateMap,
-      candidateFeatures)
+    val twelonelontTypelonsBitmaps = mkTwelonelontTypelonsBitmaps(
+      Homelon.TwelonelontTypelonIdxMap,
+      HomelonTwelonelontTypelonPrelondicatelons.PrelondicatelonMap,
+      candidatelonFelonaturelons)
 
-    val tweetTypesListBytes = mkItemTypesBitmapsV2(
-      Home.TweetTypeIdxMap,
-      HomeTweetTypePredicates.PredicateMap,
-      candidateFeatures)
+    val twelonelontTypelonsListBytelons = mkItelonmTypelonsBitmapsV2(
+      Homelon.TwelonelontTypelonIdxMap,
+      HomelonTwelonelontTypelonPrelondicatelons.PrelondicatelonMap,
+      candidatelonFelonaturelons)
 
-    val candidateSourceId =
-      candidateFeatures.getOrElse(CandidateSourceIdFeature, None).map(_.value.toByte)
+    val candidatelonSourcelonId =
+      candidatelonFelonaturelons.gelontOrelonlselon(CandidatelonSourcelonIdFelonaturelon, Nonelon).map(_.valuelon.toBytelon)
 
-    val homeTweetsControllerDataV1 = v1ht.HomeTweetsControllerData(
-      tweetTypesBitmap = tweetTypesBitmaps.getOrElse(0, 0L),
-      tweetTypesBitmapContinued1 = tweetTypesBitmaps.get(1),
-      candidateTweetSourceId = candidateSourceId,
-      traceId = Some(Trace.id.traceId.toLong),
-      injectedPosition = candidateFeatures.getOrElse(PositionFeature, None),
-      tweetTypesListBytes = Some(tweetTypesListBytes),
-      requestJoinId = getRequestJoinId(),
+    val homelonTwelonelontsControllelonrDataV1 = v1ht.HomelonTwelonelontsControllelonrData(
+      twelonelontTypelonsBitmap = twelonelontTypelonsBitmaps.gelontOrelonlselon(0, 0L),
+      twelonelontTypelonsBitmapContinuelond1 = twelonelontTypelonsBitmaps.gelont(1),
+      candidatelonTwelonelontSourcelonId = candidatelonSourcelonId,
+      tracelonId = Somelon(Tracelon.id.tracelonId.toLong),
+      injelonctelondPosition = candidatelonFelonaturelons.gelontOrelonlselon(PositionFelonaturelon, Nonelon),
+      twelonelontTypelonsListBytelons = Somelon(twelonelontTypelonsListBytelons),
+      relonquelonstJoinId = gelontRelonquelonstJoinId(),
     )
 
-    val serializedControllerData = ControllerDataSerializer(
-      ControllerData.V2(
-        ControllerDataV2.HomeTweets(ht.HomeTweetsControllerData.V1(homeTweetsControllerDataV1))))
+    val selonrializelondControllelonrData = ControllelonrDataSelonrializelonr(
+      ControllelonrData.V2(
+        ControllelonrDataV2.HomelonTwelonelonts(ht.HomelonTwelonelontsControllelonrData.V1(homelonTwelonelontsControllelonrDataV1))))
 
-    val clientEventDetails = ClientEventDetails(
-      conversationDetails = None,
-      timelinesDetails = Some(
-        TimelinesDetails(
-          injectionType = candidateFeatures.getOrElse(SuggestTypeFeature, None).map(_.name),
-          controllerData = Some(serializedControllerData),
-          sourceData = None)),
-      articleDetails = None,
-      liveEventDetails = None,
-      commerceDetails = None
+    val clielonntelonvelonntDelontails = ClielonntelonvelonntDelontails(
+      convelonrsationDelontails = Nonelon,
+      timelonlinelonsDelontails = Somelon(
+        TimelonlinelonsDelontails(
+          injelonctionTypelon = candidatelonFelonaturelons.gelontOrelonlselon(SuggelonstTypelonFelonaturelon, Nonelon).map(_.namelon),
+          controllelonrData = Somelon(selonrializelondControllelonrData),
+          sourcelonData = Nonelon)),
+      articlelonDelontails = Nonelon,
+      livelonelonvelonntDelontails = Nonelon,
+      commelonrcelonDelontails = Nonelon
     )
 
-    Some(clientEventDetails)
+    Somelon(clielonntelonvelonntDelontails)
   }
 }

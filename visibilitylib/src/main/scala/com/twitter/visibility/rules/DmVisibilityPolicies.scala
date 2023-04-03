@@ -1,130 +1,130 @@
-package com.twitter.visibility.rules
+packagelon com.twittelonr.visibility.rulelons
 
-import com.twitter.visibility.configapi.params.RuleParams
-import com.twitter.visibility.rules.DmConversationRules._
-import com.twitter.visibility.rules.DmEventRules._
-import com.twitter.visibility.rules.PolicyLevelRuleParams.ruleParams
+import com.twittelonr.visibility.configapi.params.RulelonParams
+import com.twittelonr.visibility.rulelons.DmConvelonrsationRulelons._
+import com.twittelonr.visibility.rulelons.DmelonvelonntRulelons._
+import com.twittelonr.visibility.rulelons.PolicyLelonvelonlRulelonParams.rulelonParams
 
-object SensitiveMediaSettingsDirectMessagesBaseRules {
-  val policyRuleParams = Map[Rule, PolicyLevelRuleParams](
-    NsfwHighPrecisionInterstitialAllUsersTweetLabelRule -> ruleParams(
-      RuleParams.EnableLegacySensitiveMediaDirectMessagesRulesParam),
-    GoreAndViolenceHighPrecisionAllUsersTweetLabelRule -> ruleParams(
-      RuleParams.EnableLegacySensitiveMediaDirectMessagesRulesParam),
-    NsfwReportedHeuristicsAllUsersTweetLabelRule -> ruleParams(
-      RuleParams.EnableLegacySensitiveMediaDirectMessagesRulesParam),
-    GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule -> ruleParams(
-      RuleParams.EnableLegacySensitiveMediaDirectMessagesRulesParam),
-    NsfwCardImageAllUsersTweetLabelRule -> ruleParams(
-      RuleParams.EnableLegacySensitiveMediaDirectMessagesRulesParam)
+objelonct SelonnsitivelonMelondiaSelonttingsDirelonctMelonssagelonsBaselonRulelons {
+  val policyRulelonParams = Map[Rulelon, PolicyLelonvelonlRulelonParams](
+    NsfwHighPreloncisionIntelonrstitialAllUselonrsTwelonelontLabelonlRulelon -> rulelonParams(
+      RulelonParams.elonnablelonLelongacySelonnsitivelonMelondiaDirelonctMelonssagelonsRulelonsParam),
+    GorelonAndViolelonncelonHighPreloncisionAllUselonrsTwelonelontLabelonlRulelon -> rulelonParams(
+      RulelonParams.elonnablelonLelongacySelonnsitivelonMelondiaDirelonctMelonssagelonsRulelonsParam),
+    NsfwRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlRulelon -> rulelonParams(
+      RulelonParams.elonnablelonLelongacySelonnsitivelonMelondiaDirelonctMelonssagelonsRulelonsParam),
+    GorelonAndViolelonncelonRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlRulelon -> rulelonParams(
+      RulelonParams.elonnablelonLelongacySelonnsitivelonMelondiaDirelonctMelonssagelonsRulelonsParam),
+    NsfwCardImagelonAllUselonrsTwelonelontLabelonlRulelon -> rulelonParams(
+      RulelonParams.elonnablelonLelongacySelonnsitivelonMelondiaDirelonctMelonssagelonsRulelonsParam)
   )
 }
 
-case object DirectMessagesPolicy
-    extends VisibilityPolicy(
-      tweetRules = TweetDetailPolicy.tweetRules.diff(LimitedEngagementBaseRules.tweetRules),
-      dmRules = Seq(
-        DeactivatedAuthorRule,
-        ErasedAuthorRule
+caselon objelonct DirelonctMelonssagelonsPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = TwelonelontDelontailPolicy.twelonelontRulelons.diff(LimitelondelonngagelonmelonntBaselonRulelons.twelonelontRulelons),
+      dmRulelons = Selonq(
+        DelonactivatelondAuthorRulelon,
+        elonraselondAuthorRulelon
       ),
-      policyRuleParams = SensitiveMediaSettingsDirectMessagesBaseRules.policyRuleParams
+      policyRulelonParams = SelonnsitivelonMelondiaSelonttingsDirelonctMelonssagelonsBaselonRulelons.policyRulelonParams
     )
 
-case object DirectMessagesMutedUsersPolicy
-    extends VisibilityPolicy(
-      userRules = Seq(SuspendedAuthorRule)
+caselon objelonct DirelonctMelonssagelonsMutelondUselonrsPolicy
+    elonxtelonnds VisibilityPolicy(
+      uselonrRulelons = Selonq(SuspelonndelondAuthorRulelon)
     )
 
-case object DirectMessagesSearchPolicy
-    extends VisibilityPolicy(
-      dmConversationRules = Seq(
-        DropDmConversationWithUndefinedConversationInfoRule,
-        DropDmConversationWithUndefinedConversationTimelineRule,
-        DropInaccessibleDmConversationRule,
-        DropEmptyDmConversationRule,
-        DropOneToOneDmConversationWithUnavailableParticipantsRule
+caselon objelonct DirelonctMelonssagelonsSelonarchPolicy
+    elonxtelonnds VisibilityPolicy(
+      dmConvelonrsationRulelons = Selonq(
+        DropDmConvelonrsationWithUndelonfinelondConvelonrsationInfoRulelon,
+        DropDmConvelonrsationWithUndelonfinelondConvelonrsationTimelonlinelonRulelon,
+        DropInaccelonssiblelonDmConvelonrsationRulelon,
+        DropelonmptyDmConvelonrsationRulelon,
+        DropOnelonToOnelonDmConvelonrsationWithUnavailablelonParticipantsRulelon
       ),
-      dmEventRules = Seq(
-        InaccessibleDmEventDropRule,
-        HiddenAndDeletedDmEventDropRule,
-        MessageCreateEventWithUnavailableSenderDropRule),
-      userRules = Seq(ErasedAuthorRule, DeactivatedAuthorRule, SuspendedAuthorRule),
-      tweetRules =
-        Seq(ViewerBlocksAuthorRule, ViewerMutesAuthorRule) ++ TweetDetailPolicy.tweetRules.diff(
-          LimitedEngagementBaseRules.tweetRules),
-      policyRuleParams = SensitiveMediaSettingsDirectMessagesBaseRules.policyRuleParams
+      dmelonvelonntRulelons = Selonq(
+        InaccelonssiblelonDmelonvelonntDropRulelon,
+        HiddelonnAndDelonlelontelondDmelonvelonntDropRulelon,
+        MelonssagelonCrelonatelonelonvelonntWithUnavailablelonSelonndelonrDropRulelon),
+      uselonrRulelons = Selonq(elonraselondAuthorRulelon, DelonactivatelondAuthorRulelon, SuspelonndelondAuthorRulelon),
+      twelonelontRulelons =
+        Selonq(VielonwelonrBlocksAuthorRulelon, VielonwelonrMutelonsAuthorRulelon) ++ TwelonelontDelontailPolicy.twelonelontRulelons.diff(
+          LimitelondelonngagelonmelonntBaselonRulelons.twelonelontRulelons),
+      policyRulelonParams = SelonnsitivelonMelondiaSelonttingsDirelonctMelonssagelonsBaselonRulelons.policyRulelonParams
     )
 
-case object DirectMessagesPinnedPolicy
-    extends VisibilityPolicy(
-      dmConversationRules = Seq(
-        DropDmConversationWithUndefinedConversationInfoRule,
-        DropDmConversationWithUndefinedConversationTimelineRule,
-        DropInaccessibleDmConversationRule,
-        DropEmptyDmConversationRule,
-        DropOneToOneDmConversationWithUnavailableParticipantsRule
+caselon objelonct DirelonctMelonssagelonsPinnelondPolicy
+    elonxtelonnds VisibilityPolicy(
+      dmConvelonrsationRulelons = Selonq(
+        DropDmConvelonrsationWithUndelonfinelondConvelonrsationInfoRulelon,
+        DropDmConvelonrsationWithUndelonfinelondConvelonrsationTimelonlinelonRulelon,
+        DropInaccelonssiblelonDmConvelonrsationRulelon,
+        DropelonmptyDmConvelonrsationRulelon,
+        DropOnelonToOnelonDmConvelonrsationWithUnavailablelonParticipantsRulelon
       ),
-      dmEventRules = Seq(
-        InaccessibleDmEventDropRule,
-        HiddenAndDeletedDmEventDropRule,
-        MessageCreateEventWithUnavailableSenderDropRule),
-      userRules = Seq(ErasedAuthorRule, DeactivatedAuthorRule, SuspendedAuthorRule),
-      tweetRules =
-        Seq(ViewerBlocksAuthorRule, ViewerMutesAuthorRule) ++ TweetDetailPolicy.tweetRules.diff(
-          LimitedEngagementBaseRules.tweetRules),
-      policyRuleParams = SensitiveMediaSettingsDirectMessagesBaseRules.policyRuleParams
+      dmelonvelonntRulelons = Selonq(
+        InaccelonssiblelonDmelonvelonntDropRulelon,
+        HiddelonnAndDelonlelontelondDmelonvelonntDropRulelon,
+        MelonssagelonCrelonatelonelonvelonntWithUnavailablelonSelonndelonrDropRulelon),
+      uselonrRulelons = Selonq(elonraselondAuthorRulelon, DelonactivatelondAuthorRulelon, SuspelonndelondAuthorRulelon),
+      twelonelontRulelons =
+        Selonq(VielonwelonrBlocksAuthorRulelon, VielonwelonrMutelonsAuthorRulelon) ++ TwelonelontDelontailPolicy.twelonelontRulelons.diff(
+          LimitelondelonngagelonmelonntBaselonRulelons.twelonelontRulelons),
+      policyRulelonParams = SelonnsitivelonMelondiaSelonttingsDirelonctMelonssagelonsBaselonRulelons.policyRulelonParams
     )
 
-case object DirectMessagesConversationListPolicy
-    extends VisibilityPolicy(
-      dmConversationRules = Seq(
-        DropDmConversationWithUndefinedConversationInfoRule,
-        DropDmConversationWithUndefinedConversationTimelineRule,
-        DropInaccessibleDmConversationRule,
-        DropEmptyDmConversationRule,
-        DropOneToOneDmConversationWithUnavailableParticipantsRule
+caselon objelonct DirelonctMelonssagelonsConvelonrsationListPolicy
+    elonxtelonnds VisibilityPolicy(
+      dmConvelonrsationRulelons = Selonq(
+        DropDmConvelonrsationWithUndelonfinelondConvelonrsationInfoRulelon,
+        DropDmConvelonrsationWithUndelonfinelondConvelonrsationTimelonlinelonRulelon,
+        DropInaccelonssiblelonDmConvelonrsationRulelon,
+        DropelonmptyDmConvelonrsationRulelon,
+        DropOnelonToOnelonDmConvelonrsationWithUnavailablelonParticipantsRulelon
       ),
-      userRules = Seq(ErasedAuthorRule, DeactivatedAuthorRule, SuspendedAuthorRule),
-      tweetRules =
-        Seq(ViewerBlocksAuthorRule, ViewerMutesAuthorRule) ++ TweetDetailPolicy.tweetRules.diff(
-          LimitedEngagementBaseRules.tweetRules),
-      policyRuleParams = SensitiveMediaSettingsDirectMessagesBaseRules.policyRuleParams
+      uselonrRulelons = Selonq(elonraselondAuthorRulelon, DelonactivatelondAuthorRulelon, SuspelonndelondAuthorRulelon),
+      twelonelontRulelons =
+        Selonq(VielonwelonrBlocksAuthorRulelon, VielonwelonrMutelonsAuthorRulelon) ++ TwelonelontDelontailPolicy.twelonelontRulelons.diff(
+          LimitelondelonngagelonmelonntBaselonRulelons.twelonelontRulelons),
+      policyRulelonParams = SelonnsitivelonMelondiaSelonttingsDirelonctMelonssagelonsBaselonRulelons.policyRulelonParams
     )
 
-case object DirectMessagesConversationTimelinePolicy
-    extends VisibilityPolicy(
-      dmEventRules = Seq(
-        InaccessibleDmEventDropRule,
-        HiddenAndDeletedDmEventDropRule,
-        MessageCreateEventWithUnavailableSenderDropRule),
-      userRules = Seq(ErasedAuthorRule, DeactivatedAuthorRule, SuspendedAuthorRule),
-      tweetRules =
-        Seq(ViewerBlocksAuthorRule, ViewerMutesAuthorRule) ++ TweetDetailPolicy.tweetRules.diff(
-          LimitedEngagementBaseRules.tweetRules),
-      policyRuleParams = SensitiveMediaSettingsDirectMessagesBaseRules.policyRuleParams
+caselon objelonct DirelonctMelonssagelonsConvelonrsationTimelonlinelonPolicy
+    elonxtelonnds VisibilityPolicy(
+      dmelonvelonntRulelons = Selonq(
+        InaccelonssiblelonDmelonvelonntDropRulelon,
+        HiddelonnAndDelonlelontelondDmelonvelonntDropRulelon,
+        MelonssagelonCrelonatelonelonvelonntWithUnavailablelonSelonndelonrDropRulelon),
+      uselonrRulelons = Selonq(elonraselondAuthorRulelon, DelonactivatelondAuthorRulelon, SuspelonndelondAuthorRulelon),
+      twelonelontRulelons =
+        Selonq(VielonwelonrBlocksAuthorRulelon, VielonwelonrMutelonsAuthorRulelon) ++ TwelonelontDelontailPolicy.twelonelontRulelons.diff(
+          LimitelondelonngagelonmelonntBaselonRulelons.twelonelontRulelons),
+      policyRulelonParams = SelonnsitivelonMelondiaSelonttingsDirelonctMelonssagelonsBaselonRulelons.policyRulelonParams
     )
 
-case object DirectMessagesInboxPolicy
-    extends VisibilityPolicy(
-      dmConversationRules = Seq(
-        DropDmConversationWithUndefinedConversationInfoRule,
-        DropDmConversationWithUndefinedConversationTimelineRule,
-        DropInaccessibleDmConversationRule,
-        DropEmptyDmConversationRule,
-        DropOneToOneDmConversationWithUnavailableParticipantsRule
+caselon objelonct DirelonctMelonssagelonsInboxPolicy
+    elonxtelonnds VisibilityPolicy(
+      dmConvelonrsationRulelons = Selonq(
+        DropDmConvelonrsationWithUndelonfinelondConvelonrsationInfoRulelon,
+        DropDmConvelonrsationWithUndelonfinelondConvelonrsationTimelonlinelonRulelon,
+        DropInaccelonssiblelonDmConvelonrsationRulelon,
+        DropelonmptyDmConvelonrsationRulelon,
+        DropOnelonToOnelonDmConvelonrsationWithUnavailablelonParticipantsRulelon
       ),
-      dmEventRules = Seq(
-        InaccessibleDmEventDropRule,
-        HiddenAndDeletedDmEventDropRule,
-        DmEventInOneToOneConversationWithUnavailableUserDropRule,
-        MessageCreateEventWithUnavailableSenderDropRule,
-        NonPerspectivalDmEventDropRule,
-        WelcomeMessageCreateEventOnlyVisibleToRecipientDropRule,
-        GroupEventInOneToOneConversationDropRule
+      dmelonvelonntRulelons = Selonq(
+        InaccelonssiblelonDmelonvelonntDropRulelon,
+        HiddelonnAndDelonlelontelondDmelonvelonntDropRulelon,
+        DmelonvelonntInOnelonToOnelonConvelonrsationWithUnavailablelonUselonrDropRulelon,
+        MelonssagelonCrelonatelonelonvelonntWithUnavailablelonSelonndelonrDropRulelon,
+        NonPelonrspelonctivalDmelonvelonntDropRulelon,
+        WelonlcomelonMelonssagelonCrelonatelonelonvelonntOnlyVisiblelonToReloncipielonntDropRulelon,
+        GroupelonvelonntInOnelonToOnelonConvelonrsationDropRulelon
       ),
-      userRules = Seq(ErasedAuthorRule, DeactivatedAuthorRule, SuspendedAuthorRule),
-      tweetRules =
-        Seq(ViewerBlocksAuthorRule, ViewerMutesAuthorRule) ++ TweetDetailPolicy.tweetRules.diff(
-          LimitedEngagementBaseRules.tweetRules),
-      policyRuleParams = SensitiveMediaSettingsDirectMessagesBaseRules.policyRuleParams
+      uselonrRulelons = Selonq(elonraselondAuthorRulelon, DelonactivatelondAuthorRulelon, SuspelonndelondAuthorRulelon),
+      twelonelontRulelons =
+        Selonq(VielonwelonrBlocksAuthorRulelon, VielonwelonrMutelonsAuthorRulelon) ++ TwelonelontDelontailPolicy.twelonelontRulelons.diff(
+          LimitelondelonngagelonmelonntBaselonRulelons.twelonelontRulelons),
+      policyRulelonParams = SelonnsitivelonMelondiaSelonttingsDirelonctMelonssagelonsBaselonRulelons.policyRulelonParams
     )

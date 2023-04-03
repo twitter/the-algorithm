@@ -1,116 +1,116 @@
-package com.twitter.ann.scalding.offline
+packagelon com.twittelonr.ann.scalding.offlinelon
 
-import com.twitter.core_workflows.user_model.thriftscala.CondensedUserState
-import com.twitter.cortex.ml.embeddings.common.{DataSourceManager, GraphEdge, Helpers, UserKind}
-import com.twitter.ml.featurestore.lib.UserId
-import com.twitter.entityembeddings.neighbors.thriftscala.{EntityKey, NearestNeighbors}
-import com.twitter.pluck.source.core_workflows.user_model.CondensedUserStateScalaDataset
-import com.twitter.scalding._
-import com.twitter.scalding.typed.TypedPipe
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.usersource.snapshot.flat.UsersourceFlatScalaDataset
-import com.twitter.usersource.snapshot.flat.thriftscala.FlatUser
+import com.twittelonr.corelon_workflows.uselonr_modelonl.thriftscala.CondelonnselondUselonrStatelon
+import com.twittelonr.cortelonx.ml.elonmbelonddings.common.{DataSourcelonManagelonr, Graphelondgelon, Helonlpelonrs, UselonrKind}
+import com.twittelonr.ml.felonaturelonstorelon.lib.UselonrId
+import com.twittelonr.elonntityelonmbelonddings.nelonighbors.thriftscala.{elonntityKelony, NelonarelonstNelonighbors}
+import com.twittelonr.pluck.sourcelon.corelon_workflows.uselonr_modelonl.CondelonnselondUselonrStatelonScalaDataselont
+import com.twittelonr.scalding._
+import com.twittelonr.scalding.typelond.TypelondPipelon
+import com.twittelonr.scalding_intelonrnal.dalv2.DAL
+import com.twittelonr.uselonrsourcelon.snapshot.flat.UselonrsourcelonFlatScalaDataselont
+import com.twittelonr.uselonrsourcelon.snapshot.flat.thriftscala.FlatUselonr
 
-case class ConsumerAssoc(consumerId: UserId, assoc: List[String])
+caselon class ConsumelonrAssoc(consumelonrId: UselonrId, assoc: List[String])
 
-object KnnDebug {
+objelonct KnnDelonbug {
 
-  def getConsumerAssociations(
-    graph: TypedPipe[GraphEdge[UserId, UserId]],
-    usernames: TypedPipe[(UserId, String)],
-    reducers: Int
-  ): TypedPipe[ConsumerAssoc] = {
+  delonf gelontConsumelonrAssociations(
+    graph: TypelondPipelon[Graphelondgelon[UselonrId, UselonrId]],
+    uselonrnamelons: TypelondPipelon[(UselonrId, String)],
+    relonducelonrs: Int
+  ): TypelondPipelon[ConsumelonrAssoc] = {
     graph
-      .groupBy(_.itemId)
-      .join(usernames).withReducers(reducers)
-      .values
+      .groupBy(_.itelonmId)
+      .join(uselonrnamelons).withRelonducelonrs(relonducelonrs)
+      .valuelons
       .map {
-        case (edge: GraphEdge[UserId, UserId], producerScreenName: String) =>
-          ConsumerAssoc(consumerId = edge.consumerId, assoc = List(producerScreenName))
+        caselon (elondgelon: Graphelondgelon[UselonrId, UselonrId], producelonrScrelonelonnNamelon: String) =>
+          ConsumelonrAssoc(consumelonrId = elondgelon.consumelonrId, assoc = List(producelonrScrelonelonnNamelon))
       }
-      .groupBy(_.consumerId).withReducers(reducers)
-      .reduce[ConsumerAssoc] {
-        case (uFollow1: ConsumerAssoc, uFollow2: ConsumerAssoc) =>
-          ConsumerAssoc(consumerId = uFollow1.consumerId, assoc = uFollow1.assoc ++ uFollow2.assoc)
+      .groupBy(_.consumelonrId).withRelonducelonrs(relonducelonrs)
+      .relonducelon[ConsumelonrAssoc] {
+        caselon (uFollow1: ConsumelonrAssoc, uFollow2: ConsumelonrAssoc) =>
+          ConsumelonrAssoc(consumelonrId = uFollow1.consumelonrId, assoc = uFollow1.assoc ++ uFollow2.assoc)
       }
-      .values
+      .valuelons
   }
 
   /**
-   * Write the neighbors and a set of follows to a tsv for easier analysis during debugging
-   * We take the set of users with between 25-50 follows and grab only those users
+   * Writelon thelon nelonighbors and a selont of follows to a tsv for elonasielonr analysis during delonbugging
+   * Welon takelon thelon selont of uselonrs with belontwelonelonn 25-50 follows and grab only thoselon uselonrs
    *
-   * This returns 4 strings of the form:
-   * consumerId, state, followUserName<f>followUserName<f>followUserName, neighborName<n>neighborName<n>neighborName
+   * This relonturns 4 strings of thelon form:
+   * consumelonrId, statelon, followUselonrNamelon<f>followUselonrNamelon<f>followUselonrNamelon, nelonighborNamelon<n>nelonighborNamelon<n>nelonighborNamelon
    */
-  def getDebugTable(
-    neighborsPipe: TypedPipe[(EntityKey, NearestNeighbors)],
+  delonf gelontDelonbugTablelon(
+    nelonighborsPipelon: TypelondPipelon[(elonntityKelony, NelonarelonstNelonighbors)],
     shards: Int,
-    reducers: Int,
+    relonducelonrs: Int,
     limit: Int = 10000,
-    userDataset: Option[TypedPipe[FlatUser]] = None,
-    followDataset: Option[TypedPipe[GraphEdge[UserId, UserId]]] = None,
-    consumerStatesDataset: Option[TypedPipe[CondensedUserState]] = None,
+    uselonrDataselont: Option[TypelondPipelon[FlatUselonr]] = Nonelon,
+    followDataselont: Option[TypelondPipelon[Graphelondgelon[UselonrId, UselonrId]]] = Nonelon,
+    consumelonrStatelonsDataselont: Option[TypelondPipelon[CondelonnselondUselonrStatelon]] = Nonelon,
     minFollows: Int = 25,
     maxFollows: Int = 50
   )(
-    implicit dateRange: DateRange
-  ): TypedPipe[(String, String, String, String)] = {
+    implicit datelonRangelon: DatelonRangelon
+  ): TypelondPipelon[(String, String, String, String)] = {
 
-    val usersourcePipe: TypedPipe[FlatUser] = userDataset
-      .getOrElse(DAL.readMostRecentSnapshot(UsersourceFlatScalaDataset, dateRange).toTypedPipe)
+    val uselonrsourcelonPipelon: TypelondPipelon[FlatUselonr] = uselonrDataselont
+      .gelontOrelonlselon(DAL.relonadMostReloncelonntSnapshot(UselonrsourcelonFlatScalaDataselont, datelonRangelon).toTypelondPipelon)
 
-    val followGraph: TypedPipe[GraphEdge[UserId, UserId]] = followDataset
-      .getOrElse(new DataSourceManager().getFollowGraph())
+    val followGraph: TypelondPipelon[Graphelondgelon[UselonrId, UselonrId]] = followDataselont
+      .gelontOrelonlselon(nelonw DataSourcelonManagelonr().gelontFollowGraph())
 
-    val consumerStates: TypedPipe[CondensedUserState] = consumerStatesDataset
-      .getOrElse(DAL.read(CondensedUserStateScalaDataset).toTypedPipe)
+    val consumelonrStatelons: TypelondPipelon[CondelonnselondUselonrStatelon] = consumelonrStatelonsDataselont
+      .gelontOrelonlselon(DAL.relonad(CondelonnselondUselonrStatelonScalaDataselont).toTypelondPipelon)
 
-    val usernames: TypedPipe[(UserId, String)] = usersourcePipe.flatMap { flatUser =>
-      (flatUser.screenName, flatUser.id) match {
-        case (Some(name: String), Some(userId: Long)) => Some((UserId(userId), name))
-        case _ => None
+    val uselonrnamelons: TypelondPipelon[(UselonrId, String)] = uselonrsourcelonPipelon.flatMap { flatUselonr =>
+      (flatUselonr.screlonelonnNamelon, flatUselonr.id) match {
+        caselon (Somelon(namelon: String), Somelon(uselonrId: Long)) => Somelon((UselonrId(uselonrId), namelon))
+        caselon _ => Nonelon
       }
     }.fork
 
-    val consumerFollows: TypedPipe[ConsumerAssoc] =
-      getConsumerAssociations(followGraph, usernames, reducers)
-        .filter { uFollow => (uFollow.assoc.size > minFollows && uFollow.assoc.size < maxFollows) }
+    val consumelonrFollows: TypelondPipelon[ConsumelonrAssoc] =
+      gelontConsumelonrAssociations(followGraph, uselonrnamelons, relonducelonrs)
+        .filtelonr { uFollow => (uFollow.assoc.sizelon > minFollows && uFollow.assoc.sizelon < maxFollows) }
 
-    val neighborGraph: TypedPipe[GraphEdge[UserId, UserId]] = neighborsPipe
+    val nelonighborGraph: TypelondPipelon[Graphelondgelon[UselonrId, UselonrId]] = nelonighborsPipelon
       .limit(limit)
       .flatMap {
-        case (entityKey: EntityKey, neighbors: NearestNeighbors) =>
-          Helpers.optionalToLong(entityKey.id) match {
-            case Some(entityId: Long) =>
-              neighbors.neighbors.flatMap { neighbor =>
-                Helpers
-                  .optionalToLong(neighbor.neighbor.id)
-                  .map { neighborId =>
-                    GraphEdge[UserId, UserId](
-                      consumerId = UserId(entityId),
-                      itemId = UserId(neighborId),
-                      weight = 1.0F)
+        caselon (elonntityKelony: elonntityKelony, nelonighbors: NelonarelonstNelonighbors) =>
+          Helonlpelonrs.optionalToLong(elonntityKelony.id) match {
+            caselon Somelon(elonntityId: Long) =>
+              nelonighbors.nelonighbors.flatMap { nelonighbor =>
+                Helonlpelonrs
+                  .optionalToLong(nelonighbor.nelonighbor.id)
+                  .map { nelonighborId =>
+                    Graphelondgelon[UselonrId, UselonrId](
+                      consumelonrId = UselonrId(elonntityId),
+                      itelonmId = UselonrId(nelonighborId),
+                      welonight = 1.0F)
                   }
               }
-            case None => List()
+            caselon Nonelon => List()
           }
       }
-    val consumerNeighbors: TypedPipe[ConsumerAssoc] =
-      getConsumerAssociations(neighborGraph, usernames, reducers)
+    val consumelonrNelonighbors: TypelondPipelon[ConsumelonrAssoc] =
+      gelontConsumelonrAssociations(nelonighborGraph, uselonrnamelons, relonducelonrs)
 
-    consumerFollows
-      .groupBy(_.consumerId)
-      .join(consumerStates.groupBy { consumer => UserId(consumer.uid) }).withReducers(reducers)
-      .join(consumerNeighbors.groupBy(_.consumerId)).withReducers(reducers)
-      .values
+    consumelonrFollows
+      .groupBy(_.consumelonrId)
+      .join(consumelonrStatelons.groupBy { consumelonr => UselonrId(consumelonr.uid) }).withRelonducelonrs(relonducelonrs)
+      .join(consumelonrNelonighbors.groupBy(_.consumelonrId)).withRelonducelonrs(relonducelonrs)
+      .valuelons
       .map {
-        case ((uFollow: ConsumerAssoc, state: CondensedUserState), uNeighbors: ConsumerAssoc) =>
+        caselon ((uFollow: ConsumelonrAssoc, statelon: CondelonnselondUselonrStatelon), uNelonighbors: ConsumelonrAssoc) =>
           (
-            UserKind.stringInjection(uFollow.consumerId),
-            state.state.toString,
+            UselonrKind.stringInjelonction(uFollow.consumelonrId),
+            statelon.statelon.toString,
             uFollow.assoc mkString "<f>",
-            uNeighbors.assoc mkString "<n>")
+            uNelonighbors.assoc mkString "<n>")
       }
       .shard(shards)
   }

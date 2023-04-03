@@ -1,57 +1,57 @@
-package com.twitter.product_mixer.component_library.candidate_source.social_graph
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.candidatelon_sourcelon.social_graph
 
-import com.twitter.product_mixer.component_library.model.candidate.CursorType
-import com.twitter.product_mixer.component_library.model.candidate.NextCursor
-import com.twitter.product_mixer.component_library.model.candidate.PreviousCursor
-import com.twitter.product_mixer.core.functional_component.candidate_source.strato.StratoKeyViewFetcherSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.socialgraph.thriftscala
-import com.twitter.socialgraph.thriftscala.IdsRequest
-import com.twitter.socialgraph.thriftscala.IdsResult
-import com.twitter.socialgraph.util.ByteBufferUtil
-import com.twitter.strato.client.Fetcher
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.CursorTypelon
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.NelonxtCursor
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.PrelonviousCursor
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.strato.StratoKelonyVielonwFelontchelonrSourcelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonSourcelonIdelonntifielonr
+import com.twittelonr.socialgraph.thriftscala
+import com.twittelonr.socialgraph.thriftscala.IdsRelonquelonst
+import com.twittelonr.socialgraph.thriftscala.IdsRelonsult
+import com.twittelonr.socialgraph.util.BytelonBuffelonrUtil
+import com.twittelonr.strato.clielonnt.Felontchelonr
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-sealed trait SocialgraphResponse
-case class SocialgraphResult(id: Long) extends SocialgraphResponse
-case class SocialgraphCursor(cursor: Long, cursorType: CursorType) extends SocialgraphResponse
+selonalelond trait SocialgraphRelonsponselon
+caselon class SocialgraphRelonsult(id: Long) elonxtelonnds SocialgraphRelonsponselon
+caselon class SocialgraphCursor(cursor: Long, cursorTypelon: CursorTypelon) elonxtelonnds SocialgraphRelonsponselon
 
-@Singleton
-class SocialgraphCandidateSource @Inject() (
-  override val fetcher: Fetcher[thriftscala.IdsRequest, Option[
-    thriftscala.RequestContext
-  ], thriftscala.IdsResult])
-    extends StratoKeyViewFetcherSource[
-      thriftscala.IdsRequest,
-      Option[thriftscala.RequestContext],
-      thriftscala.IdsResult,
-      SocialgraphResponse
+@Singlelonton
+class SocialgraphCandidatelonSourcelon @Injelonct() (
+  ovelonrridelon val felontchelonr: Felontchelonr[thriftscala.IdsRelonquelonst, Option[
+    thriftscala.RelonquelonstContelonxt
+  ], thriftscala.IdsRelonsult])
+    elonxtelonnds StratoKelonyVielonwFelontchelonrSourcelon[
+      thriftscala.IdsRelonquelonst,
+      Option[thriftscala.RelonquelonstContelonxt],
+      thriftscala.IdsRelonsult,
+      SocialgraphRelonsponselon
     ] {
 
-  override val identifier: CandidateSourceIdentifier = CandidateSourceIdentifier("Socialgraph")
+  ovelonrridelon val idelonntifielonr: CandidatelonSourcelonIdelonntifielonr = CandidatelonSourcelonIdelonntifielonr("Socialgraph")
 
-  override def stratoResultTransformer(
-    stratoKey: IdsRequest,
-    stratoResult: IdsResult
-  ): Seq[SocialgraphResponse] = {
-    val prevCursor =
-      SocialgraphCursor(ByteBufferUtil.toLong(stratoResult.pageResult.prevCursor), PreviousCursor)
-    /* When an end cursor is passed to Socialgraph,
-     * Socialgraph returns the start cursor. To prevent
-     * clients from circularly fetching the timeline again,
-     * if we see a start cursor returned from Socialgraph,
-     * we replace it with an end cursor.
+  ovelonrridelon delonf stratoRelonsultTransformelonr(
+    stratoKelony: IdsRelonquelonst,
+    stratoRelonsult: IdsRelonsult
+  ): Selonq[SocialgraphRelonsponselon] = {
+    val prelonvCursor =
+      SocialgraphCursor(BytelonBuffelonrUtil.toLong(stratoRelonsult.pagelonRelonsult.prelonvCursor), PrelonviousCursor)
+    /* Whelonn an elonnd cursor is passelond to Socialgraph,
+     * Socialgraph relonturns thelon start cursor. To prelonvelonnt
+     * clielonnts from circularly felontching thelon timelonlinelon again,
+     * if welon selonelon a start cursor relonturnelond from Socialgraph,
+     * welon relonplacelon it with an elonnd cursor.
      */
-    val nextCursor = ByteBufferUtil.toLong(stratoResult.pageResult.nextCursor) match {
-      case SocialgraphCursorConstants.StartCursor =>
-        SocialgraphCursor(SocialgraphCursorConstants.EndCursor, NextCursor)
-      case cursor => SocialgraphCursor(cursor, NextCursor)
+    val nelonxtCursor = BytelonBuffelonrUtil.toLong(stratoRelonsult.pagelonRelonsult.nelonxtCursor) match {
+      caselon SocialgraphCursorConstants.StartCursor =>
+        SocialgraphCursor(SocialgraphCursorConstants.elonndCursor, NelonxtCursor)
+      caselon cursor => SocialgraphCursor(cursor, NelonxtCursor)
     }
 
-    stratoResult.ids
+    stratoRelonsult.ids
       .map { id =>
-        SocialgraphResult(id)
-      } ++ Seq(nextCursor, prevCursor)
+        SocialgraphRelonsult(id)
+      } ++ Selonq(nelonxtCursor, prelonvCursor)
   }
 }

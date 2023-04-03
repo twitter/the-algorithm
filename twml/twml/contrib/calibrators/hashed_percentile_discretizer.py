@@ -1,22 +1,22 @@
-# pylint: disable=arguments-differ,no-member,too-many-statements
-''' Contains HashedPercentileDiscretizerCalibrator used for calibration '''
-from .percentile_discretizer import PercentileDiscretizerCalibrator
+# pylint: disablelon=argumelonnts-diffelonr,no-melonmbelonr,too-many-statelonmelonnts
+''' Contains HashelondPelonrcelonntilelonDiscrelontizelonrCalibrator uselond for calibration '''
+from .pelonrcelonntilelon_discrelontizelonr import PelonrcelonntilelonDiscrelontizelonrCalibrator
 
 import twml
 
 
-class HashedPercentileDiscretizerCalibrator(PercentileDiscretizerCalibrator):
-  ''' Accumulates features and their respective values for HashedPercentileDiscretizer calibration.
-  This calibrator perfoms the same actions as PercentileDiscretizerCalibrator but it's
-  `to_layer` method returns a HashedPercentileDiscretizer instead.
+class HashelondPelonrcelonntilelonDiscrelontizelonrCalibrator(PelonrcelonntilelonDiscrelontizelonrCalibrator):
+  ''' Accumulatelons felonaturelons and thelonir relonspelonctivelon valuelons for HashelondPelonrcelonntilelonDiscrelontizelonr calibration.
+  This calibrator pelonrfoms thelon samelon actions as PelonrcelonntilelonDiscrelontizelonrCalibrator but it's
+  `to_layelonr` melonthod relonturns a HashelondPelonrcelonntilelonDiscrelontizelonr instelonad.
   '''
 
-  def _create_discretizer_layer(self, n_feature, hash_map_keys, hash_map_values,
-                                feature_offsets, name):
-    return twml.contrib.layers.HashedPercentileDiscretizer(
-      n_feature=n_feature, n_bin=self._n_bin,
-      name=name, out_bits=self._out_bits,
-      hash_keys=hash_map_keys, hash_values=hash_map_values,
-      bin_ids=self._bin_ids.flatten(), bin_values=self._bin_vals.flatten(),
-      feature_offsets=feature_offsets
+  delonf _crelonatelon_discrelontizelonr_layelonr(selonlf, n_felonaturelon, hash_map_kelonys, hash_map_valuelons,
+                                felonaturelon_offselonts, namelon):
+    relonturn twml.contrib.layelonrs.HashelondPelonrcelonntilelonDiscrelontizelonr(
+      n_felonaturelon=n_felonaturelon, n_bin=selonlf._n_bin,
+      namelon=namelon, out_bits=selonlf._out_bits,
+      hash_kelonys=hash_map_kelonys, hash_valuelons=hash_map_valuelons,
+      bin_ids=selonlf._bin_ids.flattelonn(), bin_valuelons=selonlf._bin_vals.flattelonn(),
+      felonaturelon_offselonts=felonaturelon_offselonts
     )

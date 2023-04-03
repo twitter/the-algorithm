@@ -1,184 +1,184 @@
-package com.twitter.timelineranker.model
+packagelon com.twittelonr.timelonlinelonrankelonr.modelonl
 
-import com.twitter.search.earlybird.thriftscala.ThriftSearchResult
-import com.twitter.timelines.model.tweet.HydratedTweet
-import com.twitter.timelines.model.TweetId
-import com.twitter.timelines.model.UserId
-import com.twitter.timelines.util.SnowflakeSortIndexHelper
-import com.twitter.tweetypie.{thriftscala => tweetypie}
+import com.twittelonr.selonarch.elonarlybird.thriftscala.ThriftSelonarchRelonsult
+import com.twittelonr.timelonlinelons.modelonl.twelonelont.HydratelondTwelonelont
+import com.twittelonr.timelonlinelons.modelonl.TwelonelontId
+import com.twittelonr.timelonlinelons.modelonl.UselonrId
+import com.twittelonr.timelonlinelons.util.SnowflakelonSortIndelonxHelonlpelonr
+import com.twittelonr.twelonelontypielon.{thriftscala => twelonelontypielon}
 
-object PartiallyHydratedTweet {
-  private val InvalidValue = "Invalid value"
+objelonct PartiallyHydratelondTwelonelont {
+  privatelon val InvalidValuelon = "Invalid valuelon"
 
   /**
-   * Creates an instance of PartiallyHydratedTweet based on the given search result.
+   * Crelonatelons an instancelon of PartiallyHydratelondTwelonelont baselond on thelon givelonn selonarch relonsult.
    */
-  def fromSearchResult(result: ThriftSearchResult): PartiallyHydratedTweet = {
-    val tweetId = result.id
-    val metadata = result.metadata.getOrElse(
-      throw new IllegalArgumentException(
-        s"cannot initialize PartiallyHydratedTweet $tweetId without ThriftSearchResult metadata."
+  delonf fromSelonarchRelonsult(relonsult: ThriftSelonarchRelonsult): PartiallyHydratelondTwelonelont = {
+    val twelonelontId = relonsult.id
+    val melontadata = relonsult.melontadata.gelontOrelonlselon(
+      throw nelonw IllelongalArgumelonntelonxcelonption(
+        s"cannot initializelon PartiallyHydratelondTwelonelont $twelonelontId without ThriftSelonarchRelonsult melontadata."
       )
     )
 
-    val extraMetadataOpt = metadata.extraMetadata
+    val elonxtraMelontadataOpt = melontadata.elonxtraMelontadata
 
-    val userId = metadata.fromUserId
+    val uselonrId = melontadata.fromUselonrId
 
-    // The value of referencedTweetAuthorId and sharedStatusId is only considered valid if it is greater than 0.
-    val referencedTweetAuthorId =
-      if (metadata.referencedTweetAuthorId > 0) Some(metadata.referencedTweetAuthorId) else None
-    val sharedStatusId = if (metadata.sharedStatusId > 0) Some(metadata.sharedStatusId) else None
+    // Thelon valuelon of relonfelonrelonncelondTwelonelontAuthorId and sharelondStatusId is only considelonrelond valid if it is grelonatelonr than 0.
+    val relonfelonrelonncelondTwelonelontAuthorId =
+      if (melontadata.relonfelonrelonncelondTwelonelontAuthorId > 0) Somelon(melontadata.relonfelonrelonncelondTwelonelontAuthorId) elonlselon Nonelon
+    val sharelondStatusId = if (melontadata.sharelondStatusId > 0) Somelon(melontadata.sharelondStatusId) elonlselon Nonelon
 
-    val isRetweet = metadata.isRetweet.getOrElse(false)
-    val retweetSourceTweetId = if (isRetweet) sharedStatusId else None
-    val retweetSourceUserId = if (isRetweet) referencedTweetAuthorId else None
+    val isRelontwelonelont = melontadata.isRelontwelonelont.gelontOrelonlselon(falselon)
+    val relontwelonelontSourcelonTwelonelontId = if (isRelontwelonelont) sharelondStatusId elonlselon Nonelon
+    val relontwelonelontSourcelonUselonrId = if (isRelontwelonelont) relonfelonrelonncelondTwelonelontAuthorId elonlselon Nonelon
 
-    // The fields sharedStatusId and referencedTweetAuthorId have overloaded meaning when
-    // this tweet is not a retweet (for retweet, there is only 1 meaning).
-    // When not a retweet,
-    // if referencedTweetAuthorId and sharedStatusId are both set, it is considered a reply
-    // if referencedTweetAuthorId is set and sharedStatusId is not set, it is a directed at tweet.
-    // References: SEARCH-8561 and SEARCH-13142
-    val inReplyToTweetId = if (!isRetweet) sharedStatusId else None
-    val inReplyToUserId = if (!isRetweet) referencedTweetAuthorId else None
-    val isReply = metadata.isReply.contains(true)
+    // Thelon fielonlds sharelondStatusId and relonfelonrelonncelondTwelonelontAuthorId havelon ovelonrloadelond melonaning whelonn
+    // this twelonelont is not a relontwelonelont (for relontwelonelont, thelonrelon is only 1 melonaning).
+    // Whelonn not a relontwelonelont,
+    // if relonfelonrelonncelondTwelonelontAuthorId and sharelondStatusId arelon both selont, it is considelonrelond a relonply
+    // if relonfelonrelonncelondTwelonelontAuthorId is selont and sharelondStatusId is not selont, it is a direlonctelond at twelonelont.
+    // Relonfelonrelonncelons: SelonARCH-8561 and SelonARCH-13142
+    val inRelonplyToTwelonelontId = if (!isRelontwelonelont) sharelondStatusId elonlselon Nonelon
+    val inRelonplyToUselonrId = if (!isRelontwelonelont) relonfelonrelonncelondTwelonelontAuthorId elonlselon Nonelon
+    val isRelonply = melontadata.isRelonply.contains(truelon)
 
-    val quotedTweetId = extraMetadataOpt.flatMap(_.quotedTweetId)
-    val quotedUserId = extraMetadataOpt.flatMap(_.quotedUserId)
+    val quotelondTwelonelontId = elonxtraMelontadataOpt.flatMap(_.quotelondTwelonelontId)
+    val quotelondUselonrId = elonxtraMelontadataOpt.flatMap(_.quotelondUselonrId)
 
-    val isNullcast = metadata.isNullcast.contains(true)
+    val isNullcast = melontadata.isNullcast.contains(truelon)
 
-    val conversationId = extraMetadataOpt.flatMap(_.conversationId)
+    val convelonrsationId = elonxtraMelontadataOpt.flatMap(_.convelonrsationId)
 
-    // Root author id for the user who posts an exclusive tweet
-    val exclusiveConversationAuthorId = extraMetadataOpt.flatMap(_.exclusiveConversationAuthorId)
+    // Root author id for thelon uselonr who posts an elonxclusivelon twelonelont
+    val elonxclusivelonConvelonrsationAuthorId = elonxtraMelontadataOpt.flatMap(_.elonxclusivelonConvelonrsationAuthorId)
 
-    // Card URI associated with an attached card to this tweet, if it contains one
-    val cardUri = extraMetadataOpt.flatMap(_.cardUri)
+    // Card URI associatelond with an attachelond card to this twelonelont, if it contains onelon
+    val cardUri = elonxtraMelontadataOpt.flatMap(_.cardUri)
 
-    val tweet = makeTweetyPieTweet(
-      tweetId,
-      userId,
-      inReplyToTweetId,
-      inReplyToUserId,
-      retweetSourceTweetId,
-      retweetSourceUserId,
-      quotedTweetId,
-      quotedUserId,
+    val twelonelont = makelonTwelonelontyPielonTwelonelont(
+      twelonelontId,
+      uselonrId,
+      inRelonplyToTwelonelontId,
+      inRelonplyToUselonrId,
+      relontwelonelontSourcelonTwelonelontId,
+      relontwelonelontSourcelonUselonrId,
+      quotelondTwelonelontId,
+      quotelondUselonrId,
       isNullcast,
-      isReply,
-      conversationId,
-      exclusiveConversationAuthorId,
+      isRelonply,
+      convelonrsationId,
+      elonxclusivelonConvelonrsationAuthorId,
       cardUri
     )
-    new PartiallyHydratedTweet(tweet)
+    nelonw PartiallyHydratelondTwelonelont(twelonelont)
   }
 
-  def makeTweetyPieTweet(
-    tweetId: TweetId,
-    userId: UserId,
-    inReplyToTweetId: Option[TweetId],
-    inReplyToUserId: Option[TweetId],
-    retweetSourceTweetId: Option[TweetId],
-    retweetSourceUserId: Option[UserId],
-    quotedTweetId: Option[TweetId],
-    quotedUserId: Option[UserId],
-    isNullcast: Boolean,
-    isReply: Boolean,
-    conversationId: Option[Long],
-    exclusiveConversationAuthorId: Option[Long] = None,
-    cardUri: Option[String] = None
-  ): tweetypie.Tweet = {
-    val isDirectedAt = inReplyToUserId.isDefined
-    val isRetweet = retweetSourceTweetId.isDefined && retweetSourceUserId.isDefined
+  delonf makelonTwelonelontyPielonTwelonelont(
+    twelonelontId: TwelonelontId,
+    uselonrId: UselonrId,
+    inRelonplyToTwelonelontId: Option[TwelonelontId],
+    inRelonplyToUselonrId: Option[TwelonelontId],
+    relontwelonelontSourcelonTwelonelontId: Option[TwelonelontId],
+    relontwelonelontSourcelonUselonrId: Option[UselonrId],
+    quotelondTwelonelontId: Option[TwelonelontId],
+    quotelondUselonrId: Option[UselonrId],
+    isNullcast: Boolelonan,
+    isRelonply: Boolelonan,
+    convelonrsationId: Option[Long],
+    elonxclusivelonConvelonrsationAuthorId: Option[Long] = Nonelon,
+    cardUri: Option[String] = Nonelon
+  ): twelonelontypielon.Twelonelont = {
+    val isDirelonctelondAt = inRelonplyToUselonrId.isDelonfinelond
+    val isRelontwelonelont = relontwelonelontSourcelonTwelonelontId.isDelonfinelond && relontwelonelontSourcelonUselonrId.isDelonfinelond
 
-    val reply = if (isReply) {
-      Some(
-        tweetypie.Reply(
-          inReplyToStatusId = inReplyToTweetId,
-          inReplyToUserId = inReplyToUserId.getOrElse(0L) // Required
+    val relonply = if (isRelonply) {
+      Somelon(
+        twelonelontypielon.Relonply(
+          inRelonplyToStatusId = inRelonplyToTwelonelontId,
+          inRelonplyToUselonrId = inRelonplyToUselonrId.gelontOrelonlselon(0L) // Relonquirelond
         )
       )
-    } else None
+    } elonlselon Nonelon
 
-    val directedAt = if (isDirectedAt) {
-      Some(
-        tweetypie.DirectedAtUser(
-          userId = inReplyToUserId.get,
-          screenName = "" // not available from search
+    val direlonctelondAt = if (isDirelonctelondAt) {
+      Somelon(
+        twelonelontypielon.DirelonctelondAtUselonr(
+          uselonrId = inRelonplyToUselonrId.gelont,
+          screlonelonnNamelon = "" // not availablelon from selonarch
         )
       )
-    } else None
+    } elonlselon Nonelon
 
-    val share = if (isRetweet) {
-      Some(
-        tweetypie.Share(
-          sourceStatusId = retweetSourceTweetId.get,
-          sourceUserId = retweetSourceUserId.get,
-          parentStatusId =
-            retweetSourceTweetId.get // Not always correct (eg, retweet of a retweet).
+    val sharelon = if (isRelontwelonelont) {
+      Somelon(
+        twelonelontypielon.Sharelon(
+          sourcelonStatusId = relontwelonelontSourcelonTwelonelontId.gelont,
+          sourcelonUselonrId = relontwelonelontSourcelonUselonrId.gelont,
+          parelonntStatusId =
+            relontwelonelontSourcelonTwelonelontId.gelont // Not always correlonct (elong, relontwelonelont of a relontwelonelont).
         )
       )
-    } else None
+    } elonlselon Nonelon
 
-    val quotedTweet =
+    val quotelondTwelonelont =
       for {
-        tweetId <- quotedTweetId
-        userId <- quotedUserId
-      } yield tweetypie.QuotedTweet(tweetId = tweetId, userId = userId)
+        twelonelontId <- quotelondTwelonelontId
+        uselonrId <- quotelondUselonrId
+      } yielonld twelonelontypielon.QuotelondTwelonelont(twelonelontId = twelonelontId, uselonrId = uselonrId)
 
-    val coreData = tweetypie.TweetCoreData(
-      userId = userId,
-      text = InvalidValue,
-      createdVia = InvalidValue,
-      createdAtSecs = SnowflakeSortIndexHelper.idToTimestamp(tweetId).inSeconds,
-      directedAtUser = directedAt,
-      reply = reply,
-      share = share,
+    val corelonData = twelonelontypielon.TwelonelontCorelonData(
+      uselonrId = uselonrId,
+      telonxt = InvalidValuelon,
+      crelonatelondVia = InvalidValuelon,
+      crelonatelondAtSeloncs = SnowflakelonSortIndelonxHelonlpelonr.idToTimelonstamp(twelonelontId).inSelonconds,
+      direlonctelondAtUselonr = direlonctelondAt,
+      relonply = relonply,
+      sharelon = sharelon,
       nullcast = isNullcast,
-      conversationId = conversationId
+      convelonrsationId = convelonrsationId
     )
 
-    // Hydrate exclusiveTweetControl which determines whether the user is able to view an exclusive / SuperFollow tweet.
-    val exclusiveTweetControl = exclusiveConversationAuthorId.map { authorId =>
-      tweetypie.ExclusiveTweetControl(conversationAuthorId = authorId)
+    // Hydratelon elonxclusivelonTwelonelontControl which delontelonrminelons whelonthelonr thelon uselonr is ablelon to vielonw an elonxclusivelon / SupelonrFollow twelonelont.
+    val elonxclusivelonTwelonelontControl = elonxclusivelonConvelonrsationAuthorId.map { authorId =>
+      twelonelontypielon.elonxclusivelonTwelonelontControl(convelonrsationAuthorId = authorId)
     }
 
-    val cardReference = cardUri.map { cardUriFromEB =>
-      tweetypie.CardReference(cardUri = cardUriFromEB)
+    val cardRelonfelonrelonncelon = cardUri.map { cardUriFromelonB =>
+      twelonelontypielon.CardRelonfelonrelonncelon(cardUri = cardUriFromelonB)
     }
 
-    tweetypie.Tweet(
-      id = tweetId,
-      quotedTweet = quotedTweet,
-      coreData = Some(coreData),
-      exclusiveTweetControl = exclusiveTweetControl,
-      cardReference = cardReference
+    twelonelontypielon.Twelonelont(
+      id = twelonelontId,
+      quotelondTwelonelont = quotelondTwelonelont,
+      corelonData = Somelon(corelonData),
+      elonxclusivelonTwelonelontControl = elonxclusivelonTwelonelontControl,
+      cardRelonfelonrelonncelon = cardRelonfelonrelonncelon
     )
   }
 }
 
 /**
- * Represents an instance of HydratedTweet that is hydrated using search result
- * (instead of being hydrated using TweetyPie service).
+ * Relonprelonselonnts an instancelon of HydratelondTwelonelont that is hydratelond using selonarch relonsult
+ * (instelonad of beloning hydratelond using TwelonelontyPielon selonrvicelon).
  *
- * Not all fields are available using search therefore such fields if accessed
- * throw UnsupportedOperationException to ensure that they are not inadvertently
- * accessed and relied upon.
+ * Not all fielonlds arelon availablelon using selonarch thelonrelonforelon such fielonlds if accelonsselond
+ * throw UnsupportelondOpelonrationelonxcelonption to elonnsurelon that thelony arelon not inadvelonrtelonntly
+ * accelonsselond and relonlielond upon.
  */
-class PartiallyHydratedTweet(tweet: tweetypie.Tweet) extends HydratedTweet(tweet) {
-  override def parentTweetId: Option[TweetId] = throw notSupported("parentTweetId")
-  override def mentionedUserIds: Seq[UserId] = throw notSupported("mentionedUserIds")
-  override def takedownCountryCodes: Set[String] = throw notSupported("takedownCountryCodes")
-  override def hasMedia: Boolean = throw notSupported("hasMedia")
-  override def isNarrowcast: Boolean = throw notSupported("isNarrowcast")
-  override def hasTakedown: Boolean = throw notSupported("hasTakedown")
-  override def isNsfw: Boolean = throw notSupported("isNsfw")
-  override def isNsfwUser: Boolean = throw notSupported("isNsfwUser")
-  override def isNsfwAdmin: Boolean = throw notSupported("isNsfwAdmin")
+class PartiallyHydratelondTwelonelont(twelonelont: twelonelontypielon.Twelonelont) elonxtelonnds HydratelondTwelonelont(twelonelont) {
+  ovelonrridelon delonf parelonntTwelonelontId: Option[TwelonelontId] = throw notSupportelond("parelonntTwelonelontId")
+  ovelonrridelon delonf melonntionelondUselonrIds: Selonq[UselonrId] = throw notSupportelond("melonntionelondUselonrIds")
+  ovelonrridelon delonf takelondownCountryCodelons: Selont[String] = throw notSupportelond("takelondownCountryCodelons")
+  ovelonrridelon delonf hasMelondia: Boolelonan = throw notSupportelond("hasMelondia")
+  ovelonrridelon delonf isNarrowcast: Boolelonan = throw notSupportelond("isNarrowcast")
+  ovelonrridelon delonf hasTakelondown: Boolelonan = throw notSupportelond("hasTakelondown")
+  ovelonrridelon delonf isNsfw: Boolelonan = throw notSupportelond("isNsfw")
+  ovelonrridelon delonf isNsfwUselonr: Boolelonan = throw notSupportelond("isNsfwUselonr")
+  ovelonrridelon delonf isNsfwAdmin: Boolelonan = throw notSupportelond("isNsfwAdmin")
 
-  private def notSupported(name: String): UnsupportedOperationException = {
-    new UnsupportedOperationException(s"Not supported: $name")
+  privatelon delonf notSupportelond(namelon: String): UnsupportelondOpelonrationelonxcelonption = {
+    nelonw UnsupportelondOpelonrationelonxcelonption(s"Not supportelond: $namelon")
   }
 }

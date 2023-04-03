@@ -1,45 +1,45 @@
-package com.twitter.follow_recommendations.common.candidate_sources.real_graph
+packagelon com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.relonal_graph
 
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSParam
+import com.twittelonr.timelonlinelons.configapi.FSBoundelondParam
+import com.twittelonr.timelonlinelons.configapi.FSParam
 
-object RealGraphOonParams {
-  case object IncludeRealGraphOonCandidates
-      extends FSParam[Boolean](
-        "real_graph_oon_include_candidates",
-        false
+objelonct RelonalGraphOonParams {
+  caselon objelonct IncludelonRelonalGraphOonCandidatelons
+      elonxtelonnds FSParam[Boolelonan](
+        "relonal_graph_oon_includelon_candidatelons",
+        falselon
       )
-  case object TryToReadRealGraphOonCandidates
-      extends FSParam[Boolean](
-        "real_graph_oon_try_to_read_candidates",
-        false
+  caselon objelonct TryToRelonadRelonalGraphOonCandidatelons
+      elonxtelonnds FSParam[Boolelonan](
+        "relonal_graph_oon_try_to_relonad_candidatelons",
+        falselon
       )
-  case object RealGraphOonResultCountThreshold
-      extends FSBoundedParam[Int](
-        "real_graph_oon_result_count_threshold",
-        default = 1,
+  caselon objelonct RelonalGraphOonRelonsultCountThrelonshold
+      elonxtelonnds FSBoundelondParam[Int](
+        "relonal_graph_oon_relonsult_count_threlonshold",
+        delonfault = 1,
         min = 0,
-        max = Integer.MAX_VALUE
+        max = Intelongelonr.MAX_VALUelon
       )
 
-  case object UseV2
-      extends FSParam[Boolean](
-        "real_graph_oon_use_v2",
-        false
+  caselon objelonct UselonV2
+      elonxtelonnds FSParam[Boolelonan](
+        "relonal_graph_oon_uselon_v2",
+        falselon
       )
 
-  case object ScoreThreshold
-      extends FSBoundedParam[Double](
-        "real_graph_oon_score_threshold",
-        default = 0.26,
+  caselon objelonct ScorelonThrelonshold
+      elonxtelonnds FSBoundelondParam[Doublelon](
+        "relonal_graph_oon_scorelon_threlonshold",
+        delonfault = 0.26,
         min = 0,
         max = 1.0
       )
 
-  case object MaxResults
-      extends FSBoundedParam[Int](
-        "real_graph_oon_max_results",
-        default = 200,
+  caselon objelonct MaxRelonsults
+      elonxtelonnds FSBoundelondParam[Int](
+        "relonal_graph_oon_max_relonsults",
+        delonfault = 200,
         min = 0,
         max = 1000
       )

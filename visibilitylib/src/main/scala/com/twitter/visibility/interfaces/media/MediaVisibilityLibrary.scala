@@ -1,88 +1,88 @@
-package com.twitter.visibility.interfaces.media
+packagelon com.twittelonr.visibility.intelonrfacelons.melondia
 
-import com.twitter.stitch.Stitch
-import com.twitter.strato.client.{Client => StratoClient}
-import com.twitter.util.Stopwatch
-import com.twitter.visibility.VisibilityLibrary
-import com.twitter.visibility.builder.VisibilityResult
-import com.twitter.visibility.builder.users.ViewerFeatures
-import com.twitter.visibility.builder.media.MediaFeatures
-import com.twitter.visibility.builder.media.MediaMetadataFeatures
-import com.twitter.visibility.builder.media.StratoMediaLabelMaps
-import com.twitter.visibility.common.MediaMetadataSource
-import com.twitter.visibility.common.MediaSafetyLabelMapSource
-import com.twitter.visibility.common.UserSource
-import com.twitter.visibility.features.FeatureMap
-import com.twitter.visibility.generators.TombstoneGenerator
-import com.twitter.visibility.models.ContentId.MediaId
-import com.twitter.visibility.rules.EvaluationContext
-import com.twitter.visibility.rules.providers.ProvidedEvaluationContext
-import com.twitter.visibility.rules.utils.ShimUtils
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.strato.clielonnt.{Clielonnt => StratoClielonnt}
+import com.twittelonr.util.Stopwatch
+import com.twittelonr.visibility.VisibilityLibrary
+import com.twittelonr.visibility.buildelonr.VisibilityRelonsult
+import com.twittelonr.visibility.buildelonr.uselonrs.VielonwelonrFelonaturelons
+import com.twittelonr.visibility.buildelonr.melondia.MelondiaFelonaturelons
+import com.twittelonr.visibility.buildelonr.melondia.MelondiaMelontadataFelonaturelons
+import com.twittelonr.visibility.buildelonr.melondia.StratoMelondiaLabelonlMaps
+import com.twittelonr.visibility.common.MelondiaMelontadataSourcelon
+import com.twittelonr.visibility.common.MelondiaSafelontyLabelonlMapSourcelon
+import com.twittelonr.visibility.common.UselonrSourcelon
+import com.twittelonr.visibility.felonaturelons.FelonaturelonMap
+import com.twittelonr.visibility.gelonnelonrators.TombstonelonGelonnelonrator
+import com.twittelonr.visibility.modelonls.ContelonntId.MelondiaId
+import com.twittelonr.visibility.rulelons.elonvaluationContelonxt
+import com.twittelonr.visibility.rulelons.providelonrs.ProvidelondelonvaluationContelonxt
+import com.twittelonr.visibility.rulelons.utils.ShimUtils
 
-object MediaVisibilityLibrary {
-  type Type = MediaVisibilityRequest => Stitch[VisibilityResult]
+objelonct MelondiaVisibilityLibrary {
+  typelon Typelon = MelondiaVisibilityRelonquelonst => Stitch[VisibilityRelonsult]
 
-  def apply(
+  delonf apply(
     visibilityLibrary: VisibilityLibrary,
-    userSource: UserSource,
-    tombstoneGenerator: TombstoneGenerator,
-    stratoClient: StratoClient,
-  ): Type = {
-    val libraryStatsReceiver = visibilityLibrary.statsReceiver
-    val vfEngineCounter = libraryStatsReceiver.counter("vf_engine_requests")
-    val vfLatencyOverallStat = libraryStatsReceiver.stat("vf_latency_overall")
-    val vfLatencyStitchRunStat = libraryStatsReceiver.stat("vf_latency_stitch_run")
+    uselonrSourcelon: UselonrSourcelon,
+    tombstonelonGelonnelonrator: TombstonelonGelonnelonrator,
+    stratoClielonnt: StratoClielonnt,
+  ): Typelon = {
+    val libraryStatsReloncelonivelonr = visibilityLibrary.statsReloncelonivelonr
+    val vfelonnginelonCountelonr = libraryStatsReloncelonivelonr.countelonr("vf_elonnginelon_relonquelonsts")
+    val vfLatelonncyOvelonrallStat = libraryStatsReloncelonivelonr.stat("vf_latelonncy_ovelonrall")
+    val vfLatelonncyStitchRunStat = libraryStatsReloncelonivelonr.stat("vf_latelonncy_stitch_run")
 
-    val stratoClientStatsReceiver = libraryStatsReceiver.scope("strato")
+    val stratoClielonntStatsReloncelonivelonr = libraryStatsReloncelonivelonr.scopelon("strato")
 
-    val mediaMetadataFeatures = new MediaMetadataFeatures(
-      MediaMetadataSource.fromStrato(stratoClient, stratoClientStatsReceiver),
-      libraryStatsReceiver)
+    val melondiaMelontadataFelonaturelons = nelonw MelondiaMelontadataFelonaturelons(
+      MelondiaMelontadataSourcelon.fromStrato(stratoClielonnt, stratoClielonntStatsReloncelonivelonr),
+      libraryStatsReloncelonivelonr)
 
-    val mediaLabelMaps = new StratoMediaLabelMaps(
-      MediaSafetyLabelMapSource.fromStrato(stratoClient, stratoClientStatsReceiver))
-    val mediaFeatures = new MediaFeatures(mediaLabelMaps, libraryStatsReceiver)
+    val melondiaLabelonlMaps = nelonw StratoMelondiaLabelonlMaps(
+      MelondiaSafelontyLabelonlMapSourcelon.fromStrato(stratoClielonnt, stratoClielonntStatsReloncelonivelonr))
+    val melondiaFelonaturelons = nelonw MelondiaFelonaturelons(melondiaLabelonlMaps, libraryStatsReloncelonivelonr)
 
-    val viewerFeatures = new ViewerFeatures(userSource, libraryStatsReceiver)
+    val vielonwelonrFelonaturelons = nelonw VielonwelonrFelonaturelons(uselonrSourcelon, libraryStatsReloncelonivelonr)
 
-    { r: MediaVisibilityRequest =>
-      vfEngineCounter.incr()
+    { r: MelondiaVisibilityRelonquelonst =>
+      vfelonnginelonCountelonr.incr()
 
-      val contentId = MediaId(r.mediaKey.toStringKey)
-      val languageCode = r.viewerContext.requestLanguageCode.getOrElse("en")
+      val contelonntId = MelondiaId(r.melondiaKelony.toStringKelony)
+      val languagelonCodelon = r.vielonwelonrContelonxt.relonquelonstLanguagelonCodelon.gelontOrelonlselon("elonn")
 
-      val featureMap = visibilityLibrary.featureMapBuilder(
-        Seq(
-          viewerFeatures.forViewerContext(r.viewerContext),
-          mediaFeatures.forGenericMediaKey(r.mediaKey),
-          mediaMetadataFeatures.forGenericMediaKey(r.mediaKey),
+      val felonaturelonMap = visibilityLibrary.felonaturelonMapBuildelonr(
+        Selonq(
+          vielonwelonrFelonaturelons.forVielonwelonrContelonxt(r.vielonwelonrContelonxt),
+          melondiaFelonaturelons.forGelonnelonricMelondiaKelony(r.melondiaKelony),
+          melondiaMelontadataFelonaturelons.forGelonnelonricMelondiaKelony(r.melondiaKelony),
         )
       )
 
-      val evaluationContext = ProvidedEvaluationContext.injectRuntimeRulesIntoEvaluationContext(
-        evaluationContext = EvaluationContext(
-          r.safetyLevel,
-          visibilityLibrary.getParams(r.viewerContext, r.safetyLevel),
-          visibilityLibrary.statsReceiver)
+      val elonvaluationContelonxt = ProvidelondelonvaluationContelonxt.injelonctRuntimelonRulelonsIntoelonvaluationContelonxt(
+        elonvaluationContelonxt = elonvaluationContelonxt(
+          r.safelontyLelonvelonl,
+          visibilityLibrary.gelontParams(r.vielonwelonrContelonxt, r.safelontyLelonvelonl),
+          visibilityLibrary.statsReloncelonivelonr)
       )
 
-      val preFilteredFeatureMap =
-        ShimUtils.preFilterFeatureMap(featureMap, r.safetyLevel, contentId, evaluationContext)
+      val prelonFiltelonrelondFelonaturelonMap =
+        ShimUtils.prelonFiltelonrFelonaturelonMap(felonaturelonMap, r.safelontyLelonvelonl, contelonntId, elonvaluationContelonxt)
 
-      val elapsed = Stopwatch.start()
-      FeatureMap.resolve(preFilteredFeatureMap, libraryStatsReceiver).flatMap {
-        resolvedFeatureMap =>
-          vfLatencyStitchRunStat.add(elapsed().inMilliseconds)
+      val elonlapselond = Stopwatch.start()
+      FelonaturelonMap.relonsolvelon(prelonFiltelonrelondFelonaturelonMap, libraryStatsReloncelonivelonr).flatMap {
+        relonsolvelondFelonaturelonMap =>
+          vfLatelonncyStitchRunStat.add(elonlapselond().inMilliselonconds)
 
           visibilityLibrary
-            .runRuleEngine(
-              contentId,
-              resolvedFeatureMap,
-              r.viewerContext,
-              r.safetyLevel
+            .runRulelonelonnginelon(
+              contelonntId,
+              relonsolvelondFelonaturelonMap,
+              r.vielonwelonrContelonxt,
+              r.safelontyLelonvelonl
             )
-            .map(tombstoneGenerator(_, languageCode))
-            .onSuccess(_ => vfLatencyOverallStat.add(elapsed().inMilliseconds))
+            .map(tombstonelonGelonnelonrator(_, languagelonCodelon))
+            .onSuccelonss(_ => vfLatelonncyOvelonrallStat.add(elonlapselond().inMilliselonconds))
       }
     }
   }

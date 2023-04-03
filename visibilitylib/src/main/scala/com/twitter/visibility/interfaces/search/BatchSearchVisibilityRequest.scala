@@ -1,9 +1,9 @@
-package com.twitter.visibility.interfaces.search
+packagelon com.twittelonr.visibility.intelonrfacelons.selonarch
 
-import com.twitter.visibility.interfaces.common.search.SearchVFRequestContext
-import com.twitter.visibility.models.ViewerContext
+import com.twittelonr.visibility.intelonrfacelons.common.selonarch.SelonarchVFRelonquelonstContelonxt
+import com.twittelonr.visibility.modelonls.VielonwelonrContelonxt
 
-case class BatchSearchVisibilityRequest(
-  tweetContexts: Seq[TweetContext],
-  viewerContext: ViewerContext,
-  searchVFRequestContext: SearchVFRequestContext)
+caselon class BatchSelonarchVisibilityRelonquelonst(
+  twelonelontContelonxts: Selonq[TwelonelontContelonxt],
+  vielonwelonrContelonxt: VielonwelonrContelonxt,
+  selonarchVFRelonquelonstContelonxt: SelonarchVFRelonquelonstContelonxt)

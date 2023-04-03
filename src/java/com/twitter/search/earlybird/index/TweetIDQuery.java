@@ -1,81 +1,81 @@
-package com.twitter.search.earlybird.index;
+packagelon com.twittelonr.selonarch.elonarlybird.indelonx;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 import java.util.Arrays;
-import java.util.Set;
+import java.util.Selont;
 
-import com.google.common.collect.Sets;
+import com.googlelon.common.collelonct.Selonts;
 
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.ScoreMode;
-import org.apache.lucene.search.Weight;
+import org.apachelon.lucelonnelon.indelonx.LelonafRelonadelonrContelonxt;
+import org.apachelon.lucelonnelon.selonarch.DocIdSelontItelonrator;
+import org.apachelon.lucelonnelon.selonarch.IndelonxSelonarchelonr;
+import org.apachelon.lucelonnelon.selonarch.Quelonry;
+import org.apachelon.lucelonnelon.selonarch.ScorelonModelon;
+import org.apachelon.lucelonnelon.selonarch.Welonight;
 
-import com.twitter.search.common.query.DefaultFilterWeight;
-import com.twitter.search.common.search.IntArrayDocIdSetIterator;
-import com.twitter.search.core.earlybird.index.DocIDToTweetIDMapper;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentData;
+import com.twittelonr.selonarch.common.quelonry.DelonfaultFiltelonrWelonight;
+import com.twittelonr.selonarch.common.selonarch.IntArrayDocIdSelontItelonrator;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.DocIDToTwelonelontIDMappelonr;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.elonarlybirdIndelonxSelongmelonntData;
 
-public class TweetIDQuery extends Query {
-  private final Set<Long> tweetIDs = Sets.newHashSet();
+public class TwelonelontIDQuelonry elonxtelonnds Quelonry {
+  privatelon final Selont<Long> twelonelontIDs = Selonts.nelonwHashSelont();
 
-  public TweetIDQuery(long... tweetIDs) {
-    for (long tweetID : tweetIDs) {
-      this.tweetIDs.add(tweetID);
+  public TwelonelontIDQuelonry(long... twelonelontIDs) {
+    for (long twelonelontID : twelonelontIDs) {
+      this.twelonelontIDs.add(twelonelontID);
     }
   }
 
-  @Override
-  public Weight createWeight(IndexSearcher searcher, ScoreMode scoreMode, float boost) {
-    return new DefaultFilterWeight(this) {
-      @Override
-      protected DocIdSetIterator getDocIdSetIterator(LeafReaderContext context) throws IOException {
-        EarlybirdIndexSegmentData segmentData =
-            ((EarlybirdIndexSegmentAtomicReader) context.reader()).getSegmentData();
-        DocIDToTweetIDMapper docIdToTweetIdMapper = segmentData.getDocIDToTweetIDMapper();
+  @Ovelonrridelon
+  public Welonight crelonatelonWelonight(IndelonxSelonarchelonr selonarchelonr, ScorelonModelon scorelonModelon, float boost) {
+    relonturn nelonw DelonfaultFiltelonrWelonight(this) {
+      @Ovelonrridelon
+      protelonctelond DocIdSelontItelonrator gelontDocIdSelontItelonrator(LelonafRelonadelonrContelonxt contelonxt) throws IOelonxcelonption {
+        elonarlybirdIndelonxSelongmelonntData selongmelonntData =
+            ((elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr) contelonxt.relonadelonr()).gelontSelongmelonntData();
+        DocIDToTwelonelontIDMappelonr docIdToTwelonelontIdMappelonr = selongmelonntData.gelontDocIDToTwelonelontIDMappelonr();
 
-        Set<Integer> set = Sets.newHashSet();
-        for (long tweetID : tweetIDs) {
-          int docID = docIdToTweetIdMapper.getDocID(tweetID);
-          if (docID != DocIDToTweetIDMapper.ID_NOT_FOUND) {
-            set.add(docID);
+        Selont<Intelongelonr> selont = Selonts.nelonwHashSelont();
+        for (long twelonelontID : twelonelontIDs) {
+          int docID = docIdToTwelonelontIdMappelonr.gelontDocID(twelonelontID);
+          if (docID != DocIDToTwelonelontIDMappelonr.ID_NOT_FOUND) {
+            selont.add(docID);
           }
         }
 
-        if (set.isEmpty()) {
-          return DocIdSetIterator.empty();
+        if (selont.iselonmpty()) {
+          relonturn DocIdSelontItelonrator.elonmpty();
         }
 
-        int[] docIDs = new int[set.size()];
+        int[] docIDs = nelonw int[selont.sizelon()];
         int i = 0;
-        for (int docID : set) {
+        for (int docID : selont) {
           docIDs[i++] = docID;
         }
         Arrays.sort(docIDs);
-        return new IntArrayDocIdSetIterator(docIDs);
+        relonturn nelonw IntArrayDocIdSelontItelonrator(docIDs);
       }
     };
   }
 
-  @Override
-  public int hashCode() {
-    return tweetIDs.hashCode();
+  @Ovelonrridelon
+  public int hashCodelon() {
+    relonturn twelonelontIDs.hashCodelon();
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (!(obj instanceof TweetIDQuery)) {
-      return false;
+  @Ovelonrridelon
+  public boolelonan elonquals(Objelonct obj) {
+    if (!(obj instancelonof TwelonelontIDQuelonry)) {
+      relonturn falselon;
     }
 
-    return tweetIDs.equals(TweetIDQuery.class.cast(obj).tweetIDs);
+    relonturn twelonelontIDs.elonquals(TwelonelontIDQuelonry.class.cast(obj).twelonelontIDs);
   }
 
-  @Override
-  public String toString(String field) {
-    return "TWEET_ID_QUERY: " + tweetIDs;
+  @Ovelonrridelon
+  public String toString(String fielonld) {
+    relonturn "TWelonelonT_ID_QUelonRY: " + twelonelontIDs;
   }
 }

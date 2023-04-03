@@ -1,21 +1,21 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.topic
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.itelonm.topic
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.topic.BasicTopicDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.topic.NoIconTopicDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.topic.PillTopicDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.topic.PillWithoutActionIconDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.topic.TopicDisplayType
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.topic.BasicTopicDisplayTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.topic.NoIconTopicDisplayTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.topic.PillTopicDisplayTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.topic.PillWithoutActionIconDisplayTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.topic.TopicDisplayTypelon
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class TopicDisplayTypeMarshaller @Inject() () {
+@Singlelonton
+class TopicDisplayTypelonMarshallelonr @Injelonct() () {
 
-  def apply(topicDisplayType: TopicDisplayType): urt.TopicDisplayType = topicDisplayType match {
-    case BasicTopicDisplayType => urt.TopicDisplayType.Basic
-    case PillTopicDisplayType => urt.TopicDisplayType.Pill
-    case NoIconTopicDisplayType => urt.TopicDisplayType.NoIcon
-    case PillWithoutActionIconDisplayType => urt.TopicDisplayType.PillWithoutActionIcon
+  delonf apply(topicDisplayTypelon: TopicDisplayTypelon): urt.TopicDisplayTypelon = topicDisplayTypelon match {
+    caselon BasicTopicDisplayTypelon => urt.TopicDisplayTypelon.Basic
+    caselon PillTopicDisplayTypelon => urt.TopicDisplayTypelon.Pill
+    caselon NoIconTopicDisplayTypelon => urt.TopicDisplayTypelon.NoIcon
+    caselon PillWithoutActionIconDisplayTypelon => urt.TopicDisplayTypelon.PillWithoutActionIcon
   }
 }

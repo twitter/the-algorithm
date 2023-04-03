@@ -1,90 +1,90 @@
-package com.twitter.product_mixer.core.model.common.identifier
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr
 
 /**
- * Pipeline Step identifier
+ * Pipelonlinelon Stelonp idelonntifielonr
  *
- * @note This class should always remain effectively `final`. If for any reason the `sealed`
- *       modifier is removed, the equals() implementation must be updated in order to handle class
- *       inheritor equality (see note on the equals method below)
+ * @notelon This class should always relonmain elonffelonctivelonly `final`. If for any relonason thelon `selonalelond`
+ *       modifielonr is relonmovelond, thelon elonquals() implelonmelonntation must belon updatelond in ordelonr to handlelon class
+ *       inhelonritor elonquality (selonelon notelon on thelon elonquals melonthod belonlow)
  */
-sealed abstract class PipelineStepIdentifier(
-  override val name: String)
-    extends ComponentIdentifier("Step", name) {
+selonalelond abstract class PipelonlinelonStelonpIdelonntifielonr(
+  ovelonrridelon val namelon: String)
+    elonxtelonnds ComponelonntIdelonntifielonr("Stelonp", namelon) {
 
   /**
-   * @inheritdoc
+   * @inhelonritdoc
    */
-  override def canEqual(that: Any): Boolean = that.isInstanceOf[PipelineStepIdentifier]
+  ovelonrridelon delonf canelonqual(that: Any): Boolelonan = that.isInstancelonOf[PipelonlinelonStelonpIdelonntifielonr]
 
   /**
-   * High performance implementation of equals method that leverages:
-   *  - Referential equality short circuit
-   *  - Cached hashcode equality short circuit
-   *  - Field values are only checked if the hashCodes are equal to handle the unlikely case
-   *    of a hashCode collision
-   *  - Removal of check for `that` being an equals-compatible descendant since this class is final
+   * High pelonrformancelon implelonmelonntation of elonquals melonthod that lelonvelonragelons:
+   *  - Relonfelonrelonntial elonquality short circuit
+   *  - Cachelond hashcodelon elonquality short circuit
+   *  - Fielonld valuelons arelon only chelonckelond if thelon hashCodelons arelon elonqual to handlelon thelon unlikelonly caselon
+   *    of a hashCodelon collision
+   *  - Relonmoval of chelonck for `that` beloning an elonquals-compatiblelon delonscelonndant sincelon this class is final
    *
-   * @note `candidate.canEqual(this)` is not necessary because this class is final
-   * @see [[http://www.artima.com/pins1ed/object-equality.html Programming in Scala,
-   *      Chapter 28]] for discussion and design.
+   * @notelon `candidatelon.canelonqual(this)` is not neloncelonssary beloncauselon this class is final
+   * @selonelon [[http://www.artima.com/pins1elond/objelonct-elonquality.html Programming in Scala,
+   *      Chaptelonr 28]] for discussion and delonsign.
    */
-  override def equals(that: Any): Boolean =
+  ovelonrridelon delonf elonquals(that: Any): Boolelonan =
     that match {
-      case identifier: PipelineStepIdentifier =>
-        // Note identifier.canEqual(this) is not necessary because this class is effectively final
-        ((this eq identifier)
-          || ((hashCode == identifier.hashCode) && ((componentType == identifier.componentType) && (name == identifier.name))))
-      case _ =>
-        false
+      caselon idelonntifielonr: PipelonlinelonStelonpIdelonntifielonr =>
+        // Notelon idelonntifielonr.canelonqual(this) is not neloncelonssary beloncauselon this class is elonffelonctivelonly final
+        ((this elonq idelonntifielonr)
+          || ((hashCodelon == idelonntifielonr.hashCodelon) && ((componelonntTypelon == idelonntifielonr.componelonntTypelon) && (namelon == idelonntifielonr.namelon))))
+      caselon _ =>
+        falselon
     }
 
   /**
-   * Leverage domain-specific constraints (see notes below) to safely construct and cache the
-   * hashCode as a val, such that it is instantiated once on object construction. This prevents the
-   * need to recompute the hashCode on each hashCode() invocation, which is the behavior of the
-   * Scala compiler case class-generated hashCode() since it cannot make assumptions regarding field
-   * object mutability and hashCode implementations.
+   * Lelonvelonragelon domain-speloncific constraints (selonelon notelons belonlow) to safelonly construct and cachelon thelon
+   * hashCodelon as a val, such that it is instantiatelond oncelon on objelonct construction. This prelonvelonnts thelon
+   * nelonelond to reloncomputelon thelon hashCodelon on elonach hashCodelon() invocation, which is thelon belonhavior of thelon
+   * Scala compilelonr caselon class-gelonnelonratelond hashCodelon() sincelon it cannot makelon assumptions relongarding fielonld
+   * objelonct mutability and hashCodelon implelonmelonntations.
    *
-   * @note Caching the hashCode is only safe if all of the fields used to construct the hashCode
-   *       are immutable. This includes:
-   *       - Inability to mutate the object reference on for an existing instantiated identifier
-   *       (i.e. each field is a val)
-   *       - Inability to mutate the field object instance itself (i.e. each field is an immutable
-   *       - Inability to mutate the field object instance itself (i.e. each field is an immutable
-   *       data structure), assuming stable hashCode implementations for these objects
+   * @notelon Caching thelon hashCodelon is only safelon if all of thelon fielonlds uselond to construct thelon hashCodelon
+   *       arelon immutablelon. This includelons:
+   *       - Inability to mutatelon thelon objelonct relonfelonrelonncelon on for an elonxisting instantiatelond idelonntifielonr
+   *       (i.elon. elonach fielonld is a val)
+   *       - Inability to mutatelon thelon fielonld objelonct instancelon itselonlf (i.elon. elonach fielonld is an immutablelon
+   *       - Inability to mutatelon thelon fielonld objelonct instancelon itselonlf (i.elon. elonach fielonld is an immutablelon
+   *       data structurelon), assuming stablelon hashCodelon implelonmelonntations for thelonselon objeloncts
    *
-   * @note In order for the hashCode to be consistent with object equality, `##` must be used for
-   *       boxed numeric types and null. As such, always prefer `.##` over `.hashCode()`.
+   * @notelon In ordelonr for thelon hashCodelon to belon consistelonnt with objelonct elonquality, `##` must belon uselond for
+   *       boxelond numelonric typelons and null. As such, always prelonfelonr `.##` ovelonr `.hashCodelon()`.
    */
-  override val hashCode: Int = 31 * componentType.## + name.##
+  ovelonrridelon val hashCodelon: Int = 31 * componelonntTypelon.## + namelon.##
 }
 
-class Person(val name: String, val age: Int) extends Equals {
-  override def canEqual(that: Any): Boolean =
-    that.isInstanceOf[Person]
+class Pelonrson(val namelon: String, val agelon: Int) elonxtelonnds elonquals {
+  ovelonrridelon delonf canelonqual(that: Any): Boolelonan =
+    that.isInstancelonOf[Pelonrson]
 
-  //Intentionally avoiding the call to super.equals because no ancestor has overridden equals (see note 7 below)
-  override def equals(that: Any): Boolean =
+  //Intelonntionally avoiding thelon call to supelonr.elonquals beloncauselon no ancelonstor has ovelonrriddelonn elonquals (selonelon notelon 7 belonlow)
+  ovelonrridelon delonf elonquals(that: Any): Boolelonan =
     that match {
-      case person: Person =>
-        (this eq person) || (hashCode == person.hashCode) && ((name == person.name) && (age == person.age))
+      caselon pelonrson: Pelonrson =>
+        (this elonq pelonrson) || (hashCodelon == pelonrson.hashCodelon) && ((namelon == pelonrson.namelon) && (agelon == pelonrson.agelon))
 
-      case _ =>
-        false
+      caselon _ =>
+        falselon
     }
 
-  //Intentionally avoiding the call to super.hashCode because no ancestor has overridden hashCode (see note 7 below)
-  override def hashCode(): Int =
+  //Intelonntionally avoiding thelon call to supelonr.hashCodelon beloncauselon no ancelonstor has ovelonrriddelonn hashCodelon (selonelon notelon 7 belonlow)
+  ovelonrridelon delonf hashCodelon(): Int =
     31 * (
-      name.##
-    ) + age.##
+      namelon.##
+    ) + agelon.##
 }
 
-object PipelineStepIdentifier {
-  def apply(name: String)(implicit sourceFile: sourcecode.File): PipelineStepIdentifier = {
-    if (ComponentIdentifier.isValidName(name))
-      new PipelineStepIdentifier(name) { override val file: sourcecode.File = sourceFile }
-    else
-      throw new IllegalArgumentException(s"Illegal StepIdentifier: $name")
+objelonct PipelonlinelonStelonpIdelonntifielonr {
+  delonf apply(namelon: String)(implicit sourcelonFilelon: sourceloncodelon.Filelon): PipelonlinelonStelonpIdelonntifielonr = {
+    if (ComponelonntIdelonntifielonr.isValidNamelon(namelon))
+      nelonw PipelonlinelonStelonpIdelonntifielonr(namelon) { ovelonrridelon val filelon: sourceloncodelon.Filelon = sourcelonFilelon }
+    elonlselon
+      throw nelonw IllelongalArgumelonntelonxcelonption(s"Illelongal StelonpIdelonntifielonr: $namelon")
   }
 }

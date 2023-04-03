@@ -1,31 +1,31 @@
-package com.twitter.product_mixer.component_library.candidate_source.explore_ranker
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.candidatelon_sourcelon.elonxplorelon_rankelonr
 
-import com.twitter.explore_ranker.{thriftscala => t}
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.stitch.Stitch
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.elonxplorelon_rankelonr.{thriftscala => t}
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.CandidatelonSourcelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonSourcelonIdelonntifielonr
+import com.twittelonr.stitch.Stitch
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class ExploreRankerCandidateSource @Inject() (
-  exploreRankerService: t.ExploreRanker.MethodPerEndpoint)
-    extends CandidateSource[t.ExploreRankerRequest, t.ImmersiveRecsResult] {
+@Singlelonton
+class elonxplorelonRankelonrCandidatelonSourcelon @Injelonct() (
+  elonxplorelonRankelonrSelonrvicelon: t.elonxplorelonRankelonr.MelonthodPelonrelonndpoint)
+    elonxtelonnds CandidatelonSourcelon[t.elonxplorelonRankelonrRelonquelonst, t.ImmelonrsivelonReloncsRelonsult] {
 
-  override val identifier: CandidateSourceIdentifier = CandidateSourceIdentifier("ExploreRanker")
+  ovelonrridelon val idelonntifielonr: CandidatelonSourcelonIdelonntifielonr = CandidatelonSourcelonIdelonntifielonr("elonxplorelonRankelonr")
 
-  override def apply(
-    request: t.ExploreRankerRequest
-  ): Stitch[Seq[t.ImmersiveRecsResult]] = {
+  ovelonrridelon delonf apply(
+    relonquelonst: t.elonxplorelonRankelonrRelonquelonst
+  ): Stitch[Selonq[t.ImmelonrsivelonReloncsRelonsult]] = {
     Stitch
-      .callFuture(exploreRankerService.getRankedResults(request))
+      .callFuturelon(elonxplorelonRankelonrSelonrvicelon.gelontRankelondRelonsults(relonquelonst))
       .map {
-        case t.ExploreRankerResponse(
-              t.ExploreRankerProductResponse
-                .ImmersiveRecsResponse(t.ImmersiveRecsResponse(immersiveRecsResults))) =>
-          immersiveRecsResults
-        case response =>
-          throw new UnsupportedOperationException(s"Unknown response type: $response")
+        caselon t.elonxplorelonRankelonrRelonsponselon(
+              t.elonxplorelonRankelonrProductRelonsponselon
+                .ImmelonrsivelonReloncsRelonsponselon(t.ImmelonrsivelonReloncsRelonsponselon(immelonrsivelonReloncsRelonsults))) =>
+          immelonrsivelonReloncsRelonsults
+        caselon relonsponselon =>
+          throw nelonw UnsupportelondOpelonrationelonxcelonption(s"Unknown relonsponselon typelon: $relonsponselon")
       }
   }
 }

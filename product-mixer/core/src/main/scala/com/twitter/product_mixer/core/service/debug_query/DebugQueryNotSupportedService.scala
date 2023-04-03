@@ -1,43 +1,43 @@
-package com.twitter.product_mixer.core.service.debug_query
+packagelon com.twittelonr.product_mixelonr.corelon.selonrvicelon.delonbug_quelonry
 
-import com.twitter.finagle.Service
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.ProductDisabled
-import com.twitter.product_mixer.core.pipeline.product.ProductPipelineResult
-import com.twitter.scrooge.{Request => ScroogeRequest}
-import com.twitter.scrooge.{Response => ScroogeResponse}
-import com.twitter.util.Future
-import com.twitter.product_mixer.core.{thriftscala => t}
-import com.twitter.util.jackson.ScalaObjectMapper
+import com.twittelonr.finaglelon.Selonrvicelon
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.PipelonlinelonFailurelon
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.ProductDisablelond
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.product.ProductPipelonlinelonRelonsult
+import com.twittelonr.scroogelon.{Relonquelonst => ScroogelonRelonquelonst}
+import com.twittelonr.scroogelon.{Relonsponselon => ScroogelonRelonsponselon}
+import com.twittelonr.util.Futurelon
+import com.twittelonr.product_mixelonr.corelon.{thriftscala => t}
+import com.twittelonr.util.jackson.ScalaObjelonctMappelonr
 
 /**
- * All Mixers must implement a debug query interface. This can be a problem for in-place migrations
- * where a service may only partially implement Product Mixer patterns. This service can be used as
- * a noop implementation of [[DebugQueryService]] until the Mixer service is fully migrated.
+ * All Mixelonrs must implelonmelonnt a delonbug quelonry intelonrfacelon. This can belon a problelonm for in-placelon migrations
+ * whelonrelon a selonrvicelon may only partially implelonmelonnt Product Mixelonr pattelonrns. This selonrvicelon can belon uselond as
+ * a noop implelonmelonntation of [[DelonbugQuelonrySelonrvicelon]] until thelon Mixelonr selonrvicelon is fully migratelond.
  */
-object DebugQueryNotSupportedService
-    extends Service[ScroogeRequest[_], ScroogeResponse[t.PipelineExecutionResult]] {
+objelonct DelonbugQuelonryNotSupportelondSelonrvicelon
+    elonxtelonnds Selonrvicelon[ScroogelonRelonquelonst[_], ScroogelonRelonsponselon[t.PipelonlinelonelonxeloncutionRelonsult]] {
 
-  val failureJson: String = {
-    val message = "This service does not support debug queries, this is usually due to an active " +
-      "in-place migration to Product Mixer. Please reach out in #product-mixer if you have any questions."
+  val failurelonJson: String = {
+    val melonssagelon = "This selonrvicelon doelons not support delonbug quelonrielons, this is usually duelon to an activelon " +
+      "in-placelon migration to Product Mixelonr. Plelonaselon relonach out in #product-mixelonr if you havelon any quelonstions."
 
-    ScalaObjectMapper().writeValueAsString(
-      ProductPipelineResult(
-        transformedQuery = None,
-        qualityFactorResult = None,
-        gateResult = None,
-        pipelineSelectorResult = None,
-        mixerPipelineResult = None,
-        recommendationPipelineResult = None,
-        traceId = None,
-        failure = Some(PipelineFailure(ProductDisabled, message)),
-        result = None,
+    ScalaObjelonctMappelonr().writelonValuelonAsString(
+      ProductPipelonlinelonRelonsult(
+        transformelondQuelonry = Nonelon,
+        qualityFactorRelonsult = Nonelon,
+        gatelonRelonsult = Nonelon,
+        pipelonlinelonSelonlelonctorRelonsult = Nonelon,
+        mixelonrPipelonlinelonRelonsult = Nonelon,
+        reloncommelonndationPipelonlinelonRelonsult = Nonelon,
+        tracelonId = Nonelon,
+        failurelon = Somelon(PipelonlinelonFailurelon(ProductDisablelond, melonssagelon)),
+        relonsult = Nonelon,
       ))
   }
 
-  override def apply(
-    thriftRequest: ScroogeRequest[_]
-  ): Future[ScroogeResponse[t.PipelineExecutionResult]] =
-    Future.value(ScroogeResponse(t.PipelineExecutionResult(failureJson)))
+  ovelonrridelon delonf apply(
+    thriftRelonquelonst: ScroogelonRelonquelonst[_]
+  ): Futurelon[ScroogelonRelonsponselon[t.PipelonlinelonelonxeloncutionRelonsult]] =
+    Futurelon.valuelon(ScroogelonRelonsponselon(t.PipelonlinelonelonxeloncutionRelonsult(failurelonJson)))
 }

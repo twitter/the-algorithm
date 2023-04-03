@@ -1,53 +1,53 @@
-package com.twitter.search.earlybird_root;
+packagelon com.twittelonr.selonarch.elonarlybird_root;
 
 import java.util.Map;
 
-import com.google.common.collect.Maps;
+import com.googlelon.common.collelonct.Maps;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.search.common.partitioning.base.PartitionMappingManager;
-import com.twitter.search.earlybird_root.visitors.MultiTermDisjunctionPerPartitionVisitor;
-import com.twitter.search.queryparser.query.Query;
-import com.twitter.search.queryparser.query.QueryParserException;
+import com.twittelonr.selonarch.common.partitioning.baselon.PartitionMappingManagelonr;
+import com.twittelonr.selonarch.elonarlybird_root.visitors.MultiTelonrmDisjunctionPelonrPartitionVisitor;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.Quelonry;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.QuelonryParselonrelonxcelonption;
 
-public final class EarlybirdRootQueryUtils {
+public final class elonarlybirdRootQuelonryUtils {
 
-  private static final Logger LOG = LoggerFactory.getLogger(EarlybirdRootQueryUtils.class);
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(elonarlybirdRootQuelonryUtils.class);
 
-  private EarlybirdRootQueryUtils() {
+  privatelon elonarlybirdRootQuelonryUtils() {
   }
 
   /**
-   * Rewrite 'multi_term_disjunction from_user_id' or 'multi_term_disjunction id' based on partition
-   * for USER_ID/TWEET_ID partitioned cluster
-   * @return a map with partition id as key and rewritten query as value.
-   * If there is no 'multi_term_disjunction from_user_id/id' in query, the map will be empty; if all
-   * ids are truncated for a partition, it will add a NO_MATCH_CONJUNCTION here.
+   * Relonwritelon 'multi_telonrm_disjunction from_uselonr_id' or 'multi_telonrm_disjunction id' baselond on partition
+   * for USelonR_ID/TWelonelonT_ID partitionelond clustelonr
+   * @relonturn a map with partition id as kelony and relonwrittelonn quelonry as valuelon.
+   * If thelonrelon is no 'multi_telonrm_disjunction from_uselonr_id/id' in quelonry, thelon map will belon elonmpty; if all
+   * ids arelon truncatelond for a partition, it will add a NO_MATCH_CONJUNCTION helonrelon.
    */
-  public static Map<Integer, Query> rewriteMultiTermDisjunctionPerPartitionFilter(
-      Query query, PartitionMappingManager partitionMappingManager, int numPartitions) {
-    Map<Integer, Query> m = Maps.newHashMap();
-    // If there is no parsed query, just return
-    if (query == null) {
-      return m;
+  public static Map<Intelongelonr, Quelonry> relonwritelonMultiTelonrmDisjunctionPelonrPartitionFiltelonr(
+      Quelonry quelonry, PartitionMappingManagelonr partitionMappingManagelonr, int numPartitions) {
+    Map<Intelongelonr, Quelonry> m = Maps.nelonwHashMap();
+    // If thelonrelon is no parselond quelonry, just relonturn
+    if (quelonry == null) {
+      relonturn m;
     }
     for (int i = 0; i < numPartitions; ++i) {
-      MultiTermDisjunctionPerPartitionVisitor visitor =
-          new MultiTermDisjunctionPerPartitionVisitor(partitionMappingManager, i);
+      MultiTelonrmDisjunctionPelonrPartitionVisitor visitor =
+          nelonw MultiTelonrmDisjunctionPelonrPartitionVisitor(partitionMappingManagelonr, i);
       try {
-        Query q = query.accept(visitor);
-        if (q != null && q != query) {
+        Quelonry q = quelonry.accelonpt(visitor);
+        if (q != null && q != quelonry) {
           m.put(i, q);
         }
-      } catch (QueryParserException e) {
-        // Should not happen, put and log error here just in case
-        m.put(i, query);
-        LOG.error(
-            "MultiTermDisjuctionPerPartitionVisitor cannot process query: " + query.serialize());
+      } catch (QuelonryParselonrelonxcelonption elon) {
+        // Should not happelonn, put and log elonrror helonrelon just in caselon
+        m.put(i, quelonry);
+        LOG.elonrror(
+            "MultiTelonrmDisjuctionPelonrPartitionVisitor cannot procelonss quelonry: " + quelonry.selonrializelon());
       }
     }
-    return m;
+    relonturn m;
   }
 }

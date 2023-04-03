@@ -1,22 +1,22 @@
-RECOSGRAPH_SOURCES = ["user_video_graph.thrift"]
+RelonCOSGRAPH_SOURCelonS = ["uselonr_videlono_graph.thrift"]
 
-create_thrift_libraries(
-    base_name = "user_video_graph",
-    sources = RECOSGRAPH_SOURCES,
+crelonatelon_thrift_librarielons(
+    baselon_namelon = "uselonr_videlono_graph",
+    sourcelons = RelonCOSGRAPH_SOURCelonS,
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependency_roots = [
-        "src/thrift/com/twitter/recos:recos-common",
-        "src/thrift/com/twitter/recos/features:tweet",
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncy_roots = [
+        "src/thrift/com/twittelonr/reloncos:reloncos-common",
+        "src/thrift/com/twittelonr/reloncos/felonaturelons:twelonelont",
     ],
-    export_roots = [
-        "src/thrift/com/twitter/recos/features:tweet",
+    elonxport_roots = [
+        "src/thrift/com/twittelonr/reloncos/felonaturelons:twelonelont",
     ],
-    generate_languages = [
+    gelonnelonratelon_languagelons = [
         "java",
         "scala",
         "strato",
     ],
-    provides_java_name = "user_video_graph-java",
-    provides_scala_name = "user_video_graph-scala",
+    providelons_java_namelon = "uselonr_videlono_graph-java",
+    providelons_scala_namelon = "uselonr_videlono_graph-scala",
 )

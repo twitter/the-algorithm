@@ -1,226 +1,226 @@
-package com.twitter.search.ingester.pipeline.wire;
+packagelon com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.wirelon;
 
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import javax.annotation.Nullable;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
+import java.util.concurrelonnt.elonxeloncutorSelonrvicelon;
+import javax.annotation.Nullablelon;
+import javax.naming.Contelonxt;
+import javax.naming.InitialContelonxt;
+import javax.naming.Namingelonxcelonption;
 
-import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.clients.producer.Partitioner;
-import org.apache.kafka.common.serialization.Deserializer;
-import org.apache.kafka.common.serialization.Serializer;
-import org.apache.thrift.TBase;
+import org.apachelon.kafka.clielonnts.consumelonr.KafkaConsumelonr;
+import org.apachelon.kafka.clielonnts.producelonr.Partitionelonr;
+import org.apachelon.kafka.common.selonrialization.Delonselonrializelonr;
+import org.apachelon.kafka.common.selonrialization.Selonrializelonr;
+import org.apachelon.thrift.TBaselon;
 
-import com.twitter.common.util.Clock;
-import com.twitter.common_internal.text.version.PenguinVersion;
-import com.twitter.decider.Decider;
-import com.twitter.eventbus.client.EventBusSubscriber;
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier;
-import com.twitter.finatra.kafka.producers.BlockingFinagleKafkaProducer;
-import com.twitter.gizmoduck.thriftjava.UserService;
-import com.twitter.metastore.client_v2.MetastoreClient;
-import com.twitter.pink_floyd.thrift.Storer;
-import com.twitter.search.common.partitioning.base.PartitionMappingManager;
-import com.twitter.search.common.relevance.classifiers.TweetOffensiveEvaluator;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.ingester.pipeline.strato_fetchers.AudioSpaceCoreFetcher;
-import com.twitter.search.ingester.pipeline.strato_fetchers.AudioSpaceParticipantsFetcher;
-import com.twitter.search.ingester.pipeline.strato_fetchers.NamedEntityFetcher;
-import com.twitter.search.ingester.pipeline.util.PipelineExceptionHandler;
-import com.twitter.storage.client.manhattan.kv.JavaManhattanKVEndpoint;
-import com.twitter.tweetypie.thriftjava.TweetService;
-import com.twitter.util.Duration;
-import com.twitter.util.Function;
-import com.twitter.util.Future;
+import com.twittelonr.common.util.Clock;
+import com.twittelonr.common_intelonrnal.telonxt.velonrsion.PelonnguinVelonrsion;
+import com.twittelonr.deloncidelonr.Deloncidelonr;
+import com.twittelonr.elonvelonntbus.clielonnt.elonvelonntBusSubscribelonr;
+import com.twittelonr.finaglelon.mtls.authelonntication.SelonrvicelonIdelonntifielonr;
+import com.twittelonr.finatra.kafka.producelonrs.BlockingFinaglelonKafkaProducelonr;
+import com.twittelonr.gizmoduck.thriftjava.UselonrSelonrvicelon;
+import com.twittelonr.melontastorelon.clielonnt_v2.MelontastorelonClielonnt;
+import com.twittelonr.pink_floyd.thrift.Storelonr;
+import com.twittelonr.selonarch.common.partitioning.baselon.PartitionMappingManagelonr;
+import com.twittelonr.selonarch.common.relonlelonvancelon.classifielonrs.TwelonelontOffelonnsivelonelonvaluator;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdClustelonr;
+import com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.strato_felontchelonrs.AudioSpacelonCorelonFelontchelonr;
+import com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.strato_felontchelonrs.AudioSpacelonParticipantsFelontchelonr;
+import com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.strato_felontchelonrs.NamelondelonntityFelontchelonr;
+import com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.util.PipelonlinelonelonxcelonptionHandlelonr;
+import com.twittelonr.storagelon.clielonnt.manhattan.kv.JavaManhattanKVelonndpoint;
+import com.twittelonr.twelonelontypielon.thriftjava.TwelonelontSelonrvicelon;
+import com.twittelonr.util.Duration;
+import com.twittelonr.util.Function;
+import com.twittelonr.util.Futurelon;
 
 /**
- * An "injection module" that provides bindings for all ingester endpoints that we want to mock out
- * in tests.
+ * An "injelonction modulelon" that providelons bindings for all ingelonstelonr elonndpoints that welon want to mock out
+ * in telonsts.
  */
-public abstract class WireModule {
-  /** The JNDI property to which this module will be bound. */
-  private static final String WIRE_MODULE_NAME = "";
+public abstract class WirelonModulelon {
+  /** Thelon JNDI propelonrty to which this modulelon will belon bound. */
+  privatelon static final String WIRelon_MODULelon_NAMelon = "";
 
-  /** The root name of all properties specified in the twitter-naming-production.*.xml files. */
-  public static final String JNDI_PIPELINE_ROOT = "";
+  /** Thelon root namelon of all propelonrtielons speloncifielond in thelon twittelonr-naming-production.*.xml filelons. */
+  public static final String JNDI_PIPelonLINelon_ROOT = "";
 
   /**
-   * (Re)binds the given wire module in JNDI.
+   * (Relon)binds thelon givelonn wirelon modulelon in JNDI.
    *
-   * @param wireModule The wire module to bind in JNDI.
-   * @throws NamingException If the wire module cannot be bound in JNDI for some reason.
+   * @param wirelonModulelon Thelon wirelon modulelon to bind in JNDI.
+   * @throws Namingelonxcelonption If thelon wirelon modulelon cannot belon bound in JNDI for somelon relonason.
    */
-  public static void bindWireModule(WireModule wireModule) throws NamingException {
-    Context jndiContext = new InitialContext();
-    jndiContext.rebind(WIRE_MODULE_NAME, wireModule);
+  public static void bindWirelonModulelon(WirelonModulelon wirelonModulelon) throws Namingelonxcelonption {
+    Contelonxt jndiContelonxt = nelonw InitialContelonxt();
+    jndiContelonxt.relonbind(WIRelon_MODULelon_NAMelon, wirelonModulelon);
   }
 
   /**
-   * Returns the wire module bound in JNDI.
+   * Relonturns thelon wirelon modulelon bound in JNDI.
    *
-   * @return The wire module bound in JNDI.
-   * @throws NamingException If there's no wire module bound in JNDI.
+   * @relonturn Thelon wirelon modulelon bound in JNDI.
+   * @throws Namingelonxcelonption If thelonrelon's no wirelon modulelon bound in JNDI.
    */
-  public static WireModule getWireModule() throws NamingException {
-    Context jndiContext = new InitialContext();
-    return (WireModule) jndiContext.lookup(WIRE_MODULE_NAME);
+  public static WirelonModulelon gelontWirelonModulelon() throws Namingelonxcelonption {
+    Contelonxt jndiContelonxt = nelonw InitialContelonxt();
+    relonturn (WirelonModulelon) jndiContelonxt.lookup(WIRelon_MODULelon_NAMelon);
   }
 
   /**
-   * Retrieves the service identifier needed for making mtls requests.
-   * @return The service identifier for the current running service.
+   * Relontrielonvelons thelon selonrvicelon idelonntifielonr nelonelondelond for making mtls relonquelonsts.
+   * @relonturn Thelon selonrvicelon idelonntifielonr for thelon currelonnt running selonrvicelon.
    */
-  public abstract ServiceIdentifier getServiceIdentifier();
+  public abstract SelonrvicelonIdelonntifielonr gelontSelonrvicelonIdelonntifielonr();
 
   /**
-   * Creates a new {@code FinagleKafkaConsumer} with a specified consumer group ID.
+   * Crelonatelons a nelonw {@codelon FinaglelonKafkaConsumelonr} with a speloncifielond consumelonr group ID.
    */
-  public abstract <T> KafkaConsumer<Long, T> newKafkaConsumer(
-      String kafkaClusterPath, Deserializer<T> deserializer, String clientId, String groupId,
-      int maxPollRecords);
+  public abstract <T> KafkaConsumelonr<Long, T> nelonwKafkaConsumelonr(
+      String kafkaClustelonrPath, Delonselonrializelonr<T> delonselonrializelonr, String clielonntId, String groupId,
+      int maxPollReloncords);
 
   /**
-   * Creates a new {@code FinagleKafkaConsumer} with a specified consumer group ID.
+   * Crelonatelons a nelonw {@codelon FinaglelonKafkaConsumelonr} with a speloncifielond consumelonr group ID.
    */
-  public abstract <T> BlockingFinagleKafkaProducer<Long, T> newFinagleKafkaProducer(
-      String kafkaClusterPath, Serializer<T> serializer, String clientId,
-      @Nullable Class<? extends Partitioner> partitionerClass);
+  public abstract <T> BlockingFinaglelonKafkaProducelonr<Long, T> nelonwFinaglelonKafkaProducelonr(
+      String kafkaClustelonrPath, Selonrializelonr<T> selonrializelonr, String clielonntId,
+      @Nullablelon Class<? elonxtelonnds Partitionelonr> partitionelonrClass);
 
   /**
-   * Gets a TweetyPie client.
+   * Gelonts a TwelonelontyPielon clielonnt.
    *
-   * @param tweetypieClientId Use this string as the client id.
-   * @return A TweetyPie client
-   * @throws NamingException
+   * @param twelonelontypielonClielonntId Uselon this string as thelon clielonnt id.
+   * @relonturn A TwelonelontyPielon clielonnt
+   * @throws Namingelonxcelonption
    */
-  public abstract TweetService.ServiceToClient getTweetyPieClient(String tweetypieClientId)
-      throws NamingException;
+  public abstract TwelonelontSelonrvicelon.SelonrvicelonToClielonnt gelontTwelonelontyPielonClielonnt(String twelonelontypielonClielonntId)
+      throws Namingelonxcelonption;
 
   /**
-   * Gets a Gizmoduck client.
+   * Gelonts a Gizmoduck clielonnt.
    *
-   * @param clientId
-   * @throws NamingException
+   * @param clielonntId
+   * @throws Namingelonxcelonption
    */
-  public abstract UserService.ServiceToClient getGizmoduckClient(String clientId)
-      throws NamingException;
+  public abstract UselonrSelonrvicelon.SelonrvicelonToClielonnt gelontGizmoduckClielonnt(String clielonntId)
+      throws Namingelonxcelonption;
 
   /**
-   * Gets the ManhattanKVEndpoint that should be used for the ManhattanCodedLocationProvider
+   * Gelonts thelon ManhattanKVelonndpoint that should belon uselond for thelon ManhattanCodelondLocationProvidelonr
    *
-   * @return the JavaManhattanKVEndpoint that we need for the ManhattanCodedLocationProvider
-   * @throws NamingException
+   * @relonturn thelon JavaManhattanKVelonndpoint that welon nelonelond for thelon ManhattanCodelondLocationProvidelonr
+   * @throws Namingelonxcelonption
    */
-  public abstract JavaManhattanKVEndpoint getJavaManhattanKVEndpoint()
-      throws NamingException;
+  public abstract JavaManhattanKVelonndpoint gelontJavaManhattanKVelonndpoint()
+      throws Namingelonxcelonption;
 
   /**
-   * Returns the decider to be used by all stages.
+   * Relonturns thelon deloncidelonr to belon uselond by all stagelons.
    *
-   * @return The decider to be used by all stages.
+   * @relonturn Thelon deloncidelonr to belon uselond by all stagelons.
    */
-  public abstract Decider getDecider();
+  public abstract Deloncidelonr gelontDeloncidelonr();
 
   /**
-   * Returns the partition ID to be used by all stages.
+   * Relonturns thelon partition ID to belon uselond by all stagelons.
    *
-   * @return The partition ID to be used by all stages.
+   * @relonturn Thelon partition ID to belon uselond by all stagelons.
    */
-  public abstract int getPartition();
+  public abstract int gelontPartition();
 
 
   /**
-   * Returns the PipelineExceptionHandler instance to be used by all stages.
+   * Relonturns thelon PipelonlinelonelonxcelonptionHandlelonr instancelon to belon uselond by all stagelons.
    *
-   * @return The PipelineExceptionHandler instance to be used by all stages.
-   * @throws NamingException If building the PipelineExceptionHandler instance requires some
-   *                         parameters, and those parameters were not bound in JNDI.
+   * @relonturn Thelon PipelonlinelonelonxcelonptionHandlelonr instancelon to belon uselond by all stagelons.
+   * @throws Namingelonxcelonption If building thelon PipelonlinelonelonxcelonptionHandlelonr instancelon relonquirelons somelon
+   *                         paramelontelonrs, and thoselon paramelontelonrs welonrelon not bound in JNDI.
    */
-  public abstract PipelineExceptionHandler getPipelineExceptionHandler();
+  public abstract PipelonlinelonelonxcelonptionHandlelonr gelontPipelonlinelonelonxcelonptionHandlelonr();
 
   /**
-   * Gets the PartitionMappingManager for the Kafka writer.
+   * Gelonts thelon PartitionMappingManagelonr for thelon Kafka writelonr.
    *
-   * @return a PartitionMappingManager
+   * @relonturn a PartitionMappingManagelonr
    */
-  public abstract PartitionMappingManager getPartitionMappingManager();
+  public abstract PartitionMappingManagelonr gelontPartitionMappingManagelonr();
 
   /**
-   * Returns the Metastore client used by the UserPropertiesManager.
+   * Relonturns thelon Melontastorelon clielonnt uselond by thelon UselonrPropelonrtielonsManagelonr.
    *
-   * @return A Metastore client.
-   * @throws NamingException
+   * @relonturn A Melontastorelon clielonnt.
+   * @throws Namingelonxcelonption
    */
-  public abstract MetastoreClient getMetastoreClient() throws NamingException;
+  public abstract MelontastorelonClielonnt gelontMelontastorelonClielonnt() throws Namingelonxcelonption;
 
   /**
-   * Returns an ExecutorService potentially backed by the specified number of threads.
+   * Relonturns an elonxeloncutorSelonrvicelon potelonntially backelond by thelon speloncifielond numbelonr of threlonads.
    *
-   * @param numThreads An advisory value with a suggestion for how large the threadpool should be.
-   * @return an ExecutorService that might be backed by some threads.
-   * @throws NamingException
+   * @param numThrelonads An advisory valuelon with a suggelonstion for how largelon thelon threlonadpool should belon.
+   * @relonturn an elonxeloncutorSelonrvicelon that might belon backelond by somelon threlonads.
+   * @throws Namingelonxcelonption
    */
-  public abstract ExecutorService getThreadPool(int numThreads) throws NamingException;
+  public abstract elonxeloncutorSelonrvicelon gelontThrelonadPool(int numThrelonads) throws Namingelonxcelonption;
 
   /**
-   * Returns the Storer interface to connect to Pink.
+   * Relonturns thelon Storelonr intelonrfacelon to connelonct to Pink.
    *
-   * @param requestTimeout The request timeout for the Pink client.
-   * @param retries The number of Finagle retries.
-   * @return a Storer.ServiceIface to connect to pink.
+   * @param relonquelonstTimelonout Thelon relonquelonst timelonout for thelon Pink clielonnt.
+   * @param relontrielons Thelon numbelonr of Finaglelon relontrielons.
+   * @relonturn a Storelonr.SelonrvicelonIfacelon to connelonct to pink.
    *
    */
-  public abstract Storer.ServiceIface getStorer(Duration requestTimeout, int retries)
-      throws NamingException;
+  public abstract Storelonr.SelonrvicelonIfacelon gelontStorelonr(Duration relonquelonstTimelonout, int relontrielons)
+      throws Namingelonxcelonption;
 
   /**
-   * Returns an EventBusSubscriber
+   * Relonturns an elonvelonntBusSubscribelonr
    */
-  public abstract <T extends TBase<?, ?>> EventBusSubscriber<T> createEventBusSubscriber(
-      Function<T, Future<?>> process,
+  public abstract <T elonxtelonnds TBaselon<?, ?>> elonvelonntBusSubscribelonr<T> crelonatelonelonvelonntBusSubscribelonr(
+      Function<T, Futurelon<?>> procelonss,
       Class<T> thriftStructClass,
-      String eventBusSubscriberId,
-      int maxConcurrentEvents);
+      String elonvelonntBusSubscribelonrId,
+      int maxConcurrelonntelonvelonnts);
 
   /**
-   * Returns a Clock.
+   * Relonturns a Clock.
    */
-  public abstract Clock getClock();
+  public abstract Clock gelontClock();
 
   /**
-   * Returns a TweetOffensiveEvaluator.
+   * Relonturns a TwelonelontOffelonnsivelonelonvaluator.
    */
-  public abstract TweetOffensiveEvaluator getTweetOffensiveEvaluator();
+  public abstract TwelonelontOffelonnsivelonelonvaluator gelontTwelonelontOffelonnsivelonelonvaluator();
 
   /**
-   * Returns the cluster.
+   * Relonturns thelon clustelonr.
    */
-  public abstract EarlybirdCluster getEarlybirdCluster() throws NamingException;
+  public abstract elonarlybirdClustelonr gelontelonarlybirdClustelonr() throws Namingelonxcelonption;
 
   /**
-   * Returns the current penguin version(s).
+   * Relonturns thelon currelonnt pelonnguin velonrsion(s).
    */
-  public abstract List<PenguinVersion> getPenguinVersions() throws NamingException;
+  public abstract List<PelonnguinVelonrsion> gelontPelonnguinVelonrsions() throws Namingelonxcelonption;
 
   /**
-   * Returns updated penguin version(s) depending on decider availability.
+   * Relonturns updatelond pelonnguin velonrsion(s) delonpelonnding on deloncidelonr availability.
    */
-  public abstract List<PenguinVersion> getCurrentlyEnabledPenguinVersions();
+  public abstract List<PelonnguinVelonrsion> gelontCurrelonntlyelonnablelondPelonnguinVelonrsions();
 
   /**
-   * Returns a named entities strato column fetcher.
+   * Relonturns a namelond elonntitielons strato column felontchelonr.
    */
-  public abstract NamedEntityFetcher getNamedEntityFetcher();
+  public abstract NamelondelonntityFelontchelonr gelontNamelondelonntityFelontchelonr();
 
   /**
-   * Returns audio space participants strato column fetcher.
+   * Relonturns audio spacelon participants strato column felontchelonr.
    */
-  public abstract AudioSpaceParticipantsFetcher getAudioSpaceParticipantsFetcher();
+  public abstract AudioSpacelonParticipantsFelontchelonr gelontAudioSpacelonParticipantsFelontchelonr();
 
   /**
-   * Returns audio space core strato column fetcher.
+   * Relonturns audio spacelon corelon strato column felontchelonr.
    */
-  public abstract AudioSpaceCoreFetcher getAudioSpaceCoreFetcher();
+  public abstract AudioSpacelonCorelonFelontchelonr gelontAudioSpacelonCorelonFelontchelonr();
 }

@@ -1,15 +1,15 @@
-package com.twitter.search.common.encoding.features;
+packagelon com.twittelonr.selonarch.common.elonncoding.felonaturelons;
 
 /**
- * Interface for processing different feature values into an int. It provides a one-way translation
- * of encoding using com.twitter.search.common.encoding.features.ByteNormalizer and supports all the
- * old normalizers. The difference is that we directly return the normalized int value
- * (instead of converting from byte).
+ * Intelonrfacelon for procelonssing diffelonrelonnt felonaturelon valuelons into an int. It providelons a onelon-way translation
+ * of elonncoding using com.twittelonr.selonarch.common.elonncoding.felonaturelons.BytelonNormalizelonr and supports all thelon
+ * old normalizelonrs. Thelon diffelonrelonncelon is that welon direlonctly relonturn thelon normalizelond int valuelon
+ * (instelonad of convelonrting from bytelon).
  */
-public interface IntNormalizer {
+public intelonrfacelon IntNormalizelonr {
   /**
-   * Returns the normalized value of {@code val}.
-   * The value may be byte-compressed or as-is depending on the normalizer type
+   * Relonturns thelon normalizelond valuelon of {@codelon val}.
+   * Thelon valuelon may belon bytelon-comprelonsselond or as-is delonpelonnding on thelon normalizelonr typelon
    */
-  int normalize(double val);
+  int normalizelon(doublelon val);
 }

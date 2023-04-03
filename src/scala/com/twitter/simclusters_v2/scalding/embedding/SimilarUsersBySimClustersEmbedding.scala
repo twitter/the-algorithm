@@ -1,104 +1,104 @@
-package com.twitter.simclusters_v2.scalding.embedding
+packagelon com.twittelonr.simclustelonrs_v2.scalding.elonmbelondding
 
-import com.twitter.bijection.Injection
-import com.twitter.bijection.scrooge.CompactScalaCodec
-import com.twitter.hermit.candidate.thriftscala.Candidate
-import com.twitter.hermit.candidate.thriftscala.Candidates
-import com.twitter.scalding._
-import com.twitter.scalding.commons.source.VersionedKeyValSource
-import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.scalding_internal.dalv2._
-import com.twitter.scalding_internal.dalv2.remote_access.AllowCrossClusterSameDC
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.CosineSimilarityUtil
-import com.twitter.simclusters_v2.hdfs_sources._
-import com.twitter.simclusters_v2.thriftscala._
-import com.twitter.wtf.scalding.jobs.common.AdhocExecutionApp
-import com.twitter.wtf.scalding.jobs.common.ScheduledExecutionApp
-import java.util.TimeZone
+import com.twittelonr.bijelonction.Injelonction
+import com.twittelonr.bijelonction.scroogelon.CompactScalaCodelonc
+import com.twittelonr.helonrmit.candidatelon.thriftscala.Candidatelon
+import com.twittelonr.helonrmit.candidatelon.thriftscala.Candidatelons
+import com.twittelonr.scalding._
+import com.twittelonr.scalding.commons.sourcelon.VelonrsionelondKelonyValSourcelon
+import com.twittelonr.scalding_intelonrnal.dalv2.DALWritelon._
+import com.twittelonr.scalding_intelonrnal.dalv2._
+import com.twittelonr.scalding_intelonrnal.dalv2.relonmotelon_accelonss.AllowCrossClustelonrSamelonDC
+import com.twittelonr.scalding_intelonrnal.multiformat.format.kelonyval.KelonyVal
+import com.twittelonr.simclustelonrs_v2.common.CosinelonSimilarityUtil
+import com.twittelonr.simclustelonrs_v2.hdfs_sourcelons._
+import com.twittelonr.simclustelonrs_v2.thriftscala._
+import com.twittelonr.wtf.scalding.jobs.common.AdhocelonxeloncutionApp
+import com.twittelonr.wtf.scalding.jobs.common.SchelondulelondelonxeloncutionApp
+import java.util.TimelonZonelon
 
 /**
-capesospy-v2 update --build_locally --start_cron \
-  --start_cron similar_users_by_simclusters_embeddings_job \
-  src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
+capelonsospy-v2 updatelon --build_locally --start_cron \
+  --start_cron similar_uselonrs_by_simclustelonrs_elonmbelonddings_job \
+  src/scala/com/twittelonr/simclustelonrs_v2/capelonsos_config/atla_proc3.yaml
  */
-object SimilarUsersBySimClustersEmbeddingBatchApp extends ScheduledExecutionApp {
+objelonct SimilarUselonrsBySimClustelonrselonmbelonddingBatchApp elonxtelonnds SchelondulelondelonxeloncutionApp {
 
-  override val firstTime: RichDate = RichDate("2019-07-10")
+  ovelonrridelon val firstTimelon: RichDatelon = RichDatelon("2019-07-10")
 
-  override val batchIncrement: Duration = Days(7)
+  ovelonrridelon val batchIncrelonmelonnt: Duration = Days(7)
 
-  private val outputByFav =
-    "/user/cassowary/manhattan_sequence_files/similar_users_by_simclusters_embeddings/by_fav"
-  private val outputByFollow =
-    "/user/cassowary/manhattan_sequence_files/similar_users_by_simclusters_embeddings/by_follow"
+  privatelon val outputByFav =
+    "/uselonr/cassowary/manhattan_selonquelonncelon_filelons/similar_uselonrs_by_simclustelonrs_elonmbelonddings/by_fav"
+  privatelon val outputByFollow =
+    "/uselonr/cassowary/manhattan_selonquelonncelon_filelons/similar_uselonrs_by_simclustelonrs_elonmbelonddings/by_follow"
 
-  private implicit val valueInj: CompactScalaCodec[Candidates] = CompactScalaCodec(Candidates)
+  privatelon implicit val valuelonInj: CompactScalaCodelonc[Candidatelons] = CompactScalaCodelonc(Candidatelons)
 
-  private val topClusterEmbeddingsByFavScore = DAL
-    .readMostRecentSnapshotNoOlderThan(
-      ProducerTopKSimclusterEmbeddingsByFavScoreUpdatedScalaDataset,
+  privatelon val topClustelonrelonmbelonddingsByFavScorelon = DAL
+    .relonadMostReloncelonntSnapshotNoOldelonrThan(
+      ProducelonrTopKSimclustelonrelonmbelonddingsByFavScorelonUpdatelondScalaDataselont,
       Days(14)
     )
-    .withRemoteReadPolicy(AllowCrossClusterSameDC)
-    .toTypedPipe
-    .map { clusterScorePair => clusterScorePair.key -> clusterScorePair.value }
+    .withRelonmotelonRelonadPolicy(AllowCrossClustelonrSamelonDC)
+    .toTypelondPipelon
+    .map { clustelonrScorelonPair => clustelonrScorelonPair.kelony -> clustelonrScorelonPair.valuelon }
 
-  private val topProducersForClusterEmbeddingByFavScore = DAL
-    .readMostRecentSnapshotNoOlderThan(
-      SimclusterEmbeddingTopKProducersByFavScoreUpdatedScalaDataset,
+  privatelon val topProducelonrsForClustelonrelonmbelonddingByFavScorelon = DAL
+    .relonadMostReloncelonntSnapshotNoOldelonrThan(
+      SimclustelonrelonmbelonddingTopKProducelonrsByFavScorelonUpdatelondScalaDataselont,
       Days(14)
     )
-    .withRemoteReadPolicy(AllowCrossClusterSameDC)
-    .toTypedPipe
-    .map { producerScoresPair => producerScoresPair.key -> producerScoresPair.value }
+    .withRelonmotelonRelonadPolicy(AllowCrossClustelonrSamelonDC)
+    .toTypelondPipelon
+    .map { producelonrScorelonsPair => producelonrScorelonsPair.kelony -> producelonrScorelonsPair.valuelon }
 
-  private val topClusterEmbeddingsByFollowScore = DAL
-    .readMostRecentSnapshotNoOlderThan(
-      ProducerTopKSimclusterEmbeddingsByFollowScoreUpdatedScalaDataset,
+  privatelon val topClustelonrelonmbelonddingsByFollowScorelon = DAL
+    .relonadMostReloncelonntSnapshotNoOldelonrThan(
+      ProducelonrTopKSimclustelonrelonmbelonddingsByFollowScorelonUpdatelondScalaDataselont,
       Days(14)
     )
-    .withRemoteReadPolicy(AllowCrossClusterSameDC)
-    .toTypedPipe
-    .map { clusterScorePair => clusterScorePair.key -> clusterScorePair.value }
+    .withRelonmotelonRelonadPolicy(AllowCrossClustelonrSamelonDC)
+    .toTypelondPipelon
+    .map { clustelonrScorelonPair => clustelonrScorelonPair.kelony -> clustelonrScorelonPair.valuelon }
 
-  private val topProducersForClusterEmbeddingByFollowScore = DAL
-    .readMostRecentSnapshotNoOlderThan(
-      SimclusterEmbeddingTopKProducersByFollowScoreUpdatedScalaDataset,
+  privatelon val topProducelonrsForClustelonrelonmbelonddingByFollowScorelon = DAL
+    .relonadMostReloncelonntSnapshotNoOldelonrThan(
+      SimclustelonrelonmbelonddingTopKProducelonrsByFollowScorelonUpdatelondScalaDataselont,
       Days(14)
     )
-    .withRemoteReadPolicy(AllowCrossClusterSameDC)
-    .toTypedPipe
-    .map { producerScoresPair => producerScoresPair.key -> producerScoresPair.value }
+    .withRelonmotelonRelonadPolicy(AllowCrossClustelonrSamelonDC)
+    .toTypelondPipelon
+    .map { producelonrScorelonsPair => producelonrScorelonsPair.kelony -> producelonrScorelonsPair.valuelon }
 
-  override def runOnDateRange(
+  ovelonrridelon delonf runOnDatelonRangelon(
     args: Args
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon,
+    uniquelonID: UniquelonID
+  ): elonxeloncution[Unit] = {
 
-    Execution
+    elonxeloncution
       .zip(
-        SimilarUsersBySimClustersEmbedding
-          .getTopUsersRelatedToUser(
-            topClusterEmbeddingsByFavScore,
-            topProducersForClusterEmbeddingByFavScore
+        SimilarUselonrsBySimClustelonrselonmbelondding
+          .gelontTopUselonrsRelonlatelondToUselonr(
+            topClustelonrelonmbelonddingsByFavScorelon,
+            topProducelonrsForClustelonrelonmbelonddingByFavScorelon
           )
-          .map { case (key, value) => KeyVal(key, value) }
-          .writeDALVersionedKeyValExecution(
-            SimilarUsersByFavBasedProducerEmbeddingScalaDataset,
+          .map { caselon (kelony, valuelon) => KelonyVal(kelony, valuelon) }
+          .writelonDALVelonrsionelondKelonyValelonxeloncution(
+            SimilarUselonrsByFavBaselondProducelonrelonmbelonddingScalaDataselont,
             D.Suffix(outputByFav)
           ),
-        SimilarUsersBySimClustersEmbedding
-          .getTopUsersRelatedToUser(
-            topClusterEmbeddingsByFollowScore,
-            topProducersForClusterEmbeddingByFollowScore
+        SimilarUselonrsBySimClustelonrselonmbelondding
+          .gelontTopUselonrsRelonlatelondToUselonr(
+            topClustelonrelonmbelonddingsByFollowScorelon,
+            topProducelonrsForClustelonrelonmbelonddingByFollowScorelon
           )
-          .map { case (key, value) => KeyVal(key, value) }
-          .writeDALVersionedKeyValExecution(
-            SimilarUsersByFollowBasedProducerEmbeddingScalaDataset,
+          .map { caselon (kelony, valuelon) => KelonyVal(kelony, valuelon) }
+          .writelonDALVelonrsionelondKelonyValelonxeloncution(
+            SimilarUselonrsByFollowBaselondProducelonrelonmbelonddingScalaDataselont,
             D.Suffix(outputByFollow)
           )
       ).unit
@@ -106,194 +106,194 @@ object SimilarUsersBySimClustersEmbeddingBatchApp extends ScheduledExecutionApp 
 }
 
 /**
- * Adhoc job to calculate producer's simcluster embeddings, which essentially assigns interestedIn
- * SimClusters to each producer, regardless of whether the producer has a knownFor assignment.
+ * Adhoc job to calculatelon producelonr's simclustelonr elonmbelonddings, which elonsselonntially assigns intelonrelonstelondIn
+ * SimClustelonrs to elonach producelonr, relongardlelonss of whelonthelonr thelon producelonr has a knownFor assignmelonnt.
  *
-./bazel bundle src/scala/com/twitter/simclusters_v2/scalding/embedding:similar_users_by_simclusters_embeddings-adhoc && \
-  oscar hdfs --user recos-platform --screen --tee similar_users_by_simclusters_embeddings --bundle similar_users_by_simclusters_embeddings-adhoc \
-  --tool com.twitter.simclusters_v2.scalding.embedding.SimilarUsersBySimClustersEmbeddingAdhocApp \
-  -- --date 2019-07-10T00 2019-07-10T23
+./bazelonl bundlelon src/scala/com/twittelonr/simclustelonrs_v2/scalding/elonmbelondding:similar_uselonrs_by_simclustelonrs_elonmbelonddings-adhoc && \
+  oscar hdfs --uselonr reloncos-platform --screlonelonn --telonelon similar_uselonrs_by_simclustelonrs_elonmbelonddings --bundlelon similar_uselonrs_by_simclustelonrs_elonmbelonddings-adhoc \
+  --tool com.twittelonr.simclustelonrs_v2.scalding.elonmbelondding.SimilarUselonrsBySimClustelonrselonmbelonddingAdhocApp \
+  -- --datelon 2019-07-10T00 2019-07-10T23
  */
-object SimilarUsersBySimClustersEmbeddingAdhocApp extends AdhocExecutionApp {
+objelonct SimilarUselonrsBySimClustelonrselonmbelonddingAdhocApp elonxtelonnds AdhocelonxeloncutionApp {
 
-  private val outputByFav =
-    "/user/recos-platform/adhoc/similar_users_by_simclusters_embeddings/by_fav"
-  private val outputByFollow =
-    "/user/recos-platform/adhoc/similar_users_by_simclusters_embeddings/by_follow"
+  privatelon val outputByFav =
+    "/uselonr/reloncos-platform/adhoc/similar_uselonrs_by_simclustelonrs_elonmbelonddings/by_fav"
+  privatelon val outputByFollow =
+    "/uselonr/reloncos-platform/adhoc/similar_uselonrs_by_simclustelonrs_elonmbelonddings/by_follow"
 
-  private val topClusterEmbeddingsByFavScore = DAL
-    .readMostRecentSnapshotNoOlderThan(
-      ProducerTopKSimclusterEmbeddingsByFavScoreUpdatedScalaDataset,
+  privatelon val topClustelonrelonmbelonddingsByFavScorelon = DAL
+    .relonadMostReloncelonntSnapshotNoOldelonrThan(
+      ProducelonrTopKSimclustelonrelonmbelonddingsByFavScorelonUpdatelondScalaDataselont,
       Days(14)
     )
-    .withRemoteReadPolicy(AllowCrossClusterSameDC)
-    .toTypedPipe
-    .map { clusterScorePair => clusterScorePair.key -> clusterScorePair.value }
+    .withRelonmotelonRelonadPolicy(AllowCrossClustelonrSamelonDC)
+    .toTypelondPipelon
+    .map { clustelonrScorelonPair => clustelonrScorelonPair.kelony -> clustelonrScorelonPair.valuelon }
 
-  private val topProducersForClusterEmbeddingByFavScore = DAL
-    .readMostRecentSnapshotNoOlderThan(
-      SimclusterEmbeddingTopKProducersByFavScoreUpdatedScalaDataset,
+  privatelon val topProducelonrsForClustelonrelonmbelonddingByFavScorelon = DAL
+    .relonadMostReloncelonntSnapshotNoOldelonrThan(
+      SimclustelonrelonmbelonddingTopKProducelonrsByFavScorelonUpdatelondScalaDataselont,
       Days(14)
     )
-    .withRemoteReadPolicy(AllowCrossClusterSameDC)
-    .toTypedPipe
-    .map { producerScoresPair => producerScoresPair.key -> producerScoresPair.value }
+    .withRelonmotelonRelonadPolicy(AllowCrossClustelonrSamelonDC)
+    .toTypelondPipelon
+    .map { producelonrScorelonsPair => producelonrScorelonsPair.kelony -> producelonrScorelonsPair.valuelon }
 
-  private val topClusterEmbeddingsByFollowScore = DAL
-    .readMostRecentSnapshotNoOlderThan(
-      ProducerTopKSimclusterEmbeddingsByFollowScoreUpdatedScalaDataset,
+  privatelon val topClustelonrelonmbelonddingsByFollowScorelon = DAL
+    .relonadMostReloncelonntSnapshotNoOldelonrThan(
+      ProducelonrTopKSimclustelonrelonmbelonddingsByFollowScorelonUpdatelondScalaDataselont,
       Days(14)
     )
-    .withRemoteReadPolicy(AllowCrossClusterSameDC)
-    .toTypedPipe
-    .map { clusterScorePair => clusterScorePair.key -> clusterScorePair.value }
+    .withRelonmotelonRelonadPolicy(AllowCrossClustelonrSamelonDC)
+    .toTypelondPipelon
+    .map { clustelonrScorelonPair => clustelonrScorelonPair.kelony -> clustelonrScorelonPair.valuelon }
 
-  private val topProducersForClusterEmbeddingByFollowScore = DAL
-    .readMostRecentSnapshotNoOlderThan(
-      SimclusterEmbeddingTopKProducersByFollowScoreUpdatedScalaDataset,
+  privatelon val topProducelonrsForClustelonrelonmbelonddingByFollowScorelon = DAL
+    .relonadMostReloncelonntSnapshotNoOldelonrThan(
+      SimclustelonrelonmbelonddingTopKProducelonrsByFollowScorelonUpdatelondScalaDataselont,
       Days(14)
     )
-    .withRemoteReadPolicy(AllowCrossClusterSameDC)
-    .toTypedPipe
-    .map { producerScoresPair => producerScoresPair.key -> producerScoresPair.value }
+    .withRelonmotelonRelonadPolicy(AllowCrossClustelonrSamelonDC)
+    .toTypelondPipelon
+    .map { producelonrScorelonsPair => producelonrScorelonsPair.kelony -> producelonrScorelonsPair.valuelon }
 
-  implicit val candidatesInj: CompactScalaCodec[Candidates] = CompactScalaCodec(Candidates)
+  implicit val candidatelonsInj: CompactScalaCodelonc[Candidatelons] = CompactScalaCodelonc(Candidatelons)
 
-  override def runOnDateRange(
+  ovelonrridelon delonf runOnDatelonRangelon(
     args: Args
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon,
+    uniquelonID: UniquelonID
+  ): elonxeloncution[Unit] = {
 
-    Execution
+    elonxeloncution
       .zip(
-        SimilarUsersBySimClustersEmbedding
-          .getTopUsersRelatedToUser(
-            topClusterEmbeddingsByFavScore,
-            topProducersForClusterEmbeddingByFavScore).writeExecution(
-            VersionedKeyValSource[Long, Candidates](outputByFav))
-          .getCounters
+        SimilarUselonrsBySimClustelonrselonmbelondding
+          .gelontTopUselonrsRelonlatelondToUselonr(
+            topClustelonrelonmbelonddingsByFavScorelon,
+            topProducelonrsForClustelonrelonmbelonddingByFavScorelon).writelonelonxeloncution(
+            VelonrsionelondKelonyValSourcelon[Long, Candidatelons](outputByFav))
+          .gelontCountelonrs
           .flatMap {
-            case (_, counters) =>
-              counters.toMap.toSeq
-                .sortBy(e => (e._1.group, e._1.counter))
-                .foreach {
-                  case (statKey, value) =>
-                    println(s"${statKey.group}\t${statKey.counter}\t$value")
+            caselon (_, countelonrs) =>
+              countelonrs.toMap.toSelonq
+                .sortBy(elon => (elon._1.group, elon._1.countelonr))
+                .forelonach {
+                  caselon (statKelony, valuelon) =>
+                    println(s"${statKelony.group}\t${statKelony.countelonr}\t$valuelon")
                 }
-              Execution.unit
+              elonxeloncution.unit
           },
-        SimilarUsersBySimClustersEmbedding
-          .getTopUsersRelatedToUser(
-            topClusterEmbeddingsByFollowScore,
-            topProducersForClusterEmbeddingByFollowScore).writeExecution(
-            VersionedKeyValSource[Long, Candidates](outputByFollow))
-          .getCounters
+        SimilarUselonrsBySimClustelonrselonmbelondding
+          .gelontTopUselonrsRelonlatelondToUselonr(
+            topClustelonrelonmbelonddingsByFollowScorelon,
+            topProducelonrsForClustelonrelonmbelonddingByFollowScorelon).writelonelonxeloncution(
+            VelonrsionelondKelonyValSourcelon[Long, Candidatelons](outputByFollow))
+          .gelontCountelonrs
           .flatMap {
-            case (_, counters) =>
-              counters.toMap.toSeq
-                .sortBy(e => (e._1.group, e._1.counter))
-                .foreach {
-                  case (statKey, value) =>
-                    println(s"${statKey.group}\t${statKey.counter}\t$value")
+            caselon (_, countelonrs) =>
+              countelonrs.toMap.toSelonq
+                .sortBy(elon => (elon._1.group, elon._1.countelonr))
+                .forelonach {
+                  caselon (statKelony, valuelon) =>
+                    println(s"${statKelony.group}\t${statKelony.countelonr}\t$valuelon")
                 }
-              Execution.unit
+              elonxeloncution.unit
           }
       ).unit
   }
 }
 
-object SimilarUsersBySimClustersEmbedding {
-  private val maxUsersPerCluster = 300
-  private val maxClustersPerUser = 50
-  private val topK = 100
+objelonct SimilarUselonrsBySimClustelonrselonmbelondding {
+  privatelon val maxUselonrsPelonrClustelonr = 300
+  privatelon val maxClustelonrsPelonrUselonr = 50
+  privatelon val topK = 100
 
-  def getTopUsersRelatedToUser(
-    clusterScores: TypedPipe[(Long, TopSimClustersWithScore)],
-    producerScores: TypedPipe[(PersistedFullClusterId, TopProducersWithScore)]
+  delonf gelontTopUselonrsRelonlatelondToUselonr(
+    clustelonrScorelons: TypelondPipelon[(Long, TopSimClustelonrsWithScorelon)],
+    producelonrScorelons: TypelondPipelon[(PelonrsistelondFullClustelonrId, TopProducelonrsWithScorelon)]
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[(Long, Candidates)] = {
+    implicit uniquelonID: UniquelonID
+  ): TypelondPipelon[(Long, Candidatelons)] = {
 
-    val numUserUserPair = Stat("num_user_producer_pairs")
-    val numUserClusterPair = Stat("num_user_cluster_pairs")
-    val numClusterProducerPair = Stat("num_cluster_producer_pairs")
+    val numUselonrUselonrPair = Stat("num_uselonr_producelonr_pairs")
+    val numUselonrClustelonrPair = Stat("num_uselonr_clustelonr_pairs")
+    val numClustelonrProducelonrPair = Stat("num_clustelonr_producelonr_pairs")
 
-    val clusterToUserMap =
-      clusterScores.flatMap {
-        case (userId, topSimClustersWithScore) =>
-          val targetUserClusters =
-            topSimClustersWithScore.topClusters.sortBy(-_.score).take(maxClustersPerUser)
+    val clustelonrToUselonrMap =
+      clustelonrScorelons.flatMap {
+        caselon (uselonrId, topSimClustelonrsWithScorelon) =>
+          val targelontUselonrClustelonrs =
+            topSimClustelonrsWithScorelon.topClustelonrs.sortBy(-_.scorelon).takelon(maxClustelonrsPelonrUselonr)
 
-          targetUserClusters.map { simClusterWithScore =>
-            numUserClusterPair.inc()
-            simClusterWithScore.clusterId -> userId
+          targelontUselonrClustelonrs.map { simClustelonrWithScorelon =>
+            numUselonrClustelonrPair.inc()
+            simClustelonrWithScorelon.clustelonrId -> uselonrId
           }
       }
 
-    val clusterToProducerMap = producerScores.flatMap {
-      case (persistedFullClusterId, topProducersWithScore) =>
-        numClusterProducerPair.inc()
-        val targetProducers = topProducersWithScore.topProducers
-          .sortBy(-_.score)
-          .take(maxUsersPerCluster)
-        targetProducers.map { topProducerWithScore =>
-          persistedFullClusterId.clusterId -> topProducerWithScore.userId
+    val clustelonrToProducelonrMap = producelonrScorelons.flatMap {
+      caselon (pelonrsistelondFullClustelonrId, topProducelonrsWithScorelon) =>
+        numClustelonrProducelonrPair.inc()
+        val targelontProducelonrs = topProducelonrsWithScorelon.topProducelonrs
+          .sortBy(-_.scorelon)
+          .takelon(maxUselonrsPelonrClustelonr)
+        targelontProducelonrs.map { topProducelonrWithScorelon =>
+          pelonrsistelondFullClustelonrId.clustelonrId -> topProducelonrWithScorelon.uselonrId
         }
     }
 
-    implicit val intInject: Int => Array[Byte] = Injection.int2BigEndian.toFunction
+    implicit val intInjelonct: Int => Array[Bytelon] = Injelonction.int2Bigelonndian.toFunction
 
-    val userToProducerMap =
-      clusterToUserMap.group
-        .sketch(2000)
-        .join(clusterToProducerMap.group)
-        .values
+    val uselonrToProducelonrMap =
+      clustelonrToUselonrMap.group
+        .skelontch(2000)
+        .join(clustelonrToProducelonrMap.group)
+        .valuelons
         .distinct
-        .collect({
-          //filter self-pair
-          case userPair if userPair._1 != userPair._2 =>
-            numUserUserPair.inc()
-            userPair
+        .collelonct({
+          //filtelonr selonlf-pair
+          caselon uselonrPair if uselonrPair._1 != uselonrPair._2 =>
+            numUselonrUselonrPair.inc()
+            uselonrPair
         })
 
-    val userEmbeddingsAllGrouped = clusterScores.map {
-      case (userId, topSimClustersWithScore) =>
-        val targetUserClusters =
-          topSimClustersWithScore.topClusters.sortBy(-_.score).take(maxClustersPerUser)
-        val embedding = targetUserClusters.map { simClustersWithScore =>
-          simClustersWithScore.clusterId -> simClustersWithScore.score
+    val uselonrelonmbelonddingsAllGroupelond = clustelonrScorelons.map {
+      caselon (uselonrId, topSimClustelonrsWithScorelon) =>
+        val targelontUselonrClustelonrs =
+          topSimClustelonrsWithScorelon.topClustelonrs.sortBy(-_.scorelon).takelon(maxClustelonrsPelonrUselonr)
+        val elonmbelondding = targelontUselonrClustelonrs.map { simClustelonrsWithScorelon =>
+          simClustelonrsWithScorelon.clustelonrId -> simClustelonrsWithScorelon.scorelon
         }.toMap
-        val embeddingNormalized = CosineSimilarityUtil.normalize(embedding)
-        userId -> embeddingNormalized
-    }.forceToDisk
+        val elonmbelonddingNormalizelond = CosinelonSimilarityUtil.normalizelon(elonmbelondding)
+        uselonrId -> elonmbelonddingNormalizelond
+    }.forcelonToDisk
 
-    val userToProducerMapJoinWithEmbedding =
-      userToProducerMap
-        .join(userEmbeddingsAllGrouped)
+    val uselonrToProducelonrMapJoinWithelonmbelondding =
+      uselonrToProducelonrMap
+        .join(uselonrelonmbelonddingsAllGroupelond)
         .map {
-          case (user, (producer, userEmbedding)) =>
-            producer -> (user, userEmbedding)
+          caselon (uselonr, (producelonr, uselonrelonmbelondding)) =>
+            producelonr -> (uselonr, uselonrelonmbelondding)
         }
-        .join(userEmbeddingsAllGrouped)
+        .join(uselonrelonmbelonddingsAllGroupelond)
         .map {
-          case (producer, ((user, userEmbedding), producerEmbedding)) =>
-            user -> (producer, CosineSimilarityUtil.dotProduct(userEmbedding, producerEmbedding))
+          caselon (producelonr, ((uselonr, uselonrelonmbelondding), producelonrelonmbelondding)) =>
+            uselonr -> (producelonr, CosinelonSimilarityUtil.dotProduct(uselonrelonmbelondding, producelonrelonmbelondding))
         }
         .group
-        .sortWithTake(topK)((a, b) => a._2 > b._2)
+        .sortWithTakelon(topK)((a, b) => a._2 > b._2)
         .map {
-          case (userId, candidatesList) =>
-            val candidatesSeq = candidatesList
+          caselon (uselonrId, candidatelonsList) =>
+            val candidatelonsSelonq = candidatelonsList
               .map {
-                case (candidateId, score) => Candidate(candidateId, score)
+                caselon (candidatelonId, scorelon) => Candidatelon(candidatelonId, scorelon)
               }
-            userId -> Candidates(userId, candidatesSeq)
+            uselonrId -> Candidatelons(uselonrId, candidatelonsSelonq)
         }
 
-    userToProducerMapJoinWithEmbedding
+    uselonrToProducelonrMapJoinWithelonmbelondding
   }
 
 }

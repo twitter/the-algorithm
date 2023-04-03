@@ -1,151 +1,151 @@
-package com.twitter.follow_recommendations.common.feature_hydration.adapters
+packagelon com.twittelonr.follow_reloncommelonndations.common.felonaturelon_hydration.adaptelonrs
 
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.Feature
-import com.twitter.ml.api.Feature.Continuous
-import com.twitter.ml.api.FeatureContext
-import com.twitter.ml.api.IRecordOneToOneAdapter
-import com.twitter.ml.api.util.FDsl._
-import com.twitter.ml.featurestore.catalog.features.customer_journey.PostNuxAlgorithmFeatures
-import com.twitter.ml.featurestore.catalog.features.customer_journey.PostNuxAlgorithmIdAggregateFeatureGroup
-import com.twitter.ml.featurestore.catalog.features.customer_journey.PostNuxAlgorithmTypeAggregateFeatureGroup
-import scala.collection.JavaConverters._
+import com.twittelonr.ml.api.DataReloncord
+import com.twittelonr.ml.api.Felonaturelon
+import com.twittelonr.ml.api.Felonaturelon.Continuous
+import com.twittelonr.ml.api.FelonaturelonContelonxt
+import com.twittelonr.ml.api.IReloncordOnelonToOnelonAdaptelonr
+import com.twittelonr.ml.api.util.FDsl._
+import com.twittelonr.ml.felonaturelonstorelon.catalog.felonaturelons.customelonr_journelony.PostNuxAlgorithmFelonaturelons
+import com.twittelonr.ml.felonaturelonstorelon.catalog.felonaturelons.customelonr_journelony.PostNuxAlgorithmIdAggrelongatelonFelonaturelonGroup
+import com.twittelonr.ml.felonaturelonstorelon.catalog.felonaturelons.customelonr_journelony.PostNuxAlgorithmTypelonAggrelongatelonFelonaturelonGroup
+import scala.collelonction.JavaConvelonrtelonrs._
 
-object PostNuxAlgorithmIdAdapter extends PostNuxAlgorithmAdapter {
-  override val PostNuxAlgorithmFeatureGroup: PostNuxAlgorithmFeatures =
-    PostNuxAlgorithmIdAggregateFeatureGroup
+objelonct PostNuxAlgorithmIdAdaptelonr elonxtelonnds PostNuxAlgorithmAdaptelonr {
+  ovelonrridelon val PostNuxAlgorithmFelonaturelonGroup: PostNuxAlgorithmFelonaturelons =
+    PostNuxAlgorithmIdAggrelongatelonFelonaturelonGroup
 
-  // To keep the length of feature names reasonable, we remove the prefix added by FeatureStore.
-  override val FeatureStorePrefix: String =
-    "wtf_algorithm_id.customer_journey.post_nux_algorithm_id_aggregate_feature_group."
+  // To kelonelonp thelon lelonngth of felonaturelon namelons relonasonablelon, welon relonmovelon thelon prelonfix addelond by FelonaturelonStorelon.
+  ovelonrridelon val FelonaturelonStorelonPrelonfix: String =
+    "wtf_algorithm_id.customelonr_journelony.post_nux_algorithm_id_aggrelongatelon_felonaturelon_group."
 }
 
-object PostNuxAlgorithmTypeAdapter extends PostNuxAlgorithmAdapter {
-  override val PostNuxAlgorithmFeatureGroup: PostNuxAlgorithmFeatures =
-    PostNuxAlgorithmTypeAggregateFeatureGroup
+objelonct PostNuxAlgorithmTypelonAdaptelonr elonxtelonnds PostNuxAlgorithmAdaptelonr {
+  ovelonrridelon val PostNuxAlgorithmFelonaturelonGroup: PostNuxAlgorithmFelonaturelons =
+    PostNuxAlgorithmTypelonAggrelongatelonFelonaturelonGroup
 
-  // To keep the length of feature names reasonable, we remove the prefix added by FeatureStore.
-  override val FeatureStorePrefix: String =
-    "wtf_algorithm_type.customer_journey.post_nux_algorithm_type_aggregate_feature_group."
+  // To kelonelonp thelon lelonngth of felonaturelon namelons relonasonablelon, welon relonmovelon thelon prelonfix addelond by FelonaturelonStorelon.
+  ovelonrridelon val FelonaturelonStorelonPrelonfix: String =
+    "wtf_algorithm_typelon.customelonr_journelony.post_nux_algorithm_typelon_aggrelongatelon_felonaturelon_group."
 }
 
-trait PostNuxAlgorithmAdapter extends IRecordOneToOneAdapter[DataRecord] {
+trait PostNuxAlgorithmAdaptelonr elonxtelonnds IReloncordOnelonToOnelonAdaptelonr[DataReloncord] {
 
-  val PostNuxAlgorithmFeatureGroup: PostNuxAlgorithmFeatures
+  val PostNuxAlgorithmFelonaturelonGroup: PostNuxAlgorithmFelonaturelons
 
-  // The string that is attached to the feature name when it is fetched from feature store.
-  val FeatureStorePrefix: String
+  // Thelon string that is attachelond to thelon felonaturelon namelon whelonn it is felontchelond from felonaturelon storelon.
+  val FelonaturelonStorelonPrelonfix: String
 
   /**
    *
-   * This stores transformed aggregate features for PostNux algorithm aggregate features. The
-   * transformation here is log-ratio, where ratio is the raw value divided by # of impressions.
+   * This storelons transformelond aggrelongatelon felonaturelons for PostNux algorithm aggrelongatelon felonaturelons. Thelon
+   * transformation helonrelon is log-ratio, whelonrelon ratio is thelon raw valuelon dividelond by # of imprelonssions.
    */
-  case class TransformedAlgorithmFeatures(
+  caselon class TransformelondAlgorithmFelonaturelons(
     ratioLog: Continuous) {
-    def getFeatures: Seq[Continuous] = Seq(ratioLog)
+    delonf gelontFelonaturelons: Selonq[Continuous] = Selonq(ratioLog)
   }
 
-  private def applyFeatureStorePrefix(feature: Continuous) = new Continuous(
-    s"$FeatureStorePrefix${feature.getFeatureName}")
+  privatelon delonf applyFelonaturelonStorelonPrelonfix(felonaturelon: Continuous) = nelonw Continuous(
+    s"$FelonaturelonStorelonPrelonfix${felonaturelon.gelontFelonaturelonNamelon}")
 
-  // The list of input features WITH the prefix assigned to them by FeatureStore.
-  lazy val allInputFeatures: Seq[Seq[Continuous]] = Seq(
-    PostNuxAlgorithmFeatureGroup.Aggregate7DayFeatures.map(applyFeatureStorePrefix),
-    PostNuxAlgorithmFeatureGroup.Aggregate30DayFeatures.map(applyFeatureStorePrefix)
+  // Thelon list of input felonaturelons WITH thelon prelonfix assignelond to thelonm by FelonaturelonStorelon.
+  lazy val allInputFelonaturelons: Selonq[Selonq[Continuous]] = Selonq(
+    PostNuxAlgorithmFelonaturelonGroup.Aggrelongatelon7DayFelonaturelons.map(applyFelonaturelonStorelonPrelonfix),
+    PostNuxAlgorithmFelonaturelonGroup.Aggrelongatelon30DayFelonaturelons.map(applyFelonaturelonStorelonPrelonfix)
   )
 
-  // This is a list of the features WITHOUT the prefix assigned to them by FeatureStore.
-  lazy val outputBaseFeatureNames: Seq[Seq[Continuous]] = Seq(
-    PostNuxAlgorithmFeatureGroup.Aggregate7DayFeatures,
-    PostNuxAlgorithmFeatureGroup.Aggregate30DayFeatures
+  // This is a list of thelon felonaturelons WITHOUT thelon prelonfix assignelond to thelonm by FelonaturelonStorelon.
+  lazy val outputBaselonFelonaturelonNamelons: Selonq[Selonq[Continuous]] = Selonq(
+    PostNuxAlgorithmFelonaturelonGroup.Aggrelongatelon7DayFelonaturelons,
+    PostNuxAlgorithmFelonaturelonGroup.Aggrelongatelon30DayFelonaturelons
   )
 
-  // We use backend impression to calculate ratio values.
-  lazy val ratioDenominators: Seq[Continuous] = Seq(
-    applyFeatureStorePrefix(PostNuxAlgorithmFeatureGroup.BackendImpressions7Days),
-    applyFeatureStorePrefix(PostNuxAlgorithmFeatureGroup.BackendImpressions30Days)
+  // Welon uselon backelonnd imprelonssion to calculatelon ratio valuelons.
+  lazy val ratioDelonnominators: Selonq[Continuous] = Selonq(
+    applyFelonaturelonStorelonPrelonfix(PostNuxAlgorithmFelonaturelonGroup.BackelonndImprelonssions7Days),
+    applyFelonaturelonStorelonPrelonfix(PostNuxAlgorithmFelonaturelonGroup.BackelonndImprelonssions30Days)
   )
 
   /**
-   * A mapping from an original feature's ID to the corresponding set of transformed features.
-   * This is used to compute the transformed features for each of the original ones.
+   * A mapping from an original felonaturelon's ID to thelon correlonsponding selont of transformelond felonaturelons.
+   * This is uselond to computelon thelon transformelond felonaturelons for elonach of thelon original onelons.
    */
-  private lazy val TransformedFeaturesMap: Map[Continuous, TransformedAlgorithmFeatures] =
-    outputBaseFeatureNames.flatten.map { feature =>
+  privatelon lazy val TransformelondFelonaturelonsMap: Map[Continuous, TransformelondAlgorithmFelonaturelons] =
+    outputBaselonFelonaturelonNamelons.flattelonn.map { felonaturelon =>
       (
-        // The input feature would have the FeatureStore prefix attached to it.
-        new Continuous(s"$FeatureStorePrefix${feature.getFeatureName}"),
-        // We don't keep the FeatureStore prefix to keep the length of feature names reasonable.
-        TransformedAlgorithmFeatures(
-          new Continuous(s"${feature.getFeatureName}-ratio-log")
+        // Thelon input felonaturelon would havelon thelon FelonaturelonStorelon prelonfix attachelond to it.
+        nelonw Continuous(s"$FelonaturelonStorelonPrelonfix${felonaturelon.gelontFelonaturelonNamelon}"),
+        // Welon don't kelonelonp thelon FelonaturelonStorelon prelonfix to kelonelonp thelon lelonngth of felonaturelon namelons relonasonablelon.
+        TransformelondAlgorithmFelonaturelons(
+          nelonw Continuous(s"${felonaturelon.gelontFelonaturelonNamelon}-ratio-log")
         ))
     }.toMap
 
   /**
-   * Given a denominator, number of impressions, this function returns another function that adds
-   * transformed features (log1p and ratio) of an input feature to a DataRecord.
+   * Givelonn a delonnominator, numbelonr of imprelonssions, this function relonturns anothelonr function that adds
+   * transformelond felonaturelons (log1p and ratio) of an input felonaturelon to a DataReloncord.
    */
-  private def addTransformedFeaturesToDataRecordFunc(
-    originalDr: DataRecord,
-    numImpressions: Double,
-  ): (DataRecord, Continuous) => DataRecord = { (record: DataRecord, feature: Continuous) =>
+  privatelon delonf addTransformelondFelonaturelonsToDataReloncordFunc(
+    originalDr: DataReloncord,
+    numImprelonssions: Doublelon,
+  ): (DataReloncord, Continuous) => DataReloncord = { (reloncord: DataReloncord, felonaturelon: Continuous) =>
     {
-      Option(originalDr.getFeatureValue(feature)) foreach { featureValue =>
-        TransformedFeaturesMap.get(feature).foreach { transformedFeatures =>
-          record.setFeatureValue(
-            transformedFeatures.ratioLog,
-            // We don't use log1p here since the values are ratios and adding 1 to the _ratio_ would
-            // lead to logarithm of values between 1 and 2, essentially making all values the same.
-            math.log((featureValue + 1) / numImpressions)
+      Option(originalDr.gelontFelonaturelonValuelon(felonaturelon)) forelonach { felonaturelonValuelon =>
+        TransformelondFelonaturelonsMap.gelont(felonaturelon).forelonach { transformelondFelonaturelons =>
+          reloncord.selontFelonaturelonValuelon(
+            transformelondFelonaturelons.ratioLog,
+            // Welon don't uselon log1p helonrelon sincelon thelon valuelons arelon ratios and adding 1 to thelon _ratio_ would
+            // lelonad to logarithm of valuelons belontwelonelonn 1 and 2, elonsselonntially making all valuelons thelon samelon.
+            math.log((felonaturelonValuelon + 1) / numImprelonssions)
           )
         }
       }
-      record
+      reloncord
     }
   }
 
   /**
-   * @param record: The input record whose PostNuxAlgorithm aggregates are to be transformed.
-   * @return the input [[DataRecord]] with transformed aggregates added.
+   * @param reloncord: Thelon input reloncord whoselon PostNuxAlgorithm aggrelongatelons arelon to belon transformelond.
+   * @relonturn thelon input [[DataReloncord]] with transformelond aggrelongatelons addelond.
    */
-  override def adaptToDataRecord(record: DataRecord): DataRecord = {
-    if (record.continuousFeatures == null) {
-      // There are no base features available, and hence no transformations.
-      record
-    } else {
+  ovelonrridelon delonf adaptToDataReloncord(reloncord: DataReloncord): DataReloncord = {
+    if (reloncord.continuousFelonaturelons == null) {
+      // Thelonrelon arelon no baselon felonaturelons availablelon, and helonncelon no transformations.
+      reloncord
+    } elonlselon {
 
       /**
-       * The `foldLeft` below goes through pairs of (1) Feature groups, such as those calculated over
-       * 7 days or 30 days, and (2) the number of impressions for each of these groups, which is the
-       * denominator when ratio is calculated.
+       * Thelon `foldLelonft` belonlow goelons through pairs of (1) Felonaturelon groups, such as thoselon calculatelond ovelonr
+       * 7 days or 30 days, and (2) thelon numbelonr of imprelonssions for elonach of thelonselon groups, which is thelon
+       * delonnominator whelonn ratio is calculatelond.
        */
-      ratioDenominators
-        .zip(allInputFeatures).foldLeft( /* initial empty DataRecord */ record)(
+      ratioDelonnominators
+        .zip(allInputFelonaturelons).foldLelonft( /* initial elonmpty DataReloncord */ reloncord)(
           (
-            /* DataRecord with transformed features up to here */ transformedRecord,
-            /* A tuple with the denominator (#impressions) and features to be transformed */ numImpressionsAndFeatures
+            /* DataReloncord with transformelond felonaturelons up to helonrelon */ transformelondReloncord,
+            /* A tuplelon with thelon delonnominator (#imprelonssions) and felonaturelons to belon transformelond */ numImprelonssionsAndFelonaturelons
           ) => {
-            val (numImpressionsFeature, features) = numImpressionsAndFeatures
-            Option(record.getFeatureValue(numImpressionsFeature)) match {
-              case Some(numImpressions) if numImpressions > 0.0 =>
+            val (numImprelonssionsFelonaturelon, felonaturelons) = numImprelonssionsAndFelonaturelons
+            Option(reloncord.gelontFelonaturelonValuelon(numImprelonssionsFelonaturelon)) match {
+              caselon Somelon(numImprelonssions) if numImprelonssions > 0.0 =>
                 /**
-                 * With the number of impressions fixed, we generate a function that adds log-ratio
-                 * for each feature in the current [[DataRecord]]. The `foldLeft` goes through all
-                 * such features and applies that function while updating the kept DataRecord.
+                 * With thelon numbelonr of imprelonssions fixelond, welon gelonnelonratelon a function that adds log-ratio
+                 * for elonach felonaturelon in thelon currelonnt [[DataReloncord]]. Thelon `foldLelonft` goelons through all
+                 * such felonaturelons and applielons that function whilelon updating thelon kelonpt DataReloncord.
                  */
-                features.foldLeft(transformedRecord)(
-                  addTransformedFeaturesToDataRecordFunc(record, numImpressions))
-              case _ =>
-                transformedRecord
+                felonaturelons.foldLelonft(transformelondReloncord)(
+                  addTransformelondFelonaturelonsToDataReloncordFunc(reloncord, numImprelonssions))
+              caselon _ =>
+                transformelondReloncord
             }
           })
     }
   }
 
-  def getFeatures: Seq[Feature[_]] = TransformedFeaturesMap.values.flatMap(_.getFeatures).toSeq
+  delonf gelontFelonaturelons: Selonq[Felonaturelon[_]] = TransformelondFelonaturelonsMap.valuelons.flatMap(_.gelontFelonaturelons).toSelonq
 
-  override def getFeatureContext: FeatureContext =
-    new FeatureContext()
-      .addFeatures(this.getFeatures.asJava)
+  ovelonrridelon delonf gelontFelonaturelonContelonxt: FelonaturelonContelonxt =
+    nelonw FelonaturelonContelonxt()
+      .addFelonaturelons(this.gelontFelonaturelons.asJava)
 }

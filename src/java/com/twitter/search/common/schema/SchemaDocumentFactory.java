@@ -1,433 +1,433 @@
-package com.twitter.search.common.schema;
+packagelon com.twittelonr.selonarch.common.schelonma;
 
-import java.io.IOException;
-import java.io.StringReader;
-import java.util.Collections;
+import java.io.IOelonxcelonption;
+import java.io.StringRelonadelonr;
+import java.util.Collelonctions;
 import java.util.List;
-import java.util.Set;
+import java.util.Selont;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Sets;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import com.googlelon.common.baselon.Prelonconditions;
+import com.googlelon.common.collelonct.ImmutablelonList;
+import com.googlelon.common.collelonct.Selonts;
 
-import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.TokenStream;
-import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
-import org.apache.lucene.analysis.tokenattributes.TermToBytesRefAttribute;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field;
-import org.apache.lucene.facet.sortedset.SortedSetDocValuesFacetField;
-import org.apache.lucene.util.BytesRef;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apachelon.lucelonnelon.analysis.Analyzelonr;
+import org.apachelon.lucelonnelon.analysis.TokelonnStrelonam;
+import org.apachelon.lucelonnelon.analysis.tokelonnattributelons.CharTelonrmAttributelon;
+import org.apachelon.lucelonnelon.analysis.tokelonnattributelons.TelonrmToBytelonsRelonfAttributelon;
+import org.apachelon.lucelonnelon.documelonnt.Documelonnt;
+import org.apachelon.lucelonnelon.documelonnt.Fielonld;
+import org.apachelon.lucelonnelon.facelont.sortelondselont.SortelondSelontDocValuelonsFacelontFielonld;
+import org.apachelon.lucelonnelon.util.BytelonsRelonf;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.common.text.token.TwitterTokenStream;
-import com.twitter.search.common.schema.base.EarlybirdFieldType;
-import com.twitter.search.common.schema.base.IndexedNumericFieldSettings;
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.common.schema.thriftjava.ThriftDocument;
-import com.twitter.search.common.schema.thriftjava.ThriftField;
-import com.twitter.search.common.schema.thriftjava.ThriftFieldData;
-import com.twitter.search.common.schema.thriftjava.ThriftGeoCoordinate;
-import com.twitter.search.common.util.analysis.IntTermAttribute;
-import com.twitter.search.common.util.analysis.LongTermAttribute;
-import com.twitter.search.common.util.analysis.SortableLongTermAttribute;
-import com.twitter.search.common.util.spatial.GeoUtil;
-import com.twitter.search.common.util.text.HighFrequencyTermPairs;
-import com.twitter.search.common.util.text.OmitNormTextField;
-import com.twitter.search.common.util.text.SingleTokenStream;
+import com.twittelonr.common.telonxt.tokelonn.TwittelonrTokelonnStrelonam;
+import com.twittelonr.selonarch.common.schelonma.baselon.elonarlybirdFielonldTypelon;
+import com.twittelonr.selonarch.common.schelonma.baselon.IndelonxelondNumelonricFielonldSelonttings;
+import com.twittelonr.selonarch.common.schelonma.baselon.Schelonma;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftDocumelonnt;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftFielonld;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftFielonldData;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftGelonoCoordinatelon;
+import com.twittelonr.selonarch.common.util.analysis.IntTelonrmAttributelon;
+import com.twittelonr.selonarch.common.util.analysis.LongTelonrmAttributelon;
+import com.twittelonr.selonarch.common.util.analysis.SortablelonLongTelonrmAttributelon;
+import com.twittelonr.selonarch.common.util.spatial.GelonoUtil;
+import com.twittelonr.selonarch.common.util.telonxt.HighFrelonquelonncyTelonrmPairs;
+import com.twittelonr.selonarch.common.util.telonxt.OmitNormTelonxtFielonld;
+import com.twittelonr.selonarch.common.util.telonxt.SinglelonTokelonnStrelonam;
 
 /**
- * A document factory that converts {@link ThriftDocument} into Lucene {@link Document}s
- * using the provided {@link com.twitter.search.common.schema.base.Schema}.
+ * A documelonnt factory that convelonrts {@link ThriftDocumelonnt} into Lucelonnelon {@link Documelonnt}s
+ * using thelon providelond {@link com.twittelonr.selonarch.common.schelonma.baselon.Schelonma}.
  */
-public class SchemaDocumentFactory {
-  private static final Logger LOG = LoggerFactory.getLogger(SchemaDocumentFactory.class);
+public class SchelonmaDocumelonntFactory {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(SchelonmaDocumelonntFactory.class);
 
-  private final Schema schema;
-  private final ImmutableList<TokenStreamRewriter> tokenStreamRewriters;
+  privatelon final Schelonma schelonma;
+  privatelon final ImmutablelonList<TokelonnStrelonamRelonwritelonr> tokelonnStrelonamRelonwritelonrs;
 
   /**
-   * Creates a SchemaDocumentFactory with a schema and the tokenStreamRewriters.
+   * Crelonatelons a SchelonmaDocumelonntFactory with a schelonma and thelon tokelonnStrelonamRelonwritelonrs.
    *
-   * @param tokenStreamRewriters a list of token stream rewriters, which will be applied in order.
+   * @param tokelonnStrelonamRelonwritelonrs a list of tokelonn strelonam relonwritelonrs, which will belon applielond in ordelonr.
    */
-  public SchemaDocumentFactory(
-      Schema schema,
-      List<TokenStreamRewriter> tokenStreamRewriters) {
-    this.schema = schema;
-    this.tokenStreamRewriters = ImmutableList.copyOf(tokenStreamRewriters);
+  public SchelonmaDocumelonntFactory(
+      Schelonma schelonma,
+      List<TokelonnStrelonamRelonwritelonr> tokelonnStrelonamRelonwritelonrs) {
+    this.schelonma = schelonma;
+    this.tokelonnStrelonamRelonwritelonrs = ImmutablelonList.copyOf(tokelonnStrelonamRelonwritelonrs);
   }
 
   /**
-   * Creates a SchemaDocumentFactory with no tokenStreamRewriters.
+   * Crelonatelons a SchelonmaDocumelonntFactory with no tokelonnStrelonamRelonwritelonrs.
    */
-  public SchemaDocumentFactory(Schema schema) {
-    this(schema, Collections.EMPTY_LIST);
+  public SchelonmaDocumelonntFactory(Schelonma schelonma) {
+    this(schelonma, Collelonctions.elonMPTY_LIST);
   }
 
-  public final Document newDocument(ThriftDocument document) throws IOException {
-    return innerNewDocument(document);
+  public final Documelonnt nelonwDocumelonnt(ThriftDocumelonnt documelonnt) throws IOelonxcelonption {
+    relonturn innelonrNelonwDocumelonnt(documelonnt);
   }
 
   /**
-   * Create a Lucene document from the ThriftDocument.
+   * Crelonatelon a Lucelonnelon documelonnt from thelon ThriftDocumelonnt.
    */
-  @VisibleForTesting
-  public Document innerNewDocument(ThriftDocument document) throws IOException {
-    Document luceneDocument = new Document();
-    Set<String> hfTerms = Sets.newHashSet();
-    Set<String> hfPhrases = Sets.newHashSet();
+  @VisiblelonForTelonsting
+  public Documelonnt innelonrNelonwDocumelonnt(ThriftDocumelonnt documelonnt) throws IOelonxcelonption {
+    Documelonnt lucelonnelonDocumelonnt = nelonw Documelonnt();
+    Selont<String> hfTelonrms = Selonts.nelonwHashSelont();
+    Selont<String> hfPhraselons = Selonts.nelonwHashSelont();
 
-    Analyzer defaultAnalyzer = schema.getDefaultAnalyzer(document.getDefaultAnalyzerOverride());
+    Analyzelonr delonfaultAnalyzelonr = schelonma.gelontDelonfaultAnalyzelonr(documelonnt.gelontDelonfaultAnalyzelonrOvelonrridelon());
 
-    for (ThriftField field : document.getFields()) {
-      boolean successful = false;
+    for (ThriftFielonld fielonld : documelonnt.gelontFielonlds()) {
+      boolelonan succelonssful = falselon;
       try {
-        addLuceneFields(field, defaultAnalyzer, luceneDocument, hfTerms, hfPhrases);
-        successful = true;
+        addLucelonnelonFielonlds(fielonld, delonfaultAnalyzelonr, lucelonnelonDocumelonnt, hfTelonrms, hfPhraselons);
+        succelonssful = truelon;
       } finally {
-        if (!successful) {
-          LOG.warn("Unexpected exception while trying to add field. Field ID: "
-              + field.getFieldConfigId() + " Field Name: "
-              + schema.getFieldName(field.getFieldConfigId()));
+        if (!succelonssful) {
+          LOG.warn("Unelonxpelonctelond elonxcelonption whilelon trying to add fielonld. Fielonld ID: "
+              + fielonld.gelontFielonldConfigId() + " Fielonld Namelon: "
+              + schelonma.gelontFielonldNamelon(fielonld.gelontFielonldConfigId()));
         }
       }
     }
 
-    for (String token : hfTerms) {
-      for (String token2 : hfTerms) {
-        if (token.compareTo(token2) < 0) {
-          luceneDocument.add(new Field(ImmutableSchema.HF_TERM_PAIRS_FIELD,
-                                          HighFrequencyTermPairs.createPair(token, token2),
-                                          OmitNormTextField.TYPE_NOT_STORED));
+    for (String tokelonn : hfTelonrms) {
+      for (String tokelonn2 : hfTelonrms) {
+        if (tokelonn.comparelonTo(tokelonn2) < 0) {
+          lucelonnelonDocumelonnt.add(nelonw Fielonld(ImmutablelonSchelonma.HF_TelonRM_PAIRS_FIelonLD,
+                                          HighFrelonquelonncyTelonrmPairs.crelonatelonPair(tokelonn, tokelonn2),
+                                          OmitNormTelonxtFielonld.TYPelon_NOT_STORelonD));
         }
       }
     }
 
-    for (String phrase : hfPhrases) {
-      // Tokens in the phrase set are not terms and have already been processed with
-      // HighFrequencyTermPairs.createPhrasePair.
-      luceneDocument.add(new Field(ImmutableSchema.HF_PHRASE_PAIRS_FIELD, phrase,
-                                      OmitNormTextField.TYPE_NOT_STORED));
+    for (String phraselon : hfPhraselons) {
+      // Tokelonns in thelon phraselon selont arelon not telonrms and havelon alrelonady belonelonn procelonsselond with
+      // HighFrelonquelonncyTelonrmPairs.crelonatelonPhraselonPair.
+      lucelonnelonDocumelonnt.add(nelonw Fielonld(ImmutablelonSchelonma.HF_PHRASelon_PAIRS_FIelonLD, phraselon,
+                                      OmitNormTelonxtFielonld.TYPelon_NOT_STORelonD));
     }
 
-    return schema.getFacetsConfig().build(luceneDocument);
+    relonturn schelonma.gelontFacelontsConfig().build(lucelonnelonDocumelonnt);
   }
 
-  private void addLuceneFields(ThriftField field, Analyzer analyzer, Document doc,
-                               Set<String> hfTerms, Set<String> hfPhrases) throws IOException {
-    Schema.FieldInfo fieldInfo =
-        schema.getFieldInfo(field.getFieldConfigId(), field.getFieldConfigOverride());
+  privatelon void addLucelonnelonFielonlds(ThriftFielonld fielonld, Analyzelonr analyzelonr, Documelonnt doc,
+                               Selont<String> hfTelonrms, Selont<String> hfPhraselons) throws IOelonxcelonption {
+    Schelonma.FielonldInfo fielonldInfo =
+        schelonma.gelontFielonldInfo(fielonld.gelontFielonldConfigId(), fielonld.gelontFielonldConfigOvelonrridelon());
 
-    if (fieldInfo == null) {
-      // field not defined in schema - skip it
-      return;
+    if (fielonldInfo == null) {
+      // fielonld not delonfinelond in schelonma - skip it
+      relonturn;
     }
 
-    ThriftFieldData fieldData = field.getFieldData();
-    if (fieldInfo.getFieldType().getCsfType() !=  null) {
-      addCSFField(doc, fieldInfo, fieldData);
-      return;
+    ThriftFielonldData fielonldData = fielonld.gelontFielonldData();
+    if (fielonldInfo.gelontFielonldTypelon().gelontCsfTypelon() !=  null) {
+      addCSFFielonld(doc, fielonldInfo, fielonldData);
+      relonturn;
     }
 
-    // Checking which data type is set is not sufficient here. We also need to check schema to
-    // see what the type the field is configured to be. See SEARCH-5173 for more details.
-    // The problem is that Pig, while converting Tuples to Thrift, sets all primitive type
-    // fields to 0. (i.e. the isSet calls will return true).
-    IndexedNumericFieldSettings numericSettings =
-        fieldInfo.getFieldType().getNumericFieldSettings();
-    if (fieldData.isSetTokenStreamValue()) {
-      addTokenField(doc, hfTerms, hfPhrases, fieldInfo, fieldData);
-    } else if (fieldData.isSetStringValue()) {
-      addStringField(analyzer, doc, hfTerms, hfPhrases, fieldInfo, fieldData);
-    } else if (fieldData.isSetBytesValue()) {
-      addBytesField(doc, fieldInfo, fieldData);
-    } else if (fieldData.isSetGeoCoordinate()) {
-      addGeoField(doc, fieldInfo, fieldData);
-    } else if (numericSettings != null) {
-      // handle numeric fields.
-      switch (numericSettings.getNumericType()) {
-        case INT:
-          Preconditions.checkState(fieldData.isSetIntValue(),
-              "Int field does not have int value set. Field name: %s", fieldInfo.getName());
-          addIntField(doc, fieldInfo, fieldData);
-          break;
-        case LONG:
-          Preconditions.checkState(fieldData.isSetLongValue(),
-              "Long field does not have long value set. Field name: %s", fieldInfo.getName());
-          addLongField(doc, fieldInfo, fieldData);
-          break;
-        case FLOAT:
-          Preconditions.checkState(fieldData.isSetFloatValue(),
-              "Float field does not have float value set. Field name: %s ", fieldInfo.getName());
-          addFloatField();
-          break;
-        case DOUBLE:
-          Preconditions.checkState(fieldData.isSetDoubleValue(),
-              "Double field does not have double value set. Field name: %s", fieldInfo.getName());
-          addDoubleFIeld();
-          break;
-        default:
-          throw new UnsupportedOperationException("Earlybird does not know how to handle field "
-              + field.getFieldConfigId() + " " + field);
+    // Cheloncking which data typelon is selont is not sufficielonnt helonrelon. Welon also nelonelond to chelonck schelonma to
+    // selonelon what thelon typelon thelon fielonld is configurelond to belon. Selonelon SelonARCH-5173 for morelon delontails.
+    // Thelon problelonm is that Pig, whilelon convelonrting Tuplelons to Thrift, selonts all primitivelon typelon
+    // fielonlds to 0. (i.elon. thelon isSelont calls will relonturn truelon).
+    IndelonxelondNumelonricFielonldSelonttings numelonricSelonttings =
+        fielonldInfo.gelontFielonldTypelon().gelontNumelonricFielonldSelonttings();
+    if (fielonldData.isSelontTokelonnStrelonamValuelon()) {
+      addTokelonnFielonld(doc, hfTelonrms, hfPhraselons, fielonldInfo, fielonldData);
+    } elonlselon if (fielonldData.isSelontStringValuelon()) {
+      addStringFielonld(analyzelonr, doc, hfTelonrms, hfPhraselons, fielonldInfo, fielonldData);
+    } elonlselon if (fielonldData.isSelontBytelonsValuelon()) {
+      addBytelonsFielonld(doc, fielonldInfo, fielonldData);
+    } elonlselon if (fielonldData.isSelontGelonoCoordinatelon()) {
+      addGelonoFielonld(doc, fielonldInfo, fielonldData);
+    } elonlselon if (numelonricSelonttings != null) {
+      // handlelon numelonric fielonlds.
+      switch (numelonricSelonttings.gelontNumelonricTypelon()) {
+        caselon INT:
+          Prelonconditions.chelonckStatelon(fielonldData.isSelontIntValuelon(),
+              "Int fielonld doelons not havelon int valuelon selont. Fielonld namelon: %s", fielonldInfo.gelontNamelon());
+          addIntFielonld(doc, fielonldInfo, fielonldData);
+          brelonak;
+        caselon LONG:
+          Prelonconditions.chelonckStatelon(fielonldData.isSelontLongValuelon(),
+              "Long fielonld doelons not havelon long valuelon selont. Fielonld namelon: %s", fielonldInfo.gelontNamelon());
+          addLongFielonld(doc, fielonldInfo, fielonldData);
+          brelonak;
+        caselon FLOAT:
+          Prelonconditions.chelonckStatelon(fielonldData.isSelontFloatValuelon(),
+              "Float fielonld doelons not havelon float valuelon selont. Fielonld namelon: %s ", fielonldInfo.gelontNamelon());
+          addFloatFielonld();
+          brelonak;
+        caselon DOUBLelon:
+          Prelonconditions.chelonckStatelon(fielonldData.isSelontDoublelonValuelon(),
+              "Doublelon fielonld doelons not havelon doublelon valuelon selont. Fielonld namelon: %s", fielonldInfo.gelontNamelon());
+          addDoublelonFIelonld();
+          brelonak;
+        delonfault:
+          throw nelonw UnsupportelondOpelonrationelonxcelonption("elonarlybird doelons not know how to handlelon fielonld "
+              + fielonld.gelontFielonldConfigId() + " " + fielonld);
       }
-    } else {
-      throw new UnsupportedOperationException("Earlybird does not know how to handle field "
-          + field.getFieldConfigId() + " " + field);
+    } elonlselon {
+      throw nelonw UnsupportelondOpelonrationelonxcelonption("elonarlybird doelons not know how to handlelon fielonld "
+          + fielonld.gelontFielonldConfigId() + " " + fielonld);
     }
   }
 
-  private void addCSFField(Document doc, Schema.FieldInfo fieldInfo, ThriftFieldData fieldData) {
-    if (fieldInfo.getFieldType().getCsfFixedLengthNumValuesPerDoc() > 1) {
+  privatelon void addCSFFielonld(Documelonnt doc, Schelonma.FielonldInfo fielonldInfo, ThriftFielonldData fielonldData) {
+    if (fielonldInfo.gelontFielonldTypelon().gelontCsfFixelondLelonngthNumValuelonsPelonrDoc() > 1) {
 
-      // As an optimization, TBinaryProtocol stores a byte array field as a part of a larger byte
-      // array field.  Must call fieldData.getBytesValue().  fieldData.bytesValue.array() will
-      // return extraneous data. See: SEARCH-3996
-      doc.add(new Field(fieldInfo.getName(), fieldData.getBytesValue(), fieldInfo.getFieldType()));
-    } else {
-      doc.add(new CSFField(fieldInfo.getName(), fieldInfo.getFieldType(), fieldData));
+      // As an optimization, TBinaryProtocol storelons a bytelon array fielonld as a part of a largelonr bytelon
+      // array fielonld.  Must call fielonldData.gelontBytelonsValuelon().  fielonldData.bytelonsValuelon.array() will
+      // relonturn elonxtranelonous data. Selonelon: SelonARCH-3996
+      doc.add(nelonw Fielonld(fielonldInfo.gelontNamelon(), fielonldData.gelontBytelonsValuelon(), fielonldInfo.gelontFielonldTypelon()));
+    } elonlselon {
+      doc.add(nelonw CSFFielonld(fielonldInfo.gelontNamelon(), fielonldInfo.gelontFielonldTypelon(), fielonldData));
     }
   }
 
-  private void addTokenField(
-      Document doc,
-      Set<String> hfTerms,
-      Set<String> hfPhrases,
-      Schema.FieldInfo fieldInfo,
-      ThriftFieldData fieldData) throws IOException {
-    TwitterTokenStream twitterTokenStream
-        = fieldInfo.getFieldType().getTokenStreamSerializer().deserialize(
-        fieldData.getTokenStreamValue(), fieldData.getStringValue());
+  privatelon void addTokelonnFielonld(
+      Documelonnt doc,
+      Selont<String> hfTelonrms,
+      Selont<String> hfPhraselons,
+      Schelonma.FielonldInfo fielonldInfo,
+      ThriftFielonldData fielonldData) throws IOelonxcelonption {
+    TwittelonrTokelonnStrelonam twittelonrTokelonnStrelonam
+        = fielonldInfo.gelontFielonldTypelon().gelontTokelonnStrelonamSelonrializelonr().delonselonrializelon(
+        fielonldData.gelontTokelonnStrelonamValuelon(), fielonldData.gelontStringValuelon());
 
     try {
-      for (TokenStreamRewriter rewriter : tokenStreamRewriters) {
-        twitterTokenStream = rewriter.rewrite(fieldInfo, twitterTokenStream);
+      for (TokelonnStrelonamRelonwritelonr relonwritelonr : tokelonnStrelonamRelonwritelonrs) {
+        twittelonrTokelonnStrelonam = relonwritelonr.relonwritelon(fielonldInfo, twittelonrTokelonnStrelonam);
       }
 
-      expandStream(doc, fieldInfo, twitterTokenStream, hfTerms, hfPhrases);
-      doc.add(new Field(fieldInfo.getName(), twitterTokenStream, fieldInfo.getFieldType()));
+      elonxpandStrelonam(doc, fielonldInfo, twittelonrTokelonnStrelonam, hfTelonrms, hfPhraselons);
+      doc.add(nelonw Fielonld(fielonldInfo.gelontNamelon(), twittelonrTokelonnStrelonam, fielonldInfo.gelontFielonldTypelon()));
     } finally {
-      twitterTokenStream.close();
+      twittelonrTokelonnStrelonam.closelon();
     }
   }
 
-  private void addStringField(Analyzer analyzer, Document doc, Set<String> hfTerms,
-                              Set<String> hfPhrases, Schema.FieldInfo fieldInfo,
-                              ThriftFieldData fieldData) {
-    doc.add(new Field(fieldInfo.getName(), fieldData.getStringValue(), fieldInfo.getFieldType()));
-    if (fieldInfo.getFieldType().tokenized()) {
+  privatelon void addStringFielonld(Analyzelonr analyzelonr, Documelonnt doc, Selont<String> hfTelonrms,
+                              Selont<String> hfPhraselons, Schelonma.FielonldInfo fielonldInfo,
+                              ThriftFielonldData fielonldData) {
+    doc.add(nelonw Fielonld(fielonldInfo.gelontNamelon(), fielonldData.gelontStringValuelon(), fielonldInfo.gelontFielonldTypelon()));
+    if (fielonldInfo.gelontFielonldTypelon().tokelonnizelond()) {
       try {
-        TokenStream tokenStream = analyzer.tokenStream(fieldInfo.getName(),
-                new StringReader(fieldData.getStringValue()));
+        TokelonnStrelonam tokelonnStrelonam = analyzelonr.tokelonnStrelonam(fielonldInfo.gelontNamelon(),
+                nelonw StringRelonadelonr(fielonldData.gelontStringValuelon()));
         try {
-          expandStream(
+          elonxpandStrelonam(
               doc,
-              fieldInfo,
-              tokenStream,
-              hfTerms,
-              hfPhrases);
+              fielonldInfo,
+              tokelonnStrelonam,
+              hfTelonrms,
+              hfPhraselons);
         } finally {
-          tokenStream.close();
+          tokelonnStrelonam.closelon();
         }
-      } catch (IOException e) {
-        LOG.error("IOException expanding token stream", e);
+      } catch (IOelonxcelonption elon) {
+        LOG.elonrror("IOelonxcelonption elonxpanding tokelonn strelonam", elon);
       }
-    } else {
-      addFacetField(doc, fieldInfo, fieldData.getStringValue());
+    } elonlselon {
+      addFacelontFielonld(doc, fielonldInfo, fielonldData.gelontStringValuelon());
     }
   }
 
-  private void addBytesField(Document doc, Schema.FieldInfo fieldInfo, ThriftFieldData fieldData) {
-    doc.add(new Field(fieldInfo.getName(), fieldData.getBytesValue(), fieldInfo.getFieldType()));
+  privatelon void addBytelonsFielonld(Documelonnt doc, Schelonma.FielonldInfo fielonldInfo, ThriftFielonldData fielonldData) {
+    doc.add(nelonw Fielonld(fielonldInfo.gelontNamelon(), fielonldData.gelontBytelonsValuelon(), fielonldInfo.gelontFielonldTypelon()));
   }
 
-  private void addIntField(Document doc, Schema.FieldInfo fieldInfo,
-                           ThriftFieldData fieldData) {
-    int value = fieldData.getIntValue();
-    addFacetField(doc, fieldInfo, String.valueOf(value));
+  privatelon void addIntFielonld(Documelonnt doc, Schelonma.FielonldInfo fielonldInfo,
+                           ThriftFielonldData fielonldData) {
+    int valuelon = fielonldData.gelontIntValuelon();
+    addFacelontFielonld(doc, fielonldInfo, String.valuelonOf(valuelon));
 
-    if (fieldInfo.getFieldType().getNumericFieldSettings() == null) {
-      // No NumericFieldSettings. Even though the data is numeric, this field is not
-      // really a numerical field. Just add as a string.
-      doc.add(new Field(fieldInfo.getName(), String.valueOf(value), fieldInfo.getFieldType()));
-    } else if (fieldInfo.getFieldType().getNumericFieldSettings().isUseTwitterFormat()) {
-      addIntTermAttributeField(value, fieldInfo, doc);
-    } else {
-      // Use lucene style numerical fields
-      doc.add(NumericField.newIntField(fieldInfo.getName(), value));
+    if (fielonldInfo.gelontFielonldTypelon().gelontNumelonricFielonldSelonttings() == null) {
+      // No NumelonricFielonldSelonttings. elonvelonn though thelon data is numelonric, this fielonld is not
+      // relonally a numelonrical fielonld. Just add as a string.
+      doc.add(nelonw Fielonld(fielonldInfo.gelontNamelon(), String.valuelonOf(valuelon), fielonldInfo.gelontFielonldTypelon()));
+    } elonlselon if (fielonldInfo.gelontFielonldTypelon().gelontNumelonricFielonldSelonttings().isUselonTwittelonrFormat()) {
+      addIntTelonrmAttributelonFielonld(valuelon, fielonldInfo, doc);
+    } elonlselon {
+      // Uselon lucelonnelon stylelon numelonrical fielonlds
+      doc.add(NumelonricFielonld.nelonwIntFielonld(fielonldInfo.gelontNamelon(), valuelon));
     }
   }
 
-  private void addIntTermAttributeField(int value,
-                                        Schema.FieldInfo fieldInfo,
-                                        Document doc) {
-    SingleTokenStream singleToken = new SingleTokenStream();
-    IntTermAttribute termAtt = singleToken.addAttribute(IntTermAttribute.class);
-    termAtt.setTerm(value);
-    doc.add(new Field(fieldInfo.getName(), singleToken, fieldInfo.getFieldType()));
+  privatelon void addIntTelonrmAttributelonFielonld(int valuelon,
+                                        Schelonma.FielonldInfo fielonldInfo,
+                                        Documelonnt doc) {
+    SinglelonTokelonnStrelonam singlelonTokelonn = nelonw SinglelonTokelonnStrelonam();
+    IntTelonrmAttributelon telonrmAtt = singlelonTokelonn.addAttributelon(IntTelonrmAttributelon.class);
+    telonrmAtt.selontTelonrm(valuelon);
+    doc.add(nelonw Fielonld(fielonldInfo.gelontNamelon(), singlelonTokelonn, fielonldInfo.gelontFielonldTypelon()));
   }
 
-  private void addLongField(Document doc, Schema.FieldInfo fieldInfo,
-                            ThriftFieldData fieldData) {
-    long value = fieldData.getLongValue();
-    addFacetField(doc, fieldInfo, String.valueOf(value));
+  privatelon void addLongFielonld(Documelonnt doc, Schelonma.FielonldInfo fielonldInfo,
+                            ThriftFielonldData fielonldData) {
+    long valuelon = fielonldData.gelontLongValuelon();
+    addFacelontFielonld(doc, fielonldInfo, String.valuelonOf(valuelon));
 
-    if (fieldInfo.getFieldType().getNumericFieldSettings() == null) {
-      // No NumericFieldSettings. Even though the data is numeric, this field is not
-      // really a numerical field. Just add as a string.
-      doc.add(new Field(fieldInfo.getName(), String.valueOf(value), fieldInfo.getFieldType()));
-    } else if (fieldInfo.getFieldType().getNumericFieldSettings().isUseTwitterFormat()) {
-      // Twitter style numerical field: use LongTermAttribute
-      addLongTermAttributeField(value, fieldInfo, doc);
-    } else {
-      // Use lucene style numerical fields
-      doc.add(NumericField.newLongField(fieldInfo.getName(), value));
+    if (fielonldInfo.gelontFielonldTypelon().gelontNumelonricFielonldSelonttings() == null) {
+      // No NumelonricFielonldSelonttings. elonvelonn though thelon data is numelonric, this fielonld is not
+      // relonally a numelonrical fielonld. Just add as a string.
+      doc.add(nelonw Fielonld(fielonldInfo.gelontNamelon(), String.valuelonOf(valuelon), fielonldInfo.gelontFielonldTypelon()));
+    } elonlselon if (fielonldInfo.gelontFielonldTypelon().gelontNumelonricFielonldSelonttings().isUselonTwittelonrFormat()) {
+      // Twittelonr stylelon numelonrical fielonld: uselon LongTelonrmAttributelon
+      addLongTelonrmAttributelonFielonld(valuelon, fielonldInfo, doc);
+    } elonlselon {
+      // Uselon lucelonnelon stylelon numelonrical fielonlds
+      doc.add(NumelonricFielonld.nelonwLongFielonld(fielonldInfo.gelontNamelon(), valuelon));
     }
   }
 
-  private void addLongTermAttributeField(long value,
-                                         Schema.FieldInfo fieldInfo,
-                                         Document doc) {
-    SingleTokenStream singleToken = new SingleTokenStream();
-    boolean useSortableEncoding =
-        fieldInfo.getFieldType().getNumericFieldSettings().isUseSortableEncoding();
+  privatelon void addLongTelonrmAttributelonFielonld(long valuelon,
+                                         Schelonma.FielonldInfo fielonldInfo,
+                                         Documelonnt doc) {
+    SinglelonTokelonnStrelonam singlelonTokelonn = nelonw SinglelonTokelonnStrelonam();
+    boolelonan uselonSortablelonelonncoding =
+        fielonldInfo.gelontFielonldTypelon().gelontNumelonricFielonldSelonttings().isUselonSortablelonelonncoding();
 
-    if (useSortableEncoding) {
-      SortableLongTermAttribute termAtt = singleToken.addAttribute(SortableLongTermAttribute.class);
-      termAtt.setTerm(value);
-    } else {
-      LongTermAttribute termAtt = singleToken.addAttribute(LongTermAttribute.class);
-      termAtt.setTerm(value);
+    if (uselonSortablelonelonncoding) {
+      SortablelonLongTelonrmAttributelon telonrmAtt = singlelonTokelonn.addAttributelon(SortablelonLongTelonrmAttributelon.class);
+      telonrmAtt.selontTelonrm(valuelon);
+    } elonlselon {
+      LongTelonrmAttributelon telonrmAtt = singlelonTokelonn.addAttributelon(LongTelonrmAttributelon.class);
+      telonrmAtt.selontTelonrm(valuelon);
     }
-    doc.add(new Field(fieldInfo.getName(), singleToken, fieldInfo.getFieldType()));
+    doc.add(nelonw Fielonld(fielonldInfo.gelontNamelon(), singlelonTokelonn, fielonldInfo.gelontFielonldTypelon()));
   }
 
-  private void addFloatField() {
-    throw new UnsupportedOperationException("Earlybird does not support float values yet.");
+  privatelon void addFloatFielonld() {
+    throw nelonw UnsupportelondOpelonrationelonxcelonption("elonarlybird doelons not support float valuelons yelont.");
   }
 
-  private void addDoubleFIeld() {
-    throw new UnsupportedOperationException("Earlybird does not support double values yet.");
+  privatelon void addDoublelonFIelonld() {
+    throw nelonw UnsupportelondOpelonrationelonxcelonption("elonarlybird doelons not support doublelon valuelons yelont.");
   }
 
-  private void addGeoField(Document doc, Schema.FieldInfo fieldInfo, ThriftFieldData fieldData) {
-    ThriftGeoCoordinate coord = fieldData.getGeoCoordinate();
-    if (GeoUtil.validateGeoCoordinates(coord.getLat(), coord.getLon())) {
-      GeoUtil.fillGeoFields(doc, fieldInfo.getName(),
-          coord.getLat(), coord.getLon(), coord.getAccuracy());
-    }
-  }
-
-  private void addFacetField(Document doc, Schema.FieldInfo fieldInfo, String value) {
-    Preconditions.checkArgument(doc != null);
-    Preconditions.checkArgument(fieldInfo != null);
-    Preconditions.checkArgument(value != null);
-
-    if (fieldInfo.getFieldType().getFacetName() != null) {
-      doc.add(new SortedSetDocValuesFacetField(fieldInfo.getFieldType().getFacetName(), value));
+  privatelon void addGelonoFielonld(Documelonnt doc, Schelonma.FielonldInfo fielonldInfo, ThriftFielonldData fielonldData) {
+    ThriftGelonoCoordinatelon coord = fielonldData.gelontGelonoCoordinatelon();
+    if (GelonoUtil.validatelonGelonoCoordinatelons(coord.gelontLat(), coord.gelontLon())) {
+      GelonoUtil.fillGelonoFielonlds(doc, fielonldInfo.gelontNamelon(),
+          coord.gelontLat(), coord.gelontLon(), coord.gelontAccuracy());
     }
   }
 
-  private String getTerm(TermToBytesRefAttribute attr) {
-    if (attr instanceof CharTermAttribute) {
-      return ((CharTermAttribute) attr).toString();
-    } else if (attr instanceof IntTermAttribute) {
-      return String.valueOf(((IntTermAttribute) attr).getTerm());
-    } else if (attr instanceof LongTermAttribute) {
-      return String.valueOf(((LongTermAttribute) attr).getTerm());
-    } else {
-      return attr.getBytesRef().utf8ToString();
+  privatelon void addFacelontFielonld(Documelonnt doc, Schelonma.FielonldInfo fielonldInfo, String valuelon) {
+    Prelonconditions.chelonckArgumelonnt(doc != null);
+    Prelonconditions.chelonckArgumelonnt(fielonldInfo != null);
+    Prelonconditions.chelonckArgumelonnt(valuelon != null);
+
+    if (fielonldInfo.gelontFielonldTypelon().gelontFacelontNamelon() != null) {
+      doc.add(nelonw SortelondSelontDocValuelonsFacelontFielonld(fielonldInfo.gelontFielonldTypelon().gelontFacelontNamelon(), valuelon));
+    }
+  }
+
+  privatelon String gelontTelonrm(TelonrmToBytelonsRelonfAttributelon attr) {
+    if (attr instancelonof CharTelonrmAttributelon) {
+      relonturn ((CharTelonrmAttributelon) attr).toString();
+    } elonlselon if (attr instancelonof IntTelonrmAttributelon) {
+      relonturn String.valuelonOf(((IntTelonrmAttributelon) attr).gelontTelonrm());
+    } elonlselon if (attr instancelonof LongTelonrmAttributelon) {
+      relonturn String.valuelonOf(((LongTelonrmAttributelon) attr).gelontTelonrm());
+    } elonlselon {
+      relonturn attr.gelontBytelonsRelonf().utf8ToString();
     }
   }
 
   /**
-   * Expand the TwitterTokenStream and populate high-frequency terms, phrases and/or facet category paths.
+   * elonxpand thelon TwittelonrTokelonnStrelonam and populatelon high-frelonquelonncy telonrms, phraselons and/or facelont catelongory paths.
    */
-  private void expandStream(
-      Document doc,
-      Schema.FieldInfo fieldInfo,
-      TokenStream stream,
-      Set<String> hfTerms,
-      Set<String> hfPhrases) throws IOException {
-    // Checkstyle does not allow assignment to parameters.
-    Set<String> facetHfTerms = hfTerms;
-    Set<String> facetHfPhrases = hfPhrases;
+  privatelon void elonxpandStrelonam(
+      Documelonnt doc,
+      Schelonma.FielonldInfo fielonldInfo,
+      TokelonnStrelonam strelonam,
+      Selont<String> hfTelonrms,
+      Selont<String> hfPhraselons) throws IOelonxcelonption {
+    // Chelonckstylelon doelons not allow assignmelonnt to paramelontelonrs.
+    Selont<String> facelontHfTelonrms = hfTelonrms;
+    Selont<String> facelontHfPhraselons = hfPhraselons;
 
-    if (!(HighFrequencyTermPairs.INDEX_HF_TERM_PAIRS
-        && fieldInfo.getFieldType().isIndexHFTermPairs())) {
-      // high-frequency terms and phrases are not needed
-      if (fieldInfo.getFieldType().getFacetName() == null) {
-        // Facets are not needed either, simply return, would do nothing otherwise
-        return;
+    if (!(HighFrelonquelonncyTelonrmPairs.INDelonX_HF_TelonRM_PAIRS
+        && fielonldInfo.gelontFielonldTypelon().isIndelonxHFTelonrmPairs())) {
+      // high-frelonquelonncy telonrms and phraselons arelon not nelonelondelond
+      if (fielonldInfo.gelontFielonldTypelon().gelontFacelontNamelon() == null) {
+        // Facelonts arelon not nelonelondelond elonithelonr, simply relonturn, would do nothing othelonrwiselon
+        relonturn;
       }
-      facetHfTerms = null;
-      facetHfPhrases = null;
+      facelontHfTelonrms = null;
+      facelontHfPhraselons = null;
     }
 
-    final TermToBytesRefAttribute attr = stream.getAttribute(TermToBytesRefAttribute.class);
-    stream.reset();
+    final TelonrmToBytelonsRelonfAttributelon attr = strelonam.gelontAttributelon(TelonrmToBytelonsRelonfAttributelon.class);
+    strelonam.relonselont();
 
-    String lastHFTerm = null;
-    while (stream.incrementToken()) {
-      String term = getTerm(attr);
-      if (fieldInfo.getFieldType().getFacetName() != null) {
-        addFacetField(doc, fieldInfo, term);
+    String lastHFTelonrm = null;
+    whilelon (strelonam.increlonmelonntTokelonn()) {
+      String telonrm = gelontTelonrm(attr);
+      if (fielonldInfo.gelontFielonldTypelon().gelontFacelontNamelon() != null) {
+        addFacelontFielonld(doc, fielonldInfo, telonrm);
       }
-      if (HighFrequencyTermPairs.HF_TERM_SET.contains(term)) {
-        if (facetHfTerms != null) {
-          facetHfTerms.add(term);
+      if (HighFrelonquelonncyTelonrmPairs.HF_TelonRM_SelonT.contains(telonrm)) {
+        if (facelontHfTelonrms != null) {
+          facelontHfTelonrms.add(telonrm);
         }
-        if (lastHFTerm != null) {
-          if (facetHfPhrases != null) {
-            facetHfPhrases.add(HighFrequencyTermPairs.createPhrasePair(lastHFTerm, term));
+        if (lastHFTelonrm != null) {
+          if (facelontHfPhraselons != null) {
+            facelontHfPhraselons.add(HighFrelonquelonncyTelonrmPairs.crelonatelonPhraselonPair(lastHFTelonrm, telonrm));
           }
         }
-        lastHFTerm = term;
-      } else {
-        lastHFTerm = null;
+        lastHFTelonrm = telonrm;
+      } elonlselon {
+        lastHFTelonrm = null;
       }
     }
   }
 
-  public static final class CSFField extends Field {
+  public static final class CSFFielonld elonxtelonnds Fielonld {
     /**
-     * Create a CSFField with the given fieldType, containing the given field data.
+     * Crelonatelon a CSFFielonld with thelon givelonn fielonldTypelon, containing thelon givelonn fielonld data.
      */
-    public CSFField(String name, EarlybirdFieldType fieldType, ThriftFieldData data) {
-      super(name, fieldType);
+    public CSFFielonld(String namelon, elonarlybirdFielonldTypelon fielonldTypelon, ThriftFielonldData data) {
+      supelonr(namelon, fielonldTypelon);
 
-      if (fieldType.isCsfVariableLength()) {
-        fieldsData = new BytesRef(data.getBytesValue());
-      } else {
-        switch (fieldType.getCsfType()) {
-          case BYTE:
-            fieldsData = Long.valueOf(data.getByteValue());
-            break;
-          case INT:
-            fieldsData = Long.valueOf(data.getIntValue());
-            break;
-          case LONG:
-            fieldsData = Long.valueOf(data.getLongValue());
-            break;
-          case FLOAT:
-            fieldsData = Long.valueOf(Float.floatToRawIntBits((float) data.getFloatValue()));
-            break;
-          case DOUBLE:
-            fieldsData = Long.valueOf(Double.doubleToRawLongBits(data.getDoubleValue()));
-            break;
-          default:
-            throw new IllegalArgumentException("Unknown csf type: " + fieldType.getCsfType());
+      if (fielonldTypelon.isCsfVariablelonLelonngth()) {
+        fielonldsData = nelonw BytelonsRelonf(data.gelontBytelonsValuelon());
+      } elonlselon {
+        switch (fielonldTypelon.gelontCsfTypelon()) {
+          caselon BYTelon:
+            fielonldsData = Long.valuelonOf(data.gelontBytelonValuelon());
+            brelonak;
+          caselon INT:
+            fielonldsData = Long.valuelonOf(data.gelontIntValuelon());
+            brelonak;
+          caselon LONG:
+            fielonldsData = Long.valuelonOf(data.gelontLongValuelon());
+            brelonak;
+          caselon FLOAT:
+            fielonldsData = Long.valuelonOf(Float.floatToRawIntBits((float) data.gelontFloatValuelon()));
+            brelonak;
+          caselon DOUBLelon:
+            fielonldsData = Long.valuelonOf(Doublelon.doublelonToRawLongBits(data.gelontDoublelonValuelon()));
+            brelonak;
+          delonfault:
+            throw nelonw IllelongalArgumelonntelonxcelonption("Unknown csf typelon: " + fielonldTypelon.gelontCsfTypelon());
         }
       }
     }
   }
 
-  public interface TokenStreamRewriter {
+  public intelonrfacelon TokelonnStrelonamRelonwritelonr {
     /**
-     * Rewrite the token stream.
+     * Relonwritelon thelon tokelonn strelonam.
      */
-    TwitterTokenStream rewrite(Schema.FieldInfo fieldInfo, TwitterTokenStream stream);
+    TwittelonrTokelonnStrelonam relonwritelon(Schelonma.FielonldInfo fielonldInfo, TwittelonrTokelonnStrelonam strelonam);
   }
 }

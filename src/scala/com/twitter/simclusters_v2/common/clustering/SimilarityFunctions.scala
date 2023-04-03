@@ -1,32 +1,32 @@
-package com.twitter.simclusters_v2.common.clustering
+packagelon com.twittelonr.simclustelonrs_v2.common.clustelonring
 
-import com.twitter.simclusters_v2.common.SimClustersEmbedding
+import com.twittelonr.simclustelonrs_v2.common.SimClustelonrselonmbelondding
 
 /**
- * SimilarityFunctions provide commonly used similarity functions that this clustering library needs.
+ * SimilarityFunctions providelon commonly uselond similarity functions that this clustelonring library nelonelonds.
  */
-object SimilarityFunctions {
-  def simClustersCosineSimilarity: (SimClustersEmbedding, SimClustersEmbedding) => Double =
-    (e1, e2) => e1.cosineSimilarity(e2)
+objelonct SimilarityFunctions {
+  delonf simClustelonrsCosinelonSimilarity: (SimClustelonrselonmbelondding, SimClustelonrselonmbelondding) => Doublelon =
+    (elon1, elon2) => elon1.cosinelonSimilarity(elon2)
 
-  def simClustersMatchingLargestDimension: (
-    SimClustersEmbedding,
-    SimClustersEmbedding
-  ) => Double = (e1, e2) => {
-    val doesMatchLargestDimension: Boolean = e1
-      .topClusterIds(1)
-      .exists { id1 =>
-        e2.topClusterIds(1).contains(id1)
+  delonf simClustelonrsMatchingLargelonstDimelonnsion: (
+    SimClustelonrselonmbelondding,
+    SimClustelonrselonmbelondding
+  ) => Doublelon = (elon1, elon2) => {
+    val doelonsMatchLargelonstDimelonnsion: Boolelonan = elon1
+      .topClustelonrIds(1)
+      .elonxists { id1 =>
+        elon2.topClustelonrIds(1).contains(id1)
       }
 
-    if (doesMatchLargestDimension) 1.0
-    else 0.0
+    if (doelonsMatchLargelonstDimelonnsion) 1.0
+    elonlselon 0.0
   }
 
-  def simClustersFuzzyJaccardSimilarity: (
-    SimClustersEmbedding,
-    SimClustersEmbedding
-  ) => Double = (e1, e2) => {
-    e1.fuzzyJaccardSimilarity(e2)
+  delonf simClustelonrsFuzzyJaccardSimilarity: (
+    SimClustelonrselonmbelondding,
+    SimClustelonrselonmbelondding
+  ) => Doublelon = (elon1, elon2) => {
+    elon1.fuzzyJaccardSimilarity(elon2)
   }
 }

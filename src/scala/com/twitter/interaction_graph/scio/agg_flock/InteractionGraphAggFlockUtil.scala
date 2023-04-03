@@ -1,61 +1,61 @@
-package com.twitter.interaction_graph.scio.agg_flock
+packagelon com.twittelonr.intelonraction_graph.scio.agg_flock
 
-import com.spotify.scio.values.SCollection
-import com.twitter.algebird.Min
-import com.twitter.flockdb.tools.datasets.flock.thriftscala.FlockEdge
-import com.twitter.interaction_graph.scio.common.InteractionGraphRawInput
-import com.twitter.interaction_graph.thriftscala.FeatureName
-import java.time.Instant
-import java.time.temporal.ChronoUnit
-import org.joda.time.Interval
+import com.spotify.scio.valuelons.SCollelonction
+import com.twittelonr.algelonbird.Min
+import com.twittelonr.flockdb.tools.dataselonts.flock.thriftscala.Flockelondgelon
+import com.twittelonr.intelonraction_graph.scio.common.IntelonractionGraphRawInput
+import com.twittelonr.intelonraction_graph.thriftscala.FelonaturelonNamelon
+import java.timelon.Instant
+import java.timelon.telonmporal.ChronoUnit
+import org.joda.timelon.Intelonrval
 
-object InteractionGraphAggFlockUtil {
+objelonct IntelonractionGraphAggFlockUtil {
 
-  def getFlockFeatures(
-    edges: SCollection[FlockEdge],
-    featureName: FeatureName,
-    dateInterval: Interval
-  ): SCollection[InteractionGraphRawInput] = {
-    edges
-      .withName(s"${featureName.toString} - Converting flock edge to interaction graph input")
-      .map { edge =>
-        // NOTE: getUpdatedAt gives time in the seconds resolution
-        // Because we use .extend() when reading the data source, the updatedAt time might be larger than the dateRange.
-        // We need to cap them, otherwise, DateUtil.diffDays gives incorrect results.
-        val start = (edge.updatedAt * 1000L).min(dateInterval.getEnd.toInstant.getMillis)
-        val end = dateInterval.getStart.toInstant.getMillis
-        val age = ChronoUnit.DAYS.between(
-          Instant.ofEpochMilli(start),
-          Instant.ofEpochMilli(end)
+  delonf gelontFlockFelonaturelons(
+    elondgelons: SCollelonction[Flockelondgelon],
+    felonaturelonNamelon: FelonaturelonNamelon,
+    datelonIntelonrval: Intelonrval
+  ): SCollelonction[IntelonractionGraphRawInput] = {
+    elondgelons
+      .withNamelon(s"${felonaturelonNamelon.toString} - Convelonrting flock elondgelon to intelonraction graph input")
+      .map { elondgelon =>
+        // NOTelon: gelontUpdatelondAt givelons timelon in thelon selonconds relonsolution
+        // Beloncauselon welon uselon .elonxtelonnd() whelonn relonading thelon data sourcelon, thelon updatelondAt timelon might belon largelonr than thelon datelonRangelon.
+        // Welon nelonelond to cap thelonm, othelonrwiselon, DatelonUtil.diffDays givelons incorrelonct relonsults.
+        val start = (elondgelon.updatelondAt * 1000L).min(datelonIntelonrval.gelontelonnd.toInstant.gelontMillis)
+        val elonnd = datelonIntelonrval.gelontStart.toInstant.gelontMillis
+        val agelon = ChronoUnit.DAYS.belontwelonelonn(
+          Instant.ofelonpochMilli(start),
+          Instant.ofelonpochMilli(elonnd)
         ) + 1
-        InteractionGraphRawInput(edge.sourceId, edge.destinationId, featureName, age.toInt, 1.0)
+        IntelonractionGraphRawInput(elondgelon.sourcelonId, elondgelon.delonstinationId, felonaturelonNamelon, agelon.toInt, 1.0)
       }
 
   }
 
-  def getMutualFollowFeature(
-    flockFollowFeature: SCollection[InteractionGraphRawInput]
-  ): SCollection[InteractionGraphRawInput] = {
-    flockFollowFeature
-      .withName("Convert FlockFollows to Mutual Follows")
+  delonf gelontMutualFollowFelonaturelon(
+    flockFollowFelonaturelon: SCollelonction[IntelonractionGraphRawInput]
+  ): SCollelonction[IntelonractionGraphRawInput] = {
+    flockFollowFelonaturelon
+      .withNamelon("Convelonrt FlockFollows to Mutual Follows")
       .map { input =>
-        val sourceId = input.src
-        val destId = input.dst
+        val sourcelonId = input.src
+        val delonstId = input.dst
 
-        if (sourceId < destId) {
-          Tuple2(sourceId, destId) -> Tuple2(Set(true), Min(input.age)) // true means follow
-        } else {
-          Tuple2(destId, sourceId) -> Tuple2(Set(false), Min(input.age)) // false means followed_by
+        if (sourcelonId < delonstId) {
+          Tuplelon2(sourcelonId, delonstId) -> Tuplelon2(Selont(truelon), Min(input.agelon)) // truelon melonans follow
+        } elonlselon {
+          Tuplelon2(delonstId, sourcelonId) -> Tuplelon2(Selont(falselon), Min(input.agelon)) // falselon melonans followelond_by
         }
       }
-      .sumByKey
+      .sumByKelony
       .flatMap {
-        case ((id1, id2), (followSet, minAge)) if followSet.size == 2 =>
-          val age = minAge.get
-          Seq(
-            InteractionGraphRawInput(id1, id2, FeatureName.NumMutualFollows, age, 1.0),
-            InteractionGraphRawInput(id2, id1, FeatureName.NumMutualFollows, age, 1.0))
-        case _ =>
+        caselon ((id1, id2), (followSelont, minAgelon)) if followSelont.sizelon == 2 =>
+          val agelon = minAgelon.gelont
+          Selonq(
+            IntelonractionGraphRawInput(id1, id2, FelonaturelonNamelon.NumMutualFollows, agelon, 1.0),
+            IntelonractionGraphRawInput(id2, id1, FelonaturelonNamelon.NumMutualFollows, agelon, 1.0))
+        caselon _ =>
           Nil
       }
   }

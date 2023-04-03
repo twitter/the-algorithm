@@ -1,110 +1,110 @@
-package com.twitter.search.earlybird.document;
+packagelon com.twittelonr.selonarch.elonarlybird.documelonnt;
 
-import java.io.IOException;
-import javax.annotation.Nullable;
+import java.io.IOelonxcelonption;
+import javax.annotation.Nullablelon;
 
-import org.apache.commons.codec.binary.Base64;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field;
-import org.apache.lucene.document.FieldType;
-import org.apache.lucene.index.IndexableField;
-import org.apache.thrift.TBase;
-import org.apache.thrift.TException;
-import org.apache.thrift.TSerializer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apachelon.commons.codelonc.binary.Baselon64;
+import org.apachelon.lucelonnelon.documelonnt.Documelonnt;
+import org.apachelon.lucelonnelon.documelonnt.Fielonld;
+import org.apachelon.lucelonnelon.documelonnt.FielonldTypelon;
+import org.apachelon.lucelonnelon.indelonx.IndelonxablelonFielonld;
+import org.apachelon.thrift.TBaselon;
+import org.apachelon.thrift.Telonxcelonption;
+import org.apachelon.thrift.TSelonrializelonr;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.util.text.OmitNormTextField;
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.common.util.telonxt.OmitNormTelonxtFielonld;
+import com.twittelonr.selonarch.elonarlybird.elonxcelonption.CriticalelonxcelonptionHandlelonr;
 
 /**
- * Factory that constructs a Lucene document from a thrift object stored in T format.
+ * Factory that constructs a Lucelonnelon documelonnt from a thrift objelonct storelond in T format.
  *
- * @param <T> ThriftStatus or ThriftIndexingEvent, to be converted to a Lucene Document.
+ * @param <T> ThriftStatus or ThriftIndelonxingelonvelonnt, to belon convelonrtelond to a Lucelonnelon Documelonnt.
  */
-public abstract class DocumentFactory<T extends TBase<T, ?>> {
-  private static final Logger LOG = LoggerFactory.getLogger(DocumentFactory.class);
-  private static final int MAX_ALLOWED_INVALID_DOCUMENTS = 100;
+public abstract class DocumelonntFactory<T elonxtelonnds TBaselon<T, ?>> {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(DocumelonntFactory.class);
+  privatelon static final int MAX_ALLOWelonD_INVALID_DOCUMelonNTS = 100;
 
-  private static final SearchCounter INVALID_DOCUMENTS_COUNTER =
-      SearchCounter.export("invalid_documents");
+  privatelon static final SelonarchCountelonr INVALID_DOCUMelonNTS_COUNTelonR =
+      SelonarchCountelonr.elonxport("invalid_documelonnts");
 
-  private final CriticalExceptionHandler criticalExceptionHandler;
+  privatelon final CriticalelonxcelonptionHandlelonr criticalelonxcelonptionHandlelonr;
 
-  public DocumentFactory(CriticalExceptionHandler criticalExceptionHandler) {
-    this.criticalExceptionHandler = criticalExceptionHandler;
+  public DocumelonntFactory(CriticalelonxcelonptionHandlelonr criticalelonxcelonptionHandlelonr) {
+    this.criticalelonxcelonptionHandlelonr = criticalelonxcelonptionHandlelonr;
   }
 
   /**
-   * Given the thrift representation of a tweet, returns the associated tweetId.
+   * Givelonn thelon thrift relonprelonselonntation of a twelonelont, relonturns thelon associatelond twelonelontId.
    */
-  public abstract long getStatusId(T thriftObject);
+  public abstract long gelontStatusId(T thriftObjelonct);
 
   /**
-   * Given the thrift representation of a tweet, returns a Lucene Document with all the fields
-   * that need to be indexed.
+   * Givelonn thelon thrift relonprelonselonntation of a twelonelont, relonturns a Lucelonnelon Documelonnt with all thelon fielonlds
+   * that nelonelond to belon indelonxelond.
    */
-  @Nullable
-  public final Document newDocument(T thriftObject) {
+  @Nullablelon
+  public final Documelonnt nelonwDocumelonnt(T thriftObjelonct) {
     try {
-      return innerNewDocument(thriftObject);
-    } catch (Exception e) {
-      String statusId = "Not available";
-      if (thriftObject != null) {
+      relonturn innelonrNelonwDocumelonnt(thriftObjelonct);
+    } catch (elonxcelonption elon) {
+      String statusId = "Not availablelon";
+      if (thriftObjelonct != null) {
         try {
-          statusId = Long.toString(getStatusId(thriftObject));
-        } catch (Exception ex) {
-          LOG.error("Unable to get tweet id for document", ex);
-          statusId = "Not parsable";
+          statusId = Long.toString(gelontStatusId(thriftObjelonct));
+        } catch (elonxcelonption elonx) {
+          LOG.elonrror("Unablelon to gelont twelonelont id for documelonnt", elonx);
+          statusId = "Not parsablelon";
         }
       }
-      LOG.error("Unexpected exception while indexing. Status id: " + statusId, e);
+      LOG.elonrror("Unelonxpelonctelond elonxcelonption whilelon indelonxing. Status id: " + statusId, elon);
 
-      if (thriftObject != null) {
-        // Log the status in base64 for debugging
+      if (thriftObjelonct != null) {
+        // Log thelon status in baselon64 for delonbugging
         try {
-          LOG.warn("Bad ThriftStatus. Id: " + statusId + " base 64: "
-              + Base64.encodeBase64String(new TSerializer().serialize(thriftObject)));
-        } catch (TException e1) {
-          // Ignored since this is logging for debugging.
+          LOG.warn("Bad ThriftStatus. Id: " + statusId + " baselon 64: "
+              + Baselon64.elonncodelonBaselon64String(nelonw TSelonrializelonr().selonrializelon(thriftObjelonct)));
+        } catch (Telonxcelonption elon1) {
+          // Ignorelond sincelon this is logging for delonbugging.
         }
       }
-      INVALID_DOCUMENTS_COUNTER.increment();
-      if (INVALID_DOCUMENTS_COUNTER.get() > MAX_ALLOWED_INVALID_DOCUMENTS) {
-        criticalExceptionHandler.handle(this, e);
+      INVALID_DOCUMelonNTS_COUNTelonR.increlonmelonnt();
+      if (INVALID_DOCUMelonNTS_COUNTelonR.gelont() > MAX_ALLOWelonD_INVALID_DOCUMelonNTS) {
+        criticalelonxcelonptionHandlelonr.handlelon(this, elon);
       }
-      return new Document();
+      relonturn nelonw Documelonnt();
     }
   }
 
   /**
-   * Given the thrift representation of a tweet, returns a Lucene Document with all the fields
-   * that need to be indexed.
+   * Givelonn thelon thrift relonprelonselonntation of a twelonelont, relonturns a Lucelonnelon Documelonnt with all thelon fielonlds
+   * that nelonelond to belon indelonxelond.
    *
-   * Return null if the given thrift object is invalid.
+   * Relonturn null if thelon givelonn thrift objelonct is invalid.
    *
-   * @throws IOException if there are problems reading the input of producing the output. Exception
-   *         is handled in {@link #newDocument(TBase)}.
+   * @throws IOelonxcelonption if thelonrelon arelon problelonms relonading thelon input of producing thelon output. elonxcelonption
+   *         is handlelond in {@link #nelonwDocumelonnt(TBaselon)}.
    */
-  @Nullable
-  protected abstract Document innerNewDocument(T thriftObject) throws IOException;
+  @Nullablelon
+  protelonctelond abstract Documelonnt innelonrNelonwDocumelonnt(T thriftObjelonct) throws IOelonxcelonption;
 
-  // Helper methods that prevent us from adding null fields to the lucene index
-  protected void addField(Document document, IndexableField field) {
-    if (field != null) {
-      document.add(field);
+  // Helonlpelonr melonthods that prelonvelonnt us from adding null fielonlds to thelon lucelonnelon indelonx
+  protelonctelond void addFielonld(Documelonnt documelonnt, IndelonxablelonFielonld fielonld) {
+    if (fielonld != null) {
+      documelonnt.add(fielonld);
     }
   }
 
-  protected Field newField(String data, String fieldName) {
-    return newField(data, fieldName, OmitNormTextField.TYPE_NOT_STORED);
+  protelonctelond Fielonld nelonwFielonld(String data, String fielonldNamelon) {
+    relonturn nelonwFielonld(data, fielonldNamelon, OmitNormTelonxtFielonld.TYPelon_NOT_STORelonD);
   }
 
-  protected Field newField(String data, String fieldName, FieldType fieldType) {
+  protelonctelond Fielonld nelonwFielonld(String data, String fielonldNamelon, FielonldTypelon fielonldTypelon) {
     if (data != null) {
-      return new Field(fieldName, data, fieldType);
+      relonturn nelonw Fielonld(fielonldNamelon, data, fielonldTypelon);
     }
-    return null;
+    relonturn null;
   }
 }

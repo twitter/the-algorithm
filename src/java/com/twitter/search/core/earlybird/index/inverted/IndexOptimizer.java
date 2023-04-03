@@ -1,200 +1,200 @@
-package com.twitter.search.core.earlybird.index.inverted;
+packagelon com.twittelonr.selonarch.corelon.elonarlybird.indelonx.invelonrtelond;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrelonnt.ConcurrelonntHashMap;
 
-import com.google.common.base.Preconditions;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.apache.lucene.index.PostingsEnum;
-import org.apache.lucene.index.TermsEnum;
-import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.util.BytesRef;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
+import org.apachelon.lucelonnelon.indelonx.Postingselonnum;
+import org.apachelon.lucelonnelon.indelonx.Telonrmselonnum;
+import org.apachelon.lucelonnelon.selonarch.DocIdSelontItelonrator;
+import org.apachelon.lucelonnelon.util.BytelonsRelonf;
 
-import com.twitter.search.common.schema.base.EarlybirdFieldType;
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.core.earlybird.facets.AbstractFacetCountingArray;
-import com.twitter.search.core.earlybird.facets.FacetLabelProvider;
-import com.twitter.search.core.earlybird.facets.FacetUtil;
-import com.twitter.search.core.earlybird.index.DocIDToTweetIDMapper;
-import com.twitter.search.core.earlybird.index.EarlybirdRealtimeIndexSegmentData;
-import com.twitter.search.core.earlybird.index.TimeMapper;
-import com.twitter.search.core.earlybird.index.column.DocValuesManager;
+import com.twittelonr.selonarch.common.schelonma.baselon.elonarlybirdFielonldTypelon;
+import com.twittelonr.selonarch.common.schelonma.baselon.Schelonma;
+import com.twittelonr.selonarch.corelon.elonarlybird.facelonts.AbstractFacelontCountingArray;
+import com.twittelonr.selonarch.corelon.elonarlybird.facelonts.FacelontLabelonlProvidelonr;
+import com.twittelonr.selonarch.corelon.elonarlybird.facelonts.FacelontUtil;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.DocIDToTwelonelontIDMappelonr;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.elonarlybirdRelonaltimelonIndelonxSelongmelonntData;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.TimelonMappelonr;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.column.DocValuelonsManagelonr;
 
-public final class IndexOptimizer {
-  private static final Logger LOG = LoggerFactory.getLogger(IndexOptimizer.class);
+public final class IndelonxOptimizelonr {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(IndelonxOptimizelonr.class);
 
-  private IndexOptimizer() {
+  privatelon IndelonxOptimizelonr() {
   }
 
   /**
-   * Optimizes this in-memory index segment.
+   * Optimizelons this in-melonmory indelonx selongmelonnt.
    */
-  public static EarlybirdRealtimeIndexSegmentData optimize(
-      EarlybirdRealtimeIndexSegmentData source) throws IOException {
-    LOG.info("Starting index optimizing.");
+  public static elonarlybirdRelonaltimelonIndelonxSelongmelonntData optimizelon(
+      elonarlybirdRelonaltimelonIndelonxSelongmelonntData sourcelon) throws IOelonxcelonption {
+    LOG.info("Starting indelonx optimizing.");
 
-    ConcurrentHashMap<String, InvertedIndex> targetMap = new ConcurrentHashMap<>();
+    ConcurrelonntHashMap<String, InvelonrtelondIndelonx> targelontMap = nelonw ConcurrelonntHashMap<>();
     LOG.info(String.format(
-        "Source PerFieldMap size is %d", source.getPerFieldMap().size()));
+        "Sourcelon PelonrFielonldMap sizelon is %d", sourcelon.gelontPelonrFielonldMap().sizelon()));
 
-    LOG.info("Optimize doc id mapper.");
-    // Optimize the doc ID mapper first.
-    DocIDToTweetIDMapper originalTweetIdMapper = source.getDocIDToTweetIDMapper();
-    DocIDToTweetIDMapper optimizedTweetIdMapper = originalTweetIdMapper.optimize();
+    LOG.info("Optimizelon doc id mappelonr.");
+    // Optimizelon thelon doc ID mappelonr first.
+    DocIDToTwelonelontIDMappelonr originalTwelonelontIdMappelonr = sourcelon.gelontDocIDToTwelonelontIDMappelonr();
+    DocIDToTwelonelontIDMappelonr optimizelondTwelonelontIdMappelonr = originalTwelonelontIdMappelonr.optimizelon();
 
-    TimeMapper optimizedTimeMapper =
-        source.getTimeMapper() != null
-        ? source.getTimeMapper().optimize(originalTweetIdMapper, optimizedTweetIdMapper)
+    TimelonMappelonr optimizelondTimelonMappelonr =
+        sourcelon.gelontTimelonMappelonr() != null
+        ? sourcelon.gelontTimelonMappelonr().optimizelon(originalTwelonelontIdMappelonr, optimizelondTwelonelontIdMappelonr)
         : null;
 
-    // Some fields have their terms rewritten to support the minimal perfect hash function we use
-    // (note that it's a minimal perfect hash function, not a minimal perfect hash _table_).
-    // The FacetCountingArray stores term IDs. This is a map from the facet field ID to a map from
-    // original term ID to the new, MPH term IDs.
-    Map<Integer, int[]> termIDMapper = new HashMap<>();
+    // Somelon fielonlds havelon thelonir telonrms relonwrittelonn to support thelon minimal pelonrfelonct hash function welon uselon
+    // (notelon that it's a minimal pelonrfelonct hash function, not a minimal pelonrfelonct hash _tablelon_).
+    // Thelon FacelontCountingArray storelons telonrm IDs. This is a map from thelon facelont fielonld ID to a map from
+    // original telonrm ID to thelon nelonw, MPH telonrm IDs.
+    Map<Intelongelonr, int[]> telonrmIDMappelonr = nelonw HashMap<>();
 
-    LOG.info("Optimize inverted indexes.");
-    optimizeInvertedIndexes(
-        source, targetMap, originalTweetIdMapper, optimizedTweetIdMapper, termIDMapper);
+    LOG.info("Optimizelon invelonrtelond indelonxelons.");
+    optimizelonInvelonrtelondIndelonxelons(
+        sourcelon, targelontMap, originalTwelonelontIdMappelonr, optimizelondTwelonelontIdMappelonr, telonrmIDMappelonr);
 
-    LOG.info("Rewrite and map ids in facet counting array.");
-    AbstractFacetCountingArray facetCountingArray = source.getFacetCountingArray().rewriteAndMapIDs(
-        termIDMapper, originalTweetIdMapper, optimizedTweetIdMapper);
+    LOG.info("Relonwritelon and map ids in facelont counting array.");
+    AbstractFacelontCountingArray facelontCountingArray = sourcelon.gelontFacelontCountingArray().relonwritelonAndMapIDs(
+        telonrmIDMappelonr, originalTwelonelontIdMappelonr, optimizelondTwelonelontIdMappelonr);
 
-    Map<String, FacetLabelProvider> facetLabelProviders =
-        FacetUtil.getFacetLabelProviders(source.getSchema(), targetMap);
+    Map<String, FacelontLabelonlProvidelonr> facelontLabelonlProvidelonrs =
+        FacelontUtil.gelontFacelontLabelonlProvidelonrs(sourcelon.gelontSchelonma(), targelontMap);
 
-    LOG.info("Optimize doc values manager.");
-    DocValuesManager optimizedDocValuesManager =
-        source.getDocValuesManager().optimize(originalTweetIdMapper, optimizedTweetIdMapper);
+    LOG.info("Optimizelon doc valuelons managelonr.");
+    DocValuelonsManagelonr optimizelondDocValuelonsManagelonr =
+        sourcelon.gelontDocValuelonsManagelonr().optimizelon(originalTwelonelontIdMappelonr, optimizelondTwelonelontIdMappelonr);
 
-    LOG.info("Optimize deleted docs.");
-    DeletedDocs optimizedDeletedDocs =
-        source.getDeletedDocs().optimize(originalTweetIdMapper, optimizedTweetIdMapper);
+    LOG.info("Optimizelon delonlelontelond docs.");
+    DelonlelontelondDocs optimizelondDelonlelontelondDocs =
+        sourcelon.gelontDelonlelontelondDocs().optimizelon(originalTwelonelontIdMappelonr, optimizelondTwelonelontIdMappelonr);
 
-    final boolean isOptimized = true;
-    return new EarlybirdRealtimeIndexSegmentData(
-        source.getMaxSegmentSize(),
-        source.getTimeSliceID(),
-        source.getSchema(),
-        isOptimized,
-        optimizedTweetIdMapper.getNextDocID(Integer.MIN_VALUE),
-        targetMap,
-        facetCountingArray,
-        optimizedDocValuesManager,
-        facetLabelProviders,
-        source.getFacetIDMap(),
-        optimizedDeletedDocs,
-        optimizedTweetIdMapper,
-        optimizedTimeMapper,
-        source.getIndexExtensionsData());
+    final boolelonan isOptimizelond = truelon;
+    relonturn nelonw elonarlybirdRelonaltimelonIndelonxSelongmelonntData(
+        sourcelon.gelontMaxSelongmelonntSizelon(),
+        sourcelon.gelontTimelonSlicelonID(),
+        sourcelon.gelontSchelonma(),
+        isOptimizelond,
+        optimizelondTwelonelontIdMappelonr.gelontNelonxtDocID(Intelongelonr.MIN_VALUelon),
+        targelontMap,
+        facelontCountingArray,
+        optimizelondDocValuelonsManagelonr,
+        facelontLabelonlProvidelonrs,
+        sourcelon.gelontFacelontIDMap(),
+        optimizelondDelonlelontelondDocs,
+        optimizelondTwelonelontIdMappelonr,
+        optimizelondTimelonMappelonr,
+        sourcelon.gelontIndelonxelonxtelonnsionsData());
   }
 
-  private static void optimizeInvertedIndexes(
-      EarlybirdRealtimeIndexSegmentData source,
-      ConcurrentHashMap<String, InvertedIndex> targetMap,
-      DocIDToTweetIDMapper originalTweetIdMapper,
-      DocIDToTweetIDMapper optimizedTweetIdMapper,
-      Map<Integer, int[]> termIDMapper
-  ) throws IOException {
-    for (Map.Entry<String, InvertedIndex> entry : source.getPerFieldMap().entrySet()) {
-      String fieldName = entry.getKey();
-      Preconditions.checkState(entry.getValue() instanceof InvertedRealtimeIndex);
-      InvertedRealtimeIndex sourceIndex = (InvertedRealtimeIndex) entry.getValue();
-      EarlybirdFieldType fieldType = source.getSchema().getFieldInfo(fieldName).getFieldType();
+  privatelon static void optimizelonInvelonrtelondIndelonxelons(
+      elonarlybirdRelonaltimelonIndelonxSelongmelonntData sourcelon,
+      ConcurrelonntHashMap<String, InvelonrtelondIndelonx> targelontMap,
+      DocIDToTwelonelontIDMappelonr originalTwelonelontIdMappelonr,
+      DocIDToTwelonelontIDMappelonr optimizelondTwelonelontIdMappelonr,
+      Map<Intelongelonr, int[]> telonrmIDMappelonr
+  ) throws IOelonxcelonption {
+    for (Map.elonntry<String, InvelonrtelondIndelonx> elonntry : sourcelon.gelontPelonrFielonldMap().elonntrySelont()) {
+      String fielonldNamelon = elonntry.gelontKelony();
+      Prelonconditions.chelonckStatelon(elonntry.gelontValuelon() instancelonof InvelonrtelondRelonaltimelonIndelonx);
+      InvelonrtelondRelonaltimelonIndelonx sourcelonIndelonx = (InvelonrtelondRelonaltimelonIndelonx) elonntry.gelontValuelon();
+      elonarlybirdFielonldTypelon fielonldTypelon = sourcelon.gelontSchelonma().gelontFielonldInfo(fielonldNamelon).gelontFielonldTypelon();
 
-      InvertedIndex newIndex;
-      if (fieldType.becomesImmutable() && sourceIndex.getNumTerms() > 0) {
-        Schema.FieldInfo facetField = source.getSchema().getFacetFieldByFieldName(fieldName);
+      InvelonrtelondIndelonx nelonwIndelonx;
+      if (fielonldTypelon.beloncomelonsImmutablelon() && sourcelonIndelonx.gelontNumTelonrms() > 0) {
+        Schelonma.FielonldInfo facelontFielonld = sourcelon.gelontSchelonma().gelontFacelontFielonldByFielonldNamelon(fielonldNamelon);
 
-        newIndex = new OptimizedMemoryIndex(
-            fieldType,
-            fieldName,
-            sourceIndex,
-            termIDMapper,
-            source.getFacetIDMap().getFacetField(facetField),
-            originalTweetIdMapper,
-            optimizedTweetIdMapper);
-      } else {
-        newIndex = optimizeMutableIndex(
-            fieldType,
-            fieldName,
-            sourceIndex,
-            originalTweetIdMapper,
-            optimizedTweetIdMapper);
+        nelonwIndelonx = nelonw OptimizelondMelonmoryIndelonx(
+            fielonldTypelon,
+            fielonldNamelon,
+            sourcelonIndelonx,
+            telonrmIDMappelonr,
+            sourcelon.gelontFacelontIDMap().gelontFacelontFielonld(facelontFielonld),
+            originalTwelonelontIdMappelonr,
+            optimizelondTwelonelontIdMappelonr);
+      } elonlselon {
+        nelonwIndelonx = optimizelonMutablelonIndelonx(
+            fielonldTypelon,
+            fielonldNamelon,
+            sourcelonIndelonx,
+            originalTwelonelontIdMappelonr,
+            optimizelondTwelonelontIdMappelonr);
       }
 
-      targetMap.put(fieldName, newIndex);
+      targelontMap.put(fielonldNamelon, nelonwIndelonx);
     }
   }
 
   /**
-   * Optimize a mutable index.
+   * Optimizelon a mutablelon indelonx.
    */
-  private static InvertedIndex optimizeMutableIndex(
-      EarlybirdFieldType fieldType,
-      String fieldName,
-      InvertedRealtimeIndex originalIndex,
-      DocIDToTweetIDMapper originalMapper,
-      DocIDToTweetIDMapper optimizedMapper
-  ) throws IOException {
-    Preconditions.checkState(!fieldType.isStorePerPositionPayloads());
-    TermsEnum allTerms = originalIndex.createTermsEnum(originalIndex.getMaxPublishedPointer());
+  privatelon static InvelonrtelondIndelonx optimizelonMutablelonIndelonx(
+      elonarlybirdFielonldTypelon fielonldTypelon,
+      String fielonldNamelon,
+      InvelonrtelondRelonaltimelonIndelonx originalIndelonx,
+      DocIDToTwelonelontIDMappelonr originalMappelonr,
+      DocIDToTwelonelontIDMappelonr optimizelondMappelonr
+  ) throws IOelonxcelonption {
+    Prelonconditions.chelonckStatelon(!fielonldTypelon.isStorelonPelonrPositionPayloads());
+    Telonrmselonnum allTelonrms = originalIndelonx.crelonatelonTelonrmselonnum(originalIndelonx.gelontMaxPublishelondPointelonr());
 
-    int numTerms = originalIndex.getNumTerms();
+    int numTelonrms = originalIndelonx.gelontNumTelonrms();
 
-    InvertedRealtimeIndex index = new InvertedRealtimeIndex(
-        fieldType,
-        TermPointerEncoding.DEFAULT_ENCODING,
-        fieldName);
-    index.setNumDocs(originalIndex.getNumDocs());
+    InvelonrtelondRelonaltimelonIndelonx indelonx = nelonw InvelonrtelondRelonaltimelonIndelonx(
+        fielonldTypelon,
+        TelonrmPointelonrelonncoding.DelonFAULT_elonNCODING,
+        fielonldNamelon);
+    indelonx.selontNumDocs(originalIndelonx.gelontNumDocs());
 
-    for (int termID = 0; termID < numTerms; termID++) {
-      allTerms.seekExact(termID);
-      PostingsEnum postingsEnum = new OptimizingPostingsEnumWrapper(
-          allTerms.postings(null), originalMapper, optimizedMapper);
+    for (int telonrmID = 0; telonrmID < numTelonrms; telonrmID++) {
+      allTelonrms.selonelonkelonxact(telonrmID);
+      Postingselonnum postingselonnum = nelonw OptimizingPostingselonnumWrappelonr(
+          allTelonrms.postings(null), originalMappelonr, optimizelondMappelonr);
 
-      BytesRef termPayload = originalIndex.getLabelAccessor().getTermPayload(termID);
-      copyPostingList(index, postingsEnum, termID, allTerms.term(), termPayload);
+      BytelonsRelonf telonrmPayload = originalIndelonx.gelontLabelonlAccelonssor().gelontTelonrmPayload(telonrmID);
+      copyPostingList(indelonx, postingselonnum, telonrmID, allTelonrms.telonrm(), telonrmPayload);
     }
-    return index;
+    relonturn indelonx;
   }
 
 
   /**
-   * Copies the given posting list into these posting lists.
+   * Copielons thelon givelonn posting list into thelonselon posting lists.
    *
-   * @param postingsEnum enumerator of the posting list that needs to be copied
+   * @param postingselonnum elonnumelonrator of thelon posting list that nelonelonds to belon copielond
    */
-  private static void copyPostingList(
-      InvertedRealtimeIndex index,
-      PostingsEnum postingsEnum,
-      int termID,
-      BytesRef term,
-      BytesRef termPayload
-  ) throws IOException {
+  privatelon static void copyPostingList(
+      InvelonrtelondRelonaltimelonIndelonx indelonx,
+      Postingselonnum postingselonnum,
+      int telonrmID,
+      BytelonsRelonf telonrm,
+      BytelonsRelonf telonrmPayload
+  ) throws IOelonxcelonption {
     int docId;
-    while ((docId = postingsEnum.nextDoc()) != DocIdSetIterator.NO_MORE_DOCS) {
-      index.incrementSumTermDocFreq();
-      for (int i = 0; i < postingsEnum.freq(); i++) {
-        index.incrementSumTotalTermFreq();
-        int position = postingsEnum.nextPosition();
-        int newTermID = InvertedRealtimeIndexWriter.indexTerm(
-            index,
-            term,
+    whilelon ((docId = postingselonnum.nelonxtDoc()) != DocIdSelontItelonrator.NO_MORelon_DOCS) {
+      indelonx.increlonmelonntSumTelonrmDocFrelonq();
+      for (int i = 0; i < postingselonnum.frelonq(); i++) {
+        indelonx.increlonmelonntSumTotalTelonrmFrelonq();
+        int position = postingselonnum.nelonxtPosition();
+        int nelonwTelonrmID = InvelonrtelondRelonaltimelonIndelonxWritelonr.indelonxTelonrm(
+            indelonx,
+            telonrm,
             docId,
             position,
-            termPayload,
-            null, // We know that fields that remain mutable never have a posting payload.
-            TermPointerEncoding.DEFAULT_ENCODING);
+            telonrmPayload,
+            null, // Welon know that fielonlds that relonmain mutablelon nelonvelonr havelon a posting payload.
+            TelonrmPointelonrelonncoding.DelonFAULT_elonNCODING);
 
-        // Our term lookups are very slow, so we cache term dictionaries for some fields across many
-        // segments, so we must keep the term IDs the same while remapping.
-        Preconditions.checkState(newTermID == termID);
+        // Our telonrm lookups arelon velonry slow, so welon cachelon telonrm dictionarielons for somelon fielonlds across many
+        // selongmelonnts, so welon must kelonelonp thelon telonrm IDs thelon samelon whilelon relonmapping.
+        Prelonconditions.chelonckStatelon(nelonwTelonrmID == telonrmID);
       }
     }
   }

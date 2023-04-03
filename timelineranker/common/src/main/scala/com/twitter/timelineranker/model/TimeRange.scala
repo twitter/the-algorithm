@@ -1,39 +1,39 @@
-package com.twitter.timelineranker.model
+packagelon com.twittelonr.timelonlinelonrankelonr.modelonl
 
-import com.twitter.timelineranker.{thriftscala => thrift}
-import com.twitter.util.Time
+import com.twittelonr.timelonlinelonrankelonr.{thriftscala => thrift}
+import com.twittelonr.util.Timelon
 
-object TimeRange {
-  val default: TimeRange = TimeRange(None, None)
+objelonct TimelonRangelon {
+  val delonfault: TimelonRangelon = TimelonRangelon(Nonelon, Nonelon)
 
-  def fromThrift(range: thrift.TimeRange): TimeRange = {
-    TimeRange(
-      from = range.fromMs.map(Time.fromMilliseconds),
-      to = range.toMs.map(Time.fromMilliseconds)
+  delonf fromThrift(rangelon: thrift.TimelonRangelon): TimelonRangelon = {
+    TimelonRangelon(
+      from = rangelon.fromMs.map(Timelon.fromMilliselonconds),
+      to = rangelon.toMs.map(Timelon.fromMilliselonconds)
     )
   }
 }
 
-case class TimeRange(from: Option[Time], to: Option[Time]) extends TimelineRange {
+caselon class TimelonRangelon(from: Option[Timelon], to: Option[Timelon]) elonxtelonnds TimelonlinelonRangelon {
 
   throwIfInvalid()
 
-  def throwIfInvalid(): Unit = {
+  delonf throwIfInvalid(): Unit = {
     (from, to) match {
-      case (Some(fromTime), Some(toTime)) =>
-        require(fromTime <= toTime, "from-time must be less than or equal to-time.")
-      case _ => // valid, do nothing.
+      caselon (Somelon(fromTimelon), Somelon(toTimelon)) =>
+        relonquirelon(fromTimelon <= toTimelon, "from-timelon must belon lelonss than or elonqual to-timelon.")
+      caselon _ => // valid, do nothing.
     }
   }
 
-  def toThrift: thrift.TimeRange = {
-    thrift.TimeRange(
-      fromMs = from.map(_.inMilliseconds),
-      toMs = to.map(_.inMilliseconds)
+  delonf toThrift: thrift.TimelonRangelon = {
+    thrift.TimelonRangelon(
+      fromMs = from.map(_.inMilliselonconds),
+      toMs = to.map(_.inMilliselonconds)
     )
   }
 
-  def toTimelineRangeThrift: thrift.TimelineRange = {
-    thrift.TimelineRange.TimeRange(toThrift)
+  delonf toTimelonlinelonRangelonThrift: thrift.TimelonlinelonRangelon = {
+    thrift.TimelonlinelonRangelon.TimelonRangelon(toThrift)
   }
 }

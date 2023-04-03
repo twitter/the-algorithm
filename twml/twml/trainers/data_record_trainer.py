@@ -1,821 +1,821 @@
-# pylint: disable=arguments-differ, invalid-name
+# pylint: disablelon=argumelonnts-diffelonr, invalid-namelon
 """
-This module contains the ``DataRecordTrainer``.
-Unlike the parent ``Trainer`` class, the ``DataRecordTrainer``
-is used specifically for processing data records.
-It abstracts away a lot of the intricacies of working with DataRecords.
-`DataRecord <http://go/datarecord>`_ is the main piping format for data samples.
-The `DataRecordTrainer` assumes training data and production responses and requests
-to be organized as the `Thrift prediction service API
+This modulelon contains thelon ``DataReloncordTrainelonr``.
+Unlikelon thelon parelonnt ``Trainelonr`` class, thelon ``DataReloncordTrainelonr``
+is uselond speloncifically for procelonssing data reloncords.
+It abstracts away a lot of thelon intricacielons of working with DataReloncords.
+`DataReloncord <http://go/datareloncord>`_ is thelon main piping format for data samplelons.
+Thelon `DataReloncordTrainelonr` assumelons training data and production relonsponselons and relonquelonsts
+to belon organizelond as thelon `Thrift prelondiction selonrvicelon API
 
-A ``DataRecord`` is a Thrift struct that defines how to encode the data:
+A ``DataReloncord`` is a Thrift struct that delonfinelons how to elonncodelon thelon data:
 
 ::
 
-  struct DataRecord {
-    1: optional set<i64> binaryFeatures;                     // stores BINARY features
-    2: optional map<i64, double> continuousFeatures;         // stores CONTINUOUS features
-    3: optional map<i64, i64> discreteFeatures;              // stores DISCRETE features
-    4: optional map<i64, string> stringFeatures;             // stores STRING features
-    5: optional map<i64, set<string>> sparseBinaryFeatures;  // stores sparse BINARY features
-    6: optional map<i64, map<string, double>> sparseContinuousFeatures; // sparse CONTINUOUS feature
-    7: optional map<i64, binary> blobFeatures; // stores features as BLOBs (binary large objects)
-    8: optional map<i64, tensor.GeneralTensor> tensors; // stores TENSOR features
-    9: optional map<i64, tensor.SparseTensor> sparseTensors; // stores SPARSE_TENSOR features
+  struct DataReloncord {
+    1: optional selont<i64> binaryFelonaturelons;                     // storelons BINARY felonaturelons
+    2: optional map<i64, doublelon> continuousFelonaturelons;         // storelons CONTINUOUS felonaturelons
+    3: optional map<i64, i64> discrelontelonFelonaturelons;              // storelons DISCRelonTelon felonaturelons
+    4: optional map<i64, string> stringFelonaturelons;             // storelons STRING felonaturelons
+    5: optional map<i64, selont<string>> sparselonBinaryFelonaturelons;  // storelons sparselon BINARY felonaturelons
+    6: optional map<i64, map<string, doublelon>> sparselonContinuousFelonaturelons; // sparselon CONTINUOUS felonaturelon
+    7: optional map<i64, binary> blobFelonaturelons; // storelons felonaturelons as BLOBs (binary largelon objeloncts)
+    8: optional map<i64, telonnsor.GelonnelonralTelonnsor> telonnsors; // storelons TelonNSOR felonaturelons
+    9: optional map<i64, telonnsor.SparselonTelonnsor> sparselonTelonnsors; // storelons SPARSelon_TelonNSOR felonaturelons
   }
 
 
-A significant portion of Twitter data is hydrated
-and then temporarily stored on HDFS as DataRecords.
-The files are compressed (.gz or .lzo) partitions of data records.
-These form supervised datasets. Each sample captures the relationship
-between input and output (cause and effect).
-To create your own dataset, please see https://github.com/twitter/elephant-bird.
+A significant portion of Twittelonr data is hydratelond
+and thelonn telonmporarily storelond on HDFS as DataReloncords.
+Thelon filelons arelon comprelonsselond (.gz or .lzo) partitions of data reloncords.
+Thelonselon form supelonrviselond dataselonts. elonach samplelon capturelons thelon relonlationship
+belontwelonelonn input and output (causelon and elonffelonct).
+To crelonatelon your own dataselont, plelonaselon selonelon https://github.com/twittelonr/elonlelonphant-bird.
 
-The default ``DataRecordTrainer.[train,evaluate,learn]()`` reads these datarecords.
-The data is a read from multiple ``part-*.[compression]`` files.
-The default behavior of ``DataRecordTrainer`` is to read sparse features from ``DataRecords``.
-This is a legacy default piping format at Twitter.
-The ``DataRecordTrainer`` is flexible enough for research and yet simple enough
-for a new beginner ML practioner.
+Thelon delonfault ``DataReloncordTrainelonr.[train,elonvaluatelon,lelonarn]()`` relonads thelonselon datareloncords.
+Thelon data is a relonad from multiplelon ``part-*.[comprelonssion]`` filelons.
+Thelon delonfault belonhavior of ``DataReloncordTrainelonr`` is to relonad sparselon felonaturelons from ``DataReloncords``.
+This is a lelongacy delonfault piping format at Twittelonr.
+Thelon ``DataReloncordTrainelonr`` is flelonxiblelon elonnough for relonselonarch and yelont simplelon elonnough
+for a nelonw belonginnelonr ML practionelonr.
 
-By means of the feature string to key hashing function,
-the ``[train,eval]_feature_config`` constructor arguments
-control which features can be used as sample labels, sample weights,
-or sample features.
-Samples ids, and feature keys, feature values and feature weights
-can be skipped, included, excluded or used as labels, weights, or features.
-This allows you to easily define and control sparse distributions of
-named features.
+By melonans of thelon felonaturelon string to kelony hashing function,
+thelon ``[train,elonval]_felonaturelon_config`` constructor argumelonnts
+control which felonaturelons can belon uselond as samplelon labelonls, samplelon welonights,
+or samplelon felonaturelons.
+Samplelons ids, and felonaturelon kelonys, felonaturelon valuelons and felonaturelon welonights
+can belon skippelond, includelond, elonxcludelond or uselond as labelonls, welonights, or felonaturelons.
+This allows you to elonasily delonfinelon and control sparselon distributions of
+namelond felonaturelons.
 
-Yet sparse data is difficult to work with. We are currently working to
-optimize the sparse operations due to inefficiencies in the gradient descent
-and parameter update processes. There are efforts underway
-to minimize the footprint of sparse data as it is inefficient to process.
-CPUs and GPUs much prefer dense tensor data.
+Yelont sparselon data is difficult to work with. Welon arelon currelonntly working to
+optimizelon thelon sparselon opelonrations duelon to inelonfficielonncielons in thelon gradielonnt delonscelonnt
+and paramelontelonr updatelon procelonsselons. Thelonrelon arelon elonfforts undelonrway
+to minimizelon thelon footprint of sparselon data as it is inelonfficielonnt to procelonss.
+CPUs and GPUs much prelonfelonr delonnselon telonnsor data.
 """
 
-import datetime
+import datelontimelon
 
-import tensorflow.compat.v1 as tf
-from twitter.deepbird.io.dal import dal_to_hdfs_path, is_dal_path
+import telonnsorflow.compat.v1 as tf
+from twittelonr.delonelonpbird.io.dal import dal_to_hdfs_path, is_dal_path
 import twml
-from twml.trainers import Trainer
-from twml.contrib.feature_importances.feature_importances import (
-  compute_feature_importances,
-  TREE,
-  write_feature_importances_to_hdfs,
-  write_feature_importances_to_ml_dash)
+from twml.trainelonrs import Trainelonr
+from twml.contrib.felonaturelon_importancelons.felonaturelon_importancelons import (
+  computelon_felonaturelon_importancelons,
+  TRelonelon,
+  writelon_felonaturelon_importancelons_to_hdfs,
+  writelon_felonaturelon_importancelons_to_ml_dash)
 from absl import logging
 
 
-class DataRecordTrainer(Trainer):  # pylint: disable=abstract-method
+class DataReloncordTrainelonr(Trainelonr):  # pylint: disablelon=abstract-melonthod
   """
-  The ``DataRecordTrainer`` implementation is intended to satisfy the most common use cases
-  at Twitter where only the build_graph methods needs to be overridden.
-  For this reason, ``Trainer.[train,eval]_input_fn`` methods
-  assume a DataRecord dataset partitioned into part files stored in compressed (e.g. gzip) format.
+  Thelon ``DataReloncordTrainelonr`` implelonmelonntation is intelonndelond to satisfy thelon most common uselon caselons
+  at Twittelonr whelonrelon only thelon build_graph melonthods nelonelonds to belon ovelonrriddelonn.
+  For this relonason, ``Trainelonr.[train,elonval]_input_fn`` melonthods
+  assumelon a DataReloncord dataselont partitionelond into part filelons storelond in comprelonsselond (elon.g. gzip) format.
 
-  For use-cases that differ from this common Twitter use-case,
-  further Trainer methods can be overridden.
-  If that still doesn't provide enough flexibility, the user can always
-  use the tf.estimator.Esimator or tf.session.run directly.
+  For uselon-caselons that diffelonr from this common Twittelonr uselon-caselon,
+  furthelonr Trainelonr melonthods can belon ovelonrriddelonn.
+  If that still doelonsn't providelon elonnough flelonxibility, thelon uselonr can always
+  uselon thelon tf.elonstimator.elonsimator or tf.selonssion.run direlonctly.
   """
 
-  def __init__(
-          self, name, params,
+  delonf __init__(
+          selonlf, namelon, params,
           build_graph_fn,
-          feature_config=None,
+          felonaturelon_config=Nonelon,
           **kwargs):
     """
-    The DataRecordTrainer constructor builds a
-    ``tf.estimator.Estimator`` and stores it in self.estimator.
-    For this reason, DataRecordTrainer accepts the same Estimator constructor arguments.
-    It also accepts additional arguments to facilitate metric evaluation and multi-phase training
+    Thelon DataReloncordTrainelonr constructor builds a
+    ``tf.elonstimator.elonstimator`` and storelons it in selonlf.elonstimator.
+    For this relonason, DataReloncordTrainelonr accelonpts thelon samelon elonstimator constructor argumelonnts.
+    It also accelonpts additional argumelonnts to facilitatelon melontric elonvaluation and multi-phaselon training
     (init_from_dir, init_map).
 
     Args:
-      parent arguments:
-        See the `Trainer constructor <#twml.trainers.Trainer.__init__>`_ documentation
-        for a full list of arguments accepted by the parent class.
-      name, params, build_graph_fn (and other parent class args):
-        see documentation for twml.Trainer doc.
-      feature_config:
-        An object of type FeatureConfig describing what features to decode.
-        Defaults to None. But it is needed in the following cases:
-          - `get_train_input_fn()` / `get_eval_input_fn()` is called without a `parse_fn`
-          - `learn()`, `train()`, `eval()`, `calibrate()` are called without providing `*input_fn`.
+      parelonnt argumelonnts:
+        Selonelon thelon `Trainelonr constructor <#twml.trainelonrs.Trainelonr.__init__>`_ documelonntation
+        for a full list of argumelonnts accelonptelond by thelon parelonnt class.
+      namelon, params, build_graph_fn (and othelonr parelonnt class args):
+        selonelon documelonntation for twml.Trainelonr doc.
+      felonaturelon_config:
+        An objelonct of typelon FelonaturelonConfig delonscribing what felonaturelons to deloncodelon.
+        Delonfaults to Nonelon. But it is nelonelondelond in thelon following caselons:
+          - `gelont_train_input_fn()` / `gelont_elonval_input_fn()` is callelond without a `parselon_fn`
+          - `lelonarn()`, `train()`, `elonval()`, `calibratelon()` arelon callelond without providing `*input_fn`.
 
       **kwargs:
-        further kwargs can be specified and passed to the Estimator constructor.
+        furthelonr kwargs can belon speloncifielond and passelond to thelon elonstimator constructor.
     """
 
-    # NOTE: DO NOT MODIFY `params` BEFORE THIS CALL.
-    super(DataRecordTrainer, self).__init__(
-      name=name, params=params, build_graph_fn=build_graph_fn, **kwargs)
+    # NOTelon: DO NOT MODIFY `params` BelonFORelon THIS CALL.
+    supelonr(DataReloncordTrainelonr, selonlf).__init__(
+      namelon=namelon, params=params, build_graph_fn=build_graph_fn, **kwargs)
 
-    self._feature_config = feature_config
+    selonlf._felonaturelon_config = felonaturelon_config
 
-    # date range parameters common to both training and evaluation data:
-    hour_resolution = self.params.get("hour_resolution", 1)
-    data_threads = self.params.get("data_threads", 4)
-    datetime_format = self.params.get("datetime_format", "%Y/%m/%d")
+    # datelon rangelon paramelontelonrs common to both training and elonvaluation data:
+    hour_relonsolution = selonlf.params.gelont("hour_relonsolution", 1)
+    data_threlonads = selonlf.params.gelont("data_threlonads", 4)
+    datelontimelon_format = selonlf.params.gelont("datelontimelon_format", "%Y/%m/%d")
 
-    # retrieve the desired training dataset files
-    self._train_files = self.build_files_list(
-      files_list_path=self.params.get("train_files_list", None),
-      data_dir=self.params.get("train_data_dir", None),
-      start_datetime=self.params.get("train_start_datetime", None),
-      end_datetime=self.params.get("train_end_datetime", None),
-      datetime_format=datetime_format, data_threads=data_threads,
-      hour_resolution=hour_resolution, maybe_save=self.is_chief(),
-      overwrite=self.params.get("train_overwrite_files_list", False),
+    # relontrielonvelon thelon delonsirelond training dataselont filelons
+    selonlf._train_filelons = selonlf.build_filelons_list(
+      filelons_list_path=selonlf.params.gelont("train_filelons_list", Nonelon),
+      data_dir=selonlf.params.gelont("train_data_dir", Nonelon),
+      start_datelontimelon=selonlf.params.gelont("train_start_datelontimelon", Nonelon),
+      elonnd_datelontimelon=selonlf.params.gelont("train_elonnd_datelontimelon", Nonelon),
+      datelontimelon_format=datelontimelon_format, data_threlonads=data_threlonads,
+      hour_relonsolution=hour_relonsolution, maybelon_savelon=selonlf.is_chielonf(),
+      ovelonrwritelon=selonlf.params.gelont("train_ovelonrwritelon_filelons_list", Falselon),
     )
 
-    # retrieve the desired evaluation dataset files
-    eval_name = self.params.get("eval_name", None)
+    # relontrielonvelon thelon delonsirelond elonvaluation dataselont filelons
+    elonval_namelon = selonlf.params.gelont("elonval_namelon", Nonelon)
 
-    if eval_name == "train":
-      self._eval_files = self._train_files
-    else:
-      self._eval_files = self.build_files_list(
-        files_list_path=self.params.get("eval_files_list", None),
-        data_dir=self.params.get("eval_data_dir", None),
-        start_datetime=self.params.get("eval_start_datetime", None),
-        end_datetime=self.params.get("eval_end_datetime", None),
-        datetime_format=datetime_format, data_threads=data_threads,
-        hour_resolution=hour_resolution, maybe_save=self.is_chief(),
-        overwrite=self.params.get("eval_overwrite_files_list", False),
+    if elonval_namelon == "train":
+      selonlf._elonval_filelons = selonlf._train_filelons
+    elonlselon:
+      selonlf._elonval_filelons = selonlf.build_filelons_list(
+        filelons_list_path=selonlf.params.gelont("elonval_filelons_list", Nonelon),
+        data_dir=selonlf.params.gelont("elonval_data_dir", Nonelon),
+        start_datelontimelon=selonlf.params.gelont("elonval_start_datelontimelon", Nonelon),
+        elonnd_datelontimelon=selonlf.params.gelont("elonval_elonnd_datelontimelon", Nonelon),
+        datelontimelon_format=datelontimelon_format, data_threlonads=data_threlonads,
+        hour_relonsolution=hour_relonsolution, maybelon_savelon=selonlf.is_chielonf(),
+        ovelonrwritelon=selonlf.params.gelont("elonval_ovelonrwritelon_filelons_list", Falselon),
       )
 
-      if not self.params.get("allow_train_eval_overlap"):
-        # if there is overlap between train and eval, error out!
-        if self._train_files and self._eval_files:
-          overlap_files = set(self._train_files) & set(self._eval_files)
-        else:
-          overlap_files = set()
-        if overlap_files:
-          raise ValueError("There is an overlap between train and eval files:\n %s" %
-                           (overlap_files))
+      if not selonlf.params.gelont("allow_train_elonval_ovelonrlap"):
+        # if thelonrelon is ovelonrlap belontwelonelonn train and elonval, elonrror out!
+        if selonlf._train_filelons and selonlf._elonval_filelons:
+          ovelonrlap_filelons = selont(selonlf._train_filelons) & selont(selonlf._elonval_filelons)
+        elonlselon:
+          ovelonrlap_filelons = selont()
+        if ovelonrlap_filelons:
+          raiselon Valuelonelonrror("Thelonrelon is an ovelonrlap belontwelonelonn train and elonval filelons:\n %s" %
+                           (ovelonrlap_filelons))
 
-  @staticmethod
-  def build_hdfs_files_list(
-      files_list_path, data_dir,
-      start_datetime, end_datetime, datetime_format,
-      data_threads, hour_resolution, maybe_save, overwrite):
-    if files_list_path:
-      files_list_path = twml.util.preprocess_path(files_list_path)
+  @staticmelonthod
+  delonf build_hdfs_filelons_list(
+      filelons_list_path, data_dir,
+      start_datelontimelon, elonnd_datelontimelon, datelontimelon_format,
+      data_threlonads, hour_relonsolution, maybelon_savelon, ovelonrwritelon):
+    if filelons_list_path:
+      filelons_list_path = twml.util.prelonprocelonss_path(filelons_list_path)
 
-    if isinstance(start_datetime, datetime.datetime):
-      start_datetime = start_datetime.strftime(datetime_format)
-    if isinstance(end_datetime, datetime.datetime):
-      end_datetime = end_datetime.strftime(datetime_format)
+    if isinstancelon(start_datelontimelon, datelontimelon.datelontimelon):
+      start_datelontimelon = start_datelontimelon.strftimelon(datelontimelon_format)
+    if isinstancelon(elonnd_datelontimelon, datelontimelon.datelontimelon):
+      elonnd_datelontimelon = elonnd_datelontimelon.strftimelon(datelontimelon_format)
 
-    list_files_by_datetime_args = {
-      "base_path": data_dir,
-      "start_datetime": start_datetime,
-      "end_datetime": end_datetime,
-      "datetime_prefix_format": datetime_format,
-      "extension": "lzo",
-      "parallelism": data_threads,
-      "hour_resolution": hour_resolution,
-      "sort": True,
+    list_filelons_by_datelontimelon_args = {
+      "baselon_path": data_dir,
+      "start_datelontimelon": start_datelontimelon,
+      "elonnd_datelontimelon": elonnd_datelontimelon,
+      "datelontimelon_prelonfix_format": datelontimelon_format,
+      "elonxtelonnsion": "lzo",
+      "parallelonlism": data_threlonads,
+      "hour_relonsolution": hour_relonsolution,
+      "sort": Truelon,
     }
 
-    # no cache of data file paths, just get the list by scraping the directory
-    if not files_list_path or not tf.io.gfile.exists(files_list_path):
-      # twml.util.list_files_by_datetime returns None if data_dir is None.
-      # twml.util.list_files_by_datetime passes through data_dir if data_dir is a list
-      files_list = twml.util.list_files_by_datetime(**list_files_by_datetime_args)
-    else:
-      # the cached data file paths file exists.
-      files_info = twml.util.read_file(files_list_path, decode="json")
-      # use the cached list if data params match current params,
-      #  or if current params are None
-      # Not including None checks for datetime_format and hour_resolution,
-      #  since those are shared between eval and training.
-      if (all(param is None for param in [data_dir, start_datetime, end_datetime]) or
-          (files_info["data_dir"] == data_dir and
-           files_info["start_datetime"] == start_datetime and
-           files_info["end_datetime"] == end_datetime and
-           files_info["datetime_format"] == datetime_format and
-           files_info["hour_resolution"] == hour_resolution)):
-        files_list = files_info["files"]
-      elif overwrite:
-        # current params are not none and don't match saved params
-        # `overwrite` indicates we should thus update the list
-        files_list = twml.util.list_files_by_datetime(**list_files_by_datetime_args)
-      else:
-        # dont update the cached list
-        raise ValueError("Information in files_list is inconsistent with provided args.\n"
-                         "Did you intend to overwrite files_list using "
-                         "--train.overwrite_files_list or --eval.overwrite_files_list?\n"
-                         "If you instead want to use the paths in files_list, ensure that "
-                         "data_dir, start_datetime, and end_datetime are None.")
+    # no cachelon of data filelon paths, just gelont thelon list by scraping thelon direlonctory
+    if not filelons_list_path or not tf.io.gfilelon.elonxists(filelons_list_path):
+      # twml.util.list_filelons_by_datelontimelon relonturns Nonelon if data_dir is Nonelon.
+      # twml.util.list_filelons_by_datelontimelon passelons through data_dir if data_dir is a list
+      filelons_list = twml.util.list_filelons_by_datelontimelon(**list_filelons_by_datelontimelon_args)
+    elonlselon:
+      # thelon cachelond data filelon paths filelon elonxists.
+      filelons_info = twml.util.relonad_filelon(filelons_list_path, deloncodelon="json")
+      # uselon thelon cachelond list if data params match currelonnt params,
+      #  or if currelonnt params arelon Nonelon
+      # Not including Nonelon cheloncks for datelontimelon_format and hour_relonsolution,
+      #  sincelon thoselon arelon sharelond belontwelonelonn elonval and training.
+      if (all(param is Nonelon for param in [data_dir, start_datelontimelon, elonnd_datelontimelon]) or
+          (filelons_info["data_dir"] == data_dir and
+           filelons_info["start_datelontimelon"] == start_datelontimelon and
+           filelons_info["elonnd_datelontimelon"] == elonnd_datelontimelon and
+           filelons_info["datelontimelon_format"] == datelontimelon_format and
+           filelons_info["hour_relonsolution"] == hour_relonsolution)):
+        filelons_list = filelons_info["filelons"]
+      elonlif ovelonrwritelon:
+        # currelonnt params arelon not nonelon and don't match savelond params
+        # `ovelonrwritelon` indicatelons welon should thus updatelon thelon list
+        filelons_list = twml.util.list_filelons_by_datelontimelon(**list_filelons_by_datelontimelon_args)
+      elonlselon:
+        # dont updatelon thelon cachelond list
+        raiselon Valuelonelonrror("Information in filelons_list is inconsistelonnt with providelond args.\n"
+                         "Did you intelonnd to ovelonrwritelon filelons_list using "
+                         "--train.ovelonrwritelon_filelons_list or --elonval.ovelonrwritelon_filelons_list?\n"
+                         "If you instelonad want to uselon thelon paths in filelons_list, elonnsurelon that "
+                         "data_dir, start_datelontimelon, and elonnd_datelontimelon arelon Nonelon.")
 
-    if maybe_save and files_list_path and (overwrite or not tf.io.gfile.exists(files_list_path)):
-      save_dict = {}
-      save_dict["files"] = files_list
-      save_dict["data_dir"] = data_dir
-      save_dict["start_datetime"] = start_datetime
-      save_dict["end_datetime"] = end_datetime
-      save_dict["datetime_format"] = datetime_format
-      save_dict["hour_resolution"] = hour_resolution
-      twml.util.write_file(files_list_path, save_dict, encode="json")
+    if maybelon_savelon and filelons_list_path and (ovelonrwritelon or not tf.io.gfilelon.elonxists(filelons_list_path)):
+      savelon_dict = {}
+      savelon_dict["filelons"] = filelons_list
+      savelon_dict["data_dir"] = data_dir
+      savelon_dict["start_datelontimelon"] = start_datelontimelon
+      savelon_dict["elonnd_datelontimelon"] = elonnd_datelontimelon
+      savelon_dict["datelontimelon_format"] = datelontimelon_format
+      savelon_dict["hour_relonsolution"] = hour_relonsolution
+      twml.util.writelon_filelon(filelons_list_path, savelon_dict, elonncodelon="json")
 
-    return files_list
+    relonturn filelons_list
 
-  @staticmethod
-  def build_files_list(files_list_path, data_dir,
-                        start_datetime, end_datetime, datetime_format,
-                        data_threads, hour_resolution, maybe_save, overwrite):
+  @staticmelonthod
+  delonf build_filelons_list(filelons_list_path, data_dir,
+                        start_datelontimelon, elonnd_datelontimelon, datelontimelon_format,
+                        data_threlonads, hour_relonsolution, maybelon_savelon, ovelonrwritelon):
     '''
-    When specifying DAL datasets, only data_dir, start_dateime, and end_datetime
-    should be given with the format:
+    Whelonn speloncifying DAL dataselonts, only data_dir, start_datelonimelon, and elonnd_datelontimelon
+    should belon givelonn with thelon format:
 
-    dal://{cluster}/{role}/{dataset_name}/{env}
+    dal://{clustelonr}/{rolelon}/{dataselont_namelon}/{elonnv}
 
     '''
     if not data_dir or not is_dal_path(data_dir):
-      logging.warn(f"Please consider specifying a dal:// dataset rather than passing a physical hdfs path.")
-      return DataRecordTrainer.build_hdfs_files_list(
-        files_list_path, data_dir,
-        start_datetime, end_datetime, datetime_format,
-        data_threads, hour_resolution, maybe_save, overwrite)
+      logging.warn(f"Plelonaselon considelonr speloncifying a dal:// dataselont rathelonr than passing a physical hdfs path.")
+      relonturn DataReloncordTrainelonr.build_hdfs_filelons_list(
+        filelons_list_path, data_dir,
+        start_datelontimelon, elonnd_datelontimelon, datelontimelon_format,
+        data_threlonads, hour_relonsolution, maybelon_savelon, ovelonrwritelon)
 
-    del datetime_format
-    del data_threads
-    del hour_resolution
-    del maybe_save
-    del overwrite
+    delonl datelontimelon_format
+    delonl data_threlonads
+    delonl hour_relonsolution
+    delonl maybelon_savelon
+    delonl ovelonrwritelon
 
-    return dal_to_hdfs_path(
+    relonturn dal_to_hdfs_path(
       path=data_dir,
-      start_datetime=start_datetime,
-      end_datetime=end_datetime,
+      start_datelontimelon=start_datelontimelon,
+      elonnd_datelontimelon=elonnd_datelontimelon,
     )
 
-  @property
-  def train_files(self):
-    return self._train_files
+  @propelonrty
+  delonf train_filelons(selonlf):
+    relonturn selonlf._train_filelons
 
-  @property
-  def eval_files(self):
-    return self._eval_files
+  @propelonrty
+  delonf elonval_filelons(selonlf):
+    relonturn selonlf._elonval_filelons
 
-  @staticmethod
-  def add_parser_arguments():
+  @staticmelonthod
+  delonf add_parselonr_argumelonnts():
     """
-    Add common commandline args to parse for the Trainer class.
-    Typically, the user calls this function and then parses cmd-line arguments
-    into an argparse.Namespace object which is then passed to the Trainer constructor
-    via the params argument.
+    Add common commandlinelon args to parselon for thelon Trainelonr class.
+    Typically, thelon uselonr calls this function and thelonn parselons cmd-linelon argumelonnts
+    into an argparselon.Namelonspacelon objelonct which is thelonn passelond to thelon Trainelonr constructor
+    via thelon params argumelonnt.
 
-    See the `Trainer code <_modules/twml/trainers/trainer.html#Trainer.add_parser_arguments>`_
-    and `DataRecordTrainer code
-    <_modules/twml/trainers/trainer.html#DataRecordTrainer.add_parser_arguments>`_
-    for a list and description of all cmd-line arguments.
+    Selonelon thelon `Trainelonr codelon <_modulelons/twml/trainelonrs/trainelonr.html#Trainelonr.add_parselonr_argumelonnts>`_
+    and `DataReloncordTrainelonr codelon
+    <_modulelons/twml/trainelonrs/trainelonr.html#DataReloncordTrainelonr.add_parselonr_argumelonnts>`_
+    for a list and delonscription of all cmd-linelon argumelonnts.
 
     Args:
-      learning_rate_decay:
-        Defaults to False. When True, parses learning rate decay arguments.
+      lelonarning_ratelon_deloncay:
+        Delonfaults to Falselon. Whelonn Truelon, parselons lelonarning ratelon deloncay argumelonnts.
 
-    Returns:
-      argparse.ArgumentParser instance with some useful args already added.
+    Relonturns:
+      argparselon.ArgumelonntParselonr instancelon with somelon uselonful args alrelonady addelond.
     """
-    parser = super(DataRecordTrainer, DataRecordTrainer).add_parser_arguments()
-    parser.add_argument(
-      "--train.files_list", "--train_files_list", type=str, default=None,
-      dest="train_files_list",
-      help="Path for a json file storing information on training data.\n"
-           "Specifically, the file at files_list should contain the dataset parameters "
-           "for constructing the list of data files, and the list of data file paths.\n"
-           "If the json file does not exist, other args are used to construct the "
-           "training files list, and that list will be saved to the indicated json file.\n"
-           "If the json file does exist, and current args are consistent with "
-           "saved args, or are all None, then the saved files list will be used.\n"
-           "If current args are not consistent with the saved args, then error out "
-           "if train_overwrite_files_list==False, else overwrite files_list with "
-           "a newly constructed list.")
-    parser.add_argument(
-      "--train.overwrite_files_list", "--train_overwrite_files_list", action="store_true", default=False,
-      dest="train_overwrite_files_list",
-      help="When the --train.files_list param is used, indicates whether to "
-           "overwrite the existing --train.files_list when there are differences "
-           "between the current and saved dataset args. Default (False) is to "
-           "error out if files_list exists and differs from current params.")
-    parser.add_argument(
-      "--train.data_dir", "--train_data_dir", type=str, default=None,
-      dest="train_data_dir",
-      help="Path to the training data directory."
-           "Supports local, dal://{cluster}-{region}/{role}/{dataset_name}/{environment}, "
-           "and HDFS (hdfs://default/<path> ) paths.")
-    parser.add_argument(
-      "--train.start_date", "--train_start_datetime",
-      type=str, default=None,
-      dest="train_start_datetime",
-      help="Starting date for training inside the train data dir."
-           "The start datetime is inclusive."
-           "e.g. 2019/01/15")
-    parser.add_argument(
-      "--train.end_date", "--train_end_datetime", type=str, default=None,
-      dest="train_end_datetime",
-      help="Ending date for training inside the train data dir."
-           "The end datetime is inclusive."
-           "e.g. 2019/01/15")
-    parser.add_argument(
-      "--eval.files_list", "--eval_files_list", type=str, default=None,
-      dest="eval_files_list",
-      help="Path for a json file storing information on evaluation data.\n"
-           "Specifically, the file at files_list should contain the dataset parameters "
-           "for constructing the list of data files, and the list of data file paths.\n"
-           "If the json file does not exist, other args are used to construct the "
-           "evaluation files list, and that list will be saved to the indicated json file.\n"
-           "If the json file does exist, and current args are consistent with "
-           "saved args, or are all None, then the saved files list will be used.\n"
-           "If current args are not consistent with the saved args, then error out "
-           "if eval_overwrite_files_list==False, else overwrite files_list with "
-           "a newly constructed list.")
-    parser.add_argument(
-      "--eval.overwrite_files_list", "--eval_overwrite_files_list", action="store_true", default=False,
-      dest="eval_overwrite_files_list",
-      help="When the --eval.files_list param is used, indicates whether to "
-           "overwrite the existing --eval.files_list when there are differences "
-           "between the current and saved dataset args. Default (False) is to "
-           "error out if files_list exists and differs from current params.")
-    parser.add_argument(
-      "--eval.data_dir", "--eval_data_dir", type=str, default=None,
-      dest="eval_data_dir",
-      help="Path to the cross-validation data directory."
-           "Supports local, dal://{cluster}-{region}/{role}/{dataset_name}/{environment}, "
-           "and HDFS (hdfs://default/<path> ) paths.")
-    parser.add_argument(
-      "--eval.start_date", "--eval_start_datetime",
-      type=str, default=None,
-      dest="eval_start_datetime",
-      help="Starting date for evaluating inside the eval data dir."
-           "The start datetime is inclusive."
-           "e.g. 2019/01/15")
-    parser.add_argument(
-      "--eval.end_date", "--eval_end_datetime", type=str, default=None,
-      dest="eval_end_datetime",
-      help="Ending date for evaluating inside the eval data dir."
-           "The end datetime is inclusive."
-           "e.g. 2019/01/15")
-    parser.add_argument(
-      "--datetime_format", type=str, default="%Y/%m/%d",
-      help="Date format for training and evaluation datasets."
-           "Has to be a format that is understood by python datetime."
-           "e.g. %%Y/%%m/%%d for 2019/01/15."
-           "Used only if {train/eval}.{start/end}_date are provided.")
-    parser.add_argument(
-      "--hour_resolution", type=int, default=None,
-      help="Specify the hourly resolution of the stored data.")
-    parser.add_argument(
-      "--data_spec", type=str, required=True,
-      help="Path to data specification JSON file. This file is used to decode DataRecords")
-    parser.add_argument(
-      "--train.keep_rate", "--train_keep_rate", type=float, default=None,
-      dest="train_keep_rate",
-      help="A float value in (0.0, 1.0] that indicates to drop records according to the Bernoulli \
-      distribution with p = 1 - keep_rate.")
-    parser.add_argument(
-      "--eval.keep_rate", "--eval_keep_rate", type=float, default=None,
-      dest="eval_keep_rate",
-      help="A float value in (0.0, 1.0] that indicates to drop records according to the Bernoulli \
-      distribution with p = 1 - keep_rate.")
-    parser.add_argument(
-      "--train.parts_downsampling_rate", "--train_parts_downsampling_rate",
-      dest="train_parts_downsampling_rate",
-      type=float, default=None,
-      help="A float value in (0.0, 1.0] that indicates the factor by which to downsample part \
-      files. For example, a value of 0.2 means only 20 percent of part files become part of the \
-      dataset.")
-    parser.add_argument(
-      "--eval.parts_downsampling_rate", "--eval_parts_downsampling_rate",
-      dest="eval_parts_downsampling_rate",
-      type=float, default=None,
-      help="A float value in (0.0, 1.0] that indicates the factor by which to downsample part \
-      files. For example, a value of 0.2 means only 20 percent of part files become part of the \
-      dataset.")
-    parser.add_argument(
-      "--allow_train_eval_overlap",
-      dest="allow_train_eval_overlap",
-      action="store_true",
-      help="Allow overlap between train and eval datasets."
+    parselonr = supelonr(DataReloncordTrainelonr, DataReloncordTrainelonr).add_parselonr_argumelonnts()
+    parselonr.add_argumelonnt(
+      "--train.filelons_list", "--train_filelons_list", typelon=str, delonfault=Nonelon,
+      delonst="train_filelons_list",
+      helonlp="Path for a json filelon storing information on training data.\n"
+           "Speloncifically, thelon filelon at filelons_list should contain thelon dataselont paramelontelonrs "
+           "for constructing thelon list of data filelons, and thelon list of data filelon paths.\n"
+           "If thelon json filelon doelons not elonxist, othelonr args arelon uselond to construct thelon "
+           "training filelons list, and that list will belon savelond to thelon indicatelond json filelon.\n"
+           "If thelon json filelon doelons elonxist, and currelonnt args arelon consistelonnt with "
+           "savelond args, or arelon all Nonelon, thelonn thelon savelond filelons list will belon uselond.\n"
+           "If currelonnt args arelon not consistelonnt with thelon savelond args, thelonn elonrror out "
+           "if train_ovelonrwritelon_filelons_list==Falselon, elonlselon ovelonrwritelon filelons_list with "
+           "a nelonwly constructelond list.")
+    parselonr.add_argumelonnt(
+      "--train.ovelonrwritelon_filelons_list", "--train_ovelonrwritelon_filelons_list", action="storelon_truelon", delonfault=Falselon,
+      delonst="train_ovelonrwritelon_filelons_list",
+      helonlp="Whelonn thelon --train.filelons_list param is uselond, indicatelons whelonthelonr to "
+           "ovelonrwritelon thelon elonxisting --train.filelons_list whelonn thelonrelon arelon diffelonrelonncelons "
+           "belontwelonelonn thelon currelonnt and savelond dataselont args. Delonfault (Falselon) is to "
+           "elonrror out if filelons_list elonxists and diffelonrs from currelonnt params.")
+    parselonr.add_argumelonnt(
+      "--train.data_dir", "--train_data_dir", typelon=str, delonfault=Nonelon,
+      delonst="train_data_dir",
+      helonlp="Path to thelon training data direlonctory."
+           "Supports local, dal://{clustelonr}-{relongion}/{rolelon}/{dataselont_namelon}/{elonnvironmelonnt}, "
+           "and HDFS (hdfs://delonfault/<path> ) paths.")
+    parselonr.add_argumelonnt(
+      "--train.start_datelon", "--train_start_datelontimelon",
+      typelon=str, delonfault=Nonelon,
+      delonst="train_start_datelontimelon",
+      helonlp="Starting datelon for training insidelon thelon train data dir."
+           "Thelon start datelontimelon is inclusivelon."
+           "elon.g. 2019/01/15")
+    parselonr.add_argumelonnt(
+      "--train.elonnd_datelon", "--train_elonnd_datelontimelon", typelon=str, delonfault=Nonelon,
+      delonst="train_elonnd_datelontimelon",
+      helonlp="elonnding datelon for training insidelon thelon train data dir."
+           "Thelon elonnd datelontimelon is inclusivelon."
+           "elon.g. 2019/01/15")
+    parselonr.add_argumelonnt(
+      "--elonval.filelons_list", "--elonval_filelons_list", typelon=str, delonfault=Nonelon,
+      delonst="elonval_filelons_list",
+      helonlp="Path for a json filelon storing information on elonvaluation data.\n"
+           "Speloncifically, thelon filelon at filelons_list should contain thelon dataselont paramelontelonrs "
+           "for constructing thelon list of data filelons, and thelon list of data filelon paths.\n"
+           "If thelon json filelon doelons not elonxist, othelonr args arelon uselond to construct thelon "
+           "elonvaluation filelons list, and that list will belon savelond to thelon indicatelond json filelon.\n"
+           "If thelon json filelon doelons elonxist, and currelonnt args arelon consistelonnt with "
+           "savelond args, or arelon all Nonelon, thelonn thelon savelond filelons list will belon uselond.\n"
+           "If currelonnt args arelon not consistelonnt with thelon savelond args, thelonn elonrror out "
+           "if elonval_ovelonrwritelon_filelons_list==Falselon, elonlselon ovelonrwritelon filelons_list with "
+           "a nelonwly constructelond list.")
+    parselonr.add_argumelonnt(
+      "--elonval.ovelonrwritelon_filelons_list", "--elonval_ovelonrwritelon_filelons_list", action="storelon_truelon", delonfault=Falselon,
+      delonst="elonval_ovelonrwritelon_filelons_list",
+      helonlp="Whelonn thelon --elonval.filelons_list param is uselond, indicatelons whelonthelonr to "
+           "ovelonrwritelon thelon elonxisting --elonval.filelons_list whelonn thelonrelon arelon diffelonrelonncelons "
+           "belontwelonelonn thelon currelonnt and savelond dataselont args. Delonfault (Falselon) is to "
+           "elonrror out if filelons_list elonxists and diffelonrs from currelonnt params.")
+    parselonr.add_argumelonnt(
+      "--elonval.data_dir", "--elonval_data_dir", typelon=str, delonfault=Nonelon,
+      delonst="elonval_data_dir",
+      helonlp="Path to thelon cross-validation data direlonctory."
+           "Supports local, dal://{clustelonr}-{relongion}/{rolelon}/{dataselont_namelon}/{elonnvironmelonnt}, "
+           "and HDFS (hdfs://delonfault/<path> ) paths.")
+    parselonr.add_argumelonnt(
+      "--elonval.start_datelon", "--elonval_start_datelontimelon",
+      typelon=str, delonfault=Nonelon,
+      delonst="elonval_start_datelontimelon",
+      helonlp="Starting datelon for elonvaluating insidelon thelon elonval data dir."
+           "Thelon start datelontimelon is inclusivelon."
+           "elon.g. 2019/01/15")
+    parselonr.add_argumelonnt(
+      "--elonval.elonnd_datelon", "--elonval_elonnd_datelontimelon", typelon=str, delonfault=Nonelon,
+      delonst="elonval_elonnd_datelontimelon",
+      helonlp="elonnding datelon for elonvaluating insidelon thelon elonval data dir."
+           "Thelon elonnd datelontimelon is inclusivelon."
+           "elon.g. 2019/01/15")
+    parselonr.add_argumelonnt(
+      "--datelontimelon_format", typelon=str, delonfault="%Y/%m/%d",
+      helonlp="Datelon format for training and elonvaluation dataselonts."
+           "Has to belon a format that is undelonrstood by python datelontimelon."
+           "elon.g. %%Y/%%m/%%d for 2019/01/15."
+           "Uselond only if {train/elonval}.{start/elonnd}_datelon arelon providelond.")
+    parselonr.add_argumelonnt(
+      "--hour_relonsolution", typelon=int, delonfault=Nonelon,
+      helonlp="Speloncify thelon hourly relonsolution of thelon storelond data.")
+    parselonr.add_argumelonnt(
+      "--data_spelonc", typelon=str, relonquirelond=Truelon,
+      helonlp="Path to data speloncification JSON filelon. This filelon is uselond to deloncodelon DataReloncords")
+    parselonr.add_argumelonnt(
+      "--train.kelonelonp_ratelon", "--train_kelonelonp_ratelon", typelon=float, delonfault=Nonelon,
+      delonst="train_kelonelonp_ratelon",
+      helonlp="A float valuelon in (0.0, 1.0] that indicatelons to drop reloncords according to thelon Belonrnoulli \
+      distribution with p = 1 - kelonelonp_ratelon.")
+    parselonr.add_argumelonnt(
+      "--elonval.kelonelonp_ratelon", "--elonval_kelonelonp_ratelon", typelon=float, delonfault=Nonelon,
+      delonst="elonval_kelonelonp_ratelon",
+      helonlp="A float valuelon in (0.0, 1.0] that indicatelons to drop reloncords according to thelon Belonrnoulli \
+      distribution with p = 1 - kelonelonp_ratelon.")
+    parselonr.add_argumelonnt(
+      "--train.parts_downsampling_ratelon", "--train_parts_downsampling_ratelon",
+      delonst="train_parts_downsampling_ratelon",
+      typelon=float, delonfault=Nonelon,
+      helonlp="A float valuelon in (0.0, 1.0] that indicatelons thelon factor by which to downsamplelon part \
+      filelons. For elonxamplelon, a valuelon of 0.2 melonans only 20 pelonrcelonnt of part filelons beloncomelon part of thelon \
+      dataselont.")
+    parselonr.add_argumelonnt(
+      "--elonval.parts_downsampling_ratelon", "--elonval_parts_downsampling_ratelon",
+      delonst="elonval_parts_downsampling_ratelon",
+      typelon=float, delonfault=Nonelon,
+      helonlp="A float valuelon in (0.0, 1.0] that indicatelons thelon factor by which to downsamplelon part \
+      filelons. For elonxamplelon, a valuelon of 0.2 melonans only 20 pelonrcelonnt of part filelons beloncomelon part of thelon \
+      dataselont.")
+    parselonr.add_argumelonnt(
+      "--allow_train_elonval_ovelonrlap",
+      delonst="allow_train_elonval_ovelonrlap",
+      action="storelon_truelon",
+      helonlp="Allow ovelonrlap belontwelonelonn train and elonval dataselonts."
     )
-    parser.add_argument(
-      "--eval_name", type=str, default=None,
-      help="String denoting what we want to name the eval. If this is `train`, then we eval on \
-      the training dataset."
+    parselonr.add_argumelonnt(
+      "--elonval_namelon", typelon=str, delonfault=Nonelon,
+      helonlp="String delonnoting what welon want to namelon thelon elonval. If this is `train`, thelonn welon elonval on \
+      thelon training dataselont."
     )
-    return parser
+    relonturn parselonr
 
-  def contrib_run_feature_importances(self, feature_importances_parse_fn=None, write_to_hdfs=True, extra_groups=None, datarecord_filter_fn=None, datarecord_filter_run_name=None):
-    """Compute feature importances on a trained model (this is a contrib feature)
+  delonf contrib_run_felonaturelon_importancelons(selonlf, felonaturelon_importancelons_parselon_fn=Nonelon, writelon_to_hdfs=Truelon, elonxtra_groups=Nonelon, datareloncord_filtelonr_fn=Nonelon, datareloncord_filtelonr_run_namelon=Nonelon):
+    """Computelon felonaturelon importancelons on a trainelond modelonl (this is a contrib felonaturelon)
     Args:
-      feature_importances_parse_fn (fn): The same parse_fn that we use for training/evaluation.
-        Defaults to feature_config.get_parse_fn()
-      write_to_hdfs (bool): Setting this to True writes the feature importance metrics to HDFS
-    extra_groups (dict<str, list<str>>): A dictionary mapping the name of extra feature groups to the list of
-      the names of the features in the group
-    datarecord_filter_fn (function): a function takes a single data sample in com.twitter.ml.api.ttypes.DataRecord format
-        and return a boolean value, to indicate if this data record should be kept in feature importance module or not.
+      felonaturelon_importancelons_parselon_fn (fn): Thelon samelon parselon_fn that welon uselon for training/elonvaluation.
+        Delonfaults to felonaturelon_config.gelont_parselon_fn()
+      writelon_to_hdfs (bool): Selontting this to Truelon writelons thelon felonaturelon importancelon melontrics to HDFS
+    elonxtra_groups (dict<str, list<str>>): A dictionary mapping thelon namelon of elonxtra felonaturelon groups to thelon list of
+      thelon namelons of thelon felonaturelons in thelon group
+    datareloncord_filtelonr_fn (function): a function takelons a singlelon data samplelon in com.twittelonr.ml.api.ttypelons.DataReloncord format
+        and relonturn a boolelonan valuelon, to indicatelon if this data reloncord should belon kelonpt in felonaturelon importancelon modulelon or not.
     """
-    logging.info("Computing feature importance")
-    algorithm = self._params.feature_importance_algorithm
+    logging.info("Computing felonaturelon importancelon")
+    algorithm = selonlf._params.felonaturelon_importancelon_algorithm
 
     kwargs = {}
-    if algorithm == TREE:
-      kwargs["split_feature_group_on_period"] = self._params.split_feature_group_on_period
-      kwargs["stopping_metric"] = self._params.feature_importance_metric
-      kwargs["sensitivity"] = self._params.feature_importance_sensitivity
-      kwargs["dont_build_tree"] = self._params.dont_build_tree
-      kwargs["extra_groups"] = extra_groups
-      if self._params.feature_importance_is_metric_larger_the_better:
-        # The user has specified that the stopping metric is one where larger values are better (e.g. ROC_AUC)
-        kwargs["is_metric_larger_the_better"] = True
-      elif self._params.feature_importance_is_metric_smaller_the_better:
-        # The user has specified that the stopping metric is one where smaller values are better (e.g. LOSS)
-        kwargs["is_metric_larger_the_better"] = False
-      else:
-        # The user has not specified which direction is better for the stopping metric
-        kwargs["is_metric_larger_the_better"] = None
-      logging.info("Using the tree algorithm with kwargs {}".format(kwargs))
+    if algorithm == TRelonelon:
+      kwargs["split_felonaturelon_group_on_pelonriod"] = selonlf._params.split_felonaturelon_group_on_pelonriod
+      kwargs["stopping_melontric"] = selonlf._params.felonaturelon_importancelon_melontric
+      kwargs["selonnsitivity"] = selonlf._params.felonaturelon_importancelon_selonnsitivity
+      kwargs["dont_build_trelonelon"] = selonlf._params.dont_build_trelonelon
+      kwargs["elonxtra_groups"] = elonxtra_groups
+      if selonlf._params.felonaturelon_importancelon_is_melontric_largelonr_thelon_belonttelonr:
+        # Thelon uselonr has speloncifielond that thelon stopping melontric is onelon whelonrelon largelonr valuelons arelon belonttelonr (elon.g. ROC_AUC)
+        kwargs["is_melontric_largelonr_thelon_belonttelonr"] = Truelon
+      elonlif selonlf._params.felonaturelon_importancelon_is_melontric_smallelonr_thelon_belonttelonr:
+        # Thelon uselonr has speloncifielond that thelon stopping melontric is onelon whelonrelon smallelonr valuelons arelon belonttelonr (elon.g. LOSS)
+        kwargs["is_melontric_largelonr_thelon_belonttelonr"] = Falselon
+      elonlselon:
+        # Thelon uselonr has not speloncifielond which direlonction is belonttelonr for thelon stopping melontric
+        kwargs["is_melontric_largelonr_thelon_belonttelonr"] = Nonelon
+      logging.info("Using thelon trelonelon algorithm with kwargs {}".format(kwargs))
 
-    feature_importances = compute_feature_importances(
-      trainer=self,
-      data_dir=self._params.get('feature_importance_data_dir'),
-      feature_config=self._feature_config,
+    felonaturelon_importancelons = computelon_felonaturelon_importancelons(
+      trainelonr=selonlf,
+      data_dir=selonlf._params.gelont('felonaturelon_importancelon_data_dir'),
+      felonaturelon_config=selonlf._felonaturelon_config,
       algorithm=algorithm,
-      record_count=self._params.feature_importance_example_count,
-      parse_fn=feature_importances_parse_fn,
-      datarecord_filter_fn=datarecord_filter_fn,
+      reloncord_count=selonlf._params.felonaturelon_importancelon_elonxamplelon_count,
+      parselon_fn=felonaturelon_importancelons_parselon_fn,
+      datareloncord_filtelonr_fn=datareloncord_filtelonr_fn,
       **kwargs)
 
-    if not feature_importances:
-      logging.info("Feature importances returned None")
-    else:
-      if write_to_hdfs:
-        logging.info("Writing feature importance to HDFS")
-        write_feature_importances_to_hdfs(
-          trainer=self,
-          feature_importances=feature_importances,
-          output_path=datarecord_filter_run_name,
-          metric=self._params.get('feature_importance_metric'))
-      else:
-        logging.info("Not writing feature importance to HDFS")
+    if not felonaturelon_importancelons:
+      logging.info("Felonaturelon importancelons relonturnelond Nonelon")
+    elonlselon:
+      if writelon_to_hdfs:
+        logging.info("Writing felonaturelon importancelon to HDFS")
+        writelon_felonaturelon_importancelons_to_hdfs(
+          trainelonr=selonlf,
+          felonaturelon_importancelons=felonaturelon_importancelons,
+          output_path=datareloncord_filtelonr_run_namelon,
+          melontric=selonlf._params.gelont('felonaturelon_importancelon_melontric'))
+      elonlselon:
+        logging.info("Not writing felonaturelon importancelon to HDFS")
 
-      logging.info("Writing feature importance to ML Metastore")
-      write_feature_importances_to_ml_dash(
-        trainer=self, feature_importances=feature_importances)
-    return feature_importances
+      logging.info("Writing felonaturelon importancelon to ML Melontastorelon")
+      writelon_felonaturelon_importancelons_to_ml_dash(
+        trainelonr=selonlf, felonaturelon_importancelons=felonaturelon_importancelons)
+    relonturn felonaturelon_importancelons
 
-  def export_model(self, serving_input_receiver_fn=None,
-                   export_output_fn=None,
-                   export_dir=None, checkpoint_path=None,
-                   feature_spec=None):
+  delonf elonxport_modelonl(selonlf, selonrving_input_reloncelonivelonr_fn=Nonelon,
+                   elonxport_output_fn=Nonelon,
+                   elonxport_dir=Nonelon, chelonckpoint_path=Nonelon,
+                   felonaturelon_spelonc=Nonelon):
     """
-    Export the model for prediction. Typically, the exported model
-    will later be run in production servers. This method is called
-    by the user to export the PREDICT graph to disk.
+    elonxport thelon modelonl for prelondiction. Typically, thelon elonxportelond modelonl
+    will latelonr belon run in production selonrvelonrs. This melonthod is callelond
+    by thelon uselonr to elonxport thelon PRelonDICT graph to disk.
 
-    Internally, this method calls `tf.estimator.Estimator.export_savedmodel
-    <https://www.tensorflow.org/api_docs/python/tf/estimator/Estimator#export_savedmodel>`_.
+    Intelonrnally, this melonthod calls `tf.elonstimator.elonstimator.elonxport_savelondmodelonl
+    <https://www.telonnsorflow.org/api_docs/python/tf/elonstimator/elonstimator#elonxport_savelondmodelonl>`_.
 
     Args:
-      serving_input_receiver_fn (Function):
-        function preparing the model for inference requests.
-        If not set; defaults to the the serving input receiver fn set by the FeatureConfig.
-      export_output_fn (Function):
-        Function to export the graph_output (output of build_graph) for
-        prediction. Takes a graph_output dict as sole argument and returns
-        the export_output_fns dict.
-        Defaults to ``twml.export_output_fns.batch_prediction_continuous_output_fn``.
-      export_dir:
-        directory to export a SavedModel for prediction servers.
-        Defaults to ``[save_dir]/exported_models``.
-      checkpoint_path:
-        the checkpoint path to export. If None (the default), the most recent checkpoint
-        found within the model directory ``save_dir`` is chosen.
+      selonrving_input_reloncelonivelonr_fn (Function):
+        function prelonparing thelon modelonl for infelonrelonncelon relonquelonsts.
+        If not selont; delonfaults to thelon thelon selonrving input reloncelonivelonr fn selont by thelon FelonaturelonConfig.
+      elonxport_output_fn (Function):
+        Function to elonxport thelon graph_output (output of build_graph) for
+        prelondiction. Takelons a graph_output dict as solelon argumelonnt and relonturns
+        thelon elonxport_output_fns dict.
+        Delonfaults to ``twml.elonxport_output_fns.batch_prelondiction_continuous_output_fn``.
+      elonxport_dir:
+        direlonctory to elonxport a SavelondModelonl for prelondiction selonrvelonrs.
+        Delonfaults to ``[savelon_dir]/elonxportelond_modelonls``.
+      chelonckpoint_path:
+        thelon chelonckpoint path to elonxport. If Nonelon (thelon delonfault), thelon most reloncelonnt chelonckpoint
+        found within thelon modelonl direlonctory ``savelon_dir`` is choselonn.
 
-    Returns:
-      The export directory where the PREDICT graph is saved.
+    Relonturns:
+      Thelon elonxport direlonctory whelonrelon thelon PRelonDICT graph is savelond.
     """
-    if serving_input_receiver_fn is None:
-      if self._feature_config is None:
-        raise ValueError("`feature_config` was not passed to `DataRecordTrainer`")
-      serving_input_receiver_fn = self._feature_config.get_serving_input_receiver_fn()
+    if selonrving_input_reloncelonivelonr_fn is Nonelon:
+      if selonlf._felonaturelon_config is Nonelon:
+        raiselon Valuelonelonrror("`felonaturelon_config` was not passelond to `DataReloncordTrainelonr`")
+      selonrving_input_reloncelonivelonr_fn = selonlf._felonaturelon_config.gelont_selonrving_input_reloncelonivelonr_fn()
 
-    if feature_spec is None:
-      if self._feature_config is None:
-        raise ValueError("feature_spec can not be inferred."
-                         "Please pass feature_spec=feature_config.get_feature_spec() to the trainer.export_model method")
-      else:
-        feature_spec = self._feature_config.get_feature_spec()
+    if felonaturelon_spelonc is Nonelon:
+      if selonlf._felonaturelon_config is Nonelon:
+        raiselon Valuelonelonrror("felonaturelon_spelonc can not belon infelonrrelond."
+                         "Plelonaselon pass felonaturelon_spelonc=felonaturelon_config.gelont_felonaturelon_spelonc() to thelon trainelonr.elonxport_modelonl melonthod")
+      elonlselon:
+        felonaturelon_spelonc = selonlf._felonaturelon_config.gelont_felonaturelon_spelonc()
 
-    if isinstance(serving_input_receiver_fn, twml.feature_config.FeatureConfig):
-      raise ValueError("Cannot pass FeatureConfig as a parameter to serving_input_receiver_fn")
-    elif not callable(serving_input_receiver_fn):
-      raise ValueError("Expecting Function for serving_input_receiver_fn")
+    if isinstancelon(selonrving_input_reloncelonivelonr_fn, twml.felonaturelon_config.FelonaturelonConfig):
+      raiselon Valuelonelonrror("Cannot pass FelonaturelonConfig as a paramelontelonr to selonrving_input_reloncelonivelonr_fn")
+    elonlif not callablelon(selonrving_input_reloncelonivelonr_fn):
+      raiselon Valuelonelonrror("elonxpeloncting Function for selonrving_input_reloncelonivelonr_fn")
 
-    if export_output_fn is None:
-      export_output_fn = twml.export_output_fns.batch_prediction_continuous_output_fn
+    if elonxport_output_fn is Nonelon:
+      elonxport_output_fn = twml.elonxport_output_fns.batch_prelondiction_continuous_output_fn
 
-    return super(DataRecordTrainer, self).export_model(
-      export_dir=export_dir,
-      serving_input_receiver_fn=serving_input_receiver_fn,
-      checkpoint_path=checkpoint_path,
-      export_output_fn=export_output_fn,
-      feature_spec=feature_spec,
+    relonturn supelonr(DataReloncordTrainelonr, selonlf).elonxport_modelonl(
+      elonxport_dir=elonxport_dir,
+      selonrving_input_reloncelonivelonr_fn=selonrving_input_reloncelonivelonr_fn,
+      chelonckpoint_path=chelonckpoint_path,
+      elonxport_output_fn=elonxport_output_fn,
+      felonaturelon_spelonc=felonaturelon_spelonc,
     )
 
-  def get_train_input_fn(
-      self, parse_fn=None, repeat=None, shuffle=True, interleave=True, shuffle_files=None,
-      initializable=False, log_tf_data_summaries=False, **kwargs):
+  delonf gelont_train_input_fn(
+      selonlf, parselon_fn=Nonelon, relonpelonat=Nonelon, shufflelon=Truelon, intelonrlelonavelon=Truelon, shufflelon_filelons=Nonelon,
+      initializablelon=Falselon, log_tf_data_summarielons=Falselon, **kwargs):
     """
-    This method is used to create input function used by estimator.train().
+    This melonthod is uselond to crelonatelon input function uselond by elonstimator.train().
 
     Args:
-      parse_fn:
-        Function to parse a data record into a set of features.
-        Defaults to the parser returned by the FeatureConfig selected
-      repeat (optional):
-        Specifies if the dataset is to be repeated. Defaults to `params.train_steps > 0`.
-        This ensures the training is run for atleast `params.train_steps`.
-        Toggling this to `False` results in training finishing when one of the following happens:
-          - The entire dataset has been trained upon once.
-          - `params.train_steps` has been reached.
-      shuffle (optional):
-        Specifies if the files and records in the files need to be shuffled.
-        When `True`,  files are shuffled, and records of each files are shuffled.
-        When `False`, files are read in alpha-numerical order. Also when `False`
-        the dataset is sharded among workers for Hogwild and distributed training
-        if no sharding configuration is provided in `params.train_dataset_shards`.
-        Defaults to `True`.
-      interleave (optional):
-        Specifies if records from multiple files need to be interleaved in parallel.
-        Defaults to `True`.
-      shuffle_files (optional):
-        Shuffle the list of files. Defaults to 'Shuffle' if not provided.
-      initializable (optional):
-        A boolean indicator. When the parsing function depends on some resource, e.g. a HashTable or
-        a Tensor, i.e. it's an initializable iterator, set it to True. Otherwise, default value
-        (false) is used for most plain iterators.
-      log_tf_data_summaries (optional):
-        A boolean indicator denoting whether to add a `tf.data.experimental.StatsAggregator` to the
-        tf.data pipeline. This adds summaries of pipeline utilization and buffer sizes to the output
-        events files. This requires that `initializable` is `True` above.
+      parselon_fn:
+        Function to parselon a data reloncord into a selont of felonaturelons.
+        Delonfaults to thelon parselonr relonturnelond by thelon FelonaturelonConfig selonlelonctelond
+      relonpelonat (optional):
+        Speloncifielons if thelon dataselont is to belon relonpelonatelond. Delonfaults to `params.train_stelonps > 0`.
+        This elonnsurelons thelon training is run for atlelonast `params.train_stelonps`.
+        Toggling this to `Falselon` relonsults in training finishing whelonn onelon of thelon following happelonns:
+          - Thelon elonntirelon dataselont has belonelonn trainelond upon oncelon.
+          - `params.train_stelonps` has belonelonn relonachelond.
+      shufflelon (optional):
+        Speloncifielons if thelon filelons and reloncords in thelon filelons nelonelond to belon shufflelond.
+        Whelonn `Truelon`,  filelons arelon shufflelond, and reloncords of elonach filelons arelon shufflelond.
+        Whelonn `Falselon`, filelons arelon relonad in alpha-numelonrical ordelonr. Also whelonn `Falselon`
+        thelon dataselont is shardelond among workelonrs for Hogwild and distributelond training
+        if no sharding configuration is providelond in `params.train_dataselont_shards`.
+        Delonfaults to `Truelon`.
+      intelonrlelonavelon (optional):
+        Speloncifielons if reloncords from multiplelon filelons nelonelond to belon intelonrlelonavelond in parallelonl.
+        Delonfaults to `Truelon`.
+      shufflelon_filelons (optional):
+        Shufflelon thelon list of filelons. Delonfaults to 'Shufflelon' if not providelond.
+      initializablelon (optional):
+        A boolelonan indicator. Whelonn thelon parsing function delonpelonnds on somelon relonsourcelon, elon.g. a HashTablelon or
+        a Telonnsor, i.elon. it's an initializablelon itelonrator, selont it to Truelon. Othelonrwiselon, delonfault valuelon
+        (falselon) is uselond for most plain itelonrators.
+      log_tf_data_summarielons (optional):
+        A boolelonan indicator delonnoting whelonthelonr to add a `tf.data.elonxpelonrimelonntal.StatsAggrelongator` to thelon
+        tf.data pipelonlinelon. This adds summarielons of pipelonlinelon utilization and buffelonr sizelons to thelon output
+        elonvelonnts filelons. This relonquirelons that `initializablelon` is `Truelon` abovelon.
 
-    Returns:
-      An input_fn that can be consumed by `estimator.train()`.
+    Relonturns:
+      An input_fn that can belon consumelond by `elonstimator.train()`.
     """
-    if parse_fn is None:
-      if self._feature_config is None:
-        raise ValueError("`feature_config` was not passed to `DataRecordTrainer`")
-      parse_fn = self._feature_config.get_parse_fn()
+    if parselon_fn is Nonelon:
+      if selonlf._felonaturelon_config is Nonelon:
+        raiselon Valuelonelonrror("`felonaturelon_config` was not passelond to `DataReloncordTrainelonr`")
+      parselon_fn = selonlf._felonaturelon_config.gelont_parselon_fn()
 
-    if not callable(parse_fn):
-      raise ValueError("Expecting parse_fn to be a function.")
+    if not callablelon(parselon_fn):
+      raiselon Valuelonelonrror("elonxpeloncting parselon_fn to belon a function.")
 
-    if log_tf_data_summaries and not initializable:
-      raise ValueError("Require `initializable` if `log_tf_data_summaries`.")
+    if log_tf_data_summarielons and not initializablelon:
+      raiselon Valuelonelonrror("Relonquirelon `initializablelon` if `log_tf_data_summarielons`.")
 
-    if repeat is None:
-      repeat = self.params.train_steps > 0 or self.params.get('distributed', False)
+    if relonpelonat is Nonelon:
+      relonpelonat = selonlf.params.train_stelonps > 0 or selonlf.params.gelont('distributelond', Falselon)
 
-    if not shuffle and self.num_workers > 1 and self.params.train_dataset_shards is None:
-      num_shards = self.num_workers
-      shard_index = self.worker_index
-    else:
-      num_shards = self.params.train_dataset_shards
-      shard_index = self.params.train_dataset_shard_index
+    if not shufflelon and selonlf.num_workelonrs > 1 and selonlf.params.train_dataselont_shards is Nonelon:
+      num_shards = selonlf.num_workelonrs
+      shard_indelonx = selonlf.workelonr_indelonx
+    elonlselon:
+      num_shards = selonlf.params.train_dataselont_shards
+      shard_indelonx = selonlf.params.train_dataselont_shard_indelonx
 
-    return lambda: twml.input_fns.default_input_fn(
-      files=self._train_files,
-      batch_size=self.params.train_batch_size,
-      parse_fn=parse_fn,
-      num_threads=self.params.num_threads,
-      repeat=repeat,
-      keep_rate=self.params.train_keep_rate,
-      parts_downsampling_rate=self.params.train_parts_downsampling_rate,
+    relonturn lambda: twml.input_fns.delonfault_input_fn(
+      filelons=selonlf._train_filelons,
+      batch_sizelon=selonlf.params.train_batch_sizelon,
+      parselon_fn=parselon_fn,
+      num_threlonads=selonlf.params.num_threlonads,
+      relonpelonat=relonpelonat,
+      kelonelonp_ratelon=selonlf.params.train_kelonelonp_ratelon,
+      parts_downsampling_ratelon=selonlf.params.train_parts_downsampling_ratelon,
       shards=num_shards,
-      shard_index=shard_index,
-      shuffle=shuffle,
-      shuffle_files=(shuffle if shuffle_files is None else shuffle_files),
-      interleave=interleave,
-      initializable=initializable,
-      log_tf_data_summaries=log_tf_data_summaries,
+      shard_indelonx=shard_indelonx,
+      shufflelon=shufflelon,
+      shufflelon_filelons=(shufflelon if shufflelon_filelons is Nonelon elonlselon shufflelon_filelons),
+      intelonrlelonavelon=intelonrlelonavelon,
+      initializablelon=initializablelon,
+      log_tf_data_summarielons=log_tf_data_summarielons,
       **kwargs)
 
-  def get_eval_input_fn(
-      self, parse_fn=None, repeat=None,
-      shuffle=True, interleave=True,
-      shuffle_files=None, initializable=False, log_tf_data_summaries=False, **kwargs):
+  delonf gelont_elonval_input_fn(
+      selonlf, parselon_fn=Nonelon, relonpelonat=Nonelon,
+      shufflelon=Truelon, intelonrlelonavelon=Truelon,
+      shufflelon_filelons=Nonelon, initializablelon=Falselon, log_tf_data_summarielons=Falselon, **kwargs):
     """
-    This method is used to create input function used by estimator.eval().
+    This melonthod is uselond to crelonatelon input function uselond by elonstimator.elonval().
 
     Args:
-      parse_fn:
-        Function to parse a data record into a set of features.
-        Defaults to twml.parsers.get_sparse_parse_fn(feature_config).
-      repeat (optional):
-        Specifies if the dataset is to be repeated. Defaults to `params.eval_steps > 0`.
-        This ensures the evaluation is run for atleast `params.eval_steps`.
-        Toggling this to `False` results in evaluation finishing when one of the following happens:
-          - The entire dataset has been evaled upon once.
-          - `params.eval_steps` has been reached.
-      shuffle (optional):
-        Specifies if the files and records in the files need to be shuffled.
-        When `False`, files are read in alpha-numerical order.
-        When `True`,  files are shuffled, and records of each files are shuffled.
-        Defaults to `True`.
-      interleave (optional):
-        Specifies if records from multiple files need to be interleaved in parallel.
-        Defaults to `True`.
-      shuffle_files (optional):
-        Shuffles the list of files. Defaults to 'Shuffle' if not provided.
-      initializable (optional):
-        A boolean indicator. When the parsing function depends on some resource, e.g. a HashTable or
-        a Tensor, i.e. it's an initializable iterator, set it to True. Otherwise, default value
-        (false) is used for most plain iterators.
-      log_tf_data_summaries (optional):
-        A boolean indicator denoting whether to add a `tf.data.experimental.StatsAggregator` to the
-        tf.data pipeline. This adds summaries of pipeline utilization and buffer sizes to the output
-        events files. This requires that `initializable` is `True` above.
+      parselon_fn:
+        Function to parselon a data reloncord into a selont of felonaturelons.
+        Delonfaults to twml.parselonrs.gelont_sparselon_parselon_fn(felonaturelon_config).
+      relonpelonat (optional):
+        Speloncifielons if thelon dataselont is to belon relonpelonatelond. Delonfaults to `params.elonval_stelonps > 0`.
+        This elonnsurelons thelon elonvaluation is run for atlelonast `params.elonval_stelonps`.
+        Toggling this to `Falselon` relonsults in elonvaluation finishing whelonn onelon of thelon following happelonns:
+          - Thelon elonntirelon dataselont has belonelonn elonvalelond upon oncelon.
+          - `params.elonval_stelonps` has belonelonn relonachelond.
+      shufflelon (optional):
+        Speloncifielons if thelon filelons and reloncords in thelon filelons nelonelond to belon shufflelond.
+        Whelonn `Falselon`, filelons arelon relonad in alpha-numelonrical ordelonr.
+        Whelonn `Truelon`,  filelons arelon shufflelond, and reloncords of elonach filelons arelon shufflelond.
+        Delonfaults to `Truelon`.
+      intelonrlelonavelon (optional):
+        Speloncifielons if reloncords from multiplelon filelons nelonelond to belon intelonrlelonavelond in parallelonl.
+        Delonfaults to `Truelon`.
+      shufflelon_filelons (optional):
+        Shufflelons thelon list of filelons. Delonfaults to 'Shufflelon' if not providelond.
+      initializablelon (optional):
+        A boolelonan indicator. Whelonn thelon parsing function delonpelonnds on somelon relonsourcelon, elon.g. a HashTablelon or
+        a Telonnsor, i.elon. it's an initializablelon itelonrator, selont it to Truelon. Othelonrwiselon, delonfault valuelon
+        (falselon) is uselond for most plain itelonrators.
+      log_tf_data_summarielons (optional):
+        A boolelonan indicator delonnoting whelonthelonr to add a `tf.data.elonxpelonrimelonntal.StatsAggrelongator` to thelon
+        tf.data pipelonlinelon. This adds summarielons of pipelonlinelon utilization and buffelonr sizelons to thelon output
+        elonvelonnts filelons. This relonquirelons that `initializablelon` is `Truelon` abovelon.
 
-    Returns:
-      An input_fn that can be consumed by `estimator.eval()`.
+    Relonturns:
+      An input_fn that can belon consumelond by `elonstimator.elonval()`.
     """
-    if parse_fn is None:
-      if self._feature_config is None:
-        raise ValueError("`feature_config` was not passed to `DataRecordTrainer`")
-      parse_fn = self._feature_config.get_parse_fn()
+    if parselon_fn is Nonelon:
+      if selonlf._felonaturelon_config is Nonelon:
+        raiselon Valuelonelonrror("`felonaturelon_config` was not passelond to `DataReloncordTrainelonr`")
+      parselon_fn = selonlf._felonaturelon_config.gelont_parselon_fn()
 
-    if not self._eval_files:
-      raise ValueError("`eval_files` was not present in `params` passed to `DataRecordTrainer`")
+    if not selonlf._elonval_filelons:
+      raiselon Valuelonelonrror("`elonval_filelons` was not prelonselonnt in `params` passelond to `DataReloncordTrainelonr`")
 
-    if not callable(parse_fn):
-      raise ValueError("Expecting parse_fn to be a function.")
+    if not callablelon(parselon_fn):
+      raiselon Valuelonelonrror("elonxpeloncting parselon_fn to belon a function.")
 
-    if log_tf_data_summaries and not initializable:
-      raise ValueError("Require `initializable` if `log_tf_data_summaries`.")
+    if log_tf_data_summarielons and not initializablelon:
+      raiselon Valuelonelonrror("Relonquirelon `initializablelon` if `log_tf_data_summarielons`.")
 
-    if repeat is None:
-      repeat = self.params.eval_steps > 0
+    if relonpelonat is Nonelon:
+      relonpelonat = selonlf.params.elonval_stelonps > 0
 
-    return lambda: twml.input_fns.default_input_fn(
-      files=self._eval_files,
-      batch_size=self.params.eval_batch_size,
-      parse_fn=parse_fn,
-      num_threads=self.params.num_threads,
-      repeat=repeat,
-      keep_rate=self.params.eval_keep_rate,
-      parts_downsampling_rate=self.params.eval_parts_downsampling_rate,
-      shuffle=shuffle,
-      shuffle_files=(shuffle if shuffle_files is None else shuffle_files),
-      interleave=interleave,
-      initializable=initializable,
-      log_tf_data_summaries=log_tf_data_summaries,
+    relonturn lambda: twml.input_fns.delonfault_input_fn(
+      filelons=selonlf._elonval_filelons,
+      batch_sizelon=selonlf.params.elonval_batch_sizelon,
+      parselon_fn=parselon_fn,
+      num_threlonads=selonlf.params.num_threlonads,
+      relonpelonat=relonpelonat,
+      kelonelonp_ratelon=selonlf.params.elonval_kelonelonp_ratelon,
+      parts_downsampling_ratelon=selonlf.params.elonval_parts_downsampling_ratelon,
+      shufflelon=shufflelon,
+      shufflelon_filelons=(shufflelon if shufflelon_filelons is Nonelon elonlselon shufflelon_filelons),
+      intelonrlelonavelon=intelonrlelonavelon,
+      initializablelon=initializablelon,
+      log_tf_data_summarielons=log_tf_data_summarielons,
       **kwargs
     )
 
-  def _assert_train_files(self):
-    if not self._train_files:
-      raise ValueError("train.data_dir was not set in params passed to DataRecordTrainer.")
+  delonf _asselonrt_train_filelons(selonlf):
+    if not selonlf._train_filelons:
+      raiselon Valuelonelonrror("train.data_dir was not selont in params passelond to DataReloncordTrainelonr.")
 
-  def _assert_eval_files(self):
-    if not self._eval_files:
-      raise ValueError("eval.data_dir was not set in params passed to DataRecordTrainer.")
+  delonf _asselonrt_elonval_filelons(selonlf):
+    if not selonlf._elonval_filelons:
+      raiselon Valuelonelonrror("elonval.data_dir was not selont in params passelond to DataReloncordTrainelonr.")
 
-  def train(self, input_fn=None, steps=None, hooks=None):
+  delonf train(selonlf, input_fn=Nonelon, stelonps=Nonelon, hooks=Nonelon):
     """
-    Makes input functions optional. input_fn defaults to self.get_train_input_fn().
-    See Trainer for more detailed documentation documentation.
+    Makelons input functions optional. input_fn delonfaults to selonlf.gelont_train_input_fn().
+    Selonelon Trainelonr for morelon delontailelond documelonntation documelonntation.
     """
-    if input_fn is None:
-      self._assert_train_files()
-    input_fn = input_fn if input_fn else self.get_train_input_fn()
-    super(DataRecordTrainer, self).train(input_fn=input_fn, steps=steps, hooks=hooks)
+    if input_fn is Nonelon:
+      selonlf._asselonrt_train_filelons()
+    input_fn = input_fn if input_fn elonlselon selonlf.gelont_train_input_fn()
+    supelonr(DataReloncordTrainelonr, selonlf).train(input_fn=input_fn, stelonps=stelonps, hooks=hooks)
 
-  def evaluate(self, input_fn=None, steps=None, hooks=None, name=None):
+  delonf elonvaluatelon(selonlf, input_fn=Nonelon, stelonps=Nonelon, hooks=Nonelon, namelon=Nonelon):
     """
-    Makes input functions optional. input_fn defaults to self.get_eval_input_fn().
-    See Trainer for more detailed documentation.
+    Makelons input functions optional. input_fn delonfaults to selonlf.gelont_elonval_input_fn().
+    Selonelon Trainelonr for morelon delontailelond documelonntation.
     """
-    if input_fn is None:
-      self._assert_eval_files()
-    input_fn = input_fn if input_fn else self.get_eval_input_fn(repeat=False)
-    return super(DataRecordTrainer, self).evaluate(
+    if input_fn is Nonelon:
+      selonlf._asselonrt_elonval_filelons()
+    input_fn = input_fn if input_fn elonlselon selonlf.gelont_elonval_input_fn(relonpelonat=Falselon)
+    relonturn supelonr(DataReloncordTrainelonr, selonlf).elonvaluatelon(
       input_fn=input_fn,
-      steps=steps,
+      stelonps=stelonps,
       hooks=hooks,
-      name=name
+      namelon=namelon
     )
 
-  def learn(self, train_input_fn=None, eval_input_fn=None, **kwargs):
+  delonf lelonarn(selonlf, train_input_fn=Nonelon, elonval_input_fn=Nonelon, **kwargs):
     """
-    Overrides ``Trainer.learn`` to make ``input_fn`` functions optional.
-    Respectively, ``train_input_fn`` and ``eval_input_fn`` default to
-    ``self.train_input_fn`` and ``self.eval_input_fn``.
-    See ``Trainer.learn`` for more detailed documentation.
+    Ovelonrridelons ``Trainelonr.lelonarn`` to makelon ``input_fn`` functions optional.
+    Relonspelonctivelonly, ``train_input_fn`` and ``elonval_input_fn`` delonfault to
+    ``selonlf.train_input_fn`` and ``selonlf.elonval_input_fn``.
+    Selonelon ``Trainelonr.lelonarn`` for morelon delontailelond documelonntation.
     """
-    if train_input_fn is None:
-      self._assert_train_files()
-    if eval_input_fn is None:
-      self._assert_eval_files()
-    train_input_fn = train_input_fn if train_input_fn else self.get_train_input_fn()
-    eval_input_fn = eval_input_fn if eval_input_fn else self.get_eval_input_fn()
+    if train_input_fn is Nonelon:
+      selonlf._asselonrt_train_filelons()
+    if elonval_input_fn is Nonelon:
+      selonlf._asselonrt_elonval_filelons()
+    train_input_fn = train_input_fn if train_input_fn elonlselon selonlf.gelont_train_input_fn()
+    elonval_input_fn = elonval_input_fn if elonval_input_fn elonlselon selonlf.gelont_elonval_input_fn()
 
-    super(DataRecordTrainer, self).learn(
+    supelonr(DataReloncordTrainelonr, selonlf).lelonarn(
       train_input_fn=train_input_fn,
-      eval_input_fn=eval_input_fn,
+      elonval_input_fn=elonval_input_fn,
       **kwargs
     )
 
-  def train_and_evaluate(self,
-                         train_input_fn=None, eval_input_fn=None,
+  delonf train_and_elonvaluatelon(selonlf,
+                         train_input_fn=Nonelon, elonval_input_fn=Nonelon,
                           **kwargs):
     """
-    Overrides ``Trainer.train_and_evaluate`` to make ``input_fn`` functions optional.
-    Respectively, ``train_input_fn`` and ``eval_input_fn`` default to
-    ``self.train_input_fn`` and ``self.eval_input_fn``.
-    See ``Trainer.train_and_evaluate`` for detailed documentation.
+    Ovelonrridelons ``Trainelonr.train_and_elonvaluatelon`` to makelon ``input_fn`` functions optional.
+    Relonspelonctivelonly, ``train_input_fn`` and ``elonval_input_fn`` delonfault to
+    ``selonlf.train_input_fn`` and ``selonlf.elonval_input_fn``.
+    Selonelon ``Trainelonr.train_and_elonvaluatelon`` for delontailelond documelonntation.
     """
-    if train_input_fn is None:
-      self._assert_train_files()
-    if eval_input_fn is None:
-      self._assert_eval_files()
-    train_input_fn = train_input_fn if train_input_fn else self.get_train_input_fn()
-    eval_input_fn = eval_input_fn if eval_input_fn else self.get_eval_input_fn()
+    if train_input_fn is Nonelon:
+      selonlf._asselonrt_train_filelons()
+    if elonval_input_fn is Nonelon:
+      selonlf._asselonrt_elonval_filelons()
+    train_input_fn = train_input_fn if train_input_fn elonlselon selonlf.gelont_train_input_fn()
+    elonval_input_fn = elonval_input_fn if elonval_input_fn elonlselon selonlf.gelont_elonval_input_fn()
 
-    super(DataRecordTrainer, self).train_and_evaluate(
+    supelonr(DataReloncordTrainelonr, selonlf).train_and_elonvaluatelon(
       train_input_fn=train_input_fn,
-      eval_input_fn=eval_input_fn,
+      elonval_input_fn=elonval_input_fn,
       **kwargs
     )
 
-  def _model_fn(self, features, labels, mode, params, config=None):
+  delonf _modelonl_fn(selonlf, felonaturelons, labelonls, modelon, params, config=Nonelon):
     """
-    Overrides the _model_fn to correct for the features shape of the sparse features
-    extracted with the contrib.FeatureConfig
+    Ovelonrridelons thelon _modelonl_fn to correlonct for thelon felonaturelons shapelon of thelon sparselon felonaturelons
+    elonxtractelond with thelon contrib.FelonaturelonConfig
     """
-    if isinstance(self._feature_config, twml.contrib.feature_config.FeatureConfig):
-      # Fix the shape of the features. The features dictionary will be modified to
-      # contain the shape changes.
-      twml.util.fix_shape_sparse(features, self._feature_config)
-    return super(DataRecordTrainer, self)._model_fn(
-      features=features,
-      labels=labels,
-      mode=mode,
+    if isinstancelon(selonlf._felonaturelon_config, twml.contrib.felonaturelon_config.FelonaturelonConfig):
+      # Fix thelon shapelon of thelon felonaturelons. Thelon felonaturelons dictionary will belon modifielond to
+      # contain thelon shapelon changelons.
+      twml.util.fix_shapelon_sparselon(felonaturelons, selonlf._felonaturelon_config)
+    relonturn supelonr(DataReloncordTrainelonr, selonlf)._modelonl_fn(
+      felonaturelons=felonaturelons,
+      labelonls=labelonls,
+      modelon=modelon,
       params=params,
       config=config
     )
 
-  def calibrate(self,
+  delonf calibratelon(selonlf,
                 calibrator,
-                input_fn=None,
-                steps=None,
-                save_calibrator=True,
-                hooks=None):
+                input_fn=Nonelon,
+                stelonps=Nonelon,
+                savelon_calibrator=Truelon,
+                hooks=Nonelon):
     """
-    Makes input functions optional. input_fn defaults to self.train_input_fn.
-    See Trainer for more detailed documentation.
+    Makelons input functions optional. input_fn delonfaults to selonlf.train_input_fn.
+    Selonelon Trainelonr for morelon delontailelond documelonntation.
     """
-    if input_fn is None:
-      self._assert_train_files()
-    input_fn = input_fn if input_fn else self.get_train_input_fn()
-    super(DataRecordTrainer, self).calibrate(calibrator=calibrator,
+    if input_fn is Nonelon:
+      selonlf._asselonrt_train_filelons()
+    input_fn = input_fn if input_fn elonlselon selonlf.gelont_train_input_fn()
+    supelonr(DataReloncordTrainelonr, selonlf).calibratelon(calibrator=calibrator,
                                              input_fn=input_fn,
-                                             steps=steps,
-                                             save_calibrator=save_calibrator,
+                                             stelonps=stelonps,
+                                             savelon_calibrator=savelon_calibrator,
                                              hooks=hooks)
 
-  def save_checkpoints_and_export_model(self,
-                                        serving_input_receiver_fn,
-                                        export_output_fn=None,
-                                        export_dir=None,
-                                        checkpoint_path=None,
-                                        input_fn=None):
+  delonf savelon_chelonckpoints_and_elonxport_modelonl(selonlf,
+                                        selonrving_input_reloncelonivelonr_fn,
+                                        elonxport_output_fn=Nonelon,
+                                        elonxport_dir=Nonelon,
+                                        chelonckpoint_path=Nonelon,
+                                        input_fn=Nonelon):
     """
-    Exports saved module after saving checkpoint to save_dir.
-    Please note that to use this method, you need to assign a loss to the output
-    of the build_graph (for the train mode).
-    See export_model for more detailed information.
+    elonxports savelond modulelon aftelonr saving chelonckpoint to savelon_dir.
+    Plelonaselon notelon that to uselon this melonthod, you nelonelond to assign a loss to thelon output
+    of thelon build_graph (for thelon train modelon).
+    Selonelon elonxport_modelonl for morelon delontailelond information.
     """
-    self.train(input_fn=input_fn, steps=1)
-    self.export_model(serving_input_receiver_fn, export_output_fn, export_dir, checkpoint_path)
+    selonlf.train(input_fn=input_fn, stelonps=1)
+    selonlf.elonxport_modelonl(selonrving_input_reloncelonivelonr_fn, elonxport_output_fn, elonxport_dir, chelonckpoint_path)
 
-  def save_checkpoints_and_evaluate(self,
-                                    input_fn=None,
-                                    steps=None,
-                                    hooks=None,
-                                    name=None):
+  delonf savelon_chelonckpoints_and_elonvaluatelon(selonlf,
+                                    input_fn=Nonelon,
+                                    stelonps=Nonelon,
+                                    hooks=Nonelon,
+                                    namelon=Nonelon):
     """
-    Evaluates model after saving checkpoint to save_dir.
-    Please note that to use this method, you need to assign a loss to the output
-    of the build_graph (for the train mode).
-    See evaluate for more detailed information.
+    elonvaluatelons modelonl aftelonr saving chelonckpoint to savelon_dir.
+    Plelonaselon notelon that to uselon this melonthod, you nelonelond to assign a loss to thelon output
+    of thelon build_graph (for thelon train modelon).
+    Selonelon elonvaluatelon for morelon delontailelond information.
     """
-    self.train(input_fn=input_fn, steps=1)
-    self.evaluate(input_fn, steps, hooks, name)
+    selonlf.train(input_fn=input_fn, stelonps=1)
+    selonlf.elonvaluatelon(input_fn, stelonps, hooks, namelon)

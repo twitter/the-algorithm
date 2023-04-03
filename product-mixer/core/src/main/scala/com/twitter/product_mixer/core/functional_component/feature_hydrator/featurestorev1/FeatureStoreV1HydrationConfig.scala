@@ -1,25 +1,25 @@
-package com.twitter.product_mixer.core.functional_component.feature_hydrator.featurestorev1
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator.felonaturelonstorelonv1
 
-import com.twitter.ml.featurestore.lib.EntityId
-import com.twitter.ml.featurestore.lib.dynamic.BaseDynamicHydrationConfig
-import com.twitter.product_mixer.core.feature.featurestorev1.BaseFeatureStoreV1CandidateFeature
-import com.twitter.product_mixer.core.feature.featurestorev1.BaseFeatureStoreV1QueryFeature
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.ml.felonaturelonstorelon.lib.elonntityId
+import com.twittelonr.ml.felonaturelonstorelon.lib.dynamic.BaselonDynamicHydrationConfig
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonstorelonv1.BaselonFelonaturelonStorelonV1CandidatelonFelonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonstorelonv1.BaselonFelonaturelonStorelonV1QuelonryFelonaturelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
-case class FeatureStoreV1QueryFeatureHydrationConfig[Query <: PipelineQuery](
-  features: Set[BaseFeatureStoreV1QueryFeature[Query, _ <: EntityId, _]])
-    extends BaseDynamicHydrationConfig[
-      Query,
-      BaseFeatureStoreV1QueryFeature[Query, _ <: EntityId, _]
-    ](features)
+caselon class FelonaturelonStorelonV1QuelonryFelonaturelonHydrationConfig[Quelonry <: PipelonlinelonQuelonry](
+  felonaturelons: Selont[BaselonFelonaturelonStorelonV1QuelonryFelonaturelon[Quelonry, _ <: elonntityId, _]])
+    elonxtelonnds BaselonDynamicHydrationConfig[
+      Quelonry,
+      BaselonFelonaturelonStorelonV1QuelonryFelonaturelon[Quelonry, _ <: elonntityId, _]
+    ](felonaturelons)
 
-case class FeatureStoreV1CandidateFeatureHydrationConfig[
-  Query <: PipelineQuery,
-  Input <: UniversalNoun[Any]
+caselon class FelonaturelonStorelonV1CandidatelonFelonaturelonHydrationConfig[
+  Quelonry <: PipelonlinelonQuelonry,
+  Input <: UnivelonrsalNoun[Any]
 ](
-  features: Set[BaseFeatureStoreV1CandidateFeature[Query, Input, _ <: EntityId, _]])
-    extends BaseDynamicHydrationConfig[
-      Query,
-      BaseFeatureStoreV1CandidateFeature[Query, Input, _ <: EntityId, _]
-    ](features)
+  felonaturelons: Selont[BaselonFelonaturelonStorelonV1CandidatelonFelonaturelon[Quelonry, Input, _ <: elonntityId, _]])
+    elonxtelonnds BaselonDynamicHydrationConfig[
+      Quelonry,
+      BaselonFelonaturelonStorelonV1CandidatelonFelonaturelon[Quelonry, Input, _ <: elonntityId, _]
+    ](felonaturelons)

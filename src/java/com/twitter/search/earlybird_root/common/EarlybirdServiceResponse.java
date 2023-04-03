@@ -1,87 +1,87 @@
-package com.twitter.search.earlybird_root.common;
+packagelon com.twittelonr.selonarch.elonarlybird_root.common;
 
-import javax.annotation.Nullable;
+import javax.annotation.Nullablelon;
 
-import com.google.common.base.Preconditions;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
 
 /**
- * A class that wraps an EarlybirdResponse and a flag that determines if a request was sent to a
- * service.
+ * A class that wraps an elonarlybirdRelonsponselon and a flag that delontelonrminelons if a relonquelonst was selonnt to a
+ * selonrvicelon.
  */
-public final class EarlybirdServiceResponse {
-  public static enum ServiceState {
-    // The service was called (or will be called).
-    SERVICE_CALLED(true),
+public final class elonarlybirdSelonrvicelonRelonsponselon {
+  public static elonnum SelonrvicelonStatelon {
+    // Thelon selonrvicelon was callelond (or will belon callelond).
+    SelonRVICelon_CALLelonD(truelon),
 
-    // The service is not available (turned off by a decider, for example).
-    SERVICE_NOT_AVAILABLE(false),
+    // Thelon selonrvicelon is not availablelon (turnelond off by a deloncidelonr, for elonxamplelon).
+    SelonRVICelon_NOT_AVAILABLelon(falselon),
 
-    // The client did not request results from this service.
-    SERVICE_NOT_REQUESTED(false),
+    // Thelon clielonnt did not relonquelonst relonsults from this selonrvicelon.
+    SelonRVICelon_NOT_RelonQUelonSTelonD(falselon),
 
-    // The service is available and the client wants results from this service, but the service
-    // was not called (because we got enough results from other services, for example).
-    SERVICE_NOT_CALLED(false);
+    // Thelon selonrvicelon is availablelon and thelon clielonnt wants relonsults from this selonrvicelon, but thelon selonrvicelon
+    // was not callelond (beloncauselon welon got elonnough relonsults from othelonr selonrvicelons, for elonxamplelon).
+    SelonRVICelon_NOT_CALLelonD(falselon);
 
-    private final boolean serviceWasCalled;
+    privatelon final boolelonan selonrvicelonWasCallelond;
 
-    private ServiceState(boolean serviceWasCalled) {
-      this.serviceWasCalled = serviceWasCalled;
+    privatelon SelonrvicelonStatelon(boolelonan selonrvicelonWasCallelond) {
+      this.selonrvicelonWasCallelond = selonrvicelonWasCallelond;
     }
 
-    public boolean serviceWasCalled() {
-      return serviceWasCalled;
+    public boolelonan selonrvicelonWasCallelond() {
+      relonturn selonrvicelonWasCallelond;
     }
 
-    public boolean serviceWasRequested() {
-      return this != SERVICE_NOT_REQUESTED;
+    public boolelonan selonrvicelonWasRelonquelonstelond() {
+      relonturn this != SelonRVICelon_NOT_RelonQUelonSTelonD;
     }
 
   }
 
-  private final EarlybirdResponse earlybirdResponse;
-  private final ServiceState serviceState;
+  privatelon final elonarlybirdRelonsponselon elonarlybirdRelonsponselon;
+  privatelon final SelonrvicelonStatelon selonrvicelonStatelon;
 
-  private EarlybirdServiceResponse(@Nullable EarlybirdResponse earlybirdResponse,
-                                   ServiceState serviceState) {
-    this.earlybirdResponse = earlybirdResponse;
-    this.serviceState = serviceState;
-    if (!serviceState.serviceWasCalled()) {
-      Preconditions.checkArgument(earlybirdResponse == null);
+  privatelon elonarlybirdSelonrvicelonRelonsponselon(@Nullablelon elonarlybirdRelonsponselon elonarlybirdRelonsponselon,
+                                   SelonrvicelonStatelon selonrvicelonStatelon) {
+    this.elonarlybirdRelonsponselon = elonarlybirdRelonsponselon;
+    this.selonrvicelonStatelon = selonrvicelonStatelon;
+    if (!selonrvicelonStatelon.selonrvicelonWasCallelond()) {
+      Prelonconditions.chelonckArgumelonnt(elonarlybirdRelonsponselon == null);
     }
   }
 
   /**
-   * Creates a new EarlybirdServiceResponse instance, indicating that the service was not called.
+   * Crelonatelons a nelonw elonarlybirdSelonrvicelonRelonsponselon instancelon, indicating that thelon selonrvicelon was not callelond.
    *
-   * @param serviceState The state of the service.
-   * @return a new EarlybirdServiceResponse instance, indicating that the service was not called.
+   * @param selonrvicelonStatelon Thelon statelon of thelon selonrvicelon.
+   * @relonturn a nelonw elonarlybirdSelonrvicelonRelonsponselon instancelon, indicating that thelon selonrvicelon was not callelond.
    */
-  public static EarlybirdServiceResponse serviceNotCalled(ServiceState serviceState) {
-    Preconditions.checkArgument(!serviceState.serviceWasCalled());
-    return new EarlybirdServiceResponse(null, serviceState);
+  public static elonarlybirdSelonrvicelonRelonsponselon selonrvicelonNotCallelond(SelonrvicelonStatelon selonrvicelonStatelon) {
+    Prelonconditions.chelonckArgumelonnt(!selonrvicelonStatelon.selonrvicelonWasCallelond());
+    relonturn nelonw elonarlybirdSelonrvicelonRelonsponselon(null, selonrvicelonStatelon);
   }
 
   /**
-   * Creates a new EarlybirdServiceResponse instance that wraps the given earlybird response.
+   * Crelonatelons a nelonw elonarlybirdSelonrvicelonRelonsponselon instancelon that wraps thelon givelonn elonarlybird relonsponselon.
    *
-   * @param earlybirdResponse The EarlybirdResponse instance returned by the service.
-   * @return a new EarlybirdServiceResponse instance that wraps the given earlybird response.
+   * @param elonarlybirdRelonsponselon Thelon elonarlybirdRelonsponselon instancelon relonturnelond by thelon selonrvicelon.
+   * @relonturn a nelonw elonarlybirdSelonrvicelonRelonsponselon instancelon that wraps thelon givelonn elonarlybird relonsponselon.
    */
-  public static EarlybirdServiceResponse serviceCalled(EarlybirdResponse earlybirdResponse) {
-    return new EarlybirdServiceResponse(earlybirdResponse, ServiceState.SERVICE_CALLED);
+  public static elonarlybirdSelonrvicelonRelonsponselon selonrvicelonCallelond(elonarlybirdRelonsponselon elonarlybirdRelonsponselon) {
+    relonturn nelonw elonarlybirdSelonrvicelonRelonsponselon(elonarlybirdRelonsponselon, SelonrvicelonStatelon.SelonRVICelon_CALLelonD);
   }
 
-  /** Returns the wrapped earlybird response. */
-  @Nullable
-  public EarlybirdResponse getResponse() {
-    return earlybirdResponse;
+  /** Relonturns thelon wrappelond elonarlybird relonsponselon. */
+  @Nullablelon
+  public elonarlybirdRelonsponselon gelontRelonsponselon() {
+    relonturn elonarlybirdRelonsponselon;
   }
 
-  /** Returns the state of the service. */
-  public ServiceState getServiceState() {
-    return serviceState;
+  /** Relonturns thelon statelon of thelon selonrvicelon. */
+  public SelonrvicelonStatelon gelontSelonrvicelonStatelon() {
+    relonturn selonrvicelonStatelon;
   }
 }

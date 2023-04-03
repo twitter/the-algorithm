@@ -1,8 +1,8 @@
-package com.twitter.product_mixer.core.model.marshalling.request
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst
 
-import com.twitter.timelines.configapi.{FeatureValue => ConfigApiFeatureValue}
+import com.twittelonr.timelonlinelons.configapi.{FelonaturelonValuelon => ConfigApiFelonaturelonValuelon}
 
-case class DebugParams(
-  featureOverrides: Option[Map[String, ConfigApiFeatureValue]],
-  override val debugOptions: Option[DebugOptions])
-    extends HasDebugOptions
+caselon class DelonbugParams(
+  felonaturelonOvelonrridelons: Option[Map[String, ConfigApiFelonaturelonValuelon]],
+  ovelonrridelon val delonbugOptions: Option[DelonbugOptions])
+    elonxtelonnds HasDelonbugOptions

@@ -1,12 +1,12 @@
-package com.twitter.product_mixer.core.module
+packagelon com.twittelonr.product_mixelonr.corelon.modulelon
 
-import com.twitter.inject.TwitterModule
-import com.twitter.product_mixer.core.service.pipeline_execution_logger.AllowListedPipelineExecutionLogger
-import com.twitter.product_mixer.core.service.pipeline_execution_logger.PipelineExecutionLogger
+import com.twittelonr.injelonct.TwittelonrModulelon
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.pipelonlinelon_elonxeloncution_loggelonr.AllowListelondPipelonlinelonelonxeloncutionLoggelonr
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.pipelonlinelon_elonxeloncution_loggelonr.PipelonlinelonelonxeloncutionLoggelonr
 
-object PipelineExecutionLoggerModule extends TwitterModule {
+objelonct PipelonlinelonelonxeloncutionLoggelonrModulelon elonxtelonnds TwittelonrModulelon {
 
-  override protected def configure(): Unit = {
-    bind[PipelineExecutionLogger].to[AllowListedPipelineExecutionLogger]
+  ovelonrridelon protelonctelond delonf configurelon(): Unit = {
+    bind[PipelonlinelonelonxeloncutionLoggelonr].to[AllowListelondPipelonlinelonelonxeloncutionLoggelonr]
   }
 }

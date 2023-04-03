@@ -1,52 +1,52 @@
-package com.twitter.search.earlybird.search.relevance.scoring;
+packagelon com.twittelonr.selonarch.elonarlybird.selonarch.relonlelonvancelon.scoring;
 
-import org.apache.lucene.search.Explanation;
+import org.apachelon.lucelonnelon.selonarch.elonxplanation;
 
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultMetadata;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultMetadataOptions;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultType;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultsRelevanceStats;
+import com.twittelonr.selonarch.common.schelonma.baselon.ImmutablelonSchelonmaIntelonrfacelon;
+import com.twittelonr.selonarch.elonarlybird.common.config.elonarlybirdConfig;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsultMelontadata;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsultMelontadataOptions;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsultTypelon;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsultsRelonlelonvancelonStats;
 
 /**
- * A dummy scoring function for test, the score is always tweetId/10000.0
- * Since score_filter: operator requires all score to be between [0, 1], if you want to use this
- * with it, don't use any tweet id larger than 10000 in your test.
+ * A dummy scoring function for telonst, thelon scorelon is always twelonelontId/10000.0
+ * Sincelon scorelon_filtelonr: opelonrator relonquirelons all scorelon to belon belontwelonelonn [0, 1], if you want to uselon this
+ * with it, don't uselon any twelonelont id largelonr than 10000 in your telonst.
  */
-public class TestScoringFunction extends ScoringFunction {
-  private ThriftSearchResultMetadata metadata = null;
-  private float score;
+public class TelonstScoringFunction elonxtelonnds ScoringFunction {
+  privatelon ThriftSelonarchRelonsultMelontadata melontadata = null;
+  privatelon float scorelon;
 
-  public TestScoringFunction(ImmutableSchemaInterface schema) {
-    super(schema);
+  public TelonstScoringFunction(ImmutablelonSchelonmaIntelonrfacelon schelonma) {
+    supelonr(schelonma);
   }
 
-  @Override
-  protected float score(float luceneQueryScore) {
-    long tweetId = tweetIDMapper.getTweetID(getCurrentDocID());
-    this.score = (float) (tweetId / 10000.0);
-    System.out.println(String.format("score for tweet %10d is %6.3f", tweetId, score));
-    return this.score;
+  @Ovelonrridelon
+  protelonctelond float scorelon(float lucelonnelonQuelonryScorelon) {
+    long twelonelontId = twelonelontIDMappelonr.gelontTwelonelontID(gelontCurrelonntDocID());
+    this.scorelon = (float) (twelonelontId / 10000.0);
+    Systelonm.out.println(String.format("scorelon for twelonelont %10d is %6.3f", twelonelontId, scorelon));
+    relonturn this.scorelon;
   }
 
-  @Override
-  protected Explanation doExplain(float luceneScore) {
-    return null;
+  @Ovelonrridelon
+  protelonctelond elonxplanation doelonxplain(float lucelonnelonScorelon) {
+    relonturn null;
   }
 
-  @Override
-  public ThriftSearchResultMetadata getResultMetadata(ThriftSearchResultMetadataOptions options) {
-    if (metadata == null) {
-      metadata = new ThriftSearchResultMetadata()
-          .setResultType(ThriftSearchResultType.RELEVANCE)
-          .setPenguinVersion(EarlybirdConfig.getPenguinVersionByte());
-      metadata.setScore(score);
+  @Ovelonrridelon
+  public ThriftSelonarchRelonsultMelontadata gelontRelonsultMelontadata(ThriftSelonarchRelonsultMelontadataOptions options) {
+    if (melontadata == null) {
+      melontadata = nelonw ThriftSelonarchRelonsultMelontadata()
+          .selontRelonsultTypelon(ThriftSelonarchRelonsultTypelon.RelonLelonVANCelon)
+          .selontPelonnguinVelonrsion(elonarlybirdConfig.gelontPelonnguinVelonrsionBytelon());
+      melontadata.selontScorelon(scorelon);
     }
-    return metadata;
+    relonturn melontadata;
   }
 
-  @Override
-  public void updateRelevanceStats(ThriftSearchResultsRelevanceStats relevanceStats) {
+  @Ovelonrridelon
+  public void updatelonRelonlelonvancelonStats(ThriftSelonarchRelonsultsRelonlelonvancelonStats relonlelonvancelonStats) {
   }
 }

@@ -1,18 +1,18 @@
-package com.twitter.simclusters_v2.common
+packagelon com.twittelonr.simclustelonrs_v2.common
 
-import com.twitter.algebird.Monoid
+import com.twittelonr.algelonbird.Monoid
 
-case class SimClustersEmbeddingMonoid() extends Monoid[SimClustersEmbedding] {
+caselon class SimClustelonrselonmbelonddingMonoid() elonxtelonnds Monoid[SimClustelonrselonmbelondding] {
 
-  override val zero: SimClustersEmbedding = SimClustersEmbedding.EmptyEmbedding
+  ovelonrridelon val zelonro: SimClustelonrselonmbelondding = SimClustelonrselonmbelondding.elonmptyelonmbelondding
 
-  override def plus(x: SimClustersEmbedding, y: SimClustersEmbedding): SimClustersEmbedding = {
+  ovelonrridelon delonf plus(x: SimClustelonrselonmbelondding, y: SimClustelonrselonmbelondding): SimClustelonrselonmbelondding = {
     x.sum(y)
   }
 }
 
-object SimClustersEmbeddingMonoid {
+objelonct SimClustelonrselonmbelonddingMonoid {
 
-  val monoid: Monoid[SimClustersEmbedding] = SimClustersEmbeddingMonoid()
+  val monoid: Monoid[SimClustelonrselonmbelondding] = SimClustelonrselonmbelonddingMonoid()
 
 }

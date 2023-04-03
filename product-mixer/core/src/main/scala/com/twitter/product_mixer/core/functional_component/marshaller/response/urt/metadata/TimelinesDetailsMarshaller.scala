@@ -1,16 +1,16 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.melontadata
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.TimelinesDetails
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.TimelonlinelonsDelontails
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class TimelinesDetailsMarshaller @Inject() () {
+@Singlelonton
+class TimelonlinelonsDelontailsMarshallelonr @Injelonct() () {
 
-  def apply(timelinesDetails: TimelinesDetails): urt.TimelinesDetails = urt.TimelinesDetails(
-    injectionType = timelinesDetails.injectionType,
-    controllerData = timelinesDetails.controllerData,
-    sourceData = timelinesDetails.sourceData
+  delonf apply(timelonlinelonsDelontails: TimelonlinelonsDelontails): urt.TimelonlinelonsDelontails = urt.TimelonlinelonsDelontails(
+    injelonctionTypelon = timelonlinelonsDelontails.injelonctionTypelon,
+    controllelonrData = timelonlinelonsDelontails.controllelonrData,
+    sourcelonData = timelonlinelonsDelontails.sourcelonData
   )
 }

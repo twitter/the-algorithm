@@ -1,39 +1,39 @@
-package com.twitter.home_mixer.functional_component.feature_hydrator.real_time_aggregates
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator.relonal_timelon_aggrelongatelons
 
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.datarecord.DataRecordInAFeature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BulkCandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.TwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.datareloncord.DataReloncordInAFelonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMapBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator.BulkCandidatelonFelonaturelonHydrator
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stitch.Stitch
 
-trait BaseRealTimeAggregateBulkCandidateFeatureHydrator[K]
-    extends BulkCandidateFeatureHydrator[PipelineQuery, TweetCandidate]
-    with BaseRealtimeAggregateHydrator[K] {
+trait BaselonRelonalTimelonAggrelongatelonBulkCandidatelonFelonaturelonHydrator[K]
+    elonxtelonnds BulkCandidatelonFelonaturelonHydrator[PipelonlinelonQuelonry, TwelonelontCandidatelon]
+    with BaselonRelonaltimelonAggrelongatelonHydrator[K] {
 
-  val outputFeature: DataRecordInAFeature[TweetCandidate]
+  val outputFelonaturelon: DataReloncordInAFelonaturelon[TwelonelontCandidatelon]
 
-  override def features: Set[Feature[_, _]] = Set(outputFeature)
+  ovelonrridelon delonf felonaturelons: Selont[Felonaturelon[_, _]] = Selont(outputFelonaturelon)
 
-  override lazy val statScope: String = identifier.toString
+  ovelonrridelon lazy val statScopelon: String = idelonntifielonr.toString
 
-  def keysFromQueryAndCandidates(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Seq[Option[K]]
+  delonf kelonysFromQuelonryAndCandidatelons(
+    quelonry: PipelonlinelonQuelonry,
+    candidatelons: Selonq[CandidatelonWithFelonaturelons[TwelonelontCandidatelon]]
+  ): Selonq[Option[K]]
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[Seq[FeatureMap]] = {
-    val possiblyKeys = keysFromQueryAndCandidates(query, candidates)
-    fetchAndConstructDataRecords(possiblyKeys).map { dataRecords =>
-      dataRecords.map { dataRecord =>
-        FeatureMapBuilder()
-          .add(outputFeature, dataRecord)
+  ovelonrridelon delonf apply(
+    quelonry: PipelonlinelonQuelonry,
+    candidatelons: Selonq[CandidatelonWithFelonaturelons[TwelonelontCandidatelon]]
+  ): Stitch[Selonq[FelonaturelonMap]] = {
+    val possiblyKelonys = kelonysFromQuelonryAndCandidatelons(quelonry, candidatelons)
+    felontchAndConstructDataReloncords(possiblyKelonys).map { dataReloncords =>
+      dataReloncords.map { dataReloncord =>
+        FelonaturelonMapBuildelonr()
+          .add(outputFelonaturelon, dataReloncord)
           .build()
       }
     }

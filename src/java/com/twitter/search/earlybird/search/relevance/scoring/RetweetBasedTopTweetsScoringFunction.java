@@ -1,165 +1,165 @@
-package com.twitter.search.earlybird.search.relevance.scoring;
+packagelon com.twittelonr.selonarch.elonarlybird.selonarch.relonlelonvancelon.scoring;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 
-import org.apache.lucene.search.Explanation;
+import org.apachelon.lucelonnelon.selonarch.elonxplanation;
 
-import com.twitter.search.common.relevance.features.MutableFeatureNormalizers;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultMetadata;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultMetadataOptions;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultType;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultsRelevanceStats;
+import com.twittelonr.selonarch.common.relonlelonvancelon.felonaturelons.MutablelonFelonaturelonNormalizelonrs;
+import com.twittelonr.selonarch.common.schelonma.baselon.ImmutablelonSchelonmaIntelonrfacelon;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdFielonldConstants.elonarlybirdFielonldConstant;
+import com.twittelonr.selonarch.elonarlybird.common.config.elonarlybirdConfig;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsultMelontadata;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsultMelontadataOptions;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsultTypelon;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsultsRelonlelonvancelonStats;
 
 /**
- * A toptweets query cache index selection scoring function that is based purely on retweet counts.
- * The goal of this scoring functon is to deprecate itweet score in entirety.
+ * A toptwelonelonts quelonry cachelon indelonx selonlelonction scoring function that is baselond purelonly on relontwelonelont counts.
+ * Thelon goal of this scoring functon is to delonpreloncatelon itwelonelont scorelon in elonntirelonty.
  *
- * Once all legacy itweet scores are drained from existing earlybird index, new parus score replaces
- * existing itweet score position, then this class will be deprecated, a new scoring function
- * using parus score shall replace this.
+ * Oncelon all lelongacy itwelonelont scorelons arelon drainelond from elonxisting elonarlybird indelonx, nelonw parus scorelon relonplacelons
+ * elonxisting itwelonelont scorelon position, thelonn this class will belon delonpreloncatelond, a nelonw scoring function
+ * using parus scorelon shall relonplacelon this.
  *
- * this scoring function is only used in Query Cache for marking top tweets
- * in the background. When searched, those tweets are still ranked with linear or model-based
+ * this scoring function is only uselond in Quelonry Cachelon for marking top twelonelonts
+ * in thelon background. Whelonn selonarchelond, thoselon twelonelonts arelon still rankelond with linelonar or modelonl-baselond
  * scoring function.
  *
  */
-public class RetweetBasedTopTweetsScoringFunction extends ScoringFunction {
-  private static final double DEFAULT_RECENCY_SCORE_FRACTION = 0.1;
-  private static final double DEFAULT_SIGMOID_APLHA = 0.008;
-  private static final int DEFAULT_RECENCY_CENTER_MINUTES = 1080;
+public class RelontwelonelontBaselondTopTwelonelontsScoringFunction elonxtelonnds ScoringFunction {
+  privatelon static final doublelon DelonFAULT_RelonCelonNCY_SCORelon_FRACTION = 0.1;
+  privatelon static final doublelon DelonFAULT_SIGMOID_APLHA = 0.008;
+  privatelon static final int DelonFAULT_RelonCelonNCY_CelonNTelonR_MINUTelonS = 1080;
 
-  // if you update the default cut off, make sure you update the query cache filter in
-  // querycache.yml
+  // if you updatelon thelon delonfault cut off, makelon surelon you updatelon thelon quelonry cachelon filtelonr in
+  // quelonrycachelon.yml
   //
-  // we know currently each time slice, each partition has about 10K entries in toptweets query
-  // cache. These are unique tweets. Looking at retweet updates, each time slice, each partition has
-  // about 650K unique tweets that received retweet. To create roughly similar number of entries in
-  // query cache, we need top 2% of such tweets, and that sets to min retweet count to 4.
-  // In this linear scoring function, we will rescale retweet count to [0, 1] range,
-  // with an input range of [0, 20]. Given the realtime factor's weight of 0.1, that give our
-  // minimal retweet score threshold to: 4/20 * 0.9 = 0.18.
-  // Testing on prod showed much higher volume due to the generous setting of max value of 20,
-  // (highest we have seen is 14). Adjusted to 0.21 which gave us similar volume.
-  private static final double DEFAULT_CUT_OFF_SCORE = 0.21;
+  // welon know currelonntly elonach timelon slicelon, elonach partition has about 10K elonntrielons in toptwelonelonts quelonry
+  // cachelon. Thelonselon arelon uniquelon twelonelonts. Looking at relontwelonelont updatelons, elonach timelon slicelon, elonach partition has
+  // about 650K uniquelon twelonelonts that reloncelonivelond relontwelonelont. To crelonatelon roughly similar numbelonr of elonntrielons in
+  // quelonry cachelon, welon nelonelond top 2% of such twelonelonts, and that selonts to min relontwelonelont count to 4.
+  // In this linelonar scoring function, welon will relonscalelon relontwelonelont count to [0, 1] rangelon,
+  // with an input rangelon of [0, 20]. Givelonn thelon relonaltimelon factor's welonight of 0.1, that givelon our
+  // minimal relontwelonelont scorelon threlonshold to: 4/20 * 0.9 = 0.18.
+  // Telonsting on prod showelond much highelonr volumelon duelon to thelon gelonnelonrous selontting of max valuelon of 20,
+  // (highelonst welon havelon selonelonn is 14). Adjustelond to 0.21 which gavelon us similar volumelon.
+  privatelon static final doublelon DelonFAULT_CUT_OFF_SCORelon = 0.21;
 
-  // Normalize retweet counts from [0, 20] range to [0, 1] range
-  private static final double MAX_RETWEET_COUNT = 20.0;
-  private static final double MIN_USER_REPUTATION = 40.0;  // matches itweet system threshold
+  // Normalizelon relontwelonelont counts from [0, 20] rangelon to [0, 1] rangelon
+  privatelon static final doublelon MAX_RelonTWelonelonT_COUNT = 20.0;
+  privatelon static final doublelon MIN_USelonR_RelonPUTATION = 40.0;  // matchelons itwelonelont systelonm threlonshold
 
   /**
-   * The scores for the retweet based top tweets have to be in the [0, 1] interval. So we can't use
-   * SKIP_HIT as the lowest possible score, and instead have to use Float.MIN_VALUE.
+   * Thelon scorelons for thelon relontwelonelont baselond top twelonelonts havelon to belon in thelon [0, 1] intelonrval. So welon can't uselon
+   * SKIP_HIT as thelon lowelonst possiblelon scorelon, and instelonad havelon to uselon Float.MIN_VALUelon.
    *
-   * It's OK to use different values for these constants, because they do not interfere with each
-   * other. This constant is only used in RetweetBasedTopTweetsScoringFunction, which is only used
-   * to filter the hits for the [score_filter retweets minScore maxScore] operator. So the scores
-   * returned by RetweetBasedTopTweetsScoringFunction.score() do not have any impact on the final
-   * hit score.
+   * It's OK to uselon diffelonrelonnt valuelons for thelonselon constants, beloncauselon thelony do not intelonrfelonrelon with elonach
+   * othelonr. This constant is only uselond in RelontwelonelontBaselondTopTwelonelontsScoringFunction, which is only uselond
+   * to filtelonr thelon hits for thelon [scorelon_filtelonr relontwelonelonts minScorelon maxScorelon] opelonrator. So thelon scorelons
+   * relonturnelond by RelontwelonelontBaselondTopTwelonelontsScoringFunction.scorelon() do not havelon any impact on thelon final
+   * hit scorelon.
    *
-   * See EarlybirdLuceneQueryVisitor.visitScoredFilterOperator() and ScoreFilterQuery for more details.
+   * Selonelon elonarlybirdLucelonnelonQuelonryVisitor.visitScorelondFiltelonrOpelonrator() and ScorelonFiltelonrQuelonry for morelon delontails.
    */
-  private static final float RETWEET_BASED_TOP_TWEETS_LOWEST_SCORE = Float.MIN_VALUE;
+  privatelon static final float RelonTWelonelonT_BASelonD_TOP_TWelonelonTS_LOWelonST_SCORelon = Float.MIN_VALUelon;
 
-  private final double recencyScoreFraction;
-  private final double sigmoidAlpha;
-  private final double cutOffScore;
-  private final int recencyCenterMinutes;
-  private final double maxRecency;
+  privatelon final doublelon reloncelonncyScorelonFraction;
+  privatelon final doublelon sigmoidAlpha;
+  privatelon final doublelon cutOffScorelon;
+  privatelon final int reloncelonncyCelonntelonrMinutelons;
+  privatelon final doublelon maxReloncelonncy;
 
-  private final int currentTimeSeconds;
+  privatelon final int currelonntTimelonSelonconds;
 
-  private ThriftSearchResultMetadata metadata = null;
-  private double score;
-  private double retweetCount;
+  privatelon ThriftSelonarchRelonsultMelontadata melontadata = null;
+  privatelon doublelon scorelon;
+  privatelon doublelon relontwelonelontCount;
 
-  public RetweetBasedTopTweetsScoringFunction(ImmutableSchemaInterface schema) {
-    this(schema, DEFAULT_RECENCY_SCORE_FRACTION,
-         DEFAULT_SIGMOID_APLHA,
-         DEFAULT_CUT_OFF_SCORE,
-         DEFAULT_RECENCY_CENTER_MINUTES);
+  public RelontwelonelontBaselondTopTwelonelontsScoringFunction(ImmutablelonSchelonmaIntelonrfacelon schelonma) {
+    this(schelonma, DelonFAULT_RelonCelonNCY_SCORelon_FRACTION,
+         DelonFAULT_SIGMOID_APLHA,
+         DelonFAULT_CUT_OFF_SCORelon,
+         DelonFAULT_RelonCelonNCY_CelonNTelonR_MINUTelonS);
   }
 
   /**
-   * Creates a no decay scoring function (used by top archive).
-   * Otherwise same as default constructor.
-   * @param nodecay  If no decay is set to true. Alpha is set to 0.0.
+   * Crelonatelons a no deloncay scoring function (uselond by top archivelon).
+   * Othelonrwiselon samelon as delonfault constructor.
+   * @param nodeloncay  If no deloncay is selont to truelon. Alpha is selont to 0.0.
    */
-  public RetweetBasedTopTweetsScoringFunction(ImmutableSchemaInterface schema, boolean nodecay) {
-    this(schema, DEFAULT_RECENCY_SCORE_FRACTION,
-         nodecay ? 0.0 : DEFAULT_SIGMOID_APLHA,
-         DEFAULT_CUT_OFF_SCORE,
-         DEFAULT_RECENCY_CENTER_MINUTES);
+  public RelontwelonelontBaselondTopTwelonelontsScoringFunction(ImmutablelonSchelonmaIntelonrfacelon schelonma, boolelonan nodeloncay) {
+    this(schelonma, DelonFAULT_RelonCelonNCY_SCORelon_FRACTION,
+         nodeloncay ? 0.0 : DelonFAULT_SIGMOID_APLHA,
+         DelonFAULT_CUT_OFF_SCORelon,
+         DelonFAULT_RelonCelonNCY_CelonNTelonR_MINUTelonS);
   }
 
-  public RetweetBasedTopTweetsScoringFunction(ImmutableSchemaInterface schema,
-                                              double recencyScoreFraction, double sigmoidAlpha,
-                                              double cutOffScore, int recencyCenterMinutes) {
-    super(schema);
-    this.recencyScoreFraction = recencyScoreFraction;
+  public RelontwelonelontBaselondTopTwelonelontsScoringFunction(ImmutablelonSchelonmaIntelonrfacelon schelonma,
+                                              doublelon reloncelonncyScorelonFraction, doublelon sigmoidAlpha,
+                                              doublelon cutOffScorelon, int reloncelonncyCelonntelonrMinutelons) {
+    supelonr(schelonma);
+    this.reloncelonncyScorelonFraction = reloncelonncyScorelonFraction;
     this.sigmoidAlpha = sigmoidAlpha;
-    this.cutOffScore = cutOffScore;
-    this.recencyCenterMinutes = recencyCenterMinutes;
-    this.maxRecency = computeSigmoid(0);
-    this.currentTimeSeconds = (int) (System.currentTimeMillis() / 1000);
+    this.cutOffScorelon = cutOffScorelon;
+    this.reloncelonncyCelonntelonrMinutelons = reloncelonncyCelonntelonrMinutelons;
+    this.maxReloncelonncy = computelonSigmoid(0);
+    this.currelonntTimelonSelonconds = (int) (Systelonm.currelonntTimelonMillis() / 1000);
   }
 
-  @Override
-  protected float score(float luceneQueryScore) throws IOException {
-    // Reset the data for each tweet!!!
-    metadata = null;
-    if (documentFeatures.isFlagSet(EarlybirdFieldConstant.IS_OFFENSIVE_FLAG)
-        || (documentFeatures.getFeatureValue(EarlybirdFieldConstant.USER_REPUTATION)
-            < MIN_USER_REPUTATION)) {
-      score = RETWEET_BASED_TOP_TWEETS_LOWEST_SCORE;
-    } else {
-      // Note that here we want the post log2 value, as the MAX_RETWEET_COUNT was actually
-      // set up for that.
-      retweetCount = MutableFeatureNormalizers.BYTE_NORMALIZER.unnormAndLog2(
-          (byte) documentFeatures.getFeatureValue(EarlybirdFieldConstant.RETWEET_COUNT));
-      final double recencyScore = computeTopTweetRecencyScore();
+  @Ovelonrridelon
+  protelonctelond float scorelon(float lucelonnelonQuelonryScorelon) throws IOelonxcelonption {
+    // Relonselont thelon data for elonach twelonelont!!!
+    melontadata = null;
+    if (documelonntFelonaturelons.isFlagSelont(elonarlybirdFielonldConstant.IS_OFFelonNSIVelon_FLAG)
+        || (documelonntFelonaturelons.gelontFelonaturelonValuelon(elonarlybirdFielonldConstant.USelonR_RelonPUTATION)
+            < MIN_USelonR_RelonPUTATION)) {
+      scorelon = RelonTWelonelonT_BASelonD_TOP_TWelonelonTS_LOWelonST_SCORelon;
+    } elonlselon {
+      // Notelon that helonrelon welon want thelon post log2 valuelon, as thelon MAX_RelonTWelonelonT_COUNT was actually
+      // selont up for that.
+      relontwelonelontCount = MutablelonFelonaturelonNormalizelonrs.BYTelon_NORMALIZelonR.unnormAndLog2(
+          (bytelon) documelonntFelonaturelons.gelontFelonaturelonValuelon(elonarlybirdFielonldConstant.RelonTWelonelonT_COUNT));
+      final doublelon reloncelonncyScorelon = computelonTopTwelonelontReloncelonncyScorelon();
 
-      score = (retweetCount / MAX_RETWEET_COUNT) * (1 - recencyScoreFraction)
-          + recencyScoreFraction * recencyScore;
+      scorelon = (relontwelonelontCount / MAX_RelonTWelonelonT_COUNT) * (1 - reloncelonncyScorelonFraction)
+          + reloncelonncyScorelonFraction * reloncelonncyScorelon;
 
-      if (score < this.cutOffScore) {
-        score = RETWEET_BASED_TOP_TWEETS_LOWEST_SCORE;
+      if (scorelon < this.cutOffScorelon) {
+        scorelon = RelonTWelonelonT_BASelonD_TOP_TWelonelonTS_LOWelonST_SCORelon;
       }
     }
 
-    return (float) score;
+    relonturn (float) scorelon;
   }
 
-  private double computeSigmoid(double x) {
-    return 1.0f / (1.0f + Math.exp(sigmoidAlpha * (x - recencyCenterMinutes)));
+  privatelon doublelon computelonSigmoid(doublelon x) {
+    relonturn 1.0f / (1.0f + Math.elonxp(sigmoidAlpha * (x - reloncelonncyCelonntelonrMinutelons)));
   }
 
-  private double computeTopTweetRecencyScore() {
-    double diffMinutes =
-        Math.max(0, currentTimeSeconds - timeMapper.getTime(getCurrentDocID())) / 60.0;
-    return computeSigmoid(diffMinutes) / maxRecency;
+  privatelon doublelon computelonTopTwelonelontReloncelonncyScorelon() {
+    doublelon diffMinutelons =
+        Math.max(0, currelonntTimelonSelonconds - timelonMappelonr.gelontTimelon(gelontCurrelonntDocID())) / 60.0;
+    relonturn computelonSigmoid(diffMinutelons) / maxReloncelonncy;
   }
 
-  @Override
-  protected Explanation doExplain(float luceneScore) {
-    return null;
+  @Ovelonrridelon
+  protelonctelond elonxplanation doelonxplain(float lucelonnelonScorelon) {
+    relonturn null;
   }
 
-  @Override
-  public ThriftSearchResultMetadata getResultMetadata(ThriftSearchResultMetadataOptions options) {
-    if (metadata == null) {
-      metadata = new ThriftSearchResultMetadata()
-          .setResultType(ThriftSearchResultType.POPULAR)
-          .setPenguinVersion(EarlybirdConfig.getPenguinVersionByte());
-      metadata.setRetweetCount((int) retweetCount);
-      metadata.setScore(score);
+  @Ovelonrridelon
+  public ThriftSelonarchRelonsultMelontadata gelontRelonsultMelontadata(ThriftSelonarchRelonsultMelontadataOptions options) {
+    if (melontadata == null) {
+      melontadata = nelonw ThriftSelonarchRelonsultMelontadata()
+          .selontRelonsultTypelon(ThriftSelonarchRelonsultTypelon.POPULAR)
+          .selontPelonnguinVelonrsion(elonarlybirdConfig.gelontPelonnguinVelonrsionBytelon());
+      melontadata.selontRelontwelonelontCount((int) relontwelonelontCount);
+      melontadata.selontScorelon(scorelon);
     }
-    return metadata;
+    relonturn melontadata;
   }
 
-  @Override
-  public void updateRelevanceStats(ThriftSearchResultsRelevanceStats relevanceStats) {
+  @Ovelonrridelon
+  public void updatelonRelonlelonvancelonStats(ThriftSelonarchRelonsultsRelonlelonvancelonStats relonlelonvancelonStats) {
   }
 }

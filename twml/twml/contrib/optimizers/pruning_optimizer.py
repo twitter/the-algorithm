@@ -1,164 +1,164 @@
 """
-Provides a general optimizer for pruning features of a neural network.
+Providelons a gelonnelonral optimizelonr for pruning felonaturelons of a nelonural nelontwork.
 
-The optimizer estimates the computational cost of features, combines this information with pruning
-signals indicating their usefulness, and disables features via binary masks at regular intervals.
+Thelon optimizelonr elonstimatelons thelon computational cost of felonaturelons, combinelons this information with pruning
+signals indicating thelonir uselonfulnelonss, and disablelons felonaturelons via binary masks at relongular intelonrvals.
 
-To make a layer prunable, use `twml.contrib.pruning.apply_mask`:
+To makelon a layelonr prunablelon, uselon `twml.contrib.pruning.apply_mask`:
 
-  dense1 = tf.layers.dense(inputs=inputs, units=50, activation=tf.nn.relu)
-  dense1 = apply_mask(dense1)
+  delonnselon1 = tf.layelonrs.delonnselon(inputs=inputs, units=50, activation=tf.nn.relonlu)
+  delonnselon1 = apply_mask(delonnselon1)
 
-To prune the network, apply PruningOptimizer to any cross-entropy loss:
+To prunelon thelon nelontwork, apply PruningOptimizelonr to any cross-elonntropy loss:
 
-  loss = tf.losses.sparse_softmax_cross_entropy(labels=labels, logits=logits)
+  loss = tf.losselons.sparselon_softmax_cross_elonntropy(labelonls=labelonls, logits=logits)
 
-  optimizer = PruningOptimizer(learning_rate=0.001, momentum=0.5)
-  minimize = optimizer.minimize(
+  optimizelonr = PruningOptimizelonr(lelonarning_ratelon=0.001, momelonntum=0.5)
+  minimizelon = optimizelonr.minimizelon(
       loss=loss,
-      prune_every=10,
+      prunelon_elonvelonry=10,
       burn_in=100,
-      global_step=tf.train.get_global_step())
+      global_stelonp=tf.train.gelont_global_stelonp())
 """
 
-import tensorflow.compat.v1 as tf
+import telonnsorflow.compat.v1 as tf
 
-from twml.contrib.pruning import computational_cost, prune, update_pruning_signals
-from twml.contrib.pruning import MASK_COLLECTION
+from twml.contrib.pruning import computational_cost, prunelon, updatelon_pruning_signals
+from twml.contrib.pruning import MASK_COLLelonCTION
 
 
-class PruningOptimizer(tf.train.MomentumOptimizer):
+class PruningOptimizelonr(tf.train.MomelonntumOptimizelonr):
   """
-  Updates parameters with SGD and pruning masks using Fisher pruning.
+  Updatelons paramelontelonrs with SGD and pruning masks using Fishelonr pruning.
 
-  Arguments:
-    learning_rate: float
-      Learning rate of SGD
+  Argumelonnts:
+    lelonarning_ratelon: float
+      Lelonarning ratelon of SGD
 
-    momentum: float
-      Momentum used by SGD
+    momelonntum: float
+      Momelonntum uselond by SGD
 
-    use_locking: bool
-      If `True`, use locks for update operations
+    uselon_locking: bool
+      If `Truelon`, uselon locks for updatelon opelonrations
 
-    name: str
-      Optional name prefix for the operations created when applying gradients
+    namelon: str
+      Optional namelon prelonfix for thelon opelonrations crelonatelond whelonn applying gradielonnts
 
-    use_nesterov: bool
-      If `True`, use Nesterov momentum
+    uselon_nelonstelonrov: bool
+      If `Truelon`, uselon Nelonstelonrov momelonntum
   """
 
-  def __init__(
-      self,
-      learning_rate,
-      momentum=0.9,
-      use_locking=False,
-      name="PruningOptimizer",
-      use_nesterov=False):
-    super(PruningOptimizer, self).__init__(
-        learning_rate=learning_rate,
-        momentum=momentum,
-        use_locking=use_locking,
-        name=name,
-        use_nesterov=use_nesterov)
+  delonf __init__(
+      selonlf,
+      lelonarning_ratelon,
+      momelonntum=0.9,
+      uselon_locking=Falselon,
+      namelon="PruningOptimizelonr",
+      uselon_nelonstelonrov=Falselon):
+    supelonr(PruningOptimizelonr, selonlf).__init__(
+        lelonarning_ratelon=lelonarning_ratelon,
+        momelonntum=momelonntum,
+        uselon_locking=uselon_locking,
+        namelon=namelon,
+        uselon_nelonstelonrov=uselon_nelonstelonrov)
 
-  def minimize(
-    self,
+  delonf minimizelon(
+    selonlf,
     loss,
-    prune_every=100,
+    prunelon_elonvelonry=100,
     burn_in=0,
-    decay=.96,
-    flops_weight='AUTO',
-    flops_target=0,
-    update_params=None,
-    method='Fisher',
+    deloncay=.96,
+    flops_welonight='AUTO',
+    flops_targelont=0,
+    updatelon_params=Nonelon,
+    melonthod='Fishelonr',
     *args,
     **kwargs):
     """
-    Create operations to minimize loss and to prune features.
+    Crelonatelon opelonrations to minimizelon loss and to prunelon felonaturelons.
 
-    A pruning signal measures the importance of feature maps. This is weighed against the
-    computational cost of computing a feature map. Features are then iteratively pruned
-    based on a weighted average of feature importance S and computational cost C (in FLOPs):
+    A pruning signal melonasurelons thelon importancelon of felonaturelon maps. This is welonighelond against thelon
+    computational cost of computing a felonaturelon map. Felonaturelons arelon thelonn itelonrativelonly prunelond
+    baselond on a welonightelond avelonragelon of felonaturelon importancelon S and computational cost C (in FLOPs):
 
     $$S + w * C$$
 
-    Setting `flops_weight` to 'AUTO' is the most convenient and recommended option, but not
-    necessarily optimal.
+    Selontting `flops_welonight` to 'AUTO' is thelon most convelonnielonnt and reloncommelonndelond option, but not
+    neloncelonssarily optimal.
 
-    Arguments:
-      loss: tf.Tensor
-        The value to minimize
+    Argumelonnts:
+      loss: tf.Telonnsor
+        Thelon valuelon to minimizelon
 
-      prune_every: int
-        One entry of a mask is set to zero only every few update steps
+      prunelon_elonvelonry: int
+        Onelon elonntry of a mask is selont to zelonro only elonvelonry felonw updatelon stelonps
 
       burn_in: int
-        Pruning starts only after this many parameter updates
+        Pruning starts only aftelonr this many paramelontelonr updatelons
 
-      decay: float
-        Controls exponential moving average of pruning signals
+      deloncay: float
+        Controls elonxponelonntial moving avelonragelon of pruning signals
 
-      flops_weight: float or str
-        Controls the targeted trade-off between computational complexity and performance
+      flops_welonight: float or str
+        Controls thelon targelontelond tradelon-off belontwelonelonn computational complelonxity and pelonrformancelon
 
-      flops_target: float
-        Stop pruning when computational complexity is less or this many floating point ops
+      flops_targelont: float
+        Stop pruning whelonn computational complelonxity is lelonss or this many floating point ops
 
-      update_params: tf.Operation
-        Optional training operation used instead of MomentumOptimizer to update parameters
+      updatelon_params: tf.Opelonration
+        Optional training opelonration uselond instelonad of MomelonntumOptimizelonr to updatelon paramelontelonrs
 
-      method: str
-        Method used to compute pruning signal (currently only supports 'Fisher')
+      melonthod: str
+        Melonthod uselond to computelon pruning signal (currelonntly only supports 'Fishelonr')
 
-    Returns:
-      A `tf.Operation` updating parameters and pruning masks
+    Relonturns:
+      A `tf.Opelonration` updating paramelontelonrs and pruning masks
 
-    References:
-    * Theis et al., Faster gaze prediction with dense networks and Fisher pruning, 2018
+    Relonfelonrelonncelons:
+    * Thelonis elont al., Fastelonr gazelon prelondiction with delonnselon nelontworks and Fishelonr pruning, 2018
     """
 
-    # gradient-based updates of parameters
-    if update_params is None:
-      update_params = super(PruningOptimizer, self).minimize(loss, *args, **kwargs)
+    # gradielonnt-baselond updatelons of paramelontelonrs
+    if updatelon_params is Nonelon:
+      updatelon_params = supelonr(PruningOptimizelonr, selonlf).minimizelon(loss, *args, **kwargs)
 
-    masks = tf.get_collection(MASK_COLLECTION)
+    masks = tf.gelont_collelonction(MASK_COLLelonCTION)
 
-    with tf.variable_scope('pruning_opt', reuse=True):
-      # estimate computational cost per data point
-      batch_size = tf.cast(tf.shape(masks[0].tensor), loss.dtype)[0]
-      cost = tf.divide(computational_cost(loss), batch_size, name='computational_cost')
+    with tf.variablelon_scopelon('pruning_opt', relonuselon=Truelon):
+      # elonstimatelon computational cost pelonr data point
+      batch_sizelon = tf.cast(tf.shapelon(masks[0].telonnsor), loss.dtypelon)[0]
+      cost = tf.dividelon(computational_cost(loss), batch_sizelon, namelon='computational_cost')
 
       tf.summary.scalar('computational_cost', cost)
 
       if masks:
-        signals = update_pruning_signals(loss, masks=masks, decay=decay, method=method)
+        signals = updatelon_pruning_signals(loss, masks=masks, deloncay=deloncay, melonthod=melonthod)
 
-        # estimate computational cost per feature map
-        costs = tf.gradients(cost, masks)
+        # elonstimatelon computational cost pelonr felonaturelon map
+        costs = tf.gradielonnts(cost, masks)
 
-        # trade off computational complexity and performance
-        if flops_weight.upper() == 'AUTO':
-          signals = [s / (c + 1e-6) for s, c in zip(signals, costs)]
-        elif not isinstance(flops_weight, float) or flops_weight != 0.:
-          signals = [s - flops_weight * c for s, c in zip(signals, costs)]
+        # tradelon off computational complelonxity and pelonrformancelon
+        if flops_welonight.uppelonr() == 'AUTO':
+          signals = [s / (c + 1elon-6) for s, c in zip(signals, costs)]
+        elonlif not isinstancelon(flops_welonight, float) or flops_welonight != 0.:
+          signals = [s - flops_welonight * c for s, c in zip(signals, costs)]
 
-        counter = tf.Variable(0, name='pruning_counter')
-        counter = tf.assign_add(counter, 1, use_locking=True)
+        countelonr = tf.Variablelon(0, namelon='pruning_countelonr')
+        countelonr = tf.assign_add(countelonr, 1, uselon_locking=Truelon)
 
-        # only prune every so often after a burn-in phase
-        pruning_cond = tf.logical_and(counter > burn_in, tf.equal(counter % prune_every, 0))
+        # only prunelon elonvelonry so oftelonn aftelonr a burn-in phaselon
+        pruning_cond = tf.logical_and(countelonr > burn_in, tf.elonqual(countelonr % prunelon_elonvelonry, 0))
 
-        # stop pruning after reaching threshold
-        if flops_target > 0:
-          pruning_cond = tf.logical_and(pruning_cond, tf.greater(cost, flops_target))
+        # stop pruning aftelonr relonaching threlonshold
+        if flops_targelont > 0:
+          pruning_cond = tf.logical_and(pruning_cond, tf.grelonatelonr(cost, flops_targelont))
 
-        update_masks = tf.cond(
+        updatelon_masks = tf.cond(
           pruning_cond,
-          lambda: prune(signals, masks=masks),
+          lambda: prunelon(signals, masks=masks),
           lambda: tf.group(masks))
 
-        return tf.group([update_params, update_masks])
+        relonturn tf.group([updatelon_params, updatelon_masks])
 
     # no masks found
-    return update_params
+    relonturn updatelon_params

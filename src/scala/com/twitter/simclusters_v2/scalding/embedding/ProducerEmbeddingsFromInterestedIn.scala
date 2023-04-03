@@ -1,530 +1,530 @@
-package com.twitter.simclusters_v2.scalding.embedding
+packagelon com.twittelonr.simclustelonrs_v2.scalding.elonmbelondding
 
-import com.twitter.dal.client.dataset.KeyValDALDataset
-import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.ModelVersions
-import com.twitter.simclusters_v2.hdfs_sources._
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil._
-import com.twitter.simclusters_v2.scalding.embedding.common.SimClustersEmbeddingJob
-import com.twitter.simclusters_v2.thriftscala._
-import com.twitter.wtf.scalding.jobs.common.{AdhocExecutionApp, ScheduledExecutionApp}
-import java.util.TimeZone
+import com.twittelonr.dal.clielonnt.dataselont.KelonyValDALDataselont
+import com.twittelonr.scalding._
+import com.twittelonr.scalding_intelonrnal.dalv2.DALWritelon._
+import com.twittelonr.scalding_intelonrnal.multiformat.format.kelonyval.KelonyVal
+import com.twittelonr.simclustelonrs_v2.common.ModelonlVelonrsions
+import com.twittelonr.simclustelonrs_v2.hdfs_sourcelons._
+import com.twittelonr.simclustelonrs_v2.scalding.elonmbelondding.common.elonmbelonddingUtil._
+import com.twittelonr.simclustelonrs_v2.scalding.elonmbelondding.common.SimClustelonrselonmbelonddingJob
+import com.twittelonr.simclustelonrs_v2.thriftscala._
+import com.twittelonr.wtf.scalding.jobs.common.{AdhocelonxeloncutionApp, SchelondulelondelonxeloncutionApp}
+import java.util.TimelonZonelon
 
-object ProducerEmbeddingsFromInterestedInBatchAppUtil {
-  import ProducerEmbeddingsFromInterestedIn._
+objelonct ProducelonrelonmbelonddingsFromIntelonrelonstelondInBatchAppUtil {
+  import ProducelonrelonmbelonddingsFromIntelonrelonstelondIn._
 
-  val user = System.getenv("USER")
+  val uselonr = Systelonm.gelontelonnv("USelonR")
 
-  val rootPath: String = s"/user/$user/manhattan_sequence_files"
+  val rootPath: String = s"/uselonr/$uselonr/manhattan_selonquelonncelon_filelons"
 
-  // Helps speed up the multiplication step which can get very big
-  val numReducersForMatrixMultiplication: Int = 12000
+  // Helonlps spelonelond up thelon multiplication stelonp which can gelont velonry big
+  val numRelonducelonrsForMatrixMultiplication: Int = 12000
 
   /**
-   * Given the producer x cluster matrix, key by producer / cluster individually, and write output
-   * to individual DAL datasets
+   * Givelonn thelon producelonr x clustelonr matrix, kelony by producelonr / clustelonr individually, and writelon output
+   * to individual DAL dataselonts
    */
-  def writeOutput(
-    producerClusterEmbedding: TypedPipe[((ClusterId, UserId), Double)],
-    producerTopKEmbeddingsDataset: KeyValDALDataset[KeyVal[Long, TopSimClustersWithScore]],
-    clusterTopKProducersDataset: KeyValDALDataset[
-      KeyVal[PersistedFullClusterId, TopProducersWithScore]
+  delonf writelonOutput(
+    producelonrClustelonrelonmbelondding: TypelondPipelon[((ClustelonrId, UselonrId), Doublelon)],
+    producelonrTopKelonmbelonddingsDataselont: KelonyValDALDataselont[KelonyVal[Long, TopSimClustelonrsWithScorelon]],
+    clustelonrTopKProducelonrsDataselont: KelonyValDALDataselont[
+      KelonyVal[PelonrsistelondFullClustelonrId, TopProducelonrsWithScorelon]
     ],
-    producerTopKEmbeddingsPath: String,
-    clusterTopKProducersPath: String,
-    modelVersion: ModelVersion
-  ): Execution[Unit] = {
-    val keyedByProducer =
-      toSimClusterEmbedding(producerClusterEmbedding, topKClustersToKeep, modelVersion)
-        .map { case (userId, clusters) => KeyVal(userId, clusters) }
-        .writeDALVersionedKeyValExecution(
-          producerTopKEmbeddingsDataset,
-          D.Suffix(producerTopKEmbeddingsPath)
+    producelonrTopKelonmbelonddingsPath: String,
+    clustelonrTopKProducelonrsPath: String,
+    modelonlVelonrsion: ModelonlVelonrsion
+  ): elonxeloncution[Unit] = {
+    val kelonyelondByProducelonr =
+      toSimClustelonrelonmbelondding(producelonrClustelonrelonmbelondding, topKClustelonrsToKelonelonp, modelonlVelonrsion)
+        .map { caselon (uselonrId, clustelonrs) => KelonyVal(uselonrId, clustelonrs) }
+        .writelonDALVelonrsionelondKelonyValelonxeloncution(
+          producelonrTopKelonmbelonddingsDataselont,
+          D.Suffix(producelonrTopKelonmbelonddingsPath)
         )
 
-    val keyedBySimCluster = fromSimClusterEmbedding(
-      producerClusterEmbedding,
-      topKUsersToKeep,
-      modelVersion
+    val kelonyelondBySimClustelonr = fromSimClustelonrelonmbelondding(
+      producelonrClustelonrelonmbelondding,
+      topKUselonrsToKelonelonp,
+      modelonlVelonrsion
     ).map {
-        case (clusterId, topProducers) => KeyVal(clusterId, topProducersToThrift(topProducers))
+        caselon (clustelonrId, topProducelonrs) => KelonyVal(clustelonrId, topProducelonrsToThrift(topProducelonrs))
       }
-      .writeDALVersionedKeyValExecution(
-        clusterTopKProducersDataset,
-        D.Suffix(clusterTopKProducersPath)
+      .writelonDALVelonrsionelondKelonyValelonxeloncution(
+        clustelonrTopKProducelonrsDataselont,
+        D.Suffix(clustelonrTopKProducelonrsPath)
       )
 
-    Execution.zip(keyedByProducer, keyedBySimCluster).unit
+    elonxeloncution.zip(kelonyelondByProducelonr, kelonyelondBySimClustelonr).unit
   }
 }
 
 /**
- * Base class for Fav based producer embeddings. Helps reuse the code for different model versions
+ * Baselon class for Fav baselond producelonr elonmbelonddings. Helonlps relonuselon thelon codelon for diffelonrelonnt modelonl velonrsions
  */
-trait ProducerEmbeddingsFromInterestedInByFavScoreBase extends ScheduledExecutionApp {
-  import ProducerEmbeddingsFromInterestedIn._
-  import ProducerEmbeddingsFromInterestedInBatchAppUtil._
+trait ProducelonrelonmbelonddingsFromIntelonrelonstelondInByFavScorelonBaselon elonxtelonnds SchelondulelondelonxeloncutionApp {
+  import ProducelonrelonmbelonddingsFromIntelonrelonstelondIn._
+  import ProducelonrelonmbelonddingsFromIntelonrelonstelondInBatchAppUtil._
 
-  def modelVersion: ModelVersion
+  delonf modelonlVelonrsion: ModelonlVelonrsion
 
-  val producerTopKEmbeddingsByFavScorePathPrefix: String =
-    "/producer_top_k_simcluster_embeddings_by_fav_score_"
+  val producelonrTopKelonmbelonddingsByFavScorelonPathPrelonfix: String =
+    "/producelonr_top_k_simclustelonr_elonmbelonddings_by_fav_scorelon_"
 
-  val clusterTopKProducersByFavScorePathPrefix: String =
-    "/simcluster_embedding_top_k_producers_by_fav_score_"
+  val clustelonrTopKProducelonrsByFavScorelonPathPrelonfix: String =
+    "/simclustelonr_elonmbelondding_top_k_producelonrs_by_fav_scorelon_"
 
-  val minNumFavers: Int = minNumFaversForProducer
+  val minNumFavelonrs: Int = minNumFavelonrsForProducelonr
 
-  def producerTopKSimclusterEmbeddingsByFavScoreDataset: KeyValDALDataset[
-    KeyVal[Long, TopSimClustersWithScore]
+  delonf producelonrTopKSimclustelonrelonmbelonddingsByFavScorelonDataselont: KelonyValDALDataselont[
+    KelonyVal[Long, TopSimClustelonrsWithScorelon]
   ]
 
-  def simclusterEmbeddingTopKProducersByFavScoreDataset: KeyValDALDataset[
-    KeyVal[PersistedFullClusterId, TopProducersWithScore]
+  delonf simclustelonrelonmbelonddingTopKProducelonrsByFavScorelonDataselont: KelonyValDALDataselont[
+    KelonyVal[PelonrsistelondFullClustelonrId, TopProducelonrsWithScorelon]
   ]
 
-  def getInterestedInFn: (DateRange, TimeZone) => TypedPipe[(Long, ClustersUserIsInterestedIn)]
+  delonf gelontIntelonrelonstelondInFn: (DatelonRangelon, TimelonZonelon) => TypelondPipelon[(Long, ClustelonrsUselonrIsIntelonrelonstelondIn)]
 
-  override def runOnDateRange(
+  ovelonrridelon delonf runOnDatelonRangelon(
     args: Args
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon,
+    uniquelonID: UniquelonID
+  ): elonxeloncution[Unit] = {
 
-    val producerTopKEmbeddingsByFavScorePathUpdated: String =
-      rootPath + producerTopKEmbeddingsByFavScorePathPrefix + ModelVersions
-        .toKnownForModelVersion(modelVersion)
+    val producelonrTopKelonmbelonddingsByFavScorelonPathUpdatelond: String =
+      rootPath + producelonrTopKelonmbelonddingsByFavScorelonPathPrelonfix + ModelonlVelonrsions
+        .toKnownForModelonlVelonrsion(modelonlVelonrsion)
 
-    val clusterTopKProducersByFavScorePathUpdated: String =
-      rootPath + clusterTopKProducersByFavScorePathPrefix + ModelVersions
-        .toKnownForModelVersion(modelVersion)
+    val clustelonrTopKProducelonrsByFavScorelonPathUpdatelond: String =
+      rootPath + clustelonrTopKProducelonrsByFavScorelonPathPrelonfix + ModelonlVelonrsions
+        .toKnownForModelonlVelonrsion(modelonlVelonrsion)
 
-    val producerClusterEmbeddingByFavScore = getProducerClusterEmbedding(
-      getInterestedInFn(dateRange.embiggen(Days(5)), timeZone),
-      DataSources.userUserNormalizedGraphSource,
-      DataSources.userNormsAndCounts,
-      userToProducerFavScore,
-      userToClusterFavScore, // Fav score
-      _.faverCount.exists(_ > minNumFavers),
-      numReducersForMatrixMultiplication,
-      modelVersion,
-      cosineSimilarityThreshold
-    ).forceToDisk
+    val producelonrClustelonrelonmbelonddingByFavScorelon = gelontProducelonrClustelonrelonmbelondding(
+      gelontIntelonrelonstelondInFn(datelonRangelon.elonmbiggelonn(Days(5)), timelonZonelon),
+      DataSourcelons.uselonrUselonrNormalizelondGraphSourcelon,
+      DataSourcelons.uselonrNormsAndCounts,
+      uselonrToProducelonrFavScorelon,
+      uselonrToClustelonrFavScorelon, // Fav scorelon
+      _.favelonrCount.elonxists(_ > minNumFavelonrs),
+      numRelonducelonrsForMatrixMultiplication,
+      modelonlVelonrsion,
+      cosinelonSimilarityThrelonshold
+    ).forcelonToDisk
 
-    writeOutput(
-      producerClusterEmbeddingByFavScore,
-      producerTopKSimclusterEmbeddingsByFavScoreDataset,
-      simclusterEmbeddingTopKProducersByFavScoreDataset,
-      producerTopKEmbeddingsByFavScorePathUpdated,
-      clusterTopKProducersByFavScorePathUpdated,
-      modelVersion
+    writelonOutput(
+      producelonrClustelonrelonmbelonddingByFavScorelon,
+      producelonrTopKSimclustelonrelonmbelonddingsByFavScorelonDataselont,
+      simclustelonrelonmbelonddingTopKProducelonrsByFavScorelonDataselont,
+      producelonrTopKelonmbelonddingsByFavScorelonPathUpdatelond,
+      clustelonrTopKProducelonrsByFavScorelonPathUpdatelond,
+      modelonlVelonrsion
     )
   }
 }
 
 /**
- * Base class for Follow based producer embeddings. Helps reuse the code for different model versions
+ * Baselon class for Follow baselond producelonr elonmbelonddings. Helonlps relonuselon thelon codelon for diffelonrelonnt modelonl velonrsions
  */
-trait ProducerEmbeddingsFromInterestedInByFollowScoreBase extends ScheduledExecutionApp {
-  import ProducerEmbeddingsFromInterestedIn._
-  import ProducerEmbeddingsFromInterestedInBatchAppUtil._
+trait ProducelonrelonmbelonddingsFromIntelonrelonstelondInByFollowScorelonBaselon elonxtelonnds SchelondulelondelonxeloncutionApp {
+  import ProducelonrelonmbelonddingsFromIntelonrelonstelondIn._
+  import ProducelonrelonmbelonddingsFromIntelonrelonstelondInBatchAppUtil._
 
-  def modelVersion: ModelVersion
+  delonf modelonlVelonrsion: ModelonlVelonrsion
 
-  val producerTopKEmbeddingsByFollowScorePathPrefix: String =
-    "/producer_top_k_simcluster_embeddings_by_follow_score_"
+  val producelonrTopKelonmbelonddingsByFollowScorelonPathPrelonfix: String =
+    "/producelonr_top_k_simclustelonr_elonmbelonddings_by_follow_scorelon_"
 
-  val clusterTopKProducersByFollowScorePathPrefix: String =
-    "/simcluster_embedding_top_k_producers_by_follow_score_"
+  val clustelonrTopKProducelonrsByFollowScorelonPathPrelonfix: String =
+    "/simclustelonr_elonmbelondding_top_k_producelonrs_by_follow_scorelon_"
 
-  def producerTopKSimclusterEmbeddingsByFollowScoreDataset: KeyValDALDataset[
-    KeyVal[Long, TopSimClustersWithScore]
+  delonf producelonrTopKSimclustelonrelonmbelonddingsByFollowScorelonDataselont: KelonyValDALDataselont[
+    KelonyVal[Long, TopSimClustelonrsWithScorelon]
   ]
 
-  def simclusterEmbeddingTopKProducersByFollowScoreDataset: KeyValDALDataset[
-    KeyVal[PersistedFullClusterId, TopProducersWithScore]
+  delonf simclustelonrelonmbelonddingTopKProducelonrsByFollowScorelonDataselont: KelonyValDALDataselont[
+    KelonyVal[PelonrsistelondFullClustelonrId, TopProducelonrsWithScorelon]
   ]
 
-  def getInterestedInFn: (DateRange, TimeZone) => TypedPipe[(Long, ClustersUserIsInterestedIn)]
+  delonf gelontIntelonrelonstelondInFn: (DatelonRangelon, TimelonZonelon) => TypelondPipelon[(Long, ClustelonrsUselonrIsIntelonrelonstelondIn)]
 
-  val minNumFollowers: Int = minNumFollowersForProducer
+  val minNumFollowelonrs: Int = minNumFollowelonrsForProducelonr
 
-  override def runOnDateRange(
+  ovelonrridelon delonf runOnDatelonRangelon(
     args: Args
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon,
+    uniquelonID: UniquelonID
+  ): elonxeloncution[Unit] = {
 
-    val producerTopKEmbeddingsByFollowScorePath: String =
-      rootPath + producerTopKEmbeddingsByFollowScorePathPrefix + ModelVersions
-        .toKnownForModelVersion(modelVersion)
+    val producelonrTopKelonmbelonddingsByFollowScorelonPath: String =
+      rootPath + producelonrTopKelonmbelonddingsByFollowScorelonPathPrelonfix + ModelonlVelonrsions
+        .toKnownForModelonlVelonrsion(modelonlVelonrsion)
 
-    val clusterTopKProducersByFollowScorePath: String =
-      rootPath + clusterTopKProducersByFollowScorePathPrefix + ModelVersions
-        .toKnownForModelVersion(modelVersion)
+    val clustelonrTopKProducelonrsByFollowScorelonPath: String =
+      rootPath + clustelonrTopKProducelonrsByFollowScorelonPathPrelonfix + ModelonlVelonrsions
+        .toKnownForModelonlVelonrsion(modelonlVelonrsion)
 
-    val producerClusterEmbeddingByFollowScore = getProducerClusterEmbedding(
-      getInterestedInFn(dateRange.embiggen(Days(5)), timeZone),
-      DataSources.userUserNormalizedGraphSource,
-      DataSources.userNormsAndCounts,
-      userToProducerFollowScore,
-      userToClusterFollowScore, // Follow score
-      _.followerCount.exists(_ > minNumFollowers),
-      numReducersForMatrixMultiplication,
-      modelVersion,
-      cosineSimilarityThreshold
-    ).forceToDisk
+    val producelonrClustelonrelonmbelonddingByFollowScorelon = gelontProducelonrClustelonrelonmbelondding(
+      gelontIntelonrelonstelondInFn(datelonRangelon.elonmbiggelonn(Days(5)), timelonZonelon),
+      DataSourcelons.uselonrUselonrNormalizelondGraphSourcelon,
+      DataSourcelons.uselonrNormsAndCounts,
+      uselonrToProducelonrFollowScorelon,
+      uselonrToClustelonrFollowScorelon, // Follow scorelon
+      _.followelonrCount.elonxists(_ > minNumFollowelonrs),
+      numRelonducelonrsForMatrixMultiplication,
+      modelonlVelonrsion,
+      cosinelonSimilarityThrelonshold
+    ).forcelonToDisk
 
-    writeOutput(
-      producerClusterEmbeddingByFollowScore,
-      producerTopKSimclusterEmbeddingsByFollowScoreDataset,
-      simclusterEmbeddingTopKProducersByFollowScoreDataset,
-      producerTopKEmbeddingsByFollowScorePath,
-      clusterTopKProducersByFollowScorePath,
-      modelVersion
+    writelonOutput(
+      producelonrClustelonrelonmbelonddingByFollowScorelon,
+      producelonrTopKSimclustelonrelonmbelonddingsByFollowScorelonDataselont,
+      simclustelonrelonmbelonddingTopKProducelonrsByFollowScorelonDataselont,
+      producelonrTopKelonmbelonddingsByFollowScorelonPath,
+      clustelonrTopKProducelonrsByFollowScorelonPath,
+      modelonlVelonrsion
     )
   }
 }
 
 /**
- capesospy-v2 update --build_locally --start_cron \
- --start_cron producer_embeddings_from_interested_in_by_fav_score \
- src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
+ capelonsospy-v2 updatelon --build_locally --start_cron \
+ --start_cron producelonr_elonmbelonddings_from_intelonrelonstelond_in_by_fav_scorelon \
+ src/scala/com/twittelonr/simclustelonrs_v2/capelonsos_config/atla_proc3.yaml
  */
-object ProducerEmbeddingsFromInterestedInByFavScoreBatchApp
-    extends ProducerEmbeddingsFromInterestedInByFavScoreBase {
-  override def modelVersion: ModelVersion = ModelVersion.Model20m145kUpdated
+objelonct ProducelonrelonmbelonddingsFromIntelonrelonstelondInByFavScorelonBatchApp
+    elonxtelonnds ProducelonrelonmbelonddingsFromIntelonrelonstelondInByFavScorelonBaselon {
+  ovelonrridelon delonf modelonlVelonrsion: ModelonlVelonrsion = ModelonlVelonrsion.Modelonl20m145kUpdatelond
 
-  override def getInterestedInFn: (
-    DateRange,
-    TimeZone
-  ) => TypedPipe[(UserId, ClustersUserIsInterestedIn)] =
-    InterestedInSources.simClustersInterestedInUpdatedSource
+  ovelonrridelon delonf gelontIntelonrelonstelondInFn: (
+    DatelonRangelon,
+    TimelonZonelon
+  ) => TypelondPipelon[(UselonrId, ClustelonrsUselonrIsIntelonrelonstelondIn)] =
+    IntelonrelonstelondInSourcelons.simClustelonrsIntelonrelonstelondInUpdatelondSourcelon
 
-  override val firstTime: RichDate = RichDate("2019-09-10")
+  ovelonrridelon val firstTimelon: RichDatelon = RichDatelon("2019-09-10")
 
-  override val batchIncrement: Duration = Days(7)
+  ovelonrridelon val batchIncrelonmelonnt: Duration = Days(7)
 
-  override def producerTopKSimclusterEmbeddingsByFavScoreDataset: KeyValDALDataset[
-    KeyVal[Long, TopSimClustersWithScore]
+  ovelonrridelon delonf producelonrTopKSimclustelonrelonmbelonddingsByFavScorelonDataselont: KelonyValDALDataselont[
+    KelonyVal[Long, TopSimClustelonrsWithScorelon]
   ] =
-    ProducerTopKSimclusterEmbeddingsByFavScoreUpdatedScalaDataset
+    ProducelonrTopKSimclustelonrelonmbelonddingsByFavScorelonUpdatelondScalaDataselont
 
-  override def simclusterEmbeddingTopKProducersByFavScoreDataset: KeyValDALDataset[
-    KeyVal[PersistedFullClusterId, TopProducersWithScore]
+  ovelonrridelon delonf simclustelonrelonmbelonddingTopKProducelonrsByFavScorelonDataselont: KelonyValDALDataselont[
+    KelonyVal[PelonrsistelondFullClustelonrId, TopProducelonrsWithScorelon]
   ] =
-    SimclusterEmbeddingTopKProducersByFavScoreUpdatedScalaDataset
+    SimclustelonrelonmbelonddingTopKProducelonrsByFavScorelonUpdatelondScalaDataselont
 }
 
 /**
-capesospy-v2 update --build_locally --start_cron \
- --start_cron producer_embeddings_from_interested_in_by_fav_score_2020 \
- src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
+capelonsospy-v2 updatelon --build_locally --start_cron \
+ --start_cron producelonr_elonmbelonddings_from_intelonrelonstelond_in_by_fav_scorelon_2020 \
+ src/scala/com/twittelonr/simclustelonrs_v2/capelonsos_config/atla_proc3.yaml
  */
-object ProducerEmbeddingsFromInterestedInByFavScore2020BatchApp
-    extends ProducerEmbeddingsFromInterestedInByFavScoreBase {
-  override def modelVersion: ModelVersion = ModelVersion.Model20m145k2020
+objelonct ProducelonrelonmbelonddingsFromIntelonrelonstelondInByFavScorelon2020BatchApp
+    elonxtelonnds ProducelonrelonmbelonddingsFromIntelonrelonstelondInByFavScorelonBaselon {
+  ovelonrridelon delonf modelonlVelonrsion: ModelonlVelonrsion = ModelonlVelonrsion.Modelonl20m145k2020
 
-  override def getInterestedInFn: (
-    DateRange,
-    TimeZone
-  ) => TypedPipe[(UserId, ClustersUserIsInterestedIn)] =
-    InterestedInSources.simClustersInterestedIn2020Source
+  ovelonrridelon delonf gelontIntelonrelonstelondInFn: (
+    DatelonRangelon,
+    TimelonZonelon
+  ) => TypelondPipelon[(UselonrId, ClustelonrsUselonrIsIntelonrelonstelondIn)] =
+    IntelonrelonstelondInSourcelons.simClustelonrsIntelonrelonstelondIn2020Sourcelon
 
-  override val firstTime: RichDate = RichDate("2021-03-01")
+  ovelonrridelon val firstTimelon: RichDatelon = RichDatelon("2021-03-01")
 
-  override val batchIncrement: Duration = Days(7)
+  ovelonrridelon val batchIncrelonmelonnt: Duration = Days(7)
 
-  override def producerTopKSimclusterEmbeddingsByFavScoreDataset: KeyValDALDataset[
-    KeyVal[Long, TopSimClustersWithScore]
+  ovelonrridelon delonf producelonrTopKSimclustelonrelonmbelonddingsByFavScorelonDataselont: KelonyValDALDataselont[
+    KelonyVal[Long, TopSimClustelonrsWithScorelon]
   ] =
-    ProducerTopKSimclusterEmbeddingsByFavScore2020ScalaDataset
+    ProducelonrTopKSimclustelonrelonmbelonddingsByFavScorelon2020ScalaDataselont
 
-  override def simclusterEmbeddingTopKProducersByFavScoreDataset: KeyValDALDataset[
-    KeyVal[PersistedFullClusterId, TopProducersWithScore]
+  ovelonrridelon delonf simclustelonrelonmbelonddingTopKProducelonrsByFavScorelonDataselont: KelonyValDALDataselont[
+    KelonyVal[PelonrsistelondFullClustelonrId, TopProducelonrsWithScorelon]
   ] =
-    SimclusterEmbeddingTopKProducersByFavScore2020ScalaDataset
+    SimclustelonrelonmbelonddingTopKProducelonrsByFavScorelon2020ScalaDataselont
 }
 
 /**
-capesospy-v2 update --build_locally --start_cron \
- --start_cron producer_embeddings_from_interested_in_by_fav_score_dec11 \
- src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
+capelonsospy-v2 updatelon --build_locally --start_cron \
+ --start_cron producelonr_elonmbelonddings_from_intelonrelonstelond_in_by_fav_scorelon_delonc11 \
+ src/scala/com/twittelonr/simclustelonrs_v2/capelonsos_config/atla_proc3.yaml
  */
-object ProducerEmbeddingsFromInterestedInByFavScoreDec11BatchApp
-    extends ProducerEmbeddingsFromInterestedInByFavScoreBase {
-  override def modelVersion: ModelVersion = ModelVersion.Model20m145kDec11
+objelonct ProducelonrelonmbelonddingsFromIntelonrelonstelondInByFavScorelonDelonc11BatchApp
+    elonxtelonnds ProducelonrelonmbelonddingsFromIntelonrelonstelondInByFavScorelonBaselon {
+  ovelonrridelon delonf modelonlVelonrsion: ModelonlVelonrsion = ModelonlVelonrsion.Modelonl20m145kDelonc11
 
-  override def getInterestedInFn: (
-    DateRange,
-    TimeZone
-  ) => TypedPipe[(UserId, ClustersUserIsInterestedIn)] =
-    InterestedInSources.simClustersInterestedInDec11Source
+  ovelonrridelon delonf gelontIntelonrelonstelondInFn: (
+    DatelonRangelon,
+    TimelonZonelon
+  ) => TypelondPipelon[(UselonrId, ClustelonrsUselonrIsIntelonrelonstelondIn)] =
+    IntelonrelonstelondInSourcelons.simClustelonrsIntelonrelonstelondInDelonc11Sourcelon
 
-  override val firstTime: RichDate = RichDate("2019-11-18")
+  ovelonrridelon val firstTimelon: RichDatelon = RichDatelon("2019-11-18")
 
-  override val batchIncrement: Duration = Days(7)
+  ovelonrridelon val batchIncrelonmelonnt: Duration = Days(7)
 
-  override def producerTopKSimclusterEmbeddingsByFavScoreDataset: KeyValDALDataset[
-    KeyVal[Long, TopSimClustersWithScore]
+  ovelonrridelon delonf producelonrTopKSimclustelonrelonmbelonddingsByFavScorelonDataselont: KelonyValDALDataselont[
+    KelonyVal[Long, TopSimClustelonrsWithScorelon]
   ] =
-    ProducerTopKSimclusterEmbeddingsByFavScoreScalaDataset
+    ProducelonrTopKSimclustelonrelonmbelonddingsByFavScorelonScalaDataselont
 
-  override def simclusterEmbeddingTopKProducersByFavScoreDataset: KeyValDALDataset[
-    KeyVal[PersistedFullClusterId, TopProducersWithScore]
+  ovelonrridelon delonf simclustelonrelonmbelonddingTopKProducelonrsByFavScorelonDataselont: KelonyValDALDataselont[
+    KelonyVal[PelonrsistelondFullClustelonrId, TopProducelonrsWithScorelon]
   ] =
-    SimclusterEmbeddingTopKProducersByFavScoreScalaDataset
+    SimclustelonrelonmbelonddingTopKProducelonrsByFavScorelonScalaDataselont
 }
 
 /**
-capesospy-v2 update --build_locally --start_cron \
- --start_cron producer_embeddings_from_interested_in_by_follow_score \
- src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
+capelonsospy-v2 updatelon --build_locally --start_cron \
+ --start_cron producelonr_elonmbelonddings_from_intelonrelonstelond_in_by_follow_scorelon \
+ src/scala/com/twittelonr/simclustelonrs_v2/capelonsos_config/atla_proc3.yaml
  */
-object ProducerEmbeddingsFromInterestedInByFollowScoreBatchApp
-    extends ProducerEmbeddingsFromInterestedInByFollowScoreBase {
-  override def modelVersion: ModelVersion = ModelVersion.Model20m145kUpdated
+objelonct ProducelonrelonmbelonddingsFromIntelonrelonstelondInByFollowScorelonBatchApp
+    elonxtelonnds ProducelonrelonmbelonddingsFromIntelonrelonstelondInByFollowScorelonBaselon {
+  ovelonrridelon delonf modelonlVelonrsion: ModelonlVelonrsion = ModelonlVelonrsion.Modelonl20m145kUpdatelond
 
-  override def getInterestedInFn: (
-    DateRange,
-    TimeZone
-  ) => TypedPipe[(UserId, ClustersUserIsInterestedIn)] =
-    InterestedInSources.simClustersInterestedInUpdatedSource
+  ovelonrridelon delonf gelontIntelonrelonstelondInFn: (
+    DatelonRangelon,
+    TimelonZonelon
+  ) => TypelondPipelon[(UselonrId, ClustelonrsUselonrIsIntelonrelonstelondIn)] =
+    IntelonrelonstelondInSourcelons.simClustelonrsIntelonrelonstelondInUpdatelondSourcelon
 
-  override val firstTime: RichDate = RichDate("2019-09-10")
+  ovelonrridelon val firstTimelon: RichDatelon = RichDatelon("2019-09-10")
 
-  override val batchIncrement: Duration = Days(7)
+  ovelonrridelon val batchIncrelonmelonnt: Duration = Days(7)
 
-  override def producerTopKSimclusterEmbeddingsByFollowScoreDataset: KeyValDALDataset[
-    KeyVal[Long, TopSimClustersWithScore]
+  ovelonrridelon delonf producelonrTopKSimclustelonrelonmbelonddingsByFollowScorelonDataselont: KelonyValDALDataselont[
+    KelonyVal[Long, TopSimClustelonrsWithScorelon]
   ] =
-    ProducerTopKSimclusterEmbeddingsByFollowScoreUpdatedScalaDataset
+    ProducelonrTopKSimclustelonrelonmbelonddingsByFollowScorelonUpdatelondScalaDataselont
 
-  override def simclusterEmbeddingTopKProducersByFollowScoreDataset: KeyValDALDataset[
-    KeyVal[PersistedFullClusterId, TopProducersWithScore]
+  ovelonrridelon delonf simclustelonrelonmbelonddingTopKProducelonrsByFollowScorelonDataselont: KelonyValDALDataselont[
+    KelonyVal[PelonrsistelondFullClustelonrId, TopProducelonrsWithScorelon]
   ] =
-    SimclusterEmbeddingTopKProducersByFollowScoreUpdatedScalaDataset
+    SimclustelonrelonmbelonddingTopKProducelonrsByFollowScorelonUpdatelondScalaDataselont
 }
 
 /**
-capesospy-v2 update --build_locally --start_cron \
- --start_cron producer_embeddings_from_interested_in_by_follow_score_2020 \
- src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
+capelonsospy-v2 updatelon --build_locally --start_cron \
+ --start_cron producelonr_elonmbelonddings_from_intelonrelonstelond_in_by_follow_scorelon_2020 \
+ src/scala/com/twittelonr/simclustelonrs_v2/capelonsos_config/atla_proc3.yaml
  */
-object ProducerEmbeddingsFromInterestedInByFollowScore2020BatchApp
-    extends ProducerEmbeddingsFromInterestedInByFollowScoreBase {
-  override def modelVersion: ModelVersion = ModelVersion.Model20m145k2020
+objelonct ProducelonrelonmbelonddingsFromIntelonrelonstelondInByFollowScorelon2020BatchApp
+    elonxtelonnds ProducelonrelonmbelonddingsFromIntelonrelonstelondInByFollowScorelonBaselon {
+  ovelonrridelon delonf modelonlVelonrsion: ModelonlVelonrsion = ModelonlVelonrsion.Modelonl20m145k2020
 
-  override def getInterestedInFn: (
-    DateRange,
-    TimeZone
-  ) => TypedPipe[(UserId, ClustersUserIsInterestedIn)] =
-    InterestedInSources.simClustersInterestedIn2020Source
+  ovelonrridelon delonf gelontIntelonrelonstelondInFn: (
+    DatelonRangelon,
+    TimelonZonelon
+  ) => TypelondPipelon[(UselonrId, ClustelonrsUselonrIsIntelonrelonstelondIn)] =
+    IntelonrelonstelondInSourcelons.simClustelonrsIntelonrelonstelondIn2020Sourcelon
 
-  override val firstTime: RichDate = RichDate("2021-03-01")
+  ovelonrridelon val firstTimelon: RichDatelon = RichDatelon("2021-03-01")
 
-  override val batchIncrement: Duration = Days(7)
+  ovelonrridelon val batchIncrelonmelonnt: Duration = Days(7)
 
-  override def producerTopKSimclusterEmbeddingsByFollowScoreDataset: KeyValDALDataset[
-    KeyVal[Long, TopSimClustersWithScore]
+  ovelonrridelon delonf producelonrTopKSimclustelonrelonmbelonddingsByFollowScorelonDataselont: KelonyValDALDataselont[
+    KelonyVal[Long, TopSimClustelonrsWithScorelon]
   ] =
-    ProducerTopKSimclusterEmbeddingsByFollowScore2020ScalaDataset
+    ProducelonrTopKSimclustelonrelonmbelonddingsByFollowScorelon2020ScalaDataselont
 
-  override def simclusterEmbeddingTopKProducersByFollowScoreDataset: KeyValDALDataset[
-    KeyVal[PersistedFullClusterId, TopProducersWithScore]
+  ovelonrridelon delonf simclustelonrelonmbelonddingTopKProducelonrsByFollowScorelonDataselont: KelonyValDALDataselont[
+    KelonyVal[PelonrsistelondFullClustelonrId, TopProducelonrsWithScorelon]
   ] =
-    SimclusterEmbeddingTopKProducersByFollowScore2020ScalaDataset
+    SimclustelonrelonmbelonddingTopKProducelonrsByFollowScorelon2020ScalaDataselont
 }
 
 /**
-capesospy-v2 update --build_locally --start_cron \
- --start_cron producer_embeddings_from_interested_in_by_follow_score_dec11 \
- src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
+capelonsospy-v2 updatelon --build_locally --start_cron \
+ --start_cron producelonr_elonmbelonddings_from_intelonrelonstelond_in_by_follow_scorelon_delonc11 \
+ src/scala/com/twittelonr/simclustelonrs_v2/capelonsos_config/atla_proc3.yaml
  */
-object ProducerEmbeddingsFromInterestedInByFollowScoreDec11BatchApp
-    extends ProducerEmbeddingsFromInterestedInByFollowScoreBase {
-  override def modelVersion: ModelVersion = ModelVersion.Model20m145kDec11
+objelonct ProducelonrelonmbelonddingsFromIntelonrelonstelondInByFollowScorelonDelonc11BatchApp
+    elonxtelonnds ProducelonrelonmbelonddingsFromIntelonrelonstelondInByFollowScorelonBaselon {
+  ovelonrridelon delonf modelonlVelonrsion: ModelonlVelonrsion = ModelonlVelonrsion.Modelonl20m145kDelonc11
 
-  override def getInterestedInFn: (
-    DateRange,
-    TimeZone
-  ) => TypedPipe[(UserId, ClustersUserIsInterestedIn)] =
-    InterestedInSources.simClustersInterestedInDec11Source
+  ovelonrridelon delonf gelontIntelonrelonstelondInFn: (
+    DatelonRangelon,
+    TimelonZonelon
+  ) => TypelondPipelon[(UselonrId, ClustelonrsUselonrIsIntelonrelonstelondIn)] =
+    IntelonrelonstelondInSourcelons.simClustelonrsIntelonrelonstelondInDelonc11Sourcelon
 
-  override val firstTime: RichDate = RichDate("2019-11-18")
+  ovelonrridelon val firstTimelon: RichDatelon = RichDatelon("2019-11-18")
 
-  override val batchIncrement: Duration = Days(7)
+  ovelonrridelon val batchIncrelonmelonnt: Duration = Days(7)
 
-  override def producerTopKSimclusterEmbeddingsByFollowScoreDataset: KeyValDALDataset[
-    KeyVal[Long, TopSimClustersWithScore]
+  ovelonrridelon delonf producelonrTopKSimclustelonrelonmbelonddingsByFollowScorelonDataselont: KelonyValDALDataselont[
+    KelonyVal[Long, TopSimClustelonrsWithScorelon]
   ] =
-    ProducerTopKSimclusterEmbeddingsByFollowScoreScalaDataset
+    ProducelonrTopKSimclustelonrelonmbelonddingsByFollowScorelonScalaDataselont
 
-  override def simclusterEmbeddingTopKProducersByFollowScoreDataset: KeyValDALDataset[
-    KeyVal[PersistedFullClusterId, TopProducersWithScore]
+  ovelonrridelon delonf simclustelonrelonmbelonddingTopKProducelonrsByFollowScorelonDataselont: KelonyValDALDataselont[
+    KelonyVal[PelonrsistelondFullClustelonrId, TopProducelonrsWithScorelon]
   ] =
-    SimclusterEmbeddingTopKProducersByFollowScoreScalaDataset
+    SimclustelonrelonmbelonddingTopKProducelonrsByFollowScorelonScalaDataselont
 }
 
 /**
- * Adhoc job to calculate producer's simcluster embeddings, which essentially assigns interestedIn
- * SimClusters to each producer, regardless of whether the producer has a knownFor assignment.
+ * Adhoc job to calculatelon producelonr's simclustelonr elonmbelonddings, which elonsselonntially assigns intelonrelonstelondIn
+ * SimClustelonrs to elonach producelonr, relongardlelonss of whelonthelonr thelon producelonr has a knownFor assignmelonnt.
  *
-$ ./bazel bundle src/scala/com/twitter/simclusters_v2/scalding/embedding:producer_embeddings_from_interested_in-adhoc
+$ ./bazelonl bundlelon src/scala/com/twittelonr/simclustelonrs_v2/scalding/elonmbelondding:producelonr_elonmbelonddings_from_intelonrelonstelond_in-adhoc
 
- $ scalding remote run \
- --main-class com.twitter.simclusters_v2.scalding.embedding.ProducerEmbeddingsFromInterestedInAdhocApp \
- --target src/scala/com/twitter/simclusters_v2/scalding/embedding:producer_embeddings_from_interested_in-adhoc \
- --user cassowary --cluster bluebird-qus1 \
- --keytab /var/lib/tss/keys/fluffy/keytabs/client/cassowary.keytab \
- --principal service_acoount@TWITTER.BIZ \
- -- --date 2020-08-25 --model_version 20M_145K_updated \
- --outputDir /gcs/user/cassowary/adhoc/producerEmbeddings/
+ $ scalding relonmotelon run \
+ --main-class com.twittelonr.simclustelonrs_v2.scalding.elonmbelondding.ProducelonrelonmbelonddingsFromIntelonrelonstelondInAdhocApp \
+ --targelont src/scala/com/twittelonr/simclustelonrs_v2/scalding/elonmbelondding:producelonr_elonmbelonddings_from_intelonrelonstelond_in-adhoc \
+ --uselonr cassowary --clustelonr bluelonbird-qus1 \
+ --kelonytab /var/lib/tss/kelonys/fluffy/kelonytabs/clielonnt/cassowary.kelonytab \
+ --principal selonrvicelon_acoount@TWITTelonR.BIZ \
+ -- --datelon 2020-08-25 --modelonl_velonrsion 20M_145K_updatelond \
+ --outputDir /gcs/uselonr/cassowary/adhoc/producelonrelonmbelonddings/
 
  */
-object ProducerEmbeddingsFromInterestedInAdhocApp extends AdhocExecutionApp {
+objelonct ProducelonrelonmbelonddingsFromIntelonrelonstelondInAdhocApp elonxtelonnds AdhocelonxeloncutionApp {
 
-  import ProducerEmbeddingsFromInterestedIn._
+  import ProducelonrelonmbelonddingsFromIntelonrelonstelondIn._
 
-  private val numReducersForMatrixMultiplication = 12000
+  privatelon val numRelonducelonrsForMatrixMultiplication = 12000
 
   /**
-   * Calculate the embedding and writes the results keyed by producers and clusters separately into
+   * Calculatelon thelon elonmbelondding and writelons thelon relonsults kelonyelond by producelonrs and clustelonrs selonparatelonly into
    * individual locations
    */
-  private def runAdhocByScore(
-    interestedInClusters: TypedPipe[(Long, ClustersUserIsInterestedIn)],
-    userUserNormalGraph: TypedPipe[UserAndNeighbors],
-    userNormsAndCounts: TypedPipe[NormsAndCounts],
-    keyedByProducerSinkPath: String,
-    keyedByClusterSinkPath: String,
-    userToProducerScoringFn: NeighborWithWeights => Double,
-    userToClusterScoringFn: UserToInterestedInClusterScores => Double,
-    userFilter: NormsAndCounts => Boolean,
-    modelVersion: ModelVersion
+  privatelon delonf runAdhocByScorelon(
+    intelonrelonstelondInClustelonrs: TypelondPipelon[(Long, ClustelonrsUselonrIsIntelonrelonstelondIn)],
+    uselonrUselonrNormalGraph: TypelondPipelon[UselonrAndNelonighbors],
+    uselonrNormsAndCounts: TypelondPipelon[NormsAndCounts],
+    kelonyelondByProducelonrSinkPath: String,
+    kelonyelondByClustelonrSinkPath: String,
+    uselonrToProducelonrScoringFn: NelonighborWithWelonights => Doublelon,
+    uselonrToClustelonrScoringFn: UselonrToIntelonrelonstelondInClustelonrScorelons => Doublelon,
+    uselonrFiltelonr: NormsAndCounts => Boolelonan,
+    modelonlVelonrsion: ModelonlVelonrsion
   )(
-    implicit uniqueID: UniqueID
-  ): Execution[Unit] = {
+    implicit uniquelonID: UniquelonID
+  ): elonxeloncution[Unit] = {
 
-    val producerClusterEmbedding = getProducerClusterEmbedding(
-      interestedInClusters,
-      userUserNormalGraph,
-      userNormsAndCounts,
-      userToProducerScoringFn,
-      userToClusterScoringFn,
-      userFilter,
-      numReducersForMatrixMultiplication,
-      modelVersion,
-      cosineSimilarityThreshold
-    ).forceToDisk
+    val producelonrClustelonrelonmbelondding = gelontProducelonrClustelonrelonmbelondding(
+      intelonrelonstelondInClustelonrs,
+      uselonrUselonrNormalGraph,
+      uselonrNormsAndCounts,
+      uselonrToProducelonrScoringFn,
+      uselonrToClustelonrScoringFn,
+      uselonrFiltelonr,
+      numRelonducelonrsForMatrixMultiplication,
+      modelonlVelonrsion,
+      cosinelonSimilarityThrelonshold
+    ).forcelonToDisk
 
-    val keyByProducerExec =
-      toSimClusterEmbedding(producerClusterEmbedding, topKClustersToKeep, modelVersion)
-        .writeExecution(
-          AdhocKeyValSources.topProducerToClusterEmbeddingsSource(keyedByProducerSinkPath))
+    val kelonyByProducelonrelonxelonc =
+      toSimClustelonrelonmbelondding(producelonrClustelonrelonmbelondding, topKClustelonrsToKelonelonp, modelonlVelonrsion)
+        .writelonelonxeloncution(
+          AdhocKelonyValSourcelons.topProducelonrToClustelonrelonmbelonddingsSourcelon(kelonyelondByProducelonrSinkPath))
 
-    val keyByClusterExec =
-      fromSimClusterEmbedding(producerClusterEmbedding, topKUsersToKeep, modelVersion)
-        .map { case (clusterId, topProducers) => (clusterId, topProducersToThrift(topProducers)) }
-        .writeExecution(
-          AdhocKeyValSources.topClusterEmbeddingsToProducerSource(keyedByClusterSinkPath))
+    val kelonyByClustelonrelonxelonc =
+      fromSimClustelonrelonmbelondding(producelonrClustelonrelonmbelondding, topKUselonrsToKelonelonp, modelonlVelonrsion)
+        .map { caselon (clustelonrId, topProducelonrs) => (clustelonrId, topProducelonrsToThrift(topProducelonrs)) }
+        .writelonelonxeloncution(
+          AdhocKelonyValSourcelons.topClustelonrelonmbelonddingsToProducelonrSourcelon(kelonyelondByClustelonrSinkPath))
 
-    Execution.zip(keyByProducerExec, keyByClusterExec).unit
+    elonxeloncution.zip(kelonyByProducelonrelonxelonc, kelonyByClustelonrelonxelonc).unit
   }
 
-  // Calculate the embeddings using follow scores
-  private def runFollowScore(
-    interestedInClusters: TypedPipe[(Long, ClustersUserIsInterestedIn)],
-    userUserNormalGraph: TypedPipe[UserAndNeighbors],
-    userNormsAndCounts: TypedPipe[NormsAndCounts],
-    modelVersion: ModelVersion,
+  // Calculatelon thelon elonmbelonddings using follow scorelons
+  privatelon delonf runFollowScorelon(
+    intelonrelonstelondInClustelonrs: TypelondPipelon[(Long, ClustelonrsUselonrIsIntelonrelonstelondIn)],
+    uselonrUselonrNormalGraph: TypelondPipelon[UselonrAndNelonighbors],
+    uselonrNormsAndCounts: TypelondPipelon[NormsAndCounts],
+    modelonlVelonrsion: ModelonlVelonrsion,
     outputDir: String
   )(
-    implicit uniqueID: UniqueID
-  ): Execution[Unit] = {
-    val keyByClusterSinkPath = outputDir + "keyedByCluster/byFollowScore_" + modelVersion
-    val keyByProducerSinkPath = outputDir + "keyedByProducer/byFollowScore_" + modelVersion
+    implicit uniquelonID: UniquelonID
+  ): elonxeloncution[Unit] = {
+    val kelonyByClustelonrSinkPath = outputDir + "kelonyelondByClustelonr/byFollowScorelon_" + modelonlVelonrsion
+    val kelonyByProducelonrSinkPath = outputDir + "kelonyelondByProducelonr/byFollowScorelon_" + modelonlVelonrsion
 
-    runAdhocByScore(
-      interestedInClusters,
-      userUserNormalGraph,
-      userNormsAndCounts,
-      keyedByProducerSinkPath = keyByProducerSinkPath,
-      keyedByClusterSinkPath = keyByClusterSinkPath,
-      userToProducerScoringFn = userToProducerFollowScore,
-      userToClusterScoringFn = userToClusterFollowScore,
-      _.followerCount.exists(_ > minNumFollowersForProducer),
-      modelVersion
+    runAdhocByScorelon(
+      intelonrelonstelondInClustelonrs,
+      uselonrUselonrNormalGraph,
+      uselonrNormsAndCounts,
+      kelonyelondByProducelonrSinkPath = kelonyByProducelonrSinkPath,
+      kelonyelondByClustelonrSinkPath = kelonyByClustelonrSinkPath,
+      uselonrToProducelonrScoringFn = uselonrToProducelonrFollowScorelon,
+      uselonrToClustelonrScoringFn = uselonrToClustelonrFollowScorelon,
+      _.followelonrCount.elonxists(_ > minNumFollowelonrsForProducelonr),
+      modelonlVelonrsion
     )
   }
 
-  // Calculate the embeddings using fav scores
-  private def runFavScore(
-    interestedInClusters: TypedPipe[(Long, ClustersUserIsInterestedIn)],
-    userUserNormalGraph: TypedPipe[UserAndNeighbors],
-    userNormsAndCounts: TypedPipe[NormsAndCounts],
-    modelVersion: ModelVersion,
+  // Calculatelon thelon elonmbelonddings using fav scorelons
+  privatelon delonf runFavScorelon(
+    intelonrelonstelondInClustelonrs: TypelondPipelon[(Long, ClustelonrsUselonrIsIntelonrelonstelondIn)],
+    uselonrUselonrNormalGraph: TypelondPipelon[UselonrAndNelonighbors],
+    uselonrNormsAndCounts: TypelondPipelon[NormsAndCounts],
+    modelonlVelonrsion: ModelonlVelonrsion,
     outputDir: String
   )(
-    implicit uniqueID: UniqueID
-  ): Execution[Unit] = {
-    val keyByClusterSinkPath = outputDir + "keyedByCluster/byFavScore_" + modelVersion
-    val keyByProducerSinkPath = outputDir + "keyedByProducer/byFavScore_" + modelVersion
+    implicit uniquelonID: UniquelonID
+  ): elonxeloncution[Unit] = {
+    val kelonyByClustelonrSinkPath = outputDir + "kelonyelondByClustelonr/byFavScorelon_" + modelonlVelonrsion
+    val kelonyByProducelonrSinkPath = outputDir + "kelonyelondByProducelonr/byFavScorelon_" + modelonlVelonrsion
 
-    runAdhocByScore(
-      interestedInClusters,
-      userUserNormalGraph,
-      userNormsAndCounts,
-      keyedByProducerSinkPath = keyByProducerSinkPath,
-      keyedByClusterSinkPath = keyByClusterSinkPath,
-      userToProducerScoringFn = userToProducerFavScore,
-      userToClusterScoringFn = userToClusterFavScore,
-      _.faverCount.exists(_ > minNumFaversForProducer),
-      modelVersion
+    runAdhocByScorelon(
+      intelonrelonstelondInClustelonrs,
+      uselonrUselonrNormalGraph,
+      uselonrNormsAndCounts,
+      kelonyelondByProducelonrSinkPath = kelonyByProducelonrSinkPath,
+      kelonyelondByClustelonrSinkPath = kelonyByClustelonrSinkPath,
+      uselonrToProducelonrScoringFn = uselonrToProducelonrFavScorelon,
+      uselonrToClustelonrScoringFn = uselonrToClustelonrFavScorelon,
+      _.favelonrCount.elonxists(_ > minNumFavelonrsForProducelonr),
+      modelonlVelonrsion
     )
   }
 
-  override def runOnDateRange(
+  ovelonrridelon delonf runOnDatelonRangelon(
     args: Args
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon,
+    uniquelonID: UniquelonID
+  ): elonxeloncution[Unit] = {
     val outputDir = args("outputDir")
 
-    val modelVersion =
-      ModelVersions.toModelVersion(args.required("model_version"))
+    val modelonlVelonrsion =
+      ModelonlVelonrsions.toModelonlVelonrsion(args.relonquirelond("modelonl_velonrsion"))
 
-    val interestedInClusters = modelVersion match {
-      case ModelVersion.Model20m145k2020 =>
-        InterestedInSources.simClustersInterestedIn2020Source(dateRange, timeZone).forceToDisk
-      case ModelVersion.Model20m145kUpdated =>
-        InterestedInSources.simClustersInterestedInUpdatedSource(dateRange, timeZone).forceToDisk
-      case _ =>
-        InterestedInSources.simClustersInterestedInDec11Source(dateRange, timeZone).forceToDisk
+    val intelonrelonstelondInClustelonrs = modelonlVelonrsion match {
+      caselon ModelonlVelonrsion.Modelonl20m145k2020 =>
+        IntelonrelonstelondInSourcelons.simClustelonrsIntelonrelonstelondIn2020Sourcelon(datelonRangelon, timelonZonelon).forcelonToDisk
+      caselon ModelonlVelonrsion.Modelonl20m145kUpdatelond =>
+        IntelonrelonstelondInSourcelons.simClustelonrsIntelonrelonstelondInUpdatelondSourcelon(datelonRangelon, timelonZonelon).forcelonToDisk
+      caselon _ =>
+        IntelonrelonstelondInSourcelons.simClustelonrsIntelonrelonstelondInDelonc11Sourcelon(datelonRangelon, timelonZonelon).forcelonToDisk
     }
 
-    Execution
+    elonxeloncution
       .zip(
-        runFavScore(
-          interestedInClusters,
-          DataSources.userUserNormalizedGraphSource,
-          DataSources.userNormsAndCounts,
-          modelVersion,
+        runFavScorelon(
+          intelonrelonstelondInClustelonrs,
+          DataSourcelons.uselonrUselonrNormalizelondGraphSourcelon,
+          DataSourcelons.uselonrNormsAndCounts,
+          modelonlVelonrsion,
           outputDir
         ),
-        runFollowScore(
-          interestedInClusters,
-          DataSources.userUserNormalizedGraphSource,
-          DataSources.userNormsAndCounts,
-          modelVersion,
+        runFollowScorelon(
+          intelonrelonstelondInClustelonrs,
+          DataSourcelons.uselonrUselonrNormalizelondGraphSourcelon,
+          DataSourcelons.uselonrNormsAndCounts,
+          modelonlVelonrsion,
           outputDir
         )
       ).unit
@@ -532,170 +532,170 @@ object ProducerEmbeddingsFromInterestedInAdhocApp extends AdhocExecutionApp {
 }
 
 /**
- * Computes the producer's interestedIn cluster embedding. i.e. If a tweet author (producer) is not
- * associated with a KnownFor cluster, do a cross-product between
- * [user, interestedIn] and [user, producer] to find the similarity matrix [interestedIn, producer].
+ * Computelons thelon producelonr's intelonrelonstelondIn clustelonr elonmbelondding. i.elon. If a twelonelont author (producelonr) is not
+ * associatelond with a KnownFor clustelonr, do a cross-product belontwelonelonn
+ * [uselonr, intelonrelonstelondIn] and [uselonr, producelonr] to find thelon similarity matrix [intelonrelonstelondIn, producelonr].
  */
-object ProducerEmbeddingsFromInterestedIn {
-  val minNumFollowersForProducer: Int = 100
-  val minNumFaversForProducer: Int = 100
-  val topKUsersToKeep: Int = 300
-  val topKClustersToKeep: Int = 60
-  val cosineSimilarityThreshold: Double = 0.01
+objelonct ProducelonrelonmbelonddingsFromIntelonrelonstelondIn {
+  val minNumFollowelonrsForProducelonr: Int = 100
+  val minNumFavelonrsForProducelonr: Int = 100
+  val topKUselonrsToKelonelonp: Int = 300
+  val topKClustelonrsToKelonelonp: Int = 60
+  val cosinelonSimilarityThrelonshold: Doublelon = 0.01
 
-  type ClusterId = Int
+  typelon ClustelonrId = Int
 
-  def topProducersToThrift(producersWithScore: Seq[(UserId, Double)]): TopProducersWithScore = {
-    val thrift = producersWithScore.map { producer =>
-      TopProducerWithScore(producer._1, producer._2)
+  delonf topProducelonrsToThrift(producelonrsWithScorelon: Selonq[(UselonrId, Doublelon)]): TopProducelonrsWithScorelon = {
+    val thrift = producelonrsWithScorelon.map { producelonr =>
+      TopProducelonrWithScorelon(producelonr._1, producelonr._2)
     }
-    TopProducersWithScore(thrift)
+    TopProducelonrsWithScorelon(thrift)
   }
 
-  def userToProducerFavScore(neighbor: NeighborWithWeights): Double = {
-    neighbor.favScoreHalfLife100DaysNormalizedByNeighborFaversL2.getOrElse(0.0)
+  delonf uselonrToProducelonrFavScorelon(nelonighbor: NelonighborWithWelonights): Doublelon = {
+    nelonighbor.favScorelonHalfLifelon100DaysNormalizelondByNelonighborFavelonrsL2.gelontOrelonlselon(0.0)
   }
 
-  def userToProducerFollowScore(neighbor: NeighborWithWeights): Double = {
-    neighbor.followScoreNormalizedByNeighborFollowersL2.getOrElse(0.0)
+  delonf uselonrToProducelonrFollowScorelon(nelonighbor: NelonighborWithWelonights): Doublelon = {
+    nelonighbor.followScorelonNormalizelondByNelonighborFollowelonrsL2.gelontOrelonlselon(0.0)
   }
 
-  def userToClusterFavScore(clusterScore: UserToInterestedInClusterScores): Double = {
-    clusterScore.favScoreClusterNormalizedOnly.getOrElse(0.0)
+  delonf uselonrToClustelonrFavScorelon(clustelonrScorelon: UselonrToIntelonrelonstelondInClustelonrScorelons): Doublelon = {
+    clustelonrScorelon.favScorelonClustelonrNormalizelondOnly.gelontOrelonlselon(0.0)
   }
 
-  def userToClusterFollowScore(clusterScore: UserToInterestedInClusterScores): Double = {
-    clusterScore.followScoreClusterNormalizedOnly.getOrElse(0.0)
+  delonf uselonrToClustelonrFollowScorelon(clustelonrScorelon: UselonrToIntelonrelonstelondInClustelonrScorelons): Doublelon = {
+    clustelonrScorelon.followScorelonClustelonrNormalizelondOnly.gelontOrelonlselon(0.0)
   }
 
-  def getUserSimClustersMatrix(
-    simClustersSource: TypedPipe[(UserId, ClustersUserIsInterestedIn)],
-    extractScore: UserToInterestedInClusterScores => Double,
-    modelVersion: ModelVersion
-  ): TypedPipe[(UserId, Seq[(Int, Double)])] = {
-    simClustersSource.collect {
-      case (userId, clusters)
-          if ModelVersions.toModelVersion(clusters.knownForModelVersion).equals(modelVersion) =>
-        userId -> clusters.clusterIdToScores
+  delonf gelontUselonrSimClustelonrsMatrix(
+    simClustelonrsSourcelon: TypelondPipelon[(UselonrId, ClustelonrsUselonrIsIntelonrelonstelondIn)],
+    elonxtractScorelon: UselonrToIntelonrelonstelondInClustelonrScorelons => Doublelon,
+    modelonlVelonrsion: ModelonlVelonrsion
+  ): TypelondPipelon[(UselonrId, Selonq[(Int, Doublelon)])] = {
+    simClustelonrsSourcelon.collelonct {
+      caselon (uselonrId, clustelonrs)
+          if ModelonlVelonrsions.toModelonlVelonrsion(clustelonrs.knownForModelonlVelonrsion).elonquals(modelonlVelonrsion) =>
+        uselonrId -> clustelonrs.clustelonrIdToScorelons
           .map {
-            case (clusterId, clusterScores) =>
-              (clusterId, extractScore(clusterScores))
-          }.toSeq.filter(_._2 > 0)
+            caselon (clustelonrId, clustelonrScorelons) =>
+              (clustelonrId, elonxtractScorelon(clustelonrScorelons))
+          }.toSelonq.filtelonr(_._2 > 0)
     }
   }
 
   /**
-   * Given a weighted user-producer engagement history matrix, as well as a
-   * weighted user-interestedInCluster matrix, do the matrix multiplication to yield a weighted
-   * producer-cluster embedding matrix
+   * Givelonn a welonightelond uselonr-producelonr elonngagelonmelonnt history matrix, as welonll as a
+   * welonightelond uselonr-intelonrelonstelondInClustelonr matrix, do thelon matrix multiplication to yielonld a welonightelond
+   * producelonr-clustelonr elonmbelondding matrix
    */
-  def getProducerClusterEmbedding(
-    interestedInClusters: TypedPipe[(UserId, ClustersUserIsInterestedIn)],
-    userProducerEngagementGraph: TypedPipe[UserAndNeighbors],
-    userNormsAndCounts: TypedPipe[NormsAndCounts],
-    userToProducerScoringFn: NeighborWithWeights => Double,
-    userToClusterScoringFn: UserToInterestedInClusterScores => Double,
-    userFilter: NormsAndCounts => Boolean, // function to decide whether to compute embeddings for the user or not
-    numReducersForMatrixMultiplication: Int,
-    modelVersion: ModelVersion,
-    threshold: Double
+  delonf gelontProducelonrClustelonrelonmbelondding(
+    intelonrelonstelondInClustelonrs: TypelondPipelon[(UselonrId, ClustelonrsUselonrIsIntelonrelonstelondIn)],
+    uselonrProducelonrelonngagelonmelonntGraph: TypelondPipelon[UselonrAndNelonighbors],
+    uselonrNormsAndCounts: TypelondPipelon[NormsAndCounts],
+    uselonrToProducelonrScoringFn: NelonighborWithWelonights => Doublelon,
+    uselonrToClustelonrScoringFn: UselonrToIntelonrelonstelondInClustelonrScorelons => Doublelon,
+    uselonrFiltelonr: NormsAndCounts => Boolelonan, // function to deloncidelon whelonthelonr to computelon elonmbelonddings for thelon uselonr or not
+    numRelonducelonrsForMatrixMultiplication: Int,
+    modelonlVelonrsion: ModelonlVelonrsion,
+    threlonshold: Doublelon
   )(
-    implicit uid: UniqueID
-  ): TypedPipe[((ClusterId, UserId), Double)] = {
-    val userSimClustersMatrix = getUserSimClustersMatrix(
-      interestedInClusters,
-      userToClusterScoringFn,
-      modelVersion
+    implicit uid: UniquelonID
+  ): TypelondPipelon[((ClustelonrId, UselonrId), Doublelon)] = {
+    val uselonrSimClustelonrsMatrix = gelontUselonrSimClustelonrsMatrix(
+      intelonrelonstelondInClustelonrs,
+      uselonrToClustelonrScoringFn,
+      modelonlVelonrsion
     )
 
-    val userUserNormalizedGraph = getFilteredUserUserNormalizedGraph(
-      userProducerEngagementGraph,
-      userNormsAndCounts,
-      userToProducerScoringFn,
-      userFilter
+    val uselonrUselonrNormalizelondGraph = gelontFiltelonrelondUselonrUselonrNormalizelondGraph(
+      uselonrProducelonrelonngagelonmelonntGraph,
+      uselonrNormsAndCounts,
+      uselonrToProducelonrScoringFn,
+      uselonrFiltelonr
     )
 
-    SimClustersEmbeddingJob
-      .legacyMultiplyMatrices(
-        userUserNormalizedGraph,
-        userSimClustersMatrix,
-        numReducersForMatrixMultiplication
+    SimClustelonrselonmbelonddingJob
+      .lelongacyMultiplyMatricelons(
+        uselonrUselonrNormalizelondGraph,
+        uselonrSimClustelonrsMatrix,
+        numRelonducelonrsForMatrixMultiplication
       )
-      .filter(_._2 >= threshold)
+      .filtelonr(_._2 >= threlonshold)
   }
 
-  def getFilteredUserUserNormalizedGraph(
-    userProducerEngagementGraph: TypedPipe[UserAndNeighbors],
-    userNormsAndCounts: TypedPipe[NormsAndCounts],
-    userToProducerScoringFn: NeighborWithWeights => Double,
-    userFilter: NormsAndCounts => Boolean
+  delonf gelontFiltelonrelondUselonrUselonrNormalizelondGraph(
+    uselonrProducelonrelonngagelonmelonntGraph: TypelondPipelon[UselonrAndNelonighbors],
+    uselonrNormsAndCounts: TypelondPipelon[NormsAndCounts],
+    uselonrToProducelonrScoringFn: NelonighborWithWelonights => Doublelon,
+    uselonrFiltelonr: NormsAndCounts => Boolelonan
   )(
-    implicit uid: UniqueID
-  ): TypedPipe[(UserId, (UserId, Double))] = {
-    val numUsersCount = Stat("num_users_with_engagements")
-    val userUserFilteredEdgeCount = Stat("num_filtered_user_user_engagements")
-    val validUsersCount = Stat("num_valid_users")
+    implicit uid: UniquelonID
+  ): TypelondPipelon[(UselonrId, (UselonrId, Doublelon))] = {
+    val numUselonrsCount = Stat("num_uselonrs_with_elonngagelonmelonnts")
+    val uselonrUselonrFiltelonrelondelondgelonCount = Stat("num_filtelonrelond_uselonr_uselonr_elonngagelonmelonnts")
+    val validUselonrsCount = Stat("num_valid_uselonrs")
 
-    val validUsers = userNormsAndCounts.collect {
-      case user if userFilter(user) =>
-        validUsersCount.inc()
-        user.userId
+    val validUselonrs = uselonrNormsAndCounts.collelonct {
+      caselon uselonr if uselonrFiltelonr(uselonr) =>
+        validUselonrsCount.inc()
+        uselonr.uselonrId
     }
 
-    userProducerEngagementGraph
-      .flatMap { userAndNeighbors =>
-        numUsersCount.inc()
-        userAndNeighbors.neighbors
-          .map { neighbor =>
-            userUserFilteredEdgeCount.inc()
-            (neighbor.neighborId, (userAndNeighbors.userId, userToProducerScoringFn(neighbor)))
+    uselonrProducelonrelonngagelonmelonntGraph
+      .flatMap { uselonrAndNelonighbors =>
+        numUselonrsCount.inc()
+        uselonrAndNelonighbors.nelonighbors
+          .map { nelonighbor =>
+            uselonrUselonrFiltelonrelondelondgelonCount.inc()
+            (nelonighbor.nelonighborId, (uselonrAndNelonighbors.uselonrId, uselonrToProducelonrScoringFn(nelonighbor)))
           }
-          .filter(_._2._2 > 0.0)
+          .filtelonr(_._2._2 > 0.0)
       }
-      .join(validUsers.asKeys)
+      .join(validUselonrs.asKelonys)
       .map {
-        case (neighborId, ((userId, score), _)) =>
-          (userId, (neighborId, score))
+        caselon (nelonighborId, ((uselonrId, scorelon), _)) =>
+          (uselonrId, (nelonighborId, scorelon))
       }
   }
 
-  def fromSimClusterEmbedding[T, E](
-    resultMatrix: TypedPipe[((ClusterId, T), Double)],
+  delonf fromSimClustelonrelonmbelondding[T, elon](
+    relonsultMatrix: TypelondPipelon[((ClustelonrId, T), Doublelon)],
     topK: Int,
-    modelVersion: ModelVersion
-  ): TypedPipe[(PersistedFullClusterId, Seq[(T, Double)])] = {
-    resultMatrix
+    modelonlVelonrsion: ModelonlVelonrsion
+  ): TypelondPipelon[(PelonrsistelondFullClustelonrId, Selonq[(T, Doublelon)])] = {
+    relonsultMatrix
       .map {
-        case ((clusterId, inputId), score) => (clusterId, (inputId, score))
+        caselon ((clustelonrId, inputId), scorelon) => (clustelonrId, (inputId, scorelon))
       }
       .group
-      .sortedReverseTake(topK)(Ordering.by(_._2))
+      .sortelondRelonvelonrselonTakelon(topK)(Ordelonring.by(_._2))
       .map {
-        case (clusterId, topEntitiesWithScore) =>
-          PersistedFullClusterId(modelVersion, clusterId) -> topEntitiesWithScore
+        caselon (clustelonrId, topelonntitielonsWithScorelon) =>
+          PelonrsistelondFullClustelonrId(modelonlVelonrsion, clustelonrId) -> topelonntitielonsWithScorelon
       }
   }
 
-  def toSimClusterEmbedding[T](
-    resultMatrix: TypedPipe[((ClusterId, T), Double)],
+  delonf toSimClustelonrelonmbelondding[T](
+    relonsultMatrix: TypelondPipelon[((ClustelonrId, T), Doublelon)],
     topK: Int,
-    modelVersion: ModelVersion
+    modelonlVelonrsion: ModelonlVelonrsion
   )(
-    implicit ordering: Ordering[T]
-  ): TypedPipe[(T, TopSimClustersWithScore)] = {
-    resultMatrix
+    implicit ordelonring: Ordelonring[T]
+  ): TypelondPipelon[(T, TopSimClustelonrsWithScorelon)] = {
+    relonsultMatrix
       .map {
-        case ((clusterId, inputId), score) => (inputId, (clusterId, score))
+        caselon ((clustelonrId, inputId), scorelon) => (inputId, (clustelonrId, scorelon))
       }
       .group
-      //.withReducers(3000) // uncomment for producer-simclusters job
-      .sortedReverseTake(topK)(Ordering.by(_._2))
+      //.withRelonducelonrs(3000) // uncommelonnt for producelonr-simclustelonrs job
+      .sortelondRelonvelonrselonTakelon(topK)(Ordelonring.by(_._2))
       .map {
-        case (inputId, topSimClustersWithScore) =>
-          val topSimClusters = topSimClustersWithScore.map {
-            case (clusterId, score) => SimClusterWithScore(clusterId, score)
+        caselon (inputId, topSimClustelonrsWithScorelon) =>
+          val topSimClustelonrs = topSimClustelonrsWithScorelon.map {
+            caselon (clustelonrId, scorelon) => SimClustelonrWithScorelon(clustelonrId, scorelon)
           }
-          inputId -> TopSimClustersWithScore(topSimClusters, modelVersion)
+          inputId -> TopSimClustelonrsWithScorelon(topSimClustelonrs, modelonlVelonrsion)
       }
   }
 }

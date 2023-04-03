@@ -1,18 +1,18 @@
-package com.twitter.follow_recommendations.service.exceptions
+packagelon com.twittelonr.follow_reloncommelonndations.selonrvicelon.elonxcelonptions
 
-import com.twitter.finatra.thrift.exceptions.ExceptionMapper
-import com.twitter.inject.Logging
-import com.twitter.util.Future
-import javax.inject.Singleton
+import com.twittelonr.finatra.thrift.elonxcelonptions.elonxcelonptionMappelonr
+import com.twittelonr.injelonct.Logging
+import com.twittelonr.util.Futurelon
+import javax.injelonct.Singlelonton
 
-@Singleton
-class UnknownLoggingExceptionMapper extends ExceptionMapper[Exception, Throwable] with Logging {
-  def handleException(throwable: Exception): Future[Throwable] = {
-    error(
-      s"Unmapped Exception: ${throwable.getMessage} - ${throwable.getStackTrace.mkString(", \n\t")}",
-      throwable
+@Singlelonton
+class UnknownLoggingelonxcelonptionMappelonr elonxtelonnds elonxcelonptionMappelonr[elonxcelonption, Throwablelon] with Logging {
+  delonf handlelonelonxcelonption(throwablelon: elonxcelonption): Futurelon[Throwablelon] = {
+    elonrror(
+      s"Unmappelond elonxcelonption: ${throwablelon.gelontMelonssagelon} - ${throwablelon.gelontStackTracelon.mkString(", \n\t")}",
+      throwablelon
     )
 
-    Future.exception(throwable)
+    Futurelon.elonxcelonption(throwablelon)
   }
 }

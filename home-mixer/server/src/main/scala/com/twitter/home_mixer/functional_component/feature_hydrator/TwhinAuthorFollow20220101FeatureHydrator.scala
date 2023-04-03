@@ -1,96 +1,96 @@
-package com.twitter.home_mixer.functional_component.feature_hydrator
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.home_mixer.functional_component.feature_hydrator.adapters.twhin_embeddings.TwhinAuthorFollowEmbeddingsAdapter
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.TwhinAuthorFollow20200101FeatureRepository
-import com.twitter.home_mixer.util.ObservedKeyValueResultHandler
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.{thriftscala => ml}
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure
-import com.twitter.product_mixer.core.feature.datarecord.DataRecordInAFeature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BulkCandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.servo.repository.KeyValueRepository
-import com.twitter.servo.repository.KeyValueResult
-import com.twitter.stitch.Stitch
-import com.twitter.util.Future
-import com.twitter.util.Try
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator.adaptelonrs.twhin_elonmbelonddings.TwhinAuthorFollowelonmbelonddingsAdaptelonr
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.AuthorIdFelonaturelon
+import com.twittelonr.homelon_mixelonr.param.HomelonMixelonrInjelonctionNamelons.TwhinAuthorFollow20200101FelonaturelonRelonpository
+import com.twittelonr.homelon_mixelonr.util.ObselonrvelondKelonyValuelonRelonsultHandlelonr
+import com.twittelonr.ml.api.DataReloncord
+import com.twittelonr.ml.api.{thriftscala => ml}
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.TwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.FelonaturelonWithDelonfaultOnFailurelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.datareloncord.DataReloncordInAFelonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMapBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator.BulkCandidatelonFelonaturelonHydrator
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.FelonaturelonHydratorIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.selonrvo.relonpository.KelonyValuelonRelonpository
+import com.twittelonr.selonrvo.relonpository.KelonyValuelonRelonsult
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.util.Futurelon
+import com.twittelonr.util.Try
 
-import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Singleton
-import scala.collection.JavaConverters._
+import javax.injelonct.Injelonct
+import javax.injelonct.Namelond
+import javax.injelonct.Singlelonton
+import scala.collelonction.JavaConvelonrtelonrs._
 
-object TwhinAuthorFollow20220101Feature
-    extends DataRecordInAFeature[TweetCandidate]
-    with FeatureWithDefaultOnFailure[TweetCandidate, DataRecord] {
-  override def defaultValue: DataRecord = new DataRecord()
+objelonct TwhinAuthorFollow20220101Felonaturelon
+    elonxtelonnds DataReloncordInAFelonaturelon[TwelonelontCandidatelon]
+    with FelonaturelonWithDelonfaultOnFailurelon[TwelonelontCandidatelon, DataReloncord] {
+  ovelonrridelon delonf delonfaultValuelon: DataReloncord = nelonw DataReloncord()
 }
 
-@Singleton
-class TwhinAuthorFollow20220101FeatureHydrator @Inject() (
-  @Named(TwhinAuthorFollow20200101FeatureRepository)
-  client: KeyValueRepository[Seq[Long], Long, ml.Embedding],
-  override val statsReceiver: StatsReceiver)
-    extends BulkCandidateFeatureHydrator[PipelineQuery, TweetCandidate]
-    with ObservedKeyValueResultHandler {
+@Singlelonton
+class TwhinAuthorFollow20220101FelonaturelonHydrator @Injelonct() (
+  @Namelond(TwhinAuthorFollow20200101FelonaturelonRelonpository)
+  clielonnt: KelonyValuelonRelonpository[Selonq[Long], Long, ml.elonmbelondding],
+  ovelonrridelon val statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds BulkCandidatelonFelonaturelonHydrator[PipelonlinelonQuelonry, TwelonelontCandidatelon]
+    with ObselonrvelondKelonyValuelonRelonsultHandlelonr {
 
-  override val identifier: FeatureHydratorIdentifier =
-    FeatureHydratorIdentifier("TwhinAuthorFollow20220101")
+  ovelonrridelon val idelonntifielonr: FelonaturelonHydratorIdelonntifielonr =
+    FelonaturelonHydratorIdelonntifielonr("TwhinAuthorFollow20220101")
 
-  override val features: Set[Feature[_, _]] = Set(TwhinAuthorFollow20220101Feature)
+  ovelonrridelon val felonaturelons: Selont[Felonaturelon[_, _]] = Selont(TwhinAuthorFollow20220101Felonaturelon)
 
-  override val statScope: String = identifier.toString
+  ovelonrridelon val statScopelon: String = idelonntifielonr.toString
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[Seq[FeatureMap]] = {
-    Stitch.callFuture {
-      val possiblyAuthorIds = extractKeys(candidates)
-      val authorIds = possiblyAuthorIds.flatten
+  ovelonrridelon delonf apply(
+    quelonry: PipelonlinelonQuelonry,
+    candidatelons: Selonq[CandidatelonWithFelonaturelons[TwelonelontCandidatelon]]
+  ): Stitch[Selonq[FelonaturelonMap]] = {
+    Stitch.callFuturelon {
+      val possiblyAuthorIds = elonxtractKelonys(candidatelons)
+      val authorIds = possiblyAuthorIds.flattelonn
 
-      val response: Future[KeyValueResult[Long, ml.Embedding]] =
-        if (authorIds.isEmpty) {
-          Future.value(KeyValueResult.empty)
-        } else {
-          client(authorIds)
+      val relonsponselon: Futurelon[KelonyValuelonRelonsult[Long, ml.elonmbelondding]] =
+        if (authorIds.iselonmpty) {
+          Futurelon.valuelon(KelonyValuelonRelonsult.elonmpty)
+        } elonlselon {
+          clielonnt(authorIds)
         }
 
-      response.map { result =>
+      relonsponselon.map { relonsult =>
         possiblyAuthorIds.map { possiblyAuthorId =>
-          val value = observedGet(key = possiblyAuthorId, keyValueResult = result)
-          val transformedValue = postTransformer(value)
+          val valuelon = obselonrvelondGelont(kelony = possiblyAuthorId, kelonyValuelonRelonsult = relonsult)
+          val transformelondValuelon = postTransformelonr(valuelon)
 
-          FeatureMapBuilder()
-            .add(TwhinAuthorFollow20220101Feature, transformedValue)
+          FelonaturelonMapBuildelonr()
+            .add(TwhinAuthorFollow20220101Felonaturelon, transformelondValuelon)
             .build()
         }
       }
     }
   }
 
-  private def postTransformer(embedding: Try[Option[ml.Embedding]]): Try[DataRecord] = {
-    embedding.map { e =>
-      TwhinAuthorFollowEmbeddingsAdapter.adaptToDataRecords(e).asScala.head
+  privatelon delonf postTransformelonr(elonmbelondding: Try[Option[ml.elonmbelondding]]): Try[DataReloncord] = {
+    elonmbelondding.map { elon =>
+      TwhinAuthorFollowelonmbelonddingsAdaptelonr.adaptToDataReloncords(elon).asScala.helonad
     }
   }
 
-  private def extractKeys(
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Seq[Option[Long]] = {
-    candidates.map { candidate =>
-      candidate.features
-        .getTry(AuthorIdFeature)
+  privatelon delonf elonxtractKelonys(
+    candidatelons: Selonq[CandidatelonWithFelonaturelons[TwelonelontCandidatelon]]
+  ): Selonq[Option[Long]] = {
+    candidatelons.map { candidatelon =>
+      candidatelon.felonaturelons
+        .gelontTry(AuthorIdFelonaturelon)
         .toOption
-        .flatten
+        .flattelonn
     }
   }
 }

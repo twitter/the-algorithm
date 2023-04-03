@@ -1,45 +1,45 @@
-package com.twitter.simclusters_v2.hdfs_sources.injections
+packagelon com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions
 
-import com.twitter.hermit.candidate.thriftscala.Candidates
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.{
-  Long2BigEndian,
+import com.twittelonr.helonrmit.candidatelon.thriftscala.Candidatelons
+import com.twittelonr.scalding_intelonrnal.multiformat.format.kelonyval.KelonyValInjelonction
+import com.twittelonr.scalding_intelonrnal.multiformat.format.kelonyval.KelonyValInjelonction.{
+  Long2Bigelonndian,
   ScalaBinaryThrift,
   ScalaCompactThrift
 }
-import com.twitter.simclusters_v2.thriftscala.{
-  PersistedFullClusterId,
-  SimClustersEmbedding,
-  SimClustersEmbeddingId,
-  TopProducersWithScore,
-  TopSimClustersWithScore
+import com.twittelonr.simclustelonrs_v2.thriftscala.{
+  PelonrsistelondFullClustelonrId,
+  SimClustelonrselonmbelondding,
+  SimClustelonrselonmbelonddingId,
+  TopProducelonrsWithScorelon,
+  TopSimClustelonrsWithScorelon
 }
 
-object ProducerEmbeddingsInjections {
-  final val ProducerTopKSimClusterEmbeddingsInjection: KeyValInjection[
+objelonct ProducelonrelonmbelonddingsInjelonctions {
+  final val ProducelonrTopKSimClustelonrelonmbelonddingsInjelonction: KelonyValInjelonction[
     Long,
-    TopSimClustersWithScore
+    TopSimClustelonrsWithScorelon
   ] =
-    KeyValInjection(
-      keyCodec = Long2BigEndian,
-      valueCodec = ScalaCompactThrift(TopSimClustersWithScore))
+    KelonyValInjelonction(
+      kelonyCodelonc = Long2Bigelonndian,
+      valuelonCodelonc = ScalaCompactThrift(TopSimClustelonrsWithScorelon))
 
-  final val SimClusterEmbeddingTopKProducersInjection: KeyValInjection[
-    PersistedFullClusterId,
-    TopProducersWithScore
+  final val SimClustelonrelonmbelonddingTopKProducelonrsInjelonction: KelonyValInjelonction[
+    PelonrsistelondFullClustelonrId,
+    TopProducelonrsWithScorelon
   ] =
-    KeyValInjection(
-      keyCodec = ScalaCompactThrift(PersistedFullClusterId),
-      valueCodec = ScalaCompactThrift(TopProducersWithScore))
+    KelonyValInjelonction(
+      kelonyCodelonc = ScalaCompactThrift(PelonrsistelondFullClustelonrId),
+      valuelonCodelonc = ScalaCompactThrift(TopProducelonrsWithScorelon))
 
-  final val SimilarUsersInjection: KeyValInjection[Long, Candidates] =
-    KeyValInjection(keyCodec = Long2BigEndian, valueCodec = ScalaCompactThrift(Candidates))
+  final val SimilarUselonrsInjelonction: KelonyValInjelonction[Long, Candidatelons] =
+    KelonyValInjelonction(kelonyCodelonc = Long2Bigelonndian, valuelonCodelonc = ScalaCompactThrift(Candidatelons))
 
-  final val ProducerSimClustersEmbeddingInjection: KeyValInjection[
-    SimClustersEmbeddingId,
-    SimClustersEmbedding
+  final val ProducelonrSimClustelonrselonmbelonddingInjelonction: KelonyValInjelonction[
+    SimClustelonrselonmbelonddingId,
+    SimClustelonrselonmbelondding
   ] =
-    KeyValInjection(
-      keyCodec = ScalaBinaryThrift(SimClustersEmbeddingId),
-      valueCodec = ScalaBinaryThrift(SimClustersEmbedding))
+    KelonyValInjelonction(
+      kelonyCodelonc = ScalaBinaryThrift(SimClustelonrselonmbelonddingId),
+      valuelonCodelonc = ScalaBinaryThrift(SimClustelonrselonmbelondding))
 }

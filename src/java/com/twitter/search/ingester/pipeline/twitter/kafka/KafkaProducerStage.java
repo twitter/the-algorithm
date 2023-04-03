@@ -1,259 +1,259 @@
-package com.twitter.search.ingester.pipeline.twitter.kafka;
+packagelon com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.twittelonr.kafka;
 
-import java.util.Collection;
+import java.util.Collelonction;
 import java.util.Map;
 
-import javax.naming.NamingException;
+import javax.naming.Namingelonxcelonption;
 
-import scala.runtime.BoxedUnit;
+import scala.runtimelon.BoxelondUnit;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Maps;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import com.googlelon.common.baselon.Prelonconditions;
+import com.googlelon.common.collelonct.Maps;
 
-import org.apache.commons.pipeline.StageException;
-import org.apache.kafka.clients.producer.ProducerRecord;
-import org.apache.kafka.clients.producer.RecordMetadata;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apachelon.commons.pipelonlinelon.Stagelonelonxcelonption;
+import org.apachelon.kafka.clielonnts.producelonr.ProducelonrReloncord;
+import org.apachelon.kafka.clielonnts.producelonr.ReloncordMelontadata;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.finatra.kafka.producers.BlockingFinagleKafkaProducer;
-import com.twitter.search.common.debug.DebugEventUtil;
-import com.twitter.search.common.debug.thriftjava.DebugEvents;
-import com.twitter.search.common.decider.DeciderUtil;
-import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
-import com.twitter.search.common.metrics.Percentile;
-import com.twitter.search.common.metrics.PercentileUtil;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.schema.thriftjava.ThriftIndexingEvent;
-import com.twitter.search.common.schema.thriftjava.ThriftIndexingEventType;
-import com.twitter.search.common.util.io.kafka.CompactThriftSerializer;
-import com.twitter.search.ingester.model.IngesterThriftVersionedEvents;
-import com.twitter.search.ingester.pipeline.twitter.TwitterBaseStage;
-import com.twitter.search.ingester.pipeline.util.PipelineStageException;
-import com.twitter.search.ingester.pipeline.wire.IngesterPartitioner;
-import com.twitter.util.Await;
-import com.twitter.util.Future;
+import com.twittelonr.finatra.kafka.producelonrs.BlockingFinaglelonKafkaProducelonr;
+import com.twittelonr.selonarch.common.delonbug.DelonbugelonvelonntUtil;
+import com.twittelonr.selonarch.common.delonbug.thriftjava.Delonbugelonvelonnts;
+import com.twittelonr.selonarch.common.deloncidelonr.DeloncidelonrUtil;
+import com.twittelonr.selonarch.common.indelonxing.thriftjava.ThriftVelonrsionelondelonvelonnts;
+import com.twittelonr.selonarch.common.melontrics.Pelonrcelonntilelon;
+import com.twittelonr.selonarch.common.melontrics.PelonrcelonntilelonUtil;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftIndelonxingelonvelonnt;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftIndelonxingelonvelonntTypelon;
+import com.twittelonr.selonarch.common.util.io.kafka.CompactThriftSelonrializelonr;
+import com.twittelonr.selonarch.ingelonstelonr.modelonl.IngelonstelonrThriftVelonrsionelondelonvelonnts;
+import com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.twittelonr.TwittelonrBaselonStagelon;
+import com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.util.PipelonlinelonStagelonelonxcelonption;
+import com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.wirelon.IngelonstelonrPartitionelonr;
+import com.twittelonr.util.Await;
+import com.twittelonr.util.Futurelon;
 
-public class KafkaProducerStage<T> extends TwitterBaseStage<T, Void> {
-  private static final Logger LOG = LoggerFactory.getLogger(KafkaProducerStage.class);
+public class KafkaProducelonrStagelon<T> elonxtelonnds TwittelonrBaselonStagelon<T, Void> {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(KafkaProducelonrStagelon.class);
 
-  private static final Logger LATE_EVENTS_LOG = LoggerFactory.getLogger(
-      KafkaProducerStage.class.getName() + ".LateEvents");
+  privatelon static final Loggelonr LATelon_elonVelonNTS_LOG = LoggelonrFactory.gelontLoggelonr(
+      KafkaProducelonrStagelon.class.gelontNamelon() + ".Latelonelonvelonnts");
 
-  private final Map<ThriftIndexingEventType, Percentile<Long>> processingLatenciesStats =
-      Maps.newEnumMap(ThriftIndexingEventType.class);
+  privatelon final Map<ThriftIndelonxingelonvelonntTypelon, Pelonrcelonntilelon<Long>> procelonssingLatelonncielonsStats =
+      Maps.nelonwelonnumMap(ThriftIndelonxingelonvelonntTypelon.class);
 
-  private String kafkaClientId;
-  private String kafkaTopicName;
-  private String kafkaClusterPath;
-  private SearchCounter sendCount;
-  private String perPartitionSendCountFormat;
-  private String deciderKey;
+  privatelon String kafkaClielonntId;
+  privatelon String kafkaTopicNamelon;
+  privatelon String kafkaClustelonrPath;
+  privatelon SelonarchCountelonr selonndCount;
+  privatelon String pelonrPartitionSelonndCountFormat;
+  privatelon String deloncidelonrKelony;
 
-  protected BlockingFinagleKafkaProducer<Long, ThriftVersionedEvents> kafkaProducer;
+  protelonctelond BlockingFinaglelonKafkaProducelonr<Long, ThriftVelonrsionelondelonvelonnts> kafkaProducelonr;
 
-  private int processingLatencyThresholdMillis = 10000;
+  privatelon int procelonssingLatelonncyThrelonsholdMillis = 10000;
 
-  public KafkaProducerStage() { }
+  public KafkaProducelonrStagelon() { }
 
-  public KafkaProducerStage(String topicName, String clientId, String clusterPath) {
-    this.kafkaTopicName = topicName;
-    this.kafkaClientId = clientId;
-    this.kafkaClusterPath = clusterPath;
+  public KafkaProducelonrStagelon(String topicNamelon, String clielonntId, String clustelonrPath) {
+    this.kafkaTopicNamelon = topicNamelon;
+    this.kafkaClielonntId = clielonntId;
+    this.kafkaClustelonrPath = clustelonrPath;
   }
 
-  @Override
-  protected void initStats() {
-    super.initStats();
-    setupCommonStats();
+  @Ovelonrridelon
+  protelonctelond void initStats() {
+    supelonr.initStats();
+    selontupCommonStats();
   }
 
-  private void setupCommonStats() {
-    sendCount = SearchCounter.export(getStageNamePrefix() + "_send_count");
-    perPartitionSendCountFormat = getStageNamePrefix() + "_partition_%d_send_count";
-    for (ThriftIndexingEventType eventType : ThriftIndexingEventType.values()) {
-      processingLatenciesStats.put(
-          eventType,
-          PercentileUtil.createPercentile(
-              getStageNamePrefix() + "_" + eventType.name().toLowerCase()
-                  + "_processing_latency_ms"));
+  privatelon void selontupCommonStats() {
+    selonndCount = SelonarchCountelonr.elonxport(gelontStagelonNamelonPrelonfix() + "_selonnd_count");
+    pelonrPartitionSelonndCountFormat = gelontStagelonNamelonPrelonfix() + "_partition_%d_selonnd_count";
+    for (ThriftIndelonxingelonvelonntTypelon elonvelonntTypelon : ThriftIndelonxingelonvelonntTypelon.valuelons()) {
+      procelonssingLatelonncielonsStats.put(
+          elonvelonntTypelon,
+          PelonrcelonntilelonUtil.crelonatelonPelonrcelonntilelon(
+              gelontStagelonNamelonPrelonfix() + "_" + elonvelonntTypelon.namelon().toLowelonrCaselon()
+                  + "_procelonssing_latelonncy_ms"));
     }
   }
 
-  @Override
-  protected void innerSetupStats() {
-   setupCommonStats();
+  @Ovelonrridelon
+  protelonctelond void innelonrSelontupStats() {
+   selontupCommonStats();
   }
 
-  private boolean isEnabled() {
-    if (this.deciderKey != null) {
-      return DeciderUtil.isAvailableForRandomRecipient(decider, deciderKey);
-    } else {
-      // No decider means it's enabled.
-      return true;
+  privatelon boolelonan iselonnablelond() {
+    if (this.deloncidelonrKelony != null) {
+      relonturn DeloncidelonrUtil.isAvailablelonForRandomReloncipielonnt(deloncidelonr, deloncidelonrKelony);
+    } elonlselon {
+      // No deloncidelonr melonans it's elonnablelond.
+      relonturn truelon;
     }
   }
 
-  @Override
-  protected void doInnerPreprocess() throws StageException, NamingException {
+  @Ovelonrridelon
+  protelonctelond void doInnelonrPrelonprocelonss() throws Stagelonelonxcelonption, Namingelonxcelonption {
     try {
-      innerSetup();
-    } catch (PipelineStageException e) {
-      throw new StageException(this, e);
+      innelonrSelontup();
+    } catch (PipelonlinelonStagelonelonxcelonption elon) {
+      throw nelonw Stagelonelonxcelonption(this, elon);
     }
   }
 
-  @Override
-  protected void innerSetup() throws PipelineStageException, NamingException {
-    Preconditions.checkNotNull(kafkaClientId);
-    Preconditions.checkNotNull(kafkaClusterPath);
-    Preconditions.checkNotNull(kafkaTopicName);
+  @Ovelonrridelon
+  protelonctelond void innelonrSelontup() throws PipelonlinelonStagelonelonxcelonption, Namingelonxcelonption {
+    Prelonconditions.chelonckNotNull(kafkaClielonntId);
+    Prelonconditions.chelonckNotNull(kafkaClustelonrPath);
+    Prelonconditions.chelonckNotNull(kafkaTopicNamelon);
 
-    kafkaProducer = wireModule.newFinagleKafkaProducer(
-        kafkaClusterPath,
-        new CompactThriftSerializer<ThriftVersionedEvents>(),
-        kafkaClientId,
-        IngesterPartitioner.class);
+    kafkaProducelonr = wirelonModulelon.nelonwFinaglelonKafkaProducelonr(
+        kafkaClustelonrPath,
+        nelonw CompactThriftSelonrializelonr<ThriftVelonrsionelondelonvelonnts>(),
+        kafkaClielonntId,
+        IngelonstelonrPartitionelonr.class);
 
-    int numPartitions = wireModule.getPartitionMappingManager().getNumPartitions();
-    int numKafkaPartitions = kafkaProducer.partitionsFor(kafkaTopicName).size();
+    int numPartitions = wirelonModulelon.gelontPartitionMappingManagelonr().gelontNumPartitions();
+    int numKafkaPartitions = kafkaProducelonr.partitionsFor(kafkaTopicNamelon).sizelon();
     if (numPartitions != numKafkaPartitions) {
-      throw new PipelineStageException(String.format(
-          "Number of partitions for Kafka topic %s (%d) != number of expected partitions (%d)",
-          kafkaTopicName, numKafkaPartitions, numPartitions));
+      throw nelonw PipelonlinelonStagelonelonxcelonption(String.format(
+          "Numbelonr of partitions for Kafka topic %s (%d) != numbelonr of elonxpelonctelond partitions (%d)",
+          kafkaTopicNamelon, numKafkaPartitions, numPartitions));
     }
   }
 
 
-  @Override
-  public void innerProcess(Object obj) throws StageException {
-    if (!(obj instanceof IngesterThriftVersionedEvents)) {
-      throw new StageException(this, "Object is not IngesterThriftVersionedEvents: " + obj);
+  @Ovelonrridelon
+  public void innelonrProcelonss(Objelonct obj) throws Stagelonelonxcelonption {
+    if (!(obj instancelonof IngelonstelonrThriftVelonrsionelondelonvelonnts)) {
+      throw nelonw Stagelonelonxcelonption(this, "Objelonct is not IngelonstelonrThriftVelonrsionelondelonvelonnts: " + obj);
     }
 
-    IngesterThriftVersionedEvents events = (IngesterThriftVersionedEvents) obj;
-    tryToSendEventsToKafka(events);
+    IngelonstelonrThriftVelonrsionelondelonvelonnts elonvelonnts = (IngelonstelonrThriftVelonrsionelondelonvelonnts) obj;
+    tryToSelonndelonvelonntsToKafka(elonvelonnts);
   }
 
-  protected void tryToSendEventsToKafka(IngesterThriftVersionedEvents events) {
-    if (!isEnabled()) {
-      return;
+  protelonctelond void tryToSelonndelonvelonntsToKafka(IngelonstelonrThriftVelonrsionelondelonvelonnts elonvelonnts) {
+    if (!iselonnablelond()) {
+      relonturn;
     }
 
-    DebugEvents debugEvents = events.getDebugEvents();
-    // We don't propagate debug events to Kafka, because they take about 50%
-    // of the storage space.
-    events.unsetDebugEvents();
+    Delonbugelonvelonnts delonbugelonvelonnts = elonvelonnts.gelontDelonbugelonvelonnts();
+    // Welon don't propagatelon delonbug elonvelonnts to Kafka, beloncauselon thelony takelon about 50%
+    // of thelon storagelon spacelon.
+    elonvelonnts.unselontDelonbugelonvelonnts();
 
-    ProducerRecord<Long, ThriftVersionedEvents> record = new ProducerRecord<>(
-        kafkaTopicName,
+    ProducelonrReloncord<Long, ThriftVelonrsionelondelonvelonnts> reloncord = nelonw ProducelonrReloncord<>(
+        kafkaTopicNamelon,
         null,
         clock.nowMillis(),
         null,
-        events);
+        elonvelonnts);
 
-    sendRecordToKafka(record).ensure(() -> {
-      updateEventProcessingLatencyStats(events, debugEvents);
-      return null;
+    selonndReloncordToKafka(reloncord).elonnsurelon(() -> {
+      updatelonelonvelonntProcelonssingLatelonncyStats(elonvelonnts, delonbugelonvelonnts);
+      relonturn null;
     });
   }
 
-  private Future<RecordMetadata> sendRecordToKafka(
-      ProducerRecord<Long, ThriftVersionedEvents> record) {
-    Future<RecordMetadata> result;
+  privatelon Futurelon<ReloncordMelontadata> selonndReloncordToKafka(
+      ProducelonrReloncord<Long, ThriftVelonrsionelondelonvelonnts> reloncord) {
+    Futurelon<ReloncordMelontadata> relonsult;
     try {
-      result = kafkaProducer.send(record);
-    } catch (Exception e) {
-      // Even though KafkaProducer.send() returns a Future, it can throw a synchronous exception,
-      // so we translate synchronous exceptions into a Future.exception so we handle all exceptions
-      // consistently.
-      result = Future.exception(e);
+      relonsult = kafkaProducelonr.selonnd(reloncord);
+    } catch (elonxcelonption elon) {
+      // elonvelonn though KafkaProducelonr.selonnd() relonturns a Futurelon, it can throw a synchronous elonxcelonption,
+      // so welon translatelon synchronous elonxcelonptions into a Futurelon.elonxcelonption so welon handlelon all elonxcelonptions
+      // consistelonntly.
+      relonsult = Futurelon.elonxcelonption(elon);
     }
 
-    return result.onSuccess(recordMetadata -> {
-      sendCount.increment();
-      SearchCounter.export(
-          String.format(perPartitionSendCountFormat, recordMetadata.partition())).increment();
-      return BoxedUnit.UNIT;
-    }).onFailure(e -> {
-      stats.incrementExceptions();
-      LOG.error("Sending a record failed.", e);
-      return BoxedUnit.UNIT;
+    relonturn relonsult.onSuccelonss(reloncordMelontadata -> {
+      selonndCount.increlonmelonnt();
+      SelonarchCountelonr.elonxport(
+          String.format(pelonrPartitionSelonndCountFormat, reloncordMelontadata.partition())).increlonmelonnt();
+      relonturn BoxelondUnit.UNIT;
+    }).onFailurelon(elon -> {
+      stats.increlonmelonntelonxcelonptions();
+      LOG.elonrror("Selonnding a reloncord failelond.", elon);
+      relonturn BoxelondUnit.UNIT;
     });
   }
 
-  private void updateEventProcessingLatencyStats(IngesterThriftVersionedEvents events,
-                                                 DebugEvents debugEvents) {
-    if ((debugEvents != null) && debugEvents.isSetProcessingStartedAt()) {
-      // Get the one indexing event out of all events we're sending.
-      Collection<ThriftIndexingEvent> indexingEvents = events.getVersionedEvents().values();
-      Preconditions.checkState(!indexingEvents.isEmpty());
-      ThriftIndexingEventType eventType = indexingEvents.iterator().next().getEventType();
+  privatelon void updatelonelonvelonntProcelonssingLatelonncyStats(IngelonstelonrThriftVelonrsionelondelonvelonnts elonvelonnts,
+                                                 Delonbugelonvelonnts delonbugelonvelonnts) {
+    if ((delonbugelonvelonnts != null) && delonbugelonvelonnts.isSelontProcelonssingStartelondAt()) {
+      // Gelont thelon onelon indelonxing elonvelonnt out of all elonvelonnts welon'relon selonnding.
+      Collelonction<ThriftIndelonxingelonvelonnt> indelonxingelonvelonnts = elonvelonnts.gelontVelonrsionelondelonvelonnts().valuelons();
+      Prelonconditions.chelonckStatelon(!indelonxingelonvelonnts.iselonmpty());
+      ThriftIndelonxingelonvelonntTypelon elonvelonntTypelon = indelonxingelonvelonnts.itelonrator().nelonxt().gelontelonvelonntTypelon();
 
-      // Check if the event took too much time to get to this current point.
-      long processingLatencyMillis =
-          clock.nowMillis() - debugEvents.getProcessingStartedAt().getEventTimestampMillis();
-      processingLatenciesStats.get(eventType).record(processingLatencyMillis);
+      // Chelonck if thelon elonvelonnt took too much timelon to gelont to this currelonnt point.
+      long procelonssingLatelonncyMillis =
+          clock.nowMillis() - delonbugelonvelonnts.gelontProcelonssingStartelondAt().gelontelonvelonntTimelonstampMillis();
+      procelonssingLatelonncielonsStats.gelont(elonvelonntTypelon).reloncord(procelonssingLatelonncyMillis);
 
-      if (processingLatencyMillis >= processingLatencyThresholdMillis) {
-        LATE_EVENTS_LOG.warn("Event of type {} for tweet {} was processed in {}ms: {}",
-            eventType.name(),
-            events.getTweetId(),
-            processingLatencyMillis,
-            DebugEventUtil.debugEventsToString(debugEvents));
+      if (procelonssingLatelonncyMillis >= procelonssingLatelonncyThrelonsholdMillis) {
+        LATelon_elonVelonNTS_LOG.warn("elonvelonnt of typelon {} for twelonelont {} was procelonsselond in {}ms: {}",
+            elonvelonntTypelon.namelon(),
+            elonvelonnts.gelontTwelonelontId(),
+            procelonssingLatelonncyMillis,
+            DelonbugelonvelonntUtil.delonbugelonvelonntsToString(delonbugelonvelonnts));
       }
     }
   }
 
-  public void setProcessingLatencyThresholdMillis(int processingLatencyThresholdMillis) {
-    this.processingLatencyThresholdMillis = processingLatencyThresholdMillis;
+  public void selontProcelonssingLatelonncyThrelonsholdMillis(int procelonssingLatelonncyThrelonsholdMillis) {
+    this.procelonssingLatelonncyThrelonsholdMillis = procelonssingLatelonncyThrelonsholdMillis;
   }
 
-  @Override
-  public void innerPostprocess() throws StageException {
+  @Ovelonrridelon
+  public void innelonrPostprocelonss() throws Stagelonelonxcelonption {
     try {
-      commonCleanup();
-    } catch (Exception e) {
-      throw new StageException(this, e);
+      commonClelonanup();
+    } catch (elonxcelonption elon) {
+      throw nelonw Stagelonelonxcelonption(this, elon);
     }
   }
 
-  @Override
-  public void cleanupStageV2()  {
+  @Ovelonrridelon
+  public void clelonanupStagelonV2()  {
     try {
-      commonCleanup();
-    } catch (Exception e) {
-      LOG.error("Error trying to clean up KafkaProducerStage.", e);
+      commonClelonanup();
+    } catch (elonxcelonption elon) {
+      LOG.elonrror("elonrror trying to clelonan up KafkaProducelonrStagelon.", elon);
     }
   }
 
-  private void commonCleanup() throws Exception {
-    Await.result(kafkaProducer.close());
+  privatelon void commonClelonanup() throws elonxcelonption {
+    Await.relonsult(kafkaProducelonr.closelon());
   }
 
-  @SuppressWarnings("unused")  // set from pipeline config
-  public void setKafkaClientId(String kafkaClientId) {
-    this.kafkaClientId = kafkaClientId;
+  @SupprelonssWarnings("unuselond")  // selont from pipelonlinelon config
+  public void selontKafkaClielonntId(String kafkaClielonntId) {
+    this.kafkaClielonntId = kafkaClielonntId;
   }
 
-  @SuppressWarnings("unused")  // set from pipeline config
-  public void setKafkaTopicName(String kafkaTopicName) {
-    this.kafkaTopicName = kafkaTopicName;
+  @SupprelonssWarnings("unuselond")  // selont from pipelonlinelon config
+  public void selontKafkaTopicNamelon(String kafkaTopicNamelon) {
+    this.kafkaTopicNamelon = kafkaTopicNamelon;
   }
 
-  @VisibleForTesting
-  public BlockingFinagleKafkaProducer<Long, ThriftVersionedEvents> getKafkaProducer() {
-    return kafkaProducer;
+  @VisiblelonForTelonsting
+  public BlockingFinaglelonKafkaProducelonr<Long, ThriftVelonrsionelondelonvelonnts> gelontKafkaProducelonr() {
+    relonturn kafkaProducelonr;
   }
 
-  @SuppressWarnings("unused")  // set from pipeline config
-  public void setDeciderKey(String deciderKey) {
-    this.deciderKey = deciderKey;
+  @SupprelonssWarnings("unuselond")  // selont from pipelonlinelon config
+  public void selontDeloncidelonrKelony(String deloncidelonrKelony) {
+    this.deloncidelonrKelony = deloncidelonrKelony;
   }
 
-  @SuppressWarnings("unused")  // set from pipeline config
-  public void setKafkaClusterPath(String kafkaClusterPath) {
-    this.kafkaClusterPath = kafkaClusterPath;
+  @SupprelonssWarnings("unuselond")  // selont from pipelonlinelon config
+  public void selontKafkaClustelonrPath(String kafkaClustelonrPath) {
+    this.kafkaClustelonrPath = kafkaClustelonrPath;
   }
 }

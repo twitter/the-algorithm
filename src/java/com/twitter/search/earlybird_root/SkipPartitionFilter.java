@@ -1,70 +1,70 @@
-package com.twitter.search.earlybird_root;
+packagelon com.twittelonr.selonarch.elonarlybird_root;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestType;
-import com.twitter.util.Future;
+import com.twittelonr.finaglelon.Selonrvicelon;
+import com.twittelonr.finaglelon.SimplelonFiltelonr;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonquelonst;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
+import com.twittelonr.selonarch.elonarlybird_root.common.elonarlybirdRelonquelonstContelonxt;
+import com.twittelonr.selonarch.elonarlybird_root.common.elonarlybirdRelonquelonstTypelon;
+import com.twittelonr.util.Futurelon;
 
 /**
- * Filter that returns a PARTITION_SKIPPED response instead of sending the request to a partition
- * if the partition PartitionAccessController says its disabled for a request.
+ * Filtelonr that relonturns a PARTITION_SKIPPelonD relonsponselon instelonad of selonnding thelon relonquelonst to a partition
+ * if thelon partition PartitionAccelonssControllelonr says its disablelond for a relonquelonst.
  */
-public final class SkipPartitionFilter extends
-    SimpleFilter<EarlybirdRequestContext, EarlybirdResponse> {
+public final class SkipPartitionFiltelonr elonxtelonnds
+    SimplelonFiltelonr<elonarlybirdRelonquelonstContelonxt, elonarlybirdRelonsponselon> {
 
-  private static final Logger LOG = LoggerFactory.getLogger(SkipPartitionFilter.class);
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(SkipPartitionFiltelonr.class);
 
-  private final String tierName;
-  private final int partitionNum;
-  private final PartitionAccessController controller;
+  privatelon final String tielonrNamelon;
+  privatelon final int partitionNum;
+  privatelon final PartitionAccelonssControllelonr controllelonr;
 
-  private SkipPartitionFilter(String tierName, int partitionNum,
-                             PartitionAccessController controller) {
-    this.tierName = tierName;
+  privatelon SkipPartitionFiltelonr(String tielonrNamelon, int partitionNum,
+                             PartitionAccelonssControllelonr controllelonr) {
+    this.tielonrNamelon = tielonrNamelon;
     this.partitionNum = partitionNum;
-    this.controller = controller;
+    this.controllelonr = controllelonr;
   }
 
-  @Override
-  public Future<EarlybirdResponse> apply(
-      EarlybirdRequestContext requestContext,
-      Service<EarlybirdRequestContext, EarlybirdResponse> service) {
+  @Ovelonrridelon
+  public Futurelon<elonarlybirdRelonsponselon> apply(
+      elonarlybirdRelonquelonstContelonxt relonquelonstContelonxt,
+      Selonrvicelon<elonarlybirdRelonquelonstContelonxt, elonarlybirdRelonsponselon> selonrvicelon) {
 
-    EarlybirdRequest request = requestContext.getRequest();
-    if (!controller.canAccessPartition(tierName, partitionNum, request.getClientId(),
-        EarlybirdRequestType.of(request))) {
-      return Future.value(EarlybirdServiceScatterGatherSupport.newEmptyResponse());
+    elonarlybirdRelonquelonst relonquelonst = relonquelonstContelonxt.gelontRelonquelonst();
+    if (!controllelonr.canAccelonssPartition(tielonrNamelon, partitionNum, relonquelonst.gelontClielonntId(),
+        elonarlybirdRelonquelonstTypelon.of(relonquelonst))) {
+      relonturn Futurelon.valuelon(elonarlybirdSelonrvicelonScattelonrGathelonrSupport.nelonwelonmptyRelonsponselon());
     }
 
-    return service.apply(requestContext);
+    relonturn selonrvicelon.apply(relonquelonstContelonxt);
   }
 
   /**
-   * Wrap the services with a SkipPartitionFilter
+   * Wrap thelon selonrvicelons with a SkipPartitionFiltelonr
    */
-  public static List<Service<EarlybirdRequestContext, EarlybirdResponse>> wrapServices(
-      String tierName,
-      List<Service<EarlybirdRequestContext, EarlybirdResponse>> clients,
-      PartitionAccessController controller) {
+  public static List<Selonrvicelon<elonarlybirdRelonquelonstContelonxt, elonarlybirdRelonsponselon>> wrapSelonrvicelons(
+      String tielonrNamelon,
+      List<Selonrvicelon<elonarlybirdRelonquelonstContelonxt, elonarlybirdRelonsponselon>> clielonnts,
+      PartitionAccelonssControllelonr controllelonr) {
 
-    LOG.info("Creating SkipPartitionFilters for cluster: {}, tier: {}, partitions 0-{}",
-        controller.getClusterName(), tierName, clients.size() - 1);
+    LOG.info("Crelonating SkipPartitionFiltelonrs for clustelonr: {}, tielonr: {}, partitions 0-{}",
+        controllelonr.gelontClustelonrNamelon(), tielonrNamelon, clielonnts.sizelon() - 1);
 
-    List<Service<EarlybirdRequestContext, EarlybirdResponse>> wrappedServices = new ArrayList<>();
-    for (int partitionNum = 0; partitionNum < clients.size(); partitionNum++) {
-      SkipPartitionFilter filter = new SkipPartitionFilter(tierName, partitionNum, controller);
-      wrappedServices.add(filter.andThen(clients.get(partitionNum)));
+    List<Selonrvicelon<elonarlybirdRelonquelonstContelonxt, elonarlybirdRelonsponselon>> wrappelondSelonrvicelons = nelonw ArrayList<>();
+    for (int partitionNum = 0; partitionNum < clielonnts.sizelon(); partitionNum++) {
+      SkipPartitionFiltelonr filtelonr = nelonw SkipPartitionFiltelonr(tielonrNamelon, partitionNum, controllelonr);
+      wrappelondSelonrvicelons.add(filtelonr.andThelonn(clielonnts.gelont(partitionNum)));
     }
 
-    return wrappedServices;
+    relonturn wrappelondSelonrvicelons;
   }
 }

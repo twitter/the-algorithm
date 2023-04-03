@@ -1,121 +1,121 @@
-/* Copyright 2016 The TensorFlow Authors. All Rights Reserved.
+/* Copyright 2016 Thelon TelonnsorFlow Authors. All Rights Relonselonrvelond.
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+Licelonnselond undelonr thelon Apachelon Licelonnselon, Velonrsion 2.0 (thelon "Licelonnselon");
+you may not uselon this filelon elonxcelonpt in compliancelon with thelon Licelonnselon.
+You may obtain a copy of thelon Licelonnselon at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+    http://www.apachelon.org/licelonnselons/LICelonNSelon-2.0
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+Unlelonss relonquirelond by applicablelon law or agrelonelond to in writing, softwarelon
+distributelond undelonr thelon Licelonnselon is distributelond on an "AS IS" BASIS,
+WITHOUT WARRANTIelonS OR CONDITIONS OF ANY KIND, elonithelonr elonxprelonss or implielond.
+Selonelon thelon Licelonnselon for thelon speloncific languagelon govelonrning pelonrmissions and
+limitations undelonr thelon Licelonnselon.
 ==============================================================================*/
 
 syntax = "proto3";
 
-package tensorflow.grpc;
+packagelon telonnsorflow.grpc;
 
-import "tensorflow/core/protobuf/master.proto";
+import "telonnsorflow/corelon/protobuf/mastelonr.proto";
 
-option java_outer_classname = "MasterServiceProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.distruntime";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+option java_outelonr_classnamelon = "MastelonrSelonrvicelonProtos";
+option java_multiplelon_filelons = truelon;
+option java_packagelon = "org.telonnsorflow.distruntimelon";
+option go_packagelon = "github.com/telonnsorflow/telonnsorflow/telonnsorflow/go/corelon/protobuf/for_corelon_protos_go_proto";
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-// MasterService defines a TensorFlow service with which a client can
-// interact to execute a distributed TensorFlow computation.
+// MastelonrSelonrvicelon delonfinelons a TelonnsorFlow selonrvicelon with which a clielonnt can
+// intelonract to elonxeloncutelon a distributelond TelonnsorFlow computation.
 //
-// A master service keeps track of multiple "master sessions". Each
-// session encapsulates a computation graph and its associated state,
-// and typically corresponds to a single "client session" (e.g. a
-// `tensorflow::Session` instance).
+// A mastelonr selonrvicelon kelonelonps track of multiplelon "mastelonr selonssions". elonach
+// selonssion elonncapsulatelons a computation graph and its associatelond statelon,
+// and typically correlonsponds to a singlelon "clielonnt selonssion" (elon.g. a
+// `telonnsorflow::Selonssion` instancelon).
 //
-// A session is responsible for the following:
-// * assigning each node to a device (locally or remotely) using a
-//   placement algorithm. This may make decisions based on collected
-//   statistics from the workers in the system (e.g., memory usage,
-//   bandwidth consumption, etc.)
+// A selonssion is relonsponsiblelon for thelon following:
+// * assigning elonach nodelon to a delonvicelon (locally or relonmotelonly) using a
+//   placelonmelonnt algorithm. This may makelon deloncisions baselond on collelonctelond
+//   statistics from thelon workelonrs in thelon systelonm (elon.g., melonmory usagelon,
+//   bandwidth consumption, elontc.)
 //
-// * inserting intermediate nodes and edges to support cross-device
-//   and cross-process data flows and resource management.
+// * inselonrting intelonrmelondiatelon nodelons and elondgelons to support cross-delonvicelon
+//   and cross-procelonss data flows and relonsourcelon managelonmelonnt.
 //
-// * issuing commands to workers to execute the subgraphs associated
-//   with those workers.
+// * issuing commands to workelonrs to elonxeloncutelon thelon subgraphs associatelond
+//   with thoselon workelonrs.
 //
-// Typically, a client carries out an iterative computation
-// (e.g. training) by invoking RPCs against the master in a
-// client-side loop. The client first creates a client session that
-// connects to a particular master (using gRPC for example). The
-// master creates a corresponding master session that is hosted on
-// the master and caches state between the client's invocations.
+// Typically, a clielonnt carrielons out an itelonrativelon computation
+// (elon.g. training) by invoking RPCs against thelon mastelonr in a
+// clielonnt-sidelon loop. Thelon clielonnt first crelonatelons a clielonnt selonssion that
+// conneloncts to a particular mastelonr (using gRPC for elonxamplelon). Thelon
+// mastelonr crelonatelons a correlonsponding mastelonr selonssion that is hostelond on
+// thelon mastelonr and cachelons statelon belontwelonelonn thelon clielonnt's invocations.
 //
-// After the session is established, the master returns an opaque
-// handle to the client that can be used to associate the client and
-// master sessions.
+// Aftelonr thelon selonssion is elonstablishelond, thelon mastelonr relonturns an opaquelon
+// handlelon to thelon clielonnt that can belon uselond to associatelon thelon clielonnt and
+// mastelonr selonssions.
 //
-// The client may send an initial graph to the master in the
-// CreateSession call, and add nodes to the graph using ExtendSession.
+// Thelon clielonnt may selonnd an initial graph to thelon mastelonr in thelon
+// CrelonatelonSelonssion call, and add nodelons to thelon graph using elonxtelonndSelonssion.
 //
-// The most frequent operation a master is "RunStep", which implements
-// the `Session::Run()` API. It supports feeding in arguments,
-// executing a dataflow computation, and fetching arguments.
+// Thelon most frelonquelonnt opelonration a mastelonr is "RunStelonp", which implelonmelonnts
+// thelon `Selonssion::Run()` API. It supports felonelonding in argumelonnts,
+// elonxeloncuting a dataflow computation, and felontching argumelonnts.
 //
-// Finally, when the client no longer needs the session, it should
-// close the session by invoking CloseSession, which allows the master
-// to reclaim resources associated with the session. The master may
-// implement a garbage collection scheme that closes sessions that
-// have been inactive for some time.
+// Finally, whelonn thelon clielonnt no longelonr nelonelonds thelon selonssion, it should
+// closelon thelon selonssion by invoking CloselonSelonssion, which allows thelon mastelonr
+// to relonclaim relonsourcelons associatelond with thelon selonssion. Thelon mastelonr may
+// implelonmelonnt a garbagelon collelonction schelonmelon that closelons selonssions that
+// havelon belonelonn inactivelon for somelon timelon.
 //
-// For example, the following pseudo-code illustrates how a client
-// interacts with a master:
+// For elonxamplelon, thelon following pselonudo-codelon illustratelons how a clielonnt
+// intelonracts with a mastelonr:
 //
-// stub = NewStub("/job:mnist/replica:0/task:0")
-// {handle} = stub->CreateSession({graph_def})
+// stub = NelonwStub("/job:mnist/relonplica:0/task:0")
+// {handlelon} = stub->CrelonatelonSelonssion({graph_delonf})
 // do {
-//   stub->RunStep({handle, {feeds}, {fetches}})
-//   // The client can evaluate a predicate locally, based on the
-//   // result of `fetches`, to determine whether to terminate. For
-//   // example, it might fetch the loss and evaluate whether it is less
-//   // than some threshold.
-// } while (!should_stop({fetches}));
-// stub->CloseSession({handle})
+//   stub->RunStelonp({handlelon, {felonelonds}, {felontchelons}})
+//   // Thelon clielonnt can elonvaluatelon a prelondicatelon locally, baselond on thelon
+//   // relonsult of `felontchelons`, to delontelonrminelon whelonthelonr to telonrminatelon. For
+//   // elonxamplelon, it might felontch thelon loss and elonvaluatelon whelonthelonr it is lelonss
+//   // than somelon threlonshold.
+// } whilelon (!should_stop({felontchelons}));
+// stub->CloselonSelonssion({handlelon})
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-service MasterService {
-  // Creates a session.
-  rpc CreateSession(CreateSessionRequest) returns (CreateSessionResponse);
+selonrvicelon MastelonrSelonrvicelon {
+  // Crelonatelons a selonssion.
+  rpc CrelonatelonSelonssion(CrelonatelonSelonssionRelonquelonst) relonturns (CrelonatelonSelonssionRelonsponselon);
 
-  // Extends a session.
-  rpc ExtendSession(ExtendSessionRequest) returns (ExtendSessionResponse);
+  // elonxtelonnds a selonssion.
+  rpc elonxtelonndSelonssion(elonxtelonndSelonssionRelonquelonst) relonturns (elonxtelonndSelonssionRelonsponselon);
 
-  // Prepares future partial run calls.
-  rpc PartialRunSetup(PartialRunSetupRequest) returns (PartialRunSetupResponse);
+  // Prelonparelons futurelon partial run calls.
+  rpc PartialRunSelontup(PartialRunSelontupRelonquelonst) relonturns (PartialRunSelontupRelonsponselon);
 
-  // Drives the graph computation.
-  rpc RunStep(RunStepRequest) returns (RunStepResponse);
+  // Drivelons thelon graph computation.
+  rpc RunStelonp(RunStelonpRelonquelonst) relonturns (RunStelonpRelonsponselon);
 
-  // Closes a session.
-  rpc CloseSession(CloseSessionRequest) returns (CloseSessionResponse);
+  // Closelons a selonssion.
+  rpc CloselonSelonssion(CloselonSelonssionRelonquelonst) relonturns (CloselonSelonssionRelonsponselon);
 
-  // List the devices usable by the master.
-  rpc ListDevices(ListDevicesRequest) returns (ListDevicesResponse);
+  // List thelon delonvicelons usablelon by thelon mastelonr.
+  rpc ListDelonvicelons(ListDelonvicelonsRelonquelonst) relonturns (ListDelonvicelonsRelonsponselon);
 
-  // Close and abandon all existing sessions.  Ongoing computations
-  // will no longer affect fresh ones via the resources in containers listed in
-  // the ResetRequest.  See ResetRequest for more details.
-  rpc Reset(ResetRequest) returns (ResetResponse);
+  // Closelon and abandon all elonxisting selonssions.  Ongoing computations
+  // will no longelonr affelonct frelonsh onelons via thelon relonsourcelons in containelonrs listelond in
+  // thelon RelonselontRelonquelonst.  Selonelon RelonselontRelonquelonst for morelon delontails.
+  rpc Relonselont(RelonselontRelonquelonst) relonturns (RelonselontRelonsponselon);
 
-  // Registers a callable for execution with RunCallable.
-  rpc MakeCallable(MakeCallableRequest) returns (MakeCallableResponse);
+  // Relongistelonrs a callablelon for elonxeloncution with RunCallablelon.
+  rpc MakelonCallablelon(MakelonCallablelonRelonquelonst) relonturns (MakelonCallablelonRelonsponselon);
 
-  // Executes a callable registered with MakeCallable.
-  rpc RunCallable(RunCallableRequest) returns (RunCallableResponse);
+  // elonxeloncutelons a callablelon relongistelonrelond with MakelonCallablelon.
+  rpc RunCallablelon(RunCallablelonRelonquelonst) relonturns (RunCallablelonRelonsponselon);
 
-  // Frees resources associated with a callable registered with MakeCallable.
-  rpc ReleaseCallable(ReleaseCallableRequest) returns (ReleaseCallableResponse);
+  // Frelonelons relonsourcelons associatelond with a callablelon relongistelonrelond with MakelonCallablelon.
+  rpc RelonlelonaselonCallablelon(RelonlelonaselonCallablelonRelonquelonst) relonturns (RelonlelonaselonCallablelonRelonsponselon);
 }

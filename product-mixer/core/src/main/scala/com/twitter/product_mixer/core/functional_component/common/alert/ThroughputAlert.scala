@@ -1,24 +1,24 @@
-package com.twitter.product_mixer.core.functional_component.common.alert
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.alelonrt
 
-import com.twitter.product_mixer.core.functional_component.common.alert.predicate.ThroughputPredicate
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.alelonrt.prelondicatelon.ThroughputPrelondicatelon
 
 /**
- * [[ThroughputAlert]] triggers when the requests/sec for the component this is used
- * with is outside of the predicate set by a [[ThroughputPredicate]] for
- * the configured amount of time
+ * [[ThroughputAlelonrt]] triggelonrs whelonn thelon relonquelonsts/selonc for thelon componelonnt this is uselond
+ * with is outsidelon of thelon prelondicatelon selont by a [[ThroughputPrelondicatelon]] for
+ * thelon configurelond amount of timelon
  */
-case class ThroughputAlert(
-  override val notificationGroup: NotificationGroup,
-  override val warnPredicate: ThroughputPredicate,
-  override val criticalPredicate: ThroughputPredicate,
-  override val runbookLink: Option[String] = None)
-    extends Alert
-    with IsObservableFromStrato {
-  override val alertType: AlertType = Throughput
-  require(
-    warnPredicate.threshold >= 0,
-    s"ThroughputAlert predicates must be >= 0 but got warnPredicate = ${warnPredicate.threshold}")
-  require(
-    criticalPredicate.threshold >= 0,
-    s"ThroughputAlert predicates must be >= 0 but got criticalPredicate = ${criticalPredicate.threshold}")
+caselon class ThroughputAlelonrt(
+  ovelonrridelon val notificationGroup: NotificationGroup,
+  ovelonrridelon val warnPrelondicatelon: ThroughputPrelondicatelon,
+  ovelonrridelon val criticalPrelondicatelon: ThroughputPrelondicatelon,
+  ovelonrridelon val runbookLink: Option[String] = Nonelon)
+    elonxtelonnds Alelonrt
+    with IsObselonrvablelonFromStrato {
+  ovelonrridelon val alelonrtTypelon: AlelonrtTypelon = Throughput
+  relonquirelon(
+    warnPrelondicatelon.threlonshold >= 0,
+    s"ThroughputAlelonrt prelondicatelons must belon >= 0 but got warnPrelondicatelon = ${warnPrelondicatelon.threlonshold}")
+  relonquirelon(
+    criticalPrelondicatelon.threlonshold >= 0,
+    s"ThroughputAlelonrt prelondicatelons must belon >= 0 but got criticalPrelondicatelon = ${criticalPrelondicatelon.threlonshold}")
 }

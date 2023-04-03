@@ -1,29 +1,29 @@
-package com.twitter.home_mixer.product.scored_tweets.model
+packagelon com.twittelonr.homelon_mixelonr.product.scorelond_twelonelonts.modelonl
 
-import com.twitter.product_mixer.core.model.marshalling.HasMarshalling
-import com.twitter.timelineservice.suggests.{thriftscala => st}
-import com.twitter.tweetconvosvc.tweet_ancestor.{thriftscala => ta}
-import com.twitter.timelines.render.{thriftscala => urt}
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.HasMarshalling
+import com.twittelonr.timelonlinelonselonrvicelon.suggelonsts.{thriftscala => st}
+import com.twittelonr.twelonelontconvosvc.twelonelont_ancelonstor.{thriftscala => ta}
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
 
-case class ScoredTweet(
-  tweetId: Long,
+caselon class ScorelondTwelonelont(
+  twelonelontId: Long,
   authorId: Long,
-  score: Option[Double],
-  suggestType: st.SuggestType,
-  sourceTweetId: Option[Long],
-  sourceUserId: Option[Long],
-  quotedTweetId: Option[Long],
-  quotedUserId: Option[Long],
-  inReplyToTweetId: Option[Long],
-  inReplyToUserId: Option[Long],
-  directedAtUserId: Option[Long],
-  inNetwork: Option[Boolean],
-  favoritedByUserIds: Option[Seq[Long]],
-  followedByUserIds: Option[Seq[Long]],
+  scorelon: Option[Doublelon],
+  suggelonstTypelon: st.SuggelonstTypelon,
+  sourcelonTwelonelontId: Option[Long],
+  sourcelonUselonrId: Option[Long],
+  quotelondTwelonelontId: Option[Long],
+  quotelondUselonrId: Option[Long],
+  inRelonplyToTwelonelontId: Option[Long],
+  inRelonplyToUselonrId: Option[Long],
+  direlonctelondAtUselonrId: Option[Long],
+  inNelontwork: Option[Boolelonan],
+  favoritelondByUselonrIds: Option[Selonq[Long]],
+  followelondByUselonrIds: Option[Selonq[Long]],
   topicId: Option[Long],
-  topicFunctionalityType: Option[urt.TopicContextFunctionalityType],
-  ancestors: Option[Seq[ta.TweetAncestor]],
-  isReadFromCache: Option[Boolean],
-  streamToKafka: Option[Boolean])
+  topicFunctionalityTypelon: Option[urt.TopicContelonxtFunctionalityTypelon],
+  ancelonstors: Option[Selonq[ta.TwelonelontAncelonstor]],
+  isRelonadFromCachelon: Option[Boolelonan],
+  strelonamToKafka: Option[Boolelonan])
 
-case class ScoredTweetsResponse(scoredTweets: Seq[ScoredTweet]) extends HasMarshalling
+caselon class ScorelondTwelonelontsRelonsponselon(scorelondTwelonelonts: Selonq[ScorelondTwelonelont]) elonxtelonnds HasMarshalling

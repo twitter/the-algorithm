@@ -1,29 +1,29 @@
-package com.twitter.follow_recommendations.common.clients.addressbook.models
+packagelon com.twittelonr.follow_reloncommelonndations.common.clielonnts.addrelonssbook.modelonls
 
-import com.twitter.addressbook.{thriftscala => t}
-import com.twitter.util.Time
+import com.twittelonr.addrelonssbook.{thriftscala => t}
+import com.twittelonr.util.Timelon
 
-case class Contact(
+caselon class Contact(
   id: Long,
-  emails: Option[Set[String]],
-  phoneNumbers: Option[Set[String]],
-  firstName: Option[String],
-  lastName: Option[String],
-  name: Option[String],
+  elonmails: Option[Selont[String]],
+  phonelonNumbelonrs: Option[Selont[String]],
+  firstNamelon: Option[String],
+  lastNamelon: Option[String],
+  namelon: Option[String],
   appId: Option[Long],
-  appIds: Option[Set[Long]],
-  importedTimestamp: Option[Time])
+  appIds: Option[Selont[Long]],
+  importelondTimelonstamp: Option[Timelon])
 
-object Contact {
-  def fromThrift(thriftContact: t.Contact): Contact = Contact(
+objelonct Contact {
+  delonf fromThrift(thriftContact: t.Contact): Contact = Contact(
     thriftContact.id,
-    thriftContact.emails.map(_.toSet),
-    thriftContact.phoneNumbers.map(_.toSet),
-    thriftContact.firstName,
-    thriftContact.lastName,
-    thriftContact.name,
+    thriftContact.elonmails.map(_.toSelont),
+    thriftContact.phonelonNumbelonrs.map(_.toSelont),
+    thriftContact.firstNamelon,
+    thriftContact.lastNamelon,
+    thriftContact.namelon,
     thriftContact.appId,
-    thriftContact.appIds.map(_.toSet),
-    thriftContact.importedTimestamp.map(Time.fromMilliseconds)
+    thriftContact.appIds.map(_.toSelont),
+    thriftContact.importelondTimelonstamp.map(Timelon.fromMilliselonconds)
   )
 }

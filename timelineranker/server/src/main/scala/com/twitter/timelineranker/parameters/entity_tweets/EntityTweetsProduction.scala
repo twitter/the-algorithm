@@ -1,42 +1,42 @@
-package com.twitter.timelineranker.parameters.entity_tweets
+packagelon com.twittelonr.timelonlinelonrankelonr.paramelontelonrs.elonntity_twelonelonts
 
-import com.twitter.servo.decider.DeciderGateBuilder
-import com.twitter.servo.decider.DeciderKeyName
-import com.twitter.timelineranker.decider.DeciderKey
-import com.twitter.timelineranker.parameters.entity_tweets.EntityTweetsParams._
-import com.twitter.timelines.configapi.decider.DeciderUtils
-import com.twitter.timelines.configapi.BaseConfig
-import com.twitter.timelines.configapi.BaseConfigBuilder
-import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil
-import com.twitter.timelines.configapi.Param
+import com.twittelonr.selonrvo.deloncidelonr.DeloncidelonrGatelonBuildelonr
+import com.twittelonr.selonrvo.deloncidelonr.DeloncidelonrKelonyNamelon
+import com.twittelonr.timelonlinelonrankelonr.deloncidelonr.DeloncidelonrKelony
+import com.twittelonr.timelonlinelonrankelonr.paramelontelonrs.elonntity_twelonelonts.elonntityTwelonelontsParams._
+import com.twittelonr.timelonlinelons.configapi.deloncidelonr.DeloncidelonrUtils
+import com.twittelonr.timelonlinelons.configapi.BaselonConfig
+import com.twittelonr.timelonlinelons.configapi.BaselonConfigBuildelonr
+import com.twittelonr.timelonlinelons.configapi.FelonaturelonSwitchOvelonrridelonUtil
+import com.twittelonr.timelonlinelons.configapi.Param
 
-object EntityTweetsProduction {
-  val deciderByParam: Map[Param[_], DeciderKeyName] = Map[Param[_], DeciderKeyName](
-    EnableContentFeaturesHydrationParam -> DeciderKey.EntityTweetsEnableContentFeaturesHydration
+objelonct elonntityTwelonelontsProduction {
+  val deloncidelonrByParam: Map[Param[_], DeloncidelonrKelonyNamelon] = Map[Param[_], DeloncidelonrKelonyNamelon](
+    elonnablelonContelonntFelonaturelonsHydrationParam -> DeloncidelonrKelony.elonntityTwelonelontselonnablelonContelonntFelonaturelonsHydration
   )
 }
 
-case class EntityTweetsProduction(deciderGateBuilder: DeciderGateBuilder) {
+caselon class elonntityTwelonelontsProduction(deloncidelonrGatelonBuildelonr: DeloncidelonrGatelonBuildelonr) {
 
-  val booleanDeciderOverrides = DeciderUtils.getBooleanDeciderOverrides(
-    deciderGateBuilder,
-    EnableContentFeaturesHydrationParam
+  val boolelonanDeloncidelonrOvelonrridelons = DeloncidelonrUtils.gelontBoolelonanDeloncidelonrOvelonrridelons(
+    deloncidelonrGatelonBuildelonr,
+    elonnablelonContelonntFelonaturelonsHydrationParam
   )
 
-  val booleanFeatureSwitchOverrides = FeatureSwitchOverrideUtil.getBooleanFSOverrides(
-    EnableTokensInContentFeaturesHydrationParam,
-    EnableTweetTextInContentFeaturesHydrationParam,
-    EnableConversationControlInContentFeaturesHydrationParam,
-    EnableTweetMediaHydrationParam
+  val boolelonanFelonaturelonSwitchOvelonrridelons = FelonaturelonSwitchOvelonrridelonUtil.gelontBoolelonanFSOvelonrridelons(
+    elonnablelonTokelonnsInContelonntFelonaturelonsHydrationParam,
+    elonnablelonTwelonelontTelonxtInContelonntFelonaturelonsHydrationParam,
+    elonnablelonConvelonrsationControlInContelonntFelonaturelonsHydrationParam,
+    elonnablelonTwelonelontMelondiaHydrationParam
   )
 
-  val intFeatureSwitchOverrides = FeatureSwitchOverrideUtil.getBoundedIntFSOverrides(
-    MaxFollowedUsersParam
+  val intFelonaturelonSwitchOvelonrridelons = FelonaturelonSwitchOvelonrridelonUtil.gelontBoundelondIntFSOvelonrridelons(
+    MaxFollowelondUselonrsParam
   )
 
-  val config: BaseConfig = new BaseConfigBuilder()
-    .set(booleanDeciderOverrides: _*)
-    .set(booleanFeatureSwitchOverrides: _*)
-    .set(intFeatureSwitchOverrides: _*)
+  val config: BaselonConfig = nelonw BaselonConfigBuildelonr()
+    .selont(boolelonanDeloncidelonrOvelonrridelons: _*)
+    .selont(boolelonanFelonaturelonSwitchOvelonrridelons: _*)
+    .selont(intFelonaturelonSwitchOvelonrridelons: _*)
     .build()
 }

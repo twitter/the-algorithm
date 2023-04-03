@@ -1,75 +1,75 @@
-package com.twitter.home_mixer.functional_component.feature_hydrator
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator
 
-import com.twitter.home_mixer.model.HomeFeatures._
-import com.twitter.product_mixer.component_library.candidate_source.timeline_ranker.TimelineRankerInNetworkSourceTweetsByTweetIdMapFeature
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BulkCandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.search.common.features.thriftscala.ThriftTweetFeatures
-import com.twitter.stitch.Stitch
-import com.twitter.timelineranker.thriftscala.CandidateTweet
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons._
+import com.twittelonr.product_mixelonr.componelonnt_library.candidatelon_sourcelon.timelonlinelon_rankelonr.TimelonlinelonRankelonrInNelontworkSourcelonTwelonelontsByTwelonelontIdMapFelonaturelon
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.TwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMapBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator.BulkCandidatelonFelonaturelonHydrator
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.FelonaturelonHydratorIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.selonarch.common.felonaturelons.thriftscala.ThriftTwelonelontFelonaturelons
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.timelonlinelonrankelonr.thriftscala.CandidatelonTwelonelont
 
-object SourceTweetEarlybirdFeature extends Feature[TweetCandidate, Option[ThriftTweetFeatures]]
+objelonct SourcelonTwelonelontelonarlybirdFelonaturelon elonxtelonnds Felonaturelon[TwelonelontCandidatelon, Option[ThriftTwelonelontFelonaturelons]]
 
 /**
- * Feature Hydrator that bulk hydrates source tweets' features to retweet candidates
+ * Felonaturelon Hydrator that bulk hydratelons sourcelon twelonelonts' felonaturelons to relontwelonelont candidatelons
  */
-object RetweetSourceTweetFeatureHydrator
-    extends BulkCandidateFeatureHydrator[PipelineQuery, TweetCandidate] {
+objelonct RelontwelonelontSourcelonTwelonelontFelonaturelonHydrator
+    elonxtelonnds BulkCandidatelonFelonaturelonHydrator[PipelonlinelonQuelonry, TwelonelontCandidatelon] {
 
-  override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier(
-    "RetweetSourceTweet")
+  ovelonrridelon val idelonntifielonr: FelonaturelonHydratorIdelonntifielonr = FelonaturelonHydratorIdelonntifielonr(
+    "RelontwelonelontSourcelonTwelonelont")
 
-  override val features: Set[Feature[_, _]] = Set(
-    SourceTweetEarlybirdFeature,
+  ovelonrridelon val felonaturelons: Selont[Felonaturelon[_, _]] = Selont(
+    SourcelonTwelonelontelonarlybirdFelonaturelon,
   )
 
-  private val DefaultFeatureMap = FeatureMapBuilder()
-    .add(SourceTweetEarlybirdFeature, None)
+  privatelon val DelonfaultFelonaturelonMap = FelonaturelonMapBuildelonr()
+    .add(SourcelonTwelonelontelonarlybirdFelonaturelon, Nonelon)
     .build()
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[Seq[FeatureMap]] = {
-    val sourceTweetsByTweetId: Option[Map[Long, CandidateTweet]] = {
-      query.features.map(
-        _.getOrElse(
-          TimelineRankerInNetworkSourceTweetsByTweetIdMapFeature,
-          Map.empty[Long, CandidateTweet]))
+  ovelonrridelon delonf apply(
+    quelonry: PipelonlinelonQuelonry,
+    candidatelons: Selonq[CandidatelonWithFelonaturelons[TwelonelontCandidatelon]]
+  ): Stitch[Selonq[FelonaturelonMap]] = {
+    val sourcelonTwelonelontsByTwelonelontId: Option[Map[Long, CandidatelonTwelonelont]] = {
+      quelonry.felonaturelons.map(
+        _.gelontOrelonlselon(
+          TimelonlinelonRankelonrInNelontworkSourcelonTwelonelontsByTwelonelontIdMapFelonaturelon,
+          Map.elonmpty[Long, CandidatelonTwelonelont]))
     }
 
     /**
-     * Return DefaultFeatureMap (no-op to candidate) when it is unfeasible to hydrate the
-     * source tweet's feature to the current candidate: early bird does not return source
-     * tweets info / candidate is not a retweet / sourceTweetId is not found
+     * Relonturn DelonfaultFelonaturelonMap (no-op to candidatelon) whelonn it is unfelonasiblelon to hydratelon thelon
+     * sourcelon twelonelont's felonaturelon to thelon currelonnt candidatelon: elonarly bird doelons not relonturn sourcelon
+     * twelonelonts info / candidatelon is not a relontwelonelont / sourcelonTwelonelontId is not found
      */
-    Stitch.value {
-      if (sourceTweetsByTweetId.exists(_.nonEmpty)) {
-        candidates.map { candidate =>
-          val candidateIsRetweet = candidate.features.getOrElse(IsRetweetFeature, false)
-          val sourceTweetId = candidate.features.getOrElse(SourceTweetIdFeature, None)
-          if (!candidateIsRetweet || sourceTweetId.isEmpty) {
-            DefaultFeatureMap
-          } else {
-            val sourceTweet = sourceTweetsByTweetId.flatMap(_.get(sourceTweetId.get))
-            if (sourceTweet.nonEmpty) {
-              val source = sourceTweet.get
-              FeatureMapBuilder()
-                .add(SourceTweetEarlybirdFeature, source.features)
+    Stitch.valuelon {
+      if (sourcelonTwelonelontsByTwelonelontId.elonxists(_.nonelonmpty)) {
+        candidatelons.map { candidatelon =>
+          val candidatelonIsRelontwelonelont = candidatelon.felonaturelons.gelontOrelonlselon(IsRelontwelonelontFelonaturelon, falselon)
+          val sourcelonTwelonelontId = candidatelon.felonaturelons.gelontOrelonlselon(SourcelonTwelonelontIdFelonaturelon, Nonelon)
+          if (!candidatelonIsRelontwelonelont || sourcelonTwelonelontId.iselonmpty) {
+            DelonfaultFelonaturelonMap
+          } elonlselon {
+            val sourcelonTwelonelont = sourcelonTwelonelontsByTwelonelontId.flatMap(_.gelont(sourcelonTwelonelontId.gelont))
+            if (sourcelonTwelonelont.nonelonmpty) {
+              val sourcelon = sourcelonTwelonelont.gelont
+              FelonaturelonMapBuildelonr()
+                .add(SourcelonTwelonelontelonarlybirdFelonaturelon, sourcelon.felonaturelons)
                 .build()
-            } else {
-              DefaultFeatureMap
+            } elonlselon {
+              DelonfaultFelonaturelonMap
             }
           }
         }
-      } else {
-        candidates.map(_ => DefaultFeatureMap)
+      } elonlselon {
+        candidatelons.map(_ => DelonfaultFelonaturelonMap)
       }
     }
   }

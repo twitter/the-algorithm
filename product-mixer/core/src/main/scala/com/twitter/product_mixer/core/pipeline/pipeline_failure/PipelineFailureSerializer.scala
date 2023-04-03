@@ -1,67 +1,67 @@
-package com.twitter.product_mixer.core.pipeline.pipeline_failure
+packagelon com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon
 
-import com.fasterxml.jackson.core.JsonGenerator
-import com.fasterxml.jackson.databind.JsonSerializer
-import com.fasterxml.jackson.databind.SerializerProvider
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifierStack
+import com.fastelonrxml.jackson.corelon.JsonGelonnelonrator
+import com.fastelonrxml.jackson.databind.JsonSelonrializelonr
+import com.fastelonrxml.jackson.databind.SelonrializelonrProvidelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.ComponelonntIdelonntifielonrStack
 
-private[pipeline_failure] class PipelineFailureSerializer()
-    extends JsonSerializer[PipelineFailure] {
+privatelon[pipelonlinelon_failurelon] class PipelonlinelonFailurelonSelonrializelonr()
+    elonxtelonnds JsonSelonrializelonr[PipelonlinelonFailurelon] {
 
-  private sealed trait BaseSerializableException
+  privatelon selonalelond trait BaselonSelonrializablelonelonxcelonption
 
-  private case class SerializableException(
+  privatelon caselon class Selonrializablelonelonxcelonption(
     `class`: String,
-    message: String,
-    stackTrace: Seq[String],
-    cause: Option[BaseSerializableException])
-      extends BaseSerializableException
+    melonssagelon: String,
+    stackTracelon: Selonq[String],
+    causelon: Option[BaselonSelonrializablelonelonxcelonption])
+      elonxtelonnds BaselonSelonrializablelonelonxcelonption
 
-  private case class SerializablePipelineFailure(
-    category: String,
-    reason: String,
-    underlying: Option[BaseSerializableException],
-    componentStack: Option[ComponentIdentifierStack],
-    stackTrace: Seq[String])
-      extends BaseSerializableException
+  privatelon caselon class SelonrializablelonPipelonlinelonFailurelon(
+    catelongory: String,
+    relonason: String,
+    undelonrlying: Option[BaselonSelonrializablelonelonxcelonption],
+    componelonntStack: Option[ComponelonntIdelonntifielonrStack],
+    stackTracelon: Selonq[String])
+      elonxtelonnds BaselonSelonrializablelonelonxcelonption
 
-  private def serializeStackTrace(stackTrace: Array[StackTraceElement]): Seq[String] =
-    stackTrace.map(stackTraceElement => "at " + stackTraceElement.toString)
+  privatelon delonf selonrializelonStackTracelon(stackTracelon: Array[StackTracelonelonlelonmelonnt]): Selonq[String] =
+    stackTracelon.map(stackTracelonelonlelonmelonnt => "at " + stackTracelonelonlelonmelonnt.toString)
 
-  private def mkSerializableException(
-    t: Throwable,
-    recursionDepth: Int = 0
-  ): Option[BaseSerializableException] = {
+  privatelon delonf mkSelonrializablelonelonxcelonption(
+    t: Throwablelon,
+    reloncursionDelonpth: Int = 0
+  ): Option[BaselonSelonrializablelonelonxcelonption] = {
     t match {
-      case _ if recursionDepth > 4 =>
-        // in the unfortunate case of a super deep chain of exceptions, stop if we get too deep
-        None
-      case pipelineFailure: PipelineFailure =>
-        Some(
-          SerializablePipelineFailure(
-            category =
-              pipelineFailure.category.categoryName + "/" + pipelineFailure.category.failureName,
-            reason = pipelineFailure.reason,
-            underlying =
-              pipelineFailure.underlying.flatMap(mkSerializableException(_, recursionDepth + 1)),
-            componentStack = pipelineFailure.componentStack,
-            stackTrace = serializeStackTrace(pipelineFailure.getStackTrace)
+      caselon _ if reloncursionDelonpth > 4 =>
+        // in thelon unfortunatelon caselon of a supelonr delonelonp chain of elonxcelonptions, stop if welon gelont too delonelonp
+        Nonelon
+      caselon pipelonlinelonFailurelon: PipelonlinelonFailurelon =>
+        Somelon(
+          SelonrializablelonPipelonlinelonFailurelon(
+            catelongory =
+              pipelonlinelonFailurelon.catelongory.catelongoryNamelon + "/" + pipelonlinelonFailurelon.catelongory.failurelonNamelon,
+            relonason = pipelonlinelonFailurelon.relonason,
+            undelonrlying =
+              pipelonlinelonFailurelon.undelonrlying.flatMap(mkSelonrializablelonelonxcelonption(_, reloncursionDelonpth + 1)),
+            componelonntStack = pipelonlinelonFailurelon.componelonntStack,
+            stackTracelon = selonrializelonStackTracelon(pipelonlinelonFailurelon.gelontStackTracelon)
           ))
-      case t =>
-        Some(
-          SerializableException(
-            `class` = t.getClass.getName,
-            message = t.getMessage,
-            stackTrace = serializeStackTrace(t.getStackTrace),
-            cause = Option(t.getCause).flatMap(mkSerializableException(_, recursionDepth + 1))
+      caselon t =>
+        Somelon(
+          Selonrializablelonelonxcelonption(
+            `class` = t.gelontClass.gelontNamelon,
+            melonssagelon = t.gelontMelonssagelon,
+            stackTracelon = selonrializelonStackTracelon(t.gelontStackTracelon),
+            causelon = Option(t.gelontCauselon).flatMap(mkSelonrializablelonelonxcelonption(_, reloncursionDelonpth + 1))
           )
         )
     }
   }
 
-  override def serialize(
-    pipelineFailure: PipelineFailure,
-    gen: JsonGenerator,
-    serializers: SerializerProvider
-  ): Unit = serializers.defaultSerializeValue(mkSerializableException(pipelineFailure), gen)
+  ovelonrridelon delonf selonrializelon(
+    pipelonlinelonFailurelon: PipelonlinelonFailurelon,
+    gelonn: JsonGelonnelonrator,
+    selonrializelonrs: SelonrializelonrProvidelonr
+  ): Unit = selonrializelonrs.delonfaultSelonrializelonValuelon(mkSelonrializablelonelonxcelonption(pipelonlinelonFailurelon), gelonn)
 }

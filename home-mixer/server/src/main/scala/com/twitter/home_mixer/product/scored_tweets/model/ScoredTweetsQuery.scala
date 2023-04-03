@@ -1,39 +1,39 @@
-package com.twitter.home_mixer.product.scored_tweets.model
+packagelon com.twittelonr.homelon_mixelonr.product.scorelond_twelonelonts.modelonl
 
-import com.twitter.home_mixer.model.request.DeviceContext
-import com.twitter.home_mixer.model.request.HasDeviceContext
-import com.twitter.home_mixer.model.request.HasSeenTweetIds
-import com.twitter.home_mixer.model.request.ScoredTweetsProduct
-import com.twitter.product_mixer.component_library.model.cursor.UrtOrderedCursor
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.marshalling.request._
-import com.twitter.product_mixer.core.pipeline.HasPipelineCursor
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.quality_factor.HasQualityFactorStatus
-import com.twitter.product_mixer.core.quality_factor.QualityFactorStatus
-import com.twitter.timelines.configapi.Params
+import com.twittelonr.homelon_mixelonr.modelonl.relonquelonst.DelonvicelonContelonxt
+import com.twittelonr.homelon_mixelonr.modelonl.relonquelonst.HasDelonvicelonContelonxt
+import com.twittelonr.homelon_mixelonr.modelonl.relonquelonst.HasSelonelonnTwelonelontIds
+import com.twittelonr.homelon_mixelonr.modelonl.relonquelonst.ScorelondTwelonelontsProduct
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.cursor.UrtOrdelonrelondCursor
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst._
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.HasPipelonlinelonCursor
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.product_mixelonr.corelon.quality_factor.HasQualityFactorStatus
+import com.twittelonr.product_mixelonr.corelon.quality_factor.QualityFactorStatus
+import com.twittelonr.timelonlinelons.configapi.Params
 
-case class ScoredTweetsQuery(
-  override val params: Params,
-  override val clientContext: ClientContext,
-  override val pipelineCursor: Option[UrtOrderedCursor],
-  override val requestedMaxResults: Option[Int],
-  override val debugOptions: Option[DebugOptions],
-  override val features: Option[FeatureMap],
-  override val deviceContext: Option[DeviceContext],
-  override val seenTweetIds: Option[Seq[Long]],
-  override val qualityFactorStatus: Option[QualityFactorStatus])
-    extends PipelineQuery
-    with HasPipelineCursor[UrtOrderedCursor]
-    with HasDeviceContext
-    with HasSeenTweetIds
+caselon class ScorelondTwelonelontsQuelonry(
+  ovelonrridelon val params: Params,
+  ovelonrridelon val clielonntContelonxt: ClielonntContelonxt,
+  ovelonrridelon val pipelonlinelonCursor: Option[UrtOrdelonrelondCursor],
+  ovelonrridelon val relonquelonstelondMaxRelonsults: Option[Int],
+  ovelonrridelon val delonbugOptions: Option[DelonbugOptions],
+  ovelonrridelon val felonaturelons: Option[FelonaturelonMap],
+  ovelonrridelon val delonvicelonContelonxt: Option[DelonvicelonContelonxt],
+  ovelonrridelon val selonelonnTwelonelontIds: Option[Selonq[Long]],
+  ovelonrridelon val qualityFactorStatus: Option[QualityFactorStatus])
+    elonxtelonnds PipelonlinelonQuelonry
+    with HasPipelonlinelonCursor[UrtOrdelonrelondCursor]
+    with HasDelonvicelonContelonxt
+    with HasSelonelonnTwelonelontIds
     with HasQualityFactorStatus {
-  override val product: Product = ScoredTweetsProduct
+  ovelonrridelon val product: Product = ScorelondTwelonelontsProduct
 
-  override def withFeatureMap(features: FeatureMap): ScoredTweetsQuery =
-    copy(features = Some(features))
+  ovelonrridelon delonf withFelonaturelonMap(felonaturelons: FelonaturelonMap): ScorelondTwelonelontsQuelonry =
+    copy(felonaturelons = Somelon(felonaturelons))
 
-  override def withQualityFactorStatus(
+  ovelonrridelon delonf withQualityFactorStatus(
     qualityFactorStatus: QualityFactorStatus
-  ): ScoredTweetsQuery = copy(qualityFactorStatus = Some(qualityFactorStatus))
+  ): ScorelondTwelonelontsQuelonry = copy(qualityFactorStatus = Somelon(qualityFactorStatus))
 }

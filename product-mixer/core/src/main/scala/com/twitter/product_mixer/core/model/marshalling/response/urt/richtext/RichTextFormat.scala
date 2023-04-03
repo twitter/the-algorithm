@@ -1,13 +1,13 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.richtext
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.richtelonxt
 
-sealed trait RichTextFormat {
-  def name: String
+selonalelond trait RichTelonxtFormat {
+  delonf namelon: String
 }
 
-case object Plain extends RichTextFormat {
-  override val name: String = "Plain"
+caselon objelonct Plain elonxtelonnds RichTelonxtFormat {
+  ovelonrridelon val namelon: String = "Plain"
 }
 
-case object Strong extends RichTextFormat {
-  override val name: String = "Strong"
+caselon objelonct Strong elonxtelonnds RichTelonxtFormat {
+  ovelonrridelon val namelon: String = "Strong"
 }

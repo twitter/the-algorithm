@@ -1,147 +1,147 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.slice
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.slicelon
 
-import com.twitter.product_mixer.core.model.marshalling.response.slice.AdType
-import com.twitter.product_mixer.core.model.marshalling.response.slice
-import com.twitter.strato.graphql.{thriftscala => t}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.slicelon.AdTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.slicelon
+import com.twittelonr.strato.graphql.{thriftscala => t}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class SliceItemMarshaller @Inject() () {
-  def apply(item: slice.SliceItem): t.SliceItem = {
-    item match {
-      case item: slice.TweetItem =>
-        t.SliceItem.TweetItem(t.TweetItem(id = item.id))
-      case item: slice.UserItem =>
-        t.SliceItem.UserItem(t.UserItem(id = item.id))
-      case item: slice.TwitterListItem =>
-        t.SliceItem.TwitterListItem(t.TwitterListItem(id = item.id))
-      case item: slice.DMConvoSearchItem =>
-        t.SliceItem.DmConvoSearchItem(t.DMConvoSearchItem(id = item.id))
-      case item: slice.DMConvoItem =>
-        t.SliceItem.DmConvoItem(t.DMConvoItem(id = item.id))
-      case item: slice.DMEventItem =>
-        t.SliceItem.DmEventItem(t.DMEventItem(id = item.id))
-      case item: slice.DMMessageSearchItem =>
-        t.SliceItem.DmMessageSearchItem(t.DMMessageSearchItem(id = item.id))
-      case item: slice.TopicItem =>
-        t.SliceItem.TopicItem(t.TopicItem(id = item.id.toString))
-      case item: slice.TypeaheadEventItem =>
-        t.SliceItem.TypeaheadEventItem(
-          t.TypeaheadEventItem(
-            eventId = item.eventId,
-            metadata = item.metadata.map(marshalTypeaheadMetadata)
+@Singlelonton
+class SlicelonItelonmMarshallelonr @Injelonct() () {
+  delonf apply(itelonm: slicelon.SlicelonItelonm): t.SlicelonItelonm = {
+    itelonm match {
+      caselon itelonm: slicelon.TwelonelontItelonm =>
+        t.SlicelonItelonm.TwelonelontItelonm(t.TwelonelontItelonm(id = itelonm.id))
+      caselon itelonm: slicelon.UselonrItelonm =>
+        t.SlicelonItelonm.UselonrItelonm(t.UselonrItelonm(id = itelonm.id))
+      caselon itelonm: slicelon.TwittelonrListItelonm =>
+        t.SlicelonItelonm.TwittelonrListItelonm(t.TwittelonrListItelonm(id = itelonm.id))
+      caselon itelonm: slicelon.DMConvoSelonarchItelonm =>
+        t.SlicelonItelonm.DmConvoSelonarchItelonm(t.DMConvoSelonarchItelonm(id = itelonm.id))
+      caselon itelonm: slicelon.DMConvoItelonm =>
+        t.SlicelonItelonm.DmConvoItelonm(t.DMConvoItelonm(id = itelonm.id))
+      caselon itelonm: slicelon.DMelonvelonntItelonm =>
+        t.SlicelonItelonm.DmelonvelonntItelonm(t.DMelonvelonntItelonm(id = itelonm.id))
+      caselon itelonm: slicelon.DMMelonssagelonSelonarchItelonm =>
+        t.SlicelonItelonm.DmMelonssagelonSelonarchItelonm(t.DMMelonssagelonSelonarchItelonm(id = itelonm.id))
+      caselon itelonm: slicelon.TopicItelonm =>
+        t.SlicelonItelonm.TopicItelonm(t.TopicItelonm(id = itelonm.id.toString))
+      caselon itelonm: slicelon.TypelonahelonadelonvelonntItelonm =>
+        t.SlicelonItelonm.TypelonahelonadelonvelonntItelonm(
+          t.TypelonahelonadelonvelonntItelonm(
+            elonvelonntId = itelonm.elonvelonntId,
+            melontadata = itelonm.melontadata.map(marshalTypelonahelonadMelontadata)
           )
         )
-      case item: slice.TypeaheadQuerySuggestionItem =>
-        t.SliceItem.TypeaheadQuerySuggestionItem(
-          t.TypeaheadQuerySuggestionItem(
-            query = item.query,
-            metadata = item.metadata.map(marshalTypeaheadMetadata)
+      caselon itelonm: slicelon.TypelonahelonadQuelonrySuggelonstionItelonm =>
+        t.SlicelonItelonm.TypelonahelonadQuelonrySuggelonstionItelonm(
+          t.TypelonahelonadQuelonrySuggelonstionItelonm(
+            quelonry = itelonm.quelonry,
+            melontadata = itelonm.melontadata.map(marshalTypelonahelonadMelontadata)
           )
         )
-      case item: slice.TypeaheadUserItem =>
-        t.SliceItem.TypeaheadUserItem(
-          t.TypeaheadUserItem(
-            userId = item.userId,
-            metadata = item.metadata.map(marshalTypeaheadMetadata),
-            badges = Some(item.badges.map { badge =>
-              t.UserBadge(
-                badgeUrl = badge.badgeUrl,
-                description = Some(badge.description),
-                badgeType = Some(badge.badgeType))
+      caselon itelonm: slicelon.TypelonahelonadUselonrItelonm =>
+        t.SlicelonItelonm.TypelonahelonadUselonrItelonm(
+          t.TypelonahelonadUselonrItelonm(
+            uselonrId = itelonm.uselonrId,
+            melontadata = itelonm.melontadata.map(marshalTypelonahelonadMelontadata),
+            badgelons = Somelon(itelonm.badgelons.map { badgelon =>
+              t.UselonrBadgelon(
+                badgelonUrl = badgelon.badgelonUrl,
+                delonscription = Somelon(badgelon.delonscription),
+                badgelonTypelon = Somelon(badgelon.badgelonTypelon))
             })
           )
         )
-      case item: slice.AdItem =>
-        t.SliceItem.AdItem(
-          t.AdItem(
-            adKey = t.AdKey(
-              adAccountId = item.adAccountId,
-              adUnitId = item.adUnitId,
+      caselon itelonm: slicelon.AdItelonm =>
+        t.SlicelonItelonm.AdItelonm(
+          t.AdItelonm(
+            adKelony = t.AdKelony(
+              adAccountId = itelonm.adAccountId,
+              adUnitId = itelonm.adUnitId,
             )
           )
         )
-      case item: slice.AdCreativeItem =>
-        t.SliceItem.AdCreativeItem(
-          t.AdCreativeItem(
-            adCreativeKey = t.AdCreativeKey(
-              adAccountId = item.adAccountId,
-              adType = marshalAdType(item.adType),
-              creativeId = item.creativeId
+      caselon itelonm: slicelon.AdCrelonativelonItelonm =>
+        t.SlicelonItelonm.AdCrelonativelonItelonm(
+          t.AdCrelonativelonItelonm(
+            adCrelonativelonKelony = t.AdCrelonativelonKelony(
+              adAccountId = itelonm.adAccountId,
+              adTypelon = marshalAdTypelon(itelonm.adTypelon),
+              crelonativelonId = itelonm.crelonativelonId
             )
           )
         )
-      case item: slice.AdGroupItem =>
-        t.SliceItem.AdGroupItem(
-          t.AdGroupItem(
-            adGroupKey = t.AdGroupKey(
-              adAccountId = item.adAccountId,
-              adGroupId = item.adGroupId
+      caselon itelonm: slicelon.AdGroupItelonm =>
+        t.SlicelonItelonm.AdGroupItelonm(
+          t.AdGroupItelonm(
+            adGroupKelony = t.AdGroupKelony(
+              adAccountId = itelonm.adAccountId,
+              adGroupId = itelonm.adGroupId
             )
           )
         )
-      case item: slice.CampaignItem =>
-        t.SliceItem.CampaignItem(
-          t.CampaignItem(
-            campaignKey = t.CampaignKey(
-              adAccountId = item.adAccountId,
-              campaignId = item.campaignId
+      caselon itelonm: slicelon.CampaignItelonm =>
+        t.SlicelonItelonm.CampaignItelonm(
+          t.CampaignItelonm(
+            campaignKelony = t.CampaignKelony(
+              adAccountId = itelonm.adAccountId,
+              campaignId = itelonm.campaignId
             )
           )
         )
-      case item: slice.FundingSourceItem =>
-        t.SliceItem.FundingSourceItem(
-          t.FundingSourceItem(
-            fundingSourceKey = t.FundingSourceKey(
-              adAccountId = item.adAccountId,
-              fundingSourceId = item.fundingSourceId
+      caselon itelonm: slicelon.FundingSourcelonItelonm =>
+        t.SlicelonItelonm.FundingSourcelonItelonm(
+          t.FundingSourcelonItelonm(
+            fundingSourcelonKelony = t.FundingSourcelonKelony(
+              adAccountId = itelonm.adAccountId,
+              fundingSourcelonId = itelonm.fundingSourcelonId
             )
           )
         )
     }
   }
 
-  private def marshalTypeaheadMetadata(metadata: slice.TypeaheadMetadata) = {
-    t.TypeaheadMetadata(
-      score = metadata.score,
-      source = metadata.source,
-      resultContext = metadata.context.map(context =>
-        t.TypeaheadResultContext(
-          displayString = context.displayString,
-          contextType = marshalRequestContextType(context.contextType),
-          iconUrl = context.iconUrl
+  privatelon delonf marshalTypelonahelonadMelontadata(melontadata: slicelon.TypelonahelonadMelontadata) = {
+    t.TypelonahelonadMelontadata(
+      scorelon = melontadata.scorelon,
+      sourcelon = melontadata.sourcelon,
+      relonsultContelonxt = melontadata.contelonxt.map(contelonxt =>
+        t.TypelonahelonadRelonsultContelonxt(
+          displayString = contelonxt.displayString,
+          contelonxtTypelon = marshalRelonquelonstContelonxtTypelon(contelonxt.contelonxtTypelon),
+          iconUrl = contelonxt.iconUrl
         ))
     )
   }
 
-  private def marshalRequestContextType(
-    context: slice.TypeaheadResultContextType
-  ): t.TypeaheadResultContextType = {
-    context match {
-      case slice.You => t.TypeaheadResultContextType.You
-      case slice.Location => t.TypeaheadResultContextType.Location
-      case slice.NumFollowers => t.TypeaheadResultContextType.NumFollowers
-      case slice.FollowRelationship => t.TypeaheadResultContextType.FollowRelationship
-      case slice.Bio => t.TypeaheadResultContextType.Bio
-      case slice.NumTweets => t.TypeaheadResultContextType.NumTweets
-      case slice.Trending => t.TypeaheadResultContextType.Trending
-      case slice.HighlightedLabel => t.TypeaheadResultContextType.HighlightedLabel
-      case _ => t.TypeaheadResultContextType.Undefined
+  privatelon delonf marshalRelonquelonstContelonxtTypelon(
+    contelonxt: slicelon.TypelonahelonadRelonsultContelonxtTypelon
+  ): t.TypelonahelonadRelonsultContelonxtTypelon = {
+    contelonxt match {
+      caselon slicelon.You => t.TypelonahelonadRelonsultContelonxtTypelon.You
+      caselon slicelon.Location => t.TypelonahelonadRelonsultContelonxtTypelon.Location
+      caselon slicelon.NumFollowelonrs => t.TypelonahelonadRelonsultContelonxtTypelon.NumFollowelonrs
+      caselon slicelon.FollowRelonlationship => t.TypelonahelonadRelonsultContelonxtTypelon.FollowRelonlationship
+      caselon slicelon.Bio => t.TypelonahelonadRelonsultContelonxtTypelon.Bio
+      caselon slicelon.NumTwelonelonts => t.TypelonahelonadRelonsultContelonxtTypelon.NumTwelonelonts
+      caselon slicelon.Trelonnding => t.TypelonahelonadRelonsultContelonxtTypelon.Trelonnding
+      caselon slicelon.HighlightelondLabelonl => t.TypelonahelonadRelonsultContelonxtTypelon.HighlightelondLabelonl
+      caselon _ => t.TypelonahelonadRelonsultContelonxtTypelon.Undelonfinelond
     }
   }
 
-  private def marshalAdType(
-    adType: AdType
-  ): t.AdType = {
-    adType match {
-      case AdType.Tweet => t.AdType.Tweet
-      case AdType.Account => t.AdType.Account
-      case AdType.InStreamVideo => t.AdType.InStreamVideo
-      case AdType.DisplayCreative => t.AdType.DisplayCreative
-      case AdType.Trend => t.AdType.Trend
-      case AdType.Spotlight => t.AdType.Spotlight
-      case AdType.Takeover => t.AdType.Takeover
+  privatelon delonf marshalAdTypelon(
+    adTypelon: AdTypelon
+  ): t.AdTypelon = {
+    adTypelon match {
+      caselon AdTypelon.Twelonelont => t.AdTypelon.Twelonelont
+      caselon AdTypelon.Account => t.AdTypelon.Account
+      caselon AdTypelon.InStrelonamVidelono => t.AdTypelon.InStrelonamVidelono
+      caselon AdTypelon.DisplayCrelonativelon => t.AdTypelon.DisplayCrelonativelon
+      caselon AdTypelon.Trelonnd => t.AdTypelon.Trelonnd
+      caselon AdTypelon.Spotlight => t.AdTypelon.Spotlight
+      caselon AdTypelon.Takelonovelonr => t.AdTypelon.Takelonovelonr
     }
   }
 }

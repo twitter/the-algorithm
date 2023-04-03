@@ -1,14 +1,14 @@
-package com.twitter.visibility.interfaces.tweets
+packagelon com.twittelonr.visibility.intelonrfacelons.twelonelonts
 
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.models.ViewerContext
+import com.twittelonr.twelonelontypielon.thriftscala.Twelonelont
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl
+import com.twittelonr.visibility.modelonls.VielonwelonrContelonxt
 
-case class TweetVisibilityRequest(
-  tweet: Tweet,
-  safetyLevel: SafetyLevel,
-  viewerContext: ViewerContext,
-  isInnerQuotedTweet: Boolean,
-  isRetweet: Boolean,
-  hydrateConversationControl: Boolean = false,
-  isSourceTweet: Boolean = false)
+caselon class TwelonelontVisibilityRelonquelonst(
+  twelonelont: Twelonelont,
+  safelontyLelonvelonl: SafelontyLelonvelonl,
+  vielonwelonrContelonxt: VielonwelonrContelonxt,
+  isInnelonrQuotelondTwelonelont: Boolelonan,
+  isRelontwelonelont: Boolelonan,
+  hydratelonConvelonrsationControl: Boolelonan = falselon,
+  isSourcelonTwelonelont: Boolelonan = falselon)

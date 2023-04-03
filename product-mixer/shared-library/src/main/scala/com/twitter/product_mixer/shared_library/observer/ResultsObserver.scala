@@ -1,281 +1,281 @@
-package com.twitter.product_mixer.shared_library.observer
+packagelon com.twittelonr.product_mixelonr.sharelond_library.obselonrvelonr
 
-import com.twitter.finagle.stats.Counter
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.shared_library.observer.Observer.ArrowObserver
-import com.twitter.product_mixer.shared_library.observer.Observer.FunctionObserver
-import com.twitter.product_mixer.shared_library.observer.Observer.FutureObserver
-import com.twitter.product_mixer.shared_library.observer.Observer.Observer
-import com.twitter.product_mixer.shared_library.observer.Observer.StitchObserver
-import com.twitter.stitch.Arrow
-import com.twitter.stitch.Stitch
-import com.twitter.util.Future
-import com.twitter.util.Try
+import com.twittelonr.finaglelon.stats.Countelonr
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.product_mixelonr.sharelond_library.obselonrvelonr.Obselonrvelonr.ArrowObselonrvelonr
+import com.twittelonr.product_mixelonr.sharelond_library.obselonrvelonr.Obselonrvelonr.FunctionObselonrvelonr
+import com.twittelonr.product_mixelonr.sharelond_library.obselonrvelonr.Obselonrvelonr.FuturelonObselonrvelonr
+import com.twittelonr.product_mixelonr.sharelond_library.obselonrvelonr.Obselonrvelonr.Obselonrvelonr
+import com.twittelonr.product_mixelonr.sharelond_library.obselonrvelonr.Obselonrvelonr.StitchObselonrvelonr
+import com.twittelonr.stitch.Arrow
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.util.Futurelon
+import com.twittelonr.util.Try
 
 /**
- * Helper functions to observe requests, successes, failures, cancellations, exceptions, latency,
- * and result counts. Supports native functions and asynchronous operations.
+ * Helonlpelonr functions to obselonrvelon relonquelonsts, succelonsselons, failurelons, cancelonllations, elonxcelonptions, latelonncy,
+ * and relonsult counts. Supports nativelon functions and asynchronous opelonrations.
  */
-object ResultsObserver {
+objelonct RelonsultsObselonrvelonr {
   val Total = "total"
   val Found = "found"
   val NotFound = "not_found"
 
   /**
-   * Helper function to observe a stitch and result counts
+   * Helonlpelonr function to obselonrvelon a stitch and relonsult counts
    *
-   * @see [[StitchResultsObserver]]
+   * @selonelon [[StitchRelonsultsObselonrvelonr]]
    */
-  def stitchResults[T](
-    size: T => Int,
-    statsReceiver: StatsReceiver,
-    scopes: String*
-  ): StitchResultsObserver[T] = {
-    new StitchResultsObserver[T](size, statsReceiver, scopes)
+  delonf stitchRelonsults[T](
+    sizelon: T => Int,
+    statsReloncelonivelonr: StatsReloncelonivelonr,
+    scopelons: String*
+  ): StitchRelonsultsObselonrvelonr[T] = {
+    nelonw StitchRelonsultsObselonrvelonr[T](sizelon, statsReloncelonivelonr, scopelons)
   }
 
   /**
-   * Helper function to observe a stitch and traversable (e.g. Seq, Set) result counts
+   * Helonlpelonr function to obselonrvelon a stitch and travelonrsablelon (elon.g. Selonq, Selont) relonsult counts
    *
-   * @see [[StitchResultsObserver]]
+   * @selonelon [[StitchRelonsultsObselonrvelonr]]
    */
-  def stitchResults[T <: TraversableOnce[_]](
-    statsReceiver: StatsReceiver,
-    scopes: String*
-  ): StitchResultsObserver[T] = {
-    new StitchResultsObserver[T](_.size, statsReceiver, scopes)
+  delonf stitchRelonsults[T <: TravelonrsablelonOncelon[_]](
+    statsReloncelonivelonr: StatsReloncelonivelonr,
+    scopelons: String*
+  ): StitchRelonsultsObselonrvelonr[T] = {
+    nelonw StitchRelonsultsObselonrvelonr[T](_.sizelon, statsReloncelonivelonr, scopelons)
   }
 
   /**
-   * Helper function to observe an arrow and result counts
+   * Helonlpelonr function to obselonrvelon an arrow and relonsult counts
    *
-   * @see [[ArrowResultsObserver]]
+   * @selonelon [[ArrowRelonsultsObselonrvelonr]]
    */
-  def arrowResults[In, Out](
-    size: Out => Int,
-    statsReceiver: StatsReceiver,
-    scopes: String*
-  ): ArrowResultsObserver[In, Out] = {
-    new ArrowResultsObserver[In, Out](size, statsReceiver, scopes)
+  delonf arrowRelonsults[In, Out](
+    sizelon: Out => Int,
+    statsReloncelonivelonr: StatsReloncelonivelonr,
+    scopelons: String*
+  ): ArrowRelonsultsObselonrvelonr[In, Out] = {
+    nelonw ArrowRelonsultsObselonrvelonr[In, Out](sizelon, statsReloncelonivelonr, scopelons)
   }
 
   /**
-   * Helper function to observe an arrow and traversable (e.g. Seq, Set) result counts
+   * Helonlpelonr function to obselonrvelon an arrow and travelonrsablelon (elon.g. Selonq, Selont) relonsult counts
    *
-   * @see [[ArrowResultsObserver]]
+   * @selonelon [[ArrowRelonsultsObselonrvelonr]]
    */
-  def arrowResults[In, Out <: TraversableOnce[_]](
-    statsReceiver: StatsReceiver,
-    scopes: String*
-  ): ArrowResultsObserver[In, Out] = {
-    new ArrowResultsObserver[In, Out](_.size, statsReceiver, scopes)
+  delonf arrowRelonsults[In, Out <: TravelonrsablelonOncelon[_]](
+    statsReloncelonivelonr: StatsReloncelonivelonr,
+    scopelons: String*
+  ): ArrowRelonsultsObselonrvelonr[In, Out] = {
+    nelonw ArrowRelonsultsObselonrvelonr[In, Out](_.sizelon, statsReloncelonivelonr, scopelons)
   }
 
   /**
-   * Helper function to observe an arrow and result counts
+   * Helonlpelonr function to obselonrvelon an arrow and relonsult counts
    *
-   * @see [[TransformingArrowResultsObserver]]
+   * @selonelon [[TransformingArrowRelonsultsObselonrvelonr]]
    */
-  def transformingArrowResults[In, Out, Transformed](
-    transformer: Out => Try[Transformed],
-    size: Transformed => Int,
-    statsReceiver: StatsReceiver,
-    scopes: String*
-  ): TransformingArrowResultsObserver[In, Out, Transformed] = {
-    new TransformingArrowResultsObserver[In, Out, Transformed](
-      transformer,
-      size,
-      statsReceiver,
-      scopes)
+  delonf transformingArrowRelonsults[In, Out, Transformelond](
+    transformelonr: Out => Try[Transformelond],
+    sizelon: Transformelond => Int,
+    statsReloncelonivelonr: StatsReloncelonivelonr,
+    scopelons: String*
+  ): TransformingArrowRelonsultsObselonrvelonr[In, Out, Transformelond] = {
+    nelonw TransformingArrowRelonsultsObselonrvelonr[In, Out, Transformelond](
+      transformelonr,
+      sizelon,
+      statsReloncelonivelonr,
+      scopelons)
   }
 
   /**
-   * Helper function to observe an arrow and traversable (e.g. Seq, Set) result counts
+   * Helonlpelonr function to obselonrvelon an arrow and travelonrsablelon (elon.g. Selonq, Selont) relonsult counts
    *
-   * @see [[TransformingArrowResultsObserver]]
+   * @selonelon [[TransformingArrowRelonsultsObselonrvelonr]]
    */
-  def transformingArrowResults[In, Out, Transformed <: TraversableOnce[_]](
-    transformer: Out => Try[Transformed],
-    statsReceiver: StatsReceiver,
-    scopes: String*
-  ): TransformingArrowResultsObserver[In, Out, Transformed] = {
-    new TransformingArrowResultsObserver[In, Out, Transformed](
-      transformer,
-      _.size,
-      statsReceiver,
-      scopes)
+  delonf transformingArrowRelonsults[In, Out, Transformelond <: TravelonrsablelonOncelon[_]](
+    transformelonr: Out => Try[Transformelond],
+    statsReloncelonivelonr: StatsReloncelonivelonr,
+    scopelons: String*
+  ): TransformingArrowRelonsultsObselonrvelonr[In, Out, Transformelond] = {
+    nelonw TransformingArrowRelonsultsObselonrvelonr[In, Out, Transformelond](
+      transformelonr,
+      _.sizelon,
+      statsReloncelonivelonr,
+      scopelons)
   }
 
   /**
-   * Helper function to observe a future and result counts
+   * Helonlpelonr function to obselonrvelon a futurelon and relonsult counts
    *
-   * @see [[FutureResultsObserver]]
+   * @selonelon [[FuturelonRelonsultsObselonrvelonr]]
    */
-  def futureResults[T](
-    size: T => Int,
-    statsReceiver: StatsReceiver,
-    scopes: String*
-  ): FutureResultsObserver[T] = {
-    new FutureResultsObserver[T](size, statsReceiver, scopes)
+  delonf futurelonRelonsults[T](
+    sizelon: T => Int,
+    statsReloncelonivelonr: StatsReloncelonivelonr,
+    scopelons: String*
+  ): FuturelonRelonsultsObselonrvelonr[T] = {
+    nelonw FuturelonRelonsultsObselonrvelonr[T](sizelon, statsReloncelonivelonr, scopelons)
   }
 
   /**
-   * Helper function to observe a future and traversable (e.g. Seq, Set) result counts
+   * Helonlpelonr function to obselonrvelon a futurelon and travelonrsablelon (elon.g. Selonq, Selont) relonsult counts
    *
-   * @see [[FutureResultsObserver]]
+   * @selonelon [[FuturelonRelonsultsObselonrvelonr]]
    */
-  def futureResults[T <: TraversableOnce[_]](
-    statsReceiver: StatsReceiver,
-    scopes: String*
-  ): FutureResultsObserver[T] = {
-    new FutureResultsObserver[T](_.size, statsReceiver, scopes)
+  delonf futurelonRelonsults[T <: TravelonrsablelonOncelon[_]](
+    statsReloncelonivelonr: StatsReloncelonivelonr,
+    scopelons: String*
+  ): FuturelonRelonsultsObselonrvelonr[T] = {
+    nelonw FuturelonRelonsultsObselonrvelonr[T](_.sizelon, statsReloncelonivelonr, scopelons)
   }
 
   /**
-   * Helper function to observe a function and result counts
+   * Helonlpelonr function to obselonrvelon a function and relonsult counts
    *
-   * @see [[FunctionResultsObserver]]
+   * @selonelon [[FunctionRelonsultsObselonrvelonr]]
    */
-  def functionResults[T](
-    size: T => Int,
-    statsReceiver: StatsReceiver,
-    scopes: String*
-  ): FunctionResultsObserver[T] = {
-    new FunctionResultsObserver[T](size, statsReceiver, scopes)
+  delonf functionRelonsults[T](
+    sizelon: T => Int,
+    statsReloncelonivelonr: StatsReloncelonivelonr,
+    scopelons: String*
+  ): FunctionRelonsultsObselonrvelonr[T] = {
+    nelonw FunctionRelonsultsObselonrvelonr[T](sizelon, statsReloncelonivelonr, scopelons)
   }
 
   /**
-   * Helper function to observe a function and traversable (e.g. Seq, Set) result counts
+   * Helonlpelonr function to obselonrvelon a function and travelonrsablelon (elon.g. Selonq, Selont) relonsult counts
    *
-   * @see [[FunctionResultsObserver]]
+   * @selonelon [[FunctionRelonsultsObselonrvelonr]]
    */
-  def functionResults[T <: TraversableOnce[_]](
-    statsReceiver: StatsReceiver,
-    scopes: String*
-  ): FunctionResultsObserver[T] = {
-    new FunctionResultsObserver[T](_.size, statsReceiver, scopes)
+  delonf functionRelonsults[T <: TravelonrsablelonOncelon[_]](
+    statsReloncelonivelonr: StatsReloncelonivelonr,
+    scopelons: String*
+  ): FunctionRelonsultsObselonrvelonr[T] = {
+    nelonw FunctionRelonsultsObselonrvelonr[T](_.sizelon, statsReloncelonivelonr, scopelons)
   }
 
-  /** [[StitchObserver]] that also records result size */
-  class StitchResultsObserver[T](
-    override val size: T => Int,
-    override val statsReceiver: StatsReceiver,
-    override val scopes: Seq[String])
-      extends StitchObserver[T](statsReceiver, scopes)
-      with ResultsObserver[T] {
+  /** [[StitchObselonrvelonr]] that also reloncords relonsult sizelon */
+  class StitchRelonsultsObselonrvelonr[T](
+    ovelonrridelon val sizelon: T => Int,
+    ovelonrridelon val statsReloncelonivelonr: StatsReloncelonivelonr,
+    ovelonrridelon val scopelons: Selonq[String])
+      elonxtelonnds StitchObselonrvelonr[T](statsReloncelonivelonr, scopelons)
+      with RelonsultsObselonrvelonr[T] {
 
-    override def apply(stitch: => Stitch[T]): Stitch[T] =
-      super
+    ovelonrridelon delonf apply(stitch: => Stitch[T]): Stitch[T] =
+      supelonr
         .apply(stitch)
-        .onSuccess(observeResults)
+        .onSuccelonss(obselonrvelonRelonsults)
   }
 
-  /** [[ArrowObserver]] that also records result size */
-  class ArrowResultsObserver[In, Out](
-    override val size: Out => Int,
-    override val statsReceiver: StatsReceiver,
-    override val scopes: Seq[String])
-      extends ArrowObserver[In, Out](statsReceiver, scopes)
-      with ResultsObserver[Out] {
+  /** [[ArrowObselonrvelonr]] that also reloncords relonsult sizelon */
+  class ArrowRelonsultsObselonrvelonr[In, Out](
+    ovelonrridelon val sizelon: Out => Int,
+    ovelonrridelon val statsReloncelonivelonr: StatsReloncelonivelonr,
+    ovelonrridelon val scopelons: Selonq[String])
+      elonxtelonnds ArrowObselonrvelonr[In, Out](statsReloncelonivelonr, scopelons)
+      with RelonsultsObselonrvelonr[Out] {
 
-    override def apply(arrow: Arrow[In, Out]): Arrow[In, Out] =
-      super
+    ovelonrridelon delonf apply(arrow: Arrow[In, Out]): Arrow[In, Out] =
+      supelonr
         .apply(arrow)
-        .onSuccess(observeResults)
+        .onSuccelonss(obselonrvelonRelonsults)
   }
 
   /**
-   * [[TransformingArrowResultsObserver]] functions like an [[ArrowObserver]] except
-   * that it transforms the result using [[transformer]] before recording stats.
+   * [[TransformingArrowRelonsultsObselonrvelonr]] functions likelon an [[ArrowObselonrvelonr]] elonxcelonpt
+   * that it transforms thelon relonsult using [[transformelonr]] belonforelon reloncording stats.
    *
-   * The original non-transformed result is then returned.
+   * Thelon original non-transformelond relonsult is thelonn relonturnelond.
    */
-  class TransformingArrowResultsObserver[In, Out, Transformed](
-    val transformer: Out => Try[Transformed],
-    override val size: Transformed => Int,
-    override val statsReceiver: StatsReceiver,
-    override val scopes: Seq[String])
-      extends Observer[Transformed]
-      with ResultsObserver[Transformed] {
+  class TransformingArrowRelonsultsObselonrvelonr[In, Out, Transformelond](
+    val transformelonr: Out => Try[Transformelond],
+    ovelonrridelon val sizelon: Transformelond => Int,
+    ovelonrridelon val statsReloncelonivelonr: StatsReloncelonivelonr,
+    ovelonrridelon val scopelons: Selonq[String])
+      elonxtelonnds Obselonrvelonr[Transformelond]
+      with RelonsultsObselonrvelonr[Transformelond] {
 
     /**
-     * Returns a new Arrow that records stats on the result after applying [[transformer]] when it's run.
-     * The original, non-transformed, result of the Arrow is passed through.
+     * Relonturns a nelonw Arrow that reloncords stats on thelon relonsult aftelonr applying [[transformelonr]] whelonn it's run.
+     * Thelon original, non-transformelond, relonsult of thelon Arrow is passelond through.
      *
-     * @note the provided Arrow must contain the parts that need to be timed.
-     *       Using this on just the result of the computation the latency stat
-     *       will be incorrect.
+     * @notelon thelon providelond Arrow must contain thelon parts that nelonelond to belon timelond.
+     *       Using this on just thelon relonsult of thelon computation thelon latelonncy stat
+     *       will belon incorrelonct.
      */
-    def apply(arrow: Arrow[In, Out]): Arrow[In, Out] = {
+    delonf apply(arrow: Arrow[In, Out]): Arrow[In, Out] = {
       Arrow
-        .time(arrow)
+        .timelon(arrow)
         .map {
-          case (response, stitchRunDuration) =>
-            observe(response.flatMap(transformer), stitchRunDuration)
-              .onSuccess(observeResults)
-            response
-        }.lowerFromTry
+          caselon (relonsponselon, stitchRunDuration) =>
+            obselonrvelon(relonsponselon.flatMap(transformelonr), stitchRunDuration)
+              .onSuccelonss(obselonrvelonRelonsults)
+            relonsponselon
+        }.lowelonrFromTry
     }
   }
 
-  /** [[FutureObserver]] that also records result size */
-  class FutureResultsObserver[T](
-    override val size: T => Int,
-    override val statsReceiver: StatsReceiver,
-    override val scopes: Seq[String])
-      extends FutureObserver[T](statsReceiver, scopes)
-      with ResultsObserver[T] {
+  /** [[FuturelonObselonrvelonr]] that also reloncords relonsult sizelon */
+  class FuturelonRelonsultsObselonrvelonr[T](
+    ovelonrridelon val sizelon: T => Int,
+    ovelonrridelon val statsReloncelonivelonr: StatsReloncelonivelonr,
+    ovelonrridelon val scopelons: Selonq[String])
+      elonxtelonnds FuturelonObselonrvelonr[T](statsReloncelonivelonr, scopelons)
+      with RelonsultsObselonrvelonr[T] {
 
-    override def apply(future: => Future[T]): Future[T] =
-      super
-        .apply(future)
-        .onSuccess(observeResults)
+    ovelonrridelon delonf apply(futurelon: => Futurelon[T]): Futurelon[T] =
+      supelonr
+        .apply(futurelon)
+        .onSuccelonss(obselonrvelonRelonsults)
   }
 
-  /** [[FunctionObserver]] that also records result size */
-  class FunctionResultsObserver[T](
-    override val size: T => Int,
-    override val statsReceiver: StatsReceiver,
-    override val scopes: Seq[String])
-      extends FunctionObserver[T](statsReceiver, scopes)
-      with ResultsObserver[T] {
+  /** [[FunctionObselonrvelonr]] that also reloncords relonsult sizelon */
+  class FunctionRelonsultsObselonrvelonr[T](
+    ovelonrridelon val sizelon: T => Int,
+    ovelonrridelon val statsReloncelonivelonr: StatsReloncelonivelonr,
+    ovelonrridelon val scopelons: Selonq[String])
+      elonxtelonnds FunctionObselonrvelonr[T](statsReloncelonivelonr, scopelons)
+      with RelonsultsObselonrvelonr[T] {
 
-    override def apply(f: => T): T = observeResults(super.apply(f))
+    ovelonrridelon delonf apply(f: => T): T = obselonrvelonRelonsults(supelonr.apply(f))
   }
 
-  /** [[ResultsObserver]] provides methods for recording stats for the result size */
-  trait ResultsObserver[T] {
-    protected val statsReceiver: StatsReceiver
+  /** [[RelonsultsObselonrvelonr]] providelons melonthods for reloncording stats for thelon relonsult sizelon */
+  trait RelonsultsObselonrvelonr[T] {
+    protelonctelond val statsReloncelonivelonr: StatsReloncelonivelonr
 
-    /** Scopes that prefix all stats */
-    protected val scopes: Seq[String]
+    /** Scopelons that prelonfix all stats */
+    protelonctelond val scopelons: Selonq[String]
 
-    protected val totalCounter: Counter = statsReceiver.counter(scopes :+ Total: _*)
-    protected val foundCounter: Counter = statsReceiver.counter(scopes :+ Found: _*)
-    protected val notFoundCounter: Counter = statsReceiver.counter(scopes :+ NotFound: _*)
+    protelonctelond val totalCountelonr: Countelonr = statsReloncelonivelonr.countelonr(scopelons :+ Total: _*)
+    protelonctelond val foundCountelonr: Countelonr = statsReloncelonivelonr.countelonr(scopelons :+ Found: _*)
+    protelonctelond val notFoundCountelonr: Countelonr = statsReloncelonivelonr.countelonr(scopelons :+ NotFound: _*)
 
-    /** given a [[T]] returns it's size. */
-    protected val size: T => Int
+    /** givelonn a [[T]] relonturns it's sizelon. */
+    protelonctelond val sizelon: T => Int
 
-    /** Records the size of the `results` using [[size]] and return the original value. */
-    protected def observeResults(results: T): T = {
-      val resultsSize = size(results)
-      observeResultsWithSize(results, resultsSize)
+    /** Reloncords thelon sizelon of thelon `relonsults` using [[sizelon]] and relonturn thelon original valuelon. */
+    protelonctelond delonf obselonrvelonRelonsults(relonsults: T): T = {
+      val relonsultsSizelon = sizelon(relonsults)
+      obselonrvelonRelonsultsWithSizelon(relonsults, relonsultsSizelon)
     }
 
     /**
-     * Records the `resultsSize` and returns the `results`
+     * Reloncords thelon `relonsultsSizelon` and relonturns thelon `relonsults`
      *
-     * This is useful if the size is already available and is expensive to calculate.
+     * This is uselonful if thelon sizelon is alrelonady availablelon and is elonxpelonnsivelon to calculatelon.
      */
-    protected def observeResultsWithSize(results: T, resultsSize: Int): T = {
-      if (resultsSize > 0) {
-        totalCounter.incr(resultsSize)
-        foundCounter.incr()
-      } else {
-        notFoundCounter.incr()
+    protelonctelond delonf obselonrvelonRelonsultsWithSizelon(relonsults: T, relonsultsSizelon: Int): T = {
+      if (relonsultsSizelon > 0) {
+        totalCountelonr.incr(relonsultsSizelon)
+        foundCountelonr.incr()
+      } elonlselon {
+        notFoundCountelonr.incr()
       }
-      results
+      relonsults
     }
   }
 }

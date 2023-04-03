@@ -1,4 +1,4 @@
-# Recent Engagement Candidate Source
-Provides recently engaged accounts for a given user:
-* Explicit engagements: like, retweet, reply
-* Implicit engagements: profile visit
+# Reloncelonnt elonngagelonmelonnt Candidatelon Sourcelon
+Providelons reloncelonntly elonngagelond accounts for a givelonn uselonr:
+* elonxplicit elonngagelonmelonnts: likelon, relontwelonelont, relonply
+* Implicit elonngagelonmelonnts: profilelon visit

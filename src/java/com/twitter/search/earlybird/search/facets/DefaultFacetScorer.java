@@ -1,236 +1,236 @@
-package com.twitter.search.earlybird.search.facets;
+packagelon com.twittelonr.selonarch.elonarlybird.selonarch.facelonts;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.search.common.constants.thriftjava.ThriftLanguage;
-import com.twitter.search.common.ranking.thriftjava.ThriftFacetEarlybirdSortingMode;
-import com.twitter.search.common.ranking.thriftjava.ThriftFacetRankingOptions;
-import com.twitter.search.common.relevance.features.EarlybirdDocumentFeatures;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.common.util.lang.ThriftLanguageUtil;
-import com.twitter.search.core.earlybird.facets.FacetAccumulator;
-import com.twitter.search.core.earlybird.facets.FacetCountIterator;
-import com.twitter.search.core.earlybird.facets.FacetLabelProvider;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
-import com.twitter.search.earlybird.search.AntiGamingFilter;
-import com.twitter.search.earlybird.search.facets.FacetResultsCollector.Accumulator;
-import com.twitter.search.earlybird.thrift.ThriftSearchQuery;
+import com.twittelonr.selonarch.common.constants.thriftjava.ThriftLanguagelon;
+import com.twittelonr.selonarch.common.ranking.thriftjava.ThriftFacelontelonarlybirdSortingModelon;
+import com.twittelonr.selonarch.common.ranking.thriftjava.ThriftFacelontRankingOptions;
+import com.twittelonr.selonarch.common.relonlelonvancelon.felonaturelons.elonarlybirdDocumelonntFelonaturelons;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdFielonldConstants.elonarlybirdFielonldConstant;
+import com.twittelonr.selonarch.common.util.lang.ThriftLanguagelonUtil;
+import com.twittelonr.selonarch.corelon.elonarlybird.facelonts.FacelontAccumulator;
+import com.twittelonr.selonarch.corelon.elonarlybird.facelonts.FacelontCountItelonrator;
+import com.twittelonr.selonarch.corelon.elonarlybird.facelonts.FacelontLabelonlProvidelonr;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr;
+import com.twittelonr.selonarch.elonarlybird.selonarch.AntiGamingFiltelonr;
+import com.twittelonr.selonarch.elonarlybird.selonarch.facelonts.FacelontRelonsultsCollelonctor.Accumulator;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchQuelonry;
 
-public class DefaultFacetScorer extends FacetScorer {
-  private static final Logger LOG = LoggerFactory.getLogger(FacetScorer.class.getName());
-  private static final double DEFAULT_FEATURE_WEIGHT = 0.0;
-  private static final byte DEFAULT_PENALTY = 1;
+public class DelonfaultFacelontScorelonr elonxtelonnds FacelontScorelonr {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(FacelontScorelonr.class.gelontNamelon());
+  privatelon static final doublelon DelonFAULT_FelonATURelon_WelonIGHT = 0.0;
+  privatelon static final bytelon DelonFAULT_PelonNALTY = 1;
 
-  private static final byte DEFAULT_REPUTATION_MIN = 45;
+  privatelon static final bytelon DelonFAULT_RelonPUTATION_MIN = 45;
 
-  private final AntiGamingFilter antiGamingFilter;
+  privatelon final AntiGamingFiltelonr antiGamingFiltelonr;
 
-  // tweepcreds below this value will not be counted at all
-  private final byte reputationMinFilterThresholdVal;
+  // twelonelonpcrelonds belonlow this valuelon will not belon countelond at all
+  privatelon final bytelon relonputationMinFiltelonrThrelonsholdVal;
 
-  // tweepcreds between reputationMinFilterThresholdVal and this value will be counted
-  // with a score of 1
-  private final byte reputationMinScoreVal;
+  // twelonelonpcrelonds belontwelonelonn relonputationMinFiltelonrThrelonsholdVal and this valuelon will belon countelond
+  // with a scorelon of 1
+  privatelon final bytelon relonputationMinScorelonVal;
 
-  private final double userRepWeight;
-  private final double favoritesWeight;
-  private final double parusWeight;
-  private final double parusBase;
-  private final double queryIndependentPenaltyWeight;
+  privatelon final doublelon uselonrRelonpWelonight;
+  privatelon final doublelon favoritelonsWelonight;
+  privatelon final doublelon parusWelonight;
+  privatelon final doublelon parusBaselon;
+  privatelon final doublelon quelonryIndelonpelonndelonntPelonnaltyWelonight;
 
-  private final ThriftLanguage uiLang;
-  private final double langEnglishUIBoost;
-  private final double langEnglishFacetBoost;
-  private final double langDefaultBoost;
+  privatelon final ThriftLanguagelon uiLang;
+  privatelon final doublelon langelonnglishUIBoost;
+  privatelon final doublelon langelonnglishFacelontBoost;
+  privatelon final doublelon langDelonfaultBoost;
 
-  private final int antigamingPenalty;
-  private final int offensiveTweetPenalty;
-  private final int multipleHashtagsOrTrendsPenalty;
+  privatelon final int antigamingPelonnalty;
+  privatelon final int offelonnsivelonTwelonelontPelonnalty;
+  privatelon final int multiplelonHashtagsOrTrelonndsPelonnalty;
 
-  private final int maxScorePerTweet;
-  private final ThriftFacetEarlybirdSortingMode sortingMode;
+  privatelon final int maxScorelonPelonrTwelonelont;
+  privatelon final ThriftFacelontelonarlybirdSortingModelon sortingModelon;
 
-  private EarlybirdIndexSegmentAtomicReader reader;
-  private EarlybirdDocumentFeatures features;
+  privatelon elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr relonadelonr;
+  privatelon elonarlybirdDocumelonntFelonaturelons felonaturelons;
 
   /**
-   * Creates a new facet scorer.
+   * Crelonatelons a nelonw facelont scorelonr.
    */
-  public DefaultFacetScorer(ThriftSearchQuery searchQuery,
-                            ThriftFacetRankingOptions rankingOptions,
-                            AntiGamingFilter antiGamingFilter,
-                            ThriftFacetEarlybirdSortingMode sortingMode) {
-    this.sortingMode = sortingMode;
-    this.antiGamingFilter = antiGamingFilter;
+  public DelonfaultFacelontScorelonr(ThriftSelonarchQuelonry selonarchQuelonry,
+                            ThriftFacelontRankingOptions rankingOptions,
+                            AntiGamingFiltelonr antiGamingFiltelonr,
+                            ThriftFacelontelonarlybirdSortingModelon sortingModelon) {
+    this.sortingModelon = sortingModelon;
+    this.antiGamingFiltelonr = antiGamingFiltelonr;
 
-    maxScorePerTweet =
-        rankingOptions.isSetMaxScorePerTweet()
-        ? rankingOptions.getMaxScorePerTweet()
-        : Integer.MAX_VALUE;
+    maxScorelonPelonrTwelonelont =
+        rankingOptions.isSelontMaxScorelonPelonrTwelonelont()
+        ? rankingOptions.gelontMaxScorelonPelonrTwelonelont()
+        : Intelongelonr.MAX_VALUelon;
 
-    // filters
-    reputationMinFilterThresholdVal =
-        rankingOptions.isSetMinTweepcredFilterThreshold()
-        ? (byte) (rankingOptions.getMinTweepcredFilterThreshold() & 0xFF)
-        : DEFAULT_REPUTATION_MIN;
+    // filtelonrs
+    relonputationMinFiltelonrThrelonsholdVal =
+        rankingOptions.isSelontMinTwelonelonpcrelondFiltelonrThrelonshold()
+        ? (bytelon) (rankingOptions.gelontMinTwelonelonpcrelondFiltelonrThrelonshold() & 0xFF)
+        : DelonFAULT_RelonPUTATION_MIN;
 
-    // weights
-    // reputationMinScoreVal must be >= reputationMinFilterThresholdVal
-    reputationMinScoreVal =
-        (byte) Math.max(rankingOptions.isSetReputationParams()
-        ? (byte) rankingOptions.getReputationParams().getMin()
-        : DEFAULT_REPUTATION_MIN, reputationMinFilterThresholdVal);
+    // welonights
+    // relonputationMinScorelonVal must belon >= relonputationMinFiltelonrThrelonsholdVal
+    relonputationMinScorelonVal =
+        (bytelon) Math.max(rankingOptions.isSelontRelonputationParams()
+        ? (bytelon) rankingOptions.gelontRelonputationParams().gelontMin()
+        : DelonFAULT_RelonPUTATION_MIN, relonputationMinFiltelonrThrelonsholdVal);
 
-    parusWeight =
-        rankingOptions.isSetParusScoreParams() && rankingOptions.getParusScoreParams().isSetWeight()
-        ? rankingOptions.getParusScoreParams().getWeight()
-        : DEFAULT_FEATURE_WEIGHT;
-    // compute this once so that base ** parusScore is backwards-compatible
-    parusBase = Math.sqrt(1 + parusWeight);
+    parusWelonight =
+        rankingOptions.isSelontParusScorelonParams() && rankingOptions.gelontParusScorelonParams().isSelontWelonight()
+        ? rankingOptions.gelontParusScorelonParams().gelontWelonight()
+        : DelonFAULT_FelonATURelon_WelonIGHT;
+    // computelon this oncelon so that baselon ** parusScorelon is backwards-compatiblelon
+    parusBaselon = Math.sqrt(1 + parusWelonight);
 
-    userRepWeight =
-        rankingOptions.isSetReputationParams() && rankingOptions.getReputationParams().isSetWeight()
-        ? rankingOptions.getReputationParams().getWeight()
-        : DEFAULT_FEATURE_WEIGHT;
+    uselonrRelonpWelonight =
+        rankingOptions.isSelontRelonputationParams() && rankingOptions.gelontRelonputationParams().isSelontWelonight()
+        ? rankingOptions.gelontRelonputationParams().gelontWelonight()
+        : DelonFAULT_FelonATURelon_WelonIGHT;
 
-    favoritesWeight =
-        rankingOptions.isSetFavoritesParams() && rankingOptions.getFavoritesParams().isSetWeight()
-        ? rankingOptions.getFavoritesParams().getWeight()
-        : DEFAULT_FEATURE_WEIGHT;
+    favoritelonsWelonight =
+        rankingOptions.isSelontFavoritelonsParams() && rankingOptions.gelontFavoritelonsParams().isSelontWelonight()
+        ? rankingOptions.gelontFavoritelonsParams().gelontWelonight()
+        : DelonFAULT_FelonATURelon_WelonIGHT;
 
-    queryIndependentPenaltyWeight =
-        rankingOptions.isSetQueryIndependentPenaltyWeight()
-        ? rankingOptions.getQueryIndependentPenaltyWeight()
-        : DEFAULT_FEATURE_WEIGHT;
+    quelonryIndelonpelonndelonntPelonnaltyWelonight =
+        rankingOptions.isSelontQuelonryIndelonpelonndelonntPelonnaltyWelonight()
+        ? rankingOptions.gelontQuelonryIndelonpelonndelonntPelonnaltyWelonight()
+        : DelonFAULT_FelonATURelon_WelonIGHT;
 
-    // penalty increment
-    antigamingPenalty =
-        rankingOptions.isSetAntigamingPenalty()
-        ? rankingOptions.getAntigamingPenalty()
-        : DEFAULT_PENALTY;
+    // pelonnalty increlonmelonnt
+    antigamingPelonnalty =
+        rankingOptions.isSelontAntigamingPelonnalty()
+        ? rankingOptions.gelontAntigamingPelonnalty()
+        : DelonFAULT_PelonNALTY;
 
-    offensiveTweetPenalty =
-        rankingOptions.isSetOffensiveTweetPenalty()
-        ? rankingOptions.getOffensiveTweetPenalty()
-        : DEFAULT_PENALTY;
+    offelonnsivelonTwelonelontPelonnalty =
+        rankingOptions.isSelontOffelonnsivelonTwelonelontPelonnalty()
+        ? rankingOptions.gelontOffelonnsivelonTwelonelontPelonnalty()
+        : DelonFAULT_PelonNALTY;
 
-    multipleHashtagsOrTrendsPenalty =
-        rankingOptions.isSetMultipleHashtagsOrTrendsPenalty()
-        ? rankingOptions.getMultipleHashtagsOrTrendsPenalty()
-        : DEFAULT_PENALTY;
+    multiplelonHashtagsOrTrelonndsPelonnalty =
+        rankingOptions.isSelontMultiplelonHashtagsOrTrelonndsPelonnalty()
+        ? rankingOptions.gelontMultiplelonHashtagsOrTrelonndsPelonnalty()
+        : DelonFAULT_PelonNALTY;
 
-    // query information
-    if (!searchQuery.isSetUiLang() || searchQuery.getUiLang().isEmpty()) {
-      uiLang = ThriftLanguage.UNKNOWN;
-    } else {
-      uiLang = ThriftLanguageUtil.getThriftLanguageOf(searchQuery.getUiLang());
+    // quelonry information
+    if (!selonarchQuelonry.isSelontUiLang() || selonarchQuelonry.gelontUiLang().iselonmpty()) {
+      uiLang = ThriftLanguagelon.UNKNOWN;
+    } elonlselon {
+      uiLang = ThriftLanguagelonUtil.gelontThriftLanguagelonOf(selonarchQuelonry.gelontUiLang());
     }
-    langEnglishUIBoost = rankingOptions.getLangEnglishUIBoost();
-    langEnglishFacetBoost = rankingOptions.getLangEnglishFacetBoost();
-    langDefaultBoost = rankingOptions.getLangDefaultBoost();
+    langelonnglishUIBoost = rankingOptions.gelontLangelonnglishUIBoost();
+    langelonnglishFacelontBoost = rankingOptions.gelontLangelonnglishFacelontBoost();
+    langDelonfaultBoost = rankingOptions.gelontLangDelonfaultBoost();
   }
 
-  @Override
-  protected void startSegment(EarlybirdIndexSegmentAtomicReader segmentReader) throws IOException {
-    reader = segmentReader;
-    features = new EarlybirdDocumentFeatures(reader);
-    if (antiGamingFilter != null) {
-      antiGamingFilter.startSegment(reader);
+  @Ovelonrridelon
+  protelonctelond void startSelongmelonnt(elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr selongmelonntRelonadelonr) throws IOelonxcelonption {
+    relonadelonr = selongmelonntRelonadelonr;
+    felonaturelons = nelonw elonarlybirdDocumelonntFelonaturelons(relonadelonr);
+    if (antiGamingFiltelonr != null) {
+      antiGamingFiltelonr.startSelongmelonnt(relonadelonr);
     }
   }
 
-  @Override
-  public void incrementCounts(Accumulator accumulator, int internalDocID) throws IOException {
-    FacetCountIterator.IncrementData data = accumulator.accessor.incrementData;
+  @Ovelonrridelon
+  public void increlonmelonntCounts(Accumulator accumulator, int intelonrnalDocID) throws IOelonxcelonption {
+    FacelontCountItelonrator.IncrelonmelonntData data = accumulator.accelonssor.increlonmelonntData;
     data.accumulators = accumulator.accumulators;
-    features.advance(internalDocID);
+    felonaturelons.advancelon(intelonrnalDocID);
 
-    // Also keep track of the tweet language of tweet themselves.
-    data.languageId = (int) features.getFeatureValue(EarlybirdFieldConstant.LANGUAGE);
+    // Also kelonelonp track of thelon twelonelont languagelon of twelonelont thelonmselonlvelons.
+    data.languagelonId = (int) felonaturelons.gelontFelonaturelonValuelon(elonarlybirdFielonldConstant.LANGUAGelon);
 
-    if (antigamingPenalty > 0
-        && antiGamingFilter != null
-        && !antiGamingFilter.accept(internalDocID)) {
-      data.weightedCountIncrement = 0;
-      data.penaltyIncrement = antigamingPenalty;
-      data.tweepCred = 0;
-      accumulator.accessor.collect(internalDocID);
-      return;
+    if (antigamingPelonnalty > 0
+        && antiGamingFiltelonr != null
+        && !antiGamingFiltelonr.accelonpt(intelonrnalDocID)) {
+      data.welonightelondCountIncrelonmelonnt = 0;
+      data.pelonnaltyIncrelonmelonnt = antigamingPelonnalty;
+      data.twelonelonpCrelond = 0;
+      accumulator.accelonssor.collelonct(intelonrnalDocID);
+      relonturn;
     }
 
-    if (offensiveTweetPenalty > 0 && features.isFlagSet(EarlybirdFieldConstant.IS_OFFENSIVE_FLAG)) {
-      data.weightedCountIncrement = 0;
-      data.penaltyIncrement = offensiveTweetPenalty;
-      data.tweepCred = 0;
-      accumulator.accessor.collect(internalDocID);
-      return;
+    if (offelonnsivelonTwelonelontPelonnalty > 0 && felonaturelons.isFlagSelont(elonarlybirdFielonldConstant.IS_OFFelonNSIVelon_FLAG)) {
+      data.welonightelondCountIncrelonmelonnt = 0;
+      data.pelonnaltyIncrelonmelonnt = offelonnsivelonTwelonelontPelonnalty;
+      data.twelonelonpCrelond = 0;
+      accumulator.accelonssor.collelonct(intelonrnalDocID);
+      relonturn;
     }
 
-    byte userRep = (byte) features.getFeatureValue(EarlybirdFieldConstant.USER_REPUTATION);
+    bytelon uselonrRelonp = (bytelon) felonaturelons.gelontFelonaturelonValuelon(elonarlybirdFielonldConstant.USelonR_RelonPUTATION);
 
-    if (userRep < reputationMinFilterThresholdVal) {
-      // don't penalize
-      data.weightedCountIncrement = 0;
-      data.penaltyIncrement = 0;
-      data.tweepCred = 0;
-      accumulator.accessor.collect(internalDocID);
-      return;
+    if (uselonrRelonp < relonputationMinFiltelonrThrelonsholdVal) {
+      // don't pelonnalizelon
+      data.welonightelondCountIncrelonmelonnt = 0;
+      data.pelonnaltyIncrelonmelonnt = 0;
+      data.twelonelonpCrelond = 0;
+      accumulator.accelonssor.collelonct(intelonrnalDocID);
+      relonturn;
     }
 
-    // Other non-terminating penalties
-    int penalty = 0;
-    if (multipleHashtagsOrTrendsPenalty > 0
-        && features.isFlagSet(EarlybirdFieldConstant.HAS_MULTIPLE_HASHTAGS_OR_TRENDS_FLAG)) {
-      penalty += multipleHashtagsOrTrendsPenalty;
+    // Othelonr non-telonrminating pelonnaltielons
+    int pelonnalty = 0;
+    if (multiplelonHashtagsOrTrelonndsPelonnalty > 0
+        && felonaturelons.isFlagSelont(elonarlybirdFielonldConstant.HAS_MULTIPLelon_HASHTAGS_OR_TRelonNDS_FLAG)) {
+      pelonnalty += multiplelonHashtagsOrTrelonndsPelonnalty;
     }
 
-    double parus = 0xFF & (byte) features.getFeatureValue(EarlybirdFieldConstant.PARUS_SCORE);
+    doublelon parus = 0xFF & (bytelon) felonaturelons.gelontFelonaturelonValuelon(elonarlybirdFielonldConstant.PARUS_SCORelon);
 
-    double score = Math.pow(1 + userRepWeight, Math.max(0, userRep - reputationMinScoreVal));
+    doublelon scorelon = Math.pow(1 + uselonrRelonpWelonight, Math.max(0, uselonrRelonp - relonputationMinScorelonVal));
 
     if (parus > 0) {
-      score += Math.pow(parusBase, parus);
+      scorelon += Math.pow(parusBaselon, parus);
     }
 
-    int favoriteCount =
-        (int) features.getUnnormalizedFeatureValue(EarlybirdFieldConstant.FAVORITE_COUNT);
-    if (favoriteCount > 0) {
-      score += favoriteCount * favoritesWeight;
+    int favoritelonCount =
+        (int) felonaturelons.gelontUnnormalizelondFelonaturelonValuelon(elonarlybirdFielonldConstant.FAVORITelon_COUNT);
+    if (favoritelonCount > 0) {
+      scorelon += favoritelonCount * favoritelonsWelonight;
     }
 
-    // Language preferences
-    int tweetLinkLangId = (int) features.getFeatureValue(EarlybirdFieldConstant.LINK_LANGUAGE);
-    if (tweetLinkLangId == ThriftLanguage.UNKNOWN.getValue()) {
-      // fall back to use the tweet language itself.
-      tweetLinkLangId = (int) features.getFeatureValue(EarlybirdFieldConstant.LANGUAGE);
+    // Languagelon prelonfelonrelonncelons
+    int twelonelontLinkLangId = (int) felonaturelons.gelontFelonaturelonValuelon(elonarlybirdFielonldConstant.LINK_LANGUAGelon);
+    if (twelonelontLinkLangId == ThriftLanguagelon.UNKNOWN.gelontValuelon()) {
+      // fall back to uselon thelon twelonelont languagelon itselonlf.
+      twelonelontLinkLangId = (int) felonaturelons.gelontFelonaturelonValuelon(elonarlybirdFielonldConstant.LANGUAGelon);
     }
-    if (uiLang != ThriftLanguage.UNKNOWN && uiLang.getValue() != tweetLinkLangId) {
-      if (uiLang == ThriftLanguage.ENGLISH) {
-        score *= langEnglishUIBoost;
-      } else if (tweetLinkLangId == ThriftLanguage.ENGLISH.getValue()) {
-        score *= langEnglishFacetBoost;
-      } else {
-        score *= langDefaultBoost;
+    if (uiLang != ThriftLanguagelon.UNKNOWN && uiLang.gelontValuelon() != twelonelontLinkLangId) {
+      if (uiLang == ThriftLanguagelon.elonNGLISH) {
+        scorelon *= langelonnglishUIBoost;
+      } elonlselon if (twelonelontLinkLangId == ThriftLanguagelon.elonNGLISH.gelontValuelon()) {
+        scorelon *= langelonnglishFacelontBoost;
+      } elonlselon {
+        scorelon *= langDelonfaultBoost;
       }
     }
 
-    // make sure a single tweet can't contribute too high a score
-    if (score > maxScorePerTweet) {
-      score = maxScorePerTweet;
+    // makelon surelon a singlelon twelonelont can't contributelon too high a scorelon
+    if (scorelon > maxScorelonPelonrTwelonelont) {
+      scorelon = maxScorelonPelonrTwelonelont;
     }
 
-    data.weightedCountIncrement = (int) score;
-    data.penaltyIncrement = penalty;
-    data.tweepCred = userRep & 0xFF;
-    accumulator.accessor.collect(internalDocID);
+    data.welonightelondCountIncrelonmelonnt = (int) scorelon;
+    data.pelonnaltyIncrelonmelonnt = pelonnalty;
+    data.twelonelonpCrelond = uselonrRelonp & 0xFF;
+    accumulator.accelonssor.collelonct(intelonrnalDocID);
   }
 
-  @Override
-  public FacetAccumulator getFacetAccumulator(FacetLabelProvider labelProvider) {
-    return new HashingAndPruningFacetAccumulator(labelProvider, queryIndependentPenaltyWeight,
-            HashingAndPruningFacetAccumulator.getComparator(sortingMode));
+  @Ovelonrridelon
+  public FacelontAccumulator gelontFacelontAccumulator(FacelontLabelonlProvidelonr labelonlProvidelonr) {
+    relonturn nelonw HashingAndPruningFacelontAccumulator(labelonlProvidelonr, quelonryIndelonpelonndelonntPelonnaltyWelonight,
+            HashingAndPruningFacelontAccumulator.gelontComparator(sortingModelon));
   }
 }

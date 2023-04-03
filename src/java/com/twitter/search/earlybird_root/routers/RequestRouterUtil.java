@@ -1,106 +1,106 @@
-package com.twitter.search.earlybird_root.routers;
+packagelon com.twittelonr.selonarch.elonarlybird_root.routelonrs;
 
 import java.util.List;
 
-import com.google.common.base.Optional;
-import com.google.common.collect.Lists;
+import com.googlelon.common.baselon.Optional;
+import com.googlelon.common.collelonct.Lists;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestType;
-import com.twitter.search.earlybird_root.common.EarlybirdServiceResponse;
-import com.twitter.util.Await;
-import com.twitter.util.Function;
-import com.twitter.util.Future;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselonCodelon;
+import com.twittelonr.selonarch.elonarlybird_root.common.elonarlybirdRelonquelonstContelonxt;
+import com.twittelonr.selonarch.elonarlybird_root.common.elonarlybirdRelonquelonstTypelon;
+import com.twittelonr.selonarch.elonarlybird_root.common.elonarlybirdSelonrvicelonRelonsponselon;
+import com.twittelonr.util.Await;
+import com.twittelonr.util.Function;
+import com.twittelonr.util.Futurelon;
 
-public final class RequestRouterUtil {
-  private static final Logger LOG = LoggerFactory.getLogger(RequestRouterUtil.class);
+public final class RelonquelonstRoutelonrUtil {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(RelonquelonstRoutelonrUtil.class);
 
-  private RequestRouterUtil() {
+  privatelon RelonquelonstRoutelonrUtil() {
   }
 
   /**
-   * Returns the function that checks if the minSearchedStatusID on the merged response is higher
-   * than the max ID in the request.
+   * Relonturns thelon function that cheloncks if thelon minSelonarchelondStatusID on thelon melonrgelond relonsponselon is highelonr
+   * than thelon max ID in thelon relonquelonst.
    *
-   * @param requestContext The request context that stores the request.
-   * @param operator The operator that we're checking against (max_id or until_time).
-   * @param requestMaxId The maxId specified in the request (in the given operator).
-   * @param realtimeResponseFuture The response from the realtime cluster.
-   * @param protectedResponseFuture The response from the protected cluster.
-   * @param fullArchiveResponseFuture The response from the full archive cluster.
-   * @param stat The stat to increment if minSearchedStatusID on the merged response is higher than
-   *             the max ID in the request.
-   * @return A function that checks if the minSearchedStatusID on the merged response is higher than
-   *         the max ID in the request.
+   * @param relonquelonstContelonxt Thelon relonquelonst contelonxt that storelons thelon relonquelonst.
+   * @param opelonrator Thelon opelonrator that welon'relon cheloncking against (max_id or until_timelon).
+   * @param relonquelonstMaxId Thelon maxId speloncifielond in thelon relonquelonst (in thelon givelonn opelonrator).
+   * @param relonaltimelonRelonsponselonFuturelon Thelon relonsponselon from thelon relonaltimelon clustelonr.
+   * @param protelonctelondRelonsponselonFuturelon Thelon relonsponselon from thelon protelonctelond clustelonr.
+   * @param fullArchivelonRelonsponselonFuturelon Thelon relonsponselon from thelon full archivelon clustelonr.
+   * @param stat Thelon stat to increlonmelonnt if minSelonarchelondStatusID on thelon melonrgelond relonsponselon is highelonr than
+   *             thelon max ID in thelon relonquelonst.
+   * @relonturn A function that cheloncks if thelon minSelonarchelondStatusID on thelon melonrgelond relonsponselon is highelonr than
+   *         thelon max ID in thelon relonquelonst.
    */
-  public static Function<EarlybirdResponse, EarlybirdResponse> checkMinSearchedStatusId(
-      final EarlybirdRequestContext requestContext,
-      final String operator,
-      final Optional<Long> requestMaxId,
-      final Future<EarlybirdServiceResponse> realtimeResponseFuture,
-      final Future<EarlybirdServiceResponse> protectedResponseFuture,
-      final Future<EarlybirdServiceResponse> fullArchiveResponseFuture,
-      final SearchCounter stat) {
-    return new Function<EarlybirdResponse, EarlybirdResponse>() {
-      @Override
-      public EarlybirdResponse apply(EarlybirdResponse mergedResponse) {
-        if (requestMaxId.isPresent()
-            && (mergedResponse.getResponseCode() == EarlybirdResponseCode.SUCCESS)
-            && mergedResponse.isSetSearchResults()
-            && mergedResponse.getSearchResults().isSetMinSearchedStatusID()) {
-          long minSearchedStatusId = mergedResponse.getSearchResults().getMinSearchedStatusID();
-          if (minSearchedStatusId > requestMaxId.get()) {
-            stat.increment();
-            // We're logging this only for STRICT RECENCY as it was very spammy for all types of
-            // request. We don't expect this to happen for STRICT RECENCY but we're tracking
-            // with the stat when it happens for RELEVANCE and RECENCY
-            if (requestContext.getEarlybirdRequestType() == EarlybirdRequestType.STRICT_RECENCY) {
-              String logMessage = "Response has a minSearchedStatusID ({}) larger than request "
-                  + operator + " ({})."
-                  + "\nrequest type: {}"
-                  + "\nrequest: {}"
-                  + "\nmerged response: {}"
-                  + "\nrealtime response: {}"
-                  + "\nprotected response: {}"
-                  + "\nfull archive response: {}";
-              List<Object> logMessageParams = Lists.newArrayList();
-              logMessageParams.add(minSearchedStatusId);
-              logMessageParams.add(requestMaxId.get());
-              logMessageParams.add(requestContext.getEarlybirdRequestType());
-              logMessageParams.add(requestContext.getRequest());
-              logMessageParams.add(mergedResponse);
+  public static Function<elonarlybirdRelonsponselon, elonarlybirdRelonsponselon> chelonckMinSelonarchelondStatusId(
+      final elonarlybirdRelonquelonstContelonxt relonquelonstContelonxt,
+      final String opelonrator,
+      final Optional<Long> relonquelonstMaxId,
+      final Futurelon<elonarlybirdSelonrvicelonRelonsponselon> relonaltimelonRelonsponselonFuturelon,
+      final Futurelon<elonarlybirdSelonrvicelonRelonsponselon> protelonctelondRelonsponselonFuturelon,
+      final Futurelon<elonarlybirdSelonrvicelonRelonsponselon> fullArchivelonRelonsponselonFuturelon,
+      final SelonarchCountelonr stat) {
+    relonturn nelonw Function<elonarlybirdRelonsponselon, elonarlybirdRelonsponselon>() {
+      @Ovelonrridelon
+      public elonarlybirdRelonsponselon apply(elonarlybirdRelonsponselon melonrgelondRelonsponselon) {
+        if (relonquelonstMaxId.isPrelonselonnt()
+            && (melonrgelondRelonsponselon.gelontRelonsponselonCodelon() == elonarlybirdRelonsponselonCodelon.SUCCelonSS)
+            && melonrgelondRelonsponselon.isSelontSelonarchRelonsults()
+            && melonrgelondRelonsponselon.gelontSelonarchRelonsults().isSelontMinSelonarchelondStatusID()) {
+          long minSelonarchelondStatusId = melonrgelondRelonsponselon.gelontSelonarchRelonsults().gelontMinSelonarchelondStatusID();
+          if (minSelonarchelondStatusId > relonquelonstMaxId.gelont()) {
+            stat.increlonmelonnt();
+            // Welon'relon logging this only for STRICT RelonCelonNCY as it was velonry spammy for all typelons of
+            // relonquelonst. Welon don't elonxpelonct this to happelonn for STRICT RelonCelonNCY but welon'relon tracking
+            // with thelon stat whelonn it happelonns for RelonLelonVANCelon and RelonCelonNCY
+            if (relonquelonstContelonxt.gelontelonarlybirdRelonquelonstTypelon() == elonarlybirdRelonquelonstTypelon.STRICT_RelonCelonNCY) {
+              String logMelonssagelon = "Relonsponselon has a minSelonarchelondStatusID ({}) largelonr than relonquelonst "
+                  + opelonrator + " ({})."
+                  + "\nrelonquelonst typelon: {}"
+                  + "\nrelonquelonst: {}"
+                  + "\nmelonrgelond relonsponselon: {}"
+                  + "\nrelonaltimelon relonsponselon: {}"
+                  + "\nprotelonctelond relonsponselon: {}"
+                  + "\nfull archivelon relonsponselon: {}";
+              List<Objelonct> logMelonssagelonParams = Lists.nelonwArrayList();
+              logMelonssagelonParams.add(minSelonarchelondStatusId);
+              logMelonssagelonParams.add(relonquelonstMaxId.gelont());
+              logMelonssagelonParams.add(relonquelonstContelonxt.gelontelonarlybirdRelonquelonstTypelon());
+              logMelonssagelonParams.add(relonquelonstContelonxt.gelontRelonquelonst());
+              logMelonssagelonParams.add(melonrgelondRelonsponselon);
 
-              // The realtime, protected and full archive response futures are "done" at this point:
-              // we have to wait for them in order to build the merged response. So it's ok to call
-              // Await.result() here to get the responses: it's a no-op.
+              // Thelon relonaltimelon, protelonctelond and full archivelon relonsponselon futurelons arelon "donelon" at this point:
+              // welon havelon to wait for thelonm in ordelonr to build thelon melonrgelond relonsponselon. So it's ok to call
+              // Await.relonsult() helonrelon to gelont thelon relonsponselons: it's a no-op.
               try {
-                logMessageParams.add(Await.result(realtimeResponseFuture).getResponse());
-              } catch (Exception e) {
-                logMessageParams.add(e);
+                logMelonssagelonParams.add(Await.relonsult(relonaltimelonRelonsponselonFuturelon).gelontRelonsponselon());
+              } catch (elonxcelonption elon) {
+                logMelonssagelonParams.add(elon);
               }
               try {
-                logMessageParams.add(Await.result(protectedResponseFuture).getResponse());
-              } catch (Exception e) {
-                logMessageParams.add(e);
+                logMelonssagelonParams.add(Await.relonsult(protelonctelondRelonsponselonFuturelon).gelontRelonsponselon());
+              } catch (elonxcelonption elon) {
+                logMelonssagelonParams.add(elon);
               }
               try {
-                logMessageParams.add(Await.result(fullArchiveResponseFuture).getResponse());
-              } catch (Exception e) {
-                logMessageParams.add(e);
+                logMelonssagelonParams.add(Await.relonsult(fullArchivelonRelonsponselonFuturelon).gelontRelonsponselon());
+              } catch (elonxcelonption elon) {
+                logMelonssagelonParams.add(elon);
               }
 
-              LOG.warn(logMessage, logMessageParams.toArray());
+              LOG.warn(logMelonssagelon, logMelonssagelonParams.toArray());
             }
           }
         }
 
-        return mergedResponse;
+        relonturn melonrgelondRelonsponselon;
       }
     };
   }

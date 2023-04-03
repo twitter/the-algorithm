@@ -1,369 +1,369 @@
-package com.twitter.home_mixer.util.earlybird
+packagelon com.twittelonr.homelon_mixelonr.util.elonarlybird
 
-import com.twitter.search.common.constants.{thriftscala => scc}
-import com.twitter.search.common.features.{thriftscala => sc}
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant._
-import com.twitter.search.common.util.lang.ThriftLanguageUtil
-import com.twitter.search.earlybird.{thriftscala => eb}
+import com.twittelonr.selonarch.common.constants.{thriftscala => scc}
+import com.twittelonr.selonarch.common.felonaturelons.{thriftscala => sc}
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdFielonldConstants.elonarlybirdFielonldConstant
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdFielonldConstants.elonarlybirdFielonldConstant._
+import com.twittelonr.selonarch.common.util.lang.ThriftLanguagelonUtil
+import com.twittelonr.selonarch.elonarlybird.{thriftscala => elonb}
 
-object EarlybirdResponseUtil {
+objelonct elonarlybirdRelonsponselonUtil {
 
-  private[earlybird] val Mentions: String = "mentions"
-  private[earlybird] val Hashtags: String = "hashtags"
-  private val CharsToRemoveFromMentions: Set[Char] = "@".toSet
-  private val CharsToRemoveFromHashtags: Set[Char] = "#".toSet
+  privatelon[elonarlybird] val Melonntions: String = "melonntions"
+  privatelon[elonarlybird] val Hashtags: String = "hashtags"
+  privatelon val CharsToRelonmovelonFromMelonntions: Selont[Char] = "@".toSelont
+  privatelon val CharsToRelonmovelonFromHashtags: Selont[Char] = "#".toSelont
 
-  // Default value of settings of ThriftTweetFeatures.
-  private[earlybird] val DefaultEarlybirdFeatures: sc.ThriftTweetFeatures = sc.ThriftTweetFeatures()
-  private[earlybird] val DefaultCount = 0
-  private[earlybird] val DefaultLanguage = 0
-  private[earlybird] val DefaultScore = 0.0
+  // Delonfault valuelon of selonttings of ThriftTwelonelontFelonaturelons.
+  privatelon[elonarlybird] val DelonfaultelonarlybirdFelonaturelons: sc.ThriftTwelonelontFelonaturelons = sc.ThriftTwelonelontFelonaturelons()
+  privatelon[elonarlybird] val DelonfaultCount = 0
+  privatelon[elonarlybird] val DelonfaultLanguagelon = 0
+  privatelon[elonarlybird] val DelonfaultScorelon = 0.0
 
-  private[earlybird] def getTweetCountByAuthorId(
-    searchResults: Seq[eb.ThriftSearchResult]
+  privatelon[elonarlybird] delonf gelontTwelonelontCountByAuthorId(
+    selonarchRelonsults: Selonq[elonb.ThriftSelonarchRelonsult]
   ): Map[Long, Int] = {
-    searchResults
-      .groupBy { result =>
-        result.metadata.map(_.fromUserId).getOrElse(0L)
-      }.mapValues(_.size).withDefaultValue(0)
+    selonarchRelonsults
+      .groupBy { relonsult =>
+        relonsult.melontadata.map(_.fromUselonrId).gelontOrelonlselon(0L)
+      }.mapValuelons(_.sizelon).withDelonfaultValuelon(0)
   }
 
-  private[earlybird] def getLanguage(uiLanguageCode: Option[String]): Option[scc.ThriftLanguage] = {
-    uiLanguageCode.flatMap { languageCode =>
-      scc.ThriftLanguage.get(ThriftLanguageUtil.getThriftLanguageOf(languageCode).getValue)
+  privatelon[elonarlybird] delonf gelontLanguagelon(uiLanguagelonCodelon: Option[String]): Option[scc.ThriftLanguagelon] = {
+    uiLanguagelonCodelon.flatMap { languagelonCodelon =>
+      scc.ThriftLanguagelon.gelont(ThriftLanguagelonUtil.gelontThriftLanguagelonOf(languagelonCodelon).gelontValuelon)
     }
   }
 
-  private def getMentions(result: eb.ThriftSearchResult): Seq[String] = {
-    val facetLabels = result.metadata.flatMap(_.facetLabels).getOrElse(Seq.empty)
-    getFacets(facetLabels, Mentions, CharsToRemoveFromMentions)
+  privatelon delonf gelontMelonntions(relonsult: elonb.ThriftSelonarchRelonsult): Selonq[String] = {
+    val facelontLabelonls = relonsult.melontadata.flatMap(_.facelontLabelonls).gelontOrelonlselon(Selonq.elonmpty)
+    gelontFacelonts(facelontLabelonls, Melonntions, CharsToRelonmovelonFromMelonntions)
   }
 
-  private def getHashtags(result: eb.ThriftSearchResult): Seq[String] = {
-    val facetLabels = result.metadata.flatMap(_.facetLabels).getOrElse(Seq.empty)
-    getFacets(facetLabels, Hashtags, CharsToRemoveFromHashtags)
+  privatelon delonf gelontHashtags(relonsult: elonb.ThriftSelonarchRelonsult): Selonq[String] = {
+    val facelontLabelonls = relonsult.melontadata.flatMap(_.facelontLabelonls).gelontOrelonlselon(Selonq.elonmpty)
+    gelontFacelonts(facelontLabelonls, Hashtags, CharsToRelonmovelonFromHashtags)
   }
 
-  private def getFacets(
-    facetLabels: Seq[eb.ThriftFacetLabel],
-    facetName: String,
-    charsToRemove: Set[Char]
-  ): Seq[String] = {
-    facetLabels.filter(_.fieldName == facetName).map(_.label.filterNot(charsToRemove))
+  privatelon delonf gelontFacelonts(
+    facelontLabelonls: Selonq[elonb.ThriftFacelontLabelonl],
+    facelontNamelon: String,
+    charsToRelonmovelon: Selont[Char]
+  ): Selonq[String] = {
+    facelontLabelonls.filtelonr(_.fielonldNamelon == facelontNamelon).map(_.labelonl.filtelonrNot(charsToRelonmovelon))
   }
 
-  private def isUserMentioned(
-    screenName: Option[String],
-    mentions: Seq[String]
-  ): Boolean = {
-    screenName
-      .exists { screenName => mentions.exists(_.equalsIgnoreCase(screenName)) }
+  privatelon delonf isUselonrMelonntionelond(
+    screlonelonnNamelon: Option[String],
+    melonntions: Selonq[String]
+  ): Boolelonan = {
+    screlonelonnNamelon
+      .elonxists { screlonelonnNamelon => melonntions.elonxists(_.elonqualsIgnorelonCaselon(screlonelonnNamelon)) }
   }
 
-  private[earlybird] def isUsersMainLanguage(
-    tweetLanguage: scc.ThriftLanguage,
-    userLanguages: Seq[scc.ThriftLanguage]
-  ): Boolean = {
-    (tweetLanguage != scc.ThriftLanguage.Unknown) && userLanguages.headOption.contains(
-      tweetLanguage)
+  privatelon[elonarlybird] delonf isUselonrsMainLanguagelon(
+    twelonelontLanguagelon: scc.ThriftLanguagelon,
+    uselonrLanguagelons: Selonq[scc.ThriftLanguagelon]
+  ): Boolelonan = {
+    (twelonelontLanguagelon != scc.ThriftLanguagelon.Unknown) && uselonrLanguagelons.helonadOption.contains(
+      twelonelontLanguagelon)
   }
 
-  private[earlybird] def isUsersLanguage(
-    tweetLanguage: scc.ThriftLanguage,
-    userLanguages: Seq[scc.ThriftLanguage]
-  ): Boolean = {
-    (tweetLanguage != scc.ThriftLanguage.Unknown) && userLanguages.contains(tweetLanguage)
+  privatelon[elonarlybird] delonf isUselonrsLanguagelon(
+    twelonelontLanguagelon: scc.ThriftLanguagelon,
+    uselonrLanguagelons: Selonq[scc.ThriftLanguagelon]
+  ): Boolelonan = {
+    (twelonelontLanguagelon != scc.ThriftLanguagelon.Unknown) && uselonrLanguagelons.contains(twelonelontLanguagelon)
   }
 
-  private[earlybird] def isUILanguage(
-    tweetLanguage: scc.ThriftLanguage,
-    uiLanguage: Option[scc.ThriftLanguage]
-  ): Boolean = {
-    (tweetLanguage != scc.ThriftLanguage.Unknown) && uiLanguage.contains(tweetLanguage)
+  privatelon[elonarlybird] delonf isUILanguagelon(
+    twelonelontLanguagelon: scc.ThriftLanguagelon,
+    uiLanguagelon: Option[scc.ThriftLanguagelon]
+  ): Boolelonan = {
+    (twelonelontLanguagelon != scc.ThriftLanguagelon.Unknown) && uiLanguagelon.contains(twelonelontLanguagelon)
   }
 
-  private def getBooleanOptFeature(
-    featureName: EarlybirdFieldConstant,
-    resultMapOpt: Option[scala.collection.Map[Int, Boolean]],
-    defaultValue: Boolean = false,
-  ): Option[Boolean] = {
-    resultMapOpt.map {
-      _.getOrElse(featureName.getFieldId, defaultValue)
+  privatelon delonf gelontBoolelonanOptFelonaturelon(
+    felonaturelonNamelon: elonarlybirdFielonldConstant,
+    relonsultMapOpt: Option[scala.collelonction.Map[Int, Boolelonan]],
+    delonfaultValuelon: Boolelonan = falselon,
+  ): Option[Boolelonan] = {
+    relonsultMapOpt.map {
+      _.gelontOrelonlselon(felonaturelonNamelon.gelontFielonldId, delonfaultValuelon)
     }
   }
 
-  private def getDoubleAsIntOptFeature(
-    featureName: EarlybirdFieldConstant,
-    resultMapOpt: Option[scala.collection.Map[Int, Double]]
+  privatelon delonf gelontDoublelonAsIntOptFelonaturelon(
+    felonaturelonNamelon: elonarlybirdFielonldConstant,
+    relonsultMapOpt: Option[scala.collelonction.Map[Int, Doublelon]]
   ): Option[Int] = {
-    if (resultMapOpt.exists(_.contains(featureName.getFieldId)))
-      resultMapOpt
+    if (relonsultMapOpt.elonxists(_.contains(felonaturelonNamelon.gelontFielonldId)))
+      relonsultMapOpt
         .map {
-          _.get(featureName.getFieldId)
+          _.gelont(felonaturelonNamelon.gelontFielonldId)
         }
-        .flatMap { doubleValue =>
-          doubleValue.map(_.toInt)
+        .flatMap { doublelonValuelon =>
+          doublelonValuelon.map(_.toInt)
         }
-    else
-      None
+    elonlselon
+      Nonelon
   }
 
-  private def getIntOptFeature(
-    featureName: EarlybirdFieldConstant,
-    resultMapOpt: Option[scala.collection.Map[Int, Int]]
+  privatelon delonf gelontIntOptFelonaturelon(
+    felonaturelonNamelon: elonarlybirdFielonldConstant,
+    relonsultMapOpt: Option[scala.collelonction.Map[Int, Int]]
   ): Option[Int] = {
-    if (resultMapOpt.exists(_.contains(featureName.getFieldId)))
-      resultMapOpt.flatMap {
-        _.get(featureName.getFieldId)
+    if (relonsultMapOpt.elonxists(_.contains(felonaturelonNamelon.gelontFielonldId)))
+      relonsultMapOpt.flatMap {
+        _.gelont(felonaturelonNamelon.gelontFielonldId)
       }
-    else
-      None
+    elonlselon
+      Nonelon
   }
 
-  def getOONTweetThriftFeaturesByTweetId(
-    searcherUserId: Long,
-    screenName: Option[String],
-    userLanguages: Seq[scc.ThriftLanguage],
-    uiLanguageCode: Option[String] = None,
-    searchResults: Seq[eb.ThriftSearchResult],
-  ): Map[Long, sc.ThriftTweetFeatures] = {
+  delonf gelontOONTwelonelontThriftFelonaturelonsByTwelonelontId(
+    selonarchelonrUselonrId: Long,
+    screlonelonnNamelon: Option[String],
+    uselonrLanguagelons: Selonq[scc.ThriftLanguagelon],
+    uiLanguagelonCodelon: Option[String] = Nonelon,
+    selonarchRelonsults: Selonq[elonb.ThriftSelonarchRelonsult],
+  ): Map[Long, sc.ThriftTwelonelontFelonaturelons] = {
 
-    searchResults.map { searchResult =>
-      val features = getOONThriftTweetFeaturesFromSearchResult(
-        searcherUserId,
-        screenName,
-        userLanguages,
-        getLanguage(uiLanguageCode),
-        getTweetCountByAuthorId(searchResults),
-        searchResult
+    selonarchRelonsults.map { selonarchRelonsult =>
+      val felonaturelons = gelontOONThriftTwelonelontFelonaturelonsFromSelonarchRelonsult(
+        selonarchelonrUselonrId,
+        screlonelonnNamelon,
+        uselonrLanguagelons,
+        gelontLanguagelon(uiLanguagelonCodelon),
+        gelontTwelonelontCountByAuthorId(selonarchRelonsults),
+        selonarchRelonsult
       )
-      (searchResult.id -> features)
+      (selonarchRelonsult.id -> felonaturelons)
     }.toMap
   }
 
-  private[earlybird] def getOONThriftTweetFeaturesFromSearchResult(
-    searcherUserId: Long,
-    screenName: Option[String],
-    userLanguages: Seq[scc.ThriftLanguage],
-    uiLanguage: Option[scc.ThriftLanguage],
-    tweetCountByAuthorId: Map[Long, Int],
-    searchResult: eb.ThriftSearchResult
-  ): sc.ThriftTweetFeatures = {
-    val applyFeatures = (applyUserIndependentFeatures(
-      searchResult
-    )(_)).andThen(
-      applyOONUserDependentFeatures(
-        searcherUserId,
-        screenName,
-        userLanguages,
-        uiLanguage,
-        tweetCountByAuthorId,
-        searchResult
+  privatelon[elonarlybird] delonf gelontOONThriftTwelonelontFelonaturelonsFromSelonarchRelonsult(
+    selonarchelonrUselonrId: Long,
+    screlonelonnNamelon: Option[String],
+    uselonrLanguagelons: Selonq[scc.ThriftLanguagelon],
+    uiLanguagelon: Option[scc.ThriftLanguagelon],
+    twelonelontCountByAuthorId: Map[Long, Int],
+    selonarchRelonsult: elonb.ThriftSelonarchRelonsult
+  ): sc.ThriftTwelonelontFelonaturelons = {
+    val applyFelonaturelons = (applyUselonrIndelonpelonndelonntFelonaturelons(
+      selonarchRelonsult
+    )(_)).andThelonn(
+      applyOONUselonrDelonpelonndelonntFelonaturelons(
+        selonarchelonrUselonrId,
+        screlonelonnNamelon,
+        uselonrLanguagelons,
+        uiLanguagelon,
+        twelonelontCountByAuthorId,
+        selonarchRelonsult
       )(_)
     )
-    val tweetFeatures = searchResult.tweetFeatures.getOrElse(DefaultEarlybirdFeatures)
-    applyFeatures(tweetFeatures)
+    val twelonelontFelonaturelons = selonarchRelonsult.twelonelontFelonaturelons.gelontOrelonlselon(DelonfaultelonarlybirdFelonaturelons)
+    applyFelonaturelons(twelonelontFelonaturelons)
   }
 
-  private[earlybird] def applyUserIndependentFeatures(
-    result: eb.ThriftSearchResult
+  privatelon[elonarlybird] delonf applyUselonrIndelonpelonndelonntFelonaturelons(
+    relonsult: elonb.ThriftSelonarchRelonsult
   )(
-    thriftTweetFeatures: sc.ThriftTweetFeatures
-  ): sc.ThriftTweetFeatures = {
+    thriftTwelonelontFelonaturelons: sc.ThriftTwelonelontFelonaturelons
+  ): sc.ThriftTwelonelontFelonaturelons = {
 
-    val features = result.metadata
-      .map { metadata =>
-        val isRetweet = metadata.isRetweet.getOrElse(false)
-        val isReply = metadata.isReply.getOrElse(false)
+    val felonaturelons = relonsult.melontadata
+      .map { melontadata =>
+        val isRelontwelonelont = melontadata.isRelontwelonelont.gelontOrelonlselon(falselon)
+        val isRelonply = melontadata.isRelonply.gelontOrelonlselon(falselon)
 
-        // Facets.
-        val mentions = getMentions(result)
-        val hashtags = getHashtags(result)
+        // Facelonts.
+        val melonntions = gelontMelonntions(relonsult)
+        val hashtags = gelontHashtags(relonsult)
 
-        val searchResultSchemaFeatures = metadata.extraMetadata.flatMap(_.features)
-        val booleanSearchResultSchemaFeatures = searchResultSchemaFeatures.flatMap(_.boolValues)
-        val intSearchResultSchemaFeatures = searchResultSchemaFeatures.flatMap(_.intValues)
-        val doubleSearchResultSchemaFeatures = searchResultSchemaFeatures.flatMap(_.doubleValues)
+        val selonarchRelonsultSchelonmaFelonaturelons = melontadata.elonxtraMelontadata.flatMap(_.felonaturelons)
+        val boolelonanSelonarchRelonsultSchelonmaFelonaturelons = selonarchRelonsultSchelonmaFelonaturelons.flatMap(_.boolValuelons)
+        val intSelonarchRelonsultSchelonmaFelonaturelons = selonarchRelonsultSchelonmaFelonaturelons.flatMap(_.intValuelons)
+        val doublelonSelonarchRelonsultSchelonmaFelonaturelons = selonarchRelonsultSchelonmaFelonaturelons.flatMap(_.doublelonValuelons)
 
-        thriftTweetFeatures.copy(
-          // Info about the Tweet.
-          isRetweet = isRetweet,
-          isOffensive = metadata.isOffensive.getOrElse(false),
-          isReply = isReply,
-          fromVerifiedAccount = metadata.fromVerifiedAccount.getOrElse(false),
-          cardType = metadata.cardType,
-          signature = metadata.signature,
-          language = metadata.language,
-          isAuthorNSFW = metadata.isUserNSFW.getOrElse(false),
-          isAuthorBot = metadata.isUserBot.getOrElse(false),
-          isAuthorSpam = metadata.isUserSpam.getOrElse(false),
-          isSensitiveContent =
-            metadata.extraMetadata.flatMap(_.isSensitiveContent).getOrElse(false),
-          isAuthorProfileEgg = metadata.extraMetadata.flatMap(_.profileIsEggFlag).getOrElse(false),
-          isAuthorNew = metadata.extraMetadata.flatMap(_.isUserNewFlag).getOrElse(false),
-          linkLanguage = metadata.extraMetadata.flatMap(_.linkLanguage).getOrElse(DefaultLanguage),
-          // Info about Tweet content/media.
-          hasCard = metadata.hasCard.getOrElse(false),
-          hasImage = metadata.hasImage.getOrElse(false),
-          hasNews = metadata.hasNews.getOrElse(false),
-          hasVideo = metadata.hasVideo.getOrElse(false),
-          hasConsumerVideo = metadata.hasConsumerVideo.getOrElse(false),
-          hasProVideo = metadata.hasProVideo.getOrElse(false),
-          hasVine = metadata.hasVine.getOrElse(false),
-          hasPeriscope = metadata.hasPeriscope.getOrElse(false),
-          hasNativeVideo = metadata.hasNativeVideo.getOrElse(false),
-          hasNativeImage = metadata.hasNativeImage.getOrElse(false),
-          hasLink = metadata.hasLink.getOrElse(false),
-          hasVisibleLink = metadata.hasVisibleLink.getOrElse(false),
-          hasTrend = metadata.hasTrend.getOrElse(false),
-          hasMultipleHashtagsOrTrends = metadata.hasMultipleHashtagsOrTrends.getOrElse(false),
-          hasQuote = metadata.extraMetadata.flatMap(_.hasQuote),
-          urlsList = metadata.tweetUrls.map {
+        thriftTwelonelontFelonaturelons.copy(
+          // Info about thelon Twelonelont.
+          isRelontwelonelont = isRelontwelonelont,
+          isOffelonnsivelon = melontadata.isOffelonnsivelon.gelontOrelonlselon(falselon),
+          isRelonply = isRelonply,
+          fromVelonrifielondAccount = melontadata.fromVelonrifielondAccount.gelontOrelonlselon(falselon),
+          cardTypelon = melontadata.cardTypelon,
+          signaturelon = melontadata.signaturelon,
+          languagelon = melontadata.languagelon,
+          isAuthorNSFW = melontadata.isUselonrNSFW.gelontOrelonlselon(falselon),
+          isAuthorBot = melontadata.isUselonrBot.gelontOrelonlselon(falselon),
+          isAuthorSpam = melontadata.isUselonrSpam.gelontOrelonlselon(falselon),
+          isSelonnsitivelonContelonnt =
+            melontadata.elonxtraMelontadata.flatMap(_.isSelonnsitivelonContelonnt).gelontOrelonlselon(falselon),
+          isAuthorProfilelonelongg = melontadata.elonxtraMelontadata.flatMap(_.profilelonIselonggFlag).gelontOrelonlselon(falselon),
+          isAuthorNelonw = melontadata.elonxtraMelontadata.flatMap(_.isUselonrNelonwFlag).gelontOrelonlselon(falselon),
+          linkLanguagelon = melontadata.elonxtraMelontadata.flatMap(_.linkLanguagelon).gelontOrelonlselon(DelonfaultLanguagelon),
+          // Info about Twelonelont contelonnt/melondia.
+          hasCard = melontadata.hasCard.gelontOrelonlselon(falselon),
+          hasImagelon = melontadata.hasImagelon.gelontOrelonlselon(falselon),
+          hasNelonws = melontadata.hasNelonws.gelontOrelonlselon(falselon),
+          hasVidelono = melontadata.hasVidelono.gelontOrelonlselon(falselon),
+          hasConsumelonrVidelono = melontadata.hasConsumelonrVidelono.gelontOrelonlselon(falselon),
+          hasProVidelono = melontadata.hasProVidelono.gelontOrelonlselon(falselon),
+          hasVinelon = melontadata.hasVinelon.gelontOrelonlselon(falselon),
+          hasPelonriscopelon = melontadata.hasPelonriscopelon.gelontOrelonlselon(falselon),
+          hasNativelonVidelono = melontadata.hasNativelonVidelono.gelontOrelonlselon(falselon),
+          hasNativelonImagelon = melontadata.hasNativelonImagelon.gelontOrelonlselon(falselon),
+          hasLink = melontadata.hasLink.gelontOrelonlselon(falselon),
+          hasVisiblelonLink = melontadata.hasVisiblelonLink.gelontOrelonlselon(falselon),
+          hasTrelonnd = melontadata.hasTrelonnd.gelontOrelonlselon(falselon),
+          hasMultiplelonHashtagsOrTrelonnds = melontadata.hasMultiplelonHashtagsOrTrelonnds.gelontOrelonlselon(falselon),
+          hasQuotelon = melontadata.elonxtraMelontadata.flatMap(_.hasQuotelon),
+          urlsList = melontadata.twelonelontUrls.map {
             _.map(_.originalUrl)
           },
-          hasMultipleMedia =
-            metadata.extraMetadata.flatMap(_.hasMultipleMediaFlag).getOrElse(false),
-          visibleTokenRatio = getIntOptFeature(VISIBLE_TOKEN_RATIO, intSearchResultSchemaFeatures),
+          hasMultiplelonMelondia =
+            melontadata.elonxtraMelontadata.flatMap(_.hasMultiplelonMelondiaFlag).gelontOrelonlselon(falselon),
+          visiblelonTokelonnRatio = gelontIntOptFelonaturelon(VISIBLelon_TOKelonN_RATIO, intSelonarchRelonsultSchelonmaFelonaturelons),
           // Various counts.
-          favCount = metadata.favCount.getOrElse(DefaultCount),
-          replyCount = metadata.replyCount.getOrElse(DefaultCount),
-          retweetCount = metadata.retweetCount.getOrElse(DefaultCount),
-          quoteCount = metadata.extraMetadata.flatMap(_.quotedCount),
-          embedsImpressionCount = metadata.embedsImpressionCount.getOrElse(DefaultCount),
-          embedsUrlCount = metadata.embedsUrlCount.getOrElse(DefaultCount),
-          videoViewCount = metadata.videoViewCount.getOrElse(DefaultCount),
-          numMentions = metadata.extraMetadata.flatMap(_.numMentions).getOrElse(DefaultCount),
-          numHashtags = metadata.extraMetadata.flatMap(_.numHashtags).getOrElse(DefaultCount),
-          favCountV2 = metadata.extraMetadata.flatMap(_.favCountV2),
-          replyCountV2 = metadata.extraMetadata.flatMap(_.replyCountV2),
-          retweetCountV2 = metadata.extraMetadata.flatMap(_.retweetCountV2),
-          weightedFavoriteCount = metadata.extraMetadata.flatMap(_.weightedFavCount),
-          weightedReplyCount = metadata.extraMetadata.flatMap(_.weightedReplyCount),
-          weightedRetweetCount = metadata.extraMetadata.flatMap(_.weightedRetweetCount),
-          weightedQuoteCount = metadata.extraMetadata.flatMap(_.weightedQuoteCount),
-          embedsImpressionCountV2 =
-            getDoubleAsIntOptFeature(EMBEDS_IMPRESSION_COUNT_V2, doubleSearchResultSchemaFeatures),
-          embedsUrlCountV2 =
-            getDoubleAsIntOptFeature(EMBEDS_URL_COUNT_V2, doubleSearchResultSchemaFeatures),
-          decayedFavoriteCount =
-            getDoubleAsIntOptFeature(DECAYED_FAVORITE_COUNT, doubleSearchResultSchemaFeatures),
-          decayedRetweetCount =
-            getDoubleAsIntOptFeature(DECAYED_RETWEET_COUNT, doubleSearchResultSchemaFeatures),
-          decayedReplyCount =
-            getDoubleAsIntOptFeature(DECAYED_REPLY_COUNT, doubleSearchResultSchemaFeatures),
-          decayedQuoteCount =
-            getDoubleAsIntOptFeature(DECAYED_QUOTE_COUNT, doubleSearchResultSchemaFeatures),
-          fakeFavoriteCount =
-            getDoubleAsIntOptFeature(FAKE_FAVORITE_COUNT, doubleSearchResultSchemaFeatures),
-          fakeRetweetCount =
-            getDoubleAsIntOptFeature(FAKE_RETWEET_COUNT, doubleSearchResultSchemaFeatures),
-          fakeReplyCount =
-            getDoubleAsIntOptFeature(FAKE_REPLY_COUNT, doubleSearchResultSchemaFeatures),
-          fakeQuoteCount =
-            getDoubleAsIntOptFeature(FAKE_QUOTE_COUNT, doubleSearchResultSchemaFeatures),
-          // Scores.
-          textScore = metadata.textScore.getOrElse(DefaultScore),
-          earlybirdScore = metadata.score.getOrElse(DefaultScore),
-          parusScore = metadata.parusScore.getOrElse(DefaultScore),
-          userRep = metadata.userRep.getOrElse(DefaultScore),
-          pBlockScore = metadata.extraMetadata.flatMap(_.pBlockScore),
-          toxicityScore = metadata.extraMetadata.flatMap(_.toxicityScore),
-          pSpammyTweetScore = metadata.extraMetadata.flatMap(_.pSpammyTweetScore),
-          pReportedTweetScore = metadata.extraMetadata.flatMap(_.pReportedTweetScore),
-          pSpammyTweetContent = metadata.extraMetadata.flatMap(_.spammyTweetContentScore),
-          // Safety Signals
-          labelAbusiveFlag =
-            getBooleanOptFeature(LABEL_ABUSIVE_FLAG, booleanSearchResultSchemaFeatures),
-          labelAbusiveHiRclFlag =
-            getBooleanOptFeature(LABEL_ABUSIVE_HI_RCL_FLAG, booleanSearchResultSchemaFeatures),
-          labelDupContentFlag =
-            getBooleanOptFeature(LABEL_DUP_CONTENT_FLAG, booleanSearchResultSchemaFeatures),
-          labelNsfwHiPrcFlag =
-            getBooleanOptFeature(LABEL_NSFW_HI_PRC_FLAG, booleanSearchResultSchemaFeatures),
-          labelNsfwHiRclFlag =
-            getBooleanOptFeature(LABEL_NSFW_HI_RCL_FLAG, booleanSearchResultSchemaFeatures),
-          labelSpamFlag = getBooleanOptFeature(LABEL_SPAM_FLAG, booleanSearchResultSchemaFeatures),
-          labelSpamHiRclFlag =
-            getBooleanOptFeature(LABEL_SPAM_HI_RCL_FLAG, booleanSearchResultSchemaFeatures),
-          // Periscope Features
-          periscopeExists =
-            getBooleanOptFeature(PERISCOPE_EXISTS, booleanSearchResultSchemaFeatures),
-          periscopeHasBeenFeatured =
-            getBooleanOptFeature(PERISCOPE_HAS_BEEN_FEATURED, booleanSearchResultSchemaFeatures),
-          periscopeIsCurrentlyFeatured = getBooleanOptFeature(
-            PERISCOPE_IS_CURRENTLY_FEATURED,
-            booleanSearchResultSchemaFeatures),
-          periscopeIsFromQualitySource = getBooleanOptFeature(
-            PERISCOPE_IS_FROM_QUALITY_SOURCE,
-            booleanSearchResultSchemaFeatures),
-          periscopeIsLive =
-            getBooleanOptFeature(PERISCOPE_IS_LIVE, booleanSearchResultSchemaFeatures),
-          // Last Engagement Features
-          lastFavSinceCreationHrs =
-            getIntOptFeature(LAST_FAVORITE_SINCE_CREATION_HRS, intSearchResultSchemaFeatures),
-          lastRetweetSinceCreationHrs =
-            getIntOptFeature(LAST_RETWEET_SINCE_CREATION_HRS, intSearchResultSchemaFeatures),
-          lastReplySinceCreationHrs =
-            getIntOptFeature(LAST_REPLY_SINCE_CREATION_HRS, intSearchResultSchemaFeatures),
-          lastQuoteSinceCreationHrs =
-            getIntOptFeature(LAST_QUOTE_SINCE_CREATION_HRS, intSearchResultSchemaFeatures),
-          likedByUserIds = metadata.extraMetadata.flatMap(_.likedByUserIds),
-          mentionsList = if (mentions.nonEmpty) Some(mentions) else None,
-          hashtagsList = if (hashtags.nonEmpty) Some(hashtags) else None,
-          isComposerSourceCamera =
-            getBooleanOptFeature(COMPOSER_SOURCE_IS_CAMERA_FLAG, booleanSearchResultSchemaFeatures),
+          favCount = melontadata.favCount.gelontOrelonlselon(DelonfaultCount),
+          relonplyCount = melontadata.relonplyCount.gelontOrelonlselon(DelonfaultCount),
+          relontwelonelontCount = melontadata.relontwelonelontCount.gelontOrelonlselon(DelonfaultCount),
+          quotelonCount = melontadata.elonxtraMelontadata.flatMap(_.quotelondCount),
+          elonmbelondsImprelonssionCount = melontadata.elonmbelondsImprelonssionCount.gelontOrelonlselon(DelonfaultCount),
+          elonmbelondsUrlCount = melontadata.elonmbelondsUrlCount.gelontOrelonlselon(DelonfaultCount),
+          videlonoVielonwCount = melontadata.videlonoVielonwCount.gelontOrelonlselon(DelonfaultCount),
+          numMelonntions = melontadata.elonxtraMelontadata.flatMap(_.numMelonntions).gelontOrelonlselon(DelonfaultCount),
+          numHashtags = melontadata.elonxtraMelontadata.flatMap(_.numHashtags).gelontOrelonlselon(DelonfaultCount),
+          favCountV2 = melontadata.elonxtraMelontadata.flatMap(_.favCountV2),
+          relonplyCountV2 = melontadata.elonxtraMelontadata.flatMap(_.relonplyCountV2),
+          relontwelonelontCountV2 = melontadata.elonxtraMelontadata.flatMap(_.relontwelonelontCountV2),
+          welonightelondFavoritelonCount = melontadata.elonxtraMelontadata.flatMap(_.welonightelondFavCount),
+          welonightelondRelonplyCount = melontadata.elonxtraMelontadata.flatMap(_.welonightelondRelonplyCount),
+          welonightelondRelontwelonelontCount = melontadata.elonxtraMelontadata.flatMap(_.welonightelondRelontwelonelontCount),
+          welonightelondQuotelonCount = melontadata.elonxtraMelontadata.flatMap(_.welonightelondQuotelonCount),
+          elonmbelondsImprelonssionCountV2 =
+            gelontDoublelonAsIntOptFelonaturelon(elonMBelonDS_IMPRelonSSION_COUNT_V2, doublelonSelonarchRelonsultSchelonmaFelonaturelons),
+          elonmbelondsUrlCountV2 =
+            gelontDoublelonAsIntOptFelonaturelon(elonMBelonDS_URL_COUNT_V2, doublelonSelonarchRelonsultSchelonmaFelonaturelons),
+          deloncayelondFavoritelonCount =
+            gelontDoublelonAsIntOptFelonaturelon(DelonCAYelonD_FAVORITelon_COUNT, doublelonSelonarchRelonsultSchelonmaFelonaturelons),
+          deloncayelondRelontwelonelontCount =
+            gelontDoublelonAsIntOptFelonaturelon(DelonCAYelonD_RelonTWelonelonT_COUNT, doublelonSelonarchRelonsultSchelonmaFelonaturelons),
+          deloncayelondRelonplyCount =
+            gelontDoublelonAsIntOptFelonaturelon(DelonCAYelonD_RelonPLY_COUNT, doublelonSelonarchRelonsultSchelonmaFelonaturelons),
+          deloncayelondQuotelonCount =
+            gelontDoublelonAsIntOptFelonaturelon(DelonCAYelonD_QUOTelon_COUNT, doublelonSelonarchRelonsultSchelonmaFelonaturelons),
+          fakelonFavoritelonCount =
+            gelontDoublelonAsIntOptFelonaturelon(FAKelon_FAVORITelon_COUNT, doublelonSelonarchRelonsultSchelonmaFelonaturelons),
+          fakelonRelontwelonelontCount =
+            gelontDoublelonAsIntOptFelonaturelon(FAKelon_RelonTWelonelonT_COUNT, doublelonSelonarchRelonsultSchelonmaFelonaturelons),
+          fakelonRelonplyCount =
+            gelontDoublelonAsIntOptFelonaturelon(FAKelon_RelonPLY_COUNT, doublelonSelonarchRelonsultSchelonmaFelonaturelons),
+          fakelonQuotelonCount =
+            gelontDoublelonAsIntOptFelonaturelon(FAKelon_QUOTelon_COUNT, doublelonSelonarchRelonsultSchelonmaFelonaturelons),
+          // Scorelons.
+          telonxtScorelon = melontadata.telonxtScorelon.gelontOrelonlselon(DelonfaultScorelon),
+          elonarlybirdScorelon = melontadata.scorelon.gelontOrelonlselon(DelonfaultScorelon),
+          parusScorelon = melontadata.parusScorelon.gelontOrelonlselon(DelonfaultScorelon),
+          uselonrRelonp = melontadata.uselonrRelonp.gelontOrelonlselon(DelonfaultScorelon),
+          pBlockScorelon = melontadata.elonxtraMelontadata.flatMap(_.pBlockScorelon),
+          toxicityScorelon = melontadata.elonxtraMelontadata.flatMap(_.toxicityScorelon),
+          pSpammyTwelonelontScorelon = melontadata.elonxtraMelontadata.flatMap(_.pSpammyTwelonelontScorelon),
+          pRelonportelondTwelonelontScorelon = melontadata.elonxtraMelontadata.flatMap(_.pRelonportelondTwelonelontScorelon),
+          pSpammyTwelonelontContelonnt = melontadata.elonxtraMelontadata.flatMap(_.spammyTwelonelontContelonntScorelon),
+          // Safelonty Signals
+          labelonlAbusivelonFlag =
+            gelontBoolelonanOptFelonaturelon(LABelonL_ABUSIVelon_FLAG, boolelonanSelonarchRelonsultSchelonmaFelonaturelons),
+          labelonlAbusivelonHiRclFlag =
+            gelontBoolelonanOptFelonaturelon(LABelonL_ABUSIVelon_HI_RCL_FLAG, boolelonanSelonarchRelonsultSchelonmaFelonaturelons),
+          labelonlDupContelonntFlag =
+            gelontBoolelonanOptFelonaturelon(LABelonL_DUP_CONTelonNT_FLAG, boolelonanSelonarchRelonsultSchelonmaFelonaturelons),
+          labelonlNsfwHiPrcFlag =
+            gelontBoolelonanOptFelonaturelon(LABelonL_NSFW_HI_PRC_FLAG, boolelonanSelonarchRelonsultSchelonmaFelonaturelons),
+          labelonlNsfwHiRclFlag =
+            gelontBoolelonanOptFelonaturelon(LABelonL_NSFW_HI_RCL_FLAG, boolelonanSelonarchRelonsultSchelonmaFelonaturelons),
+          labelonlSpamFlag = gelontBoolelonanOptFelonaturelon(LABelonL_SPAM_FLAG, boolelonanSelonarchRelonsultSchelonmaFelonaturelons),
+          labelonlSpamHiRclFlag =
+            gelontBoolelonanOptFelonaturelon(LABelonL_SPAM_HI_RCL_FLAG, boolelonanSelonarchRelonsultSchelonmaFelonaturelons),
+          // Pelonriscopelon Felonaturelons
+          pelonriscopelonelonxists =
+            gelontBoolelonanOptFelonaturelon(PelonRISCOPelon_elonXISTS, boolelonanSelonarchRelonsultSchelonmaFelonaturelons),
+          pelonriscopelonHasBelonelonnFelonaturelond =
+            gelontBoolelonanOptFelonaturelon(PelonRISCOPelon_HAS_BelonelonN_FelonATURelonD, boolelonanSelonarchRelonsultSchelonmaFelonaturelons),
+          pelonriscopelonIsCurrelonntlyFelonaturelond = gelontBoolelonanOptFelonaturelon(
+            PelonRISCOPelon_IS_CURRelonNTLY_FelonATURelonD,
+            boolelonanSelonarchRelonsultSchelonmaFelonaturelons),
+          pelonriscopelonIsFromQualitySourcelon = gelontBoolelonanOptFelonaturelon(
+            PelonRISCOPelon_IS_FROM_QUALITY_SOURCelon,
+            boolelonanSelonarchRelonsultSchelonmaFelonaturelons),
+          pelonriscopelonIsLivelon =
+            gelontBoolelonanOptFelonaturelon(PelonRISCOPelon_IS_LIVelon, boolelonanSelonarchRelonsultSchelonmaFelonaturelons),
+          // Last elonngagelonmelonnt Felonaturelons
+          lastFavSincelonCrelonationHrs =
+            gelontIntOptFelonaturelon(LAST_FAVORITelon_SINCelon_CRelonATION_HRS, intSelonarchRelonsultSchelonmaFelonaturelons),
+          lastRelontwelonelontSincelonCrelonationHrs =
+            gelontIntOptFelonaturelon(LAST_RelonTWelonelonT_SINCelon_CRelonATION_HRS, intSelonarchRelonsultSchelonmaFelonaturelons),
+          lastRelonplySincelonCrelonationHrs =
+            gelontIntOptFelonaturelon(LAST_RelonPLY_SINCelon_CRelonATION_HRS, intSelonarchRelonsultSchelonmaFelonaturelons),
+          lastQuotelonSincelonCrelonationHrs =
+            gelontIntOptFelonaturelon(LAST_QUOTelon_SINCelon_CRelonATION_HRS, intSelonarchRelonsultSchelonmaFelonaturelons),
+          likelondByUselonrIds = melontadata.elonxtraMelontadata.flatMap(_.likelondByUselonrIds),
+          melonntionsList = if (melonntions.nonelonmpty) Somelon(melonntions) elonlselon Nonelon,
+          hashtagsList = if (hashtags.nonelonmpty) Somelon(hashtags) elonlselon Nonelon,
+          isComposelonrSourcelonCamelonra =
+            gelontBoolelonanOptFelonaturelon(COMPOSelonR_SOURCelon_IS_CAMelonRA_FLAG, boolelonanSelonarchRelonsultSchelonmaFelonaturelons),
         )
       }
-      .getOrElse(thriftTweetFeatures)
+      .gelontOrelonlselon(thriftTwelonelontFelonaturelons)
 
-    if (result.tweetSource.contains(eb.ThriftTweetSource.RealtimeProtectedCluster)) {
-      features.copy(isProtected = true)
-    } else {
-      features
+    if (relonsult.twelonelontSourcelon.contains(elonb.ThriftTwelonelontSourcelon.RelonaltimelonProtelonctelondClustelonr)) {
+      felonaturelons.copy(isProtelonctelond = truelon)
+    } elonlselon {
+      felonaturelons
     }
   }
 
-  // Omitting inNetwork features e.g source tweet features and follow graph.
-  // Can be expanded to include InNetwork in the future.
-  def applyOONUserDependentFeatures(
-    searcherUserId: Long,
-    screenName: Option[String],
-    userLanguages: Seq[scc.ThriftLanguage],
-    uiLanguage: Option[scc.ThriftLanguage],
-    tweetCountByAuthorId: Map[Long, Int],
-    result: eb.ThriftSearchResult
+  // Omitting inNelontwork felonaturelons elon.g sourcelon twelonelont felonaturelons and follow graph.
+  // Can belon elonxpandelond to includelon InNelontwork in thelon futurelon.
+  delonf applyOONUselonrDelonpelonndelonntFelonaturelons(
+    selonarchelonrUselonrId: Long,
+    screlonelonnNamelon: Option[String],
+    uselonrLanguagelons: Selonq[scc.ThriftLanguagelon],
+    uiLanguagelon: Option[scc.ThriftLanguagelon],
+    twelonelontCountByAuthorId: Map[Long, Int],
+    relonsult: elonb.ThriftSelonarchRelonsult
   )(
-    thriftTweetFeatures: sc.ThriftTweetFeatures
-  ): sc.ThriftTweetFeatures = {
-    result.metadata
-      .map { metadata =>
-        val isRetweet = metadata.isRetweet.getOrElse(false)
-        val isReply = metadata.isReply.getOrElse(false)
-        val replyToSearcher = isReply && (metadata.referencedTweetAuthorId == searcherUserId)
-        val replyOther = isReply && !replyToSearcher
-        val retweetOther = isRetweet && (metadata.referencedTweetAuthorId != searcherUserId)
-        val tweetLanguage = metadata.language.getOrElse(scc.ThriftLanguage.Unknown)
+    thriftTwelonelontFelonaturelons: sc.ThriftTwelonelontFelonaturelons
+  ): sc.ThriftTwelonelontFelonaturelons = {
+    relonsult.melontadata
+      .map { melontadata =>
+        val isRelontwelonelont = melontadata.isRelontwelonelont.gelontOrelonlselon(falselon)
+        val isRelonply = melontadata.isRelonply.gelontOrelonlselon(falselon)
+        val relonplyToSelonarchelonr = isRelonply && (melontadata.relonfelonrelonncelondTwelonelontAuthorId == selonarchelonrUselonrId)
+        val relonplyOthelonr = isRelonply && !relonplyToSelonarchelonr
+        val relontwelonelontOthelonr = isRelontwelonelont && (melontadata.relonfelonrelonncelondTwelonelontAuthorId != selonarchelonrUselonrId)
+        val twelonelontLanguagelon = melontadata.languagelon.gelontOrelonlselon(scc.ThriftLanguagelon.Unknown)
 
-        thriftTweetFeatures.copy(
-          // Info about the Tweet.
-          fromSearcher = metadata.fromUserId == searcherUserId,
-          probablyFromFollowedAuthor = false,
-          fromMutualFollow = false,
-          replySearcher = replyToSearcher,
-          replyOther = replyOther,
-          retweetOther = retweetOther,
-          mentionSearcher = isUserMentioned(screenName, getMentions(result)),
-          // Info about Tweet content/media.
-          matchesSearcherMainLang = isUsersMainLanguage(tweetLanguage, userLanguages),
-          matchesSearcherLangs = isUsersLanguage(tweetLanguage, userLanguages),
-          matchesUILang = isUILanguage(tweetLanguage, uiLanguage),
+        thriftTwelonelontFelonaturelons.copy(
+          // Info about thelon Twelonelont.
+          fromSelonarchelonr = melontadata.fromUselonrId == selonarchelonrUselonrId,
+          probablyFromFollowelondAuthor = falselon,
+          fromMutualFollow = falselon,
+          relonplySelonarchelonr = relonplyToSelonarchelonr,
+          relonplyOthelonr = relonplyOthelonr,
+          relontwelonelontOthelonr = relontwelonelontOthelonr,
+          melonntionSelonarchelonr = isUselonrMelonntionelond(screlonelonnNamelon, gelontMelonntions(relonsult)),
+          // Info about Twelonelont contelonnt/melondia.
+          matchelonsSelonarchelonrMainLang = isUselonrsMainLanguagelon(twelonelontLanguagelon, uselonrLanguagelons),
+          matchelonsSelonarchelonrLangs = isUselonrsLanguagelon(twelonelontLanguagelon, uselonrLanguagelons),
+          matchelonsUILang = isUILanguagelon(twelonelontLanguagelon, uiLanguagelon),
           // Various counts.
-          prevUserTweetEngagement =
-            metadata.extraMetadata.flatMap(_.prevUserTweetEngagement).getOrElse(DefaultCount),
-          tweetCountFromUserInSnapshot = tweetCountByAuthorId(metadata.fromUserId),
+          prelonvUselonrTwelonelontelonngagelonmelonnt =
+            melontadata.elonxtraMelontadata.flatMap(_.prelonvUselonrTwelonelontelonngagelonmelonnt).gelontOrelonlselon(DelonfaultCount),
+          twelonelontCountFromUselonrInSnapshot = twelonelontCountByAuthorId(melontadata.fromUselonrId),
         )
       }
-      .getOrElse(thriftTweetFeatures)
+      .gelontOrelonlselon(thriftTwelonelontFelonaturelons)
   }
 }

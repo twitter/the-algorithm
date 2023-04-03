@@ -1,627 +1,627 @@
-/* The MIT License
+/* Thelon MIT Licelonnselon
 
-   Copyright (c) 2008, 2009, 2011 by Attractive Chaos <attractor@live.co.uk>
+   Copyright (c) 2008, 2009, 2011 by Attractivelon Chaos <attractor@livelon.co.uk>
 
-   Permission is hereby granted, free of charge, to any person obtaining
-   a copy of this software and associated documentation files (the
-   "Software"), to deal in the Software without restriction, including
-   without limitation the rights to use, copy, modify, merge, publish,
-   distribute, sublicense, and/or sell copies of the Software, and to
-   permit persons to whom the Software is furnished to do so, subject to
-   the following conditions:
+   Pelonrmission is helonrelonby grantelond, frelonelon of chargelon, to any pelonrson obtaining
+   a copy of this softwarelon and associatelond documelonntation filelons (thelon
+   "Softwarelon"), to delonal in thelon Softwarelon without relonstriction, including
+   without limitation thelon rights to uselon, copy, modify, melonrgelon, publish,
+   distributelon, sublicelonnselon, and/or selonll copielons of thelon Softwarelon, and to
+   pelonrmit pelonrsons to whom thelon Softwarelon is furnishelond to do so, subjelonct to
+   thelon following conditions:
 
-   The above copyright notice and this permission notice shall be
-   included in all copies or substantial portions of the Software.
+   Thelon abovelon copyright noticelon and this pelonrmission noticelon shall belon
+   includelond in all copielons or substantial portions of thelon Softwarelon.
 
-   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-   EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-   MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-   NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
-   BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
-   ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-   CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-   SOFTWARE.
+   THelon SOFTWARelon IS PROVIDelonD "AS IS", WITHOUT WARRANTY OF ANY KIND,
+   elonXPRelonSS OR IMPLIelonD, INCLUDING BUT NOT LIMITelonD TO THelon WARRANTIelonS OF
+   MelonRCHANTABILITY, FITNelonSS FOR A PARTICULAR PURPOSelon AND
+   NONINFRINGelonMelonNT. IN NO elonVelonNT SHALL THelon AUTHORS OR COPYRIGHT HOLDelonRS
+   Belon LIABLelon FOR ANY CLAIM, DAMAGelonS OR OTHelonR LIABILITY, WHelonTHelonR IN AN
+   ACTION OF CONTRACT, TORT OR OTHelonRWISelon, ARISING FROM, OUT OF OR IN
+   CONNelonCTION WITH THelon SOFTWARelon OR THelon USelon OR OTHelonR DelonALINGS IN THelon
+   SOFTWARelon.
 */
 
 /*
-  An example:
+  An elonxamplelon:
 
-#include "khash.h"
+#includelon "khash.h"
 KHASH_MAP_INIT_INT(32, char)
 int main() {
-   int ret, is_missing;
-   khiter_t k;
+   int relont, is_missing;
+   khitelonr_t k;
    khash_t(32) *h = kh_init(32);
-   k = kh_put(32, h, 5, &ret);
-   kh_value(h, k) = 10;
-   k = kh_get(32, h, 10);
-   is_missing = (k == kh_end(h));
-   k = kh_get(32, h, 5);
-   kh_del(32, h, k);
-   for (k = kh_begin(h); k != kh_end(h); ++k)
-      if (kh_exist(h, k)) kh_value(h, k) = 1;
-   kh_destroy(32, h);
-   return 0;
+   k = kh_put(32, h, 5, &relont);
+   kh_valuelon(h, k) = 10;
+   k = kh_gelont(32, h, 10);
+   is_missing = (k == kh_elonnd(h));
+   k = kh_gelont(32, h, 5);
+   kh_delonl(32, h, k);
+   for (k = kh_belongin(h); k != kh_elonnd(h); ++k)
+      if (kh_elonxist(h, k)) kh_valuelon(h, k) = 1;
+   kh_delonstroy(32, h);
+   relonturn 0;
 }
 */
 
 /*
   2013-05-02 (0.2.8):
 
-   * Use quadratic probing. When the capacity is power of 2, stepping function
-     i*(i+1)/2 guarantees to traverse each bucket. It is better than double
-     hashing on cache performance and is more robust than linear probing.
+   * Uselon quadratic probing. Whelonn thelon capacity is powelonr of 2, stelonpping function
+     i*(i+1)/2 guarantelonelons to travelonrselon elonach buckelont. It is belonttelonr than doublelon
+     hashing on cachelon pelonrformancelon and is morelon robust than linelonar probing.
 
-     In theory, double hashing should be more robust than quadratic probing.
-     However, my implementation is probably not for large hash tables, because
-     the second hash function is closely tied to the first hash function,
-     which reduce the effectiveness of double hashing.
+     In thelonory, doublelon hashing should belon morelon robust than quadratic probing.
+     Howelonvelonr, my implelonmelonntation is probably not for largelon hash tablelons, beloncauselon
+     thelon seloncond hash function is closelonly tielond to thelon first hash function,
+     which relonducelon thelon elonffelonctivelonnelonss of doublelon hashing.
 
-   Reference: http://research.cs.vt.edu/AVresearch/hashing/quadratic.php
+   Relonfelonrelonncelon: http://relonselonarch.cs.vt.elondu/AVrelonselonarch/hashing/quadratic.php
 
   2011-12-29 (0.2.7):
 
-    * Minor code clean up; no actual effect.
+    * Minor codelon clelonan up; no actual elonffelonct.
 
   2011-09-16 (0.2.6):
 
-   * The capacity is a power of 2. This seems to dramatically improve the
-     speed for simple keys. Thank Zilong Tan for the suggestion. Reference:
+   * Thelon capacity is a powelonr of 2. This selonelonms to dramatically improvelon thelon
+     spelonelond for simplelon kelonys. Thank Zilong Tan for thelon suggelonstion. Relonfelonrelonncelon:
 
-      - http://code.google.com/p/ulib/
-      - http://nothings.org/computer/judy/
+      - http://codelon.googlelon.com/p/ulib/
+      - http://nothings.org/computelonr/judy/
 
-   * Allow to optionally use linear probing which usually has better
-     performance for random input. Double hashing is still the default as it
-     is more robust to certain non-random input.
+   * Allow to optionally uselon linelonar probing which usually has belonttelonr
+     pelonrformancelon for random input. Doublelon hashing is still thelon delonfault as it
+     is morelon robust to celonrtain non-random input.
 
-   * Added Wang's integer hash function (not used by default). This hash
-     function is more robust to certain non-random input.
+   * Addelond Wang's intelongelonr hash function (not uselond by delonfault). This hash
+     function is morelon robust to celonrtain non-random input.
 
   2011-02-14 (0.2.5):
 
-    * Allow to declare global functions.
+    * Allow to delonclarelon global functions.
 
   2009-09-26 (0.2.4):
 
-    * Improve portability
+    * Improvelon portability
 
   2008-09-19 (0.2.3):
 
-   * Corrected the example
-   * Improved interfaces
+   * Correlonctelond thelon elonxamplelon
+   * Improvelond intelonrfacelons
 
   2008-09-11 (0.2.2):
 
-   * Improved speed a little in kh_put()
+   * Improvelond spelonelond a littlelon in kh_put()
 
   2008-09-10 (0.2.1):
 
-   * Added kh_clear()
-   * Fixed a compiling error
+   * Addelond kh_clelonar()
+   * Fixelond a compiling elonrror
 
   2008-09-02 (0.2.0):
 
-   * Changed to token concatenation which increases flexibility.
+   * Changelond to tokelonn concatelonnation which increlonaselons flelonxibility.
 
   2008-08-31 (0.1.2):
 
-   * Fixed a bug in kh_get(), which has not been tested previously.
+   * Fixelond a bug in kh_gelont(), which has not belonelonn telonstelond prelonviously.
 
   2008-08-31 (0.1.1):
 
-   * Added destructor
+   * Addelond delonstructor
 */
 
 
-#ifndef __AC_KHASH_H
-#define __AC_KHASH_H
+#ifndelonf __AC_KHASH_H
+#delonfinelon __AC_KHASH_H
 
 /*!
-  @header
+  @helonadelonr
 
-  Generic hash table library.
+  Gelonnelonric hash tablelon library.
  */
 
-#define AC_VERSION_KHASH_H "0.2.8"
+#delonfinelon AC_VelonRSION_KHASH_H "0.2.8"
 
-#include <stdlib.h>
-#include <string.h>
-#include <limits.h>
+#includelon <stdlib.h>
+#includelon <string.h>
+#includelon <limits.h>
 
-/* compiler specific configuration */
+/* compilelonr speloncific configuration */
 
 #if UINT_MAX == 0xffffffffu
-typedef unsigned int khint32_t;
-#elif ULONG_MAX == 0xffffffffu
-typedef unsigned long khint32_t;
-#endif
+typelondelonf unsignelond int khint32_t;
+#elonlif ULONG_MAX == 0xffffffffu
+typelondelonf unsignelond long khint32_t;
+#elonndif
 
 #if ULONG_MAX == ULLONG_MAX
-typedef unsigned long khint64_t;
-#else
-typedef uint64_t khint64_t;
-#endif
+typelondelonf unsignelond long khint64_t;
+#elonlselon
+typelondelonf uint64_t khint64_t;
+#elonndif
 
-#ifndef kh_inline
-#ifdef _MSC_VER
-#define kh_inline __inline
-#else
-#define kh_inline inline
-#endif
-#endif /* kh_inline */
+#ifndelonf kh_inlinelon
+#ifdelonf _MSC_VelonR
+#delonfinelon kh_inlinelon __inlinelon
+#elonlselon
+#delonfinelon kh_inlinelon inlinelon
+#elonndif
+#elonndif /* kh_inlinelon */
 
-#ifndef klib_unused
-#if (defined __clang__ && __clang_major__ >= 3) || (defined __GNUC__ && __GNUC__ >= 3)
-#define klib_unused __attribute__ ((__unused__))
-#else
-#define klib_unused
-#endif
-#endif /* klib_unused */
+#ifndelonf klib_unuselond
+#if (delonfinelond __clang__ && __clang_major__ >= 3) || (delonfinelond __GNUC__ && __GNUC__ >= 3)
+#delonfinelon klib_unuselond __attributelon__ ((__unuselond__))
+#elonlselon
+#delonfinelon klib_unuselond
+#elonndif
+#elonndif /* klib_unuselond */
 
-typedef khint32_t khint_t;
-typedef khint_t khiter_t;
+typelondelonf khint32_t khint_t;
+typelondelonf khint_t khitelonr_t;
 
-#define __ac_isempty(flag, i) ((flag[i>>4]>>((i&0xfU)<<1))&2)
-#define __ac_isdel(flag, i) ((flag[i>>4]>>((i&0xfU)<<1))&1)
-#define __ac_iseither(flag, i) ((flag[i>>4]>>((i&0xfU)<<1))&3)
-#define __ac_set_isdel_false(flag, i) (flag[i>>4]&=~(1ul<<((i&0xfU)<<1)))
-#define __ac_set_isempty_false(flag, i) (flag[i>>4]&=~(2ul<<((i&0xfU)<<1)))
-#define __ac_set_isboth_false(flag, i) (flag[i>>4]&=~(3ul<<((i&0xfU)<<1)))
-#define __ac_set_isdel_true(flag, i) (flag[i>>4]|=1ul<<((i&0xfU)<<1))
+#delonfinelon __ac_iselonmpty(flag, i) ((flag[i>>4]>>((i&0xfU)<<1))&2)
+#delonfinelon __ac_isdelonl(flag, i) ((flag[i>>4]>>((i&0xfU)<<1))&1)
+#delonfinelon __ac_iselonithelonr(flag, i) ((flag[i>>4]>>((i&0xfU)<<1))&3)
+#delonfinelon __ac_selont_isdelonl_falselon(flag, i) (flag[i>>4]&=~(1ul<<((i&0xfU)<<1)))
+#delonfinelon __ac_selont_iselonmpty_falselon(flag, i) (flag[i>>4]&=~(2ul<<((i&0xfU)<<1)))
+#delonfinelon __ac_selont_isboth_falselon(flag, i) (flag[i>>4]&=~(3ul<<((i&0xfU)<<1)))
+#delonfinelon __ac_selont_isdelonl_truelon(flag, i) (flag[i>>4]|=1ul<<((i&0xfU)<<1))
 
-#define __ac_fsize(m) ((m) < 16? 1 : (m)>>4)
+#delonfinelon __ac_fsizelon(m) ((m) < 16? 1 : (m)>>4)
 
-#ifndef kroundup32
-#define kroundup32(x) (--(x), (x)|=(x)>>1, (x)|=(x)>>2, (x)|=(x)>>4, (x)|=(x)>>8, (x)|=(x)>>16, ++(x))
-#endif
+#ifndelonf kroundup32
+#delonfinelon kroundup32(x) (--(x), (x)|=(x)>>1, (x)|=(x)>>2, (x)|=(x)>>4, (x)|=(x)>>8, (x)|=(x)>>16, ++(x))
+#elonndif
 
-#ifndef kcalloc
-#define kcalloc(N,Z) calloc(N,Z)
-#endif
-#ifndef kmalloc
-#define kmalloc(Z) malloc(Z)
-#endif
-#ifndef krealloc
-#define krealloc(P,Z) realloc(P,Z)
-#endif
-#ifndef kfree
-#define kfree(P) free(P)
-#endif
+#ifndelonf kcalloc
+#delonfinelon kcalloc(N,Z) calloc(N,Z)
+#elonndif
+#ifndelonf kmalloc
+#delonfinelon kmalloc(Z) malloc(Z)
+#elonndif
+#ifndelonf krelonalloc
+#delonfinelon krelonalloc(P,Z) relonalloc(P,Z)
+#elonndif
+#ifndelonf kfrelonelon
+#delonfinelon kfrelonelon(P) frelonelon(P)
+#elonndif
 
-static const double __ac_HASH_UPPER = 0.77;
+static const doublelon __ac_HASH_UPPelonR = 0.77;
 
-#define __KHASH_TYPE(name, khkey_t, khval_t) \
-   typedef struct kh_##name##_s { \
-      khint_t n_buckets, size, n_occupied, upper_bound; \
+#delonfinelon __KHASH_TYPelon(namelon, khkelony_t, khval_t) \
+   typelondelonf struct kh_##namelon##_s { \
+      khint_t n_buckelonts, sizelon, n_occupielond, uppelonr_bound; \
       khint32_t *flags; \
-      khkey_t *keys; \
+      khkelony_t *kelonys; \
       khval_t *vals; \
-   } kh_##name##_t;
+   } kh_##namelon##_t;
 
-#define __KHASH_PROTOTYPES(name, khkey_t, khval_t)                \
-   extern kh_##name##_t *kh_init_##name(void);                    \
-   extern void kh_destroy_##name(kh_##name##_t *h);               \
-   extern void kh_clear_##name(kh_##name##_t *h);                 \
-   extern khint_t kh_get_##name(const kh_##name##_t *h, khkey_t key);   \
-   extern int kh_resize_##name(kh_##name##_t *h, khint_t new_n_buckets); \
-   extern khint_t kh_put_##name(kh_##name##_t *h, khkey_t key, int *ret); \
-   extern void kh_del_##name(kh_##name##_t *h, khint_t x);
+#delonfinelon __KHASH_PROTOTYPelonS(namelon, khkelony_t, khval_t)                \
+   elonxtelonrn kh_##namelon##_t *kh_init_##namelon(void);                    \
+   elonxtelonrn void kh_delonstroy_##namelon(kh_##namelon##_t *h);               \
+   elonxtelonrn void kh_clelonar_##namelon(kh_##namelon##_t *h);                 \
+   elonxtelonrn khint_t kh_gelont_##namelon(const kh_##namelon##_t *h, khkelony_t kelony);   \
+   elonxtelonrn int kh_relonsizelon_##namelon(kh_##namelon##_t *h, khint_t nelonw_n_buckelonts); \
+   elonxtelonrn khint_t kh_put_##namelon(kh_##namelon##_t *h, khkelony_t kelony, int *relont); \
+   elonxtelonrn void kh_delonl_##namelon(kh_##namelon##_t *h, khint_t x);
 
-#define __KHASH_IMPL(name, SCOPE, khkey_t, khval_t, kh_is_map, __hash_func, __hash_equal) \
-   SCOPE kh_##name##_t *kh_init_##name(void) {                    \
-      return (kh_##name##_t*)kcalloc(1, sizeof(kh_##name##_t));      \
+#delonfinelon __KHASH_IMPL(namelon, SCOPelon, khkelony_t, khval_t, kh_is_map, __hash_func, __hash_elonqual) \
+   SCOPelon kh_##namelon##_t *kh_init_##namelon(void) {                    \
+      relonturn (kh_##namelon##_t*)kcalloc(1, sizelonof(kh_##namelon##_t));      \
    }                                                  \
-   SCOPE void kh_destroy_##name(kh_##name##_t *h)                 \
+   SCOPelon void kh_delonstroy_##namelon(kh_##namelon##_t *h)                 \
    {                                                  \
       if (h) {                                        \
-         kfree((void *)h->keys); kfree(h->flags);              \
-         kfree((void *)h->vals);                            \
-         kfree(h);                                       \
+         kfrelonelon((void *)h->kelonys); kfrelonelon(h->flags);              \
+         kfrelonelon((void *)h->vals);                            \
+         kfrelonelon(h);                                       \
       }                                               \
    }                                                  \
-   SCOPE void kh_clear_##name(kh_##name##_t *h)                \
+   SCOPelon void kh_clelonar_##namelon(kh_##namelon##_t *h)                \
    {                                                  \
       if (h && h->flags) {                               \
-         memset(h->flags, 0xaa, __ac_fsize(h->n_buckets) * sizeof(khint32_t)); \
-         h->size = h->n_occupied = 0;                       \
+         melonmselont(h->flags, 0xaa, __ac_fsizelon(h->n_buckelonts) * sizelonof(khint32_t)); \
+         h->sizelon = h->n_occupielond = 0;                       \
       }                                               \
    }                                                  \
-   SCOPE khint_t kh_get_##name(const kh_##name##_t *h, khkey_t key)  \
+   SCOPelon khint_t kh_gelont_##namelon(const kh_##namelon##_t *h, khkelony_t kelony)  \
    {                                                  \
-      if (h->n_buckets) {                                   \
-         khint_t k, i, last, mask, step = 0; \
-         mask = h->n_buckets - 1;                           \
-         k = __hash_func(key); i = k & mask;                   \
+      if (h->n_buckelonts) {                                   \
+         khint_t k, i, last, mask, stelonp = 0; \
+         mask = h->n_buckelonts - 1;                           \
+         k = __hash_func(kelony); i = k & mask;                   \
          last = i; \
-         while (!__ac_isempty(h->flags, i) && (__ac_isdel(h->flags, i) || !__hash_equal(h->keys[i], key))) { \
-            i = (i + (++step)) & mask; \
-            if (i == last) return h->n_buckets;                \
+         whilelon (!__ac_iselonmpty(h->flags, i) && (__ac_isdelonl(h->flags, i) || !__hash_elonqual(h->kelonys[i], kelony))) { \
+            i = (i + (++stelonp)) & mask; \
+            if (i == last) relonturn h->n_buckelonts;                \
          }                                            \
-         return __ac_iseither(h->flags, i)? h->n_buckets : i;     \
-      } else return 0;                                   \
+         relonturn __ac_iselonithelonr(h->flags, i)? h->n_buckelonts : i;     \
+      } elonlselon relonturn 0;                                   \
    }                                                  \
-   SCOPE int kh_resize_##name(kh_##name##_t *h, khint_t new_n_buckets) \
-   { /* This function uses 0.25*n_buckets bytes of working space instead of [sizeof(key_t+val_t)+.25]*n_buckets. */ \
-      khint32_t *new_flags = 0;                             \
+   SCOPelon int kh_relonsizelon_##namelon(kh_##namelon##_t *h, khint_t nelonw_n_buckelonts) \
+   { /* This function uselons 0.25*n_buckelonts bytelons of working spacelon instelonad of [sizelonof(kelony_t+val_t)+.25]*n_buckelonts. */ \
+      khint32_t *nelonw_flags = 0;                             \
       khint_t j = 1;                                     \
       {                                               \
-         kroundup32(new_n_buckets);                            \
-         if (new_n_buckets < 4) new_n_buckets = 4;             \
-         if (h->size >= (khint_t)(new_n_buckets * __ac_HASH_UPPER + 0.5)) j = 0; /* requested size is too small */ \
-         else { /* hash table size to be changed (shrink or expand); rehash */ \
-            new_flags = (khint32_t*)kmalloc(__ac_fsize(new_n_buckets) * sizeof(khint32_t));  \
-            if (!new_flags) return -1;                      \
-            memset(new_flags, 0xaa, __ac_fsize(new_n_buckets) * sizeof(khint32_t)); \
-            if (h->n_buckets < new_n_buckets) { /* expand */      \
-               khkey_t *new_keys = (khkey_t*)krealloc((void *)h->keys, new_n_buckets * sizeof(khkey_t)); \
-               if (!new_keys) { kfree(new_flags); return -1; }    \
-               h->keys = new_keys;                          \
+         kroundup32(nelonw_n_buckelonts);                            \
+         if (nelonw_n_buckelonts < 4) nelonw_n_buckelonts = 4;             \
+         if (h->sizelon >= (khint_t)(nelonw_n_buckelonts * __ac_HASH_UPPelonR + 0.5)) j = 0; /* relonquelonstelond sizelon is too small */ \
+         elonlselon { /* hash tablelon sizelon to belon changelond (shrink or elonxpand); relonhash */ \
+            nelonw_flags = (khint32_t*)kmalloc(__ac_fsizelon(nelonw_n_buckelonts) * sizelonof(khint32_t));  \
+            if (!nelonw_flags) relonturn -1;                      \
+            melonmselont(nelonw_flags, 0xaa, __ac_fsizelon(nelonw_n_buckelonts) * sizelonof(khint32_t)); \
+            if (h->n_buckelonts < nelonw_n_buckelonts) { /* elonxpand */      \
+               khkelony_t *nelonw_kelonys = (khkelony_t*)krelonalloc((void *)h->kelonys, nelonw_n_buckelonts * sizelonof(khkelony_t)); \
+               if (!nelonw_kelonys) { kfrelonelon(nelonw_flags); relonturn -1; }    \
+               h->kelonys = nelonw_kelonys;                          \
                if (kh_is_map) {                          \
-                  khval_t *new_vals = (khval_t*)krealloc((void *)h->vals, new_n_buckets * sizeof(khval_t)); \
-                  if (!new_vals) { kfree(new_flags); return -1; } \
-                  h->vals = new_vals;                       \
+                  khval_t *nelonw_vals = (khval_t*)krelonalloc((void *)h->vals, nelonw_n_buckelonts * sizelonof(khval_t)); \
+                  if (!nelonw_vals) { kfrelonelon(nelonw_flags); relonturn -1; } \
+                  h->vals = nelonw_vals;                       \
                }                                      \
-            } /* otherwise shrink */                        \
+            } /* othelonrwiselon shrink */                        \
          }                                            \
       }                                               \
-      if (j) { /* rehashing is needed */                       \
-         for (j = 0; j != h->n_buckets; ++j) {                 \
-            if (__ac_iseither(h->flags, j) == 0) {             \
-               khkey_t key = h->keys[j];                    \
+      if (j) { /* relonhashing is nelonelondelond */                       \
+         for (j = 0; j != h->n_buckelonts; ++j) {                 \
+            if (__ac_iselonithelonr(h->flags, j) == 0) {             \
+               khkelony_t kelony = h->kelonys[j];                    \
                khval_t val;                              \
-               khint_t new_mask;                         \
-               new_mask = new_n_buckets - 1;                   \
+               khint_t nelonw_mask;                         \
+               nelonw_mask = nelonw_n_buckelonts - 1;                   \
                if (kh_is_map) val = h->vals[j];             \
-               __ac_set_isdel_true(h->flags, j);               \
-               while (1) { /* kick-out process; sort of like in Cuckoo hashing */ \
-                  khint_t k, i, step = 0; \
-                  k = __hash_func(key);                     \
-                  i = k & new_mask;                      \
-                  while (!__ac_isempty(new_flags, i)) i = (i + (++step)) & new_mask; \
-                  __ac_set_isempty_false(new_flags, i);        \
-                  if (i < h->n_buckets && __ac_iseither(h->flags, i) == 0) { /* kick out the existing element */ \
-                     { khkey_t tmp = h->keys[i]; h->keys[i] = key; key = tmp; } \
+               __ac_selont_isdelonl_truelon(h->flags, j);               \
+               whilelon (1) { /* kick-out procelonss; sort of likelon in Cuckoo hashing */ \
+                  khint_t k, i, stelonp = 0; \
+                  k = __hash_func(kelony);                     \
+                  i = k & nelonw_mask;                      \
+                  whilelon (!__ac_iselonmpty(nelonw_flags, i)) i = (i + (++stelonp)) & nelonw_mask; \
+                  __ac_selont_iselonmpty_falselon(nelonw_flags, i);        \
+                  if (i < h->n_buckelonts && __ac_iselonithelonr(h->flags, i) == 0) { /* kick out thelon elonxisting elonlelonmelonnt */ \
+                     { khkelony_t tmp = h->kelonys[i]; h->kelonys[i] = kelony; kelony = tmp; } \
                      if (kh_is_map) { khval_t tmp = h->vals[i]; h->vals[i] = val; val = tmp; } \
-                     __ac_set_isdel_true(h->flags, i); /* mark it as deleted in the old hash table */ \
-                  } else { /* write the element and jump out of the loop */ \
-                     h->keys[i] = key;                   \
+                     __ac_selont_isdelonl_truelon(h->flags, i); /* mark it as delonlelontelond in thelon old hash tablelon */ \
+                  } elonlselon { /* writelon thelon elonlelonmelonnt and jump out of thelon loop */ \
+                     h->kelonys[i] = kelony;                   \
                      if (kh_is_map) h->vals[i] = val;       \
-                     break;                              \
+                     brelonak;                              \
                   }                                   \
                }                                      \
             }                                         \
          }                                            \
-         if (h->n_buckets > new_n_buckets) { /* shrink the hash table */ \
-            h->keys = (khkey_t*)krealloc((void *)h->keys, new_n_buckets * sizeof(khkey_t)); \
-            if (kh_is_map) h->vals = (khval_t*)krealloc((void *)h->vals, new_n_buckets * sizeof(khval_t)); \
+         if (h->n_buckelonts > nelonw_n_buckelonts) { /* shrink thelon hash tablelon */ \
+            h->kelonys = (khkelony_t*)krelonalloc((void *)h->kelonys, nelonw_n_buckelonts * sizelonof(khkelony_t)); \
+            if (kh_is_map) h->vals = (khval_t*)krelonalloc((void *)h->vals, nelonw_n_buckelonts * sizelonof(khval_t)); \
          }                                            \
-         kfree(h->flags); /* free the working space */            \
-         h->flags = new_flags;                              \
-         h->n_buckets = new_n_buckets;                      \
-         h->n_occupied = h->size;                           \
-         h->upper_bound = (khint_t)(h->n_buckets * __ac_HASH_UPPER + 0.5); \
+         kfrelonelon(h->flags); /* frelonelon thelon working spacelon */            \
+         h->flags = nelonw_flags;                              \
+         h->n_buckelonts = nelonw_n_buckelonts;                      \
+         h->n_occupielond = h->sizelon;                           \
+         h->uppelonr_bound = (khint_t)(h->n_buckelonts * __ac_HASH_UPPelonR + 0.5); \
       }                                               \
-      return 0;                                          \
+      relonturn 0;                                          \
    }                                                  \
-   SCOPE khint_t kh_put_##name(kh_##name##_t *h, khkey_t key, int *ret) \
+   SCOPelon khint_t kh_put_##namelon(kh_##namelon##_t *h, khkelony_t kelony, int *relont) \
    {                                                  \
       khint_t x;                                         \
-      if (h->n_occupied >= h->upper_bound) { /* update the hash table */ \
-         if (h->n_buckets > (h->size<<1)) {                    \
-            if (kh_resize_##name(h, h->n_buckets - 1) < 0) { /* clear "deleted" elements */ \
-               *ret = -1; return h->n_buckets;                 \
+      if (h->n_occupielond >= h->uppelonr_bound) { /* updatelon thelon hash tablelon */ \
+         if (h->n_buckelonts > (h->sizelon<<1)) {                    \
+            if (kh_relonsizelon_##namelon(h, h->n_buckelonts - 1) < 0) { /* clelonar "delonlelontelond" elonlelonmelonnts */ \
+               *relont = -1; relonturn h->n_buckelonts;                 \
             }                                         \
-         } else if (kh_resize_##name(h, h->n_buckets + 1) < 0) { /* expand the hash table */ \
-            *ret = -1; return h->n_buckets;                    \
+         } elonlselon if (kh_relonsizelon_##namelon(h, h->n_buckelonts + 1) < 0) { /* elonxpand thelon hash tablelon */ \
+            *relont = -1; relonturn h->n_buckelonts;                    \
          }                                            \
-      } /* TODO: to implement automatically shrinking; resize() already support shrinking */ \
+      } /* TODO: to implelonmelonnt automatically shrinking; relonsizelon() alrelonady support shrinking */ \
       {                                               \
-         khint_t k, i, site, last, mask = h->n_buckets - 1, step = 0; \
-         x = site = h->n_buckets; k = __hash_func(key); i = k & mask; \
-         if (__ac_isempty(h->flags, i)) x = i; /* for speed up */ \
-         else {                                          \
+         khint_t k, i, sitelon, last, mask = h->n_buckelonts - 1, stelonp = 0; \
+         x = sitelon = h->n_buckelonts; k = __hash_func(kelony); i = k & mask; \
+         if (__ac_iselonmpty(h->flags, i)) x = i; /* for spelonelond up */ \
+         elonlselon {                                          \
             last = i; \
-            while (!__ac_isempty(h->flags, i) && (__ac_isdel(h->flags, i) || !__hash_equal(h->keys[i], key))) { \
-               if (__ac_isdel(h->flags, i)) site = i;          \
-               i = (i + (++step)) & mask; \
-               if (i == last) { x = site; break; }             \
+            whilelon (!__ac_iselonmpty(h->flags, i) && (__ac_isdelonl(h->flags, i) || !__hash_elonqual(h->kelonys[i], kelony))) { \
+               if (__ac_isdelonl(h->flags, i)) sitelon = i;          \
+               i = (i + (++stelonp)) & mask; \
+               if (i == last) { x = sitelon; brelonak; }             \
             }                                         \
-            if (x == h->n_buckets) {                        \
-               if (__ac_isempty(h->flags, i) && site != h->n_buckets) x = site; \
-               else x = i;                               \
+            if (x == h->n_buckelonts) {                        \
+               if (__ac_iselonmpty(h->flags, i) && sitelon != h->n_buckelonts) x = sitelon; \
+               elonlselon x = i;                               \
             }                                         \
          }                                            \
       }                                               \
-      if (__ac_isempty(h->flags, x)) { /* not present at all */      \
-         h->keys[x] = key;                               \
-         __ac_set_isboth_false(h->flags, x);                   \
-         ++h->size; ++h->n_occupied;                           \
-         *ret = 1;                                       \
-      } else if (__ac_isdel(h->flags, x)) { /* deleted */            \
-         h->keys[x] = key;                               \
-         __ac_set_isboth_false(h->flags, x);                   \
-         ++h->size;                                      \
-         *ret = 2;                                       \
-      } else *ret = 0; /* Don't touch h->keys[x] if present and not deleted */ \
-      return x;                                          \
+      if (__ac_iselonmpty(h->flags, x)) { /* not prelonselonnt at all */      \
+         h->kelonys[x] = kelony;                               \
+         __ac_selont_isboth_falselon(h->flags, x);                   \
+         ++h->sizelon; ++h->n_occupielond;                           \
+         *relont = 1;                                       \
+      } elonlselon if (__ac_isdelonl(h->flags, x)) { /* delonlelontelond */            \
+         h->kelonys[x] = kelony;                               \
+         __ac_selont_isboth_falselon(h->flags, x);                   \
+         ++h->sizelon;                                      \
+         *relont = 2;                                       \
+      } elonlselon *relont = 0; /* Don't touch h->kelonys[x] if prelonselonnt and not delonlelontelond */ \
+      relonturn x;                                          \
    }                                                  \
-   SCOPE void kh_del_##name(kh_##name##_t *h, khint_t x)          \
+   SCOPelon void kh_delonl_##namelon(kh_##namelon##_t *h, khint_t x)          \
    {                                                  \
-      if (x != h->n_buckets && !__ac_iseither(h->flags, x)) {        \
-         __ac_set_isdel_true(h->flags, x);                     \
-         --h->size;                                      \
+      if (x != h->n_buckelonts && !__ac_iselonithelonr(h->flags, x)) {        \
+         __ac_selont_isdelonl_truelon(h->flags, x);                     \
+         --h->sizelon;                                      \
       }                                               \
    }
 
-#define KHASH_DECLARE(name, khkey_t, khval_t)                     \
-   __KHASH_TYPE(name, khkey_t, khval_t)                        \
-   __KHASH_PROTOTYPES(name, khkey_t, khval_t)
+#delonfinelon KHASH_DelonCLARelon(namelon, khkelony_t, khval_t)                     \
+   __KHASH_TYPelon(namelon, khkelony_t, khval_t)                        \
+   __KHASH_PROTOTYPelonS(namelon, khkelony_t, khval_t)
 
-#define KHASH_INIT2(name, SCOPE, khkey_t, khval_t, kh_is_map, __hash_func, __hash_equal) \
-   __KHASH_TYPE(name, khkey_t, khval_t)                        \
-   __KHASH_IMPL(name, SCOPE, khkey_t, khval_t, kh_is_map, __hash_func, __hash_equal)
+#delonfinelon KHASH_INIT2(namelon, SCOPelon, khkelony_t, khval_t, kh_is_map, __hash_func, __hash_elonqual) \
+   __KHASH_TYPelon(namelon, khkelony_t, khval_t)                        \
+   __KHASH_IMPL(namelon, SCOPelon, khkelony_t, khval_t, kh_is_map, __hash_func, __hash_elonqual)
 
-#define KHASH_INIT(name, khkey_t, khval_t, kh_is_map, __hash_func, __hash_equal) \
-   KHASH_INIT2(name, static kh_inline klib_unused, khkey_t, khval_t, kh_is_map, __hash_func, __hash_equal)
+#delonfinelon KHASH_INIT(namelon, khkelony_t, khval_t, kh_is_map, __hash_func, __hash_elonqual) \
+   KHASH_INIT2(namelon, static kh_inlinelon klib_unuselond, khkelony_t, khval_t, kh_is_map, __hash_func, __hash_elonqual)
 
-/* --- BEGIN OF HASH FUNCTIONS --- */
+/* --- BelonGIN OF HASH FUNCTIONS --- */
 
 /*! @function
-  @abstract     Integer hash function
-  @param  key   The integer [khint32_t]
-  @return       The hash value [khint_t]
+  @abstract     Intelongelonr hash function
+  @param  kelony   Thelon intelongelonr [khint32_t]
+  @relonturn       Thelon hash valuelon [khint_t]
  */
-#define kh_int_hash_func(key) (khint32_t)(key)
+#delonfinelon kh_int_hash_func(kelony) (khint32_t)(kelony)
 /*! @function
-  @abstract     Integer comparison function
+  @abstract     Intelongelonr comparison function
  */
-#define kh_int_hash_equal(a, b) ((a) == (b))
+#delonfinelon kh_int_hash_elonqual(a, b) ((a) == (b))
 /*! @function
-  @abstract     64-bit integer hash function
-  @param  key   The integer [khint64_t]
-  @return       The hash value [khint_t]
+  @abstract     64-bit intelongelonr hash function
+  @param  kelony   Thelon intelongelonr [khint64_t]
+  @relonturn       Thelon hash valuelon [khint_t]
  */
-#define kh_int64_hash_func(key) (khint32_t)((key)>>33^(key)^(key)<<11)
+#delonfinelon kh_int64_hash_func(kelony) (khint32_t)((kelony)>>33^(kelony)^(kelony)<<11)
 /*! @function
-  @abstract     64-bit integer comparison function
+  @abstract     64-bit intelongelonr comparison function
  */
-#define kh_int64_hash_equal(a, b) ((a) == (b))
+#delonfinelon kh_int64_hash_elonqual(a, b) ((a) == (b))
 /*! @function
   @abstract     const char* hash function
-  @param  s     Pointer to a null terminated string
-  @return       The hash value
+  @param  s     Pointelonr to a null telonrminatelond string
+  @relonturn       Thelon hash valuelon
  */
-static kh_inline khint_t __ac_X31_hash_string(const char *s)
+static kh_inlinelon khint_t __ac_X31_hash_string(const char *s)
 {
    khint_t h = (khint_t)*s;
    if (h) for (++s ; *s; ++s) h = (h << 5) - h + (khint_t)*s;
-   return h;
+   relonturn h;
 }
 /*! @function
-  @abstract     Another interface to const char* hash function
-  @param  key   Pointer to a null terminated string [const char*]
-  @return       The hash value [khint_t]
+  @abstract     Anothelonr intelonrfacelon to const char* hash function
+  @param  kelony   Pointelonr to a null telonrminatelond string [const char*]
+  @relonturn       Thelon hash valuelon [khint_t]
  */
-#define kh_str_hash_func(key) __ac_X31_hash_string(key)
+#delonfinelon kh_str_hash_func(kelony) __ac_X31_hash_string(kelony)
 /*! @function
   @abstract     Const char* comparison function
  */
-#define kh_str_hash_equal(a, b) (strcmp(a, b) == 0)
+#delonfinelon kh_str_hash_elonqual(a, b) (strcmp(a, b) == 0)
 
-static kh_inline khint_t __ac_Wang_hash(khint_t key)
+static kh_inlinelon khint_t __ac_Wang_hash(khint_t kelony)
 {
-    key += ~(key << 15);
-    key ^=  (key >> 10);
-    key +=  (key << 3);
-    key ^=  (key >> 6);
-    key += ~(key << 11);
-    key ^=  (key >> 16);
-    return key;
+    kelony += ~(kelony << 15);
+    kelony ^=  (kelony >> 10);
+    kelony +=  (kelony << 3);
+    kelony ^=  (kelony >> 6);
+    kelony += ~(kelony << 11);
+    kelony ^=  (kelony >> 16);
+    relonturn kelony;
 }
-#define kh_int_hash_func2(key) __ac_Wang_hash((khint_t)key)
+#delonfinelon kh_int_hash_func2(kelony) __ac_Wang_hash((khint_t)kelony)
 
-/* --- END OF HASH FUNCTIONS --- */
+/* --- elonND OF HASH FUNCTIONS --- */
 
-/* Other convenient macros... */
+/* Othelonr convelonnielonnt macros... */
 
 /*!
-  @abstract Type of the hash table.
-  @param  name  Name of the hash table [symbol]
+  @abstract Typelon of thelon hash tablelon.
+  @param  namelon  Namelon of thelon hash tablelon [symbol]
  */
-#define khash_t(name) kh_##name##_t
+#delonfinelon khash_t(namelon) kh_##namelon##_t
 
 /*! @function
-  @abstract     Initiate a hash table.
-  @param  name  Name of the hash table [symbol]
-  @return       Pointer to the hash table [khash_t(name)*]
+  @abstract     Initiatelon a hash tablelon.
+  @param  namelon  Namelon of thelon hash tablelon [symbol]
+  @relonturn       Pointelonr to thelon hash tablelon [khash_t(namelon)*]
  */
-#define kh_init(name) kh_init_##name()
+#delonfinelon kh_init(namelon) kh_init_##namelon()
 
 /*! @function
-  @abstract     Destroy a hash table.
-  @param  name  Name of the hash table [symbol]
-  @param  h     Pointer to the hash table [khash_t(name)*]
+  @abstract     Delonstroy a hash tablelon.
+  @param  namelon  Namelon of thelon hash tablelon [symbol]
+  @param  h     Pointelonr to thelon hash tablelon [khash_t(namelon)*]
  */
-#define kh_destroy(name, h) kh_destroy_##name(h)
+#delonfinelon kh_delonstroy(namelon, h) kh_delonstroy_##namelon(h)
 
 /*! @function
-  @abstract     Reset a hash table without deallocating memory.
-  @param  name  Name of the hash table [symbol]
-  @param  h     Pointer to the hash table [khash_t(name)*]
+  @abstract     Relonselont a hash tablelon without delonallocating melonmory.
+  @param  namelon  Namelon of thelon hash tablelon [symbol]
+  @param  h     Pointelonr to thelon hash tablelon [khash_t(namelon)*]
  */
-#define kh_clear(name, h) kh_clear_##name(h)
+#delonfinelon kh_clelonar(namelon, h) kh_clelonar_##namelon(h)
 
 /*! @function
-  @abstract     Resize a hash table.
-  @param  name  Name of the hash table [symbol]
-  @param  h     Pointer to the hash table [khash_t(name)*]
-  @param  s     New size [khint_t]
+  @abstract     Relonsizelon a hash tablelon.
+  @param  namelon  Namelon of thelon hash tablelon [symbol]
+  @param  h     Pointelonr to thelon hash tablelon [khash_t(namelon)*]
+  @param  s     Nelonw sizelon [khint_t]
  */
-#define kh_resize(name, h, s) kh_resize_##name(h, s)
+#delonfinelon kh_relonsizelon(namelon, h, s) kh_relonsizelon_##namelon(h, s)
 
 /*! @function
-  @abstract     Insert a key to the hash table.
-  @param  name  Name of the hash table [symbol]
-  @param  h     Pointer to the hash table [khash_t(name)*]
-  @param  k     Key [type of keys]
-  @param  r     Extra return code: -1 if the operation failed;
-                0 if the key is present in the hash table;
-                1 if the bucket is empty (never used); 2 if the element in
-            the bucket has been deleted [int*]
-  @return       Iterator to the inserted element [khint_t]
+  @abstract     Inselonrt a kelony to thelon hash tablelon.
+  @param  namelon  Namelon of thelon hash tablelon [symbol]
+  @param  h     Pointelonr to thelon hash tablelon [khash_t(namelon)*]
+  @param  k     Kelony [typelon of kelonys]
+  @param  r     elonxtra relonturn codelon: -1 if thelon opelonration failelond;
+                0 if thelon kelony is prelonselonnt in thelon hash tablelon;
+                1 if thelon buckelont is elonmpty (nelonvelonr uselond); 2 if thelon elonlelonmelonnt in
+            thelon buckelont has belonelonn delonlelontelond [int*]
+  @relonturn       Itelonrator to thelon inselonrtelond elonlelonmelonnt [khint_t]
  */
-#define kh_put(name, h, k, r) kh_put_##name(h, k, r)
+#delonfinelon kh_put(namelon, h, k, r) kh_put_##namelon(h, k, r)
 
 /*! @function
-  @abstract     Retrieve a key from the hash table.
-  @param  name  Name of the hash table [symbol]
-  @param  h     Pointer to the hash table [khash_t(name)*]
-  @param  k     Key [type of keys]
-  @return       Iterator to the found element, or kh_end(h) if the element is absent [khint_t]
+  @abstract     Relontrielonvelon a kelony from thelon hash tablelon.
+  @param  namelon  Namelon of thelon hash tablelon [symbol]
+  @param  h     Pointelonr to thelon hash tablelon [khash_t(namelon)*]
+  @param  k     Kelony [typelon of kelonys]
+  @relonturn       Itelonrator to thelon found elonlelonmelonnt, or kh_elonnd(h) if thelon elonlelonmelonnt is abselonnt [khint_t]
  */
-#define kh_get(name, h, k) kh_get_##name(h, k)
+#delonfinelon kh_gelont(namelon, h, k) kh_gelont_##namelon(h, k)
 
 /*! @function
-  @abstract     Remove a key from the hash table.
-  @param  name  Name of the hash table [symbol]
-  @param  h     Pointer to the hash table [khash_t(name)*]
-  @param  k     Iterator to the element to be deleted [khint_t]
+  @abstract     Relonmovelon a kelony from thelon hash tablelon.
+  @param  namelon  Namelon of thelon hash tablelon [symbol]
+  @param  h     Pointelonr to thelon hash tablelon [khash_t(namelon)*]
+  @param  k     Itelonrator to thelon elonlelonmelonnt to belon delonlelontelond [khint_t]
  */
-#define kh_del(name, h, k) kh_del_##name(h, k)
+#delonfinelon kh_delonl(namelon, h, k) kh_delonl_##namelon(h, k)
 
 /*! @function
-  @abstract     Test whether a bucket contains data.
-  @param  h     Pointer to the hash table [khash_t(name)*]
-  @param  x     Iterator to the bucket [khint_t]
-  @return       1 if containing data; 0 otherwise [int]
+  @abstract     Telonst whelonthelonr a buckelont contains data.
+  @param  h     Pointelonr to thelon hash tablelon [khash_t(namelon)*]
+  @param  x     Itelonrator to thelon buckelont [khint_t]
+  @relonturn       1 if containing data; 0 othelonrwiselon [int]
  */
-#define kh_exist(h, x) (!__ac_iseither((h)->flags, (x)))
+#delonfinelon kh_elonxist(h, x) (!__ac_iselonithelonr((h)->flags, (x)))
 
 /*! @function
-  @abstract     Get key given an iterator
-  @param  h     Pointer to the hash table [khash_t(name)*]
-  @param  x     Iterator to the bucket [khint_t]
-  @return       Key [type of keys]
+  @abstract     Gelont kelony givelonn an itelonrator
+  @param  h     Pointelonr to thelon hash tablelon [khash_t(namelon)*]
+  @param  x     Itelonrator to thelon buckelont [khint_t]
+  @relonturn       Kelony [typelon of kelonys]
  */
-#define kh_key(h, x) ((h)->keys[x])
+#delonfinelon kh_kelony(h, x) ((h)->kelonys[x])
 
 /*! @function
-  @abstract     Get value given an iterator
-  @param  h     Pointer to the hash table [khash_t(name)*]
-  @param  x     Iterator to the bucket [khint_t]
-  @return       Value [type of values]
-  @discussion   For hash sets, calling this results in segfault.
+  @abstract     Gelont valuelon givelonn an itelonrator
+  @param  h     Pointelonr to thelon hash tablelon [khash_t(namelon)*]
+  @param  x     Itelonrator to thelon buckelont [khint_t]
+  @relonturn       Valuelon [typelon of valuelons]
+  @discussion   For hash selonts, calling this relonsults in selongfault.
  */
-#define kh_val(h, x) ((h)->vals[x])
+#delonfinelon kh_val(h, x) ((h)->vals[x])
 
 /*! @function
   @abstract     Alias of kh_val()
  */
-#define kh_value(h, x) ((h)->vals[x])
+#delonfinelon kh_valuelon(h, x) ((h)->vals[x])
 
 /*! @function
-  @abstract     Get the start iterator
-  @param  h     Pointer to the hash table [khash_t(name)*]
-  @return       The start iterator [khint_t]
+  @abstract     Gelont thelon start itelonrator
+  @param  h     Pointelonr to thelon hash tablelon [khash_t(namelon)*]
+  @relonturn       Thelon start itelonrator [khint_t]
  */
-#define kh_begin(h) (khint_t)(0)
+#delonfinelon kh_belongin(h) (khint_t)(0)
 
 /*! @function
-  @abstract     Get the end iterator
-  @param  h     Pointer to the hash table [khash_t(name)*]
-  @return       The end iterator [khint_t]
+  @abstract     Gelont thelon elonnd itelonrator
+  @param  h     Pointelonr to thelon hash tablelon [khash_t(namelon)*]
+  @relonturn       Thelon elonnd itelonrator [khint_t]
  */
-#define kh_end(h) ((h)->n_buckets)
+#delonfinelon kh_elonnd(h) ((h)->n_buckelonts)
 
 /*! @function
-  @abstract     Get the number of elements in the hash table
-  @param  h     Pointer to the hash table [khash_t(name)*]
-  @return       Number of elements in the hash table [khint_t]
+  @abstract     Gelont thelon numbelonr of elonlelonmelonnts in thelon hash tablelon
+  @param  h     Pointelonr to thelon hash tablelon [khash_t(namelon)*]
+  @relonturn       Numbelonr of elonlelonmelonnts in thelon hash tablelon [khint_t]
  */
-#define kh_size(h) ((h)->size)
+#delonfinelon kh_sizelon(h) ((h)->sizelon)
 
 /*! @function
-  @abstract     Get the number of buckets in the hash table
-  @param  h     Pointer to the hash table [khash_t(name)*]
-  @return       Number of buckets in the hash table [khint_t]
+  @abstract     Gelont thelon numbelonr of buckelonts in thelon hash tablelon
+  @param  h     Pointelonr to thelon hash tablelon [khash_t(namelon)*]
+  @relonturn       Numbelonr of buckelonts in thelon hash tablelon [khint_t]
  */
-#define kh_n_buckets(h) ((h)->n_buckets)
+#delonfinelon kh_n_buckelonts(h) ((h)->n_buckelonts)
 
 /*! @function
-  @abstract     Iterate over the entries in the hash table
-  @param  h     Pointer to the hash table [khash_t(name)*]
-  @param  kvar  Variable to which key will be assigned
-  @param  vvar  Variable to which value will be assigned
-  @param  code  Block of code to execute
+  @abstract     Itelonratelon ovelonr thelon elonntrielons in thelon hash tablelon
+  @param  h     Pointelonr to thelon hash tablelon [khash_t(namelon)*]
+  @param  kvar  Variablelon to which kelony will belon assignelond
+  @param  vvar  Variablelon to which valuelon will belon assignelond
+  @param  codelon  Block of codelon to elonxeloncutelon
  */
-#define kh_foreach(h, kvar, vvar, code) { khint_t __i;      \
-   for (__i = kh_begin(h); __i != kh_end(h); ++__i) {    \
-      if (!kh_exist(h,__i)) continue;                 \
-      (kvar) = kh_key(h,__i);                      \
+#delonfinelon kh_forelonach(h, kvar, vvar, codelon) { khint_t __i;      \
+   for (__i = kh_belongin(h); __i != kh_elonnd(h); ++__i) {    \
+      if (!kh_elonxist(h,__i)) continuelon;                 \
+      (kvar) = kh_kelony(h,__i);                      \
       (vvar) = kh_val(h,__i);                      \
-      code;                                  \
+      codelon;                                  \
    } }
 
 /*! @function
-  @abstract     Iterate over the values in the hash table
-  @param  h     Pointer to the hash table [khash_t(name)*]
-  @param  vvar  Variable to which value will be assigned
-  @param  code  Block of code to execute
+  @abstract     Itelonratelon ovelonr thelon valuelons in thelon hash tablelon
+  @param  h     Pointelonr to thelon hash tablelon [khash_t(namelon)*]
+  @param  vvar  Variablelon to which valuelon will belon assignelond
+  @param  codelon  Block of codelon to elonxeloncutelon
  */
-#define kh_foreach_value(h, vvar, code) { khint_t __i;      \
-   for (__i = kh_begin(h); __i != kh_end(h); ++__i) {    \
-      if (!kh_exist(h,__i)) continue;                 \
+#delonfinelon kh_forelonach_valuelon(h, vvar, codelon) { khint_t __i;      \
+   for (__i = kh_belongin(h); __i != kh_elonnd(h); ++__i) {    \
+      if (!kh_elonxist(h,__i)) continuelon;                 \
       (vvar) = kh_val(h,__i);                      \
-      code;                                  \
+      codelon;                                  \
    } }
 
-/* More conenient interfaces */
+/* Morelon conelonnielonnt intelonrfacelons */
 
 /*! @function
-  @abstract     Instantiate a hash set containing integer keys
-  @param  name  Name of the hash table [symbol]
+  @abstract     Instantiatelon a hash selont containing intelongelonr kelonys
+  @param  namelon  Namelon of thelon hash tablelon [symbol]
  */
-#define KHASH_SET_INIT_INT(name)                            \
-   KHASH_INIT(name, khint32_t, char, 0, kh_int_hash_func, kh_int_hash_equal)
+#delonfinelon KHASH_SelonT_INIT_INT(namelon)                            \
+   KHASH_INIT(namelon, khint32_t, char, 0, kh_int_hash_func, kh_int_hash_elonqual)
 
 /*! @function
-  @abstract     Instantiate a hash map containing integer keys
-  @param  name  Name of the hash table [symbol]
-  @param  khval_t  Type of values [type]
+  @abstract     Instantiatelon a hash map containing intelongelonr kelonys
+  @param  namelon  Namelon of thelon hash tablelon [symbol]
+  @param  khval_t  Typelon of valuelons [typelon]
  */
-#define KHASH_MAP_INIT_INT(name, khval_t)                      \
-   KHASH_INIT(name, khint32_t, khval_t, 1, kh_int_hash_func, kh_int_hash_equal)
+#delonfinelon KHASH_MAP_INIT_INT(namelon, khval_t)                      \
+   KHASH_INIT(namelon, khint32_t, khval_t, 1, kh_int_hash_func, kh_int_hash_elonqual)
 
 /*! @function
-  @abstract     Instantiate a hash map containing 64-bit integer keys
-  @param  name  Name of the hash table [symbol]
+  @abstract     Instantiatelon a hash map containing 64-bit intelongelonr kelonys
+  @param  namelon  Namelon of thelon hash tablelon [symbol]
  */
-#define KHASH_SET_INIT_INT64(name)                             \
-   KHASH_INIT(name, khint64_t, char, 0, kh_int64_hash_func, kh_int64_hash_equal)
+#delonfinelon KHASH_SelonT_INIT_INT64(namelon)                             \
+   KHASH_INIT(namelon, khint64_t, char, 0, kh_int64_hash_func, kh_int64_hash_elonqual)
 
 /*! @function
-  @abstract     Instantiate a hash map containing 64-bit integer keys
-  @param  name  Name of the hash table [symbol]
-  @param  khval_t  Type of values [type]
+  @abstract     Instantiatelon a hash map containing 64-bit intelongelonr kelonys
+  @param  namelon  Namelon of thelon hash tablelon [symbol]
+  @param  khval_t  Typelon of valuelons [typelon]
  */
-#define KHASH_MAP_INIT_INT64(name, khval_t)                       \
-   KHASH_INIT(name, khint64_t, khval_t, 1, kh_int64_hash_func, kh_int64_hash_equal)
+#delonfinelon KHASH_MAP_INIT_INT64(namelon, khval_t)                       \
+   KHASH_INIT(namelon, khint64_t, khval_t, 1, kh_int64_hash_func, kh_int64_hash_elonqual)
 
-typedef const char *kh_cstr_t;
+typelondelonf const char *kh_cstr_t;
 /*! @function
-  @abstract     Instantiate a hash map containing const char* keys
-  @param  name  Name of the hash table [symbol]
+  @abstract     Instantiatelon a hash map containing const char* kelonys
+  @param  namelon  Namelon of thelon hash tablelon [symbol]
  */
-#define KHASH_SET_INIT_STR(name)                            \
-   KHASH_INIT(name, kh_cstr_t, char, 0, kh_str_hash_func, kh_str_hash_equal)
+#delonfinelon KHASH_SelonT_INIT_STR(namelon)                            \
+   KHASH_INIT(namelon, kh_cstr_t, char, 0, kh_str_hash_func, kh_str_hash_elonqual)
 
 /*! @function
-  @abstract     Instantiate a hash map containing const char* keys
-  @param  name  Name of the hash table [symbol]
-  @param  khval_t  Type of values [type]
+  @abstract     Instantiatelon a hash map containing const char* kelonys
+  @param  namelon  Namelon of thelon hash tablelon [symbol]
+  @param  khval_t  Typelon of valuelons [typelon]
  */
-#define KHASH_MAP_INIT_STR(name, khval_t)                      \
-   KHASH_INIT(name, kh_cstr_t, khval_t, 1, kh_str_hash_func, kh_str_hash_equal)
+#delonfinelon KHASH_MAP_INIT_STR(namelon, khval_t)                      \
+   KHASH_INIT(namelon, kh_cstr_t, khval_t, 1, kh_str_hash_func, kh_str_hash_elonqual)
 
-#endif /* __AC_KHASH_H */
+#elonndif /* __AC_KHASH_H */

@@ -1,36 +1,36 @@
-package com.twitter.follow_recommendations.common.rankers.weighted_candidate_source_ranker
+packagelon com.twittelonr.follow_reloncommelonndations.common.rankelonrs.welonightelond_candidatelon_sourcelon_rankelonr
 
-import com.twitter.follow_recommendations.common.utils.RandomUtil
+import com.twittelonr.follow_reloncommelonndations.common.utils.RandomUtil
 import scala.util.Random
 
-sealed trait CandidateShuffler[T] {
-  def shuffle(seed: Option[Long])(input: Seq[T]): Seq[T]
+selonalelond trait CandidatelonShufflelonr[T] {
+  delonf shufflelon(selonelond: Option[Long])(input: Selonq[T]): Selonq[T]
 }
 
-class NoShuffle[T]() extends CandidateShuffler[T] {
-  def shuffle(seed: Option[Long])(input: Seq[T]): Seq[T] = input
+class NoShufflelon[T]() elonxtelonnds CandidatelonShufflelonr[T] {
+  delonf shufflelon(selonelond: Option[Long])(input: Selonq[T]): Selonq[T] = input
 }
 
-class RandomShuffler[T]() extends CandidateShuffler[T] {
-  def shuffle(seed: Option[Long])(input: Seq[T]): Seq[T] = {
-    seed.map(new Random(_)).getOrElse(Random).shuffle(input)
+class RandomShufflelonr[T]() elonxtelonnds CandidatelonShufflelonr[T] {
+  delonf shufflelon(selonelond: Option[Long])(input: Selonq[T]): Selonq[T] = {
+    selonelond.map(nelonw Random(_)).gelontOrelonlselon(Random).shufflelon(input)
   }
 }
 
-trait RankWeightedRandomShuffler[T] extends CandidateShuffler[T] {
+trait RankWelonightelondRandomShufflelonr[T] elonxtelonnds CandidatelonShufflelonr[T] {
 
-  def rankToWeight(rank: Int): Double
-  def shuffle(seed: Option[Long])(input: Seq[T]): Seq[T] = {
-    val candWeights = input.zipWithIndex.map {
-      case (candidate, rank) => (candidate, rankToWeight(rank))
+  delonf rankToWelonight(rank: Int): Doublelon
+  delonf shufflelon(selonelond: Option[Long])(input: Selonq[T]): Selonq[T] = {
+    val candWelonights = input.zipWithIndelonx.map {
+      caselon (candidatelon, rank) => (candidatelon, rankToWelonight(rank))
     }
-    RandomUtil.weightedRandomShuffle(candWeights, seed.map(new Random(_))).unzip._1
+    RandomUtil.welonightelondRandomShufflelon(candWelonights, selonelond.map(nelonw Random(_))).unzip._1
   }
 }
 
-class ExponentialShuffler[T]() extends RankWeightedRandomShuffler[T] {
-  def rankToWeight(rank: Int): Double = {
+class elonxponelonntialShufflelonr[T]() elonxtelonnds RankWelonightelondRandomShufflelonr[T] {
+  delonf rankToWelonight(rank: Int): Doublelon = {
     1 / math
-      .pow(rank.toDouble, 2.0) // this function was proved to be effective in previous DDGs
+      .pow(rank.toDoublelon, 2.0) // this function was provelond to belon elonffelonctivelon in prelonvious DDGs
   }
 }

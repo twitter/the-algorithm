@@ -1,56 +1,56 @@
-package com.twitter.search.core.earlybird.facets;
+packagelon com.twittelonr.selonarch.corelon.elonarlybird.facelonts;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 
-import com.google.common.base.Preconditions;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import org.apache.lucene.index.NumericDocValues;
+import org.apachelon.lucelonnelon.indelonx.NumelonricDocValuelons;
 
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
+import com.twittelonr.selonarch.common.schelonma.baselon.Schelonma;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr;
 
 /**
- * An iterator that looks up the termID from the appropriate CSF
+ * An itelonrator that looks up thelon telonrmID from thelon appropriatelon CSF
  */
-public class CSFFacetCountIterator extends FacetCountIterator {
-  private final int fieldID;
-  private final NumericDocValues numericDocValues;
+public class CSFFacelontCountItelonrator elonxtelonnds FacelontCountItelonrator {
+  privatelon final int fielonldID;
+  privatelon final NumelonricDocValuelons numelonricDocValuelons;
 
   /**
-   * Creates a new iterator for the given facet csf field.
+   * Crelonatelons a nelonw itelonrator for thelon givelonn facelont csf fielonld.
    */
-  public CSFFacetCountIterator(
-      EarlybirdIndexSegmentAtomicReader reader,
-      Schema.FieldInfo facetFieldInfo) throws IOException {
-    FacetIDMap.FacetField facetField = reader.getFacetIDMap().getFacetField(facetFieldInfo);
-    Preconditions.checkNotNull(facetField);
-    this.fieldID = facetField.getFacetId();
-    numericDocValues = reader.getNumericDocValues(facetFieldInfo.getName());
-    Preconditions.checkNotNull(numericDocValues);
+  public CSFFacelontCountItelonrator(
+      elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr relonadelonr,
+      Schelonma.FielonldInfo facelontFielonldInfo) throws IOelonxcelonption {
+    FacelontIDMap.FacelontFielonld facelontFielonld = relonadelonr.gelontFacelontIDMap().gelontFacelontFielonld(facelontFielonldInfo);
+    Prelonconditions.chelonckNotNull(facelontFielonld);
+    this.fielonldID = facelontFielonld.gelontFacelontId();
+    numelonricDocValuelons = relonadelonr.gelontNumelonricDocValuelons(facelontFielonldInfo.gelontNamelon());
+    Prelonconditions.chelonckNotNull(numelonricDocValuelons);
   }
 
-  @Override
-  public void collect(int internalDocID) throws IOException {
-    if (numericDocValues.advanceExact(internalDocID)) {
-      long termID = numericDocValues.longValue();
-      if (shouldCollect(internalDocID, termID)) {
-        collect(internalDocID, termID, fieldID);
+  @Ovelonrridelon
+  public void collelonct(int intelonrnalDocID) throws IOelonxcelonption {
+    if (numelonricDocValuelons.advancelonelonxact(intelonrnalDocID)) {
+      long telonrmID = numelonricDocValuelons.longValuelon();
+      if (shouldCollelonct(intelonrnalDocID, telonrmID)) {
+        collelonct(intelonrnalDocID, telonrmID, fielonldID);
       }
     }
   }
 
   /**
-   * Subclasses should override if they need to restrict the docs or termIDs
-   * that they collect on. For example, these may need to override if
-   *  1) Not all docs set this field, so we should not collect on
-   *     the default value of 0
-   *  2) The same CSF field means different things (in particular, shared_status_id means
-   *     retweet OR reply parent id) so we need to do some other check to determine if we should
-   *     collect
+   * Subclasselons should ovelonrridelon if thelony nelonelond to relonstrict thelon docs or telonrmIDs
+   * that thelony collelonct on. For elonxamplelon, thelonselon may nelonelond to ovelonrridelon if
+   *  1) Not all docs selont this fielonld, so welon should not collelonct on
+   *     thelon delonfault valuelon of 0
+   *  2) Thelon samelon CSF fielonld melonans diffelonrelonnt things (in particular, sharelond_status_id melonans
+   *     relontwelonelont OR relonply parelonnt id) so welon nelonelond to do somelon othelonr chelonck to delontelonrminelon if welon should
+   *     collelonct
    *
-   * @return whether we should collect on this doc/termID
+   * @relonturn whelonthelonr welon should collelonct on this doc/telonrmID
    */
-  protected boolean shouldCollect(int internalDocID, long termID) throws IOException {
-    return true;
+  protelonctelond boolelonan shouldCollelonct(int intelonrnalDocID, long telonrmID) throws IOelonxcelonption {
+    relonturn truelon;
   }
 }

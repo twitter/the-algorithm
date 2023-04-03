@@ -1,103 +1,103 @@
-package com.twitter.follow_recommendations.flows.post_nux_ml
+packagelon com.twittelonr.follow_reloncommelonndations.flows.post_nux_ml
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.base.CandidateSourceRegistry
-import com.twitter.follow_recommendations.common.base.EnrichedCandidateSource
-import com.twitter.follow_recommendations.common.candidate_sources.addressbook.ForwardEmailBookSource
-import com.twitter.follow_recommendations.common.candidate_sources.addressbook.ForwardPhoneBookSource
-import com.twitter.follow_recommendations.common.candidate_sources.addressbook.ReverseEmailBookSource
-import com.twitter.follow_recommendations.common.candidate_sources.addressbook.ReversePhoneBookSource
-import com.twitter.follow_recommendations.common.candidate_sources.crowd_search_accounts.CrowdSearchAccountsSource
-import com.twitter.follow_recommendations.common.candidate_sources.top_organic_follows_accounts.TopOrganicFollowsAccountsSource
-import com.twitter.follow_recommendations.common.candidate_sources.geo.PopCountrySource
-import com.twitter.follow_recommendations.common.candidate_sources.geo.PopCountryBackFillSource
-import com.twitter.follow_recommendations.common.candidate_sources.geo.PopGeohashQualityFollowSource
-import com.twitter.follow_recommendations.common.candidate_sources.geo.PopGeohashSource
-import com.twitter.follow_recommendations.common.candidate_sources.ppmi_locale_follow.PPMILocaleFollowSource
-import com.twitter.follow_recommendations.common.candidate_sources.real_graph.RealGraphOonV2Source
-import com.twitter.follow_recommendations.common.candidate_sources.recent_engagement.RecentEngagementNonDirectFollowSource
-import com.twitter.follow_recommendations.common.candidate_sources.recent_engagement.RepeatedProfileVisitsSource
-import com.twitter.follow_recommendations.common.candidate_sources.salsa.RecentEngagementDirectFollowSalsaExpansionSource
-import com.twitter.follow_recommendations.common.candidate_sources.sims.LinearRegressionFollow2vecNearestNeighborsStore
-import com.twitter.follow_recommendations.common.candidate_sources.sims_expansion.RecentEngagementSimilarUsersSource
-import com.twitter.follow_recommendations.common.candidate_sources.sims_expansion.RecentFollowingSimilarUsersSource
-import com.twitter.follow_recommendations.common.candidate_sources.stp.OnlineSTPSourceScorer
-import com.twitter.follow_recommendations.common.candidate_sources.stp.OfflineStrongTiePredictionSource
-import com.twitter.follow_recommendations.common.candidate_sources.triangular_loops.TriangularLoopsSource
-import com.twitter.follow_recommendations.common.candidate_sources.user_user_graph.UserUserGraphCandidateSource
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.follow_reloncommelonndations.common.baselon.CandidatelonSourcelonRelongistry
+import com.twittelonr.follow_reloncommelonndations.common.baselon.elonnrichelondCandidatelonSourcelon
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.addrelonssbook.ForwardelonmailBookSourcelon
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.addrelonssbook.ForwardPhonelonBookSourcelon
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.addrelonssbook.RelonvelonrselonelonmailBookSourcelon
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.addrelonssbook.RelonvelonrselonPhonelonBookSourcelon
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.crowd_selonarch_accounts.CrowdSelonarchAccountsSourcelon
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.top_organic_follows_accounts.TopOrganicFollowsAccountsSourcelon
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.gelono.PopCountrySourcelon
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.gelono.PopCountryBackFillSourcelon
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.gelono.PopGelonohashQualityFollowSourcelon
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.gelono.PopGelonohashSourcelon
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.ppmi_localelon_follow.PPMILocalelonFollowSourcelon
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.relonal_graph.RelonalGraphOonV2Sourcelon
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.reloncelonnt_elonngagelonmelonnt.ReloncelonntelonngagelonmelonntNonDirelonctFollowSourcelon
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.reloncelonnt_elonngagelonmelonnt.RelonpelonatelondProfilelonVisitsSourcelon
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.salsa.ReloncelonntelonngagelonmelonntDirelonctFollowSalsaelonxpansionSourcelon
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.sims.LinelonarRelongrelonssionFollow2veloncNelonarelonstNelonighborsStorelon
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.sims_elonxpansion.ReloncelonntelonngagelonmelonntSimilarUselonrsSourcelon
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.sims_elonxpansion.ReloncelonntFollowingSimilarUselonrsSourcelon
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.stp.OnlinelonSTPSourcelonScorelonr
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.stp.OfflinelonStrongTielonPrelondictionSourcelon
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.triangular_loops.TriangularLoopsSourcelon
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.uselonr_uselonr_graph.UselonrUselonrGraphCandidatelonSourcelon
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.CandidatelonUselonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.CandidatelonSourcelon
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class PostNuxMlCandidateSourceRegistry @Inject() (
-  crowdSearchAccountsCandidateSource: CrowdSearchAccountsSource,
-  topOrganicFollowsAccountsSource: TopOrganicFollowsAccountsSource,
-  linearRegressionfollow2vecNearestNeighborsStore: LinearRegressionFollow2vecNearestNeighborsStore,
-  forwardEmailBookSource: ForwardEmailBookSource,
-  forwardPhoneBookSource: ForwardPhoneBookSource,
-  offlineStrongTiePredictionSource: OfflineStrongTiePredictionSource,
-  onlineSTPSource: OnlineSTPSourceScorer,
-  popCountrySource: PopCountrySource,
-  popCountryBackFillSource: PopCountryBackFillSource,
-  popGeohashSource: PopGeohashSource,
-  recentEngagementDirectFollowSimilarUsersSource: RecentEngagementSimilarUsersSource,
-  recentEngagementNonDirectFollowSource: RecentEngagementNonDirectFollowSource,
-  recentEngagementDirectFollowSalsaExpansionSource: RecentEngagementDirectFollowSalsaExpansionSource,
-  recentFollowingSimilarUsersSource: RecentFollowingSimilarUsersSource,
-  realGraphOonV2Source: RealGraphOonV2Source,
-  repeatedProfileVisitSource: RepeatedProfileVisitsSource,
-  reverseEmailBookSource: ReverseEmailBookSource,
-  reversePhoneBookSource: ReversePhoneBookSource,
-  triangularLoopsSource: TriangularLoopsSource,
-  userUserGraphCandidateSource: UserUserGraphCandidateSource,
-  ppmiLocaleFollowSource: PPMILocaleFollowSource,
-  popGeohashQualityFollowSource: PopGeohashQualityFollowSource,
-  baseStatsReceiver: StatsReceiver,
-) extends CandidateSourceRegistry[PostNuxMlRequest, CandidateUser] {
-  import EnrichedCandidateSource._
+@Singlelonton
+class PostNuxMlCandidatelonSourcelonRelongistry @Injelonct() (
+  crowdSelonarchAccountsCandidatelonSourcelon: CrowdSelonarchAccountsSourcelon,
+  topOrganicFollowsAccountsSourcelon: TopOrganicFollowsAccountsSourcelon,
+  linelonarRelongrelonssionfollow2veloncNelonarelonstNelonighborsStorelon: LinelonarRelongrelonssionFollow2veloncNelonarelonstNelonighborsStorelon,
+  forwardelonmailBookSourcelon: ForwardelonmailBookSourcelon,
+  forwardPhonelonBookSourcelon: ForwardPhonelonBookSourcelon,
+  offlinelonStrongTielonPrelondictionSourcelon: OfflinelonStrongTielonPrelondictionSourcelon,
+  onlinelonSTPSourcelon: OnlinelonSTPSourcelonScorelonr,
+  popCountrySourcelon: PopCountrySourcelon,
+  popCountryBackFillSourcelon: PopCountryBackFillSourcelon,
+  popGelonohashSourcelon: PopGelonohashSourcelon,
+  reloncelonntelonngagelonmelonntDirelonctFollowSimilarUselonrsSourcelon: ReloncelonntelonngagelonmelonntSimilarUselonrsSourcelon,
+  reloncelonntelonngagelonmelonntNonDirelonctFollowSourcelon: ReloncelonntelonngagelonmelonntNonDirelonctFollowSourcelon,
+  reloncelonntelonngagelonmelonntDirelonctFollowSalsaelonxpansionSourcelon: ReloncelonntelonngagelonmelonntDirelonctFollowSalsaelonxpansionSourcelon,
+  reloncelonntFollowingSimilarUselonrsSourcelon: ReloncelonntFollowingSimilarUselonrsSourcelon,
+  relonalGraphOonV2Sourcelon: RelonalGraphOonV2Sourcelon,
+  relonpelonatelondProfilelonVisitSourcelon: RelonpelonatelondProfilelonVisitsSourcelon,
+  relonvelonrselonelonmailBookSourcelon: RelonvelonrselonelonmailBookSourcelon,
+  relonvelonrselonPhonelonBookSourcelon: RelonvelonrselonPhonelonBookSourcelon,
+  triangularLoopsSourcelon: TriangularLoopsSourcelon,
+  uselonrUselonrGraphCandidatelonSourcelon: UselonrUselonrGraphCandidatelonSourcelon,
+  ppmiLocalelonFollowSourcelon: PPMILocalelonFollowSourcelon,
+  popGelonohashQualityFollowSourcelon: PopGelonohashQualityFollowSourcelon,
+  baselonStatsReloncelonivelonr: StatsReloncelonivelonr,
+) elonxtelonnds CandidatelonSourcelonRelongistry[PostNuxMlRelonquelonst, CandidatelonUselonr] {
+  import elonnrichelondCandidatelonSourcelon._
 
-  override val statsReceiver = baseStatsReceiver
-    .scope("post_nux_ml_flow", "candidate_sources")
+  ovelonrridelon val statsReloncelonivelonr = baselonStatsReloncelonivelonr
+    .scopelon("post_nux_ml_flow", "candidatelon_sourcelons")
 
-  // sources primarily based on social graph signals
-  private[this] val socialSources = Seq(
-    linearRegressionfollow2vecNearestNeighborsStore.mapKeys[PostNuxMlRequest](
-      _.getOptionalUserId.toSeq),
-    forwardEmailBookSource,
-    forwardPhoneBookSource,
-    offlineStrongTiePredictionSource,
-    onlineSTPSource,
-    reverseEmailBookSource,
-    reversePhoneBookSource,
-    triangularLoopsSource,
+  // sourcelons primarily baselond on social graph signals
+  privatelon[this] val socialSourcelons = Selonq(
+    linelonarRelongrelonssionfollow2veloncNelonarelonstNelonighborsStorelon.mapKelonys[PostNuxMlRelonquelonst](
+      _.gelontOptionalUselonrId.toSelonq),
+    forwardelonmailBookSourcelon,
+    forwardPhonelonBookSourcelon,
+    offlinelonStrongTielonPrelondictionSourcelon,
+    onlinelonSTPSourcelon,
+    relonvelonrselonelonmailBookSourcelon,
+    relonvelonrselonPhonelonBookSourcelon,
+    triangularLoopsSourcelon,
   )
 
-  // sources primarily based on geo signals
-  private[this] val geoSources = Seq(
-    popCountrySource,
-    popCountryBackFillSource,
-    popGeohashSource,
-    popGeohashQualityFollowSource,
-    topOrganicFollowsAccountsSource,
-    crowdSearchAccountsCandidateSource,
-    ppmiLocaleFollowSource,
+  // sourcelons primarily baselond on gelono signals
+  privatelon[this] val gelonoSourcelons = Selonq(
+    popCountrySourcelon,
+    popCountryBackFillSourcelon,
+    popGelonohashSourcelon,
+    popGelonohashQualityFollowSourcelon,
+    topOrganicFollowsAccountsSourcelon,
+    crowdSelonarchAccountsCandidatelonSourcelon,
+    ppmiLocalelonFollowSourcelon,
   )
 
-  // sources primarily based on recent activity signals
-  private[this] val activitySources = Seq(
-    repeatedProfileVisitSource,
-    recentEngagementDirectFollowSalsaExpansionSource.mapKeys[PostNuxMlRequest](
-      _.getOptionalUserId.toSeq),
-    recentEngagementDirectFollowSimilarUsersSource,
-    recentEngagementNonDirectFollowSource.mapKeys[PostNuxMlRequest](_.getOptionalUserId.toSeq),
-    recentFollowingSimilarUsersSource,
-    realGraphOonV2Source,
-    userUserGraphCandidateSource,
+  // sourcelons primarily baselond on reloncelonnt activity signals
+  privatelon[this] val activitySourcelons = Selonq(
+    relonpelonatelondProfilelonVisitSourcelon,
+    reloncelonntelonngagelonmelonntDirelonctFollowSalsaelonxpansionSourcelon.mapKelonys[PostNuxMlRelonquelonst](
+      _.gelontOptionalUselonrId.toSelonq),
+    reloncelonntelonngagelonmelonntDirelonctFollowSimilarUselonrsSourcelon,
+    reloncelonntelonngagelonmelonntNonDirelonctFollowSourcelon.mapKelonys[PostNuxMlRelonquelonst](_.gelontOptionalUselonrId.toSelonq),
+    reloncelonntFollowingSimilarUselonrsSourcelon,
+    relonalGraphOonV2Sourcelon,
+    uselonrUselonrGraphCandidatelonSourcelon,
   )
 
-  override val sources: Set[CandidateSource[PostNuxMlRequest, CandidateUser]] = (
-    geoSources ++ socialSources ++ activitySources
-  ).toSet
+  ovelonrridelon val sourcelons: Selont[CandidatelonSourcelon[PostNuxMlRelonquelonst, CandidatelonUselonr]] = (
+    gelonoSourcelons ++ socialSourcelons ++ activitySourcelons
+  ).toSelont
 }

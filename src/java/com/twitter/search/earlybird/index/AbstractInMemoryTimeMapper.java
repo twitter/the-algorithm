@@ -1,83 +1,83 @@
-package com.twitter.search.earlybird.index;
+packagelon com.twittelonr.selonarch.elonarlybird.indelonx;
 
-import com.twitter.search.core.earlybird.index.TimeMapper;
-import com.twitter.search.core.earlybird.index.inverted.IntBlockPool;
-import com.twitter.search.core.earlybird.index.util.SearchSortUtils;
-import com.twitter.search.earlybird.search.queries.SinceUntilFilter;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.TimelonMappelonr;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.invelonrtelond.IntBlockPool;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.util.SelonarchSortUtils;
+import com.twittelonr.selonarch.elonarlybird.selonarch.quelonrielons.SincelonUntilFiltelonr;
 
-public abstract class AbstractInMemoryTimeMapper implements TimeMapper {
-  // Reverse map: timestamp to first doc ID seen with that timestamp.
-  // This is two arrays: the timestamps (sorted), and the doc ids.
-  protected final IntBlockPool reverseMapTimes;
-  protected final IntBlockPool reverseMapIds;
-  protected volatile int reverseMapLastIndex;
+public abstract class AbstractInMelonmoryTimelonMappelonr implelonmelonnts TimelonMappelonr {
+  // Relonvelonrselon map: timelonstamp to first doc ID selonelonn with that timelonstamp.
+  // This is two arrays: thelon timelonstamps (sortelond), and thelon doc ids.
+  protelonctelond final IntBlockPool relonvelonrselonMapTimelons;
+  protelonctelond final IntBlockPool relonvelonrselonMapIds;
+  protelonctelond volatilelon int relonvelonrselonMapLastIndelonx;
 
-  public AbstractInMemoryTimeMapper() {
-    this.reverseMapTimes = new IntBlockPool(ILLEGAL_TIME, "time_mapper_times");
-    this.reverseMapIds = new IntBlockPool(ILLEGAL_TIME, "time_mapper_ids");
-    this.reverseMapLastIndex = -1;
+  public AbstractInMelonmoryTimelonMappelonr() {
+    this.relonvelonrselonMapTimelons = nelonw IntBlockPool(ILLelonGAL_TIMelon, "timelon_mappelonr_timelons");
+    this.relonvelonrselonMapIds = nelonw IntBlockPool(ILLelonGAL_TIMelon, "timelon_mappelonr_ids");
+    this.relonvelonrselonMapLastIndelonx = -1;
   }
 
-  protected AbstractInMemoryTimeMapper(int reverseMapLastIndex,
-                                       IntBlockPool reverseMapTimes,
-                                       IntBlockPool reverseMapIds) {
-    this.reverseMapTimes = reverseMapTimes;
-    this.reverseMapIds = reverseMapIds;
-    this.reverseMapLastIndex = reverseMapLastIndex;
+  protelonctelond AbstractInMelonmoryTimelonMappelonr(int relonvelonrselonMapLastIndelonx,
+                                       IntBlockPool relonvelonrselonMapTimelons,
+                                       IntBlockPool relonvelonrselonMapIds) {
+    this.relonvelonrselonMapTimelons = relonvelonrselonMapTimelons;
+    this.relonvelonrselonMapIds = relonvelonrselonMapIds;
+    this.relonvelonrselonMapLastIndelonx = relonvelonrselonMapLastIndelonx;
   }
 
-  @Override
-  public final int getLastTime() {
-    return reverseMapLastIndex == -1 ? ILLEGAL_TIME : reverseMapTimes.get(reverseMapLastIndex);
+  @Ovelonrridelon
+  public final int gelontLastTimelon() {
+    relonturn relonvelonrselonMapLastIndelonx == -1 ? ILLelonGAL_TIMelon : relonvelonrselonMapTimelons.gelont(relonvelonrselonMapLastIndelonx);
   }
 
-  @Override
-  public final int getFirstTime() {
-    return reverseMapLastIndex == -1 ? ILLEGAL_TIME : reverseMapTimes.get(0);
+  @Ovelonrridelon
+  public final int gelontFirstTimelon() {
+    relonturn relonvelonrselonMapLastIndelonx == -1 ? ILLelonGAL_TIMelon : relonvelonrselonMapTimelons.gelont(0);
   }
 
-  @Override
-  public final int findFirstDocId(int timeSeconds, int smallestDocID) {
-    if (timeSeconds == SinceUntilFilter.NO_FILTER || reverseMapLastIndex == -1) {
-      return smallestDocID;
+  @Ovelonrridelon
+  public final int findFirstDocId(int timelonSelonconds, int smallelonstDocID) {
+    if (timelonSelonconds == SincelonUntilFiltelonr.NO_FILTelonR || relonvelonrselonMapLastIndelonx == -1) {
+      relonturn smallelonstDocID;
     }
 
-    final int index = SearchSortUtils.binarySearch(
-        new IntArrayComparator(), 0, reverseMapLastIndex, timeSeconds, false);
+    final int indelonx = SelonarchSortUtils.binarySelonarch(
+        nelonw IntArrayComparator(), 0, relonvelonrselonMapLastIndelonx, timelonSelonconds, falselon);
 
-    if (index == reverseMapLastIndex && reverseMapTimes.get(index) < timeSeconds) {
-      // Special case for out of bounds time.
-      return smallestDocID;
+    if (indelonx == relonvelonrselonMapLastIndelonx && relonvelonrselonMapTimelons.gelont(indelonx) < timelonSelonconds) {
+      // Speloncial caselon for out of bounds timelon.
+      relonturn smallelonstDocID;
     }
 
-    return reverseMapIds.get(index);
+    relonturn relonvelonrselonMapIds.gelont(indelonx);
   }
 
-  protected abstract void setTime(int docID, int timeSeconds);
+  protelonctelond abstract void selontTimelon(int docID, int timelonSelonconds);
 
-  protected void doAddMapping(int docID, int timeSeconds) {
-    setTime(docID, timeSeconds);
-    int lastTime = getLastTime();
-    if (timeSeconds > lastTime) {
-      // Found a timestamp newer than any timestamp we've seen before.
-      // Add a reverse mapping to this tweet (the first seen with this timestamp).
+  protelonctelond void doAddMapping(int docID, int timelonSelonconds) {
+    selontTimelon(docID, timelonSelonconds);
+    int lastTimelon = gelontLastTimelon();
+    if (timelonSelonconds > lastTimelon) {
+      // Found a timelonstamp nelonwelonr than any timelonstamp welon'velon selonelonn belonforelon.
+      // Add a relonvelonrselon mapping to this twelonelont (thelon first selonelonn with this timelonstamp).
       //
-      // When indexing out of order tweets, we could have gaps in the timestamps recorded in
-      // reverseMapTimes. For example, if we get 3 tweets with timestamp T0, T0 + 5, T0 + 3, then we
-      // will only record T0 and T0 + 5 in reverseMapTimes. However, this should not be an issue,
-      // because reverseMapTimes is only used by findFirstDocId(), and it's OK for that method to
-      // return a smaller doc ID than strictly necessary (in this case, findFirstDocId(T0 + 3) will
-      // return the doc ID of the second tweet, instead of returning the doc ID of the third tweet).
-      reverseMapTimes.add(timeSeconds);
-      reverseMapIds.add(docID);
-      reverseMapLastIndex++;
+      // Whelonn indelonxing out of ordelonr twelonelonts, welon could havelon gaps in thelon timelonstamps reloncordelond in
+      // relonvelonrselonMapTimelons. For elonxamplelon, if welon gelont 3 twelonelonts with timelonstamp T0, T0 + 5, T0 + 3, thelonn welon
+      // will only reloncord T0 and T0 + 5 in relonvelonrselonMapTimelons. Howelonvelonr, this should not belon an issuelon,
+      // beloncauselon relonvelonrselonMapTimelons is only uselond by findFirstDocId(), and it's OK for that melonthod to
+      // relonturn a smallelonr doc ID than strictly neloncelonssary (in this caselon, findFirstDocId(T0 + 3) will
+      // relonturn thelon doc ID of thelon seloncond twelonelont, instelonad of relonturning thelon doc ID of thelon third twelonelont).
+      relonvelonrselonMapTimelons.add(timelonSelonconds);
+      relonvelonrselonMapIds.add(docID);
+      relonvelonrselonMapLastIndelonx++;
     }
   }
 
-  private class IntArrayComparator implements SearchSortUtils.Comparator<Integer> {
-    @Override
-    public int compare(int index, Integer value) {
-      return Integer.compare(reverseMapTimes.get(index), value);
+  privatelon class IntArrayComparator implelonmelonnts SelonarchSortUtils.Comparator<Intelongelonr> {
+    @Ovelonrridelon
+    public int comparelon(int indelonx, Intelongelonr valuelon) {
+      relonturn Intelongelonr.comparelon(relonvelonrselonMapTimelons.gelont(indelonx), valuelon);
     }
   }
 }

@@ -1,540 +1,540 @@
-package com.twitter.search.earlybird.archive.segmentbuilder;
+packagelon com.twittelonr.selonarch.elonarlybird.archivelon.selongmelonntbuildelonr;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
+import java.util.Collelonctions;
+import java.util.Datelon;
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.Itelonrator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrelonnt.TimelonUnit;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.base.Stopwatch;
-import com.google.common.collect.ComparisonChain;
-import com.google.common.collect.ImmutableList;
-import com.google.common.util.concurrent.Uninterruptibles;
-import com.google.inject.Inject;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import com.googlelon.common.baselon.Prelonconditions;
+import com.googlelon.common.baselon.Stopwatch;
+import com.googlelon.common.collelonct.ComparisonChain;
+import com.googlelon.common.collelonct.ImmutablelonList;
+import com.googlelon.common.util.concurrelonnt.Unintelonrruptiblelons;
+import com.googlelon.injelonct.Injelonct;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.common.quantity.Amount;
-import com.twitter.common.quantity.Time;
-import com.twitter.common.util.Clock;
-import com.twitter.decider.Decider;
-import com.twitter.inject.annotations.Flag;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchLongGauge;
-import com.twitter.search.common.metrics.SearchStatsReceiver;
-import com.twitter.search.common.metrics.SearchStatsReceiverImpl;
-import com.twitter.search.common.partitioning.zookeeper.SearchZkClient;
-import com.twitter.search.common.util.Kerberos;
-import com.twitter.search.common.util.zktrylock.ZooKeeperTryLockFactory;
-import com.twitter.search.earlybird.archive.ArchiveOnDiskEarlybirdIndexConfig;
-import com.twitter.search.earlybird.archive.ArchiveSegment;
-import com.twitter.search.earlybird.archive.DailyStatusBatches;
-import com.twitter.search.earlybird.archive.ArchiveTimeSlicer;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.util.ScrubGenUtil;
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
-import com.twitter.search.earlybird.index.EarlybirdSegmentFactory;
-import com.twitter.search.earlybird.partition.SearchIndexingMetricSet;
-import com.twitter.search.earlybird.partition.SegmentInfo;
-import com.twitter.search.earlybird.partition.SegmentSyncConfig;
-import com.twitter.search.earlybird.stats.EarlybirdSearcherStats;
+import com.twittelonr.common.quantity.Amount;
+import com.twittelonr.common.quantity.Timelon;
+import com.twittelonr.common.util.Clock;
+import com.twittelonr.deloncidelonr.Deloncidelonr;
+import com.twittelonr.injelonct.annotations.Flag;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchLongGaugelon;
+import com.twittelonr.selonarch.common.melontrics.SelonarchStatsReloncelonivelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchStatsReloncelonivelonrImpl;
+import com.twittelonr.selonarch.common.partitioning.zookelonelonpelonr.SelonarchZkClielonnt;
+import com.twittelonr.selonarch.common.util.Kelonrbelonros;
+import com.twittelonr.selonarch.common.util.zktrylock.ZooKelonelonpelonrTryLockFactory;
+import com.twittelonr.selonarch.elonarlybird.archivelon.ArchivelonOnDiskelonarlybirdIndelonxConfig;
+import com.twittelonr.selonarch.elonarlybird.archivelon.ArchivelonSelongmelonnt;
+import com.twittelonr.selonarch.elonarlybird.archivelon.DailyStatusBatchelons;
+import com.twittelonr.selonarch.elonarlybird.archivelon.ArchivelonTimelonSlicelonr;
+import com.twittelonr.selonarch.elonarlybird.common.config.elonarlybirdConfig;
+import com.twittelonr.selonarch.elonarlybird.util.ScrubGelonnUtil;
+import com.twittelonr.selonarch.elonarlybird.elonxcelonption.CriticalelonxcelonptionHandlelonr;
+import com.twittelonr.selonarch.elonarlybird.indelonx.elonarlybirdSelongmelonntFactory;
+import com.twittelonr.selonarch.elonarlybird.partition.SelonarchIndelonxingMelontricSelont;
+import com.twittelonr.selonarch.elonarlybird.partition.SelongmelonntInfo;
+import com.twittelonr.selonarch.elonarlybird.partition.SelongmelonntSyncConfig;
+import com.twittelonr.selonarch.elonarlybird.stats.elonarlybirdSelonarchelonrStats;
 
 /**
- * This class provides the core logic to build segment indices offline.
- * For each server, it coordinate via zookeeper to pick the next segment, build the indices for it
- * and upload them to HDFS. A state machine is used to handle the build state transitions. There
- * are three states:
- *  NOT_BUILD_YET: a segment that needs to be built
- *  SOMEONE_ELSE_IS_BUILDING: another server is building the segment.
- *  BUILT_AND_FINALIZED: the indices of this segment have already been built.
+ * This class providelons thelon corelon logic to build selongmelonnt indicelons offlinelon.
+ * For elonach selonrvelonr, it coordinatelon via zookelonelonpelonr to pick thelon nelonxt selongmelonnt, build thelon indicelons for it
+ * and upload thelonm to HDFS. A statelon machinelon is uselond to handlelon thelon build statelon transitions. Thelonrelon
+ * arelon threlonelon statelons:
+ *  NOT_BUILD_YelonT: a selongmelonnt that nelonelonds to belon built
+ *  SOMelonONelon_elonLSelon_IS_BUILDING: anothelonr selonrvelonr is building thelon selongmelonnt.
+ *  BUILT_AND_FINALIZelonD: thelon indicelons of this selongmelonnt havelon alrelonady belonelonn built.
  */
-public class SegmentBuilder {
-  private static final Logger LOG = LoggerFactory.getLogger(SegmentBuilder.class);
+public class SelongmelonntBuildelonr {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(SelongmelonntBuildelonr.class);
 
-  private final boolean onlyRunOnce;
-  private final int waitBetweenLoopsMins;
-  private final int startUpBatchSize;
-  private final int instance;
-  private final int waitBetweenSegmentsSecs;
-  private final int waitBeforeQuitMins;
+  privatelon final boolelonan onlyRunOncelon;
+  privatelon final int waitBelontwelonelonnLoopsMins;
+  privatelon final int startUpBatchSizelon;
+  privatelon final int instancelon;
+  privatelon final int waitBelontwelonelonnSelongmelonntsSeloncs;
+  privatelon final int waitBelonforelonQuitMins;
 
-  // When multiple segment builders start simultaneously, they might make the HDFS name node and
-  // zookeeper overwhelmed. So, we let some instances sleep sometimes before they start to avoid
-  // the issues.
-  private final long startUpSleepMins;
+  // Whelonn multiplelon selongmelonnt buildelonrs start simultanelonously, thelony might makelon thelon HDFS namelon nodelon and
+  // zookelonelonpelonr ovelonrwhelonlmelond. So, welon lelont somelon instancelons slelonelonp somelontimelons belonforelon thelony start to avoid
+  // thelon issuelons.
+  privatelon final long startUpSlelonelonpMins;
 
-  // If no more segments to built, wait this interval before checking again.
-  private final long processWaitingInterval = TimeUnit.MINUTES.toMillis(10);
+  // If no morelon selongmelonnts to built, wait this intelonrval belonforelon cheloncking again.
+  privatelon final long procelonssWaitingIntelonrval = TimelonUnit.MINUTelonS.toMillis(10);
 
-  // The hash partitions that segments will be built.
-  private final ImmutableList<Integer> hashPartitions;
+  // Thelon hash partitions that selongmelonnts will belon built.
+  privatelon final ImmutablelonList<Intelongelonr> hashPartitions;
 
-  private final SearchStatsReceiver statsReceiver = new SearchStatsReceiverImpl();
-  private final SearchIndexingMetricSet searchIndexingMetricSet =
-      new SearchIndexingMetricSet(statsReceiver);
-  private final EarlybirdSearcherStats searcherStats =
-      new EarlybirdSearcherStats(statsReceiver);
+  privatelon final SelonarchStatsReloncelonivelonr statsReloncelonivelonr = nelonw SelonarchStatsReloncelonivelonrImpl();
+  privatelon final SelonarchIndelonxingMelontricSelont selonarchIndelonxingMelontricSelont =
+      nelonw SelonarchIndelonxingMelontricSelont(statsReloncelonivelonr);
+  privatelon final elonarlybirdSelonarchelonrStats selonarchelonrStats =
+      nelonw elonarlybirdSelonarchelonrStats(statsReloncelonivelonr);
 
-  private final ArchiveOnDiskEarlybirdIndexConfig earlybirdIndexConfig;
+  privatelon final ArchivelonOnDiskelonarlybirdIndelonxConfig elonarlybirdIndelonxConfig;
 
-  private final ZooKeeperTryLockFactory zkTryLockFactory;
-  private final RateLimitingSegmentHandler segmentHandler;
-  private final Clock clock;
-  private final int numSegmentBuilderPartitions;
-  private final int myPartitionId;
-  private final SegmentConfig segmentConfig;
-  private final EarlybirdSegmentFactory segmentFactory;
-  private final SegmentBuilderCoordinator segmentBuilderCoordinator;
-  private final SegmentSyncConfig segmentSyncConfig;
-  private final Random random = new Random();
+  privatelon final ZooKelonelonpelonrTryLockFactory zkTryLockFactory;
+  privatelon final RatelonLimitingSelongmelonntHandlelonr selongmelonntHandlelonr;
+  privatelon final Clock clock;
+  privatelon final int numSelongmelonntBuildelonrPartitions;
+  privatelon final int myPartitionId;
+  privatelon final SelongmelonntConfig selongmelonntConfig;
+  privatelon final elonarlybirdSelongmelonntFactory selongmelonntFactory;
+  privatelon final SelongmelonntBuildelonrCoordinator selongmelonntBuildelonrCoordinator;
+  privatelon final SelongmelonntSyncConfig selongmelonntSyncConfig;
+  privatelon final Random random = nelonw Random();
 
-  private static final double SLEEP_RANDOMIZATION_RATIO = .2;
+  privatelon static final doublelon SLelonelonP_RANDOMIZATION_RATIO = .2;
 
   // Stats
-  // The flush version used to build segments
-  private static final SearchLongGauge CURRENT_FLUSH_VERSION =
-      SearchLongGauge.export("current_flush_version");
+  // Thelon flush velonrsion uselond to build selongmelonnts
+  privatelon static final SelonarchLongGaugelon CURRelonNT_FLUSH_VelonRSION =
+      SelonarchLongGaugelon.elonxport("currelonnt_flush_velonrsion");
 
-  // Accumulated number and time in seconds spent on building segments locally
-  private static SearchCounter segmentsBuiltLocally =
-      SearchCounter.export("segments_built_locally");
-  private static SearchCounter timeSpentOnSuccessfulBuildSecs =
-      SearchCounter.export("time_spent_on_successful_build_secs");
+  // Accumulatelond numbelonr and timelon in selonconds spelonnt on building selongmelonnts locally
+  privatelon static SelonarchCountelonr selongmelonntsBuiltLocally =
+      SelonarchCountelonr.elonxport("selongmelonnts_built_locally");
+  privatelon static SelonarchCountelonr timelonSpelonntOnSuccelonssfulBuildSeloncs =
+      SelonarchCountelonr.elonxport("timelon_spelonnt_on_succelonssful_build_seloncs");
 
-  // The total number of segments to be built
-  private static final SearchLongGauge SEGMENTS_TO_BUILD =
-      SearchLongGauge.export("segments_to_build");
+  // Thelon total numbelonr of selongmelonnts to belon built
+  privatelon static final SelonarchLongGaugelon SelonGMelonNTS_TO_BUILD =
+      SelonarchLongGaugelon.elonxport("selongmelonnts_to_build");
 
-  // How many segments failed locally
-  private static final SearchCounter FAILED_SEGMENTS =
-      SearchCounter.export("failed_segments");
+  // How many selongmelonnts failelond locally
+  privatelon static final SelonarchCountelonr FAILelonD_SelonGMelonNTS =
+      SelonarchCountelonr.elonxport("failelond_selongmelonnts");
 
-  @Inject
-  protected SegmentBuilder(@Flag("onlyRunOnce") boolean onlyRunOnceFlag,
-                           @Flag("waitBetweenLoopsMins") int waitBetweenLoopsMinsFlag,
-                           @Flag("startup_batch_size") int startUpBatchSizeFlag,
-                           @Flag("instance") int instanceFlag,
-                           @Flag("segmentZkLockExpirationHours")
-                                 int segmentZkLockExpirationHoursFlag,
-                           @Flag("startupSleepMins") long startupSleepMinsFlag,
-                           @Flag("maxRetriesOnFailure") int maxRetriesOnFailureFlag,
-                           @Flag("hash_partitions") List<Integer> hashPartitionsFlag,
-                           @Flag("numSegmentBuilderPartitions") int numSegmentBuilderPartitionsFlag,
-                           @Flag("waitBetweenSegmentsSecs") int waitBetweenSegmentsSecsFlag,
-                           @Flag("waitBeforeQuitMins") int waitBeforeQuitMinsFlag,
-                           @Flag("scrubGen") String scrubGen,
-                           Decider decider) {
-    this(onlyRunOnceFlag,
-        waitBetweenLoopsMinsFlag,
-        startUpBatchSizeFlag,
-        instanceFlag,
-        segmentZkLockExpirationHoursFlag,
-        startupSleepMinsFlag,
+  @Injelonct
+  protelonctelond SelongmelonntBuildelonr(@Flag("onlyRunOncelon") boolelonan onlyRunOncelonFlag,
+                           @Flag("waitBelontwelonelonnLoopsMins") int waitBelontwelonelonnLoopsMinsFlag,
+                           @Flag("startup_batch_sizelon") int startUpBatchSizelonFlag,
+                           @Flag("instancelon") int instancelonFlag,
+                           @Flag("selongmelonntZkLockelonxpirationHours")
+                                 int selongmelonntZkLockelonxpirationHoursFlag,
+                           @Flag("startupSlelonelonpMins") long startupSlelonelonpMinsFlag,
+                           @Flag("maxRelontrielonsOnFailurelon") int maxRelontrielonsOnFailurelonFlag,
+                           @Flag("hash_partitions") List<Intelongelonr> hashPartitionsFlag,
+                           @Flag("numSelongmelonntBuildelonrPartitions") int numSelongmelonntBuildelonrPartitionsFlag,
+                           @Flag("waitBelontwelonelonnSelongmelonntsSeloncs") int waitBelontwelonelonnSelongmelonntsSeloncsFlag,
+                           @Flag("waitBelonforelonQuitMins") int waitBelonforelonQuitMinsFlag,
+                           @Flag("scrubGelonn") String scrubGelonn,
+                           Deloncidelonr deloncidelonr) {
+    this(onlyRunOncelonFlag,
+        waitBelontwelonelonnLoopsMinsFlag,
+        startUpBatchSizelonFlag,
+        instancelonFlag,
+        selongmelonntZkLockelonxpirationHoursFlag,
+        startupSlelonelonpMinsFlag,
         hashPartitionsFlag,
-        maxRetriesOnFailureFlag,
-        waitBetweenSegmentsSecsFlag,
-        waitBeforeQuitMinsFlag,
-        SearchZkClient.getSZooKeeperClient().createZooKeeperTryLockFactory(),
-        new RateLimitingSegmentHandler(TimeUnit.MINUTES.toMillis(10), Clock.SYSTEM_CLOCK),
-        Clock.SYSTEM_CLOCK,
-        numSegmentBuilderPartitionsFlag,
-        decider,
-        getSyncConfig(scrubGen));
+        maxRelontrielonsOnFailurelonFlag,
+        waitBelontwelonelonnSelongmelonntsSeloncsFlag,
+        waitBelonforelonQuitMinsFlag,
+        SelonarchZkClielonnt.gelontSZooKelonelonpelonrClielonnt().crelonatelonZooKelonelonpelonrTryLockFactory(),
+        nelonw RatelonLimitingSelongmelonntHandlelonr(TimelonUnit.MINUTelonS.toMillis(10), Clock.SYSTelonM_CLOCK),
+        Clock.SYSTelonM_CLOCK,
+        numSelongmelonntBuildelonrPartitionsFlag,
+        deloncidelonr,
+        gelontSyncConfig(scrubGelonn));
   }
 
-  @VisibleForTesting
-  protected SegmentBuilder(boolean onlyRunOnceFlag,
-                           int waitBetweenLoopsMinsFlag,
-                           int startUpBatchSizeFlag,
-                           int instanceFlag,
-                           int segmentZkLockExpirationHoursFlag,
-                           long startupSleepMinsFlag,
-                           List<Integer> hashPartitions,
-                           int maxRetriesOnFailure,
-                           int waitBetweenSegmentsSecsFlag,
-                           int waitBeforeQuitMinsFlag,
-                           ZooKeeperTryLockFactory zooKeeperTryLockFactory,
-                           RateLimitingSegmentHandler segmentHandler,
+  @VisiblelonForTelonsting
+  protelonctelond SelongmelonntBuildelonr(boolelonan onlyRunOncelonFlag,
+                           int waitBelontwelonelonnLoopsMinsFlag,
+                           int startUpBatchSizelonFlag,
+                           int instancelonFlag,
+                           int selongmelonntZkLockelonxpirationHoursFlag,
+                           long startupSlelonelonpMinsFlag,
+                           List<Intelongelonr> hashPartitions,
+                           int maxRelontrielonsOnFailurelon,
+                           int waitBelontwelonelonnSelongmelonntsSeloncsFlag,
+                           int waitBelonforelonQuitMinsFlag,
+                           ZooKelonelonpelonrTryLockFactory zooKelonelonpelonrTryLockFactory,
+                           RatelonLimitingSelongmelonntHandlelonr selongmelonntHandlelonr,
                            Clock clock,
-                           int numSegmentBuilderPartitions,
-                           Decider decider,
-                           SegmentSyncConfig syncConfig) {
-    LOG.info("Creating SegmentBuilder");
-    LOG.info("Penguin version in use: " + EarlybirdConfig.getPenguinVersion());
+                           int numSelongmelonntBuildelonrPartitions,
+                           Deloncidelonr deloncidelonr,
+                           SelongmelonntSyncConfig syncConfig) {
+    LOG.info("Crelonating SelongmelonntBuildelonr");
+    LOG.info("Pelonnguin velonrsion in uselon: " + elonarlybirdConfig.gelontPelonnguinVelonrsion());
 
-    // Set command line flag values
-    this.onlyRunOnce = onlyRunOnceFlag;
-    this.waitBetweenLoopsMins = waitBetweenLoopsMinsFlag;
-    this.startUpBatchSize = startUpBatchSizeFlag;
-    this.instance = instanceFlag;
-    this.waitBetweenSegmentsSecs = waitBetweenSegmentsSecsFlag;
-    this.waitBeforeQuitMins = waitBeforeQuitMinsFlag;
+    // Selont command linelon flag valuelons
+    this.onlyRunOncelon = onlyRunOncelonFlag;
+    this.waitBelontwelonelonnLoopsMins = waitBelontwelonelonnLoopsMinsFlag;
+    this.startUpBatchSizelon = startUpBatchSizelonFlag;
+    this.instancelon = instancelonFlag;
+    this.waitBelontwelonelonnSelongmelonntsSeloncs = waitBelontwelonelonnSelongmelonntsSeloncsFlag;
+    this.waitBelonforelonQuitMins = waitBelonforelonQuitMinsFlag;
 
-    this.segmentHandler = segmentHandler;
-    this.zkTryLockFactory = zooKeeperTryLockFactory;
-    this.segmentSyncConfig = syncConfig;
-    this.startUpSleepMins = startupSleepMinsFlag;
+    this.selongmelonntHandlelonr = selongmelonntHandlelonr;
+    this.zkTryLockFactory = zooKelonelonpelonrTryLockFactory;
+    this.selongmelonntSyncConfig = syncConfig;
+    this.startUpSlelonelonpMins = startupSlelonelonpMinsFlag;
 
-    if (!hashPartitions.isEmpty()) {
-      this.hashPartitions = ImmutableList.copyOf(hashPartitions);
-    } else {
+    if (!hashPartitions.iselonmpty()) {
+      this.hashPartitions = ImmutablelonList.copyOf(hashPartitions);
+    } elonlselon {
       this.hashPartitions = null;
     }
 
-    Amount<Long, Time> segmentZKLockExpirationTime = Amount.of((long)
-        segmentZkLockExpirationHoursFlag, Time.HOURS);
+    Amount<Long, Timelon> selongmelonntZKLockelonxpirationTimelon = Amount.of((long)
+        selongmelonntZkLockelonxpirationHoursFlag, Timelon.HOURS);
 
-    this.earlybirdIndexConfig =
-        new ArchiveOnDiskEarlybirdIndexConfig(decider, searchIndexingMetricSet,
-            new CriticalExceptionHandler());
+    this.elonarlybirdIndelonxConfig =
+        nelonw ArchivelonOnDiskelonarlybirdIndelonxConfig(deloncidelonr, selonarchIndelonxingMelontricSelont,
+            nelonw CriticalelonxcelonptionHandlelonr());
 
-    this.segmentConfig = new SegmentConfig(
-        earlybirdIndexConfig,
-        segmentZKLockExpirationTime,
-        maxRetriesOnFailure,
+    this.selongmelonntConfig = nelonw SelongmelonntConfig(
+        elonarlybirdIndelonxConfig,
+        selongmelonntZKLockelonxpirationTimelon,
+        maxRelontrielonsOnFailurelon,
         zkTryLockFactory);
-    this.segmentFactory = new EarlybirdSegmentFactory(
-        earlybirdIndexConfig,
-        searchIndexingMetricSet,
-        searcherStats,
+    this.selongmelonntFactory = nelonw elonarlybirdSelongmelonntFactory(
+        elonarlybirdIndelonxConfig,
+        selonarchIndelonxingMelontricSelont,
+        selonarchelonrStats,
         clock);
-    this.segmentBuilderCoordinator = new SegmentBuilderCoordinator(
+    this.selongmelonntBuildelonrCoordinator = nelonw SelongmelonntBuildelonrCoordinator(
         zkTryLockFactory, syncConfig, clock);
 
     this.clock = clock;
 
-    this.numSegmentBuilderPartitions = numSegmentBuilderPartitions;
-    this.myPartitionId = instance % numSegmentBuilderPartitions;
-    SearchLongGauge.export("segment_builder_partition_id_" + myPartitionId).set(1);
+    this.numSelongmelonntBuildelonrPartitions = numSelongmelonntBuildelonrPartitions;
+    this.myPartitionId = instancelon % numSelongmelonntBuildelonrPartitions;
+    SelonarchLongGaugelon.elonxport("selongmelonnt_buildelonr_partition_id_" + myPartitionId).selont(1);
 
-    CURRENT_FLUSH_VERSION.set(earlybirdIndexConfig.getSchema().getMajorVersionNumber());
+    CURRelonNT_FLUSH_VelonRSION.selont(elonarlybirdIndelonxConfig.gelontSchelonma().gelontMajorVelonrsionNumbelonr());
   }
 
   void run() {
-    LOG.info("Config values: {}", EarlybirdConfig.allValuesAsString());
+    LOG.info("Config valuelons: {}", elonarlybirdConfig.allValuelonsAsString());
 
-    // Sleep some time uninterruptibly before get started so that if multiple instances are running,
-    // the HDFS name node and zookeeper wont be overwhelmed
-    // Say, we have 100 instances (instance_arg will have value from 0 - 99, our
-    // STARTUP_BATCH_SIZE_ARG is 20 and startUpSleepMins is 3 mins. Then the first 20 instances
-    // will not sleep, but start immediately. then instance 20 - 39 will sleep 3 mins and then
-    // start to run. instance 40 - 59 will sleep 6 mins then start to run. instances 60 - 79 will
-    // sleep 9 mins and then start to run and so forth.
-    long sleepTime = instance / startUpBatchSize * startUpSleepMins;
-    LOG.info("Instance={}, Start up batch size={}", instance, startUpBatchSize);
-    LOG.info("Sleep {} minutes to void HDFS name node and ZooKeeper overwhelmed.", sleepTime);
-    Uninterruptibles.sleepUninterruptibly(sleepTime, TimeUnit.MINUTES);
+    // Slelonelonp somelon timelon unintelonrruptibly belonforelon gelont startelond so that if multiplelon instancelons arelon running,
+    // thelon HDFS namelon nodelon and zookelonelonpelonr wont belon ovelonrwhelonlmelond
+    // Say, welon havelon 100 instancelons (instancelon_arg will havelon valuelon from 0 - 99, our
+    // STARTUP_BATCH_SIZelon_ARG is 20 and startUpSlelonelonpMins is 3 mins. Thelonn thelon first 20 instancelons
+    // will not slelonelonp, but start immelondiatelonly. thelonn instancelon 20 - 39 will slelonelonp 3 mins and thelonn
+    // start to run. instancelon 40 - 59 will slelonelonp 6 mins thelonn start to run. instancelons 60 - 79 will
+    // slelonelonp 9 mins and thelonn start to run and so forth.
+    long slelonelonpTimelon = instancelon / startUpBatchSizelon * startUpSlelonelonpMins;
+    LOG.info("Instancelon={}, Start up batch sizelon={}", instancelon, startUpBatchSizelon);
+    LOG.info("Slelonelonp {} minutelons to void HDFS namelon nodelon and ZooKelonelonpelonr ovelonrwhelonlmelond.", slelonelonpTimelon);
+    Unintelonrruptiblelons.slelonelonpUnintelonrruptibly(slelonelonpTimelon, TimelonUnit.MINUTelonS);
 
-    // Kinit here.
-    Kerberos.kinit(
-        EarlybirdConfig.getString("kerberos_user", ""),
-        EarlybirdConfig.getString("kerberos_keytab_path", "")
+    // Kinit helonrelon.
+    Kelonrbelonros.kinit(
+        elonarlybirdConfig.gelontString("kelonrbelonros_uselonr", ""),
+        elonarlybirdConfig.gelontString("kelonrbelonros_kelonytab_path", "")
     );
 
-    long waitBetweenLoopsMs = TimeUnit.MINUTES.toMillis(waitBetweenLoopsMins);
-    if (onlyRunOnce) {
-      LOG.info("This segment builder will run the full rebuild of all the segments");
-    } else {
-      LOG.info("This segment builder will incrementally check for new data and rebuilt "
-          + "current segments as needed.");
-      LOG.info("The waiting interval between two new data checking is: "
-          + waitBetweenLoopsMs + " ms.");
+    long waitBelontwelonelonnLoopsMs = TimelonUnit.MINUTelonS.toMillis(waitBelontwelonelonnLoopsMins);
+    if (onlyRunOncelon) {
+      LOG.info("This selongmelonnt buildelonr will run thelon full relonbuild of all thelon selongmelonnts");
+    } elonlselon {
+      LOG.info("This selongmelonnt buildelonr will increlonmelonntally chelonck for nelonw data and relonbuilt "
+          + "currelonnt selongmelonnts as nelonelondelond.");
+      LOG.info("Thelon waiting intelonrval belontwelonelonn two nelonw data cheloncking is: "
+          + waitBelontwelonelonnLoopsMs + " ms.");
     }
 
-    boolean scrubGenPresent = segmentSyncConfig.getScrubGen().isPresent();
-    LOG.info("Scrub gen present: {}", scrubGenPresent);
-    boolean scrubGenDataFullyBuilt = segmentBuilderCoordinator.isScrubGenDataFullyBuilt(instance);
-    LOG.info("Scrub gen data fully built: {}", scrubGenDataFullyBuilt);
+    boolelonan scrubGelonnPrelonselonnt = selongmelonntSyncConfig.gelontScrubGelonn().isPrelonselonnt();
+    LOG.info("Scrub gelonn prelonselonnt: {}", scrubGelonnPrelonselonnt);
+    boolelonan scrubGelonnDataFullyBuilt = selongmelonntBuildelonrCoordinator.isScrubGelonnDataFullyBuilt(instancelon);
+    LOG.info("Scrub gelonn data fully built: {}", scrubGelonnDataFullyBuilt);
 
-    if (!scrubGenPresent || scrubGenDataFullyBuilt) {
-      LOG.info("Starting segment building loop...");
-      while (!Thread.currentThread().isInterrupted()) {
+    if (!scrubGelonnPrelonselonnt || scrubGelonnDataFullyBuilt) {
+      LOG.info("Starting selongmelonnt building loop...");
+      whilelon (!Threlonad.currelonntThrelonad().isIntelonrruptelond()) {
         try {
-          indexingLoop();
-          if (onlyRunOnce) {
-            LOG.info("only run once is true, breaking");
-            break;
+          indelonxingLoop();
+          if (onlyRunOncelon) {
+            LOG.info("only run oncelon is truelon, brelonaking");
+            brelonak;
           }
-          clock.waitFor(waitBetweenLoopsMs);
-        } catch (InterruptedException e) {
-          LOG.info("Interrupted, quitting segment builder");
-          Thread.currentThread().interrupt();
-        } catch (SegmentInfoConstructionException e) {
-          LOG.error("Error creating new segmentInfo, quitting segment builder: ", e);
-          break;
-        } catch (SegmentUpdaterException e) {
-          FAILED_SEGMENTS.increment();
-          // Before the segment builder quits, sleep for WAIT_BEFORE_QUIT_MINS minutes so that the
-          // FAILED_SEGMENTS stat can be exported.
+          clock.waitFor(waitBelontwelonelonnLoopsMs);
+        } catch (Intelonrruptelondelonxcelonption elon) {
+          LOG.info("Intelonrruptelond, quitting selongmelonnt buildelonr");
+          Threlonad.currelonntThrelonad().intelonrrupt();
+        } catch (SelongmelonntInfoConstructionelonxcelonption elon) {
+          LOG.elonrror("elonrror crelonating nelonw selongmelonntInfo, quitting selongmelonnt buildelonr: ", elon);
+          brelonak;
+        } catch (SelongmelonntUpdatelonrelonxcelonption elon) {
+          FAILelonD_SelonGMelonNTS.increlonmelonnt();
+          // Belonforelon thelon selongmelonnt buildelonr quits, slelonelonp for WAIT_BelonFORelon_QUIT_MINS minutelons so that thelon
+          // FAILelonD_SelonGMelonNTS stat can belon elonxportelond.
           try {
-            clock.waitFor(TimeUnit.MINUTES.toMillis(waitBeforeQuitMins));
-          } catch (InterruptedException ex) {
-            LOG.info("Interrupted, quitting segment builder");
-            Thread.currentThread().interrupt();
+            clock.waitFor(TimelonUnit.MINUTelonS.toMillis(waitBelonforelonQuitMins));
+          } catch (Intelonrruptelondelonxcelonption elonx) {
+            LOG.info("Intelonrruptelond, quitting selongmelonnt buildelonr");
+            Threlonad.currelonntThrelonad().intelonrrupt();
           }
-          LOG.error("SegmentUpdater processing segment error, quitting segment builder: ", e);
-          break;
+          LOG.elonrror("SelongmelonntUpdatelonr procelonssing selongmelonnt elonrror, quitting selongmelonnt buildelonr: ", elon);
+          brelonak;
         }
       }
-    } else {
-      LOG.info("Cannot build the segments for scrub gen yet.");
+    } elonlselon {
+      LOG.info("Cannot build thelon selongmelonnts for scrub gelonn yelont.");
     }
   }
 
-  // Refactoring the run loop to here for unittest
-  @VisibleForTesting
-  void indexingLoop()
-      throws SegmentInfoConstructionException, InterruptedException, SegmentUpdaterException {
-    // This map contains all the segments to be processed; if a segment is built, it will be removed
-    // from the map.
-    Map<String, SegmentBuilderSegment> buildableSegmentInfoMap;
+  // Relonfactoring thelon run loop to helonrelon for unittelonst
+  @VisiblelonForTelonsting
+  void indelonxingLoop()
+      throws SelongmelonntInfoConstructionelonxcelonption, Intelonrruptelondelonxcelonption, SelongmelonntUpdatelonrelonxcelonption {
+    // This map contains all thelon selongmelonnts to belon procelonsselond; if a selongmelonnt is built, it will belon relonmovelond
+    // from thelon map.
+    Map<String, SelongmelonntBuildelonrSelongmelonnt> buildablelonSelongmelonntInfoMap;
     try {
-      buildableSegmentInfoMap = createSegmentInfoMap();
-      printSegmentInfoMap(buildableSegmentInfoMap);
-    } catch (IOException e) {
-      LOG.error("Error creating segmentInfoMap: ", e);
-      return;
+      buildablelonSelongmelonntInfoMap = crelonatelonSelongmelonntInfoMap();
+      printSelongmelonntInfoMap(buildablelonSelongmelonntInfoMap);
+    } catch (IOelonxcelonption elon) {
+      LOG.elonrror("elonrror crelonating selongmelonntInfoMap: ", elon);
+      relonturn;
     }
 
-    while (!buildableSegmentInfoMap.isEmpty()) {
-      boolean hasBuiltSegment = processSegments(buildableSegmentInfoMap);
+    whilelon (!buildablelonSelongmelonntInfoMap.iselonmpty()) {
+      boolelonan hasBuiltSelongmelonnt = procelonssSelongmelonnts(buildablelonSelongmelonntInfoMap);
 
-      if (!hasBuiltSegment) {
-        // If we successfully built a segment, no need to sleep since building a segment takes a
-        // long time
-        clock.waitFor(processWaitingInterval);
+      if (!hasBuiltSelongmelonnt) {
+        // If welon succelonssfully built a selongmelonnt, no nelonelond to slelonelonp sincelon building a selongmelonnt takelons a
+        // long timelon
+        clock.waitFor(procelonssWaitingIntelonrval);
       }
     }
   }
 
   // Actual shutdown.
-  protected void doShutdown() {
+  protelonctelond void doShutdown() {
     LOG.info("doShutdown()...");
     try {
-      earlybirdIndexConfig.getResourceCloser().shutdownExecutor();
-    } catch (InterruptedException e) {
-      LOG.error("Interrupted during shutdown. ", e);
+      elonarlybirdIndelonxConfig.gelontRelonsourcelonCloselonr().shutdownelonxeloncutor();
+    } catch (Intelonrruptelondelonxcelonption elon) {
+      LOG.elonrror("Intelonrruptelond during shutdown. ", elon);
     }
 
-    LOG.info("Segment builder stopped!");
+    LOG.info("Selongmelonnt buildelonr stoppelond!");
   }
 
-  private List<ArchiveTimeSlicer.ArchiveTimeSlice> createTimeSlices() throws IOException {
-    Preconditions.checkState(segmentSyncConfig.getScrubGen().isPresent());
-    Date scrubGen = ScrubGenUtil.parseScrubGenToDate(segmentSyncConfig.getScrubGen().get());
+  privatelon List<ArchivelonTimelonSlicelonr.ArchivelonTimelonSlicelon> crelonatelonTimelonSlicelons() throws IOelonxcelonption {
+    Prelonconditions.chelonckStatelon(selongmelonntSyncConfig.gelontScrubGelonn().isPrelonselonnt());
+    Datelon scrubGelonn = ScrubGelonnUtil.parselonScrubGelonnToDatelon(selongmelonntSyncConfig.gelontScrubGelonn().gelont());
 
-    final DailyStatusBatches dailyStatusBatches =
-        new DailyStatusBatches(zkTryLockFactory, scrubGen);
-    final ArchiveTimeSlicer archiveTimeSlicer = new ArchiveTimeSlicer(
-        EarlybirdConfig.getMaxSegmentSize(), dailyStatusBatches, earlybirdIndexConfig);
+    final DailyStatusBatchelons dailyStatusBatchelons =
+        nelonw DailyStatusBatchelons(zkTryLockFactory, scrubGelonn);
+    final ArchivelonTimelonSlicelonr archivelonTimelonSlicelonr = nelonw ArchivelonTimelonSlicelonr(
+        elonarlybirdConfig.gelontMaxSelongmelonntSizelon(), dailyStatusBatchelons, elonarlybirdIndelonxConfig);
 
-    Stopwatch stopwatch = Stopwatch.createStarted();
-    List<ArchiveTimeSlicer.ArchiveTimeSlice> timeSlices = archiveTimeSlicer.getTimeSlices();
+    Stopwatch stopwatch = Stopwatch.crelonatelonStartelond();
+    List<ArchivelonTimelonSlicelonr.ArchivelonTimelonSlicelon> timelonSlicelons = archivelonTimelonSlicelonr.gelontTimelonSlicelons();
 
-    if (timeSlices == null) {
-      LOG.error("Failed to load timeslice map after {}", stopwatch);
-      return Collections.emptyList();
+    if (timelonSlicelons == null) {
+      LOG.elonrror("Failelond to load timelonslicelon map aftelonr {}", stopwatch);
+      relonturn Collelonctions.elonmptyList();
     }
 
-    LOG.info("Took {} to get timeslices", stopwatch);
-    return timeSlices;
+    LOG.info("Took {} to gelont timelonslicelons", stopwatch);
+    relonturn timelonSlicelons;
   }
 
-  private static class TimeSliceAndHashPartition implements Comparable<TimeSliceAndHashPartition> {
-    public final ArchiveTimeSlicer.ArchiveTimeSlice timeSlice;
-    public final Integer hashPartition;
+  privatelon static class TimelonSlicelonAndHashPartition implelonmelonnts Comparablelon<TimelonSlicelonAndHashPartition> {
+    public final ArchivelonTimelonSlicelonr.ArchivelonTimelonSlicelon timelonSlicelon;
+    public final Intelongelonr hashPartition;
 
-    public TimeSliceAndHashPartition(
-        ArchiveTimeSlicer.ArchiveTimeSlice timeSlice,
-        Integer hashPartition) {
-      this.timeSlice = timeSlice;
+    public TimelonSlicelonAndHashPartition(
+        ArchivelonTimelonSlicelonr.ArchivelonTimelonSlicelon timelonSlicelon,
+        Intelongelonr hashPartition) {
+      this.timelonSlicelon = timelonSlicelon;
       this.hashPartition = hashPartition;
     }
 
-    @Override
-    public int compareTo(TimeSliceAndHashPartition o) {
-      Integer myHashPartition = this.hashPartition;
-      Integer otherHashPartition = o.hashPartition;
+    @Ovelonrridelon
+    public int comparelonTo(TimelonSlicelonAndHashPartition o) {
+      Intelongelonr myHashPartition = this.hashPartition;
+      Intelongelonr othelonrHashPartition = o.hashPartition;
 
-      long myTimeSliceId = this.timeSlice.getMinStatusID(myHashPartition);
-      long otherTimeSliceId = o.timeSlice.getMinStatusID(otherHashPartition);
+      long myTimelonSlicelonId = this.timelonSlicelon.gelontMinStatusID(myHashPartition);
+      long othelonrTimelonSlicelonId = o.timelonSlicelon.gelontMinStatusID(othelonrHashPartition);
 
-      return ComparisonChain.start()
-          .compare(myHashPartition, otherHashPartition)
-          .compare(myTimeSliceId, otherTimeSliceId)
-          .result();
+      relonturn ComparisonChain.start()
+          .comparelon(myHashPartition, othelonrHashPartition)
+          .comparelon(myTimelonSlicelonId, othelonrTimelonSlicelonId)
+          .relonsult();
     }
   }
 
   /**
-   * For all the timeslices, create the corresponding SegmentInfo and store in a map
+   * For all thelon timelonslicelons, crelonatelon thelon correlonsponding SelongmelonntInfo and storelon in a map
    */
-  @VisibleForTesting
-  Map<String, SegmentBuilderSegment> createSegmentInfoMap() throws IOException {
-    final List<ArchiveTimeSlicer.ArchiveTimeSlice> timeSlices = createTimeSlices();
+  @VisiblelonForTelonsting
+  Map<String, SelongmelonntBuildelonrSelongmelonnt> crelonatelonSelongmelonntInfoMap() throws IOelonxcelonption {
+    final List<ArchivelonTimelonSlicelonr.ArchivelonTimelonSlicelon> timelonSlicelons = crelonatelonTimelonSlicelons();
 
-    List<TimeSliceAndHashPartition> timeSlicePairs = createPairs(timeSlices);
-    // Export how many segments should be built
-    SEGMENTS_TO_BUILD.set(timeSlicePairs.size());
-    LOG.info("Total number of segments to be built across all segment builders: {}",
-        timeSlicePairs.size());
+    List<TimelonSlicelonAndHashPartition> timelonSlicelonPairs = crelonatelonPairs(timelonSlicelons);
+    // elonxport how many selongmelonnts should belon built
+    SelonGMelonNTS_TO_BUILD.selont(timelonSlicelonPairs.sizelon());
+    LOG.info("Total numbelonr of selongmelonnts to belon built across all selongmelonnt buildelonrs: {}",
+        timelonSlicelonPairs.sizelon());
 
-    List<TimeSliceAndHashPartition> mySegments = getSegmentsForMyPartition(timeSlicePairs);
+    List<TimelonSlicelonAndHashPartition> mySelongmelonnts = gelontSelongmelonntsForMyPartition(timelonSlicelonPairs);
 
-    Map<String, SegmentBuilderSegment> segmentInfoMap = new HashMap<>();
-    for (TimeSliceAndHashPartition mySegment : mySegments) {
-      ArchiveSegment segment = new ArchiveSegment(mySegment.timeSlice, mySegment.hashPartition,
-          EarlybirdConfig.getMaxSegmentSize());
-      SegmentInfo segmentInfo = new SegmentInfo(segment, segmentFactory, segmentSyncConfig);
+    Map<String, SelongmelonntBuildelonrSelongmelonnt> selongmelonntInfoMap = nelonw HashMap<>();
+    for (TimelonSlicelonAndHashPartition mySelongmelonnt : mySelongmelonnts) {
+      ArchivelonSelongmelonnt selongmelonnt = nelonw ArchivelonSelongmelonnt(mySelongmelonnt.timelonSlicelon, mySelongmelonnt.hashPartition,
+          elonarlybirdConfig.gelontMaxSelongmelonntSizelon());
+      SelongmelonntInfo selongmelonntInfo = nelonw SelongmelonntInfo(selongmelonnt, selongmelonntFactory, selongmelonntSyncConfig);
 
-      segmentInfoMap.put(segmentInfo.getSegment().getSegmentName(), new NotYetBuiltSegment(
-          segmentInfo, segmentConfig, segmentFactory, 0, segmentSyncConfig));
+      selongmelonntInfoMap.put(selongmelonntInfo.gelontSelongmelonnt().gelontSelongmelonntNamelon(), nelonw NotYelontBuiltSelongmelonnt(
+          selongmelonntInfo, selongmelonntConfig, selongmelonntFactory, 0, selongmelonntSyncConfig));
     }
 
-    return segmentInfoMap;
+    relonturn selongmelonntInfoMap;
   }
 
-  private List<TimeSliceAndHashPartition> createPairs(
-      List<ArchiveTimeSlicer.ArchiveTimeSlice> timeSlices) {
+  privatelon List<TimelonSlicelonAndHashPartition> crelonatelonPairs(
+      List<ArchivelonTimelonSlicelonr.ArchivelonTimelonSlicelon> timelonSlicelons) {
 
-    List<TimeSliceAndHashPartition> timeSlicePairs = new ArrayList<>();
+    List<TimelonSlicelonAndHashPartition> timelonSlicelonPairs = nelonw ArrayList<>();
 
-    for (ArchiveTimeSlicer.ArchiveTimeSlice slice : timeSlices) {
-      List<Integer> localPartitions = hashPartitions;
+    for (ArchivelonTimelonSlicelonr.ArchivelonTimelonSlicelon slicelon : timelonSlicelons) {
+      List<Intelongelonr> localPartitions = hashPartitions;
       if (localPartitions == null) {
-        localPartitions = range(slice.getNumHashPartitions());
+        localPartitions = rangelon(slicelon.gelontNumHashPartitions());
       }
 
-      for (Integer partition : localPartitions) {
-        timeSlicePairs.add(new TimeSliceAndHashPartition(slice, partition));
+      for (Intelongelonr partition : localPartitions) {
+        timelonSlicelonPairs.add(nelonw TimelonSlicelonAndHashPartition(slicelon, partition));
       }
     }
-    return timeSlicePairs;
+    relonturn timelonSlicelonPairs;
   }
 
-  private List<TimeSliceAndHashPartition> getSegmentsForMyPartition(
-      List<TimeSliceAndHashPartition> timeSlicePairs) {
+  privatelon List<TimelonSlicelonAndHashPartition> gelontSelongmelonntsForMyPartition(
+      List<TimelonSlicelonAndHashPartition> timelonSlicelonPairs) {
 
-    Collections.sort(timeSlicePairs);
+    Collelonctions.sort(timelonSlicelonPairs);
 
-    List<TimeSliceAndHashPartition> myTimeSlices = new ArrayList<>();
-    for (int i = myPartitionId; i < timeSlicePairs.size(); i += numSegmentBuilderPartitions) {
-      myTimeSlices.add(timeSlicePairs.get(i));
+    List<TimelonSlicelonAndHashPartition> myTimelonSlicelons = nelonw ArrayList<>();
+    for (int i = myPartitionId; i < timelonSlicelonPairs.sizelon(); i += numSelongmelonntBuildelonrPartitions) {
+      myTimelonSlicelons.add(timelonSlicelonPairs.gelont(i));
     }
 
-    LOG.info("Getting segments to be built for partition: {}", myPartitionId);
-    LOG.info("Total number of partitions: {}", numSegmentBuilderPartitions);
-    LOG.info("Number of segments picked: {}", myTimeSlices.size());
-    return myTimeSlices;
+    LOG.info("Gelontting selongmelonnts to belon built for partition: {}", myPartitionId);
+    LOG.info("Total numbelonr of partitions: {}", numSelongmelonntBuildelonrPartitions);
+    LOG.info("Numbelonr of selongmelonnts pickelond: {}", myTimelonSlicelons.sizelon());
+    relonturn myTimelonSlicelons;
   }
 
   /**
-   * Print out the segmentInfo Map for debugging
+   * Print out thelon selongmelonntInfo Map for delonbugging
    */
-  private void printSegmentInfoMap(Map<String, SegmentBuilderSegment> segmentInfoMap) {
-    LOG.info("SegmentInfoMap: ");
-    for (Map.Entry<String, SegmentBuilderSegment> entry : segmentInfoMap.entrySet()) {
-      LOG.info(entry.getValue().toString());
+  privatelon void printSelongmelonntInfoMap(Map<String, SelongmelonntBuildelonrSelongmelonnt> selongmelonntInfoMap) {
+    LOG.info("SelongmelonntInfoMap: ");
+    for (Map.elonntry<String, SelongmelonntBuildelonrSelongmelonnt> elonntry : selongmelonntInfoMap.elonntrySelont()) {
+      LOG.info(elonntry.gelontValuelon().toString());
     }
-    LOG.info("Total SegmentInfoMap size: " + segmentInfoMap.size() + ". done.");
+    LOG.info("Total SelongmelonntInfoMap sizelon: " + selongmelonntInfoMap.sizelon() + ". donelon.");
   }
 
   /**
-   * Build indices or refresh state for the segments in the specified segmentInfoMap, which only
-   * contains the segments that need to build or are building. When a segment has not been built,
-   * it is built here. If built successfully, it will be removed from the map; otherwise, its
-   * state will be updated in the map.
+   * Build indicelons or relonfrelonsh statelon for thelon selongmelonnts in thelon speloncifielond selongmelonntInfoMap, which only
+   * contains thelon selongmelonnts that nelonelond to build or arelon building. Whelonn a selongmelonnt has not belonelonn built,
+   * it is built helonrelon. If built succelonssfully, it will belon relonmovelond from thelon map; othelonrwiselon, its
+   * statelon will belon updatelond in thelon map.
    *
-   * Returns true iff this process has built a segment.
+   * Relonturns truelon iff this procelonss has built a selongmelonnt.
    */
-  @VisibleForTesting
-  boolean processSegments(Map<String, SegmentBuilderSegment> segmentInfoMap)
-      throws SegmentInfoConstructionException, SegmentUpdaterException, InterruptedException {
+  @VisiblelonForTelonsting
+  boolelonan procelonssSelongmelonnts(Map<String, SelongmelonntBuildelonrSelongmelonnt> selongmelonntInfoMap)
+      throws SelongmelonntInfoConstructionelonxcelonption, SelongmelonntUpdatelonrelonxcelonption, Intelonrruptelondelonxcelonption {
 
-    boolean hasBuiltSegment = false;
+    boolelonan hasBuiltSelongmelonnt = falselon;
 
-    Iterator<Map.Entry<String, SegmentBuilderSegment>> iter =
-        segmentInfoMap.entrySet().iterator();
-    while (iter.hasNext()) {
-      Map.Entry<String, SegmentBuilderSegment> entry = iter.next();
-      SegmentBuilderSegment originalSegment = entry.getValue();
+    Itelonrator<Map.elonntry<String, SelongmelonntBuildelonrSelongmelonnt>> itelonr =
+        selongmelonntInfoMap.elonntrySelont().itelonrator();
+    whilelon (itelonr.hasNelonxt()) {
+      Map.elonntry<String, SelongmelonntBuildelonrSelongmelonnt> elonntry = itelonr.nelonxt();
+      SelongmelonntBuildelonrSelongmelonnt originalSelongmelonnt = elonntry.gelontValuelon();
 
-      LOG.info("About to process segment: {}", originalSegment.getSegmentName());
-      long startMillis = System.currentTimeMillis();
-      SegmentBuilderSegment updatedSegment = segmentHandler.processSegment(originalSegment);
+      LOG.info("About to procelonss selongmelonnt: {}", originalSelongmelonnt.gelontSelongmelonntNamelon());
+      long startMillis = Systelonm.currelonntTimelonMillis();
+      SelongmelonntBuildelonrSelongmelonnt updatelondSelongmelonnt = selongmelonntHandlelonr.procelonssSelongmelonnt(originalSelongmelonnt);
 
-      if (updatedSegment.isBuilt()) {
-        iter.remove();
-        hasBuiltSegment = true;
+      if (updatelondSelongmelonnt.isBuilt()) {
+        itelonr.relonmovelon();
+        hasBuiltSelongmelonnt = truelon;
 
-        if (originalSegment instanceof NotYetBuiltSegment) {
-          // Record the total time spent on successfully building a semgent, used to compute the
-          // average segment building time.
-          long timeSpent = System.currentTimeMillis() - startMillis;
-          segmentsBuiltLocally.increment();
-          timeSpentOnSuccessfulBuildSecs.add(timeSpent / 1000);
+        if (originalSelongmelonnt instancelonof NotYelontBuiltSelongmelonnt) {
+          // Reloncord thelon total timelon spelonnt on succelonssfully building a selonmgelonnt, uselond to computelon thelon
+          // avelonragelon selongmelonnt building timelon.
+          long timelonSpelonnt = Systelonm.currelonntTimelonMillis() - startMillis;
+          selongmelonntsBuiltLocally.increlonmelonnt();
+          timelonSpelonntOnSuccelonssfulBuildSeloncs.add(timelonSpelonnt / 1000);
         }
-      } else {
-        entry.setValue(updatedSegment);
+      } elonlselon {
+        elonntry.selontValuelon(updatelondSelongmelonnt);
       }
 
-      clock.waitFor(getSegmentSleepTime());
+      clock.waitFor(gelontSelongmelonntSlelonelonpTimelon());
     }
 
-    return hasBuiltSegment;
+    relonturn hasBuiltSelongmelonnt;
   }
 
-  private long getSegmentSleepTime() {
-    // The Hadoop name node can handle only about 200 requests/sec before it gets overloaded.
-    // Updating the state of a node that has been built takes about 1 second.  In the worst case
-    // scenario with 800 segment builders, we end up with about 800 requests/sec.  Adding a 10
-    // second sleep lowers the worst case to about 80 requests/sec.
+  privatelon long gelontSelongmelonntSlelonelonpTimelon() {
+    // Thelon Hadoop namelon nodelon can handlelon only about 200 relonquelonsts/selonc belonforelon it gelonts ovelonrloadelond.
+    // Updating thelon statelon of a nodelon that has belonelonn built takelons about 1 seloncond.  In thelon worst caselon
+    // scelonnario with 800 selongmelonnt buildelonrs, welon elonnd up with about 800 relonquelonsts/selonc.  Adding a 10
+    // seloncond slelonelonp lowelonrs thelon worst caselon to about 80 relonquelonsts/selonc.
 
-    long sleepMillis = TimeUnit.SECONDS.toMillis(waitBetweenSegmentsSecs);
+    long slelonelonpMillis = TimelonUnit.SelonCONDS.toMillis(waitBelontwelonelonnSelongmelonntsSeloncs);
 
-    // Use randomization so that we can't get all segment builders hitting it at the exact same time
+    // Uselon randomization so that welon can't gelont all selongmelonnt buildelonrs hitting it at thelon elonxact samelon timelon
 
-    int lowerSleepBoundMillis = (int) (sleepMillis * (1.0 - SLEEP_RANDOMIZATION_RATIO));
-    int upperSleepBoundMillis = (int) (sleepMillis * (1.0 + SLEEP_RANDOMIZATION_RATIO));
-    return randRange(lowerSleepBoundMillis, upperSleepBoundMillis);
-  }
-
-  /**
-   * Returns a pseudo-random number between min and max, inclusive.
-   */
-  private int randRange(int min, int max) {
-    return random.nextInt((max - min) + 1) + min;
+    int lowelonrSlelonelonpBoundMillis = (int) (slelonelonpMillis * (1.0 - SLelonelonP_RANDOMIZATION_RATIO));
+    int uppelonrSlelonelonpBoundMillis = (int) (slelonelonpMillis * (1.0 + SLelonelonP_RANDOMIZATION_RATIO));
+    relonturn randRangelon(lowelonrSlelonelonpBoundMillis, uppelonrSlelonelonpBoundMillis);
   }
 
   /**
-   * Returns list of integers 0, 1, 2, ..., count-1.
+   * Relonturns a pselonudo-random numbelonr belontwelonelonn min and max, inclusivelon.
    */
-  private static List<Integer> range(int count) {
-    List<Integer> nums = new ArrayList<>(count);
+  privatelon int randRangelon(int min, int max) {
+    relonturn random.nelonxtInt((max - min) + 1) + min;
+  }
+
+  /**
+   * Relonturns list of intelongelonrs 0, 1, 2, ..., count-1.
+   */
+  privatelon static List<Intelongelonr> rangelon(int count) {
+    List<Intelongelonr> nums = nelonw ArrayList<>(count);
 
     for (int i = 0; i < count; i++) {
       nums.add(i);
     }
 
-    return nums;
+    relonturn nums;
   }
 
-  private static SegmentSyncConfig getSyncConfig(String scrubGen) {
-    if (scrubGen == null || scrubGen.isEmpty()) {
-      throw new RuntimeException(
-          "Scrub gen expected, but could not get it from the arguments.");
+  privatelon static SelongmelonntSyncConfig gelontSyncConfig(String scrubGelonn) {
+    if (scrubGelonn == null || scrubGelonn.iselonmpty()) {
+      throw nelonw Runtimelonelonxcelonption(
+          "Scrub gelonn elonxpelonctelond, but could not gelont it from thelon argumelonnts.");
     }
 
-    LOG.info("Scrub gen: " + scrubGen);
-    return new SegmentSyncConfig(Optional.of(scrubGen));
+    LOG.info("Scrub gelonn: " + scrubGelonn);
+    relonturn nelonw SelongmelonntSyncConfig(Optional.of(scrubGelonn));
   }
 }

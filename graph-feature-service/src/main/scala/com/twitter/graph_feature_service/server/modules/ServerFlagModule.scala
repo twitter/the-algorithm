@@ -1,31 +1,31 @@
-package com.twitter.graph_feature_service.server.modules
+packagelon com.twittelonr.graph_felonaturelon_selonrvicelon.selonrvelonr.modulelons
 
-import com.twitter.inject.TwitterModule
+import com.twittelonr.injelonct.TwittelonrModulelon
 
-object ServerFlagNames {
-  final val NumWorkers = "service.num_workers"
-  final val ServiceRole = "service.role"
-  final val ServiceEnv = "service.env"
+objelonct SelonrvelonrFlagNamelons {
+  final val NumWorkelonrs = "selonrvicelon.num_workelonrs"
+  final val SelonrvicelonRolelon = "selonrvicelon.rolelon"
+  final val Selonrvicelonelonnv = "selonrvicelon.elonnv"
 
-  final val MemCacheClientName = "service.mem_cache_client_name"
-  final val MemCachePath = "service.mem_cache_path"
+  final val MelonmCachelonClielonntNamelon = "selonrvicelon.melonm_cachelon_clielonnt_namelon"
+  final val MelonmCachelonPath = "selonrvicelon.melonm_cachelon_path"
 }
 
 /**
- * Initializes references to the flag values defined in the aurora.deploy file.
- * To check what the flag values are initialized in runtime, search FlagsModule in stdout
+ * Initializelons relonfelonrelonncelons to thelon flag valuelons delonfinelond in thelon aurora.delonploy filelon.
+ * To chelonck what thelon flag valuelons arelon initializelond in runtimelon, selonarch FlagsModulelon in stdout
  */
-object ServerFlagsModule extends TwitterModule {
+objelonct SelonrvelonrFlagsModulelon elonxtelonnds TwittelonrModulelon {
 
-  import ServerFlagNames._
+  import SelonrvelonrFlagNamelons._
 
-  flag[Int](NumWorkers, "Num of workers")
+  flag[Int](NumWorkelonrs, "Num of workelonrs")
 
-  flag[String](ServiceRole, "Service Role")
+  flag[String](SelonrvicelonRolelon, "Selonrvicelon Rolelon")
 
-  flag[String](ServiceEnv, "Service Env")
+  flag[String](Selonrvicelonelonnv, "Selonrvicelon elonnv")
 
-  flag[String](MemCacheClientName, "MemCache Client Name")
+  flag[String](MelonmCachelonClielonntNamelon, "MelonmCachelon Clielonnt Namelon")
 
-  flag[String](MemCachePath, "MemCache Path")
+  flag[String](MelonmCachelonPath, "MelonmCachelon Path")
 }

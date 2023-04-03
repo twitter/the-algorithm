@@ -1,82 +1,82 @@
-package com.twitter.interaction_graph.scio.agg_flock
+packagelon com.twittelonr.intelonraction_graph.scio.agg_flock
 
-import com.spotify.scio.ScioContext
-import com.spotify.scio.values.SCollection
-import com.twitter.beam.io.dal.DAL
-import com.twitter.beam.io.dal.DAL.DiskFormat
-import com.twitter.beam.io.dal.DAL.PathLayout
-import com.twitter.beam.io.dal.DAL.WriteOptions
-import com.twitter.beam.job.ServiceIdentifierOptions
-import com.twitter.interaction_graph.scio.agg_flock.InteractionGraphAggFlockUtil._
-import com.twitter.interaction_graph.scio.common.DateUtil
-import com.twitter.interaction_graph.scio.common.FeatureGeneratorUtil
-import com.twitter.interaction_graph.thriftscala.Edge
-import com.twitter.interaction_graph.thriftscala.FeatureName
-import com.twitter.interaction_graph.thriftscala.Vertex
-import com.twitter.scio_internal.job.ScioBeamJob
-import com.twitter.statebird.v2.thriftscala.Environment
-import com.twitter.util.Duration
-import java.time.Instant
-import org.joda.time.Interval
+import com.spotify.scio.ScioContelonxt
+import com.spotify.scio.valuelons.SCollelonction
+import com.twittelonr.belonam.io.dal.DAL
+import com.twittelonr.belonam.io.dal.DAL.DiskFormat
+import com.twittelonr.belonam.io.dal.DAL.PathLayout
+import com.twittelonr.belonam.io.dal.DAL.WritelonOptions
+import com.twittelonr.belonam.job.SelonrvicelonIdelonntifielonrOptions
+import com.twittelonr.intelonraction_graph.scio.agg_flock.IntelonractionGraphAggFlockUtil._
+import com.twittelonr.intelonraction_graph.scio.common.DatelonUtil
+import com.twittelonr.intelonraction_graph.scio.common.FelonaturelonGelonnelonratorUtil
+import com.twittelonr.intelonraction_graph.thriftscala.elondgelon
+import com.twittelonr.intelonraction_graph.thriftscala.FelonaturelonNamelon
+import com.twittelonr.intelonraction_graph.thriftscala.Velonrtelonx
+import com.twittelonr.scio_intelonrnal.job.ScioBelonamJob
+import com.twittelonr.statelonbird.v2.thriftscala.elonnvironmelonnt
+import com.twittelonr.util.Duration
+import java.timelon.Instant
+import org.joda.timelon.Intelonrval
 
-object InteractionGraphAggFlockJob extends ScioBeamJob[InteractionGraphAggFlockOption] {
-  override protected def configurePipeline(
-    scioContext: ScioContext,
-    pipelineOptions: InteractionGraphAggFlockOption
+objelonct IntelonractionGraphAggFlockJob elonxtelonnds ScioBelonamJob[IntelonractionGraphAggFlockOption] {
+  ovelonrridelon protelonctelond delonf configurelonPipelonlinelon(
+    scioContelonxt: ScioContelonxt,
+    pipelonlinelonOptions: IntelonractionGraphAggFlockOption
   ): Unit = {
-    @transient
-    implicit lazy val sc: ScioContext = scioContext
-    implicit lazy val dateInterval: Interval = pipelineOptions.interval
+    @transielonnt
+    implicit lazy val sc: ScioContelonxt = scioContelonxt
+    implicit lazy val datelonIntelonrval: Intelonrval = pipelonlinelonOptions.intelonrval
 
-    val source = InteractionGraphAggFlockSource(pipelineOptions)
+    val sourcelon = IntelonractionGraphAggFlockSourcelon(pipelonlinelonOptions)
 
-    val embiggenInterval = DateUtil.embiggen(dateInterval, Duration.fromDays(7))
+    val elonmbiggelonnIntelonrval = DatelonUtil.elonmbiggelonn(datelonIntelonrval, Duration.fromDays(7))
 
-    val flockFollowsSnapshot = source.readFlockFollowsSnapshot(embiggenInterval)
+    val flockFollowsSnapshot = sourcelon.relonadFlockFollowsSnapshot(elonmbiggelonnIntelonrval)
 
-    // the flock snapshot we're reading from has already been filtered for safe/valid users hence no filtering for safeUsers
-    val flockFollowsFeature =
-      getFlockFeatures(flockFollowsSnapshot, FeatureName.NumFollows, dateInterval)
+    // thelon flock snapshot welon'relon relonading from has alrelonady belonelonn filtelonrelond for safelon/valid uselonrs helonncelon no filtelonring for safelonUselonrs
+    val flockFollowsFelonaturelon =
+      gelontFlockFelonaturelons(flockFollowsSnapshot, FelonaturelonNamelon.NumFollows, datelonIntelonrval)
 
-    val flockMutualFollowsFeature = getMutualFollowFeature(flockFollowsFeature)
+    val flockMutualFollowsFelonaturelon = gelontMutualFollowFelonaturelon(flockFollowsFelonaturelon)
 
-    val allSCollections = Seq(flockFollowsFeature, flockMutualFollowsFeature)
+    val allSCollelonctions = Selonq(flockFollowsFelonaturelon, flockMutualFollowsFelonaturelon)
 
-    val allFeatures = SCollection.unionAll(allSCollections)
+    val allFelonaturelons = SCollelonction.unionAll(allSCollelonctions)
 
-    val (vertex, edges) = FeatureGeneratorUtil.getFeatures(allFeatures)
+    val (velonrtelonx, elondgelons) = FelonaturelonGelonnelonratorUtil.gelontFelonaturelons(allFelonaturelons)
 
-    val dalEnvironment: String = pipelineOptions
-      .as(classOf[ServiceIdentifierOptions])
-      .getEnvironment()
-    val dalWriteEnvironment = if (pipelineOptions.getDALWriteEnvironment != null) {
-      pipelineOptions.getDALWriteEnvironment
-    } else {
-      dalEnvironment
+    val dalelonnvironmelonnt: String = pipelonlinelonOptions
+      .as(classOf[SelonrvicelonIdelonntifielonrOptions])
+      .gelontelonnvironmelonnt()
+    val dalWritelonelonnvironmelonnt = if (pipelonlinelonOptions.gelontDALWritelonelonnvironmelonnt != null) {
+      pipelonlinelonOptions.gelontDALWritelonelonnvironmelonnt
+    } elonlselon {
+      dalelonnvironmelonnt
     }
 
-    vertex.saveAsCustomOutput(
-      "Write Vertex Records",
-      DAL.writeSnapshot[Vertex](
-        InteractionGraphAggFlockVertexSnapshotScalaDataset,
-        PathLayout.DailyPath(pipelineOptions.getOutputPath + "/aggregated_flock_vertex_daily"),
-        Instant.ofEpochMilli(dateInterval.getEndMillis),
-        DiskFormat.Parquet,
-        Environment.valueOf(dalWriteEnvironment),
-        writeOption =
-          WriteOptions(numOfShards = Some((pipelineOptions.getNumberOfShards / 64.0).ceil.toInt))
+    velonrtelonx.savelonAsCustomOutput(
+      "Writelon Velonrtelonx Reloncords",
+      DAL.writelonSnapshot[Velonrtelonx](
+        IntelonractionGraphAggFlockVelonrtelonxSnapshotScalaDataselont,
+        PathLayout.DailyPath(pipelonlinelonOptions.gelontOutputPath + "/aggrelongatelond_flock_velonrtelonx_daily"),
+        Instant.ofelonpochMilli(datelonIntelonrval.gelontelonndMillis),
+        DiskFormat.Parquelont,
+        elonnvironmelonnt.valuelonOf(dalWritelonelonnvironmelonnt),
+        writelonOption =
+          WritelonOptions(numOfShards = Somelon((pipelonlinelonOptions.gelontNumbelonrOfShards / 64.0).celonil.toInt))
       )
     )
 
-    edges.saveAsCustomOutput(
-      "Write Edge Records",
-      DAL.writeSnapshot[Edge](
-        InteractionGraphAggFlockEdgeSnapshotScalaDataset,
-        PathLayout.DailyPath(pipelineOptions.getOutputPath + "/aggregated_flock_edge_daily"),
-        Instant.ofEpochMilli(dateInterval.getEndMillis),
-        DiskFormat.Parquet,
-        Environment.valueOf(dalWriteEnvironment),
-        writeOption = WriteOptions(numOfShards = Some(pipelineOptions.getNumberOfShards))
+    elondgelons.savelonAsCustomOutput(
+      "Writelon elondgelon Reloncords",
+      DAL.writelonSnapshot[elondgelon](
+        IntelonractionGraphAggFlockelondgelonSnapshotScalaDataselont,
+        PathLayout.DailyPath(pipelonlinelonOptions.gelontOutputPath + "/aggrelongatelond_flock_elondgelon_daily"),
+        Instant.ofelonpochMilli(datelonIntelonrval.gelontelonndMillis),
+        DiskFormat.Parquelont,
+        elonnvironmelonnt.valuelonOf(dalWritelonelonnvironmelonnt),
+        writelonOption = WritelonOptions(numOfShards = Somelon(pipelonlinelonOptions.gelontNumbelonrOfShards))
       )
     )
 

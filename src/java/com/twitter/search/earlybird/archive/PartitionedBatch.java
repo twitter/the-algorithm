@@ -1,333 +1,333 @@
-package com.twitter.search.earlybird.archive;
+packagelon com.twittelonr.selonarch.elonarlybird.archivelon;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.FilelonNotFoundelonxcelonption;
+import java.io.IOelonxcelonption;
 import java.util.Comparator;
-import java.util.Date;
+import java.util.Datelon;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.concurrelonnt.TimelonUnit;
+import java.util.relongelonx.Matchelonr;
+import java.util.relongelonx.Pattelonrn;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
-import com.google.common.collect.ComparisonChain;
-import com.google.common.collect.Lists;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import com.googlelon.common.baselon.Function;
+import com.googlelon.common.baselon.Prelondicatelon;
+import com.googlelon.common.collelonct.ComparisonChain;
+import com.googlelon.common.collelonct.Lists;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.hadoop.fs.FileStatus;
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.fs.PathFilter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apachelon.commons.io.IOUtils;
+import org.apachelon.hadoop.fs.FilelonStatus;
+import org.apachelon.hadoop.fs.FilelonSystelonm;
+import org.apachelon.hadoop.fs.Path;
+import org.apachelon.hadoop.fs.PathFiltelonr;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.search.common.config.Config;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.partitioning.snowflakeparser.SnowflakeIdParser;
-import com.twitter.search.common.schema.earlybird.EarlybirdThriftDocumentUtil;
-import com.twitter.search.common.schema.thriftjava.ThriftIndexingEvent;
-import com.twitter.search.common.util.date.DateUtil;
-import com.twitter.search.common.util.io.EmptyRecordReader;
-import com.twitter.search.common.util.io.LzoThriftBlockFileReader;
-import com.twitter.search.common.util.io.MergingSortedRecordReader;
-import com.twitter.search.common.util.io.TransformingRecordReader;
-import com.twitter.search.common.util.io.recordreader.RecordReader;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.document.DocumentFactory;
-import com.twitter.search.earlybird.document.TweetDocument;
-import com.twitter.search.earlybird.partition.HdfsUtil;
+import com.twittelonr.selonarch.common.config.Config;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.common.partitioning.snowflakelonparselonr.SnowflakelonIdParselonr;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdThriftDocumelonntUtil;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftIndelonxingelonvelonnt;
+import com.twittelonr.selonarch.common.util.datelon.DatelonUtil;
+import com.twittelonr.selonarch.common.util.io.elonmptyReloncordRelonadelonr;
+import com.twittelonr.selonarch.common.util.io.LzoThriftBlockFilelonRelonadelonr;
+import com.twittelonr.selonarch.common.util.io.MelonrgingSortelondReloncordRelonadelonr;
+import com.twittelonr.selonarch.common.util.io.TransformingReloncordRelonadelonr;
+import com.twittelonr.selonarch.common.util.io.reloncordrelonadelonr.ReloncordRelonadelonr;
+import com.twittelonr.selonarch.elonarlybird.common.config.elonarlybirdConfig;
+import com.twittelonr.selonarch.elonarlybird.documelonnt.DocumelonntFactory;
+import com.twittelonr.selonarch.elonarlybird.documelonnt.TwelonelontDocumelonnt;
+import com.twittelonr.selonarch.elonarlybird.partition.HdfsUtil;
 
 /**
- * A batch of pre-processed tweets for a single hash partition from a particular day.
+ * A batch of prelon-procelonsselond twelonelonts for a singlelon hash partition from a particular day.
  */
-public class PartitionedBatch {
-  private static final Logger LOG = LoggerFactory.getLogger(PartitionedBatch.class);
-  private static final Date START_DATE_INCLUSIVE = DateUtil.toDate(2006, 03, 21);
-  private static final String STATUS_COUNT_FILE_PREFIX = "_status_count_";
-  private static final Pattern STATUS_COUNT_FILE_PATTERN =
-      Pattern.compile(STATUS_COUNT_FILE_PREFIX + "(\\d+)_minid_(\\d+)_maxid_(\\d+)");
-  private static final int MAXIMUM_OUT_OF_ORDER_TOLERANCE_HOURS =
-      EarlybirdConfig.getInt("archive_max_out_of_order_tolerance_hours", 12);
-  private static final int READER_INIT_IOEXCEPTION_RETRIES = 20;
-  private static final PathFilter LZO_DATA_FILES_FILTER = file -> file.getName().endsWith(".lzo");
-  private static final PathFilter TXT_DATA_FILES_FILTER = file -> file.getName().endsWith(".txt");
+public class PartitionelondBatch {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(PartitionelondBatch.class);
+  privatelon static final Datelon START_DATelon_INCLUSIVelon = DatelonUtil.toDatelon(2006, 03, 21);
+  privatelon static final String STATUS_COUNT_FILelon_PRelonFIX = "_status_count_";
+  privatelon static final Pattelonrn STATUS_COUNT_FILelon_PATTelonRN =
+      Pattelonrn.compilelon(STATUS_COUNT_FILelon_PRelonFIX + "(\\d+)_minid_(\\d+)_maxid_(\\d+)");
+  privatelon static final int MAXIMUM_OUT_OF_ORDelonR_TOLelonRANCelon_HOURS =
+      elonarlybirdConfig.gelontInt("archivelon_max_out_of_ordelonr_tolelonrancelon_hours", 12);
+  privatelon static final int RelonADelonR_INIT_IOelonXCelonPTION_RelonTRIelonS = 20;
+  privatelon static final PathFiltelonr LZO_DATA_FILelonS_FILTelonR = filelon -> filelon.gelontNamelon().elonndsWith(".lzo");
+  privatelon static final PathFiltelonr TXT_DATA_FILelonS_FILTelonR = filelon -> filelon.gelontNamelon().elonndsWith(".txt");
 
-  private static final Comparator<ThriftIndexingEvent> DESC_THRIFT_INDEXING_EVENT_COMPARATOR =
+  privatelon static final Comparator<ThriftIndelonxingelonvelonnt> DelonSC_THRIFT_INDelonXING_elonVelonNT_COMPARATOR =
       (o1, o2) -> ComparisonChain.start()
-          .compare(o2.getSortId(), o1.getSortId())
-          .compare(o2.getUid(), o1.getUid())
-          .result();
+          .comparelon(o2.gelontSortId(), o1.gelontSortId())
+          .comparelon(o2.gelontUid(), o1.gelontUid())
+          .relonsult();
 
-  // Number archive tweets skipped because they are too out-of-order.
-  private static final SearchCounter OUT_OF_ORDER_STATUSES_SKIPPED =
-      SearchCounter.export("out_of_order_archive_statuses_skipped");
+  // Numbelonr archivelon twelonelonts skippelond beloncauselon thelony arelon too out-of-ordelonr.
+  privatelon static final SelonarchCountelonr OUT_OF_ORDelonR_STATUSelonS_SKIPPelonD =
+      SelonarchCountelonr.elonxport("out_of_ordelonr_archivelon_statuselons_skippelond");
 
-  @VisibleForTesting
-  protected static final long MAXIMUM_OUT_OF_ORDER_TOLERANCE_MILLIS =
-      TimeUnit.HOURS.toMillis(MAXIMUM_OUT_OF_ORDER_TOLERANCE_HOURS);
+  @VisiblelonForTelonsting
+  protelonctelond static final long MAXIMUM_OUT_OF_ORDelonR_TOLelonRANCelon_MILLIS =
+      TimelonUnit.HOURS.toMillis(MAXIMUM_OUT_OF_ORDelonR_TOLelonRANCelon_HOURS);
 
-  private final Date date;
-  private final Path path;
-  private int statusCount;
-  private long minStatusID;
-  private long maxStatusID;
-  private final int hashPartitionID;
-  private boolean hasStatusCountFile;
-  private final int numHashPartitions;
+  privatelon final Datelon datelon;
+  privatelon final Path path;
+  privatelon int statusCount;
+  privatelon long minStatusID;
+  privatelon long maxStatusID;
+  privatelon final int hashPartitionID;
+  privatelon boolelonan hasStatusCountFilelon;
+  privatelon final int numHashPartitions;
 
-  @VisibleForTesting
-  public PartitionedBatch(
+  @VisiblelonForTelonsting
+  public PartitionelondBatch(
       Path path,
       int hashPartitionID,
       int numHashPartitions,
-      Date date) {
+      Datelon datelon) {
     this.path = path;
     this.hashPartitionID = hashPartitionID;
     this.numHashPartitions = numHashPartitions;
-    this.date = date;
+    this.datelon = datelon;
   }
 
   /**
-   * Loads all the information (tweet count, etc.) for this partition and day from HDFS.
+   * Loads all thelon information (twelonelont count, elontc.) for this partition and day from HDFS.
    */
-  public void load(FileSystem hdfs) throws IOException {
-    FileStatus[] dailyBatchFiles = null;
+  public void load(FilelonSystelonm hdfs) throws IOelonxcelonption {
+    FilelonStatus[] dailyBatchFilelons = null;
     try {
-      // listStatus() javadoc says it throws FileNotFoundException when path does not exist.
-      // However, the actual implementations return null or an empty array instead.
-      // We handle all 3 cases: null, empty array, or FileNotFoundException.
-      dailyBatchFiles = hdfs.listStatus(path);
-    } catch (FileNotFoundException e) {
-      // don't do anything here and the day will be handled as empty.
+      // listStatus() javadoc says it throws FilelonNotFoundelonxcelonption whelonn path doelons not elonxist.
+      // Howelonvelonr, thelon actual implelonmelonntations relonturn null or an elonmpty array instelonad.
+      // Welon handlelon all 3 caselons: null, elonmpty array, or FilelonNotFoundelonxcelonption.
+      dailyBatchFilelons = hdfs.listStatus(path);
+    } catch (FilelonNotFoundelonxcelonption elon) {
+      // don't do anything helonrelon and thelon day will belon handlelond as elonmpty.
     }
 
-    if (dailyBatchFiles != null && dailyBatchFiles.length > 0) {
-      for (FileStatus file : dailyBatchFiles) {
-        String fileName = file.getPath().getName();
-        if (fileName.equals(STATUS_COUNT_FILE_PREFIX)) {
-          // zero tweets in this partition - this can happen for early days in 2006
-          handleEmptyPartition();
-        } else {
-          Matcher matcher = STATUS_COUNT_FILE_PATTERN.matcher(fileName);
-          if (matcher.matches()) {
+    if (dailyBatchFilelons != null && dailyBatchFilelons.lelonngth > 0) {
+      for (FilelonStatus filelon : dailyBatchFilelons) {
+        String filelonNamelon = filelon.gelontPath().gelontNamelon();
+        if (filelonNamelon.elonquals(STATUS_COUNT_FILelon_PRelonFIX)) {
+          // zelonro twelonelonts in this partition - this can happelonn for elonarly days in 2006
+          handlelonelonmptyPartition();
+        } elonlselon {
+          Matchelonr matchelonr = STATUS_COUNT_FILelon_PATTelonRN.matchelonr(filelonNamelon);
+          if (matchelonr.matchelons()) {
             try {
-              statusCount = Integer.parseInt(matcher.group(1));
-              // Only adjustMinStatusId in production. For tests, this makes the tests harder to
-              // understand.
-              minStatusID = Config.environmentIsTest() ? Long.parseLong(matcher.group(2))
-                  : adjustMinStatusId(Long.parseLong(matcher.group(2)), date);
-              maxStatusID = Long.parseLong(matcher.group(3));
-              hasStatusCountFile = true;
-            } catch (NumberFormatException e) {
-              // invalid file - ignore
-              LOG.warn("Could not parse status count file name.", e);
+              statusCount = Intelongelonr.parselonInt(matchelonr.group(1));
+              // Only adjustMinStatusId in production. For telonsts, this makelons thelon telonsts hardelonr to
+              // undelonrstand.
+              minStatusID = Config.elonnvironmelonntIsTelonst() ? Long.parselonLong(matchelonr.group(2))
+                  : adjustMinStatusId(Long.parselonLong(matchelonr.group(2)), datelon);
+              maxStatusID = Long.parselonLong(matchelonr.group(3));
+              hasStatusCountFilelon = truelon;
+            } catch (NumbelonrFormatelonxcelonption elon) {
+              // invalid filelon - ignorelon
+              LOG.warn("Could not parselon status count filelon namelon.", elon);
             }
           }
         }
       }
-    } else {
-      // Partition folder does not exist. This case can happen for early days of twitter
-      // where some partitions are empty. Set us to having a status count file, the validity of
-      // the parent DailyStatusBatch will still be determined by whether there was a _SUCCESS file
-      // in the day root.
-      handleEmptyPartition();
+    } elonlselon {
+      // Partition foldelonr doelons not elonxist. This caselon can happelonn for elonarly days of twittelonr
+      // whelonrelon somelon partitions arelon elonmpty. Selont us to having a status count filelon, thelon validity of
+      // thelon parelonnt DailyStatusBatch will still belon delontelonrminelond by whelonthelonr thelonrelon was a _SUCCelonSS filelon
+      // in thelon day root.
+      handlelonelonmptyPartition();
 
-      if (date.after(getEarliestDenseDay())) {
-        LOG.error("Unexpected empty directory {} for {}", path, date);
+      if (datelon.aftelonr(gelontelonarlielonstDelonnselonDay())) {
+        LOG.elonrror("Unelonxpelonctelond elonmpty direlonctory {} for {}", path, datelon);
       }
     }
   }
 
-  private void handleEmptyPartition() {
+  privatelon void handlelonelonmptyPartition() {
     statusCount = 0;
-    minStatusID = DailyStatusBatch.EMPTY_BATCH_STATUS_ID;
-    maxStatusID = DailyStatusBatch.EMPTY_BATCH_STATUS_ID;
-    hasStatusCountFile = true;
+    minStatusID = DailyStatusBatch.elonMPTY_BATCH_STATUS_ID;
+    maxStatusID = DailyStatusBatch.elonMPTY_BATCH_STATUS_ID;
+    hasStatusCountFilelon = truelon;
   }
 
   /**
-   * Sometimes tweets are out-of-order (E.g. a tweet from Sep 2012 got into a
-   * batch in July 2013). See SEARCH-1750 for more details.
-   * This adjust the minStatusID if it is badly out-of-order.
+   * Somelontimelons twelonelonts arelon out-of-ordelonr (elon.g. a twelonelont from Selonp 2012 got into a
+   * batch in July 2013). Selonelon SelonARCH-1750 for morelon delontails.
+   * This adjust thelon minStatusID if it is badly out-of-ordelonr.
    */
-  @VisibleForTesting
-  protected static long adjustMinStatusId(long minStatusID, Date date) {
-    long dateTime = date.getTime();
-    // If the daily batch is for a day before we started using snow flake IDs. Never adjust.
-    if (!SnowflakeIdParser.isUsableSnowflakeTimestamp(dateTime)) {
-      return minStatusID;
+  @VisiblelonForTelonsting
+  protelonctelond static long adjustMinStatusId(long minStatusID, Datelon datelon) {
+    long datelonTimelon = datelon.gelontTimelon();
+    // If thelon daily batch is for a day belonforelon welon startelond using snow flakelon IDs. Nelonvelonr adjust.
+    if (!SnowflakelonIdParselonr.isUsablelonSnowflakelonTimelonstamp(datelonTimelon)) {
+      relonturn minStatusID;
     }
 
-    long earliestStartTime = dateTime - MAXIMUM_OUT_OF_ORDER_TOLERANCE_MILLIS;
-    long minStatusTime = SnowflakeIdParser.getTimestampFromTweetId(minStatusID);
-    if (minStatusTime < earliestStartTime) {
-      long newMinId =  SnowflakeIdParser.generateValidStatusId(earliestStartTime, 0);
-      LOG.info("Daily batch for " + date + " has badly out of order tweet: " + minStatusID
-          + ". The minStatusID for the day this batch is adjusted to " + newMinId);
-      return newMinId;
-    } else {
-      return minStatusID;
+    long elonarlielonstStartTimelon = datelonTimelon - MAXIMUM_OUT_OF_ORDelonR_TOLelonRANCelon_MILLIS;
+    long minStatusTimelon = SnowflakelonIdParselonr.gelontTimelonstampFromTwelonelontId(minStatusID);
+    if (minStatusTimelon < elonarlielonstStartTimelon) {
+      long nelonwMinId =  SnowflakelonIdParselonr.gelonnelonratelonValidStatusId(elonarlielonstStartTimelon, 0);
+      LOG.info("Daily batch for " + datelon + " has badly out of ordelonr twelonelont: " + minStatusID
+          + ". Thelon minStatusID for thelon day this batch is adjustelond to " + nelonwMinId);
+      relonturn nelonwMinId;
+    } elonlselon {
+      relonturn minStatusID;
     }
   }
 
   /**
-   * Returns a reader that reads tweets from the given directory.
+   * Relonturns a relonadelonr that relonads twelonelonts from thelon givelonn direlonctory.
    *
-   * @param archiveSegment Determines the timeslice ID of all read tweets.
-   * @param tweetsPath The path to the directory where the tweets for this day are stored.
-   * @param documentFactory The ThriftIndexingEvent to TweetDocument converter.
+   * @param archivelonSelongmelonnt Delontelonrminelons thelon timelonslicelon ID of all relonad twelonelonts.
+   * @param twelonelontsPath Thelon path to thelon direlonctory whelonrelon thelon twelonelonts for this day arelon storelond.
+   * @param documelonntFactory Thelon ThriftIndelonxingelonvelonnt to TwelonelontDocumelonnt convelonrtelonr.
    */
-  public RecordReader<TweetDocument> getTweetReaders(
-      ArchiveSegment archiveSegment,
-      Path tweetsPath,
-      DocumentFactory<ThriftIndexingEvent> documentFactory) throws IOException {
-    RecordReader<TweetDocument> tweetDocumentReader =
-        new TransformingRecordReader<>(
-            createTweetReader(tweetsPath), new Function<ThriftIndexingEvent, TweetDocument>() {
-          @Override
-          public TweetDocument apply(ThriftIndexingEvent event) {
-            return new TweetDocument(
-                event.getSortId(),
-                archiveSegment.getTimeSliceID(),
-                EarlybirdThriftDocumentUtil.getCreatedAtMs(event.getDocument()),
-                documentFactory.newDocument(event)
+  public ReloncordRelonadelonr<TwelonelontDocumelonnt> gelontTwelonelontRelonadelonrs(
+      ArchivelonSelongmelonnt archivelonSelongmelonnt,
+      Path twelonelontsPath,
+      DocumelonntFactory<ThriftIndelonxingelonvelonnt> documelonntFactory) throws IOelonxcelonption {
+    ReloncordRelonadelonr<TwelonelontDocumelonnt> twelonelontDocumelonntRelonadelonr =
+        nelonw TransformingReloncordRelonadelonr<>(
+            crelonatelonTwelonelontRelonadelonr(twelonelontsPath), nelonw Function<ThriftIndelonxingelonvelonnt, TwelonelontDocumelonnt>() {
+          @Ovelonrridelon
+          public TwelonelontDocumelonnt apply(ThriftIndelonxingelonvelonnt elonvelonnt) {
+            relonturn nelonw TwelonelontDocumelonnt(
+                elonvelonnt.gelontSortId(),
+                archivelonSelongmelonnt.gelontTimelonSlicelonID(),
+                elonarlybirdThriftDocumelonntUtil.gelontCrelonatelondAtMs(elonvelonnt.gelontDocumelonnt()),
+                documelonntFactory.nelonwDocumelonnt(elonvelonnt)
             );
           }
         });
 
-    tweetDocumentReader.setExhaustStream(true);
-    return tweetDocumentReader;
+    twelonelontDocumelonntRelonadelonr.selontelonxhaustStrelonam(truelon);
+    relonturn twelonelontDocumelonntRelonadelonr;
   }
 
-  private RecordReader<ThriftIndexingEvent> createTweetReader(Path tweetsPath) throws IOException {
-    if (date.before(START_DATE_INCLUSIVE)) {
-      return new EmptyRecordReader<>();
+  privatelon ReloncordRelonadelonr<ThriftIndelonxingelonvelonnt> crelonatelonTwelonelontRelonadelonr(Path twelonelontsPath) throws IOelonxcelonption {
+    if (datelon.belonforelon(START_DATelon_INCLUSIVelon)) {
+      relonturn nelonw elonmptyReloncordRelonadelonr<>();
     }
 
-    List<RecordReader<ThriftIndexingEvent>> readers = Lists.newArrayList();
-    FileSystem hdfs = HdfsUtil.getHdfsFileSystem();
+    List<ReloncordRelonadelonr<ThriftIndelonxingelonvelonnt>> relonadelonrs = Lists.nelonwArrayList();
+    FilelonSystelonm hdfs = HdfsUtil.gelontHdfsFilelonSystelonm();
     try {
-      Path dayPath = new Path(tweetsPath, ArchiveHDFSUtils.dateToPath(date, "/"));
+      Path dayPath = nelonw Path(twelonelontsPath, ArchivelonHDFSUtils.datelonToPath(datelon, "/"));
       Path partitionPath =
-          new Path(dayPath, String.format("p_%d_of_%d", hashPartitionID, numHashPartitions));
-      PathFilter pathFilter =
-          Config.environmentIsTest() ? TXT_DATA_FILES_FILTER : LZO_DATA_FILES_FILTER;
-      FileStatus[] files = hdfs.listStatus(partitionPath, pathFilter);
-      for (FileStatus fileStatus : files) {
-        String fileStatusPath = fileStatus.getPath().toString().replaceAll("file:/", "/");
-        RecordReader<ThriftIndexingEvent> reader = createRecordReaderWithRetries(fileStatusPath);
-        readers.add(reader);
+          nelonw Path(dayPath, String.format("p_%d_of_%d", hashPartitionID, numHashPartitions));
+      PathFiltelonr pathFiltelonr =
+          Config.elonnvironmelonntIsTelonst() ? TXT_DATA_FILelonS_FILTelonR : LZO_DATA_FILelonS_FILTelonR;
+      FilelonStatus[] filelons = hdfs.listStatus(partitionPath, pathFiltelonr);
+      for (FilelonStatus filelonStatus : filelons) {
+        String filelonStatusPath = filelonStatus.gelontPath().toString().relonplacelonAll("filelon:/", "/");
+        ReloncordRelonadelonr<ThriftIndelonxingelonvelonnt> relonadelonr = crelonatelonReloncordRelonadelonrWithRelontrielons(filelonStatusPath);
+        relonadelonrs.add(relonadelonr);
       }
     } finally {
-      IOUtils.closeQuietly(hdfs);
+      IOUtils.closelonQuielontly(hdfs);
     }
 
-    if (readers.isEmpty()) {
-      return new EmptyRecordReader<>();
+    if (relonadelonrs.iselonmpty()) {
+      relonturn nelonw elonmptyReloncordRelonadelonr<>();
     }
 
-    return new MergingSortedRecordReader<>(DESC_THRIFT_INDEXING_EVENT_COMPARATOR, readers);
+    relonturn nelonw MelonrgingSortelondReloncordRelonadelonr<>(DelonSC_THRIFT_INDelonXING_elonVelonNT_COMPARATOR, relonadelonrs);
   }
 
-  private RecordReader<ThriftIndexingEvent> createRecordReaderWithRetries(String filePath)
-      throws IOException {
-    Predicate<ThriftIndexingEvent> recordFilter = getRecordFilter();
-    int numTries = 0;
-    while (true) {
+  privatelon ReloncordRelonadelonr<ThriftIndelonxingelonvelonnt> crelonatelonReloncordRelonadelonrWithRelontrielons(String filelonPath)
+      throws IOelonxcelonption {
+    Prelondicatelon<ThriftIndelonxingelonvelonnt> reloncordFiltelonr = gelontReloncordFiltelonr();
+    int numTrielons = 0;
+    whilelon (truelon) {
       try {
-        ++numTries;
-        return new LzoThriftBlockFileReader<>(filePath, ThriftIndexingEvent.class, recordFilter);
-      } catch (IOException e) {
-        if (numTries < READER_INIT_IOEXCEPTION_RETRIES) {
-          LOG.warn("Failed to open LzoThriftBlockFileReader for " + filePath + ". Will retry.", e);
-        } else {
-          LOG.error("Failed to open LzoThriftBlockFileReader for " + filePath
-              + " after too many retries.", e);
-          throw e;
+        ++numTrielons;
+        relonturn nelonw LzoThriftBlockFilelonRelonadelonr<>(filelonPath, ThriftIndelonxingelonvelonnt.class, reloncordFiltelonr);
+      } catch (IOelonxcelonption elon) {
+        if (numTrielons < RelonADelonR_INIT_IOelonXCelonPTION_RelonTRIelonS) {
+          LOG.warn("Failelond to opelonn LzoThriftBlockFilelonRelonadelonr for " + filelonPath + ". Will relontry.", elon);
+        } elonlselon {
+          LOG.elonrror("Failelond to opelonn LzoThriftBlockFilelonRelonadelonr for " + filelonPath
+              + " aftelonr too many relontrielons.", elon);
+          throw elon;
         }
       }
     }
   }
 
-  private Predicate<ThriftIndexingEvent> getRecordFilter() {
-    return Config.environmentIsTest() ? null : input -> {
+  privatelon Prelondicatelon<ThriftIndelonxingelonvelonnt> gelontReloncordFiltelonr() {
+    relonturn Config.elonnvironmelonntIsTelonst() ? null : input -> {
       if (input == null) {
-        return false;
+        relonturn falselon;
       }
-      // We only guard against status IDs that are too small, because it is possible
-      // for a very old tweet to get into today's batch, but not possible for a very
-      // large ID (a future tweet ID that is not yet published) to get in today's
-      // batch, unless tweet ID generation messed up.
-      long statusId = input.getSortId();
-      boolean keep = statusId >= minStatusID;
-      if (!keep) {
-        LOG.debug("Out of order documentId: {} minStatusID: {} Date: {} Path: {}",
-            statusId, minStatusID, date, path);
-        OUT_OF_ORDER_STATUSES_SKIPPED.increment();
+      // Welon only guard against status IDs that arelon too small, beloncauselon it is possiblelon
+      // for a velonry old twelonelont to gelont into today's batch, but not possiblelon for a velonry
+      // largelon ID (a futurelon twelonelont ID that is not yelont publishelond) to gelont in today's
+      // batch, unlelonss twelonelont ID gelonnelonration melonsselond up.
+      long statusId = input.gelontSortId();
+      boolelonan kelonelonp = statusId >= minStatusID;
+      if (!kelonelonp) {
+        LOG.delonbug("Out of ordelonr documelonntId: {} minStatusID: {} Datelon: {} Path: {}",
+            statusId, minStatusID, datelon, path);
+        OUT_OF_ORDelonR_STATUSelonS_SKIPPelonD.increlonmelonnt();
       }
-      return keep;
+      relonturn kelonelonp;
     };
   }
 
   /**
-   * Returns the number of statuses in this batch
+   * Relonturns thelon numbelonr of statuselons in this batch
    */
-  public int getStatusCount() {
-    return statusCount;
+  public int gelontStatusCount() {
+    relonturn statusCount;
   }
 
   /**
-   * Was the _status_count file was found in this folder.
+   * Was thelon _status_count filelon was found in this foldelonr.
    */
-  public boolean hasStatusCount() {
-    return hasStatusCountFile;
+  public boolelonan hasStatusCount() {
+    relonturn hasStatusCountFilelon;
   }
 
-  public long getMinStatusID() {
-    return minStatusID;
+  public long gelontMinStatusID() {
+    relonturn minStatusID;
   }
 
-  public long getMaxStatusID() {
-    return maxStatusID;
+  public long gelontMaxStatusID() {
+    relonturn maxStatusID;
   }
 
-  public Date getDate() {
-    return date;
+  public Datelon gelontDatelon() {
+    relonturn datelon;
   }
 
-  public Path getPath() {
-    return path;
+  public Path gelontPath() {
+    relonturn path;
   }
 
   /**
-   * Check whether the partition is
-   * . empty and
-   * . it is disallowed (empty partition can only happen before 2010)
-   * (Empty partition means that the directory is missing when scan happens.)
+   * Chelonck whelonthelonr thelon partition is
+   * . elonmpty and
+   * . it is disallowelond (elonmpty partition can only happelonn belonforelon 2010)
+   * (elonmpty partition melonans that thelon direlonctory is missing whelonn scan happelonns.)
    *
-   * @return true if the partition has no documents and it is not allowed.
+   * @relonturn truelon if thelon partition has no documelonnts and it is not allowelond.
    */
-  public boolean isDisallowedEmptyPartition() {
-    return hasStatusCountFile
+  public boolelonan isDisallowelondelonmptyPartition() {
+    relonturn hasStatusCountFilelon
         && statusCount == 0
-        && minStatusID == DailyStatusBatch.EMPTY_BATCH_STATUS_ID
-        && maxStatusID == DailyStatusBatch.EMPTY_BATCH_STATUS_ID
-        && date.after(getEarliestDenseDay());
+        && minStatusID == DailyStatusBatch.elonMPTY_BATCH_STATUS_ID
+        && maxStatusID == DailyStatusBatch.elonMPTY_BATCH_STATUS_ID
+        && datelon.aftelonr(gelontelonarlielonstDelonnselonDay());
   }
 
-  @Override
+  @Ovelonrridelon
   public String toString() {
-    return "PartitionedBatch[hashPartitionId=" + hashPartitionID
+    relonturn "PartitionelondBatch[hashPartitionId=" + hashPartitionID
         + ",numHashPartitions=" + numHashPartitions
-        + ",date=" + date
+        + ",datelon=" + datelon
         + ",path=" + path
-        + ",hasStatusCountFile=" + hasStatusCountFile
+        + ",hasStatusCountFilelon=" + hasStatusCountFilelon
         + ",statusCount=" + statusCount + "]";
   }
 
-  private Date getEarliestDenseDay() {
-    return EarlybirdConfig.getDate("archive_search_earliest_dense_day");
+  privatelon Datelon gelontelonarlielonstDelonnselonDay() {
+    relonturn elonarlybirdConfig.gelontDatelon("archivelon_selonarch_elonarlielonst_delonnselon_day");
   }
 }

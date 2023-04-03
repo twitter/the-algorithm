@@ -1,66 +1,66 @@
-package com.twitter.home_mixer.functional_component.feature_hydrator
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator
 
-import com.twitter.home_mixer.model.HomeFeatures.CandidateSourceIdFeature
-import com.twitter.home_mixer.util.CandidatesUtil
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.RichDataRecord
-import com.twitter.ml.api.constant.SharedFeatures
-import com.twitter.ml.api.util.DataRecordConverters._
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure
-import com.twitter.product_mixer.core.feature.datarecord.DataRecordInAFeature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.CandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.prediction.features.common.TimelinesSharedFeatures
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.CandidatelonSourcelonIdFelonaturelon
+import com.twittelonr.homelon_mixelonr.util.CandidatelonsUtil
+import com.twittelonr.ml.api.DataReloncord
+import com.twittelonr.ml.api.RichDataReloncord
+import com.twittelonr.ml.api.constant.SharelondFelonaturelons
+import com.twittelonr.ml.api.util.DataReloncordConvelonrtelonrs._
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.TwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.FelonaturelonWithDelonfaultOnFailurelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.datareloncord.DataReloncordInAFelonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMapBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator.CandidatelonFelonaturelonHydrator
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.FelonaturelonHydratorIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.timelonlinelons.prelondiction.felonaturelons.common.TimelonlinelonsSharelondFelonaturelons
 import java.lang.{Long => JLong}
 
-object TweetMetaDataDataRecord
-    extends DataRecordInAFeature[TweetCandidate]
-    with FeatureWithDefaultOnFailure[TweetCandidate, DataRecord] {
-  override def defaultValue: DataRecord = new DataRecord()
+objelonct TwelonelontMelontaDataDataReloncord
+    elonxtelonnds DataReloncordInAFelonaturelon[TwelonelontCandidatelon]
+    with FelonaturelonWithDelonfaultOnFailurelon[TwelonelontCandidatelon, DataReloncord] {
+  ovelonrridelon delonf delonfaultValuelon: DataReloncord = nelonw DataReloncord()
 }
 
-object TweetMetaDataFeatureHydrator
-    extends CandidateFeatureHydrator[PipelineQuery, TweetCandidate] {
+objelonct TwelonelontMelontaDataFelonaturelonHydrator
+    elonxtelonnds CandidatelonFelonaturelonHydrator[PipelonlinelonQuelonry, TwelonelontCandidatelon] {
 
-  override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier("TweetMetaData")
+  ovelonrridelon val idelonntifielonr: FelonaturelonHydratorIdelonntifielonr = FelonaturelonHydratorIdelonntifielonr("TwelonelontMelontaData")
 
-  override def features: Set[Feature[_, _]] = Set(TweetMetaDataDataRecord)
+  ovelonrridelon delonf felonaturelons: Selont[Felonaturelon[_, _]] = Selont(TwelonelontMelontaDataDataReloncord)
 
-  override def apply(
-    query: PipelineQuery,
-    candidate: TweetCandidate,
-    existingFeatures: FeatureMap
-  ): Stitch[FeatureMap] = {
-    val richDataRecord = new RichDataRecord()
+  ovelonrridelon delonf apply(
+    quelonry: PipelonlinelonQuelonry,
+    candidatelon: TwelonelontCandidatelon,
+    elonxistingFelonaturelons: FelonaturelonMap
+  ): Stitch[FelonaturelonMap] = {
+    val richDataReloncord = nelonw RichDataReloncord()
 
-    setFeatures(richDataRecord, candidate, existingFeatures)
+    selontFelonaturelons(richDataReloncord, candidatelon, elonxistingFelonaturelons)
 
-    Stitch.value {
-      FeatureMapBuilder()
-        .add(TweetMetaDataDataRecord, richDataRecord.getRecord)
+    Stitch.valuelon {
+      FelonaturelonMapBuildelonr()
+        .add(TwelonelontMelontaDataDataReloncord, richDataReloncord.gelontReloncord)
         .build()
     }
   }
 
-  private def setFeatures(
-    richDataRecord: RichDataRecord,
-    candidate: TweetCandidate,
-    existingFeatures: FeatureMap
+  privatelon delonf selontFelonaturelons(
+    richDataReloncord: RichDataReloncord,
+    candidatelon: TwelonelontCandidatelon,
+    elonxistingFelonaturelons: FelonaturelonMap
   ): Unit = {
-    richDataRecord.setFeatureValue[JLong](SharedFeatures.TWEET_ID, candidate.id)
+    richDataReloncord.selontFelonaturelonValuelon[JLong](SharelondFelonaturelons.TWelonelonT_ID, candidatelon.id)
 
-    richDataRecord.setFeatureValueFromOption(
-      TimelinesSharedFeatures.ORIGINAL_AUTHOR_ID,
-      CandidatesUtil.getOriginalAuthorId(existingFeatures))
+    richDataReloncord.selontFelonaturelonValuelonFromOption(
+      TimelonlinelonsSharelondFelonaturelons.ORIGINAL_AUTHOR_ID,
+      CandidatelonsUtil.gelontOriginalAuthorId(elonxistingFelonaturelons))
 
-    richDataRecord.setFeatureValueFromOption(
-      TimelinesSharedFeatures.CANDIDATE_TWEET_SOURCE_ID,
-      existingFeatures.getOrElse(CandidateSourceIdFeature, None).map(_.value.toLong))
+    richDataReloncord.selontFelonaturelonValuelonFromOption(
+      TimelonlinelonsSharelondFelonaturelons.CANDIDATelon_TWelonelonT_SOURCelon_ID,
+      elonxistingFelonaturelons.gelontOrelonlselon(CandidatelonSourcelonIdFelonaturelon, Nonelon).map(_.valuelon.toLong))
   }
 }

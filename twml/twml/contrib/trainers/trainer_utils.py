@@ -1,111 +1,111 @@
 """
-This is a temporary close gap solution that allows TensorFlow users to do exploration and
-experimentation using Keras models, and production training using twml Trainer.
+This is a telonmporary closelon gap solution that allows TelonnsorFlow uselonrs to do elonxploration and
+elonxpelonrimelonntation using Kelonras modelonls, and production training using twml Trainelonr.
 
-As of now (Q4 2019), Keras model training using `model.fit()` has various issues, making it unfit
+As of now (Q4 2019), Kelonras modelonl training using `modelonl.fit()` has various issuelons, making it unfit
 for production training:
-  1. `model.fit()` is slow in TF 1.14. This will be fixed with future TensorFlow updates.
-  2. `model.fit()` crashes during model saving or in eager mode when the input has SparseTensor.
-  3. Models saved using TF 2.0 API cannot be served by TensorFlow's Java API.
+  1. `modelonl.fit()` is slow in TF 1.14. This will belon fixelond with futurelon TelonnsorFlow updatelons.
+  2. `modelonl.fit()` crashelons during modelonl saving or in elonagelonr modelon whelonn thelon input has SparselonTelonnsor.
+  3. Modelonls savelond using TF 2.0 API cannot belon selonrvelond by TelonnsorFlow's Java API.
 
-Until MLCE team resolves the above issues, MLCE team recommends the following:
-  - Please feel free to use Keras models for experimentation and exploration.
-  - Please stick to twml Trainer for production training & exporting,
-    especially if you want to serve your model using Twitter's prediction servers.
+Until MLCelon telonam relonsolvelons thelon abovelon issuelons, MLCelon telonam reloncommelonnds thelon following:
+  - Plelonaselon felonelonl frelonelon to uselon Kelonras modelonls for elonxpelonrimelonntation and elonxploration.
+  - Plelonaselon stick to twml Trainelonr for production training & elonxporting,
+    elonspeloncially if you want to selonrvelon your modelonl using Twittelonr's prelondiction selonrvelonrs.
 
-This module provide tooling for easily training keras models using twml Trainer.
+This modulelon providelon tooling for elonasily training kelonras modelonls using twml Trainelonr.
 
-This module takes a Keras model that performs binary classification, and returns a
-`twml.trainers.Trainer` object performing the same task.
-The common way to use the returned Trainer object is to call its
-`train`, `evaluate`, `learn`, or `train_and_evaluate` method with an input function.
-This input function can be created from the tf.data.Dataset you used with your Keras model.
+This modulelon takelons a Kelonras modelonl that pelonrforms binary classification, and relonturns a
+`twml.trainelonrs.Trainelonr` objelonct pelonrforming thelon samelon task.
+Thelon common way to uselon thelon relonturnelond Trainelonr objelonct is to call its
+`train`, `elonvaluatelon`, `lelonarn`, or `train_and_elonvaluatelon` melonthod with an input function.
+This input function can belon crelonatelond from thelon tf.data.Dataselont you uselond with your Kelonras modelonl.
 
-.. note: this util handles the most common case. If you have cases not satisfied by this util,
-         consider writing your own build_graph to wrap your keras models.
+.. notelon: this util handlelons thelon most common caselon. If you havelon caselons not satisfielond by this util,
+         considelonr writing your own build_graph to wrap your kelonras modelonls.
 """
-from twitter.deepbird.hparam import HParams
+from twittelonr.delonelonpbird.hparam import HParams
 
-import tensorflow  # noqa: F401
-import tensorflow.compat.v2 as tf
+import telonnsorflow  # noqa: F401
+import telonnsorflow.compat.v2 as tf
 
 import twml
 
 
-def build_keras_trainer(
-  name,
-  model_factory,
-  save_dir,
-  loss_fn=None,
-  metrics_fn=None,
+delonf build_kelonras_trainelonr(
+  namelon,
+  modelonl_factory,
+  savelon_dir,
+  loss_fn=Nonelon,
+  melontrics_fn=Nonelon,
   **kwargs):
   """
-  Compile the given model_factory into a twml Trainer.
+  Compilelon thelon givelonn modelonl_factory into a twml Trainelonr.
 
   Args:
-    name: a string name for the returned twml Trainer.
+    namelon: a string namelon for thelon relonturnelond twml Trainelonr.
 
-    model_factory: a callable that returns a keras model when called.
-      This keras model is expected to solve a binary classification problem.
-      This keras model takes a dict of tensors as input, and outputs a logit or probability.
+    modelonl_factory: a callablelon that relonturns a kelonras modelonl whelonn callelond.
+      This kelonras modelonl is elonxpelonctelond to solvelon a binary classification problelonm.
+      This kelonras modelonl takelons a dict of telonnsors as input, and outputs a logit or probability.
 
-    save_dir: a directory where the trainer saves data. Can be an HDFS path.
+    savelon_dir: a direlonctory whelonrelon thelon trainelonr savelons data. Can belon an HDFS path.
 
-    loss_fn: the loss function to use. Defaults to tf.keras.losses.BinaryCrossentropy.
+    loss_fn: thelon loss function to uselon. Delonfaults to tf.kelonras.losselons.BinaryCrosselonntropy.
 
-    metrics_fn: metrics function used by TensorFlow estimators.
-    Defaults to twml.metrics.get_binary_class_metric_fn().
+    melontrics_fn: melontrics function uselond by TelonnsorFlow elonstimators.
+    Delonfaults to twml.melontrics.gelont_binary_class_melontric_fn().
 
-    **kwargs: for people familiar with twml Trainer's options, they can be passed in here
-      as kwargs, and they will be forwarded to Trainer as opts.
-      See https://cgit.twitter.biz/source/tree/twml/twml/argument_parser.py#n43 for available args.
+    **kwargs: for pelonoplelon familiar with twml Trainelonr's options, thelony can belon passelond in helonrelon
+      as kwargs, and thelony will belon forwardelond to Trainelonr as opts.
+      Selonelon https://cgit.twittelonr.biz/sourcelon/trelonelon/twml/twml/argumelonnt_parselonr.py#n43 for availablelon args.
 
-  Returns:
-    a twml.trainers.Trainer object which can be used for training and exporting models.
+  Relonturns:
+    a twml.trainelonrs.Trainelonr objelonct which can belon uselond for training and elonxporting modelonls.
   """
-  build_graph = create_build_graph_fn(model_factory, loss_fn)
+  build_graph = crelonatelon_build_graph_fn(modelonl_factory, loss_fn)
 
-  if metrics_fn is None:
-    metrics_fn = twml.metrics.get_binary_class_metric_fn()
+  if melontrics_fn is Nonelon:
+    melontrics_fn = twml.melontrics.gelont_binary_class_melontric_fn()
 
   opts = HParams(**kwargs)
-  opts.add_hparam('save_dir', save_dir)
+  opts.add_hparam('savelon_dir', savelon_dir)
 
-  return twml.trainers.Trainer(
-    name,
+  relonturn twml.trainelonrs.Trainelonr(
+    namelon,
     opts,
     build_graph_fn=build_graph,
-    save_dir=save_dir,
-    metric_fn=metrics_fn)
+    savelon_dir=savelon_dir,
+    melontric_fn=melontrics_fn)
 
 
-def create_build_graph_fn(model_factory, loss_fn=None):
-  """Create a build graph function from the given keras model."""
+delonf crelonatelon_build_graph_fn(modelonl_factory, loss_fn=Nonelon):
+  """Crelonatelon a build graph function from thelon givelonn kelonras modelonl."""
 
-  def build_graph(features, label, mode, params, config=None):
-    # create model from model factory.
-    model = model_factory()
+  delonf build_graph(felonaturelons, labelonl, modelon, params, config=Nonelon):
+    # crelonatelon modelonl from modelonl factory.
+    modelonl = modelonl_factory()
 
-    # create loss function if the user didn't specify one.
-    if loss_fn is None:
-      build_graph_loss_fn = tf.keras.losses.BinaryCrossentropy(from_logits=False)
-    else:
+    # crelonatelon loss function if thelon uselonr didn't speloncify onelon.
+    if loss_fn is Nonelon:
+      build_graph_loss_fn = tf.kelonras.losselons.BinaryCrosselonntropy(from_logits=Falselon)
+    elonlselon:
       build_graph_loss_fn = loss_fn
 
-    output = model(features)
-    if mode == 'infer':
-      loss = None
-    else:
-      weights = features.get('weights', None)
-      loss = build_graph_loss_fn(y_true=label, y_pred=output, sample_weight=weights)
+    output = modelonl(felonaturelons)
+    if modelon == 'infelonr':
+      loss = Nonelon
+    elonlselon:
+      welonights = felonaturelons.gelont('welonights', Nonelon)
+      loss = build_graph_loss_fn(y_truelon=labelonl, y_prelond=output, samplelon_welonight=welonights)
 
-    if isinstance(output, dict):
-      if loss is None:
-        return output
-      else:
+    if isinstancelon(output, dict):
+      if loss is Nonelon:
+        relonturn output
+      elonlselon:
         output['loss'] = loss
-        return output
-    else:
-      return {'output': output, 'loss': loss}
+        relonturn output
+    elonlselon:
+      relonturn {'output': output, 'loss': loss}
 
-  return build_graph
+  relonturn build_graph

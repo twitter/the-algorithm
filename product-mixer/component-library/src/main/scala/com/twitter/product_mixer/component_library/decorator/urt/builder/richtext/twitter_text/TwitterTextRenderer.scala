@@ -1,390 +1,390 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.richtext.twitter_text
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.richtelonxt.twittelonr_telonxt
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.ReferenceObject
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichText
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextAlignment
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextEntity
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextFormat
-import scala.annotation.tailrec
-import scala.collection.mutable
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.richtelonxt.RelonfelonrelonncelonObjelonct
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.richtelonxt.RichTelonxt
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.richtelonxt.RichTelonxtAlignmelonnt
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.richtelonxt.RichTelonxtelonntity
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.richtelonxt.RichTelonxtFormat
+import scala.annotation.tailrelonc
+import scala.collelonction.mutablelon
 
-object TwitterTextRenderer {
+objelonct TwittelonrTelonxtRelonndelonrelonr {
 
   /**
-   * Creates a new [[TwitterTextRenderer]] instance.
-   * @param text      The initial text representation
-   * @param rtl       Defines whether this text is in an RTL language
-   * @param alignment Assigns the [[RichTextAlignment]] of the given text for display
-   * @return          A new [[TwitterTextRenderer]] instance
+   * Crelonatelons a nelonw [[TwittelonrTelonxtRelonndelonrelonr]] instancelon.
+   * @param telonxt      Thelon initial telonxt relonprelonselonntation
+   * @param rtl       Delonfinelons whelonthelonr this telonxt is in an RTL languagelon
+   * @param alignmelonnt Assigns thelon [[RichTelonxtAlignmelonnt]] of thelon givelonn telonxt for display
+   * @relonturn          A nelonw [[TwittelonrTelonxtRelonndelonrelonr]] instancelon
    */
-  def apply(
-    text: String,
-    rtl: Option[Boolean] = None,
-    alignment: Option[RichTextAlignment] = None
-  ): TwitterTextRenderer = {
-    TwitterTextRenderer(rtl, alignment).append(text)
+  delonf apply(
+    telonxt: String,
+    rtl: Option[Boolelonan] = Nonelon,
+    alignmelonnt: Option[RichTelonxtAlignmelonnt] = Nonelon
+  ): TwittelonrTelonxtRelonndelonrelonr = {
+    TwittelonrTelonxtRelonndelonrelonr(rtl, alignmelonnt).appelonnd(telonxt)
   }
 
   /**
-   * Creates a new [[TwitterTextRenderer]] instance from a product-mixer [[RichText]] object.
-   * Converts Unicode entity indexes into JVM String indexes.
-   * @param richText  The product-mixer [[RichText]] representation
-   * @return          A new [[TwitterTextRenderer]] instance
+   * Crelonatelons a nelonw [[TwittelonrTelonxtRelonndelonrelonr]] instancelon from a product-mixelonr [[RichTelonxt]] objelonct.
+   * Convelonrts Unicodelon elonntity indelonxelons into JVM String indelonxelons.
+   * @param richTelonxt  Thelon product-mixelonr [[RichTelonxt]] relonprelonselonntation
+   * @relonturn          A nelonw [[TwittelonrTelonxtRelonndelonrelonr]] instancelon
    */
-  def fromRichText(richText: RichText): TwitterTextRenderer = {
-    val builder = TwitterTextRenderer(richText.text, richText.rtl, richText.alignment)
-    richText.entities.foreach { e =>
-      val startIndex = richText.text.offsetByCodePoints(0, e.fromIndex)
-      val endIndex = richText.text.offsetByCodePoints(0, e.toIndex)
-      e.format.foreach { f =>
-        builder.setFormat(startIndex, endIndex, f)
+  delonf fromRichTelonxt(richTelonxt: RichTelonxt): TwittelonrTelonxtRelonndelonrelonr = {
+    val buildelonr = TwittelonrTelonxtRelonndelonrelonr(richTelonxt.telonxt, richTelonxt.rtl, richTelonxt.alignmelonnt)
+    richTelonxt.elonntitielons.forelonach { elon =>
+      val startIndelonx = richTelonxt.telonxt.offselontByCodelonPoints(0, elon.fromIndelonx)
+      val elonndIndelonx = richTelonxt.telonxt.offselontByCodelonPoints(0, elon.toIndelonx)
+      elon.format.forelonach { f =>
+        buildelonr.selontFormat(startIndelonx, elonndIndelonx, f)
       }
-      e.ref.foreach { r =>
-        builder.setRefObject(startIndex, endIndex, r)
+      elon.relonf.forelonach { r =>
+        buildelonr.selontRelonfObjelonct(startIndelonx, elonndIndelonx, r)
       }
     }
-    builder
+    buildelonr
   }
 
-  private def buildRichTextEntity(
-    text: String,
-    entity: TwitterTextRendererEntity[_]
-  ): RichTextEntity = {
-    val fromIndex = text.codePointCount(0, entity.startIndex)
-    val toIndex = text.codePointCount(0, entity.endIndex)
+  privatelon delonf buildRichTelonxtelonntity(
+    telonxt: String,
+    elonntity: TwittelonrTelonxtRelonndelonrelonrelonntity[_]
+  ): RichTelonxtelonntity = {
+    val fromIndelonx = telonxt.codelonPointCount(0, elonntity.startIndelonx)
+    val toIndelonx = telonxt.codelonPointCount(0, elonntity.elonndIndelonx)
 
-    entity.value match {
-      case format: RichTextFormat =>
-        RichTextEntity(fromIndex, toIndex, ref = None, format = Some(format))
-      case ref: ReferenceObject =>
-        RichTextEntity(fromIndex, toIndex, ref = Some(ref), format = None)
+    elonntity.valuelon match {
+      caselon format: RichTelonxtFormat =>
+        RichTelonxtelonntity(fromIndelonx, toIndelonx, relonf = Nonelon, format = Somelon(format))
+      caselon relonf: RelonfelonrelonncelonObjelonct =>
+        RichTelonxtelonntity(fromIndelonx, toIndelonx, relonf = Somelon(relonf), format = Nonelon)
     }
   }
 }
 
-case class TwitterTextRenderer(
-  rtl: Option[Boolean],
-  alignment: Option[RichTextAlignment],
+caselon class TwittelonrTelonxtRelonndelonrelonr(
+  rtl: Option[Boolelonan],
+  alignmelonnt: Option[RichTelonxtAlignmelonnt],
 ) {
-  private[this] val textBuilder = new mutable.StringBuilder()
+  privatelon[this] val telonxtBuildelonr = nelonw mutablelon.StringBuildelonr()
 
-  private[richtext] val formatBuffer =
-    mutable.ArrayBuffer[TwitterTextRendererEntity[RichTextFormat]]()
-  private[richtext] val refObjectBuffer =
-    mutable.ArrayBuffer[TwitterTextRendererEntity[ReferenceObject]]()
+  privatelon[richtelonxt] val formatBuffelonr =
+    mutablelon.ArrayBuffelonr[TwittelonrTelonxtRelonndelonrelonrelonntity[RichTelonxtFormat]]()
+  privatelon[richtelonxt] val relonfObjelonctBuffelonr =
+    mutablelon.ArrayBuffelonr[TwittelonrTelonxtRelonndelonrelonrelonntity[RelonfelonrelonncelonObjelonct]]()
 
   /**
-   * Appends a string with attached [[RichTextFormat]] and [[ReferenceObject]] information.
-   * @param string    The text to append to the end of the existing text
-   * @param format    The [[RichTextFormat]] assigned to the new text
-   * @param refObject The [[ReferenceObject]] assigned to the new text
-   * @return          this
+   * Appelonnds a string with attachelond [[RichTelonxtFormat]] and [[RelonfelonrelonncelonObjelonct]] information.
+   * @param string    Thelon telonxt to appelonnd to thelon elonnd of thelon elonxisting telonxt
+   * @param format    Thelon [[RichTelonxtFormat]] assignelond to thelon nelonw telonxt
+   * @param relonfObjelonct Thelon [[RelonfelonrelonncelonObjelonct]] assignelond to thelon nelonw telonxt
+   * @relonturn          this
    */
-  def append(
+  delonf appelonnd(
     string: String,
-    format: Option[RichTextFormat] = None,
-    refObject: Option[ReferenceObject] = None
-  ): TwitterTextRenderer = {
-    if (string.nonEmpty) {
-      val start = textBuilder.length
-      val end = start + string.length
-      format.foreach { f =>
-        formatBuffer.append(TwitterTextRendererEntity(start, end, f))
+    format: Option[RichTelonxtFormat] = Nonelon,
+    relonfObjelonct: Option[RelonfelonrelonncelonObjelonct] = Nonelon
+  ): TwittelonrTelonxtRelonndelonrelonr = {
+    if (string.nonelonmpty) {
+      val start = telonxtBuildelonr.lelonngth
+      val elonnd = start + string.lelonngth
+      format.forelonach { f =>
+        formatBuffelonr.appelonnd(TwittelonrTelonxtRelonndelonrelonrelonntity(start, elonnd, f))
       }
-      refObject.foreach { r =>
-        refObjectBuffer.append(TwitterTextRendererEntity(start, end, r))
+      relonfObjelonct.forelonach { r =>
+        relonfObjelonctBuffelonr.appelonnd(TwittelonrTelonxtRelonndelonrelonrelonntity(start, elonnd, r))
       }
-      textBuilder.append(string)
+      telonxtBuildelonr.appelonnd(string)
     }
     this
   }
 
   /**
-   * Builds a new [[RichText]] thrift instance with Unicode entity ranges.
+   * Builds a nelonw [[RichTelonxt]] thrift instancelon with Unicodelon elonntity rangelons.
    */
-  def build: RichText = {
-    val richTextString = this.text
-    val richTextEntities = this.entities
-      .map { e =>
-        TwitterTextRenderer.buildRichTextEntity(richTextString, e)
+  delonf build: RichTelonxt = {
+    val richTelonxtString = this.telonxt
+    val richTelonxtelonntitielons = this.elonntitielons
+      .map { elon =>
+        TwittelonrTelonxtRelonndelonrelonr.buildRichTelonxtelonntity(richTelonxtString, elon)
       }
 
-    RichText(
-      text = richTextString,
+    RichTelonxt(
+      telonxt = richTelonxtString,
       rtl = rtl,
-      alignment = alignment,
-      entities = richTextEntities.toList
+      alignmelonnt = alignmelonnt,
+      elonntitielons = richTelonxtelonntitielons.toList
     )
   }
 
   /**
-   * Modifies the TwitterTextRenderer with the provided [[TwitterTextRendererProcessor]]
+   * Modifielons thelon TwittelonrTelonxtRelonndelonrelonr with thelon providelond [[TwittelonrTelonxtRelonndelonrelonrProcelonssor]]
    */
-  def transform(twitterTextProcessor: TwitterTextRendererProcessor): TwitterTextRenderer = {
-    twitterTextProcessor.process(this)
+  delonf transform(twittelonrTelonxtProcelonssor: TwittelonrTelonxtRelonndelonrelonrProcelonssor): TwittelonrTelonxtRelonndelonrelonr = {
+    twittelonrTelonxtProcelonssor.procelonss(this)
   }
 
   /**
-   * Builds and returns a sorted list of [[TwitterTextRendererEntity]] with JVM String index entity ranges.
+   * Builds and relonturns a sortelond list of [[TwittelonrTelonxtRelonndelonrelonrelonntity]] with JVM String indelonx elonntity rangelons.
    */
-  def entities: Seq[TwitterTextRendererEntity[_]] = {
-    buildEntities(formatBuffer.toList, refObjectBuffer.toList)
+  delonf elonntitielons: Selonq[TwittelonrTelonxtRelonndelonrelonrelonntity[_]] = {
+    buildelonntitielons(formatBuffelonr.toList, relonfObjelonctBuffelonr.toList)
   }
 
   /**
-   * Assigns a [[RichTextFormat]] to the given range while keeping existing formatting information.
-   * New formatting will only be assigned to unformatted text ranges.
-   * @param start  Start index to apply formatting (inclusive)
-   * @param end    End index to apply formatting (exclusive)
-   * @param format The format to assign
-   * @return       this
+   * Assigns a [[RichTelonxtFormat]] to thelon givelonn rangelon whilelon kelonelonping elonxisting formatting information.
+   * Nelonw formatting will only belon assignelond to unformattelond telonxt rangelons.
+   * @param start  Start indelonx to apply formatting (inclusivelon)
+   * @param elonnd    elonnd indelonx to apply formatting (elonxclusivelon)
+   * @param format Thelon format to assign
+   * @relonturn       this
    */
-  def mergeFormat(start: Int, end: Int, format: RichTextFormat): TwitterTextRenderer = {
-    validateRange(start, end)
-    var injectionIndex: Option[Int] = None
-    var entity = TwitterTextRendererEntity(start, end, format)
+  delonf melonrgelonFormat(start: Int, elonnd: Int, format: RichTelonxtFormat): TwittelonrTelonxtRelonndelonrelonr = {
+    validatelonRangelon(start, elonnd)
+    var injelonctionIndelonx: Option[Int] = Nonelon
+    var elonntity = TwittelonrTelonxtRelonndelonrelonrelonntity(start, elonnd, format)
 
-    val buffer = mutable.ArrayBuffer[TwitterTextRendererEntity[RichTextFormat]]()
-    val iterator = formatBuffer.zipWithIndex.reverseIterator
+    val buffelonr = mutablelon.ArrayBuffelonr[TwittelonrTelonxtRelonndelonrelonrelonntity[RichTelonxtFormat]]()
+    val itelonrator = formatBuffelonr.zipWithIndelonx.relonvelonrselonItelonrator
 
-    while (iterator.hasNext && injectionIndex.isEmpty) {
-      iterator.next match {
-        case (e, i) if e.startIndex >= end =>
-          buffer.append(e)
+    whilelon (itelonrator.hasNelonxt && injelonctionIndelonx.iselonmpty) {
+      itelonrator.nelonxt match {
+        caselon (elon, i) if elon.startIndelonx >= elonnd =>
+          buffelonr.appelonnd(elon)
 
-        case (e, i) if e.enclosedIn(entity.startIndex, entity.endIndex) =>
-          val endEntity = entity.copy(startIndex = e.endIndex)
-          if (endEntity.nonEmpty) { buffer.append(endEntity) }
-          buffer.append(e)
-          entity = entity.copy(endIndex = e.startIndex)
+        caselon (elon, i) if elon.elonncloselondIn(elonntity.startIndelonx, elonntity.elonndIndelonx) =>
+          val elonndelonntity = elonntity.copy(startIndelonx = elon.elonndIndelonx)
+          if (elonndelonntity.nonelonmpty) { buffelonr.appelonnd(elonndelonntity) }
+          buffelonr.appelonnd(elon)
+          elonntity = elonntity.copy(elonndIndelonx = elon.startIndelonx)
 
-        case (e, i) if e.encloses(entity.startIndex, entity.endIndex) =>
-          buffer.append(e.copy(startIndex = entity.endIndex))
-          buffer.append(e.copy(endIndex = entity.startIndex))
-          injectionIndex = Some(i + 1)
+        caselon (elon, i) if elon.elonncloselons(elonntity.startIndelonx, elonntity.elonndIndelonx) =>
+          buffelonr.appelonnd(elon.copy(startIndelonx = elonntity.elonndIndelonx))
+          buffelonr.appelonnd(elon.copy(elonndIndelonx = elonntity.startIndelonx))
+          injelonctionIndelonx = Somelon(i + 1)
 
-        case (e, i) if e.startsBetween(entity.startIndex, entity.endIndex) =>
-          buffer.append(e)
-          entity = entity.copy(endIndex = e.startIndex)
+        caselon (elon, i) if elon.startsBelontwelonelonn(elonntity.startIndelonx, elonntity.elonndIndelonx) =>
+          buffelonr.appelonnd(elon)
+          elonntity = elonntity.copy(elonndIndelonx = elon.startIndelonx)
 
-        case (e, i) if e.endsBetween(entity.startIndex, entity.endIndex) =>
-          buffer.append(e)
-          entity = entity.copy(startIndex = e.endIndex)
-          injectionIndex = Some(i + 1)
+        caselon (elon, i) if elon.elonndsBelontwelonelonn(elonntity.startIndelonx, elonntity.elonndIndelonx) =>
+          buffelonr.appelonnd(elon)
+          elonntity = elonntity.copy(startIndelonx = elon.elonndIndelonx)
+          injelonctionIndelonx = Somelon(i + 1)
 
-        case (e, i) if e.endIndex <= entity.startIndex =>
-          buffer.append(e)
-          injectionIndex = Some(i + 1)
+        caselon (elon, i) if elon.elonndIndelonx <= elonntity.startIndelonx =>
+          buffelonr.appelonnd(elon)
+          injelonctionIndelonx = Somelon(i + 1)
 
-        case _ => // do nothing
+        caselon _ => // do nothing
       }
     }
 
-    val index = injectionIndex.map(_ - 1).getOrElse(0)
-    formatBuffer.remove(index, formatBuffer.length - index)
-    formatBuffer.appendAll(buffer.reverse)
+    val indelonx = injelonctionIndelonx.map(_ - 1).gelontOrelonlselon(0)
+    formatBuffelonr.relonmovelon(indelonx, formatBuffelonr.lelonngth - indelonx)
+    formatBuffelonr.appelonndAll(buffelonr.relonvelonrselon)
 
-    if (entity.nonEmpty) {
-      formatBuffer.insert(injectionIndex.getOrElse(0), entity)
+    if (elonntity.nonelonmpty) {
+      formatBuffelonr.inselonrt(injelonctionIndelonx.gelontOrelonlselon(0), elonntity)
     }
 
     this
   }
 
   /**
-   * Removes text, formatting, and refObject information from the given range.
-   * @param start  Start index to apply formatting (inclusive)
-   * @param end    End index to apply formatting (exclusive)
-   * @return       this
+   * Relonmovelons telonxt, formatting, and relonfObjelonct information from thelon givelonn rangelon.
+   * @param start  Start indelonx to apply formatting (inclusivelon)
+   * @param elonnd    elonnd indelonx to apply formatting (elonxclusivelon)
+   * @relonturn       this
    */
-  def remove(start: Int, end: Int): TwitterTextRenderer = replace(start, end, "")
+  delonf relonmovelon(start: Int, elonnd: Int): TwittelonrTelonxtRelonndelonrelonr = relonplacelon(start, elonnd, "")
 
   /**
-   * Replaces text, formatting, and refObject information in the given range.
-   * @param start     Start index to apply formatting (inclusive)
-   * @param end       End index to apply formatting (exclusive)
-   * @param string    The new text to insert
-   * @param format    The [[RichTextFormat]] assigned to the new text
-   * @param refObject The [[ReferenceObject]] assigned to the new text
-   * @return          this
+   * Relonplacelons telonxt, formatting, and relonfObjelonct information in thelon givelonn rangelon.
+   * @param start     Start indelonx to apply formatting (inclusivelon)
+   * @param elonnd       elonnd indelonx to apply formatting (elonxclusivelon)
+   * @param string    Thelon nelonw telonxt to inselonrt
+   * @param format    Thelon [[RichTelonxtFormat]] assignelond to thelon nelonw telonxt
+   * @param relonfObjelonct Thelon [[RelonfelonrelonncelonObjelonct]] assignelond to thelon nelonw telonxt
+   * @relonturn          this
    */
-  def replace(
+  delonf relonplacelon(
     start: Int,
-    end: Int,
+    elonnd: Int,
     string: String,
-    format: Option[RichTextFormat] = None,
-    refObject: Option[ReferenceObject] = None
-  ): TwitterTextRenderer = {
-    validateRange(start, end)
+    format: Option[RichTelonxtFormat] = Nonelon,
+    relonfObjelonct: Option[RelonfelonrelonncelonObjelonct] = Nonelon
+  ): TwittelonrTelonxtRelonndelonrelonr = {
+    validatelonRangelon(start, elonnd)
 
-    val newEnd = start + string.length
-    val formatInjectIndex = removeAndOffsetFormats(start, end, string.length)
-    val refObjectInjectIndex = removeAndOffsetRefObjects(start, end, string.length)
-    format.foreach { f =>
-      formatBuffer.insert(formatInjectIndex, TwitterTextRendererEntity(start, newEnd, f))
+    val nelonwelonnd = start + string.lelonngth
+    val formatInjelonctIndelonx = relonmovelonAndOffselontFormats(start, elonnd, string.lelonngth)
+    val relonfObjelonctInjelonctIndelonx = relonmovelonAndOffselontRelonfObjeloncts(start, elonnd, string.lelonngth)
+    format.forelonach { f =>
+      formatBuffelonr.inselonrt(formatInjelonctIndelonx, TwittelonrTelonxtRelonndelonrelonrelonntity(start, nelonwelonnd, f))
     }
-    refObject.foreach { r =>
-      refObjectBuffer.insert(refObjectInjectIndex, TwitterTextRendererEntity(start, newEnd, r))
+    relonfObjelonct.forelonach { r =>
+      relonfObjelonctBuffelonr.inselonrt(relonfObjelonctInjelonctIndelonx, TwittelonrTelonxtRelonndelonrelonrelonntity(start, nelonwelonnd, r))
     }
-    textBuilder.replace(start, end, string)
+    telonxtBuildelonr.relonplacelon(start, elonnd, string)
 
     this
   }
 
   /**
-   * Assigns a [[RichTextFormat]] to the given range. Trims existing format ranges that overlap the
-   * new format range. Removes format ranges that fall within the new range.
-   * @param start  Start index to apply formatting (inclusive)
-   * @param end    End index to apply formatting (exclusive)
-   * @param format The format to assign
-   * @return       this
+   * Assigns a [[RichTelonxtFormat]] to thelon givelonn rangelon. Trims elonxisting format rangelons that ovelonrlap thelon
+   * nelonw format rangelon. Relonmovelons format rangelons that fall within thelon nelonw rangelon.
+   * @param start  Start indelonx to apply formatting (inclusivelon)
+   * @param elonnd    elonnd indelonx to apply formatting (elonxclusivelon)
+   * @param format Thelon format to assign
+   * @relonturn       this
    */
-  def setFormat(start: Int, end: Int, format: RichTextFormat): TwitterTextRenderer = {
-    validateRange(start, end)
-    val bufferIndex = removeAndOffsetFormats(start, end, end - start)
-    formatBuffer.insert(bufferIndex, TwitterTextRendererEntity(start, end, format))
+  delonf selontFormat(start: Int, elonnd: Int, format: RichTelonxtFormat): TwittelonrTelonxtRelonndelonrelonr = {
+    validatelonRangelon(start, elonnd)
+    val buffelonrIndelonx = relonmovelonAndOffselontFormats(start, elonnd, elonnd - start)
+    formatBuffelonr.inselonrt(buffelonrIndelonx, TwittelonrTelonxtRelonndelonrelonrelonntity(start, elonnd, format))
 
     this
   }
 
-  private[this] def removeAndOffsetFormats(start: Int, end: Int, newSize: Int): Int = {
-    val newEnd = start + newSize
-    val offset = newEnd - end
-    var injectionIndex: Option[Int] = None
+  privatelon[this] delonf relonmovelonAndOffselontFormats(start: Int, elonnd: Int, nelonwSizelon: Int): Int = {
+    val nelonwelonnd = start + nelonwSizelon
+    val offselont = nelonwelonnd - elonnd
+    var injelonctionIndelonx: Option[Int] = Nonelon
 
-    val buffer = mutable.ArrayBuffer[TwitterTextRendererEntity[RichTextFormat]]()
-    val iterator = formatBuffer.zipWithIndex.reverseIterator
+    val buffelonr = mutablelon.ArrayBuffelonr[TwittelonrTelonxtRelonndelonrelonrelonntity[RichTelonxtFormat]]()
+    val itelonrator = formatBuffelonr.zipWithIndelonx.relonvelonrselonItelonrator
 
-    while (iterator.hasNext && injectionIndex.isEmpty) {
-      iterator.next match {
-        case (e, i) if e.startIndex >= end =>
-          buffer.append(e.offset(offset))
-        case (e, i) if e.encloses(start, end) =>
-          buffer.append(e.copy(startIndex = newEnd, endIndex = e.endIndex + offset))
-          buffer.append(e.copy(endIndex = e.endIndex + offset))
-          injectionIndex = Some(i + 1)
-        case (e, i) if e.endsBetween(start, end) =>
-          buffer.append(e.copy(endIndex = start))
-          injectionIndex = Some(i + 1)
-        case (e, i) if e.startsBetween(start, end) =>
-          buffer.append(e.copy(startIndex = newEnd, endIndex = e.endIndex + offset))
-        case (e, i) if e.endIndex <= start =>
-          buffer.append(e)
-          injectionIndex = Some(i + 1)
-        case _ => // do nothing
+    whilelon (itelonrator.hasNelonxt && injelonctionIndelonx.iselonmpty) {
+      itelonrator.nelonxt match {
+        caselon (elon, i) if elon.startIndelonx >= elonnd =>
+          buffelonr.appelonnd(elon.offselont(offselont))
+        caselon (elon, i) if elon.elonncloselons(start, elonnd) =>
+          buffelonr.appelonnd(elon.copy(startIndelonx = nelonwelonnd, elonndIndelonx = elon.elonndIndelonx + offselont))
+          buffelonr.appelonnd(elon.copy(elonndIndelonx = elon.elonndIndelonx + offselont))
+          injelonctionIndelonx = Somelon(i + 1)
+        caselon (elon, i) if elon.elonndsBelontwelonelonn(start, elonnd) =>
+          buffelonr.appelonnd(elon.copy(elonndIndelonx = start))
+          injelonctionIndelonx = Somelon(i + 1)
+        caselon (elon, i) if elon.startsBelontwelonelonn(start, elonnd) =>
+          buffelonr.appelonnd(elon.copy(startIndelonx = nelonwelonnd, elonndIndelonx = elon.elonndIndelonx + offselont))
+        caselon (elon, i) if elon.elonndIndelonx <= start =>
+          buffelonr.appelonnd(elon)
+          injelonctionIndelonx = Somelon(i + 1)
+        caselon _ => // do nothing
       }
     }
-    val index = injectionIndex.map(_ - 1).getOrElse(0)
-    formatBuffer.remove(index, formatBuffer.length - index)
-    formatBuffer.appendAll(buffer.reverse)
+    val indelonx = injelonctionIndelonx.map(_ - 1).gelontOrelonlselon(0)
+    formatBuffelonr.relonmovelon(indelonx, formatBuffelonr.lelonngth - indelonx)
+    formatBuffelonr.appelonndAll(buffelonr.relonvelonrselon)
 
-    injectionIndex.getOrElse(0)
+    injelonctionIndelonx.gelontOrelonlselon(0)
   }
 
-  private[this] def validateRange(start: Int, end: Int): Unit = {
-    require(
-      start >= 0 && start < textBuilder.length && end > start && end <= textBuilder.length,
-      s"The start ($start) and end ($end) indexes must be within the text range (0..${textBuilder.length})"
+  privatelon[this] delonf validatelonRangelon(start: Int, elonnd: Int): Unit = {
+    relonquirelon(
+      start >= 0 && start < telonxtBuildelonr.lelonngth && elonnd > start && elonnd <= telonxtBuildelonr.lelonngth,
+      s"Thelon start ($start) and elonnd ($elonnd) indelonxelons must belon within thelon telonxt rangelon (0..${telonxtBuildelonr.lelonngth})"
     )
   }
 
   /**
-   * Assigns a [[ReferenceObject]] to the given range. Since it makes little sense to trim object
-   * ranges, existing intersecting or overlapping ranges are removed entirely.
-   * @param start  Start index to apply formatting (inclusive)
-   * @param end       End index to apply formatting (exclusive)
-   * @param refObject The [[ReferenceObject]] to assign
-   * @return          this
+   * Assigns a [[RelonfelonrelonncelonObjelonct]] to thelon givelonn rangelon. Sincelon it makelons littlelon selonnselon to trim objelonct
+   * rangelons, elonxisting intelonrseloncting or ovelonrlapping rangelons arelon relonmovelond elonntirelonly.
+   * @param start  Start indelonx to apply formatting (inclusivelon)
+   * @param elonnd       elonnd indelonx to apply formatting (elonxclusivelon)
+   * @param relonfObjelonct Thelon [[RelonfelonrelonncelonObjelonct]] to assign
+   * @relonturn          this
    */
-  def setRefObject(start: Int, end: Int, refObject: ReferenceObject): TwitterTextRenderer = {
-    validateRange(start, end)
-    val bufferIndex = removeAndOffsetRefObjects(start, end, end - start)
-    refObjectBuffer.insert(bufferIndex, TwitterTextRendererEntity(start, end, refObject))
+  delonf selontRelonfObjelonct(start: Int, elonnd: Int, relonfObjelonct: RelonfelonrelonncelonObjelonct): TwittelonrTelonxtRelonndelonrelonr = {
+    validatelonRangelon(start, elonnd)
+    val buffelonrIndelonx = relonmovelonAndOffselontRelonfObjeloncts(start, elonnd, elonnd - start)
+    relonfObjelonctBuffelonr.inselonrt(buffelonrIndelonx, TwittelonrTelonxtRelonndelonrelonrelonntity(start, elonnd, relonfObjelonct))
 
     this
   }
 
-  private[this] def removeAndOffsetRefObjects(start: Int, end: Int, newSize: Int): Int = {
-    val newEnd = start + newSize
-    val offset = newEnd - end
-    var injectionIndex: Option[Int] = None
+  privatelon[this] delonf relonmovelonAndOffselontRelonfObjeloncts(start: Int, elonnd: Int, nelonwSizelon: Int): Int = {
+    val nelonwelonnd = start + nelonwSizelon
+    val offselont = nelonwelonnd - elonnd
+    var injelonctionIndelonx: Option[Int] = Nonelon
 
-    val buffer = mutable.ArrayBuffer[TwitterTextRendererEntity[ReferenceObject]]()
-    val iterator = refObjectBuffer.zipWithIndex.reverseIterator
+    val buffelonr = mutablelon.ArrayBuffelonr[TwittelonrTelonxtRelonndelonrelonrelonntity[RelonfelonrelonncelonObjelonct]]()
+    val itelonrator = relonfObjelonctBuffelonr.zipWithIndelonx.relonvelonrselonItelonrator
 
-    while (iterator.hasNext && injectionIndex.isEmpty) {
-      iterator.next match {
-        case (e, i) if e.startIndex >= end => buffer.append(e.offset(offset))
-        case (e, i) if e.endIndex <= start => injectionIndex = Some(i + 1)
-        case _ => // do nothing
+    whilelon (itelonrator.hasNelonxt && injelonctionIndelonx.iselonmpty) {
+      itelonrator.nelonxt match {
+        caselon (elon, i) if elon.startIndelonx >= elonnd => buffelonr.appelonnd(elon.offselont(offselont))
+        caselon (elon, i) if elon.elonndIndelonx <= start => injelonctionIndelonx = Somelon(i + 1)
+        caselon _ => // do nothing
       }
     }
-    val index = injectionIndex.getOrElse(0)
-    refObjectBuffer.remove(index, refObjectBuffer.length - index)
-    refObjectBuffer.appendAll(buffer.reverse)
+    val indelonx = injelonctionIndelonx.gelontOrelonlselon(0)
+    relonfObjelonctBuffelonr.relonmovelon(indelonx, relonfObjelonctBuffelonr.lelonngth - indelonx)
+    relonfObjelonctBuffelonr.appelonndAll(buffelonr.relonvelonrselon)
 
-    index
+    indelonx
   }
 
   /**
-   * Builds and returns the full TwitterTextRenderer text with any changes applied to the builder instance.
+   * Builds and relonturns thelon full TwittelonrTelonxtRelonndelonrelonr telonxt with any changelons applielond to thelon buildelonr instancelon.
    */
-  def text: String = {
-    textBuilder.mkString
+  delonf telonxt: String = {
+    telonxtBuildelonr.mkString
   }
 
-  @tailrec
-  private def buildEntities(
-    formats: List[TwitterTextRendererEntity[RichTextFormat]],
-    refs: List[TwitterTextRendererEntity[ReferenceObject]],
-    acc: List[TwitterTextRendererEntity[_]] = List()
-  ): Seq[TwitterTextRendererEntity[_]] = {
-    (formats, refs) match {
-      case (Nil, Nil) => acc
-      case (remainingFormats, Nil) => acc ++ remainingFormats
-      case (Nil, remainingRefs) => acc ++ remainingRefs
+  @tailrelonc
+  privatelon delonf buildelonntitielons(
+    formats: List[TwittelonrTelonxtRelonndelonrelonrelonntity[RichTelonxtFormat]],
+    relonfs: List[TwittelonrTelonxtRelonndelonrelonrelonntity[RelonfelonrelonncelonObjelonct]],
+    acc: List[TwittelonrTelonxtRelonndelonrelonrelonntity[_]] = List()
+  ): Selonq[TwittelonrTelonxtRelonndelonrelonrelonntity[_]] = {
+    (formats, relonfs) match {
+      caselon (Nil, Nil) => acc
+      caselon (relonmainingFormats, Nil) => acc ++ relonmainingFormats
+      caselon (Nil, relonmainingRelonfs) => acc ++ relonmainingRelonfs
 
-      case (format +: remainingFormats, ref +: remainingRefs)
-          if format.startIndex < ref.startIndex || (format.startIndex == ref.startIndex && format.endIndex < ref.endIndex) =>
-        buildEntities(remainingFormats, refs, acc :+ format)
+      caselon (format +: relonmainingFormats, relonf +: relonmainingRelonfs)
+          if format.startIndelonx < relonf.startIndelonx || (format.startIndelonx == relonf.startIndelonx && format.elonndIndelonx < relonf.elonndIndelonx) =>
+        buildelonntitielons(relonmainingFormats, relonfs, acc :+ format)
 
-      case (format +: remainingFormats, ref +: remainingRefs)
-          if format.startIndex == ref.startIndex && format.endIndex == ref.endIndex =>
-        buildEntities(remainingFormats, remainingRefs, acc :+ format :+ ref)
+      caselon (format +: relonmainingFormats, relonf +: relonmainingRelonfs)
+          if format.startIndelonx == relonf.startIndelonx && format.elonndIndelonx == relonf.elonndIndelonx =>
+        buildelonntitielons(relonmainingFormats, relonmainingRelonfs, acc :+ format :+ relonf)
 
-      case (_, ref +: remainingRefs) =>
-        buildEntities(formats, remainingRefs, acc :+ ref)
+      caselon (_, relonf +: relonmainingRelonfs) =>
+        buildelonntitielons(formats, relonmainingRelonfs, acc :+ relonf)
     }
   }
 }
 
-case class TwitterTextRendererEntity[+T] private[richtext] (
-  startIndex: Int,
-  endIndex: Int,
-  value: T) {
-  require(startIndex <= endIndex, "startIndex must be <= than endIndex")
+caselon class TwittelonrTelonxtRelonndelonrelonrelonntity[+T] privatelon[richtelonxt] (
+  startIndelonx: Int,
+  elonndIndelonx: Int,
+  valuelon: T) {
+  relonquirelon(startIndelonx <= elonndIndelonx, "startIndelonx must belon <= than elonndIndelonx")
 
-  def nonEmpty: Boolean = !isEmpty
+  delonf nonelonmpty: Boolelonan = !iselonmpty
 
-  def isEmpty: Boolean = startIndex == endIndex
+  delonf iselonmpty: Boolelonan = startIndelonx == elonndIndelonx
 
-  private[richtext] def enclosedIn(start: Int, end: Int): Boolean = {
-    start <= startIndex && endIndex <= end
+  privatelon[richtelonxt] delonf elonncloselondIn(start: Int, elonnd: Int): Boolelonan = {
+    start <= startIndelonx && elonndIndelonx <= elonnd
   }
 
-  private[richtext] def encloses(start: Int, end: Int): Boolean = {
-    startIndex < start && end < endIndex
+  privatelon[richtelonxt] delonf elonncloselons(start: Int, elonnd: Int): Boolelonan = {
+    startIndelonx < start && elonnd < elonndIndelonx
   }
 
-  private[richtext] def endsBetween(start: Int, end: Int): Boolean = {
-    start < endIndex && endIndex <= end && startIndex < start
+  privatelon[richtelonxt] delonf elonndsBelontwelonelonn(start: Int, elonnd: Int): Boolelonan = {
+    start < elonndIndelonx && elonndIndelonx <= elonnd && startIndelonx < start
   }
 
-  private[richtext] def offset(num: Int): TwitterTextRendererEntity[T] = {
-    copy(startIndex = startIndex + num, endIndex = endIndex + num)
+  privatelon[richtelonxt] delonf offselont(num: Int): TwittelonrTelonxtRelonndelonrelonrelonntity[T] = {
+    copy(startIndelonx = startIndelonx + num, elonndIndelonx = elonndIndelonx + num)
   }
 
-  private[richtext] def startsBetween(start: Int, end: Int): Boolean = {
-    startIndex >= start && startIndex < end && endIndex > end
+  privatelon[richtelonxt] delonf startsBelontwelonelonn(start: Int, elonnd: Int): Boolelonan = {
+    startIndelonx >= start && startIndelonx < elonnd && elonndIndelonx > elonnd
   }
 }

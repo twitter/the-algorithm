@@ -1,11 +1,11 @@
-package com.twitter.cr_mixer.model
+packagelon com.twittelonr.cr_mixelonr.modelonl
 
-object HealthThreshold {
-  object Enum extends Enumeration {
-    val Off: Value = Value(1)
-    val Moderate: Value = Value(2)
-    val Strict: Value = Value(3)
-    val Stricter: Value = Value(4)
-    val StricterPlus: Value = Value(5)
+objelonct HelonalthThrelonshold {
+  objelonct elonnum elonxtelonnds elonnumelonration {
+    val Off: Valuelon = Valuelon(1)
+    val Modelonratelon: Valuelon = Valuelon(2)
+    val Strict: Valuelon = Valuelon(3)
+    val Strictelonr: Valuelon = Valuelon(4)
+    val StrictelonrPlus: Valuelon = Valuelon(5)
   }
 }

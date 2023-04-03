@@ -1,45 +1,45 @@
-package com.twitter.product_mixer.core.feature.featuremap.asyncfeaturemap
+packagelon com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.asyncfelonaturelonmap
 
-import com.fasterxml.jackson.core.JsonGenerator
-import com.fasterxml.jackson.databind.JsonSerializer
-import com.fasterxml.jackson.databind.SerializerProvider
+import com.fastelonrxml.jackson.corelon.JsonGelonnelonrator
+import com.fastelonrxml.jackson.databind.JsonSelonrializelonr
+import com.fastelonrxml.jackson.databind.SelonrializelonrProvidelonr
 
 /**
- * Since an [[AsyncFeatureMap]] is typically incomplete, and by the time it's serialized, all the [[com.twitter.product_mixer.core.feature.Feature]]s
- * it will typically be completed and part of the Query or Candidate's individual [[com.twitter.product_mixer.core.feature.Feature]]s
- * we instead opt to provide a summary of the Features which would be hydrated using [[AsyncFeatureMap.features]]
+ * Sincelon an [[AsyncFelonaturelonMap]] is typically incomplelontelon, and by thelon timelon it's selonrializelond, all thelon [[com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon]]s
+ * it will typically belon complelontelond and part of thelon Quelonry or Candidatelon's individual [[com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon]]s
+ * welon instelonad opt to providelon a summary of thelon Felonaturelons which would belon hydratelond using [[AsyncFelonaturelonMap.felonaturelons]]
  *
- * This indicates which [[com.twitter.product_mixer.core.feature.Feature]]s will be ready at which Steps
- * and which [[com.twitter.product_mixer.core.functional_component.feature_hydrator.FeatureHydrator]]
- * are responsible for those [[com.twitter.product_mixer.core.feature.Feature]]
+ * This indicatelons which [[com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon]]s will belon relonady at which Stelonps
+ * and which [[com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator.FelonaturelonHydrator]]
+ * arelon relonsponsiblelon for thoselon [[com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon]]
  *
- * @note changes to serialization logic can have serious performance implications given how hot the
- *       serialization path is. Consider benchmarking changes with [[com.twitter.product_mixer.core.benchmark.AsyncQueryFeatureMapSerializationBenchmark]]
+ * @notelon changelons to selonrialization logic can havelon selonrious pelonrformancelon implications givelonn how hot thelon
+ *       selonrialization path is. Considelonr belonnchmarking changelons with [[com.twittelonr.product_mixelonr.corelon.belonnchmark.AsyncQuelonryFelonaturelonMapSelonrializationBelonnchmark]]
  */
-private[asyncfeaturemap] class AsyncFeatureMapSerializer() extends JsonSerializer[AsyncFeatureMap] {
-  override def serialize(
-    asyncFeatureMap: AsyncFeatureMap,
-    gen: JsonGenerator,
-    serializers: SerializerProvider
+privatelon[asyncfelonaturelonmap] class AsyncFelonaturelonMapSelonrializelonr() elonxtelonnds JsonSelonrializelonr[AsyncFelonaturelonMap] {
+  ovelonrridelon delonf selonrializelon(
+    asyncFelonaturelonMap: AsyncFelonaturelonMap,
+    gelonn: JsonGelonnelonrator,
+    selonrializelonrs: SelonrializelonrProvidelonr
   ): Unit = {
-    gen.writeStartObject()
+    gelonn.writelonStartObjelonct()
 
-    asyncFeatureMap.features.foreach {
-      case (stepIdentifier, featureHydrators) =>
-        gen.writeObjectFieldStart(stepIdentifier.toString)
+    asyncFelonaturelonMap.felonaturelons.forelonach {
+      caselon (stelonpIdelonntifielonr, felonaturelonHydrators) =>
+        gelonn.writelonObjelonctFielonldStart(stelonpIdelonntifielonr.toString)
 
-        featureHydrators.foreach {
-          case (hydratorIdentifier, featuresFromHydrator) =>
-            gen.writeArrayFieldStart(hydratorIdentifier.toString)
+        felonaturelonHydrators.forelonach {
+          caselon (hydratorIdelonntifielonr, felonaturelonsFromHydrator) =>
+            gelonn.writelonArrayFielonldStart(hydratorIdelonntifielonr.toString)
 
-            featuresFromHydrator.foreach(feature => gen.writeString(feature.toString))
+            felonaturelonsFromHydrator.forelonach(felonaturelon => gelonn.writelonString(felonaturelon.toString))
 
-            gen.writeEndArray()
+            gelonn.writelonelonndArray()
         }
 
-        gen.writeEndObject()
+        gelonn.writelonelonndObjelonct()
     }
 
-    gen.writeEndObject()
+    gelonn.writelonelonndObjelonct()
   }
 }

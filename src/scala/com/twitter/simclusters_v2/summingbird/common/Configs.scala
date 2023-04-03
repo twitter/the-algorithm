@@ -1,70 +1,70 @@
-package com.twitter.simclusters_v2.summingbird.common
+packagelon com.twittelonr.simclustelonrs_v2.summingbird.common
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
-import com.twitter.util.Duration
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.simclustelonrs_v2.thriftscala.ModelonlVelonrsion
+import com.twittelonr.util.Duration
 
-object Configs {
+objelonct Configs {
 
-  final val role = "cassowary"
+  final val rolelon = "cassowary"
 
-  final val ZoneAtla: String = "atla"
+  final val ZonelonAtla: String = "atla"
 
-  @deprecated("Use 'common/ModelVersions'", "2019-09-04")
-  final val ModelVersion20M145KDec11: String = "20M_145K_dec11"
-  @deprecated("Use 'common/ModelVersions'", "2019-09-04")
-  final val ModelVersion20M145KUpdated: String = "20M_145K_updated"
-  final val ModelVersion20M145K2020: String = "20M_145K_2020"
+  @delonpreloncatelond("Uselon 'common/ModelonlVelonrsions'", "2019-09-04")
+  final val ModelonlVelonrsion20M145KDelonc11: String = "20M_145K_delonc11"
+  @delonpreloncatelond("Uselon 'common/ModelonlVelonrsions'", "2019-09-04")
+  final val ModelonlVelonrsion20M145KUpdatelond: String = "20M_145K_updatelond"
+  final val ModelonlVelonrsion20M145K2020: String = "20M_145K_2020"
 
-  @deprecated("Use 'common/ModelVersions'", "2019-09-04")
-  final val ModelVersionMap: Map[String, ModelVersion] = Map(
-    ModelVersion20M145KDec11 -> ModelVersion.Model20m145kDec11,
-    ModelVersion20M145KUpdated -> ModelVersion.Model20m145kUpdated,
-    ModelVersion20M145K2020 -> ModelVersion.Model20m145k2020
+  @delonpreloncatelond("Uselon 'common/ModelonlVelonrsions'", "2019-09-04")
+  final val ModelonlVelonrsionMap: Map[String, ModelonlVelonrsion] = Map(
+    ModelonlVelonrsion20M145KDelonc11 -> ModelonlVelonrsion.Modelonl20m145kDelonc11,
+    ModelonlVelonrsion20M145KUpdatelond -> ModelonlVelonrsion.Modelonl20m145kUpdatelond,
+    ModelonlVelonrsion20M145K2020 -> ModelonlVelonrsion.Modelonl20m145k2020
   )
 
-  final val favScoreThresholdForUserInterest: String => Double = {
-    case ModelVersion20M145KDec11 => 0.15
-    case ModelVersion20M145KUpdated => 1.0
-    case ModelVersion20M145K2020 => 0.3
-    case modelVersionStr => throw new Exception(s"$modelVersionStr is not a valid model")
+  final val favScorelonThrelonsholdForUselonrIntelonrelonst: String => Doublelon = {
+    caselon ModelonlVelonrsion20M145KDelonc11 => 0.15
+    caselon ModelonlVelonrsion20M145KUpdatelond => 1.0
+    caselon ModelonlVelonrsion20M145K2020 => 0.3
+    caselon modelonlVelonrsionStr => throw nelonw elonxcelonption(s"$modelonlVelonrsionStr is not a valid modelonl")
   }
 
-  @deprecated("Use 'common/ModelVersions'", "2019-09-04")
-  final val ReversedModelVersionMap = ModelVersionMap.map(_.swap)
+  @delonpreloncatelond("Uselon 'common/ModelonlVelonrsions'", "2019-09-04")
+  final val RelonvelonrselondModelonlVelonrsionMap = ModelonlVelonrsionMap.map(_.swap)
 
-  final val batchesToKeep: Int = 1
+  final val batchelonsToKelonelonp: Int = 1
 
-  final val HalfLife: Duration = 8.hours
-  final val HalfLifeInMs: Long = HalfLife.inMilliseconds
+  final val HalfLifelon: Duration = 8.hours
+  final val HalfLifelonInMs: Long = HalfLifelon.inMilliselonconds
 
-  final val topKTweetsPerCluster: Int = 1600
+  final val topKTwelonelontsPelonrClustelonr: Int = 1600
 
-  final val topKClustersPerEntity: Int = 50
+  final val topKClustelonrsPelonrelonntity: Int = 50
 
-  // the config used in offline job only
-  final val topKClustersPerTweet: Int = 400
+  // thelon config uselond in offlinelon job only
+  final val topKClustelonrsPelonrTwelonelont: Int = 400
 
-  // minimum score to save clusterIds in entityTopKClusters cache
-  // entity includes entities other than tweetId.
-  final val scoreThresholdForEntityTopKClustersCache: Double = 0.02
+  // minimum scorelon to savelon clustelonrIds in elonntityTopKClustelonrs cachelon
+  // elonntity includelons elonntitielons othelonr than twelonelontId.
+  final val scorelonThrelonsholdForelonntityTopKClustelonrsCachelon: Doublelon = 0.02
 
-  // minimum score to save clusterIds in tweetTopKClusters cache
-  final val scoreThresholdForTweetTopKClustersCache: Double = 0.02
+  // minimum scorelon to savelon clustelonrIds in twelonelontTopKClustelonrs cachelon
+  final val scorelonThrelonsholdForTwelonelontTopKClustelonrsCachelon: Doublelon = 0.02
 
-  // minimum score to save tweetIds in clusterTopKTweets cache
-  final val scoreThresholdForClusterTopKTweetsCache: Double = 0.001
+  // minimum scorelon to savelon twelonelontIds in clustelonrTopKTwelonelonts cachelon
+  final val scorelonThrelonsholdForClustelonrTopKTwelonelontsCachelon: Doublelon = 0.001
 
-  // minimum score to save entities in clusterTopKEntities cache
-  final val scoreThresholdForClusterTopKEntitiesCache: Double = 0.001
+  // minimum scorelon to savelon elonntitielons in clustelonrTopKelonntitielons cachelon
+  final val scorelonThrelonsholdForClustelonrTopKelonntitielonsCachelon: Doublelon = 0.001
 
-  final val MinFavoriteCount = 8
+  final val MinFavoritelonCount = 8
 
-  final val OldestTweetInLightIndexInMillis = 1.hours.inMillis
+  final val OldelonstTwelonelontInLightIndelonxInMillis = 1.hours.inMillis
 
-  final val OldestTweetFavEventTimeInMillis = 3.days.inMillis
+  final val OldelonstTwelonelontFavelonvelonntTimelonInMillis = 3.days.inMillis
 
-  final val FirstUpdateValue = 1
+  final val FirstUpdatelonValuelon = 1
 
-  final val TempUpdateValue = -1
+  final val TelonmpUpdatelonValuelon = -1
 }

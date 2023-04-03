@@ -1,194 +1,194 @@
-package com.twitter.ann.scalding.offline.indexbuilderfrombq
+packagelon com.twittelonr.ann.scalding.offlinelon.indelonxbuildelonrfrombq
 
-import com.google.auth.oauth2.ServiceAccountCredentials
-import com.google.cloud.bigquery.BigQueryOptions
-import com.google.cloud.bigquery.QueryJobConfiguration
-import com.twitter.ann.annoy.TypedAnnoyIndex
-import com.twitter.ann.brute_force.SerializableBruteForceIndex
-import com.twitter.ann.common.Distance
-import com.twitter.ann.common.Metric
-import com.twitter.ann.common.ReadWriteFuturePool
-import com.twitter.ann.hnsw.TypedHnswIndex
-import com.twitter.ann.serialization.PersistedEmbeddingInjection
-import com.twitter.ann.serialization.ThriftIteratorIO
-import com.twitter.ann.serialization.thriftscala.PersistedEmbedding
-import com.twitter.cortex.ml.embeddings.common._
-import com.twitter.ml.api.embedding.Embedding
-import com.twitter.ml.featurestore.lib._
-import com.twitter.ml.featurestore.lib.embedding.EmbeddingWithEntity
-import com.twitter.scalding.Args
-import com.twitter.scalding.Execution
-import com.twitter.scalding.typed.TypedPipe
-import com.twitter.scalding_internal.bigquery.BigQueryConfig
-import com.twitter.scalding_internal.bigquery.BigQuerySource
-import com.twitter.scalding_internal.job.TwitterExecutionApp
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.search.common.file.FileUtils
-import com.twitter.util.FuturePool
-import java.io.FileInputStream
-import java.time.LocalDateTime
-import java.time.ZoneOffset
-import java.util.concurrent.Executors
-import org.apache.avro.generic.GenericRecord
-import scala.collection.JavaConverters._
+import com.googlelon.auth.oauth2.SelonrvicelonAccountCrelondelonntials
+import com.googlelon.cloud.bigquelonry.BigQuelonryOptions
+import com.googlelon.cloud.bigquelonry.QuelonryJobConfiguration
+import com.twittelonr.ann.annoy.TypelondAnnoyIndelonx
+import com.twittelonr.ann.brutelon_forcelon.SelonrializablelonBrutelonForcelonIndelonx
+import com.twittelonr.ann.common.Distancelon
+import com.twittelonr.ann.common.Melontric
+import com.twittelonr.ann.common.RelonadWritelonFuturelonPool
+import com.twittelonr.ann.hnsw.TypelondHnswIndelonx
+import com.twittelonr.ann.selonrialization.PelonrsistelondelonmbelonddingInjelonction
+import com.twittelonr.ann.selonrialization.ThriftItelonratorIO
+import com.twittelonr.ann.selonrialization.thriftscala.Pelonrsistelondelonmbelondding
+import com.twittelonr.cortelonx.ml.elonmbelonddings.common._
+import com.twittelonr.ml.api.elonmbelondding.elonmbelondding
+import com.twittelonr.ml.felonaturelonstorelon.lib._
+import com.twittelonr.ml.felonaturelonstorelon.lib.elonmbelondding.elonmbelonddingWithelonntity
+import com.twittelonr.scalding.Args
+import com.twittelonr.scalding.elonxeloncution
+import com.twittelonr.scalding.typelond.TypelondPipelon
+import com.twittelonr.scalding_intelonrnal.bigquelonry.BigQuelonryConfig
+import com.twittelonr.scalding_intelonrnal.bigquelonry.BigQuelonrySourcelon
+import com.twittelonr.scalding_intelonrnal.job.TwittelonrelonxeloncutionApp
+import com.twittelonr.scalding_intelonrnal.multiformat.format.kelonyval.KelonyVal
+import com.twittelonr.selonarch.common.filelon.FilelonUtils
+import com.twittelonr.util.FuturelonPool
+import java.io.FilelonInputStrelonam
+import java.timelon.LocalDatelonTimelon
+import java.timelon.ZonelonOffselont
+import java.util.concurrelonnt.elonxeloncutors
+import org.apachelon.avro.gelonnelonric.GelonnelonricReloncord
+import scala.collelonction.JavaConvelonrtelonrs._
 
 /**
- * Scalding execution app for building ANN index from embeddings present in BigQuery table.
- * The output index is written to a GCS file.
+ * Scalding elonxeloncution app for building ANN indelonx from elonmbelonddings prelonselonnt in BigQuelonry tablelon.
+ * Thelon output indelonx is writtelonn to a GCS filelon.
  *
- * Note:
- * - Assumes input data has the fields entityId
- * - Assumes input data has the fields embedding
+ * Notelon:
+ * - Assumelons input data has thelon fielonlds elonntityId
+ * - Assumelons input data has thelon fielonlds elonmbelondding
  *
- * Command for running the app (from source repo root):
- * scalding remote run \
- *   --target ann/src/main/scala/com/twitter/ann/scalding/offline/indexbuilderfrombq:ann-index-builder-binary
+ * Command for running thelon app (from sourcelon relonpo root):
+ * scalding relonmotelon run \
+ *   --targelont ann/src/main/scala/com/twittelonr/ann/scalding/offlinelon/indelonxbuildelonrfrombq:ann-indelonx-buildelonr-binary
  */
-trait IndexBuilderFromBQExecutable {
-  // This method is used to cast the entityKind and the metric to have parameters.
-  def indexBuilderExecution[T <: EntityId, D <: Distance[D]](
+trait IndelonxBuildelonrFromBQelonxeloncutablelon {
+  // This melonthod is uselond to cast thelon elonntityKind and thelon melontric to havelon paramelontelonrs.
+  delonf indelonxBuildelonrelonxeloncution[T <: elonntityId, D <: Distancelon[D]](
     args: Args
-  ): Execution[Unit] = {
-    // parse the arguments for this job
-    val uncastEntityKind = EntityKind.getEntityKind(args("entity_kind"))
-    val uncastMetric = Metric.fromString(args("metric"))
-    val entityKind = uncastEntityKind.asInstanceOf[EntityKind[T]]
-    val metric = uncastMetric.asInstanceOf[Metric[D]]
-    val injection = entityKind.byteInjection
-    val numDimensions = args.int("num_dimensions")
-    val embeddingLimit = args.optional("embedding_limit").map(_.toInt)
-    val concurrencyLevel = args.int("concurrency_level")
+  ): elonxeloncution[Unit] = {
+    // parselon thelon argumelonnts for this job
+    val uncastelonntityKind = elonntityKind.gelontelonntityKind(args("elonntity_kind"))
+    val uncastMelontric = Melontric.fromString(args("melontric"))
+    val elonntityKind = uncastelonntityKind.asInstancelonOf[elonntityKind[T]]
+    val melontric = uncastMelontric.asInstancelonOf[Melontric[D]]
+    val injelonction = elonntityKind.bytelonInjelonction
+    val numDimelonnsions = args.int("num_dimelonnsions")
+    val elonmbelonddingLimit = args.optional("elonmbelondding_limit").map(_.toInt)
+    val concurrelonncyLelonvelonl = args.int("concurrelonncy_lelonvelonl")
 
-    val bigQuery =
-      BigQueryOptions
-        .newBuilder().setProjectId(args.required("bq_gcp_job_project")).setCredentials(
-          ServiceAccountCredentials.fromStream(
-            new FileInputStream(args.required("gcp_service_account_key_json")))).build().getService
+    val bigQuelonry =
+      BigQuelonryOptions
+        .nelonwBuildelonr().selontProjelonctId(args.relonquirelond("bq_gcp_job_projelonct")).selontCrelondelonntials(
+          SelonrvicelonAccountCrelondelonntials.fromStrelonam(
+            nelonw FilelonInputStrelonam(args.relonquirelond("gcp_selonrvicelon_account_kelony_json")))).build().gelontSelonrvicelon
 
-    // Query to get the latest partition of the BigQuery table.
-    val query =
-      s"SELECT MAX(ts) AS RecentPartition FROM ${args.required("bq_gcp_table_project")}.${args
-        .required("bq_dataset")}.${args.required("bq_table")}"
-    val queryConfig = QueryJobConfiguration
-      .newBuilder(query)
-      .setUseLegacySql(false)
+    // Quelonry to gelont thelon latelonst partition of thelon BigQuelonry tablelon.
+    val quelonry =
+      s"SelonLelonCT MAX(ts) AS ReloncelonntPartition FROM ${args.relonquirelond("bq_gcp_tablelon_projelonct")}.${args
+        .relonquirelond("bq_dataselont")}.${args.relonquirelond("bq_tablelon")}"
+    val quelonryConfig = QuelonryJobConfiguration
+      .nelonwBuildelonr(quelonry)
+      .selontUselonLelongacySql(falselon)
       .build
-    val recentPartition =
-      bigQuery
-        .query(queryConfig).iterateAll().asScala.map(field => {
-          field.get(0).getStringValue
+    val reloncelonntPartition =
+      bigQuelonry
+        .quelonry(quelonryConfig).itelonratelonAll().asScala.map(fielonld => {
+          fielonld.gelont(0).gelontStringValuelon
         }).toArray.apply(0)
 
-    // Query to extract the embeddings from the latest partition of the BigQuery table
-    val bigQueryConfig = BigQueryConfig(
-      args.required("bq_gcp_table_project"),
+    // Quelonry to elonxtract thelon elonmbelonddings from thelon latelonst partition of thelon BigQuelonry tablelon
+    val bigQuelonryConfig = BigQuelonryConfig(
+      args.relonquirelond("bq_gcp_tablelon_projelonct"),
       args
-        .required("bq_dataset"),
-      args.required("bq_table"))
-      .withServiceAccountKey(args.required("gcp_service_account_key_json"))
+        .relonquirelond("bq_dataselont"),
+      args.relonquirelond("bq_tablelon"))
+      .withSelonrvicelonAccountKelony(args.relonquirelond("gcp_selonrvicelon_account_kelony_json"))
 
-    val bqFilter = Some(
-      s"ts >= '${recentPartition}' AND DATE(TIMESTAMP_MILLIS(createdAt)) >= DATE_SUB(DATE('${recentPartition}'), INTERVAL 1 DAY) AND DATE(TIMESTAMP_MILLIS(createdAt)) <= DATE('${recentPartition}')")
-    val withFilterBigQueryConfig = bqFilter
-      .map { filter: String =>
-        bigQueryConfig.withFilter(filter)
-      }.getOrElse(bigQueryConfig)
-    val source = new BigQuerySource(withFilterBigQueryConfig)
-      .andThen(avroMapper)
+    val bqFiltelonr = Somelon(
+      s"ts >= '${reloncelonntPartition}' AND DATelon(TIMelonSTAMP_MILLIS(crelonatelondAt)) >= DATelon_SUB(DATelon('${reloncelonntPartition}'), INTelonRVAL 1 DAY) AND DATelon(TIMelonSTAMP_MILLIS(crelonatelondAt)) <= DATelon('${reloncelonntPartition}')")
+    val withFiltelonrBigQuelonryConfig = bqFiltelonr
+      .map { filtelonr: String =>
+        bigQuelonryConfig.withFiltelonr(filtelonr)
+      }.gelontOrelonlselon(bigQuelonryConfig)
+    val sourcelon = nelonw BigQuelonrySourcelon(withFiltelonrBigQuelonryConfig)
+      .andThelonn(avroMappelonr)
 
-    val sourcePipe = TypedPipe
-      .from(source)
-      .map(transform[T](entityKind))
+    val sourcelonPipelon = TypelondPipelon
+      .from(sourcelon)
+      .map(transform[T](elonntityKind))
 
     println(s"Job args: ${args.toString}")
-    val threadPool = Executors.newFixedThreadPool(concurrencyLevel)
+    val threlonadPool = elonxeloncutors.nelonwFixelondThrelonadPool(concurrelonncyLelonvelonl)
 
-    val serialization = args("algo") match {
-      case "brute_force" =>
-        val PersistedEmbeddingIO = new ThriftIteratorIO[PersistedEmbedding](PersistedEmbedding)
-        SerializableBruteForceIndex[T, D](
-          metric,
-          FuturePool.apply(threadPool),
-          new PersistedEmbeddingInjection[T](injection),
-          PersistedEmbeddingIO
+    val selonrialization = args("algo") match {
+      caselon "brutelon_forcelon" =>
+        val PelonrsistelondelonmbelonddingIO = nelonw ThriftItelonratorIO[Pelonrsistelondelonmbelondding](Pelonrsistelondelonmbelondding)
+        SelonrializablelonBrutelonForcelonIndelonx[T, D](
+          melontric,
+          FuturelonPool.apply(threlonadPool),
+          nelonw PelonrsistelondelonmbelonddingInjelonction[T](injelonction),
+          PelonrsistelondelonmbelonddingIO
         )
-      case "annoy" =>
-        TypedAnnoyIndex.indexBuilder[T, D](
-          numDimensions,
-          args.int("annoy_num_trees"),
-          metric,
-          injection,
-          FuturePool.apply(threadPool)
+      caselon "annoy" =>
+        TypelondAnnoyIndelonx.indelonxBuildelonr[T, D](
+          numDimelonnsions,
+          args.int("annoy_num_trelonelons"),
+          melontric,
+          injelonction,
+          FuturelonPool.apply(threlonadPool)
         )
-      case "hnsw" =>
-        val efConstruction = args.int("ef_construction")
+      caselon "hnsw" =>
+        val elonfConstruction = args.int("elonf_construction")
         val maxM = args.int("max_m")
-        val expectedElements = args.int("expected_elements")
-        TypedHnswIndex.serializableIndex[T, D](
-          numDimensions,
-          metric,
-          efConstruction,
+        val elonxpelonctelondelonlelonmelonnts = args.int("elonxpelonctelond_elonlelonmelonnts")
+        TypelondHnswIndelonx.selonrializablelonIndelonx[T, D](
+          numDimelonnsions,
+          melontric,
+          elonfConstruction,
           maxM,
-          expectedElements,
-          injection,
-          ReadWriteFuturePool(FuturePool.apply(threadPool))
+          elonxpelonctelondelonlelonmelonnts,
+          injelonction,
+          RelonadWritelonFuturelonPool(FuturelonPool.apply(threlonadPool))
         )
     }
 
-    // Output directory for the ANN index. We place the index under a timestamped directory which
-    // will be used by the ANN service to read the latest index
-    val timestamp = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)
-    val outputDirectory = FileUtils.getFileHandle(args("output_dir") + "/" + timestamp)
-    IndexBuilder
+    // Output direlonctory for thelon ANN indelonx. Welon placelon thelon indelonx undelonr a timelonstampelond direlonctory which
+    // will belon uselond by thelon ANN selonrvicelon to relonad thelon latelonst indelonx
+    val timelonstamp = LocalDatelonTimelon.now().toelonpochSeloncond(ZonelonOffselont.UTC)
+    val outputDirelonctory = FilelonUtils.gelontFilelonHandlelon(args("output_dir") + "/" + timelonstamp)
+    IndelonxBuildelonr
       .run(
-        sourcePipe,
-        embeddingLimit,
-        serialization,
-        concurrencyLevel,
-        outputDirectory,
-        numDimensions
-      ).onComplete { _ =>
-        threadPool.shutdown()
+        sourcelonPipelon,
+        elonmbelonddingLimit,
+        selonrialization,
+        concurrelonncyLelonvelonl,
+        outputDirelonctory,
+        numDimelonnsions
+      ).onComplelontelon { _ =>
+        threlonadPool.shutdown()
         Unit
       }
 
   }
 
-  def avroMapper(row: GenericRecord): KeyVal[Long, java.util.List[Double]] = {
-    val entityId = row.get("entityId")
-    val embedding = row.get("embedding")
+  delonf avroMappelonr(row: GelonnelonricReloncord): KelonyVal[Long, java.util.List[Doublelon]] = {
+    val elonntityId = row.gelont("elonntityId")
+    val elonmbelondding = row.gelont("elonmbelondding")
 
-    KeyVal(
-      entityId.toString.toLong,
-      embedding.asInstanceOf[java.util.List[Double]]
+    KelonyVal(
+      elonntityId.toString.toLong,
+      elonmbelondding.asInstancelonOf[java.util.List[Doublelon]]
     )
   }
 
-  def transform[T <: EntityId](
-    entityKind: EntityKind[T]
+  delonf transform[T <: elonntityId](
+    elonntityKind: elonntityKind[T]
   )(
-    bqRecord: KeyVal[Long, java.util.List[Double]]
-  ): EmbeddingWithEntity[T] = {
-    val embeddingArray = bqRecord.value.asScala.map(_.floatValue()).toArray
-    val entity_id = entityKind match {
-      case UserKind => UserId(bqRecord.key).toThrift
-      case TweetKind => TweetId(bqRecord.key).toThrift
-      case TfwKind => TfwId(bqRecord.key).toThrift
-      case SemanticCoreKind => SemanticCoreId(bqRecord.key).toThrift
-      case _ => throw new IllegalArgumentException(s"Unsupported embedding kind: $entityKind")
+    bqReloncord: KelonyVal[Long, java.util.List[Doublelon]]
+  ): elonmbelonddingWithelonntity[T] = {
+    val elonmbelonddingArray = bqReloncord.valuelon.asScala.map(_.floatValuelon()).toArray
+    val elonntity_id = elonntityKind match {
+      caselon UselonrKind => UselonrId(bqReloncord.kelony).toThrift
+      caselon TwelonelontKind => TwelonelontId(bqReloncord.kelony).toThrift
+      caselon TfwKind => TfwId(bqReloncord.kelony).toThrift
+      caselon SelonmanticCorelonKind => SelonmanticCorelonId(bqReloncord.kelony).toThrift
+      caselon _ => throw nelonw IllelongalArgumelonntelonxcelonption(s"Unsupportelond elonmbelondding kind: $elonntityKind")
     }
-    EmbeddingWithEntity[T](
-      EntityId.fromThrift(entity_id).asInstanceOf[T],
-      Embedding(embeddingArray))
+    elonmbelonddingWithelonntity[T](
+      elonntityId.fromThrift(elonntity_id).asInstancelonOf[T],
+      elonmbelondding(elonmbelonddingArray))
   }
 }
 
 /*
-scalding remote run \
---target ann/src/main/scala/com/twitter/ann/scalding/offline/indexbuilderfrombq:ann-index-builder-binary
+scalding relonmotelon run \
+--targelont ann/src/main/scala/com/twittelonr/ann/scalding/offlinelon/indelonxbuildelonrfrombq:ann-indelonx-buildelonr-binary
  */
-object IndexBuilderFromBQApp extends TwitterExecutionApp with IndexBuilderFromBQExecutable {
-  override def job: Execution[Unit] = Execution.getArgs.flatMap { args: Args =>
-    indexBuilderExecution(args)
+objelonct IndelonxBuildelonrFromBQApp elonxtelonnds TwittelonrelonxeloncutionApp with IndelonxBuildelonrFromBQelonxeloncutablelon {
+  ovelonrridelon delonf job: elonxeloncution[Unit] = elonxeloncution.gelontArgs.flatMap { args: Args =>
+    indelonxBuildelonrelonxeloncution(args)
   }
 }

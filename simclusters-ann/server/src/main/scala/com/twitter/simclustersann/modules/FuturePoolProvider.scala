@@ -1,27 +1,27 @@
-package com.twitter.simclustersann.modules
+packagelon com.twittelonr.simclustelonrsann.modulelons
 
-import com.google.inject.Provides
-import com.twitter.inject.TwitterModule
-import com.twitter.inject.annotations.Flag
-import com.twitter.simclustersann.common.FlagNames.NumberOfThreads
-import com.twitter.util.ExecutorServiceFuturePool
-import java.util.concurrent.Executors
-import javax.inject.Singleton
-object FuturePoolProvider extends TwitterModule {
+import com.googlelon.injelonct.Providelons
+import com.twittelonr.injelonct.TwittelonrModulelon
+import com.twittelonr.injelonct.annotations.Flag
+import com.twittelonr.simclustelonrsann.common.FlagNamelons.NumbelonrOfThrelonads
+import com.twittelonr.util.elonxeloncutorSelonrvicelonFuturelonPool
+import java.util.concurrelonnt.elonxeloncutors
+import javax.injelonct.Singlelonton
+objelonct FuturelonPoolProvidelonr elonxtelonnds TwittelonrModulelon {
   flag[Int](
-    name = NumberOfThreads,
-    default = 20,
-    help = "The number of threads in the future pool."
+    namelon = NumbelonrOfThrelonads,
+    delonfault = 20,
+    helonlp = "Thelon numbelonr of threlonads in thelon futurelon pool."
   )
 
-  @Singleton
-  @Provides
-  def providesFuturePool(
-    @Flag(NumberOfThreads) numberOfThreads: Int
-  ): ExecutorServiceFuturePool = {
-    val threadPool = Executors.newFixedThreadPool(numberOfThreads)
-    new ExecutorServiceFuturePool(threadPool) {
-      override def toString: String = s"warmup-future-pool-$executor)"
+  @Singlelonton
+  @Providelons
+  delonf providelonsFuturelonPool(
+    @Flag(NumbelonrOfThrelonads) numbelonrOfThrelonads: Int
+  ): elonxeloncutorSelonrvicelonFuturelonPool = {
+    val threlonadPool = elonxeloncutors.nelonwFixelondThrelonadPool(numbelonrOfThrelonads)
+    nelonw elonxeloncutorSelonrvicelonFuturelonPool(threlonadPool) {
+      ovelonrridelon delonf toString: String = s"warmup-futurelon-pool-$elonxeloncutor)"
     }
   }
 }

@@ -1,32 +1,32 @@
-package com.twitter.cr_mixer.similarity_engine
+packagelon com.twittelonr.cr_mixelonr.similarity_elonnginelon
 
-import com.twitter.cr_mixer.model.TweetWithAuthor
-import com.twitter.cr_mixer.similarity_engine.SimilarityEngine.SimilarityEngineConfig
-import com.twitter.cr_mixer.thriftscala.SimilarityEngineType
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
+import com.twittelonr.cr_mixelonr.modelonl.TwelonelontWithAuthor
+import com.twittelonr.cr_mixelonr.similarity_elonnginelon.Similarityelonnginelon.SimilarityelonnginelonConfig
+import com.twittelonr.cr_mixelonr.thriftscala.SimilarityelonnginelonTypelon
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.storelonhaus.RelonadablelonStorelon
+import com.twittelonr.util.Futurelon
 
-class EarlybirdSimilarityEngine[
-  Query,
-  EarlybirdSimilarityEngineStore <: ReadableStore[Query, Seq[TweetWithAuthor]]
+class elonarlybirdSimilarityelonnginelon[
+  Quelonry,
+  elonarlybirdSimilarityelonnginelonStorelon <: RelonadablelonStorelon[Quelonry, Selonq[TwelonelontWithAuthor]]
 ](
-  implementingStore: EarlybirdSimilarityEngineStore,
-  override val identifier: SimilarityEngineType,
-  globalStats: StatsReceiver,
-  engineConfig: SimilarityEngineConfig,
-) extends SimilarityEngine[EngineQuery[Query], TweetWithAuthor] {
-  private val scopedStats = globalStats.scope("similarityEngine", identifier.toString)
+  implelonmelonntingStorelon: elonarlybirdSimilarityelonnginelonStorelon,
+  ovelonrridelon val idelonntifielonr: SimilarityelonnginelonTypelon,
+  globalStats: StatsReloncelonivelonr,
+  elonnginelonConfig: SimilarityelonnginelonConfig,
+) elonxtelonnds Similarityelonnginelon[elonnginelonQuelonry[Quelonry], TwelonelontWithAuthor] {
+  privatelon val scopelondStats = globalStats.scopelon("similarityelonnginelon", idelonntifielonr.toString)
 
-  def getScopedStats: StatsReceiver = scopedStats
+  delonf gelontScopelondStats: StatsReloncelonivelonr = scopelondStats
 
-  def getCandidates(query: EngineQuery[Query]): Future[Option[Seq[TweetWithAuthor]]] = {
-    SimilarityEngine.getFromFn(
-      implementingStore.get,
-      query.storeQuery,
-      engineConfig,
-      query.params,
-      scopedStats
+  delonf gelontCandidatelons(quelonry: elonnginelonQuelonry[Quelonry]): Futurelon[Option[Selonq[TwelonelontWithAuthor]]] = {
+    Similarityelonnginelon.gelontFromFn(
+      implelonmelonntingStorelon.gelont,
+      quelonry.storelonQuelonry,
+      elonnginelonConfig,
+      quelonry.params,
+      scopelondStats
     )
   }
 }

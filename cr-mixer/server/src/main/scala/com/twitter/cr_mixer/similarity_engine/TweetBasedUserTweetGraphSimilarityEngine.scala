@@ -1,181 +1,181 @@
-package com.twitter.cr_mixer.similarity_engine
+packagelon com.twittelonr.cr_mixelonr.similarity_elonnginelon
 
-import com.twitter.cr_mixer.model.SimilarityEngineInfo
-import com.twitter.cr_mixer.model.TweetWithScore
-import com.twitter.cr_mixer.param.GlobalParams
-import com.twitter.cr_mixer.param.TweetBasedUserTweetGraphParams
-import com.twitter.cr_mixer.thriftscala.SimilarityEngineType
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.util.StatsUtil
-import com.twitter.recos.user_tweet_graph.thriftscala.RelatedTweetResponse
-import com.twitter.recos.user_tweet_graph.thriftscala.TweetBasedRelatedTweetRequest
-import com.twitter.recos.user_tweet_graph.thriftscala.ConsumersBasedRelatedTweetRequest
-import com.twitter.recos.user_tweet_graph.thriftscala.UserTweetGraph
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.twistly.thriftscala.TweetRecentEngagedUsers
-import com.twitter.util.Future
-import javax.inject.Singleton
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.timelines.configapi
-import com.twitter.util.Duration
-import com.twitter.util.Time
-import scala.concurrent.duration.HOURS
+import com.twittelonr.cr_mixelonr.modelonl.SimilarityelonnginelonInfo
+import com.twittelonr.cr_mixelonr.modelonl.TwelonelontWithScorelon
+import com.twittelonr.cr_mixelonr.param.GlobalParams
+import com.twittelonr.cr_mixelonr.param.TwelonelontBaselondUselonrTwelonelontGraphParams
+import com.twittelonr.cr_mixelonr.thriftscala.SimilarityelonnginelonTypelon
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.frigatelon.common.util.StatsUtil
+import com.twittelonr.reloncos.uselonr_twelonelont_graph.thriftscala.RelonlatelondTwelonelontRelonsponselon
+import com.twittelonr.reloncos.uselonr_twelonelont_graph.thriftscala.TwelonelontBaselondRelonlatelondTwelonelontRelonquelonst
+import com.twittelonr.reloncos.uselonr_twelonelont_graph.thriftscala.ConsumelonrsBaselondRelonlatelondTwelonelontRelonquelonst
+import com.twittelonr.reloncos.uselonr_twelonelont_graph.thriftscala.UselonrTwelonelontGraph
+import com.twittelonr.simclustelonrs_v2.common.TwelonelontId
+import com.twittelonr.simclustelonrs_v2.thriftscala.IntelonrnalId
+import com.twittelonr.storelonhaus.RelonadablelonStorelon
+import com.twittelonr.twistly.thriftscala.TwelonelontReloncelonntelonngagelondUselonrs
+import com.twittelonr.util.Futurelon
+import javax.injelonct.Singlelonton
+import com.twittelonr.snowflakelon.id.SnowflakelonId
+import com.twittelonr.timelonlinelons.configapi
+import com.twittelonr.util.Duration
+import com.twittelonr.util.Timelon
+import scala.concurrelonnt.duration.HOURS
 
 /**
- * This store looks for similar tweets from UserTweetGraph for a Source TweetId
- * For a query tweet,User Tweet Graph (UTG),
- * lets us find out which other tweets share a lot of the same engagers with the query tweet
- * one-pager: go/UTG
+ * This storelon looks for similar twelonelonts from UselonrTwelonelontGraph for a Sourcelon TwelonelontId
+ * For a quelonry twelonelont,Uselonr Twelonelont Graph (UTG),
+ * lelonts us find out which othelonr twelonelonts sharelon a lot of thelon samelon elonngagelonrs with thelon quelonry twelonelont
+ * onelon-pagelonr: go/UTG
  */
-@Singleton
-case class TweetBasedUserTweetGraphSimilarityEngine(
-  userTweetGraphService: UserTweetGraph.MethodPerEndpoint,
-  tweetEngagedUsersStore: ReadableStore[TweetId, TweetRecentEngagedUsers],
-  statsReceiver: StatsReceiver)
-    extends ReadableStore[
-      TweetBasedUserTweetGraphSimilarityEngine.Query,
-      Seq[TweetWithScore]
+@Singlelonton
+caselon class TwelonelontBaselondUselonrTwelonelontGraphSimilarityelonnginelon(
+  uselonrTwelonelontGraphSelonrvicelon: UselonrTwelonelontGraph.MelonthodPelonrelonndpoint,
+  twelonelontelonngagelondUselonrsStorelon: RelonadablelonStorelon[TwelonelontId, TwelonelontReloncelonntelonngagelondUselonrs],
+  statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds RelonadablelonStorelon[
+      TwelonelontBaselondUselonrTwelonelontGraphSimilarityelonnginelon.Quelonry,
+      Selonq[TwelonelontWithScorelon]
     ] {
 
-  import TweetBasedUserTweetGraphSimilarityEngine._
+  import TwelonelontBaselondUselonrTwelonelontGraphSimilarityelonnginelon._
 
-  private val stats = statsReceiver.scope(this.getClass.getSimpleName)
-  private val fetchCandidatesStat = stats.scope("fetchCandidates")
-  private val fetchCoverageExpansionCandidatesStat = stats.scope("fetchCoverageExpansionCandidates")
+  privatelon val stats = statsReloncelonivelonr.scopelon(this.gelontClass.gelontSimplelonNamelon)
+  privatelon val felontchCandidatelonsStat = stats.scopelon("felontchCandidatelons")
+  privatelon val felontchCovelonragelonelonxpansionCandidatelonsStat = stats.scopelon("felontchCovelonragelonelonxpansionCandidatelons")
 
-  override def get(
-    query: TweetBasedUserTweetGraphSimilarityEngine.Query
-  ): Future[Option[Seq[TweetWithScore]]] = {
-    query.sourceId match {
-      case InternalId.TweetId(tweetId) if query.enableCoverageExpansionAllTweet =>
-        getCoverageExpansionCandidates(tweetId, query)
+  ovelonrridelon delonf gelont(
+    quelonry: TwelonelontBaselondUselonrTwelonelontGraphSimilarityelonnginelon.Quelonry
+  ): Futurelon[Option[Selonq[TwelonelontWithScorelon]]] = {
+    quelonry.sourcelonId match {
+      caselon IntelonrnalId.TwelonelontId(twelonelontId) if quelonry.elonnablelonCovelonragelonelonxpansionAllTwelonelont =>
+        gelontCovelonragelonelonxpansionCandidatelons(twelonelontId, quelonry)
 
-      case InternalId.TweetId(tweetId) if query.enableCoverageExpansionOldTweet => // For Home
-        if (isOldTweet(tweetId)) getCoverageExpansionCandidates(tweetId, query)
-        else getCandidates(tweetId, query)
+      caselon IntelonrnalId.TwelonelontId(twelonelontId) if quelonry.elonnablelonCovelonragelonelonxpansionOldTwelonelont => // For Homelon
+        if (isOldTwelonelont(twelonelontId)) gelontCovelonragelonelonxpansionCandidatelons(twelonelontId, quelonry)
+        elonlselon gelontCandidatelons(twelonelontId, quelonry)
 
-      case InternalId.TweetId(tweetId) => getCandidates(tweetId, query)
-      case _ =>
-        Future.value(None)
+      caselon IntelonrnalId.TwelonelontId(twelonelontId) => gelontCandidatelons(twelonelontId, quelonry)
+      caselon _ =>
+        Futurelon.valuelon(Nonelon)
     }
   }
 
-  // This is the main candidate source
-  private def getCandidates(
-    tweetId: TweetId,
-    query: TweetBasedUserTweetGraphSimilarityEngine.Query
-  ): Future[Option[Seq[TweetWithScore]]] = {
-    StatsUtil.trackOptionItemsStats(fetchCandidatesStat) {
-      val tweetBasedRelatedTweetRequest = {
-        TweetBasedRelatedTweetRequest(
-          tweetId,
-          maxResults = Some(query.maxResults),
-          minCooccurrence = Some(query.minCooccurrence),
-          excludeTweetIds = Some(Seq(tweetId)),
-          minScore = Some(query.tweetBasedMinScore),
-          maxTweetAgeInHours = Some(query.maxTweetAgeInHours)
+  // This is thelon main candidatelon sourcelon
+  privatelon delonf gelontCandidatelons(
+    twelonelontId: TwelonelontId,
+    quelonry: TwelonelontBaselondUselonrTwelonelontGraphSimilarityelonnginelon.Quelonry
+  ): Futurelon[Option[Selonq[TwelonelontWithScorelon]]] = {
+    StatsUtil.trackOptionItelonmsStats(felontchCandidatelonsStat) {
+      val twelonelontBaselondRelonlatelondTwelonelontRelonquelonst = {
+        TwelonelontBaselondRelonlatelondTwelonelontRelonquelonst(
+          twelonelontId,
+          maxRelonsults = Somelon(quelonry.maxRelonsults),
+          minCooccurrelonncelon = Somelon(quelonry.minCooccurrelonncelon),
+          elonxcludelonTwelonelontIds = Somelon(Selonq(twelonelontId)),
+          minScorelon = Somelon(quelonry.twelonelontBaselondMinScorelon),
+          maxTwelonelontAgelonInHours = Somelon(quelonry.maxTwelonelontAgelonInHours)
         )
       }
-      toTweetWithScore(
-        userTweetGraphService.tweetBasedRelatedTweets(tweetBasedRelatedTweetRequest).map {
-          Some(_)
+      toTwelonelontWithScorelon(
+        uselonrTwelonelontGraphSelonrvicelon.twelonelontBaselondRelonlatelondTwelonelonts(twelonelontBaselondRelonlatelondTwelonelontRelonquelonst).map {
+          Somelon(_)
         })
     }
   }
 
-  // function for DDGs, for coverage expansion algo, we first fetch tweet's recent engaged users as consumeSeedSet from MH store,
-  // and query consumersBasedUTG using the consumeSeedSet
-  private def getCoverageExpansionCandidates(
-    tweetId: TweetId,
-    query: TweetBasedUserTweetGraphSimilarityEngine.Query
-  ): Future[Option[Seq[TweetWithScore]]] = {
+  // function for DDGs, for covelonragelon elonxpansion algo, welon first felontch twelonelont's reloncelonnt elonngagelond uselonrs as consumelonSelonelondSelont from MH storelon,
+  // and quelonry consumelonrsBaselondUTG using thelon consumelonSelonelondSelont
+  privatelon delonf gelontCovelonragelonelonxpansionCandidatelons(
+    twelonelontId: TwelonelontId,
+    quelonry: TwelonelontBaselondUselonrTwelonelontGraphSimilarityelonnginelon.Quelonry
+  ): Futurelon[Option[Selonq[TwelonelontWithScorelon]]] = {
     StatsUtil
-      .trackOptionItemsStats(fetchCoverageExpansionCandidatesStat) {
-        tweetEngagedUsersStore
-          .get(tweetId).flatMap {
-            _.map { tweetRecentEngagedUsers =>
-              val consumerSeedSet =
-                tweetRecentEngagedUsers.recentEngagedUsers
-                  .map { _.userId }.take(query.maxConsumerSeedsNum)
-              val consumersBasedRelatedTweetRequest =
-                ConsumersBasedRelatedTweetRequest(
-                  consumerSeedSet = consumerSeedSet,
-                  maxResults = Some(query.maxResults),
-                  minCooccurrence = Some(query.minCooccurrence),
-                  excludeTweetIds = Some(Seq(tweetId)),
-                  minScore = Some(query.consumersBasedMinScore),
-                  maxTweetAgeInHours = Some(query.maxTweetAgeInHours)
+      .trackOptionItelonmsStats(felontchCovelonragelonelonxpansionCandidatelonsStat) {
+        twelonelontelonngagelondUselonrsStorelon
+          .gelont(twelonelontId).flatMap {
+            _.map { twelonelontReloncelonntelonngagelondUselonrs =>
+              val consumelonrSelonelondSelont =
+                twelonelontReloncelonntelonngagelondUselonrs.reloncelonntelonngagelondUselonrs
+                  .map { _.uselonrId }.takelon(quelonry.maxConsumelonrSelonelondsNum)
+              val consumelonrsBaselondRelonlatelondTwelonelontRelonquelonst =
+                ConsumelonrsBaselondRelonlatelondTwelonelontRelonquelonst(
+                  consumelonrSelonelondSelont = consumelonrSelonelondSelont,
+                  maxRelonsults = Somelon(quelonry.maxRelonsults),
+                  minCooccurrelonncelon = Somelon(quelonry.minCooccurrelonncelon),
+                  elonxcludelonTwelonelontIds = Somelon(Selonq(twelonelontId)),
+                  minScorelon = Somelon(quelonry.consumelonrsBaselondMinScorelon),
+                  maxTwelonelontAgelonInHours = Somelon(quelonry.maxTwelonelontAgelonInHours)
                 )
 
-              toTweetWithScore(userTweetGraphService
-                .consumersBasedRelatedTweets(consumersBasedRelatedTweetRequest).map { Some(_) })
-            }.getOrElse(Future.value(None))
+              toTwelonelontWithScorelon(uselonrTwelonelontGraphSelonrvicelon
+                .consumelonrsBaselondRelonlatelondTwelonelonts(consumelonrsBaselondRelonlatelondTwelonelontRelonquelonst).map { Somelon(_) })
+            }.gelontOrelonlselon(Futurelon.valuelon(Nonelon))
           }
       }
   }
 
 }
 
-object TweetBasedUserTweetGraphSimilarityEngine {
+objelonct TwelonelontBaselondUselonrTwelonelontGraphSimilarityelonnginelon {
 
-  def toSimilarityEngineInfo(score: Double): SimilarityEngineInfo = {
-    SimilarityEngineInfo(
-      similarityEngineType = SimilarityEngineType.TweetBasedUserTweetGraph,
-      modelId = None,
-      score = Some(score))
+  delonf toSimilarityelonnginelonInfo(scorelon: Doublelon): SimilarityelonnginelonInfo = {
+    SimilarityelonnginelonInfo(
+      similarityelonnginelonTypelon = SimilarityelonnginelonTypelon.TwelonelontBaselondUselonrTwelonelontGraph,
+      modelonlId = Nonelon,
+      scorelon = Somelon(scorelon))
   }
 
-  private val oldTweetCap: Duration = Duration(48, HOURS)
+  privatelon val oldTwelonelontCap: Duration = Duration(48, HOURS)
 
-  private def toTweetWithScore(
-    relatedTweetResponseFut: Future[Option[RelatedTweetResponse]]
-  ): Future[Option[Seq[TweetWithScore]]] = {
-    relatedTweetResponseFut.map { relatedTweetResponseOpt =>
-      relatedTweetResponseOpt.map { relatedTweetResponse =>
-        val candidates =
-          relatedTweetResponse.tweets.map(tweet => TweetWithScore(tweet.tweetId, tweet.score))
-        candidates
+  privatelon delonf toTwelonelontWithScorelon(
+    relonlatelondTwelonelontRelonsponselonFut: Futurelon[Option[RelonlatelondTwelonelontRelonsponselon]]
+  ): Futurelon[Option[Selonq[TwelonelontWithScorelon]]] = {
+    relonlatelondTwelonelontRelonsponselonFut.map { relonlatelondTwelonelontRelonsponselonOpt =>
+      relonlatelondTwelonelontRelonsponselonOpt.map { relonlatelondTwelonelontRelonsponselon =>
+        val candidatelons =
+          relonlatelondTwelonelontRelonsponselon.twelonelonts.map(twelonelont => TwelonelontWithScorelon(twelonelont.twelonelontId, twelonelont.scorelon))
+        candidatelons
       }
     }
   }
 
-  private def isOldTweet(tweetId: TweetId): Boolean = {
-    SnowflakeId
-      .timeFromIdOpt(tweetId).forall { tweetTime => tweetTime < Time.now - oldTweetCap }
-    // If there's no snowflake timestamp, we have no idea when this tweet happened.
+  privatelon delonf isOldTwelonelont(twelonelontId: TwelonelontId): Boolelonan = {
+    SnowflakelonId
+      .timelonFromIdOpt(twelonelontId).forall { twelonelontTimelon => twelonelontTimelon < Timelon.now - oldTwelonelontCap }
+    // If thelonrelon's no snowflakelon timelonstamp, welon havelon no idelona whelonn this twelonelont happelonnelond.
   }
 
-  case class Query(
-    sourceId: InternalId,
-    maxResults: Int,
-    minCooccurrence: Int,
-    tweetBasedMinScore: Double,
-    consumersBasedMinScore: Double,
-    maxTweetAgeInHours: Int,
-    maxConsumerSeedsNum: Int,
-    enableCoverageExpansionOldTweet: Boolean,
-    enableCoverageExpansionAllTweet: Boolean,
+  caselon class Quelonry(
+    sourcelonId: IntelonrnalId,
+    maxRelonsults: Int,
+    minCooccurrelonncelon: Int,
+    twelonelontBaselondMinScorelon: Doublelon,
+    consumelonrsBaselondMinScorelon: Doublelon,
+    maxTwelonelontAgelonInHours: Int,
+    maxConsumelonrSelonelondsNum: Int,
+    elonnablelonCovelonragelonelonxpansionOldTwelonelont: Boolelonan,
+    elonnablelonCovelonragelonelonxpansionAllTwelonelont: Boolelonan,
   )
 
-  def fromParams(
-    sourceId: InternalId,
+  delonf fromParams(
+    sourcelonId: IntelonrnalId,
     params: configapi.Params,
-  ): EngineQuery[Query] = {
-    EngineQuery(
-      Query(
-        sourceId = sourceId,
-        maxResults = params(GlobalParams.MaxCandidateNumPerSourceKeyParam),
-        minCooccurrence = params(TweetBasedUserTweetGraphParams.MinCoOccurrenceParam),
-        tweetBasedMinScore = params(TweetBasedUserTweetGraphParams.TweetBasedMinScoreParam),
-        consumersBasedMinScore = params(TweetBasedUserTweetGraphParams.ConsumersBasedMinScoreParam),
-        maxTweetAgeInHours = params(GlobalParams.MaxTweetAgeHoursParam).inHours,
-        maxConsumerSeedsNum = params(TweetBasedUserTweetGraphParams.MaxConsumerSeedsNumParam),
-        enableCoverageExpansionOldTweet =
-          params(TweetBasedUserTweetGraphParams.EnableCoverageExpansionOldTweetParam),
-        enableCoverageExpansionAllTweet =
-          params(TweetBasedUserTweetGraphParams.EnableCoverageExpansionAllTweetParam),
+  ): elonnginelonQuelonry[Quelonry] = {
+    elonnginelonQuelonry(
+      Quelonry(
+        sourcelonId = sourcelonId,
+        maxRelonsults = params(GlobalParams.MaxCandidatelonNumPelonrSourcelonKelonyParam),
+        minCooccurrelonncelon = params(TwelonelontBaselondUselonrTwelonelontGraphParams.MinCoOccurrelonncelonParam),
+        twelonelontBaselondMinScorelon = params(TwelonelontBaselondUselonrTwelonelontGraphParams.TwelonelontBaselondMinScorelonParam),
+        consumelonrsBaselondMinScorelon = params(TwelonelontBaselondUselonrTwelonelontGraphParams.ConsumelonrsBaselondMinScorelonParam),
+        maxTwelonelontAgelonInHours = params(GlobalParams.MaxTwelonelontAgelonHoursParam).inHours,
+        maxConsumelonrSelonelondsNum = params(TwelonelontBaselondUselonrTwelonelontGraphParams.MaxConsumelonrSelonelondsNumParam),
+        elonnablelonCovelonragelonelonxpansionOldTwelonelont =
+          params(TwelonelontBaselondUselonrTwelonelontGraphParams.elonnablelonCovelonragelonelonxpansionOldTwelonelontParam),
+        elonnablelonCovelonragelonelonxpansionAllTwelonelont =
+          params(TwelonelontBaselondUselonrTwelonelontGraphParams.elonnablelonCovelonragelonelonxpansionAllTwelonelontParam),
       ),
       params
     )

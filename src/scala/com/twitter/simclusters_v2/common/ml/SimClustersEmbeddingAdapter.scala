@@ -1,39 +1,39 @@
-package com.twitter.simclusters_v2.common.ml
+packagelon com.twittelonr.simclustelonrs_v2.common.ml
 
-import com.twitter.ml.api.Feature.Continuous
-import com.twitter.ml.api.Feature.SparseContinuous
-import com.twitter.ml.api._
-import com.twitter.ml.api.util.FDsl._
-import com.twitter.simclusters_v2.common.SimClustersEmbedding
+import com.twittelonr.ml.api.Felonaturelon.Continuous
+import com.twittelonr.ml.api.Felonaturelon.SparselonContinuous
+import com.twittelonr.ml.api._
+import com.twittelonr.ml.api.util.FDsl._
+import com.twittelonr.simclustelonrs_v2.common.SimClustelonrselonmbelondding
 
-class SimClustersEmbeddingAdapter(embeddingFeature: SparseContinuous)
-    extends IRecordOneToOneAdapter[SimClustersEmbedding] {
+class SimClustelonrselonmbelonddingAdaptelonr(elonmbelonddingFelonaturelon: SparselonContinuous)
+    elonxtelonnds IReloncordOnelonToOnelonAdaptelonr[SimClustelonrselonmbelondding] {
 
-  override def getFeatureContext: FeatureContext = new FeatureContext(embeddingFeature)
+  ovelonrridelon delonf gelontFelonaturelonContelonxt: FelonaturelonContelonxt = nelonw FelonaturelonContelonxt(elonmbelonddingFelonaturelon)
 
-  override def adaptToDataRecord(embedding: SimClustersEmbedding): DataRecord = {
-    val embeddingMap = embedding.embedding.map {
-      case (clusterId, score) =>
-        (clusterId.toString, score)
+  ovelonrridelon delonf adaptToDataReloncord(elonmbelondding: SimClustelonrselonmbelondding): DataReloncord = {
+    val elonmbelonddingMap = elonmbelondding.elonmbelondding.map {
+      caselon (clustelonrId, scorelon) =>
+        (clustelonrId.toString, scorelon)
     }.toMap
 
-    new DataRecord().setFeatureValue(embeddingFeature, embeddingMap)
+    nelonw DataReloncord().selontFelonaturelonValuelon(elonmbelonddingFelonaturelon, elonmbelonddingMap)
   }
 }
 
-class NormalizedSimClustersEmbeddingAdapter(
-  embeddingFeature: SparseContinuous,
-  normFeature: Continuous)
-    extends IRecordOneToOneAdapter[SimClustersEmbedding] {
+class NormalizelondSimClustelonrselonmbelonddingAdaptelonr(
+  elonmbelonddingFelonaturelon: SparselonContinuous,
+  normFelonaturelon: Continuous)
+    elonxtelonnds IReloncordOnelonToOnelonAdaptelonr[SimClustelonrselonmbelondding] {
 
-  override def getFeatureContext: FeatureContext = new FeatureContext(embeddingFeature, normFeature)
+  ovelonrridelon delonf gelontFelonaturelonContelonxt: FelonaturelonContelonxt = nelonw FelonaturelonContelonxt(elonmbelonddingFelonaturelon, normFelonaturelon)
 
-  override def adaptToDataRecord(embedding: SimClustersEmbedding): DataRecord = {
+  ovelonrridelon delonf adaptToDataReloncord(elonmbelondding: SimClustelonrselonmbelondding): DataReloncord = {
 
-    val normalizedEmbedding = Map(
-      embedding.sortedClusterIds.map(_.toString).zip(embedding.normalizedSortedScores): _*)
+    val normalizelondelonmbelondding = Map(
+      elonmbelondding.sortelondClustelonrIds.map(_.toString).zip(elonmbelondding.normalizelondSortelondScorelons): _*)
 
-    val dataRecord = new DataRecord().setFeatureValue(embeddingFeature, normalizedEmbedding)
-    dataRecord.setFeatureValue(normFeature, embedding.l2norm)
+    val dataReloncord = nelonw DataReloncord().selontFelonaturelonValuelon(elonmbelonddingFelonaturelon, normalizelondelonmbelondding)
+    dataReloncord.selontFelonaturelonValuelon(normFelonaturelon, elonmbelondding.l2norm)
   }
 }

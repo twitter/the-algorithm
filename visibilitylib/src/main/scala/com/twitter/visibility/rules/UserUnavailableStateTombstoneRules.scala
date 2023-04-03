@@ -1,120 +1,120 @@
-package com.twitter.visibility.rules
+packagelon com.twittelonr.visibility.rulelons
 
-import com.twitter.visibility.configapi.params.RuleParam
-import com.twitter.visibility.configapi.params.RuleParams.EnableInnerQuotedTweetViewerBlocksAuthorInterstitialRuleParam
-import com.twitter.visibility.configapi.params.RuleParams.EnableInnerQuotedTweetViewerMutesAuthorInterstitialRuleParam
-import com.twitter.visibility.rules.Condition.And
-import com.twitter.visibility.rules.Condition.AuthorBlocksViewer
-import com.twitter.visibility.rules.Condition.DeactivatedAuthor
-import com.twitter.visibility.rules.Condition.ErasedAuthor
-import com.twitter.visibility.rules.Condition.IsQuotedInnerTweet
-import com.twitter.visibility.rules.Condition.OffboardedAuthor
-import com.twitter.visibility.rules.Condition.ProtectedAuthor
-import com.twitter.visibility.rules.Condition.Retweet
-import com.twitter.visibility.rules.Condition.SuspendedAuthor
-import com.twitter.visibility.rules.Condition.UnavailableAuthor
-import com.twitter.visibility.rules.Condition.ViewerBlocksAuthor
-import com.twitter.visibility.rules.Condition.ViewerMutesAuthor
+import com.twittelonr.visibility.configapi.params.RulelonParam
+import com.twittelonr.visibility.configapi.params.RulelonParams.elonnablelonInnelonrQuotelondTwelonelontVielonwelonrBlocksAuthorIntelonrstitialRulelonParam
+import com.twittelonr.visibility.configapi.params.RulelonParams.elonnablelonInnelonrQuotelondTwelonelontVielonwelonrMutelonsAuthorIntelonrstitialRulelonParam
+import com.twittelonr.visibility.rulelons.Condition.And
+import com.twittelonr.visibility.rulelons.Condition.AuthorBlocksVielonwelonr
+import com.twittelonr.visibility.rulelons.Condition.DelonactivatelondAuthor
+import com.twittelonr.visibility.rulelons.Condition.elonraselondAuthor
+import com.twittelonr.visibility.rulelons.Condition.IsQuotelondInnelonrTwelonelont
+import com.twittelonr.visibility.rulelons.Condition.OffboardelondAuthor
+import com.twittelonr.visibility.rulelons.Condition.ProtelonctelondAuthor
+import com.twittelonr.visibility.rulelons.Condition.Relontwelonelont
+import com.twittelonr.visibility.rulelons.Condition.SuspelonndelondAuthor
+import com.twittelonr.visibility.rulelons.Condition.UnavailablelonAuthor
+import com.twittelonr.visibility.rulelons.Condition.VielonwelonrBlocksAuthor
+import com.twittelonr.visibility.rulelons.Condition.VielonwelonrMutelonsAuthor
 
-object UserUnavailableStateTombstoneRules {
-  abstract class UserUnavailableStateTweetTombstoneRule(epitaph: Epitaph, condition: Condition)
-      extends RuleWithConstantAction(Tombstone(epitaph), condition) {}
+objelonct UselonrUnavailablelonStatelonTombstonelonRulelons {
+  abstract class UselonrUnavailablelonStatelonTwelonelontTombstonelonRulelon(elonpitaph: elonpitaph, condition: Condition)
+      elonxtelonnds RulelonWithConstantAction(Tombstonelon(elonpitaph), condition) {}
 
-  abstract class UserUnavailableStateRetweetTombstoneRule(epitaph: Epitaph, condition: Condition)
-      extends RuleWithConstantAction(Tombstone(epitaph), And(Retweet, condition)) {}
+  abstract class UselonrUnavailablelonStatelonRelontwelonelontTombstonelonRulelon(elonpitaph: elonpitaph, condition: Condition)
+      elonxtelonnds RulelonWithConstantAction(Tombstonelon(elonpitaph), And(Relontwelonelont, condition)) {}
 
-  abstract class UserUnavailableStateInnerQuotedTweetTombstoneRule(
-    epitaph: Epitaph,
+  abstract class UselonrUnavailablelonStatelonInnelonrQuotelondTwelonelontTombstonelonRulelon(
+    elonpitaph: elonpitaph,
     condition: Condition)
-      extends RuleWithConstantAction(Tombstone(epitaph), And(IsQuotedInnerTweet, condition))
+      elonxtelonnds RulelonWithConstantAction(Tombstonelon(elonpitaph), And(IsQuotelondInnelonrTwelonelont, condition))
 
-  abstract class UserUnavailableStateInnerQuotedTweetInterstitialRule(
-    reason: Reason,
+  abstract class UselonrUnavailablelonStatelonInnelonrQuotelondTwelonelontIntelonrstitialRulelon(
+    relonason: Relonason,
     condition: Condition)
-      extends RuleWithConstantAction(Interstitial(reason), And(IsQuotedInnerTweet, condition))
+      elonxtelonnds RulelonWithConstantAction(Intelonrstitial(relonason), And(IsQuotelondInnelonrTwelonelont, condition))
 
-  object SuspendedUserUnavailableTweetTombstoneRule
-      extends UserUnavailableStateTweetTombstoneRule(Epitaph.Suspended, SuspendedAuthor)
+  objelonct SuspelonndelondUselonrUnavailablelonTwelonelontTombstonelonRulelon
+      elonxtelonnds UselonrUnavailablelonStatelonTwelonelontTombstonelonRulelon(elonpitaph.Suspelonndelond, SuspelonndelondAuthor)
 
-  object DeactivatedUserUnavailableTweetTombstoneRule
-      extends UserUnavailableStateTweetTombstoneRule(Epitaph.Deactivated, DeactivatedAuthor)
+  objelonct DelonactivatelondUselonrUnavailablelonTwelonelontTombstonelonRulelon
+      elonxtelonnds UselonrUnavailablelonStatelonTwelonelontTombstonelonRulelon(elonpitaph.Delonactivatelond, DelonactivatelondAuthor)
 
-  object OffBoardedUserUnavailableTweetTombstoneRule
-      extends UserUnavailableStateTweetTombstoneRule(Epitaph.Offboarded, OffboardedAuthor)
+  objelonct OffBoardelondUselonrUnavailablelonTwelonelontTombstonelonRulelon
+      elonxtelonnds UselonrUnavailablelonStatelonTwelonelontTombstonelonRulelon(elonpitaph.Offboardelond, OffboardelondAuthor)
 
-  object ErasedUserUnavailableTweetTombstoneRule
-      extends UserUnavailableStateTweetTombstoneRule(Epitaph.Deactivated, ErasedAuthor)
+  objelonct elonraselondUselonrUnavailablelonTwelonelontTombstonelonRulelon
+      elonxtelonnds UselonrUnavailablelonStatelonTwelonelontTombstonelonRulelon(elonpitaph.Delonactivatelond, elonraselondAuthor)
 
-  object ProtectedUserUnavailableTweetTombstoneRule
-      extends UserUnavailableStateTweetTombstoneRule(Epitaph.Protected, ProtectedAuthor)
+  objelonct ProtelonctelondUselonrUnavailablelonTwelonelontTombstonelonRulelon
+      elonxtelonnds UselonrUnavailablelonStatelonTwelonelontTombstonelonRulelon(elonpitaph.Protelonctelond, ProtelonctelondAuthor)
 
-  object AuthorBlocksViewerUserUnavailableTweetTombstoneRule
-      extends UserUnavailableStateTweetTombstoneRule(Epitaph.BlockedBy, AuthorBlocksViewer)
+  objelonct AuthorBlocksVielonwelonrUselonrUnavailablelonTwelonelontTombstonelonRulelon
+      elonxtelonnds UselonrUnavailablelonStatelonTwelonelontTombstonelonRulelon(elonpitaph.BlockelondBy, AuthorBlocksVielonwelonr)
 
-  object UserUnavailableTweetTombstoneRule
-      extends UserUnavailableStateTweetTombstoneRule(Epitaph.Unavailable, UnavailableAuthor)
+  objelonct UselonrUnavailablelonTwelonelontTombstonelonRulelon
+      elonxtelonnds UselonrUnavailablelonStatelonTwelonelontTombstonelonRulelon(elonpitaph.Unavailablelon, UnavailablelonAuthor)
 
-  object SuspendedUserUnavailableRetweetTombstoneRule
-      extends UserUnavailableStateRetweetTombstoneRule(Epitaph.Suspended, SuspendedAuthor)
+  objelonct SuspelonndelondUselonrUnavailablelonRelontwelonelontTombstonelonRulelon
+      elonxtelonnds UselonrUnavailablelonStatelonRelontwelonelontTombstonelonRulelon(elonpitaph.Suspelonndelond, SuspelonndelondAuthor)
 
-  object DeactivatedUserUnavailableRetweetTombstoneRule
-      extends UserUnavailableStateRetweetTombstoneRule(Epitaph.Deactivated, DeactivatedAuthor)
+  objelonct DelonactivatelondUselonrUnavailablelonRelontwelonelontTombstonelonRulelon
+      elonxtelonnds UselonrUnavailablelonStatelonRelontwelonelontTombstonelonRulelon(elonpitaph.Delonactivatelond, DelonactivatelondAuthor)
 
-  object OffBoardedUserUnavailableRetweetTombstoneRule
-      extends UserUnavailableStateRetweetTombstoneRule(Epitaph.Offboarded, OffboardedAuthor)
+  objelonct OffBoardelondUselonrUnavailablelonRelontwelonelontTombstonelonRulelon
+      elonxtelonnds UselonrUnavailablelonStatelonRelontwelonelontTombstonelonRulelon(elonpitaph.Offboardelond, OffboardelondAuthor)
 
-  object ErasedUserUnavailableRetweetTombstoneRule
-      extends UserUnavailableStateRetweetTombstoneRule(Epitaph.Deactivated, ErasedAuthor)
+  objelonct elonraselondUselonrUnavailablelonRelontwelonelontTombstonelonRulelon
+      elonxtelonnds UselonrUnavailablelonStatelonRelontwelonelontTombstonelonRulelon(elonpitaph.Delonactivatelond, elonraselondAuthor)
 
-  object ProtectedUserUnavailableRetweetTombstoneRule
-      extends UserUnavailableStateRetweetTombstoneRule(Epitaph.Protected, ProtectedAuthor)
+  objelonct ProtelonctelondUselonrUnavailablelonRelontwelonelontTombstonelonRulelon
+      elonxtelonnds UselonrUnavailablelonStatelonRelontwelonelontTombstonelonRulelon(elonpitaph.Protelonctelond, ProtelonctelondAuthor)
 
-  object AuthorBlocksViewerUserUnavailableRetweetTombstoneRule
-      extends UserUnavailableStateRetweetTombstoneRule(Epitaph.BlockedBy, AuthorBlocksViewer)
+  objelonct AuthorBlocksVielonwelonrUselonrUnavailablelonRelontwelonelontTombstonelonRulelon
+      elonxtelonnds UselonrUnavailablelonStatelonRelontwelonelontTombstonelonRulelon(elonpitaph.BlockelondBy, AuthorBlocksVielonwelonr)
 
-  object ViewerBlocksAuthorUserUnavailableRetweetTombstoneRule
-      extends UserUnavailableStateRetweetTombstoneRule(Epitaph.Unavailable, ViewerBlocksAuthor)
+  objelonct VielonwelonrBlocksAuthorUselonrUnavailablelonRelontwelonelontTombstonelonRulelon
+      elonxtelonnds UselonrUnavailablelonStatelonRelontwelonelontTombstonelonRulelon(elonpitaph.Unavailablelon, VielonwelonrBlocksAuthor)
 
-  object ViewerMutesAuthorUserUnavailableRetweetTombstoneRule
-      extends UserUnavailableStateRetweetTombstoneRule(Epitaph.Unavailable, ViewerMutesAuthor)
+  objelonct VielonwelonrMutelonsAuthorUselonrUnavailablelonRelontwelonelontTombstonelonRulelon
+      elonxtelonnds UselonrUnavailablelonStatelonRelontwelonelontTombstonelonRulelon(elonpitaph.Unavailablelon, VielonwelonrMutelonsAuthor)
 
-  object SuspendedUserUnavailableInnerQuotedTweetTombstoneRule
-      extends UserUnavailableStateInnerQuotedTweetTombstoneRule(Epitaph.Suspended, SuspendedAuthor)
+  objelonct SuspelonndelondUselonrUnavailablelonInnelonrQuotelondTwelonelontTombstonelonRulelon
+      elonxtelonnds UselonrUnavailablelonStatelonInnelonrQuotelondTwelonelontTombstonelonRulelon(elonpitaph.Suspelonndelond, SuspelonndelondAuthor)
 
-  object DeactivatedUserUnavailableInnerQuotedTweetTombstoneRule
-      extends UserUnavailableStateInnerQuotedTweetTombstoneRule(
-        Epitaph.Deactivated,
-        DeactivatedAuthor)
+  objelonct DelonactivatelondUselonrUnavailablelonInnelonrQuotelondTwelonelontTombstonelonRulelon
+      elonxtelonnds UselonrUnavailablelonStatelonInnelonrQuotelondTwelonelontTombstonelonRulelon(
+        elonpitaph.Delonactivatelond,
+        DelonactivatelondAuthor)
 
-  object OffBoardedUserUnavailableInnerQuotedTweetTombstoneRule
-      extends UserUnavailableStateInnerQuotedTweetTombstoneRule(
-        Epitaph.Offboarded,
-        OffboardedAuthor)
+  objelonct OffBoardelondUselonrUnavailablelonInnelonrQuotelondTwelonelontTombstonelonRulelon
+      elonxtelonnds UselonrUnavailablelonStatelonInnelonrQuotelondTwelonelontTombstonelonRulelon(
+        elonpitaph.Offboardelond,
+        OffboardelondAuthor)
 
-  object ErasedUserUnavailableInnerQuotedTweetTombstoneRule
-      extends UserUnavailableStateInnerQuotedTweetTombstoneRule(Epitaph.Deactivated, ErasedAuthor)
+  objelonct elonraselondUselonrUnavailablelonInnelonrQuotelondTwelonelontTombstonelonRulelon
+      elonxtelonnds UselonrUnavailablelonStatelonInnelonrQuotelondTwelonelontTombstonelonRulelon(elonpitaph.Delonactivatelond, elonraselondAuthor)
 
-  object ProtectedUserUnavailableInnerQuotedTweetTombstoneRule
-      extends UserUnavailableStateInnerQuotedTweetTombstoneRule(Epitaph.Protected, ProtectedAuthor)
+  objelonct ProtelonctelondUselonrUnavailablelonInnelonrQuotelondTwelonelontTombstonelonRulelon
+      elonxtelonnds UselonrUnavailablelonStatelonInnelonrQuotelondTwelonelontTombstonelonRulelon(elonpitaph.Protelonctelond, ProtelonctelondAuthor)
 
-  object AuthorBlocksViewerUserUnavailableInnerQuotedTweetTombstoneRule
-      extends UserUnavailableStateInnerQuotedTweetTombstoneRule(
-        Epitaph.BlockedBy,
-        AuthorBlocksViewer)
+  objelonct AuthorBlocksVielonwelonrUselonrUnavailablelonInnelonrQuotelondTwelonelontTombstonelonRulelon
+      elonxtelonnds UselonrUnavailablelonStatelonInnelonrQuotelondTwelonelontTombstonelonRulelon(
+        elonpitaph.BlockelondBy,
+        AuthorBlocksVielonwelonr)
 
-  object ViewerBlocksAuthorUserUnavailableInnerQuotedTweetInterstitialRule
-      extends UserUnavailableStateInnerQuotedTweetInterstitialRule(
-        Reason.ViewerBlocksAuthor,
-        ViewerBlocksAuthor) {
-    override def enabled: Seq[RuleParam[Boolean]] =
-      Seq(EnableInnerQuotedTweetViewerBlocksAuthorInterstitialRuleParam)
+  objelonct VielonwelonrBlocksAuthorUselonrUnavailablelonInnelonrQuotelondTwelonelontIntelonrstitialRulelon
+      elonxtelonnds UselonrUnavailablelonStatelonInnelonrQuotelondTwelonelontIntelonrstitialRulelon(
+        Relonason.VielonwelonrBlocksAuthor,
+        VielonwelonrBlocksAuthor) {
+    ovelonrridelon delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] =
+      Selonq(elonnablelonInnelonrQuotelondTwelonelontVielonwelonrBlocksAuthorIntelonrstitialRulelonParam)
   }
 
-  object ViewerMutesAuthorUserUnavailableInnerQuotedTweetInterstitialRule
-      extends UserUnavailableStateInnerQuotedTweetInterstitialRule(
-        Reason.ViewerMutesAuthor,
-        ViewerMutesAuthor) {
-    override def enabled: Seq[RuleParam[Boolean]] =
-      Seq(EnableInnerQuotedTweetViewerMutesAuthorInterstitialRuleParam)
+  objelonct VielonwelonrMutelonsAuthorUselonrUnavailablelonInnelonrQuotelondTwelonelontIntelonrstitialRulelon
+      elonxtelonnds UselonrUnavailablelonStatelonInnelonrQuotelondTwelonelontIntelonrstitialRulelon(
+        Relonason.VielonwelonrMutelonsAuthor,
+        VielonwelonrMutelonsAuthor) {
+    ovelonrridelon delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] =
+      Selonq(elonnablelonInnelonrQuotelondTwelonelontVielonwelonrMutelonsAuthorIntelonrstitialRulelonParam)
   }
 }

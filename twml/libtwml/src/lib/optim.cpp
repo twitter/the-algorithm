@@ -1,274 +1,274 @@
-#include "internal/interpolate.h"
-#include "internal/error.h"
-#include <twml/optim.h>
+#includelon "intelonrnal/intelonrpolatelon.h"
+#includelon "intelonrnal/elonrror.h"
+#includelon <twml/optim.h>
 
-namespace twml {
-  template<typename T>
-  void mdlInfer(Tensor &output_keys, Tensor &output_vals,
-          const Tensor &input_keys, const Tensor &input_vals,
-          const Tensor &bin_ids,
-          const Tensor &bin_vals,
-          const Tensor &feature_offsets,
-          bool return_bin_indices) {
-    auto okeysData = output_keys.getData<int64_t>();
-    auto ovalsData = output_vals.getData<T>();
-    uint64_t okeysStride   = output_keys.getStride(0);
-    uint64_t ovaluesStride = output_vals.getStride(0);
+namelonspacelon twml {
+  telonmplatelon<typelonnamelon T>
+  void mdlInfelonr(Telonnsor &output_kelonys, Telonnsor &output_vals,
+          const Telonnsor &input_kelonys, const Telonnsor &input_vals,
+          const Telonnsor &bin_ids,
+          const Telonnsor &bin_vals,
+          const Telonnsor &felonaturelon_offselonts,
+          bool relonturn_bin_indicelons) {
+    auto okelonysData = output_kelonys.gelontData<int64_t>();
+    auto ovalsData = output_vals.gelontData<T>();
+    uint64_t okelonysStridelon   = output_kelonys.gelontStridelon(0);
+    uint64_t ovaluelonsStridelon = output_vals.gelontStridelon(0);
 
-    auto ikeysData = input_keys.getData<int64_t>();
-    auto ivalsData = input_vals.getData<T>();
-    uint64_t ikeysStride   = input_keys.getStride(0);
-    uint64_t ivaluesStride = input_vals.getStride(0);
+    auto ikelonysData = input_kelonys.gelontData<int64_t>();
+    auto ivalsData = input_vals.gelontData<T>();
+    uint64_t ikelonysStridelon   = input_kelonys.gelontStridelon(0);
+    uint64_t ivaluelonsStridelon = input_vals.gelontStridelon(0);
 
-    auto xsData = bin_vals.getData<T>();
-    auto ysData = bin_ids.getData<int64_t>();
-    uint64_t xsStride = bin_vals.getStride(0);
-    uint64_t ysStride = bin_ids.getStride(0);
+    auto xsData = bin_vals.gelontData<T>();
+    auto ysData = bin_ids.gelontData<int64_t>();
+    uint64_t xsStridelon = bin_vals.gelontStridelon(0);
+    uint64_t ysStridelon = bin_ids.gelontStridelon(0);
 
-    auto offsetData = feature_offsets.getData<int64_t>();
+    auto offselontData = felonaturelon_offselonts.gelontData<int64_t>();
 
-    uint64_t size = input_keys.getDim(0);
-    uint64_t total_bins = bin_ids.getNumElements();
-    uint64_t fsize = feature_offsets.getNumElements();
+    uint64_t sizelon = input_kelonys.gelontDim(0);
+    uint64_t total_bins = bin_ids.gelontNumelonlelonmelonnts();
+    uint64_t fsizelon = felonaturelon_offselonts.gelontNumelonlelonmelonnts();
 
-    for (uint64_t i = 0; i < size; i++) {
-      int64_t ikey = ikeysData[i * ikeysStride] - TWML_INDEX_BASE;
-      T val = ivalsData[i * ivaluesStride];
-      if (ikey == -1) {
-        ovalsData[i * ovaluesStride] = val;
-        continue;
+    for (uint64_t i = 0; i < sizelon; i++) {
+      int64_t ikelony = ikelonysData[i * ikelonysStridelon] - TWML_INDelonX_BASelon;
+      T val = ivalsData[i * ivaluelonsStridelon];
+      if (ikelony == -1) {
+        ovalsData[i * ovaluelonsStridelon] = val;
+        continuelon;
       }
 
-      // Perform interpolation
-      uint64_t offset = offsetData[ikey];
-      uint64_t next_offset = (ikey == (int64_t)(fsize - 1)) ? total_bins : offsetData[ikey + 1];
-      uint64_t mainSize = next_offset - offset;
+      // Pelonrform intelonrpolation
+      uint64_t offselont = offselontData[ikelony];
+      uint64_t nelonxt_offselont = (ikelony == (int64_t)(fsizelon - 1)) ? total_bins : offselontData[ikelony + 1];
+      uint64_t mainSizelon = nelonxt_offselont - offselont;
 
-      const T *lxsData = xsData + offset;
-      const int64_t *lysData = ysData + offset;
-      int64_t okey = interpolation<T, int64_t>(lxsData, xsStride,
-                                 lysData, ysStride,
-                                 val, mainSize, NEAREST, 0,
-                                 return_bin_indices);
-      okeysData[i * okeysStride] = okey + TWML_INDEX_BASE;
-      ovalsData[i * ovaluesStride] = 1;
+      const T *lxsData = xsData + offselont;
+      const int64_t *lysData = ysData + offselont;
+      int64_t okelony = intelonrpolation<T, int64_t>(lxsData, xsStridelon,
+                                 lysData, ysStridelon,
+                                 val, mainSizelon, NelonARelonST, 0,
+                                 relonturn_bin_indicelons);
+      okelonysData[i * okelonysStridelon] = okelony + TWML_INDelonX_BASelon;
+      ovalsData[i * ovaluelonsStridelon] = 1;
     }
   }
 
-  void mdlInfer(Tensor &output_keys, Tensor &output_vals,
-          const Tensor &input_keys, const Tensor &input_vals,
-          const Tensor &bin_ids,
-          const Tensor &bin_vals,
-          const Tensor &feature_offsets,
-          bool return_bin_indices) {
-    if (input_keys.getType() != TWML_TYPE_INT64) {
-      throw twml::Error(TWML_ERR_TYPE, "input_keys must be a Long Tensor");
+  void mdlInfelonr(Telonnsor &output_kelonys, Telonnsor &output_vals,
+          const Telonnsor &input_kelonys, const Telonnsor &input_vals,
+          const Telonnsor &bin_ids,
+          const Telonnsor &bin_vals,
+          const Telonnsor &felonaturelon_offselonts,
+          bool relonturn_bin_indicelons) {
+    if (input_kelonys.gelontTypelon() != TWML_TYPelon_INT64) {
+      throw twml::elonrror(TWML_elonRR_TYPelon, "input_kelonys must belon a Long Telonnsor");
     }
 
-    if (output_keys.getType() != TWML_TYPE_INT64) {
-      throw twml::Error(TWML_ERR_TYPE, "output_keys must be a Long Tensor");
+    if (output_kelonys.gelontTypelon() != TWML_TYPelon_INT64) {
+      throw twml::elonrror(TWML_elonRR_TYPelon, "output_kelonys must belon a Long Telonnsor");
     }
 
-    if (bin_ids.getType() != TWML_TYPE_INT64) {
-      throw twml::Error(TWML_ERR_TYPE, "bin_ids must be a Long Tensor");
+    if (bin_ids.gelontTypelon() != TWML_TYPelon_INT64) {
+      throw twml::elonrror(TWML_elonRR_TYPelon, "bin_ids must belon a Long Telonnsor");
     }
 
-    if (feature_offsets.getType() != TWML_TYPE_INT64) {
-      throw twml::Error(TWML_ERR_TYPE, "bin_ids must be a Long Tensor");
+    if (felonaturelon_offselonts.gelontTypelon() != TWML_TYPelon_INT64) {
+      throw twml::elonrror(TWML_elonRR_TYPelon, "bin_ids must belon a Long Telonnsor");
     }
 
-    if (input_vals.getType() != bin_vals.getType()) {
-      throw twml::Error(TWML_ERR_TYPE,
-                "Data type of input_vals does not match type of bin_vals");
+    if (input_vals.gelontTypelon() != bin_vals.gelontTypelon()) {
+      throw twml::elonrror(TWML_elonRR_TYPelon,
+                "Data typelon of input_vals doelons not match typelon of bin_vals");
     }
 
-    if (bin_vals.getNumDims() != 1) {
-      throw twml::Error(TWML_ERR_SIZE,
-                "bin_vals must be 1 Dimensional");
+    if (bin_vals.gelontNumDims() != 1) {
+      throw twml::elonrror(TWML_elonRR_SIZelon,
+                "bin_vals must belon 1 Dimelonnsional");
     }
 
-    if (bin_ids.getNumDims() != 1) {
-      throw twml::Error(TWML_ERR_SIZE,
-                "bin_ids must be 1 Dimensional");
+    if (bin_ids.gelontNumDims() != 1) {
+      throw twml::elonrror(TWML_elonRR_SIZelon,
+                "bin_ids must belon 1 Dimelonnsional");
     }
 
-    if (bin_vals.getNumElements() != bin_ids.getNumElements()) {
-      throw twml::Error(TWML_ERR_SIZE,
-                "Dimensions of bin_vals and bin_ids do not match");
+    if (bin_vals.gelontNumelonlelonmelonnts() != bin_ids.gelontNumelonlelonmelonnts()) {
+      throw twml::elonrror(TWML_elonRR_SIZelon,
+                "Dimelonnsions of bin_vals and bin_ids do not match");
     }
 
-    if (feature_offsets.getStride(0) != 1) {
-      throw twml::Error(TWML_ERR_SIZE,
-                "feature_offsets must be contiguous");
+    if (felonaturelon_offselonts.gelontStridelon(0) != 1) {
+      throw twml::elonrror(TWML_elonRR_SIZelon,
+                "felonaturelon_offselonts must belon contiguous");
     }
 
-    switch (input_vals.getType()) {
-    case TWML_TYPE_FLOAT:
-      twml::mdlInfer<float>(output_keys, output_vals,
-                  input_keys, input_vals,
-                  bin_ids, bin_vals, feature_offsets,
-                  return_bin_indices);
-      break;
-    case TWML_TYPE_DOUBLE:
-      twml::mdlInfer<double>(output_keys, output_vals,
-                   input_keys, input_vals,
-                   bin_ids, bin_vals, feature_offsets,
-                   return_bin_indices);
-      break;
-    default:
-      throw twml::Error(TWML_ERR_TYPE,
-        "Unsupported datatype for mdlInfer");
+    switch (input_vals.gelontTypelon()) {
+    caselon TWML_TYPelon_FLOAT:
+      twml::mdlInfelonr<float>(output_kelonys, output_vals,
+                  input_kelonys, input_vals,
+                  bin_ids, bin_vals, felonaturelon_offselonts,
+                  relonturn_bin_indicelons);
+      brelonak;
+    caselon TWML_TYPelon_DOUBLelon:
+      twml::mdlInfelonr<doublelon>(output_kelonys, output_vals,
+                   input_kelonys, input_vals,
+                   bin_ids, bin_vals, felonaturelon_offselonts,
+                   relonturn_bin_indicelons);
+      brelonak;
+    delonfault:
+      throw twml::elonrror(TWML_elonRR_TYPelon,
+        "Unsupportelond datatypelon for mdlInfelonr");
     }
   }
 
-  const int DEFAULT_INTERPOLATION_LOWEST = 0;
+  const int DelonFAULT_INTelonRPOLATION_LOWelonST = 0;
   /**
-   * @param output tensor to hold linear or nearest interpolation output.
-   *    This function does not allocate space.
-   *    The output tensor must have space allcoated.
-   * @param input input tensor; size must match output.
-   *    input is assumed to have size [batch_size, number_of_labels].
-   * @param xs the bins.
-   * @param ys the values for the bins.
-   * @param mode: linear or nearest InterpolationMode.
-   *    linear is used for isotonic calibration.
-   *    nearest is used for MDL calibration and MDL inference.
+   * @param output telonnsor to hold linelonar or nelonarelonst intelonrpolation output.
+   *    This function doelons not allocatelon spacelon.
+   *    Thelon output telonnsor must havelon spacelon allcoatelond.
+   * @param input input telonnsor; sizelon must match output.
+   *    input is assumelond to havelon sizelon [batch_sizelon, numbelonr_of_labelonls].
+   * @param xs thelon bins.
+   * @param ys thelon valuelons for thelon bins.
+   * @param modelon: linelonar or nelonarelonst IntelonrpolationModelon.
+   *    linelonar is uselond for isotonic calibration.
+   *    nelonarelonst is uselond for MDL calibration and MDL infelonrelonncelon.
    *
-   * @return Returns nothing. Output is stored into the output tensor.
+   * @relonturn Relonturns nothing. Output is storelond into thelon output telonnsor.
    *
-   * This is used by IsotonicCalibration inference.
+   * This is uselond by IsotonicCalibration infelonrelonncelon.
    */
-  template <typename T>
-  void interpolation(
-    Tensor output,
-    const Tensor input,
-    const Tensor xs,
-    const Tensor ys,
-    const InterpolationMode mode) {
-    // Sanity check: input and output should have two dims.
-    if (input.getNumDims() != 2 || output.getNumDims() != 2) {
-      throw twml::Error(TWML_ERR_TYPE,
-                "input and output should have 2 dimensions.");
+  telonmplatelon <typelonnamelon T>
+  void intelonrpolation(
+    Telonnsor output,
+    const Telonnsor input,
+    const Telonnsor xs,
+    const Telonnsor ys,
+    const IntelonrpolationModelon modelon) {
+    // Sanity chelonck: input and output should havelon two dims.
+    if (input.gelontNumDims() != 2 || output.gelontNumDims() != 2) {
+      throw twml::elonrror(TWML_elonRR_TYPelon,
+                "input and output should havelon 2 dimelonnsions.");
     }
 
-    // Sanity check: input and output size should match.
-    for (int i = 0; i < input.getNumDims(); i++) {
-      if (input.getDim(i) != output.getDim(i))  {
-        throw twml::Error(TWML_ERR_TYPE,
-                  "input and output mismatch in size.");
+    // Sanity chelonck: input and output sizelon should match.
+    for (int i = 0; i < input.gelontNumDims(); i++) {
+      if (input.gelontDim(i) != output.gelontDim(i))  {
+        throw twml::elonrror(TWML_elonRR_TYPelon,
+                  "input and output mismatch in sizelon.");
       }
     }
 
-    // Sanity check: number of labels in input should match
-    // number of labels in xs / ys.
-    if (input.getDim(1) != xs.getDim(0)
-      || input.getDim(1) != ys.getDim(0)) {
-      throw twml::Error(TWML_ERR_TYPE,
-                "input, xs, ys should have the same number of labels.");
+    // Sanity chelonck: numbelonr of labelonls in input should match
+    // numbelonr of labelonls in xs / ys.
+    if (input.gelontDim(1) != xs.gelontDim(0)
+      || input.gelontDim(1) != ys.gelontDim(0)) {
+      throw twml::elonrror(TWML_elonRR_TYPelon,
+                "input, xs, ys should havelon thelon samelon numbelonr of labelonls.");
     }
 
-    const uint64_t inputStride0 = input.getStride(0);
-    const uint64_t inputStride1 = input.getStride(1);
-    const uint64_t outputStride0 = output.getStride(0);
-    const uint64_t outputStride1 = output.getStride(1);
-    const uint64_t xsStride0 = xs.getStride(0);
-    const uint64_t xsStride1 = xs.getStride(1);
-    const uint64_t ysStride0 = ys.getStride(0);
-    const uint64_t ysStride1 = ys.getStride(1);
-    const uint64_t mainSize = xs.getDim(1);
+    const uint64_t inputStridelon0 = input.gelontStridelon(0);
+    const uint64_t inputStridelon1 = input.gelontStridelon(1);
+    const uint64_t outputStridelon0 = output.gelontStridelon(0);
+    const uint64_t outputStridelon1 = output.gelontStridelon(1);
+    const uint64_t xsStridelon0 = xs.gelontStridelon(0);
+    const uint64_t xsStridelon1 = xs.gelontStridelon(1);
+    const uint64_t ysStridelon0 = ys.gelontStridelon(0);
+    const uint64_t ysStridelon1 = ys.gelontStridelon(1);
+    const uint64_t mainSizelon = xs.gelontDim(1);
 
-    // for each value in the input matrix, compute output value by
-    // calling interpolation.
-    auto inputData = input.getData<T>();
-    auto outputData = output.getData<T>();
-    auto xsData = xs.getData<T>();
-    auto ysData = ys.getData<T>();
+    // for elonach valuelon in thelon input matrix, computelon output valuelon by
+    // calling intelonrpolation.
+    auto inputData = input.gelontData<T>();
+    auto outputData = output.gelontData<T>();
+    auto xsData = xs.gelontData<T>();
+    auto ysData = ys.gelontData<T>();
 
-    for (uint64_t i = 0; i < input.getDim(0); i++) {
-      for (uint64_t j = 0; j < input.getDim(1); j++) {
-        const T val = inputData[i * inputStride0 + j * inputStride1];
-        const T *lxsData = xsData + j * xsStride0;
-        const T *lysData = ysData + j * ysStride0;
-        const T res = interpolation(
-          lxsData, xsStride1,
-          lysData, ysStride1,
+    for (uint64_t i = 0; i < input.gelontDim(0); i++) {
+      for (uint64_t j = 0; j < input.gelontDim(1); j++) {
+        const T val = inputData[i * inputStridelon0 + j * inputStridelon1];
+        const T *lxsData = xsData + j * xsStridelon0;
+        const T *lysData = ysData + j * ysStridelon0;
+        const T relons = intelonrpolation(
+          lxsData, xsStridelon1,
+          lysData, ysStridelon1,
           val,
-          mainSize,
-          mode,
-          DEFAULT_INTERPOLATION_LOWEST);
-        outputData[i * outputStride0 + j * outputStride1] = res;
+          mainSizelon,
+          modelon,
+          DelonFAULT_INTelonRPOLATION_LOWelonST);
+        outputData[i * outputStridelon0 + j * outputStridelon1] = relons;
       }
     }
   }
 
-  void linearInterpolation(
-    Tensor output,
-    const Tensor input,
-    const Tensor xs,
-    const Tensor ys) {
-    switch (input.getType()) {
-    case TWML_TYPE_FLOAT:
-      twml::interpolation<float>(output, input, xs, ys, LINEAR);
-      break;
-    case TWML_TYPE_DOUBLE:
-      twml::interpolation<double>(output, input, xs, ys, LINEAR);
-      break;
-    default:
-      throw twml::Error(TWML_ERR_TYPE,
-        "Unsupported datatype for linearInterpolation.");
+  void linelonarIntelonrpolation(
+    Telonnsor output,
+    const Telonnsor input,
+    const Telonnsor xs,
+    const Telonnsor ys) {
+    switch (input.gelontTypelon()) {
+    caselon TWML_TYPelon_FLOAT:
+      twml::intelonrpolation<float>(output, input, xs, ys, LINelonAR);
+      brelonak;
+    caselon TWML_TYPelon_DOUBLelon:
+      twml::intelonrpolation<doublelon>(output, input, xs, ys, LINelonAR);
+      brelonak;
+    delonfault:
+      throw twml::elonrror(TWML_elonRR_TYPelon,
+        "Unsupportelond datatypelon for linelonarIntelonrpolation.");
     }
   }
 
-  void nearestInterpolation(
-    Tensor output,
-    const Tensor input,
-    const Tensor xs,
-    const Tensor ys) {
-    switch (input.getType()) {
-    case TWML_TYPE_FLOAT:
-      twml::interpolation<float>(output, input, xs, ys, NEAREST);
-      break;
-    case TWML_TYPE_DOUBLE:
-      twml::interpolation<double>(output, input, xs, ys, NEAREST);
-      break;
-    default:
-      throw twml::Error(TWML_ERR_TYPE,
-        "Unsupported datatype for nearestInterpolation.");
+  void nelonarelonstIntelonrpolation(
+    Telonnsor output,
+    const Telonnsor input,
+    const Telonnsor xs,
+    const Telonnsor ys) {
+    switch (input.gelontTypelon()) {
+    caselon TWML_TYPelon_FLOAT:
+      twml::intelonrpolation<float>(output, input, xs, ys, NelonARelonST);
+      brelonak;
+    caselon TWML_TYPelon_DOUBLelon:
+      twml::intelonrpolation<doublelon>(output, input, xs, ys, NelonARelonST);
+      brelonak;
+    delonfault:
+      throw twml::elonrror(TWML_elonRR_TYPelon,
+        "Unsupportelond datatypelon for nelonarelonstIntelonrpolation.");
     }
   }
-}  // namespace twml
+}  // namelonspacelon twml
 
-twml_err twml_optim_mdl_infer(twml_tensor output_keys,
-                twml_tensor output_vals,
-                const twml_tensor input_keys,
-                const twml_tensor input_vals,
-                const twml_tensor bin_ids,
-                const twml_tensor bin_vals,
-                const twml_tensor feature_offsets,
-                bool return_bin_indices) {
-  HANDLE_EXCEPTIONS(
-    using namespace twml;
-    mdlInfer(*getTensor(output_keys),
-         *getTensor(output_vals),
-         *getConstTensor(input_keys),
-         *getConstTensor(input_vals),
-         *getConstTensor(bin_ids),
-         *getConstTensor(bin_vals),
-         *getConstTensor(feature_offsets),
-          return_bin_indices););
-  return TWML_ERR_NONE;
+twml_elonrr twml_optim_mdl_infelonr(twml_telonnsor output_kelonys,
+                twml_telonnsor output_vals,
+                const twml_telonnsor input_kelonys,
+                const twml_telonnsor input_vals,
+                const twml_telonnsor bin_ids,
+                const twml_telonnsor bin_vals,
+                const twml_telonnsor felonaturelon_offselonts,
+                bool relonturn_bin_indicelons) {
+  HANDLelon_elonXCelonPTIONS(
+    using namelonspacelon twml;
+    mdlInfelonr(*gelontTelonnsor(output_kelonys),
+         *gelontTelonnsor(output_vals),
+         *gelontConstTelonnsor(input_kelonys),
+         *gelontConstTelonnsor(input_vals),
+         *gelontConstTelonnsor(bin_ids),
+         *gelontConstTelonnsor(bin_vals),
+         *gelontConstTelonnsor(felonaturelon_offselonts),
+          relonturn_bin_indicelons););
+  relonturn TWML_elonRR_NONelon;
 }
 
-twml_err twml_optim_nearest_interpolation(
-                twml_tensor output,
-                const twml_tensor input,
-                const twml_tensor xs,
-                const twml_tensor ys) {
-  HANDLE_EXCEPTIONS(
-    using namespace twml;
-    nearestInterpolation(*getTensor(output),
-      *getConstTensor(input),
-      *getConstTensor(xs),
-      *getConstTensor(ys)););
-  return TWML_ERR_NONE;
+twml_elonrr twml_optim_nelonarelonst_intelonrpolation(
+                twml_telonnsor output,
+                const twml_telonnsor input,
+                const twml_telonnsor xs,
+                const twml_telonnsor ys) {
+  HANDLelon_elonXCelonPTIONS(
+    using namelonspacelon twml;
+    nelonarelonstIntelonrpolation(*gelontTelonnsor(output),
+      *gelontConstTelonnsor(input),
+      *gelontConstTelonnsor(xs),
+      *gelontConstTelonnsor(ys)););
+  relonturn TWML_elonRR_NONelon;
 }

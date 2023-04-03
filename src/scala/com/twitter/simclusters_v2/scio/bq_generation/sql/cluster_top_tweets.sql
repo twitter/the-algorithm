@@ -1,15 +1,15 @@
-WITH tweet_embedding AS (
--- Expected columns:
--- tweetId, clusterId, tweetScore
-  {TWEET_EMBEDDING_SQL}
+WITH twelonelont_elonmbelondding AS (
+-- elonxpelonctelond columns:
+-- twelonelontId, clustelonrId, twelonelontScorelon
+  {TWelonelonT_elonMBelonDDING_SQL}
 ),
-clusters_top_k_tweets AS (
-  SELECT clusterId, ARRAY_AGG(STRUCT(tweetId, tweetScore) ORDER BY tweetScore DESC LIMIT {CLUSTER_TOP_K_TWEETS}) AS topKTweetsForClusterKey
-  FROM tweet_embedding
-  GROUP BY clusterId
+clustelonrs_top_k_twelonelonts AS (
+  SelonLelonCT clustelonrId, ARRAY_AGG(STRUCT(twelonelontId, twelonelontScorelon) ORDelonR BY twelonelontScorelon DelonSC LIMIT {CLUSTelonR_TOP_K_TWelonelonTS}) AS topKTwelonelontsForClustelonrKelony
+  FROM twelonelont_elonmbelondding
+  GROUP BY clustelonrId
 )
-SELECT
-  clusterId,
-  topKTweetsForClusterKey
-FROM clusters_top_k_tweets
+SelonLelonCT
+  clustelonrId,
+  topKTwelonelontsForClustelonrKelony
+FROM clustelonrs_top_k_twelonelonts
 

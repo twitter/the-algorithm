@@ -1,76 +1,76 @@
-package com.twitter.interaction_graph.scio.common
+packagelon com.twittelonr.intelonraction_graph.scio.common
 
-import com.spotify.scio.coders.Coder
-import com.spotify.scio.values.SCollection
-import com.twitter.twadoop.user.gen.thriftscala.CombinedUser
-import com.twitter.usersource.snapshot.flat.thriftscala.FlatUser
+import com.spotify.scio.codelonrs.Codelonr
+import com.spotify.scio.valuelons.SCollelonction
+import com.twittelonr.twadoop.uselonr.gelonn.thriftscala.CombinelondUselonr
+import com.twittelonr.uselonrsourcelon.snapshot.flat.thriftscala.FlatUselonr
 
-object UserUtil {
+objelonct UselonrUtil {
 
   /**
-   * placeholder for the destId when representing vertex features with no dest (eg create tweet)
-   * this will only be aggregated and saved in the vertex datasets but not the edge datasets
+   * placelonholdelonr for thelon delonstId whelonn relonprelonselonnting velonrtelonx felonaturelons with no delonst (elong crelonatelon twelonelont)
+   * this will only belon aggrelongatelond and savelond in thelon velonrtelonx dataselonts but not thelon elondgelon dataselonts
    */
-  val DUMMY_USER_ID = -1L
-  def getValidUsers(users: SCollection[CombinedUser]): SCollection[Long] = {
-    users
+  val DUMMY_USelonR_ID = -1L
+  delonf gelontValidUselonrs(uselonrs: SCollelonction[CombinelondUselonr]): SCollelonction[Long] = {
+    uselonrs
       .flatMap { u =>
         for {
-          user <- u.user
-          if user.id != 0
-          safety <- user.safety
-          if !(safety.suspended || safety.deactivated || safety.restricted ||
-            safety.nsfwUser || safety.nsfwAdmin || safety.erased)
-        } yield {
-          user.id
+          uselonr <- u.uselonr
+          if uselonr.id != 0
+          safelonty <- uselonr.safelonty
+          if !(safelonty.suspelonndelond || safelonty.delonactivatelond || safelonty.relonstrictelond ||
+            safelonty.nsfwUselonr || safelonty.nsfwAdmin || safelonty.elonraselond)
+        } yielonld {
+          uselonr.id
         }
       }
   }
 
-  def getValidFlatUsers(users: SCollection[FlatUser]): SCollection[Long] = {
-    users
+  delonf gelontValidFlatUselonrs(uselonrs: SCollelonction[FlatUselonr]): SCollelonction[Long] = {
+    uselonrs
       .flatMap { u =>
         for {
           id <- u.id
-          if id != 0 && u.validUser.contains(true)
-        } yield {
+          if id != 0 && u.validUselonr.contains(truelon)
+        } yielonld {
           id
         }
       }
   }
 
-  def getInvalidUsers(users: SCollection[FlatUser]): SCollection[Long] = {
-    users
-      .flatMap { user =>
+  delonf gelontInvalidUselonrs(uselonrs: SCollelonction[FlatUselonr]): SCollelonction[Long] = {
+    uselonrs
+      .flatMap { uselonr =>
         for {
-          valid <- user.validUser
+          valid <- uselonr.validUselonr
           if !valid
-          id <- user.id
-        } yield id
+          id <- uselonr.id
+        } yielonld id
       }
   }
 
-  def filterUsersByIdMapping[T: Coder](
-    input: SCollection[T],
-    usersToBeFiltered: SCollection[Long],
-    userIdMapping: T => Long
-  ): SCollection[T] = {
+  delonf filtelonrUselonrsByIdMapping[T: Codelonr](
+    input: SCollelonction[T],
+    uselonrsToBelonFiltelonrelond: SCollelonction[Long],
+    uselonrIdMapping: T => Long
+  ): SCollelonction[T] = {
     input
-      .withName("filter users by id")
-      .keyBy(userIdMapping(_))
-      .leftOuterJoin[Long](usersToBeFiltered.map(x => (x, x)))
-      .collect {
-        // only return data if the key is not in the list of usersToBeFiltered
-        case (_, (data, None)) => data
+      .withNamelon("filtelonr uselonrs by id")
+      .kelonyBy(uselonrIdMapping(_))
+      .lelonftOutelonrJoin[Long](uselonrsToBelonFiltelonrelond.map(x => (x, x)))
+      .collelonct {
+        // only relonturn data if thelon kelony is not in thelon list of uselonrsToBelonFiltelonrelond
+        caselon (_, (data, Nonelon)) => data
       }
   }
 
-  def filterUsersByMultipleIdMappings[T: Coder](
-    input: SCollection[T],
-    usersToBeFiltered: SCollection[Long],
-    userIdMappings: Seq[T => Long]
-  ): SCollection[T] = {
-    userIdMappings.foldLeft(input)((data, mapping) =>
-      filterUsersByIdMapping(data, usersToBeFiltered, mapping))
+  delonf filtelonrUselonrsByMultiplelonIdMappings[T: Codelonr](
+    input: SCollelonction[T],
+    uselonrsToBelonFiltelonrelond: SCollelonction[Long],
+    uselonrIdMappings: Selonq[T => Long]
+  ): SCollelonction[T] = {
+    uselonrIdMappings.foldLelonft(input)((data, mapping) =>
+      filtelonrUselonrsByIdMapping(data, uselonrsToBelonFiltelonrelond, mapping))
   }
 }

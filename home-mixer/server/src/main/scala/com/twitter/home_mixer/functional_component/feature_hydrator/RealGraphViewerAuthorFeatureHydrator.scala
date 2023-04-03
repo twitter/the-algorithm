@@ -1,123 +1,123 @@
-package com.twitter.home_mixer.functional_component.feature_hydrator
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator
 
-import com.twitter.home_mixer.functional_component.feature_hydrator.RealGraphViewerAuthorFeatureHydrator.getCombinedRealGraphFeatures
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.InReplyToUserIdFeature
-import com.twitter.home_mixer.util.MissingKeyException
-import com.twitter.ml.api.DataRecord
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure
-import com.twitter.product_mixer.core.feature.datarecord.DataRecordInAFeature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.CandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.prediction.adapters.real_graph.RealGraphEdgeFeaturesCombineAdapter
-import com.twitter.timelines.prediction.adapters.real_graph.RealGraphFeaturesAdapter
-import com.twitter.timelines.real_graph.v1.{thriftscala => v1}
-import com.twitter.timelines.real_graph.{thriftscala => rg}
-import com.twitter.util.Throw
-import javax.inject.Inject
-import javax.inject.Singleton
-import scala.collection.JavaConverters._
+import com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator.RelonalGraphVielonwelonrAuthorFelonaturelonHydrator.gelontCombinelondRelonalGraphFelonaturelons
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.AuthorIdFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.InRelonplyToUselonrIdFelonaturelon
+import com.twittelonr.homelon_mixelonr.util.MissingKelonyelonxcelonption
+import com.twittelonr.ml.api.DataReloncord
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.TwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.FelonaturelonWithDelonfaultOnFailurelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.datareloncord.DataReloncordInAFelonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMapBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator.CandidatelonFelonaturelonHydrator
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.FelonaturelonHydratorIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.timelonlinelons.prelondiction.adaptelonrs.relonal_graph.RelonalGraphelondgelonFelonaturelonsCombinelonAdaptelonr
+import com.twittelonr.timelonlinelons.prelondiction.adaptelonrs.relonal_graph.RelonalGraphFelonaturelonsAdaptelonr
+import com.twittelonr.timelonlinelons.relonal_graph.v1.{thriftscala => v1}
+import com.twittelonr.timelonlinelons.relonal_graph.{thriftscala => rg}
+import com.twittelonr.util.Throw
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
+import scala.collelonction.JavaConvelonrtelonrs._
 
-object RealGraphViewerAuthorDataRecordFeature
-    extends DataRecordInAFeature[TweetCandidate]
-    with FeatureWithDefaultOnFailure[TweetCandidate, DataRecord] {
-  override def defaultValue: DataRecord = new DataRecord()
+objelonct RelonalGraphVielonwelonrAuthorDataReloncordFelonaturelon
+    elonxtelonnds DataReloncordInAFelonaturelon[TwelonelontCandidatelon]
+    with FelonaturelonWithDelonfaultOnFailurelon[TwelonelontCandidatelon, DataReloncord] {
+  ovelonrridelon delonf delonfaultValuelon: DataReloncord = nelonw DataReloncord()
 }
 
-object RealGraphViewerAuthorsDataRecordFeature
-    extends DataRecordInAFeature[TweetCandidate]
-    with FeatureWithDefaultOnFailure[TweetCandidate, DataRecord] {
-  override def defaultValue: DataRecord = new DataRecord()
+objelonct RelonalGraphVielonwelonrAuthorsDataReloncordFelonaturelon
+    elonxtelonnds DataReloncordInAFelonaturelon[TwelonelontCandidatelon]
+    with FelonaturelonWithDelonfaultOnFailurelon[TwelonelontCandidatelon, DataReloncord] {
+  ovelonrridelon delonf delonfaultValuelon: DataReloncord = nelonw DataReloncord()
 }
 
-@Singleton
-class RealGraphViewerAuthorFeatureHydrator @Inject() ()
-    extends CandidateFeatureHydrator[PipelineQuery, TweetCandidate] {
+@Singlelonton
+class RelonalGraphVielonwelonrAuthorFelonaturelonHydrator @Injelonct() ()
+    elonxtelonnds CandidatelonFelonaturelonHydrator[PipelonlinelonQuelonry, TwelonelontCandidatelon] {
 
-  override val identifier: FeatureHydratorIdentifier =
-    FeatureHydratorIdentifier("RealGraphViewerAuthor")
+  ovelonrridelon val idelonntifielonr: FelonaturelonHydratorIdelonntifielonr =
+    FelonaturelonHydratorIdelonntifielonr("RelonalGraphVielonwelonrAuthor")
 
-  override val features: Set[Feature[_, _]] =
-    Set(RealGraphViewerAuthorDataRecordFeature, RealGraphViewerAuthorsDataRecordFeature)
+  ovelonrridelon val felonaturelons: Selont[Felonaturelon[_, _]] =
+    Selont(RelonalGraphVielonwelonrAuthorDataReloncordFelonaturelon, RelonalGraphVielonwelonrAuthorsDataReloncordFelonaturelon)
 
-  private val realGraphEdgeFeaturesAdapter = new RealGraphFeaturesAdapter
-  private val realGraphEdgeFeaturesCombineAdapter =
-    new RealGraphEdgeFeaturesCombineAdapter(prefix = "authors.realgraph")
+  privatelon val relonalGraphelondgelonFelonaturelonsAdaptelonr = nelonw RelonalGraphFelonaturelonsAdaptelonr
+  privatelon val relonalGraphelondgelonFelonaturelonsCombinelonAdaptelonr =
+    nelonw RelonalGraphelondgelonFelonaturelonsCombinelonAdaptelonr(prelonfix = "authors.relonalgraph")
 
-  private val MissingKeyFeatureMap = FeatureMapBuilder()
-    .add(RealGraphViewerAuthorDataRecordFeature, Throw(MissingKeyException))
-    .add(RealGraphViewerAuthorsDataRecordFeature, Throw(MissingKeyException))
+  privatelon val MissingKelonyFelonaturelonMap = FelonaturelonMapBuildelonr()
+    .add(RelonalGraphVielonwelonrAuthorDataReloncordFelonaturelon, Throw(MissingKelonyelonxcelonption))
+    .add(RelonalGraphVielonwelonrAuthorsDataReloncordFelonaturelon, Throw(MissingKelonyelonxcelonption))
     .build()
 
-  override def apply(
-    query: PipelineQuery,
-    candidate: TweetCandidate,
-    existingFeatures: FeatureMap
-  ): Stitch[FeatureMap] = {
-    val viewerId = query.getRequiredUserId
-    val realGraphFeatures = query.features
-      .flatMap(_.getOrElse(RealGraphFeatures, None))
-      .getOrElse(Map.empty[Long, v1.RealGraphEdgeFeatures])
+  ovelonrridelon delonf apply(
+    quelonry: PipelonlinelonQuelonry,
+    candidatelon: TwelonelontCandidatelon,
+    elonxistingFelonaturelons: FelonaturelonMap
+  ): Stitch[FelonaturelonMap] = {
+    val vielonwelonrId = quelonry.gelontRelonquirelondUselonrId
+    val relonalGraphFelonaturelons = quelonry.felonaturelons
+      .flatMap(_.gelontOrelonlselon(RelonalGraphFelonaturelons, Nonelon))
+      .gelontOrelonlselon(Map.elonmpty[Long, v1.RelonalGraphelondgelonFelonaturelons])
 
-    val result: FeatureMap = existingFeatures.getOrElse(AuthorIdFeature, None) match {
-      case Some(authorId) =>
-        val realGraphAuthorFeatures =
-          getRealGraphViewerAuthorFeatures(viewerId, authorId, realGraphFeatures)
-        val realGraphAuthorDataRecord = realGraphEdgeFeaturesAdapter
-          .adaptToDataRecords(realGraphAuthorFeatures).asScala.headOption.getOrElse(new DataRecord)
+    val relonsult: FelonaturelonMap = elonxistingFelonaturelons.gelontOrelonlselon(AuthorIdFelonaturelon, Nonelon) match {
+      caselon Somelon(authorId) =>
+        val relonalGraphAuthorFelonaturelons =
+          gelontRelonalGraphVielonwelonrAuthorFelonaturelons(vielonwelonrId, authorId, relonalGraphFelonaturelons)
+        val relonalGraphAuthorDataReloncord = relonalGraphelondgelonFelonaturelonsAdaptelonr
+          .adaptToDataReloncords(relonalGraphAuthorFelonaturelons).asScala.helonadOption.gelontOrelonlselon(nelonw DataReloncord)
 
-        val combinedRealGraphFeaturesDataRecord = for {
-          inReplyToAuthorId <- existingFeatures.getOrElse(InReplyToUserIdFeature, None)
-        } yield {
-          val combinedRealGraphFeatures =
-            getCombinedRealGraphFeatures(Seq(authorId, inReplyToAuthorId), realGraphFeatures)
-          realGraphEdgeFeaturesCombineAdapter
-            .adaptToDataRecords(Some(combinedRealGraphFeatures)).asScala.headOption
-            .getOrElse(new DataRecord)
+        val combinelondRelonalGraphFelonaturelonsDataReloncord = for {
+          inRelonplyToAuthorId <- elonxistingFelonaturelons.gelontOrelonlselon(InRelonplyToUselonrIdFelonaturelon, Nonelon)
+        } yielonld {
+          val combinelondRelonalGraphFelonaturelons =
+            gelontCombinelondRelonalGraphFelonaturelons(Selonq(authorId, inRelonplyToAuthorId), relonalGraphFelonaturelons)
+          relonalGraphelondgelonFelonaturelonsCombinelonAdaptelonr
+            .adaptToDataReloncords(Somelon(combinelondRelonalGraphFelonaturelons)).asScala.helonadOption
+            .gelontOrelonlselon(nelonw DataReloncord)
         }
 
-        FeatureMapBuilder()
-          .add(RealGraphViewerAuthorDataRecordFeature, realGraphAuthorDataRecord)
+        FelonaturelonMapBuildelonr()
+          .add(RelonalGraphVielonwelonrAuthorDataReloncordFelonaturelon, relonalGraphAuthorDataReloncord)
           .add(
-            RealGraphViewerAuthorsDataRecordFeature,
-            combinedRealGraphFeaturesDataRecord.getOrElse(new DataRecord))
+            RelonalGraphVielonwelonrAuthorsDataReloncordFelonaturelon,
+            combinelondRelonalGraphFelonaturelonsDataReloncord.gelontOrelonlselon(nelonw DataReloncord))
           .build()
-      case _ => MissingKeyFeatureMap
+      caselon _ => MissingKelonyFelonaturelonMap
     }
-    Stitch(result)
+    Stitch(relonsult)
   }
 
-  private def getRealGraphViewerAuthorFeatures(
-    viewerId: Long,
+  privatelon delonf gelontRelonalGraphVielonwelonrAuthorFelonaturelons(
+    vielonwelonrId: Long,
     authorId: Long,
-    realGraphEdgeFeaturesMap: Map[Long, v1.RealGraphEdgeFeatures]
-  ): rg.UserRealGraphFeatures = {
-    realGraphEdgeFeaturesMap.get(authorId) match {
-      case Some(realGraphEdgeFeatures) =>
-        rg.UserRealGraphFeatures(
-          srcId = viewerId,
-          features = rg.RealGraphFeatures.V1(
-            v1.RealGraphFeatures(edgeFeatures = Seq(realGraphEdgeFeatures))))
-      case _ =>
-        rg.UserRealGraphFeatures(
-          srcId = viewerId,
-          features = rg.RealGraphFeatures.V1(v1.RealGraphFeatures(edgeFeatures = Seq.empty)))
+    relonalGraphelondgelonFelonaturelonsMap: Map[Long, v1.RelonalGraphelondgelonFelonaturelons]
+  ): rg.UselonrRelonalGraphFelonaturelons = {
+    relonalGraphelondgelonFelonaturelonsMap.gelont(authorId) match {
+      caselon Somelon(relonalGraphelondgelonFelonaturelons) =>
+        rg.UselonrRelonalGraphFelonaturelons(
+          srcId = vielonwelonrId,
+          felonaturelons = rg.RelonalGraphFelonaturelons.V1(
+            v1.RelonalGraphFelonaturelons(elondgelonFelonaturelons = Selonq(relonalGraphelondgelonFelonaturelons))))
+      caselon _ =>
+        rg.UselonrRelonalGraphFelonaturelons(
+          srcId = vielonwelonrId,
+          felonaturelons = rg.RelonalGraphFelonaturelons.V1(v1.RelonalGraphFelonaturelons(elondgelonFelonaturelons = Selonq.elonmpty)))
     }
   }
 }
 
-object RealGraphViewerAuthorFeatureHydrator {
-  def getCombinedRealGraphFeatures(
-    userIds: Seq[Long],
-    realGraphEdgeFeaturesMap: Map[Long, v1.RealGraphEdgeFeatures]
-  ): rg.RealGraphFeatures = {
-    val edgeFeatures = userIds.flatMap(realGraphEdgeFeaturesMap.get)
-    rg.RealGraphFeatures.V1(v1.RealGraphFeatures(edgeFeatures = edgeFeatures))
+objelonct RelonalGraphVielonwelonrAuthorFelonaturelonHydrator {
+  delonf gelontCombinelondRelonalGraphFelonaturelons(
+    uselonrIds: Selonq[Long],
+    relonalGraphelondgelonFelonaturelonsMap: Map[Long, v1.RelonalGraphelondgelonFelonaturelons]
+  ): rg.RelonalGraphFelonaturelons = {
+    val elondgelonFelonaturelons = uselonrIds.flatMap(relonalGraphelondgelonFelonaturelonsMap.gelont)
+    rg.RelonalGraphFelonaturelons.V1(v1.RelonalGraphFelonaturelons(elondgelonFelonaturelons = elondgelonFelonaturelons))
   }
 }

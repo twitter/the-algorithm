@@ -1,13 +1,13 @@
-package com.twitter.follow_recommendations.assembler.models
+packagelon com.twittelonr.follow_reloncommelonndations.asselonmblelonr.modelonls
 
-import com.twitter.follow_recommendations.{thriftscala => t}
+import com.twittelonr.follow_reloncommelonndations.{thriftscala => t}
 
-trait FeedbackAction {
-  def toThrift: t.FeedbackAction
+trait FelonelondbackAction {
+  delonf toThrift: t.FelonelondbackAction
 }
 
-case class DismissUserId() extends FeedbackAction {
-  override lazy val toThrift: t.FeedbackAction = {
-    t.FeedbackAction.DismissUserId(t.DismissUserId())
+caselon class DismissUselonrId() elonxtelonnds FelonelondbackAction {
+  ovelonrridelon lazy val toThrift: t.FelonelondbackAction = {
+    t.FelonelondbackAction.DismissUselonrId(t.DismissUselonrId())
   }
 }

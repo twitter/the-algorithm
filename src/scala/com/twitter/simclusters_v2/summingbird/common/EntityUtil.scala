@@ -1,45 +1,45 @@
-package com.twitter.simclusters_v2.summingbird.common
+packagelon com.twittelonr.simclustelonrs_v2.summingbird.common
 
-import com.twitter.cuad.ner.thriftscala.WholeEntityType
-import com.twitter.simclusters_v2.summingbird.common.Implicits.thriftDecayedValueMonoid
-import com.twitter.simclusters_v2.thriftscala.{Scores, SimClusterEntity, TweetTextEntity}
-import scala.collection.Map
+import com.twittelonr.cuad.nelonr.thriftscala.WholelonelonntityTypelon
+import com.twittelonr.simclustelonrs_v2.summingbird.common.Implicits.thriftDeloncayelondValuelonMonoid
+import com.twittelonr.simclustelonrs_v2.thriftscala.{Scorelons, SimClustelonrelonntity, TwelonelontTelonxtelonntity}
+import scala.collelonction.Map
 
-private[summingbird] object EntityUtil {
+privatelon[summingbird] objelonct elonntityUtil {
 
-  def updateScoreWithLatestTimestamp[K](
-    scoresMapOption: Option[Map[K, Scores]],
-    timeInMs: Long
-  ): Option[Map[K, Scores]] = {
-    scoresMapOption map { scoresMap =>
-      scoresMap.mapValues(score => updateScoreWithLatestTimestamp(score, timeInMs))
+  delonf updatelonScorelonWithLatelonstTimelonstamp[K](
+    scorelonsMapOption: Option[Map[K, Scorelons]],
+    timelonInMs: Long
+  ): Option[Map[K, Scorelons]] = {
+    scorelonsMapOption map { scorelonsMap =>
+      scorelonsMap.mapValuelons(scorelon => updatelonScorelonWithLatelonstTimelonstamp(scorelon, timelonInMs))
     }
   }
 
-  def updateScoreWithLatestTimestamp(score: Scores, timeInMs: Long): Scores = {
-    score.copy(
-      favClusterNormalized8HrHalfLifeScore = score.favClusterNormalized8HrHalfLifeScore.map {
-        decayedValue => thriftDecayedValueMonoid.decayToTimestamp(decayedValue, timeInMs)
+  delonf updatelonScorelonWithLatelonstTimelonstamp(scorelon: Scorelons, timelonInMs: Long): Scorelons = {
+    scorelon.copy(
+      favClustelonrNormalizelond8HrHalfLifelonScorelon = scorelon.favClustelonrNormalizelond8HrHalfLifelonScorelon.map {
+        deloncayelondValuelon => thriftDeloncayelondValuelonMonoid.deloncayToTimelonstamp(deloncayelondValuelon, timelonInMs)
       },
-      followClusterNormalized8HrHalfLifeScore = score.followClusterNormalized8HrHalfLifeScore.map {
-        decayedValue => thriftDecayedValueMonoid.decayToTimestamp(decayedValue, timeInMs)
+      followClustelonrNormalizelond8HrHalfLifelonScorelon = scorelon.followClustelonrNormalizelond8HrHalfLifelonScorelon.map {
+        deloncayelondValuelon => thriftDeloncayelondValuelonMonoid.deloncayToTimelonstamp(deloncayelondValuelon, timelonInMs)
       }
     )
   }
 
-  def entityToString(entity: SimClusterEntity): String = {
-    entity match {
-      case SimClusterEntity.TweetId(id) => s"t_id:$id"
-      case SimClusterEntity.SpaceId(id) => s"space_id:$id"
-      case SimClusterEntity.TweetEntity(textEntity) =>
-        textEntity match {
-          case TweetTextEntity.Hashtag(str) => s"$str[h_tag]"
-          case TweetTextEntity.Penguin(penguin) =>
-            s"${penguin.textEntity}[penguin]"
-          case TweetTextEntity.Ner(ner) =>
-            s"${ner.textEntity}[ner_${WholeEntityType(ner.wholeEntityType)}]"
-          case TweetTextEntity.SemanticCore(semanticCore) =>
-            s"[sc:${semanticCore.entityId}]"
+  delonf elonntityToString(elonntity: SimClustelonrelonntity): String = {
+    elonntity match {
+      caselon SimClustelonrelonntity.TwelonelontId(id) => s"t_id:$id"
+      caselon SimClustelonrelonntity.SpacelonId(id) => s"spacelon_id:$id"
+      caselon SimClustelonrelonntity.Twelonelontelonntity(telonxtelonntity) =>
+        telonxtelonntity match {
+          caselon TwelonelontTelonxtelonntity.Hashtag(str) => s"$str[h_tag]"
+          caselon TwelonelontTelonxtelonntity.Pelonnguin(pelonnguin) =>
+            s"${pelonnguin.telonxtelonntity}[pelonnguin]"
+          caselon TwelonelontTelonxtelonntity.Nelonr(nelonr) =>
+            s"${nelonr.telonxtelonntity}[nelonr_${WholelonelonntityTypelon(nelonr.wholelonelonntityTypelon)}]"
+          caselon TwelonelontTelonxtelonntity.SelonmanticCorelon(selonmanticCorelon) =>
+            s"[sc:${selonmanticCorelon.elonntityId}]"
         }
     }
   }

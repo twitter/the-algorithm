@@ -1,69 +1,69 @@
-package com.twitter.home_mixer.module
+packagelon com.twittelonr.homelon_mixelonr.modulelon
 
-import com.google.inject.name.Named
-import com.google.inject.Provides
-import com.twitter.conversions.DurationOps.RichDuration
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.TweetypieStaticEntitiesCache
-import com.twitter.inject.TwitterModule
-import com.twitter.product_mixer.shared_library.memcached_client.MemcachedClientBuilder
-import com.twitter.servo.cache.FinagleMemcache
-import com.twitter.servo.cache.KeyTransformer
-import com.twitter.servo.cache.KeyValueTransformingTtlCache
-import com.twitter.servo.cache.ObservableTtlCache
-import com.twitter.servo.cache.Serializer
-import com.twitter.servo.cache.ThriftSerializer
-import com.twitter.servo.cache.TtlCache
-import com.twitter.tweetypie.{thriftscala => tp}
-import javax.inject.Singleton
-import org.apache.thrift.protocol.TCompactProtocol
+import com.googlelon.injelonct.namelon.Namelond
+import com.googlelon.injelonct.Providelons
+import com.twittelonr.convelonrsions.DurationOps.RichDuration
+import com.twittelonr.finaglelon.mtls.authelonntication.SelonrvicelonIdelonntifielonr
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.homelon_mixelonr.param.HomelonMixelonrInjelonctionNamelons.TwelonelontypielonStaticelonntitielonsCachelon
+import com.twittelonr.injelonct.TwittelonrModulelon
+import com.twittelonr.product_mixelonr.sharelond_library.melonmcachelond_clielonnt.MelonmcachelondClielonntBuildelonr
+import com.twittelonr.selonrvo.cachelon.FinaglelonMelonmcachelon
+import com.twittelonr.selonrvo.cachelon.KelonyTransformelonr
+import com.twittelonr.selonrvo.cachelon.KelonyValuelonTransformingTtlCachelon
+import com.twittelonr.selonrvo.cachelon.ObselonrvablelonTtlCachelon
+import com.twittelonr.selonrvo.cachelon.Selonrializelonr
+import com.twittelonr.selonrvo.cachelon.ThriftSelonrializelonr
+import com.twittelonr.selonrvo.cachelon.TtlCachelon
+import com.twittelonr.twelonelontypielon.{thriftscala => tp}
+import javax.injelonct.Singlelonton
+import org.apachelon.thrift.protocol.TCompactProtocol
 
-object TweetypieStaticEntitiesCacheClientModule extends TwitterModule {
+objelonct TwelonelontypielonStaticelonntitielonsCachelonClielonntModulelon elonxtelonnds TwittelonrModulelon {
 
-  private val ScopeName = "TweetypieStaticEntitiesMemcache"
-  private val ProdDest = "/srv#/prod/local/cache/timelinescorer_tweet_core_data:twemcaches"
+  privatelon val ScopelonNamelon = "TwelonelontypielonStaticelonntitielonsMelonmcachelon"
+  privatelon val ProdDelonst = "/srv#/prod/local/cachelon/timelonlinelonscorelonr_twelonelont_corelon_data:twelonmcachelons"
 
-  private val tweetsSerializer: Serializer[tp.Tweet] = {
-    new ThriftSerializer[tp.Tweet](tp.Tweet, new TCompactProtocol.Factory())
+  privatelon val twelonelontsSelonrializelonr: Selonrializelonr[tp.Twelonelont] = {
+    nelonw ThriftSelonrializelonr[tp.Twelonelont](tp.Twelonelont, nelonw TCompactProtocol.Factory())
   }
-  private val keyTransformer: KeyTransformer[Long] = { tweetId => tweetId.toString }
+  privatelon val kelonyTransformelonr: KelonyTransformelonr[Long] = { twelonelontId => twelonelontId.toString }
 
-  @Provides
-  @Singleton
-  @Named(TweetypieStaticEntitiesCache)
-  def providesTweetypieStaticEntitiesCache(
-    statsReceiver: StatsReceiver,
-    serviceIdentifier: ServiceIdentifier
-  ): TtlCache[Long, tp.Tweet] = {
-    val memCacheClient = MemcachedClientBuilder.buildMemcachedClient(
-      destName = ProdDest,
-      numTries = 1,
-      requestTimeout = 50.milliseconds,
-      globalTimeout = 100.milliseconds,
-      connectTimeout = 100.milliseconds,
-      acquisitionTimeout = 100.milliseconds,
-      serviceIdentifier = serviceIdentifier,
-      statsReceiver = statsReceiver
+  @Providelons
+  @Singlelonton
+  @Namelond(TwelonelontypielonStaticelonntitielonsCachelon)
+  delonf providelonsTwelonelontypielonStaticelonntitielonsCachelon(
+    statsReloncelonivelonr: StatsReloncelonivelonr,
+    selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr
+  ): TtlCachelon[Long, tp.Twelonelont] = {
+    val melonmCachelonClielonnt = MelonmcachelondClielonntBuildelonr.buildMelonmcachelondClielonnt(
+      delonstNamelon = ProdDelonst,
+      numTrielons = 1,
+      relonquelonstTimelonout = 50.milliselonconds,
+      globalTimelonout = 100.milliselonconds,
+      connelonctTimelonout = 100.milliselonconds,
+      acquisitionTimelonout = 100.milliselonconds,
+      selonrvicelonIdelonntifielonr = selonrvicelonIdelonntifielonr,
+      statsReloncelonivelonr = statsReloncelonivelonr
     )
-    mkCache(new FinagleMemcache(memCacheClient), statsReceiver)
+    mkCachelon(nelonw FinaglelonMelonmcachelon(melonmCachelonClielonnt), statsReloncelonivelonr)
   }
 
-  private def mkCache(
-    finagleMemcache: FinagleMemcache,
-    statsReceiver: StatsReceiver
-  ): TtlCache[Long, tp.Tweet] = {
-    val baseCache: KeyValueTransformingTtlCache[Long, String, tp.Tweet, Array[Byte]] =
-      new KeyValueTransformingTtlCache(
-        underlyingCache = finagleMemcache,
-        transformer = tweetsSerializer,
-        underlyingKey = keyTransformer
+  privatelon delonf mkCachelon(
+    finaglelonMelonmcachelon: FinaglelonMelonmcachelon,
+    statsReloncelonivelonr: StatsReloncelonivelonr
+  ): TtlCachelon[Long, tp.Twelonelont] = {
+    val baselonCachelon: KelonyValuelonTransformingTtlCachelon[Long, String, tp.Twelonelont, Array[Bytelon]] =
+      nelonw KelonyValuelonTransformingTtlCachelon(
+        undelonrlyingCachelon = finaglelonMelonmcachelon,
+        transformelonr = twelonelontsSelonrializelonr,
+        undelonrlyingKelony = kelonyTransformelonr
       )
-    ObservableTtlCache(
-      underlyingCache = baseCache,
-      statsReceiver = statsReceiver.scope(ScopeName),
-      windowSize = 1000,
-      name = ScopeName
+    ObselonrvablelonTtlCachelon(
+      undelonrlyingCachelon = baselonCachelon,
+      statsReloncelonivelonr = statsReloncelonivelonr.scopelon(ScopelonNamelon),
+      windowSizelon = 1000,
+      namelon = ScopelonNamelon
     )
   }
 }

@@ -1,37 +1,37 @@
-package com.twitter.search.common.schema.base;
+packagelon com.twittelonr.selonarch.common.schelonma.baselon;
 
-import com.twitter.search.common.schema.thriftjava.ThriftIndexedNumericFieldSettings;
-import com.twitter.search.common.schema.thriftjava.ThriftNumericType;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftIndelonxelondNumelonricFielonldSelonttings;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftNumelonricTypelon;
 
-public class IndexedNumericFieldSettings {
-  private final ThriftNumericType numericType;
-  private final int numericPrecisionStep;
-  private final boolean useTwitterFormat;
-  private final boolean useSortableEncoding;
+public class IndelonxelondNumelonricFielonldSelonttings {
+  privatelon final ThriftNumelonricTypelon numelonricTypelon;
+  privatelon final int numelonricPreloncisionStelonp;
+  privatelon final boolelonan uselonTwittelonrFormat;
+  privatelon final boolelonan uselonSortablelonelonncoding;
 
   /**
-   * Create a IndexedNumericFieldSettings from a ThriftIndexedNumericFieldSettings
+   * Crelonatelon a IndelonxelondNumelonricFielonldSelonttings from a ThriftIndelonxelondNumelonricFielonldSelonttings
    */
-  public IndexedNumericFieldSettings(ThriftIndexedNumericFieldSettings numericFieldSettings) {
-    this.numericType            = numericFieldSettings.getNumericType();
-    this.numericPrecisionStep   = numericFieldSettings.getNumericPrecisionStep();
-    this.useTwitterFormat       = numericFieldSettings.isUseTwitterFormat();
-    this.useSortableEncoding    = numericFieldSettings.isUseSortableEncoding();
+  public IndelonxelondNumelonricFielonldSelonttings(ThriftIndelonxelondNumelonricFielonldSelonttings numelonricFielonldSelonttings) {
+    this.numelonricTypelon            = numelonricFielonldSelonttings.gelontNumelonricTypelon();
+    this.numelonricPreloncisionStelonp   = numelonricFielonldSelonttings.gelontNumelonricPreloncisionStelonp();
+    this.uselonTwittelonrFormat       = numelonricFielonldSelonttings.isUselonTwittelonrFormat();
+    this.uselonSortablelonelonncoding    = numelonricFielonldSelonttings.isUselonSortablelonelonncoding();
   }
 
-  public ThriftNumericType getNumericType() {
-    return numericType;
+  public ThriftNumelonricTypelon gelontNumelonricTypelon() {
+    relonturn numelonricTypelon;
   }
 
-  public int getNumericPrecisionStep() {
-    return numericPrecisionStep;
+  public int gelontNumelonricPreloncisionStelonp() {
+    relonturn numelonricPreloncisionStelonp;
   }
 
-  public boolean isUseTwitterFormat() {
-    return useTwitterFormat;
+  public boolelonan isUselonTwittelonrFormat() {
+    relonturn uselonTwittelonrFormat;
   }
 
-  public boolean isUseSortableEncoding() {
-    return useSortableEncoding;
+  public boolelonan isUselonSortablelonelonncoding() {
+    relonturn uselonSortablelonelonncoding;
   }
 }

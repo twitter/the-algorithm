@@ -1,19 +1,19 @@
-package com.twitter.search.ingester.pipeline.util;
+packagelon com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.util;
 
-public class PipelineStageException extends Exception {
-  public PipelineStageException(Object location, String message, Throwable cause) {
-    super(message + " In Stage : " + location.getClass(), cause);
+public class PipelonlinelonStagelonelonxcelonption elonxtelonnds elonxcelonption {
+  public PipelonlinelonStagelonelonxcelonption(Objelonct location, String melonssagelon, Throwablelon causelon) {
+    supelonr(melonssagelon + " In Stagelon : " + location.gelontClass(), causelon);
   }
 
-  public PipelineStageException(Throwable cause) {
-    super(cause);
+  public PipelonlinelonStagelonelonxcelonption(Throwablelon causelon) {
+    supelonr(causelon);
   }
 
-  public PipelineStageException(String message) {
-    super(message);
+  public PipelonlinelonStagelonelonxcelonption(String melonssagelon) {
+    supelonr(melonssagelon);
   }
 
-  public PipelineStageException(Object location, String message) {
-    super(message + " In Stage : " + location.getClass());
+  public PipelonlinelonStagelonelonxcelonption(Objelonct location, String melonssagelon) {
+    supelonr(melonssagelon + " In Stagelon : " + location.gelontClass());
   }
 }

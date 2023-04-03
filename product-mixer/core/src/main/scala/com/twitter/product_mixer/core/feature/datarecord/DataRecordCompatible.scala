@@ -1,316 +1,316 @@
-package com.twitter.product_mixer.core.feature.datarecord
+packagelon com.twittelonr.product_mixelonr.corelon.felonaturelon.datareloncord
 
-import com.twitter.dal.personal_data.thriftjava.PersonalDataType
-import com.twitter.ml.api.Feature
-import com.twitter.ml.api.DataType
-import com.twitter.ml.api.thriftscala.GeneralTensor
-import com.twitter.ml.api.thriftscala.StringTensor
-import com.twitter.ml.api.util.ScalaToJavaDataRecordConversions
-import com.twitter.ml.api.{GeneralTensor => JGeneralTensor}
-import com.twitter.ml.api.{RawTypedTensor => JRawTypedTensor}
-import com.twitter.ml.api.{Feature => MlFeature}
-import java.nio.ByteBuffer
-import java.nio.ByteOrder
+import com.twittelonr.dal.pelonrsonal_data.thriftjava.PelonrsonalDataTypelon
+import com.twittelonr.ml.api.Felonaturelon
+import com.twittelonr.ml.api.DataTypelon
+import com.twittelonr.ml.api.thriftscala.GelonnelonralTelonnsor
+import com.twittelonr.ml.api.thriftscala.StringTelonnsor
+import com.twittelonr.ml.api.util.ScalaToJavaDataReloncordConvelonrsions
+import com.twittelonr.ml.api.{GelonnelonralTelonnsor => JGelonnelonralTelonnsor}
+import com.twittelonr.ml.api.{RawTypelondTelonnsor => JRawTypelondTelonnsor}
+import com.twittelonr.ml.api.{Felonaturelon => MlFelonaturelon}
+import java.nio.BytelonBuffelonr
+import java.nio.BytelonOrdelonr
 import java.util.{Map => JMap}
-import java.util.{Set => JSet}
+import java.util.{Selont => JSelont}
 import java.lang.{Long => JLong}
-import java.lang.{Boolean => JBoolean}
-import java.lang.{Double => JDouble}
-import scala.collection.JavaConverters._
+import java.lang.{Boolelonan => JBoolelonan}
+import java.lang.{Doublelon => JDoublelon}
+import scala.collelonction.JavaConvelonrtelonrs._
 
 /**
- * Defines a conversion function for customers to mix-in when constructing a DataRecord supported
- * feature. We do this because the ML Feature representation is written in Java and uses Java types.
- * Furthermore, allowing customers to construct their own ML Feature directly can leave room
- * for mistyping errors, such as using a Double ML Feature on a String Product Mixer feature.
- * This mix in enforces that the customer only uses the right types, while making it easier
- * to setup a DataRecord Feature with nothing but a feature name and personal data types.
- * @tparam FeatureValueType The type of the underlying Product Mixer feature value.
+ * Delonfinelons a convelonrsion function for customelonrs to mix-in whelonn constructing a DataReloncord supportelond
+ * felonaturelon. Welon do this beloncauselon thelon ML Felonaturelon relonprelonselonntation is writtelonn in Java and uselons Java typelons.
+ * Furthelonrmorelon, allowing customelonrs to construct thelonir own ML Felonaturelon direlonctly can lelonavelon room
+ * for mistyping elonrrors, such as using a Doublelon ML Felonaturelon on a String Product Mixelonr felonaturelon.
+ * This mix in elonnforcelons that thelon customelonr only uselons thelon right typelons, whilelon making it elonasielonr
+ * to selontup a DataReloncord Felonaturelon with nothing but a felonaturelon namelon and pelonrsonal data typelons.
+ * @tparam FelonaturelonValuelonTypelon Thelon typelon of thelon undelonrlying Product Mixelonr felonaturelon valuelon.
  */
-sealed trait DataRecordCompatible[FeatureValueType] {
-  // The feature value type in ProMix.
-  final type FeatureType = FeatureValueType
-  // The underlying DataRecord value type, sometimes this differs from the Feature Store and ProMix type.
-  type DataRecordType
+selonalelond trait DataReloncordCompatiblelon[FelonaturelonValuelonTypelon] {
+  // Thelon felonaturelon valuelon typelon in ProMix.
+  final typelon FelonaturelonTypelon = FelonaturelonValuelonTypelon
+  // Thelon undelonrlying DataReloncord valuelon typelon, somelontimelons this diffelonrs from thelon Felonaturelon Storelon and ProMix typelon.
+  typelon DataReloncordTypelon
 
-  def featureName: String
-  def personalDataTypes: Set[PersonalDataType]
+  delonf felonaturelonNamelon: String
+  delonf pelonrsonalDataTypelons: Selont[PelonrsonalDataTypelon]
 
-  private[product_mixer] def mlFeature: MlFeature[DataRecordType]
+  privatelon[product_mixelonr] delonf mlFelonaturelon: MlFelonaturelon[DataReloncordTypelon]
 
   /**
-   * To & from Data Record value converters. In most cases, this is one to one when the types match
-   * but in some cases, certain features are modeled as different types in Data Record. For example,
-   * some features that are Long (e.g, such as TweepCred) are sometimes stored as Doubles.
+   * To & from Data Reloncord valuelon convelonrtelonrs. In most caselons, this is onelon to onelon whelonn thelon typelons match
+   * but in somelon caselons, celonrtain felonaturelons arelon modelonlelond as diffelonrelonnt typelons in Data Reloncord. For elonxamplelon,
+   * somelon felonaturelons that arelon Long (elon.g, such as TwelonelonpCrelond) arelon somelontimelons storelond as Doublelons.
    */
-  private[product_mixer] def toDataRecordFeatureValue(featureValue: FeatureType): DataRecordType
-  private[product_mixer] def fromDataRecordFeatureValue(featureValue: DataRecordType): FeatureType
+  privatelon[product_mixelonr] delonf toDataReloncordFelonaturelonValuelon(felonaturelonValuelon: FelonaturelonTypelon): DataReloncordTypelon
+  privatelon[product_mixelonr] delonf fromDataReloncordFelonaturelonValuelon(felonaturelonValuelon: DataReloncordTypelon): FelonaturelonTypelon
 
 }
 
 /**
- * Converter for going from String feature value to String ML Feature.
+ * Convelonrtelonr for going from String felonaturelon valuelon to String ML Felonaturelon.
  */
-trait StringDataRecordCompatible extends DataRecordCompatible[String] {
-  override type DataRecordType = String
+trait StringDataReloncordCompatiblelon elonxtelonnds DataReloncordCompatiblelon[String] {
+  ovelonrridelon typelon DataReloncordTypelon = String
 
-  final override lazy val mlFeature: MlFeature[String] =
-    new MlFeature.Text(featureName, personalDataTypes.asJava)
+  final ovelonrridelon lazy val mlFelonaturelon: MlFelonaturelon[String] =
+    nelonw MlFelonaturelon.Telonxt(felonaturelonNamelon, pelonrsonalDataTypelons.asJava)
 
-  override private[product_mixer] def fromDataRecordFeatureValue(
-    featureValue: String
-  ): String = featureValue
+  ovelonrridelon privatelon[product_mixelonr] delonf fromDataReloncordFelonaturelonValuelon(
+    felonaturelonValuelon: String
+  ): String = felonaturelonValuelon
 
-  override private[product_mixer] def toDataRecordFeatureValue(
-    featureValue: String
-  ): String = featureValue
+  ovelonrridelon privatelon[product_mixelonr] delonf toDataReloncordFelonaturelonValuelon(
+    felonaturelonValuelon: String
+  ): String = felonaturelonValuelon
 }
 
 /**
- * Converter for going from Long feature value to Discrete/Long ML Feature.
+ * Convelonrtelonr for going from Long felonaturelon valuelon to Discrelontelon/Long ML Felonaturelon.
  */
-trait LongDiscreteDataRecordCompatible extends DataRecordCompatible[Long] {
-  override type DataRecordType = JLong
+trait LongDiscrelontelonDataReloncordCompatiblelon elonxtelonnds DataReloncordCompatiblelon[Long] {
+  ovelonrridelon typelon DataReloncordTypelon = JLong
 
-  final override lazy val mlFeature: MlFeature[JLong] =
-    new Feature.Discrete(featureName, personalDataTypes.asJava)
+  final ovelonrridelon lazy val mlFelonaturelon: MlFelonaturelon[JLong] =
+    nelonw Felonaturelon.Discrelontelon(felonaturelonNamelon, pelonrsonalDataTypelons.asJava)
 
-  override private[product_mixer] def fromDataRecordFeatureValue(
-    featureValue: JLong
-  ): Long = featureValue
+  ovelonrridelon privatelon[product_mixelonr] delonf fromDataReloncordFelonaturelonValuelon(
+    felonaturelonValuelon: JLong
+  ): Long = felonaturelonValuelon
 
-  override private[product_mixer] def toDataRecordFeatureValue(
-    featureValue: Long
-  ): JLong = featureValue
+  ovelonrridelon privatelon[product_mixelonr] delonf toDataReloncordFelonaturelonValuelon(
+    felonaturelonValuelon: Long
+  ): JLong = felonaturelonValuelon
 }
 
 /**
- * Converter for going from Long feature value to Continuous/Double ML Feature.
+ * Convelonrtelonr for going from Long felonaturelon valuelon to Continuous/Doublelon ML Felonaturelon.
  */
-trait LongContinuousDataRecordCompatible extends DataRecordCompatible[Long] {
-  override type DataRecordType = JDouble
+trait LongContinuousDataReloncordCompatiblelon elonxtelonnds DataReloncordCompatiblelon[Long] {
+  ovelonrridelon typelon DataReloncordTypelon = JDoublelon
 
-  final override lazy val mlFeature: MlFeature[JDouble] =
-    new Feature.Continuous(featureName, personalDataTypes.asJava)
+  final ovelonrridelon lazy val mlFelonaturelon: MlFelonaturelon[JDoublelon] =
+    nelonw Felonaturelon.Continuous(felonaturelonNamelon, pelonrsonalDataTypelons.asJava)
 
-  override private[product_mixer] def toDataRecordFeatureValue(
-    featureValue: FeatureType
-  ): JDouble = featureValue.toDouble
+  ovelonrridelon privatelon[product_mixelonr] delonf toDataReloncordFelonaturelonValuelon(
+    felonaturelonValuelon: FelonaturelonTypelon
+  ): JDoublelon = felonaturelonValuelon.toDoublelon
 
-  override private[product_mixer] def fromDataRecordFeatureValue(
-    featureValue: JDouble
-  ): Long = featureValue.longValue()
+  ovelonrridelon privatelon[product_mixelonr] delonf fromDataReloncordFelonaturelonValuelon(
+    felonaturelonValuelon: JDoublelon
+  ): Long = felonaturelonValuelon.longValuelon()
 }
 
 /**
- * Converter for going from an Integer feature value to Long/Discrete ML Feature.
+ * Convelonrtelonr for going from an Intelongelonr felonaturelon valuelon to Long/Discrelontelon ML Felonaturelon.
  */
-trait IntDiscreteDataRecordCompatible extends DataRecordCompatible[Int] {
-  override type DataRecordType = JLong
+trait IntDiscrelontelonDataReloncordCompatiblelon elonxtelonnds DataReloncordCompatiblelon[Int] {
+  ovelonrridelon typelon DataReloncordTypelon = JLong
 
-  final override lazy val mlFeature: MlFeature[JLong] =
-    new MlFeature.Discrete(featureName, personalDataTypes.asJava)
+  final ovelonrridelon lazy val mlFelonaturelon: MlFelonaturelon[JLong] =
+    nelonw MlFelonaturelon.Discrelontelon(felonaturelonNamelon, pelonrsonalDataTypelons.asJava)
 
-  override private[product_mixer] def fromDataRecordFeatureValue(
-    featureValue: JLong
-  ): Int = featureValue.toInt
+  ovelonrridelon privatelon[product_mixelonr] delonf fromDataReloncordFelonaturelonValuelon(
+    felonaturelonValuelon: JLong
+  ): Int = felonaturelonValuelon.toInt
 
-  override private[product_mixer] def toDataRecordFeatureValue(
-    featureValue: Int
-  ): JLong = featureValue.toLong
+  ovelonrridelon privatelon[product_mixelonr] delonf toDataReloncordFelonaturelonValuelon(
+    felonaturelonValuelon: Int
+  ): JLong = felonaturelonValuelon.toLong
 }
 
 /**
- * Converter for going from Integer feature value to Continuous/Double ML Feature.
+ * Convelonrtelonr for going from Intelongelonr felonaturelon valuelon to Continuous/Doublelon ML Felonaturelon.
  */
-trait IntContinuousDataRecordCompatible extends DataRecordCompatible[Int] {
-  override type DataRecordType = JDouble
+trait IntContinuousDataReloncordCompatiblelon elonxtelonnds DataReloncordCompatiblelon[Int] {
+  ovelonrridelon typelon DataReloncordTypelon = JDoublelon
 
-  final override lazy val mlFeature: MlFeature[JDouble] =
-    new Feature.Continuous(featureName, personalDataTypes.asJava)
+  final ovelonrridelon lazy val mlFelonaturelon: MlFelonaturelon[JDoublelon] =
+    nelonw Felonaturelon.Continuous(felonaturelonNamelon, pelonrsonalDataTypelons.asJava)
 
-  override private[product_mixer] def toDataRecordFeatureValue(
-    featureValue: Int
-  ): JDouble = featureValue.toDouble
+  ovelonrridelon privatelon[product_mixelonr] delonf toDataReloncordFelonaturelonValuelon(
+    felonaturelonValuelon: Int
+  ): JDoublelon = felonaturelonValuelon.toDoublelon
 
-  override private[product_mixer] def fromDataRecordFeatureValue(
-    featureValue: JDouble
-  ): Int = featureValue.toInt
+  ovelonrridelon privatelon[product_mixelonr] delonf fromDataReloncordFelonaturelonValuelon(
+    felonaturelonValuelon: JDoublelon
+  ): Int = felonaturelonValuelon.toInt
 }
 
 /**
- * Converter for going from Double feature value to Continuous/Double ML Feature.
+ * Convelonrtelonr for going from Doublelon felonaturelon valuelon to Continuous/Doublelon ML Felonaturelon.
  */
-trait DoubleDataRecordCompatible extends DataRecordCompatible[Double] {
-  override type DataRecordType = JDouble
+trait DoublelonDataReloncordCompatiblelon elonxtelonnds DataReloncordCompatiblelon[Doublelon] {
+  ovelonrridelon typelon DataReloncordTypelon = JDoublelon
 
-  final override lazy val mlFeature: MlFeature[JDouble] =
-    new MlFeature.Continuous(featureName, personalDataTypes.asJava)
+  final ovelonrridelon lazy val mlFelonaturelon: MlFelonaturelon[JDoublelon] =
+    nelonw MlFelonaturelon.Continuous(felonaturelonNamelon, pelonrsonalDataTypelons.asJava)
 
-  override private[product_mixer] def fromDataRecordFeatureValue(
-    featureValue: JDouble
-  ): Double = featureValue
+  ovelonrridelon privatelon[product_mixelonr] delonf fromDataReloncordFelonaturelonValuelon(
+    felonaturelonValuelon: JDoublelon
+  ): Doublelon = felonaturelonValuelon
 
-  override private[product_mixer] def toDataRecordFeatureValue(
-    featureValue: Double
-  ): JDouble = featureValue
+  ovelonrridelon privatelon[product_mixelonr] delonf toDataReloncordFelonaturelonValuelon(
+    felonaturelonValuelon: Doublelon
+  ): JDoublelon = felonaturelonValuelon
 }
 
 /**
- * Converter for going from Boolean feature value to Boolean ML Feature.
+ * Convelonrtelonr for going from Boolelonan felonaturelon valuelon to Boolelonan ML Felonaturelon.
  */
-trait BoolDataRecordCompatible extends DataRecordCompatible[Boolean] {
-  override type DataRecordType = JBoolean
+trait BoolDataReloncordCompatiblelon elonxtelonnds DataReloncordCompatiblelon[Boolelonan] {
+  ovelonrridelon typelon DataReloncordTypelon = JBoolelonan
 
-  final override lazy val mlFeature: MlFeature[JBoolean] =
-    new MlFeature.Binary(featureName, personalDataTypes.asJava)
+  final ovelonrridelon lazy val mlFelonaturelon: MlFelonaturelon[JBoolelonan] =
+    nelonw MlFelonaturelon.Binary(felonaturelonNamelon, pelonrsonalDataTypelons.asJava)
 
-  override private[product_mixer] def fromDataRecordFeatureValue(
-    featureValue: JBoolean
-  ): Boolean = featureValue
+  ovelonrridelon privatelon[product_mixelonr] delonf fromDataReloncordFelonaturelonValuelon(
+    felonaturelonValuelon: JBoolelonan
+  ): Boolelonan = felonaturelonValuelon
 
-  override private[product_mixer] def toDataRecordFeatureValue(
-    featureValue: Boolean
-  ): JBoolean = featureValue
+  ovelonrridelon privatelon[product_mixelonr] delonf toDataReloncordFelonaturelonValuelon(
+    felonaturelonValuelon: Boolelonan
+  ): JBoolelonan = felonaturelonValuelon
 }
 
 /**
- * Converter for going from a ByteBuffer feature value to ByteBuffer ML Feature.
+ * Convelonrtelonr for going from a BytelonBuffelonr felonaturelon valuelon to BytelonBuffelonr ML Felonaturelon.
  */
-trait BlobDataRecordCompatible extends DataRecordCompatible[ByteBuffer] {
-  override type DataRecordType = ByteBuffer
+trait BlobDataReloncordCompatiblelon elonxtelonnds DataReloncordCompatiblelon[BytelonBuffelonr] {
+  ovelonrridelon typelon DataReloncordTypelon = BytelonBuffelonr
 
-  final override lazy val mlFeature: MlFeature[ByteBuffer] =
-    new Feature.Blob(featureName, personalDataTypes.asJava)
+  final ovelonrridelon lazy val mlFelonaturelon: MlFelonaturelon[BytelonBuffelonr] =
+    nelonw Felonaturelon.Blob(felonaturelonNamelon, pelonrsonalDataTypelons.asJava)
 
-  override private[product_mixer] def fromDataRecordFeatureValue(
-    featureValue: ByteBuffer
-  ): ByteBuffer = featureValue
+  ovelonrridelon privatelon[product_mixelonr] delonf fromDataReloncordFelonaturelonValuelon(
+    felonaturelonValuelon: BytelonBuffelonr
+  ): BytelonBuffelonr = felonaturelonValuelon
 
-  override private[product_mixer] def toDataRecordFeatureValue(
-    featureValue: ByteBuffer
-  ): ByteBuffer = featureValue
+  ovelonrridelon privatelon[product_mixelonr] delonf toDataReloncordFelonaturelonValuelon(
+    felonaturelonValuelon: BytelonBuffelonr
+  ): BytelonBuffelonr = felonaturelonValuelon
 }
 
 /**
- * Converter for going from a Map[String, Double] feature value to Sparse Double/Continious ML Feature.
+ * Convelonrtelonr for going from a Map[String, Doublelon] felonaturelon valuelon to Sparselon Doublelon/Continious ML Felonaturelon.
  */
-trait SparseContinuousDataRecordCompatible extends DataRecordCompatible[Map[String, Double]] {
-  override type DataRecordType = JMap[String, JDouble]
+trait SparselonContinuousDataReloncordCompatiblelon elonxtelonnds DataReloncordCompatiblelon[Map[String, Doublelon]] {
+  ovelonrridelon typelon DataReloncordTypelon = JMap[String, JDoublelon]
 
-  final override lazy val mlFeature: MlFeature[JMap[String, JDouble]] =
-    new Feature.SparseContinuous(featureName, personalDataTypes.asJava)
+  final ovelonrridelon lazy val mlFelonaturelon: MlFelonaturelon[JMap[String, JDoublelon]] =
+    nelonw Felonaturelon.SparselonContinuous(felonaturelonNamelon, pelonrsonalDataTypelons.asJava)
 
-  override private[product_mixer] def toDataRecordFeatureValue(
-    featureValue: Map[String, Double]
-  ): JMap[String, JDouble] =
-    featureValue.mapValues(_.asInstanceOf[JDouble]).asJava
+  ovelonrridelon privatelon[product_mixelonr] delonf toDataReloncordFelonaturelonValuelon(
+    felonaturelonValuelon: Map[String, Doublelon]
+  ): JMap[String, JDoublelon] =
+    felonaturelonValuelon.mapValuelons(_.asInstancelonOf[JDoublelon]).asJava
 
-  override private[product_mixer] def fromDataRecordFeatureValue(
-    featureValue: JMap[String, JDouble]
-  ) = featureValue.asScala.toMap.mapValues(_.doubleValue())
+  ovelonrridelon privatelon[product_mixelonr] delonf fromDataReloncordFelonaturelonValuelon(
+    felonaturelonValuelon: JMap[String, JDoublelon]
+  ) = felonaturelonValuelon.asScala.toMap.mapValuelons(_.doublelonValuelon())
 }
 
 /**
- * Converter for going from a Set[String] feature value to SparseBinary/String Set ML Feature.
+ * Convelonrtelonr for going from a Selont[String] felonaturelon valuelon to SparselonBinary/String Selont ML Felonaturelon.
  */
-trait SparseBinaryDataRecordCompatible extends DataRecordCompatible[Set[String]] {
-  override type DataRecordType = JSet[String]
+trait SparselonBinaryDataReloncordCompatiblelon elonxtelonnds DataReloncordCompatiblelon[Selont[String]] {
+  ovelonrridelon typelon DataReloncordTypelon = JSelont[String]
 
-  final override lazy val mlFeature: MlFeature[JSet[String]] =
-    new Feature.SparseBinary(featureName, personalDataTypes.asJava)
+  final ovelonrridelon lazy val mlFelonaturelon: MlFelonaturelon[JSelont[String]] =
+    nelonw Felonaturelon.SparselonBinary(felonaturelonNamelon, pelonrsonalDataTypelons.asJava)
 
-  override private[product_mixer] def fromDataRecordFeatureValue(
-    featureValue: JSet[String]
-  ) = featureValue.asScala.toSet
+  ovelonrridelon privatelon[product_mixelonr] delonf fromDataReloncordFelonaturelonValuelon(
+    felonaturelonValuelon: JSelont[String]
+  ) = felonaturelonValuelon.asScala.toSelont
 
-  override private[product_mixer] def toDataRecordFeatureValue(
-    featureValue: FeatureType
-  ): JSet[String] = featureValue.asJava
+  ovelonrridelon privatelon[product_mixelonr] delonf toDataReloncordFelonaturelonValuelon(
+    felonaturelonValuelon: FelonaturelonTypelon
+  ): JSelont[String] = felonaturelonValuelon.asJava
 }
 
 /**
- * Marker trait for any feature value to Tensor ML Feature. Not directly usable.
+ * Markelonr trait for any felonaturelon valuelon to Telonnsor ML Felonaturelon. Not direlonctly usablelon.
  */
-sealed trait TensorDataRecordCompatible[FeatureV] extends DataRecordCompatible[FeatureV] {
-  override type DataRecordType = JGeneralTensor
-  override def mlFeature: MlFeature[JGeneralTensor]
+selonalelond trait TelonnsorDataReloncordCompatiblelon[FelonaturelonV] elonxtelonnds DataReloncordCompatiblelon[FelonaturelonV] {
+  ovelonrridelon typelon DataReloncordTypelon = JGelonnelonralTelonnsor
+  ovelonrridelon delonf mlFelonaturelon: MlFelonaturelon[JGelonnelonralTelonnsor]
 }
 
 /**
- * Converter for a double to a Tensor feature encoded as float encoded RawTypedTensor
+ * Convelonrtelonr for a doublelon to a Telonnsor felonaturelon elonncodelond as float elonncodelond RawTypelondTelonnsor
  */
-trait RawTensorFloatDoubleDataRecordCompatible extends TensorDataRecordCompatible[Double] {
-  final override lazy val mlFeature: MlFeature[JGeneralTensor] =
-    new Feature.Tensor(
-      featureName,
-      DataType.FLOAT,
-      List.empty[JLong].asJava,
-      personalDataTypes.asJava)
+trait RawTelonnsorFloatDoublelonDataReloncordCompatiblelon elonxtelonnds TelonnsorDataReloncordCompatiblelon[Doublelon] {
+  final ovelonrridelon lazy val mlFelonaturelon: MlFelonaturelon[JGelonnelonralTelonnsor] =
+    nelonw Felonaturelon.Telonnsor(
+      felonaturelonNamelon,
+      DataTypelon.FLOAT,
+      List.elonmpty[JLong].asJava,
+      pelonrsonalDataTypelons.asJava)
 
-  override private[product_mixer] def toDataRecordFeatureValue(
-    featureValue: FeatureType
+  ovelonrridelon privatelon[product_mixelonr] delonf toDataReloncordFelonaturelonValuelon(
+    felonaturelonValuelon: FelonaturelonTypelon
   ) = {
-    val byteBuffer: ByteBuffer =
-      ByteBuffer
-        .allocate(4).order(ByteOrder.LITTLE_ENDIAN).putFloat(featureValue.toFloat)
-    byteBuffer.flip()
-    val tensor = new JGeneralTensor()
-    tensor.setRawTypedTensor(new JRawTypedTensor(DataType.FLOAT, byteBuffer))
-    tensor
+    val bytelonBuffelonr: BytelonBuffelonr =
+      BytelonBuffelonr
+        .allocatelon(4).ordelonr(BytelonOrdelonr.LITTLelon_elonNDIAN).putFloat(felonaturelonValuelon.toFloat)
+    bytelonBuffelonr.flip()
+    val telonnsor = nelonw JGelonnelonralTelonnsor()
+    telonnsor.selontRawTypelondTelonnsor(nelonw JRawTypelondTelonnsor(DataTypelon.FLOAT, bytelonBuffelonr))
+    telonnsor
   }
 
-  override private[product_mixer] def fromDataRecordFeatureValue(
-    featureValue: JGeneralTensor
+  ovelonrridelon privatelon[product_mixelonr] delonf fromDataReloncordFelonaturelonValuelon(
+    felonaturelonValuelon: JGelonnelonralTelonnsor
   ) = {
-    val tensor = Option(featureValue.getRawTypedTensor)
-      .getOrElse(throw new UnexpectedTensorException(featureValue))
-    tensor.content.order(ByteOrder.LITTLE_ENDIAN).getFloat().toDouble
+    val telonnsor = Option(felonaturelonValuelon.gelontRawTypelondTelonnsor)
+      .gelontOrelonlselon(throw nelonw UnelonxpelonctelondTelonnsorelonxcelonption(felonaturelonValuelon))
+    telonnsor.contelonnt.ordelonr(BytelonOrdelonr.LITTLelon_elonNDIAN).gelontFloat().toDoublelon
   }
 }
 
 /**
- *  Converter for a scala general tensor to java general tensor ML feature.
+ *  Convelonrtelonr for a scala gelonnelonral telonnsor to java gelonnelonral telonnsor ML felonaturelon.
  */
-trait GeneralTensorDataRecordCompatible extends TensorDataRecordCompatible[GeneralTensor] {
+trait GelonnelonralTelonnsorDataReloncordCompatiblelon elonxtelonnds TelonnsorDataReloncordCompatiblelon[GelonnelonralTelonnsor] {
 
-  def dataType: DataType
-  final override lazy val mlFeature: MlFeature[JGeneralTensor] =
-    new Feature.Tensor(featureName, dataType, List.empty[JLong].asJava, personalDataTypes.asJava)
+  delonf dataTypelon: DataTypelon
+  final ovelonrridelon lazy val mlFelonaturelon: MlFelonaturelon[JGelonnelonralTelonnsor] =
+    nelonw Felonaturelon.Telonnsor(felonaturelonNamelon, dataTypelon, List.elonmpty[JLong].asJava, pelonrsonalDataTypelons.asJava)
 
-  override private[product_mixer] def toDataRecordFeatureValue(
-    featureValue: FeatureType
-  ) = ScalaToJavaDataRecordConversions.scalaTensor2Java(featureValue)
+  ovelonrridelon privatelon[product_mixelonr] delonf toDataReloncordFelonaturelonValuelon(
+    felonaturelonValuelon: FelonaturelonTypelon
+  ) = ScalaToJavaDataReloncordConvelonrsions.scalaTelonnsor2Java(felonaturelonValuelon)
 
-  override private[product_mixer] def fromDataRecordFeatureValue(
-    featureValue: JGeneralTensor
-  ) = ScalaToJavaDataRecordConversions.javaTensor2Scala(featureValue)
+  ovelonrridelon privatelon[product_mixelonr] delonf fromDataReloncordFelonaturelonValuelon(
+    felonaturelonValuelon: JGelonnelonralTelonnsor
+  ) = ScalaToJavaDataReloncordConvelonrsions.javaTelonnsor2Scala(felonaturelonValuelon)
 }
 
 /**
- *  Converter for a scala string tensor to java general tensor ML feature.
+ *  Convelonrtelonr for a scala string telonnsor to java gelonnelonral telonnsor ML felonaturelon.
  */
-trait StringTensorDataRecordCompatible extends TensorDataRecordCompatible[StringTensor] {
-  final override lazy val mlFeature: MlFeature[JGeneralTensor] =
-    new Feature.Tensor(
-      featureName,
-      DataType.STRING,
-      List.empty[JLong].asJava,
-      personalDataTypes.asJava)
+trait StringTelonnsorDataReloncordCompatiblelon elonxtelonnds TelonnsorDataReloncordCompatiblelon[StringTelonnsor] {
+  final ovelonrridelon lazy val mlFelonaturelon: MlFelonaturelon[JGelonnelonralTelonnsor] =
+    nelonw Felonaturelon.Telonnsor(
+      felonaturelonNamelon,
+      DataTypelon.STRING,
+      List.elonmpty[JLong].asJava,
+      pelonrsonalDataTypelons.asJava)
 
-  override private[product_mixer] def fromDataRecordFeatureValue(
-    featureValue: JGeneralTensor
+  ovelonrridelon privatelon[product_mixelonr] delonf fromDataReloncordFelonaturelonValuelon(
+    felonaturelonValuelon: JGelonnelonralTelonnsor
   ) = {
-    ScalaToJavaDataRecordConversions.javaTensor2Scala(featureValue) match {
-      case GeneralTensor.StringTensor(stringTensor) => stringTensor
-      case _ => throw new UnexpectedTensorException(featureValue)
+    ScalaToJavaDataReloncordConvelonrsions.javaTelonnsor2Scala(felonaturelonValuelon) match {
+      caselon GelonnelonralTelonnsor.StringTelonnsor(stringTelonnsor) => stringTelonnsor
+      caselon _ => throw nelonw UnelonxpelonctelondTelonnsorelonxcelonption(felonaturelonValuelon)
     }
   }
 
-  override private[product_mixer] def toDataRecordFeatureValue(
-    featureValue: FeatureType
-  ) = ScalaToJavaDataRecordConversions.scalaTensor2Java(GeneralTensor.StringTensor(featureValue))
+  ovelonrridelon privatelon[product_mixelonr] delonf toDataReloncordFelonaturelonValuelon(
+    felonaturelonValuelon: FelonaturelonTypelon
+  ) = ScalaToJavaDataReloncordConvelonrsions.scalaTelonnsor2Java(GelonnelonralTelonnsor.StringTelonnsor(felonaturelonValuelon))
 }
 
-class UnexpectedTensorException(tensor: JGeneralTensor)
-    extends Exception(s"Unexpected Tensor: $tensor")
+class UnelonxpelonctelondTelonnsorelonxcelonption(telonnsor: JGelonnelonralTelonnsor)
+    elonxtelonnds elonxcelonption(s"Unelonxpelonctelond Telonnsor: $telonnsor")

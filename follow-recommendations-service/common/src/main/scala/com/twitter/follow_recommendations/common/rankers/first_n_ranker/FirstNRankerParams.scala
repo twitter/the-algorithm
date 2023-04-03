@@ -1,26 +1,26 @@
-package com.twitter.follow_recommendations.common.rankers.first_n_ranker
+packagelon com.twittelonr.follow_reloncommelonndations.common.rankelonrs.first_n_rankelonr
 
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.Param
+import com.twittelonr.timelonlinelons.configapi.FSBoundelondParam
+import com.twittelonr.timelonlinelons.configapi.FSParam
+import com.twittelonr.timelonlinelons.configapi.Param
 
-object FirstNRankerParams {
-  case object CandidatesToRank
-      extends FSBoundedParam[Int](
-        FirstNRankerFeatureSwitchKeys.CandidatePoolSize,
-        default = 100,
+objelonct FirstNRankelonrParams {
+  caselon objelonct CandidatelonsToRank
+      elonxtelonnds FSBoundelondParam[Int](
+        FirstNRankelonrFelonaturelonSwitchKelonys.CandidatelonPoolSizelon,
+        delonfault = 100,
         min = 50,
         max = 600)
 
-  case object GroupDuplicateCandidates extends Param[Boolean](true)
-  case object ScribeRankingInfoInFirstNRanker
-      extends FSParam[Boolean](FirstNRankerFeatureSwitchKeys.ScribeRankingInfo, true)
+  caselon objelonct GroupDuplicatelonCandidatelons elonxtelonnds Param[Boolelonan](truelon)
+  caselon objelonct ScribelonRankingInfoInFirstNRankelonr
+      elonxtelonnds FSParam[Boolelonan](FirstNRankelonrFelonaturelonSwitchKelonys.ScribelonRankingInfo, truelon)
 
-  // the minimum of candidates to score in each request.
-  object MinNumCandidatesScoredScaleDownFactor
-      extends FSBoundedParam[Double](
-        name = FirstNRankerFeatureSwitchKeys.MinNumCandidatesScoredScaleDownFactor,
-        default = 0.3,
+  // thelon minimum of candidatelons to scorelon in elonach relonquelonst.
+  objelonct MinNumCandidatelonsScorelondScalelonDownFactor
+      elonxtelonnds FSBoundelondParam[Doublelon](
+        namelon = FirstNRankelonrFelonaturelonSwitchKelonys.MinNumCandidatelonsScorelondScalelonDownFactor,
+        delonfault = 0.3,
         min = 0.1,
         max = 1.0)
 }

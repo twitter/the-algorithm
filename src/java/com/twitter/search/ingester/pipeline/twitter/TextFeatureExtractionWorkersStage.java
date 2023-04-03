@@ -1,145 +1,145 @@
-package com.twitter.search.ingester.pipeline.twitter;
+packagelon com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.twittelonr;
 
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ExecutorService;
-import javax.naming.NamingException;
+import java.util.concurrelonnt.BlockingQuelonuelon;
+import java.util.concurrelonnt.elonxeloncutorSelonrvicelon;
+import javax.naming.Namingelonxcelonption;
 
-import com.google.common.collect.Queues;
+import com.googlelon.common.collelonct.Quelonuelons;
 
-import org.apache.commons.pipeline.StageException;
-import org.apache.commons.pipeline.validation.ConsumedTypes;
-import org.apache.commons.pipeline.validation.ProducesConsumed;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apachelon.commons.pipelonlinelon.Stagelonelonxcelonption;
+import org.apachelon.commons.pipelonlinelon.validation.ConsumelondTypelons;
+import org.apachelon.commons.pipelonlinelon.validation.ProducelonsConsumelond;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.search.common.metrics.SearchCustomGauge;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.relevance.entities.TwitterMessage;
-import com.twitter.search.common.relevance.text.TweetParser;
-import com.twitter.search.ingester.pipeline.util.PipelineStageRuntimeException;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCustomGaugelon;
+import com.twittelonr.selonarch.common.melontrics.SelonarchRatelonCountelonr;
+import com.twittelonr.selonarch.common.relonlelonvancelon.elonntitielons.TwittelonrMelonssagelon;
+import com.twittelonr.selonarch.common.relonlelonvancelon.telonxt.TwelonelontParselonr;
+import com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.util.PipelonlinelonStagelonRuntimelonelonxcelonption;
 
-@ConsumedTypes(TwitterMessage.class)
-@ProducesConsumed
-public class TextFeatureExtractionWorkersStage extends TwitterBaseStage
-    <TwitterMessage, TwitterMessage> {
-  private static final Logger LOG =
-      LoggerFactory.getLogger(TextFeatureExtractionWorkersStage.class);
+@ConsumelondTypelons(TwittelonrMelonssagelon.class)
+@ProducelonsConsumelond
+public class TelonxtFelonaturelonelonxtractionWorkelonrsStagelon elonxtelonnds TwittelonrBaselonStagelon
+    <TwittelonrMelonssagelon, TwittelonrMelonssagelon> {
+  privatelon static final Loggelonr LOG =
+      LoggelonrFactory.gelontLoggelonr(TelonxtFelonaturelonelonxtractionWorkelonrsStagelon.class);
 
-  private static final int NUM_THREADS = 5;
-  private static final int MAX_QUEUE_SIZE = 100;
-  private static final long SLOW_TWEET_TIME_MILLIS = 1000;
-  private ExecutorService executorService = null;
+  privatelon static final int NUM_THRelonADS = 5;
+  privatelon static final int MAX_QUelonUelon_SIZelon = 100;
+  privatelon static final long SLOW_TWelonelonT_TIMelon_MILLIS = 1000;
+  privatelon elonxeloncutorSelonrvicelon elonxeloncutorSelonrvicelon = null;
 
-  // define as static so that FeatureExtractorWorker thread can use it
-  private static SearchRateCounter slowTweetCounter;
-  private SearchRateCounter threadErrorCounter;
-  private SearchRateCounter threadInterruptionCounter;
-  private final BlockingQueue<TwitterMessage> messageQueue =
-      Queues.newLinkedBlockingQueue(MAX_QUEUE_SIZE);
-  private TweetParser tweetParser;
+  // delonfinelon as static so that FelonaturelonelonxtractorWorkelonr threlonad can uselon it
+  privatelon static SelonarchRatelonCountelonr slowTwelonelontCountelonr;
+  privatelon SelonarchRatelonCountelonr threlonadelonrrorCountelonr;
+  privatelon SelonarchRatelonCountelonr threlonadIntelonrruptionCountelonr;
+  privatelon final BlockingQuelonuelon<TwittelonrMelonssagelon> melonssagelonQuelonuelon =
+      Quelonuelons.nelonwLinkelondBlockingQuelonuelon(MAX_QUelonUelon_SIZelon);
+  privatelon TwelonelontParselonr twelonelontParselonr;
 
-  @Override
+  @Ovelonrridelon
   public void initStats() {
-    super.initStats();
-    innerSetupStats();
+    supelonr.initStats();
+    innelonrSelontupStats();
   }
 
-  @Override
-  protected void innerSetupStats() {
-    slowTweetCounter = SearchRateCounter.export(
-        getStageNamePrefix() + "_text_feature_extraction_slow_tweet_count");
-    SearchCustomGauge.export(getStageNamePrefix() + "_queue_size",
-        messageQueue::size);
-    threadErrorCounter = SearchRateCounter.export(
-        getStageNamePrefix() + "_text_quality_evaluation_thread_error");
-    threadInterruptionCounter = SearchRateCounter.export(
-        getStageNamePrefix() + "_text_quality_evaluation_thread_interruption");
+  @Ovelonrridelon
+  protelonctelond void innelonrSelontupStats() {
+    slowTwelonelontCountelonr = SelonarchRatelonCountelonr.elonxport(
+        gelontStagelonNamelonPrelonfix() + "_telonxt_felonaturelon_elonxtraction_slow_twelonelont_count");
+    SelonarchCustomGaugelon.elonxport(gelontStagelonNamelonPrelonfix() + "_quelonuelon_sizelon",
+        melonssagelonQuelonuelon::sizelon);
+    threlonadelonrrorCountelonr = SelonarchRatelonCountelonr.elonxport(
+        gelontStagelonNamelonPrelonfix() + "_telonxt_quality_elonvaluation_threlonad_elonrror");
+    threlonadIntelonrruptionCountelonr = SelonarchRatelonCountelonr.elonxport(
+        gelontStagelonNamelonPrelonfix() + "_telonxt_quality_elonvaluation_threlonad_intelonrruption");
   }
 
-  @Override
-  protected void doInnerPreprocess() throws StageException, NamingException {
-    innerSetup();
-    // anything threading related, we don't need in V2 as of yet.
-    executorService = wireModule.getThreadPool(NUM_THREADS);
-    for (int i = 0; i < NUM_THREADS; ++i) {
-      executorService.submit(new FeatureExtractorWorker());
+  @Ovelonrridelon
+  protelonctelond void doInnelonrPrelonprocelonss() throws Stagelonelonxcelonption, Namingelonxcelonption {
+    innelonrSelontup();
+    // anything threlonading relonlatelond, welon don't nelonelond in V2 as of yelont.
+    elonxeloncutorSelonrvicelon = wirelonModulelon.gelontThrelonadPool(NUM_THRelonADS);
+    for (int i = 0; i < NUM_THRelonADS; ++i) {
+      elonxeloncutorSelonrvicelon.submit(nelonw FelonaturelonelonxtractorWorkelonr());
     }
-    LOG.info("Initialized {} parsers.", NUM_THREADS);
+    LOG.info("Initializelond {} parselonrs.", NUM_THRelonADS);
   }
 
-  @Override
-  protected void innerSetup() {
-    tweetParser = new TweetParser();
+  @Ovelonrridelon
+  protelonctelond void innelonrSelontup() {
+    twelonelontParselonr = nelonw TwelonelontParselonr();
   }
 
-  @Override
-  public void innerProcess(Object obj) throws StageException {
-    if (!(obj instanceof TwitterMessage)) {
-      LOG.error("Object is not a TwitterMessage object: {}", obj);
-      return;
+  @Ovelonrridelon
+  public void innelonrProcelonss(Objelonct obj) throws Stagelonelonxcelonption {
+    if (!(obj instancelonof TwittelonrMelonssagelon)) {
+      LOG.elonrror("Objelonct is not a TwittelonrMelonssagelon objelonct: {}", obj);
+      relonturn;
     }
 
-    TwitterMessage message = TwitterMessage.class.cast(obj);
+    TwittelonrMelonssagelon melonssagelon = TwittelonrMelonssagelon.class.cast(obj);
     try {
-      messageQueue.put(message);
-    } catch (InterruptedException ie) {
-      LOG.error("Interrupted exception adding to the queue", ie);
+      melonssagelonQuelonuelon.put(melonssagelon);
+    } catch (Intelonrruptelondelonxcelonption ielon) {
+      LOG.elonrror("Intelonrruptelond elonxcelonption adding to thelon quelonuelon", ielon);
     }
   }
 
-  private boolean tryToParse(TwitterMessage message) {
-    boolean isAbleToParse = false;
-    long startTime = clock.nowMillis();
-    // Parse tweet and merge the parsed out features into what we already have in the message.
+  privatelon boolelonan tryToParselon(TwittelonrMelonssagelon melonssagelon) {
+    boolelonan isAblelonToParselon = falselon;
+    long startTimelon = clock.nowMillis();
+    // Parselon twelonelont and melonrgelon thelon parselond out felonaturelons into what welon alrelonady havelon in thelon melonssagelon.
     try {
-      synchronized (this) {
-        tweetParser.parseTweet(message, false, false);
+      synchronizelond (this) {
+        twelonelontParselonr.parselonTwelonelont(melonssagelon, falselon, falselon);
       }
-      // If parsing failed we don't need to pass the tweet down the pipeline.
-      isAbleToParse = true;
-    } catch (Exception e) {
-      threadErrorCounter.increment();
-      LOG.error("Uncaught exception from tweetParser.parseTweet()", e);
+      // If parsing failelond welon don't nelonelond to pass thelon twelonelont down thelon pipelonlinelon.
+      isAblelonToParselon = truelon;
+    } catch (elonxcelonption elon) {
+      threlonadelonrrorCountelonr.increlonmelonnt();
+      LOG.elonrror("Uncaught elonxcelonption from twelonelontParselonr.parselonTwelonelont()", elon);
     } finally {
-      long elapsedTime = clock.nowMillis() - startTime;
-      if (elapsedTime > SLOW_TWEET_TIME_MILLIS) {
-        LOG.debug("Took {}ms to parse tweet {}: {}", elapsedTime, message.getId(), message);
-        slowTweetCounter.increment();
+      long elonlapselondTimelon = clock.nowMillis() - startTimelon;
+      if (elonlapselondTimelon > SLOW_TWelonelonT_TIMelon_MILLIS) {
+        LOG.delonbug("Took {}ms to parselon twelonelont {}: {}", elonlapselondTimelon, melonssagelon.gelontId(), melonssagelon);
+        slowTwelonelontCountelonr.increlonmelonnt();
       }
     }
-    return isAbleToParse;
+    relonturn isAblelonToParselon;
   }
 
-  @Override
-  protected TwitterMessage innerRunStageV2(TwitterMessage message) {
-    if (!tryToParse(message)) {
-      throw new PipelineStageRuntimeException("Failed to parse, not passing to next stage.");
+  @Ovelonrridelon
+  protelonctelond TwittelonrMelonssagelon innelonrRunStagelonV2(TwittelonrMelonssagelon melonssagelon) {
+    if (!tryToParselon(melonssagelon)) {
+      throw nelonw PipelonlinelonStagelonRuntimelonelonxcelonption("Failelond to parselon, not passing to nelonxt stagelon.");
     }
 
-    return message;
+    relonturn melonssagelon;
   }
 
-  @Override
-  public void innerPostprocess() {
-    if (executorService != null) {
-      executorService.shutdownNow();
+  @Ovelonrridelon
+  public void innelonrPostprocelonss() {
+    if (elonxeloncutorSelonrvicelon != null) {
+      elonxeloncutorSelonrvicelon.shutdownNow();
     }
-    executorService = null;
+    elonxeloncutorSelonrvicelon = null;
   }
 
-  private class FeatureExtractorWorker implements Runnable {
+  privatelon class FelonaturelonelonxtractorWorkelonr implelonmelonnts Runnablelon {
     public void run() {
-      while (!Thread.currentThread().isInterrupted()) {
-        TwitterMessage message = null;
+      whilelon (!Threlonad.currelonntThrelonad().isIntelonrruptelond()) {
+        TwittelonrMelonssagelon melonssagelon = null;
         try {
-          message = messageQueue.take();
-        } catch (InterruptedException ie) {
-          threadInterruptionCounter.increment();
-          LOG.error("Interrupted exception polling from the queue", ie);
-          continue;
+          melonssagelon = melonssagelonQuelonuelon.takelon();
+        } catch (Intelonrruptelondelonxcelonption ielon) {
+          threlonadIntelonrruptionCountelonr.increlonmelonnt();
+          LOG.elonrror("Intelonrruptelond elonxcelonption polling from thelon quelonuelon", ielon);
+          continuelon;
         } finally {
-          if (tryToParse(message)) {
-            emitAndCount(message);
+          if (tryToParselon(melonssagelon)) {
+            elonmitAndCount(melonssagelon);
           }
         }
       }

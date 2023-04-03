@@ -1,214 +1,214 @@
-package com.twitter.search.common.schema;
+packagelon com.twittelonr.selonarch.common.schelonma;
 
-import java.util.Collection;
+import java.util.Collelonction;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrelonnt.atomic.AtomicRelonfelonrelonncelon;
 
-import javax.annotation.Nullable;
+import javax.annotation.Nullablelon;
 
-import com.google.common.base.Preconditions;
-import com.google.common.base.Predicate;
-import com.google.common.collect.ImmutableCollection;
-import com.google.common.collect.ImmutableMap;
+import com.googlelon.common.baselon.Prelonconditions;
+import com.googlelon.common.baselon.Prelondicatelon;
+import com.googlelon.common.collelonct.ImmutablelonCollelonction;
+import com.googlelon.common.collelonct.ImmutablelonMap;
 
-import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.facet.FacetsConfig;
-import org.apache.lucene.index.FieldInfos;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apachelon.lucelonnelon.analysis.Analyzelonr;
+import org.apachelon.lucelonnelon.facelont.FacelontsConfig;
+import org.apachelon.lucelonnelon.indelonx.FielonldInfos;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.search.common.features.thrift.ThriftSearchFeatureSchema;
-import com.twitter.search.common.schema.base.FeatureConfiguration;
-import com.twitter.search.common.schema.base.FieldWeightDefault;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.common.schema.thriftjava.ThriftAnalyzer;
-import com.twitter.search.common.schema.thriftjava.ThriftCSFType;
-import com.twitter.search.common.schema.thriftjava.ThriftFieldConfiguration;
+import com.twittelonr.selonarch.common.felonaturelons.thrift.ThriftSelonarchFelonaturelonSchelonma;
+import com.twittelonr.selonarch.common.schelonma.baselon.FelonaturelonConfiguration;
+import com.twittelonr.selonarch.common.schelonma.baselon.FielonldWelonightDelonfault;
+import com.twittelonr.selonarch.common.schelonma.baselon.ImmutablelonSchelonmaIntelonrfacelon;
+import com.twittelonr.selonarch.common.schelonma.baselon.Schelonma;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftAnalyzelonr;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftCSFTypelon;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftFielonldConfiguration;
 
 /**
- * A schema implementation that allow minor version increments at run time.
+ * A schelonma implelonmelonntation that allow minor velonrsion increlonmelonnts at run timelon.
  */
-public class DynamicSchema implements Schema {
-  private static final Logger LOG = LoggerFactory.getLogger(DynamicSchema.class);
+public class DynamicSchelonma implelonmelonnts Schelonma {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(DynamicSchelonma.class);
 
-  private final AtomicReference<ImmutableSchema> schema;
+  privatelon final AtomicRelonfelonrelonncelon<ImmutablelonSchelonma> schelonma;
 
-  public DynamicSchema(ImmutableSchema schema) {
-    this.schema = new AtomicReference<>(schema);
+  public DynamicSchelonma(ImmutablelonSchelonma schelonma) {
+    this.schelonma = nelonw AtomicRelonfelonrelonncelon<>(schelonma);
   }
 
-  public ImmutableSchemaInterface getSchemaSnapshot() {
-    return schema.get();
+  public ImmutablelonSchelonmaIntelonrfacelon gelontSchelonmaSnapshot() {
+    relonturn schelonma.gelont();
   }
 
   /**
-   * Update the schema reference inside this DynamicSchema.
+   * Updatelon thelon schelonma relonfelonrelonncelon insidelon this DynamicSchelonma.
    */
-  public synchronized void updateSchema(ImmutableSchema newSchema) throws SchemaUpdateException {
-    ImmutableSchema oldSchema = schema.get();
-    if (newSchema.getMajorVersionNumber() != oldSchema.getMajorVersionNumber()) {
-      throw new SchemaUpdateException("Dynamic major version update is not supported.");
-    } else {
-      if (newSchema.getMinorVersionNumber() <= oldSchema.getMinorVersionNumber()) {
-        throw new SchemaUpdateException("Dynamic backward minor version update is not supported.");
-      } else {
-        LOG.info("DynamicSchema accepted update. Old version is {}.{}; new version is {}.{}",
-            oldSchema.getMajorVersionNumber(),
-            oldSchema.getMinorVersionNumber(),
-            newSchema.getMajorVersionNumber(),
-            newSchema.getMinorVersionNumber());
-        schema.set(newSchema);
+  public synchronizelond void updatelonSchelonma(ImmutablelonSchelonma nelonwSchelonma) throws SchelonmaUpdatelonelonxcelonption {
+    ImmutablelonSchelonma oldSchelonma = schelonma.gelont();
+    if (nelonwSchelonma.gelontMajorVelonrsionNumbelonr() != oldSchelonma.gelontMajorVelonrsionNumbelonr()) {
+      throw nelonw SchelonmaUpdatelonelonxcelonption("Dynamic major velonrsion updatelon is not supportelond.");
+    } elonlselon {
+      if (nelonwSchelonma.gelontMinorVelonrsionNumbelonr() <= oldSchelonma.gelontMinorVelonrsionNumbelonr()) {
+        throw nelonw SchelonmaUpdatelonelonxcelonption("Dynamic backward minor velonrsion updatelon is not supportelond.");
+      } elonlselon {
+        LOG.info("DynamicSchelonma accelonptelond updatelon. Old velonrsion is {}.{}; nelonw velonrsion is {}.{}",
+            oldSchelonma.gelontMajorVelonrsionNumbelonr(),
+            oldSchelonma.gelontMinorVelonrsionNumbelonr(),
+            nelonwSchelonma.gelontMajorVelonrsionNumbelonr(),
+            nelonwSchelonma.gelontMinorVelonrsionNumbelonr());
+        schelonma.selont(nelonwSchelonma);
       }
     }
   }
 
-  public static class SchemaUpdateException extends Exception {
-    public SchemaUpdateException(String message) {
-      super(message);
+  public static class SchelonmaUpdatelonelonxcelonption elonxtelonnds elonxcelonption {
+    public SchelonmaUpdatelonelonxcelonption(String melonssagelon) {
+      supelonr(melonssagelon);
     }
   }
 
-  // The below are all methods in the Schema interface delegated to the underlying ImmutableSchema.
-  // The below is generated by IntelliJ, and reviewers can stop reviewing this file here.
-  // If you are adding logic into this class, please do so above this line.
-  @Override
-  public FieldInfos getLuceneFieldInfos(
-      Predicate<String> acceptedFields) {
-    return schema.get().getLuceneFieldInfos(acceptedFields);
+  // Thelon belonlow arelon all melonthods in thelon Schelonma intelonrfacelon delonlelongatelond to thelon undelonrlying ImmutablelonSchelonma.
+  // Thelon belonlow is gelonnelonratelond by IntelonlliJ, and relonvielonwelonrs can stop relonvielonwing this filelon helonrelon.
+  // If you arelon adding logic into this class, plelonaselon do so abovelon this linelon.
+  @Ovelonrridelon
+  public FielonldInfos gelontLucelonnelonFielonldInfos(
+      Prelondicatelon<String> accelonptelondFielonlds) {
+    relonturn schelonma.gelont().gelontLucelonnelonFielonldInfos(accelonptelondFielonlds);
   }
 
-  @Override
-  public FacetsConfig getFacetsConfig() {
-    return schema.get().getFacetsConfig();
+  @Ovelonrridelon
+  public FacelontsConfig gelontFacelontsConfig() {
+    relonturn schelonma.gelont().gelontFacelontsConfig();
   }
 
-  @Override
-  public Analyzer getDefaultAnalyzer(
-      ThriftAnalyzer override) {
-    return schema.get().getDefaultAnalyzer(override);
+  @Ovelonrridelon
+  public Analyzelonr gelontDelonfaultAnalyzelonr(
+      ThriftAnalyzelonr ovelonrridelon) {
+    relonturn schelonma.gelont().gelontDelonfaultAnalyzelonr(ovelonrridelon);
   }
 
-  @Override
-  public ImmutableCollection<FieldInfo> getFieldInfos() {
-    return schema.get().getFieldInfos();
+  @Ovelonrridelon
+  public ImmutablelonCollelonction<FielonldInfo> gelontFielonldInfos() {
+    relonturn schelonma.gelont().gelontFielonldInfos();
   }
 
-  @Override
-  public boolean hasField(int fieldConfigId) {
-    return schema.get().hasField(fieldConfigId);
+  @Ovelonrridelon
+  public boolelonan hasFielonld(int fielonldConfigId) {
+    relonturn schelonma.gelont().hasFielonld(fielonldConfigId);
   }
 
-  @Override
-  public boolean hasField(String fieldName) {
-    return schema.get().hasField(fieldName);
+  @Ovelonrridelon
+  public boolelonan hasFielonld(String fielonldNamelon) {
+    relonturn schelonma.gelont().hasFielonld(fielonldNamelon);
   }
 
-  @Override
-  @Nullable
-  public FieldInfo getFieldInfo(int fieldConfigId) {
-    return schema.get().getFieldInfo(fieldConfigId);
+  @Ovelonrridelon
+  @Nullablelon
+  public FielonldInfo gelontFielonldInfo(int fielonldConfigId) {
+    relonturn schelonma.gelont().gelontFielonldInfo(fielonldConfigId);
   }
 
-  @Override
-  @Nullable
-  public FieldInfo getFieldInfo(String fieldName) {
-    return schema.get().getFieldInfo(fieldName);
+  @Ovelonrridelon
+  @Nullablelon
+  public FielonldInfo gelontFielonldInfo(String fielonldNamelon) {
+    relonturn schelonma.gelont().gelontFielonldInfo(fielonldNamelon);
   }
 
-  @Override
-  public String getFieldName(int fieldConfigId) {
-    return schema.get().getFieldName(fieldConfigId);
+  @Ovelonrridelon
+  public String gelontFielonldNamelon(int fielonldConfigId) {
+    relonturn schelonma.gelont().gelontFielonldNamelon(fielonldConfigId);
   }
 
-  @Override
-  public FieldInfo getFieldInfo(int fieldConfigId,
-                                ThriftFieldConfiguration override) {
-    return schema.get().getFieldInfo(fieldConfigId, override);
+  @Ovelonrridelon
+  public FielonldInfo gelontFielonldInfo(int fielonldConfigId,
+                                ThriftFielonldConfiguration ovelonrridelon) {
+    relonturn schelonma.gelont().gelontFielonldInfo(fielonldConfigId, ovelonrridelon);
   }
 
-  @Override
-  public int getNumFacetFields() {
-    return schema.get().getNumFacetFields();
+  @Ovelonrridelon
+  public int gelontNumFacelontFielonlds() {
+    relonturn schelonma.gelont().gelontNumFacelontFielonlds();
   }
 
-  @Override
-  public FieldInfo getFacetFieldByFacetName(
-      String facetName) {
-    return schema.get().getFacetFieldByFacetName(facetName);
+  @Ovelonrridelon
+  public FielonldInfo gelontFacelontFielonldByFacelontNamelon(
+      String facelontNamelon) {
+    relonturn schelonma.gelont().gelontFacelontFielonldByFacelontNamelon(facelontNamelon);
   }
 
-  @Override
-  public FieldInfo getFacetFieldByFieldName(
-      String fieldName) {
-    return schema.get().getFacetFieldByFieldName(fieldName);
+  @Ovelonrridelon
+  public FielonldInfo gelontFacelontFielonldByFielonldNamelon(
+      String fielonldNamelon) {
+    relonturn schelonma.gelont().gelontFacelontFielonldByFielonldNamelon(fielonldNamelon);
   }
 
-  @Override
-  public Collection<FieldInfo> getFacetFields() {
-    return schema.get().getFacetFields();
+  @Ovelonrridelon
+  public Collelonction<FielonldInfo> gelontFacelontFielonlds() {
+    relonturn schelonma.gelont().gelontFacelontFielonlds();
   }
 
-  @Override
-  public Collection<FieldInfo> getCsfFacetFields() {
-    return schema.get().getCsfFacetFields();
+  @Ovelonrridelon
+  public Collelonction<FielonldInfo> gelontCsfFacelontFielonlds() {
+    relonturn schelonma.gelont().gelontCsfFacelontFielonlds();
   }
 
-  @Override
-  public String getVersionDescription() {
-    return schema.get().getVersionDescription();
+  @Ovelonrridelon
+  public String gelontVelonrsionDelonscription() {
+    relonturn schelonma.gelont().gelontVelonrsionDelonscription();
   }
 
-  @Override
-  public int getMajorVersionNumber() {
-    return schema.get().getMajorVersionNumber();
+  @Ovelonrridelon
+  public int gelontMajorVelonrsionNumbelonr() {
+    relonturn schelonma.gelont().gelontMajorVelonrsionNumbelonr();
   }
 
-  @Override
-  public int getMinorVersionNumber() {
-    return schema.get().getMinorVersionNumber();
+  @Ovelonrridelon
+  public int gelontMinorVelonrsionNumbelonr() {
+    relonturn schelonma.gelont().gelontMinorVelonrsionNumbelonr();
   }
 
-  @Override
-  public boolean isVersionOfficial() {
-    return schema.get().isVersionOfficial();
+  @Ovelonrridelon
+  public boolelonan isVelonrsionOfficial() {
+    relonturn schelonma.gelont().isVelonrsionOfficial();
   }
 
-  @Override
-  public Map<String, FieldWeightDefault> getFieldWeightMap() {
-    return schema.get().getFieldWeightMap();
+  @Ovelonrridelon
+  public Map<String, FielonldWelonightDelonfault> gelontFielonldWelonightMap() {
+    relonturn schelonma.gelont().gelontFielonldWelonightMap();
   }
 
-  @Override
-  public FeatureConfiguration getFeatureConfigurationByName(
-      String featureName) {
-    return schema.get().getFeatureConfigurationByName(featureName);
+  @Ovelonrridelon
+  public FelonaturelonConfiguration gelontFelonaturelonConfigurationByNamelon(
+      String felonaturelonNamelon) {
+    relonturn schelonma.gelont().gelontFelonaturelonConfigurationByNamelon(felonaturelonNamelon);
   }
 
-  @Override
-  public FeatureConfiguration getFeatureConfigurationById(int featureFieldId) {
-    return Preconditions.checkNotNull(schema.get().getFeatureConfigurationById(featureFieldId));
+  @Ovelonrridelon
+  public FelonaturelonConfiguration gelontFelonaturelonConfigurationById(int felonaturelonFielonldId) {
+    relonturn Prelonconditions.chelonckNotNull(schelonma.gelont().gelontFelonaturelonConfigurationById(felonaturelonFielonldId));
   }
 
-  @Override
-  @Nullable
-  public ThriftCSFType getCSFFieldType(
-      String fieldName) {
-    return schema.get().getCSFFieldType(fieldName);
+  @Ovelonrridelon
+  @Nullablelon
+  public ThriftCSFTypelon gelontCSFFielonldTypelon(
+      String fielonldNamelon) {
+    relonturn schelonma.gelont().gelontCSFFielonldTypelon(fielonldNamelon);
   }
 
-  @Override
-  public ThriftSearchFeatureSchema getSearchFeatureSchema() {
-    return schema.get().getSearchFeatureSchema();
+  @Ovelonrridelon
+  public ThriftSelonarchFelonaturelonSchelonma gelontSelonarchFelonaturelonSchelonma() {
+    relonturn schelonma.gelont().gelontSelonarchFelonaturelonSchelonma();
   }
 
-  @Override
-  public ImmutableMap<Integer, FeatureConfiguration> getFeatureIdToFeatureConfig() {
-    return schema.get().getFeatureIdToFeatureConfig();
+  @Ovelonrridelon
+  public ImmutablelonMap<Intelongelonr, FelonaturelonConfiguration> gelontFelonaturelonIdToFelonaturelonConfig() {
+    relonturn schelonma.gelont().gelontFelonaturelonIdToFelonaturelonConfig();
   }
 
-  @Override
-  public ImmutableMap<String, FeatureConfiguration> getFeatureNameToFeatureConfig() {
-    return schema.get().getFeatureNameToFeatureConfig();
+  @Ovelonrridelon
+  public ImmutablelonMap<String, FelonaturelonConfiguration> gelontFelonaturelonNamelonToFelonaturelonConfig() {
+    relonturn schelonma.gelont().gelontFelonaturelonNamelonToFelonaturelonConfig();
   }
 }

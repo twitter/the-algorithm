@@ -1,172 +1,172 @@
-package com.twitter.follow_recommendations.flows.post_nux_ml
+packagelon com.twittelonr.follow_reloncommelonndations.flows.post_nux_ml
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.clients.dismiss_store.DismissStore
-import com.twitter.follow_recommendations.common.clients.geoduck.UserLocationFetcher
-import com.twitter.follow_recommendations.common.clients.impression_store.WtfImpressionStore
-import com.twitter.follow_recommendations.common.clients.interests_service.InterestServiceClient
-import com.twitter.follow_recommendations.common.clients.socialgraph.SocialGraphClient
-import com.twitter.follow_recommendations.common.clients.user_state.UserStateClient
-import com.twitter.follow_recommendations.common.predicates.dismiss.DismissedCandidatePredicateParams
-import com.twitter.follow_recommendations.common.utils.RescueWithStatsUtils._
-import com.twitter.follow_recommendations.flows.post_nux_ml.PostNuxMlRequestBuilderParams.DismissedIdScanBudget
-import com.twitter.follow_recommendations.flows.post_nux_ml.PostNuxMlRequestBuilderParams.TopicIdFetchBudget
-import com.twitter.follow_recommendations.flows.post_nux_ml.PostNuxMlRequestBuilderParams.WTFImpressionsScanBudget
-import com.twitter.follow_recommendations.products.common.ProductRequest
-import com.twitter.inject.Logging
-import com.twitter.stitch.Stitch
-import com.twitter.util.Time
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.follow_reloncommelonndations.common.clielonnts.dismiss_storelon.DismissStorelon
+import com.twittelonr.follow_reloncommelonndations.common.clielonnts.gelonoduck.UselonrLocationFelontchelonr
+import com.twittelonr.follow_reloncommelonndations.common.clielonnts.imprelonssion_storelon.WtfImprelonssionStorelon
+import com.twittelonr.follow_reloncommelonndations.common.clielonnts.intelonrelonsts_selonrvicelon.IntelonrelonstSelonrvicelonClielonnt
+import com.twittelonr.follow_reloncommelonndations.common.clielonnts.socialgraph.SocialGraphClielonnt
+import com.twittelonr.follow_reloncommelonndations.common.clielonnts.uselonr_statelon.UselonrStatelonClielonnt
+import com.twittelonr.follow_reloncommelonndations.common.prelondicatelons.dismiss.DismisselondCandidatelonPrelondicatelonParams
+import com.twittelonr.follow_reloncommelonndations.common.utils.RelonscuelonWithStatsUtils._
+import com.twittelonr.follow_reloncommelonndations.flows.post_nux_ml.PostNuxMlRelonquelonstBuildelonrParams.DismisselondIdScanBudgelont
+import com.twittelonr.follow_reloncommelonndations.flows.post_nux_ml.PostNuxMlRelonquelonstBuildelonrParams.TopicIdFelontchBudgelont
+import com.twittelonr.follow_reloncommelonndations.flows.post_nux_ml.PostNuxMlRelonquelonstBuildelonrParams.WTFImprelonssionsScanBudgelont
+import com.twittelonr.follow_reloncommelonndations.products.common.ProductRelonquelonst
+import com.twittelonr.injelonct.Logging
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.util.Timelon
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class PostNuxMlRequestBuilder @Inject() (
-  socialGraph: SocialGraphClient,
-  wtfImpressionStore: WtfImpressionStore,
-  dismissStore: DismissStore,
-  userLocationFetcher: UserLocationFetcher,
-  interestServiceClient: InterestServiceClient,
-  userStateClient: UserStateClient,
-  statsReceiver: StatsReceiver)
-    extends Logging {
+@Singlelonton
+class PostNuxMlRelonquelonstBuildelonr @Injelonct() (
+  socialGraph: SocialGraphClielonnt,
+  wtfImprelonssionStorelon: WtfImprelonssionStorelon,
+  dismissStorelon: DismissStorelon,
+  uselonrLocationFelontchelonr: UselonrLocationFelontchelonr,
+  intelonrelonstSelonrvicelonClielonnt: IntelonrelonstSelonrvicelonClielonnt,
+  uselonrStatelonClielonnt: UselonrStatelonClielonnt,
+  statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds Logging {
 
-  val stats: StatsReceiver = statsReceiver.scope("post_nux_ml_request_builder")
-  val invalidRelationshipUsersStats: StatsReceiver = stats.scope("invalidRelationshipUserIds")
-  private val invalidRelationshipUsersMaxSizeCounter =
-    invalidRelationshipUsersStats.counter("maxSize")
-  private val invalidRelationshipUsersNotMaxSizeCounter =
-    invalidRelationshipUsersStats.counter("notMaxSize")
+  val stats: StatsReloncelonivelonr = statsReloncelonivelonr.scopelon("post_nux_ml_relonquelonst_buildelonr")
+  val invalidRelonlationshipUselonrsStats: StatsReloncelonivelonr = stats.scopelon("invalidRelonlationshipUselonrIds")
+  privatelon val invalidRelonlationshipUselonrsMaxSizelonCountelonr =
+    invalidRelonlationshipUselonrsStats.countelonr("maxSizelon")
+  privatelon val invalidRelonlationshipUselonrsNotMaxSizelonCountelonr =
+    invalidRelonlationshipUselonrsStats.countelonr("notMaxSizelon")
 
-  def build(
-    req: ProductRequest,
-    previouslyRecommendedUserIds: Option[Set[Long]] = None,
-    previouslyFollowedUserIds: Option[Set[Long]] = None
-  ): Stitch[PostNuxMlRequest] = {
-    val dl = req.recommendationRequest.displayLocation
-    val resultsStitch = Stitch.collect(
-      req.recommendationRequest.clientContext.userId
-        .map { userId =>
-          val lookBackDuration = req.params(DismissedCandidatePredicateParams.LookBackDuration)
-          val negativeStartTs = -(Time.now - lookBackDuration).inMillis
-          val recentFollowedUserIdsStitch =
-            rescueWithStats(
-              socialGraph.getRecentFollowedUserIds(userId),
+  delonf build(
+    relonq: ProductRelonquelonst,
+    prelonviouslyReloncommelonndelondUselonrIds: Option[Selont[Long]] = Nonelon,
+    prelonviouslyFollowelondUselonrIds: Option[Selont[Long]] = Nonelon
+  ): Stitch[PostNuxMlRelonquelonst] = {
+    val dl = relonq.reloncommelonndationRelonquelonst.displayLocation
+    val relonsultsStitch = Stitch.collelonct(
+      relonq.reloncommelonndationRelonquelonst.clielonntContelonxt.uselonrId
+        .map { uselonrId =>
+          val lookBackDuration = relonq.params(DismisselondCandidatelonPrelondicatelonParams.LookBackDuration)
+          val nelongativelonStartTs = -(Timelon.now - lookBackDuration).inMillis
+          val reloncelonntFollowelondUselonrIdsStitch =
+            relonscuelonWithStats(
+              socialGraph.gelontReloncelonntFollowelondUselonrIds(uselonrId),
               stats,
-              "recentFollowedUserIds")
-          val invalidRelationshipUserIdsStitch =
-            if (req.params(PostNuxMlParams.EnableInvalidRelationshipPredicate)) {
-              rescueWithStats(
+              "reloncelonntFollowelondUselonrIds")
+          val invalidRelonlationshipUselonrIdsStitch =
+            if (relonq.params(PostNuxMlParams.elonnablelonInvalidRelonlationshipPrelondicatelon)) {
+              relonscuelonWithStats(
                 socialGraph
-                  .getInvalidRelationshipUserIds(userId)
-                  .onSuccess(ids =>
-                    if (ids.size >= SocialGraphClient.MaxNumInvalidRelationship) {
-                      invalidRelationshipUsersMaxSizeCounter.incr()
-                    } else {
-                      invalidRelationshipUsersNotMaxSizeCounter.incr()
+                  .gelontInvalidRelonlationshipUselonrIds(uselonrId)
+                  .onSuccelonss(ids =>
+                    if (ids.sizelon >= SocialGraphClielonnt.MaxNumInvalidRelonlationship) {
+                      invalidRelonlationshipUselonrsMaxSizelonCountelonr.incr()
+                    } elonlselon {
+                      invalidRelonlationshipUselonrsNotMaxSizelonCountelonr.incr()
                     }),
                 stats,
-                "invalidRelationshipUserIds"
+                "invalidRelonlationshipUselonrIds"
               )
-            } else {
-              Stitch.value(Seq.empty)
+            } elonlselon {
+              Stitch.valuelon(Selonq.elonmpty)
             }
-          // recentFollowedByUserIds are only used in experiment candidate sources
-          val recentFollowedByUserIdsStitch = if (req.params(PostNuxMlParams.GetFollowersFromSgs)) {
-            rescueWithStats(
-              socialGraph.getRecentFollowedByUserIdsFromCachedColumn(userId),
+          // reloncelonntFollowelondByUselonrIds arelon only uselond in elonxpelonrimelonnt candidatelon sourcelons
+          val reloncelonntFollowelondByUselonrIdsStitch = if (relonq.params(PostNuxMlParams.GelontFollowelonrsFromSgs)) {
+            relonscuelonWithStats(
+              socialGraph.gelontReloncelonntFollowelondByUselonrIdsFromCachelondColumn(uselonrId),
               stats,
-              "recentFollowedByUserIds")
-          } else Stitch.value(Seq.empty)
-          val wtfImpressionsStitch =
-            rescueWithStatsWithin(
-              wtfImpressionStore.get(userId, dl),
+              "reloncelonntFollowelondByUselonrIds")
+          } elonlselon Stitch.valuelon(Selonq.elonmpty)
+          val wtfImprelonssionsStitch =
+            relonscuelonWithStatsWithin(
+              wtfImprelonssionStorelon.gelont(uselonrId, dl),
               stats,
-              "wtfImpressions",
-              req.params(WTFImpressionsScanBudget))
-          val dismissedUserIdsStitch =
-            rescueWithStatsWithin(
-              dismissStore.get(userId, negativeStartTs, None),
+              "wtfImprelonssions",
+              relonq.params(WTFImprelonssionsScanBudgelont))
+          val dismisselondUselonrIdsStitch =
+            relonscuelonWithStatsWithin(
+              dismissStorelon.gelont(uselonrId, nelongativelonStartTs, Nonelon),
               stats,
-              "dismissedUserIds",
-              req.params(DismissedIdScanBudget))
+              "dismisselondUselonrIds",
+              relonq.params(DismisselondIdScanBudgelont))
           val locationStitch =
-            rescueOptionalWithStats(
-              userLocationFetcher.getGeohashAndCountryCode(
-                Some(userId),
-                req.recommendationRequest.clientContext.ipAddress),
+            relonscuelonOptionalWithStats(
+              uselonrLocationFelontchelonr.gelontGelonohashAndCountryCodelon(
+                Somelon(uselonrId),
+                relonq.reloncommelonndationRelonquelonst.clielonntContelonxt.ipAddrelonss),
               stats,
-              "userLocation"
+              "uselonrLocation"
             )
           val topicIdsStitch =
-            rescueWithStatsWithin(
-              interestServiceClient.fetchUttInterestIds(userId),
+            relonscuelonWithStatsWithin(
+              intelonrelonstSelonrvicelonClielonnt.felontchUttIntelonrelonstIds(uselonrId),
               stats,
               "topicIds",
-              req.params(TopicIdFetchBudget))
-          val userStateStitch =
-            rescueOptionalWithStats(userStateClient.getUserState(userId), stats, "userState")
+              relonq.params(TopicIdFelontchBudgelont))
+          val uselonrStatelonStitch =
+            relonscuelonOptionalWithStats(uselonrStatelonClielonnt.gelontUselonrStatelon(uselonrId), stats, "uselonrStatelon")
           Stitch.join(
-            recentFollowedUserIdsStitch,
-            invalidRelationshipUserIdsStitch,
-            recentFollowedByUserIdsStitch,
-            dismissedUserIdsStitch,
-            wtfImpressionsStitch,
+            reloncelonntFollowelondUselonrIdsStitch,
+            invalidRelonlationshipUselonrIdsStitch,
+            reloncelonntFollowelondByUselonrIdsStitch,
+            dismisselondUselonrIdsStitch,
+            wtfImprelonssionsStitch,
             locationStitch,
             topicIdsStitch,
-            userStateStitch
+            uselonrStatelonStitch
           )
         })
 
-    resultsStitch.map {
-      case Some(
+    relonsultsStitch.map {
+      caselon Somelon(
             (
-              recentFollowedUserIds,
-              invalidRelationshipUserIds,
-              recentFollowedByUserIds,
-              dismissedUserIds,
-              wtfImpressions,
+              reloncelonntFollowelondUselonrIds,
+              invalidRelonlationshipUselonrIds,
+              reloncelonntFollowelondByUselonrIds,
+              dismisselondUselonrIds,
+              wtfImprelonssions,
               locationInfo,
               topicIds,
-              userState)) =>
-        PostNuxMlRequest(
-          params = req.params,
-          clientContext = req.recommendationRequest.clientContext,
-          similarToUserIds = Nil,
-          inputExcludeUserIds = req.recommendationRequest.excludedIds.getOrElse(Nil),
-          recentFollowedUserIds = Some(recentFollowedUserIds),
-          invalidRelationshipUserIds = Some(invalidRelationshipUserIds.toSet),
-          recentFollowedByUserIds = Some(recentFollowedByUserIds),
-          dismissedUserIds = Some(dismissedUserIds),
+              uselonrStatelon)) =>
+        PostNuxMlRelonquelonst(
+          params = relonq.params,
+          clielonntContelonxt = relonq.reloncommelonndationRelonquelonst.clielonntContelonxt,
+          similarToUselonrIds = Nil,
+          inputelonxcludelonUselonrIds = relonq.reloncommelonndationRelonquelonst.elonxcludelondIds.gelontOrelonlselon(Nil),
+          reloncelonntFollowelondUselonrIds = Somelon(reloncelonntFollowelondUselonrIds),
+          invalidRelonlationshipUselonrIds = Somelon(invalidRelonlationshipUselonrIds.toSelont),
+          reloncelonntFollowelondByUselonrIds = Somelon(reloncelonntFollowelondByUselonrIds),
+          dismisselondUselonrIds = Somelon(dismisselondUselonrIds),
           displayLocation = dl,
-          maxResults = req.recommendationRequest.maxResults,
-          debugOptions = req.recommendationRequest.debugParams.flatMap(_.debugOptions),
-          wtfImpressions = Some(wtfImpressions),
-          geohashAndCountryCode = locationInfo,
-          uttInterestIds = Some(topicIds),
-          inputPreviouslyRecommendedUserIds = previouslyRecommendedUserIds,
-          inputPreviouslyFollowedUserIds = previouslyFollowedUserIds,
-          isSoftUser = req.recommendationRequest.isSoftUser,
-          userState = userState
+          maxRelonsults = relonq.reloncommelonndationRelonquelonst.maxRelonsults,
+          delonbugOptions = relonq.reloncommelonndationRelonquelonst.delonbugParams.flatMap(_.delonbugOptions),
+          wtfImprelonssions = Somelon(wtfImprelonssions),
+          gelonohashAndCountryCodelon = locationInfo,
+          uttIntelonrelonstIds = Somelon(topicIds),
+          inputPrelonviouslyReloncommelonndelondUselonrIds = prelonviouslyReloncommelonndelondUselonrIds,
+          inputPrelonviouslyFollowelondUselonrIds = prelonviouslyFollowelondUselonrIds,
+          isSoftUselonr = relonq.reloncommelonndationRelonquelonst.isSoftUselonr,
+          uselonrStatelon = uselonrStatelon
         )
-      case _ =>
-        PostNuxMlRequest(
-          params = req.params,
-          clientContext = req.recommendationRequest.clientContext,
-          similarToUserIds = Nil,
-          inputExcludeUserIds = req.recommendationRequest.excludedIds.getOrElse(Nil),
-          recentFollowedUserIds = None,
-          invalidRelationshipUserIds = None,
-          recentFollowedByUserIds = None,
-          dismissedUserIds = None,
+      caselon _ =>
+        PostNuxMlRelonquelonst(
+          params = relonq.params,
+          clielonntContelonxt = relonq.reloncommelonndationRelonquelonst.clielonntContelonxt,
+          similarToUselonrIds = Nil,
+          inputelonxcludelonUselonrIds = relonq.reloncommelonndationRelonquelonst.elonxcludelondIds.gelontOrelonlselon(Nil),
+          reloncelonntFollowelondUselonrIds = Nonelon,
+          invalidRelonlationshipUselonrIds = Nonelon,
+          reloncelonntFollowelondByUselonrIds = Nonelon,
+          dismisselondUselonrIds = Nonelon,
           displayLocation = dl,
-          maxResults = req.recommendationRequest.maxResults,
-          debugOptions = req.recommendationRequest.debugParams.flatMap(_.debugOptions),
-          wtfImpressions = None,
-          geohashAndCountryCode = None,
-          inputPreviouslyRecommendedUserIds = previouslyRecommendedUserIds,
-          inputPreviouslyFollowedUserIds = previouslyFollowedUserIds,
-          isSoftUser = req.recommendationRequest.isSoftUser,
-          userState = None
+          maxRelonsults = relonq.reloncommelonndationRelonquelonst.maxRelonsults,
+          delonbugOptions = relonq.reloncommelonndationRelonquelonst.delonbugParams.flatMap(_.delonbugOptions),
+          wtfImprelonssions = Nonelon,
+          gelonohashAndCountryCodelon = Nonelon,
+          inputPrelonviouslyReloncommelonndelondUselonrIds = prelonviouslyReloncommelonndelondUselonrIds,
+          inputPrelonviouslyFollowelondUselonrIds = prelonviouslyFollowelondUselonrIds,
+          isSoftUselonr = relonq.reloncommelonndationRelonquelonst.isSoftUselonr,
+          uselonrStatelon = Nonelon
         )
     }
   }

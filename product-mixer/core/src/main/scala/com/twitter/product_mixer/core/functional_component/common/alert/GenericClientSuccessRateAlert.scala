@@ -1,29 +1,29 @@
-package com.twitter.product_mixer.core.functional_component.common.alert
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.alelonrt
 
-import com.twitter.product_mixer.core.functional_component.common.alert.predicate.TriggerIfBelow
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.alelonrt.prelondicatelon.TriggelonrIfBelonlow
 
 /**
- * Similar to [[SuccessRateAlert]] but intended for use with an external client calling Product Mixer
+ * Similar to [[SuccelonssRatelonAlelonrt]] but intelonndelond for uselon with an elonxtelonrnal clielonnt calling Product Mixelonr
  *
- * [[GenericClientSuccessRateAlert]] triggers when the Success Rate for the external client
- * drops below the [[TriggerIfBelow]] threshold for the configured amount of time
+ * [[GelonnelonricClielonntSuccelonssRatelonAlelonrt]] triggelonrs whelonn thelon Succelonss Ratelon for thelon elonxtelonrnal clielonnt
+ * drops belonlow thelon [[TriggelonrIfBelonlow]] threlonshold for thelon configurelond amount of timelon
  *
- * @note SuccessRate thresholds must be between 0 and 100%
+ * @notelon SuccelonssRatelon threlonsholds must belon belontwelonelonn 0 and 100%
  */
-case class GenericClientSuccessRateAlert(
-  override val source: GenericClient,
-  override val notificationGroup: NotificationGroup,
-  override val warnPredicate: TriggerIfBelow,
-  override val criticalPredicate: TriggerIfBelow,
-  override val runbookLink: Option[String] = None)
-    extends Alert {
-  override val alertType: AlertType = SuccessRate
-  require(
-    warnPredicate.threshold > 0 && warnPredicate.threshold <= 100,
-    s"SuccessRateAlert predicates must be between 0 and 100 but got warnPredicate = ${warnPredicate.threshold}"
+caselon class GelonnelonricClielonntSuccelonssRatelonAlelonrt(
+  ovelonrridelon val sourcelon: GelonnelonricClielonnt,
+  ovelonrridelon val notificationGroup: NotificationGroup,
+  ovelonrridelon val warnPrelondicatelon: TriggelonrIfBelonlow,
+  ovelonrridelon val criticalPrelondicatelon: TriggelonrIfBelonlow,
+  ovelonrridelon val runbookLink: Option[String] = Nonelon)
+    elonxtelonnds Alelonrt {
+  ovelonrridelon val alelonrtTypelon: AlelonrtTypelon = SuccelonssRatelon
+  relonquirelon(
+    warnPrelondicatelon.threlonshold > 0 && warnPrelondicatelon.threlonshold <= 100,
+    s"SuccelonssRatelonAlelonrt prelondicatelons must belon belontwelonelonn 0 and 100 but got warnPrelondicatelon = ${warnPrelondicatelon.threlonshold}"
   )
-  require(
-    criticalPredicate.threshold > 0 && criticalPredicate.threshold <= 100,
-    s"SuccessRateAlert predicates must be between 0 and 100 but got criticalPredicate = ${criticalPredicate.threshold}"
+  relonquirelon(
+    criticalPrelondicatelon.threlonshold > 0 && criticalPrelondicatelon.threlonshold <= 100,
+    s"SuccelonssRatelonAlelonrt prelondicatelons must belon belontwelonelonn 0 and 100 but got criticalPrelondicatelon = ${criticalPrelondicatelon.threlonshold}"
   )
 }

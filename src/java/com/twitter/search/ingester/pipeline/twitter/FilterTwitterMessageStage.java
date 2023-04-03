@@ -1,77 +1,77 @@
-package com.twitter.search.ingester.pipeline.twitter;
+packagelon com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.twittelonr;
 
-import org.apache.commons.pipeline.StageException;
-import org.apache.commons.pipeline.validation.ConsumedTypes;
-import org.apache.commons.pipeline.validation.ProducesConsumed;
+import org.apachelon.commons.pipelonlinelon.Stagelonelonxcelonption;
+import org.apachelon.commons.pipelonlinelon.validation.ConsumelondTypelons;
+import org.apachelon.commons.pipelonlinelon.validation.ProducelonsConsumelond;
 
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.relevance.entities.TwitterMessage;
-import com.twitter.search.ingester.pipeline.twitter.filters.IngesterValidMessageFilter;
-import com.twitter.search.ingester.pipeline.util.PipelineStageRuntimeException;
+import com.twittelonr.selonarch.common.melontrics.SelonarchRatelonCountelonr;
+import com.twittelonr.selonarch.common.relonlelonvancelon.elonntitielons.TwittelonrMelonssagelon;
+import com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.twittelonr.filtelonrs.IngelonstelonrValidMelonssagelonFiltelonr;
+import com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.util.PipelonlinelonStagelonRuntimelonelonxcelonption;
 
 /**
- * Filter out Twitter messages meeting some filtering rule.
+ * Filtelonr out Twittelonr melonssagelons melonelonting somelon filtelonring rulelon.
  */
-@ConsumedTypes(TwitterMessage.class)
-@ProducesConsumed
-public class FilterTwitterMessageStage extends TwitterBaseStage
-    <TwitterMessage, TwitterMessage> {
-  private IngesterValidMessageFilter filter = null;
-  private SearchRateCounter validMessages;
-  private SearchRateCounter invalidMessages;
+@ConsumelondTypelons(TwittelonrMelonssagelon.class)
+@ProducelonsConsumelond
+public class FiltelonrTwittelonrMelonssagelonStagelon elonxtelonnds TwittelonrBaselonStagelon
+    <TwittelonrMelonssagelon, TwittelonrMelonssagelon> {
+  privatelon IngelonstelonrValidMelonssagelonFiltelonr filtelonr = null;
+  privatelon SelonarchRatelonCountelonr validMelonssagelons;
+  privatelon SelonarchRatelonCountelonr invalidMelonssagelons;
 
-  @Override
-  protected void initStats() {
-    super.initStats();
-    innerSetupStats();
+  @Ovelonrridelon
+  protelonctelond void initStats() {
+    supelonr.initStats();
+    innelonrSelontupStats();
   }
 
-  @Override
-  protected void innerSetupStats() {
-    validMessages = SearchRateCounter.export(getStageNamePrefix() + "_valid_messages");
-    invalidMessages = SearchRateCounter.export(getStageNamePrefix() + "_filtered_messages");
+  @Ovelonrridelon
+  protelonctelond void innelonrSelontupStats() {
+    validMelonssagelons = SelonarchRatelonCountelonr.elonxport(gelontStagelonNamelonPrelonfix() + "_valid_melonssagelons");
+    invalidMelonssagelons = SelonarchRatelonCountelonr.elonxport(gelontStagelonNamelonPrelonfix() + "_filtelonrelond_melonssagelons");
   }
 
-  @Override
-  protected void doInnerPreprocess() {
-    innerSetup();
+  @Ovelonrridelon
+  protelonctelond void doInnelonrPrelonprocelonss() {
+    innelonrSelontup();
   }
 
-  @Override
-  protected void innerSetup() {
-    filter = new IngesterValidMessageFilter(decider);
+  @Ovelonrridelon
+  protelonctelond void innelonrSelontup() {
+    filtelonr = nelonw IngelonstelonrValidMelonssagelonFiltelonr(deloncidelonr);
   }
 
-  @Override
-  public void innerProcess(Object obj) throws StageException {
-    if (!(obj instanceof TwitterMessage)) {
-      throw new StageException(this, "Object is not a IngesterTwitterMessage: "
+  @Ovelonrridelon
+  public void innelonrProcelonss(Objelonct obj) throws Stagelonelonxcelonption {
+    if (!(obj instancelonof TwittelonrMelonssagelon)) {
+      throw nelonw Stagelonelonxcelonption(this, "Objelonct is not a IngelonstelonrTwittelonrMelonssagelon: "
       + obj);
     }
 
-    TwitterMessage message = (TwitterMessage) obj;
-    if (tryToFilter(message)) {
-      emitAndCount(message);
+    TwittelonrMelonssagelon melonssagelon = (TwittelonrMelonssagelon) obj;
+    if (tryToFiltelonr(melonssagelon)) {
+      elonmitAndCount(melonssagelon);
     }
   }
 
-  @Override
-  protected TwitterMessage innerRunStageV2(TwitterMessage message) {
-    if (!tryToFilter(message)) {
-      throw new PipelineStageRuntimeException("Failed to filter, does not have to "
-      + "pass to the next stage");
+  @Ovelonrridelon
+  protelonctelond TwittelonrMelonssagelon innelonrRunStagelonV2(TwittelonrMelonssagelon melonssagelon) {
+    if (!tryToFiltelonr(melonssagelon)) {
+      throw nelonw PipelonlinelonStagelonRuntimelonelonxcelonption("Failelond to filtelonr, doelons not havelon to "
+      + "pass to thelon nelonxt stagelon");
     }
-    return message;
+    relonturn melonssagelon;
   }
 
-  private boolean tryToFilter(TwitterMessage message) {
-    boolean ableToFilter = false;
-    if (message != null && filter.accepts(message)) {
-      validMessages.increment();
-      ableToFilter = true;
-    } else {
-      invalidMessages.increment();
+  privatelon boolelonan tryToFiltelonr(TwittelonrMelonssagelon melonssagelon) {
+    boolelonan ablelonToFiltelonr = falselon;
+    if (melonssagelon != null && filtelonr.accelonpts(melonssagelon)) {
+      validMelonssagelons.increlonmelonnt();
+      ablelonToFiltelonr = truelon;
+    } elonlselon {
+      invalidMelonssagelons.increlonmelonnt();
     }
-    return ableToFilter;
+    relonturn ablelonToFiltelonr;
   }
 }

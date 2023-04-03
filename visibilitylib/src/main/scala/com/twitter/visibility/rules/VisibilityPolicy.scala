@@ -1,3226 +1,3226 @@
-package com.twitter.visibility.rules
+packagelon com.twittelonr.visibility.rulelons
 
-import com.twitter.visibility.configapi.params.RuleParam
-import com.twitter.visibility.configapi.params.RuleParams
-import com.twitter.visibility.models.ContentId
-import com.twitter.visibility.rules.ConversationControlRules._
-import com.twitter.visibility.rules.FollowerRelations.AuthorMutesViewerRule
-import com.twitter.visibility.rules.FollowerRelations.ProtectedViewerRule
-import com.twitter.visibility.rules.PolicyLevelRuleParams.ruleParams
-import com.twitter.visibility.rules.PublicInterestRules._
-import com.twitter.visibility.rules.SafeSearchTweetRules._
-import com.twitter.visibility.rules.SafeSearchUserRules.SafeSearchNsfwAvatarImageUserLabelRule
-import com.twitter.visibility.rules.SafeSearchUserRules._
-import com.twitter.visibility.rules.SpaceRules._
-import com.twitter.visibility.rules.ToxicityReplyFilterRules.ToxicityReplyFilterDropNotificationRule
-import com.twitter.visibility.rules.ToxicityReplyFilterRules.ToxicityReplyFilterRule
-import com.twitter.visibility.rules.UnsafeSearchTweetRules._
-import com.twitter.visibility.rules.UserUnavailableStateTombstoneRules._
+import com.twittelonr.visibility.configapi.params.RulelonParam
+import com.twittelonr.visibility.configapi.params.RulelonParams
+import com.twittelonr.visibility.modelonls.ContelonntId
+import com.twittelonr.visibility.rulelons.ConvelonrsationControlRulelons._
+import com.twittelonr.visibility.rulelons.FollowelonrRelonlations.AuthorMutelonsVielonwelonrRulelon
+import com.twittelonr.visibility.rulelons.FollowelonrRelonlations.ProtelonctelondVielonwelonrRulelon
+import com.twittelonr.visibility.rulelons.PolicyLelonvelonlRulelonParams.rulelonParams
+import com.twittelonr.visibility.rulelons.PublicIntelonrelonstRulelons._
+import com.twittelonr.visibility.rulelons.SafelonSelonarchTwelonelontRulelons._
+import com.twittelonr.visibility.rulelons.SafelonSelonarchUselonrRulelons.SafelonSelonarchNsfwAvatarImagelonUselonrLabelonlRulelon
+import com.twittelonr.visibility.rulelons.SafelonSelonarchUselonrRulelons._
+import com.twittelonr.visibility.rulelons.SpacelonRulelons._
+import com.twittelonr.visibility.rulelons.ToxicityRelonplyFiltelonrRulelons.ToxicityRelonplyFiltelonrDropNotificationRulelon
+import com.twittelonr.visibility.rulelons.ToxicityRelonplyFiltelonrRulelons.ToxicityRelonplyFiltelonrRulelon
+import com.twittelonr.visibility.rulelons.UnsafelonSelonarchTwelonelontRulelons._
+import com.twittelonr.visibility.rulelons.UselonrUnavailablelonStatelonTombstonelonRulelons._
 
 abstract class VisibilityPolicy(
-  val tweetRules: Seq[Rule] = Nil,
-  val userRules: Seq[Rule] = Nil,
-  val cardRules: Seq[Rule] = Nil,
-  val quotedTweetRules: Seq[Rule] = Nil,
-  val dmRules: Seq[Rule] = Nil,
-  val dmConversationRules: Seq[Rule] = Nil,
-  val dmEventRules: Seq[Rule] = Nil,
-  val spaceRules: Seq[Rule] = Nil,
-  val userUnavailableStateRules: Seq[Rule] = Nil,
-  val twitterArticleRules: Seq[Rule] = Nil,
-  val deletedTweetRules: Seq[Rule] = Nil,
-  val mediaRules: Seq[Rule] = Nil,
-  val communityRules: Seq[Rule] = Nil,
-  val policyRuleParams: Map[Rule, PolicyLevelRuleParams] = Map.empty) {
+  val twelonelontRulelons: Selonq[Rulelon] = Nil,
+  val uselonrRulelons: Selonq[Rulelon] = Nil,
+  val cardRulelons: Selonq[Rulelon] = Nil,
+  val quotelondTwelonelontRulelons: Selonq[Rulelon] = Nil,
+  val dmRulelons: Selonq[Rulelon] = Nil,
+  val dmConvelonrsationRulelons: Selonq[Rulelon] = Nil,
+  val dmelonvelonntRulelons: Selonq[Rulelon] = Nil,
+  val spacelonRulelons: Selonq[Rulelon] = Nil,
+  val uselonrUnavailablelonStatelonRulelons: Selonq[Rulelon] = Nil,
+  val twittelonrArticlelonRulelons: Selonq[Rulelon] = Nil,
+  val delonlelontelondTwelonelontRulelons: Selonq[Rulelon] = Nil,
+  val melondiaRulelons: Selonq[Rulelon] = Nil,
+  val communityRulelons: Selonq[Rulelon] = Nil,
+  val policyRulelonParams: Map[Rulelon, PolicyLelonvelonlRulelonParams] = Map.elonmpty) {
 
-  def forContentId(contentId: ContentId): Seq[Rule] =
-    contentId match {
-      case ContentId.TweetId(_) => tweetRules
-      case ContentId.UserId(_) => userRules
-      case ContentId.CardId(_) => cardRules
-      case ContentId.QuotedTweetRelationship(_, _) => quotedTweetRules
-      case ContentId.NotificationId(_) => userRules
-      case ContentId.DmId(_) => dmRules
-      case ContentId.BlenderTweetId(_) => userRules ++ tweetRules
-      case ContentId.SpaceId(_) => spaceRules
-      case ContentId.SpacePlusUserId(_) => spaceRules ++ userRules
-      case ContentId.DmConversationId(_) => dmConversationRules
-      case ContentId.DmEventId(_) => dmEventRules
-      case ContentId.UserUnavailableState(_) => userUnavailableStateRules
-      case ContentId.TwitterArticleId(_) => twitterArticleRules
-      case ContentId.DeleteTweetId(_) => deletedTweetRules
-      case ContentId.MediaId(_) => mediaRules
-      case ContentId.CommunityId(_) => communityRules
+  delonf forContelonntId(contelonntId: ContelonntId): Selonq[Rulelon] =
+    contelonntId match {
+      caselon ContelonntId.TwelonelontId(_) => twelonelontRulelons
+      caselon ContelonntId.UselonrId(_) => uselonrRulelons
+      caselon ContelonntId.CardId(_) => cardRulelons
+      caselon ContelonntId.QuotelondTwelonelontRelonlationship(_, _) => quotelondTwelonelontRulelons
+      caselon ContelonntId.NotificationId(_) => uselonrRulelons
+      caselon ContelonntId.DmId(_) => dmRulelons
+      caselon ContelonntId.BlelonndelonrTwelonelontId(_) => uselonrRulelons ++ twelonelontRulelons
+      caselon ContelonntId.SpacelonId(_) => spacelonRulelons
+      caselon ContelonntId.SpacelonPlusUselonrId(_) => spacelonRulelons ++ uselonrRulelons
+      caselon ContelonntId.DmConvelonrsationId(_) => dmConvelonrsationRulelons
+      caselon ContelonntId.DmelonvelonntId(_) => dmelonvelonntRulelons
+      caselon ContelonntId.UselonrUnavailablelonStatelon(_) => uselonrUnavailablelonStatelonRulelons
+      caselon ContelonntId.TwittelonrArticlelonId(_) => twittelonrArticlelonRulelons
+      caselon ContelonntId.DelonlelontelonTwelonelontId(_) => delonlelontelondTwelonelontRulelons
+      caselon ContelonntId.MelondiaId(_) => melondiaRulelons
+      caselon ContelonntId.CommunityId(_) => communityRulelons
     }
 
-  private[visibility] def allRules: Seq[Rule] =
-    (tweetRules ++ userRules ++ cardRules ++ quotedTweetRules ++ dmRules ++ spaceRules ++ dmConversationRules ++ dmEventRules ++ twitterArticleRules ++ deletedTweetRules ++ mediaRules ++ communityRules)
+  privatelon[visibility] delonf allRulelons: Selonq[Rulelon] =
+    (twelonelontRulelons ++ uselonrRulelons ++ cardRulelons ++ quotelondTwelonelontRulelons ++ dmRulelons ++ spacelonRulelons ++ dmConvelonrsationRulelons ++ dmelonvelonntRulelons ++ twittelonrArticlelonRulelons ++ delonlelontelondTwelonelontRulelons ++ melondiaRulelons ++ communityRulelons)
 }
 
-object VisibilityPolicy {
-  val baseTweetRules = Seq(
-    DropCommunityTweetsRule,
-    DropCommunityTweetCommunityNotVisibleRule,
-    DropProtectedCommunityTweetsRule,
-    DropHiddenCommunityTweetsRule,
-    DropAuthorRemovedCommunityTweetsRule,
-    SpamTweetLabelRule,
-    PdnaTweetLabelRule,
-    BounceTweetLabelRule,
-    DropExclusiveTweetContentRule,
-    DropTrustedFriendsTweetContentRule
+objelonct VisibilityPolicy {
+  val baselonTwelonelontRulelons = Selonq(
+    DropCommunityTwelonelontsRulelon,
+    DropCommunityTwelonelontCommunityNotVisiblelonRulelon,
+    DropProtelonctelondCommunityTwelonelontsRulelon,
+    DropHiddelonnCommunityTwelonelontsRulelon,
+    DropAuthorRelonmovelondCommunityTwelonelontsRulelon,
+    SpamTwelonelontLabelonlRulelon,
+    PdnaTwelonelontLabelonlRulelon,
+    BouncelonTwelonelontLabelonlRulelon,
+    DropelonxclusivelonTwelonelontContelonntRulelon,
+    DropTrustelondFrielonndsTwelonelontContelonntRulelon
   )
 
-  val baseTweetTombstoneRules = Seq(
-    TombstoneCommunityTweetsRule,
-    TombstoneCommunityTweetCommunityNotVisibleRule,
-    TombstoneProtectedCommunityTweetsRule,
-    TombstoneHiddenCommunityTweetsRule,
-    TombstoneAuthorRemovedCommunityTweetsRule,
-    SpamTweetLabelTombstoneRule,
-    PdnaTweetLabelTombstoneRule,
-    BounceTweetLabelTombstoneRule,
-    TombstoneExclusiveTweetContentRule,
-    TombstoneTrustedFriendsTweetContentRule,
+  val baselonTwelonelontTombstonelonRulelons = Selonq(
+    TombstonelonCommunityTwelonelontsRulelon,
+    TombstonelonCommunityTwelonelontCommunityNotVisiblelonRulelon,
+    TombstonelonProtelonctelondCommunityTwelonelontsRulelon,
+    TombstonelonHiddelonnCommunityTwelonelontsRulelon,
+    TombstonelonAuthorRelonmovelondCommunityTwelonelontsRulelon,
+    SpamTwelonelontLabelonlTombstonelonRulelon,
+    PdnaTwelonelontLabelonlTombstonelonRulelon,
+    BouncelonTwelonelontLabelonlTombstonelonRulelon,
+    TombstonelonelonxclusivelonTwelonelontContelonntRulelon,
+    TombstonelonTrustelondFrielonndsTwelonelontContelonntRulelon,
   )
 
-  val baseMediaRules = Seq(
+  val baselonMelondiaRulelons = Selonq(
   )
 
-  val baseQuotedTweetTombstoneRules = Seq(
-    BounceQuotedTweetTombstoneRule
+  val baselonQuotelondTwelonelontTombstonelonRulelons = Selonq(
+    BouncelonQuotelondTwelonelontTombstonelonRulelon
   )
 
-  def union[T](rules: Seq[Rule]*): Seq[Rule] = {
-    if (rules.isEmpty) {
-      Seq.empty[Rule]
-    } else {
-      rules.reduce((a, b) => a ++ b.filterNot(a.contains))
+  delonf union[T](rulelons: Selonq[Rulelon]*): Selonq[Rulelon] = {
+    if (rulelons.iselonmpty) {
+      Selonq.elonmpty[Rulelon]
+    } elonlselon {
+      rulelons.relonducelon((a, b) => a ++ b.filtelonrNot(a.contains))
     }
   }
 }
 
-case class PolicyLevelRuleParams(
-  ruleParams: Seq[RuleParam[Boolean]],
-  force: Boolean = false) {}
+caselon class PolicyLelonvelonlRulelonParams(
+  rulelonParams: Selonq[RulelonParam[Boolelonan]],
+  forcelon: Boolelonan = falselon) {}
 
-object PolicyLevelRuleParams {
-  def ruleParams(ruleParams: RuleParam[Boolean]*): PolicyLevelRuleParams = {
-    PolicyLevelRuleParams(ruleParams)
+objelonct PolicyLelonvelonlRulelonParams {
+  delonf rulelonParams(rulelonParams: RulelonParam[Boolelonan]*): PolicyLelonvelonlRulelonParams = {
+    PolicyLelonvelonlRulelonParams(rulelonParams)
   }
 
-  def ruleParams(force: Boolean, ruleParams: RuleParam[Boolean]*): PolicyLevelRuleParams = {
-    PolicyLevelRuleParams(ruleParams, force)
+  delonf rulelonParams(forcelon: Boolelonan, rulelonParams: RulelonParam[Boolelonan]*): PolicyLelonvelonlRulelonParams = {
+    PolicyLelonvelonlRulelonParams(rulelonParams, forcelon)
   }
 }
 
-case object FilterAllPolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(DropAllRule),
-      userRules = Seq(DropAllRule),
-      cardRules = Seq(DropAllRule),
-      quotedTweetRules = Seq(DropAllRule),
-      dmRules = Seq(DropAllRule),
-      dmConversationRules = Seq(DropAllRule),
-      dmEventRules = Seq(DropAllRule),
-      spaceRules = Seq(DropAllRule),
-      userUnavailableStateRules = Seq(DropAllRule),
-      twitterArticleRules = Seq(DropAllRule),
-      deletedTweetRules = Seq(DropAllRule),
-      mediaRules = Seq(DropAllRule),
-      communityRules = Seq(DropAllRule),
+caselon objelonct FiltelonrAllPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = Selonq(DropAllRulelon),
+      uselonrRulelons = Selonq(DropAllRulelon),
+      cardRulelons = Selonq(DropAllRulelon),
+      quotelondTwelonelontRulelons = Selonq(DropAllRulelon),
+      dmRulelons = Selonq(DropAllRulelon),
+      dmConvelonrsationRulelons = Selonq(DropAllRulelon),
+      dmelonvelonntRulelons = Selonq(DropAllRulelon),
+      spacelonRulelons = Selonq(DropAllRulelon),
+      uselonrUnavailablelonStatelonRulelons = Selonq(DropAllRulelon),
+      twittelonrArticlelonRulelons = Selonq(DropAllRulelon),
+      delonlelontelondTwelonelontRulelons = Selonq(DropAllRulelon),
+      melondiaRulelons = Selonq(DropAllRulelon),
+      communityRulelons = Selonq(DropAllRulelon),
     )
 
-case object FilterNonePolicy extends VisibilityPolicy()
+caselon objelonct FiltelonrNonelonPolicy elonxtelonnds VisibilityPolicy()
 
-object ConversationsAdAvoidanceRules {
-  val tweetRules = Seq(
-    NsfwHighRecallTweetLabelAvoidRule,
-    NsfwHighPrecisionTweetLabelAvoidRule,
-    NsfwTextTweetLabelAvoidRule,
-    AvoidHighToxicityModelScoreRule,
-    AvoidReportedTweetModelScoreRule,
-    NsfwHighPrecisionUserLabelAvoidTweetRule,
-    TweetNsfwUserAdminAvoidRule,
-    DoNotAmplifyTweetLabelAvoidRule,
-    NsfaHighPrecisionTweetLabelAvoidRule,
+objelonct ConvelonrsationsAdAvoidancelonRulelons {
+  val twelonelontRulelons = Selonq(
+    NsfwHighReloncallTwelonelontLabelonlAvoidRulelon,
+    NsfwHighPreloncisionTwelonelontLabelonlAvoidRulelon,
+    NsfwTelonxtTwelonelontLabelonlAvoidRulelon,
+    AvoidHighToxicityModelonlScorelonRulelon,
+    AvoidRelonportelondTwelonelontModelonlScorelonRulelon,
+    NsfwHighPreloncisionUselonrLabelonlAvoidTwelonelontRulelon,
+    TwelonelontNsfwUselonrAdminAvoidRulelon,
+    DoNotAmplifyTwelonelontLabelonlAvoidRulelon,
+    NsfaHighPreloncisionTwelonelontLabelonlAvoidRulelon,
   )
 
-  val policyRuleParams = Map[Rule, PolicyLevelRuleParams](
-    NsfwHighRecallTweetLabelAvoidRule -> ruleParams(
-      RuleParams.EnableNewAdAvoidanceRulesParam
+  val policyRulelonParams = Map[Rulelon, PolicyLelonvelonlRulelonParams](
+    NsfwHighReloncallTwelonelontLabelonlAvoidRulelon -> rulelonParams(
+      RulelonParams.elonnablelonNelonwAdAvoidancelonRulelonsParam
     ),
-    NsfwHighPrecisionTweetLabelAvoidRule -> ruleParams(
-      RuleParams.EnableNewAdAvoidanceRulesParam
+    NsfwHighPreloncisionTwelonelontLabelonlAvoidRulelon -> rulelonParams(
+      RulelonParams.elonnablelonNelonwAdAvoidancelonRulelonsParam
     ),
-    NsfwTextTweetLabelAvoidRule -> ruleParams(RuleParams.EnableNewAdAvoidanceRulesParam),
-    AvoidHighToxicityModelScoreRule -> ruleParams(RuleParams.EnableNewAdAvoidanceRulesParam),
-    AvoidReportedTweetModelScoreRule -> ruleParams(RuleParams.EnableNewAdAvoidanceRulesParam),
-    NsfwHighPrecisionUserLabelAvoidTweetRule -> ruleParams(
-      RuleParams.EnableNewAdAvoidanceRulesParam),
-    TweetNsfwUserAdminAvoidRule -> ruleParams(RuleParams.EnableNewAdAvoidanceRulesParam),
-    DoNotAmplifyTweetLabelAvoidRule -> ruleParams(RuleParams.EnableNewAdAvoidanceRulesParam),
-    NsfaHighPrecisionTweetLabelAvoidRule -> ruleParams(RuleParams.EnableNewAdAvoidanceRulesParam),
+    NsfwTelonxtTwelonelontLabelonlAvoidRulelon -> rulelonParams(RulelonParams.elonnablelonNelonwAdAvoidancelonRulelonsParam),
+    AvoidHighToxicityModelonlScorelonRulelon -> rulelonParams(RulelonParams.elonnablelonNelonwAdAvoidancelonRulelonsParam),
+    AvoidRelonportelondTwelonelontModelonlScorelonRulelon -> rulelonParams(RulelonParams.elonnablelonNelonwAdAvoidancelonRulelonsParam),
+    NsfwHighPreloncisionUselonrLabelonlAvoidTwelonelontRulelon -> rulelonParams(
+      RulelonParams.elonnablelonNelonwAdAvoidancelonRulelonsParam),
+    TwelonelontNsfwUselonrAdminAvoidRulelon -> rulelonParams(RulelonParams.elonnablelonNelonwAdAvoidancelonRulelonsParam),
+    DoNotAmplifyTwelonelontLabelonlAvoidRulelon -> rulelonParams(RulelonParams.elonnablelonNelonwAdAvoidancelonRulelonsParam),
+    NsfaHighPreloncisionTwelonelontLabelonlAvoidRulelon -> rulelonParams(RulelonParams.elonnablelonNelonwAdAvoidancelonRulelonsParam),
   )
 }
 
-case object FilterDefaultPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++
-        Seq(
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-          GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule
+caselon objelonct FiltelonrDelonfaultPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = VisibilityPolicy.baselonTwelonelontRulelons ++
+        Selonq(
+          NsfwHighPreloncisionIntelonrstitialAllUselonrsTwelonelontLabelonlRulelon,
+          GorelonAndViolelonncelonHighPreloncisionAllUselonrsTwelonelontLabelonlRulelon,
+          NsfwRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlRulelon,
+          GorelonAndViolelonncelonRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlRulelon,
+          NsfwCardImagelonAllUselonrsTwelonelontLabelonlRulelon
         )
     )
 
-case object LimitedEngagementBaseRules
-    extends VisibilityPolicy(
-      tweetRules = Seq(
-        StaleTweetLimitedActionsRule,
-        LimitRepliesByInvitationConversationRule,
-        LimitRepliesCommunityConversationRule,
-        LimitRepliesFollowersConversationRule,
-        CommunityTweetCommunityNotFoundLimitedActionsRule,
-        CommunityTweetCommunityDeletedLimitedActionsRule,
-        CommunityTweetCommunitySuspendedLimitedActionsRule,
-        CommunityTweetMemberRemovedLimitedActionsRule,
-        CommunityTweetHiddenLimitedActionsRule,
-        CommunityTweetMemberLimitedActionsRule,
-        CommunityTweetNonMemberLimitedActionsRule,
-        DynamicProductAdLimitedEngagementTweetLabelRule,
-        TrustedFriendsTweetLimitedEngagementsRule
+caselon objelonct LimitelondelonngagelonmelonntBaselonRulelons
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = Selonq(
+        StalelonTwelonelontLimitelondActionsRulelon,
+        LimitRelonplielonsByInvitationConvelonrsationRulelon,
+        LimitRelonplielonsCommunityConvelonrsationRulelon,
+        LimitRelonplielonsFollowelonrsConvelonrsationRulelon,
+        CommunityTwelonelontCommunityNotFoundLimitelondActionsRulelon,
+        CommunityTwelonelontCommunityDelonlelontelondLimitelondActionsRulelon,
+        CommunityTwelonelontCommunitySuspelonndelondLimitelondActionsRulelon,
+        CommunityTwelonelontMelonmbelonrRelonmovelondLimitelondActionsRulelon,
+        CommunityTwelonelontHiddelonnLimitelondActionsRulelon,
+        CommunityTwelonelontMelonmbelonrLimitelondActionsRulelon,
+        CommunityTwelonelontNonMelonmbelonrLimitelondActionsRulelon,
+        DynamicProductAdLimitelondelonngagelonmelonntTwelonelontLabelonlRulelon,
+        TrustelondFrielonndsTwelonelontLimitelondelonngagelonmelonntsRulelon
       )
     )
 
-case object WritePathLimitedActionsEnforcementPolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(
-        AbusePolicyEpisodicTweetLabelInterstitialRule,
-        EmergencyDynamicInterstitialRule
+caselon objelonct WritelonPathLimitelondActionselonnforcelonmelonntPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = Selonq(
+        AbuselonPolicyelonpisodicTwelonelontLabelonlIntelonrstitialRulelon,
+        elonmelonrgelonncyDynamicIntelonrstitialRulelon
       ) ++
-        LimitedEngagementBaseRules.tweetRules
+        LimitelondelonngagelonmelonntBaselonRulelons.twelonelontRulelons
     )
 
-case object TestPolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(
-        TestRule
+caselon objelonct TelonstPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = Selonq(
+        TelonstRulelon
       )
     )
 
-case object CardsServicePolicy
-    extends VisibilityPolicy(
-      cardRules = Seq(
-        DropProtectedAuthorPollCardRule,
-        DropCardUriRootDomainDenylistRule
+caselon objelonct CardsSelonrvicelonPolicy
+    elonxtelonnds VisibilityPolicy(
+      cardRulelons = Selonq(
+        DropProtelonctelondAuthorPollCardRulelon,
+        DropCardUriRootDomainDelonnylistRulelon
       ),
-      spaceRules = Seq(
-        SpaceHighToxicityScoreNonFollowerDropRule,
-        SpaceHatefulHighRecallAllUsersDropRule,
-        SpaceViolenceHighRecallAllUsersDropRule,
-        ViewerIsSoftUserDropRule
+      spacelonRulelons = Selonq(
+        SpacelonHighToxicityScorelonNonFollowelonrDropRulelon,
+        SpacelonHatelonfulHighReloncallAllUselonrsDropRulelon,
+        SpacelonViolelonncelonHighReloncallAllUselonrsDropRulelon,
+        VielonwelonrIsSoftUselonrDropRulelon
       ),
     )
 
-case object CardPollVotingPolicy
-    extends VisibilityPolicy(
-      cardRules = Seq(
-        DropProtectedAuthorPollCardRule,
-        DropCommunityNonMemberPollCardRule
+caselon objelonct CardPollVotingPolicy
+    elonxtelonnds VisibilityPolicy(
+      cardRulelons = Selonq(
+        DropProtelonctelondAuthorPollCardRulelon,
+        DropCommunityNonMelonmbelonrPollCardRulelon
       )
     )
 
-case object UserTimelineRules {
-  val UserRules = Seq(
-    AuthorBlocksViewerDropRule,
-    ProtectedAuthorDropRule,
-    SuspendedAuthorRule
+caselon objelonct UselonrTimelonlinelonRulelons {
+  val UselonrRulelons = Selonq(
+    AuthorBlocksVielonwelonrDropRulelon,
+    ProtelonctelondAuthorDropRulelon,
+    SuspelonndelondAuthorRulelon
   )
 }
 
-case object TimelineLikedByRules {
-  val UserRules = Seq(
-    CompromisedNonFollowerWithUqfRule,
-    EngagementSpammerNonFollowerWithUqfRule,
-    LowQualityNonFollowerWithUqfRule,
-    ReadOnlyNonFollowerWithUqfRule,
-    SpamHighRecallNonFollowerWithUqfRule
+caselon objelonct TimelonlinelonLikelondByRulelons {
+  val UselonrRulelons = Selonq(
+    CompromiselondNonFollowelonrWithUqfRulelon,
+    elonngagelonmelonntSpammelonrNonFollowelonrWithUqfRulelon,
+    LowQualityNonFollowelonrWithUqfRulelon,
+    RelonadOnlyNonFollowelonrWithUqfRulelon,
+    SpamHighReloncallNonFollowelonrWithUqfRulelon
   )
 }
 
-case object FollowingAndFollowersUserListPolicy
-    extends VisibilityPolicy(
-      userRules = UserTimelineRules.UserRules
+caselon objelonct FollowingAndFollowelonrsUselonrListPolicy
+    elonxtelonnds VisibilityPolicy(
+      uselonrRulelons = UselonrTimelonlinelonRulelons.UselonrRulelons
     )
 
-case object FriendsFollowingListPolicy
-    extends VisibilityPolicy(
-      userRules = UserTimelineRules.UserRules
+caselon objelonct FrielonndsFollowingListPolicy
+    elonxtelonnds VisibilityPolicy(
+      uselonrRulelons = UselonrTimelonlinelonRulelons.UselonrRulelons
     )
 
-case object ListOwnershipsPolicy
-    extends VisibilityPolicy(
-      userRules = UserTimelineRules.UserRules
+caselon objelonct ListOwnelonrshipsPolicy
+    elonxtelonnds VisibilityPolicy(
+      uselonrRulelons = UselonrTimelonlinelonRulelons.UselonrRulelons
     )
 
-case object ListRecommendationsPolicy
-    extends VisibilityPolicy(
-      userRules = RecommendationsPolicy.userRules ++ Seq(
-        DropNsfwUserAuthorRule,
-        NsfwHighRecallRule,
-        SearchBlacklistRule,
-        SearchNsfwTextRule,
-        ViewerBlocksAuthorRule,
-        ViewerMutesAuthorRule
+caselon objelonct ListReloncommelonndationsPolicy
+    elonxtelonnds VisibilityPolicy(
+      uselonrRulelons = ReloncommelonndationsPolicy.uselonrRulelons ++ Selonq(
+        DropNsfwUselonrAuthorRulelon,
+        NsfwHighReloncallRulelon,
+        SelonarchBlacklistRulelon,
+        SelonarchNsfwTelonxtRulelon,
+        VielonwelonrBlocksAuthorRulelon,
+        VielonwelonrMutelonsAuthorRulelon
       )
     )
 
-case object ListSearchBaseRules {
+caselon objelonct ListSelonarchBaselonRulelons {
 
-  val NonExperimentalSafeSearchMinimalPolicyUserRules: Seq[Rule] =
-    SafeSearchMinimalPolicy.userRules.filterNot(_.isExperimental)
+  val NonelonxpelonrimelonntalSafelonSelonarchMinimalPolicyUselonrRulelons: Selonq[Rulelon] =
+    SafelonSelonarchMinimalPolicy.uselonrRulelons.filtelonrNot(_.iselonxpelonrimelonntal)
 
-  val MinimalPolicyUserRules: Seq[Rule] = NonExperimentalSafeSearchMinimalPolicyUserRules
+  val MinimalPolicyUselonrRulelons: Selonq[Rulelon] = NonelonxpelonrimelonntalSafelonSelonarchMinimalPolicyUselonrRulelons
 
-  val BlockMutePolicyUserRules = Seq(
-    ViewerBlocksAuthorViewerOptInBlockingOnSearchRule,
-    ViewerMutesAuthorViewerOptInBlockingOnSearchRule
+  val BlockMutelonPolicyUselonrRulelons = Selonq(
+    VielonwelonrBlocksAuthorVielonwelonrOptInBlockingOnSelonarchRulelon,
+    VielonwelonrMutelonsAuthorVielonwelonrOptInBlockingOnSelonarchRulelon
   )
 
-  val StrictPolicyUserRules = Seq(
-    SafeSearchAbusiveUserLabelRule,
-    SafeSearchAbusiveHighRecallUserLabelRule,
-    SafeSearchCompromisedUserLabelRule,
-    SafeSearchDoNotAmplifyNonFollowersUserLabelRule,
-    SafeSearchDuplicateContentUserLabelRule,
-    SafeSearchLowQualityUserLabelRule,
-    SafeSearchNotGraduatedNonFollowersUserLabelRule,
-    SafeSearchNsfwHighPrecisionUserLabelRule,
-    SafeSearchNsfwAvatarImageUserLabelRule,
-    SafeSearchNsfwBannerImageUserLabelRule,
-    SafeSearchReadOnlyUserLabelRule,
-    SafeSearchSearchBlacklistUserLabelRule,
-    SafeSearchNsfwTextUserLabelRule,
-    SafeSearchSpamHighRecallUserLabelRule,
-    SafeSearchDownrankSpamReplyAuthorLabelRule,
-    SafeSearchNsfwTextAuthorLabelRule,
-    DropNsfwAdminAuthorViewerOptInFilteringOnSearchRule,
-    DropNsfwUserAuthorViewerOptInFilteringOnSearchRule,
-  )
-}
-
-object SensitiveMediaSettingsTimelineHomeBaseRules {
-  val policyRuleParams = Map[Rule, PolicyLevelRuleParams](
-    NsfwHighPrecisionInterstitialAllUsersTweetLabelRule -> ruleParams(
-      RuleParams.EnableLegacySensitiveMediaHomeTimelineRulesParam),
-    GoreAndViolenceHighPrecisionAllUsersTweetLabelRule -> ruleParams(
-      RuleParams.EnableLegacySensitiveMediaHomeTimelineRulesParam),
-    NsfwReportedHeuristicsAllUsersTweetLabelRule -> ruleParams(
-      RuleParams.EnableLegacySensitiveMediaHomeTimelineRulesParam),
-    GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule -> ruleParams(
-      RuleParams.EnableLegacySensitiveMediaHomeTimelineRulesParam),
-    NsfwCardImageAllUsersTweetLabelRule -> ruleParams(
-      RuleParams.EnableLegacySensitiveMediaHomeTimelineRulesParam),
-    SensitiveMediaTweetInterstitialRules.AdultMediaNsfwHighPrecisionTweetLabelInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsHomeTimelineRulesParam),
-    SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceHighPrecisionInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsHomeTimelineRulesParam),
-    SensitiveMediaTweetInterstitialRules.AdultMediaNsfwReportedHeuristicsTweetLabelInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsHomeTimelineRulesParam),
-    SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceReportedHeuristicsInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsHomeTimelineRulesParam),
-    SensitiveMediaTweetInterstitialRules.AdultMediaNsfwCardImageTweetLabelInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsHomeTimelineRulesParam),
-    SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwUserTweetFlagInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsHomeTimelineRulesParam),
-    SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwAdminTweetFlagInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsHomeTimelineRulesParam)
+  val StrictPolicyUselonrRulelons = Selonq(
+    SafelonSelonarchAbusivelonUselonrLabelonlRulelon,
+    SafelonSelonarchAbusivelonHighReloncallUselonrLabelonlRulelon,
+    SafelonSelonarchCompromiselondUselonrLabelonlRulelon,
+    SafelonSelonarchDoNotAmplifyNonFollowelonrsUselonrLabelonlRulelon,
+    SafelonSelonarchDuplicatelonContelonntUselonrLabelonlRulelon,
+    SafelonSelonarchLowQualityUselonrLabelonlRulelon,
+    SafelonSelonarchNotGraduatelondNonFollowelonrsUselonrLabelonlRulelon,
+    SafelonSelonarchNsfwHighPreloncisionUselonrLabelonlRulelon,
+    SafelonSelonarchNsfwAvatarImagelonUselonrLabelonlRulelon,
+    SafelonSelonarchNsfwBannelonrImagelonUselonrLabelonlRulelon,
+    SafelonSelonarchRelonadOnlyUselonrLabelonlRulelon,
+    SafelonSelonarchSelonarchBlacklistUselonrLabelonlRulelon,
+    SafelonSelonarchNsfwTelonxtUselonrLabelonlRulelon,
+    SafelonSelonarchSpamHighReloncallUselonrLabelonlRulelon,
+    SafelonSelonarchDownrankSpamRelonplyAuthorLabelonlRulelon,
+    SafelonSelonarchNsfwTelonxtAuthorLabelonlRulelon,
+    DropNsfwAdminAuthorVielonwelonrOptInFiltelonringOnSelonarchRulelon,
+    DropNsfwUselonrAuthorVielonwelonrOptInFiltelonringOnSelonarchRulelon,
   )
 }
 
-object SensitiveMediaSettingsConversationBaseRules {
-  val policyRuleParams = Map[Rule, PolicyLevelRuleParams](
-    NsfwHighPrecisionInterstitialAllUsersTweetLabelRule -> ruleParams(
-      RuleParams.EnableLegacySensitiveMediaConversationRulesParam),
-    GoreAndViolenceHighPrecisionAllUsersTweetLabelRule -> ruleParams(
-      RuleParams.EnableLegacySensitiveMediaConversationRulesParam),
-    NsfwReportedHeuristicsAllUsersTweetLabelRule -> ruleParams(
-      RuleParams.EnableLegacySensitiveMediaConversationRulesParam),
-    GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule -> ruleParams(
-      RuleParams.EnableLegacySensitiveMediaConversationRulesParam),
-    NsfwCardImageAllUsersTweetLabelRule -> ruleParams(
-      RuleParams.EnableLegacySensitiveMediaConversationRulesParam),
-    SensitiveMediaTweetInterstitialRules.AdultMediaNsfwHighPrecisionTweetLabelInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsConversationRulesParam),
-    SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceHighPrecisionInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsConversationRulesParam),
-    SensitiveMediaTweetInterstitialRules.AdultMediaNsfwReportedHeuristicsTweetLabelInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsConversationRulesParam),
-    SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceReportedHeuristicsInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsConversationRulesParam),
-    SensitiveMediaTweetInterstitialRules.AdultMediaNsfwCardImageTweetLabelInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsConversationRulesParam),
-    SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwUserTweetFlagInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsConversationRulesParam),
-    SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwAdminTweetFlagInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsConversationRulesParam)
+objelonct SelonnsitivelonMelondiaSelonttingsTimelonlinelonHomelonBaselonRulelons {
+  val policyRulelonParams = Map[Rulelon, PolicyLelonvelonlRulelonParams](
+    NsfwHighPreloncisionIntelonrstitialAllUselonrsTwelonelontLabelonlRulelon -> rulelonParams(
+      RulelonParams.elonnablelonLelongacySelonnsitivelonMelondiaHomelonTimelonlinelonRulelonsParam),
+    GorelonAndViolelonncelonHighPreloncisionAllUselonrsTwelonelontLabelonlRulelon -> rulelonParams(
+      RulelonParams.elonnablelonLelongacySelonnsitivelonMelondiaHomelonTimelonlinelonRulelonsParam),
+    NsfwRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlRulelon -> rulelonParams(
+      RulelonParams.elonnablelonLelongacySelonnsitivelonMelondiaHomelonTimelonlinelonRulelonsParam),
+    GorelonAndViolelonncelonRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlRulelon -> rulelonParams(
+      RulelonParams.elonnablelonLelongacySelonnsitivelonMelondiaHomelonTimelonlinelonRulelonsParam),
+    NsfwCardImagelonAllUselonrsTwelonelontLabelonlRulelon -> rulelonParams(
+      RulelonParams.elonnablelonLelongacySelonnsitivelonMelondiaHomelonTimelonlinelonRulelonsParam),
+    SelonnsitivelonMelondiaTwelonelontIntelonrstitialRulelons.AdultMelondiaNsfwHighPreloncisionTwelonelontLabelonlIntelonrstitialRulelon -> rulelonParams(
+      RulelonParams.elonnablelonNelonwSelonnsitivelonMelondiaSelonttingsIntelonrstitialsHomelonTimelonlinelonRulelonsParam),
+    SelonnsitivelonMelondiaTwelonelontIntelonrstitialRulelons.ViolelonntMelondiaGorelonAndViolelonncelonHighPreloncisionIntelonrstitialRulelon -> rulelonParams(
+      RulelonParams.elonnablelonNelonwSelonnsitivelonMelondiaSelonttingsIntelonrstitialsHomelonTimelonlinelonRulelonsParam),
+    SelonnsitivelonMelondiaTwelonelontIntelonrstitialRulelons.AdultMelondiaNsfwRelonportelondHelonuristicsTwelonelontLabelonlIntelonrstitialRulelon -> rulelonParams(
+      RulelonParams.elonnablelonNelonwSelonnsitivelonMelondiaSelonttingsIntelonrstitialsHomelonTimelonlinelonRulelonsParam),
+    SelonnsitivelonMelondiaTwelonelontIntelonrstitialRulelons.ViolelonntMelondiaGorelonAndViolelonncelonRelonportelondHelonuristicsIntelonrstitialRulelon -> rulelonParams(
+      RulelonParams.elonnablelonNelonwSelonnsitivelonMelondiaSelonttingsIntelonrstitialsHomelonTimelonlinelonRulelonsParam),
+    SelonnsitivelonMelondiaTwelonelontIntelonrstitialRulelons.AdultMelondiaNsfwCardImagelonTwelonelontLabelonlIntelonrstitialRulelon -> rulelonParams(
+      RulelonParams.elonnablelonNelonwSelonnsitivelonMelondiaSelonttingsIntelonrstitialsHomelonTimelonlinelonRulelonsParam),
+    SelonnsitivelonMelondiaTwelonelontIntelonrstitialRulelons.OthelonrSelonnsitivelonMelondiaNsfwUselonrTwelonelontFlagIntelonrstitialRulelon -> rulelonParams(
+      RulelonParams.elonnablelonNelonwSelonnsitivelonMelondiaSelonttingsIntelonrstitialsHomelonTimelonlinelonRulelonsParam),
+    SelonnsitivelonMelondiaTwelonelontIntelonrstitialRulelons.OthelonrSelonnsitivelonMelondiaNsfwAdminTwelonelontFlagIntelonrstitialRulelon -> rulelonParams(
+      RulelonParams.elonnablelonNelonwSelonnsitivelonMelondiaSelonttingsIntelonrstitialsHomelonTimelonlinelonRulelonsParam)
   )
 }
 
-object SensitiveMediaSettingsProfileTimelineBaseRules {
-  val policyRuleParams = Map[Rule, PolicyLevelRuleParams](
-    NsfwHighPrecisionInterstitialAllUsersTweetLabelRule -> ruleParams(
-      RuleParams.EnableLegacySensitiveMediaProfileTimelineRulesParam),
-    GoreAndViolenceHighPrecisionAllUsersTweetLabelRule -> ruleParams(
-      RuleParams.EnableLegacySensitiveMediaProfileTimelineRulesParam),
-    NsfwReportedHeuristicsAllUsersTweetLabelRule -> ruleParams(
-      RuleParams.EnableLegacySensitiveMediaProfileTimelineRulesParam),
-    GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule -> ruleParams(
-      RuleParams.EnableLegacySensitiveMediaProfileTimelineRulesParam),
-    NsfwCardImageAllUsersTweetLabelRule -> ruleParams(
-      RuleParams.EnableLegacySensitiveMediaProfileTimelineRulesParam),
-    SensitiveMediaTweetInterstitialRules.AdultMediaNsfwHighPrecisionTweetLabelInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsProfileTimelineRulesParam),
-    SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceHighPrecisionInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsProfileTimelineRulesParam),
-    SensitiveMediaTweetInterstitialRules.AdultMediaNsfwReportedHeuristicsTweetLabelInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsProfileTimelineRulesParam),
-    SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceReportedHeuristicsInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsProfileTimelineRulesParam),
-    SensitiveMediaTweetInterstitialRules.AdultMediaNsfwCardImageTweetLabelInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsProfileTimelineRulesParam),
-    SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwUserTweetFlagInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsProfileTimelineRulesParam),
-    SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwAdminTweetFlagInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsProfileTimelineRulesParam)
+objelonct SelonnsitivelonMelondiaSelonttingsConvelonrsationBaselonRulelons {
+  val policyRulelonParams = Map[Rulelon, PolicyLelonvelonlRulelonParams](
+    NsfwHighPreloncisionIntelonrstitialAllUselonrsTwelonelontLabelonlRulelon -> rulelonParams(
+      RulelonParams.elonnablelonLelongacySelonnsitivelonMelondiaConvelonrsationRulelonsParam),
+    GorelonAndViolelonncelonHighPreloncisionAllUselonrsTwelonelontLabelonlRulelon -> rulelonParams(
+      RulelonParams.elonnablelonLelongacySelonnsitivelonMelondiaConvelonrsationRulelonsParam),
+    NsfwRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlRulelon -> rulelonParams(
+      RulelonParams.elonnablelonLelongacySelonnsitivelonMelondiaConvelonrsationRulelonsParam),
+    GorelonAndViolelonncelonRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlRulelon -> rulelonParams(
+      RulelonParams.elonnablelonLelongacySelonnsitivelonMelondiaConvelonrsationRulelonsParam),
+    NsfwCardImagelonAllUselonrsTwelonelontLabelonlRulelon -> rulelonParams(
+      RulelonParams.elonnablelonLelongacySelonnsitivelonMelondiaConvelonrsationRulelonsParam),
+    SelonnsitivelonMelondiaTwelonelontIntelonrstitialRulelons.AdultMelondiaNsfwHighPreloncisionTwelonelontLabelonlIntelonrstitialRulelon -> rulelonParams(
+      RulelonParams.elonnablelonNelonwSelonnsitivelonMelondiaSelonttingsIntelonrstitialsConvelonrsationRulelonsParam),
+    SelonnsitivelonMelondiaTwelonelontIntelonrstitialRulelons.ViolelonntMelondiaGorelonAndViolelonncelonHighPreloncisionIntelonrstitialRulelon -> rulelonParams(
+      RulelonParams.elonnablelonNelonwSelonnsitivelonMelondiaSelonttingsIntelonrstitialsConvelonrsationRulelonsParam),
+    SelonnsitivelonMelondiaTwelonelontIntelonrstitialRulelons.AdultMelondiaNsfwRelonportelondHelonuristicsTwelonelontLabelonlIntelonrstitialRulelon -> rulelonParams(
+      RulelonParams.elonnablelonNelonwSelonnsitivelonMelondiaSelonttingsIntelonrstitialsConvelonrsationRulelonsParam),
+    SelonnsitivelonMelondiaTwelonelontIntelonrstitialRulelons.ViolelonntMelondiaGorelonAndViolelonncelonRelonportelondHelonuristicsIntelonrstitialRulelon -> rulelonParams(
+      RulelonParams.elonnablelonNelonwSelonnsitivelonMelondiaSelonttingsIntelonrstitialsConvelonrsationRulelonsParam),
+    SelonnsitivelonMelondiaTwelonelontIntelonrstitialRulelons.AdultMelondiaNsfwCardImagelonTwelonelontLabelonlIntelonrstitialRulelon -> rulelonParams(
+      RulelonParams.elonnablelonNelonwSelonnsitivelonMelondiaSelonttingsIntelonrstitialsConvelonrsationRulelonsParam),
+    SelonnsitivelonMelondiaTwelonelontIntelonrstitialRulelons.OthelonrSelonnsitivelonMelondiaNsfwUselonrTwelonelontFlagIntelonrstitialRulelon -> rulelonParams(
+      RulelonParams.elonnablelonNelonwSelonnsitivelonMelondiaSelonttingsIntelonrstitialsConvelonrsationRulelonsParam),
+    SelonnsitivelonMelondiaTwelonelontIntelonrstitialRulelons.OthelonrSelonnsitivelonMelondiaNsfwAdminTwelonelontFlagIntelonrstitialRulelon -> rulelonParams(
+      RulelonParams.elonnablelonNelonwSelonnsitivelonMelondiaSelonttingsIntelonrstitialsConvelonrsationRulelonsParam)
   )
 }
 
-object SensitiveMediaSettingsTweetDetailBaseRules {
-  val policyRuleParams = Map[Rule, PolicyLevelRuleParams](
-    NsfwHighPrecisionInterstitialAllUsersTweetLabelRule -> ruleParams(
-      RuleParams.EnableLegacySensitiveMediaTweetDetailRulesParam),
-    GoreAndViolenceHighPrecisionAllUsersTweetLabelRule -> ruleParams(
-      RuleParams.EnableLegacySensitiveMediaTweetDetailRulesParam),
-    NsfwReportedHeuristicsAllUsersTweetLabelRule -> ruleParams(
-      RuleParams.EnableLegacySensitiveMediaTweetDetailRulesParam),
-    GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule -> ruleParams(
-      RuleParams.EnableLegacySensitiveMediaTweetDetailRulesParam),
-    NsfwCardImageAllUsersTweetLabelRule -> ruleParams(
-      RuleParams.EnableLegacySensitiveMediaTweetDetailRulesParam),
-    SensitiveMediaTweetInterstitialRules.AdultMediaNsfwHighPrecisionTweetLabelInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsTweetDetailRulesParam),
-    SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceHighPrecisionInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsTweetDetailRulesParam),
-    SensitiveMediaTweetInterstitialRules.AdultMediaNsfwReportedHeuristicsTweetLabelInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsTweetDetailRulesParam),
-    SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceReportedHeuristicsInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsTweetDetailRulesParam),
-    SensitiveMediaTweetInterstitialRules.AdultMediaNsfwCardImageTweetLabelInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsTweetDetailRulesParam),
-    SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwUserTweetFlagInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsTweetDetailRulesParam),
-    SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwAdminTweetFlagInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsTweetDetailRulesParam)
+objelonct SelonnsitivelonMelondiaSelonttingsProfilelonTimelonlinelonBaselonRulelons {
+  val policyRulelonParams = Map[Rulelon, PolicyLelonvelonlRulelonParams](
+    NsfwHighPreloncisionIntelonrstitialAllUselonrsTwelonelontLabelonlRulelon -> rulelonParams(
+      RulelonParams.elonnablelonLelongacySelonnsitivelonMelondiaProfilelonTimelonlinelonRulelonsParam),
+    GorelonAndViolelonncelonHighPreloncisionAllUselonrsTwelonelontLabelonlRulelon -> rulelonParams(
+      RulelonParams.elonnablelonLelongacySelonnsitivelonMelondiaProfilelonTimelonlinelonRulelonsParam),
+    NsfwRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlRulelon -> rulelonParams(
+      RulelonParams.elonnablelonLelongacySelonnsitivelonMelondiaProfilelonTimelonlinelonRulelonsParam),
+    GorelonAndViolelonncelonRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlRulelon -> rulelonParams(
+      RulelonParams.elonnablelonLelongacySelonnsitivelonMelondiaProfilelonTimelonlinelonRulelonsParam),
+    NsfwCardImagelonAllUselonrsTwelonelontLabelonlRulelon -> rulelonParams(
+      RulelonParams.elonnablelonLelongacySelonnsitivelonMelondiaProfilelonTimelonlinelonRulelonsParam),
+    SelonnsitivelonMelondiaTwelonelontIntelonrstitialRulelons.AdultMelondiaNsfwHighPreloncisionTwelonelontLabelonlIntelonrstitialRulelon -> rulelonParams(
+      RulelonParams.elonnablelonNelonwSelonnsitivelonMelondiaSelonttingsIntelonrstitialsProfilelonTimelonlinelonRulelonsParam),
+    SelonnsitivelonMelondiaTwelonelontIntelonrstitialRulelons.ViolelonntMelondiaGorelonAndViolelonncelonHighPreloncisionIntelonrstitialRulelon -> rulelonParams(
+      RulelonParams.elonnablelonNelonwSelonnsitivelonMelondiaSelonttingsIntelonrstitialsProfilelonTimelonlinelonRulelonsParam),
+    SelonnsitivelonMelondiaTwelonelontIntelonrstitialRulelons.AdultMelondiaNsfwRelonportelondHelonuristicsTwelonelontLabelonlIntelonrstitialRulelon -> rulelonParams(
+      RulelonParams.elonnablelonNelonwSelonnsitivelonMelondiaSelonttingsIntelonrstitialsProfilelonTimelonlinelonRulelonsParam),
+    SelonnsitivelonMelondiaTwelonelontIntelonrstitialRulelons.ViolelonntMelondiaGorelonAndViolelonncelonRelonportelondHelonuristicsIntelonrstitialRulelon -> rulelonParams(
+      RulelonParams.elonnablelonNelonwSelonnsitivelonMelondiaSelonttingsIntelonrstitialsProfilelonTimelonlinelonRulelonsParam),
+    SelonnsitivelonMelondiaTwelonelontIntelonrstitialRulelons.AdultMelondiaNsfwCardImagelonTwelonelontLabelonlIntelonrstitialRulelon -> rulelonParams(
+      RulelonParams.elonnablelonNelonwSelonnsitivelonMelondiaSelonttingsIntelonrstitialsProfilelonTimelonlinelonRulelonsParam),
+    SelonnsitivelonMelondiaTwelonelontIntelonrstitialRulelons.OthelonrSelonnsitivelonMelondiaNsfwUselonrTwelonelontFlagIntelonrstitialRulelon -> rulelonParams(
+      RulelonParams.elonnablelonNelonwSelonnsitivelonMelondiaSelonttingsIntelonrstitialsProfilelonTimelonlinelonRulelonsParam),
+    SelonnsitivelonMelondiaTwelonelontIntelonrstitialRulelons.OthelonrSelonnsitivelonMelondiaNsfwAdminTwelonelontFlagIntelonrstitialRulelon -> rulelonParams(
+      RulelonParams.elonnablelonNelonwSelonnsitivelonMelondiaSelonttingsIntelonrstitialsProfilelonTimelonlinelonRulelonsParam)
   )
 }
 
-case object ListSearchPolicy
-    extends VisibilityPolicy(
-      userRules = ListSearchBaseRules.MinimalPolicyUserRules ++
-        ListSearchBaseRules.BlockMutePolicyUserRules ++
-        ListSearchBaseRules.StrictPolicyUserRules
+objelonct SelonnsitivelonMelondiaSelonttingsTwelonelontDelontailBaselonRulelons {
+  val policyRulelonParams = Map[Rulelon, PolicyLelonvelonlRulelonParams](
+    NsfwHighPreloncisionIntelonrstitialAllUselonrsTwelonelontLabelonlRulelon -> rulelonParams(
+      RulelonParams.elonnablelonLelongacySelonnsitivelonMelondiaTwelonelontDelontailRulelonsParam),
+    GorelonAndViolelonncelonHighPreloncisionAllUselonrsTwelonelontLabelonlRulelon -> rulelonParams(
+      RulelonParams.elonnablelonLelongacySelonnsitivelonMelondiaTwelonelontDelontailRulelonsParam),
+    NsfwRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlRulelon -> rulelonParams(
+      RulelonParams.elonnablelonLelongacySelonnsitivelonMelondiaTwelonelontDelontailRulelonsParam),
+    GorelonAndViolelonncelonRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlRulelon -> rulelonParams(
+      RulelonParams.elonnablelonLelongacySelonnsitivelonMelondiaTwelonelontDelontailRulelonsParam),
+    NsfwCardImagelonAllUselonrsTwelonelontLabelonlRulelon -> rulelonParams(
+      RulelonParams.elonnablelonLelongacySelonnsitivelonMelondiaTwelonelontDelontailRulelonsParam),
+    SelonnsitivelonMelondiaTwelonelontIntelonrstitialRulelons.AdultMelondiaNsfwHighPreloncisionTwelonelontLabelonlIntelonrstitialRulelon -> rulelonParams(
+      RulelonParams.elonnablelonNelonwSelonnsitivelonMelondiaSelonttingsIntelonrstitialsTwelonelontDelontailRulelonsParam),
+    SelonnsitivelonMelondiaTwelonelontIntelonrstitialRulelons.ViolelonntMelondiaGorelonAndViolelonncelonHighPreloncisionIntelonrstitialRulelon -> rulelonParams(
+      RulelonParams.elonnablelonNelonwSelonnsitivelonMelondiaSelonttingsIntelonrstitialsTwelonelontDelontailRulelonsParam),
+    SelonnsitivelonMelondiaTwelonelontIntelonrstitialRulelons.AdultMelondiaNsfwRelonportelondHelonuristicsTwelonelontLabelonlIntelonrstitialRulelon -> rulelonParams(
+      RulelonParams.elonnablelonNelonwSelonnsitivelonMelondiaSelonttingsIntelonrstitialsTwelonelontDelontailRulelonsParam),
+    SelonnsitivelonMelondiaTwelonelontIntelonrstitialRulelons.ViolelonntMelondiaGorelonAndViolelonncelonRelonportelondHelonuristicsIntelonrstitialRulelon -> rulelonParams(
+      RulelonParams.elonnablelonNelonwSelonnsitivelonMelondiaSelonttingsIntelonrstitialsTwelonelontDelontailRulelonsParam),
+    SelonnsitivelonMelondiaTwelonelontIntelonrstitialRulelons.AdultMelondiaNsfwCardImagelonTwelonelontLabelonlIntelonrstitialRulelon -> rulelonParams(
+      RulelonParams.elonnablelonNelonwSelonnsitivelonMelondiaSelonttingsIntelonrstitialsTwelonelontDelontailRulelonsParam),
+    SelonnsitivelonMelondiaTwelonelontIntelonrstitialRulelons.OthelonrSelonnsitivelonMelondiaNsfwUselonrTwelonelontFlagIntelonrstitialRulelon -> rulelonParams(
+      RulelonParams.elonnablelonNelonwSelonnsitivelonMelondiaSelonttingsIntelonrstitialsTwelonelontDelontailRulelonsParam),
+    SelonnsitivelonMelondiaTwelonelontIntelonrstitialRulelons.OthelonrSelonnsitivelonMelondiaNsfwAdminTwelonelontFlagIntelonrstitialRulelon -> rulelonParams(
+      RulelonParams.elonnablelonNelonwSelonnsitivelonMelondiaSelonttingsIntelonrstitialsTwelonelontDelontailRulelonsParam)
+  )
+}
+
+caselon objelonct ListSelonarchPolicy
+    elonxtelonnds VisibilityPolicy(
+      uselonrRulelons = ListSelonarchBaselonRulelons.MinimalPolicyUselonrRulelons ++
+        ListSelonarchBaselonRulelons.BlockMutelonPolicyUselonrRulelons ++
+        ListSelonarchBaselonRulelons.StrictPolicyUselonrRulelons
     )
 
-case object ListSubscriptionsPolicy
-    extends VisibilityPolicy(
-      userRules = UserTimelineRules.UserRules
+caselon objelonct ListSubscriptionsPolicy
+    elonxtelonnds VisibilityPolicy(
+      uselonrRulelons = UselonrTimelonlinelonRulelons.UselonrRulelons
     )
 
-case object ListMembershipsPolicy
-    extends VisibilityPolicy(
-      userRules = UserTimelineRules.UserRules
+caselon objelonct ListMelonmbelonrshipsPolicy
+    elonxtelonnds VisibilityPolicy(
+      uselonrRulelons = UselonrTimelonlinelonRulelons.UselonrRulelons
     )
 
-case object AllSubscribedListsPolicy
-    extends VisibilityPolicy(
-      userRules = UserTimelineRules.UserRules
+caselon objelonct AllSubscribelondListsPolicy
+    elonxtelonnds VisibilityPolicy(
+      uselonrRulelons = UselonrTimelonlinelonRulelons.UselonrRulelons
     )
 
-case object ListHeaderPolicy
-    extends VisibilityPolicy(
-      userRules = Seq(
-        AuthorBlocksViewerDropRule,
-        ProtectedAuthorDropRule,
-        SuspendedAuthorRule
+caselon objelonct ListHelonadelonrPolicy
+    elonxtelonnds VisibilityPolicy(
+      uselonrRulelons = Selonq(
+        AuthorBlocksVielonwelonrDropRulelon,
+        ProtelonctelondAuthorDropRulelon,
+        SuspelonndelondAuthorRulelon
       )
     )
 
-case object NewUserExperiencePolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++ Seq(
-        AbusiveTweetLabelRule,
-        LowQualityTweetLabelDropRule,
-        NsfaHighRecallTweetLabelRule,
-        NsfwHighPrecisionTweetLabelRule,
-        GoreAndViolenceHighPrecisionTweetLabelRule,
-        NsfwReportedHeuristicsTweetLabelRule,
-        GoreAndViolenceReportedHeuristicsTweetLabelRule,
-        NsfwCardImageTweetLabelRule,
-        NsfwHighRecallTweetLabelRule,
-        NsfwVideoTweetLabelDropRule,
-        NsfwTextTweetLabelDropRule,
-        SpamHighRecallTweetLabelDropRule,
-        DuplicateContentTweetLabelDropRule,
-        GoreAndViolenceTweetLabelRule,
-        UntrustedUrlTweetLabelRule,
-        DownrankSpamReplyTweetLabelRule,
-        SearchBlacklistTweetLabelRule,
-        AutomationTweetLabelRule,
-        DuplicateMentionTweetLabelRule,
-        BystanderAbusiveTweetLabelRule,
-        SafetyCrisisLevel3DropRule,
-        SafetyCrisisLevel4DropRule,
-        DoNotAmplifyDropRule,
-        SmyteSpamTweetLabelDropRule,
+caselon objelonct NelonwUselonrelonxpelonrielonncelonPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = VisibilityPolicy.baselonTwelonelontRulelons ++ Selonq(
+        AbusivelonTwelonelontLabelonlRulelon,
+        LowQualityTwelonelontLabelonlDropRulelon,
+        NsfaHighReloncallTwelonelontLabelonlRulelon,
+        NsfwHighPreloncisionTwelonelontLabelonlRulelon,
+        GorelonAndViolelonncelonHighPreloncisionTwelonelontLabelonlRulelon,
+        NsfwRelonportelondHelonuristicsTwelonelontLabelonlRulelon,
+        GorelonAndViolelonncelonRelonportelondHelonuristicsTwelonelontLabelonlRulelon,
+        NsfwCardImagelonTwelonelontLabelonlRulelon,
+        NsfwHighReloncallTwelonelontLabelonlRulelon,
+        NsfwVidelonoTwelonelontLabelonlDropRulelon,
+        NsfwTelonxtTwelonelontLabelonlDropRulelon,
+        SpamHighReloncallTwelonelontLabelonlDropRulelon,
+        DuplicatelonContelonntTwelonelontLabelonlDropRulelon,
+        GorelonAndViolelonncelonTwelonelontLabelonlRulelon,
+        UntrustelondUrlTwelonelontLabelonlRulelon,
+        DownrankSpamRelonplyTwelonelontLabelonlRulelon,
+        SelonarchBlacklistTwelonelontLabelonlRulelon,
+        AutomationTwelonelontLabelonlRulelon,
+        DuplicatelonMelonntionTwelonelontLabelonlRulelon,
+        BystandelonrAbusivelonTwelonelontLabelonlRulelon,
+        SafelontyCrisisLelonvelonl3DropRulelon,
+        SafelontyCrisisLelonvelonl4DropRulelon,
+        DoNotAmplifyDropRulelon,
+        SmytelonSpamTwelonelontLabelonlDropRulelon,
       ),
-      userRules = Seq(
-        AbusiveRule,
-        LowQualityRule,
-        ReadOnlyRule,
-        SearchBlacklistRule,
-        SearchNsfwTextRule,
-        CompromisedRule,
-        SpamHighRecallRule,
-        DuplicateContentRule,
-        NsfwHighPrecisionRule,
-        NsfwAvatarImageRule,
-        NsfwBannerImageRule,
-        AbusiveHighRecallRule,
-        DoNotAmplifyNonFollowerRule,
-        NotGraduatedNonFollowerRule,
-        LikelyIvsLabelNonFollowerDropUserRule,
-        DownrankSpamReplyNonAuthorRule,
-        NsfwTextNonAuthorDropRule
+      uselonrRulelons = Selonq(
+        AbusivelonRulelon,
+        LowQualityRulelon,
+        RelonadOnlyRulelon,
+        SelonarchBlacklistRulelon,
+        SelonarchNsfwTelonxtRulelon,
+        CompromiselondRulelon,
+        SpamHighReloncallRulelon,
+        DuplicatelonContelonntRulelon,
+        NsfwHighPreloncisionRulelon,
+        NsfwAvatarImagelonRulelon,
+        NsfwBannelonrImagelonRulelon,
+        AbusivelonHighReloncallRulelon,
+        DoNotAmplifyNonFollowelonrRulelon,
+        NotGraduatelondNonFollowelonrRulelon,
+        LikelonlyIvsLabelonlNonFollowelonrDropUselonrRulelon,
+        DownrankSpamRelonplyNonAuthorRulelon,
+        NsfwTelonxtNonAuthorDropRulelon
       )
     )
 
-case object DESHomeTimelinePolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(
-        DropStaleTweetsRule,
-        DropAllExclusiveTweetsRule,
-        DropAllTrustedFriendsTweetsRule,
-        DropAllCommunityTweetsRule
+caselon objelonct DelonSHomelonTimelonlinelonPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = Selonq(
+        DropStalelonTwelonelontsRulelon,
+        DropAllelonxclusivelonTwelonelontsRulelon,
+        DropAllTrustelondFrielonndsTwelonelontsRulelon,
+        DropAllCommunityTwelonelontsRulelon
       ) ++
-        VisibilityPolicy.baseTweetRules,
-      userRules = UserTimelineRules.UserRules
+        VisibilityPolicy.baselonTwelonelontRulelons,
+      uselonrRulelons = UselonrTimelonlinelonRulelons.UselonrRulelons
     )
 
-case object DesQuoteTweetTimelinePolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(
-        DropStaleTweetsRule,
-        DropAllExclusiveTweetsRule,
-        DropAllTrustedFriendsTweetsRule
-      ) ++ ElevatedQuoteTweetTimelinePolicy.tweetRules.diff(Seq(DropStaleTweetsRule)),
-      userRules = Seq(
-        ProtectedAuthorDropRule
+caselon objelonct DelonsQuotelonTwelonelontTimelonlinelonPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = Selonq(
+        DropStalelonTwelonelontsRulelon,
+        DropAllelonxclusivelonTwelonelontsRulelon,
+        DropAllTrustelondFrielonndsTwelonelontsRulelon
+      ) ++ elonlelonvatelondQuotelonTwelonelontTimelonlinelonPolicy.twelonelontRulelons.diff(Selonq(DropStalelonTwelonelontsRulelon)),
+      uselonrRulelons = Selonq(
+        ProtelonctelondAuthorDropRulelon
       ),
-      policyRuleParams = ElevatedQuoteTweetTimelinePolicy.policyRuleParams
+      policyRulelonParams = elonlelonvatelondQuotelonTwelonelontTimelonlinelonPolicy.policyRulelonParams
     )
 
-case object DESRealtimeSpamEnrichmentPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++ Seq(
-        LowQualityTweetLabelDropRule,
-        SpamHighRecallTweetLabelDropRule,
-        DuplicateContentTweetLabelDropRule,
-        SearchBlacklistTweetLabelRule,
-        SmyteSpamTweetLabelDropRule,
-        DropAllCommunityTweetsRule,
-        DropAllExclusiveTweetsRule,
-        DropAllTrustedFriendsTweetsRule,
-        NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-        GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-        NsfwReportedHeuristicsAllUsersTweetLabelRule,
-        GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-        NsfwCardImageAllUsersTweetLabelRule
+caselon objelonct DelonSRelonaltimelonSpamelonnrichmelonntPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = VisibilityPolicy.baselonTwelonelontRulelons ++ Selonq(
+        LowQualityTwelonelontLabelonlDropRulelon,
+        SpamHighReloncallTwelonelontLabelonlDropRulelon,
+        DuplicatelonContelonntTwelonelontLabelonlDropRulelon,
+        SelonarchBlacklistTwelonelontLabelonlRulelon,
+        SmytelonSpamTwelonelontLabelonlDropRulelon,
+        DropAllCommunityTwelonelontsRulelon,
+        DropAllelonxclusivelonTwelonelontsRulelon,
+        DropAllTrustelondFrielonndsTwelonelontsRulelon,
+        NsfwHighPreloncisionIntelonrstitialAllUselonrsTwelonelontLabelonlRulelon,
+        GorelonAndViolelonncelonHighPreloncisionAllUselonrsTwelonelontLabelonlRulelon,
+        NsfwRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlRulelon,
+        GorelonAndViolelonncelonRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlRulelon,
+        NsfwCardImagelonAllUselonrsTwelonelontLabelonlRulelon
       )
     )
 
-case object DESRealtimePolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(
-        DropAllCommunityTweetsRule,
-        DropAllExclusiveTweetsRule,
-        DropAllTrustedFriendsTweetsRule,
-        DropAllCollabInvitationTweetsRule
+caselon objelonct DelonSRelonaltimelonPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = Selonq(
+        DropAllCommunityTwelonelontsRulelon,
+        DropAllelonxclusivelonTwelonelontsRulelon,
+        DropAllTrustelondFrielonndsTwelonelontsRulelon,
+        DropAllCollabInvitationTwelonelontsRulelon
       ),
-      userRules = Seq(
-        DropAllProtectedAuthorRule,
-        DropProtectedViewerIfPresentRule
+      uselonrRulelons = Selonq(
+        DropAllProtelonctelondAuthorRulelon,
+        DropProtelonctelondVielonwelonrIfPrelonselonntRulelon
       )
     )
 
-case object DESRetweetingUsersPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++ Seq(
-        DropAllExclusiveTweetsRule,
-        DropAllTrustedFriendsTweetsRule,
+caselon objelonct DelonSRelontwelonelontingUselonrsPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = VisibilityPolicy.baselonTwelonelontRulelons ++ Selonq(
+        DropAllelonxclusivelonTwelonelontsRulelon,
+        DropAllTrustelondFrielonndsTwelonelontsRulelon,
       ),
-      userRules = Seq(
-        AuthorBlocksViewerDropRule,
-        ViewerBlocksAuthorRule,
-        ProtectedAuthorDropRule,
-        SuspendedAuthorRule
+      uselonrRulelons = Selonq(
+        AuthorBlocksVielonwelonrDropRulelon,
+        VielonwelonrBlocksAuthorRulelon,
+        ProtelonctelondAuthorDropRulelon,
+        SuspelonndelondAuthorRulelon
       )
     )
 
-case object DESTweetLikingUsersPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++ Seq(
-        DropAllExclusiveTweetsRule,
-        DropAllTrustedFriendsTweetsRule,
+caselon objelonct DelonSTwelonelontLikingUselonrsPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = VisibilityPolicy.baselonTwelonelontRulelons ++ Selonq(
+        DropAllelonxclusivelonTwelonelontsRulelon,
+        DropAllTrustelondFrielonndsTwelonelontsRulelon,
       ),
-      userRules = TimelineLikedByRules.UserRules
+      uselonrRulelons = TimelonlinelonLikelondByRulelons.UselonrRulelons
     )
 
-case object DESUserBookmarksPolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(
-        DropAllExclusiveTweetsRule,
-        DropAllTrustedFriendsTweetsRule,
+caselon objelonct DelonSUselonrBookmarksPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = Selonq(
+        DropAllelonxclusivelonTwelonelontsRulelon,
+        DropAllTrustelondFrielonndsTwelonelontsRulelon,
       ) ++
-        (VisibilityPolicy.baseTweetRules
-          ++ Seq(DropAllCommunityTweetsRule)
-          ++ TimelineProfileRules.tweetRules),
-      userRules = UserTimelineRules.UserRules
+        (VisibilityPolicy.baselonTwelonelontRulelons
+          ++ Selonq(DropAllCommunityTwelonelontsRulelon)
+          ++ TimelonlinelonProfilelonRulelons.twelonelontRulelons),
+      uselonrRulelons = UselonrTimelonlinelonRulelons.UselonrRulelons
     )
 
-case object DESUserLikedTweetsPolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(
-        DropStaleTweetsRule,
-        DropAllExclusiveTweetsRule,
-        DropAllTrustedFriendsTweetsRule,
+caselon objelonct DelonSUselonrLikelondTwelonelontsPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = Selonq(
+        DropStalelonTwelonelontsRulelon,
+        DropAllelonxclusivelonTwelonelontsRulelon,
+        DropAllTrustelondFrielonndsTwelonelontsRulelon,
       ) ++
         (
-          VisibilityPolicy.baseTweetRules ++
-            Seq(
-              DropAllCommunityTweetsRule,
-              AbusePolicyEpisodicTweetLabelInterstitialRule,
-              EmergencyDynamicInterstitialRule,
-              ReportedTweetInterstitialRule,
-              NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-              GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-              NsfwReportedHeuristicsAllUsersTweetLabelRule,
-              GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-              NsfwCardImageAllUsersTweetLabelRule,
-              NsfwHighPrecisionTweetLabelAvoidRule,
-              NsfwHighRecallTweetLabelAvoidRule,
-              GoreAndViolenceHighPrecisionAvoidAllUsersTweetLabelRule,
-              NsfwReportedHeuristicsAvoidAllUsersTweetLabelRule,
-              GoreAndViolenceReportedHeuristicsAvoidAllUsersTweetLabelRule,
-              NsfwCardImageAvoidAllUsersTweetLabelRule,
-              DoNotAmplifyTweetLabelAvoidRule,
-              NsfaHighPrecisionTweetLabelAvoidRule,
-            ) ++ LimitedEngagementBaseRules.tweetRules
+          VisibilityPolicy.baselonTwelonelontRulelons ++
+            Selonq(
+              DropAllCommunityTwelonelontsRulelon,
+              AbuselonPolicyelonpisodicTwelonelontLabelonlIntelonrstitialRulelon,
+              elonmelonrgelonncyDynamicIntelonrstitialRulelon,
+              RelonportelondTwelonelontIntelonrstitialRulelon,
+              NsfwHighPreloncisionIntelonrstitialAllUselonrsTwelonelontLabelonlRulelon,
+              GorelonAndViolelonncelonHighPreloncisionAllUselonrsTwelonelontLabelonlRulelon,
+              NsfwRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlRulelon,
+              GorelonAndViolelonncelonRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlRulelon,
+              NsfwCardImagelonAllUselonrsTwelonelontLabelonlRulelon,
+              NsfwHighPreloncisionTwelonelontLabelonlAvoidRulelon,
+              NsfwHighReloncallTwelonelontLabelonlAvoidRulelon,
+              GorelonAndViolelonncelonHighPreloncisionAvoidAllUselonrsTwelonelontLabelonlRulelon,
+              NsfwRelonportelondHelonuristicsAvoidAllUselonrsTwelonelontLabelonlRulelon,
+              GorelonAndViolelonncelonRelonportelondHelonuristicsAvoidAllUselonrsTwelonelontLabelonlRulelon,
+              NsfwCardImagelonAvoidAllUselonrsTwelonelontLabelonlRulelon,
+              DoNotAmplifyTwelonelontLabelonlAvoidRulelon,
+              NsfaHighPreloncisionTwelonelontLabelonlAvoidRulelon,
+            ) ++ LimitelondelonngagelonmelonntBaselonRulelons.twelonelontRulelons
         ),
-      userRules = UserTimelineRules.UserRules
+      uselonrRulelons = UselonrTimelonlinelonRulelons.UselonrRulelons
     )
 
-case object DESUserMentionsPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++ Seq(
-        DropAllCommunityTweetsRule,
-        AuthorBlocksViewerDropRule,
-        ProtectedAuthorDropRule,
-        DropAllExclusiveTweetsRule,
-        DropAllTrustedFriendsTweetsRule,
-        AbusePolicyEpisodicTweetLabelInterstitialRule,
-        EmergencyDynamicInterstitialRule,
-        NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-        GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-        NsfwReportedHeuristicsAllUsersTweetLabelRule,
-        GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-        NsfwCardImageAllUsersTweetLabelRule,
-      ) ++ LimitedEngagementBaseRules.tweetRules,
-      userRules = Seq(
-        SuspendedAuthorRule
+caselon objelonct DelonSUselonrMelonntionsPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = VisibilityPolicy.baselonTwelonelontRulelons ++ Selonq(
+        DropAllCommunityTwelonelontsRulelon,
+        AuthorBlocksVielonwelonrDropRulelon,
+        ProtelonctelondAuthorDropRulelon,
+        DropAllelonxclusivelonTwelonelontsRulelon,
+        DropAllTrustelondFrielonndsTwelonelontsRulelon,
+        AbuselonPolicyelonpisodicTwelonelontLabelonlIntelonrstitialRulelon,
+        elonmelonrgelonncyDynamicIntelonrstitialRulelon,
+        NsfwHighPreloncisionIntelonrstitialAllUselonrsTwelonelontLabelonlRulelon,
+        GorelonAndViolelonncelonHighPreloncisionAllUselonrsTwelonelontLabelonlRulelon,
+        NsfwRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlRulelon,
+        GorelonAndViolelonncelonRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlRulelon,
+        NsfwCardImagelonAllUselonrsTwelonelontLabelonlRulelon,
+      ) ++ LimitelondelonngagelonmelonntBaselonRulelons.twelonelontRulelons,
+      uselonrRulelons = Selonq(
+        SuspelonndelondAuthorRulelon
       )
     )
 
-case object DESUserTweetsPolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(
-        DropStaleTweetsRule,
-        DropAllExclusiveTweetsRule,
-        DropAllTrustedFriendsTweetsRule,
+caselon objelonct DelonSUselonrTwelonelontsPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = Selonq(
+        DropStalelonTwelonelontsRulelon,
+        DropAllelonxclusivelonTwelonelontsRulelon,
+        DropAllTrustelondFrielonndsTwelonelontsRulelon,
       ) ++
-        (VisibilityPolicy.baseTweetRules
-          ++ Seq(DropAllCommunityTweetsRule)
-          ++ TimelineProfileRules.tweetRules),
-      userRules = UserTimelineRules.UserRules
+        (VisibilityPolicy.baselonTwelonelontRulelons
+          ++ Selonq(DropAllCommunityTwelonelontsRulelon)
+          ++ TimelonlinelonProfilelonRulelons.twelonelontRulelons),
+      uselonrRulelons = UselonrTimelonlinelonRulelons.UselonrRulelons
     )
 
-case object DevPlatformComplianceStreamPolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(
-        SpamAllUsersTweetLabelRule,
-        PdnaAllUsersTweetLabelRule,
-        BounceAllUsersTweetLabelRule,
-        AbusePolicyEpisodicTweetLabelComplianceTweetNoticeRule,
+caselon objelonct DelonvPlatformCompliancelonStrelonamPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = Selonq(
+        SpamAllUselonrsTwelonelontLabelonlRulelon,
+        PdnaAllUselonrsTwelonelontLabelonlRulelon,
+        BouncelonAllUselonrsTwelonelontLabelonlRulelon,
+        AbuselonPolicyelonpisodicTwelonelontLabelonlCompliancelonTwelonelontNoticelonRulelon,
       )
     )
 
-case object DesTweetDetailPolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(
-        DropAllExclusiveTweetsRule,
-        DropAllTrustedFriendsTweetsRule,
-      ) ++ BaseTweetDetailPolicy.tweetRules
+caselon objelonct DelonsTwelonelontDelontailPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = Selonq(
+        DropAllelonxclusivelonTwelonelontsRulelon,
+        DropAllTrustelondFrielonndsTwelonelontsRulelon,
+      ) ++ BaselonTwelonelontDelontailPolicy.twelonelontRulelons
     )
 
-case object DevPlatformGetListTweetsPolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(DropStaleTweetsRule) ++ DesTweetDetailPolicy.tweetRules
+caselon objelonct DelonvPlatformGelontListTwelonelontsPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = Selonq(DropStalelonTwelonelontsRulelon) ++ DelonsTwelonelontDelontailPolicy.twelonelontRulelons
     )
 
-case object FollowerConnectionsPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules,
-      userRules = Seq(
-        SpammyFollowerRule
+caselon objelonct FollowelonrConnelonctionsPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = VisibilityPolicy.baselonTwelonelontRulelons,
+      uselonrRulelons = Selonq(
+        SpammyFollowelonrRulelon
       )
     )
 
-case object SuperFollowerConnectionsPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules,
-      userRules = Seq(
-        SpammyFollowerRule
+caselon objelonct SupelonrFollowelonrConnelonctionsPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = VisibilityPolicy.baselonTwelonelontRulelons,
+      uselonrRulelons = Selonq(
+        SpammyFollowelonrRulelon
       )
     )
 
-case object LivePipelineEngagementCountsPolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(
-        AbusePolicyEpisodicTweetLabelInterstitialRule,
-        EmergencyDynamicInterstitialRule,
-      ) ++ LimitedEngagementBaseRules.tweetRules
+caselon objelonct LivelonPipelonlinelonelonngagelonmelonntCountsPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = Selonq(
+        AbuselonPolicyelonpisodicTwelonelontLabelonlIntelonrstitialRulelon,
+        elonmelonrgelonncyDynamicIntelonrstitialRulelon,
+      ) ++ LimitelondelonngagelonmelonntBaselonRulelons.twelonelontRulelons
     )
 
-case object LiveVideoTimelinePolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++ Seq(
-        AbusiveTweetLabelRule,
-        AbusiveHighRecallTweetLabelRule,
-        LowQualityTweetLabelDropRule,
-        NsfwHighPrecisionTweetLabelRule,
-        GoreAndViolenceHighPrecisionTweetLabelRule,
-        NsfwReportedHeuristicsTweetLabelRule,
-        GoreAndViolenceReportedHeuristicsTweetLabelRule,
-        NsfwCardImageTweetLabelRule,
-        NsfwHighRecallTweetLabelRule,
-        NsfwVideoTweetLabelDropRule,
-        NsfwTextTweetLabelDropRule,
-        LiveLowQualityTweetLabelRule,
-        SpamHighRecallTweetLabelDropRule,
-        DuplicateContentTweetLabelDropRule,
-        SearchBlacklistTweetLabelRule,
-        BystanderAbusiveTweetLabelRule,
-        SafetyCrisisLevel3DropRule,
-        SafetyCrisisLevel4DropRule,
-        DoNotAmplifyDropRule,
-        SmyteSpamTweetLabelDropRule,
-        AbusePolicyEpisodicTweetLabelDropRule,
-        EmergencyDropRule,
+caselon objelonct LivelonVidelonoTimelonlinelonPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = VisibilityPolicy.baselonTwelonelontRulelons ++ Selonq(
+        AbusivelonTwelonelontLabelonlRulelon,
+        AbusivelonHighReloncallTwelonelontLabelonlRulelon,
+        LowQualityTwelonelontLabelonlDropRulelon,
+        NsfwHighPreloncisionTwelonelontLabelonlRulelon,
+        GorelonAndViolelonncelonHighPreloncisionTwelonelontLabelonlRulelon,
+        NsfwRelonportelondHelonuristicsTwelonelontLabelonlRulelon,
+        GorelonAndViolelonncelonRelonportelondHelonuristicsTwelonelontLabelonlRulelon,
+        NsfwCardImagelonTwelonelontLabelonlRulelon,
+        NsfwHighReloncallTwelonelontLabelonlRulelon,
+        NsfwVidelonoTwelonelontLabelonlDropRulelon,
+        NsfwTelonxtTwelonelontLabelonlDropRulelon,
+        LivelonLowQualityTwelonelontLabelonlRulelon,
+        SpamHighReloncallTwelonelontLabelonlDropRulelon,
+        DuplicatelonContelonntTwelonelontLabelonlDropRulelon,
+        SelonarchBlacklistTwelonelontLabelonlRulelon,
+        BystandelonrAbusivelonTwelonelontLabelonlRulelon,
+        SafelontyCrisisLelonvelonl3DropRulelon,
+        SafelontyCrisisLelonvelonl4DropRulelon,
+        DoNotAmplifyDropRulelon,
+        SmytelonSpamTwelonelontLabelonlDropRulelon,
+        AbuselonPolicyelonpisodicTwelonelontLabelonlDropRulelon,
+        elonmelonrgelonncyDropRulelon,
       ),
-      userRules = Seq(
-        AbusiveRule,
-        LowQualityRule,
-        ReadOnlyRule,
-        SearchBlacklistRule,
-        SearchNsfwTextRule,
-        CompromisedRule,
-        NsfwHighPrecisionRule,
-        NsfwHighRecallRule,
-        NsfwAvatarImageRule,
-        NsfwBannerImageRule,
-        SpamHighRecallRule,
-        DuplicateContentRule,
-        LiveLowQualityRule,
-        EngagementSpammerRule,
-        EngagementSpammerHighRecallRule,
-        AbusiveHighRecallRule,
-        DoNotAmplifyNonFollowerRule,
-        NotGraduatedNonFollowerRule,
-        LikelyIvsLabelNonFollowerDropUserRule,
-        NsfwTextNonAuthorDropRule
+      uselonrRulelons = Selonq(
+        AbusivelonRulelon,
+        LowQualityRulelon,
+        RelonadOnlyRulelon,
+        SelonarchBlacklistRulelon,
+        SelonarchNsfwTelonxtRulelon,
+        CompromiselondRulelon,
+        NsfwHighPreloncisionRulelon,
+        NsfwHighReloncallRulelon,
+        NsfwAvatarImagelonRulelon,
+        NsfwBannelonrImagelonRulelon,
+        SpamHighReloncallRulelon,
+        DuplicatelonContelonntRulelon,
+        LivelonLowQualityRulelon,
+        elonngagelonmelonntSpammelonrRulelon,
+        elonngagelonmelonntSpammelonrHighReloncallRulelon,
+        AbusivelonHighReloncallRulelon,
+        DoNotAmplifyNonFollowelonrRulelon,
+        NotGraduatelondNonFollowelonrRulelon,
+        LikelonlyIvsLabelonlNonFollowelonrDropUselonrRulelon,
+        NsfwTelonxtNonAuthorDropRulelon
       )
     )
 
-case object MagicRecsPolicyOverrides {
-  val replacements: Map[Rule, Rule] = Map()
-  def union(rules: Seq[Rule]*): Seq[Rule] = rules
-    .map(ar => ar.map(x => replacements.getOrElse(x, x)))
-    .reduce((a, b) => a ++ b.filterNot(a.contains))
+caselon objelonct MagicReloncsPolicyOvelonrridelons {
+  val relonplacelonmelonnts: Map[Rulelon, Rulelon] = Map()
+  delonf union(rulelons: Selonq[Rulelon]*): Selonq[Rulelon] = rulelons
+    .map(ar => ar.map(x => relonplacelonmelonnts.gelontOrelonlselon(x, x)))
+    .relonducelon((a, b) => a ++ b.filtelonrNot(a.contains))
 }
 
-case object MagicRecsPolicy
-    extends VisibilityPolicy(
-      tweetRules = MagicRecsPolicyOverrides.union(
-        RecommendationsPolicy.tweetRules.filterNot(_ == SafetyCrisisLevel3DropRule),
-        NotificationsIbisPolicy.tweetRules,
-        Seq(NsfaHighRecallTweetLabelRule, NsfwHighRecallTweetLabelRule),
-        Seq(
-          AuthorBlocksViewerDropRule,
-          ViewerBlocksAuthorRule,
-          ViewerMutesAuthorRule
+caselon objelonct MagicReloncsPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = MagicReloncsPolicyOvelonrridelons.union(
+        ReloncommelonndationsPolicy.twelonelontRulelons.filtelonrNot(_ == SafelontyCrisisLelonvelonl3DropRulelon),
+        NotificationsIbisPolicy.twelonelontRulelons,
+        Selonq(NsfaHighReloncallTwelonelontLabelonlRulelon, NsfwHighReloncallTwelonelontLabelonlRulelon),
+        Selonq(
+          AuthorBlocksVielonwelonrDropRulelon,
+          VielonwelonrBlocksAuthorRulelon,
+          VielonwelonrMutelonsAuthorRulelon
         ),
-        Seq(
-          DeactivatedAuthorRule,
-          SuspendedAuthorRule,
-          TweetNsfwUserDropRule,
-          TweetNsfwAdminDropRule
+        Selonq(
+          DelonactivatelondAuthorRulelon,
+          SuspelonndelondAuthorRulelon,
+          TwelonelontNsfwUselonrDropRulelon,
+          TwelonelontNsfwAdminDropRulelon
         )
       ),
-      userRules = MagicRecsPolicyOverrides.union(
-        RecommendationsPolicy.userRules,
-        NotificationsRules.userRules
+      uselonrRulelons = MagicReloncsPolicyOvelonrridelons.union(
+        ReloncommelonndationsPolicy.uselonrRulelons,
+        NotificationsRulelons.uselonrRulelons
       )
     )
 
-case object MagicRecsV2Policy
-    extends VisibilityPolicy(
-      tweetRules = MagicRecsPolicyOverrides.union(
-        MagicRecsPolicy.tweetRules,
-        NotificationsWriterTweetHydratorPolicy.tweetRules
+caselon objelonct MagicReloncsV2Policy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = MagicReloncsPolicyOvelonrridelons.union(
+        MagicReloncsPolicy.twelonelontRulelons,
+        NotificationsWritelonrTwelonelontHydratorPolicy.twelonelontRulelons
       ),
-      userRules = MagicRecsPolicyOverrides.union(
-        MagicRecsPolicy.userRules,
-        NotificationsWriterV2Policy.userRules
+      uselonrRulelons = MagicReloncsPolicyOvelonrridelons.union(
+        MagicReloncsPolicy.uselonrRulelons,
+        NotificationsWritelonrV2Policy.uselonrRulelons
       )
     )
 
-case object MagicRecsAggressivePolicy
-    extends VisibilityPolicy(
-      tweetRules = MagicRecsPolicy.tweetRules,
-      userRules = MagicRecsPolicy.userRules
+caselon objelonct MagicReloncsAggrelonssivelonPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = MagicReloncsPolicy.twelonelontRulelons,
+      uselonrRulelons = MagicReloncsPolicy.uselonrRulelons
     )
 
-case object MagicRecsAggressiveV2Policy
-    extends VisibilityPolicy(
-      tweetRules = MagicRecsV2Policy.tweetRules,
-      userRules = MagicRecsV2Policy.userRules
+caselon objelonct MagicReloncsAggrelonssivelonV2Policy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = MagicReloncsV2Policy.twelonelontRulelons,
+      uselonrRulelons = MagicReloncsV2Policy.uselonrRulelons
     )
 
-case object MinimalPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules,
-      userRules = Seq(
-        TsViolationRule
+caselon objelonct MinimalPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = VisibilityPolicy.baselonTwelonelontRulelons,
+      uselonrRulelons = Selonq(
+        TsViolationRulelon
       )
     )
 
-case object ModeratedTweetsTimelinePolicy
-    extends VisibilityPolicy(
-      tweetRules = TweetDetailPolicy.tweetRules.diff(
-        Seq(
-          AuthorBlocksViewerDropRule,
-          MutedKeywordForTweetRepliesInterstitialRule,
-          ReportedTweetInterstitialRule)),
-      policyRuleParams = TweetDetailPolicy.policyRuleParams
+caselon objelonct ModelonratelondTwelonelontsTimelonlinelonPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = TwelonelontDelontailPolicy.twelonelontRulelons.diff(
+        Selonq(
+          AuthorBlocksVielonwelonrDropRulelon,
+          MutelondKelonywordForTwelonelontRelonplielonsIntelonrstitialRulelon,
+          RelonportelondTwelonelontIntelonrstitialRulelon)),
+      policyRulelonParams = TwelonelontDelontailPolicy.policyRulelonParams
     )
 
-case object MomentsPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++
-        Seq(
-          AuthorBlocksViewerUnspecifiedRule,
-          AbusePolicyEpisodicTweetLabelInterstitialRule,
-          EmergencyDynamicInterstitialRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-          GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule,
-        ) ++ LimitedEngagementBaseRules.tweetRules
+caselon objelonct MomelonntsPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = VisibilityPolicy.baselonTwelonelontRulelons ++
+        Selonq(
+          AuthorBlocksVielonwelonrUnspeloncifielondRulelon,
+          AbuselonPolicyelonpisodicTwelonelontLabelonlIntelonrstitialRulelon,
+          elonmelonrgelonncyDynamicIntelonrstitialRulelon,
+          NsfwHighPreloncisionIntelonrstitialAllUselonrsTwelonelontLabelonlRulelon,
+          GorelonAndViolelonncelonHighPreloncisionAllUselonrsTwelonelontLabelonlRulelon,
+          NsfwRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlRulelon,
+          GorelonAndViolelonncelonRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlRulelon,
+          NsfwCardImagelonAllUselonrsTwelonelontLabelonlRulelon,
+        ) ++ LimitelondelonngagelonmelonntBaselonRulelons.twelonelontRulelons
     )
 
-case object NearbyTimelinePolicy
-    extends VisibilityPolicy(
-      tweetRules = SearchBlenderRules.tweetRelevanceRules,
-      userRules = SearchBlenderRules.userBaseRules
+caselon objelonct NelonarbyTimelonlinelonPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = SelonarchBlelonndelonrRulelons.twelonelontRelonlelonvancelonRulelons,
+      uselonrRulelons = SelonarchBlelonndelonrRulelons.uselonrBaselonRulelons
     )
 
-private object NotificationsRules {
-  val tweetRules: Seq[Rule] =
-    DropStaleTweetsRule +: VisibilityPolicy.baseTweetRules
+privatelon objelonct NotificationsRulelons {
+  val twelonelontRulelons: Selonq[Rulelon] =
+    DropStalelonTwelonelontsRulelon +: VisibilityPolicy.baselonTwelonelontRulelons
 
-  val userRules: Seq[Rule] = Seq(
-    AbusiveRule,
-    LowQualityRule,
-    ReadOnlyRule,
-    CompromisedRule,
-    SpamHighRecallRule,
-    DuplicateContentRule,
-    AbusiveHighRecallRule,
-    EngagementSpammerNonFollowerWithUqfRule,
-    EngagementSpammerHighRecallNonFollowerWithUqfRule,
-    DownrankSpamReplyNonFollowerWithUqfRule
+  val uselonrRulelons: Selonq[Rulelon] = Selonq(
+    AbusivelonRulelon,
+    LowQualityRulelon,
+    RelonadOnlyRulelon,
+    CompromiselondRulelon,
+    SpamHighReloncallRulelon,
+    DuplicatelonContelonntRulelon,
+    AbusivelonHighReloncallRulelon,
+    elonngagelonmelonntSpammelonrNonFollowelonrWithUqfRulelon,
+    elonngagelonmelonntSpammelonrHighReloncallNonFollowelonrWithUqfRulelon,
+    DownrankSpamRelonplyNonFollowelonrWithUqfRulelon
   )
 }
 
-case object NotificationsIbisPolicy
-    extends VisibilityPolicy(
-      tweetRules =
-          VisibilityPolicy.baseTweetRules ++ Seq(
-          AbusiveUqfNonFollowerTweetLabelRule,
-          LowQualityTweetLabelDropRule,
-          ToxicityReplyFilterDropNotificationRule,
-          NsfwHighPrecisionTweetLabelRule,
-          GoreAndViolenceHighPrecisionTweetLabelRule,
-          NsfwReportedHeuristicsTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsTweetLabelRule,
-          NsfwCardImageTweetLabelRule,
-          NsfwVideoTweetLabelDropRule,
-          NsfwTextTweetLabelDropRule,
-          SpamHighRecallTweetLabelDropRule,
-          DuplicateContentTweetLabelDropRule,
-          DuplicateMentionTweetLabelRule,
-          LowQualityMentionTweetLabelRule,
-          UntrustedUrlUqfNonFollowerTweetLabelRule,
-          DownrankSpamReplyUqfNonFollowerTweetLabelRule,
-          SafetyCrisisAnyLevelDropRule,
-          DoNotAmplifyDropRule,
-          SmyteSpamTweetLabelDropRule,
-          AbusePolicyEpisodicTweetLabelDropRule,
-          EmergencyDropRule,
+caselon objelonct NotificationsIbisPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons =
+          VisibilityPolicy.baselonTwelonelontRulelons ++ Selonq(
+          AbusivelonUqfNonFollowelonrTwelonelontLabelonlRulelon,
+          LowQualityTwelonelontLabelonlDropRulelon,
+          ToxicityRelonplyFiltelonrDropNotificationRulelon,
+          NsfwHighPreloncisionTwelonelontLabelonlRulelon,
+          GorelonAndViolelonncelonHighPreloncisionTwelonelontLabelonlRulelon,
+          NsfwRelonportelondHelonuristicsTwelonelontLabelonlRulelon,
+          GorelonAndViolelonncelonRelonportelondHelonuristicsTwelonelontLabelonlRulelon,
+          NsfwCardImagelonTwelonelontLabelonlRulelon,
+          NsfwVidelonoTwelonelontLabelonlDropRulelon,
+          NsfwTelonxtTwelonelontLabelonlDropRulelon,
+          SpamHighReloncallTwelonelontLabelonlDropRulelon,
+          DuplicatelonContelonntTwelonelontLabelonlDropRulelon,
+          DuplicatelonMelonntionTwelonelontLabelonlRulelon,
+          LowQualityMelonntionTwelonelontLabelonlRulelon,
+          UntrustelondUrlUqfNonFollowelonrTwelonelontLabelonlRulelon,
+          DownrankSpamRelonplyUqfNonFollowelonrTwelonelontLabelonlRulelon,
+          SafelontyCrisisAnyLelonvelonlDropRulelon,
+          DoNotAmplifyDropRulelon,
+          SmytelonSpamTwelonelontLabelonlDropRulelon,
+          AbuselonPolicyelonpisodicTwelonelontLabelonlDropRulelon,
+          elonmelonrgelonncyDropRulelon,
         ),
-      userRules = NotificationsRules.userRules ++ Seq(
-        DoNotAmplifyNonFollowerRule,
-        LikelyIvsLabelNonFollowerDropUserRule,
-        NsfwTextNonAuthorDropRule
+      uselonrRulelons = NotificationsRulelons.uselonrRulelons ++ Selonq(
+        DoNotAmplifyNonFollowelonrRulelon,
+        LikelonlyIvsLabelonlNonFollowelonrDropUselonrRulelon,
+        NsfwTelonxtNonAuthorDropRulelon
       )
     )
 
-case object NotificationsReadPolicy
-    extends VisibilityPolicy(
-      tweetRules = NotificationsRules.tweetRules,
-      userRules = NotificationsRules.userRules
+caselon objelonct NotificationsRelonadPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = NotificationsRulelons.twelonelontRulelons,
+      uselonrRulelons = NotificationsRulelons.uselonrRulelons
     )
 
-case object NotificationsTimelineDeviceFollowPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules,
-      userRules = Seq(
-        AuthorBlocksViewerDropRule,
-        ViewerBlocksAuthorRule,
-        CompromisedRule
+caselon objelonct NotificationsTimelonlinelonDelonvicelonFollowPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = VisibilityPolicy.baselonTwelonelontRulelons,
+      uselonrRulelons = Selonq(
+        AuthorBlocksVielonwelonrDropRulelon,
+        VielonwelonrBlocksAuthorRulelon,
+        CompromiselondRulelon
       )
     )
 
-case object NotificationsWritePolicy
-    extends VisibilityPolicy(
-      tweetRules = NotificationsRules.tweetRules,
-      userRules = NotificationsRules.userRules
+caselon objelonct NotificationsWritelonPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = NotificationsRulelons.twelonelontRulelons,
+      uselonrRulelons = NotificationsRulelons.uselonrRulelons
     )
 
-case object NotificationsWriterV2Policy
-    extends VisibilityPolicy(
-      userRules =
-        Seq(
-          AuthorBlocksViewerDropRule,
-          DeactivatedAuthorRule,
-          ErasedAuthorRule,
-          ProtectedAuthorDropRule,
-          SuspendedAuthorRule,
-          DeactivatedViewerRule,
-          SuspendedViewerRule,
-          ViewerBlocksAuthorRule,
-          ViewerMutesAndDoesNotFollowAuthorRule,
-          ViewerIsUnmentionedRule,
-          NoConfirmedEmailRule,
-          NoConfirmedPhoneRule,
-          NoDefaultProfileImageRule,
-          NoNewUsersRule,
-          NoNotFollowedByRule,
-          OnlyPeopleIFollowRule
+caselon objelonct NotificationsWritelonrV2Policy
+    elonxtelonnds VisibilityPolicy(
+      uselonrRulelons =
+        Selonq(
+          AuthorBlocksVielonwelonrDropRulelon,
+          DelonactivatelondAuthorRulelon,
+          elonraselondAuthorRulelon,
+          ProtelonctelondAuthorDropRulelon,
+          SuspelonndelondAuthorRulelon,
+          DelonactivatelondVielonwelonrRulelon,
+          SuspelonndelondVielonwelonrRulelon,
+          VielonwelonrBlocksAuthorRulelon,
+          VielonwelonrMutelonsAndDoelonsNotFollowAuthorRulelon,
+          VielonwelonrIsUnmelonntionelondRulelon,
+          NoConfirmelondelonmailRulelon,
+          NoConfirmelondPhonelonRulelon,
+          NoDelonfaultProfilelonImagelonRulelon,
+          NoNelonwUselonrsRulelon,
+          NoNotFollowelondByRulelon,
+          OnlyPelonoplelonIFollowRulelon
         ) ++
-          NotificationsRules.userRules
+          NotificationsRulelons.uselonrRulelons
     )
 
-case object NotificationsWriterTweetHydratorPolicy
-    extends VisibilityPolicy(
-      tweetRules = NotificationsRules.tweetRules ++
-        Seq(
-          LowQualityTweetLabelDropRule,
-          SpamHighRecallTweetLabelDropRule,
-          DuplicateContentTweetLabelDropRule,
-          DuplicateMentionUqfTweetLabelRule,
-          LowQualityMentionTweetLabelRule,
-          SmyteSpamTweetLabelDropRule,
-          ToxicityReplyFilterDropNotificationRule,
-          AbusiveUqfNonFollowerTweetLabelRule,
-          UntrustedUrlUqfNonFollowerTweetLabelRule,
-          DownrankSpamReplyUqfNonFollowerTweetLabelRule,
-          ViewerHasMatchingMutedKeywordForNotificationsRule,
-          NsfwCardImageAllUsersTweetLabelRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-          GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-        ) ++ LimitedEngagementBaseRules.tweetRules
+caselon objelonct NotificationsWritelonrTwelonelontHydratorPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = NotificationsRulelons.twelonelontRulelons ++
+        Selonq(
+          LowQualityTwelonelontLabelonlDropRulelon,
+          SpamHighReloncallTwelonelontLabelonlDropRulelon,
+          DuplicatelonContelonntTwelonelontLabelonlDropRulelon,
+          DuplicatelonMelonntionUqfTwelonelontLabelonlRulelon,
+          LowQualityMelonntionTwelonelontLabelonlRulelon,
+          SmytelonSpamTwelonelontLabelonlDropRulelon,
+          ToxicityRelonplyFiltelonrDropNotificationRulelon,
+          AbusivelonUqfNonFollowelonrTwelonelontLabelonlRulelon,
+          UntrustelondUrlUqfNonFollowelonrTwelonelontLabelonlRulelon,
+          DownrankSpamRelonplyUqfNonFollowelonrTwelonelontLabelonlRulelon,
+          VielonwelonrHasMatchingMutelondKelonywordForNotificationsRulelon,
+          NsfwCardImagelonAllUselonrsTwelonelontLabelonlRulelon,
+          NsfwHighPreloncisionIntelonrstitialAllUselonrsTwelonelontLabelonlRulelon,
+          GorelonAndViolelonncelonHighPreloncisionAllUselonrsTwelonelontLabelonlRulelon,
+          NsfwRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlRulelon,
+          GorelonAndViolelonncelonRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlRulelon,
+        ) ++ LimitelondelonngagelonmelonntBaselonRulelons.twelonelontRulelons
     )
 
-case object NotificationsPlatformPolicy
-    extends VisibilityPolicy(
-      tweetRules = NotificationsWriterTweetHydratorPolicy.tweetRules,
-      userRules = NotificationsWriterV2Policy.userRules
+caselon objelonct NotificationsPlatformPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = NotificationsWritelonrTwelonelontHydratorPolicy.twelonelontRulelons,
+      uselonrRulelons = NotificationsWritelonrV2Policy.uselonrRulelons
     )
 
-case object NotificationsPlatformPushPolicy
-    extends VisibilityPolicy(
-      tweetRules = NotificationsIbisPolicy.tweetRules,
-      userRules = Seq(ViewerMutesAuthorRule)
-        ++ NotificationsIbisPolicy.userRules
+caselon objelonct NotificationsPlatformPushPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = NotificationsIbisPolicy.twelonelontRulelons,
+      uselonrRulelons = Selonq(VielonwelonrMutelonsAuthorRulelon)
+        ++ NotificationsIbisPolicy.uselonrRulelons
     )
 
-case object QuoteTweetTimelinePolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++ Seq(
-        DropStaleTweetsRule,
-        AbusiveTweetLabelRule,
-        LowQualityTweetLabelDropRule,
-        NsfwHighPrecisionTweetLabelRule,
-        GoreAndViolenceHighPrecisionTweetLabelRule,
-        NsfwReportedHeuristicsTweetLabelRule,
-        GoreAndViolenceReportedHeuristicsTweetLabelRule,
-        NsfwCardImageTweetLabelRule,
-        NsfwHighRecallTweetLabelRule,
-        NsfwVideoTweetLabelDropRule,
-        NsfwTextTweetLabelDropRule,
-        SpamHighRecallTweetLabelDropRule,
-        DuplicateContentTweetLabelDropRule,
-        GoreAndViolenceTweetLabelRule,
-        UntrustedUrlTweetLabelRule,
-        DownrankSpamReplyTweetLabelRule,
-        SearchBlacklistTweetLabelRule,
-        AutomationTweetLabelRule,
-        DuplicateMentionTweetLabelRule,
-        BystanderAbusiveTweetLabelRule,
-        SmyteSpamTweetLabelDropRule,
-        AbusePolicyEpisodicTweetLabelInterstitialRule,
-        EmergencyDynamicInterstitialRule,
-      ) ++ LimitedEngagementBaseRules.tweetRules,
-      userRules = Seq(
-        AbusiveRule,
-        LowQualityRule,
-        ReadOnlyRule,
-        SearchBlacklistRule,
-        SearchNsfwTextRule,
-        CompromisedRule,
-        SpamHighRecallRule,
-        DuplicateContentRule,
-        NsfwHighPrecisionRule,
-        NsfwAvatarImageRule,
-        NsfwBannerImageRule,
-        AbusiveHighRecallRule,
-        DownrankSpamReplyNonAuthorRule,
-        NsfwTextNonAuthorDropRule
+caselon objelonct QuotelonTwelonelontTimelonlinelonPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = VisibilityPolicy.baselonTwelonelontRulelons ++ Selonq(
+        DropStalelonTwelonelontsRulelon,
+        AbusivelonTwelonelontLabelonlRulelon,
+        LowQualityTwelonelontLabelonlDropRulelon,
+        NsfwHighPreloncisionTwelonelontLabelonlRulelon,
+        GorelonAndViolelonncelonHighPreloncisionTwelonelontLabelonlRulelon,
+        NsfwRelonportelondHelonuristicsTwelonelontLabelonlRulelon,
+        GorelonAndViolelonncelonRelonportelondHelonuristicsTwelonelontLabelonlRulelon,
+        NsfwCardImagelonTwelonelontLabelonlRulelon,
+        NsfwHighReloncallTwelonelontLabelonlRulelon,
+        NsfwVidelonoTwelonelontLabelonlDropRulelon,
+        NsfwTelonxtTwelonelontLabelonlDropRulelon,
+        SpamHighReloncallTwelonelontLabelonlDropRulelon,
+        DuplicatelonContelonntTwelonelontLabelonlDropRulelon,
+        GorelonAndViolelonncelonTwelonelontLabelonlRulelon,
+        UntrustelondUrlTwelonelontLabelonlRulelon,
+        DownrankSpamRelonplyTwelonelontLabelonlRulelon,
+        SelonarchBlacklistTwelonelontLabelonlRulelon,
+        AutomationTwelonelontLabelonlRulelon,
+        DuplicatelonMelonntionTwelonelontLabelonlRulelon,
+        BystandelonrAbusivelonTwelonelontLabelonlRulelon,
+        SmytelonSpamTwelonelontLabelonlDropRulelon,
+        AbuselonPolicyelonpisodicTwelonelontLabelonlIntelonrstitialRulelon,
+        elonmelonrgelonncyDynamicIntelonrstitialRulelon,
+      ) ++ LimitelondelonngagelonmelonntBaselonRulelons.twelonelontRulelons,
+      uselonrRulelons = Selonq(
+        AbusivelonRulelon,
+        LowQualityRulelon,
+        RelonadOnlyRulelon,
+        SelonarchBlacklistRulelon,
+        SelonarchNsfwTelonxtRulelon,
+        CompromiselondRulelon,
+        SpamHighReloncallRulelon,
+        DuplicatelonContelonntRulelon,
+        NsfwHighPreloncisionRulelon,
+        NsfwAvatarImagelonRulelon,
+        NsfwBannelonrImagelonRulelon,
+        AbusivelonHighReloncallRulelon,
+        DownrankSpamRelonplyNonAuthorRulelon,
+        NsfwTelonxtNonAuthorDropRulelon
       )
     )
 
-case object ElevatedQuoteTweetTimelinePolicy
-    extends VisibilityPolicy(
-      tweetRules =
-          TweetDetailPolicy.tweetRules.diff(
-            Seq(
-              MutedKeywordForQuotedTweetTweetDetailInterstitialRule,
-              ReportedTweetInterstitialRule)),
-      policyRuleParams = TweetDetailPolicy.policyRuleParams
+caselon objelonct elonlelonvatelondQuotelonTwelonelontTimelonlinelonPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons =
+          TwelonelontDelontailPolicy.twelonelontRulelons.diff(
+            Selonq(
+              MutelondKelonywordForQuotelondTwelonelontTwelonelontDelontailIntelonrstitialRulelon,
+              RelonportelondTwelonelontIntelonrstitialRulelon)),
+      policyRulelonParams = TwelonelontDelontailPolicy.policyRulelonParams
     )
 
-case object EmbedsPublicInterestNoticePolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++ Seq(
-        AbusePolicyEpisodicTweetLabelInterstitialRule,
-        EmergencyDynamicInterstitialRule,
+caselon objelonct elonmbelondsPublicIntelonrelonstNoticelonPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = VisibilityPolicy.baselonTwelonelontRulelons ++ Selonq(
+        AbuselonPolicyelonpisodicTwelonelontLabelonlIntelonrstitialRulelon,
+        elonmelonrgelonncyDynamicIntelonrstitialRulelon,
       )
     )
 
-case object RecommendationsPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++
-        Seq(
-          AbusiveTweetLabelRule,
-          LowQualityTweetLabelDropRule,
-          NsfwHighPrecisionTweetLabelRule,
-          GoreAndViolenceHighPrecisionTweetLabelRule,
-          NsfwReportedHeuristicsTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsTweetLabelRule,
-          NsfwCardImageTweetLabelRule,
-          NsfwVideoTweetLabelDropRule,
-          NsfwTextTweetLabelDropRule,
-          SpamHighRecallTweetLabelDropRule,
-          DuplicateContentTweetLabelDropRule,
-          GoreAndViolenceTweetLabelRule,
-          BystanderAbusiveTweetLabelRule,
-          DoNotAmplifyDropRule,
-          SafetyCrisisLevel3DropRule,
-          SmyteSpamTweetLabelDropRule,
-          AbusePolicyEpisodicTweetLabelDropRule,
-          EmergencyDropRule,
+caselon objelonct ReloncommelonndationsPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = VisibilityPolicy.baselonTwelonelontRulelons ++
+        Selonq(
+          AbusivelonTwelonelontLabelonlRulelon,
+          LowQualityTwelonelontLabelonlDropRulelon,
+          NsfwHighPreloncisionTwelonelontLabelonlRulelon,
+          GorelonAndViolelonncelonHighPreloncisionTwelonelontLabelonlRulelon,
+          NsfwRelonportelondHelonuristicsTwelonelontLabelonlRulelon,
+          GorelonAndViolelonncelonRelonportelondHelonuristicsTwelonelontLabelonlRulelon,
+          NsfwCardImagelonTwelonelontLabelonlRulelon,
+          NsfwVidelonoTwelonelontLabelonlDropRulelon,
+          NsfwTelonxtTwelonelontLabelonlDropRulelon,
+          SpamHighReloncallTwelonelontLabelonlDropRulelon,
+          DuplicatelonContelonntTwelonelontLabelonlDropRulelon,
+          GorelonAndViolelonncelonTwelonelontLabelonlRulelon,
+          BystandelonrAbusivelonTwelonelontLabelonlRulelon,
+          DoNotAmplifyDropRulelon,
+          SafelontyCrisisLelonvelonl3DropRulelon,
+          SmytelonSpamTwelonelontLabelonlDropRulelon,
+          AbuselonPolicyelonpisodicTwelonelontLabelonlDropRulelon,
+          elonmelonrgelonncyDropRulelon,
         ),
-      userRules = Seq(
-        DropNsfwAdminAuthorRule,
-        AbusiveRule,
-        LowQualityRule,
-        ReadOnlyRule,
-        CompromisedRule,
-        RecommendationsBlacklistRule,
-        SpamHighRecallRule,
-        DuplicateContentRule,
-        NsfwHighPrecisionRule,
-        NsfwNearPerfectAuthorRule,
-        NsfwBannerImageRule,
-        NsfwAvatarImageRule,
-        EngagementSpammerRule,
-        EngagementSpammerHighRecallRule,
-        AbusiveHighRecallRule,
-        DoNotAmplifyNonFollowerRule,
-        NotGraduatedNonFollowerRule,
-        LikelyIvsLabelNonFollowerDropUserRule,
-        NsfwTextNonAuthorDropRule
+      uselonrRulelons = Selonq(
+        DropNsfwAdminAuthorRulelon,
+        AbusivelonRulelon,
+        LowQualityRulelon,
+        RelonadOnlyRulelon,
+        CompromiselondRulelon,
+        ReloncommelonndationsBlacklistRulelon,
+        SpamHighReloncallRulelon,
+        DuplicatelonContelonntRulelon,
+        NsfwHighPreloncisionRulelon,
+        NsfwNelonarPelonrfelonctAuthorRulelon,
+        NsfwBannelonrImagelonRulelon,
+        NsfwAvatarImagelonRulelon,
+        elonngagelonmelonntSpammelonrRulelon,
+        elonngagelonmelonntSpammelonrHighReloncallRulelon,
+        AbusivelonHighReloncallRulelon,
+        DoNotAmplifyNonFollowelonrRulelon,
+        NotGraduatelondNonFollowelonrRulelon,
+        LikelonlyIvsLabelonlNonFollowelonrDropUselonrRulelon,
+        NsfwTelonxtNonAuthorDropRulelon
       )
     )
 
-case object RecosVideoPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++ Seq(
-        AbusiveTweetLabelRule,
-        LowQualityTweetLabelDropRule,
-        NsfwHighPrecisionTweetLabelRule,
-        GoreAndViolenceHighPrecisionTweetLabelRule,
-        NsfwReportedHeuristicsTweetLabelRule,
-        GoreAndViolenceReportedHeuristicsTweetLabelRule,
-        NsfwCardImageTweetLabelRule,
-        NsfwHighRecallTweetLabelRule,
-        NsfwVideoTweetLabelDropRule,
-        NsfwTextTweetLabelDropRule,
-        SpamHighRecallTweetLabelDropRule,
-        DuplicateContentTweetLabelDropRule,
-        BystanderAbusiveTweetLabelRule,
-        SmyteSpamTweetLabelDropRule,
+caselon objelonct ReloncosVidelonoPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = VisibilityPolicy.baselonTwelonelontRulelons ++ Selonq(
+        AbusivelonTwelonelontLabelonlRulelon,
+        LowQualityTwelonelontLabelonlDropRulelon,
+        NsfwHighPreloncisionTwelonelontLabelonlRulelon,
+        GorelonAndViolelonncelonHighPreloncisionTwelonelontLabelonlRulelon,
+        NsfwRelonportelondHelonuristicsTwelonelontLabelonlRulelon,
+        GorelonAndViolelonncelonRelonportelondHelonuristicsTwelonelontLabelonlRulelon,
+        NsfwCardImagelonTwelonelontLabelonlRulelon,
+        NsfwHighReloncallTwelonelontLabelonlRulelon,
+        NsfwVidelonoTwelonelontLabelonlDropRulelon,
+        NsfwTelonxtTwelonelontLabelonlDropRulelon,
+        SpamHighReloncallTwelonelontLabelonlDropRulelon,
+        DuplicatelonContelonntTwelonelontLabelonlDropRulelon,
+        BystandelonrAbusivelonTwelonelontLabelonlRulelon,
+        SmytelonSpamTwelonelontLabelonlDropRulelon,
       ),
-      userRules = Seq(NsfwTextNonAuthorDropRule)
+      uselonrRulelons = Selonq(NsfwTelonxtNonAuthorDropRulelon)
     )
 
-case object RepliesGroupingPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++
-        Seq(
-          LowQualityTweetLabelDropRule,
-          SpamHighRecallTweetLabelDropRule,
-          DuplicateContentTweetLabelDropRule,
-          DeciderableSpamHighRecallAuthorLabelDropRule,
-          SmyteSpamTweetLabelDropRule,
-          AbusePolicyEpisodicTweetLabelInterstitialRule,
-          EmergencyDynamicInterstitialRule,
-          MutedKeywordForTweetRepliesInterstitialRule,
-          ReportedTweetInterstitialRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-          GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule,
-          NsfwHighPrecisionTweetLabelAvoidRule,
-          NsfwHighRecallTweetLabelAvoidRule,
-          GoreAndViolenceHighPrecisionAvoidAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAvoidAdPlacementAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAvoidAdPlacementAllUsersTweetLabelRule,
-          NsfwCardImageAvoidAdPlacementAllUsersTweetLabelRule,
-          DoNotAmplifyTweetLabelAvoidRule,
-          NsfaHighPrecisionTweetLabelAvoidRule,
-        ) ++ LimitedEngagementBaseRules.tweetRules,
-      userRules = Seq(
-        LowQualityRule,
-        ReadOnlyRule,
-        LowQualityHighRecallRule,
-        CompromisedRule,
-        DeciderableSpamHighRecallRule
+caselon objelonct RelonplielonsGroupingPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = VisibilityPolicy.baselonTwelonelontRulelons ++
+        Selonq(
+          LowQualityTwelonelontLabelonlDropRulelon,
+          SpamHighReloncallTwelonelontLabelonlDropRulelon,
+          DuplicatelonContelonntTwelonelontLabelonlDropRulelon,
+          DeloncidelonrablelonSpamHighReloncallAuthorLabelonlDropRulelon,
+          SmytelonSpamTwelonelontLabelonlDropRulelon,
+          AbuselonPolicyelonpisodicTwelonelontLabelonlIntelonrstitialRulelon,
+          elonmelonrgelonncyDynamicIntelonrstitialRulelon,
+          MutelondKelonywordForTwelonelontRelonplielonsIntelonrstitialRulelon,
+          RelonportelondTwelonelontIntelonrstitialRulelon,
+          NsfwHighPreloncisionIntelonrstitialAllUselonrsTwelonelontLabelonlRulelon,
+          GorelonAndViolelonncelonHighPreloncisionAllUselonrsTwelonelontLabelonlRulelon,
+          NsfwRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlRulelon,
+          GorelonAndViolelonncelonRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlRulelon,
+          NsfwCardImagelonAllUselonrsTwelonelontLabelonlRulelon,
+          NsfwHighPreloncisionTwelonelontLabelonlAvoidRulelon,
+          NsfwHighReloncallTwelonelontLabelonlAvoidRulelon,
+          GorelonAndViolelonncelonHighPreloncisionAvoidAllUselonrsTwelonelontLabelonlRulelon,
+          NsfwRelonportelondHelonuristicsAvoidAdPlacelonmelonntAllUselonrsTwelonelontLabelonlRulelon,
+          GorelonAndViolelonncelonRelonportelondHelonuristicsAvoidAdPlacelonmelonntAllUselonrsTwelonelontLabelonlRulelon,
+          NsfwCardImagelonAvoidAdPlacelonmelonntAllUselonrsTwelonelontLabelonlRulelon,
+          DoNotAmplifyTwelonelontLabelonlAvoidRulelon,
+          NsfaHighPreloncisionTwelonelontLabelonlAvoidRulelon,
+        ) ++ LimitelondelonngagelonmelonntBaselonRulelons.twelonelontRulelons,
+      uselonrRulelons = Selonq(
+        LowQualityRulelon,
+        RelonadOnlyRulelon,
+        LowQualityHighReloncallRulelon,
+        CompromiselondRulelon,
+        DeloncidelonrablelonSpamHighReloncallRulelon
       )
     )
 
-case object ReturningUserExperiencePolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++ Seq(
-        AbusiveTweetLabelRule,
-        LowQualityTweetLabelDropRule,
-        NsfaHighRecallTweetLabelRule,
-        NsfwHighPrecisionTweetLabelRule,
-        GoreAndViolenceHighPrecisionTweetLabelRule,
-        NsfwReportedHeuristicsTweetLabelRule,
-        GoreAndViolenceReportedHeuristicsTweetLabelRule,
-        NsfwCardImageTweetLabelRule,
-        NsfwHighRecallTweetLabelRule,
-        NsfwVideoTweetLabelDropRule,
-        NsfwTextTweetLabelDropRule,
-        NsfwTextTweetLabelTopicsDropRule,
-        SpamHighRecallTweetLabelDropRule,
-        DuplicateContentTweetLabelDropRule,
-        GoreAndViolenceTweetLabelRule,
-        UntrustedUrlTweetLabelRule,
-        DownrankSpamReplyTweetLabelRule,
-        SearchBlacklistTweetLabelRule,
-        AutomationTweetLabelRule,
-        DuplicateMentionTweetLabelRule,
-        BystanderAbusiveTweetLabelRule,
-        SmyteSpamTweetLabelDropRule,
-        SafetyCrisisLevel3DropRule,
-        SafetyCrisisLevel4DropRule,
-        DoNotAmplifyDropRule,
-        AbusePolicyEpisodicTweetLabelDropRule,
-        EmergencyDropRule,
-      ) ++ LimitedEngagementBaseRules.tweetRules,
-      userRules = Seq(
-        AbusiveRule,
-        LowQualityRule,
-        ReadOnlyRule,
-        SearchBlacklistRule,
-        SearchNsfwTextRule,
-        CompromisedRule,
-        SpamHighRecallRule,
-        DuplicateContentRule,
-        NsfwHighPrecisionRule,
-        NsfwAvatarImageRule,
-        NsfwBannerImageRule,
-        AbusiveHighRecallRule,
-        DoNotAmplifyNonFollowerRule,
-        NotGraduatedNonFollowerRule,
-        LikelyIvsLabelNonFollowerDropUserRule,
-        DownrankSpamReplyNonAuthorRule,
-        NsfwTextNonAuthorDropRule,
-        DropNsfwUserAuthorRule,
-        NsfwHighRecallRule
+caselon objelonct RelonturningUselonrelonxpelonrielonncelonPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = VisibilityPolicy.baselonTwelonelontRulelons ++ Selonq(
+        AbusivelonTwelonelontLabelonlRulelon,
+        LowQualityTwelonelontLabelonlDropRulelon,
+        NsfaHighReloncallTwelonelontLabelonlRulelon,
+        NsfwHighPreloncisionTwelonelontLabelonlRulelon,
+        GorelonAndViolelonncelonHighPreloncisionTwelonelontLabelonlRulelon,
+        NsfwRelonportelondHelonuristicsTwelonelontLabelonlRulelon,
+        GorelonAndViolelonncelonRelonportelondHelonuristicsTwelonelontLabelonlRulelon,
+        NsfwCardImagelonTwelonelontLabelonlRulelon,
+        NsfwHighReloncallTwelonelontLabelonlRulelon,
+        NsfwVidelonoTwelonelontLabelonlDropRulelon,
+        NsfwTelonxtTwelonelontLabelonlDropRulelon,
+        NsfwTelonxtTwelonelontLabelonlTopicsDropRulelon,
+        SpamHighReloncallTwelonelontLabelonlDropRulelon,
+        DuplicatelonContelonntTwelonelontLabelonlDropRulelon,
+        GorelonAndViolelonncelonTwelonelontLabelonlRulelon,
+        UntrustelondUrlTwelonelontLabelonlRulelon,
+        DownrankSpamRelonplyTwelonelontLabelonlRulelon,
+        SelonarchBlacklistTwelonelontLabelonlRulelon,
+        AutomationTwelonelontLabelonlRulelon,
+        DuplicatelonMelonntionTwelonelontLabelonlRulelon,
+        BystandelonrAbusivelonTwelonelontLabelonlRulelon,
+        SmytelonSpamTwelonelontLabelonlDropRulelon,
+        SafelontyCrisisLelonvelonl3DropRulelon,
+        SafelontyCrisisLelonvelonl4DropRulelon,
+        DoNotAmplifyDropRulelon,
+        AbuselonPolicyelonpisodicTwelonelontLabelonlDropRulelon,
+        elonmelonrgelonncyDropRulelon,
+      ) ++ LimitelondelonngagelonmelonntBaselonRulelons.twelonelontRulelons,
+      uselonrRulelons = Selonq(
+        AbusivelonRulelon,
+        LowQualityRulelon,
+        RelonadOnlyRulelon,
+        SelonarchBlacklistRulelon,
+        SelonarchNsfwTelonxtRulelon,
+        CompromiselondRulelon,
+        SpamHighReloncallRulelon,
+        DuplicatelonContelonntRulelon,
+        NsfwHighPreloncisionRulelon,
+        NsfwAvatarImagelonRulelon,
+        NsfwBannelonrImagelonRulelon,
+        AbusivelonHighReloncallRulelon,
+        DoNotAmplifyNonFollowelonrRulelon,
+        NotGraduatelondNonFollowelonrRulelon,
+        LikelonlyIvsLabelonlNonFollowelonrDropUselonrRulelon,
+        DownrankSpamRelonplyNonAuthorRulelon,
+        NsfwTelonxtNonAuthorDropRulelon,
+        DropNsfwUselonrAuthorRulelon,
+        NsfwHighReloncallRulelon
       )
     )
 
-case object ReturningUserExperienceFocalTweetPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++
-        Seq(
-          AuthorBlocksViewerDropRule,
-          AbusePolicyEpisodicTweetLabelInterstitialRule,
-          EmergencyDynamicInterstitialRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-          GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule,
-          MutedKeywordForTweetRepliesInterstitialRule,
-          ViewerMutesAuthorInterstitialRule,
-          ReportedTweetInterstitialRule,
-        ) ++ LimitedEngagementBaseRules.tweetRules
+caselon objelonct RelonturningUselonrelonxpelonrielonncelonFocalTwelonelontPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = VisibilityPolicy.baselonTwelonelontRulelons ++
+        Selonq(
+          AuthorBlocksVielonwelonrDropRulelon,
+          AbuselonPolicyelonpisodicTwelonelontLabelonlIntelonrstitialRulelon,
+          elonmelonrgelonncyDynamicIntelonrstitialRulelon,
+          NsfwHighPreloncisionIntelonrstitialAllUselonrsTwelonelontLabelonlRulelon,
+          GorelonAndViolelonncelonHighPreloncisionAllUselonrsTwelonelontLabelonlRulelon,
+          NsfwRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlRulelon,
+          GorelonAndViolelonncelonRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlRulelon,
+          NsfwCardImagelonAllUselonrsTwelonelontLabelonlRulelon,
+          MutelondKelonywordForTwelonelontRelonplielonsIntelonrstitialRulelon,
+          VielonwelonrMutelonsAuthorIntelonrstitialRulelon,
+          RelonportelondTwelonelontIntelonrstitialRulelon,
+        ) ++ LimitelondelonngagelonmelonntBaselonRulelons.twelonelontRulelons
     )
 
-case object RevenuePolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++
-        Seq(
-          AbusiveTweetLabelRule,
-          BystanderAbusiveTweetLabelRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-          GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule
+caselon objelonct RelonvelonnuelonPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = VisibilityPolicy.baselonTwelonelontRulelons ++
+        Selonq(
+          AbusivelonTwelonelontLabelonlRulelon,
+          BystandelonrAbusivelonTwelonelontLabelonlRulelon,
+          NsfwHighPreloncisionIntelonrstitialAllUselonrsTwelonelontLabelonlRulelon,
+          GorelonAndViolelonncelonHighPreloncisionAllUselonrsTwelonelontLabelonlRulelon,
+          NsfwRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlRulelon,
+          GorelonAndViolelonncelonRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlRulelon,
+          NsfwCardImagelonAllUselonrsTwelonelontLabelonlRulelon
         )
     )
 
-case object SafeSearchMinimalPolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(
-        DropOuterCommunityTweetsRule,
-      ) ++ VisibilityPolicy.baseTweetRules ++ Seq(
-        LowQualityTweetLabelDropRule,
-        HighProactiveTosScoreTweetLabelDropSearchRule,
-        SpamHighRecallTweetLabelDropRule,
-        DuplicateContentTweetLabelDropRule,
-        SearchBlacklistTweetLabelRule,
-        SearchBlacklistHighRecallTweetLabelDropRule,
-        SafetyCrisisLevel3DropRule,
-        SafetyCrisisLevel4DropRule,
-        DoNotAmplifyDropRule,
-        SmyteSpamTweetLabelDropRule,
+caselon objelonct SafelonSelonarchMinimalPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = Selonq(
+        DropOutelonrCommunityTwelonelontsRulelon,
+      ) ++ VisibilityPolicy.baselonTwelonelontRulelons ++ Selonq(
+        LowQualityTwelonelontLabelonlDropRulelon,
+        HighProactivelonTosScorelonTwelonelontLabelonlDropSelonarchRulelon,
+        SpamHighReloncallTwelonelontLabelonlDropRulelon,
+        DuplicatelonContelonntTwelonelontLabelonlDropRulelon,
+        SelonarchBlacklistTwelonelontLabelonlRulelon,
+        SelonarchBlacklistHighReloncallTwelonelontLabelonlDropRulelon,
+        SafelontyCrisisLelonvelonl3DropRulelon,
+        SafelontyCrisisLelonvelonl4DropRulelon,
+        DoNotAmplifyDropRulelon,
+        SmytelonSpamTwelonelontLabelonlDropRulelon,
       ) ++
-        Seq(
-          AbusePolicyEpisodicTweetLabelInterstitialRule,
-          EmergencyDynamicInterstitialRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-          GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule,
-        ) ++ LimitedEngagementBaseRules.tweetRules
-        ++ SearchBlenderRules.tweetAvoidRules,
-      userRules = Seq(
-        LowQualityRule,
-        ReadOnlyRule,
-        CompromisedRule,
-        SpamHighRecallRule,
-        SearchBlacklistRule,
-        SearchNsfwTextRule,
-        DuplicateContentRule,
-        DoNotAmplifyNonFollowerRule,
-        SearchLikelyIvsLabelNonFollowerDropUserRule
+        Selonq(
+          AbuselonPolicyelonpisodicTwelonelontLabelonlIntelonrstitialRulelon,
+          elonmelonrgelonncyDynamicIntelonrstitialRulelon,
+          NsfwHighPreloncisionIntelonrstitialAllUselonrsTwelonelontLabelonlRulelon,
+          GorelonAndViolelonncelonHighPreloncisionAllUselonrsTwelonelontLabelonlRulelon,
+          NsfwRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlRulelon,
+          GorelonAndViolelonncelonRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlRulelon,
+          NsfwCardImagelonAllUselonrsTwelonelontLabelonlRulelon,
+        ) ++ LimitelondelonngagelonmelonntBaselonRulelons.twelonelontRulelons
+        ++ SelonarchBlelonndelonrRulelons.twelonelontAvoidRulelons,
+      uselonrRulelons = Selonq(
+        LowQualityRulelon,
+        RelonadOnlyRulelon,
+        CompromiselondRulelon,
+        SpamHighReloncallRulelon,
+        SelonarchBlacklistRulelon,
+        SelonarchNsfwTelonxtRulelon,
+        DuplicatelonContelonntRulelon,
+        DoNotAmplifyNonFollowelonrRulelon,
+        SelonarchLikelonlyIvsLabelonlNonFollowelonrDropUselonrRulelon
       )
     )
 
-case object SearchHydrationPolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(
-        AbusePolicyEpisodicTweetLabelInterstitialRule,
-        EmergencyDynamicInterstitialRule,
-        ReportedTweetInterstitialSearchRule,
-        NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-        GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-        NsfwReportedHeuristicsAllUsersTweetLabelRule,
-        GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-        NsfwCardImageAllUsersTweetLabelRule,
-      ) ++ LimitedEngagementBaseRules.tweetRules
+caselon objelonct SelonarchHydrationPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = Selonq(
+        AbuselonPolicyelonpisodicTwelonelontLabelonlIntelonrstitialRulelon,
+        elonmelonrgelonncyDynamicIntelonrstitialRulelon,
+        RelonportelondTwelonelontIntelonrstitialSelonarchRulelon,
+        NsfwHighPreloncisionIntelonrstitialAllUselonrsTwelonelontLabelonlRulelon,
+        GorelonAndViolelonncelonHighPreloncisionAllUselonrsTwelonelontLabelonlRulelon,
+        NsfwRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlRulelon,
+        GorelonAndViolelonncelonRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlRulelon,
+        NsfwCardImagelonAllUselonrsTwelonelontLabelonlRulelon,
+      ) ++ LimitelondelonngagelonmelonntBaselonRulelons.twelonelontRulelons
     )
 
-case object SearchBlenderRules {
-  val limitedEngagementBaseRules: Seq[Rule] = LimitedEngagementBaseRules.tweetRules
+caselon objelonct SelonarchBlelonndelonrRulelons {
+  val limitelondelonngagelonmelonntBaselonRulelons: Selonq[Rulelon] = LimitelondelonngagelonmelonntBaselonRulelons.twelonelontRulelons
 
-  val tweetAvoidRules: Seq[Rule] =
-    Seq(
-      NsfwHighPrecisionTweetLabelAvoidRule,
-      NsfwHighRecallTweetLabelAvoidRule,
-      GoreAndViolenceHighPrecisionAvoidAllUsersTweetLabelRule,
-      NsfwReportedHeuristicsAvoidAllUsersTweetLabelRule,
-      GoreAndViolenceReportedHeuristicsAvoidAllUsersTweetLabelRule,
-      NsfwCardImageAvoidAllUsersTweetLabelRule,
-      SearchAvoidTweetNsfwAdminRule,
-      SearchAvoidTweetNsfwUserRule,
-      DoNotAmplifyTweetLabelAvoidRule,
-      NsfaHighPrecisionTweetLabelAvoidRule,
+  val twelonelontAvoidRulelons: Selonq[Rulelon] =
+    Selonq(
+      NsfwHighPreloncisionTwelonelontLabelonlAvoidRulelon,
+      NsfwHighReloncallTwelonelontLabelonlAvoidRulelon,
+      GorelonAndViolelonncelonHighPreloncisionAvoidAllUselonrsTwelonelontLabelonlRulelon,
+      NsfwRelonportelondHelonuristicsAvoidAllUselonrsTwelonelontLabelonlRulelon,
+      GorelonAndViolelonncelonRelonportelondHelonuristicsAvoidAllUselonrsTwelonelontLabelonlRulelon,
+      NsfwCardImagelonAvoidAllUselonrsTwelonelontLabelonlRulelon,
+      SelonarchAvoidTwelonelontNsfwAdminRulelon,
+      SelonarchAvoidTwelonelontNsfwUselonrRulelon,
+      DoNotAmplifyTwelonelontLabelonlAvoidRulelon,
+      NsfaHighPreloncisionTwelonelontLabelonlAvoidRulelon,
     )
 
-  val basicBlockMuteRules: Seq[Rule] = Seq(
-    AuthorBlocksViewerDropRule,
-    ViewerBlocksAuthorViewerOptInBlockingOnSearchRule,
-    ViewerMutesAuthorViewerOptInBlockingOnSearchRule
+  val basicBlockMutelonRulelons: Selonq[Rulelon] = Selonq(
+    AuthorBlocksVielonwelonrDropRulelon,
+    VielonwelonrBlocksAuthorVielonwelonrOptInBlockingOnSelonarchRulelon,
+    VielonwelonrMutelonsAuthorVielonwelonrOptInBlockingOnSelonarchRulelon
   )
 
-  val tweetRelevanceRules: Seq[Rule] =
-    Seq(
-      DropOuterCommunityTweetsRule,
-      DropStaleTweetsRule,
-    ) ++ VisibilityPolicy.baseTweetRules ++ Seq(
-      SafeSearchAbusiveTweetLabelRule,
-      LowQualityTweetLabelDropRule,
-      HighProactiveTosScoreTweetLabelDropSearchRule,
-      HighPSpammyTweetScoreSearchTweetLabelDropRule,
-      HighSpammyTweetContentScoreSearchTopTweetLabelDropRule,
-      HighSpammyTweetContentScoreTrendsTopTweetLabelDropRule,
-      SafeSearchNsfwHighPrecisionTweetLabelRule,
-      SafeSearchGoreAndViolenceHighPrecisionTweetLabelRule,
-      SafeSearchNsfwReportedHeuristicsTweetLabelRule,
-      SafeSearchGoreAndViolenceReportedHeuristicsTweetLabelRule,
-      SafeSearchNsfwCardImageTweetLabelRule,
-      SafeSearchNsfwHighRecallTweetLabelRule,
-      SafeSearchNsfwVideoTweetLabelRule,
-      SafeSearchNsfwTextTweetLabelRule,
-      SpamHighRecallTweetLabelDropRule,
-      DuplicateContentTweetLabelDropRule,
-      SafeSearchGoreAndViolenceTweetLabelRule,
-      SafeSearchUntrustedUrlTweetLabelRule,
-      SafeSearchDownrankSpamReplyTweetLabelRule,
-      SearchBlacklistTweetLabelRule,
-      SearchBlacklistHighRecallTweetLabelDropRule,
-      SmyteSpamTweetLabelDropSearchRule,
-      CopypastaSpamAllViewersSearchTweetLabelRule,
-    ) ++ basicBlockMuteRules ++
-      Seq(
-        SafeSearchAutomationNonFollowerTweetLabelRule,
-        SafeSearchDuplicateMentionNonFollowerTweetLabelRule,
-        SafeSearchBystanderAbusiveTweetLabelRule,
-        SafetyCrisisLevel3DropRule,
-        SafetyCrisisLevel4DropRule,
-        DoNotAmplifyDropRule,
-        SearchIpiSafeSearchWithoutUserInQueryDropRule,
-        SearchEdiSafeSearchWithoutUserInQueryDropRule,
-        AbusePolicyEpisodicTweetLabelInterstitialRule,
-        EmergencyDynamicInterstitialRule,
-        UnsafeSearchNsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-        UnsafeSearchGoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-        UnsafeSearchNsfwReportedHeuristicsAllUsersTweetLabelRule,
-        UnsafeSearchGoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-        UnsafeSearchNsfwCardImageAllUsersTweetLabelRule,
+  val twelonelontRelonlelonvancelonRulelons: Selonq[Rulelon] =
+    Selonq(
+      DropOutelonrCommunityTwelonelontsRulelon,
+      DropStalelonTwelonelontsRulelon,
+    ) ++ VisibilityPolicy.baselonTwelonelontRulelons ++ Selonq(
+      SafelonSelonarchAbusivelonTwelonelontLabelonlRulelon,
+      LowQualityTwelonelontLabelonlDropRulelon,
+      HighProactivelonTosScorelonTwelonelontLabelonlDropSelonarchRulelon,
+      HighPSpammyTwelonelontScorelonSelonarchTwelonelontLabelonlDropRulelon,
+      HighSpammyTwelonelontContelonntScorelonSelonarchTopTwelonelontLabelonlDropRulelon,
+      HighSpammyTwelonelontContelonntScorelonTrelonndsTopTwelonelontLabelonlDropRulelon,
+      SafelonSelonarchNsfwHighPreloncisionTwelonelontLabelonlRulelon,
+      SafelonSelonarchGorelonAndViolelonncelonHighPreloncisionTwelonelontLabelonlRulelon,
+      SafelonSelonarchNsfwRelonportelondHelonuristicsTwelonelontLabelonlRulelon,
+      SafelonSelonarchGorelonAndViolelonncelonRelonportelondHelonuristicsTwelonelontLabelonlRulelon,
+      SafelonSelonarchNsfwCardImagelonTwelonelontLabelonlRulelon,
+      SafelonSelonarchNsfwHighReloncallTwelonelontLabelonlRulelon,
+      SafelonSelonarchNsfwVidelonoTwelonelontLabelonlRulelon,
+      SafelonSelonarchNsfwTelonxtTwelonelontLabelonlRulelon,
+      SpamHighReloncallTwelonelontLabelonlDropRulelon,
+      DuplicatelonContelonntTwelonelontLabelonlDropRulelon,
+      SafelonSelonarchGorelonAndViolelonncelonTwelonelontLabelonlRulelon,
+      SafelonSelonarchUntrustelondUrlTwelonelontLabelonlRulelon,
+      SafelonSelonarchDownrankSpamRelonplyTwelonelontLabelonlRulelon,
+      SelonarchBlacklistTwelonelontLabelonlRulelon,
+      SelonarchBlacklistHighReloncallTwelonelontLabelonlDropRulelon,
+      SmytelonSpamTwelonelontLabelonlDropSelonarchRulelon,
+      CopypastaSpamAllVielonwelonrsSelonarchTwelonelontLabelonlRulelon,
+    ) ++ basicBlockMutelonRulelons ++
+      Selonq(
+        SafelonSelonarchAutomationNonFollowelonrTwelonelontLabelonlRulelon,
+        SafelonSelonarchDuplicatelonMelonntionNonFollowelonrTwelonelontLabelonlRulelon,
+        SafelonSelonarchBystandelonrAbusivelonTwelonelontLabelonlRulelon,
+        SafelontyCrisisLelonvelonl3DropRulelon,
+        SafelontyCrisisLelonvelonl4DropRulelon,
+        DoNotAmplifyDropRulelon,
+        SelonarchIpiSafelonSelonarchWithoutUselonrInQuelonryDropRulelon,
+        SelonarchelondiSafelonSelonarchWithoutUselonrInQuelonryDropRulelon,
+        AbuselonPolicyelonpisodicTwelonelontLabelonlIntelonrstitialRulelon,
+        elonmelonrgelonncyDynamicIntelonrstitialRulelon,
+        UnsafelonSelonarchNsfwHighPreloncisionIntelonrstitialAllUselonrsTwelonelontLabelonlRulelon,
+        UnsafelonSelonarchGorelonAndViolelonncelonHighPreloncisionAllUselonrsTwelonelontLabelonlRulelon,
+        UnsafelonSelonarchNsfwRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlRulelon,
+        UnsafelonSelonarchGorelonAndViolelonncelonRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlRulelon,
+        UnsafelonSelonarchNsfwCardImagelonAllUselonrsTwelonelontLabelonlRulelon,
       ) ++
-      limitedEngagementBaseRules ++
-      tweetAvoidRules
+      limitelondelonngagelonmelonntBaselonRulelons ++
+      twelonelontAvoidRulelons
 
-    VisibilityPolicy.baseTweetRules ++ Seq(
-    SafeSearchAbusiveTweetLabelRule,
-    LowQualityTweetLabelDropRule,
-    HighProactiveTosScoreTweetLabelDropSearchRule,
-    HighSpammyTweetContentScoreSearchLatestTweetLabelDropRule,
-    HighSpammyTweetContentScoreTrendsLatestTweetLabelDropRule,
-    SafeSearchNsfwHighPrecisionTweetLabelRule,
-    SafeSearchGoreAndViolenceHighPrecisionTweetLabelRule,
-    SafeSearchNsfwReportedHeuristicsTweetLabelRule,
-    SafeSearchGoreAndViolenceReportedHeuristicsTweetLabelRule,
-    SafeSearchNsfwCardImageTweetLabelRule,
-    SafeSearchNsfwHighRecallTweetLabelRule,
-    SafeSearchNsfwVideoTweetLabelRule,
-    SafeSearchNsfwTextTweetLabelRule,
-    SpamHighRecallTweetLabelDropRule,
-    DuplicateContentTweetLabelDropRule,
-    SafeSearchGoreAndViolenceTweetLabelRule,
-    SafeSearchUntrustedUrlTweetLabelRule,
-    SafeSearchDownrankSpamReplyTweetLabelRule,
-    SearchBlacklistTweetLabelRule,
-    SearchBlacklistHighRecallTweetLabelDropRule,
-    SmyteSpamTweetLabelDropSearchRule,
-    CopypastaSpamNonFollowerSearchTweetLabelRule,
+    VisibilityPolicy.baselonTwelonelontRulelons ++ Selonq(
+    SafelonSelonarchAbusivelonTwelonelontLabelonlRulelon,
+    LowQualityTwelonelontLabelonlDropRulelon,
+    HighProactivelonTosScorelonTwelonelontLabelonlDropSelonarchRulelon,
+    HighSpammyTwelonelontContelonntScorelonSelonarchLatelonstTwelonelontLabelonlDropRulelon,
+    HighSpammyTwelonelontContelonntScorelonTrelonndsLatelonstTwelonelontLabelonlDropRulelon,
+    SafelonSelonarchNsfwHighPreloncisionTwelonelontLabelonlRulelon,
+    SafelonSelonarchGorelonAndViolelonncelonHighPreloncisionTwelonelontLabelonlRulelon,
+    SafelonSelonarchNsfwRelonportelondHelonuristicsTwelonelontLabelonlRulelon,
+    SafelonSelonarchGorelonAndViolelonncelonRelonportelondHelonuristicsTwelonelontLabelonlRulelon,
+    SafelonSelonarchNsfwCardImagelonTwelonelontLabelonlRulelon,
+    SafelonSelonarchNsfwHighReloncallTwelonelontLabelonlRulelon,
+    SafelonSelonarchNsfwVidelonoTwelonelontLabelonlRulelon,
+    SafelonSelonarchNsfwTelonxtTwelonelontLabelonlRulelon,
+    SpamHighReloncallTwelonelontLabelonlDropRulelon,
+    DuplicatelonContelonntTwelonelontLabelonlDropRulelon,
+    SafelonSelonarchGorelonAndViolelonncelonTwelonelontLabelonlRulelon,
+    SafelonSelonarchUntrustelondUrlTwelonelontLabelonlRulelon,
+    SafelonSelonarchDownrankSpamRelonplyTwelonelontLabelonlRulelon,
+    SelonarchBlacklistTwelonelontLabelonlRulelon,
+    SelonarchBlacklistHighReloncallTwelonelontLabelonlDropRulelon,
+    SmytelonSpamTwelonelontLabelonlDropSelonarchRulelon,
+    CopypastaSpamNonFollowelonrSelonarchTwelonelontLabelonlRulelon,
   ) ++
-    basicBlockMuteRules ++
-    Seq(
-      SafeSearchAutomationNonFollowerTweetLabelRule,
-      SafeSearchDuplicateMentionNonFollowerTweetLabelRule,
-      SafeSearchBystanderAbusiveTweetLabelRule,
-      SafetyCrisisLevel3DropRule,
-      SafetyCrisisLevel4DropRule,
-      SearchIpiSafeSearchWithoutUserInQueryDropRule,
-      SearchEdiSafeSearchWithoutUserInQueryDropRule,
-      AbusePolicyEpisodicTweetLabelInterstitialRule,
-      EmergencyDynamicInterstitialRule,
-      UnsafeSearchNsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-      UnsafeSearchGoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-      UnsafeSearchNsfwReportedHeuristicsAllUsersTweetLabelRule,
-      UnsafeSearchGoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-      UnsafeSearchNsfwCardImageAllUsersTweetLabelRule,
-    ) ++ limitedEngagementBaseRules ++ tweetAvoidRules
+    basicBlockMutelonRulelons ++
+    Selonq(
+      SafelonSelonarchAutomationNonFollowelonrTwelonelontLabelonlRulelon,
+      SafelonSelonarchDuplicatelonMelonntionNonFollowelonrTwelonelontLabelonlRulelon,
+      SafelonSelonarchBystandelonrAbusivelonTwelonelontLabelonlRulelon,
+      SafelontyCrisisLelonvelonl3DropRulelon,
+      SafelontyCrisisLelonvelonl4DropRulelon,
+      SelonarchIpiSafelonSelonarchWithoutUselonrInQuelonryDropRulelon,
+      SelonarchelondiSafelonSelonarchWithoutUselonrInQuelonryDropRulelon,
+      AbuselonPolicyelonpisodicTwelonelontLabelonlIntelonrstitialRulelon,
+      elonmelonrgelonncyDynamicIntelonrstitialRulelon,
+      UnsafelonSelonarchNsfwHighPreloncisionIntelonrstitialAllUselonrsTwelonelontLabelonlRulelon,
+      UnsafelonSelonarchGorelonAndViolelonncelonHighPreloncisionAllUselonrsTwelonelontLabelonlRulelon,
+      UnsafelonSelonarchNsfwRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlRulelon,
+      UnsafelonSelonarchGorelonAndViolelonncelonRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlRulelon,
+      UnsafelonSelonarchNsfwCardImagelonAllUselonrsTwelonelontLabelonlRulelon,
+    ) ++ limitelondelonngagelonmelonntBaselonRulelons ++ twelonelontAvoidRulelons
 
-  val userBaseRules: Seq[ConditionWithUserLabelRule] = Seq(
-    SafeSearchAbusiveUserLabelRule,
-    LowQualityRule,
-    ReadOnlyRule,
-    SearchBlacklistRule,
-    CompromisedRule,
-    SpamHighRecallRule,
-    DuplicateContentRule,
-    DoNotAmplifyNonFollowerRule,
-    SearchLikelyIvsLabelNonFollowerDropUserRule,
-    SafeSearchNsfwHighPrecisionUserLabelRule,
-    SafeSearchNsfwAvatarImageUserLabelRule,
-    SafeSearchNsfwBannerImageUserLabelRule,
-    SafeSearchAbusiveHighRecallUserLabelRule,
-    SafeSearchDownrankSpamReplyAuthorLabelRule,
-    SafeSearchNotGraduatedNonFollowersUserLabelRule,
-    SafeSearchNsfwTextAuthorLabelRule
+  val uselonrBaselonRulelons: Selonq[ConditionWithUselonrLabelonlRulelon] = Selonq(
+    SafelonSelonarchAbusivelonUselonrLabelonlRulelon,
+    LowQualityRulelon,
+    RelonadOnlyRulelon,
+    SelonarchBlacklistRulelon,
+    CompromiselondRulelon,
+    SpamHighReloncallRulelon,
+    DuplicatelonContelonntRulelon,
+    DoNotAmplifyNonFollowelonrRulelon,
+    SelonarchLikelonlyIvsLabelonlNonFollowelonrDropUselonrRulelon,
+    SafelonSelonarchNsfwHighPreloncisionUselonrLabelonlRulelon,
+    SafelonSelonarchNsfwAvatarImagelonUselonrLabelonlRulelon,
+    SafelonSelonarchNsfwBannelonrImagelonUselonrLabelonlRulelon,
+    SafelonSelonarchAbusivelonHighReloncallUselonrLabelonlRulelon,
+    SafelonSelonarchDownrankSpamRelonplyAuthorLabelonlRulelon,
+    SafelonSelonarchNotGraduatelondNonFollowelonrsUselonrLabelonlRulelon,
+    SafelonSelonarchNsfwTelonxtAuthorLabelonlRulelon
   )
 
-  val userRules: Seq[ConditionWithUserLabelRule] = userBaseRules
+  val uselonrRulelons: Selonq[ConditionWithUselonrLabelonlRulelon] = uselonrBaselonRulelons
 
-  val userRelevanceBaseRules = userBaseRules ++ basicBlockMuteRules
+  val uselonrRelonlelonvancelonBaselonRulelons = uselonrBaselonRulelons ++ basicBlockMutelonRulelons
 
-  val userRelevanceRules = userRelevanceBaseRules
+  val uselonrRelonlelonvancelonRulelons = uselonrRelonlelonvancelonBaselonRulelons
 
-  val userRecencyBaseRules = userBaseRules.filterNot(
-    Seq(DoNotAmplifyNonFollowerRule, SearchLikelyIvsLabelNonFollowerDropUserRule).contains
-  ) ++ basicBlockMuteRules
+  val uselonrReloncelonncyBaselonRulelons = uselonrBaselonRulelons.filtelonrNot(
+    Selonq(DoNotAmplifyNonFollowelonrRulelon, SelonarchLikelonlyIvsLabelonlNonFollowelonrDropUselonrRulelon).contains
+  ) ++ basicBlockMutelonRulelons
 
-  val searchQueryMatchesTweetAuthorRules: Seq[ConditionWithUserLabelRule] =
-    userBaseRules
+  val selonarchQuelonryMatchelonsTwelonelontAuthorRulelons: Selonq[ConditionWithUselonrLabelonlRulelon] =
+    uselonrBaselonRulelons
 
-  val basicBlockMutePolicyRuleParam: Map[Rule, PolicyLevelRuleParams] =
-    SearchBlenderRules.basicBlockMuteRules
-      .map(rule => rule -> ruleParams(RuleParams.EnableSearchBasicBlockMuteRulesParam)).toMap
+  val basicBlockMutelonPolicyRulelonParam: Map[Rulelon, PolicyLelonvelonlRulelonParams] =
+    SelonarchBlelonndelonrRulelons.basicBlockMutelonRulelons
+      .map(rulelon => rulelon -> rulelonParams(RulelonParams.elonnablelonSelonarchBasicBlockMutelonRulelonsParam)).toMap
 }
 
-case object SearchBlenderUserRulesPolicy
-    extends VisibilityPolicy(
-      userRules = SearchBlenderRules.userRules
+caselon objelonct SelonarchBlelonndelonrUselonrRulelonsPolicy
+    elonxtelonnds VisibilityPolicy(
+      uselonrRulelons = SelonarchBlelonndelonrRulelons.uselonrRulelons
     )
 
-case object SearchLatestUserRulesPolicy
-    extends VisibilityPolicy(
-      userRules = SearchLatestPolicy.userRules
+caselon objelonct SelonarchLatelonstUselonrRulelonsPolicy
+    elonxtelonnds VisibilityPolicy(
+      uselonrRulelons = SelonarchLatelonstPolicy.uselonrRulelons
     )
 
-case object UserSearchSrpPolicy
-    extends VisibilityPolicy(
-      userRules = Seq(
-        AuthorBlocksViewerDropRule,
-        ViewerBlocksAuthorViewerOptInBlockingOnSearchRule,
-        ViewerMutesAuthorViewerOptInBlockingOnSearchRule,
-        DropNsfwAdminAuthorViewerOptInFilteringOnSearchRule,
-        SafeSearchAbusiveUserLabelRule,
-        SafeSearchHighRecallUserLabelRule,
-        SafeSearchNsfwNearPerfectAuthorRule,
-        SafeSearchNsfwHighPrecisionUserLabelRule,
-        SafeSearchNsfwAvatarImageUserLabelRule,
-        SafeSearchNsfwBannerImageUserLabelRule,
-        SafeSearchAbusiveHighRecallUserLabelRule,
-        SafeSearchNsfwTextAuthorLabelRule
+caselon objelonct UselonrSelonarchSrpPolicy
+    elonxtelonnds VisibilityPolicy(
+      uselonrRulelons = Selonq(
+        AuthorBlocksVielonwelonrDropRulelon,
+        VielonwelonrBlocksAuthorVielonwelonrOptInBlockingOnSelonarchRulelon,
+        VielonwelonrMutelonsAuthorVielonwelonrOptInBlockingOnSelonarchRulelon,
+        DropNsfwAdminAuthorVielonwelonrOptInFiltelonringOnSelonarchRulelon,
+        SafelonSelonarchAbusivelonUselonrLabelonlRulelon,
+        SafelonSelonarchHighReloncallUselonrLabelonlRulelon,
+        SafelonSelonarchNsfwNelonarPelonrfelonctAuthorRulelon,
+        SafelonSelonarchNsfwHighPreloncisionUselonrLabelonlRulelon,
+        SafelonSelonarchNsfwAvatarImagelonUselonrLabelonlRulelon,
+        SafelonSelonarchNsfwBannelonrImagelonUselonrLabelonlRulelon,
+        SafelonSelonarchAbusivelonHighReloncallUselonrLabelonlRulelon,
+        SafelonSelonarchNsfwTelonxtAuthorLabelonlRulelon
       )
     )
 
-case object UserSearchTypeaheadPolicy
-    extends VisibilityPolicy(
-      userRules = Seq(
-        SafeSearchAbusiveUserLabelRule,
-        SafeSearchHighRecallUserLabelRule,
-        SafeSearchNsfwNearPerfectAuthorRule,
-        SafeSearchNsfwHighPrecisionUserLabelRule,
-        SafeSearchNsfwAvatarImageUserLabelRule,
-        SafeSearchNsfwBannerImageUserLabelRule,
-        SafeSearchAbusiveHighRecallUserLabelRule,
-        SafeSearchNsfwTextAuthorLabelRule
+caselon objelonct UselonrSelonarchTypelonahelonadPolicy
+    elonxtelonnds VisibilityPolicy(
+      uselonrRulelons = Selonq(
+        SafelonSelonarchAbusivelonUselonrLabelonlRulelon,
+        SafelonSelonarchHighReloncallUselonrLabelonlRulelon,
+        SafelonSelonarchNsfwNelonarPelonrfelonctAuthorRulelon,
+        SafelonSelonarchNsfwHighPreloncisionUselonrLabelonlRulelon,
+        SafelonSelonarchNsfwAvatarImagelonUselonrLabelonlRulelon,
+        SafelonSelonarchNsfwBannelonrImagelonUselonrLabelonlRulelon,
+        SafelonSelonarchAbusivelonHighReloncallUselonrLabelonlRulelon,
+        SafelonSelonarchNsfwTelonxtAuthorLabelonlRulelon
       ),
-      tweetRules = Seq(DropAllRule)
+      twelonelontRulelons = Selonq(DropAllRulelon)
     )
 
-case object SearchMixerSrpMinimalPolicy
-    extends VisibilityPolicy(
-      userRules = Seq(
-        AuthorBlocksViewerDropRule,
-        ViewerBlocksAuthorViewerOptInBlockingOnSearchRule,
-        ViewerMutesAuthorViewerOptInBlockingOnSearchRule
+caselon objelonct SelonarchMixelonrSrpMinimalPolicy
+    elonxtelonnds VisibilityPolicy(
+      uselonrRulelons = Selonq(
+        AuthorBlocksVielonwelonrDropRulelon,
+        VielonwelonrBlocksAuthorVielonwelonrOptInBlockingOnSelonarchRulelon,
+        VielonwelonrMutelonsAuthorVielonwelonrOptInBlockingOnSelonarchRulelon
       )
     )
 
-case object SearchMixerSrpStrictPolicy
-    extends VisibilityPolicy(
-      userRules = Seq(
-        AuthorBlocksViewerDropRule,
-        ViewerBlocksAuthorViewerOptInBlockingOnSearchRule,
-        ViewerMutesAuthorViewerOptInBlockingOnSearchRule,
-        DropNsfwAdminAuthorViewerOptInFilteringOnSearchRule,
-        NsfwNearPerfectAuthorRule,
-        NsfwHighPrecisionRule,
-        NsfwHighRecallRule,
-        NsfwSensitiveRule,
-        NsfwAvatarImageRule,
-        NsfwBannerImageRule
-      ) ++ SearchBlenderRules.searchQueryMatchesTweetAuthorRules
-        .diff(Seq(SafeSearchNotGraduatedNonFollowersUserLabelRule))
+caselon objelonct SelonarchMixelonrSrpStrictPolicy
+    elonxtelonnds VisibilityPolicy(
+      uselonrRulelons = Selonq(
+        AuthorBlocksVielonwelonrDropRulelon,
+        VielonwelonrBlocksAuthorVielonwelonrOptInBlockingOnSelonarchRulelon,
+        VielonwelonrMutelonsAuthorVielonwelonrOptInBlockingOnSelonarchRulelon,
+        DropNsfwAdminAuthorVielonwelonrOptInFiltelonringOnSelonarchRulelon,
+        NsfwNelonarPelonrfelonctAuthorRulelon,
+        NsfwHighPreloncisionRulelon,
+        NsfwHighReloncallRulelon,
+        NsfwSelonnsitivelonRulelon,
+        NsfwAvatarImagelonRulelon,
+        NsfwBannelonrImagelonRulelon
+      ) ++ SelonarchBlelonndelonrRulelons.selonarchQuelonryMatchelonsTwelonelontAuthorRulelons
+        .diff(Selonq(SafelonSelonarchNotGraduatelondNonFollowelonrsUselonrLabelonlRulelon))
     )
 
-case object SearchPeopleSrpPolicy
-    extends VisibilityPolicy(
-      userRules = SearchBlenderRules.searchQueryMatchesTweetAuthorRules
+caselon objelonct SelonarchPelonoplelonSrpPolicy
+    elonxtelonnds VisibilityPolicy(
+      uselonrRulelons = SelonarchBlelonndelonrRulelons.selonarchQuelonryMatchelonsTwelonelontAuthorRulelons
     )
 
-case object SearchPeopleTypeaheadPolicy
-    extends VisibilityPolicy(
-      userRules = SearchBlenderRules.searchQueryMatchesTweetAuthorRules
+caselon objelonct SelonarchPelonoplelonTypelonahelonadPolicy
+    elonxtelonnds VisibilityPolicy(
+      uselonrRulelons = SelonarchBlelonndelonrRulelons.selonarchQuelonryMatchelonsTwelonelontAuthorRulelons
         .diff(
-          Seq(
-            SafeSearchNotGraduatedNonFollowersUserLabelRule
+          Selonq(
+            SafelonSelonarchNotGraduatelondNonFollowelonrsUselonrLabelonlRulelon
           )),
-      tweetRules = Seq(DropAllRule)
+      twelonelontRulelons = Selonq(DropAllRulelon)
     )
 
-case object SearchPhotoPolicy
-    extends VisibilityPolicy(
-      tweetRules = SearchBlenderRules.tweetRelevanceRules,
-      userRules = SearchBlenderRules.userRelevanceRules,
-      policyRuleParams = SearchBlenderRules.basicBlockMutePolicyRuleParam
+caselon objelonct SelonarchPhotoPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = SelonarchBlelonndelonrRulelons.twelonelontRelonlelonvancelonRulelons,
+      uselonrRulelons = SelonarchBlelonndelonrRulelons.uselonrRelonlelonvancelonRulelons,
+      policyRulelonParams = SelonarchBlelonndelonrRulelons.basicBlockMutelonPolicyRulelonParam
     )
 
-case object SearchTrendTakeoverPromotedTweetPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules
+caselon objelonct SelonarchTrelonndTakelonovelonrPromotelondTwelonelontPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = VisibilityPolicy.baselonTwelonelontRulelons
     )
 
-case object SearchVideoPolicy
-    extends VisibilityPolicy(
-      tweetRules = SearchBlenderRules.tweetRelevanceRules,
-      userRules = SearchBlenderRules.userRelevanceRules,
-      policyRuleParams = SearchBlenderRules.basicBlockMutePolicyRuleParam
+caselon objelonct SelonarchVidelonoPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = SelonarchBlelonndelonrRulelons.twelonelontRelonlelonvancelonRulelons,
+      uselonrRulelons = SelonarchBlelonndelonrRulelons.uselonrRelonlelonvancelonRulelons,
+      policyRulelonParams = SelonarchBlelonndelonrRulelons.basicBlockMutelonPolicyRulelonParam
     )
 
-case object SearchLatestPolicy
-    extends VisibilityPolicy(
-      tweetRules = SearchBlenderRules.tweetRecencyRules,
-      userRules = SearchBlenderRules.userRecencyBaseRules,
-      policyRuleParams = SearchBlenderRules.basicBlockMutePolicyRuleParam
+caselon objelonct SelonarchLatelonstPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = SelonarchBlelonndelonrRulelons.twelonelontReloncelonncyRulelons,
+      uselonrRulelons = SelonarchBlelonndelonrRulelons.uselonrReloncelonncyBaselonRulelons,
+      policyRulelonParams = SelonarchBlelonndelonrRulelons.basicBlockMutelonPolicyRulelonParam
     )
 
-case object SearchTopPolicy
-    extends VisibilityPolicy(
-      tweetRules = SearchBlenderRules.tweetRelevanceRules,
-      userRules = Seq(SpammyUserModelHighPrecisionDropTweetRule) ++
-        SearchBlenderRules.basicBlockMuteRules ++
-        SearchBlenderRules.searchQueryMatchesTweetAuthorRules,
-      policyRuleParams = SearchBlenderRules.basicBlockMutePolicyRuleParam
+caselon objelonct SelonarchTopPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = SelonarchBlelonndelonrRulelons.twelonelontRelonlelonvancelonRulelons,
+      uselonrRulelons = Selonq(SpammyUselonrModelonlHighPreloncisionDropTwelonelontRulelon) ++
+        SelonarchBlelonndelonrRulelons.basicBlockMutelonRulelons ++
+        SelonarchBlelonndelonrRulelons.selonarchQuelonryMatchelonsTwelonelontAuthorRulelons,
+      policyRulelonParams = SelonarchBlelonndelonrRulelons.basicBlockMutelonPolicyRulelonParam
     )
 
-case object SearchTopQigPolicy
-    extends VisibilityPolicy(
-      tweetRules = BaseQigPolicy.tweetRules ++
-        Seq(
-          UnsafeSearchGoreAndViolenceHighPrecisionAllUsersTweetLabelDropRule,
-          UnsafeSearchGoreAndViolenceReportedHeuristicsAllUsersTweetLabelDropRule,
-          UnsafeSearchNsfwCardImageAllUsersTweetLabelDropRule,
-          UnsafeSearchNsfwReportedHeuristicsAllUsersTweetLabelDropRule,
-          UnsafeSearchNsfwHighPrecisionAllUsersTweetLabelDropRule
+caselon objelonct SelonarchTopQigPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = BaselonQigPolicy.twelonelontRulelons ++
+        Selonq(
+          UnsafelonSelonarchGorelonAndViolelonncelonHighPreloncisionAllUselonrsTwelonelontLabelonlDropRulelon,
+          UnsafelonSelonarchGorelonAndViolelonncelonRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlDropRulelon,
+          UnsafelonSelonarchNsfwCardImagelonAllUselonrsTwelonelontLabelonlDropRulelon,
+          UnsafelonSelonarchNsfwRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlDropRulelon,
+          UnsafelonSelonarchNsfwHighPreloncisionAllUselonrsTwelonelontLabelonlDropRulelon
         ) ++
-        SearchTopPolicy.tweetRules.diff(
-          Seq(
-            SearchIpiSafeSearchWithoutUserInQueryDropRule,
-            SearchEdiSafeSearchWithoutUserInQueryDropRule,
-            HighSpammyTweetContentScoreTrendsTopTweetLabelDropRule,
-            UnsafeSearchNsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-            UnsafeSearchGoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-            UnsafeSearchGoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-            UnsafeSearchNsfwCardImageAllUsersTweetLabelRule,
-            UnsafeSearchNsfwReportedHeuristicsAllUsersTweetLabelRule
+        SelonarchTopPolicy.twelonelontRulelons.diff(
+          Selonq(
+            SelonarchIpiSafelonSelonarchWithoutUselonrInQuelonryDropRulelon,
+            SelonarchelondiSafelonSelonarchWithoutUselonrInQuelonryDropRulelon,
+            HighSpammyTwelonelontContelonntScorelonTrelonndsTopTwelonelontLabelonlDropRulelon,
+            UnsafelonSelonarchNsfwHighPreloncisionIntelonrstitialAllUselonrsTwelonelontLabelonlRulelon,
+            UnsafelonSelonarchGorelonAndViolelonncelonHighPreloncisionAllUselonrsTwelonelontLabelonlRulelon,
+            UnsafelonSelonarchGorelonAndViolelonncelonRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlRulelon,
+            UnsafelonSelonarchNsfwCardImagelonAllUselonrsTwelonelontLabelonlRulelon,
+            UnsafelonSelonarchNsfwRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlRulelon
           ) ++
-            SearchTopPolicy.tweetRules.intersect(BaseQigPolicy.tweetRules)),
-      userRules = BaseQigPolicy.userRules ++ Seq(
-        DropNsfwAdminAuthorViewerOptInFilteringOnSearchRule,
-        NsfwNearPerfectAuthorRule,
-      ) ++ SearchTopPolicy.userRules.diff(
-        SearchTopPolicy.userRules.intersect(BaseQigPolicy.userRules)),
-      policyRuleParams = SearchBlenderRules.basicBlockMutePolicyRuleParam
+            SelonarchTopPolicy.twelonelontRulelons.intelonrselonct(BaselonQigPolicy.twelonelontRulelons)),
+      uselonrRulelons = BaselonQigPolicy.uselonrRulelons ++ Selonq(
+        DropNsfwAdminAuthorVielonwelonrOptInFiltelonringOnSelonarchRulelon,
+        NsfwNelonarPelonrfelonctAuthorRulelon,
+      ) ++ SelonarchTopPolicy.uselonrRulelons.diff(
+        SelonarchTopPolicy.uselonrRulelons.intelonrselonct(BaselonQigPolicy.uselonrRulelons)),
+      policyRulelonParams = SelonarchBlelonndelonrRulelons.basicBlockMutelonPolicyRulelonParam
     )
 
-case object SafeSearchStrictPolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(
-        DropOuterCommunityTweetsRule,
-      ) ++ VisibilityPolicy.baseTweetRules ++ Seq(
-        AbusiveTweetLabelRule,
-        LowQualityTweetLabelDropRule,
-        HighProactiveTosScoreTweetLabelDropSearchRule,
-        NsfwHighPrecisionTweetLabelRule,
-        GoreAndViolenceHighPrecisionTweetLabelRule,
-        NsfwReportedHeuristicsTweetLabelRule,
-        GoreAndViolenceReportedHeuristicsTweetLabelRule,
-        NsfwCardImageTweetLabelRule,
-        NsfwHighRecallTweetLabelRule,
-        NsfwVideoTweetLabelDropRule,
-        NsfwTextTweetLabelDropRule,
-        SpamHighRecallTweetLabelDropRule,
-        DuplicateContentTweetLabelDropRule,
-        GoreAndViolenceTweetLabelRule,
-        UntrustedUrlTweetLabelRule,
-        DownrankSpamReplyTweetLabelRule,
-        SearchBlacklistTweetLabelRule,
-        SearchBlacklistHighRecallTweetLabelDropRule,
-        AutomationTweetLabelRule,
-        DuplicateMentionTweetLabelRule,
-        BystanderAbusiveTweetLabelRule,
-        SafetyCrisisLevel3DropRule,
-        SafetyCrisisLevel4DropRule,
-        DoNotAmplifyDropRule,
-        SmyteSpamTweetLabelDropRule,
-        AbusePolicyEpisodicTweetLabelInterstitialRule,
-        EmergencyDynamicInterstitialRule,
-      ) ++ LimitedEngagementBaseRules.tweetRules
-        ++ SearchBlenderRules.tweetAvoidRules,
-      userRules = Seq(
-        AbusiveRule,
-        LowQualityRule,
-        ReadOnlyRule,
-        SearchBlacklistRule,
-        SearchNsfwTextRule,
-        CompromisedRule,
-        SpamHighRecallRule,
-        DuplicateContentRule,
-        NsfwHighPrecisionRule,
-        NsfwAvatarImageRule,
-        NsfwBannerImageRule,
-        AbusiveHighRecallRule,
-        DoNotAmplifyNonFollowerRule,
-        NotGraduatedNonFollowerRule,
-        SearchLikelyIvsLabelNonFollowerDropUserRule,
-        DownrankSpamReplyNonAuthorRule,
-        NsfwTextNonAuthorDropRule,
+caselon objelonct SafelonSelonarchStrictPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = Selonq(
+        DropOutelonrCommunityTwelonelontsRulelon,
+      ) ++ VisibilityPolicy.baselonTwelonelontRulelons ++ Selonq(
+        AbusivelonTwelonelontLabelonlRulelon,
+        LowQualityTwelonelontLabelonlDropRulelon,
+        HighProactivelonTosScorelonTwelonelontLabelonlDropSelonarchRulelon,
+        NsfwHighPreloncisionTwelonelontLabelonlRulelon,
+        GorelonAndViolelonncelonHighPreloncisionTwelonelontLabelonlRulelon,
+        NsfwRelonportelondHelonuristicsTwelonelontLabelonlRulelon,
+        GorelonAndViolelonncelonRelonportelondHelonuristicsTwelonelontLabelonlRulelon,
+        NsfwCardImagelonTwelonelontLabelonlRulelon,
+        NsfwHighReloncallTwelonelontLabelonlRulelon,
+        NsfwVidelonoTwelonelontLabelonlDropRulelon,
+        NsfwTelonxtTwelonelontLabelonlDropRulelon,
+        SpamHighReloncallTwelonelontLabelonlDropRulelon,
+        DuplicatelonContelonntTwelonelontLabelonlDropRulelon,
+        GorelonAndViolelonncelonTwelonelontLabelonlRulelon,
+        UntrustelondUrlTwelonelontLabelonlRulelon,
+        DownrankSpamRelonplyTwelonelontLabelonlRulelon,
+        SelonarchBlacklistTwelonelontLabelonlRulelon,
+        SelonarchBlacklistHighReloncallTwelonelontLabelonlDropRulelon,
+        AutomationTwelonelontLabelonlRulelon,
+        DuplicatelonMelonntionTwelonelontLabelonlRulelon,
+        BystandelonrAbusivelonTwelonelontLabelonlRulelon,
+        SafelontyCrisisLelonvelonl3DropRulelon,
+        SafelontyCrisisLelonvelonl4DropRulelon,
+        DoNotAmplifyDropRulelon,
+        SmytelonSpamTwelonelontLabelonlDropRulelon,
+        AbuselonPolicyelonpisodicTwelonelontLabelonlIntelonrstitialRulelon,
+        elonmelonrgelonncyDynamicIntelonrstitialRulelon,
+      ) ++ LimitelondelonngagelonmelonntBaselonRulelons.twelonelontRulelons
+        ++ SelonarchBlelonndelonrRulelons.twelonelontAvoidRulelons,
+      uselonrRulelons = Selonq(
+        AbusivelonRulelon,
+        LowQualityRulelon,
+        RelonadOnlyRulelon,
+        SelonarchBlacklistRulelon,
+        SelonarchNsfwTelonxtRulelon,
+        CompromiselondRulelon,
+        SpamHighReloncallRulelon,
+        DuplicatelonContelonntRulelon,
+        NsfwHighPreloncisionRulelon,
+        NsfwAvatarImagelonRulelon,
+        NsfwBannelonrImagelonRulelon,
+        AbusivelonHighReloncallRulelon,
+        DoNotAmplifyNonFollowelonrRulelon,
+        NotGraduatelondNonFollowelonrRulelon,
+        SelonarchLikelonlyIvsLabelonlNonFollowelonrDropUselonrRulelon,
+        DownrankSpamRelonplyNonAuthorRulelon,
+        NsfwTelonxtNonAuthorDropRulelon,
       )
     )
 
-case object StickersTimelinePolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules,
-      userRules = Seq(
-        AbusiveRule,
-        LowQualityRule,
-        ReadOnlyRule,
-        CompromisedRule,
-        SearchBlacklistRule,
-        SearchNsfwTextRule,
-        DuplicateContentRule,
-        EngagementSpammerRule,
-        EngagementSpammerHighRecallRule,
-        NsfwSensitiveRule,
-        SpamHighRecallRule,
-        AbusiveHighRecallRule
+caselon objelonct StickelonrsTimelonlinelonPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = VisibilityPolicy.baselonTwelonelontRulelons,
+      uselonrRulelons = Selonq(
+        AbusivelonRulelon,
+        LowQualityRulelon,
+        RelonadOnlyRulelon,
+        CompromiselondRulelon,
+        SelonarchBlacklistRulelon,
+        SelonarchNsfwTelonxtRulelon,
+        DuplicatelonContelonntRulelon,
+        elonngagelonmelonntSpammelonrRulelon,
+        elonngagelonmelonntSpammelonrHighReloncallRulelon,
+        NsfwSelonnsitivelonRulelon,
+        SpamHighReloncallRulelon,
+        AbusivelonHighReloncallRulelon
       )
     )
 
-case object StratoExtLimitedEngagementsPolicy
-    extends VisibilityPolicy(
-      tweetRules =
-        VisibilityPolicy.baseTweetRules ++ LimitedEngagementBaseRules.tweetRules
+caselon objelonct StratoelonxtLimitelondelonngagelonmelonntsPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons =
+        VisibilityPolicy.baselonTwelonelontRulelons ++ LimitelondelonngagelonmelonntBaselonRulelons.twelonelontRulelons
     )
 
-case object InternalPromotedContentPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules
+caselon objelonct IntelonrnalPromotelondContelonntPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = VisibilityPolicy.baselonTwelonelontRulelons
     )
 
-case object StreamServicesPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++ Seq(
-        AbusiveTweetLabelRule,
-        LowQualityTweetLabelDropRule,
-        NsfwHighPrecisionTweetLabelRule,
-        GoreAndViolenceHighPrecisionTweetLabelRule,
-        NsfwReportedHeuristicsTweetLabelRule,
-        GoreAndViolenceReportedHeuristicsTweetLabelRule,
-        NsfwCardImageTweetLabelRule,
-        NsfwVideoTweetLabelDropRule,
-        NsfwTextTweetLabelDropRule,
-        SpamHighRecallTweetLabelDropRule,
-        DuplicateContentTweetLabelDropRule,
-        BystanderAbusiveTweetLabelRule,
-        SmyteSpamTweetLabelDropRule
+caselon objelonct StrelonamSelonrvicelonsPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = VisibilityPolicy.baselonTwelonelontRulelons ++ Selonq(
+        AbusivelonTwelonelontLabelonlRulelon,
+        LowQualityTwelonelontLabelonlDropRulelon,
+        NsfwHighPreloncisionTwelonelontLabelonlRulelon,
+        GorelonAndViolelonncelonHighPreloncisionTwelonelontLabelonlRulelon,
+        NsfwRelonportelondHelonuristicsTwelonelontLabelonlRulelon,
+        GorelonAndViolelonncelonRelonportelondHelonuristicsTwelonelontLabelonlRulelon,
+        NsfwCardImagelonTwelonelontLabelonlRulelon,
+        NsfwVidelonoTwelonelontLabelonlDropRulelon,
+        NsfwTelonxtTwelonelontLabelonlDropRulelon,
+        SpamHighReloncallTwelonelontLabelonlDropRulelon,
+        DuplicatelonContelonntTwelonelontLabelonlDropRulelon,
+        BystandelonrAbusivelonTwelonelontLabelonlRulelon,
+        SmytelonSpamTwelonelontLabelonlDropRulelon
       ),
-      userRules = Seq(NsfwTextNonAuthorDropRule)
+      uselonrRulelons = Selonq(NsfwTelonxtNonAuthorDropRulelon)
     )
 
-case object SuperLikePolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++ Seq(
-        AbusePolicyEpisodicTweetLabelDropRule,
-        EmergencyDropRule,
-        NsfwHighPrecisionTweetLabelRule,
-        GoreAndViolenceHighPrecisionTweetLabelRule,
-        NsfwReportedHeuristicsTweetLabelRule,
-        GoreAndViolenceReportedHeuristicsTweetLabelRule,
-        NsfwCardImageTweetLabelRule,
-        NsfwVideoTweetLabelDropRule,
-        NsfwTextTweetLabelDropRule
+caselon objelonct SupelonrLikelonPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = VisibilityPolicy.baselonTwelonelontRulelons ++ Selonq(
+        AbuselonPolicyelonpisodicTwelonelontLabelonlDropRulelon,
+        elonmelonrgelonncyDropRulelon,
+        NsfwHighPreloncisionTwelonelontLabelonlRulelon,
+        GorelonAndViolelonncelonHighPreloncisionTwelonelontLabelonlRulelon,
+        NsfwRelonportelondHelonuristicsTwelonelontLabelonlRulelon,
+        GorelonAndViolelonncelonRelonportelondHelonuristicsTwelonelontLabelonlRulelon,
+        NsfwCardImagelonTwelonelontLabelonlRulelon,
+        NsfwVidelonoTwelonelontLabelonlDropRulelon,
+        NsfwTelonxtTwelonelontLabelonlDropRulelon
       ),
-      userRules = Seq(NsfwTextNonAuthorDropRule)
+      uselonrRulelons = Selonq(NsfwTelonxtNonAuthorDropRulelon)
     )
 
-case object TimelineFocalTweetPolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(
-        AbusePolicyEpisodicTweetLabelInterstitialRule,
-        EmergencyDynamicInterstitialRule,
-      ) ++ LimitedEngagementBaseRules.tweetRules
+caselon objelonct TimelonlinelonFocalTwelonelontPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = Selonq(
+        AbuselonPolicyelonpisodicTwelonelontLabelonlIntelonrstitialRulelon,
+        elonmelonrgelonncyDynamicIntelonrstitialRulelon,
+      ) ++ LimitelondelonngagelonmelonntBaselonRulelons.twelonelontRulelons
     )
 
-case object TimelineBookmarkPolicy
-    extends VisibilityPolicy(
-      tweetRules =
-        Seq(
-          DropCommunityTweetsRule,
-          DropCommunityTweetCommunityNotVisibleRule,
-          DropProtectedCommunityTweetsRule,
-          DropHiddenCommunityTweetsRule,
-          DropAuthorRemovedCommunityTweetsRule,
-          SpamTweetLabelRule,
-          PdnaTweetLabelRule,
-          BounceOuterTweetTombstoneRule,
-          BounceQuotedTweetTombstoneRule,
-          DropExclusiveTweetContentRule,
-          DropTrustedFriendsTweetContentRule,
+caselon objelonct TimelonlinelonBookmarkPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons =
+        Selonq(
+          DropCommunityTwelonelontsRulelon,
+          DropCommunityTwelonelontCommunityNotVisiblelonRulelon,
+          DropProtelonctelondCommunityTwelonelontsRulelon,
+          DropHiddelonnCommunityTwelonelontsRulelon,
+          DropAuthorRelonmovelondCommunityTwelonelontsRulelon,
+          SpamTwelonelontLabelonlRulelon,
+          PdnaTwelonelontLabelonlRulelon,
+          BouncelonOutelonrTwelonelontTombstonelonRulelon,
+          BouncelonQuotelondTwelonelontTombstonelonRulelon,
+          DropelonxclusivelonTwelonelontContelonntRulelon,
+          DropTrustelondFrielonndsTwelonelontContelonntRulelon,
         ) ++
-          Seq(
-            AbusePolicyEpisodicTweetLabelInterstitialRule,
-            EmergencyDynamicInterstitialRule,
-            NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-            GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-            NsfwReportedHeuristicsAllUsersTweetLabelRule,
-            GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-            ViewerBlocksAuthorInnerQuotedTweetInterstitialRule,
-            ViewerMutesAuthorInnerQuotedTweetInterstitialRule,
-            NsfwCardImageAllUsersTweetLabelRule,
-          ) ++ LimitedEngagementBaseRules.tweetRules,
-      deletedTweetRules = Seq(
-        TombstoneBounceDeletedTweetRule,
-        TombstoneDeletedQuotedTweetRule
+          Selonq(
+            AbuselonPolicyelonpisodicTwelonelontLabelonlIntelonrstitialRulelon,
+            elonmelonrgelonncyDynamicIntelonrstitialRulelon,
+            NsfwHighPreloncisionIntelonrstitialAllUselonrsTwelonelontLabelonlRulelon,
+            GorelonAndViolelonncelonHighPreloncisionAllUselonrsTwelonelontLabelonlRulelon,
+            NsfwRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlRulelon,
+            GorelonAndViolelonncelonRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlRulelon,
+            VielonwelonrBlocksAuthorInnelonrQuotelondTwelonelontIntelonrstitialRulelon,
+            VielonwelonrMutelonsAuthorInnelonrQuotelondTwelonelontIntelonrstitialRulelon,
+            NsfwCardImagelonAllUselonrsTwelonelontLabelonlRulelon,
+          ) ++ LimitelondelonngagelonmelonntBaselonRulelons.twelonelontRulelons,
+      delonlelontelondTwelonelontRulelons = Selonq(
+        TombstonelonBouncelonDelonlelontelondTwelonelontRulelon,
+        TombstonelonDelonlelontelondQuotelondTwelonelontRulelon
       ),
-      userUnavailableStateRules = Seq(
-        SuspendedUserUnavailableTweetTombstoneRule,
-        DeactivatedUserUnavailableTweetTombstoneRule,
-        OffBoardedUserUnavailableTweetTombstoneRule,
-        ErasedUserUnavailableTweetTombstoneRule,
-        ProtectedUserUnavailableTweetTombstoneRule,
-        AuthorBlocksViewerUserUnavailableInnerQuotedTweetTombstoneRule,
-        UserUnavailableTweetTombstoneRule,
-        ViewerBlocksAuthorUserUnavailableInnerQuotedTweetInterstitialRule,
-        ViewerMutesAuthorUserUnavailableInnerQuotedTweetInterstitialRule
+      uselonrUnavailablelonStatelonRulelons = Selonq(
+        SuspelonndelondUselonrUnavailablelonTwelonelontTombstonelonRulelon,
+        DelonactivatelondUselonrUnavailablelonTwelonelontTombstonelonRulelon,
+        OffBoardelondUselonrUnavailablelonTwelonelontTombstonelonRulelon,
+        elonraselondUselonrUnavailablelonTwelonelontTombstonelonRulelon,
+        ProtelonctelondUselonrUnavailablelonTwelonelontTombstonelonRulelon,
+        AuthorBlocksVielonwelonrUselonrUnavailablelonInnelonrQuotelondTwelonelontTombstonelonRulelon,
+        UselonrUnavailablelonTwelonelontTombstonelonRulelon,
+        VielonwelonrBlocksAuthorUselonrUnavailablelonInnelonrQuotelondTwelonelontIntelonrstitialRulelon,
+        VielonwelonrMutelonsAuthorUselonrUnavailablelonInnelonrQuotelondTwelonelontIntelonrstitialRulelon
       ),
     )
 
-case object TimelineListsPolicy
-    extends VisibilityPolicy(
-      tweetRules =
-        Seq(
-          DropOuterCommunityTweetsRule,
-          DropStaleTweetsRule,
+caselon objelonct TimelonlinelonListsPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons =
+        Selonq(
+          DropOutelonrCommunityTwelonelontsRulelon,
+          DropStalelonTwelonelontsRulelon,
         ) ++
-          VisibilityPolicy.baseTweetRules ++
-          Seq(
-            AbusePolicyEpisodicTweetLabelInterstitialRule,
-            EmergencyDynamicInterstitialRule,
-            NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-            GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-            NsfwReportedHeuristicsAllUsersTweetLabelRule,
-            GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-            NsfwCardImageAllUsersTweetLabelRule,
-          ) ++ LimitedEngagementBaseRules.tweetRules
+          VisibilityPolicy.baselonTwelonelontRulelons ++
+          Selonq(
+            AbuselonPolicyelonpisodicTwelonelontLabelonlIntelonrstitialRulelon,
+            elonmelonrgelonncyDynamicIntelonrstitialRulelon,
+            NsfwHighPreloncisionIntelonrstitialAllUselonrsTwelonelontLabelonlRulelon,
+            GorelonAndViolelonncelonHighPreloncisionAllUselonrsTwelonelontLabelonlRulelon,
+            NsfwRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlRulelon,
+            GorelonAndViolelonncelonRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlRulelon,
+            NsfwCardImagelonAllUselonrsTwelonelontLabelonlRulelon,
+          ) ++ LimitelondelonngagelonmelonntBaselonRulelons.twelonelontRulelons
     )
 
-case object TimelineFavoritesPolicy
-    extends VisibilityPolicy(
-      tweetRules =
-        Seq(
-          DropOuterCommunityTweetsRule,
-          DropStaleTweetsRule,
+caselon objelonct TimelonlinelonFavoritelonsPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons =
+        Selonq(
+          DropOutelonrCommunityTwelonelontsRulelon,
+          DropStalelonTwelonelontsRulelon,
         )
-          ++ TimelineProfileRules.baseTweetRules
-          ++ Seq(
-            DynamicProductAdDropTweetLabelRule,
-            NsfwHighPrecisionTombstoneInnerQuotedTweetLabelRule,
-            SensitiveMediaTweetDropSettingLevelTombstoneRules.AdultMediaNsfwHighPrecisionTweetLabelDropSettingLevelTombstoneRule,
-            SensitiveMediaTweetDropSettingLevelTombstoneRules.ViolentMediaGoreAndViolenceHighPrecisionDropSettingLeveTombstoneRule,
-            SensitiveMediaTweetDropSettingLevelTombstoneRules.AdultMediaNsfwReportedHeuristicsTweetLabelDropSettingLevelTombstoneRule,
-            SensitiveMediaTweetDropSettingLevelTombstoneRules.ViolentMediaGoreAndViolenceReportedHeuristicsDropSettingLevelTombstoneRule,
-            SensitiveMediaTweetDropSettingLevelTombstoneRules.AdultMediaNsfwCardImageTweetLabelDropSettingLevelTombstoneRule,
-            SensitiveMediaTweetDropSettingLevelTombstoneRules.OtherSensitiveMediaNsfwUserTweetFlagDropSettingLevelTombstoneRule,
-            SensitiveMediaTweetDropSettingLevelTombstoneRules.OtherSensitiveMediaNsfwAdminTweetFlagDropSettingLevelTombstoneRule,
-            AbusePolicyEpisodicTweetLabelInterstitialRule,
-            EmergencyDynamicInterstitialRule,
-            ReportedTweetInterstitialRule,
-            ViewerMutesAuthorInterstitialRule,
-            ViewerBlocksAuthorInterstitialRule,
-            NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-            GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-            NsfwReportedHeuristicsAllUsersTweetLabelRule,
-            GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-            NsfwCardImageAllUsersTweetLabelRule,
-            SensitiveMediaTweetInterstitialRules.AdultMediaNsfwHighPrecisionTweetLabelInterstitialRule,
-            SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceHighPrecisionInterstitialRule,
-            SensitiveMediaTweetInterstitialRules.AdultMediaNsfwReportedHeuristicsTweetLabelInterstitialRule,
-            SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceReportedHeuristicsInterstitialRule,
-            SensitiveMediaTweetInterstitialRules.AdultMediaNsfwCardImageTweetLabelInterstitialRule,
-            SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwUserTweetFlagInterstitialRule,
-            SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwAdminTweetFlagInterstitialRule,
-            NsfwHighPrecisionTweetLabelAvoidRule,
-            NsfwHighRecallTweetLabelAvoidRule,
-            GoreAndViolenceHighPrecisionAvoidAllUsersTweetLabelRule,
-            NsfwReportedHeuristicsAvoidAllUsersTweetLabelRule,
-            GoreAndViolenceReportedHeuristicsAvoidAllUsersTweetLabelRule,
-            NsfwCardImageAvoidAllUsersTweetLabelRule,
-            DoNotAmplifyTweetLabelAvoidRule,
-            NsfaHighPrecisionTweetLabelAvoidRule,
-          ) ++ LimitedEngagementBaseRules.tweetRules,
-      deletedTweetRules = Seq(
-        TombstoneDeletedQuotedTweetRule,
-        TombstoneBounceDeletedQuotedTweetRule
+          ++ TimelonlinelonProfilelonRulelons.baselonTwelonelontRulelons
+          ++ Selonq(
+            DynamicProductAdDropTwelonelontLabelonlRulelon,
+            NsfwHighPreloncisionTombstonelonInnelonrQuotelondTwelonelontLabelonlRulelon,
+            SelonnsitivelonMelondiaTwelonelontDropSelonttingLelonvelonlTombstonelonRulelons.AdultMelondiaNsfwHighPreloncisionTwelonelontLabelonlDropSelonttingLelonvelonlTombstonelonRulelon,
+            SelonnsitivelonMelondiaTwelonelontDropSelonttingLelonvelonlTombstonelonRulelons.ViolelonntMelondiaGorelonAndViolelonncelonHighPreloncisionDropSelonttingLelonvelonTombstonelonRulelon,
+            SelonnsitivelonMelondiaTwelonelontDropSelonttingLelonvelonlTombstonelonRulelons.AdultMelondiaNsfwRelonportelondHelonuristicsTwelonelontLabelonlDropSelonttingLelonvelonlTombstonelonRulelon,
+            SelonnsitivelonMelondiaTwelonelontDropSelonttingLelonvelonlTombstonelonRulelons.ViolelonntMelondiaGorelonAndViolelonncelonRelonportelondHelonuristicsDropSelonttingLelonvelonlTombstonelonRulelon,
+            SelonnsitivelonMelondiaTwelonelontDropSelonttingLelonvelonlTombstonelonRulelons.AdultMelondiaNsfwCardImagelonTwelonelontLabelonlDropSelonttingLelonvelonlTombstonelonRulelon,
+            SelonnsitivelonMelondiaTwelonelontDropSelonttingLelonvelonlTombstonelonRulelons.OthelonrSelonnsitivelonMelondiaNsfwUselonrTwelonelontFlagDropSelonttingLelonvelonlTombstonelonRulelon,
+            SelonnsitivelonMelondiaTwelonelontDropSelonttingLelonvelonlTombstonelonRulelons.OthelonrSelonnsitivelonMelondiaNsfwAdminTwelonelontFlagDropSelonttingLelonvelonlTombstonelonRulelon,
+            AbuselonPolicyelonpisodicTwelonelontLabelonlIntelonrstitialRulelon,
+            elonmelonrgelonncyDynamicIntelonrstitialRulelon,
+            RelonportelondTwelonelontIntelonrstitialRulelon,
+            VielonwelonrMutelonsAuthorIntelonrstitialRulelon,
+            VielonwelonrBlocksAuthorIntelonrstitialRulelon,
+            NsfwHighPreloncisionIntelonrstitialAllUselonrsTwelonelontLabelonlRulelon,
+            GorelonAndViolelonncelonHighPreloncisionAllUselonrsTwelonelontLabelonlRulelon,
+            NsfwRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlRulelon,
+            GorelonAndViolelonncelonRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlRulelon,
+            NsfwCardImagelonAllUselonrsTwelonelontLabelonlRulelon,
+            SelonnsitivelonMelondiaTwelonelontIntelonrstitialRulelons.AdultMelondiaNsfwHighPreloncisionTwelonelontLabelonlIntelonrstitialRulelon,
+            SelonnsitivelonMelondiaTwelonelontIntelonrstitialRulelons.ViolelonntMelondiaGorelonAndViolelonncelonHighPreloncisionIntelonrstitialRulelon,
+            SelonnsitivelonMelondiaTwelonelontIntelonrstitialRulelons.AdultMelondiaNsfwRelonportelondHelonuristicsTwelonelontLabelonlIntelonrstitialRulelon,
+            SelonnsitivelonMelondiaTwelonelontIntelonrstitialRulelons.ViolelonntMelondiaGorelonAndViolelonncelonRelonportelondHelonuristicsIntelonrstitialRulelon,
+            SelonnsitivelonMelondiaTwelonelontIntelonrstitialRulelons.AdultMelondiaNsfwCardImagelonTwelonelontLabelonlIntelonrstitialRulelon,
+            SelonnsitivelonMelondiaTwelonelontIntelonrstitialRulelons.OthelonrSelonnsitivelonMelondiaNsfwUselonrTwelonelontFlagIntelonrstitialRulelon,
+            SelonnsitivelonMelondiaTwelonelontIntelonrstitialRulelons.OthelonrSelonnsitivelonMelondiaNsfwAdminTwelonelontFlagIntelonrstitialRulelon,
+            NsfwHighPreloncisionTwelonelontLabelonlAvoidRulelon,
+            NsfwHighReloncallTwelonelontLabelonlAvoidRulelon,
+            GorelonAndViolelonncelonHighPreloncisionAvoidAllUselonrsTwelonelontLabelonlRulelon,
+            NsfwRelonportelondHelonuristicsAvoidAllUselonrsTwelonelontLabelonlRulelon,
+            GorelonAndViolelonncelonRelonportelondHelonuristicsAvoidAllUselonrsTwelonelontLabelonlRulelon,
+            NsfwCardImagelonAvoidAllUselonrsTwelonelontLabelonlRulelon,
+            DoNotAmplifyTwelonelontLabelonlAvoidRulelon,
+            NsfaHighPreloncisionTwelonelontLabelonlAvoidRulelon,
+          ) ++ LimitelondelonngagelonmelonntBaselonRulelons.twelonelontRulelons,
+      delonlelontelondTwelonelontRulelons = Selonq(
+        TombstonelonDelonlelontelondQuotelondTwelonelontRulelon,
+        TombstonelonBouncelonDelonlelontelondQuotelondTwelonelontRulelon
       ),
-      userUnavailableStateRules = Seq(
-        SuspendedUserUnavailableInnerQuotedTweetTombstoneRule,
-        DeactivatedUserUnavailableInnerQuotedTweetTombstoneRule,
-        OffBoardedUserUnavailableInnerQuotedTweetTombstoneRule,
-        ErasedUserUnavailableInnerQuotedTweetTombstoneRule,
-        ProtectedUserUnavailableInnerQuotedTweetTombstoneRule,
-        AuthorBlocksViewerUserUnavailableInnerQuotedTweetTombstoneRule,
-        ViewerBlocksAuthorUserUnavailableInnerQuotedTweetInterstitialRule,
-        ViewerMutesAuthorUserUnavailableInnerQuotedTweetInterstitialRule
+      uselonrUnavailablelonStatelonRulelons = Selonq(
+        SuspelonndelondUselonrUnavailablelonInnelonrQuotelondTwelonelontTombstonelonRulelon,
+        DelonactivatelondUselonrUnavailablelonInnelonrQuotelondTwelonelontTombstonelonRulelon,
+        OffBoardelondUselonrUnavailablelonInnelonrQuotelondTwelonelontTombstonelonRulelon,
+        elonraselondUselonrUnavailablelonInnelonrQuotelondTwelonelontTombstonelonRulelon,
+        ProtelonctelondUselonrUnavailablelonInnelonrQuotelondTwelonelontTombstonelonRulelon,
+        AuthorBlocksVielonwelonrUselonrUnavailablelonInnelonrQuotelondTwelonelontTombstonelonRulelon,
+        VielonwelonrBlocksAuthorUselonrUnavailablelonInnelonrQuotelondTwelonelontIntelonrstitialRulelon,
+        VielonwelonrMutelonsAuthorUselonrUnavailablelonInnelonrQuotelondTwelonelontIntelonrstitialRulelon
       ),
-      policyRuleParams = SensitiveMediaSettingsProfileTimelineBaseRules.policyRuleParams
+      policyRulelonParams = SelonnsitivelonMelondiaSelonttingsProfilelonTimelonlinelonBaselonRulelons.policyRulelonParams
     )
 
-case object ProfileMixerFavoritesPolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(
-        DropStaleTweetsRule,
-        DropExclusiveTweetContentRule,
-        DropOuterCommunityTweetsRule,
+caselon objelonct ProfilelonMixelonrFavoritelonsPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = Selonq(
+        DropStalelonTwelonelontsRulelon,
+        DropelonxclusivelonTwelonelontContelonntRulelon,
+        DropOutelonrCommunityTwelonelontsRulelon,
       ),
-      deletedTweetRules = Seq(
-        TombstoneDeletedQuotedTweetRule,
-        TombstoneBounceDeletedQuotedTweetRule
+      delonlelontelondTwelonelontRulelons = Selonq(
+        TombstonelonDelonlelontelondQuotelondTwelonelontRulelon,
+        TombstonelonBouncelonDelonlelontelondQuotelondTwelonelontRulelon
       )
     )
 
-case object TimelineMediaPolicy
-    extends VisibilityPolicy(
-        TimelineProfileRules.baseTweetRules
-        ++ Seq(
-          NsfwHighPrecisionTombstoneInnerQuotedTweetLabelRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.AdultMediaNsfwHighPrecisionTweetLabelDropSettingLevelTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.ViolentMediaGoreAndViolenceHighPrecisionDropSettingLeveTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.AdultMediaNsfwReportedHeuristicsTweetLabelDropSettingLevelTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.ViolentMediaGoreAndViolenceReportedHeuristicsDropSettingLevelTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.AdultMediaNsfwCardImageTweetLabelDropSettingLevelTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.OtherSensitiveMediaNsfwUserTweetFlagDropSettingLevelTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.OtherSensitiveMediaNsfwAdminTweetFlagDropSettingLevelTombstoneRule,
-          AbusePolicyEpisodicTweetLabelInterstitialRule,
-          EmergencyDynamicInterstitialRule,
-          ReportedTweetInterstitialRule,
-          ViewerMutesAuthorInnerQuotedTweetInterstitialRule,
-          ViewerBlocksAuthorInnerQuotedTweetInterstitialRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-          GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule,
-          SensitiveMediaTweetInterstitialRules.AdultMediaNsfwHighPrecisionTweetLabelInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceHighPrecisionInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.AdultMediaNsfwReportedHeuristicsTweetLabelInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceReportedHeuristicsInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.AdultMediaNsfwCardImageTweetLabelInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwUserTweetFlagInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwAdminTweetFlagInterstitialRule,
-          NsfwHighPrecisionTweetLabelAvoidRule,
-          NsfwHighRecallTweetLabelAvoidRule,
-          GoreAndViolenceHighPrecisionAvoidAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAvoidAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAvoidAllUsersTweetLabelRule,
-          NsfwCardImageAvoidAllUsersTweetLabelRule,
-          DoNotAmplifyTweetLabelAvoidRule,
-          NsfaHighPrecisionTweetLabelAvoidRule,
-        ) ++ LimitedEngagementBaseRules.tweetRules,
-      deletedTweetRules = Seq(
-        TombstoneBounceDeletedOuterTweetRule,
-        TombstoneDeletedQuotedTweetRule,
-        TombstoneBounceDeletedQuotedTweetRule
+caselon objelonct TimelonlinelonMelondiaPolicy
+    elonxtelonnds VisibilityPolicy(
+        TimelonlinelonProfilelonRulelons.baselonTwelonelontRulelons
+        ++ Selonq(
+          NsfwHighPreloncisionTombstonelonInnelonrQuotelondTwelonelontLabelonlRulelon,
+          SelonnsitivelonMelondiaTwelonelontDropSelonttingLelonvelonlTombstonelonRulelons.AdultMelondiaNsfwHighPreloncisionTwelonelontLabelonlDropSelonttingLelonvelonlTombstonelonRulelon,
+          SelonnsitivelonMelondiaTwelonelontDropSelonttingLelonvelonlTombstonelonRulelons.ViolelonntMelondiaGorelonAndViolelonncelonHighPreloncisionDropSelonttingLelonvelonTombstonelonRulelon,
+          SelonnsitivelonMelondiaTwelonelontDropSelonttingLelonvelonlTombstonelonRulelons.AdultMelondiaNsfwRelonportelondHelonuristicsTwelonelontLabelonlDropSelonttingLelonvelonlTombstonelonRulelon,
+          SelonnsitivelonMelondiaTwelonelontDropSelonttingLelonvelonlTombstonelonRulelons.ViolelonntMelondiaGorelonAndViolelonncelonRelonportelondHelonuristicsDropSelonttingLelonvelonlTombstonelonRulelon,
+          SelonnsitivelonMelondiaTwelonelontDropSelonttingLelonvelonlTombstonelonRulelons.AdultMelondiaNsfwCardImagelonTwelonelontLabelonlDropSelonttingLelonvelonlTombstonelonRulelon,
+          SelonnsitivelonMelondiaTwelonelontDropSelonttingLelonvelonlTombstonelonRulelons.OthelonrSelonnsitivelonMelondiaNsfwUselonrTwelonelontFlagDropSelonttingLelonvelonlTombstonelonRulelon,
+          SelonnsitivelonMelondiaTwelonelontDropSelonttingLelonvelonlTombstonelonRulelons.OthelonrSelonnsitivelonMelondiaNsfwAdminTwelonelontFlagDropSelonttingLelonvelonlTombstonelonRulelon,
+          AbuselonPolicyelonpisodicTwelonelontLabelonlIntelonrstitialRulelon,
+          elonmelonrgelonncyDynamicIntelonrstitialRulelon,
+          RelonportelondTwelonelontIntelonrstitialRulelon,
+          VielonwelonrMutelonsAuthorInnelonrQuotelondTwelonelontIntelonrstitialRulelon,
+          VielonwelonrBlocksAuthorInnelonrQuotelondTwelonelontIntelonrstitialRulelon,
+          NsfwHighPreloncisionIntelonrstitialAllUselonrsTwelonelontLabelonlRulelon,
+          GorelonAndViolelonncelonHighPreloncisionAllUselonrsTwelonelontLabelonlRulelon,
+          NsfwRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlRulelon,
+          GorelonAndViolelonncelonRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlRulelon,
+          NsfwCardImagelonAllUselonrsTwelonelontLabelonlRulelon,
+          SelonnsitivelonMelondiaTwelonelontIntelonrstitialRulelons.AdultMelondiaNsfwHighPreloncisionTwelonelontLabelonlIntelonrstitialRulelon,
+          SelonnsitivelonMelondiaTwelonelontIntelonrstitialRulelons.ViolelonntMelondiaGorelonAndViolelonncelonHighPreloncisionIntelonrstitialRulelon,
+          SelonnsitivelonMelondiaTwelonelontIntelonrstitialRulelons.AdultMelondiaNsfwRelonportelondHelonuristicsTwelonelontLabelonlIntelonrstitialRulelon,
+          SelonnsitivelonMelondiaTwelonelontIntelonrstitialRulelons.ViolelonntMelondiaGorelonAndViolelonncelonRelonportelondHelonuristicsIntelonrstitialRulelon,
+          SelonnsitivelonMelondiaTwelonelontIntelonrstitialRulelons.AdultMelondiaNsfwCardImagelonTwelonelontLabelonlIntelonrstitialRulelon,
+          SelonnsitivelonMelondiaTwelonelontIntelonrstitialRulelons.OthelonrSelonnsitivelonMelondiaNsfwUselonrTwelonelontFlagIntelonrstitialRulelon,
+          SelonnsitivelonMelondiaTwelonelontIntelonrstitialRulelons.OthelonrSelonnsitivelonMelondiaNsfwAdminTwelonelontFlagIntelonrstitialRulelon,
+          NsfwHighPreloncisionTwelonelontLabelonlAvoidRulelon,
+          NsfwHighReloncallTwelonelontLabelonlAvoidRulelon,
+          GorelonAndViolelonncelonHighPreloncisionAvoidAllUselonrsTwelonelontLabelonlRulelon,
+          NsfwRelonportelondHelonuristicsAvoidAllUselonrsTwelonelontLabelonlRulelon,
+          GorelonAndViolelonncelonRelonportelondHelonuristicsAvoidAllUselonrsTwelonelontLabelonlRulelon,
+          NsfwCardImagelonAvoidAllUselonrsTwelonelontLabelonlRulelon,
+          DoNotAmplifyTwelonelontLabelonlAvoidRulelon,
+          NsfaHighPreloncisionTwelonelontLabelonlAvoidRulelon,
+        ) ++ LimitelondelonngagelonmelonntBaselonRulelons.twelonelontRulelons,
+      delonlelontelondTwelonelontRulelons = Selonq(
+        TombstonelonBouncelonDelonlelontelondOutelonrTwelonelontRulelon,
+        TombstonelonDelonlelontelondQuotelondTwelonelontRulelon,
+        TombstonelonBouncelonDelonlelontelondQuotelondTwelonelontRulelon
       ),
-      userUnavailableStateRules = Seq(
-        SuspendedUserUnavailableInnerQuotedTweetTombstoneRule,
-        DeactivatedUserUnavailableInnerQuotedTweetTombstoneRule,
-        OffBoardedUserUnavailableInnerQuotedTweetTombstoneRule,
-        ErasedUserUnavailableInnerQuotedTweetTombstoneRule,
-        ProtectedUserUnavailableInnerQuotedTweetTombstoneRule,
-        AuthorBlocksViewerUserUnavailableInnerQuotedTweetTombstoneRule,
-        ViewerBlocksAuthorUserUnavailableInnerQuotedTweetInterstitialRule,
-        ViewerMutesAuthorUserUnavailableInnerQuotedTweetInterstitialRule
+      uselonrUnavailablelonStatelonRulelons = Selonq(
+        SuspelonndelondUselonrUnavailablelonInnelonrQuotelondTwelonelontTombstonelonRulelon,
+        DelonactivatelondUselonrUnavailablelonInnelonrQuotelondTwelonelontTombstonelonRulelon,
+        OffBoardelondUselonrUnavailablelonInnelonrQuotelondTwelonelontTombstonelonRulelon,
+        elonraselondUselonrUnavailablelonInnelonrQuotelondTwelonelontTombstonelonRulelon,
+        ProtelonctelondUselonrUnavailablelonInnelonrQuotelondTwelonelontTombstonelonRulelon,
+        AuthorBlocksVielonwelonrUselonrUnavailablelonInnelonrQuotelondTwelonelontTombstonelonRulelon,
+        VielonwelonrBlocksAuthorUselonrUnavailablelonInnelonrQuotelondTwelonelontIntelonrstitialRulelon,
+        VielonwelonrMutelonsAuthorUselonrUnavailablelonInnelonrQuotelondTwelonelontIntelonrstitialRulelon
       ),
-      policyRuleParams = SensitiveMediaSettingsProfileTimelineBaseRules.policyRuleParams
+      policyRulelonParams = SelonnsitivelonMelondiaSelonttingsProfilelonTimelonlinelonBaselonRulelons.policyRulelonParams
     )
 
-case object ProfileMixerMediaPolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(
-        DropStaleTweetsRule,
-        DropExclusiveTweetContentRule
+caselon objelonct ProfilelonMixelonrMelondiaPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = Selonq(
+        DropStalelonTwelonelontsRulelon,
+        DropelonxclusivelonTwelonelontContelonntRulelon
       ),
-      deletedTweetRules = Seq(
-        TombstoneBounceDeletedOuterTweetRule,
-        TombstoneDeletedQuotedTweetRule,
-        TombstoneBounceDeletedQuotedTweetRule
+      delonlelontelondTwelonelontRulelons = Selonq(
+        TombstonelonBouncelonDelonlelontelondOutelonrTwelonelontRulelon,
+        TombstonelonDelonlelontelondQuotelondTwelonelontRulelon,
+        TombstonelonBouncelonDelonlelontelondQuotelondTwelonelontRulelon
       )
     )
 
-object TimelineProfileRules {
+objelonct TimelonlinelonProfilelonRulelons {
 
-  val baseTweetRules: Seq[Rule] = Seq(
-    TombstoneCommunityTweetsRule,
-    TombstoneCommunityTweetCommunityNotVisibleRule,
-    TombstoneProtectedCommunityTweetsRule,
-    TombstoneHiddenCommunityTweetsRule,
-    TombstoneAuthorRemovedCommunityTweetsRule,
-    SpamQuotedTweetLabelTombstoneRule,
-    SpamTweetLabelRule,
-    PdnaQuotedTweetLabelTombstoneRule,
-    PdnaTweetLabelRule,
-    BounceTweetLabelTombstoneRule,
-    TombstoneExclusiveQuotedTweetContentRule,
-    DropExclusiveTweetContentRule,
-    DropTrustedFriendsTweetContentRule
+  val baselonTwelonelontRulelons: Selonq[Rulelon] = Selonq(
+    TombstonelonCommunityTwelonelontsRulelon,
+    TombstonelonCommunityTwelonelontCommunityNotVisiblelonRulelon,
+    TombstonelonProtelonctelondCommunityTwelonelontsRulelon,
+    TombstonelonHiddelonnCommunityTwelonelontsRulelon,
+    TombstonelonAuthorRelonmovelondCommunityTwelonelontsRulelon,
+    SpamQuotelondTwelonelontLabelonlTombstonelonRulelon,
+    SpamTwelonelontLabelonlRulelon,
+    PdnaQuotelondTwelonelontLabelonlTombstonelonRulelon,
+    PdnaTwelonelontLabelonlRulelon,
+    BouncelonTwelonelontLabelonlTombstonelonRulelon,
+    TombstonelonelonxclusivelonQuotelondTwelonelontContelonntRulelon,
+    DropelonxclusivelonTwelonelontContelonntRulelon,
+    DropTrustelondFrielonndsTwelonelontContelonntRulelon
   )
 
-  val tweetRules: Seq[Rule] =
-    Seq(
-      DynamicProductAdDropTweetLabelRule,
-      AbusePolicyEpisodicTweetLabelInterstitialRule,
-      EmergencyDynamicInterstitialRule,
-      ReportedTweetInterstitialRule,
-      NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-      GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-      NsfwReportedHeuristicsAllUsersTweetLabelRule,
-      GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-      NsfwCardImageAllUsersTweetLabelRule,
-      NsfwHighPrecisionTweetLabelAvoidRule,
-      NsfwHighRecallTweetLabelAvoidRule,
-      GoreAndViolenceHighPrecisionAvoidAllUsersTweetLabelRule,
-      NsfwReportedHeuristicsAvoidAllUsersTweetLabelRule,
-      GoreAndViolenceReportedHeuristicsAvoidAllUsersTweetLabelRule,
-      NsfwCardImageAvoidAllUsersTweetLabelRule,
-      NsfwTextTweetLabelAvoidRule,
-      DoNotAmplifyTweetLabelAvoidRule,
-      NsfaHighPrecisionTweetLabelAvoidRule,
-    ) ++ LimitedEngagementBaseRules.tweetRules
+  val twelonelontRulelons: Selonq[Rulelon] =
+    Selonq(
+      DynamicProductAdDropTwelonelontLabelonlRulelon,
+      AbuselonPolicyelonpisodicTwelonelontLabelonlIntelonrstitialRulelon,
+      elonmelonrgelonncyDynamicIntelonrstitialRulelon,
+      RelonportelondTwelonelontIntelonrstitialRulelon,
+      NsfwHighPreloncisionIntelonrstitialAllUselonrsTwelonelontLabelonlRulelon,
+      GorelonAndViolelonncelonHighPreloncisionAllUselonrsTwelonelontLabelonlRulelon,
+      NsfwRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlRulelon,
+      GorelonAndViolelonncelonRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlRulelon,
+      NsfwCardImagelonAllUselonrsTwelonelontLabelonlRulelon,
+      NsfwHighPreloncisionTwelonelontLabelonlAvoidRulelon,
+      NsfwHighReloncallTwelonelontLabelonlAvoidRulelon,
+      GorelonAndViolelonncelonHighPreloncisionAvoidAllUselonrsTwelonelontLabelonlRulelon,
+      NsfwRelonportelondHelonuristicsAvoidAllUselonrsTwelonelontLabelonlRulelon,
+      GorelonAndViolelonncelonRelonportelondHelonuristicsAvoidAllUselonrsTwelonelontLabelonlRulelon,
+      NsfwCardImagelonAvoidAllUselonrsTwelonelontLabelonlRulelon,
+      NsfwTelonxtTwelonelontLabelonlAvoidRulelon,
+      DoNotAmplifyTwelonelontLabelonlAvoidRulelon,
+      NsfaHighPreloncisionTwelonelontLabelonlAvoidRulelon,
+    ) ++ LimitelondelonngagelonmelonntBaselonRulelons.twelonelontRulelons
 
-  val tweetTombstoneRules: Seq[Rule] =
-    Seq(
-      DynamicProductAdDropTweetLabelRule,
-      NsfwHighPrecisionInnerQuotedTweetLabelRule,
-      SensitiveMediaTweetDropSettingLevelTombstoneRules.AdultMediaNsfwHighPrecisionTweetLabelDropSettingLevelTombstoneRule,
-      SensitiveMediaTweetDropSettingLevelTombstoneRules.ViolentMediaGoreAndViolenceHighPrecisionDropSettingLeveTombstoneRule,
-      SensitiveMediaTweetDropSettingLevelTombstoneRules.AdultMediaNsfwReportedHeuristicsTweetLabelDropSettingLevelTombstoneRule,
-      SensitiveMediaTweetDropSettingLevelTombstoneRules.ViolentMediaGoreAndViolenceReportedHeuristicsDropSettingLevelTombstoneRule,
-      SensitiveMediaTweetDropSettingLevelTombstoneRules.AdultMediaNsfwCardImageTweetLabelDropSettingLevelTombstoneRule,
-      SensitiveMediaTweetDropSettingLevelTombstoneRules.OtherSensitiveMediaNsfwUserTweetFlagDropSettingLevelTombstoneRule,
-      SensitiveMediaTweetDropSettingLevelTombstoneRules.OtherSensitiveMediaNsfwAdminTweetFlagDropSettingLevelTombstoneRule,
-      AbusePolicyEpisodicTweetLabelInterstitialRule,
-      EmergencyDynamicInterstitialRule,
-      ReportedTweetInterstitialRule,
-      ViewerMutesAuthorInnerQuotedTweetInterstitialRule,
-      ViewerBlocksAuthorInnerQuotedTweetInterstitialRule,
-      NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-      GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-      NsfwReportedHeuristicsAllUsersTweetLabelRule,
-      GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-      NsfwCardImageAllUsersTweetLabelRule,
-      SensitiveMediaTweetInterstitialRules.AdultMediaNsfwHighPrecisionTweetLabelInterstitialRule,
-      SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceHighPrecisionInterstitialRule,
-      SensitiveMediaTweetInterstitialRules.AdultMediaNsfwReportedHeuristicsTweetLabelInterstitialRule,
-      SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceReportedHeuristicsInterstitialRule,
-      SensitiveMediaTweetInterstitialRules.AdultMediaNsfwCardImageTweetLabelInterstitialRule,
-      SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwUserTweetFlagInterstitialRule,
-      SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwAdminTweetFlagInterstitialRule,
-      NsfwHighPrecisionTweetLabelAvoidRule,
-      NsfwHighRecallTweetLabelAvoidRule,
-      GoreAndViolenceHighPrecisionAvoidAllUsersTweetLabelRule,
-      NsfwReportedHeuristicsAvoidAllUsersTweetLabelRule,
-      GoreAndViolenceReportedHeuristicsAvoidAllUsersTweetLabelRule,
-      NsfwCardImageAvoidAllUsersTweetLabelRule,
-      DoNotAmplifyTweetLabelAvoidRule,
-      NsfaHighPrecisionTweetLabelAvoidRule,
-    ) ++ LimitedEngagementBaseRules.tweetRules
+  val twelonelontTombstonelonRulelons: Selonq[Rulelon] =
+    Selonq(
+      DynamicProductAdDropTwelonelontLabelonlRulelon,
+      NsfwHighPreloncisionInnelonrQuotelondTwelonelontLabelonlRulelon,
+      SelonnsitivelonMelondiaTwelonelontDropSelonttingLelonvelonlTombstonelonRulelons.AdultMelondiaNsfwHighPreloncisionTwelonelontLabelonlDropSelonttingLelonvelonlTombstonelonRulelon,
+      SelonnsitivelonMelondiaTwelonelontDropSelonttingLelonvelonlTombstonelonRulelons.ViolelonntMelondiaGorelonAndViolelonncelonHighPreloncisionDropSelonttingLelonvelonTombstonelonRulelon,
+      SelonnsitivelonMelondiaTwelonelontDropSelonttingLelonvelonlTombstonelonRulelons.AdultMelondiaNsfwRelonportelondHelonuristicsTwelonelontLabelonlDropSelonttingLelonvelonlTombstonelonRulelon,
+      SelonnsitivelonMelondiaTwelonelontDropSelonttingLelonvelonlTombstonelonRulelons.ViolelonntMelondiaGorelonAndViolelonncelonRelonportelondHelonuristicsDropSelonttingLelonvelonlTombstonelonRulelon,
+      SelonnsitivelonMelondiaTwelonelontDropSelonttingLelonvelonlTombstonelonRulelons.AdultMelondiaNsfwCardImagelonTwelonelontLabelonlDropSelonttingLelonvelonlTombstonelonRulelon,
+      SelonnsitivelonMelondiaTwelonelontDropSelonttingLelonvelonlTombstonelonRulelons.OthelonrSelonnsitivelonMelondiaNsfwUselonrTwelonelontFlagDropSelonttingLelonvelonlTombstonelonRulelon,
+      SelonnsitivelonMelondiaTwelonelontDropSelonttingLelonvelonlTombstonelonRulelons.OthelonrSelonnsitivelonMelondiaNsfwAdminTwelonelontFlagDropSelonttingLelonvelonlTombstonelonRulelon,
+      AbuselonPolicyelonpisodicTwelonelontLabelonlIntelonrstitialRulelon,
+      elonmelonrgelonncyDynamicIntelonrstitialRulelon,
+      RelonportelondTwelonelontIntelonrstitialRulelon,
+      VielonwelonrMutelonsAuthorInnelonrQuotelondTwelonelontIntelonrstitialRulelon,
+      VielonwelonrBlocksAuthorInnelonrQuotelondTwelonelontIntelonrstitialRulelon,
+      NsfwHighPreloncisionIntelonrstitialAllUselonrsTwelonelontLabelonlRulelon,
+      GorelonAndViolelonncelonHighPreloncisionAllUselonrsTwelonelontLabelonlRulelon,
+      NsfwRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlRulelon,
+      GorelonAndViolelonncelonRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlRulelon,
+      NsfwCardImagelonAllUselonrsTwelonelontLabelonlRulelon,
+      SelonnsitivelonMelondiaTwelonelontIntelonrstitialRulelons.AdultMelondiaNsfwHighPreloncisionTwelonelontLabelonlIntelonrstitialRulelon,
+      SelonnsitivelonMelondiaTwelonelontIntelonrstitialRulelons.ViolelonntMelondiaGorelonAndViolelonncelonHighPreloncisionIntelonrstitialRulelon,
+      SelonnsitivelonMelondiaTwelonelontIntelonrstitialRulelons.AdultMelondiaNsfwRelonportelondHelonuristicsTwelonelontLabelonlIntelonrstitialRulelon,
+      SelonnsitivelonMelondiaTwelonelontIntelonrstitialRulelons.ViolelonntMelondiaGorelonAndViolelonncelonRelonportelondHelonuristicsIntelonrstitialRulelon,
+      SelonnsitivelonMelondiaTwelonelontIntelonrstitialRulelons.AdultMelondiaNsfwCardImagelonTwelonelontLabelonlIntelonrstitialRulelon,
+      SelonnsitivelonMelondiaTwelonelontIntelonrstitialRulelons.OthelonrSelonnsitivelonMelondiaNsfwUselonrTwelonelontFlagIntelonrstitialRulelon,
+      SelonnsitivelonMelondiaTwelonelontIntelonrstitialRulelons.OthelonrSelonnsitivelonMelondiaNsfwAdminTwelonelontFlagIntelonrstitialRulelon,
+      NsfwHighPreloncisionTwelonelontLabelonlAvoidRulelon,
+      NsfwHighReloncallTwelonelontLabelonlAvoidRulelon,
+      GorelonAndViolelonncelonHighPreloncisionAvoidAllUselonrsTwelonelontLabelonlRulelon,
+      NsfwRelonportelondHelonuristicsAvoidAllUselonrsTwelonelontLabelonlRulelon,
+      GorelonAndViolelonncelonRelonportelondHelonuristicsAvoidAllUselonrsTwelonelontLabelonlRulelon,
+      NsfwCardImagelonAvoidAllUselonrsTwelonelontLabelonlRulelon,
+      DoNotAmplifyTwelonelontLabelonlAvoidRulelon,
+      NsfaHighPreloncisionTwelonelontLabelonlAvoidRulelon,
+    ) ++ LimitelondelonngagelonmelonntBaselonRulelons.twelonelontRulelons
 }
 
-case object TimelineProfilePolicy
-    extends VisibilityPolicy(
-      tweetRules =
-        Seq(
-          DropOuterCommunityTweetsRule,
-          DropStaleTweetsRule,
+caselon objelonct TimelonlinelonProfilelonPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons =
+        Selonq(
+          DropOutelonrCommunityTwelonelontsRulelon,
+          DropStalelonTwelonelontsRulelon,
         )
-          ++ TimelineProfileRules.baseTweetRules
-          ++ TimelineProfileRules.tweetTombstoneRules,
-      deletedTweetRules = Seq(
-        TombstoneBounceDeletedOuterTweetRule,
-        TombstoneDeletedQuotedTweetRule,
-        TombstoneBounceDeletedQuotedTweetRule,
+          ++ TimelonlinelonProfilelonRulelons.baselonTwelonelontRulelons
+          ++ TimelonlinelonProfilelonRulelons.twelonelontTombstonelonRulelons,
+      delonlelontelondTwelonelontRulelons = Selonq(
+        TombstonelonBouncelonDelonlelontelondOutelonrTwelonelontRulelon,
+        TombstonelonDelonlelontelondQuotelondTwelonelontRulelon,
+        TombstonelonBouncelonDelonlelontelondQuotelondTwelonelontRulelon,
       ),
-      userUnavailableStateRules = Seq(
-        SuspendedUserUnavailableInnerQuotedTweetTombstoneRule,
-        DeactivatedUserUnavailableInnerQuotedTweetTombstoneRule,
-        OffBoardedUserUnavailableInnerQuotedTweetTombstoneRule,
-        ErasedUserUnavailableInnerQuotedTweetTombstoneRule,
-        ProtectedUserUnavailableInnerQuotedTweetTombstoneRule,
-        AuthorBlocksViewerUserUnavailableInnerQuotedTweetTombstoneRule,
-        ViewerBlocksAuthorUserUnavailableInnerQuotedTweetInterstitialRule,
-        ViewerMutesAuthorUserUnavailableInnerQuotedTweetInterstitialRule
+      uselonrUnavailablelonStatelonRulelons = Selonq(
+        SuspelonndelondUselonrUnavailablelonInnelonrQuotelondTwelonelontTombstonelonRulelon,
+        DelonactivatelondUselonrUnavailablelonInnelonrQuotelondTwelonelontTombstonelonRulelon,
+        OffBoardelondUselonrUnavailablelonInnelonrQuotelondTwelonelontTombstonelonRulelon,
+        elonraselondUselonrUnavailablelonInnelonrQuotelondTwelonelontTombstonelonRulelon,
+        ProtelonctelondUselonrUnavailablelonInnelonrQuotelondTwelonelontTombstonelonRulelon,
+        AuthorBlocksVielonwelonrUselonrUnavailablelonInnelonrQuotelondTwelonelontTombstonelonRulelon,
+        VielonwelonrBlocksAuthorUselonrUnavailablelonInnelonrQuotelondTwelonelontIntelonrstitialRulelon,
+        VielonwelonrMutelonsAuthorUselonrUnavailablelonInnelonrQuotelondTwelonelontIntelonrstitialRulelon
       ),
-      policyRuleParams = SensitiveMediaSettingsProfileTimelineBaseRules.policyRuleParams
+      policyRulelonParams = SelonnsitivelonMelondiaSelonttingsProfilelonTimelonlinelonBaselonRulelons.policyRulelonParams
     )
 
-case object TimelineProfileAllPolicy
-    extends VisibilityPolicy(
-        TimelineProfileRules.baseTweetRules
-        ++ TimelineProfileRules.tweetTombstoneRules,
-      deletedTweetRules = Seq(
-        TombstoneBounceDeletedOuterTweetRule,
-        TombstoneDeletedQuotedTweetRule,
-        TombstoneBounceDeletedQuotedTweetRule,
+caselon objelonct TimelonlinelonProfilelonAllPolicy
+    elonxtelonnds VisibilityPolicy(
+        TimelonlinelonProfilelonRulelons.baselonTwelonelontRulelons
+        ++ TimelonlinelonProfilelonRulelons.twelonelontTombstonelonRulelons,
+      delonlelontelondTwelonelontRulelons = Selonq(
+        TombstonelonBouncelonDelonlelontelondOutelonrTwelonelontRulelon,
+        TombstonelonDelonlelontelondQuotelondTwelonelontRulelon,
+        TombstonelonBouncelonDelonlelontelondQuotelondTwelonelontRulelon,
       ),
-      userUnavailableStateRules = Seq(
-        SuspendedUserUnavailableInnerQuotedTweetTombstoneRule,
-        DeactivatedUserUnavailableInnerQuotedTweetTombstoneRule,
-        OffBoardedUserUnavailableInnerQuotedTweetTombstoneRule,
-        ErasedUserUnavailableInnerQuotedTweetTombstoneRule,
-        ProtectedUserUnavailableInnerQuotedTweetTombstoneRule,
-        AuthorBlocksViewerUserUnavailableInnerQuotedTweetTombstoneRule,
-        ViewerBlocksAuthorUserUnavailableInnerQuotedTweetInterstitialRule,
-        ViewerMutesAuthorUserUnavailableInnerQuotedTweetInterstitialRule
+      uselonrUnavailablelonStatelonRulelons = Selonq(
+        SuspelonndelondUselonrUnavailablelonInnelonrQuotelondTwelonelontTombstonelonRulelon,
+        DelonactivatelondUselonrUnavailablelonInnelonrQuotelondTwelonelontTombstonelonRulelon,
+        OffBoardelondUselonrUnavailablelonInnelonrQuotelondTwelonelontTombstonelonRulelon,
+        elonraselondUselonrUnavailablelonInnelonrQuotelondTwelonelontTombstonelonRulelon,
+        ProtelonctelondUselonrUnavailablelonInnelonrQuotelondTwelonelontTombstonelonRulelon,
+        AuthorBlocksVielonwelonrUselonrUnavailablelonInnelonrQuotelondTwelonelontTombstonelonRulelon,
+        VielonwelonrBlocksAuthorUselonrUnavailablelonInnelonrQuotelondTwelonelontIntelonrstitialRulelon,
+        VielonwelonrMutelonsAuthorUselonrUnavailablelonInnelonrQuotelondTwelonelontIntelonrstitialRulelon
       ),
-      policyRuleParams = SensitiveMediaSettingsProfileTimelineBaseRules.policyRuleParams
+      policyRulelonParams = SelonnsitivelonMelondiaSelonttingsProfilelonTimelonlinelonBaselonRulelons.policyRulelonParams
     )
 
-case object TimelineProfileSuperFollowsPolicy
-    extends VisibilityPolicy(
-      tweetRules =
-        Seq(
-          DropOuterCommunityTweetsRule
+caselon objelonct TimelonlinelonProfilelonSupelonrFollowsPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons =
+        Selonq(
+          DropOutelonrCommunityTwelonelontsRulelon
         ) ++
-          VisibilityPolicy.baseTweetRules ++
-          TimelineProfileRules.tweetRules
+          VisibilityPolicy.baselonTwelonelontRulelons ++
+          TimelonlinelonProfilelonRulelons.twelonelontRulelons
     )
 
-case object TimelineReactiveBlendingPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++
-        Seq(
-          ViewerHasMatchingMutedKeywordForHomeTimelineRule,
-          AbusePolicyEpisodicTweetLabelInterstitialRule,
-          EmergencyDynamicInterstitialRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-          GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule,
-        ) ++ LimitedEngagementBaseRules.tweetRules
+caselon objelonct TimelonlinelonRelonactivelonBlelonndingPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = VisibilityPolicy.baselonTwelonelontRulelons ++
+        Selonq(
+          VielonwelonrHasMatchingMutelondKelonywordForHomelonTimelonlinelonRulelon,
+          AbuselonPolicyelonpisodicTwelonelontLabelonlIntelonrstitialRulelon,
+          elonmelonrgelonncyDynamicIntelonrstitialRulelon,
+          NsfwHighPreloncisionIntelonrstitialAllUselonrsTwelonelontLabelonlRulelon,
+          GorelonAndViolelonncelonHighPreloncisionAllUselonrsTwelonelontLabelonlRulelon,
+          NsfwRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlRulelon,
+          GorelonAndViolelonncelonRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlRulelon,
+          NsfwCardImagelonAllUselonrsTwelonelontLabelonlRulelon,
+        ) ++ LimitelondelonngagelonmelonntBaselonRulelons.twelonelontRulelons
     )
 
-case object TimelineHomePolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseQuotedTweetTombstoneRules ++
-        VisibilityPolicy.baseTweetRules ++
-        Seq(
-          NullcastedTweetRule,
-          DropOuterCommunityTweetsRule,
-          DynamicProductAdDropTweetLabelRule,
-          MutedRetweetsRule,
-          DropAllAuthorRemovedCommunityTweetsRule,
-          DropAllHiddenCommunityTweetsRule,
-          AbusePolicyEpisodicTweetLabelDropRule,
-          EmergencyDropRule,
-          SafetyCrisisLevel4DropRule,
-          ViewerHasMatchingMutedKeywordForHomeTimelineRule,
-          SensitiveMediaTweetDropRules.AdultMediaNsfwHighPrecisionTweetLabelDropRule,
-          SensitiveMediaTweetDropRules.ViolentMediaGoreAndViolenceHighPrecisionDropRule,
-          SensitiveMediaTweetDropRules.AdultMediaNsfwReportedHeuristicsTweetLabelDropRule,
-          SensitiveMediaTweetDropRules.ViolentMediaGoreAndViolenceReportedHeuristicsDropRule,
-          SensitiveMediaTweetDropRules.AdultMediaNsfwCardImageTweetLabelDropRule,
-          SensitiveMediaTweetDropRules.OtherSensitiveMediaNsfwUserTweetFlagDropRule,
-          SensitiveMediaTweetDropRules.OtherSensitiveMediaNsfwAdminTweetFlagDropRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-          GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule,
-          SensitiveMediaTweetInterstitialRules.AdultMediaNsfwHighPrecisionTweetLabelInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceHighPrecisionInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.AdultMediaNsfwReportedHeuristicsTweetLabelInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceReportedHeuristicsInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.AdultMediaNsfwCardImageTweetLabelInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwUserTweetFlagInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwAdminTweetFlagInterstitialRule,
-          NsfwHighPrecisionTweetLabelAvoidRule,
-          NsfwHighRecallTweetLabelAvoidRule,
-          GoreAndViolenceHighPrecisionAvoidAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAvoidAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAvoidAllUsersTweetLabelRule,
-          NsfwCardImageAvoidAllUsersTweetLabelRule,
-          DoNotAmplifyTweetLabelAvoidRule,
-          NsfaHighPrecisionTweetLabelAvoidRule,
+caselon objelonct TimelonlinelonHomelonPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = VisibilityPolicy.baselonQuotelondTwelonelontTombstonelonRulelons ++
+        VisibilityPolicy.baselonTwelonelontRulelons ++
+        Selonq(
+          NullcastelondTwelonelontRulelon,
+          DropOutelonrCommunityTwelonelontsRulelon,
+          DynamicProductAdDropTwelonelontLabelonlRulelon,
+          MutelondRelontwelonelontsRulelon,
+          DropAllAuthorRelonmovelondCommunityTwelonelontsRulelon,
+          DropAllHiddelonnCommunityTwelonelontsRulelon,
+          AbuselonPolicyelonpisodicTwelonelontLabelonlDropRulelon,
+          elonmelonrgelonncyDropRulelon,
+          SafelontyCrisisLelonvelonl4DropRulelon,
+          VielonwelonrHasMatchingMutelondKelonywordForHomelonTimelonlinelonRulelon,
+          SelonnsitivelonMelondiaTwelonelontDropRulelons.AdultMelondiaNsfwHighPreloncisionTwelonelontLabelonlDropRulelon,
+          SelonnsitivelonMelondiaTwelonelontDropRulelons.ViolelonntMelondiaGorelonAndViolelonncelonHighPreloncisionDropRulelon,
+          SelonnsitivelonMelondiaTwelonelontDropRulelons.AdultMelondiaNsfwRelonportelondHelonuristicsTwelonelontLabelonlDropRulelon,
+          SelonnsitivelonMelondiaTwelonelontDropRulelons.ViolelonntMelondiaGorelonAndViolelonncelonRelonportelondHelonuristicsDropRulelon,
+          SelonnsitivelonMelondiaTwelonelontDropRulelons.AdultMelondiaNsfwCardImagelonTwelonelontLabelonlDropRulelon,
+          SelonnsitivelonMelondiaTwelonelontDropRulelons.OthelonrSelonnsitivelonMelondiaNsfwUselonrTwelonelontFlagDropRulelon,
+          SelonnsitivelonMelondiaTwelonelontDropRulelons.OthelonrSelonnsitivelonMelondiaNsfwAdminTwelonelontFlagDropRulelon,
+          NsfwHighPreloncisionIntelonrstitialAllUselonrsTwelonelontLabelonlRulelon,
+          GorelonAndViolelonncelonHighPreloncisionAllUselonrsTwelonelontLabelonlRulelon,
+          NsfwRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlRulelon,
+          GorelonAndViolelonncelonRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlRulelon,
+          NsfwCardImagelonAllUselonrsTwelonelontLabelonlRulelon,
+          SelonnsitivelonMelondiaTwelonelontIntelonrstitialRulelons.AdultMelondiaNsfwHighPreloncisionTwelonelontLabelonlIntelonrstitialRulelon,
+          SelonnsitivelonMelondiaTwelonelontIntelonrstitialRulelons.ViolelonntMelondiaGorelonAndViolelonncelonHighPreloncisionIntelonrstitialRulelon,
+          SelonnsitivelonMelondiaTwelonelontIntelonrstitialRulelons.AdultMelondiaNsfwRelonportelondHelonuristicsTwelonelontLabelonlIntelonrstitialRulelon,
+          SelonnsitivelonMelondiaTwelonelontIntelonrstitialRulelons.ViolelonntMelondiaGorelonAndViolelonncelonRelonportelondHelonuristicsIntelonrstitialRulelon,
+          SelonnsitivelonMelondiaTwelonelontIntelonrstitialRulelons.AdultMelondiaNsfwCardImagelonTwelonelontLabelonlIntelonrstitialRulelon,
+          SelonnsitivelonMelondiaTwelonelontIntelonrstitialRulelons.OthelonrSelonnsitivelonMelondiaNsfwUselonrTwelonelontFlagIntelonrstitialRulelon,
+          SelonnsitivelonMelondiaTwelonelontIntelonrstitialRulelons.OthelonrSelonnsitivelonMelondiaNsfwAdminTwelonelontFlagIntelonrstitialRulelon,
+          NsfwHighPreloncisionTwelonelontLabelonlAvoidRulelon,
+          NsfwHighReloncallTwelonelontLabelonlAvoidRulelon,
+          GorelonAndViolelonncelonHighPreloncisionAvoidAllUselonrsTwelonelontLabelonlRulelon,
+          NsfwRelonportelondHelonuristicsAvoidAllUselonrsTwelonelontLabelonlRulelon,
+          GorelonAndViolelonncelonRelonportelondHelonuristicsAvoidAllUselonrsTwelonelontLabelonlRulelon,
+          NsfwCardImagelonAvoidAllUselonrsTwelonelontLabelonlRulelon,
+          DoNotAmplifyTwelonelontLabelonlAvoidRulelon,
+          NsfaHighPreloncisionTwelonelontLabelonlAvoidRulelon,
         )
         ++
-          LimitedEngagementBaseRules.tweetRules,
-      userRules = Seq(
-        ViewerMutesAuthorRule,
-        ViewerBlocksAuthorRule,
-        DeciderableAuthorBlocksViewerDropRule
+          LimitelondelonngagelonmelonntBaselonRulelons.twelonelontRulelons,
+      uselonrRulelons = Selonq(
+        VielonwelonrMutelonsAuthorRulelon,
+        VielonwelonrBlocksAuthorRulelon,
+        DeloncidelonrablelonAuthorBlocksVielonwelonrDropRulelon
       ),
-      policyRuleParams = SensitiveMediaSettingsTimelineHomeBaseRules.policyRuleParams
+      policyRulelonParams = SelonnsitivelonMelondiaSelonttingsTimelonlinelonHomelonBaselonRulelons.policyRulelonParams
     )
 
-case object BaseTimelineHomePolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseQuotedTweetTombstoneRules ++
-        VisibilityPolicy.baseTweetRules ++
-        Seq(
-          NullcastedTweetRule,
-          DropOuterCommunityTweetsRule,
-          DynamicProductAdDropTweetLabelRule,
-          MutedRetweetsRule,
-          DropAllAuthorRemovedCommunityTweetsRule,
-          DropAllHiddenCommunityTweetsRule,
-          AbusePolicyEpisodicTweetLabelDropRule,
-          EmergencyDropRule,
-          SafetyCrisisLevel4DropRule,
-          ViewerHasMatchingMutedKeywordForHomeTimelineRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-          GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule,
-          NsfwHighPrecisionTweetLabelAvoidRule,
-          NsfwHighRecallTweetLabelAvoidRule,
-          GoreAndViolenceHighPrecisionAvoidAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAvoidAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAvoidAllUsersTweetLabelRule,
-          NsfwCardImageAvoidAllUsersTweetLabelRule,
-          DoNotAmplifyTweetLabelAvoidRule,
-          NsfaHighPrecisionTweetLabelAvoidRule,
+caselon objelonct BaselonTimelonlinelonHomelonPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = VisibilityPolicy.baselonQuotelondTwelonelontTombstonelonRulelons ++
+        VisibilityPolicy.baselonTwelonelontRulelons ++
+        Selonq(
+          NullcastelondTwelonelontRulelon,
+          DropOutelonrCommunityTwelonelontsRulelon,
+          DynamicProductAdDropTwelonelontLabelonlRulelon,
+          MutelondRelontwelonelontsRulelon,
+          DropAllAuthorRelonmovelondCommunityTwelonelontsRulelon,
+          DropAllHiddelonnCommunityTwelonelontsRulelon,
+          AbuselonPolicyelonpisodicTwelonelontLabelonlDropRulelon,
+          elonmelonrgelonncyDropRulelon,
+          SafelontyCrisisLelonvelonl4DropRulelon,
+          VielonwelonrHasMatchingMutelondKelonywordForHomelonTimelonlinelonRulelon,
+          NsfwHighPreloncisionIntelonrstitialAllUselonrsTwelonelontLabelonlRulelon,
+          GorelonAndViolelonncelonHighPreloncisionAllUselonrsTwelonelontLabelonlRulelon,
+          NsfwRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlRulelon,
+          GorelonAndViolelonncelonRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlRulelon,
+          NsfwCardImagelonAllUselonrsTwelonelontLabelonlRulelon,
+          NsfwHighPreloncisionTwelonelontLabelonlAvoidRulelon,
+          NsfwHighReloncallTwelonelontLabelonlAvoidRulelon,
+          GorelonAndViolelonncelonHighPreloncisionAvoidAllUselonrsTwelonelontLabelonlRulelon,
+          NsfwRelonportelondHelonuristicsAvoidAllUselonrsTwelonelontLabelonlRulelon,
+          GorelonAndViolelonncelonRelonportelondHelonuristicsAvoidAllUselonrsTwelonelontLabelonlRulelon,
+          NsfwCardImagelonAvoidAllUselonrsTwelonelontLabelonlRulelon,
+          DoNotAmplifyTwelonelontLabelonlAvoidRulelon,
+          NsfaHighPreloncisionTwelonelontLabelonlAvoidRulelon,
         )
         ++
-          LimitedEngagementBaseRules.tweetRules,
-      userRules = Seq(
-        ViewerMutesAuthorRule,
-        ViewerBlocksAuthorRule,
-        DeciderableAuthorBlocksViewerDropRule
+          LimitelondelonngagelonmelonntBaselonRulelons.twelonelontRulelons,
+      uselonrRulelons = Selonq(
+        VielonwelonrMutelonsAuthorRulelon,
+        VielonwelonrBlocksAuthorRulelon,
+        DeloncidelonrablelonAuthorBlocksVielonwelonrDropRulelon
       )
     )
 
-case object TimelineHomeHydrationPolicy
-    extends VisibilityPolicy(
-      tweetRules =
-          VisibilityPolicy.baseQuotedTweetTombstoneRules ++
-          VisibilityPolicy.baseTweetRules ++
-          Seq(
-            SensitiveMediaTweetDropRules.AdultMediaNsfwHighPrecisionTweetLabelDropRule,
-            SensitiveMediaTweetDropRules.ViolentMediaGoreAndViolenceHighPrecisionDropRule,
-            SensitiveMediaTweetDropRules.AdultMediaNsfwReportedHeuristicsTweetLabelDropRule,
-            SensitiveMediaTweetDropRules.ViolentMediaGoreAndViolenceReportedHeuristicsDropRule,
-            SensitiveMediaTweetDropRules.AdultMediaNsfwCardImageTweetLabelDropRule,
-            SensitiveMediaTweetDropRules.OtherSensitiveMediaNsfwUserTweetFlagDropRule,
-            SensitiveMediaTweetDropRules.OtherSensitiveMediaNsfwAdminTweetFlagDropRule,
-            AbusePolicyEpisodicTweetLabelInterstitialRule,
-            EmergencyDynamicInterstitialRule,
-            NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-            GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-            NsfwReportedHeuristicsAllUsersTweetLabelRule,
-            GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-            NsfwCardImageAllUsersTweetLabelRule,
-            SensitiveMediaTweetInterstitialRules.AdultMediaNsfwHighPrecisionTweetLabelInterstitialRule,
-            SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceHighPrecisionInterstitialRule,
-            SensitiveMediaTweetInterstitialRules.AdultMediaNsfwReportedHeuristicsTweetLabelInterstitialRule,
-            SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceReportedHeuristicsInterstitialRule,
-            SensitiveMediaTweetInterstitialRules.AdultMediaNsfwCardImageTweetLabelInterstitialRule,
-            SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwUserTweetFlagInterstitialRule,
-            SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwAdminTweetFlagInterstitialRule,
-            NsfaHighPrecisionTweetLabelAvoidRule,
-            NsfwHighPrecisionTweetLabelAvoidRule,
-            NsfwHighRecallTweetLabelAvoidRule,
-          ) ++ LimitedEngagementBaseRules.tweetRules,
-      policyRuleParams = SensitiveMediaSettingsTimelineHomeBaseRules.policyRuleParams
+caselon objelonct TimelonlinelonHomelonHydrationPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons =
+          VisibilityPolicy.baselonQuotelondTwelonelontTombstonelonRulelons ++
+          VisibilityPolicy.baselonTwelonelontRulelons ++
+          Selonq(
+            SelonnsitivelonMelondiaTwelonelontDropRulelons.AdultMelondiaNsfwHighPreloncisionTwelonelontLabelonlDropRulelon,
+            SelonnsitivelonMelondiaTwelonelontDropRulelons.ViolelonntMelondiaGorelonAndViolelonncelonHighPreloncisionDropRulelon,
+            SelonnsitivelonMelondiaTwelonelontDropRulelons.AdultMelondiaNsfwRelonportelondHelonuristicsTwelonelontLabelonlDropRulelon,
+            SelonnsitivelonMelondiaTwelonelontDropRulelons.ViolelonntMelondiaGorelonAndViolelonncelonRelonportelondHelonuristicsDropRulelon,
+            SelonnsitivelonMelondiaTwelonelontDropRulelons.AdultMelondiaNsfwCardImagelonTwelonelontLabelonlDropRulelon,
+            SelonnsitivelonMelondiaTwelonelontDropRulelons.OthelonrSelonnsitivelonMelondiaNsfwUselonrTwelonelontFlagDropRulelon,
+            SelonnsitivelonMelondiaTwelonelontDropRulelons.OthelonrSelonnsitivelonMelondiaNsfwAdminTwelonelontFlagDropRulelon,
+            AbuselonPolicyelonpisodicTwelonelontLabelonlIntelonrstitialRulelon,
+            elonmelonrgelonncyDynamicIntelonrstitialRulelon,
+            NsfwHighPreloncisionIntelonrstitialAllUselonrsTwelonelontLabelonlRulelon,
+            GorelonAndViolelonncelonHighPreloncisionAllUselonrsTwelonelontLabelonlRulelon,
+            NsfwRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlRulelon,
+            GorelonAndViolelonncelonRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlRulelon,
+            NsfwCardImagelonAllUselonrsTwelonelontLabelonlRulelon,
+            SelonnsitivelonMelondiaTwelonelontIntelonrstitialRulelons.AdultMelondiaNsfwHighPreloncisionTwelonelontLabelonlIntelonrstitialRulelon,
+            SelonnsitivelonMelondiaTwelonelontIntelonrstitialRulelons.ViolelonntMelondiaGorelonAndViolelonncelonHighPreloncisionIntelonrstitialRulelon,
+            SelonnsitivelonMelondiaTwelonelontIntelonrstitialRulelons.AdultMelondiaNsfwRelonportelondHelonuristicsTwelonelontLabelonlIntelonrstitialRulelon,
+            SelonnsitivelonMelondiaTwelonelontIntelonrstitialRulelons.ViolelonntMelondiaGorelonAndViolelonncelonRelonportelondHelonuristicsIntelonrstitialRulelon,
+            SelonnsitivelonMelondiaTwelonelontIntelonrstitialRulelons.AdultMelondiaNsfwCardImagelonTwelonelontLabelonlIntelonrstitialRulelon,
+            SelonnsitivelonMelondiaTwelonelontIntelonrstitialRulelons.OthelonrSelonnsitivelonMelondiaNsfwUselonrTwelonelontFlagIntelonrstitialRulelon,
+            SelonnsitivelonMelondiaTwelonelontIntelonrstitialRulelons.OthelonrSelonnsitivelonMelondiaNsfwAdminTwelonelontFlagIntelonrstitialRulelon,
+            NsfaHighPreloncisionTwelonelontLabelonlAvoidRulelon,
+            NsfwHighPreloncisionTwelonelontLabelonlAvoidRulelon,
+            NsfwHighReloncallTwelonelontLabelonlAvoidRulelon,
+          ) ++ LimitelondelonngagelonmelonntBaselonRulelons.twelonelontRulelons,
+      policyRulelonParams = SelonnsitivelonMelondiaSelonttingsTimelonlinelonHomelonBaselonRulelons.policyRulelonParams
     )
 
-case object TimelineHomeLatestPolicy
-    extends VisibilityPolicy(
-      tweetRules =
-          VisibilityPolicy.baseQuotedTweetTombstoneRules ++
-          VisibilityPolicy.baseTweetRules ++
-          Seq(
-            NullcastedTweetRule,
-            DropOuterCommunityTweetsRule,
-            DynamicProductAdDropTweetLabelRule,
-            MutedRetweetsRule,
-            ViewerHasMatchingMutedKeywordForHomeTimelineRule,
-            SensitiveMediaTweetDropRules.AdultMediaNsfwHighPrecisionTweetLabelDropRule,
-            SensitiveMediaTweetDropRules.ViolentMediaGoreAndViolenceHighPrecisionDropRule,
-            SensitiveMediaTweetDropRules.AdultMediaNsfwReportedHeuristicsTweetLabelDropRule,
-            SensitiveMediaTweetDropRules.ViolentMediaGoreAndViolenceReportedHeuristicsDropRule,
-            SensitiveMediaTweetDropRules.AdultMediaNsfwCardImageTweetLabelDropRule,
-            SensitiveMediaTweetDropRules.OtherSensitiveMediaNsfwUserTweetFlagDropRule,
-            SensitiveMediaTweetDropRules.OtherSensitiveMediaNsfwAdminTweetFlagDropRule,
-            AbusePolicyEpisodicTweetLabelInterstitialRule,
-            EmergencyDynamicInterstitialRule,
-            NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-            GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-            NsfwReportedHeuristicsAllUsersTweetLabelRule,
-            GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-            NsfwCardImageAllUsersTweetLabelRule,
-            SensitiveMediaTweetInterstitialRules.AdultMediaNsfwHighPrecisionTweetLabelInterstitialRule,
-            SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceHighPrecisionInterstitialRule,
-            SensitiveMediaTweetInterstitialRules.AdultMediaNsfwReportedHeuristicsTweetLabelInterstitialRule,
-            SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceReportedHeuristicsInterstitialRule,
-            SensitiveMediaTweetInterstitialRules.AdultMediaNsfwCardImageTweetLabelInterstitialRule,
-            SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwUserTweetFlagInterstitialRule,
-            SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwAdminTweetFlagInterstitialRule,
-            NsfwHighPrecisionTweetLabelAvoidRule,
-            NsfwHighRecallTweetLabelAvoidRule,
-            GoreAndViolenceHighPrecisionAvoidAllUsersTweetLabelRule,
-            NsfwReportedHeuristicsAvoidAllUsersTweetLabelRule,
-            GoreAndViolenceReportedHeuristicsAvoidAllUsersTweetLabelRule,
-            NsfwCardImageAvoidAllUsersTweetLabelRule,
-            DoNotAmplifyTweetLabelAvoidRule,
-            NsfaHighPrecisionTweetLabelAvoidRule,
+caselon objelonct TimelonlinelonHomelonLatelonstPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons =
+          VisibilityPolicy.baselonQuotelondTwelonelontTombstonelonRulelons ++
+          VisibilityPolicy.baselonTwelonelontRulelons ++
+          Selonq(
+            NullcastelondTwelonelontRulelon,
+            DropOutelonrCommunityTwelonelontsRulelon,
+            DynamicProductAdDropTwelonelontLabelonlRulelon,
+            MutelondRelontwelonelontsRulelon,
+            VielonwelonrHasMatchingMutelondKelonywordForHomelonTimelonlinelonRulelon,
+            SelonnsitivelonMelondiaTwelonelontDropRulelons.AdultMelondiaNsfwHighPreloncisionTwelonelontLabelonlDropRulelon,
+            SelonnsitivelonMelondiaTwelonelontDropRulelons.ViolelonntMelondiaGorelonAndViolelonncelonHighPreloncisionDropRulelon,
+            SelonnsitivelonMelondiaTwelonelontDropRulelons.AdultMelondiaNsfwRelonportelondHelonuristicsTwelonelontLabelonlDropRulelon,
+            SelonnsitivelonMelondiaTwelonelontDropRulelons.ViolelonntMelondiaGorelonAndViolelonncelonRelonportelondHelonuristicsDropRulelon,
+            SelonnsitivelonMelondiaTwelonelontDropRulelons.AdultMelondiaNsfwCardImagelonTwelonelontLabelonlDropRulelon,
+            SelonnsitivelonMelondiaTwelonelontDropRulelons.OthelonrSelonnsitivelonMelondiaNsfwUselonrTwelonelontFlagDropRulelon,
+            SelonnsitivelonMelondiaTwelonelontDropRulelons.OthelonrSelonnsitivelonMelondiaNsfwAdminTwelonelontFlagDropRulelon,
+            AbuselonPolicyelonpisodicTwelonelontLabelonlIntelonrstitialRulelon,
+            elonmelonrgelonncyDynamicIntelonrstitialRulelon,
+            NsfwHighPreloncisionIntelonrstitialAllUselonrsTwelonelontLabelonlRulelon,
+            GorelonAndViolelonncelonHighPreloncisionAllUselonrsTwelonelontLabelonlRulelon,
+            NsfwRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlRulelon,
+            GorelonAndViolelonncelonRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlRulelon,
+            NsfwCardImagelonAllUselonrsTwelonelontLabelonlRulelon,
+            SelonnsitivelonMelondiaTwelonelontIntelonrstitialRulelons.AdultMelondiaNsfwHighPreloncisionTwelonelontLabelonlIntelonrstitialRulelon,
+            SelonnsitivelonMelondiaTwelonelontIntelonrstitialRulelons.ViolelonntMelondiaGorelonAndViolelonncelonHighPreloncisionIntelonrstitialRulelon,
+            SelonnsitivelonMelondiaTwelonelontIntelonrstitialRulelons.AdultMelondiaNsfwRelonportelondHelonuristicsTwelonelontLabelonlIntelonrstitialRulelon,
+            SelonnsitivelonMelondiaTwelonelontIntelonrstitialRulelons.ViolelonntMelondiaGorelonAndViolelonncelonRelonportelondHelonuristicsIntelonrstitialRulelon,
+            SelonnsitivelonMelondiaTwelonelontIntelonrstitialRulelons.AdultMelondiaNsfwCardImagelonTwelonelontLabelonlIntelonrstitialRulelon,
+            SelonnsitivelonMelondiaTwelonelontIntelonrstitialRulelons.OthelonrSelonnsitivelonMelondiaNsfwUselonrTwelonelontFlagIntelonrstitialRulelon,
+            SelonnsitivelonMelondiaTwelonelontIntelonrstitialRulelons.OthelonrSelonnsitivelonMelondiaNsfwAdminTwelonelontFlagIntelonrstitialRulelon,
+            NsfwHighPreloncisionTwelonelontLabelonlAvoidRulelon,
+            NsfwHighReloncallTwelonelontLabelonlAvoidRulelon,
+            GorelonAndViolelonncelonHighPreloncisionAvoidAllUselonrsTwelonelontLabelonlRulelon,
+            NsfwRelonportelondHelonuristicsAvoidAllUselonrsTwelonelontLabelonlRulelon,
+            GorelonAndViolelonncelonRelonportelondHelonuristicsAvoidAllUselonrsTwelonelontLabelonlRulelon,
+            NsfwCardImagelonAvoidAllUselonrsTwelonelontLabelonlRulelon,
+            DoNotAmplifyTwelonelontLabelonlAvoidRulelon,
+            NsfaHighPreloncisionTwelonelontLabelonlAvoidRulelon,
           )
           ++
-            LimitedEngagementBaseRules.tweetRules,
-      userRules = Seq(
-        ViewerMutesAuthorRule,
-        ViewerBlocksAuthorRule,
-        DeciderableAuthorBlocksViewerDropRule
+            LimitelondelonngagelonmelonntBaselonRulelons.twelonelontRulelons,
+      uselonrRulelons = Selonq(
+        VielonwelonrMutelonsAuthorRulelon,
+        VielonwelonrBlocksAuthorRulelon,
+        DeloncidelonrablelonAuthorBlocksVielonwelonrDropRulelon
       ),
-      policyRuleParams = SensitiveMediaSettingsTimelineHomeBaseRules.policyRuleParams
+      policyRulelonParams = SelonnsitivelonMelondiaSelonttingsTimelonlinelonHomelonBaselonRulelons.policyRulelonParams
     )
 
-case object TimelineModeratedTweetsHydrationPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++
-        Seq(
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-          GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule,
-        ) ++ LimitedEngagementBaseRules.tweetRules
+caselon objelonct TimelonlinelonModelonratelondTwelonelontsHydrationPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = VisibilityPolicy.baselonTwelonelontRulelons ++
+        Selonq(
+          NsfwHighPreloncisionIntelonrstitialAllUselonrsTwelonelontLabelonlRulelon,
+          GorelonAndViolelonncelonHighPreloncisionAllUselonrsTwelonelontLabelonlRulelon,
+          NsfwRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlRulelon,
+          GorelonAndViolelonncelonRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlRulelon,
+          NsfwCardImagelonAllUselonrsTwelonelontLabelonlRulelon,
+        ) ++ LimitelondelonngagelonmelonntBaselonRulelons.twelonelontRulelons
     )
 
-case object SignalsReactionsPolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(
-        AuthorBlocksViewerDropRule
-      ) ++ LimitedEngagementBaseRules.tweetRules
+caselon objelonct SignalsRelonactionsPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = Selonq(
+        AuthorBlocksVielonwelonrDropRulelon
+      ) ++ LimitelondelonngagelonmelonntBaselonRulelons.twelonelontRulelons
     )
 
-case object SignalsTweetReactingUsersPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules :+
-        NsfwVideoTweetLabelDropRule :+
-        NsfwTextAllUsersTweetLabelDropRule,
-      userRules = Seq(
-        CompromisedNonFollowerWithUqfRule,
-        EngagementSpammerNonFollowerWithUqfRule,
-        LowQualityNonFollowerWithUqfRule,
-        ReadOnlyNonFollowerWithUqfRule,
-        SpamHighRecallNonFollowerWithUqfRule,
-        AuthorBlocksViewerDropRule,
-        ProtectedAuthorDropRule,
-        SuspendedAuthorRule,
-        NsfwTextNonAuthorDropRule
+caselon objelonct SignalsTwelonelontRelonactingUselonrsPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = VisibilityPolicy.baselonTwelonelontRulelons :+
+        NsfwVidelonoTwelonelontLabelonlDropRulelon :+
+        NsfwTelonxtAllUselonrsTwelonelontLabelonlDropRulelon,
+      uselonrRulelons = Selonq(
+        CompromiselondNonFollowelonrWithUqfRulelon,
+        elonngagelonmelonntSpammelonrNonFollowelonrWithUqfRulelon,
+        LowQualityNonFollowelonrWithUqfRulelon,
+        RelonadOnlyNonFollowelonrWithUqfRulelon,
+        SpamHighReloncallNonFollowelonrWithUqfRulelon,
+        AuthorBlocksVielonwelonrDropRulelon,
+        ProtelonctelondAuthorDropRulelon,
+        SuspelonndelondAuthorRulelon,
+        NsfwTelonxtNonAuthorDropRulelon
       )
     )
 
-case object SocialProofPolicy
-    extends VisibilityPolicy(
-      tweetRules = FilterDefaultPolicy.tweetRules,
-      userRules = Seq(
-        ProtectedAuthorDropRule,
-        SuspendedAuthorRule,
-        AuthorBlocksViewerDropRule,
-        ViewerBlocksAuthorRule
+caselon objelonct SocialProofPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = FiltelonrDelonfaultPolicy.twelonelontRulelons,
+      uselonrRulelons = Selonq(
+        ProtelonctelondAuthorDropRulelon,
+        SuspelonndelondAuthorRulelon,
+        AuthorBlocksVielonwelonrDropRulelon,
+        VielonwelonrBlocksAuthorRulelon
       )
     )
 
-case object TimelineLikedByPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules :+
-        NsfwVideoTweetLabelDropRule :+
-        NsfwTextAllUsersTweetLabelDropRule,
-      userRules = TimelineLikedByRules.UserRules :+ NsfwTextNonAuthorDropRule
+caselon objelonct TimelonlinelonLikelondByPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = VisibilityPolicy.baselonTwelonelontRulelons :+
+        NsfwVidelonoTwelonelontLabelonlDropRulelon :+
+        NsfwTelonxtAllUselonrsTwelonelontLabelonlDropRulelon,
+      uselonrRulelons = TimelonlinelonLikelondByRulelons.UselonrRulelons :+ NsfwTelonxtNonAuthorDropRulelon
     )
 
-case object TimelineRetweetedByPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules :+
-        NsfwVideoTweetLabelDropRule :+
-        NsfwTextAllUsersTweetLabelDropRule,
-      userRules = Seq(
-        CompromisedNonFollowerWithUqfRule,
-        EngagementSpammerNonFollowerWithUqfRule,
-        LowQualityNonFollowerWithUqfRule,
-        ReadOnlyNonFollowerWithUqfRule,
-        SpamHighRecallNonFollowerWithUqfRule,
-        NsfwTextNonAuthorDropRule
+caselon objelonct TimelonlinelonRelontwelonelontelondByPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = VisibilityPolicy.baselonTwelonelontRulelons :+
+        NsfwVidelonoTwelonelontLabelonlDropRulelon :+
+        NsfwTelonxtAllUselonrsTwelonelontLabelonlDropRulelon,
+      uselonrRulelons = Selonq(
+        CompromiselondNonFollowelonrWithUqfRulelon,
+        elonngagelonmelonntSpammelonrNonFollowelonrWithUqfRulelon,
+        LowQualityNonFollowelonrWithUqfRulelon,
+        RelonadOnlyNonFollowelonrWithUqfRulelon,
+        SpamHighReloncallNonFollowelonrWithUqfRulelon,
+        NsfwTelonxtNonAuthorDropRulelon
       )
     )
 
-case object TimelineSuperLikedByPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules :+
-        NsfwVideoTweetLabelDropRule :+
-        NsfwTextAllUsersTweetLabelDropRule,
-      userRules = Seq(
-        CompromisedNonFollowerWithUqfRule,
-        EngagementSpammerNonFollowerWithUqfRule,
-        LowQualityNonFollowerWithUqfRule,
-        ReadOnlyNonFollowerWithUqfRule,
-        SpamHighRecallNonFollowerWithUqfRule,
-        NsfwTextNonAuthorDropRule
+caselon objelonct TimelonlinelonSupelonrLikelondByPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = VisibilityPolicy.baselonTwelonelontRulelons :+
+        NsfwVidelonoTwelonelontLabelonlDropRulelon :+
+        NsfwTelonxtAllUselonrsTwelonelontLabelonlDropRulelon,
+      uselonrRulelons = Selonq(
+        CompromiselondNonFollowelonrWithUqfRulelon,
+        elonngagelonmelonntSpammelonrNonFollowelonrWithUqfRulelon,
+        LowQualityNonFollowelonrWithUqfRulelon,
+        RelonadOnlyNonFollowelonrWithUqfRulelon,
+        SpamHighReloncallNonFollowelonrWithUqfRulelon,
+        NsfwTelonxtNonAuthorDropRulelon
       )
     )
 
-case object TimelineContentControlsPolicy
-    extends VisibilityPolicy(
-      tweetRules = TopicsLandingPageTopicRecommendationsPolicy.tweetRules,
-      userRules = TopicsLandingPageTopicRecommendationsPolicy.userRules
+caselon objelonct TimelonlinelonContelonntControlsPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = TopicsLandingPagelonTopicReloncommelonndationsPolicy.twelonelontRulelons,
+      uselonrRulelons = TopicsLandingPagelonTopicReloncommelonndationsPolicy.uselonrRulelons
     )
 
-case object TimelineConversationsPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++
-        Seq(
-          AbusiveNonFollowerTweetLabelRule,
-          LowQualityTweetLabelDropRule,
-          SpamHighRecallTweetLabelDropRule,
-          DuplicateContentTweetLabelDropRule,
-          BystanderAbusiveNonFollowerTweetLabelRule,
-          UntrustedUrlAllViewersTweetLabelRule,
-          DownrankSpamReplyAllViewersTweetLabelRule,
-          SmyteSpamTweetLabelDropRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.AdultMediaNsfwHighPrecisionTweetLabelDropSettingLevelTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.ViolentMediaGoreAndViolenceHighPrecisionDropSettingLeveTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.AdultMediaNsfwReportedHeuristicsTweetLabelDropSettingLevelTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.ViolentMediaGoreAndViolenceReportedHeuristicsDropSettingLevelTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.AdultMediaNsfwCardImageTweetLabelDropSettingLevelTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.OtherSensitiveMediaNsfwUserTweetFlagDropSettingLevelTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.OtherSensitiveMediaNsfwAdminTweetFlagDropSettingLevelTombstoneRule,
-          MutedKeywordForTweetRepliesInterstitialRule,
-          ReportedTweetInterstitialRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-          GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule,
-          SensitiveMediaTweetInterstitialRules.AdultMediaNsfwHighPrecisionTweetLabelInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceHighPrecisionInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.AdultMediaNsfwReportedHeuristicsTweetLabelInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceReportedHeuristicsInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.AdultMediaNsfwCardImageTweetLabelInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwUserTweetFlagInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwAdminTweetFlagInterstitialRule,
-          AbusiveHighRecallNonFollowerTweetLabelRule,
-        ) ++ LimitedEngagementBaseRules.tweetRules,
-      userRules = Seq(
-        AbusiveRule,
-        LowQualityRule,
-        ReadOnlyRule,
-        LowQualityHighRecallRule,
-        CompromisedRule,
-        SpamHighRecallRule,
-        AbusiveHighRecallRule,
-        DownrankSpamReplyAllViewersRule,
+caselon objelonct TimelonlinelonConvelonrsationsPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = VisibilityPolicy.baselonTwelonelontRulelons ++
+        Selonq(
+          AbusivelonNonFollowelonrTwelonelontLabelonlRulelon,
+          LowQualityTwelonelontLabelonlDropRulelon,
+          SpamHighReloncallTwelonelontLabelonlDropRulelon,
+          DuplicatelonContelonntTwelonelontLabelonlDropRulelon,
+          BystandelonrAbusivelonNonFollowelonrTwelonelontLabelonlRulelon,
+          UntrustelondUrlAllVielonwelonrsTwelonelontLabelonlRulelon,
+          DownrankSpamRelonplyAllVielonwelonrsTwelonelontLabelonlRulelon,
+          SmytelonSpamTwelonelontLabelonlDropRulelon,
+          SelonnsitivelonMelondiaTwelonelontDropSelonttingLelonvelonlTombstonelonRulelons.AdultMelondiaNsfwHighPreloncisionTwelonelontLabelonlDropSelonttingLelonvelonlTombstonelonRulelon,
+          SelonnsitivelonMelondiaTwelonelontDropSelonttingLelonvelonlTombstonelonRulelons.ViolelonntMelondiaGorelonAndViolelonncelonHighPreloncisionDropSelonttingLelonvelonTombstonelonRulelon,
+          SelonnsitivelonMelondiaTwelonelontDropSelonttingLelonvelonlTombstonelonRulelons.AdultMelondiaNsfwRelonportelondHelonuristicsTwelonelontLabelonlDropSelonttingLelonvelonlTombstonelonRulelon,
+          SelonnsitivelonMelondiaTwelonelontDropSelonttingLelonvelonlTombstonelonRulelons.ViolelonntMelondiaGorelonAndViolelonncelonRelonportelondHelonuristicsDropSelonttingLelonvelonlTombstonelonRulelon,
+          SelonnsitivelonMelondiaTwelonelontDropSelonttingLelonvelonlTombstonelonRulelons.AdultMelondiaNsfwCardImagelonTwelonelontLabelonlDropSelonttingLelonvelonlTombstonelonRulelon,
+          SelonnsitivelonMelondiaTwelonelontDropSelonttingLelonvelonlTombstonelonRulelons.OthelonrSelonnsitivelonMelondiaNsfwUselonrTwelonelontFlagDropSelonttingLelonvelonlTombstonelonRulelon,
+          SelonnsitivelonMelondiaTwelonelontDropSelonttingLelonvelonlTombstonelonRulelons.OthelonrSelonnsitivelonMelondiaNsfwAdminTwelonelontFlagDropSelonttingLelonvelonlTombstonelonRulelon,
+          MutelondKelonywordForTwelonelontRelonplielonsIntelonrstitialRulelon,
+          RelonportelondTwelonelontIntelonrstitialRulelon,
+          NsfwHighPreloncisionIntelonrstitialAllUselonrsTwelonelontLabelonlRulelon,
+          GorelonAndViolelonncelonHighPreloncisionAllUselonrsTwelonelontLabelonlRulelon,
+          NsfwRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlRulelon,
+          GorelonAndViolelonncelonRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlRulelon,
+          NsfwCardImagelonAllUselonrsTwelonelontLabelonlRulelon,
+          SelonnsitivelonMelondiaTwelonelontIntelonrstitialRulelons.AdultMelondiaNsfwHighPreloncisionTwelonelontLabelonlIntelonrstitialRulelon,
+          SelonnsitivelonMelondiaTwelonelontIntelonrstitialRulelons.ViolelonntMelondiaGorelonAndViolelonncelonHighPreloncisionIntelonrstitialRulelon,
+          SelonnsitivelonMelondiaTwelonelontIntelonrstitialRulelons.AdultMelondiaNsfwRelonportelondHelonuristicsTwelonelontLabelonlIntelonrstitialRulelon,
+          SelonnsitivelonMelondiaTwelonelontIntelonrstitialRulelons.ViolelonntMelondiaGorelonAndViolelonncelonRelonportelondHelonuristicsIntelonrstitialRulelon,
+          SelonnsitivelonMelondiaTwelonelontIntelonrstitialRulelons.AdultMelondiaNsfwCardImagelonTwelonelontLabelonlIntelonrstitialRulelon,
+          SelonnsitivelonMelondiaTwelonelontIntelonrstitialRulelons.OthelonrSelonnsitivelonMelondiaNsfwUselonrTwelonelontFlagIntelonrstitialRulelon,
+          SelonnsitivelonMelondiaTwelonelontIntelonrstitialRulelons.OthelonrSelonnsitivelonMelondiaNsfwAdminTwelonelontFlagIntelonrstitialRulelon,
+          AbusivelonHighReloncallNonFollowelonrTwelonelontLabelonlRulelon,
+        ) ++ LimitelondelonngagelonmelonntBaselonRulelons.twelonelontRulelons,
+      uselonrRulelons = Selonq(
+        AbusivelonRulelon,
+        LowQualityRulelon,
+        RelonadOnlyRulelon,
+        LowQualityHighReloncallRulelon,
+        CompromiselondRulelon,
+        SpamHighReloncallRulelon,
+        AbusivelonHighReloncallRulelon,
+        DownrankSpamRelonplyAllVielonwelonrsRulelon,
       ),
-      policyRuleParams = SensitiveMediaSettingsConversationBaseRules.policyRuleParams
+      policyRulelonParams = SelonnsitivelonMelondiaSelonttingsConvelonrsationBaselonRulelons.policyRulelonParams
     )
 
-case object TimelineFollowingActivityPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++
-        Seq(
-          AbusiveTweetLabelRule,
-          BystanderAbusiveTweetLabelRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-          GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule,
-        ) ++ LimitedEngagementBaseRules.tweetRules
+caselon objelonct TimelonlinelonFollowingActivityPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = VisibilityPolicy.baselonTwelonelontRulelons ++
+        Selonq(
+          AbusivelonTwelonelontLabelonlRulelon,
+          BystandelonrAbusivelonTwelonelontLabelonlRulelon,
+          NsfwHighPreloncisionIntelonrstitialAllUselonrsTwelonelontLabelonlRulelon,
+          GorelonAndViolelonncelonHighPreloncisionAllUselonrsTwelonelontLabelonlRulelon,
+          NsfwRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlRulelon,
+          GorelonAndViolelonncelonRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlRulelon,
+          NsfwCardImagelonAllUselonrsTwelonelontLabelonlRulelon,
+        ) ++ LimitelondelonngagelonmelonntBaselonRulelons.twelonelontRulelons
     )
 
-case object TimelineInjectionPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++ Seq(
-        NsfwHighPrecisionTweetLabelRule,
-        GoreAndViolenceHighPrecisionTweetLabelRule,
-        NsfwReportedHeuristicsTweetLabelRule,
-        GoreAndViolenceReportedHeuristicsTweetLabelRule,
-        NsfwCardImageTweetLabelRule,
-        NsfwHighRecallTweetLabelRule,
-        NsfwVideoTweetLabelDropRule,
-        NsfwTextTweetLabelDropRule,
-        SafetyCrisisLevel2DropRule,
-        SafetyCrisisLevel3DropRule,
-        SafetyCrisisLevel4DropRule,
-        DoNotAmplifyDropRule,
-        HighProactiveTosScoreTweetLabelDropRule
+caselon objelonct TimelonlinelonInjelonctionPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = VisibilityPolicy.baselonTwelonelontRulelons ++ Selonq(
+        NsfwHighPreloncisionTwelonelontLabelonlRulelon,
+        GorelonAndViolelonncelonHighPreloncisionTwelonelontLabelonlRulelon,
+        NsfwRelonportelondHelonuristicsTwelonelontLabelonlRulelon,
+        GorelonAndViolelonncelonRelonportelondHelonuristicsTwelonelontLabelonlRulelon,
+        NsfwCardImagelonTwelonelontLabelonlRulelon,
+        NsfwHighReloncallTwelonelontLabelonlRulelon,
+        NsfwVidelonoTwelonelontLabelonlDropRulelon,
+        NsfwTelonxtTwelonelontLabelonlDropRulelon,
+        SafelontyCrisisLelonvelonl2DropRulelon,
+        SafelontyCrisisLelonvelonl3DropRulelon,
+        SafelontyCrisisLelonvelonl4DropRulelon,
+        DoNotAmplifyDropRulelon,
+        HighProactivelonTosScorelonTwelonelontLabelonlDropRulelon
       ),
-      userRules = Seq(
-        DoNotAmplifyNonFollowerRule,
-        NotGraduatedNonFollowerRule,
-        LikelyIvsLabelNonFollowerDropUserRule,
-        NsfwTextNonAuthorDropRule
+      uselonrRulelons = Selonq(
+        DoNotAmplifyNonFollowelonrRulelon,
+        NotGraduatelondNonFollowelonrRulelon,
+        LikelonlyIvsLabelonlNonFollowelonrDropUselonrRulelon,
+        NsfwTelonxtNonAuthorDropRulelon
       )
     )
 
-case object TimelineMentionsPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++
-        Seq(
-          LowQualityTweetLabelDropRule,
-          SpamHighRecallTweetLabelDropRule,
-          DuplicateContentTweetLabelDropRule,
-          DuplicateMentionUqfTweetLabelRule,
-          LowQualityMentionTweetLabelRule,
-          SmyteSpamTweetLabelDropRule,
-          ToxicityReplyFilterDropNotificationRule,
-          AbusiveUqfNonFollowerTweetLabelRule,
-          UntrustedUrlUqfNonFollowerTweetLabelRule,
-          DownrankSpamReplyUqfNonFollowerTweetLabelRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-          GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule,
-        ) ++ LimitedEngagementBaseRules.tweetRules,
-      userRules = Seq(
-        AbusiveRule,
-        LowQualityRule,
-        ReadOnlyRule,
-        CompromisedRule,
-        SpamHighRecallRule,
-        DuplicateContentRule,
-        AbusiveHighRecallRule,
-        EngagementSpammerNonFollowerWithUqfRule,
-        EngagementSpammerHighRecallNonFollowerWithUqfRule,
-        DownrankSpamReplyNonFollowerWithUqfRule
+caselon objelonct TimelonlinelonMelonntionsPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = VisibilityPolicy.baselonTwelonelontRulelons ++
+        Selonq(
+          LowQualityTwelonelontLabelonlDropRulelon,
+          SpamHighReloncallTwelonelontLabelonlDropRulelon,
+          DuplicatelonContelonntTwelonelontLabelonlDropRulelon,
+          DuplicatelonMelonntionUqfTwelonelontLabelonlRulelon,
+          LowQualityMelonntionTwelonelontLabelonlRulelon,
+          SmytelonSpamTwelonelontLabelonlDropRulelon,
+          ToxicityRelonplyFiltelonrDropNotificationRulelon,
+          AbusivelonUqfNonFollowelonrTwelonelontLabelonlRulelon,
+          UntrustelondUrlUqfNonFollowelonrTwelonelontLabelonlRulelon,
+          DownrankSpamRelonplyUqfNonFollowelonrTwelonelontLabelonlRulelon,
+          NsfwHighPreloncisionIntelonrstitialAllUselonrsTwelonelontLabelonlRulelon,
+          GorelonAndViolelonncelonHighPreloncisionAllUselonrsTwelonelontLabelonlRulelon,
+          NsfwRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlRulelon,
+          GorelonAndViolelonncelonRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlRulelon,
+          NsfwCardImagelonAllUselonrsTwelonelontLabelonlRulelon,
+        ) ++ LimitelondelonngagelonmelonntBaselonRulelons.twelonelontRulelons,
+      uselonrRulelons = Selonq(
+        AbusivelonRulelon,
+        LowQualityRulelon,
+        RelonadOnlyRulelon,
+        CompromiselondRulelon,
+        SpamHighReloncallRulelon,
+        DuplicatelonContelonntRulelon,
+        AbusivelonHighReloncallRulelon,
+        elonngagelonmelonntSpammelonrNonFollowelonrWithUqfRulelon,
+        elonngagelonmelonntSpammelonrHighReloncallNonFollowelonrWithUqfRulelon,
+        DownrankSpamRelonplyNonFollowelonrWithUqfRulelon
       )
     )
 
-case object TweetEngagersPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules,
-      userRules = Seq(
-        CompromisedNonFollowerWithUqfRule,
-        EngagementSpammerNonFollowerWithUqfRule,
-        LowQualityNonFollowerWithUqfRule,
-        ReadOnlyNonFollowerWithUqfRule,
-        SpamHighRecallNonFollowerWithUqfRule
+caselon objelonct TwelonelontelonngagelonrsPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = VisibilityPolicy.baselonTwelonelontRulelons,
+      uselonrRulelons = Selonq(
+        CompromiselondNonFollowelonrWithUqfRulelon,
+        elonngagelonmelonntSpammelonrNonFollowelonrWithUqfRulelon,
+        LowQualityNonFollowelonrWithUqfRulelon,
+        RelonadOnlyNonFollowelonrWithUqfRulelon,
+        SpamHighReloncallNonFollowelonrWithUqfRulelon
       )
     )
 
-case object TweetWritesApiPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++ Seq(
-        AbusePolicyEpisodicTweetLabelInterstitialRule,
-        EmergencyDynamicInterstitialRule,
-      ) ++ LimitedEngagementBaseRules.tweetRules
+caselon objelonct TwelonelontWritelonsApiPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = VisibilityPolicy.baselonTwelonelontRulelons ++ Selonq(
+        AbuselonPolicyelonpisodicTwelonelontLabelonlIntelonrstitialRulelon,
+        elonmelonrgelonncyDynamicIntelonrstitialRulelon,
+      ) ++ LimitelondelonngagelonmelonntBaselonRulelons.twelonelontRulelons
     )
 
-case object QuotedTweetRulesPolicy
-    extends VisibilityPolicy(
-      quotedTweetRules = Seq(
-        DeactivatedAuthorRule,
-        ErasedAuthorRule,
-        OffboardedAuthorRule,
-        SuspendedAuthorRule,
-        AuthorBlocksOuterAuthorRule,
-        ViewerBlocksAuthorRule,
-        AuthorBlocksViewerDropRule,
-        ViewerMutesAndDoesNotFollowAuthorRule,
-        ProtectedQuoteTweetAuthorRule
+caselon objelonct QuotelondTwelonelontRulelonsPolicy
+    elonxtelonnds VisibilityPolicy(
+      quotelondTwelonelontRulelons = Selonq(
+        DelonactivatelondAuthorRulelon,
+        elonraselondAuthorRulelon,
+        OffboardelondAuthorRulelon,
+        SuspelonndelondAuthorRulelon,
+        AuthorBlocksOutelonrAuthorRulelon,
+        VielonwelonrBlocksAuthorRulelon,
+        AuthorBlocksVielonwelonrDropRulelon,
+        VielonwelonrMutelonsAndDoelonsNotFollowAuthorRulelon,
+        ProtelonctelondQuotelonTwelonelontAuthorRulelon
       )
     )
 
-case object TweetDetailPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++
-        Seq(
-          AuthorBlocksViewerDropRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.AdultMediaNsfwHighPrecisionTweetLabelDropSettingLevelTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.ViolentMediaGoreAndViolenceHighPrecisionDropSettingLeveTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.AdultMediaNsfwReportedHeuristicsTweetLabelDropSettingLevelTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.ViolentMediaGoreAndViolenceReportedHeuristicsDropSettingLevelTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.AdultMediaNsfwCardImageTweetLabelDropSettingLevelTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.OtherSensitiveMediaNsfwUserTweetFlagDropSettingLevelTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.OtherSensitiveMediaNsfwAdminTweetFlagDropSettingLevelTombstoneRule,
-          AbusePolicyEpisodicTweetLabelInterstitialRule,
-          EmergencyDynamicInterstitialRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-          GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule,
-          SensitiveMediaTweetInterstitialRules.AdultMediaNsfwHighPrecisionTweetLabelInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceHighPrecisionInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.AdultMediaNsfwReportedHeuristicsTweetLabelInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceReportedHeuristicsInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.AdultMediaNsfwCardImageTweetLabelInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwUserTweetFlagInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwAdminTweetFlagInterstitialRule,
-          NsfwHighPrecisionTweetLabelAvoidRule,
-          NsfwHighRecallTweetLabelAvoidRule,
-          GoreAndViolenceHighPrecisionAvoidAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAvoidAdPlacementAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAvoidAdPlacementAllUsersTweetLabelRule,
-          NsfwCardImageAvoidAdPlacementAllUsersTweetLabelRule,
-          DoNotAmplifyTweetLabelAvoidRule,
-          NsfaHighPrecisionTweetLabelAvoidRule,
-          MutedKeywordForQuotedTweetTweetDetailInterstitialRule,
+caselon objelonct TwelonelontDelontailPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = VisibilityPolicy.baselonTwelonelontRulelons ++
+        Selonq(
+          AuthorBlocksVielonwelonrDropRulelon,
+          SelonnsitivelonMelondiaTwelonelontDropSelonttingLelonvelonlTombstonelonRulelons.AdultMelondiaNsfwHighPreloncisionTwelonelontLabelonlDropSelonttingLelonvelonlTombstonelonRulelon,
+          SelonnsitivelonMelondiaTwelonelontDropSelonttingLelonvelonlTombstonelonRulelons.ViolelonntMelondiaGorelonAndViolelonncelonHighPreloncisionDropSelonttingLelonvelonTombstonelonRulelon,
+          SelonnsitivelonMelondiaTwelonelontDropSelonttingLelonvelonlTombstonelonRulelons.AdultMelondiaNsfwRelonportelondHelonuristicsTwelonelontLabelonlDropSelonttingLelonvelonlTombstonelonRulelon,
+          SelonnsitivelonMelondiaTwelonelontDropSelonttingLelonvelonlTombstonelonRulelons.ViolelonntMelondiaGorelonAndViolelonncelonRelonportelondHelonuristicsDropSelonttingLelonvelonlTombstonelonRulelon,
+          SelonnsitivelonMelondiaTwelonelontDropSelonttingLelonvelonlTombstonelonRulelons.AdultMelondiaNsfwCardImagelonTwelonelontLabelonlDropSelonttingLelonvelonlTombstonelonRulelon,
+          SelonnsitivelonMelondiaTwelonelontDropSelonttingLelonvelonlTombstonelonRulelons.OthelonrSelonnsitivelonMelondiaNsfwUselonrTwelonelontFlagDropSelonttingLelonvelonlTombstonelonRulelon,
+          SelonnsitivelonMelondiaTwelonelontDropSelonttingLelonvelonlTombstonelonRulelons.OthelonrSelonnsitivelonMelondiaNsfwAdminTwelonelontFlagDropSelonttingLelonvelonlTombstonelonRulelon,
+          AbuselonPolicyelonpisodicTwelonelontLabelonlIntelonrstitialRulelon,
+          elonmelonrgelonncyDynamicIntelonrstitialRulelon,
+          NsfwHighPreloncisionIntelonrstitialAllUselonrsTwelonelontLabelonlRulelon,
+          GorelonAndViolelonncelonHighPreloncisionAllUselonrsTwelonelontLabelonlRulelon,
+          NsfwRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlRulelon,
+          GorelonAndViolelonncelonRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlRulelon,
+          NsfwCardImagelonAllUselonrsTwelonelontLabelonlRulelon,
+          SelonnsitivelonMelondiaTwelonelontIntelonrstitialRulelons.AdultMelondiaNsfwHighPreloncisionTwelonelontLabelonlIntelonrstitialRulelon,
+          SelonnsitivelonMelondiaTwelonelontIntelonrstitialRulelons.ViolelonntMelondiaGorelonAndViolelonncelonHighPreloncisionIntelonrstitialRulelon,
+          SelonnsitivelonMelondiaTwelonelontIntelonrstitialRulelons.AdultMelondiaNsfwRelonportelondHelonuristicsTwelonelontLabelonlIntelonrstitialRulelon,
+          SelonnsitivelonMelondiaTwelonelontIntelonrstitialRulelons.ViolelonntMelondiaGorelonAndViolelonncelonRelonportelondHelonuristicsIntelonrstitialRulelon,
+          SelonnsitivelonMelondiaTwelonelontIntelonrstitialRulelons.AdultMelondiaNsfwCardImagelonTwelonelontLabelonlIntelonrstitialRulelon,
+          SelonnsitivelonMelondiaTwelonelontIntelonrstitialRulelons.OthelonrSelonnsitivelonMelondiaNsfwUselonrTwelonelontFlagIntelonrstitialRulelon,
+          SelonnsitivelonMelondiaTwelonelontIntelonrstitialRulelons.OthelonrSelonnsitivelonMelondiaNsfwAdminTwelonelontFlagIntelonrstitialRulelon,
+          NsfwHighPreloncisionTwelonelontLabelonlAvoidRulelon,
+          NsfwHighReloncallTwelonelontLabelonlAvoidRulelon,
+          GorelonAndViolelonncelonHighPreloncisionAvoidAllUselonrsTwelonelontLabelonlRulelon,
+          NsfwRelonportelondHelonuristicsAvoidAdPlacelonmelonntAllUselonrsTwelonelontLabelonlRulelon,
+          GorelonAndViolelonncelonRelonportelondHelonuristicsAvoidAdPlacelonmelonntAllUselonrsTwelonelontLabelonlRulelon,
+          NsfwCardImagelonAvoidAdPlacelonmelonntAllUselonrsTwelonelontLabelonlRulelon,
+          DoNotAmplifyTwelonelontLabelonlAvoidRulelon,
+          NsfaHighPreloncisionTwelonelontLabelonlAvoidRulelon,
+          MutelondKelonywordForQuotelondTwelonelontTwelonelontDelontailIntelonrstitialRulelon,
         )
-        ++ LimitedEngagementBaseRules.tweetRules,
-      policyRuleParams = SensitiveMediaSettingsTweetDetailBaseRules.policyRuleParams
+        ++ LimitelondelonngagelonmelonntBaselonRulelons.twelonelontRulelons,
+      policyRulelonParams = SelonnsitivelonMelondiaSelonttingsTwelonelontDelontailBaselonRulelons.policyRulelonParams
     )
 
-case object BaseTweetDetailPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++
-        Seq(
-          AuthorBlocksViewerDropRule,
-          AbusePolicyEpisodicTweetLabelInterstitialRule,
-          EmergencyDynamicInterstitialRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-          GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule,
-          NsfwHighPrecisionTweetLabelAvoidRule,
-          NsfwHighRecallTweetLabelAvoidRule,
-          GoreAndViolenceHighPrecisionAvoidAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAvoidAdPlacementAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAvoidAdPlacementAllUsersTweetLabelRule,
-          NsfwCardImageAvoidAdPlacementAllUsersTweetLabelRule,
-          DoNotAmplifyTweetLabelAvoidRule,
-          NsfaHighPrecisionTweetLabelAvoidRule,
-          MutedKeywordForQuotedTweetTweetDetailInterstitialRule,
+caselon objelonct BaselonTwelonelontDelontailPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = VisibilityPolicy.baselonTwelonelontRulelons ++
+        Selonq(
+          AuthorBlocksVielonwelonrDropRulelon,
+          AbuselonPolicyelonpisodicTwelonelontLabelonlIntelonrstitialRulelon,
+          elonmelonrgelonncyDynamicIntelonrstitialRulelon,
+          NsfwHighPreloncisionIntelonrstitialAllUselonrsTwelonelontLabelonlRulelon,
+          GorelonAndViolelonncelonHighPreloncisionAllUselonrsTwelonelontLabelonlRulelon,
+          NsfwRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlRulelon,
+          GorelonAndViolelonncelonRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlRulelon,
+          NsfwCardImagelonAllUselonrsTwelonelontLabelonlRulelon,
+          NsfwHighPreloncisionTwelonelontLabelonlAvoidRulelon,
+          NsfwHighReloncallTwelonelontLabelonlAvoidRulelon,
+          GorelonAndViolelonncelonHighPreloncisionAvoidAllUselonrsTwelonelontLabelonlRulelon,
+          NsfwRelonportelondHelonuristicsAvoidAdPlacelonmelonntAllUselonrsTwelonelontLabelonlRulelon,
+          GorelonAndViolelonncelonRelonportelondHelonuristicsAvoidAdPlacelonmelonntAllUselonrsTwelonelontLabelonlRulelon,
+          NsfwCardImagelonAvoidAdPlacelonmelonntAllUselonrsTwelonelontLabelonlRulelon,
+          DoNotAmplifyTwelonelontLabelonlAvoidRulelon,
+          NsfaHighPreloncisionTwelonelontLabelonlAvoidRulelon,
+          MutelondKelonywordForQuotelondTwelonelontTwelonelontDelontailIntelonrstitialRulelon,
         )
-        ++ LimitedEngagementBaseRules.tweetRules
+        ++ LimitelondelonngagelonmelonntBaselonRulelons.twelonelontRulelons
     )
 
-case object TweetDetailWithInjectionsHydrationPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++
-        Seq(
-          AbusePolicyEpisodicTweetLabelInterstitialRule,
-          EmergencyDynamicInterstitialRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-          GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule,
-          MutedKeywordForQuotedTweetTweetDetailInterstitialRule,
-          ReportedTweetInterstitialRule,
-        ) ++ LimitedEngagementBaseRules.tweetRules,
-      userRules = UserTimelineRules.UserRules
+caselon objelonct TwelonelontDelontailWithInjelonctionsHydrationPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = VisibilityPolicy.baselonTwelonelontRulelons ++
+        Selonq(
+          AbuselonPolicyelonpisodicTwelonelontLabelonlIntelonrstitialRulelon,
+          elonmelonrgelonncyDynamicIntelonrstitialRulelon,
+          NsfwHighPreloncisionIntelonrstitialAllUselonrsTwelonelontLabelonlRulelon,
+          GorelonAndViolelonncelonHighPreloncisionAllUselonrsTwelonelontLabelonlRulelon,
+          NsfwRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlRulelon,
+          GorelonAndViolelonncelonRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlRulelon,
+          NsfwCardImagelonAllUselonrsTwelonelontLabelonlRulelon,
+          MutelondKelonywordForQuotelondTwelonelontTwelonelontDelontailIntelonrstitialRulelon,
+          RelonportelondTwelonelontIntelonrstitialRulelon,
+        ) ++ LimitelondelonngagelonmelonntBaselonRulelons.twelonelontRulelons,
+      uselonrRulelons = UselonrTimelonlinelonRulelons.UselonrRulelons
     )
 
-case object TweetDetailNonTooPolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(
-        DropAllExclusiveTweetsRule,
-        DropAllTrustedFriendsTweetsRule,
-      ) ++ BaseTweetDetailPolicy.tweetRules
+caselon objelonct TwelonelontDelontailNonTooPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = Selonq(
+        DropAllelonxclusivelonTwelonelontsRulelon,
+        DropAllTrustelondFrielonndsTwelonelontsRulelon,
+      ) ++ BaselonTwelonelontDelontailPolicy.twelonelontRulelons
     )
 
-case object RecosWritePathPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++ Seq(
-        AbusiveTweetLabelRule,
-        LowQualityTweetLabelDropRule,
-        NsfwHighPrecisionTweetLabelRule,
-        GoreAndViolenceHighPrecisionTweetLabelRule,
-        NsfwReportedHeuristicsTweetLabelRule,
-        GoreAndViolenceReportedHeuristicsTweetLabelRule,
-        NsfwCardImageTweetLabelRule,
-        NsfwVideoTweetLabelDropRule,
-        NsfwTextTweetLabelDropRule,
-        SpamHighRecallTweetLabelDropRule,
-        DuplicateContentTweetLabelDropRule,
-        BystanderAbusiveTweetLabelRule,
-        SmyteSpamTweetLabelDropRule
+caselon objelonct ReloncosWritelonPathPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = VisibilityPolicy.baselonTwelonelontRulelons ++ Selonq(
+        AbusivelonTwelonelontLabelonlRulelon,
+        LowQualityTwelonelontLabelonlDropRulelon,
+        NsfwHighPreloncisionTwelonelontLabelonlRulelon,
+        GorelonAndViolelonncelonHighPreloncisionTwelonelontLabelonlRulelon,
+        NsfwRelonportelondHelonuristicsTwelonelontLabelonlRulelon,
+        GorelonAndViolelonncelonRelonportelondHelonuristicsTwelonelontLabelonlRulelon,
+        NsfwCardImagelonTwelonelontLabelonlRulelon,
+        NsfwVidelonoTwelonelontLabelonlDropRulelon,
+        NsfwTelonxtTwelonelontLabelonlDropRulelon,
+        SpamHighReloncallTwelonelontLabelonlDropRulelon,
+        DuplicatelonContelonntTwelonelontLabelonlDropRulelon,
+        BystandelonrAbusivelonTwelonelontLabelonlRulelon,
+        SmytelonSpamTwelonelontLabelonlDropRulelon
       ),
-      userRules = Seq(NsfwTextNonAuthorDropRule)
+      uselonrRulelons = Selonq(NsfwTelonxtNonAuthorDropRulelon)
     )
 
-case object BrandSafetyPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++ Seq(
-        NsfwVideoTweetLabelDropRule,
-        NsfwTextTweetLabelDropRule,
-        NsfaHighRecallTweetLabelInterstitialRule
+caselon objelonct BrandSafelontyPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = VisibilityPolicy.baselonTwelonelontRulelons ++ Selonq(
+        NsfwVidelonoTwelonelontLabelonlDropRulelon,
+        NsfwTelonxtTwelonelontLabelonlDropRulelon,
+        NsfaHighReloncallTwelonelontLabelonlIntelonrstitialRulelon
       ),
-      userRules = Seq(NsfwTextNonAuthorDropRule)
+      uselonrRulelons = Selonq(NsfwTelonxtNonAuthorDropRulelon)
     )
 
-case object VideoAdsPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules
+caselon objelonct VidelonoAdsPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = VisibilityPolicy.baselonTwelonelontRulelons
     )
 
-case object AppealsPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++
-        Seq(
-          NsfwCardImageAllUsersTweetLabelRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-          GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
+caselon objelonct AppelonalsPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = VisibilityPolicy.baselonTwelonelontRulelons ++
+        Selonq(
+          NsfwCardImagelonAllUselonrsTwelonelontLabelonlRulelon,
+          NsfwHighPreloncisionIntelonrstitialAllUselonrsTwelonelontLabelonlRulelon,
+          GorelonAndViolelonncelonHighPreloncisionAllUselonrsTwelonelontLabelonlRulelon,
+          NsfwRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlRulelon,
+          GorelonAndViolelonncelonRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlRulelon,
         )
     )
 
-case object TimelineConversationsDownrankingPolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(
-        HighToxicityScoreDownrankAbusiveQualitySectionRule,
-        UntrustedUrlConversationsTweetLabelRule,
-        DownrankSpamReplyConversationsTweetLabelRule,
-        DownrankSpamReplyConversationsAuthorLabelRule,
-        HighProactiveTosScoreTweetLabelDownrankingRule,
-        SafetyCrisisLevel3SectionRule,
-        SafetyCrisisLevel4SectionRule,
-        DoNotAmplifySectionRule,
-        DoNotAmplifySectionUserRule,
-        NotGraduatedConversationsAuthorLabelRule,
-        HighSpammyTweetContentScoreConvoDownrankAbusiveQualityRule,
-        HighCryptospamScoreConvoDownrankAbusiveQualityRule,
-        CopypastaSpamAbusiveQualityTweetLabelRule,
-        HighToxicityScoreDownrankLowQualitySectionRule,
-        HighPSpammyTweetScoreDownrankLowQualitySectionRule,
-        RitoActionedTweetDownrankLowQualitySectionRule,
-        HighToxicityScoreDownrankHighQualitySectionRule,
+caselon objelonct TimelonlinelonConvelonrsationsDownrankingPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = Selonq(
+        HighToxicityScorelonDownrankAbusivelonQualitySelonctionRulelon,
+        UntrustelondUrlConvelonrsationsTwelonelontLabelonlRulelon,
+        DownrankSpamRelonplyConvelonrsationsTwelonelontLabelonlRulelon,
+        DownrankSpamRelonplyConvelonrsationsAuthorLabelonlRulelon,
+        HighProactivelonTosScorelonTwelonelontLabelonlDownrankingRulelon,
+        SafelontyCrisisLelonvelonl3SelonctionRulelon,
+        SafelontyCrisisLelonvelonl4SelonctionRulelon,
+        DoNotAmplifySelonctionRulelon,
+        DoNotAmplifySelonctionUselonrRulelon,
+        NotGraduatelondConvelonrsationsAuthorLabelonlRulelon,
+        HighSpammyTwelonelontContelonntScorelonConvoDownrankAbusivelonQualityRulelon,
+        HighCryptospamScorelonConvoDownrankAbusivelonQualityRulelon,
+        CopypastaSpamAbusivelonQualityTwelonelontLabelonlRulelon,
+        HighToxicityScorelonDownrankLowQualitySelonctionRulelon,
+        HighPSpammyTwelonelontScorelonDownrankLowQualitySelonctionRulelon,
+        RitoActionelondTwelonelontDownrankLowQualitySelonctionRulelon,
+        HighToxicityScorelonDownrankHighQualitySelonctionRulelon,
       )
     )
 
-case object TimelineConversationsDownrankingMinimalPolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(
-        HighProactiveTosScoreTweetLabelDownrankingRule
+caselon objelonct TimelonlinelonConvelonrsationsDownrankingMinimalPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = Selonq(
+        HighProactivelonTosScorelonTwelonelontLabelonlDownrankingRulelon
       )
     )
 
-case object TimelineHomeRecommendationsPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.union(
-        RecommendationsPolicy.tweetRules.filter(
-          _ != NsfwHighPrecisionTweetLabelRule
+caselon objelonct TimelonlinelonHomelonReloncommelonndationsPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = VisibilityPolicy.union(
+        ReloncommelonndationsPolicy.twelonelontRulelons.filtelonr(
+          _ != NsfwHighPreloncisionTwelonelontLabelonlRulelon
         ),
-        Seq(
-          SafetyCrisisLevel2DropRule,
-          SafetyCrisisLevel3DropRule,
-          SafetyCrisisLevel4DropRule,
-          HighProactiveTosScoreTweetLabelDropRule,
-          NsfwHighRecallTweetLabelRule,
+        Selonq(
+          SafelontyCrisisLelonvelonl2DropRulelon,
+          SafelontyCrisisLelonvelonl3DropRulelon,
+          SafelontyCrisisLelonvelonl4DropRulelon,
+          HighProactivelonTosScorelonTwelonelontLabelonlDropRulelon,
+          NsfwHighReloncallTwelonelontLabelonlRulelon,
         ),
-        BaseTimelineHomePolicy.tweetRules,
+        BaselonTimelonlinelonHomelonPolicy.twelonelontRulelons,
       ),
-      userRules = VisibilityPolicy.union(
-        RecommendationsPolicy.userRules,
-        BaseTimelineHomePolicy.userRules
+      uselonrRulelons = VisibilityPolicy.union(
+        ReloncommelonndationsPolicy.uselonrRulelons,
+        BaselonTimelonlinelonHomelonPolicy.uselonrRulelons
       )
     )
 
-case object TimelineHomeTopicFollowRecommendationsPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.union(
-        Seq(
-          SearchBlacklistTweetLabelRule,
-          GoreAndViolenceTopicHighRecallTweetLabelRule,
-          NsfwHighRecallTweetLabelRule,
+caselon objelonct TimelonlinelonHomelonTopicFollowReloncommelonndationsPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = VisibilityPolicy.union(
+        Selonq(
+          SelonarchBlacklistTwelonelontLabelonlRulelon,
+          GorelonAndViolelonncelonTopicHighReloncallTwelonelontLabelonlRulelon,
+          NsfwHighReloncallTwelonelontLabelonlRulelon,
         ),
-        RecommendationsPolicy.tweetRules
-          .filterNot(
-            Seq(
-              NsfwHighPrecisionTweetLabelRule,
+        ReloncommelonndationsPolicy.twelonelontRulelons
+          .filtelonrNot(
+            Selonq(
+              NsfwHighPreloncisionTwelonelontLabelonlRulelon,
             ).contains),
-        BaseTimelineHomePolicy.tweetRules
+        BaselonTimelonlinelonHomelonPolicy.twelonelontRulelons
       ),
-      userRules = VisibilityPolicy.union(
-        RecommendationsPolicy.userRules,
-        BaseTimelineHomePolicy.userRules
+      uselonrRulelons = VisibilityPolicy.union(
+        ReloncommelonndationsPolicy.uselonrRulelons,
+        BaselonTimelonlinelonHomelonPolicy.uselonrRulelons
       )
     )
 
-case object TimelineScorerPolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(
-        AllowAllRule
+caselon objelonct TimelonlinelonScorelonrPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = Selonq(
+        AllowAllRulelon
       )
     )
 
-case object FollowedTopicsTimelinePolicy
-    extends VisibilityPolicy(
-      userRules = Seq(
-        AuthorBlocksViewerDropRule,
-        ProtectedAuthorDropRule,
-        SuspendedAuthorRule
+caselon objelonct FollowelondTopicsTimelonlinelonPolicy
+    elonxtelonnds VisibilityPolicy(
+      uselonrRulelons = Selonq(
+        AuthorBlocksVielonwelonrDropRulelon,
+        ProtelonctelondAuthorDropRulelon,
+        SuspelonndelondAuthorRulelon
       )
     )
 
-case object TopicsLandingPageTopicRecommendationsPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.union(
-        Seq(
-          SearchBlacklistTweetLabelRule,
-          GoreAndViolenceTopicHighRecallTweetLabelRule,
-          NsfwHighRecallTweetLabelRule
+caselon objelonct TopicsLandingPagelonTopicReloncommelonndationsPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = VisibilityPolicy.union(
+        Selonq(
+          SelonarchBlacklistTwelonelontLabelonlRulelon,
+          GorelonAndViolelonncelonTopicHighReloncallTwelonelontLabelonlRulelon,
+          NsfwHighReloncallTwelonelontLabelonlRulelon
         ),
-        RecommendationsPolicy.tweetRules,
-        BaseTimelineHomePolicy.tweetRules,
+        ReloncommelonndationsPolicy.twelonelontRulelons,
+        BaselonTimelonlinelonHomelonPolicy.twelonelontRulelons,
       ),
-      userRules = VisibilityPolicy.union(
-        RecommendationsPolicy.userRules,
-        BaseTimelineHomePolicy.userRules
-      ) ++ Seq(
-        AuthorBlocksViewerDropRule
+      uselonrRulelons = VisibilityPolicy.union(
+        ReloncommelonndationsPolicy.uselonrRulelons,
+        BaselonTimelonlinelonHomelonPolicy.uselonrRulelons
+      ) ++ Selonq(
+        AuthorBlocksVielonwelonrDropRulelon
       )
     )
 
-case object ExploreRecommendationsPolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(
-        DropOuterCommunityTweetsRule,
-        SearchBlacklistTweetLabelRule,
-        GoreAndViolenceTopicHighRecallTweetLabelRule,
-        NsfwHighRecallTweetLabelRule,
-        DropTweetsWithGeoRestrictedMediaRule,
-        TweetNsfwUserDropRule,
-        TweetNsfwAdminDropRule,
-        ViewerHasMatchingMutedKeywordForHomeTimelineRule,
-        ViewerHasMatchingMutedKeywordForNotificationsRule,
+caselon objelonct elonxplorelonReloncommelonndationsPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = Selonq(
+        DropOutelonrCommunityTwelonelontsRulelon,
+        SelonarchBlacklistTwelonelontLabelonlRulelon,
+        GorelonAndViolelonncelonTopicHighReloncallTwelonelontLabelonlRulelon,
+        NsfwHighReloncallTwelonelontLabelonlRulelon,
+        DropTwelonelontsWithGelonoRelonstrictelondMelondiaRulelon,
+        TwelonelontNsfwUselonrDropRulelon,
+        TwelonelontNsfwAdminDropRulelon,
+        VielonwelonrHasMatchingMutelondKelonywordForHomelonTimelonlinelonRulelon,
+        VielonwelonrHasMatchingMutelondKelonywordForNotificationsRulelon,
       ) ++ VisibilityPolicy.union(
-        RecommendationsPolicy.tweetRules
+        ReloncommelonndationsPolicy.twelonelontRulelons
       ),
-      userRules = VisibilityPolicy.union(
-        RecommendationsPolicy.userRules
-      ) ++ Seq(
-        AuthorBlocksViewerDropRule,
-        ViewerMutesAuthorRule,
-        ViewerBlocksAuthorRule
+      uselonrRulelons = VisibilityPolicy.union(
+        ReloncommelonndationsPolicy.uselonrRulelons
+      ) ++ Selonq(
+        AuthorBlocksVielonwelonrDropRulelon,
+        VielonwelonrMutelonsAuthorRulelon,
+        VielonwelonrBlocksAuthorRulelon
       )
     )
 
-case object TombstoningPolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(
-        TombstoneIf.ViewerIsBlockedByAuthor,
-        TombstoneIf.AuthorIsProtected,
-        TombstoneIf.ReplyIsModeratedByRootAuthor,
-        TombstoneIf.AuthorIsSuspended,
-        TombstoneIf.AuthorIsDeactivated,
-        InterstitialIf.ViewerHardMutedAuthor
+caselon objelonct TombstoningPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = Selonq(
+        TombstonelonIf.VielonwelonrIsBlockelondByAuthor,
+        TombstonelonIf.AuthorIsProtelonctelond,
+        TombstonelonIf.RelonplyIsModelonratelondByRootAuthor,
+        TombstonelonIf.AuthorIsSuspelonndelond,
+        TombstonelonIf.AuthorIsDelonactivatelond,
+        IntelonrstitialIf.VielonwelonrHardMutelondAuthor
       )
     )
 
-case object TweetReplyNudgePolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(
-        SpamAllUsersTweetLabelRule,
-        PdnaAllUsersTweetLabelRule,
-        BounceAllUsersTweetLabelRule,
-        TweetNsfwAdminDropRule,
-        TweetNsfwUserDropRule,
-        NsfwHighRecallAllUsersTweetLabelDropRule,
-        NsfwHighPrecisionAllUsersTweetLabelDropRule,
-        GoreAndViolenceHighPrecisionAllUsersTweetLabelDropRule,
-        NsfwReportedHeuristicsAllUsersTweetLabelDropRule,
-        GoreAndViolenceReportedHeuristicsAllUsersTweetLabelDropRule,
-        NsfwCardImageAllUsersTweetLabelDropRule,
-        NsfwVideoAllUsersTweetLabelDropRule,
-        NsfwTextAllUsersTweetLabelDropRule,
+caselon objelonct TwelonelontRelonplyNudgelonPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = Selonq(
+        SpamAllUselonrsTwelonelontLabelonlRulelon,
+        PdnaAllUselonrsTwelonelontLabelonlRulelon,
+        BouncelonAllUselonrsTwelonelontLabelonlRulelon,
+        TwelonelontNsfwAdminDropRulelon,
+        TwelonelontNsfwUselonrDropRulelon,
+        NsfwHighReloncallAllUselonrsTwelonelontLabelonlDropRulelon,
+        NsfwHighPreloncisionAllUselonrsTwelonelontLabelonlDropRulelon,
+        GorelonAndViolelonncelonHighPreloncisionAllUselonrsTwelonelontLabelonlDropRulelon,
+        NsfwRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlDropRulelon,
+        GorelonAndViolelonncelonRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlDropRulelon,
+        NsfwCardImagelonAllUselonrsTwelonelontLabelonlDropRulelon,
+        NsfwVidelonoAllUselonrsTwelonelontLabelonlDropRulelon,
+        NsfwTelonxtAllUselonrsTwelonelontLabelonlDropRulelon,
       ),
-      userRules = Seq(
-        DropNsfwUserAuthorRule,
-        DropNsfwAdminAuthorRule,
-        NsfwTextAllUsersDropRule
+      uselonrRulelons = Selonq(
+        DropNsfwUselonrAuthorRulelon,
+        DropNsfwAdminAuthorRulelon,
+        NsfwTelonxtAllUselonrsDropRulelon
       )
     )
 
-case object HumanizationNudgePolicy
-    extends VisibilityPolicy(
-      userRules = UserTimelineRules.UserRules
+caselon objelonct HumanizationNudgelonPolicy
+    elonxtelonnds VisibilityPolicy(
+      uselonrRulelons = UselonrTimelonlinelonRulelons.UselonrRulelons
     )
 
-case object TrendsRepresentativeTweetPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.union(
-        RecommendationsPolicy.tweetRules,
-        Seq(
-          AbusiveHighRecallTweetLabelRule,
-          BystanderAbusiveTweetLabelRule,
-          DuplicateContentTweetLabelDropRule,
-          LowQualityTweetLabelDropRule,
-          HighProactiveTosScoreTweetLabelDropRule,
-          NsfaHighRecallTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelDropRule,
-          NsfwHighPrecisionTweetLabelRule,
-          NsfwHighRecallAllUsersTweetLabelDropRule,
-          NsfwVideoTweetLabelDropRule,
-          NsfwTextTweetLabelDropRule,
-          PdnaAllUsersTweetLabelRule,
-          SearchBlacklistTweetLabelRule,
-          SpamHighRecallTweetLabelDropRule,
-          UntrustedUrlAllViewersTweetLabelRule,
-          DownrankSpamReplyAllViewersTweetLabelRule,
-          HighPSpammyScoreAllViewerDropRule,
-          DoNotAmplifyAllViewersDropRule,
-          SmyteSpamTweetLabelDropRule,
-          AuthorBlocksViewerDropRule,
-          ViewerBlocksAuthorRule,
-          ViewerMutesAuthorRule,
-          CopypastaSpamAllViewersTweetLabelRule,
+caselon objelonct TrelonndsRelonprelonselonntativelonTwelonelontPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = VisibilityPolicy.union(
+        ReloncommelonndationsPolicy.twelonelontRulelons,
+        Selonq(
+          AbusivelonHighReloncallTwelonelontLabelonlRulelon,
+          BystandelonrAbusivelonTwelonelontLabelonlRulelon,
+          DuplicatelonContelonntTwelonelontLabelonlDropRulelon,
+          LowQualityTwelonelontLabelonlDropRulelon,
+          HighProactivelonTosScorelonTwelonelontLabelonlDropRulelon,
+          NsfaHighReloncallTwelonelontLabelonlRulelon,
+          NsfwCardImagelonAllUselonrsTwelonelontLabelonlDropRulelon,
+          NsfwHighPreloncisionTwelonelontLabelonlRulelon,
+          NsfwHighReloncallAllUselonrsTwelonelontLabelonlDropRulelon,
+          NsfwVidelonoTwelonelontLabelonlDropRulelon,
+          NsfwTelonxtTwelonelontLabelonlDropRulelon,
+          PdnaAllUselonrsTwelonelontLabelonlRulelon,
+          SelonarchBlacklistTwelonelontLabelonlRulelon,
+          SpamHighReloncallTwelonelontLabelonlDropRulelon,
+          UntrustelondUrlAllVielonwelonrsTwelonelontLabelonlRulelon,
+          DownrankSpamRelonplyAllVielonwelonrsTwelonelontLabelonlRulelon,
+          HighPSpammyScorelonAllVielonwelonrDropRulelon,
+          DoNotAmplifyAllVielonwelonrsDropRulelon,
+          SmytelonSpamTwelonelontLabelonlDropRulelon,
+          AuthorBlocksVielonwelonrDropRulelon,
+          VielonwelonrBlocksAuthorRulelon,
+          VielonwelonrMutelonsAuthorRulelon,
+          CopypastaSpamAllVielonwelonrsTwelonelontLabelonlRulelon,
         )
       ),
-      userRules = VisibilityPolicy.union(
-        RecommendationsPolicy.userRules,
-        Seq(
-          AbusiveRule,
-          LowQualityRule,
-          ReadOnlyRule,
-          CompromisedRule,
-          RecommendationsBlacklistRule,
-          SpamHighRecallRule,
-          DuplicateContentRule,
-          NsfwHighPrecisionRule,
-          NsfwNearPerfectAuthorRule,
-          NsfwBannerImageRule,
-          NsfwAvatarImageRule,
-          EngagementSpammerRule,
-          EngagementSpammerHighRecallRule,
-          AbusiveHighRecallRule,
-          SearchBlacklistRule,
-          SearchNsfwTextRule,
-          NsfwHighRecallRule,
-          TsViolationRule,
-          DownrankSpamReplyAllViewersRule,
-          NsfwTextNonAuthorDropRule
+      uselonrRulelons = VisibilityPolicy.union(
+        ReloncommelonndationsPolicy.uselonrRulelons,
+        Selonq(
+          AbusivelonRulelon,
+          LowQualityRulelon,
+          RelonadOnlyRulelon,
+          CompromiselondRulelon,
+          ReloncommelonndationsBlacklistRulelon,
+          SpamHighReloncallRulelon,
+          DuplicatelonContelonntRulelon,
+          NsfwHighPreloncisionRulelon,
+          NsfwNelonarPelonrfelonctAuthorRulelon,
+          NsfwBannelonrImagelonRulelon,
+          NsfwAvatarImagelonRulelon,
+          elonngagelonmelonntSpammelonrRulelon,
+          elonngagelonmelonntSpammelonrHighReloncallRulelon,
+          AbusivelonHighReloncallRulelon,
+          SelonarchBlacklistRulelon,
+          SelonarchNsfwTelonxtRulelon,
+          NsfwHighReloncallRulelon,
+          TsViolationRulelon,
+          DownrankSpamRelonplyAllVielonwelonrsRulelon,
+          NsfwTelonxtNonAuthorDropRulelon
         )
       )
     )
 
-case object AdsCampaignPolicy
-    extends VisibilityPolicy(
-      userRules = Seq(SuspendedAuthorRule),
-      tweetRules = VisibilityPolicy.baseTweetRules
+caselon objelonct AdsCampaignPolicy
+    elonxtelonnds VisibilityPolicy(
+      uselonrRulelons = Selonq(SuspelonndelondAuthorRulelon),
+      twelonelontRulelons = VisibilityPolicy.baselonTwelonelontRulelons
     )
 
-case object AdsManagerPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++ Seq(
-        AdsManagerDenyListAllUsersTweetLabelRule,
+caselon objelonct AdsManagelonrPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = VisibilityPolicy.baselonTwelonelontRulelons ++ Selonq(
+        AdsManagelonrDelonnyListAllUselonrsTwelonelontLabelonlRulelon,
       )
     )
 
-case object AdsReportingDashboardPolicy
-    extends VisibilityPolicy(
-      tweetRules = AdsManagerPolicy.tweetRules,
-      userRules = AdsCampaignPolicy.userRules
+caselon objelonct AdsRelonportingDashboardPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = AdsManagelonrPolicy.twelonelontRulelons,
+      uselonrRulelons = AdsCampaignPolicy.uselonrRulelons
     )
 
-case object BirdwatchNoteAuthorPolicy
-    extends VisibilityPolicy(
-      userRules = Seq(
-        SuspendedAuthorRule,
-        AuthorBlocksViewerDropRule,
-        ViewerBlocksAuthorRule,
-        ViewerMutesAuthorRule
+caselon objelonct BirdwatchNotelonAuthorPolicy
+    elonxtelonnds VisibilityPolicy(
+      uselonrRulelons = Selonq(
+        SuspelonndelondAuthorRulelon,
+        AuthorBlocksVielonwelonrDropRulelon,
+        VielonwelonrBlocksAuthorRulelon,
+        VielonwelonrMutelonsAuthorRulelon
       )
     )
 
-case object BirdwatchNoteTweetsTimelinePolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++
-        Seq(
-          MutedRetweetsRule,
-          AuthorBlocksViewerDropRule,
-          ViewerMutesAuthorRule,
-          AbusePolicyEpisodicTweetLabelInterstitialRule,
-          EmergencyDynamicInterstitialRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-          GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule,
-        ) ++ LimitedEngagementBaseRules.tweetRules
+caselon objelonct BirdwatchNotelonTwelonelontsTimelonlinelonPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = VisibilityPolicy.baselonTwelonelontRulelons ++
+        Selonq(
+          MutelondRelontwelonelontsRulelon,
+          AuthorBlocksVielonwelonrDropRulelon,
+          VielonwelonrMutelonsAuthorRulelon,
+          AbuselonPolicyelonpisodicTwelonelontLabelonlIntelonrstitialRulelon,
+          elonmelonrgelonncyDynamicIntelonrstitialRulelon,
+          NsfwHighPreloncisionIntelonrstitialAllUselonrsTwelonelontLabelonlRulelon,
+          GorelonAndViolelonncelonHighPreloncisionAllUselonrsTwelonelontLabelonlRulelon,
+          NsfwRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlRulelon,
+          GorelonAndViolelonncelonRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlRulelon,
+          NsfwCardImagelonAllUselonrsTwelonelontLabelonlRulelon,
+        ) ++ LimitelondelonngagelonmelonntBaselonRulelons.twelonelontRulelons
     )
 
-case object BirdwatchNeedsYourHelpNotificationsPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++
-        Seq(
-          AuthorBlocksViewerDropRule,
-          ViewerBlocksAuthorRule,
-          ViewerMutesAuthorRule,
-          ViewerHasMatchingMutedKeywordForHomeTimelineRule,
-          ViewerHasMatchingMutedKeywordForNotificationsRule,
+caselon objelonct BirdwatchNelonelondsYourHelonlpNotificationsPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = VisibilityPolicy.baselonTwelonelontRulelons ++
+        Selonq(
+          AuthorBlocksVielonwelonrDropRulelon,
+          VielonwelonrBlocksAuthorRulelon,
+          VielonwelonrMutelonsAuthorRulelon,
+          VielonwelonrHasMatchingMutelondKelonywordForHomelonTimelonlinelonRulelon,
+          VielonwelonrHasMatchingMutelondKelonywordForNotificationsRulelon,
         )
     )
 
-case object ForDevelopmentOnlyPolicy
-    extends VisibilityPolicy(
-      userRules = Seq.empty,
-      tweetRules = VisibilityPolicy.baseTweetRules
+caselon objelonct ForDelonvelonlopmelonntOnlyPolicy
+    elonxtelonnds VisibilityPolicy(
+      uselonrRulelons = Selonq.elonmpty,
+      twelonelontRulelons = VisibilityPolicy.baselonTwelonelontRulelons
     )
 
-case object UserProfileHeaderPolicy
-    extends VisibilityPolicy(
-      userRules = Seq.empty,
-      tweetRules = Seq(DropAllRule)
+caselon objelonct UselonrProfilelonHelonadelonrPolicy
+    elonxtelonnds VisibilityPolicy(
+      uselonrRulelons = Selonq.elonmpty,
+      twelonelontRulelons = Selonq(DropAllRulelon)
     )
 
-case object UserScopedTimelinePolicy
-    extends VisibilityPolicy(
-      userRules = UserTimelineRules.UserRules,
-      tweetRules = Seq(DropAllRule)
+caselon objelonct UselonrScopelondTimelonlinelonPolicy
+    elonxtelonnds VisibilityPolicy(
+      uselonrRulelons = UselonrTimelonlinelonRulelons.UselonrRulelons,
+      twelonelontRulelons = Selonq(DropAllRulelon)
     )
 
-case object TweetScopedTimelinePolicy
-    extends VisibilityPolicy(
-      userRules = UserTimelineRules.UserRules,
-      tweetRules = Seq.empty
+caselon objelonct TwelonelontScopelondTimelonlinelonPolicy
+    elonxtelonnds VisibilityPolicy(
+      uselonrRulelons = UselonrTimelonlinelonRulelons.UselonrRulelons,
+      twelonelontRulelons = Selonq.elonmpty
     )
 
-case object SoftInterventionPivotPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules
+caselon objelonct SoftIntelonrvelonntionPivotPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = VisibilityPolicy.baselonTwelonelontRulelons
     )
 
-case object CuratedTrendsRepresentativeTweetPolicy
-    extends VisibilityPolicy(
-      userRules = Seq(
-        SuspendedAuthorRule,
-        AuthorBlocksViewerDropRule,
-        ViewerBlocksAuthorRule,
-        ViewerMutesAndDoesNotFollowAuthorRule
+caselon objelonct CuratelondTrelonndsRelonprelonselonntativelonTwelonelontPolicy
+    elonxtelonnds VisibilityPolicy(
+      uselonrRulelons = Selonq(
+        SuspelonndelondAuthorRulelon,
+        AuthorBlocksVielonwelonrDropRulelon,
+        VielonwelonrBlocksAuthorRulelon,
+        VielonwelonrMutelonsAndDoelonsNotFollowAuthorRulelon
       )
     )
 
-case object CommunitiesPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++
-        Seq(
-          RetweetDropRule,
-          AbusePolicyEpisodicTweetLabelDropRule,
-          EmergencyDropRule,
-          SafetyCrisisLevel4DropRule,
-          ReportedTweetInterstitialRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-          GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule,
-        ) ++ LimitedEngagementBaseRules.tweetRules
+caselon objelonct CommunitielonsPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = VisibilityPolicy.baselonTwelonelontRulelons ++
+        Selonq(
+          RelontwelonelontDropRulelon,
+          AbuselonPolicyelonpisodicTwelonelontLabelonlDropRulelon,
+          elonmelonrgelonncyDropRulelon,
+          SafelontyCrisisLelonvelonl4DropRulelon,
+          RelonportelondTwelonelontIntelonrstitialRulelon,
+          NsfwHighPreloncisionIntelonrstitialAllUselonrsTwelonelontLabelonlRulelon,
+          GorelonAndViolelonncelonHighPreloncisionAllUselonrsTwelonelontLabelonlRulelon,
+          NsfwRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlRulelon,
+          GorelonAndViolelonncelonRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlRulelon,
+          NsfwCardImagelonAllUselonrsTwelonelontLabelonlRulelon,
+        ) ++ LimitelondelonngagelonmelonntBaselonRulelons.twelonelontRulelons
     )
 
-case object TimelineHomeCommunitiesPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.union(
-        Seq(
-          DropAllAuthorRemovedCommunityTweetsRule,
-          DropAllHiddenCommunityTweetsRule,
-          ViewerHasMatchingMutedKeywordForHomeTimelineRule,
+caselon objelonct TimelonlinelonHomelonCommunitielonsPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = VisibilityPolicy.union(
+        Selonq(
+          DropAllAuthorRelonmovelondCommunityTwelonelontsRulelon,
+          DropAllHiddelonnCommunityTwelonelontsRulelon,
+          VielonwelonrHasMatchingMutelondKelonywordForHomelonTimelonlinelonRulelon,
         ),
-        VisibilityPolicy.baseQuotedTweetTombstoneRules,
-        CommunitiesPolicy.tweetRules,
+        VisibilityPolicy.baselonQuotelondTwelonelontTombstonelonRulelons,
+        CommunitielonsPolicy.twelonelontRulelons,
       ),
-      userRules = Seq(
-        ViewerMutesAuthorRule,
-        ViewerBlocksAuthorRule,
+      uselonrRulelons = Selonq(
+        VielonwelonrMutelonsAuthorRulelon,
+        VielonwelonrBlocksAuthorRulelon,
       )
     )
 
-case object TimelineHomePromotedHydrationPolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(
-        ViewerHasMatchingMutedKeywordForHomeTimelinePromotedTweetRule,
-        ViewerMutesAuthorHomeTimelinePromotedTweetRule,
-        ViewerBlocksAuthorHomeTimelinePromotedTweetRule
-      ) ++ TimelineHomeHydrationPolicy.tweetRules,
-      policyRuleParams = TimelineHomeHydrationPolicy.policyRuleParams
+caselon objelonct TimelonlinelonHomelonPromotelondHydrationPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = Selonq(
+        VielonwelonrHasMatchingMutelondKelonywordForHomelonTimelonlinelonPromotelondTwelonelontRulelon,
+        VielonwelonrMutelonsAuthorHomelonTimelonlinelonPromotelondTwelonelontRulelon,
+        VielonwelonrBlocksAuthorHomelonTimelonlinelonPromotelondTwelonelontRulelon
+      ) ++ TimelonlinelonHomelonHydrationPolicy.twelonelontRulelons,
+      policyRulelonParams = TimelonlinelonHomelonHydrationPolicy.policyRulelonParams
     )
 
-case object SpacesPolicy
-    extends VisibilityPolicy(
-        SpaceDoNotAmplifyAllUsersDropRule,
-        SpaceNsfwHighPrecisionNonFollowerDropRule),
-      userRules = Seq(
-        AuthorBlocksViewerDropRule
+caselon objelonct SpacelonsPolicy
+    elonxtelonnds VisibilityPolicy(
+        SpacelonDoNotAmplifyAllUselonrsDropRulelon,
+        SpacelonNsfwHighPreloncisionNonFollowelonrDropRulelon),
+      uselonrRulelons = Selonq(
+        AuthorBlocksVielonwelonrDropRulelon
       )
     )
 
-case object SpacesSellerApplicationStatusPolicy
-    extends VisibilityPolicy(
-      userRules = Seq(
-        ViewerIsNotAuthorDropRule
+caselon objelonct SpacelonsSelonllelonrApplicationStatusPolicy
+    elonxtelonnds VisibilityPolicy(
+      uselonrRulelons = Selonq(
+        VielonwelonrIsNotAuthorDropRulelon
       )
     )
 
-case object SpacesParticipantsPolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(DropAllRule),
-      userRules = Seq(
-        AuthorBlocksViewerDropRule,
-        SuspendedAuthorRule
+caselon objelonct SpacelonsParticipantsPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = Selonq(DropAllRulelon),
+      uselonrRulelons = Selonq(
+        AuthorBlocksVielonwelonrDropRulelon,
+        SuspelonndelondAuthorRulelon
       )
     )
 
-case object SpacesSharingPolicy
-    extends VisibilityPolicy(
-      tweetRules = TweetDetailPolicy.tweetRules,
-      userRules = Seq(
-        AuthorBlocksViewerDropRule,
-        ProtectedAuthorDropRule,
-        SuspendedAuthorRule
+caselon objelonct SpacelonsSharingPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = TwelonelontDelontailPolicy.twelonelontRulelons,
+      uselonrRulelons = Selonq(
+        AuthorBlocksVielonwelonrDropRulelon,
+        ProtelonctelondAuthorDropRulelon,
+        SuspelonndelondAuthorRulelon
       ),
-      policyRuleParams = TweetDetailPolicy.policyRuleParams
+      policyRulelonParams = TwelonelontDelontailPolicy.policyRulelonParams
     )
 
-case object SpaceFleetlinePolicy
-    extends VisibilityPolicy(
-      spaceRules = Seq(
-        SpaceDoNotAmplifyNonFollowerDropRule,
-        SpaceCoordHarmfulActivityHighRecallNonFollowerDropRule,
-        SpaceUntrustedUrlNonFollowerDropRule,
-        SpaceMisleadingHighRecallNonFollowerDropRule,
-        SpaceNsfwHighPrecisionAllUsersInterstitialRule
+caselon objelonct SpacelonFlelonelontlinelonPolicy
+    elonxtelonnds VisibilityPolicy(
+      spacelonRulelons = Selonq(
+        SpacelonDoNotAmplifyNonFollowelonrDropRulelon,
+        SpacelonCoordHarmfulActivityHighReloncallNonFollowelonrDropRulelon,
+        SpacelonUntrustelondUrlNonFollowelonrDropRulelon,
+        SpacelonMislelonadingHighReloncallNonFollowelonrDropRulelon,
+        SpacelonNsfwHighPreloncisionAllUselonrsIntelonrstitialRulelon
       ),
-      userRules = Seq(
-        TsViolationRule,
-        DoNotAmplifyNonFollowerRule,
-        NotGraduatedNonFollowerRule,
-        LikelyIvsLabelNonFollowerDropUserRule,
-        UserAbusiveNonFollowerDropRule
+      uselonrRulelons = Selonq(
+        TsViolationRulelon,
+        DoNotAmplifyNonFollowelonrRulelon,
+        NotGraduatelondNonFollowelonrRulelon,
+        LikelonlyIvsLabelonlNonFollowelonrDropUselonrRulelon,
+        UselonrAbusivelonNonFollowelonrDropRulelon
       )
     )
 
-case object SpaceNotificationsPolicy
-    extends VisibilityPolicy(
-      spaceRules = Seq(
-        SpaceHatefulHighRecallAllUsersDropRule,
-        SpaceViolenceHighRecallAllUsersDropRule,
-        SpaceDoNotAmplifyAllUsersDropRule,
-        SpaceCoordHarmfulActivityHighRecallAllUsersDropRule,
-        SpaceUntrustedUrlNonFollowerDropRule,
-        SpaceMisleadingHighRecallNonFollowerDropRule,
-        SpaceNsfwHighPrecisionAllUsersDropRule,
-        SpaceNsfwHighRecallAllUsersDropRule,
-        ViewerHasMatchingMutedKeywordInSpaceTitleForNotificationsRule
+caselon objelonct SpacelonNotificationsPolicy
+    elonxtelonnds VisibilityPolicy(
+      spacelonRulelons = Selonq(
+        SpacelonHatelonfulHighReloncallAllUselonrsDropRulelon,
+        SpacelonViolelonncelonHighReloncallAllUselonrsDropRulelon,
+        SpacelonDoNotAmplifyAllUselonrsDropRulelon,
+        SpacelonCoordHarmfulActivityHighReloncallAllUselonrsDropRulelon,
+        SpacelonUntrustelondUrlNonFollowelonrDropRulelon,
+        SpacelonMislelonadingHighReloncallNonFollowelonrDropRulelon,
+        SpacelonNsfwHighPreloncisionAllUselonrsDropRulelon,
+        SpacelonNsfwHighReloncallAllUselonrsDropRulelon,
+        VielonwelonrHasMatchingMutelondKelonywordInSpacelonTitlelonForNotificationsRulelon
       ),
-      userRules = Seq(
-        ViewerMutesAuthorRule,
-        ViewerBlocksAuthorRule,
-        AuthorBlocksViewerDropRule,
-        TsViolationRule,
-        DoNotAmplifyUserRule,
-        AbusiveRule,
-        SearchBlacklistRule,
-        SearchNsfwTextRule,
-        RecommendationsBlacklistRule,
-        NotGraduatedRule,
-        SpamHighRecallRule,
-        AbusiveHighRecallRule,
-        UserBlinkWorstAllUsersDropRule,
-        UserNsfwNearPerfectNonFollowerDropRule,
-        SpaceNsfwHighPrecisionNonFollowerDropRule,
-        UserNsfwAvatarImageNonFollowerDropRule,
-        UserNsfwBannerImageNonFollowerDropRule
+      uselonrRulelons = Selonq(
+        VielonwelonrMutelonsAuthorRulelon,
+        VielonwelonrBlocksAuthorRulelon,
+        AuthorBlocksVielonwelonrDropRulelon,
+        TsViolationRulelon,
+        DoNotAmplifyUselonrRulelon,
+        AbusivelonRulelon,
+        SelonarchBlacklistRulelon,
+        SelonarchNsfwTelonxtRulelon,
+        ReloncommelonndationsBlacklistRulelon,
+        NotGraduatelondRulelon,
+        SpamHighReloncallRulelon,
+        AbusivelonHighReloncallRulelon,
+        UselonrBlinkWorstAllUselonrsDropRulelon,
+        UselonrNsfwNelonarPelonrfelonctNonFollowelonrDropRulelon,
+        SpacelonNsfwHighPreloncisionNonFollowelonrDropRulelon,
+        UselonrNsfwAvatarImagelonNonFollowelonrDropRulelon,
+        UselonrNsfwBannelonrImagelonNonFollowelonrDropRulelon
       )
     )
 
-case object SpaceTweetAvatarHomeTimelinePolicy
-    extends VisibilityPolicy(
-      spaceRules = Seq(
-        SpaceDoNotAmplifyNonFollowerDropRule,
-        SpaceCoordHarmfulActivityHighRecallNonFollowerDropRule,
-        SpaceUntrustedUrlNonFollowerDropRule,
-        SpaceMisleadingHighRecallNonFollowerDropRule,
-        SpaceNsfwHighPrecisionAllUsersDropRule,
-        SpaceNsfwHighPrecisionAllUsersInterstitialRule
+caselon objelonct SpacelonTwelonelontAvatarHomelonTimelonlinelonPolicy
+    elonxtelonnds VisibilityPolicy(
+      spacelonRulelons = Selonq(
+        SpacelonDoNotAmplifyNonFollowelonrDropRulelon,
+        SpacelonCoordHarmfulActivityHighReloncallNonFollowelonrDropRulelon,
+        SpacelonUntrustelondUrlNonFollowelonrDropRulelon,
+        SpacelonMislelonadingHighReloncallNonFollowelonrDropRulelon,
+        SpacelonNsfwHighPreloncisionAllUselonrsDropRulelon,
+        SpacelonNsfwHighPreloncisionAllUselonrsIntelonrstitialRulelon
       ),
-      userRules = Seq(
-        TsViolationRule,
-        DoNotAmplifyUserRule,
-        NotGraduatedNonFollowerRule,
-        AbusiveRule,
-        SearchBlacklistRule,
-        SearchNsfwTextRule,
-        RecommendationsBlacklistRule,
-        SpamHighRecallRule,
-        AbusiveHighRecallRule,
-        UserBlinkWorstAllUsersDropRule,
-        UserNsfwNearPerfectNonFollowerDropRule,
-        SpaceNsfwHighPrecisionNonFollowerDropRule,
-        UserNsfwAvatarImageNonFollowerDropRule,
-        UserNsfwBannerImageNonFollowerDropRule
+      uselonrRulelons = Selonq(
+        TsViolationRulelon,
+        DoNotAmplifyUselonrRulelon,
+        NotGraduatelondNonFollowelonrRulelon,
+        AbusivelonRulelon,
+        SelonarchBlacklistRulelon,
+        SelonarchNsfwTelonxtRulelon,
+        ReloncommelonndationsBlacklistRulelon,
+        SpamHighReloncallRulelon,
+        AbusivelonHighReloncallRulelon,
+        UselonrBlinkWorstAllUselonrsDropRulelon,
+        UselonrNsfwNelonarPelonrfelonctNonFollowelonrDropRulelon,
+        SpacelonNsfwHighPreloncisionNonFollowelonrDropRulelon,
+        UselonrNsfwAvatarImagelonNonFollowelonrDropRulelon,
+        UselonrNsfwBannelonrImagelonNonFollowelonrDropRulelon
       )
     )
 
-case object SpaceHomeTimelineUprankingPolicy
-    extends VisibilityPolicy(
-      spaceRules = Seq(
-        SpaceDoNotAmplifyNonFollowerDropRule,
-        SpaceCoordHarmfulActivityHighRecallNonFollowerDropRule,
-        SpaceUntrustedUrlNonFollowerDropRule,
-        SpaceMisleadingHighRecallNonFollowerDropRule,
-        SpaceNsfwHighPrecisionNonFollowerDropRule,
-        SpaceNsfwHighPrecisionSafeSearchNonFollowerDropRule,
-        SpaceNsfwHighRecallSafeSearchNonFollowerDropRule
+caselon objelonct SpacelonHomelonTimelonlinelonUprankingPolicy
+    elonxtelonnds VisibilityPolicy(
+      spacelonRulelons = Selonq(
+        SpacelonDoNotAmplifyNonFollowelonrDropRulelon,
+        SpacelonCoordHarmfulActivityHighReloncallNonFollowelonrDropRulelon,
+        SpacelonUntrustelondUrlNonFollowelonrDropRulelon,
+        SpacelonMislelonadingHighReloncallNonFollowelonrDropRulelon,
+        SpacelonNsfwHighPreloncisionNonFollowelonrDropRulelon,
+        SpacelonNsfwHighPreloncisionSafelonSelonarchNonFollowelonrDropRulelon,
+        SpacelonNsfwHighReloncallSafelonSelonarchNonFollowelonrDropRulelon
       ),
-      userRules = Seq(
-        TsViolationRule,
-        DoNotAmplifyUserRule,
-        NotGraduatedRule,
-        AbusiveRule,
-        SearchBlacklistRule,
-        SearchNsfwTextRule,
-        RecommendationsBlacklistRule,
-        SpamHighRecallRule,
-        AbusiveHighRecallRule,
-        UserBlinkWorstAllUsersDropRule,
-        UserNsfwNearPerfectNonFollowerDropRule,
-        UserNsfwAvatarImageNonFollowerDropRule,
-        UserNsfwBannerImageNonFollowerDropRule
+      uselonrRulelons = Selonq(
+        TsViolationRulelon,
+        DoNotAmplifyUselonrRulelon,
+        NotGraduatelondRulelon,
+        AbusivelonRulelon,
+        SelonarchBlacklistRulelon,
+        SelonarchNsfwTelonxtRulelon,
+        ReloncommelonndationsBlacklistRulelon,
+        SpamHighReloncallRulelon,
+        AbusivelonHighReloncallRulelon,
+        UselonrBlinkWorstAllUselonrsDropRulelon,
+        UselonrNsfwNelonarPelonrfelonctNonFollowelonrDropRulelon,
+        UselonrNsfwAvatarImagelonNonFollowelonrDropRulelon,
+        UselonrNsfwBannelonrImagelonNonFollowelonrDropRulelon
       )
     )
 
-case object SpaceJoinScreenPolicy
-    extends VisibilityPolicy(
-      spaceRules = Seq(
-        SpaceNsfwHighPrecisionAllUsersInterstitialRule
+caselon objelonct SpacelonJoinScrelonelonnPolicy
+    elonxtelonnds VisibilityPolicy(
+      spacelonRulelons = Selonq(
+        SpacelonNsfwHighPreloncisionAllUselonrsIntelonrstitialRulelon
       )
     )
 
-case object KitchenSinkDevelopmentPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules.diff(
-        Seq(
-          BounceTweetLabelRule,
-          DropExclusiveTweetContentRule,
-          DropTrustedFriendsTweetContentRule
+caselon objelonct KitchelonnSinkDelonvelonlopmelonntPolicy
+    elonxtelonnds VisibilityPolicy(
+      twelonelontRulelons = VisibilityPolicy.baselonTwelonelontRulelons.diff(
+        Selonq(
+          BouncelonTwelonelontLabelonlRulelon,
+          DropelonxclusivelonTwelonelontContelonntRulelon,
+          DropTrustelondFrielonndsTwelonelontContelonntRulelon
         )
-      ) ++ Seq(
-        BounceTweetLabelTombstoneRule,
-        TombstoneExclusiveTweetContentRule,
-        TombstoneTrustedFriendsTweetContentRule)
-        ++ Seq(
-          AbusePolicyEpisodicTweetLabelInterstitialRule,
-          EmergencyDynamicInterstitialRule,
-          ViewerReportsAuthorInterstitialRule,
-          ViewerMutesAuthorInterstitialRule,
-          ViewerBlocksAuthorInterstitialRule,
-          MutedKeywordForTweetRepliesInterstitialRule,
-          ReportedTweetInterstitialRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-          GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule,
-          ExperimentalNudgeLabelRule,
-        ) ++ LimitedEngagementBaseRules.tweetRules,
-      userRules = Seq(
-        AuthorBlocksViewerDropRule,
-        ProtectedAuthorTombstoneRule,
-        SuspendedAuthorRule
+      ) ++ Selonq(
+        BouncelonTwelonelontLabelonlTombstonelonRulelon,
+        TombstonelonelonxclusivelonTwelonelontContelonntRulelon,
+        TombstonelonTrustelondFrielonndsTwelonelontContelonntRulelon)
+        ++ Selonq(
+          AbuselonPolicyelonpisodicTwelonelontLabelonlIntelonrstitialRulelon,
+          elonmelonrgelonncyDynamicIntelonrstitialRulelon,
+          VielonwelonrRelonportsAuthorIntelonrstitialRulelon,
+          VielonwelonrMutelonsAuthorIntelonrstitialRulelon,
+          VielonwelonrBlocksAuthorIntelonrstitialRulelon,
+          MutelondKelonywordForTwelonelontRelonplielonsIntelonrstitialRulelon,
+          RelonportelondTwelonelontIntelonrstitialRulelon,
+          NsfwHighPreloncisionIntelonrstitialAllUselonrsTwelonelontLabelonlRulelon,
+          GorelonAndViolelonncelonHighPreloncisionAllUselonrsTwelonelontLabelonlRulelon,
+          NsfwRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlRulelon,
+          GorelonAndViolelonncelonRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlRulelon,
+          NsfwCardImagelonAllUselonrsTwelonelontLabelonlRulelon,
+          elonxpelonrimelonntalNudgelonLabelonlRulelon,
+        ) ++ LimitelondelonngagelonmelonntBaselonRulelons.twelonelontRulelons,
+      uselonrRulelons = Selonq(
+        AuthorBlocksVielonwelonrDropRulelon,
+        ProtelonctelondAuthorTombstonelonRulelon,
+        SuspelonndelondAuthorRulelon
       ),
-      userUnavailableStateRules = Seq(
-        SuspendedUserUnavailableRetweetTombstoneRule,
-        DeactivatedUserUnavailableRetweetTombstoneRule,
-        OffBoardedUserUnavailableRetweetTombstoneRule,
-        ErasedUserUnavailableRetweetTombstoneRule,
-        ProtectedUserUnavailableRetweetTombstoneRule,
-        AuthorBlocksViewerUserUnavailableRetweetTombstoneRule,
-        ViewerBlocksAuthorUserUnavailableRetweetTombstoneRule,
-        ViewerMutesAuthorUserUnavailableRetweetTombstoneRule,
-        SuspendedUserUnavailableInnerQuotedTweetTombstoneRule,
-        DeactivatedUserUnavailableInnerQuotedTweetTombstoneRule,
-        OffBoardedUserUnavailableInnerQuotedTweetTombstoneRule,
-        ErasedUserUnavailableInnerQuotedTweetTombstoneRule,
-        ProtectedUserUnavailableInnerQuotedTweetTombstoneRule,
-        AuthorBlocksViewerUserUnavailableInnerQuotedTweetTombstoneRule,
-        SuspendedUserUnavailableTweetTombstoneRule,
-        DeactivatedUserUnavailableTweetTombstoneRule,
-        OffBoardedUserUnavailableTweetTombstoneRule,
-        ErasedUserUnavailableTweetTombstoneRule,
-        ProtectedUserUnavailableTweetTombstoneRule,
-        AuthorBlocksViewerUserUnavailableTweetTombstoneRule,
-        ViewerBlocksAuthorUserUnavailableInnerQuotedTweetInterstitialRule,
-        ViewerMutesAuthorUserUnavailableInnerQuotedTweetInterstitialRule
+      uselonrUnavailablelonStatelonRulelons = Selonq(
+        SuspelonndelondUselonrUnavailablelonRelontwelonelontTombstonelonRulelon,
+        DelonactivatelondUselonrUnavailablelonRelontwelonelontTombstonelonRulelon,
+        OffBoardelondUselonrUnavailablelonRelontwelonelontTombstonelonRulelon,
+        elonraselondUselonrUnavailablelonRelontwelonelontTombstonelonRulelon,
+        ProtelonctelondUselonrUnavailablelonRelontwelonelontTombstonelonRulelon,
+        AuthorBlocksVielonwelonrUselonrUnavailablelonRelontwelonelontTombstonelonRulelon,
+        VielonwelonrBlocksAuthorUselonrUnavailablelonRelontwelonelontTombstonelonRulelon,
+        VielonwelonrMutelonsAuthorUselonrUnavailablelonRelontwelonelontTombstonelonRulelon,
+        SuspelonndelondUselonrUnavailablelonInnelonrQuotelondTwelonelontTombstonelonRulelon,
+        DelonactivatelondUselonrUnavailablelonInnelonrQuotelondTwelonelontTombstonelonRulelon,
+        OffBoardelondUselonrUnavailablelonInnelonrQuotelondTwelonelontTombstonelonRulelon,
+        elonraselondUselonrUnavailablelonInnelonrQuotelondTwelonelontTombstonelonRulelon,
+        ProtelonctelondUselonrUnavailablelonInnelonrQuotelondTwelonelontTombstonelonRulelon,
+        AuthorBlocksVielonwelonrUselonrUnavailablelonInnelonrQuotelondTwelonelontTombstonelonRulelon,
+        SuspelonndelondUselonrUnavailablelonTwelonelontTombstonelonRulelon,
+        DelonactivatelondUselonrUnavailablelonTwelonelontTombstonelonRulelon,
+        OffBoardelondUselonrUnavailablelonTwelonelontTombstonelonRulelon,
+        elonraselondUselonrUnavailablelonTwelonelontTombstonelonRulelon,
+        ProtelonctelondUselonrUnavailablelonTwelonelontTombstonelonRulelon,
+        AuthorBlocksVielonwelonrUselonrUnavailablelonTwelonelontTombstonelonRulelon,
+        VielonwelonrBlocksAuthorUselonrUnavailablelonInnelonrQuotelondTwelonelontIntelonrstitialRulelon,
+        VielonwelonrMutelonsAuthorUselonrUnavailablelonInnelonrQuotelondTwelonelontInterstitialRule
       ),
       deletedTweetRules = Seq(
         TombstoneDeletedOuterTweetRule,

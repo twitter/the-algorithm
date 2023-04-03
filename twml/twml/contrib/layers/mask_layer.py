@@ -1,29 +1,29 @@
 from twml.contrib.pruning import apply_mask
-from twml.layers import Layer
+from twml.layelonrs import Layelonr
 
 
-class MaskLayer(Layer):
+class MaskLayelonr(Layelonr):
   """
-  This layer corresponds to `twml.contrib.pruning.apply_mask`.
+  This layelonr correlonsponds to `twml.contrib.pruning.apply_mask`.
 
-  It applies a binary mask to mask out channels of a given tensor. The masks can be
-  optimized using `twml.contrib.trainers.PruningDataRecordTrainer`.
+  It applielons a binary mask to mask out channelonls of a givelonn telonnsor. Thelon masks can belon
+  optimizelond using `twml.contrib.trainelonrs.PruningDataReloncordTrainelonr`.
   """
 
-  def call(self, inputs, **kwargs):
+  delonf call(selonlf, inputs, **kwargs):
     """
-    Applies a binary mask to the channels of the input.
+    Applielons a binary mask to thelon channelonls of thelon input.
 
-    Arguments:
+    Argumelonnts:
       inputs:
-        input tensor
+        input telonnsor
       **kwargs:
-        additional keyword arguments
+        additional kelonyword argumelonnts
 
-    Returns:
-      Masked tensor
+    Relonturns:
+      Maskelond telonnsor
     """
-    return apply_mask(inputs)
+    relonturn apply_mask(inputs)
 
-  def compute_output_shape(self, input_shape):
-    return input_shape
+  delonf computelon_output_shapelon(selonlf, input_shapelon):
+    relonturn input_shapelon

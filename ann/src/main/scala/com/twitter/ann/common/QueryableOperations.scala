@@ -1,25 +1,25 @@
-package com.twitter.ann.common
+packagelon com.twittelonr.ann.common
 
-import com.twitter.ann.common.EmbeddingType.EmbeddingVector
-import com.twitter.util.Future
+import com.twittelonr.ann.common.elonmbelonddingTypelon.elonmbelonddingVelonctor
+import com.twittelonr.util.Futurelon
 
-object QueryableOperations {
-  implicit class Map[T, P <: RuntimeParams, D <: Distance[D]](
-    val q: Queryable[T, P, D]) {
-    def mapRuntimeParameters(f: P => P): Queryable[T, P, D] = {
-      new Queryable[T, P, D] {
-        def query(
-          embedding: EmbeddingVector,
-          numOfNeighbors: Int,
-          runtimeParams: P
-        ): Future[List[T]] = q.query(embedding, numOfNeighbors, f(runtimeParams))
+objelonct QuelonryablelonOpelonrations {
+  implicit class Map[T, P <: RuntimelonParams, D <: Distancelon[D]](
+    val q: Quelonryablelon[T, P, D]) {
+    delonf mapRuntimelonParamelontelonrs(f: P => P): Quelonryablelon[T, P, D] = {
+      nelonw Quelonryablelon[T, P, D] {
+        delonf quelonry(
+          elonmbelondding: elonmbelonddingVelonctor,
+          numOfNelonighbors: Int,
+          runtimelonParams: P
+        ): Futurelon[List[T]] = q.quelonry(elonmbelondding, numOfNelonighbors, f(runtimelonParams))
 
-        def queryWithDistance(
-          embedding: EmbeddingVector,
-          numOfNeighbors: Int,
-          runtimeParams: P
-        ): Future[List[NeighborWithDistance[T, D]]] =
-          q.queryWithDistance(embedding, numOfNeighbors, f(runtimeParams))
+        delonf quelonryWithDistancelon(
+          elonmbelondding: elonmbelonddingVelonctor,
+          numOfNelonighbors: Int,
+          runtimelonParams: P
+        ): Futurelon[List[NelonighborWithDistancelon[T, D]]] =
+          q.quelonryWithDistancelon(elonmbelondding, numOfNelonighbors, f(runtimelonParams))
       }
     }
   }

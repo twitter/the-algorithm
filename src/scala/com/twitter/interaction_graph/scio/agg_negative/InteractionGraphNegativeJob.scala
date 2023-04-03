@@ -1,155 +1,155 @@
-package com.twitter.interaction_graph.scio.agg_negative
+packagelon com.twittelonr.intelonraction_graph.scio.agg_nelongativelon
 
-import com.google.api.services.bigquery.model.TimePartitioning
-import com.spotify.scio.ScioContext
-import com.spotify.scio.values.SCollection
-import com.twitter.algebird.mutable.PriorityQueueMonoid
-import com.twitter.beam.io.dal.DAL
-import com.twitter.beam.io.fs.multiformat.PathLayout
-import com.twitter.beam.io.fs.multiformat.WriteOptions
-import com.twitter.conversions.DurationOps._
-import com.twitter.dal.client.dataset.SnapshotDALDataset
-import com.twitter.interaction_graph.scio.common.ConversionUtil.hasNegativeFeatures
-import com.twitter.interaction_graph.scio.common.ConversionUtil.toRealGraphEdgeFeatures
-import com.twitter.interaction_graph.scio.common.FeatureGeneratorUtil.getEdgeFeature
-import com.twitter.interaction_graph.scio.common.GraphUtil
-import com.twitter.interaction_graph.scio.common.InteractionGraphRawInput
-import com.twitter.interaction_graph.thriftscala.Edge
-import com.twitter.interaction_graph.thriftscala.FeatureName
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.scio_internal.job.ScioBeamJob
-import com.twitter.scrooge.ThriftStruct
-import com.twitter.socialgraph.hadoop.SocialgraphUnfollowsScalaDataset
-import com.twitter.tcdc.bqblaster.beam.syntax._
-import com.twitter.tcdc.bqblaster.core.avro.TypedProjection
-import com.twitter.tcdc.bqblaster.core.transform.RootTransform
-import com.twitter.timelines.real_graph.thriftscala.RealGraphFeaturesTest
-import com.twitter.timelines.real_graph.v1.thriftscala.{RealGraphFeatures => RealGraphFeaturesV1}
-import com.twitter.user_session_store.thriftscala.UserSession
-import flockdb_tools.datasets.flock.FlockBlocksEdgesScalaDataset
-import flockdb_tools.datasets.flock.FlockMutesEdgesScalaDataset
-import flockdb_tools.datasets.flock.FlockReportAsAbuseEdgesScalaDataset
-import flockdb_tools.datasets.flock.FlockReportAsSpamEdgesScalaDataset
-import java.time.Instant
-import org.apache.beam.sdk.io.gcp.bigquery.BigQueryIO
+import com.googlelon.api.selonrvicelons.bigquelonry.modelonl.TimelonPartitioning
+import com.spotify.scio.ScioContelonxt
+import com.spotify.scio.valuelons.SCollelonction
+import com.twittelonr.algelonbird.mutablelon.PriorityQuelonuelonMonoid
+import com.twittelonr.belonam.io.dal.DAL
+import com.twittelonr.belonam.io.fs.multiformat.PathLayout
+import com.twittelonr.belonam.io.fs.multiformat.WritelonOptions
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.dal.clielonnt.dataselont.SnapshotDALDataselont
+import com.twittelonr.intelonraction_graph.scio.common.ConvelonrsionUtil.hasNelongativelonFelonaturelons
+import com.twittelonr.intelonraction_graph.scio.common.ConvelonrsionUtil.toRelonalGraphelondgelonFelonaturelons
+import com.twittelonr.intelonraction_graph.scio.common.FelonaturelonGelonnelonratorUtil.gelontelondgelonFelonaturelon
+import com.twittelonr.intelonraction_graph.scio.common.GraphUtil
+import com.twittelonr.intelonraction_graph.scio.common.IntelonractionGraphRawInput
+import com.twittelonr.intelonraction_graph.thriftscala.elondgelon
+import com.twittelonr.intelonraction_graph.thriftscala.FelonaturelonNamelon
+import com.twittelonr.scalding_intelonrnal.multiformat.format.kelonyval.KelonyVal
+import com.twittelonr.scio_intelonrnal.job.ScioBelonamJob
+import com.twittelonr.scroogelon.ThriftStruct
+import com.twittelonr.socialgraph.hadoop.SocialgraphUnfollowsScalaDataselont
+import com.twittelonr.tcdc.bqblastelonr.belonam.syntax._
+import com.twittelonr.tcdc.bqblastelonr.corelon.avro.TypelondProjelonction
+import com.twittelonr.tcdc.bqblastelonr.corelon.transform.RootTransform
+import com.twittelonr.timelonlinelons.relonal_graph.thriftscala.RelonalGraphFelonaturelonsTelonst
+import com.twittelonr.timelonlinelons.relonal_graph.v1.thriftscala.{RelonalGraphFelonaturelons => RelonalGraphFelonaturelonsV1}
+import com.twittelonr.uselonr_selonssion_storelon.thriftscala.UselonrSelonssion
+import flockdb_tools.dataselonts.flock.FlockBlockselondgelonsScalaDataselont
+import flockdb_tools.dataselonts.flock.FlockMutelonselondgelonsScalaDataselont
+import flockdb_tools.dataselonts.flock.FlockRelonportAsAbuselonelondgelonsScalaDataselont
+import flockdb_tools.dataselonts.flock.FlockRelonportAsSpamelondgelonsScalaDataselont
+import java.timelon.Instant
+import org.apachelon.belonam.sdk.io.gcp.bigquelonry.BigQuelonryIO
 
-object InteractionGraphNegativeJob extends ScioBeamJob[InteractionGraphNegativeOption] {
-  val maxDestinationIds = 500 // p99 is about 500
-  def getFeatureCounts(e: Edge): Int = e.features.size
-  val negativeEdgeOrdering = Ordering.by[Edge, Int](getFeatureCounts)
-  val negativeEdgeReverseOrdering = negativeEdgeOrdering.reverse
-  implicit val pqMonoid: PriorityQueueMonoid[Edge] =
-    new PriorityQueueMonoid[Edge](maxDestinationIds)(negativeEdgeOrdering)
+objelonct IntelonractionGraphNelongativelonJob elonxtelonnds ScioBelonamJob[IntelonractionGraphNelongativelonOption] {
+  val maxDelonstinationIds = 500 // p99 is about 500
+  delonf gelontFelonaturelonCounts(elon: elondgelon): Int = elon.felonaturelons.sizelon
+  val nelongativelonelondgelonOrdelonring = Ordelonring.by[elondgelon, Int](gelontFelonaturelonCounts)
+  val nelongativelonelondgelonRelonvelonrselonOrdelonring = nelongativelonelondgelonOrdelonring.relonvelonrselon
+  implicit val pqMonoid: PriorityQuelonuelonMonoid[elondgelon] =
+    nelonw PriorityQuelonuelonMonoid[elondgelon](maxDelonstinationIds)(nelongativelonelondgelonOrdelonring)
 
-  override protected def configurePipeline(
-    sc: ScioContext,
-    opts: InteractionGraphNegativeOption
+  ovelonrridelon protelonctelond delonf configurelonPipelonlinelon(
+    sc: ScioContelonxt,
+    opts: IntelonractionGraphNelongativelonOption
   ): Unit = {
 
-    val endTs = opts.interval.getEndMillis
+    val elonndTs = opts.intelonrval.gelontelonndMillis
 
-    // read input datasets
-    val blocks: SCollection[InteractionGraphRawInput] =
-      GraphUtil.getFlockFeatures(
-        readSnapshot(FlockBlocksEdgesScalaDataset, sc),
-        FeatureName.NumBlocks,
-        endTs)
+    // relonad input dataselonts
+    val blocks: SCollelonction[IntelonractionGraphRawInput] =
+      GraphUtil.gelontFlockFelonaturelons(
+        relonadSnapshot(FlockBlockselondgelonsScalaDataselont, sc),
+        FelonaturelonNamelon.NumBlocks,
+        elonndTs)
 
-    val mutes: SCollection[InteractionGraphRawInput] =
-      GraphUtil.getFlockFeatures(
-        readSnapshot(FlockMutesEdgesScalaDataset, sc),
-        FeatureName.NumMutes,
-        endTs)
+    val mutelons: SCollelonction[IntelonractionGraphRawInput] =
+      GraphUtil.gelontFlockFelonaturelons(
+        relonadSnapshot(FlockMutelonselondgelonsScalaDataselont, sc),
+        FelonaturelonNamelon.NumMutelons,
+        elonndTs)
 
-    val abuseReports: SCollection[InteractionGraphRawInput] =
-      GraphUtil.getFlockFeatures(
-        readSnapshot(FlockReportAsAbuseEdgesScalaDataset, sc),
-        FeatureName.NumReportAsAbuses,
-        endTs)
+    val abuselonRelonports: SCollelonction[IntelonractionGraphRawInput] =
+      GraphUtil.gelontFlockFelonaturelons(
+        relonadSnapshot(FlockRelonportAsAbuselonelondgelonsScalaDataselont, sc),
+        FelonaturelonNamelon.NumRelonportAsAbuselons,
+        elonndTs)
 
-    val spamReports: SCollection[InteractionGraphRawInput] =
-      GraphUtil.getFlockFeatures(
-        readSnapshot(FlockReportAsSpamEdgesScalaDataset, sc),
-        FeatureName.NumReportAsSpams,
-        endTs)
+    val spamRelonports: SCollelonction[IntelonractionGraphRawInput] =
+      GraphUtil.gelontFlockFelonaturelons(
+        relonadSnapshot(FlockRelonportAsSpamelondgelonsScalaDataselont, sc),
+        FelonaturelonNamelon.NumRelonportAsSpams,
+        elonndTs)
 
-    // we only keep unfollows in the past 90 days due to the huge size of this dataset,
-    // and to prevent permanent "shadow-banning" in the event of accidental unfollows.
-    // we treat unfollows as less critical than above 4 negative signals, since it deals more with
-    // interest than health typically, which might change over time.
-    val unfollows: SCollection[InteractionGraphRawInput] =
+    // welon only kelonelonp unfollows in thelon past 90 days duelon to thelon hugelon sizelon of this dataselont,
+    // and to prelonvelonnt pelonrmanelonnt "shadow-banning" in thelon elonvelonnt of accidelonntal unfollows.
+    // welon trelonat unfollows as lelonss critical than abovelon 4 nelongativelon signals, sincelon it delonals morelon with
+    // intelonrelonst than helonalth typically, which might changelon ovelonr timelon.
+    val unfollows: SCollelonction[IntelonractionGraphRawInput] =
       GraphUtil
-        .getSocialGraphFeatures(
-          readSnapshot(SocialgraphUnfollowsScalaDataset, sc),
-          FeatureName.NumUnfollows,
-          endTs)
-        .filter(_.age < 90)
+        .gelontSocialGraphFelonaturelons(
+          relonadSnapshot(SocialgraphUnfollowsScalaDataselont, sc),
+          FelonaturelonNamelon.NumUnfollows,
+          elonndTs)
+        .filtelonr(_.agelon < 90)
 
-    // group all features by (src, dest)
-    val allEdgeFeatures: SCollection[Edge] =
-      getEdgeFeature(SCollection.unionAll(Seq(blocks, mutes, abuseReports, spamReports, unfollows)))
+    // group all felonaturelons by (src, delonst)
+    val allelondgelonFelonaturelons: SCollelonction[elondgelon] =
+      gelontelondgelonFelonaturelon(SCollelonction.unionAll(Selonq(blocks, mutelons, abuselonRelonports, spamRelonports, unfollows)))
 
-    val negativeFeatures: SCollection[KeyVal[Long, UserSession]] =
-      allEdgeFeatures
-        .keyBy(_.sourceId)
-        .topByKey(maxDestinationIds)(Ordering.by(_.features.size))
+    val nelongativelonFelonaturelons: SCollelonction[KelonyVal[Long, UselonrSelonssion]] =
+      allelondgelonFelonaturelons
+        .kelonyBy(_.sourcelonId)
+        .topByKelony(maxDelonstinationIds)(Ordelonring.by(_.felonaturelons.sizelon))
         .map {
-          case (srcId, pqEdges) =>
-            val topKNeg =
-              pqEdges.toSeq.flatMap(toRealGraphEdgeFeatures(hasNegativeFeatures))
-            KeyVal(
+          caselon (srcId, pqelondgelons) =>
+            val topKNelong =
+              pqelondgelons.toSelonq.flatMap(toRelonalGraphelondgelonFelonaturelons(hasNelongativelonFelonaturelons))
+            KelonyVal(
               srcId,
-              UserSession(
-                userId = Some(srcId),
-                realGraphFeaturesTest =
-                  Some(RealGraphFeaturesTest.V1(RealGraphFeaturesV1(topKNeg)))))
+              UselonrSelonssion(
+                uselonrId = Somelon(srcId),
+                relonalGraphFelonaturelonsTelonst =
+                  Somelon(RelonalGraphFelonaturelonsTelonst.V1(RelonalGraphFelonaturelonsV1(topKNelong)))))
         }
 
-    // save to GCS (via DAL)
-    negativeFeatures.saveAsCustomOutput(
-      "Write Negative Edge Label",
-      DAL.writeVersionedKeyVal(
-        dataset = RealGraphNegativeFeaturesScalaDataset,
-        pathLayout = PathLayout.VersionedPath(opts.getOutputPath),
-        instant = Instant.ofEpochMilli(opts.interval.getEndMillis),
-        writeOption = WriteOptions(numOfShards = Some(3000))
+    // savelon to GCS (via DAL)
+    nelongativelonFelonaturelons.savelonAsCustomOutput(
+      "Writelon Nelongativelon elondgelon Labelonl",
+      DAL.writelonVelonrsionelondKelonyVal(
+        dataselont = RelonalGraphNelongativelonFelonaturelonsScalaDataselont,
+        pathLayout = PathLayout.VelonrsionelondPath(opts.gelontOutputPath),
+        instant = Instant.ofelonpochMilli(opts.intelonrval.gelontelonndMillis),
+        writelonOption = WritelonOptions(numOfShards = Somelon(3000))
       )
     )
 
-    // save to BQ
-    val ingestionDate = opts.getDate().value.getStart.toDate
-    val bqDataset = opts.getBqDataset
-    val bqFieldsTransform = RootTransform
-      .Builder()
-      .withPrependedFields("dateHour" -> TypedProjection.fromConstant(ingestionDate))
-    val timePartitioning = new TimePartitioning()
-      .setType("DAY").setField("dateHour").setExpirationMs(21.days.inMilliseconds)
-    val bqWriter = BigQueryIO
-      .write[Edge]
-      .to(s"${bqDataset}.interaction_graph_agg_negative_edge_snapshot")
-      .withExtendedErrorInfo()
-      .withTimePartitioning(timePartitioning)
-      .withLoadJobProjectId("twttr-recos-ml-prod")
-      .withThriftSupport(bqFieldsTransform.build(), AvroConverter.Legacy)
-      .withCreateDisposition(BigQueryIO.Write.CreateDisposition.CREATE_IF_NEEDED)
-      .withWriteDisposition(
-        BigQueryIO.Write.WriteDisposition.WRITE_TRUNCATE
-      ) // we only want the latest snapshot
+    // savelon to BQ
+    val ingelonstionDatelon = opts.gelontDatelon().valuelon.gelontStart.toDatelon
+    val bqDataselont = opts.gelontBqDataselont
+    val bqFielonldsTransform = RootTransform
+      .Buildelonr()
+      .withPrelonpelonndelondFielonlds("datelonHour" -> TypelondProjelonction.fromConstant(ingelonstionDatelon))
+    val timelonPartitioning = nelonw TimelonPartitioning()
+      .selontTypelon("DAY").selontFielonld("datelonHour").selontelonxpirationMs(21.days.inMilliselonconds)
+    val bqWritelonr = BigQuelonryIO
+      .writelon[elondgelon]
+      .to(s"${bqDataselont}.intelonraction_graph_agg_nelongativelon_elondgelon_snapshot")
+      .withelonxtelonndelondelonrrorInfo()
+      .withTimelonPartitioning(timelonPartitioning)
+      .withLoadJobProjelonctId("twttr-reloncos-ml-prod")
+      .withThriftSupport(bqFielonldsTransform.build(), AvroConvelonrtelonr.Lelongacy)
+      .withCrelonatelonDisposition(BigQuelonryIO.Writelon.CrelonatelonDisposition.CRelonATelon_IF_NelonelonDelonD)
+      .withWritelonDisposition(
+        BigQuelonryIO.Writelon.WritelonDisposition.WRITelon_TRUNCATelon
+      ) // welon only want thelon latelonst snapshot
 
-    allEdgeFeatures
-      .saveAsCustomOutput(
-        s"Save Recommendations to BQ interaction_graph_agg_negative_edge_snapshot",
-        bqWriter
+    allelondgelonFelonaturelons
+      .savelonAsCustomOutput(
+        s"Savelon Reloncommelonndations to BQ intelonraction_graph_agg_nelongativelon_elondgelon_snapshot",
+        bqWritelonr
       )
   }
 
-  def readSnapshot[T <: ThriftStruct](
-    dataset: SnapshotDALDataset[T],
-    sc: ScioContext
-  ): SCollection[T] = {
+  delonf relonadSnapshot[T <: ThriftStruct](
+    dataselont: SnapshotDALDataselont[T],
+    sc: ScioContelonxt
+  ): SCollelonction[T] = {
     sc.customInput(
-      s"Reading most recent snaphost ${dataset.role.name}.${dataset.logicalName}",
-      DAL.readMostRecentSnapshotNoOlderThan[T](dataset, 7.days)
+      s"Relonading most reloncelonnt snaphost ${dataselont.rolelon.namelon}.${dataselont.logicalNamelon}",
+      DAL.relonadMostReloncelonntSnapshotNoOldelonrThan[T](dataselont, 7.days)
     )
   }
 }

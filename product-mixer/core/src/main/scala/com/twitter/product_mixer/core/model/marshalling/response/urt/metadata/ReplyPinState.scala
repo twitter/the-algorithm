@@ -1,7 +1,7 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.metadata
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata
 
-sealed trait ReplyPinState
+selonalelond trait RelonplyPinStatelon
 
-object PinnedReplyPinState extends ReplyPinState
-object PinnableReplyPinState extends ReplyPinState
-object NotPinnableReplyPinState extends ReplyPinState
+objelonct PinnelondRelonplyPinStatelon elonxtelonnds RelonplyPinStatelon
+objelonct PinnablelonRelonplyPinStatelon elonxtelonnds RelonplyPinStatelon
+objelonct NotPinnablelonRelonplyPinStatelon elonxtelonnds RelonplyPinStatelon

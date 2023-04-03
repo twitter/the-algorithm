@@ -1,459 +1,459 @@
-package com.twitter.search.earlybird.partition.freshstartup;
+packagelon com.twittelonr.selonarch.elonarlybird.partition.frelonshstartup;
 
-import java.io.IOException;
-import java.time.Duration;
+import java.io.IOelonxcelonption;
+import java.timelon.Duration;
 import java.util.ArrayList;
 import java.util.Optional;
 
-import com.google.common.base.Preconditions;
-import com.google.common.base.Stopwatch;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
+import com.googlelon.common.baselon.Prelonconditions;
+import com.googlelon.common.baselon.Stopwatch;
+import com.googlelon.common.collelonct.ImmutablelonList;
+import com.googlelon.common.collelonct.ImmutablelonMap;
 
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.clients.consumer.OffsetAndTimestamp;
-import org.apache.kafka.common.TopicPartition;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apachelon.kafka.clielonnts.consumelonr.ConsumelonrReloncord;
+import org.apachelon.kafka.clielonnts.consumelonr.ConsumelonrReloncords;
+import org.apachelon.kafka.clielonnts.consumelonr.KafkaConsumelonr;
+import org.apachelon.kafka.clielonnts.consumelonr.OffselontAndTimelonstamp;
+import org.apachelon.kafka.common.TopicPartition;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
-import com.twitter.search.earlybird.factory.EarlybirdKafkaConsumersFactory;
-import com.twitter.search.earlybird.partition.IndexingResultCounts;
-import com.twitter.search.earlybird.partition.SegmentInfo;
-import com.twitter.search.earlybird.partition.SegmentManager;
-import com.twitter.search.earlybird.partition.SegmentWriter;
+import com.twittelonr.selonarch.common.indelonxing.thriftjava.ThriftVelonrsionelondelonvelonnts;
+import com.twittelonr.selonarch.elonarlybird.factory.elonarlybirdKafkaConsumelonrsFactory;
+import com.twittelonr.selonarch.elonarlybird.partition.IndelonxingRelonsultCounts;
+import com.twittelonr.selonarch.elonarlybird.partition.SelongmelonntInfo;
+import com.twittelonr.selonarch.elonarlybird.partition.SelongmelonntManagelonr;
+import com.twittelonr.selonarch.elonarlybird.partition.SelongmelonntWritelonr;
 
 /**
- * Responsible for indexing the tweets and updates that need to be applied to a single segment
- * before it gets optimized and then optimizing the segment (except if it's the last one).
+ * Relonsponsiblelon for indelonxing thelon twelonelonts and updatelons that nelonelond to belon applielond to a singlelon selongmelonnt
+ * belonforelon it gelonts optimizelond and thelonn optimizing thelon selongmelonnt (elonxcelonpt if it's thelon last onelon).
  *
- * After that, no more tweets are added to the segment and the rest of the updates are added
- * in PostOptimizationUpdatesIndexer.
+ * Aftelonr that, no morelon twelonelonts arelon addelond to thelon selongmelonnt and thelon relonst of thelon updatelons arelon addelond
+ * in PostOptimizationUpdatelonsIndelonxelonr.
  */
-class PreOptimizationSegmentIndexer {
-  private static final Logger LOG = LoggerFactory.getLogger(PreOptimizationSegmentIndexer.class);
+class PrelonOptimizationSelongmelonntIndelonxelonr {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(PrelonOptimizationSelongmelonntIndelonxelonr.class);
 
-  private SegmentBuildInfo segmentBuildInfo;
-  private final ArrayList<SegmentBuildInfo> segmentBuildInfos;
-  private SegmentManager segmentManager;
-  private final TopicPartition tweetTopic;
-  private final TopicPartition updateTopic;
-  private final EarlybirdKafkaConsumersFactory earlybirdKafkaConsumersFactory;
-  private final long lateTweetBuffer;
+  privatelon SelongmelonntBuildInfo selongmelonntBuildInfo;
+  privatelon final ArrayList<SelongmelonntBuildInfo> selongmelonntBuildInfos;
+  privatelon SelongmelonntManagelonr selongmelonntManagelonr;
+  privatelon final TopicPartition twelonelontTopic;
+  privatelon final TopicPartition updatelonTopic;
+  privatelon final elonarlybirdKafkaConsumelonrsFactory elonarlybirdKafkaConsumelonrsFactory;
+  privatelon final long latelonTwelonelontBuffelonr;
 
-  public PreOptimizationSegmentIndexer(
-      SegmentBuildInfo segmentBuildInfo,
-      ArrayList<SegmentBuildInfo> segmentBuildInfos,
-      SegmentManager segmentManager,
-      TopicPartition tweetTopic,
-      TopicPartition updateTopic,
-      EarlybirdKafkaConsumersFactory earlybirdKafkaConsumersFactory,
-      long lateTweetBuffer) {
-    this.segmentBuildInfo = segmentBuildInfo;
-    this.segmentBuildInfos = segmentBuildInfos;
-    this.segmentManager = segmentManager;
-    this.tweetTopic = tweetTopic;
-    this.updateTopic = updateTopic;
-    this.earlybirdKafkaConsumersFactory = earlybirdKafkaConsumersFactory;
-    this.lateTweetBuffer = lateTweetBuffer;
+  public PrelonOptimizationSelongmelonntIndelonxelonr(
+      SelongmelonntBuildInfo selongmelonntBuildInfo,
+      ArrayList<SelongmelonntBuildInfo> selongmelonntBuildInfos,
+      SelongmelonntManagelonr selongmelonntManagelonr,
+      TopicPartition twelonelontTopic,
+      TopicPartition updatelonTopic,
+      elonarlybirdKafkaConsumelonrsFactory elonarlybirdKafkaConsumelonrsFactory,
+      long latelonTwelonelontBuffelonr) {
+    this.selongmelonntBuildInfo = selongmelonntBuildInfo;
+    this.selongmelonntBuildInfos = selongmelonntBuildInfos;
+    this.selongmelonntManagelonr = selongmelonntManagelonr;
+    this.twelonelontTopic = twelonelontTopic;
+    this.updatelonTopic = updatelonTopic;
+    this.elonarlybirdKafkaConsumelonrsFactory = elonarlybirdKafkaConsumelonrsFactory;
+    this.latelonTwelonelontBuffelonr = latelonTwelonelontBuffelonr;
   }
 
-  SegmentInfo runIndexing() throws IOException {
-    LOG.info(String.format("Starting segment building for segment %d. "
-            + "Tweet offset range [ %,d, %,d ]",
-        segmentBuildInfo.getIndex(),
-        segmentBuildInfo.getTweetStartOffset(),
-        segmentBuildInfo.getTweetEndOffset()));
+  SelongmelonntInfo runIndelonxing() throws IOelonxcelonption {
+    LOG.info(String.format("Starting selongmelonnt building for selongmelonnt %d. "
+            + "Twelonelont offselont rangelon [ %,d, %,d ]",
+        selongmelonntBuildInfo.gelontIndelonx(),
+        selongmelonntBuildInfo.gelontTwelonelontStartOffselont(),
+        selongmelonntBuildInfo.gelontTwelonelontelonndOffselont()));
 
-    Optional<Long> firstTweetIdInNextSegment = Optional.empty();
-    int index = segmentBuildInfo.getIndex();
-    if (index + 1 < segmentBuildInfos.size()) {
-      firstTweetIdInNextSegment = Optional.of(
-          segmentBuildInfos.get(index + 1).getStartTweetId());
+    Optional<Long> firstTwelonelontIdInNelonxtSelongmelonnt = Optional.elonmpty();
+    int indelonx = selongmelonntBuildInfo.gelontIndelonx();
+    if (indelonx + 1 < selongmelonntBuildInfos.sizelon()) {
+      firstTwelonelontIdInNelonxtSelongmelonnt = Optional.of(
+          selongmelonntBuildInfos.gelont(indelonx + 1).gelontStartTwelonelontId());
     }
 
-    // Index tweets.
-    SegmentTweetsIndexingResult tweetIndexingResult = indexSegmentTweetsFromStream(
-        tweetTopic,
-        String.format("tweet_consumer_for_segment_%d", segmentBuildInfo.getIndex()),
-        firstTweetIdInNextSegment
+    // Indelonx twelonelonts.
+    SelongmelonntTwelonelontsIndelonxingRelonsult twelonelontIndelonxingRelonsult = indelonxSelongmelonntTwelonelontsFromStrelonam(
+        twelonelontTopic,
+        String.format("twelonelont_consumelonr_for_selongmelonnt_%d", selongmelonntBuildInfo.gelontIndelonx()),
+        firstTwelonelontIdInNelonxtSelongmelonnt
     );
 
-    // Index updates.
-    KafkaOffsetPair updatesIndexingOffsets = findUpdateStreamOffsetRange(tweetIndexingResult);
+    // Indelonx updatelons.
+    KafkaOffselontPair updatelonsIndelonxingOffselonts = findUpdatelonStrelonamOffselontRangelon(twelonelontIndelonxingRelonsult);
 
-    String updatesConsumerClientId =
-        String.format("update_consumer_for_segment_%d", segmentBuildInfo.getIndex());
+    String updatelonsConsumelonrClielonntId =
+        String.format("updatelon_consumelonr_for_selongmelonnt_%d", selongmelonntBuildInfo.gelontIndelonx());
 
-    LOG.info(String.format("Consumer: %s :: Tweets start time: %d, end time: %d ==> "
-            + "Updates start offset: %,d, end offset: %,d",
-        updatesConsumerClientId,
-        tweetIndexingResult.getMinRecordTimestampMs(),
-        tweetIndexingResult.getMaxRecordTimestampMs(),
-        updatesIndexingOffsets.getBeginOffset(),
-        updatesIndexingOffsets.getEndOffset()));
+    LOG.info(String.format("Consumelonr: %s :: Twelonelonts start timelon: %d, elonnd timelon: %d ==> "
+            + "Updatelons start offselont: %,d, elonnd offselont: %,d",
+        updatelonsConsumelonrClielonntId,
+        twelonelontIndelonxingRelonsult.gelontMinReloncordTimelonstampMs(),
+        twelonelontIndelonxingRelonsult.gelontMaxReloncordTimelonstampMs(),
+        updatelonsIndelonxingOffselonts.gelontBelonginOffselont(),
+        updatelonsIndelonxingOffselonts.gelontelonndOffselont()));
 
-    indexUpdatesFromStream(
-        updateTopic,
-        updatesConsumerClientId,
-        updatesIndexingOffsets.getBeginOffset(),
-        updatesIndexingOffsets.getEndOffset(),
-        tweetIndexingResult.getSegmentWriter()
+    indelonxUpdatelonsFromStrelonam(
+        updatelonTopic,
+        updatelonsConsumelonrClielonntId,
+        updatelonsIndelonxingOffselonts.gelontBelonginOffselont(),
+        updatelonsIndelonxingOffselonts.gelontelonndOffselont(),
+        twelonelontIndelonxingRelonsult.gelontSelongmelonntWritelonr()
     );
 
-    if (segmentBuildInfo.isLastSegment()) {
+    if (selongmelonntBuildInfo.isLastSelongmelonnt()) {
       /*
-       * We don't optimize the last segment for a few reasons:
+       * Welon don't optimizelon thelon last selongmelonnt for a felonw relonasons:
        *
-       * 1. We might have tweets coming next in the stream, which are supposed to end
-       *    up in this segment.
+       * 1. Welon might havelon twelonelonts coming nelonxt in thelon strelonam, which arelon supposelond to elonnd
+       *    up in this selongmelonnt.
        *
-       * 2. We might have updates coming next in the stream, which need to be applied to
-       *    this segment before it's optimized.
+       * 2. Welon might havelon updatelons coming nelonxt in thelon strelonam, which nelonelond to belon applielond to
+       *    this selongmelonnt belonforelon it's optimizelond.
        *
-       * So the segment is kept unoptimized and later we take care of setting up things
-       * so that PartitionWriter and the tweet create/update handlers can start correctly.
+       * So thelon selongmelonnt is kelonpt unoptimizelond and latelonr welon takelon carelon of selontting up things
+       * so that PartitionWritelonr and thelon twelonelont crelonatelon/updatelon handlelonrs can start correlonctly.
        */
-      LOG.info("Not optimizing the last segment ({})", segmentBuildInfo.getIndex());
-    } else {
-      Stopwatch optimizationStopwatch = Stopwatch.createStarted();
+      LOG.info("Not optimizing thelon last selongmelonnt ({})", selongmelonntBuildInfo.gelontIndelonx());
+    } elonlselon {
+      Stopwatch optimizationStopwatch = Stopwatch.crelonatelonStartelond();
       try {
-        LOG.info("Starting to optimize segment: {}", segmentBuildInfo.getIndex());
-        tweetIndexingResult.getSegmentWriter().getSegmentInfo()
-            .getIndexSegment().optimizeIndexes();
+        LOG.info("Starting to optimizelon selongmelonnt: {}", selongmelonntBuildInfo.gelontIndelonx());
+        twelonelontIndelonxingRelonsult.gelontSelongmelonntWritelonr().gelontSelongmelonntInfo()
+            .gelontIndelonxSelongmelonnt().optimizelonIndelonxelons();
       } finally {
-        LOG.info("Optimization of segment {} finished in {}.",
-            segmentBuildInfo.getIndex(), optimizationStopwatch);
+        LOG.info("Optimization of selongmelonnt {} finishelond in {}.",
+            selongmelonntBuildInfo.gelontIndelonx(), optimizationStopwatch);
       }
     }
 
-    segmentBuildInfo.setUpdateKafkaOffsetPair(updatesIndexingOffsets);
-    segmentBuildInfo.setMaxIndexedTweetId(tweetIndexingResult.getMaxIndexedTweetId());
-    segmentBuildInfo.setSegmentWriter(tweetIndexingResult.getSegmentWriter());
+    selongmelonntBuildInfo.selontUpdatelonKafkaOffselontPair(updatelonsIndelonxingOffselonts);
+    selongmelonntBuildInfo.selontMaxIndelonxelondTwelonelontId(twelonelontIndelonxingRelonsult.gelontMaxIndelonxelondTwelonelontId());
+    selongmelonntBuildInfo.selontSelongmelonntWritelonr(twelonelontIndelonxingRelonsult.gelontSelongmelonntWritelonr());
 
-    return tweetIndexingResult.getSegmentWriter().getSegmentInfo();
+    relonturn twelonelontIndelonxingRelonsult.gelontSelongmelonntWritelonr().gelontSelongmelonntInfo();
   }
 
-  private SegmentTweetsIndexingResult indexSegmentTweetsFromStream(
+  privatelon SelongmelonntTwelonelontsIndelonxingRelonsult indelonxSelongmelonntTwelonelontsFromStrelonam(
       TopicPartition topicPartition,
-      String consumerClientId,
-      Optional<Long> firstTweetIdInNextSegment) throws IOException {
-    long startOffset = segmentBuildInfo.getTweetStartOffset();
-    long endOffset = segmentBuildInfo.getTweetEndOffset();
-    long marginSize = lateTweetBuffer / 2;
+      String consumelonrClielonntId,
+      Optional<Long> firstTwelonelontIdInNelonxtSelongmelonnt) throws IOelonxcelonption {
+    long startOffselont = selongmelonntBuildInfo.gelontTwelonelontStartOffselont();
+    long elonndOffselont = selongmelonntBuildInfo.gelontTwelonelontelonndOffselont();
+    long marginSizelon = latelonTwelonelontBuffelonr / 2;
 
-    boolean isFirstSegment = segmentBuildInfo.getIndex() == 0;
+    boolelonan isFirstSelongmelonnt = selongmelonntBuildInfo.gelontIndelonx() == 0;
 
-    long startReadingAtOffset = startOffset;
-    if (!isFirstSegment) {
-      startReadingAtOffset -= marginSize;
-    } else {
-      LOG.info("Not moving start offset backwards for segment {}.", segmentBuildInfo.getIndex());
+    long startRelonadingAtOffselont = startOffselont;
+    if (!isFirstSelongmelonnt) {
+      startRelonadingAtOffselont -= marginSizelon;
+    } elonlselon {
+      LOG.info("Not moving start offselont backwards for selongmelonnt {}.", selongmelonntBuildInfo.gelontIndelonx());
     }
 
-    long endReadingAtOffset = endOffset;
-    if (firstTweetIdInNextSegment.isPresent()) {
-      endReadingAtOffset += marginSize;
-    } else {
-      LOG.info("Not moving end offset forwards for segment {}.", segmentBuildInfo.getIndex());
+    long elonndRelonadingAtOffselont = elonndOffselont;
+    if (firstTwelonelontIdInNelonxtSelongmelonnt.isPrelonselonnt()) {
+      elonndRelonadingAtOffselont += marginSizelon;
+    } elonlselon {
+      LOG.info("Not moving elonnd offselont forwards for selongmelonnt {}.", selongmelonntBuildInfo.gelontIndelonx());
     }
 
-    KafkaConsumer<Long, ThriftVersionedEvents> tweetsKafkaConsumer =
-        makeKafkaConsumerForIndexing(consumerClientId,
-            topicPartition, startReadingAtOffset);
+    KafkaConsumelonr<Long, ThriftVelonrsionelondelonvelonnts> twelonelontsKafkaConsumelonr =
+        makelonKafkaConsumelonrForIndelonxing(consumelonrClielonntId,
+            topicPartition, startRelonadingAtOffselont);
 
-    boolean done = false;
-    long minIndexedTimestampMs = Long.MAX_VALUE;
-    long maxIndexedTimestampMs = Long.MIN_VALUE;
-    int indexedEvents = 0;
+    boolelonan donelon = falselon;
+    long minIndelonxelondTimelonstampMs = Long.MAX_VALUelon;
+    long maxIndelonxelondTimelonstampMs = Long.MIN_VALUelon;
+    int indelonxelondelonvelonnts = 0;
 
-    Stopwatch stopwatch = Stopwatch.createStarted();
+    Stopwatch stopwatch = Stopwatch.crelonatelonStartelond();
 
-    LOG.info("Creating segment writer for timeslice ID {}.", segmentBuildInfo.getStartTweetId());
-    SegmentWriter segmentWriter = segmentManager.createSegmentWriter(
-        segmentBuildInfo.getStartTweetId());
+    LOG.info("Crelonating selongmelonnt writelonr for timelonslicelon ID {}.", selongmelonntBuildInfo.gelontStartTwelonelontId());
+    SelongmelonntWritelonr selongmelonntWritelonr = selongmelonntManagelonr.crelonatelonSelongmelonntWritelonr(
+        selongmelonntBuildInfo.gelontStartTwelonelontId());
 
     /*
-     * We don't have a guarantee that tweets come in sorted order, so when we're building segment
-     * X', we try to pick some tweets from the previous and next ranges we're going to index.
+     * Welon don't havelon a guarantelonelon that twelonelonts comelon in sortelond ordelonr, so whelonn welon'relon building selongmelonnt
+     * X', welon try to pick somelon twelonelonts from thelon prelonvious and nelonxt rangelons welon'relon going to indelonx.
      *
-     * We also ignore tweets in the beginning and the end of our tweets range, which are picked
-     * by the previous or following segment.
+     * Welon also ignorelon twelonelonts in thelon belonginning and thelon elonnd of our twelonelonts rangelon, which arelon pickelond
+     * by thelon prelonvious or following selongmelonnt.
      *
-     *   Segment X        Segment X'                              Segment X''
+     *   Selongmelonnt X        Selongmelonnt X'                              Selongmelonnt X''
      * -------------- o ----------------------------------------- o ---------------
      *        [~~~~~] ^ [~~~~~]                           [~~~~~] | [~~~~~]
      *           |    |    |                                 |    |    |
-     *  front margin  |    front padding (size K)   back padding  |   back margin
+     *  front margin  |    front padding (sizelon K)   back padding  |   back margin
      *                |                                           |
-     *                segment boundary at offset B' (1)           B''
+     *                selongmelonnt boundary at offselont B' (1)           B''
      *
-     * (1) This is at a predetermined tweet offset / tweet id.
+     * (1) This is at a prelondelontelonrminelond twelonelont offselont / twelonelont id.
      *
-     * For segment X', we start to read tweets at offset B'-K and finish reading
-     * tweets at offset B''+K. K is a constant.
+     * For selongmelonnt X', welon start to relonad twelonelonts at offselont B'-K and finish relonading
+     * twelonelonts at offselont B''+K. K is a constant.
      *
-     * For middle segments X'
+     * For middlelon selongmelonnts X'
      * ======================
-     * We move some tweets from the front margin and back margin into segment X'.
-     * Some tweets from the front and back padding are ignored, as they are moved
-     * into the previous and next segments.
+     * Welon movelon somelon twelonelonts from thelon front margin and back margin into selongmelonnt X'.
+     * Somelon twelonelonts from thelon front and back padding arelon ignorelond, as thelony arelon movelond
+     * into thelon prelonvious and nelonxt selongmelonnts.
      *
-     * For the first segment
+     * For thelon first selongmelonnt
      * =====================
-     * No front margin, no front padding. We just read from the beginning offset
-     * and insert everything.
+     * No front margin, no front padding. Welon just relonad from thelon belonginning offselont
+     * and inselonrt elonvelonrything.
      *
-     * For the last segment
+     * For thelon last selongmelonnt
      * ====================
-     * No back margin, no back padding. We just read until the end.
+     * No back margin, no back padding. Welon just relonad until thelon elonnd.
      */
 
-    SkippedPickedCounter frontMargin = new SkippedPickedCounter("front margin");
-    SkippedPickedCounter backMargin = new SkippedPickedCounter("back margin");
-    SkippedPickedCounter frontPadding = new SkippedPickedCounter("front padding");
-    SkippedPickedCounter backPadding = new SkippedPickedCounter("back padding");
-    SkippedPickedCounter regular = new SkippedPickedCounter("regular");
-    int totalRead = 0;
-    long maxIndexedTweetId = -1;
+    SkippelondPickelondCountelonr frontMargin = nelonw SkippelondPickelondCountelonr("front margin");
+    SkippelondPickelondCountelonr backMargin = nelonw SkippelondPickelondCountelonr("back margin");
+    SkippelondPickelondCountelonr frontPadding = nelonw SkippelondPickelondCountelonr("front padding");
+    SkippelondPickelondCountelonr backPadding = nelonw SkippelondPickelondCountelonr("back padding");
+    SkippelondPickelondCountelonr relongular = nelonw SkippelondPickelondCountelonr("relongular");
+    int totalRelonad = 0;
+    long maxIndelonxelondTwelonelontId = -1;
 
-    Stopwatch pollTimer = Stopwatch.createUnstarted();
-    Stopwatch indexTimer = Stopwatch.createUnstarted();
+    Stopwatch pollTimelonr = Stopwatch.crelonatelonUnstartelond();
+    Stopwatch indelonxTimelonr = Stopwatch.crelonatelonUnstartelond();
 
     do {
-      // This can cause an exception, See P33896
-      pollTimer.start();
-      ConsumerRecords<Long, ThriftVersionedEvents> records =
-          tweetsKafkaConsumer.poll(Duration.ofSeconds(1));
-      pollTimer.stop();
+      // This can causelon an elonxcelonption, Selonelon P33896
+      pollTimelonr.start();
+      ConsumelonrReloncords<Long, ThriftVelonrsionelondelonvelonnts> reloncords =
+          twelonelontsKafkaConsumelonr.poll(Duration.ofSelonconds(1));
+      pollTimelonr.stop();
 
-      indexTimer.start();
-      for (ConsumerRecord<Long, ThriftVersionedEvents> record : records) {
-        // Done reading?
-        if (record.offset() >= endReadingAtOffset) {
-          done = true;
+      indelonxTimelonr.start();
+      for (ConsumelonrReloncord<Long, ThriftVelonrsionelondelonvelonnts> reloncord : reloncords) {
+        // Donelon relonading?
+        if (reloncord.offselont() >= elonndRelonadingAtOffselont) {
+          donelon = truelon;
         }
 
-        ThriftVersionedEvents tve = record.value();
-        boolean indexTweet = false;
-        SkippedPickedCounter skippedPickedCounter;
+        ThriftVelonrsionelondelonvelonnts tvelon = reloncord.valuelon();
+        boolelonan indelonxTwelonelont = falselon;
+        SkippelondPickelondCountelonr skippelondPickelondCountelonr;
 
-        if (record.offset() < segmentBuildInfo.getTweetStartOffset()) {
+        if (reloncord.offselont() < selongmelonntBuildInfo.gelontTwelonelontStartOffselont()) {
           // Front margin.
-          skippedPickedCounter = frontMargin;
-          if (tve.getId() > segmentBuildInfo.getStartTweetId()) {
-            indexTweet = true;
+          skippelondPickelondCountelonr = frontMargin;
+          if (tvelon.gelontId() > selongmelonntBuildInfo.gelontStartTwelonelontId()) {
+            indelonxTwelonelont = truelon;
           }
-        } else if (record.offset() > segmentBuildInfo.getTweetEndOffset()) {
+        } elonlselon if (reloncord.offselont() > selongmelonntBuildInfo.gelontTwelonelontelonndOffselont()) {
           // Back margin.
-          skippedPickedCounter = backMargin;
-          if (firstTweetIdInNextSegment.isPresent()
-              && tve.getId() < firstTweetIdInNextSegment.get()) {
-            indexTweet = true;
+          skippelondPickelondCountelonr = backMargin;
+          if (firstTwelonelontIdInNelonxtSelongmelonnt.isPrelonselonnt()
+              && tvelon.gelontId() < firstTwelonelontIdInNelonxtSelongmelonnt.gelont()) {
+            indelonxTwelonelont = truelon;
           }
-        } else if (record.offset() < segmentBuildInfo.getTweetStartOffset() + marginSize) {
+        } elonlselon if (reloncord.offselont() < selongmelonntBuildInfo.gelontTwelonelontStartOffselont() + marginSizelon) {
           // Front padding.
-          skippedPickedCounter = frontPadding;
-          if (tve.getId() >= segmentBuildInfo.getStartTweetId()) {
-            indexTweet = true;
+          skippelondPickelondCountelonr = frontPadding;
+          if (tvelon.gelontId() >= selongmelonntBuildInfo.gelontStartTwelonelontId()) {
+            indelonxTwelonelont = truelon;
           }
-        } else if (firstTweetIdInNextSegment.isPresent()
-            && record.offset() > segmentBuildInfo.getTweetEndOffset() - marginSize) {
+        } elonlselon if (firstTwelonelontIdInNelonxtSelongmelonnt.isPrelonselonnt()
+            && reloncord.offselont() > selongmelonntBuildInfo.gelontTwelonelontelonndOffselont() - marginSizelon) {
           // Back padding.
-          skippedPickedCounter = backPadding;
-          if (tve.getId() < firstTweetIdInNextSegment.get()) {
-            indexTweet = true;
+          skippelondPickelondCountelonr = backPadding;
+          if (tvelon.gelontId() < firstTwelonelontIdInNelonxtSelongmelonnt.gelont()) {
+            indelonxTwelonelont = truelon;
           }
-        } else {
-          skippedPickedCounter = regular;
-          // These we just pick. A tweet that came very late can end up in the wrong
-          // segment, but it's better for it to be present in a segment than dropped.
-          indexTweet = true;
+        } elonlselon {
+          skippelondPickelondCountelonr = relongular;
+          // Thelonselon welon just pick. A twelonelont that camelon velonry latelon can elonnd up in thelon wrong
+          // selongmelonnt, but it's belonttelonr for it to belon prelonselonnt in a selongmelonnt than droppelond.
+          indelonxTwelonelont = truelon;
         }
 
-        if (indexTweet) {
-          skippedPickedCounter.incrementPicked();
-          segmentWriter.indexThriftVersionedEvents(tve);
-          maxIndexedTweetId = Math.max(maxIndexedTweetId, tve.getId());
-          indexedEvents++;
+        if (indelonxTwelonelont) {
+          skippelondPickelondCountelonr.increlonmelonntPickelond();
+          selongmelonntWritelonr.indelonxThriftVelonrsionelondelonvelonnts(tvelon);
+          maxIndelonxelondTwelonelontId = Math.max(maxIndelonxelondTwelonelontId, tvelon.gelontId());
+          indelonxelondelonvelonnts++;
 
-          // Note that records don't necessarily have increasing timestamps.
-          // Why? The timestamps whatever timestamp we picked when creating the record
-          // in ingesters and there are many ingesters.
-          minIndexedTimestampMs = Math.min(minIndexedTimestampMs, record.timestamp());
-          maxIndexedTimestampMs = Math.max(maxIndexedTimestampMs, record.timestamp());
-        } else {
-          skippedPickedCounter.incrementSkipped();
+          // Notelon that reloncords don't neloncelonssarily havelon increlonasing timelonstamps.
+          // Why? Thelon timelonstamps whatelonvelonr timelonstamp welon pickelond whelonn crelonating thelon reloncord
+          // in ingelonstelonrs and thelonrelon arelon many ingelonstelonrs.
+          minIndelonxelondTimelonstampMs = Math.min(minIndelonxelondTimelonstampMs, reloncord.timelonstamp());
+          maxIndelonxelondTimelonstampMs = Math.max(maxIndelonxelondTimelonstampMs, reloncord.timelonstamp());
+        } elonlselon {
+          skippelondPickelondCountelonr.increlonmelonntSkippelond();
         }
-        totalRead++;
+        totalRelonad++;
 
-        if (record.offset() >= endReadingAtOffset) {
-          break;
+        if (reloncord.offselont() >= elonndRelonadingAtOffselont) {
+          brelonak;
         }
       }
-      indexTimer.stop();
-    } while (!done);
+      indelonxTimelonr.stop();
+    } whilelon (!donelon);
 
-    tweetsKafkaConsumer.close();
+    twelonelontsKafkaConsumelonr.closelon();
 
-    SegmentTweetsIndexingResult result = new SegmentTweetsIndexingResult(
-        minIndexedTimestampMs, maxIndexedTimestampMs, maxIndexedTweetId, segmentWriter);
+    SelongmelonntTwelonelontsIndelonxingRelonsult relonsult = nelonw SelongmelonntTwelonelontsIndelonxingRelonsult(
+        minIndelonxelondTimelonstampMs, maxIndelonxelondTimelonstampMs, maxIndelonxelondTwelonelontId, selongmelonntWritelonr);
 
-    LOG.info("Finished indexing {} tweets for {} in {}. Read {} tweets. Result: {}."
-            + " Time polling: {}, Time indexing: {}.",
-        indexedEvents, consumerClientId, stopwatch, totalRead, result,
-        pollTimer, indexTimer);
+    LOG.info("Finishelond indelonxing {} twelonelonts for {} in {}. Relonad {} twelonelonts. Relonsult: {}."
+            + " Timelon polling: {}, Timelon indelonxing: {}.",
+        indelonxelondelonvelonnts, consumelonrClielonntId, stopwatch, totalRelonad, relonsult,
+        pollTimelonr, indelonxTimelonr);
 
-    // In normal conditions, expect to pick just a few in front and in the back.
-    LOG.info("SkippedPicked ({}) -- {}, {}, {}, {}, {}",
-        consumerClientId, frontMargin, frontPadding, backPadding, backMargin, regular);
+    // In normal conditions, elonxpelonct to pick just a felonw in front and in thelon back.
+    LOG.info("SkippelondPickelond ({}) -- {}, {}, {}, {}, {}",
+        consumelonrClielonntId, frontMargin, frontPadding, backPadding, backMargin, relongular);
 
-    return result;
+    relonturn relonsult;
   }
 
 
   /**
-   * After indexing all the tweets for a segment, index updates that need to be applied before
-   * the segment is optimized.
+   * Aftelonr indelonxing all thelon twelonelonts for a selongmelonnt, indelonx updatelons that nelonelond to belon applielond belonforelon
+   * thelon selongmelonnt is optimizelond.
    *
-   * This is required because some updates (URL updates, cards and Named Entities) can only be
-   * applied to an unoptimized segment. Luckily, all of these updates should arrive close to when
-   * the Tweet is created.
+   * This is relonquirelond beloncauselon somelon updatelons (URL updatelons, cards and Namelond elonntitielons) can only belon
+   * applielond to an unoptimizelond selongmelonnt. Luckily, all of thelonselon updatelons should arrivelon closelon to whelonn
+   * thelon Twelonelont is crelonatelond.
    */
-  private KafkaOffsetPair findUpdateStreamOffsetRange(
-      SegmentTweetsIndexingResult tweetsIndexingResult) {
-    KafkaConsumer<Long, ThriftVersionedEvents> offsetsConsumer =
-        earlybirdKafkaConsumersFactory.createKafkaConsumer(
-            "consumer_for_update_offsets_" + segmentBuildInfo.getIndex());
+  privatelon KafkaOffselontPair findUpdatelonStrelonamOffselontRangelon(
+      SelongmelonntTwelonelontsIndelonxingRelonsult twelonelontsIndelonxingRelonsult) {
+    KafkaConsumelonr<Long, ThriftVelonrsionelondelonvelonnts> offselontsConsumelonr =
+        elonarlybirdKafkaConsumelonrsFactory.crelonatelonKafkaConsumelonr(
+            "consumelonr_for_updatelon_offselonts_" + selongmelonntBuildInfo.gelontIndelonx());
 
-    // Start one minute before the first indexed tweet. One minute is excessive, but
-    // we need to start a bit earlier in case the first tweet we indexed came in
-    // later than some of its updates.
-    long updatesStartOffset = offsetForTime(offsetsConsumer, updateTopic,
-        tweetsIndexingResult.getMinRecordTimestampMs() - Duration.ofMinutes(1).toMillis());
+    // Start onelon minutelon belonforelon thelon first indelonxelond twelonelont. Onelon minutelon is elonxcelonssivelon, but
+    // welon nelonelond to start a bit elonarlielonr in caselon thelon first twelonelont welon indelonxelond camelon in
+    // latelonr than somelon of its updatelons.
+    long updatelonsStartOffselont = offselontForTimelon(offselontsConsumelonr, updatelonTopic,
+        twelonelontsIndelonxingRelonsult.gelontMinReloncordTimelonstampMs() - Duration.ofMinutelons(1).toMillis());
 
-    // Two cases:
+    // Two caselons:
     //
-    // 1. If we're not indexing the last segment, end 10 minutes after the last tweet. So for
-    //    example if we resolve an url in a tweet 3 minutes after the tweet is published,
-    //    we'll apply that update before the segment is optimized. 10 minutes is a bit too
-    //    much, but that doesn't matter a whole lot, since we're indexing about ~10 hours of
-    //    updates.
+    // 1. If welon'relon not indelonxing thelon last selongmelonnt, elonnd 10 minutelons aftelonr thelon last twelonelont. So for
+    //    elonxamplelon if welon relonsolvelon an url in a twelonelont 3 minutelons aftelonr thelon twelonelont is publishelond,
+    //    welon'll apply that updatelon belonforelon thelon selongmelonnt is optimizelond. 10 minutelons is a bit too
+    //    much, but that doelonsn't mattelonr a wholelon lot, sincelon welon'relon indelonxing about ~10 hours of
+    //    updatelons.
     //
-    // 2. If we're indexing the last segment, end a bit before the last indexed tweet. We might
-    //    have incoming tweets that are a bit late. In fresh startup, we don't have a mechanism
-    //    to store these tweets to be applied when the tweet arrives, as in TweetUpdateHandler,
-    //    so just stop a bit earlier and let TweetCreateHandler and TweetUpdateHandler deal with
+    // 2. If welon'relon indelonxing thelon last selongmelonnt, elonnd a bit belonforelon thelon last indelonxelond twelonelont. Welon might
+    //    havelon incoming twelonelonts that arelon a bit latelon. In frelonsh startup, welon don't havelon a melonchanism
+    //    to storelon thelonselon twelonelonts to belon applielond whelonn thelon twelonelont arrivelons, as in TwelonelontUpdatelonHandlelonr,
+    //    so just stop a bit elonarlielonr and lelont TwelonelontCrelonatelonHandlelonr and TwelonelontUpdatelonHandlelonr delonal with
     //    that.
     long millisAdjust;
-    if (segmentBuildInfo.getIndex() == segmentBuildInfos.size() - 1) {
-      millisAdjust = -Duration.ofMinutes(1).toMillis();
-    } else {
-      millisAdjust = Duration.ofMinutes(10).toMillis();
+    if (selongmelonntBuildInfo.gelontIndelonx() == selongmelonntBuildInfos.sizelon() - 1) {
+      millisAdjust = -Duration.ofMinutelons(1).toMillis();
+    } elonlselon {
+      millisAdjust = Duration.ofMinutelons(10).toMillis();
     }
-    long updatesEndOffset = offsetForTime(offsetsConsumer, updateTopic,
-        tweetsIndexingResult.getMaxRecordTimestampMs() + millisAdjust);
+    long updatelonselonndOffselont = offselontForTimelon(offselontsConsumelonr, updatelonTopic,
+        twelonelontsIndelonxingRelonsult.gelontMaxReloncordTimelonstampMs() + millisAdjust);
 
-    offsetsConsumer.close();
+    offselontsConsumelonr.closelon();
 
-    return new KafkaOffsetPair(updatesStartOffset, updatesEndOffset);
+    relonturn nelonw KafkaOffselontPair(updatelonsStartOffselont, updatelonselonndOffselont);
   }
 
   /**
-   * Get the earliest offset with a timestamp >= $timestamp.
+   * Gelont thelon elonarlielonst offselont with a timelonstamp >= $timelonstamp.
    *
-   * The guarantee we get is that if we start reading from here on, we will get
-   * every single message that came in with a timestamp >= $timestamp.
+   * Thelon guarantelonelon welon gelont is that if welon start relonading from helonrelon on, welon will gelont
+   * elonvelonry singlelon melonssagelon that camelon in with a timelonstamp >= $timelonstamp.
    */
-  private long offsetForTime(KafkaConsumer<Long, ThriftVersionedEvents> kafkaConsumer,
+  privatelon long offselontForTimelon(KafkaConsumelonr<Long, ThriftVelonrsionelondelonvelonnts> kafkaConsumelonr,
                              TopicPartition partition,
-                             long timestamp) {
-    Preconditions.checkNotNull(kafkaConsumer);
-    Preconditions.checkNotNull(partition);
+                             long timelonstamp) {
+    Prelonconditions.chelonckNotNull(kafkaConsumelonr);
+    Prelonconditions.chelonckNotNull(partition);
 
-    OffsetAndTimestamp offsetAndTimestamp = kafkaConsumer
-        .offsetsForTimes(ImmutableMap.of(partition, timestamp))
-        .get(partition);
-    if (offsetAndTimestamp == null) {
-      return -1;
-    } else {
-      return offsetAndTimestamp.offset();
+    OffselontAndTimelonstamp offselontAndTimelonstamp = kafkaConsumelonr
+        .offselontsForTimelons(ImmutablelonMap.of(partition, timelonstamp))
+        .gelont(partition);
+    if (offselontAndTimelonstamp == null) {
+      relonturn -1;
+    } elonlselon {
+      relonturn offselontAndTimelonstamp.offselont();
     }
   }
 
-  private void indexUpdatesFromStream(
+  privatelon void indelonxUpdatelonsFromStrelonam(
       TopicPartition topicPartition,
-      String consumerClientId,
-      long startOffset,
-      long endOffset,
-      SegmentWriter segmentWriter) throws IOException {
-    KafkaConsumer<Long, ThriftVersionedEvents> kafkaConsumer =
-        makeKafkaConsumerForIndexing(consumerClientId, topicPartition, startOffset);
+      String consumelonrClielonntId,
+      long startOffselont,
+      long elonndOffselont,
+      SelongmelonntWritelonr selongmelonntWritelonr) throws IOelonxcelonption {
+    KafkaConsumelonr<Long, ThriftVelonrsionelondelonvelonnts> kafkaConsumelonr =
+        makelonKafkaConsumelonrForIndelonxing(consumelonrClielonntId, topicPartition, startOffselont);
 
-    // Index TVEs.
-    boolean done = false;
+    // Indelonx TVelons.
+    boolelonan donelon = falselon;
 
-    Stopwatch pollTimer = Stopwatch.createUnstarted();
-    Stopwatch indexTimer = Stopwatch.createUnstarted();
+    Stopwatch pollTimelonr = Stopwatch.crelonatelonUnstartelond();
+    Stopwatch indelonxTimelonr = Stopwatch.crelonatelonUnstartelond();
 
-    SkippedPickedCounter updatesSkippedPicked = new SkippedPickedCounter("streamed_updates");
-    IndexingResultCounts indexingResultCounts = new IndexingResultCounts();
+    SkippelondPickelondCountelonr updatelonsSkippelondPickelond = nelonw SkippelondPickelondCountelonr("strelonamelond_updatelons");
+    IndelonxingRelonsultCounts indelonxingRelonsultCounts = nelonw IndelonxingRelonsultCounts();
 
-    long segmentTimesliceId = segmentWriter.getSegmentInfo().getTimeSliceID();
+    long selongmelonntTimelonslicelonId = selongmelonntWritelonr.gelontSelongmelonntInfo().gelontTimelonSlicelonID();
 
-    Stopwatch totalTime = Stopwatch.createStarted();
+    Stopwatch totalTimelon = Stopwatch.crelonatelonStartelond();
 
     do {
-      pollTimer.start();
-      ConsumerRecords<Long, ThriftVersionedEvents> records =
-          kafkaConsumer.poll(Duration.ofSeconds(1));
-      pollTimer.stop();
+      pollTimelonr.start();
+      ConsumelonrReloncords<Long, ThriftVelonrsionelondelonvelonnts> reloncords =
+          kafkaConsumelonr.poll(Duration.ofSelonconds(1));
+      pollTimelonr.stop();
 
-      indexTimer.start();
-      for (ConsumerRecord<Long, ThriftVersionedEvents> record : records) {
-        if (record.value().getId() < segmentTimesliceId) {
-          // Doesn't apply to this segment, can be skipped instead of skipping it
-          // inside the more costly segmentWriter.indexThriftVersionedEvents call.
-          updatesSkippedPicked.incrementSkipped();
-        } else {
-          if (record.offset() >= endOffset) {
-            done = true;
+      indelonxTimelonr.start();
+      for (ConsumelonrReloncord<Long, ThriftVelonrsionelondelonvelonnts> reloncord : reloncords) {
+        if (reloncord.valuelon().gelontId() < selongmelonntTimelonslicelonId) {
+          // Doelonsn't apply to this selongmelonnt, can belon skippelond instelonad of skipping it
+          // insidelon thelon morelon costly selongmelonntWritelonr.indelonxThriftVelonrsionelondelonvelonnts call.
+          updatelonsSkippelondPickelond.increlonmelonntSkippelond();
+        } elonlselon {
+          if (reloncord.offselont() >= elonndOffselont) {
+            donelon = truelon;
           }
 
-          updatesSkippedPicked.incrementPicked();
-          indexingResultCounts.countResult(
-              segmentWriter.indexThriftVersionedEvents(record.value()));
+          updatelonsSkippelondPickelond.increlonmelonntPickelond();
+          indelonxingRelonsultCounts.countRelonsult(
+              selongmelonntWritelonr.indelonxThriftVelonrsionelondelonvelonnts(reloncord.valuelon()));
         }
 
-        if (record.offset() >= endOffset) {
-          break;
+        if (reloncord.offselont() >= elonndOffselont) {
+          brelonak;
         }
       }
-      indexTimer.stop();
-    } while (!done);
+      indelonxTimelonr.stop();
+    } whilelon (!donelon);
 
-    // Note that there'll be a decent amount of failed retryable updates. Since we index
-    // updates in a range that's a bit wider, they can't be applied here.
-    LOG.info("Client: {}, Finished indexing updates: {}. "
-            + "Times -- total: {}. polling: {}, indexing: {}. Indexing result counts: {}",
-        consumerClientId, updatesSkippedPicked,
-        totalTime, pollTimer, indexTimer, indexingResultCounts);
+    // Notelon that thelonrelon'll belon a deloncelonnt amount of failelond relontryablelon updatelons. Sincelon welon indelonx
+    // updatelons in a rangelon that's a bit widelonr, thelony can't belon applielond helonrelon.
+    LOG.info("Clielonnt: {}, Finishelond indelonxing updatelons: {}. "
+            + "Timelons -- total: {}. polling: {}, indelonxing: {}. Indelonxing relonsult counts: {}",
+        consumelonrClielonntId, updatelonsSkippelondPickelond,
+        totalTimelon, pollTimelonr, indelonxTimelonr, indelonxingRelonsultCounts);
   }
 
   /**
-   * Make a consumer that reads from a single partition, starting at some offset.
+   * Makelon a consumelonr that relonads from a singlelon partition, starting at somelon offselont.
    */
-  private KafkaConsumer<Long, ThriftVersionedEvents> makeKafkaConsumerForIndexing(
-      String consumerClientId,
+  privatelon KafkaConsumelonr<Long, ThriftVelonrsionelondelonvelonnts> makelonKafkaConsumelonrForIndelonxing(
+      String consumelonrClielonntId,
       TopicPartition topicPartition,
-      long offset) {
-    KafkaConsumer<Long, ThriftVersionedEvents> kafkaConsumer =
-        earlybirdKafkaConsumersFactory.createKafkaConsumer(consumerClientId);
-    kafkaConsumer.assign(ImmutableList.of(topicPartition));
-    kafkaConsumer.seek(topicPartition, offset);
-    LOG.info("Indexing TVEs. Kafka consumer: {}", consumerClientId);
-    return kafkaConsumer;
+      long offselont) {
+    KafkaConsumelonr<Long, ThriftVelonrsionelondelonvelonnts> kafkaConsumelonr =
+        elonarlybirdKafkaConsumelonrsFactory.crelonatelonKafkaConsumelonr(consumelonrClielonntId);
+    kafkaConsumelonr.assign(ImmutablelonList.of(topicPartition));
+    kafkaConsumelonr.selonelonk(topicPartition, offselont);
+    LOG.info("Indelonxing TVelons. Kafka consumelonr: {}", consumelonrClielonntId);
+    relonturn kafkaConsumelonr;
   }
 }

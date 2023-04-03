@@ -1,41 +1,41 @@
-package com.twitter.search.earlybird.search.facets;
+packagelon com.twittelonr.selonarch.elonarlybird.selonarch.facelonts;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 
-import com.google.common.base.Preconditions;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.core.earlybird.facets.CSFFacetCountIterator;
-import com.twitter.search.core.earlybird.facets.FacetCountIterator;
-import com.twitter.search.core.earlybird.facets.FacetCountIteratorFactory;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
+import com.twittelonr.selonarch.common.schelonma.baselon.Schelonma;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdFielonldConstants.elonarlybirdFielonldConstant;
+import com.twittelonr.selonarch.corelon.elonarlybird.facelonts.CSFFacelontCountItelonrator;
+import com.twittelonr.selonarch.corelon.elonarlybird.facelonts.FacelontCountItelonrator;
+import com.twittelonr.selonarch.corelon.elonarlybird.facelonts.FacelontCountItelonratorFactory;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr;
 
 /**
- * Factory of {@link FacetCountIterator} instances for tweet search.
- * It provides a special iterator for the retweets facet.
+ * Factory of {@link FacelontCountItelonrator} instancelons for twelonelont selonarch.
+ * It providelons a speloncial itelonrator for thelon relontwelonelonts facelont.
  */
-public final class TweetSearchFacetCountIteratorFactory extends FacetCountIteratorFactory {
-  public static final TweetSearchFacetCountIteratorFactory FACTORY =
-      new TweetSearchFacetCountIteratorFactory();
+public final class TwelonelontSelonarchFacelontCountItelonratorFactory elonxtelonnds FacelontCountItelonratorFactory {
+  public static final TwelonelontSelonarchFacelontCountItelonratorFactory FACTORY =
+      nelonw TwelonelontSelonarchFacelontCountItelonratorFactory();
 
-  private TweetSearchFacetCountIteratorFactory() {
+  privatelon TwelonelontSelonarchFacelontCountItelonratorFactory() {
   }
 
-  @Override
-  public FacetCountIterator getFacetCountIterator(
-      EarlybirdIndexSegmentAtomicReader reader,
-      Schema.FieldInfo fieldInfo) throws IOException {
-    Preconditions.checkNotNull(reader);
-    Preconditions.checkNotNull(fieldInfo);
-    Preconditions.checkArgument(fieldInfo.getFieldType().isUseCSFForFacetCounting());
+  @Ovelonrridelon
+  public FacelontCountItelonrator gelontFacelontCountItelonrator(
+      elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr relonadelonr,
+      Schelonma.FielonldInfo fielonldInfo) throws IOelonxcelonption {
+    Prelonconditions.chelonckNotNull(relonadelonr);
+    Prelonconditions.chelonckNotNull(fielonldInfo);
+    Prelonconditions.chelonckArgumelonnt(fielonldInfo.gelontFielonldTypelon().isUselonCSFForFacelontCounting());
 
-    String facetName = fieldInfo.getFieldType().getFacetName();
+    String facelontNamelon = fielonldInfo.gelontFielonldTypelon().gelontFacelontNamelon();
 
-    if (EarlybirdFieldConstant.RETWEETS_FACET.equals(facetName)) {
-      return new RetweetFacetCountIterator(reader, fieldInfo);
-    } else {
-      return new CSFFacetCountIterator(reader, fieldInfo);
+    if (elonarlybirdFielonldConstant.RelonTWelonelonTS_FACelonT.elonquals(facelontNamelon)) {
+      relonturn nelonw RelontwelonelontFacelontCountItelonrator(relonadelonr, fielonldInfo);
+    } elonlselon {
+      relonturn nelonw CSFFacelontCountItelonrator(relonadelonr, fielonldInfo);
     }
   }
 }

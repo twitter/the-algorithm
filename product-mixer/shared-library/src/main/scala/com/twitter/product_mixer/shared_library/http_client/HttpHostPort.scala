@@ -1,5 +1,5 @@
-package com.twitter.product_mixer.shared_library.http_client
+packagelon com.twittelonr.product_mixelonr.sharelond_library.http_clielonnt
 
-case class HttpHostPort(host: String, port: Int) {
-  override val toString: String = s"$host:$port"
+caselon class HttpHostPort(host: String, port: Int) {
+  ovelonrridelon val toString: String = s"$host:$port"
 }

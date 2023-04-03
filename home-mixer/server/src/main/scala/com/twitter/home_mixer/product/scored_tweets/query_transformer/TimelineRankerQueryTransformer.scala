@@ -1,109 +1,109 @@
-package com.twitter.home_mixer.product.scored_tweets.query_transformer
+packagelon com.twittelonr.homelon_mixelonr.product.scorelond_twelonelonts.quelonry_transformelonr
 
-import com.twitter.home_mixer.model.HomeFeatures.RealGraphInNetworkScoresFeature
-import com.twitter.home_mixer.model.request.HasDeviceContext
-import com.twitter.home_mixer.product.scored_tweets.query_transformer.TimelineRankerQueryTransformer._
-import com.twitter.home_mixer.util.CachedScoredTweetsHelper
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.quality_factor.HasQualityFactorStatus
-import com.twitter.timelinemixer.clients.timelineranker.EarlybirdScoringModels
-import com.twitter.timelinemixer.clients.timelineranker.EarlybirdScoringModelsId
-import com.twitter.timelineranker.{model => tlr}
-import com.twitter.timelines.common.model.TweetKindOption
-import com.twitter.timelines.earlybird.common.options.EarlybirdOptions
-import com.twitter.timelines.earlybird.common.options.EarlybirdScoringModelConfig
-import com.twitter.timelines.earlybird.common.utils.SearchOperator
-import com.twitter.timelines.model.UserId
-import com.twitter.timelines.model.candidate.CandidateTweetSourceId
-import com.twitter.timelines.util.SnowflakeSortIndexHelper
-import com.twitter.util.Duration
-import com.twitter.util.Time
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.RelonalGraphInNelontworkScorelonsFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.relonquelonst.HasDelonvicelonContelonxt
+import com.twittelonr.homelon_mixelonr.product.scorelond_twelonelonts.quelonry_transformelonr.TimelonlinelonRankelonrQuelonryTransformelonr._
+import com.twittelonr.homelon_mixelonr.util.CachelondScorelondTwelonelontsHelonlpelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonPipelonlinelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.product_mixelonr.corelon.quality_factor.HasQualityFactorStatus
+import com.twittelonr.timelonlinelonmixelonr.clielonnts.timelonlinelonrankelonr.elonarlybirdScoringModelonls
+import com.twittelonr.timelonlinelonmixelonr.clielonnts.timelonlinelonrankelonr.elonarlybirdScoringModelonlsId
+import com.twittelonr.timelonlinelonrankelonr.{modelonl => tlr}
+import com.twittelonr.timelonlinelons.common.modelonl.TwelonelontKindOption
+import com.twittelonr.timelonlinelons.elonarlybird.common.options.elonarlybirdOptions
+import com.twittelonr.timelonlinelons.elonarlybird.common.options.elonarlybirdScoringModelonlConfig
+import com.twittelonr.timelonlinelons.elonarlybird.common.utils.SelonarchOpelonrator
+import com.twittelonr.timelonlinelons.modelonl.UselonrId
+import com.twittelonr.timelonlinelons.modelonl.candidatelon.CandidatelonTwelonelontSourcelonId
+import com.twittelonr.timelonlinelons.util.SnowflakelonSortIndelonxHelonlpelonr
+import com.twittelonr.util.Duration
+import com.twittelonr.util.Timelon
 
-object TimelineRankerQueryTransformer {
-
-  /**
-   * Specifies the maximum number of excluded tweet ids to include in the search index query.
-   * Earlybird's named multi term disjunction map feature supports up to 1500 tweet ids.
-   */
-  private val EarlybirdMaxExcludedTweets = 1500
+objelonct TimelonlinelonRankelonrQuelonryTransformelonr {
 
   /**
-   * Maximum number of query hits each earlybird shard is allowed to accumulate before
-   * early-terminating the query and reducing the hits to MaxNumEarlybirdResults.
+   * Speloncifielons thelon maximum numbelonr of elonxcludelond twelonelont ids to includelon in thelon selonarch indelonx quelonry.
+   * elonarlybird's namelond multi telonrm disjunction map felonaturelon supports up to 1500 twelonelont ids.
    */
-  private val EarlybirdMaxHits = 1000
+  privatelon val elonarlybirdMaxelonxcludelondTwelonelonts = 1500
 
   /**
-   * Maximum number of results TLR should retrieve from each earlybird shard.
+   * Maximum numbelonr of quelonry hits elonach elonarlybird shard is allowelond to accumulatelon belonforelon
+   * elonarly-telonrminating thelon quelonry and relonducing thelon hits to MaxNumelonarlybirdRelonsults.
    */
-  private val EarlybirdMaxResults = 200
+  privatelon val elonarlybirdMaxHits = 1000
+
+  /**
+   * Maximum numbelonr of relonsults TLR should relontrielonvelon from elonach elonarlybird shard.
+   */
+  privatelon val elonarlybirdMaxRelonsults = 200
 }
 
-trait TimelineRankerQueryTransformer[
-  Query <: PipelineQuery with HasQualityFactorStatus with HasDeviceContext] {
-  def maxTweetsToFetch: Int
-  def sinceDuration: Duration
-  def options: TweetKindOption.ValueSet = TweetKindOption.Default
-  def candidateTweetSourceId: CandidateTweetSourceId.Value
-  def skipVeryRecentTweets: Boolean
-  def utegLikedByTweetsOptions(query: Query): Option[tlr.UtegLikedByTweetsOptions] = None
-  def seedAuthorIds(query: Query): Option[Seq[Long]] = None
-  def candidatePipelineIdentifier: CandidatePipelineIdentifier
-  def earlybirdModels: Seq[EarlybirdScoringModelConfig] =
-    EarlybirdScoringModels.fromEnum(EarlybirdScoringModelsId.UnifiedEngagementProd)
-  def tensorflowModel: Option[String] = None
+trait TimelonlinelonRankelonrQuelonryTransformelonr[
+  Quelonry <: PipelonlinelonQuelonry with HasQualityFactorStatus with HasDelonvicelonContelonxt] {
+  delonf maxTwelonelontsToFelontch: Int
+  delonf sincelonDuration: Duration
+  delonf options: TwelonelontKindOption.ValuelonSelont = TwelonelontKindOption.Delonfault
+  delonf candidatelonTwelonelontSourcelonId: CandidatelonTwelonelontSourcelonId.Valuelon
+  delonf skipVelonryReloncelonntTwelonelonts: Boolelonan
+  delonf utelongLikelondByTwelonelontsOptions(quelonry: Quelonry): Option[tlr.UtelongLikelondByTwelonelontsOptions] = Nonelon
+  delonf selonelondAuthorIds(quelonry: Quelonry): Option[Selonq[Long]] = Nonelon
+  delonf candidatelonPipelonlinelonIdelonntifielonr: CandidatelonPipelonlinelonIdelonntifielonr
+  delonf elonarlybirdModelonls: Selonq[elonarlybirdScoringModelonlConfig] =
+    elonarlybirdScoringModelonls.fromelonnum(elonarlybirdScoringModelonlsId.UnifielondelonngagelonmelonntProd)
+  delonf telonnsorflowModelonl: Option[String] = Nonelon
 
-  def buildTimelineRankerQuery(query: Query): tlr.RecapQuery = {
-    val sinceTime: Time = sinceDuration.ago
-    val untilTime: Time = Time.now
+  delonf buildTimelonlinelonRankelonrQuelonry(quelonry: Quelonry): tlr.ReloncapQuelonry = {
+    val sincelonTimelon: Timelon = sincelonDuration.ago
+    val untilTimelon: Timelon = Timelon.now
 
-    val fromTweetIdExclusive = SnowflakeSortIndexHelper.timestampToFakeId(sinceTime)
-    val toTweetIdExclusive = SnowflakeSortIndexHelper.timestampToFakeId(untilTime)
-    val range = tlr.TweetIdRange(Some(fromTweetIdExclusive), Some(toTweetIdExclusive))
+    val fromTwelonelontIdelonxclusivelon = SnowflakelonSortIndelonxHelonlpelonr.timelonstampToFakelonId(sincelonTimelon)
+    val toTwelonelontIdelonxclusivelon = SnowflakelonSortIndelonxHelonlpelonr.timelonstampToFakelonId(untilTimelon)
+    val rangelon = tlr.TwelonelontIdRangelon(Somelon(fromTwelonelontIdelonxclusivelon), Somelon(toTwelonelontIdelonxclusivelon))
 
-    val excludedTweetIds = query.features.map { featureMap =>
-      CachedScoredTweetsHelper.tweetImpressionsAndCachedScoredTweetsInRange(
-        featureMap,
-        candidatePipelineIdentifier,
-        EarlybirdMaxExcludedTweets,
-        sinceTime,
-        untilTime)
+    val elonxcludelondTwelonelontIds = quelonry.felonaturelons.map { felonaturelonMap =>
+      CachelondScorelondTwelonelontsHelonlpelonr.twelonelontImprelonssionsAndCachelondScorelondTwelonelontsInRangelon(
+        felonaturelonMap,
+        candidatelonPipelonlinelonIdelonntifielonr,
+        elonarlybirdMaxelonxcludelondTwelonelonts,
+        sincelonTimelon,
+        untilTimelon)
     }
 
     val maxCount =
-      (query.getQualityFactorCurrentValue(candidatePipelineIdentifier) * maxTweetsToFetch).toInt
+      (quelonry.gelontQualityFactorCurrelonntValuelon(candidatelonPipelonlinelonIdelonntifielonr) * maxTwelonelontsToFelontch).toInt
 
-    val authorScoreMap = query.features
-      .map(_.getOrElse(RealGraphInNetworkScoresFeature, Map.empty[UserId, Double]))
-      .getOrElse(Map.empty)
+    val authorScorelonMap = quelonry.felonaturelons
+      .map(_.gelontOrelonlselon(RelonalGraphInNelontworkScorelonsFelonaturelon, Map.elonmpty[UselonrId, Doublelon]))
+      .gelontOrelonlselon(Map.elonmpty)
 
-    val deviceContext =
-      query.deviceContext.map(_.toTimelineServiceDeviceContext(query.clientContext))
+    val delonvicelonContelonxt =
+      quelonry.delonvicelonContelonxt.map(_.toTimelonlinelonSelonrvicelonDelonvicelonContelonxt(quelonry.clielonntContelonxt))
 
-    val earlyBirdOptions = EarlybirdOptions(
-      maxNumHitsPerShard = EarlybirdMaxHits,
-      maxNumResultsPerShard = EarlybirdMaxResults,
-      models = earlybirdModels,
-      authorScoreMap = authorScoreMap,
-      skipVeryRecentTweets = skipVeryRecentTweets,
-      tensorflowModel = tensorflowModel
+    val elonarlyBirdOptions = elonarlybirdOptions(
+      maxNumHitsPelonrShard = elonarlybirdMaxHits,
+      maxNumRelonsultsPelonrShard = elonarlybirdMaxRelonsults,
+      modelonls = elonarlybirdModelonls,
+      authorScorelonMap = authorScorelonMap,
+      skipVelonryReloncelonntTwelonelonts = skipVelonryReloncelonntTwelonelonts,
+      telonnsorflowModelonl = telonnsorflowModelonl
     )
 
-    tlr.RecapQuery(
-      userId = query.getRequiredUserId,
-      maxCount = Some(maxCount),
-      range = Some(range),
+    tlr.ReloncapQuelonry(
+      uselonrId = quelonry.gelontRelonquirelondUselonrId,
+      maxCount = Somelon(maxCount),
+      rangelon = Somelon(rangelon),
       options = options,
-      searchOperator = SearchOperator.Exclude,
-      earlybirdOptions = Some(earlyBirdOptions),
-      deviceContext = deviceContext,
-      authorIds = seedAuthorIds(query),
-      excludedTweetIds = excludedTweetIds,
-      utegLikedByTweetsOptions = utegLikedByTweetsOptions(query),
-      searchClientSubId = None,
-      candidateTweetSourceId = Some(candidateTweetSourceId),
-      hydratesContentFeatures = Some(false)
+      selonarchOpelonrator = SelonarchOpelonrator.elonxcludelon,
+      elonarlybirdOptions = Somelon(elonarlyBirdOptions),
+      delonvicelonContelonxt = delonvicelonContelonxt,
+      authorIds = selonelondAuthorIds(quelonry),
+      elonxcludelondTwelonelontIds = elonxcludelondTwelonelontIds,
+      utelongLikelondByTwelonelontsOptions = utelongLikelondByTwelonelontsOptions(quelonry),
+      selonarchClielonntSubId = Nonelon,
+      candidatelonTwelonelontSourcelonId = Somelon(candidatelonTwelonelontSourcelonId),
+      hydratelonsContelonntFelonaturelons = Somelon(falselon)
     )
   }
 }

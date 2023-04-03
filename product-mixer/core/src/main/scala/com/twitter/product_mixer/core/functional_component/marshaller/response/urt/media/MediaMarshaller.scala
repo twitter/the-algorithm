@@ -1,23 +1,23 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.media
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.melondia
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.media.Media
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melondia.Melondia
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class MediaMarshaller @Inject() (
-  mediaEntityMarshaller: MediaEntityMarshaller,
-  mediaKeyMarshaller: MediaKeyMarshaller,
-  rectMarshaller: RectMarshaller,
-  aspectRatioMarshaller: AspectRatioMarshaller) {
+@Singlelonton
+class MelondiaMarshallelonr @Injelonct() (
+  melondiaelonntityMarshallelonr: MelondiaelonntityMarshallelonr,
+  melondiaKelonyMarshallelonr: MelondiaKelonyMarshallelonr,
+  relonctMarshallelonr: RelonctMarshallelonr,
+  aspelonctRatioMarshallelonr: AspelonctRatioMarshallelonr) {
 
-  def apply(media: Media): urt.Media = urt.Media(
-    mediaEntity = media.mediaEntity.map(mediaEntityMarshaller(_)),
-    mediaKey = media.mediaKey.map(mediaKeyMarshaller(_)),
-    imagePossibleCropping = media.imagePossibleCropping.map { rects =>
-      rects.map(rectMarshaller(_))
+  delonf apply(melondia: Melondia): urt.Melondia = urt.Melondia(
+    melondiaelonntity = melondia.melondiaelonntity.map(melondiaelonntityMarshallelonr(_)),
+    melondiaKelony = melondia.melondiaKelony.map(melondiaKelonyMarshallelonr(_)),
+    imagelonPossiblelonCropping = melondia.imagelonPossiblelonCropping.map { reloncts =>
+      reloncts.map(relonctMarshallelonr(_))
     },
-    aspectRatio = media.aspectRatio.map(aspectRatioMarshaller(_))
+    aspelonctRatio = melondia.aspelonctRatio.map(aspelonctRatioMarshallelonr(_))
   )
 }

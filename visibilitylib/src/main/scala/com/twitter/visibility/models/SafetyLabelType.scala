@@ -1,7 +1,7 @@
-package com.twitter.visibility.models
+packagelon com.twittelonr.visibility.modelonls
 
-trait SafetyLabelType {
-  val DeprecatedEnumValue: Short = -1
-  val UnknownEnumValue: Short = -2
-  val StratoOnlyLabelEnumValue: Short = -3
+trait SafelontyLabelonlTypelon {
+  val DelonpreloncatelondelonnumValuelon: Short = -1
+  val UnknownelonnumValuelon: Short = -2
+  val StratoOnlyLabelonlelonnumValuelon: Short = -3
 }

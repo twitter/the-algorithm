@@ -1,25 +1,25 @@
-package com.twitter.timelineranker.repository
+packagelon com.twittelonr.timelonlinelonrankelonr.relonpository
 
-import com.twitter.timelineranker.model._
-import com.twitter.util.Future
+import com.twittelonr.timelonlinelonrankelonr.modelonl._
+import com.twittelonr.util.Futurelon
 
-class RoutingTimelineRepository(
-  reverseChronTimelineRepository: ReverseChronHomeTimelineRepository,
-  rankedTimelineRepository: RankedHomeTimelineRepository)
-    extends TimelineRepository {
+class RoutingTimelonlinelonRelonpository(
+  relonvelonrselonChronTimelonlinelonRelonpository: RelonvelonrselonChronHomelonTimelonlinelonRelonpository,
+  rankelondTimelonlinelonRelonpository: RankelondHomelonTimelonlinelonRelonpository)
+    elonxtelonnds TimelonlinelonRelonpository {
 
-  override def get(query: TimelineQuery): Future[Timeline] = {
-    query match {
-      case q: ReverseChronTimelineQuery => reverseChronTimelineRepository.get(q)
-      case q: RankedTimelineQuery => rankedTimelineRepository.get(q)
-      case _ =>
-        throw new IllegalArgumentException(
-          s"Query types other than RankedTimelineQuery and ReverseChronTimelineQuery are not supported. Found: $query"
+  ovelonrridelon delonf gelont(quelonry: TimelonlinelonQuelonry): Futurelon[Timelonlinelon] = {
+    quelonry match {
+      caselon q: RelonvelonrselonChronTimelonlinelonQuelonry => relonvelonrselonChronTimelonlinelonRelonpository.gelont(q)
+      caselon q: RankelondTimelonlinelonQuelonry => rankelondTimelonlinelonRelonpository.gelont(q)
+      caselon _ =>
+        throw nelonw IllelongalArgumelonntelonxcelonption(
+          s"Quelonry typelons othelonr than RankelondTimelonlinelonQuelonry and RelonvelonrselonChronTimelonlinelonQuelonry arelon not supportelond. Found: $quelonry"
         )
     }
   }
 
-  override def get(queries: Seq[TimelineQuery]): Seq[Future[Timeline]] = {
-    queries.map(get)
+  ovelonrridelon delonf gelont(quelonrielons: Selonq[TimelonlinelonQuelonry]): Selonq[Futurelon[Timelonlinelon]] = {
+    quelonrielons.map(gelont)
   }
 }

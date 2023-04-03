@@ -1,63 +1,63 @@
-package com.twitter.home_mixer.product.scored_tweets.query_feature_hydrator
+packagelon com.twittelonr.homelon_mixelonr.product.scorelond_twelonelonts.quelonry_felonaturelon_hydrator
 
-import com.twitter.follow_recommendations.{thriftscala => frs}
-import com.twitter.home_mixer.product.scored_tweets.model.ScoredTweetsQuery
-import com.twitter.product_mixer.component_library.candidate_source.recommendations.UserFollowRecommendationsCandidateSource
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.candidate_source.strato.StratoKeyView
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.QueryFeatureHydrator
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.stitch.Stitch
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.follow_reloncommelonndations.{thriftscala => frs}
+import com.twittelonr.homelon_mixelonr.product.scorelond_twelonelonts.modelonl.ScorelondTwelonelontsQuelonry
+import com.twittelonr.product_mixelonr.componelonnt_library.candidatelon_sourcelon.reloncommelonndations.UselonrFollowReloncommelonndationsCandidatelonSourcelon
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.TwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMapBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.strato.StratoKelonyVielonw
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator.QuelonryFelonaturelonHydrator
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.FelonaturelonHydratorIdelonntifielonr
+import com.twittelonr.stitch.Stitch
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-object FrsSeedUserIdsFeature extends Feature[TweetCandidate, Option[Seq[Long]]]
-object FrsUserToFollowedByUserIdsFeature extends Feature[TweetCandidate, Map[Long, Seq[Long]]]
+objelonct FrsSelonelondUselonrIdsFelonaturelon elonxtelonnds Felonaturelon[TwelonelontCandidatelon, Option[Selonq[Long]]]
+objelonct FrsUselonrToFollowelondByUselonrIdsFelonaturelon elonxtelonnds Felonaturelon[TwelonelontCandidatelon, Map[Long, Selonq[Long]]]
 
-@Singleton
-case class FrsSeedUsersQueryFeatureHydrator @Inject() (
-  userFollowRecommendationsCandidateSource: UserFollowRecommendationsCandidateSource)
-    extends QueryFeatureHydrator[ScoredTweetsQuery] {
+@Singlelonton
+caselon class FrsSelonelondUselonrsQuelonryFelonaturelonHydrator @Injelonct() (
+  uselonrFollowReloncommelonndationsCandidatelonSourcelon: UselonrFollowReloncommelonndationsCandidatelonSourcelon)
+    elonxtelonnds QuelonryFelonaturelonHydrator[ScorelondTwelonelontsQuelonry] {
 
-  private val maxUsersToFetch = 100
+  privatelon val maxUselonrsToFelontch = 100
 
-  override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier("FrsSeedUsers")
+  ovelonrridelon val idelonntifielonr: FelonaturelonHydratorIdelonntifielonr = FelonaturelonHydratorIdelonntifielonr("FrsSelonelondUselonrs")
 
-  override def features: Set[Feature[_, _]] = Set(
-    FrsSeedUserIdsFeature,
-    FrsUserToFollowedByUserIdsFeature
+  ovelonrridelon delonf felonaturelons: Selont[Felonaturelon[_, _]] = Selont(
+    FrsSelonelondUselonrIdsFelonaturelon,
+    FrsUselonrToFollowelondByUselonrIdsFelonaturelon
   )
 
-  override def hydrate(query: ScoredTweetsQuery): Stitch[FeatureMap] = {
-    val frsRequest = frs.RecommendationRequest(
-      clientContext = frs.ClientContext(query.getOptionalUserId),
-      displayLocation = frs.DisplayLocation.HomeTimelineTweetRecs,
-      maxResults = Some(maxUsersToFetch)
+  ovelonrridelon delonf hydratelon(quelonry: ScorelondTwelonelontsQuelonry): Stitch[FelonaturelonMap] = {
+    val frsRelonquelonst = frs.ReloncommelonndationRelonquelonst(
+      clielonntContelonxt = frs.ClielonntContelonxt(quelonry.gelontOptionalUselonrId),
+      displayLocation = frs.DisplayLocation.HomelonTimelonlinelonTwelonelontReloncs,
+      maxRelonsults = Somelon(maxUselonrsToFelontch)
     )
 
-    userFollowRecommendationsCandidateSource(StratoKeyView(frsRequest, Unit))
-      .map { userRecommendations: Seq[frs.UserRecommendation] =>
-        val seedUserIds = userRecommendations.map(_.userId)
-        val seedUserIdsSet = seedUserIds.toSet
+    uselonrFollowReloncommelonndationsCandidatelonSourcelon(StratoKelonyVielonw(frsRelonquelonst, Unit))
+      .map { uselonrReloncommelonndations: Selonq[frs.UselonrReloncommelonndation] =>
+        val selonelondUselonrIds = uselonrReloncommelonndations.map(_.uselonrId)
+        val selonelondUselonrIdsSelont = selonelondUselonrIds.toSelont
 
-        val userToFollowedByUserIds: Map[Long, Seq[Long]] = userRecommendations.flatMap {
-          userRecommendation =>
-            if (seedUserIdsSet.contains(userRecommendation.userId)) {
+        val uselonrToFollowelondByUselonrIds: Map[Long, Selonq[Long]] = uselonrReloncommelonndations.flatMap {
+          uselonrReloncommelonndation =>
+            if (selonelondUselonrIdsSelont.contains(uselonrReloncommelonndation.uselonrId)) {
               val followProof =
-                userRecommendation.reason.flatMap(_.accountProof).flatMap(_.followProof)
-              val followedByUserIds = followProof.map(_.userIds).getOrElse(Seq.empty)
-              Some(userRecommendation.userId -> followedByUserIds)
-            } else {
-              None
+                uselonrReloncommelonndation.relonason.flatMap(_.accountProof).flatMap(_.followProof)
+              val followelondByUselonrIds = followProof.map(_.uselonrIds).gelontOrelonlselon(Selonq.elonmpty)
+              Somelon(uselonrReloncommelonndation.uselonrId -> followelondByUselonrIds)
+            } elonlselon {
+              Nonelon
             }
         }.toMap
 
-        FeatureMapBuilder()
-          .add(FrsSeedUserIdsFeature, Some(seedUserIds))
-          .add(FrsUserToFollowedByUserIdsFeature, userToFollowedByUserIds)
+        FelonaturelonMapBuildelonr()
+          .add(FrsSelonelondUselonrIdsFelonaturelon, Somelon(selonelondUselonrIds))
+          .add(FrsUselonrToFollowelondByUselonrIdsFelonaturelon, uselonrToFollowelondByUselonrIds)
           .build()
       }
   }

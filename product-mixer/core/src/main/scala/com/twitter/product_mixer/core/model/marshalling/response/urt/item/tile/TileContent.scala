@@ -1,21 +1,21 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.tile
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.tilelon
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.button.CtaButton
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Badge
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichText
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.button.CtaButton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.Badgelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.richtelonxt.RichTelonxt
 
-sealed trait TileContent
+selonalelond trait TilelonContelonnt
 
-case class StandardTileContent(
-  title: String,
-  supportingText: String,
-  badge: Option[Badge])
-    extends TileContent
+caselon class StandardTilelonContelonnt(
+  titlelon: String,
+  supportingTelonxt: String,
+  badgelon: Option[Badgelon])
+    elonxtelonnds TilelonContelonnt
 
-case class CallToActionTileContent(
-  text: String,
-  richText: Option[RichText],
+caselon class CallToActionTilelonContelonnt(
+  telonxt: String,
+  richTelonxt: Option[RichTelonxt],
   ctaButton: Option[CtaButton])
-    extends TileContent
+    elonxtelonnds TilelonContelonnt
 
-//todo: Add other TileContent types later
+//todo: Add othelonr TilelonContelonnt typelons latelonr

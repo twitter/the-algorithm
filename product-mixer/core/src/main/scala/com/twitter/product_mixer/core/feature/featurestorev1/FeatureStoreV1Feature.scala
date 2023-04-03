@@ -1,312 +1,312 @@
-package com.twitter.product_mixer.core.feature.featurestorev1
+packagelon com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonstorelonv1
 
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.transform.FeatureRenameTransform
-import com.twitter.ml.featurestore.lib.EntityId
-import com.twitter.ml.featurestore.lib.dynamic.BaseGatedFeatures
-import com.twitter.ml.featurestore.lib.feature.BoundFeature
-import com.twitter.ml.featurestore.lib.feature.BoundFeatureSet
-import com.twitter.ml.featurestore.lib.feature.TimelinesAggregationFrameworkFeatureGroup
-import com.twitter.ml.featurestore.lib.feature.{Feature => FSv1Feature}
-import com.twitter.product_mixer.core.feature.ModelFeatureName
-import com.twitter.product_mixer.core.feature.datarecord.FeatureStoreDataRecordFeature
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.servo.util.{Gate => ServoGate}
-import com.twitter.timelines.configapi.FSParam
-import scala.reflect.ClassTag
+import com.twittelonr.ml.api.DataReloncord
+import com.twittelonr.ml.api.transform.FelonaturelonRelonnamelonTransform
+import com.twittelonr.ml.felonaturelonstorelon.lib.elonntityId
+import com.twittelonr.ml.felonaturelonstorelon.lib.dynamic.BaselonGatelondFelonaturelons
+import com.twittelonr.ml.felonaturelonstorelon.lib.felonaturelon.BoundFelonaturelon
+import com.twittelonr.ml.felonaturelonstorelon.lib.felonaturelon.BoundFelonaturelonSelont
+import com.twittelonr.ml.felonaturelonstorelon.lib.felonaturelon.TimelonlinelonsAggrelongationFramelonworkFelonaturelonGroup
+import com.twittelonr.ml.felonaturelonstorelon.lib.felonaturelon.{Felonaturelon => FSv1Felonaturelon}
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.ModelonlFelonaturelonNamelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.datareloncord.FelonaturelonStorelonDataReloncordFelonaturelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.selonrvo.util.{Gatelon => SelonrvoGatelon}
+import com.twittelonr.timelonlinelons.configapi.FSParam
+import scala.relonflelonct.ClassTag
 
 /**
- * The base trait for all feature store features on ProMix. This should not be constructed directly
- * and should instead be used through the other implementations below
- * @tparam Query Product Mixer Query Type
- * @tparam Input The input type the feature should be keyed on, this is same as Query for query
- *               features and
- * @tparam FeatureStoreEntityId Feature Store Entity Type
- * @tparam Value The type of the value of this feature.
+ * Thelon baselon trait for all felonaturelon storelon felonaturelons on ProMix. This should not belon constructelond direlonctly
+ * and should instelonad belon uselond through thelon othelonr implelonmelonntations belonlow
+ * @tparam Quelonry Product Mixelonr Quelonry Typelon
+ * @tparam Input Thelon input typelon thelon felonaturelon should belon kelonyelond on, this is samelon as Quelonry for quelonry
+ *               felonaturelons and
+ * @tparam FelonaturelonStorelonelonntityId Felonaturelon Storelon elonntity Typelon
+ * @tparam Valuelon Thelon typelon of thelon valuelon of this felonaturelon.
  */
-sealed trait BaseFeatureStoreV1Feature[
-  -Query <: PipelineQuery,
+selonalelond trait BaselonFelonaturelonStorelonV1Felonaturelon[
+  -Quelonry <: PipelonlinelonQuelonry,
   -Input,
-  FeatureStoreEntityId <: EntityId,
-  Value]
-    extends FeatureStoreDataRecordFeature[Input, Value]
-    with BaseGatedFeatures[Query] {
-  val fsv1Feature: FSv1Feature[FeatureStoreEntityId, Value]
+  FelonaturelonStorelonelonntityId <: elonntityId,
+  Valuelon]
+    elonxtelonnds FelonaturelonStorelonDataReloncordFelonaturelon[Input, Valuelon]
+    with BaselonGatelondFelonaturelons[Quelonry] {
+  val fsv1Felonaturelon: FSv1Felonaturelon[FelonaturelonStorelonelonntityId, Valuelon]
 
-  val entity: FeatureStoreV1Entity[Query, Input, FeatureStoreEntityId]
+  val elonntity: FelonaturelonStorelonV1elonntity[Quelonry, Input, FelonaturelonStorelonelonntityId]
 
-  val enabledParam: Option[FSParam[Boolean]]
+  val elonnablelondParam: Option[FSParam[Boolelonan]]
 
-  override final lazy val gate: ServoGate[Query] = enabledParam
+  ovelonrridelon final lazy val gatelon: SelonrvoGatelon[Quelonry] = elonnablelondParam
     .map { param =>
-      new ServoGate[PipelineQuery] {
-        override def apply[U](query: U)(implicit asT: <:<[U, PipelineQuery]): Boolean = {
-          query.params(param)
+      nelonw SelonrvoGatelon[PipelonlinelonQuelonry] {
+        ovelonrridelon delonf apply[U](quelonry: U)(implicit asT: <:<[U, PipelonlinelonQuelonry]): Boolelonan = {
+          quelonry.params(param)
         }
       }
-    }.getOrElse(ServoGate.True)
+    }.gelontOrelonlselon(SelonrvoGatelon.Truelon)
 
-  override final lazy val boundFeatureSet: BoundFeatureSet = new BoundFeatureSet(Set(boundFeature))
+  ovelonrridelon final lazy val boundFelonaturelonSelont: BoundFelonaturelonSelont = nelonw BoundFelonaturelonSelont(Selont(boundFelonaturelon))
 
-  val boundFeature: BoundFeature[FeatureStoreEntityId, Value]
+  val boundFelonaturelon: BoundFelonaturelon[FelonaturelonStorelonelonntityId, Valuelon]
 
   /**
-   * Since this trait is normally constructed inline, avoid the anonymous toString and use the bounded feature name.
+   * Sincelon this trait is normally constructelond inlinelon, avoid thelon anonymous toString and uselon thelon boundelond felonaturelon namelon.
    */
-  override lazy val toString: String = boundFeature.name
+  ovelonrridelon lazy val toString: String = boundFelonaturelon.namelon
 }
 
 /**
- * A unitary (non-aggregate group) feature store feature in ProMix. This should be constructed using
- * [[FeatureStoreV1CandidateFeature]] or [[FeatureStoreV1QueryFeature]].
- * @tparam Query Product Mixer Query Type
- * @tparam Input The input type the feature should be keyed on, this is same as Query for query
- *               features and
- * @tparam FeatureStoreEntityId Feature Store Entity Type
- * @tparam Value The type of the value of this feature.
+ * A unitary (non-aggrelongatelon group) felonaturelon storelon felonaturelon in ProMix. This should belon constructelond using
+ * [[FelonaturelonStorelonV1CandidatelonFelonaturelon]] or [[FelonaturelonStorelonV1QuelonryFelonaturelon]].
+ * @tparam Quelonry Product Mixelonr Quelonry Typelon
+ * @tparam Input Thelon input typelon thelon felonaturelon should belon kelonyelond on, this is samelon as Quelonry for quelonry
+ *               felonaturelons and
+ * @tparam FelonaturelonStorelonelonntityId Felonaturelon Storelon elonntity Typelon
+ * @tparam Valuelon Thelon typelon of thelon valuelon of this felonaturelon.
  */
-sealed trait FeatureStoreV1Feature[
-  -Query <: PipelineQuery,
+selonalelond trait FelonaturelonStorelonV1Felonaturelon[
+  -Quelonry <: PipelonlinelonQuelonry,
   -Input,
-  FeatureStoreEntityId <: EntityId,
-  Value]
-    extends BaseFeatureStoreV1Feature[Query, Input, FeatureStoreEntityId, Value]
-    with ModelFeatureName {
+  FelonaturelonStorelonelonntityId <: elonntityId,
+  Valuelon]
+    elonxtelonnds BaselonFelonaturelonStorelonV1Felonaturelon[Quelonry, Input, FelonaturelonStorelonelonntityId, Valuelon]
+    with ModelonlFelonaturelonNamelon {
 
-  val legacyName: Option[String]
-  val defaultValue: Option[Value]
+  val lelongacyNamelon: Option[String]
+  val delonfaultValuelon: Option[Valuelon]
 
-  override lazy val featureName: String = boundFeature.name
+  ovelonrridelon lazy val felonaturelonNamelon: String = boundFelonaturelon.namelon
 
-  override final lazy val boundFeature = (legacyName, defaultValue) match {
-    case (Some(legacyName), Some(defaultValue)) =>
-      fsv1Feature.bind(entity.entity).withLegacyName(legacyName).withDefault(defaultValue)
-    case (Some(legacyName), _) =>
-      fsv1Feature.bind(entity.entity).withLegacyName(legacyName)
-    case (_, Some(defaultValue)) =>
-      fsv1Feature.bind(entity.entity).withDefault(defaultValue)
-    case _ =>
-      fsv1Feature.bind(entity.entity)
+  ovelonrridelon final lazy val boundFelonaturelon = (lelongacyNamelon, delonfaultValuelon) match {
+    caselon (Somelon(lelongacyNamelon), Somelon(delonfaultValuelon)) =>
+      fsv1Felonaturelon.bind(elonntity.elonntity).withLelongacyNamelon(lelongacyNamelon).withDelonfault(delonfaultValuelon)
+    caselon (Somelon(lelongacyNamelon), _) =>
+      fsv1Felonaturelon.bind(elonntity.elonntity).withLelongacyNamelon(lelongacyNamelon)
+    caselon (_, Somelon(delonfaultValuelon)) =>
+      fsv1Felonaturelon.bind(elonntity.elonntity).withDelonfault(delonfaultValuelon)
+    caselon _ =>
+      fsv1Felonaturelon.bind(elonntity.elonntity)
   }
 
-  def fromDataRecordValue(recordValue: boundFeature.feature.mfc.V): Value =
-    boundFeature.feature.mfc.fromDataRecordValue(recordValue)
+  delonf fromDataReloncordValuelon(reloncordValuelon: boundFelonaturelon.felonaturelon.mfc.V): Valuelon =
+    boundFelonaturelon.felonaturelon.mfc.fromDataReloncordValuelon(reloncordValuelon)
 }
 
 /**
- * A feature store aggregated group feature in ProMix. This should be constructed using
- * [[FeatureStoreV1CandidateFeatureGroup]] or [[FeatureStoreV1QueryFeatureGroup]].
+ * A felonaturelon storelon aggrelongatelond group felonaturelon in ProMix. This should belon constructelond using
+ * [[FelonaturelonStorelonV1CandidatelonFelonaturelonGroup]] or [[FelonaturelonStorelonV1QuelonryFelonaturelonGroup]].
  *
- * @tparam Query Product Mixer Query Type
- * @tparam Input The input type the feature should be keyed on, this is same as Query for query
- *               features and
- * @tparam FeatureStoreEntityId Feature Store Entity Type
+ * @tparam Quelonry Product Mixelonr Quelonry Typelon
+ * @tparam Input Thelon input typelon thelon felonaturelon should belon kelonyelond on, this is samelon as Quelonry for quelonry
+ *               felonaturelons and
+ * @tparam FelonaturelonStorelonelonntityId Felonaturelon Storelon elonntity Typelon
  */
-abstract class FeatureStoreV1FeatureGroup[
-  -Query <: PipelineQuery,
+abstract class FelonaturelonStorelonV1FelonaturelonGroup[
+  -Quelonry <: PipelonlinelonQuelonry,
   -Input,
-  FeatureStoreEntityId <: EntityId: ClassTag]
-    extends BaseFeatureStoreV1Feature[Query, Input, FeatureStoreEntityId, DataRecord] {
-  val keepLegacyNames: Boolean
-  val featureNameTransform: Option[FeatureRenameTransform]
+  FelonaturelonStorelonelonntityId <: elonntityId: ClassTag]
+    elonxtelonnds BaselonFelonaturelonStorelonV1Felonaturelon[Quelonry, Input, FelonaturelonStorelonelonntityId, DataReloncord] {
+  val kelonelonpLelongacyNamelons: Boolelonan
+  val felonaturelonNamelonTransform: Option[FelonaturelonRelonnamelonTransform]
 
-  val featureGroup: TimelinesAggregationFrameworkFeatureGroup[FeatureStoreEntityId]
+  val felonaturelonGroup: TimelonlinelonsAggrelongationFramelonworkFelonaturelonGroup[FelonaturelonStorelonelonntityId]
 
-  override lazy val fsv1Feature: FSv1Feature[FeatureStoreEntityId, DataRecord] =
-    featureGroup.FeaturesAsDataRecord
+  ovelonrridelon lazy val fsv1Felonaturelon: FSv1Felonaturelon[FelonaturelonStorelonelonntityId, DataReloncord] =
+    felonaturelonGroup.FelonaturelonsAsDataReloncord
 
-  override final lazy val boundFeature = (keepLegacyNames, featureNameTransform) match {
-    case (_, Some(transform)) =>
-      fsv1Feature.bind(entity.entity).withLegacyIndividualFeatureNames(transform)
-    case (true, _) =>
-      fsv1Feature.bind(entity.entity).keepLegacyNames
-    case _ =>
-      fsv1Feature.bind(entity.entity)
+  ovelonrridelon final lazy val boundFelonaturelon = (kelonelonpLelongacyNamelons, felonaturelonNamelonTransform) match {
+    caselon (_, Somelon(transform)) =>
+      fsv1Felonaturelon.bind(elonntity.elonntity).withLelongacyIndividualFelonaturelonNamelons(transform)
+    caselon (truelon, _) =>
+      fsv1Felonaturelon.bind(elonntity.elonntity).kelonelonpLelongacyNamelons
+    caselon _ =>
+      fsv1Felonaturelon.bind(elonntity.elonntity)
   }
 }
 
-sealed trait BaseFeatureStoreV1QueryFeature[
-  -Query <: PipelineQuery,
-  FeatureStoreEntityId <: EntityId,
-  Value]
-    extends BaseFeatureStoreV1Feature[Query, Query, FeatureStoreEntityId, Value] {
+selonalelond trait BaselonFelonaturelonStorelonV1QuelonryFelonaturelon[
+  -Quelonry <: PipelonlinelonQuelonry,
+  FelonaturelonStorelonelonntityId <: elonntityId,
+  Valuelon]
+    elonxtelonnds BaselonFelonaturelonStorelonV1Felonaturelon[Quelonry, Quelonry, FelonaturelonStorelonelonntityId, Valuelon] {
 
-  override val entity: FeatureStoreV1QueryEntity[Query, FeatureStoreEntityId]
+  ovelonrridelon val elonntity: FelonaturelonStorelonV1Quelonryelonntity[Quelonry, FelonaturelonStorelonelonntityId]
 }
 
-trait FeatureStoreV1QueryFeature[-Query <: PipelineQuery, FeatureStoreEntityId <: EntityId, Value]
-    extends FeatureStoreV1Feature[Query, Query, FeatureStoreEntityId, Value]
-    with BaseFeatureStoreV1QueryFeature[Query, FeatureStoreEntityId, Value]
+trait FelonaturelonStorelonV1QuelonryFelonaturelon[-Quelonry <: PipelonlinelonQuelonry, FelonaturelonStorelonelonntityId <: elonntityId, Valuelon]
+    elonxtelonnds FelonaturelonStorelonV1Felonaturelon[Quelonry, Quelonry, FelonaturelonStorelonelonntityId, Valuelon]
+    with BaselonFelonaturelonStorelonV1QuelonryFelonaturelon[Quelonry, FelonaturelonStorelonelonntityId, Valuelon]
 
-trait FeatureStoreV1QueryFeatureGroup[-Query <: PipelineQuery, FeatureStoreEntityId <: EntityId]
-    extends FeatureStoreV1FeatureGroup[Query, Query, FeatureStoreEntityId]
-    with BaseFeatureStoreV1QueryFeature[Query, FeatureStoreEntityId, DataRecord]
+trait FelonaturelonStorelonV1QuelonryFelonaturelonGroup[-Quelonry <: PipelonlinelonQuelonry, FelonaturelonStorelonelonntityId <: elonntityId]
+    elonxtelonnds FelonaturelonStorelonV1FelonaturelonGroup[Quelonry, Quelonry, FelonaturelonStorelonelonntityId]
+    with BaselonFelonaturelonStorelonV1QuelonryFelonaturelon[Quelonry, FelonaturelonStorelonelonntityId, DataReloncord]
 
-object FeatureStoreV1QueryFeature {
+objelonct FelonaturelonStorelonV1QuelonryFelonaturelon {
 
   /**
-   * Query-based Feature Store backed feature
-   * @param feature The underling feature store feature this represents.
-   * @param _entity The entity for binding the Feature Store features
-   * @param _legacyName Feature Store legacy name if required
-   * @param _defaultValue The default value to return for this feature if not hydrated.
-   * @param _enabledParam The Feature Switch Param to gate this feature, always enabled if none.
-   * @tparam Query The Product Mixer query type this feature is keyed on.
-   * @tparam FeatureStoreEntityId Feature Store Entity ID
-   * @tparam Value The type of the value this feature contains.
-   * @return Product Mixer Feature
+   * Quelonry-baselond Felonaturelon Storelon backelond felonaturelon
+   * @param felonaturelon Thelon undelonrling felonaturelon storelon felonaturelon this relonprelonselonnts.
+   * @param _elonntity Thelon elonntity for binding thelon Felonaturelon Storelon felonaturelons
+   * @param _lelongacyNamelon Felonaturelon Storelon lelongacy namelon if relonquirelond
+   * @param _delonfaultValuelon Thelon delonfault valuelon to relonturn for this felonaturelon if not hydratelond.
+   * @param _elonnablelondParam Thelon Felonaturelon Switch Param to gatelon this felonaturelon, always elonnablelond if nonelon.
+   * @tparam Quelonry Thelon Product Mixelonr quelonry typelon this felonaturelon is kelonyelond on.
+   * @tparam FelonaturelonStorelonelonntityId Felonaturelon Storelon elonntity ID
+   * @tparam Valuelon Thelon typelon of thelon valuelon this felonaturelon contains.
+   * @relonturn Product Mixelonr Felonaturelon
    */
-  def apply[Query <: PipelineQuery, FeatureStoreEntityId <: EntityId, Value](
-    feature: FSv1Feature[FeatureStoreEntityId, Value],
-    _entity: FeatureStoreV1QueryEntity[Query, FeatureStoreEntityId],
-    _legacyName: Option[String] = None,
-    _defaultValue: Option[Value] = None,
-    _enabledParam: Option[FSParam[Boolean]] = None
-  ): FeatureStoreV1QueryFeature[Query, FeatureStoreEntityId, Value] =
-    new FeatureStoreV1QueryFeature[Query, FeatureStoreEntityId, Value] {
-      override val fsv1Feature: FSv1Feature[FeatureStoreEntityId, Value] = feature
-      override val entity: FeatureStoreV1QueryEntity[Query, FeatureStoreEntityId] = _entity
-      override val legacyName: Option[String] = _legacyName
-      override val defaultValue: Option[Value] = _defaultValue
-      override val enabledParam: Option[FSParam[Boolean]] = _enabledParam
+  delonf apply[Quelonry <: PipelonlinelonQuelonry, FelonaturelonStorelonelonntityId <: elonntityId, Valuelon](
+    felonaturelon: FSv1Felonaturelon[FelonaturelonStorelonelonntityId, Valuelon],
+    _elonntity: FelonaturelonStorelonV1Quelonryelonntity[Quelonry, FelonaturelonStorelonelonntityId],
+    _lelongacyNamelon: Option[String] = Nonelon,
+    _delonfaultValuelon: Option[Valuelon] = Nonelon,
+    _elonnablelondParam: Option[FSParam[Boolelonan]] = Nonelon
+  ): FelonaturelonStorelonV1QuelonryFelonaturelon[Quelonry, FelonaturelonStorelonelonntityId, Valuelon] =
+    nelonw FelonaturelonStorelonV1QuelonryFelonaturelon[Quelonry, FelonaturelonStorelonelonntityId, Valuelon] {
+      ovelonrridelon val fsv1Felonaturelon: FSv1Felonaturelon[FelonaturelonStorelonelonntityId, Valuelon] = felonaturelon
+      ovelonrridelon val elonntity: FelonaturelonStorelonV1Quelonryelonntity[Quelonry, FelonaturelonStorelonelonntityId] = _elonntity
+      ovelonrridelon val lelongacyNamelon: Option[String] = _lelongacyNamelon
+      ovelonrridelon val delonfaultValuelon: Option[Valuelon] = _delonfaultValuelon
+      ovelonrridelon val elonnablelondParam: Option[FSParam[Boolelonan]] = _elonnablelondParam
     }
 }
 
-object FeatureStoreV1QueryFeatureGroup {
+objelonct FelonaturelonStorelonV1QuelonryFelonaturelonGroup {
 
   /**
-   * Query-based Feature Store Aggregated group backed feature
+   * Quelonry-baselond Felonaturelon Storelon Aggrelongatelond group backelond felonaturelon
    *
-   * @param featureGroup  The underling aggregation group feature this represents.
-   * @param _entity       The entity for binding the Feature Store features
-   * @param _enabledParam The Feature Switch Param to gate this feature, always enabled if none.
-   * @param _keepLegacyNames Whether to keep the legacy names as is for the entire group
-   * @param _featureNameTransform Rename the entire group's legacy names using the [[FeatureRenameTransform]]
-   * @tparam Query                The Product Mixer query type this feature is keyed on.
-   * @tparam FeatureStoreEntityId Feature Store Entity ID
+   * @param felonaturelonGroup  Thelon undelonrling aggrelongation group felonaturelon this relonprelonselonnts.
+   * @param _elonntity       Thelon elonntity for binding thelon Felonaturelon Storelon felonaturelons
+   * @param _elonnablelondParam Thelon Felonaturelon Switch Param to gatelon this felonaturelon, always elonnablelond if nonelon.
+   * @param _kelonelonpLelongacyNamelons Whelonthelonr to kelonelonp thelon lelongacy namelons as is for thelon elonntirelon group
+   * @param _felonaturelonNamelonTransform Relonnamelon thelon elonntirelon group's lelongacy namelons using thelon [[FelonaturelonRelonnamelonTransform]]
+   * @tparam Quelonry                Thelon Product Mixelonr quelonry typelon this felonaturelon is kelonyelond on.
+   * @tparam FelonaturelonStorelonelonntityId Felonaturelon Storelon elonntity ID
    *
-   * @return Product Mixer Feature
+   * @relonturn Product Mixelonr Felonaturelon
    */
-  def apply[Query <: PipelineQuery, FeatureStoreEntityId <: EntityId: ClassTag](
-    _featureGroup: TimelinesAggregationFrameworkFeatureGroup[FeatureStoreEntityId],
-    _entity: FeatureStoreV1QueryEntity[Query, FeatureStoreEntityId],
-    _enabledParam: Option[FSParam[Boolean]] = None,
-    _keepLegacyNames: Boolean = false,
-    _featureNameTransform: Option[FeatureRenameTransform] = None
-  ): FeatureStoreV1QueryFeatureGroup[Query, FeatureStoreEntityId] =
-    new FeatureStoreV1QueryFeatureGroup[Query, FeatureStoreEntityId] {
-      override val entity: FeatureStoreV1QueryEntity[Query, FeatureStoreEntityId] = _entity
-      override val featureGroup: TimelinesAggregationFrameworkFeatureGroup[
-        FeatureStoreEntityId
-      ] = _featureGroup
+  delonf apply[Quelonry <: PipelonlinelonQuelonry, FelonaturelonStorelonelonntityId <: elonntityId: ClassTag](
+    _felonaturelonGroup: TimelonlinelonsAggrelongationFramelonworkFelonaturelonGroup[FelonaturelonStorelonelonntityId],
+    _elonntity: FelonaturelonStorelonV1Quelonryelonntity[Quelonry, FelonaturelonStorelonelonntityId],
+    _elonnablelondParam: Option[FSParam[Boolelonan]] = Nonelon,
+    _kelonelonpLelongacyNamelons: Boolelonan = falselon,
+    _felonaturelonNamelonTransform: Option[FelonaturelonRelonnamelonTransform] = Nonelon
+  ): FelonaturelonStorelonV1QuelonryFelonaturelonGroup[Quelonry, FelonaturelonStorelonelonntityId] =
+    nelonw FelonaturelonStorelonV1QuelonryFelonaturelonGroup[Quelonry, FelonaturelonStorelonelonntityId] {
+      ovelonrridelon val elonntity: FelonaturelonStorelonV1Quelonryelonntity[Quelonry, FelonaturelonStorelonelonntityId] = _elonntity
+      ovelonrridelon val felonaturelonGroup: TimelonlinelonsAggrelongationFramelonworkFelonaturelonGroup[
+        FelonaturelonStorelonelonntityId
+      ] = _felonaturelonGroup
 
-      override val enabledParam: Option[FSParam[Boolean]] = _enabledParam
+      ovelonrridelon val elonnablelondParam: Option[FSParam[Boolelonan]] = _elonnablelondParam
 
-      override val keepLegacyNames: Boolean = _keepLegacyNames
-      override val featureNameTransform: Option[FeatureRenameTransform] = _featureNameTransform
+      ovelonrridelon val kelonelonpLelongacyNamelons: Boolelonan = _kelonelonpLelongacyNamelons
+      ovelonrridelon val felonaturelonNamelonTransform: Option[FelonaturelonRelonnamelonTransform] = _felonaturelonNamelonTransform
     }
 }
 
-sealed trait BaseFeatureStoreV1CandidateFeature[
-  -Query <: PipelineQuery,
-  -Input <: UniversalNoun[Any],
-  FeatureStoreEntityId <: EntityId,
-  Value]
-    extends BaseFeatureStoreV1Feature[Query, Input, FeatureStoreEntityId, Value] {
+selonalelond trait BaselonFelonaturelonStorelonV1CandidatelonFelonaturelon[
+  -Quelonry <: PipelonlinelonQuelonry,
+  -Input <: UnivelonrsalNoun[Any],
+  FelonaturelonStorelonelonntityId <: elonntityId,
+  Valuelon]
+    elonxtelonnds BaselonFelonaturelonStorelonV1Felonaturelon[Quelonry, Input, FelonaturelonStorelonelonntityId, Valuelon] {
 
-  override val entity: FeatureStoreV1CandidateEntity[Query, Input, FeatureStoreEntityId]
+  ovelonrridelon val elonntity: FelonaturelonStorelonV1Candidatelonelonntity[Quelonry, Input, FelonaturelonStorelonelonntityId]
 }
 
-trait FeatureStoreV1CandidateFeature[
-  -Query <: PipelineQuery,
-  -Input <: UniversalNoun[Any],
-  FeatureStoreEntityId <: EntityId,
-  Value]
-    extends FeatureStoreV1Feature[Query, Input, FeatureStoreEntityId, Value]
-    with BaseFeatureStoreV1CandidateFeature[Query, Input, FeatureStoreEntityId, Value]
+trait FelonaturelonStorelonV1CandidatelonFelonaturelon[
+  -Quelonry <: PipelonlinelonQuelonry,
+  -Input <: UnivelonrsalNoun[Any],
+  FelonaturelonStorelonelonntityId <: elonntityId,
+  Valuelon]
+    elonxtelonnds FelonaturelonStorelonV1Felonaturelon[Quelonry, Input, FelonaturelonStorelonelonntityId, Valuelon]
+    with BaselonFelonaturelonStorelonV1CandidatelonFelonaturelon[Quelonry, Input, FelonaturelonStorelonelonntityId, Valuelon]
 
-trait FeatureStoreV1CandidateFeatureGroup[
-  -Query <: PipelineQuery,
-  -Input <: UniversalNoun[Any],
-  FeatureStoreEntityId <: EntityId]
-    extends FeatureStoreV1FeatureGroup[Query, Input, FeatureStoreEntityId]
-    with BaseFeatureStoreV1CandidateFeature[Query, Input, FeatureStoreEntityId, DataRecord]
+trait FelonaturelonStorelonV1CandidatelonFelonaturelonGroup[
+  -Quelonry <: PipelonlinelonQuelonry,
+  -Input <: UnivelonrsalNoun[Any],
+  FelonaturelonStorelonelonntityId <: elonntityId]
+    elonxtelonnds FelonaturelonStorelonV1FelonaturelonGroup[Quelonry, Input, FelonaturelonStorelonelonntityId]
+    with BaselonFelonaturelonStorelonV1CandidatelonFelonaturelon[Quelonry, Input, FelonaturelonStorelonelonntityId, DataReloncord]
 
-object FeatureStoreV1CandidateFeature {
+objelonct FelonaturelonStorelonV1CandidatelonFelonaturelon {
 
   /**
-   * Candidate-based Feature Store backed feature
-   * @param feature The underling feature store feature this represents.
-   * @param _entity The entity for binding the Feature Store features
-   * @param _legacyName Feature Store legacy name if required
-   * @param _defaultValue The default value to return for this feature if not hydrated.
-   * @param _enabledParam The Feature Switch Param to gate this feature, always enabled if none.
-   * @tparam Query The Product Mixer query type this feature is keyed on.
-   * @tparam FeatureStoreEntityId The feature store entity type
-   * @tparam Input The type of the candidate this feature is keyed on
-   * @tparam Value The type of value this feature contains.
-   * @return Product Mixer Feature
+   * Candidatelon-baselond Felonaturelon Storelon backelond felonaturelon
+   * @param felonaturelon Thelon undelonrling felonaturelon storelon felonaturelon this relonprelonselonnts.
+   * @param _elonntity Thelon elonntity for binding thelon Felonaturelon Storelon felonaturelons
+   * @param _lelongacyNamelon Felonaturelon Storelon lelongacy namelon if relonquirelond
+   * @param _delonfaultValuelon Thelon delonfault valuelon to relonturn for this felonaturelon if not hydratelond.
+   * @param _elonnablelondParam Thelon Felonaturelon Switch Param to gatelon this felonaturelon, always elonnablelond if nonelon.
+   * @tparam Quelonry Thelon Product Mixelonr quelonry typelon this felonaturelon is kelonyelond on.
+   * @tparam FelonaturelonStorelonelonntityId Thelon felonaturelon storelon elonntity typelon
+   * @tparam Input Thelon typelon of thelon candidatelon this felonaturelon is kelonyelond on
+   * @tparam Valuelon Thelon typelon of valuelon this felonaturelon contains.
+   * @relonturn Product Mixelonr Felonaturelon
    */
-  def apply[
-    Query <: PipelineQuery,
-    Input <: UniversalNoun[Any],
-    FeatureStoreEntityId <: EntityId,
-    Value
+  delonf apply[
+    Quelonry <: PipelonlinelonQuelonry,
+    Input <: UnivelonrsalNoun[Any],
+    FelonaturelonStorelonelonntityId <: elonntityId,
+    Valuelon
   ](
-    feature: FSv1Feature[FeatureStoreEntityId, Value],
-    _entity: FeatureStoreV1CandidateEntity[Query, Input, FeatureStoreEntityId],
-    _legacyName: Option[String] = None,
-    _defaultValue: Option[Value] = None,
-    _enabledParam: Option[FSParam[Boolean]] = None
-  ): FeatureStoreV1CandidateFeature[Query, Input, FeatureStoreEntityId, Value] =
-    new FeatureStoreV1CandidateFeature[Query, Input, FeatureStoreEntityId, Value] {
-      override val fsv1Feature: FSv1Feature[FeatureStoreEntityId, Value] = feature
-      override val entity: FeatureStoreV1CandidateEntity[Query, Input, FeatureStoreEntityId] =
-        _entity
-      override val legacyName: Option[String] = _legacyName
-      override val defaultValue: Option[Value] = _defaultValue
-      override val enabledParam: Option[FSParam[Boolean]] = _enabledParam
+    felonaturelon: FSv1Felonaturelon[FelonaturelonStorelonelonntityId, Valuelon],
+    _elonntity: FelonaturelonStorelonV1Candidatelonelonntity[Quelonry, Input, FelonaturelonStorelonelonntityId],
+    _lelongacyNamelon: Option[String] = Nonelon,
+    _delonfaultValuelon: Option[Valuelon] = Nonelon,
+    _elonnablelondParam: Option[FSParam[Boolelonan]] = Nonelon
+  ): FelonaturelonStorelonV1CandidatelonFelonaturelon[Quelonry, Input, FelonaturelonStorelonelonntityId, Valuelon] =
+    nelonw FelonaturelonStorelonV1CandidatelonFelonaturelon[Quelonry, Input, FelonaturelonStorelonelonntityId, Valuelon] {
+      ovelonrridelon val fsv1Felonaturelon: FSv1Felonaturelon[FelonaturelonStorelonelonntityId, Valuelon] = felonaturelon
+      ovelonrridelon val elonntity: FelonaturelonStorelonV1Candidatelonelonntity[Quelonry, Input, FelonaturelonStorelonelonntityId] =
+        _elonntity
+      ovelonrridelon val lelongacyNamelon: Option[String] = _lelongacyNamelon
+      ovelonrridelon val delonfaultValuelon: Option[Valuelon] = _delonfaultValuelon
+      ovelonrridelon val elonnablelondParam: Option[FSParam[Boolelonan]] = _elonnablelondParam
     }
 }
 
-object FeatureStoreV1CandidateFeatureGroup {
+objelonct FelonaturelonStorelonV1CandidatelonFelonaturelonGroup {
 
   /**
-   * Candidate-based Feature Store Aggregated group backed feature
+   * Candidatelon-baselond Felonaturelon Storelon Aggrelongatelond group backelond felonaturelon
    *
-   * @param featureGroup          The underling aggregation group feature this represents.
-   * @param _entity               The entity for binding the Feature Store features
-   * @param _enabledParam         The Feature Switch Param to gate this feature, always enabled if none.
-   * @param _keepLegacyNames      Whether to keep the legacy names as is for the entire group
-   * @param _featureNameTransform Rename the entire group's legacy names using the [[FeatureRenameTransform]]
-   * @tparam Query                The Product Mixer query type this feature is keyed on.
-   * @tparam Input The type of the candidate this feature is keyed on
-   * @tparam FeatureStoreEntityId Feature Store Entity ID
+   * @param felonaturelonGroup          Thelon undelonrling aggrelongation group felonaturelon this relonprelonselonnts.
+   * @param _elonntity               Thelon elonntity for binding thelon Felonaturelon Storelon felonaturelons
+   * @param _elonnablelondParam         Thelon Felonaturelon Switch Param to gatelon this felonaturelon, always elonnablelond if nonelon.
+   * @param _kelonelonpLelongacyNamelons      Whelonthelonr to kelonelonp thelon lelongacy namelons as is for thelon elonntirelon group
+   * @param _felonaturelonNamelonTransform Relonnamelon thelon elonntirelon group's lelongacy namelons using thelon [[FelonaturelonRelonnamelonTransform]]
+   * @tparam Quelonry                Thelon Product Mixelonr quelonry typelon this felonaturelon is kelonyelond on.
+   * @tparam Input Thelon typelon of thelon candidatelon this felonaturelon is kelonyelond on
+   * @tparam FelonaturelonStorelonelonntityId Felonaturelon Storelon elonntity ID
    *
-   * @return Product Mixer Feature
+   * @relonturn Product Mixelonr Felonaturelon
    */
-  def apply[
-    Query <: PipelineQuery,
-    Input <: UniversalNoun[Any],
-    FeatureStoreEntityId <: EntityId: ClassTag,
+  delonf apply[
+    Quelonry <: PipelonlinelonQuelonry,
+    Input <: UnivelonrsalNoun[Any],
+    FelonaturelonStorelonelonntityId <: elonntityId: ClassTag,
   ](
-    _featureGroup: TimelinesAggregationFrameworkFeatureGroup[FeatureStoreEntityId],
-    _entity: FeatureStoreV1CandidateEntity[Query, Input, FeatureStoreEntityId],
-    _enabledParam: Option[FSParam[Boolean]] = None,
-    _keepLegacyNames: Boolean = false,
-    _featureNameTransform: Option[FeatureRenameTransform] = None
-  ): FeatureStoreV1CandidateFeatureGroup[Query, Input, FeatureStoreEntityId] =
-    new FeatureStoreV1CandidateFeatureGroup[Query, Input, FeatureStoreEntityId] {
-      override val entity: FeatureStoreV1CandidateEntity[Query, Input, FeatureStoreEntityId] =
-        _entity
-      override val featureGroup: TimelinesAggregationFrameworkFeatureGroup[
-        FeatureStoreEntityId
-      ] = _featureGroup
+    _felonaturelonGroup: TimelonlinelonsAggrelongationFramelonworkFelonaturelonGroup[FelonaturelonStorelonelonntityId],
+    _elonntity: FelonaturelonStorelonV1Candidatelonelonntity[Quelonry, Input, FelonaturelonStorelonelonntityId],
+    _elonnablelondParam: Option[FSParam[Boolelonan]] = Nonelon,
+    _kelonelonpLelongacyNamelons: Boolelonan = falselon,
+    _felonaturelonNamelonTransform: Option[FelonaturelonRelonnamelonTransform] = Nonelon
+  ): FelonaturelonStorelonV1CandidatelonFelonaturelonGroup[Quelonry, Input, FelonaturelonStorelonelonntityId] =
+    nelonw FelonaturelonStorelonV1CandidatelonFelonaturelonGroup[Quelonry, Input, FelonaturelonStorelonelonntityId] {
+      ovelonrridelon val elonntity: FelonaturelonStorelonV1Candidatelonelonntity[Quelonry, Input, FelonaturelonStorelonelonntityId] =
+        _elonntity
+      ovelonrridelon val felonaturelonGroup: TimelonlinelonsAggrelongationFramelonworkFelonaturelonGroup[
+        FelonaturelonStorelonelonntityId
+      ] = _felonaturelonGroup
 
-      override val enabledParam: Option[FSParam[Boolean]] = _enabledParam
+      ovelonrridelon val elonnablelondParam: Option[FSParam[Boolelonan]] = _elonnablelondParam
 
-      override val keepLegacyNames: Boolean = _keepLegacyNames
-      override val featureNameTransform: Option[FeatureRenameTransform] = _featureNameTransform
+      ovelonrridelon val kelonelonpLelongacyNamelons: Boolelonan = _kelonelonpLelongacyNamelons
+      ovelonrridelon val felonaturelonNamelonTransform: Option[FelonaturelonRelonnamelonTransform] = _felonaturelonNamelonTransform
     }
 }

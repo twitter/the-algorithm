@@ -1,99 +1,99 @@
-package com.twitter.timelines.data_processing.ad_hoc.earlybird_ranking.common
+packagelon com.twittelonr.timelonlinelons.data_procelonssing.ad_hoc.elonarlybird_ranking.common
 
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.Feature
-import com.twitter.ml.api.FeatureContext
-import com.twitter.ml.api.ITransform
-import com.twitter.ml.api.transform.CascadeTransform
-import com.twitter.ml.api.util.SRichDataRecord
-import com.twitter.search.common.features.SearchResultFeature
-import com.twitter.search.common.features.TweetFeature
-import com.twitter.timelines.prediction.features.itl.ITLFeatures._
-import scala.collection.JavaConverters._
+import com.twittelonr.ml.api.DataReloncord
+import com.twittelonr.ml.api.Felonaturelon
+import com.twittelonr.ml.api.FelonaturelonContelonxt
+import com.twittelonr.ml.api.ITransform
+import com.twittelonr.ml.api.transform.CascadelonTransform
+import com.twittelonr.ml.api.util.SRichDataReloncord
+import com.twittelonr.selonarch.common.felonaturelons.SelonarchRelonsultFelonaturelon
+import com.twittelonr.selonarch.common.felonaturelons.TwelonelontFelonaturelon
+import com.twittelonr.timelonlinelons.prelondiction.felonaturelons.itl.ITLFelonaturelons._
+import scala.collelonction.JavaConvelonrtelonrs._
 
-class EarlybirdTrainingRectweetConfiguration extends EarlybirdTrainingConfiguration {
+class elonarlybirdTrainingRelonctwelonelontConfiguration elonxtelonnds elonarlybirdTrainingConfiguration {
 
-  override val labels: Map[String, Feature.Binary] = Map(
-    "detail_expanded" -> IS_CLICKED,
-    "favorited" -> IS_FAVORITED,
-    "open_linked" -> IS_OPEN_LINKED,
-    "photo_expanded" -> IS_PHOTO_EXPANDED,
-    "profile_clicked" -> IS_PROFILE_CLICKED,
-    "replied" -> IS_REPLIED,
-    "retweeted" -> IS_RETWEETED,
-    "video_playback50" -> IS_VIDEO_PLAYBACK_50
+  ovelonrridelon val labelonls: Map[String, Felonaturelon.Binary] = Map(
+    "delontail_elonxpandelond" -> IS_CLICKelonD,
+    "favoritelond" -> IS_FAVORITelonD,
+    "opelonn_linkelond" -> IS_OPelonN_LINKelonD,
+    "photo_elonxpandelond" -> IS_PHOTO_elonXPANDelonD,
+    "profilelon_clickelond" -> IS_PROFILelon_CLICKelonD,
+    "relonplielond" -> IS_RelonPLIelonD,
+    "relontwelonelontelond" -> IS_RelonTWelonelonTelonD,
+    "videlono_playback50" -> IS_VIDelonO_PLAYBACK_50
   )
 
-  override val PositiveSamplingRate: Double = 0.5
+  ovelonrridelon val PositivelonSamplingRatelon: Doublelon = 0.5
 
-  override def featureToSearchResultFeatureMap: Map[Feature[_], SearchResultFeature] =
-    super.featureToSearchResultFeatureMap ++ Map(
-      TEXT_SCORE -> TweetFeature.TEXT_SCORE,
-      REPLY_COUNT -> TweetFeature.REPLY_COUNT,
-      RETWEET_COUNT -> TweetFeature.RETWEET_COUNT,
-      FAV_COUNT -> TweetFeature.FAVORITE_COUNT,
-      HAS_CARD -> TweetFeature.HAS_CARD_FLAG,
-      HAS_CONSUMER_VIDEO -> TweetFeature.HAS_CONSUMER_VIDEO_FLAG,
-      HAS_PRO_VIDEO -> TweetFeature.HAS_PRO_VIDEO_FLAG,
-      HAS_VINE -> TweetFeature.HAS_VINE_FLAG,
-      HAS_PERISCOPE -> TweetFeature.HAS_PERISCOPE_FLAG,
-      HAS_NATIVE_IMAGE -> TweetFeature.HAS_NATIVE_IMAGE_FLAG,
-      HAS_IMAGE -> TweetFeature.HAS_IMAGE_URL_FLAG,
-      HAS_NEWS -> TweetFeature.HAS_NEWS_URL_FLAG,
-      HAS_VIDEO -> TweetFeature.HAS_VIDEO_URL_FLAG,
-      // some features that exist for recap are not available in rectweet
-      //    HAS_TREND
-      //    HAS_MULTIPLE_HASHTAGS_OR_TRENDS
-      //    IS_OFFENSIVE
-      //    IS_REPLY
-      //    IS_RETWEET
-      IS_AUTHOR_BOT -> TweetFeature.IS_USER_BOT_FLAG,
-      IS_AUTHOR_SPAM -> TweetFeature.IS_USER_SPAM_FLAG,
-      IS_AUTHOR_NSFW -> TweetFeature.IS_USER_NSFW_FLAG,
-      //    FROM_VERIFIED_ACCOUNT
-      USER_REP -> TweetFeature.USER_REPUTATION,
-      //    EMBEDS_IMPRESSION_COUNT
-      //    EMBEDS_URL_COUNT
-      //    VIDEO_VIEW_COUNT
-      FAV_COUNT_V2 -> TweetFeature.FAVORITE_COUNT_V2,
-      RETWEET_COUNT_V2 -> TweetFeature.RETWEET_COUNT_V2,
-      REPLY_COUNT_V2 -> TweetFeature.REPLY_COUNT_V2,
-      IS_SENSITIVE -> TweetFeature.IS_SENSITIVE_CONTENT,
-      HAS_MULTIPLE_MEDIA -> TweetFeature.HAS_MULTIPLE_MEDIA_FLAG,
-      IS_AUTHOR_PROFILE_EGG -> TweetFeature.PROFILE_IS_EGG_FLAG,
-      IS_AUTHOR_NEW -> TweetFeature.IS_USER_NEW_FLAG,
-      NUM_MENTIONS -> TweetFeature.NUM_MENTIONS,
-      NUM_HASHTAGS -> TweetFeature.NUM_HASHTAGS,
-      HAS_VISIBLE_LINK -> TweetFeature.HAS_VISIBLE_LINK_FLAG,
-      HAS_LINK -> TweetFeature.HAS_LINK_FLAG
+  ovelonrridelon delonf felonaturelonToSelonarchRelonsultFelonaturelonMap: Map[Felonaturelon[_], SelonarchRelonsultFelonaturelon] =
+    supelonr.felonaturelonToSelonarchRelonsultFelonaturelonMap ++ Map(
+      TelonXT_SCORelon -> TwelonelontFelonaturelon.TelonXT_SCORelon,
+      RelonPLY_COUNT -> TwelonelontFelonaturelon.RelonPLY_COUNT,
+      RelonTWelonelonT_COUNT -> TwelonelontFelonaturelon.RelonTWelonelonT_COUNT,
+      FAV_COUNT -> TwelonelontFelonaturelon.FAVORITelon_COUNT,
+      HAS_CARD -> TwelonelontFelonaturelon.HAS_CARD_FLAG,
+      HAS_CONSUMelonR_VIDelonO -> TwelonelontFelonaturelon.HAS_CONSUMelonR_VIDelonO_FLAG,
+      HAS_PRO_VIDelonO -> TwelonelontFelonaturelon.HAS_PRO_VIDelonO_FLAG,
+      HAS_VINelon -> TwelonelontFelonaturelon.HAS_VINelon_FLAG,
+      HAS_PelonRISCOPelon -> TwelonelontFelonaturelon.HAS_PelonRISCOPelon_FLAG,
+      HAS_NATIVelon_IMAGelon -> TwelonelontFelonaturelon.HAS_NATIVelon_IMAGelon_FLAG,
+      HAS_IMAGelon -> TwelonelontFelonaturelon.HAS_IMAGelon_URL_FLAG,
+      HAS_NelonWS -> TwelonelontFelonaturelon.HAS_NelonWS_URL_FLAG,
+      HAS_VIDelonO -> TwelonelontFelonaturelon.HAS_VIDelonO_URL_FLAG,
+      // somelon felonaturelons that elonxist for reloncap arelon not availablelon in relonctwelonelont
+      //    HAS_TRelonND
+      //    HAS_MULTIPLelon_HASHTAGS_OR_TRelonNDS
+      //    IS_OFFelonNSIVelon
+      //    IS_RelonPLY
+      //    IS_RelonTWelonelonT
+      IS_AUTHOR_BOT -> TwelonelontFelonaturelon.IS_USelonR_BOT_FLAG,
+      IS_AUTHOR_SPAM -> TwelonelontFelonaturelon.IS_USelonR_SPAM_FLAG,
+      IS_AUTHOR_NSFW -> TwelonelontFelonaturelon.IS_USelonR_NSFW_FLAG,
+      //    FROM_VelonRIFIelonD_ACCOUNT
+      USelonR_RelonP -> TwelonelontFelonaturelon.USelonR_RelonPUTATION,
+      //    elonMBelonDS_IMPRelonSSION_COUNT
+      //    elonMBelonDS_URL_COUNT
+      //    VIDelonO_VIelonW_COUNT
+      FAV_COUNT_V2 -> TwelonelontFelonaturelon.FAVORITelon_COUNT_V2,
+      RelonTWelonelonT_COUNT_V2 -> TwelonelontFelonaturelon.RelonTWelonelonT_COUNT_V2,
+      RelonPLY_COUNT_V2 -> TwelonelontFelonaturelon.RelonPLY_COUNT_V2,
+      IS_SelonNSITIVelon -> TwelonelontFelonaturelon.IS_SelonNSITIVelon_CONTelonNT,
+      HAS_MULTIPLelon_MelonDIA -> TwelonelontFelonaturelon.HAS_MULTIPLelon_MelonDIA_FLAG,
+      IS_AUTHOR_PROFILelon_elonGG -> TwelonelontFelonaturelon.PROFILelon_IS_elonGG_FLAG,
+      IS_AUTHOR_NelonW -> TwelonelontFelonaturelon.IS_USelonR_NelonW_FLAG,
+      NUM_MelonNTIONS -> TwelonelontFelonaturelon.NUM_MelonNTIONS,
+      NUM_HASHTAGS -> TwelonelontFelonaturelon.NUM_HASHTAGS,
+      HAS_VISIBLelon_LINK -> TwelonelontFelonaturelon.HAS_VISIBLelon_LINK_FLAG,
+      HAS_LINK -> TwelonelontFelonaturelon.HAS_LINK_FLAG
     )
 
-  override def derivedFeaturesAdder: CascadeTransform = {
-    // only LINK_LANGUAGE availabe in rectweet. no LANGUAGE feature
-    val linkLanguageTransform = new ITransform {
-      private val linkLanguageFeature = new Feature.Continuous(TweetFeature.LINK_LANGUAGE.getName)
+  ovelonrridelon delonf delonrivelondFelonaturelonsAddelonr: CascadelonTransform = {
+    // only LINK_LANGUAGelon availabelon in relonctwelonelont. no LANGUAGelon felonaturelon
+    val linkLanguagelonTransform = nelonw ITransform {
+      privatelon val linkLanguagelonFelonaturelon = nelonw Felonaturelon.Continuous(TwelonelontFelonaturelon.LINK_LANGUAGelon.gelontNamelon)
 
-      override def transformContext(featureContext: FeatureContext): FeatureContext =
-        featureContext.addFeatures(
-          linkLanguageFeature
+      ovelonrridelon delonf transformContelonxt(felonaturelonContelonxt: FelonaturelonContelonxt): FelonaturelonContelonxt =
+        felonaturelonContelonxt.addFelonaturelons(
+          linkLanguagelonFelonaturelon
         )
 
-      override def transform(record: DataRecord): Unit = {
-        val srecord = SRichDataRecord(record)
+      ovelonrridelon delonf transform(reloncord: DataReloncord): Unit = {
+        val sreloncord = SRichDataReloncord(reloncord)
 
-        srecord.getFeatureValueOpt(LINK_LANGUAGE).map { link_language =>
-          srecord.setFeatureValue(
-            linkLanguageFeature,
-            link_language.toDouble
+        sreloncord.gelontFelonaturelonValuelonOpt(LINK_LANGUAGelon).map { link_languagelon =>
+          sreloncord.selontFelonaturelonValuelon(
+            linkLanguagelonFelonaturelon,
+            link_languagelon.toDoublelon
           )
         }
       }
     }
 
-    new CascadeTransform(
+    nelonw CascadelonTransform(
       List(
-        super.derivedFeaturesAdder,
-        linkLanguageTransform
+        supelonr.delonrivelondFelonaturelonsAddelonr,
+        linkLanguagelonTransform
       ).asJava
     )
   }

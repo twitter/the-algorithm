@@ -1,27 +1,27 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.vertical_grid_item
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.itelonm.velonrtical_grid_itelonm
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.UrlMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.vertical_grid_item.VerticalGridItemTopicTile
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.melontadata.UrlMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.velonrtical_grid_itelonm.VelonrticalGridItelonmTopicTilelon
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class VerticalGridItemTopicTileMarshaller @Inject() (
-  styleMarshaller: VerticalGridItemTileStyleMarshaller,
-  functionalityTypeMarshaller: VerticalGridItemTopicFunctionalityTypeMarshaller,
-  urlMarshaller: UrlMarshaller) {
+@Singlelonton
+class VelonrticalGridItelonmTopicTilelonMarshallelonr @Injelonct() (
+  stylelonMarshallelonr: VelonrticalGridItelonmTilelonStylelonMarshallelonr,
+  functionalityTypelonMarshallelonr: VelonrticalGridItelonmTopicFunctionalityTypelonMarshallelonr,
+  urlMarshallelonr: UrlMarshallelonr) {
 
-  def apply(verticalGridItemTopicTile: VerticalGridItemTopicTile): urt.VerticalGridItemContent =
-    urt.VerticalGridItemContent.TopicTile(
-      urt.VerticalGridItemTopicTile(
-        topicId = verticalGridItemTopicTile.id.toString,
-        style = verticalGridItemTopicTile.style
-          .map(styleMarshaller(_)).getOrElse(urt.VerticalGridItemTileStyle.SingleStateDefault),
-        functionalityType = verticalGridItemTopicTile.functionalityType
-          .map(functionalityTypeMarshaller(_)).getOrElse(
-            urt.VerticalGridItemTopicFunctionalityType.Pivot),
-        url = verticalGridItemTopicTile.url.map(urlMarshaller(_))
+  delonf apply(velonrticalGridItelonmTopicTilelon: VelonrticalGridItelonmTopicTilelon): urt.VelonrticalGridItelonmContelonnt =
+    urt.VelonrticalGridItelonmContelonnt.TopicTilelon(
+      urt.VelonrticalGridItelonmTopicTilelon(
+        topicId = velonrticalGridItelonmTopicTilelon.id.toString,
+        stylelon = velonrticalGridItelonmTopicTilelon.stylelon
+          .map(stylelonMarshallelonr(_)).gelontOrelonlselon(urt.VelonrticalGridItelonmTilelonStylelon.SinglelonStatelonDelonfault),
+        functionalityTypelon = velonrticalGridItelonmTopicTilelon.functionalityTypelon
+          .map(functionalityTypelonMarshallelonr(_)).gelontOrelonlselon(
+            urt.VelonrticalGridItelonmTopicFunctionalityTypelon.Pivot),
+        url = velonrticalGridItelonmTopicTilelon.url.map(urlMarshallelonr(_))
       )
     )
 

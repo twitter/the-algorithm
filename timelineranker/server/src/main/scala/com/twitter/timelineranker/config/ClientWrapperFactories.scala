@@ -1,86 +1,86 @@
-package com.twitter.timelineranker.config
+packagelon com.twittelonr.timelonlinelonrankelonr.config
 
-import com.twitter.servo.util.Gate
-import com.twitter.timelineranker.clients.ScopedCortexTweetQueryServiceClientFactory
-import com.twitter.timelines.clients.gizmoduck.ScopedGizmoduckClientFactory
-import com.twitter.timelines.clients.manhattan.ScopedUserMetadataClientFactory
-import com.twitter.timelines.clients.socialgraph.ScopedSocialGraphClientFactory
-import com.twitter.timelines.clients.strato.realgraph.ScopedRealGraphClientFactory
-import com.twitter.timelines.clients.tweetypie.AdditionalFieldConfig
-import com.twitter.timelines.clients.tweetypie.ScopedTweetyPieClientFactory
-import com.twitter.timelines.visibility.VisibilityEnforcerFactory
-import com.twitter.timelines.visibility.VisibilityProfileHydratorFactory
-import com.twitter.tweetypie.thriftscala.{Tweet => TTweet}
+import com.twittelonr.selonrvo.util.Gatelon
+import com.twittelonr.timelonlinelonrankelonr.clielonnts.ScopelondCortelonxTwelonelontQuelonrySelonrvicelonClielonntFactory
+import com.twittelonr.timelonlinelons.clielonnts.gizmoduck.ScopelondGizmoduckClielonntFactory
+import com.twittelonr.timelonlinelons.clielonnts.manhattan.ScopelondUselonrMelontadataClielonntFactory
+import com.twittelonr.timelonlinelons.clielonnts.socialgraph.ScopelondSocialGraphClielonntFactory
+import com.twittelonr.timelonlinelons.clielonnts.strato.relonalgraph.ScopelondRelonalGraphClielonntFactory
+import com.twittelonr.timelonlinelons.clielonnts.twelonelontypielon.AdditionalFielonldConfig
+import com.twittelonr.timelonlinelons.clielonnts.twelonelontypielon.ScopelondTwelonelontyPielonClielonntFactory
+import com.twittelonr.timelonlinelons.visibility.VisibilityelonnforcelonrFactory
+import com.twittelonr.timelonlinelons.visibility.VisibilityProfilelonHydratorFactory
+import com.twittelonr.twelonelontypielon.thriftscala.{Twelonelont => TTwelonelont}
 
-class ClientWrapperFactories(config: RuntimeConfiguration) {
-  private[this] val statsReceiver = config.statsReceiver
+class ClielonntWrappelonrFactorielons(config: RuntimelonConfiguration) {
+  privatelon[this] val statsReloncelonivelonr = config.statsReloncelonivelonr
 
-  val cortexTweetQueryServiceClientFactory: ScopedCortexTweetQueryServiceClientFactory =
-    new ScopedCortexTweetQueryServiceClientFactory(
-      config.underlyingClients.cortexTweetQueryServiceClient,
-      statsReceiver = statsReceiver
+  val cortelonxTwelonelontQuelonrySelonrvicelonClielonntFactory: ScopelondCortelonxTwelonelontQuelonrySelonrvicelonClielonntFactory =
+    nelonw ScopelondCortelonxTwelonelontQuelonrySelonrvicelonClielonntFactory(
+      config.undelonrlyingClielonnts.cortelonxTwelonelontQuelonrySelonrvicelonClielonnt,
+      statsReloncelonivelonr = statsReloncelonivelonr
     )
 
-  val gizmoduckClientFactory: ScopedGizmoduckClientFactory = new ScopedGizmoduckClientFactory(
-    config.underlyingClients.gizmoduckClient,
-    statsReceiver = statsReceiver
+  val gizmoduckClielonntFactory: ScopelondGizmoduckClielonntFactory = nelonw ScopelondGizmoduckClielonntFactory(
+    config.undelonrlyingClielonnts.gizmoduckClielonnt,
+    statsReloncelonivelonr = statsReloncelonivelonr
   )
 
-  val socialGraphClientFactory: ScopedSocialGraphClientFactory = new ScopedSocialGraphClientFactory(
-    config.underlyingClients.sgsClient,
-    statsReceiver
+  val socialGraphClielonntFactory: ScopelondSocialGraphClielonntFactory = nelonw ScopelondSocialGraphClielonntFactory(
+    config.undelonrlyingClielonnts.sgsClielonnt,
+    statsReloncelonivelonr
   )
 
-  val visibilityEnforcerFactory: VisibilityEnforcerFactory = new VisibilityEnforcerFactory(
-    gizmoduckClientFactory,
-    socialGraphClientFactory,
-    statsReceiver
+  val visibilityelonnforcelonrFactory: VisibilityelonnforcelonrFactory = nelonw VisibilityelonnforcelonrFactory(
+    gizmoduckClielonntFactory,
+    socialGraphClielonntFactory,
+    statsReloncelonivelonr
   )
 
-  val tweetyPieAdditionalFieldsToDisable: Seq[Short] = Seq(
-    TTweet.MediaTagsField.id,
-    TTweet.SchedulingInfoField.id,
-    TTweet.EscherbirdEntityAnnotationsField.id,
-    TTweet.CardReferenceField.id,
-    TTweet.SelfPermalinkField.id,
-    TTweet.ExtendedTweetMetadataField.id,
-    TTweet.CommunitiesField.id,
-    TTweet.VisibleTextRangeField.id
+  val twelonelontyPielonAdditionalFielonldsToDisablelon: Selonq[Short] = Selonq(
+    TTwelonelont.MelondiaTagsFielonld.id,
+    TTwelonelont.SchelondulingInfoFielonld.id,
+    TTwelonelont.elonschelonrbirdelonntityAnnotationsFielonld.id,
+    TTwelonelont.CardRelonfelonrelonncelonFielonld.id,
+    TTwelonelont.SelonlfPelonrmalinkFielonld.id,
+    TTwelonelont.elonxtelonndelondTwelonelontMelontadataFielonld.id,
+    TTwelonelont.CommunitielonsFielonld.id,
+    TTwelonelont.VisiblelonTelonxtRangelonFielonld.id
   )
 
-  val tweetyPieHighQoSClientFactory: ScopedTweetyPieClientFactory =
-    new ScopedTweetyPieClientFactory(
-      tweetyPieClient = config.underlyingClients.tweetyPieHighQoSClient,
-      additionalFieldConfig = AdditionalFieldConfig(
-        fieldDisablingGates = tweetyPieAdditionalFieldsToDisable.map(_ -> Gate.False).toMap
+  val twelonelontyPielonHighQoSClielonntFactory: ScopelondTwelonelontyPielonClielonntFactory =
+    nelonw ScopelondTwelonelontyPielonClielonntFactory(
+      twelonelontyPielonClielonnt = config.undelonrlyingClielonnts.twelonelontyPielonHighQoSClielonnt,
+      additionalFielonldConfig = AdditionalFielonldConfig(
+        fielonldDisablingGatelons = twelonelontyPielonAdditionalFielonldsToDisablelon.map(_ -> Gatelon.Falselon).toMap
       ),
-      includePartialResults = Gate.False,
-      statsReceiver = statsReceiver
+      includelonPartialRelonsults = Gatelon.Falselon,
+      statsReloncelonivelonr = statsReloncelonivelonr
     )
 
-  val tweetyPieLowQoSClientFactory: ScopedTweetyPieClientFactory = new ScopedTweetyPieClientFactory(
-    tweetyPieClient = config.underlyingClients.tweetyPieLowQoSClient,
-    additionalFieldConfig = AdditionalFieldConfig(
-      fieldDisablingGates = tweetyPieAdditionalFieldsToDisable.map(_ -> Gate.False).toMap
+  val twelonelontyPielonLowQoSClielonntFactory: ScopelondTwelonelontyPielonClielonntFactory = nelonw ScopelondTwelonelontyPielonClielonntFactory(
+    twelonelontyPielonClielonnt = config.undelonrlyingClielonnts.twelonelontyPielonLowQoSClielonnt,
+    additionalFielonldConfig = AdditionalFielonldConfig(
+      fielonldDisablingGatelons = twelonelontyPielonAdditionalFielonldsToDisablelon.map(_ -> Gatelon.Falselon).toMap
     ),
-    includePartialResults = Gate.False,
-    statsReceiver = statsReceiver
+    includelonPartialRelonsults = Gatelon.Falselon,
+    statsReloncelonivelonr = statsReloncelonivelonr
   )
 
-  val userMetadataClientFactory: ScopedUserMetadataClientFactory =
-    new ScopedUserMetadataClientFactory(
-      config.underlyingClients.manhattanStarbuckClient,
-      TimelineRankerConstants.ManhattanStarbuckAppId,
-      statsReceiver
+  val uselonrMelontadataClielonntFactory: ScopelondUselonrMelontadataClielonntFactory =
+    nelonw ScopelondUselonrMelontadataClielonntFactory(
+      config.undelonrlyingClielonnts.manhattanStarbuckClielonnt,
+      TimelonlinelonRankelonrConstants.ManhattanStarbuckAppId,
+      statsReloncelonivelonr
     )
 
-  val visibilityProfileHydratorFactory: VisibilityProfileHydratorFactory =
-    new VisibilityProfileHydratorFactory(
-      gizmoduckClientFactory,
-      socialGraphClientFactory,
-      statsReceiver
+  val visibilityProfilelonHydratorFactory: VisibilityProfilelonHydratorFactory =
+    nelonw VisibilityProfilelonHydratorFactory(
+      gizmoduckClielonntFactory,
+      socialGraphClielonntFactory,
+      statsReloncelonivelonr
     )
 
-  val realGraphClientFactory =
-    new ScopedRealGraphClientFactory(config.underlyingClients.stratoClient, statsReceiver)
+  val relonalGraphClielonntFactory =
+    nelonw ScopelondRelonalGraphClielonntFactory(config.undelonrlyingClielonnts.stratoClielonnt, statsReloncelonivelonr)
 }

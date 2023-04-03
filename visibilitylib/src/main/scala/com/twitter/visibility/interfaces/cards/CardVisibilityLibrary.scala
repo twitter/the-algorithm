@@ -1,186 +1,186 @@
-package com.twitter.visibility.interfaces.cards
+packagelon com.twittelonr.visibility.intelonrfacelons.cards
 
-import com.twitter.appsec.sanitization.URLSafety
-import com.twitter.decider.Decider
-import com.twitter.servo.util.Gate
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.{thriftscala => tweetypiethrift}
-import com.twitter.util.Stopwatch
-import com.twitter.visibility.VisibilityLibrary
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.builder.VisibilityResult
-import com.twitter.visibility.builder.tweets.CommunityTweetFeatures
-import com.twitter.visibility.builder.tweets.CommunityTweetFeaturesV2
-import com.twitter.visibility.builder.tweets.NilTweetLabelMaps
-import com.twitter.visibility.builder.tweets.TweetFeatures
-import com.twitter.visibility.builder.users.AuthorFeatures
-import com.twitter.visibility.builder.users.RelationshipFeatures
-import com.twitter.visibility.builder.users.ViewerFeatures
-import com.twitter.visibility.common.CommunitiesSource
-import com.twitter.visibility.common.UserId
-import com.twitter.visibility.common.UserRelationshipSource
-import com.twitter.visibility.common.UserSource
-import com.twitter.visibility.configapi.configs.VisibilityDeciderGates
-import com.twitter.visibility.features.CardIsPoll
-import com.twitter.visibility.features.CardUriHost
-import com.twitter.visibility.features.FeatureMap
-import com.twitter.visibility.models.ContentId.CardId
-import com.twitter.visibility.models.ViewerContext
+import com.twittelonr.appselonc.sanitization.URLSafelonty
+import com.twittelonr.deloncidelonr.Deloncidelonr
+import com.twittelonr.selonrvo.util.Gatelon
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.twelonelontypielon.{thriftscala => twelonelontypielonthrift}
+import com.twittelonr.util.Stopwatch
+import com.twittelonr.visibility.VisibilityLibrary
+import com.twittelonr.visibility.buildelonr.FelonaturelonMapBuildelonr
+import com.twittelonr.visibility.buildelonr.VisibilityRelonsult
+import com.twittelonr.visibility.buildelonr.twelonelonts.CommunityTwelonelontFelonaturelons
+import com.twittelonr.visibility.buildelonr.twelonelonts.CommunityTwelonelontFelonaturelonsV2
+import com.twittelonr.visibility.buildelonr.twelonelonts.NilTwelonelontLabelonlMaps
+import com.twittelonr.visibility.buildelonr.twelonelonts.TwelonelontFelonaturelons
+import com.twittelonr.visibility.buildelonr.uselonrs.AuthorFelonaturelons
+import com.twittelonr.visibility.buildelonr.uselonrs.RelonlationshipFelonaturelons
+import com.twittelonr.visibility.buildelonr.uselonrs.VielonwelonrFelonaturelons
+import com.twittelonr.visibility.common.CommunitielonsSourcelon
+import com.twittelonr.visibility.common.UselonrId
+import com.twittelonr.visibility.common.UselonrRelonlationshipSourcelon
+import com.twittelonr.visibility.common.UselonrSourcelon
+import com.twittelonr.visibility.configapi.configs.VisibilityDeloncidelonrGatelons
+import com.twittelonr.visibility.felonaturelons.CardIsPoll
+import com.twittelonr.visibility.felonaturelons.CardUriHost
+import com.twittelonr.visibility.felonaturelons.FelonaturelonMap
+import com.twittelonr.visibility.modelonls.ContelonntId.CardId
+import com.twittelonr.visibility.modelonls.VielonwelonrContelonxt
 
-object CardVisibilityLibrary {
-  type Type = CardVisibilityRequest => Stitch[VisibilityResult]
+objelonct CardVisibilityLibrary {
+  typelon Typelon = CardVisibilityRelonquelonst => Stitch[VisibilityRelonsult]
 
-  private[this] def getAuthorFeatures(
+  privatelon[this] delonf gelontAuthorFelonaturelons(
     authorIdOpt: Option[Long],
-    authorFeatures: AuthorFeatures
-  ): FeatureMapBuilder => FeatureMapBuilder = {
+    authorFelonaturelons: AuthorFelonaturelons
+  ): FelonaturelonMapBuildelonr => FelonaturelonMapBuildelonr = {
     authorIdOpt match {
-      case Some(authorId) => authorFeatures.forAuthorId(authorId)
-      case _ => authorFeatures.forNoAuthor()
+      caselon Somelon(authorId) => authorFelonaturelons.forAuthorId(authorId)
+      caselon _ => authorFelonaturelons.forNoAuthor()
     }
   }
 
-  private[this] def getCardUriFeatures(
+  privatelon[this] delonf gelontCardUriFelonaturelons(
     cardUri: String,
-    enableCardVisibilityLibraryCardUriParsing: Boolean,
+    elonnablelonCardVisibilityLibraryCardUriParsing: Boolelonan,
     trackCardUriHost: Option[String] => Unit
-  ): FeatureMapBuilder => FeatureMapBuilder = {
-    if (enableCardVisibilityLibraryCardUriParsing) {
-      val safeCardUriHost = URLSafety.getHostSafe(cardUri)
-      trackCardUriHost(safeCardUriHost)
+  ): FelonaturelonMapBuildelonr => FelonaturelonMapBuildelonr = {
+    if (elonnablelonCardVisibilityLibraryCardUriParsing) {
+      val safelonCardUriHost = URLSafelonty.gelontHostSafelon(cardUri)
+      trackCardUriHost(safelonCardUriHost)
 
-      _.withConstantFeature(CardUriHost, safeCardUriHost)
-    } else {
-      identity
+      _.withConstantFelonaturelon(CardUriHost, safelonCardUriHost)
+    } elonlselon {
+      idelonntity
     }
   }
 
-  private[this] def getRelationshipFeatures(
+  privatelon[this] delonf gelontRelonlationshipFelonaturelons(
     authorIdOpt: Option[Long],
-    viewerIdOpt: Option[Long],
-    relationshipFeatures: RelationshipFeatures
-  ): FeatureMapBuilder => FeatureMapBuilder = {
+    vielonwelonrIdOpt: Option[Long],
+    relonlationshipFelonaturelons: RelonlationshipFelonaturelons
+  ): FelonaturelonMapBuildelonr => FelonaturelonMapBuildelonr = {
     authorIdOpt match {
-      case Some(authorId) => relationshipFeatures.forAuthorId(authorId, viewerIdOpt)
-      case _ => relationshipFeatures.forNoAuthor()
+      caselon Somelon(authorId) => relonlationshipFelonaturelons.forAuthorId(authorId, vielonwelonrIdOpt)
+      caselon _ => relonlationshipFelonaturelons.forNoAuthor()
     }
   }
 
-  private[this] def getTweetFeatures(
-    tweetOpt: Option[tweetypiethrift.Tweet],
-    tweetFeatures: TweetFeatures
-  ): FeatureMapBuilder => FeatureMapBuilder = {
-    tweetOpt match {
-      case Some(tweet) => tweetFeatures.forTweet(tweet)
-      case _ => identity
+  privatelon[this] delonf gelontTwelonelontFelonaturelons(
+    twelonelontOpt: Option[twelonelontypielonthrift.Twelonelont],
+    twelonelontFelonaturelons: TwelonelontFelonaturelons
+  ): FelonaturelonMapBuildelonr => FelonaturelonMapBuildelonr = {
+    twelonelontOpt match {
+      caselon Somelon(twelonelont) => twelonelontFelonaturelons.forTwelonelont(twelonelont)
+      caselon _ => idelonntity
     }
   }
 
-  private[this] def getCommunityFeatures(
-    tweetOpt: Option[tweetypiethrift.Tweet],
-    viewerContext: ViewerContext,
-    communityTweetFeatures: CommunityTweetFeatures
-  ): FeatureMapBuilder => FeatureMapBuilder = {
-    tweetOpt match {
-      case Some(tweet) => communityTweetFeatures.forTweet(tweet, viewerContext)
-      case _ => identity
+  privatelon[this] delonf gelontCommunityFelonaturelons(
+    twelonelontOpt: Option[twelonelontypielonthrift.Twelonelont],
+    vielonwelonrContelonxt: VielonwelonrContelonxt,
+    communityTwelonelontFelonaturelons: CommunityTwelonelontFelonaturelons
+  ): FelonaturelonMapBuildelonr => FelonaturelonMapBuildelonr = {
+    twelonelontOpt match {
+      caselon Somelon(twelonelont) => communityTwelonelontFelonaturelons.forTwelonelont(twelonelont, vielonwelonrContelonxt)
+      caselon _ => idelonntity
     }
   }
 
-  def apply(
+  delonf apply(
     visibilityLibrary: VisibilityLibrary,
-    userSource: UserSource = UserSource.empty,
-    userRelationshipSource: UserRelationshipSource = UserRelationshipSource.empty,
-    communitiesSource: CommunitiesSource = CommunitiesSource.empty,
-    enableVfParityTest: Gate[Unit] = Gate.False,
-    enableVfFeatureHydration: Gate[Unit] = Gate.False,
-    decider: Decider
-  ): Type = {
-    val libraryStatsReceiver = visibilityLibrary.statsReceiver
-    val vfLatencyOverallStat = libraryStatsReceiver.stat("vf_latency_overall")
-    val vfLatencyStitchBuildStat = libraryStatsReceiver.stat("vf_latency_stitch_build")
-    val vfLatencyStitchRunStat = libraryStatsReceiver.stat("vf_latency_stitch_run")
-    val cardUriStats = libraryStatsReceiver.scope("card_uri")
-    val visibilityDeciderGates = VisibilityDeciderGates(decider)
+    uselonrSourcelon: UselonrSourcelon = UselonrSourcelon.elonmpty,
+    uselonrRelonlationshipSourcelon: UselonrRelonlationshipSourcelon = UselonrRelonlationshipSourcelon.elonmpty,
+    communitielonsSourcelon: CommunitielonsSourcelon = CommunitielonsSourcelon.elonmpty,
+    elonnablelonVfParityTelonst: Gatelon[Unit] = Gatelon.Falselon,
+    elonnablelonVfFelonaturelonHydration: Gatelon[Unit] = Gatelon.Falselon,
+    deloncidelonr: Deloncidelonr
+  ): Typelon = {
+    val libraryStatsReloncelonivelonr = visibilityLibrary.statsReloncelonivelonr
+    val vfLatelonncyOvelonrallStat = libraryStatsReloncelonivelonr.stat("vf_latelonncy_ovelonrall")
+    val vfLatelonncyStitchBuildStat = libraryStatsReloncelonivelonr.stat("vf_latelonncy_stitch_build")
+    val vfLatelonncyStitchRunStat = libraryStatsReloncelonivelonr.stat("vf_latelonncy_stitch_run")
+    val cardUriStats = libraryStatsReloncelonivelonr.scopelon("card_uri")
+    val visibilityDeloncidelonrGatelons = VisibilityDeloncidelonrGatelons(deloncidelonr)
 
-    val authorFeatures = new AuthorFeatures(userSource, libraryStatsReceiver)
-    val viewerFeatures = new ViewerFeatures(userSource, libraryStatsReceiver)
-    val tweetFeatures = new TweetFeatures(NilTweetLabelMaps, libraryStatsReceiver)
-    val communityTweetFeatures = new CommunityTweetFeaturesV2(
-      communitiesSource = communitiesSource,
+    val authorFelonaturelons = nelonw AuthorFelonaturelons(uselonrSourcelon, libraryStatsReloncelonivelonr)
+    val vielonwelonrFelonaturelons = nelonw VielonwelonrFelonaturelons(uselonrSourcelon, libraryStatsReloncelonivelonr)
+    val twelonelontFelonaturelons = nelonw TwelonelontFelonaturelons(NilTwelonelontLabelonlMaps, libraryStatsReloncelonivelonr)
+    val communityTwelonelontFelonaturelons = nelonw CommunityTwelonelontFelonaturelonsV2(
+      communitielonsSourcelon = communitielonsSourcelon,
     )
-    val relationshipFeatures =
-      new RelationshipFeatures(userRelationshipSource, libraryStatsReceiver)
-    val parityTest = new CardVisibilityLibraryParityTest(libraryStatsReceiver)
+    val relonlationshipFelonaturelons =
+      nelonw RelonlationshipFelonaturelons(uselonrRelonlationshipSourcelon, libraryStatsReloncelonivelonr)
+    val parityTelonst = nelonw CardVisibilityLibraryParityTelonst(libraryStatsReloncelonivelonr)
 
-    { r: CardVisibilityRequest =>
-      val elapsed = Stopwatch.start()
+    { r: CardVisibilityRelonquelonst =>
+      val elonlapselond = Stopwatch.start()
       var runStitchStartMs = 0L
 
-      val viewerId: Option[UserId] = r.viewerContext.userId
+      val vielonwelonrId: Option[UselonrId] = r.vielonwelonrContelonxt.uselonrId
 
-      val featureMap =
+      val felonaturelonMap =
         visibilityLibrary
-          .featureMapBuilder(
-            Seq(
-              viewerFeatures.forViewerId(viewerId),
-              getAuthorFeatures(r.authorId, authorFeatures),
-              getCardUriFeatures(
+          .felonaturelonMapBuildelonr(
+            Selonq(
+              vielonwelonrFelonaturelons.forVielonwelonrId(vielonwelonrId),
+              gelontAuthorFelonaturelons(r.authorId, authorFelonaturelons),
+              gelontCardUriFelonaturelons(
                 cardUri = r.cardUri,
-                enableCardVisibilityLibraryCardUriParsing =
-                  visibilityDeciderGates.enableCardVisibilityLibraryCardUriParsing(),
-                trackCardUriHost = { safeCardUriHost: Option[String] =>
-                  if (safeCardUriHost.isEmpty) {
-                    cardUriStats.counter("empty").incr()
+                elonnablelonCardVisibilityLibraryCardUriParsing =
+                  visibilityDeloncidelonrGatelons.elonnablelonCardVisibilityLibraryCardUriParsing(),
+                trackCardUriHost = { safelonCardUriHost: Option[String] =>
+                  if (safelonCardUriHost.iselonmpty) {
+                    cardUriStats.countelonr("elonmpty").incr()
                   }
                 }
               ),
-              getCommunityFeatures(r.tweetOpt, r.viewerContext, communityTweetFeatures),
-              getRelationshipFeatures(r.authorId, r.viewerContext.userId, relationshipFeatures),
-              getTweetFeatures(r.tweetOpt, tweetFeatures),
-              _.withConstantFeature(CardIsPoll, r.isPollCardType)
+              gelontCommunityFelonaturelons(r.twelonelontOpt, r.vielonwelonrContelonxt, communityTwelonelontFelonaturelons),
+              gelontRelonlationshipFelonaturelons(r.authorId, r.vielonwelonrContelonxt.uselonrId, relonlationshipFelonaturelons),
+              gelontTwelonelontFelonaturelons(r.twelonelontOpt, twelonelontFelonaturelons),
+              _.withConstantFelonaturelon(CardIsPoll, r.isPollCardTypelon)
             )
           )
 
-      val response = visibilityLibrary
-        .runRuleEngine(
+      val relonsponselon = visibilityLibrary
+        .runRulelonelonnginelon(
           CardId(r.cardUri),
-          featureMap,
-          r.viewerContext,
-          r.safetyLevel
+          felonaturelonMap,
+          r.vielonwelonrContelonxt,
+          r.safelontyLelonvelonl
         )
-        .onSuccess(_ => {
-          val overallStatMs = elapsed().inMilliseconds
-          vfLatencyOverallStat.add(overallStatMs)
-          val runStitchEndMs = elapsed().inMilliseconds
-          vfLatencyStitchRunStat.add(runStitchEndMs - runStitchStartMs)
+        .onSuccelonss(_ => {
+          val ovelonrallStatMs = elonlapselond().inMilliselonconds
+          vfLatelonncyOvelonrallStat.add(ovelonrallStatMs)
+          val runStitchelonndMs = elonlapselond().inMilliselonconds
+          vfLatelonncyStitchRunStat.add(runStitchelonndMs - runStitchStartMs)
         })
 
-      runStitchStartMs = elapsed().inMilliseconds
-      val buildStitchStatMs = elapsed().inMilliseconds
-      vfLatencyStitchBuildStat.add(buildStitchStatMs)
+      runStitchStartMs = elonlapselond().inMilliselonconds
+      val buildStitchStatMs = elonlapselond().inMilliselonconds
+      vfLatelonncyStitchBuildStat.add(buildStitchStatMs)
 
-      lazy val hydratedFeatureResponse: Stitch[VisibilityResult] =
-        FeatureMap.resolve(featureMap, libraryStatsReceiver).flatMap { resolvedFeatureMap =>
-          visibilityLibrary.runRuleEngine(
+      lazy val hydratelondFelonaturelonRelonsponselon: Stitch[VisibilityRelonsult] =
+        FelonaturelonMap.relonsolvelon(felonaturelonMap, libraryStatsReloncelonivelonr).flatMap { relonsolvelondFelonaturelonMap =>
+          visibilityLibrary.runRulelonelonnginelon(
             CardId(r.cardUri),
-            resolvedFeatureMap,
-            r.viewerContext,
-            r.safetyLevel
+            relonsolvelondFelonaturelonMap,
+            r.vielonwelonrContelonxt,
+            r.safelontyLelonvelonl
           )
         }
 
-      val isVfParityTestEnabled = enableVfParityTest()
-      val isVfFeatureHydrationEnabled = enableVfFeatureHydration()
+      val isVfParityTelonstelonnablelond = elonnablelonVfParityTelonst()
+      val isVfFelonaturelonHydrationelonnablelond = elonnablelonVfFelonaturelonHydration()
 
-      if (!isVfParityTestEnabled && !isVfFeatureHydrationEnabled) {
-        response
-      } else if (isVfParityTestEnabled && !isVfFeatureHydrationEnabled) {
-        response.applyEffect { resp =>
-          Stitch.async(parityTest.runParityTest(hydratedFeatureResponse, resp))
+      if (!isVfParityTelonstelonnablelond && !isVfFelonaturelonHydrationelonnablelond) {
+        relonsponselon
+      } elonlselon if (isVfParityTelonstelonnablelond && !isVfFelonaturelonHydrationelonnablelond) {
+        relonsponselon.applyelonffelonct { relonsp =>
+          Stitch.async(parityTelonst.runParityTelonst(hydratelondFelonaturelonRelonsponselon, relonsp))
         }
-      } else {
-        hydratedFeatureResponse
+      } elonlselon {
+        hydratelondFelonaturelonRelonsponselon
       }
     }
   }

@@ -1,5 +1,5 @@
-package com.twitter.follow_recommendations.models
+packagelon com.twittelonr.follow_reloncommelonndations.modelonls
 
-import com.twitter.timelines.configapi.Params
+import com.twittelonr.timelonlinelons.configapi.Params
 
-case class CandidateUserDebugParams(paramsMap: Map[Long, Params])
+caselon class CandidatelonUselonrDelonbugParams(paramsMap: Map[Long, Params])

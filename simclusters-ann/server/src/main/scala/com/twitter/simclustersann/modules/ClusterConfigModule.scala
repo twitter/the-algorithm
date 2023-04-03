@@ -1,25 +1,25 @@
-package com.twitter.simclustersann.modules
+packagelon com.twittelonr.simclustelonrsann.modulelons
 
-import com.google.inject.Provides
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.inject.TwitterModule
-import com.twitter.relevance_platform.simclustersann.multicluster.ClusterConfig
-import com.twitter.relevance_platform.simclustersann.multicluster.ClusterConfigMapper
-import com.twitter.simclustersann.exceptions.MissingClusterConfigForSimClustersAnnVariantException
-import javax.inject.Singleton
+import com.googlelon.injelonct.Providelons
+import com.twittelonr.finaglelon.mtls.authelonntication.SelonrvicelonIdelonntifielonr
+import com.twittelonr.injelonct.TwittelonrModulelon
+import com.twittelonr.relonlelonvancelon_platform.simclustelonrsann.multiclustelonr.ClustelonrConfig
+import com.twittelonr.relonlelonvancelon_platform.simclustelonrsann.multiclustelonr.ClustelonrConfigMappelonr
+import com.twittelonr.simclustelonrsann.elonxcelonptions.MissingClustelonrConfigForSimClustelonrsAnnVariantelonxcelonption
+import javax.injelonct.Singlelonton
 
-object ClusterConfigModule extends TwitterModule {
-  @Singleton
-  @Provides
-  def providesClusterConfig(
-    serviceIdentifier: ServiceIdentifier,
-    clusterConfigMapper: ClusterConfigMapper
-  ): ClusterConfig = {
-    val serviceName = serviceIdentifier.service
+objelonct ClustelonrConfigModulelon elonxtelonnds TwittelonrModulelon {
+  @Singlelonton
+  @Providelons
+  delonf providelonsClustelonrConfig(
+    selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr,
+    clustelonrConfigMappelonr: ClustelonrConfigMappelonr
+  ): ClustelonrConfig = {
+    val selonrvicelonNamelon = selonrvicelonIdelonntifielonr.selonrvicelon
 
-    clusterConfigMapper.getClusterConfig(serviceName) match {
-      case Some(config) => config
-      case None => throw MissingClusterConfigForSimClustersAnnVariantException(serviceName)
+    clustelonrConfigMappelonr.gelontClustelonrConfig(selonrvicelonNamelon) match {
+      caselon Somelon(config) => config
+      caselon Nonelon => throw MissingClustelonrConfigForSimClustelonrsAnnVariantelonxcelonption(selonrvicelonNamelon)
     }
   }
 }

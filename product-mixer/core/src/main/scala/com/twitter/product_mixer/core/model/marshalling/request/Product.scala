@@ -1,25 +1,25 @@
-package com.twitter.product_mixer.core.model.marshalling.request
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst
 
-import com.twitter.product_mixer.core.model.common.Component
-import com.twitter.product_mixer.core.model.common.identifier.ProductIdentifier
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.Componelonnt
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.ProductIdelonntifielonr
 
-trait Product extends Component {
+trait Product elonxtelonnds Componelonnt {
 
   /**
-   * Identifier names on products can be used to create Feature Switch rules by product,
-   * which useful if bucketing occurs in a component shared by multiple products.
+   * Idelonntifielonr namelons on products can belon uselond to crelonatelon Felonaturelon Switch rulelons by product,
+   * which uselonful if buckelonting occurs in a componelonnt sharelond by multiplelon products.
    *
-   * @see [[com.twitter.product_mixer.core.product.ProductParamConfig.supportedClientFSName]]
+   * @selonelon [[com.twittelonr.product_mixelonr.corelon.product.ProductParamConfig.supportelondClielonntFSNamelon]]
    */
-  override val identifier: ProductIdentifier
+  ovelonrridelon val idelonntifielonr: ProductIdelonntifielonr
 
   /**
-   * To support StringCenter, override this val to `Some("name-of-string-center-project")` and
-   * include the `ProductScopeStringCenterModule` in the server's modules list
+   * To support StringCelonntelonr, ovelonrridelon this val to `Somelon("namelon-of-string-celonntelonr-projelonct")` and
+   * includelon thelon `ProductScopelonStringCelonntelonrModulelon` in thelon selonrvelonr's modulelons list
    */
-  val stringCenterProject: Option[String] = None
+  val stringCelonntelonrProjelonct: Option[String] = Nonelon
 }
 
 trait HasProduct {
-  def product: Product
+  delonf product: Product
 }

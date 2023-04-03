@@ -1,34 +1,34 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.generic_summary
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.gelonnelonric_summary
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.EntryNamespace
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.media.Media
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackActionInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.PromotedMetadata
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichText
-import com.twitter.util.Time
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.elonntryNamelonspacelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.Timelonlinelonelonntry
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.TimelonlinelonItelonm
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melondia.Melondia
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.ClielonntelonvelonntInfo
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.FelonelondbackActionInfo
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.promotelond.PromotelondMelontadata
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.richtelonxt.RichTelonxt
+import com.twittelonr.util.Timelon
 
-object GenericSummaryItem {
-  val GenericSummaryItemNamespace: EntryNamespace = EntryNamespace("genericsummary")
+objelonct GelonnelonricSummaryItelonm {
+  val GelonnelonricSummaryItelonmNamelonspacelon: elonntryNamelonspacelon = elonntryNamelonspacelon("gelonnelonricsummary")
 }
 
-case class GenericSummaryItem(
-  override val id: String,
-  override val sortIndex: Option[Long],
-  override val clientEventInfo: Option[ClientEventInfo],
-  override val feedbackActionInfo: Option[FeedbackActionInfo],
-  headline: RichText,
-  displayType: GenericSummaryItemDisplayType,
-  userAttributionIds: Seq[Long],
-  media: Option[Media],
-  context: Option[GenericSummaryContext],
-  timestamp: Option[Time],
-  onClickAction: Option[GenericSummaryAction],
-  promotedMetadata: Option[PromotedMetadata])
-    extends TimelineItem {
-  override val entryNamespace: EntryNamespace = GenericSummaryItem.GenericSummaryItemNamespace
+caselon class GelonnelonricSummaryItelonm(
+  ovelonrridelon val id: String,
+  ovelonrridelon val sortIndelonx: Option[Long],
+  ovelonrridelon val clielonntelonvelonntInfo: Option[ClielonntelonvelonntInfo],
+  ovelonrridelon val felonelondbackActionInfo: Option[FelonelondbackActionInfo],
+  helonadlinelon: RichTelonxt,
+  displayTypelon: GelonnelonricSummaryItelonmDisplayTypelon,
+  uselonrAttributionIds: Selonq[Long],
+  melondia: Option[Melondia],
+  contelonxt: Option[GelonnelonricSummaryContelonxt],
+  timelonstamp: Option[Timelon],
+  onClickAction: Option[GelonnelonricSummaryAction],
+  promotelondMelontadata: Option[PromotelondMelontadata])
+    elonxtelonnds TimelonlinelonItelonm {
+  ovelonrridelon val elonntryNamelonspacelon: elonntryNamelonspacelon = GelonnelonricSummaryItelonm.GelonnelonricSummaryItelonmNamelonspacelon
 
-  override def withSortIndex(sortIndex: Long): TimelineEntry = copy(sortIndex = Some(sortIndex))
+  ovelonrridelon delonf withSortIndelonx(sortIndelonx: Long): Timelonlinelonelonntry = copy(sortIndelonx = Somelon(sortIndelonx))
 }

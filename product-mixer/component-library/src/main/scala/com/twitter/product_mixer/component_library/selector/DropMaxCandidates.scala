@@ -1,84 +1,84 @@
-package com.twitter.product_mixer.component_library.selector
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.selonlelonctor
 
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.functional_component.common.SpecificPipeline
-import com.twitter.product_mixer.core.functional_component.common.SpecificPipelines
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.functional_component.selector.SelectorResult
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.configapi.Param
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.CandidatelonScopelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.SpeloncificPipelonlinelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.SpeloncificPipelonlinelons
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.selonlelonctor.Selonlelonctor
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.selonlelonctor.SelonlelonctorRelonsult
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonPipelonlinelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.timelonlinelons.configapi.Param
 
-trait MaxSelector[-Query <: PipelineQuery] {
-  def apply(
-    query: Query,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
+trait MaxSelonlelonctor[-Quelonry <: PipelonlinelonQuelonry] {
+  delonf apply(
+    quelonry: Quelonry,
+    relonmainingCandidatelons: Selonq[CandidatelonWithDelontails],
+    relonsult: Selonq[CandidatelonWithDelontails]
   ): Int
 }
 
-object DropMaxCandidates {
+objelonct DropMaxCandidatelons {
 
   /**
-   * A [[DropMaxCandidates]] Selector based on a [[Param]] applied to a single candidate pipeline
+   * A [[DropMaxCandidatelons]] Selonlelonctor baselond on a [[Param]] applielond to a singlelon candidatelon pipelonlinelon
    */
-  def apply[Query <: PipelineQuery](
-    candidatePipeline: CandidatePipelineIdentifier,
-    maxSelectionsParam: Param[Int]
-  ) = new DropMaxCandidates[Query](
-    SpecificPipeline(candidatePipeline),
-    (query, _, _) => query.params(maxSelectionsParam))
+  delonf apply[Quelonry <: PipelonlinelonQuelonry](
+    candidatelonPipelonlinelon: CandidatelonPipelonlinelonIdelonntifielonr,
+    maxSelonlelonctionsParam: Param[Int]
+  ) = nelonw DropMaxCandidatelons[Quelonry](
+    SpeloncificPipelonlinelon(candidatelonPipelonlinelon),
+    (quelonry, _, _) => quelonry.params(maxSelonlelonctionsParam))
 
   /**
-   * A [[DropMaxCandidates]] Selector based on a [[Param]] with multiple candidate pipelines
+   * A [[DropMaxCandidatelons]] Selonlelonctor baselond on a [[Param]] with multiplelon candidatelon pipelonlinelons
    */
-  def apply[Query <: PipelineQuery](
-    candidatePipelines: Set[CandidatePipelineIdentifier],
-    maxSelectionsParam: Param[Int]
-  ) = new DropMaxCandidates[Query](
-    SpecificPipelines(candidatePipelines),
-    (query, _, _) => query.params(maxSelectionsParam))
+  delonf apply[Quelonry <: PipelonlinelonQuelonry](
+    candidatelonPipelonlinelons: Selont[CandidatelonPipelonlinelonIdelonntifielonr],
+    maxSelonlelonctionsParam: Param[Int]
+  ) = nelonw DropMaxCandidatelons[Quelonry](
+    SpeloncificPipelonlinelons(candidatelonPipelonlinelons),
+    (quelonry, _, _) => quelonry.params(maxSelonlelonctionsParam))
 
   /**
-   * A [[DropMaxCandidates]] Selector based on a [[Param]] that applies to a [[CandidateScope]]
+   * A [[DropMaxCandidatelons]] Selonlelonctor baselond on a [[Param]] that applielons to a [[CandidatelonScopelon]]
    */
-  def apply[Query <: PipelineQuery](
-    pipelineScope: CandidateScope,
-    maxSelectionsParam: Param[Int]
-  ) = new DropMaxCandidates[Query](pipelineScope, (query, _, _) => query.params(maxSelectionsParam))
+  delonf apply[Quelonry <: PipelonlinelonQuelonry](
+    pipelonlinelonScopelon: CandidatelonScopelon,
+    maxSelonlelonctionsParam: Param[Int]
+  ) = nelonw DropMaxCandidatelons[Quelonry](pipelonlinelonScopelon, (quelonry, _, _) => quelonry.params(maxSelonlelonctionsParam))
 }
 
 /**
- * Limit the number of item and module (not items inside modules) candidates from the
- * specified pipelines based on the value provided by the [[MaxSelector]]
+ * Limit thelon numbelonr of itelonm and modulelon (not itelonms insidelon modulelons) candidatelons from thelon
+ * speloncifielond pipelonlinelons baselond on thelon valuelon providelond by thelon [[MaxSelonlelonctor]]
  *
- * For example, if value from the [[MaxSelector]] is 3, and a candidatePipeline returned 10 items
- * in the candidate pool, then these items will be reduced to the first 3 items. Note that to
- * update the ordering of the candidates, an UpdateCandidateOrderingSelector may be used prior to
- * using this Selector.
+ * For elonxamplelon, if valuelon from thelon [[MaxSelonlelonctor]] is 3, and a candidatelonPipelonlinelon relonturnelond 10 itelonms
+ * in thelon candidatelon pool, thelonn thelonselon itelonms will belon relonducelond to thelon first 3 itelonms. Notelon that to
+ * updatelon thelon ordelonring of thelon candidatelons, an UpdatelonCandidatelonOrdelonringSelonlelonctor may belon uselond prior to
+ * using this Selonlelonctor.
  *
- * Another example, if the [[MaxSelector]] value is 3, and a candidatePipeline returned 10 modules
- * in the candidate pool, then these will be reduced to the first 3 modules. The items inside the
- * modeles will not be affected by this selector. To control the number of items inside modules see
- * [[DropMaxModuleItemCandidates]].
+ * Anothelonr elonxamplelon, if thelon [[MaxSelonlelonctor]] valuelon is 3, and a candidatelonPipelonlinelon relonturnelond 10 modulelons
+ * in thelon candidatelon pool, thelonn thelonselon will belon relonducelond to thelon first 3 modulelons. Thelon itelonms insidelon thelon
+ * modelonlelons will not belon affelonctelond by this selonlelonctor. To control thelon numbelonr of itelonms insidelon modulelons selonelon
+ * [[DropMaxModulelonItelonmCandidatelons]].
  */
-case class DropMaxCandidates[-Query <: PipelineQuery](
-  override val pipelineScope: CandidateScope,
-  maxSelector: MaxSelector[Query])
-    extends Selector[Query] {
+caselon class DropMaxCandidatelons[-Quelonry <: PipelonlinelonQuelonry](
+  ovelonrridelon val pipelonlinelonScopelon: CandidatelonScopelon,
+  maxSelonlelonctor: MaxSelonlelonctor[Quelonry])
+    elonxtelonnds Selonlelonctor[Quelonry] {
 
-  override def apply(
-    query: Query,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
-  ): SelectorResult = {
-    val maxSelections = maxSelector(query, remainingCandidates, result)
-    assert(maxSelections > 0, "Max selections must be greater than zero")
+  ovelonrridelon delonf apply(
+    quelonry: Quelonry,
+    relonmainingCandidatelons: Selonq[CandidatelonWithDelontails],
+    relonsult: Selonq[CandidatelonWithDelontails]
+  ): SelonlelonctorRelonsult = {
+    val maxSelonlelonctions = maxSelonlelonctor(quelonry, relonmainingCandidatelons, relonsult)
+    asselonrt(maxSelonlelonctions > 0, "Max selonlelonctions must belon grelonatelonr than zelonro")
 
-    val remainingCandidatesLimited =
-      DropSelector.takeUntil(maxSelections, remainingCandidates, pipelineScope)
+    val relonmainingCandidatelonsLimitelond =
+      DropSelonlelonctor.takelonUntil(maxSelonlelonctions, relonmainingCandidatelons, pipelonlinelonScopelon)
 
-    SelectorResult(remainingCandidates = remainingCandidatesLimited, result = result)
+    SelonlelonctorRelonsult(relonmainingCandidatelons = relonmainingCandidatelonsLimitelond, relonsult = relonsult)
   }
 }

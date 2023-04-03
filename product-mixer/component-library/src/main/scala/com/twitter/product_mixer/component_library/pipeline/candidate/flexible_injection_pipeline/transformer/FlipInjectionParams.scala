@@ -1,11 +1,11 @@
-package com.twitter.product_mixer.component_library.pipeline.candidate.flexible_injection_pipeline.transformer
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.pipelonlinelon.candidatelon.flelonxiblelon_injelonction_pipelonlinelon.transformelonr
 
-import com.twitter.onboarding.task.service.{thriftscala => flip}
+import com.twittelonr.onboarding.task.selonrvicelon.{thriftscala => flip}
 
-trait HasFlipInjectionParams {
-  def displayLocation: flip.DisplayLocation
-  def rankingDisablerWithLatestControlsAvailable: Option[Boolean]
-  def isEmptyState: Option[Boolean]
-  def isFirstRequestAfterSignup: Option[Boolean]
-  def isEndOfTimeline: Option[Boolean]
+trait HasFlipInjelonctionParams {
+  delonf displayLocation: flip.DisplayLocation
+  delonf rankingDisablelonrWithLatelonstControlsAvailablelon: Option[Boolelonan]
+  delonf iselonmptyStatelon: Option[Boolelonan]
+  delonf isFirstRelonquelonstAftelonrSignup: Option[Boolelonan]
+  delonf iselonndOfTimelonlinelon: Option[Boolelonan]
 }

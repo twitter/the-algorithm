@@ -1,45 +1,45 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.metadata
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.melontadata
 
-import com.twitter.product_mixer.component_library.model.candidate.BaseTopicCandidate
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackAction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackActionInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.RichBehavior
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.RichFeedbackBehaviorMarkNotInterestedTopic
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.BaselonTopicCandidatelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.melontadata.BaselonFelonelondbackActionInfoBuildelonr
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.FelonelondbackAction
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.FelonelondbackActionInfo
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.RichBelonhavior
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.RichFelonelondbackBelonhaviorMarkNotIntelonrelonstelondTopic
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
-case class TopicNotInterestedFeedbackActionInfoBuilder[-Query <: PipelineQuery]()
-    extends BaseFeedbackActionInfoBuilder[Query, BaseTopicCandidate] {
+caselon class TopicNotIntelonrelonstelondFelonelondbackActionInfoBuildelonr[-Quelonry <: PipelonlinelonQuelonry]()
+    elonxtelonnds BaselonFelonelondbackActionInfoBuildelonr[Quelonry, BaselonTopicCandidatelon] {
 
-  override def apply(
-    query: Query,
-    topicCandidate: BaseTopicCandidate,
-    candidateFeatures: FeatureMap
-  ): Option[FeedbackActionInfo] = {
-    Some(
-      FeedbackActionInfo(
-        feedbackActions = Seq(
-          FeedbackAction(
-            feedbackType = RichBehavior,
-            richBehavior = Some(
-              RichFeedbackBehaviorMarkNotInterestedTopic(topicCandidate.id.toString)
+  ovelonrridelon delonf apply(
+    quelonry: Quelonry,
+    topicCandidatelon: BaselonTopicCandidatelon,
+    candidatelonFelonaturelons: FelonaturelonMap
+  ): Option[FelonelondbackActionInfo] = {
+    Somelon(
+      FelonelondbackActionInfo(
+        felonelondbackActions = Selonq(
+          FelonelondbackAction(
+            felonelondbackTypelon = RichBelonhavior,
+            richBelonhavior = Somelon(
+              RichFelonelondbackBelonhaviorMarkNotIntelonrelonstelondTopic(topicCandidatelon.id.toString)
             ),
-            hasUndoAction = Some(true),
-            prompt = None,
-            confirmation = None,
-            feedbackUrl = None,
-            clientEventInfo = None,
-            childFeedbackActions = None,
-            confirmationDisplayType = None,
-            icon = None,
-            subprompt = None,
-            encodedFeedbackRequest = None
+            hasUndoAction = Somelon(truelon),
+            prompt = Nonelon,
+            confirmation = Nonelon,
+            felonelondbackUrl = Nonelon,
+            clielonntelonvelonntInfo = Nonelon,
+            childFelonelondbackActions = Nonelon,
+            confirmationDisplayTypelon = Nonelon,
+            icon = Nonelon,
+            subprompt = Nonelon,
+            elonncodelondFelonelondbackRelonquelonst = Nonelon
           )
         ),
-        feedbackMetadata = None,
-        displayContext = None,
-        clientEventInfo = None
+        felonelondbackMelontadata = Nonelon,
+        displayContelonxt = Nonelon,
+        clielonntelonvelonntInfo = Nonelon
       ))
   }
 }

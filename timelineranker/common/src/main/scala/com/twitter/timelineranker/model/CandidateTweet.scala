@@ -1,35 +1,35 @@
-package com.twitter.timelineranker.model
+packagelon com.twittelonr.timelonlinelonrankelonr.modelonl
 
-import com.twitter.search.common.features.thriftscala.ThriftTweetFeatures
-import com.twitter.timelineranker.{thriftscala => thrift}
-import com.twitter.timelines.model.tweet.HydratedTweet
-import com.twitter.tweetypie.thriftscala
+import com.twittelonr.selonarch.common.felonaturelons.thriftscala.ThriftTwelonelontFelonaturelons
+import com.twittelonr.timelonlinelonrankelonr.{thriftscala => thrift}
+import com.twittelonr.timelonlinelons.modelonl.twelonelont.HydratelondTwelonelont
+import com.twittelonr.twelonelontypielon.thriftscala
 
-object CandidateTweet {
-  val DefaultFeatures: ThriftTweetFeatures = ThriftTweetFeatures()
+objelonct CandidatelonTwelonelont {
+  val DelonfaultFelonaturelons: ThriftTwelonelontFelonaturelons = ThriftTwelonelontFelonaturelons()
 
-  def fromThrift(candidate: thrift.CandidateTweet): CandidateTweet = {
-    val tweet: thriftscala.Tweet = candidate.tweet.getOrElse(
-      throw new IllegalArgumentException(s"CandidateTweet.tweet must have a value")
+  delonf fromThrift(candidatelon: thrift.CandidatelonTwelonelont): CandidatelonTwelonelont = {
+    val twelonelont: thriftscala.Twelonelont = candidatelon.twelonelont.gelontOrelonlselon(
+      throw nelonw IllelongalArgumelonntelonxcelonption(s"CandidatelonTwelonelont.twelonelont must havelon a valuelon")
     )
-    val features = candidate.features.getOrElse(
-      throw new IllegalArgumentException(s"CandidateTweet.features must have a value")
+    val felonaturelons = candidatelon.felonaturelons.gelontOrelonlselon(
+      throw nelonw IllelongalArgumelonntelonxcelonption(s"CandidatelonTwelonelont.felonaturelons must havelon a valuelon")
     )
 
-    CandidateTweet(HydratedTweet(tweet), features)
+    CandidatelonTwelonelont(HydratelondTwelonelont(twelonelont), felonaturelons)
   }
 }
 
 /**
- * A candidate Tweet and associated information.
- * Model object for CandidateTweet thrift struct.
+ * A candidatelon Twelonelont and associatelond information.
+ * Modelonl objelonct for CandidatelonTwelonelont thrift struct.
  */
-case class CandidateTweet(hydratedTweet: HydratedTweet, features: ThriftTweetFeatures) {
+caselon class CandidatelonTwelonelont(hydratelondTwelonelont: HydratelondTwelonelont, felonaturelons: ThriftTwelonelontFelonaturelons) {
 
-  def toThrift: thrift.CandidateTweet = {
-    thrift.CandidateTweet(
-      tweet = Some(hydratedTweet.tweet),
-      features = Some(features)
+  delonf toThrift: thrift.CandidatelonTwelonelont = {
+    thrift.CandidatelonTwelonelont(
+      twelonelont = Somelon(hydratelondTwelonelont.twelonelont),
+      felonaturelons = Somelon(felonaturelons)
     )
   }
 }

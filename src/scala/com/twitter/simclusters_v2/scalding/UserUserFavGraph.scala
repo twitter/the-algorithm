@@ -1,444 +1,444 @@
-package com.twitter.simclusters_v2.scalding
+packagelon com.twittelonr.simclustelonrs_v2.scalding
 
-import com.twitter.algebird.DecayedValue
-import com.twitter.algebird.DecayedValueMonoid
-import com.twitter.algebird.Monoid
-import com.twitter.algebird.Semigroup
-import com.twitter.conversions.DurationOps._
-import com.twitter.logging.Logger
-import com.twitter.scalding._
-import com.twitter.scalding.typed.UnsortedGrouped
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.scalding_internal.dalv2.remote_access.ExplicitLocation
-import com.twitter.scalding_internal.dalv2.remote_access.ProcAtla
-import com.twitter.scalding_internal.job.TwitterExecutionApp
-import com.twitter.scalding_internal.job.analytics_batch._
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.hdfs_sources._
-import com.twitter.simclusters_v2.scalding.common.Util
-import com.twitter.simclusters_v2.thriftscala.DecayedSums
-import com.twitter.simclusters_v2.thriftscala.EdgeWithDecayedWeights
-import com.twitter.timelineservice.thriftscala.ContextualizedFavoriteEvent
-import com.twitter.timelineservice.thriftscala.FavoriteEventUnion
-import com.twitter.usersource.snapshot.flat.UsersourceFlatScalaDataset
-import com.twitter.usersource.snapshot.flat.thriftscala.FlatUser
-import com.twitter.util.Time
-import twadoop_config.configuration.log_categories.group.timeline.TimelineServiceFavoritesScalaDataset
+import com.twittelonr.algelonbird.DeloncayelondValuelon
+import com.twittelonr.algelonbird.DeloncayelondValuelonMonoid
+import com.twittelonr.algelonbird.Monoid
+import com.twittelonr.algelonbird.Selonmigroup
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.logging.Loggelonr
+import com.twittelonr.scalding._
+import com.twittelonr.scalding.typelond.UnsortelondGroupelond
+import com.twittelonr.scalding_intelonrnal.dalv2.DAL
+import com.twittelonr.scalding_intelonrnal.dalv2.DALWritelon._
+import com.twittelonr.scalding_intelonrnal.dalv2.relonmotelon_accelonss.elonxplicitLocation
+import com.twittelonr.scalding_intelonrnal.dalv2.relonmotelon_accelonss.ProcAtla
+import com.twittelonr.scalding_intelonrnal.job.TwittelonrelonxeloncutionApp
+import com.twittelonr.scalding_intelonrnal.job.analytics_batch._
+import com.twittelonr.simclustelonrs_v2.common.TwelonelontId
+import com.twittelonr.simclustelonrs_v2.common.UselonrId
+import com.twittelonr.simclustelonrs_v2.hdfs_sourcelons._
+import com.twittelonr.simclustelonrs_v2.scalding.common.Util
+import com.twittelonr.simclustelonrs_v2.thriftscala.DeloncayelondSums
+import com.twittelonr.simclustelonrs_v2.thriftscala.elondgelonWithDeloncayelondWelonights
+import com.twittelonr.timelonlinelonselonrvicelon.thriftscala.ContelonxtualizelondFavoritelonelonvelonnt
+import com.twittelonr.timelonlinelonselonrvicelon.thriftscala.FavoritelonelonvelonntUnion
+import com.twittelonr.uselonrsourcelon.snapshot.flat.UselonrsourcelonFlatScalaDataselont
+import com.twittelonr.uselonrsourcelon.snapshot.flat.thriftscala.FlatUselonr
+import com.twittelonr.util.Timelon
+import twadoop_config.configuration.log_catelongorielons.group.timelonlinelon.TimelonlinelonSelonrvicelonFavoritelonsScalaDataselont
 
-sealed trait FavState
+selonalelond trait FavStatelon
 
-object Fav extends FavState
+objelonct Fav elonxtelonnds FavStatelon
 
-object UnFavWithoutPriorFav extends FavState
+objelonct UnFavWithoutPriorFav elonxtelonnds FavStatelon
 
-object UnFavWithPriorFav extends FavState
+objelonct UnFavWithPriorFav elonxtelonnds FavStatelon
 
-case class TimestampedFavState(favOrUnfav: FavState, timestampMillis: Long)
+caselon class TimelonstampelondFavStatelon(favOrUnfav: FavStatelon, timelonstampMillis: Long)
 
-object TimestampedFavStateSemigroup extends Semigroup[TimestampedFavState] {
-  override def plus(left: TimestampedFavState, right: TimestampedFavState): TimestampedFavState = {
+objelonct TimelonstampelondFavStatelonSelonmigroup elonxtelonnds Selonmigroup[TimelonstampelondFavStatelon] {
+  ovelonrridelon delonf plus(lelonft: TimelonstampelondFavStatelon, right: TimelonstampelondFavStatelon): TimelonstampelondFavStatelon = {
 
     /**
-     * Assigning to first, second ensures commutative property
+     * Assigning to first, seloncond elonnsurelons commutativelon propelonrty
      */
-    val (first, second) = if (left.timestampMillis < right.timestampMillis) {
-      (left, right)
-    } else {
-      (right, left)
+    val (first, seloncond) = if (lelonft.timelonstampMillis < right.timelonstampMillis) {
+      (lelonft, right)
+    } elonlselon {
+      (right, lelonft)
     }
-    (first.favOrUnfav, second.favOrUnfav) match {
-      case (_, UnFavWithPriorFav) => second
-      case (UnFavWithPriorFav, UnFavWithoutPriorFav) =>
-        TimestampedFavState(UnFavWithPriorFav, second.timestampMillis)
-      case (Fav, UnFavWithoutPriorFav) =>
-        TimestampedFavState(UnFavWithPriorFav, second.timestampMillis)
-      case (UnFavWithoutPriorFav, UnFavWithoutPriorFav) => second
-      case (_, Fav) => second
+    (first.favOrUnfav, seloncond.favOrUnfav) match {
+      caselon (_, UnFavWithPriorFav) => seloncond
+      caselon (UnFavWithPriorFav, UnFavWithoutPriorFav) =>
+        TimelonstampelondFavStatelon(UnFavWithPriorFav, seloncond.timelonstampMillis)
+      caselon (Fav, UnFavWithoutPriorFav) =>
+        TimelonstampelondFavStatelon(UnFavWithPriorFav, seloncond.timelonstampMillis)
+      caselon (UnFavWithoutPriorFav, UnFavWithoutPriorFav) => seloncond
+      caselon (_, Fav) => seloncond
     }
   }
 }
 
-object UserUserFavGraph {
-  implicit val tz: java.util.TimeZone = DateOps.UTC
-  // setting the prune threshold in the monoid below to 0.0, since we want to do our own pruning
-  // outside the monoid, primarily to be able to count how many scores are pruned.
-  implicit val dvMonoid: Monoid[DecayedValue] = DecayedValueMonoid(0.0)
-  implicit val lfvSemigroup: Semigroup[TimestampedFavState] = TimestampedFavStateSemigroup
+objelonct UselonrUselonrFavGraph {
+  implicit val tz: java.util.TimelonZonelon = DatelonOps.UTC
+  // selontting thelon prunelon threlonshold in thelon monoid belonlow to 0.0, sincelon welon want to do our own pruning
+  // outsidelon thelon monoid, primarily to belon ablelon to count how many scorelons arelon prunelond.
+  implicit val dvMonoid: Monoid[DeloncayelondValuelon] = DeloncayelondValuelonMonoid(0.0)
+  implicit val lfvSelonmigroup: Selonmigroup[TimelonstampelondFavStatelon] = TimelonstampelondFavStatelonSelonmigroup
 
-  def getSummedFavGraph(
-    previousGraphOpt: Option[TypedPipe[EdgeWithDecayedWeights]],
-    newFavsDateRange: DateRange,
-    halfLivesInDays: List[Int],
-    minScoreToKeep: Double
+  delonf gelontSummelondFavGraph(
+    prelonviousGraphOpt: Option[TypelondPipelon[elondgelonWithDeloncayelondWelonights]],
+    nelonwFavsDatelonRangelon: DatelonRangelon,
+    halfLivelonsInDays: List[Int],
+    minScorelonToKelonelonp: Doublelon
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[EdgeWithDecayedWeights] = {
-    val newFavs = DAL.read(TimelineServiceFavoritesScalaDataset, newFavsDateRange).toTypedPipe
-    val endTime = Time.fromMilliseconds(newFavsDateRange.end.timestamp)
-    val userSource =
-      DAL.readMostRecentSnapshotNoOlderThan(UsersourceFlatScalaDataset, Days(7)).toTypedPipe
-    getSummedFavGraphWithValidUsers(
-      previousGraphOpt,
-      newFavs,
-      halfLivesInDays,
-      endTime,
-      minScoreToKeep,
-      userSource
+    implicit uniquelonID: UniquelonID
+  ): TypelondPipelon[elondgelonWithDeloncayelondWelonights] = {
+    val nelonwFavs = DAL.relonad(TimelonlinelonSelonrvicelonFavoritelonsScalaDataselont, nelonwFavsDatelonRangelon).toTypelondPipelon
+    val elonndTimelon = Timelon.fromMilliselonconds(nelonwFavsDatelonRangelon.elonnd.timelonstamp)
+    val uselonrSourcelon =
+      DAL.relonadMostReloncelonntSnapshotNoOldelonrThan(UselonrsourcelonFlatScalaDataselont, Days(7)).toTypelondPipelon
+    gelontSummelondFavGraphWithValidUselonrs(
+      prelonviousGraphOpt,
+      nelonwFavs,
+      halfLivelonsInDays,
+      elonndTimelon,
+      minScorelonToKelonelonp,
+      uselonrSourcelon
     )
   }
 
-  def getSummedFavGraphWithValidUsers(
-    previousGraphOpt: Option[TypedPipe[EdgeWithDecayedWeights]],
-    newFavs: TypedPipe[ContextualizedFavoriteEvent],
-    halfLivesInDays: List[Int],
-    endTime: Time,
-    minScoreToKeep: Double,
-    userSource: TypedPipe[FlatUser]
+  delonf gelontSummelondFavGraphWithValidUselonrs(
+    prelonviousGraphOpt: Option[TypelondPipelon[elondgelonWithDeloncayelondWelonights]],
+    nelonwFavs: TypelondPipelon[ContelonxtualizelondFavoritelonelonvelonnt],
+    halfLivelonsInDays: List[Int],
+    elonndTimelon: Timelon,
+    minScorelonToKelonelonp: Doublelon,
+    uselonrSourcelon: TypelondPipelon[FlatUselonr]
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[EdgeWithDecayedWeights] = {
-    val fullGraph = getSummedFavGraph(
-      previousGraphOpt,
-      newFavs,
-      halfLivesInDays,
-      endTime,
-      minScoreToKeep
+    implicit uniquelonID: UniquelonID
+  ): TypelondPipelon[elondgelonWithDeloncayelondWelonights] = {
+    val fullGraph = gelontSummelondFavGraph(
+      prelonviousGraphOpt,
+      nelonwFavs,
+      halfLivelonsInDays,
+      elonndTimelon,
+      minScorelonToKelonelonp
     )
-    removeDeactivedOrSuspendedUsers(fullGraph, userSource)
+    relonmovelonDelonactivelondOrSuspelonndelondUselonrs(fullGraph, uselonrSourcelon)
   }
 
-  def processRawFavEvents(
-    favsOrUnfavs: TypedPipe[ContextualizedFavoriteEvent]
+  delonf procelonssRawFavelonvelonnts(
+    favsOrUnfavs: TypelondPipelon[ContelonxtualizelondFavoritelonelonvelonnt]
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[((UserId, TweetId, UserId), TimestampedFavState)] = {
-    val numFavsBeforeUniq = Stat("num_favs_before_uniq")
-    val numUnFavsBeforeUniq = Stat("num_unfavs_before_uniq")
+    implicit uniquelonID: UniquelonID
+  ): TypelondPipelon[((UselonrId, TwelonelontId, UselonrId), TimelonstampelondFavStatelon)] = {
+    val numFavsBelonforelonUniq = Stat("num_favs_belonforelon_uniq")
+    val numUnFavsBelonforelonUniq = Stat("num_unfavs_belonforelon_uniq")
     val numFinalFavs = Stat("num_final_favs")
     val numUnFavsWithPriorFavs = Stat("num_unfavs_with_prior_favs")
     val numUnFavsWithoutPriorFavs = Stat("num_unfavs_without_prior_favs")
 
     favsOrUnfavs
-      .flatMap { cfe: ContextualizedFavoriteEvent =>
-        cfe.event match {
-          case FavoriteEventUnion.Favorite(fav) =>
-            numFavsBeforeUniq.inc()
-            Some(
+      .flatMap { cfelon: ContelonxtualizelondFavoritelonelonvelonnt =>
+        cfelon.elonvelonnt match {
+          caselon FavoritelonelonvelonntUnion.Favoritelon(fav) =>
+            numFavsBelonforelonUniq.inc()
+            Somelon(
               (
-                (fav.userId, fav.tweetId, fav.tweetUserId),
-                TimestampedFavState(Fav, fav.eventTimeMs)))
-          case FavoriteEventUnion.Unfavorite(unfav) =>
-            numUnFavsBeforeUniq.inc()
-            Some(
+                (fav.uselonrId, fav.twelonelontId, fav.twelonelontUselonrId),
+                TimelonstampelondFavStatelon(Fav, fav.elonvelonntTimelonMs)))
+          caselon FavoritelonelonvelonntUnion.Unfavoritelon(unfav) =>
+            numUnFavsBelonforelonUniq.inc()
+            Somelon(
               (
-                (unfav.userId, unfav.tweetId, unfav.tweetUserId),
-                TimestampedFavState(UnFavWithoutPriorFav, unfav.eventTimeMs)))
-          case _ => None
+                (unfav.uselonrId, unfav.twelonelontId, unfav.twelonelontUselonrId),
+                TimelonstampelondFavStatelon(UnFavWithoutPriorFav, unfav.elonvelonntTimelonMs)))
+          caselon _ => Nonelon
         }
       }
-      .sumByKey
-      .toTypedPipe
+      .sumByKelony
+      .toTypelondPipelon
       .flatMap {
-        case fav @ (_, TimestampedFavState(Fav, _)) =>
+        caselon fav @ (_, TimelonstampelondFavStatelon(Fav, _)) =>
           numFinalFavs.inc()
-          Some(fav)
-        case unfav @ (_, TimestampedFavState(UnFavWithoutPriorFav, _)) =>
+          Somelon(fav)
+        caselon unfav @ (_, TimelonstampelondFavStatelon(UnFavWithoutPriorFav, _)) =>
           numUnFavsWithoutPriorFavs.inc()
-          Some(unfav)
-        case (_, TimestampedFavState(UnFavWithPriorFav, _)) =>
+          Somelon(unfav)
+        caselon (_, TimelonstampelondFavStatelon(UnFavWithPriorFav, _)) =>
           numUnFavsWithPriorFavs.inc()
-          None
+          Nonelon
       }
   }
 
-  private def getGraphFromNewFavsOnly(
-    newFavs: TypedPipe[ContextualizedFavoriteEvent],
-    halfLivesInDays: List[Int],
-    endTime: Time
+  privatelon delonf gelontGraphFromNelonwFavsOnly(
+    nelonwFavs: TypelondPipelon[ContelonxtualizelondFavoritelonelonvelonnt],
+    halfLivelonsInDays: List[Int],
+    elonndTimelon: Timelon
   )(
-    implicit uniqueID: UniqueID
-  ): UnsortedGrouped[(UserId, UserId), Map[Int, DecayedValue]] = {
+    implicit uniquelonID: UniquelonID
+  ): UnsortelondGroupelond[(UselonrId, UselonrId), Map[Int, DeloncayelondValuelon]] = {
 
-    val numEventsNewerThanEndTime = Stat("num_events_newer_than_endtime")
+    val numelonvelonntsNelonwelonrThanelonndTimelon = Stat("num_elonvelonnts_nelonwelonr_than_elonndtimelon")
 
-    processRawFavEvents(newFavs).map {
-      case ((userId, _, authorId), TimestampedFavState(favOrUnfav, timestampMillis)) =>
-        val halfLifeInDaysToScores = halfLivesInDays.map { halfLifeInDays =>
-          val givenTime = Time.fromMilliseconds(timestampMillis)
-          if (givenTime > endTime) {
-            // technically this should never happen, and even if it did happen,
-            // we shouldn't have to care, but I'm noticing that the weights aren't being computed
-            // correctly for events that spilled over the edge
-            numEventsNewerThanEndTime.inc()
+    procelonssRawFavelonvelonnts(nelonwFavs).map {
+      caselon ((uselonrId, _, authorId), TimelonstampelondFavStatelon(favOrUnfav, timelonstampMillis)) =>
+        val halfLifelonInDaysToScorelons = halfLivelonsInDays.map { halfLifelonInDays =>
+          val givelonnTimelon = Timelon.fromMilliselonconds(timelonstampMillis)
+          if (givelonnTimelon > elonndTimelon) {
+            // telonchnically this should nelonvelonr happelonn, and elonvelonn if it did happelonn,
+            // welon shouldn't havelon to carelon, but I'm noticing that thelon welonights arelonn't beloning computelond
+            // correlonctly for elonvelonnts that spillelond ovelonr thelon elondgelon
+            numelonvelonntsNelonwelonrThanelonndTimelon.inc()
           }
-          val timeInSeconds = math.min(givenTime.inSeconds, endTime.inSeconds)
-          val value = favOrUnfav match {
-            case Fav => 1.0
-            case UnFavWithoutPriorFav => -1.0
-            case UnFavWithPriorFav => 0.0
+          val timelonInSelonconds = math.min(givelonnTimelon.inSelonconds, elonndTimelon.inSelonconds)
+          val valuelon = favOrUnfav match {
+            caselon Fav => 1.0
+            caselon UnFavWithoutPriorFav => -1.0
+            caselon UnFavWithPriorFav => 0.0
           }
-          val decayedValue = DecayedValue.build(value, timeInSeconds, halfLifeInDays.days.inSeconds)
-          halfLifeInDays -> decayedValue
+          val deloncayelondValuelon = DeloncayelondValuelon.build(valuelon, timelonInSelonconds, halfLifelonInDays.days.inSelonconds)
+          halfLifelonInDays -> deloncayelondValuelon
         }
-        ((userId, authorId), halfLifeInDaysToScores.toMap)
-    }.sumByKey
+        ((uselonrId, authorId), halfLifelonInDaysToScorelons.toMap)
+    }.sumByKelony
   }
 
-  def getSummedFavGraph(
-    previousGraphOpt: Option[TypedPipe[EdgeWithDecayedWeights]],
-    newFavs: TypedPipe[ContextualizedFavoriteEvent],
-    halfLivesInDays: List[Int],
-    endTime: Time,
-    minScoreToKeep: Double
+  delonf gelontSummelondFavGraph(
+    prelonviousGraphOpt: Option[TypelondPipelon[elondgelonWithDeloncayelondWelonights]],
+    nelonwFavs: TypelondPipelon[ContelonxtualizelondFavoritelonelonvelonnt],
+    halfLivelonsInDays: List[Int],
+    elonndTimelon: Timelon,
+    minScorelonToKelonelonp: Doublelon
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[EdgeWithDecayedWeights] = {
-    val prunedScoresCounter = Stat("num_pruned_scores")
-    val negativeScoresCounter = Stat("num_negative_scores")
-    val prunedEdgesCounter = Stat("num_pruned_edges")
-    val keptEdgesCounter = Stat("num_kept_edges")
-    val keptScoresCounter = Stat("num_kept_scores")
-    val numCommonEdges = Stat("num_common_edges")
-    val numNewEdges = Stat("num_new_edges")
-    val numOldEdges = Stat("num_old_edges")
+    implicit uniquelonID: UniquelonID
+  ): TypelondPipelon[elondgelonWithDeloncayelondWelonights] = {
+    val prunelondScorelonsCountelonr = Stat("num_prunelond_scorelons")
+    val nelongativelonScorelonsCountelonr = Stat("num_nelongativelon_scorelons")
+    val prunelondelondgelonsCountelonr = Stat("num_prunelond_elondgelons")
+    val kelonptelondgelonsCountelonr = Stat("num_kelonpt_elondgelons")
+    val kelonptScorelonsCountelonr = Stat("num_kelonpt_scorelons")
+    val numCommonelondgelons = Stat("num_common_elondgelons")
+    val numNelonwelondgelons = Stat("num_nelonw_elondgelons")
+    val numOldelondgelons = Stat("num_old_elondgelons")
 
-    val unprunedOuterJoinedGraph = previousGraphOpt match {
-      case Some(previousGraph) =>
-        previousGraph
+    val unprunelondOutelonrJoinelondGraph = prelonviousGraphOpt match {
+      caselon Somelon(prelonviousGraph) =>
+        prelonviousGraph
           .map {
-            case EdgeWithDecayedWeights(srcId, destId, decayedSums) =>
-              val ts = decayedSums.lastUpdatedTimestamp.toDouble / 1000
-              val map = decayedSums.halfLifeInDaysToDecayedSums.map {
-                case (halfLifeInDays, value) =>
-                  halfLifeInDays -> DecayedValue.build(value, ts, halfLifeInDays.days.inSeconds)
+            caselon elondgelonWithDeloncayelondWelonights(srcId, delonstId, deloncayelondSums) =>
+              val ts = deloncayelondSums.lastUpdatelondTimelonstamp.toDoublelon / 1000
+              val map = deloncayelondSums.halfLifelonInDaysToDeloncayelondSums.map {
+                caselon (halfLifelonInDays, valuelon) =>
+                  halfLifelonInDays -> DeloncayelondValuelon.build(valuelon, ts, halfLifelonInDays.days.inSelonconds)
               }.toMap
-              ((srcId, destId), map)
+              ((srcId, delonstId), map)
           }
-          .outerJoin(getGraphFromNewFavsOnly(newFavs, halfLivesInDays, endTime))
-          .toTypedPipe
-      case None =>
-        getGraphFromNewFavsOnly(newFavs, halfLivesInDays, endTime).toTypedPipe
+          .outelonrJoin(gelontGraphFromNelonwFavsOnly(nelonwFavs, halfLivelonsInDays, elonndTimelon))
+          .toTypelondPipelon
+      caselon Nonelon =>
+        gelontGraphFromNelonwFavsOnly(nelonwFavs, halfLivelonsInDays, elonndTimelon).toTypelondPipelon
           .map {
-            case ((srcId, destId), scoreMap) =>
-              ((srcId, destId), (None, Some(scoreMap)))
+            caselon ((srcId, delonstId), scorelonMap) =>
+              ((srcId, delonstId), (Nonelon, Somelon(scorelonMap)))
           }
     }
 
-    unprunedOuterJoinedGraph
+    unprunelondOutelonrJoinelondGraph
       .flatMap {
-        case ((srcId, destId), (previousScoreMapOpt, newScoreMapOpt)) =>
-          val latestTimeDecayedValues = halfLivesInDays.map { hlInDays =>
-            hlInDays -> DecayedValue.build(0, endTime.inSeconds, hlInDays.days.inSeconds)
+        caselon ((srcId, delonstId), (prelonviousScorelonMapOpt, nelonwScorelonMapOpt)) =>
+          val latelonstTimelonDeloncayelondValuelons = halfLivelonsInDays.map { hlInDays =>
+            hlInDays -> DeloncayelondValuelon.build(0, elonndTimelon.inSelonconds, hlInDays.days.inSelonconds)
           }.toMap
 
-          val updatedDecayedValues =
+          val updatelondDeloncayelondValuelons =
             Monoid.sum(
-              List(previousScoreMapOpt, newScoreMapOpt, Some(latestTimeDecayedValues)).flatten)
+              List(prelonviousScorelonMapOpt, nelonwScorelonMapOpt, Somelon(latelonstTimelonDeloncayelondValuelons)).flattelonn)
 
-          (previousScoreMapOpt, newScoreMapOpt) match {
-            case (Some(pm), None) => numOldEdges.inc()
-            case (None, Some(nm)) => numNewEdges.inc()
-            case (Some(pm), Some(nm)) => numCommonEdges.inc()
+          (prelonviousScorelonMapOpt, nelonwScorelonMapOpt) match {
+            caselon (Somelon(pm), Nonelon) => numOldelondgelons.inc()
+            caselon (Nonelon, Somelon(nm)) => numNelonwelondgelons.inc()
+            caselon (Somelon(pm), Somelon(nm)) => numCommonelondgelons.inc()
           }
 
-          val prunedMap = updatedDecayedValues.flatMap {
-            case (hlInDays, decayedValue) =>
-              if (decayedValue.value < minScoreToKeep) {
-                if (decayedValue.value < 0) {
-                  negativeScoresCounter.inc()
+          val prunelondMap = updatelondDeloncayelondValuelons.flatMap {
+            caselon (hlInDays, deloncayelondValuelon) =>
+              if (deloncayelondValuelon.valuelon < minScorelonToKelonelonp) {
+                if (deloncayelondValuelon.valuelon < 0) {
+                  nelongativelonScorelonsCountelonr.inc()
                 }
-                prunedScoresCounter.inc()
-                None
-              } else {
-                keptScoresCounter.inc()
-                Some((hlInDays, decayedValue.value))
+                prunelondScorelonsCountelonr.inc()
+                Nonelon
+              } elonlselon {
+                kelonptScorelonsCountelonr.inc()
+                Somelon((hlInDays, deloncayelondValuelon.valuelon))
               }
           }
 
-          if (prunedMap.nonEmpty) {
-            keptEdgesCounter.inc()
-            Some(EdgeWithDecayedWeights(srcId, destId, DecayedSums(endTime.inMillis, prunedMap)))
-          } else {
-            prunedEdgesCounter.inc()
-            None
+          if (prunelondMap.nonelonmpty) {
+            kelonptelondgelonsCountelonr.inc()
+            Somelon(elondgelonWithDeloncayelondWelonights(srcId, delonstId, DeloncayelondSums(elonndTimelon.inMillis, prunelondMap)))
+          } elonlselon {
+            prunelondelondgelonsCountelonr.inc()
+            Nonelon
           }
       }
   }
 
-  def removeDeactivedOrSuspendedUsers(
-    full: TypedPipe[EdgeWithDecayedWeights],
-    userSource: TypedPipe[FlatUser]
+  delonf relonmovelonDelonactivelondOrSuspelonndelondUselonrs(
+    full: TypelondPipelon[elondgelonWithDeloncayelondWelonights],
+    uselonrSourcelon: TypelondPipelon[FlatUselonr]
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[EdgeWithDecayedWeights] = {
-    val numValidUsers = Stat("num_valid_users")
-    val numInvalidUsers = Stat("num_invalid_users")
-    val numEdgesBeforeUsersourceJoin = Stat("num_edges_before_join_with_usersource")
-    val numEdgesWithValidSource = Stat("num_edges_with_valid_source")
-    val numEdgesWithValidSourceAndDest = Stat("num_edges_with_valid_source_and_dest")
+    implicit uniquelonID: UniquelonID
+  ): TypelondPipelon[elondgelonWithDeloncayelondWelonights] = {
+    val numValidUselonrs = Stat("num_valid_uselonrs")
+    val numInvalidUselonrs = Stat("num_invalid_uselonrs")
+    val numelondgelonsBelonforelonUselonrsourcelonJoin = Stat("num_elondgelons_belonforelon_join_with_uselonrsourcelon")
+    val numelondgelonsWithValidSourcelon = Stat("num_elondgelons_with_valid_sourcelon")
+    val numelondgelonsWithValidSourcelonAndDelonst = Stat("num_elondgelons_with_valid_sourcelon_and_delonst")
 
-    val validUsers = userSource.flatMap {
-      case flatUser
-          if !flatUser.deactivated.contains(true) && !flatUser.suspended.contains(true)
-            && flatUser.id.nonEmpty =>
-        numValidUsers.inc()
-        flatUser.id
-      case _ =>
-        numInvalidUsers.inc()
-        None
-    }.forceToDisk // avoid reading in the whole of userSource for both of the joins below
+    val validUselonrs = uselonrSourcelon.flatMap {
+      caselon flatUselonr
+          if !flatUselonr.delonactivatelond.contains(truelon) && !flatUselonr.suspelonndelond.contains(truelon)
+            && flatUselonr.id.nonelonmpty =>
+        numValidUselonrs.inc()
+        flatUselonr.id
+      caselon _ =>
+        numInvalidUselonrs.inc()
+        Nonelon
+    }.forcelonToDisk // avoid relonading in thelon wholelon of uselonrSourcelon for both of thelon joins belonlow
 
-    val toJoin = full.map { edge =>
-      numEdgesBeforeUsersourceJoin.inc()
-      (edge.sourceId, edge)
+    val toJoin = full.map { elondgelon =>
+      numelondgelonsBelonforelonUselonrsourcelonJoin.inc()
+      (elondgelon.sourcelonId, elondgelon)
     }
 
     toJoin
-      .join(validUsers.asKeys)
+      .join(validUselonrs.asKelonys)
       .map {
-        case (_, (edge, _)) =>
-          numEdgesWithValidSource.inc()
-          (edge.destinationId, edge)
+        caselon (_, (elondgelon, _)) =>
+          numelondgelonsWithValidSourcelon.inc()
+          (elondgelon.delonstinationId, elondgelon)
       }
-      .join(validUsers.asKeys)
+      .join(validUselonrs.asKelonys)
       .map {
-        case (_, (edge, _)) =>
-          numEdgesWithValidSourceAndDest.inc()
-          edge
+        caselon (_, (elondgelon, _)) =>
+          numelondgelonsWithValidSourcelonAndDelonst.inc()
+          elondgelon
       }
   }
 }
 
 /**
- * ./bazel bundle src/scala/com/twitter/simclusters_v2/scalding:fav_graph_adhoc && \
- * oscar hdfs --user frigate --host hadoopnest1.atla.twitter.com --bundle fav_graph_adhoc \
- * --tool com.twitter.simclusters_v2.scalding.UserUserFavGraphAdhoc --screen --screen-detached \
- * --tee logs/userUserFavGraphAdhoc_20170101 -- --date 2017-01-01 --halfLivesInDays 14 50 100 \
- * --outputDir /user/frigate/your_ldap/userUserFavGraphAdhoc_20170101_hl14_50_100
+ * ./bazelonl bundlelon src/scala/com/twittelonr/simclustelonrs_v2/scalding:fav_graph_adhoc && \
+ * oscar hdfs --uselonr frigatelon --host hadoopnelonst1.atla.twittelonr.com --bundlelon fav_graph_adhoc \
+ * --tool com.twittelonr.simclustelonrs_v2.scalding.UselonrUselonrFavGraphAdhoc --screlonelonn --screlonelonn-delontachelond \
+ * --telonelon logs/uselonrUselonrFavGraphAdhoc_20170101 -- --datelon 2017-01-01 --halfLivelonsInDays 14 50 100 \
+ * --outputDir /uselonr/frigatelon/your_ldap/uselonrUselonrFavGraphAdhoc_20170101_hl14_50_100
  *
- * ./bazel bundle src/scala/com/twitter/simclusters_v2/scalding:fav_graph_adhoc && \
- * oscar hdfs --user frigate --host hadoopnest1.atla.twitter.com --bundle fav_graph_adhoc \
- * --tool com.twitter.simclusters_v2.scalding.UserUserFavGraphAdhoc --screen --screen-detached \
- * --tee logs/userUserFavGraphAdhoc_20170102_addPrevious20170101 -- --date 2017-01-02 \
- * --previousGraphDir /user/frigate/your_ldap/userUserFavGraphAdhoc_20170101_hl14_50_100 \
- * --halfLivesInDays 14 50 100 \
- * --outputDir /user/frigate/your_ldap/userUserFavGraphAdhoc_20170102_addPrevious20170101_hl14_50_100
+ * ./bazelonl bundlelon src/scala/com/twittelonr/simclustelonrs_v2/scalding:fav_graph_adhoc && \
+ * oscar hdfs --uselonr frigatelon --host hadoopnelonst1.atla.twittelonr.com --bundlelon fav_graph_adhoc \
+ * --tool com.twittelonr.simclustelonrs_v2.scalding.UselonrUselonrFavGraphAdhoc --screlonelonn --screlonelonn-delontachelond \
+ * --telonelon logs/uselonrUselonrFavGraphAdhoc_20170102_addPrelonvious20170101 -- --datelon 2017-01-02 \
+ * --prelonviousGraphDir /uselonr/frigatelon/your_ldap/uselonrUselonrFavGraphAdhoc_20170101_hl14_50_100 \
+ * --halfLivelonsInDays 14 50 100 \
+ * --outputDir /uselonr/frigatelon/your_ldap/uselonrUselonrFavGraphAdhoc_20170102_addPrelonvious20170101_hl14_50_100
  */
-object UserUserFavGraphAdhoc extends TwitterExecutionApp {
-  implicit val tz: java.util.TimeZone = DateOps.UTC
-  implicit val dp = DateParser.default
-  val log = Logger()
+objelonct UselonrUselonrFavGraphAdhoc elonxtelonnds TwittelonrelonxeloncutionApp {
+  implicit val tz: java.util.TimelonZonelon = DatelonOps.UTC
+  implicit val dp = DatelonParselonr.delonfault
+  val log = Loggelonr()
 
-  def job: Execution[Unit] =
-    Execution.getConfigMode.flatMap {
-      case (config, mode) =>
-        Execution.withId { implicit uniqueId =>
-          val args = config.getArgs
-          val previousGraphOpt = args.optional("previousGraphDir").map { dir =>
-            TypedPipe.from(EdgeWithDecayedWtsFixedPathSource(dir))
+  delonf job: elonxeloncution[Unit] =
+    elonxeloncution.gelontConfigModelon.flatMap {
+      caselon (config, modelon) =>
+        elonxeloncution.withId { implicit uniquelonId =>
+          val args = config.gelontArgs
+          val prelonviousGraphOpt = args.optional("prelonviousGraphDir").map { dir =>
+            TypelondPipelon.from(elondgelonWithDeloncayelondWtsFixelondPathSourcelon(dir))
           }
-          val favsDateRange = DateRange.parse(args.list("date"))
-          val halfLives = args.list("halfLivesInDays").map(_.toInt)
-          val minScoreToKeep = args.double("minScoreToKeep", 1e-5)
+          val favsDatelonRangelon = DatelonRangelon.parselon(args.list("datelon"))
+          val halfLivelons = args.list("halfLivelonsInDays").map(_.toInt)
+          val minScorelonToKelonelonp = args.doublelon("minScorelonToKelonelonp", 1elon-5)
           val outputDir = args("outputDir")
-          Util.printCounters(
-            UserUserFavGraph
-              .getSummedFavGraph(previousGraphOpt, favsDateRange, halfLives, minScoreToKeep)
-              .writeExecution(EdgeWithDecayedWtsFixedPathSource(outputDir))
+          Util.printCountelonrs(
+            UselonrUselonrFavGraph
+              .gelontSummelondFavGraph(prelonviousGraphOpt, favsDatelonRangelon, halfLivelons, minScorelonToKelonelonp)
+              .writelonelonxeloncution(elondgelonWithDeloncayelondWtsFixelondPathSourcelon(outputDir))
           )
         }
     }
 }
 
 /**
- * $ capesospy-v2 update --start_cron fav_graph src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc.yaml
+ * $ capelonsospy-v2 updatelon --start_cron fav_graph src/scala/com/twittelonr/simclustelonrs_v2/capelonsos_config/atla_proc.yaml
  */
-object UserUserFavGraphBatch extends TwitterScheduledExecutionApp {
-  private val firstTime: String = "2017-01-01"
-  implicit val tz = DateOps.UTC
-  implicit val parser = DateParser.default
-  private val batchIncrement: Duration = Days(2)
-  private val firstStartDate = DateRange.parse(firstTime).start
+objelonct UselonrUselonrFavGraphBatch elonxtelonnds TwittelonrSchelondulelondelonxeloncutionApp {
+  privatelon val firstTimelon: String = "2017-01-01"
+  implicit val tz = DatelonOps.UTC
+  implicit val parselonr = DatelonParselonr.delonfault
+  privatelon val batchIncrelonmelonnt: Duration = Days(2)
+  privatelon val firstStartDatelon = DatelonRangelon.parselon(firstTimelon).start
 
-  val outputPath: String = "/user/cassowary/processed/user_user_fav_graph"
-  val log = Logger()
+  val outputPath: String = "/uselonr/cassowary/procelonsselond/uselonr_uselonr_fav_graph"
+  val log = Loggelonr()
 
-  private val execArgs = AnalyticsBatchExecutionArgs(
-    batchDesc = BatchDescription(this.getClass.getName),
-    firstTime = BatchFirstTime(RichDate(firstTime)),
-    lastTime = None,
-    batchIncrement = BatchIncrement(batchIncrement)
+  privatelon val elonxeloncArgs = AnalyticsBatchelonxeloncutionArgs(
+    batchDelonsc = BatchDelonscription(this.gelontClass.gelontNamelon),
+    firstTimelon = BatchFirstTimelon(RichDatelon(firstTimelon)),
+    lastTimelon = Nonelon,
+    batchIncrelonmelonnt = BatchIncrelonmelonnt(batchIncrelonmelonnt)
   )
 
-  override def scheduledJob: Execution[Unit] = AnalyticsBatchExecution(execArgs) { dateRange =>
-    Execution.withId { implicit uniqueId =>
-      Execution.withArgs { args =>
-        val previousGraph = if (dateRange.start.timestamp == firstStartDate.timestamp) {
-          log.info("Looks like this is the first time, setting previousGraph to None")
-          None
-        } else {
-          Some(
+  ovelonrridelon delonf schelondulelondJob: elonxeloncution[Unit] = AnalyticsBatchelonxeloncution(elonxeloncArgs) { datelonRangelon =>
+    elonxeloncution.withId { implicit uniquelonId =>
+      elonxeloncution.withArgs { args =>
+        val prelonviousGraph = if (datelonRangelon.start.timelonstamp == firstStartDatelon.timelonstamp) {
+          log.info("Looks likelon this is thelon first timelon, selontting prelonviousGraph to Nonelon")
+          Nonelon
+        } elonlselon {
+          Somelon(
             DAL
-              .readMostRecentSnapshot(UserUserFavGraphScalaDataset, dateRange - batchIncrement)
-              .toTypedPipe
+              .relonadMostReloncelonntSnapshot(UselonrUselonrFavGraphScalaDataselont, datelonRangelon - batchIncrelonmelonnt)
+              .toTypelondPipelon
           )
         }
-        val halfLives = args.list("halfLivesInDays").map(_.toInt)
-        val minScoreToKeep = args.double("minScoreToKeep", 1e-5)
-        Util.printCounters(
-          UserUserFavGraph
-            .getSummedFavGraph(previousGraph, dateRange, halfLives, minScoreToKeep)
-            .writeDALSnapshotExecution(
-              UserUserFavGraphScalaDataset,
+        val halfLivelons = args.list("halfLivelonsInDays").map(_.toInt)
+        val minScorelonToKelonelonp = args.doublelon("minScorelonToKelonelonp", 1elon-5)
+        Util.printCountelonrs(
+          UselonrUselonrFavGraph
+            .gelontSummelondFavGraph(prelonviousGraph, datelonRangelon, halfLivelons, minScorelonToKelonelonp)
+            .writelonDALSnapshotelonxeloncution(
+              UselonrUselonrFavGraphScalaDataselont,
               D.Daily,
               D.Suffix(outputPath),
-              D.EBLzo(),
-              dateRange.end)
+              D.elonBLzo(),
+              datelonRangelon.elonnd)
         )
       }
     }
   }
 }
 
-object DumpFavGraphAdhoc extends TwitterExecutionApp {
-  implicit val tz: java.util.TimeZone = DateOps.UTC
+objelonct DumpFavGraphAdhoc elonxtelonnds TwittelonrelonxeloncutionApp {
+  implicit val tz: java.util.TimelonZonelon = DatelonOps.UTC
 
-  def job: Execution[Unit] =
-    Execution.getConfigMode.flatMap {
-      case (config, mode) =>
-        Execution.withId { implicit uniqueId =>
+  delonf job: elonxeloncution[Unit] =
+    elonxeloncution.gelontConfigModelon.flatMap {
+      caselon (config, modelon) =>
+        elonxeloncution.withId { implicit uniquelonId =>
           val favGraph = DAL
-            .readMostRecentSnapshotNoOlderThan(UserUserFavGraphScalaDataset, Days(10))
-            .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-            .toTypedPipe
-            .collect {
-              case edge if edge.weights.halfLifeInDaysToDecayedSums.contains(100) =>
-                (edge.sourceId, edge.destinationId, edge.weights.halfLifeInDaysToDecayedSums(100))
+            .relonadMostReloncelonntSnapshotNoOldelonrThan(UselonrUselonrFavGraphScalaDataselont, Days(10))
+            .withRelonmotelonRelonadPolicy(elonxplicitLocation(ProcAtla))
+            .toTypelondPipelon
+            .collelonct {
+              caselon elondgelon if elondgelon.welonights.halfLifelonInDaysToDeloncayelondSums.contains(100) =>
+                (elondgelon.sourcelonId, elondgelon.delonstinationId, elondgelon.welonights.halfLifelonInDaysToDeloncayelondSums(100))
             }
 
-          Execution
-            .sequence(
-              Seq(
-                Util.printSummaryOfNumericColumn(
+          elonxeloncution
+            .selonquelonncelon(
+              Selonq(
+                Util.printSummaryOfNumelonricColumn(
                   favGraph.map(_._3),
-                  Some("Weight")
+                  Somelon("Welonight")
                 ),
-                Util.printSummaryOfNumericColumn(
+                Util.printSummaryOfNumelonricColumn(
                   favGraph.map(c => math.log10(10.0 + c._3)),
-                  Some("Weight_Log_P10")
+                  Somelon("Welonight_Log_P10")
                 ),
-                Util.printSummaryOfNumericColumn(
+                Util.printSummaryOfNumelonricColumn(
                   favGraph.map(c => math.log10(1.0 + c._3)),
-                  Some("Weight_Log_P1")
+                  Somelon("Welonight_Log_P1")
                 ),
-                Util.printSummaryOfCategoricalColumn(favGraph.map(_._1), Some("SourceId")),
-                Util.printSummaryOfCategoricalColumn(favGraph.map(_._2), Some("DestId"))
+                Util.printSummaryOfCatelongoricalColumn(favGraph.map(_._1), Somelon("SourcelonId")),
+                Util.printSummaryOfCatelongoricalColumn(favGraph.map(_._2), Somelon("DelonstId"))
               )
-            ).flatMap { summarySeq =>
-              println(summarySeq.mkString("\n"))
-              Execution.unit
+            ).flatMap { summarySelonq =>
+              println(summarySelonq.mkString("\n"))
+              elonxeloncution.unit
             }
         }
     }

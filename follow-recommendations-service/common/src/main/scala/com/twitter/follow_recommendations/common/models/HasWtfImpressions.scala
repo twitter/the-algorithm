@@ -1,30 +1,30 @@
-package com.twitter.follow_recommendations.common.models
+packagelon com.twittelonr.follow_reloncommelonndations.common.modelonls
 
-import com.twitter.util.Time
+import com.twittelonr.util.Timelon
 
-trait HasWtfImpressions {
+trait HasWtfImprelonssions {
 
-  def wtfImpressions: Option[Seq[WtfImpression]]
+  delonf wtfImprelonssions: Option[Selonq[WtfImprelonssion]]
 
-  lazy val numWtfImpressions: Int = wtfImpressions.map(_.size).getOrElse(0)
+  lazy val numWtfImprelonssions: Int = wtfImprelonssions.map(_.sizelon).gelontOrelonlselon(0)
 
-  lazy val candidateImpressions: Map[Long, WtfImpression] = wtfImpressions
+  lazy val candidatelonImprelonssions: Map[Long, WtfImprelonssion] = wtfImprelonssions
     .map { imprMap =>
       imprMap.map { i =>
-        i.candidateId -> i
+        i.candidatelonId -> i
       }.toMap
-    }.getOrElse(Map.empty)
+    }.gelontOrelonlselon(Map.elonmpty)
 
-  lazy val latestImpressionTime: Time = {
-    if (wtfImpressions.exists(_.nonEmpty)) {
-      wtfImpressions.get.map(_.latestTime).max
-    } else Time.Top
+  lazy val latelonstImprelonssionTimelon: Timelon = {
+    if (wtfImprelonssions.elonxists(_.nonelonmpty)) {
+      wtfImprelonssions.gelont.map(_.latelonstTimelon).max
+    } elonlselon Timelon.Top
   }
 
-  def getCandidateImpressionCounts(id: Long): Option[Int] =
-    candidateImpressions.get(id).map(_.counts)
+  delonf gelontCandidatelonImprelonssionCounts(id: Long): Option[Int] =
+    candidatelonImprelonssions.gelont(id).map(_.counts)
 
-  def getCandidateLatestTime(id: Long): Option[Time] = {
-    candidateImpressions.get(id).map(_.latestTime)
+  delonf gelontCandidatelonLatelonstTimelon(id: Long): Option[Timelon] = {
+    candidatelonImprelonssions.gelont(id).map(_.latelonstTimelon)
   }
 }

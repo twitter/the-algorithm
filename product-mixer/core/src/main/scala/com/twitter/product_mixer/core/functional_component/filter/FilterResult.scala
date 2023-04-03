@@ -1,4 +1,4 @@
-package com.twitter.product_mixer.core.functional_component.filter
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.filtelonr
 
-/** `Candidate`s were `kept` and `removed` by a [[Filter]] */
-case class FilterResult[+Candidate](kept: Seq[Candidate], removed: Seq[Candidate])
+/** `Candidatelon`s welonrelon `kelonpt` and `relonmovelond` by a [[Filtelonr]] */
+caselon class FiltelonrRelonsult[+Candidatelon](kelonpt: Selonq[Candidatelon], relonmovelond: Selonq[Candidatelon])

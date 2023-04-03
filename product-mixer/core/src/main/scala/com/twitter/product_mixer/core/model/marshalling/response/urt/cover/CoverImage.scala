@@ -1,10 +1,10 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.cover
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.covelonr
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ImageAnimationType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ImageDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ImageVariant
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.ImagelonAnimationTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.ImagelonDisplayTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.ImagelonVariant
 
-case class CoverImage(
-  imageVariant: ImageVariant,
-  imageDisplayType: ImageDisplayType,
-  imageAnimationType: Option[ImageAnimationType])
+caselon class CovelonrImagelon(
+  imagelonVariant: ImagelonVariant,
+  imagelonDisplayTypelon: ImagelonDisplayTypelon,
+  imagelonAnimationTypelon: Option[ImagelonAnimationTypelon])

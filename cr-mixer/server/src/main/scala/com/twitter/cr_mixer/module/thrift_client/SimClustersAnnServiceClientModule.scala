@@ -1,147 +1,147 @@
-package com.twitter.cr_mixer.module.thrift_client
+packagelon com.twittelonr.cr_mixelonr.modulelon.thrift_clielonnt
 
-import com.google.inject.Provides
-import com.twitter.conversions.PercentOps._
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.cr_mixer.config.TimeoutConfig
-import com.twitter.finagle.ThriftMux
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.mtls.client.MtlsStackClient._
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.inject.TwitterModule
-import com.twitter.simclustersann.{thriftscala => t}
-import javax.inject.Named
-import javax.inject.Singleton
+import com.googlelon.injelonct.Providelons
+import com.twittelonr.convelonrsions.PelonrcelonntOps._
+import com.twittelonr.cr_mixelonr.modelonl.ModulelonNamelons
+import com.twittelonr.cr_mixelonr.config.TimelonoutConfig
+import com.twittelonr.finaglelon.ThriftMux
+import com.twittelonr.finaglelon.mtls.authelonntication.SelonrvicelonIdelonntifielonr
+import com.twittelonr.finaglelon.mtls.clielonnt.MtlsStackClielonnt._
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.finaglelon.thrift.ClielonntId
+import com.twittelonr.injelonct.TwittelonrModulelon
+import com.twittelonr.simclustelonrsann.{thriftscala => t}
+import javax.injelonct.Namelond
+import javax.injelonct.Singlelonton
 
-object SimClustersAnnServiceClientModule extends TwitterModule {
+objelonct SimClustelonrsAnnSelonrvicelonClielonntModulelon elonxtelonnds TwittelonrModulelon {
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.ProdSimClustersANNServiceClientName)
-  def providesProdSimClustersANNServiceClient(
-    serviceIdentifier: ServiceIdentifier,
-    clientId: ClientId,
-    timeoutConfig: TimeoutConfig,
-    statsReceiver: StatsReceiver,
-  ): t.SimClustersANNService.MethodPerEndpoint = {
-    val label = "simclusters-ann-server"
-    val dest = "/s/simclusters-ann/simclusters-ann"
+  @Providelons
+  @Singlelonton
+  @Namelond(ModulelonNamelons.ProdSimClustelonrsANNSelonrvicelonClielonntNamelon)
+  delonf providelonsProdSimClustelonrsANNSelonrvicelonClielonnt(
+    selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr,
+    clielonntId: ClielonntId,
+    timelonoutConfig: TimelonoutConfig,
+    statsReloncelonivelonr: StatsReloncelonivelonr,
+  ): t.SimClustelonrsANNSelonrvicelon.MelonthodPelonrelonndpoint = {
+    val labelonl = "simclustelonrs-ann-selonrvelonr"
+    val delonst = "/s/simclustelonrs-ann/simclustelonrs-ann"
 
-    buildClient(serviceIdentifier, clientId, timeoutConfig, statsReceiver, dest, label)
+    buildClielonnt(selonrvicelonIdelonntifielonr, clielonntId, timelonoutConfig, statsReloncelonivelonr, delonst, labelonl)
   }
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.ExperimentalSimClustersANNServiceClientName)
-  def providesExperimentalSimClustersANNServiceClient(
-    serviceIdentifier: ServiceIdentifier,
-    clientId: ClientId,
-    timeoutConfig: TimeoutConfig,
-    statsReceiver: StatsReceiver,
-  ): t.SimClustersANNService.MethodPerEndpoint = {
-    val label = "simclusters-ann-experimental-server"
-    val dest = "/s/simclusters-ann/simclusters-ann-experimental"
+  @Providelons
+  @Singlelonton
+  @Namelond(ModulelonNamelons.elonxpelonrimelonntalSimClustelonrsANNSelonrvicelonClielonntNamelon)
+  delonf providelonselonxpelonrimelonntalSimClustelonrsANNSelonrvicelonClielonnt(
+    selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr,
+    clielonntId: ClielonntId,
+    timelonoutConfig: TimelonoutConfig,
+    statsReloncelonivelonr: StatsReloncelonivelonr,
+  ): t.SimClustelonrsANNSelonrvicelon.MelonthodPelonrelonndpoint = {
+    val labelonl = "simclustelonrs-ann-elonxpelonrimelonntal-selonrvelonr"
+    val delonst = "/s/simclustelonrs-ann/simclustelonrs-ann-elonxpelonrimelonntal"
 
-    buildClient(serviceIdentifier, clientId, timeoutConfig, statsReceiver, dest, label)
+    buildClielonnt(selonrvicelonIdelonntifielonr, clielonntId, timelonoutConfig, statsReloncelonivelonr, delonst, labelonl)
   }
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.SimClustersANNServiceClientName1)
-  def providesSimClustersANNServiceClient1(
-    serviceIdentifier: ServiceIdentifier,
-    clientId: ClientId,
-    timeoutConfig: TimeoutConfig,
-    statsReceiver: StatsReceiver,
-  ): t.SimClustersANNService.MethodPerEndpoint = {
-    val label = "simclusters-ann-server-1"
-    val dest = "/s/simclusters-ann/simclusters-ann-1"
+  @Providelons
+  @Singlelonton
+  @Namelond(ModulelonNamelons.SimClustelonrsANNSelonrvicelonClielonntNamelon1)
+  delonf providelonsSimClustelonrsANNSelonrvicelonClielonnt1(
+    selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr,
+    clielonntId: ClielonntId,
+    timelonoutConfig: TimelonoutConfig,
+    statsReloncelonivelonr: StatsReloncelonivelonr,
+  ): t.SimClustelonrsANNSelonrvicelon.MelonthodPelonrelonndpoint = {
+    val labelonl = "simclustelonrs-ann-selonrvelonr-1"
+    val delonst = "/s/simclustelonrs-ann/simclustelonrs-ann-1"
 
-    buildClient(serviceIdentifier, clientId, timeoutConfig, statsReceiver, dest, label)
+    buildClielonnt(selonrvicelonIdelonntifielonr, clielonntId, timelonoutConfig, statsReloncelonivelonr, delonst, labelonl)
   }
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.SimClustersANNServiceClientName2)
-  def providesSimClustersANNServiceClient2(
-    serviceIdentifier: ServiceIdentifier,
-    clientId: ClientId,
-    timeoutConfig: TimeoutConfig,
-    statsReceiver: StatsReceiver,
-  ): t.SimClustersANNService.MethodPerEndpoint = {
-    val label = "simclusters-ann-server-2"
-    val dest = "/s/simclusters-ann/simclusters-ann-2"
+  @Providelons
+  @Singlelonton
+  @Namelond(ModulelonNamelons.SimClustelonrsANNSelonrvicelonClielonntNamelon2)
+  delonf providelonsSimClustelonrsANNSelonrvicelonClielonnt2(
+    selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr,
+    clielonntId: ClielonntId,
+    timelonoutConfig: TimelonoutConfig,
+    statsReloncelonivelonr: StatsReloncelonivelonr,
+  ): t.SimClustelonrsANNSelonrvicelon.MelonthodPelonrelonndpoint = {
+    val labelonl = "simclustelonrs-ann-selonrvelonr-2"
+    val delonst = "/s/simclustelonrs-ann/simclustelonrs-ann-2"
 
-    buildClient(serviceIdentifier, clientId, timeoutConfig, statsReceiver, dest, label)
+    buildClielonnt(selonrvicelonIdelonntifielonr, clielonntId, timelonoutConfig, statsReloncelonivelonr, delonst, labelonl)
   }
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.SimClustersANNServiceClientName3)
-  def providesSimClustersANNServiceClient3(
-    serviceIdentifier: ServiceIdentifier,
-    clientId: ClientId,
-    timeoutConfig: TimeoutConfig,
-    statsReceiver: StatsReceiver,
-  ): t.SimClustersANNService.MethodPerEndpoint = {
-    val label = "simclusters-ann-server-3"
-    val dest = "/s/simclusters-ann/simclusters-ann-3"
+  @Providelons
+  @Singlelonton
+  @Namelond(ModulelonNamelons.SimClustelonrsANNSelonrvicelonClielonntNamelon3)
+  delonf providelonsSimClustelonrsANNSelonrvicelonClielonnt3(
+    selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr,
+    clielonntId: ClielonntId,
+    timelonoutConfig: TimelonoutConfig,
+    statsReloncelonivelonr: StatsReloncelonivelonr,
+  ): t.SimClustelonrsANNSelonrvicelon.MelonthodPelonrelonndpoint = {
+    val labelonl = "simclustelonrs-ann-selonrvelonr-3"
+    val delonst = "/s/simclustelonrs-ann/simclustelonrs-ann-3"
 
-    buildClient(serviceIdentifier, clientId, timeoutConfig, statsReceiver, dest, label)
+    buildClielonnt(selonrvicelonIdelonntifielonr, clielonntId, timelonoutConfig, statsReloncelonivelonr, delonst, labelonl)
   }
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.SimClustersANNServiceClientName5)
-  def providesSimClustersANNServiceClient5(
-    serviceIdentifier: ServiceIdentifier,
-    clientId: ClientId,
-    timeoutConfig: TimeoutConfig,
-    statsReceiver: StatsReceiver,
-  ): t.SimClustersANNService.MethodPerEndpoint = {
-    val label = "simclusters-ann-server-5"
-    val dest = "/s/simclusters-ann/simclusters-ann-5"
+  @Providelons
+  @Singlelonton
+  @Namelond(ModulelonNamelons.SimClustelonrsANNSelonrvicelonClielonntNamelon5)
+  delonf providelonsSimClustelonrsANNSelonrvicelonClielonnt5(
+    selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr,
+    clielonntId: ClielonntId,
+    timelonoutConfig: TimelonoutConfig,
+    statsReloncelonivelonr: StatsReloncelonivelonr,
+  ): t.SimClustelonrsANNSelonrvicelon.MelonthodPelonrelonndpoint = {
+    val labelonl = "simclustelonrs-ann-selonrvelonr-5"
+    val delonst = "/s/simclustelonrs-ann/simclustelonrs-ann-5"
 
-    buildClient(serviceIdentifier, clientId, timeoutConfig, statsReceiver, dest, label)
+    buildClielonnt(selonrvicelonIdelonntifielonr, clielonntId, timelonoutConfig, statsReloncelonivelonr, delonst, labelonl)
   }
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.SimClustersANNServiceClientName4)
-  def providesSimClustersANNServiceClient4(
-    serviceIdentifier: ServiceIdentifier,
-    clientId: ClientId,
-    timeoutConfig: TimeoutConfig,
-    statsReceiver: StatsReceiver,
-  ): t.SimClustersANNService.MethodPerEndpoint = {
-    val label = "simclusters-ann-server-4"
-    val dest = "/s/simclusters-ann/simclusters-ann-4"
+  @Providelons
+  @Singlelonton
+  @Namelond(ModulelonNamelons.SimClustelonrsANNSelonrvicelonClielonntNamelon4)
+  delonf providelonsSimClustelonrsANNSelonrvicelonClielonnt4(
+    selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr,
+    clielonntId: ClielonntId,
+    timelonoutConfig: TimelonoutConfig,
+    statsReloncelonivelonr: StatsReloncelonivelonr,
+  ): t.SimClustelonrsANNSelonrvicelon.MelonthodPelonrelonndpoint = {
+    val labelonl = "simclustelonrs-ann-selonrvelonr-4"
+    val delonst = "/s/simclustelonrs-ann/simclustelonrs-ann-4"
 
-    buildClient(serviceIdentifier, clientId, timeoutConfig, statsReceiver, dest, label)
+    buildClielonnt(selonrvicelonIdelonntifielonr, clielonntId, timelonoutConfig, statsReloncelonivelonr, delonst, labelonl)
   }
-  private def buildClient(
-    serviceIdentifier: ServiceIdentifier,
-    clientId: ClientId,
-    timeoutConfig: TimeoutConfig,
-    statsReceiver: StatsReceiver,
-    dest: String,
-    label: String
-  ): t.SimClustersANNService.MethodPerEndpoint = {
-    val stats = statsReceiver.scope("clnt")
+  privatelon delonf buildClielonnt(
+    selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr,
+    clielonntId: ClielonntId,
+    timelonoutConfig: TimelonoutConfig,
+    statsReloncelonivelonr: StatsReloncelonivelonr,
+    delonst: String,
+    labelonl: String
+  ): t.SimClustelonrsANNSelonrvicelon.MelonthodPelonrelonndpoint = {
+    val stats = statsReloncelonivelonr.scopelon("clnt")
 
-    val thriftClient = ThriftMux.client
-      .withMutualTls(serviceIdentifier)
-      .withClientId(clientId)
-      .withLabel(label)
-      .withStatsReceiver(stats)
-      .methodBuilder(dest)
-      .idempotent(5.percent)
-      .withTimeoutPerRequest(timeoutConfig.annServiceClientTimeout)
-      .withRetryDisabled
-      .servicePerEndpoint[t.SimClustersANNService.ServicePerEndpoint]
+    val thriftClielonnt = ThriftMux.clielonnt
+      .withMutualTls(selonrvicelonIdelonntifielonr)
+      .withClielonntId(clielonntId)
+      .withLabelonl(labelonl)
+      .withStatsReloncelonivelonr(stats)
+      .melonthodBuildelonr(delonst)
+      .idelonmpotelonnt(5.pelonrcelonnt)
+      .withTimelonoutPelonrRelonquelonst(timelonoutConfig.annSelonrvicelonClielonntTimelonout)
+      .withRelontryDisablelond
+      .selonrvicelonPelonrelonndpoint[t.SimClustelonrsANNSelonrvicelon.SelonrvicelonPelonrelonndpoint]
 
-    ThriftMux.Client.methodPerEndpoint(thriftClient)
+    ThriftMux.Clielonnt.melonthodPelonrelonndpoint(thriftClielonnt)
   }
 
 }

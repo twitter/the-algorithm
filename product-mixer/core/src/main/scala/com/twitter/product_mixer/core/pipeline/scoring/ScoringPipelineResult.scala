@@ -1,51 +1,51 @@
-package com.twitter.product_mixer.core.pipeline.scoring
+packagelon com.twittelonr.product_mixelonr.corelon.pipelonlinelon.scoring
 
-import com.twitter.product_mixer.core.functional_component.scorer.ScoredCandidateResult
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.pipeline.PipelineResult
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.service.candidate_feature_hydrator_executor.CandidateFeatureHydratorExecutorResult
-import com.twitter.product_mixer.core.service.gate_executor.GateExecutorResult
-import com.twitter.product_mixer.core.service.selector_executor.SelectorExecutorResult
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.scorelonr.ScorelondCandidatelonRelonsult
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonRelonsult
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.PipelonlinelonFailurelon
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.candidatelon_felonaturelon_hydrator_elonxeloncutor.CandidatelonFelonaturelonHydratorelonxeloncutorRelonsult
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.gatelon_elonxeloncutor.GatelonelonxeloncutorRelonsult
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.selonlelonctor_elonxeloncutor.SelonlelonctorelonxeloncutorRelonsult
 
 /**
- * The Results of every step during the ScoringPipeline process. The end result contains
- * only the candidates that were actually scored (e.g, not dropped by a filter) with an updated,
- * combined feature map of all features that were passed in with the candidate plus all features
- * returned as part of scoring.
+ * Thelon Relonsults of elonvelonry stelonp during thelon ScoringPipelonlinelon procelonss. Thelon elonnd relonsult contains
+ * only thelon candidatelons that welonrelon actually scorelond (elon.g, not droppelond by a filtelonr) with an updatelond,
+ * combinelond felonaturelon map of all felonaturelons that welonrelon passelond in with thelon candidatelon plus all felonaturelons
+ * relonturnelond as part of scoring.
  */
-case class ScoringPipelineResult[Candidate <: UniversalNoun[Any]](
-  gateResults: Option[GateExecutorResult],
-  selectorResults: Option[SelectorExecutorResult],
-  preScoringHydrationPhase1Result: Option[CandidateFeatureHydratorExecutorResult[Candidate]],
-  preScoringHydrationPhase2Result: Option[CandidateFeatureHydratorExecutorResult[Candidate]],
-  scorerResults: Option[CandidateFeatureHydratorExecutorResult[
-    Candidate
+caselon class ScoringPipelonlinelonRelonsult[Candidatelon <: UnivelonrsalNoun[Any]](
+  gatelonRelonsults: Option[GatelonelonxeloncutorRelonsult],
+  selonlelonctorRelonsults: Option[SelonlelonctorelonxeloncutorRelonsult],
+  prelonScoringHydrationPhaselon1Relonsult: Option[CandidatelonFelonaturelonHydratorelonxeloncutorRelonsult[Candidatelon]],
+  prelonScoringHydrationPhaselon2Relonsult: Option[CandidatelonFelonaturelonHydratorelonxeloncutorRelonsult[Candidatelon]],
+  scorelonrRelonsults: Option[CandidatelonFelonaturelonHydratorelonxeloncutorRelonsult[
+    Candidatelon
   ]],
-  failure: Option[PipelineFailure],
-  result: Option[Seq[ScoredCandidateResult[Candidate]]])
-    extends PipelineResult[Seq[ScoredCandidateResult[Candidate]]] {
-  override val resultSize: Int = result.map(_.size).getOrElse(0)
+  failurelon: Option[PipelonlinelonFailurelon],
+  relonsult: Option[Selonq[ScorelondCandidatelonRelonsult[Candidatelon]]])
+    elonxtelonnds PipelonlinelonRelonsult[Selonq[ScorelondCandidatelonRelonsult[Candidatelon]]] {
+  ovelonrridelon val relonsultSizelon: Int = relonsult.map(_.sizelon).gelontOrelonlselon(0)
 
-  override def withFailure(
-    failure: PipelineFailure
-  ): ScoringPipelineResult[Candidate] =
-    copy(failure = Some(failure))
-  override def withResult(
-    result: Seq[ScoredCandidateResult[Candidate]]
-  ): ScoringPipelineResult[Candidate] =
-    copy(result = Some(result))
+  ovelonrridelon delonf withFailurelon(
+    failurelon: PipelonlinelonFailurelon
+  ): ScoringPipelonlinelonRelonsult[Candidatelon] =
+    copy(failurelon = Somelon(failurelon))
+  ovelonrridelon delonf withRelonsult(
+    relonsult: Selonq[ScorelondCandidatelonRelonsult[Candidatelon]]
+  ): ScoringPipelonlinelonRelonsult[Candidatelon] =
+    copy(relonsult = Somelon(relonsult))
 }
 
-object ScoringPipelineResult {
-  def empty[Candidate <: UniversalNoun[Any]]: ScoringPipelineResult[Candidate] =
-    ScoringPipelineResult(
-      None,
-      None,
-      None,
-      None,
-      None,
-      None,
-      None
+objelonct ScoringPipelonlinelonRelonsult {
+  delonf elonmpty[Candidatelon <: UnivelonrsalNoun[Any]]: ScoringPipelonlinelonRelonsult[Candidatelon] =
+    ScoringPipelonlinelonRelonsult(
+      Nonelon,
+      Nonelon,
+      Nonelon,
+      Nonelon,
+      Nonelon,
+      Nonelon,
+      Nonelon
     )
 }

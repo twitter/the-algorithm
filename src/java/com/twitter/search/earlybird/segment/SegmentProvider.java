@@ -1,13 +1,13 @@
-package com.twitter.search.earlybird.segment;
+packagelon com.twittelonr.selonarch.elonarlybird.selongmelonnt;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 import java.util.List;
 
-import com.twitter.search.common.partitioning.base.Segment;
+import com.twittelonr.selonarch.common.partitioning.baselon.Selongmelonnt;
 
-public interface SegmentProvider {
+public intelonrfacelon SelongmelonntProvidelonr {
   /**
-   * Returns a *new* sorted list of all available segments on disk / db / hdfs / etc.
+   * Relonturns a *nelonw* sortelond list of all availablelon selongmelonnts on disk / db / hdfs / elontc.
    */
-  List<Segment> newSegmentList() throws IOException;
+  List<Selongmelonnt> nelonwSelongmelonntList() throws IOelonxcelonption;
 }

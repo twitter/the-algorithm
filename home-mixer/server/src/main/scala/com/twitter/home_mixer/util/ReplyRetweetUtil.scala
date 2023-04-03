@@ -1,119 +1,119 @@
-package com.twitter.home_mixer.util
+packagelon com.twittelonr.homelon_mixelonr.util
 
-import com.twitter.home_mixer.model.HomeFeatures._
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons._
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.TwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
 
-object ReplyRetweetUtil {
+objelonct RelonplyRelontwelonelontUtil {
 
-  def isEligibleReply(candidate: CandidateWithFeatures[TweetCandidate]): Boolean = {
-    candidate.features.getOrElse(InReplyToTweetIdFeature, None).nonEmpty &&
-    !candidate.features.getOrElse(IsRetweetFeature, false)
+  delonf iselonligiblelonRelonply(candidatelon: CandidatelonWithFelonaturelons[TwelonelontCandidatelon]): Boolelonan = {
+    candidatelon.felonaturelons.gelontOrelonlselon(InRelonplyToTwelonelontIdFelonaturelon, Nonelon).nonelonmpty &&
+    !candidatelon.felonaturelons.gelontOrelonlselon(IsRelontwelonelontFelonaturelon, falselon)
   }
 
   /**
-   * Builds a map from reply tweet to all ancestors that are also hydrated candidates. If a reply
-   * does not have any ancestors which are also candidates, it will not add to the returned Map.
-   * Make sure ancestors are bottom-up ordered such that:
-   * (1) if parent tweet is a candidate, it should be the first item at the returned ancestors;
-   * (2) if root tweet is a candidate, it should be the last item at the returned ancestors.
-   * Retweets of replies or replies to retweets are not included.
+   * Builds a map from relonply twelonelont to all ancelonstors that arelon also hydratelond candidatelons. If a relonply
+   * doelons not havelon any ancelonstors which arelon also candidatelons, it will not add to thelon relonturnelond Map.
+   * Makelon surelon ancelonstors arelon bottom-up ordelonrelond such that:
+   * (1) if parelonnt twelonelont is a candidatelon, it should belon thelon first itelonm at thelon relonturnelond ancelonstors;
+   * (2) if root twelonelont is a candidatelon, it should belon thelon last itelonm at thelon relonturnelond ancelonstors.
+   * Relontwelonelonts of relonplielons or relonplielons to relontwelonelonts arelon not includelond.
    */
-  def replyToAncestorTweetCandidatesMap(
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Map[Long, Seq[CandidateWithFeatures[TweetCandidate]]] = {
-    val replyToAncestorTweetIdsMap: Map[Long, Seq[Long]] =
-      candidates.flatMap { candidate =>
-        if (isEligibleReply(candidate)) {
-          val ancestorIds =
-            if (candidate.features.getOrElse(AncestorsFeature, Seq.empty).nonEmpty) {
-              candidate.features.getOrElse(AncestorsFeature, Seq.empty).map(_.tweetId)
-            } else {
-              Seq(
-                candidate.features.getOrElse(InReplyToTweetIdFeature, None),
-                candidate.features.getOrElse(ConversationModuleIdFeature, None)
-              ).flatten.distinct
+  delonf relonplyToAncelonstorTwelonelontCandidatelonsMap(
+    candidatelons: Selonq[CandidatelonWithFelonaturelons[TwelonelontCandidatelon]]
+  ): Map[Long, Selonq[CandidatelonWithFelonaturelons[TwelonelontCandidatelon]]] = {
+    val relonplyToAncelonstorTwelonelontIdsMap: Map[Long, Selonq[Long]] =
+      candidatelons.flatMap { candidatelon =>
+        if (iselonligiblelonRelonply(candidatelon)) {
+          val ancelonstorIds =
+            if (candidatelon.felonaturelons.gelontOrelonlselon(AncelonstorsFelonaturelon, Selonq.elonmpty).nonelonmpty) {
+              candidatelon.felonaturelons.gelontOrelonlselon(AncelonstorsFelonaturelon, Selonq.elonmpty).map(_.twelonelontId)
+            } elonlselon {
+              Selonq(
+                candidatelon.felonaturelons.gelontOrelonlselon(InRelonplyToTwelonelontIdFelonaturelon, Nonelon),
+                candidatelon.felonaturelons.gelontOrelonlselon(ConvelonrsationModulelonIdFelonaturelon, Nonelon)
+              ).flattelonn.distinct
             }
-          Some(candidate.candidate.id -> ancestorIds)
-        } else {
-          None
+          Somelon(candidatelon.candidatelon.id -> ancelonstorIds)
+        } elonlselon {
+          Nonelon
         }
       }.toMap
 
-    val ancestorTweetIds = replyToAncestorTweetIdsMap.values.flatten.toSet
-    val ancestorTweetsMapById: Map[Long, CandidateWithFeatures[TweetCandidate]] = candidates
-      .filter { maybeAncestor =>
-        ancestorTweetIds.contains(maybeAncestor.candidate.id)
-      }.map { ancestor =>
-        ancestor.candidate.id -> ancestor
+    val ancelonstorTwelonelontIds = relonplyToAncelonstorTwelonelontIdsMap.valuelons.flattelonn.toSelont
+    val ancelonstorTwelonelontsMapById: Map[Long, CandidatelonWithFelonaturelons[TwelonelontCandidatelon]] = candidatelons
+      .filtelonr { maybelonAncelonstor =>
+        ancelonstorTwelonelontIds.contains(maybelonAncelonstor.candidatelon.id)
+      }.map { ancelonstor =>
+        ancelonstor.candidatelon.id -> ancelonstor
       }.toMap
 
-    replyToAncestorTweetIdsMap
-      .mapValues { ancestorTweetIds =>
-        ancestorTweetIds.flatMap { ancestorTweetId =>
-          ancestorTweetsMapById.get(ancestorTweetId)
+    relonplyToAncelonstorTwelonelontIdsMap
+      .mapValuelons { ancelonstorTwelonelontIds =>
+        ancelonstorTwelonelontIds.flatMap { ancelonstorTwelonelontId =>
+          ancelonstorTwelonelontsMapById.gelont(ancelonstorTwelonelontId)
         }
-      }.filter {
-        case (reply, ancestors) =>
-          ancestors.nonEmpty
+      }.filtelonr {
+        caselon (relonply, ancelonstors) =>
+          ancelonstors.nonelonmpty
       }
   }
 
   /**
-   * This map is the opposite of [[replyToAncestorTweetCandidatesMap]].
-   * Builds a map from ancestor tweet to all descendant replies that are also hydrated candidates.
-   * Currently, we only return two ancestors at most: one is inReplyToTweetId and the other
-   * is conversationId.
-   * Retweets of replies are not included.
+   * This map is thelon oppositelon of [[relonplyToAncelonstorTwelonelontCandidatelonsMap]].
+   * Builds a map from ancelonstor twelonelont to all delonscelonndant relonplielons that arelon also hydratelond candidatelons.
+   * Currelonntly, welon only relonturn two ancelonstors at most: onelon is inRelonplyToTwelonelontId and thelon othelonr
+   * is convelonrsationId.
+   * Relontwelonelonts of relonplielons arelon not includelond.
    */
-  def ancestorTweetIdToDescendantRepliesMap(
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Map[Long, Seq[CandidateWithFeatures[TweetCandidate]]] = {
-    val tweetToCandidateMap = candidates.map(c => c.candidate.id -> c).toMap
-    replyToAncestorTweetCandidatesMap(candidates).toSeq
+  delonf ancelonstorTwelonelontIdToDelonscelonndantRelonplielonsMap(
+    candidatelons: Selonq[CandidatelonWithFelonaturelons[TwelonelontCandidatelon]]
+  ): Map[Long, Selonq[CandidatelonWithFelonaturelons[TwelonelontCandidatelon]]] = {
+    val twelonelontToCandidatelonMap = candidatelons.map(c => c.candidatelon.id -> c).toMap
+    relonplyToAncelonstorTwelonelontCandidatelonsMap(candidatelons).toSelonq
       .flatMap {
-        case (reply, ancestorTweets) =>
-          ancestorTweets.map { ancestor =>
-            (ancestor.candidate.id, reply)
+        caselon (relonply, ancelonstorTwelonelonts) =>
+          ancelonstorTwelonelonts.map { ancelonstor =>
+            (ancelonstor.candidatelon.id, relonply)
           }
-      }.groupBy { case (ancestor, reply) => ancestor }
-      .mapValues { ancestorReplyPairs =>
-        ancestorReplyPairs.map(_._2).distinct
-      }.mapValues(tweetIds => tweetIds.map(tid => tweetToCandidateMap(tid)))
+      }.groupBy { caselon (ancelonstor, relonply) => ancelonstor }
+      .mapValuelons { ancelonstorRelonplyPairs =>
+        ancelonstorRelonplyPairs.map(_._2).distinct
+      }.mapValuelons(twelonelontIds => twelonelontIds.map(tid => twelonelontToCandidatelonMap(tid)))
   }
 
   /**
-   * Builds a map from reply tweet to inReplyToTweet which is also a candidate.
-   * Retweets of replies or replies to retweets are not included
+   * Builds a map from relonply twelonelont to inRelonplyToTwelonelont which is also a candidatelon.
+   * Relontwelonelonts of relonplielons or relonplielons to relontwelonelonts arelon not includelond
    */
-  def replyTweetIdToInReplyToTweetMap(
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Map[Long, CandidateWithFeatures[TweetCandidate]] = {
-    val eligibleReplyCandidates = candidates.filter { candidate =>
-      isEligibleReply(candidate) && candidate.features
-        .getOrElse(InReplyToTweetIdFeature, None)
-        .nonEmpty
+  delonf relonplyTwelonelontIdToInRelonplyToTwelonelontMap(
+    candidatelons: Selonq[CandidatelonWithFelonaturelons[TwelonelontCandidatelon]]
+  ): Map[Long, CandidatelonWithFelonaturelons[TwelonelontCandidatelon]] = {
+    val elonligiblelonRelonplyCandidatelons = candidatelons.filtelonr { candidatelon =>
+      iselonligiblelonRelonply(candidatelon) && candidatelon.felonaturelons
+        .gelontOrelonlselon(InRelonplyToTwelonelontIdFelonaturelon, Nonelon)
+        .nonelonmpty
     }
 
-    val inReplyToTweetIds = eligibleReplyCandidates
-      .flatMap(_.features.getOrElse(InReplyToTweetIdFeature, None))
-      .toSet
+    val inRelonplyToTwelonelontIds = elonligiblelonRelonplyCandidatelons
+      .flatMap(_.felonaturelons.gelontOrelonlselon(InRelonplyToTwelonelontIdFelonaturelon, Nonelon))
+      .toSelont
 
-    val inReplyToTweetIdToTweetMap: Map[Long, CandidateWithFeatures[TweetCandidate]] = candidates
-      .filter { maybeInReplyToTweet =>
-        inReplyToTweetIds.contains(maybeInReplyToTweet.candidate.id)
-      }.map { inReplyToTweet =>
-        inReplyToTweet.candidate.id -> inReplyToTweet
+    val inRelonplyToTwelonelontIdToTwelonelontMap: Map[Long, CandidatelonWithFelonaturelons[TwelonelontCandidatelon]] = candidatelons
+      .filtelonr { maybelonInRelonplyToTwelonelont =>
+        inRelonplyToTwelonelontIds.contains(maybelonInRelonplyToTwelonelont.candidatelon.id)
+      }.map { inRelonplyToTwelonelont =>
+        inRelonplyToTwelonelont.candidatelon.id -> inRelonplyToTwelonelont
       }.toMap
 
-    eligibleReplyCandidates.flatMap { reply =>
-      val inReplyToTweetId = reply.features.getOrElse(InReplyToTweetIdFeature, None)
-      if (inReplyToTweetId.nonEmpty) {
-        inReplyToTweetIdToTweetMap.get(inReplyToTweetId.get).map { inReplyToTweet =>
-          reply.candidate.id -> inReplyToTweet
+    elonligiblelonRelonplyCandidatelons.flatMap { relonply =>
+      val inRelonplyToTwelonelontId = relonply.felonaturelons.gelontOrelonlselon(InRelonplyToTwelonelontIdFelonaturelon, Nonelon)
+      if (inRelonplyToTwelonelontId.nonelonmpty) {
+        inRelonplyToTwelonelontIdToTwelonelontMap.gelont(inRelonplyToTwelonelontId.gelont).map { inRelonplyToTwelonelont =>
+          relonply.candidatelon.id -> inRelonplyToTwelonelont
         }
-      } else {
-        None
+      } elonlselon {
+        Nonelon
       }
     }.toMap
   }

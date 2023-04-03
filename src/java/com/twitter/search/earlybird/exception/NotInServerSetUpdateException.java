@@ -1,12 +1,12 @@
-package com.twitter.search.earlybird.exception;
+packagelon com.twittelonr.selonarch.elonarlybird.elonxcelonption;
 
-import com.twitter.common.zookeeper.ServerSet;
+import com.twittelonr.common.zookelonelonpelonr.SelonrvelonrSelont;
 
 /**
- * Used when trying to leave a server set when this earlybird is already out of the server set.
+ * Uselond whelonn trying to lelonavelon a selonrvelonr selont whelonn this elonarlybird is alrelonady out of thelon selonrvelonr selont.
  */
-public class NotInServerSetUpdateException extends ServerSet.UpdateException {
-  public NotInServerSetUpdateException(String message) {
-    super(message);
+public class NotInSelonrvelonrSelontUpdatelonelonxcelonption elonxtelonnds SelonrvelonrSelont.Updatelonelonxcelonption {
+  public NotInSelonrvelonrSelontUpdatelonelonxcelonption(String melonssagelon) {
+    supelonr(melonssagelon);
   }
 }

@@ -1,18 +1,18 @@
-package com.twitter.visibility.interfaces.common.tweets
+packagelon com.twittelonr.visibility.intelonrfacelons.common.twelonelonts
 
-import com.twitter.spam.rtf.thriftscala.SafetyLabel
-import com.twitter.spam.rtf.thriftscala.SafetyLabelType
-import com.twitter.strato.client.Fetcher
-import com.twitter.strato.client.{Client => StratoClient}
-import com.twitter.strato.thrift.ScroogeConvImplicits._
-import com.twitter.util.Memoize
+import com.twittelonr.spam.rtf.thriftscala.SafelontyLabelonl
+import com.twittelonr.spam.rtf.thriftscala.SafelontyLabelonlTypelon
+import com.twittelonr.strato.clielonnt.Felontchelonr
+import com.twittelonr.strato.clielonnt.{Clielonnt => StratoClielonnt}
+import com.twittelonr.strato.thrift.ScroogelonConvImplicits._
+import com.twittelonr.util.Melonmoizelon
 
-object StratoSafetyLabelFetcher {
-  def apply(client: StratoClient): SafetyLabelFetcherType = {
-    val getFetcher: SafetyLabelType => Fetcher[Long, Unit, SafetyLabel] =
-      Memoize((safetyLabelType: SafetyLabelType) =>
-        client.fetcher[Long, SafetyLabel](s"visibility/${safetyLabelType.name}.Tweet"))
+objelonct StratoSafelontyLabelonlFelontchelonr {
+  delonf apply(clielonnt: StratoClielonnt): SafelontyLabelonlFelontchelonrTypelon = {
+    val gelontFelontchelonr: SafelontyLabelonlTypelon => Felontchelonr[Long, Unit, SafelontyLabelonl] =
+      Melonmoizelon((safelontyLabelonlTypelon: SafelontyLabelonlTypelon) =>
+        clielonnt.felontchelonr[Long, SafelontyLabelonl](s"visibility/${safelontyLabelonlTypelon.namelon}.Twelonelont"))
 
-    (tweetId, safetyLabelType) => getFetcher(safetyLabelType).fetch(tweetId).map(_.v)
+    (twelonelontId, safelontyLabelonlTypelon) => gelontFelontchelonr(safelontyLabelonlTypelon).felontch(twelonelontId).map(_.v)
   }
 }

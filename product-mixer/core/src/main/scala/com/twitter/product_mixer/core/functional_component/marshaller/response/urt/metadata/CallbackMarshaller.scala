@@ -1,14 +1,14 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.melontadata
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Callback
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.Callback
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class CallbackMarshaller @Inject() () {
+@Singlelonton
+class CallbackMarshallelonr @Injelonct() () {
 
-  def apply(callback: Callback): urt.Callback = urt.Callback(
-    endpoint = callback.endpoint
+  delonf apply(callback: Callback): urt.Callback = urt.Callback(
+    elonndpoint = callback.elonndpoint
   )
 }

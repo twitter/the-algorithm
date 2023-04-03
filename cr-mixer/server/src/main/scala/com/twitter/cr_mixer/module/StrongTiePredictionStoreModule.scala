@@ -1,39 +1,39 @@
-package com.twitter.cr_mixer.module
+packagelon com.twittelonr.cr_mixelonr.modulelon
 
-import com.google.inject.Provides
-import com.google.inject.Singleton
-import com.twitter.app.Flag
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.store.strato.StratoFetchableStore
-import com.twitter.hermit.store.common.ObservedReadableStore
-import com.twitter.inject.TwitterModule
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.hermit.stp.thriftscala.STPResult
-import com.twitter.storehaus.ReadableStore
-import com.twitter.strato.client.{Client => StratoClient}
-import javax.inject.Named
+import com.googlelon.injelonct.Providelons
+import com.googlelon.injelonct.Singlelonton
+import com.twittelonr.app.Flag
+import com.twittelonr.cr_mixelonr.modelonl.ModulelonNamelons
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.frigatelon.common.storelon.strato.StratoFelontchablelonStorelon
+import com.twittelonr.helonrmit.storelon.common.ObselonrvelondRelonadablelonStorelon
+import com.twittelonr.injelonct.TwittelonrModulelon
+import com.twittelonr.simclustelonrs_v2.common.UselonrId
+import com.twittelonr.helonrmit.stp.thriftscala.STPRelonsult
+import com.twittelonr.storelonhaus.RelonadablelonStorelon
+import com.twittelonr.strato.clielonnt.{Clielonnt => StratoClielonnt}
+import javax.injelonct.Namelond
 
-object StrongTiePredictionStoreModule extends TwitterModule {
+objelonct StrongTielonPrelondictionStorelonModulelon elonxtelonnds TwittelonrModulelon {
 
-  private val strongTiePredictionColumnPath: Flag[String] = flag[String](
-    name = "crMixer.strongTiePredictionColumnPath",
-    default = "onboarding/userrecs/strong_tie_prediction_big",
-    help = "Strato column path for StrongTiePredictionStore"
+  privatelon val strongTielonPrelondictionColumnPath: Flag[String] = flag[String](
+    namelon = "crMixelonr.strongTielonPrelondictionColumnPath",
+    delonfault = "onboarding/uselonrreloncs/strong_tielon_prelondiction_big",
+    helonlp = "Strato column path for StrongTielonPrelondictionStorelon"
   )
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.StpStore)
-  def providesStrongTiePredictionStore(
-    statsReceiver: StatsReceiver,
-    stratoClient: StratoClient,
-  ): ReadableStore[UserId, STPResult] = {
-    val strongTiePredictionStratoFetchableStore = StratoFetchableStore
-      .withUnitView[UserId, STPResult](stratoClient, strongTiePredictionColumnPath())
+  @Providelons
+  @Singlelonton
+  @Namelond(ModulelonNamelons.StpStorelon)
+  delonf providelonsStrongTielonPrelondictionStorelon(
+    statsReloncelonivelonr: StatsReloncelonivelonr,
+    stratoClielonnt: StratoClielonnt,
+  ): RelonadablelonStorelon[UselonrId, STPRelonsult] = {
+    val strongTielonPrelondictionStratoFelontchablelonStorelon = StratoFelontchablelonStorelon
+      .withUnitVielonw[UselonrId, STPRelonsult](stratoClielonnt, strongTielonPrelondictionColumnPath())
 
-    ObservedReadableStore(
-      strongTiePredictionStratoFetchableStore
-    )(statsReceiver.scope("strong_tie_prediction_big_store"))
+    ObselonrvelondRelonadablelonStorelon(
+      strongTielonPrelondictionStratoFelontchablelonStorelon
+    )(statsReloncelonivelonr.scopelon("strong_tielon_prelondiction_big_storelon"))
   }
 }

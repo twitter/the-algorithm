@@ -1,31 +1,31 @@
-package com.twitter.simclusters_v2.summingbird.stores
+packagelon com.twittelonr.simclustelonrs_v2.summingbird.storelons
 
-import com.twitter.simclusters_v2.summingbird.common.EntityUtil
-import com.twitter.simclusters_v2.thriftscala._
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
-import com.twitter.util.Time
+import com.twittelonr.simclustelonrs_v2.summingbird.common.elonntityUtil
+import com.twittelonr.simclustelonrs_v2.thriftscala._
+import com.twittelonr.storelonhaus.RelonadablelonStorelon
+import com.twittelonr.util.Futurelon
+import com.twittelonr.util.Timelon
 
-case class TopKClustersForEntityReadableStore(
-  underlyingStore: ReadableStore[EntityWithVersion, TopKClustersWithScores])
-    extends ReadableStore[EntityWithVersion, TopKClustersWithScores] {
+caselon class TopKClustelonrsForelonntityRelonadablelonStorelon(
+  undelonrlyingStorelon: RelonadablelonStorelon[elonntityWithVelonrsion, TopKClustelonrsWithScorelons])
+    elonxtelonnds RelonadablelonStorelon[elonntityWithVelonrsion, TopKClustelonrsWithScorelons] {
 
-  override def multiGet[K1 <: EntityWithVersion](
-    ks: Set[K1]
-  ): Map[K1, Future[Option[TopKClustersWithScores]]] = {
-    val nowInMs = Time.now.inMilliseconds
-    underlyingStore
-      .multiGet(ks)
-      .mapValues { resFuture =>
-        resFuture.map { resOpt =>
-          resOpt.map { clustersWithScores =>
-            clustersWithScores.copy(
-              topClustersByFavClusterNormalizedScore = EntityUtil.updateScoreWithLatestTimestamp(
-                clustersWithScores.topClustersByFavClusterNormalizedScore,
+  ovelonrridelon delonf multiGelont[K1 <: elonntityWithVelonrsion](
+    ks: Selont[K1]
+  ): Map[K1, Futurelon[Option[TopKClustelonrsWithScorelons]]] = {
+    val nowInMs = Timelon.now.inMilliselonconds
+    undelonrlyingStorelon
+      .multiGelont(ks)
+      .mapValuelons { relonsFuturelon =>
+        relonsFuturelon.map { relonsOpt =>
+          relonsOpt.map { clustelonrsWithScorelons =>
+            clustelonrsWithScorelons.copy(
+              topClustelonrsByFavClustelonrNormalizelondScorelon = elonntityUtil.updatelonScorelonWithLatelonstTimelonstamp(
+                clustelonrsWithScorelons.topClustelonrsByFavClustelonrNormalizelondScorelon,
                 nowInMs
               ),
-              topClustersByFollowClusterNormalizedScore = EntityUtil.updateScoreWithLatestTimestamp(
-                clustersWithScores.topClustersByFollowClusterNormalizedScore,
+              topClustelonrsByFollowClustelonrNormalizelondScorelon = elonntityUtil.updatelonScorelonWithLatelonstTimelonstamp(
+                clustelonrsWithScorelons.topClustelonrsByFollowClustelonrNormalizelondScorelon,
                 nowInMs
               )
             )

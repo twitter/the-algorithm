@@ -1,175 +1,175 @@
-package com.twitter.product_mixer.core.pipeline.mixer
+packagelon com.twittelonr.product_mixelonr.corelon.pipelonlinelon.mixelonr
 
-import com.twitter.product_mixer.core.functional_component.common.alert.Alert
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.QueryFeatureHydrator
-import com.twitter.product_mixer.core.functional_component.gate.Gate
-import com.twitter.product_mixer.core.functional_component.premarshaller.DomainMarshaller
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.functional_component.side_effect.PipelineResultSideEffect
-import com.twitter.product_mixer.core.functional_component.marshaller.TransportMarshaller
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifierStack
-import com.twitter.product_mixer.core.model.common.identifier.MixerPipelineIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.PipelineStepIdentifier
-import com.twitter.product_mixer.core.model.marshalling.HasMarshalling
-import com.twitter.product_mixer.core.pipeline.FailOpenPolicy
-import com.twitter.product_mixer.core.pipeline.PipelineConfig
-import com.twitter.product_mixer.core.pipeline.PipelineConfigCompanion
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.candidate.CandidatePipelineConfig
-import com.twitter.product_mixer.core.pipeline.candidate.DependentCandidatePipelineConfig
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.ClosedGate
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.quality_factor.QualityFactorConfig
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.alelonrt.Alelonrt
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator.QuelonryFelonaturelonHydrator
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.gatelon.Gatelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.prelonmarshallelonr.DomainMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.selonlelonctor.Selonlelonctor
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.sidelon_elonffelonct.PipelonlinelonRelonsultSidelonelonffelonct
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.TransportMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonPipelonlinelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.ComponelonntIdelonntifielonrStack
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.MixelonrPipelonlinelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.PipelonlinelonStelonpIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.HasMarshalling
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.FailOpelonnPolicy
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonConfig
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonConfigCompanion
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.candidatelon.CandidatelonPipelonlinelonConfig
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.candidatelon.DelonpelonndelonntCandidatelonPipelonlinelonConfig
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.CloselondGatelon
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.PipelonlinelonFailurelon
+import com.twittelonr.product_mixelonr.corelon.quality_factor.QualityFactorConfig
 
 /**
- *  This is the configuration necessary to generate a Mixer Pipeline. Product code should create a
- *  MixerPipelineConfig, and then use a MixerPipelineBuilder to get the final MixerPipeline which can
- *  process requests.
+ *  This is thelon configuration neloncelonssary to gelonnelonratelon a Mixelonr Pipelonlinelon. Product codelon should crelonatelon a
+ *  MixelonrPipelonlinelonConfig, and thelonn uselon a MixelonrPipelonlinelonBuildelonr to gelont thelon final MixelonrPipelonlinelon which can
+ *  procelonss relonquelonsts.
  *
- * @tparam Query - The domain model for the query or request
- * @tparam UnmarshalledResultType - The result type of the pipeline, but before marshalling to a wire protocol like URT
- * @tparam Result - The final result that will be served to users
+ * @tparam Quelonry - Thelon domain modelonl for thelon quelonry or relonquelonst
+ * @tparam UnmarshallelondRelonsultTypelon - Thelon relonsult typelon of thelon pipelonlinelon, but belonforelon marshalling to a wirelon protocol likelon URT
+ * @tparam Relonsult - Thelon final relonsult that will belon selonrvelond to uselonrs
  */
-trait MixerPipelineConfig[Query <: PipelineQuery, UnmarshalledResultType <: HasMarshalling, Result]
-    extends PipelineConfig {
+trait MixelonrPipelonlinelonConfig[Quelonry <: PipelonlinelonQuelonry, UnmarshallelondRelonsultTypelon <: HasMarshalling, Relonsult]
+    elonxtelonnds PipelonlinelonConfig {
 
-  override val identifier: MixerPipelineIdentifier
+  ovelonrridelon val idelonntifielonr: MixelonrPipelonlinelonIdelonntifielonr
 
   /**
-   * Mixer Pipeline Gates will be executed before any other step (including retrieval from candidate
-   * pipelines). They're executed sequentially, and any "Stop" result will prevent pipeline execution.
+   * Mixelonr Pipelonlinelon Gatelons will belon elonxeloncutelond belonforelon any othelonr stelonp (including relontrielonval from candidatelon
+   * pipelonlinelons). Thelony'relon elonxeloncutelond selonquelonntially, and any "Stop" relonsult will prelonvelonnt pipelonlinelon elonxeloncution.
    */
-  def gates: Seq[Gate[Query]] = Seq.empty
+  delonf gatelons: Selonq[Gatelon[Quelonry]] = Selonq.elonmpty
 
   /**
-   * A mixer pipeline can fetch query-level features before candidate pipelines are executed.
+   * A mixelonr pipelonlinelon can felontch quelonry-lelonvelonl felonaturelons belonforelon candidatelon pipelonlinelons arelon elonxeloncutelond.
    */
-  def fetchQueryFeatures: Seq[QueryFeatureHydrator[Query]] = Seq.empty
+  delonf felontchQuelonryFelonaturelons: Selonq[QuelonryFelonaturelonHydrator[Quelonry]] = Selonq.elonmpty
 
   /**
-   * For query-level features that are dependent on query-level features from [[fetchQueryFeatures]]
+   * For quelonry-lelonvelonl felonaturelons that arelon delonpelonndelonnt on quelonry-lelonvelonl felonaturelons from [[felontchQuelonryFelonaturelons]]
    */
-  def fetchQueryFeaturesPhase2: Seq[QueryFeatureHydrator[Query]] = Seq.empty
+  delonf felontchQuelonryFelonaturelonsPhaselon2: Selonq[QuelonryFelonaturelonHydrator[Quelonry]] = Selonq.elonmpty
 
   /**
-   * Candidate pipelines retrieve candidates for possible inclusion in the result
+   * Candidatelon pipelonlinelons relontrielonvelon candidatelons for possiblelon inclusion in thelon relonsult
    */
-  def candidatePipelines: Seq[CandidatePipelineConfig[Query, _, _, _]]
+  delonf candidatelonPipelonlinelons: Selonq[CandidatelonPipelonlinelonConfig[Quelonry, _, _, _]]
 
   /**
-   * Dependent candidate pipelines to retrieve candidates that depend on the result of [[candidatePipelines]]
-   * [[DependentCandidatePipelineConfig]] have access to the list of previously retrieved & decorated
-   * candidates for use in constructing the query object.
+   * Delonpelonndelonnt candidatelon pipelonlinelons to relontrielonvelon candidatelons that delonpelonnd on thelon relonsult of [[candidatelonPipelonlinelons]]
+   * [[DelonpelonndelonntCandidatelonPipelonlinelonConfig]] havelon accelonss to thelon list of prelonviously relontrielonvelond & deloncoratelond
+   * candidatelons for uselon in constructing thelon quelonry objelonct.
    */
-  def dependentCandidatePipelines: Seq[DependentCandidatePipelineConfig[Query, _, _, _]] = Seq.empty
+  delonf delonpelonndelonntCandidatelonPipelonlinelons: Selonq[DelonpelonndelonntCandidatelonPipelonlinelonConfig[Quelonry, _, _, _]] = Selonq.elonmpty
 
   /**
-   * [[defaultFailOpenPolicy]] is the [[FailOpenPolicy]] that will be applied to any candidate
-   * pipeline that isn't in the [[failOpenPolicies]] map. By default Candidate Pipelines will fail
-   * open for Closed Gates only.
+   * [[delonfaultFailOpelonnPolicy]] is thelon [[FailOpelonnPolicy]] that will belon applielond to any candidatelon
+   * pipelonlinelon that isn't in thelon [[failOpelonnPolicielons]] map. By delonfault Candidatelon Pipelonlinelons will fail
+   * opelonn for Closelond Gatelons only.
    */
-  def defaultFailOpenPolicy: FailOpenPolicy = FailOpenPolicy(Set(ClosedGate))
+  delonf delonfaultFailOpelonnPolicy: FailOpelonnPolicy = FailOpelonnPolicy(Selont(CloselondGatelon))
 
   /**
-   * [[failOpenPolicies]] associates [[FailOpenPolicy]]s to specific candidate pipelines using
-   * [[CandidatePipelineIdentifier]].
+   * [[failOpelonnPolicielons]] associatelons [[FailOpelonnPolicy]]s to speloncific candidatelon pipelonlinelons using
+   * [[CandidatelonPipelonlinelonIdelonntifielonr]].
    *
-   * @note these [[FailOpenPolicy]]s override the [[defaultFailOpenPolicy]] for a mapped
-   *       Candidate Pipeline.
+   * @notelon thelonselon [[FailOpelonnPolicy]]s ovelonrridelon thelon [[delonfaultFailOpelonnPolicy]] for a mappelond
+   *       Candidatelon Pipelonlinelon.
    */
-  def failOpenPolicies: Map[CandidatePipelineIdentifier, FailOpenPolicy] = Map.empty
+  delonf failOpelonnPolicielons: Map[CandidatelonPipelonlinelonIdelonntifielonr, FailOpelonnPolicy] = Map.elonmpty
 
   /**
-   ** [[qualityFactorConfigs]] associates [[QualityFactorConfig]]s to specific candidate pipelines
-   * using [[CandidatePipelineIdentifier]].
+   ** [[qualityFactorConfigs]] associatelons [[QualityFactorConfig]]s to speloncific candidatelon pipelonlinelons
+   * using [[CandidatelonPipelonlinelonIdelonntifielonr]].
    */
-  def qualityFactorConfigs: Map[CandidatePipelineIdentifier, QualityFactorConfig] =
-    Map.empty
+  delonf qualityFactorConfigs: Map[CandidatelonPipelonlinelonIdelonntifielonr, QualityFactorConfig] =
+    Map.elonmpty
 
   /**
-   * Selectors are executed in sequential order to combine the candidates into a result
+   * Selonlelonctors arelon elonxeloncutelond in selonquelonntial ordelonr to combinelon thelon candidatelons into a relonsult
    */
-  def resultSelectors: Seq[Selector[Query]]
+  delonf relonsultSelonlelonctors: Selonq[Selonlelonctor[Quelonry]]
 
   /**
-   * Mixer result side effects that are executed after selection and domain marshalling
+   * Mixelonr relonsult sidelon elonffeloncts that arelon elonxeloncutelond aftelonr selonlelonction and domain marshalling
    */
-  def resultSideEffects: Seq[PipelineResultSideEffect[Query, UnmarshalledResultType]] = Seq()
+  delonf relonsultSidelonelonffeloncts: Selonq[PipelonlinelonRelonsultSidelonelonffelonct[Quelonry, UnmarshallelondRelonsultTypelon]] = Selonq()
 
   /**
-   * Domain marshaller transforms the selections into the model expected by the marshaller
+   * Domain marshallelonr transforms thelon selonlelonctions into thelon modelonl elonxpelonctelond by thelon marshallelonr
    */
-  def domainMarshaller: DomainMarshaller[Query, UnmarshalledResultType]
+  delonf domainMarshallelonr: DomainMarshallelonr[Quelonry, UnmarshallelondRelonsultTypelon]
 
   /**
-   * Transport marshaller transforms the model into our line-level API like URT or JSON
+   * Transport marshallelonr transforms thelon modelonl into our linelon-lelonvelonl API likelon URT or JSON
    */
-  def transportMarshaller: TransportMarshaller[UnmarshalledResultType, Result]
+  delonf transportMarshallelonr: TransportMarshallelonr[UnmarshallelondRelonsultTypelon, Relonsult]
 
   /**
-   * A pipeline can define a partial function to rescue failures here. They will be treated as failures
-   * from a monitoring standpoint, and cancellation exceptions will always be propagated (they cannot be caught here).
+   * A pipelonlinelon can delonfinelon a partial function to relonscuelon failurelons helonrelon. Thelony will belon trelonatelond as failurelons
+   * from a monitoring standpoint, and cancelonllation elonxcelonptions will always belon propagatelond (thelony cannot belon caught helonrelon).
    */
-  def failureClassifier: PartialFunction[Throwable, PipelineFailure] = PartialFunction.empty
+  delonf failurelonClassifielonr: PartialFunction[Throwablelon, PipelonlinelonFailurelon] = PartialFunction.elonmpty
 
   /**
-   * Alert can be used to indicate the pipeline's service level objectives. Alerts and
-   * dashboards will be automatically created based on this information.
+   * Alelonrt can belon uselond to indicatelon thelon pipelonlinelon's selonrvicelon lelonvelonl objelonctivelons. Alelonrts and
+   * dashboards will belon automatically crelonatelond baselond on this information.
    */
-  val alerts: Seq[Alert] = Seq.empty
+  val alelonrts: Selonq[Alelonrt] = Selonq.elonmpty
 
   /**
-   * This method is used by the product mixer framework to build the pipeline.
+   * This melonthod is uselond by thelon product mixelonr framelonwork to build thelon pipelonlinelon.
    */
-  private[core] final def build(
-    parentComponentIdentifierStack: ComponentIdentifierStack,
-    builder: MixerPipelineBuilderFactory
-  ): MixerPipeline[Query, Result] =
-    builder.get.build(parentComponentIdentifierStack, this)
+  privatelon[corelon] final delonf build(
+    parelonntComponelonntIdelonntifielonrStack: ComponelonntIdelonntifielonrStack,
+    buildelonr: MixelonrPipelonlinelonBuildelonrFactory
+  ): MixelonrPipelonlinelon[Quelonry, Relonsult] =
+    buildelonr.gelont.build(parelonntComponelonntIdelonntifielonrStack, this)
 }
 
-object MixerPipelineConfig extends PipelineConfigCompanion {
-  val qualityFactorStep: PipelineStepIdentifier = PipelineStepIdentifier("QualityFactor")
-  val gatesStep: PipelineStepIdentifier = PipelineStepIdentifier("Gates")
-  val fetchQueryFeaturesStep: PipelineStepIdentifier = PipelineStepIdentifier("FetchQueryFeatures")
-  val fetchQueryFeaturesPhase2Step: PipelineStepIdentifier =
-    PipelineStepIdentifier("FetchQueryFeaturesPhase2")
-  val candidatePipelinesStep: PipelineStepIdentifier = PipelineStepIdentifier("CandidatePipelines")
-  val dependentCandidatePipelinesStep: PipelineStepIdentifier =
-    PipelineStepIdentifier("DependentCandidatePipelines")
-  val resultSelectorsStep: PipelineStepIdentifier = PipelineStepIdentifier("ResultSelectors")
-  val domainMarshallerStep: PipelineStepIdentifier = PipelineStepIdentifier("DomainMarshaller")
-  val resultSideEffectsStep: PipelineStepIdentifier = PipelineStepIdentifier("ResultSideEffects")
-  val transportMarshallerStep: PipelineStepIdentifier = PipelineStepIdentifier(
-    "TransportMarshaller")
+objelonct MixelonrPipelonlinelonConfig elonxtelonnds PipelonlinelonConfigCompanion {
+  val qualityFactorStelonp: PipelonlinelonStelonpIdelonntifielonr = PipelonlinelonStelonpIdelonntifielonr("QualityFactor")
+  val gatelonsStelonp: PipelonlinelonStelonpIdelonntifielonr = PipelonlinelonStelonpIdelonntifielonr("Gatelons")
+  val felontchQuelonryFelonaturelonsStelonp: PipelonlinelonStelonpIdelonntifielonr = PipelonlinelonStelonpIdelonntifielonr("FelontchQuelonryFelonaturelons")
+  val felontchQuelonryFelonaturelonsPhaselon2Stelonp: PipelonlinelonStelonpIdelonntifielonr =
+    PipelonlinelonStelonpIdelonntifielonr("FelontchQuelonryFelonaturelonsPhaselon2")
+  val candidatelonPipelonlinelonsStelonp: PipelonlinelonStelonpIdelonntifielonr = PipelonlinelonStelonpIdelonntifielonr("CandidatelonPipelonlinelons")
+  val delonpelonndelonntCandidatelonPipelonlinelonsStelonp: PipelonlinelonStelonpIdelonntifielonr =
+    PipelonlinelonStelonpIdelonntifielonr("DelonpelonndelonntCandidatelonPipelonlinelons")
+  val relonsultSelonlelonctorsStelonp: PipelonlinelonStelonpIdelonntifielonr = PipelonlinelonStelonpIdelonntifielonr("RelonsultSelonlelonctors")
+  val domainMarshallelonrStelonp: PipelonlinelonStelonpIdelonntifielonr = PipelonlinelonStelonpIdelonntifielonr("DomainMarshallelonr")
+  val relonsultSidelonelonffelonctsStelonp: PipelonlinelonStelonpIdelonntifielonr = PipelonlinelonStelonpIdelonntifielonr("RelonsultSidelonelonffeloncts")
+  val transportMarshallelonrStelonp: PipelonlinelonStelonpIdelonntifielonr = PipelonlinelonStelonpIdelonntifielonr(
+    "TransportMarshallelonr")
 
-  /** All the Steps which are executed by a [[MixerPipeline]] in the order in which they are run */
-  override val stepsInOrder: Seq[PipelineStepIdentifier] = Seq(
-    qualityFactorStep,
-    gatesStep,
-    fetchQueryFeaturesStep,
-    fetchQueryFeaturesPhase2Step,
-    asyncFeaturesStep(candidatePipelinesStep),
-    candidatePipelinesStep,
-    asyncFeaturesStep(dependentCandidatePipelinesStep),
-    dependentCandidatePipelinesStep,
-    asyncFeaturesStep(resultSelectorsStep),
-    resultSelectorsStep,
-    domainMarshallerStep,
-    asyncFeaturesStep(resultSideEffectsStep),
-    resultSideEffectsStep,
-    transportMarshallerStep
+  /** All thelon Stelonps which arelon elonxeloncutelond by a [[MixelonrPipelonlinelon]] in thelon ordelonr in which thelony arelon run */
+  ovelonrridelon val stelonpsInOrdelonr: Selonq[PipelonlinelonStelonpIdelonntifielonr] = Selonq(
+    qualityFactorStelonp,
+    gatelonsStelonp,
+    felontchQuelonryFelonaturelonsStelonp,
+    felontchQuelonryFelonaturelonsPhaselon2Stelonp,
+    asyncFelonaturelonsStelonp(candidatelonPipelonlinelonsStelonp),
+    candidatelonPipelonlinelonsStelonp,
+    asyncFelonaturelonsStelonp(delonpelonndelonntCandidatelonPipelonlinelonsStelonp),
+    delonpelonndelonntCandidatelonPipelonlinelonsStelonp,
+    asyncFelonaturelonsStelonp(relonsultSelonlelonctorsStelonp),
+    relonsultSelonlelonctorsStelonp,
+    domainMarshallelonrStelonp,
+    asyncFelonaturelonsStelonp(relonsultSidelonelonffelonctsStelonp),
+    relonsultSidelonelonffelonctsStelonp,
+    transportMarshallelonrStelonp
   )
 
   /**
-   * All the Steps which an [[com.twitter.product_mixer.core.functional_component.feature_hydrator.AsyncHydrator AsyncHydrator]]
-   * can be configured to [[com.twitter.product_mixer.core.functional_component.feature_hydrator.AsyncHydrator.hydrateBefore hydrateBefore]]
+   * All thelon Stelonps which an [[com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator.AsyncHydrator AsyncHydrator]]
+   * can belon configurelond to [[com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator.AsyncHydrator.hydratelonBelonforelon hydratelonBelonforelon]]
    */
-  override val stepsAsyncFeatureHydrationCanBeCompletedBy: Set[PipelineStepIdentifier] = Set(
-    candidatePipelinesStep,
-    dependentCandidatePipelinesStep,
-    resultSelectorsStep,
-    resultSideEffectsStep
+  ovelonrridelon val stelonpsAsyncFelonaturelonHydrationCanBelonComplelontelondBy: Selont[PipelonlinelonStelonpIdelonntifielonr] = Selont(
+    candidatelonPipelonlinelonsStelonp,
+    delonpelonndelonntCandidatelonPipelonlinelonsStelonp,
+    relonsultSelonlelonctorsStelonp,
+    relonsultSidelonelonffelonctsStelonp
   )
 }

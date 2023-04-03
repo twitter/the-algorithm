@@ -1,68 +1,68 @@
 WITH
   vars AS (
-    SELECT
-      TIMESTAMP("{START_TIME}") AS start_date,
-      TIMESTAMP("{END_TIME}") AS end_date,
-      TIMESTAMP("{NO_OLDER_TWEETS_THAN_DATE}") AS no_older_tweets_than_date
+    SelonLelonCT
+      TIMelonSTAMP("{START_TIMelon}") AS start_datelon,
+      TIMelonSTAMP("{elonND_TIMelon}") AS elonnd_datelon,
+      TIMelonSTAMP("{NO_OLDelonR_TWelonelonTS_THAN_DATelon}") AS no_oldelonr_twelonelonts_than_datelon
   ),
 
-  -- Get raw user-tweet interaction events from UUA
-  actions_unioned AS (
-    SELECT
-      userIdentifier.userId AS userId,
-      item.tweetInfo.actionTweetId AS tweetId,
-      eventMetadata.sourceTimestampMs AS tsMillis,
-      CASE
-          WHEN actionType = "ServerTweetFav" THEN 1
-          WHEN actionType = "ServerTweetUnfav" THEN -1
-      END AS favAction,
-      CASE
-          WHEN actionType = "ServerTweetReply" THEN 1
-          WHEN actionType = "ServerTweetDelete" THEN -1
-      END AS replyAction,
-      CASE
-          WHEN actionType = "ServerTweetRetweet" THEN 1
-          WHEN actionType = "ServerTweetUnretweet" THEN -1
-      END AS retweetAction,
-      IF(actionType = "ClientTweetVideoPlayback50", 1, NULL) AS videoPlayback50Action
-    FROM `twttr-bql-unified-prod.unified_user_actions_engagements.streaming_unified_user_actions_engagements`, vars
-    WHERE (DATE(dateHour) >= DATE(vars.start_date) AND DATE(dateHour) <= DATE(vars.end_date))
-      AND eventMetadata.sourceTimestampMs >= UNIX_MILLIS(vars.start_date) 
-      AND eventMetadata.sourceTimestampMs <= UNIX_MILLIS(vars.end_date)
-      AND (actionType = "ServerTweetReply"
-              OR actionType = "ServerTweetRetweet"
-              OR actionType = "ServerTweetFav"
-              OR actionType = "ServerTweetUnfav"
-              OR actionType = "ClientTweetVideoPlayback50"
+  -- Gelont raw uselonr-twelonelont intelonraction elonvelonnts from UUA
+  actions_unionelond AS (
+    SelonLelonCT
+      uselonrIdelonntifielonr.uselonrId AS uselonrId,
+      itelonm.twelonelontInfo.actionTwelonelontId AS twelonelontId,
+      elonvelonntMelontadata.sourcelonTimelonstampMs AS tsMillis,
+      CASelon
+          WHelonN actionTypelon = "SelonrvelonrTwelonelontFav" THelonN 1
+          WHelonN actionTypelon = "SelonrvelonrTwelonelontUnfav" THelonN -1
+      elonND AS favAction,
+      CASelon
+          WHelonN actionTypelon = "SelonrvelonrTwelonelontRelonply" THelonN 1
+          WHelonN actionTypelon = "SelonrvelonrTwelonelontDelonlelontelon" THelonN -1
+      elonND AS relonplyAction,
+      CASelon
+          WHelonN actionTypelon = "SelonrvelonrTwelonelontRelontwelonelont" THelonN 1
+          WHelonN actionTypelon = "SelonrvelonrTwelonelontUnrelontwelonelont" THelonN -1
+      elonND AS relontwelonelontAction,
+      IF(actionTypelon = "ClielonntTwelonelontVidelonoPlayback50", 1, NULL) AS videlonoPlayback50Action
+    FROM `twttr-bql-unifielond-prod.unifielond_uselonr_actions_elonngagelonmelonnts.strelonaming_unifielond_uselonr_actions_elonngagelonmelonnts`, vars
+    WHelonRelon (DATelon(datelonHour) >= DATelon(vars.start_datelon) AND DATelon(datelonHour) <= DATelon(vars.elonnd_datelon))
+      AND elonvelonntMelontadata.sourcelonTimelonstampMs >= UNIX_MILLIS(vars.start_datelon)
+      AND elonvelonntMelontadata.sourcelonTimelonstampMs <= UNIX_MILLIS(vars.elonnd_datelon)
+      AND (actionTypelon = "SelonrvelonrTwelonelontRelonply"
+              OR actionTypelon = "SelonrvelonrTwelonelontRelontwelonelont"
+              OR actionTypelon = "SelonrvelonrTwelonelontFav"
+              OR actionTypelon = "SelonrvelonrTwelonelontUnfav"
+              OR actionTypelon = "ClielonntTwelonelontVidelonoPlayback50"
            )
   ),
 
-  user_tweet_action_pairs AS (
-    SELECT
-      userId,
-      tweetId,
-      -- Get the most recent fav event
-      ARRAY_AGG(IF(favAction IS NOT NULL, STRUCT(favAction AS engaged, tsMillis), NULL) IGNORE NULLS ORDER BY tsMillis DESC LIMIT 1)[OFFSET(0)] as ServerTweetFav,
-      -- Get the most recent reply / unreply event
-      ARRAY_AGG(IF(replyAction IS NOT NULL,STRUCT(replyAction AS engaged, tsMillis), NULL) IGNORE NULLS ORDER BY tsMillis DESC LIMIT 1)[OFFSET(0)] as ServerTweetReply,
-      -- Get the most recent retweet / unretweet event
-      ARRAY_AGG(IF(retweetAction IS NOT NULL, STRUCT(retweetAction AS engaged, tsMillis), NULL) IGNORE NULLS ORDER BY tsMillis DESC LIMIT 1)[OFFSET(0)] as ServerTweetRetweet,
-      -- Get the most recent video view event
-      ARRAY_AGG(IF(videoPlayback50Action IS NOT NULL, STRUCT(videoPlayback50Action AS engaged, tsMillis), NULL) IGNORE NULLS ORDER BY tsMillis DESC LIMIT 1)[OFFSET(0)] as ClientTweetVideoPlayback50
-    FROM actions_unioned
-    GROUP BY userId, tweetId
+  uselonr_twelonelont_action_pairs AS (
+    SelonLelonCT
+      uselonrId,
+      twelonelontId,
+      -- Gelont thelon most reloncelonnt fav elonvelonnt
+      ARRAY_AGG(IF(favAction IS NOT NULL, STRUCT(favAction AS elonngagelond, tsMillis), NULL) IGNORelon NULLS ORDelonR BY tsMillis DelonSC LIMIT 1)[OFFSelonT(0)] as SelonrvelonrTwelonelontFav,
+      -- Gelont thelon most reloncelonnt relonply / unrelonply elonvelonnt
+      ARRAY_AGG(IF(relonplyAction IS NOT NULL,STRUCT(relonplyAction AS elonngagelond, tsMillis), NULL) IGNORelon NULLS ORDelonR BY tsMillis DelonSC LIMIT 1)[OFFSelonT(0)] as SelonrvelonrTwelonelontRelonply,
+      -- Gelont thelon most reloncelonnt relontwelonelont / unrelontwelonelont elonvelonnt
+      ARRAY_AGG(IF(relontwelonelontAction IS NOT NULL, STRUCT(relontwelonelontAction AS elonngagelond, tsMillis), NULL) IGNORelon NULLS ORDelonR BY tsMillis DelonSC LIMIT 1)[OFFSelonT(0)] as SelonrvelonrTwelonelontRelontwelonelont,
+      -- Gelont thelon most reloncelonnt videlono vielonw elonvelonnt
+      ARRAY_AGG(IF(videlonoPlayback50Action IS NOT NULL, STRUCT(videlonoPlayback50Action AS elonngagelond, tsMillis), NULL) IGNORelon NULLS ORDelonR BY tsMillis DelonSC LIMIT 1)[OFFSelonT(0)] as ClielonntTwelonelontVidelonoPlayback50
+    FROM actions_unionelond
+    GROUP BY uselonrId, twelonelontId
   )
 
--- Combine signals
--- Apply age filter in this step
-SELECT
-  userId,
-  tweetId,
-  CAST({CONTRIBUTING_ACTION_TYPE_STR}.tsMillis AS FLOAT64) AS tsMillis
-FROM user_tweet_action_pairs, vars
-WHERE
-    {CONTRIBUTING_ACTION_TYPE_STR}.engaged = 1
+-- Combinelon signals
+-- Apply agelon filtelonr in this stelonp
+SelonLelonCT
+  uselonrId,
+  twelonelontId,
+  CAST({CONTRIBUTING_ACTION_TYPelon_STR}.tsMillis AS FLOAT64) AS tsMillis
+FROM uselonr_twelonelont_action_pairs, vars
+WHelonRelon
+    {CONTRIBUTING_ACTION_TYPelon_STR}.elonngagelond = 1
    AND
-    ({SUPPLEMENTAL_ACTION_TYPES_ENGAGEMENT_STR})
-   AND timestamp_millis((1288834974657 +
-            ((tweetId  & 9223372036850581504) >> 22))) >= vars.no_older_tweets_than_date
+    ({SUPPLelonMelonNTAL_ACTION_TYPelonS_elonNGAGelonMelonNT_STR})
+   AND timelonstamp_millis((1288834974657 +
+            ((twelonelontId  & 9223372036850581504) >> 22))) >= vars.no_oldelonr_twelonelonts_than_datelon

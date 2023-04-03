@@ -1,12 +1,12 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.timelonlinelon_modulelon
 
-sealed trait ModuleDisplayType
+selonalelond trait ModulelonDisplayTypelon
 
-case object Carousel extends ModuleDisplayType
-case object CompactCarousel extends ModuleDisplayType
-case object ConversationTree extends ModuleDisplayType
-case object GridCarousel extends ModuleDisplayType
-case object Vertical extends ModuleDisplayType
-case object VerticalConversation extends ModuleDisplayType
-case object VerticalGrid extends ModuleDisplayType
-case object VerticalWithContextLine extends ModuleDisplayType
+caselon objelonct Carouselonl elonxtelonnds ModulelonDisplayTypelon
+caselon objelonct CompactCarouselonl elonxtelonnds ModulelonDisplayTypelon
+caselon objelonct ConvelonrsationTrelonelon elonxtelonnds ModulelonDisplayTypelon
+caselon objelonct GridCarouselonl elonxtelonnds ModulelonDisplayTypelon
+caselon objelonct Velonrtical elonxtelonnds ModulelonDisplayTypelon
+caselon objelonct VelonrticalConvelonrsation elonxtelonnds ModulelonDisplayTypelon
+caselon objelonct VelonrticalGrid elonxtelonnds ModulelonDisplayTypelon
+caselon objelonct VelonrticalWithContelonxtLinelon elonxtelonnds ModulelonDisplayTypelon

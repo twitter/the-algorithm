@@ -1,85 +1,85 @@
-package com.twitter.follow_recommendations.common.candidate_sources.base
+packagelon com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.baselon
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.transforms.modify_social_proof.ModifySocialProof
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.util.Duration
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.CandidatelonUselonr
+import com.twittelonr.follow_reloncommelonndations.common.transforms.modify_social_proof.ModifySocialProof
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.CandidatelonSourcelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonSourcelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.HasClielonntContelonxt
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.timelonlinelons.configapi.HasParams
+import com.twittelonr.util.Duration
 
-abstract class SocialProofEnforcedCandidateSource(
-  candidateSource: CandidateSource[HasClientContext with HasParams, CandidateUser],
+abstract class SocialProofelonnforcelondCandidatelonSourcelon(
+  candidatelonSourcelon: CandidatelonSourcelon[HasClielonntContelonxt with HasParams, CandidatelonUselonr],
   modifySocialProof: ModifySocialProof,
-  minNumSocialProofsRequired: Int,
-  override val identifier: CandidateSourceIdentifier,
-  baseStatsReceiver: StatsReceiver)
-    extends CandidateSource[HasClientContext with HasParams, CandidateUser] {
+  minNumSocialProofsRelonquirelond: Int,
+  ovelonrridelon val idelonntifielonr: CandidatelonSourcelonIdelonntifielonr,
+  baselonStatsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds CandidatelonSourcelon[HasClielonntContelonxt with HasParams, CandidatelonUselonr] {
 
-  val statsReceiver = baseStatsReceiver.scope(identifier.name)
+  val statsReloncelonivelonr = baselonStatsReloncelonivelonr.scopelon(idelonntifielonr.namelon)
 
-  override def apply(target: HasClientContext with HasParams): Stitch[Seq[CandidateUser]] = {
-    val mustCallSgs: Boolean = target.params(SocialProofEnforcedCandidateSourceParams.MustCallSgs)
-    val callSgsCachedColumn: Boolean =
-      target.params(SocialProofEnforcedCandidateSourceParams.CallSgsCachedColumn)
-    val QueryIntersectionIdsNum: Int =
-      target.params(SocialProofEnforcedCandidateSourceParams.QueryIntersectionIdsNum)
-    val MaxNumCandidatesToAnnotate: Int =
-      target.params(SocialProofEnforcedCandidateSourceParams.MaxNumCandidatesToAnnotate)
-    val gfsIntersectionIdsNum: Int =
-      target.params(SocialProofEnforcedCandidateSourceParams.GfsIntersectionIdsNum)
-    val sgsIntersectionIdsNum: Int =
-      target.params(SocialProofEnforcedCandidateSourceParams.SgsIntersectionIdsNum)
+  ovelonrridelon delonf apply(targelont: HasClielonntContelonxt with HasParams): Stitch[Selonq[CandidatelonUselonr]] = {
+    val mustCallSgs: Boolelonan = targelont.params(SocialProofelonnforcelondCandidatelonSourcelonParams.MustCallSgs)
+    val callSgsCachelondColumn: Boolelonan =
+      targelont.params(SocialProofelonnforcelondCandidatelonSourcelonParams.CallSgsCachelondColumn)
+    val QuelonryIntelonrselonctionIdsNum: Int =
+      targelont.params(SocialProofelonnforcelondCandidatelonSourcelonParams.QuelonryIntelonrselonctionIdsNum)
+    val MaxNumCandidatelonsToAnnotatelon: Int =
+      targelont.params(SocialProofelonnforcelondCandidatelonSourcelonParams.MaxNumCandidatelonsToAnnotatelon)
+    val gfsIntelonrselonctionIdsNum: Int =
+      targelont.params(SocialProofelonnforcelondCandidatelonSourcelonParams.GfsIntelonrselonctionIdsNum)
+    val sgsIntelonrselonctionIdsNum: Int =
+      targelont.params(SocialProofelonnforcelondCandidatelonSourcelonParams.SgsIntelonrselonctionIdsNum)
     val gfsLagDuration: Duration =
-      target.params(SocialProofEnforcedCandidateSourceParams.GfsLagDurationInDays)
+      targelont.params(SocialProofelonnforcelondCandidatelonSourcelonParams.GfsLagDurationInDays)
 
-    candidateSource(target)
-      .flatMap { candidates =>
-        val candidatesWithoutEnoughSocialProof = candidates
-          .collect {
-            case candidate if !candidate.followedBy.exists(_.size >= minNumSocialProofsRequired) =>
-              candidate
+    candidatelonSourcelon(targelont)
+      .flatMap { candidatelons =>
+        val candidatelonsWithoutelonnoughSocialProof = candidatelons
+          .collelonct {
+            caselon candidatelon if !candidatelon.followelondBy.elonxists(_.sizelon >= minNumSocialProofsRelonquirelond) =>
+              candidatelon
           }
-        statsReceiver
-          .stat("candidates_with_no_social_proofs").add(candidatesWithoutEnoughSocialProof.size)
-        val candidatesToAnnotate =
-          candidatesWithoutEnoughSocialProof.take(MaxNumCandidatesToAnnotate)
-        statsReceiver.stat("candidates_to_annotate").add(candidatesToAnnotate.size)
+        statsReloncelonivelonr
+          .stat("candidatelons_with_no_social_proofs").add(candidatelonsWithoutelonnoughSocialProof.sizelon)
+        val candidatelonsToAnnotatelon =
+          candidatelonsWithoutelonnoughSocialProof.takelon(MaxNumCandidatelonsToAnnotatelon)
+        statsReloncelonivelonr.stat("candidatelons_to_annotatelon").add(candidatelonsToAnnotatelon.sizelon)
 
-        val annotatedCandidatesMapStitch = target.getOptionalUserId
-          .map { userId =>
+        val annotatelondCandidatelonsMapStitch = targelont.gelontOptionalUselonrId
+          .map { uselonrId =>
             modifySocialProof
-              .hydrateSocialProof(
-                userId,
-                candidatesToAnnotate,
-                Some(QueryIntersectionIdsNum),
+              .hydratelonSocialProof(
+                uselonrId,
+                candidatelonsToAnnotatelon,
+                Somelon(QuelonryIntelonrselonctionIdsNum),
                 mustCallSgs,
-                callSgsCachedColumn,
+                callSgsCachelondColumn,
                 gfsLagDuration = gfsLagDuration,
-                gfsIntersectionIds = gfsIntersectionIdsNum,
-                sgsIntersectionIds = sgsIntersectionIdsNum
-              ).map { annotatedCandidates =>
-                annotatedCandidates
-                  .map(annotatedCandidate => (annotatedCandidate.id, annotatedCandidate)).toMap
+                gfsIntelonrselonctionIds = gfsIntelonrselonctionIdsNum,
+                sgsIntelonrselonctionIds = sgsIntelonrselonctionIdsNum
+              ).map { annotatelondCandidatelons =>
+                annotatelondCandidatelons
+                  .map(annotatelondCandidatelon => (annotatelondCandidatelon.id, annotatelondCandidatelon)).toMap
               }
-          }.getOrElse(Stitch.value(Map.empty[Long, CandidateUser]))
+          }.gelontOrelonlselon(Stitch.valuelon(Map.elonmpty[Long, CandidatelonUselonr]))
 
-        annotatedCandidatesMapStitch.map { annotatedCandidatesMap =>
-          candidates
-            .flatMap { candidate =>
-              if (candidate.followedBy.exists(_.size >= minNumSocialProofsRequired)) {
-                Some(candidate)
-              } else {
-                annotatedCandidatesMap.get(candidate.id).collect {
-                  case annotatedCandidate
-                      if annotatedCandidate.followedBy.exists(
-                        _.size >= minNumSocialProofsRequired) =>
-                    annotatedCandidate
+        annotatelondCandidatelonsMapStitch.map { annotatelondCandidatelonsMap =>
+          candidatelons
+            .flatMap { candidatelon =>
+              if (candidatelon.followelondBy.elonxists(_.sizelon >= minNumSocialProofsRelonquirelond)) {
+                Somelon(candidatelon)
+              } elonlselon {
+                annotatelondCandidatelonsMap.gelont(candidatelon.id).collelonct {
+                  caselon annotatelondCandidatelon
+                      if annotatelondCandidatelon.followelondBy.elonxists(
+                        _.sizelon >= minNumSocialProofsRelonquirelond) =>
+                    annotatelondCandidatelon
                 }
               }
-            }.map(_.withCandidateSource(identifier))
+            }.map(_.withCandidatelonSourcelon(idelonntifielonr))
         }
       }
   }

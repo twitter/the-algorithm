@@ -1,342 +1,342 @@
-package com.twitter.interaction_graph.scio.common
+packagelon com.twittelonr.intelonraction_graph.scio.common
 
-import com.twitter.interaction_graph.thriftscala.FeatureName
-import com.twitter.interaction_graph.thriftscala.TimeSeriesStatistics
-import com.twitter.interaction_graph.thriftscala.Vertex
-import com.twitter.interaction_graph.thriftscala.VertexFeature
+import com.twittelonr.intelonraction_graph.thriftscala.FelonaturelonNamelon
+import com.twittelonr.intelonraction_graph.thriftscala.TimelonSelonrielonsStatistics
+import com.twittelonr.intelonraction_graph.thriftscala.Velonrtelonx
+import com.twittelonr.intelonraction_graph.thriftscala.VelonrtelonxFelonaturelon
 
-object VertexFeatureCombiner {
-  def apply(userId: Long): VertexFeatureCombiner = new VertexFeatureCombiner(
-    instanceVertex = Vertex(userId),
-    featureMap = Map(
-      (FeatureName.NumRetweets, true) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumRetweets, false) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumFavorites, true) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumFavorites, false) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumMentions, true) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumMentions, false) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumTweetClicks, true) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumTweetClicks, false) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumLinkClicks, true) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumLinkClicks, false) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumProfileViews, true) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumProfileViews, false) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumFollows, true) -> new ReplacementVertexCombiner,
-      (FeatureName.NumFollows, false) -> new ReplacementVertexCombiner,
-      (FeatureName.NumUnfollows, true) -> new ReplacementVertexCombiner,
-      (FeatureName.NumUnfollows, false) -> new ReplacementVertexCombiner,
-      (FeatureName.NumMutualFollows, true) -> new ReplacementVertexCombiner,
-      (FeatureName.NumBlocks, true) -> new ReplacementVertexCombiner,
-      (FeatureName.NumBlocks, false) -> new ReplacementVertexCombiner,
-      (FeatureName.NumMutes, true) -> new ReplacementVertexCombiner,
-      (FeatureName.NumMutes, false) -> new ReplacementVertexCombiner,
-      (FeatureName.NumReportAsAbuses, true) -> new ReplacementVertexCombiner,
-      (FeatureName.NumReportAsAbuses, false) -> new ReplacementVertexCombiner,
-      (FeatureName.NumReportAsSpams, true) -> new ReplacementVertexCombiner,
-      (FeatureName.NumReportAsSpams, false) -> new ReplacementVertexCombiner,
-      (FeatureName.NumTweetQuotes, true) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumTweetQuotes, false) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumMutualFollows, false) -> new ReplacementVertexCombiner,
-      (FeatureName.AddressBookEmail, true) -> new ReplacementVertexCombiner,
-      (FeatureName.AddressBookEmail, false) -> new ReplacementVertexCombiner,
-      (FeatureName.AddressBookPhone, true) -> new ReplacementVertexCombiner,
-      (FeatureName.AddressBookPhone, false) -> new ReplacementVertexCombiner,
-      (FeatureName.AddressBookInBoth, true) -> new ReplacementVertexCombiner,
-      (FeatureName.AddressBookInBoth, false) -> new ReplacementVertexCombiner,
-      (FeatureName.AddressBookMutualEdgeEmail, true) -> new ReplacementVertexCombiner,
-      (FeatureName.AddressBookMutualEdgeEmail, false) -> new ReplacementVertexCombiner,
-      (FeatureName.AddressBookMutualEdgePhone, true) -> new ReplacementVertexCombiner,
-      (FeatureName.AddressBookMutualEdgePhone, false) -> new ReplacementVertexCombiner,
-      (FeatureName.AddressBookMutualEdgeInBoth, true) -> new ReplacementVertexCombiner,
-      (FeatureName.AddressBookMutualEdgeInBoth, false) -> new ReplacementVertexCombiner,
-      (FeatureName.TotalDwellTime, true) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.TotalDwellTime, false) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumInspectedStatuses, true) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumInspectedStatuses, false) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumPhotoTags, true) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumPhotoTags, false) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumPushOpens, true) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumPushOpens, false) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumNtabClicks, true) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumNtabClicks, false) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumRtFavories, true) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumRtFavories, false) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumRtTweetQuotes, true) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumRtTweetQuotes, false) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumRtTweetClicks, true) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumRtTweetClicks, false) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumRtRetweets, true) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumRtRetweets, false) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumRtReplies, true) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumRtReplies, false) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumRtLinkClicks, true) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumRtLinkClicks, false) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumRtMentions, true) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumRtMentions, false) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumShares, true) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumShares, false) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumEmailOpen, true) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumEmailOpen, false) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumEmailClick, true) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumEmailClick, false) -> new WeightedAdditiveVertexCombiner,
+objelonct VelonrtelonxFelonaturelonCombinelonr {
+  delonf apply(uselonrId: Long): VelonrtelonxFelonaturelonCombinelonr = nelonw VelonrtelonxFelonaturelonCombinelonr(
+    instancelonVelonrtelonx = Velonrtelonx(uselonrId),
+    felonaturelonMap = Map(
+      (FelonaturelonNamelon.NumRelontwelonelonts, truelon) -> nelonw WelonightelondAdditivelonVelonrtelonxCombinelonr,
+      (FelonaturelonNamelon.NumRelontwelonelonts, falselon) -> nelonw WelonightelondAdditivelonVelonrtelonxCombinelonr,
+      (FelonaturelonNamelon.NumFavoritelons, truelon) -> nelonw WelonightelondAdditivelonVelonrtelonxCombinelonr,
+      (FelonaturelonNamelon.NumFavoritelons, falselon) -> nelonw WelonightelondAdditivelonVelonrtelonxCombinelonr,
+      (FelonaturelonNamelon.NumMelonntions, truelon) -> nelonw WelonightelondAdditivelonVelonrtelonxCombinelonr,
+      (FelonaturelonNamelon.NumMelonntions, falselon) -> nelonw WelonightelondAdditivelonVelonrtelonxCombinelonr,
+      (FelonaturelonNamelon.NumTwelonelontClicks, truelon) -> nelonw WelonightelondAdditivelonVelonrtelonxCombinelonr,
+      (FelonaturelonNamelon.NumTwelonelontClicks, falselon) -> nelonw WelonightelondAdditivelonVelonrtelonxCombinelonr,
+      (FelonaturelonNamelon.NumLinkClicks, truelon) -> nelonw WelonightelondAdditivelonVelonrtelonxCombinelonr,
+      (FelonaturelonNamelon.NumLinkClicks, falselon) -> nelonw WelonightelondAdditivelonVelonrtelonxCombinelonr,
+      (FelonaturelonNamelon.NumProfilelonVielonws, truelon) -> nelonw WelonightelondAdditivelonVelonrtelonxCombinelonr,
+      (FelonaturelonNamelon.NumProfilelonVielonws, falselon) -> nelonw WelonightelondAdditivelonVelonrtelonxCombinelonr,
+      (FelonaturelonNamelon.NumFollows, truelon) -> nelonw RelonplacelonmelonntVelonrtelonxCombinelonr,
+      (FelonaturelonNamelon.NumFollows, falselon) -> nelonw RelonplacelonmelonntVelonrtelonxCombinelonr,
+      (FelonaturelonNamelon.NumUnfollows, truelon) -> nelonw RelonplacelonmelonntVelonrtelonxCombinelonr,
+      (FelonaturelonNamelon.NumUnfollows, falselon) -> nelonw RelonplacelonmelonntVelonrtelonxCombinelonr,
+      (FelonaturelonNamelon.NumMutualFollows, truelon) -> nelonw RelonplacelonmelonntVelonrtelonxCombinelonr,
+      (FelonaturelonNamelon.NumBlocks, truelon) -> nelonw RelonplacelonmelonntVelonrtelonxCombinelonr,
+      (FelonaturelonNamelon.NumBlocks, falselon) -> nelonw RelonplacelonmelonntVelonrtelonxCombinelonr,
+      (FelonaturelonNamelon.NumMutelons, truelon) -> nelonw RelonplacelonmelonntVelonrtelonxCombinelonr,
+      (FelonaturelonNamelon.NumMutelons, falselon) -> nelonw RelonplacelonmelonntVelonrtelonxCombinelonr,
+      (FelonaturelonNamelon.NumRelonportAsAbuselons, truelon) -> nelonw RelonplacelonmelonntVelonrtelonxCombinelonr,
+      (FelonaturelonNamelon.NumRelonportAsAbuselons, falselon) -> nelonw RelonplacelonmelonntVelonrtelonxCombinelonr,
+      (FelonaturelonNamelon.NumRelonportAsSpams, truelon) -> nelonw RelonplacelonmelonntVelonrtelonxCombinelonr,
+      (FelonaturelonNamelon.NumRelonportAsSpams, falselon) -> nelonw RelonplacelonmelonntVelonrtelonxCombinelonr,
+      (FelonaturelonNamelon.NumTwelonelontQuotelons, truelon) -> nelonw WelonightelondAdditivelonVelonrtelonxCombinelonr,
+      (FelonaturelonNamelon.NumTwelonelontQuotelons, falselon) -> nelonw WelonightelondAdditivelonVelonrtelonxCombinelonr,
+      (FelonaturelonNamelon.NumMutualFollows, falselon) -> nelonw RelonplacelonmelonntVelonrtelonxCombinelonr,
+      (FelonaturelonNamelon.AddrelonssBookelonmail, truelon) -> nelonw RelonplacelonmelonntVelonrtelonxCombinelonr,
+      (FelonaturelonNamelon.AddrelonssBookelonmail, falselon) -> nelonw RelonplacelonmelonntVelonrtelonxCombinelonr,
+      (FelonaturelonNamelon.AddrelonssBookPhonelon, truelon) -> nelonw RelonplacelonmelonntVelonrtelonxCombinelonr,
+      (FelonaturelonNamelon.AddrelonssBookPhonelon, falselon) -> nelonw RelonplacelonmelonntVelonrtelonxCombinelonr,
+      (FelonaturelonNamelon.AddrelonssBookInBoth, truelon) -> nelonw RelonplacelonmelonntVelonrtelonxCombinelonr,
+      (FelonaturelonNamelon.AddrelonssBookInBoth, falselon) -> nelonw RelonplacelonmelonntVelonrtelonxCombinelonr,
+      (FelonaturelonNamelon.AddrelonssBookMutualelondgelonelonmail, truelon) -> nelonw RelonplacelonmelonntVelonrtelonxCombinelonr,
+      (FelonaturelonNamelon.AddrelonssBookMutualelondgelonelonmail, falselon) -> nelonw RelonplacelonmelonntVelonrtelonxCombinelonr,
+      (FelonaturelonNamelon.AddrelonssBookMutualelondgelonPhonelon, truelon) -> nelonw RelonplacelonmelonntVelonrtelonxCombinelonr,
+      (FelonaturelonNamelon.AddrelonssBookMutualelondgelonPhonelon, falselon) -> nelonw RelonplacelonmelonntVelonrtelonxCombinelonr,
+      (FelonaturelonNamelon.AddrelonssBookMutualelondgelonInBoth, truelon) -> nelonw RelonplacelonmelonntVelonrtelonxCombinelonr,
+      (FelonaturelonNamelon.AddrelonssBookMutualelondgelonInBoth, falselon) -> nelonw RelonplacelonmelonntVelonrtelonxCombinelonr,
+      (FelonaturelonNamelon.TotalDwelonllTimelon, truelon) -> nelonw WelonightelondAdditivelonVelonrtelonxCombinelonr,
+      (FelonaturelonNamelon.TotalDwelonllTimelon, falselon) -> nelonw WelonightelondAdditivelonVelonrtelonxCombinelonr,
+      (FelonaturelonNamelon.NumInspelonctelondStatuselons, truelon) -> nelonw WelonightelondAdditivelonVelonrtelonxCombinelonr,
+      (FelonaturelonNamelon.NumInspelonctelondStatuselons, falselon) -> nelonw WelonightelondAdditivelonVelonrtelonxCombinelonr,
+      (FelonaturelonNamelon.NumPhotoTags, truelon) -> nelonw WelonightelondAdditivelonVelonrtelonxCombinelonr,
+      (FelonaturelonNamelon.NumPhotoTags, falselon) -> nelonw WelonightelondAdditivelonVelonrtelonxCombinelonr,
+      (FelonaturelonNamelon.NumPushOpelonns, truelon) -> nelonw WelonightelondAdditivelonVelonrtelonxCombinelonr,
+      (FelonaturelonNamelon.NumPushOpelonns, falselon) -> nelonw WelonightelondAdditivelonVelonrtelonxCombinelonr,
+      (FelonaturelonNamelon.NumNtabClicks, truelon) -> nelonw WelonightelondAdditivelonVelonrtelonxCombinelonr,
+      (FelonaturelonNamelon.NumNtabClicks, falselon) -> nelonw WelonightelondAdditivelonVelonrtelonxCombinelonr,
+      (FelonaturelonNamelon.NumRtFavorielons, truelon) -> nelonw WelonightelondAdditivelonVelonrtelonxCombinelonr,
+      (FelonaturelonNamelon.NumRtFavorielons, falselon) -> nelonw WelonightelondAdditivelonVelonrtelonxCombinelonr,
+      (FelonaturelonNamelon.NumRtTwelonelontQuotelons, truelon) -> nelonw WelonightelondAdditivelonVelonrtelonxCombinelonr,
+      (FelonaturelonNamelon.NumRtTwelonelontQuotelons, falselon) -> nelonw WelonightelondAdditivelonVelonrtelonxCombinelonr,
+      (FelonaturelonNamelon.NumRtTwelonelontClicks, truelon) -> nelonw WelonightelondAdditivelonVelonrtelonxCombinelonr,
+      (FelonaturelonNamelon.NumRtTwelonelontClicks, falselon) -> nelonw WelonightelondAdditivelonVelonrtelonxCombinelonr,
+      (FelonaturelonNamelon.NumRtRelontwelonelonts, truelon) -> nelonw WelonightelondAdditivelonVelonrtelonxCombinelonr,
+      (FelonaturelonNamelon.NumRtRelontwelonelonts, falselon) -> nelonw WelonightelondAdditivelonVelonrtelonxCombinelonr,
+      (FelonaturelonNamelon.NumRtRelonplielons, truelon) -> nelonw WelonightelondAdditivelonVelonrtelonxCombinelonr,
+      (FelonaturelonNamelon.NumRtRelonplielons, falselon) -> nelonw WelonightelondAdditivelonVelonrtelonxCombinelonr,
+      (FelonaturelonNamelon.NumRtLinkClicks, truelon) -> nelonw WelonightelondAdditivelonVelonrtelonxCombinelonr,
+      (FelonaturelonNamelon.NumRtLinkClicks, falselon) -> nelonw WelonightelondAdditivelonVelonrtelonxCombinelonr,
+      (FelonaturelonNamelon.NumRtMelonntions, truelon) -> nelonw WelonightelondAdditivelonVelonrtelonxCombinelonr,
+      (FelonaturelonNamelon.NumRtMelonntions, falselon) -> nelonw WelonightelondAdditivelonVelonrtelonxCombinelonr,
+      (FelonaturelonNamelon.NumSharelons, truelon) -> nelonw WelonightelondAdditivelonVelonrtelonxCombinelonr,
+      (FelonaturelonNamelon.NumSharelons, falselon) -> nelonw WelonightelondAdditivelonVelonrtelonxCombinelonr,
+      (FelonaturelonNamelon.NumelonmailOpelonn, truelon) -> nelonw WelonightelondAdditivelonVelonrtelonxCombinelonr,
+      (FelonaturelonNamelon.NumelonmailOpelonn, falselon) -> nelonw WelonightelondAdditivelonVelonrtelonxCombinelonr,
+      (FelonaturelonNamelon.NumelonmailClick, truelon) -> nelonw WelonightelondAdditivelonVelonrtelonxCombinelonr,
+      (FelonaturelonNamelon.NumelonmailClick, falselon) -> nelonw WelonightelondAdditivelonVelonrtelonxCombinelonr,
     )
   )
 }
 
 /**
- * This class can take in a number of input Vertex thrift objects (all of which are assumed to
- * contain information about a single vertex) and builds a combined Vertex protobuf object, which
- * has the union of all the input. Note that we do a weighted addition for a time-decayed value.
+ * This class can takelon in a numbelonr of input Velonrtelonx thrift objeloncts (all of which arelon assumelond to
+ * contain information about a singlelon velonrtelonx) and builds a combinelond Velonrtelonx protobuf objelonct, which
+ * has thelon union of all thelon input. Notelon that welon do a welonightelond addition for a timelon-deloncayelond valuelon.
  * <p>
- * The input objects features must be disjoint. Also, remember that the Vertex is directed!
+ * Thelon input objeloncts felonaturelons must belon disjoint. Also, relonmelonmbelonr that thelon Velonrtelonx is direlonctelond!
  */
-class VertexFeatureCombiner(
-  instanceVertex: Vertex,
-  featureMap: Map[(FeatureName, Boolean), VFeatureCombiner]) {
+class VelonrtelonxFelonaturelonCombinelonr(
+  instancelonVelonrtelonx: Velonrtelonx,
+  felonaturelonMap: Map[(FelonaturelonNamelon, Boolelonan), VFelonaturelonCombinelonr]) {
 
   /**
-   * Adds features without any decay. To be used for the same day.
+   * Adds felonaturelons without any deloncay. To belon uselond for thelon samelon day.
    *
-   * @param vertex vertex to be added into the combiner
+   * @param velonrtelonx velonrtelonx to belon addelond into thelon combinelonr
    */
-  def addFeature(vertex: Vertex): VertexFeatureCombiner = {
-    val newVertex = instanceVertex.copy(weight = vertex.weight)
-    val newFeatures = featureMap.map {
-      case ((featureName, outgoing), combiner) =>
-        vertex.features.find(f => f.name.equals(featureName) && f.outgoing.equals(outgoing)) match {
-          case Some(feature) =>
-            val updatedCombiner =
-              if (combiner.isSet) combiner.updateFeature(feature) else combiner.setFeature(feature)
-            ((featureName, outgoing), updatedCombiner)
-          case _ => ((featureName, outgoing), combiner)
+  delonf addFelonaturelon(velonrtelonx: Velonrtelonx): VelonrtelonxFelonaturelonCombinelonr = {
+    val nelonwVelonrtelonx = instancelonVelonrtelonx.copy(welonight = velonrtelonx.welonight)
+    val nelonwFelonaturelons = felonaturelonMap.map {
+      caselon ((felonaturelonNamelon, outgoing), combinelonr) =>
+        velonrtelonx.felonaturelons.find(f => f.namelon.elonquals(felonaturelonNamelon) && f.outgoing.elonquals(outgoing)) match {
+          caselon Somelon(felonaturelon) =>
+            val updatelondCombinelonr =
+              if (combinelonr.isSelont) combinelonr.updatelonFelonaturelon(felonaturelon) elonlselon combinelonr.selontFelonaturelon(felonaturelon)
+            ((felonaturelonNamelon, outgoing), updatelondCombinelonr)
+          caselon _ => ((felonaturelonNamelon, outgoing), combinelonr)
         }
     }
 
-    new VertexFeatureCombiner(newVertex, newFeatures)
+    nelonw VelonrtelonxFelonaturelonCombinelonr(nelonwVelonrtelonx, nelonwFelonaturelons)
   }
 
   /**
-   * Adds features with decays. Used for combining multiple days.
+   * Adds felonaturelons with deloncays. Uselond for combining multiplelon days.
    *
-   * @param vertex vertex to be added into the combiner
-   * @param alpha  parameters for the decay calculation
-   * @param day    number of days from today
+   * @param velonrtelonx velonrtelonx to belon addelond into thelon combinelonr
+   * @param alpha  paramelontelonrs for thelon deloncay calculation
+   * @param day    numbelonr of days from today
    */
-  def addFeature(vertex: Vertex, alpha: Double, day: Int): VertexFeatureCombiner = {
+  delonf addFelonaturelon(velonrtelonx: Velonrtelonx, alpha: Doublelon, day: Int): VelonrtelonxFelonaturelonCombinelonr = {
 
-    val newVertex = instanceVertex.copy(weight = vertex.weight)
-    val newFeatures = featureMap.map {
-      case ((featureName, outgoing), combiner) =>
-        vertex.features.find(f => f.name.equals(featureName) && f.outgoing.equals(outgoing)) match {
-          case Some(feature) =>
-            val updatedCombiner =
-              if (combiner.isSet) combiner.updateFeature(feature, alpha, day)
-              else combiner.setFeature(feature, alpha, day)
-            ((featureName, outgoing), updatedCombiner)
-          case _ => ((featureName, outgoing), combiner)
+    val nelonwVelonrtelonx = instancelonVelonrtelonx.copy(welonight = velonrtelonx.welonight)
+    val nelonwFelonaturelons = felonaturelonMap.map {
+      caselon ((felonaturelonNamelon, outgoing), combinelonr) =>
+        velonrtelonx.felonaturelons.find(f => f.namelon.elonquals(felonaturelonNamelon) && f.outgoing.elonquals(outgoing)) match {
+          caselon Somelon(felonaturelon) =>
+            val updatelondCombinelonr =
+              if (combinelonr.isSelont) combinelonr.updatelonFelonaturelon(felonaturelon, alpha, day)
+              elonlselon combinelonr.selontFelonaturelon(felonaturelon, alpha, day)
+            ((felonaturelonNamelon, outgoing), updatelondCombinelonr)
+          caselon _ => ((felonaturelonNamelon, outgoing), combinelonr)
         }
     }
 
-    new VertexFeatureCombiner(newVertex, newFeatures)
+    nelonw VelonrtelonxFelonaturelonCombinelonr(nelonwVelonrtelonx, nelonwFelonaturelons)
   }
 
   /**
-   * Generate the final combined Vertex instance
+   * Gelonnelonratelon thelon final combinelond Velonrtelonx instancelon
    *
-   * @param totalDays total number of days to be combined together
+   * @param totalDays total numbelonr of days to belon combinelond togelonthelonr
    */
-  def getCombinedVertex(totalDays: Int): Vertex = {
-    val moreFeatures = featureMap.values.flatMap {
-      case combiner => combiner.getFinalFeature(totalDays)
+  delonf gelontCombinelondVelonrtelonx(totalDays: Int): Velonrtelonx = {
+    val morelonFelonaturelons = felonaturelonMap.valuelons.flatMap {
+      caselon combinelonr => combinelonr.gelontFinalFelonaturelon(totalDays)
     }
-    instanceVertex.copy(features = moreFeatures.toSeq)
+    instancelonVelonrtelonx.copy(felonaturelons = morelonFelonaturelons.toSelonq)
   }
 
 }
 
 /**
- * This portion contains the actual combination logic. For now, we only implement a simple
- * additive combiner, but in future we'd like to have things like time-weighted (exponential
- * decay, maybe) values.
+ * This portion contains thelon actual combination logic. For now, welon only implelonmelonnt a simplelon
+ * additivelon combinelonr, but in futurelon welon'd likelon to havelon things likelon timelon-welonightelond (elonxponelonntial
+ * deloncay, maybelon) valuelons.
  */
-trait VFeatureCombiner {
+trait VFelonaturelonCombinelonr {
   val startingDay: Int
-  val endingDay: Int
-  val timeSeriesStatistics: Option[TimeSeriesStatistics]
-  val vertexFeature: Option[VertexFeature]
+  val elonndingDay: Int
+  val timelonSelonrielonsStatistics: Option[TimelonSelonrielonsStatistics]
+  val velonrtelonxFelonaturelon: Option[VelonrtelonxFelonaturelon]
 
-  def updateTss(feature: VertexFeature, alpha: Double): VFeatureCombiner
-  def addToTss(feature: VertexFeature): VFeatureCombiner
-  def updateFeature(feature: VertexFeature, alpha: Double, day: Int): VFeatureCombiner
-  def updateFeature(feature: VertexFeature): VFeatureCombiner
-  def isSet: Boolean
-  def dropFeature: Boolean
-  def setFeature(feature: VertexFeature, alpha: Double, day: Int): VFeatureCombiner
-  def setFeature(feature: VertexFeature): VFeatureCombiner
-  def getFinalFeature(totalDays: Int): Option[VertexFeature]
+  delonf updatelonTss(felonaturelon: VelonrtelonxFelonaturelon, alpha: Doublelon): VFelonaturelonCombinelonr
+  delonf addToTss(felonaturelon: VelonrtelonxFelonaturelon): VFelonaturelonCombinelonr
+  delonf updatelonFelonaturelon(felonaturelon: VelonrtelonxFelonaturelon, alpha: Doublelon, day: Int): VFelonaturelonCombinelonr
+  delonf updatelonFelonaturelon(felonaturelon: VelonrtelonxFelonaturelon): VFelonaturelonCombinelonr
+  delonf isSelont: Boolelonan
+  delonf dropFelonaturelon: Boolelonan
+  delonf selontFelonaturelon(felonaturelon: VelonrtelonxFelonaturelon, alpha: Doublelon, day: Int): VFelonaturelonCombinelonr
+  delonf selontFelonaturelon(felonaturelon: VelonrtelonxFelonaturelon): VFelonaturelonCombinelonr
+  delonf gelontFinalFelonaturelon(totalDays: Int): Option[VelonrtelonxFelonaturelon]
 }
 
-case class WeightedAdditiveVertexCombiner(
-  override val vertexFeature: Option[VertexFeature] = None,
-  override val startingDay: Int = Integer.MAX_VALUE,
-  override val endingDay: Int = Integer.MIN_VALUE,
-  override val timeSeriesStatistics: Option[TimeSeriesStatistics] = None)
-    extends VFeatureCombiner {
-  override def updateTss(
-    feature: VertexFeature,
-    alpha: Double
-  ): WeightedAdditiveVertexCombiner = copy(timeSeriesStatistics = timeSeriesStatistics.map(tss =>
-    InteractionGraphUtils.updateTimeSeriesStatistics(tss, feature.tss.mean, alpha)))
+caselon class WelonightelondAdditivelonVelonrtelonxCombinelonr(
+  ovelonrridelon val velonrtelonxFelonaturelon: Option[VelonrtelonxFelonaturelon] = Nonelon,
+  ovelonrridelon val startingDay: Int = Intelongelonr.MAX_VALUelon,
+  ovelonrridelon val elonndingDay: Int = Intelongelonr.MIN_VALUelon,
+  ovelonrridelon val timelonSelonrielonsStatistics: Option[TimelonSelonrielonsStatistics] = Nonelon)
+    elonxtelonnds VFelonaturelonCombinelonr {
+  ovelonrridelon delonf updatelonTss(
+    felonaturelon: VelonrtelonxFelonaturelon,
+    alpha: Doublelon
+  ): WelonightelondAdditivelonVelonrtelonxCombinelonr = copy(timelonSelonrielonsStatistics = timelonSelonrielonsStatistics.map(tss =>
+    IntelonractionGraphUtils.updatelonTimelonSelonrielonsStatistics(tss, felonaturelon.tss.melonan, alpha)))
 
-  override def addToTss(feature: VertexFeature): WeightedAdditiveVertexCombiner =
-    copy(timeSeriesStatistics = timeSeriesStatistics.map(tss =>
-      InteractionGraphUtils.addToTimeSeriesStatistics(tss, feature.tss.mean)))
+  ovelonrridelon delonf addToTss(felonaturelon: VelonrtelonxFelonaturelon): WelonightelondAdditivelonVelonrtelonxCombinelonr =
+    copy(timelonSelonrielonsStatistics = timelonSelonrielonsStatistics.map(tss =>
+      IntelonractionGraphUtils.addToTimelonSelonrielonsStatistics(tss, felonaturelon.tss.melonan)))
 
-  override def updateFeature(feature: VertexFeature, alpha: Double, day: Int): VFeatureCombiner = {
-    updateTss(feature, alpha).copy(
-      vertexFeature,
+  ovelonrridelon delonf updatelonFelonaturelon(felonaturelon: VelonrtelonxFelonaturelon, alpha: Doublelon, day: Int): VFelonaturelonCombinelonr = {
+    updatelonTss(felonaturelon, alpha).copy(
+      velonrtelonxFelonaturelon,
       startingDay = startingDay,
-      endingDay = Math.max(endingDay, day)
+      elonndingDay = Math.max(elonndingDay, day)
     )
   }
 
-  override def updateFeature(feature: VertexFeature): VFeatureCombiner =
-    addToTss(feature)
+  ovelonrridelon delonf updatelonFelonaturelon(felonaturelon: VelonrtelonxFelonaturelon): VFelonaturelonCombinelonr =
+    addToTss(felonaturelon)
 
-  override def setFeature(feature: VertexFeature, alpha: Double, day: Int): VFeatureCombiner = {
-    val newStartingDay = Math.min(startingDay, day)
-    val newEndingDay = Math.max(endingDay, day)
+  ovelonrridelon delonf selontFelonaturelon(felonaturelon: VelonrtelonxFelonaturelon, alpha: Doublelon, day: Int): VFelonaturelonCombinelonr = {
+    val nelonwStartingDay = Math.min(startingDay, day)
+    val nelonwelonndingDay = Math.max(elonndingDay, day)
 
-    val numDaysSinceLast =
-      if (feature.tss.numDaysSinceLast.exists(_ > 0))
-        feature.tss.numDaysSinceLast
-      else Some(feature.tss.numElapsedDays - feature.tss.numNonZeroDays + 1)
+    val numDaysSincelonLast =
+      if (felonaturelon.tss.numDaysSincelonLast.elonxists(_ > 0))
+        felonaturelon.tss.numDaysSincelonLast
+      elonlselon Somelon(felonaturelon.tss.numelonlapselondDays - felonaturelon.tss.numNonZelonroDays + 1)
 
-    val tss = feature.tss.copy(numDaysSinceLast = numDaysSinceLast)
+    val tss = felonaturelon.tss.copy(numDaysSincelonLast = numDaysSincelonLast)
 
-    val newFeature = VertexFeature(
-      name = feature.name,
-      outgoing = feature.outgoing,
+    val nelonwFelonaturelon = VelonrtelonxFelonaturelon(
+      namelon = felonaturelon.namelon,
+      outgoing = felonaturelon.outgoing,
       tss = tss
     )
 
-    WeightedAdditiveVertexCombiner(
-      Some(newFeature),
-      newStartingDay,
-      newEndingDay,
-      Some(tss)
+    WelonightelondAdditivelonVelonrtelonxCombinelonr(
+      Somelon(nelonwFelonaturelon),
+      nelonwStartingDay,
+      nelonwelonndingDay,
+      Somelon(tss)
     )
   }
 
-  def getFinalFeature(totalDays: Int): Option[VertexFeature] = {
-    if (vertexFeature.isEmpty || dropFeature) return None
+  delonf gelontFinalFelonaturelon(totalDays: Int): Option[VelonrtelonxFelonaturelon] = {
+    if (velonrtelonxFelonaturelon.iselonmpty || dropFelonaturelon) relonturn Nonelon
 
-    val newTss = if (totalDays > 0) {
-      val elapsed =
-        timeSeriesStatistics.map(tss => tss.numElapsedDays + totalDays - 1 - startingDay)
-      val latest =
-        if (endingDay > 0) Some(totalDays - endingDay)
-        else timeSeriesStatistics.map(tss => tss.numDaysSinceLast.get + totalDays - 1)
+    val nelonwTss = if (totalDays > 0) {
+      val elonlapselond =
+        timelonSelonrielonsStatistics.map(tss => tss.numelonlapselondDays + totalDays - 1 - startingDay)
+      val latelonst =
+        if (elonndingDay > 0) Somelon(totalDays - elonndingDay)
+        elonlselon timelonSelonrielonsStatistics.map(tss => tss.numDaysSincelonLast.gelont + totalDays - 1)
 
-      timeSeriesStatistics.map(tss =>
+      timelonSelonrielonsStatistics.map(tss =>
         tss.copy(
-          numElapsedDays = elapsed.get,
-          numDaysSinceLast = latest
+          numelonlapselondDays = elonlapselond.gelont,
+          numDaysSincelonLast = latelonst
         ))
-    } else timeSeriesStatistics
+    } elonlselon timelonSelonrielonsStatistics
 
-    vertexFeature.map(vf => vf.copy(tss = newTss.get))
+    velonrtelonxFelonaturelon.map(vf => vf.copy(tss = nelonwTss.gelont))
   }
 
-  override def setFeature(feature: VertexFeature): VFeatureCombiner = setFeature(feature, 1.0, 0)
-  override def isSet: Boolean = vertexFeature.isDefined
-  override def dropFeature: Boolean =
-    timeSeriesStatistics.exists(tss =>
-      tss.numDaysSinceLast.exists(_ > InteractionGraphUtils.MAX_DAYS_RETENTION) &&
-        tss.ewma < InteractionGraphUtils.MIN_FEATURE_VALUE)
+  ovelonrridelon delonf selontFelonaturelon(felonaturelon: VelonrtelonxFelonaturelon): VFelonaturelonCombinelonr = selontFelonaturelon(felonaturelon, 1.0, 0)
+  ovelonrridelon delonf isSelont: Boolelonan = velonrtelonxFelonaturelon.isDelonfinelond
+  ovelonrridelon delonf dropFelonaturelon: Boolelonan =
+    timelonSelonrielonsStatistics.elonxists(tss =>
+      tss.numDaysSincelonLast.elonxists(_ > IntelonractionGraphUtils.MAX_DAYS_RelonTelonNTION) &&
+        tss.elonwma < IntelonractionGraphUtils.MIN_FelonATURelon_VALUelon)
 }
 
 /**
- * This combiner always replaces the old value with the current. Ignores time-decays.
+ * This combinelonr always relonplacelons thelon old valuelon with thelon currelonnt. Ignorelons timelon-deloncays.
  */
-case class ReplacementVertexCombiner(
-  override val vertexFeature: Option[VertexFeature] = None,
-  override val startingDay: Int = Integer.MAX_VALUE,
-  override val endingDay: Int = Integer.MIN_VALUE,
-  override val timeSeriesStatistics: Option[TimeSeriesStatistics] = None)
-    extends VFeatureCombiner {
-  override def updateTss(
-    feature: VertexFeature,
-    alpha: Double
-  ): ReplacementVertexCombiner = setFeature(feature, 1.0, 0)
+caselon class RelonplacelonmelonntVelonrtelonxCombinelonr(
+  ovelonrridelon val velonrtelonxFelonaturelon: Option[VelonrtelonxFelonaturelon] = Nonelon,
+  ovelonrridelon val startingDay: Int = Intelongelonr.MAX_VALUelon,
+  ovelonrridelon val elonndingDay: Int = Intelongelonr.MIN_VALUelon,
+  ovelonrridelon val timelonSelonrielonsStatistics: Option[TimelonSelonrielonsStatistics] = Nonelon)
+    elonxtelonnds VFelonaturelonCombinelonr {
+  ovelonrridelon delonf updatelonTss(
+    felonaturelon: VelonrtelonxFelonaturelon,
+    alpha: Doublelon
+  ): RelonplacelonmelonntVelonrtelonxCombinelonr = selontFelonaturelon(felonaturelon, 1.0, 0)
 
-  override def addToTss(feature: VertexFeature): ReplacementVertexCombiner =
-    setFeature(feature, 1.0, 0)
+  ovelonrridelon delonf addToTss(felonaturelon: VelonrtelonxFelonaturelon): RelonplacelonmelonntVelonrtelonxCombinelonr =
+    selontFelonaturelon(felonaturelon, 1.0, 0)
 
-  override def updateFeature(
-    feature: VertexFeature,
-    alpha: Double,
+  ovelonrridelon delonf updatelonFelonaturelon(
+    felonaturelon: VelonrtelonxFelonaturelon,
+    alpha: Doublelon,
     day: Int
-  ): ReplacementVertexCombiner = updateTss(feature, alpha).copy(
-    vertexFeature,
+  ): RelonplacelonmelonntVelonrtelonxCombinelonr = updatelonTss(felonaturelon, alpha).copy(
+    velonrtelonxFelonaturelon,
     startingDay = startingDay,
-    endingDay = Math.max(endingDay, day)
+    elonndingDay = Math.max(elonndingDay, day)
   )
 
-  override def updateFeature(feature: VertexFeature): ReplacementVertexCombiner =
-    addToTss(feature)
+  ovelonrridelon delonf updatelonFelonaturelon(felonaturelon: VelonrtelonxFelonaturelon): RelonplacelonmelonntVelonrtelonxCombinelonr =
+    addToTss(felonaturelon)
 
-  override def setFeature(
-    feature: VertexFeature,
-    alpha: Double,
+  ovelonrridelon delonf selontFelonaturelon(
+    felonaturelon: VelonrtelonxFelonaturelon,
+    alpha: Doublelon,
     day: Int
-  ): ReplacementVertexCombiner = {
-    val newStartingDay = Math.min(startingDay, day)
-    val newEndingDay = Math.max(endingDay, day)
+  ): RelonplacelonmelonntVelonrtelonxCombinelonr = {
+    val nelonwStartingDay = Math.min(startingDay, day)
+    val nelonwelonndingDay = Math.max(elonndingDay, day)
 
-    val numDaysSinceLast =
-      if (feature.tss.numDaysSinceLast.exists(_ > 0))
-        feature.tss.numDaysSinceLast
-      else Some(feature.tss.numElapsedDays - feature.tss.numNonZeroDays + 1)
+    val numDaysSincelonLast =
+      if (felonaturelon.tss.numDaysSincelonLast.elonxists(_ > 0))
+        felonaturelon.tss.numDaysSincelonLast
+      elonlselon Somelon(felonaturelon.tss.numelonlapselondDays - felonaturelon.tss.numNonZelonroDays + 1)
 
-    val tss = feature.tss.copy(numDaysSinceLast = numDaysSinceLast)
+    val tss = felonaturelon.tss.copy(numDaysSincelonLast = numDaysSincelonLast)
 
-    val newFeature = VertexFeature(
-      name = feature.name,
-      outgoing = feature.outgoing,
+    val nelonwFelonaturelon = VelonrtelonxFelonaturelon(
+      namelon = felonaturelon.namelon,
+      outgoing = felonaturelon.outgoing,
       tss = tss
     )
 
-    ReplacementVertexCombiner(
-      Some(newFeature),
-      newStartingDay,
-      newEndingDay,
-      Some(tss)
+    RelonplacelonmelonntVelonrtelonxCombinelonr(
+      Somelon(nelonwFelonaturelon),
+      nelonwStartingDay,
+      nelonwelonndingDay,
+      Somelon(tss)
     )
   }
 
-  override def getFinalFeature(totalDays: Int): Option[VertexFeature] = {
-    if (vertexFeature.isEmpty || dropFeature) return None
-    if (timeSeriesStatistics.exists(tss => tss.ewma < 1.0)) return None
-    val newTss = if (totalDays > 0) {
-      val latest =
-        if (endingDay > 0) totalDays - endingDay
-        else timeSeriesStatistics.get.numDaysSinceLast.get + totalDays - 1
+  ovelonrridelon delonf gelontFinalFelonaturelon(totalDays: Int): Option[VelonrtelonxFelonaturelon] = {
+    if (velonrtelonxFelonaturelon.iselonmpty || dropFelonaturelon) relonturn Nonelon
+    if (timelonSelonrielonsStatistics.elonxists(tss => tss.elonwma < 1.0)) relonturn Nonelon
+    val nelonwTss = if (totalDays > 0) {
+      val latelonst =
+        if (elonndingDay > 0) totalDays - elonndingDay
+        elonlselon timelonSelonrielonsStatistics.gelont.numDaysSincelonLast.gelont + totalDays - 1
 
-      timeSeriesStatistics.map(tss =>
+      timelonSelonrielonsStatistics.map(tss =>
         tss.copy(
-          numElapsedDays = 1,
-          numDaysSinceLast = Some(latest)
+          numelonlapselondDays = 1,
+          numDaysSincelonLast = Somelon(latelonst)
         ))
-    } else timeSeriesStatistics
+    } elonlselon timelonSelonrielonsStatistics
 
-    vertexFeature.map(vf => vf.copy(tss = newTss.get))
+    velonrtelonxFelonaturelon.map(vf => vf.copy(tss = nelonwTss.gelont))
   }
 
-  override def setFeature(feature: VertexFeature): VFeatureCombiner = setFeature(feature, 1.0, 0)
-  override def isSet: Boolean = vertexFeature.isDefined
-  override def dropFeature: Boolean =
-    timeSeriesStatistics.exists(tss =>
-      tss.numDaysSinceLast.exists(_ > InteractionGraphUtils.MAX_DAYS_RETENTION) &&
-        tss.ewma < InteractionGraphUtils.MIN_FEATURE_VALUE)
+  ovelonrridelon delonf selontFelonaturelon(felonaturelon: VelonrtelonxFelonaturelon): VFelonaturelonCombinelonr = selontFelonaturelon(felonaturelon, 1.0, 0)
+  ovelonrridelon delonf isSelont: Boolelonan = velonrtelonxFelonaturelon.isDelonfinelond
+  ovelonrridelon delonf dropFelonaturelon: Boolelonan =
+    timelonSelonrielonsStatistics.elonxists(tss =>
+      tss.numDaysSincelonLast.elonxists(_ > IntelonractionGraphUtils.MAX_DAYS_RelonTelonNTION) &&
+        tss.elonwma < IntelonractionGraphUtils.MIN_FelonATURelon_VALUelon)
 }

@@ -1,19 +1,19 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.melontadata
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.color.ColorPaletteMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ImageVariant
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.color.ColorPalelonttelonMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.ImagelonVariant
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class ImageVariantMarshaller @Inject() (
-  colorPaletteMarshaller: ColorPaletteMarshaller) {
+@Singlelonton
+class ImagelonVariantMarshallelonr @Injelonct() (
+  colorPalelonttelonMarshallelonr: ColorPalelonttelonMarshallelonr) {
 
-  def apply(imageVariant: ImageVariant): urt.ImageVariant = urt.ImageVariant(
-    url = imageVariant.url,
-    width = imageVariant.width,
-    height = imageVariant.height,
-    palette = imageVariant.palette.map { paletteList => paletteList.map(colorPaletteMarshaller(_)) }
+  delonf apply(imagelonVariant: ImagelonVariant): urt.ImagelonVariant = urt.ImagelonVariant(
+    url = imagelonVariant.url,
+    width = imagelonVariant.width,
+    helonight = imagelonVariant.helonight,
+    palelonttelon = imagelonVariant.palelonttelon.map { palelonttelonList => palelonttelonList.map(colorPalelonttelonMarshallelonr(_)) }
   )
 }

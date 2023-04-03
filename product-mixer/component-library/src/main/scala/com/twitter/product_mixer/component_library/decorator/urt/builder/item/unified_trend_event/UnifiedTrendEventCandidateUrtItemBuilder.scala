@@ -1,36 +1,36 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.unified_trend_event
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.itelonm.unifielond_trelonnd_elonvelonnt
 
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.event_summary.EventCandidateUrtItemBuilder
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.trend.TrendCandidateUrtItemBuilder
-import com.twitter.product_mixer.component_library.model.candidate.trends_events.UnifiedEventCandidate
-import com.twitter.product_mixer.component_library.model.candidate.trends_events.UnifiedTrendCandidate
-import com.twitter.product_mixer.component_library.model.candidate.trends_events.UnifiedTrendEventCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineItem
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.itelonm.elonvelonnt_summary.elonvelonntCandidatelonUrtItelonmBuildelonr
+import com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.itelonm.trelonnd.TrelonndCandidatelonUrtItelonmBuildelonr
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.trelonnds_elonvelonnts.UnifielondelonvelonntCandidatelon
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.trelonnds_elonvelonnts.UnifielondTrelonndCandidatelon
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.trelonnds_elonvelonnts.UnifielondTrelonndelonvelonntCandidatelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.CandidatelonUrtelonntryBuildelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.TimelonlinelonItelonm
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
-case class UnifiedTrendEventCandidateUrtItemBuilder[Query <: PipelineQuery](
-  eventCandidateUrtItemBuilder: EventCandidateUrtItemBuilder[Query],
-  trendCandidateUrtItemBuilder: TrendCandidateUrtItemBuilder[Query])
-    extends CandidateUrtEntryBuilder[Query, UnifiedTrendEventCandidate[Any], TimelineItem] {
+caselon class UnifielondTrelonndelonvelonntCandidatelonUrtItelonmBuildelonr[Quelonry <: PipelonlinelonQuelonry](
+  elonvelonntCandidatelonUrtItelonmBuildelonr: elonvelonntCandidatelonUrtItelonmBuildelonr[Quelonry],
+  trelonndCandidatelonUrtItelonmBuildelonr: TrelonndCandidatelonUrtItelonmBuildelonr[Quelonry])
+    elonxtelonnds CandidatelonUrtelonntryBuildelonr[Quelonry, UnifielondTrelonndelonvelonntCandidatelon[Any], TimelonlinelonItelonm] {
 
-  override def apply(
-    query: Query,
-    candidate: UnifiedTrendEventCandidate[Any],
-    candidateFeatures: FeatureMap
-  ): TimelineItem = {
-    candidate match {
-      case event: UnifiedEventCandidate =>
-        eventCandidateUrtItemBuilder(
-          query = query,
-          candidate = event,
-          candidateFeatures = candidateFeatures)
-      case trend: UnifiedTrendCandidate =>
-        trendCandidateUrtItemBuilder(
-          query = query,
-          candidate = trend,
-          candidateFeatures = candidateFeatures)
+  ovelonrridelon delonf apply(
+    quelonry: Quelonry,
+    candidatelon: UnifielondTrelonndelonvelonntCandidatelon[Any],
+    candidatelonFelonaturelons: FelonaturelonMap
+  ): TimelonlinelonItelonm = {
+    candidatelon match {
+      caselon elonvelonnt: UnifielondelonvelonntCandidatelon =>
+        elonvelonntCandidatelonUrtItelonmBuildelonr(
+          quelonry = quelonry,
+          candidatelon = elonvelonnt,
+          candidatelonFelonaturelons = candidatelonFelonaturelons)
+      caselon trelonnd: UnifielondTrelonndCandidatelon =>
+        trelonndCandidatelonUrtItelonmBuildelonr(
+          quelonry = quelonry,
+          candidatelon = trelonnd,
+          candidatelonFelonaturelons = candidatelonFelonaturelons)
     }
   }
 }

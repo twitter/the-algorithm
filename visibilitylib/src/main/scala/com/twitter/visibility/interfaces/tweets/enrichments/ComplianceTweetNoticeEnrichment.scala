@@ -1,55 +1,55 @@
-package com.twitter.visibility.interfaces.tweets.enrichments
+packagelon com.twittelonr.visibility.intelonrfacelons.twelonelonts.elonnrichmelonnts
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.visibility.builder.VisibilityResult
-import com.twitter.visibility.results.richtext.PublicInterestReasonToPlainText
-import com.twitter.visibility.rules.Action
-import com.twitter.visibility.rules.ComplianceTweetNoticePreEnrichment
-import com.twitter.visibility.rules.PublicInterest
-import com.twitter.visibility.rules.Reason
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.visibility.buildelonr.VisibilityRelonsult
+import com.twittelonr.visibility.relonsults.richtelonxt.PublicIntelonrelonstRelonasonToPlainTelonxt
+import com.twittelonr.visibility.rulelons.Action
+import com.twittelonr.visibility.rulelons.CompliancelonTwelonelontNoticelonPrelonelonnrichmelonnt
+import com.twittelonr.visibility.rulelons.PublicIntelonrelonst
+import com.twittelonr.visibility.rulelons.Relonason
 
-object ComplianceTweetNoticeEnrichment {
-  val ComplianceTweetNoticeEnrichmentScope = "compliance_tweet_notice_enrichment"
-  val ComplianceTweetNoticePreEnrichmentActionScope =
-    "compliance_tweet_notice_pre_enrichment_action"
+objelonct CompliancelonTwelonelontNoticelonelonnrichmelonnt {
+  val CompliancelonTwelonelontNoticelonelonnrichmelonntScopelon = "compliancelon_twelonelont_noticelon_elonnrichmelonnt"
+  val CompliancelonTwelonelontNoticelonPrelonelonnrichmelonntActionScopelon =
+    "compliancelon_twelonelont_noticelon_prelon_elonnrichmelonnt_action"
 
-  val englishLanguageTag = "en"
+  val elonnglishLanguagelonTag = "elonn"
 
-  def apply(result: VisibilityResult, statsReceiver: StatsReceiver): VisibilityResult = {
-    val scopedStatsReceiver = statsReceiver.scope(ComplianceTweetNoticeEnrichmentScope)
+  delonf apply(relonsult: VisibilityRelonsult, statsReloncelonivelonr: StatsReloncelonivelonr): VisibilityRelonsult = {
+    val scopelondStatsReloncelonivelonr = statsReloncelonivelonr.scopelon(CompliancelonTwelonelontNoticelonelonnrichmelonntScopelon)
 
-    val enrichedVerdict = enrichVerdict(result.verdict, scopedStatsReceiver)
-    result.copy(verdict = enrichedVerdict)
+    val elonnrichelondVelonrdict = elonnrichVelonrdict(relonsult.velonrdict, scopelondStatsReloncelonivelonr)
+    relonsult.copy(velonrdict = elonnrichelondVelonrdict)
   }
 
-  private def enrichVerdict(
-    verdict: Action,
-    statsReceiver: StatsReceiver
+  privatelon delonf elonnrichVelonrdict(
+    velonrdict: Action,
+    statsReloncelonivelonr: StatsReloncelonivelonr
   ): Action = {
-    val preEnrichmentActionScope =
-      statsReceiver.scope(ComplianceTweetNoticePreEnrichmentActionScope)
+    val prelonelonnrichmelonntActionScopelon =
+      statsReloncelonivelonr.scopelon(CompliancelonTwelonelontNoticelonPrelonelonnrichmelonntActionScopelon)
 
-    verdict match {
-      case complianceTweetNoticePreEnrichmentVerdict: ComplianceTweetNoticePreEnrichment =>
-        preEnrichmentActionScope.counter("").incr()
+    velonrdict match {
+      caselon compliancelonTwelonelontNoticelonPrelonelonnrichmelonntVelonrdict: CompliancelonTwelonelontNoticelonPrelonelonnrichmelonnt =>
+        prelonelonnrichmelonntActionScopelon.countelonr("").incr()
 
-        val verdictWithDetailsAndUrl = complianceTweetNoticePreEnrichmentVerdict.reason match {
-          case Reason.Unspecified =>
-            preEnrichmentActionScope.counter("reason_unspecified").incr()
-            complianceTweetNoticePreEnrichmentVerdict
+        val velonrdictWithDelontailsAndUrl = compliancelonTwelonelontNoticelonPrelonelonnrichmelonntVelonrdict.relonason match {
+          caselon Relonason.Unspeloncifielond =>
+            prelonelonnrichmelonntActionScopelon.countelonr("relonason_unspeloncifielond").incr()
+            compliancelonTwelonelontNoticelonPrelonelonnrichmelonntVelonrdict
 
-          case reason =>
-            preEnrichmentActionScope.counter("reason_specified").incr()
-            val safetyResultReason = PublicInterest.ReasonToSafetyResultReason(reason)
-            val (details, url) =
-              PublicInterestReasonToPlainText(safetyResultReason, englishLanguageTag)
-            complianceTweetNoticePreEnrichmentVerdict.copy(
-              details = Some(details),
-              extendedDetailsUrl = Some(url))
+          caselon relonason =>
+            prelonelonnrichmelonntActionScopelon.countelonr("relonason_speloncifielond").incr()
+            val safelontyRelonsultRelonason = PublicIntelonrelonst.RelonasonToSafelontyRelonsultRelonason(relonason)
+            val (delontails, url) =
+              PublicIntelonrelonstRelonasonToPlainTelonxt(safelontyRelonsultRelonason, elonnglishLanguagelonTag)
+            compliancelonTwelonelontNoticelonPrelonelonnrichmelonntVelonrdict.copy(
+              delontails = Somelon(delontails),
+              elonxtelonndelondDelontailsUrl = Somelon(url))
         }
-        verdictWithDetailsAndUrl.toComplianceTweetNotice()
+        velonrdictWithDelontailsAndUrl.toCompliancelonTwelonelontNoticelon()
 
-      case _ => verdict
+      caselon _ => velonrdict
     }
   }
 }

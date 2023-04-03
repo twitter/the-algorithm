@@ -1,4 +1,4 @@
-from twitter.deepbird.compat.v1.optimizers import (
-  LazyAdamOptimizer,
-  optimize_loss,
-  OPTIMIZER_SUMMARIES) # noqa: F401
+from twittelonr.delonelonpbird.compat.v1.optimizelonrs import (
+  LazyAdamOptimizelonr,
+  optimizelon_loss,
+  OPTIMIZelonR_SUMMARIelonS) # noqa: F401

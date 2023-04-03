@@ -1,17 +1,17 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.media
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.melondia
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.media.Rect
-import javax.inject.Inject
-import javax.inject.Singleton
-import com.twitter.timelines.render.{thriftscala => urt}
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melondia.Relonct
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
 
-@Singleton
-class RectMarshaller @Inject() () {
+@Singlelonton
+class RelonctMarshallelonr @Injelonct() () {
 
-  def apply(rect: Rect): urt.Rect = urt.Rect(
-    left = rect.left,
-    top = rect.top,
-    width = rect.width,
-    height = rect.height
+  delonf apply(relonct: Relonct): urt.Relonct = urt.Relonct(
+    lelonft = relonct.lelonft,
+    top = relonct.top,
+    width = relonct.width,
+    helonight = relonct.helonight
   )
 }

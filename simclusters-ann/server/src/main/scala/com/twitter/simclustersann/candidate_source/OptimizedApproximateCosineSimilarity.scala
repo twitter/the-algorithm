@@ -1,112 +1,112 @@
-package com.twitter.simclustersann.candidate_source
+packagelon com.twittelonr.simclustelonrsann.candidatelon_sourcelon
 
-import com.twitter.simclusters_v2.common.ClusterId
-import com.twitter.simclusters_v2.common.SimClustersEmbedding
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId
-import com.twitter.simclustersann.thriftscala.ScoringAlgorithm
-import com.twitter.simclustersann.thriftscala.SimClustersANNConfig
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.util.Duration
-import com.twitter.util.Time
+import com.twittelonr.simclustelonrs_v2.common.ClustelonrId
+import com.twittelonr.simclustelonrs_v2.common.SimClustelonrselonmbelondding
+import com.twittelonr.simclustelonrs_v2.common.TwelonelontId
+import com.twittelonr.simclustelonrs_v2.thriftscala.IntelonrnalId
+import com.twittelonr.simclustelonrs_v2.thriftscala.SimClustelonrselonmbelonddingId
+import com.twittelonr.simclustelonrsann.thriftscala.ScoringAlgorithm
+import com.twittelonr.simclustelonrsann.thriftscala.SimClustelonrsANNConfig
+import com.twittelonr.snowflakelon.id.SnowflakelonId
+import com.twittelonr.util.Duration
+import com.twittelonr.util.Timelon
 
 /**
- * Compared with ApproximateCosineSimilarity, this implementation:
- * - moves some computation aroudn to reduce allocations
- * - uses a single hashmap to store both scores and normalization coefficients
- * - uses some java collections in place of scala ones
- * Testing is still in progress, but this implementation shows significant (> 2x) improvements in
- * CPU utilization and allocations with 800 tweets per cluster.
+ * Comparelond with ApproximatelonCosinelonSimilarity, this implelonmelonntation:
+ * - movelons somelon computation aroudn to relonducelon allocations
+ * - uselons a singlelon hashmap to storelon both scorelons and normalization coelonfficielonnts
+ * - uselons somelon java collelonctions in placelon of scala onelons
+ * Telonsting is still in progrelonss, but this implelonmelonntation shows significant (> 2x) improvelonmelonnts in
+ * CPU utilization and allocations with 800 twelonelonts pelonr clustelonr.
  */
-object OptimizedApproximateCosineSimilarity extends ApproximateCosineSimilarity {
+objelonct OptimizelondApproximatelonCosinelonSimilarity elonxtelonnds ApproximatelonCosinelonSimilarity {
 
-  final val InitialCandidateMapSize = 16384
-  val MaxNumResultsUpperBound = 1000
-  final val MaxTweetCandidateAgeUpperBound = 175200
+  final val InitialCandidatelonMapSizelon = 16384
+  val MaxNumRelonsultsUppelonrBound = 1000
+  final val MaxTwelonelontCandidatelonAgelonUppelonrBound = 175200
 
-  private def parseTweetId(embeddingId: SimClustersEmbeddingId): Option[TweetId] = {
-    embeddingId.internalId match {
-      case InternalId.TweetId(tweetId) =>
-        Some(tweetId)
-      case _ =>
-        None
+  privatelon delonf parselonTwelonelontId(elonmbelonddingId: SimClustelonrselonmbelonddingId): Option[TwelonelontId] = {
+    elonmbelonddingId.intelonrnalId match {
+      caselon IntelonrnalId.TwelonelontId(twelonelontId) =>
+        Somelon(twelonelontId)
+      caselon _ =>
+        Nonelon
     }
   }
 
-  override def apply(
-    sourceEmbedding: SimClustersEmbedding,
-    sourceEmbeddingId: SimClustersEmbeddingId,
-    config: SimClustersANNConfig,
-    candidateScoresStat: Int => Unit,
-    clusterTweetsMap: Map[ClusterId, Option[Seq[(TweetId, Double)]]] = Map.empty,
-    clusterTweetsMapArray: Map[ClusterId, Option[Array[(TweetId, Double)]]] = Map.empty
-  ): Seq[ScoredTweet] = {
-    val now = Time.now
-    val earliestTweetId =
-      if (config.maxTweetCandidateAgeHours >= MaxTweetCandidateAgeUpperBound)
-        0L // Disable max tweet age filter
-      else
-        SnowflakeId.firstIdFor(now - Duration.fromHours(config.maxTweetCandidateAgeHours))
-    val latestTweetId =
-      SnowflakeId.firstIdFor(now - Duration.fromHours(config.minTweetCandidateAgeHours))
+  ovelonrridelon delonf apply(
+    sourcelonelonmbelondding: SimClustelonrselonmbelondding,
+    sourcelonelonmbelonddingId: SimClustelonrselonmbelonddingId,
+    config: SimClustelonrsANNConfig,
+    candidatelonScorelonsStat: Int => Unit,
+    clustelonrTwelonelontsMap: Map[ClustelonrId, Option[Selonq[(TwelonelontId, Doublelon)]]] = Map.elonmpty,
+    clustelonrTwelonelontsMapArray: Map[ClustelonrId, Option[Array[(TwelonelontId, Doublelon)]]] = Map.elonmpty
+  ): Selonq[ScorelondTwelonelont] = {
+    val now = Timelon.now
+    val elonarlielonstTwelonelontId =
+      if (config.maxTwelonelontCandidatelonAgelonHours >= MaxTwelonelontCandidatelonAgelonUppelonrBound)
+        0L // Disablelon max twelonelont agelon filtelonr
+      elonlselon
+        SnowflakelonId.firstIdFor(now - Duration.fromHours(config.maxTwelonelontCandidatelonAgelonHours))
+    val latelonstTwelonelontId =
+      SnowflakelonId.firstIdFor(now - Duration.fromHours(config.minTwelonelontCandidatelonAgelonHours))
 
-    val candidateScoresMap = new java.util.HashMap[Long, (Double, Double)](InitialCandidateMapSize)
+    val candidatelonScorelonsMap = nelonw java.util.HashMap[Long, (Doublelon, Doublelon)](InitialCandidatelonMapSizelon)
 
-    val sourceTweetId = parseTweetId(sourceEmbeddingId).getOrElse(0L)
+    val sourcelonTwelonelontId = parselonTwelonelontId(sourcelonelonmbelonddingId).gelontOrelonlselon(0L)
 
-    clusterTweetsMap.foreach {
-      case (clusterId, Some(tweetScores)) if sourceEmbedding.contains(clusterId) =>
-        val sourceClusterScore = sourceEmbedding.getOrElse(clusterId)
+    clustelonrTwelonelontsMap.forelonach {
+      caselon (clustelonrId, Somelon(twelonelontScorelons)) if sourcelonelonmbelondding.contains(clustelonrId) =>
+        val sourcelonClustelonrScorelon = sourcelonelonmbelondding.gelontOrelonlselon(clustelonrId)
 
-        for (i <- 0 until Math.min(tweetScores.size, config.maxTopTweetsPerCluster)) {
-          val (tweetId, score) = tweetScores(i)
+        for (i <- 0 until Math.min(twelonelontScorelons.sizelon, config.maxTopTwelonelontsPelonrClustelonr)) {
+          val (twelonelontId, scorelon) = twelonelontScorelons(i)
 
-          if (tweetId >= earliestTweetId &&
-            tweetId <= latestTweetId &&
-            tweetId != sourceTweetId) {
+          if (twelonelontId >= elonarlielonstTwelonelontId &&
+            twelonelontId <= latelonstTwelonelontId &&
+            twelonelontId != sourcelonTwelonelontId) {
 
-            val scores = candidateScoresMap.getOrDefault(tweetId, (0.0, 0.0))
-            val newScores = (
-              scores._1 + score * sourceClusterScore,
-              scores._2 + score * score,
+            val scorelons = candidatelonScorelonsMap.gelontOrDelonfault(twelonelontId, (0.0, 0.0))
+            val nelonwScorelons = (
+              scorelons._1 + scorelon * sourcelonClustelonrScorelon,
+              scorelons._2 + scorelon * scorelon,
             )
-            candidateScoresMap.put(tweetId, newScores)
+            candidatelonScorelonsMap.put(twelonelontId, nelonwScorelons)
           }
         }
-      case _ => ()
+      caselon _ => ()
     }
 
-    candidateScoresStat(candidateScoresMap.size)
+    candidatelonScorelonsStat(candidatelonScorelonsMap.sizelon)
 
-    val normFn: (Long, (Double, Double)) => (Long, Double) = config.annAlgorithm match {
-      case ScoringAlgorithm.LogCosineSimilarity =>
-        (candidateId: Long, score: (Double, Double)) =>
-          candidateId -> score._1 / sourceEmbedding.logNorm / math.log(1 + score._2)
-      case ScoringAlgorithm.CosineSimilarity =>
-        (candidateId: Long, score: (Double, Double)) =>
-          candidateId -> score._1 / sourceEmbedding.l2norm / math.sqrt(score._2)
-      case ScoringAlgorithm.CosineSimilarityNoSourceEmbeddingNormalization =>
-        (candidateId: Long, score: (Double, Double)) =>
-          candidateId -> score._1 / math.sqrt(score._2)
-      case ScoringAlgorithm.DotProduct =>
-        (candidateId: Long, score: (Double, Double)) => (candidateId, score._1)
+    val normFn: (Long, (Doublelon, Doublelon)) => (Long, Doublelon) = config.annAlgorithm match {
+      caselon ScoringAlgorithm.LogCosinelonSimilarity =>
+        (candidatelonId: Long, scorelon: (Doublelon, Doublelon)) =>
+          candidatelonId -> scorelon._1 / sourcelonelonmbelondding.logNorm / math.log(1 + scorelon._2)
+      caselon ScoringAlgorithm.CosinelonSimilarity =>
+        (candidatelonId: Long, scorelon: (Doublelon, Doublelon)) =>
+          candidatelonId -> scorelon._1 / sourcelonelonmbelondding.l2norm / math.sqrt(scorelon._2)
+      caselon ScoringAlgorithm.CosinelonSimilarityNoSourcelonelonmbelonddingNormalization =>
+        (candidatelonId: Long, scorelon: (Doublelon, Doublelon)) =>
+          candidatelonId -> scorelon._1 / math.sqrt(scorelon._2)
+      caselon ScoringAlgorithm.DotProduct =>
+        (candidatelonId: Long, scorelon: (Doublelon, Doublelon)) => (candidatelonId, scorelon._1)
     }
 
-    val scoredTweets: java.util.ArrayList[(Long, Double)] =
-      new java.util.ArrayList(candidateScoresMap.size)
+    val scorelondTwelonelonts: java.util.ArrayList[(Long, Doublelon)] =
+      nelonw java.util.ArrayList(candidatelonScorelonsMap.sizelon)
 
-    val it = candidateScoresMap.entrySet().iterator()
-    while (it.hasNext) {
-      val mapEntry = it.next()
-      val normedScore = normFn(mapEntry.getKey, mapEntry.getValue)
-      if (normedScore._2 >= config.minScore)
-        scoredTweets.add(normedScore)
+    val it = candidatelonScorelonsMap.elonntrySelont().itelonrator()
+    whilelon (it.hasNelonxt) {
+      val mapelonntry = it.nelonxt()
+      val normelondScorelon = normFn(mapelonntry.gelontKelony, mapelonntry.gelontValuelon)
+      if (normelondScorelon._2 >= config.minScorelon)
+        scorelondTwelonelonts.add(normelondScorelon)
     }
-    import scala.collection.JavaConverters._
+    import scala.collelonction.JavaConvelonrtelonrs._
 
-    scoredTweets.asScala
+    scorelondTwelonelonts.asScala
       .sortBy(-_._2)
-      .take(Math.min(config.maxNumResults, MaxNumResultsUpperBound))
+      .takelon(Math.min(config.maxNumRelonsults, MaxNumRelonsultsUppelonrBound))
   }
 }

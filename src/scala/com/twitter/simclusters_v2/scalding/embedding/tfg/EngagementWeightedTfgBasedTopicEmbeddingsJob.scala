@@ -1,309 +1,309 @@
-package com.twitter.simclusters_v2.scalding.embedding.tfg
+packagelon com.twittelonr.simclustelonrs_v2.scalding.elonmbelondding.tfg
 
-import com.twitter.dal.client.dataset.SnapshotDALDatasetBase
-import com.twitter.ml.api.DataSetPipe
-import com.twitter.ml.api.Feature.Continuous
-import com.twitter.ml.api.constant.SharedFeatures
-import com.twitter.ml.api.util.SRichDataRecord
-import com.twitter.scalding.Execution
-import com.twitter.scalding._
-import com.twitter.scalding.typed.UnsortedGrouped
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.DALWrite.D
-import com.twitter.scalding_internal.dalv2.DALWrite.WriteExtension
-import com.twitter.scalding_internal.dalv2.remote_access.AllowCrossClusterSameDC
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.Country
-import com.twitter.simclusters_v2.common.Language
-import com.twitter.simclusters_v2.common.ModelVersions
-import com.twitter.simclusters_v2.hdfs_sources.FavTfgTopicEmbeddings2020ScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.UserTopicWeightedEmbeddingScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.UserTopicWeightedEmbeddingParquetScalaDataset
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil
-import com.twitter.simclusters_v2.scalding.embedding.common.ExternalDataSources
-import com.twitter.simclusters_v2.thriftscala._
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.conversion._
-import com.twitter.timelines.prediction.common.aggregates.TimelinesAggregationConfig
-import com.twitter.timelines.prediction.features.common.TimelinesSharedFeatures
-import com.twitter.wtf.scalding.jobs.common.AdhocExecutionApp
-import com.twitter.wtf.scalding.jobs.common.DateRangeExecutionApp
-import com.twitter.wtf.scalding.jobs.common.ScheduledExecutionApp
-import java.util.TimeZone
+import com.twittelonr.dal.clielonnt.dataselont.SnapshotDALDataselontBaselon
+import com.twittelonr.ml.api.DataSelontPipelon
+import com.twittelonr.ml.api.Felonaturelon.Continuous
+import com.twittelonr.ml.api.constant.SharelondFelonaturelons
+import com.twittelonr.ml.api.util.SRichDataReloncord
+import com.twittelonr.scalding.elonxeloncution
+import com.twittelonr.scalding._
+import com.twittelonr.scalding.typelond.UnsortelondGroupelond
+import com.twittelonr.scalding_intelonrnal.dalv2.DAL
+import com.twittelonr.scalding_intelonrnal.dalv2.DALWritelon.D
+import com.twittelonr.scalding_intelonrnal.dalv2.DALWritelon.Writelonelonxtelonnsion
+import com.twittelonr.scalding_intelonrnal.dalv2.relonmotelon_accelonss.AllowCrossClustelonrSamelonDC
+import com.twittelonr.scalding_intelonrnal.multiformat.format.kelonyval.KelonyVal
+import com.twittelonr.simclustelonrs_v2.common.Country
+import com.twittelonr.simclustelonrs_v2.common.Languagelon
+import com.twittelonr.simclustelonrs_v2.common.ModelonlVelonrsions
+import com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.FavTfgTopicelonmbelonddings2020ScalaDataselont
+import com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.UselonrTopicWelonightelondelonmbelonddingScalaDataselont
+import com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.UselonrTopicWelonightelondelonmbelonddingParquelontScalaDataselont
+import com.twittelonr.simclustelonrs_v2.scalding.elonmbelondding.common.elonmbelonddingUtil
+import com.twittelonr.simclustelonrs_v2.scalding.elonmbelondding.common.elonxtelonrnalDataSourcelons
+import com.twittelonr.simclustelonrs_v2.thriftscala._
+import com.twittelonr.timelonlinelons.data_procelonssing.ml_util.aggrelongation_framelonwork.convelonrsion._
+import com.twittelonr.timelonlinelons.prelondiction.common.aggrelongatelons.TimelonlinelonsAggrelongationConfig
+import com.twittelonr.timelonlinelons.prelondiction.felonaturelons.common.TimelonlinelonsSharelondFelonaturelons
+import com.twittelonr.wtf.scalding.jobs.common.AdhocelonxeloncutionApp
+import com.twittelonr.wtf.scalding.jobs.common.DatelonRangelonelonxeloncutionApp
+import com.twittelonr.wtf.scalding.jobs.common.SchelondulelondelonxeloncutionApp
+import java.util.TimelonZonelon
 
 /**
- * Jobs to generate Fav-based engagement weighted Topic-Follow-Graph (TFG) topic embeddings
- * The job uses fav based TFG embeddings and fav based engagement to produce a new embedding
+ * Jobs to gelonnelonratelon Fav-baselond elonngagelonmelonnt welonightelond Topic-Follow-Graph (TFG) topic elonmbelonddings
+ * Thelon job uselons fav baselond TFG elonmbelonddings and fav baselond elonngagelonmelonnt to producelon a nelonw elonmbelondding
  */
 
 /**
- * ./bazel bundle ...
- * scalding workflow upload --jobs src/scala/com/twitter/simclusters_v2/scalding/embedding/tfg:fav_weighted_user_topic_tfg_embeddings_adhoc_job --autoplay
+ * ./bazelonl bundlelon ...
+ * scalding workflow upload --jobs src/scala/com/twittelonr/simclustelonrs_v2/scalding/elonmbelondding/tfg:fav_welonightelond_uselonr_topic_tfg_elonmbelonddings_adhoc_job --autoplay
  */
-object EngagementWeightedTfgBasedTopicEmbeddingsAdhocJob
-    extends AdhocExecutionApp
-    with EngagementWeightedTfgBasedTopicEmbeddingsBaseJob {
-  override val outputByFav =
-    "/user/cassowary/adhoc/manhattan_sequence_files/simclusters_v2_embedding/user_tfgembedding/by_fav"
-  override val parquetOutputByFav =
-    "/user/cassowary/adhoc/processed/simclusters_v2_embedding/user_tfgembedding/by_fav/snapshot"
+objelonct elonngagelonmelonntWelonightelondTfgBaselondTopicelonmbelonddingsAdhocJob
+    elonxtelonnds AdhocelonxeloncutionApp
+    with elonngagelonmelonntWelonightelondTfgBaselondTopicelonmbelonddingsBaselonJob {
+  ovelonrridelon val outputByFav =
+    "/uselonr/cassowary/adhoc/manhattan_selonquelonncelon_filelons/simclustelonrs_v2_elonmbelondding/uselonr_tfgelonmbelondding/by_fav"
+  ovelonrridelon val parquelontOutputByFav =
+    "/uselonr/cassowary/adhoc/procelonsselond/simclustelonrs_v2_elonmbelondding/uselonr_tfgelonmbelondding/by_fav/snapshot"
 }
 
 /**
- * ./bazel bundle ...
- * scalding workflow upload --jobs src/scala/com/twitter/simclusters_v2/scalding/embedding/tfg:fav_weighted_user_topic_tfg_embeddings_batch_job --autoplay
+ * ./bazelonl bundlelon ...
+ * scalding workflow upload --jobs src/scala/com/twittelonr/simclustelonrs_v2/scalding/elonmbelondding/tfg:fav_welonightelond_uselonr_topic_tfg_elonmbelonddings_batch_job --autoplay
  */
-object EngagementWeightedTfgBasedTopicEmbeddingsScheduleJob
-    extends ScheduledExecutionApp
-    with EngagementWeightedTfgBasedTopicEmbeddingsBaseJob {
-  override val firstTime: RichDate = RichDate("2021-10-03")
-  override val batchIncrement: Duration = Days(1)
-  override val outputByFav =
-    "/user/cassowary/manhattan_sequence_files/simclusters_v2_embedding/user_tfgembedding/by_fav"
-  override val parquetOutputByFav =
-    "/user/cassowary/processed/simclusters_v2_embedding/user_tfgembedding/by_fav/snapshot"
+objelonct elonngagelonmelonntWelonightelondTfgBaselondTopicelonmbelonddingsSchelondulelonJob
+    elonxtelonnds SchelondulelondelonxeloncutionApp
+    with elonngagelonmelonntWelonightelondTfgBaselondTopicelonmbelonddingsBaselonJob {
+  ovelonrridelon val firstTimelon: RichDatelon = RichDatelon("2021-10-03")
+  ovelonrridelon val batchIncrelonmelonnt: Duration = Days(1)
+  ovelonrridelon val outputByFav =
+    "/uselonr/cassowary/manhattan_selonquelonncelon_filelons/simclustelonrs_v2_elonmbelondding/uselonr_tfgelonmbelondding/by_fav"
+  ovelonrridelon val parquelontOutputByFav =
+    "/uselonr/cassowary/procelonsselond/simclustelonrs_v2_elonmbelondding/uselonr_tfgelonmbelondding/by_fav/snapshot"
 }
 
-trait EngagementWeightedTfgBasedTopicEmbeddingsBaseJob extends DateRangeExecutionApp {
+trait elonngagelonmelonntWelonightelondTfgBaselondTopicelonmbelonddingsBaselonJob elonxtelonnds DatelonRangelonelonxeloncutionApp {
 
   val outputByFav: String
-  val parquetOutputByFav: String
+  val parquelontOutputByFav: String
 
-  //root path to read aggregate data
-  private val aggregateFeatureRootPath =
-    "/atla/proc2/user/timelines/processed/aggregates_v2"
+  //root path to relonad aggrelongatelon data
+  privatelon val aggrelongatelonFelonaturelonRootPath =
+    "/atla/proc2/uselonr/timelonlinelons/procelonsselond/aggrelongatelons_v2"
 
-  private val topKTopicsToKeep = 100
+  privatelon val topKTopicsToKelonelonp = 100
 
-  private val favContinuousFeature = new Continuous(
-    "user_topic_aggregate.pair.recap.engagement.is_favorited.any_feature.50.days.count")
+  privatelon val favContinuousFelonaturelon = nelonw Continuous(
+    "uselonr_topic_aggrelongatelon.pair.reloncap.elonngagelonmelonnt.is_favoritelond.any_felonaturelon.50.days.count")
 
-  private val parquetDataSource: SnapshotDALDatasetBase[UserTopicWeightedEmbedding] =
-    UserTopicWeightedEmbeddingParquetScalaDataset
+  privatelon val parquelontDataSourcelon: SnapshotDALDataselontBaselon[UselonrTopicWelonightelondelonmbelondding] =
+    UselonrTopicWelonightelondelonmbelonddingParquelontScalaDataselont
 
-  def sortedTake[K](m: Map[K, Double], keysToKeep: Int): Map[K, Double] = {
-    m.toSeq.sortBy { case (k, v) => -v }.take(keysToKeep).toMap
+  delonf sortelondTakelon[K](m: Map[K, Doublelon], kelonysToKelonelonp: Int): Map[K, Doublelon] = {
+    m.toSelonq.sortBy { caselon (k, v) => -v }.takelon(kelonysToKelonelonp).toMap
   }
 
-  case class UserTopicEngagement(
-    userId: Long,
+  caselon class UselonrTopicelonngagelonmelonnt(
+    uselonrId: Long,
     topicId: Long,
-    language: String,
-    country: String, //field is not used
-    favCount: Double) {
-    val userLanguageGroup: (Long, String) = (userId, language)
+    languagelon: String,
+    country: String, //fielonld is not uselond
+    favCount: Doublelon) {
+    val uselonrLanguagelonGroup: (Long, String) = (uselonrId, languagelon)
   }
 
-  def prepareUserToTopicEmbedding(
-    favTfgTopicEmbeddings: TypedPipe[(Long, String, SimClustersEmbedding)],
-    userTopicEngagementCount: TypedPipe[UserTopicEngagement]
+  delonf prelonparelonUselonrToTopicelonmbelondding(
+    favTfgTopicelonmbelonddings: TypelondPipelon[(Long, String, SimClustelonrselonmbelondding)],
+    uselonrTopicelonngagelonmelonntCount: TypelondPipelon[UselonrTopicelonngagelonmelonnt]
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[((Long, String), Map[Int, Double])] = {
-    val userTfgEmbeddingsStat = Stat("User Tfg Embeddings Count")
-    val userTopicTopKEngagementStat = Stat("User Topic Top K engagement count")
-    val userEngagementStat = Stat("User engagement count")
-    val tfgEmbeddingsStat = Stat("TFG Embedding Map count")
+    implicit uniquelonID: UniquelonID
+  ): TypelondPipelon[((Long, String), Map[Int, Doublelon])] = {
+    val uselonrTfgelonmbelonddingsStat = Stat("Uselonr Tfg elonmbelonddings Count")
+    val uselonrTopicTopKelonngagelonmelonntStat = Stat("Uselonr Topic Top K elonngagelonmelonnt count")
+    val uselonrelonngagelonmelonntStat = Stat("Uselonr elonngagelonmelonnt count")
+    val tfgelonmbelonddingsStat = Stat("TFG elonmbelondding Map count")
 
-    //get only top K topics
-    val userTopKTopicEngagementCount: TypedPipe[UserTopicEngagement] = userTopicEngagementCount
-      .groupBy(_.userLanguageGroup)
-      .withReducers(499)
-      .withDescription("select topK topics")
-      .sortedReverseTake(topKTopicsToKeep)(Ordering.by(_.favCount))
-      .values
-      .flatten
+    //gelont only top K topics
+    val uselonrTopKTopicelonngagelonmelonntCount: TypelondPipelon[UselonrTopicelonngagelonmelonnt] = uselonrTopicelonngagelonmelonntCount
+      .groupBy(_.uselonrLanguagelonGroup)
+      .withRelonducelonrs(499)
+      .withDelonscription("selonlelonct topK topics")
+      .sortelondRelonvelonrselonTakelon(topKTopicsToKelonelonp)(Ordelonring.by(_.favCount))
+      .valuelons
+      .flattelonn
 
-    //(userId, language), totalCount
-    val userLanguageEngagementCount: UnsortedGrouped[(Long, String), Double] =
-      userTopKTopicEngagementCount
-        .collect {
-          case UserTopicEngagement(userId, topicId, language, country, favCount) =>
-            userTopicTopKEngagementStat.inc()
-            ((userId, language), favCount)
-        }.sumByKey
-        .withReducers(499)
-        .withDescription("fav count by user")
+    //(uselonrId, languagelon), totalCount
+    val uselonrLanguagelonelonngagelonmelonntCount: UnsortelondGroupelond[(Long, String), Doublelon] =
+      uselonrTopKTopicelonngagelonmelonntCount
+        .collelonct {
+          caselon UselonrTopicelonngagelonmelonnt(uselonrId, topicId, languagelon, country, favCount) =>
+            uselonrTopicTopKelonngagelonmelonntStat.inc()
+            ((uselonrId, languagelon), favCount)
+        }.sumByKelony
+        .withRelonducelonrs(499)
+        .withDelonscription("fav count by uselonr")
 
-    //(topicId, language), (userId, favWeight)
-    val topicUserWithNormalizedWeights: TypedPipe[((Long, String), (Long, Double))] =
-      userTopKTopicEngagementCount
-        .groupBy(_.userLanguageGroup)
-        .join(userLanguageEngagementCount)
-        .withReducers(499)
-        .withDescription("join userTopic and user EngagementCount")
-        .collect {
-          case ((userId, language), (engagementData, totalCount)) =>
-            userEngagementStat.inc()
+    //(topicId, languagelon), (uselonrId, favWelonight)
+    val topicUselonrWithNormalizelondWelonights: TypelondPipelon[((Long, String), (Long, Doublelon))] =
+      uselonrTopKTopicelonngagelonmelonntCount
+        .groupBy(_.uselonrLanguagelonGroup)
+        .join(uselonrLanguagelonelonngagelonmelonntCount)
+        .withRelonducelonrs(499)
+        .withDelonscription("join uselonrTopic and uselonr elonngagelonmelonntCount")
+        .collelonct {
+          caselon ((uselonrId, languagelon), (elonngagelonmelonntData, totalCount)) =>
+            uselonrelonngagelonmelonntStat.inc()
             (
-              (engagementData.topicId, engagementData.language),
-              (userId, engagementData.favCount / totalCount)
+              (elonngagelonmelonntData.topicId, elonngagelonmelonntData.languagelon),
+              (uselonrId, elonngagelonmelonntData.favCount / totalCount)
             )
         }
 
-    // (topicId, language), embeddingMap
-    val tfgEmbeddingsMap: TypedPipe[((Long, String), Map[Int, Double])] = favTfgTopicEmbeddings
+    // (topicId, languagelon), elonmbelonddingMap
+    val tfgelonmbelonddingsMap: TypelondPipelon[((Long, String), Map[Int, Doublelon])] = favTfgTopicelonmbelonddings
       .map {
-        case (topicId, language, embedding) =>
-          tfgEmbeddingsStat.inc()
-          ((topicId, language), embedding.embedding.map(a => a.clusterId -> a.score).toMap)
+        caselon (topicId, languagelon, elonmbelondding) =>
+          tfgelonmbelonddingsStat.inc()
+          ((topicId, languagelon), elonmbelondding.elonmbelondding.map(a => a.clustelonrId -> a.scorelon).toMap)
       }
-      .withDescription("covert sim cluster embedding to map")
+      .withDelonscription("covelonrt sim clustelonr elonmbelondding to map")
 
-    // (userId, language), clusters
-    val newUserTfgEmbedding = topicUserWithNormalizedWeights
-      .join(tfgEmbeddingsMap)
-      .withReducers(799)
-      .withDescription("join user | topic | favWeight * embedding")
-      .collect {
-        case ((topicId, language), ((userId, favWeight), embeddingMap)) =>
-          userTfgEmbeddingsStat.inc()
-          ((userId, language), embeddingMap.mapValues(_ * favWeight))
+    // (uselonrId, languagelon), clustelonrs
+    val nelonwUselonrTfgelonmbelondding = topicUselonrWithNormalizelondWelonights
+      .join(tfgelonmbelonddingsMap)
+      .withRelonducelonrs(799)
+      .withDelonscription("join uselonr | topic | favWelonight * elonmbelondding")
+      .collelonct {
+        caselon ((topicId, languagelon), ((uselonrId, favWelonight), elonmbelonddingMap)) =>
+          uselonrTfgelonmbelonddingsStat.inc()
+          ((uselonrId, languagelon), elonmbelonddingMap.mapValuelons(_ * favWelonight))
       }
-      .sumByKey
-      .withReducers(799)
-      .withDescription("aggregate embedding by user")
+      .sumByKelony
+      .withRelonducelonrs(799)
+      .withDelonscription("aggrelongatelon elonmbelondding by uselonr")
 
-    newUserTfgEmbedding.toTypedPipe
+    nelonwUselonrTfgelonmbelondding.toTypelondPipelon
   }
 
-  def writeOutput(
-    newUserTfgEmbedding: TypedPipe[((Long, String), Map[Int, Double])],
+  delonf writelonOutput(
+    nelonwUselonrTfgelonmbelondding: TypelondPipelon[((Long, String), Map[Int, Doublelon])],
     outputPath: String,
-    parquetOutputPath: String,
-    modelVersion: String
+    parquelontOutputPath: String,
+    modelonlVelonrsion: String
   )(
-    implicit uniqueID: UniqueID,
-    dateRange: DateRange
-  ): Execution[Unit] = {
-    val outputRecordStat = Stat("output record count")
-    val output = newUserTfgEmbedding
+    implicit uniquelonID: UniquelonID,
+    datelonRangelon: DatelonRangelon
+  ): elonxeloncution[Unit] = {
+    val outputReloncordStat = Stat("output reloncord count")
+    val output = nelonwUselonrTfgelonmbelondding
       .map {
-        //language has been purposely ignored because the entire logic is based on the fact that
-        //user is mapped to a language. In future if a user is mapped to multiple languages then
-        //the final output needs to be keyed on (userId, language)
-        case ((userId, language), embeddingMap) =>
-          outputRecordStat.inc()
-          val clusterScores = embeddingMap.map {
-            case (clusterId, score) =>
-              clusterId -> UserToInterestedInClusterScores(favScore = Some(score))
+        //languagelon has belonelonn purposelonly ignorelond beloncauselon thelon elonntirelon logic is baselond on thelon fact that
+        //uselonr is mappelond to a languagelon. In futurelon if a uselonr is mappelond to multiplelon languagelons thelonn
+        //thelon final output nelonelonds to belon kelonyelond on (uselonrId, languagelon)
+        caselon ((uselonrId, languagelon), elonmbelonddingMap) =>
+          outputReloncordStat.inc()
+          val clustelonrScorelons = elonmbelonddingMap.map {
+            caselon (clustelonrId, scorelon) =>
+              clustelonrId -> UselonrToIntelonrelonstelondInClustelonrScorelons(favScorelon = Somelon(scorelon))
           }
-          KeyVal(userId, ClustersUserIsInterestedIn(modelVersion, clusterScores))
+          KelonyVal(uselonrId, ClustelonrsUselonrIsIntelonrelonstelondIn(modelonlVelonrsion, clustelonrScorelons))
       }
 
-    val keyValExec = output
-      .withDescription("write output keyval dataset")
-      .writeDALVersionedKeyValExecution(
-        UserTopicWeightedEmbeddingScalaDataset,
+    val kelonyValelonxelonc = output
+      .withDelonscription("writelon output kelonyval dataselont")
+      .writelonDALVelonrsionelondKelonyValelonxeloncution(
+        UselonrTopicWelonightelondelonmbelonddingScalaDataselont,
         D.Suffix(outputPath))
 
-    val parquetExec = newUserTfgEmbedding
+    val parquelontelonxelonc = nelonwUselonrTfgelonmbelondding
       .map {
-        case ((userId, language), embeddingMap) =>
-          val clusterScores = embeddingMap.map {
-            case (clusterId, score) => ClustersScore(clusterId, score)
+        caselon ((uselonrId, languagelon), elonmbelonddingMap) =>
+          val clustelonrScorelons = elonmbelonddingMap.map {
+            caselon (clustelonrId, scorelon) => ClustelonrsScorelon(clustelonrId, scorelon)
           }
-          UserTopicWeightedEmbedding(userId, clusterScores.toSeq)
+          UselonrTopicWelonightelondelonmbelondding(uselonrId, clustelonrScorelons.toSelonq)
       }
-      .withDescription("write output parquet dataset")
-      .writeDALSnapshotExecution(
-        parquetDataSource,
+      .withDelonscription("writelon output parquelont dataselont")
+      .writelonDALSnapshotelonxeloncution(
+        parquelontDataSourcelon,
         D.Daily,
-        D.Suffix(parquetOutputPath),
-        D.Parquet,
-        dateRange.end
+        D.Suffix(parquelontOutputPath),
+        D.Parquelont,
+        datelonRangelon.elonnd
       )
-    Execution.zip(keyValExec, parquetExec).unit
+    elonxeloncution.zip(kelonyValelonxelonc, parquelontelonxelonc).unit
   }
 
-  override def runOnDateRange(
+  ovelonrridelon delonf runOnDatelonRangelon(
     args: Args
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon,
+    uniquelonID: UniquelonID
+  ): elonxeloncution[Unit] = {
 
-    val end = dateRange.start
-    val start = end - Days(21)
-    val featureDateRange = DateRange(start, end - Millisecs(1))
-    val outputPath = args.getOrElse("output_path", outputByFav)
-    val parquetOutputPath = args.getOrElse("parquet_output_path", parquetOutputByFav)
-    val modelVersion = ModelVersions.Model20M145K2020
+    val elonnd = datelonRangelon.start
+    val start = elonnd - Days(21)
+    val felonaturelonDatelonRangelon = DatelonRangelon(start, elonnd - Milliseloncs(1))
+    val outputPath = args.gelontOrelonlselon("output_path", outputByFav)
+    val parquelontOutputPath = args.gelontOrelonlselon("parquelont_output_path", parquelontOutputByFav)
+    val modelonlVelonrsion = ModelonlVelonrsions.Modelonl20M145K2020
 
-    //define stats counter
-    val favTfgTopicEmbeddingsStat = Stat("FavTfgTopicEmbeddings")
-    val userTopicEngagementStat = Stat("UserTopicEngagement")
-    val userTopicsStat = Stat("UserTopics")
-    val userLangStat = Stat("UserLanguage")
+    //delonfinelon stats countelonr
+    val favTfgTopicelonmbelonddingsStat = Stat("FavTfgTopicelonmbelonddings")
+    val uselonrTopicelonngagelonmelonntStat = Stat("UselonrTopicelonngagelonmelonnt")
+    val uselonrTopicsStat = Stat("UselonrTopics")
+    val uselonrLangStat = Stat("UselonrLanguagelon")
 
-    //get fav based tfg embeddings
-    //topic can have different languages and the clusters will be different
-    //current logic is to filter based on user language
-    // topicId, lang, embedding
-    val favTfgTopicEmbeddings: TypedPipe[(Long, String, SimClustersEmbedding)] = DAL
-      .readMostRecentSnapshot(FavTfgTopicEmbeddings2020ScalaDataset, featureDateRange)
-      .withRemoteReadPolicy(AllowCrossClusterSameDC)
-      .toTypedPipe
-      .collect {
-        case KeyVal(
-              SimClustersEmbeddingId(
-                embedType,
-                modelVersion,
-                InternalId.LocaleEntityId(LocaleEntityId(entityId, language))),
-              embedding) =>
-          favTfgTopicEmbeddingsStat.inc()
-          (entityId, language, embedding)
+    //gelont fav baselond tfg elonmbelonddings
+    //topic can havelon diffelonrelonnt languagelons and thelon clustelonrs will belon diffelonrelonnt
+    //currelonnt logic is to filtelonr baselond on uselonr languagelon
+    // topicId, lang, elonmbelondding
+    val favTfgTopicelonmbelonddings: TypelondPipelon[(Long, String, SimClustelonrselonmbelondding)] = DAL
+      .relonadMostReloncelonntSnapshot(FavTfgTopicelonmbelonddings2020ScalaDataselont, felonaturelonDatelonRangelon)
+      .withRelonmotelonRelonadPolicy(AllowCrossClustelonrSamelonDC)
+      .toTypelondPipelon
+      .collelonct {
+        caselon KelonyVal(
+              SimClustelonrselonmbelonddingId(
+                elonmbelondTypelon,
+                modelonlVelonrsion,
+                IntelonrnalId.LocalelonelonntityId(LocalelonelonntityId(elonntityId, languagelon))),
+              elonmbelondding) =>
+          favTfgTopicelonmbelonddingsStat.inc()
+          (elonntityId, languagelon, elonmbelondding)
       }
 
     /*
-    Ideally, if the timeline aggregate framework provided data with breakdown by language,
-    it could have been joined with (topic, language) embedding. Since, it is not possible
-    we fetch the language of the user from other sources.
-    This returns language for the user so that it could be joined with (topic, language) embedding.
-    `userSource` returns 1 language per user
-    `inferredUserConsumedLanguageSource` returns multiple languages with confidence values
+    Idelonally, if thelon timelonlinelon aggrelongatelon framelonwork providelond data with brelonakdown by languagelon,
+    it could havelon belonelonn joinelond with (topic, languagelon) elonmbelondding. Sincelon, it is not possiblelon
+    welon felontch thelon languagelon of thelon uselonr from othelonr sourcelons.
+    This relonturns languagelon for thelon uselonr so that it could belon joinelond with (topic, languagelon) elonmbelondding.
+    `uselonrSourcelon` relonturns 1 languagelon pelonr uselonr
+    `infelonrrelondUselonrConsumelondLanguagelonSourcelon` relonturns multiplelon languagelons with confidelonncelon valuelons
      */
-    val userLangSource = ExternalDataSources.userSource
+    val uselonrLangSourcelon = elonxtelonrnalDataSourcelons.uselonrSourcelon
       .map {
-        case (userId, (country, language)) =>
-          userLangStat.inc()
-          (userId, (language, country))
+        caselon (uselonrId, (country, languagelon)) =>
+          uselonrLangStat.inc()
+          (uselonrId, (languagelon, country))
       }
 
-    //get userid, topicid, favcount as aggregated dataset
-    //currently there is no way to get language breakdown from the timeline aggregate framework.
-    val userTopicEngagementPipe: DataSetPipe = AggregatesV2MostRecentFeatureSource(
-      rootPath = aggregateFeatureRootPath,
-      storeName = "user_topic_aggregates",
-      aggregates =
-        Set(TimelinesAggregationConfig.userTopicAggregates).flatMap(_.buildTypedAggregateGroups()),
-    ).read
+    //gelont uselonrid, topicid, favcount as aggrelongatelond dataselont
+    //currelonntly thelonrelon is no way to gelont languagelon brelonakdown from thelon timelonlinelon aggrelongatelon framelonwork.
+    val uselonrTopicelonngagelonmelonntPipelon: DataSelontPipelon = AggrelongatelonsV2MostReloncelonntFelonaturelonSourcelon(
+      rootPath = aggrelongatelonFelonaturelonRootPath,
+      storelonNamelon = "uselonr_topic_aggrelongatelons",
+      aggrelongatelons =
+        Selont(TimelonlinelonsAggrelongationConfig.uselonrTopicAggrelongatelons).flatMap(_.buildTypelondAggrelongatelonGroups()),
+    ).relonad
 
-    val userTopicEngagementCount = userTopicEngagementPipe.records
-      .flatMap { record =>
-        val sRichDataRecord = SRichDataRecord(record)
-        val userId: Long = sRichDataRecord.getFeatureValue(SharedFeatures.USER_ID)
-        val topicId: Long = sRichDataRecord.getFeatureValue(TimelinesSharedFeatures.TOPIC_ID)
-        val favCount: Double = sRichDataRecord
-          .getFeatureValueOpt(favContinuousFeature).map(_.toDouble).getOrElse(0.0)
-        userTopicEngagementStat.inc()
+    val uselonrTopicelonngagelonmelonntCount = uselonrTopicelonngagelonmelonntPipelon.reloncords
+      .flatMap { reloncord =>
+        val sRichDataReloncord = SRichDataReloncord(reloncord)
+        val uselonrId: Long = sRichDataReloncord.gelontFelonaturelonValuelon(SharelondFelonaturelons.USelonR_ID)
+        val topicId: Long = sRichDataReloncord.gelontFelonaturelonValuelon(TimelonlinelonsSharelondFelonaturelons.TOPIC_ID)
+        val favCount: Doublelon = sRichDataReloncord
+          .gelontFelonaturelonValuelonOpt(favContinuousFelonaturelon).map(_.toDoublelon).gelontOrelonlselon(0.0)
+        uselonrTopicelonngagelonmelonntStat.inc()
         if (favCount > 0) {
-          List((userId, (topicId, favCount)))
-        } else None
-      }.join(userLangSource)
-      .collect {
-        case (userId, ((topicId, favCount), (language, country))) =>
-          userTopicsStat.inc()
-          UserTopicEngagement(userId, topicId, language, country, favCount)
+          List((uselonrId, (topicId, favCount)))
+        } elonlselon Nonelon
+      }.join(uselonrLangSourcelon)
+      .collelonct {
+        caselon (uselonrId, ((topicId, favCount), (languagelon, country))) =>
+          uselonrTopicsStat.inc()
+          UselonrTopicelonngagelonmelonnt(uselonrId, topicId, languagelon, country, favCount)
       }
-      .withDescription("User Topic aggregated favcount")
+      .withDelonscription("Uselonr Topic aggrelongatelond favcount")
 
-    // combine user, topics, topic_embeddings
-    // and take weighted aggregate of the tfg embedding
-    val newUserTfgEmbedding =
-      prepareUserToTopicEmbedding(favTfgTopicEmbeddings, userTopicEngagementCount)
+    // combinelon uselonr, topics, topic_elonmbelonddings
+    // and takelon welonightelond aggrelongatelon of thelon tfg elonmbelondding
+    val nelonwUselonrTfgelonmbelondding =
+      prelonparelonUselonrToTopicelonmbelondding(favTfgTopicelonmbelonddings, uselonrTopicelonngagelonmelonntCount)
 
-    writeOutput(newUserTfgEmbedding, outputPath, parquetOutputPath, modelVersion)
+    writelonOutput(nelonwUselonrTfgelonmbelondding, outputPath, parquelontOutputPath, modelonlVelonrsion)
 
   }
 

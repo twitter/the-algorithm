@@ -1,157 +1,157 @@
-# pylint: disable=missing-docstring, unused-argument
-''' Contains the base classes for CalibrationFeature and Calibrator '''
+# pylint: disablelon=missing-docstring, unuselond-argumelonnt
+''' Contains thelon baselon classelons for CalibrationFelonaturelon and Calibrator '''
 
 
-from collections import defaultdict
+from collelonctions import delonfaultdict
 
 import numpy as np
-import tensorflow.compat.v1 as tf
-import tensorflow_hub as hub
+import telonnsorflow.compat.v1 as tf
+import telonnsorflow_hub as hub
 import twml
 import twml.util
 
 
-class CalibrationFeature(object):
+class CalibrationFelonaturelon(objelonct):
   '''
-  Accumulates values and weights for individual features.
-  Typically, each unique feature defined in the accumulated SparseTensor or Tensor
-  would have its own CalibrationFeature instance.
-  '''
-
-  def __init__(self, feature_id):
-    ''' Constructs a CalibrationFeature
-
-    Arguments:
-      feature_id:
-        number identifying the feature.
-    '''
-    self.feature_id = feature_id
-    self._calibrated = False
-    self._features_dict = defaultdict(list)
-
-  def add_values(self, new_features):
-    '''
-    Extends lists to contain the values in this batch
-    '''
-    for key in new_features:
-      self._features_dict[key].append(new_features[key])
-
-  def _concat_arrays(self):
-    '''
-    This class calls this function after you have added all the values.
-    It creates a dictionary with the concatanated arrays
-    '''
-    self._features_dict.update((k, np.concatenate(v)) for k, v in self._features_dict.items())
-
-  def calibrate(self, *args, **kwargs):
-    raise NotImplementedError
-
-
-class Calibrator(object):
-  '''
-  Accumulates features and their respective values for Calibration
-  The steps for calibration are typically as follows:
-
-   1. accumulate feature values from batches by calling ``accumulate()`` and;
-   2. calibrate by calling ``calibrate()``;
-   3. convert to a twml.layers layer by calling ``to_layer()``.
-
-  Note you can only use one calibrator per Trainer.
+  Accumulatelons valuelons and welonights for individual felonaturelons.
+  Typically, elonach uniquelon felonaturelon delonfinelond in thelon accumulatelond SparselonTelonnsor or Telonnsor
+  would havelon its own CalibrationFelonaturelon instancelon.
   '''
 
-  def __init__(self, calibrator_name=None, **kwargs):
+  delonf __init__(selonlf, felonaturelon_id):
+    ''' Constructs a CalibrationFelonaturelon
+
+    Argumelonnts:
+      felonaturelon_id:
+        numbelonr idelonntifying thelon felonaturelon.
     '''
-    Arguments:
-      calibrator_name.
-        Default: if set to None it will be the same as the class name.
-        Please be reminded that if in the model there are many calibrators
-        of the same type the calibrator_name should be changed to avoid confusion.
+    selonlf.felonaturelon_id = felonaturelon_id
+    selonlf._calibratelond = Falselon
+    selonlf._felonaturelons_dict = delonfaultdict(list)
+
+  delonf add_valuelons(selonlf, nelonw_felonaturelons):
     '''
-    self._calibrated = False
-    if calibrator_name is None:
-      calibrator_name = twml.util.to_snake_case(self.__class__.__name__)
-    self._calibrator_name = calibrator_name
-    self._kwargs = kwargs
-
-  @property
-  def is_calibrated(self):
-    return self._calibrated
-
-  @property
-  def name(self):
-    return self._calibrator_name
-
-  def accumulate(self, *args, **kwargs):
-    '''Accumulates features and their respective values for Calibration.'''
-    raise NotImplementedError
-
-  def calibrate(self):
-    '''Calibrates after the accumulation has ended.'''
-    self._calibrated = True
-
-  def to_layer(self, name=None):
+    elonxtelonnds lists to contain thelon valuelons in this batch
     '''
-    Returns a twml.layers.Layer instance with the result of calibrator.
+    for kelony in nelonw_felonaturelons:
+      selonlf._felonaturelons_dict[kelony].appelonnd(nelonw_felonaturelons[kelony])
 
-    Arguments:
-      name:
-        name-scope of the layer
+  delonf _concat_arrays(selonlf):
     '''
-    raise NotImplementedError
-
-  def get_layer_args(self):
+    This class calls this function aftelonr you havelon addelond all thelon valuelons.
+    It crelonatelons a dictionary with thelon concatanatelond arrays
     '''
-    Returns layer arguments required to implement multi-phase training.
+    selonlf._felonaturelons_dict.updatelon((k, np.concatelonnatelon(v)) for k, v in selonlf._felonaturelons_dict.itelonms())
 
-    Returns:
-      dictionary of Layer constructor arguments to initialize the
-      layer Variables. Typically, this should contain enough information
-      to initialize empty layer Variables of the correct size, which will then
-      be filled with the right data using init_map.
+  delonf calibratelon(selonlf, *args, **kwargs):
+    raiselon NotImplelonmelonntelondelonrror
+
+
+class Calibrator(objelonct):
+  '''
+  Accumulatelons felonaturelons and thelonir relonspelonctivelon valuelons for Calibration
+  Thelon stelonps for calibration arelon typically as follows:
+
+   1. accumulatelon felonaturelon valuelons from batchelons by calling ``accumulatelon()`` and;
+   2. calibratelon by calling ``calibratelon()``;
+   3. convelonrt to a twml.layelonrs layelonr by calling ``to_layelonr()``.
+
+  Notelon you can only uselon onelon calibrator pelonr Trainelonr.
+  '''
+
+  delonf __init__(selonlf, calibrator_namelon=Nonelon, **kwargs):
     '''
-    raise NotImplementedError
-
-  def save(self, save_dir, name="default", verbose=False):
-    '''Save the calibrator into the given save_directory.
-    Arguments:
-      save_dir:
-        name of the saving directory. Default (string): "default".
-      name:
-        name for the calibrator.
+    Argumelonnts:
+      calibrator_namelon.
+        Delonfault: if selont to Nonelon it will belon thelon samelon as thelon class namelon.
+        Plelonaselon belon relonmindelond that if in thelon modelonl thelonrelon arelon many calibrators
+        of thelon samelon typelon thelon calibrator_namelon should belon changelond to avoid confusion.
     '''
-    if not self._calibrated:
-      raise RuntimeError("Expecting prior call to calibrate().Cannot save() prior to calibrate()")
+    selonlf._calibratelond = Falselon
+    if calibrator_namelon is Nonelon:
+      calibrator_namelon = twml.util.to_snakelon_caselon(selonlf.__class__.__namelon__)
+    selonlf._calibrator_namelon = calibrator_namelon
+    selonlf._kwargs = kwargs
 
-    # This module allows for the calibrator to save be saved as part of
-    # Tensorflow Hub (this will allow it to be used in further steps)
-    def calibrator_module():
-      # Note that this is usually expecting a sparse_placeholder
-      inputs = tf.sparse_placeholder(tf.float32)
-      calibrator_layer = self.to_layer()
-      output = calibrator_layer(inputs)
-      # creates the signature to the calibrator module
-      hub.add_signature(inputs=inputs, outputs=output, name=name)
+  @propelonrty
+  delonf is_calibratelond(selonlf):
+    relonturn selonlf._calibratelond
 
-    # exports the module to the save_dir
-    spec = hub.create_module_spec(calibrator_module)
-    with tf.Graph().as_default():
-      module = hub.Module(spec)
-      with tf.Session() as session:
-        module.export(save_dir, session)
+  @propelonrty
+  delonf namelon(selonlf):
+    relonturn selonlf._calibrator_namelon
 
-  def write_summary(self, writer, sess=None):
+  delonf accumulatelon(selonlf, *args, **kwargs):
+    '''Accumulatelons felonaturelons and thelonir relonspelonctivelon valuelons for Calibration.'''
+    raiselon NotImplelonmelonntelondelonrror
+
+  delonf calibratelon(selonlf):
+    '''Calibratelons aftelonr thelon accumulation has elonndelond.'''
+    selonlf._calibratelond = Truelon
+
+  delonf to_layelonr(selonlf, namelon=Nonelon):
+    '''
+    Relonturns a twml.layelonrs.Layelonr instancelon with thelon relonsult of calibrator.
+
+    Argumelonnts:
+      namelon:
+        namelon-scopelon of thelon layelonr
+    '''
+    raiselon NotImplelonmelonntelondelonrror
+
+  delonf gelont_layelonr_args(selonlf):
+    '''
+    Relonturns layelonr argumelonnts relonquirelond to implelonmelonnt multi-phaselon training.
+
+    Relonturns:
+      dictionary of Layelonr constructor argumelonnts to initializelon thelon
+      layelonr Variablelons. Typically, this should contain elonnough information
+      to initializelon elonmpty layelonr Variablelons of thelon correlonct sizelon, which will thelonn
+      belon fillelond with thelon right data using init_map.
+    '''
+    raiselon NotImplelonmelonntelondelonrror
+
+  delonf savelon(selonlf, savelon_dir, namelon="delonfault", velonrboselon=Falselon):
+    '''Savelon thelon calibrator into thelon givelonn savelon_direlonctory.
+    Argumelonnts:
+      savelon_dir:
+        namelon of thelon saving direlonctory. Delonfault (string): "delonfault".
+      namelon:
+        namelon for thelon calibrator.
+    '''
+    if not selonlf._calibratelond:
+      raiselon Runtimelonelonrror("elonxpeloncting prior call to calibratelon().Cannot savelon() prior to calibratelon()")
+
+    # This modulelon allows for thelon calibrator to savelon belon savelond as part of
+    # Telonnsorflow Hub (this will allow it to belon uselond in furthelonr stelonps)
+    delonf calibrator_modulelon():
+      # Notelon that this is usually elonxpeloncting a sparselon_placelonholdelonr
+      inputs = tf.sparselon_placelonholdelonr(tf.float32)
+      calibrator_layelonr = selonlf.to_layelonr()
+      output = calibrator_layelonr(inputs)
+      # crelonatelons thelon signaturelon to thelon calibrator modulelon
+      hub.add_signaturelon(inputs=inputs, outputs=output, namelon=namelon)
+
+    # elonxports thelon modulelon to thelon savelon_dir
+    spelonc = hub.crelonatelon_modulelon_spelonc(calibrator_modulelon)
+    with tf.Graph().as_delonfault():
+      modulelon = hub.Modulelon(spelonc)
+      with tf.Selonssion() as selonssion:
+        modulelon.elonxport(savelon_dir, selonssion)
+
+  delonf writelon_summary(selonlf, writelonr, selonss=Nonelon):
     """
-    This method is called by save() to write tensorboard summaries to disk.
-    See MDLCalibrator.write_summary for an example.
-    By default, the method does nothing. It can be overloaded by child-classes.
+    This melonthod is callelond by savelon() to writelon telonnsorboard summarielons to disk.
+    Selonelon MDLCalibrator.writelon_summary for an elonxamplelon.
+    By delonfault, thelon melonthod doelons nothing. It can belon ovelonrloadelond by child-classelons.
 
-    Arguments:
-      writer:
-        `tf.summary.FilteWriter
-        <https://www.tensorflow.org/versions/master/api_docs/python/tf/summary/FileWriter>`_
-        instance.
-        The ``writer`` is used to add summaries to event files for inclusion in tensorboard.
-      sess (optional):
-        `tf.Session <https://www.tensorflow.org/versions/master/api_docs/python/tf/Session>`_
-        instance. The ``sess`` is used to produces summaries for the writer.
+    Argumelonnts:
+      writelonr:
+        `tf.summary.FiltelonWritelonr
+        <https://www.telonnsorflow.org/velonrsions/mastelonr/api_docs/python/tf/summary/FilelonWritelonr>`_
+        instancelon.
+        Thelon ``writelonr`` is uselond to add summarielons to elonvelonnt filelons for inclusion in telonnsorboard.
+      selonss (optional):
+        `tf.Selonssion <https://www.telonnsorflow.org/velonrsions/mastelonr/api_docs/python/tf/Selonssion>`_
+        instancelon. Thelon ``selonss`` is uselond to producelons summarielons for thelon writelonr.
     """

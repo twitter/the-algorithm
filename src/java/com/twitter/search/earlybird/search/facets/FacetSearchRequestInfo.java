@@ -1,28 +1,28 @@
-package com.twitter.search.earlybird.search.facets;
+packagelon com.twittelonr.selonarch.elonarlybird.selonarch.facelonts;
 
-import org.apache.lucene.search.Query;
+import org.apachelon.lucelonnelon.selonarch.Quelonry;
 
-import com.twitter.search.common.ranking.thriftjava.ThriftFacetRankingOptions;
-import com.twitter.search.common.search.TerminationTracker;
-import com.twitter.search.core.earlybird.facets.FacetCountState;
-import com.twitter.search.earlybird.search.SearchRequestInfo;
-import com.twitter.search.earlybird.thrift.ThriftSearchQuery;
+import com.twittelonr.selonarch.common.ranking.thriftjava.ThriftFacelontRankingOptions;
+import com.twittelonr.selonarch.common.selonarch.TelonrminationTrackelonr;
+import com.twittelonr.selonarch.corelon.elonarlybird.facelonts.FacelontCountStatelon;
+import com.twittelonr.selonarch.elonarlybird.selonarch.SelonarchRelonquelonstInfo;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchQuelonry;
 
-public class FacetSearchRequestInfo extends SearchRequestInfo {
-  protected final FacetCountState facetCountState;
-  protected final ThriftFacetRankingOptions rankingOptions;
+public class FacelontSelonarchRelonquelonstInfo elonxtelonnds SelonarchRelonquelonstInfo {
+  protelonctelond final FacelontCountStatelon facelontCountStatelon;
+  protelonctelond final ThriftFacelontRankingOptions rankingOptions;
 
-  public FacetSearchRequestInfo(ThriftSearchQuery searchQuery,
-                                ThriftFacetRankingOptions rankingOptions,
-                                Query query,
-                                FacetCountState facetCountState,
-                                TerminationTracker terminationTracker) {
-    super(searchQuery, query, terminationTracker);
-    this.facetCountState = facetCountState;
+  public FacelontSelonarchRelonquelonstInfo(ThriftSelonarchQuelonry selonarchQuelonry,
+                                ThriftFacelontRankingOptions rankingOptions,
+                                Quelonry quelonry,
+                                FacelontCountStatelon facelontCountStatelon,
+                                TelonrminationTrackelonr telonrminationTrackelonr) {
+    supelonr(selonarchQuelonry, quelonry, telonrminationTrackelonr);
+    this.facelontCountStatelon = facelontCountStatelon;
     this.rankingOptions = rankingOptions;
   }
 
-  public final FacetCountState getFacetCountState() {
-    return this.facetCountState;
+  public final FacelontCountStatelon gelontFacelontCountStatelon() {
+    relonturn this.facelontCountStatelon;
   }
 }

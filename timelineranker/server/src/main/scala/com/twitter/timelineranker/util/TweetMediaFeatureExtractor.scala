@@ -1,272 +1,272 @@
-package com.twitter.timelineranker.util
+packagelon com.twittelonr.timelonlinelonrankelonr.util
 
-import com.twitter.mediaservices.commons.tweetmedia.thriftscala.MediaInfo
-import com.twitter.tweetypie.thriftscala.MediaEntity
-import com.twitter.tweetypie.thriftscala.MediaTag
-import com.twitter.tweetypie.{thriftscala => tweetypie}
-import scala.collection.Map
-import com.twitter.mediaservices.commons.mediainformation.thriftscala.ColorPaletteItem
-import com.twitter.mediaservices.commons.mediainformation.thriftscala.Face
-import com.twitter.timelineranker.recap.model.ContentFeatures
+import com.twittelonr.melondiaselonrvicelons.commons.twelonelontmelondia.thriftscala.MelondiaInfo
+import com.twittelonr.twelonelontypielon.thriftscala.Melondiaelonntity
+import com.twittelonr.twelonelontypielon.thriftscala.MelondiaTag
+import com.twittelonr.twelonelontypielon.{thriftscala => twelonelontypielon}
+import scala.collelonction.Map
+import com.twittelonr.melondiaselonrvicelons.commons.melondiainformation.thriftscala.ColorPalelonttelonItelonm
+import com.twittelonr.melondiaselonrvicelons.commons.melondiainformation.thriftscala.Facelon
+import com.twittelonr.timelonlinelonrankelonr.reloncap.modelonl.ContelonntFelonaturelons
 
-object TweetMediaFeaturesExtractor {
+objelonct TwelonelontMelondiaFelonaturelonselonxtractor {
 
-  // Method to overload for content features.
-  def addMediaFeaturesFromTweet(
-    inputFeatures: ContentFeatures,
-    tweet: tweetypie.Tweet,
-    enableTweetMediaHydration: Boolean
-  ): ContentFeatures = {
-    val featuresWithMediaEntity = tweet.media
-      .map { mediaEntities =>
-        val sizeFeatures = getSizeFeatures(mediaEntities)
-        val playbackFeatures = getPlaybackFeatures(mediaEntities)
-        val mediaWidths = sizeFeatures.map(_.width.toShort)
-        val mediaHeights = sizeFeatures.map(_.height.toShort)
-        val resizeMethods = sizeFeatures.map(_.resizeMethod.toShort)
-        val faceMapAreas = getFaceMapAreas(mediaEntities)
-        val sortedColorPalette = getSortedColorPalette(mediaEntities)
-        val stickerFeatures = getStickerFeatures(mediaEntities)
-        val mediaOriginProviders = getMediaOriginProviders(mediaEntities)
-        val isManaged = getIsManaged(mediaEntities)
-        val is360 = getIs360(mediaEntities)
-        val viewCount = getViewCount(mediaEntities)
-        val userDefinedProductMetadataFeatures =
-          getUserDefinedProductMetadataFeatures(mediaEntities)
-        val isMonetizable =
-          getOptBooleanFromSeqOpt(userDefinedProductMetadataFeatures.map(_.isMonetizable))
-        val isEmbeddable =
-          getOptBooleanFromSeqOpt(userDefinedProductMetadataFeatures.map(_.isEmbeddable))
-        val hasSelectedPreviewImage =
-          getOptBooleanFromSeqOpt(userDefinedProductMetadataFeatures.map(_.hasSelectedPreviewImage))
-        val hasTitle = getOptBooleanFromSeqOpt(userDefinedProductMetadataFeatures.map(_.hasTitle))
-        val hasDescription =
-          getOptBooleanFromSeqOpt(userDefinedProductMetadataFeatures.map(_.hasDescription))
-        val hasVisitSiteCallToAction = getOptBooleanFromSeqOpt(
-          userDefinedProductMetadataFeatures.map(_.hasVisitSiteCallToAction))
-        val hasAppInstallCallToAction = getOptBooleanFromSeqOpt(
-          userDefinedProductMetadataFeatures.map(_.hasAppInstallCallToAction))
+  // Melonthod to ovelonrload for contelonnt felonaturelons.
+  delonf addMelondiaFelonaturelonsFromTwelonelont(
+    inputFelonaturelons: ContelonntFelonaturelons,
+    twelonelont: twelonelontypielon.Twelonelont,
+    elonnablelonTwelonelontMelondiaHydration: Boolelonan
+  ): ContelonntFelonaturelons = {
+    val felonaturelonsWithMelondiaelonntity = twelonelont.melondia
+      .map { melondiaelonntitielons =>
+        val sizelonFelonaturelons = gelontSizelonFelonaturelons(melondiaelonntitielons)
+        val playbackFelonaturelons = gelontPlaybackFelonaturelons(melondiaelonntitielons)
+        val melondiaWidths = sizelonFelonaturelons.map(_.width.toShort)
+        val melondiaHelonights = sizelonFelonaturelons.map(_.helonight.toShort)
+        val relonsizelonMelonthods = sizelonFelonaturelons.map(_.relonsizelonMelonthod.toShort)
+        val facelonMapArelonas = gelontFacelonMapArelonas(melondiaelonntitielons)
+        val sortelondColorPalelonttelon = gelontSortelondColorPalelonttelon(melondiaelonntitielons)
+        val stickelonrFelonaturelons = gelontStickelonrFelonaturelons(melondiaelonntitielons)
+        val melondiaOriginProvidelonrs = gelontMelondiaOriginProvidelonrs(melondiaelonntitielons)
+        val isManagelond = gelontIsManagelond(melondiaelonntitielons)
+        val is360 = gelontIs360(melondiaelonntitielons)
+        val vielonwCount = gelontVielonwCount(melondiaelonntitielons)
+        val uselonrDelonfinelondProductMelontadataFelonaturelons =
+          gelontUselonrDelonfinelondProductMelontadataFelonaturelons(melondiaelonntitielons)
+        val isMonelontizablelon =
+          gelontOptBoolelonanFromSelonqOpt(uselonrDelonfinelondProductMelontadataFelonaturelons.map(_.isMonelontizablelon))
+        val iselonmbelonddablelon =
+          gelontOptBoolelonanFromSelonqOpt(uselonrDelonfinelondProductMelontadataFelonaturelons.map(_.iselonmbelonddablelon))
+        val hasSelonlelonctelondPrelonvielonwImagelon =
+          gelontOptBoolelonanFromSelonqOpt(uselonrDelonfinelondProductMelontadataFelonaturelons.map(_.hasSelonlelonctelondPrelonvielonwImagelon))
+        val hasTitlelon = gelontOptBoolelonanFromSelonqOpt(uselonrDelonfinelondProductMelontadataFelonaturelons.map(_.hasTitlelon))
+        val hasDelonscription =
+          gelontOptBoolelonanFromSelonqOpt(uselonrDelonfinelondProductMelontadataFelonaturelons.map(_.hasDelonscription))
+        val hasVisitSitelonCallToAction = gelontOptBoolelonanFromSelonqOpt(
+          uselonrDelonfinelondProductMelontadataFelonaturelons.map(_.hasVisitSitelonCallToAction))
+        val hasAppInstallCallToAction = gelontOptBoolelonanFromSelonqOpt(
+          uselonrDelonfinelondProductMelontadataFelonaturelons.map(_.hasAppInstallCallToAction))
         val hasWatchNowCallToAction =
-          getOptBooleanFromSeqOpt(userDefinedProductMetadataFeatures.map(_.hasWatchNowCallToAction))
+          gelontOptBoolelonanFromSelonqOpt(uselonrDelonfinelondProductMelontadataFelonaturelons.map(_.hasWatchNowCallToAction))
 
-        inputFeatures.copy(
-          videoDurationMs = playbackFeatures.durationMs,
-          bitRate = playbackFeatures.bitRate,
-          aspectRatioNum = playbackFeatures.aspectRatioNum,
-          aspectRatioDen = playbackFeatures.aspectRatioDen,
-          widths = Some(mediaWidths),
-          heights = Some(mediaHeights),
-          resizeMethods = Some(resizeMethods),
-          faceAreas = Some(faceMapAreas),
-          dominantColorRed = sortedColorPalette.headOption.map(_.rgb.red),
-          dominantColorBlue = sortedColorPalette.headOption.map(_.rgb.blue),
-          dominantColorGreen = sortedColorPalette.headOption.map(_.rgb.green),
-          dominantColorPercentage = sortedColorPalette.headOption.map(_.percentage),
-          numColors = Some(sortedColorPalette.size.toShort),
-          stickerIds = Some(stickerFeatures),
-          mediaOriginProviders = Some(mediaOriginProviders),
-          isManaged = Some(isManaged),
-          is360 = Some(is360),
-          viewCount = viewCount,
-          isMonetizable = isMonetizable,
-          isEmbeddable = isEmbeddable,
-          hasSelectedPreviewImage = hasSelectedPreviewImage,
-          hasTitle = hasTitle,
-          hasDescription = hasDescription,
-          hasVisitSiteCallToAction = hasVisitSiteCallToAction,
+        inputFelonaturelons.copy(
+          videlonoDurationMs = playbackFelonaturelons.durationMs,
+          bitRatelon = playbackFelonaturelons.bitRatelon,
+          aspelonctRatioNum = playbackFelonaturelons.aspelonctRatioNum,
+          aspelonctRatioDelonn = playbackFelonaturelons.aspelonctRatioDelonn,
+          widths = Somelon(melondiaWidths),
+          helonights = Somelon(melondiaHelonights),
+          relonsizelonMelonthods = Somelon(relonsizelonMelonthods),
+          facelonArelonas = Somelon(facelonMapArelonas),
+          dominantColorRelond = sortelondColorPalelonttelon.helonadOption.map(_.rgb.relond),
+          dominantColorBluelon = sortelondColorPalelonttelon.helonadOption.map(_.rgb.bluelon),
+          dominantColorGrelonelonn = sortelondColorPalelonttelon.helonadOption.map(_.rgb.grelonelonn),
+          dominantColorPelonrcelonntagelon = sortelondColorPalelonttelon.helonadOption.map(_.pelonrcelonntagelon),
+          numColors = Somelon(sortelondColorPalelonttelon.sizelon.toShort),
+          stickelonrIds = Somelon(stickelonrFelonaturelons),
+          melondiaOriginProvidelonrs = Somelon(melondiaOriginProvidelonrs),
+          isManagelond = Somelon(isManagelond),
+          is360 = Somelon(is360),
+          vielonwCount = vielonwCount,
+          isMonelontizablelon = isMonelontizablelon,
+          iselonmbelonddablelon = iselonmbelonddablelon,
+          hasSelonlelonctelondPrelonvielonwImagelon = hasSelonlelonctelondPrelonvielonwImagelon,
+          hasTitlelon = hasTitlelon,
+          hasDelonscription = hasDelonscription,
+          hasVisitSitelonCallToAction = hasVisitSitelonCallToAction,
           hasAppInstallCallToAction = hasAppInstallCallToAction,
           hasWatchNowCallToAction = hasWatchNowCallToAction
         )
       }
-      .getOrElse(inputFeatures)
+      .gelontOrelonlselon(inputFelonaturelons)
 
-    val featuresWithMediaTags = tweet.mediaTags
-      .map { mediaTags =>
-        val mediaTagScreenNames = getMediaTagScreenNames(mediaTags.tagMap)
-        val numMediaTags = mediaTagScreenNames.size
+    val felonaturelonsWithMelondiaTags = twelonelont.melondiaTags
+      .map { melondiaTags =>
+        val melondiaTagScrelonelonnNamelons = gelontMelondiaTagScrelonelonnNamelons(melondiaTags.tagMap)
+        val numMelondiaTags = melondiaTagScrelonelonnNamelons.sizelon
 
-        featuresWithMediaEntity.copy(
-          mediaTagScreenNames = Some(mediaTagScreenNames),
-          numMediaTags = Some(numMediaTags.toShort)
+        felonaturelonsWithMelondiaelonntity.copy(
+          melondiaTagScrelonelonnNamelons = Somelon(melondiaTagScrelonelonnNamelons),
+          numMelondiaTags = Somelon(numMelondiaTags.toShort)
         )
       }
-      .getOrElse(featuresWithMediaEntity)
+      .gelontOrelonlselon(felonaturelonsWithMelondiaelonntity)
 
-    if (enableTweetMediaHydration) {
-      featuresWithMediaTags
-        .copy(media = tweet.media)
-    } else {
-      featuresWithMediaTags
+    if (elonnablelonTwelonelontMelondiaHydration) {
+      felonaturelonsWithMelondiaTags
+        .copy(melondia = twelonelont.melondia)
+    } elonlselon {
+      felonaturelonsWithMelondiaTags
     }
   }
 
-  // Extracts height, width and resize method of photo/video.
-  private def getSizeFeatures(mediaEntities: Seq[MediaEntity]): Seq[MediaSizeFeatures] = {
-    mediaEntities.map { mediaEntity =>
-      mediaEntity.sizes.foldLeft(MediaSizeFeatures(0, 0, 0))((accDimensions, dimensions) =>
-        MediaSizeFeatures(
-          width = math.max(dimensions.width, accDimensions.width),
-          height = math.max(dimensions.height, accDimensions.height),
-          resizeMethod = math.max(dimensions.resizeMethod.getValue, accDimensions.resizeMethod)
+  // elonxtracts helonight, width and relonsizelon melonthod of photo/videlono.
+  privatelon delonf gelontSizelonFelonaturelons(melondiaelonntitielons: Selonq[Melondiaelonntity]): Selonq[MelondiaSizelonFelonaturelons] = {
+    melondiaelonntitielons.map { melondiaelonntity =>
+      melondiaelonntity.sizelons.foldLelonft(MelondiaSizelonFelonaturelons(0, 0, 0))((accDimelonnsions, dimelonnsions) =>
+        MelondiaSizelonFelonaturelons(
+          width = math.max(dimelonnsions.width, accDimelonnsions.width),
+          helonight = math.max(dimelonnsions.helonight, accDimelonnsions.helonight),
+          relonsizelonMelonthod = math.max(dimelonnsions.relonsizelonMelonthod.gelontValuelon, accDimelonnsions.relonsizelonMelonthod)
         ))
     }
   }
 
-  // Extracts media playback features
-  private def getPlaybackFeatures(mediaEntities: Seq[MediaEntity]): PlaybackFeatures = {
-    val allPlaybackFeatures = mediaEntities
-      .flatMap { mediaEntity =>
-        mediaEntity.mediaInfo map {
-          case videoEntity: MediaInfo.VideoInfo =>
-            PlaybackFeatures(
-              durationMs = Some(videoEntity.videoInfo.durationMillis),
-              bitRate = videoEntity.videoInfo.variants.maxBy(_.bitRate).bitRate,
-              aspectRatioNum = Some(videoEntity.videoInfo.aspectRatio.numerator),
-              aspectRatioDen = Some(videoEntity.videoInfo.aspectRatio.denominator)
+  // elonxtracts melondia playback felonaturelons
+  privatelon delonf gelontPlaybackFelonaturelons(melondiaelonntitielons: Selonq[Melondiaelonntity]): PlaybackFelonaturelons = {
+    val allPlaybackFelonaturelons = melondiaelonntitielons
+      .flatMap { melondiaelonntity =>
+        melondiaelonntity.melondiaInfo map {
+          caselon videlonoelonntity: MelondiaInfo.VidelonoInfo =>
+            PlaybackFelonaturelons(
+              durationMs = Somelon(videlonoelonntity.videlonoInfo.durationMillis),
+              bitRatelon = videlonoelonntity.videlonoInfo.variants.maxBy(_.bitRatelon).bitRatelon,
+              aspelonctRatioNum = Somelon(videlonoelonntity.videlonoInfo.aspelonctRatio.numelonrator),
+              aspelonctRatioDelonn = Somelon(videlonoelonntity.videlonoInfo.aspelonctRatio.delonnominator)
             )
-          case gifEntity: MediaInfo.AnimatedGifInfo =>
-            PlaybackFeatures(
-              durationMs = None,
-              bitRate = gifEntity.animatedGifInfo.variants.maxBy(_.bitRate).bitRate,
-              aspectRatioNum = Some(gifEntity.animatedGifInfo.aspectRatio.numerator),
-              aspectRatioDen = Some(gifEntity.animatedGifInfo.aspectRatio.denominator)
+          caselon gifelonntity: MelondiaInfo.AnimatelondGifInfo =>
+            PlaybackFelonaturelons(
+              durationMs = Nonelon,
+              bitRatelon = gifelonntity.animatelondGifInfo.variants.maxBy(_.bitRatelon).bitRatelon,
+              aspelonctRatioNum = Somelon(gifelonntity.animatelondGifInfo.aspelonctRatio.numelonrator),
+              aspelonctRatioDelonn = Somelon(gifelonntity.animatelondGifInfo.aspelonctRatio.delonnominator)
             )
-          case _ => PlaybackFeatures(None, None, None, None)
+          caselon _ => PlaybackFelonaturelons(Nonelon, Nonelon, Nonelon, Nonelon)
         }
       }
-      .collect {
-        case playbackFeatures: PlaybackFeatures => playbackFeatures
+      .collelonct {
+        caselon playbackFelonaturelons: PlaybackFelonaturelons => playbackFelonaturelons
       }
 
-    if (allPlaybackFeatures.nonEmpty) allPlaybackFeatures.maxBy(_.durationMs)
-    else PlaybackFeatures(None, None, None, None)
+    if (allPlaybackFelonaturelons.nonelonmpty) allPlaybackFelonaturelons.maxBy(_.durationMs)
+    elonlselon PlaybackFelonaturelons(Nonelon, Nonelon, Nonelon, Nonelon)
   }
 
-  private def getMediaTagScreenNames(tagMap: Map[Long, Seq[MediaTag]]): Seq[String] =
-    tagMap.values
-      .flatMap(seqMediaTag => seqMediaTag.flatMap(_.screenName))
-      .toSeq
+  privatelon delonf gelontMelondiaTagScrelonelonnNamelons(tagMap: Map[Long, Selonq[MelondiaTag]]): Selonq[String] =
+    tagMap.valuelons
+      .flatMap(selonqMelondiaTag => selonqMelondiaTag.flatMap(_.screlonelonnNamelon))
+      .toSelonq
 
-  // Areas of the faces identified in the media entities
-  private def getFaceMapAreas(mediaEntities: Seq[MediaEntity]): Seq[Int] = {
+  // Arelonas of thelon facelons idelonntifielond in thelon melondia elonntitielons
+  privatelon delonf gelontFacelonMapArelonas(melondiaelonntitielons: Selonq[Melondiaelonntity]): Selonq[Int] = {
     for {
-      mediaEntity <- mediaEntities
-      metadata <- mediaEntity.additionalMetadata.toSeq
-      faceData <- metadata.faceData
-      faces <- faceData.faces
-    } yield {
-      faces
-        .getOrElse("orig", Seq.empty[Face])
-        .flatMap(f => f.boundingBox.map(bb => bb.width * bb.height))
+      melondiaelonntity <- melondiaelonntitielons
+      melontadata <- melondiaelonntity.additionalMelontadata.toSelonq
+      facelonData <- melontadata.facelonData
+      facelons <- facelonData.facelons
+    } yielonld {
+      facelons
+        .gelontOrelonlselon("orig", Selonq.elonmpty[Facelon])
+        .flatMap(f => f.boundingBox.map(bb => bb.width * bb.helonight))
     }
-  }.flatten
+  }.flattelonn
 
-  // All ColorPalettes in the media sorted by the percentage in descending order
-  private def getSortedColorPalette(mediaEntities: Seq[MediaEntity]): Seq[ColorPaletteItem] = {
+  // All ColorPalelonttelons in thelon melondia sortelond by thelon pelonrcelonntagelon in delonscelonnding ordelonr
+  privatelon delonf gelontSortelondColorPalelonttelon(melondiaelonntitielons: Selonq[Melondiaelonntity]): Selonq[ColorPalelonttelonItelonm] = {
     for {
-      mediaEntity <- mediaEntities
-      metadata <- mediaEntity.additionalMetadata.toSeq
-      colorInfo <- metadata.colorInfo
-    } yield {
-      colorInfo.palette
+      melondiaelonntity <- melondiaelonntitielons
+      melontadata <- melondiaelonntity.additionalMelontadata.toSelonq
+      colorInfo <- melontadata.colorInfo
+    } yielonld {
+      colorInfo.palelonttelon
     }
-  }.flatten.sortBy(_.percentage).reverse
+  }.flattelonn.sortBy(_.pelonrcelonntagelon).relonvelonrselon
 
-  // Id's of stickers applied by the user
-  private def getStickerFeatures(mediaEntities: Seq[MediaEntity]): Seq[Long] = {
+  // Id's of stickelonrs applielond by thelon uselonr
+  privatelon delonf gelontStickelonrFelonaturelons(melondiaelonntitielons: Selonq[Melondiaelonntity]): Selonq[Long] = {
     for {
-      mediaEntity <- mediaEntities
-      metadata <- mediaEntity.additionalMetadata.toSeq
-      stickerInfo <- metadata.stickerInfo
-    } yield {
-      stickerInfo.stickers.map(_.id)
+      melondiaelonntity <- melondiaelonntitielons
+      melontadata <- melondiaelonntity.additionalMelontadata.toSelonq
+      stickelonrInfo <- melontadata.stickelonrInfo
+    } yielonld {
+      stickelonrInfo.stickelonrs.map(_.id)
     }
-  }.flatten
+  }.flattelonn
 
-  // 3rd party media providers. eg. giphy for gifs
-  private def getMediaOriginProviders(mediaEntities: Seq[MediaEntity]): Seq[String] =
+  // 3rd party melondia providelonrs. elong. giphy for gifs
+  privatelon delonf gelontMelondiaOriginProvidelonrs(melondiaelonntitielons: Selonq[Melondiaelonntity]): Selonq[String] =
     for {
-      mediaEntity <- mediaEntities
-      metadata <- mediaEntity.additionalMetadata.toSeq
-      mediaOrigin <- metadata.foundMediaOrigin
-    } yield {
-      mediaOrigin.provider
+      melondiaelonntity <- melondiaelonntitielons
+      melontadata <- melondiaelonntity.additionalMelontadata.toSelonq
+      melondiaOrigin <- melontadata.foundMelondiaOrigin
+    } yielonld {
+      melondiaOrigin.providelonr
     }
 
-  private def getIsManaged(mediaEntities: Seq[MediaEntity]): Boolean = {
+  privatelon delonf gelontIsManagelond(melondiaelonntitielons: Selonq[Melondiaelonntity]): Boolelonan = {
     for {
-      mediaEntity <- mediaEntities
-      metadata <- mediaEntity.additionalMetadata.toSeq
-      managementInfo <- metadata.managementInfo
-    } yield {
-      managementInfo.managed
+      melondiaelonntity <- melondiaelonntitielons
+      melontadata <- melondiaelonntity.additionalMelontadata.toSelonq
+      managelonmelonntInfo <- melontadata.managelonmelonntInfo
+    } yielonld {
+      managelonmelonntInfo.managelond
     }
-  }.contains(true)
+  }.contains(truelon)
 
-  private def getIs360(mediaEntities: Seq[MediaEntity]): Boolean = {
+  privatelon delonf gelontIs360(melondiaelonntitielons: Selonq[Melondiaelonntity]): Boolelonan = {
     for {
-      mediaEntity <- mediaEntities
-      metadata <- mediaEntity.additionalMetadata.toSeq
-      info360 <- metadata.info360
-    } yield {
+      melondiaelonntity <- melondiaelonntitielons
+      melontadata <- melondiaelonntity.additionalMelontadata.toSelonq
+      info360 <- melontadata.info360
+    } yielonld {
       info360.is360
     }
-  }.contains(Some(true))
+  }.contains(Somelon(truelon))
 
-  private def getViewCount(mediaEntities: Seq[MediaEntity]): Option[Long] = {
+  privatelon delonf gelontVielonwCount(melondiaelonntitielons: Selonq[Melondiaelonntity]): Option[Long] = {
     for {
-      mediaEntity <- mediaEntities
-      metadata <- mediaEntity.additionalMetadata.toSeq
-      engagementInfo <- metadata.engagementInfo
-      viewCounts <- engagementInfo.viewCount
-    } yield {
-      viewCounts
+      melondiaelonntity <- melondiaelonntitielons
+      melontadata <- melondiaelonntity.additionalMelontadata.toSelonq
+      elonngagelonmelonntInfo <- melontadata.elonngagelonmelonntInfo
+      vielonwCounts <- elonngagelonmelonntInfo.vielonwCount
+    } yielonld {
+      vielonwCounts
     }
-  }.reduceOption(_ max _)
+  }.relonducelonOption(_ max _)
 
-  // metadata defined by the user when uploading the image
-  private def getUserDefinedProductMetadataFeatures(
-    mediaEntities: Seq[MediaEntity]
-  ): Seq[UserDefinedProductMetadataFeatures] =
+  // melontadata delonfinelond by thelon uselonr whelonn uploading thelon imagelon
+  privatelon delonf gelontUselonrDelonfinelondProductMelontadataFelonaturelons(
+    melondiaelonntitielons: Selonq[Melondiaelonntity]
+  ): Selonq[UselonrDelonfinelondProductMelontadataFelonaturelons] =
     for {
-      mediaEntity <- mediaEntities
-      userDefinedMetadata <- mediaEntity.metadata
-    } yield {
-      UserDefinedProductMetadataFeatures(
-        isMonetizable = userDefinedMetadata.monetizable,
-        isEmbeddable = userDefinedMetadata.embeddable,
-        hasSelectedPreviewImage = Some(userDefinedMetadata.previewImage.nonEmpty),
-        hasTitle = userDefinedMetadata.title.map(_.nonEmpty),
-        hasDescription = userDefinedMetadata.description.map(_.nonEmpty),
-        hasVisitSiteCallToAction = userDefinedMetadata.callToActions.map(_.visitSite.nonEmpty),
-        hasAppInstallCallToAction = userDefinedMetadata.callToActions.map(_.appInstall.nonEmpty),
-        hasWatchNowCallToAction = userDefinedMetadata.callToActions.map(_.watchNow.nonEmpty)
+      melondiaelonntity <- melondiaelonntitielons
+      uselonrDelonfinelondMelontadata <- melondiaelonntity.melontadata
+    } yielonld {
+      UselonrDelonfinelondProductMelontadataFelonaturelons(
+        isMonelontizablelon = uselonrDelonfinelondMelontadata.monelontizablelon,
+        iselonmbelonddablelon = uselonrDelonfinelondMelontadata.elonmbelonddablelon,
+        hasSelonlelonctelondPrelonvielonwImagelon = Somelon(uselonrDelonfinelondMelontadata.prelonvielonwImagelon.nonelonmpty),
+        hasTitlelon = uselonrDelonfinelondMelontadata.titlelon.map(_.nonelonmpty),
+        hasDelonscription = uselonrDelonfinelondMelontadata.delonscription.map(_.nonelonmpty),
+        hasVisitSitelonCallToAction = uselonrDelonfinelondMelontadata.callToActions.map(_.visitSitelon.nonelonmpty),
+        hasAppInstallCallToAction = uselonrDelonfinelondMelontadata.callToActions.map(_.appInstall.nonelonmpty),
+        hasWatchNowCallToAction = uselonrDelonfinelondMelontadata.callToActions.map(_.watchNow.nonelonmpty)
       )
     }
 
-  private def getOptBooleanFromSeqOpt(
-    seqOpt: Seq[Option[Boolean]],
-    default: Boolean = false
-  ): Option[Boolean] = Some(
-    seqOpt.exists(boolOpt => boolOpt.contains(true))
+  privatelon delonf gelontOptBoolelonanFromSelonqOpt(
+    selonqOpt: Selonq[Option[Boolelonan]],
+    delonfault: Boolelonan = falselon
+  ): Option[Boolelonan] = Somelon(
+    selonqOpt.elonxists(boolOpt => boolOpt.contains(truelon))
   )
 
 }
 
-case class MediaSizeFeatures(width: Int, height: Int, resizeMethod: Int)
+caselon class MelondiaSizelonFelonaturelons(width: Int, helonight: Int, relonsizelonMelonthod: Int)
 
-case class PlaybackFeatures(
+caselon class PlaybackFelonaturelons(
   durationMs: Option[Int],
-  bitRate: Option[Int],
-  aspectRatioNum: Option[Short],
-  aspectRatioDen: Option[Short])
+  bitRatelon: Option[Int],
+  aspelonctRatioNum: Option[Short],
+  aspelonctRatioDelonn: Option[Short])
 
-case class UserDefinedProductMetadataFeatures(
-  isMonetizable: Option[Boolean],
-  isEmbeddable: Option[Boolean],
-  hasSelectedPreviewImage: Option[Boolean],
-  hasTitle: Option[Boolean],
-  hasDescription: Option[Boolean],
-  hasVisitSiteCallToAction: Option[Boolean],
-  hasAppInstallCallToAction: Option[Boolean],
-  hasWatchNowCallToAction: Option[Boolean])
+caselon class UselonrDelonfinelondProductMelontadataFelonaturelons(
+  isMonelontizablelon: Option[Boolelonan],
+  iselonmbelonddablelon: Option[Boolelonan],
+  hasSelonlelonctelondPrelonvielonwImagelon: Option[Boolelonan],
+  hasTitlelon: Option[Boolelonan],
+  hasDelonscription: Option[Boolelonan],
+  hasVisitSitelonCallToAction: Option[Boolelonan],
+  hasAppInstallCallToAction: Option[Boolelonan],
+  hasWatchNowCallToAction: Option[Boolelonan])

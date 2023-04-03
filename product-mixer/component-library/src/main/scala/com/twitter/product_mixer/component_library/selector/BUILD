@@ -1,47 +1,47 @@
 scala_library(
-    name = "insert_append_results",
-    sources = ["InsertAppendResults.scala"],
-    compiler_option_sets = ["fatal_warnings"],
+    namelon = "inselonrt_appelonnd_relonsults",
+    sourcelons = ["InselonrtAppelonndRelonsults.scala"],
+    compilelonr_option_selonts = ["fatal_warnings"],
     platform = "java8",
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/model/candidate",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/common",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/selector",
+    strict_delonps = Truelon,
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        "product-mixelonr/componelonnt-library/src/main/scala/com/twittelonr/product_mixelonr/componelonnt_library/modelonl/candidatelon",
+        "product-mixelonr/corelon/src/main/scala/com/twittelonr/product_mixelonr/corelon/functional_componelonnt/common",
+        "product-mixelonr/corelon/src/main/scala/com/twittelonr/product_mixelonr/corelon/functional_componelonnt/selonlelonctor",
     ],
-    exports = [
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/model/candidate",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/common",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/selector",
+    elonxports = [
+        "product-mixelonr/componelonnt-library/src/main/scala/com/twittelonr/product_mixelonr/componelonnt_library/modelonl/candidatelon",
+        "product-mixelonr/corelon/src/main/scala/com/twittelonr/product_mixelonr/corelon/functional_componelonnt/common",
+        "product-mixelonr/corelon/src/main/scala/com/twittelonr/product_mixelonr/corelon/functional_componelonnt/selonlelonctor",
     ],
 )
 
 scala_library(
-    sources = [
-        "!InsertAppendResults.scala",
+    sourcelons = [
+        "!InselonrtAppelonndRelonsults.scala",
         "*.scala",
     ],
-    compiler_option_sets = ["fatal_warnings"],
+    compilelonr_option_selonts = ["fatal_warnings"],
     platform = "java8",
     scalac_plugins = ["no-roomba"],
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        ":insert_append_results",
-        "3rdparty/jvm/com/google/inject:guice",
-        "finatra/inject/inject-slf4j/src/main/scala/com/twitter/inject",
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/model/candidate",
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/model/candidate/ads",
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/model/query/ads",
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/selector/sorter",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/configapi",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/selector",
+    strict_delonps = Truelon,
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        ":inselonrt_appelonnd_relonsults",
+        "3rdparty/jvm/com/googlelon/injelonct:guicelon",
+        "finatra/injelonct/injelonct-slf4j/src/main/scala/com/twittelonr/injelonct",
+        "product-mixelonr/componelonnt-library/src/main/scala/com/twittelonr/product_mixelonr/componelonnt_library/modelonl/candidatelon",
+        "product-mixelonr/componelonnt-library/src/main/scala/com/twittelonr/product_mixelonr/componelonnt_library/modelonl/candidatelon/ads",
+        "product-mixelonr/componelonnt-library/src/main/scala/com/twittelonr/product_mixelonr/componelonnt_library/modelonl/quelonry/ads",
+        "product-mixelonr/componelonnt-library/src/main/scala/com/twittelonr/product_mixelonr/componelonnt_library/selonlelonctor/sortelonr",
+        "product-mixelonr/corelon/src/main/scala/com/twittelonr/product_mixelonr/corelon/functional_componelonnt/configapi",
+        "product-mixelonr/corelon/src/main/scala/com/twittelonr/product_mixelonr/corelon/functional_componelonnt/selonlelonctor",
     ],
-    exports = [
-        ":insert_append_results",
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/model/candidate",
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/selector/sorter",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/selector",
+    elonxports = [
+        ":inselonrt_appelonnd_relonsults",
+        "product-mixelonr/componelonnt-library/src/main/scala/com/twittelonr/product_mixelonr/componelonnt_library/modelonl/candidatelon",
+        "product-mixelonr/componelonnt-library/src/main/scala/com/twittelonr/product_mixelonr/componelonnt_library/selonlelonctor/sortelonr",
+        "product-mixelonr/corelon/src/main/scala/com/twittelonr/product_mixelonr/corelon/functional_componelonnt/selonlelonctor",
     ],
 )

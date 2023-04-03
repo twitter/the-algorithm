@@ -1,14 +1,14 @@
-package com.twitter.interaction_graph.injection
+packagelon com.twittelonr.intelonraction_graph.injelonction
 
-import com.twitter.interaction_graph.thriftscala.EdgeList
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.Long2BigEndian
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.ScalaCompactThrift
+import com.twittelonr.intelonraction_graph.thriftscala.elondgelonList
+import com.twittelonr.scalding_intelonrnal.multiformat.format.kelonyval.KelonyValInjelonction
+import com.twittelonr.scalding_intelonrnal.multiformat.format.kelonyval.KelonyValInjelonction.Long2Bigelonndian
+import com.twittelonr.scalding_intelonrnal.multiformat.format.kelonyval.KelonyValInjelonction.ScalaCompactThrift
 
-object EdgeListInjection {
-  final val injection: KeyValInjection[Long, EdgeList] =
-    KeyValInjection(
-      Long2BigEndian,
-      ScalaCompactThrift(EdgeList)
+objelonct elondgelonListInjelonction {
+  final val injelonction: KelonyValInjelonction[Long, elondgelonList] =
+    KelonyValInjelonction(
+      Long2Bigelonndian,
+      ScalaCompactThrift(elondgelonList)
     )
 }

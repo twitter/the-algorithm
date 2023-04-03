@@ -1,37 +1,37 @@
-package com.twitter.visibility.rules
+packagelon com.twittelonr.visibility.rulelons
 
-import com.twitter.visibility.models.TweetSafetyLabelType
-import com.twitter.visibility.rules.Condition.And
-import com.twitter.visibility.rules.Condition.HasSearchCandidateCountGreaterThan45
-import com.twitter.visibility.rules.Condition.IsFirstPageSearchResult
-import com.twitter.visibility.rules.Condition.Not
-import com.twitter.visibility.rules.Reason.FirstPageSearchResult
+import com.twittelonr.visibility.modelonls.TwelonelontSafelontyLabelonlTypelon
+import com.twittelonr.visibility.rulelons.Condition.And
+import com.twittelonr.visibility.rulelons.Condition.HasSelonarchCandidatelonCountGrelonatelonrThan45
+import com.twittelonr.visibility.rulelons.Condition.IsFirstPagelonSelonarchRelonsult
+import com.twittelonr.visibility.rulelons.Condition.Not
+import com.twittelonr.visibility.rulelons.Relonason.FirstPagelonSelonarchRelonsult
 
-abstract class FirstPageSearchResultWithTweetLabelRule(
+abstract class FirstPagelonSelonarchRelonsultWithTwelonelontLabelonlRulelon(
   action: Action,
-  tweetSafetyLabelType: TweetSafetyLabelType)
-    extends ConditionWithTweetLabelRule(
+  twelonelontSafelontyLabelonlTypelon: TwelonelontSafelontyLabelonlTypelon)
+    elonxtelonnds ConditionWithTwelonelontLabelonlRulelon(
       action,
-      IsFirstPageSearchResult,
-      tweetSafetyLabelType
+      IsFirstPagelonSelonarchRelonsult,
+      twelonelontSafelontyLabelonlTypelon
     )
 
-abstract class FirstPageSearchResultSmartOutOfNetworkWithTweetLabelRule(
+abstract class FirstPagelonSelonarchRelonsultSmartOutOfNelontworkWithTwelonelontLabelonlRulelon(
   action: Action,
-  tweetSafetyLabelType: TweetSafetyLabelType)
-    extends ConditionWithTweetLabelRule(
+  twelonelontSafelontyLabelonlTypelon: TwelonelontSafelontyLabelonlTypelon)
+    elonxtelonnds ConditionWithTwelonelontLabelonlRulelon(
       action,
       And(
-        IsFirstPageSearchResult,
-        HasSearchCandidateCountGreaterThan45,
-        Condition.NonAuthorViewer,
-        Not(Condition.ViewerDoesFollowAuthor),
-        Not(Condition.VerifiedAuthor)
+        IsFirstPagelonSelonarchRelonsult,
+        HasSelonarchCandidatelonCountGrelonatelonrThan45,
+        Condition.NonAuthorVielonwelonr,
+        Not(Condition.VielonwelonrDoelonsFollowAuthor),
+        Not(Condition.VelonrifielondAuthor)
       ),
-      tweetSafetyLabelType
+      twelonelontSafelontyLabelonlTypelon
     )
 
-object FirstPageSearchResultAgathaSpamDropRule
-    extends FirstPageSearchResultWithTweetLabelRule(
-      Drop(FirstPageSearchResult),
-      TweetSafetyLabelType.AgathaSpam)
+objelonct FirstPagelonSelonarchRelonsultAgathaSpamDropRulelon
+    elonxtelonnds FirstPagelonSelonarchRelonsultWithTwelonelontLabelonlRulelon(
+      Drop(FirstPagelonSelonarchRelonsult),
+      TwelonelontSafelontyLabelonlTypelon.AgathaSpam)

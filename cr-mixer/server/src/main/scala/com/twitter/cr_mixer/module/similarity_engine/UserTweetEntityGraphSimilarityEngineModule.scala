@@ -1,55 +1,55 @@
-package com.twitter.cr_mixer.module.similarity_engine
+packagelon com.twittelonr.cr_mixelonr.modulelon.similarity_elonnginelon
 
-import com.google.inject.Provides
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.cr_mixer.model.TweetWithScoreAndSocialProof
-import com.twitter.cr_mixer.config.TimeoutConfig
-import com.twitter.cr_mixer.param.decider.CrMixerDecider
-import com.twitter.cr_mixer.param.decider.DeciderConstants
-import com.twitter.cr_mixer.similarity_engine.UserTweetEntityGraphSimilarityEngine
-import com.twitter.cr_mixer.similarity_engine.SimilarityEngine.DeciderConfig
-import com.twitter.cr_mixer.similarity_engine.SimilarityEngine.GatingConfig
-import com.twitter.cr_mixer.similarity_engine.SimilarityEngine.SimilarityEngineConfig
-import com.twitter.cr_mixer.similarity_engine.StandardSimilarityEngine
-import com.twitter.cr_mixer.thriftscala.SimilarityEngineType
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
-import com.twitter.recos.user_tweet_entity_graph.thriftscala.UserTweetEntityGraph
-import javax.inject.Named
-import javax.inject.Singleton
+import com.googlelon.injelonct.Providelons
+import com.twittelonr.cr_mixelonr.modelonl.ModulelonNamelons
+import com.twittelonr.cr_mixelonr.modelonl.TwelonelontWithScorelonAndSocialProof
+import com.twittelonr.cr_mixelonr.config.TimelonoutConfig
+import com.twittelonr.cr_mixelonr.param.deloncidelonr.CrMixelonrDeloncidelonr
+import com.twittelonr.cr_mixelonr.param.deloncidelonr.DeloncidelonrConstants
+import com.twittelonr.cr_mixelonr.similarity_elonnginelon.UselonrTwelonelontelonntityGraphSimilarityelonnginelon
+import com.twittelonr.cr_mixelonr.similarity_elonnginelon.Similarityelonnginelon.DeloncidelonrConfig
+import com.twittelonr.cr_mixelonr.similarity_elonnginelon.Similarityelonnginelon.GatingConfig
+import com.twittelonr.cr_mixelonr.similarity_elonnginelon.Similarityelonnginelon.SimilarityelonnginelonConfig
+import com.twittelonr.cr_mixelonr.similarity_elonnginelon.StandardSimilarityelonnginelon
+import com.twittelonr.cr_mixelonr.thriftscala.SimilarityelonnginelonTypelon
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.injelonct.TwittelonrModulelon
+import com.twittelonr.reloncos.uselonr_twelonelont_elonntity_graph.thriftscala.UselonrTwelonelontelonntityGraph
+import javax.injelonct.Namelond
+import javax.injelonct.Singlelonton
 
-object UserTweetEntityGraphSimilarityEngineModule extends TwitterModule {
+objelonct UselonrTwelonelontelonntityGraphSimilarityelonnginelonModulelon elonxtelonnds TwittelonrModulelon {
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.UserTweetEntityGraphSimilarityEngine)
-  def providesUserTweetEntityGraphSimilarityEngine(
-    userTweetEntityGraphService: UserTweetEntityGraph.MethodPerEndpoint,
-    timeoutConfig: TimeoutConfig,
-    statsReceiver: StatsReceiver,
-    decider: CrMixerDecider
-  ): StandardSimilarityEngine[
-    UserTweetEntityGraphSimilarityEngine.Query,
-    TweetWithScoreAndSocialProof
+  @Providelons
+  @Singlelonton
+  @Namelond(ModulelonNamelons.UselonrTwelonelontelonntityGraphSimilarityelonnginelon)
+  delonf providelonsUselonrTwelonelontelonntityGraphSimilarityelonnginelon(
+    uselonrTwelonelontelonntityGraphSelonrvicelon: UselonrTwelonelontelonntityGraph.MelonthodPelonrelonndpoint,
+    timelonoutConfig: TimelonoutConfig,
+    statsReloncelonivelonr: StatsReloncelonivelonr,
+    deloncidelonr: CrMixelonrDeloncidelonr
+  ): StandardSimilarityelonnginelon[
+    UselonrTwelonelontelonntityGraphSimilarityelonnginelon.Quelonry,
+    TwelonelontWithScorelonAndSocialProof
   ] = {
-    new StandardSimilarityEngine[
-      UserTweetEntityGraphSimilarityEngine.Query,
-      TweetWithScoreAndSocialProof
+    nelonw StandardSimilarityelonnginelon[
+      UselonrTwelonelontelonntityGraphSimilarityelonnginelon.Quelonry,
+      TwelonelontWithScorelonAndSocialProof
     ](
-      implementingStore =
-        UserTweetEntityGraphSimilarityEngine(userTweetEntityGraphService, statsReceiver),
-      identifier = SimilarityEngineType.Uteg,
-      globalStats = statsReceiver,
-      engineConfig = SimilarityEngineConfig(
-        timeout = timeoutConfig.utegSimilarityEngineTimeout,
+      implelonmelonntingStorelon =
+        UselonrTwelonelontelonntityGraphSimilarityelonnginelon(uselonrTwelonelontelonntityGraphSelonrvicelon, statsReloncelonivelonr),
+      idelonntifielonr = SimilarityelonnginelonTypelon.Utelong,
+      globalStats = statsReloncelonivelonr,
+      elonnginelonConfig = SimilarityelonnginelonConfig(
+        timelonout = timelonoutConfig.utelongSimilarityelonnginelonTimelonout,
         gatingConfig = GatingConfig(
-          deciderConfig = Some(
-            DeciderConfig(decider, DeciderConstants.enableUserTweetEntityGraphTrafficDeciderKey)),
-          enableFeatureSwitch = None
+          deloncidelonrConfig = Somelon(
+            DeloncidelonrConfig(deloncidelonr, DeloncidelonrConstants.elonnablelonUselonrTwelonelontelonntityGraphTrafficDeloncidelonrKelony)),
+          elonnablelonFelonaturelonSwitch = Nonelon
         )
       ),
-      // We cannot use the key to cache anything in UTEG because the key contains a long list of userIds
-      memCacheConfig = None
+      // Welon cannot uselon thelon kelony to cachelon anything in UTelonG beloncauselon thelon kelony contains a long list of uselonrIds
+      melonmCachelonConfig = Nonelon
     )
   }
 }

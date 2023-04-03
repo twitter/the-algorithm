@@ -1,35 +1,35 @@
-package com.twitter.follow_recommendations.common.candidate_sources.sims
+packagelon com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.sims
 
-import com.google.inject.Singleton
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.strato.generated.client.onboarding.userrecs.NewSimsRefreshOnUserClientColumn
-import com.twitter.util.Duration
+import com.googlelon.injelonct.Singlelonton
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.helonrmit.modelonl.Algorithm
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonSourcelonIdelonntifielonr
+import com.twittelonr.strato.gelonnelonratelond.clielonnt.onboarding.uselonrreloncs.NelonwSimsRelonfrelonshOnUselonrClielonntColumn
+import com.twittelonr.util.Duration
 
-import javax.inject.Inject
+import javax.injelonct.Injelonct
 
-@Singleton
-class DBV2SimsRefreshStore @Inject() (
-  newSimsRefreshOnUserClientColumn: NewSimsRefreshOnUserClientColumn)
-    extends StratoBasedSimsCandidateSourceWithUnitView(
-      fetcher = newSimsRefreshOnUserClientColumn.fetcher,
-      identifier = DBV2SimsRefreshStore.Identifier)
+@Singlelonton
+class DBV2SimsRelonfrelonshStorelon @Injelonct() (
+  nelonwSimsRelonfrelonshOnUselonrClielonntColumn: NelonwSimsRelonfrelonshOnUselonrClielonntColumn)
+    elonxtelonnds StratoBaselondSimsCandidatelonSourcelonWithUnitVielonw(
+      felontchelonr = nelonwSimsRelonfrelonshOnUselonrClielonntColumn.felontchelonr,
+      idelonntifielonr = DBV2SimsRelonfrelonshStorelon.Idelonntifielonr)
 
-@Singleton
-class CachedDBV2SimsRefreshStore @Inject() (
-  newSimsRefreshOnUserClientColumn: NewSimsRefreshOnUserClientColumn,
-  statsReceiver: StatsReceiver)
-    extends CacheBasedSimsStore(
-      id = DBV2SimsRefreshStore.Identifier,
-      fetcher = newSimsRefreshOnUserClientColumn.fetcher,
-      maxCacheSize = DBV2SimsRefreshStore.MaxCacheSize,
-      cacheTtl = DBV2SimsRefreshStore.CacheTTL,
-      statsReceiver = statsReceiver.scope("CachedDBV2SimsRefreshStore", "cache")
+@Singlelonton
+class CachelondDBV2SimsRelonfrelonshStorelon @Injelonct() (
+  nelonwSimsRelonfrelonshOnUselonrClielonntColumn: NelonwSimsRelonfrelonshOnUselonrClielonntColumn,
+  statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds CachelonBaselondSimsStorelon(
+      id = DBV2SimsRelonfrelonshStorelon.Idelonntifielonr,
+      felontchelonr = nelonwSimsRelonfrelonshOnUselonrClielonntColumn.felontchelonr,
+      maxCachelonSizelon = DBV2SimsRelonfrelonshStorelon.MaxCachelonSizelon,
+      cachelonTtl = DBV2SimsRelonfrelonshStorelon.CachelonTTL,
+      statsReloncelonivelonr = statsReloncelonivelonr.scopelon("CachelondDBV2SimsRelonfrelonshStorelon", "cachelon")
     )
 
-object DBV2SimsRefreshStore {
-  val Identifier = CandidateSourceIdentifier(Algorithm.Sims.toString)
-  val MaxCacheSize = 5000
-  val CacheTTL: Duration = Duration.fromHours(24)
+objelonct DBV2SimsRelonfrelonshStorelon {
+  val Idelonntifielonr = CandidatelonSourcelonIdelonntifielonr(Algorithm.Sims.toString)
+  val MaxCachelonSizelon = 5000
+  val CachelonTTL: Duration = Duration.fromHours(24)
 }

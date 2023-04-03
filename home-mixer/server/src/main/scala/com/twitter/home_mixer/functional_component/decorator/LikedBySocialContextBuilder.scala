@@ -1,54 +1,54 @@
-package com.twitter.home_mixer.functional_component.decorator
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.deloncorator
 
-import com.twitter.home_mixer.model.HomeFeatures.PerspectiveFilteredLikedByUserIdsFeature
-import com.twitter.home_mixer.model.HomeFeatures.SGSValidLikedByUserIdsFeature
-import com.twitter.home_mixer.product.following.model.HomeMixerExternalStrings
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.social_context.BaseSocialContextBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.LikeGeneralContextType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.SocialContext
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.product.guice.scope.ProductScoped
-import com.twitter.stringcenter.client.StringCenter
-import javax.inject.Inject
-import javax.inject.Provider
-import javax.inject.Singleton
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.PelonrspelonctivelonFiltelonrelondLikelondByUselonrIdsFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.SGSValidLikelondByUselonrIdsFelonaturelon
+import com.twittelonr.homelon_mixelonr.product.following.modelonl.HomelonMixelonrelonxtelonrnalStrings
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.TwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.social_contelonxt.BaselonSocialContelonxtBuildelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.LikelonGelonnelonralContelonxtTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.SocialContelonxt
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.product_mixelonr.corelon.product.guicelon.scopelon.ProductScopelond
+import com.twittelonr.stringcelonntelonr.clielonnt.StringCelonntelonr
+import javax.injelonct.Injelonct
+import javax.injelonct.Providelonr
+import javax.injelonct.Singlelonton
 
-@Singleton
-case class LikedBySocialContextBuilder @Inject() (
-  externalStrings: HomeMixerExternalStrings,
-  @ProductScoped stringCenterProvider: Provider[StringCenter])
-    extends BaseSocialContextBuilder[PipelineQuery, TweetCandidate] {
+@Singlelonton
+caselon class LikelondBySocialContelonxtBuildelonr @Injelonct() (
+  elonxtelonrnalStrings: HomelonMixelonrelonxtelonrnalStrings,
+  @ProductScopelond stringCelonntelonrProvidelonr: Providelonr[StringCelonntelonr])
+    elonxtelonnds BaselonSocialContelonxtBuildelonr[PipelonlinelonQuelonry, TwelonelontCandidatelon] {
 
-  private val stringCenter = stringCenterProvider.get()
+  privatelon val stringCelonntelonr = stringCelonntelonrProvidelonr.gelont()
 
-  private val engagerSocialContextBuilder = EngagerSocialContextBuilder(
-    contextType = LikeGeneralContextType,
-    stringCenter = stringCenter,
-    oneUserString = externalStrings.socialContextOneUserLikedString,
-    twoUsersString = externalStrings.socialContextTwoUsersLikedString,
-    moreUsersString = externalStrings.socialContextMoreUsersLikedString,
-    timelineTitle = externalStrings.socialContextLikedByTimelineTitle
+  privatelon val elonngagelonrSocialContelonxtBuildelonr = elonngagelonrSocialContelonxtBuildelonr(
+    contelonxtTypelon = LikelonGelonnelonralContelonxtTypelon,
+    stringCelonntelonr = stringCelonntelonr,
+    onelonUselonrString = elonxtelonrnalStrings.socialContelonxtOnelonUselonrLikelondString,
+    twoUselonrsString = elonxtelonrnalStrings.socialContelonxtTwoUselonrsLikelondString,
+    morelonUselonrsString = elonxtelonrnalStrings.socialContelonxtMorelonUselonrsLikelondString,
+    timelonlinelonTitlelon = elonxtelonrnalStrings.socialContelonxtLikelondByTimelonlinelonTitlelon
   )
 
-  def apply(
-    query: PipelineQuery,
-    candidate: TweetCandidate,
-    candidateFeatures: FeatureMap
-  ): Option[SocialContext] = {
+  delonf apply(
+    quelonry: PipelonlinelonQuelonry,
+    candidatelon: TwelonelontCandidatelon,
+    candidatelonFelonaturelons: FelonaturelonMap
+  ): Option[SocialContelonxt] = {
 
-    // Liked by users are valid only if they pass both the SGS and Perspective filters.
-    val validLikedByUserIds =
-      candidateFeatures
-        .getOrElse(SGSValidLikedByUserIdsFeature, Nil)
-        .filter(
-          candidateFeatures.getOrElse(PerspectiveFilteredLikedByUserIdsFeature, Nil).toSet.contains)
+    // Likelond by uselonrs arelon valid only if thelony pass both thelon SGS and Pelonrspelonctivelon filtelonrs.
+    val validLikelondByUselonrIds =
+      candidatelonFelonaturelons
+        .gelontOrelonlselon(SGSValidLikelondByUselonrIdsFelonaturelon, Nil)
+        .filtelonr(
+          candidatelonFelonaturelons.gelontOrelonlselon(PelonrspelonctivelonFiltelonrelondLikelondByUselonrIdsFelonaturelon, Nil).toSelont.contains)
 
-    engagerSocialContextBuilder(
-      socialContextIds = validLikedByUserIds,
-      query = query,
-      candidateFeatures = candidateFeatures
+    elonngagelonrSocialContelonxtBuildelonr(
+      socialContelonxtIds = validLikelondByUselonrIds,
+      quelonry = quelonry,
+      candidatelonFelonaturelons = candidatelonFelonaturelons
     )
   }
 }

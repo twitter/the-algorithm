@@ -1,30 +1,30 @@
-package com.twitter.timelineranker.common
+packagelon com.twittelonr.timelonlinelonrankelonr.common
 
-import com.twitter.search.common.constants.thriftscala.ThriftLanguage
-import com.twitter.servo.util.FutureArrow
-import com.twitter.timelineranker.model.RecapQuery
-import com.twitter.timelines.clients.manhattan.LanguageUtils
-import com.twitter.timelines.clients.manhattan.UserMetadataClient
-import com.twitter.timelines.util.FailOpenHandler
-import com.twitter.util.Future
-import com.twitter.service.metastore.gen.thriftscala.UserLanguages
+import com.twittelonr.selonarch.common.constants.thriftscala.ThriftLanguagelon
+import com.twittelonr.selonrvo.util.FuturelonArrow
+import com.twittelonr.timelonlinelonrankelonr.modelonl.ReloncapQuelonry
+import com.twittelonr.timelonlinelons.clielonnts.manhattan.LanguagelonUtils
+import com.twittelonr.timelonlinelons.clielonnts.manhattan.UselonrMelontadataClielonnt
+import com.twittelonr.timelonlinelons.util.FailOpelonnHandlelonr
+import com.twittelonr.util.Futurelon
+import com.twittelonr.selonrvicelon.melontastorelon.gelonn.thriftscala.UselonrLanguagelons
 
-object UserLanguagesTransform {
-  val EmptyUserLanguagesFuture: Future[UserLanguages] =
-    Future.value(UserMetadataClient.EmptyUserLanguages)
+objelonct UselonrLanguagelonsTransform {
+  val elonmptyUselonrLanguagelonsFuturelon: Futurelon[UselonrLanguagelons] =
+    Futurelon.valuelon(UselonrMelontadataClielonnt.elonmptyUselonrLanguagelons)
 }
 
 /**
- * FutureArrow which fetches user languages
- * It should be run in parallel with the main pipeline which fetches and hydrates CandidateTweets
+ * FuturelonArrow which felontchelons uselonr languagelons
+ * It should belon run in parallelonl with thelon main pipelonlinelon which felontchelons and hydratelons CandidatelonTwelonelonts
  */
-class UserLanguagesTransform(handler: FailOpenHandler, userMetadataClient: UserMetadataClient)
-    extends FutureArrow[RecapQuery, Seq[ThriftLanguage]] {
-  override def apply(request: RecapQuery): Future[Seq[ThriftLanguage]] = {
-    import UserLanguagesTransform._
+class UselonrLanguagelonsTransform(handlelonr: FailOpelonnHandlelonr, uselonrMelontadataClielonnt: UselonrMelontadataClielonnt)
+    elonxtelonnds FuturelonArrow[ReloncapQuelonry, Selonq[ThriftLanguagelon]] {
+  ovelonrridelon delonf apply(relonquelonst: ReloncapQuelonry): Futurelon[Selonq[ThriftLanguagelon]] = {
+    import UselonrLanguagelonsTransform._
 
-    handler {
-      userMetadataClient.getUserLanguages(request.userId)
-    } { _: Throwable => EmptyUserLanguagesFuture }
-  }.map(LanguageUtils.computeLanguages(_))
+    handlelonr {
+      uselonrMelontadataClielonnt.gelontUselonrLanguagelons(relonquelonst.uselonrId)
+    } { _: Throwablelon => elonmptyUselonrLanguagelonsFuturelon }
+  }.map(LanguagelonUtils.computelonLanguagelons(_))
 }

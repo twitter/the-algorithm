@@ -1,12 +1,12 @@
-package com.twitter.search.common.search;
+packagelon com.twittelonr.selonarch.common.selonarch;
 
 /**
- * Provide an accessor for a doc ID. This is useful for classes that iterate through doc IDs
- * and maintain a "last seen" doc ID.
+ * Providelon an accelonssor for a doc ID. This is uselonful for classelons that itelonratelon through doc IDs
+ * and maintain a "last selonelonn" doc ID.
  */
-public interface DocIdTracker {
+public intelonrfacelon DocIdTrackelonr {
   /**
-   * Retrieve current doc ID
+   * Relontrielonvelon currelonnt doc ID
    */
-  int getCurrentDocId();
+  int gelontCurrelonntDocId();
 }

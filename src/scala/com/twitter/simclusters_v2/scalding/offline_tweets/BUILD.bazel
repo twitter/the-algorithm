@@ -1,27 +1,27 @@
 scala_library(
-    sources = [
+    sourcelons = [
         "*.scala",
     ],
     platform = "java8",
-    tags = ["bazel-only"],
-    dependencies = [
-        "src/scala/com/twitter/simclusters_v2/scalding",
-        "tweetsource/public_tweets/src/main/scala/com/twitter/tweetsource/public_tweets:public_tweets-scala",
-        "usersource/snapshot/src/main/scala/com/twitter/usersource/snapshot/flat:usersource_flat-scala",
+    tags = ["bazelonl-only"],
+    delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/simclustelonrs_v2/scalding",
+        "twelonelontsourcelon/public_twelonelonts/src/main/scala/com/twittelonr/twelonelontsourcelon/public_twelonelonts:public_twelonelonts-scala",
+        "uselonrsourcelon/snapshot/src/main/scala/com/twittelonr/uselonrsourcelon/snapshot/flat:uselonrsourcelon_flat-scala",
     ],
 )
 
 hadoop_binary(
-    name = "offline_cluster_top_media_tweets_20M_145K_2020-adhoc",
-    main = "com.twitter.simclusters_v2.scalding.offline_tweets.AdhocClusterTopTweetsJob",
+    namelon = "offlinelon_clustelonr_top_melondia_twelonelonts_20M_145K_2020-adhoc",
+    main = "com.twittelonr.simclustelonrs_v2.scalding.offlinelon_twelonelonts.AdhocClustelonrTopTwelonelontsJob",
     platform = "java8",
-    runtime_platform = "java8",
+    runtimelon_platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
+        "bazelonl-compatiblelon",
+        "bazelonl-compatiblelon:migratelond",
+        "bazelonl-only",
     ],
-    dependencies = [
-        ":offline_tweets",
+    delonpelonndelonncielons = [
+        ":offlinelon_twelonelonts",
     ],
 )

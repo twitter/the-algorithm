@@ -1,51 +1,51 @@
-package com.twitter.product_mixer.core.pipeline.candidate
+packagelon com.twittelonr.product_mixelonr.corelon.pipelonlinelon.candidatelon
 
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.functional_component.candidate_source.StaticCandidateSource
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineResultsTransformer
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.functional_component.decorator.CandidateDecorator
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.CandidatelonSourcelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.StaticCandidatelonSourcelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.transformelonr.CandidatelonPipelonlinelonQuelonryTransformelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.transformelonr.CandidatelonPipelonlinelonRelonsultsTransformelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonPipelonlinelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonSourcelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.CandidatelonDeloncorator
 
-object StaticCandidatePipelineConfig {
+objelonct StaticCandidatelonPipelonlinelonConfig {
 
   /**
-   * Build a [[StaticCandidatePipelineConfig]] with a [[CandidateSource]] that returns the [[candidate]]
+   * Build a [[StaticCandidatelonPipelonlinelonConfig]] with a [[CandidatelonSourcelon]] that relonturns thelon [[candidatelon]]
    */
-  def apply[Query <: PipelineQuery, Candidate <: UniversalNoun[Any]](
-    identifier: CandidatePipelineIdentifier,
-    candidate: Candidate,
-    decorator: Option[CandidateDecorator[Query, Candidate]] = None
-  ): StaticCandidatePipelineConfig[Query, Candidate] = {
+  delonf apply[Quelonry <: PipelonlinelonQuelonry, Candidatelon <: UnivelonrsalNoun[Any]](
+    idelonntifielonr: CandidatelonPipelonlinelonIdelonntifielonr,
+    candidatelon: Candidatelon,
+    deloncorator: Option[CandidatelonDeloncorator[Quelonry, Candidatelon]] = Nonelon
+  ): StaticCandidatelonPipelonlinelonConfig[Quelonry, Candidatelon] = {
 
-    // Renaming variables to keep the interface clean, but avoid naming collisions when creating
-    // the anonymous class.
-    val _identifier = identifier
-    val _candidate = candidate
-    val _decorator = decorator
+    // Relonnaming variablelons to kelonelonp thelon intelonrfacelon clelonan, but avoid naming collisions whelonn crelonating
+    // thelon anonymous class.
+    val _idelonntifielonr = idelonntifielonr
+    val _candidatelon = candidatelon
+    val _deloncorator = deloncorator
 
-    new StaticCandidatePipelineConfig[Query, Candidate] {
-      override val identifier = _identifier
-      override val candidate = _candidate
-      override val decorator = _decorator
+    nelonw StaticCandidatelonPipelonlinelonConfig[Quelonry, Candidatelon] {
+      ovelonrridelon val idelonntifielonr = _idelonntifielonr
+      ovelonrridelon val candidatelon = _candidatelon
+      ovelonrridelon val deloncorator = _deloncorator
     }
   }
 }
 
-trait StaticCandidatePipelineConfig[Query <: PipelineQuery, Candidate <: UniversalNoun[Any]]
-    extends CandidatePipelineConfig[Query, Unit, Unit, Candidate] {
+trait StaticCandidatelonPipelonlinelonConfig[Quelonry <: PipelonlinelonQuelonry, Candidatelon <: UnivelonrsalNoun[Any]]
+    elonxtelonnds CandidatelonPipelonlinelonConfig[Quelonry, Unit, Unit, Candidatelon] {
 
-  val candidate: Candidate
+  val candidatelon: Candidatelon
 
-  override def candidateSource: CandidateSource[Unit, Unit] = StaticCandidateSource[Unit](
-    identifier = CandidateSourceIdentifier(identifier.name),
-    result = Seq(()))
+  ovelonrridelon delonf candidatelonSourcelon: CandidatelonSourcelon[Unit, Unit] = StaticCandidatelonSourcelon[Unit](
+    idelonntifielonr = CandidatelonSourcelonIdelonntifielonr(idelonntifielonr.namelon),
+    relonsult = Selonq(()))
 
-  override val queryTransformer: CandidatePipelineQueryTransformer[Query, Unit] = _ => Unit
+  ovelonrridelon val quelonryTransformelonr: CandidatelonPipelonlinelonQuelonryTransformelonr[Quelonry, Unit] = _ => Unit
 
-  override val resultTransformer: CandidatePipelineResultsTransformer[Unit, Candidate] = _ =>
-    candidate
+  ovelonrridelon val relonsultTransformelonr: CandidatelonPipelonlinelonRelonsultsTransformelonr[Unit, Candidatelon] = _ =>
+    candidatelon
 }

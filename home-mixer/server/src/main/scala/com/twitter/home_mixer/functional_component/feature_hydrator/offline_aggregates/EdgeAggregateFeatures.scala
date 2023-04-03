@@ -1,107 +1,107 @@
-package com.twitter.home_mixer.functional_component.feature_hydrator.offline_aggregates
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator.offlinelon_aggrelongatelons
 
-import com.twitter.home_mixer.functional_component.feature_hydrator.TSPInferredTopicFeature
-import com.twitter.home_mixer.functional_component.feature_hydrator.adapters.offline_aggregates.PassThroughAdapter
-import com.twitter.home_mixer.functional_component.feature_hydrator.adapters.offline_aggregates.SparseAggregatesToDenseAdapter
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.MentionUserIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.TopicIdSocialContextFeature
-import com.twitter.home_mixer.util.CandidatesUtil
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.AggregateType
-import com.twitter.timelines.prediction.common.aggregates.TimelinesAggregationConfig
-import com.twitter.timelines.prediction.common.aggregates.TimelinesAggregationConfig.CombineCountPolicies
+import com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator.TSPInfelonrrelondTopicFelonaturelon
+import com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator.adaptelonrs.offlinelon_aggrelongatelons.PassThroughAdaptelonr
+import com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator.adaptelonrs.offlinelon_aggrelongatelons.SparselonAggrelongatelonsToDelonnselonAdaptelonr
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.AuthorIdFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.MelonntionUselonrIdFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.TopicIdSocialContelonxtFelonaturelon
+import com.twittelonr.homelon_mixelonr.util.CandidatelonsUtil
+import com.twittelonr.timelonlinelons.data_procelonssing.ml_util.aggrelongation_framelonwork.AggrelongatelonTypelon
+import com.twittelonr.timelonlinelons.prelondiction.common.aggrelongatelons.TimelonlinelonsAggrelongationConfig
+import com.twittelonr.timelonlinelons.prelondiction.common.aggrelongatelons.TimelonlinelonsAggrelongationConfig.CombinelonCountPolicielons
 
-object EdgeAggregateFeatures {
+objelonct elondgelonAggrelongatelonFelonaturelons {
 
-  object UserAuthorAggregateFeature
-      extends BaseEdgeAggregateFeature(
-        aggregateGroups = TimelinesAggregationConfig.userAuthorAggregatesV2 ++ Set(
-          TimelinesAggregationConfig.userAuthorAggregatesV5,
-          TimelinesAggregationConfig.tweetSourceUserAuthorAggregatesV1,
-          TimelinesAggregationConfig.twitterWideUserAuthorAggregates
+  objelonct UselonrAuthorAggrelongatelonFelonaturelon
+      elonxtelonnds BaselonelondgelonAggrelongatelonFelonaturelon(
+        aggrelongatelonGroups = TimelonlinelonsAggrelongationConfig.uselonrAuthorAggrelongatelonsV2 ++ Selont(
+          TimelonlinelonsAggrelongationConfig.uselonrAuthorAggrelongatelonsV5,
+          TimelonlinelonsAggrelongationConfig.twelonelontSourcelonUselonrAuthorAggrelongatelonsV1,
+          TimelonlinelonsAggrelongationConfig.twittelonrWidelonUselonrAuthorAggrelongatelons
         ),
-        aggregateType = AggregateType.UserAuthor,
-        extractMapFn = _.userAuthorAggregates,
-        adapter = PassThroughAdapter,
-        getSecondaryKeysFn = _.features.getOrElse(AuthorIdFeature, None).toSeq
+        aggrelongatelonTypelon = AggrelongatelonTypelon.UselonrAuthor,
+        elonxtractMapFn = _.uselonrAuthorAggrelongatelons,
+        adaptelonr = PassThroughAdaptelonr,
+        gelontSeloncondaryKelonysFn = _.felonaturelons.gelontOrelonlselon(AuthorIdFelonaturelon, Nonelon).toSelonq
       )
 
-  object UserOriginalAuthorAggregateFeature
-      extends BaseEdgeAggregateFeature(
-        aggregateGroups = Set(
-          TimelinesAggregationConfig.userOriginalAuthorReciprocalEngagementAggregates),
-        aggregateType = AggregateType.UserOriginalAuthor,
-        extractMapFn = _.userOriginalAuthorAggregates,
-        adapter = PassThroughAdapter,
-        getSecondaryKeysFn = candidate =>
-          CandidatesUtil.getOriginalAuthorId(candidate.features).toSeq
+  objelonct UselonrOriginalAuthorAggrelongatelonFelonaturelon
+      elonxtelonnds BaselonelondgelonAggrelongatelonFelonaturelon(
+        aggrelongatelonGroups = Selont(
+          TimelonlinelonsAggrelongationConfig.uselonrOriginalAuthorRelonciprocalelonngagelonmelonntAggrelongatelons),
+        aggrelongatelonTypelon = AggrelongatelonTypelon.UselonrOriginalAuthor,
+        elonxtractMapFn = _.uselonrOriginalAuthorAggrelongatelons,
+        adaptelonr = PassThroughAdaptelonr,
+        gelontSeloncondaryKelonysFn = candidatelon =>
+          CandidatelonsUtil.gelontOriginalAuthorId(candidatelon.felonaturelons).toSelonq
       )
 
-  object UserTopicAggregateFeature
-      extends BaseEdgeAggregateFeature(
-        aggregateGroups = Set(
-          TimelinesAggregationConfig.userTopicAggregates,
-          TimelinesAggregationConfig.userTopicAggregatesV2,
+  objelonct UselonrTopicAggrelongatelonFelonaturelon
+      elonxtelonnds BaselonelondgelonAggrelongatelonFelonaturelon(
+        aggrelongatelonGroups = Selont(
+          TimelonlinelonsAggrelongationConfig.uselonrTopicAggrelongatelons,
+          TimelonlinelonsAggrelongationConfig.uselonrTopicAggrelongatelonsV2,
         ),
-        aggregateType = AggregateType.UserTopic,
-        extractMapFn = _.userTopicAggregates,
-        adapter = PassThroughAdapter,
-        getSecondaryKeysFn = candidate =>
-          candidate.features.getOrElse(TopicIdSocialContextFeature, None).toSeq
+        aggrelongatelonTypelon = AggrelongatelonTypelon.UselonrTopic,
+        elonxtractMapFn = _.uselonrTopicAggrelongatelons,
+        adaptelonr = PassThroughAdaptelonr,
+        gelontSeloncondaryKelonysFn = candidatelon =>
+          candidatelon.felonaturelons.gelontOrelonlselon(TopicIdSocialContelonxtFelonaturelon, Nonelon).toSelonq
       )
 
-  object UserMentionAggregateFeature
-      extends BaseEdgeAggregateFeature(
-        aggregateGroups = Set(TimelinesAggregationConfig.userMentionAggregates),
-        aggregateType = AggregateType.UserMention,
-        extractMapFn = _.userMentionAggregates,
-        adapter = new SparseAggregatesToDenseAdapter(CombineCountPolicies.MentionCountsPolicy),
-        getSecondaryKeysFn = candidate =>
-          candidate.features.getOrElse(MentionUserIdFeature, Seq.empty)
+  objelonct UselonrMelonntionAggrelongatelonFelonaturelon
+      elonxtelonnds BaselonelondgelonAggrelongatelonFelonaturelon(
+        aggrelongatelonGroups = Selont(TimelonlinelonsAggrelongationConfig.uselonrMelonntionAggrelongatelons),
+        aggrelongatelonTypelon = AggrelongatelonTypelon.UselonrMelonntion,
+        elonxtractMapFn = _.uselonrMelonntionAggrelongatelons,
+        adaptelonr = nelonw SparselonAggrelongatelonsToDelonnselonAdaptelonr(CombinelonCountPolicielons.MelonntionCountsPolicy),
+        gelontSeloncondaryKelonysFn = candidatelon =>
+          candidatelon.felonaturelons.gelontOrelonlselon(MelonntionUselonrIdFelonaturelon, Selonq.elonmpty)
       )
 
-  object UserInferredTopicAggregateFeature
-      extends BaseEdgeAggregateFeature(
-        aggregateGroups = Set(
-          TimelinesAggregationConfig.userInferredTopicAggregates,
-          TimelinesAggregationConfig.userInferredTopicAggregatesV2
+  objelonct UselonrInfelonrrelondTopicAggrelongatelonFelonaturelon
+      elonxtelonnds BaselonelondgelonAggrelongatelonFelonaturelon(
+        aggrelongatelonGroups = Selont(
+          TimelonlinelonsAggrelongationConfig.uselonrInfelonrrelondTopicAggrelongatelons,
+          TimelonlinelonsAggrelongationConfig.uselonrInfelonrrelondTopicAggrelongatelonsV2
         ),
-        aggregateType = AggregateType.UserInferredTopic,
-        extractMapFn = _.userInferredTopicAggregates,
-        adapter = new SparseAggregatesToDenseAdapter(
-          CombineCountPolicies.UserInferredTopicV2CountsPolicy),
-        getSecondaryKeysFn = candidate =>
-          candidate.features.getOrElse(TSPInferredTopicFeature, Map.empty[Long, Double]).keys.toSeq
+        aggrelongatelonTypelon = AggrelongatelonTypelon.UselonrInfelonrrelondTopic,
+        elonxtractMapFn = _.uselonrInfelonrrelondTopicAggrelongatelons,
+        adaptelonr = nelonw SparselonAggrelongatelonsToDelonnselonAdaptelonr(
+          CombinelonCountPolicielons.UselonrInfelonrrelondTopicV2CountsPolicy),
+        gelontSeloncondaryKelonysFn = candidatelon =>
+          candidatelon.felonaturelons.gelontOrelonlselon(TSPInfelonrrelondTopicFelonaturelon, Map.elonmpty[Long, Doublelon]).kelonys.toSelonq
       )
 
-  object UserMediaUnderstandingAnnotationAggregateFeature
-      extends BaseEdgeAggregateFeature(
-        aggregateGroups = Set(
-          TimelinesAggregationConfig.userMediaUnderstandingAnnotationAggregates),
-        aggregateType = AggregateType.UserMediaUnderstandingAnnotation,
-        extractMapFn = _.userMediaUnderstandingAnnotationAggregates,
-        adapter = new SparseAggregatesToDenseAdapter(
-          CombineCountPolicies.UserMediaUnderstandingAnnotationCountsPolicy),
-        getSecondaryKeysFn = candidate =>
-          CandidatesUtil.getMediaUnderstandingAnnotationIds(candidate.features)
+  objelonct UselonrMelondiaUndelonrstandingAnnotationAggrelongatelonFelonaturelon
+      elonxtelonnds BaselonelondgelonAggrelongatelonFelonaturelon(
+        aggrelongatelonGroups = Selont(
+          TimelonlinelonsAggrelongationConfig.uselonrMelondiaUndelonrstandingAnnotationAggrelongatelons),
+        aggrelongatelonTypelon = AggrelongatelonTypelon.UselonrMelondiaUndelonrstandingAnnotation,
+        elonxtractMapFn = _.uselonrMelondiaUndelonrstandingAnnotationAggrelongatelons,
+        adaptelonr = nelonw SparselonAggrelongatelonsToDelonnselonAdaptelonr(
+          CombinelonCountPolicielons.UselonrMelondiaUndelonrstandingAnnotationCountsPolicy),
+        gelontSeloncondaryKelonysFn = candidatelon =>
+          CandidatelonsUtil.gelontMelondiaUndelonrstandingAnnotationIds(candidatelon.felonaturelons)
       )
 
-  object UserEngagerAggregateFeature
-      extends BaseEdgeAggregateFeature(
-        aggregateGroups = Set(TimelinesAggregationConfig.userEngagerAggregates),
-        aggregateType = AggregateType.UserEngager,
-        extractMapFn = _.userEngagerAggregates,
-        adapter = new SparseAggregatesToDenseAdapter(CombineCountPolicies.EngagerCountsPolicy),
-        getSecondaryKeysFn = candidate => CandidatesUtil.getEngagerUserIds(candidate.features)
+  objelonct UselonrelonngagelonrAggrelongatelonFelonaturelon
+      elonxtelonnds BaselonelondgelonAggrelongatelonFelonaturelon(
+        aggrelongatelonGroups = Selont(TimelonlinelonsAggrelongationConfig.uselonrelonngagelonrAggrelongatelons),
+        aggrelongatelonTypelon = AggrelongatelonTypelon.Uselonrelonngagelonr,
+        elonxtractMapFn = _.uselonrelonngagelonrAggrelongatelons,
+        adaptelonr = nelonw SparselonAggrelongatelonsToDelonnselonAdaptelonr(CombinelonCountPolicielons.elonngagelonrCountsPolicy),
+        gelontSeloncondaryKelonysFn = candidatelon => CandidatelonsUtil.gelontelonngagelonrUselonrIds(candidatelon.felonaturelons)
       )
 
-  object UserEngagerGoodClickAggregateFeature
-      extends BaseEdgeAggregateFeature(
-        aggregateGroups = Set(TimelinesAggregationConfig.userEngagerGoodClickAggregates),
-        aggregateType = AggregateType.UserEngager,
-        extractMapFn = _.userEngagerAggregates,
-        adapter = new SparseAggregatesToDenseAdapter(
-          CombineCountPolicies.EngagerGoodClickCountsPolicy),
-        getSecondaryKeysFn = candidate => CandidatesUtil.getEngagerUserIds(candidate.features)
+  objelonct UselonrelonngagelonrGoodClickAggrelongatelonFelonaturelon
+      elonxtelonnds BaselonelondgelonAggrelongatelonFelonaturelon(
+        aggrelongatelonGroups = Selont(TimelonlinelonsAggrelongationConfig.uselonrelonngagelonrGoodClickAggrelongatelons),
+        aggrelongatelonTypelon = AggrelongatelonTypelon.Uselonrelonngagelonr,
+        elonxtractMapFn = _.uselonrelonngagelonrAggrelongatelons,
+        adaptelonr = nelonw SparselonAggrelongatelonsToDelonnselonAdaptelonr(
+          CombinelonCountPolicielons.elonngagelonrGoodClickCountsPolicy),
+        gelontSeloncondaryKelonysFn = candidatelon => CandidatelonsUtil.gelontelonngagelonrUselonrIds(candidatelon.felonaturelons)
       )
 }

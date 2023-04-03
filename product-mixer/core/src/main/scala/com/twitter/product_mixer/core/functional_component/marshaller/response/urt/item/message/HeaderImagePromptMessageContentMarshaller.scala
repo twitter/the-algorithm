@@ -1,33 +1,33 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.message
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.itelonm.melonssagelon
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.richtext.RichTextMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.HeaderImagePromptMessageContent
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.richtelonxt.RichTelonxtMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.melonssagelon.HelonadelonrImagelonPromptMelonssagelonContelonnt
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class HeaderImagePromptMessageContentMarshaller @Inject() (
-  messageImageMarshaller: MessageImageMarshaller,
-  messageTextActionMarshaller: MessageTextActionMarshaller,
-  messageActionMarshaller: MessageActionMarshaller,
-  richTextMarshaller: RichTextMarshaller) {
+@Singlelonton
+class HelonadelonrImagelonPromptMelonssagelonContelonntMarshallelonr @Injelonct() (
+  melonssagelonImagelonMarshallelonr: MelonssagelonImagelonMarshallelonr,
+  melonssagelonTelonxtActionMarshallelonr: MelonssagelonTelonxtActionMarshallelonr,
+  melonssagelonActionMarshallelonr: MelonssagelonActionMarshallelonr,
+  richTelonxtMarshallelonr: RichTelonxtMarshallelonr) {
 
-  def apply(
-    headerImagePromptMessageContent: HeaderImagePromptMessageContent
-  ): urt.MessageContent =
-    urt.MessageContent.HeaderImagePrompt(
-      urt.HeaderImagePrompt(
-        headerImage = messageImageMarshaller(headerImagePromptMessageContent.headerImage),
-        headerText = headerImagePromptMessageContent.headerText,
-        bodyText = headerImagePromptMessageContent.bodyText,
+  delonf apply(
+    helonadelonrImagelonPromptMelonssagelonContelonnt: HelonadelonrImagelonPromptMelonssagelonContelonnt
+  ): urt.MelonssagelonContelonnt =
+    urt.MelonssagelonContelonnt.HelonadelonrImagelonPrompt(
+      urt.HelonadelonrImagelonPrompt(
+        helonadelonrImagelon = melonssagelonImagelonMarshallelonr(helonadelonrImagelonPromptMelonssagelonContelonnt.helonadelonrImagelon),
+        helonadelonrTelonxt = helonadelonrImagelonPromptMelonssagelonContelonnt.helonadelonrTelonxt,
+        bodyTelonxt = helonadelonrImagelonPromptMelonssagelonContelonnt.bodyTelonxt,
         primaryButtonAction =
-          headerImagePromptMessageContent.primaryButtonAction.map(messageTextActionMarshaller(_)),
-        secondaryButtonAction =
-          headerImagePromptMessageContent.secondaryButtonAction.map(messageTextActionMarshaller(_)),
-        action = headerImagePromptMessageContent.action.map(messageActionMarshaller(_)),
-        headerRichText = headerImagePromptMessageContent.headerRichText.map(richTextMarshaller(_)),
-        bodyRichText = headerImagePromptMessageContent.bodyRichText.map(richTextMarshaller(_))
+          helonadelonrImagelonPromptMelonssagelonContelonnt.primaryButtonAction.map(melonssagelonTelonxtActionMarshallelonr(_)),
+        seloncondaryButtonAction =
+          helonadelonrImagelonPromptMelonssagelonContelonnt.seloncondaryButtonAction.map(melonssagelonTelonxtActionMarshallelonr(_)),
+        action = helonadelonrImagelonPromptMelonssagelonContelonnt.action.map(melonssagelonActionMarshallelonr(_)),
+        helonadelonrRichTelonxt = helonadelonrImagelonPromptMelonssagelonContelonnt.helonadelonrRichTelonxt.map(richTelonxtMarshallelonr(_)),
+        bodyRichTelonxt = helonadelonrImagelonPromptMelonssagelonContelonnt.bodyRichTelonxt.map(richTelonxtMarshallelonr(_))
       )
     )
 }

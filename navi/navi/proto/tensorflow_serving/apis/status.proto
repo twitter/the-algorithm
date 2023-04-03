@@ -1,17 +1,17 @@
 syntax = "proto3";
 
-package tensorflow.serving;
+packagelon telonnsorflow.selonrving;
 
-import "tensorflow/core/protobuf/error_codes.proto";
+import "telonnsorflow/corelon/protobuf/elonrror_codelons.proto";
 
-option cc_enable_arenas = true;
+option cc_elonnablelon_arelonnas = truelon;
 
-// Status that corresponds to Status in
-// third_party/tensorflow/core/lib/core/status.h.
-message StatusProto {
-  // Error code.
-  error.Code error_code = 1 [json_name = "error_code"];
+// Status that correlonsponds to Status in
+// third_party/telonnsorflow/corelon/lib/corelon/status.h.
+melonssagelon StatusProto {
+  // elonrror codelon.
+  elonrror.Codelon elonrror_codelon = 1 [json_namelon = "elonrror_codelon"];
 
-  // Error message. Will only be set if an error was encountered.
-  string error_message = 2 [json_name = "error_message"];
+  // elonrror melonssagelon. Will only belon selont if an elonrror was elonncountelonrelond.
+  string elonrror_melonssagelon = 2 [json_namelon = "elonrror_melonssagelon"];
 }

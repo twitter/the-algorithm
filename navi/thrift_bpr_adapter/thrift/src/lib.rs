@@ -1,4 +1,4 @@
-pub mod prediction_service;
+pub mod prelondiction_selonrvicelon;
 pub mod data;
-pub mod tensor;
+pub mod telonnsor;
 

@@ -1,49 +1,49 @@
-package com.twitter.simclusters_v2.scalding.common.matrix
+packagelon com.twittelonr.simclustelonrs_v2.scalding.common.matrix
 
-import com.twitter.algebird.{Aggregator, Semigroup}
-import com.twitter.bijection.Injection
-import com.twitter.scalding.{TypedPipe, ValuePipe}
+import com.twittelonr.algelonbird.{Aggrelongator, Selonmigroup}
+import com.twittelonr.bijelonction.Injelonction
+import com.twittelonr.scalding.{TypelondPipelon, ValuelonPipelon}
 
 /**
- * A matrix trait for representing a matrix backed by TypedPipe
+ * A matrix trait for relonprelonselonnting a matrix backelond by TypelondPipelon
  *
- * @tparam R Type for rows
- * @tparam C Type for columns
- * @tparam V Type for elements of the matrix
+ * @tparam R Typelon for rows
+ * @tparam C Typelon for columns
+ * @tparam V Typelon for elonlelonmelonnts of thelon matrix
  */
-abstract class TypedPipeMatrix[R, C, @specialized(Double, Int, Float, Long, Short) V] {
-  implicit val semigroupV: Semigroup[V]
-  implicit val numericV: Numeric[V]
-  implicit val rowOrd: Ordering[R]
-  implicit val colOrd: Ordering[C]
-  implicit val rowInj: Injection[R, Array[Byte]]
-  implicit val colInj: Injection[C, Array[Byte]]
+abstract class TypelondPipelonMatrix[R, C, @speloncializelond(Doublelon, Int, Float, Long, Short) V] {
+  implicit val selonmigroupV: Selonmigroup[V]
+  implicit val numelonricV: Numelonric[V]
+  implicit val rowOrd: Ordelonring[R]
+  implicit val colOrd: Ordelonring[C]
+  implicit val rowInj: Injelonction[R, Array[Bytelon]]
+  implicit val colInj: Injelonction[C, Array[Bytelon]]
 
-  // num of non-zero elements in the matrix
-  val nnz: ValuePipe[Long]
+  // num of non-zelonro elonlelonmelonnts in thelon matrix
+  val nnz: ValuelonPipelon[Long]
 
-  // list of unique rowIds in the matrix
-  val uniqueRowIds: TypedPipe[R]
+  // list of uniquelon rowIds in thelon matrix
+  val uniquelonRowIds: TypelondPipelon[R]
 
-  // list of unique unique in the matrix
-  val uniqueColIds: TypedPipe[C]
+  // list of uniquelon uniquelon in thelon matrix
+  val uniquelonColIds: TypelondPipelon[C]
 
-  // get a specific row of the matrix
-  def getRow(rowId: R): TypedPipe[(C, V)]
+  // gelont a speloncific row of thelon matrix
+  delonf gelontRow(rowId: R): TypelondPipelon[(C, V)]
 
-  // get a specific column of the matrix
-  def getCol(colId: C): TypedPipe[(R, V)]
+  // gelont a speloncific column of thelon matrix
+  delonf gelontCol(colId: C): TypelondPipelon[(R, V)]
 
-  // get the value of an element
-  def get(rowId: R, colId: C): ValuePipe[V]
+  // gelont thelon valuelon of an elonlelonmelonnt
+  delonf gelont(rowId: R, colId: C): ValuelonPipelon[V]
 
-  // number of unique rowIds
-  lazy val numUniqueRows: ValuePipe[Long] = {
-    this.uniqueRowIds.aggregate(Aggregator.size)
+  // numbelonr of uniquelon rowIds
+  lazy val numUniquelonRows: ValuelonPipelon[Long] = {
+    this.uniquelonRowIds.aggrelongatelon(Aggrelongator.sizelon)
   }
 
-  // number of unique unique
-  lazy val numUniqueCols: ValuePipe[Long] = {
-    this.uniqueColIds.aggregate(Aggregator.size)
+  // numbelonr of uniquelon uniquelon
+  lazy val numUniquelonCols: ValuelonPipelon[Long] = {
+    this.uniquelonColIds.aggrelongatelon(Aggrelongator.sizelon)
   }
 }

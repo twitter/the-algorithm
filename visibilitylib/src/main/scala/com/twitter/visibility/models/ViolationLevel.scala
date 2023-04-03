@@ -1,51 +1,51 @@
-package com.twitter.visibility.models
+packagelon com.twittelonr.visibility.modelonls
 
-sealed trait ViolationLevel extends Product with Serializable {
-  val level: Int
+selonalelond trait ViolationLelonvelonl elonxtelonnds Product with Selonrializablelon {
+  val lelonvelonl: Int
 }
 
-object ViolationLevel {
+objelonct ViolationLelonvelonl {
 
-  case object DefaultLevel extends ViolationLevel {
-    override val level: Int = 0
+  caselon objelonct DelonfaultLelonvelonl elonxtelonnds ViolationLelonvelonl {
+    ovelonrridelon val lelonvelonl: Int = 0
   }
 
-  case object Level1 extends ViolationLevel {
-    override val level: Int = 1
+  caselon objelonct Lelonvelonl1 elonxtelonnds ViolationLelonvelonl {
+    ovelonrridelon val lelonvelonl: Int = 1
   }
 
-  case object Level2 extends ViolationLevel {
-    override val level: Int = 2
+  caselon objelonct Lelonvelonl2 elonxtelonnds ViolationLelonvelonl {
+    ovelonrridelon val lelonvelonl: Int = 2
   }
 
-  case object Level3 extends ViolationLevel {
-    override val level: Int = 3
+  caselon objelonct Lelonvelonl3 elonxtelonnds ViolationLelonvelonl {
+    ovelonrridelon val lelonvelonl: Int = 3
   }
 
-  case object Level4 extends ViolationLevel {
-    override val level: Int = 4
+  caselon objelonct Lelonvelonl4 elonxtelonnds ViolationLelonvelonl {
+    ovelonrridelon val lelonvelonl: Int = 4
   }
 
-  private val safetyLabelToViolationLevel: Map[TweetSafetyLabelType, ViolationLevel] = Map(
-    TweetSafetyLabelType.FosnrHatefulConduct -> Level3,
-    TweetSafetyLabelType.FosnrHatefulConductLowSeveritySlur -> Level1,
+  privatelon val safelontyLabelonlToViolationLelonvelonl: Map[TwelonelontSafelontyLabelonlTypelon, ViolationLelonvelonl] = Map(
+    TwelonelontSafelontyLabelonlTypelon.FosnrHatelonfulConduct -> Lelonvelonl3,
+    TwelonelontSafelontyLabelonlTypelon.FosnrHatelonfulConductLowSelonvelonritySlur -> Lelonvelonl1,
   )
 
-  val violationLevelToSafetyLabels: Map[ViolationLevel, Set[TweetSafetyLabelType]] =
-    safetyLabelToViolationLevel.groupBy { case (_, violationLevel) => violationLevel }.map {
-      case (violationLevel, collection) => (violationLevel, collection.keySet)
+  val violationLelonvelonlToSafelontyLabelonls: Map[ViolationLelonvelonl, Selont[TwelonelontSafelontyLabelonlTypelon]] =
+    safelontyLabelonlToViolationLelonvelonl.groupBy { caselon (_, violationLelonvelonl) => violationLelonvelonl }.map {
+      caselon (violationLelonvelonl, collelonction) => (violationLelonvelonl, collelonction.kelonySelont)
     }
 
-  def fromTweetSafetyLabel(
-    tweetSafetyLabel: TweetSafetyLabel
-  ): ViolationLevel = {
-    safetyLabelToViolationLevel.getOrElse(tweetSafetyLabel.labelType, DefaultLevel)
+  delonf fromTwelonelontSafelontyLabelonl(
+    twelonelontSafelontyLabelonl: TwelonelontSafelontyLabelonl
+  ): ViolationLelonvelonl = {
+    safelontyLabelonlToViolationLelonvelonl.gelontOrelonlselon(twelonelontSafelontyLabelonl.labelonlTypelon, DelonfaultLelonvelonl)
   }
 
-  def fromTweetSafetyLabelOpt(
-    tweetSafetyLabel: TweetSafetyLabel
-  ): Option[ViolationLevel] = {
-    safetyLabelToViolationLevel.get(tweetSafetyLabel.labelType)
+  delonf fromTwelonelontSafelontyLabelonlOpt(
+    twelonelontSafelontyLabelonl: TwelonelontSafelontyLabelonl
+  ): Option[ViolationLelonvelonl] = {
+    safelontyLabelonlToViolationLelonvelonl.gelont(twelonelontSafelontyLabelonl.labelonlTypelon)
   }
 
 }

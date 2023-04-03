@@ -1,14 +1,14 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.alert
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.alelonrt
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.alert.ShowAlertNavigationMetadata
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.alelonrt.ShowAlelonrtNavigationMelontadata
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class ShowAlertNavigationMetadataMarshaller @Inject() () {
+@Singlelonton
+class ShowAlelonrtNavigationMelontadataMarshallelonr @Injelonct() () {
 
-  def apply(alertNavigationMetadata: ShowAlertNavigationMetadata): urt.ShowAlertNavigationMetadata =
-    urt.ShowAlertNavigationMetadata(navigateToEntryId =
-      Some(alertNavigationMetadata.navigateToEntryId))
+  delonf apply(alelonrtNavigationMelontadata: ShowAlelonrtNavigationMelontadata): urt.ShowAlelonrtNavigationMelontadata =
+    urt.ShowAlelonrtNavigationMelontadata(navigatelonToelonntryId =
+      Somelon(alelonrtNavigationMelontadata.navigatelonToelonntryId))
 }

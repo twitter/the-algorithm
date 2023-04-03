@@ -1,267 +1,267 @@
-#[cfg(feature = "onnx")]
+#[cfg(felonaturelon = "onnx")]
 pub mod onnx {
-    use crate::TensorReturnEnum;
-    use crate::bootstrap::{TensorInput, TensorInputEnum};
-    use crate::cli_args::{
-        Args, ARGS, INPUTS, MODEL_SPECS, OUTPUTS,
+    uselon cratelon::TelonnsorRelonturnelonnum;
+    uselon cratelon::bootstrap::{TelonnsorInput, TelonnsorInputelonnum};
+    uselon cratelon::cli_args::{
+        Args, ARGS, INPUTS, MODelonL_SPelonCS, OUTPUTS,
     };
-    use crate::metrics::{self, CONVERTER_TIME_COLLECTOR};
-    use crate::predict_service::Model;
-    use crate::{MAX_NUM_INPUTS, MAX_NUM_OUTPUTS, META_INFO, utils};
-    use anyhow::Result;
-    use arrayvec::ArrayVec;
-    use dr_transform::converter::{BatchPredictionRequestToTorchTensorConverter, Converter};
-    use itertools::Itertools;
-    use log::{debug, info};
-    use ort::environment::Environment;
-    use ort::session::Session;
-    use ort::tensor::InputTensor;
-    use ort::{ExecutionProvider, GraphOptimizationLevel, SessionBuilder};
-    use serde_json::Value;
-    use std::fmt::{Debug, Display};
-    use std::sync::Arc;
-    use std::{fmt, fs};
-    use tokio::time::Instant;
+    uselon cratelon::melontrics::{selonlf, CONVelonRTelonR_TIMelon_COLLelonCTOR};
+    uselon cratelon::prelondict_selonrvicelon::Modelonl;
+    uselon cratelon::{MAX_NUM_INPUTS, MAX_NUM_OUTPUTS, MelonTA_INFO, utils};
+    uselon anyhow::Relonsult;
+    uselon arrayvelonc::ArrayVelonc;
+    uselon dr_transform::convelonrtelonr::{BatchPrelondictionRelonquelonstToTorchTelonnsorConvelonrtelonr, Convelonrtelonr};
+    uselon itelonrtools::Itelonrtools;
+    uselon log::{delonbug, info};
+    uselon ort::elonnvironmelonnt::elonnvironmelonnt;
+    uselon ort::selonssion::Selonssion;
+    uselon ort::telonnsor::InputTelonnsor;
+    uselon ort::{elonxeloncutionProvidelonr, GraphOptimizationLelonvelonl, SelonssionBuildelonr};
+    uselon selonrdelon_json::Valuelon;
+    uselon std::fmt::{Delonbug, Display};
+    uselon std::sync::Arc;
+    uselon std::{fmt, fs};
+    uselon tokio::timelon::Instant;
 
     lazy_static! {
-        pub static ref ENVIRONMENT: Arc<Environment> = Arc::new(
-            Environment::builder()
-                .with_name("onnx home")
-                .with_log_level(ort::LoggingLevel::Error)
+        pub static relonf elonNVIRONMelonNT: Arc<elonnvironmelonnt> = Arc::nelonw(
+            elonnvironmelonnt::buildelonr()
+                .with_namelon("onnx homelon")
+                .with_log_lelonvelonl(ort::LoggingLelonvelonl::elonrror)
                 .build()
                 .unwrap()
         );
     }
-    #[derive(Debug)]
-    pub struct OnnxModel {
-        pub session: Session,
-        pub model_idx: usize,
-        pub version: i64,
-        pub export_dir: String,
-        pub output_filters: ArrayVec<usize, MAX_NUM_OUTPUTS>,
-        pub input_converter: Box<dyn Converter>,
+    #[delonrivelon(Delonbug)]
+    pub struct OnnxModelonl {
+        pub selonssion: Selonssion,
+        pub modelonl_idx: usizelon,
+        pub velonrsion: i64,
+        pub elonxport_dir: String,
+        pub output_filtelonrs: ArrayVelonc<usizelon, MAX_NUM_OUTPUTS>,
+        pub input_convelonrtelonr: Box<dyn Convelonrtelonr>,
     }
-    impl Display for OnnxModel {
-        fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-            write!(
+    impl Display for OnnxModelonl {
+        fn fmt(&selonlf, f: &mut fmt::Formattelonr) -> fmt::Relonsult {
+            writelon!(
                 f,
-                "idx: {}, onnx model_name:{}, version:{}, output_filters:{:?}, converter:{:}",
-                self.model_idx,
-                MODEL_SPECS[self.model_idx],
-                self.version,
-                self.output_filters,
-                self.input_converter
+                "idx: {}, onnx modelonl_namelon:{}, velonrsion:{}, output_filtelonrs:{:?}, convelonrtelonr:{:}",
+                selonlf.modelonl_idx,
+                MODelonL_SPelonCS[selonlf.modelonl_idx],
+                selonlf.velonrsion,
+                selonlf.output_filtelonrs,
+                selonlf.input_convelonrtelonr
             )
         }
     }
-    impl Drop for OnnxModel {
-        fn drop(&mut self) {
-            if ARGS.profiling != None {
-                self.session.end_profiling().map_or_else(
-                    |e| {
-                        info!("end profiling with some error:{:?}", e);
+    impl Drop for OnnxModelonl {
+        fn drop(&mut selonlf) {
+            if ARGS.profiling != Nonelon {
+                selonlf.selonssion.elonnd_profiling().map_or_elonlselon(
+                    |elon| {
+                        info!("elonnd profiling with somelon elonrror:{:?}", elon);
                     },
                     |f| {
-                        info!("profiling ended with file:{}", f);
+                        info!("profiling elonndelond with filelon:{}", f);
                     },
                 );
             }
         }
     }
-    impl OnnxModel {
-        fn get_output_filters(session: &Session, idx: usize) -> ArrayVec<usize, MAX_NUM_OUTPUTS> {
+    impl OnnxModelonl {
+        fn gelont_output_filtelonrs(selonssion: &Selonssion, idx: usizelon) -> ArrayVelonc<usizelon, MAX_NUM_OUTPUTS> {
             OUTPUTS[idx]
-                .iter()
-                .map(|output| session.outputs.iter().position(|o| o.name == *output))
-                .flatten()
-                .collect::<ArrayVec<usize, MAX_NUM_OUTPUTS>>()
+                .itelonr()
+                .map(|output| selonssion.outputs.itelonr().position(|o| o.namelon == *output))
+                .flattelonn()
+                .collelonct::<ArrayVelonc<usizelon, MAX_NUM_OUTPUTS>>()
         }
-        #[cfg(target_os = "linux")]
-        fn ep_choices() -> Vec<ExecutionProvider> {
-            match ARGS.onnx_gpu_ep.as_ref().map(|e| e.as_str()) {
-                Some("onednn") => vec![Self::ep_with_options(ExecutionProvider::onednn())],
-                Some("tensorrt") => vec![Self::ep_with_options(ExecutionProvider::tensorrt())],
-                Some("cuda") => vec![Self::ep_with_options(ExecutionProvider::cuda())],
-                _ => vec![Self::ep_with_options(ExecutionProvider::cpu())],
+        #[cfg(targelont_os = "linux")]
+        fn elonp_choicelons() -> Velonc<elonxeloncutionProvidelonr> {
+            match ARGS.onnx_gpu_elonp.as_relonf().map(|elon| elon.as_str()) {
+                Somelon("onelondnn") => velonc![Selonlf::elonp_with_options(elonxeloncutionProvidelonr::onelondnn())],
+                Somelon("telonnsorrt") => velonc![Selonlf::elonp_with_options(elonxeloncutionProvidelonr::telonnsorrt())],
+                Somelon("cuda") => velonc![Selonlf::elonp_with_options(elonxeloncutionProvidelonr::cuda())],
+                _ => velonc![Selonlf::elonp_with_options(elonxeloncutionProvidelonr::cpu())],
             }
         }
-        fn ep_with_options(mut ep: ExecutionProvider) -> ExecutionProvider {
-            for (ref k, ref v) in ARGS.onnx_ep_options.clone() {
-                ep = ep.with(k, v);
-                info!("setting option:{} -> {} and now ep is:{:?}", k, v, ep);
+        fn elonp_with_options(mut elonp: elonxeloncutionProvidelonr) -> elonxeloncutionProvidelonr {
+            for (relonf k, relonf v) in ARGS.onnx_elonp_options.clonelon() {
+                elonp = elonp.with(k, v);
+                info!("selontting option:{} -> {} and now elonp is:{:?}", k, v, elonp);
             }
-            ep
+            elonp
         }
-        #[cfg(target_os = "macos")]
-        fn ep_choices() -> Vec<ExecutionProvider> {
-            vec![Self::ep_with_options(ExecutionProvider::cpu())]
+        #[cfg(targelont_os = "macos")]
+        fn elonp_choicelons() -> Velonc<elonxeloncutionProvidelonr> {
+            velonc![Selonlf::elonp_with_options(elonxeloncutionProvidelonr::cpu())]
         }
-        pub fn new(idx: usize, version: String, model_config: &Value) -> Result<OnnxModel> {
-            let export_dir = format!("{}/{}/model.onnx", ARGS.model_dir[idx], version);
-            let meta_info = format!("{}/{}/{}", ARGS.model_dir[idx], version, META_INFO);
-            let mut builder = SessionBuilder::new(&ENVIRONMENT)?
-                .with_optimization_level(GraphOptimizationLevel::Level3)?
-                .with_parallel_execution(ARGS.onnx_use_parallel_mode == "true")?
-                .with_inter_threads(
-                    utils::get_config_or(
-                        model_config,
-                        "inter_op_parallelism",
-                        &ARGS.inter_op_parallelism[idx],
+        pub fn nelonw(idx: usizelon, velonrsion: String, modelonl_config: &Valuelon) -> Relonsult<OnnxModelonl> {
+            lelont elonxport_dir = format!("{}/{}/modelonl.onnx", ARGS.modelonl_dir[idx], velonrsion);
+            lelont melonta_info = format!("{}/{}/{}", ARGS.modelonl_dir[idx], velonrsion, MelonTA_INFO);
+            lelont mut buildelonr = SelonssionBuildelonr::nelonw(&elonNVIRONMelonNT)?
+                .with_optimization_lelonvelonl(GraphOptimizationLelonvelonl::Lelonvelonl3)?
+                .with_parallelonl_elonxeloncution(ARGS.onnx_uselon_parallelonl_modelon == "truelon")?
+                .with_intelonr_threlonads(
+                    utils::gelont_config_or(
+                        modelonl_config,
+                        "intelonr_op_parallelonlism",
+                        &ARGS.intelonr_op_parallelonlism[idx],
                     )
-                    .parse()?,
+                    .parselon()?,
                 )?
-                .with_intra_threads(
-                    utils::get_config_or(
-                        model_config,
-                        "intra_op_parallelism",
-                        &ARGS.intra_op_parallelism[idx],
+                .with_intra_threlonads(
+                    utils::gelont_config_or(
+                        modelonl_config,
+                        "intra_op_parallelonlism",
+                        &ARGS.intra_op_parallelonlism[idx],
                     )
-                    .parse()?,
+                    .parselon()?,
                 )?
-                .with_memory_pattern(ARGS.onnx_use_memory_pattern == "true")?
-                .with_execution_providers(&OnnxModel::ep_choices())?;
+                .with_melonmory_pattelonrn(ARGS.onnx_uselon_melonmory_pattelonrn == "truelon")?
+                .with_elonxeloncution_providelonrs(&OnnxModelonl::elonp_choicelons())?;
             match &ARGS.profiling {
-                Some(p) => {
-                    debug!("Enable profiling, writing to {}", *p);
-                    builder = builder.with_profiling(p)?
+                Somelon(p) => {
+                    delonbug!("elonnablelon profiling, writing to {}", *p);
+                    buildelonr = buildelonr.with_profiling(p)?
                 }
                 _ => {}
             }
-            let session = builder.with_model_from_file(&export_dir)?;
+            lelont selonssion = buildelonr.with_modelonl_from_filelon(&elonxport_dir)?;
 
             info!(
                 "inputs: {:?}, outputs: {:?}",
-                session.inputs.iter().format(","),
-                session.outputs.iter().format(",")
+                selonssion.inputs.itelonr().format(","),
+                selonssion.outputs.itelonr().format(",")
             );
 
-            fs::read_to_string(&meta_info)
+            fs::relonad_to_string(&melonta_info)
                 .ok()
-                .map(|info| info!("meta info:{}", info));
-            let output_filters = OnnxModel::get_output_filters(&session, idx);
-            let mut reporting_feature_ids: Vec<(i64, &str)> = vec![];
+                .map(|info| info!("melonta info:{}", info));
+            lelont output_filtelonrs = OnnxModelonl::gelont_output_filtelonrs(&selonssion, idx);
+            lelont mut relonporting_felonaturelon_ids: Velonc<(i64, &str)> = velonc![];
 
-            let input_spec_cell = &INPUTS[idx];
-            if input_spec_cell.get().is_none() {
-                let input_spec = session
+            lelont input_spelonc_celonll = &INPUTS[idx];
+            if input_spelonc_celonll.gelont().is_nonelon() {
+                lelont input_spelonc = selonssion
                     .inputs
-                    .iter()
-                    .map(|input| input.name.clone())
-                    .collect::<ArrayVec<String, MAX_NUM_INPUTS>>();
-                input_spec_cell.set(input_spec.clone()).map_or_else(
-                    |_| info!("unable to set the input_spec for model {}", idx),
-                    |_| info!("auto detect and set the inputs: {:?}", input_spec),
+                    .itelonr()
+                    .map(|input| input.namelon.clonelon())
+                    .collelonct::<ArrayVelonc<String, MAX_NUM_INPUTS>>();
+                input_spelonc_celonll.selont(input_spelonc.clonelon()).map_or_elonlselon(
+                    |_| info!("unablelon to selont thelon input_spelonc for modelonl {}", idx),
+                    |_| info!("auto delontelonct and selont thelon inputs: {:?}", input_spelonc),
                 );
             }
-            ARGS.onnx_report_discrete_feature_ids
-                .iter()
-                .for_each(|ids| {
+            ARGS.onnx_relonport_discrelontelon_felonaturelon_ids
+                .itelonr()
+                .for_elonach(|ids| {
                     ids.split(",")
-                        .filter(|s| !s.is_empty())
-                        .map(|s| s.parse::<i64>().unwrap())
-                        .for_each(|id| reporting_feature_ids.push((id, "discrete")))
+                        .filtelonr(|s| !s.is_elonmpty())
+                        .map(|s| s.parselon::<i64>().unwrap())
+                        .for_elonach(|id| relonporting_felonaturelon_ids.push((id, "discrelontelon")))
                 });
-            ARGS.onnx_report_continuous_feature_ids
-                .iter()
-                .for_each(|ids| {
+            ARGS.onnx_relonport_continuous_felonaturelon_ids
+                .itelonr()
+                .for_elonach(|ids| {
                     ids.split(",")
-                        .filter(|s| !s.is_empty())
-                        .map(|s| s.parse::<i64>().unwrap())
-                        .for_each(|id| reporting_feature_ids.push((id, "continuous")))
+                        .filtelonr(|s| !s.is_elonmpty())
+                        .map(|s| s.parselon::<i64>().unwrap())
+                        .for_elonach(|id| relonporting_felonaturelon_ids.push((id, "continuous")))
                 });
 
-            let onnx_model = OnnxModel {
-                session,
-                model_idx: idx,
-                version: Args::version_str_to_epoch(&version)?,
-                export_dir,
-                output_filters,
-                input_converter: Box::new(BatchPredictionRequestToTorchTensorConverter::new(
-                    &ARGS.model_dir[idx],
-                    &version,
-                    reporting_feature_ids,
-                    Some(metrics::register_dynamic_metrics),
+            lelont onnx_modelonl = OnnxModelonl {
+                selonssion,
+                modelonl_idx: idx,
+                velonrsion: Args::velonrsion_str_to_elonpoch(&velonrsion)?,
+                elonxport_dir,
+                output_filtelonrs,
+                input_convelonrtelonr: Box::nelonw(BatchPrelondictionRelonquelonstToTorchTelonnsorConvelonrtelonr::nelonw(
+                    &ARGS.modelonl_dir[idx],
+                    &velonrsion,
+                    relonporting_felonaturelon_ids,
+                    Somelon(melontrics::relongistelonr_dynamic_melontrics),
                 )),
             };
-            onnx_model.warmup()?;
-            Ok(onnx_model)
+            onnx_modelonl.warmup()?;
+            Ok(onnx_modelonl)
         }
     }
-    ///Currently we only assume the input as just one string tensor.
-    ///The string tensor will be be converted to the actual raw tensors.
-    /// The converter we are using is very specific to home.
-    /// It reads a BatchDataRecord thrift and decode it to a batch of raw input tensors.
-    /// Navi will then do server side batching and feed it to ONNX runtime
-    impl Model for OnnxModel {
-        //TODO: implement a generic online warmup for all runtimes
-        fn warmup(&self) -> Result<()> {
+    ///Currelonntly welon only assumelon thelon input as just onelon string telonnsor.
+    ///Thelon string telonnsor will belon belon convelonrtelond to thelon actual raw telonnsors.
+    /// Thelon convelonrtelonr welon arelon using is velonry speloncific to homelon.
+    /// It relonads a BatchDataReloncord thrift and deloncodelon it to a batch of raw input telonnsors.
+    /// Navi will thelonn do selonrvelonr sidelon batching and felonelond it to ONNX runtimelon
+    impl Modelonl for OnnxModelonl {
+        //TODO: implelonmelonnt a gelonnelonric onlinelon warmup for all runtimelons
+        fn warmup(&selonlf) -> Relonsult<()> {
             Ok(())
         }
 
-        #[inline(always)]
-        fn do_predict(
-            &self,
-            input_tensors: Vec<Vec<TensorInput>>,
+        #[inlinelon(always)]
+        fn do_prelondict(
+            &selonlf,
+            input_telonnsors: Velonc<Velonc<TelonnsorInput>>,
             _: u64,
-        ) -> (Vec<TensorReturnEnum>, Vec<Vec<usize>>) {
-            let batched_tensors = TensorInputEnum::merge_batch(input_tensors);
-            let (inputs, batch_ends): (Vec<Vec<InputTensor>>, Vec<Vec<usize>>) = batched_tensors
-                .into_iter()
-                .map(|batched_tensor| {
-                    match batched_tensor.tensor_data {
-                        TensorInputEnum::String(t) if ARGS.onnx_use_converter.is_some() => {
-                            let start = Instant::now();
-                            let (inputs, batch_ends) = self.input_converter.convert(t);
-                            // info!("batch_ends:{:?}", batch_ends);
-                            CONVERTER_TIME_COLLECTOR
-                                .with_label_values(&[&MODEL_SPECS[self.model_idx()]])
-                                .observe(
-                                    start.elapsed().as_micros() as f64
-                                        / (*batch_ends.last().unwrap() as f64),
+        ) -> (Velonc<TelonnsorRelonturnelonnum>, Velonc<Velonc<usizelon>>) {
+            lelont batchelond_telonnsors = TelonnsorInputelonnum::melonrgelon_batch(input_telonnsors);
+            lelont (inputs, batch_elonnds): (Velonc<Velonc<InputTelonnsor>>, Velonc<Velonc<usizelon>>) = batchelond_telonnsors
+                .into_itelonr()
+                .map(|batchelond_telonnsor| {
+                    match batchelond_telonnsor.telonnsor_data {
+                        TelonnsorInputelonnum::String(t) if ARGS.onnx_uselon_convelonrtelonr.is_somelon() => {
+                            lelont start = Instant::now();
+                            lelont (inputs, batch_elonnds) = selonlf.input_convelonrtelonr.convelonrt(t);
+                            // info!("batch_elonnds:{:?}", batch_elonnds);
+                            CONVelonRTelonR_TIMelon_COLLelonCTOR
+                                .with_labelonl_valuelons(&[&MODelonL_SPelonCS[selonlf.modelonl_idx()]])
+                                .obselonrvelon(
+                                    start.elonlapselond().as_micros() as f64
+                                        / (*batch_elonnds.last().unwrap() as f64),
                                 );
-                            (inputs, batch_ends)
+                            (inputs, batch_elonnds)
                         }
-                        _ => unimplemented!(),
+                        _ => unimplelonmelonntelond!(),
                     }
                 })
                 .unzip();
-            //invariant we only support one input as string. will relax later
-            assert_eq!(inputs.len(), 1);
-            let output_tensors = self
-                .session
-                .run(inputs.into_iter().flatten().collect::<Vec<_>>())
+            //invariant welon only support onelon input as string. will relonlax latelonr
+            asselonrt_elonq!(inputs.lelonn(), 1);
+            lelont output_telonnsors = selonlf
+                .selonssion
+                .run(inputs.into_itelonr().flattelonn().collelonct::<Velonc<_>>())
                 .unwrap();
-            self.output_filters
-                .iter()
+            selonlf.output_filtelonrs
+                .itelonr()
                 .map(|&idx| {
-                    let mut size = 1usize;
-                    let output = output_tensors[idx].try_extract::<f32>().unwrap();
-                    for &dim in self.session.outputs[idx].dimensions.iter().flatten() {
-                        size *= dim as usize;
+                    lelont mut sizelon = 1usizelon;
+                    lelont output = output_telonnsors[idx].try_elonxtract::<f32>().unwrap();
+                    for &dim in selonlf.selonssion.outputs[idx].dimelonnsions.itelonr().flattelonn() {
+                        sizelon *= dim as usizelon;
                     }
-                    let tensor_ends = batch_ends[0]
-                        .iter()
-                        .map(|&batch| batch * size)
-                        .collect::<Vec<_>>();
+                    lelont telonnsor_elonnds = batch_elonnds[0]
+                        .itelonr()
+                        .map(|&batch| batch * sizelon)
+                        .collelonct::<Velonc<_>>();
 
                     (
                         //only works for batch major
-                        //TODO: to_vec() obviously wasteful, especially for large batches(GPU) . Will refactor to
-                        //break up output and return Vec<Vec<TensorScore>> here
-                        TensorReturnEnum::FloatTensorReturn(Box::new(output.view().as_slice().unwrap().to_vec(),
+                        //TODO: to_velonc() obviously wastelonful, elonspeloncially for largelon batchelons(GPU) . Will relonfactor to
+                        //brelonak up output and relonturn Velonc<Velonc<TelonnsorScorelon>> helonrelon
+                        TelonnsorRelonturnelonnum::FloatTelonnsorRelonturn(Box::nelonw(output.vielonw().as_slicelon().unwrap().to_velonc(),
                         )),
-                        tensor_ends,
+                        telonnsor_elonnds,
                     )
                 })
                 .unzip()
         }
-        #[inline(always)]
-        fn model_idx(&self) -> usize {
-            self.model_idx
+        #[inlinelon(always)]
+        fn modelonl_idx(&selonlf) -> usizelon {
+            selonlf.modelonl_idx
         }
-        #[inline(always)]
-        fn version(&self) -> i64 {
-            self.version
+        #[inlinelon(always)]
+        fn velonrsion(&selonlf) -> i64 {
+            selonlf.velonrsion
         }
     }
 }

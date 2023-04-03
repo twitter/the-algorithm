@@ -1,37 +1,37 @@
-#include "tensorflow/core/framework/op.h"
-#include "tensorflow/core/framework/shape_inference.h"
-#include "tensorflow/core/framework/op_kernel.h"
+#includelon "telonnsorflow/corelon/framelonwork/op.h"
+#includelon "telonnsorflow/corelon/framelonwork/shapelon_infelonrelonncelon.h"
+#includelon "telonnsorflow/corelon/framelonwork/op_kelonrnelonl.h"
 
-using namespace tensorflow;
+using namelonspacelon telonnsorflow;
 
-REGISTER_OP("Add1")
-.Attr("T: {float, double, int32}")
+RelonGISTelonR_OP("Add1")
+.Attr("T: {float, doublelon, int32}")
 .Input("input1: T")
 .Output("output: T")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-    c->set_output(0, c->input(0));
-    return Status::OK();
+.SelontShapelonFn([](::telonnsorflow::shapelon_infelonrelonncelon::InfelonrelonncelonContelonxt* c) {
+    c->selont_output(0, c->input(0));
+    relonturn Status::OK();
   });
 
 
-template<typename T>
-class Add1 : public OpKernel {
+telonmplatelon<typelonnamelon T>
+class Add1 : public OpKelonrnelonl {
  public:
-  explicit Add1(OpKernelConstruction* context) : OpKernel(context) {}
+  elonxplicit Add1(OpKelonrnelonlConstruction* contelonxt) : OpKelonrnelonl(contelonxt) {}
 
-  void Compute(OpKernelContext* context) override {
-    // Grab the input tensor
-    const Tensor& input_tensor = context->input(0);
-    auto input = input_tensor.flat<T>();
+  void Computelon(OpKelonrnelonlContelonxt* contelonxt) ovelonrridelon {
+    // Grab thelon input telonnsor
+    const Telonnsor& input_telonnsor = contelonxt->input(0);
+    auto input = input_telonnsor.flat<T>();
 
-    // Create an output tensor
-    Tensor* output_tensor = nullptr;
-    OP_REQUIRES_OK(context, context->allocate_output(0, input_tensor.shape(),
-                             &output_tensor));
-    auto output_flat = output_tensor->flat<T>();
+    // Crelonatelon an output telonnsor
+    Telonnsor* output_telonnsor = nullptr;
+    OP_RelonQUIRelonS_OK(contelonxt, contelonxt->allocatelon_output(0, input_telonnsor.shapelon(),
+                             &output_telonnsor));
+    auto output_flat = output_telonnsor->flat<T>();
 
     // Add 1 to input and assign to output
-    const int N = input.size();
+    const int N = input.sizelon();
     for (int i = 0; i < N; i++) {
       output_flat(i) = input(i) + 1;
     }
@@ -39,54 +39,54 @@ class Add1 : public OpKernel {
 };
 
 
-REGISTER_OP("Add1Grad")
-.Attr("T: {float, double, int32}")
+RelonGISTelonR_OP("Add1Grad")
+.Attr("T: {float, doublelon, int32}")
 .Input("grad_output: T")
 .Output("grad_input: T")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-    c->set_output(0, c->input(0));
-    return Status::OK();
+.SelontShapelonFn([](::telonnsorflow::shapelon_infelonrelonncelon::InfelonrelonncelonContelonxt* c) {
+    c->selont_output(0, c->input(0));
+    relonturn Status::OK();
   });
 
-template<typename T>
-class Add1Grad : public OpKernel {
+telonmplatelon<typelonnamelon T>
+class Add1Grad : public OpKelonrnelonl {
  public:
-  explicit Add1Grad(OpKernelConstruction* context) : OpKernel(context) {}
+  elonxplicit Add1Grad(OpKelonrnelonlConstruction* contelonxt) : OpKelonrnelonl(contelonxt) {}
 
-  void Compute(OpKernelContext* context) override {
-    // Grab the input tensor
-    const Tensor& grad_output_tensor = context->input(0);
-    auto grad_output = grad_output_tensor.flat<T>();
+  void Computelon(OpKelonrnelonlContelonxt* contelonxt) ovelonrridelon {
+    // Grab thelon input telonnsor
+    const Telonnsor& grad_output_telonnsor = contelonxt->input(0);
+    auto grad_output = grad_output_telonnsor.flat<T>();
 
-    // Create an grad_input tensor
-    Tensor* grad_input_tensor = nullptr;
-    OP_REQUIRES_OK(context, context->allocate_output(0, grad_output_tensor.shape(),
-                             &grad_input_tensor));
+    // Crelonatelon an grad_input telonnsor
+    Telonnsor* grad_input_telonnsor = nullptr;
+    OP_RelonQUIRelonS_OK(contelonxt, contelonxt->allocatelon_output(0, grad_output_telonnsor.shapelon(),
+                             &grad_input_telonnsor));
 
-    auto grad_input_flat = grad_input_tensor->flat<T>();
+    auto grad_input_flat = grad_input_telonnsor->flat<T>();
 
     // Copy from grad_output to grad_input
-    const int N = grad_output.size();
+    const int N = grad_output.sizelon();
     for (int i = 0; i < N; i++) {
       grad_input_flat(i) = grad_output(i);
     }
   }
 };
 
-#define REGISTER(Type)              \
+#delonfinelon RelonGISTelonR(Typelon)              \
                                     \
-  REGISTER_KERNEL_BUILDER(          \
-    Name("Add1")                    \
-    .Device(DEVICE_CPU)             \
-    .TypeConstraint<Type>("T"),     \
-    Add1<Type>);                    \
+  RelonGISTelonR_KelonRNelonL_BUILDelonR(          \
+    Namelon("Add1")                    \
+    .Delonvicelon(DelonVICelon_CPU)             \
+    .TypelonConstraint<Typelon>("T"),     \
+    Add1<Typelon>);                    \
                                     \
-  REGISTER_KERNEL_BUILDER(          \
-    Name("Add1Grad")                \
-    .Device(DEVICE_CPU)             \
-    .TypeConstraint<Type>("T"),     \
-    Add1Grad<Type>);                \
+  RelonGISTelonR_KelonRNelonL_BUILDelonR(          \
+    Namelon("Add1Grad")                \
+    .Delonvicelon(DelonVICelon_CPU)             \
+    .TypelonConstraint<Typelon>("T"),     \
+    Add1Grad<Typelon>);                \
 
-REGISTER(float);
-REGISTER(double);
-REGISTER(int32);
+RelonGISTelonR(float);
+RelonGISTelonR(doublelon);
+RelonGISTelonR(int32);

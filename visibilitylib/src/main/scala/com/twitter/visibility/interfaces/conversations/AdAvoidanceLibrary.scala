@@ -1,158 +1,158 @@
-package com.twitter.visibility.interfaces.conversations
+packagelon com.twittelonr.visibility.intelonrfacelons.convelonrsations
 
-import com.google.common.annotations.VisibleForTesting
-import com.twitter.decider.Decider
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.gizmoduck.thriftscala.User
-import com.twitter.spam.rtf.thriftscala.SafetyLevel
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.thriftscala.GetTweetFieldsResult
-import com.twitter.tweetypie.thriftscala.TweetFieldsResultFound
-import com.twitter.tweetypie.thriftscala.TweetFieldsResultState
-import com.twitter.util.Stopwatch
-import com.twitter.visibility.VisibilityLibrary
-import com.twitter.visibility.common.filtered_reason.FilteredReasonHelper
-import com.twitter.visibility.models.ViewerContext
-import com.twitter.visibility.rules.Interstitial
-import com.twitter.visibility.rules.Tombstone
+import com.googlelon.common.annotations.VisiblelonForTelonsting
+import com.twittelonr.deloncidelonr.Deloncidelonr
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.gizmoduck.thriftscala.Uselonr
+import com.twittelonr.spam.rtf.thriftscala.SafelontyLelonvelonl
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.twelonelontypielon.thriftscala.GelontTwelonelontFielonldsRelonsult
+import com.twittelonr.twelonelontypielon.thriftscala.TwelonelontFielonldsRelonsultFound
+import com.twittelonr.twelonelontypielon.thriftscala.TwelonelontFielonldsRelonsultStatelon
+import com.twittelonr.util.Stopwatch
+import com.twittelonr.visibility.VisibilityLibrary
+import com.twittelonr.visibility.common.filtelonrelond_relonason.FiltelonrelondRelonasonHelonlpelonr
+import com.twittelonr.visibility.modelonls.VielonwelonrContelonxt
+import com.twittelonr.visibility.rulelons.Intelonrstitial
+import com.twittelonr.visibility.rulelons.Tombstonelon
 
-case class AdAvoidanceRequest(
-  conversationId: Long,
-  focalTweetId: Long,
-  tweets: Seq[(GetTweetFieldsResult, Option[SafetyLevel])],
+caselon class AdAvoidancelonRelonquelonst(
+  convelonrsationId: Long,
+  focalTwelonelontId: Long,
+  twelonelonts: Selonq[(GelontTwelonelontFielonldsRelonsult, Option[SafelontyLelonvelonl])],
   authorMap: Map[
     Long,
-    User
+    Uselonr
   ],
-  moderatedTweetIds: Seq[Long],
-  viewerContext: ViewerContext,
-  useRichText: Boolean = true)
+  modelonratelondTwelonelontIds: Selonq[Long],
+  vielonwelonrContelonxt: VielonwelonrContelonxt,
+  uselonRichTelonxt: Boolelonan = truelon)
 
-case class AdAvoidanceResponse(dropAd: Map[Long, Boolean])
+caselon class AdAvoidancelonRelonsponselon(dropAd: Map[Long, Boolelonan])
 
-object AdAvoidanceLibrary {
-  type Type =
-    AdAvoidanceRequest => Stitch[AdAvoidanceResponse]
+objelonct AdAvoidancelonLibrary {
+  typelon Typelon =
+    AdAvoidancelonRelonquelonst => Stitch[AdAvoidancelonRelonsponselon]
 
-  private def shouldAvoid(
-    result: TweetFieldsResultState,
-    tombstoneOpt: Option[VfTombstone],
-    statsReceiver: StatsReceiver
-  ): Boolean = {
-    shouldAvoid(result, statsReceiver) || shouldAvoid(tombstoneOpt, statsReceiver)
+  privatelon delonf shouldAvoid(
+    relonsult: TwelonelontFielonldsRelonsultStatelon,
+    tombstonelonOpt: Option[VfTombstonelon],
+    statsReloncelonivelonr: StatsReloncelonivelonr
+  ): Boolelonan = {
+    shouldAvoid(relonsult, statsReloncelonivelonr) || shouldAvoid(tombstonelonOpt, statsReloncelonivelonr)
   }
 
-  private def shouldAvoid(
-    result: TweetFieldsResultState,
-    statsReceiver: StatsReceiver
-  ): Boolean = {
-    result match {
-      case TweetFieldsResultState.Found(TweetFieldsResultFound(_, _, Some(filteredReason)))
-          if FilteredReasonHelper.isAvoid(filteredReason) =>
-        statsReceiver.counter("avoid").incr()
-        true
-      case _ => false
+  privatelon delonf shouldAvoid(
+    relonsult: TwelonelontFielonldsRelonsultStatelon,
+    statsReloncelonivelonr: StatsReloncelonivelonr
+  ): Boolelonan = {
+    relonsult match {
+      caselon TwelonelontFielonldsRelonsultStatelon.Found(TwelonelontFielonldsRelonsultFound(_, _, Somelon(filtelonrelondRelonason)))
+          if FiltelonrelondRelonasonHelonlpelonr.isAvoid(filtelonrelondRelonason) =>
+        statsReloncelonivelonr.countelonr("avoid").incr()
+        truelon
+      caselon _ => falselon
     }
   }
 
-  private def shouldAvoid(
-    tombstoneOpt: Option[VfTombstone],
-    statsReceiver: StatsReceiver,
-  ): Boolean = {
-    tombstoneOpt
-      .map(_.action).collect {
-        case Tombstone(epitaph, _) =>
-          statsReceiver.scope("tombstone").counter(epitaph.name).incr()
-          true
-        case interstitial: Interstitial =>
-          statsReceiver.scope("interstitial").counter(interstitial.reason.name).incr()
-          true
-        case _ => false
-      }.getOrElse(false)
+  privatelon delonf shouldAvoid(
+    tombstonelonOpt: Option[VfTombstonelon],
+    statsReloncelonivelonr: StatsReloncelonivelonr,
+  ): Boolelonan = {
+    tombstonelonOpt
+      .map(_.action).collelonct {
+        caselon Tombstonelon(elonpitaph, _) =>
+          statsReloncelonivelonr.scopelon("tombstonelon").countelonr(elonpitaph.namelon).incr()
+          truelon
+        caselon intelonrstitial: Intelonrstitial =>
+          statsReloncelonivelonr.scopelon("intelonrstitial").countelonr(intelonrstitial.relonason.namelon).incr()
+          truelon
+        caselon _ => falselon
+      }.gelontOrelonlselon(falselon)
   }
 
-  private def runTombstoneVisLib(
-    request: AdAvoidanceRequest,
-    tombstoneVisibilityLibrary: TombstoneVisibilityLibrary,
-  ): Stitch[TombstoneVisibilityResponse] = {
-    val tombstoneRequest = TombstoneVisibilityRequest(
-      conversationId = request.conversationId,
-      focalTweetId = request.focalTweetId,
-      tweets = request.tweets,
-      authorMap = request.authorMap,
-      moderatedTweetIds = request.moderatedTweetIds,
-      viewerContext = request.viewerContext,
-      useRichText = request.useRichText
+  privatelon delonf runTombstonelonVisLib(
+    relonquelonst: AdAvoidancelonRelonquelonst,
+    tombstonelonVisibilityLibrary: TombstonelonVisibilityLibrary,
+  ): Stitch[TombstonelonVisibilityRelonsponselon] = {
+    val tombstonelonRelonquelonst = TombstonelonVisibilityRelonquelonst(
+      convelonrsationId = relonquelonst.convelonrsationId,
+      focalTwelonelontId = relonquelonst.focalTwelonelontId,
+      twelonelonts = relonquelonst.twelonelonts,
+      authorMap = relonquelonst.authorMap,
+      modelonratelondTwelonelontIds = relonquelonst.modelonratelondTwelonelontIds,
+      vielonwelonrContelonxt = relonquelonst.vielonwelonrContelonxt,
+      uselonRichTelonxt = relonquelonst.uselonRichTelonxt
     )
 
-    tombstoneVisibilityLibrary(tombstoneRequest)
+    tombstonelonVisibilityLibrary(tombstonelonRelonquelonst)
   }
 
-  def buildTweetAdAvoidanceMap(tweets: Seq[GetTweetFieldsResult]): Map[Long, Boolean] = tweets
-    .map(tweet => {
-      val shouldAvoid = tweet.tweetResult match {
-        case TweetFieldsResultState.Found(TweetFieldsResultFound(_, _, Some(filteredReason))) =>
-          FilteredReasonHelper.isAvoid(filteredReason)
-        case _ => false
+  delonf buildTwelonelontAdAvoidancelonMap(twelonelonts: Selonq[GelontTwelonelontFielonldsRelonsult]): Map[Long, Boolelonan] = twelonelonts
+    .map(twelonelont => {
+      val shouldAvoid = twelonelont.twelonelontRelonsult match {
+        caselon TwelonelontFielonldsRelonsultStatelon.Found(TwelonelontFielonldsRelonsultFound(_, _, Somelon(filtelonrelondRelonason))) =>
+          FiltelonrelondRelonasonHelonlpelonr.isAvoid(filtelonrelondRelonason)
+        caselon _ => falselon
       }
 
-      tweet.tweetId -> shouldAvoid
+      twelonelont.twelonelontId -> shouldAvoid
     }).toMap
 
-  def apply(visibilityLibrary: VisibilityLibrary, decider: Decider): Type = {
+  delonf apply(visibilityLibrary: VisibilityLibrary, deloncidelonr: Deloncidelonr): Typelon = {
     val tvl =
-      TombstoneVisibilityLibrary(visibilityLibrary, visibilityLibrary.statsReceiver, decider)
-    buildLibrary(tvl, visibilityLibrary.statsReceiver)
+      TombstonelonVisibilityLibrary(visibilityLibrary, visibilityLibrary.statsReloncelonivelonr, deloncidelonr)
+    buildLibrary(tvl, visibilityLibrary.statsReloncelonivelonr)
   }
 
-  @VisibleForTesting
-  def buildLibrary(
-    tvl: TombstoneVisibilityLibrary,
-    libraryStatsReceiver: StatsReceiver
-  ): AdAvoidanceLibrary.Type = {
+  @VisiblelonForTelonsting
+  delonf buildLibrary(
+    tvl: TombstonelonVisibilityLibrary,
+    libraryStatsReloncelonivelonr: StatsReloncelonivelonr
+  ): AdAvoidancelonLibrary.Typelon = {
 
-    val statsReceiver = libraryStatsReceiver.scope("AdAvoidanceLibrary")
-    val reasonsStatsReceiver = statsReceiver.scope("reasons")
-    val latencyStatsReceiver = statsReceiver.scope("latency")
-    val vfLatencyOverallStat = latencyStatsReceiver.stat("vf_latency_overall")
-    val vfLatencyStitchBuildStat = latencyStatsReceiver.stat("vf_latency_stitch_build")
-    val vfLatencyStitchRunStat = latencyStatsReceiver.stat("vf_latency_stitch_run")
+    val statsReloncelonivelonr = libraryStatsReloncelonivelonr.scopelon("AdAvoidancelonLibrary")
+    val relonasonsStatsReloncelonivelonr = statsReloncelonivelonr.scopelon("relonasons")
+    val latelonncyStatsReloncelonivelonr = statsReloncelonivelonr.scopelon("latelonncy")
+    val vfLatelonncyOvelonrallStat = latelonncyStatsReloncelonivelonr.stat("vf_latelonncy_ovelonrall")
+    val vfLatelonncyStitchBuildStat = latelonncyStatsReloncelonivelonr.stat("vf_latelonncy_stitch_build")
+    val vfLatelonncyStitchRunStat = latelonncyStatsReloncelonivelonr.stat("vf_latelonncy_stitch_run")
 
-    request: AdAvoidanceRequest => {
-      val elapsed = Stopwatch.start()
+    relonquelonst: AdAvoidancelonRelonquelonst => {
+      val elonlapselond = Stopwatch.start()
 
       var runStitchStartMs = 0L
 
-      val tombstoneResponse: Stitch[TombstoneVisibilityResponse] =
-        runTombstoneVisLib(request, tvl)
+      val tombstonelonRelonsponselon: Stitch[TombstonelonVisibilityRelonsponselon] =
+        runTombstonelonVisLib(relonquelonst, tvl)
 
-      val response = tombstoneResponse
-        .map({ response: TombstoneVisibilityResponse =>
-          statsReceiver.counter("requests").incr(request.tweets.size)
+      val relonsponselon = tombstonelonRelonsponselon
+        .map({ relonsponselon: TombstonelonVisibilityRelonsponselon =>
+          statsReloncelonivelonr.countelonr("relonquelonsts").incr(relonquelonst.twelonelonts.sizelon)
 
-          val dropResults: Seq[(Long, Boolean)] = request.tweets.map(tweetAndSafetyLevel => {
-            val tweet = tweetAndSafetyLevel._1
-            tweet.tweetId ->
+          val dropRelonsults: Selonq[(Long, Boolelonan)] = relonquelonst.twelonelonts.map(twelonelontAndSafelontyLelonvelonl => {
+            val twelonelont = twelonelontAndSafelontyLelonvelonl._1
+            twelonelont.twelonelontId ->
               shouldAvoid(
-                tweet.tweetResult,
-                response.tweetVerdicts.get(tweet.tweetId),
-                reasonsStatsReceiver)
+                twelonelont.twelonelontRelonsult,
+                relonsponselon.twelonelontVelonrdicts.gelont(twelonelont.twelonelontId),
+                relonasonsStatsReloncelonivelonr)
           })
 
-          AdAvoidanceResponse(dropAd = dropResults.toMap)
+          AdAvoidancelonRelonsponselon(dropAd = dropRelonsults.toMap)
         })
-        .onSuccess(_ => {
-          val overallStatMs = elapsed().inMilliseconds
-          vfLatencyOverallStat.add(overallStatMs)
-          val runStitchEndMs = elapsed().inMilliseconds
-          vfLatencyStitchRunStat.add(runStitchEndMs - runStitchStartMs)
+        .onSuccelonss(_ => {
+          val ovelonrallStatMs = elonlapselond().inMilliselonconds
+          vfLatelonncyOvelonrallStat.add(ovelonrallStatMs)
+          val runStitchelonndMs = elonlapselond().inMilliselonconds
+          vfLatelonncyStitchRunStat.add(runStitchelonndMs - runStitchStartMs)
         })
 
-      runStitchStartMs = elapsed().inMilliseconds
-      val buildStitchStatMs = elapsed().inMilliseconds
-      vfLatencyStitchBuildStat.add(buildStitchStatMs)
+      runStitchStartMs = elonlapselond().inMilliselonconds
+      val buildStitchStatMs = elonlapselond().inMilliselonconds
+      vfLatelonncyStitchBuildStat.add(buildStitchStatMs)
 
-      response
+      relonsponselon
     }
   }
 }

@@ -1,62 +1,62 @@
 scala_library(
-    name = "agg_address_book",
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
+    namelon = "agg_addrelonss_book",
+    sourcelons = ["*.scala"],
+    compilelonr_option_selonts = ["fatal_warnings"],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        ":interaction_graph_agg_address_book_edge_snapshot-scala",
-        ":interaction_graph_agg_address_book_vertex_snapshot-scala",
-        "3rdparty/jvm/com/twitter/storehaus:algebra",
-        "addressbook/jobs/src/main/scala/com/twitter/addressbook/jobs/simplematches:simple_user_matches-scala",
-        "beam-internal/src/main/scala/com/twitter/beam/io/dal",
-        "beam-internal/src/main/scala/com/twitter/scio_internal/job",
-        "beam-internal/src/main/scala/com/twitter/scio_internal/runner/dataflow",
-        "consumer-data-tools/src/main/scala/com/twitter/cde/scio/dal_read",
-        "src/scala/com/twitter/interaction_graph/scio/common",
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        ":intelonraction_graph_agg_addrelonss_book_elondgelon_snapshot-scala",
+        ":intelonraction_graph_agg_addrelonss_book_velonrtelonx_snapshot-scala",
+        "3rdparty/jvm/com/twittelonr/storelonhaus:algelonbra",
+        "addrelonssbook/jobs/src/main/scala/com/twittelonr/addrelonssbook/jobs/simplelonmatchelons:simplelon_uselonr_matchelons-scala",
+        "belonam-intelonrnal/src/main/scala/com/twittelonr/belonam/io/dal",
+        "belonam-intelonrnal/src/main/scala/com/twittelonr/scio_intelonrnal/job",
+        "belonam-intelonrnal/src/main/scala/com/twittelonr/scio_intelonrnal/runnelonr/dataflow",
+        "consumelonr-data-tools/src/main/scala/com/twittelonr/cdelon/scio/dal_relonad",
+        "src/scala/com/twittelonr/intelonraction_graph/scio/common",
     ],
 )
 
 jvm_binary(
-    name = "interaction_graph_address_book_scio",
-    main = "com.twitter.interaction_graph.scio.agg_address_book.InteractionGraphAddressBookJob",
+    namelon = "intelonraction_graph_addrelonss_book_scio",
+    main = "com.twittelonr.intelonraction_graph.scio.agg_addrelonss_book.IntelonractionGraphAddrelonssBookJob",
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        ":agg_address_book",
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        ":agg_addrelonss_book",
     ],
 )
 
-create_datasets(
-    base_name = "interaction_graph_agg_address_book_edge_snapshot",
-    description = "User-user directed edges with addressbook features",
-    java_schema = "com.twitter.interaction_graph.thriftjava.Edge",
+crelonatelon_dataselonts(
+    baselon_namelon = "intelonraction_graph_agg_addrelonss_book_elondgelon_snapshot",
+    delonscription = "Uselonr-uselonr direlonctelond elondgelons with addrelonssbook felonaturelons",
+    java_schelonma = "com.twittelonr.intelonraction_graph.thriftjava.elondgelon",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.interaction_graph.thriftscala.Edge",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    java_dependencies = [
-        "src/thrift/com/twitter/interaction_graph:interaction_graph-java",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.intelonraction_graph.thriftscala.elondgelon",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    java_delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/intelonraction_graph:intelonraction_graph-java",
     ],
-    scala_dependencies = [
-        "src/thrift/com/twitter/interaction_graph:interaction_graph-scala",
+    scala_delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/intelonraction_graph:intelonraction_graph-scala",
     ],
 )
 
-create_datasets(
-    base_name = "interaction_graph_agg_address_book_vertex_snapshot",
-    description = "User vertex with addressbook features",
-    java_schema = "com.twitter.interaction_graph.thriftjava.Vertex",
+crelonatelon_dataselonts(
+    baselon_namelon = "intelonraction_graph_agg_addrelonss_book_velonrtelonx_snapshot",
+    delonscription = "Uselonr velonrtelonx with addrelonssbook felonaturelons",
+    java_schelonma = "com.twittelonr.intelonraction_graph.thriftjava.Velonrtelonx",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.interaction_graph.thriftscala.Vertex",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    java_dependencies = [
-        "src/thrift/com/twitter/interaction_graph:interaction_graph-java",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.intelonraction_graph.thriftscala.Velonrtelonx",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    java_delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/intelonraction_graph:intelonraction_graph-java",
     ],
-    scala_dependencies = [
-        "src/thrift/com/twitter/interaction_graph:interaction_graph-scala",
+    scala_delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/intelonraction_graph:intelonraction_graph-scala",
     ],
 )

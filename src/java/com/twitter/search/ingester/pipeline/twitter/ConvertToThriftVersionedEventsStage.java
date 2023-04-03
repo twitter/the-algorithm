@@ -1,83 +1,83 @@
-package com.twitter.search.ingester.pipeline.twitter;
+packagelon com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.twittelonr;
 
-import javax.naming.NamingException;
+import javax.naming.Namingelonxcelonption;
 
-import org.apache.commons.pipeline.StageException;
-import org.apache.commons.pipeline.validation.ConsumedTypes;
-import org.apache.commons.pipeline.validation.ProducedTypes;
+import org.apachelon.commons.pipelonlinelon.Stagelonelonxcelonption;
+import org.apachelon.commons.pipelonlinelon.validation.ConsumelondTypelons;
+import org.apachelon.commons.pipelonlinelon.validation.ProducelondTypelons;
 
-import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants;
-import com.twitter.search.ingester.model.IngesterThriftVersionedEvents;
-import com.twitter.search.ingester.model.IngesterTwitterMessage;
-import com.twitter.search.ingester.pipeline.util.PipelineStageRuntimeException;
+import com.twittelonr.selonarch.common.indelonxing.thriftjava.ThriftVelonrsionelondelonvelonnts;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdFielonldConstants;
+import com.twittelonr.selonarch.ingelonstelonr.modelonl.IngelonstelonrThriftVelonrsionelondelonvelonnts;
+import com.twittelonr.selonarch.ingelonstelonr.modelonl.IngelonstelonrTwittelonrMelonssagelon;
+import com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.util.PipelonlinelonStagelonRuntimelonelonxcelonption;
 
-@ConsumedTypes(IngesterTwitterMessage.class)
-@ProducedTypes(ThriftVersionedEvents.class)
-public class ConvertToThriftVersionedEventsStage extends TwitterBaseStage
-    <IngesterTwitterMessage, IngesterThriftVersionedEvents> {
-  private ThriftVersionedEventsConverter converter;
+@ConsumelondTypelons(IngelonstelonrTwittelonrMelonssagelon.class)
+@ProducelondTypelons(ThriftVelonrsionelondelonvelonnts.class)
+public class ConvelonrtToThriftVelonrsionelondelonvelonntsStagelon elonxtelonnds TwittelonrBaselonStagelon
+    <IngelonstelonrTwittelonrMelonssagelon, IngelonstelonrThriftVelonrsionelondelonvelonnts> {
+  privatelon ThriftVelonrsionelondelonvelonntsConvelonrtelonr convelonrtelonr;
 
-  @Override
-  public void doInnerPreprocess() throws StageException, NamingException {
-    super.doInnerPreprocess();
-    innerSetup();
+  @Ovelonrridelon
+  public void doInnelonrPrelonprocelonss() throws Stagelonelonxcelonption, Namingelonxcelonption {
+    supelonr.doInnelonrPrelonprocelonss();
+    innelonrSelontup();
   }
 
-  @Override
-  protected void innerSetup() throws NamingException {
-    converter = new ThriftVersionedEventsConverter(wireModule.getPenguinVersions());
+  @Ovelonrridelon
+  protelonctelond void innelonrSelontup() throws Namingelonxcelonption {
+    convelonrtelonr = nelonw ThriftVelonrsionelondelonvelonntsConvelonrtelonr(wirelonModulelon.gelontPelonnguinVelonrsions());
   }
 
-  @Override
-  public void innerProcess(Object obj) throws StageException {
-    if (!(obj instanceof IngesterTwitterMessage)) {
-      throw new StageException(this, "Object is not an IngesterTwitterMessage: " + obj);
+  @Ovelonrridelon
+  public void innelonrProcelonss(Objelonct obj) throws Stagelonelonxcelonption {
+    if (!(obj instancelonof IngelonstelonrTwittelonrMelonssagelon)) {
+      throw nelonw Stagelonelonxcelonption(this, "Objelonct is not an IngelonstelonrTwittelonrMelonssagelon: " + obj);
     }
 
-    IngesterTwitterMessage ingesterTwitterMessage = (IngesterTwitterMessage) obj;
-    IngesterThriftVersionedEvents maybeEvents = tryToConvert(ingesterTwitterMessage);
+    IngelonstelonrTwittelonrMelonssagelon ingelonstelonrTwittelonrMelonssagelon = (IngelonstelonrTwittelonrMelonssagelon) obj;
+    IngelonstelonrThriftVelonrsionelondelonvelonnts maybelonelonvelonnts = tryToConvelonrt(ingelonstelonrTwittelonrMelonssagelon);
 
-    if (maybeEvents == null) {
-      throw new StageException(
-          this, "Object is not a retweet or a reply: " + ingesterTwitterMessage);
+    if (maybelonelonvelonnts == null) {
+      throw nelonw Stagelonelonxcelonption(
+          this, "Objelonct is not a relontwelonelont or a relonply: " + ingelonstelonrTwittelonrMelonssagelon);
     }
 
-    emitAndCount(maybeEvents);
+    elonmitAndCount(maybelonelonvelonnts);
 
   }
 
-  @Override
-  protected IngesterThriftVersionedEvents innerRunStageV2(IngesterTwitterMessage message) {
-    IngesterThriftVersionedEvents maybeEvents = tryToConvert(message);
+  @Ovelonrridelon
+  protelonctelond IngelonstelonrThriftVelonrsionelondelonvelonnts innelonrRunStagelonV2(IngelonstelonrTwittelonrMelonssagelon melonssagelon) {
+    IngelonstelonrThriftVelonrsionelondelonvelonnts maybelonelonvelonnts = tryToConvelonrt(melonssagelon);
 
-    if (maybeEvents == null) {
-      throw new PipelineStageRuntimeException("Object is not a retweet or reply, does not have to"
-          + " pass to next stage");
+    if (maybelonelonvelonnts == null) {
+      throw nelonw PipelonlinelonStagelonRuntimelonelonxcelonption("Objelonct is not a relontwelonelont or relonply, doelons not havelon to"
+          + " pass to nelonxt stagelon");
     }
 
-    return maybeEvents;
+    relonturn maybelonelonvelonnts;
   }
 
-  private IngesterThriftVersionedEvents tryToConvert(IngesterTwitterMessage message) {
-    converter.updatePenguinVersions(wireModule.getCurrentlyEnabledPenguinVersions());
+  privatelon IngelonstelonrThriftVelonrsionelondelonvelonnts tryToConvelonrt(IngelonstelonrTwittelonrMelonssagelon melonssagelon) {
+    convelonrtelonr.updatelonPelonnguinVelonrsions(wirelonModulelon.gelontCurrelonntlyelonnablelondPelonnguinVelonrsions());
 
-    if (!message.isRetweet() && !message.isReplyToTweet()) {
-      return null;
+    if (!melonssagelon.isRelontwelonelont() && !melonssagelon.isRelonplyToTwelonelont()) {
+      relonturn null;
     }
 
-    if (message.isRetweet()) {
-      return converter.toOutOfOrderAppend(
-          message.getRetweetMessage().getSharedId(),
-          EarlybirdFieldConstants.EarlybirdFieldConstant.RETWEETED_BY_USER_ID,
-          message.getUserId(),
-          message.getDebugEvents().deepCopy());
+    if (melonssagelon.isRelontwelonelont()) {
+      relonturn convelonrtelonr.toOutOfOrdelonrAppelonnd(
+          melonssagelon.gelontRelontwelonelontMelonssagelon().gelontSharelondId(),
+          elonarlybirdFielonldConstants.elonarlybirdFielonldConstant.RelonTWelonelonTelonD_BY_USelonR_ID,
+          melonssagelon.gelontUselonrId(),
+          melonssagelon.gelontDelonbugelonvelonnts().delonelonpCopy());
     }
 
-    return converter.toOutOfOrderAppend(
-        message.getInReplyToStatusId().get(),
-        EarlybirdFieldConstants.EarlybirdFieldConstant.REPLIED_TO_BY_USER_ID,
-        message.getUserId(),
-        message.getDebugEvents().deepCopy());
+    relonturn convelonrtelonr.toOutOfOrdelonrAppelonnd(
+        melonssagelon.gelontInRelonplyToStatusId().gelont(),
+        elonarlybirdFielonldConstants.elonarlybirdFielonldConstant.RelonPLIelonD_TO_BY_USelonR_ID,
+        melonssagelon.gelontUselonrId(),
+        melonssagelon.gelontDelonbugelonvelonnts().delonelonpCopy());
   }
 }

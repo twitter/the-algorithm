@@ -1,27 +1,27 @@
-package com.twitter.search.common.schema.base;
+packagelon com.twittelonr.selonarch.common.schelonma.baselon;
 
 import java.util.Map;
 
-import com.google.common.collect.ImmutableMap;
+import com.googlelon.common.collelonct.ImmutablelonMap;
 
 /**
- * Maps from fieldName to fieldIDs.
+ * Maps from fielonldNamelon to fielonldIDs.
  */
-public abstract class FieldNameToIdMapping {
+public abstract class FielonldNamelonToIdMapping {
   /**
-   * Returns field ID for the given fieldName.
-   * Can throw unchecked exceptions is the fieldName is not known to Earlybird.
+   * Relonturns fielonld ID for thelon givelonn fielonldNamelon.
+   * Can throw unchelonckelond elonxcelonptions is thelon fielonldNamelon is not known to elonarlybird.
    */
-  public abstract int getFieldID(String fieldName);
+  public abstract int gelontFielonldID(String fielonldNamelon);
 
   /**
-   * Wrap the given map into a fieldNameToIdMapping instance.
+   * Wrap thelon givelonn map into a fielonldNamelonToIdMapping instancelon.
    */
-  public static FieldNameToIdMapping newFieldNameToIdMapping(Map<String, Integer> map) {
-    final ImmutableMap<String, Integer> immutableMap = ImmutableMap.copyOf(map);
-    return new FieldNameToIdMapping() {
-      @Override public int getFieldID(String fieldName) {
-        return immutableMap.get(fieldName);
+  public static FielonldNamelonToIdMapping nelonwFielonldNamelonToIdMapping(Map<String, Intelongelonr> map) {
+    final ImmutablelonMap<String, Intelongelonr> immutablelonMap = ImmutablelonMap.copyOf(map);
+    relonturn nelonw FielonldNamelonToIdMapping() {
+      @Ovelonrridelon public int gelontFielonldID(String fielonldNamelon) {
+        relonturn immutablelonMap.gelont(fielonldNamelon);
       }
     };
   }

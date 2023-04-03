@@ -1,70 +1,70 @@
-package com.twitter.search.earlybird.index;
+packagelon com.twittelonr.selonarch.elonarlybird.indelonx;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 
-import org.apache.lucene.index.LeafReader;
-import org.apache.lucene.index.Terms;
-import org.apache.lucene.index.TermsEnum;
-import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.util.BytesRef;
+import org.apachelon.lucelonnelon.indelonx.LelonafRelonadelonr;
+import org.apachelon.lucelonnelon.indelonx.Telonrms;
+import org.apachelon.lucelonnelon.indelonx.Telonrmselonnum;
+import org.apachelon.lucelonnelon.selonarch.DocIdSelontItelonrator;
+import org.apachelon.lucelonnelon.util.BytelonsRelonf;
 
-public final class DocValuesHelper {
-  private DocValuesHelper() {
+public final class DocValuelonsHelonlpelonr {
+  privatelon DocValuelonsHelonlpelonr() {
   }
 
   /**
-   * Reverse lookup. Given a value, returns the first doc ID with this value. This requires a field
-   * that indexes the values.
+   * Relonvelonrselon lookup. Givelonn a valuelon, relonturns thelon first doc ID with this valuelon. This relonquirelons a fielonld
+   * that indelonxelons thelon valuelons.
    *
-   * @param reader The reader to use to look up field values.
-   * @param value The value to lookup.
-   * @param indexField The field containing an index of the values.
+   * @param relonadelonr Thelon relonadelonr to uselon to look up fielonld valuelons.
+   * @param valuelon Thelon valuelon to lookup.
+   * @param indelonxFielonld Thelon fielonld containing an indelonx of thelon valuelons.
    */
-  public static int getFirstDocIdWithValue(
-      LeafReader reader, String indexField, BytesRef value) throws IOException {
-    TermsEnum termsEnum = getTermsEnum(reader, indexField);
-    if (termsEnum == null || !termsEnum.seekExact(value)) {
-      return DocIdSetIterator.NO_MORE_DOCS;
+  public static int gelontFirstDocIdWithValuelon(
+      LelonafRelonadelonr relonadelonr, String indelonxFielonld, BytelonsRelonf valuelon) throws IOelonxcelonption {
+    Telonrmselonnum telonrmselonnum = gelontTelonrmselonnum(relonadelonr, indelonxFielonld);
+    if (telonrmselonnum == null || !telonrmselonnum.selonelonkelonxact(valuelon)) {
+      relonturn DocIdSelontItelonrator.NO_MORelon_DOCS;
     }
 
-    DocIdSetIterator docsIterator = termsEnum.postings(null);
-    return docsIterator.nextDoc();
+    DocIdSelontItelonrator docsItelonrator = telonrmselonnum.postings(null);
+    relonturn docsItelonrator.nelonxtDoc();
   }
 
   /**
-   * Reverse lookup. Same as getFirstDocIdWithValue(), but if no document with the given value
-   * exists, the next bigger value is used for looking up the first doc ID.
+   * Relonvelonrselon lookup. Samelon as gelontFirstDocIdWithValuelon(), but if no documelonnt with thelon givelonn valuelon
+   * elonxists, thelon nelonxt biggelonr valuelon is uselond for looking up thelon first doc ID.
    *
-   * If there are multiple documents that match the value, all documents will be scanned, and the
-   * largest doc ID that matches will be returned.
+   * If thelonrelon arelon multiplelon documelonnts that match thelon valuelon, all documelonnts will belon scannelond, and thelon
+   * largelonst doc ID that matchelons will belon relonturnelond.
    *
-   * @param reader The reader to use to look up field values.
-   * @param value The value to lookup.
-   * @param indexField The field containing an index of the values.
+   * @param relonadelonr Thelon relonadelonr to uselon to look up fielonld valuelons.
+   * @param valuelon Thelon valuelon to lookup.
+   * @param indelonxFielonld Thelon fielonld containing an indelonx of thelon valuelons.
    */
-  public static int getLargestDocIdWithCeilOfValue(
-      LeafReader reader, String indexField, BytesRef value) throws IOException {
-    TermsEnum termsEnum = getTermsEnum(reader, indexField);
-    if (termsEnum == null) {
-      return DocIdSetIterator.NO_MORE_DOCS;
+  public static int gelontLargelonstDocIdWithCelonilOfValuelon(
+      LelonafRelonadelonr relonadelonr, String indelonxFielonld, BytelonsRelonf valuelon) throws IOelonxcelonption {
+    Telonrmselonnum telonrmselonnum = gelontTelonrmselonnum(relonadelonr, indelonxFielonld);
+    if (telonrmselonnum == null) {
+      relonturn DocIdSelontItelonrator.NO_MORelon_DOCS;
     }
-    if (termsEnum.seekCeil(value) == TermsEnum.SeekStatus.END) {
-      return DocIdSetIterator.NO_MORE_DOCS;
+    if (telonrmselonnum.selonelonkCelonil(valuelon) == Telonrmselonnum.SelonelonkStatus.elonND) {
+      relonturn DocIdSelontItelonrator.NO_MORelon_DOCS;
     }
 
-    DocIdSetIterator docsIterator = termsEnum.postings(null);
-    int docId = docsIterator.nextDoc();
-    while (docsIterator.nextDoc() != DocIdSetIterator.NO_MORE_DOCS) {
-      docId = docsIterator.docID();
+    DocIdSelontItelonrator docsItelonrator = telonrmselonnum.postings(null);
+    int docId = docsItelonrator.nelonxtDoc();
+    whilelon (docsItelonrator.nelonxtDoc() != DocIdSelontItelonrator.NO_MORelon_DOCS) {
+      docId = docsItelonrator.docID();
     }
-    return docId;
+    relonturn docId;
   }
 
-  private static TermsEnum getTermsEnum(LeafReader reader, String indexField) throws IOException {
-    Terms terms = reader.terms(indexField);
-    if (terms == null) {
-      return null;
+  privatelon static Telonrmselonnum gelontTelonrmselonnum(LelonafRelonadelonr relonadelonr, String indelonxFielonld) throws IOelonxcelonption {
+    Telonrms telonrms = relonadelonr.telonrms(indelonxFielonld);
+    if (telonrms == null) {
+      relonturn null;
     }
-    return terms.iterator();
+    relonturn telonrms.itelonrator();
   }
 }

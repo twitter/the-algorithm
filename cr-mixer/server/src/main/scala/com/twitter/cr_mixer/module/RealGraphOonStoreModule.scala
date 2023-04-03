@@ -1,39 +1,39 @@
-package com.twitter.cr_mixer.module
+packagelon com.twittelonr.cr_mixelonr.modulelon
 
-import com.google.inject.Provides
-import com.twitter.app.Flag
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.store.strato.StratoFetchableStore
-import com.twitter.hermit.store.common.ObservedReadableStore
-import com.twitter.inject.TwitterModule
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.storehaus.ReadableStore
-import javax.inject.Named
-import javax.inject.Singleton
-import com.twitter.strato.client.{Client => StratoClient}
-import com.twitter.wtf.candidate.thriftscala.CandidateSeq
+import com.googlelon.injelonct.Providelons
+import com.twittelonr.app.Flag
+import com.twittelonr.cr_mixelonr.modelonl.ModulelonNamelons
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.frigatelon.common.storelon.strato.StratoFelontchablelonStorelon
+import com.twittelonr.helonrmit.storelon.common.ObselonrvelondRelonadablelonStorelon
+import com.twittelonr.injelonct.TwittelonrModulelon
+import com.twittelonr.simclustelonrs_v2.common.UselonrId
+import com.twittelonr.storelonhaus.RelonadablelonStorelon
+import javax.injelonct.Namelond
+import javax.injelonct.Singlelonton
+import com.twittelonr.strato.clielonnt.{Clielonnt => StratoClielonnt}
+import com.twittelonr.wtf.candidatelon.thriftscala.CandidatelonSelonq
 
-object RealGraphOonStoreModule extends TwitterModule {
+objelonct RelonalGraphOonStorelonModulelon elonxtelonnds TwittelonrModulelon {
 
-  private val userRealGraphOonColumnPath: Flag[String] = flag[String](
-    name = "crMixer.userRealGraphOonColumnPath",
-    default = "recommendations/twistly/userRealgraphOon",
-    help = "Strato column path for user real graph OON Store"
+  privatelon val uselonrRelonalGraphOonColumnPath: Flag[String] = flag[String](
+    namelon = "crMixelonr.uselonrRelonalGraphOonColumnPath",
+    delonfault = "reloncommelonndations/twistly/uselonrRelonalgraphOon",
+    helonlp = "Strato column path for uselonr relonal graph OON Storelon"
   )
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.RealGraphOonStore)
-  def providesRealGraphOonStore(
-    stratoClient: StratoClient,
-    statsReceiver: StatsReceiver
-  ): ReadableStore[UserId, CandidateSeq] = {
-    val realGraphOonStratoFetchableStore = StratoFetchableStore
-      .withUnitView[UserId, CandidateSeq](stratoClient, userRealGraphOonColumnPath())
+  @Providelons
+  @Singlelonton
+  @Namelond(ModulelonNamelons.RelonalGraphOonStorelon)
+  delonf providelonsRelonalGraphOonStorelon(
+    stratoClielonnt: StratoClielonnt,
+    statsReloncelonivelonr: StatsReloncelonivelonr
+  ): RelonadablelonStorelon[UselonrId, CandidatelonSelonq] = {
+    val relonalGraphOonStratoFelontchablelonStorelon = StratoFelontchablelonStorelon
+      .withUnitVielonw[UselonrId, CandidatelonSelonq](stratoClielonnt, uselonrRelonalGraphOonColumnPath())
 
-    ObservedReadableStore(
-      realGraphOonStratoFetchableStore
-    )(statsReceiver.scope("user_real_graph_oon_store"))
+    ObselonrvelondRelonadablelonStorelon(
+      relonalGraphOonStratoFelontchablelonStorelon
+    )(statsReloncelonivelonr.scopelon("uselonr_relonal_graph_oon_storelon"))
   }
 }

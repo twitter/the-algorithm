@@ -1,114 +1,114 @@
-package com.twitter.visibility.builder
+packagelon com.twittelonr.visibility.buildelonr
 
-import com.twitter.visibility.features.Feature
-import com.twitter.visibility.features.FeatureMap
-import com.twitter.visibility.models.ContentId
-import com.twitter.visibility.rules.Action
-import com.twitter.visibility.rules.Allow
-import com.twitter.visibility.rules.EvaluationContext
-import com.twitter.visibility.rules.FailClosedException
-import com.twitter.visibility.rules.FeaturesFailedException
-import com.twitter.visibility.rules.MissingFeaturesException
-import com.twitter.visibility.rules.Rule
-import com.twitter.visibility.rules.RuleFailedException
-import com.twitter.visibility.rules.RuleResult
-import com.twitter.visibility.rules.State.FeatureFailed
-import com.twitter.visibility.rules.State.MissingFeature
-import com.twitter.visibility.rules.State.RuleFailed
+import com.twittelonr.visibility.felonaturelons.Felonaturelon
+import com.twittelonr.visibility.felonaturelons.FelonaturelonMap
+import com.twittelonr.visibility.modelonls.ContelonntId
+import com.twittelonr.visibility.rulelons.Action
+import com.twittelonr.visibility.rulelons.Allow
+import com.twittelonr.visibility.rulelons.elonvaluationContelonxt
+import com.twittelonr.visibility.rulelons.FailCloselondelonxcelonption
+import com.twittelonr.visibility.rulelons.FelonaturelonsFailelondelonxcelonption
+import com.twittelonr.visibility.rulelons.MissingFelonaturelonselonxcelonption
+import com.twittelonr.visibility.rulelons.Rulelon
+import com.twittelonr.visibility.rulelons.RulelonFailelondelonxcelonption
+import com.twittelonr.visibility.rulelons.RulelonRelonsult
+import com.twittelonr.visibility.rulelons.Statelon.FelonaturelonFailelond
+import com.twittelonr.visibility.rulelons.Statelon.MissingFelonaturelon
+import com.twittelonr.visibility.rulelons.Statelon.RulelonFailelond
 
-class VisibilityResultBuilder(
-  val contentId: ContentId,
-  val featureMap: FeatureMap = FeatureMap.empty,
-  private var ruleResultMap: Map[Rule, RuleResult] = Map.empty) {
-  private var mapBuilder = Map.newBuilder[Rule, RuleResult]
-  mapBuilder ++= ruleResultMap
-  var verdict: Action = Allow
-  var finished: Boolean = false
-  var features: FeatureMap = featureMap
-  var actingRule: Option[Rule] = None
-  var secondaryVerdicts: Seq[Action] = Seq()
-  var secondaryActingRules: Seq[Rule] = Seq()
-  var resolvedFeatureMap: Map[Feature[_], Any] = Map.empty
+class VisibilityRelonsultBuildelonr(
+  val contelonntId: ContelonntId,
+  val felonaturelonMap: FelonaturelonMap = FelonaturelonMap.elonmpty,
+  privatelon var rulelonRelonsultMap: Map[Rulelon, RulelonRelonsult] = Map.elonmpty) {
+  privatelon var mapBuildelonr = Map.nelonwBuildelonr[Rulelon, RulelonRelonsult]
+  mapBuildelonr ++= rulelonRelonsultMap
+  var velonrdict: Action = Allow
+  var finishelond: Boolelonan = falselon
+  var felonaturelons: FelonaturelonMap = felonaturelonMap
+  var actingRulelon: Option[Rulelon] = Nonelon
+  var seloncondaryVelonrdicts: Selonq[Action] = Selonq()
+  var seloncondaryActingRulelons: Selonq[Rulelon] = Selonq()
+  var relonsolvelondFelonaturelonMap: Map[Felonaturelon[_], Any] = Map.elonmpty
 
-  def ruleResults: Map[Rule, RuleResult] = mapBuilder.result()
+  delonf rulelonRelonsults: Map[Rulelon, RulelonRelonsult] = mapBuildelonr.relonsult()
 
-  def withFeatureMap(featureMap: FeatureMap): VisibilityResultBuilder = {
-    this.features = featureMap
+  delonf withFelonaturelonMap(felonaturelonMap: FelonaturelonMap): VisibilityRelonsultBuildelonr = {
+    this.felonaturelons = felonaturelonMap
     this
   }
 
-  def withRuleResultMap(ruleResultMap: Map[Rule, RuleResult]): VisibilityResultBuilder = {
-    this.ruleResultMap = ruleResultMap
-    mapBuilder = Map.newBuilder[Rule, RuleResult]
-    mapBuilder ++= ruleResultMap
+  delonf withRulelonRelonsultMap(rulelonRelonsultMap: Map[Rulelon, RulelonRelonsult]): VisibilityRelonsultBuildelonr = {
+    this.rulelonRelonsultMap = rulelonRelonsultMap
+    mapBuildelonr = Map.nelonwBuildelonr[Rulelon, RulelonRelonsult]
+    mapBuildelonr ++= rulelonRelonsultMap
     this
   }
 
-  def withRuleResult(rule: Rule, result: RuleResult): VisibilityResultBuilder = {
-    mapBuilder += ((rule, result))
+  delonf withRulelonRelonsult(rulelon: Rulelon, relonsult: RulelonRelonsult): VisibilityRelonsultBuildelonr = {
+    mapBuildelonr += ((rulelon, relonsult))
     this
   }
 
-  def withVerdict(verdict: Action, ruleOpt: Option[Rule] = None): VisibilityResultBuilder = {
-    this.verdict = verdict
-    this.actingRule = ruleOpt
+  delonf withVelonrdict(velonrdict: Action, rulelonOpt: Option[Rulelon] = Nonelon): VisibilityRelonsultBuildelonr = {
+    this.velonrdict = velonrdict
+    this.actingRulelon = rulelonOpt
     this
   }
 
-  def withSecondaryVerdict(verdict: Action, rule: Rule): VisibilityResultBuilder = {
-    this.secondaryVerdicts = this.secondaryVerdicts :+ verdict
-    this.secondaryActingRules = this.secondaryActingRules :+ rule
+  delonf withSeloncondaryVelonrdict(velonrdict: Action, rulelon: Rulelon): VisibilityRelonsultBuildelonr = {
+    this.seloncondaryVelonrdicts = this.seloncondaryVelonrdicts :+ velonrdict
+    this.seloncondaryActingRulelons = this.seloncondaryActingRulelons :+ rulelon
     this
   }
 
-  def withFinished(finished: Boolean): VisibilityResultBuilder = {
-    this.finished = finished
+  delonf withFinishelond(finishelond: Boolelonan): VisibilityRelonsultBuildelonr = {
+    this.finishelond = finishelond
     this
   }
 
-  def withResolvedFeatureMap(
-    resolvedFeatureMap: Map[Feature[_], Any]
-  ): VisibilityResultBuilder = {
-    this.resolvedFeatureMap = resolvedFeatureMap
+  delonf withRelonsolvelondFelonaturelonMap(
+    relonsolvelondFelonaturelonMap: Map[Felonaturelon[_], Any]
+  ): VisibilityRelonsultBuildelonr = {
+    this.relonsolvelondFelonaturelonMap = relonsolvelondFelonaturelonMap
     this
   }
 
-  def isVerdictComposable(): Boolean = this.verdict.isComposable
+  delonf isVelonrdictComposablelon(): Boolelonan = this.velonrdict.isComposablelon
 
-  def failClosedException(evaluationContext: EvaluationContext): Option[FailClosedException] = {
-    mapBuilder
-      .result().collect {
-        case (r: Rule, RuleResult(_, MissingFeature(mf)))
-            if r.shouldFailClosed(evaluationContext.params) =>
-          Some(MissingFeaturesException(r.name, mf))
-        case (r: Rule, RuleResult(_, FeatureFailed(ff)))
-            if r.shouldFailClosed(evaluationContext.params) =>
-          Some(FeaturesFailedException(r.name, ff))
-        case (r: Rule, RuleResult(_, RuleFailed(t)))
-            if r.shouldFailClosed(evaluationContext.params) =>
-          Some(RuleFailedException(r.name, t))
-      }.toList.foldLeft(None: Option[FailClosedException]) { (acc, arg) =>
+  delonf failCloselondelonxcelonption(elonvaluationContelonxt: elonvaluationContelonxt): Option[FailCloselondelonxcelonption] = {
+    mapBuildelonr
+      .relonsult().collelonct {
+        caselon (r: Rulelon, RulelonRelonsult(_, MissingFelonaturelon(mf)))
+            if r.shouldFailCloselond(elonvaluationContelonxt.params) =>
+          Somelon(MissingFelonaturelonselonxcelonption(r.namelon, mf))
+        caselon (r: Rulelon, RulelonRelonsult(_, FelonaturelonFailelond(ff)))
+            if r.shouldFailCloselond(elonvaluationContelonxt.params) =>
+          Somelon(FelonaturelonsFailelondelonxcelonption(r.namelon, ff))
+        caselon (r: Rulelon, RulelonRelonsult(_, RulelonFailelond(t)))
+            if r.shouldFailCloselond(elonvaluationContelonxt.params) =>
+          Somelon(RulelonFailelondelonxcelonption(r.namelon, t))
+      }.toList.foldLelonft(Nonelon: Option[FailCloselondelonxcelonption]) { (acc, arg) =>
         (acc, arg) match {
-          case (None, Some(_)) => arg
-          case (Some(FeaturesFailedException(_, _)), Some(MissingFeaturesException(_, _))) => arg
-          case (Some(RuleFailedException(_, _)), Some(MissingFeaturesException(_, _))) => arg
-          case (Some(RuleFailedException(_, _)), Some(FeaturesFailedException(_, _))) => arg
-          case _ => acc
+          caselon (Nonelon, Somelon(_)) => arg
+          caselon (Somelon(FelonaturelonsFailelondelonxcelonption(_, _)), Somelon(MissingFelonaturelonselonxcelonption(_, _))) => arg
+          caselon (Somelon(RulelonFailelondelonxcelonption(_, _)), Somelon(MissingFelonaturelonselonxcelonption(_, _))) => arg
+          caselon (Somelon(RulelonFailelondelonxcelonption(_, _)), Somelon(FelonaturelonsFailelondelonxcelonption(_, _))) => arg
+          caselon _ => acc
         }
       }
   }
 
-  def build: VisibilityResult = {
-    VisibilityResult(
-      contentId = contentId,
-      featureMap = features,
-      ruleResultMap = mapBuilder.result(),
-      verdict = verdict,
-      finished = finished,
-      actingRule = actingRule,
-      secondaryActingRules = secondaryActingRules,
-      secondaryVerdicts = secondaryVerdicts,
-      resolvedFeatureMap = resolvedFeatureMap
+  delonf build: VisibilityRelonsult = {
+    VisibilityRelonsult(
+      contelonntId = contelonntId,
+      felonaturelonMap = felonaturelons,
+      rulelonRelonsultMap = mapBuildelonr.relonsult(),
+      velonrdict = velonrdict,
+      finishelond = finishelond,
+      actingRulelon = actingRulelon,
+      seloncondaryActingRulelons = seloncondaryActingRulelons,
+      seloncondaryVelonrdicts = seloncondaryVelonrdicts,
+      relonsolvelondFelonaturelonMap = relonsolvelondFelonaturelonMap
     )
   }
 }

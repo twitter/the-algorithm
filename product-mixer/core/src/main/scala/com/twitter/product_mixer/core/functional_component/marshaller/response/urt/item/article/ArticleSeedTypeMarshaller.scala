@@ -1,20 +1,20 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.article
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.itelonm.articlelon
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.article.ArticleSeedType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.article.FollowingListSeed
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.article.FriendsOfFriendsSeed
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.article.ListIdSeed
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.articlelon.ArticlelonSelonelondTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.articlelon.FollowingListSelonelond
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.articlelon.FrielonndsOfFrielonndsSelonelond
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.articlelon.ListIdSelonelond
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class ArticleSeedTypeMarshaller @Inject() () {
+@Singlelonton
+class ArticlelonSelonelondTypelonMarshallelonr @Injelonct() () {
 
-  def apply(articleSeedType: ArticleSeedType): urt.ArticleSeedType =
-    articleSeedType match {
-      case FollowingListSeed => urt.ArticleSeedType.FollowingList
-      case FriendsOfFriendsSeed => urt.ArticleSeedType.FriendsOfFriends
-      case ListIdSeed => urt.ArticleSeedType.ListId
+  delonf apply(articlelonSelonelondTypelon: ArticlelonSelonelondTypelon): urt.ArticlelonSelonelondTypelon =
+    articlelonSelonelondTypelon match {
+      caselon FollowingListSelonelond => urt.ArticlelonSelonelondTypelon.FollowingList
+      caselon FrielonndsOfFrielonndsSelonelond => urt.ArticlelonSelonelondTypelon.FrielonndsOfFrielonnds
+      caselon ListIdSelonelond => urt.ArticlelonSelonelondTypelon.ListId
     }
 }

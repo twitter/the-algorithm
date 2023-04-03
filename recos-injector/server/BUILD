@@ -1,43 +1,43 @@
-target(
-    name = "server",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "recos-injector/server/src/main/scala/com/twitter/recosinjector",
+targelont(
+    namelon = "selonrvelonr",
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        "reloncos-injelonctor/selonrvelonr/src/main/scala/com/twittelonr/reloncosinjelonctor",
     ],
 )
 
-test_suite(
-    name = "tests",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "recos-injector/server/src/test/scala/com/twitter/recosinjector",
+telonst_suitelon(
+    namelon = "telonsts",
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        "reloncos-injelonctor/selonrvelonr/src/telonst/scala/com/twittelonr/reloncosinjelonctor",
     ],
 )
 
 jvm_binary(
-    name = "bin",
-    basename = "recos-injector-server",
-    main = "com.twitter.recosinjector.Main",
+    namelon = "bin",
+    baselonnamelon = "reloncos-injelonctor-selonrvelonr",
+    main = "com.twittelonr.reloncosinjelonctor.Main",
     platform = "java11",
-    runtime_platform = "java11",
+    runtimelon_platform = "java11",
     tags = [
-        "bazel-compatible:migrated",
+        "bazelonl-compatiblelon:migratelond",
     ],
-    dependencies = [
-        ":server",
+    delonpelonndelonncielons = [
+        ":selonrvelonr",
         "3rdparty/jvm/org/slf4j:slf4j-jdk14",
     ],
 )
 
 jvm_app(
-    name = "bundle",
-    basename = "recos-injector",
+    namelon = "bundlelon",
+    baselonnamelon = "reloncos-injelonctor",
     binary = ":bin",
-    bundles = [bundle(
-        fileset = ["config/*"],
-        owning_target = "recos-injector/server/config:files",
+    bundlelons = [bundlelon(
+        filelonselont = ["config/*"],
+        owning_targelont = "reloncos-injelonctor/selonrvelonr/config:filelons",
     )],
     tags = [
-        "bazel-compatible:migrated",
+        "bazelonl-compatiblelon:migratelond",
     ],
 )

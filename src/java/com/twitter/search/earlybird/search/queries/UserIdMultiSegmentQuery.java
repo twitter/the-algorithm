@@ -1,528 +1,528 @@
-package com.twitter.search.earlybird.search.queries;
+packagelon com.twittelonr.selonarch.elonarlybird.selonarch.quelonrielons;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
-import javax.annotation.Nullable;
+import java.util.Selont;
+import java.util.concurrelonnt.TimelonUnit;
+import java.util.strelonam.Collelonctors;
+import javax.annotation.Nullablelon;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import com.googlelon.common.baselon.Prelonconditions;
+import com.googlelon.common.collelonct.Lists;
+import com.googlelon.common.collelonct.Maps;
 
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.index.Terms;
-import org.apache.lucene.index.TermsEnum;
-import org.apache.lucene.search.BooleanClause;
-import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.BulkScorer;
-import org.apache.lucene.search.ConstantScoreQuery;
-import org.apache.lucene.search.ConstantScoreWeight;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.Scorer;
-import org.apache.lucene.search.ScoreMode;
-import org.apache.lucene.search.Weight;
-import org.apache.lucene.util.BytesRef;
+import org.apachelon.lucelonnelon.indelonx.LelonafRelonadelonrContelonxt;
+import org.apachelon.lucelonnelon.indelonx.Telonrm;
+import org.apachelon.lucelonnelon.indelonx.Telonrms;
+import org.apachelon.lucelonnelon.indelonx.Telonrmselonnum;
+import org.apachelon.lucelonnelon.selonarch.BoolelonanClauselon;
+import org.apachelon.lucelonnelon.selonarch.BoolelonanQuelonry;
+import org.apachelon.lucelonnelon.selonarch.BulkScorelonr;
+import org.apachelon.lucelonnelon.selonarch.ConstantScorelonQuelonry;
+import org.apachelon.lucelonnelon.selonarch.ConstantScorelonWelonight;
+import org.apachelon.lucelonnelon.selonarch.IndelonxSelonarchelonr;
+import org.apachelon.lucelonnelon.selonarch.Quelonry;
+import org.apachelon.lucelonnelon.selonarch.Scorelonr;
+import org.apachelon.lucelonnelon.selonarch.ScorelonModelon;
+import org.apachelon.lucelonnelon.selonarch.Welonight;
+import org.apachelon.lucelonnelon.util.BytelonsRelonf;
 
-import com.twitter.decider.Decider;
-import com.twitter.search.common.decider.DeciderUtil;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchTimer;
-import com.twitter.search.common.metrics.SearchTimerStats;
-import com.twitter.search.common.query.HitAttributeHelper;
-import com.twitter.search.common.query.IDDisjunctionQuery;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.schema.base.IndexedNumericFieldSettings;
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.common.search.termination.QueryTimeout;
-import com.twitter.search.common.util.analysis.LongTermAttributeImpl;
-import com.twitter.search.common.util.analysis.SortableLongTermAttributeImpl;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentData;
-import com.twitter.search.core.earlybird.index.inverted.InvertedIndex;
-import com.twitter.search.core.earlybird.index.inverted.MultiSegmentTermDictionary;
-import com.twitter.search.earlybird.partition.MultiSegmentTermDictionaryManager;
-import com.twitter.search.earlybird.queryparser.EarlybirdQueryHelper;
-import com.twitter.search.queryparser.query.QueryParserException;
+import com.twittelonr.deloncidelonr.Deloncidelonr;
+import com.twittelonr.selonarch.common.deloncidelonr.DeloncidelonrUtil;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchTimelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchTimelonrStats;
+import com.twittelonr.selonarch.common.quelonry.HitAttributelonHelonlpelonr;
+import com.twittelonr.selonarch.common.quelonry.IDDisjunctionQuelonry;
+import com.twittelonr.selonarch.common.schelonma.baselon.ImmutablelonSchelonmaIntelonrfacelon;
+import com.twittelonr.selonarch.common.schelonma.baselon.IndelonxelondNumelonricFielonldSelonttings;
+import com.twittelonr.selonarch.common.schelonma.baselon.Schelonma;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdClustelonr;
+import com.twittelonr.selonarch.common.selonarch.telonrmination.QuelonryTimelonout;
+import com.twittelonr.selonarch.common.util.analysis.LongTelonrmAttributelonImpl;
+import com.twittelonr.selonarch.common.util.analysis.SortablelonLongTelonrmAttributelonImpl;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.elonarlybirdIndelonxSelongmelonntData;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.invelonrtelond.InvelonrtelondIndelonx;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.invelonrtelond.MultiSelongmelonntTelonrmDictionary;
+import com.twittelonr.selonarch.elonarlybird.partition.MultiSelongmelonntTelonrmDictionaryManagelonr;
+import com.twittelonr.selonarch.elonarlybird.quelonryparselonr.elonarlybirdQuelonryHelonlpelonr;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.QuelonryParselonrelonxcelonption;
 
 /**
- * A variant of a multi-term ID disjunction query (similar to {@link UserIdMultiSegmentQuery}),
- * that also uses a {@link MultiSegmentTermDictionary} where available, for more efficient
- * term lookups for queries that span multiple segments.
+ * A variant of a multi-telonrm ID disjunction quelonry (similar to {@link UselonrIdMultiSelongmelonntQuelonry}),
+ * that also uselons a {@link MultiSelongmelonntTelonrmDictionary} whelonrelon availablelon, for morelon elonfficielonnt
+ * telonrm lookups for quelonrielons that span multiplelon selongmelonnts.
  *
- * By default, a IDDisjunctionQuery (or Lucene's MultiTermQuery), does a term dictionary lookup
- * for all of the terms in its disjunction, and it does it once for each segment (or AtomicReader)
- * that the query is searching.
- * This means that when the term dictionary is large, and the term lookups are expensive, and when
- * we are searching multiple segments, the query needs to make num_terms * num_segments expensive
- * term dictionary lookups.
+ * By delonfault, a IDDisjunctionQuelonry (or Lucelonnelon's MultiTelonrmQuelonry), doelons a telonrm dictionary lookup
+ * for all of thelon telonrms in its disjunction, and it doelons it oncelon for elonach selongmelonnt (or AtomicRelonadelonr)
+ * that thelon quelonry is selonarching.
+ * This melonans that whelonn thelon telonrm dictionary is largelon, and thelon telonrm lookups arelon elonxpelonnsivelon, and whelonn
+ * welon arelon selonarching multiplelon selongmelonnts, thelon quelonry nelonelonds to makelon num_telonrms * num_selongmelonnts elonxpelonnsivelon
+ * telonrm dictionary lookups.
  *
- * With the help of a MultiSegmentTermDictionary, this multi-term disjunction query implementation
- * only does one lookup for all of the segments managed by the MultiSegmentTermDictionary.
- * If a segment is not supported by the MultiSegmentTermDictionary (e.g. if it's not optimized yet),
- * a regular lookup in that segment's term dictionary will be performed.
+ * With thelon helonlp of a MultiSelongmelonntTelonrmDictionary, this multi-telonrm disjunction quelonry implelonmelonntation
+ * only doelons onelon lookup for all of thelon selongmelonnts managelond by thelon MultiSelongmelonntTelonrmDictionary.
+ * If a selongmelonnt is not supportelond by thelon MultiSelongmelonntTelonrmDictionary (elon.g. if it's not optimizelond yelont),
+ * a relongular lookup in that selongmelonnt's telonrm dictionary will belon pelonrformelond.
  *
- * Usually, we will make 'num_terms' lookups in the current, un-optimized segment, and then if
- * more segments need to be searched, we will make another 'num_terms' lookups, once for all of
- * the remaining segments.
+ * Usually, welon will makelon 'num_telonrms' lookups in thelon currelonnt, un-optimizelond selongmelonnt, and thelonn if
+ * morelon selongmelonnts nelonelond to belon selonarchelond, welon will makelon anothelonr 'num_telonrms' lookups, oncelon for all of
+ * thelon relonmaining selongmelonnts.
  *
- * When performing lookups in the MultiSegmentTermDictionary, for each supported segment, we save
- * a list of termIds from that segment for all the searched terms that appear in that segment.
+ * Whelonn pelonrforming lookups in thelon MultiSelongmelonntTelonrmDictionary, for elonach supportelond selongmelonnt, welon savelon
+ * a list of telonrmIds from that selongmelonnt for all thelon selonarchelond telonrms that appelonar in that selongmelonnt.
  *
- * For example, when querying for UserIdMultiSegmentQuery with user ids: {1L, 2L, 3L} and
- * segments: {1, 2}, where segment 1 has user ids {1L, 2L} indexed under termIds {100, 200},
- * and segment 2 has user ids {1L, 2L, 3L} indexed under termIds {200, 300, 400}, we will build
- * up the following map once:
- *   segment1 -> [100, 200]
- *   segment2 -> [200, 300, 400]
+ * For elonxamplelon, whelonn quelonrying for UselonrIdMultiSelongmelonntQuelonry with uselonr ids: {1L, 2L, 3L} and
+ * selongmelonnts: {1, 2}, whelonrelon selongmelonnt 1 has uselonr ids {1L, 2L} indelonxelond undelonr telonrmIds {100, 200},
+ * and selongmelonnt 2 has uselonr ids {1L, 2L, 3L} indelonxelond undelonr telonrmIds {200, 300, 400}, welon will build
+ * up thelon following map oncelon:
+ *   selongmelonnt1 -> [100, 200]
+ *   selongmelonnt2 -> [200, 300, 400]
  */
-public class UserIdMultiSegmentQuery extends Query {
-  @VisibleForTesting
-  public static final SearchTimerStats TERM_LOOKUP_STATS =
-      SearchTimerStats.export("multi_segment_query_term_lookup", TimeUnit.NANOSECONDS, false);
-  public static final SearchTimerStats QUERY_FROM_PRECOMPUTED =
-      SearchTimerStats.export("multi_segment_query_from_precomputed", TimeUnit.NANOSECONDS, false);
-  public static final SearchTimerStats QUERY_REGULAR =
-      SearchTimerStats.export("multi_segment_query_regular", TimeUnit.NANOSECONDS, false);
+public class UselonrIdMultiSelongmelonntQuelonry elonxtelonnds Quelonry {
+  @VisiblelonForTelonsting
+  public static final SelonarchTimelonrStats TelonRM_LOOKUP_STATS =
+      SelonarchTimelonrStats.elonxport("multi_selongmelonnt_quelonry_telonrm_lookup", TimelonUnit.NANOSelonCONDS, falselon);
+  public static final SelonarchTimelonrStats QUelonRY_FROM_PRelonCOMPUTelonD =
+      SelonarchTimelonrStats.elonxport("multi_selongmelonnt_quelonry_from_preloncomputelond", TimelonUnit.NANOSelonCONDS, falselon);
+  public static final SelonarchTimelonrStats QUelonRY_RelonGULAR =
+      SelonarchTimelonrStats.elonxport("multi_selongmelonnt_quelonry_relongular", TimelonUnit.NANOSelonCONDS, falselon);
 
-  @VisibleForTesting
-  public static final SearchCounter USED_MULTI_SEGMENT_TERM_DICTIONARY_COUNT = SearchCounter.export(
-      "user_id_multi_segment_query_used_multi_segment_term_dictionary_count");
-  @VisibleForTesting
-  public static final SearchCounter USED_ORIGINAL_TERM_DICTIONARY_COUNT = SearchCounter.export(
-      "user_id_multi_segment_query_used_original_term_dictionary_count");
+  @VisiblelonForTelonsting
+  public static final SelonarchCountelonr USelonD_MULTI_SelonGMelonNT_TelonRM_DICTIONARY_COUNT = SelonarchCountelonr.elonxport(
+      "uselonr_id_multi_selongmelonnt_quelonry_uselond_multi_selongmelonnt_telonrm_dictionary_count");
+  @VisiblelonForTelonsting
+  public static final SelonarchCountelonr USelonD_ORIGINAL_TelonRM_DICTIONARY_COUNT = SelonarchCountelonr.elonxport(
+      "uselonr_id_multi_selongmelonnt_quelonry_uselond_original_telonrm_dictionary_count");
 
-  private static final SearchCounter NEW_QUERY_COUNT =
-      SearchCounter.export("user_id_multi_segment_new_query_count");
-  private static final SearchCounter OLD_QUERY_COUNT =
-      SearchCounter.export("user_id_multi_segment_old_query_count");
+  privatelon static final SelonarchCountelonr NelonW_QUelonRY_COUNT =
+      SelonarchCountelonr.elonxport("uselonr_id_multi_selongmelonnt_nelonw_quelonry_count");
+  privatelon static final SelonarchCountelonr OLD_QUelonRY_COUNT =
+      SelonarchCountelonr.elonxport("uselonr_id_multi_selongmelonnt_old_quelonry_count");
 
-  private static final HashMap<String, SearchCounter> QUERY_COUNT_BY_QUERY_NAME = new HashMap<>();
-  private static final HashMap<String, SearchCounter> QUERY_COUNT_BY_FIELD_NAME = new HashMap<>();
+  privatelon static final HashMap<String, SelonarchCountelonr> QUelonRY_COUNT_BY_QUelonRY_NAMelon = nelonw HashMap<>();
+  privatelon static final HashMap<String, SelonarchCountelonr> QUelonRY_COUNT_BY_FIelonLD_NAMelon = nelonw HashMap<>();
 
-  private static final String DECIDER_KEY_PREFIX = "use_multi_segment_id_disjunction_queries_in_";
+  privatelon static final String DelonCIDelonR_KelonY_PRelonFIX = "uselon_multi_selongmelonnt_id_disjunction_quelonrielons_in_";
 
   /**
-   * Returns a new user ID disjunction query.
+   * Relonturns a nelonw uselonr ID disjunction quelonry.
    *
-   * @param ids The user IDs.
-   * @param field The field storing the user IDs.
-   * @param schemaSnapshot A snapshot of earlybird's schema.
-   * @param multiSegmentTermDictionaryManager The manager for the term dictionaries that span
-   *                                          multiple segments.
-   * @param decider The decider.
-   * @param earlybirdCluster The earlybird cluster.
-   * @param ranks The hit attribution ranks to be assigned to every user ID.
-   * @param hitAttributeHelper The helper that tracks hit attributions.
-   * @param queryTimeout The timeout to be enforced on this query.
-   * @return A new user ID disjunction query.
+   * @param ids Thelon uselonr IDs.
+   * @param fielonld Thelon fielonld storing thelon uselonr IDs.
+   * @param schelonmaSnapshot A snapshot of elonarlybird's schelonma.
+   * @param multiSelongmelonntTelonrmDictionaryManagelonr Thelon managelonr for thelon telonrm dictionarielons that span
+   *                                          multiplelon selongmelonnts.
+   * @param deloncidelonr Thelon deloncidelonr.
+   * @param elonarlybirdClustelonr Thelon elonarlybird clustelonr.
+   * @param ranks Thelon hit attribution ranks to belon assignelond to elonvelonry uselonr ID.
+   * @param hitAttributelonHelonlpelonr Thelon helonlpelonr that tracks hit attributions.
+   * @param quelonryTimelonout Thelon timelonout to belon elonnforcelond on this quelonry.
+   * @relonturn A nelonw uselonr ID disjunction quelonry.
    */
-  public static Query createIdDisjunctionQuery(
-      String queryName,
+  public static Quelonry crelonatelonIdDisjunctionQuelonry(
+      String quelonryNamelon,
       List<Long> ids,
-      String field,
-      ImmutableSchemaInterface schemaSnapshot,
-      MultiSegmentTermDictionaryManager multiSegmentTermDictionaryManager,
-      Decider decider,
-      EarlybirdCluster earlybirdCluster,
-      List<Integer> ranks,
-      @Nullable HitAttributeHelper hitAttributeHelper,
-      @Nullable QueryTimeout queryTimeout) throws QueryParserException {
-    QUERY_COUNT_BY_QUERY_NAME.computeIfAbsent(queryName, name ->
-        SearchCounter.export("multi_segment_query_name_" + name)).increment();
-    QUERY_COUNT_BY_FIELD_NAME.computeIfAbsent(field, name ->
-        SearchCounter.export("multi_segment_query_count_for_field_" + name)).increment();
+      String fielonld,
+      ImmutablelonSchelonmaIntelonrfacelon schelonmaSnapshot,
+      MultiSelongmelonntTelonrmDictionaryManagelonr multiSelongmelonntTelonrmDictionaryManagelonr,
+      Deloncidelonr deloncidelonr,
+      elonarlybirdClustelonr elonarlybirdClustelonr,
+      List<Intelongelonr> ranks,
+      @Nullablelon HitAttributelonHelonlpelonr hitAttributelonHelonlpelonr,
+      @Nullablelon QuelonryTimelonout quelonryTimelonout) throws QuelonryParselonrelonxcelonption {
+    QUelonRY_COUNT_BY_QUelonRY_NAMelon.computelonIfAbselonnt(quelonryNamelon, namelon ->
+        SelonarchCountelonr.elonxport("multi_selongmelonnt_quelonry_namelon_" + namelon)).increlonmelonnt();
+    QUelonRY_COUNT_BY_FIelonLD_NAMelon.computelonIfAbselonnt(fielonld, namelon ->
+        SelonarchCountelonr.elonxport("multi_selongmelonnt_quelonry_count_for_fielonld_" + namelon)).increlonmelonnt();
 
-    if (DeciderUtil.isAvailableForRandomRecipient(decider, getDeciderName(earlybirdCluster))) {
-      NEW_QUERY_COUNT.increment();
-      MultiSegmentTermDictionary multiSegmentTermDictionary =
-          multiSegmentTermDictionaryManager.getMultiSegmentTermDictionary(field);
-      return new UserIdMultiSegmentQuery(
+    if (DeloncidelonrUtil.isAvailablelonForRandomReloncipielonnt(deloncidelonr, gelontDeloncidelonrNamelon(elonarlybirdClustelonr))) {
+      NelonW_QUelonRY_COUNT.increlonmelonnt();
+      MultiSelongmelonntTelonrmDictionary multiSelongmelonntTelonrmDictionary =
+          multiSelongmelonntTelonrmDictionaryManagelonr.gelontMultiSelongmelonntTelonrmDictionary(fielonld);
+      relonturn nelonw UselonrIdMultiSelongmelonntQuelonry(
           ids,
-          field,
-          schemaSnapshot,
-          multiSegmentTermDictionary,
+          fielonld,
+          schelonmaSnapshot,
+          multiSelongmelonntTelonrmDictionary,
           ranks,
-          hitAttributeHelper,
-          queryTimeout);
-    } else {
-      OLD_QUERY_COUNT.increment();
-      return new IDDisjunctionQuery(ids, field, schemaSnapshot);
+          hitAttributelonHelonlpelonr,
+          quelonryTimelonout);
+    } elonlselon {
+      OLD_QUelonRY_COUNT.increlonmelonnt();
+      relonturn nelonw IDDisjunctionQuelonry(ids, fielonld, schelonmaSnapshot);
     }
   }
 
-  @VisibleForTesting
-  public static String getDeciderName(EarlybirdCluster earlybirdCluster) {
-    return DECIDER_KEY_PREFIX + earlybirdCluster.name().toLowerCase();
+  @VisiblelonForTelonsting
+  public static String gelontDeloncidelonrNamelon(elonarlybirdClustelonr elonarlybirdClustelonr) {
+    relonturn DelonCIDelonR_KelonY_PRelonFIX + elonarlybirdClustelonr.namelon().toLowelonrCaselon();
   }
 
-  private final boolean useOrderPreservingEncoding;
-  private final HitAttributeHelper hitAttributeHelper;
-  private final QueryTimeout queryTimeout;
-  private final MultiSegmentTermDictionary multiSegmentTermDictionary;
-  private final Schema.FieldInfo fieldInfo;
-  private final String field;
-  private final List<Long> ids;
+  privatelon final boolelonan uselonOrdelonrPrelonselonrvingelonncoding;
+  privatelon final HitAttributelonHelonlpelonr hitAttributelonHelonlpelonr;
+  privatelon final QuelonryTimelonout quelonryTimelonout;
+  privatelon final MultiSelongmelonntTelonrmDictionary multiSelongmelonntTelonrmDictionary;
+  privatelon final Schelonma.FielonldInfo fielonldInfo;
+  privatelon final String fielonld;
+  privatelon final List<Long> ids;
 
-  private final List<Integer> ranks;
-  // For each segment where we have a multi-segment term dictionary, this map will contain the
-  // termIds of all the terms that actually appear in that segment's index.
-  @Nullable
-  private Map<InvertedIndex, List<TermRankPair>> termIdsPerSegment;
+  privatelon final List<Intelongelonr> ranks;
+  // For elonach selongmelonnt whelonrelon welon havelon a multi-selongmelonnt telonrm dictionary, this map will contain thelon
+  // telonrmIds of all thelon telonrms that actually appelonar in that selongmelonnt's indelonx.
+  @Nullablelon
+  privatelon Map<InvelonrtelondIndelonx, List<TelonrmRankPair>> telonrmIdsPelonrSelongmelonnt;
 
-  // A wrap class helps to associate termId with corresponding search operator rank if exist
-  private final class TermRankPair {
-    private final int termId;
-    private final int rank;
+  // A wrap class helonlps to associatelon telonrmId with correlonsponding selonarch opelonrator rank if elonxist
+  privatelon final class TelonrmRankPair {
+    privatelon final int telonrmId;
+    privatelon final int rank;
 
-    TermRankPair(int termId, int rank) {
-      this.termId = termId;
+    TelonrmRankPair(int telonrmId, int rank) {
+      this.telonrmId = telonrmId;
       this.rank = rank;
     }
 
-    public int getTermId() {
-      return termId;
+    public int gelontTelonrmId() {
+      relonturn telonrmId;
     }
 
-    public int getRank() {
-      return rank;
+    public int gelontRank() {
+      relonturn rank;
     }
   }
 
-  @VisibleForTesting
-  public UserIdMultiSegmentQuery(
+  @VisiblelonForTelonsting
+  public UselonrIdMultiSelongmelonntQuelonry(
       List<Long> ids,
-      String field,
-      ImmutableSchemaInterface schemaSnapshot,
-      MultiSegmentTermDictionary termDictionary,
-      List<Integer> ranks,
-      @Nullable HitAttributeHelper hitAttributeHelper,
-      @Nullable QueryTimeout queryTimeout) {
-    this.field = field;
+      String fielonld,
+      ImmutablelonSchelonmaIntelonrfacelon schelonmaSnapshot,
+      MultiSelongmelonntTelonrmDictionary telonrmDictionary,
+      List<Intelongelonr> ranks,
+      @Nullablelon HitAttributelonHelonlpelonr hitAttributelonHelonlpelonr,
+      @Nullablelon QuelonryTimelonout quelonryTimelonout) {
+    this.fielonld = fielonld;
     this.ids = ids;
-    this.multiSegmentTermDictionary = termDictionary;
+    this.multiSelongmelonntTelonrmDictionary = telonrmDictionary;
     this.ranks = ranks;
-    this.hitAttributeHelper = hitAttributeHelper;
-    this.queryTimeout = queryTimeout;
+    this.hitAttributelonHelonlpelonr = hitAttributelonHelonlpelonr;
+    this.quelonryTimelonout = quelonryTimelonout;
 
-    // check ids and ranks have same size
-    Preconditions.checkArgument(ranks.size() == 0 || ranks.size() == ids.size());
-    // hitAttributeHelper is not null iff ranks is not empty
-    if (ranks.size() > 0) {
-      Preconditions.checkNotNull(hitAttributeHelper);
-    } else {
-      Preconditions.checkArgument(hitAttributeHelper == null);
+    // chelonck ids and ranks havelon samelon sizelon
+    Prelonconditions.chelonckArgumelonnt(ranks.sizelon() == 0 || ranks.sizelon() == ids.sizelon());
+    // hitAttributelonHelonlpelonr is not null iff ranks is not elonmpty
+    if (ranks.sizelon() > 0) {
+      Prelonconditions.chelonckNotNull(hitAttributelonHelonlpelonr);
+    } elonlselon {
+      Prelonconditions.chelonckArgumelonnt(hitAttributelonHelonlpelonr == null);
     }
 
-    if (!schemaSnapshot.hasField(field)) {
-      throw new IllegalStateException("Tried to search a field which does not exist in schema");
+    if (!schelonmaSnapshot.hasFielonld(fielonld)) {
+      throw nelonw IllelongalStatelonelonxcelonption("Trielond to selonarch a fielonld which doelons not elonxist in schelonma");
     }
-    this.fieldInfo = Preconditions.checkNotNull(schemaSnapshot.getFieldInfo(field));
+    this.fielonldInfo = Prelonconditions.chelonckNotNull(schelonmaSnapshot.gelontFielonldInfo(fielonld));
 
-    IndexedNumericFieldSettings numericFieldSettings =
-        fieldInfo.getFieldType().getNumericFieldSettings();
-    if (numericFieldSettings == null) {
-      throw new IllegalStateException("Id field is not numerical");
+    IndelonxelondNumelonricFielonldSelonttings numelonricFielonldSelonttings =
+        fielonldInfo.gelontFielonldTypelon().gelontNumelonricFielonldSelonttings();
+    if (numelonricFielonldSelonttings == null) {
+      throw nelonw IllelongalStatelonelonxcelonption("Id fielonld is not numelonrical");
     }
 
-    this.useOrderPreservingEncoding = numericFieldSettings.isUseSortableEncoding();
+    this.uselonOrdelonrPrelonselonrvingelonncoding = numelonricFielonldSelonttings.isUselonSortablelonelonncoding();
   }
 
   /**
-   * If it hasn't been built yet, build up the map containing termIds of all the terms being
-   * searched, for all of the segments that are managed by the multi-segment term dictionary.
+   * If it hasn't belonelonn built yelont, build up thelon map containing telonrmIds of all thelon telonrms beloning
+   * selonarchelond, for all of thelon selongmelonnts that arelon managelond by thelon multi-selongmelonnt telonrm dictionary.
    *
-   * We only do this once, when we have to search the first segment that's supported by our
-   * multi-segment term dictionary.
+   * Welon only do this oncelon, whelonn welon havelon to selonarch thelon first selongmelonnt that's supportelond by our
+   * multi-selongmelonnt telonrm dictionary.
    *
-   * Flow here is to:
-   * 1. go through all the ids being queried.
-   * 2. for each id, get the termIds for that term in all of the segments in the term dictionary
-   * 3. for all of the segments that have that term, add the termId to that segment's list of
-   * term ids (in the 'termIdsPerSegment' map).
+   * Flow helonrelon is to:
+   * 1. go through all thelon ids beloning quelonrielond.
+   * 2. for elonach id, gelont thelon telonrmIds for that telonrm in all of thelon selongmelonnts in thelon telonrm dictionary
+   * 3. for all of thelon selongmelonnts that havelon that telonrm, add thelon telonrmId to that selongmelonnt's list of
+   * telonrm ids (in thelon 'telonrmIdsPelonrSelongmelonnt' map).
    */
-  private void createTermIdsPerSegment() {
-    if (termIdsPerSegment != null) {
-      // already created the map
-      return;
+  privatelon void crelonatelonTelonrmIdsPelonrSelongmelonnt() {
+    if (telonrmIdsPelonrSelongmelonnt != null) {
+      // alrelonady crelonatelond thelon map
+      relonturn;
     }
 
-    long start = System.nanoTime();
+    long start = Systelonm.nanoTimelon();
 
-    final BytesRef termRef = useOrderPreservingEncoding
-        ? SortableLongTermAttributeImpl.newBytesRef()
-        : LongTermAttributeImpl.newBytesRef();
+    final BytelonsRelonf telonrmRelonf = uselonOrdelonrPrelonselonrvingelonncoding
+        ? SortablelonLongTelonrmAttributelonImpl.nelonwBytelonsRelonf()
+        : LongTelonrmAttributelonImpl.nelonwBytelonsRelonf();
 
-    termIdsPerSegment = Maps.newHashMap();
-    List<? extends InvertedIndex> segmentIndexes = multiSegmentTermDictionary.getSegmentIndexes();
+    telonrmIdsPelonrSelongmelonnt = Maps.nelonwHashMap();
+    List<? elonxtelonnds InvelonrtelondIndelonx> selongmelonntIndelonxelons = multiSelongmelonntTelonrmDictionary.gelontSelongmelonntIndelonxelons();
 
-    for (int idx = 0; idx < ids.size(); ++idx) {
-      long longTerm = ids.get(idx);
+    for (int idx = 0; idx < ids.sizelon(); ++idx) {
+      long longTelonrm = ids.gelont(idx);
 
-      if (useOrderPreservingEncoding) {
-        SortableLongTermAttributeImpl.copyLongToBytesRef(termRef, longTerm);
-      } else {
-        LongTermAttributeImpl.copyLongToBytesRef(termRef, longTerm);
+      if (uselonOrdelonrPrelonselonrvingelonncoding) {
+        SortablelonLongTelonrmAttributelonImpl.copyLongToBytelonsRelonf(telonrmRelonf, longTelonrm);
+      } elonlselon {
+        LongTelonrmAttributelonImpl.copyLongToBytelonsRelonf(telonrmRelonf, longTelonrm);
       }
 
-      int[] termIds = multiSegmentTermDictionary.lookupTermIds(termRef);
-      Preconditions.checkState(segmentIndexes.size() == termIds.length,
-          "SegmentIndexes: %s, field: %s, termIds: %s",
-          segmentIndexes.size(), field, termIds.length);
+      int[] telonrmIds = multiSelongmelonntTelonrmDictionary.lookupTelonrmIds(telonrmRelonf);
+      Prelonconditions.chelonckStatelon(selongmelonntIndelonxelons.sizelon() == telonrmIds.lelonngth,
+          "SelongmelonntIndelonxelons: %s, fielonld: %s, telonrmIds: %s",
+          selongmelonntIndelonxelons.sizelon(), fielonld, telonrmIds.lelonngth);
 
-      for (int indexId = 0; indexId < termIds.length; indexId++) {
-        int termId = termIds[indexId];
-        if (termId != EarlybirdIndexSegmentAtomicReader.TERM_NOT_FOUND) {
-          InvertedIndex fieldIndex = segmentIndexes.get(indexId);
+      for (int indelonxId = 0; indelonxId < telonrmIds.lelonngth; indelonxId++) {
+        int telonrmId = telonrmIds[indelonxId];
+        if (telonrmId != elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr.TelonRM_NOT_FOUND) {
+          InvelonrtelondIndelonx fielonldIndelonx = selongmelonntIndelonxelons.gelont(indelonxId);
 
-          List<TermRankPair> termIdsList = termIdsPerSegment.get(fieldIndex);
-          if (termIdsList == null) {
-            termIdsList = Lists.newArrayList();
-            termIdsPerSegment.put(fieldIndex, termIdsList);
+          List<TelonrmRankPair> telonrmIdsList = telonrmIdsPelonrSelongmelonnt.gelont(fielonldIndelonx);
+          if (telonrmIdsList == null) {
+            telonrmIdsList = Lists.nelonwArrayList();
+            telonrmIdsPelonrSelongmelonnt.put(fielonldIndelonx, telonrmIdsList);
           }
-          termIdsList.add(new TermRankPair(
-              termId, ranks.size() > 0 ? ranks.get(idx) : -1));
+          telonrmIdsList.add(nelonw TelonrmRankPair(
+              telonrmId, ranks.sizelon() > 0 ? ranks.gelont(idx) : -1));
         }
       }
     }
 
-    long elapsed = System.nanoTime() - start;
-    TERM_LOOKUP_STATS.timerIncrement(elapsed);
+    long elonlapselond = Systelonm.nanoTimelon() - start;
+    TelonRM_LOOKUP_STATS.timelonrIncrelonmelonnt(elonlapselond);
   }
 
-  @Override
-  public Weight createWeight(IndexSearcher searcher, ScoreMode scoreMode, float boost) {
-    return new UserIdMultiSegmentQueryWeight(searcher, scoreMode, boost);
+  @Ovelonrridelon
+  public Welonight crelonatelonWelonight(IndelonxSelonarchelonr selonarchelonr, ScorelonModelon scorelonModelon, float boost) {
+    relonturn nelonw UselonrIdMultiSelongmelonntQuelonryWelonight(selonarchelonr, scorelonModelon, boost);
   }
 
-  @Override
-  public int hashCode() {
-    return Arrays.hashCode(
-        new Object[] {useOrderPreservingEncoding, queryTimeout, field, ids, ranks});
+  @Ovelonrridelon
+  public int hashCodelon() {
+    relonturn Arrays.hashCodelon(
+        nelonw Objelonct[] {uselonOrdelonrPrelonselonrvingelonncoding, quelonryTimelonout, fielonld, ids, ranks});
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (!(obj instanceof UserIdMultiSegmentQuery)) {
-      return false;
+  @Ovelonrridelon
+  public boolelonan elonquals(Objelonct obj) {
+    if (!(obj instancelonof UselonrIdMultiSelongmelonntQuelonry)) {
+      relonturn falselon;
     }
 
-    UserIdMultiSegmentQuery query = UserIdMultiSegmentQuery.class.cast(obj);
-    return Arrays.equals(
-        new Object[] {useOrderPreservingEncoding, queryTimeout, field, ids, ranks},
-        new Object[] {query.useOrderPreservingEncoding,
-                      query.queryTimeout,
-                      query.field,
-                      query.ids,
-                      query.ranks});
+    UselonrIdMultiSelongmelonntQuelonry quelonry = UselonrIdMultiSelongmelonntQuelonry.class.cast(obj);
+    relonturn Arrays.elonquals(
+        nelonw Objelonct[] {uselonOrdelonrPrelonselonrvingelonncoding, quelonryTimelonout, fielonld, ids, ranks},
+        nelonw Objelonct[] {quelonry.uselonOrdelonrPrelonselonrvingelonncoding,
+                      quelonry.quelonryTimelonout,
+                      quelonry.fielonld,
+                      quelonry.ids,
+                      quelonry.ranks});
   }
 
-  @Override
-  public String toString(String fieldName) {
-    StringBuilder builder = new StringBuilder();
-    builder.append(getClass().getSimpleName()).append("[").append(fieldName).append(":");
+  @Ovelonrridelon
+  public String toString(String fielonldNamelon) {
+    StringBuildelonr buildelonr = nelonw StringBuildelonr();
+    buildelonr.appelonnd(gelontClass().gelontSimplelonNamelon()).appelonnd("[").appelonnd(fielonldNamelon).appelonnd(":");
     for (Long id : this.ids) {
-      builder.append(id);
-      builder.append(",");
+      buildelonr.appelonnd(id);
+      buildelonr.appelonnd(",");
     }
-    builder.setLength(builder.length() - 1);
-    builder.append("]");
-    return builder.toString();
+    buildelonr.selontLelonngth(buildelonr.lelonngth() - 1);
+    buildelonr.appelonnd("]");
+    relonturn buildelonr.toString();
   }
 
-  private final class UserIdMultiSegmentQueryWeight extends ConstantScoreWeight {
-    private final IndexSearcher searcher;
-    private final ScoreMode scoreMode;
+  privatelon final class UselonrIdMultiSelongmelonntQuelonryWelonight elonxtelonnds ConstantScorelonWelonight {
+    privatelon final IndelonxSelonarchelonr selonarchelonr;
+    privatelon final ScorelonModelon scorelonModelon;
 
-    private UserIdMultiSegmentQueryWeight(
-        IndexSearcher searcher,
-        ScoreMode scoreMode,
+    privatelon UselonrIdMultiSelongmelonntQuelonryWelonight(
+        IndelonxSelonarchelonr selonarchelonr,
+        ScorelonModelon scorelonModelon,
         float boost) {
-      super(UserIdMultiSegmentQuery.this, boost);
-      this.searcher = searcher;
-      this.scoreMode = scoreMode;
+      supelonr(UselonrIdMultiSelongmelonntQuelonry.this, boost);
+      this.selonarchelonr = selonarchelonr;
+      this.scorelonModelon = scorelonModelon;
     }
 
-    @Override
-    public Scorer scorer(LeafReaderContext context) throws IOException {
-      Weight weight = rewrite(context);
-      if (weight != null) {
-        return weight.scorer(context);
-      } else {
-        return null;
+    @Ovelonrridelon
+    public Scorelonr scorelonr(LelonafRelonadelonrContelonxt contelonxt) throws IOelonxcelonption {
+      Welonight welonight = relonwritelon(contelonxt);
+      if (welonight != null) {
+        relonturn welonight.scorelonr(contelonxt);
+      } elonlselon {
+        relonturn null;
       }
     }
 
-    @Override
-    public BulkScorer bulkScorer(LeafReaderContext context) throws IOException {
-      Weight weight = rewrite(context);
-      if (weight != null) {
-        return weight.bulkScorer(context);
-      } else {
-        return null;
+    @Ovelonrridelon
+    public BulkScorelonr bulkScorelonr(LelonafRelonadelonrContelonxt contelonxt) throws IOelonxcelonption {
+      Welonight welonight = relonwritelon(contelonxt);
+      if (welonight != null) {
+        relonturn welonight.bulkScorelonr(contelonxt);
+      } elonlselon {
+        relonturn null;
       }
     }
 
-    @Override
-    public void extractTerms(Set<Term> terms) {
-      terms.addAll(ids
-          .stream()
-          .map(id -> new Term(field, LongTermAttributeImpl.copyIntoNewBytesRef(id)))
-          .collect(Collectors.toSet()));
+    @Ovelonrridelon
+    public void elonxtractTelonrms(Selont<Telonrm> telonrms) {
+      telonrms.addAll(ids
+          .strelonam()
+          .map(id -> nelonw Telonrm(fielonld, LongTelonrmAttributelonImpl.copyIntoNelonwBytelonsRelonf(id)))
+          .collelonct(Collelonctors.toSelont()));
     }
 
-    @Override
-    public boolean isCacheable(LeafReaderContext ctx) {
-      return true;
+    @Ovelonrridelon
+    public boolelonan isCachelonablelon(LelonafRelonadelonrContelonxt ctx) {
+      relonturn truelon;
     }
 
-    private Weight rewrite(LeafReaderContext context) throws IOException {
-      final Terms terms = context.reader().terms(field);
-      if (terms == null) {
-        // field does not exist
-        return null;
+    privatelon Welonight relonwritelon(LelonafRelonadelonrContelonxt contelonxt) throws IOelonxcelonption {
+      final Telonrms telonrms = contelonxt.relonadelonr().telonrms(fielonld);
+      if (telonrms == null) {
+        // fielonld doelons not elonxist
+        relonturn null;
       }
-      final TermsEnum termsEnum = terms.iterator();
-      Preconditions.checkNotNull(termsEnum, "No termsEnum for field: %s", field);
+      final Telonrmselonnum telonrmselonnum = telonrms.itelonrator();
+      Prelonconditions.chelonckNotNull(telonrmselonnum, "No telonrmselonnum for fielonld: %s", fielonld);
 
-      BooleanQuery bq;
-      // See if the segment is supported by the multi-segment term dictionary. If so, build up
-      // the query using the termIds from the multi-segment term dictionary.
-      // If not (for the current segment), do the term lookups directly in the queried segment.
-      InvertedIndex fieldIndex = getFieldIndexFromMultiTermDictionary(context);
-      if (fieldIndex != null) {
-        createTermIdsPerSegment();
+      BoolelonanQuelonry bq;
+      // Selonelon if thelon selongmelonnt is supportelond by thelon multi-selongmelonnt telonrm dictionary. If so, build up
+      // thelon quelonry using thelon telonrmIds from thelon multi-selongmelonnt telonrm dictionary.
+      // If not (for thelon currelonnt selongmelonnt), do thelon telonrm lookups direlonctly in thelon quelonrielond selongmelonnt.
+      InvelonrtelondIndelonx fielonldIndelonx = gelontFielonldIndelonxFromMultiTelonrmDictionary(contelonxt);
+      if (fielonldIndelonx != null) {
+        crelonatelonTelonrmIdsPelonrSelongmelonnt();
 
-        USED_MULTI_SEGMENT_TERM_DICTIONARY_COUNT.increment();
-        SearchTimer timer = QUERY_FROM_PRECOMPUTED.startNewTimer();
-        bq = addPrecomputedTermQueries(fieldIndex, termsEnum);
-        QUERY_FROM_PRECOMPUTED.stopTimerAndIncrement(timer);
-      } else {
-        USED_ORIGINAL_TERM_DICTIONARY_COUNT.increment();
-        // This segment is not supported by the multi-segment term dictionary. Lookup terms
-        // directly.
-        SearchTimer timer = QUERY_REGULAR.startNewTimer();
-        bq = addTermQueries(termsEnum);
-        QUERY_REGULAR.stopTimerAndIncrement(timer);
+        USelonD_MULTI_SelonGMelonNT_TelonRM_DICTIONARY_COUNT.increlonmelonnt();
+        SelonarchTimelonr timelonr = QUelonRY_FROM_PRelonCOMPUTelonD.startNelonwTimelonr();
+        bq = addPreloncomputelondTelonrmQuelonrielons(fielonldIndelonx, telonrmselonnum);
+        QUelonRY_FROM_PRelonCOMPUTelonD.stopTimelonrAndIncrelonmelonnt(timelonr);
+      } elonlselon {
+        USelonD_ORIGINAL_TelonRM_DICTIONARY_COUNT.increlonmelonnt();
+        // This selongmelonnt is not supportelond by thelon multi-selongmelonnt telonrm dictionary. Lookup telonrms
+        // direlonctly.
+        SelonarchTimelonr timelonr = QUelonRY_RelonGULAR.startNelonwTimelonr();
+        bq = addTelonrmQuelonrielons(telonrmselonnum);
+        QUelonRY_RelonGULAR.stopTimelonrAndIncrelonmelonnt(timelonr);
       }
 
-      return searcher.rewrite(new ConstantScoreQuery(bq)).createWeight(
-          searcher, scoreMode, score());
+      relonturn selonarchelonr.relonwritelon(nelonw ConstantScorelonQuelonry(bq)).crelonatelonWelonight(
+          selonarchelonr, scorelonModelon, scorelon());
     }
 
     /**
-     * If the multi-segment term dictionary supports this segment/LeafReader, then return the
-     * InvertedIndex representing this segment.
+     * If thelon multi-selongmelonnt telonrm dictionary supports this selongmelonnt/LelonafRelonadelonr, thelonn relonturn thelon
+     * InvelonrtelondIndelonx relonprelonselonnting this selongmelonnt.
      *
-     * If the segment being queried right now is not in the multi-segment term dictionary (e.g.
-     * if it's not optimized yet), return null.
+     * If thelon selongmelonnt beloning quelonrielond right now is not in thelon multi-selongmelonnt telonrm dictionary (elon.g.
+     * if it's not optimizelond yelont), relonturn null.
      */
-    @Nullable
-    private InvertedIndex getFieldIndexFromMultiTermDictionary(LeafReaderContext context)
-        throws IOException {
-      if (multiSegmentTermDictionary == null) {
-        return null;
+    @Nullablelon
+    privatelon InvelonrtelondIndelonx gelontFielonldIndelonxFromMultiTelonrmDictionary(LelonafRelonadelonrContelonxt contelonxt)
+        throws IOelonxcelonption {
+      if (multiSelongmelonntTelonrmDictionary == null) {
+        relonturn null;
       }
 
-      if (context.reader() instanceof EarlybirdIndexSegmentAtomicReader) {
-        EarlybirdIndexSegmentAtomicReader reader =
-            (EarlybirdIndexSegmentAtomicReader) context.reader();
+      if (contelonxt.relonadelonr() instancelonof elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr) {
+        elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr relonadelonr =
+            (elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr) contelonxt.relonadelonr();
 
-        EarlybirdIndexSegmentData segmentData = reader.getSegmentData();
-        InvertedIndex fieldIndex = segmentData.getFieldIndex(field);
+        elonarlybirdIndelonxSelongmelonntData selongmelonntData = relonadelonr.gelontSelongmelonntData();
+        InvelonrtelondIndelonx fielonldIndelonx = selongmelonntData.gelontFielonldIndelonx(fielonld);
 
-        if (multiSegmentTermDictionary.supportSegmentIndex(fieldIndex)) {
-          return fieldIndex;
+        if (multiSelongmelonntTelonrmDictionary.supportSelongmelonntIndelonx(fielonldIndelonx)) {
+          relonturn fielonldIndelonx;
         }
       }
 
-      return null;
+      relonturn null;
     }
 
-    private BooleanQuery addPrecomputedTermQueries(
-        InvertedIndex fieldIndex,
-        TermsEnum termsEnum) throws IOException {
+    privatelon BoolelonanQuelonry addPreloncomputelondTelonrmQuelonrielons(
+        InvelonrtelondIndelonx fielonldIndelonx,
+        Telonrmselonnum telonrmselonnum) throws IOelonxcelonption {
 
-      BooleanQuery.Builder bqBuilder = new BooleanQuery.Builder();
-      int numClauses = 0;
+      BoolelonanQuelonry.Buildelonr bqBuildelonr = nelonw BoolelonanQuelonry.Buildelonr();
+      int numClauselons = 0;
 
-      List<TermRankPair> termRankPairs = termIdsPerSegment.get(fieldIndex);
-      if (termRankPairs != null) {
-        for (TermRankPair pair : termRankPairs) {
-          int termId = pair.getTermId();
-          if (numClauses >= BooleanQuery.getMaxClauseCount()) {
-            BooleanQuery saved = bqBuilder.build();
-            bqBuilder = new BooleanQuery.Builder();
-            bqBuilder.add(saved, BooleanClause.Occur.SHOULD);
-            numClauses = 1;
+      List<TelonrmRankPair> telonrmRankPairs = telonrmIdsPelonrSelongmelonnt.gelont(fielonldIndelonx);
+      if (telonrmRankPairs != null) {
+        for (TelonrmRankPair pair : telonrmRankPairs) {
+          int telonrmId = pair.gelontTelonrmId();
+          if (numClauselons >= BoolelonanQuelonry.gelontMaxClauselonCount()) {
+            BoolelonanQuelonry savelond = bqBuildelonr.build();
+            bqBuildelonr = nelonw BoolelonanQuelonry.Buildelonr();
+            bqBuildelonr.add(savelond, BoolelonanClauselon.Occur.SHOULD);
+            numClauselons = 1;
           }
 
-          Query query;
-          if (pair.getRank() != -1) {
-            query = EarlybirdQueryHelper.maybeWrapWithHitAttributionCollector(
-                new SimpleTermQuery(termsEnum, termId),
-                pair.getRank(),
-                fieldInfo,
-                hitAttributeHelper);
-          } else {
-            query = new SimpleTermQuery(termsEnum, termId);
+          Quelonry quelonry;
+          if (pair.gelontRank() != -1) {
+            quelonry = elonarlybirdQuelonryHelonlpelonr.maybelonWrapWithHitAttributionCollelonctor(
+                nelonw SimplelonTelonrmQuelonry(telonrmselonnum, telonrmId),
+                pair.gelontRank(),
+                fielonldInfo,
+                hitAttributelonHelonlpelonr);
+          } elonlselon {
+            quelonry = nelonw SimplelonTelonrmQuelonry(telonrmselonnum, telonrmId);
           }
-          bqBuilder.add(EarlybirdQueryHelper.maybeWrapWithTimeout(query, queryTimeout),
-                        BooleanClause.Occur.SHOULD);
-          ++numClauses;
+          bqBuildelonr.add(elonarlybirdQuelonryHelonlpelonr.maybelonWrapWithTimelonout(quelonry, quelonryTimelonout),
+                        BoolelonanClauselon.Occur.SHOULD);
+          ++numClauselons;
         }
       }
-      return bqBuilder.build();
+      relonturn bqBuildelonr.build();
     }
 
-    private BooleanQuery addTermQueries(TermsEnum termsEnum) throws IOException {
-      final BytesRef termRef = useOrderPreservingEncoding
-          ? SortableLongTermAttributeImpl.newBytesRef()
-          : LongTermAttributeImpl.newBytesRef();
+    privatelon BoolelonanQuelonry addTelonrmQuelonrielons(Telonrmselonnum telonrmselonnum) throws IOelonxcelonption {
+      final BytelonsRelonf telonrmRelonf = uselonOrdelonrPrelonselonrvingelonncoding
+          ? SortablelonLongTelonrmAttributelonImpl.nelonwBytelonsRelonf()
+          : LongTelonrmAttributelonImpl.nelonwBytelonsRelonf();
 
-      BooleanQuery.Builder bqBuilder = new BooleanQuery.Builder();
-      int numClauses = 0;
+      BoolelonanQuelonry.Buildelonr bqBuildelonr = nelonw BoolelonanQuelonry.Buildelonr();
+      int numClauselons = 0;
 
-      for (int idx = 0; idx < ids.size(); ++idx) {
-        long longTerm = ids.get(idx);
-        if (useOrderPreservingEncoding) {
-          SortableLongTermAttributeImpl.copyLongToBytesRef(termRef, longTerm);
-        } else {
-          LongTermAttributeImpl.copyLongToBytesRef(termRef, longTerm);
+      for (int idx = 0; idx < ids.sizelon(); ++idx) {
+        long longTelonrm = ids.gelont(idx);
+        if (uselonOrdelonrPrelonselonrvingelonncoding) {
+          SortablelonLongTelonrmAttributelonImpl.copyLongToBytelonsRelonf(telonrmRelonf, longTelonrm);
+        } elonlselon {
+          LongTelonrmAttributelonImpl.copyLongToBytelonsRelonf(telonrmRelonf, longTelonrm);
         }
 
-        if (termsEnum.seekExact(termRef)) {
-          if (numClauses >= BooleanQuery.getMaxClauseCount()) {
-            BooleanQuery saved = bqBuilder.build();
-            bqBuilder = new BooleanQuery.Builder();
-            bqBuilder.add(saved, BooleanClause.Occur.SHOULD);
-            numClauses = 1;
+        if (telonrmselonnum.selonelonkelonxact(telonrmRelonf)) {
+          if (numClauselons >= BoolelonanQuelonry.gelontMaxClauselonCount()) {
+            BoolelonanQuelonry savelond = bqBuildelonr.build();
+            bqBuildelonr = nelonw BoolelonanQuelonry.Buildelonr();
+            bqBuildelonr.add(savelond, BoolelonanClauselon.Occur.SHOULD);
+            numClauselons = 1;
           }
 
-          if (ranks.size() > 0) {
-            bqBuilder.add(EarlybirdQueryHelper.maybeWrapWithHitAttributionCollector(
-                              new SimpleTermQuery(termsEnum, termsEnum.ord()),
-                              ranks.get(idx),
-                              fieldInfo,
-                              hitAttributeHelper),
-                          BooleanClause.Occur.SHOULD);
-          } else {
-            bqBuilder.add(new SimpleTermQuery(termsEnum, termsEnum.ord()),
-                          BooleanClause.Occur.SHOULD);
+          if (ranks.sizelon() > 0) {
+            bqBuildelonr.add(elonarlybirdQuelonryHelonlpelonr.maybelonWrapWithHitAttributionCollelonctor(
+                              nelonw SimplelonTelonrmQuelonry(telonrmselonnum, telonrmselonnum.ord()),
+                              ranks.gelont(idx),
+                              fielonldInfo,
+                              hitAttributelonHelonlpelonr),
+                          BoolelonanClauselon.Occur.SHOULD);
+          } elonlselon {
+            bqBuildelonr.add(nelonw SimplelonTelonrmQuelonry(telonrmselonnum, telonrmselonnum.ord()),
+                          BoolelonanClauselon.Occur.SHOULD);
           }
-          ++numClauses;
+          ++numClauselons;
         }
       }
 
-      return bqBuilder.build();
+      relonturn bqBuildelonr.build();
     }
   }
 }

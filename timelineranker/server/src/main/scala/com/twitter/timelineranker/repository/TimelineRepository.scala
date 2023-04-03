@@ -1,16 +1,16 @@
-package com.twitter.timelineranker.repository
+packagelon com.twittelonr.timelonlinelonrankelonr.relonpository
 
-import com.twitter.timelineranker.model.Timeline
-import com.twitter.timelineranker.model.TimelineQuery
-import com.twitter.util.Future
+import com.twittelonr.timelonlinelonrankelonr.modelonl.Timelonlinelon
+import com.twittelonr.timelonlinelonrankelonr.modelonl.TimelonlinelonQuelonry
+import com.twittelonr.util.Futurelon
 
-trait TimelineRepository {
-  def get(queries: Seq[TimelineQuery]): Seq[Future[Timeline]]
-  def get(query: TimelineQuery): Future[Timeline] = get(Seq(query)).head
+trait TimelonlinelonRelonpository {
+  delonf gelont(quelonrielons: Selonq[TimelonlinelonQuelonry]): Selonq[Futurelon[Timelonlinelon]]
+  delonf gelont(quelonry: TimelonlinelonQuelonry): Futurelon[Timelonlinelon] = gelont(Selonq(quelonry)).helonad
 }
 
-class EmptyTimelineRepository extends TimelineRepository {
-  def get(queries: Seq[TimelineQuery]): Seq[Future[Timeline]] = {
-    queries.map(q => Future.value(Timeline.empty(q.id)))
+class elonmptyTimelonlinelonRelonpository elonxtelonnds TimelonlinelonRelonpository {
+  delonf gelont(quelonrielons: Selonq[TimelonlinelonQuelonry]): Selonq[Futurelon[Timelonlinelon]] = {
+    quelonrielons.map(q => Futurelon.valuelon(Timelonlinelon.elonmpty(q.id)))
   }
 }

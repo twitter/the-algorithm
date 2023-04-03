@@ -1,160 +1,160 @@
-package com.twitter.product_mixer.component_library.premarshaller.cursor
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.prelonmarshallelonr.cursor
 
-import com.twitter.product_mixer.component_library.model.cursor.UrtOrderedCursor
-import com.twitter.product_mixer.component_library.model.cursor.UrtPassThroughCursor
-import com.twitter.product_mixer.component_library.model.cursor.UrtPlaceholderCursor
-import com.twitter.product_mixer.component_library.model.cursor.UrtUnorderedBloomFilterCursor
-import com.twitter.product_mixer.component_library.model.cursor.UrtUnorderedExcludeIdsCursor
-import com.twitter.product_mixer.component_library.premarshaller.cursor.CursorSerializer.CursorThriftSerializer
-import com.twitter.product_mixer.component_library.{thriftscala => t}
-import com.twitter.product_mixer.core.pipeline.PipelineCursorSerializer.deserializeCursor
-import com.twitter.product_mixer.core.pipeline.PipelineCursor
-import com.twitter.product_mixer.core.pipeline.PipelineCursorSerializer
-import com.twitter.product_mixer.core.pipeline.UrtPipelineCursor
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.IllegalStateFailure
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.MalformedCursor
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.search.common.util.bloomfilter.AdaptiveLongIntBloomFilterSerializer
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.operation.CursorTypeMarshaller
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.cursor.UrtOrdelonrelondCursor
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.cursor.UrtPassThroughCursor
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.cursor.UrtPlacelonholdelonrCursor
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.cursor.UrtUnordelonrelondBloomFiltelonrCursor
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.cursor.UrtUnordelonrelondelonxcludelonIdsCursor
+import com.twittelonr.product_mixelonr.componelonnt_library.prelonmarshallelonr.cursor.CursorSelonrializelonr.CursorThriftSelonrializelonr
+import com.twittelonr.product_mixelonr.componelonnt_library.{thriftscala => t}
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonCursorSelonrializelonr.delonselonrializelonCursor
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonCursor
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonCursorSelonrializelonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.UrtPipelonlinelonCursor
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.IllelongalStatelonFailurelon
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.MalformelondCursor
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.PipelonlinelonFailurelon
+import com.twittelonr.selonarch.common.util.bloomfiltelonr.AdaptivelonLongIntBloomFiltelonrSelonrializelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.opelonration.CursorTypelonMarshallelonr
 
 /**
- * Handles serialization and deserialization for all supported URT cursors
+ * Handlelons selonrialization and delonselonrialization for all supportelond URT cursors
  */
-object UrtCursorSerializer extends PipelineCursorSerializer[UrtPipelineCursor] {
+objelonct UrtCursorSelonrializelonr elonxtelonnds PipelonlinelonCursorSelonrializelonr[UrtPipelonlinelonCursor] {
 
-  val SerializedUrtPlaceholderCursor = CursorThriftSerializer.toString(
-    t.ProductMixerRequestCursor.UrtPlaceholderCursor(t.UrtPlaceholderCursor()))
+  val SelonrializelondUrtPlacelonholdelonrCursor = CursorThriftSelonrializelonr.toString(
+    t.ProductMixelonrRelonquelonstCursor.UrtPlacelonholdelonrCursor(t.UrtPlacelonholdelonrCursor()))
 
-  val cursorTypeMarshaller = new CursorTypeMarshaller()
+  val cursorTypelonMarshallelonr = nelonw CursorTypelonMarshallelonr()
 
-  override def serializeCursor(cursor: UrtPipelineCursor): String =
+  ovelonrridelon delonf selonrializelonCursor(cursor: UrtPipelonlinelonCursor): String =
     cursor match {
-      case UrtOrderedCursor(initialSortIndex, id, cursorType, gapBoundaryId) =>
-        val thriftCursor = t.ProductMixerRequestCursor.UrtOrderedCursor(
-          t.UrtOrderedCursor(
-            initialSortIndex = initialSortIndex,
+      caselon UrtOrdelonrelondCursor(initialSortIndelonx, id, cursorTypelon, gapBoundaryId) =>
+        val thriftCursor = t.ProductMixelonrRelonquelonstCursor.UrtOrdelonrelondCursor(
+          t.UrtOrdelonrelondCursor(
+            initialSortIndelonx = initialSortIndelonx,
             id = id,
-            cursorType.map(cursorTypeMarshaller.apply),
+            cursorTypelon.map(cursorTypelonMarshallelonr.apply),
             gapBoundaryId = gapBoundaryId))
 
-        CursorThriftSerializer.toString(thriftCursor)
-      case UrtUnorderedExcludeIdsCursor(initialSortIndex, excludedIds) =>
-        val thriftCursor = t.ProductMixerRequestCursor.UrtUnorderedExcludeIdsCursor(
-          t.UrtUnorderedExcludeIdsCursor(
-            initialSortIndex = initialSortIndex,
-            excludedIds = Some(excludedIds)))
+        CursorThriftSelonrializelonr.toString(thriftCursor)
+      caselon UrtUnordelonrelondelonxcludelonIdsCursor(initialSortIndelonx, elonxcludelondIds) =>
+        val thriftCursor = t.ProductMixelonrRelonquelonstCursor.UrtUnordelonrelondelonxcludelonIdsCursor(
+          t.UrtUnordelonrelondelonxcludelonIdsCursor(
+            initialSortIndelonx = initialSortIndelonx,
+            elonxcludelondIds = Somelon(elonxcludelondIds)))
 
-        CursorThriftSerializer.toString(thriftCursor)
-      case UrtUnorderedBloomFilterCursor(initialSortIndex, longIntBloomFilter) =>
-        val thriftCursor = t.ProductMixerRequestCursor.UrtUnorderedBloomFilterCursor(
-          t.UrtUnorderedBloomFilterCursor(
-            initialSortIndex = initialSortIndex,
-            serializedLongIntBloomFilter =
-              AdaptiveLongIntBloomFilterSerializer.serialize(longIntBloomFilter)
+        CursorThriftSelonrializelonr.toString(thriftCursor)
+      caselon UrtUnordelonrelondBloomFiltelonrCursor(initialSortIndelonx, longIntBloomFiltelonr) =>
+        val thriftCursor = t.ProductMixelonrRelonquelonstCursor.UrtUnordelonrelondBloomFiltelonrCursor(
+          t.UrtUnordelonrelondBloomFiltelonrCursor(
+            initialSortIndelonx = initialSortIndelonx,
+            selonrializelondLongIntBloomFiltelonr =
+              AdaptivelonLongIntBloomFiltelonrSelonrializelonr.selonrializelon(longIntBloomFiltelonr)
           ))
 
-        CursorThriftSerializer.toString(thriftCursor)
-      case UrtPassThroughCursor(initialSortIndex, cursorValue, cursorType) =>
-        val thriftCursor = t.ProductMixerRequestCursor.UrtPassThroughCursor(
+        CursorThriftSelonrializelonr.toString(thriftCursor)
+      caselon UrtPassThroughCursor(initialSortIndelonx, cursorValuelon, cursorTypelon) =>
+        val thriftCursor = t.ProductMixelonrRelonquelonstCursor.UrtPassThroughCursor(
           t.UrtPassThroughCursor(
-            initialSortIndex = initialSortIndex,
-            cursorValue = cursorValue,
-            cursorType = cursorType.map(cursorTypeMarshaller.apply)
+            initialSortIndelonx = initialSortIndelonx,
+            cursorValuelon = cursorValuelon,
+            cursorTypelon = cursorTypelon.map(cursorTypelonMarshallelonr.apply)
           ))
 
-        CursorThriftSerializer.toString(thriftCursor)
-      case UrtPlaceholderCursor() =>
-        SerializedUrtPlaceholderCursor
-      case _ =>
-        throw PipelineFailure(IllegalStateFailure, "Unknown cursor type")
+        CursorThriftSelonrializelonr.toString(thriftCursor)
+      caselon UrtPlacelonholdelonrCursor() =>
+        SelonrializelondUrtPlacelonholdelonrCursor
+      caselon _ =>
+        throw PipelonlinelonFailurelon(IllelongalStatelonFailurelon, "Unknown cursor typelon")
     }
 
-  def deserializeOrderedCursor(cursorString: String): Option[UrtOrderedCursor] = {
-    deserializeUrtCursor(
+  delonf delonselonrializelonOrdelonrelondCursor(cursorString: String): Option[UrtOrdelonrelondCursor] = {
+    delonselonrializelonUrtCursor(
       cursorString,
       {
-        case Some(
-              t.ProductMixerRequestCursor.UrtOrderedCursor(
-                t.UrtOrderedCursor(initialSortIndex, id, cursorType, gapBoundaryId))) =>
-          Some(
-            UrtOrderedCursor(
-              initialSortIndex = initialSortIndex,
+        caselon Somelon(
+              t.ProductMixelonrRelonquelonstCursor.UrtOrdelonrelondCursor(
+                t.UrtOrdelonrelondCursor(initialSortIndelonx, id, cursorTypelon, gapBoundaryId))) =>
+          Somelon(
+            UrtOrdelonrelondCursor(
+              initialSortIndelonx = initialSortIndelonx,
               id = id,
-              cursorType = cursorType.map(cursorTypeMarshaller.unmarshall),
+              cursorTypelon = cursorTypelon.map(cursorTypelonMarshallelonr.unmarshall),
               gapBoundaryId))
       }
     )
   }
 
-  def deserializeUnorderedExcludeIdsCursor(
+  delonf delonselonrializelonUnordelonrelondelonxcludelonIdsCursor(
     cursorString: String
-  ): Option[UrtUnorderedExcludeIdsCursor] = {
-    deserializeUrtCursor(
+  ): Option[UrtUnordelonrelondelonxcludelonIdsCursor] = {
+    delonselonrializelonUrtCursor(
       cursorString,
       {
-        case Some(
-              t.ProductMixerRequestCursor.UrtUnorderedExcludeIdsCursor(
-                t.UrtUnorderedExcludeIdsCursor(initialSortIndex, excludedIdsOpt))) =>
-          Some(
-            UrtUnorderedExcludeIdsCursor(
-              initialSortIndex = initialSortIndex,
-              excludedIds = excludedIdsOpt.getOrElse(Seq.empty)))
+        caselon Somelon(
+              t.ProductMixelonrRelonquelonstCursor.UrtUnordelonrelondelonxcludelonIdsCursor(
+                t.UrtUnordelonrelondelonxcludelonIdsCursor(initialSortIndelonx, elonxcludelondIdsOpt))) =>
+          Somelon(
+            UrtUnordelonrelondelonxcludelonIdsCursor(
+              initialSortIndelonx = initialSortIndelonx,
+              elonxcludelondIds = elonxcludelondIdsOpt.gelontOrelonlselon(Selonq.elonmpty)))
       }
     )
   }
 
-  def deserializeUnorderedBloomFilterCursor(
+  delonf delonselonrializelonUnordelonrelondBloomFiltelonrCursor(
     cursorString: String
-  ): Option[UrtUnorderedBloomFilterCursor] = {
-    deserializeUrtCursor(
+  ): Option[UrtUnordelonrelondBloomFiltelonrCursor] = {
+    delonselonrializelonUrtCursor(
       cursorString,
       {
-        case Some(
-              t.ProductMixerRequestCursor.UrtUnorderedBloomFilterCursor(
-                t.UrtUnorderedBloomFilterCursor(initialSortIndex, serializedLongIntBloomFilter))) =>
-          val longIntBloomFilter = AdaptiveLongIntBloomFilterSerializer
-            .deserialize(serializedLongIntBloomFilter).getOrElse(
-              throw PipelineFailure(
-                MalformedCursor,
-                s"Failed to deserialize UrtUnorderedBloomFilterCursor from cursor string: $cursorString")
+        caselon Somelon(
+              t.ProductMixelonrRelonquelonstCursor.UrtUnordelonrelondBloomFiltelonrCursor(
+                t.UrtUnordelonrelondBloomFiltelonrCursor(initialSortIndelonx, selonrializelondLongIntBloomFiltelonr))) =>
+          val longIntBloomFiltelonr = AdaptivelonLongIntBloomFiltelonrSelonrializelonr
+            .delonselonrializelon(selonrializelondLongIntBloomFiltelonr).gelontOrelonlselon(
+              throw PipelonlinelonFailurelon(
+                MalformelondCursor,
+                s"Failelond to delonselonrializelon UrtUnordelonrelondBloomFiltelonrCursor from cursor string: $cursorString")
             )
 
-          Some(
-            UrtUnorderedBloomFilterCursor(
-              initialSortIndex = initialSortIndex,
-              longIntBloomFilter = longIntBloomFilter))
+          Somelon(
+            UrtUnordelonrelondBloomFiltelonrCursor(
+              initialSortIndelonx = initialSortIndelonx,
+              longIntBloomFiltelonr = longIntBloomFiltelonr))
       }
     )
   }
 
-  def deserializePassThroughCursor(cursorString: String): Option[UrtPassThroughCursor] = {
-    deserializeUrtCursor(
+  delonf delonselonrializelonPassThroughCursor(cursorString: String): Option[UrtPassThroughCursor] = {
+    delonselonrializelonUrtCursor(
       cursorString,
       {
-        case Some(
-              t.ProductMixerRequestCursor
+        caselon Somelon(
+              t.ProductMixelonrRelonquelonstCursor
                 .UrtPassThroughCursor(
-                  t.UrtPassThroughCursor(initialSortIndex, cursorValue, cursorType))) =>
-          Some(
+                  t.UrtPassThroughCursor(initialSortIndelonx, cursorValuelon, cursorTypelon))) =>
+          Somelon(
             UrtPassThroughCursor(
-              initialSortIndex = initialSortIndex,
-              cursorValue = cursorValue,
-              cursorType = cursorType.map(cursorTypeMarshaller.unmarshall)))
+              initialSortIndelonx = initialSortIndelonx,
+              cursorValuelon = cursorValuelon,
+              cursorTypelon = cursorTypelon.map(cursorTypelonMarshallelonr.unmarshall)))
       }
     )
   }
 
-  private def deserializeUrtCursor[Cursor <: PipelineCursor](
+  privatelon delonf delonselonrializelonUrtCursor[Cursor <: PipelonlinelonCursor](
     cursorString: String,
-    deserializePf: PartialFunction[Option[t.ProductMixerRequestCursor], Option[Cursor]]
+    delonselonrializelonPf: PartialFunction[Option[t.ProductMixelonrRelonquelonstCursor], Option[Cursor]]
   ): Option[Cursor] = {
-    deserializeCursor[t.ProductMixerRequestCursor, Cursor](
+    delonselonrializelonCursor[t.ProductMixelonrRelonquelonstCursor, Cursor](
       cursorString,
-      CursorThriftSerializer,
-      deserializePf orElse {
-        case Some(t.ProductMixerRequestCursor.UrtPlaceholderCursor(t.UrtPlaceholderCursor())) =>
-          // Treat submitted placeholder cursor like an initial page load
-          None
+      CursorThriftSelonrializelonr,
+      delonselonrializelonPf orelonlselon {
+        caselon Somelon(t.ProductMixelonrRelonquelonstCursor.UrtPlacelonholdelonrCursor(t.UrtPlacelonholdelonrCursor())) =>
+          // Trelonat submittelond placelonholdelonr cursor likelon an initial pagelon load
+          Nonelon
       },
     )
   }

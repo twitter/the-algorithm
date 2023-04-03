@@ -1,27 +1,27 @@
-package com.twitter.simclustersann.exceptions
+packagelon com.twittelonr.simclustelonrsann.elonxcelonptions
 
-import com.twitter.finatra.thrift.exceptions.ExceptionMapper
-import com.twitter.finatra.thrift.thriftscala.ClientError
-import com.twitter.finatra.thrift.thriftscala.ClientErrorCause
-import com.twitter.util.Future
-import com.twitter.util.logging.Logging
-import javax.inject.Singleton
+import com.twittelonr.finatra.thrift.elonxcelonptions.elonxcelonptionMappelonr
+import com.twittelonr.finatra.thrift.thriftscala.Clielonntelonrror
+import com.twittelonr.finatra.thrift.thriftscala.ClielonntelonrrorCauselon
+import com.twittelonr.util.Futurelon
+import com.twittelonr.util.logging.Logging
+import javax.injelonct.Singlelonton
 
 /**
- * An exception mapper designed to handle
- * [[com.twitter.simclustersann.exceptions.InvalidRequestForSimClustersAnnVariantException]]
- * by returning a Thrift IDL defined Client Error.
+ * An elonxcelonption mappelonr delonsignelond to handlelon
+ * [[com.twittelonr.simclustelonrsann.elonxcelonptions.InvalidRelonquelonstForSimClustelonrsAnnVariantelonxcelonption]]
+ * by relonturning a Thrift IDL delonfinelond Clielonnt elonrror.
  */
-@Singleton
-class InvalidRequestForSimClustersAnnVariantExceptionMapper
-    extends ExceptionMapper[InvalidRequestForSimClustersAnnVariantException, Nothing]
+@Singlelonton
+class InvalidRelonquelonstForSimClustelonrsAnnVariantelonxcelonptionMappelonr
+    elonxtelonnds elonxcelonptionMappelonr[InvalidRelonquelonstForSimClustelonrsAnnVariantelonxcelonption, Nothing]
     with Logging {
 
-  override def handleException(
-    throwable: InvalidRequestForSimClustersAnnVariantException
-  ): Future[Nothing] = {
-    error("Invalid Request For SimClusters Ann Variant Exception", throwable)
+  ovelonrridelon delonf handlelonelonxcelonption(
+    throwablelon: InvalidRelonquelonstForSimClustelonrsAnnVariantelonxcelonption
+  ): Futurelon[Nothing] = {
+    elonrror("Invalid Relonquelonst For SimClustelonrs Ann Variant elonxcelonption", throwablelon)
 
-    Future.exception(ClientError(ClientErrorCause.BadRequest, throwable.getMessage()))
+    Futurelon.elonxcelonption(Clielonntelonrror(ClielonntelonrrorCauselon.BadRelonquelonst, throwablelon.gelontMelonssagelon()))
   }
 }

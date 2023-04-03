@@ -1,10 +1,10 @@
-package com.twitter.product_mixer.component_library.model.presentation.urt
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.modelonl.prelonselonntation.urt
 
-import com.twitter.product_mixer.core.model.common.presentation.urt.BaseUrtItemPresentation
-import com.twitter.product_mixer.core.model.common.presentation.urt.IsDispensable
-import com.twitter.product_mixer.core.model.common.presentation.urt.WithItemTreeDisplay
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.urt.BaselonUrtItelonmPrelonselonntation
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.urt.IsDispelonnsablelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.urt.WithItelonmTrelonelonDisplay
 
-trait ConversationModuleItem
-    extends BaseUrtItemPresentation
-    with IsDispensable
-    with WithItemTreeDisplay
+trait ConvelonrsationModulelonItelonm
+    elonxtelonnds BaselonUrtItelonmPrelonselonntation
+    with IsDispelonnsablelon
+    with WithItelonmTrelonelonDisplay

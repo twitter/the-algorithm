@@ -1,5 +1,5 @@
-(SELECT * FROM ML.FEATURE_IMPORTANCE(MODEL `twttr-recos-ml-prod.realgraph.prod`)
-ORDER BY importance_gain DESC)
+(SelonLelonCT * FROM ML.FelonATURelon_IMPORTANCelon(MODelonL `twttr-reloncos-ml-prod.relonalgraph.prod`)
+ORDelonR BY importancelon_gain DelonSC)
 UNION ALL
-(SELECT * FROM ML.FEATURE_IMPORTANCE(MODEL `twttr-recos-ml-prod.realgraph.prod_explicit`)
-ORDER BY importance_gain DESC)
+(SelonLelonCT * FROM ML.FelonATURelon_IMPORTANCelon(MODelonL `twttr-reloncos-ml-prod.relonalgraph.prod_elonxplicit`)
+ORDelonR BY importancelon_gain DelonSC)

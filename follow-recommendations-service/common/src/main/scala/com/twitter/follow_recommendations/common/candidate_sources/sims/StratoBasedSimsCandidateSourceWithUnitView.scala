@@ -1,10 +1,10 @@
-package com.twitter.follow_recommendations.common.candidate_sources.sims
+packagelon com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.sims
 
-import com.twitter.hermit.candidate.thriftscala.Candidates
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.strato.client.Fetcher
+import com.twittelonr.helonrmit.candidatelon.thriftscala.Candidatelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonSourcelonIdelonntifielonr
+import com.twittelonr.strato.clielonnt.Felontchelonr
 
-abstract class StratoBasedSimsCandidateSourceWithUnitView(
-  fetcher: Fetcher[Long, Unit, Candidates],
-  override val identifier: CandidateSourceIdentifier)
-    extends StratoBasedSimsCandidateSource[Unit](fetcher, Unit, identifier)
+abstract class StratoBaselondSimsCandidatelonSourcelonWithUnitVielonw(
+  felontchelonr: Felontchelonr[Long, Unit, Candidatelons],
+  ovelonrridelon val idelonntifielonr: CandidatelonSourcelonIdelonntifielonr)
+    elonxtelonnds StratoBaselondSimsCandidatelonSourcelon[Unit](felontchelonr, Unit, idelonntifielonr)

@@ -1,57 +1,57 @@
-package com.twitter.cr_mixer.param.decider
+packagelon com.twittelonr.cr_mixelonr.param.deloncidelonr
 
-import com.twitter.decider.Decider
-import com.twitter.decider.RandomRecipient
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.util.Future
-import javax.inject.Inject
-import scala.util.control.NoStackTrace
+import com.twittelonr.deloncidelonr.Deloncidelonr
+import com.twittelonr.deloncidelonr.RandomReloncipielonnt
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.util.Futurelon
+import javax.injelonct.Injelonct
+import scala.util.control.NoStackTracelon
 
 /*
-  Provides deciders-controlled load shedding for a given Product from a given endpoint.
-  The format of the decider keys is:
+  Providelons deloncidelonrs-controllelond load shelondding for a givelonn Product from a givelonn elonndpoint.
+  Thelon format of thelon deloncidelonr kelonys is:
 
-    enable_loadshedding_<endpoint name>_<product name>
-  E.g.:
-    enable_loadshedding_getTweetRecommendations_Notifications
+    elonnablelon_loadshelondding_<elonndpoint namelon>_<product namelon>
+  elon.g.:
+    elonnablelon_loadshelondding_gelontTwelonelontReloncommelonndations_Notifications
 
-  Deciders are fractional, so a value of 50.00 will drop 50% of responses. If a decider key is not
-  defined for a particular endpoint/product combination, those requests will always be
-  served.
+  Deloncidelonrs arelon fractional, so a valuelon of 50.00 will drop 50% of relonsponselons. If a deloncidelonr kelony is not
+  delonfinelond for a particular elonndpoint/product combination, thoselon relonquelonsts will always belon
+  selonrvelond.
 
-  We should therefore aim to define keys for the endpoints/product we care most about in decider.yml,
-  so that we can control them during incidents.
+  Welon should thelonrelonforelon aim to delonfinelon kelonys for thelon elonndpoints/product welon carelon most about in deloncidelonr.yml,
+  so that welon can control thelonm during incidelonnts.
  */
-case class EndpointLoadShedder @Inject() (
-  decider: Decider,
-  statsReceiver: StatsReceiver) {
-  import EndpointLoadShedder._
+caselon class elonndpointLoadShelonddelonr @Injelonct() (
+  deloncidelonr: Deloncidelonr,
+  statsReloncelonivelonr: StatsReloncelonivelonr) {
+  import elonndpointLoadShelonddelonr._
 
-  // Fall back to False for any undefined key
-  private val deciderWithFalseFallback: Decider = decider.orElse(Decider.False)
-  private val keyPrefix = "enable_loadshedding"
-  private val scopedStats = statsReceiver.scope("EndpointLoadShedder")
+  // Fall back to Falselon for any undelonfinelond kelony
+  privatelon val deloncidelonrWithFalselonFallback: Deloncidelonr = deloncidelonr.orelonlselon(Deloncidelonr.Falselon)
+  privatelon val kelonyPrelonfix = "elonnablelon_loadshelondding"
+  privatelon val scopelondStats = statsReloncelonivelonr.scopelon("elonndpointLoadShelonddelonr")
 
-  def apply[T](endpointName: String, product: String)(serve: => Future[T]): Future[T] = {
+  delonf apply[T](elonndpointNamelon: String, product: String)(selonrvelon: => Futurelon[T]): Futurelon[T] = {
     /*
-    Checks if either per-product or top-level load shedding is enabled
-    If both are enabled at different percentages, load shedding will not be perfectly calculable due
-    to salting of hash (i.e. 25% load shed for Product x + 25% load shed for overall does not
-    result in 50% load shed for x)
+    Cheloncks if elonithelonr pelonr-product or top-lelonvelonl load shelondding is elonnablelond
+    If both arelon elonnablelond at diffelonrelonnt pelonrcelonntagelons, load shelondding will not belon pelonrfelonctly calculablelon duelon
+    to salting of hash (i.elon. 25% load shelond for Product x + 25% load shelond for ovelonrall doelons not
+    relonsult in 50% load shelond for x)
      */
-    val keyTyped = s"${keyPrefix}_${endpointName}_$product"
-    val keyTopLevel = s"${keyPrefix}_${endpointName}"
+    val kelonyTypelond = s"${kelonyPrelonfix}_${elonndpointNamelon}_$product"
+    val kelonyTopLelonvelonl = s"${kelonyPrelonfix}_${elonndpointNamelon}"
 
-    if (deciderWithFalseFallback.isAvailable(keyTopLevel, recipient = Some(RandomRecipient))) {
-      scopedStats.counter(keyTopLevel).incr
-      Future.exception(LoadSheddingException)
-    } else if (deciderWithFalseFallback.isAvailable(keyTyped, recipient = Some(RandomRecipient))) {
-      scopedStats.counter(keyTyped).incr
-      Future.exception(LoadSheddingException)
-    } else serve
+    if (deloncidelonrWithFalselonFallback.isAvailablelon(kelonyTopLelonvelonl, reloncipielonnt = Somelon(RandomReloncipielonnt))) {
+      scopelondStats.countelonr(kelonyTopLelonvelonl).incr
+      Futurelon.elonxcelonption(LoadShelonddingelonxcelonption)
+    } elonlselon if (deloncidelonrWithFalselonFallback.isAvailablelon(kelonyTypelond, reloncipielonnt = Somelon(RandomReloncipielonnt))) {
+      scopelondStats.countelonr(kelonyTypelond).incr
+      Futurelon.elonxcelonption(LoadShelonddingelonxcelonption)
+    } elonlselon selonrvelon
   }
 }
 
-object EndpointLoadShedder {
-  object LoadSheddingException extends Exception with NoStackTrace
+objelonct elonndpointLoadShelonddelonr {
+  objelonct LoadShelonddingelonxcelonption elonxtelonnds elonxcelonption with NoStackTracelon
 }

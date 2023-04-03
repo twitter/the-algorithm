@@ -1,131 +1,131 @@
-package com.twitter.simclusters_v2.scalding.embedding.abuse
+packagelon com.twittelonr.simclustelonrs_v2.scalding.elonmbelondding.abuselon
 
-import com.twitter.scalding._
-import com.twitter.scalding.source.TypedText
-import com.twitter.scalding_internal.dalv2.DALWrite.{D, _}
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.hdfs_sources.SearchAbuseSimclusterFeaturesManhattanScalaDataset
-import com.twitter.simclusters_v2.scalding.common.matrix.SparseMatrix
-import com.twitter.simclusters_v2.scalding.embedding.abuse.AbuseSimclusterFeaturesScaldingJob.buildKeyValDataSet
-import com.twitter.simclusters_v2.scalding.embedding.abuse.AdhocAbuseSimClusterFeaturesScaldingJob.{
-  abuseInteractionSearchGraph,
-  buildSearchAbuseScores,
-  impressionInteractionSearchGraph
+import com.twittelonr.scalding._
+import com.twittelonr.scalding.sourcelon.TypelondTelonxt
+import com.twittelonr.scalding_intelonrnal.dalv2.DALWritelon.{D, _}
+import com.twittelonr.scalding_intelonrnal.multiformat.format.kelonyval.KelonyVal
+import com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.SelonarchAbuselonSimclustelonrFelonaturelonsManhattanScalaDataselont
+import com.twittelonr.simclustelonrs_v2.scalding.common.matrix.SparselonMatrix
+import com.twittelonr.simclustelonrs_v2.scalding.elonmbelondding.abuselon.AbuselonSimclustelonrFelonaturelonsScaldingJob.buildKelonyValDataSelont
+import com.twittelonr.simclustelonrs_v2.scalding.elonmbelondding.abuselon.AdhocAbuselonSimClustelonrFelonaturelonsScaldingJob.{
+  abuselonIntelonractionSelonarchGraph,
+  buildSelonarchAbuselonScorelons,
+  imprelonssionIntelonractionSelonarchGraph
 }
-import com.twitter.simclusters_v2.scalding.embedding.abuse.DataSources.getUserInterestedInSparseMatrix
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil.{ClusterId, UserId}
-import com.twitter.simclusters_v2.thriftscala.{
-  ModelVersion,
-  SimClustersEmbedding,
-  SingleSideUserScores
+import com.twittelonr.simclustelonrs_v2.scalding.elonmbelondding.abuselon.DataSourcelons.gelontUselonrIntelonrelonstelondInSparselonMatrix
+import com.twittelonr.simclustelonrs_v2.scalding.elonmbelondding.common.elonmbelonddingUtil
+import com.twittelonr.simclustelonrs_v2.scalding.elonmbelondding.common.elonmbelonddingUtil.{ClustelonrId, UselonrId}
+import com.twittelonr.simclustelonrs_v2.thriftscala.{
+  ModelonlVelonrsion,
+  SimClustelonrselonmbelondding,
+  SinglelonSidelonUselonrScorelons
 }
-import com.twitter.wtf.scalding.jobs.common.{AdhocExecutionApp, ScheduledExecutionApp}
-import java.util.TimeZone
+import com.twittelonr.wtf.scalding.jobs.common.{AdhocelonxeloncutionApp, SchelondulelondelonxeloncutionApp}
+import java.util.TimelonZonelon
 
-object AbuseSimclusterFeaturesScaldingJob {
+objelonct AbuselonSimclustelonrFelonaturelonsScaldingJob {
 
-  val HealthyConsumerKey = "healthyConsumer"
-  val UnhealthyConsumerKey = "unhealthyConsumer"
-  val HealthyAuthorKey = "healthyAuthor"
-  val UnhealthyAuthorKey = "unhealthyAuthor"
+  val HelonalthyConsumelonrKelony = "helonalthyConsumelonr"
+  val UnhelonalthyConsumelonrKelony = "unhelonalthyConsumelonr"
+  val HelonalthyAuthorKelony = "helonalthyAuthor"
+  val UnhelonalthyAuthorKelony = "unhelonalthyAuthor"
 
-  private[this] val EmptySimCluster = SimClustersEmbedding(List())
+  privatelon[this] val elonmptySimClustelonr = SimClustelonrselonmbelondding(List())
 
-  def buildKeyValDataSet(
-    normalizedSimClusterMatrix: SparseMatrix[UserId, ClusterId, Double],
-    unhealthyGraph: SparseMatrix[UserId, UserId, Double],
-    healthyGraph: SparseMatrix[UserId, UserId, Double]
-  ): TypedPipe[KeyVal[Long, SingleSideUserScores]] = {
+  delonf buildKelonyValDataSelont(
+    normalizelondSimClustelonrMatrix: SparselonMatrix[UselonrId, ClustelonrId, Doublelon],
+    unhelonalthyGraph: SparselonMatrix[UselonrId, UselonrId, Doublelon],
+    helonalthyGraph: SparselonMatrix[UselonrId, UselonrId, Doublelon]
+  ): TypelondPipelon[KelonyVal[Long, SinglelonSidelonUselonrScorelons]] = {
 
-    val searchAbuseScores =
-      buildSearchAbuseScores(
-        normalizedSimClusterMatrix,
-        unhealthyGraph = unhealthyGraph,
-        healthyGraph = healthyGraph
+    val selonarchAbuselonScorelons =
+      buildSelonarchAbuselonScorelons(
+        normalizelondSimClustelonrMatrix,
+        unhelonalthyGraph = unhelonalthyGraph,
+        helonalthyGraph = helonalthyGraph
       )
 
-    val pairedScores = SingleSideInteractionTransformation.pairScores(
+    val pairelondScorelons = SinglelonSidelonIntelonractionTransformation.pairScorelons(
       Map(
-        HealthyConsumerKey -> searchAbuseScores.healthyConsumerClusterScores,
-        UnhealthyConsumerKey -> searchAbuseScores.unhealthyConsumerClusterScores,
-        HealthyAuthorKey -> searchAbuseScores.healthyAuthorClusterScores,
-        UnhealthyAuthorKey -> searchAbuseScores.unhealthyAuthorClusterScores
+        HelonalthyConsumelonrKelony -> selonarchAbuselonScorelons.helonalthyConsumelonrClustelonrScorelons,
+        UnhelonalthyConsumelonrKelony -> selonarchAbuselonScorelons.unhelonalthyConsumelonrClustelonrScorelons,
+        HelonalthyAuthorKelony -> selonarchAbuselonScorelons.helonalthyAuthorClustelonrScorelons,
+        UnhelonalthyAuthorKelony -> selonarchAbuselonScorelons.unhelonalthyAuthorClustelonrScorelons
       )
     )
 
-    pairedScores
-      .map { pairedScore =>
-        val userPairInteractionFeatures = PairedInteractionFeatures(
-          healthyInteractionSimClusterEmbedding =
-            pairedScore.interactionScores.getOrElse(HealthyConsumerKey, EmptySimCluster),
-          unhealthyInteractionSimClusterEmbedding =
-            pairedScore.interactionScores.getOrElse(UnhealthyConsumerKey, EmptySimCluster)
+    pairelondScorelons
+      .map { pairelondScorelon =>
+        val uselonrPairIntelonractionFelonaturelons = PairelondIntelonractionFelonaturelons(
+          helonalthyIntelonractionSimClustelonrelonmbelondding =
+            pairelondScorelon.intelonractionScorelons.gelontOrelonlselon(HelonalthyConsumelonrKelony, elonmptySimClustelonr),
+          unhelonalthyIntelonractionSimClustelonrelonmbelondding =
+            pairelondScorelon.intelonractionScorelons.gelontOrelonlselon(UnhelonalthyConsumelonrKelony, elonmptySimClustelonr)
         )
 
-        val authorPairInteractionFeatures = PairedInteractionFeatures(
-          healthyInteractionSimClusterEmbedding =
-            pairedScore.interactionScores.getOrElse(HealthyAuthorKey, EmptySimCluster),
-          unhealthyInteractionSimClusterEmbedding =
-            pairedScore.interactionScores.getOrElse(UnhealthyAuthorKey, EmptySimCluster)
+        val authorPairIntelonractionFelonaturelons = PairelondIntelonractionFelonaturelons(
+          helonalthyIntelonractionSimClustelonrelonmbelondding =
+            pairelondScorelon.intelonractionScorelons.gelontOrelonlselon(HelonalthyAuthorKelony, elonmptySimClustelonr),
+          unhelonalthyIntelonractionSimClustelonrelonmbelondding =
+            pairelondScorelon.intelonractionScorelons.gelontOrelonlselon(UnhelonalthyAuthorKelony, elonmptySimClustelonr)
         )
 
-        val value = SingleSideUserScores(
-          pairedScore.userId,
-          consumerHealthyScore = userPairInteractionFeatures.healthySum,
-          consumerUnhealthyScore = userPairInteractionFeatures.unhealthySum,
-          authorUnhealthyScore = authorPairInteractionFeatures.unhealthySum,
-          authorHealthyScore = authorPairInteractionFeatures.healthySum
+        val valuelon = SinglelonSidelonUselonrScorelons(
+          pairelondScorelon.uselonrId,
+          consumelonrHelonalthyScorelon = uselonrPairIntelonractionFelonaturelons.helonalthySum,
+          consumelonrUnhelonalthyScorelon = uselonrPairIntelonractionFelonaturelons.unhelonalthySum,
+          authorUnhelonalthyScorelon = authorPairIntelonractionFelonaturelons.unhelonalthySum,
+          authorHelonalthyScorelon = authorPairIntelonractionFelonaturelons.helonalthySum
         )
 
-        KeyVal(pairedScore.userId, value)
+        KelonyVal(pairelondScorelon.uselonrId, valuelon)
       }
   }
 }
 
 /**
- * This job creates single-side features used to predict the abuse reports in search. The features
- * are put into manhattan and availabe in feature store. We expect that search will be able to use
- * these features directly. They may be useful for other models as well.
+ * This job crelonatelons singlelon-sidelon felonaturelons uselond to prelondict thelon abuselon relonports in selonarch. Thelon felonaturelons
+ * arelon put into manhattan and availabelon in felonaturelon storelon. Welon elonxpelonct that selonarch will belon ablelon to uselon
+ * thelonselon felonaturelons direlonctly. Thelony may belon uselonful for othelonr modelonls as welonll.
  */
-object SearchAbuseSimclusterFeaturesScaldingJob extends ScheduledExecutionApp {
-  override def firstTime: RichDate = RichDate("2021-02-01")
+objelonct SelonarchAbuselonSimclustelonrFelonaturelonsScaldingJob elonxtelonnds SchelondulelondelonxeloncutionApp {
+  ovelonrridelon delonf firstTimelon: RichDatelon = RichDatelon("2021-02-01")
 
-  override def batchIncrement: Duration =
+  ovelonrridelon delonf batchIncrelonmelonnt: Duration =
     Days(7)
 
-  private val OutputPath: String = EmbeddingUtil.getHdfsPath(
-    isAdhoc = false,
-    isManhattanKeyVal = true,
-    modelVersion = ModelVersion.Model20m145kUpdated,
-    pathSuffix = "search_abuse_simcluster_features"
+  privatelon val OutputPath: String = elonmbelonddingUtil.gelontHdfsPath(
+    isAdhoc = falselon,
+    isManhattanKelonyVal = truelon,
+    modelonlVelonrsion = ModelonlVelonrsion.Modelonl20m145kUpdatelond,
+    pathSuffix = "selonarch_abuselon_simclustelonr_felonaturelons"
   )
 
-  def buildDataset(
+  delonf buildDataselont(
   )(
-    implicit dateRange: DateRange,
-  ): Execution[TypedPipe[KeyVal[Long, SingleSideUserScores]]] = {
-    Execution.getMode.map { implicit mode =>
-      val normalizedSimClusterMatrix = getUserInterestedInSparseMatrix.rowL2Normalize
-      val abuseSearchGraph = abuseInteractionSearchGraph()(dateRange, mode)
-      val impressionSearchGraph = impressionInteractionSearchGraph()(dateRange, mode)
+    implicit datelonRangelon: DatelonRangelon,
+  ): elonxeloncution[TypelondPipelon[KelonyVal[Long, SinglelonSidelonUselonrScorelons]]] = {
+    elonxeloncution.gelontModelon.map { implicit modelon =>
+      val normalizelondSimClustelonrMatrix = gelontUselonrIntelonrelonstelondInSparselonMatrix.rowL2Normalizelon
+      val abuselonSelonarchGraph = abuselonIntelonractionSelonarchGraph()(datelonRangelon, modelon)
+      val imprelonssionSelonarchGraph = imprelonssionIntelonractionSelonarchGraph()(datelonRangelon, modelon)
 
-      buildKeyValDataSet(normalizedSimClusterMatrix, abuseSearchGraph, impressionSearchGraph)
+      buildKelonyValDataSelont(normalizelondSimClustelonrMatrix, abuselonSelonarchGraph, imprelonssionSelonarchGraph)
     }
   }
 
-  override def runOnDateRange(
+  ovelonrridelon delonf runOnDatelonRangelon(
     args: Args
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
-    // Extend the date range to a total of 19 days. Search keeps 21 days of data.
-    val dateRangeSearchData = dateRange.prepend(Days(12))
-    buildDataset()(dateRangeSearchData).flatMap { dataset =>
-      dataset.writeDALVersionedKeyValExecution(
-        dataset = SearchAbuseSimclusterFeaturesManhattanScalaDataset,
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon,
+    uniquelonID: UniquelonID
+  ): elonxeloncution[Unit] = {
+    // elonxtelonnd thelon datelon rangelon to a total of 19 days. Selonarch kelonelonps 21 days of data.
+    val datelonRangelonSelonarchData = datelonRangelon.prelonpelonnd(Days(12))
+    buildDataselont()(datelonRangelonSelonarchData).flatMap { dataselont =>
+      dataselont.writelonDALVelonrsionelondKelonyValelonxeloncution(
+        dataselont = SelonarchAbuselonSimclustelonrFelonaturelonsManhattanScalaDataselont,
         pathLayout = D.Suffix(OutputPath)
       )
     }
@@ -133,45 +133,45 @@ object SearchAbuseSimclusterFeaturesScaldingJob extends ScheduledExecutionApp {
 }
 
 /**
- * You can check the logic of this job by running this query.
+ * You can chelonck thelon logic of this job by running this quelonry.
  *
- * scalding remote run \
- * --target src/scala/com/twitter/simclusters_v2/scalding/embedding/abuse:abuse-prod \
- * --main-class com.twitter.simclusters_v2.scalding.embedding.abuse.AdhocSearchAbuseSimclusterFeaturesScaldingJob \
- * --hadoop-properties "mapreduce.job.split.metainfo.maxsize=-1" \
- * --cluster bluebird-qus1 --submitter hadoopnest-bluebird-1.qus1.twitter.com \
- * -- --date 2021-02-01 2021-02-02 \
- * --outputPath AdhocSearchAbuseSimclusterFeaturesScaldingJob-test1
+ * scalding relonmotelon run \
+ * --targelont src/scala/com/twittelonr/simclustelonrs_v2/scalding/elonmbelondding/abuselon:abuselon-prod \
+ * --main-class com.twittelonr.simclustelonrs_v2.scalding.elonmbelondding.abuselon.AdhocSelonarchAbuselonSimclustelonrFelonaturelonsScaldingJob \
+ * --hadoop-propelonrtielons "maprelonducelon.job.split.melontainfo.maxsizelon=-1" \
+ * --clustelonr bluelonbird-qus1 --submittelonr hadoopnelonst-bluelonbird-1.qus1.twittelonr.com \
+ * -- --datelon 2021-02-01 2021-02-02 \
+ * --outputPath AdhocSelonarchAbuselonSimclustelonrFelonaturelonsScaldingJob-telonst1
  */
-object AdhocSearchAbuseSimclusterFeaturesScaldingJob extends AdhocExecutionApp {
-  def toTsv(
-    datasetExecution: Execution[TypedPipe[KeyVal[Long, SingleSideUserScores]]],
+objelonct AdhocSelonarchAbuselonSimclustelonrFelonaturelonsScaldingJob elonxtelonnds AdhocelonxeloncutionApp {
+  delonf toTsv(
+    dataselontelonxeloncution: elonxeloncution[TypelondPipelon[KelonyVal[Long, SinglelonSidelonUselonrScorelons]]],
     outputPath: String
-  ): Execution[Unit] = {
-    datasetExecution.flatMap { dataset =>
-      dataset
-        .map { keyVal =>
+  ): elonxeloncution[Unit] = {
+    dataselontelonxeloncution.flatMap { dataselont =>
+      dataselont
+        .map { kelonyVal =>
           (
-            keyVal.key,
-            keyVal.value.consumerHealthyScore,
-            keyVal.value.consumerUnhealthyScore,
-            keyVal.value.authorHealthyScore,
-            keyVal.value.authorUnhealthyScore
+            kelonyVal.kelony,
+            kelonyVal.valuelon.consumelonrHelonalthyScorelon,
+            kelonyVal.valuelon.consumelonrUnhelonalthyScorelon,
+            kelonyVal.valuelon.authorHelonalthyScorelon,
+            kelonyVal.valuelon.authorUnhelonalthyScorelon
           )
         }
-        .writeExecution(TypedText.tsv(outputPath))
+        .writelonelonxeloncution(TypelondTelonxt.tsv(outputPath))
     }
   }
 
-  override def runOnDateRange(
+  ovelonrridelon delonf runOnDatelonRangelon(
     args: Args
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon,
+    uniquelonID: UniquelonID
+  ): elonxeloncution[Unit] = {
     toTsv(
-      SearchAbuseSimclusterFeaturesScaldingJob.buildDataset()(dateRange),
+      SelonarchAbuselonSimclustelonrFelonaturelonsScaldingJob.buildDataselont()(datelonRangelon),
       args("outputPath")
     )
   }

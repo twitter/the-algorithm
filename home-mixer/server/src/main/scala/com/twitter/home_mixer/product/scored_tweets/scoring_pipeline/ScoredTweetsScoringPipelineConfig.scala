@@ -1,174 +1,174 @@
-package com.twitter.home_mixer.product.scored_tweets.scoring_pipeline
+packagelon com.twittelonr.homelon_mixelonr.product.scorelond_twelonelonts.scoring_pipelonlinelon
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.home_mixer.functional_component.feature_hydrator._
-import com.twitter.home_mixer.functional_component.feature_hydrator.offline_aggregates.Phase1EdgeAggregateFeatureHydrator
-import com.twitter.home_mixer.functional_component.feature_hydrator.offline_aggregates.Phase2EdgeAggregateFeatureHydrator
-import com.twitter.home_mixer.functional_component.feature_hydrator.real_time_aggregates._
-import com.twitter.home_mixer.model.HomeFeatures.EarlybirdScoreFeature
-import com.twitter.home_mixer.product.scored_tweets.candidate_pipeline.CachedScoredTweetsCandidatePipelineConfig
-import com.twitter.home_mixer.product.scored_tweets.candidate_pipeline.ScoredTweetsCrMixerCandidatePipelineConfig
-import com.twitter.home_mixer.product.scored_tweets.candidate_pipeline.ScoredTweetsFrsCandidatePipelineConfig
-import com.twitter.home_mixer.product.scored_tweets.candidate_pipeline.ScoredTweetsInNetworkCandidatePipelineConfig
-import com.twitter.home_mixer.product.scored_tweets.candidate_pipeline.ScoredTweetsUtegCandidatePipelineConfig
-import com.twitter.home_mixer.product.scored_tweets.model.ScoredTweetsQuery
-import com.twitter.home_mixer.product.scored_tweets.param.ScoredTweetsParam.QualityFactor
-import com.twitter.home_mixer.product.scored_tweets.scorer.HomeNaviModelDataRecordScorer
-import com.twitter.product_mixer.component_library.gate.NonEmptyCandidatesGate
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.component_library.selector.DropMaxCandidates
-import com.twitter.product_mixer.component_library.selector.InsertAppendResults
-import com.twitter.product_mixer.component_library.selector.UpdateSortCandidates
-import com.twitter.product_mixer.core.feature.featuremap.datarecord.AllFeatures
-import com.twitter.product_mixer.core.functional_component.common.AllExceptPipelines
-import com.twitter.product_mixer.core.functional_component.common.SpecificPipelines
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BaseCandidateFeatureHydrator
-import com.twitter.product_mixer.core.functional_component.gate.BaseGate
-import com.twitter.product_mixer.core.functional_component.scorer.Scorer
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.model.common.identifier.ScorerIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.ScoringPipelineIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ItemCandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.UnexpectedCandidateResult
-import com.twitter.product_mixer.core.pipeline.scoring.ScoringPipelineConfig
-import com.twitter.timelines.clients.predictionservice.PredictionGRPCService
-import com.twitter.timelines.clients.predictionservice.PredictionServiceGRPCClient
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator._
+import com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator.offlinelon_aggrelongatelons.Phaselon1elondgelonAggrelongatelonFelonaturelonHydrator
+import com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator.offlinelon_aggrelongatelons.Phaselon2elondgelonAggrelongatelonFelonaturelonHydrator
+import com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator.relonal_timelon_aggrelongatelons._
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.elonarlybirdScorelonFelonaturelon
+import com.twittelonr.homelon_mixelonr.product.scorelond_twelonelonts.candidatelon_pipelonlinelon.CachelondScorelondTwelonelontsCandidatelonPipelonlinelonConfig
+import com.twittelonr.homelon_mixelonr.product.scorelond_twelonelonts.candidatelon_pipelonlinelon.ScorelondTwelonelontsCrMixelonrCandidatelonPipelonlinelonConfig
+import com.twittelonr.homelon_mixelonr.product.scorelond_twelonelonts.candidatelon_pipelonlinelon.ScorelondTwelonelontsFrsCandidatelonPipelonlinelonConfig
+import com.twittelonr.homelon_mixelonr.product.scorelond_twelonelonts.candidatelon_pipelonlinelon.ScorelondTwelonelontsInNelontworkCandidatelonPipelonlinelonConfig
+import com.twittelonr.homelon_mixelonr.product.scorelond_twelonelonts.candidatelon_pipelonlinelon.ScorelondTwelonelontsUtelongCandidatelonPipelonlinelonConfig
+import com.twittelonr.homelon_mixelonr.product.scorelond_twelonelonts.modelonl.ScorelondTwelonelontsQuelonry
+import com.twittelonr.homelon_mixelonr.product.scorelond_twelonelonts.param.ScorelondTwelonelontsParam.QualityFactor
+import com.twittelonr.homelon_mixelonr.product.scorelond_twelonelonts.scorelonr.HomelonNaviModelonlDataReloncordScorelonr
+import com.twittelonr.product_mixelonr.componelonnt_library.gatelon.NonelonmptyCandidatelonsGatelon
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.TwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.componelonnt_library.selonlelonctor.DropMaxCandidatelons
+import com.twittelonr.product_mixelonr.componelonnt_library.selonlelonctor.InselonrtAppelonndRelonsults
+import com.twittelonr.product_mixelonr.componelonnt_library.selonlelonctor.UpdatelonSortCandidatelons
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.datareloncord.AllFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.AllelonxcelonptPipelonlinelons
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.SpeloncificPipelonlinelons
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator.BaselonCandidatelonFelonaturelonHydrator
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.gatelon.BaselonGatelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.scorelonr.Scorelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.selonlelonctor.Selonlelonctor
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.ScorelonrIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.ScoringPipelonlinelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.ItelonmCandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.PipelonlinelonFailurelon
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.UnelonxpelonctelondCandidatelonRelonsult
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.scoring.ScoringPipelonlinelonConfig
+import com.twittelonr.timelonlinelons.clielonnts.prelondictionselonrvicelon.PrelondictionGRPCSelonrvicelon
+import com.twittelonr.timelonlinelons.clielonnts.prelondictionselonrvicelon.PrelondictionSelonrvicelonGRPCClielonnt
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class ScoredTweetsScoringPipelineConfig @Inject() (
-  scoredTweetsInNetworkCandidatePipelineConfig: ScoredTweetsInNetworkCandidatePipelineConfig,
-  scoredTweetsUtegCandidatePipelineConfig: ScoredTweetsUtegCandidatePipelineConfig,
-  scoredTweetsCrMixerCandidatePipelineConfig: ScoredTweetsCrMixerCandidatePipelineConfig,
-  scoredTweetsFrsCandidatePipelineConfig: ScoredTweetsFrsCandidatePipelineConfig,
-  predictionGRPCService: PredictionGRPCService,
-  ancestorFeatureHydrator: AncestorFeatureHydrator,
-  authorFeatureHydrator: AuthorFeatureHydrator,
-  earlybirdFeatureHydrator: EarlybirdFeatureHydrator,
-  metricCenterUserCountingFeatureHydrator: MetricCenterUserCountingFeatureHydrator,
-  tweetypieContentFeatureHydrator: TweetypieContentFeatureHydrator,
-  gizmoduckAuthorSafetyFeatureHydrator: GizmoduckAuthorSafetyFeatureHydrator,
-  graphTwoHopFeatureHydrator: GraphTwoHopFeatureHydrator,
-  socialGraphServiceFeatureHydrator: SocialGraphServiceFeatureHydrator,
-  twhinAuthorFollow20220101FeatureHydrator: TwhinAuthorFollow20220101FeatureHydrator,
-  userFollowedTopicIdsFeatureHydrator: UserFollowedTopicIdsFeatureHydrator,
-  utegFeatureHydrator: UtegFeatureHydrator,
-  realGraphViewerAuthorFeatureHydrator: RealGraphViewerAuthorFeatureHydrator,
-  realGraphViewerRelatedUsersFeatureHydrator: RealGraphViewerRelatedUsersFeatureHydrator,
-  realTimeInteractionGraphEdgeFeatureHydrator: RealTimeInteractionGraphEdgeFeatureHydrator,
-  engagementsReceivedByAuthorRealTimeAggregateFeatureHydrator: EngagementsReceivedByAuthorRealTimeAggregateFeatureHydrator,
-  topicCountryEngagementRealTimeAggregateFeatureHydrator: TopicCountryEngagementRealTimeAggregateFeatureHydrator,
-  topicEngagementRealTimeAggregateFeatureHydrator: TopicEngagementRealTimeAggregateFeatureHydrator,
-  tspInferredTopicFeatureHydrator: TSPInferredTopicFeatureHydrator,
-  tweetCountryEngagementRealTimeAggregateFeatureHydrator: TweetCountryEngagementRealTimeAggregateFeatureHydrator,
-  tweetEngagementRealTimeAggregateFeatureHydrator: TweetEngagementRealTimeAggregateFeatureHydrator,
-  twitterListEngagementRealTimeAggregateFeatureHydrator: TwitterListEngagementRealTimeAggregateFeatureHydrator,
-  userAuthorEngagementRealTimeAggregateFeatureHydrator: UserAuthorEngagementRealTimeAggregateFeatureHydrator,
-  simClustersEngagementSimilarityFeatureHydrator: SimClustersEngagementSimilarityFeatureHydrator,
-  phase1EdgeAggregateFeatureHydrator: Phase1EdgeAggregateFeatureHydrator,
-  phase2EdgeAggregateFeatureHydrator: Phase2EdgeAggregateFeatureHydrator,
-  statsReceiver: StatsReceiver)
-    extends ScoringPipelineConfig[ScoredTweetsQuery, TweetCandidate] {
+@Singlelonton
+class ScorelondTwelonelontsScoringPipelonlinelonConfig @Injelonct() (
+  scorelondTwelonelontsInNelontworkCandidatelonPipelonlinelonConfig: ScorelondTwelonelontsInNelontworkCandidatelonPipelonlinelonConfig,
+  scorelondTwelonelontsUtelongCandidatelonPipelonlinelonConfig: ScorelondTwelonelontsUtelongCandidatelonPipelonlinelonConfig,
+  scorelondTwelonelontsCrMixelonrCandidatelonPipelonlinelonConfig: ScorelondTwelonelontsCrMixelonrCandidatelonPipelonlinelonConfig,
+  scorelondTwelonelontsFrsCandidatelonPipelonlinelonConfig: ScorelondTwelonelontsFrsCandidatelonPipelonlinelonConfig,
+  prelondictionGRPCSelonrvicelon: PrelondictionGRPCSelonrvicelon,
+  ancelonstorFelonaturelonHydrator: AncelonstorFelonaturelonHydrator,
+  authorFelonaturelonHydrator: AuthorFelonaturelonHydrator,
+  elonarlybirdFelonaturelonHydrator: elonarlybirdFelonaturelonHydrator,
+  melontricCelonntelonrUselonrCountingFelonaturelonHydrator: MelontricCelonntelonrUselonrCountingFelonaturelonHydrator,
+  twelonelontypielonContelonntFelonaturelonHydrator: TwelonelontypielonContelonntFelonaturelonHydrator,
+  gizmoduckAuthorSafelontyFelonaturelonHydrator: GizmoduckAuthorSafelontyFelonaturelonHydrator,
+  graphTwoHopFelonaturelonHydrator: GraphTwoHopFelonaturelonHydrator,
+  socialGraphSelonrvicelonFelonaturelonHydrator: SocialGraphSelonrvicelonFelonaturelonHydrator,
+  twhinAuthorFollow20220101FelonaturelonHydrator: TwhinAuthorFollow20220101FelonaturelonHydrator,
+  uselonrFollowelondTopicIdsFelonaturelonHydrator: UselonrFollowelondTopicIdsFelonaturelonHydrator,
+  utelongFelonaturelonHydrator: UtelongFelonaturelonHydrator,
+  relonalGraphVielonwelonrAuthorFelonaturelonHydrator: RelonalGraphVielonwelonrAuthorFelonaturelonHydrator,
+  relonalGraphVielonwelonrRelonlatelondUselonrsFelonaturelonHydrator: RelonalGraphVielonwelonrRelonlatelondUselonrsFelonaturelonHydrator,
+  relonalTimelonIntelonractionGraphelondgelonFelonaturelonHydrator: RelonalTimelonIntelonractionGraphelondgelonFelonaturelonHydrator,
+  elonngagelonmelonntsReloncelonivelondByAuthorRelonalTimelonAggrelongatelonFelonaturelonHydrator: elonngagelonmelonntsReloncelonivelondByAuthorRelonalTimelonAggrelongatelonFelonaturelonHydrator,
+  topicCountryelonngagelonmelonntRelonalTimelonAggrelongatelonFelonaturelonHydrator: TopicCountryelonngagelonmelonntRelonalTimelonAggrelongatelonFelonaturelonHydrator,
+  topicelonngagelonmelonntRelonalTimelonAggrelongatelonFelonaturelonHydrator: TopicelonngagelonmelonntRelonalTimelonAggrelongatelonFelonaturelonHydrator,
+  tspInfelonrrelondTopicFelonaturelonHydrator: TSPInfelonrrelondTopicFelonaturelonHydrator,
+  twelonelontCountryelonngagelonmelonntRelonalTimelonAggrelongatelonFelonaturelonHydrator: TwelonelontCountryelonngagelonmelonntRelonalTimelonAggrelongatelonFelonaturelonHydrator,
+  twelonelontelonngagelonmelonntRelonalTimelonAggrelongatelonFelonaturelonHydrator: TwelonelontelonngagelonmelonntRelonalTimelonAggrelongatelonFelonaturelonHydrator,
+  twittelonrListelonngagelonmelonntRelonalTimelonAggrelongatelonFelonaturelonHydrator: TwittelonrListelonngagelonmelonntRelonalTimelonAggrelongatelonFelonaturelonHydrator,
+  uselonrAuthorelonngagelonmelonntRelonalTimelonAggrelongatelonFelonaturelonHydrator: UselonrAuthorelonngagelonmelonntRelonalTimelonAggrelongatelonFelonaturelonHydrator,
+  simClustelonrselonngagelonmelonntSimilarityFelonaturelonHydrator: SimClustelonrselonngagelonmelonntSimilarityFelonaturelonHydrator,
+  phaselon1elondgelonAggrelongatelonFelonaturelonHydrator: Phaselon1elondgelonAggrelongatelonFelonaturelonHydrator,
+  phaselon2elondgelonAggrelongatelonFelonaturelonHydrator: Phaselon2elondgelonAggrelongatelonFelonaturelonHydrator,
+  statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds ScoringPipelonlinelonConfig[ScorelondTwelonelontsQuelonry, TwelonelontCandidatelon] {
 
-  override val identifier: ScoringPipelineIdentifier = ScoringPipelineIdentifier("ScoredTweets")
+  ovelonrridelon val idelonntifielonr: ScoringPipelonlinelonIdelonntifielonr = ScoringPipelonlinelonIdelonntifielonr("ScorelondTwelonelonts")
 
-  private val nonCachedScoringPipelineScope = AllExceptPipelines(
-    pipelinesToExclude = Set(CachedScoredTweetsCandidatePipelineConfig.Identifier)
+  privatelon val nonCachelondScoringPipelonlinelonScopelon = AllelonxcelonptPipelonlinelons(
+    pipelonlinelonsToelonxcludelon = Selont(CachelondScorelondTwelonelontsCandidatelonPipelonlinelonConfig.Idelonntifielonr)
   )
 
-  override val gates: Seq[BaseGate[ScoredTweetsQuery]] = Seq(
-    NonEmptyCandidatesGate(nonCachedScoringPipelineScope)
+  ovelonrridelon val gatelons: Selonq[BaselonGatelon[ScorelondTwelonelontsQuelonry]] = Selonq(
+    NonelonmptyCandidatelonsGatelon(nonCachelondScoringPipelonlinelonScopelon)
   )
 
-  private val earlybirdScorePipelineScope = Set(
-    scoredTweetsInNetworkCandidatePipelineConfig.identifier,
-    scoredTweetsUtegCandidatePipelineConfig.identifier,
-    scoredTweetsFrsCandidatePipelineConfig.identifier
+  privatelon val elonarlybirdScorelonPipelonlinelonScopelon = Selont(
+    scorelondTwelonelontsInNelontworkCandidatelonPipelonlinelonConfig.idelonntifielonr,
+    scorelondTwelonelontsUtelongCandidatelonPipelonlinelonConfig.idelonntifielonr,
+    scorelondTwelonelontsFrsCandidatelonPipelonlinelonConfig.idelonntifielonr
   )
 
-  private val earlybirdScoreOrdering: Ordering[CandidateWithDetails] =
-    Ordering.by[CandidateWithDetails, Double] {
-      case ItemCandidateWithDetails(_, _, features) =>
-        -features.getOrElse(EarlybirdScoreFeature, None).getOrElse(0.0)
-      case _ => throw PipelineFailure(UnexpectedCandidateResult, "Invalid candidate type")
+  privatelon val elonarlybirdScorelonOrdelonring: Ordelonring[CandidatelonWithDelontails] =
+    Ordelonring.by[CandidatelonWithDelontails, Doublelon] {
+      caselon ItelonmCandidatelonWithDelontails(_, _, felonaturelons) =>
+        -felonaturelons.gelontOrelonlselon(elonarlybirdScorelonFelonaturelon, Nonelon).gelontOrelonlselon(0.0)
+      caselon _ => throw PipelonlinelonFailurelon(UnelonxpelonctelondCandidatelonRelonsult, "Invalid candidatelon typelon")
     }
 
-  override val selectors: Seq[Selector[ScoredTweetsQuery]] = Seq(
-    UpdateSortCandidates(SpecificPipelines(earlybirdScorePipelineScope), earlybirdScoreOrdering),
-    new DropMaxCandidates(
-      pipelineScope = SpecificPipelines(earlybirdScorePipelineScope),
-      maxSelector = (query, _, _) =>
-        (query.getQualityFactorCurrentValue(identifier) *
-          query.params(QualityFactor.MaxTweetsToScoreParam)).toInt
+  ovelonrridelon val selonlelonctors: Selonq[Selonlelonctor[ScorelondTwelonelontsQuelonry]] = Selonq(
+    UpdatelonSortCandidatelons(SpeloncificPipelonlinelons(elonarlybirdScorelonPipelonlinelonScopelon), elonarlybirdScorelonOrdelonring),
+    nelonw DropMaxCandidatelons(
+      pipelonlinelonScopelon = SpeloncificPipelonlinelons(elonarlybirdScorelonPipelonlinelonScopelon),
+      maxSelonlelonctor = (quelonry, _, _) =>
+        (quelonry.gelontQualityFactorCurrelonntValuelon(idelonntifielonr) *
+          quelonry.params(QualityFactor.MaxTwelonelontsToScorelonParam)).toInt
     ),
-    new DropMaxCandidates(
-      pipelineScope = SpecificPipelines(scoredTweetsCrMixerCandidatePipelineConfig.identifier),
-      maxSelector = (query, _, _) =>
-        (query.getQualityFactorCurrentValue(identifier) *
-          query.params(QualityFactor.CrMixerMaxTweetsToScoreParam)).toInt
+    nelonw DropMaxCandidatelons(
+      pipelonlinelonScopelon = SpeloncificPipelonlinelons(scorelondTwelonelontsCrMixelonrCandidatelonPipelonlinelonConfig.idelonntifielonr),
+      maxSelonlelonctor = (quelonry, _, _) =>
+        (quelonry.gelontQualityFactorCurrelonntValuelon(idelonntifielonr) *
+          quelonry.params(QualityFactor.CrMixelonrMaxTwelonelontsToScorelonParam)).toInt
     ),
-    // Select candidates for Heavy Ranker Feature Hydration and Scoring
-    InsertAppendResults(nonCachedScoringPipelineScope)
+    // Selonlelonct candidatelons for Helonavy Rankelonr Felonaturelon Hydration and Scoring
+    InselonrtAppelonndRelonsults(nonCachelondScoringPipelonlinelonScopelon)
   )
 
-  override val preScoringFeatureHydrationPhase1: Seq[
-    BaseCandidateFeatureHydrator[ScoredTweetsQuery, TweetCandidate, _]
-  ] = Seq(
-    ancestorFeatureHydrator,
-    authorFeatureHydrator,
-    earlybirdFeatureHydrator,
-    gizmoduckAuthorSafetyFeatureHydrator,
-    graphTwoHopFeatureHydrator,
-    metricCenterUserCountingFeatureHydrator,
-    socialGraphServiceFeatureHydrator,
-    TweetMetaDataFeatureHydrator,
-    tweetypieContentFeatureHydrator,
-    twhinAuthorFollow20220101FeatureHydrator,
-    userFollowedTopicIdsFeatureHydrator,
-    utegFeatureHydrator,
-    realTimeInteractionGraphEdgeFeatureHydrator,
-    realGraphViewerAuthorFeatureHydrator,
-    // real time aggregates
-    engagementsReceivedByAuthorRealTimeAggregateFeatureHydrator,
-    simClustersEngagementSimilarityFeatureHydrator,
-    tspInferredTopicFeatureHydrator,
-    tweetCountryEngagementRealTimeAggregateFeatureHydrator,
-    tweetEngagementRealTimeAggregateFeatureHydrator,
-    twitterListEngagementRealTimeAggregateFeatureHydrator,
-    userAuthorEngagementRealTimeAggregateFeatureHydrator,
-    // offline aggregates
-    phase1EdgeAggregateFeatureHydrator
+  ovelonrridelon val prelonScoringFelonaturelonHydrationPhaselon1: Selonq[
+    BaselonCandidatelonFelonaturelonHydrator[ScorelondTwelonelontsQuelonry, TwelonelontCandidatelon, _]
+  ] = Selonq(
+    ancelonstorFelonaturelonHydrator,
+    authorFelonaturelonHydrator,
+    elonarlybirdFelonaturelonHydrator,
+    gizmoduckAuthorSafelontyFelonaturelonHydrator,
+    graphTwoHopFelonaturelonHydrator,
+    melontricCelonntelonrUselonrCountingFelonaturelonHydrator,
+    socialGraphSelonrvicelonFelonaturelonHydrator,
+    TwelonelontMelontaDataFelonaturelonHydrator,
+    twelonelontypielonContelonntFelonaturelonHydrator,
+    twhinAuthorFollow20220101FelonaturelonHydrator,
+    uselonrFollowelondTopicIdsFelonaturelonHydrator,
+    utelongFelonaturelonHydrator,
+    relonalTimelonIntelonractionGraphelondgelonFelonaturelonHydrator,
+    relonalGraphVielonwelonrAuthorFelonaturelonHydrator,
+    // relonal timelon aggrelongatelons
+    elonngagelonmelonntsReloncelonivelondByAuthorRelonalTimelonAggrelongatelonFelonaturelonHydrator,
+    simClustelonrselonngagelonmelonntSimilarityFelonaturelonHydrator,
+    tspInfelonrrelondTopicFelonaturelonHydrator,
+    twelonelontCountryelonngagelonmelonntRelonalTimelonAggrelongatelonFelonaturelonHydrator,
+    twelonelontelonngagelonmelonntRelonalTimelonAggrelongatelonFelonaturelonHydrator,
+    twittelonrListelonngagelonmelonntRelonalTimelonAggrelongatelonFelonaturelonHydrator,
+    uselonrAuthorelonngagelonmelonntRelonalTimelonAggrelongatelonFelonaturelonHydrator,
+    // offlinelon aggrelongatelons
+    phaselon1elondgelonAggrelongatelonFelonaturelonHydrator
   )
 
-  override val preScoringFeatureHydrationPhase2: Seq[
-    BaseCandidateFeatureHydrator[ScoredTweetsQuery, TweetCandidate, _]
-  ] = Seq(
-    realGraphViewerRelatedUsersFeatureHydrator,
-    TimeFeaturesHydrator,
-    topicCountryEngagementRealTimeAggregateFeatureHydrator,
-    topicEngagementRealTimeAggregateFeatureHydrator,
-    phase2EdgeAggregateFeatureHydrator
+  ovelonrridelon val prelonScoringFelonaturelonHydrationPhaselon2: Selonq[
+    BaselonCandidatelonFelonaturelonHydrator[ScorelondTwelonelontsQuelonry, TwelonelontCandidatelon, _]
+  ] = Selonq(
+    relonalGraphVielonwelonrRelonlatelondUselonrsFelonaturelonHydrator,
+    TimelonFelonaturelonsHydrator,
+    topicCountryelonngagelonmelonntRelonalTimelonAggrelongatelonFelonaturelonHydrator,
+    topicelonngagelonmelonntRelonalTimelonAggrelongatelonFelonaturelonHydrator,
+    phaselon2elondgelonAggrelongatelonFelonaturelonHydrator
   )
 
-  private val homeNaviModelDataRecordScorer: Scorer[ScoredTweetsQuery, TweetCandidate] = {
-    val modelClient = new PredictionServiceGRPCClient(
-      service = predictionGRPCService,
-      statsReceiver = statsReceiver,
-      requestBatchSize = HomeNaviModelDataRecordScorer.RequestBatchSize,
-      useCompact = false
+  privatelon val homelonNaviModelonlDataReloncordScorelonr: Scorelonr[ScorelondTwelonelontsQuelonry, TwelonelontCandidatelon] = {
+    val modelonlClielonnt = nelonw PrelondictionSelonrvicelonGRPCClielonnt(
+      selonrvicelon = prelondictionGRPCSelonrvicelon,
+      statsReloncelonivelonr = statsReloncelonivelonr,
+      relonquelonstBatchSizelon = HomelonNaviModelonlDataReloncordScorelonr.RelonquelonstBatchSizelon,
+      uselonCompact = falselon
     )
-    HomeNaviModelDataRecordScorer(
-      identifier = ScorerIdentifier("HomeNaviModel"),
-      modelClient = modelClient,
-      candidateFeatures = AllFeatures(),
-      resultFeatures = HomeNaviModelDataRecordScorer.PredictedScoreFeatures.toSet,
-      statsReceiver = statsReceiver
+    HomelonNaviModelonlDataReloncordScorelonr(
+      idelonntifielonr = ScorelonrIdelonntifielonr("HomelonNaviModelonl"),
+      modelonlClielonnt = modelonlClielonnt,
+      candidatelonFelonaturelons = AllFelonaturelons(),
+      relonsultFelonaturelons = HomelonNaviModelonlDataReloncordScorelonr.PrelondictelondScorelonFelonaturelons.toSelont,
+      statsReloncelonivelonr = statsReloncelonivelonr
     )
   }
 
-  override val scorers: Seq[Scorer[ScoredTweetsQuery, TweetCandidate]] =
-    Seq(homeNaviModelDataRecordScorer)
+  ovelonrridelon val scorelonrs: Selonq[Scorelonr[ScorelondTwelonelontsQuelonry, TwelonelontCandidatelon]] =
+    Selonq(homelonNaviModelonlDataReloncordScorelonr)
 }

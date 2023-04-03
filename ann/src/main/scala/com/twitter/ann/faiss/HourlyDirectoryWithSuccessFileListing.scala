@@ -1,63 +1,63 @@
-package com.twitter.ann.faiss
+packagelon com.twittelonr.ann.faiss
 
-import com.twitter.conversions.DurationOps.richDurationFromInt
-import com.twitter.search.common.file.AbstractFile
-import com.twitter.search.common.file.FileUtils
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import com.twitter.util.Time
-import com.twitter.util.Try
-import com.twitter.util.logging.Logging
-import java.util.Locale
+import com.twittelonr.convelonrsions.DurationOps.richDurationFromInt
+import com.twittelonr.selonarch.common.filelon.AbstractFilelon
+import com.twittelonr.selonarch.common.filelon.FilelonUtils
+import com.twittelonr.util.Relonturn
+import com.twittelonr.util.Throw
+import com.twittelonr.util.Timelon
+import com.twittelonr.util.Try
+import com.twittelonr.util.logging.Logging
+import java.util.Localelon
 
-object HourlyDirectoryWithSuccessFileListing extends Logging {
-  private val SUCCESS_FILE_NAME = "_SUCCESS"
+objelonct HourlyDirelonctoryWithSuccelonssFilelonListing elonxtelonnds Logging {
+  privatelon val SUCCelonSS_FILelon_NAMelon = "_SUCCelonSS"
 
-  def listHourlyIndexDirectories(
-    root: AbstractFile,
-    startingFrom: Time,
+  delonf listHourlyIndelonxDirelonctorielons(
+    root: AbstractFilelon,
+    startingFrom: Timelon,
     count: Int,
-    lookbackInterval: Int
-  ): Seq[AbstractFile] = listingStep(root, startingFrom, count, lookbackInterval)
+    lookbackIntelonrval: Int
+  ): Selonq[AbstractFilelon] = listingStelonp(root, startingFrom, count, lookbackIntelonrval)
 
-  private def listingStep(
-    root: AbstractFile,
-    startingFrom: Time,
-    remainingDirectoriesToFind: Int,
-    remainingAttempts: Int
-  ): List[AbstractFile] = {
-    if (remainingDirectoriesToFind == 0 || remainingAttempts == 0) {
-      return List.empty
+  privatelon delonf listingStelonp(
+    root: AbstractFilelon,
+    startingFrom: Timelon,
+    relonmainingDirelonctorielonsToFind: Int,
+    relonmainingAttelonmpts: Int
+  ): List[AbstractFilelon] = {
+    if (relonmainingDirelonctorielonsToFind == 0 || relonmainingAttelonmpts == 0) {
+      relonturn List.elonmpty
     }
 
-    val head = getSuccessfulDirectoryForDate(root, startingFrom)
+    val helonad = gelontSuccelonssfulDirelonctoryForDatelon(root, startingFrom)
 
-    val previousHour = startingFrom - 1.hour
+    val prelonviousHour = startingFrom - 1.hour
 
-    head match {
-      case Throw(e) =>
-        listingStep(root, previousHour, remainingDirectoriesToFind, remainingAttempts - 1)
-      case Return(directory) =>
-        directory ::
-          listingStep(root, previousHour, remainingDirectoriesToFind - 1, remainingAttempts - 1)
+    helonad match {
+      caselon Throw(elon) =>
+        listingStelonp(root, prelonviousHour, relonmainingDirelonctorielonsToFind, relonmainingAttelonmpts - 1)
+      caselon Relonturn(direlonctory) =>
+        direlonctory ::
+          listingStelonp(root, prelonviousHour, relonmainingDirelonctorielonsToFind - 1, relonmainingAttelonmpts - 1)
     }
   }
 
-  private def getSuccessfulDirectoryForDate(
-    root: AbstractFile,
-    date: Time
-  ): Try[AbstractFile] = {
-    val folder = root.getPath + "/" + date.format("yyyy/MM/dd/HH", Locale.ROOT)
-    val successPath =
-      folder + "/" + SUCCESS_FILE_NAME
+  privatelon delonf gelontSuccelonssfulDirelonctoryForDatelon(
+    root: AbstractFilelon,
+    datelon: Timelon
+  ): Try[AbstractFilelon] = {
+    val foldelonr = root.gelontPath + "/" + datelon.format("yyyy/MM/dd/HH", Localelon.ROOT)
+    val succelonssPath =
+      foldelonr + "/" + SUCCelonSS_FILelon_NAMelon
 
-    debug(s"Checking ${successPath}")
+    delonbug(s"Cheloncking ${succelonssPath}")
 
-    Try(FileUtils.getFileHandle(successPath)).flatMap { file =>
-      if (file.canRead) {
-        Try(FileUtils.getFileHandle(folder))
-      } else {
-        Throw(new IllegalArgumentException(s"Found ${file.toString} but can't read it"))
+    Try(FilelonUtils.gelontFilelonHandlelon(succelonssPath)).flatMap { filelon =>
+      if (filelon.canRelonad) {
+        Try(FilelonUtils.gelontFilelonHandlelon(foldelonr))
+      } elonlselon {
+        Throw(nelonw IllelongalArgumelonntelonxcelonption(s"Found ${filelon.toString} but can't relonad it"))
       }
     }
   }

@@ -1,27 +1,27 @@
-package com.twitter.follow_recommendations.common.candidate_sources.base
+packagelon com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.baselon
 
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.stitch.Stitch
-import com.twitter.strato.client.Fetcher
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.CandidatelonUselonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.CandidatelonSourcelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonSourcelonIdelonntifielonr
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.strato.clielonnt.Felontchelonr
 
-abstract class StratoFetcherSource[K, U, V](
-  fetcher: Fetcher[K, U, V],
-  view: U,
-  override val identifier: CandidateSourceIdentifier)
-    extends CandidateSource[K, CandidateUser] {
+abstract class StratoFelontchelonrSourcelon[K, U, V](
+  felontchelonr: Felontchelonr[K, U, V],
+  vielonw: U,
+  ovelonrridelon val idelonntifielonr: CandidatelonSourcelonIdelonntifielonr)
+    elonxtelonnds CandidatelonSourcelon[K, CandidatelonUselonr] {
 
-  def map(user: K, v: V): Seq[CandidateUser]
+  delonf map(uselonr: K, v: V): Selonq[CandidatelonUselonr]
 
-  override def apply(target: K): Stitch[Seq[CandidateUser]] = {
-    fetcher
-      .fetch(target, view)
-      .map { result =>
-        result.v
-          .map { candidates => map(target, candidates) }
-          .getOrElse(Nil)
-          .map(_.withCandidateSource(identifier))
+  ovelonrridelon delonf apply(targelont: K): Stitch[Selonq[CandidatelonUselonr]] = {
+    felontchelonr
+      .felontch(targelont, vielonw)
+      .map { relonsult =>
+        relonsult.v
+          .map { candidatelons => map(targelont, candidatelons) }
+          .gelontOrelonlselon(Nil)
+          .map(_.withCandidatelonSourcelon(idelonntifielonr))
       }
   }
 }

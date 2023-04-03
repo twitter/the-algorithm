@@ -1,13 +1,13 @@
-package com.twitter.visibility.configapi.params
+packagelon com.twittelonr.visibility.configapi.params
 
-private[visibility] object TimelineConversationsDownrankingSpecificParams {
+privatelon[visibility] objelonct TimelonlinelonConvelonrsationsDownrankingSpeloncificParams {
 
-  object EnablePSpammyTweetDownrankConvosLowQualityParam extends RuleParam(false)
+  objelonct elonnablelonPSpammyTwelonelontDownrankConvosLowQualityParam elonxtelonnds RulelonParam(falselon)
 
-  object EnableRitoActionedTweetDownrankConvosLowQualityParam extends RuleParam(false)
+  objelonct elonnablelonRitoActionelondTwelonelontDownrankConvosLowQualityParam elonxtelonnds RulelonParam(falselon)
 
-  object EnableHighSpammyTweetContentScoreConvoDownrankAbusiveQualityRuleParam
-      extends RuleParam(false)
+  objelonct elonnablelonHighSpammyTwelonelontContelonntScorelonConvoDownrankAbusivelonQualityRulelonParam
+      elonxtelonnds RulelonParam(falselon)
 
-  object EnableHighCryptospamScoreConvoDownrankAbusiveQualityRuleParam extends RuleParam(false)
+  objelonct elonnablelonHighCryptospamScorelonConvoDownrankAbusivelonQualityRulelonParam elonxtelonnds RulelonParam(falselon)
 }

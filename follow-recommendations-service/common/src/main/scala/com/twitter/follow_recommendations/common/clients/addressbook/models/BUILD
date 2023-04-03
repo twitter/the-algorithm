@@ -1,10 +1,10 @@
 scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
+    sourcelons = ["*.scala"],
+    compilelonr_option_selonts = ["fatal_warnings"],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "addressbook/thrift/src/thrift/com/twitter/addressbook:thrift-scala",
-        "addressbook/thrift/src/thrift/com/twitter/addressbook/datatypes:thrift-scala",
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        "addrelonssbook/thrift/src/thrift/com/twittelonr/addrelonssbook:thrift-scala",
+        "addrelonssbook/thrift/src/thrift/com/twittelonr/addrelonssbook/datatypelons:thrift-scala",
     ],
 )

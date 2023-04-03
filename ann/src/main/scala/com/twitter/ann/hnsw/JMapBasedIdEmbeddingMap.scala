@@ -1,87 +1,87 @@
-package com.twitter.ann.hnsw
+packagelon com.twittelonr.ann.hnsw
 
-import com.twitter.ann.common.EmbeddingType.EmbeddingVector
-import com.twitter.bijection.Injection
-import com.twitter.search.common.file.AbstractFile
-import java.io.OutputStream
-import java.util.concurrent.ConcurrentHashMap
-import scala.collection.JavaConverters._
+import com.twittelonr.ann.common.elonmbelonddingTypelon.elonmbelonddingVelonctor
+import com.twittelonr.bijelonction.Injelonction
+import com.twittelonr.selonarch.common.filelon.AbstractFilelon
+import java.io.OutputStrelonam
+import java.util.concurrelonnt.ConcurrelonntHashMap
+import scala.collelonction.JavaConvelonrtelonrs._
 
-private[hnsw] object JMapBasedIdEmbeddingMap {
+privatelon[hnsw] objelonct JMapBaselondIdelonmbelonddingMap {
 
   /**
-   * Creates in-memory concurrent hashmap based container that for storing id embedding mapping.
-   * @param expectedElements: Expected num of elements for sizing hint, need not be exact.
+   * Crelonatelons in-melonmory concurrelonnt hashmap baselond containelonr that for storing id elonmbelondding mapping.
+   * @param elonxpelonctelondelonlelonmelonnts: elonxpelonctelond num of elonlelonmelonnts for sizing hint, nelonelond not belon elonxact.
    */
-  def applyInMemory[T](expectedElements: Int): IdEmbeddingMap[T] =
-    new JMapBasedIdEmbeddingMap[T](
-      new ConcurrentHashMap[T, EmbeddingVector](expectedElements),
-      Option.empty
+  delonf applyInMelonmory[T](elonxpelonctelondelonlelonmelonnts: Int): IdelonmbelonddingMap[T] =
+    nelonw JMapBaselondIdelonmbelonddingMap[T](
+      nelonw ConcurrelonntHashMap[T, elonmbelonddingVelonctor](elonxpelonctelondelonlelonmelonnts),
+      Option.elonmpty
     )
 
   /**
-   * Creates in-memory concurrent hashmap based container that can be serialized to disk for storing id embedding mapping.
-   * @param expectedElements: Expected num of elements for sizing hint, need not be exact.
-   * @param injection : Injection for typed Id T to Array[Byte]
+   * Crelonatelons in-melonmory concurrelonnt hashmap baselond containelonr that can belon selonrializelond to disk for storing id elonmbelondding mapping.
+   * @param elonxpelonctelondelonlelonmelonnts: elonxpelonctelond num of elonlelonmelonnts for sizing hint, nelonelond not belon elonxact.
+   * @param injelonction : Injelonction for typelond Id T to Array[Bytelon]
    */
-  def applyInMemoryWithSerialization[T](
-    expectedElements: Int,
-    injection: Injection[T, Array[Byte]]
-  ): IdEmbeddingMap[T] =
-    new JMapBasedIdEmbeddingMap[T](
-      new ConcurrentHashMap[T, EmbeddingVector](expectedElements),
-      Some(injection)
+  delonf applyInMelonmoryWithSelonrialization[T](
+    elonxpelonctelondelonlelonmelonnts: Int,
+    injelonction: Injelonction[T, Array[Bytelon]]
+  ): IdelonmbelonddingMap[T] =
+    nelonw JMapBaselondIdelonmbelonddingMap[T](
+      nelonw ConcurrelonntHashMap[T, elonmbelonddingVelonctor](elonxpelonctelondelonlelonmelonnts),
+      Somelon(injelonction)
     )
 
   /**
-   * Loads id embedding mapping in in-memory concurrent hashmap.
-   * @param embeddingFile: Local/Hdfs file path for embeddings
-   * @param injection : Injection for typed Id T to Array[Byte]
-   * @param numElements: Expected num of elements for sizing hint, need not be exact
+   * Loads id elonmbelondding mapping in in-melonmory concurrelonnt hashmap.
+   * @param elonmbelonddingFilelon: Local/Hdfs filelon path for elonmbelonddings
+   * @param injelonction : Injelonction for typelond Id T to Array[Bytelon]
+   * @param numelonlelonmelonnts: elonxpelonctelond num of elonlelonmelonnts for sizing hint, nelonelond not belon elonxact
    */
-  def loadInMemory[T](
-    embeddingFile: AbstractFile,
-    injection: Injection[T, Array[Byte]],
-    numElements: Option[Int] = Option.empty
-  ): IdEmbeddingMap[T] = {
-    val map = numElements match {
-      case Some(elements) => new ConcurrentHashMap[T, EmbeddingVector](elements)
-      case None => new ConcurrentHashMap[T, EmbeddingVector]()
+  delonf loadInMelonmory[T](
+    elonmbelonddingFilelon: AbstractFilelon,
+    injelonction: Injelonction[T, Array[Bytelon]],
+    numelonlelonmelonnts: Option[Int] = Option.elonmpty
+  ): IdelonmbelonddingMap[T] = {
+    val map = numelonlelonmelonnts match {
+      caselon Somelon(elonlelonmelonnts) => nelonw ConcurrelonntHashMap[T, elonmbelonddingVelonctor](elonlelonmelonnts)
+      caselon Nonelon => nelonw ConcurrelonntHashMap[T, elonmbelonddingVelonctor]()
     }
-    HnswIOUtil.loadEmbeddings(
-      embeddingFile,
-      injection,
-      new JMapBasedIdEmbeddingMap(map, Some(injection))
+    HnswIOUtil.loadelonmbelonddings(
+      elonmbelonddingFilelon,
+      injelonction,
+      nelonw JMapBaselondIdelonmbelonddingMap(map, Somelon(injelonction))
     )
   }
 }
 
-private[this] class JMapBasedIdEmbeddingMap[T](
-  map: java.util.concurrent.ConcurrentHashMap[T, EmbeddingVector],
-  injection: Option[Injection[T, Array[Byte]]])
-    extends IdEmbeddingMap[T] {
-  override def putIfAbsent(id: T, embedding: EmbeddingVector): EmbeddingVector = {
-    map.putIfAbsent(id, embedding)
+privatelon[this] class JMapBaselondIdelonmbelonddingMap[T](
+  map: java.util.concurrelonnt.ConcurrelonntHashMap[T, elonmbelonddingVelonctor],
+  injelonction: Option[Injelonction[T, Array[Bytelon]]])
+    elonxtelonnds IdelonmbelonddingMap[T] {
+  ovelonrridelon delonf putIfAbselonnt(id: T, elonmbelondding: elonmbelonddingVelonctor): elonmbelonddingVelonctor = {
+    map.putIfAbselonnt(id, elonmbelondding)
   }
 
-  override def put(id: T, embedding: EmbeddingVector): EmbeddingVector = {
-    map.put(id, embedding)
+  ovelonrridelon delonf put(id: T, elonmbelondding: elonmbelonddingVelonctor): elonmbelonddingVelonctor = {
+    map.put(id, elonmbelondding)
   }
 
-  override def get(id: T): EmbeddingVector = {
-    map.get(id)
+  ovelonrridelon delonf gelont(id: T): elonmbelonddingVelonctor = {
+    map.gelont(id)
   }
 
-  override def iter(): Iterator[(T, EmbeddingVector)] =
+  ovelonrridelon delonf itelonr(): Itelonrator[(T, elonmbelonddingVelonctor)] =
     map
-      .entrySet()
-      .iterator()
+      .elonntrySelont()
+      .itelonrator()
       .asScala
-      .map(e => (e.getKey, e.getValue))
+      .map(elon => (elon.gelontKelony, elon.gelontValuelon))
 
-  override def size(): Int = map.size()
+  ovelonrridelon delonf sizelon(): Int = map.sizelon()
 
-  override def toDirectory(embeddingFile: OutputStream): Unit = {
-    HnswIOUtil.saveEmbeddings(embeddingFile, injection.get, iter())
+  ovelonrridelon delonf toDirelonctory(elonmbelonddingFilelon: OutputStrelonam): Unit = {
+    HnswIOUtil.savelonelonmbelonddings(elonmbelonddingFilelon, injelonction.gelont, itelonr())
   }
 }

@@ -1,112 +1,112 @@
-package com.twitter.search.core.earlybird.index.inverted;
+packagelon com.twittelonr.selonarch.corelon.elonarlybird.indelonx.invelonrtelond;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 
-import javax.annotation.Nullable;
+import javax.annotation.Nullablelon;
 
-import org.apache.lucene.util.packed.PackedInts;
+import org.apachelon.lucelonnelon.util.packelond.PackelondInts;
 
 /**
- * A PostingsEnum for iterating over LowDFPackedIntsPostingLists.
+ * A Postingselonnum for itelonrating ovelonr LowDFPackelondIntsPostingLists.
  *
- * Can be used with positions and without positions.
+ * Can belon uselond with positions and without positions.
  */
-public class LowDFPackedIntsPostingsEnum extends EarlybirdOptimizedPostingsEnum {
-  private static final int SKIP_INTERVAL = 128;
+public class LowDFPackelondIntsPostingselonnum elonxtelonnds elonarlybirdOptimizelondPostingselonnum {
+  privatelon static final int SKIP_INTelonRVAL = 128;
 
-  private final PackedInts.Reader packedDocIds;
-  @Nullable
-  private final PackedInts.Reader packedPositions;
-  private final int lastPostingPointer;
-  private final int largestDocID;
-  private int currentPositionPointer;
+  privatelon final PackelondInts.Relonadelonr packelondDocIds;
+  @Nullablelon
+  privatelon final PackelondInts.Relonadelonr packelondPositions;
+  privatelon final int lastPostingPointelonr;
+  privatelon final int largelonstDocID;
+  privatelon int currelonntPositionPointelonr;
 
-  /** Pointer to the next posting that will be loaded. */
-  private int nextPostingPointer;
+  /** Pointelonr to thelon nelonxt posting that will belon loadelond. */
+  privatelon int nelonxtPostingPointelonr;
 
   /**
-   * Creates a new PostingsEnum for all postings in a given term.
+   * Crelonatelons a nelonw Postingselonnum for all postings in a givelonn telonrm.
    */
-  public LowDFPackedIntsPostingsEnum(
-      PackedInts.Reader packedDocIds,
-      @Nullable
-      PackedInts.Reader packedPositions,
-      int postingListPointer,
+  public LowDFPackelondIntsPostingselonnum(
+      PackelondInts.Relonadelonr packelondDocIds,
+      @Nullablelon
+      PackelondInts.Relonadelonr packelondPositions,
+      int postingListPointelonr,
       int numPostings) {
-    super(postingListPointer, numPostings);
+    supelonr(postingListPointelonr, numPostings);
 
-    this.packedDocIds = packedDocIds;
-    this.packedPositions = packedPositions;
-    this.nextPostingPointer = postingListPointer;
+    this.packelondDocIds = packelondDocIds;
+    this.packelondPositions = packelondPositions;
+    this.nelonxtPostingPointelonr = postingListPointelonr;
 
-    this.lastPostingPointer = postingListPointer + numPostings - 1;
-    this.largestDocID = (int) packedDocIds.get(lastPostingPointer);
+    this.lastPostingPointelonr = postingListPointelonr + numPostings - 1;
+    this.largelonstDocID = (int) packelondDocIds.gelont(lastPostingPointelonr);
 
-    loadNextPosting();
+    loadNelonxtPosting();
 
-    // Treat each term as a single block load.
-    queryCostTracker.track(QueryCostTracker.CostType.LOAD_OPTIMIZED_POSTING_BLOCK);
+    // Trelonat elonach telonrm as a singlelon block load.
+    quelonryCostTrackelonr.track(QuelonryCostTrackelonr.CostTypelon.LOAD_OPTIMIZelonD_POSTING_BLOCK);
   }
 
-  @Override
-  protected void loadNextPosting() {
-    if (nextPostingPointer <= lastPostingPointer) {
-      nextDocID = (int) packedDocIds.get(nextPostingPointer);
-      nextFreq = 1;
-    } else {
-      // all postings fully processed
-      nextDocID = NO_MORE_DOCS;
-      nextFreq = 0;
+  @Ovelonrridelon
+  protelonctelond void loadNelonxtPosting() {
+    if (nelonxtPostingPointelonr <= lastPostingPointelonr) {
+      nelonxtDocID = (int) packelondDocIds.gelont(nelonxtPostingPointelonr);
+      nelonxtFrelonq = 1;
+    } elonlselon {
+      // all postings fully procelonsselond
+      nelonxtDocID = NO_MORelon_DOCS;
+      nelonxtFrelonq = 0;
     }
-    nextPostingPointer++;
+    nelonxtPostingPointelonr++;
   }
 
-  @Override
-  protected void startCurrentDoc() {
-    if (packedPositions != null) {
+  @Ovelonrridelon
+  protelonctelond void startCurrelonntDoc() {
+    if (packelondPositions != null) {
       /**
-       * Remember where we were at the beginning of this doc, so that we can iterate over the
-       * positions for this doc if needed.
-       * Adjust by `- 1 - getCurrentFreq()` because we already advanced beyond the last posting in
-       * the previous loadNextPosting() calls.
-       * @see #nextDocNoDel()
+       * Relonmelonmbelonr whelonrelon welon welonrelon at thelon belonginning of this doc, so that welon can itelonratelon ovelonr thelon
+       * positions for this doc if nelonelondelond.
+       * Adjust by `- 1 - gelontCurrelonntFrelonq()` beloncauselon welon alrelonady advancelond belonyond thelon last posting in
+       * thelon prelonvious loadNelonxtPosting() calls.
+       * @selonelon #nelonxtDocNoDelonl()
        */
-      currentPositionPointer = nextPostingPointer - 1 - getCurrentFreq();
+      currelonntPositionPointelonr = nelonxtPostingPointelonr - 1 - gelontCurrelonntFrelonq();
     }
   }
 
-  @Override
-  protected void skipTo(int target) {
-    assert target != NO_MORE_DOCS : "Should be handled in parent class advance method";
+  @Ovelonrridelon
+  protelonctelond void skipTo(int targelont) {
+    asselonrt targelont != NO_MORelon_DOCS : "Should belon handlelond in parelonnt class advancelon melonthod";
 
-    // now we know there must be a doc in this block that we can return
-    int skipIndex = nextPostingPointer + SKIP_INTERVAL;
-    while (skipIndex <= lastPostingPointer && target > packedDocIds.get(skipIndex)) {
-      nextPostingPointer = skipIndex;
-      skipIndex += SKIP_INTERVAL;
+    // now welon know thelonrelon must belon a doc in this block that welon can relonturn
+    int skipIndelonx = nelonxtPostingPointelonr + SKIP_INTelonRVAL;
+    whilelon (skipIndelonx <= lastPostingPointelonr && targelont > packelondDocIds.gelont(skipIndelonx)) {
+      nelonxtPostingPointelonr = skipIndelonx;
+      skipIndelonx += SKIP_INTelonRVAL;
     }
   }
 
-  @Override
-  public int nextPosition() throws IOException {
-    if (packedPositions == null) {
-      return -1;
-    } else if (currentPositionPointer < packedPositions.size()) {
-      return (int) packedPositions.get(currentPositionPointer++);
-    } else {
-      return -1;
+  @Ovelonrridelon
+  public int nelonxtPosition() throws IOelonxcelonption {
+    if (packelondPositions == null) {
+      relonturn -1;
+    } elonlselon if (currelonntPositionPointelonr < packelondPositions.sizelon()) {
+      relonturn (int) packelondPositions.gelont(currelonntPositionPointelonr++);
+    } elonlselon {
+      relonturn -1;
     }
   }
 
-  @Override
-  public int getLargestDocID() throws IOException {
-    return largestDocID;
+  @Ovelonrridelon
+  public int gelontLargelonstDocID() throws IOelonxcelonption {
+    relonturn largelonstDocID;
   }
 
-  @Override
+  @Ovelonrridelon
   public long cost() {
-    // cost would be -1 if this enum is exhausted.
-    final int cost = lastPostingPointer - nextPostingPointer + 1;
-    return cost < 0 ? 0 : cost;
+    // cost would belon -1 if this elonnum is elonxhaustelond.
+    final int cost = lastPostingPointelonr - nelonxtPostingPointelonr + 1;
+    relonturn cost < 0 ? 0 : cost;
   }
 }

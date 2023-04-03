@@ -1,113 +1,113 @@
-package com.twitter.timelineranker.clients
+packagelon com.twittelonr.timelonlinelonrankelonr.clielonnts
 
-import com.twitter.cortex_core.thriftscala.ModelName
-import com.twitter.cortex_tweet_annotate.thriftscala._
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.logging.Logger
-import com.twitter.mediaservices.commons.mediainformation.thriftscala.CalibrationLevel
-import com.twitter.timelines.model.TweetId
-import com.twitter.timelines.util.stats.RequestScope
-import com.twitter.timelines.util.stats.RequestStats
-import com.twitter.timelines.util.stats.ScopedFactory
-import com.twitter.timelines.util.FailOpenHandler
-import com.twitter.util.Future
+import com.twittelonr.cortelonx_corelon.thriftscala.ModelonlNamelon
+import com.twittelonr.cortelonx_twelonelont_annotatelon.thriftscala._
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.logging.Loggelonr
+import com.twittelonr.melondiaselonrvicelons.commons.melondiainformation.thriftscala.CalibrationLelonvelonl
+import com.twittelonr.timelonlinelons.modelonl.TwelonelontId
+import com.twittelonr.timelonlinelons.util.stats.RelonquelonstScopelon
+import com.twittelonr.timelonlinelons.util.stats.RelonquelonstStats
+import com.twittelonr.timelonlinelons.util.stats.ScopelondFactory
+import com.twittelonr.timelonlinelons.util.FailOpelonnHandlelonr
+import com.twittelonr.util.Futurelon
 
-object CortexTweetQueryServiceClient {
-  private[this] val logger = Logger.get(getClass.getSimpleName)
+objelonct CortelonxTwelonelontQuelonrySelonrvicelonClielonnt {
+  privatelon[this] val loggelonr = Loggelonr.gelont(gelontClass.gelontSimplelonNamelon)
 
   /**
-   * A tweet is considered safe if Cortex NSFA model gives it a score that is above the threshold.
-   * Both the score and the threshold are returned in a response from getTweetSignalByIds endpoint.
+   * A twelonelont is considelonrelond safelon if Cortelonx NSFA modelonl givelons it a scorelon that is abovelon thelon threlonshold.
+   * Both thelon scorelon and thelon threlonshold arelon relonturnelond in a relonsponselon from gelontTwelonelontSignalByIds elonndpoint.
    */
-  private def getSafeTweet(
-    request: TweetSignalRequest,
-    response: ModelResponseResult
-  ): Option[TweetId] = {
-    val tweetId = request.tweetId
-    response match {
-      case ModelResponseResult(ModelResponseState.Success, Some(tid), Some(modelResponse), _) =>
-        val prediction = modelResponse.predictions.flatMap(_.headOption)
-        val score = prediction.map(_.score.score)
-        val highRecallBucket = prediction.flatMap(_.calibrationBuckets).flatMap { buckets =>
-          buckets.find(_.description.contains(CalibrationLevel.HighRecall))
+  privatelon delonf gelontSafelonTwelonelont(
+    relonquelonst: TwelonelontSignalRelonquelonst,
+    relonsponselon: ModelonlRelonsponselonRelonsult
+  ): Option[TwelonelontId] = {
+    val twelonelontId = relonquelonst.twelonelontId
+    relonsponselon match {
+      caselon ModelonlRelonsponselonRelonsult(ModelonlRelonsponselonStatelon.Succelonss, Somelon(tid), Somelon(modelonlRelonsponselon), _) =>
+        val prelondiction = modelonlRelonsponselon.prelondictions.flatMap(_.helonadOption)
+        val scorelon = prelondiction.map(_.scorelon.scorelon)
+        val highReloncallBuckelont = prelondiction.flatMap(_.calibrationBuckelonts).flatMap { buckelonts =>
+          buckelonts.find(_.delonscription.contains(CalibrationLelonvelonl.HighReloncall))
         }
-        val threshold = highRecallBucket.map(_.threshold)
-        (score, threshold) match {
-          case (Some(s), Some(t)) if (s > t) =>
-            Some(tid)
-          case (Some(s), Some(t)) =>
-            logger.ifDebug(
-              s"Cortex NSFA score for tweet $tweetId is $s (threshold is $t), removing as unsafe."
+        val threlonshold = highReloncallBuckelont.map(_.threlonshold)
+        (scorelon, threlonshold) match {
+          caselon (Somelon(s), Somelon(t)) if (s > t) =>
+            Somelon(tid)
+          caselon (Somelon(s), Somelon(t)) =>
+            loggelonr.ifDelonbug(
+              s"Cortelonx NSFA scorelon for twelonelont $twelonelontId is $s (threlonshold is $t), relonmoving as unsafelon."
             )
-            None
-          case _ =>
-            logger.ifDebug(s"Unexpected response, removing tweet $tweetId as unsafe.")
-            None
+            Nonelon
+          caselon _ =>
+            loggelonr.ifDelonbug(s"Unelonxpelonctelond relonsponselon, relonmoving twelonelont $twelonelontId as unsafelon.")
+            Nonelon
         }
-      case _ =>
-        logger.ifWarning(
-          s"Cortex tweet NSFA call was not successful, removing tweet $tweetId as unsafe."
+      caselon _ =>
+        loggelonr.ifWarning(
+          s"Cortelonx twelonelont NSFA call was not succelonssful, relonmoving twelonelont $twelonelontId as unsafelon."
         )
-        None
+        Nonelon
     }
   }
 }
 
 /**
- * Enables calling cortex tweet query service to get NSFA scores on the tweet.
+ * elonnablelons calling cortelonx twelonelont quelonry selonrvicelon to gelont NSFA scorelons on thelon twelonelont.
  */
-class CortexTweetQueryServiceClient(
-  cortexClient: CortexTweetQueryService.MethodPerEndpoint,
-  requestScope: RequestScope,
-  statsReceiver: StatsReceiver)
-    extends RequestStats {
-  import CortexTweetQueryServiceClient._
+class CortelonxTwelonelontQuelonrySelonrvicelonClielonnt(
+  cortelonxClielonnt: CortelonxTwelonelontQuelonrySelonrvicelon.MelonthodPelonrelonndpoint,
+  relonquelonstScopelon: RelonquelonstScopelon,
+  statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds RelonquelonstStats {
+  import CortelonxTwelonelontQuelonrySelonrvicelonClielonnt._
 
-  private[this] val logger = Logger.get(getClass.getSimpleName)
+  privatelon[this] val loggelonr = Loggelonr.gelont(gelontClass.gelontSimplelonNamelon)
 
-  private[this] val getTweetSignalByIdsRequestStats =
-    requestScope.stats("cortex", statsReceiver, suffix = Some("getTweetSignalByIds"))
-  private[this] val getTweetSignalByIdsRequestScopedStatsReceiver =
-    getTweetSignalByIdsRequestStats.scopedStatsReceiver
+  privatelon[this] val gelontTwelonelontSignalByIdsRelonquelonstStats =
+    relonquelonstScopelon.stats("cortelonx", statsReloncelonivelonr, suffix = Somelon("gelontTwelonelontSignalByIds"))
+  privatelon[this] val gelontTwelonelontSignalByIdsRelonquelonstScopelondStatsReloncelonivelonr =
+    gelontTwelonelontSignalByIdsRelonquelonstStats.scopelondStatsReloncelonivelonr
 
-  private[this] val failedCortexTweetQueryServiceScope =
-    getTweetSignalByIdsRequestScopedStatsReceiver.scope(Failures)
-  private[this] val failedCortexTweetQueryServiceCallCounter =
-    failedCortexTweetQueryServiceScope.counter("failOpen")
+  privatelon[this] val failelondCortelonxTwelonelontQuelonrySelonrvicelonScopelon =
+    gelontTwelonelontSignalByIdsRelonquelonstScopelondStatsReloncelonivelonr.scopelon(Failurelons)
+  privatelon[this] val failelondCortelonxTwelonelontQuelonrySelonrvicelonCallCountelonr =
+    failelondCortelonxTwelonelontQuelonrySelonrvicelonScopelon.countelonr("failOpelonn")
 
-  private[this] val cortexTweetQueryServiceFailOpenHandler = new FailOpenHandler(
-    getTweetSignalByIdsRequestScopedStatsReceiver
+  privatelon[this] val cortelonxTwelonelontQuelonrySelonrvicelonFailOpelonnHandlelonr = nelonw FailOpelonnHandlelonr(
+    gelontTwelonelontSignalByIdsRelonquelonstScopelondStatsReloncelonivelonr
   )
 
-  def getSafeTweets(tweetIds: Seq[TweetId]): Future[Seq[TweetId]] = {
-    val requests = tweetIds.map { id => TweetSignalRequest(id, ModelName.TweetToNsfa) }
-    val results = cortexClient
-      .getTweetSignalByIds(
-        GetTweetSignalByIdsRequest(requests)
+  delonf gelontSafelonTwelonelonts(twelonelontIds: Selonq[TwelonelontId]): Futurelon[Selonq[TwelonelontId]] = {
+    val relonquelonsts = twelonelontIds.map { id => TwelonelontSignalRelonquelonst(id, ModelonlNamelon.TwelonelontToNsfa) }
+    val relonsults = cortelonxClielonnt
+      .gelontTwelonelontSignalByIds(
+        GelontTwelonelontSignalByIdsRelonquelonst(relonquelonsts)
       )
-      .map(_.results)
+      .map(_.relonsults)
 
-    cortexTweetQueryServiceFailOpenHandler(
-      results.map { responses =>
-        requests.zip(responses).flatMap {
-          case (request, response) =>
-            getSafeTweet(request, response)
+    cortelonxTwelonelontQuelonrySelonrvicelonFailOpelonnHandlelonr(
+      relonsults.map { relonsponselons =>
+        relonquelonsts.zip(relonsponselons).flatMap {
+          caselon (relonquelonst, relonsponselon) =>
+            gelontSafelonTwelonelont(relonquelonst, relonsponselon)
         }
       }
     ) { _ =>
-      failedCortexTweetQueryServiceCallCounter.incr()
-      logger.ifWarning(s"Cortex tweet NSFA call failed, considering tweets $tweetIds as unsafe.")
-      Future.value(Seq())
+      failelondCortelonxTwelonelontQuelonrySelonrvicelonCallCountelonr.incr()
+      loggelonr.ifWarning(s"Cortelonx twelonelont NSFA call failelond, considelonring twelonelonts $twelonelontIds as unsafelon.")
+      Futurelon.valuelon(Selonq())
     }
   }
 }
 
-class ScopedCortexTweetQueryServiceClientFactory(
-  cortexClient: CortexTweetQueryService.MethodPerEndpoint,
-  statsReceiver: StatsReceiver)
-    extends ScopedFactory[CortexTweetQueryServiceClient] {
+class ScopelondCortelonxTwelonelontQuelonrySelonrvicelonClielonntFactory(
+  cortelonxClielonnt: CortelonxTwelonelontQuelonrySelonrvicelon.MelonthodPelonrelonndpoint,
+  statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds ScopelondFactory[CortelonxTwelonelontQuelonrySelonrvicelonClielonnt] {
 
-  override def scope(scope: RequestScope): CortexTweetQueryServiceClient = {
-    new CortexTweetQueryServiceClient(cortexClient, scope, statsReceiver)
+  ovelonrridelon delonf scopelon(scopelon: RelonquelonstScopelon): CortelonxTwelonelontQuelonrySelonrvicelonClielonnt = {
+    nelonw CortelonxTwelonelontQuelonrySelonrvicelonClielonnt(cortelonxClielonnt, scopelon, statsReloncelonivelonr)
   }
 }

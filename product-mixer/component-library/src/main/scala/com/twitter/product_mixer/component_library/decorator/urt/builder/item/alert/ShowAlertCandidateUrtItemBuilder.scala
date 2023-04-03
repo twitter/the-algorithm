@@ -1,61 +1,61 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.alert
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.itelonm.alelonrt
 
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.alert.ShowAlertCandidateUrtItemBuilder.ShowAlertClientEventInfoElement
-import com.twitter.product_mixer.component_library.model.candidate.ShowAlertCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.item.alert.BaseDurationBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.item.alert.BaseShowAlertColorConfigurationBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.item.alert.BaseShowAlertDisplayLocationBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.item.alert.BaseShowAlertIconDisplayInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.item.alert.BaseShowAlertNavigationMetadataBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.item.alert.BaseShowAlertUserIdsBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.ShowAlert
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.richtext.BaseRichTextBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.alert.ShowAlertType
+import com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.itelonm.alelonrt.ShowAlelonrtCandidatelonUrtItelonmBuildelonr.ShowAlelonrtClielonntelonvelonntInfoelonlelonmelonnt
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.ShowAlelonrtCandidatelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.CandidatelonUrtelonntryBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.itelonm.alelonrt.BaselonDurationBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.itelonm.alelonrt.BaselonShowAlelonrtColorConfigurationBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.itelonm.alelonrt.BaselonShowAlelonrtDisplayLocationBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.itelonm.alelonrt.BaselonShowAlelonrtIconDisplayInfoBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.itelonm.alelonrt.BaselonShowAlelonrtNavigationMelontadataBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.itelonm.alelonrt.BaselonShowAlelonrtUselonrIdsBuildelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.ShowAlelonrt
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.melontadata.BaselonClielonntelonvelonntInfoBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.richtelonxt.BaselonRichTelonxtBuildelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.alelonrt.ShowAlelonrtTypelon
 
-object ShowAlertCandidateUrtItemBuilder {
-  val ShowAlertClientEventInfoElement: String = "showAlert"
+objelonct ShowAlelonrtCandidatelonUrtItelonmBuildelonr {
+  val ShowAlelonrtClielonntelonvelonntInfoelonlelonmelonnt: String = "showAlelonrt"
 }
 
-case class ShowAlertCandidateUrtItemBuilder[-Query <: PipelineQuery](
-  alertType: ShowAlertType,
-  displayLocationBuilder: BaseShowAlertDisplayLocationBuilder[Query],
-  colorConfigBuilder: BaseShowAlertColorConfigurationBuilder[Query],
-  triggerDelayBuilder: Option[BaseDurationBuilder[Query]] = None,
-  displayDurationBuilder: Option[BaseDurationBuilder[Query]] = None,
-  clientEventInfoBuilder: Option[BaseClientEventInfoBuilder[Query, ShowAlertCandidate]] = None,
-  collapseDelayBuilder: Option[BaseDurationBuilder[Query]] = None,
-  userIdsBuilder: Option[BaseShowAlertUserIdsBuilder[Query]] = None,
-  richTextBuilder: Option[BaseRichTextBuilder[Query, ShowAlertCandidate]] = None,
-  iconDisplayInfoBuilder: Option[BaseShowAlertIconDisplayInfoBuilder[Query]] = None,
-  navigationMetadataBuilder: Option[BaseShowAlertNavigationMetadataBuilder[Query]] = None)
-    extends CandidateUrtEntryBuilder[
-      Query,
-      ShowAlertCandidate,
-      ShowAlert
+caselon class ShowAlelonrtCandidatelonUrtItelonmBuildelonr[-Quelonry <: PipelonlinelonQuelonry](
+  alelonrtTypelon: ShowAlelonrtTypelon,
+  displayLocationBuildelonr: BaselonShowAlelonrtDisplayLocationBuildelonr[Quelonry],
+  colorConfigBuildelonr: BaselonShowAlelonrtColorConfigurationBuildelonr[Quelonry],
+  triggelonrDelonlayBuildelonr: Option[BaselonDurationBuildelonr[Quelonry]] = Nonelon,
+  displayDurationBuildelonr: Option[BaselonDurationBuildelonr[Quelonry]] = Nonelon,
+  clielonntelonvelonntInfoBuildelonr: Option[BaselonClielonntelonvelonntInfoBuildelonr[Quelonry, ShowAlelonrtCandidatelon]] = Nonelon,
+  collapselonDelonlayBuildelonr: Option[BaselonDurationBuildelonr[Quelonry]] = Nonelon,
+  uselonrIdsBuildelonr: Option[BaselonShowAlelonrtUselonrIdsBuildelonr[Quelonry]] = Nonelon,
+  richTelonxtBuildelonr: Option[BaselonRichTelonxtBuildelonr[Quelonry, ShowAlelonrtCandidatelon]] = Nonelon,
+  iconDisplayInfoBuildelonr: Option[BaselonShowAlelonrtIconDisplayInfoBuildelonr[Quelonry]] = Nonelon,
+  navigationMelontadataBuildelonr: Option[BaselonShowAlelonrtNavigationMelontadataBuildelonr[Quelonry]] = Nonelon)
+    elonxtelonnds CandidatelonUrtelonntryBuildelonr[
+      Quelonry,
+      ShowAlelonrtCandidatelon,
+      ShowAlelonrt
     ] {
 
-  override def apply(
-    query: Query,
-    candidate: ShowAlertCandidate,
-    features: FeatureMap,
-  ): ShowAlert = ShowAlert(
-    id = candidate.id,
-    sortIndex = None,
-    alertType = alertType,
-    triggerDelay = triggerDelayBuilder.flatMap(_.apply(query, candidate, features)),
-    displayDuration = displayDurationBuilder.flatMap(_.apply(query, candidate, features)),
-    clientEventInfo = clientEventInfoBuilder.flatMap(
-      _.apply(query, candidate, features, Some(ShowAlertClientEventInfoElement))),
-    collapseDelay = collapseDelayBuilder.flatMap(_.apply(query, candidate, features)),
-    userIds = userIdsBuilder.flatMap(_.apply(query, candidate, features)),
-    richText = richTextBuilder.map(_.apply(query, candidate, features)),
-    iconDisplayInfo = iconDisplayInfoBuilder.flatMap(_.apply(query, candidate, features)),
-    displayLocation = displayLocationBuilder(query, candidate, features),
-    colorConfig = colorConfigBuilder(query, candidate, features),
-    navigationMetadata = navigationMetadataBuilder.flatMap(_.apply(query, candidate, features)),
+  ovelonrridelon delonf apply(
+    quelonry: Quelonry,
+    candidatelon: ShowAlelonrtCandidatelon,
+    felonaturelons: FelonaturelonMap,
+  ): ShowAlelonrt = ShowAlelonrt(
+    id = candidatelon.id,
+    sortIndelonx = Nonelon,
+    alelonrtTypelon = alelonrtTypelon,
+    triggelonrDelonlay = triggelonrDelonlayBuildelonr.flatMap(_.apply(quelonry, candidatelon, felonaturelons)),
+    displayDuration = displayDurationBuildelonr.flatMap(_.apply(quelonry, candidatelon, felonaturelons)),
+    clielonntelonvelonntInfo = clielonntelonvelonntInfoBuildelonr.flatMap(
+      _.apply(quelonry, candidatelon, felonaturelons, Somelon(ShowAlelonrtClielonntelonvelonntInfoelonlelonmelonnt))),
+    collapselonDelonlay = collapselonDelonlayBuildelonr.flatMap(_.apply(quelonry, candidatelon, felonaturelons)),
+    uselonrIds = uselonrIdsBuildelonr.flatMap(_.apply(quelonry, candidatelon, felonaturelons)),
+    richTelonxt = richTelonxtBuildelonr.map(_.apply(quelonry, candidatelon, felonaturelons)),
+    iconDisplayInfo = iconDisplayInfoBuildelonr.flatMap(_.apply(quelonry, candidatelon, felonaturelons)),
+    displayLocation = displayLocationBuildelonr(quelonry, candidatelon, felonaturelons),
+    colorConfig = colorConfigBuildelonr(quelonry, candidatelon, felonaturelons),
+    navigationMelontadata = navigationMelontadataBuildelonr.flatMap(_.apply(quelonry, candidatelon, felonaturelons)),
   )
 }

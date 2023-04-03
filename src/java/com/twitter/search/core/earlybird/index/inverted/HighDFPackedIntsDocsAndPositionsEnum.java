@@ -1,156 +1,156 @@
-package com.twitter.search.core.earlybird.index.inverted;
+packagelon com.twittelonr.selonarch.corelon.elonarlybird.indelonx.invelonrtelond;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 
 /**
- * Docs, frequencies, and positions enumerator for {@link HighDFPackedIntsPostingLists}.
+ * Docs, frelonquelonncielons, and positions elonnumelonrator for {@link HighDFPackelondIntsPostingLists}.
  */
-public class HighDFPackedIntsDocsAndPositionsEnum extends HighDFPackedIntsDocsEnum {
+public class HighDFPackelondIntsDocsAndPositionselonnum elonxtelonnds HighDFPackelondIntsDocselonnum {
   /**
-   * Pre-computed shifts, masks, and start int indices for {@link #positionListsReader}.
-   * These pre-computed values should be read-only and shared across all reader threads.
+   * Prelon-computelond shifts, masks, and start int indicelons for {@link #positionListsRelonadelonr}.
+   * Thelonselon prelon-computelond valuelons should belon relonad-only and sharelond across all relonadelonr threlonads.
    *
-   * Notice:
-   * - start int indices are NEEDED since there IS jumping within a slice in
-   *   {@link #doAdditionalSkip()} and {@link #startCurrentDoc()}.
+   * Noticelon:
+   * - start int indicelons arelon NelonelonDelonD sincelon thelonrelon IS jumping within a slicelon in
+   *   {@link #doAdditionalSkip()} and {@link #startCurrelonntDoc()}.
    */
-  private static final PackedLongsReaderPreComputedValues PRE_COMPUTED_VALUES =
-      new PackedLongsReaderPreComputedValues(
-          HighDFPackedIntsPostingLists.MAX_POSITION_BIT,
-          HighDFPackedIntsPostingLists.POSITION_SLICE_NUM_BITS_WITHOUT_HEADER,
-          HighDFPackedIntsPostingLists.POSITION_SLICE_SIZE_WITHOUT_HEADER,
-          true);
+  privatelon static final PackelondLongsRelonadelonrPrelonComputelondValuelons PRelon_COMPUTelonD_VALUelonS =
+      nelonw PackelondLongsRelonadelonrPrelonComputelondValuelons(
+          HighDFPackelondIntsPostingLists.MAX_POSITION_BIT,
+          HighDFPackelondIntsPostingLists.POSITION_SLICelon_NUM_BITS_WITHOUT_HelonADelonR,
+          HighDFPackelondIntsPostingLists.POSITION_SLICelon_SIZelon_WITHOUT_HelonADelonR,
+          truelon);
 
   /**
-   * Int block pool holding the positions for the read posting list. This is mainly used while
-   * reading slice headers in {@link #loadNextPositionSlice()}.
+   * Int block pool holding thelon positions for thelon relonad posting list. This is mainly uselond whilelon
+   * relonading slicelon helonadelonrs in {@link #loadNelonxtPositionSlicelon()}.
    */
-  private final IntBlockPool positionLists;
+  privatelon final IntBlockPool positionLists;
 
-  /** Packed ints reader for positions. */
-  private final IntBlockPoolPackedLongsReader positionListsReader;
+  /** Packelond ints relonadelonr for positions. */
+  privatelon final IntBlockPoolPackelondLongsRelonadelonr positionListsRelonadelonr;
 
-  /** Total number of positions in the current position slice. */
-  private int numPositionsInSliceTotal;
+  /** Total numbelonr of positions in thelon currelonnt position slicelon. */
+  privatelon int numPositionsInSlicelonTotal;
 
   /**
-   * Number of remaining positions for {@link #currentDocID}; this value is decremented every time
-   * {@link #nextPosition()} is called.
+   * Numbelonr of relonmaining positions for {@link #currelonntDocID}; this valuelon is deloncrelonmelonntelond elonvelonry timelon
+   * {@link #nelonxtPosition()} is callelond.
    */
-  private int numPositionsRemainingForCurrentDocID;
+  privatelon int numPositionsRelonmainingForCurrelonntDocID;
 
   /**
-   * Pointer to the first int, which contains the position slice header, of the next position slice.
-   * This value is used to track which slice will be loaded when {@link #loadNextPositionSlice()} is
-   * called.
+   * Pointelonr to thelon first int, which contains thelon position slicelon helonadelonr, of thelon nelonxt position slicelon.
+   * This valuelon is uselond to track which slicelon will belon loadelond whelonn {@link #loadNelonxtPositionSlicelon()} is
+   * callelond.
    */
-  private int nextPositionSlicePointer;
+  privatelon int nelonxtPositionSlicelonPointelonr;
 
   /**
-   * Create a docs and positions enumerator.
+   * Crelonatelon a docs and positions elonnumelonrator.
    */
-  public HighDFPackedIntsDocsAndPositionsEnum(
+  public HighDFPackelondIntsDocsAndPositionselonnum(
       IntBlockPool skipLists,
-      IntBlockPool deltaFreqLists,
+      IntBlockPool delonltaFrelonqLists,
       IntBlockPool positionLists,
-      int postingListPointer,
+      int postingListPointelonr,
       int numPostings,
-      boolean omitPositions) {
-    super(skipLists, deltaFreqLists, postingListPointer, numPostings, omitPositions);
+      boolelonan omitPositions) {
+    supelonr(skipLists, delonltaFrelonqLists, postingListPointelonr, numPostings, omitPositions);
 
     this.positionLists = positionLists;
-    this.positionListsReader = new IntBlockPoolPackedLongsReader(
+    this.positionListsRelonadelonr = nelonw IntBlockPoolPackelondLongsRelonadelonr(
         positionLists,
-        PRE_COMPUTED_VALUES,
-        queryCostTracker,
-        QueryCostTracker.CostType.LOAD_OPTIMIZED_POSTING_BLOCK);
+        PRelon_COMPUTelonD_VALUelonS,
+        quelonryCostTrackelonr,
+        QuelonryCostTrackelonr.CostTypelon.LOAD_OPTIMIZelonD_POSTING_BLOCK);
 
-    // Load the first position slice.
-    this.nextPositionSlicePointer = skipListReader.getPositionCurrentSlicePointer();
-    loadNextPositionSlice();
+    // Load thelon first position slicelon.
+    this.nelonxtPositionSlicelonPointelonr = skipListRelonadelonr.gelontPositionCurrelonntSlicelonPointelonr();
+    loadNelonxtPositionSlicelon();
   }
 
   /**
-   * Prepare for current doc:
-   * - skipping over unread positions for the current doc.
-   * - reset remaining positions for current doc to {@link #currentFreq}.
+   * Prelonparelon for currelonnt doc:
+   * - skipping ovelonr unrelonad positions for thelon currelonnt doc.
+   * - relonselont relonmaining positions for currelonnt doc to {@link #currelonntFrelonq}.
    *
-   * @see #nextDocNoDel()
+   * @selonelon #nelonxtDocNoDelonl()
    */
-  @Override
-  protected void startCurrentDoc() {
-    // Locate next position for current doc by skipping over unread positions from the previous doc.
-    if (numPositionsRemainingForCurrentDocID != 0) {
-      int numPositionsRemainingInSlice =
-          numPositionsInSliceTotal - positionListsReader.getPackedValueIndex();
-      while (numPositionsRemainingInSlice <= numPositionsRemainingForCurrentDocID) {
-        numPositionsRemainingForCurrentDocID -= numPositionsRemainingInSlice;
-        nextPositionSlicePointer += HighDFPackedIntsPostingLists.SLICE_SIZE;
-        loadNextPositionSlice();
-        numPositionsRemainingInSlice = numPositionsInSliceTotal;
+  @Ovelonrridelon
+  protelonctelond void startCurrelonntDoc() {
+    // Locatelon nelonxt position for currelonnt doc by skipping ovelonr unrelonad positions from thelon prelonvious doc.
+    if (numPositionsRelonmainingForCurrelonntDocID != 0) {
+      int numPositionsRelonmainingInSlicelon =
+          numPositionsInSlicelonTotal - positionListsRelonadelonr.gelontPackelondValuelonIndelonx();
+      whilelon (numPositionsRelonmainingInSlicelon <= numPositionsRelonmainingForCurrelonntDocID) {
+        numPositionsRelonmainingForCurrelonntDocID -= numPositionsRelonmainingInSlicelon;
+        nelonxtPositionSlicelonPointelonr += HighDFPackelondIntsPostingLists.SLICelon_SIZelon;
+        loadNelonxtPositionSlicelon();
+        numPositionsRelonmainingInSlicelon = numPositionsInSlicelonTotal;
       }
 
-      positionListsReader.setPackedValueIndex(
-          positionListsReader.getPackedValueIndex() + numPositionsRemainingForCurrentDocID);
+      positionListsRelonadelonr.selontPackelondValuelonIndelonx(
+          positionListsRelonadelonr.gelontPackelondValuelonIndelonx() + numPositionsRelonmainingForCurrelonntDocID);
     }
 
-    // Number of remaining positions for current doc is current freq.
-    numPositionsRemainingForCurrentDocID = getCurrentFreq();
+    // Numbelonr of relonmaining positions for currelonnt doc is currelonnt frelonq.
+    numPositionsRelonmainingForCurrelonntDocID = gelontCurrelonntFrelonq();
   }
 
   /**
-   * Put positions reader to the start of next position slice and reset number of bits per packed
-   * value for next position slice.
+   * Put positions relonadelonr to thelon start of nelonxt position slicelon and relonselont numbelonr of bits pelonr packelond
+   * valuelon for nelonxt position slicelon.
    */
-  private void loadNextPositionSlice() {
-    final int header = positionLists.get(nextPositionSlicePointer);
-    final int bitsForPosition = HighDFPackedIntsPostingLists.getNumBitsForPosition(header);
-    numPositionsInSliceTotal = HighDFPackedIntsPostingLists.getNumPositionsInSlice(header);
+  privatelon void loadNelonxtPositionSlicelon() {
+    final int helonadelonr = positionLists.gelont(nelonxtPositionSlicelonPointelonr);
+    final int bitsForPosition = HighDFPackelondIntsPostingLists.gelontNumBitsForPosition(helonadelonr);
+    numPositionsInSlicelonTotal = HighDFPackelondIntsPostingLists.gelontNumPositionsInSlicelon(helonadelonr);
 
-    positionListsReader.jumpToInt(
-        nextPositionSlicePointer + HighDFPackedIntsPostingLists.POSITION_SLICE_HEADER_SIZE,
+    positionListsRelonadelonr.jumpToInt(
+        nelonxtPositionSlicelonPointelonr + HighDFPackelondIntsPostingLists.POSITION_SLICelon_HelonADelonR_SIZelon,
         bitsForPosition);
   }
 
   /**
-   * Return next position for current doc.
-   * @see org.apache.lucene.index.PostingsEnum#nextPosition()
+   * Relonturn nelonxt position for currelonnt doc.
+   * @selonelon org.apachelon.lucelonnelon.indelonx.Postingselonnum#nelonxtPosition()
    */
-  @Override
-  public int nextPosition() throws IOException {
-    // Return -1 immediately if all positions are used up for current doc.
-    if (numPositionsRemainingForCurrentDocID == 0) {
-      return -1;
+  @Ovelonrridelon
+  public int nelonxtPosition() throws IOelonxcelonption {
+    // Relonturn -1 immelondiatelonly if all positions arelon uselond up for currelonnt doc.
+    if (numPositionsRelonmainingForCurrelonntDocID == 0) {
+      relonturn -1;
     }
 
-    if (positionListsReader.getPackedValueIndex() < numPositionsInSliceTotal)  {
-      // Read next position in current slice.
-      final int nextPosition = (int) positionListsReader.readPackedLong();
-      numPositionsRemainingForCurrentDocID--;
-      return nextPosition;
-    } else {
-      // All positions in current slice is used up, load next slice.
-      nextPositionSlicePointer += HighDFPackedIntsPostingLists.SLICE_SIZE;
-      loadNextPositionSlice();
-      return nextPosition();
+    if (positionListsRelonadelonr.gelontPackelondValuelonIndelonx() < numPositionsInSlicelonTotal)  {
+      // Relonad nelonxt position in currelonnt slicelon.
+      final int nelonxtPosition = (int) positionListsRelonadelonr.relonadPackelondLong();
+      numPositionsRelonmainingForCurrelonntDocID--;
+      relonturn nelonxtPosition;
+    } elonlselon {
+      // All positions in currelonnt slicelon is uselond up, load nelonxt slicelon.
+      nelonxtPositionSlicelonPointelonr += HighDFPackelondIntsPostingLists.SLICelon_SIZelon;
+      loadNelonxtPositionSlicelon();
+      relonturn nelonxtPosition();
     }
   }
 
   /**
-   * Set {@link #positionListsReader} to the correct location and correct number of bits per packed
-   * value for the delta-freq slice on which this enum is landed after skipping.
+   * Selont {@link #positionListsRelonadelonr} to thelon correlonct location and correlonct numbelonr of bits pelonr packelond
+   * valuelon for thelon delonlta-frelonq slicelon on which this elonnum is landelond aftelonr skipping.
    *
-   * @see #skipTo(int)
+   * @selonelon #skipTo(int)
    */
-  @Override
-  protected void doAdditionalSkip() {
-    nextPositionSlicePointer = skipListReader.getPositionCurrentSlicePointer();
-    loadNextPositionSlice();
+  @Ovelonrridelon
+  protelonctelond void doAdditionalSkip() {
+    nelonxtPositionSlicelonPointelonr = skipListRelonadelonr.gelontPositionCurrelonntSlicelonPointelonr();
+    loadNelonxtPositionSlicelon();
 
-    // Locate the exact position in slice.
-    final int skipListEntryEncodedMetadata = skipListReader.getEncodedMetadataCurrentSlice();
-    positionListsReader.setPackedValueIndex(
-        HighDFPackedIntsPostingLists.getPositionOffsetInSlice(skipListEntryEncodedMetadata));
-    numPositionsRemainingForCurrentDocID = 0;
+    // Locatelon thelon elonxact position in slicelon.
+    final int skipListelonntryelonncodelondMelontadata = skipListRelonadelonr.gelontelonncodelondMelontadataCurrelonntSlicelon();
+    positionListsRelonadelonr.selontPackelondValuelonIndelonx(
+        HighDFPackelondIntsPostingLists.gelontPositionOffselontInSlicelon(skipListelonntryelonncodelondMelontadata));
+    numPositionsRelonmainingForCurrelonntDocID = 0;
   }
 }

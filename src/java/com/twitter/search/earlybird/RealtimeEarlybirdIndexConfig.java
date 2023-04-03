@@ -1,128 +1,128 @@
-package com.twitter.search.earlybird;
+packagelon com.twittelonr.selonarch.elonarlybird;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 
-import com.google.common.base.Preconditions;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import org.apache.lucene.index.IndexWriterConfig;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.store.Directory;
-import org.apache.lucene.store.RAMDirectory;
+import org.apachelon.lucelonnelon.indelonx.IndelonxWritelonrConfig;
+import org.apachelon.lucelonnelon.selonarch.IndelonxSelonarchelonr;
+import org.apachelon.lucelonnelon.storelon.Direlonctory;
+import org.apachelon.lucelonnelon.storelon.RAMDirelonctory;
 
-import com.twitter.decider.Decider;
-import com.twitter.search.common.schema.DynamicSchema;
-import com.twitter.search.common.schema.SearchWhitespaceAnalyzer;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.common.util.CloseResourceUtil;
-import com.twitter.search.common.util.io.flushable.DataDeserializer;
-import com.twitter.search.common.util.io.flushable.FlushInfo;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentData;
-import com.twitter.search.core.earlybird.index.EarlybirdRealtimeIndexSegmentData;
-import com.twitter.search.core.earlybird.index.extensions.EarlybirdIndexExtensionsFactory;
-import com.twitter.search.core.earlybird.index.inverted.IndexOptimizer;
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
-import com.twitter.search.earlybird.index.OptimizedTimeMapper;
-import com.twitter.search.earlybird.index.OptimizedTweetIDMapper;
-import com.twitter.search.earlybird.index.OutOfOrderRealtimeTweetIDMapper;
-import com.twitter.search.earlybird.index.RealtimeTimeMapper;
-import com.twitter.search.earlybird.partition.SearchIndexingMetricSet;
-import com.twitter.search.earlybird.partition.SegmentSyncInfo;
+import com.twittelonr.deloncidelonr.Deloncidelonr;
+import com.twittelonr.selonarch.common.schelonma.DynamicSchelonma;
+import com.twittelonr.selonarch.common.schelonma.SelonarchWhitelonspacelonAnalyzelonr;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdClustelonr;
+import com.twittelonr.selonarch.common.util.CloselonRelonsourcelonUtil;
+import com.twittelonr.selonarch.common.util.io.flushablelon.DataDelonselonrializelonr;
+import com.twittelonr.selonarch.common.util.io.flushablelon.FlushInfo;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.elonarlybirdIndelonxSelongmelonntData;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.elonarlybirdRelonaltimelonIndelonxSelongmelonntData;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.elonxtelonnsions.elonarlybirdIndelonxelonxtelonnsionsFactory;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.invelonrtelond.IndelonxOptimizelonr;
+import com.twittelonr.selonarch.elonarlybird.elonxcelonption.CriticalelonxcelonptionHandlelonr;
+import com.twittelonr.selonarch.elonarlybird.indelonx.OptimizelondTimelonMappelonr;
+import com.twittelonr.selonarch.elonarlybird.indelonx.OptimizelondTwelonelontIDMappelonr;
+import com.twittelonr.selonarch.elonarlybird.indelonx.OutOfOrdelonrRelonaltimelonTwelonelontIDMappelonr;
+import com.twittelonr.selonarch.elonarlybird.indelonx.RelonaltimelonTimelonMappelonr;
+import com.twittelonr.selonarch.elonarlybird.partition.SelonarchIndelonxingMelontricSelont;
+import com.twittelonr.selonarch.elonarlybird.partition.SelongmelonntSyncInfo;
 
 /**
- * Index config for the Real-Time in-memory Tweet cluster.
+ * Indelonx config for thelon Relonal-Timelon in-melonmory Twelonelont clustelonr.
  */
-public class RealtimeEarlybirdIndexConfig extends EarlybirdIndexConfig {
-  private final CloseResourceUtil resourceCloser = new CloseResourceUtil();
+public class RelonaltimelonelonarlybirdIndelonxConfig elonxtelonnds elonarlybirdIndelonxConfig {
+  privatelon final CloselonRelonsourcelonUtil relonsourcelonCloselonr = nelonw CloselonRelonsourcelonUtil();
 
-  public RealtimeEarlybirdIndexConfig(
-      EarlybirdCluster cluster, Decider decider, SearchIndexingMetricSet searchIndexingMetricSet,
-      CriticalExceptionHandler criticalExceptionHandler) {
-    super(cluster, decider, searchIndexingMetricSet, criticalExceptionHandler);
+  public RelonaltimelonelonarlybirdIndelonxConfig(
+      elonarlybirdClustelonr clustelonr, Deloncidelonr deloncidelonr, SelonarchIndelonxingMelontricSelont selonarchIndelonxingMelontricSelont,
+      CriticalelonxcelonptionHandlelonr criticalelonxcelonptionHandlelonr) {
+    supelonr(clustelonr, deloncidelonr, selonarchIndelonxingMelontricSelont, criticalelonxcelonptionHandlelonr);
   }
 
-  public RealtimeEarlybirdIndexConfig(
-      EarlybirdCluster cluster, DynamicSchema schema, Decider decider,
-      SearchIndexingMetricSet searchIndexingMetricSet,
-      CriticalExceptionHandler criticalExceptionHandler) {
-    super(cluster, schema, decider, searchIndexingMetricSet, criticalExceptionHandler);
+  public RelonaltimelonelonarlybirdIndelonxConfig(
+      elonarlybirdClustelonr clustelonr, DynamicSchelonma schelonma, Deloncidelonr deloncidelonr,
+      SelonarchIndelonxingMelontricSelont selonarchIndelonxingMelontricSelont,
+      CriticalelonxcelonptionHandlelonr criticalelonxcelonptionHandlelonr) {
+    supelonr(clustelonr, schelonma, deloncidelonr, selonarchIndelonxingMelontricSelont, criticalelonxcelonptionHandlelonr);
   }
 
-  @Override
-  public Directory newLuceneDirectory(SegmentSyncInfo segmentSyncInfo) {
-    return new RAMDirectory();
+  @Ovelonrridelon
+  public Direlonctory nelonwLucelonnelonDirelonctory(SelongmelonntSyncInfo selongmelonntSyncInfo) {
+    relonturn nelonw RAMDirelonctory();
   }
 
-  @Override
-  public IndexWriterConfig newIndexWriterConfig() {
-    return new IndexWriterConfig(new SearchWhitespaceAnalyzer())
-        .setSimilarity(IndexSearcher.getDefaultSimilarity());
+  @Ovelonrridelon
+  public IndelonxWritelonrConfig nelonwIndelonxWritelonrConfig() {
+    relonturn nelonw IndelonxWritelonrConfig(nelonw SelonarchWhitelonspacelonAnalyzelonr())
+        .selontSimilarity(IndelonxSelonarchelonr.gelontDelonfaultSimilarity());
   }
 
-  @Override
-  public EarlybirdIndexSegmentData newSegmentData(
-      int maxSegmentSize,
-      long timeSliceID,
-      Directory dir,
-      EarlybirdIndexExtensionsFactory extensionsFactory) {
-    return new EarlybirdRealtimeIndexSegmentData(
-        maxSegmentSize,
-        timeSliceID,
-        getSchema(),
-        new OutOfOrderRealtimeTweetIDMapper(maxSegmentSize, timeSliceID),
-        new RealtimeTimeMapper(maxSegmentSize),
-        extensionsFactory);
+  @Ovelonrridelon
+  public elonarlybirdIndelonxSelongmelonntData nelonwSelongmelonntData(
+      int maxSelongmelonntSizelon,
+      long timelonSlicelonID,
+      Direlonctory dir,
+      elonarlybirdIndelonxelonxtelonnsionsFactory elonxtelonnsionsFactory) {
+    relonturn nelonw elonarlybirdRelonaltimelonIndelonxSelongmelonntData(
+        maxSelongmelonntSizelon,
+        timelonSlicelonID,
+        gelontSchelonma(),
+        nelonw OutOfOrdelonrRelonaltimelonTwelonelontIDMappelonr(maxSelongmelonntSizelon, timelonSlicelonID),
+        nelonw RelonaltimelonTimelonMappelonr(maxSelongmelonntSizelon),
+        elonxtelonnsionsFactory);
   }
 
-  @Override
-  public EarlybirdIndexSegmentData loadSegmentData(
+  @Ovelonrridelon
+  public elonarlybirdIndelonxSelongmelonntData loadSelongmelonntData(
           FlushInfo flushInfo,
-          DataDeserializer dataInputStream,
-          Directory dir,
-          EarlybirdIndexExtensionsFactory extensionsFactory) throws IOException {
-    EarlybirdRealtimeIndexSegmentData.InMemorySegmentDataFlushHandler flushHandler;
-    boolean isOptimized = flushInfo.getBooleanProperty(
-        EarlybirdIndexSegmentData.AbstractSegmentDataFlushHandler.IS_OPTIMIZED_PROP_NAME);
-    if (isOptimized) {
-      flushHandler = new EarlybirdRealtimeIndexSegmentData.InMemorySegmentDataFlushHandler(
-          getSchema(),
-          extensionsFactory,
-          new OptimizedTweetIDMapper.FlushHandler(),
-          new OptimizedTimeMapper.FlushHandler());
-    } else {
-      flushHandler = new EarlybirdRealtimeIndexSegmentData.InMemorySegmentDataFlushHandler(
-          getSchema(),
-          extensionsFactory,
-          new OutOfOrderRealtimeTweetIDMapper.FlushHandler(),
-          new RealtimeTimeMapper.FlushHandler());
+          DataDelonselonrializelonr dataInputStrelonam,
+          Direlonctory dir,
+          elonarlybirdIndelonxelonxtelonnsionsFactory elonxtelonnsionsFactory) throws IOelonxcelonption {
+    elonarlybirdRelonaltimelonIndelonxSelongmelonntData.InMelonmorySelongmelonntDataFlushHandlelonr flushHandlelonr;
+    boolelonan isOptimizelond = flushInfo.gelontBoolelonanPropelonrty(
+        elonarlybirdIndelonxSelongmelonntData.AbstractSelongmelonntDataFlushHandlelonr.IS_OPTIMIZelonD_PROP_NAMelon);
+    if (isOptimizelond) {
+      flushHandlelonr = nelonw elonarlybirdRelonaltimelonIndelonxSelongmelonntData.InMelonmorySelongmelonntDataFlushHandlelonr(
+          gelontSchelonma(),
+          elonxtelonnsionsFactory,
+          nelonw OptimizelondTwelonelontIDMappelonr.FlushHandlelonr(),
+          nelonw OptimizelondTimelonMappelonr.FlushHandlelonr());
+    } elonlselon {
+      flushHandlelonr = nelonw elonarlybirdRelonaltimelonIndelonxSelongmelonntData.InMelonmorySelongmelonntDataFlushHandlelonr(
+          gelontSchelonma(),
+          elonxtelonnsionsFactory,
+          nelonw OutOfOrdelonrRelonaltimelonTwelonelontIDMappelonr.FlushHandlelonr(),
+          nelonw RelonaltimelonTimelonMappelonr.FlushHandlelonr());
     }
 
 
-    return flushHandler.load(flushInfo, dataInputStream);
+    relonturn flushHandlelonr.load(flushInfo, dataInputStrelonam);
   }
 
-  @Override
-  public EarlybirdIndexSegmentData optimize(
-      EarlybirdIndexSegmentData earlybirdIndexSegmentData) throws IOException {
-    Preconditions.checkArgument(
-        earlybirdIndexSegmentData instanceof EarlybirdRealtimeIndexSegmentData,
-        "Expected EarlybirdRealtimeIndexSegmentData but got %s",
-        earlybirdIndexSegmentData.getClass());
+  @Ovelonrridelon
+  public elonarlybirdIndelonxSelongmelonntData optimizelon(
+      elonarlybirdIndelonxSelongmelonntData elonarlybirdIndelonxSelongmelonntData) throws IOelonxcelonption {
+    Prelonconditions.chelonckArgumelonnt(
+        elonarlybirdIndelonxSelongmelonntData instancelonof elonarlybirdRelonaltimelonIndelonxSelongmelonntData,
+        "elonxpelonctelond elonarlybirdRelonaltimelonIndelonxSelongmelonntData but got %s",
+        elonarlybirdIndelonxSelongmelonntData.gelontClass());
 
-    return IndexOptimizer.optimize((EarlybirdRealtimeIndexSegmentData) earlybirdIndexSegmentData);
+    relonturn IndelonxOptimizelonr.optimizelon((elonarlybirdRelonaltimelonIndelonxSelongmelonntData) elonarlybirdIndelonxSelongmelonntData);
   }
 
-  @Override
-  public boolean isIndexStoredOnDisk() {
-    return false;
+  @Ovelonrridelon
+  public boolelonan isIndelonxStorelondOnDisk() {
+    relonturn falselon;
   }
 
-  @Override
-  public final CloseResourceUtil getResourceCloser() {
-    return resourceCloser;
+  @Ovelonrridelon
+  public final CloselonRelonsourcelonUtil gelontRelonsourcelonCloselonr() {
+    relonturn relonsourcelonCloselonr;
   }
 
-  @Override
-  public boolean supportOutOfOrderIndexing() {
-    return true;
+  @Ovelonrridelon
+  public boolelonan supportOutOfOrdelonrIndelonxing() {
+    relonturn truelon;
   }
 }

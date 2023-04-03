@@ -1,42 +1,42 @@
-package com.twitter.cr_mixer.module
+packagelon com.twittelonr.cr_mixelonr.modulelon
 
-import com.google.inject.Provides
-import com.google.inject.Singleton
-import com.twitter.app.Flag
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.store.strato.StratoFetchableStore
-import com.twitter.hermit.store.common.ObservedReadableStore
-import com.twitter.inject.TwitterModule
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.strato.client.{Client => StratoClient}
-import com.twitter.twistly.thriftscala.TweetRecentEngagedUsers
+import com.googlelon.injelonct.Providelons
+import com.googlelon.injelonct.Singlelonton
+import com.twittelonr.app.Flag
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.frigatelon.common.storelon.strato.StratoFelontchablelonStorelon
+import com.twittelonr.helonrmit.storelon.common.ObselonrvelondRelonadablelonStorelon
+import com.twittelonr.injelonct.TwittelonrModulelon
+import com.twittelonr.simclustelonrs_v2.common.TwelonelontId
+import com.twittelonr.storelonhaus.RelonadablelonStorelon
+import com.twittelonr.strato.clielonnt.{Clielonnt => StratoClielonnt}
+import com.twittelonr.twistly.thriftscala.TwelonelontReloncelonntelonngagelondUselonrs
 
-object TweetRecentEngagedUserStoreModule extends TwitterModule {
+objelonct TwelonelontReloncelonntelonngagelondUselonrStorelonModulelon elonxtelonnds TwittelonrModulelon {
 
-  private val tweetRecentEngagedUsersStoreDefaultVersion =
-    0 // DefaultVersion for tweetEngagedUsersStore, whose key = (tweetId, DefaultVersion)
-  private val tweetRecentEngagedUsersColumnPath: Flag[String] = flag[String](
-    name = "crMixer.tweetRecentEngagedUsersColumnPath",
-    default = "recommendations/twistly/tweetRecentEngagedUsers",
-    help = "Strato column path for TweetRecentEngagedUsersStore"
+  privatelon val twelonelontReloncelonntelonngagelondUselonrsStorelonDelonfaultVelonrsion =
+    0 // DelonfaultVelonrsion for twelonelontelonngagelondUselonrsStorelon, whoselon kelony = (twelonelontId, DelonfaultVelonrsion)
+  privatelon val twelonelontReloncelonntelonngagelondUselonrsColumnPath: Flag[String] = flag[String](
+    namelon = "crMixelonr.twelonelontReloncelonntelonngagelondUselonrsColumnPath",
+    delonfault = "reloncommelonndations/twistly/twelonelontReloncelonntelonngagelondUselonrs",
+    helonlp = "Strato column path for TwelonelontReloncelonntelonngagelondUselonrsStorelon"
   )
-  private type Version = Long
+  privatelon typelon Velonrsion = Long
 
-  @Provides
-  @Singleton
-  def providesTweetRecentEngagedUserStore(
-    statsReceiver: StatsReceiver,
-    stratoClient: StratoClient,
-  ): ReadableStore[TweetId, TweetRecentEngagedUsers] = {
-    val tweetRecentEngagedUsersStratoFetchableStore = StratoFetchableStore
-      .withUnitView[(TweetId, Version), TweetRecentEngagedUsers](
-        stratoClient,
-        tweetRecentEngagedUsersColumnPath()).composeKeyMapping[TweetId](tweetId =>
-        (tweetId, tweetRecentEngagedUsersStoreDefaultVersion))
+  @Providelons
+  @Singlelonton
+  delonf providelonsTwelonelontReloncelonntelonngagelondUselonrStorelon(
+    statsReloncelonivelonr: StatsReloncelonivelonr,
+    stratoClielonnt: StratoClielonnt,
+  ): RelonadablelonStorelon[TwelonelontId, TwelonelontReloncelonntelonngagelondUselonrs] = {
+    val twelonelontReloncelonntelonngagelondUselonrsStratoFelontchablelonStorelon = StratoFelontchablelonStorelon
+      .withUnitVielonw[(TwelonelontId, Velonrsion), TwelonelontReloncelonntelonngagelondUselonrs](
+        stratoClielonnt,
+        twelonelontReloncelonntelonngagelondUselonrsColumnPath()).composelonKelonyMapping[TwelonelontId](twelonelontId =>
+        (twelonelontId, twelonelontReloncelonntelonngagelondUselonrsStorelonDelonfaultVelonrsion))
 
-    ObservedReadableStore(
-      tweetRecentEngagedUsersStratoFetchableStore
-    )(statsReceiver.scope("tweet_recent_engaged_users_store"))
+    ObselonrvelondRelonadablelonStorelon(
+      twelonelontReloncelonntelonngagelondUselonrsStratoFelontchablelonStorelon
+    )(statsReloncelonivelonr.scopelon("twelonelont_reloncelonnt_elonngagelond_uselonrs_storelon"))
   }
 }

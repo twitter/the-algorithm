@@ -1,57 +1,57 @@
-package com.twitter.home_mixer.util.tweetypie
+packagelon com.twittelonr.homelon_mixelonr.util.twelonelontypielon
 
-import com.twitter.tweetypie.{thriftscala => tp}
+import com.twittelonr.twelonelontypielon.{thriftscala => tp}
 
-object RequestFields {
+objelonct RelonquelonstFielonlds {
 
-  val CoreTweetFields: Set[tp.TweetInclude] = Set[tp.TweetInclude](
-    tp.TweetInclude.TweetFieldId(tp.Tweet.IdField.id),
-    tp.TweetInclude.TweetFieldId(tp.Tweet.CoreDataField.id)
+  val CorelonTwelonelontFielonlds: Selont[tp.TwelonelontIncludelon] = Selont[tp.TwelonelontIncludelon](
+    tp.TwelonelontIncludelon.TwelonelontFielonldId(tp.Twelonelont.IdFielonld.id),
+    tp.TwelonelontIncludelon.TwelonelontFielonldId(tp.Twelonelont.CorelonDataFielonld.id)
   )
-  val MediaFields: Set[tp.TweetInclude] = Set[tp.TweetInclude](
-    tp.TweetInclude.TweetFieldId(tp.Tweet.MediaField.id),
+  val MelondiaFielonlds: Selont[tp.TwelonelontIncludelon] = Selont[tp.TwelonelontIncludelon](
+    tp.TwelonelontIncludelon.TwelonelontFielonldId(tp.Twelonelont.MelondiaFielonld.id),
   )
-  val SelfThreadFields: Set[tp.TweetInclude] = Set[tp.TweetInclude](
-    tp.TweetInclude.TweetFieldId(tp.Tweet.SelfThreadMetadataField.id)
+  val SelonlfThrelonadFielonlds: Selont[tp.TwelonelontIncludelon] = Selont[tp.TwelonelontIncludelon](
+    tp.TwelonelontIncludelon.TwelonelontFielonldId(tp.Twelonelont.SelonlfThrelonadMelontadataFielonld.id)
   )
-  val MentionsTweetFields: Set[tp.TweetInclude] = Set[tp.TweetInclude](
-    tp.TweetInclude.TweetFieldId(tp.Tweet.MentionsField.id)
+  val MelonntionsTwelonelontFielonlds: Selont[tp.TwelonelontIncludelon] = Selont[tp.TwelonelontIncludelon](
+    tp.TwelonelontIncludelon.TwelonelontFielonldId(tp.Twelonelont.MelonntionsFielonld.id)
   )
-  val SemanticAnnotationTweetFields: Set[tp.TweetInclude] = Set[tp.TweetInclude](
-    tp.TweetInclude.TweetFieldId(tp.Tweet.EscherbirdEntityAnnotationsField.id)
+  val SelonmanticAnnotationTwelonelontFielonlds: Selont[tp.TwelonelontIncludelon] = Selont[tp.TwelonelontIncludelon](
+    tp.TwelonelontIncludelon.TwelonelontFielonldId(tp.Twelonelont.elonschelonrbirdelonntityAnnotationsFielonld.id)
   )
-  val NsfwLabelFields: Set[tp.TweetInclude] = Set[tp.TweetInclude](
-    // Tweet fields containing NSFW related attributes.
-    tp.TweetInclude.TweetFieldId(tp.Tweet.NsfwHighRecallLabelField.id),
-    tp.TweetInclude.TweetFieldId(tp.Tweet.NsfwHighPrecisionLabelField.id),
-    tp.TweetInclude.TweetFieldId(tp.Tweet.NsfaHighRecallLabelField.id)
+  val NsfwLabelonlFielonlds: Selont[tp.TwelonelontIncludelon] = Selont[tp.TwelonelontIncludelon](
+    // Twelonelont fielonlds containing NSFW relonlatelond attributelons.
+    tp.TwelonelontIncludelon.TwelonelontFielonldId(tp.Twelonelont.NsfwHighReloncallLabelonlFielonld.id),
+    tp.TwelonelontIncludelon.TwelonelontFielonldId(tp.Twelonelont.NsfwHighPreloncisionLabelonlFielonld.id),
+    tp.TwelonelontIncludelon.TwelonelontFielonldId(tp.Twelonelont.NsfaHighReloncallLabelonlFielonld.id)
   )
-  val SafetyLabelFields: Set[tp.TweetInclude] = Set[tp.TweetInclude](
-    // Tweet fields containing RTF labels for abuse and spam.
-    tp.TweetInclude.TweetFieldId(tp.Tweet.SpamLabelField.id),
-    tp.TweetInclude.TweetFieldId(tp.Tweet.AbusiveLabelField.id)
+  val SafelontyLabelonlFielonlds: Selont[tp.TwelonelontIncludelon] = Selont[tp.TwelonelontIncludelon](
+    // Twelonelont fielonlds containing RTF labelonls for abuselon and spam.
+    tp.TwelonelontIncludelon.TwelonelontFielonldId(tp.Twelonelont.SpamLabelonlFielonld.id),
+    tp.TwelonelontIncludelon.TwelonelontFielonldId(tp.Twelonelont.AbusivelonLabelonlFielonld.id)
   )
-  val ConversationControlField: Set[tp.TweetInclude] =
-    Set[tp.TweetInclude](tp.TweetInclude.TweetFieldId(tp.Tweet.ConversationControlField.id))
+  val ConvelonrsationControlFielonld: Selont[tp.TwelonelontIncludelon] =
+    Selont[tp.TwelonelontIncludelon](tp.TwelonelontIncludelon.TwelonelontFielonldId(tp.Twelonelont.ConvelonrsationControlFielonld.id))
 
-  val TweetTPHydrationFields: Set[tp.TweetInclude] = CoreTweetFields ++
-    NsfwLabelFields ++
-    SafetyLabelFields ++
-    SemanticAnnotationTweetFields ++
-    Set(
-      tp.TweetInclude.TweetFieldId(tp.Tweet.TakedownCountryCodesField.id),
-      // QTs imply a TweetyPie -> SGS request dependency
-      tp.TweetInclude.TweetFieldId(tp.Tweet.QuotedTweetField.id),
-      tp.TweetInclude.TweetFieldId(tp.Tweet.CommunitiesField.id),
-      // Field required for determining if a Tweet was created via News Camera.
-      tp.TweetInclude.TweetFieldId(tp.Tweet.ComposerSourceField.id)
+  val TwelonelontTPHydrationFielonlds: Selont[tp.TwelonelontIncludelon] = CorelonTwelonelontFielonlds ++
+    NsfwLabelonlFielonlds ++
+    SafelontyLabelonlFielonlds ++
+    SelonmanticAnnotationTwelonelontFielonlds ++
+    Selont(
+      tp.TwelonelontIncludelon.TwelonelontFielonldId(tp.Twelonelont.TakelondownCountryCodelonsFielonld.id),
+      // QTs imply a TwelonelontyPielon -> SGS relonquelonst delonpelonndelonncy
+      tp.TwelonelontIncludelon.TwelonelontFielonldId(tp.Twelonelont.QuotelondTwelonelontFielonld.id),
+      tp.TwelonelontIncludelon.TwelonelontFielonldId(tp.Twelonelont.CommunitielonsFielonld.id),
+      // Fielonld relonquirelond for delontelonrmining if a Twelonelont was crelonatelond via Nelonws Camelonra.
+      tp.TwelonelontIncludelon.TwelonelontFielonldId(tp.Twelonelont.ComposelonrSourcelonFielonld.id)
     )
 
-  val TweetStaticEntitiesFields: Set[tp.TweetInclude] =
-    MentionsTweetFields ++ CoreTweetFields ++ SemanticAnnotationTweetFields ++ MediaFields
+  val TwelonelontStaticelonntitielonsFielonlds: Selont[tp.TwelonelontIncludelon] =
+    MelonntionsTwelonelontFielonlds ++ CorelonTwelonelontFielonlds ++ SelonmanticAnnotationTwelonelontFielonlds ++ MelondiaFielonlds
 
-  val ContentFields: Set[tp.TweetInclude] = CoreTweetFields ++ MediaFields ++ SelfThreadFields ++
-    ConversationControlField ++ SemanticAnnotationTweetFields ++
-    Set[tp.TweetInclude](
-      tp.TweetInclude.MediaEntityFieldId(tp.MediaEntity.AdditionalMetadataField.id))
+  val ContelonntFielonlds: Selont[tp.TwelonelontIncludelon] = CorelonTwelonelontFielonlds ++ MelondiaFielonlds ++ SelonlfThrelonadFielonlds ++
+    ConvelonrsationControlFielonld ++ SelonmanticAnnotationTwelonelontFielonlds ++
+    Selont[tp.TwelonelontIncludelon](
+      tp.TwelonelontIncludelon.MelondiaelonntityFielonldId(tp.Melondiaelonntity.AdditionalMelontadataFielonld.id))
 }

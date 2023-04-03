@@ -1,211 +1,211 @@
-package com.twitter.home_mixer.product.scored_tweets.side_effect
+packagelon com.twittelonr.homelon_mixelonr.product.scorelond_twelonelonts.sidelon_elonffelonct
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.mysql.Client
-import com.twitter.finagle.mysql.Transactions
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.util.DefaultTimer
-import com.twitter.home_mixer.functional_component.feature_hydrator.adapters.non_ml_features.NonMLCandidateFeatures
-import com.twitter.home_mixer.functional_component.feature_hydrator.adapters.non_ml_features.NonMLCandidateFeaturesAdapter
-import com.twitter.home_mixer.functional_component.feature_hydrator.adapters.non_ml_features.NonMLCommonFeatures
-import com.twitter.home_mixer.functional_component.feature_hydrator.adapters.non_ml_features.NonMLCommonFeaturesAdapter
-import com.twitter.home_mixer.model.HomeFeatures.ServedRequestIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.SourceTweetIdFeature
-import com.twitter.home_mixer.param.HomeMixerFlagName.DataRecordMetadataStoreConfigsYmlFlag
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.CandidateFeaturesScribeEventPublisher
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.CommonFeaturesScribeEventPublisher
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.MinimumFeaturesScribeEventPublisher
-import com.twitter.home_mixer.product.scored_tweets.model.ScoredTweetsQuery
-import com.twitter.home_mixer.product.scored_tweets.model.ScoredTweetsResponse
-import com.twitter.home_mixer.product.scored_tweets.scorer.CandidateFeaturesDataRecordFeature
-import com.twitter.home_mixer.product.scored_tweets.scorer.CommonFeaturesDataRecordFeature
-import com.twitter.home_mixer.product.scored_tweets.scorer.HomeNaviModelDataRecordScorer.PredictedScoreFeatures
-import com.twitter.home_mixer.util.CandidatesUtil.getOriginalAuthorId
-import com.twitter.inject.annotations.Flag
-import com.twitter.logpipeline.client.common.EventPublisher
-import com.twitter.ml.api.DataRecordMerger
-import com.twitter.product_mixer.core.feature.featuremap.datarecord.DataRecordConverter
-import com.twitter.product_mixer.core.feature.featuremap.datarecord.SpecificFeatures
-import com.twitter.product_mixer.core.functional_component.side_effect.PipelineResultSideEffect
-import com.twitter.product_mixer.core.model.common.identifier.SideEffectIdentifier
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.ml.cont_train.common.domain.non_scalding.CandidateAndCommonFeaturesStreamingUtils
-import com.twitter.timelines.ml.pldr.client.MysqlClientUtils
-import com.twitter.timelines.ml.pldr.client.VersionedMetadataCacheClient
-import com.twitter.timelines.ml.pldr.conversion.VersionIdAndFeatures
-import com.twitter.timelines.suggests.common.data_record_metadata.{thriftscala => drmd}
-import com.twitter.timelines.suggests.common.poly_data_record.{thriftjava => pldr}
-import com.twitter.timelines.util.stats.OptionObserver
-import com.twitter.util.Time
-import com.twitter.util.Try
-import com.twitter.util.logging.Logging
-import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Singleton
-import scala.collection.JavaConverters._
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.finaglelon.mysql.Clielonnt
+import com.twittelonr.finaglelon.mysql.Transactions
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.finaglelon.util.DelonfaultTimelonr
+import com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator.adaptelonrs.non_ml_felonaturelons.NonMLCandidatelonFelonaturelons
+import com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator.adaptelonrs.non_ml_felonaturelons.NonMLCandidatelonFelonaturelonsAdaptelonr
+import com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator.adaptelonrs.non_ml_felonaturelons.NonMLCommonFelonaturelons
+import com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator.adaptelonrs.non_ml_felonaturelons.NonMLCommonFelonaturelonsAdaptelonr
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.SelonrvelondRelonquelonstIdFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.SourcelonTwelonelontIdFelonaturelon
+import com.twittelonr.homelon_mixelonr.param.HomelonMixelonrFlagNamelon.DataReloncordMelontadataStorelonConfigsYmlFlag
+import com.twittelonr.homelon_mixelonr.param.HomelonMixelonrInjelonctionNamelons.CandidatelonFelonaturelonsScribelonelonvelonntPublishelonr
+import com.twittelonr.homelon_mixelonr.param.HomelonMixelonrInjelonctionNamelons.CommonFelonaturelonsScribelonelonvelonntPublishelonr
+import com.twittelonr.homelon_mixelonr.param.HomelonMixelonrInjelonctionNamelons.MinimumFelonaturelonsScribelonelonvelonntPublishelonr
+import com.twittelonr.homelon_mixelonr.product.scorelond_twelonelonts.modelonl.ScorelondTwelonelontsQuelonry
+import com.twittelonr.homelon_mixelonr.product.scorelond_twelonelonts.modelonl.ScorelondTwelonelontsRelonsponselon
+import com.twittelonr.homelon_mixelonr.product.scorelond_twelonelonts.scorelonr.CandidatelonFelonaturelonsDataReloncordFelonaturelon
+import com.twittelonr.homelon_mixelonr.product.scorelond_twelonelonts.scorelonr.CommonFelonaturelonsDataReloncordFelonaturelon
+import com.twittelonr.homelon_mixelonr.product.scorelond_twelonelonts.scorelonr.HomelonNaviModelonlDataReloncordScorelonr.PrelondictelondScorelonFelonaturelons
+import com.twittelonr.homelon_mixelonr.util.CandidatelonsUtil.gelontOriginalAuthorId
+import com.twittelonr.injelonct.annotations.Flag
+import com.twittelonr.logpipelonlinelon.clielonnt.common.elonvelonntPublishelonr
+import com.twittelonr.ml.api.DataReloncordMelonrgelonr
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.datareloncord.DataReloncordConvelonrtelonr
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.datareloncord.SpeloncificFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.sidelon_elonffelonct.PipelonlinelonRelonsultSidelonelonffelonct
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.SidelonelonffelonctIdelonntifielonr
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.timelonlinelons.ml.cont_train.common.domain.non_scalding.CandidatelonAndCommonFelonaturelonsStrelonamingUtils
+import com.twittelonr.timelonlinelons.ml.pldr.clielonnt.MysqlClielonntUtils
+import com.twittelonr.timelonlinelons.ml.pldr.clielonnt.VelonrsionelondMelontadataCachelonClielonnt
+import com.twittelonr.timelonlinelons.ml.pldr.convelonrsion.VelonrsionIdAndFelonaturelons
+import com.twittelonr.timelonlinelons.suggelonsts.common.data_reloncord_melontadata.{thriftscala => drmd}
+import com.twittelonr.timelonlinelons.suggelonsts.common.poly_data_reloncord.{thriftjava => pldr}
+import com.twittelonr.timelonlinelons.util.stats.OptionObselonrvelonr
+import com.twittelonr.util.Timelon
+import com.twittelonr.util.Try
+import com.twittelonr.util.logging.Logging
+import javax.injelonct.Injelonct
+import javax.injelonct.Namelond
+import javax.injelonct.Singlelonton
+import scala.collelonction.JavaConvelonrtelonrs._
 
 /**
- * (1) Scribe common features sent to prediction service + some other features as PLDR format into logs
- * (2) Scribe candidate features sent to prediction service + some other features as PLDR format into another logs
+ * (1) Scribelon common felonaturelons selonnt to prelondiction selonrvicelon + somelon othelonr felonaturelons as PLDR format into logs
+ * (2) Scribelon candidatelon felonaturelons selonnt to prelondiction selonrvicelon + somelon othelonr felonaturelons as PLDR format into anothelonr logs
  */
-@Singleton
-class ScribeServedCommonFeaturesAndCandidateFeaturesSideEffect @Inject() (
-  @Flag(DataRecordMetadataStoreConfigsYmlFlag) dataRecordMetadataStoreConfigsYml: String,
-  @Named(CommonFeaturesScribeEventPublisher) commonFeaturesScribeEventPublisher: EventPublisher[
-    pldr.PolyDataRecord
+@Singlelonton
+class ScribelonSelonrvelondCommonFelonaturelonsAndCandidatelonFelonaturelonsSidelonelonffelonct @Injelonct() (
+  @Flag(DataReloncordMelontadataStorelonConfigsYmlFlag) dataReloncordMelontadataStorelonConfigsYml: String,
+  @Namelond(CommonFelonaturelonsScribelonelonvelonntPublishelonr) commonFelonaturelonsScribelonelonvelonntPublishelonr: elonvelonntPublishelonr[
+    pldr.PolyDataReloncord
   ],
-  @Named(CandidateFeaturesScribeEventPublisher) candidateFeaturesScribeEventPublisher: EventPublisher[
-    pldr.PolyDataRecord
+  @Namelond(CandidatelonFelonaturelonsScribelonelonvelonntPublishelonr) candidatelonFelonaturelonsScribelonelonvelonntPublishelonr: elonvelonntPublishelonr[
+    pldr.PolyDataReloncord
   ],
-  @Named(MinimumFeaturesScribeEventPublisher) minimumFeaturesScribeEventPublisher: EventPublisher[
-    pldr.PolyDataRecord
+  @Namelond(MinimumFelonaturelonsScribelonelonvelonntPublishelonr) minimumFelonaturelonsScribelonelonvelonntPublishelonr: elonvelonntPublishelonr[
+    pldr.PolyDataReloncord
   ],
-  statsReceiver: StatsReceiver,
-) extends PipelineResultSideEffect[ScoredTweetsQuery, ScoredTweetsResponse]
+  statsReloncelonivelonr: StatsReloncelonivelonr,
+) elonxtelonnds PipelonlinelonRelonsultSidelonelonffelonct[ScorelondTwelonelontsQuelonry, ScorelondTwelonelontsRelonsponselon]
     with Logging {
 
-  override val identifier: SideEffectIdentifier = SideEffectIdentifier(
-    "ScribeServedCommonFeaturesAndCandidateFeatures")
+  ovelonrridelon val idelonntifielonr: SidelonelonffelonctIdelonntifielonr = SidelonelonffelonctIdelonntifielonr(
+    "ScribelonSelonrvelondCommonFelonaturelonsAndCandidatelonFelonaturelons")
 
-  private val drMerger = new DataRecordMerger
-  private val postScoringCandidateFeatures = SpecificFeatures(PredictedScoreFeatures.toSet)
-  private val postScoringCandidateFeaturesDataRecordAdapter = new DataRecordConverter(
-    postScoringCandidateFeatures)
+  privatelon val drMelonrgelonr = nelonw DataReloncordMelonrgelonr
+  privatelon val postScoringCandidatelonFelonaturelons = SpeloncificFelonaturelons(PrelondictelondScorelonFelonaturelons.toSelont)
+  privatelon val postScoringCandidatelonFelonaturelonsDataReloncordAdaptelonr = nelonw DataReloncordConvelonrtelonr(
+    postScoringCandidatelonFelonaturelons)
 
-  private val scopedStatsReceiver = statsReceiver.scope(getClass.getSimpleName)
-  private val metadataFetchFailedCounter = scopedStatsReceiver.counter("metadataFetchFailed")
-  private val commonFeaturesScribeCounter = scopedStatsReceiver.counter("commonFeaturesScribe")
-  private val commonFeaturesPLDROptionObserver = OptionObserver(
-    scopedStatsReceiver.scope("commonFeaturesPLDR"))
-  private val candidateFeaturesScribeCounter =
-    scopedStatsReceiver.counter("candidateFeaturesScribe")
-  private val candidateFeaturesPLDROptionObserver = OptionObserver(
-    scopedStatsReceiver.scope("candidateFeaturesPLDR"))
-  private val minimumFeaturesPLDROptionObserver = OptionObserver(
-    scopedStatsReceiver.scope("minimumFeaturesPLDR"))
-  private val minimumFeaturesScribeCounter =
-    scopedStatsReceiver.counter("minimumFeaturesScribe")
+  privatelon val scopelondStatsReloncelonivelonr = statsReloncelonivelonr.scopelon(gelontClass.gelontSimplelonNamelon)
+  privatelon val melontadataFelontchFailelondCountelonr = scopelondStatsReloncelonivelonr.countelonr("melontadataFelontchFailelond")
+  privatelon val commonFelonaturelonsScribelonCountelonr = scopelondStatsReloncelonivelonr.countelonr("commonFelonaturelonsScribelon")
+  privatelon val commonFelonaturelonsPLDROptionObselonrvelonr = OptionObselonrvelonr(
+    scopelondStatsReloncelonivelonr.scopelon("commonFelonaturelonsPLDR"))
+  privatelon val candidatelonFelonaturelonsScribelonCountelonr =
+    scopelondStatsReloncelonivelonr.countelonr("candidatelonFelonaturelonsScribelon")
+  privatelon val candidatelonFelonaturelonsPLDROptionObselonrvelonr = OptionObselonrvelonr(
+    scopelondStatsReloncelonivelonr.scopelon("candidatelonFelonaturelonsPLDR"))
+  privatelon val minimumFelonaturelonsPLDROptionObselonrvelonr = OptionObselonrvelonr(
+    scopelondStatsReloncelonivelonr.scopelon("minimumFelonaturelonsPLDR"))
+  privatelon val minimumFelonaturelonsScribelonCountelonr =
+    scopelondStatsReloncelonivelonr.countelonr("minimumFelonaturelonsScribelon")
 
-  lazy private val dataRecordMetadataStoreClient: Option[Client with Transactions] =
+  lazy privatelon val dataReloncordMelontadataStorelonClielonnt: Option[Clielonnt with Transactions] =
     Try {
-      MysqlClientUtils.mysqlClientProvider(
-        MysqlClientUtils.parseConfigFromYaml(dataRecordMetadataStoreConfigsYml))
-    }.onFailure { e => info(s"Error building MySQL client: $e") }.toOption
+      MysqlClielonntUtils.mysqlClielonntProvidelonr(
+        MysqlClielonntUtils.parselonConfigFromYaml(dataReloncordMelontadataStorelonConfigsYml))
+    }.onFailurelon { elon => info(s"elonrror building MySQL clielonnt: $elon") }.toOption
 
-  lazy private val versionedMetadataCacheClientOpt: Option[
-    VersionedMetadataCacheClient[Map[drmd.FeaturesCategory, Option[VersionIdAndFeatures]]]
+  lazy privatelon val velonrsionelondMelontadataCachelonClielonntOpt: Option[
+    VelonrsionelondMelontadataCachelonClielonnt[Map[drmd.FelonaturelonsCatelongory, Option[VelonrsionIdAndFelonaturelons]]]
   ] =
-    dataRecordMetadataStoreClient.map { mysqlClient =>
-      new VersionedMetadataCacheClient[Map[drmd.FeaturesCategory, Option[VersionIdAndFeatures]]](
-        maximumSize = 1,
-        expireDurationOpt = None,
-        mysqlClient = mysqlClient,
-        transform = CandidateAndCommonFeaturesStreamingUtils.metadataTransformer,
-        statsReceiver = statsReceiver
+    dataReloncordMelontadataStorelonClielonnt.map { mysqlClielonnt =>
+      nelonw VelonrsionelondMelontadataCachelonClielonnt[Map[drmd.FelonaturelonsCatelongory, Option[VelonrsionIdAndFelonaturelons]]](
+        maximumSizelon = 1,
+        elonxpirelonDurationOpt = Nonelon,
+        mysqlClielonnt = mysqlClielonnt,
+        transform = CandidatelonAndCommonFelonaturelonsStrelonamingUtils.melontadataTransformelonr,
+        statsReloncelonivelonr = statsReloncelonivelonr
       )
     }
 
-  versionedMetadataCacheClientOpt.foreach { versionedMetadataCacheClient =>
-    versionedMetadataCacheClient
-      .metadataFetchTimerTask(
-        CandidateAndCommonFeaturesStreamingUtils.metadataFetchKey,
-        metadataFetchTimer = DefaultTimer,
-        metadataFetchInterval = 90.seconds,
-        metadataFetchFailedCounter = metadataFetchFailedCounter
+  velonrsionelondMelontadataCachelonClielonntOpt.forelonach { velonrsionelondMelontadataCachelonClielonnt =>
+    velonrsionelondMelontadataCachelonClielonnt
+      .melontadataFelontchTimelonrTask(
+        CandidatelonAndCommonFelonaturelonsStrelonamingUtils.melontadataFelontchKelony,
+        melontadataFelontchTimelonr = DelonfaultTimelonr,
+        melontadataFelontchIntelonrval = 90.selonconds,
+        melontadataFelontchFailelondCountelonr = melontadataFelontchFailelondCountelonr
       )
   }
 
-  override def apply(
-    inputs: PipelineResultSideEffect.Inputs[ScoredTweetsQuery, ScoredTweetsResponse]
+  ovelonrridelon delonf apply(
+    inputs: PipelonlinelonRelonsultSidelonelonffelonct.Inputs[ScorelondTwelonelontsQuelonry, ScorelondTwelonelontsRelonsponselon]
   ): Stitch[Unit] = {
-    Stitch.value {
-      val servedTimestamp: Long = Time.now.inMilliseconds
-      val nonMLCommonFeatures = NonMLCommonFeatures(
-        userId = inputs.query.getRequiredUserId,
-        predictionRequestId =
-          inputs.query.features.flatMap(_.getOrElse(ServedRequestIdFeature, None)),
-        servedTimestamp = servedTimestamp
+    Stitch.valuelon {
+      val selonrvelondTimelonstamp: Long = Timelon.now.inMilliselonconds
+      val nonMLCommonFelonaturelons = NonMLCommonFelonaturelons(
+        uselonrId = inputs.quelonry.gelontRelonquirelondUselonrId,
+        prelondictionRelonquelonstId =
+          inputs.quelonry.felonaturelons.flatMap(_.gelontOrelonlselon(SelonrvelondRelonquelonstIdFelonaturelon, Nonelon)),
+        selonrvelondTimelonstamp = selonrvelondTimelonstamp
       )
-      val nonMLCommonFeaturesDataRecord =
-        NonMLCommonFeaturesAdapter.adaptToDataRecords(nonMLCommonFeatures).asScala.head
+      val nonMLCommonFelonaturelonsDataReloncord =
+        NonMLCommonFelonaturelonsAdaptelonr.adaptToDataReloncords(nonMLCommonFelonaturelons).asScala.helonad
 
       /**
-       * Steps of scribing common features
-       * (1) fetch common features as data record
-       * (2) extract additional feature as data record, e.g. predictionRequestId which is used as join key in downstream jobs
-       * (3) merge two data records above and convert the merged data record to pldr
+       * Stelonps of scribing common felonaturelons
+       * (1) felontch common felonaturelons as data reloncord
+       * (2) elonxtract additional felonaturelon as data reloncord, elon.g. prelondictionRelonquelonstId which is uselond as join kelony in downstrelonam jobs
+       * (3) melonrgelon two data reloncords abovelon and convelonrt thelon melonrgelond data reloncord to pldr
        * (4) publish pldr
        */
-      val commonFeaturesDataRecordOpt =
-        inputs.selectedCandidates.headOption.map(_.features.get(CommonFeaturesDataRecordFeature))
-      val commonFeaturesPLDROpt = commonFeaturesDataRecordOpt.flatMap { commonFeaturesDataRecord =>
-        drMerger.merge(commonFeaturesDataRecord, nonMLCommonFeaturesDataRecord)
+      val commonFelonaturelonsDataReloncordOpt =
+        inputs.selonlelonctelondCandidatelons.helonadOption.map(_.felonaturelons.gelont(CommonFelonaturelonsDataReloncordFelonaturelon))
+      val commonFelonaturelonsPLDROpt = commonFelonaturelonsDataReloncordOpt.flatMap { commonFelonaturelonsDataReloncord =>
+        drMelonrgelonr.melonrgelon(commonFelonaturelonsDataReloncord, nonMLCommonFelonaturelonsDataReloncord)
 
-        CandidateAndCommonFeaturesStreamingUtils.commonFeaturesToPolyDataRecord(
-          versionedMetadataCacheClientOpt = versionedMetadataCacheClientOpt,
-          commonFeatures = commonFeaturesDataRecord,
-          valueFormat = pldr.PolyDataRecord._Fields.LITE_COMPACT_DATA_RECORD
+        CandidatelonAndCommonFelonaturelonsStrelonamingUtils.commonFelonaturelonsToPolyDataReloncord(
+          velonrsionelondMelontadataCachelonClielonntOpt = velonrsionelondMelontadataCachelonClielonntOpt,
+          commonFelonaturelons = commonFelonaturelonsDataReloncord,
+          valuelonFormat = pldr.PolyDataReloncord._Fielonlds.LITelon_COMPACT_DATA_RelonCORD
         )
       }
 
-      commonFeaturesPLDROptionObserver(commonFeaturesPLDROpt).foreach { pldr =>
-        commonFeaturesScribeEventPublisher.publish(pldr)
-        commonFeaturesScribeCounter.incr()
+      commonFelonaturelonsPLDROptionObselonrvelonr(commonFelonaturelonsPLDROpt).forelonach { pldr =>
+        commonFelonaturelonsScribelonelonvelonntPublishelonr.publish(pldr)
+        commonFelonaturelonsScribelonCountelonr.incr()
       }
 
       /**
-       * steps of scribing candidate features
-       * (1) fetch candidate features as data record
-       * (2) extract additional features (mostly non ML features including predicted scores, predictionRequestId, userId, tweetId)
-       * (3) merge data records and convert the merged data record into pldr
+       * stelonps of scribing candidatelon felonaturelons
+       * (1) felontch candidatelon felonaturelons as data reloncord
+       * (2) elonxtract additional felonaturelons (mostly non ML felonaturelons including prelondictelond scorelons, prelondictionRelonquelonstId, uselonrId, twelonelontId)
+       * (3) melonrgelon data reloncords and convelonrt thelon melonrgelond data reloncord into pldr
        * (4) publish pldr
        */
-      inputs.selectedCandidates.foreach { candidate =>
-        val candidateFeaturesDataRecord = candidate.features.get(CandidateFeaturesDataRecordFeature)
+      inputs.selonlelonctelondCandidatelons.forelonach { candidatelon =>
+        val candidatelonFelonaturelonsDataReloncord = candidatelon.felonaturelons.gelont(CandidatelonFelonaturelonsDataReloncordFelonaturelon)
 
         /**
-         * extract predicted scores as data record and merge it into original data record
+         * elonxtract prelondictelond scorelons as data reloncord and melonrgelon it into original data reloncord
          */
-        val postScoringCandidateFeaturesDataRecord =
-          postScoringCandidateFeaturesDataRecordAdapter.toDataRecord(candidate.features)
-        drMerger.merge(candidateFeaturesDataRecord, postScoringCandidateFeaturesDataRecord)
+        val postScoringCandidatelonFelonaturelonsDataReloncord =
+          postScoringCandidatelonFelonaturelonsDataReloncordAdaptelonr.toDataReloncord(candidatelon.felonaturelons)
+        drMelonrgelonr.melonrgelon(candidatelonFelonaturelonsDataReloncord, postScoringCandidatelonFelonaturelonsDataReloncord)
 
         /**
-         * extract non ML common features as data record and merge it into original data record
+         * elonxtract non ML common felonaturelons as data reloncord and melonrgelon it into original data reloncord
          */
-        drMerger.merge(candidateFeaturesDataRecord, nonMLCommonFeaturesDataRecord)
+        drMelonrgelonr.melonrgelon(candidatelonFelonaturelonsDataReloncord, nonMLCommonFelonaturelonsDataReloncord)
 
         /**
-         * extract non ML candidate features as data record and merge it into original data record
+         * elonxtract non ML candidatelon felonaturelons as data reloncord and melonrgelon it into original data reloncord
          */
-        val nonMLCandidateFeatures = NonMLCandidateFeatures(
-          tweetId = candidate.candidateIdLong,
-          sourceTweetId = candidate.features.getOrElse(SourceTweetIdFeature, None),
-          originalAuthorId = getOriginalAuthorId(candidate.features)
+        val nonMLCandidatelonFelonaturelons = NonMLCandidatelonFelonaturelons(
+          twelonelontId = candidatelon.candidatelonIdLong,
+          sourcelonTwelonelontId = candidatelon.felonaturelons.gelontOrelonlselon(SourcelonTwelonelontIdFelonaturelon, Nonelon),
+          originalAuthorId = gelontOriginalAuthorId(candidatelon.felonaturelons)
         )
-        val nonMLCandidateFeaturesDataRecord =
-          NonMLCandidateFeaturesAdapter.adaptToDataRecords(nonMLCandidateFeatures).asScala.head
-        drMerger.merge(candidateFeaturesDataRecord, nonMLCandidateFeaturesDataRecord)
+        val nonMLCandidatelonFelonaturelonsDataReloncord =
+          NonMLCandidatelonFelonaturelonsAdaptelonr.adaptToDataReloncords(nonMLCandidatelonFelonaturelons).asScala.helonad
+        drMelonrgelonr.melonrgelon(candidatelonFelonaturelonsDataReloncord, nonMLCandidatelonFelonaturelonsDataReloncord)
 
-        val candidateFeaturesPLDROpt =
-          CandidateAndCommonFeaturesStreamingUtils.candidateFeaturesToPolyDataRecord(
-            versionedMetadataCacheClientOpt = versionedMetadataCacheClientOpt,
-            candidateFeatures = candidateFeaturesDataRecord,
-            valueFormat = pldr.PolyDataRecord._Fields.LITE_COMPACT_DATA_RECORD
+        val candidatelonFelonaturelonsPLDROpt =
+          CandidatelonAndCommonFelonaturelonsStrelonamingUtils.candidatelonFelonaturelonsToPolyDataReloncord(
+            velonrsionelondMelontadataCachelonClielonntOpt = velonrsionelondMelontadataCachelonClielonntOpt,
+            candidatelonFelonaturelons = candidatelonFelonaturelonsDataReloncord,
+            valuelonFormat = pldr.PolyDataReloncord._Fielonlds.LITelon_COMPACT_DATA_RelonCORD
           )
 
-        candidateFeaturesPLDROptionObserver(candidateFeaturesPLDROpt).foreach { pldr =>
-          candidateFeaturesScribeEventPublisher.publish(pldr)
-          candidateFeaturesScribeCounter.incr()
+        candidatelonFelonaturelonsPLDROptionObselonrvelonr(candidatelonFelonaturelonsPLDROpt).forelonach { pldr =>
+          candidatelonFelonaturelonsScribelonelonvelonntPublishelonr.publish(pldr)
+          candidatelonFelonaturelonsScribelonCountelonr.incr()
         }
 
-        // scribe minimum features which are used to join labels from client events.
-        val minimumFeaturesPLDROpt = candidateFeaturesPLDROpt
-          .map(CandidateAndCommonFeaturesStreamingUtils.extractMinimumFeaturesFromPldr)
-          .map(pldr.PolyDataRecord.dataRecord)
-        minimumFeaturesPLDROptionObserver(minimumFeaturesPLDROpt).foreach { pldr =>
-          minimumFeaturesScribeEventPublisher.publish(pldr)
-          minimumFeaturesScribeCounter.incr()
+        // scribelon minimum felonaturelons which arelon uselond to join labelonls from clielonnt elonvelonnts.
+        val minimumFelonaturelonsPLDROpt = candidatelonFelonaturelonsPLDROpt
+          .map(CandidatelonAndCommonFelonaturelonsStrelonamingUtils.elonxtractMinimumFelonaturelonsFromPldr)
+          .map(pldr.PolyDataReloncord.dataReloncord)
+        minimumFelonaturelonsPLDROptionObselonrvelonr(minimumFelonaturelonsPLDROpt).forelonach { pldr =>
+          minimumFelonaturelonsScribelonelonvelonntPublishelonr.publish(pldr)
+          minimumFelonaturelonsScribelonCountelonr.incr()
         }
       }
     }

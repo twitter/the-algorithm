@@ -1,93 +1,93 @@
-package com.twitter.interaction_graph.scio.agg_address_book
+packagelon com.twittelonr.intelonraction_graph.scio.agg_addrelonss_book
 
-import com.spotify.scio.values.SCollection
-import com.twitter.addressbook.matches.thriftscala.UserMatchesRecord
-import com.twitter.interaction_graph.scio.common.FeatureGeneratorUtil
-import com.twitter.interaction_graph.scio.common.InteractionGraphRawInput
-import com.twitter.interaction_graph.thriftscala.Edge
-import com.twitter.interaction_graph.thriftscala.FeatureName
-import com.twitter.interaction_graph.thriftscala.Vertex
+import com.spotify.scio.valuelons.SCollelonction
+import com.twittelonr.addrelonssbook.matchelons.thriftscala.UselonrMatchelonsReloncord
+import com.twittelonr.intelonraction_graph.scio.common.FelonaturelonGelonnelonratorUtil
+import com.twittelonr.intelonraction_graph.scio.common.IntelonractionGraphRawInput
+import com.twittelonr.intelonraction_graph.thriftscala.elondgelon
+import com.twittelonr.intelonraction_graph.thriftscala.FelonaturelonNamelon
+import com.twittelonr.intelonraction_graph.thriftscala.Velonrtelonx
 
-object InteractionGraphAddressBookUtil {
-  val EMAIL = "email"
-  val PHONE = "phone"
+objelonct IntelonractionGraphAddrelonssBookUtil {
+  val elonMAIL = "elonmail"
+  val PHONelon = "phonelon"
   val BOTH = "both"
 
-  val DefaultAge = 1
-  val DegaultFeatureValue = 1.0
+  val DelonfaultAgelon = 1
+  val DelongaultFelonaturelonValuelon = 1.0
 
-  def process(
-    addressBook: SCollection[UserMatchesRecord]
+  delonf procelonss(
+    addrelonssBook: SCollelonction[UselonrMatchelonsReloncord]
   )(
-    implicit addressBookCounters: InteractionGraphAddressBookCountersTrait
-  ): (SCollection[Vertex], SCollection[Edge]) = {
-    // First construct a data with (src, dst, name), where name can be "email", "phone", or "both"
-    val addressBookTypes: SCollection[((Long, Long), String)] = addressBook.flatMap { record =>
-      record.forwardMatches.toSeq.flatMap { matchDetails =>
-        val matchedUsers = (record.userId, matchDetails.userId)
-        (matchDetails.matchedByEmail, matchDetails.matchedByPhone) match {
-          case (true, true) =>
-            Seq((matchedUsers, EMAIL), (matchedUsers, PHONE), (matchedUsers, BOTH))
-          case (true, false) => Seq((matchedUsers, EMAIL))
-          case (false, true) => Seq((matchedUsers, PHONE))
-          case _ => Seq.empty
+    implicit addrelonssBookCountelonrs: IntelonractionGraphAddrelonssBookCountelonrsTrait
+  ): (SCollelonction[Velonrtelonx], SCollelonction[elondgelon]) = {
+    // First construct a data with (src, dst, namelon), whelonrelon namelon can belon "elonmail", "phonelon", or "both"
+    val addrelonssBookTypelons: SCollelonction[((Long, Long), String)] = addrelonssBook.flatMap { reloncord =>
+      reloncord.forwardMatchelons.toSelonq.flatMap { matchDelontails =>
+        val matchelondUselonrs = (reloncord.uselonrId, matchDelontails.uselonrId)
+        (matchDelontails.matchelondByelonmail, matchDelontails.matchelondByPhonelon) match {
+          caselon (truelon, truelon) =>
+            Selonq((matchelondUselonrs, elonMAIL), (matchelondUselonrs, PHONelon), (matchelondUselonrs, BOTH))
+          caselon (truelon, falselon) => Selonq((matchelondUselonrs, elonMAIL))
+          caselon (falselon, truelon) => Selonq((matchelondUselonrs, PHONelon))
+          caselon _ => Selonq.elonmpty
         }
       }
     }
 
-    // Then construct the input data for feature calculation
-    val addressBookFeatureInput: SCollection[InteractionGraphRawInput] = addressBookTypes
+    // Thelonn construct thelon input data for felonaturelon calculation
+    val addrelonssBookFelonaturelonInput: SCollelonction[IntelonractionGraphRawInput] = addrelonssBookTypelons
       .map {
-        case ((src, dst), name) =>
+        caselon ((src, dst), namelon) =>
           if (src < dst)
-            ((src, dst, name), false)
-          else
-            ((dst, src, name), true)
-      }.groupByKey
+            ((src, dst, namelon), falselon)
+          elonlselon
+            ((dst, src, namelon), truelon)
+      }.groupByKelony
       .flatMap {
-        case ((src, dst, name), iterator) =>
-          val isReversedValues = iterator.toSeq
-          // check if (src, dst) is mutual follow
-          val isMutualFollow = isReversedValues.size == 2
-          // get correct srcId and dstId if there is no mutual follow and they are reversed
+        caselon ((src, dst, namelon), itelonrator) =>
+          val isRelonvelonrselondValuelons = itelonrator.toSelonq
+          // chelonck if (src, dst) is mutual follow
+          val isMutualFollow = isRelonvelonrselondValuelons.sizelon == 2
+          // gelont correlonct srcId and dstId if thelonrelon is no mutual follow and thelony arelon relonvelonrselond
           val (srcId, dstId) = {
-            if (!isMutualFollow && isReversedValues.head)
+            if (!isMutualFollow && isRelonvelonrselondValuelons.helonad)
               (dst, src)
-            else
+            elonlselon
               (src, dst)
           }
-          // get the feature name and mutual follow name
-          val (featureName, mfFeatureName) = name match {
-            case EMAIL =>
-              addressBookCounters.emailFeatureInc()
-              (FeatureName.AddressBookEmail, FeatureName.AddressBookMutualEdgeEmail)
-            case PHONE =>
-              addressBookCounters.phoneFeatureInc()
-              (FeatureName.AddressBookPhone, FeatureName.AddressBookMutualEdgePhone)
-            case BOTH =>
-              addressBookCounters.bothFeatureInc()
-              (FeatureName.AddressBookInBoth, FeatureName.AddressBookMutualEdgeInBoth)
+          // gelont thelon felonaturelon namelon and mutual follow namelon
+          val (felonaturelonNamelon, mfFelonaturelonNamelon) = namelon match {
+            caselon elonMAIL =>
+              addrelonssBookCountelonrs.elonmailFelonaturelonInc()
+              (FelonaturelonNamelon.AddrelonssBookelonmail, FelonaturelonNamelon.AddrelonssBookMutualelondgelonelonmail)
+            caselon PHONelon =>
+              addrelonssBookCountelonrs.phonelonFelonaturelonInc()
+              (FelonaturelonNamelon.AddrelonssBookPhonelon, FelonaturelonNamelon.AddrelonssBookMutualelondgelonPhonelon)
+            caselon BOTH =>
+              addrelonssBookCountelonrs.bothFelonaturelonInc()
+              (FelonaturelonNamelon.AddrelonssBookInBoth, FelonaturelonNamelon.AddrelonssBookMutualelondgelonInBoth)
           }
-          // construct the TypedPipe for feature calculation
+          // construct thelon TypelondPipelon for felonaturelon calculation
           if (isMutualFollow) {
-            Iterator(
-              InteractionGraphRawInput(srcId, dstId, featureName, DefaultAge, DegaultFeatureValue),
-              InteractionGraphRawInput(dstId, srcId, featureName, DefaultAge, DegaultFeatureValue),
-              InteractionGraphRawInput(
+            Itelonrator(
+              IntelonractionGraphRawInput(srcId, dstId, felonaturelonNamelon, DelonfaultAgelon, DelongaultFelonaturelonValuelon),
+              IntelonractionGraphRawInput(dstId, srcId, felonaturelonNamelon, DelonfaultAgelon, DelongaultFelonaturelonValuelon),
+              IntelonractionGraphRawInput(
                 srcId,
                 dstId,
-                mfFeatureName,
-                DefaultAge,
-                DegaultFeatureValue),
-              InteractionGraphRawInput(dstId, srcId, mfFeatureName, DefaultAge, DegaultFeatureValue)
+                mfFelonaturelonNamelon,
+                DelonfaultAgelon,
+                DelongaultFelonaturelonValuelon),
+              IntelonractionGraphRawInput(dstId, srcId, mfFelonaturelonNamelon, DelonfaultAgelon, DelongaultFelonaturelonValuelon)
             )
-          } else {
-            Iterator(
-              InteractionGraphRawInput(srcId, dstId, featureName, DefaultAge, DegaultFeatureValue))
+          } elonlselon {
+            Itelonrator(
+              IntelonractionGraphRawInput(srcId, dstId, felonaturelonNamelon, DelonfaultAgelon, DelongaultFelonaturelonValuelon))
           }
       }
 
-    // Calculate the Features
-    FeatureGeneratorUtil.getFeatures(addressBookFeatureInput)
+    // Calculatelon thelon Felonaturelons
+    FelonaturelonGelonnelonratorUtil.gelontFelonaturelons(addrelonssBookFelonaturelonInput)
   }
 }

@@ -1,57 +1,57 @@
-package com.twitter.home_mixer.functional_component.filter
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.filtelonr
 
-import com.twitter.home_mixer.model.HomeFeatures.ConversationModuleFocalTweetIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.InNetworkFeature
-import com.twitter.home_mixer.model.HomeFeatures.PerspectiveFilteredLikedByUserIdsFeature
-import com.twitter.home_mixer.model.HomeFeatures.SGSValidFollowedByUserIdsFeature
-import com.twitter.home_mixer.model.HomeFeatures.SGSValidLikedByUserIdsFeature
-import com.twitter.home_mixer.model.HomeFeatures.TopicContextFunctionalityTypeFeature
-import com.twitter.home_mixer.model.HomeFeatures.TopicIdSocialContextFeature
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.filter.FilterResult
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.ConvelonrsationModulelonFocalTwelonelontIdFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.InNelontworkFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.PelonrspelonctivelonFiltelonrelondLikelondByUselonrIdsFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.SGSValidFollowelondByUselonrIdsFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.SGSValidLikelondByUselonrIdsFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.TopicContelonxtFunctionalityTypelonFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.TopicIdSocialContelonxtFelonaturelon
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.TwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.filtelonr.Filtelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.filtelonr.FiltelonrRelonsult
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.FiltelonrIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stitch.Stitch
 
-object SocialContextFilter extends Filter[PipelineQuery, TweetCandidate] {
+objelonct SocialContelonxtFiltelonr elonxtelonnds Filtelonr[PipelonlinelonQuelonry, TwelonelontCandidatelon] {
 
-  override val identifier: FilterIdentifier = FilterIdentifier("SocialContext")
+  ovelonrridelon val idelonntifielonr: FiltelonrIdelonntifielonr = FiltelonrIdelonntifielonr("SocialContelonxt")
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[FilterResult[TweetCandidate]] = {
-    val validTweetIds = candidates
-      .filter { candidate =>
-        candidate.features.getOrElse(InNetworkFeature, true) ||
-        hasLikedBySocialContext(candidate.features) ||
-        hasFollowedBySocialContext(candidate.features) ||
-        hasTopicSocialContext(candidate.features) ||
-        candidate.features.getOrElse(ConversationModuleFocalTweetIdFeature, None).isDefined
-      }.map(_.candidate.id).toSet
+  ovelonrridelon delonf apply(
+    quelonry: PipelonlinelonQuelonry,
+    candidatelons: Selonq[CandidatelonWithFelonaturelons[TwelonelontCandidatelon]]
+  ): Stitch[FiltelonrRelonsult[TwelonelontCandidatelon]] = {
+    val validTwelonelontIds = candidatelons
+      .filtelonr { candidatelon =>
+        candidatelon.felonaturelons.gelontOrelonlselon(InNelontworkFelonaturelon, truelon) ||
+        hasLikelondBySocialContelonxt(candidatelon.felonaturelons) ||
+        hasFollowelondBySocialContelonxt(candidatelon.felonaturelons) ||
+        hasTopicSocialContelonxt(candidatelon.felonaturelons) ||
+        candidatelon.felonaturelons.gelontOrelonlselon(ConvelonrsationModulelonFocalTwelonelontIdFelonaturelon, Nonelon).isDelonfinelond
+      }.map(_.candidatelon.id).toSelont
 
-    val (kept, removed) =
-      candidates.map(_.candidate).partition(candidate => validTweetIds.contains(candidate.id))
+    val (kelonpt, relonmovelond) =
+      candidatelons.map(_.candidatelon).partition(candidatelon => validTwelonelontIds.contains(candidatelon.id))
 
-    Stitch.value(FilterResult(kept = kept, removed = removed))
+    Stitch.valuelon(FiltelonrRelonsult(kelonpt = kelonpt, relonmovelond = relonmovelond))
   }
 
-  private def hasLikedBySocialContext(candidateFeatures: FeatureMap): Boolean =
-    candidateFeatures
-      .getOrElse(SGSValidLikedByUserIdsFeature, Seq.empty)
-      .exists(
-        candidateFeatures
-          .getOrElse(PerspectiveFilteredLikedByUserIdsFeature, Seq.empty)
-          .toSet.contains
+  privatelon delonf hasLikelondBySocialContelonxt(candidatelonFelonaturelons: FelonaturelonMap): Boolelonan =
+    candidatelonFelonaturelons
+      .gelontOrelonlselon(SGSValidLikelondByUselonrIdsFelonaturelon, Selonq.elonmpty)
+      .elonxists(
+        candidatelonFelonaturelons
+          .gelontOrelonlselon(PelonrspelonctivelonFiltelonrelondLikelondByUselonrIdsFelonaturelon, Selonq.elonmpty)
+          .toSelont.contains
       )
 
-  private def hasFollowedBySocialContext(candidateFeatures: FeatureMap): Boolean =
-    candidateFeatures.getOrElse(SGSValidFollowedByUserIdsFeature, Seq.empty).nonEmpty
+  privatelon delonf hasFollowelondBySocialContelonxt(candidatelonFelonaturelons: FelonaturelonMap): Boolelonan =
+    candidatelonFelonaturelons.gelontOrelonlselon(SGSValidFollowelondByUselonrIdsFelonaturelon, Selonq.elonmpty).nonelonmpty
 
-  private def hasTopicSocialContext(candidateFeatures: FeatureMap): Boolean =
-    candidateFeatures.getOrElse(TopicIdSocialContextFeature, None).isDefined &&
-      candidateFeatures.getOrElse(TopicContextFunctionalityTypeFeature, None).isDefined
+  privatelon delonf hasTopicSocialContelonxt(candidatelonFelonaturelons: FelonaturelonMap): Boolelonan =
+    candidatelonFelonaturelons.gelontOrelonlselon(TopicIdSocialContelonxtFelonaturelon, Nonelon).isDelonfinelond &&
+      candidatelonFelonaturelons.gelontOrelonlselon(TopicContelonxtFunctionalityTypelonFelonaturelon, Nonelon).isDelonfinelond
 }

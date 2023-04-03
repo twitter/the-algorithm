@@ -1,18 +1,18 @@
-package com.twitter.product_mixer.core.quality_factor
+packagelon com.twittelonr.product_mixelonr.corelon.quality_factor
 
-import com.twitter.util.Duration
-import com.twitter.util.Try
+import com.twittelonr.util.Duration
+import com.twittelonr.util.Try
 
-case class LinearLatencyQualityFactorObserver(
-  override val qualityFactor: LinearLatencyQualityFactor)
-    extends QualityFactorObserver {
+caselon class LinelonarLatelonncyQualityFactorObselonrvelonr(
+  ovelonrridelon val qualityFactor: LinelonarLatelonncyQualityFactor)
+    elonxtelonnds QualityFactorObselonrvelonr {
 
-  override def apply(result: Try[_], latency: Duration): Unit = {
-    result
-      .onSuccess(_ => qualityFactor.update(latency))
-      .onFailure {
-        case t if qualityFactor.config.ignorableFailures.isDefinedAt(t) => ()
-        case _ => qualityFactor.update(Duration.Top)
+  ovelonrridelon delonf apply(relonsult: Try[_], latelonncy: Duration): Unit = {
+    relonsult
+      .onSuccelonss(_ => qualityFactor.updatelon(latelonncy))
+      .onFailurelon {
+        caselon t if qualityFactor.config.ignorablelonFailurelons.isDelonfinelondAt(t) => ()
+        caselon _ => qualityFactor.updatelon(Duration.Top)
       }
   }
 }

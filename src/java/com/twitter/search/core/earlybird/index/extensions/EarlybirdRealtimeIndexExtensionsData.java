@@ -1,20 +1,20 @@
-package com.twitter.search.core.earlybird.index.extensions;
+packagelon com.twittelonr.selonarch.corelon.elonarlybird.indelonx.elonxtelonnsions;
 
-import com.twitter.search.core.earlybird.index.EarlybirdRealtimeIndexSegmentWriter;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.elonarlybirdRelonaltimelonIndelonxSelongmelonntWritelonr;
 
 /**
- * An index extensions implementation for real-time Earlybird indexes.
+ * An indelonx elonxtelonnsions implelonmelonntation for relonal-timelon elonarlybird indelonxelons.
  */
-public interface EarlybirdRealtimeIndexExtensionsData extends EarlybirdIndexExtensionsData {
+public intelonrfacelon elonarlybirdRelonaltimelonIndelonxelonxtelonnsionsData elonxtelonnds elonarlybirdIndelonxelonxtelonnsionsData {
   /**
-   * Optionally, an implementing class can provide a custom consumer for inverted fields (i.e. streams of tokens).
+   * Optionally, an implelonmelonnting class can providelon a custom consumelonr for invelonrtelond fielonlds (i.elon. strelonams of tokelonns).
    */
-  void createInvertedDocConsumer(
-      EarlybirdRealtimeIndexSegmentWriter.InvertedDocConsumerBuilder builder);
+  void crelonatelonInvelonrtelondDocConsumelonr(
+      elonarlybirdRelonaltimelonIndelonxSelongmelonntWritelonr.InvelonrtelondDocConsumelonrBuildelonr buildelonr);
 
   /**
-   * Optionally, an implementing class can provide a custom consumer for stored fields (e.g. doc values fields).
+   * Optionally, an implelonmelonnting class can providelon a custom consumelonr for storelond fielonlds (elon.g. doc valuelons fielonlds).
    */
-  void createStoredFieldsConsumer(
-      EarlybirdRealtimeIndexSegmentWriter.StoredFieldsConsumerBuilder builder);
+  void crelonatelonStorelondFielonldsConsumelonr(
+      elonarlybirdRelonaltimelonIndelonxSelongmelonntWritelonr.StorelondFielonldsConsumelonrBuildelonr buildelonr);
 }

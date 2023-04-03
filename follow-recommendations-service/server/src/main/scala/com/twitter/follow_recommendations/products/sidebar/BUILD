@@ -1,14 +1,14 @@
 scala_library(
-    compiler_option_sets = ["fatal_warnings"],
+    compilelonr_option_selonts = ["fatal_warnings"],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "finatra/inject/inject-app/src/main/scala",
-        "finatra/inject/inject-core/src/main/scala",
-        "follow-recommendations-service/server/src/main/scala/com/twitter/follow_recommendations/blenders",
-        "follow-recommendations-service/server/src/main/scala/com/twitter/follow_recommendations/flows/ads",
-        "follow-recommendations-service/server/src/main/scala/com/twitter/follow_recommendations/flows/post_nux_ml",
-        "follow-recommendations-service/server/src/main/scala/com/twitter/follow_recommendations/products/common",
-        "follow-recommendations-service/server/src/main/scala/com/twitter/follow_recommendations/products/sidebar/configapi",
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        "finatra/injelonct/injelonct-app/src/main/scala",
+        "finatra/injelonct/injelonct-corelon/src/main/scala",
+        "follow-reloncommelonndations-selonrvicelon/selonrvelonr/src/main/scala/com/twittelonr/follow_reloncommelonndations/blelonndelonrs",
+        "follow-reloncommelonndations-selonrvicelon/selonrvelonr/src/main/scala/com/twittelonr/follow_reloncommelonndations/flows/ads",
+        "follow-reloncommelonndations-selonrvicelon/selonrvelonr/src/main/scala/com/twittelonr/follow_reloncommelonndations/flows/post_nux_ml",
+        "follow-reloncommelonndations-selonrvicelon/selonrvelonr/src/main/scala/com/twittelonr/follow_reloncommelonndations/products/common",
+        "follow-reloncommelonndations-selonrvicelon/selonrvelonr/src/main/scala/com/twittelonr/follow_reloncommelonndations/products/sidelonbar/configapi",
     ],
 )

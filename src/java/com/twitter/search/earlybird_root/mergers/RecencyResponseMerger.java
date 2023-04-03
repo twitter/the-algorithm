@@ -1,638 +1,638 @@
-package com.twitter.search.earlybird_root.mergers;
+packagelon com.twittelonr.selonarch.elonarlybird_root.melonrgelonrs;
 
-import java.util.Collections;
+import java.util.Collelonctions;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrelonnt.TimelonUnit;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import com.googlelon.common.baselon.Prelonconditions;
+import com.googlelon.common.collelonct.ImmutablelonMap;
+import com.googlelon.common.collelonct.Lists;
+import com.googlelon.common.collelonct.Maps;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchTimerStats;
-import com.twitter.search.common.partitioning.snowflakeparser.SnowflakeIdParser;
-import com.twitter.search.common.query.thriftjava.EarlyTerminationInfo;
-import com.twitter.search.common.relevance.utils.ResultComparators;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.ThriftSearchResult;
-import com.twitter.search.earlybird.thrift.ThriftSearchResults;
-import com.twitter.search.earlybird_root.collectors.RecencyMergeCollector;
-import com.twitter.search.earlybird_root.common.EarlybirdFeatureSchemaMerger;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.util.Future;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchTimelonrStats;
+import com.twittelonr.selonarch.common.partitioning.snowflakelonparselonr.SnowflakelonIdParselonr;
+import com.twittelonr.selonarch.common.quelonry.thriftjava.elonarlyTelonrminationInfo;
+import com.twittelonr.selonarch.common.relonlelonvancelon.utils.RelonsultComparators;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsult;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsults;
+import com.twittelonr.selonarch.elonarlybird_root.collelonctors.ReloncelonncyMelonrgelonCollelonctor;
+import com.twittelonr.selonarch.elonarlybird_root.common.elonarlybirdFelonaturelonSchelonmaMelonrgelonr;
+import com.twittelonr.selonarch.elonarlybird_root.common.elonarlybirdRelonquelonstContelonxt;
+import com.twittelonr.util.Futurelon;
 
-import static com.twitter.search.earlybird_root.mergers.RecencyResponseMerger
-    .EarlyTerminationTrimmingStats.Type.ALREADY_EARLY_TERMINATED;
-import static com.twitter.search.earlybird_root.mergers.RecencyResponseMerger
-    .EarlyTerminationTrimmingStats.Type.FILTERED;
-import static com.twitter.search.earlybird_root.mergers.RecencyResponseMerger
-    .EarlyTerminationTrimmingStats.Type.FILTERED_AND_TRUNCATED;
-import static com.twitter.search.earlybird_root.mergers.RecencyResponseMerger
-    .EarlyTerminationTrimmingStats.Type.NOT_EARLY_TERMINATED;
-import static com.twitter.search.earlybird_root.mergers.RecencyResponseMerger
-    .EarlyTerminationTrimmingStats.Type.TERMINATED_GOT_EXACT_NUM_RESULTS;
-import static com.twitter.search.earlybird_root.mergers.RecencyResponseMerger
-    .EarlyTerminationTrimmingStats.Type.TRUNCATED;
+import static com.twittelonr.selonarch.elonarlybird_root.melonrgelonrs.ReloncelonncyRelonsponselonMelonrgelonr
+    .elonarlyTelonrminationTrimmingStats.Typelon.ALRelonADY_elonARLY_TelonRMINATelonD;
+import static com.twittelonr.selonarch.elonarlybird_root.melonrgelonrs.ReloncelonncyRelonsponselonMelonrgelonr
+    .elonarlyTelonrminationTrimmingStats.Typelon.FILTelonRelonD;
+import static com.twittelonr.selonarch.elonarlybird_root.melonrgelonrs.ReloncelonncyRelonsponselonMelonrgelonr
+    .elonarlyTelonrminationTrimmingStats.Typelon.FILTelonRelonD_AND_TRUNCATelonD;
+import static com.twittelonr.selonarch.elonarlybird_root.melonrgelonrs.ReloncelonncyRelonsponselonMelonrgelonr
+    .elonarlyTelonrminationTrimmingStats.Typelon.NOT_elonARLY_TelonRMINATelonD;
+import static com.twittelonr.selonarch.elonarlybird_root.melonrgelonrs.ReloncelonncyRelonsponselonMelonrgelonr
+    .elonarlyTelonrminationTrimmingStats.Typelon.TelonRMINATelonD_GOT_elonXACT_NUM_RelonSULTS;
+import static com.twittelonr.selonarch.elonarlybird_root.melonrgelonrs.ReloncelonncyRelonsponselonMelonrgelonr
+    .elonarlyTelonrminationTrimmingStats.Typelon.TRUNCATelonD;
 
 /**
- * Merger class to merge recency search EarlybirdResponse objects.
+ * Melonrgelonr class to melonrgelon reloncelonncy selonarch elonarlybirdRelonsponselon objeloncts.
  */
-public class RecencyResponseMerger extends EarlybirdResponseMerger {
-  private static final Logger LOG = LoggerFactory.getLogger(RecencyResponseMerger.class);
+public class ReloncelonncyRelonsponselonMelonrgelonr elonxtelonnds elonarlybirdRelonsponselonMelonrgelonr {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(ReloncelonncyRelonsponselonMelonrgelonr.class);
 
-  private static final SearchTimerStats RECENCY_TIMER =
-      SearchTimerStats.export("merge_recency", TimeUnit.NANOSECONDS, false, true);
+  privatelon static final SelonarchTimelonrStats RelonCelonNCY_TIMelonR =
+      SelonarchTimelonrStats.elonxport("melonrgelon_reloncelonncy", TimelonUnit.NANOSelonCONDS, falselon, truelon);
 
-  @VisibleForTesting
-  static final String TERMINATED_COLLECTED_ENOUGH_RESULTS =
-      "terminated_collected_enough_results";
+  @VisiblelonForTelonsting
+  static final String TelonRMINATelonD_COLLelonCTelonD_elonNOUGH_RelonSULTS =
+      "telonrminatelond_collelonctelond_elonnough_relonsults";
 
-  // Allowed replication lag relative to all replicas.  Replication lag exceeding
-  // this amount may result in some tweets from the replica not returned in search.
-  private static final long ALLOWED_REPLICATION_LAG_MS = 10000;
+  // Allowelond relonplication lag relonlativelon to all relonplicas.  Relonplication lag elonxcelonelonding
+  // this amount may relonsult in somelon twelonelonts from thelon relonplica not relonturnelond in selonarch.
+  privatelon static final long ALLOWelonD_RelonPLICATION_LAG_MS = 10000;
 
-  private static final double SUCCESSFUL_RESPONSE_THRESHOLD = 0.9;
+  privatelon static final doublelon SUCCelonSSFUL_RelonSPONSelon_THRelonSHOLD = 0.9;
 
-  @VisibleForTesting
-  static final SearchCounter RECENCY_ZERO_RESULT_COUNT_AFTER_FILTERING_MAX_MIN_IDS =
-      SearchCounter.export("merger_recency_zero_result_count_after_filtering_max_min_ids");
+  @VisiblelonForTelonsting
+  static final SelonarchCountelonr RelonCelonNCY_ZelonRO_RelonSULT_COUNT_AFTelonR_FILTelonRING_MAX_MIN_IDS =
+      SelonarchCountelonr.elonxport("melonrgelonr_reloncelonncy_zelonro_relonsult_count_aftelonr_filtelonring_max_min_ids");
 
-  @VisibleForTesting
-  static final SearchCounter RECENCY_TRIMMED_TOO_MANY_RESULTS_COUNT =
-      SearchCounter.export("merger_recency_trimmed_too_many_results_count");
+  @VisiblelonForTelonsting
+  static final SelonarchCountelonr RelonCelonNCY_TRIMMelonD_TOO_MANY_RelonSULTS_COUNT =
+      SelonarchCountelonr.elonxport("melonrgelonr_reloncelonncy_trimmelond_too_many_relonsults_count");
 
-  private static final SearchCounter RECENCY_TIER_MERGE_EARLY_TERMINATED_WITH_NOT_ENOUGH_RESULTS =
-      SearchCounter.export("merger_recency_tier_merge_early_terminated_with_not_enough_results");
+  privatelon static final SelonarchCountelonr RelonCelonNCY_TIelonR_MelonRGelon_elonARLY_TelonRMINATelonD_WITH_NOT_elonNOUGH_RelonSULTS =
+      SelonarchCountelonr.elonxport("melonrgelonr_reloncelonncy_tielonr_melonrgelon_elonarly_telonrminatelond_with_not_elonnough_relonsults");
 
-  private static final SearchCounter RECENCY_CLEARED_EARLY_TERMINATION_COUNT =
-      SearchCounter.export("merger_recency_cleared_early_termination_count");
-
-  /**
-   * Results were truncated because merged results exceeded the requested numResults.
-   */
-  @VisibleForTesting
-  static final String MERGING_EARLY_TERMINATION_REASON_TRUNCATED =
-      "root_merging_truncated_results";
+  privatelon static final SelonarchCountelonr RelonCelonNCY_CLelonARelonD_elonARLY_TelonRMINATION_COUNT =
+      SelonarchCountelonr.elonxport("melonrgelonr_reloncelonncy_clelonarelond_elonarly_telonrmination_count");
 
   /**
-   * Results that were were filtered smaller than merged minSearchedStatusId were filtered out.
+   * Relonsults welonrelon truncatelond beloncauselon melonrgelond relonsults elonxcelonelondelond thelon relonquelonstelond numRelonsults.
    */
-  @VisibleForTesting
-  static final String MERGING_EARLY_TERMINATION_REASON_FILTERED =
-      "root_merging_filtered_results";
+  @VisiblelonForTelonsting
+  static final String MelonRGING_elonARLY_TelonRMINATION_RelonASON_TRUNCATelonD =
+      "root_melonrging_truncatelond_relonsults";
 
-  @VisibleForTesting
-  static final EarlyTerminationTrimmingStats PARTITION_MERGING_EARLY_TERMINATION_TRIMMING_STATS =
-      new EarlyTerminationTrimmingStats("recency_partition_merging");
+  /**
+   * Relonsults that welonrelon welonrelon filtelonrelond smallelonr than melonrgelond minSelonarchelondStatusId welonrelon filtelonrelond out.
+   */
+  @VisiblelonForTelonsting
+  static final String MelonRGING_elonARLY_TelonRMINATION_RelonASON_FILTelonRelonD =
+      "root_melonrging_filtelonrelond_relonsults";
 
-  @VisibleForTesting
-  static final EarlyTerminationTrimmingStats TIER_MERGING_EARLY_TERMINATION_TRIMMING_STATS =
-      new EarlyTerminationTrimmingStats("recency_tier_merging");
+  @VisiblelonForTelonsting
+  static final elonarlyTelonrminationTrimmingStats PARTITION_MelonRGING_elonARLY_TelonRMINATION_TRIMMING_STATS =
+      nelonw elonarlyTelonrminationTrimmingStats("reloncelonncy_partition_melonrging");
 
-  @VisibleForTesting
-  static class EarlyTerminationTrimmingStats {
+  @VisiblelonForTelonsting
+  static final elonarlyTelonrminationTrimmingStats TIelonR_MelonRGING_elonARLY_TelonRMINATION_TRIMMING_STATS =
+      nelonw elonarlyTelonrminationTrimmingStats("reloncelonncy_tielonr_melonrging");
 
-    enum Type {
+  @VisiblelonForTelonsting
+  static class elonarlyTelonrminationTrimmingStats {
+
+    elonnum Typelon {
       /**
-       * The whole result was not terminated at all.
+       * Thelon wholelon relonsult was not telonrminatelond at all.
        */
-      NOT_EARLY_TERMINATED,
+      NOT_elonARLY_TelonRMINATelonD,
       /**
-       * Was terminated before we did any trimming.
+       * Was telonrminatelond belonforelon welon did any trimming.
        */
-      ALREADY_EARLY_TERMINATED,
+      ALRelonADY_elonARLY_TelonRMINATelonD,
       /**
-       * Was not terminated when merged, but results were filtered due to min/max ranges.
+       * Was not telonrminatelond whelonn melonrgelond, but relonsults welonrelon filtelonrelond duelon to min/max rangelons.
        */
-      FILTERED,
+      FILTelonRelonD,
       /**
-       * Was not terminated when merged, but results were truncated.
+       * Was not telonrminatelond whelonn melonrgelond, but relonsults welonrelon truncatelond.
        */
-      TRUNCATED,
+      TRUNCATelonD,
       /**
-       * Was not terminated when merged, but results were filtered due to min/max ranges and
-       * truncated.
+       * Was not telonrminatelond whelonn melonrgelond, but relonsults welonrelon filtelonrelond duelon to min/max rangelons and
+       * truncatelond.
        */
-      FILTERED_AND_TRUNCATED,
+      FILTelonRelonD_AND_TRUNCATelonD,
       /**
-       * When the search asks for X result, and we get exactly X results back, without trimming
-       * or truncating on the tail side (min_id side), we still mark the search as early terminated.
-       * This is because later tiers possibly has more results.
+       * Whelonn thelon selonarch asks for X relonsult, and welon gelont elonxactly X relonsults back, without trimming
+       * or truncating on thelon tail sidelon (min_id sidelon), welon still mark thelon selonarch as elonarly telonrminatelond.
+       * This is beloncauselon latelonr tielonrs possibly has morelon relonsults.
        */
-      TERMINATED_GOT_EXACT_NUM_RESULTS,
+      TelonRMINATelonD_GOT_elonXACT_NUM_RelonSULTS,
     }
 
     /**
-     * A counter tracking merged responses for each {@link EarlyTerminationTrimmingStats.Type}
-     * define above.
+     * A countelonr tracking melonrgelond relonsponselons for elonach {@link elonarlyTelonrminationTrimmingStats.Typelon}
+     * delonfinelon abovelon.
      */
-    private final ImmutableMap<Type, SearchCounter> searchCounterMap;
+    privatelon final ImmutablelonMap<Typelon, SelonarchCountelonr> selonarchCountelonrMap;
 
-    EarlyTerminationTrimmingStats(String prefix) {
-      Map<Type, SearchCounter> tempMap = Maps.newEnumMap(Type.class);
+    elonarlyTelonrminationTrimmingStats(String prelonfix) {
+      Map<Typelon, SelonarchCountelonr> telonmpMap = Maps.nelonwelonnumMap(Typelon.class);
 
-      tempMap.put(NOT_EARLY_TERMINATED,
-          SearchCounter.export(prefix + "_not_early_terminated_after_merging"));
-      tempMap.put(ALREADY_EARLY_TERMINATED,
-          SearchCounter.export(prefix + "_early_terminated_before_merge_trimming"));
-      tempMap.put(TRUNCATED,
-          SearchCounter.export(prefix + "_early_terminated_after_merging_truncated"));
-      tempMap.put(FILTERED,
-          SearchCounter.export(prefix + "_early_terminated_after_merging_filtered"));
-      tempMap.put(FILTERED_AND_TRUNCATED,
-          SearchCounter.export(prefix + "_early_terminated_after_merging_filtered_and_truncated"));
-      tempMap.put(TERMINATED_GOT_EXACT_NUM_RESULTS,
-          SearchCounter.export(prefix + "_early_terminated_after_merging_got_exact_num_results"));
+      telonmpMap.put(NOT_elonARLY_TelonRMINATelonD,
+          SelonarchCountelonr.elonxport(prelonfix + "_not_elonarly_telonrminatelond_aftelonr_melonrging"));
+      telonmpMap.put(ALRelonADY_elonARLY_TelonRMINATelonD,
+          SelonarchCountelonr.elonxport(prelonfix + "_elonarly_telonrminatelond_belonforelon_melonrgelon_trimming"));
+      telonmpMap.put(TRUNCATelonD,
+          SelonarchCountelonr.elonxport(prelonfix + "_elonarly_telonrminatelond_aftelonr_melonrging_truncatelond"));
+      telonmpMap.put(FILTelonRelonD,
+          SelonarchCountelonr.elonxport(prelonfix + "_elonarly_telonrminatelond_aftelonr_melonrging_filtelonrelond"));
+      telonmpMap.put(FILTelonRelonD_AND_TRUNCATelonD,
+          SelonarchCountelonr.elonxport(prelonfix + "_elonarly_telonrminatelond_aftelonr_melonrging_filtelonrelond_and_truncatelond"));
+      telonmpMap.put(TelonRMINATelonD_GOT_elonXACT_NUM_RelonSULTS,
+          SelonarchCountelonr.elonxport(prelonfix + "_elonarly_telonrminatelond_aftelonr_melonrging_got_elonxact_num_relonsults"));
 
-      searchCounterMap = Maps.immutableEnumMap(tempMap);
+      selonarchCountelonrMap = Maps.immutablelonelonnumMap(telonmpMap);
     }
 
-    public SearchCounter getCounterFor(Type type) {
-      return searchCounterMap.get(type);
+    public SelonarchCountelonr gelontCountelonrFor(Typelon typelon) {
+      relonturn selonarchCountelonrMap.gelont(typelon);
     }
   }
 
-  private final EarlybirdFeatureSchemaMerger featureSchemaMerger;
+  privatelon final elonarlybirdFelonaturelonSchelonmaMelonrgelonr felonaturelonSchelonmaMelonrgelonr;
 
-  public RecencyResponseMerger(EarlybirdRequestContext requestContext,
-                               List<Future<EarlybirdResponse>> responses,
-                               ResponseAccumulator mode,
-                               EarlybirdFeatureSchemaMerger featureSchemaMerger) {
-    super(requestContext, responses, mode);
-    this.featureSchemaMerger = featureSchemaMerger;
+  public ReloncelonncyRelonsponselonMelonrgelonr(elonarlybirdRelonquelonstContelonxt relonquelonstContelonxt,
+                               List<Futurelon<elonarlybirdRelonsponselon>> relonsponselons,
+                               RelonsponselonAccumulator modelon,
+                               elonarlybirdFelonaturelonSchelonmaMelonrgelonr felonaturelonSchelonmaMelonrgelonr) {
+    supelonr(relonquelonstContelonxt, relonsponselons, modelon);
+    this.felonaturelonSchelonmaMelonrgelonr = felonaturelonSchelonmaMelonrgelonr;
   }
 
-  @Override
-  protected double getDefaultSuccessResponseThreshold() {
-    return SUCCESSFUL_RESPONSE_THRESHOLD;
+  @Ovelonrridelon
+  protelonctelond doublelon gelontDelonfaultSuccelonssRelonsponselonThrelonshold() {
+    relonturn SUCCelonSSFUL_RelonSPONSelon_THRelonSHOLD;
   }
 
-  @Override
-  protected SearchTimerStats getMergedResponseTimer() {
-    return RECENCY_TIMER;
+  @Ovelonrridelon
+  protelonctelond SelonarchTimelonrStats gelontMelonrgelondRelonsponselonTimelonr() {
+    relonturn RelonCelonNCY_TIMelonR;
   }
 
-  @Override
-  protected EarlybirdResponse internalMerge(EarlybirdResponse mergedResponse) {
-    // The merged maxSearchedStatusId and minSearchedStatusId
-    long maxId = findMaxFullySearchedStatusID();
-    long minId = findMinFullySearchedStatusID();
+  @Ovelonrridelon
+  protelonctelond elonarlybirdRelonsponselon intelonrnalMelonrgelon(elonarlybirdRelonsponselon melonrgelondRelonsponselon) {
+    // Thelon melonrgelond maxSelonarchelondStatusId and minSelonarchelondStatusId
+    long maxId = findMaxFullySelonarchelondStatusID();
+    long minId = findMinFullySelonarchelondStatusID();
 
-    RecencyMergeCollector collector = new RecencyMergeCollector(responses.size());
-    int totalResultSize = addResponsesToCollector(collector);
-    ThriftSearchResults searchResults = collector.getAllSearchResults();
+    ReloncelonncyMelonrgelonCollelonctor collelonctor = nelonw ReloncelonncyMelonrgelonCollelonctor(relonsponselons.sizelon());
+    int totalRelonsultSizelon = addRelonsponselonsToCollelonctor(collelonctor);
+    ThriftSelonarchRelonsults selonarchRelonsults = collelonctor.gelontAllSelonarchRelonsults();
 
-    TrimStats trimStats = trimResults(searchResults, minId, maxId);
-    setMergedMaxSearchedStatusId(searchResults, maxId);
-    setMergedMinSearchedStatusId(
-        searchResults, minId, trimStats.getResultsTruncatedFromTailCount() > 0);
+    TrimStats trimStats = trimRelonsults(selonarchRelonsults, minId, maxId);
+    selontMelonrgelondMaxSelonarchelondStatusId(selonarchRelonsults, maxId);
+    selontMelonrgelondMinSelonarchelondStatusId(
+        selonarchRelonsults, minId, trimStats.gelontRelonsultsTruncatelondFromTailCount() > 0);
 
-    mergedResponse.setSearchResults(searchResults);
+    melonrgelondRelonsponselon.selontSelonarchRelonsults(selonarchRelonsults);
 
-    // Override some components of the response as appropriate to real-time.
-    searchResults.setHitCounts(aggregateHitCountMap());
-    if (accumulatedResponses.isMergingPartitionsWithinATier()
-        && clearEarlyTerminationIfReachingTierBottom(mergedResponse)) {
-      RECENCY_CLEARED_EARLY_TERMINATION_COUNT.increment();
-    } else {
-      setEarlyTerminationForTrimmedResults(mergedResponse, trimStats);
+    // Ovelonrridelon somelon componelonnts of thelon relonsponselon as appropriatelon to relonal-timelon.
+    selonarchRelonsults.selontHitCounts(aggrelongatelonHitCountMap());
+    if (accumulatelondRelonsponselons.isMelonrgingPartitionsWithinATielonr()
+        && clelonarelonarlyTelonrminationIfRelonachingTielonrBottom(melonrgelondRelonsponselon)) {
+      RelonCelonNCY_CLelonARelonD_elonARLY_TelonRMINATION_COUNT.increlonmelonnt();
+    } elonlselon {
+      selontelonarlyTelonrminationForTrimmelondRelonsults(melonrgelondRelonsponselon, trimStats);
     }
 
-    responseMessageBuilder.debugVerbose("Hits: %s %s", totalResultSize, trimStats);
-    responseMessageBuilder.debugVerbose(
-        "Hash Partitioned Earlybird call completed successfully: %s", mergedResponse);
+    relonsponselonMelonssagelonBuildelonr.delonbugVelonrboselon("Hits: %s %s", totalRelonsultSizelon, trimStats);
+    relonsponselonMelonssagelonBuildelonr.delonbugVelonrboselon(
+        "Hash Partitionelond elonarlybird call complelontelond succelonssfully: %s", melonrgelondRelonsponselon);
 
-    featureSchemaMerger.collectAndSetFeatureSchemaInResponse(
-        searchResults,
-        requestContext,
-        "merger_recency_tier",
-        accumulatedResponses.getSuccessResponses());
+    felonaturelonSchelonmaMelonrgelonr.collelonctAndSelontFelonaturelonSchelonmaInRelonsponselon(
+        selonarchRelonsults,
+        relonquelonstContelonxt,
+        "melonrgelonr_reloncelonncy_tielonr",
+        accumulatelondRelonsponselons.gelontSuccelonssRelonsponselons());
 
-    return mergedResponse;
+    relonturn melonrgelondRelonsponselon;
   }
 
   /**
-   * When we reached tier bottom, pagination can stop working even though we haven't got
-   * all results. e.g.
-   * Results from partition 1:  [101 91 81], minSearchedStatusId is 81
-   * Results from Partition 2:  [102 92],  minSearchedStatusId is 92, not early terminated.
+   * Whelonn welon relonachelond tielonr bottom, pagination can stop working elonvelonn though welon havelonn't got
+   * all relonsults. elon.g.
+   * Relonsults from partition 1:  [101 91 81], minSelonarchelondStatusId is 81
+   * Relonsults from Partition 2:  [102 92],  minSelonarchelondStatusId is 92, not elonarly telonrminatelond.
    *
-   * After merge, we get [102, 101, 92], with minResultId == 92. Since results from
-   * partition 2 is not early terminated, 92 is the tier bottom here. Since results are
-   * filtered, early termination for merged result is set to true, so blender will call again,
-   * with maxDocId == 91. This time we get result:
-   * Results from partition 1: [91 81], minSearchedStatusId is 81
-   * Results from partition 2: [], minSearchedStatusId is still 92
-   * After merge we get [] and minSearchedStatusId is still 92. No progress can be made on
-   * pagination and clients get stuck.
+   * Aftelonr melonrgelon, welon gelont [102, 101, 92], with minRelonsultId == 92. Sincelon relonsults from
+   * partition 2 is not elonarly telonrminatelond, 92 is thelon tielonr bottom helonrelon. Sincelon relonsults arelon
+   * filtelonrelond, elonarly telonrmination for melonrgelond relonsult is selont to truelon, so blelonndelonr will call again,
+   * with maxDocId == 91. This timelon welon gelont relonsult:
+   * Relonsults from partition 1: [91 81], minSelonarchelondStatusId is 81
+   * Relonsults from partition 2: [], minSelonarchelondStatusId is still 92
+   * Aftelonr melonrgelon welon gelont [] and minSelonarchelondStatusId is still 92. No progrelonss can belon madelon on
+   * pagination and clielonnts gelont stuck.
    *
-   * So in this case, we clear the early termination flag to tell blender there is no more
-   * result in this tier. Tweets below tier bottom will be missed, but that also happens
-   * without this step, as the next pagination call will return empty results anyway.
-   * So even if there is NOT overlap between tiers, this is still better.
+   * So in this caselon, welon clelonar thelon elonarly telonrmination flag to telonll blelonndelonr thelonrelon is no morelon
+   * relonsult in this tielonr. Twelonelonts belonlow tielonr bottom will belon misselond, but that also happelonns
+   * without this stelonp, as thelon nelonxt pagination call will relonturn elonmpty relonsults anyway.
+   * So elonvelonn if thelonrelon is NOT ovelonrlap belontwelonelonn tielonrs, this is still belonttelonr.
    *
-   * Return true if early termination is cleared due to this, otherwise return false.
-   * To be safe, we do nothing here to keep existing behavior and only override it in
-   * StrictRecencyResponseMerger.
+   * Relonturn truelon if elonarly telonrmination is clelonarelond duelon to this, othelonrwiselon relonturn falselon.
+   * To belon safelon, welon do nothing helonrelon to kelonelonp elonxisting belonhavior and only ovelonrridelon it in
+   * StrictReloncelonncyRelonsponselonMelonrgelonr.
    */
-  protected boolean clearEarlyTerminationIfReachingTierBottom(EarlybirdResponse mergedResponse) {
-    return false;
+  protelonctelond boolelonan clelonarelonarlyTelonrminationIfRelonachingTielonrBottom(elonarlybirdRelonsponselon melonrgelondRelonsponselon) {
+    relonturn falselon;
   }
 
   /**
-   * Determines if the merged response should be early-terminated when it has exactly as many
-   * trimmed results as requested, as is not early-terminated because of other reasons.
+   * Delontelonrminelons if thelon melonrgelond relonsponselon should belon elonarly-telonrminatelond whelonn it has elonxactly as many
+   * trimmelond relonsults as relonquelonstelond, as is not elonarly-telonrminatelond beloncauselon of othelonr relonasons.
    */
-  protected boolean shouldEarlyTerminateWhenEnoughTrimmedResults() {
-    return true;
+  protelonctelond boolelonan shouldelonarlyTelonrminatelonWhelonnelonnoughTrimmelondRelonsults() {
+    relonturn truelon;
   }
 
   /**
-   * If the end results were trimmed in any way, reflect that in the response as a query that was
-   * early terminated. A response can be either (1) truncated because we merged more results than
-   * what was asked for with numResults, or (2) we filtered results that were smaller than the
-   * merged minSearchedStatusId.
+   * If thelon elonnd relonsults welonrelon trimmelond in any way, relonflelonct that in thelon relonsponselon as a quelonry that was
+   * elonarly telonrminatelond. A relonsponselon can belon elonithelonr (1) truncatelond beloncauselon welon melonrgelond morelon relonsults than
+   * what was askelond for with numRelonsults, or (2) welon filtelonrelond relonsults that welonrelon smallelonr than thelon
+   * melonrgelond minSelonarchelondStatusId.
    *
-   * @param mergedResponse the merged response.
-   * @param trimStats trim stats for this merge.
+   * @param melonrgelondRelonsponselon thelon melonrgelond relonsponselon.
+   * @param trimStats trim stats for this melonrgelon.
    */
-  private void setEarlyTerminationForTrimmedResults(
-      EarlybirdResponse mergedResponse,
+  privatelon void selontelonarlyTelonrminationForTrimmelondRelonsults(
+      elonarlybirdRelonsponselon melonrgelondRelonsponselon,
       TrimStats trimStats) {
 
-    responseMessageBuilder.debugVerbose("Checking for merge trimming, trimStats %s", trimStats);
+    relonsponselonMelonssagelonBuildelonr.delonbugVelonrboselon("Cheloncking for melonrgelon trimming, trimStats %s", trimStats);
 
-    EarlyTerminationTrimmingStats stats = getEarlyTerminationTrimmingStats();
+    elonarlyTelonrminationTrimmingStats stats = gelontelonarlyTelonrminationTrimmingStats();
 
-    EarlyTerminationInfo earlyTerminationInfo = mergedResponse.getEarlyTerminationInfo();
-    Preconditions.checkNotNull(earlyTerminationInfo);
+    elonarlyTelonrminationInfo elonarlyTelonrminationInfo = melonrgelondRelonsponselon.gelontelonarlyTelonrminationInfo();
+    Prelonconditions.chelonckNotNull(elonarlyTelonrminationInfo);
 
-    if (!earlyTerminationInfo.isEarlyTerminated()) {
-      if (trimStats.getMinIdFilterCount() > 0 || trimStats.getResultsTruncatedFromTailCount() > 0) {
-        responseMessageBuilder.debugVerbose("Setting early termination, trimStats: %s, results: %s",
-            trimStats, mergedResponse);
+    if (!elonarlyTelonrminationInfo.iselonarlyTelonrminatelond()) {
+      if (trimStats.gelontMinIdFiltelonrCount() > 0 || trimStats.gelontRelonsultsTruncatelondFromTailCount() > 0) {
+        relonsponselonMelonssagelonBuildelonr.delonbugVelonrboselon("Selontting elonarly telonrmination, trimStats: %s, relonsults: %s",
+            trimStats, melonrgelondRelonsponselon);
 
-        earlyTerminationInfo.setEarlyTerminated(true);
-        addEarlyTerminationReasons(earlyTerminationInfo, trimStats);
+        elonarlyTelonrminationInfo.selontelonarlyTelonrminatelond(truelon);
+        addelonarlyTelonrminationRelonasons(elonarlyTelonrminationInfo, trimStats);
 
-        if (trimStats.getMinIdFilterCount() > 0
-            && trimStats.getResultsTruncatedFromTailCount() > 0) {
-          stats.getCounterFor(FILTERED_AND_TRUNCATED).increment();
-        } else if (trimStats.getMinIdFilterCount() > 0) {
-          stats.getCounterFor(FILTERED).increment();
-        } else if (trimStats.getResultsTruncatedFromTailCount() > 0) {
-          stats.getCounterFor(TRUNCATED).increment();
-        } else {
-          Preconditions.checkState(false, "Invalid TrimStats: %s", trimStats);
+        if (trimStats.gelontMinIdFiltelonrCount() > 0
+            && trimStats.gelontRelonsultsTruncatelondFromTailCount() > 0) {
+          stats.gelontCountelonrFor(FILTelonRelonD_AND_TRUNCATelonD).increlonmelonnt();
+        } elonlselon if (trimStats.gelontMinIdFiltelonrCount() > 0) {
+          stats.gelontCountelonrFor(FILTelonRelonD).increlonmelonnt();
+        } elonlselon if (trimStats.gelontRelonsultsTruncatelondFromTailCount() > 0) {
+          stats.gelontCountelonrFor(TRUNCATelonD).increlonmelonnt();
+        } elonlselon {
+          Prelonconditions.chelonckStatelon(falselon, "Invalid TrimStats: %s", trimStats);
         }
-      } else if ((computeNumResultsToKeep() == mergedResponse.getSearchResults().getResultsSize())
-                 && shouldEarlyTerminateWhenEnoughTrimmedResults()) {
-        earlyTerminationInfo.setEarlyTerminated(true);
-        earlyTerminationInfo.addToMergedEarlyTerminationReasons(
-            TERMINATED_COLLECTED_ENOUGH_RESULTS);
-        stats.getCounterFor(TERMINATED_GOT_EXACT_NUM_RESULTS).increment();
-      } else {
-        stats.getCounterFor(NOT_EARLY_TERMINATED).increment();
+      } elonlselon if ((computelonNumRelonsultsToKelonelonp() == melonrgelondRelonsponselon.gelontSelonarchRelonsults().gelontRelonsultsSizelon())
+                 && shouldelonarlyTelonrminatelonWhelonnelonnoughTrimmelondRelonsults()) {
+        elonarlyTelonrminationInfo.selontelonarlyTelonrminatelond(truelon);
+        elonarlyTelonrminationInfo.addToMelonrgelondelonarlyTelonrminationRelonasons(
+            TelonRMINATelonD_COLLelonCTelonD_elonNOUGH_RelonSULTS);
+        stats.gelontCountelonrFor(TelonRMINATelonD_GOT_elonXACT_NUM_RelonSULTS).increlonmelonnt();
+      } elonlselon {
+        stats.gelontCountelonrFor(NOT_elonARLY_TelonRMINATelonD).increlonmelonnt();
       }
-    } else {
-      stats.getCounterFor(ALREADY_EARLY_TERMINATED).increment();
-      // Even if the results were already marked as early terminated, we can add additional
-      // reasons for debugging (if the merged results were filtered or truncated).
-      addEarlyTerminationReasons(earlyTerminationInfo, trimStats);
+    } elonlselon {
+      stats.gelontCountelonrFor(ALRelonADY_elonARLY_TelonRMINATelonD).increlonmelonnt();
+      // elonvelonn if thelon relonsults welonrelon alrelonady markelond as elonarly telonrminatelond, welon can add additional
+      // relonasons for delonbugging (if thelon melonrgelond relonsults welonrelon filtelonrelond or truncatelond).
+      addelonarlyTelonrminationRelonasons(elonarlyTelonrminationInfo, trimStats);
     }
   }
 
-  private void addEarlyTerminationReasons(
-      EarlyTerminationInfo earlyTerminationInfo,
+  privatelon void addelonarlyTelonrminationRelonasons(
+      elonarlyTelonrminationInfo elonarlyTelonrminationInfo,
       TrimStats trimStats) {
 
-    if (trimStats.getMinIdFilterCount() > 0) {
-      earlyTerminationInfo.addToMergedEarlyTerminationReasons(
-          MERGING_EARLY_TERMINATION_REASON_FILTERED);
+    if (trimStats.gelontMinIdFiltelonrCount() > 0) {
+      elonarlyTelonrminationInfo.addToMelonrgelondelonarlyTelonrminationRelonasons(
+          MelonRGING_elonARLY_TelonRMINATION_RelonASON_FILTelonRelonD);
     }
 
-    if (trimStats.getResultsTruncatedFromTailCount() > 0) {
-      earlyTerminationInfo.addToMergedEarlyTerminationReasons(
-          MERGING_EARLY_TERMINATION_REASON_TRUNCATED);
-    }
-  }
-
-  private EarlyTerminationTrimmingStats getEarlyTerminationTrimmingStats() {
-    if (accumulatedResponses.isMergingPartitionsWithinATier()) {
-      return getEarlyTerminationTrimmingStatsForPartitions();
-    } else {
-      return getEarlyTerminationTrimmingStatsForTiers();
+    if (trimStats.gelontRelonsultsTruncatelondFromTailCount() > 0) {
+      elonarlyTelonrminationInfo.addToMelonrgelondelonarlyTelonrminationRelonasons(
+          MelonRGING_elonARLY_TelonRMINATION_RelonASON_TRUNCATelonD);
     }
   }
 
-  protected EarlyTerminationTrimmingStats getEarlyTerminationTrimmingStatsForPartitions() {
-    return PARTITION_MERGING_EARLY_TERMINATION_TRIMMING_STATS;
-  }
-
-  protected EarlyTerminationTrimmingStats getEarlyTerminationTrimmingStatsForTiers() {
-    return TIER_MERGING_EARLY_TERMINATION_TRIMMING_STATS;
-  }
-
-  /**
-   * If we get enough results, no need to go on.
-   * If one of the partitions early terminated, we can't go on or else there could be a gap.
-   */
-  @Override
-  public boolean shouldEarlyTerminateTierMerge(int totalResultsFromSuccessfulShards,
-                                                  boolean foundEarlyTermination) {
-
-
-    int resultsRequested = computeNumResultsToKeep();
-
-    boolean shouldEarlyTerminate = foundEarlyTermination
-        || totalResultsFromSuccessfulShards >= resultsRequested;
-
-    if (shouldEarlyTerminate && totalResultsFromSuccessfulShards < resultsRequested) {
-      RECENCY_TIER_MERGE_EARLY_TERMINATED_WITH_NOT_ENOUGH_RESULTS.increment();
+  privatelon elonarlyTelonrminationTrimmingStats gelontelonarlyTelonrminationTrimmingStats() {
+    if (accumulatelondRelonsponselons.isMelonrgingPartitionsWithinATielonr()) {
+      relonturn gelontelonarlyTelonrminationTrimmingStatsForPartitions();
+    } elonlselon {
+      relonturn gelontelonarlyTelonrminationTrimmingStatsForTielonrs();
     }
+  }
 
-    return shouldEarlyTerminate;
+  protelonctelond elonarlyTelonrminationTrimmingStats gelontelonarlyTelonrminationTrimmingStatsForPartitions() {
+    relonturn PARTITION_MelonRGING_elonARLY_TelonRMINATION_TRIMMING_STATS;
+  }
+
+  protelonctelond elonarlyTelonrminationTrimmingStats gelontelonarlyTelonrminationTrimmingStatsForTielonrs() {
+    relonturn TIelonR_MelonRGING_elonARLY_TelonRMINATION_TRIMMING_STATS;
   }
 
   /**
-   * Find the min status id that has been _completely_ searched across all partitions. The
-   * largest min status id across all partitions.
-   *
-   * @return the min searched status id found
+   * If welon gelont elonnough relonsults, no nelonelond to go on.
+   * If onelon of thelon partitions elonarly telonrminatelond, welon can't go on or elonlselon thelonrelon could belon a gap.
    */
-  protected long findMinFullySearchedStatusID() {
-    List<Long> minIds = accumulatedResponses.getMinIds();
-    if (minIds.isEmpty()) {
-      return Long.MIN_VALUE;
+  @Ovelonrridelon
+  public boolelonan shouldelonarlyTelonrminatelonTielonrMelonrgelon(int totalRelonsultsFromSuccelonssfulShards,
+                                                  boolelonan foundelonarlyTelonrmination) {
+
+
+    int relonsultsRelonquelonstelond = computelonNumRelonsultsToKelonelonp();
+
+    boolelonan shouldelonarlyTelonrminatelon = foundelonarlyTelonrmination
+        || totalRelonsultsFromSuccelonssfulShards >= relonsultsRelonquelonstelond;
+
+    if (shouldelonarlyTelonrminatelon && totalRelonsultsFromSuccelonssfulShards < relonsultsRelonquelonstelond) {
+      RelonCelonNCY_TIelonR_MelonRGelon_elonARLY_TelonRMINATelonD_WITH_NOT_elonNOUGH_RelonSULTS.increlonmelonnt();
     }
 
-    if (accumulatedResponses.isMergingPartitionsWithinATier()) {
-      // When merging partitions, the min ID should be the largest among the min IDs.
-      return Collections.max(accumulatedResponses.getMinIds());
-    } else {
-      // When merging tiers, the min ID should be the smallest among the min IDs.
-      return Collections.min(accumulatedResponses.getMinIds());
+    relonturn shouldelonarlyTelonrminatelon;
+  }
+
+  /**
+   * Find thelon min status id that has belonelonn _complelontelonly_ selonarchelond across all partitions. Thelon
+   * largelonst min status id across all partitions.
+   *
+   * @relonturn thelon min selonarchelond status id found
+   */
+  protelonctelond long findMinFullySelonarchelondStatusID() {
+    List<Long> minIds = accumulatelondRelonsponselons.gelontMinIds();
+    if (minIds.iselonmpty()) {
+      relonturn Long.MIN_VALUelon;
+    }
+
+    if (accumulatelondRelonsponselons.isMelonrgingPartitionsWithinATielonr()) {
+      // Whelonn melonrging partitions, thelon min ID should belon thelon largelonst among thelon min IDs.
+      relonturn Collelonctions.max(accumulatelondRelonsponselons.gelontMinIds());
+    } elonlselon {
+      // Whelonn melonrging tielonrs, thelon min ID should belon thelon smallelonst among thelon min IDs.
+      relonturn Collelonctions.min(accumulatelondRelonsponselons.gelontMinIds());
     }
   }
 
   /**
-   * Find the max status id that has been _completely_ searched across all partitions. The
-   * smallest max status id across all partitions.
+   * Find thelon max status id that has belonelonn _complelontelonly_ selonarchelond across all partitions. Thelon
+   * smallelonst max status id across all partitions.
    *
-   * This is where we reconcile replication lag by selecting the oldest maxid from the
-   * partitions searched.
+   * This is whelonrelon welon relonconcilelon relonplication lag by selonleloncting thelon oldelonst maxid from thelon
+   * partitions selonarchelond.
    *
-   * @return the max searched status id found
+   * @relonturn thelon max selonarchelond status id found
    */
-   protected long findMaxFullySearchedStatusID() {
-    List<Long> maxIDs = accumulatedResponses.getMaxIds();
-    if (maxIDs.isEmpty()) {
-      return Long.MAX_VALUE;
+   protelonctelond long findMaxFullySelonarchelondStatusID() {
+    List<Long> maxIDs = accumulatelondRelonsponselons.gelontMaxIds();
+    if (maxIDs.iselonmpty()) {
+      relonturn Long.MAX_VALUelon;
     }
-    Collections.sort(maxIDs);
+    Collelonctions.sort(maxIDs);
 
-    final long newest = maxIDs.get(maxIDs.size() - 1);
-    final long newestTimestamp = SnowflakeIdParser.getTimestampFromTweetId(newest);
+    final long nelonwelonst = maxIDs.gelont(maxIDs.sizelon() - 1);
+    final long nelonwelonstTimelonstamp = SnowflakelonIdParselonr.gelontTimelonstampFromTwelonelontId(nelonwelonst);
 
-    for (int i = 0; i < maxIDs.size(); i++) {
-      long oldest = maxIDs.get(i);
-      long oldestTimestamp = SnowflakeIdParser.getTimestampFromTweetId(oldest);
-      long deltaMs = newestTimestamp - oldestTimestamp;
+    for (int i = 0; i < maxIDs.sizelon(); i++) {
+      long oldelonst = maxIDs.gelont(i);
+      long oldelonstTimelonstamp = SnowflakelonIdParselonr.gelontTimelonstampFromTwelonelontId(oldelonst);
+      long delonltaMs = nelonwelonstTimelonstamp - oldelonstTimelonstamp;
 
       if (i == 0) {
-        LOG.debug("Max delta is {}", deltaMs);
+        LOG.delonbug("Max delonlta is {}", delonltaMs);
       }
 
-      if (deltaMs < ALLOWED_REPLICATION_LAG_MS) {
+      if (delonltaMs < ALLOWelonD_RelonPLICATION_LAG_MS) {
         if (i != 0) {
-          LOG.debug("{} partition replicas lagging more than {} ms", i, ALLOWED_REPLICATION_LAG_MS);
+          LOG.delonbug("{} partition relonplicas lagging morelon than {} ms", i, ALLOWelonD_RelonPLICATION_LAG_MS);
         }
-        return oldest;
+        relonturn oldelonst;
       }
     }
 
-    // Can't get here - by this point oldest == newest, and delta is 0.
-    return newest;
+    // Can't gelont helonrelon - by this point oldelonst == nelonwelonst, and delonlta is 0.
+    relonturn nelonwelonst;
   }
 
   /**
-   * Trim the ThriftSearchResults if we have enough results, to return the first
-   * 'computeNumResultsToKeep()' number of results.
+   * Trim thelon ThriftSelonarchRelonsults if welon havelon elonnough relonsults, to relonturn thelon first
+   * 'computelonNumRelonsultsToKelonelonp()' numbelonr of relonsults.
    *
-   * If we don't have enough results after trimming, this function will first try to back fill
-   * older results, then newer results
+   * If welon don't havelon elonnough relonsults aftelonr trimming, this function will first try to back fill
+   * oldelonr relonsults, thelonn nelonwelonr relonsults
    *
-   * @param searchResults ThriftSearchResults that hold the to be trimmed List<ThriftSearchResult>
-   * @return TrimStats containing statistics about how many results being removed
+   * @param selonarchRelonsults ThriftSelonarchRelonsults that hold thelon to belon trimmelond List<ThriftSelonarchRelonsult>
+   * @relonturn TrimStats containing statistics about how many relonsults beloning relonmovelond
    */
-  protected TrimStats trimResults(
-      ThriftSearchResults searchResults,
-      long mergedMin,
-      long mergedMax) {
-    if (!searchResults.isSetResults() || searchResults.getResultsSize() == 0) {
-      // no results, no trimming needed
-      return TrimStats.EMPTY_STATS;
+  protelonctelond TrimStats trimRelonsults(
+      ThriftSelonarchRelonsults selonarchRelonsults,
+      long melonrgelondMin,
+      long melonrgelondMax) {
+    if (!selonarchRelonsults.isSelontRelonsults() || selonarchRelonsults.gelontRelonsultsSizelon() == 0) {
+      // no relonsults, no trimming nelonelondelond
+      relonturn TrimStats.elonMPTY_STATS;
     }
 
-    if (requestContext.getRequest().getSearchQuery().isSetSearchStatusIds()) {
-      // Not a normal search, no trimming needed
-      return TrimStats.EMPTY_STATS;
+    if (relonquelonstContelonxt.gelontRelonquelonst().gelontSelonarchQuelonry().isSelontSelonarchStatusIds()) {
+      // Not a normal selonarch, no trimming nelonelondelond
+      relonturn TrimStats.elonMPTY_STATS;
     }
 
-    TrimStats trimStats = new TrimStats();
-    trimExactDups(searchResults, trimStats);
+    TrimStats trimStats = nelonw TrimStats();
+    trimelonxactDups(selonarchRelonsults, trimStats);
 
-    int numResultsRequested = computeNumResultsToKeep();
-    if (shouldSkipTrimmingWhenNotEnoughResults(searchResults, numResultsRequested)) {
+    int numRelonsultsRelonquelonstelond = computelonNumRelonsultsToKelonelonp();
+    if (shouldSkipTrimmingWhelonnNotelonnoughRelonsults(selonarchRelonsults, numRelonsultsRelonquelonstelond)) {
       //////////////////////////////////////////////////////////
-      // We don't have enough results, let's not do trimming
+      // Welon don't havelon elonnough relonsults, lelont's not do trimming
       //////////////////////////////////////////////////////////
-      return trimStats;
+      relonturn trimStats;
     }
 
-    if (accumulatedResponses.isMergingPartitionsWithinATier()) {
-      trimResultsBasedSearchedRange(
-          searchResults, trimStats, numResultsRequested, mergedMin, mergedMax);
+    if (accumulatelondRelonsponselons.isMelonrgingPartitionsWithinATielonr()) {
+      trimRelonsultsBaselondSelonarchelondRangelon(
+          selonarchRelonsults, trimStats, numRelonsultsRelonquelonstelond, melonrgelondMin, melonrgelondMax);
     }
 
-    // Respect "computeNumResultsToKeep()" here, only keep "computeNumResultsToKeep()" results.
-    truncateResults(searchResults, trimStats);
+    // Relonspelonct "computelonNumRelonsultsToKelonelonp()" helonrelon, only kelonelonp "computelonNumRelonsultsToKelonelonp()" relonsults.
+    truncatelonRelonsults(selonarchRelonsults, trimStats);
 
-    return trimStats;
+    relonturn trimStats;
   }
 
   /**
-   * When there's not enough results, we don't remove results based on the searched range.
-   * This has a tradeoff:  with this, we don't reduce our recall when we already don't have enough
-   * results. However, with this, we can lose results while paginating because we return results
-   * outside of the valid searched range.
+   * Whelonn thelonrelon's not elonnough relonsults, welon don't relonmovelon relonsults baselond on thelon selonarchelond rangelon.
+   * This has a tradelonoff:  with this, welon don't relonducelon our reloncall whelonn welon alrelonady don't havelon elonnough
+   * relonsults. Howelonvelonr, with this, welon can loselon relonsults whilelon paginating beloncauselon welon relonturn relonsults
+   * outsidelon of thelon valid selonarchelond rangelon.
    */
-  protected boolean shouldSkipTrimmingWhenNotEnoughResults(
-      ThriftSearchResults searchResults, int numResultsRequested) {
-    return searchResults.getResultsSize() <= numResultsRequested;
+  protelonctelond boolelonan shouldSkipTrimmingWhelonnNotelonnoughRelonsults(
+      ThriftSelonarchRelonsults selonarchRelonsults, int numRelonsultsRelonquelonstelond) {
+    relonturn selonarchRelonsults.gelontRelonsultsSizelon() <= numRelonsultsRelonquelonstelond;
   }
 
 
   /**
-   * Trim results based on search range. The search range [x, y] is determined by:
-   *   x is the maximun of the minimun search IDs;
-   *   y is the minimun of the maximum search IDs.
+   * Trim relonsults baselond on selonarch rangelon. Thelon selonarch rangelon [x, y] is delontelonrminelond by:
+   *   x is thelon maximun of thelon minimun selonarch IDs;
+   *   y is thelon minimun of thelon maximum selonarch IDs.
    *
-   * Ids out side of this range are removed.
-   * If we do not get enough results after the removal, we add IDs back until we get enough results.
-   * We first add IDs back from the older side back. If there's still not enough results,
-   * we start adding IDs from the newer side back.
+   * Ids out sidelon of this rangelon arelon relonmovelond.
+   * If welon do not gelont elonnough relonsults aftelonr thelon relonmoval, welon add IDs back until welon gelont elonnough relonsults.
+   * Welon first add IDs back from thelon oldelonr sidelon back. If thelonrelon's still not elonnough relonsults,
+   * welon start adding IDs from thelon nelonwelonr sidelon back.
    */
-  private void trimResultsBasedSearchedRange(ThriftSearchResults searchResults,
+  privatelon void trimRelonsultsBaselondSelonarchelondRangelon(ThriftSelonarchRelonsults selonarchRelonsults,
                                              TrimStats trimStats,
-                                             int numResultsRequested,
-                                             long mergedMin,
-                                             long mergedMax) {
+                                             int numRelonsultsRelonquelonstelond,
+                                             long melonrgelondMin,
+                                             long melonrgelondMax) {
     ///////////////////////////////////////////////////////////////////
-    // we have more results than requested, let's do some trimming
+    // welon havelon morelon relonsults than relonquelonstelond, lelont's do somelon trimming
     ///////////////////////////////////////////////////////////////////
 
-    // Save the original results before trimming
-    List<ThriftSearchResult> originalResults = searchResults.getResults();
+    // Savelon thelon original relonsults belonforelon trimming
+    List<ThriftSelonarchRelonsult> originalRelonsults = selonarchRelonsults.gelontRelonsults();
 
-    filterResultsByMergedMinMaxIds(searchResults, mergedMax, mergedMin, trimStats);
+    filtelonrRelonsultsByMelonrgelondMinMaxIds(selonarchRelonsults, melonrgelondMax, melonrgelondMin, trimStats);
 
-    // This does happen. It is hard to say what we should do here so we just return the original
-    // result here.
-    if (searchResults.getResultsSize() == 0) {
-      RECENCY_ZERO_RESULT_COUNT_AFTER_FILTERING_MAX_MIN_IDS.increment();
-      searchResults.setResults(originalResults);
+    // This doelons happelonn. It is hard to say what welon should do helonrelon so welon just relonturn thelon original
+    // relonsult helonrelon.
+    if (selonarchRelonsults.gelontRelonsultsSizelon() == 0) {
+      RelonCelonNCY_ZelonRO_RelonSULT_COUNT_AFTelonR_FILTelonRING_MAX_MIN_IDS.increlonmelonnt();
+      selonarchRelonsults.selontRelonsults(originalRelonsults);
 
-      // Clean up min/mix filtered count, since we're bringing back whatever we just filtered.
-      trimStats.clearMaxIdFilterCount();
-      trimStats.clearMinIdFilterCount();
+      // Clelonan up min/mix filtelonrelond count, sincelon welon'relon bringing back whatelonvelonr welon just filtelonrelond.
+      trimStats.clelonarMaxIdFiltelonrCount();
+      trimStats.clelonarMinIdFiltelonrCount();
 
-      if (LOG.isDebugEnabled() || responseMessageBuilder.isDebugMode()) {
-        String errMsg = "No trimming is done as filtered results is empty. "
-            + "maxId=" + mergedMax + ",minId=" + mergedMin;
-        LOG.debug(errMsg);
-        responseMessageBuilder.append(errMsg + "\n");
+      if (LOG.isDelonbugelonnablelond() || relonsponselonMelonssagelonBuildelonr.isDelonbugModelon()) {
+        String elonrrMsg = "No trimming is donelon as filtelonrelond relonsults is elonmpty. "
+            + "maxId=" + melonrgelondMax + ",minId=" + melonrgelondMin;
+        LOG.delonbug(elonrrMsg);
+        relonsponselonMelonssagelonBuildelonr.appelonnd(elonrrMsg + "\n");
       }
-    } else {
-      // oops! we're trimming too many results. Let's put some back
-      if (searchResults.getResultsSize() < numResultsRequested) {
-        RECENCY_TRIMMED_TOO_MANY_RESULTS_COUNT.increment();
+    } elonlselon {
+      // oops! welon'relon trimming too many relonsults. Lelont's put somelon back
+      if (selonarchRelonsults.gelontRelonsultsSizelon() < numRelonsultsRelonquelonstelond) {
+        RelonCelonNCY_TRIMMelonD_TOO_MANY_RelonSULTS_COUNT.increlonmelonnt();
 
-        List<ThriftSearchResult> trimmedResults = searchResults.getResults();
-        long firstTrimmedResultId = trimmedResults.get(0).getId();
-        long lastTrimmedResultId = trimmedResults.get(trimmedResults.size() - 1).getId();
+        List<ThriftSelonarchRelonsult> trimmelondRelonsults = selonarchRelonsults.gelontRelonsults();
+        long firstTrimmelondRelonsultId = trimmelondRelonsults.gelont(0).gelontId();
+        long lastTrimmelondRelonsultId = trimmelondRelonsults.gelont(trimmelondRelonsults.sizelon() - 1).gelontId();
 
-        // First, try to back fill with older results
+        // First, try to back fill with oldelonr relonsults
         int i = 0;
-        for (; i < originalResults.size(); ++i) {
-          ThriftSearchResult result = originalResults.get(i);
-          if (result.getId() < lastTrimmedResultId) {
-            trimmedResults.add(result);
-            trimStats.decreaseMinIdFilterCount();
-            if (trimmedResults.size() >= numResultsRequested) {
-              break;
+        for (; i < originalRelonsults.sizelon(); ++i) {
+          ThriftSelonarchRelonsult relonsult = originalRelonsults.gelont(i);
+          if (relonsult.gelontId() < lastTrimmelondRelonsultId) {
+            trimmelondRelonsults.add(relonsult);
+            trimStats.deloncrelonaselonMinIdFiltelonrCount();
+            if (trimmelondRelonsults.sizelon() >= numRelonsultsRelonquelonstelond) {
+              brelonak;
             }
           }
         }
 
-        // still not enough results? back fill with newer results
-        // find the oldest of the newer results
-        if (trimmedResults.size() < numResultsRequested) {
-          // still not enough results? back fill with newer results
-          // find the oldest of the newer results
-          for (i = originalResults.size() - 1; i >= 0; --i) {
-            ThriftSearchResult result = originalResults.get(i);
-            if (result.getId() > firstTrimmedResultId) {
-              trimmedResults.add(result);
-              trimStats.decreaseMaxIdFilterCount();
-              if (trimmedResults.size() >= numResultsRequested) {
-                break;
+        // still not elonnough relonsults? back fill with nelonwelonr relonsults
+        // find thelon oldelonst of thelon nelonwelonr relonsults
+        if (trimmelondRelonsults.sizelon() < numRelonsultsRelonquelonstelond) {
+          // still not elonnough relonsults? back fill with nelonwelonr relonsults
+          // find thelon oldelonst of thelon nelonwelonr relonsults
+          for (i = originalRelonsults.sizelon() - 1; i >= 0; --i) {
+            ThriftSelonarchRelonsult relonsult = originalRelonsults.gelont(i);
+            if (relonsult.gelontId() > firstTrimmelondRelonsultId) {
+              trimmelondRelonsults.add(relonsult);
+              trimStats.deloncrelonaselonMaxIdFiltelonrCount();
+              if (trimmelondRelonsults.sizelon() >= numRelonsultsRelonquelonstelond) {
+                brelonak;
               }
             }
           }
 
-          // newer results were added to the back of the list, re-sort
-          Collections.sort(trimmedResults, ResultComparators.ID_COMPARATOR);
+          // nelonwelonr relonsults welonrelon addelond to thelon back of thelon list, relon-sort
+          Collelonctions.sort(trimmelondRelonsults, RelonsultComparators.ID_COMPARATOR);
         }
       }
     }
   }
 
-  protected void setMergedMinSearchedStatusId(
-      ThriftSearchResults searchResults,
-      long currentMergedMin,
-      boolean resultsWereTrimmed) {
-    if (accumulatedResponses.getMinIds().isEmpty()) {
-      return;
+  protelonctelond void selontMelonrgelondMinSelonarchelondStatusId(
+      ThriftSelonarchRelonsults selonarchRelonsults,
+      long currelonntMelonrgelondMin,
+      boolelonan relonsultsWelonrelonTrimmelond) {
+    if (accumulatelondRelonsponselons.gelontMinIds().iselonmpty()) {
+      relonturn;
     }
 
-    long merged;
-    if (searchResults == null
-        || !searchResults.isSetResults()
-        || searchResults.getResultsSize() == 0) {
-      merged = currentMergedMin;
-    } else {
-      List<ThriftSearchResult> results = searchResults.getResults();
-      long firstResultId = results.get(0).getId();
-      long lastResultId = results.get(results.size() - 1).getId();
-      merged = Math.min(firstResultId, lastResultId);
-      if (!resultsWereTrimmed) {
-        // If the results were trimmed, we want to set minSearchedStatusID to the smallest
-        // tweet ID in the response. Otherwise, we want to take the min between that, and
-        // the current minSearchedStatusID.
-        merged = Math.min(merged, currentMergedMin);
+    long melonrgelond;
+    if (selonarchRelonsults == null
+        || !selonarchRelonsults.isSelontRelonsults()
+        || selonarchRelonsults.gelontRelonsultsSizelon() == 0) {
+      melonrgelond = currelonntMelonrgelondMin;
+    } elonlselon {
+      List<ThriftSelonarchRelonsult> relonsults = selonarchRelonsults.gelontRelonsults();
+      long firstRelonsultId = relonsults.gelont(0).gelontId();
+      long lastRelonsultId = relonsults.gelont(relonsults.sizelon() - 1).gelontId();
+      melonrgelond = Math.min(firstRelonsultId, lastRelonsultId);
+      if (!relonsultsWelonrelonTrimmelond) {
+        // If thelon relonsults welonrelon trimmelond, welon want to selont minSelonarchelondStatusID to thelon smallelonst
+        // twelonelont ID in thelon relonsponselon. Othelonrwiselon, welon want to takelon thelon min belontwelonelonn that, and
+        // thelon currelonnt minSelonarchelondStatusID.
+        melonrgelond = Math.min(melonrgelond, currelonntMelonrgelondMin);
       }
     }
 
-    searchResults.setMinSearchedStatusID(merged);
+    selonarchRelonsults.selontMinSelonarchelondStatusID(melonrgelond);
   }
 
-  private void setMergedMaxSearchedStatusId(
-      ThriftSearchResults searchResults,
-      long currentMergedMax) {
-    if (accumulatedResponses.getMaxIds().isEmpty()) {
-      return;
+  privatelon void selontMelonrgelondMaxSelonarchelondStatusId(
+      ThriftSelonarchRelonsults selonarchRelonsults,
+      long currelonntMelonrgelondMax) {
+    if (accumulatelondRelonsponselons.gelontMaxIds().iselonmpty()) {
+      relonturn;
     }
 
-    long merged;
-    if (searchResults == null
-        || !searchResults.isSetResults()
-        || searchResults.getResultsSize() == 0) {
-      merged = currentMergedMax;
-    } else {
-      List<ThriftSearchResult> results = searchResults.getResults();
-      long firstResultId = results.get(0).getId();
-      long lastResultId = results.get(results.size() - 1).getId();
-      long maxResultId = Math.max(firstResultId, lastResultId);
-      merged = Math.max(maxResultId, currentMergedMax);
+    long melonrgelond;
+    if (selonarchRelonsults == null
+        || !selonarchRelonsults.isSelontRelonsults()
+        || selonarchRelonsults.gelontRelonsultsSizelon() == 0) {
+      melonrgelond = currelonntMelonrgelondMax;
+    } elonlselon {
+      List<ThriftSelonarchRelonsult> relonsults = selonarchRelonsults.gelontRelonsults();
+      long firstRelonsultId = relonsults.gelont(0).gelontId();
+      long lastRelonsultId = relonsults.gelont(relonsults.sizelon() - 1).gelontId();
+      long maxRelonsultId = Math.max(firstRelonsultId, lastRelonsultId);
+      melonrgelond = Math.max(maxRelonsultId, currelonntMelonrgelondMax);
     }
 
-    searchResults.setMaxSearchedStatusID(merged);
+    selonarchRelonsults.selontMaxSelonarchelondStatusID(melonrgelond);
   }
 
-  protected static void filterResultsByMergedMinMaxIds(
-      ThriftSearchResults results, long maxStatusId, long minStatusId, TrimStats trimStats) {
-    List<ThriftSearchResult> trimedResults =
-        Lists.newArrayListWithCapacity(results.getResultsSize());
+  protelonctelond static void filtelonrRelonsultsByMelonrgelondMinMaxIds(
+      ThriftSelonarchRelonsults relonsults, long maxStatusId, long minStatusId, TrimStats trimStats) {
+    List<ThriftSelonarchRelonsult> trimelondRelonsults =
+        Lists.nelonwArrayListWithCapacity(relonsults.gelontRelonsultsSizelon());
 
-    for (ThriftSearchResult result : results.getResults()) {
-      long statusId = result.getId();
+    for (ThriftSelonarchRelonsult relonsult : relonsults.gelontRelonsults()) {
+      long statusId = relonsult.gelontId();
 
       if (statusId > maxStatusId) {
-        trimStats.increaseMaxIdFilterCount();
-      } else if (statusId < minStatusId) {
-        trimStats.increaseMinIdFilterCount();
-      } else {
-        trimedResults.add(result);
+        trimStats.increlonaselonMaxIdFiltelonrCount();
+      } elonlselon if (statusId < minStatusId) {
+        trimStats.increlonaselonMinIdFiltelonrCount();
+      } elonlselon {
+        trimelondRelonsults.add(relonsult);
       }
     }
 
-    results.setResults(trimedResults);
+    relonsults.selontRelonsults(trimelondRelonsults);
   }
 }

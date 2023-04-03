@@ -1,7 +1,7 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.promoted
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.promotelond
 
-sealed trait SponsorshipType
+selonalelond trait SponsorshipTypelon
 
-case object DirectSponsorshipType extends SponsorshipType
-case object IndirectSponsorshipType extends SponsorshipType
-case object NoSponsorshipSponsorshipType extends SponsorshipType
+caselon objelonct DirelonctSponsorshipTypelon elonxtelonnds SponsorshipTypelon
+caselon objelonct IndirelonctSponsorshipTypelon elonxtelonnds SponsorshipTypelon
+caselon objelonct NoSponsorshipSponsorshipTypelon elonxtelonnds SponsorshipTypelon

@@ -1,10 +1,10 @@
-package com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.melontadata
 
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
-trait BaseModuleStr[-Query <: PipelineQuery, -Candidate <: UniversalNoun[Any]] {
+trait BaselonModulelonStr[-Quelonry <: PipelonlinelonQuelonry, -Candidatelon <: UnivelonrsalNoun[Any]] {
 
-  def apply(query: Query, candidates: Seq[CandidateWithFeatures[Candidate]]): String
+  delonf apply(quelonry: Quelonry, candidatelons: Selonq[CandidatelonWithFelonaturelons[Candidatelon]]): String
 }

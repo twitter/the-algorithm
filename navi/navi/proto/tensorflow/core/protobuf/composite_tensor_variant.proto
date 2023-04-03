@@ -1,16 +1,16 @@
 syntax = "proto3";
 
-package tensorflow;
+packagelon telonnsorflow;
 
-import "tensorflow/core/protobuf/struct.proto";
+import "telonnsorflow/corelon/protobuf/struct.proto";
 
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+option go_packagelon = "github.com/telonnsorflow/telonnsorflow/telonnsorflow/go/corelon/protobuf/for_corelon_protos_go_proto";
 
-// Metadata for CompositeTensorVariant, used when serializing as Variant.
+// Melontadata for CompositelonTelonnsorVariant, uselond whelonn selonrializing as Variant.
 //
-// We define a new message here (rather than directly using TypeSpecProto for
-// the metadata string) to retain flexibility to change the metadata encoding
-// to support additional features.
-message CompositeTensorVariantMetadata {
-  TypeSpecProto type_spec_proto = 1;
+// Welon delonfinelon a nelonw melonssagelon helonrelon (rathelonr than direlonctly using TypelonSpeloncProto for
+// thelon melontadata string) to relontain flelonxibility to changelon thelon melontadata elonncoding
+// to support additional felonaturelons.
+melonssagelon CompositelonTelonnsorVariantMelontadata {
+  TypelonSpeloncProto typelon_spelonc_proto = 1;
 }

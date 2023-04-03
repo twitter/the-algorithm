@@ -1,184 +1,184 @@
-package com.twitter.search.earlybird.partition;
+packagelon com.twittelonr.selonarch.elonarlybird.partition;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.Duration;
+import java.io.Filelon;
+import java.io.IOelonxcelonption;
+import java.io.OutputStrelonamWritelonr;
+import java.telonxt.DatelonFormat;
+import java.telonxt.Parselonelonxcelonption;
+import java.telonxt.SimplelonDatelonFormat;
+import java.timelon.Duration;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.SortedMap;
-import java.util.TreeMap;
-import java.util.concurrent.TimeoutException;
+import java.util.Datelon;
+import java.util.SortelondMap;
+import java.util.TrelonelonMap;
+import java.util.concurrelonnt.Timelonoutelonxcelonption;
 
-import scala.runtime.BoxedUnit;
+import scala.runtimelon.BoxelondUnit;
 
-import com.google.common.base.Preconditions;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import org.apache.commons.compress.utils.Lists;
-import org.apache.commons.lang.RandomStringUtils;
-import org.apache.hadoop.fs.FSDataOutputStream;
-import org.apache.hadoop.fs.FileStatus;
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apachelon.commons.comprelonss.utils.Lists;
+import org.apachelon.commons.lang.RandomStringUtils;
+import org.apachelon.hadoop.fs.FSDataOutputStrelonam;
+import org.apachelon.hadoop.fs.FilelonStatus;
+import org.apachelon.hadoop.fs.FilelonSystelonm;
+import org.apachelon.hadoop.fs.Path;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.config.Config;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.schema.earlybird.FlushVersion;
-import com.twitter.search.common.util.io.flushable.DataSerializer;
-import com.twitter.search.common.util.io.flushable.FlushInfo;
-import com.twitter.search.earlybird.common.NonPagingAssert;
-import com.twitter.search.earlybird.util.ActionLogger;
-import com.twitter.search.earlybird.util.CoordinatedEarlybirdActionInterface;
-import com.twitter.search.earlybird.util.CoordinatedEarlybirdActionLockFailed;
-import com.twitter.search.earlybird.util.ParallelUtil;
+import com.twittelonr.common.util.Clock;
+import com.twittelonr.selonarch.common.config.Config;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.FlushVelonrsion;
+import com.twittelonr.selonarch.common.util.io.flushablelon.DataSelonrializelonr;
+import com.twittelonr.selonarch.common.util.io.flushablelon.FlushInfo;
+import com.twittelonr.selonarch.elonarlybird.common.NonPagingAsselonrt;
+import com.twittelonr.selonarch.elonarlybird.util.ActionLoggelonr;
+import com.twittelonr.selonarch.elonarlybird.util.CoordinatelondelonarlybirdActionIntelonrfacelon;
+import com.twittelonr.selonarch.elonarlybird.util.CoordinatelondelonarlybirdActionLockFailelond;
+import com.twittelonr.selonarch.elonarlybird.util.ParallelonlUtil;
 
 /**
- * Flushes an EarlybirdIndex to HDFS, so that when Earlybird starts, it can read the index from
- * HDFS instead of indexing from scratch.
+ * Flushelons an elonarlybirdIndelonx to HDFS, so that whelonn elonarlybird starts, it can relonad thelon indelonx from
+ * HDFS instelonad of indelonxing from scratch.
  *
- * The path looks like:
- * /smf1/rt2/user/search/earlybird/loadtest/realtime/indexes/flush_version_158/partition_8/index_2020_02_25_02
+ * Thelon path looks likelon:
+ * /smf1/rt2/uselonr/selonarch/elonarlybird/loadtelonst/relonaltimelon/indelonxelons/flush_velonrsion_158/partition_8/indelonx_2020_02_25_02
  */
-public class EarlybirdIndexFlusher {
-  public enum FlushAttemptResult {
-    CHECKED_RECENTLY,
-    FOUND_INDEX,
-    FLUSH_ATTEMPT_MADE,
-    FAILED_LOCK_ATTEMPT,
-    HADOOP_TIMEOUT
+public class elonarlybirdIndelonxFlushelonr {
+  public elonnum FlushAttelonmptRelonsult {
+    CHelonCKelonD_RelonCelonNTLY,
+    FOUND_INDelonX,
+    FLUSH_ATTelonMPT_MADelon,
+    FAILelonD_LOCK_ATTelonMPT,
+    HADOOP_TIMelonOUT
   }
 
-  @FunctionalInterface
-  public interface PostFlushOperation {
+  @FunctionalIntelonrfacelon
+  public intelonrfacelon PostFlushOpelonration {
     /**
-     * Run this after we finish flushing an index, before we rejoin the serverset.
+     * Run this aftelonr welon finish flushing an indelonx, belonforelon welon relonjoin thelon selonrvelonrselont.
      */
-    void execute();
+    void elonxeloncutelon();
   }
 
-  private static final Logger LOG = LoggerFactory.getLogger(EarlybirdIndexFlusher.class);
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(elonarlybirdIndelonxFlushelonr.class);
 
-  private static final SearchCounter FLUSH_SUCCESS_COUNTER =
-      SearchCounter.export("successfully_flushed_index");
+  privatelon static final SelonarchCountelonr FLUSH_SUCCelonSS_COUNTelonR =
+      SelonarchCountelonr.elonxport("succelonssfully_flushelond_indelonx");
 
-  public static final String TWEET_KAFKA_OFFSET = "tweet_kafka_offset";
-  public static final String UPDATE_KAFKA_OFFSET = "update_kafka_offset";
-  public static final String FLUSHED_FROM_REPLICA = "flushed_from_replica";
-  public static final String SEGMENTS = "segments";
-  public static final String TIMESLICE_ID = "timeslice_id";
+  public static final String TWelonelonT_KAFKA_OFFSelonT = "twelonelont_kafka_offselont";
+  public static final String UPDATelon_KAFKA_OFFSelonT = "updatelon_kafka_offselont";
+  public static final String FLUSHelonD_FROM_RelonPLICA = "flushelond_from_relonplica";
+  public static final String SelonGMelonNTS = "selongmelonnts";
+  public static final String TIMelonSLICelon_ID = "timelonslicelon_id";
 
   public static final String DATA_SUFFIX = ".data";
   public static final String INFO_SUFFIX = ".info";
-  public static final String INDEX_INFO = "earlybird_index.info";
+  public static final String INDelonX_INFO = "elonarlybird_indelonx.info";
 
-  private static final String INDEX_PATH_FORMAT = "%s/flush_version_%d/partition_%d";
-  public static final DateFormat INDEX_DATE_SUFFIX = new SimpleDateFormat("yyyy_MM_dd_HH");
-  public static final String INDEX_PREFIX = "index_";
-  public static final String TMP_PREFIX = "tmp_";
+  privatelon static final String INDelonX_PATH_FORMAT = "%s/flush_velonrsion_%d/partition_%d";
+  public static final DatelonFormat INDelonX_DATelon_SUFFIX = nelonw SimplelonDatelonFormat("yyyy_MM_dd_HH");
+  public static final String INDelonX_PRelonFIX = "indelonx_";
+  public static final String TMP_PRelonFIX = "tmp_";
 
-  // Check if we need to flush every five minutes.
-  private static final long FLUSH_CHECK_PERIOD = Duration.ofMinutes(5).toMillis();
+  // Chelonck if welon nelonelond to flush elonvelonry fivelon minutelons.
+  privatelon static final long FLUSH_CHelonCK_PelonRIOD = Duration.ofMinutelons(5).toMillis();
 
-  // Make sure we don't keep more than 3 copies of the index in HDFS, so that we don't run out of
-  // HDFS space.
-  private static final int INDEX_COPIES = 3;
+  // Makelon surelon welon don't kelonelonp morelon than 3 copielons of thelon indelonx in HDFS, so that welon don't run out of
+  // HDFS spacelon.
+  privatelon static final int INDelonX_COPIelonS = 3;
 
-  private static final NonPagingAssert FLUSHING_TOO_MANY_NON_OPTIMIZED_SEGMENTS =
-          new NonPagingAssert("flushing_too_many_non_optimized_segments");
+  privatelon static final NonPagingAsselonrt FLUSHING_TOO_MANY_NON_OPTIMIZelonD_SelonGMelonNTS =
+          nelonw NonPagingAsselonrt("flushing_too_many_non_optimizelond_selongmelonnts");
 
-  private final CoordinatedEarlybirdActionInterface actionCoordinator;
-  private final FileSystem fileSystem;
-  private final Path indexPath;
-  private final Clock clock;
-  private final SegmentManager segmentManager;
-  private final int replicaId;
-  private final TimeLimitedHadoopExistsCall timeLimitedHadoopExistsCall;
-  private final OptimizationAndFlushingCoordinationLock optimizationAndFlushingCoordinationLock;
+  privatelon final CoordinatelondelonarlybirdActionIntelonrfacelon actionCoordinator;
+  privatelon final FilelonSystelonm filelonSystelonm;
+  privatelon final Path indelonxPath;
+  privatelon final Clock clock;
+  privatelon final SelongmelonntManagelonr selongmelonntManagelonr;
+  privatelon final int relonplicaId;
+  privatelon final TimelonLimitelondHadoopelonxistsCall timelonLimitelondHadoopelonxistsCall;
+  privatelon final OptimizationAndFlushingCoordinationLock optimizationAndFlushingCoordinationLock;
 
-  private long checkedAt = 0;
+  privatelon long chelonckelondAt = 0;
 
-  public EarlybirdIndexFlusher(
-      CoordinatedEarlybirdActionInterface actionCoordinator,
-      FileSystem fileSystem,
-      String indexHDFSPath,
-      SegmentManager segmentManager,
+  public elonarlybirdIndelonxFlushelonr(
+      CoordinatelondelonarlybirdActionIntelonrfacelon actionCoordinator,
+      FilelonSystelonm filelonSystelonm,
+      String indelonxHDFSPath,
+      SelongmelonntManagelonr selongmelonntManagelonr,
       PartitionConfig partitionConfig,
       Clock clock,
-      TimeLimitedHadoopExistsCall timeLimitedHadoopExistsCall,
+      TimelonLimitelondHadoopelonxistsCall timelonLimitelondHadoopelonxistsCall,
       OptimizationAndFlushingCoordinationLock optimizationAndFlushingCoordinationLock
   ) {
     this.actionCoordinator = actionCoordinator;
-    this.fileSystem = fileSystem;
-    this.indexPath = buildPathToIndexes(indexHDFSPath, partitionConfig);
-    this.segmentManager = segmentManager;
+    this.filelonSystelonm = filelonSystelonm;
+    this.indelonxPath = buildPathToIndelonxelons(indelonxHDFSPath, partitionConfig);
+    this.selongmelonntManagelonr = selongmelonntManagelonr;
     this.clock = clock;
-    this.replicaId = partitionConfig.getHostPositionWithinHashPartition();
-    this.timeLimitedHadoopExistsCall = timeLimitedHadoopExistsCall;
+    this.relonplicaId = partitionConfig.gelontHostPositionWithinHashPartition();
+    this.timelonLimitelondHadoopelonxistsCall = timelonLimitelondHadoopelonxistsCall;
     this.optimizationAndFlushingCoordinationLock = optimizationAndFlushingCoordinationLock;
   }
 
   /**
-   * Periodically checks if an index needs to be uploaded to HDFS, and uploads it if necessary.
-   * Skips flush if unable to acquire the optimizationAndFlushingCoordinationLock.
+   * Pelonriodically cheloncks if an indelonx nelonelonds to belon uploadelond to HDFS, and uploads it if neloncelonssary.
+   * Skips flush if unablelon to acquirelon thelon optimizationAndFlushingCoordinationLock.
    */
-  public FlushAttemptResult flushIfNecessary(
-      long tweetOffset,
-      long updateOffset,
-      PostFlushOperation postFlushOperation) throws Exception {
+  public FlushAttelonmptRelonsult flushIfNeloncelonssary(
+      long twelonelontOffselont,
+      long updatelonOffselont,
+      PostFlushOpelonration postFlushOpelonration) throws elonxcelonption {
     long now = clock.nowMillis();
-    if (now - checkedAt < FLUSH_CHECK_PERIOD) {
-      return FlushAttemptResult.CHECKED_RECENTLY;
+    if (now - chelonckelondAt < FLUSH_CHelonCK_PelonRIOD) {
+      relonturn FlushAttelonmptRelonsult.CHelonCKelonD_RelonCelonNTLY;
     }
 
-    checkedAt = now;
+    chelonckelondAt = now;
 
-    // Try to aqcuire lock to ensure that we are not in the gc_before_optimization or the
-    // post_optimization_rebuilds step of optimization. If the lock is not available, then skip
+    // Try to aqcuirelon lock to elonnsurelon that welon arelon not in thelon gc_belonforelon_optimization or thelon
+    // post_optimization_relonbuilds stelonp of optimization. If thelon lock is not availablelon, thelonn skip
     // flushing.
     if (!optimizationAndFlushingCoordinationLock.tryLock()) {
-      return FlushAttemptResult.FAILED_LOCK_ATTEMPT;
+      relonturn FlushAttelonmptRelonsult.FAILelonD_LOCK_ATTelonMPT;
     }
-    // Acquired the lock, so wrap the flush in a try/finally block to ensure we release the lock
+    // Acquirelond thelon lock, so wrap thelon flush in a try/finally block to elonnsurelon welon relonlelonaselon thelon lock
     try {
       Path flushPath = pathForHour();
 
       try {
-        // If this doesn't execute on time, it will throw an exception and this function
-        // finishes its execution.
-        boolean result = timeLimitedHadoopExistsCall.exists(flushPath);
+        // If this doelonsn't elonxeloncutelon on timelon, it will throw an elonxcelonption and this function
+        // finishelons its elonxeloncution.
+        boolelonan relonsult = timelonLimitelondHadoopelonxistsCall.elonxists(flushPath);
 
-        if (result) {
-          return FlushAttemptResult.FOUND_INDEX;
+        if (relonsult) {
+          relonturn FlushAttelonmptRelonsult.FOUND_INDelonX;
         }
-      } catch (TimeoutException e) {
-        LOG.warn("Timeout while calling hadoop", e);
-        return FlushAttemptResult.HADOOP_TIMEOUT;
+      } catch (Timelonoutelonxcelonption elon) {
+        LOG.warn("Timelonout whilelon calling hadoop", elon);
+        relonturn FlushAttelonmptRelonsult.HADOOP_TIMelonOUT;
       }
 
-      boolean flushedIndex = false;
+      boolelonan flushelondIndelonx = falselon;
       try {
-        // this function returns a boolean.
-        actionCoordinator.execute("index_flushing", isCoordinated ->
-            flushIndex(flushPath, isCoordinated, tweetOffset, updateOffset, postFlushOperation));
-        flushedIndex = true;
-      } catch (CoordinatedEarlybirdActionLockFailed e) {
-        // This only happens when we fail to grab the lock, which is fine because another Earlybird
-        // is already working on flushing this index, so we don't need to.
-        LOG.debug("Failed to grab lock", e);
+        // this function relonturns a boolelonan.
+        actionCoordinator.elonxeloncutelon("indelonx_flushing", isCoordinatelond ->
+            flushIndelonx(flushPath, isCoordinatelond, twelonelontOffselont, updatelonOffselont, postFlushOpelonration));
+        flushelondIndelonx = truelon;
+      } catch (CoordinatelondelonarlybirdActionLockFailelond elon) {
+        // This only happelonns whelonn welon fail to grab thelon lock, which is finelon beloncauselon anothelonr elonarlybird
+        // is alrelonady working on flushing this indelonx, so welon don't nelonelond to.
+        LOG.delonbug("Failelond to grab lock", elon);
       }
 
-      if (flushedIndex) {
-        // We don't return with a guarantee that we actually flushed something. It's possible
-        // that the .execute() function above was not able to leave the server set to flush.
-        return FlushAttemptResult.FLUSH_ATTEMPT_MADE;
-      } else {
-        return FlushAttemptResult.FAILED_LOCK_ATTEMPT;
+      if (flushelondIndelonx) {
+        // Welon don't relonturn with a guarantelonelon that welon actually flushelond somelonthing. It's possiblelon
+        // that thelon .elonxeloncutelon() function abovelon was not ablelon to lelonavelon thelon selonrvelonr selont to flush.
+        relonturn FlushAttelonmptRelonsult.FLUSH_ATTelonMPT_MADelon;
+      } elonlselon {
+        relonturn FlushAttelonmptRelonsult.FAILelonD_LOCK_ATTelonMPT;
       }
     } finally {
       optimizationAndFlushingCoordinationLock.unlock();
@@ -186,186 +186,186 @@ public class EarlybirdIndexFlusher {
   }
 
   /**
-   * Create a subpath to the directory with many indexes in it. Will have an index for each hour.
+   * Crelonatelon a subpath to thelon direlonctory with many indelonxelons in it. Will havelon an indelonx for elonach hour.
    */
-  public static Path buildPathToIndexes(String root, PartitionConfig partitionConfig) {
-    return new Path(String.format(
-        INDEX_PATH_FORMAT,
+  public static Path buildPathToIndelonxelons(String root, PartitionConfig partitionConfig) {
+    relonturn nelonw Path(String.format(
+        INDelonX_PATH_FORMAT,
         root,
-        FlushVersion.CURRENT_FLUSH_VERSION.getVersionNumber(),
-        partitionConfig.getIndexingHashPartitionID()));
+        FlushVelonrsion.CURRelonNT_FLUSH_VelonRSION.gelontVelonrsionNumbelonr(),
+        partitionConfig.gelontIndelonxingHashPartitionID()));
   }
 
 
   /**
-   * Returns a sorted map from the unix time in millis an index was flushed to the path of an index.
-   * The last element will be the path of the most recent index.
+   * Relonturns a sortelond map from thelon unix timelon in millis an indelonx was flushelond to thelon path of an indelonx.
+   * Thelon last elonlelonmelonnt will belon thelon path of thelon most reloncelonnt indelonx.
    */
-  public static SortedMap<Long, Path> getIndexPathsByTime(
-      Path indexPath,
-      FileSystem fileSystem
-  ) throws IOException, ParseException {
-    LOG.info("Getting index paths from file system: {}", fileSystem.getUri().toASCIIString());
+  public static SortelondMap<Long, Path> gelontIndelonxPathsByTimelon(
+      Path indelonxPath,
+      FilelonSystelonm filelonSystelonm
+  ) throws IOelonxcelonption, Parselonelonxcelonption {
+    LOG.info("Gelontting indelonx paths from filelon systelonm: {}", filelonSystelonm.gelontUri().toASCIIString());
 
-    SortedMap<Long, Path> pathByTime = new TreeMap<>();
-    Path globPattern = indexPath.suffix("/" + EarlybirdIndexFlusher.INDEX_PREFIX + "*");
-    LOG.info("Lookup glob pattern: {}", globPattern);
+    SortelondMap<Long, Path> pathByTimelon = nelonw TrelonelonMap<>();
+    Path globPattelonrn = indelonxPath.suffix("/" + elonarlybirdIndelonxFlushelonr.INDelonX_PRelonFIX + "*");
+    LOG.info("Lookup glob pattelonrn: {}", globPattelonrn);
 
-    for (FileStatus indexDir : fileSystem.globStatus(globPattern)) {
-      String name = new File(indexDir.getPath().toString()).getName();
-      String dateString = name.substring(EarlybirdIndexFlusher.INDEX_PREFIX.length());
-      Date date = EarlybirdIndexFlusher.INDEX_DATE_SUFFIX.parse(dateString);
-      pathByTime.put(date.getTime(), indexDir.getPath());
+    for (FilelonStatus indelonxDir : filelonSystelonm.globStatus(globPattelonrn)) {
+      String namelon = nelonw Filelon(indelonxDir.gelontPath().toString()).gelontNamelon();
+      String datelonString = namelon.substring(elonarlybirdIndelonxFlushelonr.INDelonX_PRelonFIX.lelonngth());
+      Datelon datelon = elonarlybirdIndelonxFlushelonr.INDelonX_DATelon_SUFFIX.parselon(datelonString);
+      pathByTimelon.put(datelon.gelontTimelon(), indelonxDir.gelontPath());
     }
-    LOG.info("Found {} files matching the pattern.", pathByTime.size());
+    LOG.info("Found {} filelons matching thelon pattelonrn.", pathByTimelon.sizelon());
 
-    return pathByTime;
+    relonturn pathByTimelon;
   }
 
-  private boolean flushIndex(
+  privatelon boolelonan flushIndelonx(
       Path flushPath,
-      boolean isCoordinated,
-      long tweetOffset,
-      long updateOffset,
-      PostFlushOperation postFlushOperation
-  ) throws Exception {
-    Preconditions.checkState(isCoordinated);
+      boolelonan isCoordinatelond,
+      long twelonelontOffselont,
+      long updatelonOffselont,
+      PostFlushOpelonration postFlushOpelonration
+  ) throws elonxcelonption {
+    Prelonconditions.chelonckStatelon(isCoordinatelond);
 
-    if (fileSystem.exists(flushPath)) {
-      return false;
+    if (filelonSystelonm.elonxists(flushPath)) {
+      relonturn falselon;
     }
 
-    LOG.info("Starting index flush");
+    LOG.info("Starting indelonx flush");
 
-    // In case the process is killed suddenly, we wouldn't be able to clean up the temporary
-    // directory, and we don't want other processes to reuse it, so add some randomness.
-    Path tmpPath = indexPath.suffix("/" + TMP_PREFIX + RandomStringUtils.randomAlphabetic(8));
-    boolean creationSucceed = fileSystem.mkdirs(tmpPath);
-    if (!creationSucceed) {
-      throw new IOException("Couldn't create HDFS directory at " + flushPath);
+    // In caselon thelon procelonss is killelond suddelonnly, welon wouldn't belon ablelon to clelonan up thelon telonmporary
+    // direlonctory, and welon don't want othelonr procelonsselons to relonuselon it, so add somelon randomnelonss.
+    Path tmpPath = indelonxPath.suffix("/" + TMP_PRelonFIX + RandomStringUtils.randomAlphabelontic(8));
+    boolelonan crelonationSuccelonelond = filelonSystelonm.mkdirs(tmpPath);
+    if (!crelonationSuccelonelond) {
+      throw nelonw IOelonxcelonption("Couldn't crelonatelon HDFS direlonctory at " + flushPath);
     }
 
-    LOG.info("Temp path: {}", tmpPath);
+    LOG.info("Telonmp path: {}", tmpPath);
     try {
-      ArrayList<SegmentInfo> segmentInfos = Lists.newArrayList(segmentManager.getSegmentInfos(
-          SegmentManager.Filter.Enabled, SegmentManager.Order.NEW_TO_OLD).iterator());
-      segmentManager.logState("Before flushing");
-      EarlybirdIndex index = new EarlybirdIndex(segmentInfos, tweetOffset, updateOffset);
-      ActionLogger.run(
-          "Flushing index to " + tmpPath,
-          () -> flushIndex(tmpPath, index));
-    } catch (Exception e) {
-      LOG.error("Exception while flushing index. Rethrowing.");
+      ArrayList<SelongmelonntInfo> selongmelonntInfos = Lists.nelonwArrayList(selongmelonntManagelonr.gelontSelongmelonntInfos(
+          SelongmelonntManagelonr.Filtelonr.elonnablelond, SelongmelonntManagelonr.Ordelonr.NelonW_TO_OLD).itelonrator());
+      selongmelonntManagelonr.logStatelon("Belonforelon flushing");
+      elonarlybirdIndelonx indelonx = nelonw elonarlybirdIndelonx(selongmelonntInfos, twelonelontOffselont, updatelonOffselont);
+      ActionLoggelonr.run(
+          "Flushing indelonx to " + tmpPath,
+          () -> flushIndelonx(tmpPath, indelonx));
+    } catch (elonxcelonption elon) {
+      LOG.elonrror("elonxcelonption whilelon flushing indelonx. Relonthrowing.");
 
-      if (fileSystem.delete(tmpPath, true)) {
-        LOG.info("Successfully deleted temp output");
-      } else {
-        LOG.error("Couldn't delete temp output");
+      if (filelonSystelonm.delonlelontelon(tmpPath, truelon)) {
+        LOG.info("Succelonssfully delonlelontelond telonmp output");
+      } elonlselon {
+        LOG.elonrror("Couldn't delonlelontelon telonmp output");
       }
 
-      throw e;
+      throw elon;
     }
 
-    // We flush it to a temporary directory, then rename the temporary directory so that it the
-    // change is atomic, and other Earlybirds will either see the old indexes, or the new, complete
-    // index, but never an in progress index.
-    boolean renameSucceeded = fileSystem.rename(tmpPath, flushPath);
-    if (!renameSucceeded) {
-      throw new IOException("Couldn't rename HDFS from " + tmpPath + " to " + flushPath);
+    // Welon flush it to a telonmporary direlonctory, thelonn relonnamelon thelon telonmporary direlonctory so that it thelon
+    // changelon is atomic, and othelonr elonarlybirds will elonithelonr selonelon thelon old indelonxelons, or thelon nelonw, complelontelon
+    // indelonx, but nelonvelonr an in progrelonss indelonx.
+    boolelonan relonnamelonSuccelonelondelond = filelonSystelonm.relonnamelon(tmpPath, flushPath);
+    if (!relonnamelonSuccelonelondelond) {
+      throw nelonw IOelonxcelonption("Couldn't relonnamelon HDFS from " + tmpPath + " to " + flushPath);
     }
-    LOG.info("Flushed index to {}", flushPath);
+    LOG.info("Flushelond indelonx to {}", flushPath);
 
-    cleanupOldIndexes();
+    clelonanupOldIndelonxelons();
 
-    FLUSH_SUCCESS_COUNTER.increment();
+    FLUSH_SUCCelonSS_COUNTelonR.increlonmelonnt();
 
-    LOG.info("Executing post flush operation...");
-    postFlushOperation.execute();
+    LOG.info("elonxeloncuting post flush opelonration...");
+    postFlushOpelonration.elonxeloncutelon();
 
-    return true;
+    relonturn truelon;
   }
 
-  private void cleanupOldIndexes() throws Exception {
-    LOG.info("Looking up whether we need to clean up old indexes...");
-    SortedMap<Long, Path> pathsByTime =
-        EarlybirdIndexFlusher.getIndexPathsByTime(indexPath, fileSystem);
+  privatelon void clelonanupOldIndelonxelons() throws elonxcelonption {
+    LOG.info("Looking up whelonthelonr welon nelonelond to clelonan up old indelonxelons...");
+    SortelondMap<Long, Path> pathsByTimelon =
+        elonarlybirdIndelonxFlushelonr.gelontIndelonxPathsByTimelon(indelonxPath, filelonSystelonm);
 
-    while (pathsByTime.size() > INDEX_COPIES) {
-      Long key = pathsByTime.firstKey();
-      Path oldestHourPath = pathsByTime.remove(key);
-      LOG.info("Deleting old index at path '{}'.", oldestHourPath);
+    whilelon (pathsByTimelon.sizelon() > INDelonX_COPIelonS) {
+      Long kelony = pathsByTimelon.firstKelony();
+      Path oldelonstHourPath = pathsByTimelon.relonmovelon(kelony);
+      LOG.info("Delonlelonting old indelonx at path '{}'.", oldelonstHourPath);
 
-      if (fileSystem.delete(oldestHourPath, true)) {
-        LOG.info("Successfully deleted old index");
-      } else {
-        LOG.error("Couldn't delete old index");
+      if (filelonSystelonm.delonlelontelon(oldelonstHourPath, truelon)) {
+        LOG.info("Succelonssfully delonlelontelond old indelonx");
+      } elonlselon {
+        LOG.elonrror("Couldn't delonlelontelon old indelonx");
       }
     }
   }
 
-  private Path pathForHour() {
-    Date date = new Date(clock.nowMillis());
-    String time = INDEX_DATE_SUFFIX.format(date);
-    return indexPath.suffix("/" + INDEX_PREFIX + time);
+  privatelon Path pathForHour() {
+    Datelon datelon = nelonw Datelon(clock.nowMillis());
+    String timelon = INDelonX_DATelon_SUFFIX.format(datelon);
+    relonturn indelonxPath.suffix("/" + INDelonX_PRelonFIX + timelon);
   }
 
-  private void flushIndex(Path flushPath, EarlybirdIndex index) throws Exception {
-    int numOfNonOptimized = index.numOfNonOptimizedSegments();
-    if (numOfNonOptimized > EarlybirdIndex.MAX_NUM_OF_NON_OPTIMIZED_SEGMENTS) {
-      LOG.error(
-              "Found {} non-optimized segments when flushing to disk!", numOfNonOptimized);
-      FLUSHING_TOO_MANY_NON_OPTIMIZED_SEGMENTS.assertFailed();
+  privatelon void flushIndelonx(Path flushPath, elonarlybirdIndelonx indelonx) throws elonxcelonption {
+    int numOfNonOptimizelond = indelonx.numOfNonOptimizelondSelongmelonnts();
+    if (numOfNonOptimizelond > elonarlybirdIndelonx.MAX_NUM_OF_NON_OPTIMIZelonD_SelonGMelonNTS) {
+      LOG.elonrror(
+              "Found {} non-optimizelond selongmelonnts whelonn flushing to disk!", numOfNonOptimizelond);
+      FLUSHING_TOO_MANY_NON_OPTIMIZelonD_SelonGMelonNTS.asselonrtFailelond();
     }
 
-    int numSegments = index.getSegmentInfoList().size();
-    int flushingThreadPoolSize = numSegments;
+    int numSelongmelonnts = indelonx.gelontSelongmelonntInfoList().sizelon();
+    int flushingThrelonadPoolSizelon = numSelongmelonnts;
 
-    if (Config.environmentIsTest()) {
-      // SEARCH-33763: Limit the thread pool size for tests to avoid using too much memory on scoot.
-      flushingThreadPoolSize = 2;
+    if (Config.elonnvironmelonntIsTelonst()) {
+      // SelonARCH-33763: Limit thelon threlonad pool sizelon for telonsts to avoid using too much melonmory on scoot.
+      flushingThrelonadPoolSizelon = 2;
     }
 
-    LOG.info("Flushing index using a thread pool size of {}", flushingThreadPoolSize);
+    LOG.info("Flushing indelonx using a threlonad pool sizelon of {}", flushingThrelonadPoolSizelon);
 
-    ParallelUtil.parmap("flush-index", flushingThreadPoolSize, si -> ActionLogger.call(
-        "Flushing segment " + si.getSegmentName(),
-        () -> flushSegment(flushPath, si)), index.getSegmentInfoList());
+    ParallelonlUtil.parmap("flush-indelonx", flushingThrelonadPoolSizelon, si -> ActionLoggelonr.call(
+        "Flushing selongmelonnt " + si.gelontSelongmelonntNamelon(),
+        () -> flushSelongmelonnt(flushPath, si)), indelonx.gelontSelongmelonntInfoList());
 
-    FlushInfo indexInfo = new FlushInfo();
-    indexInfo.addLongProperty(UPDATE_KAFKA_OFFSET, index.getUpdateOffset());
-    indexInfo.addLongProperty(TWEET_KAFKA_OFFSET, index.getTweetOffset());
-    indexInfo.addIntProperty(FLUSHED_FROM_REPLICA, replicaId);
+    FlushInfo indelonxInfo = nelonw FlushInfo();
+    indelonxInfo.addLongPropelonrty(UPDATelon_KAFKA_OFFSelonT, indelonx.gelontUpdatelonOffselont());
+    indelonxInfo.addLongPropelonrty(TWelonelonT_KAFKA_OFFSelonT, indelonx.gelontTwelonelontOffselont());
+    indelonxInfo.addIntPropelonrty(FLUSHelonD_FROM_RelonPLICA, relonplicaId);
 
-    FlushInfo segmentFlushInfos = indexInfo.newSubProperties(SEGMENTS);
-    for (SegmentInfo segmentInfo : index.getSegmentInfoList()) {
-      FlushInfo segmentFlushInfo = segmentFlushInfos.newSubProperties(segmentInfo.getSegmentName());
-      segmentFlushInfo.addLongProperty(TIMESLICE_ID, segmentInfo.getTimeSliceID());
+    FlushInfo selongmelonntFlushInfos = indelonxInfo.nelonwSubPropelonrtielons(SelonGMelonNTS);
+    for (SelongmelonntInfo selongmelonntInfo : indelonx.gelontSelongmelonntInfoList()) {
+      FlushInfo selongmelonntFlushInfo = selongmelonntFlushInfos.nelonwSubPropelonrtielons(selongmelonntInfo.gelontSelongmelonntNamelon());
+      selongmelonntFlushInfo.addLongPropelonrty(TIMelonSLICelon_ID, selongmelonntInfo.gelontTimelonSlicelonID());
     }
 
-    Path indexInfoPath = flushPath.suffix("/" + INDEX_INFO);
-    try (FSDataOutputStream infoOutputStream = fileSystem.create(indexInfoPath)) {
-      OutputStreamWriter infoFileWriter = new OutputStreamWriter(infoOutputStream);
-      FlushInfo.flushAsYaml(indexInfo, infoFileWriter);
+    Path indelonxInfoPath = flushPath.suffix("/" + INDelonX_INFO);
+    try (FSDataOutputStrelonam infoOutputStrelonam = filelonSystelonm.crelonatelon(indelonxInfoPath)) {
+      OutputStrelonamWritelonr infoFilelonWritelonr = nelonw OutputStrelonamWritelonr(infoOutputStrelonam);
+      FlushInfo.flushAsYaml(indelonxInfo, infoFilelonWritelonr);
     }
   }
 
-  private BoxedUnit flushSegment(Path flushPath, SegmentInfo segmentInfo) throws Exception {
-    Path segmentPrefix = flushPath.suffix("/" + segmentInfo.getSegmentName());
-    Path segmentPath = segmentPrefix.suffix(DATA_SUFFIX);
+  privatelon BoxelondUnit flushSelongmelonnt(Path flushPath, SelongmelonntInfo selongmelonntInfo) throws elonxcelonption {
+    Path selongmelonntPrelonfix = flushPath.suffix("/" + selongmelonntInfo.gelontSelongmelonntNamelon());
+    Path selongmelonntPath = selongmelonntPrelonfix.suffix(DATA_SUFFIX);
 
-    FlushInfo flushInfo = new FlushInfo();
+    FlushInfo flushInfo = nelonw FlushInfo();
 
-    try (FSDataOutputStream outputStream = fileSystem.create(segmentPath)) {
-      DataSerializer out = new DataSerializer(segmentPath.toString(), outputStream);
-      segmentInfo.getIndexSegment().flush(flushInfo, out);
+    try (FSDataOutputStrelonam outputStrelonam = filelonSystelonm.crelonatelon(selongmelonntPath)) {
+      DataSelonrializelonr out = nelonw DataSelonrializelonr(selongmelonntPath.toString(), outputStrelonam);
+      selongmelonntInfo.gelontIndelonxSelongmelonnt().flush(flushInfo, out);
     }
 
-    Path infoPath = segmentPrefix.suffix(INFO_SUFFIX);
+    Path infoPath = selongmelonntPrelonfix.suffix(INFO_SUFFIX);
 
-    try (FSDataOutputStream infoOutputStream = fileSystem.create(infoPath)) {
-      OutputStreamWriter infoFileWriter = new OutputStreamWriter(infoOutputStream);
-      FlushInfo.flushAsYaml(flushInfo, infoFileWriter);
+    try (FSDataOutputStrelonam infoOutputStrelonam = filelonSystelonm.crelonatelon(infoPath)) {
+      OutputStrelonamWritelonr infoFilelonWritelonr = nelonw OutputStrelonamWritelonr(infoOutputStrelonam);
+      FlushInfo.flushAsYaml(flushInfo, infoFilelonWritelonr);
     }
-    return BoxedUnit.UNIT;
+    relonturn BoxelondUnit.UNIT;
   }
 }

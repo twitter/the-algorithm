@@ -1,17 +1,17 @@
 syntax = "proto3";
 
-package tensorflow.serving;
+packagelon telonnsorflow.selonrving;
 
-import "tensorflow_serving/apis/model.proto";
-import "tensorflow_serving/config/logging_config.proto";
+import "telonnsorflow_selonrving/apis/modelonl.proto";
+import "telonnsorflow_selonrving/config/logging_config.proto";
 
-option cc_enable_arenas = true;
+option cc_elonnablelon_arelonnas = truelon;
 
-// Metadata logged along with the request logs.
-message LogMetadata {
-  ModelSpec model_spec = 1;
+// Melontadata loggelond along with thelon relonquelonst logs.
+melonssagelon LogMelontadata {
+  ModelonlSpelonc modelonl_spelonc = 1;
   SamplingConfig sampling_config = 2;
-  // List of tags used to load the relevant MetaGraphDef from SavedModel.
-  repeated string saved_model_tags = 3;
-  // TODO: Add more metadata as mentioned in the bug.
+  // List of tags uselond to load thelon relonlelonvant MelontaGraphDelonf from SavelondModelonl.
+  relonpelonatelond string savelond_modelonl_tags = 3;
+  // TODO: Add morelon melontadata as melonntionelond in thelon bug.
 }

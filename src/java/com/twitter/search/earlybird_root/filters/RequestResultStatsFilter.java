@@ -1,184 +1,184 @@
-package com.twitter.search.earlybird_root.filters;
+packagelon com.twittelonr.selonarch.elonarlybird_root.filtelonrs;
 
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import javax.inject.Inject;
+import java.util.concurrelonnt.ConcurrelonntHashMap;
+import javax.injelonct.Injelonct;
 
-import scala.runtime.BoxedUnit;
+import scala.runtimelon.BoxelondUnit;
 
-import com.twitter.common.util.Clock;
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.search.common.metrics.Percentile;
-import com.twitter.search.common.metrics.PercentileUtil;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.query.thriftjava.CollectorParams;
-import com.twitter.search.common.query.thriftjava.CollectorTerminationParams;
-import com.twitter.search.earlybird.common.ClientIdUtil;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.ThriftSearchQuery;
-import com.twitter.search.earlybird.thrift.ThriftSearchResult;
-import com.twitter.search.earlybird.thrift.ThriftSearchResults;
-import com.twitter.snowflake.id.SnowflakeId;
-import com.twitter.util.Function;
-import com.twitter.util.Future;
+import com.twittelonr.common.util.Clock;
+import com.twittelonr.finaglelon.Selonrvicelon;
+import com.twittelonr.finaglelon.SimplelonFiltelonr;
+import com.twittelonr.selonarch.common.melontrics.Pelonrcelonntilelon;
+import com.twittelonr.selonarch.common.melontrics.PelonrcelonntilelonUtil;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.common.quelonry.thriftjava.CollelonctorParams;
+import com.twittelonr.selonarch.common.quelonry.thriftjava.CollelonctorTelonrminationParams;
+import com.twittelonr.selonarch.elonarlybird.common.ClielonntIdUtil;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonquelonst;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchQuelonry;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsult;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsults;
+import com.twittelonr.snowflakelon.id.SnowflakelonId;
+import com.twittelonr.util.Function;
+import com.twittelonr.util.Futurelon;
 
-public class RequestResultStatsFilter
-    extends SimpleFilter<EarlybirdRequest, EarlybirdResponse> {
-  private final Clock clock;
-  private final RequestResultStats stats;
+public class RelonquelonstRelonsultStatsFiltelonr
+    elonxtelonnds SimplelonFiltelonr<elonarlybirdRelonquelonst, elonarlybirdRelonsponselon> {
+  privatelon final Clock clock;
+  privatelon final RelonquelonstRelonsultStats stats;
 
-  static class RequestResultStats {
-    private static final String PREFIX = "request_result_properties_";
+  static class RelonquelonstRelonsultStats {
+    privatelon static final String PRelonFIX = "relonquelonst_relonsult_propelonrtielons_";
 
-    private final SearchCounter resultsRequestedCount;
-    private final SearchCounter resultsReturnedCount;
-    private final SearchCounter maxHitsToProcessCount;
-    private final SearchCounter hitsProcessedCount;
-    private final SearchCounter docsProcessedCount;
-    private final SearchCounter timeoutMsCount;
-    private Map<String, Percentile<Integer>> requestedNumResultsPercentileByClientId;
-    private Map<String, Percentile<Integer>> returnedNumResultsPercentileByClientId;
-    private Map<String, Percentile<Long>> oldestResultPercentileByClientId;
+    privatelon final SelonarchCountelonr relonsultsRelonquelonstelondCount;
+    privatelon final SelonarchCountelonr relonsultsRelonturnelondCount;
+    privatelon final SelonarchCountelonr maxHitsToProcelonssCount;
+    privatelon final SelonarchCountelonr hitsProcelonsselondCount;
+    privatelon final SelonarchCountelonr docsProcelonsselondCount;
+    privatelon final SelonarchCountelonr timelonoutMsCount;
+    privatelon Map<String, Pelonrcelonntilelon<Intelongelonr>> relonquelonstelondNumRelonsultsPelonrcelonntilelonByClielonntId;
+    privatelon Map<String, Pelonrcelonntilelon<Intelongelonr>> relonturnelondNumRelonsultsPelonrcelonntilelonByClielonntId;
+    privatelon Map<String, Pelonrcelonntilelon<Long>> oldelonstRelonsultPelonrcelonntilelonByClielonntId;
 
-    RequestResultStats() {
-      // Request properties
-      resultsRequestedCount = SearchCounter.export(PREFIX + "results_requested_cnt");
-      maxHitsToProcessCount = SearchCounter.export(PREFIX + "max_hits_to_process_cnt");
-      timeoutMsCount = SearchCounter.export(PREFIX + "timeout_ms_cnt");
-      requestedNumResultsPercentileByClientId = new ConcurrentHashMap<>();
+    RelonquelonstRelonsultStats() {
+      // Relonquelonst propelonrtielons
+      relonsultsRelonquelonstelondCount = SelonarchCountelonr.elonxport(PRelonFIX + "relonsults_relonquelonstelond_cnt");
+      maxHitsToProcelonssCount = SelonarchCountelonr.elonxport(PRelonFIX + "max_hits_to_procelonss_cnt");
+      timelonoutMsCount = SelonarchCountelonr.elonxport(PRelonFIX + "timelonout_ms_cnt");
+      relonquelonstelondNumRelonsultsPelonrcelonntilelonByClielonntId = nelonw ConcurrelonntHashMap<>();
 
-      // Result properties
-      resultsReturnedCount = SearchCounter.export(PREFIX + "results_returned_cnt");
-      hitsProcessedCount = SearchCounter.export(PREFIX + "hits_processed_cnt");
-      docsProcessedCount = SearchCounter.export(PREFIX + "docs_processed_cnt");
-      returnedNumResultsPercentileByClientId = new ConcurrentHashMap<>();
-      oldestResultPercentileByClientId = new ConcurrentHashMap<>();
+      // Relonsult propelonrtielons
+      relonsultsRelonturnelondCount = SelonarchCountelonr.elonxport(PRelonFIX + "relonsults_relonturnelond_cnt");
+      hitsProcelonsselondCount = SelonarchCountelonr.elonxport(PRelonFIX + "hits_procelonsselond_cnt");
+      docsProcelonsselondCount = SelonarchCountelonr.elonxport(PRelonFIX + "docs_procelonsselond_cnt");
+      relonturnelondNumRelonsultsPelonrcelonntilelonByClielonntId = nelonw ConcurrelonntHashMap<>();
+      oldelonstRelonsultPelonrcelonntilelonByClielonntId = nelonw ConcurrelonntHashMap<>();
     }
 
-    SearchCounter getResultsRequestedCount() {
-      return resultsRequestedCount;
+    SelonarchCountelonr gelontRelonsultsRelonquelonstelondCount() {
+      relonturn relonsultsRelonquelonstelondCount;
     }
 
-    SearchCounter getResultsReturnedCount() {
-      return resultsReturnedCount;
+    SelonarchCountelonr gelontRelonsultsRelonturnelondCount() {
+      relonturn relonsultsRelonturnelondCount;
     }
 
-    SearchCounter getMaxHitsToProcessCount() {
-      return maxHitsToProcessCount;
+    SelonarchCountelonr gelontMaxHitsToProcelonssCount() {
+      relonturn maxHitsToProcelonssCount;
     }
 
-    SearchCounter getHitsProcessedCount() {
-      return hitsProcessedCount;
+    SelonarchCountelonr gelontHitsProcelonsselondCount() {
+      relonturn hitsProcelonsselondCount;
     }
 
-    SearchCounter getDocsProcessedCount() {
-      return docsProcessedCount;
+    SelonarchCountelonr gelontDocsProcelonsselondCount() {
+      relonturn docsProcelonsselondCount;
     }
 
-    SearchCounter getTimeoutMsCount() {
-      return timeoutMsCount;
+    SelonarchCountelonr gelontTimelonoutMsCount() {
+      relonturn timelonoutMsCount;
     }
 
-    Percentile<Long> getOldestResultPercentile(String clientId) {
-      return oldestResultPercentileByClientId.computeIfAbsent(clientId,
-          key -> PercentileUtil.createPercentile(statName(clientId, "oldest_result_age_seconds")));
+    Pelonrcelonntilelon<Long> gelontOldelonstRelonsultPelonrcelonntilelon(String clielonntId) {
+      relonturn oldelonstRelonsultPelonrcelonntilelonByClielonntId.computelonIfAbselonnt(clielonntId,
+          kelony -> PelonrcelonntilelonUtil.crelonatelonPelonrcelonntilelon(statNamelon(clielonntId, "oldelonst_relonsult_agelon_selonconds")));
     }
 
-    Percentile<Integer> getRequestedNumResultsPercentile(String clientId) {
-      return requestedNumResultsPercentileByClientId.computeIfAbsent(clientId,
-          key -> PercentileUtil.createPercentile(statName(clientId, "requested_num_results")));
+    Pelonrcelonntilelon<Intelongelonr> gelontRelonquelonstelondNumRelonsultsPelonrcelonntilelon(String clielonntId) {
+      relonturn relonquelonstelondNumRelonsultsPelonrcelonntilelonByClielonntId.computelonIfAbselonnt(clielonntId,
+          kelony -> PelonrcelonntilelonUtil.crelonatelonPelonrcelonntilelon(statNamelon(clielonntId, "relonquelonstelond_num_relonsults")));
     }
 
-    Percentile<Integer> getReturnedNumResultsPercentile(String clientId) {
-      return returnedNumResultsPercentileByClientId.computeIfAbsent(clientId,
-          key -> PercentileUtil.createPercentile(statName(clientId, "returned_num_results")));
+    Pelonrcelonntilelon<Intelongelonr> gelontRelonturnelondNumRelonsultsPelonrcelonntilelon(String clielonntId) {
+      relonturn relonturnelondNumRelonsultsPelonrcelonntilelonByClielonntId.computelonIfAbselonnt(clielonntId,
+          kelony -> PelonrcelonntilelonUtil.crelonatelonPelonrcelonntilelon(statNamelon(clielonntId, "relonturnelond_num_relonsults")));
     }
 
-    private String statName(String clientId, String suffix) {
-      return String.format("%s%s_%s", PREFIX, ClientIdUtil.formatClientId(clientId), suffix);
+    privatelon String statNamelon(String clielonntId, String suffix) {
+      relonturn String.format("%s%s_%s", PRelonFIX, ClielonntIdUtil.formatClielonntId(clielonntId), suffix);
     }
   }
 
-  @Inject
-  RequestResultStatsFilter(Clock clock, RequestResultStats stats) {
+  @Injelonct
+  RelonquelonstRelonsultStatsFiltelonr(Clock clock, RelonquelonstRelonsultStats stats) {
     this.clock = clock;
     this.stats = stats;
   }
 
-  private void updateRequestStats(EarlybirdRequest request) {
-    ThriftSearchQuery searchQuery = request.getSearchQuery();
-    CollectorParams collectorParams = searchQuery.getCollectorParams();
+  privatelon void updatelonRelonquelonstStats(elonarlybirdRelonquelonst relonquelonst) {
+    ThriftSelonarchQuelonry selonarchQuelonry = relonquelonst.gelontSelonarchQuelonry();
+    CollelonctorParams collelonctorParams = selonarchQuelonry.gelontCollelonctorParams();
 
-    if (collectorParams != null) {
-      stats.getResultsRequestedCount().add(collectorParams.numResultsToReturn);
-      if (request.isSetClientId()) {
-        stats.getRequestedNumResultsPercentile(request.getClientId())
-            .record(collectorParams.numResultsToReturn);
+    if (collelonctorParams != null) {
+      stats.gelontRelonsultsRelonquelonstelondCount().add(collelonctorParams.numRelonsultsToRelonturn);
+      if (relonquelonst.isSelontClielonntId()) {
+        stats.gelontRelonquelonstelondNumRelonsultsPelonrcelonntilelon(relonquelonst.gelontClielonntId())
+            .reloncord(collelonctorParams.numRelonsultsToRelonturn);
       }
-      CollectorTerminationParams terminationParams = collectorParams.getTerminationParams();
-      if (terminationParams != null) {
-        if (terminationParams.isSetMaxHitsToProcess()) {
-          stats.getMaxHitsToProcessCount().add(terminationParams.maxHitsToProcess);
+      CollelonctorTelonrminationParams telonrminationParams = collelonctorParams.gelontTelonrminationParams();
+      if (telonrminationParams != null) {
+        if (telonrminationParams.isSelontMaxHitsToProcelonss()) {
+          stats.gelontMaxHitsToProcelonssCount().add(telonrminationParams.maxHitsToProcelonss);
         }
-        if (terminationParams.isSetTimeoutMs()) {
-          stats.getTimeoutMsCount().add(terminationParams.timeoutMs);
-        }
-      }
-    } else {
-      if (searchQuery.isSetNumResults()) {
-        stats.getResultsRequestedCount().add(searchQuery.numResults);
-        if (request.isSetClientId()) {
-          stats.getRequestedNumResultsPercentile(request.getClientId())
-              .record(searchQuery.numResults);
+        if (telonrminationParams.isSelontTimelonoutMs()) {
+          stats.gelontTimelonoutMsCount().add(telonrminationParams.timelonoutMs);
         }
       }
-      if (searchQuery.isSetMaxHitsToProcess()) {
-        stats.getMaxHitsToProcessCount().add(searchQuery.maxHitsToProcess);
+    } elonlselon {
+      if (selonarchQuelonry.isSelontNumRelonsults()) {
+        stats.gelontRelonsultsRelonquelonstelondCount().add(selonarchQuelonry.numRelonsults);
+        if (relonquelonst.isSelontClielonntId()) {
+          stats.gelontRelonquelonstelondNumRelonsultsPelonrcelonntilelon(relonquelonst.gelontClielonntId())
+              .reloncord(selonarchQuelonry.numRelonsults);
+        }
       }
-      if (request.isSetTimeoutMs()) {
-        stats.getTimeoutMsCount().add(request.timeoutMs);
+      if (selonarchQuelonry.isSelontMaxHitsToProcelonss()) {
+        stats.gelontMaxHitsToProcelonssCount().add(selonarchQuelonry.maxHitsToProcelonss);
+      }
+      if (relonquelonst.isSelontTimelonoutMs()) {
+        stats.gelontTimelonoutMsCount().add(relonquelonst.timelonoutMs);
       }
     }
   }
 
-  private void updateResultsStats(String clientId, ThriftSearchResults results) {
-    stats.getResultsReturnedCount().add(results.getResultsSize());
-    if (results.isSetNumHitsProcessed()) {
-      stats.getHitsProcessedCount().add(results.numHitsProcessed);
+  privatelon void updatelonRelonsultsStats(String clielonntId, ThriftSelonarchRelonsults relonsults) {
+    stats.gelontRelonsultsRelonturnelondCount().add(relonsults.gelontRelonsultsSizelon());
+    if (relonsults.isSelontNumHitsProcelonsselond()) {
+      stats.gelontHitsProcelonsselondCount().add(relonsults.numHitsProcelonsselond);
     }
 
-    if (clientId != null) {
-      if (results.getResultsSize() > 0) {
-        List<ThriftSearchResult> resultsList = results.getResults();
+    if (clielonntId != null) {
+      if (relonsults.gelontRelonsultsSizelon() > 0) {
+        List<ThriftSelonarchRelonsult> relonsultsList = relonsults.gelontRelonsults();
 
-        long lastId = resultsList.get(resultsList.size() - 1).getId();
-        long tweetTime = SnowflakeId.timeFromId(lastId).inLongSeconds();
-        long tweetAge = (clock.nowMillis() / 1000) - tweetTime;
-        stats.getOldestResultPercentile(clientId).record(tweetAge);
+        long lastId = relonsultsList.gelont(relonsultsList.sizelon() - 1).gelontId();
+        long twelonelontTimelon = SnowflakelonId.timelonFromId(lastId).inLongSelonconds();
+        long twelonelontAgelon = (clock.nowMillis() / 1000) - twelonelontTimelon;
+        stats.gelontOldelonstRelonsultPelonrcelonntilelon(clielonntId).reloncord(twelonelontAgelon);
       }
 
-      stats.getReturnedNumResultsPercentile(clientId).record(results.getResultsSize());
+      stats.gelontRelonturnelondNumRelonsultsPelonrcelonntilelon(clielonntId).reloncord(relonsults.gelontRelonsultsSizelon());
     }
   }
 
-  @Override
-  public Future<EarlybirdResponse> apply(
-      EarlybirdRequest request,
-      Service<EarlybirdRequest, EarlybirdResponse> service) {
+  @Ovelonrridelon
+  public Futurelon<elonarlybirdRelonsponselon> apply(
+      elonarlybirdRelonquelonst relonquelonst,
+      Selonrvicelon<elonarlybirdRelonquelonst, elonarlybirdRelonsponselon> selonrvicelon) {
 
-    updateRequestStats(request);
+    updatelonRelonquelonstStats(relonquelonst);
 
-    return service.apply(request).onSuccess(
-        new Function<EarlybirdResponse, BoxedUnit>() {
-          @Override
-          public BoxedUnit apply(EarlybirdResponse response) {
-            if (response.isSetSearchResults()) {
-              updateResultsStats(request.getClientId(), response.searchResults);
+    relonturn selonrvicelon.apply(relonquelonst).onSuccelonss(
+        nelonw Function<elonarlybirdRelonsponselon, BoxelondUnit>() {
+          @Ovelonrridelon
+          public BoxelondUnit apply(elonarlybirdRelonsponselon relonsponselon) {
+            if (relonsponselon.isSelontSelonarchRelonsults()) {
+              updatelonRelonsultsStats(relonquelonst.gelontClielonntId(), relonsponselon.selonarchRelonsults);
             }
-            return BoxedUnit.UNIT;
+            relonturn BoxelondUnit.UNIT;
           }
         });
   }

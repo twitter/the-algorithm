@@ -1,13 +1,13 @@
-package com.twitter.product_mixer.component_library.scorer.tensorbuilder
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.scorelonr.telonnsorbuildelonr
 
-import inference.GrpcService.ModelInferRequest.InferInputTensor
+import infelonrelonncelon.GrpcSelonrvicelon.ModelonlInfelonrRelonquelonst.InfelonrInputTelonnsor
 
-case object BytesInferInputTensorBuilder extends InferInputTensorBuilder[String] {
-  def apply(
-    featureName: String,
-    featureValues: Seq[String]
-  ): Seq[InferInputTensor] = {
-    val tensorShape = Seq(featureValues.size, 1)
-    InferInputTensorBuilder.buildBytesInferInputTensor(featureName, featureValues, tensorShape)
+caselon objelonct BytelonsInfelonrInputTelonnsorBuildelonr elonxtelonnds InfelonrInputTelonnsorBuildelonr[String] {
+  delonf apply(
+    felonaturelonNamelon: String,
+    felonaturelonValuelons: Selonq[String]
+  ): Selonq[InfelonrInputTelonnsor] = {
+    val telonnsorShapelon = Selonq(felonaturelonValuelons.sizelon, 1)
+    InfelonrInputTelonnsorBuildelonr.buildBytelonsInfelonrInputTelonnsor(felonaturelonNamelon, felonaturelonValuelons, telonnsorShapelon)
   }
 }

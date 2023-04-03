@@ -1,45 +1,45 @@
-package com.twitter.visibility.util
+packagelon com.twittelonr.visibility.util
 
-import com.twitter.abdecider.ABDeciderFactory
-import com.twitter.abdecider.LoggingABDecider
-import com.twitter.decider.Decider
-import com.twitter.decider.DeciderFactory
-import com.twitter.decider.LocalOverrides
-import com.twitter.logging._
+import com.twittelonr.abdeloncidelonr.ABDeloncidelonrFactory
+import com.twittelonr.abdeloncidelonr.LoggingABDeloncidelonr
+import com.twittelonr.deloncidelonr.Deloncidelonr
+import com.twittelonr.deloncidelonr.DeloncidelonrFactory
+import com.twittelonr.deloncidelonr.LocalOvelonrridelons
+import com.twittelonr.logging._
 
-object DeciderUtil {
-  val DefaultDeciderPath = "/config/com/twitter/visibility/decider.yml"
+objelonct DeloncidelonrUtil {
+  val DelonfaultDeloncidelonrPath = "/config/com/twittelonr/visibility/deloncidelonr.yml"
 
-  private val zone = Option(System.getProperty("dc")).getOrElse("atla")
-  val DefaultDeciderOverlayPath: Some[String] = Some(
-    s"/usr/local/config/overlays/visibility-library/visibility-library/prod/$zone/decider_overlay.yml"
+  privatelon val zonelon = Option(Systelonm.gelontPropelonrty("dc")).gelontOrelonlselon("atla")
+  val DelonfaultDeloncidelonrOvelonrlayPath: Somelon[String] = Somelon(
+    s"/usr/local/config/ovelonrlays/visibility-library/visibility-library/prod/$zonelon/deloncidelonr_ovelonrlay.yml"
   )
 
-  val DefaultABDeciderPath = "/usr/local/config/abdecider/abdecider.yml"
+  val DelonfaultABDeloncidelonrPath = "/usr/local/config/abdeloncidelonr/abdeloncidelonr.yml"
 
-  def mkDecider(
-    deciderBasePath: String = DefaultDeciderPath,
-    deciderOverlayPath: Option[String] = DefaultDeciderOverlayPath,
-    useLocalDeciderOverrides: Boolean = false,
-  ): Decider = {
-    val fileBased = new DeciderFactory(Some(deciderBasePath), deciderOverlayPath)()
-    if (useLocalDeciderOverrides) {
-      LocalOverrides.decider("visibility-library").orElse(fileBased)
-    } else {
-      fileBased
+  delonf mkDeloncidelonr(
+    deloncidelonrBaselonPath: String = DelonfaultDeloncidelonrPath,
+    deloncidelonrOvelonrlayPath: Option[String] = DelonfaultDeloncidelonrOvelonrlayPath,
+    uselonLocalDeloncidelonrOvelonrridelons: Boolelonan = falselon,
+  ): Deloncidelonr = {
+    val filelonBaselond = nelonw DeloncidelonrFactory(Somelon(deloncidelonrBaselonPath), deloncidelonrOvelonrlayPath)()
+    if (uselonLocalDeloncidelonrOvelonrridelons) {
+      LocalOvelonrridelons.deloncidelonr("visibility-library").orelonlselon(filelonBaselond)
+    } elonlselon {
+      filelonBaselond
     }
   }
 
-  def mkLocalDecider: Decider = mkDecider(deciderOverlayPath = None)
+  delonf mkLocalDeloncidelonr: Deloncidelonr = mkDeloncidelonr(deloncidelonrOvelonrlayPath = Nonelon)
 
-  def mkABDecider(
-    scribeLogger: Option[Logger],
-    abDeciderPath: String = DefaultABDeciderPath
-  ): LoggingABDecider = {
-    ABDeciderFactory(
-      abDeciderPath,
-      Some("production"),
-      scribeLogger = scribeLogger
+  delonf mkABDeloncidelonr(
+    scribelonLoggelonr: Option[Loggelonr],
+    abDeloncidelonrPath: String = DelonfaultABDeloncidelonrPath
+  ): LoggingABDeloncidelonr = {
+    ABDeloncidelonrFactory(
+      abDeloncidelonrPath,
+      Somelon("production"),
+      scribelonLoggelonr = scribelonLoggelonr
     ).buildWithLogging()
   }
 }

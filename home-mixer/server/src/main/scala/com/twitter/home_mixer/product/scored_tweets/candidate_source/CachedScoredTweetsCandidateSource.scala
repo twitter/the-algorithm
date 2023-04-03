@@ -1,24 +1,24 @@
-package com.twitter.home_mixer.product.scored_tweets.candidate_source
+packagelon com.twittelonr.homelon_mixelonr.product.scorelond_twelonelonts.candidatelon_sourcelon
 
-import com.twitter.home_mixer.util.CachedScoredTweetsHelper
-import com.twitter.home_mixer.{thriftscala => hmt}
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+import com.twittelonr.homelon_mixelonr.util.CachelondScorelondTwelonelontsHelonlpelonr
+import com.twittelonr.homelon_mixelonr.{thriftscala => hmt}
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.CandidatelonSourcelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonSourcelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stitch.Stitch
 
-import javax.inject.Inject
-import javax.inject.Singleton
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class CachedScoredTweetsCandidateSource @Inject() ()
-    extends CandidateSource[PipelineQuery, hmt.CachedScoredTweet] {
+@Singlelonton
+class CachelondScorelondTwelonelontsCandidatelonSourcelon @Injelonct() ()
+    elonxtelonnds CandidatelonSourcelon[PipelonlinelonQuelonry, hmt.CachelondScorelondTwelonelont] {
 
-  override val identifier: CandidateSourceIdentifier =
-    CandidateSourceIdentifier("CachedScoredTweets")
+  ovelonrridelon val idelonntifielonr: CandidatelonSourcelonIdelonntifielonr =
+    CandidatelonSourcelonIdelonntifielonr("CachelondScorelondTwelonelonts")
 
-  override def apply(request: PipelineQuery): Stitch[Seq[hmt.CachedScoredTweet]] = {
-    Stitch.value(
-      request.features.map(CachedScoredTweetsHelper.unseenCachedScoredTweets).getOrElse(Seq.empty))
+  ovelonrridelon delonf apply(relonquelonst: PipelonlinelonQuelonry): Stitch[Selonq[hmt.CachelondScorelondTwelonelont]] = {
+    Stitch.valuelon(
+      relonquelonst.felonaturelons.map(CachelondScorelondTwelonelontsHelonlpelonr.unselonelonnCachelondScorelondTwelonelonts).gelontOrelonlselon(Selonq.elonmpty))
   }
 }

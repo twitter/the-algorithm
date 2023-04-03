@@ -1,7 +1,7 @@
-package com.twitter.product_mixer.component_library.model.presentation.slice
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.modelonl.prelonselonntation.slicelon
 
-import com.twitter.product_mixer.core.model.common.presentation.slice.BaseSliceItemPresentation
-import com.twitter.product_mixer.core.model.marshalling.response.slice.SliceItem
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.slicelon.BaselonSlicelonItelonmPrelonselonntation
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.slicelon.SlicelonItelonm
 
-case class SliceItemPresentation(override val sliceItem: SliceItem)
-    extends BaseSliceItemPresentation
+caselon class SlicelonItelonmPrelonselonntation(ovelonrridelon val slicelonItelonm: SlicelonItelonm)
+    elonxtelonnds BaselonSlicelonItelonmPrelonselonntation

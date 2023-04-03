@@ -1,11 +1,11 @@
-package com.twitter.follow_recommendations.assembler.models
+packagelon com.twittelonr.follow_reloncommelonndations.asselonmblelonr.modelonls
 
-sealed trait RecommendationOptions
+selonalelond trait ReloncommelonndationOptions
 
-case class UserListOptions(
-  userBioEnabled: Boolean,
-  userBioTruncated: Boolean,
-  userBioMaxLines: Option[Long],
-) extends RecommendationOptions
+caselon class UselonrListOptions(
+  uselonrBioelonnablelond: Boolelonan,
+  uselonrBioTruncatelond: Boolelonan,
+  uselonrBioMaxLinelons: Option[Long],
+) elonxtelonnds ReloncommelonndationOptions
 
-case class CarouselOptions() extends RecommendationOptions
+caselon class CarouselonlOptions() elonxtelonnds ReloncommelonndationOptions

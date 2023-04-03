@@ -1,582 +1,582 @@
-package com.twitter.product_mixer.core.pipeline.mixer
+packagelon com.twittelonr.product_mixelonr.corelon.pipelonlinelon.mixelonr
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.asyncfeaturemap.AsyncFeatureMap
-import com.twitter.product_mixer.core.functional_component.common.alert.Alert
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.QueryFeatureHydrator
-import com.twitter.product_mixer.core.functional_component.gate.Gate
-import com.twitter.product_mixer.core.functional_component.premarshaller.DomainMarshaller
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.functional_component.side_effect.PipelineResultSideEffect
-import com.twitter.product_mixer.core.functional_component.marshaller.TransportMarshaller
-import com.twitter.product_mixer.core.model.common.Component
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifierStack
-import com.twitter.product_mixer.core.model.common.identifier.MixerPipelineIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.PipelineStepIdentifier
-import com.twitter.product_mixer.core.model.marshalling.HasMarshalling
-import com.twitter.product_mixer.core.pipeline.FailOpenPolicy
-import com.twitter.product_mixer.core.pipeline.InvalidStepStateException
-import com.twitter.product_mixer.core.pipeline.PipelineBuilder
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.candidate.CandidatePipeline
-import com.twitter.product_mixer.core.pipeline.candidate.CandidatePipelineBuilderFactory
-import com.twitter.product_mixer.core.pipeline.candidate.CandidatePipelineConfig
-import com.twitter.product_mixer.core.pipeline.candidate.DependentCandidatePipelineConfig
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailureClassifier
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.ProductDisabled
-import com.twitter.product_mixer.core.quality_factor.HasQualityFactorStatus
-import com.twitter.product_mixer.core.quality_factor.QualityFactorObserver
-import com.twitter.product_mixer.core.quality_factor.QualityFactorStatus
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.product_mixer.core.service.async_feature_map_executor.AsyncFeatureMapExecutor
-import com.twitter.product_mixer.core.service.async_feature_map_executor.AsyncFeatureMapExecutorResults
-import com.twitter.product_mixer.core.service.candidate_pipeline_executor.CandidatePipelineExecutor
-import com.twitter.product_mixer.core.service.candidate_pipeline_executor.CandidatePipelineExecutorResult
-import com.twitter.product_mixer.core.service.domain_marshaller_executor.DomainMarshallerExecutor
-import com.twitter.product_mixer.core.service.gate_executor.GateExecutor
-import com.twitter.product_mixer.core.service.gate_executor.GateExecutorResult
-import com.twitter.product_mixer.core.service.gate_executor.StoppedGateException
-import com.twitter.product_mixer.core.service.pipeline_result_side_effect_executor.PipelineResultSideEffectExecutor
-import com.twitter.product_mixer.core.service.quality_factor_executor.QualityFactorExecutorResult
-import com.twitter.product_mixer.core.service.query_feature_hydrator_executor.QueryFeatureHydratorExecutor
-import com.twitter.product_mixer.core.service.selector_executor.SelectorExecutor
-import com.twitter.product_mixer.core.service.selector_executor.SelectorExecutorResult
-import com.twitter.product_mixer.core.service.transport_marshaller_executor.TransportMarshallerExecutor
-import com.twitter.stitch.Arrow
-import com.twitter.util.logging.Logging
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.asyncfelonaturelonmap.AsyncFelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.alelonrt.Alelonrt
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator.QuelonryFelonaturelonHydrator
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.gatelon.Gatelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.prelonmarshallelonr.DomainMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.selonlelonctor.Selonlelonctor
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.sidelon_elonffelonct.PipelonlinelonRelonsultSidelonelonffelonct
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.TransportMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.Componelonnt
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonPipelonlinelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.ComponelonntIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.ComponelonntIdelonntifielonrStack
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.MixelonrPipelonlinelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.PipelonlinelonStelonpIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.HasMarshalling
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.FailOpelonnPolicy
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.InvalidStelonpStatelonelonxcelonption
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonBuildelonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.candidatelon.CandidatelonPipelonlinelon
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.candidatelon.CandidatelonPipelonlinelonBuildelonrFactory
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.candidatelon.CandidatelonPipelonlinelonConfig
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.candidatelon.DelonpelonndelonntCandidatelonPipelonlinelonConfig
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.PipelonlinelonFailurelonClassifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.ProductDisablelond
+import com.twittelonr.product_mixelonr.corelon.quality_factor.HasQualityFactorStatus
+import com.twittelonr.product_mixelonr.corelon.quality_factor.QualityFactorObselonrvelonr
+import com.twittelonr.product_mixelonr.corelon.quality_factor.QualityFactorStatus
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.elonxeloncutor
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.async_felonaturelon_map_elonxeloncutor.AsyncFelonaturelonMapelonxeloncutor
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.async_felonaturelon_map_elonxeloncutor.AsyncFelonaturelonMapelonxeloncutorRelonsults
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.candidatelon_pipelonlinelon_elonxeloncutor.CandidatelonPipelonlinelonelonxeloncutor
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.candidatelon_pipelonlinelon_elonxeloncutor.CandidatelonPipelonlinelonelonxeloncutorRelonsult
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.domain_marshallelonr_elonxeloncutor.DomainMarshallelonrelonxeloncutor
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.gatelon_elonxeloncutor.Gatelonelonxeloncutor
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.gatelon_elonxeloncutor.GatelonelonxeloncutorRelonsult
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.gatelon_elonxeloncutor.StoppelondGatelonelonxcelonption
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.pipelonlinelon_relonsult_sidelon_elonffelonct_elonxeloncutor.PipelonlinelonRelonsultSidelonelonffelonctelonxeloncutor
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.quality_factor_elonxeloncutor.QualityFactorelonxeloncutorRelonsult
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.quelonry_felonaturelon_hydrator_elonxeloncutor.QuelonryFelonaturelonHydratorelonxeloncutor
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.selonlelonctor_elonxeloncutor.Selonlelonctorelonxeloncutor
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.selonlelonctor_elonxeloncutor.SelonlelonctorelonxeloncutorRelonsult
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.transport_marshallelonr_elonxeloncutor.TransportMarshallelonrelonxeloncutor
+import com.twittelonr.stitch.Arrow
+import com.twittelonr.util.logging.Logging
 
 /**
- * MixerPipelineBuilder builds [[MixerPipeline]]s from [[MixerPipelineConfig]]s.
+ * MixelonrPipelonlinelonBuildelonr builds [[MixelonrPipelonlinelon]]s from [[MixelonrPipelonlinelonConfig]]s.
  *
- * You should inject a [[MixerPipelineBuilderFactory]] and call `.get` to build these.
+ * You should injelonct a [[MixelonrPipelonlinelonBuildelonrFactory]] and call `.gelont` to build thelonselon.
  *
- * @see [[MixerPipelineConfig]] for the description of the type parameters
+ * @selonelon [[MixelonrPipelonlinelonConfig]] for thelon delonscription of thelon typelon paramelontelonrs
  */
-class MixerPipelineBuilder[Query <: PipelineQuery, DomainResultType <: HasMarshalling, Result](
-  candidatePipelineExecutor: CandidatePipelineExecutor,
-  gateExecutor: GateExecutor,
-  selectorExecutor: SelectorExecutor,
-  queryFeatureHydratorExecutor: QueryFeatureHydratorExecutor,
-  asyncFeatureMapExecutor: AsyncFeatureMapExecutor,
-  domainMarshallerExecutor: DomainMarshallerExecutor,
-  transportMarshallerExecutor: TransportMarshallerExecutor,
-  pipelineResultSideEffectExecutor: PipelineResultSideEffectExecutor,
-  candidatePipelineBuilderFactory: CandidatePipelineBuilderFactory,
-  override val statsReceiver: StatsReceiver)
-    extends PipelineBuilder[Query]
+class MixelonrPipelonlinelonBuildelonr[Quelonry <: PipelonlinelonQuelonry, DomainRelonsultTypelon <: HasMarshalling, Relonsult](
+  candidatelonPipelonlinelonelonxeloncutor: CandidatelonPipelonlinelonelonxeloncutor,
+  gatelonelonxeloncutor: Gatelonelonxeloncutor,
+  selonlelonctorelonxeloncutor: Selonlelonctorelonxeloncutor,
+  quelonryFelonaturelonHydratorelonxeloncutor: QuelonryFelonaturelonHydratorelonxeloncutor,
+  asyncFelonaturelonMapelonxeloncutor: AsyncFelonaturelonMapelonxeloncutor,
+  domainMarshallelonrelonxeloncutor: DomainMarshallelonrelonxeloncutor,
+  transportMarshallelonrelonxeloncutor: TransportMarshallelonrelonxeloncutor,
+  pipelonlinelonRelonsultSidelonelonffelonctelonxeloncutor: PipelonlinelonRelonsultSidelonelonffelonctelonxeloncutor,
+  candidatelonPipelonlinelonBuildelonrFactory: CandidatelonPipelonlinelonBuildelonrFactory,
+  ovelonrridelon val statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds PipelonlinelonBuildelonr[Quelonry]
     with Logging {
 
-  override type UnderlyingResultType = Result
-  override type PipelineResultType = MixerPipelineResult[Result]
+  ovelonrridelon typelon UndelonrlyingRelonsultTypelon = Relonsult
+  ovelonrridelon typelon PipelonlinelonRelonsultTypelon = MixelonrPipelonlinelonRelonsult[Relonsult]
 
-  def qualityFactorStep(
+  delonf qualityFactorStelonp(
     qualityFactorStatus: QualityFactorStatus
-  ): Step[Query, QualityFactorExecutorResult] =
-    new Step[Query, QualityFactorExecutorResult] {
-      override def identifier: PipelineStepIdentifier = MixerPipelineConfig.qualityFactorStep
+  ): Stelonp[Quelonry, QualityFactorelonxeloncutorRelonsult] =
+    nelonw Stelonp[Quelonry, QualityFactorelonxeloncutorRelonsult] {
+      ovelonrridelon delonf idelonntifielonr: PipelonlinelonStelonpIdelonntifielonr = MixelonrPipelonlinelonConfig.qualityFactorStelonp
 
-      override def executorArrow: Arrow[Query, QualityFactorExecutorResult] =
+      ovelonrridelon delonf elonxeloncutorArrow: Arrow[Quelonry, QualityFactorelonxeloncutorRelonsult] =
         Arrow
-          .map[Query, QualityFactorExecutorResult] { _ =>
-            QualityFactorExecutorResult(
-              pipelineQualityFactors =
-                qualityFactorStatus.qualityFactorByPipeline.mapValues(_.currentValue)
+          .map[Quelonry, QualityFactorelonxeloncutorRelonsult] { _ =>
+            QualityFactorelonxeloncutorRelonsult(
+              pipelonlinelonQualityFactors =
+                qualityFactorStatus.qualityFactorByPipelonlinelon.mapValuelons(_.currelonntValuelon)
             )
           }
 
-      override def inputAdaptor(
-        query: Query,
-        previousResult: MixerPipelineResult[Result]
-      ): Query = query
+      ovelonrridelon delonf inputAdaptor(
+        quelonry: Quelonry,
+        prelonviousRelonsult: MixelonrPipelonlinelonRelonsult[Relonsult]
+      ): Quelonry = quelonry
 
-      override def resultUpdater(
-        previousPipelineResult: MixerPipelineResult[Result],
-        executorResult: QualityFactorExecutorResult
-      ): MixerPipelineResult[Result] =
-        previousPipelineResult.copy(qualityFactorResult = Some(executorResult))
+      ovelonrridelon delonf relonsultUpdatelonr(
+        prelonviousPipelonlinelonRelonsult: MixelonrPipelonlinelonRelonsult[Relonsult],
+        elonxeloncutorRelonsult: QualityFactorelonxeloncutorRelonsult
+      ): MixelonrPipelonlinelonRelonsult[Relonsult] =
+        prelonviousPipelonlinelonRelonsult.copy(qualityFactorRelonsult = Somelon(elonxeloncutorRelonsult))
 
-      override def queryUpdater(
-        query: Query,
-        executorResult: QualityFactorExecutorResult
-      ): Query = {
-        query match {
-          case queryWithQualityFactor: HasQualityFactorStatus =>
-            queryWithQualityFactor
+      ovelonrridelon delonf quelonryUpdatelonr(
+        quelonry: Quelonry,
+        elonxeloncutorRelonsult: QualityFactorelonxeloncutorRelonsult
+      ): Quelonry = {
+        quelonry match {
+          caselon quelonryWithQualityFactor: HasQualityFactorStatus =>
+            quelonryWithQualityFactor
               .withQualityFactorStatus(
-                queryWithQualityFactor.qualityFactorStatus.getOrElse(QualityFactorStatus.empty) ++
+                quelonryWithQualityFactor.qualityFactorStatus.gelontOrelonlselon(QualityFactorStatus.elonmpty) ++
                   qualityFactorStatus
-              ).asInstanceOf[Query]
-          case _ =>
-            query
+              ).asInstancelonOf[Quelonry]
+          caselon _ =>
+            quelonry
         }
       }
     }
 
-  def gatesStep(
-    gates: Seq[Gate[Query]],
-    context: Executor.Context
-  ): Step[Query, GateExecutorResult] = new Step[Query, GateExecutorResult] {
-    override def identifier: PipelineStepIdentifier = MixerPipelineConfig.gatesStep
+  delonf gatelonsStelonp(
+    gatelons: Selonq[Gatelon[Quelonry]],
+    contelonxt: elonxeloncutor.Contelonxt
+  ): Stelonp[Quelonry, GatelonelonxeloncutorRelonsult] = nelonw Stelonp[Quelonry, GatelonelonxeloncutorRelonsult] {
+    ovelonrridelon delonf idelonntifielonr: PipelonlinelonStelonpIdelonntifielonr = MixelonrPipelonlinelonConfig.gatelonsStelonp
 
-    override def executorArrow: Arrow[Query, GateExecutorResult] =
-      gateExecutor.arrow(gates, context)
+    ovelonrridelon delonf elonxeloncutorArrow: Arrow[Quelonry, GatelonelonxeloncutorRelonsult] =
+      gatelonelonxeloncutor.arrow(gatelons, contelonxt)
 
-    override def inputAdaptor(query: Query, previousResult: MixerPipelineResult[Result]): Query =
-      query
+    ovelonrridelon delonf inputAdaptor(quelonry: Quelonry, prelonviousRelonsult: MixelonrPipelonlinelonRelonsult[Relonsult]): Quelonry =
+      quelonry
 
-    override def resultUpdater(
-      previousPipelineResult: MixerPipelineResult[Result],
-      executorResult: GateExecutorResult
-    ): MixerPipelineResult[Result] =
-      previousPipelineResult.copy(gateResult = Some(executorResult))
+    ovelonrridelon delonf relonsultUpdatelonr(
+      prelonviousPipelonlinelonRelonsult: MixelonrPipelonlinelonRelonsult[Relonsult],
+      elonxeloncutorRelonsult: GatelonelonxeloncutorRelonsult
+    ): MixelonrPipelonlinelonRelonsult[Relonsult] =
+      prelonviousPipelonlinelonRelonsult.copy(gatelonRelonsult = Somelon(elonxeloncutorRelonsult))
   }
 
-  def fetchQueryFeaturesStep(
-    queryFeatureHydrators: Seq[QueryFeatureHydrator[Query]],
-    stepIdentifier: PipelineStepIdentifier,
-    updater: ResultUpdater[MixerPipelineResult[Result], QueryFeatureHydratorExecutor.Result],
-    context: Executor.Context
-  ): Step[Query, QueryFeatureHydratorExecutor.Result] =
-    new Step[Query, QueryFeatureHydratorExecutor.Result] {
-      override def identifier: PipelineStepIdentifier = stepIdentifier
+  delonf felontchQuelonryFelonaturelonsStelonp(
+    quelonryFelonaturelonHydrators: Selonq[QuelonryFelonaturelonHydrator[Quelonry]],
+    stelonpIdelonntifielonr: PipelonlinelonStelonpIdelonntifielonr,
+    updatelonr: RelonsultUpdatelonr[MixelonrPipelonlinelonRelonsult[Relonsult], QuelonryFelonaturelonHydratorelonxeloncutor.Relonsult],
+    contelonxt: elonxeloncutor.Contelonxt
+  ): Stelonp[Quelonry, QuelonryFelonaturelonHydratorelonxeloncutor.Relonsult] =
+    nelonw Stelonp[Quelonry, QuelonryFelonaturelonHydratorelonxeloncutor.Relonsult] {
+      ovelonrridelon delonf idelonntifielonr: PipelonlinelonStelonpIdelonntifielonr = stelonpIdelonntifielonr
 
-      override def executorArrow: Arrow[Query, QueryFeatureHydratorExecutor.Result] =
-        queryFeatureHydratorExecutor.arrow(
-          queryFeatureHydrators,
-          MixerPipelineConfig.stepsAsyncFeatureHydrationCanBeCompletedBy,
-          context)
+      ovelonrridelon delonf elonxeloncutorArrow: Arrow[Quelonry, QuelonryFelonaturelonHydratorelonxeloncutor.Relonsult] =
+        quelonryFelonaturelonHydratorelonxeloncutor.arrow(
+          quelonryFelonaturelonHydrators,
+          MixelonrPipelonlinelonConfig.stelonpsAsyncFelonaturelonHydrationCanBelonComplelontelondBy,
+          contelonxt)
 
-      override def inputAdaptor(
-        query: Query,
-        previousResult: MixerPipelineResult[Result]
-      ): Query = query
+      ovelonrridelon delonf inputAdaptor(
+        quelonry: Quelonry,
+        prelonviousRelonsult: MixelonrPipelonlinelonRelonsult[Relonsult]
+      ): Quelonry = quelonry
 
-      override def resultUpdater(
-        previousPipelineResult: MixerPipelineResult[Result],
-        executorResult: QueryFeatureHydratorExecutor.Result
-      ): MixerPipelineResult[Result] =
-        updater(previousPipelineResult, executorResult)
+      ovelonrridelon delonf relonsultUpdatelonr(
+        prelonviousPipelonlinelonRelonsult: MixelonrPipelonlinelonRelonsult[Relonsult],
+        elonxeloncutorRelonsult: QuelonryFelonaturelonHydratorelonxeloncutor.Relonsult
+      ): MixelonrPipelonlinelonRelonsult[Relonsult] =
+        updatelonr(prelonviousPipelonlinelonRelonsult, elonxeloncutorRelonsult)
 
-      override def queryUpdater(
-        query: Query,
-        executorResult: QueryFeatureHydratorExecutor.Result
-      ): Query =
-        query
-          .withFeatureMap(
-            query.features
-              .getOrElse(FeatureMap.empty) ++ executorResult.featureMap).asInstanceOf[Query]
+      ovelonrridelon delonf quelonryUpdatelonr(
+        quelonry: Quelonry,
+        elonxeloncutorRelonsult: QuelonryFelonaturelonHydratorelonxeloncutor.Relonsult
+      ): Quelonry =
+        quelonry
+          .withFelonaturelonMap(
+            quelonry.felonaturelons
+              .gelontOrelonlselon(FelonaturelonMap.elonmpty) ++ elonxeloncutorRelonsult.felonaturelonMap).asInstancelonOf[Quelonry]
     }
 
-  def asyncFeaturesStep(
-    stepToHydrateFor: PipelineStepIdentifier,
-    context: Executor.Context
-  ): Step[AsyncFeatureMap, AsyncFeatureMapExecutorResults] =
-    new Step[AsyncFeatureMap, AsyncFeatureMapExecutorResults] {
-      override def identifier: PipelineStepIdentifier =
-        MixerPipelineConfig.asyncFeaturesStep(stepToHydrateFor)
+  delonf asyncFelonaturelonsStelonp(
+    stelonpToHydratelonFor: PipelonlinelonStelonpIdelonntifielonr,
+    contelonxt: elonxeloncutor.Contelonxt
+  ): Stelonp[AsyncFelonaturelonMap, AsyncFelonaturelonMapelonxeloncutorRelonsults] =
+    nelonw Stelonp[AsyncFelonaturelonMap, AsyncFelonaturelonMapelonxeloncutorRelonsults] {
+      ovelonrridelon delonf idelonntifielonr: PipelonlinelonStelonpIdelonntifielonr =
+        MixelonrPipelonlinelonConfig.asyncFelonaturelonsStelonp(stelonpToHydratelonFor)
 
-      override def executorArrow: Arrow[AsyncFeatureMap, AsyncFeatureMapExecutorResults] =
-        asyncFeatureMapExecutor.arrow(
-          stepToHydrateFor,
-          identifier,
-          context
+      ovelonrridelon delonf elonxeloncutorArrow: Arrow[AsyncFelonaturelonMap, AsyncFelonaturelonMapelonxeloncutorRelonsults] =
+        asyncFelonaturelonMapelonxeloncutor.arrow(
+          stelonpToHydratelonFor,
+          idelonntifielonr,
+          contelonxt
         )
 
-      override def inputAdaptor(
-        query: Query,
-        previousResult: MixerPipelineResult[Result]
-      ): AsyncFeatureMap =
-        previousResult.mergedAsyncQueryFeatures
-          .getOrElse(
-            throw InvalidStepStateException(identifier, "MergedAsyncQueryFeatures")
+      ovelonrridelon delonf inputAdaptor(
+        quelonry: Quelonry,
+        prelonviousRelonsult: MixelonrPipelonlinelonRelonsult[Relonsult]
+      ): AsyncFelonaturelonMap =
+        prelonviousRelonsult.melonrgelondAsyncQuelonryFelonaturelons
+          .gelontOrelonlselon(
+            throw InvalidStelonpStatelonelonxcelonption(idelonntifielonr, "MelonrgelondAsyncQuelonryFelonaturelons")
           )
 
-      override def resultUpdater(
-        previousPipelineResult: MixerPipelineResult[Result],
-        executorResult: AsyncFeatureMapExecutorResults
-      ): MixerPipelineResult[Result] = previousPipelineResult.copy(
-        asyncFeatureHydrationResults = previousPipelineResult.asyncFeatureHydrationResults match {
-          case Some(existingResults) => Some(existingResults ++ executorResult)
-          case None => Some(executorResult)
+      ovelonrridelon delonf relonsultUpdatelonr(
+        prelonviousPipelonlinelonRelonsult: MixelonrPipelonlinelonRelonsult[Relonsult],
+        elonxeloncutorRelonsult: AsyncFelonaturelonMapelonxeloncutorRelonsults
+      ): MixelonrPipelonlinelonRelonsult[Relonsult] = prelonviousPipelonlinelonRelonsult.copy(
+        asyncFelonaturelonHydrationRelonsults = prelonviousPipelonlinelonRelonsult.asyncFelonaturelonHydrationRelonsults match {
+          caselon Somelon(elonxistingRelonsults) => Somelon(elonxistingRelonsults ++ elonxeloncutorRelonsult)
+          caselon Nonelon => Somelon(elonxeloncutorRelonsult)
         })
 
-      override def queryUpdater(
-        query: Query,
-        executorResult: AsyncFeatureMapExecutorResults
-      ): Query =
-        if (executorResult.featureMapsByStep
-            .getOrElse(stepToHydrateFor, FeatureMap.empty).isEmpty) {
-          query
-        } else {
-          query
-            .withFeatureMap(
-              query.features
-                .getOrElse(FeatureMap.empty) ++ executorResult.featureMapsByStep(
-                stepToHydrateFor)).asInstanceOf[Query]
+      ovelonrridelon delonf quelonryUpdatelonr(
+        quelonry: Quelonry,
+        elonxeloncutorRelonsult: AsyncFelonaturelonMapelonxeloncutorRelonsults
+      ): Quelonry =
+        if (elonxeloncutorRelonsult.felonaturelonMapsByStelonp
+            .gelontOrelonlselon(stelonpToHydratelonFor, FelonaturelonMap.elonmpty).iselonmpty) {
+          quelonry
+        } elonlselon {
+          quelonry
+            .withFelonaturelonMap(
+              quelonry.felonaturelons
+                .gelontOrelonlselon(FelonaturelonMap.elonmpty) ++ elonxeloncutorRelonsult.felonaturelonMapsByStelonp(
+                stelonpToHydratelonFor)).asInstancelonOf[Quelonry]
         }
     }
 
-  def candidatePipelinesStep(
-    candidatePipelines: Seq[CandidatePipeline[Query]],
-    defaultFailOpenPolicy: FailOpenPolicy,
-    failOpenPolicies: Map[CandidatePipelineIdentifier, FailOpenPolicy],
-    qualityFactorObserverByPipeline: Map[ComponentIdentifier, QualityFactorObserver],
-    context: Executor.Context
-  ): Step[CandidatePipeline.Inputs[Query], CandidatePipelineExecutorResult] =
-    new Step[CandidatePipeline.Inputs[Query], CandidatePipelineExecutorResult] {
-      override def identifier: PipelineStepIdentifier = MixerPipelineConfig.candidatePipelinesStep
+  delonf candidatelonPipelonlinelonsStelonp(
+    candidatelonPipelonlinelons: Selonq[CandidatelonPipelonlinelon[Quelonry]],
+    delonfaultFailOpelonnPolicy: FailOpelonnPolicy,
+    failOpelonnPolicielons: Map[CandidatelonPipelonlinelonIdelonntifielonr, FailOpelonnPolicy],
+    qualityFactorObselonrvelonrByPipelonlinelon: Map[ComponelonntIdelonntifielonr, QualityFactorObselonrvelonr],
+    contelonxt: elonxeloncutor.Contelonxt
+  ): Stelonp[CandidatelonPipelonlinelon.Inputs[Quelonry], CandidatelonPipelonlinelonelonxeloncutorRelonsult] =
+    nelonw Stelonp[CandidatelonPipelonlinelon.Inputs[Quelonry], CandidatelonPipelonlinelonelonxeloncutorRelonsult] {
+      ovelonrridelon delonf idelonntifielonr: PipelonlinelonStelonpIdelonntifielonr = MixelonrPipelonlinelonConfig.candidatelonPipelonlinelonsStelonp
 
-      override def executorArrow: Arrow[CandidatePipeline.Inputs[
-        Query
-      ], CandidatePipelineExecutorResult] =
-        candidatePipelineExecutor
+      ovelonrridelon delonf elonxeloncutorArrow: Arrow[CandidatelonPipelonlinelon.Inputs[
+        Quelonry
+      ], CandidatelonPipelonlinelonelonxeloncutorRelonsult] =
+        candidatelonPipelonlinelonelonxeloncutor
           .arrow(
-            candidatePipelines,
-            defaultFailOpenPolicy,
-            failOpenPolicies,
-            qualityFactorObserverByPipeline,
-            context
+            candidatelonPipelonlinelons,
+            delonfaultFailOpelonnPolicy,
+            failOpelonnPolicielons,
+            qualityFactorObselonrvelonrByPipelonlinelon,
+            contelonxt
           )
 
-      override def inputAdaptor(
-        query: Query,
-        previousResult: MixerPipelineResult[Result]
-      ): CandidatePipeline.Inputs[Query] = CandidatePipeline.Inputs[Query](query, Seq.empty)
+      ovelonrridelon delonf inputAdaptor(
+        quelonry: Quelonry,
+        prelonviousRelonsult: MixelonrPipelonlinelonRelonsult[Relonsult]
+      ): CandidatelonPipelonlinelon.Inputs[Quelonry] = CandidatelonPipelonlinelon.Inputs[Quelonry](quelonry, Selonq.elonmpty)
 
-      override def resultUpdater(
-        previousPipelineResult: MixerPipelineResult[Result],
-        executorResult: CandidatePipelineExecutorResult
-      ): MixerPipelineResult[Result] =
-        previousPipelineResult.copy(candidatePipelineResults = Some(executorResult))
+      ovelonrridelon delonf relonsultUpdatelonr(
+        prelonviousPipelonlinelonRelonsult: MixelonrPipelonlinelonRelonsult[Relonsult],
+        elonxeloncutorRelonsult: CandidatelonPipelonlinelonelonxeloncutorRelonsult
+      ): MixelonrPipelonlinelonRelonsult[Relonsult] =
+        prelonviousPipelonlinelonRelonsult.copy(candidatelonPipelonlinelonRelonsults = Somelon(elonxeloncutorRelonsult))
 
-      override def queryUpdater(
-        query: Query,
-        executorResult: CandidatePipelineExecutorResult
-      ): Query = {
-        val updatedFeatureMap = query.features
-          .getOrElse(FeatureMap.empty) ++ executorResult.queryFeatureMap
-        query
-          .withFeatureMap(updatedFeatureMap).asInstanceOf[Query]
+      ovelonrridelon delonf quelonryUpdatelonr(
+        quelonry: Quelonry,
+        elonxeloncutorRelonsult: CandidatelonPipelonlinelonelonxeloncutorRelonsult
+      ): Quelonry = {
+        val updatelondFelonaturelonMap = quelonry.felonaturelons
+          .gelontOrelonlselon(FelonaturelonMap.elonmpty) ++ elonxeloncutorRelonsult.quelonryFelonaturelonMap
+        quelonry
+          .withFelonaturelonMap(updatelondFelonaturelonMap).asInstancelonOf[Quelonry]
       }
     }
 
-  def dependentCandidatePipelinesStep(
-    candidatePipelines: Seq[CandidatePipeline[Query]],
-    defaultFailOpenPolicy: FailOpenPolicy,
-    failOpenPolicies: Map[CandidatePipelineIdentifier, FailOpenPolicy],
-    qualityFactorObserverByPipeline: Map[ComponentIdentifier, QualityFactorObserver],
-    context: Executor.Context
-  ): Step[CandidatePipeline.Inputs[Query], CandidatePipelineExecutorResult] =
-    new Step[CandidatePipeline.Inputs[Query], CandidatePipelineExecutorResult] {
-      override def identifier: PipelineStepIdentifier =
-        MixerPipelineConfig.dependentCandidatePipelinesStep
+  delonf delonpelonndelonntCandidatelonPipelonlinelonsStelonp(
+    candidatelonPipelonlinelons: Selonq[CandidatelonPipelonlinelon[Quelonry]],
+    delonfaultFailOpelonnPolicy: FailOpelonnPolicy,
+    failOpelonnPolicielons: Map[CandidatelonPipelonlinelonIdelonntifielonr, FailOpelonnPolicy],
+    qualityFactorObselonrvelonrByPipelonlinelon: Map[ComponelonntIdelonntifielonr, QualityFactorObselonrvelonr],
+    contelonxt: elonxeloncutor.Contelonxt
+  ): Stelonp[CandidatelonPipelonlinelon.Inputs[Quelonry], CandidatelonPipelonlinelonelonxeloncutorRelonsult] =
+    nelonw Stelonp[CandidatelonPipelonlinelon.Inputs[Quelonry], CandidatelonPipelonlinelonelonxeloncutorRelonsult] {
+      ovelonrridelon delonf idelonntifielonr: PipelonlinelonStelonpIdelonntifielonr =
+        MixelonrPipelonlinelonConfig.delonpelonndelonntCandidatelonPipelonlinelonsStelonp
 
-      override def executorArrow: Arrow[CandidatePipeline.Inputs[
-        Query
-      ], CandidatePipelineExecutorResult] =
-        candidatePipelineExecutor
+      ovelonrridelon delonf elonxeloncutorArrow: Arrow[CandidatelonPipelonlinelon.Inputs[
+        Quelonry
+      ], CandidatelonPipelonlinelonelonxeloncutorRelonsult] =
+        candidatelonPipelonlinelonelonxeloncutor
           .arrow(
-            candidatePipelines,
-            defaultFailOpenPolicy,
-            failOpenPolicies,
-            qualityFactorObserverByPipeline,
-            context
+            candidatelonPipelonlinelons,
+            delonfaultFailOpelonnPolicy,
+            failOpelonnPolicielons,
+            qualityFactorObselonrvelonrByPipelonlinelon,
+            contelonxt
           )
 
-      override def inputAdaptor(
-        query: Query,
-        previousResult: MixerPipelineResult[Result]
-      ): CandidatePipeline.Inputs[Query] = {
-        val previousCandidates = previousResult.candidatePipelineResults
-          .getOrElse {
-            throw InvalidStepStateException(identifier, "Candidates")
-          }.candidatePipelineResults.flatMap(_.result.getOrElse(Seq.empty))
-        CandidatePipeline.Inputs[Query](query, previousCandidates)
+      ovelonrridelon delonf inputAdaptor(
+        quelonry: Quelonry,
+        prelonviousRelonsult: MixelonrPipelonlinelonRelonsult[Relonsult]
+      ): CandidatelonPipelonlinelon.Inputs[Quelonry] = {
+        val prelonviousCandidatelons = prelonviousRelonsult.candidatelonPipelonlinelonRelonsults
+          .gelontOrelonlselon {
+            throw InvalidStelonpStatelonelonxcelonption(idelonntifielonr, "Candidatelons")
+          }.candidatelonPipelonlinelonRelonsults.flatMap(_.relonsult.gelontOrelonlselon(Selonq.elonmpty))
+        CandidatelonPipelonlinelon.Inputs[Quelonry](quelonry, prelonviousCandidatelons)
       }
 
-      override def resultUpdater(
-        previousPipelineResult: MixerPipelineResult[Result],
-        executorResult: CandidatePipelineExecutorResult
-      ): MixerPipelineResult[Result] =
-        previousPipelineResult.copy(dependentCandidatePipelineResults = Some(executorResult))
+      ovelonrridelon delonf relonsultUpdatelonr(
+        prelonviousPipelonlinelonRelonsult: MixelonrPipelonlinelonRelonsult[Relonsult],
+        elonxeloncutorRelonsult: CandidatelonPipelonlinelonelonxeloncutorRelonsult
+      ): MixelonrPipelonlinelonRelonsult[Relonsult] =
+        prelonviousPipelonlinelonRelonsult.copy(delonpelonndelonntCandidatelonPipelonlinelonRelonsults = Somelon(elonxeloncutorRelonsult))
 
-      override def queryUpdater(
-        query: Query,
-        executorResult: CandidatePipelineExecutorResult
-      ): Query = {
-        val updatedFeatureMap = query.features
-          .getOrElse(FeatureMap.empty) ++ executorResult.queryFeatureMap
-        query
-          .withFeatureMap(updatedFeatureMap).asInstanceOf[Query]
+      ovelonrridelon delonf quelonryUpdatelonr(
+        quelonry: Quelonry,
+        elonxeloncutorRelonsult: CandidatelonPipelonlinelonelonxeloncutorRelonsult
+      ): Quelonry = {
+        val updatelondFelonaturelonMap = quelonry.felonaturelons
+          .gelontOrelonlselon(FelonaturelonMap.elonmpty) ++ elonxeloncutorRelonsult.quelonryFelonaturelonMap
+        quelonry
+          .withFelonaturelonMap(updatelondFelonaturelonMap).asInstancelonOf[Quelonry]
       }
     }
 
-  def resultSelectorsStep(
-    selectors: Seq[Selector[Query]],
-    context: Executor.Context
-  ): Step[SelectorExecutor.Inputs[Query], SelectorExecutorResult] =
-    new Step[SelectorExecutor.Inputs[Query], SelectorExecutorResult] {
-      override def identifier: PipelineStepIdentifier = MixerPipelineConfig.resultSelectorsStep
+  delonf relonsultSelonlelonctorsStelonp(
+    selonlelonctors: Selonq[Selonlelonctor[Quelonry]],
+    contelonxt: elonxeloncutor.Contelonxt
+  ): Stelonp[Selonlelonctorelonxeloncutor.Inputs[Quelonry], SelonlelonctorelonxeloncutorRelonsult] =
+    nelonw Stelonp[Selonlelonctorelonxeloncutor.Inputs[Quelonry], SelonlelonctorelonxeloncutorRelonsult] {
+      ovelonrridelon delonf idelonntifielonr: PipelonlinelonStelonpIdelonntifielonr = MixelonrPipelonlinelonConfig.relonsultSelonlelonctorsStelonp
 
-      override def executorArrow: Arrow[SelectorExecutor.Inputs[Query], SelectorExecutorResult] =
-        selectorExecutor.arrow(selectors, context)
+      ovelonrridelon delonf elonxeloncutorArrow: Arrow[Selonlelonctorelonxeloncutor.Inputs[Quelonry], SelonlelonctorelonxeloncutorRelonsult] =
+        selonlelonctorelonxeloncutor.arrow(selonlelonctors, contelonxt)
 
-      override def inputAdaptor(
-        query: Query,
-        previousResult: MixerPipelineResult[Result]
-      ): SelectorExecutor.Inputs[Query] = {
-        val candidates = previousResult.candidatePipelineResults
-          .getOrElse {
-            throw InvalidStepStateException(identifier, "Candidates")
-          }.candidatePipelineResults.flatMap(_.result.getOrElse(Seq.empty))
+      ovelonrridelon delonf inputAdaptor(
+        quelonry: Quelonry,
+        prelonviousRelonsult: MixelonrPipelonlinelonRelonsult[Relonsult]
+      ): Selonlelonctorelonxeloncutor.Inputs[Quelonry] = {
+        val candidatelons = prelonviousRelonsult.candidatelonPipelonlinelonRelonsults
+          .gelontOrelonlselon {
+            throw InvalidStelonpStatelonelonxcelonption(idelonntifielonr, "Candidatelons")
+          }.candidatelonPipelonlinelonRelonsults.flatMap(_.relonsult.gelontOrelonlselon(Selonq.elonmpty))
 
-        val dependentCandidates =
-          previousResult.dependentCandidatePipelineResults
-            .getOrElse {
-              throw InvalidStepStateException(identifier, "DependentCandidates")
-            }.candidatePipelineResults.flatMap(_.result.getOrElse(Seq.empty))
+        val delonpelonndelonntCandidatelons =
+          prelonviousRelonsult.delonpelonndelonntCandidatelonPipelonlinelonRelonsults
+            .gelontOrelonlselon {
+              throw InvalidStelonpStatelonelonxcelonption(idelonntifielonr, "DelonpelonndelonntCandidatelons")
+            }.candidatelonPipelonlinelonRelonsults.flatMap(_.relonsult.gelontOrelonlselon(Selonq.elonmpty))
 
-        SelectorExecutor.Inputs(
-          query = query,
-          candidatesWithDetails = candidates ++ dependentCandidates
+        Selonlelonctorelonxeloncutor.Inputs(
+          quelonry = quelonry,
+          candidatelonsWithDelontails = candidatelons ++ delonpelonndelonntCandidatelons
         )
       }
 
-      override def resultUpdater(
-        previousPipelineResult: MixerPipelineResult[Result],
-        executorResult: SelectorExecutorResult
-      ): MixerPipelineResult[Result] =
-        previousPipelineResult.copy(resultSelectorResults = Some(executorResult))
+      ovelonrridelon delonf relonsultUpdatelonr(
+        prelonviousPipelonlinelonRelonsult: MixelonrPipelonlinelonRelonsult[Relonsult],
+        elonxeloncutorRelonsult: SelonlelonctorelonxeloncutorRelonsult
+      ): MixelonrPipelonlinelonRelonsult[Relonsult] =
+        prelonviousPipelonlinelonRelonsult.copy(relonsultSelonlelonctorRelonsults = Somelon(elonxeloncutorRelonsult))
     }
 
-  def domainMarshallingStep(
-    domainMarshaller: DomainMarshaller[Query, DomainResultType],
-    context: Executor.Context
-  ): Step[DomainMarshallerExecutor.Inputs[Query], DomainMarshallerExecutor.Result[
-    DomainResultType
+  delonf domainMarshallingStelonp(
+    domainMarshallelonr: DomainMarshallelonr[Quelonry, DomainRelonsultTypelon],
+    contelonxt: elonxeloncutor.Contelonxt
+  ): Stelonp[DomainMarshallelonrelonxeloncutor.Inputs[Quelonry], DomainMarshallelonrelonxeloncutor.Relonsult[
+    DomainRelonsultTypelon
   ]] =
-    new Step[DomainMarshallerExecutor.Inputs[Query], DomainMarshallerExecutor.Result[
-      DomainResultType
+    nelonw Stelonp[DomainMarshallelonrelonxeloncutor.Inputs[Quelonry], DomainMarshallelonrelonxeloncutor.Relonsult[
+      DomainRelonsultTypelon
     ]] {
-      override def identifier: PipelineStepIdentifier = MixerPipelineConfig.domainMarshallerStep
+      ovelonrridelon delonf idelonntifielonr: PipelonlinelonStelonpIdelonntifielonr = MixelonrPipelonlinelonConfig.domainMarshallelonrStelonp
 
-      override def executorArrow: Arrow[
-        DomainMarshallerExecutor.Inputs[Query],
-        DomainMarshallerExecutor.Result[DomainResultType]
+      ovelonrridelon delonf elonxeloncutorArrow: Arrow[
+        DomainMarshallelonrelonxeloncutor.Inputs[Quelonry],
+        DomainMarshallelonrelonxeloncutor.Relonsult[DomainRelonsultTypelon]
       ] =
-        domainMarshallerExecutor.arrow(domainMarshaller, context)
+        domainMarshallelonrelonxeloncutor.arrow(domainMarshallelonr, contelonxt)
 
-      override def inputAdaptor(
-        query: Query,
-        previousResult: MixerPipelineResult[Result]
-      ): DomainMarshallerExecutor.Inputs[Query] = {
-        val selectorResults = previousResult.resultSelectorResults.getOrElse {
-          throw InvalidStepStateException(identifier, "SelectorResults")
+      ovelonrridelon delonf inputAdaptor(
+        quelonry: Quelonry,
+        prelonviousRelonsult: MixelonrPipelonlinelonRelonsult[Relonsult]
+      ): DomainMarshallelonrelonxeloncutor.Inputs[Quelonry] = {
+        val selonlelonctorRelonsults = prelonviousRelonsult.relonsultSelonlelonctorRelonsults.gelontOrelonlselon {
+          throw InvalidStelonpStatelonelonxcelonption(idelonntifielonr, "SelonlelonctorRelonsults")
         }
 
-        DomainMarshallerExecutor.Inputs(
-          query = query,
-          candidatesWithDetails = selectorResults.selectedCandidates
+        DomainMarshallelonrelonxeloncutor.Inputs(
+          quelonry = quelonry,
+          candidatelonsWithDelontails = selonlelonctorRelonsults.selonlelonctelondCandidatelons
         )
       }
 
-      override def resultUpdater(
-        previousPipelineResult: MixerPipelineResult[Result],
-        executorResult: DomainMarshallerExecutor.Result[DomainResultType]
-      ): MixerPipelineResult[Result] = previousPipelineResult.copy(
-        domainMarshallerResults = Some(executorResult)
+      ovelonrridelon delonf relonsultUpdatelonr(
+        prelonviousPipelonlinelonRelonsult: MixelonrPipelonlinelonRelonsult[Relonsult],
+        elonxeloncutorRelonsult: DomainMarshallelonrelonxeloncutor.Relonsult[DomainRelonsultTypelon]
+      ): MixelonrPipelonlinelonRelonsult[Relonsult] = prelonviousPipelonlinelonRelonsult.copy(
+        domainMarshallelonrRelonsults = Somelon(elonxeloncutorRelonsult)
       )
     }
 
-  def resultSideEffectsStep(
-    sideEffects: Seq[PipelineResultSideEffect[Query, DomainResultType]],
-    context: Executor.Context
-  ): Step[
-    PipelineResultSideEffect.Inputs[Query, DomainResultType],
-    PipelineResultSideEffectExecutor.Result
-  ] = new Step[
-    PipelineResultSideEffect.Inputs[Query, DomainResultType],
-    PipelineResultSideEffectExecutor.Result
+  delonf relonsultSidelonelonffelonctsStelonp(
+    sidelonelonffeloncts: Selonq[PipelonlinelonRelonsultSidelonelonffelonct[Quelonry, DomainRelonsultTypelon]],
+    contelonxt: elonxeloncutor.Contelonxt
+  ): Stelonp[
+    PipelonlinelonRelonsultSidelonelonffelonct.Inputs[Quelonry, DomainRelonsultTypelon],
+    PipelonlinelonRelonsultSidelonelonffelonctelonxeloncutor.Relonsult
+  ] = nelonw Stelonp[
+    PipelonlinelonRelonsultSidelonelonffelonct.Inputs[Quelonry, DomainRelonsultTypelon],
+    PipelonlinelonRelonsultSidelonelonffelonctelonxeloncutor.Relonsult
   ] {
-    override def identifier: PipelineStepIdentifier = MixerPipelineConfig.resultSideEffectsStep
+    ovelonrridelon delonf idelonntifielonr: PipelonlinelonStelonpIdelonntifielonr = MixelonrPipelonlinelonConfig.relonsultSidelonelonffelonctsStelonp
 
-    override def executorArrow: Arrow[
-      PipelineResultSideEffect.Inputs[Query, DomainResultType],
-      PipelineResultSideEffectExecutor.Result
-    ] = pipelineResultSideEffectExecutor.arrow(sideEffects, context)
+    ovelonrridelon delonf elonxeloncutorArrow: Arrow[
+      PipelonlinelonRelonsultSidelonelonffelonct.Inputs[Quelonry, DomainRelonsultTypelon],
+      PipelonlinelonRelonsultSidelonelonffelonctelonxeloncutor.Relonsult
+    ] = pipelonlinelonRelonsultSidelonelonffelonctelonxeloncutor.arrow(sidelonelonffeloncts, contelonxt)
 
-    override def inputAdaptor(
-      query: Query,
-      previousResult: MixerPipelineResult[Result]
-    ): PipelineResultSideEffect.Inputs[Query, DomainResultType] = {
+    ovelonrridelon delonf inputAdaptor(
+      quelonry: Quelonry,
+      prelonviousRelonsult: MixelonrPipelonlinelonRelonsult[Relonsult]
+    ): PipelonlinelonRelonsultSidelonelonffelonct.Inputs[Quelonry, DomainRelonsultTypelon] = {
 
-      val selectorResults = previousResult.resultSelectorResults.getOrElse {
-        throw InvalidStepStateException(identifier, "SelectorResults")
+      val selonlelonctorRelonsults = prelonviousRelonsult.relonsultSelonlelonctorRelonsults.gelontOrelonlselon {
+        throw InvalidStelonpStatelonelonxcelonption(idelonntifielonr, "SelonlelonctorRelonsults")
       }
 
-      val domainMarshallerResults = previousResult.domainMarshallerResults.getOrElse {
-        throw InvalidStepStateException(identifier, "DomainMarshallerResults")
+      val domainMarshallelonrRelonsults = prelonviousRelonsult.domainMarshallelonrRelonsults.gelontOrelonlselon {
+        throw InvalidStelonpStatelonelonxcelonption(idelonntifielonr, "DomainMarshallelonrRelonsults")
       }
 
-      PipelineResultSideEffect.Inputs[Query, DomainResultType](
-        query = query,
-        selectedCandidates = selectorResults.selectedCandidates,
-        remainingCandidates = selectorResults.remainingCandidates,
-        droppedCandidates = selectorResults.droppedCandidates,
-        response = domainMarshallerResults.result.asInstanceOf[DomainResultType]
+      PipelonlinelonRelonsultSidelonelonffelonct.Inputs[Quelonry, DomainRelonsultTypelon](
+        quelonry = quelonry,
+        selonlelonctelondCandidatelons = selonlelonctorRelonsults.selonlelonctelondCandidatelons,
+        relonmainingCandidatelons = selonlelonctorRelonsults.relonmainingCandidatelons,
+        droppelondCandidatelons = selonlelonctorRelonsults.droppelondCandidatelons,
+        relonsponselon = domainMarshallelonrRelonsults.relonsult.asInstancelonOf[DomainRelonsultTypelon]
       )
     }
 
-    override def resultUpdater(
-      previousPipelineResult: MixerPipelineResult[Result],
-      executorResult: PipelineResultSideEffectExecutor.Result
-    ): MixerPipelineResult[Result] =
-      previousPipelineResult.copy(resultSideEffectResults = Some(executorResult))
+    ovelonrridelon delonf relonsultUpdatelonr(
+      prelonviousPipelonlinelonRelonsult: MixelonrPipelonlinelonRelonsult[Relonsult],
+      elonxeloncutorRelonsult: PipelonlinelonRelonsultSidelonelonffelonctelonxeloncutor.Relonsult
+    ): MixelonrPipelonlinelonRelonsult[Relonsult] =
+      prelonviousPipelonlinelonRelonsult.copy(relonsultSidelonelonffelonctRelonsults = Somelon(elonxeloncutorRelonsult))
   }
 
-  def transportMarshallingStep(
-    transportMarshaller: TransportMarshaller[DomainResultType, Result],
-    context: Executor.Context
-  ): Step[
-    TransportMarshallerExecutor.Inputs[DomainResultType],
-    TransportMarshallerExecutor.Result[Result]
-  ] = new Step[TransportMarshallerExecutor.Inputs[
-    DomainResultType
-  ], TransportMarshallerExecutor.Result[Result]] {
-    override def identifier: PipelineStepIdentifier = MixerPipelineConfig.transportMarshallerStep
+  delonf transportMarshallingStelonp(
+    transportMarshallelonr: TransportMarshallelonr[DomainRelonsultTypelon, Relonsult],
+    contelonxt: elonxeloncutor.Contelonxt
+  ): Stelonp[
+    TransportMarshallelonrelonxeloncutor.Inputs[DomainRelonsultTypelon],
+    TransportMarshallelonrelonxeloncutor.Relonsult[Relonsult]
+  ] = nelonw Stelonp[TransportMarshallelonrelonxeloncutor.Inputs[
+    DomainRelonsultTypelon
+  ], TransportMarshallelonrelonxeloncutor.Relonsult[Relonsult]] {
+    ovelonrridelon delonf idelonntifielonr: PipelonlinelonStelonpIdelonntifielonr = MixelonrPipelonlinelonConfig.transportMarshallelonrStelonp
 
-    override def executorArrow: Arrow[TransportMarshallerExecutor.Inputs[
-      DomainResultType
-    ], TransportMarshallerExecutor.Result[Result]] =
-      transportMarshallerExecutor.arrow(transportMarshaller, context)
+    ovelonrridelon delonf elonxeloncutorArrow: Arrow[TransportMarshallelonrelonxeloncutor.Inputs[
+      DomainRelonsultTypelon
+    ], TransportMarshallelonrelonxeloncutor.Relonsult[Relonsult]] =
+      transportMarshallelonrelonxeloncutor.arrow(transportMarshallelonr, contelonxt)
 
-    override def inputAdaptor(
-      query: Query,
-      previousResult: MixerPipelineResult[Result]
-    ): TransportMarshallerExecutor.Inputs[DomainResultType] = {
-      val domainMarshallingResults = previousResult.domainMarshallerResults.getOrElse {
-        throw InvalidStepStateException(identifier, "DomainMarshallerResults")
+    ovelonrridelon delonf inputAdaptor(
+      quelonry: Quelonry,
+      prelonviousRelonsult: MixelonrPipelonlinelonRelonsult[Relonsult]
+    ): TransportMarshallelonrelonxeloncutor.Inputs[DomainRelonsultTypelon] = {
+      val domainMarshallingRelonsults = prelonviousRelonsult.domainMarshallelonrRelonsults.gelontOrelonlselon {
+        throw InvalidStelonpStatelonelonxcelonption(idelonntifielonr, "DomainMarshallelonrRelonsults")
       }
 
-      // Since the PipelineResult just uses HasMarshalling
-      val domainResult = domainMarshallingResults.result.asInstanceOf[DomainResultType]
+      // Sincelon thelon PipelonlinelonRelonsult just uselons HasMarshalling
+      val domainRelonsult = domainMarshallingRelonsults.relonsult.asInstancelonOf[DomainRelonsultTypelon]
 
-      TransportMarshallerExecutor.Inputs(domainResult)
+      TransportMarshallelonrelonxeloncutor.Inputs(domainRelonsult)
     }
 
-    override def resultUpdater(
-      previousPipelineResult: MixerPipelineResult[Result],
-      executorResult: TransportMarshallerExecutor.Result[Result]
-    ): MixerPipelineResult[Result] = previousPipelineResult.copy(
-      transportMarshallerResults = Some(executorResult),
-      result = Some(executorResult.result)
+    ovelonrridelon delonf relonsultUpdatelonr(
+      prelonviousPipelonlinelonRelonsult: MixelonrPipelonlinelonRelonsult[Relonsult],
+      elonxeloncutorRelonsult: TransportMarshallelonrelonxeloncutor.Relonsult[Relonsult]
+    ): MixelonrPipelonlinelonRelonsult[Relonsult] = prelonviousPipelonlinelonRelonsult.copy(
+      transportMarshallelonrRelonsults = Somelon(elonxeloncutorRelonsult),
+      relonsult = Somelon(elonxeloncutorRelonsult.relonsult)
     )
   }
 
-  def build(
-    parentComponentIdentifierStack: ComponentIdentifierStack,
-    config: MixerPipelineConfig[Query, DomainResultType, Result]
-  ): MixerPipeline[Query, Result] = {
+  delonf build(
+    parelonntComponelonntIdelonntifielonrStack: ComponelonntIdelonntifielonrStack,
+    config: MixelonrPipelonlinelonConfig[Quelonry, DomainRelonsultTypelon, Relonsult]
+  ): MixelonrPipelonlinelon[Quelonry, Relonsult] = {
 
-    val pipelineIdentifier = config.identifier
+    val pipelonlinelonIdelonntifielonr = config.idelonntifielonr
 
-    val context = Executor.Context(
-      PipelineFailureClassifier(
-        config.failureClassifier.orElse(StoppedGateException.classifier(ProductDisabled))),
-      parentComponentIdentifierStack.push(pipelineIdentifier)
+    val contelonxt = elonxeloncutor.Contelonxt(
+      PipelonlinelonFailurelonClassifielonr(
+        config.failurelonClassifielonr.orelonlselon(StoppelondGatelonelonxcelonption.classifielonr(ProductDisablelond))),
+      parelonntComponelonntIdelonntifielonrStack.push(pipelonlinelonIdelonntifielonr)
     )
 
     val qualityFactorStatus: QualityFactorStatus =
       QualityFactorStatus.build(config.qualityFactorConfigs)
 
-    val qualityFactorObserverByPipeline =
-      qualityFactorStatus.qualityFactorByPipeline.mapValues { qualityFactor =>
-        qualityFactor.buildObserver()
+    val qualityFactorObselonrvelonrByPipelonlinelon =
+      qualityFactorStatus.qualityFactorByPipelonlinelon.mapValuelons { qualityFactor =>
+        qualityFactor.buildObselonrvelonr()
       }
 
-    buildGaugesForQualityFactor(pipelineIdentifier, qualityFactorStatus, statsReceiver)
+    buildGaugelonsForQualityFactor(pipelonlinelonIdelonntifielonr, qualityFactorStatus, statsReloncelonivelonr)
 
-    val candidatePipelines: Seq[CandidatePipeline[Query]] = config.candidatePipelines.map {
-      pipelineConfig: CandidatePipelineConfig[Query, _, _, _] =>
-        pipelineConfig.build(context.componentStack, candidatePipelineBuilderFactory)
+    val candidatelonPipelonlinelons: Selonq[CandidatelonPipelonlinelon[Quelonry]] = config.candidatelonPipelonlinelons.map {
+      pipelonlinelonConfig: CandidatelonPipelonlinelonConfig[Quelonry, _, _, _] =>
+        pipelonlinelonConfig.build(contelonxt.componelonntStack, candidatelonPipelonlinelonBuildelonrFactory)
     }
 
-    val dependentCandidatePipelines: Seq[CandidatePipeline[Query]] =
-      config.dependentCandidatePipelines.map {
-        pipelineConfig: DependentCandidatePipelineConfig[Query, _, _, _] =>
-          pipelineConfig.build(context.componentStack, candidatePipelineBuilderFactory)
+    val delonpelonndelonntCandidatelonPipelonlinelons: Selonq[CandidatelonPipelonlinelon[Quelonry]] =
+      config.delonpelonndelonntCandidatelonPipelonlinelons.map {
+        pipelonlinelonConfig: DelonpelonndelonntCandidatelonPipelonlinelonConfig[Quelonry, _, _, _] =>
+          pipelonlinelonConfig.build(contelonxt.componelonntStack, candidatelonPipelonlinelonBuildelonrFactory)
       }
 
-    val builtSteps = Seq(
-      qualityFactorStep(qualityFactorStatus),
-      gatesStep(config.gates, context),
-      fetchQueryFeaturesStep(
-        config.fetchQueryFeatures,
-        MixerPipelineConfig.fetchQueryFeaturesStep,
-        (previousPipelineResult, executorResult) =>
-          previousPipelineResult.copy(queryFeatures = Some(executorResult)),
-        context
+    val builtStelonps = Selonq(
+      qualityFactorStelonp(qualityFactorStatus),
+      gatelonsStelonp(config.gatelons, contelonxt),
+      felontchQuelonryFelonaturelonsStelonp(
+        config.felontchQuelonryFelonaturelons,
+        MixelonrPipelonlinelonConfig.felontchQuelonryFelonaturelonsStelonp,
+        (prelonviousPipelonlinelonRelonsult, elonxeloncutorRelonsult) =>
+          prelonviousPipelonlinelonRelonsult.copy(quelonryFelonaturelons = Somelon(elonxeloncutorRelonsult)),
+        contelonxt
       ),
-      fetchQueryFeaturesStep(
-        config.fetchQueryFeaturesPhase2,
-        MixerPipelineConfig.fetchQueryFeaturesPhase2Step,
-        (previousPipelineResult, executorResult) =>
-          previousPipelineResult.copy(
-            queryFeaturesPhase2 = Some(executorResult),
-            mergedAsyncQueryFeatures = Some(
-              previousPipelineResult.queryFeatures
-                .getOrElse(throw InvalidStepStateException(
-                  MixerPipelineConfig.fetchQueryFeaturesPhase2Step,
-                  "QueryFeatures"))
-                .asyncFeatureMap ++ executorResult.asyncFeatureMap)
+      felontchQuelonryFelonaturelonsStelonp(
+        config.felontchQuelonryFelonaturelonsPhaselon2,
+        MixelonrPipelonlinelonConfig.felontchQuelonryFelonaturelonsPhaselon2Stelonp,
+        (prelonviousPipelonlinelonRelonsult, elonxeloncutorRelonsult) =>
+          prelonviousPipelonlinelonRelonsult.copy(
+            quelonryFelonaturelonsPhaselon2 = Somelon(elonxeloncutorRelonsult),
+            melonrgelondAsyncQuelonryFelonaturelons = Somelon(
+              prelonviousPipelonlinelonRelonsult.quelonryFelonaturelons
+                .gelontOrelonlselon(throw InvalidStelonpStatelonelonxcelonption(
+                  MixelonrPipelonlinelonConfig.felontchQuelonryFelonaturelonsPhaselon2Stelonp,
+                  "QuelonryFelonaturelons"))
+                .asyncFelonaturelonMap ++ elonxeloncutorRelonsult.asyncFelonaturelonMap)
           ),
-        context
+        contelonxt
       ),
-      asyncFeaturesStep(MixerPipelineConfig.candidatePipelinesStep, context),
-      candidatePipelinesStep(
-        candidatePipelines,
-        config.defaultFailOpenPolicy,
-        config.failOpenPolicies,
-        qualityFactorObserverByPipeline,
-        context),
-      asyncFeaturesStep(MixerPipelineConfig.dependentCandidatePipelinesStep, context),
-      dependentCandidatePipelinesStep(
-        dependentCandidatePipelines,
-        config.defaultFailOpenPolicy,
-        config.failOpenPolicies,
-        qualityFactorObserverByPipeline,
-        context),
-      asyncFeaturesStep(MixerPipelineConfig.resultSelectorsStep, context),
-      resultSelectorsStep(config.resultSelectors, context),
-      domainMarshallingStep(config.domainMarshaller, context),
-      asyncFeaturesStep(MixerPipelineConfig.resultSideEffectsStep, context),
-      resultSideEffectsStep(config.resultSideEffects, context),
-      transportMarshallingStep(config.transportMarshaller, context)
+      asyncFelonaturelonsStelonp(MixelonrPipelonlinelonConfig.candidatelonPipelonlinelonsStelonp, contelonxt),
+      candidatelonPipelonlinelonsStelonp(
+        candidatelonPipelonlinelons,
+        config.delonfaultFailOpelonnPolicy,
+        config.failOpelonnPolicielons,
+        qualityFactorObselonrvelonrByPipelonlinelon,
+        contelonxt),
+      asyncFelonaturelonsStelonp(MixelonrPipelonlinelonConfig.delonpelonndelonntCandidatelonPipelonlinelonsStelonp, contelonxt),
+      delonpelonndelonntCandidatelonPipelonlinelonsStelonp(
+        delonpelonndelonntCandidatelonPipelonlinelons,
+        config.delonfaultFailOpelonnPolicy,
+        config.failOpelonnPolicielons,
+        qualityFactorObselonrvelonrByPipelonlinelon,
+        contelonxt),
+      asyncFelonaturelonsStelonp(MixelonrPipelonlinelonConfig.relonsultSelonlelonctorsStelonp, contelonxt),
+      relonsultSelonlelonctorsStelonp(config.relonsultSelonlelonctors, contelonxt),
+      domainMarshallingStelonp(config.domainMarshallelonr, contelonxt),
+      asyncFelonaturelonsStelonp(MixelonrPipelonlinelonConfig.relonsultSidelonelonffelonctsStelonp, contelonxt),
+      relonsultSidelonelonffelonctsStelonp(config.relonsultSidelonelonffeloncts, contelonxt),
+      transportMarshallingStelonp(config.transportMarshallelonr, contelonxt)
     )
 
-    val finalArrow = buildCombinedArrowFromSteps(
-      steps = builtSteps,
-      context = context,
-      initialEmptyResult = MixerPipelineResult.empty,
-      stepsInOrderFromConfig = MixerPipelineConfig.stepsInOrder
+    val finalArrow = buildCombinelondArrowFromStelonps(
+      stelonps = builtStelonps,
+      contelonxt = contelonxt,
+      initialelonmptyRelonsult = MixelonrPipelonlinelonRelonsult.elonmpty,
+      stelonpsInOrdelonrFromConfig = MixelonrPipelonlinelonConfig.stelonpsInOrdelonr
     )
 
-    val configFromBuilder = config
-    new MixerPipeline[Query, Result] {
-      override private[core] val config: MixerPipelineConfig[Query, _, Result] = configFromBuilder
-      override val arrow: Arrow[Query, MixerPipelineResult[Result]] = finalArrow
-      override val identifier: MixerPipelineIdentifier = pipelineIdentifier
-      override val alerts: Seq[Alert] = config.alerts
-      override val children: Seq[Component] =
-        config.gates ++
-          config.fetchQueryFeatures ++
-          candidatePipelines ++
-          dependentCandidatePipelines ++
-          config.resultSideEffects ++
-          Seq(config.domainMarshaller, config.transportMarshaller)
+    val configFromBuildelonr = config
+    nelonw MixelonrPipelonlinelon[Quelonry, Relonsult] {
+      ovelonrridelon privatelon[corelon] val config: MixelonrPipelonlinelonConfig[Quelonry, _, Relonsult] = configFromBuildelonr
+      ovelonrridelon val arrow: Arrow[Quelonry, MixelonrPipelonlinelonRelonsult[Relonsult]] = finalArrow
+      ovelonrridelon val idelonntifielonr: MixelonrPipelonlinelonIdelonntifielonr = pipelonlinelonIdelonntifielonr
+      ovelonrridelon val alelonrts: Selonq[Alelonrt] = config.alelonrts
+      ovelonrridelon val childrelonn: Selonq[Componelonnt] =
+        config.gatelons ++
+          config.felontchQuelonryFelonaturelons ++
+          candidatelonPipelonlinelons ++
+          delonpelonndelonntCandidatelonPipelonlinelons ++
+          config.relonsultSidelonelonffeloncts ++
+          Selonq(config.domainMarshallelonr, config.transportMarshallelonr)
     }
   }
 }

@@ -1,68 +1,68 @@
-package com.twitter.follow_recommendations.flows.post_nux_ml
+packagelon com.twittelonr.follow_reloncommelonndations.flows.post_nux_ml
 
-import com.twitter.follow_recommendations.common.candidate_sources.addressbook.ForwardEmailBookSource
-import com.twitter.follow_recommendations.common.candidate_sources.addressbook.ForwardPhoneBookSource
-import com.twitter.follow_recommendations.common.candidate_sources.addressbook.ReverseEmailBookSource
-import com.twitter.follow_recommendations.common.candidate_sources.addressbook.ReversePhoneBookSource
-import com.twitter.follow_recommendations.common.candidate_sources.crowd_search_accounts.CrowdSearchAccountsSource
-import com.twitter.follow_recommendations.common.candidate_sources.geo.PopCountryBackFillSource
-import com.twitter.follow_recommendations.common.candidate_sources.geo.PopCountrySource
-import com.twitter.follow_recommendations.common.candidate_sources.geo.PopGeohashQualityFollowSource
-import com.twitter.follow_recommendations.common.candidate_sources.geo.PopGeohashSource
-import com.twitter.follow_recommendations.common.candidate_sources.ppmi_locale_follow.PPMILocaleFollowSource
-import com.twitter.follow_recommendations.common.candidate_sources.real_graph.RealGraphOonV2Source
-import com.twitter.follow_recommendations.common.candidate_sources.recent_engagement.RecentEngagementNonDirectFollowSource
-import com.twitter.follow_recommendations.common.candidate_sources.recent_engagement.RepeatedProfileVisitsSource
-import com.twitter.follow_recommendations.common.candidate_sources.salsa.RecentEngagementDirectFollowSalsaExpansionSource
-import com.twitter.follow_recommendations.common.candidate_sources.sims_expansion.RecentEngagementSimilarUsersSource
-import com.twitter.follow_recommendations.common.candidate_sources.sims_expansion.RecentFollowingSimilarUsersSource
-import com.twitter.follow_recommendations.common.candidate_sources.sims.Follow2vecNearestNeighborsStore
-import com.twitter.follow_recommendations.common.candidate_sources.stp.BaseOnlineSTPSource
-import com.twitter.follow_recommendations.common.candidate_sources.stp.OfflineStrongTiePredictionSource
-import com.twitter.follow_recommendations.common.candidate_sources.top_organic_follows_accounts.TopOrganicFollowsAccountsSource
-import com.twitter.follow_recommendations.common.candidate_sources.triangular_loops.TriangularLoopsSource
-import com.twitter.follow_recommendations.common.candidate_sources.two_hop_random_walk.TwoHopRandomWalkSource
-import com.twitter.follow_recommendations.common.candidate_sources.user_user_graph.UserUserGraphCandidateSource
-import com.twitter.follow_recommendations.flows.post_nux_ml.PostNuxMlCandidateSourceWeightParams._
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.timelines.configapi.Params
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.addrelonssbook.ForwardelonmailBookSourcelon
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.addrelonssbook.ForwardPhonelonBookSourcelon
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.addrelonssbook.RelonvelonrselonelonmailBookSourcelon
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.addrelonssbook.RelonvelonrselonPhonelonBookSourcelon
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.crowd_selonarch_accounts.CrowdSelonarchAccountsSourcelon
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.gelono.PopCountryBackFillSourcelon
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.gelono.PopCountrySourcelon
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.gelono.PopGelonohashQualityFollowSourcelon
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.gelono.PopGelonohashSourcelon
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.ppmi_localelon_follow.PPMILocalelonFollowSourcelon
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.relonal_graph.RelonalGraphOonV2Sourcelon
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.reloncelonnt_elonngagelonmelonnt.ReloncelonntelonngagelonmelonntNonDirelonctFollowSourcelon
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.reloncelonnt_elonngagelonmelonnt.RelonpelonatelondProfilelonVisitsSourcelon
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.salsa.ReloncelonntelonngagelonmelonntDirelonctFollowSalsaelonxpansionSourcelon
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.sims_elonxpansion.ReloncelonntelonngagelonmelonntSimilarUselonrsSourcelon
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.sims_elonxpansion.ReloncelonntFollowingSimilarUselonrsSourcelon
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.sims.Follow2veloncNelonarelonstNelonighborsStorelon
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.stp.BaselonOnlinelonSTPSourcelon
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.stp.OfflinelonStrongTielonPrelondictionSourcelon
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.top_organic_follows_accounts.TopOrganicFollowsAccountsSourcelon
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.triangular_loops.TriangularLoopsSourcelon
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.two_hop_random_walk.TwoHopRandomWalkSourcelon
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.uselonr_uselonr_graph.UselonrUselonrGraphCandidatelonSourcelon
+import com.twittelonr.follow_reloncommelonndations.flows.post_nux_ml.PostNuxMlCandidatelonSourcelonWelonightParams._
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonSourcelonIdelonntifielonr
+import com.twittelonr.timelonlinelons.configapi.Params
 
-object PostNuxMlFlowCandidateSourceWeights {
+objelonct PostNuxMlFlowCandidatelonSourcelonWelonights {
 
-  def getWeights(params: Params): Map[CandidateSourceIdentifier, Double] = {
-    Map[CandidateSourceIdentifier, Double](
-      // Social based
-      PPMILocaleFollowSource.Identifier -> params(CandidateWeightPPMILocaleFollow),
-      Follow2vecNearestNeighborsStore.IdentifierF2vLinearRegression -> params(
-        CandidateWeightFollow2vecNearestNeighbors),
-      RecentFollowingSimilarUsersSource.Identifier -> params(
-        CandidateWeightRecentFollowingSimilarUsers),
-      BaseOnlineSTPSource.Identifier -> params(CandidateWeightOnlineStp),
-      OfflineStrongTiePredictionSource.Identifier -> params(
-        CandidateWeightOfflineStrongTiePrediction),
-      ForwardEmailBookSource.Identifier -> params(CandidateWeightForwardEmailBook),
-      ForwardPhoneBookSource.Identifier -> params(CandidateWeightForwardPhoneBook),
-      ReverseEmailBookSource.Identifier -> params(CandidateWeightReverseEmailBook),
-      ReversePhoneBookSource.Identifier -> params(CandidateWeightReversePhoneBook),
-      TriangularLoopsSource.Identifier -> params(CandidateWeightTriangularLoops),
-      TwoHopRandomWalkSource.Identifier -> params(CandidateWeightTwoHopRandomWalk),
-      UserUserGraphCandidateSource.Identifier -> params(CandidateWeightUserUserGraph),
-      // Geo based
-      PopCountrySource.Identifier -> params(CandidateWeightPopCountry),
-      PopCountryBackFillSource.Identifier -> params(CandidateWeightPopGeoBackfill),
-      PopGeohashSource.Identifier -> params(CandidateWeightPopGeohash),
-      PopGeohashQualityFollowSource.Identifier -> params(CandidateWeightPopGeohashQualityFollow),
-      CrowdSearchAccountsSource.Identifier -> params(CandidateWeightCrowdSearch),
-      TopOrganicFollowsAccountsSource.Identifier -> params(CandidateWeightTopOrganicFollow),
-      // Engagement based
-      RealGraphOonV2Source.Identifier -> params(CandidateWeightRealGraphOonV2),
-      RecentEngagementNonDirectFollowSource.Identifier -> params(
-        CandidateWeightRecentEngagementNonDirectFollow),
-      RecentEngagementSimilarUsersSource.Identifier -> params(
-        CandidateWeightRecentEngagementSimilarUsers),
-      RepeatedProfileVisitsSource.Identifier -> params(CandidateWeightRepeatedProfileVisits),
-      RecentEngagementDirectFollowSalsaExpansionSource.Identifier -> params(
-        CandidateWeightRecentEngagementDirectFollowSalsaExpansion),
+  delonf gelontWelonights(params: Params): Map[CandidatelonSourcelonIdelonntifielonr, Doublelon] = {
+    Map[CandidatelonSourcelonIdelonntifielonr, Doublelon](
+      // Social baselond
+      PPMILocalelonFollowSourcelon.Idelonntifielonr -> params(CandidatelonWelonightPPMILocalelonFollow),
+      Follow2veloncNelonarelonstNelonighborsStorelon.IdelonntifielonrF2vLinelonarRelongrelonssion -> params(
+        CandidatelonWelonightFollow2veloncNelonarelonstNelonighbors),
+      ReloncelonntFollowingSimilarUselonrsSourcelon.Idelonntifielonr -> params(
+        CandidatelonWelonightReloncelonntFollowingSimilarUselonrs),
+      BaselonOnlinelonSTPSourcelon.Idelonntifielonr -> params(CandidatelonWelonightOnlinelonStp),
+      OfflinelonStrongTielonPrelondictionSourcelon.Idelonntifielonr -> params(
+        CandidatelonWelonightOfflinelonStrongTielonPrelondiction),
+      ForwardelonmailBookSourcelon.Idelonntifielonr -> params(CandidatelonWelonightForwardelonmailBook),
+      ForwardPhonelonBookSourcelon.Idelonntifielonr -> params(CandidatelonWelonightForwardPhonelonBook),
+      RelonvelonrselonelonmailBookSourcelon.Idelonntifielonr -> params(CandidatelonWelonightRelonvelonrselonelonmailBook),
+      RelonvelonrselonPhonelonBookSourcelon.Idelonntifielonr -> params(CandidatelonWelonightRelonvelonrselonPhonelonBook),
+      TriangularLoopsSourcelon.Idelonntifielonr -> params(CandidatelonWelonightTriangularLoops),
+      TwoHopRandomWalkSourcelon.Idelonntifielonr -> params(CandidatelonWelonightTwoHopRandomWalk),
+      UselonrUselonrGraphCandidatelonSourcelon.Idelonntifielonr -> params(CandidatelonWelonightUselonrUselonrGraph),
+      // Gelono baselond
+      PopCountrySourcelon.Idelonntifielonr -> params(CandidatelonWelonightPopCountry),
+      PopCountryBackFillSourcelon.Idelonntifielonr -> params(CandidatelonWelonightPopGelonoBackfill),
+      PopGelonohashSourcelon.Idelonntifielonr -> params(CandidatelonWelonightPopGelonohash),
+      PopGelonohashQualityFollowSourcelon.Idelonntifielonr -> params(CandidatelonWelonightPopGelonohashQualityFollow),
+      CrowdSelonarchAccountsSourcelon.Idelonntifielonr -> params(CandidatelonWelonightCrowdSelonarch),
+      TopOrganicFollowsAccountsSourcelon.Idelonntifielonr -> params(CandidatelonWelonightTopOrganicFollow),
+      // elonngagelonmelonnt baselond
+      RelonalGraphOonV2Sourcelon.Idelonntifielonr -> params(CandidatelonWelonightRelonalGraphOonV2),
+      ReloncelonntelonngagelonmelonntNonDirelonctFollowSourcelon.Idelonntifielonr -> params(
+        CandidatelonWelonightReloncelonntelonngagelonmelonntNonDirelonctFollow),
+      ReloncelonntelonngagelonmelonntSimilarUselonrsSourcelon.Idelonntifielonr -> params(
+        CandidatelonWelonightReloncelonntelonngagelonmelonntSimilarUselonrs),
+      RelonpelonatelondProfilelonVisitsSourcelon.Idelonntifielonr -> params(CandidatelonWelonightRelonpelonatelondProfilelonVisits),
+      ReloncelonntelonngagelonmelonntDirelonctFollowSalsaelonxpansionSourcelon.Idelonntifielonr -> params(
+        CandidatelonWelonightReloncelonntelonngagelonmelonntDirelonctFollowSalsaelonxpansion),
     )
   }
 }

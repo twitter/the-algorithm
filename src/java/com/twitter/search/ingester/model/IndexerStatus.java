@@ -1,13 +1,13 @@
-package com.twitter.search.ingester.model;
+packagelon com.twittelonr.selonarch.ingelonstelonr.modelonl;
 
-import com.twitter.search.common.debug.DebugEventAccumulator;
+import com.twittelonr.selonarch.common.delonbug.DelonbugelonvelonntAccumulator;
 
 /**
- * Interface used for stages that process both TwitterMessages and ThriftVersionedEvents.
+ * Intelonrfacelon uselond for stagelons that procelonss both TwittelonrMelonssagelons and ThriftVelonrsionelondelonvelonnts.
  */
-public interface IndexerStatus extends DebugEventAccumulator {
+public intelonrfacelon IndelonxelonrStatus elonxtelonnds DelonbugelonvelonntAccumulator {
   /**
-   * Needed by the SortStage.
+   * Nelonelondelond by thelon SortStagelon.
    */
-  long getId();
+  long gelontId();
 }

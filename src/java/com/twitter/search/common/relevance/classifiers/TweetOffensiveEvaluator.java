@@ -1,260 +1,260 @@
-package com.twitter.search.common.relevance.classifiers;
+packagelon com.twittelonr.selonarch.common.relonlelonvancelon.classifielonrs;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.Filelon;
+import java.io.IOelonxcelonption;
+import java.io.InputStrelonam;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrelonnt.elonxeloncutors;
+import java.util.concurrelonnt.SchelondulelondelonxeloncutorSelonrvicelon;
+import java.util.concurrelonnt.atomic.AtomicRelonfelonrelonncelon;
 
-import com.google.common.base.Joiner;
-import com.google.common.base.Preconditions;
-import com.google.common.io.ByteSource;
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import com.googlelon.common.baselon.Joinelonr;
+import com.googlelon.common.baselon.Prelonconditions;
+import com.googlelon.common.io.BytelonSourcelon;
+import com.googlelon.common.util.concurrelonnt.ThrelonadFactoryBuildelonr;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apachelon.commons.io.IOUtils;
+import org.apachelon.commons.lang.StringUtils;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.common.text.language.LocaleUtil;
-import com.twitter.common.text.token.TokenizedCharSequence;
-import com.twitter.common.text.token.attribute.TokenType;
-import com.twitter.common.util.Clock;
-import com.twitter.common_internal.text.pipeline.TwitterNgramGenerator;
-import com.twitter.common_internal.text.topic.BlacklistedTopics;
-import com.twitter.common_internal.text.topic.BlacklistedTopics.FilterMode;
-import com.twitter.common_internal.text.version.PenguinVersion;
-import com.twitter.search.common.metrics.RelevanceStats;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.relevance.entities.TwitterMessage;
-import com.twitter.search.common.relevance.features.TweetTextFeatures;
-import com.twitter.search.common.relevance.features.TweetTextQuality;
-import com.twitter.search.common.util.io.periodic.PeriodicFileLoader;
-import com.twitter.search.common.util.text.NormalizerHelper;
-import com.twitter.search.common.util.text.TokenizerHelper;
+import com.twittelonr.common.telonxt.languagelon.LocalelonUtil;
+import com.twittelonr.common.telonxt.tokelonn.TokelonnizelondCharSelonquelonncelon;
+import com.twittelonr.common.telonxt.tokelonn.attributelon.TokelonnTypelon;
+import com.twittelonr.common.util.Clock;
+import com.twittelonr.common_intelonrnal.telonxt.pipelonlinelon.TwittelonrNgramGelonnelonrator;
+import com.twittelonr.common_intelonrnal.telonxt.topic.BlacklistelondTopics;
+import com.twittelonr.common_intelonrnal.telonxt.topic.BlacklistelondTopics.FiltelonrModelon;
+import com.twittelonr.common_intelonrnal.telonxt.velonrsion.PelonnguinVelonrsion;
+import com.twittelonr.selonarch.common.melontrics.RelonlelonvancelonStats;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchRatelonCountelonr;
+import com.twittelonr.selonarch.common.relonlelonvancelon.elonntitielons.TwittelonrMelonssagelon;
+import com.twittelonr.selonarch.common.relonlelonvancelon.felonaturelons.TwelonelontTelonxtFelonaturelons;
+import com.twittelonr.selonarch.common.relonlelonvancelon.felonaturelons.TwelonelontTelonxtQuality;
+import com.twittelonr.selonarch.common.util.io.pelonriodic.PelonriodicFilelonLoadelonr;
+import com.twittelonr.selonarch.common.util.telonxt.NormalizelonrHelonlpelonr;
+import com.twittelonr.selonarch.common.util.telonxt.TokelonnizelonrHelonlpelonr;
 
 /**
- * Determines if tweet text or username contains potentially offensive language.
+ * Delontelonrminelons if twelonelont telonxt or uselonrnamelon contains potelonntially offelonnsivelon languagelon.
  */
-public class TweetOffensiveEvaluator extends TweetEvaluator {
-  private static final Logger LOG = LoggerFactory.getLogger(TweetOffensiveEvaluator.class);
+public class TwelonelontOffelonnsivelonelonvaluator elonxtelonnds Twelonelontelonvaluator {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(TwelonelontOffelonnsivelonelonvaluator.class);
 
-  private static final int MAX_OFFENSIVE_TERMS = 2;
+  privatelon static final int MAX_OFFelonNSIVelon_TelonRMS = 2;
 
-  private final File filterDirectory;
-  private static final File DEFAULT_FILTER_DIR = new File("");
-  private static final String ADULT_TOKEN_FILE_NAME = "adult_tokens.txt";
-  private static final String OFFENSIVE_TOPIC_FILE_NAME = "offensive_topics.txt";
-  private static final String OFFENSIVE_SUBSTRING_FILE_NAME = "offensive_substrings.txt";
+  privatelon final Filelon filtelonrDirelonctory;
+  privatelon static final Filelon DelonFAULT_FILTelonR_DIR = nelonw Filelon("");
+  privatelon static final String ADULT_TOKelonN_FILelon_NAMelon = "adult_tokelonns.txt";
+  privatelon static final String OFFelonNSIVelon_TOPIC_FILelon_NAMelon = "offelonnsivelon_topics.txt";
+  privatelon static final String OFFelonNSIVelon_SUBSTRING_FILelon_NAMelon = "offelonnsivelon_substrings.txt";
 
-  private static final ThreadLocal<TwitterNgramGenerator> NGRAM_GENERATOR_HOLDER =
-      new ThreadLocal<TwitterNgramGenerator>() {
-        @Override
-        protected TwitterNgramGenerator initialValue() {
-          // It'll generate ngrams from TokenizedCharSequence, which contains tokenization results,
-          // so it doesn't matter which Penguin version to use here.
-          return new TwitterNgramGenerator.Builder(PenguinVersion.PENGUIN_6)
-              .setSize(1, MAX_OFFENSIVE_TERMS)
+  privatelon static final ThrelonadLocal<TwittelonrNgramGelonnelonrator> NGRAM_GelonNelonRATOR_HOLDelonR =
+      nelonw ThrelonadLocal<TwittelonrNgramGelonnelonrator>() {
+        @Ovelonrridelon
+        protelonctelond TwittelonrNgramGelonnelonrator initialValuelon() {
+          // It'll gelonnelonratelon ngrams from TokelonnizelondCharSelonquelonncelon, which contains tokelonnization relonsults,
+          // so it doelonsn't mattelonr which Pelonnguin velonrsion to uselon helonrelon.
+          relonturn nelonw TwittelonrNgramGelonnelonrator.Buildelonr(PelonnguinVelonrsion.PelonNGUIN_6)
+              .selontSizelon(1, MAX_OFFelonNSIVelon_TelonRMS)
               .build();
         }
       };
 
-  private final AtomicReference<BlacklistedTopics> offensiveTopics =
-    new AtomicReference<>();
-  private final AtomicReference<BlacklistedTopics> offensiveUsersTopics =
-    new AtomicReference<>();
+  privatelon final AtomicRelonfelonrelonncelon<BlacklistelondTopics> offelonnsivelonTopics =
+    nelonw AtomicRelonfelonrelonncelon<>();
+  privatelon final AtomicRelonfelonrelonncelon<BlacklistelondTopics> offelonnsivelonUselonrsTopics =
+    nelonw AtomicRelonfelonrelonncelon<>();
 
-  private final AtomicReference<ByteSource> adultTokenFileContents = new AtomicReference<>();
-  private final AtomicReference<ByteSource> offensiveTokenFileContents = new AtomicReference<>();
-  private final AtomicReference<ByteSource> offensiveSubstringFileContents = new
-    AtomicReference<>();
+  privatelon final AtomicRelonfelonrelonncelon<BytelonSourcelon> adultTokelonnFilelonContelonnts = nelonw AtomicRelonfelonrelonncelon<>();
+  privatelon final AtomicRelonfelonrelonncelon<BytelonSourcelon> offelonnsivelonTokelonnFilelonContelonnts = nelonw AtomicRelonfelonrelonncelon<>();
+  privatelon final AtomicRelonfelonrelonncelon<BytelonSourcelon> offelonnsivelonSubstringFilelonContelonnts = nelonw
+    AtomicRelonfelonrelonncelon<>();
 
-  private final SearchCounter sensitiveTextCounter =
-      RelevanceStats.exportLong("num_sensitive_text");
+  privatelon final SelonarchCountelonr selonnsitivelonTelonxtCountelonr =
+      RelonlelonvancelonStats.elonxportLong("num_selonnsitivelon_telonxt");
 
-  public TweetOffensiveEvaluator() {
-    this(DEFAULT_FILTER_DIR);
+  public TwelonelontOffelonnsivelonelonvaluator() {
+    this(DelonFAULT_FILTelonR_DIR);
   }
 
-  public TweetOffensiveEvaluator(
-    File filterDirectory
+  public TwelonelontOffelonnsivelonelonvaluator(
+    Filelon filtelonrDirelonctory
   ) {
-    this.filterDirectory = filterDirectory;
-    adultTokenFileContents.set(BlacklistedTopics.getResource(
-      BlacklistedTopics.DATA_PREFIX + ADULT_TOKEN_FILE_NAME));
-    offensiveTokenFileContents.set(BlacklistedTopics.getResource(
-      BlacklistedTopics.DATA_PREFIX + OFFENSIVE_TOPIC_FILE_NAME));
-    offensiveSubstringFileContents.set(BlacklistedTopics.getResource(
-      BlacklistedTopics.DATA_PREFIX + OFFENSIVE_SUBSTRING_FILE_NAME));
+    this.filtelonrDirelonctory = filtelonrDirelonctory;
+    adultTokelonnFilelonContelonnts.selont(BlacklistelondTopics.gelontRelonsourcelon(
+      BlacklistelondTopics.DATA_PRelonFIX + ADULT_TOKelonN_FILelon_NAMelon));
+    offelonnsivelonTokelonnFilelonContelonnts.selont(BlacklistelondTopics.gelontRelonsourcelon(
+      BlacklistelondTopics.DATA_PRelonFIX + OFFelonNSIVelon_TOPIC_FILelon_NAMelon));
+    offelonnsivelonSubstringFilelonContelonnts.selont(BlacklistelondTopics.gelontRelonsourcelon(
+      BlacklistelondTopics.DATA_PRelonFIX + OFFelonNSIVelon_SUBSTRING_FILelon_NAMelon));
 
     try {
-      rebuildBlacklistedTopics();
-    } catch (IOException e) {
-      throw new RuntimeException(e);
+      relonbuildBlacklistelondTopics();
+    } catch (IOelonxcelonption elon) {
+      throw nelonw Runtimelonelonxcelonption(elon);
     }
 
-    ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor(
-      new ThreadFactoryBuilder()
-        .setNameFormat("offensive-evaluator-blacklist-reloader")
-        .setDaemon(true)
+    SchelondulelondelonxeloncutorSelonrvicelon elonxeloncutor = elonxeloncutors.nelonwSinglelonThrelonadSchelondulelondelonxeloncutor(
+      nelonw ThrelonadFactoryBuildelonr()
+        .selontNamelonFormat("offelonnsivelon-elonvaluator-blacklist-relonloadelonr")
+        .selontDaelonmon(truelon)
         .build());
-    initPeriodicFileLoader(adultTokenFileContents, ADULT_TOKEN_FILE_NAME, executor);
-    initPeriodicFileLoader(offensiveTokenFileContents, OFFENSIVE_TOPIC_FILE_NAME, executor);
-    initPeriodicFileLoader(offensiveSubstringFileContents, OFFENSIVE_SUBSTRING_FILE_NAME, executor);
+    initPelonriodicFilelonLoadelonr(adultTokelonnFilelonContelonnts, ADULT_TOKelonN_FILelon_NAMelon, elonxeloncutor);
+    initPelonriodicFilelonLoadelonr(offelonnsivelonTokelonnFilelonContelonnts, OFFelonNSIVelon_TOPIC_FILelon_NAMelon, elonxeloncutor);
+    initPelonriodicFilelonLoadelonr(offelonnsivelonSubstringFilelonContelonnts, OFFelonNSIVelon_SUBSTRING_FILelon_NAMelon, elonxeloncutor);
   }
 
-  private void initPeriodicFileLoader(
-    AtomicReference<ByteSource> byteSource,
-    String fileName,
-    ScheduledExecutorService executor) {
-    File file = new File(filterDirectory, fileName);
+  privatelon void initPelonriodicFilelonLoadelonr(
+    AtomicRelonfelonrelonncelon<BytelonSourcelon> bytelonSourcelon,
+    String filelonNamelon,
+    SchelondulelondelonxeloncutorSelonrvicelon elonxeloncutor) {
+    Filelon filelon = nelonw Filelon(filtelonrDirelonctory, filelonNamelon);
     try {
-      PeriodicFileLoader loader = new PeriodicFileLoader(
-        "offensive-evaluator-" + fileName,
-        file.getPath(),
-        executor,
-        Clock.SYSTEM_CLOCK) {
-        @Override
-        protected void accept(InputStream stream) throws IOException {
-          byteSource.set(ByteSource.wrap(IOUtils.toByteArray(stream)));
-          rebuildBlacklistedTopics();
+      PelonriodicFilelonLoadelonr loadelonr = nelonw PelonriodicFilelonLoadelonr(
+        "offelonnsivelon-elonvaluator-" + filelonNamelon,
+        filelon.gelontPath(),
+        elonxeloncutor,
+        Clock.SYSTelonM_CLOCK) {
+        @Ovelonrridelon
+        protelonctelond void accelonpt(InputStrelonam strelonam) throws IOelonxcelonption {
+          bytelonSourcelon.selont(BytelonSourcelon.wrap(IOUtils.toBytelonArray(strelonam)));
+          relonbuildBlacklistelondTopics();
         }
       };
-      loader.init();
-    } catch (Exception e) {
-      // Not the end of the world if we couldn't load the file, we already loaded the resource.
-      LOG.error("Could not load offensive topic filter " + fileName + " from ConfigBus", e);
+      loadelonr.init();
+    } catch (elonxcelonption elon) {
+      // Not thelon elonnd of thelon world if welon couldn't load thelon filelon, welon alrelonady loadelond thelon relonsourcelon.
+      LOG.elonrror("Could not load offelonnsivelon topic filtelonr " + filelonNamelon + " from ConfigBus", elon);
     }
   }
 
-  private void rebuildBlacklistedTopics() throws IOException {
-    offensiveTopics.set(new BlacklistedTopics.Builder(false)
-      .loadFilterFromSource(adultTokenFileContents.get(), FilterMode.EXACT)
-      .loadFilterFromSource(offensiveSubstringFileContents.get(), FilterMode.SUBSTRING)
+  privatelon void relonbuildBlacklistelondTopics() throws IOelonxcelonption {
+    offelonnsivelonTopics.selont(nelonw BlacklistelondTopics.Buildelonr(falselon)
+      .loadFiltelonrFromSourcelon(adultTokelonnFilelonContelonnts.gelont(), FiltelonrModelon.elonXACT)
+      .loadFiltelonrFromSourcelon(offelonnsivelonSubstringFilelonContelonnts.gelont(), FiltelonrModelon.SUBSTRING)
       .build());
 
-    offensiveUsersTopics.set(new BlacklistedTopics.Builder(false)
-      .loadFilterFromSource(offensiveTokenFileContents.get(), FilterMode.EXACT)
-      .loadFilterFromSource(offensiveSubstringFileContents.get(), FilterMode.SUBSTRING)
+    offelonnsivelonUselonrsTopics.selont(nelonw BlacklistelondTopics.Buildelonr(falselon)
+      .loadFiltelonrFromSourcelon(offelonnsivelonTokelonnFilelonContelonnts.gelont(), FiltelonrModelon.elonXACT)
+      .loadFiltelonrFromSourcelon(offelonnsivelonSubstringFilelonContelonnts.gelont(), FiltelonrModelon.SUBSTRING)
       .build());
   }
 
-  @Override
-  public void evaluate(final TwitterMessage tweet) {
-    BlacklistedTopics offensiveFilter = this.offensiveTopics.get();
-    BlacklistedTopics offensiveUsersFilter = this.offensiveUsersTopics.get();
+  @Ovelonrridelon
+  public void elonvaluatelon(final TwittelonrMelonssagelon twelonelont) {
+    BlacklistelondTopics offelonnsivelonFiltelonr = this.offelonnsivelonTopics.gelont();
+    BlacklistelondTopics offelonnsivelonUselonrsFiltelonr = this.offelonnsivelonUselonrsTopics.gelont();
 
-    if (offensiveFilter == null || offensiveUsersFilter == null) {
-      return;
+    if (offelonnsivelonFiltelonr == null || offelonnsivelonUselonrsFiltelonr == null) {
+      relonturn;
     }
 
-    if (tweet.isSensitiveContent()) {
-      sensitiveTextCounter.increment();
+    if (twelonelont.isSelonnsitivelonContelonnt()) {
+      selonnsitivelonTelonxtCountelonr.increlonmelonnt();
     }
 
-    // Check for user name.
-    Preconditions.checkState(tweet.getFromUserScreenName().isPresent(),
-        "Missing from-user screen name");
+    // Chelonck for uselonr namelon.
+    Prelonconditions.chelonckStatelon(twelonelont.gelontFromUselonrScrelonelonnNamelon().isPrelonselonnt(),
+        "Missing from-uselonr screlonelonn namelon");
 
-    for (PenguinVersion penguinVersion : tweet.getSupportedPenguinVersions()) {
-      TweetTextQuality textQuality = tweet.getTweetTextQuality(penguinVersion);
+    for (PelonnguinVelonrsion pelonnguinVelonrsion : twelonelont.gelontSupportelondPelonnguinVelonrsions()) {
+      TwelonelontTelonxtQuality telonxtQuality = twelonelont.gelontTwelonelontTelonxtQuality(pelonnguinVelonrsion);
 
-      if (tweet.isSensitiveContent()) {
-        textQuality.addBoolQuality(TweetTextQuality.BooleanQualityType.SENSITIVE);
+      if (twelonelont.isSelonnsitivelonContelonnt()) {
+        telonxtQuality.addBoolQuality(TwelonelontTelonxtQuality.BoolelonanQualityTypelon.SelonNSITIVelon);
       }
 
-      // Check if username has an offensive term
-      if (isUserNameOffensive(
-          tweet.getFromUserScreenName().get(), offensiveUsersFilter, penguinVersion)) {
-        SearchRateCounter offensiveUserCounter = RelevanceStats.exportRate(
-            "num_offensive_user_" + penguinVersion.name().toLowerCase());
-        offensiveUserCounter.increment();
-        textQuality.addBoolQuality(TweetTextQuality.BooleanQualityType.OFFENSIVE_USER);
+      // Chelonck if uselonrnamelon has an offelonnsivelon telonrm
+      if (isUselonrNamelonOffelonnsivelon(
+          twelonelont.gelontFromUselonrScrelonelonnNamelon().gelont(), offelonnsivelonUselonrsFiltelonr, pelonnguinVelonrsion)) {
+        SelonarchRatelonCountelonr offelonnsivelonUselonrCountelonr = RelonlelonvancelonStats.elonxportRatelon(
+            "num_offelonnsivelon_uselonr_" + pelonnguinVelonrsion.namelon().toLowelonrCaselon());
+        offelonnsivelonUselonrCountelonr.increlonmelonnt();
+        telonxtQuality.addBoolQuality(TwelonelontTelonxtQuality.BoolelonanQualityTypelon.OFFelonNSIVelon_USelonR);
       }
 
-      // Check if tweet has an offensive term
-      if (isTweetOffensive(tweet, offensiveFilter, penguinVersion)) {
-        SearchRateCounter offensiveTextCounter = RelevanceStats.exportRate(
-            "num_offensive_text_" + penguinVersion.name().toLowerCase());
-        offensiveTextCounter.increment();
-        textQuality.addBoolQuality(TweetTextQuality.BooleanQualityType.OFFENSIVE);
+      // Chelonck if twelonelont has an offelonnsivelon telonrm
+      if (isTwelonelontOffelonnsivelon(twelonelont, offelonnsivelonFiltelonr, pelonnguinVelonrsion)) {
+        SelonarchRatelonCountelonr offelonnsivelonTelonxtCountelonr = RelonlelonvancelonStats.elonxportRatelon(
+            "num_offelonnsivelon_telonxt_" + pelonnguinVelonrsion.namelon().toLowelonrCaselon());
+        offelonnsivelonTelonxtCountelonr.increlonmelonnt();
+        telonxtQuality.addBoolQuality(TwelonelontTelonxtQuality.BoolelonanQualityTypelon.OFFelonNSIVelon);
       }
     }
   }
 
-  private boolean isUserNameOffensive(String userName,
-                                      BlacklistedTopics offensiveUsersFilter,
-                                      PenguinVersion penguinVersion) {
-    String normalizedUserName = NormalizerHelper.normalizeKeepCase(
-        userName, LocaleUtil.UNKNOWN, penguinVersion);
-    List<String> termsToCheck = new ArrayList(TokenizerHelper.getSubtokens(normalizedUserName));
-    termsToCheck.add(normalizedUserName.toLowerCase());
+  privatelon boolelonan isUselonrNamelonOffelonnsivelon(String uselonrNamelon,
+                                      BlacklistelondTopics offelonnsivelonUselonrsFiltelonr,
+                                      PelonnguinVelonrsion pelonnguinVelonrsion) {
+    String normalizelondUselonrNamelon = NormalizelonrHelonlpelonr.normalizelonKelonelonpCaselon(
+        uselonrNamelon, LocalelonUtil.UNKNOWN, pelonnguinVelonrsion);
+    List<String> telonrmsToChelonck = nelonw ArrayList(TokelonnizelonrHelonlpelonr.gelontSubtokelonns(normalizelondUselonrNamelon));
+    telonrmsToChelonck.add(normalizelondUselonrNamelon.toLowelonrCaselon());
 
-    for (String userNameToken : termsToCheck) {
-      if (!StringUtils.isBlank(userNameToken) && offensiveUsersFilter.filter(userNameToken)) {
-        return true;
+    for (String uselonrNamelonTokelonn : telonrmsToChelonck) {
+      if (!StringUtils.isBlank(uselonrNamelonTokelonn) && offelonnsivelonUselonrsFiltelonr.filtelonr(uselonrNamelonTokelonn)) {
+        relonturn truelon;
       }
     }
-    return false;
+    relonturn falselon;
   }
 
-  private boolean isTweetOffensive(final TwitterMessage tweet,
-                                   BlacklistedTopics offensiveFilter,
-                                   PenguinVersion penguinVersion) {
-    TweetTextFeatures textFeatures = tweet.getTweetTextFeatures(penguinVersion);
+  privatelon boolelonan isTwelonelontOffelonnsivelon(final TwittelonrMelonssagelon twelonelont,
+                                   BlacklistelondTopics offelonnsivelonFiltelonr,
+                                   PelonnguinVelonrsion pelonnguinVelonrsion) {
+    TwelonelontTelonxtFelonaturelons telonxtFelonaturelons = twelonelont.gelontTwelonelontTelonxtFelonaturelons(pelonnguinVelonrsion);
 
-    boolean tweetHasOffensiveTerm = false;
+    boolelonan twelonelontHasOffelonnsivelonTelonrm = falselon;
 
-    // Check for tweet text.
-    List<TokenizedCharSequence> ngrams =
-        NGRAM_GENERATOR_HOLDER.get().generateNgramsAsTokenizedCharSequence(
-            textFeatures.getTokenSequence(), tweet.getLocale());
-    for (TokenizedCharSequence ngram : ngrams) {
+    // Chelonck for twelonelont telonxt.
+    List<TokelonnizelondCharSelonquelonncelon> ngrams =
+        NGRAM_GelonNelonRATOR_HOLDelonR.gelont().gelonnelonratelonNgramsAsTokelonnizelondCharSelonquelonncelon(
+            telonxtFelonaturelons.gelontTokelonnSelonquelonncelon(), twelonelont.gelontLocalelon());
+    for (TokelonnizelondCharSelonquelonncelon ngram : ngrams) {
       // skip URL ngram
-      if (!ngram.getTokensOf(TokenType.URL).isEmpty()) {
-        continue;
+      if (!ngram.gelontTokelonnsOf(TokelonnTypelon.URL).iselonmpty()) {
+        continuelon;
       }
       String ngramStr = ngram.toString();
-      if (!StringUtils.isBlank(ngramStr) && offensiveFilter.filter(ngramStr)) {
-        tweetHasOffensiveTerm = true;
-        break;
+      if (!StringUtils.isBlank(ngramStr) && offelonnsivelonFiltelonr.filtelonr(ngramStr)) {
+        twelonelontHasOffelonnsivelonTelonrm = truelon;
+        brelonak;
       }
     }
 
-    // Due to some strangeness in Penguin, we don't get ngrams for tokens around "\n-" or "-\n"
-    // in the original string, this made us miss some offensive words this way. Here we do another
-    // pass of check using just the tokens generated by the tokenizer. (See SEARCHQUAL-8907)
-    if (!tweetHasOffensiveTerm) {
-      for (String ngramStr : textFeatures.getTokens()) {
+    // Duelon to somelon strangelonnelonss in Pelonnguin, welon don't gelont ngrams for tokelonns around "\n-" or "-\n"
+    // in thelon original string, this madelon us miss somelon offelonnsivelon words this way. Helonrelon welon do anothelonr
+    // pass of chelonck using just thelon tokelonns gelonnelonratelond by thelon tokelonnizelonr. (Selonelon SelonARCHQUAL-8907)
+    if (!twelonelontHasOffelonnsivelonTelonrm) {
+      for (String ngramStr : telonxtFelonaturelons.gelontTokelonns()) {
         // skip URLs
         if (ngramStr.startsWith("http://") || ngramStr.startsWith("https://")) {
-          continue;
+          continuelon;
         }
-        if (!StringUtils.isBlank(ngramStr) && offensiveFilter.filter(ngramStr)) {
-          tweetHasOffensiveTerm = true;
-          break;
+        if (!StringUtils.isBlank(ngramStr) && offelonnsivelonFiltelonr.filtelonr(ngramStr)) {
+          twelonelontHasOffelonnsivelonTelonrm = truelon;
+          brelonak;
         }
       }
     }
 
-    if (!tweetHasOffensiveTerm) {
-      // check for resolved URLs
-      String resolvedUrlsText =
-          Joiner.on(" ").skipNulls().join(textFeatures.getResolvedUrlTokens());
-      List<String> ngramStrs = NGRAM_GENERATOR_HOLDER.get().generateNgramsAsString(
-          resolvedUrlsText, LocaleUtil.UNKNOWN);
+    if (!twelonelontHasOffelonnsivelonTelonrm) {
+      // chelonck for relonsolvelond URLs
+      String relonsolvelondUrlsTelonxt =
+          Joinelonr.on(" ").skipNulls().join(telonxtFelonaturelons.gelontRelonsolvelondUrlTokelonns());
+      List<String> ngramStrs = NGRAM_GelonNelonRATOR_HOLDelonR.gelont().gelonnelonratelonNgramsAsString(
+          relonsolvelondUrlsTelonxt, LocalelonUtil.UNKNOWN);
       for (String ngram : ngramStrs) {
-        if (!StringUtils.isBlank(ngram) && offensiveFilter.filter(ngram)) {
-          tweetHasOffensiveTerm = true;
-          break;
+        if (!StringUtils.isBlank(ngram) && offelonnsivelonFiltelonr.filtelonr(ngram)) {
+          twelonelontHasOffelonnsivelonTelonrm = truelon;
+          brelonak;
         }
       }
     }
 
-    return tweetHasOffensiveTerm;
+    relonturn twelonelontHasOffelonnsivelonTelonrm;
   }
 }

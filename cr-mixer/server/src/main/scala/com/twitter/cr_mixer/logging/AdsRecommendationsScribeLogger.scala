@@ -1,139 +1,139 @@
-package com.twitter.cr_mixer.logging
+packagelon com.twittelonr.cr_mixelonr.logging
 
-import com.twitter.cr_mixer.model.AdsCandidateGeneratorQuery
-import com.twitter.cr_mixer.model.InitialAdsCandidate
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.cr_mixer.logging.ScribeLoggerUtils._
-import com.twitter.cr_mixer.param.decider.CrMixerDecider
-import com.twitter.cr_mixer.param.decider.DeciderConstants
-import com.twitter.cr_mixer.thriftscala.AdsRecommendationTopLevelApiResult
-import com.twitter.cr_mixer.thriftscala.AdsRecommendationsResult
-import com.twitter.cr_mixer.thriftscala.AdsRequest
-import com.twitter.cr_mixer.thriftscala.AdsResponse
-import com.twitter.cr_mixer.thriftscala.FetchCandidatesResult
-import com.twitter.cr_mixer.thriftscala.GetAdsRecommendationsScribe
-import com.twitter.cr_mixer.thriftscala.PerformanceMetrics
-import com.twitter.cr_mixer.thriftscala.TweetCandidateWithMetadata
-import com.twitter.cr_mixer.util.CandidateGenerationKeyUtil
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.tracing.Trace
-import com.twitter.logging.Logger
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.util.Future
-import com.twitter.util.Stopwatch
+import com.twittelonr.cr_mixelonr.modelonl.AdsCandidatelonGelonnelonratorQuelonry
+import com.twittelonr.cr_mixelonr.modelonl.InitialAdsCandidatelon
+import com.twittelonr.cr_mixelonr.modelonl.ModulelonNamelons
+import com.twittelonr.cr_mixelonr.logging.ScribelonLoggelonrUtils._
+import com.twittelonr.cr_mixelonr.param.deloncidelonr.CrMixelonrDeloncidelonr
+import com.twittelonr.cr_mixelonr.param.deloncidelonr.DeloncidelonrConstants
+import com.twittelonr.cr_mixelonr.thriftscala.AdsReloncommelonndationTopLelonvelonlApiRelonsult
+import com.twittelonr.cr_mixelonr.thriftscala.AdsReloncommelonndationsRelonsult
+import com.twittelonr.cr_mixelonr.thriftscala.AdsRelonquelonst
+import com.twittelonr.cr_mixelonr.thriftscala.AdsRelonsponselon
+import com.twittelonr.cr_mixelonr.thriftscala.FelontchCandidatelonsRelonsult
+import com.twittelonr.cr_mixelonr.thriftscala.GelontAdsReloncommelonndationsScribelon
+import com.twittelonr.cr_mixelonr.thriftscala.PelonrformancelonMelontrics
+import com.twittelonr.cr_mixelonr.thriftscala.TwelonelontCandidatelonWithMelontadata
+import com.twittelonr.cr_mixelonr.util.CandidatelonGelonnelonrationKelonyUtil
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.finaglelon.tracing.Tracelon
+import com.twittelonr.logging.Loggelonr
+import com.twittelonr.simclustelonrs_v2.common.UselonrId
+import com.twittelonr.util.Futurelon
+import com.twittelonr.util.Stopwatch
 
-import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Singleton
+import javax.injelonct.Injelonct
+import javax.injelonct.Namelond
+import javax.injelonct.Singlelonton
 
-@Singleton
-case class AdsRecommendationsScribeLogger @Inject() (
-  @Named(ModuleNames.AdsRecommendationsLogger) adsRecommendationsScribeLogger: Logger,
-  decider: CrMixerDecider,
-  statsReceiver: StatsReceiver) {
+@Singlelonton
+caselon class AdsReloncommelonndationsScribelonLoggelonr @Injelonct() (
+  @Namelond(ModulelonNamelons.AdsReloncommelonndationsLoggelonr) adsReloncommelonndationsScribelonLoggelonr: Loggelonr,
+  deloncidelonr: CrMixelonrDeloncidelonr,
+  statsReloncelonivelonr: StatsReloncelonivelonr) {
 
-  private val scopedStats = statsReceiver.scope(this.getClass.getCanonicalName)
-  private val upperFunnelsStats = scopedStats.scope("UpperFunnels")
-  private val topLevelApiStats = scopedStats.scope("TopLevelApi")
+  privatelon val scopelondStats = statsReloncelonivelonr.scopelon(this.gelontClass.gelontCanonicalNamelon)
+  privatelon val uppelonrFunnelonlsStats = scopelondStats.scopelon("UppelonrFunnelonls")
+  privatelon val topLelonvelonlApiStats = scopelondStats.scopelon("TopLelonvelonlApi")
 
   /*
-   * Scribe first step results after fetching initial ads candidate
+   * Scribelon first stelonp relonsults aftelonr felontching initial ads candidatelon
    * */
-  def scribeInitialAdsCandidates(
-    query: AdsCandidateGeneratorQuery,
-    getResultFn: => Future[Seq[Seq[InitialAdsCandidate]]],
-    enableScribe: Boolean // controlled by feature switch so that we can scribe for certain DDG
-  ): Future[Seq[Seq[InitialAdsCandidate]]] = {
-    val scribeMetadata = ScribeMetadata.from(query)
-    val timer = Stopwatch.start()
-    getResultFn.onSuccess { input =>
-      val latencyMs = timer().inMilliseconds
-      val result = convertFetchCandidatesResult(input, scribeMetadata.userId)
-      val traceId = Trace.id.traceId.toLong
-      val scribeMsg = buildScribeMessage(result, scribeMetadata, latencyMs, traceId)
+  delonf scribelonInitialAdsCandidatelons(
+    quelonry: AdsCandidatelonGelonnelonratorQuelonry,
+    gelontRelonsultFn: => Futurelon[Selonq[Selonq[InitialAdsCandidatelon]]],
+    elonnablelonScribelon: Boolelonan // controllelond by felonaturelon switch so that welon can scribelon for celonrtain DDG
+  ): Futurelon[Selonq[Selonq[InitialAdsCandidatelon]]] = {
+    val scribelonMelontadata = ScribelonMelontadata.from(quelonry)
+    val timelonr = Stopwatch.start()
+    gelontRelonsultFn.onSuccelonss { input =>
+      val latelonncyMs = timelonr().inMilliselonconds
+      val relonsult = convelonrtFelontchCandidatelonsRelonsult(input, scribelonMelontadata.uselonrId)
+      val tracelonId = Tracelon.id.tracelonId.toLong
+      val scribelonMsg = buildScribelonMelonssagelon(relonsult, scribelonMelontadata, latelonncyMs, tracelonId)
 
-      if (enableScribe && decider.isAvailableForId(
-          scribeMetadata.userId,
-          DeciderConstants.adsRecommendationsPerExperimentScribeRate)) {
-        upperFunnelsStats.counter(scribeMetadata.product.originalName).incr()
-        scribeResult(scribeMsg)
+      if (elonnablelonScribelon && deloncidelonr.isAvailablelonForId(
+          scribelonMelontadata.uselonrId,
+          DeloncidelonrConstants.adsReloncommelonndationsPelonrelonxpelonrimelonntScribelonRatelon)) {
+        uppelonrFunnelonlsStats.countelonr(scribelonMelontadata.product.originalNamelon).incr()
+        scribelonRelonsult(scribelonMsg)
       }
     }
   }
 
   /*
-   * Scribe top level API results
+   * Scribelon top lelonvelonl API relonsults
    * */
-  def scribeGetAdsRecommendations(
-    request: AdsRequest,
-    startTime: Long,
-    scribeMetadata: ScribeMetadata,
-    getResultFn: => Future[AdsResponse],
-    enableScribe: Boolean
-  ): Future[AdsResponse] = {
-    val timer = Stopwatch.start()
-    getResultFn.onSuccess { response =>
-      val latencyMs = timer().inMilliseconds
-      val result = AdsRecommendationsResult.AdsRecommendationTopLevelApiResult(
-        AdsRecommendationTopLevelApiResult(
-          timestamp = startTime,
-          request = request,
-          response = response
+  delonf scribelonGelontAdsReloncommelonndations(
+    relonquelonst: AdsRelonquelonst,
+    startTimelon: Long,
+    scribelonMelontadata: ScribelonMelontadata,
+    gelontRelonsultFn: => Futurelon[AdsRelonsponselon],
+    elonnablelonScribelon: Boolelonan
+  ): Futurelon[AdsRelonsponselon] = {
+    val timelonr = Stopwatch.start()
+    gelontRelonsultFn.onSuccelonss { relonsponselon =>
+      val latelonncyMs = timelonr().inMilliselonconds
+      val relonsult = AdsReloncommelonndationsRelonsult.AdsReloncommelonndationTopLelonvelonlApiRelonsult(
+        AdsReloncommelonndationTopLelonvelonlApiRelonsult(
+          timelonstamp = startTimelon,
+          relonquelonst = relonquelonst,
+          relonsponselon = relonsponselon
         ))
-      val traceId = Trace.id.traceId.toLong
-      val scribeMsg = buildScribeMessage(result, scribeMetadata, latencyMs, traceId)
+      val tracelonId = Tracelon.id.tracelonId.toLong
+      val scribelonMsg = buildScribelonMelonssagelon(relonsult, scribelonMelontadata, latelonncyMs, tracelonId)
 
-      if (enableScribe && decider.isAvailableForId(
-          scribeMetadata.userId,
-          DeciderConstants.adsRecommendationsPerExperimentScribeRate)) {
-        topLevelApiStats.counter(scribeMetadata.product.originalName).incr()
-        scribeResult(scribeMsg)
+      if (elonnablelonScribelon && deloncidelonr.isAvailablelonForId(
+          scribelonMelontadata.uselonrId,
+          DeloncidelonrConstants.adsReloncommelonndationsPelonrelonxpelonrimelonntScribelonRatelon)) {
+        topLelonvelonlApiStats.countelonr(scribelonMelontadata.product.originalNamelon).incr()
+        scribelonRelonsult(scribelonMsg)
       }
     }
   }
 
-  private def convertFetchCandidatesResult(
-    candidatesSeq: Seq[Seq[InitialAdsCandidate]],
-    requestUserId: UserId
-  ): AdsRecommendationsResult = {
-    val tweetCandidatesWithMetadata = candidatesSeq.flatMap { candidates =>
-      candidates.map { candidate =>
-        TweetCandidateWithMetadata(
-          tweetId = candidate.tweetId,
-          candidateGenerationKey = Some(
-            CandidateGenerationKeyUtil.toThrift(candidate.candidateGenerationInfo, requestUserId)),
-          score = Some(candidate.getSimilarityScore),
-          numCandidateGenerationKeys = None // not populated yet
+  privatelon delonf convelonrtFelontchCandidatelonsRelonsult(
+    candidatelonsSelonq: Selonq[Selonq[InitialAdsCandidatelon]],
+    relonquelonstUselonrId: UselonrId
+  ): AdsReloncommelonndationsRelonsult = {
+    val twelonelontCandidatelonsWithMelontadata = candidatelonsSelonq.flatMap { candidatelons =>
+      candidatelons.map { candidatelon =>
+        TwelonelontCandidatelonWithMelontadata(
+          twelonelontId = candidatelon.twelonelontId,
+          candidatelonGelonnelonrationKelony = Somelon(
+            CandidatelonGelonnelonrationKelonyUtil.toThrift(candidatelon.candidatelonGelonnelonrationInfo, relonquelonstUselonrId)),
+          scorelon = Somelon(candidatelon.gelontSimilarityScorelon),
+          numCandidatelonGelonnelonrationKelonys = Nonelon // not populatelond yelont
         )
       }
     }
-    AdsRecommendationsResult.FetchCandidatesResult(
-      FetchCandidatesResult(Some(tweetCandidatesWithMetadata)))
+    AdsReloncommelonndationsRelonsult.FelontchCandidatelonsRelonsult(
+      FelontchCandidatelonsRelonsult(Somelon(twelonelontCandidatelonsWithMelontadata)))
   }
 
-  private def buildScribeMessage(
-    result: AdsRecommendationsResult,
-    scribeMetadata: ScribeMetadata,
-    latencyMs: Long,
-    traceId: Long
-  ): GetAdsRecommendationsScribe = {
-    GetAdsRecommendationsScribe(
-      uuid = scribeMetadata.requestUUID,
-      userId = scribeMetadata.userId,
-      result = result,
-      traceId = Some(traceId),
-      performanceMetrics = Some(PerformanceMetrics(Some(latencyMs))),
-      impressedBuckets = getImpressedBuckets(scopedStats)
+  privatelon delonf buildScribelonMelonssagelon(
+    relonsult: AdsReloncommelonndationsRelonsult,
+    scribelonMelontadata: ScribelonMelontadata,
+    latelonncyMs: Long,
+    tracelonId: Long
+  ): GelontAdsReloncommelonndationsScribelon = {
+    GelontAdsReloncommelonndationsScribelon(
+      uuid = scribelonMelontadata.relonquelonstUUID,
+      uselonrId = scribelonMelontadata.uselonrId,
+      relonsult = relonsult,
+      tracelonId = Somelon(tracelonId),
+      pelonrformancelonMelontrics = Somelon(PelonrformancelonMelontrics(Somelon(latelonncyMs))),
+      imprelonsselondBuckelonts = gelontImprelonsselondBuckelonts(scopelondStats)
     )
   }
 
-  private def scribeResult(
-    scribeMsg: GetAdsRecommendationsScribe
+  privatelon delonf scribelonRelonsult(
+    scribelonMsg: GelontAdsReloncommelonndationsScribelon
   ): Unit = {
     publish(
-      logger = adsRecommendationsScribeLogger,
-      codec = GetAdsRecommendationsScribe,
-      message = scribeMsg)
+      loggelonr = adsReloncommelonndationsScribelonLoggelonr,
+      codelonc = GelontAdsReloncommelonndationsScribelon,
+      melonssagelon = scribelonMsg)
   }
 
 }

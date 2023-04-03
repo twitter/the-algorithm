@@ -1,43 +1,43 @@
 scala_library(
-    name = "agg_negative",
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
+    namelon = "agg_nelongativelon",
+    sourcelons = ["*.scala"],
+    compilelonr_option_selonts = ["fatal_warnings"],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        ":real_graph_negative_features-scala",
-        "beam-internal/src/main/scala/com/twitter/beam/io/dal",
-        "beam-internal/src/main/scala/com/twitter/scio_internal/job",
-        "beam-internal/src/main/scala/com/twitter/scio_internal/runner/dataflow",
-        "flockdb-tools/datasets/flock:flock-blocks-edges-scala",
-        "flockdb-tools/datasets/flock:flock-mutes-edges-scala",
-        "flockdb-tools/datasets/flock:flock-report-as-abuse-edges-scala",
-        "flockdb-tools/datasets/flock:flock-report-as-spam-edges-scala",
-        "socialgraph/hadoop/src/main/scala/com/twitter/socialgraph/hadoop:socialgraph-unfollows-scala",
-        "src/scala/com/twitter/interaction_graph/scio/common",
-        "tcdc/bq_blaster/src/main/scala/com/twitter/tcdc/bqblaster/beam",
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        ":relonal_graph_nelongativelon_felonaturelons-scala",
+        "belonam-intelonrnal/src/main/scala/com/twittelonr/belonam/io/dal",
+        "belonam-intelonrnal/src/main/scala/com/twittelonr/scio_intelonrnal/job",
+        "belonam-intelonrnal/src/main/scala/com/twittelonr/scio_intelonrnal/runnelonr/dataflow",
+        "flockdb-tools/dataselonts/flock:flock-blocks-elondgelons-scala",
+        "flockdb-tools/dataselonts/flock:flock-mutelons-elondgelons-scala",
+        "flockdb-tools/dataselonts/flock:flock-relonport-as-abuselon-elondgelons-scala",
+        "flockdb-tools/dataselonts/flock:flock-relonport-as-spam-elondgelons-scala",
+        "socialgraph/hadoop/src/main/scala/com/twittelonr/socialgraph/hadoop:socialgraph-unfollows-scala",
+        "src/scala/com/twittelonr/intelonraction_graph/scio/common",
+        "tcdc/bq_blastelonr/src/main/scala/com/twittelonr/tcdc/bqblastelonr/belonam",
     ],
 )
 
 jvm_binary(
-    name = "interaction_graph_negative_scio",
-    main = "com.twitter.interaction_graph.scio.agg_negative.InteractionGraphNegativeJob",
+    namelon = "intelonraction_graph_nelongativelon_scio",
+    main = "com.twittelonr.intelonraction_graph.scio.agg_nelongativelon.IntelonractionGraphNelongativelonJob",
     platform = "java8",
-    dependencies = [
-        ":agg_negative",
+    delonpelonndelonncielons = [
+        ":agg_nelongativelon",
     ],
 )
 
-create_datasets(
-    base_name = "real_graph_negative_features",
-    key_type = "Long",
+crelonatelon_dataselonts(
+    baselon_namelon = "relonal_graph_nelongativelon_felonaturelons",
+    kelony_typelon = "Long",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.interaction_graph.injection.UserSessionInjection.injection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.user_session_store.thriftscala.UserSession",
-    scala_dependencies = [
-        "src/scala/com/twitter/interaction_graph/injection:user_session_inj",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.intelonraction_graph.injelonction.UselonrSelonssionInjelonction.injelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.uselonr_selonssion_storelon.thriftscala.UselonrSelonssion",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/intelonraction_graph/injelonction:uselonr_selonssion_inj",
     ],
 )

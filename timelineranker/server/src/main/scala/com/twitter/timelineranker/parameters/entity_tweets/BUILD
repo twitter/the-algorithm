@@ -1,12 +1,12 @@
 scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "configapi/configapi-core/src/main/scala/com/twitter/timelines/configapi",
-        "configapi/configapi-decider/src/main/scala/com/twitter/timelines/configapi/decider",
-        "servo/decider",
-        "timelineranker/server/src/main/scala/com/twitter/timelineranker/decider",
+    sourcelons = ["*.scala"],
+    compilelonr_option_selonts = ["fatal_warnings"],
+    strict_delonps = Truelon,
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        "configapi/configapi-corelon/src/main/scala/com/twittelonr/timelonlinelons/configapi",
+        "configapi/configapi-deloncidelonr/src/main/scala/com/twittelonr/timelonlinelons/configapi/deloncidelonr",
+        "selonrvo/deloncidelonr",
+        "timelonlinelonrankelonr/selonrvelonr/src/main/scala/com/twittelonr/timelonlinelonrankelonr/deloncidelonr",
     ],
 )

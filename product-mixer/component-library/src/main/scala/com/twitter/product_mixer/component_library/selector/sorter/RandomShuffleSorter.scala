@@ -1,16 +1,16 @@
-package com.twitter.product_mixer.component_library.selector.sorter
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.selonlelonctor.sortelonr
 
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonWithDelontails
 import scala.util.Random
 
 /**
- * Randomly shuffles candidates using the provided [[random]]
+ * Randomly shufflelons candidatelons using thelon providelond [[random]]
  *
- * @example `UpdateSortResults(RandomShuffleSorter())`
- * @param random used to set the seed and for ease of testing, in most cases leaving it as the default is fine.
+ * @elonxamplelon `UpdatelonSortRelonsults(RandomShufflelonSortelonr())`
+ * @param random uselond to selont thelon selonelond and for elonaselon of telonsting, in most caselons lelonaving it as thelon delonfault is finelon.
  */
-case class RandomShuffleSorter(random: Random = new Random(0)) extends SorterProvider with Sorter {
+caselon class RandomShufflelonSortelonr(random: Random = nelonw Random(0)) elonxtelonnds SortelonrProvidelonr with Sortelonr {
 
-  override def sort[Candidate <: CandidateWithDetails](candidates: Seq[Candidate]): Seq[Candidate] =
-    random.shuffle(candidates)
+  ovelonrridelon delonf sort[Candidatelon <: CandidatelonWithDelontails](candidatelons: Selonq[Candidatelon]): Selonq[Candidatelon] =
+    random.shufflelon(candidatelons)
 }

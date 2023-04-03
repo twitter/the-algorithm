@@ -1,56 +1,56 @@
-package com.twitter.home_mixer.module
+packagelon com.twittelonr.homelon_mixelonr.modulelon
 
-import com.google.inject.Provides
+import com.googlelon.injelonct.Providelons
 
-import com.twitter.adserver.{thriftscala => ads}
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
-import com.twitter.storage.client.manhattan.kv.Guarantee
-import com.twitter.storehaus.ReadableStore
-import com.twitter.storehaus_internal.manhattan.ManhattanCluster
-import com.twitter.storehaus_internal.manhattan.ManhattanClusters
-import com.twitter.timelines.clients.ads.AdvertiserBrandSafetySettingsStore
-import com.twitter.timelines.clients.manhattan.mhv3.ManhattanClientBuilder
-import com.twitter.timelines.clients.manhattan.mhv3.ManhattanClientConfigWithDataset
-import com.twitter.util.Duration
+import com.twittelonr.adselonrvelonr.{thriftscala => ads}
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.finaglelon.mtls.authelonntication.SelonrvicelonIdelonntifielonr
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.injelonct.TwittelonrModulelon
+import com.twittelonr.storagelon.clielonnt.manhattan.kv.Guarantelonelon
+import com.twittelonr.storelonhaus.RelonadablelonStorelon
+import com.twittelonr.storelonhaus_intelonrnal.manhattan.ManhattanClustelonr
+import com.twittelonr.storelonhaus_intelonrnal.manhattan.ManhattanClustelonrs
+import com.twittelonr.timelonlinelons.clielonnts.ads.AdvelonrtiselonrBrandSafelontySelonttingsStorelon
+import com.twittelonr.timelonlinelons.clielonnts.manhattan.mhv3.ManhattanClielonntBuildelonr
+import com.twittelonr.timelonlinelons.clielonnts.manhattan.mhv3.ManhattanClielonntConfigWithDataselont
+import com.twittelonr.util.Duration
 
-import javax.inject.Singleton
+import javax.injelonct.Singlelonton
 
-object AdvertiserBrandSafetySettingsStoreModule extends TwitterModule {
+objelonct AdvelonrtiselonrBrandSafelontySelonttingsStorelonModulelon elonxtelonnds TwittelonrModulelon {
 
-  @Provides
-  @Singleton
-  def providesAdvertiserBrandSafetySettingsStore(
-    injectedServiceIdentifier: ServiceIdentifier,
-    statsReceiver: StatsReceiver
-  ): ReadableStore[Long, ads.AdvertiserBrandSafetySettings] = {
-    val advertiserBrandSafetySettingsManhattanClientConfig = new ManhattanClientConfigWithDataset {
-      override val cluster: ManhattanCluster = ManhattanClusters.apollo
-      override val appId: String = "brand_safety_apollo"
-      override val dataset = "advertiser_brand_safety_settings"
-      override val statsScope: String = "AdvertiserBrandSafetySettingsManhattanClient"
-      override val defaultGuarantee = Guarantee.Weak
-      override val defaultMaxTimeout: Duration = 100.milliseconds
-      override val maxRetryCount: Int = 1
-      override val isReadOnly: Boolean = true
-      override val serviceIdentifier: ServiceIdentifier = injectedServiceIdentifier
+  @Providelons
+  @Singlelonton
+  delonf providelonsAdvelonrtiselonrBrandSafelontySelonttingsStorelon(
+    injelonctelondSelonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr,
+    statsReloncelonivelonr: StatsReloncelonivelonr
+  ): RelonadablelonStorelon[Long, ads.AdvelonrtiselonrBrandSafelontySelonttings] = {
+    val advelonrtiselonrBrandSafelontySelonttingsManhattanClielonntConfig = nelonw ManhattanClielonntConfigWithDataselont {
+      ovelonrridelon val clustelonr: ManhattanClustelonr = ManhattanClustelonrs.apollo
+      ovelonrridelon val appId: String = "brand_safelonty_apollo"
+      ovelonrridelon val dataselont = "advelonrtiselonr_brand_safelonty_selonttings"
+      ovelonrridelon val statsScopelon: String = "AdvelonrtiselonrBrandSafelontySelonttingsManhattanClielonnt"
+      ovelonrridelon val delonfaultGuarantelonelon = Guarantelonelon.Welonak
+      ovelonrridelon val delonfaultMaxTimelonout: Duration = 100.milliselonconds
+      ovelonrridelon val maxRelontryCount: Int = 1
+      ovelonrridelon val isRelonadOnly: Boolelonan = truelon
+      ovelonrridelon val selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr = injelonctelondSelonrvicelonIdelonntifielonr
     }
 
-    val advertiserBrandSafetySettingsManhattanEndpoint = ManhattanClientBuilder
-      .buildManhattanEndpoint(advertiserBrandSafetySettingsManhattanClientConfig, statsReceiver)
+    val advelonrtiselonrBrandSafelontySelonttingsManhattanelonndpoint = ManhattanClielonntBuildelonr
+      .buildManhattanelonndpoint(advelonrtiselonrBrandSafelontySelonttingsManhattanClielonntConfig, statsReloncelonivelonr)
 
-    val advertiserBrandSafetySettingsStore: ReadableStore[Long, ads.AdvertiserBrandSafetySettings] =
-      AdvertiserBrandSafetySettingsStore
-        .cached(
-          advertiserBrandSafetySettingsManhattanEndpoint,
-          advertiserBrandSafetySettingsManhattanClientConfig.dataset,
-          ttl = 60.minutes,
-          maxKeys = 100000,
-          windowSize = 10L
-        )(statsReceiver)
+    val advelonrtiselonrBrandSafelontySelonttingsStorelon: RelonadablelonStorelon[Long, ads.AdvelonrtiselonrBrandSafelontySelonttings] =
+      AdvelonrtiselonrBrandSafelontySelonttingsStorelon
+        .cachelond(
+          advelonrtiselonrBrandSafelontySelonttingsManhattanelonndpoint,
+          advelonrtiselonrBrandSafelontySelonttingsManhattanClielonntConfig.dataselont,
+          ttl = 60.minutelons,
+          maxKelonys = 100000,
+          windowSizelon = 10L
+        )(statsReloncelonivelonr)
 
-    advertiserBrandSafetySettingsStore
+    advelonrtiselonrBrandSafelontySelonttingsStorelon
   }
 }

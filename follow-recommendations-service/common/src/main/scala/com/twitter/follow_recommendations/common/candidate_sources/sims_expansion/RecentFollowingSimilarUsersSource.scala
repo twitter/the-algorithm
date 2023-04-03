@@ -1,99 +1,99 @@
-package com.twitter.follow_recommendations.common.candidate_sources.sims_expansion
+packagelon com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.sims_elonxpansion
 
-import com.google.inject.Singleton
-import com.twitter.follow_recommendations.common.candidate_sources.sims.SwitchingSimsSource
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.HasRecentFollowedUserIds
-import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.clients.socialgraph.SocialGraphClient
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import javax.inject.Inject
+import com.googlelon.injelonct.Singlelonton
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.sims.SwitchingSimsSourcelon
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.CandidatelonUselonr
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.HasReloncelonntFollowelondUselonrIds
+import com.twittelonr.helonrmit.modelonl.Algorithm
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonSourcelonIdelonntifielonr
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.timelonlinelons.configapi.HasParams
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.follow_reloncommelonndations.common.clielonnts.socialgraph.SocialGraphClielonnt
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.HasClielonntContelonxt
+import javax.injelonct.Injelonct
 
-object RecentFollowingSimilarUsersSource {
+objelonct ReloncelonntFollowingSimilarUselonrsSourcelon {
 
-  val Identifier = CandidateSourceIdentifier(Algorithm.NewFollowingSimilarUser.toString)
+  val Idelonntifielonr = CandidatelonSourcelonIdelonntifielonr(Algorithm.NelonwFollowingSimilarUselonr.toString)
 }
 
-@Singleton
-class RecentFollowingSimilarUsersSource @Inject() (
-  socialGraph: SocialGraphClient,
-  switchingSimsSource: SwitchingSimsSource,
-  statsReceiver: StatsReceiver)
-    extends SimsExpansionBasedCandidateSource[
-      HasParams with HasRecentFollowedUserIds with HasClientContext
-    ](switchingSimsSource) {
+@Singlelonton
+class ReloncelonntFollowingSimilarUselonrsSourcelon @Injelonct() (
+  socialGraph: SocialGraphClielonnt,
+  switchingSimsSourcelon: SwitchingSimsSourcelon,
+  statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds SimselonxpansionBaselondCandidatelonSourcelon[
+      HasParams with HasReloncelonntFollowelondUselonrIds with HasClielonntContelonxt
+    ](switchingSimsSourcelon) {
 
-  val identifier = RecentFollowingSimilarUsersSource.Identifier
-  private val stats = statsReceiver.scope(identifier.name)
-  private val maxResultsStats = stats.scope("max_results")
-  private val calibratedScoreCounter = stats.counter("calibrated_scores_counter")
+  val idelonntifielonr = ReloncelonntFollowingSimilarUselonrsSourcelon.Idelonntifielonr
+  privatelon val stats = statsReloncelonivelonr.scopelon(idelonntifielonr.namelon)
+  privatelon val maxRelonsultsStats = stats.scopelon("max_relonsults")
+  privatelon val calibratelondScorelonCountelonr = stats.countelonr("calibratelond_scorelons_countelonr")
 
-  override def firstDegreeNodes(
-    request: HasParams with HasRecentFollowedUserIds with HasClientContext
-  ): Stitch[Seq[CandidateUser]] = {
-    if (request.params(RecentFollowingSimilarUsersParams.TimestampIntegrated)) {
-      val recentFollowedUserIdsWithTimeStitch =
-        socialGraph.getRecentFollowedUserIdsWithTime(request.clientContext.userId.get)
+  ovelonrridelon delonf firstDelongrelonelonNodelons(
+    relonquelonst: HasParams with HasReloncelonntFollowelondUselonrIds with HasClielonntContelonxt
+  ): Stitch[Selonq[CandidatelonUselonr]] = {
+    if (relonquelonst.params(ReloncelonntFollowingSimilarUselonrsParams.TimelonstampIntelongratelond)) {
+      val reloncelonntFollowelondUselonrIdsWithTimelonStitch =
+        socialGraph.gelontReloncelonntFollowelondUselonrIdsWithTimelon(relonquelonst.clielonntContelonxt.uselonrId.gelont)
 
-      recentFollowedUserIdsWithTimeStitch.map { results =>
-        val first_degree_nodes = results
-          .sortBy(-_.timeInMs).take(
-            request.params(RecentFollowingSimilarUsersParams.MaxFirstDegreeNodes))
-        val max_timestamp = first_degree_nodes.head.timeInMs
-        first_degree_nodes.map {
-          case userIdWithTime =>
-            CandidateUser(
-              userIdWithTime.userId,
-              score = Some(userIdWithTime.timeInMs.toDouble / max_timestamp))
+      reloncelonntFollowelondUselonrIdsWithTimelonStitch.map { relonsults =>
+        val first_delongrelonelon_nodelons = relonsults
+          .sortBy(-_.timelonInMs).takelon(
+            relonquelonst.params(ReloncelonntFollowingSimilarUselonrsParams.MaxFirstDelongrelonelonNodelons))
+        val max_timelonstamp = first_delongrelonelon_nodelons.helonad.timelonInMs
+        first_delongrelonelon_nodelons.map {
+          caselon uselonrIdWithTimelon =>
+            CandidatelonUselonr(
+              uselonrIdWithTimelon.uselonrId,
+              scorelon = Somelon(uselonrIdWithTimelon.timelonInMs.toDoublelon / max_timelonstamp))
         }
       }
-    } else {
-      Stitch.value(
-        request.recentFollowedUserIds
-          .getOrElse(Nil).take(
-            request.params(RecentFollowingSimilarUsersParams.MaxFirstDegreeNodes)).map(
-            CandidateUser(_, score = Some(1.0)))
+    } elonlselon {
+      Stitch.valuelon(
+        relonquelonst.reloncelonntFollowelondUselonrIds
+          .gelontOrelonlselon(Nil).takelon(
+            relonquelonst.params(ReloncelonntFollowingSimilarUselonrsParams.MaxFirstDelongrelonelonNodelons)).map(
+            CandidatelonUselonr(_, scorelon = Somelon(1.0)))
       )
     }
   }
 
-  override def maxSecondaryDegreeNodes(
-    req: HasParams with HasRecentFollowedUserIds with HasClientContext
+  ovelonrridelon delonf maxSeloncondaryDelongrelonelonNodelons(
+    relonq: HasParams with HasReloncelonntFollowelondUselonrIds with HasClielonntContelonxt
   ): Int = {
-    req.params(RecentFollowingSimilarUsersParams.MaxSecondaryDegreeExpansionPerNode)
+    relonq.params(ReloncelonntFollowingSimilarUselonrsParams.MaxSeloncondaryDelongrelonelonelonxpansionPelonrNodelon)
   }
 
-  override def maxResults(
-    req: HasParams with HasRecentFollowedUserIds with HasClientContext
+  ovelonrridelon delonf maxRelonsults(
+    relonq: HasParams with HasReloncelonntFollowelondUselonrIds with HasClielonntContelonxt
   ): Int = {
-    val firstDegreeNodes = req.params(RecentFollowingSimilarUsersParams.MaxFirstDegreeNodes)
-    val maxResultsNum = req.params(RecentFollowingSimilarUsersParams.MaxResults)
-    maxResultsStats
+    val firstDelongrelonelonNodelons = relonq.params(ReloncelonntFollowingSimilarUselonrsParams.MaxFirstDelongrelonelonNodelons)
+    val maxRelonsultsNum = relonq.params(ReloncelonntFollowingSimilarUselonrsParams.MaxRelonsults)
+    maxRelonsultsStats
       .stat(
-        s"RecentFollowingSimilarUsersSource_firstDegreeNodes_${firstDegreeNodes}_maxResults_${maxResultsNum}")
+        s"ReloncelonntFollowingSimilarUselonrsSourcelon_firstDelongrelonelonNodelons_${firstDelongrelonelonNodelons}_maxRelonsults_${maxRelonsultsNum}")
       .add(1)
-    maxResultsNum
+    maxRelonsultsNum
   }
 
-  override def scoreCandidate(sourceScore: Double, similarToScore: Double): Double = {
-    sourceScore * similarToScore
+  ovelonrridelon delonf scorelonCandidatelon(sourcelonScorelon: Doublelon, similarToScorelon: Doublelon): Doublelon = {
+    sourcelonScorelon * similarToScorelon
   }
 
-  override def calibrateDivisor(
-    req: HasParams with HasRecentFollowedUserIds with HasClientContext
-  ): Double = {
-    req.params(DBV2SimsExpansionParams.RecentFollowingSimilarUsersDBV2CalibrateDivisor)
+  ovelonrridelon delonf calibratelonDivisor(
+    relonq: HasParams with HasReloncelonntFollowelondUselonrIds with HasClielonntContelonxt
+  ): Doublelon = {
+    relonq.params(DBV2SimselonxpansionParams.ReloncelonntFollowingSimilarUselonrsDBV2CalibratelonDivisor)
   }
 
-  override def calibrateScore(
-    candidateScore: Double,
-    req: HasParams with HasRecentFollowedUserIds with HasClientContext
-  ): Double = {
-    calibratedScoreCounter.incr()
-    candidateScore / calibrateDivisor(req)
+  ovelonrridelon delonf calibratelonScorelon(
+    candidatelonScorelon: Doublelon,
+    relonq: HasParams with HasReloncelonntFollowelondUselonrIds with HasClielonntContelonxt
+  ): Doublelon = {
+    calibratelondScorelonCountelonr.incr()
+    candidatelonScorelon / calibratelonDivisor(relonq)
   }
 }

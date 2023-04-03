@@ -1,164 +1,164 @@
-package com.twitter.simclusters_v2.scalding.optout
+packagelon com.twittelonr.simclustelonrs_v2.scalding.optout
 
-import com.twitter.algebird.Aggregator.size
-import com.twitter.algebird.QTreeAggregatorLowerBound
-import com.twitter.octain.identifiers.thriftscala.RawId
-import com.twitter.octain.p13n.batch.P13NPreferencesScalaDataset
-import com.twitter.octain.p13n.preferences.CompositeInterest
-import com.twitter.scalding.DateRange
-import com.twitter.scalding.Execution
-import com.twitter.scalding.TypedPipe
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.remote_access.AllowCrossClusterSameDC
-import com.twitter.simclusters_v2.common.ClusterId
-import com.twitter.simclusters_v2.common.SemanticCoreEntityId
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.scalding.common.Util
-import com.twitter.simclusters_v2.thriftscala.ClusterType
-import com.twitter.simclusters_v2.thriftscala.SemanticCoreEntityWithScore
-import com.twitter.wtf.interest.thriftscala.Interest
+import com.twittelonr.algelonbird.Aggrelongator.sizelon
+import com.twittelonr.algelonbird.QTrelonelonAggrelongatorLowelonrBound
+import com.twittelonr.octain.idelonntifielonrs.thriftscala.RawId
+import com.twittelonr.octain.p13n.batch.P13NPrelonfelonrelonncelonsScalaDataselont
+import com.twittelonr.octain.p13n.prelonfelonrelonncelons.CompositelonIntelonrelonst
+import com.twittelonr.scalding.DatelonRangelon
+import com.twittelonr.scalding.elonxeloncution
+import com.twittelonr.scalding.TypelondPipelon
+import com.twittelonr.scalding_intelonrnal.dalv2.DAL
+import com.twittelonr.scalding_intelonrnal.dalv2.relonmotelon_accelonss.AllowCrossClustelonrSamelonDC
+import com.twittelonr.simclustelonrs_v2.common.ClustelonrId
+import com.twittelonr.simclustelonrs_v2.common.SelonmanticCorelonelonntityId
+import com.twittelonr.simclustelonrs_v2.common.UselonrId
+import com.twittelonr.simclustelonrs_v2.scalding.common.Util
+import com.twittelonr.simclustelonrs_v2.thriftscala.ClustelonrTypelon
+import com.twittelonr.simclustelonrs_v2.thriftscala.SelonmanticCorelonelonntityWithScorelon
+import com.twittelonr.wtf.intelonrelonst.thriftscala.Intelonrelonst
 
 /**
- * Opts out InterestedIn clusters based on clusters' entity embeddings. If a user opted out an
- * entity and the user also is interested in a cluster with that entity embedding, unlink the
- * user from that entity.
+ * Opts out IntelonrelonstelondIn clustelonrs baselond on clustelonrs' elonntity elonmbelonddings. If a uselonr optelond out an
+ * elonntity and thelon uselonr also is intelonrelonstelond in a clustelonr with that elonntity elonmbelondding, unlink thelon
+ * uselonr from that elonntity.
  */
-object SimClustersOptOutUtil {
+objelonct SimClustelonrsOptOutUtil {
 
   /**
-   * Reads User's Your Twitter Data opt-out selections
+   * Relonads Uselonr's Your Twittelonr Data opt-out selonlelonctions
    */
-  def getP13nOptOutSources(
-    dateRange: DateRange,
-    clusterType: ClusterType
-  ): TypedPipe[(UserId, Set[SemanticCoreEntityId])] = {
+  delonf gelontP13nOptOutSourcelons(
+    datelonRangelon: DatelonRangelon,
+    clustelonrTypelon: ClustelonrTypelon
+  ): TypelondPipelon[(UselonrId, Selont[SelonmanticCorelonelonntityId])] = {
     DAL
-      .readMostRecentSnapshot(
-        P13NPreferencesScalaDataset,
-        dateRange
+      .relonadMostReloncelonntSnapshot(
+        P13NPrelonfelonrelonncelonsScalaDataselont,
+        datelonRangelon
       )
-      .withRemoteReadPolicy(AllowCrossClusterSameDC)
-      .toTypedPipe
-      .map { record => (record.id, record.preferences) }
+      .withRelonmotelonRelonadPolicy(AllowCrossClustelonrSamelonDC)
+      .toTypelondPipelon
+      .map { reloncord => (reloncord.id, reloncord.prelonfelonrelonncelons) }
       .flatMap {
-        case (RawId.UserId(userId), p13nPreferences) =>
-          val optedOutEntities = p13nPreferences.interestPreferences
-            .map { preference =>
-              preference.disabledInterests
-                .collect {
-                  case CompositeInterest.RecommendationInterest(recInterest)
-                      if clusterType == ClusterType.InterestedIn =>
-                    recInterest.interest match {
-                      case Interest.SemanticEntityInterest(semanticCoreInterest) =>
-                        Some(semanticCoreInterest.entityId)
-                      case _ =>
-                        None
+        caselon (RawId.UselonrId(uselonrId), p13nPrelonfelonrelonncelons) =>
+          val optelondOutelonntitielons = p13nPrelonfelonrelonncelons.intelonrelonstPrelonfelonrelonncelons
+            .map { prelonfelonrelonncelon =>
+              prelonfelonrelonncelon.disablelondIntelonrelonsts
+                .collelonct {
+                  caselon CompositelonIntelonrelonst.ReloncommelonndationIntelonrelonst(reloncIntelonrelonst)
+                      if clustelonrTypelon == ClustelonrTypelon.IntelonrelonstelondIn =>
+                    reloncIntelonrelonst.intelonrelonst match {
+                      caselon Intelonrelonst.SelonmanticelonntityIntelonrelonst(selonmanticCorelonIntelonrelonst) =>
+                        Somelon(selonmanticCorelonIntelonrelonst.elonntityId)
+                      caselon _ =>
+                        Nonelon
                     }
 
-                  case CompositeInterest.RecommendationKnownFor(recInterest)
-                      if clusterType == ClusterType.KnownFor =>
-                    recInterest.interest match {
-                      case Interest.SemanticEntityInterest(semanticCoreInterest) =>
-                        Some(semanticCoreInterest.entityId)
-                      case _ =>
-                        None
+                  caselon CompositelonIntelonrelonst.ReloncommelonndationKnownFor(reloncIntelonrelonst)
+                      if clustelonrTypelon == ClustelonrTypelon.KnownFor =>
+                    reloncIntelonrelonst.intelonrelonst match {
+                      caselon Intelonrelonst.SelonmanticelonntityIntelonrelonst(selonmanticCorelonIntelonrelonst) =>
+                        Somelon(selonmanticCorelonIntelonrelonst.elonntityId)
+                      caselon _ =>
+                        Nonelon
                     }
-                }.flatten.toSet
-            }.getOrElse(Set.empty)
-          if (optedOutEntities.nonEmpty) {
-            Some((userId, optedOutEntities))
-          } else {
-            None
+                }.flattelonn.toSelont
+            }.gelontOrelonlselon(Selont.elonmpty)
+          if (optelondOutelonntitielons.nonelonmpty) {
+            Somelon((uselonrId, optelondOutelonntitielons))
+          } elonlselon {
+            Nonelon
           }
-        case _ =>
-          None
+        caselon _ =>
+          Nonelon
       }
   }
 
   /**
-   * Remove user's clusters whose inferred entity embeddings are opted out. Will retain the user
-   * entry in the pipe even if all the clusters are filtered out.
+   * Relonmovelon uselonr's clustelonrs whoselon infelonrrelond elonntity elonmbelonddings arelon optelond out. Will relontain thelon uselonr
+   * elonntry in thelon pipelon elonvelonn if all thelon clustelonrs arelon filtelonrelond out.
    */
-  def filterOptedOutClusters(
-    userToClusters: TypedPipe[(UserId, Seq[ClusterId])],
-    optedOutEntities: TypedPipe[(UserId, Set[SemanticCoreEntityId])],
-    legibleClusters: TypedPipe[(ClusterId, Seq[SemanticCoreEntityWithScore])]
-  ): TypedPipe[(UserId, Seq[ClusterId])] = {
+  delonf filtelonrOptelondOutClustelonrs(
+    uselonrToClustelonrs: TypelondPipelon[(UselonrId, Selonq[ClustelonrId])],
+    optelondOutelonntitielons: TypelondPipelon[(UselonrId, Selont[SelonmanticCorelonelonntityId])],
+    lelongiblelonClustelonrs: TypelondPipelon[(ClustelonrId, Selonq[SelonmanticCorelonelonntityWithScorelon])]
+  ): TypelondPipelon[(UselonrId, Selonq[ClustelonrId])] = {
 
-    val inMemoryValidClusterToEntities =
-      legibleClusters
-        .mapValues(_.map(_.entityId).toSet)
+    val inMelonmoryValidClustelonrToelonntitielons =
+      lelongiblelonClustelonrs
+        .mapValuelons(_.map(_.elonntityId).toSelont)
         .map(Map(_)).sum
 
-    userToClusters
-      .leftJoin(optedOutEntities)
-      .mapWithValue(inMemoryValidClusterToEntities) {
-        case ((userId, (userClusters, optedOutEntitiesOpt)), validClusterToEntitiesOpt) =>
-          val optedOutEntitiesSet = optedOutEntitiesOpt.getOrElse(Set.empty)
-          val validClusterToEntities = validClusterToEntitiesOpt.getOrElse(Map.empty)
+    uselonrToClustelonrs
+      .lelonftJoin(optelondOutelonntitielons)
+      .mapWithValuelon(inMelonmoryValidClustelonrToelonntitielons) {
+        caselon ((uselonrId, (uselonrClustelonrs, optelondOutelonntitielonsOpt)), validClustelonrToelonntitielonsOpt) =>
+          val optelondOutelonntitielonsSelont = optelondOutelonntitielonsOpt.gelontOrelonlselon(Selont.elonmpty)
+          val validClustelonrToelonntitielons = validClustelonrToelonntitielonsOpt.gelontOrelonlselon(Map.elonmpty)
 
-          val clustersAfterOptOut = userClusters.filter { clusterId =>
-            val isClusterOptedOut = validClusterToEntities
-              .getOrElse(clusterId, Set.empty)
-              .intersect(optedOutEntitiesSet)
-              .nonEmpty
-            !isClusterOptedOut
+          val clustelonrsAftelonrOptOut = uselonrClustelonrs.filtelonr { clustelonrId =>
+            val isClustelonrOptelondOut = validClustelonrToelonntitielons
+              .gelontOrelonlselon(clustelonrId, Selont.elonmpty)
+              .intelonrselonct(optelondOutelonntitielonsSelont)
+              .nonelonmpty
+            !isClustelonrOptelondOut
           }.distinct
 
-          (userId, clustersAfterOptOut)
+          (uselonrId, clustelonrsAftelonrOptOut)
       }
-      .filter { _._2.nonEmpty }
+      .filtelonr { _._2.nonelonmpty }
   }
 
-  val AlertEmail = "no-reply@twitter.com"
+  val Alelonrtelonmail = "no-relonply@twittelonr.com"
 
   /**
-   * Does sanity check on the results, to make sure the opt out outputs are comparable to the
-   * raw version. If the delta in the number of users >= 0.1% or median of number of clusters per
-   * user >= 1%, send alert emails
+   * Doelons sanity chelonck on thelon relonsults, to makelon surelon thelon opt out outputs arelon comparablelon to thelon
+   * raw velonrsion. If thelon delonlta in thelon numbelonr of uselonrs >= 0.1% or melondian of numbelonr of clustelonrs pelonr
+   * uselonr >= 1%, selonnd alelonrt elonmails
    */
-  def sanityCheckAndSendEmail(
-    oldNumClustersPerUser: TypedPipe[Int],
-    newNumClustersPerUser: TypedPipe[Int],
-    modelVersion: String,
-    alertEmail: String
-  ): Execution[Unit] = {
-    val oldNumUsersExec = oldNumClustersPerUser.aggregate(size).toOptionExecution
-    val newNumUsersExec = newNumClustersPerUser.aggregate(size).toOptionExecution
+  delonf sanityChelonckAndSelonndelonmail(
+    oldNumClustelonrsPelonrUselonr: TypelondPipelon[Int],
+    nelonwNumClustelonrsPelonrUselonr: TypelondPipelon[Int],
+    modelonlVelonrsion: String,
+    alelonrtelonmail: String
+  ): elonxeloncution[Unit] = {
+    val oldNumUselonrselonxelonc = oldNumClustelonrsPelonrUselonr.aggrelongatelon(sizelon).toOptionelonxeloncution
+    val nelonwNumUselonrselonxelonc = nelonwNumClustelonrsPelonrUselonr.aggrelongatelon(sizelon).toOptionelonxeloncution
 
-    val oldMedianExec = oldNumClustersPerUser
-      .aggregate(QTreeAggregatorLowerBound(0.5))
-      .toOptionExecution
+    val oldMelondianelonxelonc = oldNumClustelonrsPelonrUselonr
+      .aggrelongatelon(QTrelonelonAggrelongatorLowelonrBound(0.5))
+      .toOptionelonxeloncution
 
-    val newMedianExec = newNumClustersPerUser
-      .aggregate(QTreeAggregatorLowerBound(0.5))
-      .toOptionExecution
+    val nelonwMelondianelonxelonc = nelonwNumClustelonrsPelonrUselonr
+      .aggrelongatelon(QTrelonelonAggrelongatorLowelonrBound(0.5))
+      .toOptionelonxeloncution
 
-    Execution
-      .zip(oldNumUsersExec, newNumUsersExec, oldMedianExec, newMedianExec)
+    elonxeloncution
+      .zip(oldNumUselonrselonxelonc, nelonwNumUselonrselonxelonc, oldMelondianelonxelonc, nelonwMelondianelonxelonc)
       .map {
-        case (Some(oldNumUsers), Some(newNumUsers), Some(oldMedian), Some(newMedian)) =>
-          val deltaNum = (newNumUsers - oldNumUsers).toDouble / oldNumUsers.toDouble
-          val deltaMedian = (oldMedian - newMedian) / oldMedian
-          val message =
-            s"num users before optout=$oldNumUsers,\n" +
-              s"num users after optout=$newNumUsers,\n" +
-              s"median num clusters per user before optout=$oldMedian,\n" +
-              s"median num clusters per user after optout=$newMedian\n"
+        caselon (Somelon(oldNumUselonrs), Somelon(nelonwNumUselonrs), Somelon(oldMelondian), Somelon(nelonwMelondian)) =>
+          val delonltaNum = (nelonwNumUselonrs - oldNumUselonrs).toDoublelon / oldNumUselonrs.toDoublelon
+          val delonltaMelondian = (oldMelondian - nelonwMelondian) / oldMelondian
+          val melonssagelon =
+            s"num uselonrs belonforelon optout=$oldNumUselonrs,\n" +
+              s"num uselonrs aftelonr optout=$nelonwNumUselonrs,\n" +
+              s"melondian num clustelonrs pelonr uselonr belonforelon optout=$oldMelondian,\n" +
+              s"melondian num clustelonrs pelonr uselonr aftelonr optout=$nelonwMelondian\n"
 
-          println(message)
-          if (Math.abs(deltaNum) >= 0.001 || Math.abs(deltaMedian) >= 0.01) {
-            Util.sendEmail(
-              message,
-              s"Anomaly in $modelVersion opt out job. Please check cluster optout jobs in Eagleeye",
-              alertEmail
+          println(melonssagelon)
+          if (Math.abs(delonltaNum) >= 0.001 || Math.abs(delonltaMelondian) >= 0.01) {
+            Util.selonndelonmail(
+              melonssagelon,
+              s"Anomaly in $modelonlVelonrsion opt out job. Plelonaselon chelonck clustelonr optout jobs in elonaglelonelonyelon",
+              alelonrtelonmail
             )
           }
-        case err =>
-          Util.sendEmail(
-            err.toString(),
-            s"Anomaly in $modelVersion opt out job. Please check cluster optout jobs in Eagleeye",
-            alertEmail
+        caselon elonrr =>
+          Util.selonndelonmail(
+            elonrr.toString(),
+            s"Anomaly in $modelonlVelonrsion opt out job. Plelonaselon chelonck clustelonr optout jobs in elonaglelonelonyelon",
+            alelonrtelonmail
           )
       }
   }

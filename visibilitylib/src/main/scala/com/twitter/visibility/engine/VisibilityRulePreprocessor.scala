@@ -1,156 +1,156 @@
-package com.twitter.visibility.engine
+packagelon com.twittelonr.visibility.elonnginelon
 
-import com.twitter.abdecider.NullABDecider
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import com.twitter.util.Try
-import com.twitter.visibility.builder.VisibilityResultBuilder
-import com.twitter.visibility.features._
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.rules.Rule.DisabledRuleResult
-import com.twitter.visibility.rules.Rule.EvaluatedRuleResult
-import com.twitter.visibility.rules.State._
-import com.twitter.visibility.rules._
-import com.twitter.visibility.rules.providers.ProvidedEvaluationContext
-import com.twitter.visibility.rules.providers.PolicyProvider
+import com.twittelonr.abdeloncidelonr.NullABDeloncidelonr
+import com.twittelonr.util.Relonturn
+import com.twittelonr.util.Throw
+import com.twittelonr.util.Try
+import com.twittelonr.visibility.buildelonr.VisibilityRelonsultBuildelonr
+import com.twittelonr.visibility.felonaturelons._
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl
+import com.twittelonr.visibility.rulelons.Rulelon.DisablelondRulelonRelonsult
+import com.twittelonr.visibility.rulelons.Rulelon.elonvaluatelondRulelonRelonsult
+import com.twittelonr.visibility.rulelons.Statelon._
+import com.twittelonr.visibility.rulelons._
+import com.twittelonr.visibility.rulelons.providelonrs.ProvidelondelonvaluationContelonxt
+import com.twittelonr.visibility.rulelons.providelonrs.PolicyProvidelonr
 
-class VisibilityRulePreprocessor private (
-  metricsRecorder: VisibilityResultsMetricRecorder,
-  policyProviderOpt: Option[PolicyProvider] = None) {
+class VisibilityRulelonPrelonprocelonssor privatelon (
+  melontricsReloncordelonr: VisibilityRelonsultsMelontricReloncordelonr,
+  policyProvidelonrOpt: Option[PolicyProvidelonr] = Nonelon) {
 
-  private[engine] def filterEvaluableRules(
-    evaluationContext: ProvidedEvaluationContext,
-    resultBuilder: VisibilityResultBuilder,
-    rules: Seq[Rule]
-  ): (VisibilityResultBuilder, Seq[Rule]) = {
-    val (builder, ruleList) = rules.foldLeft((resultBuilder, Seq.empty[Rule])) {
-      case ((builder, nextPassRules), rule) =>
-        if (evaluationContext.ruleEnabledInContext(rule)) {
-          val missingFeatures: Set[Feature[_]] = rule.featureDependencies.collect {
-            case feature: Feature[_] if !builder.featureMap.contains(feature) => feature
+  privatelon[elonnginelon] delonf filtelonrelonvaluablelonRulelons(
+    elonvaluationContelonxt: ProvidelondelonvaluationContelonxt,
+    relonsultBuildelonr: VisibilityRelonsultBuildelonr,
+    rulelons: Selonq[Rulelon]
+  ): (VisibilityRelonsultBuildelonr, Selonq[Rulelon]) = {
+    val (buildelonr, rulelonList) = rulelons.foldLelonft((relonsultBuildelonr, Selonq.elonmpty[Rulelon])) {
+      caselon ((buildelonr, nelonxtPassRulelons), rulelon) =>
+        if (elonvaluationContelonxt.rulelonelonnablelondInContelonxt(rulelon)) {
+          val missingFelonaturelons: Selont[Felonaturelon[_]] = rulelon.felonaturelonDelonpelonndelonncielons.collelonct {
+            caselon felonaturelon: Felonaturelon[_] if !buildelonr.felonaturelonMap.contains(felonaturelon) => felonaturelon
           }
 
-          if (missingFeatures.isEmpty) {
-            (builder, nextPassRules :+ rule)
-          } else {
-            metricsRecorder.recordRuleMissingFeatures(rule.name, missingFeatures)
+          if (missingFelonaturelons.iselonmpty) {
+            (buildelonr, nelonxtPassRulelons :+ rulelon)
+          } elonlselon {
+            melontricsReloncordelonr.reloncordRulelonMissingFelonaturelons(rulelon.namelon, missingFelonaturelons)
             (
-              builder.withRuleResult(
-                rule,
-                RuleResult(NotEvaluated, MissingFeature(missingFeatures))
+              buildelonr.withRulelonRelonsult(
+                rulelon,
+                RulelonRelonsult(Notelonvaluatelond, MissingFelonaturelon(missingFelonaturelons))
               ),
-              nextPassRules
+              nelonxtPassRulelons
             )
           }
-        } else {
-          (builder.withRuleResult(rule, DisabledRuleResult), nextPassRules)
+        } elonlselon {
+          (buildelonr.withRulelonRelonsult(rulelon, DisablelondRulelonRelonsult), nelonxtPassRulelons)
         }
     }
-    (builder, ruleList)
+    (buildelonr, rulelonList)
   }
 
-  private[visibility] def preFilterRules(
-    evaluationContext: ProvidedEvaluationContext,
-    resolvedFeatureMap: Map[Feature[_], Any],
-    resultBuilder: VisibilityResultBuilder,
-    rules: Seq[Rule]
-  ): (VisibilityResultBuilder, Seq[Rule]) = {
-    val isResolvedFeatureMap = resultBuilder.featureMap.isInstanceOf[ResolvedFeatureMap]
-    val (builder, ruleList) = rules.foldLeft((resultBuilder, Seq.empty[Rule])) {
-      case ((builder, nextPassRules), rule) =>
-        rule.preFilter(evaluationContext, resolvedFeatureMap, NullABDecider) match {
-          case NeedsFullEvaluation =>
-            (builder, nextPassRules :+ rule)
-          case NotFiltered =>
-            (builder, nextPassRules :+ rule)
-          case Filtered if isResolvedFeatureMap =>
-            (builder, nextPassRules :+ rule)
-          case Filtered =>
-            (builder.withRuleResult(rule, EvaluatedRuleResult), nextPassRules)
+  privatelon[visibility] delonf prelonFiltelonrRulelons(
+    elonvaluationContelonxt: ProvidelondelonvaluationContelonxt,
+    relonsolvelondFelonaturelonMap: Map[Felonaturelon[_], Any],
+    relonsultBuildelonr: VisibilityRelonsultBuildelonr,
+    rulelons: Selonq[Rulelon]
+  ): (VisibilityRelonsultBuildelonr, Selonq[Rulelon]) = {
+    val isRelonsolvelondFelonaturelonMap = relonsultBuildelonr.felonaturelonMap.isInstancelonOf[RelonsolvelondFelonaturelonMap]
+    val (buildelonr, rulelonList) = rulelons.foldLelonft((relonsultBuildelonr, Selonq.elonmpty[Rulelon])) {
+      caselon ((buildelonr, nelonxtPassRulelons), rulelon) =>
+        rulelon.prelonFiltelonr(elonvaluationContelonxt, relonsolvelondFelonaturelonMap, NullABDeloncidelonr) match {
+          caselon NelonelondsFullelonvaluation =>
+            (buildelonr, nelonxtPassRulelons :+ rulelon)
+          caselon NotFiltelonrelond =>
+            (buildelonr, nelonxtPassRulelons :+ rulelon)
+          caselon Filtelonrelond if isRelonsolvelondFelonaturelonMap =>
+            (buildelonr, nelonxtPassRulelons :+ rulelon)
+          caselon Filtelonrelond =>
+            (buildelonr.withRulelonRelonsult(rulelon, elonvaluatelondRulelonRelonsult), nelonxtPassRulelons)
         }
     }
-    (builder, ruleList)
+    (buildelonr, rulelonList)
   }
 
-  private[visibility] def evaluate(
-    evaluationContext: ProvidedEvaluationContext,
-    safetyLevel: SafetyLevel,
-    resultBuilder: VisibilityResultBuilder
-  ): (VisibilityResultBuilder, Seq[Rule]) = {
-    val visibilityPolicy = policyProviderOpt match {
-      case Some(policyProvider) =>
-        policyProvider.policyForSurface(safetyLevel)
-      case None => RuleBase.RuleMap(safetyLevel)
+  privatelon[visibility] delonf elonvaluatelon(
+    elonvaluationContelonxt: ProvidelondelonvaluationContelonxt,
+    safelontyLelonvelonl: SafelontyLelonvelonl,
+    relonsultBuildelonr: VisibilityRelonsultBuildelonr
+  ): (VisibilityRelonsultBuildelonr, Selonq[Rulelon]) = {
+    val visibilityPolicy = policyProvidelonrOpt match {
+      caselon Somelon(policyProvidelonr) =>
+        policyProvidelonr.policyForSurfacelon(safelontyLelonvelonl)
+      caselon Nonelon => RulelonBaselon.RulelonMap(safelontyLelonvelonl)
     }
 
-    if (evaluationContext.params(safetyLevel.enabledParam)) {
-      evaluate(evaluationContext, visibilityPolicy, resultBuilder)
-    } else {
-      metricsRecorder.recordAction(safetyLevel, "disabled")
+    if (elonvaluationContelonxt.params(safelontyLelonvelonl.elonnablelondParam)) {
+      elonvaluatelon(elonvaluationContelonxt, visibilityPolicy, relonsultBuildelonr)
+    } elonlselon {
+      melontricsReloncordelonr.reloncordAction(safelontyLelonvelonl, "disablelond")
 
-      val rules: Seq[Rule] = visibilityPolicy.forContentId(resultBuilder.contentId)
-      val skippedResultBuilder = resultBuilder
-        .withRuleResultMap(rules.map(r => r -> RuleResult(Allow, Skipped)).toMap)
-        .withVerdict(verdict = Allow)
-        .withFinished(finished = true)
+      val rulelons: Selonq[Rulelon] = visibilityPolicy.forContelonntId(relonsultBuildelonr.contelonntId)
+      val skippelondRelonsultBuildelonr = relonsultBuildelonr
+        .withRulelonRelonsultMap(rulelons.map(r => r -> RulelonRelonsult(Allow, Skippelond)).toMap)
+        .withVelonrdict(velonrdict = Allow)
+        .withFinishelond(finishelond = truelon)
 
-      (skippedResultBuilder, rules)
+      (skippelondRelonsultBuildelonr, rulelons)
     }
   }
 
-  private[visibility] def evaluate(
-    evaluationContext: ProvidedEvaluationContext,
+  privatelon[visibility] delonf elonvaluatelon(
+    elonvaluationContelonxt: ProvidelondelonvaluationContelonxt,
     visibilityPolicy: VisibilityPolicy,
-    resultBuilder: VisibilityResultBuilder,
-  ): (VisibilityResultBuilder, Seq[Rule]) = {
+    relonsultBuildelonr: VisibilityRelonsultBuildelonr,
+  ): (VisibilityRelonsultBuildelonr, Selonq[Rulelon]) = {
 
-    val rules: Seq[Rule] = visibilityPolicy.forContentId(resultBuilder.contentId)
+    val rulelons: Selonq[Rulelon] = visibilityPolicy.forContelonntId(relonsultBuildelonr.contelonntId)
 
-    val (secondPassBuilder, secondPassRules) =
-      filterEvaluableRules(evaluationContext, resultBuilder, rules)
+    val (seloncondPassBuildelonr, seloncondPassRulelons) =
+      filtelonrelonvaluablelonRulelons(elonvaluationContelonxt, relonsultBuildelonr, rulelons)
 
-    val secondPassFeatureMap = secondPassBuilder.featureMap
+    val seloncondPassFelonaturelonMap = seloncondPassBuildelonr.felonaturelonMap
 
-    val secondPassConstantFeatures: Set[Feature[_]] = RuleBase
-      .getFeaturesForRules(secondPassRules)
-      .filter(secondPassFeatureMap.containsConstant(_))
+    val seloncondPassConstantFelonaturelons: Selont[Felonaturelon[_]] = RulelonBaselon
+      .gelontFelonaturelonsForRulelons(seloncondPassRulelons)
+      .filtelonr(seloncondPassFelonaturelonMap.containsConstant(_))
 
-    val secondPassFeatureValues: Set[(Feature[_], Any)] = secondPassConstantFeatures.map {
-      feature =>
-        Try(secondPassFeatureMap.getConstant(feature)) match {
-          case Return(value) => (feature, value)
-          case Throw(ex) =>
-            metricsRecorder.recordFailedFeature(feature, ex)
-            (feature, FeatureFailedPlaceholderObject(ex))
+    val seloncondPassFelonaturelonValuelons: Selont[(Felonaturelon[_], Any)] = seloncondPassConstantFelonaturelons.map {
+      felonaturelon =>
+        Try(seloncondPassFelonaturelonMap.gelontConstant(felonaturelon)) match {
+          caselon Relonturn(valuelon) => (felonaturelon, valuelon)
+          caselon Throw(elonx) =>
+            melontricsReloncordelonr.reloncordFailelondFelonaturelon(felonaturelon, elonx)
+            (felonaturelon, FelonaturelonFailelondPlacelonholdelonrObjelonct(elonx))
         }
     }
 
-    val resolvedFeatureMap: Map[Feature[_], Any] =
-      secondPassFeatureValues.filterNot {
-        case (_, value) => value.isInstanceOf[FeatureFailedPlaceholderObject]
+    val relonsolvelondFelonaturelonMap: Map[Felonaturelon[_], Any] =
+      seloncondPassFelonaturelonValuelons.filtelonrNot {
+        caselon (_, valuelon) => valuelon.isInstancelonOf[FelonaturelonFailelondPlacelonholdelonrObjelonct]
       }.toMap
 
-    val (preFilteredResultBuilder, preFilteredRules) = preFilterRules(
-      evaluationContext,
-      resolvedFeatureMap,
-      secondPassBuilder,
-      secondPassRules
+    val (prelonFiltelonrelondRelonsultBuildelonr, prelonFiltelonrelondRulelons) = prelonFiltelonrRulelons(
+      elonvaluationContelonxt,
+      relonsolvelondFelonaturelonMap,
+      seloncondPassBuildelonr,
+      seloncondPassRulelons
     )
 
-    val preFilteredFeatureMap =
-      RuleBase.removeUnusedFeaturesFromFeatureMap(
-        preFilteredResultBuilder.featureMap,
-        preFilteredRules)
+    val prelonFiltelonrelondFelonaturelonMap =
+      RulelonBaselon.relonmovelonUnuselondFelonaturelonsFromFelonaturelonMap(
+        prelonFiltelonrelondRelonsultBuildelonr.felonaturelonMap,
+        prelonFiltelonrelondRulelons)
 
-    (preFilteredResultBuilder.withFeatureMap(preFilteredFeatureMap), preFilteredRules)
+    (prelonFiltelonrelondRelonsultBuildelonr.withFelonaturelonMap(prelonFiltelonrelondFelonaturelonMap), prelonFiltelonrelondRulelons)
   }
 }
 
-object VisibilityRulePreprocessor {
-  def apply(
-    metricsRecorder: VisibilityResultsMetricRecorder,
-    policyProviderOpt: Option[PolicyProvider] = None
-  ): VisibilityRulePreprocessor = {
-    new VisibilityRulePreprocessor(metricsRecorder, policyProviderOpt)
+objelonct VisibilityRulelonPrelonprocelonssor {
+  delonf apply(
+    melontricsReloncordelonr: VisibilityRelonsultsMelontricReloncordelonr,
+    policyProvidelonrOpt: Option[PolicyProvidelonr] = Nonelon
+  ): VisibilityRulelonPrelonprocelonssor = {
+    nelonw VisibilityRulelonPrelonprocelonssor(melontricsReloncordelonr, policyProvidelonrOpt)
   }
 }

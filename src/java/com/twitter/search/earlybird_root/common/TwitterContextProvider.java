@@ -1,20 +1,20 @@
-package com.twitter.search.earlybird_root.common;
+packagelon com.twittelonr.selonarch.elonarlybird_root.common;
 
-import javax.inject.Singleton;
+import javax.injelonct.Singlelonton;
 
 import scala.Option;
 
-import com.twitter.context.TwitterContext;
-import com.twitter.context.thriftscala.Viewer;
-import com.twitter.search.TwitterContextPermit;
+import com.twittelonr.contelonxt.TwittelonrContelonxt;
+import com.twittelonr.contelonxt.thriftscala.Vielonwelonr;
+import com.twittelonr.selonarch.TwittelonrContelonxtPelonrmit;
 
 /**
- * This class is needed to provide an easy way for unit tests to "inject"
- * a TwitterContext Viewer
+ * This class is nelonelondelond to providelon an elonasy way for unit telonsts to "injelonct"
+ * a TwittelonrContelonxt Vielonwelonr
  */
-@Singleton
-public class TwitterContextProvider {
-  public Option<Viewer> get() {
-    return TwitterContext.acquire(TwitterContextPermit.get()).apply();
+@Singlelonton
+public class TwittelonrContelonxtProvidelonr {
+  public Option<Vielonwelonr> gelont() {
+    relonturn TwittelonrContelonxt.acquirelon(TwittelonrContelonxtPelonrmit.gelont()).apply();
   }
 }

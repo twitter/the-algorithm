@@ -1,79 +1,79 @@
-package com.twitter.product_mixer.component_library.pipeline.candidate.ads
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.pipelonlinelon.candidatelon.ads
 
-import com.twitter.adserver.{thriftscala => ads}
-import com.twitter.product_mixer.component_library.model.query.ads.AdsQuery
-import com.twitter.product_mixer.component_library.pipeline.candidate.ads.AdsCandidatePipelineQueryTransformer.buildAdRequestParams
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.adselonrvelonr.{thriftscala => ads}
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.quelonry.ads.AdsQuelonry
+import com.twittelonr.product_mixelonr.componelonnt_library.pipelonlinelon.candidatelon.ads.AdsCandidatelonPipelonlinelonQuelonryTransformelonr.buildAdRelonquelonstParams
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.transformelonr.CandidatelonPipelonlinelonQuelonryTransformelonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
 /**
- * Transform a PipelineQuery with AdsQuery into an AdsRequestParams
+ * Transform a PipelonlinelonQuelonry with AdsQuelonry into an AdsRelonquelonstParams
  *
- * @param adsDisplayLocationBuilder Builder that determines the display location for the ads
- * @param estimatedNumOrganicItems  Estimate for the number of organic items that will be served
- *                                  alongside inorganic items such as ads. 
+ * @param adsDisplayLocationBuildelonr Buildelonr that delontelonrminelons thelon display location for thelon ads
+ * @param elonstimatelondNumOrganicItelonms  elonstimatelon for thelon numbelonr of organic itelonms that will belon selonrvelond
+ *                                  alongsidelon inorganic itelonms such as ads.
  */
-case class AdsCandidatePipelineQueryTransformer[Query <: PipelineQuery with AdsQuery](
-  adsDisplayLocationBuilder: AdsDisplayLocationBuilder[Query],
-  estimatedNumOrganicItems: EstimateNumOrganicItems[Query],
-  urtRequest: Option[Boolean],
-) extends CandidatePipelineQueryTransformer[Query, ads.AdRequestParams] {
+caselon class AdsCandidatelonPipelonlinelonQuelonryTransformelonr[Quelonry <: PipelonlinelonQuelonry with AdsQuelonry](
+  adsDisplayLocationBuildelonr: AdsDisplayLocationBuildelonr[Quelonry],
+  elonstimatelondNumOrganicItelonms: elonstimatelonNumOrganicItelonms[Quelonry],
+  urtRelonquelonst: Option[Boolelonan],
+) elonxtelonnds CandidatelonPipelonlinelonQuelonryTransformelonr[Quelonry, ads.AdRelonquelonstParams] {
 
-  override def transform(query: Query): ads.AdRequestParams =
-    buildAdRequestParams(
-      query = query,
-      adsDisplayLocation = adsDisplayLocationBuilder(query),
-      organicItemIds = None,
-      numOrganicItems = Some(estimatedNumOrganicItems(query)),
-      urtRequest = urtRequest
+  ovelonrridelon delonf transform(quelonry: Quelonry): ads.AdRelonquelonstParams =
+    buildAdRelonquelonstParams(
+      quelonry = quelonry,
+      adsDisplayLocation = adsDisplayLocationBuildelonr(quelonry),
+      organicItelonmIds = Nonelon,
+      numOrganicItelonms = Somelon(elonstimatelondNumOrganicItelonms(quelonry)),
+      urtRelonquelonst = urtRelonquelonst
     )
 }
 
-object AdsCandidatePipelineQueryTransformer {
+objelonct AdsCandidatelonPipelonlinelonQuelonryTransformelonr {
 
-  def buildAdRequestParams(
-    query: PipelineQuery with AdsQuery,
+  delonf buildAdRelonquelonstParams(
+    quelonry: PipelonlinelonQuelonry with AdsQuelonry,
     adsDisplayLocation: ads.DisplayLocation,
-    organicItemIds: Option[Seq[Long]],
-    numOrganicItems: Option[Short],
-    urtRequest: Option[Boolean],
-  ): ads.AdRequestParams = {
-    val searchRequestContext = query.searchRequestContext
-    val queryString = query.searchRequestContext.flatMap(_.queryString)
+    organicItelonmIds: Option[Selonq[Long]],
+    numOrganicItelonms: Option[Short],
+    urtRelonquelonst: Option[Boolelonan],
+  ): ads.AdRelonquelonstParams = {
+    val selonarchRelonquelonstContelonxt = quelonry.selonarchRelonquelonstContelonxt
+    val quelonryString = quelonry.selonarchRelonquelonstContelonxt.flatMap(_.quelonryString)
 
-    val adRequest = ads.AdRequest(
-      queryString = queryString, 
+    val adRelonquelonst = ads.AdRelonquelonst(
+      quelonryString = quelonryString,
       displayLocation = adsDisplayLocation,
-      searchRequestContext = searchRequestContext,
-      organicItemIds = organicItemIds,
-      numOrganicItems = numOrganicItems,
-      profileUserId = query.userProfileViewedUserId,
-      isDebug = Some(false),
-      isTest = Some(false),
-      requestTriggerType = query.requestTriggerType,
-      disableNsfwAvoidance = query.disableNsfwAvoidance,
-      timelineRequestParams = query.timelineRequestParams,
+      selonarchRelonquelonstContelonxt = selonarchRelonquelonstContelonxt,
+      organicItelonmIds = organicItelonmIds,
+      numOrganicItelonms = numOrganicItelonms,
+      profilelonUselonrId = quelonry.uselonrProfilelonVielonwelondUselonrId,
+      isDelonbug = Somelon(falselon),
+      isTelonst = Somelon(falselon),
+      relonquelonstTriggelonrTypelon = quelonry.relonquelonstTriggelonrTypelon,
+      disablelonNsfwAvoidancelon = quelonry.disablelonNsfwAvoidancelon,
+      timelonlinelonRelonquelonstParams = quelonry.timelonlinelonRelonquelonstParams,
     )
 
-    val context = query.clientContext
+    val contelonxt = quelonry.clielonntContelonxt
 
-    val clientInfo = ads.ClientInfo(
-      clientId = context.appId.map(_.toInt),
-      userId64 = context.userId,
-      userIp = context.ipAddress,
-      guestId = context.guestIdAds,
-      userAgent = context.userAgent,
-      deviceId = context.deviceId,
-      languageCode = context.languageCode,
-      countryCode = context.countryCode,
-      mobileDeviceId = context.mobileDeviceId,
-      mobileDeviceAdId = context.mobileDeviceAdId,
-      limitAdTracking = context.limitAdTracking,
-      autoplayEnabled = query.autoplayEnabled,
-      urtRequest = urtRequest,
-      dspClientContext = query.dspClientContext
+    val clielonntInfo = ads.ClielonntInfo(
+      clielonntId = contelonxt.appId.map(_.toInt),
+      uselonrId64 = contelonxt.uselonrId,
+      uselonrIp = contelonxt.ipAddrelonss,
+      guelonstId = contelonxt.guelonstIdAds,
+      uselonrAgelonnt = contelonxt.uselonrAgelonnt,
+      delonvicelonId = contelonxt.delonvicelonId,
+      languagelonCodelon = contelonxt.languagelonCodelon,
+      countryCodelon = contelonxt.countryCodelon,
+      mobilelonDelonvicelonId = contelonxt.mobilelonDelonvicelonId,
+      mobilelonDelonvicelonAdId = contelonxt.mobilelonDelonvicelonAdId,
+      limitAdTracking = contelonxt.limitAdTracking,
+      autoplayelonnablelond = quelonry.autoplayelonnablelond,
+      urtRelonquelonst = urtRelonquelonst,
+      dspClielonntContelonxt = quelonry.dspClielonntContelonxt
     )
 
-    ads.AdRequestParams(adRequest, clientInfo)
+    ads.AdRelonquelonstParams(adRelonquelonst, clielonntInfo)
   }
 }

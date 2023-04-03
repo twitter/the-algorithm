@@ -1,41 +1,41 @@
-package com.twitter.follow_recommendations.common.clients.impression_store
+packagelon com.twittelonr.follow_reloncommelonndations.common.clielonnts.imprelonssion_storelon
 
-import com.twitter.follow_recommendations.common.models.DisplayLocation
-import com.twitter.follow_recommendations.common.models.WtfImpression
-import com.twitter.follow_recommendations.thriftscala.{DisplayLocation => TDisplayLocation}
-import com.twitter.stitch.Stitch
-import com.twitter.strato.catalog.Scan.Slice
-import com.twitter.strato.client.Scanner
-import com.twitter.util.Time
-import com.twitter.util.logging.Logging
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.DisplayLocation
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.WtfImprelonssion
+import com.twittelonr.follow_reloncommelonndations.thriftscala.{DisplayLocation => TDisplayLocation}
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.strato.catalog.Scan.Slicelon
+import com.twittelonr.strato.clielonnt.Scannelonr
+import com.twittelonr.util.Timelon
+import com.twittelonr.util.logging.Logging
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class WtfImpressionStore @Inject() (
-  scanner: Scanner[
-    ((Long, TDisplayLocation), Slice[Long]),
+@Singlelonton
+class WtfImprelonssionStorelon @Injelonct() (
+  scannelonr: Scannelonr[
+    ((Long, TDisplayLocation), Slicelon[Long]),
     Unit,
     ((Long, TDisplayLocation), Long),
     (Long, Int)
-  ]) extends Logging {
-  def get(userId: Long, dl: DisplayLocation): Stitch[Seq[WtfImpression]] = {
+  ]) elonxtelonnds Logging {
+  delonf gelont(uselonrId: Long, dl: DisplayLocation): Stitch[Selonq[WtfImprelonssion]] = {
     val thriftDl = dl.toThrift
-    scanner.scan(((userId, thriftDl), Slice.all[Long])).map { impressionsPerDl =>
-      val wtfImpressions =
+    scannelonr.scan(((uselonrId, thriftDl), Slicelon.all[Long])).map { imprelonssionsPelonrDl =>
+      val wtfImprelonssions =
         for {
-          (((_, _), candidateId), (latestTs, counts)) <- impressionsPerDl
-        } yield WtfImpression(
-          candidateId = candidateId,
+          (((_, _), candidatelonId), (latelonstTs, counts)) <- imprelonssionsPelonrDl
+        } yielonld WtfImprelonssion(
+          candidatelonId = candidatelonId,
           displayLocation = dl,
-          latestTime = Time.fromMilliseconds(latestTs),
+          latelonstTimelon = Timelon.fromMilliselonconds(latelonstTs),
           counts = counts
         )
-      wtfImpressions
-    } rescue {
-      // fail open so that the request can still go through
-      case ex: Throwable =>
-        logger.warn(s"$dl WtfImpressionsStore warn: " + ex.getMessage)
+      wtfImprelonssions
+    } relonscuelon {
+      // fail opelonn so that thelon relonquelonst can still go through
+      caselon elonx: Throwablelon =>
+        loggelonr.warn(s"$dl WtfImprelonssionsStorelon warn: " + elonx.gelontMelonssagelon)
         Stitch.Nil
     }
   }

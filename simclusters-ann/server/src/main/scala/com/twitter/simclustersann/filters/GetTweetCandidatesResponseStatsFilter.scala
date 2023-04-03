@@ -1,43 +1,43 @@
-package com.twitter.simclustersann.filters
+packagelon com.twittelonr.simclustelonrsann.filtelonrs
 
-import com.twitter.finagle.Service
-import com.twitter.finagle.SimpleFilter
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.scrooge.Request
-import com.twitter.scrooge.Response
-import com.twitter.simclustersann.thriftscala.SimClustersANNService
-import com.twitter.util.Future
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.finaglelon.Selonrvicelon
+import com.twittelonr.finaglelon.SimplelonFiltelonr
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.scroogelon.Relonquelonst
+import com.twittelonr.scroogelon.Relonsponselon
+import com.twittelonr.simclustelonrsann.thriftscala.SimClustelonrsANNSelonrvicelon
+import com.twittelonr.util.Futurelon
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class GetTweetCandidatesResponseStatsFilter @Inject() (
-  statsReceiver: StatsReceiver)
-    extends SimpleFilter[Request[SimClustersANNService.GetTweetCandidates.Args], Response[
-      SimClustersANNService.GetTweetCandidates.SuccessType
+@Singlelonton
+class GelontTwelonelontCandidatelonsRelonsponselonStatsFiltelonr @Injelonct() (
+  statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds SimplelonFiltelonr[Relonquelonst[SimClustelonrsANNSelonrvicelon.GelontTwelonelontCandidatelons.Args], Relonsponselon[
+      SimClustelonrsANNSelonrvicelon.GelontTwelonelontCandidatelons.SuccelonssTypelon
     ]] {
 
-  private[this] val stats = statsReceiver.scope("method_response_stats").scope("getTweetCandidates")
-  private[this] val candidateScoreStats = stats.stat("candidate_score_x1000")
-  private[this] val emptyResponseCounter = stats.counter("empty")
-  private[this] val nonEmptyResponseCounter = stats.counter("non_empty")
-  override def apply(
-    request: Request[SimClustersANNService.GetTweetCandidates.Args],
-    service: Service[Request[SimClustersANNService.GetTweetCandidates.Args], Response[
-      SimClustersANNService.GetTweetCandidates.SuccessType
+  privatelon[this] val stats = statsReloncelonivelonr.scopelon("melonthod_relonsponselon_stats").scopelon("gelontTwelonelontCandidatelons")
+  privatelon[this] val candidatelonScorelonStats = stats.stat("candidatelon_scorelon_x1000")
+  privatelon[this] val elonmptyRelonsponselonCountelonr = stats.countelonr("elonmpty")
+  privatelon[this] val nonelonmptyRelonsponselonCountelonr = stats.countelonr("non_elonmpty")
+  ovelonrridelon delonf apply(
+    relonquelonst: Relonquelonst[SimClustelonrsANNSelonrvicelon.GelontTwelonelontCandidatelons.Args],
+    selonrvicelon: Selonrvicelon[Relonquelonst[SimClustelonrsANNSelonrvicelon.GelontTwelonelontCandidatelons.Args], Relonsponselon[
+      SimClustelonrsANNSelonrvicelon.GelontTwelonelontCandidatelons.SuccelonssTypelon
     ]]
-  ): Future[Response[SimClustersANNService.GetTweetCandidates.SuccessType]] = {
-    val response = service(request)
+  ): Futurelon[Relonsponselon[SimClustelonrsANNSelonrvicelon.GelontTwelonelontCandidatelons.SuccelonssTypelon]] = {
+    val relonsponselon = selonrvicelon(relonquelonst)
 
-    response.onSuccess { successResponse =>
-      if (successResponse.value.size == 0)
-        emptyResponseCounter.incr()
-      else
-        nonEmptyResponseCounter.incr()
-      successResponse.value.foreach { candidate =>
-        candidateScoreStats.add(candidate.score.toFloat * 1000)
+    relonsponselon.onSuccelonss { succelonssRelonsponselon =>
+      if (succelonssRelonsponselon.valuelon.sizelon == 0)
+        elonmptyRelonsponselonCountelonr.incr()
+      elonlselon
+        nonelonmptyRelonsponselonCountelonr.incr()
+      succelonssRelonsponselon.valuelon.forelonach { candidatelon =>
+        candidatelonScorelonStats.add(candidatelon.scorelon.toFloat * 1000)
       }
     }
-    response
+    relonsponselon
   }
 }

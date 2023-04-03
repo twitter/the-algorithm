@@ -1,67 +1,67 @@
-package com.twitter.product_mixer.component_library.scorer.cortex
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.scorelonr.cortelonx
 
-import com.twitter.finagle.Http
-import com.twitter.product_mixer.component_library.module.http.FinagleHttpClientModule.FinagleHttpClientModule
-import com.twitter.product_mixer.component_library.scorer.common.ManagedModelClient
-import com.twitter.product_mixer.component_library.scorer.common.ModelSelector
-import com.twitter.product_mixer.core.feature.datarecord.BaseDataRecordFeature
-import com.twitter.product_mixer.core.feature.datarecord.TensorDataRecordCompatible
-import com.twitter.product_mixer.core.feature.featuremap.datarecord.FeaturesScope
-import com.twitter.product_mixer.core.functional_component.scorer.Scorer
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.ScorerIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Singleton
+import com.twittelonr.finaglelon.Http
+import com.twittelonr.product_mixelonr.componelonnt_library.modulelon.http.FinaglelonHttpClielonntModulelon.FinaglelonHttpClielonntModulelon
+import com.twittelonr.product_mixelonr.componelonnt_library.scorelonr.common.ManagelondModelonlClielonnt
+import com.twittelonr.product_mixelonr.componelonnt_library.scorelonr.common.ModelonlSelonlelonctor
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.datareloncord.BaselonDataReloncordFelonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.datareloncord.TelonnsorDataReloncordCompatiblelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.datareloncord.FelonaturelonsScopelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.scorelonr.Scorelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.ScorelonrIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import javax.injelonct.Injelonct
+import javax.injelonct.Namelond
+import javax.injelonct.Singlelonton
 
-@Singleton
-class CortexManagedInferenceServiceDataRecordScorerBuilder @Inject() (
-  @Named(FinagleHttpClientModule) httpClient: Http.Client) {
+@Singlelonton
+class CortelonxManagelondInfelonrelonncelonSelonrvicelonDataReloncordScorelonrBuildelonr @Injelonct() (
+  @Namelond(FinaglelonHttpClielonntModulelon) httpClielonnt: Http.Clielonnt) {
 
   /**
-   * Builds a configurable Scorer to call into your desired DataRecord-backed Cortex Managed ML Model Service.
+   * Builds a configurablelon Scorelonr to call into your delonsirelond DataReloncord-backelond Cortelonx Managelond ML Modelonl Selonrvicelon.
    *
-   * If your service does not bind an Http.Client implementation, add
-   * [[com.twitter.product_mixer.component_library.module.http.FinagleHttpClientModule]]
-   * to your server module list
+   * If your selonrvicelon doelons not bind an Http.Clielonnt implelonmelonntation, add
+   * [[com.twittelonr.product_mixelonr.componelonnt_library.modulelon.http.FinaglelonHttpClielonntModulelon]]
+   * to your selonrvelonr modulelon list
    *
-   * @param scorerIdentifier  Unique identifier for the scorer
-   * @param modelPath         MLS path to model
-   * @param modelSignature    Model Signature Key
-   * @param modelSelector [[ModelSelector]] for choosing the model name, can be an anon function.
-   * @param candidateFeatures Desired candidate level feature store features to pass to the model.
-   * @param resultFeatures Desired candidate level feature store features to extract from the model.
-   *                       Since the Cortex Managed Platform always returns tensor values, the
-   *                       feature must use a [[TensorDataRecordCompatible]].
-   * @tparam Query Type of pipeline query.
-   * @tparam Candidate Type of candidates to score.
-   * @tparam QueryFeatures type of the query level features consumed by the scorer.
-   * @tparam CandidateFeatures type of the candidate level features consumed by the scorer.
-   * @tparam ResultFeatures type of the candidate level features returned by the scorer.
+   * @param scorelonrIdelonntifielonr  Uniquelon idelonntifielonr for thelon scorelonr
+   * @param modelonlPath         MLS path to modelonl
+   * @param modelonlSignaturelon    Modelonl Signaturelon Kelony
+   * @param modelonlSelonlelonctor [[ModelonlSelonlelonctor]] for choosing thelon modelonl namelon, can belon an anon function.
+   * @param candidatelonFelonaturelons Delonsirelond candidatelon lelonvelonl felonaturelon storelon felonaturelons to pass to thelon modelonl.
+   * @param relonsultFelonaturelons Delonsirelond candidatelon lelonvelonl felonaturelon storelon felonaturelons to elonxtract from thelon modelonl.
+   *                       Sincelon thelon Cortelonx Managelond Platform always relonturns telonnsor valuelons, thelon
+   *                       felonaturelon must uselon a [[TelonnsorDataReloncordCompatiblelon]].
+   * @tparam Quelonry Typelon of pipelonlinelon quelonry.
+   * @tparam Candidatelon Typelon of candidatelons to scorelon.
+   * @tparam QuelonryFelonaturelons typelon of thelon quelonry lelonvelonl felonaturelons consumelond by thelon scorelonr.
+   * @tparam CandidatelonFelonaturelons typelon of thelon candidatelon lelonvelonl felonaturelons consumelond by thelon scorelonr.
+   * @tparam RelonsultFelonaturelons typelon of thelon candidatelon lelonvelonl felonaturelons relonturnelond by thelon scorelonr.
    */
-  def build[
-    Query <: PipelineQuery,
-    Candidate <: UniversalNoun[Any],
-    QueryFeatures <: BaseDataRecordFeature[Query, _],
-    CandidateFeatures <: BaseDataRecordFeature[Candidate, _],
-    ResultFeatures <: BaseDataRecordFeature[Candidate, _] with TensorDataRecordCompatible[_]
+  delonf build[
+    Quelonry <: PipelonlinelonQuelonry,
+    Candidatelon <: UnivelonrsalNoun[Any],
+    QuelonryFelonaturelons <: BaselonDataReloncordFelonaturelon[Quelonry, _],
+    CandidatelonFelonaturelons <: BaselonDataReloncordFelonaturelon[Candidatelon, _],
+    RelonsultFelonaturelons <: BaselonDataReloncordFelonaturelon[Candidatelon, _] with TelonnsorDataReloncordCompatiblelon[_]
   ](
-    scorerIdentifier: ScorerIdentifier,
-    modelPath: String,
-    modelSignature: String,
-    modelSelector: ModelSelector[Query],
-    queryFeatures: FeaturesScope[QueryFeatures],
-    candidateFeatures: FeaturesScope[CandidateFeatures],
-    resultFeatures: Set[ResultFeatures]
-  ): Scorer[Query, Candidate] =
-    new CortexManagedDataRecordScorer(
-      identifier = scorerIdentifier,
-      modelSignature = modelSignature,
-      modelSelector = modelSelector,
-      modelClient = ManagedModelClient(httpClient, modelPath),
-      queryFeatures = queryFeatures,
-      candidateFeatures = candidateFeatures,
-      resultFeatures = resultFeatures
+    scorelonrIdelonntifielonr: ScorelonrIdelonntifielonr,
+    modelonlPath: String,
+    modelonlSignaturelon: String,
+    modelonlSelonlelonctor: ModelonlSelonlelonctor[Quelonry],
+    quelonryFelonaturelons: FelonaturelonsScopelon[QuelonryFelonaturelons],
+    candidatelonFelonaturelons: FelonaturelonsScopelon[CandidatelonFelonaturelons],
+    relonsultFelonaturelons: Selont[RelonsultFelonaturelons]
+  ): Scorelonr[Quelonry, Candidatelon] =
+    nelonw CortelonxManagelondDataReloncordScorelonr(
+      idelonntifielonr = scorelonrIdelonntifielonr,
+      modelonlSignaturelon = modelonlSignaturelon,
+      modelonlSelonlelonctor = modelonlSelonlelonctor,
+      modelonlClielonnt = ManagelondModelonlClielonnt(httpClielonnt, modelonlPath),
+      quelonryFelonaturelons = quelonryFelonaturelons,
+      candidatelonFelonaturelons = candidatelonFelonaturelons,
+      relonsultFelonaturelons = relonsultFelonaturelons
     )
 }

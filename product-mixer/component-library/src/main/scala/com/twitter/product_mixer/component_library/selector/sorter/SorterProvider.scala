@@ -1,40 +1,40 @@
-package com.twitter.product_mixer.component_library.selector.sorter
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.selonlelonctor.sortelonr
 
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
 /**
- * Makes a [[Sorter]] to run for the given input based on the
- * [[PipelineQuery]], the `remainingCandidates`, and the `result`.
+ * Makelons a [[Sortelonr]] to run for thelon givelonn input baselond on thelon
+ * [[PipelonlinelonQuelonry]], thelon `relonmainingCandidatelons`, and thelon `relonsult`.
  *
- * @note this should be used to choose between different [[Sorter]]s,
- *       if you want to conditionally sort wrap your [[Sorter]] with
- *       [[com.twitter.product_mixer.component_library.selector.SelectConditionally]] instead.
+ * @notelon this should belon uselond to chooselon belontwelonelonn diffelonrelonnt [[Sortelonr]]s,
+ *       if you want to conditionally sort wrap your [[Sortelonr]] with
+ *       [[com.twittelonr.product_mixelonr.componelonnt_library.selonlelonctor.SelonlelonctConditionally]] instelonad.
  */
-trait SorterProvider {
+trait SortelonrProvidelonr {
 
-  /** Makes a [[Sorter]] for the given inputs */
-  def sorter(
-    query: PipelineQuery,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
-  ): Sorter
+  /** Makelons a [[Sortelonr]] for thelon givelonn inputs */
+  delonf sortelonr(
+    quelonry: PipelonlinelonQuelonry,
+    relonmainingCandidatelons: Selonq[CandidatelonWithDelontails],
+    relonsult: Selonq[CandidatelonWithDelontails]
+  ): Sortelonr
 }
 
 /**
- * Sorts the candidates
+ * Sorts thelon candidatelons
  *
- * All [[Sorter]]s also implement [[SorterProvider]] to provide themselves for convenience.
+ * All [[Sortelonr]]s also implelonmelonnt [[SortelonrProvidelonr]] to providelon thelonmselonlvelons for convelonnielonncelon.
  */
-trait Sorter { self: SorterProvider =>
+trait Sortelonr { selonlf: SortelonrProvidelonr =>
 
-  /** Sorts the `candidates` */
-  def sort[Candidate <: CandidateWithDetails](candidates: Seq[Candidate]): Seq[Candidate]
+  /** Sorts thelon `candidatelons` */
+  delonf sort[Candidatelon <: CandidatelonWithDelontails](candidatelons: Selonq[Candidatelon]): Selonq[Candidatelon]
 
-  /** Any [[Sorter]] can be used in place of a [[SorterProvider]] to provide itself */
-  override final def sorter(
-    query: PipelineQuery,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
-  ): Sorter = self
+  /** Any [[Sortelonr]] can belon uselond in placelon of a [[SortelonrProvidelonr]] to providelon itselonlf */
+  ovelonrridelon final delonf sortelonr(
+    quelonry: PipelonlinelonQuelonry,
+    relonmainingCandidatelons: Selonq[CandidatelonWithDelontails],
+    relonsult: Selonq[CandidatelonWithDelontails]
+  ): Sortelonr = selonlf
 }

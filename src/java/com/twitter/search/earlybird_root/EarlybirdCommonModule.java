@@ -1,170 +1,170 @@
-package com.twitter.search.earlybird_root;
+packagelon com.twittelonr.selonarch.elonarlybird_root;
 
-import javax.annotation.Nullable;
-import javax.inject.Named;
-import javax.inject.Singleton;
+import javax.annotation.Nullablelon;
+import javax.injelonct.Namelond;
+import javax.injelonct.Singlelonton;
 
 import scala.PartialFunction;
 
-import com.google.inject.Provides;
+import com.googlelon.injelonct.Providelons;
 
-import org.apache.thrift.protocol.TProtocolFactory;
+import org.apachelon.thrift.protocol.TProtocolFactory;
 
-import com.twitter.app.Flag;
-import com.twitter.app.Flaggable;
-import com.twitter.common.util.Clock;
-import com.twitter.finagle.Service;
-import com.twitter.finagle.mtls.authorization.server.MtlsServerSessionTrackerFilter;
-import com.twitter.finagle.service.ReqRep;
-import com.twitter.finagle.service.ResponseClass;
-import com.twitter.finagle.stats.StatsReceiver;
-import com.twitter.finagle.thrift.RichServerParam;
-import com.twitter.finagle.thrift.ThriftClientRequest;
-import com.twitter.inject.TwitterModule;
-import com.twitter.search.common.dark.DarkProxy;
-import com.twitter.search.common.dark.ResolverProxy;
-import com.twitter.search.common.partitioning.zookeeper.SearchZkClient;
-import com.twitter.search.common.root.PartitionConfig;
-import com.twitter.search.common.root.RemoteClientBuilder;
-import com.twitter.search.common.root.RootClientServiceBuilder;
-import com.twitter.search.common.root.SearchRootModule;
-import com.twitter.search.common.root.ServerSetsConfig;
-import com.twitter.search.common.util.zookeeper.ZooKeeperProxy;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdService;
-import com.twitter.search.earlybird_root.common.EarlybirdFeatureSchemaMerger;
-import com.twitter.search.earlybird_root.filters.PreCacheRequestTypeCountFilter;
-import com.twitter.search.earlybird_root.filters.QueryLangStatFilter;
+import com.twittelonr.app.Flag;
+import com.twittelonr.app.Flaggablelon;
+import com.twittelonr.common.util.Clock;
+import com.twittelonr.finaglelon.Selonrvicelon;
+import com.twittelonr.finaglelon.mtls.authorization.selonrvelonr.MtlsSelonrvelonrSelonssionTrackelonrFiltelonr;
+import com.twittelonr.finaglelon.selonrvicelon.RelonqRelonp;
+import com.twittelonr.finaglelon.selonrvicelon.RelonsponselonClass;
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr;
+import com.twittelonr.finaglelon.thrift.RichSelonrvelonrParam;
+import com.twittelonr.finaglelon.thrift.ThriftClielonntRelonquelonst;
+import com.twittelonr.injelonct.TwittelonrModulelon;
+import com.twittelonr.selonarch.common.dark.DarkProxy;
+import com.twittelonr.selonarch.common.dark.RelonsolvelonrProxy;
+import com.twittelonr.selonarch.common.partitioning.zookelonelonpelonr.SelonarchZkClielonnt;
+import com.twittelonr.selonarch.common.root.PartitionConfig;
+import com.twittelonr.selonarch.common.root.RelonmotelonClielonntBuildelonr;
+import com.twittelonr.selonarch.common.root.RootClielonntSelonrvicelonBuildelonr;
+import com.twittelonr.selonarch.common.root.SelonarchRootModulelon;
+import com.twittelonr.selonarch.common.root.SelonrvelonrSelontsConfig;
+import com.twittelonr.selonarch.common.util.zookelonelonpelonr.ZooKelonelonpelonrProxy;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonquelonst;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdSelonrvicelon;
+import com.twittelonr.selonarch.elonarlybird_root.common.elonarlybirdFelonaturelonSchelonmaMelonrgelonr;
+import com.twittelonr.selonarch.elonarlybird_root.filtelonrs.PrelonCachelonRelonquelonstTypelonCountFiltelonr;
+import com.twittelonr.selonarch.elonarlybird_root.filtelonrs.QuelonryLangStatFiltelonr;
 
 /**
- * Provides common bindings.
+ * Providelons common bindings.
  */
-public class EarlybirdCommonModule extends TwitterModule {
-  static final String NAMED_ALT_CLIENT = "alt_client";
-  static final String NAMED_EXP_CLUSTER_CLIENT = "exp_cluster_client";
+public class elonarlybirdCommonModulelon elonxtelonnds TwittelonrModulelon {
+  static final String NAMelonD_ALT_CLIelonNT = "alt_clielonnt";
+  static final String NAMelonD_elonXP_CLUSTelonR_CLIelonNT = "elonxp_clustelonr_clielonnt";
 
-  private final Flag<String> altZkRoleFlag = createFlag(
-      "alt_zk_role",
+  privatelon final Flag<String> altZkRolelonFlag = crelonatelonFlag(
+      "alt_zk_rolelon",
       "",
-      "The alternative ZooKeeper role",
-      Flaggable.ofString());
-  private final Flag<String> altZkClientEnvFlag = createFlag(
-      "alt_zk_client_env",
+      "Thelon altelonrnativelon ZooKelonelonpelonr rolelon",
+      Flaggablelon.ofString());
+  privatelon final Flag<String> altZkClielonntelonnvFlag = crelonatelonFlag(
+      "alt_zk_clielonnt_elonnv",
       "",
-      "The alternative zk client environment",
-      Flaggable.ofString());
-  private final Flag<String> altPartitionZkPathFlag = createFlag(
+      "Thelon altelonrnativelon zk clielonnt elonnvironmelonnt",
+      Flaggablelon.ofString());
+  privatelon final Flag<String> altPartitionZkPathFlag = crelonatelonFlag(
       "alt_partition_zk_path",
       "",
-      "The alternative client partition zk path",
-      Flaggable.ofString());
+      "Thelon altelonrnativelon clielonnt partition zk path",
+      Flaggablelon.ofString());
 
-  @Override
-  public void configure() {
-    bind(InitializeFilter.class).in(Singleton.class);
-    bind(PreCacheRequestTypeCountFilter.class).in(Singleton.class);
+  @Ovelonrridelon
+  public void configurelon() {
+    bind(InitializelonFiltelonr.class).in(Singlelonton.class);
+    bind(PrelonCachelonRelonquelonstTypelonCountFiltelonr.class).in(Singlelonton.class);
 
-    bind(Clock.class).toInstance(Clock.SYSTEM_CLOCK);
-    bind(QueryLangStatFilter.Config.class).toInstance(new QueryLangStatFilter.Config(100));
+    bind(Clock.class).toInstancelon(Clock.SYSTelonM_CLOCK);
+    bind(QuelonryLangStatFiltelonr.Config.class).toInstancelon(nelonw QuelonryLangStatFiltelonr.Config(100));
   }
 
-  // Used in SearchRootModule.
-  @Provides
-  @Singleton
-  PartialFunction<ReqRep, ResponseClass> provideResponseClassifier() {
-    return new RootResponseClassifier();
+  // Uselond in SelonarchRootModulelon.
+  @Providelons
+  @Singlelonton
+  PartialFunction<RelonqRelonp, RelonsponselonClass> providelonRelonsponselonClassifielonr() {
+    relonturn nelonw RootRelonsponselonClassifielonr();
   }
 
-  @Provides
-  @Singleton
-  Service<byte[], byte[]> providesByteService(
-      EarlybirdService.ServiceIface svc,
-      DarkProxy<ThriftClientRequest, byte[]> darkProxy,
+  @Providelons
+  @Singlelonton
+  Selonrvicelon<bytelon[], bytelon[]> providelonsBytelonSelonrvicelon(
+      elonarlybirdSelonrvicelon.SelonrvicelonIfacelon svc,
+      DarkProxy<ThriftClielonntRelonquelonst, bytelon[]> darkProxy,
       TProtocolFactory protocolFactory) {
-    return darkProxy.toFilter().andThen(
-        new EarlybirdService.Service(
-            svc, new RichServerParam(protocolFactory, SearchRootModule.SCROOGE_BUFFER_SIZE)));
+    relonturn darkProxy.toFiltelonr().andThelonn(
+        nelonw elonarlybirdSelonrvicelon.Selonrvicelon(
+            svc, nelonw RichSelonrvelonrParam(protocolFactory, SelonarchRootModulelon.SCROOGelon_BUFFelonR_SIZelon)));
   }
 
-  @Provides
-  @Singleton
-  @Named(SearchRootModule.NAMED_SERVICE_INTERFACE)
-  Class providesServiceInterface() {
-    return EarlybirdService.ServiceIface.class;
+  @Providelons
+  @Singlelonton
+  @Namelond(SelonarchRootModulelon.NAMelonD_SelonRVICelon_INTelonRFACelon)
+  Class providelonsSelonrvicelonIntelonrfacelon() {
+    relonturn elonarlybirdSelonrvicelon.SelonrvicelonIfacelon.class;
   }
 
-  @Provides
-  @Singleton
-  ZooKeeperProxy provideZookeeperClient() {
-    return SearchZkClient.getSZooKeeperClient();
+  @Providelons
+  @Singlelonton
+  ZooKelonelonpelonrProxy providelonZookelonelonpelonrClielonnt() {
+    relonturn SelonarchZkClielonnt.gelontSZooKelonelonpelonrClielonnt();
   }
 
-  @Provides
-  @Singleton
-  EarlybirdFeatureSchemaMerger provideFeatureSchemaMerger() {
-    return new EarlybirdFeatureSchemaMerger();
+  @Providelons
+  @Singlelonton
+  elonarlybirdFelonaturelonSchelonmaMelonrgelonr providelonFelonaturelonSchelonmaMelonrgelonr() {
+    relonturn nelonw elonarlybirdFelonaturelonSchelonmaMelonrgelonr();
   }
 
-  @Provides
-  @Singleton
-  @Nullable
-  @Named(NAMED_ALT_CLIENT)
-  ServerSetsConfig provideAltServerSetsConfig() {
-    if (!altZkRoleFlag.isDefined() || !altZkClientEnvFlag.isDefined()) {
-      return null;
+  @Providelons
+  @Singlelonton
+  @Nullablelon
+  @Namelond(NAMelonD_ALT_CLIelonNT)
+  SelonrvelonrSelontsConfig providelonAltSelonrvelonrSelontsConfig() {
+    if (!altZkRolelonFlag.isDelonfinelond() || !altZkClielonntelonnvFlag.isDelonfinelond()) {
+      relonturn null;
     }
 
-    return new ServerSetsConfig(altZkRoleFlag.apply(), altZkClientEnvFlag.apply());
+    relonturn nelonw SelonrvelonrSelontsConfig(altZkRolelonFlag.apply(), altZkClielonntelonnvFlag.apply());
   }
 
-  @Provides
-  @Singleton
-  @Nullable
-  @Named(NAMED_ALT_CLIENT)
-  PartitionConfig provideAltPartitionConfig(PartitionConfig defaultPartitionConfig) {
-    if (!altPartitionZkPathFlag.isDefined()) {
-      return null;
+  @Providelons
+  @Singlelonton
+  @Nullablelon
+  @Namelond(NAMelonD_ALT_CLIelonNT)
+  PartitionConfig providelonAltPartitionConfig(PartitionConfig delonfaultPartitionConfig) {
+    if (!altPartitionZkPathFlag.isDelonfinelond()) {
+      relonturn null;
     }
 
-    return new PartitionConfig(
-        defaultPartitionConfig.getNumPartitions(), altPartitionZkPathFlag.apply());
+    relonturn nelonw PartitionConfig(
+        delonfaultPartitionConfig.gelontNumPartitions(), altPartitionZkPathFlag.apply());
   }
 
-  @Provides
-  @Singleton
-  @Nullable
-  @Named(NAMED_ALT_CLIENT)
-  RootClientServiceBuilder<EarlybirdService.ServiceIface> provideAltRootClientServiceBuilder(
-      @Named(NAMED_ALT_CLIENT) @Nullable ServerSetsConfig serverSetsConfig,
-      @Named(SearchRootModule.NAMED_SERVICE_INTERFACE) Class serviceIface,
-      ResolverProxy resolverProxy,
-      RemoteClientBuilder<EarlybirdService.ServiceIface> remoteClientBuilder) {
-    if (serverSetsConfig == null) {
-      return null;
+  @Providelons
+  @Singlelonton
+  @Nullablelon
+  @Namelond(NAMelonD_ALT_CLIelonNT)
+  RootClielonntSelonrvicelonBuildelonr<elonarlybirdSelonrvicelon.SelonrvicelonIfacelon> providelonAltRootClielonntSelonrvicelonBuildelonr(
+      @Namelond(NAMelonD_ALT_CLIelonNT) @Nullablelon SelonrvelonrSelontsConfig selonrvelonrSelontsConfig,
+      @Namelond(SelonarchRootModulelon.NAMelonD_SelonRVICelon_INTelonRFACelon) Class selonrvicelonIfacelon,
+      RelonsolvelonrProxy relonsolvelonrProxy,
+      RelonmotelonClielonntBuildelonr<elonarlybirdSelonrvicelon.SelonrvicelonIfacelon> relonmotelonClielonntBuildelonr) {
+    if (selonrvelonrSelontsConfig == null) {
+      relonturn null;
     }
 
-    return new RootClientServiceBuilder<>(
-        serverSetsConfig, serviceIface, resolverProxy, remoteClientBuilder);
+    relonturn nelonw RootClielonntSelonrvicelonBuildelonr<>(
+        selonrvelonrSelontsConfig, selonrvicelonIfacelon, relonsolvelonrProxy, relonmotelonClielonntBuildelonr);
   }
 
-  @Provides
-  @Singleton
-  @Named(NAMED_EXP_CLUSTER_CLIENT)
-  RootClientServiceBuilder<EarlybirdService.ServiceIface> provideExpClusterRootClientServiceBuilder(
-      @Named(SearchRootModule.NAMED_EXP_CLUSTER_SERVER_SETS_CONFIG)
-          ServerSetsConfig serverSetsConfig,
-      @Named(SearchRootModule.NAMED_SERVICE_INTERFACE) Class serviceIface,
-      ResolverProxy resolverProxy,
-      RemoteClientBuilder<EarlybirdService.ServiceIface> remoteClientBuilder) {
-    return new RootClientServiceBuilder<>(
-        serverSetsConfig, serviceIface, resolverProxy, remoteClientBuilder);
+  @Providelons
+  @Singlelonton
+  @Namelond(NAMelonD_elonXP_CLUSTelonR_CLIelonNT)
+  RootClielonntSelonrvicelonBuildelonr<elonarlybirdSelonrvicelon.SelonrvicelonIfacelon> providelonelonxpClustelonrRootClielonntSelonrvicelonBuildelonr(
+      @Namelond(SelonarchRootModulelon.NAMelonD_elonXP_CLUSTelonR_SelonRVelonR_SelonTS_CONFIG)
+          SelonrvelonrSelontsConfig selonrvelonrSelontsConfig,
+      @Namelond(SelonarchRootModulelon.NAMelonD_SelonRVICelon_INTelonRFACelon) Class selonrvicelonIfacelon,
+      RelonsolvelonrProxy relonsolvelonrProxy,
+      RelonmotelonClielonntBuildelonr<elonarlybirdSelonrvicelon.SelonrvicelonIfacelon> relonmotelonClielonntBuildelonr) {
+    relonturn nelonw RootClielonntSelonrvicelonBuildelonr<>(
+        selonrvelonrSelontsConfig, selonrvicelonIfacelon, relonsolvelonrProxy, relonmotelonClielonntBuildelonr);
   }
 
-  @Provides
-  @Singleton
-  MtlsServerSessionTrackerFilter<EarlybirdRequest, EarlybirdResponse>
-  provideMtlsServerSessionTrackerFilter(StatsReceiver statsReceiver) {
-    return new MtlsServerSessionTrackerFilter<>(statsReceiver);
+  @Providelons
+  @Singlelonton
+  MtlsSelonrvelonrSelonssionTrackelonrFiltelonr<elonarlybirdRelonquelonst, elonarlybirdRelonsponselon>
+  providelonMtlsSelonrvelonrSelonssionTrackelonrFiltelonr(StatsReloncelonivelonr statsReloncelonivelonr) {
+    relonturn nelonw MtlsSelonrvelonrSelonssionTrackelonrFiltelonr<>(statsReloncelonivelonr);
   }
 }

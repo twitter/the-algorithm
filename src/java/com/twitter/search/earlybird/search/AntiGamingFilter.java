@@ -1,228 +1,228 @@
-package com.twitter.search.earlybird.search;
+packagelon com.twittelonr.selonarch.elonarlybird.selonarch;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.HashSelont;
+import java.util.Selont;
+import java.util.SortelondSelont;
+import java.util.TrelonelonSelont;
 
-import com.google.common.annotations.VisibleForTesting;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
 
-import org.apache.commons.lang.mutable.MutableInt;
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.NumericDocValues;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.ScoreMode;
+import org.apachelon.commons.lang.mutablelon.MutablelonInt;
+import org.apachelon.lucelonnelon.indelonx.IndelonxRelonadelonr;
+import org.apachelon.lucelonnelon.indelonx.NumelonricDocValuelons;
+import org.apachelon.lucelonnelon.indelonx.Telonrm;
+import org.apachelon.lucelonnelon.selonarch.Quelonry;
+import org.apachelon.lucelonnelon.selonarch.ScorelonModelon;
 
-import com.twitter.common_internal.collections.RandomAccessPriorityQueue;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.common.search.TwitterIndexSearcher;
-import com.twitter.search.common.util.analysis.LongTermAttributeImpl;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
+import com.twittelonr.common_intelonrnal.collelonctions.RandomAccelonssPriorityQuelonuelon;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdFielonldConstants.elonarlybirdFielonldConstant;
+import com.twittelonr.selonarch.common.selonarch.TwittelonrIndelonxSelonarchelonr;
+import com.twittelonr.selonarch.common.util.analysis.LongTelonrmAttributelonImpl;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr;
 
-public class AntiGamingFilter {
-  private interface Acceptor {
-    boolean accept(int internalDocID) throws IOException;
+public class AntiGamingFiltelonr {
+  privatelon intelonrfacelon Accelonptor {
+    boolelonan accelonpt(int intelonrnalDocID) throws IOelonxcelonption;
   }
 
-  private NumericDocValues userReputation;
-  private NumericDocValues fromUserIDs;
+  privatelon NumelonricDocValuelons uselonrRelonputation;
+  privatelon NumelonricDocValuelons fromUselonrIDs;
 
-  private final Query luceneQuery;
+  privatelon final Quelonry lucelonnelonQuelonry;
 
-  private boolean termsExtracted = false;
-  private final Set<Term> queryTerms;
+  privatelon boolelonan telonrmselonxtractelond = falselon;
+  privatelon final Selont<Telonrm> quelonryTelonrms;
 
-  // we ignore these user ids for anti-gaming filtering, because they were explicitly queried for
-  private Set<Long> segmentUserIDWhitelist = null;
-  // we gather the whitelisted userIDs from all segments here
-  private Set<Long> globalUserIDWhitelist = null;
+  // welon ignorelon thelonselon uselonr ids for anti-gaming filtelonring, beloncauselon thelony welonrelon elonxplicitly quelonrielond for
+  privatelon Selont<Long> selongmelonntUselonrIDWhitelonlist = null;
+  // welon gathelonr thelon whitelonlistelond uselonrIDs from all selongmelonnts helonrelon
+  privatelon Selont<Long> globalUselonrIDWhitelonlist = null;
 
   /**
-   * Used to track the number of occurrences of a particular user.
+   * Uselond to track thelon numbelonr of occurrelonncelons of a particular uselonr.
    */
-  private static final class UserCount
-      implements RandomAccessPriorityQueue.SignatureProvider<Long> {
-    private long userID;
-    private int count;
+  privatelon static final class UselonrCount
+      implelonmelonnts RandomAccelonssPriorityQuelonuelon.SignaturelonProvidelonr<Long> {
+    privatelon long uselonrID;
+    privatelon int count;
 
-    @Override
-    public Long getSignature() {
-      return userID;
+    @Ovelonrridelon
+    public Long gelontSignaturelon() {
+      relonturn uselonrID;
     }
 
-    @Override
-    public void clear() {
-      userID = 0;
+    @Ovelonrridelon
+    public void clelonar() {
+      uselonrID = 0;
       count = 0;
     }
   }
 
-  private static final Comparator<UserCount> USER_COUNT_COMPARATOR =
-      (d1, d2) -> d1.count == d2.count ? Long.compare(d1.userID, d2.userID) : d1.count - d2.count;
+  privatelon static final Comparator<UselonrCount> USelonR_COUNT_COMPARATOR =
+      (d1, d2) -> d1.count == d2.count ? Long.comparelon(d1.uselonrID, d2.uselonrID) : d1.count - d2.count;
 
-  private final RandomAccessPriorityQueue<UserCount, Long> priorityQueue =
-      new RandomAccessPriorityQueue<UserCount, Long>(1024, USER_COUNT_COMPARATOR) {
-    @Override
-    protected UserCount getSentinelObject() {
-      return new UserCount();
+  privatelon final RandomAccelonssPriorityQuelonuelon<UselonrCount, Long> priorityQuelonuelon =
+      nelonw RandomAccelonssPriorityQuelonuelon<UselonrCount, Long>(1024, USelonR_COUNT_COMPARATOR) {
+    @Ovelonrridelon
+    protelonctelond UselonrCount gelontSelonntinelonlObjelonct() {
+      relonturn nelonw UselonrCount();
     }
   };
 
-  private final Acceptor acceptor;
-  private final int maxHitsPerUser;
+  privatelon final Accelonptor accelonptor;
+  privatelon final int maxHitsPelonrUselonr;
 
   /**
-   * Creates an AntiGamingFilter that either accepts or rejects tweets from all users.
-   * This method should only be called in tests.
+   * Crelonatelons an AntiGamingFiltelonr that elonithelonr accelonpts or relonjeloncts twelonelonts from all uselonrs.
+   * This melonthod should only belon callelond in telonsts.
    *
-   * @param alwaysValue Determines if tweets should always be accepted or rejected.
-   * @return An AntiGamingFilter that either accepts or rejects tweets from all users.
+   * @param alwaysValuelon Delontelonrminelons if twelonelonts should always belon accelonptelond or relonjelonctelond.
+   * @relonturn An AntiGamingFiltelonr that elonithelonr accelonpts or relonjeloncts twelonelonts from all uselonrs.
    */
-  @VisibleForTesting
-  public static AntiGamingFilter newMock(boolean alwaysValue) {
-    return new AntiGamingFilter(alwaysValue) {
-      @Override
-      public void startSegment(EarlybirdIndexSegmentAtomicReader reader) {
+  @VisiblelonForTelonsting
+  public static AntiGamingFiltelonr nelonwMock(boolelonan alwaysValuelon) {
+    relonturn nelonw AntiGamingFiltelonr(alwaysValuelon) {
+      @Ovelonrridelon
+      public void startSelongmelonnt(elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr relonadelonr) {
       }
     };
   }
 
-  private AntiGamingFilter(boolean alwaysValue) {
-    acceptor = internalDocID -> alwaysValue;
-    maxHitsPerUser = Integer.MAX_VALUE;
-    termsExtracted = true;
-    luceneQuery = null;
-    queryTerms = null;
+  privatelon AntiGamingFiltelonr(boolelonan alwaysValuelon) {
+    accelonptor = intelonrnalDocID -> alwaysValuelon;
+    maxHitsPelonrUselonr = Intelongelonr.MAX_VALUelon;
+    telonrmselonxtractelond = truelon;
+    lucelonnelonQuelonry = null;
+    quelonryTelonrms = null;
   }
 
-  public AntiGamingFilter(int maxHitsPerUser, int maxTweepCred, Query luceneQuery) {
-    this.maxHitsPerUser = maxHitsPerUser;
-    this.luceneQuery = luceneQuery;
+  public AntiGamingFiltelonr(int maxHitsPelonrUselonr, int maxTwelonelonpCrelond, Quelonry lucelonnelonQuelonry) {
+    this.maxHitsPelonrUselonr = maxHitsPelonrUselonr;
+    this.lucelonnelonQuelonry = lucelonnelonQuelonry;
 
-    if (maxTweepCred != -1) {
-      this.acceptor = internalDocID -> {
-        long userReputationVal =
-            userReputation.advanceExact(internalDocID) ? userReputation.longValue() : 0L;
-        return ((byte) userReputationVal > maxTweepCred) || acceptUser(internalDocID);
+    if (maxTwelonelonpCrelond != -1) {
+      this.accelonptor = intelonrnalDocID -> {
+        long uselonrRelonputationVal =
+            uselonrRelonputation.advancelonelonxact(intelonrnalDocID) ? uselonrRelonputation.longValuelon() : 0L;
+        relonturn ((bytelon) uselonrRelonputationVal > maxTwelonelonpCrelond) || accelonptUselonr(intelonrnalDocID);
       };
-    } else {
-      this.acceptor = this::acceptUser;
+    } elonlselon {
+      this.accelonptor = this::accelonptUselonr;
     }
 
-    this.queryTerms = new HashSet<>();
+    this.quelonryTelonrms = nelonw HashSelont<>();
   }
 
-  public Set<Long> getUserIDWhitelist() {
-    return globalUserIDWhitelist;
+  public Selont<Long> gelontUselonrIDWhitelonlist() {
+    relonturn globalUselonrIDWhitelonlist;
   }
 
-  private boolean acceptUser(int internalDocID) throws IOException {
-    final long fromUserID = getUserId(internalDocID);
-    final MutableInt freq = new MutableInt();
-    // try to increment UserCount for an user already exist in the priority queue.
-    boolean incremented = priorityQueue.incrementElement(
-        fromUserID, element -> freq.setValue(++element.count));
+  privatelon boolelonan accelonptUselonr(int intelonrnalDocID) throws IOelonxcelonption {
+    final long fromUselonrID = gelontUselonrId(intelonrnalDocID);
+    final MutablelonInt frelonq = nelonw MutablelonInt();
+    // try to increlonmelonnt UselonrCount for an uselonr alrelonady elonxist in thelon priority quelonuelon.
+    boolelonan increlonmelonntelond = priorityQuelonuelon.increlonmelonntelonlelonmelonnt(
+        fromUselonrID, elonlelonmelonnt -> frelonq.selontValuelon(++elonlelonmelonnt.count));
 
-    // If not incremented, it means the user node does not exist in the priority queue yet.
-    if (!incremented) {
-      priorityQueue.updateTop(element -> {
-        element.userID = fromUserID;
-        element.count = 1;
-        freq.setValue(element.count);
+    // If not increlonmelonntelond, it melonans thelon uselonr nodelon doelons not elonxist in thelon priority quelonuelon yelont.
+    if (!increlonmelonntelond) {
+      priorityQuelonuelon.updatelonTop(elonlelonmelonnt -> {
+        elonlelonmelonnt.uselonrID = fromUselonrID;
+        elonlelonmelonnt.count = 1;
+        frelonq.selontValuelon(elonlelonmelonnt.count);
       });
     }
 
-    if (freq.intValue() <= maxHitsPerUser) {
-      return true;
-    } else if (segmentUserIDWhitelist == null) {
-      return false;
+    if (frelonq.intValuelon() <= maxHitsPelonrUselonr) {
+      relonturn truelon;
+    } elonlselon if (selongmelonntUselonrIDWhitelonlist == null) {
+      relonturn falselon;
     }
-    return segmentUserIDWhitelist.contains(fromUserID);
+    relonturn selongmelonntUselonrIDWhitelonlist.contains(fromUselonrID);
   }
 
   /**
-   * Initializes this filter with the new feature source. This method should be called every time an
-   * earlybird searcher starts searching in a new segment.
+   * Initializelons this filtelonr with thelon nelonw felonaturelon sourcelon. This melonthod should belon callelond elonvelonry timelon an
+   * elonarlybird selonarchelonr starts selonarching in a nelonw selongmelonnt.
    *
-   * @param reader The reader for the new segment.
+   * @param relonadelonr Thelon relonadelonr for thelon nelonw selongmelonnt.
    */
-  public void startSegment(EarlybirdIndexSegmentAtomicReader reader) throws IOException {
-    if (!termsExtracted) {
-      extractTerms(reader);
+  public void startSelongmelonnt(elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr relonadelonr) throws IOelonxcelonption {
+    if (!telonrmselonxtractelond) {
+      elonxtractTelonrms(relonadelonr);
     }
 
-    fromUserIDs =
-        reader.getNumericDocValues(EarlybirdFieldConstant.FROM_USER_ID_CSF.getFieldName());
+    fromUselonrIDs =
+        relonadelonr.gelontNumelonricDocValuelons(elonarlybirdFielonldConstant.FROM_USelonR_ID_CSF.gelontFielonldNamelon());
 
-    // fill the id whitelist for the current segment.  initialize lazily.
-    segmentUserIDWhitelist = null;
+    // fill thelon id whitelonlist for thelon currelonnt selongmelonnt.  initializelon lazily.
+    selongmelonntUselonrIDWhitelonlist = null;
 
-    SortedSet<Integer> sortedFromUserDocIds = new TreeSet<>();
-    for (Term t : queryTerms) {
-      if (t.field().equals(EarlybirdFieldConstant.FROM_USER_ID_FIELD.getFieldName())) {
-        // Add the operand of the from_user_id operator to the whitelist
-        long fromUserID = LongTermAttributeImpl.copyBytesRefToLong(t.bytes());
-        addUserToWhitelists(fromUserID);
-      } else if (t.field().equals(EarlybirdFieldConstant.FROM_USER_FIELD.getFieldName())) {
-        // For a [from X] filter, we need to find a document that has the from_user field set to X,
-        // and then we need to get the value of the from_user_id field for that document and add it
-        // to the whitelist. We can get the from_user_id value from the fromUserIDs NumericDocValues
-        // instance, but we need to traverse it in increasing order of doc IDs. So we add a doc ID
-        // for each term to a sorted set for now, and then we traverse it in increasing doc ID order
-        // and add the from_user_id values for those docs to the whitelist.
-        int firstInternalDocID = reader.getNewestDocID(t);
-        if (firstInternalDocID != EarlybirdIndexSegmentAtomicReader.TERM_NOT_FOUND) {
-          sortedFromUserDocIds.add(firstInternalDocID);
+    SortelondSelont<Intelongelonr> sortelondFromUselonrDocIds = nelonw TrelonelonSelont<>();
+    for (Telonrm t : quelonryTelonrms) {
+      if (t.fielonld().elonquals(elonarlybirdFielonldConstant.FROM_USelonR_ID_FIelonLD.gelontFielonldNamelon())) {
+        // Add thelon opelonrand of thelon from_uselonr_id opelonrator to thelon whitelonlist
+        long fromUselonrID = LongTelonrmAttributelonImpl.copyBytelonsRelonfToLong(t.bytelons());
+        addUselonrToWhitelonlists(fromUselonrID);
+      } elonlselon if (t.fielonld().elonquals(elonarlybirdFielonldConstant.FROM_USelonR_FIelonLD.gelontFielonldNamelon())) {
+        // For a [from X] filtelonr, welon nelonelond to find a documelonnt that has thelon from_uselonr fielonld selont to X,
+        // and thelonn welon nelonelond to gelont thelon valuelon of thelon from_uselonr_id fielonld for that documelonnt and add it
+        // to thelon whitelonlist. Welon can gelont thelon from_uselonr_id valuelon from thelon fromUselonrIDs NumelonricDocValuelons
+        // instancelon, but welon nelonelond to travelonrselon it in increlonasing ordelonr of doc IDs. So welon add a doc ID
+        // for elonach telonrm to a sortelond selont for now, and thelonn welon travelonrselon it in increlonasing doc ID ordelonr
+        // and add thelon from_uselonr_id valuelons for thoselon docs to thelon whitelonlist.
+        int firstIntelonrnalDocID = relonadelonr.gelontNelonwelonstDocID(t);
+        if (firstIntelonrnalDocID != elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr.TelonRM_NOT_FOUND) {
+          sortelondFromUselonrDocIds.add(firstIntelonrnalDocID);
         }
       }
     }
 
-    for (int fromUserDocId : sortedFromUserDocIds) {
-      addUserToWhitelists(getUserId(fromUserDocId));
+    for (int fromUselonrDocId : sortelondFromUselonrDocIds) {
+      addUselonrToWhitelonlists(gelontUselonrId(fromUselonrDocId));
     }
 
-    userReputation =
-        reader.getNumericDocValues(EarlybirdFieldConstant.USER_REPUTATION.getFieldName());
+    uselonrRelonputation =
+        relonadelonr.gelontNumelonricDocValuelons(elonarlybirdFielonldConstant.USelonR_RelonPUTATION.gelontFielonldNamelon());
 
-    // Reset the fromUserIDs NumericDocValues so that the acceptor can use it to iterate over docs.
-    fromUserIDs =
-        reader.getNumericDocValues(EarlybirdFieldConstant.FROM_USER_ID_CSF.getFieldName());
+    // Relonselont thelon fromUselonrIDs NumelonricDocValuelons so that thelon accelonptor can uselon it to itelonratelon ovelonr docs.
+    fromUselonrIDs =
+        relonadelonr.gelontNumelonricDocValuelons(elonarlybirdFielonldConstant.FROM_USelonR_ID_CSF.gelontFielonldNamelon());
   }
 
-  private void extractTerms(IndexReader reader) throws IOException {
-    Query query = luceneQuery;
-    for (Query rewrittenQuery = query.rewrite(reader); rewrittenQuery != query;
-         rewrittenQuery = query.rewrite(reader)) {
-      query = rewrittenQuery;
+  privatelon void elonxtractTelonrms(IndelonxRelonadelonr relonadelonr) throws IOelonxcelonption {
+    Quelonry quelonry = lucelonnelonQuelonry;
+    for (Quelonry relonwrittelonnQuelonry = quelonry.relonwritelon(relonadelonr); relonwrittelonnQuelonry != quelonry;
+         relonwrittelonnQuelonry = quelonry.relonwritelon(relonadelonr)) {
+      quelonry = relonwrittelonnQuelonry;
     }
 
-    // Create a new TwitterIndexSearcher instance here instead of an IndexSearcher instance, to use
-    // the TwitterIndexSearcher.collectionStatistics() implementation.
-    query.createWeight(new TwitterIndexSearcher(reader), ScoreMode.COMPLETE, 1.0f)
-        .extractTerms(queryTerms);
-    termsExtracted = true;
+    // Crelonatelon a nelonw TwittelonrIndelonxSelonarchelonr instancelon helonrelon instelonad of an IndelonxSelonarchelonr instancelon, to uselon
+    // thelon TwittelonrIndelonxSelonarchelonr.collelonctionStatistics() implelonmelonntation.
+    quelonry.crelonatelonWelonight(nelonw TwittelonrIndelonxSelonarchelonr(relonadelonr), ScorelonModelon.COMPLelonTelon, 1.0f)
+        .elonxtractTelonrms(quelonryTelonrms);
+    telonrmselonxtractelond = truelon;
   }
 
-  public boolean accept(int internalDocID) throws IOException {
-    return acceptor.accept(internalDocID);
+  public boolelonan accelonpt(int intelonrnalDocID) throws IOelonxcelonption {
+    relonturn accelonptor.accelonpt(intelonrnalDocID);
   }
 
-  private void addUserToWhitelists(long userID) {
-    if (this.segmentUserIDWhitelist == null) {
-      this.segmentUserIDWhitelist = new HashSet<>();
+  privatelon void addUselonrToWhitelonlists(long uselonrID) {
+    if (this.selongmelonntUselonrIDWhitelonlist == null) {
+      this.selongmelonntUselonrIDWhitelonlist = nelonw HashSelont<>();
     }
-    if (this.globalUserIDWhitelist == null) {
-      this.globalUserIDWhitelist = new HashSet<>();
+    if (this.globalUselonrIDWhitelonlist == null) {
+      this.globalUselonrIDWhitelonlist = nelonw HashSelont<>();
     }
-    this.segmentUserIDWhitelist.add(userID);
-    this.globalUserIDWhitelist.add(userID);
+    this.selongmelonntUselonrIDWhitelonlist.add(uselonrID);
+    this.globalUselonrIDWhitelonlist.add(uselonrID);
   }
 
-  @VisibleForTesting
-  protected long getUserId(int internalDocId) throws IOException {
-    return fromUserIDs.advanceExact(internalDocId) ? fromUserIDs.longValue() : 0L;
+  @VisiblelonForTelonsting
+  protelonctelond long gelontUselonrId(int intelonrnalDocId) throws IOelonxcelonption {
+    relonturn fromUselonrIDs.advancelonelonxact(intelonrnalDocId) ? fromUselonrIDs.longValuelon() : 0L;
   }
 }

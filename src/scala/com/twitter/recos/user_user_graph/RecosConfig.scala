@@ -1,37 +1,37 @@
-package com.twitter.recos.user_user_graph
+packagelon com.twittelonr.reloncos.uselonr_uselonr_graph
 
-import com.twitter.recos.model.Constants
-import com.twitter.recos.graph_common.NodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraphBuilder.GraphBuilderConfig
+import com.twittelonr.reloncos.modelonl.Constants
+import com.twittelonr.reloncos.graph_common.NodelonMelontadataLelonftIndelonxelondPowelonrLawMultiSelongmelonntBipartitelonGraphBuildelonr.GraphBuildelonrConfig
 
 /**
- * The class holds all the config parameters for recos graph.
+ * Thelon class holds all thelon config paramelontelonrs for reloncos graph.
  */
-object RecosConfig {
-  val maxNumSegments: Int = 5
-  val maxNumEdgesPerSegment: Int = 1 << 26 // 64M edges per segment
-  val expectedNumLeftNodes: Int = 1 << 24 // should correspond to 16M nodes storage
-  val expectedMaxLeftDegree: Int = 64
-  val leftPowerLawExponent: Double = 16.0 // steep power law as most nodes will have a small degree
-  val expectedNumRightNodes: Int = 1 << 24 // 16M nodes
-  val numRightNodeMetadataTypes = 1 // UUG does not have node metadata
+objelonct ReloncosConfig {
+  val maxNumSelongmelonnts: Int = 5
+  val maxNumelondgelonsPelonrSelongmelonnt: Int = 1 << 26 // 64M elondgelons pelonr selongmelonnt
+  val elonxpelonctelondNumLelonftNodelons: Int = 1 << 24 // should correlonspond to 16M nodelons storagelon
+  val elonxpelonctelondMaxLelonftDelongrelonelon: Int = 64
+  val lelonftPowelonrLawelonxponelonnt: Doublelon = 16.0 // stelonelonp powelonr law as most nodelons will havelon a small delongrelonelon
+  val elonxpelonctelondNumRightNodelons: Int = 1 << 24 // 16M nodelons
+  val numRightNodelonMelontadataTypelons = 1 // UUG doelons not havelon nodelon melontadata
 
-  val graphBuilderConfig = GraphBuilderConfig(
-    maxNumSegments = maxNumSegments,
-    maxNumEdgesPerSegment = maxNumEdgesPerSegment,
-    expectedNumLeftNodes = expectedNumLeftNodes,
-    expectedMaxLeftDegree = expectedMaxLeftDegree,
-    leftPowerLawExponent = leftPowerLawExponent,
-    expectedNumRightNodes = expectedNumRightNodes,
-    numRightNodeMetadataTypes = numRightNodeMetadataTypes,
-    edgeTypeMask = new UserEdgeTypeMask()
+  val graphBuildelonrConfig = GraphBuildelonrConfig(
+    maxNumSelongmelonnts = maxNumSelongmelonnts,
+    maxNumelondgelonsPelonrSelongmelonnt = maxNumelondgelonsPelonrSelongmelonnt,
+    elonxpelonctelondNumLelonftNodelons = elonxpelonctelondNumLelonftNodelons,
+    elonxpelonctelondMaxLelonftDelongrelonelon = elonxpelonctelondMaxLelonftDelongrelonelon,
+    lelonftPowelonrLawelonxponelonnt = lelonftPowelonrLawelonxponelonnt,
+    elonxpelonctelondNumRightNodelons = elonxpelonctelondNumRightNodelons,
+    numRightNodelonMelontadataTypelons = numRightNodelonMelontadataTypelons,
+    elondgelonTypelonMask = nelonw UselonrelondgelonTypelonMask()
   )
 
-  println("RecosConfig -            maxNumSegments " + maxNumSegments)
-  println("RecosConfig -     maxNumEdgesPerSegment " + maxNumEdgesPerSegment)
-  println("RecosConfig -      expectedNumLeftNodes " + expectedNumLeftNodes)
-  println("RecosConfig -     expectedMaxLeftDegree " + expectedMaxLeftDegree)
-  println("RecosConfig -      leftPowerLawExponent " + leftPowerLawExponent)
-  println("RecosConfig -     expectedNumRightNodes " + expectedNumRightNodes)
-  println("RecosConfig -     numRightNodeMetadataTypes " + numRightNodeMetadataTypes)
-  println("RecosConfig -         salsaRunnerConfig " + Constants.salsaRunnerConfig)
+  println("ReloncosConfig -            maxNumSelongmelonnts " + maxNumSelongmelonnts)
+  println("ReloncosConfig -     maxNumelondgelonsPelonrSelongmelonnt " + maxNumelondgelonsPelonrSelongmelonnt)
+  println("ReloncosConfig -      elonxpelonctelondNumLelonftNodelons " + elonxpelonctelondNumLelonftNodelons)
+  println("ReloncosConfig -     elonxpelonctelondMaxLelonftDelongrelonelon " + elonxpelonctelondMaxLelonftDelongrelonelon)
+  println("ReloncosConfig -      lelonftPowelonrLawelonxponelonnt " + lelonftPowelonrLawelonxponelonnt)
+  println("ReloncosConfig -     elonxpelonctelondNumRightNodelons " + elonxpelonctelondNumRightNodelons)
+  println("ReloncosConfig -     numRightNodelonMelontadataTypelons " + numRightNodelonMelontadataTypelons)
+  println("ReloncosConfig -         salsaRunnelonrConfig " + Constants.salsaRunnelonrConfig)
 }

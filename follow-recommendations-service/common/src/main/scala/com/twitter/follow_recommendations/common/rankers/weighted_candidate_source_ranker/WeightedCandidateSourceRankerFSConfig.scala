@@ -1,13 +1,13 @@
-package com.twitter.follow_recommendations.common.rankers.weighted_candidate_source_ranker
+packagelon com.twittelonr.follow_reloncommelonndations.common.rankelonrs.welonightelond_candidatelon_sourcelon_rankelonr
 
-import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
-import com.twitter.timelines.configapi.FSParam
+import com.twittelonr.follow_reloncommelonndations.configapi.common.FelonaturelonSwitchConfig
+import com.twittelonr.timelonlinelons.configapi.FSParam
 
-import javax.inject.Inject
-import javax.inject.Singleton
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class WeightedCandidateSourceRankerFSConfig @Inject() extends FeatureSwitchConfig {
-  override val booleanFSParams: Seq[FSParam[Boolean]] =
-    Seq(WeightedCandidateSourceRankerParams.ScribeRankingInfoInWeightedRanker)
+@Singlelonton
+class WelonightelondCandidatelonSourcelonRankelonrFSConfig @Injelonct() elonxtelonnds FelonaturelonSwitchConfig {
+  ovelonrridelon val boolelonanFSParams: Selonq[FSParam[Boolelonan]] =
+    Selonq(WelonightelondCandidatelonSourcelonRankelonrParams.ScribelonRankingInfoInWelonightelondRankelonr)
 }

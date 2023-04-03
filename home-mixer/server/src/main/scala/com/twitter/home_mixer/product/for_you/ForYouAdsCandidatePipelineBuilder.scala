@@ -1,94 +1,94 @@
-package com.twitter.home_mixer.product.for_you
+packagelon com.twittelonr.homelon_mixelonr.product.for_you
 
-import com.twitter.product_mixer.component_library.feature_hydrator.candidate.param_gated.ParamGatedCandidateFeatureHydrator
-import com.twitter.adserver.{thriftscala => ads}
-import com.twitter.home_mixer.functional_component.decorator.HomeAdsClientEventDetailsBuilder
-import com.twitter.home_mixer.functional_component.gate.ExcludeSoftUserGate
-import com.twitter.home_mixer.param.HomeGlobalParams
-import com.twitter.home_mixer.param.HomeGlobalParams.EnableAdvertiserBrandSafetySettingsFeatureHydratorParam
-import com.twitter.home_mixer.product.for_you.model.ForYouQuery
-import com.twitter.home_mixer.product.for_you.param.ForYouParam.AdsNumOrganicItemsParam
-import com.twitter.home_mixer.service.HomeMixerAlertConfig
-import com.twitter.product_mixer.component_library.candidate_source.ads.AdsProdThriftCandidateSource
-import com.twitter.product_mixer.component_library.decorator.urt.UrtItemCandidateDecorator
-import com.twitter.product_mixer.component_library.decorator.urt.builder.contextual_ref.ContextualTweetRefBuilder
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.ad.AdsCandidateUrtItemBuilder
-import com.twitter.product_mixer.component_library.decorator.urt.builder.metadata.ClientEventInfoBuilder
-import com.twitter.product_mixer.component_library.feature_hydrator.candidate.ads.AdvertiserBrandSafetySettingsFeatureHydrator
-import com.twitter.product_mixer.component_library.model.candidate.ads.AdsCandidate
-import com.twitter.product_mixer.component_library.pipeline.candidate.ads.AdsCandidatePipelineConfig
-import com.twitter.product_mixer.component_library.pipeline.candidate.ads.AdsCandidatePipelineConfigBuilder
-import com.twitter.product_mixer.component_library.pipeline.candidate.ads.StaticAdsDisplayLocationBuilder
-import com.twitter.product_mixer.component_library.pipeline.candidate.ads.ValidAdImpressionIdFilter
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.gate.ParamNotGate
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.marshalling.response.rtf.safety_level.TimelineHomePromotedHydrationSafetyLevel
-import com.twitter.product_mixer.core.model.marshalling.response.urt.contextual_ref.TweetHydrationContext
-import com.twitter.timelines.injection.scribe.InjectionScribeUtil
-import com.twitter.timelineservice.suggests.{thriftscala => st}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.componelonnt_library.felonaturelon_hydrator.candidatelon.param_gatelond.ParamGatelondCandidatelonFelonaturelonHydrator
+import com.twittelonr.adselonrvelonr.{thriftscala => ads}
+import com.twittelonr.homelon_mixelonr.functional_componelonnt.deloncorator.HomelonAdsClielonntelonvelonntDelontailsBuildelonr
+import com.twittelonr.homelon_mixelonr.functional_componelonnt.gatelon.elonxcludelonSoftUselonrGatelon
+import com.twittelonr.homelon_mixelonr.param.HomelonGlobalParams
+import com.twittelonr.homelon_mixelonr.param.HomelonGlobalParams.elonnablelonAdvelonrtiselonrBrandSafelontySelonttingsFelonaturelonHydratorParam
+import com.twittelonr.homelon_mixelonr.product.for_you.modelonl.ForYouQuelonry
+import com.twittelonr.homelon_mixelonr.product.for_you.param.ForYouParam.AdsNumOrganicItelonmsParam
+import com.twittelonr.homelon_mixelonr.selonrvicelon.HomelonMixelonrAlelonrtConfig
+import com.twittelonr.product_mixelonr.componelonnt_library.candidatelon_sourcelon.ads.AdsProdThriftCandidatelonSourcelon
+import com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.UrtItelonmCandidatelonDeloncorator
+import com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.contelonxtual_relonf.ContelonxtualTwelonelontRelonfBuildelonr
+import com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.itelonm.ad.AdsCandidatelonUrtItelonmBuildelonr
+import com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.melontadata.ClielonntelonvelonntInfoBuildelonr
+import com.twittelonr.product_mixelonr.componelonnt_library.felonaturelon_hydrator.candidatelon.ads.AdvelonrtiselonrBrandSafelontySelonttingsFelonaturelonHydrator
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.ads.AdsCandidatelon
+import com.twittelonr.product_mixelonr.componelonnt_library.pipelonlinelon.candidatelon.ads.AdsCandidatelonPipelonlinelonConfig
+import com.twittelonr.product_mixelonr.componelonnt_library.pipelonlinelon.candidatelon.ads.AdsCandidatelonPipelonlinelonConfigBuildelonr
+import com.twittelonr.product_mixelonr.componelonnt_library.pipelonlinelon.candidatelon.ads.StaticAdsDisplayLocationBuildelonr
+import com.twittelonr.product_mixelonr.componelonnt_library.pipelonlinelon.candidatelon.ads.ValidAdImprelonssionIdFiltelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.CandidatelonScopelon
+import com.twittelonr.product_mixelonr.corelon.gatelon.ParamNotGatelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonPipelonlinelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.rtf.safelonty_lelonvelonl.TimelonlinelonHomelonPromotelondHydrationSafelontyLelonvelonl
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.contelonxtual_relonf.TwelonelontHydrationContelonxt
+import com.twittelonr.timelonlinelons.injelonction.scribelon.InjelonctionScribelonUtil
+import com.twittelonr.timelonlinelonselonrvicelon.suggelonsts.{thriftscala => st}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class ForYouAdsCandidatePipelineBuilder @Inject() (
-  adsCandidatePipelineConfigBuilder: AdsCandidatePipelineConfigBuilder,
-  adsCandidateSource: AdsProdThriftCandidateSource,
-  advertiserBrandSafetySettingsFeatureHydrator: AdvertiserBrandSafetySettingsFeatureHydrator[
-    ForYouQuery,
-    AdsCandidate
+@Singlelonton
+class ForYouAdsCandidatelonPipelonlinelonBuildelonr @Injelonct() (
+  adsCandidatelonPipelonlinelonConfigBuildelonr: AdsCandidatelonPipelonlinelonConfigBuildelonr,
+  adsCandidatelonSourcelon: AdsProdThriftCandidatelonSourcelon,
+  advelonrtiselonrBrandSafelontySelonttingsFelonaturelonHydrator: AdvelonrtiselonrBrandSafelontySelonttingsFelonaturelonHydrator[
+    ForYouQuelonry,
+    AdsCandidatelon
   ]) {
 
-  private val identifier: CandidatePipelineIdentifier = CandidatePipelineIdentifier("ForYouAds")
+  privatelon val idelonntifielonr: CandidatelonPipelonlinelonIdelonntifielonr = CandidatelonPipelonlinelonIdelonntifielonr("ForYouAds")
 
-  private val suggestType = st.SuggestType.Promoted
+  privatelon val suggelonstTypelon = st.SuggelonstTypelon.Promotelond
 
-  private val clientEventInfoBuilder = ClientEventInfoBuilder(
-    component = InjectionScribeUtil.scribeComponent(suggestType).get,
-    detailsBuilder = Some(HomeAdsClientEventDetailsBuilder(Some(suggestType.name)))
+  privatelon val clielonntelonvelonntInfoBuildelonr = ClielonntelonvelonntInfoBuildelonr(
+    componelonnt = InjelonctionScribelonUtil.scribelonComponelonnt(suggelonstTypelon).gelont,
+    delontailsBuildelonr = Somelon(HomelonAdsClielonntelonvelonntDelontailsBuildelonr(Somelon(suggelonstTypelon.namelon)))
   )
 
-  private val contextualTweetRefBuilder = ContextualTweetRefBuilder(
-    TweetHydrationContext(
-      safetyLevelOverride = Some(TimelineHomePromotedHydrationSafetyLevel),
-      outerTweetContext = None
+  privatelon val contelonxtualTwelonelontRelonfBuildelonr = ContelonxtualTwelonelontRelonfBuildelonr(
+    TwelonelontHydrationContelonxt(
+      safelontyLelonvelonlOvelonrridelon = Somelon(TimelonlinelonHomelonPromotelondHydrationSafelontyLelonvelonl),
+      outelonrTwelonelontContelonxt = Nonelon
     ))
 
-  private val decorator = UrtItemCandidateDecorator(
-    AdsCandidateUrtItemBuilder(
-      tweetClientEventInfoBuilder = Some(clientEventInfoBuilder),
-      contextualTweetRefBuilder = Some(contextualTweetRefBuilder)
+  privatelon val deloncorator = UrtItelonmCandidatelonDeloncorator(
+    AdsCandidatelonUrtItelonmBuildelonr(
+      twelonelontClielonntelonvelonntInfoBuildelonr = Somelon(clielonntelonvelonntInfoBuildelonr),
+      contelonxtualTwelonelontRelonfBuildelonr = Somelon(contelonxtualTwelonelontRelonfBuildelonr)
     ))
 
-  private val alerts = Seq(
-    HomeMixerAlertConfig.BusinessHours.defaultSuccessRateAlert(),
-    HomeMixerAlertConfig.BusinessHours.defaultEmptyResponseRateAlert()
+  privatelon val alelonrts = Selonq(
+    HomelonMixelonrAlelonrtConfig.BusinelonssHours.delonfaultSuccelonssRatelonAlelonrt(),
+    HomelonMixelonrAlelonrtConfig.BusinelonssHours.delonfaultelonmptyRelonsponselonRatelonAlelonrt()
   )
 
-  def build(
-    organicCandidatePipelines: Option[CandidateScope] = None
-  ): AdsCandidatePipelineConfig[ForYouQuery] =
-    adsCandidatePipelineConfigBuilder.build[ForYouQuery](
-      adsCandidateSource = adsCandidateSource,
-      identifier = identifier,
-      adsDisplayLocationBuilder = StaticAdsDisplayLocationBuilder(ads.DisplayLocation.TimelineHome),
-      estimateNumOrganicItems = _.params(AdsNumOrganicItemsParam).toShort,
-      gates = Seq(
-        ParamNotGate(
-          name = "AdsDisableInjectionBasedOnUserRole",
-          param = HomeGlobalParams.AdsDisableInjectionBasedOnUserRoleParam
+  delonf build(
+    organicCandidatelonPipelonlinelons: Option[CandidatelonScopelon] = Nonelon
+  ): AdsCandidatelonPipelonlinelonConfig[ForYouQuelonry] =
+    adsCandidatelonPipelonlinelonConfigBuildelonr.build[ForYouQuelonry](
+      adsCandidatelonSourcelon = adsCandidatelonSourcelon,
+      idelonntifielonr = idelonntifielonr,
+      adsDisplayLocationBuildelonr = StaticAdsDisplayLocationBuildelonr(ads.DisplayLocation.TimelonlinelonHomelon),
+      elonstimatelonNumOrganicItelonms = _.params(AdsNumOrganicItelonmsParam).toShort,
+      gatelons = Selonq(
+        ParamNotGatelon(
+          namelon = "AdsDisablelonInjelonctionBaselondOnUselonrRolelon",
+          param = HomelonGlobalParams.AdsDisablelonInjelonctionBaselondOnUselonrRolelonParam
         ),
-        ExcludeSoftUserGate
+        elonxcludelonSoftUselonrGatelon
       ),
-      filters = Seq(ValidAdImpressionIdFilter),
-      postFilterFeatureHydration = Seq(
-        ParamGatedCandidateFeatureHydrator(
-          EnableAdvertiserBrandSafetySettingsFeatureHydratorParam,
-          advertiserBrandSafetySettingsFeatureHydrator
+      filtelonrs = Selonq(ValidAdImprelonssionIdFiltelonr),
+      postFiltelonrFelonaturelonHydration = Selonq(
+        ParamGatelondCandidatelonFelonaturelonHydrator(
+          elonnablelonAdvelonrtiselonrBrandSafelontySelonttingsFelonaturelonHydratorParam,
+          advelonrtiselonrBrandSafelontySelonttingsFelonaturelonHydrator
         )
       ),
-      decorator = Some(decorator),
-      alerts = alerts,
-      urtRequest = Some(true),
+      deloncorator = Somelon(deloncorator),
+      alelonrts = alelonrts,
+      urtRelonquelonst = Somelon(truelon),
     )
 }

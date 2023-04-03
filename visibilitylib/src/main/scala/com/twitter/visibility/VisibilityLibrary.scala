@@ -1,387 +1,387 @@
-package com.twitter.visibility
+packagelon com.twittelonr.visibility
 
-import com.twitter.abdecider.LoggingABDecider
-import com.twitter.abdecider.NullABDecider
-import com.twitter.decider.Decider
-import com.twitter.decider.NullDecider
-import com.twitter.featureswitches.v2.FeatureSwitches
-import com.twitter.featureswitches.v2.NullFeatureSwitches
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.logging.Logger
-import com.twitter.logging.NullLogger
-import com.twitter.servo.util.Gate
-import com.twitter.servo.util.MemoizingStatsReceiver
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.Params
-import com.twitter.util.Try
-import com.twitter.visibility.builder._
-import com.twitter.visibility.common.stitch.StitchHelpers
-import com.twitter.visibility.configapi.VisibilityParams
-import com.twitter.visibility.configapi.configs.VisibilityDeciderGates
-import com.twitter.visibility.engine.DeciderableVisibilityRuleEngine
-import com.twitter.visibility.engine.VisibilityResultsMetricRecorder
-import com.twitter.visibility.engine.VisibilityRuleEngine
-import com.twitter.visibility.engine.VisibilityRulePreprocessor
-import com.twitter.visibility.features.FeatureMap
-import com.twitter.visibility.models.ContentId
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.models.ViewerContext
-import com.twitter.visibility.rules.EvaluationContext
-import com.twitter.visibility.rules.Rule
-import com.twitter.visibility.rules.generators.TweetRuleGenerator
-import com.twitter.visibility.rules.providers.InjectedPolicyProvider
-import com.twitter.visibility.util.DeciderUtil
-import com.twitter.visibility.util.FeatureSwitchUtil
-import com.twitter.visibility.util.LoggingUtil
+import com.twittelonr.abdeloncidelonr.LoggingABDeloncidelonr
+import com.twittelonr.abdeloncidelonr.NullABDeloncidelonr
+import com.twittelonr.deloncidelonr.Deloncidelonr
+import com.twittelonr.deloncidelonr.NullDeloncidelonr
+import com.twittelonr.felonaturelonswitchelons.v2.FelonaturelonSwitchelons
+import com.twittelonr.felonaturelonswitchelons.v2.NullFelonaturelonSwitchelons
+import com.twittelonr.finaglelon.stats.NullStatsReloncelonivelonr
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.logging.Loggelonr
+import com.twittelonr.logging.NullLoggelonr
+import com.twittelonr.selonrvo.util.Gatelon
+import com.twittelonr.selonrvo.util.MelonmoizingStatsReloncelonivelonr
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.timelonlinelons.configapi.Params
+import com.twittelonr.util.Try
+import com.twittelonr.visibility.buildelonr._
+import com.twittelonr.visibility.common.stitch.StitchHelonlpelonrs
+import com.twittelonr.visibility.configapi.VisibilityParams
+import com.twittelonr.visibility.configapi.configs.VisibilityDeloncidelonrGatelons
+import com.twittelonr.visibility.elonnginelon.DeloncidelonrablelonVisibilityRulelonelonnginelon
+import com.twittelonr.visibility.elonnginelon.VisibilityRelonsultsMelontricReloncordelonr
+import com.twittelonr.visibility.elonnginelon.VisibilityRulelonelonnginelon
+import com.twittelonr.visibility.elonnginelon.VisibilityRulelonPrelonprocelonssor
+import com.twittelonr.visibility.felonaturelons.FelonaturelonMap
+import com.twittelonr.visibility.modelonls.ContelonntId
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl
+import com.twittelonr.visibility.modelonls.VielonwelonrContelonxt
+import com.twittelonr.visibility.rulelons.elonvaluationContelonxt
+import com.twittelonr.visibility.rulelons.Rulelon
+import com.twittelonr.visibility.rulelons.gelonnelonrators.TwelonelontRulelonGelonnelonrator
+import com.twittelonr.visibility.rulelons.providelonrs.InjelonctelondPolicyProvidelonr
+import com.twittelonr.visibility.util.DeloncidelonrUtil
+import com.twittelonr.visibility.util.FelonaturelonSwitchUtil
+import com.twittelonr.visibility.util.LoggingUtil
 
-object VisibilityLibrary {
+objelonct VisibilityLibrary {
 
-  object Builder {
+  objelonct Buildelonr {
 
-    def apply(log: Logger, statsReceiver: StatsReceiver): Builder = new Builder(
+    delonf apply(log: Loggelonr, statsReloncelonivelonr: StatsReloncelonivelonr): Buildelonr = nelonw Buildelonr(
       log,
-      new MemoizingStatsReceiver(statsReceiver)
+      nelonw MelonmoizingStatsReloncelonivelonr(statsReloncelonivelonr)
     )
   }
 
-  case class Builder(
-    log: Logger,
-    statsReceiver: StatsReceiver,
-    decider: Option[Decider] = None,
-    abDecider: Option[LoggingABDecider] = None,
-    featureSwitches: Option[FeatureSwitches] = None,
-    enableStitchProfiling: Gate[Unit] = Gate.False,
-    captureDebugStats: Gate[Unit] = Gate.False,
-    enableComposableActions: Gate[Unit] = Gate.False,
-    enableFailClosed: Gate[Unit] = Gate.False,
-    enableShortCircuiting: Gate[Unit] = Gate.True,
-    memoizeSafetyLevelParams: Gate[Unit] = Gate.False) {
+  caselon class Buildelonr(
+    log: Loggelonr,
+    statsReloncelonivelonr: StatsReloncelonivelonr,
+    deloncidelonr: Option[Deloncidelonr] = Nonelon,
+    abDeloncidelonr: Option[LoggingABDeloncidelonr] = Nonelon,
+    felonaturelonSwitchelons: Option[FelonaturelonSwitchelons] = Nonelon,
+    elonnablelonStitchProfiling: Gatelon[Unit] = Gatelon.Falselon,
+    capturelonDelonbugStats: Gatelon[Unit] = Gatelon.Falselon,
+    elonnablelonComposablelonActions: Gatelon[Unit] = Gatelon.Falselon,
+    elonnablelonFailCloselond: Gatelon[Unit] = Gatelon.Falselon,
+    elonnablelonShortCircuiting: Gatelon[Unit] = Gatelon.Truelon,
+    melonmoizelonSafelontyLelonvelonlParams: Gatelon[Unit] = Gatelon.Falselon) {
 
-    def withDecider(decider: Decider): Builder = copy(decider = Some(decider))
+    delonf withDeloncidelonr(deloncidelonr: Deloncidelonr): Buildelonr = copy(deloncidelonr = Somelon(deloncidelonr))
 
-    @deprecated("use .withDecider and pass in a decider that is properly configured per DC")
-    def withDefaultDecider(isLocal: Boolean, useLocalOverrides: Boolean = false): Builder = {
+    @delonpreloncatelond("uselon .withDeloncidelonr and pass in a deloncidelonr that is propelonrly configurelond pelonr DC")
+    delonf withDelonfaultDeloncidelonr(isLocal: Boolelonan, uselonLocalOvelonrridelons: Boolelonan = falselon): Buildelonr = {
       if (isLocal) {
-        withLocalDecider
-      } else {
-        withDecider(
-          DeciderUtil.mkDecider(
-            useLocalDeciderOverrides = useLocalOverrides,
+        withLocalDeloncidelonr
+      } elonlselon {
+        withDeloncidelonr(
+          DeloncidelonrUtil.mkDeloncidelonr(
+            uselonLocalDeloncidelonrOvelonrridelons = uselonLocalOvelonrridelons,
           ))
       }
     }
 
-    def withLocalDecider(): Builder = withDecider(DeciderUtil.mkLocalDecider)
+    delonf withLocalDeloncidelonr(): Buildelonr = withDeloncidelonr(DeloncidelonrUtil.mkLocalDeloncidelonr)
 
-    def withNullDecider(): Builder =
-      withDecider(new NullDecider(isAvail = true, availabilityDefined = true))
+    delonf withNullDeloncidelonr(): Buildelonr =
+      withDeloncidelonr(nelonw NullDeloncidelonr(isAvail = truelon, availabilityDelonfinelond = truelon))
 
-    def withABDecider(abDecider: LoggingABDecider, featureSwitches: FeatureSwitches): Builder =
-      abDecider match {
-        case abd: NullABDecider =>
-          copy(abDecider = Some(abd), featureSwitches = Some(NullFeatureSwitches))
-        case _ =>
+    delonf withABDeloncidelonr(abDeloncidelonr: LoggingABDeloncidelonr, felonaturelonSwitchelons: FelonaturelonSwitchelons): Buildelonr =
+      abDeloncidelonr match {
+        caselon abd: NullABDeloncidelonr =>
+          copy(abDeloncidelonr = Somelon(abd), felonaturelonSwitchelons = Somelon(NullFelonaturelonSwitchelons))
+        caselon _ =>
           copy(
-            abDecider = Some(abDecider),
-            featureSwitches = Some(featureSwitches)
+            abDeloncidelonr = Somelon(abDeloncidelonr),
+            felonaturelonSwitchelons = Somelon(felonaturelonSwitchelons)
           )
       }
 
-    def withABDecider(abDecider: LoggingABDecider): Builder = abDecider match {
-      case abd: NullABDecider =>
-        withABDecider(abDecider = abd, featureSwitches = NullFeatureSwitches)
-      case _ =>
-        withABDecider(
-          abDecider = abDecider,
-          featureSwitches =
-            FeatureSwitchUtil.mkVisibilityLibraryFeatureSwitches(abDecider, statsReceiver)
+    delonf withABDeloncidelonr(abDeloncidelonr: LoggingABDeloncidelonr): Buildelonr = abDeloncidelonr match {
+      caselon abd: NullABDeloncidelonr =>
+        withABDeloncidelonr(abDeloncidelonr = abd, felonaturelonSwitchelons = NullFelonaturelonSwitchelons)
+      caselon _ =>
+        withABDeloncidelonr(
+          abDeloncidelonr = abDeloncidelonr,
+          felonaturelonSwitchelons =
+            FelonaturelonSwitchUtil.mkVisibilityLibraryFelonaturelonSwitchelons(abDeloncidelonr, statsReloncelonivelonr)
         )
     }
 
-    def withClientEventsLogger(clientEventsLogger: Logger): Builder =
-      withABDecider(DeciderUtil.mkABDecider(Some(clientEventsLogger)))
+    delonf withClielonntelonvelonntsLoggelonr(clielonntelonvelonntsLoggelonr: Loggelonr): Buildelonr =
+      withABDeloncidelonr(DeloncidelonrUtil.mkABDeloncidelonr(Somelon(clielonntelonvelonntsLoggelonr)))
 
-    def withDefaultABDecider(isLocal: Boolean): Builder =
+    delonf withDelonfaultABDeloncidelonr(isLocal: Boolelonan): Buildelonr =
       if (isLocal) {
-        withABDecider(NullABDecider)
-      } else {
-        withClientEventsLogger(LoggingUtil.mkDefaultLogger(statsReceiver))
+        withABDeloncidelonr(NullABDeloncidelonr)
+      } elonlselon {
+        withClielonntelonvelonntsLoggelonr(LoggingUtil.mkDelonfaultLoggelonr(statsReloncelonivelonr))
       }
 
-    def withNullABDecider(): Builder = withABDecider(NullABDecider)
+    delonf withNullABDeloncidelonr(): Buildelonr = withABDeloncidelonr(NullABDeloncidelonr)
 
-    def withEnableStitchProfiling(gate: Gate[Unit]): Builder =
-      copy(enableStitchProfiling = gate)
+    delonf withelonnablelonStitchProfiling(gatelon: Gatelon[Unit]): Buildelonr =
+      copy(elonnablelonStitchProfiling = gatelon)
 
-    def withCaptureDebugStats(gate: Gate[Unit]): Builder =
-      copy(captureDebugStats = gate)
+    delonf withCapturelonDelonbugStats(gatelon: Gatelon[Unit]): Buildelonr =
+      copy(capturelonDelonbugStats = gatelon)
 
-    def withEnableComposableActions(gate: Gate[Unit]): Builder =
-      copy(enableComposableActions = gate)
+    delonf withelonnablelonComposablelonActions(gatelon: Gatelon[Unit]): Buildelonr =
+      copy(elonnablelonComposablelonActions = gatelon)
 
-    def withEnableComposableActions(gateBoolean: Boolean): Builder = {
-      val gate = Gate.const(gateBoolean)
-      copy(enableComposableActions = gate)
+    delonf withelonnablelonComposablelonActions(gatelonBoolelonan: Boolelonan): Buildelonr = {
+      val gatelon = Gatelon.const(gatelonBoolelonan)
+      copy(elonnablelonComposablelonActions = gatelon)
     }
 
-    def withEnableFailClosed(gate: Gate[Unit]): Builder =
-      copy(enableFailClosed = gate)
+    delonf withelonnablelonFailCloselond(gatelon: Gatelon[Unit]): Buildelonr =
+      copy(elonnablelonFailCloselond = gatelon)
 
-    def withEnableFailClosed(gateBoolean: Boolean): Builder = {
-      val gate = Gate.const(gateBoolean)
-      copy(enableFailClosed = gate)
+    delonf withelonnablelonFailCloselond(gatelonBoolelonan: Boolelonan): Buildelonr = {
+      val gatelon = Gatelon.const(gatelonBoolelonan)
+      copy(elonnablelonFailCloselond = gatelon)
     }
 
-    def withEnableShortCircuiting(gate: Gate[Unit]): Builder =
-      copy(enableShortCircuiting = gate)
+    delonf withelonnablelonShortCircuiting(gatelon: Gatelon[Unit]): Buildelonr =
+      copy(elonnablelonShortCircuiting = gatelon)
 
-    def withEnableShortCircuiting(gateBoolean: Boolean): Builder = {
-      val gate = Gate.const(gateBoolean)
-      copy(enableShortCircuiting = gate)
+    delonf withelonnablelonShortCircuiting(gatelonBoolelonan: Boolelonan): Buildelonr = {
+      val gatelon = Gatelon.const(gatelonBoolelonan)
+      copy(elonnablelonShortCircuiting = gatelon)
     }
 
-    def memoizeSafetyLevelParams(gate: Gate[Unit]): Builder =
-      copy(memoizeSafetyLevelParams = gate)
+    delonf melonmoizelonSafelontyLelonvelonlParams(gatelon: Gatelon[Unit]): Buildelonr =
+      copy(melonmoizelonSafelontyLelonvelonlParams = gatelon)
 
-    def memoizeSafetyLevelParams(gateBoolean: Boolean): Builder = {
-      val gate = Gate.const(gateBoolean)
-      copy(memoizeSafetyLevelParams = gate)
+    delonf melonmoizelonSafelontyLelonvelonlParams(gatelonBoolelonan: Boolelonan): Buildelonr = {
+      val gatelon = Gatelon.const(gatelonBoolelonan)
+      copy(melonmoizelonSafelontyLelonvelonlParams = gatelon)
     }
 
-    def build(): VisibilityLibrary = {
+    delonf build(): VisibilityLibrary = {
 
-      (decider, abDecider, featureSwitches) match {
-        case (None, _, _) =>
-          throw new IllegalStateException(
-            "Decider is unset! If intentional, please call .withNullDecider()."
+      (deloncidelonr, abDeloncidelonr, felonaturelonSwitchelons) match {
+        caselon (Nonelon, _, _) =>
+          throw nelonw IllelongalStatelonelonxcelonption(
+            "Deloncidelonr is unselont! If intelonntional, plelonaselon call .withNullDeloncidelonr()."
           )
 
-        case (_, None, _) =>
-          throw new IllegalStateException(
-            "ABDecider is unset! If intentional, please call .withNullABDecider()."
+        caselon (_, Nonelon, _) =>
+          throw nelonw IllelongalStatelonelonxcelonption(
+            "ABDeloncidelonr is unselont! If intelonntional, plelonaselon call .withNullABDeloncidelonr()."
           )
 
-        case (_, _, None) =>
-          throw new IllegalStateException(
-            "FeatureSwitches is unset! This is a bug."
+        caselon (_, _, Nonelon) =>
+          throw nelonw IllelongalStatelonelonxcelonption(
+            "FelonaturelonSwitchelons is unselont! This is a bug."
           )
 
-        case (Some(d), Some(abd), Some(fs)) =>
-          new VisibilityLibrary(
-            statsReceiver,
+        caselon (Somelon(d), Somelon(abd), Somelon(fs)) =>
+          nelonw VisibilityLibrary(
+            statsReloncelonivelonr,
             d,
             abd,
-            VisibilityParams(log, statsReceiver, d, abd, fs),
-            enableStitchProfiling = enableStitchProfiling,
-            captureDebugStats = captureDebugStats,
-            enableComposableActions = enableComposableActions,
-            enableFailClosed = enableFailClosed,
-            enableShortCircuiting = enableShortCircuiting,
-            memoizeSafetyLevelParams = memoizeSafetyLevelParams)
+            VisibilityParams(log, statsReloncelonivelonr, d, abd, fs),
+            elonnablelonStitchProfiling = elonnablelonStitchProfiling,
+            capturelonDelonbugStats = capturelonDelonbugStats,
+            elonnablelonComposablelonActions = elonnablelonComposablelonActions,
+            elonnablelonFailCloselond = elonnablelonFailCloselond,
+            elonnablelonShortCircuiting = elonnablelonShortCircuiting,
+            melonmoizelonSafelontyLelonvelonlParams = melonmoizelonSafelontyLelonvelonlParams)
       }
     }
   }
 
-  val nullDecider = new NullDecider(true, true)
+  val nullDeloncidelonr = nelonw NullDeloncidelonr(truelon, truelon)
 
-  lazy val NullLibrary: VisibilityLibrary = new VisibilityLibrary(
-    NullStatsReceiver,
-    nullDecider,
-    NullABDecider,
+  lazy val NullLibrary: VisibilityLibrary = nelonw VisibilityLibrary(
+    NullStatsReloncelonivelonr,
+    nullDeloncidelonr,
+    NullABDeloncidelonr,
     VisibilityParams(
-      NullLogger,
-      NullStatsReceiver,
-      nullDecider,
-      NullABDecider,
-      NullFeatureSwitches),
-    enableStitchProfiling = Gate.False,
-    captureDebugStats = Gate.False,
-    enableComposableActions = Gate.False,
-    enableFailClosed = Gate.False,
-    enableShortCircuiting = Gate.True,
-    memoizeSafetyLevelParams = Gate.False
+      NullLoggelonr,
+      NullStatsReloncelonivelonr,
+      nullDeloncidelonr,
+      NullABDeloncidelonr,
+      NullFelonaturelonSwitchelons),
+    elonnablelonStitchProfiling = Gatelon.Falselon,
+    capturelonDelonbugStats = Gatelon.Falselon,
+    elonnablelonComposablelonActions = Gatelon.Falselon,
+    elonnablelonFailCloselond = Gatelon.Falselon,
+    elonnablelonShortCircuiting = Gatelon.Truelon,
+    melonmoizelonSafelontyLelonvelonlParams = Gatelon.Falselon
   )
 }
 
-class VisibilityLibrary private[VisibilityLibrary] (
-  baseStatsReceiver: StatsReceiver,
-  decider: Decider,
-  abDecider: LoggingABDecider,
+class VisibilityLibrary privatelon[VisibilityLibrary] (
+  baselonStatsReloncelonivelonr: StatsReloncelonivelonr,
+  deloncidelonr: Deloncidelonr,
+  abDeloncidelonr: LoggingABDeloncidelonr,
   visibilityParams: VisibilityParams,
-  enableStitchProfiling: Gate[Unit],
-  captureDebugStats: Gate[Unit],
-  enableComposableActions: Gate[Unit],
-  enableFailClosed: Gate[Unit],
-  enableShortCircuiting: Gate[Unit],
-  memoizeSafetyLevelParams: Gate[Unit]) {
+  elonnablelonStitchProfiling: Gatelon[Unit],
+  capturelonDelonbugStats: Gatelon[Unit],
+  elonnablelonComposablelonActions: Gatelon[Unit],
+  elonnablelonFailCloselond: Gatelon[Unit],
+  elonnablelonShortCircuiting: Gatelon[Unit],
+  melonmoizelonSafelontyLelonvelonlParams: Gatelon[Unit]) {
 
-  val statsReceiver: StatsReceiver =
-    new MemoizingStatsReceiver(baseStatsReceiver.scope("visibility_library"))
+  val statsReloncelonivelonr: StatsReloncelonivelonr =
+    nelonw MelonmoizingStatsReloncelonivelonr(baselonStatsReloncelonivelonr.scopelon("visibility_library"))
 
-  val metricsRecorder = VisibilityResultsMetricRecorder(statsReceiver, captureDebugStats)
+  val melontricsReloncordelonr = VisibilityRelonsultsMelontricReloncordelonr(statsReloncelonivelonr, capturelonDelonbugStats)
 
   val visParams: VisibilityParams = visibilityParams
 
-  val visibilityDeciderGates = VisibilityDeciderGates(decider)
+  val visibilityDeloncidelonrGatelons = VisibilityDeloncidelonrGatelons(deloncidelonr)
 
-  val profileStats: MemoizingStatsReceiver = new MemoizingStatsReceiver(
-    statsReceiver.scope("profiling"))
+  val profilelonStats: MelonmoizingStatsReloncelonivelonr = nelonw MelonmoizingStatsReloncelonivelonr(
+    statsReloncelonivelonr.scopelon("profiling"))
 
-  val perSafetyLevelProfileStats: StatsReceiver = profileStats.scope("for_safety_level")
+  val pelonrSafelontyLelonvelonlProfilelonStats: StatsReloncelonivelonr = profilelonStats.scopelon("for_safelonty_lelonvelonl")
 
-  val featureMapBuilder: FeatureMapBuilder.Build =
-    FeatureMapBuilder(statsReceiver, enableStitchProfiling)
+  val felonaturelonMapBuildelonr: FelonaturelonMapBuildelonr.Build =
+    FelonaturelonMapBuildelonr(statsReloncelonivelonr, elonnablelonStitchProfiling)
 
-  private lazy val tweetRuleGenerator = new TweetRuleGenerator()
-  lazy val policyProvider = new InjectedPolicyProvider(
-    visibilityDeciderGates = visibilityDeciderGates,
-    tweetRuleGenerator = tweetRuleGenerator)
+  privatelon lazy val twelonelontRulelonGelonnelonrator = nelonw TwelonelontRulelonGelonnelonrator()
+  lazy val policyProvidelonr = nelonw InjelonctelondPolicyProvidelonr(
+    visibilityDeloncidelonrGatelons = visibilityDeloncidelonrGatelons,
+    twelonelontRulelonGelonnelonrator = twelonelontRulelonGelonnelonrator)
 
-  val candidateVisibilityRulePreprocessor: VisibilityRulePreprocessor = VisibilityRulePreprocessor(
-    metricsRecorder,
-    policyProviderOpt = Some(policyProvider)
+  val candidatelonVisibilityRulelonPrelonprocelonssor: VisibilityRulelonPrelonprocelonssor = VisibilityRulelonPrelonprocelonssor(
+    melontricsReloncordelonr,
+    policyProvidelonrOpt = Somelon(policyProvidelonr)
   )
 
-  val fallbackVisibilityRulePreprocessor: VisibilityRulePreprocessor = VisibilityRulePreprocessor(
-    metricsRecorder)
+  val fallbackVisibilityRulelonPrelonprocelonssor: VisibilityRulelonPrelonprocelonssor = VisibilityRulelonPrelonprocelonssor(
+    melontricsReloncordelonr)
 
-  lazy val candidateVisibilityRuleEngine: VisibilityRuleEngine = VisibilityRuleEngine(
-    Some(candidateVisibilityRulePreprocessor),
-    metricsRecorder,
-    enableComposableActions,
-    enableFailClosed,
-    policyProviderOpt = Some(policyProvider)
+  lazy val candidatelonVisibilityRulelonelonnginelon: VisibilityRulelonelonnginelon = VisibilityRulelonelonnginelon(
+    Somelon(candidatelonVisibilityRulelonPrelonprocelonssor),
+    melontricsReloncordelonr,
+    elonnablelonComposablelonActions,
+    elonnablelonFailCloselond,
+    policyProvidelonrOpt = Somelon(policyProvidelonr)
   )
 
-  lazy val fallbackVisibilityRuleEngine: VisibilityRuleEngine = VisibilityRuleEngine(
-    Some(fallbackVisibilityRulePreprocessor),
-    metricsRecorder,
-    enableComposableActions,
-    enableFailClosed)
+  lazy val fallbackVisibilityRulelonelonnginelon: VisibilityRulelonelonnginelon = VisibilityRulelonelonnginelon(
+    Somelon(fallbackVisibilityRulelonPrelonprocelonssor),
+    melontricsReloncordelonr,
+    elonnablelonComposablelonActions,
+    elonnablelonFailCloselond)
 
-  val ruleEngineVersionStatsReceiver = statsReceiver.scope("rule_engine_version")
-  def isReleaseCandidateEnabled: Boolean = visibilityDeciderGates.enableExperimentalRuleEngine()
+  val rulelonelonnginelonVelonrsionStatsReloncelonivelonr = statsReloncelonivelonr.scopelon("rulelon_elonnginelon_velonrsion")
+  delonf isRelonlelonaselonCandidatelonelonnablelond: Boolelonan = visibilityDeloncidelonrGatelons.elonnablelonelonxpelonrimelonntalRulelonelonnginelon()
 
-  private def visibilityRuleEngine: DeciderableVisibilityRuleEngine = {
-    if (isReleaseCandidateEnabled) {
-      ruleEngineVersionStatsReceiver.counter("release_candidate").incr()
-      candidateVisibilityRuleEngine
-    } else {
-      ruleEngineVersionStatsReceiver.counter("fallback").incr()
-      fallbackVisibilityRuleEngine
+  privatelon delonf visibilityRulelonelonnginelon: DeloncidelonrablelonVisibilityRulelonelonnginelon = {
+    if (isRelonlelonaselonCandidatelonelonnablelond) {
+      rulelonelonnginelonVelonrsionStatsReloncelonivelonr.countelonr("relonlelonaselon_candidatelon").incr()
+      candidatelonVisibilityRulelonelonnginelon
+    } elonlselon {
+      rulelonelonnginelonVelonrsionStatsReloncelonivelonr.countelonr("fallback").incr()
+      fallbackVisibilityRulelonelonnginelon
     }
   }
 
-  private def profileStitch[A](result: Stitch[A], safetyLevelName: String): Stitch[A] =
-    if (enableStitchProfiling()) {
-      StitchHelpers.profileStitch(
-        result,
-        Seq(profileStats, perSafetyLevelProfileStats.scope(safetyLevelName))
+  privatelon delonf profilelonStitch[A](relonsult: Stitch[A], safelontyLelonvelonlNamelon: String): Stitch[A] =
+    if (elonnablelonStitchProfiling()) {
+      StitchHelonlpelonrs.profilelonStitch(
+        relonsult,
+        Selonq(profilelonStats, pelonrSafelontyLelonvelonlProfilelonStats.scopelon(safelontyLelonvelonlNamelon))
       )
-    } else {
-      result
+    } elonlselon {
+      relonsult
     }
 
-  def getParams(viewerContext: ViewerContext, safetyLevel: SafetyLevel): Params = {
-    if (memoizeSafetyLevelParams()) {
-      visibilityParams.memoized(viewerContext, safetyLevel)
-    } else {
-      visibilityParams(viewerContext, safetyLevel)
+  delonf gelontParams(vielonwelonrContelonxt: VielonwelonrContelonxt, safelontyLelonvelonl: SafelontyLelonvelonl): Params = {
+    if (melonmoizelonSafelontyLelonvelonlParams()) {
+      visibilityParams.melonmoizelond(vielonwelonrContelonxt, safelontyLelonvelonl)
+    } elonlselon {
+      visibilityParams(vielonwelonrContelonxt, safelontyLelonvelonl)
     }
   }
 
-  def evaluationContextBuilder(viewerContext: ViewerContext): EvaluationContext.Builder =
-    EvaluationContext
-      .Builder(statsReceiver, visibilityParams, viewerContext)
-      .withMemoizedParams(memoizeSafetyLevelParams)
+  delonf elonvaluationContelonxtBuildelonr(vielonwelonrContelonxt: VielonwelonrContelonxt): elonvaluationContelonxt.Buildelonr =
+    elonvaluationContelonxt
+      .Buildelonr(statsReloncelonivelonr, visibilityParams, vielonwelonrContelonxt)
+      .withMelonmoizelondParams(melonmoizelonSafelontyLelonvelonlParams)
 
-  def runRuleEngine(
-    contentId: ContentId,
-    featureMap: FeatureMap,
-    evaluationContextBuilder: EvaluationContext.Builder,
-    safetyLevel: SafetyLevel
-  ): Stitch[VisibilityResult] =
-    profileStitch(
-      visibilityRuleEngine(
-        evaluationContextBuilder.build(safetyLevel),
-        safetyLevel,
-        new VisibilityResultBuilder(contentId, featureMap),
-        enableShortCircuiting
+  delonf runRulelonelonnginelon(
+    contelonntId: ContelonntId,
+    felonaturelonMap: FelonaturelonMap,
+    elonvaluationContelonxtBuildelonr: elonvaluationContelonxt.Buildelonr,
+    safelontyLelonvelonl: SafelontyLelonvelonl
+  ): Stitch[VisibilityRelonsult] =
+    profilelonStitch(
+      visibilityRulelonelonnginelon(
+        elonvaluationContelonxtBuildelonr.build(safelontyLelonvelonl),
+        safelontyLelonvelonl,
+        nelonw VisibilityRelonsultBuildelonr(contelonntId, felonaturelonMap),
+        elonnablelonShortCircuiting
       ),
-      safetyLevel.name
+      safelontyLelonvelonl.namelon
     )
 
-  def runRuleEngine(
-    contentId: ContentId,
-    featureMap: FeatureMap,
-    viewerContext: ViewerContext,
-    safetyLevel: SafetyLevel
-  ): Stitch[VisibilityResult] =
-    profileStitch(
-      visibilityRuleEngine(
-        EvaluationContext(safetyLevel, getParams(viewerContext, safetyLevel), statsReceiver),
-        safetyLevel,
-        new VisibilityResultBuilder(contentId, featureMap),
-        enableShortCircuiting
+  delonf runRulelonelonnginelon(
+    contelonntId: ContelonntId,
+    felonaturelonMap: FelonaturelonMap,
+    vielonwelonrContelonxt: VielonwelonrContelonxt,
+    safelontyLelonvelonl: SafelontyLelonvelonl
+  ): Stitch[VisibilityRelonsult] =
+    profilelonStitch(
+      visibilityRulelonelonnginelon(
+        elonvaluationContelonxt(safelontyLelonvelonl, gelontParams(vielonwelonrContelonxt, safelontyLelonvelonl), statsReloncelonivelonr),
+        safelontyLelonvelonl,
+        nelonw VisibilityRelonsultBuildelonr(contelonntId, felonaturelonMap),
+        elonnablelonShortCircuiting
       ),
-      safetyLevel.name
+      safelontyLelonvelonl.namelon
     )
 
-  def runRuleEngine(
-    viewerContext: ViewerContext,
-    safetyLevel: SafetyLevel,
-    preprocessedResultBuilder: VisibilityResultBuilder,
-    preprocessedRules: Seq[Rule]
-  ): Stitch[VisibilityResult] =
-    profileStitch(
-      visibilityRuleEngine(
-        EvaluationContext(safetyLevel, getParams(viewerContext, safetyLevel), statsReceiver),
-        safetyLevel,
-        preprocessedResultBuilder,
-        enableShortCircuiting,
-        Some(preprocessedRules)
+  delonf runRulelonelonnginelon(
+    vielonwelonrContelonxt: VielonwelonrContelonxt,
+    safelontyLelonvelonl: SafelontyLelonvelonl,
+    prelonprocelonsselondRelonsultBuildelonr: VisibilityRelonsultBuildelonr,
+    prelonprocelonsselondRulelons: Selonq[Rulelon]
+  ): Stitch[VisibilityRelonsult] =
+    profilelonStitch(
+      visibilityRulelonelonnginelon(
+        elonvaluationContelonxt(safelontyLelonvelonl, gelontParams(vielonwelonrContelonxt, safelontyLelonvelonl), statsReloncelonivelonr),
+        safelontyLelonvelonl,
+        prelonprocelonsselondRelonsultBuildelonr,
+        elonnablelonShortCircuiting,
+        Somelon(prelonprocelonsselondRulelons)
       ),
-      safetyLevel.name
+      safelontyLelonvelonl.namelon
     )
 
-  def runRuleEngineBatch(
-    contentIds: Seq[ContentId],
-    featureMapProvider: (ContentId, SafetyLevel) => FeatureMap,
-    viewerContext: ViewerContext,
-    safetyLevel: SafetyLevel,
-  ): Stitch[Seq[Try[VisibilityResult]]] = {
-    val params = getParams(viewerContext, safetyLevel)
-    profileStitch(
-      Stitch.traverse(contentIds) { contentId =>
-        visibilityRuleEngine(
-          EvaluationContext(safetyLevel, params, NullStatsReceiver),
-          safetyLevel,
-          new VisibilityResultBuilder(contentId, featureMapProvider(contentId, safetyLevel)),
-          enableShortCircuiting
+  delonf runRulelonelonnginelonBatch(
+    contelonntIds: Selonq[ContelonntId],
+    felonaturelonMapProvidelonr: (ContelonntId, SafelontyLelonvelonl) => FelonaturelonMap,
+    vielonwelonrContelonxt: VielonwelonrContelonxt,
+    safelontyLelonvelonl: SafelontyLelonvelonl,
+  ): Stitch[Selonq[Try[VisibilityRelonsult]]] = {
+    val params = gelontParams(vielonwelonrContelonxt, safelontyLelonvelonl)
+    profilelonStitch(
+      Stitch.travelonrselon(contelonntIds) { contelonntId =>
+        visibilityRulelonelonnginelon(
+          elonvaluationContelonxt(safelontyLelonvelonl, params, NullStatsReloncelonivelonr),
+          safelontyLelonvelonl,
+          nelonw VisibilityRelonsultBuildelonr(contelonntId, felonaturelonMapProvidelonr(contelonntId, safelontyLelonvelonl)),
+          elonnablelonShortCircuiting
         ).liftToTry
       },
-      safetyLevel.name
+      safelontyLelonvelonl.namelon
     )
   }
 
-  def runRuleEngineBatch(
-    contentIds: Seq[ContentId],
-    featureMapProvider: (ContentId, SafetyLevel) => FeatureMap,
-    evaluationContextBuilder: EvaluationContext.Builder,
-    safetyLevel: SafetyLevel
-  ): Stitch[Seq[Try[VisibilityResult]]] = {
-    val evaluationContext = evaluationContextBuilder.build(safetyLevel)
-    profileStitch(
-      Stitch.traverse(contentIds) { contentId =>
-        visibilityRuleEngine(
-          evaluationContext,
-          safetyLevel,
-          new VisibilityResultBuilder(contentId, featureMapProvider(contentId, safetyLevel)),
-          enableShortCircuiting
+  delonf runRulelonelonnginelonBatch(
+    contelonntIds: Selonq[ContelonntId],
+    felonaturelonMapProvidelonr: (ContelonntId, SafelontyLelonvelonl) => FelonaturelonMap,
+    elonvaluationContelonxtBuildelonr: elonvaluationContelonxt.Buildelonr,
+    safelontyLelonvelonl: SafelontyLelonvelonl
+  ): Stitch[Selonq[Try[VisibilityRelonsult]]] = {
+    val elonvaluationContelonxt = elonvaluationContelonxtBuildelonr.build(safelontyLelonvelonl)
+    profilelonStitch(
+      Stitch.travelonrselon(contelonntIds) { contelonntId =>
+        visibilityRulelonelonnginelon(
+          elonvaluationContelonxt,
+          safelontyLelonvelonl,
+          nelonw VisibilityRelonsultBuildelonr(contelonntId, felonaturelonMapProvidelonr(contelonntId, safelontyLelonvelonl)),
+          elonnablelonShortCircuiting
         ).liftToTry
       },
-      safetyLevel.name
+      safelontyLelonvelonl.namelon
     )
   }
 }

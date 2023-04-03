@@ -1,163 +1,163 @@
-package com.twitter.search.core.earlybird.index.inverted;
+packagelon com.twittelonr.selonarch.corelon.elonarlybird.indelonx.invelonrtelond;
 
-import com.google.common.base.Preconditions;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import org.apache.lucene.analysis.tokenattributes.PayloadAttribute;
-import org.apache.lucene.analysis.tokenattributes.TermToBytesRefAttribute;
-import org.apache.lucene.util.AttributeSource;
-import org.apache.lucene.util.BytesRef;
+import org.apachelon.lucelonnelon.analysis.tokelonnattributelons.PayloadAttributelon;
+import org.apachelon.lucelonnelon.analysis.tokelonnattributelons.TelonrmToBytelonsRelonfAttributelon;
+import org.apachelon.lucelonnelon.util.AttributelonSourcelon;
+import org.apachelon.lucelonnelon.util.BytelonsRelonf;
 
-import com.twitter.search.common.hashtable.HashTable;
-import com.twitter.search.common.util.analysis.TermPayloadAttribute;
-import com.twitter.search.core.earlybird.facets.FacetCountingArrayWriter;
-import com.twitter.search.core.earlybird.facets.FacetIDMap.FacetField;
-import com.twitter.search.core.earlybird.index.EarlybirdRealtimeIndexSegmentWriter;
+import com.twittelonr.selonarch.common.hashtablelon.HashTablelon;
+import com.twittelonr.selonarch.common.util.analysis.TelonrmPayloadAttributelon;
+import com.twittelonr.selonarch.corelon.elonarlybird.facelonts.FacelontCountingArrayWritelonr;
+import com.twittelonr.selonarch.corelon.elonarlybird.facelonts.FacelontIDMap.FacelontFielonld;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.elonarlybirdRelonaltimelonIndelonxSelongmelonntWritelonr;
 
-public class InvertedRealtimeIndexWriter
-    implements EarlybirdRealtimeIndexSegmentWriter.InvertedDocConsumer {
-  private final InvertedRealtimeIndex invertedIndex;
-  private final FacetCountingArrayWriter facetArray;
-  private final FacetField facetField;
+public class InvelonrtelondRelonaltimelonIndelonxWritelonr
+    implelonmelonnts elonarlybirdRelonaltimelonIndelonxSelongmelonntWritelonr.InvelonrtelondDocConsumelonr {
+  privatelon final InvelonrtelondRelonaltimelonIndelonx invelonrtelondIndelonx;
+  privatelon final FacelontCountingArrayWritelonr facelontArray;
+  privatelon final FacelontFielonld facelontFielonld;
 
-  private TermToBytesRefAttribute termAtt;
-  private TermPayloadAttribute termPayloadAtt;
-  private PayloadAttribute payloadAtt;
-  private boolean currentDocIsOffensive;
+  privatelon TelonrmToBytelonsRelonfAttributelon telonrmAtt;
+  privatelon TelonrmPayloadAttributelon telonrmPayloadAtt;
+  privatelon PayloadAttributelon payloadAtt;
+  privatelon boolelonan currelonntDocIsOffelonnsivelon;
 
   /**
-   * Creates a new writer for writing to an inverted in-memory real-time index.
+   * Crelonatelons a nelonw writelonr for writing to an invelonrtelond in-melonmory relonal-timelon indelonx.
    */
-  public InvertedRealtimeIndexWriter(
-          InvertedRealtimeIndex index,
-          FacetField facetField,
-          FacetCountingArrayWriter facetArray) {
-    super();
-    this.invertedIndex = index;
-    this.facetArray = facetArray;
-    this.facetField = facetField;
+  public InvelonrtelondRelonaltimelonIndelonxWritelonr(
+          InvelonrtelondRelonaltimelonIndelonx indelonx,
+          FacelontFielonld facelontFielonld,
+          FacelontCountingArrayWritelonr facelontArray) {
+    supelonr();
+    this.invelonrtelondIndelonx = indelonx;
+    this.facelontArray = facelontArray;
+    this.facelontFielonld = facelontFielonld;
   }
 
-  @Override
-  public void start(AttributeSource attributeSource, boolean docIsOffensive) {
-    termAtt = attributeSource.addAttribute(TermToBytesRefAttribute.class);
-    termPayloadAtt = attributeSource.addAttribute(TermPayloadAttribute.class);
-    payloadAtt = attributeSource.addAttribute(PayloadAttribute.class);
-    currentDocIsOffensive = docIsOffensive;
+  @Ovelonrridelon
+  public void start(AttributelonSourcelon attributelonSourcelon, boolelonan docIsOffelonnsivelon) {
+    telonrmAtt = attributelonSourcelon.addAttributelon(TelonrmToBytelonsRelonfAttributelon.class);
+    telonrmPayloadAtt = attributelonSourcelon.addAttributelon(TelonrmPayloadAttributelon.class);
+    payloadAtt = attributelonSourcelon.addAttributelon(PayloadAttributelon.class);
+    currelonntDocIsOffelonnsivelon = docIsOffelonnsivelon;
   }
 
   /**
-   * Adds a posting to the provided inverted index.
+   * Adds a posting to thelon providelond invelonrtelond indelonx.
    *
-   * @param termBytesRef is a payload that is stored with the term. It is only stored once for each
-   *                     term.
-   * @param postingPayload is a byte payload that will be stored separately for every posting.
-   * @return term id of the added posting.
+   * @param telonrmBytelonsRelonf is a payload that is storelond with thelon telonrm. It is only storelond oncelon for elonach
+   *                     telonrm.
+   * @param postingPayload is a bytelon payload that will belon storelond selonparatelonly for elonvelonry posting.
+   * @relonturn telonrm id of thelon addelond posting.
    */
-  public static int indexTerm(InvertedRealtimeIndex invertedIndex, BytesRef termBytesRef,
-      int docID, int position, BytesRef termPayload,
-      BytesRef postingPayload, TermPointerEncoding termPointerEncoding) {
+  public static int indelonxTelonrm(InvelonrtelondRelonaltimelonIndelonx invelonrtelondIndelonx, BytelonsRelonf telonrmBytelonsRelonf,
+      int docID, int position, BytelonsRelonf telonrmPayload,
+      BytelonsRelonf postingPayload, TelonrmPointelonrelonncoding telonrmPointelonrelonncoding) {
 
-    InvertedRealtimeIndex.TermHashTable hashTable = invertedIndex.getHashTable();
-    BaseByteBlockPool termPool = invertedIndex.getTermPool();
+    InvelonrtelondRelonaltimelonIndelonx.TelonrmHashTablelon hashTablelon = invelonrtelondIndelonx.gelontHashTablelon();
+    BaselonBytelonBlockPool telonrmPool = invelonrtelondIndelonx.gelontTelonrmPool();
 
-    TermsArray termsArray = invertedIndex.getTermsArray();
+    TelonrmsArray telonrmsArray = invelonrtelondIndelonx.gelontTelonrmsArray();
 
-    long hashTableInfoForBytesRef = hashTable.lookupItem(termBytesRef);
-    int termID = HashTable.decodeItemId(hashTableInfoForBytesRef);
-    int hashTableSlot = HashTable.decodeHashPosition(hashTableInfoForBytesRef);
+    long hashTablelonInfoForBytelonsRelonf = hashTablelon.lookupItelonm(telonrmBytelonsRelonf);
+    int telonrmID = HashTablelon.deloncodelonItelonmId(hashTablelonInfoForBytelonsRelonf);
+    int hashTablelonSlot = HashTablelon.deloncodelonHashPosition(hashTablelonInfoForBytelonsRelonf);
 
-    invertedIndex.adjustMaxPosition(position);
+    invelonrtelondIndelonx.adjustMaxPosition(position);
 
-    if (termID == HashTable.EMPTY_SLOT) {
-      // First time we are seeing this token since we last flushed the hash.
-      // the LSB in textStart denotes whether this term has a term payload
-      int textStart = ByteTermUtils.copyToTermPool(termPool, termBytesRef);
-      boolean hasTermPayload = termPayload != null;
-      int termPointer = termPointerEncoding.encodeTermPointer(textStart, hasTermPayload);
+    if (telonrmID == HashTablelon.elonMPTY_SLOT) {
+      // First timelon welon arelon seloneloning this tokelonn sincelon welon last flushelond thelon hash.
+      // thelon LSB in telonxtStart delonnotelons whelonthelonr this telonrm has a telonrm payload
+      int telonxtStart = BytelonTelonrmUtils.copyToTelonrmPool(telonrmPool, telonrmBytelonsRelonf);
+      boolelonan hasTelonrmPayload = telonrmPayload != null;
+      int telonrmPointelonr = telonrmPointelonrelonncoding.elonncodelonTelonrmPointelonr(telonxtStart, hasTelonrmPayload);
 
-      if (hasTermPayload) {
-        ByteTermUtils.copyToTermPool(termPool, termPayload);
+      if (hasTelonrmPayload) {
+        BytelonTelonrmUtils.copyToTelonrmPool(telonrmPool, telonrmPayload);
       }
 
-      termID = invertedIndex.getNumTerms();
-      invertedIndex.incrementNumTerms();
-      if (termID >= termsArray.getSize()) {
-        termsArray = invertedIndex.growTermsArray();
+      telonrmID = invelonrtelondIndelonx.gelontNumTelonrms();
+      invelonrtelondIndelonx.increlonmelonntNumTelonrms();
+      if (telonrmID >= telonrmsArray.gelontSizelon()) {
+        telonrmsArray = invelonrtelondIndelonx.growTelonrmsArray();
       }
 
-      termsArray.termPointers[termID] = termPointer;
+      telonrmsArray.telonrmPointelonrs[telonrmID] = telonrmPointelonr;
 
-      Preconditions.checkState(hashTable.slots()[hashTableSlot] == HashTable.EMPTY_SLOT);
-      hashTable.setSlot(hashTableSlot, termID);
+      Prelonconditions.chelonckStatelon(hashTablelon.slots()[hashTablelonSlot] == HashTablelon.elonMPTY_SLOT);
+      hashTablelon.selontSlot(hashTablelonSlot, telonrmID);
 
-      if (invertedIndex.getNumTerms() * 2 >= hashTable.numSlots()) {
-        invertedIndex.rehashPostings(2 * hashTable.numSlots());
+      if (invelonrtelondIndelonx.gelontNumTelonrms() * 2 >= hashTablelon.numSlots()) {
+        invelonrtelondIndelonx.relonhashPostings(2 * hashTablelon.numSlots());
       }
 
-      // Insert termID into termsSkipList.
-      invertedIndex.insertToTermsSkipList(termBytesRef, termID);
+      // Inselonrt telonrmID into telonrmsSkipList.
+      invelonrtelondIndelonx.inselonrtToTelonrmsSkipList(telonrmBytelonsRelonf, telonrmID);
     }
 
-    invertedIndex.incrementSumTotalTermFreq();
-    invertedIndex.getPostingList()
-        .appendPosting(termID, termsArray, docID, position, postingPayload);
+    invelonrtelondIndelonx.increlonmelonntSumTotalTelonrmFrelonq();
+    invelonrtelondIndelonx.gelontPostingList()
+        .appelonndPosting(telonrmID, telonrmsArray, docID, position, postingPayload);
 
-    return termID;
+    relonturn telonrmID;
   }
 
   /**
-   * Delete a posting that was inserted out of order.
+   * Delonlelontelon a posting that was inselonrtelond out of ordelonr.
    *
-   * This function needs work before it is used in production:
-   * - It should take an isDocOffensive parameter so we can decrement the offensive
-   *   document count for the term.
-   * - It doesn't allow the same concurrency guarantees that the other posting methods do.
+   * This function nelonelonds work belonforelon it is uselond in production:
+   * - It should takelon an isDocOffelonnsivelon paramelontelonr so welon can deloncrelonmelonnt thelon offelonnsivelon
+   *   documelonnt count for thelon telonrm.
+   * - It doelonsn't allow thelon samelon concurrelonncy guarantelonelons that thelon othelonr posting melonthods do.
    */
-  public static void deletePosting(
-      InvertedRealtimeIndex invertedIndex, BytesRef termBytesRef, int docID) {
+  public static void delonlelontelonPosting(
+      InvelonrtelondRelonaltimelonIndelonx invelonrtelondIndelonx, BytelonsRelonf telonrmBytelonsRelonf, int docID) {
 
-    long hashTableInfoForBytesRef = invertedIndex.getHashTable().lookupItem(termBytesRef);
-    int termID = HashTable.decodeItemId(hashTableInfoForBytesRef);
+    long hashTablelonInfoForBytelonsRelonf = invelonrtelondIndelonx.gelontHashTablelon().lookupItelonm(telonrmBytelonsRelonf);
+    int telonrmID = HashTablelon.deloncodelonItelonmId(hashTablelonInfoForBytelonsRelonf);
 
-    if (termID != HashTable.EMPTY_SLOT) {
-      // Have seen this term before, and the field that supports deletes.
-      invertedIndex.getPostingList().deletePosting(termID, invertedIndex.getTermsArray(), docID);
+    if (telonrmID != HashTablelon.elonMPTY_SLOT) {
+      // Havelon selonelonn this telonrm belonforelon, and thelon fielonld that supports delonlelontelons.
+      invelonrtelondIndelonx.gelontPostingList().delonlelontelonPosting(telonrmID, invelonrtelondIndelonx.gelontTelonrmsArray(), docID);
     }
   }
 
-  @Override
+  @Ovelonrridelon
   public void add(int docID, int position) {
-    final BytesRef payload;
+    final BytelonsRelonf payload;
     if (payloadAtt == null) {
       payload = null;
-    } else {
-      payload = payloadAtt.getPayload();
+    } elonlselon {
+      payload = payloadAtt.gelontPayload();
     }
 
-    BytesRef termPayload = termPayloadAtt.getTermPayload();
+    BytelonsRelonf telonrmPayload = telonrmPayloadAtt.gelontTelonrmPayload();
 
-    int termID = indexTerm(invertedIndex, termAtt.getBytesRef(),
-        docID, position, termPayload, payload,
-        invertedIndex.getTermPointerEncoding());
+    int telonrmID = indelonxTelonrm(invelonrtelondIndelonx, telonrmAtt.gelontBytelonsRelonf(),
+        docID, position, telonrmPayload, payload,
+        invelonrtelondIndelonx.gelontTelonrmPointelonrelonncoding());
 
-    if (termID == -1) {
-      return;
+    if (telonrmID == -1) {
+      relonturn;
     }
 
-    TermsArray termsArray = invertedIndex.getTermsArray();
+    TelonrmsArray telonrmsArray = invelonrtelondIndelonx.gelontTelonrmsArray();
 
-    if (currentDocIsOffensive && termsArray.offensiveCounters != null) {
-      termsArray.offensiveCounters[termID]++;
+    if (currelonntDocIsOffelonnsivelon && telonrmsArray.offelonnsivelonCountelonrs != null) {
+      telonrmsArray.offelonnsivelonCountelonrs[telonrmID]++;
     }
 
-    if (facetField != null) {
-      facetArray.addFacet(docID, facetField.getFacetId(), termID);
+    if (facelontFielonld != null) {
+      facelontArray.addFacelont(docID, facelontFielonld.gelontFacelontId(), telonrmID);
     }
   }
 
-  @Override
+  @Ovelonrridelon
   public void finish() {
     payloadAtt = null;
-    termPayloadAtt = null;
+    telonrmPayloadAtt = null;
   }
 }

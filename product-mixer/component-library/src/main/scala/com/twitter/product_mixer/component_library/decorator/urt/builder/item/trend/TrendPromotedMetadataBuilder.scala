@@ -1,40 +1,40 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.trend
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.itelonm.trelonnd
 
-import com.twitter.product_mixer.component_library.model.candidate.trends_events.PromotedTrendDescriptionFeature
-import com.twitter.product_mixer.component_library.model.candidate.trends_events.PromotedTrendDisclosureTypeFeature
-import com.twitter.product_mixer.component_library.model.candidate.trends_events.PromotedTrendIdFeature
-import com.twitter.product_mixer.component_library.model.candidate.trends_events.PromotedTrendImpressionIdFeature
-import com.twitter.product_mixer.component_library.model.candidate.trends_events.PromotedTrendNameFeature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.promoted.BasePromotedMetadataBuilder
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.PromotedMetadata
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.trelonnds_elonvelonnts.PromotelondTrelonndDelonscriptionFelonaturelon
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.trelonnds_elonvelonnts.PromotelondTrelonndDisclosurelonTypelonFelonaturelon
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.trelonnds_elonvelonnts.PromotelondTrelonndIdFelonaturelon
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.trelonnds_elonvelonnts.PromotelondTrelonndImprelonssionIdFelonaturelon
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.trelonnds_elonvelonnts.PromotelondTrelonndNamelonFelonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.promotelond.BaselonPromotelondMelontadataBuildelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.promotelond.PromotelondMelontadata
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
-object TrendPromotedMetadataBuilder
-    extends BasePromotedMetadataBuilder[PipelineQuery, UniversalNoun[Any]] {
+objelonct TrelonndPromotelondMelontadataBuildelonr
+    elonxtelonnds BaselonPromotelondMelontadataBuildelonr[PipelonlinelonQuelonry, UnivelonrsalNoun[Any]] {
 
-  override def apply(
-    query: PipelineQuery,
-    candidate: UniversalNoun[Any],
-    candidateFeatures: FeatureMap
-  ): Option[PromotedMetadata] = {
-    // If a promoted trend name exists, then this is a promoted trend
-    candidateFeatures.getOrElse(PromotedTrendNameFeature, None).map { promotedTrendName =>
-      PromotedMetadata(
-        // This is the current product behavior that advertiserId is always set to 0L.
-        // Correct advertiser name comes from Trend's trendMetadata.metaDescription.
-        advertiserId = 0L,
-        disclosureType = candidateFeatures.getOrElse(PromotedTrendDisclosureTypeFeature, None),
-        experimentValues = None,
-        promotedTrendId = candidateFeatures.getOrElse(PromotedTrendIdFeature, None),
-        promotedTrendName = Some(promotedTrendName),
-        promotedTrendQueryTerm = None,
-        adMetadataContainer = None,
-        promotedTrendDescription =
-          candidateFeatures.getOrElse(PromotedTrendDescriptionFeature, None),
-        impressionString = candidateFeatures.getOrElse(PromotedTrendImpressionIdFeature, None),
-        clickTrackingInfo = None
+  ovelonrridelon delonf apply(
+    quelonry: PipelonlinelonQuelonry,
+    candidatelon: UnivelonrsalNoun[Any],
+    candidatelonFelonaturelons: FelonaturelonMap
+  ): Option[PromotelondMelontadata] = {
+    // If a promotelond trelonnd namelon elonxists, thelonn this is a promotelond trelonnd
+    candidatelonFelonaturelons.gelontOrelonlselon(PromotelondTrelonndNamelonFelonaturelon, Nonelon).map { promotelondTrelonndNamelon =>
+      PromotelondMelontadata(
+        // This is thelon currelonnt product belonhavior that advelonrtiselonrId is always selont to 0L.
+        // Correlonct advelonrtiselonr namelon comelons from Trelonnd's trelonndMelontadata.melontaDelonscription.
+        advelonrtiselonrId = 0L,
+        disclosurelonTypelon = candidatelonFelonaturelons.gelontOrelonlselon(PromotelondTrelonndDisclosurelonTypelonFelonaturelon, Nonelon),
+        elonxpelonrimelonntValuelons = Nonelon,
+        promotelondTrelonndId = candidatelonFelonaturelons.gelontOrelonlselon(PromotelondTrelonndIdFelonaturelon, Nonelon),
+        promotelondTrelonndNamelon = Somelon(promotelondTrelonndNamelon),
+        promotelondTrelonndQuelonryTelonrm = Nonelon,
+        adMelontadataContainelonr = Nonelon,
+        promotelondTrelonndDelonscription =
+          candidatelonFelonaturelons.gelontOrelonlselon(PromotelondTrelonndDelonscriptionFelonaturelon, Nonelon),
+        imprelonssionString = candidatelonFelonaturelons.gelontOrelonlselon(PromotelondTrelonndImprelonssionIdFelonaturelon, Nonelon),
+        clickTrackingInfo = Nonelon
       )
     }
   }

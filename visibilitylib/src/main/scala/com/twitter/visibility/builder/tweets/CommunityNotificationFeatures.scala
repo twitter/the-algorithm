@@ -1,64 +1,64 @@
-package com.twitter.visibility.builder.tweets
+packagelon com.twittelonr.visibility.buildelonr.twelonelonts
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.notificationservice.model.notification.ActivityNotification
-import com.twitter.notificationservice.model.notification.MentionNotification
-import com.twitter.notificationservice.model.notification.MentionQuoteNotification
-import com.twitter.notificationservice.model.notification.Notification
-import com.twitter.notificationservice.model.notification.QuoteTweetNotification
-import com.twitter.servo.util.Gate
-import com.twitter.stitch.Stitch
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.common.TweetSource
-import com.twitter.visibility.features.NotificationIsOnCommunityTweet
-import com.twitter.visibility.models.CommunityTweet
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.notificationselonrvicelon.modelonl.notification.ActivityNotification
+import com.twittelonr.notificationselonrvicelon.modelonl.notification.MelonntionNotification
+import com.twittelonr.notificationselonrvicelon.modelonl.notification.MelonntionQuotelonNotification
+import com.twittelonr.notificationselonrvicelon.modelonl.notification.Notification
+import com.twittelonr.notificationselonrvicelon.modelonl.notification.QuotelonTwelonelontNotification
+import com.twittelonr.selonrvo.util.Gatelon
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.visibility.buildelonr.FelonaturelonMapBuildelonr
+import com.twittelonr.visibility.common.TwelonelontSourcelon
+import com.twittelonr.visibility.felonaturelons.NotificationIsOnCommunityTwelonelont
+import com.twittelonr.visibility.modelonls.CommunityTwelonelont
 
-object CommunityNotificationFeatures {
-  def ForNonCommunityTweetNotification: FeatureMapBuilder => FeatureMapBuilder = {
-    _.withConstantFeature(NotificationIsOnCommunityTweet, false)
+objelonct CommunityNotificationFelonaturelons {
+  delonf ForNonCommunityTwelonelontNotification: FelonaturelonMapBuildelonr => FelonaturelonMapBuildelonr = {
+    _.withConstantFelonaturelon(NotificationIsOnCommunityTwelonelont, falselon)
   }
 }
 
-class CommunityNotificationFeatures(
-  tweetSource: TweetSource,
-  enableCommunityTweetHydration: Gate[Long],
-  statsReceiver: StatsReceiver) {
+class CommunityNotificationFelonaturelons(
+  twelonelontSourcelon: TwelonelontSourcelon,
+  elonnablelonCommunityTwelonelontHydration: Gatelon[Long],
+  statsReloncelonivelonr: StatsReloncelonivelonr) {
 
-  private[this] val scopedStatsReceiver = statsReceiver.scope("community_notification_features")
-  private[this] val requestsCounter = scopedStatsReceiver.counter("requests")
-  private[this] val hydrationsCounter = scopedStatsReceiver.counter("hydrations")
-  private[this] val notificationIsOnCommunityTweetCounter =
-    scopedStatsReceiver.scope(NotificationIsOnCommunityTweet.name).counter("true")
-  private[this] val notificationIsNotOnCommunityTweetCounter =
-    scopedStatsReceiver.scope(NotificationIsOnCommunityTweet.name).counter("false")
+  privatelon[this] val scopelondStatsReloncelonivelonr = statsReloncelonivelonr.scopelon("community_notification_felonaturelons")
+  privatelon[this] val relonquelonstsCountelonr = scopelondStatsReloncelonivelonr.countelonr("relonquelonsts")
+  privatelon[this] val hydrationsCountelonr = scopelondStatsReloncelonivelonr.countelonr("hydrations")
+  privatelon[this] val notificationIsOnCommunityTwelonelontCountelonr =
+    scopelondStatsReloncelonivelonr.scopelon(NotificationIsOnCommunityTwelonelont.namelon).countelonr("truelon")
+  privatelon[this] val notificationIsNotOnCommunityTwelonelontCountelonr =
+    scopelondStatsReloncelonivelonr.scopelon(NotificationIsOnCommunityTwelonelont.namelon).countelonr("falselon")
 
-  def forNotification(notification: Notification): FeatureMapBuilder => FeatureMapBuilder = {
-    requestsCounter.incr()
-    val isCommunityTweetResult = getTweetIdOption(notification) match {
-      case Some(tweetId) if enableCommunityTweetHydration(notification.target) =>
-        hydrationsCounter.incr()
-        tweetSource
-          .getTweet(tweetId)
+  delonf forNotification(notification: Notification): FelonaturelonMapBuildelonr => FelonaturelonMapBuildelonr = {
+    relonquelonstsCountelonr.incr()
+    val isCommunityTwelonelontRelonsult = gelontTwelonelontIdOption(notification) match {
+      caselon Somelon(twelonelontId) if elonnablelonCommunityTwelonelontHydration(notification.targelont) =>
+        hydrationsCountelonr.incr()
+        twelonelontSourcelon
+          .gelontTwelonelont(twelonelontId)
           .map {
-            case Some(tweet) if CommunityTweet(tweet).nonEmpty =>
-              notificationIsOnCommunityTweetCounter.incr()
-              true
-            case _ =>
-              notificationIsNotOnCommunityTweetCounter.incr()
-              false
+            caselon Somelon(twelonelont) if CommunityTwelonelont(twelonelont).nonelonmpty =>
+              notificationIsOnCommunityTwelonelontCountelonr.incr()
+              truelon
+            caselon _ =>
+              notificationIsNotOnCommunityTwelonelontCountelonr.incr()
+              falselon
           }
-      case _ => Stitch.False
+      caselon _ => Stitch.Falselon
     }
-    _.withFeature(NotificationIsOnCommunityTweet, isCommunityTweetResult)
+    _.withFelonaturelon(NotificationIsOnCommunityTwelonelont, isCommunityTwelonelontRelonsult)
   }
 
-  private[this] def getTweetIdOption(notification: Notification): Option[Long] = {
+  privatelon[this] delonf gelontTwelonelontIdOption(notification: Notification): Option[Long] = {
     notification match {
-      case n: MentionNotification => Some(n.mentioningTweetId)
-      case n: MentionQuoteNotification => Some(n.mentioningTweetId)
-      case n: QuoteTweetNotification => Some(n.quotedTweetId)
-      case n: ActivityNotification[_] if n.visibilityTweets.contains(n.objectId) => Some(n.objectId)
-      case _ => None
+      caselon n: MelonntionNotification => Somelon(n.melonntioningTwelonelontId)
+      caselon n: MelonntionQuotelonNotification => Somelon(n.melonntioningTwelonelontId)
+      caselon n: QuotelonTwelonelontNotification => Somelon(n.quotelondTwelonelontId)
+      caselon n: ActivityNotification[_] if n.visibilityTwelonelonts.contains(n.objelonctId) => Somelon(n.objelonctId)
+      caselon _ => Nonelon
     }
   }
 }

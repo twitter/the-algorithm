@@ -1,15 +1,15 @@
-package com.twitter.search.core.earlybird.index.extensions;
+packagelon com.twittelonr.selonarch.corelon.elonarlybird.indelonx.elonxtelonnsions;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr;
 
 /**
- * Base index extensions class.
+ * Baselon indelonx elonxtelonnsions class.
  */
-public interface EarlybirdIndexExtensionsData {
+public intelonrfacelon elonarlybirdIndelonxelonxtelonnsionsData {
   /**
-   * Sets up the extensions for the given reader.
+   * Selonts up thelon elonxtelonnsions for thelon givelonn relonadelonr.
    */
-  void setupExtensions(EarlybirdIndexSegmentAtomicReader atomicReader) throws IOException;
+  void selontupelonxtelonnsions(elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr atomicRelonadelonr) throws IOelonxcelonption;
 }

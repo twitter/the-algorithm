@@ -1,114 +1,114 @@
-package com.twitter.search.common.relevance.config;
+packagelon com.twittelonr.selonarch.common.relonlelonvancelon.config;
 
-import java.io.InputStream;
+import java.io.InputStrelonam;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.search.common.config.ConfigFile;
+import com.twittelonr.selonarch.common.config.ConfigFilelon;
 
 /**
- * Config file for relevance computation.
+ * Config filelon for relonlelonvancelon computation.
  */
-public final class TweetProcessingConfig {
-  private static final Logger LOG = LoggerFactory.getLogger(TweetProcessingConfig.class);
-  private static final String SCORER_CONFIG_DIR = "common/relevance/config";
-  public static final String DEFAULT_CONFIG_FILE = "relevance.yml";
-  private static ConfigFile relevanceConfig = null;
+public final class TwelonelontProcelonssingConfig {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(TwelonelontProcelonssingConfig.class);
+  privatelon static final String SCORelonR_CONFIG_DIR = "common/relonlelonvancelon/config";
+  public static final String DelonFAULT_CONFIG_FILelon = "relonlelonvancelon.yml";
+  privatelon static ConfigFilelon relonlelonvancelonConfig = null;
 
-  private TweetProcessingConfig() {
+  privatelon TwelonelontProcelonssingConfig() {
   }
 
-  /** Initializes this instance from the given config file. */
-  public static void init(String configFile) {
-    if (relevanceConfig == null) {
-      synchronized (TweetProcessingConfig.class) {
-        if (relevanceConfig == null) {
-          String file = configFile == null ? DEFAULT_CONFIG_FILE : configFile;
-          relevanceConfig = new ConfigFile(SCORER_CONFIG_DIR, file);
+  /** Initializelons this instancelon from thelon givelonn config filelon. */
+  public static void init(String configFilelon) {
+    if (relonlelonvancelonConfig == null) {
+      synchronizelond (TwelonelontProcelonssingConfig.class) {
+        if (relonlelonvancelonConfig == null) {
+          String filelon = configFilelon == null ? DelonFAULT_CONFIG_FILelon : configFilelon;
+          relonlelonvancelonConfig = nelonw ConfigFilelon(SCORelonR_CONFIG_DIR, filelon);
         }
       }
     }
   }
 
-  /** Initializes this instance from the given input stream. */
-  public static void init(InputStream inputStream, String configType) {
-    if (relevanceConfig == null) {
-      synchronized (TweetProcessingConfig.class) {
-        if (relevanceConfig == null) {
-          relevanceConfig = new ConfigFile(inputStream, configType);
+  /** Initializelons this instancelon from thelon givelonn input strelonam. */
+  public static void init(InputStrelonam inputStrelonam, String configTypelon) {
+    if (relonlelonvancelonConfig == null) {
+      synchronizelond (TwelonelontProcelonssingConfig.class) {
+        if (relonlelonvancelonConfig == null) {
+          relonlelonvancelonConfig = nelonw ConfigFilelon(inputStrelonam, configTypelon);
         }
       }
     }
   }
 
-  /** Initializes this instance. */
+  /** Initializelons this instancelon. */
   public static void init() {
     init(null);
   }
 
   /**
-   * Returns the value of the given property as a double value.
+   * Relonturns thelon valuelon of thelon givelonn propelonrty as a doublelon valuelon.
    *
-   * @param property The property.
-   * @param defaultValue The default value to return if the property is not present in the config.
+   * @param propelonrty Thelon propelonrty.
+   * @param delonfaultValuelon Thelon delonfault valuelon to relonturn if thelon propelonrty is not prelonselonnt in thelon config.
    */
-  public static double getDouble(String property, double defaultValue) {
-    return relevanceConfig.getDouble(property, defaultValue);
+  public static doublelon gelontDoublelon(String propelonrty, doublelon delonfaultValuelon) {
+    relonturn relonlelonvancelonConfig.gelontDoublelon(propelonrty, delonfaultValuelon);
   }
 
   /**
-   * Returns the value of the given property as a string value.
+   * Relonturns thelon valuelon of thelon givelonn propelonrty as a string valuelon.
    *
-   * @param property The property.
-   * @param defaultValue The default value to return if the property is not present in the config.
+   * @param propelonrty Thelon propelonrty.
+   * @param delonfaultValuelon Thelon delonfault valuelon to relonturn if thelon propelonrty is not prelonselonnt in thelon config.
    */
-  public static String getString(String property, String defaultValue) {
-    return relevanceConfig.getString(property, defaultValue);
+  public static String gelontString(String propelonrty, String delonfaultValuelon) {
+    relonturn relonlelonvancelonConfig.gelontString(propelonrty, delonfaultValuelon);
   }
 
   /**
-   * Returns the value of the given property as an integer value.
+   * Relonturns thelon valuelon of thelon givelonn propelonrty as an intelongelonr valuelon.
    *
-   * @param property The property.
-   * @param defaultValue The default value to return if the property is not present in the config.
+   * @param propelonrty Thelon propelonrty.
+   * @param delonfaultValuelon Thelon delonfault valuelon to relonturn if thelon propelonrty is not prelonselonnt in thelon config.
    */
-  public static int getInt(String property, int defaultValue) {
-    return relevanceConfig.getInt(property, defaultValue);
+  public static int gelontInt(String propelonrty, int delonfaultValuelon) {
+    relonturn relonlelonvancelonConfig.gelontInt(propelonrty, delonfaultValuelon);
   }
 
   /**
-   * Returns the value of the given property as a long value.
+   * Relonturns thelon valuelon of thelon givelonn propelonrty as a long valuelon.
    *
-   * @param property The property.
-   * @param defaultValue The default value to return if the property is not present in the config.
+   * @param propelonrty Thelon propelonrty.
+   * @param delonfaultValuelon Thelon delonfault valuelon to relonturn if thelon propelonrty is not prelonselonnt in thelon config.
    */
-  public static long getLong(String property, long defaultValue) {
-    return relevanceConfig.getLong(property, defaultValue);
+  public static long gelontLong(String propelonrty, long delonfaultValuelon) {
+    relonturn relonlelonvancelonConfig.gelontLong(propelonrty, delonfaultValuelon);
   }
 
   /**
-   * Returns the value of the given property as a boolean value.
+   * Relonturns thelon valuelon of thelon givelonn propelonrty as a boolelonan valuelon.
    *
-   * @param property The property.
-   * @param defaultValue The default value to return if the property is not present in the config.
+   * @param propelonrty Thelon propelonrty.
+   * @param delonfaultValuelon Thelon delonfault valuelon to relonturn if thelon propelonrty is not prelonselonnt in thelon config.
    */
-  public static boolean getBool(String property, boolean defaultValue) {
-    return relevanceConfig.getBool(property, defaultValue);
+  public static boolelonan gelontBool(String propelonrty, boolelonan delonfaultValuelon) {
+    relonturn relonlelonvancelonConfig.gelontBool(propelonrty, delonfaultValuelon);
   }
 
   /**
-   * Returns the value of the given property as a string.
+   * Relonturns thelon valuelon of thelon givelonn propelonrty as a string.
    *
-   * @param property The property.
-   * @throws ConfigurationException If the given property is not found in the config.
+   * @param propelonrty Thelon propelonrty.
+   * @throws Configurationelonxcelonption If thelon givelonn propelonrty is not found in thelon config.
    */
-  public static String getString(String property) {
+  public static String gelontString(String propelonrty) {
     try {
-      return relevanceConfig.getString(property);
-    } catch (ConfigurationException e) {
-      LOG.error("Fatal error: could not get config string " + property, e);
-      throw new RuntimeException(e);
+      relonturn relonlelonvancelonConfig.gelontString(propelonrty);
+    } catch (Configurationelonxcelonption elon) {
+      LOG.elonrror("Fatal elonrror: could not gelont config string " + propelonrty, elon);
+      throw nelonw Runtimelonelonxcelonption(elon);
     }
   }
 }

@@ -1,12 +1,12 @@
-package com.twitter.follow_recommendations.common.rankers.fatigue_ranker
+packagelon com.twittelonr.follow_reloncommelonndations.common.rankelonrs.fatiguelon_rankelonr
 
-import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
-import com.twitter.timelines.configapi.FSParam
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.follow_reloncommelonndations.configapi.common.FelonaturelonSwitchConfig
+import com.twittelonr.timelonlinelons.configapi.FSParam
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class ImpressionBasedFatigueRankerFSConfig @Inject() extends FeatureSwitchConfig {
-  override val booleanFSParams: Seq[FSParam[Boolean]] =
-    Seq(ImpressionBasedFatigueRankerParams.ScribeRankingInfoInFatigueRanker)
+@Singlelonton
+class ImprelonssionBaselondFatiguelonRankelonrFSConfig @Injelonct() elonxtelonnds FelonaturelonSwitchConfig {
+  ovelonrridelon val boolelonanFSParams: Selonq[FSParam[Boolelonan]] =
+    Selonq(ImprelonssionBaselondFatiguelonRankelonrParams.ScribelonRankingInfoInFatiguelonRankelonr)
 }

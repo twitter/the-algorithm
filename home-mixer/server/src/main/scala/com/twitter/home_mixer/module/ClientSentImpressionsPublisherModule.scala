@@ -1,48 +1,48 @@
-package com.twitter.home_mixer.module
+packagelon com.twittelonr.homelon_mixelonr.modulelon
 
-import com.google.inject.Provides
-import com.twitter.conversions.DurationOps._
-import com.twitter.eventbus.client.EventBusPublisher
-import com.twitter.eventbus.client.EventBusPublisherBuilder
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
-import com.twitter.timelines.config.ConfigUtils
-import com.twitter.timelines.config.Env
-import com.twitter.timelines.impressionstore.thriftscala.PublishedImpressionList
-import javax.inject.Singleton
+import com.googlelon.injelonct.Providelons
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.elonvelonntbus.clielonnt.elonvelonntBusPublishelonr
+import com.twittelonr.elonvelonntbus.clielonnt.elonvelonntBusPublishelonrBuildelonr
+import com.twittelonr.finaglelon.mtls.authelonntication.SelonrvicelonIdelonntifielonr
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.injelonct.TwittelonrModulelon
+import com.twittelonr.timelonlinelons.config.ConfigUtils
+import com.twittelonr.timelonlinelons.config.elonnv
+import com.twittelonr.timelonlinelons.imprelonssionstorelon.thriftscala.PublishelondImprelonssionList
+import javax.injelonct.Singlelonton
 
-object ClientSentImpressionsPublisherModule extends TwitterModule with ConfigUtils {
-  private val serviceName = "home-mixer"
+objelonct ClielonntSelonntImprelonssionsPublishelonrModulelon elonxtelonnds TwittelonrModulelon with ConfigUtils {
+  privatelon val selonrvicelonNamelon = "homelon-mixelonr"
 
-  @Singleton
-  @Provides
-  def providesClientSentImpressionsPublisher(
-    serviceIdentifier: ServiceIdentifier,
-    statsReceiver: StatsReceiver
-  ): EventBusPublisher[PublishedImpressionList] = {
-    val env = serviceIdentifier.environment.toLowerCase match {
-      case "prod" => Env.prod
-      case "staging" => Env.staging
-      case "local" => Env.local
-      case _ => Env.devel
+  @Singlelonton
+  @Providelons
+  delonf providelonsClielonntSelonntImprelonssionsPublishelonr(
+    selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr,
+    statsReloncelonivelonr: StatsReloncelonivelonr
+  ): elonvelonntBusPublishelonr[PublishelondImprelonssionList] = {
+    val elonnv = selonrvicelonIdelonntifielonr.elonnvironmelonnt.toLowelonrCaselon match {
+      caselon "prod" => elonnv.prod
+      caselon "staging" => elonnv.staging
+      caselon "local" => elonnv.local
+      caselon _ => elonnv.delonvelonl
     }
 
-    val streamName = env match {
-      case Env.prod => "timelinemixer_client_sent_impressions_prod"
-      case _ => "timelinemixer_client_sent_impressions_devel"
+    val strelonamNamelon = elonnv match {
+      caselon elonnv.prod => "timelonlinelonmixelonr_clielonnt_selonnt_imprelonssions_prod"
+      caselon _ => "timelonlinelonmixelonr_clielonnt_selonnt_imprelonssions_delonvelonl"
     }
 
-    EventBusPublisherBuilder()
-      .clientId(clientIdWithScopeOpt(serviceName, env))
-      .serviceIdentifier(serviceIdentifier)
-      .streamName(streamName)
-      .statsReceiver(statsReceiver.scope("eventbus"))
-      .thriftStruct(PublishedImpressionList)
-      .tcpConnectTimeout(20.milliseconds)
-      .connectTimeout(100.milliseconds)
-      .requestTimeout(1.second)
-      .publishTimeout(1.second)
+    elonvelonntBusPublishelonrBuildelonr()
+      .clielonntId(clielonntIdWithScopelonOpt(selonrvicelonNamelon, elonnv))
+      .selonrvicelonIdelonntifielonr(selonrvicelonIdelonntifielonr)
+      .strelonamNamelon(strelonamNamelon)
+      .statsReloncelonivelonr(statsReloncelonivelonr.scopelon("elonvelonntbus"))
+      .thriftStruct(PublishelondImprelonssionList)
+      .tcpConnelonctTimelonout(20.milliselonconds)
+      .connelonctTimelonout(100.milliselonconds)
+      .relonquelonstTimelonout(1.seloncond)
+      .publishTimelonout(1.seloncond)
       .build()
   }
 }

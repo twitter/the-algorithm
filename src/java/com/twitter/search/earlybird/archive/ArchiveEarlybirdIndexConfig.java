@@ -1,75 +1,75 @@
-package com.twitter.search.earlybird.archive;
+packagelon com.twittelonr.selonarch.elonarlybird.archivelon;
 
-import java.io.IOException;
-import java.util.concurrent.ConcurrentHashMap;
+import java.io.IOelonxcelonption;
+import java.util.concurrelonnt.ConcurrelonntHashMap;
 
-import com.google.common.base.Preconditions;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import org.apache.lucene.index.IndexWriterConfig;
-import org.apache.lucene.index.KeepOnlyLastCommitDeletionPolicy;
-import org.apache.lucene.index.LogByteSizeMergePolicy;
-import org.apache.lucene.index.SerialMergeScheduler;
+import org.apachelon.lucelonnelon.indelonx.IndelonxWritelonrConfig;
+import org.apachelon.lucelonnelon.indelonx.KelonelonpOnlyLastCommitDelonlelontionPolicy;
+import org.apachelon.lucelonnelon.indelonx.LogBytelonSizelonMelonrgelonPolicy;
+import org.apachelon.lucelonnelon.indelonx.SelonrialMelonrgelonSchelondulelonr;
 
-import com.twitter.decider.Decider;
-import com.twitter.search.common.schema.SearchWhitespaceAnalyzer;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.common.util.CloseResourceUtil;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentData;
-import com.twitter.search.core.earlybird.index.EarlybirdLuceneIndexSegmentData;
-import com.twitter.search.earlybird.EarlybirdIndexConfig;
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
-import com.twitter.search.earlybird.partition.SearchIndexingMetricSet;
+import com.twittelonr.deloncidelonr.Deloncidelonr;
+import com.twittelonr.selonarch.common.schelonma.SelonarchWhitelonspacelonAnalyzelonr;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdClustelonr;
+import com.twittelonr.selonarch.common.util.CloselonRelonsourcelonUtil;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.elonarlybirdIndelonxSelongmelonntData;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.elonarlybirdLucelonnelonIndelonxSelongmelonntData;
+import com.twittelonr.selonarch.elonarlybird.elonarlybirdIndelonxConfig;
+import com.twittelonr.selonarch.elonarlybird.elonxcelonption.CriticalelonxcelonptionHandlelonr;
+import com.twittelonr.selonarch.elonarlybird.partition.SelonarchIndelonxingMelontricSelont;
 
 /**
- * Base config for the top archive tweet clusters.
+ * Baselon config for thelon top archivelon twelonelont clustelonrs.
  */
-public abstract class ArchiveEarlybirdIndexConfig extends EarlybirdIndexConfig {
+public abstract class ArchivelonelonarlybirdIndelonxConfig elonxtelonnds elonarlybirdIndelonxConfig {
 
-  private final CloseResourceUtil resourceCloser = new CloseResourceUtil();
+  privatelon final CloselonRelonsourcelonUtil relonsourcelonCloselonr = nelonw CloselonRelonsourcelonUtil();
 
-  public ArchiveEarlybirdIndexConfig(
-      EarlybirdCluster cluster, Decider decider, SearchIndexingMetricSet searchIndexingMetricSet,
-      CriticalExceptionHandler criticalExceptionHandler) {
-    super(cluster, decider, searchIndexingMetricSet, criticalExceptionHandler);
+  public ArchivelonelonarlybirdIndelonxConfig(
+      elonarlybirdClustelonr clustelonr, Deloncidelonr deloncidelonr, SelonarchIndelonxingMelontricSelont selonarchIndelonxingMelontricSelont,
+      CriticalelonxcelonptionHandlelonr criticalelonxcelonptionHandlelonr) {
+    supelonr(clustelonr, deloncidelonr, selonarchIndelonxingMelontricSelont, criticalelonxcelonptionHandlelonr);
   }
 
-  @Override
-  public IndexWriterConfig newIndexWriterConfig() {
-    return new IndexWriterConfig(new SearchWhitespaceAnalyzer())
-        .setIndexDeletionPolicy(new KeepOnlyLastCommitDeletionPolicy())
-        .setMergeScheduler(new SerialMergeScheduler())
-        .setMergePolicy(new LogByteSizeMergePolicy())
-        .setRAMBufferSizeMB(IndexWriterConfig.DEFAULT_RAM_PER_THREAD_HARD_LIMIT_MB)
-        .setMaxBufferedDocs(IndexWriterConfig.DISABLE_AUTO_FLUSH)
-        .setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND);
+  @Ovelonrridelon
+  public IndelonxWritelonrConfig nelonwIndelonxWritelonrConfig() {
+    relonturn nelonw IndelonxWritelonrConfig(nelonw SelonarchWhitelonspacelonAnalyzelonr())
+        .selontIndelonxDelonlelontionPolicy(nelonw KelonelonpOnlyLastCommitDelonlelontionPolicy())
+        .selontMelonrgelonSchelondulelonr(nelonw SelonrialMelonrgelonSchelondulelonr())
+        .selontMelonrgelonPolicy(nelonw LogBytelonSizelonMelonrgelonPolicy())
+        .selontRAMBuffelonrSizelonMB(IndelonxWritelonrConfig.DelonFAULT_RAM_PelonR_THRelonAD_HARD_LIMIT_MB)
+        .selontMaxBuffelonrelondDocs(IndelonxWritelonrConfig.DISABLelon_AUTO_FLUSH)
+        .selontOpelonnModelon(IndelonxWritelonrConfig.OpelonnModelon.CRelonATelon_OR_APPelonND);
   }
 
-  @Override
-  public CloseResourceUtil getResourceCloser() {
-    return resourceCloser;
+  @Ovelonrridelon
+  public CloselonRelonsourcelonUtil gelontRelonsourcelonCloselonr() {
+    relonturn relonsourcelonCloselonr;
   }
 
-  @Override
-  public EarlybirdIndexSegmentData optimize(
-      EarlybirdIndexSegmentData segmentData) throws IOException {
-    Preconditions.checkArgument(
-        segmentData instanceof EarlybirdLuceneIndexSegmentData,
-        "Expected EarlybirdLuceneIndexSegmentData but got %s",
-        segmentData.getClass());
-    EarlybirdLuceneIndexSegmentData data = (EarlybirdLuceneIndexSegmentData) segmentData;
+  @Ovelonrridelon
+  public elonarlybirdIndelonxSelongmelonntData optimizelon(
+      elonarlybirdIndelonxSelongmelonntData selongmelonntData) throws IOelonxcelonption {
+    Prelonconditions.chelonckArgumelonnt(
+        selongmelonntData instancelonof elonarlybirdLucelonnelonIndelonxSelongmelonntData,
+        "elonxpelonctelond elonarlybirdLucelonnelonIndelonxSelongmelonntData but got %s",
+        selongmelonntData.gelontClass());
+    elonarlybirdLucelonnelonIndelonxSelongmelonntData data = (elonarlybirdLucelonnelonIndelonxSelongmelonntData) selongmelonntData;
 
-    return new EarlybirdLuceneIndexSegmentData(
-        data.getLuceneDirectory(),
-        data.getMaxSegmentSize(),
-        data.getTimeSliceID(),
-        data.getSchema(),
-        true, // isOptimized
-        data.getSyncData().getSmallestDocID(),
-        new ConcurrentHashMap<>(data.getPerFieldMap()),
-        data.getFacetCountingArray(),
-        data.getDocValuesManager(),
-        data.getDocIDToTweetIDMapper(),
-        data.getTimeMapper(),
-        data.getIndexExtensionsData());
+    relonturn nelonw elonarlybirdLucelonnelonIndelonxSelongmelonntData(
+        data.gelontLucelonnelonDirelonctory(),
+        data.gelontMaxSelongmelonntSizelon(),
+        data.gelontTimelonSlicelonID(),
+        data.gelontSchelonma(),
+        truelon, // isOptimizelond
+        data.gelontSyncData().gelontSmallelonstDocID(),
+        nelonw ConcurrelonntHashMap<>(data.gelontPelonrFielonldMap()),
+        data.gelontFacelontCountingArray(),
+        data.gelontDocValuelonsManagelonr(),
+        data.gelontDocIDToTwelonelontIDMappelonr(),
+        data.gelontTimelonMappelonr(),
+        data.gelontIndelonxelonxtelonnsionsData());
   }
 }

@@ -1,25 +1,25 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.slice
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.slicelon
 
-import com.twitter.product_mixer.core.functional_component.marshaller.TransportMarshaller
-import com.twitter.product_mixer.core.model.common.identifier.TransportMarshallerIdentifier
-import com.twitter.product_mixer.core.model.marshalling.response.slice.Slice
-import com.twitter.strato.graphql.{thriftscala => t}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.TransportMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.TransportMarshallelonrIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.slicelon.Slicelon
+import com.twittelonr.strato.graphql.{thriftscala => t}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class SliceTransportMarshaller @Inject() (sliceItemMarshaller: SliceItemMarshaller)
-    extends TransportMarshaller[Slice, t.SliceResult] {
+@Singlelonton
+class SlicelonTransportMarshallelonr @Injelonct() (slicelonItelonmMarshallelonr: SlicelonItelonmMarshallelonr)
+    elonxtelonnds TransportMarshallelonr[Slicelon, t.SlicelonRelonsult] {
 
-  override val identifier: TransportMarshallerIdentifier = TransportMarshallerIdentifier("Slice")
+  ovelonrridelon val idelonntifielonr: TransportMarshallelonrIdelonntifielonr = TransportMarshallelonrIdelonntifielonr("Slicelon")
 
-  override def apply(slice: Slice): t.SliceResult = {
-    t.SliceResult.Slice(
-      t.Slice(
-        items = slice.items.map(sliceItemMarshaller(_)),
-        sliceInfo = t.SliceInfo(
-          previousCursor = slice.sliceInfo.previousCursor,
-          nextCursor = slice.sliceInfo.nextCursor
+  ovelonrridelon delonf apply(slicelon: Slicelon): t.SlicelonRelonsult = {
+    t.SlicelonRelonsult.Slicelon(
+      t.Slicelon(
+        itelonms = slicelon.itelonms.map(slicelonItelonmMarshallelonr(_)),
+        slicelonInfo = t.SlicelonInfo(
+          prelonviousCursor = slicelon.slicelonInfo.prelonviousCursor,
+          nelonxtCursor = slicelon.slicelonInfo.nelonxtCursor
         )
       ))
   }

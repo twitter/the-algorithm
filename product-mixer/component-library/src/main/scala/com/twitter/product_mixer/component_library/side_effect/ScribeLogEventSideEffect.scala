@@ -1,57 +1,57 @@
-package com.twitter.product_mixer.component_library.side_effect
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.sidelon_elonffelonct
 
-import com.twitter.logpipeline.client.common.EventPublisher
-import com.twitter.product_mixer.core.functional_component.side_effect.PipelineResultSideEffect
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.marshalling.HasMarshalling
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.scrooge.ThriftStruct
-import com.twitter.stitch.Stitch
+import com.twittelonr.logpipelonlinelon.clielonnt.common.elonvelonntPublishelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.sidelon_elonffelonct.PipelonlinelonRelonsultSidelonelonffelonct
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.HasMarshalling
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.scroogelon.ThriftStruct
+import com.twittelonr.stitch.Stitch
 
 /**
- * A [[PipelineResultSideEffect]] that logs [[Thrift]] data that's already available to Scribe
+ * A [[PipelonlinelonRelonsultSidelonelonffelonct]] that logs [[Thrift]] data that's alrelonady availablelon to Scribelon
  */
-trait ScribeLogEventSideEffect[
+trait ScribelonLogelonvelonntSidelonelonffelonct[
   Thrift <: ThriftStruct,
-  Query <: PipelineQuery,
-  ResponseType <: HasMarshalling]
-    extends PipelineResultSideEffect[Query, ResponseType] {
+  Quelonry <: PipelonlinelonQuelonry,
+  RelonsponselonTypelon <: HasMarshalling]
+    elonxtelonnds PipelonlinelonRelonsultSidelonelonffelonct[Quelonry, RelonsponselonTypelon] {
 
   /**
-   * Build the log events from query, selections and response
-   * @param query PipelineQuery
-   * @param selectedCandidates Result after Selectors are executed
-   * @param remainingCandidates Candidates which were not selected
-   * @param droppedCandidates Candidates dropped during selection
-   * @param response Result after Unmarshalling
-   * @return LogEvent in thrift
+   * Build thelon log elonvelonnts from quelonry, selonlelonctions and relonsponselon
+   * @param quelonry PipelonlinelonQuelonry
+   * @param selonlelonctelondCandidatelons Relonsult aftelonr Selonlelonctors arelon elonxeloncutelond
+   * @param relonmainingCandidatelons Candidatelons which welonrelon not selonlelonctelond
+   * @param droppelondCandidatelons Candidatelons droppelond during selonlelonction
+   * @param relonsponselon Relonsult aftelonr Unmarshalling
+   * @relonturn Logelonvelonnt in thrift
    */
-  def buildLogEvents(
-    query: Query,
-    selectedCandidates: Seq[CandidateWithDetails],
-    remainingCandidates: Seq[CandidateWithDetails],
-    droppedCandidates: Seq[CandidateWithDetails],
-    response: ResponseType
-  ): Seq[Thrift]
+  delonf buildLogelonvelonnts(
+    quelonry: Quelonry,
+    selonlelonctelondCandidatelons: Selonq[CandidatelonWithDelontails],
+    relonmainingCandidatelons: Selonq[CandidatelonWithDelontails],
+    droppelondCandidatelons: Selonq[CandidatelonWithDelontails],
+    relonsponselon: RelonsponselonTypelon
+  ): Selonq[Thrift]
 
-  val logPipelinePublisher: EventPublisher[Thrift]
+  val logPipelonlinelonPublishelonr: elonvelonntPublishelonr[Thrift]
 
-  final override def apply(
-    inputs: PipelineResultSideEffect.Inputs[Query, ResponseType]
+  final ovelonrridelon delonf apply(
+    inputs: PipelonlinelonRelonsultSidelonelonffelonct.Inputs[Quelonry, RelonsponselonTypelon]
   ): Stitch[Unit] = {
-    val logEvents = buildLogEvents(
-      query = inputs.query,
-      selectedCandidates = inputs.selectedCandidates,
-      remainingCandidates = inputs.remainingCandidates,
-      droppedCandidates = inputs.droppedCandidates,
-      response = inputs.response
+    val logelonvelonnts = buildLogelonvelonnts(
+      quelonry = inputs.quelonry,
+      selonlelonctelondCandidatelons = inputs.selonlelonctelondCandidatelons,
+      relonmainingCandidatelons = inputs.relonmainingCandidatelons,
+      droppelondCandidatelons = inputs.droppelondCandidatelons,
+      relonsponselon = inputs.relonsponselon
     )
 
     Stitch
-      .collect(
-        logEvents
-          .map { logEvent =>
-            Stitch.callFuture(logPipelinePublisher.publish(logEvent))
+      .collelonct(
+        logelonvelonnts
+          .map { logelonvelonnt =>
+            Stitch.callFuturelon(logPipelonlinelonPublishelonr.publish(logelonvelonnt))
           }
       ).unit
   }

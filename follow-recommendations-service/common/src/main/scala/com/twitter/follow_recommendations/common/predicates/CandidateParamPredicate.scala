@@ -1,21 +1,21 @@
-package com.twitter.follow_recommendations.common.predicates
+packagelon com.twittelonr.follow_reloncommelonndations.common.prelondicatelons
 
-import com.twitter.follow_recommendations.common.base.Predicate
-import com.twitter.follow_recommendations.common.base.PredicateResult
-import com.twitter.follow_recommendations.common.models.FilterReason
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.timelines.configapi.Param
+import com.twittelonr.follow_reloncommelonndations.common.baselon.Prelondicatelon
+import com.twittelonr.follow_reloncommelonndations.common.baselon.PrelondicatelonRelonsult
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.FiltelonrRelonason
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.timelonlinelons.configapi.HasParams
+import com.twittelonr.timelonlinelons.configapi.Param
 
-class CandidateParamPredicate[A <: HasParams](
-  param: Param[Boolean],
-  reason: FilterReason)
-    extends Predicate[A] {
-  override def apply(candidate: A): Stitch[PredicateResult] = {
-    if (candidate.params(param)) {
-      Stitch.value(PredicateResult.Valid)
-    } else {
-      Stitch.value(PredicateResult.Invalid(Set(reason)))
+class CandidatelonParamPrelondicatelon[A <: HasParams](
+  param: Param[Boolelonan],
+  relonason: FiltelonrRelonason)
+    elonxtelonnds Prelondicatelon[A] {
+  ovelonrridelon delonf apply(candidatelon: A): Stitch[PrelondicatelonRelonsult] = {
+    if (candidatelon.params(param)) {
+      Stitch.valuelon(PrelondicatelonRelonsult.Valid)
+    } elonlselon {
+      Stitch.valuelon(PrelondicatelonRelonsult.Invalid(Selont(relonason)))
     }
   }
 }

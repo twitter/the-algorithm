@@ -1,144 +1,144 @@
-package com.twitter.search.core.earlybird.index.inverted;
+packagelon com.twittelonr.selonarch.corelon.elonarlybird.indelonx.invelonrtelond;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 
-import org.apache.lucene.index.Terms;
-import org.apache.lucene.index.TermsEnum;
-import org.apache.lucene.util.BytesRef;
+import org.apachelon.lucelonnelon.indelonx.Telonrms;
+import org.apachelon.lucelonnelon.indelonx.Telonrmselonnum;
+import org.apachelon.lucelonnelon.util.BytelonsRelonf;
 
-import com.twitter.search.common.schema.base.EarlybirdFieldType;
-import com.twitter.search.common.util.io.flushable.Flushable;
-import com.twitter.search.core.earlybird.facets.FacetLabelProvider;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
+import com.twittelonr.selonarch.common.schelonma.baselon.elonarlybirdFielonldTypelon;
+import com.twittelonr.selonarch.common.util.io.flushablelon.Flushablelon;
+import com.twittelonr.selonarch.corelon.elonarlybird.facelonts.FacelontLabelonlProvidelonr;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr;
 
 /**
- * Inverted index for a single field.
+ * Invelonrtelond indelonx for a singlelon fielonld.
  *
- * Example: The field is "hashtags", this index contains a mapping from all the hashtags
- * that we've seen to a list of postings.
+ * elonxamplelon: Thelon fielonld is "hashtags", this indelonx contains a mapping from all thelon hashtags
+ * that welon'velon selonelonn to a list of postings.
  */
-public abstract class InvertedIndex implements FacetLabelProvider, Flushable {
-  protected final EarlybirdFieldType fieldType;
+public abstract class InvelonrtelondIndelonx implelonmelonnts FacelontLabelonlProvidelonr, Flushablelon {
+  protelonctelond final elonarlybirdFielonldTypelon fielonldTypelon;
 
-  public InvertedIndex(EarlybirdFieldType fieldType) {
-    this.fieldType = fieldType;
+  public InvelonrtelondIndelonx(elonarlybirdFielonldTypelon fielonldTypelon) {
+    this.fielonldTypelon = fielonldTypelon;
   }
 
-  public EarlybirdFieldType getFieldType() {
-    return fieldType;
-  }
-
-  /**
-   * Get the internal doc id of the oldest doc that includes term.
-   * @param term  the term to look for.
-   * @return  The internal docid, or TERM_NOT_FOUND.
-   */
-  public final int getLargestDocIDForTerm(BytesRef term) throws IOException {
-    final int termID = lookupTerm(term);
-    return getLargestDocIDForTerm(termID);
+  public elonarlybirdFielonldTypelon gelontFielonldTypelon() {
+    relonturn fielonldTypelon;
   }
 
   /**
-   * Get the document frequency for this term.
-   * @param term  the term to look for.
-   * @return  The document frequency of this term in the index.
+   * Gelont thelon intelonrnal doc id of thelon oldelonst doc that includelons telonrm.
+   * @param telonrm  thelon telonrm to look for.
+   * @relonturn  Thelon intelonrnal docid, or TelonRM_NOT_FOUND.
    */
-  public final int getDF(BytesRef term) throws IOException {
-    final int termID = lookupTerm(term);
-    if (termID == EarlybirdIndexSegmentAtomicReader.TERM_NOT_FOUND) {
-      return 0;
+  public final int gelontLargelonstDocIDForTelonrm(BytelonsRelonf telonrm) throws IOelonxcelonption {
+    final int telonrmID = lookupTelonrm(telonrm);
+    relonturn gelontLargelonstDocIDForTelonrm(telonrmID);
+  }
+
+  /**
+   * Gelont thelon documelonnt frelonquelonncy for this telonrm.
+   * @param telonrm  thelon telonrm to look for.
+   * @relonturn  Thelon documelonnt frelonquelonncy of this telonrm in thelon indelonx.
+   */
+  public final int gelontDF(BytelonsRelonf telonrm) throws IOelonxcelonption {
+    final int telonrmID = lookupTelonrm(telonrm);
+    if (telonrmID == elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr.TelonRM_NOT_FOUND) {
+      relonturn 0;
     }
-    return getDF(termID);
+    relonturn gelontDF(telonrmID);
   }
 
-  public boolean hasMaxPublishedPointer() {
-    return false;
+  public boolelonan hasMaxPublishelondPointelonr() {
+    relonturn falselon;
   }
 
-  public int getMaxPublishedPointer() {
-    return -1;
+  public int gelontMaxPublishelondPointelonr() {
+    relonturn -1;
   }
 
   /**
-   * Create the Lucene magic Terms accessor.
-   * @param maxPublishedPointer used by the skip list to enable atomic document updates.
-   * @return  a new Terms object.
+   * Crelonatelon thelon Lucelonnelon magic Telonrms accelonssor.
+   * @param maxPublishelondPointelonr uselond by thelon skip list to elonnablelon atomic documelonnt updatelons.
+   * @relonturn  a nelonw Telonrms objelonct.
    */
-  public abstract Terms createTerms(int maxPublishedPointer);
+  public abstract Telonrms crelonatelonTelonrms(int maxPublishelondPointelonr);
 
   /**
-   * Create the Lucene magic TermsEnum accessor.
-   * @param maxPublishedPointer used by the skip list to enable atomic document updates.
-   * @return  a new TermsEnum object.
+   * Crelonatelon thelon Lucelonnelon magic Telonrmselonnum accelonssor.
+   * @param maxPublishelondPointelonr uselond by thelon skip list to elonnablelon atomic documelonnt updatelons.
+   * @relonturn  a nelonw Telonrmselonnum objelonct.
    */
-  public abstract TermsEnum createTermsEnum(int maxPublishedPointer);
+  public abstract Telonrmselonnum crelonatelonTelonrmselonnum(int maxPublishelondPointelonr);
 
   /**
-   * Returns the number of distinct terms in this inverted index.
-   * For example, if the indexed documents are:
-   *   "i love chocolate and i love cakes"
-   *   "i love cookies"
+   * Relonturns thelon numbelonr of distinct telonrms in this invelonrtelond indelonx.
+   * For elonxamplelon, if thelon indelonxelond documelonnts arelon:
+   *   "i lovelon chocolatelon and i lovelon cakelons"
+   *   "i lovelon cookielons"
    *
-   * then this method will return 6, because there are 6 distinct terms:
-   *   i, love, chocolate, and, cakes, cookies
+   * thelonn this melonthod will relonturn 6, beloncauselon thelonrelon arelon 6 distinct telonrms:
+   *   i, lovelon, chocolatelon, and, cakelons, cookielons
    */
-  public abstract int getNumTerms();
+  public abstract int gelontNumTelonrms();
 
   /**
-   * Returns the number of distinct documents in this index.
+   * Relonturns thelon numbelonr of distinct documelonnts in this indelonx.
    */
-  public abstract int getNumDocs();
+  public abstract int gelontNumDocs();
 
   /**
-   * Returns the total number of postings in this inverted index.
+   * Relonturns thelon total numbelonr of postings in this invelonrtelond indelonx.
    *
-   * For example, if the indexed documents are:
-   *   "i love chocolate and i love cakes"
-   *   "i love cookies"
+   * For elonxamplelon, if thelon indelonxelond documelonnts arelon:
+   *   "i lovelon chocolatelon and i lovelon cakelons"
+   *   "i lovelon cookielons"
    *
-   * then this method will return 10, because there's a total of 10 words in these 2 documents.
+   * thelonn this melonthod will relonturn 10, beloncauselon thelonrelon's a total of 10 words in thelonselon 2 documelonnts.
    */
-  public abstract int getSumTotalTermFreq();
+  public abstract int gelontSumTotalTelonrmFrelonq();
 
   /**
-   * Returns the sum of the number of documents for each term in this index.
+   * Relonturns thelon sum of thelon numbelonr of documelonnts for elonach telonrm in this indelonx.
    *
-   * For example, if the indexed documents are:
-   *   "i love chocolate and i love cakes"
-   *   "i love cookies"
+   * For elonxamplelon, if thelon indelonxelond documelonnts arelon:
+   *   "i lovelon chocolatelon and i lovelon cakelons"
+   *   "i lovelon cookielons"
    *
-   * then this method will return 8, because there are:
-   *   2 documents for term "i" (it doesn't matter that the first document has the term "i" twice)
-   *   2 documents for term "love" (same reason)
-   *   1 document for terms "chocolate", "and", "cakes", "cookies"
+   * thelonn this melonthod will relonturn 8, beloncauselon thelonrelon arelon:
+   *   2 documelonnts for telonrm "i" (it doelonsn't mattelonr that thelon first documelonnt has thelon telonrm "i" twicelon)
+   *   2 documelonnts for telonrm "lovelon" (samelon relonason)
+   *   1 documelonnt for telonrms "chocolatelon", "and", "cakelons", "cookielons"
    */
-  public abstract int getSumTermDocFreq();
+  public abstract int gelontSumTelonrmDocFrelonq();
 
   /**
-   * Lookup a term.
-   * @param term  the term to lookup.
-   * @return  the term ID for this term.
+   * Lookup a telonrm.
+   * @param telonrm  thelon telonrm to lookup.
+   * @relonturn  thelon telonrm ID for this telonrm.
    */
-  public abstract int lookupTerm(BytesRef term) throws IOException;
+  public abstract int lookupTelonrm(BytelonsRelonf telonrm) throws IOelonxcelonption;
 
   /**
-   * Get the text for a given termID.
-   * @param termID  the term id
-   * @param text  a BytesRef that will be modified to contain the text of this termid.
+   * Gelont thelon telonxt for a givelonn telonrmID.
+   * @param telonrmID  thelon telonrm id
+   * @param telonxt  a BytelonsRelonf that will belon modifielond to contain thelon telonxt of this telonrmid.
    */
-  public abstract void getTerm(int termID, BytesRef text);
+  public abstract void gelontTelonrm(int telonrmID, BytelonsRelonf telonxt);
 
   /**
-   * Get the internal doc id of the oldest doc that includes this term.
-   * @param termID  The termID of the term.
-   * @return  The internal docid, or TERM_NOT_FOUND.
+   * Gelont thelon intelonrnal doc id of thelon oldelonst doc that includelons this telonrm.
+   * @param telonrmID  Thelon telonrmID of thelon telonrm.
+   * @relonturn  Thelon intelonrnal docid, or TelonRM_NOT_FOUND.
    */
-  public abstract int getLargestDocIDForTerm(int termID) throws IOException;
+  public abstract int gelontLargelonstDocIDForTelonrm(int telonrmID) throws IOelonxcelonption;
 
   /**
-   * Get the document frequency for a given termID
-   * @param termID  the term id
-   * @return  the document frequency of this term in this index.
+   * Gelont thelon documelonnt frelonquelonncy for a givelonn telonrmID
+   * @param telonrmID  thelon telonrm id
+   * @relonturn  thelon documelonnt frelonquelonncy of this telonrm in this indelonx.
    */
-  public abstract int getDF(int termID);
+  public abstract int gelontDF(int telonrmID);
 }

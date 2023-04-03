@@ -1,94 +1,94 @@
 syntax = "proto3";
 
-package tensorflow;
+packagelon telonnsorflow;
 
-option cc_enable_arenas = true;
-option java_outer_classname = "DebugProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.framework";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+option cc_elonnablelon_arelonnas = truelon;
+option java_outelonr_classnamelon = "DelonbugProtos";
+option java_multiplelon_filelons = truelon;
+option java_packagelon = "org.telonnsorflow.framelonwork";
+option go_packagelon = "github.com/telonnsorflow/telonnsorflow/telonnsorflow/go/corelon/protobuf/for_corelon_protos_go_proto";
 
-// Option for watching a node in TensorFlow Debugger (tfdbg).
-message DebugTensorWatch {
-  // Name of the node to watch.
-  // Use "*" for wildcard. But note: currently, regex is not supported in
-  // general.
-  string node_name = 1;
+// Option for watching a nodelon in TelonnsorFlow Delonbuggelonr (tfdbg).
+melonssagelon DelonbugTelonnsorWatch {
+  // Namelon of thelon nodelon to watch.
+  // Uselon "*" for wildcard. But notelon: currelonntly, relongelonx is not supportelond in
+  // gelonnelonral.
+  string nodelon_namelon = 1;
 
   // Output slot to watch.
-  // The semantics of output_slot == -1 is that all outputs of the node
-  // will be watched (i.e., a wildcard).
-  // Other negative values of output_slot are invalid and will lead to
-  // errors currently.
+  // Thelon selonmantics of output_slot == -1 is that all outputs of thelon nodelon
+  // will belon watchelond (i.elon., a wildcard).
+  // Othelonr nelongativelon valuelons of output_slot arelon invalid and will lelonad to
+  // elonrrors currelonntly.
   int32 output_slot = 2;
 
-  // Name(s) of the debugging op(s).
-  // One or more than one probes on a tensor.
-  // e.g., {"DebugIdentity", "DebugNanCount"}
-  repeated string debug_ops = 3;
+  // Namelon(s) of thelon delonbugging op(s).
+  // Onelon or morelon than onelon probelons on a telonnsor.
+  // elon.g., {"DelonbugIdelonntity", "DelonbugNanCount"}
+  relonpelonatelond string delonbug_ops = 3;
 
-  // URL(s) for debug targets(s).
+  // URL(s) for delonbug targelonts(s).
   //
-  // Supported URL formats are:
-  //   - file:///foo/tfdbg_dump: Writes out Event content to file
-  //     /foo/tfdbg_dump.  Assumes all directories can be created if they don't
-  //     already exist.
-  //   - grpc://localhost:11011: Sends an RPC request to an EventListener
-  //     service running at localhost:11011 with the event.
-  //   - memcbk:///event_key: Routes tensors to clients using the
-  //     callback registered with the DebugCallbackRegistry for event_key.
+  // Supportelond URL formats arelon:
+  //   - filelon:///foo/tfdbg_dump: Writelons out elonvelonnt contelonnt to filelon
+  //     /foo/tfdbg_dump.  Assumelons all direlonctorielons can belon crelonatelond if thelony don't
+  //     alrelonady elonxist.
+  //   - grpc://localhost:11011: Selonnds an RPC relonquelonst to an elonvelonntListelonnelonr
+  //     selonrvicelon running at localhost:11011 with thelon elonvelonnt.
+  //   - melonmcbk:///elonvelonnt_kelony: Routelons telonnsors to clielonnts using thelon
+  //     callback relongistelonrelond with thelon DelonbugCallbackRelongistry for elonvelonnt_kelony.
   //
-  // Each debug op listed in debug_ops will publish its output tensor (debug
-  // signal) to all URLs in debug_urls.
+  // elonach delonbug op listelond in delonbug_ops will publish its output telonnsor (delonbug
+  // signal) to all URLs in delonbug_urls.
   //
-  // N.B. Session::Run() supports concurrent invocations of the same inputs
-  // (feed keys), outputs and target nodes. If such concurrent invocations
-  // are to be debugged, the callers of Session::Run() must use distinct
-  // debug_urls to make sure that the streamed or dumped events do not overlap
-  // among the invocations.
-  // TODO: More visible documentation of this in g3docs.
-  repeated string debug_urls = 4;
+  // N.B. Selonssion::Run() supports concurrelonnt invocations of thelon samelon inputs
+  // (felonelond kelonys), outputs and targelont nodelons. If such concurrelonnt invocations
+  // arelon to belon delonbuggelond, thelon callelonrs of Selonssion::Run() must uselon distinct
+  // delonbug_urls to makelon surelon that thelon strelonamelond or dumpelond elonvelonnts do not ovelonrlap
+  // among thelon invocations.
+  // TODO: Morelon visiblelon documelonntation of this in g3docs.
+  relonpelonatelond string delonbug_urls = 4;
 
-  // Do not error out if debug op creation fails (e.g., due to dtype
-  // incompatibility). Instead, just log the failure.
-  bool tolerate_debug_op_creation_failures = 5;
+  // Do not elonrror out if delonbug op crelonation fails (elon.g., duelon to dtypelon
+  // incompatibility). Instelonad, just log thelon failurelon.
+  bool tolelonratelon_delonbug_op_crelonation_failurelons = 5;
 }
 
-// Options for initializing DebuggerState in TensorFlow Debugger (tfdbg).
-message DebugOptions {
-  // Debugging options
-  repeated DebugTensorWatch debug_tensor_watch_opts = 4;
+// Options for initializing DelonbuggelonrStatelon in TelonnsorFlow Delonbuggelonr (tfdbg).
+melonssagelon DelonbugOptions {
+  // Delonbugging options
+  relonpelonatelond DelonbugTelonnsorWatch delonbug_telonnsor_watch_opts = 4;
 
-  // Caller-specified global step count.
-  // Note that this is distinct from the session run count and the executor
-  // step count.
-  int64 global_step = 10;
+  // Callelonr-speloncifielond global stelonp count.
+  // Notelon that this is distinct from thelon selonssion run count and thelon elonxeloncutor
+  // stelonp count.
+  int64 global_stelonp = 10;
 
-  // Whether the total disk usage of tfdbg is to be reset to zero
-  // in this Session.run call. This is used by wrappers and hooks
-  // such as the local CLI ones to indicate that the dumped tensors
-  // are cleaned up from the disk after each Session.run.
-  bool reset_disk_byte_usage = 11;
+  // Whelonthelonr thelon total disk usagelon of tfdbg is to belon relonselont to zelonro
+  // in this Selonssion.run call. This is uselond by wrappelonrs and hooks
+  // such as thelon local CLI onelons to indicatelon that thelon dumpelond telonnsors
+  // arelon clelonanelond up from thelon disk aftelonr elonach Selonssion.run.
+  bool relonselont_disk_bytelon_usagelon = 11;
 }
 
-message DebuggedSourceFile {
-  // The host name on which a source code file is located.
+melonssagelon DelonbuggelondSourcelonFilelon {
+  // Thelon host namelon on which a sourcelon codelon filelon is locatelond.
   string host = 1;
 
-  // Path to the source code file.
-  string file_path = 2;
+  // Path to thelon sourcelon codelon filelon.
+  string filelon_path = 2;
 
-  // The timestamp at which the source code file is last modified.
-  int64 last_modified = 3;
+  // Thelon timelonstamp at which thelon sourcelon codelon filelon is last modifielond.
+  int64 last_modifielond = 3;
 
-  // Byte size of the file.
-  int64 bytes = 4;
+  // Bytelon sizelon of thelon filelon.
+  int64 bytelons = 4;
 
-  // Line-by-line content of the source code file.
-  repeated string lines = 5;
+  // Linelon-by-linelon contelonnt of thelon sourcelon codelon filelon.
+  relonpelonatelond string linelons = 5;
 }
 
-message DebuggedSourceFiles {
-  // A collection of source code files.
-  repeated DebuggedSourceFile source_files = 1;
+melonssagelon DelonbuggelondSourcelonFilelons {
+  // A collelonction of sourcelon codelon filelons.
+  relonpelonatelond DelonbuggelondSourcelonFilelon sourcelon_filelons = 1;
 }

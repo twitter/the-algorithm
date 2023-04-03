@@ -1,15 +1,15 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.metadata
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata
 
-trait HasFeedbackActionInfo {
-  def feedbackActionInfo: Option[FeedbackActionInfo]
+trait HasFelonelondbackActionInfo {
+  delonf felonelondbackActionInfo: Option[FelonelondbackActionInfo]
 }
 
-trait ContainsFeedbackActionInfos {
-  def feedbackActionInfos: Seq[Option[FeedbackActionInfo]]
+trait ContainsFelonelondbackActionInfos {
+  delonf felonelondbackActionInfos: Selonq[Option[FelonelondbackActionInfo]]
 }
 
-case class FeedbackActionInfo(
-  feedbackActions: Seq[FeedbackAction],
-  feedbackMetadata: Option[String],
-  displayContext: Option[FeedbackDisplayContext],
-  clientEventInfo: Option[ClientEventInfo])
+caselon class FelonelondbackActionInfo(
+  felonelondbackActions: Selonq[FelonelondbackAction],
+  felonelondbackMelontadata: Option[String],
+  displayContelonxt: Option[FelonelondbackDisplayContelonxt],
+  clielonntelonvelonntInfo: Option[ClielonntelonvelonntInfo])

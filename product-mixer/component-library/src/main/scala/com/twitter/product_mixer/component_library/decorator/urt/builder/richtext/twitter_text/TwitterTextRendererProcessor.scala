@@ -1,5 +1,5 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.richtext.twitter_text
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.richtelonxt.twittelonr_telonxt
 
-trait TwitterTextRendererProcessor {
-  def process(twitterTextRichTextBuilder: TwitterTextRenderer): TwitterTextRenderer
+trait TwittelonrTelonxtRelonndelonrelonrProcelonssor {
+  delonf procelonss(twittelonrTelonxtRichTelonxtBuildelonr: TwittelonrTelonxtRelonndelonrelonr): TwittelonrTelonxtRelonndelonrelonr
 }

@@ -1,112 +1,112 @@
-package com.twitter.product_mixer.component_library.premarshaller.urt
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.prelonmarshallelonr.urt
 
-import com.twitter.product_mixer.component_library.decorator.urt.builder.timeline_module.ManualModuleId
-import com.twitter.product_mixer.component_library.decorator.urt.builder.timeline_module.ModuleIdGeneration
-import com.twitter.product_mixer.component_library.decorator.urt.builder.timeline_module.AutomaticUniqueModuleId
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder._
-import com.twitter.product_mixer.core.functional_component.premarshaller.DomainMarshaller
-import com.twitter.product_mixer.core.functional_component.premarshaller.UndecoratedCandidateDomainMarshallerException
-import com.twitter.product_mixer.core.functional_component.premarshaller.UndecoratedModuleDomainMarshallerException
-import com.twitter.product_mixer.core.functional_component.premarshaller.UnsupportedModuleDomainMarshallerException
-import com.twitter.product_mixer.core.functional_component.premarshaller.UnsupportedPresentationDomainMarshallerException
-import com.twitter.product_mixer.core.model.common.identifier.DomainMarshallerIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ItemCandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ModuleCandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.urt.BaseUrtItemPresentation
-import com.twitter.product_mixer.core.model.common.presentation.urt.BaseUrtModulePresentation
-import com.twitter.product_mixer.core.model.common.presentation.urt.BaseUrtOperationPresentation
-import com.twitter.product_mixer.core.model.common.presentation.urt.IsDispensable
-import com.twitter.product_mixer.core.model.common.presentation.urt.WithItemTreeDisplay
-import com.twitter.product_mixer.core.model.marshalling.response.urt.ModuleItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.Timeline
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineInstruction
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.timelonlinelon_modulelon.ManualModulelonId
+import com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.timelonlinelon_modulelon.ModulelonIdGelonnelonration
+import com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.timelonlinelon_modulelon.AutomaticUniquelonModulelonId
+import com.twittelonr.product_mixelonr.componelonnt_library.prelonmarshallelonr.urt.buildelonr._
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.prelonmarshallelonr.DomainMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.prelonmarshallelonr.UndeloncoratelondCandidatelonDomainMarshallelonrelonxcelonption
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.prelonmarshallelonr.UndeloncoratelondModulelonDomainMarshallelonrelonxcelonption
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.prelonmarshallelonr.UnsupportelondModulelonDomainMarshallelonrelonxcelonption
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.prelonmarshallelonr.UnsupportelondPrelonselonntationDomainMarshallelonrelonxcelonption
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.DomainMarshallelonrIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.ItelonmCandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.ModulelonCandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.urt.BaselonUrtItelonmPrelonselonntation
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.urt.BaselonUrtModulelonPrelonselonntation
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.urt.BaselonUrtOpelonrationPrelonselonntation
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.urt.IsDispelonnsablelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.urt.WithItelonmTrelonelonDisplay
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.ModulelonItelonm
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.Timelonlinelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.TimelonlinelonInstruction
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
 /**
- * Domain marshaller that generates URT timelines automatically if the candidate pipeline decorators
- * use item and module presentations types that implement [[BaseUrtItemPresentation]] and
- * [[BaseUrtModulePresentation]], respectively to hold URT presentation data.
+ * Domain marshallelonr that gelonnelonratelons URT timelonlinelons automatically if thelon candidatelon pipelonlinelon deloncorators
+ * uselon itelonm and modulelon prelonselonntations typelons that implelonmelonnt [[BaselonUrtItelonmPrelonselonntation]] and
+ * [[BaselonUrtModulelonPrelonselonntation]], relonspelonctivelonly to hold URT prelonselonntation data.
  */
-case class UrtDomainMarshaller[-Query <: PipelineQuery](
-  override val instructionBuilders: Seq[UrtInstructionBuilder[Query, TimelineInstruction]] =
-    Seq(AddEntriesInstructionBuilder()),
-  override val cursorBuilders: Seq[UrtCursorBuilder[Query]] = Seq.empty,
-  override val cursorUpdaters: Seq[UrtCursorUpdater[Query]] = Seq.empty,
-  override val metadataBuilder: Option[BaseUrtMetadataBuilder[Query]] = None,
-  override val sortIndexStep: Int = 1,
-  override val identifier: DomainMarshallerIdentifier =
-    DomainMarshallerIdentifier("UnifiedRichTimeline"))
-    extends DomainMarshaller[Query, Timeline]
-    with UrtBuilder[Query, TimelineInstruction] {
+caselon class UrtDomainMarshallelonr[-Quelonry <: PipelonlinelonQuelonry](
+  ovelonrridelon val instructionBuildelonrs: Selonq[UrtInstructionBuildelonr[Quelonry, TimelonlinelonInstruction]] =
+    Selonq(AddelonntrielonsInstructionBuildelonr()),
+  ovelonrridelon val cursorBuildelonrs: Selonq[UrtCursorBuildelonr[Quelonry]] = Selonq.elonmpty,
+  ovelonrridelon val cursorUpdatelonrs: Selonq[UrtCursorUpdatelonr[Quelonry]] = Selonq.elonmpty,
+  ovelonrridelon val melontadataBuildelonr: Option[BaselonUrtMelontadataBuildelonr[Quelonry]] = Nonelon,
+  ovelonrridelon val sortIndelonxStelonp: Int = 1,
+  ovelonrridelon val idelonntifielonr: DomainMarshallelonrIdelonntifielonr =
+    DomainMarshallelonrIdelonntifielonr("UnifielondRichTimelonlinelon"))
+    elonxtelonnds DomainMarshallelonr[Quelonry, Timelonlinelon]
+    with UrtBuildelonr[Quelonry, TimelonlinelonInstruction] {
 
-  override def apply(
-    query: Query,
-    selections: Seq[CandidateWithDetails]
-  ): Timeline = {
-    val initialSortIndex = getInitialSortIndex(query)
+  ovelonrridelon delonf apply(
+    quelonry: Quelonry,
+    selonlelonctions: Selonq[CandidatelonWithDelontails]
+  ): Timelonlinelon = {
+    val initialSortIndelonx = gelontInitialSortIndelonx(quelonry)
 
-    val entries = selections.zipWithIndex.map {
-      case (ItemCandidateWithDetails(_, Some(presentation: BaseUrtItemPresentation), _), _) =>
-        presentation.timelineItem
-      case (ItemCandidateWithDetails(_, Some(presentation: BaseUrtOperationPresentation), _), _) =>
-        presentation.timelineOperation
-      case (
-            ModuleCandidateWithDetails(
-              candidates,
-              Some(presentation: BaseUrtModulePresentation),
+    val elonntrielons = selonlelonctions.zipWithIndelonx.map {
+      caselon (ItelonmCandidatelonWithDelontails(_, Somelon(prelonselonntation: BaselonUrtItelonmPrelonselonntation), _), _) =>
+        prelonselonntation.timelonlinelonItelonm
+      caselon (ItelonmCandidatelonWithDelontails(_, Somelon(prelonselonntation: BaselonUrtOpelonrationPrelonselonntation), _), _) =>
+        prelonselonntation.timelonlinelonOpelonration
+      caselon (
+            ModulelonCandidatelonWithDelontails(
+              candidatelons,
+              Somelon(prelonselonntation: BaselonUrtModulelonPrelonselonntation),
               _),
-            index) =>
-        val moduleItems = candidates.collect {
-          case ItemCandidateWithDetails(_, Some(itemPresentation: BaseUrtItemPresentation), _) =>
-            buildModuleItem(itemPresentation)
+            indelonx) =>
+        val modulelonItelonms = candidatelons.collelonct {
+          caselon ItelonmCandidatelonWithDelontails(_, Somelon(itelonmPrelonselonntation: BaselonUrtItelonmPrelonselonntation), _) =>
+            buildModulelonItelonm(itelonmPrelonselonntation)
         }
 
-        ModuleIdGeneration(presentation.timelineModule.id) match {
-          case _: AutomaticUniqueModuleId =>
-            //  Module IDs are unique using this method since initialSortIndex is based on time of request combined
-            //  with each timeline module index
-            presentation.timelineModule.copy(id = initialSortIndex + index, items = moduleItems)
-          case ManualModuleId(moduleId) =>
-            presentation.timelineModule.copy(id = moduleId, items = moduleItems)
+        ModulelonIdGelonnelonration(prelonselonntation.timelonlinelonModulelon.id) match {
+          caselon _: AutomaticUniquelonModulelonId =>
+            //  Modulelon IDs arelon uniquelon using this melonthod sincelon initialSortIndelonx is baselond on timelon of relonquelonst combinelond
+            //  with elonach timelonlinelon modulelon indelonx
+            prelonselonntation.timelonlinelonModulelon.copy(id = initialSortIndelonx + indelonx, itelonms = modulelonItelonms)
+          caselon ManualModulelonId(modulelonId) =>
+            prelonselonntation.timelonlinelonModulelon.copy(id = modulelonId, itelonms = modulelonItelonms)
         }
-      case (
-            itemCandidateWithDetails @ ItemCandidateWithDetails(candidate, Some(presentation), _),
+      caselon (
+            itelonmCandidatelonWithDelontails @ ItelonmCandidatelonWithDelontails(candidatelon, Somelon(prelonselonntation), _),
             _) =>
-        throw new UnsupportedPresentationDomainMarshallerException(
-          candidate,
-          presentation,
-          itemCandidateWithDetails.source)
-      case (itemCandidateWithDetails @ ItemCandidateWithDetails(candidate, None, _), _) =>
-        throw new UndecoratedCandidateDomainMarshallerException(
-          candidate,
-          itemCandidateWithDetails.source)
-      case (
-            moduleCandidateWithDetails @ ModuleCandidateWithDetails(_, presentation @ Some(_), _),
+        throw nelonw UnsupportelondPrelonselonntationDomainMarshallelonrelonxcelonption(
+          candidatelon,
+          prelonselonntation,
+          itelonmCandidatelonWithDelontails.sourcelon)
+      caselon (itelonmCandidatelonWithDelontails @ ItelonmCandidatelonWithDelontails(candidatelon, Nonelon, _), _) =>
+        throw nelonw UndeloncoratelondCandidatelonDomainMarshallelonrelonxcelonption(
+          candidatelon,
+          itelonmCandidatelonWithDelontails.sourcelon)
+      caselon (
+            modulelonCandidatelonWithDelontails @ ModulelonCandidatelonWithDelontails(_, prelonselonntation @ Somelon(_), _),
             _) =>
-        // handles given a non `BaseUrtModulePresentation` presentation type
-        throw new UnsupportedModuleDomainMarshallerException(
-          presentation,
-          moduleCandidateWithDetails.source)
-      case (moduleCandidateWithDetails @ ModuleCandidateWithDetails(_, None, _), _) =>
-        throw new UndecoratedModuleDomainMarshallerException(moduleCandidateWithDetails.source)
+        // handlelons givelonn a non `BaselonUrtModulelonPrelonselonntation` prelonselonntation typelon
+        throw nelonw UnsupportelondModulelonDomainMarshallelonrelonxcelonption(
+          prelonselonntation,
+          modulelonCandidatelonWithDelontails.sourcelon)
+      caselon (modulelonCandidatelonWithDelontails @ ModulelonCandidatelonWithDelontails(_, Nonelon, _), _) =>
+        throw nelonw UndeloncoratelondModulelonDomainMarshallelonrelonxcelonption(modulelonCandidatelonWithDelontails.sourcelon)
     }
 
-    buildTimeline(query, entries)
+    buildTimelonlinelon(quelonry, elonntrielons)
   }
 
-  private def buildModuleItem(itemPresentation: BaseUrtItemPresentation): ModuleItem = {
-    val isDispensable = itemPresentation match {
-      case isDispensable: IsDispensable => Some(isDispensable.dispensable)
-      case _ => None
+  privatelon delonf buildModulelonItelonm(itelonmPrelonselonntation: BaselonUrtItelonmPrelonselonntation): ModulelonItelonm = {
+    val isDispelonnsablelon = itelonmPrelonselonntation match {
+      caselon isDispelonnsablelon: IsDispelonnsablelon => Somelon(isDispelonnsablelon.dispelonnsablelon)
+      caselon _ => Nonelon
     }
-    val treeDisplay = itemPresentation match {
-      case withItemTreeDisplay: WithItemTreeDisplay => withItemTreeDisplay.treeDisplay
-      case _ => None
+    val trelonelonDisplay = itelonmPrelonselonntation match {
+      caselon withItelonmTrelonelonDisplay: WithItelonmTrelonelonDisplay => withItelonmTrelonelonDisplay.trelonelonDisplay
+      caselon _ => Nonelon
     }
-    ModuleItem(
-      itemPresentation.timelineItem,
-      dispensable = isDispensable,
-      treeDisplay = treeDisplay)
+    ModulelonItelonm(
+      itelonmPrelonselonntation.timelonlinelonItelonm,
+      dispelonnsablelon = isDispelonnsablelon,
+      trelonelonDisplay = trelonelonDisplay)
   }
 }

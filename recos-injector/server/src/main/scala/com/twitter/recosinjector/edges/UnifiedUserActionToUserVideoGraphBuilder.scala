@@ -1,56 +1,56 @@
-package com.twitter.recosinjector.edges
+packagelon com.twittelonr.reloncosinjelonctor.elondgelons
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.recos.util.Action
-import com.twitter.recosinjector.util.UuaEngagementEventDetails
-import com.twitter.util.Future
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.reloncos.util.Action
+import com.twittelonr.reloncosinjelonctor.util.UuaelonngagelonmelonntelonvelonntDelontails
+import com.twittelonr.util.Futurelon
 
-class UnifiedUserActionToUserVideoGraphBuilder(
-  userTweetEntityEdgeBuilder: UserTweetEntityEdgeBuilder
+class UnifielondUselonrActionToUselonrVidelonoGraphBuildelonr(
+  uselonrTwelonelontelonntityelondgelonBuildelonr: UselonrTwelonelontelonntityelondgelonBuildelonr
 )(
-  override implicit val statsReceiver: StatsReceiver)
-    extends EventToMessageBuilder[UuaEngagementEventDetails, UserTweetEntityEdge] {
+  ovelonrridelon implicit val statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds elonvelonntToMelonssagelonBuildelonr[UuaelonngagelonmelonntelonvelonntDelontails, UselonrTwelonelontelonntityelondgelon] {
 
-  private val numVideoPlayback50EdgeCounter = statsReceiver.counter("num_video_playback50_edge")
-  private val numUnVideoPlayback50Counter = statsReceiver.counter("num_non_video_playback50_edge")
+  privatelon val numVidelonoPlayback50elondgelonCountelonr = statsReloncelonivelonr.countelonr("num_videlono_playback50_elondgelon")
+  privatelon val numUnVidelonoPlayback50Countelonr = statsReloncelonivelonr.countelonr("num_non_videlono_playback50_elondgelon")
 
-  override def shouldProcessEvent(event: UuaEngagementEventDetails): Future[Boolean] = {
-    event.userTweetEngagement.action match {
-      case Action.VideoPlayback50 => Future(true)
-      case _ => Future(false)
+  ovelonrridelon delonf shouldProcelonsselonvelonnt(elonvelonnt: UuaelonngagelonmelonntelonvelonntDelontails): Futurelon[Boolelonan] = {
+    elonvelonnt.uselonrTwelonelontelonngagelonmelonnt.action match {
+      caselon Action.VidelonoPlayback50 => Futurelon(truelon)
+      caselon _ => Futurelon(falselon)
     }
   }
 
-  override def buildEdges(details: UuaEngagementEventDetails): Future[Seq[UserTweetEntityEdge]] = {
-    val engagement = details.userTweetEngagement
-    val tweetDetails = engagement.tweetDetails
+  ovelonrridelon delonf buildelondgelons(delontails: UuaelonngagelonmelonntelonvelonntDelontails): Futurelon[Selonq[UselonrTwelonelontelonntityelondgelon]] = {
+    val elonngagelonmelonnt = delontails.uselonrTwelonelontelonngagelonmelonnt
+    val twelonelontDelontails = elonngagelonmelonnt.twelonelontDelontails
 
-    Future
-      .value(
-        UserTweetEntityEdge(
-          sourceUser = engagement.engageUserId,
-          targetTweet = engagement.tweetId,
-          action = engagement.action,
-          metadata = engagement.engagementTimeMillis,
-          cardInfo = engagement.tweetDetails.map(_.cardInfo.toByte),
-          entitiesMap = None,
-          tweetDetails = tweetDetails
+    Futurelon
+      .valuelon(
+        UselonrTwelonelontelonntityelondgelon(
+          sourcelonUselonr = elonngagelonmelonnt.elonngagelonUselonrId,
+          targelontTwelonelont = elonngagelonmelonnt.twelonelontId,
+          action = elonngagelonmelonnt.action,
+          melontadata = elonngagelonmelonnt.elonngagelonmelonntTimelonMillis,
+          cardInfo = elonngagelonmelonnt.twelonelontDelontails.map(_.cardInfo.toBytelon),
+          elonntitielonsMap = Nonelon,
+          twelonelontDelontails = twelonelontDelontails
         )
-      ).map { edge =>
-        edge match {
-          case videoPlayback50 if videoPlayback50.action == Action.VideoPlayback50 =>
-            numVideoPlayback50EdgeCounter.incr()
-          case _ =>
-            numUnVideoPlayback50Counter.incr()
+      ).map { elondgelon =>
+        elondgelon match {
+          caselon videlonoPlayback50 if videlonoPlayback50.action == Action.VidelonoPlayback50 =>
+            numVidelonoPlayback50elondgelonCountelonr.incr()
+          caselon _ =>
+            numUnVidelonoPlayback50Countelonr.incr()
         }
-        Seq(edge)
+        Selonq(elondgelon)
       }
   }
 
-  override def filterEdges(
-    event: UuaEngagementEventDetails,
-    edges: Seq[UserTweetEntityEdge]
-  ): Future[Seq[UserTweetEntityEdge]] = {
-    Future(edges)
+  ovelonrridelon delonf filtelonrelondgelons(
+    elonvelonnt: UuaelonngagelonmelonntelonvelonntDelontails,
+    elondgelons: Selonq[UselonrTwelonelontelonntityelondgelon]
+  ): Futurelon[Selonq[UselonrTwelonelontelonntityelondgelon]] = {
+    Futurelon(elondgelons)
   }
 }

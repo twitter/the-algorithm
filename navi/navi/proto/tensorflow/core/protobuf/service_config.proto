@@ -1,82 +1,82 @@
 syntax = "proto3";
 
-package tensorflow.data.experimental;
+packagelon telonnsorflow.data.elonxpelonrimelonntal;
 
-import "tensorflow/core/protobuf/data_service.proto";
+import "telonnsorflow/corelon/protobuf/data_selonrvicelon.proto";
 
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+option go_packagelon = "github.com/telonnsorflow/telonnsorflow/telonnsorflow/go/corelon/protobuf/for_corelon_protos_go_proto";
 
-// Configuration for a tf.data service DispatchServer.
-// Next id: 10
-message DispatcherConfig {
-  // The port for the dispatcher to bind to. A value of 0 indicates that the
-  // dispatcher may bind to any available port.
+// Configuration for a tf.data selonrvicelon DispatchSelonrvelonr.
+// Nelonxt id: 10
+melonssagelon DispatchelonrConfig {
+  // Thelon port for thelon dispatchelonr to bind to. A valuelon of 0 indicatelons that thelon
+  // dispatchelonr may bind to any availablelon port.
   int64 port = 1;
-  // The protocol for the dispatcher to use when connecting to workers.
+  // Thelon protocol for thelon dispatchelonr to uselon whelonn conneloncting to workelonrs.
   string protocol = 2;
-  // A work directory to use for storing dispatcher state, and for recovering
-  // during restarts. The empty string indicates not to use any work directory.
+  // A work direlonctory to uselon for storing dispatchelonr statelon, and for reloncovelonring
+  // during relonstarts. Thelon elonmpty string indicatelons not to uselon any work direlonctory.
   string work_dir = 3;
-  // Whether to run in fault tolerant mode, where dispatcher state is saved
-  // across restarts. Requires that `work_dir` is nonempty.
-  bool fault_tolerant_mode = 4;
-  // (Optional.) If the job uses auto-sharding, it needs to specify a fixed list
-  // of worker addresses that will register with the dispatcher. The worker
-  // addresses should be in the format "host" or "host:port", where "port" is an
-  // integer, named port, or %port% to match any port.
-  repeated string worker_addresses = 7;
-  // (Optional.) tf.data service deployment mode. Supported values are "REMOTE",
-  // "COLOCATED", and "HYBRID". If unspecified, it is assumed to be "REMOTE".
-  DeploymentMode deployment_mode = 9;
-  // How often the dispatcher should scan through to delete old and unused
-  // jobs. A value of 0 indicates that the decision should be left up to the
-  // runtime.
-  int64 job_gc_check_interval_ms = 5;
-  // How long a job needs to be unused before it becomes a candidate for garbage
-  // collection. A value of -1 indicates that jobs should never be garbage
-  // collected. A value of 0 indicates that the decision should be left up to
-  // the runtime.
-  int64 job_gc_timeout_ms = 6;
-  // How long to wait before garbage-collecting a client that hasn't
-  // heartbeated to the dispatcher. A value of 0 indicates that the timeout
-  // should be left to the runtime.
-  int64 client_timeout_ms = 8;
+  // Whelonthelonr to run in fault tolelonrant modelon, whelonrelon dispatchelonr statelon is savelond
+  // across relonstarts. Relonquirelons that `work_dir` is nonelonmpty.
+  bool fault_tolelonrant_modelon = 4;
+  // (Optional.) If thelon job uselons auto-sharding, it nelonelonds to speloncify a fixelond list
+  // of workelonr addrelonsselons that will relongistelonr with thelon dispatchelonr. Thelon workelonr
+  // addrelonsselons should belon in thelon format "host" or "host:port", whelonrelon "port" is an
+  // intelongelonr, namelond port, or %port% to match any port.
+  relonpelonatelond string workelonr_addrelonsselons = 7;
+  // (Optional.) tf.data selonrvicelon delonploymelonnt modelon. Supportelond valuelons arelon "RelonMOTelon",
+  // "COLOCATelonD", and "HYBRID". If unspeloncifielond, it is assumelond to belon "RelonMOTelon".
+  DelonploymelonntModelon delonploymelonnt_modelon = 9;
+  // How oftelonn thelon dispatchelonr should scan through to delonlelontelon old and unuselond
+  // jobs. A valuelon of 0 indicatelons that thelon deloncision should belon lelonft up to thelon
+  // runtimelon.
+  int64 job_gc_chelonck_intelonrval_ms = 5;
+  // How long a job nelonelonds to belon unuselond belonforelon it beloncomelons a candidatelon for garbagelon
+  // collelonction. A valuelon of -1 indicatelons that jobs should nelonvelonr belon garbagelon
+  // collelonctelond. A valuelon of 0 indicatelons that thelon deloncision should belon lelonft up to
+  // thelon runtimelon.
+  int64 job_gc_timelonout_ms = 6;
+  // How long to wait belonforelon garbagelon-colleloncting a clielonnt that hasn't
+  // helonartbelonatelond to thelon dispatchelonr. A valuelon of 0 indicatelons that thelon timelonout
+  // should belon lelonft to thelon runtimelon.
+  int64 clielonnt_timelonout_ms = 8;
 }
 
-// Configuration for a tf.data service WorkerServer.
-// Next id: 11
-message WorkerConfig {
-  // The port for the worker to bind to. A value of 0 indicates that the
-  // worker may bind to any available port.
+// Configuration for a tf.data selonrvicelon WorkelonrSelonrvelonr.
+// Nelonxt id: 11
+melonssagelon WorkelonrConfig {
+  // Thelon port for thelon workelonr to bind to. A valuelon of 0 indicatelons that thelon
+  // workelonr may bind to any availablelon port.
   int64 port = 1;
-  // The protocol for the worker to use when connecting to the dispatcher.
+  // Thelon protocol for thelon workelonr to uselon whelonn conneloncting to thelon dispatchelonr.
   string protocol = 2;
-  // The address of the dispatcher to register with.
-  string dispatcher_address = 3;
-  // The address of the worker server. The substring "%port%", if specified,
-  // will be replaced with the worker's bound port. This is useful when the port
-  // is set to `0`.
-  string worker_address = 4;
-  // Tags attached to the worker. This allows reading from selected workers.
-  // For example, by applying a "COLOCATED" tag, tf.data service is able to read
-  // from the local tf.data worker if one exists, then from off-TF-host workers,
-  // to avoid cross-TF-host reads.
-  repeated string worker_tags = 10;
-  // How often the worker should heartbeat to the master. A value of 0 indicates
-  // that the decision should be left up to the runtime.
-  int64 heartbeat_interval_ms = 5;
-  // How long to retry requests to the dispatcher before giving up and reporting
-  // an error. A value of 0 indicates that the decision should be left up to the
-  // runtime.
-  int64 dispatcher_timeout_ms = 6;
-  // The protocol for the worker to use when transferring data to clients.
-  string data_transfer_protocol = 7;
-  // The data transfer address of the worker server. The substring "%port%", if
-  // specified, will be replaced with the worker's bound port. This is useful
-  // when the port is set to `0`.
-  string data_transfer_address = 8;
-  // When shutting down a worker, how long to wait for the gRPC server to
-  // process the final requests. This is used to achieve clean shutdown in unit
-  // tests.
-  int64 shutdown_quiet_period_ms = 9;
+  // Thelon addrelonss of thelon dispatchelonr to relongistelonr with.
+  string dispatchelonr_addrelonss = 3;
+  // Thelon addrelonss of thelon workelonr selonrvelonr. Thelon substring "%port%", if speloncifielond,
+  // will belon relonplacelond with thelon workelonr's bound port. This is uselonful whelonn thelon port
+  // is selont to `0`.
+  string workelonr_addrelonss = 4;
+  // Tags attachelond to thelon workelonr. This allows relonading from selonlelonctelond workelonrs.
+  // For elonxamplelon, by applying a "COLOCATelonD" tag, tf.data selonrvicelon is ablelon to relonad
+  // from thelon local tf.data workelonr if onelon elonxists, thelonn from off-TF-host workelonrs,
+  // to avoid cross-TF-host relonads.
+  relonpelonatelond string workelonr_tags = 10;
+  // How oftelonn thelon workelonr should helonartbelonat to thelon mastelonr. A valuelon of 0 indicatelons
+  // that thelon deloncision should belon lelonft up to thelon runtimelon.
+  int64 helonartbelonat_intelonrval_ms = 5;
+  // How long to relontry relonquelonsts to thelon dispatchelonr belonforelon giving up and relonporting
+  // an elonrror. A valuelon of 0 indicatelons that thelon deloncision should belon lelonft up to thelon
+  // runtimelon.
+  int64 dispatchelonr_timelonout_ms = 6;
+  // Thelon protocol for thelon workelonr to uselon whelonn transfelonrring data to clielonnts.
+  string data_transfelonr_protocol = 7;
+  // Thelon data transfelonr addrelonss of thelon workelonr selonrvelonr. Thelon substring "%port%", if
+  // speloncifielond, will belon relonplacelond with thelon workelonr's bound port. This is uselonful
+  // whelonn thelon port is selont to `0`.
+  string data_transfelonr_addrelonss = 8;
+  // Whelonn shutting down a workelonr, how long to wait for thelon gRPC selonrvelonr to
+  // procelonss thelon final relonquelonsts. This is uselond to achielonvelon clelonan shutdown in unit
+  // telonsts.
+  int64 shutdown_quielont_pelonriod_ms = 9;
 }

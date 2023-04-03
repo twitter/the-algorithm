@@ -1,84 +1,84 @@
-package com.twitter.product_mixer.core.pipeline.step.candidate_source
+packagelon com.twittelonr.product_mixelonr.corelon.pipelonlinelon.stelonp.candidatelon_sourcelon
 
-import com.twitter.product_mixer.core.functional_component.candidate_source.BaseCandidateSource
-import com.twitter.product_mixer.core.functional_component.transformer.BaseCandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineResultsTransformer
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.state.HasCandidatesWithFeatures
-import com.twitter.product_mixer.core.pipeline.state.HasQuery
-import com.twitter.product_mixer.core.pipeline.step.Step
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.product_mixer.core.service.candidate_source_executor.CandidateSourceExecutor
-import com.twitter.product_mixer.core.service.candidate_source_executor.CandidateSourceExecutorResult
-import com.twitter.stitch.Arrow
-import javax.inject.Inject
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.BaselonCandidatelonSourcelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.transformelonr.BaselonCandidatelonPipelonlinelonQuelonryTransformelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.transformelonr.CandidatelonFelonaturelonTransformelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.transformelonr.CandidatelonPipelonlinelonRelonsultsTransformelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.statelon.HasCandidatelonsWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.statelon.HasQuelonry
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.stelonp.Stelonp
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.elonxeloncutor
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.candidatelon_sourcelon_elonxeloncutor.CandidatelonSourcelonelonxeloncutor
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.candidatelon_sourcelon_elonxeloncutor.CandidatelonSourcelonelonxeloncutorRelonsult
+import com.twittelonr.stitch.Arrow
+import javax.injelonct.Injelonct
 
 /**
- * A candidate source step, which takes the query and gets csandidates from the candidate source.
+ * A candidatelon sourcelon stelonp, which takelons thelon quelonry and gelonts csandidatelons from thelon candidatelon sourcelon.
  *
- * @param candidateSourceExecutor Candidate Source Executor
- * @tparam Query Type of PipelineQuery domain model
- * @tparam Candidate Type of Candidates to filter
- * @tparam State The pipeline state domain model.
+ * @param candidatelonSourcelonelonxeloncutor Candidatelon Sourcelon elonxeloncutor
+ * @tparam Quelonry Typelon of PipelonlinelonQuelonry domain modelonl
+ * @tparam Candidatelon Typelon of Candidatelons to filtelonr
+ * @tparam Statelon Thelon pipelonlinelon statelon domain modelonl.
  */
-case class CandidateSourceStep[
-  Query <: PipelineQuery,
-  CandidateSourceQuery,
-  CandidateSourceResult,
-  Candidate <: UniversalNoun[Any],
-  State <: HasQuery[Query, State] with HasCandidatesWithFeatures[Candidate, State]] @Inject() (
-  candidateSourceExecutor: CandidateSourceExecutor)
-    extends Step[
-      State,
-      CandidateSourceConfig[Query, CandidateSourceQuery, CandidateSourceResult, Candidate],
-      Query,
-      CandidateSourceExecutorResult[
-        Candidate
+caselon class CandidatelonSourcelonStelonp[
+  Quelonry <: PipelonlinelonQuelonry,
+  CandidatelonSourcelonQuelonry,
+  CandidatelonSourcelonRelonsult,
+  Candidatelon <: UnivelonrsalNoun[Any],
+  Statelon <: HasQuelonry[Quelonry, Statelon] with HasCandidatelonsWithFelonaturelons[Candidatelon, Statelon]] @Injelonct() (
+  candidatelonSourcelonelonxeloncutor: CandidatelonSourcelonelonxeloncutor)
+    elonxtelonnds Stelonp[
+      Statelon,
+      CandidatelonSourcelonConfig[Quelonry, CandidatelonSourcelonQuelonry, CandidatelonSourcelonRelonsult, Candidatelon],
+      Quelonry,
+      CandidatelonSourcelonelonxeloncutorRelonsult[
+        Candidatelon
       ]
     ] {
-  override def isEmpty(
-    config: CandidateSourceConfig[Query, CandidateSourceQuery, CandidateSourceResult, Candidate]
-  ): Boolean = false
+  ovelonrridelon delonf iselonmpty(
+    config: CandidatelonSourcelonConfig[Quelonry, CandidatelonSourcelonQuelonry, CandidatelonSourcelonRelonsult, Candidatelon]
+  ): Boolelonan = falselon
 
-  override def adaptInput(
-    state: State,
-    config: CandidateSourceConfig[Query, CandidateSourceQuery, CandidateSourceResult, Candidate]
-  ): Query = state.query
+  ovelonrridelon delonf adaptInput(
+    statelon: Statelon,
+    config: CandidatelonSourcelonConfig[Quelonry, CandidatelonSourcelonQuelonry, CandidatelonSourcelonRelonsult, Candidatelon]
+  ): Quelonry = statelon.quelonry
 
-  override def arrow(
-    config: CandidateSourceConfig[Query, CandidateSourceQuery, CandidateSourceResult, Candidate],
-    context: Executor.Context
-  ): Arrow[Query, CandidateSourceExecutorResult[Candidate]] = candidateSourceExecutor.arrow(
-    config.candidateSource,
-    config.queryTransformer,
-    config.resultTransformer,
-    config.resultFeaturesTransformers,
-    context
+  ovelonrridelon delonf arrow(
+    config: CandidatelonSourcelonConfig[Quelonry, CandidatelonSourcelonQuelonry, CandidatelonSourcelonRelonsult, Candidatelon],
+    contelonxt: elonxeloncutor.Contelonxt
+  ): Arrow[Quelonry, CandidatelonSourcelonelonxeloncutorRelonsult[Candidatelon]] = candidatelonSourcelonelonxeloncutor.arrow(
+    config.candidatelonSourcelon,
+    config.quelonryTransformelonr,
+    config.relonsultTransformelonr,
+    config.relonsultFelonaturelonsTransformelonrs,
+    contelonxt
   )
 
-  override def updateState(
-    state: State,
-    executorResult: CandidateSourceExecutorResult[Candidate],
-    config: CandidateSourceConfig[Query, CandidateSourceQuery, CandidateSourceResult, Candidate]
-  ): State = state
-    .updateQuery(
-      state.query
-        .withFeatureMap(executorResult.candidateSourceFeatureMap).asInstanceOf[
-          Query]).updateCandidatesWithFeatures(executorResult.candidates)
+  ovelonrridelon delonf updatelonStatelon(
+    statelon: Statelon,
+    elonxeloncutorRelonsult: CandidatelonSourcelonelonxeloncutorRelonsult[Candidatelon],
+    config: CandidatelonSourcelonConfig[Quelonry, CandidatelonSourcelonQuelonry, CandidatelonSourcelonRelonsult, Candidatelon]
+  ): Statelon = statelon
+    .updatelonQuelonry(
+      statelon.quelonry
+        .withFelonaturelonMap(elonxeloncutorRelonsult.candidatelonSourcelonFelonaturelonMap).asInstancelonOf[
+          Quelonry]).updatelonCandidatelonsWithFelonaturelons(elonxeloncutorRelonsult.candidatelons)
 }
 
-case class CandidateSourceConfig[
-  Query <: PipelineQuery,
-  CandidateSourceQuery,
-  CandidateSourceResult,
-  Candidate <: UniversalNoun[Any]
+caselon class CandidatelonSourcelonConfig[
+  Quelonry <: PipelonlinelonQuelonry,
+  CandidatelonSourcelonQuelonry,
+  CandidatelonSourcelonRelonsult,
+  Candidatelon <: UnivelonrsalNoun[Any]
 ](
-  candidateSource: BaseCandidateSource[CandidateSourceQuery, CandidateSourceResult],
-  queryTransformer: BaseCandidatePipelineQueryTransformer[
-    Query,
-    CandidateSourceQuery
+  candidatelonSourcelon: BaselonCandidatelonSourcelon[CandidatelonSourcelonQuelonry, CandidatelonSourcelonRelonsult],
+  quelonryTransformelonr: BaselonCandidatelonPipelonlinelonQuelonryTransformelonr[
+    Quelonry,
+    CandidatelonSourcelonQuelonry
   ],
-  resultTransformer: CandidatePipelineResultsTransformer[CandidateSourceResult, Candidate],
-  resultFeaturesTransformers: Seq[CandidateFeatureTransformer[CandidateSourceResult]])
+  relonsultTransformelonr: CandidatelonPipelonlinelonRelonsultsTransformelonr[CandidatelonSourcelonRelonsult, Candidatelon],
+  relonsultFelonaturelonsTransformelonrs: Selonq[CandidatelonFelonaturelonTransformelonr[CandidatelonSourcelonRelonsult]])

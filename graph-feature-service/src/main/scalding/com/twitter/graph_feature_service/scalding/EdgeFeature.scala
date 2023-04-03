@@ -1,9 +1,9 @@
-package com.twitter.graph_feature_service.scalding
+packagelon com.twittelonr.graph_felonaturelon_selonrvicelon.scalding
 
-case class EdgeFeature(
-  realGraphScore: Float,
-  followScore: Option[Float] = None,
-  mutualFollowScore: Option[Float] = None,
-  favoriteScore: Option[Float] = None,
-  retweetScore: Option[Float] = None,
-  mentionScore: Option[Float] = None)
+caselon class elondgelonFelonaturelon(
+  relonalGraphScorelon: Float,
+  followScorelon: Option[Float] = Nonelon,
+  mutualFollowScorelon: Option[Float] = Nonelon,
+  favoritelonScorelon: Option[Float] = Nonelon,
+  relontwelonelontScorelon: Option[Float] = Nonelon,
+  melonntionScorelon: Option[Float] = Nonelon)

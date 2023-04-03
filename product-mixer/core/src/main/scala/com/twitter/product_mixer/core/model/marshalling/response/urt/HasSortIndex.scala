@@ -1,7 +1,7 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt
 
-trait HasSortIndex { timelineEntry: TimelineEntry =>
-  def sortIndex: Option[Long]
+trait HasSortIndelonx { timelonlinelonelonntry: Timelonlinelonelonntry =>
+  delonf sortIndelonx: Option[Long]
 
-  def withSortIndex(sortIndex: Long): TimelineEntry
+  delonf withSortIndelonx(sortIndelonx: Long): Timelonlinelonelonntry
 }

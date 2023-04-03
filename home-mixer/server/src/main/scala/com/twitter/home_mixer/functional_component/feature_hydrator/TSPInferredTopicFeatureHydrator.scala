@@ -1,162 +1,162 @@
-package com.twitter.home_mixer.functional_component.feature_hydrator
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator
 
-import com.twitter.contentrecommender.{thriftscala => cr}
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.home_mixer.functional_component.feature_hydrator.adapters.inferred_topic.InferredTopicAdapter
-import com.twitter.home_mixer.model.HomeFeatures.CandidateSourceIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.TSPMetricTagFeature
-import com.twitter.home_mixer.model.HomeFeatures.TopicContextFunctionalityTypeFeature
-import com.twitter.home_mixer.model.HomeFeatures.TopicIdSocialContextFeature
-import com.twitter.ml.api.DataRecord
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure
-import com.twitter.product_mixer.core.feature.datarecord.DataRecordInAFeature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BulkCandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.BasicTopicContextFunctionalityType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.RecommendationTopicContextFunctionalityType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.TopicContextFunctionalityType
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.strato.generated.client.topic_signals.tsp.TopicSocialProofClientColumn
-import com.twitter.timelineservice.suggests.logging.candidate_tweet_source_id.{thriftscala => sid}
-import com.twitter.topiclisting.TopicListingViewerContext
-import com.twitter.tsp.{thriftscala => tsp}
+import com.twittelonr.contelonntreloncommelonndelonr.{thriftscala => cr}
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator.adaptelonrs.infelonrrelond_topic.InfelonrrelondTopicAdaptelonr
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.CandidatelonSourcelonIdFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.TSPMelontricTagFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.TopicContelonxtFunctionalityTypelonFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.TopicIdSocialContelonxtFelonaturelon
+import com.twittelonr.ml.api.DataReloncord
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.TwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.FelonaturelonWithDelonfaultOnFailurelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.datareloncord.DataReloncordInAFelonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMapBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator.BulkCandidatelonFelonaturelonHydrator
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.FelonaturelonHydratorIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.BasicTopicContelonxtFunctionalityTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.ReloncommelonndationTopicContelonxtFunctionalityTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.TopicContelonxtFunctionalityTypelon
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.strato.gelonnelonratelond.clielonnt.topic_signals.tsp.TopicSocialProofClielonntColumn
+import com.twittelonr.timelonlinelonselonrvicelon.suggelonsts.logging.candidatelon_twelonelont_sourcelon_id.{thriftscala => sid}
+import com.twittelonr.topiclisting.TopicListingVielonwelonrContelonxt
+import com.twittelonr.tsp.{thriftscala => tsp}
 
-import javax.inject.Inject
-import javax.inject.Singleton
-import scala.collection.JavaConverters._
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
+import scala.collelonction.JavaConvelonrtelonrs._
 
-object TSPInferredTopicFeature extends Feature[TweetCandidate, Map[Long, Double]]
-object TSPInferredTopicDataRecordFeature
-    extends DataRecordInAFeature[TweetCandidate]
-    with FeatureWithDefaultOnFailure[TweetCandidate, DataRecord] {
-  override def defaultValue: DataRecord = new DataRecord()
+objelonct TSPInfelonrrelondTopicFelonaturelon elonxtelonnds Felonaturelon[TwelonelontCandidatelon, Map[Long, Doublelon]]
+objelonct TSPInfelonrrelondTopicDataReloncordFelonaturelon
+    elonxtelonnds DataReloncordInAFelonaturelon[TwelonelontCandidatelon]
+    with FelonaturelonWithDelonfaultOnFailurelon[TwelonelontCandidatelon, DataReloncord] {
+  ovelonrridelon delonf delonfaultValuelon: DataReloncord = nelonw DataReloncord()
 }
 
-@Singleton
-class TSPInferredTopicFeatureHydrator @Inject() (
-  topicSocialProofClientColumn: TopicSocialProofClientColumn,
-  statsReceiver: StatsReceiver,
-) extends BulkCandidateFeatureHydrator[PipelineQuery, TweetCandidate] {
+@Singlelonton
+class TSPInfelonrrelondTopicFelonaturelonHydrator @Injelonct() (
+  topicSocialProofClielonntColumn: TopicSocialProofClielonntColumn,
+  statsReloncelonivelonr: StatsReloncelonivelonr,
+) elonxtelonnds BulkCandidatelonFelonaturelonHydrator[PipelonlinelonQuelonry, TwelonelontCandidatelon] {
 
-  override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier("TSPInferredTopic")
+  ovelonrridelon val idelonntifielonr: FelonaturelonHydratorIdelonntifielonr = FelonaturelonHydratorIdelonntifielonr("TSPInfelonrrelondTopic")
 
-  override val features: Set[Feature[_, _]] =
-    Set(
-      TSPInferredTopicFeature,
-      TSPInferredTopicDataRecordFeature,
-      TopicIdSocialContextFeature,
-      TopicContextFunctionalityTypeFeature)
+  ovelonrridelon val felonaturelons: Selont[Felonaturelon[_, _]] =
+    Selont(
+      TSPInfelonrrelondTopicFelonaturelon,
+      TSPInfelonrrelondTopicDataReloncordFelonaturelon,
+      TopicIdSocialContelonxtFelonaturelon,
+      TopicContelonxtFunctionalityTypelonFelonaturelon)
 
-  private val topK = 3
+  privatelon val topK = 3
 
-  private val sourcesToSetSocialProof: Set[sid.CandidateTweetSourceId] = Set(
-    sid.CandidateTweetSourceId.Simcluster,
-    sid.CandidateTweetSourceId.CroonTweet
+  privatelon val sourcelonsToSelontSocialProof: Selont[sid.CandidatelonTwelonelontSourcelonId] = Selont(
+    sid.CandidatelonTwelonelontSourcelonId.Simclustelonr,
+    sid.CandidatelonTwelonelontSourcelonId.CroonTwelonelont
   )
 
-  private val scopedStatsReceiver = statsReceiver.scope(getClass.getSimpleName)
-  private val keyFoundCounter = scopedStatsReceiver.counter("key/found")
-  private val keyLossCounter = scopedStatsReceiver.counter("key/loss")
-  private val requestFailCounter = scopedStatsReceiver.counter("request/fail")
+  privatelon val scopelondStatsReloncelonivelonr = statsReloncelonivelonr.scopelon(gelontClass.gelontSimplelonNamelon)
+  privatelon val kelonyFoundCountelonr = scopelondStatsReloncelonivelonr.countelonr("kelony/found")
+  privatelon val kelonyLossCountelonr = scopelondStatsReloncelonivelonr.countelonr("kelony/loss")
+  privatelon val relonquelonstFailCountelonr = scopelondStatsReloncelonivelonr.countelonr("relonquelonst/fail")
 
-  private val DefaultFeatureMap = FeatureMapBuilder()
-    .add(TSPInferredTopicFeature, Map.empty[Long, Double])
-    .add(TSPInferredTopicDataRecordFeature, new DataRecord())
-    .add(TopicIdSocialContextFeature, None)
-    .add(TopicContextFunctionalityTypeFeature, None)
+  privatelon val DelonfaultFelonaturelonMap = FelonaturelonMapBuildelonr()
+    .add(TSPInfelonrrelondTopicFelonaturelon, Map.elonmpty[Long, Doublelon])
+    .add(TSPInfelonrrelondTopicDataReloncordFelonaturelon, nelonw DataReloncord())
+    .add(TopicIdSocialContelonxtFelonaturelon, Nonelon)
+    .add(TopicContelonxtFunctionalityTypelonFelonaturelon, Nonelon)
     .build()
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[Seq[FeatureMap]] = {
-    val tags = candidates.collect {
-      case candidate if candidate.features.getTry(TSPMetricTagFeature).isReturn =>
-        candidate.candidate.id -> candidate.features
-          .getOrElse(TSPMetricTagFeature, Set.empty[tsp.MetricTag])
+  ovelonrridelon delonf apply(
+    quelonry: PipelonlinelonQuelonry,
+    candidatelons: Selonq[CandidatelonWithFelonaturelons[TwelonelontCandidatelon]]
+  ): Stitch[Selonq[FelonaturelonMap]] = {
+    val tags = candidatelons.collelonct {
+      caselon candidatelon if candidatelon.felonaturelons.gelontTry(TSPMelontricTagFelonaturelon).isRelonturn =>
+        candidatelon.candidatelon.id -> candidatelon.felonaturelons
+          .gelontOrelonlselon(TSPMelontricTagFelonaturelon, Selont.elonmpty[tsp.MelontricTag])
     }.toMap
 
-    val topicSocialProofRequest =
-      tsp.TopicSocialProofRequest(
-        userId = query.getRequiredUserId,
-        tweetIds = candidates.map(_.candidate.id).toSet,
-        displayLocation = cr.DisplayLocation.HomeTimeline,
-        topicListingSetting = tsp.TopicListingSetting.Followable,
-        context = TopicListingViewerContext.fromClientContext(query.clientContext).toThrift,
-        bypassModes = None,
-        // Only CRMixer source has this data. Convert the CRMixer metric tag to tsp metric tag.
-        tags = if (tags.isEmpty) None else Some(tags)
+    val topicSocialProofRelonquelonst =
+      tsp.TopicSocialProofRelonquelonst(
+        uselonrId = quelonry.gelontRelonquirelondUselonrId,
+        twelonelontIds = candidatelons.map(_.candidatelon.id).toSelont,
+        displayLocation = cr.DisplayLocation.HomelonTimelonlinelon,
+        topicListingSelontting = tsp.TopicListingSelontting.Followablelon,
+        contelonxt = TopicListingVielonwelonrContelonxt.fromClielonntContelonxt(quelonry.clielonntContelonxt).toThrift,
+        bypassModelons = Nonelon,
+        // Only CRMixelonr sourcelon has this data. Convelonrt thelon CRMixelonr melontric tag to tsp melontric tag.
+        tags = if (tags.iselonmpty) Nonelon elonlselon Somelon(tags)
       )
 
-    topicSocialProofClientColumn.fetcher
-      .fetch(topicSocialProofRequest)
+    topicSocialProofClielonntColumn.felontchelonr
+      .felontch(topicSocialProofRelonquelonst)
       .map(_.v)
       .map {
-        case Some(response) =>
-          candidates.map { candidate =>
-            val topicWithScores = response.socialProofs.getOrElse(candidate.candidate.id, Seq.empty)
-            if (topicWithScores.nonEmpty) {
-              keyFoundCounter.incr()
-              val (socialProofId, socialProofFunctionalityType) =
-                if (candidate.features
-                    .getOrElse(CandidateSourceIdFeature, None)
-                    .exists(sourcesToSetSocialProof.contains)) {
-                  getSocialProof(topicWithScores)
-                } else {
-                  (None, None)
+        caselon Somelon(relonsponselon) =>
+          candidatelons.map { candidatelon =>
+            val topicWithScorelons = relonsponselon.socialProofs.gelontOrelonlselon(candidatelon.candidatelon.id, Selonq.elonmpty)
+            if (topicWithScorelons.nonelonmpty) {
+              kelonyFoundCountelonr.incr()
+              val (socialProofId, socialProofFunctionalityTypelon) =
+                if (candidatelon.felonaturelons
+                    .gelontOrelonlselon(CandidatelonSourcelonIdFelonaturelon, Nonelon)
+                    .elonxists(sourcelonsToSelontSocialProof.contains)) {
+                  gelontSocialProof(topicWithScorelons)
+                } elonlselon {
+                  (Nonelon, Nonelon)
                 }
-              val inferredTopicFeatures = convertTopicWithScores(topicWithScores)
-              val inferredTopicDataRecord =
-                InferredTopicAdapter.adaptToDataRecords(inferredTopicFeatures).asScala.head
-              FeatureMapBuilder()
-                .add(TSPInferredTopicFeature, inferredTopicFeatures)
-                .add(TSPInferredTopicDataRecordFeature, inferredTopicDataRecord)
-                .add(TopicIdSocialContextFeature, socialProofId)
-                .add(TopicContextFunctionalityTypeFeature, socialProofFunctionalityType)
+              val infelonrrelondTopicFelonaturelons = convelonrtTopicWithScorelons(topicWithScorelons)
+              val infelonrrelondTopicDataReloncord =
+                InfelonrrelondTopicAdaptelonr.adaptToDataReloncords(infelonrrelondTopicFelonaturelons).asScala.helonad
+              FelonaturelonMapBuildelonr()
+                .add(TSPInfelonrrelondTopicFelonaturelon, infelonrrelondTopicFelonaturelons)
+                .add(TSPInfelonrrelondTopicDataReloncordFelonaturelon, infelonrrelondTopicDataReloncord)
+                .add(TopicIdSocialContelonxtFelonaturelon, socialProofId)
+                .add(TopicContelonxtFunctionalityTypelonFelonaturelon, socialProofFunctionalityTypelon)
                 .build()
-            } else {
-              keyLossCounter.incr()
-              DefaultFeatureMap
+            } elonlselon {
+              kelonyLossCountelonr.incr()
+              DelonfaultFelonaturelonMap
             }
           }
-        case _ =>
-          requestFailCounter.incr()
-          candidates.map { _ =>
-            DefaultFeatureMap
+        caselon _ =>
+          relonquelonstFailCountelonr.incr()
+          candidatelons.map { _ =>
+            DelonfaultFelonaturelonMap
           }
       }
   }
 
-  private def getSocialProof(
-    topicWithScores: Seq[tsp.TopicWithScore]
-  ): (Option[Long], Option[TopicContextFunctionalityType]) = {
-    val followingTopicId = topicWithScores
-      .collectFirst {
-        case tsp.TopicWithScore(topicId, _, _, Some(tsp.TopicFollowType.Following)) =>
+  privatelon delonf gelontSocialProof(
+    topicWithScorelons: Selonq[tsp.TopicWithScorelon]
+  ): (Option[Long], Option[TopicContelonxtFunctionalityTypelon]) = {
+    val followingTopicId = topicWithScorelons
+      .collelonctFirst {
+        caselon tsp.TopicWithScorelon(topicId, _, _, Somelon(tsp.TopicFollowTypelon.Following)) =>
           topicId
       }
-    if (followingTopicId.nonEmpty) {
-      return (followingTopicId, Some(BasicTopicContextFunctionalityType))
+    if (followingTopicId.nonelonmpty) {
+      relonturn (followingTopicId, Somelon(BasicTopicContelonxtFunctionalityTypelon))
     }
-    val implicitFollowingId = topicWithScores.collectFirst {
-      case tsp.TopicWithScore(topicId, _, _, Some(tsp.TopicFollowType.ImplicitFollow)) =>
+    val implicitFollowingId = topicWithScorelons.collelonctFirst {
+      caselon tsp.TopicWithScorelon(topicId, _, _, Somelon(tsp.TopicFollowTypelon.ImplicitFollow)) =>
         topicId
     }
-    if (implicitFollowingId.nonEmpty) {
-      return (implicitFollowingId, Some(RecommendationTopicContextFunctionalityType))
+    if (implicitFollowingId.nonelonmpty) {
+      relonturn (implicitFollowingId, Somelon(ReloncommelonndationTopicContelonxtFunctionalityTypelon))
     }
-    (None, None)
+    (Nonelon, Nonelon)
   }
 
-  private def convertTopicWithScores(
-    topicWithScores: Seq[tsp.TopicWithScore],
-  ): Map[Long, Double] = {
-    topicWithScores.sortBy(-_.score).take(topK).map(a => (a.topicId, a.score)).toMap
+  privatelon delonf convelonrtTopicWithScorelons(
+    topicWithScorelons: Selonq[tsp.TopicWithScorelon],
+  ): Map[Long, Doublelon] = {
+    topicWithScorelons.sortBy(-_.scorelon).takelon(topK).map(a => (a.topicId, a.scorelon)).toMap
   }
 }

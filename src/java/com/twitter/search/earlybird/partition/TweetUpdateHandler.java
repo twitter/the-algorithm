@@ -1,175 +1,175 @@
-package com.twitter.search.earlybird.partition;
+packagelon com.twittelonr.selonarch.elonarlybird.partition;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.util.SortelondMap;
+import java.util.TrelonelonMap;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.partitioning.snowflakeparser.SnowflakeIdParser;
+import com.twittelonr.selonarch.common.indelonxing.thriftjava.ThriftVelonrsionelondelonvelonnts;
+import com.twittelonr.selonarch.common.melontrics.SelonarchRatelonCountelonr;
+import com.twittelonr.selonarch.common.partitioning.snowflakelonparselonr.SnowflakelonIdParselonr;
 
 /**
- * This class handles incoming updates to Tweets in the index.
+ * This class handlelons incoming updatelons to Twelonelonts in thelon indelonx.
  *
- * Much of the logic deals with retries. It is very common to get an update before we have gotten
- * the Tweet that the update should be applied to. In this case, we queue the update for up to a
- * minute, so that we give the original Tweet the chance to be written to the index.
+ * Much of thelon logic delonals with relontrielons. It is velonry common to gelont an updatelon belonforelon welon havelon gottelonn
+ * thelon Twelonelont that thelon updatelon should belon applielond to. In this caselon, welon quelonuelon thelon updatelon for up to a
+ * minutelon, so that welon givelon thelon original Twelonelont thelon chancelon to belon writtelonn to thelon indelonx.
  */
-public class TweetUpdateHandler {
-  private static final Logger LOG = LoggerFactory.getLogger(TweetUpdateHandler.class);
-  private static final Logger UPDATES_ERRORS_LOG =
-          LoggerFactory.getLogger(TweetUpdateHandler.class.getName() + ".UpdatesErrors");
+public class TwelonelontUpdatelonHandlelonr {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(TwelonelontUpdatelonHandlelonr.class);
+  privatelon static final Loggelonr UPDATelonS_elonRRORS_LOG =
+          LoggelonrFactory.gelontLoggelonr(TwelonelontUpdatelonHandlelonr.class.gelontNamelon() + ".Updatelonselonrrors");
 
-  private static final String STATS_PREFIX = "tweet_update_handler_";
+  privatelon static final String STATS_PRelonFIX = "twelonelont_updatelon_handlelonr_";
 
-  private IndexingResultCounts indexingResultCounts;
-  private static final SearchRateCounter INCOMING_EVENT =
-          SearchRateCounter.export(STATS_PREFIX + "incoming_event");
-  private static final SearchRateCounter QUEUED_FOR_RETRY =
-      SearchRateCounter.export(STATS_PREFIX + "queued_for_retry");
-  private static final SearchRateCounter DROPPED_OLD_EVENT =
-      SearchRateCounter.export(STATS_PREFIX + "dropped_old_event");
-  private static final SearchRateCounter DROPPED_INCOMING_EVENT =
-      SearchRateCounter.export(STATS_PREFIX + "dropped_incoming_event");
-  private static final SearchRateCounter DROPPED_CLEANUP_EVENT =
-      SearchRateCounter.export(STATS_PREFIX + "dropped_cleanup_event");
-  private static final SearchRateCounter DROPPED_NOT_RETRYABLE_EVENT =
-          SearchRateCounter.export(STATS_PREFIX + "dropped_not_retryable_event");
-  private static final SearchRateCounter PICKED_TO_RETRY =
-      SearchRateCounter.export(STATS_PREFIX + "picked_to_retry");
-  private static final SearchRateCounter INDEXED_EVENT =
-          SearchRateCounter.export(STATS_PREFIX + "indexed_event");
+  privatelon IndelonxingRelonsultCounts indelonxingRelonsultCounts;
+  privatelon static final SelonarchRatelonCountelonr INCOMING_elonVelonNT =
+          SelonarchRatelonCountelonr.elonxport(STATS_PRelonFIX + "incoming_elonvelonnt");
+  privatelon static final SelonarchRatelonCountelonr QUelonUelonD_FOR_RelonTRY =
+      SelonarchRatelonCountelonr.elonxport(STATS_PRelonFIX + "quelonuelond_for_relontry");
+  privatelon static final SelonarchRatelonCountelonr DROPPelonD_OLD_elonVelonNT =
+      SelonarchRatelonCountelonr.elonxport(STATS_PRelonFIX + "droppelond_old_elonvelonnt");
+  privatelon static final SelonarchRatelonCountelonr DROPPelonD_INCOMING_elonVelonNT =
+      SelonarchRatelonCountelonr.elonxport(STATS_PRelonFIX + "droppelond_incoming_elonvelonnt");
+  privatelon static final SelonarchRatelonCountelonr DROPPelonD_CLelonANUP_elonVelonNT =
+      SelonarchRatelonCountelonr.elonxport(STATS_PRelonFIX + "droppelond_clelonanup_elonvelonnt");
+  privatelon static final SelonarchRatelonCountelonr DROPPelonD_NOT_RelonTRYABLelon_elonVelonNT =
+          SelonarchRatelonCountelonr.elonxport(STATS_PRelonFIX + "droppelond_not_relontryablelon_elonvelonnt");
+  privatelon static final SelonarchRatelonCountelonr PICKelonD_TO_RelonTRY =
+      SelonarchRatelonCountelonr.elonxport(STATS_PRelonFIX + "pickelond_to_relontry");
+  privatelon static final SelonarchRatelonCountelonr INDelonXelonD_elonVelonNT =
+          SelonarchRatelonCountelonr.elonxport(STATS_PRelonFIX + "indelonxelond_elonvelonnt");
 
-  private static final long RETRY_TIME_THRESHOLD_MS = 60_000; // one minute.
+  privatelon static final long RelonTRY_TIMelon_THRelonSHOLD_MS = 60_000; // onelon minutelon.
 
-  private final SortedMap<Long, List<ThriftVersionedEvents>> pendingUpdates = new TreeMap<>();
-  private final SegmentManager segmentManager;
-
-  /**
-   * At this time we cleaned all updates that are more than RETRY_TIME_THRESHOLD_MS old.
-   */
-  private long lastCleanedUpdatesTime = 0;
+  privatelon final SortelondMap<Long, List<ThriftVelonrsionelondelonvelonnts>> pelonndingUpdatelons = nelonw TrelonelonMap<>();
+  privatelon final SelongmelonntManagelonr selongmelonntManagelonr;
 
   /**
-   * The time of the most recent Tweet that we have applied an update for. We use this to
-   * determine when we should give up on retrying an update, instead of using the system clock,
-   * because we may be processing the stream from a long time ago if we are starting up or if
-   * there is lag in the Kafka topics and we want to let each update get a fair shot at being
-   * applied.
+   * At this timelon welon clelonanelond all updatelons that arelon morelon than RelonTRY_TIMelon_THRelonSHOLD_MS old.
    */
-  private long mostRecentUpdateTime = 0;
+  privatelon long lastClelonanelondUpdatelonsTimelon = 0;
 
-  public TweetUpdateHandler(SegmentManager segmentManager) {
-    this.segmentManager = segmentManager;
-    this.indexingResultCounts = new IndexingResultCounts();
+  /**
+   * Thelon timelon of thelon most reloncelonnt Twelonelont that welon havelon applielond an updatelon for. Welon uselon this to
+   * delontelonrminelon whelonn welon should givelon up on relontrying an updatelon, instelonad of using thelon systelonm clock,
+   * beloncauselon welon may belon procelonssing thelon strelonam from a long timelon ago if welon arelon starting up or if
+   * thelonrelon is lag in thelon Kafka topics and welon want to lelont elonach updatelon gelont a fair shot at beloning
+   * applielond.
+   */
+  privatelon long mostReloncelonntUpdatelonTimelon = 0;
+
+  public TwelonelontUpdatelonHandlelonr(SelongmelonntManagelonr selongmelonntManagelonr) {
+    this.selongmelonntManagelonr = selongmelonntManagelonr;
+    this.indelonxingRelonsultCounts = nelonw IndelonxingRelonsultCounts();
   }
 
   /**
-   * Index an update to a Tweet.
+   * Indelonx an updatelon to a Twelonelont.
    */
-  public void handleTweetUpdate(ThriftVersionedEvents tve, boolean isRetry) throws IOException {
-    if (!isRetry) {
-      INCOMING_EVENT.increment();
+  public void handlelonTwelonelontUpdatelon(ThriftVelonrsionelondelonvelonnts tvelon, boolelonan isRelontry) throws IOelonxcelonption {
+    if (!isRelontry) {
+      INCOMING_elonVelonNT.increlonmelonnt();
     }
-    long id = tve.getId();
+    long id = tvelon.gelontId();
 
-    mostRecentUpdateTime =
-        Math.max(SnowflakeIdParser.getTimestampFromTweetId(id), mostRecentUpdateTime);
-    cleanStaleUpdates();
+    mostReloncelonntUpdatelonTimelon =
+        Math.max(SnowflakelonIdParselonr.gelontTimelonstampFromTwelonelontId(id), mostReloncelonntUpdatelonTimelon);
+    clelonanStalelonUpdatelons();
 
-    ISegmentWriter writer = segmentManager.getSegmentWriterForID(id);
-    if (writer == null) {
-      if (segmentManager.getNumIndexedDocuments() == 0) {
-        // If we haven't indexed any tweets at all, then we shouldn't drop this update, because it
-        // might be applied to a Tweet we haven't indexed yet so queue it up for retry.
-        queueForRetry(id, tve);
-      } else {
-        DROPPED_OLD_EVENT.increment();
+    ISelongmelonntWritelonr writelonr = selongmelonntManagelonr.gelontSelongmelonntWritelonrForID(id);
+    if (writelonr == null) {
+      if (selongmelonntManagelonr.gelontNumIndelonxelondDocumelonnts() == 0) {
+        // If welon havelonn't indelonxelond any twelonelonts at all, thelonn welon shouldn't drop this updatelon, beloncauselon it
+        // might belon applielond to a Twelonelont welon havelonn't indelonxelond yelont so quelonuelon it up for relontry.
+        quelonuelonForRelontry(id, tvelon);
+      } elonlselon {
+        DROPPelonD_OLD_elonVelonNT.increlonmelonnt();
       }
-      return;
+      relonturn;
     }
 
-    SegmentWriter.Result result = writer.indexThriftVersionedEvents(tve);
-    indexingResultCounts.countResult(result);
+    SelongmelonntWritelonr.Relonsult relonsult = writelonr.indelonxThriftVelonrsionelondelonvelonnts(tvelon);
+    indelonxingRelonsultCounts.countRelonsult(relonsult);
 
-    if (result == ISegmentWriter.Result.FAILURE_RETRYABLE) {
-      // If the tweet hasn't arrived yet.
-      queueForRetry(id, tve);
-    } else if (result == ISegmentWriter.Result.FAILURE_NOT_RETRYABLE) {
-      DROPPED_NOT_RETRYABLE_EVENT.increment();
-      UPDATES_ERRORS_LOG.warn("Failed to apply update for tweetID {}: {}", id, tve);
-    } else if (result == ISegmentWriter.Result.SUCCESS) {
-      INDEXED_EVENT.increment();
+    if (relonsult == ISelongmelonntWritelonr.Relonsult.FAILURelon_RelonTRYABLelon) {
+      // If thelon twelonelont hasn't arrivelond yelont.
+      quelonuelonForRelontry(id, tvelon);
+    } elonlselon if (relonsult == ISelongmelonntWritelonr.Relonsult.FAILURelon_NOT_RelonTRYABLelon) {
+      DROPPelonD_NOT_RelonTRYABLelon_elonVelonNT.increlonmelonnt();
+      UPDATelonS_elonRRORS_LOG.warn("Failelond to apply updatelon for twelonelontID {}: {}", id, tvelon);
+    } elonlselon if (relonsult == ISelongmelonntWritelonr.Relonsult.SUCCelonSS) {
+      INDelonXelonD_elonVelonNT.increlonmelonnt();
     }
   }
 
-  private void queueForRetry(long id, ThriftVersionedEvents tve) {
-    long ageMillis = mostRecentUpdateTime - SnowflakeIdParser.getTimestampFromTweetId(id);
-    if (ageMillis > RETRY_TIME_THRESHOLD_MS) {
-      DROPPED_INCOMING_EVENT.increment();
-      UPDATES_ERRORS_LOG.warn(
-              "Giving up retrying update for tweetID {}: {} because the retry time has elapsed",
-              id, tve);
-      return;
+  privatelon void quelonuelonForRelontry(long id, ThriftVelonrsionelondelonvelonnts tvelon) {
+    long agelonMillis = mostReloncelonntUpdatelonTimelon - SnowflakelonIdParselonr.gelontTimelonstampFromTwelonelontId(id);
+    if (agelonMillis > RelonTRY_TIMelon_THRelonSHOLD_MS) {
+      DROPPelonD_INCOMING_elonVelonNT.increlonmelonnt();
+      UPDATelonS_elonRRORS_LOG.warn(
+              "Giving up relontrying updatelon for twelonelontID {}: {} beloncauselon thelon relontry timelon has elonlapselond",
+              id, tvelon);
+      relonturn;
     }
 
-    pendingUpdates.computeIfAbsent(id, i -> new ArrayList<>()).add(tve);
-    QUEUED_FOR_RETRY.increment();
+    pelonndingUpdatelons.computelonIfAbselonnt(id, i -> nelonw ArrayList<>()).add(tvelon);
+    QUelonUelonD_FOR_RelonTRY.increlonmelonnt();
   }
 
-  // Every time we have processed a minute's worth of updates, remove all pending updates that are
-  // more than a minute old, relative to the most recent Tweet we have seen.
-  private void cleanStaleUpdates() {
-    long oldUpdatesThreshold = mostRecentUpdateTime - RETRY_TIME_THRESHOLD_MS;
-    if (lastCleanedUpdatesTime < oldUpdatesThreshold) {
-      SortedMap<Long, List<ThriftVersionedEvents>> droppedUpdates = pendingUpdates
-          .headMap(SnowflakeIdParser.generateValidStatusId(oldUpdatesThreshold, 0));
-      for (List<ThriftVersionedEvents> events : droppedUpdates.values()) {
-        for (ThriftVersionedEvents event : events) {
-          UPDATES_ERRORS_LOG.warn(
-                  "Giving up retrying update for tweetID {}: {} because the retry time has elapsed",
-                  event.getId(), event);
+  // elonvelonry timelon welon havelon procelonsselond a minutelon's worth of updatelons, relonmovelon all pelonnding updatelons that arelon
+  // morelon than a minutelon old, relonlativelon to thelon most reloncelonnt Twelonelont welon havelon selonelonn.
+  privatelon void clelonanStalelonUpdatelons() {
+    long oldUpdatelonsThrelonshold = mostReloncelonntUpdatelonTimelon - RelonTRY_TIMelon_THRelonSHOLD_MS;
+    if (lastClelonanelondUpdatelonsTimelon < oldUpdatelonsThrelonshold) {
+      SortelondMap<Long, List<ThriftVelonrsionelondelonvelonnts>> droppelondUpdatelons = pelonndingUpdatelons
+          .helonadMap(SnowflakelonIdParselonr.gelonnelonratelonValidStatusId(oldUpdatelonsThrelonshold, 0));
+      for (List<ThriftVelonrsionelondelonvelonnts> elonvelonnts : droppelondUpdatelons.valuelons()) {
+        for (ThriftVelonrsionelondelonvelonnts elonvelonnt : elonvelonnts) {
+          UPDATelonS_elonRRORS_LOG.warn(
+                  "Giving up relontrying updatelon for twelonelontID {}: {} beloncauselon thelon relontry timelon has elonlapselond",
+                  elonvelonnt.gelontId(), elonvelonnt);
         }
-        DROPPED_CLEANUP_EVENT.increment(events.size());
+        DROPPelonD_CLelonANUP_elonVelonNT.increlonmelonnt(elonvelonnts.sizelon());
       }
-      droppedUpdates.clear();
+      droppelondUpdatelons.clelonar();
 
-      lastCleanedUpdatesTime = mostRecentUpdateTime;
+      lastClelonanelondUpdatelonsTimelon = mostReloncelonntUpdatelonTimelon;
     }
   }
 
   /**
-   * After we successfully indexed tweetID, if we have any pending updates for that tweetID, try to
-   * apply them again.
+   * Aftelonr welon succelonssfully indelonxelond twelonelontID, if welon havelon any pelonnding updatelons for that twelonelontID, try to
+   * apply thelonm again.
    */
-  public void retryPendingUpdates(long tweetID) throws IOException {
-    if (pendingUpdates.containsKey(tweetID)) {
-      for (ThriftVersionedEvents update : pendingUpdates.remove(tweetID)) {
-        PICKED_TO_RETRY.increment();
-        handleTweetUpdate(update, true);
+  public void relontryPelonndingUpdatelons(long twelonelontID) throws IOelonxcelonption {
+    if (pelonndingUpdatelons.containsKelony(twelonelontID)) {
+      for (ThriftVelonrsionelondelonvelonnts updatelon : pelonndingUpdatelons.relonmovelon(twelonelontID)) {
+        PICKelonD_TO_RelonTRY.increlonmelonnt();
+        handlelonTwelonelontUpdatelon(updatelon, truelon);
       }
     }
   }
 
-  void logState() {
-    LOG.info("TweetUpdateHandler:");
-    LOG.info(String.format("  tweets sent for indexing: %,d",
-        indexingResultCounts.getIndexingCalls()));
-    LOG.info(String.format("  non-retriable failure: %,d",
-        indexingResultCounts.getFailureNotRetriable()));
-    LOG.info(String.format("  retriable failure: %,d",
-        indexingResultCounts.getFailureRetriable()));
-    LOG.info(String.format("  successfully indexed: %,d",
-        indexingResultCounts.getIndexingSuccess()));
-    LOG.info(String.format("  queued for retry: %,d", QUEUED_FOR_RETRY.getCount()));
-    LOG.info(String.format("  dropped old events: %,d", DROPPED_OLD_EVENT.getCount()));
-    LOG.info(String.format("  dropped incoming events: %,d", DROPPED_INCOMING_EVENT.getCount()));
-    LOG.info(String.format("  dropped cleanup events: %,d", DROPPED_CLEANUP_EVENT.getCount()));
-    LOG.info(String.format("  picked events to retry: %,d", PICKED_TO_RETRY.getCount()));
+  void logStatelon() {
+    LOG.info("TwelonelontUpdatelonHandlelonr:");
+    LOG.info(String.format("  twelonelonts selonnt for indelonxing: %,d",
+        indelonxingRelonsultCounts.gelontIndelonxingCalls()));
+    LOG.info(String.format("  non-relontriablelon failurelon: %,d",
+        indelonxingRelonsultCounts.gelontFailurelonNotRelontriablelon()));
+    LOG.info(String.format("  relontriablelon failurelon: %,d",
+        indelonxingRelonsultCounts.gelontFailurelonRelontriablelon()));
+    LOG.info(String.format("  succelonssfully indelonxelond: %,d",
+        indelonxingRelonsultCounts.gelontIndelonxingSuccelonss()));
+    LOG.info(String.format("  quelonuelond for relontry: %,d", QUelonUelonD_FOR_RelonTRY.gelontCount()));
+    LOG.info(String.format("  droppelond old elonvelonnts: %,d", DROPPelonD_OLD_elonVelonNT.gelontCount()));
+    LOG.info(String.format("  droppelond incoming elonvelonnts: %,d", DROPPelonD_INCOMING_elonVelonNT.gelontCount()));
+    LOG.info(String.format("  droppelond clelonanup elonvelonnts: %,d", DROPPelonD_CLelonANUP_elonVelonNT.gelontCount()));
+    LOG.info(String.format("  pickelond elonvelonnts to relontry: %,d", PICKelonD_TO_RelonTRY.gelontCount()));
   }
 }

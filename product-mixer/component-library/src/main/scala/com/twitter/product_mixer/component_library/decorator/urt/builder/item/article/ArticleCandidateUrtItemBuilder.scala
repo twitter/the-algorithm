@@ -1,52 +1,52 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.article
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.itelonm.articlelon
 
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.article.ArticleCandidateUrtItemBuilder.ArticleClientEventInfoElement
-import com.twitter.product_mixer.component_library.model.candidate.BaseArticleCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.social_context.BaseSocialContextBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.article.ArticleDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.article.ArticleItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.article.ArticleSeedType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.article.FollowingListSeed
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.itelonm.articlelon.ArticlelonCandidatelonUrtItelonmBuildelonr.ArticlelonClielonntelonvelonntInfoelonlelonmelonnt
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.BaselonArticlelonCandidatelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.CandidatelonUrtelonntryBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.melontadata.BaselonClielonntelonvelonntInfoBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.melontadata.BaselonFelonelondbackActionInfoBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.social_contelonxt.BaselonSocialContelonxtBuildelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.articlelon.ArticlelonDisplayTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.articlelon.ArticlelonItelonm
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.articlelon.ArticlelonSelonelondTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.articlelon.FollowingListSelonelond
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
-object ArticleCandidateUrtItemBuilder {
-  val ArticleClientEventInfoElement: String = "article"
+objelonct ArticlelonCandidatelonUrtItelonmBuildelonr {
+  val ArticlelonClielonntelonvelonntInfoelonlelonmelonnt: String = "articlelon"
 }
 
-case class ArticleCandidateUrtItemBuilder[
-  -Query <: PipelineQuery,
-  Candidate <: BaseArticleCandidate
+caselon class ArticlelonCandidatelonUrtItelonmBuildelonr[
+  -Quelonry <: PipelonlinelonQuelonry,
+  Candidatelon <: BaselonArticlelonCandidatelon
 ](
-  clientEventInfoBuilder: BaseClientEventInfoBuilder[Query, Candidate],
-  articleSeedType: ArticleSeedType = FollowingListSeed,
-  feedbackActionInfoBuilder: Option[
-    BaseFeedbackActionInfoBuilder[Query, Candidate]
-  ] = None,
-  displayType: Option[ArticleDisplayType] = None,
-  socialContextBuilder: Option[BaseSocialContextBuilder[Query, Candidate]] = None,
-) extends CandidateUrtEntryBuilder[Query, Candidate, ArticleItem] {
+  clielonntelonvelonntInfoBuildelonr: BaselonClielonntelonvelonntInfoBuildelonr[Quelonry, Candidatelon],
+  articlelonSelonelondTypelon: ArticlelonSelonelondTypelon = FollowingListSelonelond,
+  felonelondbackActionInfoBuildelonr: Option[
+    BaselonFelonelondbackActionInfoBuildelonr[Quelonry, Candidatelon]
+  ] = Nonelon,
+  displayTypelon: Option[ArticlelonDisplayTypelon] = Nonelon,
+  socialContelonxtBuildelonr: Option[BaselonSocialContelonxtBuildelonr[Quelonry, Candidatelon]] = Nonelon,
+) elonxtelonnds CandidatelonUrtelonntryBuildelonr[Quelonry, Candidatelon, ArticlelonItelonm] {
 
-  override def apply(
-    query: Query,
-    articleCandidate: Candidate,
-    candidateFeatures: FeatureMap
-  ): ArticleItem = ArticleItem(
-    id = articleCandidate.id,
-    sortIndex = None, // Sort indexes are automatically set in the domain marshaller phase
-    clientEventInfo = clientEventInfoBuilder(
-      query,
-      articleCandidate,
-      candidateFeatures,
-      Some(ArticleClientEventInfoElement)),
-    feedbackActionInfo =
-      feedbackActionInfoBuilder.flatMap(_.apply(query, articleCandidate, candidateFeatures)),
-    displayType = displayType,
-    socialContext =
-      socialContextBuilder.flatMap(_.apply(query, articleCandidate, candidateFeatures)),
-    articleSeedType = articleSeedType
+  ovelonrridelon delonf apply(
+    quelonry: Quelonry,
+    articlelonCandidatelon: Candidatelon,
+    candidatelonFelonaturelons: FelonaturelonMap
+  ): ArticlelonItelonm = ArticlelonItelonm(
+    id = articlelonCandidatelon.id,
+    sortIndelonx = Nonelon, // Sort indelonxelons arelon automatically selont in thelon domain marshallelonr phaselon
+    clielonntelonvelonntInfo = clielonntelonvelonntInfoBuildelonr(
+      quelonry,
+      articlelonCandidatelon,
+      candidatelonFelonaturelons,
+      Somelon(ArticlelonClielonntelonvelonntInfoelonlelonmelonnt)),
+    felonelondbackActionInfo =
+      felonelondbackActionInfoBuildelonr.flatMap(_.apply(quelonry, articlelonCandidatelon, candidatelonFelonaturelons)),
+    displayTypelon = displayTypelon,
+    socialContelonxt =
+      socialContelonxtBuildelonr.flatMap(_.apply(quelonry, articlelonCandidatelon, candidatelonFelonaturelons)),
+    articlelonSelonelondTypelon = articlelonSelonelondTypelon
   )
 }

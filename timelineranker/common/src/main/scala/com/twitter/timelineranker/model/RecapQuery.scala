@@ -1,278 +1,278 @@
-package com.twitter.timelineranker.model
+packagelon com.twittelonr.timelonlinelonrankelonr.modelonl
 
-import com.twitter.servo.util.Gate
-import com.twitter.timelines.model.candidate.CandidateTweetSourceId
-import com.twitter.timelineranker.{thriftscala => thrift}
-import com.twitter.timelines.common.model._
-import com.twitter.timelines.earlybird.common.options.EarlybirdOptions
-import com.twitter.timelines.earlybird.common.utils.SearchOperator
-import com.twitter.timelines.configapi.{
-  DependencyProvider => ConfigApiDependencyProvider,
-  FutureDependencyProvider => ConfigApiFutureDependencyProvider,
+import com.twittelonr.selonrvo.util.Gatelon
+import com.twittelonr.timelonlinelons.modelonl.candidatelon.CandidatelonTwelonelontSourcelonId
+import com.twittelonr.timelonlinelonrankelonr.{thriftscala => thrift}
+import com.twittelonr.timelonlinelons.common.modelonl._
+import com.twittelonr.timelonlinelons.elonarlybird.common.options.elonarlybirdOptions
+import com.twittelonr.timelonlinelons.elonarlybird.common.utils.SelonarchOpelonrator
+import com.twittelonr.timelonlinelons.configapi.{
+  DelonpelonndelonncyProvidelonr => ConfigApiDelonpelonndelonncyProvidelonr,
+  FuturelonDelonpelonndelonncyProvidelonr => ConfigApiFuturelonDelonpelonndelonncyProvidelonr,
   _
 }
-import com.twitter.timelines.model.TweetId
-import com.twitter.timelines.model.UserId
-import com.twitter.timelineservice.DeviceContext
+import com.twittelonr.timelonlinelons.modelonl.TwelonelontId
+import com.twittelonr.timelonlinelons.modelonl.UselonrId
+import com.twittelonr.timelonlinelonselonrvicelon.DelonvicelonContelonxt
 
-object RecapQuery {
+objelonct ReloncapQuelonry {
 
-  val EngagedTweetsSupportedTweetKindOption: TweetKindOption.ValueSet = TweetKindOption(
-    includeReplies = false,
-    includeRetweets = false,
-    includeExtendedReplies = false,
-    includeOriginalTweetsAndQuotes = true
+  val elonngagelondTwelonelontsSupportelondTwelonelontKindOption: TwelonelontKindOption.ValuelonSelont = TwelonelontKindOption(
+    includelonRelonplielons = falselon,
+    includelonRelontwelonelonts = falselon,
+    includelonelonxtelonndelondRelonplielons = falselon,
+    includelonOriginalTwelonelontsAndQuotelons = truelon
   )
 
-  val DefaultSearchOperator: SearchOperator.Value = SearchOperator.Exclude
-  def fromThrift(query: thrift.RecapQuery): RecapQuery = {
+  val DelonfaultSelonarchOpelonrator: SelonarchOpelonrator.Valuelon = SelonarchOpelonrator.elonxcludelon
+  delonf fromThrift(quelonry: thrift.ReloncapQuelonry): ReloncapQuelonry = {
 
-    RecapQuery(
-      userId = query.userId,
-      maxCount = query.maxCount,
-      range = query.range.map(TimelineRange.fromThrift),
-      options = query.options
-        .map(options => TweetKindOption.fromThrift(options.to[Set]))
-        .getOrElse(TweetKindOption.None),
-      searchOperator = query.searchOperator
-        .map(SearchOperator.fromThrift)
-        .getOrElse(DefaultSearchOperator),
-      earlybirdOptions = query.earlybirdOptions.map(EarlybirdOptions.fromThrift),
-      deviceContext = query.deviceContext.map(DeviceContext.fromThrift),
-      authorIds = query.authorIds,
-      excludedTweetIds = query.excludedTweetIds,
-      searchClientSubId = query.searchClientSubId,
-      candidateTweetSourceId =
-        query.candidateTweetSourceId.flatMap(CandidateTweetSourceId.fromThrift),
-      hydratesContentFeatures = query.hydratesContentFeatures
+    ReloncapQuelonry(
+      uselonrId = quelonry.uselonrId,
+      maxCount = quelonry.maxCount,
+      rangelon = quelonry.rangelon.map(TimelonlinelonRangelon.fromThrift),
+      options = quelonry.options
+        .map(options => TwelonelontKindOption.fromThrift(options.to[Selont]))
+        .gelontOrelonlselon(TwelonelontKindOption.Nonelon),
+      selonarchOpelonrator = quelonry.selonarchOpelonrator
+        .map(SelonarchOpelonrator.fromThrift)
+        .gelontOrelonlselon(DelonfaultSelonarchOpelonrator),
+      elonarlybirdOptions = quelonry.elonarlybirdOptions.map(elonarlybirdOptions.fromThrift),
+      delonvicelonContelonxt = quelonry.delonvicelonContelonxt.map(DelonvicelonContelonxt.fromThrift),
+      authorIds = quelonry.authorIds,
+      elonxcludelondTwelonelontIds = quelonry.elonxcludelondTwelonelontIds,
+      selonarchClielonntSubId = quelonry.selonarchClielonntSubId,
+      candidatelonTwelonelontSourcelonId =
+        quelonry.candidatelonTwelonelontSourcelonId.flatMap(CandidatelonTwelonelontSourcelonId.fromThrift),
+      hydratelonsContelonntFelonaturelons = quelonry.hydratelonsContelonntFelonaturelons
     )
   }
 
-  def fromThrift(query: thrift.RecapHydrationQuery): RecapQuery = {
-    require(query.tweetIds.nonEmpty, "tweetIds must be non-empty")
+  delonf fromThrift(quelonry: thrift.ReloncapHydrationQuelonry): ReloncapQuelonry = {
+    relonquirelon(quelonry.twelonelontIds.nonelonmpty, "twelonelontIds must belon non-elonmpty")
 
-    RecapQuery(
-      userId = query.userId,
-      tweetIds = Some(query.tweetIds),
-      searchOperator = DefaultSearchOperator,
-      earlybirdOptions = query.earlybirdOptions.map(EarlybirdOptions.fromThrift),
-      deviceContext = query.deviceContext.map(DeviceContext.fromThrift),
-      candidateTweetSourceId =
-        query.candidateTweetSourceId.flatMap(CandidateTweetSourceId.fromThrift),
-      hydratesContentFeatures = query.hydratesContentFeatures
+    ReloncapQuelonry(
+      uselonrId = quelonry.uselonrId,
+      twelonelontIds = Somelon(quelonry.twelonelontIds),
+      selonarchOpelonrator = DelonfaultSelonarchOpelonrator,
+      elonarlybirdOptions = quelonry.elonarlybirdOptions.map(elonarlybirdOptions.fromThrift),
+      delonvicelonContelonxt = quelonry.delonvicelonContelonxt.map(DelonvicelonContelonxt.fromThrift),
+      candidatelonTwelonelontSourcelonId =
+        quelonry.candidatelonTwelonelontSourcelonId.flatMap(CandidatelonTwelonelontSourcelonId.fromThrift),
+      hydratelonsContelonntFelonaturelons = quelonry.hydratelonsContelonntFelonaturelons
     )
   }
 
-  def fromThrift(query: thrift.EngagedTweetsQuery): RecapQuery = {
-    val options = query.tweetKindOptions
-      .map(tweetKindOptions => TweetKindOption.fromThrift(tweetKindOptions.to[Set]))
-      .getOrElse(TweetKindOption.None)
+  delonf fromThrift(quelonry: thrift.elonngagelondTwelonelontsQuelonry): ReloncapQuelonry = {
+    val options = quelonry.twelonelontKindOptions
+      .map(twelonelontKindOptions => TwelonelontKindOption.fromThrift(twelonelontKindOptions.to[Selont]))
+      .gelontOrelonlselon(TwelonelontKindOption.Nonelon)
 
-    if (!(options.isEmpty ||
-        (options == EngagedTweetsSupportedTweetKindOption))) {
-      throw new IllegalArgumentException(s"Unsupported TweetKindOption value: $options")
+    if (!(options.iselonmpty ||
+        (options == elonngagelondTwelonelontsSupportelondTwelonelontKindOption))) {
+      throw nelonw IllelongalArgumelonntelonxcelonption(s"Unsupportelond TwelonelontKindOption valuelon: $options")
     }
 
-    RecapQuery(
-      userId = query.userId,
-      maxCount = query.maxCount,
-      range = query.range.map(TimelineRange.fromThrift),
+    ReloncapQuelonry(
+      uselonrId = quelonry.uselonrId,
+      maxCount = quelonry.maxCount,
+      rangelon = quelonry.rangelon.map(TimelonlinelonRangelon.fromThrift),
       options = options,
-      searchOperator = DefaultSearchOperator,
-      earlybirdOptions = query.earlybirdOptions.map(EarlybirdOptions.fromThrift),
-      deviceContext = query.deviceContext.map(DeviceContext.fromThrift),
-      authorIds = query.userIds,
-      excludedTweetIds = query.excludedTweetIds,
+      selonarchOpelonrator = DelonfaultSelonarchOpelonrator,
+      elonarlybirdOptions = quelonry.elonarlybirdOptions.map(elonarlybirdOptions.fromThrift),
+      delonvicelonContelonxt = quelonry.delonvicelonContelonxt.map(DelonvicelonContelonxt.fromThrift),
+      authorIds = quelonry.uselonrIds,
+      elonxcludelondTwelonelontIds = quelonry.elonxcludelondTwelonelontIds,
     )
   }
 
-  def fromThrift(query: thrift.EntityTweetsQuery): RecapQuery = {
-    require(
-      query.semanticCoreIds.isDefined,
-      "entities(semanticCoreIds) can't be None"
+  delonf fromThrift(quelonry: thrift.elonntityTwelonelontsQuelonry): ReloncapQuelonry = {
+    relonquirelon(
+      quelonry.selonmanticCorelonIds.isDelonfinelond,
+      "elonntitielons(selonmanticCorelonIds) can't belon Nonelon"
     )
-    val options = query.tweetKindOptions
-      .map(tweetKindOptions => TweetKindOption.fromThrift(tweetKindOptions.to[Set]))
-      .getOrElse(TweetKindOption.None)
+    val options = quelonry.twelonelontKindOptions
+      .map(twelonelontKindOptions => TwelonelontKindOption.fromThrift(twelonelontKindOptions.to[Selont]))
+      .gelontOrelonlselon(TwelonelontKindOption.Nonelon)
 
-    RecapQuery(
-      userId = query.userId,
-      maxCount = query.maxCount,
-      range = query.range.map(TimelineRange.fromThrift),
+    ReloncapQuelonry(
+      uselonrId = quelonry.uselonrId,
+      maxCount = quelonry.maxCount,
+      rangelon = quelonry.rangelon.map(TimelonlinelonRangelon.fromThrift),
       options = options,
-      searchOperator = DefaultSearchOperator,
-      earlybirdOptions = query.earlybirdOptions.map(EarlybirdOptions.fromThrift),
-      deviceContext = query.deviceContext.map(DeviceContext.fromThrift),
-      excludedTweetIds = query.excludedTweetIds,
-      semanticCoreIds = query.semanticCoreIds.map(_.map(SemanticCoreAnnotation.fromThrift).toSet),
-      hashtags = query.hashtags.map(_.toSet),
-      languages = query.languages.map(_.map(Language.fromThrift).toSet),
-      candidateTweetSourceId =
-        query.candidateTweetSourceId.flatMap(CandidateTweetSourceId.fromThrift),
-      includeNullcastTweets = query.includeNullcastTweets,
-      includeTweetsFromArchiveIndex = query.includeTweetsFromArchiveIndex,
-      authorIds = query.authorIds,
-      hydratesContentFeatures = query.hydratesContentFeatures
+      selonarchOpelonrator = DelonfaultSelonarchOpelonrator,
+      elonarlybirdOptions = quelonry.elonarlybirdOptions.map(elonarlybirdOptions.fromThrift),
+      delonvicelonContelonxt = quelonry.delonvicelonContelonxt.map(DelonvicelonContelonxt.fromThrift),
+      elonxcludelondTwelonelontIds = quelonry.elonxcludelondTwelonelontIds,
+      selonmanticCorelonIds = quelonry.selonmanticCorelonIds.map(_.map(SelonmanticCorelonAnnotation.fromThrift).toSelont),
+      hashtags = quelonry.hashtags.map(_.toSelont),
+      languagelons = quelonry.languagelons.map(_.map(Languagelon.fromThrift).toSelont),
+      candidatelonTwelonelontSourcelonId =
+        quelonry.candidatelonTwelonelontSourcelonId.flatMap(CandidatelonTwelonelontSourcelonId.fromThrift),
+      includelonNullcastTwelonelonts = quelonry.includelonNullcastTwelonelonts,
+      includelonTwelonelontsFromArchivelonIndelonx = quelonry.includelonTwelonelontsFromArchivelonIndelonx,
+      authorIds = quelonry.authorIds,
+      hydratelonsContelonntFelonaturelons = quelonry.hydratelonsContelonntFelonaturelons
     )
   }
 
-  def fromThrift(query: thrift.UtegLikedByTweetsQuery): RecapQuery = {
-    val options = query.tweetKindOptions
-      .map(tweetKindOptions => TweetKindOption.fromThrift(tweetKindOptions.to[Set]))
-      .getOrElse(TweetKindOption.None)
+  delonf fromThrift(quelonry: thrift.UtelongLikelondByTwelonelontsQuelonry): ReloncapQuelonry = {
+    val options = quelonry.twelonelontKindOptions
+      .map(twelonelontKindOptions => TwelonelontKindOption.fromThrift(twelonelontKindOptions.to[Selont]))
+      .gelontOrelonlselon(TwelonelontKindOption.Nonelon)
 
-    RecapQuery(
-      userId = query.userId,
-      maxCount = query.maxCount,
-      range = query.range.map(TimelineRange.fromThrift),
+    ReloncapQuelonry(
+      uselonrId = quelonry.uselonrId,
+      maxCount = quelonry.maxCount,
+      rangelon = quelonry.rangelon.map(TimelonlinelonRangelon.fromThrift),
       options = options,
-      earlybirdOptions = query.earlybirdOptions.map(EarlybirdOptions.fromThrift),
-      deviceContext = query.deviceContext.map(DeviceContext.fromThrift),
-      excludedTweetIds = query.excludedTweetIds,
-      utegLikedByTweetsOptions = for {
-        utegCount <- query.utegCount
-        weightedFollowings <- query.weightedFollowings.map(_.toMap)
-      } yield {
-        UtegLikedByTweetsOptions(
-          utegCount = utegCount,
-          isInNetwork = query.isInNetwork,
-          weightedFollowings = weightedFollowings
+      elonarlybirdOptions = quelonry.elonarlybirdOptions.map(elonarlybirdOptions.fromThrift),
+      delonvicelonContelonxt = quelonry.delonvicelonContelonxt.map(DelonvicelonContelonxt.fromThrift),
+      elonxcludelondTwelonelontIds = quelonry.elonxcludelondTwelonelontIds,
+      utelongLikelondByTwelonelontsOptions = for {
+        utelongCount <- quelonry.utelongCount
+        welonightelondFollowings <- quelonry.welonightelondFollowings.map(_.toMap)
+      } yielonld {
+        UtelongLikelondByTwelonelontsOptions(
+          utelongCount = utelongCount,
+          isInNelontwork = quelonry.isInNelontwork,
+          welonightelondFollowings = welonightelondFollowings
         )
       },
-      candidateTweetSourceId =
-        query.candidateTweetSourceId.flatMap(CandidateTweetSourceId.fromThrift),
-      hydratesContentFeatures = query.hydratesContentFeatures
+      candidatelonTwelonelontSourcelonId =
+        quelonry.candidatelonTwelonelontSourcelonId.flatMap(CandidatelonTwelonelontSourcelonId.fromThrift),
+      hydratelonsContelonntFelonaturelons = quelonry.hydratelonsContelonntFelonaturelons
     )
   }
 
-  val paramGate: (Param[Boolean] => Gate[RecapQuery]) = HasParams.paramGate
+  val paramGatelon: (Param[Boolelonan] => Gatelon[ReloncapQuelonry]) = HasParams.paramGatelon
 
-  type DependencyProvider[+T] = ConfigApiDependencyProvider[RecapQuery, T]
-  object DependencyProvider extends DependencyProviderFunctions[RecapQuery]
+  typelon DelonpelonndelonncyProvidelonr[+T] = ConfigApiDelonpelonndelonncyProvidelonr[ReloncapQuelonry, T]
+  objelonct DelonpelonndelonncyProvidelonr elonxtelonnds DelonpelonndelonncyProvidelonrFunctions[ReloncapQuelonry]
 
-  type FutureDependencyProvider[+T] = ConfigApiFutureDependencyProvider[RecapQuery, T]
-  object FutureDependencyProvider extends FutureDependencyProviderFunctions[RecapQuery]
+  typelon FuturelonDelonpelonndelonncyProvidelonr[+T] = ConfigApiFuturelonDelonpelonndelonncyProvidelonr[ReloncapQuelonry, T]
+  objelonct FuturelonDelonpelonndelonncyProvidelonr elonxtelonnds FuturelonDelonpelonndelonncyProvidelonrFunctions[ReloncapQuelonry]
 }
 
 /**
- * Model object corresponding to RecapQuery thrift struct.
+ * Modelonl objelonct correlonsponding to ReloncapQuelonry thrift struct.
  */
-case class RecapQuery(
-  userId: UserId,
-  maxCount: Option[Int] = None,
-  range: Option[TimelineRange] = None,
-  options: TweetKindOption.ValueSet = TweetKindOption.None,
-  searchOperator: SearchOperator.Value = RecapQuery.DefaultSearchOperator,
-  earlybirdOptions: Option[EarlybirdOptions] = None,
-  deviceContext: Option[DeviceContext] = None,
-  authorIds: Option[Seq[UserId]] = None,
-  tweetIds: Option[Seq[TweetId]] = None,
-  semanticCoreIds: Option[Set[SemanticCoreAnnotation]] = None,
-  hashtags: Option[Set[String]] = None,
-  languages: Option[Set[Language]] = None,
-  excludedTweetIds: Option[Seq[TweetId]] = None,
-  // options used only for yml tweets
-  utegLikedByTweetsOptions: Option[UtegLikedByTweetsOptions] = None,
-  searchClientSubId: Option[String] = None,
-  override val params: Params = Params.Empty,
-  candidateTweetSourceId: Option[CandidateTweetSourceId.Value] = None,
-  includeNullcastTweets: Option[Boolean] = None,
-  includeTweetsFromArchiveIndex: Option[Boolean] = None,
-  hydratesContentFeatures: Option[Boolean] = None)
-    extends HasParams {
+caselon class ReloncapQuelonry(
+  uselonrId: UselonrId,
+  maxCount: Option[Int] = Nonelon,
+  rangelon: Option[TimelonlinelonRangelon] = Nonelon,
+  options: TwelonelontKindOption.ValuelonSelont = TwelonelontKindOption.Nonelon,
+  selonarchOpelonrator: SelonarchOpelonrator.Valuelon = ReloncapQuelonry.DelonfaultSelonarchOpelonrator,
+  elonarlybirdOptions: Option[elonarlybirdOptions] = Nonelon,
+  delonvicelonContelonxt: Option[DelonvicelonContelonxt] = Nonelon,
+  authorIds: Option[Selonq[UselonrId]] = Nonelon,
+  twelonelontIds: Option[Selonq[TwelonelontId]] = Nonelon,
+  selonmanticCorelonIds: Option[Selont[SelonmanticCorelonAnnotation]] = Nonelon,
+  hashtags: Option[Selont[String]] = Nonelon,
+  languagelons: Option[Selont[Languagelon]] = Nonelon,
+  elonxcludelondTwelonelontIds: Option[Selonq[TwelonelontId]] = Nonelon,
+  // options uselond only for yml twelonelonts
+  utelongLikelondByTwelonelontsOptions: Option[UtelongLikelondByTwelonelontsOptions] = Nonelon,
+  selonarchClielonntSubId: Option[String] = Nonelon,
+  ovelonrridelon val params: Params = Params.elonmpty,
+  candidatelonTwelonelontSourcelonId: Option[CandidatelonTwelonelontSourcelonId.Valuelon] = Nonelon,
+  includelonNullcastTwelonelonts: Option[Boolelonan] = Nonelon,
+  includelonTwelonelontsFromArchivelonIndelonx: Option[Boolelonan] = Nonelon,
+  hydratelonsContelonntFelonaturelons: Option[Boolelonan] = Nonelon)
+    elonxtelonnds HasParams {
 
-  override def toString: String = {
-    s"RecapQuery(userId: $userId, maxCount: $maxCount, range: $range, options: $options, searchOperator: $searchOperator, " +
-      s"earlybirdOptions: $earlybirdOptions, deviceContext: $deviceContext, authorIds: $authorIds, " +
-      s"tweetIds: $tweetIds, semanticCoreIds: $semanticCoreIds, hashtags: $hashtags, languages: $languages, excludedTweetIds: $excludedTweetIds, " +
-      s"utegLikedByTweetsOptions: $utegLikedByTweetsOptions, searchClientSubId: $searchClientSubId, " +
-      s"params: $params, candidateTweetSourceId: $candidateTweetSourceId, includeNullcastTweets: $includeNullcastTweets, " +
-      s"includeTweetsFromArchiveIndex: $includeTweetsFromArchiveIndex), hydratesContentFeatures: $hydratesContentFeatures"
+  ovelonrridelon delonf toString: String = {
+    s"ReloncapQuelonry(uselonrId: $uselonrId, maxCount: $maxCount, rangelon: $rangelon, options: $options, selonarchOpelonrator: $selonarchOpelonrator, " +
+      s"elonarlybirdOptions: $elonarlybirdOptions, delonvicelonContelonxt: $delonvicelonContelonxt, authorIds: $authorIds, " +
+      s"twelonelontIds: $twelonelontIds, selonmanticCorelonIds: $selonmanticCorelonIds, hashtags: $hashtags, languagelons: $languagelons, elonxcludelondTwelonelontIds: $elonxcludelondTwelonelontIds, " +
+      s"utelongLikelondByTwelonelontsOptions: $utelongLikelondByTwelonelontsOptions, selonarchClielonntSubId: $selonarchClielonntSubId, " +
+      s"params: $params, candidatelonTwelonelontSourcelonId: $candidatelonTwelonelontSourcelonId, includelonNullcastTwelonelonts: $includelonNullcastTwelonelonts, " +
+      s"includelonTwelonelontsFromArchivelonIndelonx: $includelonTwelonelontsFromArchivelonIndelonx), hydratelonsContelonntFelonaturelons: $hydratelonsContelonntFelonaturelons"
   }
 
-  def throwIfInvalid(): Unit = {
-    def noDuplicates[T <: Traversable[_]](elements: T) = {
-      elements.toSet.size == elements.size
+  delonf throwIfInvalid(): Unit = {
+    delonf noDuplicatelons[T <: Travelonrsablelon[_]](elonlelonmelonnts: T) = {
+      elonlelonmelonnts.toSelont.sizelon == elonlelonmelonnts.sizelon
     }
 
-    maxCount.foreach { max => require(max > 0, "maxCount must be a positive integer") }
-    range.foreach(_.throwIfInvalid())
-    earlybirdOptions.foreach(_.throwIfInvalid())
-    tweetIds.foreach { ids => require(ids.nonEmpty, "tweetIds must be nonEmpty if present") }
-    semanticCoreIds.foreach(_.foreach(_.throwIfInvalid()))
-    languages.foreach(_.foreach(_.throwIfInvalid()))
-    languages.foreach { langs =>
-      require(langs.nonEmpty, "languages must be nonEmpty if present")
-      require(noDuplicates(langs.map(_.language)), "languages must be unique")
+    maxCount.forelonach { max => relonquirelon(max > 0, "maxCount must belon a positivelon intelongelonr") }
+    rangelon.forelonach(_.throwIfInvalid())
+    elonarlybirdOptions.forelonach(_.throwIfInvalid())
+    twelonelontIds.forelonach { ids => relonquirelon(ids.nonelonmpty, "twelonelontIds must belon nonelonmpty if prelonselonnt") }
+    selonmanticCorelonIds.forelonach(_.forelonach(_.throwIfInvalid()))
+    languagelons.forelonach(_.forelonach(_.throwIfInvalid()))
+    languagelons.forelonach { langs =>
+      relonquirelon(langs.nonelonmpty, "languagelons must belon nonelonmpty if prelonselonnt")
+      relonquirelon(noDuplicatelons(langs.map(_.languagelon)), "languagelons must belon uniquelon")
     }
   }
 
   throwIfInvalid()
 
-  def toThriftRecapQuery: thrift.RecapQuery = {
-    val thriftOptions = Some(TweetKindOption.toThrift(options))
-    thrift.RecapQuery(
-      userId,
+  delonf toThriftReloncapQuelonry: thrift.ReloncapQuelonry = {
+    val thriftOptions = Somelon(TwelonelontKindOption.toThrift(options))
+    thrift.ReloncapQuelonry(
+      uselonrId,
       maxCount,
-      range.map(_.toTimelineRangeThrift),
-      deprecatedMinCount = None,
+      rangelon.map(_.toTimelonlinelonRangelonThrift),
+      delonpreloncatelondMinCount = Nonelon,
       thriftOptions,
-      earlybirdOptions.map(_.toThrift),
-      deviceContext.map(_.toThrift),
+      elonarlybirdOptions.map(_.toThrift),
+      delonvicelonContelonxt.map(_.toThrift),
       authorIds,
-      excludedTweetIds,
-      Some(SearchOperator.toThrift(searchOperator)),
-      searchClientSubId,
-      candidateTweetSourceId.flatMap(CandidateTweetSourceId.toThrift)
+      elonxcludelondTwelonelontIds,
+      Somelon(SelonarchOpelonrator.toThrift(selonarchOpelonrator)),
+      selonarchClielonntSubId,
+      candidatelonTwelonelontSourcelonId.flatMap(CandidatelonTwelonelontSourcelonId.toThrift)
     )
   }
 
-  def toThriftRecapHydrationQuery: thrift.RecapHydrationQuery = {
-    require(tweetIds.isDefined && tweetIds.get.nonEmpty, "tweetIds must be present")
-    thrift.RecapHydrationQuery(
-      userId,
-      tweetIds.get,
-      earlybirdOptions.map(_.toThrift),
-      deviceContext.map(_.toThrift),
-      candidateTweetSourceId.flatMap(CandidateTweetSourceId.toThrift)
+  delonf toThriftReloncapHydrationQuelonry: thrift.ReloncapHydrationQuelonry = {
+    relonquirelon(twelonelontIds.isDelonfinelond && twelonelontIds.gelont.nonelonmpty, "twelonelontIds must belon prelonselonnt")
+    thrift.ReloncapHydrationQuelonry(
+      uselonrId,
+      twelonelontIds.gelont,
+      elonarlybirdOptions.map(_.toThrift),
+      delonvicelonContelonxt.map(_.toThrift),
+      candidatelonTwelonelontSourcelonId.flatMap(CandidatelonTwelonelontSourcelonId.toThrift)
     )
   }
 
-  def toThriftEntityTweetsQuery: thrift.EntityTweetsQuery = {
-    val thriftTweetKindOptions = Some(TweetKindOption.toThrift(options))
-    thrift.EntityTweetsQuery(
-      userId = userId,
+  delonf toThriftelonntityTwelonelontsQuelonry: thrift.elonntityTwelonelontsQuelonry = {
+    val thriftTwelonelontKindOptions = Somelon(TwelonelontKindOption.toThrift(options))
+    thrift.elonntityTwelonelontsQuelonry(
+      uselonrId = uselonrId,
       maxCount = maxCount,
-      range = range.map(_.toTimelineRangeThrift),
-      tweetKindOptions = thriftTweetKindOptions,
-      earlybirdOptions = earlybirdOptions.map(_.toThrift),
-      deviceContext = deviceContext.map(_.toThrift),
-      excludedTweetIds = excludedTweetIds,
-      semanticCoreIds = semanticCoreIds.map(_.map(_.toThrift)),
+      rangelon = rangelon.map(_.toTimelonlinelonRangelonThrift),
+      twelonelontKindOptions = thriftTwelonelontKindOptions,
+      elonarlybirdOptions = elonarlybirdOptions.map(_.toThrift),
+      delonvicelonContelonxt = delonvicelonContelonxt.map(_.toThrift),
+      elonxcludelondTwelonelontIds = elonxcludelondTwelonelontIds,
+      selonmanticCorelonIds = selonmanticCorelonIds.map(_.map(_.toThrift)),
       hashtags = hashtags,
-      languages = languages.map(_.map(_.toThrift)),
-      candidateTweetSourceId.flatMap(CandidateTweetSourceId.toThrift),
-      includeNullcastTweets = includeNullcastTweets,
-      includeTweetsFromArchiveIndex = includeTweetsFromArchiveIndex,
+      languagelons = languagelons.map(_.map(_.toThrift)),
+      candidatelonTwelonelontSourcelonId.flatMap(CandidatelonTwelonelontSourcelonId.toThrift),
+      includelonNullcastTwelonelonts = includelonNullcastTwelonelonts,
+      includelonTwelonelontsFromArchivelonIndelonx = includelonTwelonelontsFromArchivelonIndelonx,
       authorIds = authorIds
     )
   }
 
-  def toThriftUtegLikedByTweetsQuery: thrift.UtegLikedByTweetsQuery = {
+  delonf toThriftUtelongLikelondByTwelonelontsQuelonry: thrift.UtelongLikelondByTwelonelontsQuelonry = {
 
-    val thriftTweetKindOptions = Some(TweetKindOption.toThrift(options))
-    thrift.UtegLikedByTweetsQuery(
-      userId = userId,
+    val thriftTwelonelontKindOptions = Somelon(TwelonelontKindOption.toThrift(options))
+    thrift.UtelongLikelondByTwelonelontsQuelonry(
+      uselonrId = uselonrId,
       maxCount = maxCount,
-      utegCount = utegLikedByTweetsOptions.map(_.utegCount),
-      range = range.map(_.toTimelineRangeThrift),
-      tweetKindOptions = thriftTweetKindOptions,
-      earlybirdOptions = earlybirdOptions.map(_.toThrift),
-      deviceContext = deviceContext.map(_.toThrift),
-      excludedTweetIds = excludedTweetIds,
-      isInNetwork = utegLikedByTweetsOptions.map(_.isInNetwork).get,
-      weightedFollowings = utegLikedByTweetsOptions.map(_.weightedFollowings),
-      candidateTweetSourceId = candidateTweetSourceId.flatMap(CandidateTweetSourceId.toThrift)
+      utelongCount = utelongLikelondByTwelonelontsOptions.map(_.utelongCount),
+      rangelon = rangelon.map(_.toTimelonlinelonRangelonThrift),
+      twelonelontKindOptions = thriftTwelonelontKindOptions,
+      elonarlybirdOptions = elonarlybirdOptions.map(_.toThrift),
+      delonvicelonContelonxt = delonvicelonContelonxt.map(_.toThrift),
+      elonxcludelondTwelonelontIds = elonxcludelondTwelonelontIds,
+      isInNelontwork = utelongLikelondByTwelonelontsOptions.map(_.isInNelontwork).gelont,
+      welonightelondFollowings = utelongLikelondByTwelonelontsOptions.map(_.welonightelondFollowings),
+      candidatelonTwelonelontSourcelonId = candidatelonTwelonelontSourcelonId.flatMap(CandidatelonTwelonelontSourcelonId.toThrift)
     )
   }
 }

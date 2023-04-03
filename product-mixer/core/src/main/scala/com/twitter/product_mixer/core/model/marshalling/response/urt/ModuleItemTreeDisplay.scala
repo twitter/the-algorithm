@@ -1,9 +1,9 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ModuleDisplayType
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.timelonlinelon_modulelon.ModulelonDisplayTypelon
 
-case class ModuleItemTreeDisplay(
-  parentModuleEntryItemId: Option[String],
-  indentFromParent: Option[Boolean],
-  displayType: Option[ModuleDisplayType],
-  isAnchorChild: Option[Boolean])
+caselon class ModulelonItelonmTrelonelonDisplay(
+  parelonntModulelonelonntryItelonmId: Option[String],
+  indelonntFromParelonnt: Option[Boolelonan],
+  displayTypelon: Option[ModulelonDisplayTypelon],
+  isAnchorChild: Option[Boolelonan])

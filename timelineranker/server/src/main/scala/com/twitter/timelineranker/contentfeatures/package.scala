@@ -1,10 +1,10 @@
-package com.twitter.timelineranker
+packagelon com.twittelonr.timelonlinelonrankelonr
 
-import com.twitter.timelineranker.core.FutureDependencyTransformer
-import com.twitter.timelineranker.recap.model.ContentFeatures
-import com.twitter.timelines.model.TweetId
+import com.twittelonr.timelonlinelonrankelonr.corelon.FuturelonDelonpelonndelonncyTransformelonr
+import com.twittelonr.timelonlinelonrankelonr.reloncap.modelonl.ContelonntFelonaturelons
+import com.twittelonr.timelonlinelons.modelonl.TwelonelontId
 
-package object contentfeatures {
-  type ContentFeaturesProvider =
-    FutureDependencyTransformer[Seq[TweetId], Map[TweetId, ContentFeatures]]
+packagelon objelonct contelonntfelonaturelons {
+  typelon ContelonntFelonaturelonsProvidelonr =
+    FuturelonDelonpelonndelonncyTransformelonr[Selonq[TwelonelontId], Map[TwelonelontId, ContelonntFelonaturelons]]
 }

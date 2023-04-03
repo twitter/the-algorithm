@@ -1,6 +1,6 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.cover
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.covelonr
 
-sealed trait HalfCoverDisplayType
+selonalelond trait HalfCovelonrDisplayTypelon
 
-case object CoverHalfCoverDisplayType extends HalfCoverDisplayType
-case object CenterCoverHalfCoverDisplayType extends HalfCoverDisplayType
+caselon objelonct CovelonrHalfCovelonrDisplayTypelon elonxtelonnds HalfCovelonrDisplayTypelon
+caselon objelonct CelonntelonrCovelonrHalfCovelonrDisplayTypelon elonxtelonnds HalfCovelonrDisplayTypelon

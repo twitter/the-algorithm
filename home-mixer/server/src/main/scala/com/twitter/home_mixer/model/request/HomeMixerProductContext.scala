@@ -1,34 +1,34 @@
-package com.twitter.home_mixer.model.request
+packagelon com.twittelonr.homelon_mixelonr.modelonl.relonquelonst
 
-import com.twitter.dspbidder.commons.thriftscala.DspClientContext
-import com.twitter.product_mixer.core.model.marshalling.request.ProductContext
+import com.twittelonr.dspbiddelonr.commons.thriftscala.DspClielonntContelonxt
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.ProductContelonxt
 
-case class FollowingProductContext(
-  deviceContext: Option[DeviceContext],
-  seenTweetIds: Option[Seq[Long]],
-  dspClientContext: Option[DspClientContext])
-    extends ProductContext
+caselon class FollowingProductContelonxt(
+  delonvicelonContelonxt: Option[DelonvicelonContelonxt],
+  selonelonnTwelonelontIds: Option[Selonq[Long]],
+  dspClielonntContelonxt: Option[DspClielonntContelonxt])
+    elonxtelonnds ProductContelonxt
 
-case class ForYouProductContext(
-  deviceContext: Option[DeviceContext],
-  seenTweetIds: Option[Seq[Long]],
-  dspClientContext: Option[DspClientContext])
-    extends ProductContext
+caselon class ForYouProductContelonxt(
+  delonvicelonContelonxt: Option[DelonvicelonContelonxt],
+  selonelonnTwelonelontIds: Option[Selonq[Long]],
+  dspClielonntContelonxt: Option[DspClielonntContelonxt])
+    elonxtelonnds ProductContelonxt
 
-case class ScoredTweetsProductContext(
-  deviceContext: Option[DeviceContext],
-  seenTweetIds: Option[Seq[Long]],
-  servedTweetIds: Option[Seq[Long]])
-    extends ProductContext
+caselon class ScorelondTwelonelontsProductContelonxt(
+  delonvicelonContelonxt: Option[DelonvicelonContelonxt],
+  selonelonnTwelonelontIds: Option[Selonq[Long]],
+  selonrvelondTwelonelontIds: Option[Selonq[Long]])
+    elonxtelonnds ProductContelonxt
 
-case class ListTweetsProductContext(
+caselon class ListTwelonelontsProductContelonxt(
   listId: Long,
-  deviceContext: Option[DeviceContext],
-  dspClientContext: Option[DspClientContext])
-    extends ProductContext
+  delonvicelonContelonxt: Option[DelonvicelonContelonxt],
+  dspClielonntContelonxt: Option[DspClielonntContelonxt])
+    elonxtelonnds ProductContelonxt
 
-case class ListRecommendedUsersProductContext(
+caselon class ListReloncommelonndelondUselonrsProductContelonxt(
   listId: Long,
-  selectedUserIds: Option[Seq[Long]],
-  excludedUserIds: Option[Seq[Long]])
-    extends ProductContext
+  selonlelonctelondUselonrIds: Option[Selonq[Long]],
+  elonxcludelondUselonrIds: Option[Selonq[Long]])
+    elonxtelonnds ProductContelonxt

@@ -1,27 +1,27 @@
-package com.twitter.product_mixer.core.functional_component.common.alert
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.alelonrt
 
-import com.twitter.product_mixer.core.functional_component.common.alert.predicate.ThroughputPredicate
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.alelonrt.prelondicatelon.ThroughputPrelondicatelon
 
 /**
- * [[ResponseSizeAlert]] triggers when the specified percentile of requests with empty responses (defined
- * as the number of items returned excluding cursors) is beyond the [[ThroughputPredicate]] threshold
- * for a configured amount of time.
+ * [[RelonsponselonSizelonAlelonrt]] triggelonrs whelonn thelon speloncifielond pelonrcelonntilelon of relonquelonsts with elonmpty relonsponselons (delonfinelond
+ * as thelon numbelonr of itelonms relonturnelond elonxcluding cursors) is belonyond thelon [[ThroughputPrelondicatelon]] threlonshold
+ * for a configurelond amount of timelon.
  */
-case class ResponseSizeAlert(
-  override val notificationGroup: NotificationGroup,
-  percentile: Percentile,
-  override val warnPredicate: ThroughputPredicate,
-  override val criticalPredicate: ThroughputPredicate,
-  override val runbookLink: Option[String] = None)
-    extends Alert {
-  override val metricSuffix: Option[String] = Some(percentile.metricSuffix)
-  override val alertType: AlertType = ResponseSize
-  require(
-    warnPredicate.threshold >= 0,
-    s"ResponseSizeAlert predicates must be >= 0 but got warnPredicate = ${warnPredicate.threshold}"
+caselon class RelonsponselonSizelonAlelonrt(
+  ovelonrridelon val notificationGroup: NotificationGroup,
+  pelonrcelonntilelon: Pelonrcelonntilelon,
+  ovelonrridelon val warnPrelondicatelon: ThroughputPrelondicatelon,
+  ovelonrridelon val criticalPrelondicatelon: ThroughputPrelondicatelon,
+  ovelonrridelon val runbookLink: Option[String] = Nonelon)
+    elonxtelonnds Alelonrt {
+  ovelonrridelon val melontricSuffix: Option[String] = Somelon(pelonrcelonntilelon.melontricSuffix)
+  ovelonrridelon val alelonrtTypelon: AlelonrtTypelon = RelonsponselonSizelon
+  relonquirelon(
+    warnPrelondicatelon.threlonshold >= 0,
+    s"RelonsponselonSizelonAlelonrt prelondicatelons must belon >= 0 but got warnPrelondicatelon = ${warnPrelondicatelon.threlonshold}"
   )
-  require(
-    criticalPredicate.threshold >= 0,
-    s"ResponseSizeAlert predicates must be >= 0 but got criticalPredicate = ${criticalPredicate.threshold}"
+  relonquirelon(
+    criticalPrelondicatelon.threlonshold >= 0,
+    s"RelonsponselonSizelonAlelonrt prelondicatelons must belon >= 0 but got criticalPrelondicatelon = ${criticalPrelondicatelon.threlonshold}"
   )
 }

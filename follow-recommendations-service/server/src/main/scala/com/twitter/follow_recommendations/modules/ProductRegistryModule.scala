@@ -1,12 +1,12 @@
-package com.twitter.follow_recommendations.modules
+packagelon com.twittelonr.follow_reloncommelonndations.modulelons
 
-import com.twitter.follow_recommendations.products.ProdProductRegistry
-import com.twitter.follow_recommendations.products.common.ProductRegistry
-import com.twitter.inject.TwitterModule
-import javax.inject.Singleton
+import com.twittelonr.follow_reloncommelonndations.products.ProdProductRelongistry
+import com.twittelonr.follow_reloncommelonndations.products.common.ProductRelongistry
+import com.twittelonr.injelonct.TwittelonrModulelon
+import javax.injelonct.Singlelonton
 
-object ProductRegistryModule extends TwitterModule {
-  override protected def configure(): Unit = {
-    bind[ProductRegistry].to[ProdProductRegistry].in[Singleton]
+objelonct ProductRelongistryModulelon elonxtelonnds TwittelonrModulelon {
+  ovelonrridelon protelonctelond delonf configurelon(): Unit = {
+    bind[ProductRelongistry].to[ProdProductRelongistry].in[Singlelonton]
   }
 }

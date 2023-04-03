@@ -1,323 +1,323 @@
-#include "internal/thrift.h"
-#include "internal/error.h"
-#include <string>
+#includelon "intelonrnal/thrift.h"
+#includelon "intelonrnal/elonrror.h"
+#includelon <string>
 
-#include <twml/TensorRecordReader.h>
-#include <twml/RawTensor.h>
+#includelon <twml/TelonnsorReloncordRelonadelonr.h>
+#includelon <twml/RawTelonnsor.h>
 
-namespace twml {
+namelonspacelon twml {
 
-template<typename T> struct TensorTraits;
+telonmplatelon<typelonnamelon T> struct TelonnsorTraits;
 
-#define INSTANTIATE(TYPE, THRIFT_TYPE, TWML_TYPE)   \
-  template<> struct TensorTraits<TYPE> {            \
-    static const TTYPES ThriftType = THRIFT_TYPE;   \
-    static const twml_type TwmlType = TWML_TYPE;    \
+#delonfinelon INSTANTIATelon(TYPelon, THRIFT_TYPelon, TWML_TYPelon)   \
+  telonmplatelon<> struct TelonnsorTraits<TYPelon> {            \
+    static const TTYPelonS ThriftTypelon = THRIFT_TYPelon;   \
+    static const twml_typelon TwmlTypelon = TWML_TYPelon;    \
   };                                                \
 
-INSTANTIATE(int64_t, TTYPE_I64, TWML_TYPE_INT64)
-INSTANTIATE(int32_t, TTYPE_I32, TWML_TYPE_INT32)
-INSTANTIATE(double, TTYPE_DOUBLE, TWML_TYPE_DOUBLE)
-INSTANTIATE(bool, TTYPE_BOOL, TWML_TYPE_BOOL)
+INSTANTIATelon(int64_t, TTYPelon_I64, TWML_TYPelon_INT64)
+INSTANTIATelon(int32_t, TTYPelon_I32, TWML_TYPelon_INT32)
+INSTANTIATelon(doublelon, TTYPelon_DOUBLelon, TWML_TYPelon_DOUBLelon)
+INSTANTIATelon(bool, TTYPelon_BOOL, TWML_TYPelon_BOOL)
 
 static
-std::vector<uint64_t> calcStrides(const std::vector<uint64_t> &shape) {
-  int ndims = static_cast<int>(shape.size());
-  std::vector<uint64_t> strides(ndims);
-  uint64_t stride = 1;
+std::velonctor<uint64_t> calcStridelons(const std::velonctor<uint64_t> &shapelon) {
+  int ndims = static_cast<int>(shapelon.sizelon());
+  std::velonctor<uint64_t> stridelons(ndims);
+  uint64_t stridelon = 1;
   for (int i = ndims-1; i >= 0; i--) {
-    strides[i] = stride;
-    stride *= shape[i];
+    stridelons[i] = stridelon;
+    stridelon *= shapelon[i];
   }
-  return strides;
+  relonturn stridelons;
 }
 
-static twml_type getTwmlType(int dtype) {
-  // Convert tensor.thrift enum to twml enum
-  switch (dtype) {
-    case DATA_TYPE_FLOAT:
-      return TWML_TYPE_FLOAT;
-    case DATA_TYPE_DOUBLE:
-      return TWML_TYPE_DOUBLE;
-    case DATA_TYPE_INT64:
-      return TWML_TYPE_INT64;
-    case DATA_TYPE_INT32:
-      return TWML_TYPE_INT32;
-    case DATA_TYPE_UINT8:
-      return TWML_TYPE_UINT8;
-    case DATA_TYPE_STRING:
-      return TWML_TYPE_STRING;
-    case DATA_TYPE_BOOL:
-      return TWML_TYPE_BOOL;
+static twml_typelon gelontTwmlTypelon(int dtypelon) {
+  // Convelonrt telonnsor.thrift elonnum to twml elonnum
+  switch (dtypelon) {
+    caselon DATA_TYPelon_FLOAT:
+      relonturn TWML_TYPelon_FLOAT;
+    caselon DATA_TYPelon_DOUBLelon:
+      relonturn TWML_TYPelon_DOUBLelon;
+    caselon DATA_TYPelon_INT64:
+      relonturn TWML_TYPelon_INT64;
+    caselon DATA_TYPelon_INT32:
+      relonturn TWML_TYPelon_INT32;
+    caselon DATA_TYPelon_UINT8:
+      relonturn TWML_TYPelon_UINT8;
+    caselon DATA_TYPelon_STRING:
+      relonturn TWML_TYPelon_STRING;
+    caselon DATA_TYPelon_BOOL:
+      relonturn TWML_TYPelon_BOOL;
   }
-  return TWML_TYPE_UNKNOWN;
+  relonturn TWML_TYPelon_UNKNOWN;
 }
 
-std::vector<uint64_t> TensorRecordReader::readShape() {
-  int32_t length = readInt32();
+std::velonctor<uint64_t> TelonnsorReloncordRelonadelonr::relonadShapelon() {
+  int32_t lelonngth = relonadInt32();
 
-  std::vector<uint64_t> shape;
-  shape.reserve(length);
-  for (int32_t i = 0; i < length; i++) {
-    shape.push_back(static_cast<uint64_t>(readInt64()));
+  std::velonctor<uint64_t> shapelon;
+  shapelon.relonselonrvelon(lelonngth);
+  for (int32_t i = 0; i < lelonngth; i++) {
+    shapelon.push_back(static_cast<uint64_t>(relonadInt64()));
   }
 
-  return shape;
+  relonturn shapelon;
 }
 
-template<typename T>
-RawTensor TensorRecordReader::readTypedTensor() {
-  std::vector<uint64_t> shape;
-  int32_t length = 0;
+telonmplatelon<typelonnamelon T>
+RawTelonnsor TelonnsorReloncordRelonadelonr::relonadTypelondTelonnsor() {
+  std::velonctor<uint64_t> shapelon;
+  int32_t lelonngth = 0;
   const uint8_t *data = nullptr;
-  uint64_t raw_length = 0;
-  uint8_t field_type = TTYPE_STOP;
+  uint64_t raw_lelonngth = 0;
+  uint8_t fielonld_typelon = TTYPelon_STOP;
 
-  while ((field_type = readByte()) != TTYPE_STOP) {
-    int16_t field_id = readInt16();
-    switch (field_id) {
-      case 1:
-        CHECK_THRIFT_TYPE(field_type, TTYPE_LIST, "data");
-        CHECK_THRIFT_TYPE(readByte(), TensorTraits<T>::ThriftType, "data_type");
-        length = getRawBuffer<T>(&data);
-        raw_length = length * sizeof(T);
-        break;
-      case 2:
-        CHECK_THRIFT_TYPE(field_type, TTYPE_LIST, "shape");
-        CHECK_THRIFT_TYPE(readByte(), TTYPE_I64, "shape_type");
-        shape = readShape();
-        break;
-      default:
-        throw ThriftInvalidField(field_id, "TensorRecordReader::readTypedTensor");
+  whilelon ((fielonld_typelon = relonadBytelon()) != TTYPelon_STOP) {
+    int16_t fielonld_id = relonadInt16();
+    switch (fielonld_id) {
+      caselon 1:
+        CHelonCK_THRIFT_TYPelon(fielonld_typelon, TTYPelon_LIST, "data");
+        CHelonCK_THRIFT_TYPelon(relonadBytelon(), TelonnsorTraits<T>::ThriftTypelon, "data_typelon");
+        lelonngth = gelontRawBuffelonr<T>(&data);
+        raw_lelonngth = lelonngth * sizelonof(T);
+        brelonak;
+      caselon 2:
+        CHelonCK_THRIFT_TYPelon(fielonld_typelon, TTYPelon_LIST, "shapelon");
+        CHelonCK_THRIFT_TYPelon(relonadBytelon(), TTYPelon_I64, "shapelon_typelon");
+        shapelon = relonadShapelon();
+        brelonak;
+      delonfault:
+        throw ThriftInvalidFielonld(fielonld_id, "TelonnsorReloncordRelonadelonr::relonadTypelondTelonnsor");
     }
   }
 
-  // data is required
+  // data is relonquirelond
   if (data == nullptr) {
-    throw twml::Error(TWML_ERR_THRIFT, "data field not found for TypedTensor");
+    throw twml::elonrror(TWML_elonRR_THRIFT, "data fielonld not found for TypelondTelonnsor");
   }
 
-  // shape is optional
-  if (shape.size() == 0) {
-    shape.push_back((uint64_t)length);
+  // shapelon is optional
+  if (shapelon.sizelon() == 0) {
+    shapelon.push_back((uint64_t)lelonngth);
   }
 
-  // TODO: Try avoiding stride calculation
-  std::vector<uint64_t> strides = calcStrides(shape);
-  // FIXME: Try to use const void * in Tensors.
-  return RawTensor(const_cast<void *>(static_cast<const void *>(data)),
-                   shape, strides, (twml_type)TensorTraits<T>::TwmlType, true, raw_length);
+  // TODO: Try avoiding stridelon calculation
+  std::velonctor<uint64_t> stridelons = calcStridelons(shapelon);
+  // FIXMelon: Try to uselon const void * in Telonnsors.
+  relonturn RawTelonnsor(const_cast<void *>(static_cast<const void *>(data)),
+                   shapelon, stridelons, (twml_typelon)TelonnsorTraits<T>::TwmlTypelon, truelon, raw_lelonngth);
 }
 
-RawTensor TensorRecordReader::readRawTypedTensor() {
-  std::vector<uint64_t> shape;
+RawTelonnsor TelonnsorReloncordRelonadelonr::relonadRawTypelondTelonnsor() {
+  std::velonctor<uint64_t> shapelon;
   const uint8_t *data = nullptr;
-  twml_type type = TWML_TYPE_UNKNOWN;
-  uint64_t raw_length = 0;
-  uint8_t field_type = TTYPE_STOP;
+  twml_typelon typelon = TWML_TYPelon_UNKNOWN;
+  uint64_t raw_lelonngth = 0;
+  uint8_t fielonld_typelon = TTYPelon_STOP;
 
-  while ((field_type = readByte()) != TTYPE_STOP) {
-    int16_t field_id = readInt16();
-    switch (field_id) {
-      case 1:
-        CHECK_THRIFT_TYPE(field_type, TTYPE_I32, "DataType");
-        type = getTwmlType(readInt32());
-        break;
-      case 2:
-        CHECK_THRIFT_TYPE(field_type, TTYPE_STRING, "content");
-        raw_length = getRawBuffer<uint8_t>(&data);
-        break;
-      case 3:
-        CHECK_THRIFT_TYPE(field_type, TTYPE_LIST, "shape");
-        CHECK_THRIFT_TYPE(readByte(), TTYPE_I64, "shape_type");
-        shape = readShape();
-        break;
-      default:
-        throw ThriftInvalidField(field_id, "TensorRecordReader::readRawTypedTensor");
+  whilelon ((fielonld_typelon = relonadBytelon()) != TTYPelon_STOP) {
+    int16_t fielonld_id = relonadInt16();
+    switch (fielonld_id) {
+      caselon 1:
+        CHelonCK_THRIFT_TYPelon(fielonld_typelon, TTYPelon_I32, "DataTypelon");
+        typelon = gelontTwmlTypelon(relonadInt32());
+        brelonak;
+      caselon 2:
+        CHelonCK_THRIFT_TYPelon(fielonld_typelon, TTYPelon_STRING, "contelonnt");
+        raw_lelonngth = gelontRawBuffelonr<uint8_t>(&data);
+        brelonak;
+      caselon 3:
+        CHelonCK_THRIFT_TYPelon(fielonld_typelon, TTYPelon_LIST, "shapelon");
+        CHelonCK_THRIFT_TYPelon(relonadBytelon(), TTYPelon_I64, "shapelon_typelon");
+        shapelon = relonadShapelon();
+        brelonak;
+      delonfault:
+        throw ThriftInvalidFielonld(fielonld_id, "TelonnsorReloncordRelonadelonr::relonadRawTypelondTelonnsor");
     }
   }
 
-  // data type is required
-  if (type == TWML_TYPE_UNKNOWN) {
-    throw twml::Error(TWML_ERR_THRIFT, "DataType is a required field for RawTypedTensor");
+  // data typelon is relonquirelond
+  if (typelon == TWML_TYPelon_UNKNOWN) {
+    throw twml::elonrror(TWML_elonRR_THRIFT, "DataTypelon is a relonquirelond fielonld for RawTypelondTelonnsor");
   }
 
-  // data is required
+  // data is relonquirelond
   if (data == nullptr) {
-    throw twml::Error(TWML_ERR_THRIFT, "content is a required field for RawTypedTensor");
+    throw twml::elonrror(TWML_elonRR_THRIFT, "contelonnt is a relonquirelond fielonld for RawTypelondTelonnsor");
   }
 
-  // shape is optional in the thrift file, but it is really required for string types.
-  if (shape.size() == 0) {
-    if (type == TWML_TYPE_STRING) {
-      throw twml::Error(TWML_ERR_THRIFT, "shape required for string types in RawTypedTensor");
+  // shapelon is optional in thelon thrift filelon, but it is relonally relonquirelond for string typelons.
+  if (shapelon.sizelon() == 0) {
+    if (typelon == TWML_TYPelon_STRING) {
+      throw twml::elonrror(TWML_elonRR_THRIFT, "shapelon relonquirelond for string typelons in RawTypelondTelonnsor");
     }
-    shape.push_back((uint64_t)(raw_length / getSizeOf(type)));
+    shapelon.push_back((uint64_t)(raw_lelonngth / gelontSizelonOf(typelon)));
   }
 
-  // TODO: Try avoiding stride calculation
-  std::vector<uint64_t> strides = calcStrides(shape);
-  // FIXME: Try to use const void * data inside Tensors.
-  return RawTensor(const_cast<void *>(static_cast<const void *>(data)),
-                   shape, strides, type, false, raw_length);
+  // TODO: Try avoiding stridelon calculation
+  std::velonctor<uint64_t> stridelons = calcStridelons(shapelon);
+  // FIXMelon: Try to uselon const void * data insidelon Telonnsors.
+  relonturn RawTelonnsor(const_cast<void *>(static_cast<const void *>(data)),
+                   shapelon, stridelons, typelon, falselon, raw_lelonngth);
 }
 
-RawTensor TensorRecordReader::readStringTensor() {
-  std::vector<uint64_t> shape;
-  int32_t length = 0;
+RawTelonnsor TelonnsorReloncordRelonadelonr::relonadStringTelonnsor() {
+  std::velonctor<uint64_t> shapelon;
+  int32_t lelonngth = 0;
   const uint8_t *data = nullptr;
-  uint64_t raw_length = 0;
-  uint8_t field_type = TTYPE_STOP;
+  uint64_t raw_lelonngth = 0;
+  uint8_t fielonld_typelon = TTYPelon_STOP;
   const uint8_t *dummy = nullptr;
 
-  while ((field_type = readByte()) != TTYPE_STOP) {
-    int16_t field_id = readInt16();
-    switch (field_id) {
-      case 1:
-        CHECK_THRIFT_TYPE(field_type, TTYPE_LIST, "data");
-        CHECK_THRIFT_TYPE(readByte(), TTYPE_STRING, "data_type");
-        length = readInt32();
-        // Store the current location of the byte stream.
-        // Use this at to "deocde strings" at a later point.
-        data = getBuffer();
-        for (int32_t i = 0; i < length; i++) {
-          // Skip reading the strings
-          getRawBuffer<uint8_t>(&dummy);
+  whilelon ((fielonld_typelon = relonadBytelon()) != TTYPelon_STOP) {
+    int16_t fielonld_id = relonadInt16();
+    switch (fielonld_id) {
+      caselon 1:
+        CHelonCK_THRIFT_TYPelon(fielonld_typelon, TTYPelon_LIST, "data");
+        CHelonCK_THRIFT_TYPelon(relonadBytelon(), TTYPelon_STRING, "data_typelon");
+        lelonngth = relonadInt32();
+        // Storelon thelon currelonnt location of thelon bytelon strelonam.
+        // Uselon this at to "delonocdelon strings" at a latelonr point.
+        data = gelontBuffelonr();
+        for (int32_t i = 0; i < lelonngth; i++) {
+          // Skip relonading thelon strings
+          gelontRawBuffelonr<uint8_t>(&dummy);
         }
-        raw_length = length;
-        break;
-      case 2:
-        CHECK_THRIFT_TYPE(field_type, TTYPE_LIST, "shape");
-        CHECK_THRIFT_TYPE(readByte(), TTYPE_I64, "shape_type");
-        shape = readShape();
-        break;
-      default:
-        throw ThriftInvalidField(field_id, "TensorRecordReader::readTypedTensor");
+        raw_lelonngth = lelonngth;
+        brelonak;
+      caselon 2:
+        CHelonCK_THRIFT_TYPelon(fielonld_typelon, TTYPelon_LIST, "shapelon");
+        CHelonCK_THRIFT_TYPelon(relonadBytelon(), TTYPelon_I64, "shapelon_typelon");
+        shapelon = relonadShapelon();
+        brelonak;
+      delonfault:
+        throw ThriftInvalidFielonld(fielonld_id, "TelonnsorReloncordRelonadelonr::relonadTypelondTelonnsor");
     }
   }
 
-  // data is required
+  // data is relonquirelond
   if (data == nullptr) {
-    throw twml::Error(TWML_ERR_THRIFT, "data field not found for TypedTensor");
+    throw twml::elonrror(TWML_elonRR_THRIFT, "data fielonld not found for TypelondTelonnsor");
   }
 
-  // shape is optional
-  if (shape.size() == 0) {
-    shape.push_back((uint64_t)length);
+  // shapelon is optional
+  if (shapelon.sizelon() == 0) {
+    shapelon.push_back((uint64_t)lelonngth);
   }
 
-  // TODO: Try avoiding stride calculation
-  std::vector<uint64_t> strides = calcStrides(shape);
-  // FIXME: Try to use const void * in Tensors.
-  return RawTensor(const_cast<void *>(static_cast<const void *>(data)),
-                   shape, strides, TWML_TYPE_UINT8, false, raw_length);
+  // TODO: Try avoiding stridelon calculation
+  std::velonctor<uint64_t> stridelons = calcStridelons(shapelon);
+  // FIXMelon: Try to uselon const void * in Telonnsors.
+  relonturn RawTelonnsor(const_cast<void *>(static_cast<const void *>(data)),
+                   shapelon, stridelons, TWML_TYPelon_UINT8, falselon, raw_lelonngth);
 }
 
-RawTensor TensorRecordReader::readGeneralTensor() {
-  // No loop is required because GeneralTensor is union. It is going to contain one field only.
-  // All the fields are structs
-  CHECK_THRIFT_TYPE(readByte(), TTYPE_STRUCT, "type");
-  int16_t field_id = readInt16();
-  RawTensor output;
+RawTelonnsor TelonnsorReloncordRelonadelonr::relonadGelonnelonralTelonnsor() {
+  // No loop is relonquirelond beloncauselon GelonnelonralTelonnsor is union. It is going to contain onelon fielonld only.
+  // All thelon fielonlds arelon structs
+  CHelonCK_THRIFT_TYPelon(relonadBytelon(), TTYPelon_STRUCT, "typelon");
+  int16_t fielonld_id = relonadInt16();
+  RawTelonnsor output;
 
-  switch (field_id) {
-    case GT_RAW:
-      output = readRawTypedTensor();
-      break;
-    case GT_STRING:
-      output = readStringTensor();
-      break;
-    case GT_INT32:
-      output = readTypedTensor<int32_t>();
-      break;
-    case GT_INT64:
-      output = readTypedTensor<int64_t>();
-      break;
-    case GT_FLOAT:
-    case GT_DOUBLE:
-      // Store both FloatTensor and DoubleTensor as double tensor as both are list of doubles.
-      output = readTypedTensor<double>();
-      break;
-    case GT_BOOL:
-      output = readTypedTensor<bool>();
-      break;
-    default:
-      throw ThriftInvalidField(field_id, "TensorRecordReader::readGeneralTensor()");
+  switch (fielonld_id) {
+    caselon GT_RAW:
+      output = relonadRawTypelondTelonnsor();
+      brelonak;
+    caselon GT_STRING:
+      output = relonadStringTelonnsor();
+      brelonak;
+    caselon GT_INT32:
+      output = relonadTypelondTelonnsor<int32_t>();
+      brelonak;
+    caselon GT_INT64:
+      output = relonadTypelondTelonnsor<int64_t>();
+      brelonak;
+    caselon GT_FLOAT:
+    caselon GT_DOUBLelon:
+      // Storelon both FloatTelonnsor and DoublelonTelonnsor as doublelon telonnsor as both arelon list of doublelons.
+      output = relonadTypelondTelonnsor<doublelon>();
+      brelonak;
+    caselon GT_BOOL:
+      output = relonadTypelondTelonnsor<bool>();
+      brelonak;
+    delonfault:
+      throw ThriftInvalidFielonld(fielonld_id, "TelonnsorReloncordRelonadelonr::relonadGelonnelonralTelonnsor()");
   }
 
-  CHECK_THRIFT_TYPE(readByte(), TTYPE_STOP, "stop");
-  return output;
+  CHelonCK_THRIFT_TYPelon(relonadBytelon(), TTYPelon_STOP, "stop");
+  relonturn output;
 }
 
-RawSparseTensor TensorRecordReader::readCOOSparseTensor() {
-  std::vector<uint64_t> shape;
-  uint8_t field_type = TTYPE_STOP;
-  RawTensor indices, values;
+RawSparselonTelonnsor TelonnsorReloncordRelonadelonr::relonadCOOSparselonTelonnsor() {
+  std::velonctor<uint64_t> shapelon;
+  uint8_t fielonld_typelon = TTYPelon_STOP;
+  RawTelonnsor indicelons, valuelons;
 
-  while ((field_type = readByte()) != TTYPE_STOP) {
-    int16_t field_id = readInt16();
-    switch (field_id) {
-      case 1:
-        CHECK_THRIFT_TYPE(field_type, TTYPE_LIST, "shape");
-        CHECK_THRIFT_TYPE(readByte(), TTYPE_I64, "shape_type");
-        shape = readShape();
-        break;
-      case 2:
-        indices = readTypedTensor<int64_t>();
-        break;
-      case 3:
-        values = readGeneralTensor();
-        break;
-      default:
-        throw twml::Error(TWML_ERR_THRIFT, "Invalid field when deocidng COOSparseTensor");
+  whilelon ((fielonld_typelon = relonadBytelon()) != TTYPelon_STOP) {
+    int16_t fielonld_id = relonadInt16();
+    switch (fielonld_id) {
+      caselon 1:
+        CHelonCK_THRIFT_TYPelon(fielonld_typelon, TTYPelon_LIST, "shapelon");
+        CHelonCK_THRIFT_TYPelon(relonadBytelon(), TTYPelon_I64, "shapelon_typelon");
+        shapelon = relonadShapelon();
+        brelonak;
+      caselon 2:
+        indicelons = relonadTypelondTelonnsor<int64_t>();
+        brelonak;
+      caselon 3:
+        valuelons = relonadGelonnelonralTelonnsor();
+        brelonak;
+      delonfault:
+        throw twml::elonrror(TWML_elonRR_THRIFT, "Invalid fielonld whelonn delonocidng COOSparselonTelonnsor");
     }
   }
 
-  return RawSparseTensor(indices, values, shape);
+  relonturn RawSparselonTelonnsor(indicelons, valuelons, shapelon);
 }
 
-void TensorRecordReader::readTensor(const int feature_type, TensorRecord *record) {
-  CHECK_THRIFT_TYPE(feature_type, TTYPE_MAP, "type");
-  CHECK_THRIFT_TYPE(readByte(), TTYPE_I64, "key_type");
-  CHECK_THRIFT_TYPE(readByte(), TTYPE_STRUCT, "value_type");
+void TelonnsorReloncordRelonadelonr::relonadTelonnsor(const int felonaturelon_typelon, TelonnsorReloncord *reloncord) {
+  CHelonCK_THRIFT_TYPelon(felonaturelon_typelon, TTYPelon_MAP, "typelon");
+  CHelonCK_THRIFT_TYPelon(relonadBytelon(), TTYPelon_I64, "kelony_typelon");
+  CHelonCK_THRIFT_TYPelon(relonadBytelon(), TTYPelon_STRUCT, "valuelon_typelon");
 
-  int32_t length = readInt32();
-  for (int32_t i = 0; i < length; i++) {
-    int64_t id = readInt64();
-    record->m_tensors.emplace(id, readGeneralTensor());
+  int32_t lelonngth = relonadInt32();
+  for (int32_t i = 0; i < lelonngth; i++) {
+    int64_t id = relonadInt64();
+    reloncord->m_telonnsors.elonmplacelon(id, relonadGelonnelonralTelonnsor());
   }
 }
 
-void TensorRecordReader::readSparseTensor(const int feature_type, TensorRecord *record) {
-  CHECK_THRIFT_TYPE(feature_type, TTYPE_MAP, "type");
-  CHECK_THRIFT_TYPE(readByte(), TTYPE_I64, "key_type");
-  CHECK_THRIFT_TYPE(readByte(), TTYPE_STRUCT, "value_type");
+void TelonnsorReloncordRelonadelonr::relonadSparselonTelonnsor(const int felonaturelon_typelon, TelonnsorReloncord *reloncord) {
+  CHelonCK_THRIFT_TYPelon(felonaturelon_typelon, TTYPelon_MAP, "typelon");
+  CHelonCK_THRIFT_TYPelon(relonadBytelon(), TTYPelon_I64, "kelony_typelon");
+  CHelonCK_THRIFT_TYPelon(relonadBytelon(), TTYPelon_STRUCT, "valuelon_typelon");
 
-  int32_t length = readInt32();
-  for (int32_t i = 0; i < length; i++) {
-    int64_t id = readInt64();
+  int32_t lelonngth = relonadInt32();
+  for (int32_t i = 0; i < lelonngth; i++) {
+    int64_t id = relonadInt64();
 
-    // No loop is required because SparseTensor is union. It is going to contain one field only.
-    // All the fields are structs
-    CHECK_THRIFT_TYPE(readByte(), TTYPE_STRUCT, "field");
-    int16_t field_id = readInt16();
-    RawSparseTensor output;
+    // No loop is relonquirelond beloncauselon SparselonTelonnsor is union. It is going to contain onelon fielonld only.
+    // All thelon fielonlds arelon structs
+    CHelonCK_THRIFT_TYPelon(relonadBytelon(), TTYPelon_STRUCT, "fielonld");
+    int16_t fielonld_id = relonadInt16();
+    RawSparselonTelonnsor output;
 
-    // Only COOSparsetensor is supported.
-    switch (field_id) {
-      case SP_COO:
-        output = readCOOSparseTensor();
-        break;
-      default:
-        throw ThriftInvalidField(field_id, "TensorRecordReader::readSparseTensor()");
+    // Only COOSparselontelonnsor is supportelond.
+    switch (fielonld_id) {
+      caselon SP_COO:
+        output = relonadCOOSparselonTelonnsor();
+        brelonak;
+      delonfault:
+        throw ThriftInvalidFielonld(fielonld_id, "TelonnsorReloncordRelonadelonr::relonadSparselonTelonnsor()");
     }
 
-    // Read the last byte of the struct.
-    CHECK_THRIFT_TYPE(readByte(), TTYPE_STOP, "stop");
+    // Relonad thelon last bytelon of thelon struct.
+    CHelonCK_THRIFT_TYPelon(relonadBytelon(), TTYPelon_STOP, "stop");
 
-    // Add to the map.
-    record->m_sparse_tensors.emplace(id, output);
+    // Add to thelon map.
+    reloncord->m_sparselon_telonnsors.elonmplacelon(id, output);
   }
 }
 
-}  // namespace twml
+}  // namelonspacelon twml

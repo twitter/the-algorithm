@@ -1,16 +1,16 @@
-package com.twitter.visibility.configapi.params
+packagelon com.twittelonr.visibility.configapi.params
 
-private[visibility] object VisibilityExperiments {
+privatelon[visibility] objelonct Visibilityelonxpelonrimelonnts {
 
-  case object TestExperiment extends VisibilityExperiment("vf_test_ddg_7727")
+  caselon objelonct Telonstelonxpelonrimelonnt elonxtelonnds Visibilityelonxpelonrimelonnt("vf_telonst_ddg_7727")
 
-  object CommonBucketId extends Enumeration {
-    type CommonBucketId = Value
-    val Control = Value("control")
-    val Treatment = Value("treatment")
-    val None = Value("none")
+  objelonct CommonBuckelontId elonxtelonnds elonnumelonration {
+    typelon CommonBuckelontId = Valuelon
+    val Control = Valuelon("control")
+    val Trelonatmelonnt = Valuelon("trelonatmelonnt")
+    val Nonelon = Valuelon("nonelon")
   }
 
-  case object NotGraduatedUserLabelRuleExperiment
-      extends VisibilityExperiment("not_graduated_user_holdback_16332")
+  caselon objelonct NotGraduatelondUselonrLabelonlRulelonelonxpelonrimelonnt
+      elonxtelonnds Visibilityelonxpelonrimelonnt("not_graduatelond_uselonr_holdback_16332")
 }

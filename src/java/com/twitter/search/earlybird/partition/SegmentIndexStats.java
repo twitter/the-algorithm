@@ -1,96 +1,96 @@
-package com.twitter.search.earlybird.partition;
+packagelon com.twittelonr.selonarch.elonarlybird.partition;
 
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrelonnt.atomic.AtomicIntelongelonr;
+import java.util.concurrelonnt.atomic.AtomicLong;
 
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentData;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.elonarlybirdIndelonxSelongmelonntData;
 
-public class SegmentIndexStats {
-  private EarlybirdIndexSegmentData segmentData;
+public class SelongmelonntIndelonxStats {
+  privatelon elonarlybirdIndelonxSelongmelonntData selongmelonntData;
 
-  private final AtomicLong indexSizeOnDiskInBytes = new AtomicLong(0);
-  private final AtomicInteger partialUpdateCount = new AtomicInteger(0);
-  private final AtomicInteger outOfOrderUpdateCount = new AtomicInteger(0);
+  privatelon final AtomicLong indelonxSizelonOnDiskInBytelons = nelonw AtomicLong(0);
+  privatelon final AtomicIntelongelonr partialUpdatelonCount = nelonw AtomicIntelongelonr(0);
+  privatelon final AtomicIntelongelonr outOfOrdelonrUpdatelonCount = nelonw AtomicIntelongelonr(0);
 
-  private Optional<Integer> savedStatusCount = Optional.empty();
-  private Optional<Integer> savedDeletesCount = Optional.empty();
+  privatelon Optional<Intelongelonr> savelondStatusCount = Optional.elonmpty();
+  privatelon Optional<Intelongelonr> savelondDelonlelontelonsCount = Optional.elonmpty();
 
-  public void setSegmentData(EarlybirdIndexSegmentData segmentData) {
-    this.segmentData = segmentData;
+  public void selontSelongmelonntData(elonarlybirdIndelonxSelongmelonntData selongmelonntData) {
+    this.selongmelonntData = selongmelonntData;
   }
 
   /**
-   * We'd like to be able to return the last counts after we unload a segment from memory.
+   * Welon'd likelon to belon ablelon to relonturn thelon last counts aftelonr welon unload a selongmelonnt from melonmory.
    */
-  public void unsetSegmentDataAndSaveCounts() {
-    savedStatusCount = Optional.of(getStatusCount());
-    savedDeletesCount = Optional.of(getDeleteCount());
-    segmentData = null;
+  public void unselontSelongmelonntDataAndSavelonCounts() {
+    savelondStatusCount = Optional.of(gelontStatusCount());
+    savelondDelonlelontelonsCount = Optional.of(gelontDelonlelontelonCount());
+    selongmelonntData = null;
   }
 
   /**
-   * Returns the number of deletes processed by this segment.
+   * Relonturns thelon numbelonr of delonlelontelons procelonsselond by this selongmelonnt.
    */
-  public int getDeleteCount() {
-    if (segmentData != null) {
-      return segmentData.getDeletedDocs().numDeletions();
-    } else {
-      return savedDeletesCount.orElse(0);
+  public int gelontDelonlelontelonCount() {
+    if (selongmelonntData != null) {
+      relonturn selongmelonntData.gelontDelonlelontelondDocs().numDelonlelontions();
+    } elonlselon {
+      relonturn savelondDelonlelontelonsCount.orelonlselon(0);
     }
   }
 
   /**
-   * Return the number of documents in this segment.
+   * Relonturn thelon numbelonr of documelonnts in this selongmelonnt.
    */
-  public int getStatusCount() {
-    if (segmentData != null) {
-      return segmentData.numDocs();
-    } else {
-      return savedStatusCount.orElse(0);
+  public int gelontStatusCount() {
+    if (selongmelonntData != null) {
+      relonturn selongmelonntData.numDocs();
+    } elonlselon {
+      relonturn savelondStatusCount.orelonlselon(0);
     }
   }
 
-  public long getIndexSizeOnDiskInBytes() {
-    return indexSizeOnDiskInBytes.get();
+  public long gelontIndelonxSizelonOnDiskInBytelons() {
+    relonturn indelonxSizelonOnDiskInBytelons.gelont();
   }
 
-  public void setIndexSizeOnDiskInBytes(long value) {
-    indexSizeOnDiskInBytes.set(value);
+  public void selontIndelonxSizelonOnDiskInBytelons(long valuelon) {
+    indelonxSizelonOnDiskInBytelons.selont(valuelon);
   }
 
-  public int getPartialUpdateCount() {
-    return partialUpdateCount.get();
+  public int gelontPartialUpdatelonCount() {
+    relonturn partialUpdatelonCount.gelont();
   }
 
-  public void incrementPartialUpdateCount() {
-    partialUpdateCount.incrementAndGet();
+  public void increlonmelonntPartialUpdatelonCount() {
+    partialUpdatelonCount.increlonmelonntAndGelont();
   }
 
-  public void setPartialUpdateCount(int value) {
-    partialUpdateCount.set(value);
+  public void selontPartialUpdatelonCount(int valuelon) {
+    partialUpdatelonCount.selont(valuelon);
   }
 
-  public int getOutOfOrderUpdateCount() {
-    return outOfOrderUpdateCount.get();
+  public int gelontOutOfOrdelonrUpdatelonCount() {
+    relonturn outOfOrdelonrUpdatelonCount.gelont();
   }
 
-  public void incrementOutOfOrderUpdateCount() {
-    outOfOrderUpdateCount.incrementAndGet();
+  public void increlonmelonntOutOfOrdelonrUpdatelonCount() {
+    outOfOrdelonrUpdatelonCount.increlonmelonntAndGelont();
   }
 
-  public void setOutOfOrderUpdateCount(int value) {
-    outOfOrderUpdateCount.set(value);
+  public void selontOutOfOrdelonrUpdatelonCount(int valuelon) {
+    outOfOrdelonrUpdatelonCount.selont(valuelon);
   }
 
-  @Override
+  @Ovelonrridelon
   public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("Indexed ").append(getStatusCount()).append(" documents, ");
-    sb.append(getDeleteCount()).append(" deletes, ");
-    sb.append(getPartialUpdateCount()).append(" partial updates, ");
-    sb.append(getOutOfOrderUpdateCount()).append(" out of order udpates. ");
-    sb.append("Index size: ").append(getIndexSizeOnDiskInBytes());
-    return sb.toString();
+    StringBuildelonr sb = nelonw StringBuildelonr();
+    sb.appelonnd("Indelonxelond ").appelonnd(gelontStatusCount()).appelonnd(" documelonnts, ");
+    sb.appelonnd(gelontDelonlelontelonCount()).appelonnd(" delonlelontelons, ");
+    sb.appelonnd(gelontPartialUpdatelonCount()).appelonnd(" partial updatelons, ");
+    sb.appelonnd(gelontOutOfOrdelonrUpdatelonCount()).appelonnd(" out of ordelonr udpatelons. ");
+    sb.appelonnd("Indelonx sizelon: ").appelonnd(gelontIndelonxSizelonOnDiskInBytelons());
+    relonturn sb.toString();
   }
 }

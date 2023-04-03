@@ -1,141 +1,141 @@
-package com.twitter.cr_mixer.similarity_engine
+packagelon com.twittelonr.cr_mixelonr.similarity_elonnginelon
 
-import com.google.inject.Inject
-import com.google.inject.Singleton
-import com.google.inject.name.Named
-import com.twitter.contentrecommender.thriftscala.AlgorithmType
-import com.twitter.conversions.DurationOps._
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.cr_mixer.model.TopicTweetWithScore
-import com.twitter.cr_mixer.param.TopicTweetParams
-import com.twitter.cr_mixer.similarity_engine.SkitTopicTweetSimilarityEngine._
-import com.twitter.cr_mixer.thriftscala.SimilarityEngineType
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.util.StatsUtil
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
-import com.twitter.simclusters_v2.thriftscala.TopicId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.timelines.configapi
-import com.twitter.topic_recos.thriftscala.TopicTweet
-import com.twitter.topic_recos.thriftscala.TopicTweetPartitionFlatKey
-import com.twitter.util.Duration
-import com.twitter.util.Future
+import com.googlelon.injelonct.Injelonct
+import com.googlelon.injelonct.Singlelonton
+import com.googlelon.injelonct.namelon.Namelond
+import com.twittelonr.contelonntreloncommelonndelonr.thriftscala.AlgorithmTypelon
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.cr_mixelonr.modelonl.ModulelonNamelons
+import com.twittelonr.cr_mixelonr.modelonl.TopicTwelonelontWithScorelon
+import com.twittelonr.cr_mixelonr.param.TopicTwelonelontParams
+import com.twittelonr.cr_mixelonr.similarity_elonnginelon.SkitTopicTwelonelontSimilarityelonnginelon._
+import com.twittelonr.cr_mixelonr.thriftscala.SimilarityelonnginelonTypelon
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.frigatelon.common.util.StatsUtil
+import com.twittelonr.simclustelonrs_v2.common.TwelonelontId
+import com.twittelonr.simclustelonrs_v2.thriftscala.elonmbelonddingTypelon
+import com.twittelonr.simclustelonrs_v2.thriftscala.ModelonlVelonrsion
+import com.twittelonr.simclustelonrs_v2.thriftscala.TopicId
+import com.twittelonr.storelonhaus.RelonadablelonStorelon
+import com.twittelonr.timelonlinelons.configapi
+import com.twittelonr.topic_reloncos.thriftscala.TopicTwelonelont
+import com.twittelonr.topic_reloncos.thriftscala.TopicTwelonelontPartitionFlatKelony
+import com.twittelonr.util.Duration
+import com.twittelonr.util.Futurelon
 
-@Singleton
-case class SkitTopicTweetSimilarityEngine @Inject() (
-  @Named(ModuleNames.SkitStratoStoreName) skitStratoStore: ReadableStore[
-    TopicTweetPartitionFlatKey,
-    Seq[TopicTweet]
+@Singlelonton
+caselon class SkitTopicTwelonelontSimilarityelonnginelon @Injelonct() (
+  @Namelond(ModulelonNamelons.SkitStratoStorelonNamelon) skitStratoStorelon: RelonadablelonStorelon[
+    TopicTwelonelontPartitionFlatKelony,
+    Selonq[TopicTwelonelont]
   ],
-  statsReceiver: StatsReceiver)
-    extends ReadableStore[EngineQuery[Query], Seq[TopicTweetWithScore]] {
+  statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds RelonadablelonStorelon[elonnginelonQuelonry[Quelonry], Selonq[TopicTwelonelontWithScorelon]] {
 
-  private val name: String = this.getClass.getSimpleName
-  private val stats = statsReceiver.scope(name)
+  privatelon val namelon: String = this.gelontClass.gelontSimplelonNamelon
+  privatelon val stats = statsReloncelonivelonr.scopelon(namelon)
 
-  override def get(query: EngineQuery[Query]): Future[Option[Seq[TopicTweetWithScore]]] = {
-    StatsUtil.trackOptionItemsStats(stats) {
-      fetch(query).map { tweets =>
-        val topTweets =
-          tweets
-            .sortBy(-_.cosineSimilarityScore)
-            .take(query.storeQuery.maxCandidates)
-            .map { tweet =>
-              TopicTweetWithScore(
-                tweetId = tweet.tweetId,
-                score = tweet.cosineSimilarityScore,
-                similarityEngineType = SimilarityEngineType.SkitTfgTopicTweet
+  ovelonrridelon delonf gelont(quelonry: elonnginelonQuelonry[Quelonry]): Futurelon[Option[Selonq[TopicTwelonelontWithScorelon]]] = {
+    StatsUtil.trackOptionItelonmsStats(stats) {
+      felontch(quelonry).map { twelonelonts =>
+        val topTwelonelonts =
+          twelonelonts
+            .sortBy(-_.cosinelonSimilarityScorelon)
+            .takelon(quelonry.storelonQuelonry.maxCandidatelons)
+            .map { twelonelont =>
+              TopicTwelonelontWithScorelon(
+                twelonelontId = twelonelont.twelonelontId,
+                scorelon = twelonelont.cosinelonSimilarityScorelon,
+                similarityelonnginelonTypelon = SimilarityelonnginelonTypelon.SkitTfgTopicTwelonelont
               )
             }
-        Some(topTweets)
+        Somelon(topTwelonelonts)
       }
     }
   }
 
-  private def fetch(query: EngineQuery[Query]): Future[Seq[SkitTopicTweet]] = {
-    val latestTweetTimeInHour = System.currentTimeMillis() / 1000 / 60 / 60
+  privatelon delonf felontch(quelonry: elonnginelonQuelonry[Quelonry]): Futurelon[Selonq[SkitTopicTwelonelont]] = {
+    val latelonstTwelonelontTimelonInHour = Systelonm.currelonntTimelonMillis() / 1000 / 60 / 60
 
-    val earliestTweetTimeInHour = latestTweetTimeInHour -
-      math.min(MaxTweetAgeInHours, query.storeQuery.maxTweetAge.inHours)
-    val timedKeys = for (timePartition <- earliestTweetTimeInHour to latestTweetTimeInHour) yield {
+    val elonarlielonstTwelonelontTimelonInHour = latelonstTwelonelontTimelonInHour -
+      math.min(MaxTwelonelontAgelonInHours, quelonry.storelonQuelonry.maxTwelonelontAgelon.inHours)
+    val timelondKelonys = for (timelonPartition <- elonarlielonstTwelonelontTimelonInHour to latelonstTwelonelontTimelonInHour) yielonld {
 
-      TopicTweetPartitionFlatKey(
-        entityId = query.storeQuery.topicId.entityId,
-        timePartition = timePartition,
-        algorithmType = Some(AlgorithmType.TfgTweet),
-        tweetEmbeddingType = Some(EmbeddingType.LogFavBasedTweet),
-        language = query.storeQuery.topicId.language.getOrElse("").toLowerCase,
-        country = None, // Disable country. It is not used.
-        semanticCoreAnnotationVersionId = Some(query.storeQuery.semanticCoreVersionId),
-        simclustersModelVersion = Some(ModelVersion.Model20m145k2020)
+      TopicTwelonelontPartitionFlatKelony(
+        elonntityId = quelonry.storelonQuelonry.topicId.elonntityId,
+        timelonPartition = timelonPartition,
+        algorithmTypelon = Somelon(AlgorithmTypelon.TfgTwelonelont),
+        twelonelontelonmbelonddingTypelon = Somelon(elonmbelonddingTypelon.LogFavBaselondTwelonelont),
+        languagelon = quelonry.storelonQuelonry.topicId.languagelon.gelontOrelonlselon("").toLowelonrCaselon,
+        country = Nonelon, // Disablelon country. It is not uselond.
+        selonmanticCorelonAnnotationVelonrsionId = Somelon(quelonry.storelonQuelonry.selonmanticCorelonVelonrsionId),
+        simclustelonrsModelonlVelonrsion = Somelon(ModelonlVelonrsion.Modelonl20m145k2020)
       )
     }
 
-    getTweetsForKeys(
-      timedKeys,
-      query.storeQuery.topicId
+    gelontTwelonelontsForKelonys(
+      timelondKelonys,
+      quelonry.storelonQuelonry.topicId
     )
   }
 
   /**
-   * Given a set of keys, multiget the underlying Strato store, combine and flatten the results.
+   * Givelonn a selont of kelonys, multigelont thelon undelonrlying Strato storelon, combinelon and flattelonn thelon relonsults.
    */
-  private def getTweetsForKeys(
-    keys: Seq[TopicTweetPartitionFlatKey],
-    sourceTopic: TopicId
-  ): Future[Seq[SkitTopicTweet]] = {
-    Future
-      .collect { skitStratoStore.multiGet(keys.toSet).values.toSeq }
-      .map { combinedResults =>
-        val topTweets = combinedResults.flatten.flatten
-        topTweets.map { tweet =>
-          SkitTopicTweet(
-            tweetId = tweet.tweetId,
-            favCount = tweet.scores.favCount.getOrElse(0L),
-            cosineSimilarityScore = tweet.scores.cosineSimilarity.getOrElse(0.0),
-            sourceTopic = sourceTopic
+  privatelon delonf gelontTwelonelontsForKelonys(
+    kelonys: Selonq[TopicTwelonelontPartitionFlatKelony],
+    sourcelonTopic: TopicId
+  ): Futurelon[Selonq[SkitTopicTwelonelont]] = {
+    Futurelon
+      .collelonct { skitStratoStorelon.multiGelont(kelonys.toSelont).valuelons.toSelonq }
+      .map { combinelondRelonsults =>
+        val topTwelonelonts = combinelondRelonsults.flattelonn.flattelonn
+        topTwelonelonts.map { twelonelont =>
+          SkitTopicTwelonelont(
+            twelonelontId = twelonelont.twelonelontId,
+            favCount = twelonelont.scorelons.favCount.gelontOrelonlselon(0L),
+            cosinelonSimilarityScorelon = twelonelont.scorelons.cosinelonSimilarity.gelontOrelonlselon(0.0),
+            sourcelonTopic = sourcelonTopic
           )
         }
       }
   }
 }
 
-object SkitTopicTweetSimilarityEngine {
+objelonct SkitTopicTwelonelontSimilarityelonnginelon {
 
-  val MaxTweetAgeInHours: Int = 7.days.inHours // Simple guard to prevent overloading
+  val MaxTwelonelontAgelonInHours: Int = 7.days.inHours // Simplelon guard to prelonvelonnt ovelonrloading
 
-  // Query is used as a cache key. Do not add any user level information in this.
-  case class Query(
+  // Quelonry is uselond as a cachelon kelony. Do not add any uselonr lelonvelonl information in this.
+  caselon class Quelonry(
     topicId: TopicId,
-    maxCandidates: Int,
-    maxTweetAge: Duration,
-    semanticCoreVersionId: Long)
+    maxCandidatelons: Int,
+    maxTwelonelontAgelon: Duration,
+    selonmanticCorelonVelonrsionId: Long)
 
-  case class SkitTopicTweet(
-    sourceTopic: TopicId,
-    tweetId: TweetId,
+  caselon class SkitTopicTwelonelont(
+    sourcelonTopic: TopicId,
+    twelonelontId: TwelonelontId,
     favCount: Long,
-    cosineSimilarityScore: Double)
+    cosinelonSimilarityScorelon: Doublelon)
 
-  def fromParams(
+  delonf fromParams(
     topicId: TopicId,
-    isVideoOnly: Boolean,
+    isVidelonoOnly: Boolelonan,
     params: configapi.Params,
-  ): EngineQuery[Query] = {
-    val maxCandidates = if (isVideoOnly) {
-      params(TopicTweetParams.MaxSkitTfgCandidatesParam) * 2
-    } else {
-      params(TopicTweetParams.MaxSkitTfgCandidatesParam)
+  ): elonnginelonQuelonry[Quelonry] = {
+    val maxCandidatelons = if (isVidelonoOnly) {
+      params(TopicTwelonelontParams.MaxSkitTfgCandidatelonsParam) * 2
+    } elonlselon {
+      params(TopicTwelonelontParams.MaxSkitTfgCandidatelonsParam)
     }
 
-    EngineQuery(
-      Query(
+    elonnginelonQuelonry(
+      Quelonry(
         topicId = topicId,
-        maxCandidates = maxCandidates,
-        maxTweetAge = params(TopicTweetParams.MaxTweetAge),
-        semanticCoreVersionId = params(TopicTweetParams.SemanticCoreVersionIdParam)
+        maxCandidatelons = maxCandidatelons,
+        maxTwelonelontAgelon = params(TopicTwelonelontParams.MaxTwelonelontAgelon),
+        selonmanticCorelonVelonrsionId = params(TopicTwelonelontParams.SelonmanticCorelonVelonrsionIdParam)
       ),
       params
     )

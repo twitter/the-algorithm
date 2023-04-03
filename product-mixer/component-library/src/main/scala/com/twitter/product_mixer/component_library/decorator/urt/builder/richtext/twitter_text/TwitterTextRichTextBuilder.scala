@@ -1,37 +1,37 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.richtext.twitter_text
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.richtelonxt.twittelonr_telonxt
 
-import com.twitter.product_mixer.component_library.decorator.urt.builder.richtext.RichTextReferenceObjectBuilder
-import com.twitter.product_mixer.component_library.decorator.urt.builder.richtext.RichTextRtlOptionBuilder
-import com.twitter.product_mixer.component_library.decorator.urt.builder.richtext.StaticRichTextRtlOptionBuilder
-import com.twitter.product_mixer.component_library.decorator.urt.builder.richtext.twitter_text.TwitterTextEntityProcessor.DefaultReferenceObjectBuilder
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseStr
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.richtext.BaseRichTextBuilder
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.Plain
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichText
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextAlignment
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextFormat
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.Strong
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.richtelonxt.RichTelonxtRelonfelonrelonncelonObjelonctBuildelonr
+import com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.richtelonxt.RichTelonxtRtlOptionBuildelonr
+import com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.richtelonxt.StaticRichTelonxtRtlOptionBuildelonr
+import com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.richtelonxt.twittelonr_telonxt.TwittelonrTelonxtelonntityProcelonssor.DelonfaultRelonfelonrelonncelonObjelonctBuildelonr
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.melontadata.BaselonStr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.richtelonxt.BaselonRichTelonxtBuildelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.richtelonxt.Plain
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.richtelonxt.RichTelonxt
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.richtelonxt.RichTelonxtAlignmelonnt
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.richtelonxt.RichTelonxtFormat
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.richtelonxt.Strong
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
-case class TwitterTextRichTextBuilder[-Query <: PipelineQuery, -Candidate <: UniversalNoun[Any]](
-  stringBuilder: BaseStr[Query, Candidate],
-  alignment: Option[RichTextAlignment] = None,
-  formats: Set[RichTextFormat] = Set(Plain, Strong),
-  twitterTextRtlOptionBuilder: RichTextRtlOptionBuilder[Query] =
-    StaticRichTextRtlOptionBuilder[Query](None),
-  twitterTextReferenceObjectBuilder: RichTextReferenceObjectBuilder = DefaultReferenceObjectBuilder)
-    extends BaseRichTextBuilder[Query, Candidate] {
-  def apply(query: Query, candidate: Candidate, candidateFeatures: FeatureMap): RichText = {
-    val twitterTextRenderer = TwitterTextRenderer(
-      text = stringBuilder(query, candidate, candidateFeatures),
-      rtl = twitterTextRtlOptionBuilder(query),
-      alignment = alignment)
+caselon class TwittelonrTelonxtRichTelonxtBuildelonr[-Quelonry <: PipelonlinelonQuelonry, -Candidatelon <: UnivelonrsalNoun[Any]](
+  stringBuildelonr: BaselonStr[Quelonry, Candidatelon],
+  alignmelonnt: Option[RichTelonxtAlignmelonnt] = Nonelon,
+  formats: Selont[RichTelonxtFormat] = Selont(Plain, Strong),
+  twittelonrTelonxtRtlOptionBuildelonr: RichTelonxtRtlOptionBuildelonr[Quelonry] =
+    StaticRichTelonxtRtlOptionBuildelonr[Quelonry](Nonelon),
+  twittelonrTelonxtRelonfelonrelonncelonObjelonctBuildelonr: RichTelonxtRelonfelonrelonncelonObjelonctBuildelonr = DelonfaultRelonfelonrelonncelonObjelonctBuildelonr)
+    elonxtelonnds BaselonRichTelonxtBuildelonr[Quelonry, Candidatelon] {
+  delonf apply(quelonry: Quelonry, candidatelon: Candidatelon, candidatelonFelonaturelons: FelonaturelonMap): RichTelonxt = {
+    val twittelonrTelonxtRelonndelonrelonr = TwittelonrTelonxtRelonndelonrelonr(
+      telonxt = stringBuildelonr(quelonry, candidatelon, candidatelonFelonaturelons),
+      rtl = twittelonrTelonxtRtlOptionBuildelonr(quelonry),
+      alignmelonnt = alignmelonnt)
 
-    twitterTextRenderer
-      .transform(TwitterTextFormatProcessor(formats))
-      .transform(TwitterTextEntityProcessor(twitterTextReferenceObjectBuilder))
+    twittelonrTelonxtRelonndelonrelonr
+      .transform(TwittelonrTelonxtFormatProcelonssor(formats))
+      .transform(TwittelonrTelonxtelonntityProcelonssor(twittelonrTelonxtRelonfelonrelonncelonObjelonctBuildelonr))
       .build
   }
 }

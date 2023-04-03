@@ -1,172 +1,172 @@
-package com.twitter.product_mixer.core.service.scoring_pipeline_executor
+packagelon com.twittelonr.product_mixelonr.corelon.selonrvicelon.scoring_pipelonlinelon_elonxeloncutor
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.ScoringPipelineIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.ItemCandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.FailOpenPolicy
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.IllegalStateFailure
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.pipeline.scoring.ScoringPipeline
-import com.twitter.product_mixer.core.pipeline.scoring.ScoringPipelineResult
-import com.twitter.product_mixer.core.quality_factor.QualityFactorObserver
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.product_mixer.core.service.scoring_pipeline_executor.ScoringPipelineExecutor.ScoringPipelineState
-import com.twitter.stitch.Arrow
-import com.twitter.stitch.Arrow.Iso
-import com.twitter.util.logging.Logging
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.ComponelonntIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.ScoringPipelonlinelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.ItelonmCandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.FailOpelonnPolicy
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.IllelongalStatelonFailurelon
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.PipelonlinelonFailurelon
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.scoring.ScoringPipelonlinelon
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.scoring.ScoringPipelonlinelonRelonsult
+import com.twittelonr.product_mixelonr.corelon.quality_factor.QualityFactorObselonrvelonr
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.elonxeloncutor
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.scoring_pipelonlinelon_elonxeloncutor.ScoringPipelonlinelonelonxeloncutor.ScoringPipelonlinelonStatelon
+import com.twittelonr.stitch.Arrow
+import com.twittelonr.stitch.Arrow.Iso
+import com.twittelonr.util.logging.Logging
 
-import javax.inject.Inject
-import javax.inject.Singleton
-import scala.collection.immutable.Queue
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
+import scala.collelonction.immutablelon.Quelonuelon
 
-@Singleton
-class ScoringPipelineExecutor @Inject() (override val statsReceiver: StatsReceiver)
-    extends Executor
+@Singlelonton
+class ScoringPipelonlinelonelonxeloncutor @Injelonct() (ovelonrridelon val statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds elonxeloncutor
     with Logging {
-  def arrow[Query <: PipelineQuery, Candidate <: UniversalNoun[Any]](
-    pipelines: Seq[ScoringPipeline[Query, Candidate]],
-    context: Executor.Context,
-    defaultFailOpenPolicy: FailOpenPolicy,
-    failOpenPolicies: Map[ScoringPipelineIdentifier, FailOpenPolicy],
-    qualityFactorObserverByPipeline: Map[ComponentIdentifier, QualityFactorObserver],
-  ): Arrow[ScoringPipelineExecutor.Inputs[Query], ScoringPipelineExecutorResult[Candidate]] = {
-    val scoringPipelineArrows = pipelines.map { pipeline =>
-      val failOpenPolicy = failOpenPolicies.getOrElse(pipeline.identifier, defaultFailOpenPolicy)
-      val qualityFactorObserver = qualityFactorObserverByPipeline.get(pipeline.identifier)
+  delonf arrow[Quelonry <: PipelonlinelonQuelonry, Candidatelon <: UnivelonrsalNoun[Any]](
+    pipelonlinelons: Selonq[ScoringPipelonlinelon[Quelonry, Candidatelon]],
+    contelonxt: elonxeloncutor.Contelonxt,
+    delonfaultFailOpelonnPolicy: FailOpelonnPolicy,
+    failOpelonnPolicielons: Map[ScoringPipelonlinelonIdelonntifielonr, FailOpelonnPolicy],
+    qualityFactorObselonrvelonrByPipelonlinelon: Map[ComponelonntIdelonntifielonr, QualityFactorObselonrvelonr],
+  ): Arrow[ScoringPipelonlinelonelonxeloncutor.Inputs[Quelonry], ScoringPipelonlinelonelonxeloncutorRelonsult[Candidatelon]] = {
+    val scoringPipelonlinelonArrows = pipelonlinelons.map { pipelonlinelon =>
+      val failOpelonnPolicy = failOpelonnPolicielons.gelontOrelonlselon(pipelonlinelon.idelonntifielonr, delonfaultFailOpelonnPolicy)
+      val qualityFactorObselonrvelonr = qualityFactorObselonrvelonrByPipelonlinelon.gelont(pipelonlinelon.idelonntifielonr)
 
-      getIsoArrowForScoringPipeline(
-        pipeline,
-        context,
-        failOpenPolicy,
-        qualityFactorObserver
+      gelontIsoArrowForScoringPipelonlinelon(
+        pipelonlinelon,
+        contelonxt,
+        failOpelonnPolicy,
+        qualityFactorObselonrvelonr
       )
     }
-    val combinedArrow = isoArrowsSequentially(scoringPipelineArrows)
+    val combinelondArrow = isoArrowsSelonquelonntially(scoringPipelonlinelonArrows)
     Arrow
-      .map[ScoringPipelineExecutor.Inputs[Query], ScoringPipelineState[Query, Candidate]] {
-        case input =>
-          ScoringPipelineState(
-            input.query,
-            input.itemCandidatesWithDetails,
-            ScoringPipelineExecutorResult(input.itemCandidatesWithDetails, Queue.empty))
-      }.flatMapArrow(combinedArrow).map { state =>
-        state.executorResult.copy(individualPipelineResults =
-          // materialize the Queue into a List for faster future iterations
-          state.executorResult.individualPipelineResults.toList)
+      .map[ScoringPipelonlinelonelonxeloncutor.Inputs[Quelonry], ScoringPipelonlinelonStatelon[Quelonry, Candidatelon]] {
+        caselon input =>
+          ScoringPipelonlinelonStatelon(
+            input.quelonry,
+            input.itelonmCandidatelonsWithDelontails,
+            ScoringPipelonlinelonelonxeloncutorRelonsult(input.itelonmCandidatelonsWithDelontails, Quelonuelon.elonmpty))
+      }.flatMapArrow(combinelondArrow).map { statelon =>
+        statelon.elonxeloncutorRelonsult.copy(individualPipelonlinelonRelonsults =
+          // matelonrializelon thelon Quelonuelon into a List for fastelonr futurelon itelonrations
+          statelon.elonxeloncutorRelonsult.individualPipelonlinelonRelonsults.toList)
       }
   }
 
-  private def getIsoArrowForScoringPipeline[
-    Query <: PipelineQuery,
-    Candidate <: UniversalNoun[Any]
+  privatelon delonf gelontIsoArrowForScoringPipelonlinelon[
+    Quelonry <: PipelonlinelonQuelonry,
+    Candidatelon <: UnivelonrsalNoun[Any]
   ](
-    pipeline: ScoringPipeline[Query, Candidate],
-    context: Executor.Context,
-    failOpenPolicy: FailOpenPolicy,
-    qualityFactorObserver: Option[QualityFactorObserver]
-  ): Iso[ScoringPipelineState[Query, Candidate]] = {
-    val pipelineArrow = Arrow
-      .map[ScoringPipelineState[Query, Candidate], ScoringPipeline.Inputs[Query]] { state =>
-        ScoringPipeline.Inputs(state.query, state.allCandidates)
-      }.flatMapArrow(pipeline.arrow)
+    pipelonlinelon: ScoringPipelonlinelon[Quelonry, Candidatelon],
+    contelonxt: elonxeloncutor.Contelonxt,
+    failOpelonnPolicy: FailOpelonnPolicy,
+    qualityFactorObselonrvelonr: Option[QualityFactorObselonrvelonr]
+  ): Iso[ScoringPipelonlinelonStatelon[Quelonry, Candidatelon]] = {
+    val pipelonlinelonArrow = Arrow
+      .map[ScoringPipelonlinelonStatelon[Quelonry, Candidatelon], ScoringPipelonlinelon.Inputs[Quelonry]] { statelon =>
+        ScoringPipelonlinelon.Inputs(statelon.quelonry, statelon.allCandidatelons)
+      }.flatMapArrow(pipelonlinelon.arrow)
 
-    val observedArrow = wrapPipelineWithExecutorBookkeeping(
-      context,
-      pipeline.identifier,
-      qualityFactorObserver,
-      failOpenPolicy)(pipelineArrow)
+    val obselonrvelondArrow = wrapPipelonlinelonWithelonxeloncutorBookkelonelonping(
+      contelonxt,
+      pipelonlinelon.idelonntifielonr,
+      qualityFactorObselonrvelonr,
+      failOpelonnPolicy)(pipelonlinelonArrow)
 
     Arrow
       .zipWithArg(
-        observedArrow
+        obselonrvelondArrow
       ).map {
-        case (
-              scoringPipelinesState: ScoringPipelineState[Query, Candidate],
-              scoringPipelineResult: ScoringPipelineResult[Candidate]) =>
-          val updatedCandidates: Seq[ItemCandidateWithDetails] =
-            mkUpdatedCandidates(pipeline.identifier, scoringPipelinesState, scoringPipelineResult)
-          ScoringPipelineState(
-            scoringPipelinesState.query,
-            updatedCandidates,
-            scoringPipelinesState.executorResult
+        caselon (
+              scoringPipelonlinelonsStatelon: ScoringPipelonlinelonStatelon[Quelonry, Candidatelon],
+              scoringPipelonlinelonRelonsult: ScoringPipelonlinelonRelonsult[Candidatelon]) =>
+          val updatelondCandidatelons: Selonq[ItelonmCandidatelonWithDelontails] =
+            mkUpdatelondCandidatelons(pipelonlinelon.idelonntifielonr, scoringPipelonlinelonsStatelon, scoringPipelonlinelonRelonsult)
+          ScoringPipelonlinelonStatelon(
+            scoringPipelonlinelonsStatelon.quelonry,
+            updatelondCandidatelons,
+            scoringPipelonlinelonsStatelon.elonxeloncutorRelonsult
               .copy(
-                updatedCandidates,
-                scoringPipelinesState.executorResult.individualPipelineResults :+ scoringPipelineResult)
+                updatelondCandidatelons,
+                scoringPipelonlinelonsStatelon.elonxeloncutorRelonsult.individualPipelonlinelonRelonsults :+ scoringPipelonlinelonRelonsult)
           )
       }
   }
 
-  private def mkUpdatedCandidates[Query <: PipelineQuery, Candidate <: UniversalNoun[Any]](
-    scoringPipelineIdentifier: ScoringPipelineIdentifier,
-    scoringPipelinesState: ScoringPipelineState[Query, Candidate],
-    scoringPipelineResult: ScoringPipelineResult[Candidate]
-  ): Seq[ItemCandidateWithDetails] = {
-    if (scoringPipelineResult.failure.isEmpty) {
+  privatelon delonf mkUpdatelondCandidatelons[Quelonry <: PipelonlinelonQuelonry, Candidatelon <: UnivelonrsalNoun[Any]](
+    scoringPipelonlinelonIdelonntifielonr: ScoringPipelonlinelonIdelonntifielonr,
+    scoringPipelonlinelonsStatelon: ScoringPipelonlinelonStatelon[Quelonry, Candidatelon],
+    scoringPipelonlinelonRelonsult: ScoringPipelonlinelonRelonsult[Candidatelon]
+  ): Selonq[ItelonmCandidatelonWithDelontails] = {
+    if (scoringPipelonlinelonRelonsult.failurelon.iselonmpty) {
 
       /**
-       * It's important that we map back from which actual item candidate was scored by looking
-       * at the selector results. This is to defend against the same candidate being selected
-       * from two different candidate pipelines. If one is selected and the other isn't, we
-       * should only score the selected one. If both are selected and each is scored differently
-       * we should get the right score for each.
+       * It's important that welon map back from which actual itelonm candidatelon was scorelond by looking
+       * at thelon selonlelonctor relonsults. This is to delonfelonnd against thelon samelon candidatelon beloning selonlelonctelond
+       * from two diffelonrelonnt candidatelon pipelonlinelons. If onelon is selonlelonctelond and thelon othelonr isn't, welon
+       * should only scorelon thelon selonlelonctelond onelon. If both arelon selonlelonctelond and elonach is scorelond diffelonrelonntly
+       * welon should gelont thelon right scorelon for elonach.
        */
-      val selectedItemCandidates: Seq[ItemCandidateWithDetails] =
-        scoringPipelineResult.selectorResults
-          .getOrElse(throw PipelineFailure(
-            IllegalStateFailure,
-            s"Missing Selector Results in Scoring Pipeline $scoringPipelineIdentifier")).selectedCandidates.collect {
-            case itemCandidateWithDetails: ItemCandidateWithDetails =>
-              itemCandidateWithDetails
+      val selonlelonctelondItelonmCandidatelons: Selonq[ItelonmCandidatelonWithDelontails] =
+        scoringPipelonlinelonRelonsult.selonlelonctorRelonsults
+          .gelontOrelonlselon(throw PipelonlinelonFailurelon(
+            IllelongalStatelonFailurelon,
+            s"Missing Selonlelonctor Relonsults in Scoring Pipelonlinelon $scoringPipelonlinelonIdelonntifielonr")).selonlelonctelondCandidatelons.collelonct {
+            caselon itelonmCandidatelonWithDelontails: ItelonmCandidatelonWithDelontails =>
+              itelonmCandidatelonWithDelontails
           }
-      val scoredFeatureMaps: Seq[FeatureMap] = scoringPipelineResult.result
-        .getOrElse(Seq.empty).map(_.features)
+      val scorelondFelonaturelonMaps: Selonq[FelonaturelonMap] = scoringPipelonlinelonRelonsult.relonsult
+        .gelontOrelonlselon(Selonq.elonmpty).map(_.felonaturelons)
 
-      if (scoredFeatureMaps.isEmpty) {
-        // It's possible that all Scorers are [[Conditionally]] off. In this case, we return empty
-        // and don't validate the list size since this is done in the hydrator/scorer executor.
-        scoringPipelinesState.allCandidates
-      } else if (selectedItemCandidates.length != scoredFeatureMaps.length) {
-        // The length of the inputted candidates should always match the returned feature map, unless
-        throw PipelineFailure(
-          IllegalStateFailure,
-          s"Missing configured scorer result, length of scorer results does not match the length of selected candidates")
-      } else {
-        /* Zip the selected item candidate seq back to the scored feature maps, this works
-         * because the scored results will always have the same number of elements returned
-         * and it should match the same order. We then loop through all candidates because the
-         * expectation is to always keep the result since a subsequent scoring pipeline can score a
-         * candidate that the current one did not. We only update the feature map of the candidate
-         *  if it was selected and scored.
+      if (scorelondFelonaturelonMaps.iselonmpty) {
+        // It's possiblelon that all Scorelonrs arelon [[Conditionally]] off. In this caselon, welon relonturn elonmpty
+        // and don't validatelon thelon list sizelon sincelon this is donelon in thelon hydrator/scorelonr elonxeloncutor.
+        scoringPipelonlinelonsStatelon.allCandidatelons
+      } elonlselon if (selonlelonctelondItelonmCandidatelons.lelonngth != scorelondFelonaturelonMaps.lelonngth) {
+        // Thelon lelonngth of thelon inputtelond candidatelons should always match thelon relonturnelond felonaturelon map, unlelonss
+        throw PipelonlinelonFailurelon(
+          IllelongalStatelonFailurelon,
+          s"Missing configurelond scorelonr relonsult, lelonngth of scorelonr relonsults doelons not match thelon lelonngth of selonlelonctelond candidatelons")
+      } elonlselon {
+        /* Zip thelon selonlelonctelond itelonm candidatelon selonq back to thelon scorelond felonaturelon maps, this works
+         * beloncauselon thelon scorelond relonsults will always havelon thelon samelon numbelonr of elonlelonmelonnts relonturnelond
+         * and it should match thelon samelon ordelonr. Welon thelonn loop through all candidatelons beloncauselon thelon
+         * elonxpelonctation is to always kelonelonp thelon relonsult sincelon a subselonquelonnt scoring pipelonlinelon can scorelon a
+         * candidatelon that thelon currelonnt onelon did not. Welon only updatelon thelon felonaturelon map of thelon candidatelon
+         *  if it was selonlelonctelond and scorelond.
          */
-        val selectedItemCandidateToScorerMap: Map[ItemCandidateWithDetails, FeatureMap] =
-          selectedItemCandidates.zip(scoredFeatureMaps).toMap
-        scoringPipelinesState.allCandidates.map { itemCandidateWithDetails =>
-          selectedItemCandidateToScorerMap.get(itemCandidateWithDetails) match {
-            case Some(scorerResult) =>
-              itemCandidateWithDetails.copy(features =
-                itemCandidateWithDetails.features ++ scorerResult)
-            case None => itemCandidateWithDetails
+        val selonlelonctelondItelonmCandidatelonToScorelonrMap: Map[ItelonmCandidatelonWithDelontails, FelonaturelonMap] =
+          selonlelonctelondItelonmCandidatelons.zip(scorelondFelonaturelonMaps).toMap
+        scoringPipelonlinelonsStatelon.allCandidatelons.map { itelonmCandidatelonWithDelontails =>
+          selonlelonctelondItelonmCandidatelonToScorelonrMap.gelont(itelonmCandidatelonWithDelontails) match {
+            caselon Somelon(scorelonrRelonsult) =>
+              itelonmCandidatelonWithDelontails.copy(felonaturelons =
+                itelonmCandidatelonWithDelontails.felonaturelons ++ scorelonrRelonsult)
+            caselon Nonelon => itelonmCandidatelonWithDelontails
           }
         }
       }
-    } else {
-      // If the underlying scoring pipeline has failed open, just keep the existing candidates
-      scoringPipelinesState.allCandidates
+    } elonlselon {
+      // If thelon undelonrlying scoring pipelonlinelon has failelond opelonn, just kelonelonp thelon elonxisting candidatelons
+      scoringPipelonlinelonsStatelon.allCandidatelons
     }
   }
 }
 
-object ScoringPipelineExecutor {
-  private case class ScoringPipelineState[Query <: PipelineQuery, Candidate <: UniversalNoun[Any]](
-    query: Query,
-    allCandidates: Seq[ItemCandidateWithDetails],
-    executorResult: ScoringPipelineExecutorResult[Candidate])
+objelonct ScoringPipelonlinelonelonxeloncutor {
+  privatelon caselon class ScoringPipelonlinelonStatelon[Quelonry <: PipelonlinelonQuelonry, Candidatelon <: UnivelonrsalNoun[Any]](
+    quelonry: Quelonry,
+    allCandidatelons: Selonq[ItelonmCandidatelonWithDelontails],
+    elonxeloncutorRelonsult: ScoringPipelonlinelonelonxeloncutorRelonsult[Candidatelon])
 
-  case class Inputs[Query <: PipelineQuery](
-    query: Query,
-    itemCandidatesWithDetails: Seq[ItemCandidateWithDetails])
+  caselon class Inputs[Quelonry <: PipelonlinelonQuelonry](
+    quelonry: Quelonry,
+    itelonmCandidatelonsWithDelontails: Selonq[ItelonmCandidatelonWithDelontails])
 }

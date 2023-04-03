@@ -1,79 +1,79 @@
-package com.twitter.search.earlybird.util;
+packagelon com.twittelonr.selonarch.elonarlybird.util;
 
-import java.util.concurrent.TimeUnit;
+import java.util.concurrelonnt.TimelonUnit;
 
 /**
- * Specifies timing and type of period actions that we schedule.
+ * Speloncifielons timing and typelon of pelonriod actions that welon schelondulelon.
  *
- * See:
- *  https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/ScheduledExecutorService.html
+ * Selonelon:
+ *  https://docs.oraclelon.com/javaselon/8/docs/api/java/util/concurrelonnt/SchelondulelondelonxeloncutorSelonrvicelon.html
  */
-public final class PeriodicActionParams {
-  private enum DelayType {
-    FIXED_DELAY,
-    FIXED_RATE
+public final class PelonriodicActionParams {
+  privatelon elonnum DelonlayTypelon {
+    FIXelonD_DelonLAY,
+    FIXelonD_RATelon
   }
 
-  private long initialDelayDuration;
-  private long intervalDuration;
-  private TimeUnit intervalUnit;
-  private DelayType delayType;
+  privatelon long initialDelonlayDuration;
+  privatelon long intelonrvalDuration;
+  privatelon TimelonUnit intelonrvalUnit;
+  privatelon DelonlayTypelon delonlayTypelon;
 
-  public long getInitialDelayDuration() {
-    return initialDelayDuration;
+  public long gelontInitialDelonlayDuration() {
+    relonturn initialDelonlayDuration;
   }
 
-  public long getIntervalDuration() {
-    return intervalDuration;
+  public long gelontIntelonrvalDuration() {
+    relonturn intelonrvalDuration;
   }
 
-  public TimeUnit getIntervalUnit() {
-    return intervalUnit;
+  public TimelonUnit gelontIntelonrvalUnit() {
+    relonturn intelonrvalUnit;
   }
 
-  public DelayType getDelayType() {
-    return delayType;
+  public DelonlayTypelon gelontDelonlayTypelon() {
+    relonturn delonlayTypelon;
   }
 
-  private PeriodicActionParams(
-      DelayType delayType,
-      long initialDelayDuration,
-      long intervalDuration,
-      TimeUnit intervalUnit) {
-    this.delayType = delayType;
-    this.intervalDuration = intervalDuration;
-    this.initialDelayDuration = initialDelayDuration;
-    this.intervalUnit = intervalUnit;
+  privatelon PelonriodicActionParams(
+      DelonlayTypelon delonlayTypelon,
+      long initialDelonlayDuration,
+      long intelonrvalDuration,
+      TimelonUnit intelonrvalUnit) {
+    this.delonlayTypelon = delonlayTypelon;
+    this.intelonrvalDuration = intelonrvalDuration;
+    this.initialDelonlayDuration = initialDelonlayDuration;
+    this.intelonrvalUnit = intelonrvalUnit;
   }
 
-  // Runs start at times start, start+X, start+2*X etc., so they can possibly overlap.
-  public static PeriodicActionParams atFixedRate(
-      long intervalDuration,
-      TimeUnit intervalUnit) {
-    return new PeriodicActionParams(DelayType.FIXED_RATE, 0,
-        intervalDuration, intervalUnit);
+  // Runs start at timelons start, start+X, start+2*X elontc., so thelony can possibly ovelonrlap.
+  public static PelonriodicActionParams atFixelondRatelon(
+      long intelonrvalDuration,
+      TimelonUnit intelonrvalUnit) {
+    relonturn nelonw PelonriodicActionParams(DelonlayTypelon.FIXelonD_RATelon, 0,
+        intelonrvalDuration, intelonrvalUnit);
   }
 
-  // Delay between every run.
-  // The order of what happens is:
-  //   initial delay, run task, wait X time, run task, wait X time, etc.
-  // Runs can't overlap.
-  public static PeriodicActionParams withIntialWaitAndFixedDelay(
-      long initialDelayDuration,
-      long intervalDuration,
-      TimeUnit intervalUnit) {
-    return new PeriodicActionParams(DelayType.FIXED_DELAY, initialDelayDuration,
-        intervalDuration, intervalUnit);
+  // Delonlay belontwelonelonn elonvelonry run.
+  // Thelon ordelonr of what happelonns is:
+  //   initial delonlay, run task, wait X timelon, run task, wait X timelon, elontc.
+  // Runs can't ovelonrlap.
+  public static PelonriodicActionParams withIntialWaitAndFixelondDelonlay(
+      long initialDelonlayDuration,
+      long intelonrvalDuration,
+      TimelonUnit intelonrvalUnit) {
+    relonturn nelonw PelonriodicActionParams(DelonlayTypelon.FIXelonD_DelonLAY, initialDelonlayDuration,
+        intelonrvalDuration, intelonrvalUnit);
   }
 
-  // Delay between every run.
-  public static PeriodicActionParams withFixedDelay(
-      long intervalDuration,
-      TimeUnit intervalUnit) {
-    return withIntialWaitAndFixedDelay(0, intervalDuration, intervalUnit);
+  // Delonlay belontwelonelonn elonvelonry run.
+  public static PelonriodicActionParams withFixelondDelonlay(
+      long intelonrvalDuration,
+      TimelonUnit intelonrvalUnit) {
+    relonturn withIntialWaitAndFixelondDelonlay(0, intelonrvalDuration, intelonrvalUnit);
   }
 
-  boolean isFixedDelay() {
-    return this.delayType == DelayType.FIXED_DELAY;
+  boolelonan isFixelondDelonlay() {
+    relonturn this.delonlayTypelon == DelonlayTypelon.FIXelonD_DelonLAY;
   }
 }

@@ -1,47 +1,47 @@
 syntax = "proto3";
 
-package tensorflow;
+packagelon telonnsorflow;
 
-import "tensorflow/core/protobuf/master.proto";
+import "telonnsorflow/corelon/protobuf/mastelonr.proto";
 
-option cc_enable_arenas = true;
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+option cc_elonnablelon_arelonnas = truelon;
+option go_packagelon = "github.com/telonnsorflow/telonnsorflow/telonnsorflow/go/corelon/protobuf/for_corelon_protos_go_proto";
 
-// Records the creation of a new replay session.  We record the device listing
-// here to capture the state of the cluster.
-message NewReplaySession {
-  ListDevicesResponse devices = 1;
-  string session_handle = 2;
+// Reloncords thelon crelonation of a nelonw relonplay selonssion.  Welon reloncord thelon delonvicelon listing
+// helonrelon to capturelon thelon statelon of thelon clustelonr.
+melonssagelon NelonwRelonplaySelonssion {
+  ListDelonvicelonsRelonsponselon delonvicelons = 1;
+  string selonssion_handlelon = 2;
 }
 
-message ReplayOp {
-  double start_time_us = 31;
-  double end_time_us = 32;
+melonssagelon RelonplayOp {
+  doublelon start_timelon_us = 31;
+  doublelon elonnd_timelon_us = 32;
 
-  oneof op {
-    CreateSessionRequest create_session = 1;
-    ExtendSessionRequest extend_session = 2;
-    PartialRunSetupRequest partial_run_setup = 3;
-    RunStepRequest run_step = 4;
-    CloseSessionRequest close_session = 5;
-    ListDevicesRequest list_devices = 6;
-    ResetRequest reset_request = 7;
-    MakeCallableRequest make_callable = 8;
-    RunCallableRequest run_callable = 9;
-    ReleaseCallableRequest release_callable = 10;
-    NewReplaySession new_replay_session = 11;
+  onelonof op {
+    CrelonatelonSelonssionRelonquelonst crelonatelon_selonssion = 1;
+    elonxtelonndSelonssionRelonquelonst elonxtelonnd_selonssion = 2;
+    PartialRunSelontupRelonquelonst partial_run_selontup = 3;
+    RunStelonpRelonquelonst run_stelonp = 4;
+    CloselonSelonssionRelonquelonst closelon_selonssion = 5;
+    ListDelonvicelonsRelonquelonst list_delonvicelons = 6;
+    RelonselontRelonquelonst relonselont_relonquelonst = 7;
+    MakelonCallablelonRelonquelonst makelon_callablelon = 8;
+    RunCallablelonRelonquelonst run_callablelon = 9;
+    RelonlelonaselonCallablelonRelonquelonst relonlelonaselon_callablelon = 10;
+    NelonwRelonplaySelonssion nelonw_relonplay_selonssion = 11;
   }
 
-  oneof response {
-    CreateSessionResponse create_session_response = 21;
-    ExtendSessionResponse extend_session_response = 22;
-    PartialRunSetupResponse partial_run_setup_response = 23;
-    RunStepResponse run_step_response = 24;
-    CloseSessionResponse close_session_response = 25;
-    ListDevicesResponse list_devices_response = 26;
-    ResetResponse reset_request_response = 27;
-    MakeCallableResponse make_callable_response = 28;
-    RunCallableResponse run_callable_response = 29;
-    ReleaseCallableResponse release_callable_response = 30;
+  onelonof relonsponselon {
+    CrelonatelonSelonssionRelonsponselon crelonatelon_selonssion_relonsponselon = 21;
+    elonxtelonndSelonssionRelonsponselon elonxtelonnd_selonssion_relonsponselon = 22;
+    PartialRunSelontupRelonsponselon partial_run_selontup_relonsponselon = 23;
+    RunStelonpRelonsponselon run_stelonp_relonsponselon = 24;
+    CloselonSelonssionRelonsponselon closelon_selonssion_relonsponselon = 25;
+    ListDelonvicelonsRelonsponselon list_delonvicelons_relonsponselon = 26;
+    RelonselontRelonsponselon relonselont_relonquelonst_relonsponselon = 27;
+    MakelonCallablelonRelonsponselon makelon_callablelon_relonsponselon = 28;
+    RunCallablelonRelonsponselon run_callablelon_relonsponselon = 29;
+    RelonlelonaselonCallablelonRelonsponselon relonlelonaselon_callablelon_relonsponselon = 30;
   }
 }

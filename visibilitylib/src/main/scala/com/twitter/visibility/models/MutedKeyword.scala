@@ -1,3 +1,3 @@
-package com.twitter.visibility.models
+packagelon com.twittelonr.visibility.modelonls
 
-case class MutedKeyword(keyword: Option[String])
+caselon class MutelondKelonyword(kelonyword: Option[String])

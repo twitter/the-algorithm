@@ -1,50 +1,50 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.AddEntriesTimelineInstruction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.AddToModuleTimelineInstruction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.ClearCacheTimelineInstruction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.MarkEntriesUnreadInstruction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.PinEntryTimelineInstruction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.ReplaceEntryTimelineInstruction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.ShowAlertInstruction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.ShowCoverInstruction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TerminateTimelineInstruction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineInstruction
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.AddelonntrielonsTimelonlinelonInstruction
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.AddToModulelonTimelonlinelonInstruction
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.ClelonarCachelonTimelonlinelonInstruction
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.MarkelonntrielonsUnrelonadInstruction
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.PinelonntryTimelonlinelonInstruction
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.RelonplacelonelonntryTimelonlinelonInstruction
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.ShowAlelonrtInstruction
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.ShowCovelonrInstruction
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.TelonrminatelonTimelonlinelonInstruction
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.TimelonlinelonInstruction
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class TimelineInstructionMarshaller @Inject() (
-  addEntriesInstructionMarshaller: AddEntriesInstructionMarshaller,
-  addToModuleInstructionMarshaller: AddToModuleInstructionMarshaller,
-  markEntriesUnreadInstructionMarshaller: MarkEntriesUnreadInstructionMarshaller,
-  pinEntryInstructionMarshaller: PinEntryInstructionMarshaller,
-  replaceEntryInstructionMarshaller: ReplaceEntryInstructionMarshaller,
-  showAlertInstructionMarshaller: ShowAlertInstructionMarshaller,
-  terminateTimelineInstructionMarshaller: TerminateTimelineInstructionMarshaller,
-  coverMarshaller: CoverMarshaller) {
+@Singlelonton
+class TimelonlinelonInstructionMarshallelonr @Injelonct() (
+  addelonntrielonsInstructionMarshallelonr: AddelonntrielonsInstructionMarshallelonr,
+  addToModulelonInstructionMarshallelonr: AddToModulelonInstructionMarshallelonr,
+  markelonntrielonsUnrelonadInstructionMarshallelonr: MarkelonntrielonsUnrelonadInstructionMarshallelonr,
+  pinelonntryInstructionMarshallelonr: PinelonntryInstructionMarshallelonr,
+  relonplacelonelonntryInstructionMarshallelonr: RelonplacelonelonntryInstructionMarshallelonr,
+  showAlelonrtInstructionMarshallelonr: ShowAlelonrtInstructionMarshallelonr,
+  telonrminatelonTimelonlinelonInstructionMarshallelonr: TelonrminatelonTimelonlinelonInstructionMarshallelonr,
+  covelonrMarshallelonr: CovelonrMarshallelonr) {
 
-  def apply(instruction: TimelineInstruction): urt.TimelineInstruction = instruction match {
-    case instruction: AddEntriesTimelineInstruction =>
-      urt.TimelineInstruction.AddEntries(addEntriesInstructionMarshaller(instruction))
-    case instruction: AddToModuleTimelineInstruction =>
-      urt.TimelineInstruction.AddToModule(addToModuleInstructionMarshaller(instruction))
-    case _: ClearCacheTimelineInstruction =>
-      urt.TimelineInstruction.ClearCache(urt.ClearCache())
-    case instruction: MarkEntriesUnreadInstruction =>
-      urt.TimelineInstruction.MarkEntriesUnread(
-        markEntriesUnreadInstructionMarshaller(instruction)
+  delonf apply(instruction: TimelonlinelonInstruction): urt.TimelonlinelonInstruction = instruction match {
+    caselon instruction: AddelonntrielonsTimelonlinelonInstruction =>
+      urt.TimelonlinelonInstruction.Addelonntrielons(addelonntrielonsInstructionMarshallelonr(instruction))
+    caselon instruction: AddToModulelonTimelonlinelonInstruction =>
+      urt.TimelonlinelonInstruction.AddToModulelon(addToModulelonInstructionMarshallelonr(instruction))
+    caselon _: ClelonarCachelonTimelonlinelonInstruction =>
+      urt.TimelonlinelonInstruction.ClelonarCachelon(urt.ClelonarCachelon())
+    caselon instruction: MarkelonntrielonsUnrelonadInstruction =>
+      urt.TimelonlinelonInstruction.MarkelonntrielonsUnrelonad(
+        markelonntrielonsUnrelonadInstructionMarshallelonr(instruction)
       )
-    case instruction: PinEntryTimelineInstruction =>
-      urt.TimelineInstruction.PinEntry(pinEntryInstructionMarshaller(instruction))
-    case instruction: ReplaceEntryTimelineInstruction =>
-      urt.TimelineInstruction.ReplaceEntry(replaceEntryInstructionMarshaller(instruction))
-    case instruction: ShowCoverInstruction =>
-      urt.TimelineInstruction.ShowCover(coverMarshaller(instruction.cover))
-    case instruction: ShowAlertInstruction =>
-      urt.TimelineInstruction.ShowAlert(showAlertInstructionMarshaller(instruction))
-    case instruction: TerminateTimelineInstruction =>
-      urt.TimelineInstruction.TerminateTimeline(terminateTimelineInstructionMarshaller(instruction))
+    caselon instruction: PinelonntryTimelonlinelonInstruction =>
+      urt.TimelonlinelonInstruction.Pinelonntry(pinelonntryInstructionMarshallelonr(instruction))
+    caselon instruction: RelonplacelonelonntryTimelonlinelonInstruction =>
+      urt.TimelonlinelonInstruction.Relonplacelonelonntry(relonplacelonelonntryInstructionMarshallelonr(instruction))
+    caselon instruction: ShowCovelonrInstruction =>
+      urt.TimelonlinelonInstruction.ShowCovelonr(covelonrMarshallelonr(instruction.covelonr))
+    caselon instruction: ShowAlelonrtInstruction =>
+      urt.TimelonlinelonInstruction.ShowAlelonrt(showAlelonrtInstructionMarshallelonr(instruction))
+    caselon instruction: TelonrminatelonTimelonlinelonInstruction =>
+      urt.TimelonlinelonInstruction.TelonrminatelonTimelonlinelon(telonrminatelonTimelonlinelonInstructionMarshallelonr(instruction))
   }
 }

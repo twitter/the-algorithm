@@ -1,31 +1,31 @@
 scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
+    sourcelons = ["*.scala"],
+    compilelonr_option_selonts = ["fatal_warnings"],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/com/twitter/algebird:core",
-        "beam-internal/src/main/scala/com/twitter/beam/io/dal",
-        "beam-internal/src/main/scala/com/twitter/scio_internal/job",
-        "beam-internal/src/main/scala/com/twitter/scio_internal/runner/dataflow",
-        "flockdb-tools/datasets/flock/src/main/thrift:thrift-scala",
-        "src/scala/com/twitter/pluck/source/combined_user_scrooge_source",
-        "src/thrift/com/twitter/gizmoduck:user-thrift-scala",
-        "src/thrift/com/twitter/interaction_graph:interaction_graph-scala",
-        "src/thrift/com/twitter/socialgraph:thrift-scala",
-        "src/thrift/com/twitter/twadoop/user/gen:gen-scala",
-        "src/thrift/com/twitter/user_session_store:thrift-scala",
-        "usersource/snapshot/src/main/scala/com/twitter/usersource/snapshot/flat:usersource_flat-scala",
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        "3rdparty/jvm/com/twittelonr/algelonbird:corelon",
+        "belonam-intelonrnal/src/main/scala/com/twittelonr/belonam/io/dal",
+        "belonam-intelonrnal/src/main/scala/com/twittelonr/scio_intelonrnal/job",
+        "belonam-intelonrnal/src/main/scala/com/twittelonr/scio_intelonrnal/runnelonr/dataflow",
+        "flockdb-tools/dataselonts/flock/src/main/thrift:thrift-scala",
+        "src/scala/com/twittelonr/pluck/sourcelon/combinelond_uselonr_scroogelon_sourcelon",
+        "src/thrift/com/twittelonr/gizmoduck:uselonr-thrift-scala",
+        "src/thrift/com/twittelonr/intelonraction_graph:intelonraction_graph-scala",
+        "src/thrift/com/twittelonr/socialgraph:thrift-scala",
+        "src/thrift/com/twittelonr/twadoop/uselonr/gelonn:gelonn-scala",
+        "src/thrift/com/twittelonr/uselonr_selonssion_storelon:thrift-scala",
+        "uselonrsourcelon/snapshot/src/main/scala/com/twittelonr/uselonrsourcelon/snapshot/flat:uselonrsourcelon_flat-scala",
     ],
 )
 
 scala_library(
-    name = "feature_groups",
-    sources = ["FeatureGroups.scala"],
-    compiler_option_sets = ["fatal_warnings"],
+    namelon = "felonaturelon_groups",
+    sourcelons = ["FelonaturelonGroups.scala"],
+    compilelonr_option_selonts = ["fatal_warnings"],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "src/thrift/com/twitter/interaction_graph:interaction_graph-scala",
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/intelonraction_graph:intelonraction_graph-scala",
     ],
 )

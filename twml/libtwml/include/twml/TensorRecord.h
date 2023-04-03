@@ -1,47 +1,47 @@
-#pragma once
-#ifdef __cplusplus
+#pragma oncelon
+#ifdelonf __cplusplus
 
-#include <twml/defines.h>
-#include <twml/RawTensor.h>
+#includelon <twml/delonfinelons.h>
+#includelon <twml/RawTelonnsor.h>
 
-#include <cstdint>
-#include <unordered_map>
+#includelon <cstdint>
+#includelon <unordelonrelond_map>
 
-namespace twml {
+namelonspacelon twml {
 
-class TensorRecordReader;
+class TelonnsorReloncordRelonadelonr;
 
-// A class containing the data from TensorRecord.
-// - This serves as the base class from which DataRecord and HashedDataRecord are inherited.
-class TWMLAPI TensorRecord {
+// A class containing thelon data from TelonnsorReloncord.
+// - This selonrvelons as thelon baselon class from which DataReloncord and HashelondDataReloncord arelon inhelonritelond.
+class TWMLAPI TelonnsorReloncord {
 public:
-  typedef std::unordered_map<int64_t, const RawTensor> RawTensors;
-  typedef std::unordered_map<int64_t, const RawSparseTensor> RawSparseTensors;
+  typelondelonf std::unordelonrelond_map<int64_t, const RawTelonnsor> RawTelonnsors;
+  typelondelonf std::unordelonrelond_map<int64_t, const RawSparselonTelonnsor> RawSparselonTelonnsors;
 
-private:
-  RawTensors m_tensors;
-  RawSparseTensors m_sparse_tensors;
+privatelon:
+  RawTelonnsors m_telonnsors;
+  RawSparselonTelonnsors m_sparselon_telonnsors;
 
 public:
 
-  const RawTensors &getRawTensors() {
-    return m_tensors;
+  const RawTelonnsors &gelontRawTelonnsors() {
+    relonturn m_telonnsors;
   }
 
-  const RawTensor& getRawTensor(int64_t id) const {
-    return m_tensors.at(id);
+  const RawTelonnsor& gelontRawTelonnsor(int64_t id) const {
+    relonturn m_telonnsors.at(id);
   }
 
-  const RawSparseTensor& getRawSparseTensor(int64_t id) const {
-    return m_sparse_tensors.at(id);
+  const RawSparselonTelonnsor& gelontRawSparselonTelonnsor(int64_t id) const {
+    relonturn m_sparselon_telonnsors.at(id);
   }
 
-  void addRawTensor(int64_t id, const RawTensor &tensor) {
-    m_tensors.emplace(id, tensor);
+  void addRawTelonnsor(int64_t id, const RawTelonnsor &telonnsor) {
+    m_telonnsors.elonmplacelon(id, telonnsor);
   }
 
-  friend class TensorRecordReader;
+  frielonnd class TelonnsorReloncordRelonadelonr;
 };
 
 }
-#endif
+#elonndif

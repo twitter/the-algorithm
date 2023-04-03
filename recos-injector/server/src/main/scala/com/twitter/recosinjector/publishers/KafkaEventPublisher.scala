@@ -1,54 +1,54 @@
-package com.twitter.recosinjector.publishers
+packagelon com.twittelonr.reloncosinjelonctor.publishelonrs
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.finatra.kafka.producers.FinagleKafkaProducerBuilder
-import com.twitter.finatra.kafka.serde.ScalaSerdes
-import com.twitter.recos.internal.thriftscala.RecosHoseMessage
-import org.apache.kafka.clients.CommonClientConfigs
-import org.apache.kafka.clients.producer.ProducerRecord
-import org.apache.kafka.common.config.SaslConfigs
-import org.apache.kafka.common.config.SslConfigs
-import org.apache.kafka.common.security.auth.SecurityProtocol
-import org.apache.kafka.common.serialization.StringSerializer
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.finaglelon.thrift.ClielonntId
+import com.twittelonr.finatra.kafka.producelonrs.FinaglelonKafkaProducelonrBuildelonr
+import com.twittelonr.finatra.kafka.selonrdelon.ScalaSelonrdelons
+import com.twittelonr.reloncos.intelonrnal.thriftscala.ReloncosHoselonMelonssagelon
+import org.apachelon.kafka.clielonnts.CommonClielonntConfigs
+import org.apachelon.kafka.clielonnts.producelonr.ProducelonrReloncord
+import org.apachelon.kafka.common.config.SaslConfigs
+import org.apachelon.kafka.common.config.SslConfigs
+import org.apachelon.kafka.common.seloncurity.auth.SeloncurityProtocol
+import org.apachelon.kafka.common.selonrialization.StringSelonrializelonr
 
-case class KafkaEventPublisher(
-  kafkaDest: String,
-  outputKafkaTopicPrefix: String,
-  clientId: ClientId,
-  truststoreLocation: String) {
+caselon class KafkaelonvelonntPublishelonr(
+  kafkaDelonst: String,
+  outputKafkaTopicPrelonfix: String,
+  clielonntId: ClielonntId,
+  truststorelonLocation: String) {
 
-  private val producer = FinagleKafkaProducerBuilder[String, RecosHoseMessage]()
-    .dest(kafkaDest)
-    .clientId(clientId.name)
-    .keySerializer(new StringSerializer)
-    .valueSerializer(ScalaSerdes.Thrift[RecosHoseMessage].serializer)
-    .withConfig(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, SecurityProtocol.SASL_SSL.toString)
-    .withConfig(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, truststoreLocation)
-    .withConfig(SaslConfigs.SASL_MECHANISM, SaslConfigs.GSSAPI_MECHANISM)
-    .withConfig(SaslConfigs.SASL_KERBEROS_SERVICE_NAME, "kafka")
-    .withConfig(SaslConfigs.SASL_KERBEROS_SERVER_NAME, "kafka")
-    // Use Native Kafka Client
-    .buildClient()
+  privatelon val producelonr = FinaglelonKafkaProducelonrBuildelonr[String, ReloncosHoselonMelonssagelon]()
+    .delonst(kafkaDelonst)
+    .clielonntId(clielonntId.namelon)
+    .kelonySelonrializelonr(nelonw StringSelonrializelonr)
+    .valuelonSelonrializelonr(ScalaSelonrdelons.Thrift[ReloncosHoselonMelonssagelon].selonrializelonr)
+    .withConfig(CommonClielonntConfigs.SelonCURITY_PROTOCOL_CONFIG, SeloncurityProtocol.SASL_SSL.toString)
+    .withConfig(SslConfigs.SSL_TRUSTSTORelon_LOCATION_CONFIG, truststorelonLocation)
+    .withConfig(SaslConfigs.SASL_MelonCHANISM, SaslConfigs.GSSAPI_MelonCHANISM)
+    .withConfig(SaslConfigs.SASL_KelonRBelonROS_SelonRVICelon_NAMelon, "kafka")
+    .withConfig(SaslConfigs.SASL_KelonRBelonROS_SelonRVelonR_NAMelon, "kafka")
+    // Uselon Nativelon Kafka Clielonnt
+    .buildClielonnt()
 
-  def publish(
-    message: RecosHoseMessage,
+  delonf publish(
+    melonssagelon: ReloncosHoselonMelonssagelon,
     topic: String
   )(
-    implicit statsReceiver: StatsReceiver
+    implicit statsReloncelonivelonr: StatsReloncelonivelonr
   ): Unit = {
-    val topicName = s"${outputKafkaTopicPrefix}_$topic"
-    // Kafka Producer is thread-safe. No extra Future-pool protect.
-    producer.send(new ProducerRecord(topicName, message))
-    statsReceiver.counter(topicName + "_written_msg_success").incr()
+    val topicNamelon = s"${outputKafkaTopicPrelonfix}_$topic"
+    // Kafka Producelonr is threlonad-safelon. No elonxtra Futurelon-pool protelonct.
+    producelonr.selonnd(nelonw ProducelonrReloncord(topicNamelon, melonssagelon))
+    statsReloncelonivelonr.countelonr(topicNamelon + "_writtelonn_msg_succelonss").incr()
   }
 }
 
-object KafkaEventPublisher {
-  // Kafka topics available for publishing
-  val UserVideoTopic = "user_video"
-  val UserTweetEntityTopic = "user_tweet_entity"
-  val UserUserTopic = "user_user"
-  val UserAdTopic = "user_tweet"
-  val UserTweetPlusTopic = "user_tweet_plus"
+objelonct KafkaelonvelonntPublishelonr {
+  // Kafka topics availablelon for publishing
+  val UselonrVidelonoTopic = "uselonr_videlono"
+  val UselonrTwelonelontelonntityTopic = "uselonr_twelonelont_elonntity"
+  val UselonrUselonrTopic = "uselonr_uselonr"
+  val UselonrAdTopic = "uselonr_twelonelont"
+  val UselonrTwelonelontPlusTopic = "uselonr_twelonelont_plus"
 }

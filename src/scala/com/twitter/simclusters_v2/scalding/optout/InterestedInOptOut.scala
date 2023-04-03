@@ -1,199 +1,199 @@
-package com.twitter.simclusters_v2.scalding.optout
+packagelon com.twittelonr.simclustelonrs_v2.scalding.optout
 
-import com.twitter.dal.client.dataset.{KeyValDALDataset, SnapshotDALDataset}
-import com.twitter.scalding.{
+import com.twittelonr.dal.clielonnt.dataselont.{KelonyValDALDataselont, SnapshotDALDataselont}
+import com.twittelonr.scalding.{
   Args,
-  DateRange,
+  DatelonRangelon,
   Days,
   Duration,
-  Execution,
-  RichDate,
-  TypedPipe,
-  TypedTsv,
-  UniqueID
+  elonxeloncution,
+  RichDatelon,
+  TypelondPipelon,
+  TypelondTsv,
+  UniquelonID
 }
-import com.twitter.scalding_internal.dalv2.DALWrite.D
-import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.{ClusterId, ModelVersions, SemanticCoreEntityId, UserId}
-import com.twitter.simclusters_v2.hdfs_sources._
-import com.twitter.simclusters_v2.scalding.inferred_entities.InferredEntities
-import com.twitter.simclusters_v2.thriftscala.{
-  ClusterType,
-  ClustersUserIsInterestedIn,
-  SemanticCoreEntityWithScore,
-  UserToInterestedInClusters
+import com.twittelonr.scalding_intelonrnal.dalv2.DALWritelon.D
+import com.twittelonr.scalding_intelonrnal.dalv2.DALWritelon._
+import com.twittelonr.scalding_intelonrnal.multiformat.format.kelonyval.KelonyVal
+import com.twittelonr.simclustelonrs_v2.common.{ClustelonrId, ModelonlVelonrsions, SelonmanticCorelonelonntityId, UselonrId}
+import com.twittelonr.simclustelonrs_v2.hdfs_sourcelons._
+import com.twittelonr.simclustelonrs_v2.scalding.infelonrrelond_elonntitielons.Infelonrrelondelonntitielons
+import com.twittelonr.simclustelonrs_v2.thriftscala.{
+  ClustelonrTypelon,
+  ClustelonrsUselonrIsIntelonrelonstelondIn,
+  SelonmanticCorelonelonntityWithScorelon,
+  UselonrToIntelonrelonstelondInClustelonrs
 }
-import com.twitter.wtf.scalding.jobs.common.{AdhocExecutionApp, ScheduledExecutionApp}
-import com.twitter.simclusters_v2.scalding.common.TypedRichPipe._
-import com.twitter.simclusters_v2.scalding.common.Util
-import java.util.TimeZone
+import com.twittelonr.wtf.scalding.jobs.common.{AdhocelonxeloncutionApp, SchelondulelondelonxeloncutionApp}
+import com.twittelonr.simclustelonrs_v2.scalding.common.TypelondRichPipelon._
+import com.twittelonr.simclustelonrs_v2.scalding.common.Util
+import java.util.TimelonZonelon
 
-object InterestedInOptOut {
+objelonct IntelonrelonstelondInOptOut {
 
-  def filterOptedOutInterestedIn(
-    interestedInPipe: TypedPipe[(UserId, ClustersUserIsInterestedIn)],
-    optedOutEntities: TypedPipe[(UserId, Set[SemanticCoreEntityId])],
-    clusterToEntities: TypedPipe[(ClusterId, Seq[SemanticCoreEntityWithScore])]
-  ): TypedPipe[(UserId, ClustersUserIsInterestedIn)] = {
+  delonf filtelonrOptelondOutIntelonrelonstelondIn(
+    intelonrelonstelondInPipelon: TypelondPipelon[(UselonrId, ClustelonrsUselonrIsIntelonrelonstelondIn)],
+    optelondOutelonntitielons: TypelondPipelon[(UselonrId, Selont[SelonmanticCorelonelonntityId])],
+    clustelonrToelonntitielons: TypelondPipelon[(ClustelonrId, Selonq[SelonmanticCorelonelonntityWithScorelon])]
+  ): TypelondPipelon[(UselonrId, ClustelonrsUselonrIsIntelonrelonstelondIn)] = {
 
-    val validInterestedIn = SimClustersOptOutUtil.filterOptedOutClusters(
-      userToClusters = interestedInPipe.mapValues(_.clusterIdToScores.keySet.toSeq),
-      optedOutEntities = optedOutEntities,
-      legibleClusters = clusterToEntities
+    val validIntelonrelonstelondIn = SimClustelonrsOptOutUtil.filtelonrOptelondOutClustelonrs(
+      uselonrToClustelonrs = intelonrelonstelondInPipelon.mapValuelons(_.clustelonrIdToScorelons.kelonySelont.toSelonq),
+      optelondOutelonntitielons = optelondOutelonntitielons,
+      lelongiblelonClustelonrs = clustelonrToelonntitielons
     )
 
-    interestedInPipe
-      .leftJoin(validInterestedIn)
-      .mapValues {
-        case (originalInterestedIn, validInterestedInOpt) =>
-          val validInterestedIn = validInterestedInOpt.getOrElse(Seq()).toSet
+    intelonrelonstelondInPipelon
+      .lelonftJoin(validIntelonrelonstelondIn)
+      .mapValuelons {
+        caselon (originalIntelonrelonstelondIn, validIntelonrelonstelondInOpt) =>
+          val validIntelonrelonstelondIn = validIntelonrelonstelondInOpt.gelontOrelonlselon(Selonq()).toSelont
 
-          originalInterestedIn.copy(
-            clusterIdToScores = originalInterestedIn.clusterIdToScores.filterKeys(validInterestedIn)
+          originalIntelonrelonstelondIn.copy(
+            clustelonrIdToScorelons = originalIntelonrelonstelondIn.clustelonrIdToScorelons.filtelonrKelonys(validIntelonrelonstelondIn)
           )
       }
-      .filter(_._2.clusterIdToScores.nonEmpty)
+      .filtelonr(_._2.clustelonrIdToScorelons.nonelonmpty)
   }
 
   /**
-   * Writes InterestedIn data to HDFS
+   * Writelons IntelonrelonstelondIn data to HDFS
    */
-  def writeInterestedInOutputExecution(
-    interestedIn: TypedPipe[(UserId, ClustersUserIsInterestedIn)],
-    interestedInDataset: KeyValDALDataset[KeyVal[Long, ClustersUserIsInterestedIn]],
+  delonf writelonIntelonrelonstelondInOutputelonxeloncution(
+    intelonrelonstelondIn: TypelondPipelon[(UselonrId, ClustelonrsUselonrIsIntelonrelonstelondIn)],
+    intelonrelonstelondInDataselont: KelonyValDALDataselont[KelonyVal[Long, ClustelonrsUselonrIsIntelonrelonstelondIn]],
     outputPath: String
-  ): Execution[Unit] = {
-    interestedIn
-      .map { case (k, v) => KeyVal(k, v) }
-      .writeDALVersionedKeyValExecution(
-        interestedInDataset,
+  ): elonxeloncution[Unit] = {
+    intelonrelonstelondIn
+      .map { caselon (k, v) => KelonyVal(k, v) }
+      .writelonDALVelonrsionelondKelonyValelonxeloncution(
+        intelonrelonstelondInDataselont,
         D.Suffix(outputPath)
       )
   }
 
   /**
-   * Convert InterestedIn to thrift structs, then write to HDFS
+   * Convelonrt IntelonrelonstelondIn to thrift structs, thelonn writelon to HDFS
    */
-  def writeInterestedInThriftOutputExecution(
-    interestedIn: TypedPipe[(UserId, ClustersUserIsInterestedIn)],
-    modelVersion: String,
-    interestedInThriftDatset: SnapshotDALDataset[UserToInterestedInClusters],
+  delonf writelonIntelonrelonstelondInThriftOutputelonxeloncution(
+    intelonrelonstelondIn: TypelondPipelon[(UselonrId, ClustelonrsUselonrIsIntelonrelonstelondIn)],
+    modelonlVelonrsion: String,
+    intelonrelonstelondInThriftDatselont: SnapshotDALDataselont[UselonrToIntelonrelonstelondInClustelonrs],
     thriftOutputPath: String,
-    dateRange: DateRange
-  ): Execution[Unit] = {
-    interestedIn
+    datelonRangelon: DatelonRangelon
+  ): elonxeloncution[Unit] = {
+    intelonrelonstelondIn
       .map {
-        case (userId, clusters) =>
-          UserToInterestedInClusters(userId, modelVersion, clusters.clusterIdToScores)
+        caselon (uselonrId, clustelonrs) =>
+          UselonrToIntelonrelonstelondInClustelonrs(uselonrId, modelonlVelonrsion, clustelonrs.clustelonrIdToScorelons)
       }
-      .writeDALSnapshotExecution(
-        interestedInThriftDatset,
+      .writelonDALSnapshotelonxeloncution(
+        intelonrelonstelondInThriftDatselont,
         D.Daily,
         D.Suffix(thriftOutputPath),
-        D.EBLzo(),
-        dateRange.end
+        D.elonBLzo(),
+        datelonRangelon.elonnd
       )
   }
 }
 
 /**
-capesospy-v2 update --build_locally --start_cron \
-  --start_cron interested_in_optout_daily \
-  src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc.yaml
+capelonsospy-v2 updatelon --build_locally --start_cron \
+  --start_cron intelonrelonstelond_in_optout_daily \
+  src/scala/com/twittelonr/simclustelonrs_v2/capelonsos_config/atla_proc.yaml
  */
-object InterestedInOptOutDailyBatchJob extends ScheduledExecutionApp {
+objelonct IntelonrelonstelondInOptOutDailyBatchJob elonxtelonnds SchelondulelondelonxeloncutionApp {
 
-  override def firstTime: RichDate = RichDate("2019-11-24")
+  ovelonrridelon delonf firstTimelon: RichDatelon = RichDatelon("2019-11-24")
 
-  override def batchIncrement: Duration = Days(1)
+  ovelonrridelon delonf batchIncrelonmelonnt: Duration = Days(1)
 
-  override def runOnDateRange(
+  ovelonrridelon delonf runOnDatelonRangelon(
     args: Args
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon,
+    uniquelonID: UniquelonID
+  ): elonxeloncution[Unit] = {
 
-    val userOptoutEntities =
-      SimClustersOptOutUtil
-        .getP13nOptOutSources(dateRange.embiggen(Days(4)), ClusterType.InterestedIn)
-        .count("num_users_with_optouts")
-        .forceToDisk
+    val uselonrOptoutelonntitielons =
+      SimClustelonrsOptOutUtil
+        .gelontP13nOptOutSourcelons(datelonRangelon.elonmbiggelonn(Days(4)), ClustelonrTypelon.IntelonrelonstelondIn)
+        .count("num_uselonrs_with_optouts")
+        .forcelonToDisk
 
-    val interestedIn2020Pipe = InterestedInSources
-      .simClustersRawInterestedIn2020Source(dateRange, timeZone)
-      .count("num_users_with_2020_interestedin")
+    val intelonrelonstelondIn2020Pipelon = IntelonrelonstelondInSourcelons
+      .simClustelonrsRawIntelonrelonstelondIn2020Sourcelon(datelonRangelon, timelonZonelon)
+      .count("num_uselonrs_with_2020_intelonrelonstelondin")
 
-    val interestedInLite2020Pipe = InterestedInSources
-      .simClustersRawInterestedInLite2020Source(dateRange, timeZone)
-      .count("num_users_with_2020_interestedin_lite")
+    val intelonrelonstelondInLitelon2020Pipelon = IntelonrelonstelondInSourcelons
+      .simClustelonrsRawIntelonrelonstelondInLitelon2020Sourcelon(datelonRangelon, timelonZonelon)
+      .count("num_uselonrs_with_2020_intelonrelonstelondin_litelon")
 
-    val clusterToEntities = InferredEntities
-      .getLegibleEntityEmbeddings(dateRange.prepend(Days(21)), timeZone)
-      .count("num_cluster_to_entities")
+    val clustelonrToelonntitielons = Infelonrrelondelonntitielons
+      .gelontLelongiblelonelonntityelonmbelonddings(datelonRangelon.prelonpelonnd(Days(21)), timelonZonelon)
+      .count("num_clustelonr_to_elonntitielons")
 
-    val filtered2020InterestedIn = InterestedInOptOut
-      .filterOptedOutInterestedIn(interestedIn2020Pipe, userOptoutEntities, clusterToEntities)
-      .count("num_users_with_compliant_2020_interestedin")
+    val filtelonrelond2020IntelonrelonstelondIn = IntelonrelonstelondInOptOut
+      .filtelonrOptelondOutIntelonrelonstelondIn(intelonrelonstelondIn2020Pipelon, uselonrOptoutelonntitielons, clustelonrToelonntitielons)
+      .count("num_uselonrs_with_compliant_2020_intelonrelonstelondin")
 
-    val write2020Exec = InterestedInOptOut.writeInterestedInOutputExecution(
-      filtered2020InterestedIn,
-      SimclustersV2InterestedIn20M145K2020ScalaDataset,
-      DataPaths.InterestedIn2020Path
+    val writelon2020elonxelonc = IntelonrelonstelondInOptOut.writelonIntelonrelonstelondInOutputelonxeloncution(
+      filtelonrelond2020IntelonrelonstelondIn,
+      SimclustelonrsV2IntelonrelonstelondIn20M145K2020ScalaDataselont,
+      DataPaths.IntelonrelonstelondIn2020Path
     )
 
-    val write2020ThriftExec = InterestedInOptOut.writeInterestedInThriftOutputExecution(
-      filtered2020InterestedIn,
-      ModelVersions.Model20M145K2020,
-      SimclustersV2UserToInterestedIn20M145K2020ScalaDataset,
-      DataPaths.InterestedIn2020ThriftPath,
-      dateRange
+    val writelon2020Thriftelonxelonc = IntelonrelonstelondInOptOut.writelonIntelonrelonstelondInThriftOutputelonxeloncution(
+      filtelonrelond2020IntelonrelonstelondIn,
+      ModelonlVelonrsions.Modelonl20M145K2020,
+      SimclustelonrsV2UselonrToIntelonrelonstelondIn20M145K2020ScalaDataselont,
+      DataPaths.IntelonrelonstelondIn2020ThriftPath,
+      datelonRangelon
     )
 
-    val sanityCheck2020Exec = SimClustersOptOutUtil.sanityCheckAndSendEmail(
-      oldNumClustersPerUser = interestedIn2020Pipe.map(_._2.clusterIdToScores.size),
-      newNumClustersPerUser = filtered2020InterestedIn.map(_._2.clusterIdToScores.size),
-      modelVersion = ModelVersions.Model20M145K2020,
-      alertEmail = SimClustersOptOutUtil.AlertEmail
+    val sanityChelonck2020elonxelonc = SimClustelonrsOptOutUtil.sanityChelonckAndSelonndelonmail(
+      oldNumClustelonrsPelonrUselonr = intelonrelonstelondIn2020Pipelon.map(_._2.clustelonrIdToScorelons.sizelon),
+      nelonwNumClustelonrsPelonrUselonr = filtelonrelond2020IntelonrelonstelondIn.map(_._2.clustelonrIdToScorelons.sizelon),
+      modelonlVelonrsion = ModelonlVelonrsions.Modelonl20M145K2020,
+      alelonrtelonmail = SimClustelonrsOptOutUtil.Alelonrtelonmail
     )
 
-    val filtered2020InterestedInLite = InterestedInOptOut
-      .filterOptedOutInterestedIn(interestedInLite2020Pipe, userOptoutEntities, clusterToEntities)
-      .count("num_users_with_compliant_2020_interestedin_lite")
+    val filtelonrelond2020IntelonrelonstelondInLitelon = IntelonrelonstelondInOptOut
+      .filtelonrOptelondOutIntelonrelonstelondIn(intelonrelonstelondInLitelon2020Pipelon, uselonrOptoutelonntitielons, clustelonrToelonntitielons)
+      .count("num_uselonrs_with_compliant_2020_intelonrelonstelondin_litelon")
 
-    val write2020LiteExec = InterestedInOptOut.writeInterestedInOutputExecution(
-      filtered2020InterestedInLite,
-      SimclustersV2InterestedInLite20M145K2020ScalaDataset,
-      DataPaths.InterestedInLite2020Path
+    val writelon2020Litelonelonxelonc = IntelonrelonstelondInOptOut.writelonIntelonrelonstelondInOutputelonxeloncution(
+      filtelonrelond2020IntelonrelonstelondInLitelon,
+      SimclustelonrsV2IntelonrelonstelondInLitelon20M145K2020ScalaDataselont,
+      DataPaths.IntelonrelonstelondInLitelon2020Path
     )
 
-    val write2020LiteThriftExec = InterestedInOptOut.writeInterestedInThriftOutputExecution(
-      filtered2020InterestedInLite,
-      ModelVersions.Model20M145K2020,
-      SimclustersV2UserToInterestedInLite20M145K2020ScalaDataset,
-      DataPaths.InterestedInLite2020ThriftPath,
-      dateRange
+    val writelon2020LitelonThriftelonxelonc = IntelonrelonstelondInOptOut.writelonIntelonrelonstelondInThriftOutputelonxeloncution(
+      filtelonrelond2020IntelonrelonstelondInLitelon,
+      ModelonlVelonrsions.Modelonl20M145K2020,
+      SimclustelonrsV2UselonrToIntelonrelonstelondInLitelon20M145K2020ScalaDataselont,
+      DataPaths.IntelonrelonstelondInLitelon2020ThriftPath,
+      datelonRangelon
     )
 
-    val sanityCheck2020LiteExec = SimClustersOptOutUtil.sanityCheckAndSendEmail(
-      oldNumClustersPerUser = interestedInLite2020Pipe.map(_._2.clusterIdToScores.size),
-      newNumClustersPerUser = filtered2020InterestedInLite.map(_._2.clusterIdToScores.size),
-      modelVersion = ModelVersions.Model20M145K2020,
-      alertEmail = SimClustersOptOutUtil.AlertEmail
+    val sanityChelonck2020Litelonelonxelonc = SimClustelonrsOptOutUtil.sanityChelonckAndSelonndelonmail(
+      oldNumClustelonrsPelonrUselonr = intelonrelonstelondInLitelon2020Pipelon.map(_._2.clustelonrIdToScorelons.sizelon),
+      nelonwNumClustelonrsPelonrUselonr = filtelonrelond2020IntelonrelonstelondInLitelon.map(_._2.clustelonrIdToScorelons.sizelon),
+      modelonlVelonrsion = ModelonlVelonrsions.Modelonl20M145K2020,
+      alelonrtelonmail = SimClustelonrsOptOutUtil.Alelonrtelonmail
     )
 
-    Util.printCounters(
-      Execution.zip(
-        Execution.zip(
-          write2020Exec,
-          write2020ThriftExec,
-          sanityCheck2020Exec),
-        Execution.zip(
-          write2020LiteExec,
-          write2020LiteThriftExec,
-          sanityCheck2020LiteExec
+    Util.printCountelonrs(
+      elonxeloncution.zip(
+        elonxeloncution.zip(
+          writelon2020elonxelonc,
+          writelon2020Thriftelonxelonc,
+          sanityChelonck2020elonxelonc),
+        elonxeloncution.zip(
+          writelon2020Litelonelonxelonc,
+          writelon2020LitelonThriftelonxelonc,
+          sanityChelonck2020Litelonelonxelonc
         )
       )
     )
@@ -201,69 +201,69 @@ object InterestedInOptOutDailyBatchJob extends ScheduledExecutionApp {
 }
 
 /**
- * For debugging only. Does a filtering run and prints the differences before/after the opt out
+ * For delonbugging only. Doelons a filtelonring run and prints thelon diffelonrelonncelons belonforelon/aftelonr thelon opt out
 
- scalding remote run --target src/scala/com/twitter/simclusters_v2/scalding/optout:interested_in_optout-adhoc \
- --user cassowary --cluster bluebird-qus1 \
- --main-class com.twitter.simclusters_v2.scalding.optout.InterestedInOptOutAdhocJob -- \
- --keytab /var/lib/tss/keys/fluffy/keytabs/client/cassowary.keytab \
- --principal service_acoount@TWITTER.BIZ \
+ scalding relonmotelon run --targelont src/scala/com/twittelonr/simclustelonrs_v2/scalding/optout:intelonrelonstelond_in_optout-adhoc \
+ --uselonr cassowary --clustelonr bluelonbird-qus1 \
+ --main-class com.twittelonr.simclustelonrs_v2.scalding.optout.IntelonrelonstelondInOptOutAdhocJob -- \
+ --kelonytab /var/lib/tss/kelonys/fluffy/kelonytabs/clielonnt/cassowary.kelonytab \
+ --principal selonrvicelon_acoount@TWITTelonR.BIZ \
  -- \
- --outputDir /user/cassowary/adhoc/interestedin_optout \
- --date 2020-09-03
+ --outputDir /uselonr/cassowary/adhoc/intelonrelonstelondin_optout \
+ --datelon 2020-09-03
  */
-object InterestedInOptOutAdhocJob extends AdhocExecutionApp {
-  override def runOnDateRange(
+objelonct IntelonrelonstelondInOptOutAdhocJob elonxtelonnds AdhocelonxeloncutionApp {
+  ovelonrridelon delonf runOnDatelonRangelon(
     args: Args
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon,
+    uniquelonID: UniquelonID
+  ): elonxeloncution[Unit] = {
     val outputDir = args("outputDir")
 
-    val interestedInPipe = InterestedInSources
-      .simClustersInterestedInUpdatedSource(dateRange, timeZone)
-      .count("num_users_with_interestedin")
+    val intelonrelonstelondInPipelon = IntelonrelonstelondInSourcelons
+      .simClustelonrsIntelonrelonstelondInUpdatelondSourcelon(datelonRangelon, timelonZonelon)
+      .count("num_uselonrs_with_intelonrelonstelondin")
 
-    val userOptoutEntities: TypedPipe[(UserId, Set[SemanticCoreEntityId])] =
-      SimClustersOptOutUtil
-        .getP13nOptOutSources(dateRange.embiggen(Days(4)), ClusterType.InterestedIn)
-        .count("num_users_with_optouts")
+    val uselonrOptoutelonntitielons: TypelondPipelon[(UselonrId, Selont[SelonmanticCorelonelonntityId])] =
+      SimClustelonrsOptOutUtil
+        .gelontP13nOptOutSourcelons(datelonRangelon.elonmbiggelonn(Days(4)), ClustelonrTypelon.IntelonrelonstelondIn)
+        .count("num_uselonrs_with_optouts")
 
-    val clusterToEntities = InferredEntities
-      .getLegibleEntityEmbeddings(dateRange, timeZone)
-      .count("num_cluster_to_entities")
+    val clustelonrToelonntitielons = Infelonrrelondelonntitielons
+      .gelontLelongiblelonelonntityelonmbelonddings(datelonRangelon, timelonZonelon)
+      .count("num_clustelonr_to_elonntitielons")
 
-    val filteredInterestedInPipe = InterestedInOptOut
-      .filterOptedOutInterestedIn(
-        interestedInPipe,
-        userOptoutEntities,
-        clusterToEntities
+    val filtelonrelondIntelonrelonstelondInPipelon = IntelonrelonstelondInOptOut
+      .filtelonrOptelondOutIntelonrelonstelondIn(
+        intelonrelonstelondInPipelon,
+        uselonrOptoutelonntitielons,
+        clustelonrToelonntitielons
       )
-      .count("num_users_with_interestedin_after_optout")
+      .count("num_uselonrs_with_intelonrelonstelondin_aftelonr_optout")
 
-    val output = interestedInPipe
-      .join(filteredInterestedInPipe)
-      .filter {
-        case (userId, (originalInterestedIn, filtered)) =>
-          originalInterestedIn.clusterIdToScores != filtered.clusterIdToScores
+    val output = intelonrelonstelondInPipelon
+      .join(filtelonrelondIntelonrelonstelondInPipelon)
+      .filtelonr {
+        caselon (uselonrId, (originalIntelonrelonstelondIn, filtelonrelond)) =>
+          originalIntelonrelonstelondIn.clustelonrIdToScorelons != filtelonrelond.clustelonrIdToScorelons
       }
-      .join(userOptoutEntities)
+      .join(uselonrOptoutelonntitielons)
       .map {
-        case (userId, ((originalInterestedIn, filtered), optoutEntities)) =>
-          Seq(
-            "userId=" + userId,
-            "originalInterestedInVersion=" + originalInterestedIn.knownForModelVersion,
-            "originalInterestedIn=" + originalInterestedIn.clusterIdToScores.keySet,
-            "filteredInterestedIn=" + filtered.knownForModelVersion,
-            "filteredInterestedIn=" + filtered.clusterIdToScores.keySet,
-            "optoutEntities=" + optoutEntities
+        caselon (uselonrId, ((originalIntelonrelonstelondIn, filtelonrelond), optoutelonntitielons)) =>
+          Selonq(
+            "uselonrId=" + uselonrId,
+            "originalIntelonrelonstelondInVelonrsion=" + originalIntelonrelonstelondIn.knownForModelonlVelonrsion,
+            "originalIntelonrelonstelondIn=" + originalIntelonrelonstelondIn.clustelonrIdToScorelons.kelonySelont,
+            "filtelonrelondIntelonrelonstelondIn=" + filtelonrelond.knownForModelonlVelonrsion,
+            "filtelonrelondIntelonrelonstelondIn=" + filtelonrelond.clustelonrIdToScorelons.kelonySelont,
+            "optoutelonntitielons=" + optoutelonntitielons
           ).mkString("\t")
       }
 
-    Util.printCounters(
-      output.writeExecution(TypedTsv(outputDir))
+    Util.printCountelonrs(
+      output.writelonelonxeloncution(TypelondTsv(outputDir))
     )
   }
 }

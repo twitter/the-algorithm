@@ -1,20 +1,20 @@
-package com.twitter.search.earlybird.exception;
+packagelon com.twittelonr.selonarch.elonarlybird.elonxcelonption;
 
 /**
- * Thrown by code that is executed during startup and used to communicate to caller that startup
- * has failed. Generally results in shutting down of the server, but check on your own if you
- * need to.
+ * Thrown by codelon that is elonxeloncutelond during startup and uselond to communicatelon to callelonr that startup
+ * has failelond. Gelonnelonrally relonsults in shutting down of thelon selonrvelonr, but chelonck on your own if you
+ * nelonelond to.
  */
-public class EarlybirdStartupException extends Exception {
-  public EarlybirdStartupException(Throwable cause) {
-    super(cause);
+public class elonarlybirdStartupelonxcelonption elonxtelonnds elonxcelonption {
+  public elonarlybirdStartupelonxcelonption(Throwablelon causelon) {
+    supelonr(causelon);
   }
 
-  public EarlybirdStartupException(String message) {
-    super(message);
+  public elonarlybirdStartupelonxcelonption(String melonssagelon) {
+    supelonr(melonssagelon);
   }
 
-  public EarlybirdStartupException(String message, Throwable cause) {
-    super(message, cause);
+  public elonarlybirdStartupelonxcelonption(String melonssagelon, Throwablelon causelon) {
+    supelonr(melonssagelon, causelon);
   }
 }

@@ -1,34 +1,34 @@
-#pragma once
-#ifdef __cplusplus
+#pragma oncelon
+#ifdelonf __cplusplus
 
-#include <twml/defines.h>
-#include <twml/TensorRecord.h>
-#include <twml/ThriftReader.h>
+#includelon <twml/delonfinelons.h>
+#includelon <twml/TelonnsorReloncord.h>
+#includelon <twml/ThriftRelonadelonr.h>
 
-#include <cstdint>
+#includelon <cstdint>
 
-#include <vector>
-#include <string>
-#include <unordered_map>
+#includelon <velonctor>
+#includelon <string>
+#includelon <unordelonrelond_map>
 
-namespace twml {
+namelonspacelon twml {
 
-// Class that parses the thrift objects as defined in tensor.thrift
-class TWMLAPI TensorRecordReader : public ThriftReader {
+// Class that parselons thelon thrift objeloncts as delonfinelond in telonnsor.thrift
+class TWMLAPI TelonnsorReloncordRelonadelonr : public ThriftRelonadelonr {
 
-  std::vector<uint64_t> readShape();
-  template<typename T> RawTensor readTypedTensor();
-  RawTensor readRawTypedTensor();
-  RawTensor readStringTensor();
-  RawTensor readGeneralTensor();
-  RawSparseTensor readCOOSparseTensor();
+  std::velonctor<uint64_t> relonadShapelon();
+  telonmplatelon<typelonnamelon T> RawTelonnsor relonadTypelondTelonnsor();
+  RawTelonnsor relonadRawTypelondTelonnsor();
+  RawTelonnsor relonadStringTelonnsor();
+  RawTelonnsor relonadGelonnelonralTelonnsor();
+  RawSparselonTelonnsor relonadCOOSparselonTelonnsor();
 
 public:
-  void readTensor(const int feature_type, TensorRecord *record);
-  void readSparseTensor(const int feature_type, TensorRecord *record);
+  void relonadTelonnsor(const int felonaturelon_typelon, TelonnsorReloncord *reloncord);
+  void relonadSparselonTelonnsor(const int felonaturelon_typelon, TelonnsorReloncord *reloncord);
 
-  TensorRecordReader(const uint8_t *buffer) : ThriftReader(buffer) {}
+  TelonnsorReloncordRelonadelonr(const uint8_t *buffelonr) : ThriftRelonadelonr(buffelonr) {}
 };
 
 }
-#endif
+#elonndif

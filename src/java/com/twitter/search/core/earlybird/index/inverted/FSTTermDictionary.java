@@ -1,299 +1,299 @@
-package com.twitter.search.core.earlybird.index.inverted;
+packagelon com.twittelonr.selonarch.corelon.elonarlybird.indelonx.invelonrtelond;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 import java.util.Comparator;
 
-import org.apache.lucene.index.BaseTermsEnum;
-import org.apache.lucene.index.ImpactsEnum;
-import org.apache.lucene.index.PostingsEnum;
-import org.apache.lucene.index.SlowImpactsEnum;
-import org.apache.lucene.index.TermsEnum;
-import org.apache.lucene.util.BytesRef;
-import org.apache.lucene.util.InPlaceMergeSorter;
-import org.apache.lucene.util.IntsRefBuilder;
-import org.apache.lucene.util.fst.BytesRefFSTEnum;
-import org.apache.lucene.util.fst.FST;
-import org.apache.lucene.util.fst.PositiveIntOutputs;
-import org.apache.lucene.util.fst.Util;
-import org.apache.lucene.util.packed.PackedInts;
+import org.apachelon.lucelonnelon.indelonx.BaselonTelonrmselonnum;
+import org.apachelon.lucelonnelon.indelonx.Impactselonnum;
+import org.apachelon.lucelonnelon.indelonx.Postingselonnum;
+import org.apachelon.lucelonnelon.indelonx.SlowImpactselonnum;
+import org.apachelon.lucelonnelon.indelonx.Telonrmselonnum;
+import org.apachelon.lucelonnelon.util.BytelonsRelonf;
+import org.apachelon.lucelonnelon.util.InPlacelonMelonrgelonSortelonr;
+import org.apachelon.lucelonnelon.util.IntsRelonfBuildelonr;
+import org.apachelon.lucelonnelon.util.fst.BytelonsRelonfFSTelonnum;
+import org.apachelon.lucelonnelon.util.fst.FST;
+import org.apachelon.lucelonnelon.util.fst.PositivelonIntOutputs;
+import org.apachelon.lucelonnelon.util.fst.Util;
+import org.apachelon.lucelonnelon.util.packelond.PackelondInts;
 
-import com.twitter.search.common.util.io.flushable.DataDeserializer;
-import com.twitter.search.common.util.io.flushable.DataSerializer;
-import com.twitter.search.common.util.io.flushable.FlushInfo;
-import com.twitter.search.common.util.io.flushable.Flushable;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
+import com.twittelonr.selonarch.common.util.io.flushablelon.DataDelonselonrializelonr;
+import com.twittelonr.selonarch.common.util.io.flushablelon.DataSelonrializelonr;
+import com.twittelonr.selonarch.common.util.io.flushablelon.FlushInfo;
+import com.twittelonr.selonarch.common.util.io.flushablelon.Flushablelon;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr;
 
-public class FSTTermDictionary implements TermDictionary, Flushable {
-  private final FST<Long> fst;
+public class FSTTelonrmDictionary implelonmelonnts TelonrmDictionary, Flushablelon {
+  privatelon final FST<Long> fst;
 
-  private final PackedInts.Reader termPointers;
-  private final ByteBlockPool termPool;
-  private final TermPointerEncoding termPointerEncoding;
-  private int numTerms;
+  privatelon final PackelondInts.Relonadelonr telonrmPointelonrs;
+  privatelon final BytelonBlockPool telonrmPool;
+  privatelon final TelonrmPointelonrelonncoding telonrmPointelonrelonncoding;
+  privatelon int numTelonrms;
 
-  FSTTermDictionary(int numTerms, FST<Long> fst,
-                    ByteBlockPool termPool, PackedInts.Reader termPointers,
-                    TermPointerEncoding termPointerEncoding) {
-    this.numTerms = numTerms;
+  FSTTelonrmDictionary(int numTelonrms, FST<Long> fst,
+                    BytelonBlockPool telonrmPool, PackelondInts.Relonadelonr telonrmPointelonrs,
+                    TelonrmPointelonrelonncoding telonrmPointelonrelonncoding) {
+    this.numTelonrms = numTelonrms;
     this.fst = fst;
-    this.termPool = termPool;
-    this.termPointers = termPointers;
-    this.termPointerEncoding = termPointerEncoding;
+    this.telonrmPool = telonrmPool;
+    this.telonrmPointelonrs = telonrmPointelonrs;
+    this.telonrmPointelonrelonncoding = telonrmPointelonrelonncoding;
   }
 
-  @Override
-  public int getNumTerms() {
-    return numTerms;
+  @Ovelonrridelon
+  public int gelontNumTelonrms() {
+    relonturn numTelonrms;
   }
 
-  @Override
-  public int lookupTerm(BytesRef term) throws IOException {
+  @Ovelonrridelon
+  public int lookupTelonrm(BytelonsRelonf telonrm) throws IOelonxcelonption {
     if (fst == null) {
-      return EarlybirdIndexSegmentAtomicReader.TERM_NOT_FOUND;
+      relonturn elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr.TelonRM_NOT_FOUND;
     }
-    final BytesRefFSTEnum<Long> fstEnum = new BytesRefFSTEnum<>(fst);
+    final BytelonsRelonfFSTelonnum<Long> fstelonnum = nelonw BytelonsRelonfFSTelonnum<>(fst);
 
-    final BytesRefFSTEnum.InputOutput<Long> result = fstEnum.seekExact(term);
-    if (result != null && result.input.equals(term)) {
-      // -1 because 0 is not supported by the fst
-      return result.output.intValue() - 1;
-    } else {
-      return EarlybirdIndexSegmentAtomicReader.TERM_NOT_FOUND;
+    final BytelonsRelonfFSTelonnum.InputOutput<Long> relonsult = fstelonnum.selonelonkelonxact(telonrm);
+    if (relonsult != null && relonsult.input.elonquals(telonrm)) {
+      // -1 beloncauselon 0 is not supportelond by thelon fst
+      relonturn relonsult.output.intValuelon() - 1;
+    } elonlselon {
+      relonturn elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr.TelonRM_NOT_FOUND;
     }
   }
 
-  static FSTTermDictionary buildFST(
-      final ByteBlockPool termPool,
-      int[] termPointers,
-      int numTerms,
-      final Comparator<BytesRef> comp,
-      boolean supportTermTextLookup,
-      final TermPointerEncoding termPointerEncoding) throws IOException {
-    final IntsRefBuilder scratchIntsRef = new IntsRefBuilder();
+  static FSTTelonrmDictionary buildFST(
+      final BytelonBlockPool telonrmPool,
+      int[] telonrmPointelonrs,
+      int numTelonrms,
+      final Comparator<BytelonsRelonf> comp,
+      boolelonan supportTelonrmTelonxtLookup,
+      final TelonrmPointelonrelonncoding telonrmPointelonrelonncoding) throws IOelonxcelonption {
+    final IntsRelonfBuildelonr scratchIntsRelonf = nelonw IntsRelonfBuildelonr();
 
-    final int[] compact = new int[numTerms];
-    for (int i = 0; i < numTerms; i++) {
+    final int[] compact = nelonw int[numTelonrms];
+    for (int i = 0; i < numTelonrms; i++) {
       compact[i] = i;
     }
 
-    // first sort the terms
-    new InPlaceMergeSorter() {
-      private BytesRef scratch1 = new BytesRef();
-      private BytesRef scratch2 = new BytesRef();
+    // first sort thelon telonrms
+    nelonw InPlacelonMelonrgelonSortelonr() {
+      privatelon BytelonsRelonf scratch1 = nelonw BytelonsRelonf();
+      privatelon BytelonsRelonf scratch2 = nelonw BytelonsRelonf();
 
-      @Override
-      protected void swap(int i, int j) {
+      @Ovelonrridelon
+      protelonctelond void swap(int i, int j) {
         final int o = compact[i];
         compact[i] = compact[j];
         compact[j] = o;
       }
 
-      @Override
-      protected int compare(int i, int j) {
+      @Ovelonrridelon
+      protelonctelond int comparelon(int i, int j) {
         final int ord1 = compact[i];
         final int ord2 = compact[j];
-        ByteTermUtils.setBytesRef(termPool, scratch1,
-                                  termPointerEncoding.getTextStart(termPointers[ord1]));
-        ByteTermUtils.setBytesRef(termPool, scratch2,
-                                  termPointerEncoding.getTextStart(termPointers[ord2]));
-        return comp.compare(scratch1, scratch2);
+        BytelonTelonrmUtils.selontBytelonsRelonf(telonrmPool, scratch1,
+                                  telonrmPointelonrelonncoding.gelontTelonxtStart(telonrmPointelonrs[ord1]));
+        BytelonTelonrmUtils.selontBytelonsRelonf(telonrmPool, scratch2,
+                                  telonrmPointelonrelonncoding.gelontTelonxtStart(telonrmPointelonrs[ord2]));
+        relonturn comp.comparelon(scratch1, scratch2);
       }
 
-    }.sort(0, compact.length);
+    }.sort(0, compact.lelonngth);
 
-    final PositiveIntOutputs outputs = PositiveIntOutputs.getSingleton();
+    final PositivelonIntOutputs outputs = PositivelonIntOutputs.gelontSinglelonton();
 
-    final org.apache.lucene.util.fst.Builder<Long> builder =
-        new org.apache.lucene.util.fst.Builder<>(FST.INPUT_TYPE.BYTE1, outputs);
+    final org.apachelon.lucelonnelon.util.fst.Buildelonr<Long> buildelonr =
+        nelonw org.apachelon.lucelonnelon.util.fst.Buildelonr<>(FST.INPUT_TYPelon.BYTelon1, outputs);
 
-    final BytesRef term = new BytesRef();
-    for (int termID : compact) {
-      ByteTermUtils.setBytesRef(termPool, term,
-              termPointerEncoding.getTextStart(termPointers[termID]));
-      // +1 because 0 is not supported by the fst
-      builder.add(Util.toIntsRef(term, scratchIntsRef), (long) termID + 1);
+    final BytelonsRelonf telonrm = nelonw BytelonsRelonf();
+    for (int telonrmID : compact) {
+      BytelonTelonrmUtils.selontBytelonsRelonf(telonrmPool, telonrm,
+              telonrmPointelonrelonncoding.gelontTelonxtStart(telonrmPointelonrs[telonrmID]));
+      // +1 beloncauselon 0 is not supportelond by thelon fst
+      buildelonr.add(Util.toIntsRelonf(telonrm, scratchIntsRelonf), (long) telonrmID + 1);
     }
 
-    if (supportTermTextLookup) {
-      PackedInts.Reader packedTermPointers = OptimizedMemoryIndex.getPackedInts(termPointers);
-      return new FSTTermDictionary(
-          numTerms,
-          builder.finish(),
-          termPool,
-          packedTermPointers,
-          termPointerEncoding);
-    } else {
-      return new FSTTermDictionary(
-          numTerms,
-          builder.finish(),
-          null, // termPool
-          null, // termPointers
-          termPointerEncoding);
-    }
-  }
-
-  @Override
-  public boolean getTerm(int termID, BytesRef text, BytesRef termPayload) {
-    if (termPool == null) {
-      throw new UnsupportedOperationException(
-              "This dictionary does not support term lookup by termID");
-    } else {
-      int termPointer = (int) termPointers.get(termID);
-      boolean hasTermPayload = termPointerEncoding.hasPayload(termPointer);
-      int textStart = termPointerEncoding.getTextStart(termPointer);
-      // setBytesRef sets the passed in BytesRef "text" to the term in the termPool.
-      // As a side effect it returns the offset of the next entry in the pool after the term,
-      // which may optionally be used if this term has a payload.
-      int termPayloadStart = ByteTermUtils.setBytesRef(termPool, text, textStart);
-      if (termPayload != null && hasTermPayload) {
-        ByteTermUtils.setBytesRef(termPool, termPayload, termPayloadStart);
-      }
-
-      return hasTermPayload;
+    if (supportTelonrmTelonxtLookup) {
+      PackelondInts.Relonadelonr packelondTelonrmPointelonrs = OptimizelondMelonmoryIndelonx.gelontPackelondInts(telonrmPointelonrs);
+      relonturn nelonw FSTTelonrmDictionary(
+          numTelonrms,
+          buildelonr.finish(),
+          telonrmPool,
+          packelondTelonrmPointelonrs,
+          telonrmPointelonrelonncoding);
+    } elonlselon {
+      relonturn nelonw FSTTelonrmDictionary(
+          numTelonrms,
+          buildelonr.finish(),
+          null, // telonrmPool
+          null, // telonrmPointelonrs
+          telonrmPointelonrelonncoding);
     }
   }
 
-  @Override
-  public TermsEnum createTermsEnum(OptimizedMemoryIndex index) {
-    return new BaseTermsEnum() {
-      private final BytesRefFSTEnum<Long> fstEnum = fst != null ? new BytesRefFSTEnum<>(fst) : null;
-      private BytesRefFSTEnum.InputOutput<Long> current;
-
-      @Override
-      public SeekStatus seekCeil(BytesRef term)
-          throws IOException {
-        if (fstEnum == null) {
-          return SeekStatus.END;
-        }
-
-        current = fstEnum.seekCeil(term);
-        if (current != null && current.input.equals(term)) {
-          return SeekStatus.FOUND;
-        } else {
-          return SeekStatus.END;
-        }
+  @Ovelonrridelon
+  public boolelonan gelontTelonrm(int telonrmID, BytelonsRelonf telonxt, BytelonsRelonf telonrmPayload) {
+    if (telonrmPool == null) {
+      throw nelonw UnsupportelondOpelonrationelonxcelonption(
+              "This dictionary doelons not support telonrm lookup by telonrmID");
+    } elonlselon {
+      int telonrmPointelonr = (int) telonrmPointelonrs.gelont(telonrmID);
+      boolelonan hasTelonrmPayload = telonrmPointelonrelonncoding.hasPayload(telonrmPointelonr);
+      int telonxtStart = telonrmPointelonrelonncoding.gelontTelonxtStart(telonrmPointelonr);
+      // selontBytelonsRelonf selonts thelon passelond in BytelonsRelonf "telonxt" to thelon telonrm in thelon telonrmPool.
+      // As a sidelon elonffelonct it relonturns thelon offselont of thelon nelonxt elonntry in thelon pool aftelonr thelon telonrm,
+      // which may optionally belon uselond if this telonrm has a payload.
+      int telonrmPayloadStart = BytelonTelonrmUtils.selontBytelonsRelonf(telonrmPool, telonxt, telonxtStart);
+      if (telonrmPayload != null && hasTelonrmPayload) {
+        BytelonTelonrmUtils.selontBytelonsRelonf(telonrmPool, telonrmPayload, telonrmPayloadStart);
       }
 
-      @Override
-      public boolean seekExact(BytesRef text) throws IOException {
-        current = fstEnum.seekExact(text);
-        return current != null;
-      }
+      relonturn hasTelonrmPayload;
+    }
+  }
 
-      // In our case the ord is the termId.
-      @Override
-      public void seekExact(long ord) {
-        current = new BytesRefFSTEnum.InputOutput<>();
-        current.input = null;
-        // +1 because 0 is not supported by the fst
-        current.output = ord + 1;
+  @Ovelonrridelon
+  public Telonrmselonnum crelonatelonTelonrmselonnum(OptimizelondMelonmoryIndelonx indelonx) {
+    relonturn nelonw BaselonTelonrmselonnum() {
+      privatelon final BytelonsRelonfFSTelonnum<Long> fstelonnum = fst != null ? nelonw BytelonsRelonfFSTelonnum<>(fst) : null;
+      privatelon BytelonsRelonfFSTelonnum.InputOutput<Long> currelonnt;
 
-        if (termPool != null) {
-          BytesRef bytesRef = new BytesRef();
-          int termId = (int) ord;
-          assert termId == ord;
-          FSTTermDictionary.this.getTerm(termId, bytesRef, null);
-          current.input = bytesRef;
+      @Ovelonrridelon
+      public SelonelonkStatus selonelonkCelonil(BytelonsRelonf telonrm)
+          throws IOelonxcelonption {
+        if (fstelonnum == null) {
+          relonturn SelonelonkStatus.elonND;
+        }
+
+        currelonnt = fstelonnum.selonelonkCelonil(telonrm);
+        if (currelonnt != null && currelonnt.input.elonquals(telonrm)) {
+          relonturn SelonelonkStatus.FOUND;
+        } elonlselon {
+          relonturn SelonelonkStatus.elonND;
         }
       }
 
-      @Override
-      public BytesRef next() throws IOException {
-        current = fstEnum.next();
-        if (current == null) {
-          return null;
+      @Ovelonrridelon
+      public boolelonan selonelonkelonxact(BytelonsRelonf telonxt) throws IOelonxcelonption {
+        currelonnt = fstelonnum.selonelonkelonxact(telonxt);
+        relonturn currelonnt != null;
+      }
+
+      // In our caselon thelon ord is thelon telonrmId.
+      @Ovelonrridelon
+      public void selonelonkelonxact(long ord) {
+        currelonnt = nelonw BytelonsRelonfFSTelonnum.InputOutput<>();
+        currelonnt.input = null;
+        // +1 beloncauselon 0 is not supportelond by thelon fst
+        currelonnt.output = ord + 1;
+
+        if (telonrmPool != null) {
+          BytelonsRelonf bytelonsRelonf = nelonw BytelonsRelonf();
+          int telonrmId = (int) ord;
+          asselonrt telonrmId == ord;
+          FSTTelonrmDictionary.this.gelontTelonrm(telonrmId, bytelonsRelonf, null);
+          currelonnt.input = bytelonsRelonf;
         }
-        return current.input;
       }
 
-      @Override
-      public BytesRef term() {
-        return current.input;
+      @Ovelonrridelon
+      public BytelonsRelonf nelonxt() throws IOelonxcelonption {
+        currelonnt = fstelonnum.nelonxt();
+        if (currelonnt == null) {
+          relonturn null;
+        }
+        relonturn currelonnt.input;
       }
 
-      // In our case the ord is the termId.
-      @Override
+      @Ovelonrridelon
+      public BytelonsRelonf telonrm() {
+        relonturn currelonnt.input;
+      }
+
+      // In our caselon thelon ord is thelon telonrmId.
+      @Ovelonrridelon
       public long ord() {
-        // -1 because 0 is not supported by the fst
-        return current.output - 1;
+        // -1 beloncauselon 0 is not supportelond by thelon fst
+        relonturn currelonnt.output - 1;
       }
 
-      @Override
-      public int docFreq() {
-        return index.getDF((int) ord());
+      @Ovelonrridelon
+      public int docFrelonq() {
+        relonturn indelonx.gelontDF((int) ord());
       }
 
-      @Override
-      public long totalTermFreq() {
-        return docFreq();
+      @Ovelonrridelon
+      public long totalTelonrmFrelonq() {
+        relonturn docFrelonq();
       }
 
-      @Override
-      public PostingsEnum postings(PostingsEnum reuse, int flags) throws IOException {
-        int termID = (int) ord();
-        int postingsPointer = index.getPostingListPointer(termID);
-        int numPostings = index.getNumPostings(termID);
-        return index.getPostingLists().postings(postingsPointer, numPostings, flags);
+      @Ovelonrridelon
+      public Postingselonnum postings(Postingselonnum relonuselon, int flags) throws IOelonxcelonption {
+        int telonrmID = (int) ord();
+        int postingsPointelonr = indelonx.gelontPostingListPointelonr(telonrmID);
+        int numPostings = indelonx.gelontNumPostings(telonrmID);
+        relonturn indelonx.gelontPostingLists().postings(postingsPointelonr, numPostings, flags);
       }
 
-      @Override
-      public ImpactsEnum impacts(int flags) throws IOException {
-        return new SlowImpactsEnum(postings(null, flags));
+      @Ovelonrridelon
+      public Impactselonnum impacts(int flags) throws IOelonxcelonption {
+        relonturn nelonw SlowImpactselonnum(postings(null, flags));
       }
     };
   }
 
-  @SuppressWarnings("unchecked")
-  @Override
-  public FlushHandler getFlushHandler() {
-    return new FlushHandler(this);
+  @SupprelonssWarnings("unchelonckelond")
+  @Ovelonrridelon
+  public FlushHandlelonr gelontFlushHandlelonr() {
+    relonturn nelonw FlushHandlelonr(this);
   }
 
-  public static class FlushHandler extends Flushable.Handler<FSTTermDictionary> {
-    private static final String NUM_TERMS_PROP_NAME = "numTerms";
-    private static final String SUPPORT_TERM_TEXT_LOOKUP_PROP_NAME = "supportTermTextLookup";
-    private final TermPointerEncoding termPointerEncoding;
+  public static class FlushHandlelonr elonxtelonnds Flushablelon.Handlelonr<FSTTelonrmDictionary> {
+    privatelon static final String NUM_TelonRMS_PROP_NAMelon = "numTelonrms";
+    privatelon static final String SUPPORT_TelonRM_TelonXT_LOOKUP_PROP_NAMelon = "supportTelonrmTelonxtLookup";
+    privatelon final TelonrmPointelonrelonncoding telonrmPointelonrelonncoding;
 
-    public FlushHandler(TermPointerEncoding termPointerEncoding) {
-      super();
-      this.termPointerEncoding = termPointerEncoding;
+    public FlushHandlelonr(TelonrmPointelonrelonncoding telonrmPointelonrelonncoding) {
+      supelonr();
+      this.telonrmPointelonrelonncoding = telonrmPointelonrelonncoding;
     }
 
-    public FlushHandler(FSTTermDictionary objectToFlush) {
-      super(objectToFlush);
-      this.termPointerEncoding = objectToFlush.termPointerEncoding;
+    public FlushHandlelonr(FSTTelonrmDictionary objelonctToFlush) {
+      supelonr(objelonctToFlush);
+      this.telonrmPointelonrelonncoding = objelonctToFlush.telonrmPointelonrelonncoding;
     }
 
-    @Override
-    protected void doFlush(FlushInfo flushInfo, DataSerializer out)
-        throws IOException {
-      FSTTermDictionary objectToFlush = getObjectToFlush();
-      flushInfo.addIntProperty(NUM_TERMS_PROP_NAME, objectToFlush.getNumTerms());
-      flushInfo.addBooleanProperty(SUPPORT_TERM_TEXT_LOOKUP_PROP_NAME,
-              objectToFlush.termPool != null);
-      if (objectToFlush.termPool != null) {
-        out.writePackedInts(objectToFlush.termPointers);
-        objectToFlush.termPool.getFlushHandler().flush(flushInfo.newSubProperties("termPool"), out);
+    @Ovelonrridelon
+    protelonctelond void doFlush(FlushInfo flushInfo, DataSelonrializelonr out)
+        throws IOelonxcelonption {
+      FSTTelonrmDictionary objelonctToFlush = gelontObjelonctToFlush();
+      flushInfo.addIntPropelonrty(NUM_TelonRMS_PROP_NAMelon, objelonctToFlush.gelontNumTelonrms());
+      flushInfo.addBoolelonanPropelonrty(SUPPORT_TelonRM_TelonXT_LOOKUP_PROP_NAMelon,
+              objelonctToFlush.telonrmPool != null);
+      if (objelonctToFlush.telonrmPool != null) {
+        out.writelonPackelondInts(objelonctToFlush.telonrmPointelonrs);
+        objelonctToFlush.telonrmPool.gelontFlushHandlelonr().flush(flushInfo.nelonwSubPropelonrtielons("telonrmPool"), out);
       }
-      objectToFlush.fst.save(out.getIndexOutput());
+      objelonctToFlush.fst.savelon(out.gelontIndelonxOutput());
     }
 
-    @Override
-    protected FSTTermDictionary doLoad(FlushInfo flushInfo,
-        DataDeserializer in) throws IOException {
-      int numTerms = flushInfo.getIntProperty(NUM_TERMS_PROP_NAME);
-      boolean supportTermTextLookup =
-              flushInfo.getBooleanProperty(SUPPORT_TERM_TEXT_LOOKUP_PROP_NAME);
-      PackedInts.Reader termPointers = null;
-      ByteBlockPool termPool = null;
-      if (supportTermTextLookup) {
-        termPointers = in.readPackedInts();
-        termPool = (new ByteBlockPool.FlushHandler())
-                .load(flushInfo.getSubProperties("termPool"), in);
+    @Ovelonrridelon
+    protelonctelond FSTTelonrmDictionary doLoad(FlushInfo flushInfo,
+        DataDelonselonrializelonr in) throws IOelonxcelonption {
+      int numTelonrms = flushInfo.gelontIntPropelonrty(NUM_TelonRMS_PROP_NAMelon);
+      boolelonan supportTelonrmTelonxtLookup =
+              flushInfo.gelontBoolelonanPropelonrty(SUPPORT_TelonRM_TelonXT_LOOKUP_PROP_NAMelon);
+      PackelondInts.Relonadelonr telonrmPointelonrs = null;
+      BytelonBlockPool telonrmPool = null;
+      if (supportTelonrmTelonxtLookup) {
+        telonrmPointelonrs = in.relonadPackelondInts();
+        telonrmPool = (nelonw BytelonBlockPool.FlushHandlelonr())
+                .load(flushInfo.gelontSubPropelonrtielons("telonrmPool"), in);
       }
-      final PositiveIntOutputs outputs = PositiveIntOutputs.getSingleton();
-      return new FSTTermDictionary(numTerms, new FST<>(in.getIndexInput(), outputs),
-              termPool, termPointers, termPointerEncoding);
+      final PositivelonIntOutputs outputs = PositivelonIntOutputs.gelontSinglelonton();
+      relonturn nelonw FSTTelonrmDictionary(numTelonrms, nelonw FST<>(in.gelontIndelonxInput(), outputs),
+              telonrmPool, telonrmPointelonrs, telonrmPointelonrelonncoding);
     }
   }
 }

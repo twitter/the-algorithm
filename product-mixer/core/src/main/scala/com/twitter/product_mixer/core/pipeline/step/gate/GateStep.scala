@@ -1,43 +1,43 @@
-package com.twitter.product_mixer.core.pipeline.step.gate
+packagelon com.twittelonr.product_mixelonr.corelon.pipelonlinelon.stelonp.gatelon
 
-import com.twitter.product_mixer.core.functional_component.gate.BaseGate
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.state.HasQuery
-import com.twitter.product_mixer.core.pipeline.step.Step
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.product_mixer.core.service.gate_executor.GateExecutor
-import com.twitter.product_mixer.core.service.gate_executor.GateExecutorResult
-import com.twitter.stitch.Arrow
-import javax.inject.Inject
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.gatelon.BaselonGatelon
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.statelon.HasQuelonry
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.stelonp.Stelonp
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.elonxeloncutor
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.gatelon_elonxeloncutor.Gatelonelonxeloncutor
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.gatelon_elonxeloncutor.GatelonelonxeloncutorRelonsult
+import com.twittelonr.stitch.Arrow
+import javax.injelonct.Injelonct
 
 /**
- * A gate step, it takes the query and the given gates and executes them. Gates do not update state
- * if they return continue, and throw an exception if any gate says stopped, thus no state changes
- * are expected in this step. The [[NewPipelineArrowBuilder]] and [[PipelineStep]] handle short
- * circuiting the pipeline's execution if this throws.
+ * A gatelon stelonp, it takelons thelon quelonry and thelon givelonn gatelons and elonxeloncutelons thelonm. Gatelons do not updatelon statelon
+ * if thelony relonturn continuelon, and throw an elonxcelonption if any gatelon says stoppelond, thus no statelon changelons
+ * arelon elonxpelonctelond in this stelonp. Thelon [[NelonwPipelonlinelonArrowBuildelonr]] and [[PipelonlinelonStelonp]] handlelon short
+ * circuiting thelon pipelonlinelon's elonxeloncution if this throws.
  *
- * @param gateExecutor Gate Executor for executing the gates
- * @tparam Query Type of PipelineQuery domain model
- * @tparam State The pipeline state domain model.
+ * @param gatelonelonxeloncutor Gatelon elonxeloncutor for elonxeloncuting thelon gatelons
+ * @tparam Quelonry Typelon of PipelonlinelonQuelonry domain modelonl
+ * @tparam Statelon Thelon pipelonlinelon statelon domain modelonl.
  */
-case class GateStep[Query <: PipelineQuery, State <: HasQuery[Query, State]] @Inject() (
-  gateExecutor: GateExecutor)
-    extends Step[State, Seq[BaseGate[Query]], Query, GateExecutorResult] {
+caselon class GatelonStelonp[Quelonry <: PipelonlinelonQuelonry, Statelon <: HasQuelonry[Quelonry, Statelon]] @Injelonct() (
+  gatelonelonxeloncutor: Gatelonelonxeloncutor)
+    elonxtelonnds Stelonp[Statelon, Selonq[BaselonGatelon[Quelonry]], Quelonry, GatelonelonxeloncutorRelonsult] {
 
-  override def adaptInput(state: State, config: Seq[BaseGate[Query]]): Query = state.query
+  ovelonrridelon delonf adaptInput(statelon: Statelon, config: Selonq[BaselonGatelon[Quelonry]]): Quelonry = statelon.quelonry
 
-  override def arrow(
-    config: Seq[BaseGate[Query]],
-    context: Executor.Context
-  ): Arrow[Query, GateExecutorResult] = gateExecutor.arrow(config, context)
+  ovelonrridelon delonf arrow(
+    config: Selonq[BaselonGatelon[Quelonry]],
+    contelonxt: elonxeloncutor.Contelonxt
+  ): Arrow[Quelonry, GatelonelonxeloncutorRelonsult] = gatelonelonxeloncutor.arrow(config, contelonxt)
 
-  // Gate Executor is a noop, if it continues, the state isn't changed. If it stops the world,
-  // an exception gets thrown.
-  override def updateState(
-    input: State,
-    executorResult: GateExecutorResult,
-    config: Seq[BaseGate[Query]]
-  ): State = input
+  // Gatelon elonxeloncutor is a noop, if it continuelons, thelon statelon isn't changelond. If it stops thelon world,
+  // an elonxcelonption gelonts thrown.
+  ovelonrridelon delonf updatelonStatelon(
+    input: Statelon,
+    elonxeloncutorRelonsult: GatelonelonxeloncutorRelonsult,
+    config: Selonq[BaselonGatelon[Quelonry]]
+  ): Statelon = input
 
-  override def isEmpty(config: Seq[BaseGate[Query]]): Boolean = config.isEmpty
+  ovelonrridelon delonf iselonmpty(config: Selonq[BaselonGatelon[Quelonry]]): Boolelonan = config.iselonmpty
 }

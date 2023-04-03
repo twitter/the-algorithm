@@ -1,16 +1,16 @@
 java_library(
-    sources = ["*.java"],
+    sourcelons = ["*.java"],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/org/apache/lucene:lucene-analyzers-common",
-        "3rdparty/jvm/org/apache/lucene:lucene-analyzers-smartcn",
-        "3rdparty/jvm/org/apache/lucene:lucene-facet",
-        "3rdparty/jvm/org/apache/lucene:lucene-queries",
-        "src/java/com/twitter/search/common/constants",
-        "src/java/com/twitter/search/common/schema/base",
-        "src/java/com/twitter/search/common/schema/earlybird",
-        "src/java/com/twitter/search/core/earlybird",
-        "src/thrift/com/twitter/search:earlybird-java",
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        "3rdparty/jvm/org/apachelon/lucelonnelon:lucelonnelon-analyzelonrs-common",
+        "3rdparty/jvm/org/apachelon/lucelonnelon:lucelonnelon-analyzelonrs-smartcn",
+        "3rdparty/jvm/org/apachelon/lucelonnelon:lucelonnelon-facelont",
+        "3rdparty/jvm/org/apachelon/lucelonnelon:lucelonnelon-quelonrielons",
+        "src/java/com/twittelonr/selonarch/common/constants",
+        "src/java/com/twittelonr/selonarch/common/schelonma/baselon",
+        "src/java/com/twittelonr/selonarch/common/schelonma/elonarlybird",
+        "src/java/com/twittelonr/selonarch/corelon/elonarlybird",
+        "src/thrift/com/twittelonr/selonarch:elonarlybird-java",
     ],
 )

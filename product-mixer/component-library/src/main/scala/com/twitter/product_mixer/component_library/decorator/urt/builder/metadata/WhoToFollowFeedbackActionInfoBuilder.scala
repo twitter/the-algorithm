@@ -1,60 +1,60 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.metadata
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.melontadata
 
-import com.twitter.product_mixer.component_library.decorator.urt.builder.stringcenter.Str
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.icon.Frown
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackAction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackActionInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.SeeFewer
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stringcenter.client.ExternalStringRegistry
-import com.twitter.stringcenter.client.StringCenter
+import com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.stringcelonntelonr.Str
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.melontadata.BaselonFelonelondbackActionInfoBuildelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.icon.Frown
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.FelonelondbackAction
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.FelonelondbackActionInfo
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.SelonelonFelonwelonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stringcelonntelonr.clielonnt.elonxtelonrnalStringRelongistry
+import com.twittelonr.stringcelonntelonr.clielonnt.StringCelonntelonr
 
-case class WhoToFollowFeedbackActionInfoBuilder[
-  -Query <: PipelineQuery,
-  -Candidate <: UniversalNoun[Any]
+caselon class WhoToFollowFelonelondbackActionInfoBuildelonr[
+  -Quelonry <: PipelonlinelonQuelonry,
+  -Candidatelon <: UnivelonrsalNoun[Any]
 ](
-  externalStringRegistry: ExternalStringRegistry,
-  stringCenter: StringCenter,
-  encodedFeedbackRequest: Option[String])
-    extends BaseFeedbackActionInfoBuilder[Query, Candidate] {
+  elonxtelonrnalStringRelongistry: elonxtelonrnalStringRelongistry,
+  stringCelonntelonr: StringCelonntelonr,
+  elonncodelondFelonelondbackRelonquelonst: Option[String])
+    elonxtelonnds BaselonFelonelondbackActionInfoBuildelonr[Quelonry, Candidatelon] {
 
-  private val seeLessOftenFeedback =
-    externalStringRegistry.createProdString("Feedback.seeLessOften")
-  private val seeLessOftenConfirmationFeedback =
-    externalStringRegistry.createProdString("Feedback.seeLessOftenConfirmation")
+  privatelon val selonelonLelonssOftelonnFelonelondback =
+    elonxtelonrnalStringRelongistry.crelonatelonProdString("Felonelondback.selonelonLelonssOftelonn")
+  privatelon val selonelonLelonssOftelonnConfirmationFelonelondback =
+    elonxtelonrnalStringRelongistry.crelonatelonProdString("Felonelondback.selonelonLelonssOftelonnConfirmation")
 
-  override def apply(
-    query: Query,
-    candidate: Candidate,
-    candidateFeatures: FeatureMap
-  ): Option[FeedbackActionInfo] = Some(
-    FeedbackActionInfo(
-      feedbackActions = Seq(
-        FeedbackAction(
-          feedbackType = SeeFewer,
-          prompt = Some(
-            Str(seeLessOftenFeedback, stringCenter, None)
-              .apply(query, candidate, candidateFeatures)),
-          confirmation = Some(
-            Str(seeLessOftenConfirmationFeedback, stringCenter, None)
-              .apply(query, candidate, candidateFeatures)),
-          childFeedbackActions = None,
-          feedbackUrl = None,
-          confirmationDisplayType = None,
-          clientEventInfo = None,
-          richBehavior = None,
-          subprompt = None,
-          icon = Some(Frown), // ignored by unsupported clients
-          hasUndoAction = Some(true),
-          encodedFeedbackRequest = encodedFeedbackRequest
+  ovelonrridelon delonf apply(
+    quelonry: Quelonry,
+    candidatelon: Candidatelon,
+    candidatelonFelonaturelons: FelonaturelonMap
+  ): Option[FelonelondbackActionInfo] = Somelon(
+    FelonelondbackActionInfo(
+      felonelondbackActions = Selonq(
+        FelonelondbackAction(
+          felonelondbackTypelon = SelonelonFelonwelonr,
+          prompt = Somelon(
+            Str(selonelonLelonssOftelonnFelonelondback, stringCelonntelonr, Nonelon)
+              .apply(quelonry, candidatelon, candidatelonFelonaturelons)),
+          confirmation = Somelon(
+            Str(selonelonLelonssOftelonnConfirmationFelonelondback, stringCelonntelonr, Nonelon)
+              .apply(quelonry, candidatelon, candidatelonFelonaturelons)),
+          childFelonelondbackActions = Nonelon,
+          felonelondbackUrl = Nonelon,
+          confirmationDisplayTypelon = Nonelon,
+          clielonntelonvelonntInfo = Nonelon,
+          richBelonhavior = Nonelon,
+          subprompt = Nonelon,
+          icon = Somelon(Frown), // ignorelond by unsupportelond clielonnts
+          hasUndoAction = Somelon(truelon),
+          elonncodelondFelonelondbackRelonquelonst = elonncodelondFelonelondbackRelonquelonst
         )
       ),
-      feedbackMetadata = None,
-      displayContext = None,
-      clientEventInfo = None
+      felonelondbackMelontadata = Nonelon,
+      displayContelonxt = Nonelon,
+      clielonntelonvelonntInfo = Nonelon
     )
   )
 }

@@ -1,107 +1,107 @@
-package com.twitter.product_mixer.core.pipeline.product
+packagelon com.twittelonr.product_mixelonr.corelon.pipelonlinelon.product
 
-import com.twitter.product_mixer.core.functional_component.common.access_policy.AccessPolicy
-import com.twitter.product_mixer.core.functional_component.common.alert.Alert
-import com.twitter.product_mixer.core.functional_component.gate.Gate
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.ProductPipelineIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.PipelineStepIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.Product
-import com.twitter.product_mixer.core.model.marshalling.request.Request
-import com.twitter.product_mixer.core.pipeline.PipelineConfig
-import com.twitter.product_mixer.core.pipeline.PipelineConfigCompanion
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.product.ProductParamConfig
-import com.twitter.product_mixer.core.quality_factor.QualityFactorConfig
-import com.twitter.timelines.configapi.Params
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.accelonss_policy.AccelonssPolicy
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.alelonrt.Alelonrt
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.gatelon.Gatelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.ComponelonntIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.ProductPipelonlinelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.PipelonlinelonStelonpIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.Product
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.Relonquelonst
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonConfig
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonConfigCompanion
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.PipelonlinelonFailurelon
+import com.twittelonr.product_mixelonr.corelon.product.ProductParamConfig
+import com.twittelonr.product_mixelonr.corelon.quality_factor.QualityFactorConfig
+import com.twittelonr.timelonlinelons.configapi.Params
 
-trait ProductPipelineConfig[TRequest <: Request, Query <: PipelineQuery, Response]
-    extends PipelineConfig {
+trait ProductPipelonlinelonConfig[TRelonquelonst <: Relonquelonst, Quelonry <: PipelonlinelonQuelonry, Relonsponselon]
+    elonxtelonnds PipelonlinelonConfig {
 
-  override val identifier: ProductPipelineIdentifier
+  ovelonrridelon val idelonntifielonr: ProductPipelonlinelonIdelonntifielonr
 
   val product: Product
   val paramConfig: ProductParamConfig
 
   /**
-   * Product Pipeline Gates will be executed before any other step (including retrieval from mixer
-   * pipelines). They're executed sequentially, and any "Stop" result will prevent pipeline execution.
+   * Product Pipelonlinelon Gatelons will belon elonxeloncutelond belonforelon any othelonr stelonp (including relontrielonval from mixelonr
+   * pipelonlinelons). Thelony'relon elonxeloncutelond selonquelonntially, and any "Stop" relonsult will prelonvelonnt pipelonlinelon elonxeloncution.
    */
-  def gates: Seq[Gate[Query]] = Seq.empty
+  delonf gatelons: Selonq[Gatelon[Quelonry]] = Selonq.elonmpty
 
-  def pipelineQueryTransformer(request: TRequest, params: Params): Query
+  delonf pipelonlinelonQuelonryTransformelonr(relonquelonst: TRelonquelonst, params: Params): Quelonry
 
   /**
-   * A list of all pipelines that power this product directly (there is no need to include pipelines
-   * called by those pipelines).
+   * A list of all pipelonlinelons that powelonr this product direlonctly (thelonrelon is no nelonelond to includelon pipelonlinelons
+   * callelond by thoselon pipelonlinelons).
    *
-   * Only pipeline from this list should referenced from the pipelineSelector
+   * Only pipelonlinelon from this list should relonfelonrelonncelond from thelon pipelonlinelonSelonlelonctor
    */
-  def pipelines: Seq[PipelineConfig]
+  delonf pipelonlinelons: Selonq[PipelonlinelonConfig]
 
   /**
-   * A pipeline selector selects a pipeline (from the list in `def pipelines`) to handle the
-   * current request.
+   * A pipelonlinelon selonlelonctor selonleloncts a pipelonlinelon (from thelon list in `delonf pipelonlinelons`) to handlelon thelon
+   * currelonnt relonquelonst.
    */
-  def pipelineSelector(query: Query): ComponentIdentifier
+  delonf pipelonlinelonSelonlelonctor(quelonry: Quelonry): ComponelonntIdelonntifielonr
 
   /**
-   ** [[qualityFactorConfigs]] associates [[QualityFactorConfig]]s to specific pipelines
-   * using [[ComponentIdentifier]].
+   ** [[qualityFactorConfigs]] associatelons [[QualityFactorConfig]]s to speloncific pipelonlinelons
+   * using [[ComponelonntIdelonntifielonr]].
    */
-  def qualityFactorConfigs: Map[ComponentIdentifier, QualityFactorConfig] =
-    Map.empty
+  delonf qualityFactorConfigs: Map[ComponelonntIdelonntifielonr, QualityFactorConfig] =
+    Map.elonmpty
 
   /**
-   * By default (for safety), product mixer pipelines do not allow logged out requests.
-   * A "DenyLoggedOutUsersGate" will be generated and added to the pipeline.
+   * By delonfault (for safelonty), product mixelonr pipelonlinelons do not allow loggelond out relonquelonsts.
+   * A "DelonnyLoggelondOutUselonrsGatelon" will belon gelonnelonratelond and addelond to thelon pipelonlinelon.
    *
-   * You can disable this behavior by overriding `denyLoggedOutUsers` with False.
+   * You can disablelon this belonhavior by ovelonrriding `delonnyLoggelondOutUselonrs` with Falselon.
    */
-  val denyLoggedOutUsers: Boolean = true
+  val delonnyLoggelondOutUselonrs: Boolelonan = truelon
 
   /**
-   * A pipeline can define a partial function to rescue failures here. They will be treated as failures
-   * from a monitoring standpoint, and cancellation exceptions will always be propagated (they cannot be caught here).
+   * A pipelonlinelon can delonfinelon a partial function to relonscuelon failurelons helonrelon. Thelony will belon trelonatelond as failurelons
+   * from a monitoring standpoint, and cancelonllation elonxcelonptions will always belon propagatelond (thelony cannot belon caught helonrelon).
    */
-  def failureClassifier: PartialFunction[Throwable, PipelineFailure] = PartialFunction.empty
+  delonf failurelonClassifielonr: PartialFunction[Throwablelon, PipelonlinelonFailurelon] = PartialFunction.elonmpty
 
   /**
-   * Alerts can be used to indicate the pipeline's service level objectives. Alerts and
-   * dashboards will be automatically created based on this information.
+   * Alelonrts can belon uselond to indicatelon thelon pipelonlinelon's selonrvicelon lelonvelonl objelonctivelons. Alelonrts and
+   * dashboards will belon automatically crelonatelond baselond on this information.
    */
-  val alerts: Seq[Alert] = Seq.empty
+  val alelonrts: Selonq[Alelonrt] = Selonq.elonmpty
 
   /**
-   * Access Policies can be used to gate who can query a product from Product Mixer's query tool
-   * (go/turntable).
+   * Accelonss Policielons can belon uselond to gatelon who can quelonry a product from Product Mixelonr's quelonry tool
+   * (go/turntablelon).
    *
-   * This will typically be gated by an LDAP group associated with your team. For example:
+   * This will typically belon gatelond by an LDAP group associatelond with your telonam. For elonxamplelon:
    *
    * {{{
-   *   override val debugAccessPolicies: Set[AccessPolicy] = Set(AllowedLdapGroups("NAME"))
+   *   ovelonrridelon val delonbugAccelonssPolicielons: Selont[AccelonssPolicy] = Selont(AllowelondLdapGroups("NAMelon"))
    * }}}
    *
-   * You can disable all queries by using the [[com.twitter.product_mixer.core.functional_component.common.access_policy.BlockEverything]] policy.
+   * You can disablelon all quelonrielons by using thelon [[com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.accelonss_policy.Blockelonvelonrything]] policy.
    */
-  val debugAccessPolicies: Set[AccessPolicy]
+  val delonbugAccelonssPolicielons: Selont[AccelonssPolicy]
 }
 
-object ProductPipelineConfig extends PipelineConfigCompanion {
-  val pipelineQueryTransformerStep: PipelineStepIdentifier = PipelineStepIdentifier(
-    "PipelineQueryTransformer")
-  val qualityFactorStep: PipelineStepIdentifier = PipelineStepIdentifier("QualityFactor")
-  val gatesStep: PipelineStepIdentifier = PipelineStepIdentifier("Gates")
-  val pipelineSelectorStep: PipelineStepIdentifier = PipelineStepIdentifier("PipelineSelector")
-  val pipelineExecutionStep: PipelineStepIdentifier = PipelineStepIdentifier("PipelineExecution")
+objelonct ProductPipelonlinelonConfig elonxtelonnds PipelonlinelonConfigCompanion {
+  val pipelonlinelonQuelonryTransformelonrStelonp: PipelonlinelonStelonpIdelonntifielonr = PipelonlinelonStelonpIdelonntifielonr(
+    "PipelonlinelonQuelonryTransformelonr")
+  val qualityFactorStelonp: PipelonlinelonStelonpIdelonntifielonr = PipelonlinelonStelonpIdelonntifielonr("QualityFactor")
+  val gatelonsStelonp: PipelonlinelonStelonpIdelonntifielonr = PipelonlinelonStelonpIdelonntifielonr("Gatelons")
+  val pipelonlinelonSelonlelonctorStelonp: PipelonlinelonStelonpIdelonntifielonr = PipelonlinelonStelonpIdelonntifielonr("PipelonlinelonSelonlelonctor")
+  val pipelonlinelonelonxeloncutionStelonp: PipelonlinelonStelonpIdelonntifielonr = PipelonlinelonStelonpIdelonntifielonr("Pipelonlinelonelonxeloncution")
 
-  /** All the Steps which are executed by a [[ProductPipeline]] in the order in which they are run */
-  override val stepsInOrder: Seq[PipelineStepIdentifier] = Seq(
-    pipelineQueryTransformerStep,
-    qualityFactorStep,
-    gatesStep,
-    pipelineSelectorStep,
-    pipelineExecutionStep
+  /** All thelon Stelonps which arelon elonxeloncutelond by a [[ProductPipelonlinelon]] in thelon ordelonr in which thelony arelon run */
+  ovelonrridelon val stelonpsInOrdelonr: Selonq[PipelonlinelonStelonpIdelonntifielonr] = Selonq(
+    pipelonlinelonQuelonryTransformelonrStelonp,
+    qualityFactorStelonp,
+    gatelonsStelonp,
+    pipelonlinelonSelonlelonctorStelonp,
+    pipelonlinelonelonxeloncutionStelonp
   )
 }

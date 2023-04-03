@@ -1,71 +1,71 @@
-package com.twitter.home_mixer.functional_component.decorator
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.deloncorator
 
-import com.twitter.home_mixer.model.HomeFeatures.InNetworkFeature
-import com.twitter.home_mixer.model.HomeFeatures.PerspectiveFilteredLikedByUserIdsFeature
-import com.twitter.home_mixer.model.HomeFeatures.SGSValidFollowedByUserIdsFeature
-import com.twitter.home_mixer.model.HomeFeatures.SGSValidLikedByUserIdsFeature
-import com.twitter.home_mixer.model.HomeFeatures.TopicContextFunctionalityTypeFeature
-import com.twitter.home_mixer.model.HomeFeatures.TopicIdSocialContextFeature
-import com.twitter.home_mixer.product.following.model.HomeMixerExternalStrings
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackAction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.RecWithEducationTopicContextFunctionalityType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.RecommendationTopicContextFunctionalityType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.RichBehavior
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.RichFeedbackBehaviorMarkNotInterestedTopic
-import com.twitter.product_mixer.core.product.guice.scope.ProductScoped
-import com.twitter.stringcenter.client.StringCenter
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.InNelontworkFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.PelonrspelonctivelonFiltelonrelondLikelondByUselonrIdsFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.SGSValidFollowelondByUselonrIdsFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.SGSValidLikelondByUselonrIdsFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.TopicContelonxtFunctionalityTypelonFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.TopicIdSocialContelonxtFelonaturelon
+import com.twittelonr.homelon_mixelonr.product.following.modelonl.HomelonMixelonrelonxtelonrnalStrings
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.FelonelondbackAction
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.ReloncWithelonducationTopicContelonxtFunctionalityTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.ReloncommelonndationTopicContelonxtFunctionalityTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.RichBelonhavior
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.RichFelonelondbackBelonhaviorMarkNotIntelonrelonstelondTopic
+import com.twittelonr.product_mixelonr.corelon.product.guicelon.scopelon.ProductScopelond
+import com.twittelonr.stringcelonntelonr.clielonnt.StringCelonntelonr
 
-import javax.inject.Inject
-import javax.inject.Singleton
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-case class NotInterestedTopicFeedbackActionBuilder @Inject() (
-  @ProductScoped stringCenter: StringCenter,
-  externalStrings: HomeMixerExternalStrings) {
+@Singlelonton
+caselon class NotIntelonrelonstelondTopicFelonelondbackActionBuildelonr @Injelonct() (
+  @ProductScopelond stringCelonntelonr: StringCelonntelonr,
+  elonxtelonrnalStrings: HomelonMixelonrelonxtelonrnalStrings) {
 
-  def apply(
-    candidateFeatures: FeatureMap
-  ): Option[FeedbackAction] = {
-    val isOutOfNetwork = !candidateFeatures.getOrElse(InNetworkFeature, true)
-    val validFollowedByUserIds =
-      candidateFeatures.getOrElse(SGSValidFollowedByUserIdsFeature, Nil)
-    val validLikedByUserIds =
-      candidateFeatures
-        .getOrElse(SGSValidLikedByUserIdsFeature, Nil)
-        .filter(
-          candidateFeatures.getOrElse(PerspectiveFilteredLikedByUserIdsFeature, Nil).toSet.contains)
+  delonf apply(
+    candidatelonFelonaturelons: FelonaturelonMap
+  ): Option[FelonelondbackAction] = {
+    val isOutOfNelontwork = !candidatelonFelonaturelons.gelontOrelonlselon(InNelontworkFelonaturelon, truelon)
+    val validFollowelondByUselonrIds =
+      candidatelonFelonaturelons.gelontOrelonlselon(SGSValidFollowelondByUselonrIdsFelonaturelon, Nil)
+    val validLikelondByUselonrIds =
+      candidatelonFelonaturelons
+        .gelontOrelonlselon(SGSValidLikelondByUselonrIdsFelonaturelon, Nil)
+        .filtelonr(
+          candidatelonFelonaturelons.gelontOrelonlselon(PelonrspelonctivelonFiltelonrelondLikelondByUselonrIdsFelonaturelon, Nil).toSelont.contains)
 
-    if (isOutOfNetwork && validLikedByUserIds.isEmpty && validFollowedByUserIds.isEmpty) {
-      val topicIdSocialContext = candidateFeatures.getOrElse(TopicIdSocialContextFeature, None)
-      val topicContextFunctionalityType =
-        candidateFeatures.getOrElse(TopicContextFunctionalityTypeFeature, None)
+    if (isOutOfNelontwork && validLikelondByUselonrIds.iselonmpty && validFollowelondByUselonrIds.iselonmpty) {
+      val topicIdSocialContelonxt = candidatelonFelonaturelons.gelontOrelonlselon(TopicIdSocialContelonxtFelonaturelon, Nonelon)
+      val topicContelonxtFunctionalityTypelon =
+        candidatelonFelonaturelons.gelontOrelonlselon(TopicContelonxtFunctionalityTypelonFelonaturelon, Nonelon)
 
-      (topicIdSocialContext, topicContextFunctionalityType) match {
-        case (Some(topicId), Some(topicContextFunctionalityType))
-            if topicContextFunctionalityType == RecommendationTopicContextFunctionalityType ||
-              topicContextFunctionalityType == RecWithEducationTopicContextFunctionalityType =>
-          Some(
-            FeedbackAction(
-              feedbackType = RichBehavior,
-              prompt = None,
-              confirmation = None,
-              childFeedbackActions = None,
-              feedbackUrl = None,
-              hasUndoAction = Some(true),
-              confirmationDisplayType = None,
-              clientEventInfo = None,
-              icon = None,
-              richBehavior =
-                Some(RichFeedbackBehaviorMarkNotInterestedTopic(topicId = topicId.toString)),
-              subprompt = None,
-              encodedFeedbackRequest = None
+      (topicIdSocialContelonxt, topicContelonxtFunctionalityTypelon) match {
+        caselon (Somelon(topicId), Somelon(topicContelonxtFunctionalityTypelon))
+            if topicContelonxtFunctionalityTypelon == ReloncommelonndationTopicContelonxtFunctionalityTypelon ||
+              topicContelonxtFunctionalityTypelon == ReloncWithelonducationTopicContelonxtFunctionalityTypelon =>
+          Somelon(
+            FelonelondbackAction(
+              felonelondbackTypelon = RichBelonhavior,
+              prompt = Nonelon,
+              confirmation = Nonelon,
+              childFelonelondbackActions = Nonelon,
+              felonelondbackUrl = Nonelon,
+              hasUndoAction = Somelon(truelon),
+              confirmationDisplayTypelon = Nonelon,
+              clielonntelonvelonntInfo = Nonelon,
+              icon = Nonelon,
+              richBelonhavior =
+                Somelon(RichFelonelondbackBelonhaviorMarkNotIntelonrelonstelondTopic(topicId = topicId.toString)),
+              subprompt = Nonelon,
+              elonncodelondFelonelondbackRelonquelonst = Nonelon
             )
           )
-        case _ => None
+        caselon _ => Nonelon
       }
-    } else {
-      None
+    } elonlselon {
+      Nonelon
     }
   }
 }

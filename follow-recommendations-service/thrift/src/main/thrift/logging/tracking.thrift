@@ -1,16 +1,16 @@
-namespace java com.twitter.follow_recommendations.logging.thriftjava
-#@namespace scala com.twitter.follow_recommendations.logging.thriftscala
-#@namespace strato com.twitter.follow_recommendations.logging
+namelonspacelon java com.twittelonr.follow_reloncommelonndations.logging.thriftjava
+#@namelonspacelon scala com.twittelonr.follow_reloncommelonndations.logging.thriftscala
+#@namelonspacelon strato com.twittelonr.follow_reloncommelonndations.logging
 
-include "com/twitter/suggests/controller_data/controller_data.thrift"
-include "display_location.thrift"
+includelon "com/twittelonr/suggelonsts/controllelonr_data/controllelonr_data.thrift"
+includelon "display_location.thrift"
 
-struct TrackingToken {
-  // trace-id of the request
-  1: required i64 sessionId (personalDataType='SessionId')
-  2: optional display_location.OfflineDisplayLocation displayLocation
-  // 64-bit encoded binary attributes of our recommendation
-  3: optional controller_data.ControllerData controllerData
+struct TrackingTokelonn {
+  // tracelon-id of thelon relonquelonst
+  1: relonquirelond i64 selonssionId (pelonrsonalDataTypelon='SelonssionId')
+  2: optional display_location.OfflinelonDisplayLocation displayLocation
+  // 64-bit elonncodelond binary attributelons of our reloncommelonndation
+  3: optional controllelonr_data.ControllelonrData controllelonrData
   // WTF Algorithm Id (backward compatibility)
   4: optional i32 algoId
-}(persisted='true', hasPersonalData='true')
+}(pelonrsistelond='truelon', hasPelonrsonalData='truelon')

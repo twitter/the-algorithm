@@ -1,108 +1,108 @@
-package com.twitter.simclusters_v2.summingbird.stores
+packagelon com.twittelonr.simclustelonrs_v2.summingbird.storelons
 
-import com.twitter.bijection.Injection
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.io.Buf
-import com.twitter.scrooge.ThriftStruct
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.summingbird.stores.PersistentTweetEmbeddingStore.Timestamp
-import com.twitter.simclusters_v2.thriftscala.PersistentSimClustersEmbedding
-import com.twitter.storage.client.manhattan.kv.Guarantee
-import com.twitter.storage.client.manhattan.kv.ManhattanKVClient
-import com.twitter.storage.client.manhattan.kv.ManhattanKVClientMtlsParams
-import com.twitter.storage.client.manhattan.kv.ManhattanKVEndpointBuilder
-import com.twitter.storage.client.manhattan.kv.impl.FullBufKey
-import com.twitter.storage.client.manhattan.kv.impl.ValueDescriptor
-import com.twitter.storehaus.ReadableStore
-import com.twitter.storehaus_internal.manhattan_kv.ManhattanEndpointStore
-import com.twitter.strato.catalog.Version
-import com.twitter.strato.config.MValEncoding
-import com.twitter.strato.config.NativeEncoding
-import com.twitter.strato.config.PkeyLkey2
-import com.twitter.strato.data.Conv
-import com.twitter.strato.data.Type
-import com.twitter.strato.mh.ManhattanInjections
-import com.twitter.strato.thrift.ScroogeConv
-import com.twitter.strato.thrift.ScroogeConvImplicits._
+import com.twittelonr.bijelonction.Injelonction
+import com.twittelonr.finaglelon.stats.NullStatsReloncelonivelonr
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.io.Buf
+import com.twittelonr.scroogelon.ThriftStruct
+import com.twittelonr.simclustelonrs_v2.common.TwelonelontId
+import com.twittelonr.simclustelonrs_v2.summingbird.storelons.PelonrsistelonntTwelonelontelonmbelonddingStorelon.Timelonstamp
+import com.twittelonr.simclustelonrs_v2.thriftscala.PelonrsistelonntSimClustelonrselonmbelondding
+import com.twittelonr.storagelon.clielonnt.manhattan.kv.Guarantelonelon
+import com.twittelonr.storagelon.clielonnt.manhattan.kv.ManhattanKVClielonnt
+import com.twittelonr.storagelon.clielonnt.manhattan.kv.ManhattanKVClielonntMtlsParams
+import com.twittelonr.storagelon.clielonnt.manhattan.kv.ManhattanKVelonndpointBuildelonr
+import com.twittelonr.storagelon.clielonnt.manhattan.kv.impl.FullBufKelony
+import com.twittelonr.storagelon.clielonnt.manhattan.kv.impl.ValuelonDelonscriptor
+import com.twittelonr.storelonhaus.RelonadablelonStorelon
+import com.twittelonr.storelonhaus_intelonrnal.manhattan_kv.ManhattanelonndpointStorelon
+import com.twittelonr.strato.catalog.Velonrsion
+import com.twittelonr.strato.config.MValelonncoding
+import com.twittelonr.strato.config.Nativelonelonncoding
+import com.twittelonr.strato.config.PkelonyLkelony2
+import com.twittelonr.strato.data.Conv
+import com.twittelonr.strato.data.Typelon
+import com.twittelonr.strato.mh.ManhattanInjelonctions
+import com.twittelonr.strato.thrift.ScroogelonConv
+import com.twittelonr.strato.thrift.ScroogelonConvImplicits._
 
-object ManhattanFromStratoStore {
-  /* This enables reading from a MH store where the data is written by Strato. Strato uses a unique
-  encoding (Conv) which needs to be reconstructed for each MH store based on the type of data that
-  is written to it. Once that encoding is generated on start-up, we can read from the store like
-  any other ReadableStore.
+objelonct ManhattanFromStratoStorelon {
+  /* This elonnablelons relonading from a MH storelon whelonrelon thelon data is writtelonn by Strato. Strato uselons a uniquelon
+  elonncoding (Conv) which nelonelonds to belon relonconstructelond for elonach MH storelon baselond on thelon typelon of data that
+  is writtelonn to it. Oncelon that elonncoding is gelonnelonratelond on start-up, welon can relonad from thelon storelon likelon
+  any othelonr RelonadablelonStorelon.
    */
-  def createPersistentTweetStore(
-    dataset: String,
-    mhMtlsParams: ManhattanKVClientMtlsParams,
-    statsReceiver: StatsReceiver = NullStatsReceiver
-  ): ReadableStore[(TweetId, Timestamp), PersistentSimClustersEmbedding] = {
-    val appId = "simclusters_embeddings_prod"
-    val dest = "/s/manhattan/omega.native-thrift"
+  delonf crelonatelonPelonrsistelonntTwelonelontStorelon(
+    dataselont: String,
+    mhMtlsParams: ManhattanKVClielonntMtlsParams,
+    statsReloncelonivelonr: StatsReloncelonivelonr = NullStatsReloncelonivelonr
+  ): RelonadablelonStorelon[(TwelonelontId, Timelonstamp), PelonrsistelonntSimClustelonrselonmbelondding] = {
+    val appId = "simclustelonrs_elonmbelonddings_prod"
+    val delonst = "/s/manhattan/omelonga.nativelon-thrift"
 
-    val endpoint = createMhEndpoint(
+    val elonndpoint = crelonatelonMhelonndpoint(
       appId = appId,
-      dest = dest,
+      delonst = delonst,
       mhMtlsParams = mhMtlsParams,
-      statsReceiver = statsReceiver)
+      statsReloncelonivelonr = statsReloncelonivelonr)
 
     val (
-      keyInj: Injection[(TweetId, Timestamp), FullBufKey],
-      valueDesc: ValueDescriptor.EmptyValue[PersistentSimClustersEmbedding]) =
-      injectionsFromPkeyLkeyValueStruct[TweetId, Timestamp, PersistentSimClustersEmbedding](
-        dataset = dataset,
-        pkType = Type.Long,
-        lkType = Type.Long)
+      kelonyInj: Injelonction[(TwelonelontId, Timelonstamp), FullBufKelony],
+      valuelonDelonsc: ValuelonDelonscriptor.elonmptyValuelon[PelonrsistelonntSimClustelonrselonmbelondding]) =
+      injelonctionsFromPkelonyLkelonyValuelonStruct[TwelonelontId, Timelonstamp, PelonrsistelonntSimClustelonrselonmbelondding](
+        dataselont = dataselont,
+        pkTypelon = Typelon.Long,
+        lkTypelon = Typelon.Long)
 
-    ManhattanEndpointStore
-      .readable[(TweetId, Timestamp), PersistentSimClustersEmbedding, FullBufKey](
-        endpoint = endpoint,
-        keyDescBuilder = keyInj,
-        emptyValDesc = valueDesc)
+    ManhattanelonndpointStorelon
+      .relonadablelon[(TwelonelontId, Timelonstamp), PelonrsistelonntSimClustelonrselonmbelondding, FullBufKelony](
+        elonndpoint = elonndpoint,
+        kelonyDelonscBuildelonr = kelonyInj,
+        elonmptyValDelonsc = valuelonDelonsc)
   }
 
-  private def createMhEndpoint(
+  privatelon delonf crelonatelonMhelonndpoint(
     appId: String,
-    dest: String,
-    mhMtlsParams: ManhattanKVClientMtlsParams,
-    statsReceiver: StatsReceiver = NullStatsReceiver
+    delonst: String,
+    mhMtlsParams: ManhattanKVClielonntMtlsParams,
+    statsReloncelonivelonr: StatsReloncelonivelonr = NullStatsReloncelonivelonr
   ) = {
-    val mhc = ManhattanKVClient.memoizedByDest(
+    val mhc = ManhattanKVClielonnt.melonmoizelondByDelonst(
       appId = appId,
-      dest = dest,
+      delonst = delonst,
       mtlsParams = mhMtlsParams
     )
 
-    ManhattanKVEndpointBuilder(mhc)
-      .defaultGuarantee(Guarantee.SoftDcReadMyWrites)
-      .statsReceiver(statsReceiver)
+    ManhattanKVelonndpointBuildelonr(mhc)
+      .delonfaultGuarantelonelon(Guarantelonelon.SoftDcRelonadMyWritelons)
+      .statsReloncelonivelonr(statsReloncelonivelonr)
       .build()
   }
 
-  private def injectionsFromPkeyLkeyValueStruct[PK: Conv, LK: Conv, V <: ThriftStruct: Manifest](
-    dataset: String,
-    pkType: Type,
-    lkType: Type
-  ): (Injection[(PK, LK), FullBufKey], ValueDescriptor.EmptyValue[V]) = {
-    // Strato uses a unique encoding (Conv) so we need to rebuild that based on the pkey, lkey and
-    // value type before converting it to the Manhattan injections for key -> FullBufKey and
-    // value -> Buf
-    val valueConv: Conv[V] = ScroogeConv.fromStruct[V]
+  privatelon delonf injelonctionsFromPkelonyLkelonyValuelonStruct[PK: Conv, LK: Conv, V <: ThriftStruct: Manifelonst](
+    dataselont: String,
+    pkTypelon: Typelon,
+    lkTypelon: Typelon
+  ): (Injelonction[(PK, LK), FullBufKelony], ValuelonDelonscriptor.elonmptyValuelon[V]) = {
+    // Strato uselons a uniquelon elonncoding (Conv) so welon nelonelond to relonbuild that baselond on thelon pkelony, lkelony and
+    // valuelon typelon belonforelon convelonrting it to thelon Manhattan injelonctions for kelony -> FullBufKelony and
+    // valuelon -> Buf
+    val valuelonConv: Conv[V] = ScroogelonConv.fromStruct[V]
 
-    val mhEncodingMapping = PkeyLkey2(
-      pkey = pkType,
-      lkey = lkType,
-      value = valueConv.t,
-      pkeyEncoding = NativeEncoding,
-      lkeyEncoding = NativeEncoding,
-      valueEncoding = MValEncoding()
+    val mhelonncodingMapping = PkelonyLkelony2(
+      pkelony = pkTypelon,
+      lkelony = lkTypelon,
+      valuelon = valuelonConv.t,
+      pkelonyelonncoding = Nativelonelonncoding,
+      lkelonyelonncoding = Nativelonelonncoding,
+      valuelonelonncoding = MValelonncoding()
     )
 
-    val (keyInj: Injection[(PK, LK), FullBufKey], valueInj: Injection[V, Buf], _, _) =
-      ManhattanInjections.fromPkeyLkey[PK, LK, V](mhEncodingMapping, dataset, Version.Default)
+    val (kelonyInj: Injelonction[(PK, LK), FullBufKelony], valuelonInj: Injelonction[V, Buf], _, _) =
+      ManhattanInjelonctions.fromPkelonyLkelony[PK, LK, V](mhelonncodingMapping, dataselont, Velonrsion.Delonfault)
 
-    val valDesc: ValueDescriptor.EmptyValue[V] = ValueDescriptor.EmptyValue(valueInj)
+    val valDelonsc: ValuelonDelonscriptor.elonmptyValuelon[V] = ValuelonDelonscriptor.elonmptyValuelon(valuelonInj)
 
-    (keyInj, valDesc)
+    (kelonyInj, valDelonsc)
   }
 }

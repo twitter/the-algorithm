@@ -1,141 +1,141 @@
-package com.twitter.cr_mixer.param
+packagelon com.twittelonr.cr_mixelonr.param
 
-import com.twitter.timelines.configapi.BaseConfig
-import com.twitter.timelines.configapi.BaseConfigBuilder
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil
-import com.twitter.timelines.configapi.Param
+import com.twittelonr.timelonlinelons.configapi.BaselonConfig
+import com.twittelonr.timelonlinelons.configapi.BaselonConfigBuildelonr
+import com.twittelonr.timelonlinelons.configapi.FSBoundelondParam
+import com.twittelonr.timelonlinelons.configapi.FSNamelon
+import com.twittelonr.timelonlinelons.configapi.FSParam
+import com.twittelonr.timelonlinelons.configapi.FelonaturelonSwitchOvelonrridelonUtil
+import com.twittelonr.timelonlinelons.configapi.Param
 
-object RelatedTweetTweetBasedParams {
+objelonct RelonlatelondTwelonelontTwelonelontBaselondParams {
 
   // UTG params
-  object EnableUTGParam
-      extends FSParam[Boolean](
-        name = "related_tweet_tweet_based_enable_utg",
-        default = false
+  objelonct elonnablelonUTGParam
+      elonxtelonnds FSParam[Boolelonan](
+        namelon = "relonlatelond_twelonelont_twelonelont_baselond_elonnablelon_utg",
+        delonfault = falselon
       )
 
   // UVG params
-  object EnableUVGParam
-      extends FSParam[Boolean](
-        name = "related_tweet_tweet_based_enable_uvg",
-        default = false
+  objelonct elonnablelonUVGParam
+      elonxtelonnds FSParam[Boolelonan](
+        namelon = "relonlatelond_twelonelont_twelonelont_baselond_elonnablelon_uvg",
+        delonfault = falselon
       )
 
   // UAG params
-  object EnableUAGParam
-      extends FSParam[Boolean](
-        name = "related_tweet_tweet_based_enable_uag",
-        default = false
+  objelonct elonnablelonUAGParam
+      elonxtelonnds FSParam[Boolelonan](
+        namelon = "relonlatelond_twelonelont_twelonelont_baselond_elonnablelon_uag",
+        delonfault = falselon
       )
 
-  // SimClusters params
-  object EnableSimClustersANNParam
-      extends FSParam[Boolean](
-        name = "related_tweet_tweet_based_enable_simclusters",
-        default = true
+  // SimClustelonrs params
+  objelonct elonnablelonSimClustelonrsANNParam
+      elonxtelonnds FSParam[Boolelonan](
+        namelon = "relonlatelond_twelonelont_twelonelont_baselond_elonnablelon_simclustelonrs",
+        delonfault = truelon
       )
 
-  // Experimental SimClusters ANN params
-  object EnableExperimentalSimClustersANNParam
-      extends FSParam[Boolean](
-        name = "related_tweet_tweet_based_enable_experimental_simclusters_ann",
-        default = false
+  // elonxpelonrimelonntal SimClustelonrs ANN params
+  objelonct elonnablelonelonxpelonrimelonntalSimClustelonrsANNParam
+      elonxtelonnds FSParam[Boolelonan](
+        namelon = "relonlatelond_twelonelont_twelonelont_baselond_elonnablelon_elonxpelonrimelonntal_simclustelonrs_ann",
+        delonfault = falselon
       )
 
-  // SimClusters ANN cluster 1 params
-  object EnableSimClustersANN1Param
-      extends FSParam[Boolean](
-        name = "related_tweet_tweet_based_enable_simclusters_ann_1",
-        default = false
+  // SimClustelonrs ANN clustelonr 1 params
+  objelonct elonnablelonSimClustelonrsANN1Param
+      elonxtelonnds FSParam[Boolelonan](
+        namelon = "relonlatelond_twelonelont_twelonelont_baselond_elonnablelon_simclustelonrs_ann_1",
+        delonfault = falselon
       )
 
-  // SimClusters ANN cluster 2 params
-  object EnableSimClustersANN2Param
-      extends FSParam[Boolean](
-        name = "related_tweet_tweet_based_enable_simclusters_ann_2",
-        default = false
+  // SimClustelonrs ANN clustelonr 2 params
+  objelonct elonnablelonSimClustelonrsANN2Param
+      elonxtelonnds FSParam[Boolelonan](
+        namelon = "relonlatelond_twelonelont_twelonelont_baselond_elonnablelon_simclustelonrs_ann_2",
+        delonfault = falselon
       )
 
-  // SimClusters ANN cluster 3 params
-  object EnableSimClustersANN3Param
-      extends FSParam[Boolean](
-        name = "related_tweet_tweet_based_enable_simclusters_ann_3",
-        default = false
+  // SimClustelonrs ANN clustelonr 3 params
+  objelonct elonnablelonSimClustelonrsANN3Param
+      elonxtelonnds FSParam[Boolelonan](
+        namelon = "relonlatelond_twelonelont_twelonelont_baselond_elonnablelon_simclustelonrs_ann_3",
+        delonfault = falselon
       )
 
-  // SimClusters ANN cluster 5 params
-  object EnableSimClustersANN5Param
-      extends FSParam[Boolean](
-        name = "related_tweet_tweet_based_enable_simclusters_ann_5",
-        default = false
+  // SimClustelonrs ANN clustelonr 5 params
+  objelonct elonnablelonSimClustelonrsANN5Param
+      elonxtelonnds FSParam[Boolelonan](
+        namelon = "relonlatelond_twelonelont_twelonelont_baselond_elonnablelon_simclustelonrs_ann_5",
+        delonfault = falselon
       )
 
-  object EnableSimClustersANN4Param
-      extends FSParam[Boolean](
-        name = "related_tweet_tweet_based_enable_simclusters_ann_4",
-        default = false
+  objelonct elonnablelonSimClustelonrsANN4Param
+      elonxtelonnds FSParam[Boolelonan](
+        namelon = "relonlatelond_twelonelont_twelonelont_baselond_elonnablelon_simclustelonrs_ann_4",
+        delonfault = falselon
       )
   // TwHIN params
-  object EnableTwHINParam
-      extends FSParam[Boolean](
-        name = "related_tweet_tweet_based_enable_twhin",
-        default = false
+  objelonct elonnablelonTwHINParam
+      elonxtelonnds FSParam[Boolelonan](
+        namelon = "relonlatelond_twelonelont_twelonelont_baselond_elonnablelon_twhin",
+        delonfault = falselon
       )
 
   // QIG params
-  object EnableQigSimilarTweetsParam
-      extends FSParam[Boolean](
-        name = "related_tweet_tweet_based_enable_qig_similar_tweets",
-        default = false
+  objelonct elonnablelonQigSimilarTwelonelontsParam
+      elonxtelonnds FSParam[Boolelonan](
+        namelon = "relonlatelond_twelonelont_twelonelont_baselond_elonnablelon_qig_similar_twelonelonts",
+        delonfault = falselon
       )
 
-  // Filter params
-  object SimClustersMinScoreParam
-      extends FSBoundedParam[Double](
-        name = "related_tweet_tweet_based_filter_simclusters_min_score",
-        default = 0.3,
+  // Filtelonr params
+  objelonct SimClustelonrsMinScorelonParam
+      elonxtelonnds FSBoundelondParam[Doublelon](
+        namelon = "relonlatelond_twelonelont_twelonelont_baselond_filtelonr_simclustelonrs_min_scorelon",
+        delonfault = 0.3,
         min = 0.0,
         max = 1.0
       )
 
-  val AllParams: Seq[Param[_] with FSName] = Seq(
-    EnableTwHINParam,
-    EnableQigSimilarTweetsParam,
-    EnableUTGParam,
-    EnableUVGParam,
-    EnableSimClustersANNParam,
-    EnableSimClustersANN2Param,
-    EnableSimClustersANN3Param,
-    EnableSimClustersANN5Param,
-    EnableSimClustersANN4Param,
-    EnableExperimentalSimClustersANNParam,
-    SimClustersMinScoreParam
+  val AllParams: Selonq[Param[_] with FSNamelon] = Selonq(
+    elonnablelonTwHINParam,
+    elonnablelonQigSimilarTwelonelontsParam,
+    elonnablelonUTGParam,
+    elonnablelonUVGParam,
+    elonnablelonSimClustelonrsANNParam,
+    elonnablelonSimClustelonrsANN2Param,
+    elonnablelonSimClustelonrsANN3Param,
+    elonnablelonSimClustelonrsANN5Param,
+    elonnablelonSimClustelonrsANN4Param,
+    elonnablelonelonxpelonrimelonntalSimClustelonrsANNParam,
+    SimClustelonrsMinScorelonParam
   )
 
-  lazy val config: BaseConfig = {
+  lazy val config: BaselonConfig = {
 
-    val booleanOverrides = FeatureSwitchOverrideUtil.getBooleanFSOverrides(
-      EnableTwHINParam,
-      EnableQigSimilarTweetsParam,
-      EnableUTGParam,
-      EnableUVGParam,
-      EnableSimClustersANNParam,
-      EnableSimClustersANN2Param,
-      EnableSimClustersANN3Param,
-      EnableSimClustersANN5Param,
-      EnableSimClustersANN4Param,
-      EnableExperimentalSimClustersANNParam
+    val boolelonanOvelonrridelons = FelonaturelonSwitchOvelonrridelonUtil.gelontBoolelonanFSOvelonrridelons(
+      elonnablelonTwHINParam,
+      elonnablelonQigSimilarTwelonelontsParam,
+      elonnablelonUTGParam,
+      elonnablelonUVGParam,
+      elonnablelonSimClustelonrsANNParam,
+      elonnablelonSimClustelonrsANN2Param,
+      elonnablelonSimClustelonrsANN3Param,
+      elonnablelonSimClustelonrsANN5Param,
+      elonnablelonSimClustelonrsANN4Param,
+      elonnablelonelonxpelonrimelonntalSimClustelonrsANNParam
     )
 
-    val doubleOverrides =
-      FeatureSwitchOverrideUtil.getBoundedDoubleFSOverrides(SimClustersMinScoreParam)
+    val doublelonOvelonrridelons =
+      FelonaturelonSwitchOvelonrridelonUtil.gelontBoundelondDoublelonFSOvelonrridelons(SimClustelonrsMinScorelonParam)
 
-    BaseConfigBuilder()
-      .set(booleanOverrides: _*)
-      .set(doubleOverrides: _*)
+    BaselonConfigBuildelonr()
+      .selont(boolelonanOvelonrridelons: _*)
+      .selont(doublelonOvelonrridelons: _*)
       .build()
   }
 }

@@ -1,32 +1,32 @@
-package com.twitter.product_mixer.component_library.candidate_source.hermit
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.candidatelon_sourcelon.helonrmit
 
-import com.twitter.hermit.thriftscala.RecommendationRequest
-import com.twitter.hermit.thriftscala.RecommendationResponse
-import com.twitter.hermit.thriftscala.RelatedUser
-import com.twitter.product_mixer.core.functional_component.candidate_source.strato.StratoKeyViewFetcherSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.strato.client.Fetcher
-import com.twitter.strato.generated.client.onboarding.HermitRecommendUsersClientColumn
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.helonrmit.thriftscala.ReloncommelonndationRelonquelonst
+import com.twittelonr.helonrmit.thriftscala.ReloncommelonndationRelonsponselon
+import com.twittelonr.helonrmit.thriftscala.RelonlatelondUselonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.strato.StratoKelonyVielonwFelontchelonrSourcelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonSourcelonIdelonntifielonr
+import com.twittelonr.strato.clielonnt.Felontchelonr
+import com.twittelonr.strato.gelonnelonratelond.clielonnt.onboarding.HelonrmitReloncommelonndUselonrsClielonntColumn
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class UsersSimilarToMeCandidateSource @Inject() (
-  column: HermitRecommendUsersClientColumn)
-    extends StratoKeyViewFetcherSource[
+@Singlelonton
+class UselonrsSimilarToMelonCandidatelonSourcelon @Injelonct() (
+  column: HelonrmitReloncommelonndUselonrsClielonntColumn)
+    elonxtelonnds StratoKelonyVielonwFelontchelonrSourcelon[
       Long,
-      RecommendationRequest,
-      RecommendationResponse,
-      RelatedUser
+      ReloncommelonndationRelonquelonst,
+      ReloncommelonndationRelonsponselon,
+      RelonlatelondUselonr
     ] {
 
-  override val identifier: CandidateSourceIdentifier = CandidateSourceIdentifier("UsersSimilarToMe")
+  ovelonrridelon val idelonntifielonr: CandidatelonSourcelonIdelonntifielonr = CandidatelonSourcelonIdelonntifielonr("UselonrsSimilarToMelon")
 
-  override val fetcher: Fetcher[Long, RecommendationRequest, RecommendationResponse] =
-    column.fetcher
+  ovelonrridelon val felontchelonr: Felontchelonr[Long, ReloncommelonndationRelonquelonst, ReloncommelonndationRelonsponselon] =
+    column.felontchelonr
 
-  override def stratoResultTransformer(
-    stratoKey: Long,
-    result: RecommendationResponse
-  ): Seq[RelatedUser] = result.suggestions.getOrElse(Seq.empty).filter(_.id.isDefined)
+  ovelonrridelon delonf stratoRelonsultTransformelonr(
+    stratoKelony: Long,
+    relonsult: ReloncommelonndationRelonsponselon
+  ): Selonq[RelonlatelondUselonr] = relonsult.suggelonstions.gelontOrelonlselon(Selonq.elonmpty).filtelonr(_.id.isDelonfinelond)
 }

@@ -1,33 +1,33 @@
-package com.twitter.search.common.util.ml.prediction_engine;
+packagelon com.twittelonr.selonarch.common.util.ml.prelondiction_elonnginelon;
 
-import com.google.common.base.Preconditions;
+import com.googlelon.common.baselon.Prelonconditions;
 
 /**
- * The discretized value range for a continous feature. After discretization a continuous feature
- * may become multiple discretized binary features, each occupying a range. This class stores this
- * range and a weight for it.
+ * Thelon discrelontizelond valuelon rangelon for a continous felonaturelon. Aftelonr discrelontization a continuous felonaturelon
+ * may beloncomelon multiplelon discrelontizelond binary felonaturelons, elonach occupying a rangelon. This class storelons this
+ * rangelon and a welonight for it.
  */
-public class DiscretizedFeatureRange {
-  protected final double minValue;
-  protected final double maxValue;
-  protected final double weight;
+public class DiscrelontizelondFelonaturelonRangelon {
+  protelonctelond final doublelon minValuelon;
+  protelonctelond final doublelon maxValuelon;
+  protelonctelond final doublelon welonight;
 
-  DiscretizedFeatureRange(double weight, String range) {
-    String[] limits = range.split("_");
-    Preconditions.checkArgument(limits.length == 2);
+  DiscrelontizelondFelonaturelonRangelon(doublelon welonight, String rangelon) {
+    String[] limits = rangelon.split("_");
+    Prelonconditions.chelonckArgumelonnt(limits.lelonngth == 2);
 
-    this.minValue = parseRangeValue(limits[0]);
-    this.maxValue = parseRangeValue(limits[1]);
-    this.weight = weight;
+    this.minValuelon = parselonRangelonValuelon(limits[0]);
+    this.maxValuelon = parselonRangelonValuelon(limits[1]);
+    this.welonight = welonight;
   }
 
-  private static double parseRangeValue(String value) {
-    if ("inf".equals(value)) {
-      return Double.POSITIVE_INFINITY;
-    } else if ("-inf".equals(value)) {
-      return Double.NEGATIVE_INFINITY;
-    } else {
-      return Double.parseDouble(value);
+  privatelon static doublelon parselonRangelonValuelon(String valuelon) {
+    if ("inf".elonquals(valuelon)) {
+      relonturn Doublelon.POSITIVelon_INFINITY;
+    } elonlselon if ("-inf".elonquals(valuelon)) {
+      relonturn Doublelon.NelonGATIVelon_INFINITY;
+    } elonlselon {
+      relonturn Doublelon.parselonDoublelon(valuelon);
     }
   }
 }

@@ -1,102 +1,102 @@
-package com.twitter.product_mixer.core.pipeline.step.side_effect
+packagelon com.twittelonr.product_mixelonr.corelon.pipelonlinelon.stelonp.sidelon_elonffelonct
 
-import com.twitter.product_mixer.core.functional_component.side_effect.PipelineResultSideEffect
-import com.twitter.product_mixer.core.model.common.identifier.PipelineStepIdentifier
-import com.twitter.product_mixer.core.model.marshalling.HasMarshalling
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.IllegalStateFailure
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.pipeline.state.HasExecutorResults
-import com.twitter.product_mixer.core.pipeline.state.HasQuery
-import com.twitter.product_mixer.core.pipeline.step.Step
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.product_mixer.core.service.domain_marshaller_executor.DomainMarshallerExecutor
-import com.twitter.product_mixer.core.service.pipeline_result_side_effect_executor.PipelineResultSideEffectExecutor
-import com.twitter.product_mixer.core.service.selector_executor.SelectorExecutorResult
-import com.twitter.stitch.Arrow
-import javax.inject.Inject
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.sidelon_elonffelonct.PipelonlinelonRelonsultSidelonelonffelonct
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.PipelonlinelonStelonpIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.HasMarshalling
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.IllelongalStatelonFailurelon
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.PipelonlinelonFailurelon
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.statelon.HaselonxeloncutorRelonsults
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.statelon.HasQuelonry
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.stelonp.Stelonp
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.elonxeloncutor
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.domain_marshallelonr_elonxeloncutor.DomainMarshallelonrelonxeloncutor
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.pipelonlinelon_relonsult_sidelon_elonffelonct_elonxeloncutor.PipelonlinelonRelonsultSidelonelonffelonctelonxeloncutor
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.selonlelonctor_elonxeloncutor.SelonlelonctorelonxeloncutorRelonsult
+import com.twittelonr.stitch.Arrow
+import javax.injelonct.Injelonct
 
 /**
- * A side effect step, it takes the input list of side effects and and executes them.
+ * A sidelon elonffelonct stelonp, it takelons thelon input list of sidelon elonffeloncts and and elonxeloncutelons thelonm.
  *
- * @param sideEffectExecutor Side Effect Executor
+ * @param sidelonelonffelonctelonxeloncutor Sidelon elonffelonct elonxeloncutor
  *
- * @tparam Query Type of PipelineQuery domain model
- * @tparam DomainResultType Domain Marshaller result type
- * @tparam State The pipeline state domain model.
+ * @tparam Quelonry Typelon of PipelonlinelonQuelonry domain modelonl
+ * @tparam DomainRelonsultTypelon Domain Marshallelonr relonsult typelon
+ * @tparam Statelon Thelon pipelonlinelon statelon domain modelonl.
  */
-case class SideEffectStep[
-  Query <: PipelineQuery,
-  DomainResultType <: HasMarshalling,
-  State <: HasQuery[Query, State] with HasExecutorResults[State]] @Inject() (
-  sideEffectExecutor: PipelineResultSideEffectExecutor)
-    extends Step[
-      State,
-      PipelineStepConfig[Query, DomainResultType],
-      PipelineResultSideEffect.Inputs[
-        Query,
-        DomainResultType
+caselon class SidelonelonffelonctStelonp[
+  Quelonry <: PipelonlinelonQuelonry,
+  DomainRelonsultTypelon <: HasMarshalling,
+  Statelon <: HasQuelonry[Quelonry, Statelon] with HaselonxeloncutorRelonsults[Statelon]] @Injelonct() (
+  sidelonelonffelonctelonxeloncutor: PipelonlinelonRelonsultSidelonelonffelonctelonxeloncutor)
+    elonxtelonnds Stelonp[
+      Statelon,
+      PipelonlinelonStelonpConfig[Quelonry, DomainRelonsultTypelon],
+      PipelonlinelonRelonsultSidelonelonffelonct.Inputs[
+        Quelonry,
+        DomainRelonsultTypelon
       ],
-      PipelineResultSideEffectExecutor.Result
+      PipelonlinelonRelonsultSidelonelonffelonctelonxeloncutor.Relonsult
     ] {
-  override def isEmpty(config: PipelineStepConfig[Query, DomainResultType]): Boolean =
-    config.sideEffects.isEmpty
+  ovelonrridelon delonf iselonmpty(config: PipelonlinelonStelonpConfig[Quelonry, DomainRelonsultTypelon]): Boolelonan =
+    config.sidelonelonffeloncts.iselonmpty
 
-  override def adaptInput(
-    state: State,
-    config: PipelineStepConfig[Query, DomainResultType]
-  ): PipelineResultSideEffect.Inputs[Query, DomainResultType] = {
-    val selectorResults = state.executorResultsByPipelineStep
-      .getOrElse(
-        config.selectorStepIdentifier,
-        throw PipelineFailure(
-          IllegalStateFailure,
-          "Missing Selector Result in Side Effect Step")).asInstanceOf[SelectorExecutorResult]
+  ovelonrridelon delonf adaptInput(
+    statelon: Statelon,
+    config: PipelonlinelonStelonpConfig[Quelonry, DomainRelonsultTypelon]
+  ): PipelonlinelonRelonsultSidelonelonffelonct.Inputs[Quelonry, DomainRelonsultTypelon] = {
+    val selonlelonctorRelonsults = statelon.elonxeloncutorRelonsultsByPipelonlinelonStelonp
+      .gelontOrelonlselon(
+        config.selonlelonctorStelonpIdelonntifielonr,
+        throw PipelonlinelonFailurelon(
+          IllelongalStatelonFailurelon,
+          "Missing Selonlelonctor Relonsult in Sidelon elonffelonct Stelonp")).asInstancelonOf[SelonlelonctorelonxeloncutorRelonsult]
 
-    val domainMarshallerResult = state.executorResultsByPipelineStep
-      .getOrElse(
-        config.domainMarshallerStepIdentifier,
-        throw PipelineFailure(
-          IllegalStateFailure,
-          "Missing Domain Marshaller Result in Side Effect Step")).asInstanceOf[
-        DomainMarshallerExecutor.Result[DomainResultType]]
+    val domainMarshallelonrRelonsult = statelon.elonxeloncutorRelonsultsByPipelonlinelonStelonp
+      .gelontOrelonlselon(
+        config.domainMarshallelonrStelonpIdelonntifielonr,
+        throw PipelonlinelonFailurelon(
+          IllelongalStatelonFailurelon,
+          "Missing Domain Marshallelonr Relonsult in Sidelon elonffelonct Stelonp")).asInstancelonOf[
+        DomainMarshallelonrelonxeloncutor.Relonsult[DomainRelonsultTypelon]]
 
-    PipelineResultSideEffect.Inputs(
-      query = state.query,
-      selectedCandidates = selectorResults.selectedCandidates,
-      remainingCandidates = selectorResults.remainingCandidates,
-      droppedCandidates = selectorResults.droppedCandidates,
-      response = domainMarshallerResult.result
+    PipelonlinelonRelonsultSidelonelonffelonct.Inputs(
+      quelonry = statelon.quelonry,
+      selonlelonctelondCandidatelons = selonlelonctorRelonsults.selonlelonctelondCandidatelons,
+      relonmainingCandidatelons = selonlelonctorRelonsults.relonmainingCandidatelons,
+      droppelondCandidatelons = selonlelonctorRelonsults.droppelondCandidatelons,
+      relonsponselon = domainMarshallelonrRelonsult.relonsult
     )
   }
 
-  override def arrow(
-    config: PipelineStepConfig[Query, DomainResultType],
-    context: Executor.Context
+  ovelonrridelon delonf arrow(
+    config: PipelonlinelonStelonpConfig[Quelonry, DomainRelonsultTypelon],
+    contelonxt: elonxeloncutor.Contelonxt
   ): Arrow[
-    PipelineResultSideEffect.Inputs[Query, DomainResultType],
-    PipelineResultSideEffectExecutor.Result
-  ] = sideEffectExecutor.arrow(config.sideEffects, context)
+    PipelonlinelonRelonsultSidelonelonffelonct.Inputs[Quelonry, DomainRelonsultTypelon],
+    PipelonlinelonRelonsultSidelonelonffelonctelonxeloncutor.Relonsult
+  ] = sidelonelonffelonctelonxeloncutor.arrow(config.sidelonelonffeloncts, contelonxt)
 
-  override def updateState(
-    state: State,
-    executorResult: PipelineResultSideEffectExecutor.Result,
-    config: PipelineStepConfig[Query, DomainResultType]
-  ): State = state
+  ovelonrridelon delonf updatelonStatelon(
+    statelon: Statelon,
+    elonxeloncutorRelonsult: PipelonlinelonRelonsultSidelonelonffelonctelonxeloncutor.Relonsult,
+    config: PipelonlinelonStelonpConfig[Quelonry, DomainRelonsultTypelon]
+  ): Statelon = statelon
 }
 
 /**
- * Wrapper case class containing side effects to be executed and other information needed to execute
- * @param sideEffects The side effects to execute.
- * @param selectorStepIdentifier The identifier of the selector step in the parent
- *                               pipeline to get selection results from.
- * @param domainMarshallerStepIdentifier The identifier of the domain marshaller step in the parent
- *                                       pipeline to get domain marshalled results from.
+ * Wrappelonr caselon class containing sidelon elonffeloncts to belon elonxeloncutelond and othelonr information nelonelondelond to elonxeloncutelon
+ * @param sidelonelonffeloncts Thelon sidelon elonffeloncts to elonxeloncutelon.
+ * @param selonlelonctorStelonpIdelonntifielonr Thelon idelonntifielonr of thelon selonlelonctor stelonp in thelon parelonnt
+ *                               pipelonlinelon to gelont selonlelonction relonsults from.
+ * @param domainMarshallelonrStelonpIdelonntifielonr Thelon idelonntifielonr of thelon domain marshallelonr stelonp in thelon parelonnt
+ *                                       pipelonlinelon to gelont domain marshallelond relonsults from.
  *
- * @tparam Query Type of PipelineQuery domain model
- * @tparam DomainResultType Domain Marshaller result type
+ * @tparam Quelonry Typelon of PipelonlinelonQuelonry domain modelonl
+ * @tparam DomainRelonsultTypelon Domain Marshallelonr relonsult typelon
  */
-case class PipelineStepConfig[Query <: PipelineQuery, DomainResultType <: HasMarshalling](
-  sideEffects: Seq[PipelineResultSideEffect[Query, DomainResultType]],
-  selectorStepIdentifier: PipelineStepIdentifier,
-  domainMarshallerStepIdentifier: PipelineStepIdentifier)
+caselon class PipelonlinelonStelonpConfig[Quelonry <: PipelonlinelonQuelonry, DomainRelonsultTypelon <: HasMarshalling](
+  sidelonelonffeloncts: Selonq[PipelonlinelonRelonsultSidelonelonffelonct[Quelonry, DomainRelonsultTypelon]],
+  selonlelonctorStelonpIdelonntifielonr: PipelonlinelonStelonpIdelonntifielonr,
+  domainMarshallelonrStelonpIdelonntifielonr: PipelonlinelonStelonpIdelonntifielonr)

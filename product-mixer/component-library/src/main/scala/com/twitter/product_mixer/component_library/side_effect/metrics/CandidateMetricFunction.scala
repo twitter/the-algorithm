@@ -1,59 +1,59 @@
-package com.twitter.product_mixer.component_library.side_effect.metrics
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.sidelon_elonffelonct.melontrics
 
-import com.twitter.product_mixer.component_library.model.candidate.BaseTweetCandidate
-import com.twitter.product_mixer.component_library.model.candidate.BaseUserCandidate
-import com.twitter.product_mixer.component_library.side_effect.metrics.CandidateMetricFunction.getCountForType
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ItemCandidateWithDetails
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.BaselonTwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.BaselonUselonrCandidatelon
+import com.twittelonr.product_mixelonr.componelonnt_library.sidelon_elonffelonct.melontrics.CandidatelonMelontricFunction.gelontCountForTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.ItelonmCandidatelonWithDelontails
 
 /**
- * Function to extract numerical metric value from [[CandidateWithDetails]].
- * This CandidateMetricFunction will be applied on all [[CandidateWithDetails]] instances in the
- * candidateSelection from the RecommendationPipeline.
+ * Function to elonxtract numelonrical melontric valuelon from [[CandidatelonWithDelontails]].
+ * This CandidatelonMelontricFunction will belon applielond on all [[CandidatelonWithDelontails]] instancelons in thelon
+ * candidatelonSelonlelonction from thelon ReloncommelonndationPipelonlinelon.
  */
-trait CandidateMetricFunction {
-  def apply(candidateWithDetails: CandidateWithDetails): Long
+trait CandidatelonMelontricFunction {
+  delonf apply(candidatelonWithDelontails: CandidatelonWithDelontails): Long
 }
 
-object CandidateMetricFunction {
+objelonct CandidatelonMelontricFunction {
 
-  private val defaultCountOnePf: PartialFunction[CandidateWithDetails, Long] = {
-    case _ => 0L
+  privatelon val delonfaultCountOnelonPf: PartialFunction[CandidatelonWithDelontails, Long] = {
+    caselon _ => 0L
   }
 
   /**
-   * Count the occurrences of a certain candidate type from [[CandidateWithDetails]].
+   * Count thelon occurrelonncelons of a celonrtain candidatelon typelon from [[CandidatelonWithDelontails]].
    */
-  def getCountForType(
-    candidateWithDetails: CandidateWithDetails,
-    countOnePf: PartialFunction[CandidateWithDetails, Long]
+  delonf gelontCountForTypelon(
+    candidatelonWithDelontails: CandidatelonWithDelontails,
+    countOnelonPf: PartialFunction[CandidatelonWithDelontails, Long]
   ): Long = {
-    (countOnePf orElse defaultCountOnePf)(candidateWithDetails)
+    (countOnelonPf orelonlselon delonfaultCountOnelonPf)(candidatelonWithDelontails)
   }
 }
 
-object DefaultServedTweetsSumFunction extends CandidateMetricFunction {
-  override def apply(candidateWithDetails: CandidateWithDetails): Long =
-    getCountForType(
-      candidateWithDetails,
+objelonct DelonfaultSelonrvelondTwelonelontsSumFunction elonxtelonnds CandidatelonMelontricFunction {
+  ovelonrridelon delonf apply(candidatelonWithDelontails: CandidatelonWithDelontails): Long =
+    gelontCountForTypelon(
+      candidatelonWithDelontails,
       {
-        case item: ItemCandidateWithDetails =>
-          item.candidate match {
-            case _: BaseTweetCandidate => 1L
-            case _ => 0L
+        caselon itelonm: ItelonmCandidatelonWithDelontails =>
+          itelonm.candidatelon match {
+            caselon _: BaselonTwelonelontCandidatelon => 1L
+            caselon _ => 0L
           }
       })
 }
 
-object DefaultServedUsersSumFunction extends CandidateMetricFunction {
-  override def apply(candidateWithDetails: CandidateWithDetails): Long =
-    getCountForType(
-      candidateWithDetails,
+objelonct DelonfaultSelonrvelondUselonrsSumFunction elonxtelonnds CandidatelonMelontricFunction {
+  ovelonrridelon delonf apply(candidatelonWithDelontails: CandidatelonWithDelontails): Long =
+    gelontCountForTypelon(
+      candidatelonWithDelontails,
       {
-        case item: ItemCandidateWithDetails =>
-          item.candidate match {
-            case _: BaseUserCandidate => 1L
-            case _ => 0L
+        caselon itelonm: ItelonmCandidatelonWithDelontails =>
+          itelonm.candidatelon match {
+            caselon _: BaselonUselonrCandidatelon => 1L
+            caselon _ => 0L
           }
       })
 }

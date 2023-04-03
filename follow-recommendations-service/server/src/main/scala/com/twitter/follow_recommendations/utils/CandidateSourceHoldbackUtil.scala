@@ -1,82 +1,82 @@
-package com.twitter.follow_recommendations.utils
+packagelon com.twittelonr.follow_reloncommelonndations.utils
 
-import com.twitter.follow_recommendations.common.candidate_sources.addressbook._
-import com.twitter.follow_recommendations.common.candidate_sources.geo.PopCountrySource
-import com.twitter.follow_recommendations.common.candidate_sources.geo.PopCountryBackFillSource
-import com.twitter.follow_recommendations.common.candidate_sources.geo.PopGeoSource
-import com.twitter.follow_recommendations.common.candidate_sources.geo.PopGeohashSource
-import com.twitter.follow_recommendations.common.candidate_sources.ppmi_locale_follow.PPMILocaleFollowSource
-import com.twitter.follow_recommendations.common.candidate_sources.recent_engagement.RecentEngagementNonDirectFollowSource
-import com.twitter.follow_recommendations.common.candidate_sources.sims.SwitchingSimsSource
-import com.twitter.follow_recommendations.common.candidate_sources.sims_expansion.RecentEngagementSimilarUsersSource
-import com.twitter.follow_recommendations.common.candidate_sources.sims_expansion.RecentFollowingSimilarUsersSource
-import com.twitter.follow_recommendations.common.candidate_sources.sims_expansion.RecentStrongEngagementDirectFollowSimilarUsersSource
-import com.twitter.follow_recommendations.common.candidate_sources.socialgraph.RecentFollowingRecentFollowingExpansionSource
-import com.twitter.follow_recommendations.common.candidate_sources.stp.MutualFollowStrongTiePredictionSource
-import com.twitter.follow_recommendations.common.candidate_sources.stp.OfflineStrongTiePredictionSource
-import com.twitter.follow_recommendations.common.candidate_sources.stp.BaseOnlineSTPSource
-import com.twitter.follow_recommendations.common.candidate_sources.stp.SocialProofEnforcedOfflineStrongTiePredictionSource
-import com.twitter.follow_recommendations.common.candidate_sources.triangular_loops.TriangularLoopsSource
-import com.twitter.follow_recommendations.common.candidate_sources.two_hop_random_walk.TwoHopRandomWalkSource
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.configapi.params.GlobalParams
-import com.twitter.follow_recommendations.models.CandidateSourceType
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.timelines.configapi.HasParams
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.addrelonssbook._
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.gelono.PopCountrySourcelon
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.gelono.PopCountryBackFillSourcelon
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.gelono.PopGelonoSourcelon
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.gelono.PopGelonohashSourcelon
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.ppmi_localelon_follow.PPMILocalelonFollowSourcelon
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.reloncelonnt_elonngagelonmelonnt.ReloncelonntelonngagelonmelonntNonDirelonctFollowSourcelon
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.sims.SwitchingSimsSourcelon
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.sims_elonxpansion.ReloncelonntelonngagelonmelonntSimilarUselonrsSourcelon
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.sims_elonxpansion.ReloncelonntFollowingSimilarUselonrsSourcelon
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.sims_elonxpansion.ReloncelonntStrongelonngagelonmelonntDirelonctFollowSimilarUselonrsSourcelon
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.socialgraph.ReloncelonntFollowingReloncelonntFollowingelonxpansionSourcelon
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.stp.MutualFollowStrongTielonPrelondictionSourcelon
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.stp.OfflinelonStrongTielonPrelondictionSourcelon
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.stp.BaselonOnlinelonSTPSourcelon
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.stp.SocialProofelonnforcelondOfflinelonStrongTielonPrelondictionSourcelon
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.triangular_loops.TriangularLoopsSourcelon
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.two_hop_random_walk.TwoHopRandomWalkSourcelon
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.CandidatelonUselonr
+import com.twittelonr.follow_reloncommelonndations.configapi.params.GlobalParams
+import com.twittelonr.follow_reloncommelonndations.modelonls.CandidatelonSourcelonTypelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.CandidatelonSourcelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonSourcelonIdelonntifielonr
+import com.twittelonr.timelonlinelons.configapi.HasParams
 
-trait CandidateSourceHoldbackUtil {
-  import CandidateSourceHoldbackUtil._
-  def filterCandidateSources[T <: HasParams](
-    request: T,
-    sources: Seq[CandidateSource[T, CandidateUser]]
-  ): Seq[CandidateSource[T, CandidateUser]] = {
-    val typeToFilter = request.params(GlobalParams.CandidateSourcesToFilter)
-    val sourcesToFilter = CandidateSourceTypeToMap.get(typeToFilter).getOrElse(Set.empty)
-    sources.filterNot { source => sourcesToFilter.contains(source.identifier) }
+trait CandidatelonSourcelonHoldbackUtil {
+  import CandidatelonSourcelonHoldbackUtil._
+  delonf filtelonrCandidatelonSourcelons[T <: HasParams](
+    relonquelonst: T,
+    sourcelons: Selonq[CandidatelonSourcelon[T, CandidatelonUselonr]]
+  ): Selonq[CandidatelonSourcelon[T, CandidatelonUselonr]] = {
+    val typelonToFiltelonr = relonquelonst.params(GlobalParams.CandidatelonSourcelonsToFiltelonr)
+    val sourcelonsToFiltelonr = CandidatelonSourcelonTypelonToMap.gelont(typelonToFiltelonr).gelontOrelonlselon(Selont.elonmpty)
+    sourcelons.filtelonrNot { sourcelon => sourcelonsToFiltelonr.contains(sourcelon.idelonntifielonr) }
   }
 }
 
-object CandidateSourceHoldbackUtil {
-  final val ContextualActivityCandidateSourceIds: Set[CandidateSourceIdentifier] =
-    Set(
-      RecentFollowingSimilarUsersSource.Identifier,
-      RecentEngagementNonDirectFollowSource.Identifier,
-      RecentEngagementSimilarUsersSource.Identifier,
-      RecentStrongEngagementDirectFollowSimilarUsersSource.Identifier,
-      SwitchingSimsSource.Identifier,
+objelonct CandidatelonSourcelonHoldbackUtil {
+  final val ContelonxtualActivityCandidatelonSourcelonIds: Selont[CandidatelonSourcelonIdelonntifielonr] =
+    Selont(
+      ReloncelonntFollowingSimilarUselonrsSourcelon.Idelonntifielonr,
+      ReloncelonntelonngagelonmelonntNonDirelonctFollowSourcelon.Idelonntifielonr,
+      ReloncelonntelonngagelonmelonntSimilarUselonrsSourcelon.Idelonntifielonr,
+      ReloncelonntStrongelonngagelonmelonntDirelonctFollowSimilarUselonrsSourcelon.Idelonntifielonr,
+      SwitchingSimsSourcelon.Idelonntifielonr,
     )
 
-  final val SocialCandidateSourceIds: Set[CandidateSourceIdentifier] =
-    Set(
-      ForwardEmailBookSource.Identifier,
-      ForwardPhoneBookSource.Identifier,
-      ReverseEmailBookSource.Identifier,
-      ReversePhoneBookSource.Identifier,
-      RecentFollowingRecentFollowingExpansionSource.Identifier,
-      BaseOnlineSTPSource.Identifier,
-      MutualFollowStrongTiePredictionSource.Identifier,
-      OfflineStrongTiePredictionSource.Identifier,
-      SocialProofEnforcedOfflineStrongTiePredictionSource.Identifier,
-      TriangularLoopsSource.Identifier,
-      TwoHopRandomWalkSource.Identifier
+  final val SocialCandidatelonSourcelonIds: Selont[CandidatelonSourcelonIdelonntifielonr] =
+    Selont(
+      ForwardelonmailBookSourcelon.Idelonntifielonr,
+      ForwardPhonelonBookSourcelon.Idelonntifielonr,
+      RelonvelonrselonelonmailBookSourcelon.Idelonntifielonr,
+      RelonvelonrselonPhonelonBookSourcelon.Idelonntifielonr,
+      ReloncelonntFollowingReloncelonntFollowingelonxpansionSourcelon.Idelonntifielonr,
+      BaselonOnlinelonSTPSourcelon.Idelonntifielonr,
+      MutualFollowStrongTielonPrelondictionSourcelon.Idelonntifielonr,
+      OfflinelonStrongTielonPrelondictionSourcelon.Idelonntifielonr,
+      SocialProofelonnforcelondOfflinelonStrongTielonPrelondictionSourcelon.Idelonntifielonr,
+      TriangularLoopsSourcelon.Idelonntifielonr,
+      TwoHopRandomWalkSourcelon.Idelonntifielonr
     )
 
-  final val GeoCandidateSourceIds: Set[CandidateSourceIdentifier] =
-    Set(
-      PPMILocaleFollowSource.Identifier,
-      PopCountrySource.Identifier,
-      PopGeohashSource.Identifier,
-      PopCountryBackFillSource.Identifier,
-      PopGeoSource.Identifier,
+  final val GelonoCandidatelonSourcelonIds: Selont[CandidatelonSourcelonIdelonntifielonr] =
+    Selont(
+      PPMILocalelonFollowSourcelon.Idelonntifielonr,
+      PopCountrySourcelon.Idelonntifielonr,
+      PopGelonohashSourcelon.Idelonntifielonr,
+      PopCountryBackFillSourcelon.Idelonntifielonr,
+      PopGelonoSourcelon.Idelonntifielonr,
     )
 
-  final val CandidateSourceTypeToMap: Map[CandidateSourceType.Value, Set[
-    CandidateSourceIdentifier
+  final val CandidatelonSourcelonTypelonToMap: Map[CandidatelonSourcelonTypelon.Valuelon, Selont[
+    CandidatelonSourcelonIdelonntifielonr
   ]] =
     Map(
-      CandidateSourceType.Social -> SocialCandidateSourceIds,
-      CandidateSourceType.ActivityContextual -> ContextualActivityCandidateSourceIds,
-      CandidateSourceType.GeoAndInterests -> GeoCandidateSourceIds
+      CandidatelonSourcelonTypelon.Social -> SocialCandidatelonSourcelonIds,
+      CandidatelonSourcelonTypelon.ActivityContelonxtual -> ContelonxtualActivityCandidatelonSourcelonIds,
+      CandidatelonSourcelonTypelon.GelonoAndIntelonrelonsts -> GelonoCandidatelonSourcelonIds
     )
 }

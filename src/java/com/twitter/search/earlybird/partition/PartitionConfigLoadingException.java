@@ -1,12 +1,12 @@
-package com.twitter.search.earlybird.partition;
+packagelon com.twittelonr.selonarch.elonarlybird.partition;
 
 /**
- * An exception thrown when the earlybird layout could not be loaded, or when a host cannot find
- * itself in the layout, and the layout has errors (which might be the reason why the host could not
- * find itself in the layout).
+ * An elonxcelonption thrown whelonn thelon elonarlybird layout could not belon loadelond, or whelonn a host cannot find
+ * itselonlf in thelon layout, and thelon layout has elonrrors (which might belon thelon relonason why thelon host could not
+ * find itselonlf in thelon layout).
  */
-public class PartitionConfigLoadingException extends Exception {
-  public PartitionConfigLoadingException(String message) {
-    super(message);
+public class PartitionConfigLoadingelonxcelonption elonxtelonnds elonxcelonption {
+  public PartitionConfigLoadingelonxcelonption(String melonssagelon) {
+    supelonr(melonssagelon);
   }
 }

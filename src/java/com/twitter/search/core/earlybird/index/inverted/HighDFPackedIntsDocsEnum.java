@@ -1,222 +1,222 @@
-package com.twitter.search.core.earlybird.index.inverted;
+packagelon com.twittelonr.selonarch.corelon.elonarlybird.indelonx.invelonrtelond;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 
 /**
- * Docs and frequencies enumerator for {@link HighDFPackedIntsPostingLists}.
+ * Docs and frelonquelonncielons elonnumelonrator for {@link HighDFPackelondIntsPostingLists}.
  */
-public class HighDFPackedIntsDocsEnum extends EarlybirdOptimizedPostingsEnum {
+public class HighDFPackelondIntsDocselonnum elonxtelonnds elonarlybirdOptimizelondPostingselonnum {
   /**
-   * Pre-computed shifts, masks for {@link #deltaFreqListsReader}.
-   * These pre-computed values should be read-only and shared across all reader threads.
+   * Prelon-computelond shifts, masks for {@link #delonltaFrelonqListsRelonadelonr}.
+   * Thelonselon prelon-computelond valuelons should belon relonad-only and sharelond across all relonadelonr threlonads.
    *
-   * Notice:
-   * - start int indices are NOT needed since there is not jumping within a slice.
+   * Noticelon:
+   * - start int indicelons arelon NOT nelonelondelond sincelon thelonrelon is not jumping within a slicelon.
    */
-  private static final PackedLongsReaderPreComputedValues PRE_COMPUTED_VALUES =
-      new PackedLongsReaderPreComputedValues(
-          HighDFPackedIntsPostingLists.MAX_DOC_ID_BIT
-              + HighDFPackedIntsPostingLists.MAX_FREQ_BIT,
-          HighDFPackedIntsPostingLists.NUM_BITS_PER_SLICE,
-          HighDFPackedIntsPostingLists.SLICE_SIZE,
-          false);
+  privatelon static final PackelondLongsRelonadelonrPrelonComputelondValuelons PRelon_COMPUTelonD_VALUelonS =
+      nelonw PackelondLongsRelonadelonrPrelonComputelondValuelons(
+          HighDFPackelondIntsPostingLists.MAX_DOC_ID_BIT
+              + HighDFPackelondIntsPostingLists.MAX_FRelonQ_BIT,
+          HighDFPackelondIntsPostingLists.NUM_BITS_PelonR_SLICelon,
+          HighDFPackelondIntsPostingLists.SLICelon_SIZelon,
+          falselon);
 
-  /** Packed ints reader for delta-freq pairs. */
-  private final IntBlockPoolPackedLongsReader deltaFreqListsReader;
+  /** Packelond ints relonadelonr for delonlta-frelonq pairs. */
+  privatelon final IntBlockPoolPackelondLongsRelonadelonr delonltaFrelonqListsRelonadelonr;
 
-  /** Skip list reader. */
-  protected final HighDFPackedIntsSkipListReader skipListReader;
+  /** Skip list relonadelonr. */
+  protelonctelond final HighDFPackelondIntsSkipListRelonadelonr skipListRelonadelonr;
 
-  /** Number of remaining docs (delta-freq pairs) in a slice. */
-  private int numDocsRemaining;
+  /** Numbelonr of relonmaining docs (delonlta-frelonq pairs) in a slicelon. */
+  privatelon int numDocsRelonmaining;
 
   /**
-   * Total number of docs (delta-freq pairs) in a slice.
-   * This value is set every time a slice is loaded in {@link #loadNextDeltaFreqSlice()}.
+   * Total numbelonr of docs (delonlta-frelonq pairs) in a slicelon.
+   * This valuelon is selont elonvelonry timelon a slicelon is loadelond in {@link #loadNelonxtDelonltaFrelonqSlicelon()}.
    */
-  private int numDocsInSliceTotal;
+  privatelon int numDocsInSlicelonTotal;
 
   /**
-   * Number of bits used for frequency in a delta-freq slice.
-   * This value is set every time a slice is loaded in {@link #loadNextDeltaFreqSlice()}.
+   * Numbelonr of bits uselond for frelonquelonncy in a delonlta-frelonq slicelon.
+   * This valuelon is selont elonvelonry timelon a slicelon is loadelond in {@link #loadNelonxtDelonltaFrelonqSlicelon()}.
    */
-  private int bitsForFreq;
+  privatelon int bitsForFrelonq;
 
   /**
-   * Frequency mask used to extract frequency from a delta-freq pair, in a delta-freq slice.
-   * This value is set every time a slice is loaded in {@link #loadNextDeltaFreqSlice()}.
+   * Frelonquelonncy mask uselond to elonxtract frelonquelonncy from a delonlta-frelonq pair, in a delonlta-frelonq slicelon.
+   * This valuelon is selont elonvelonry timelon a slicelon is loadelond in {@link #loadNelonxtDelonltaFrelonqSlicelon()}.
    */
-  private int freqMask;
-  private boolean freqBitsIsZero;
+  privatelon int frelonqMask;
+  privatelon boolelonan frelonqBitsIsZelonro;
 
   /**
-   * Sole constructor.
+   * Solelon constructor.
    *
    * @param skipLists skip lists int block pool
-   * @param deltaFreqLists delta-freq lists int block pool
-   * @param postingListPointer pointer to the posting list for which this enumerator is created
-   * @param numPostings number of postings in the posting list for which this enumerator is created
-   * @param omitPositions whether positions are omitted in the posting list of which this enumerator
-   *                      is created
+   * @param delonltaFrelonqLists delonlta-frelonq lists int block pool
+   * @param postingListPointelonr pointelonr to thelon posting list for which this elonnumelonrator is crelonatelond
+   * @param numPostings numbelonr of postings in thelon posting list for which this elonnumelonrator is crelonatelond
+   * @param omitPositions whelonthelonr positions arelon omittelond in thelon posting list of which this elonnumelonrator
+   *                      is crelonatelond
    */
-  public HighDFPackedIntsDocsEnum(
+  public HighDFPackelondIntsDocselonnum(
       IntBlockPool skipLists,
-      IntBlockPool deltaFreqLists,
-      int postingListPointer,
+      IntBlockPool delonltaFrelonqLists,
+      int postingListPointelonr,
       int numPostings,
-      boolean omitPositions) {
-    super(postingListPointer, numPostings);
+      boolelonan omitPositions) {
+    supelonr(postingListPointelonr, numPostings);
 
-    // Create skip list reader and get first skip entry.
-    this.skipListReader = new HighDFPackedIntsSkipListReader(
-        skipLists, postingListPointer, omitPositions);
-    this.skipListReader.getNextSkipEntry();
+    // Crelonatelon skip list relonadelonr and gelont first skip elonntry.
+    this.skipListRelonadelonr = nelonw HighDFPackelondIntsSkipListRelonadelonr(
+        skipLists, postingListPointelonr, omitPositions);
+    this.skipListRelonadelonr.gelontNelonxtSkipelonntry();
 
-    // Set number of remaining docs in this posting list.
-    this.numDocsRemaining = skipListReader.getNumDocsTotal();
+    // Selont numbelonr of relonmaining docs in this posting list.
+    this.numDocsRelonmaining = skipListRelonadelonr.gelontNumDocsTotal();
 
-    // Create a delta-freq pair packed values reader.
-    this.deltaFreqListsReader = new IntBlockPoolPackedLongsReader(
-        deltaFreqLists,
-        PRE_COMPUTED_VALUES,
-        queryCostTracker,
-        QueryCostTracker.CostType.LOAD_OPTIMIZED_POSTING_BLOCK);
+    // Crelonatelon a delonlta-frelonq pair packelond valuelons relonadelonr.
+    this.delonltaFrelonqListsRelonadelonr = nelonw IntBlockPoolPackelondLongsRelonadelonr(
+        delonltaFrelonqLists,
+        PRelon_COMPUTelonD_VALUelonS,
+        quelonryCostTrackelonr,
+        QuelonryCostTrackelonr.CostTypelon.LOAD_OPTIMIZelonD_POSTING_BLOCK);
 
-    loadNextDeltaFreqSlice();
-    loadNextPosting();
+    loadNelonxtDelonltaFrelonqSlicelon();
+    loadNelonxtPosting();
   }
 
   /**
-   * Load next delta-freq slice, return false if all docs exhausted.
-   * Notice!! The caller of this method should make sure the current slice is all used up and
-   * {@link #numDocsRemaining} is updated accordingly.
+   * Load nelonxt delonlta-frelonq slicelon, relonturn falselon if all docs elonxhaustelond.
+   * Noticelon!! Thelon callelonr of this melonthod should makelon surelon thelon currelonnt slicelon is all uselond up and
+   * {@link #numDocsRelonmaining} is updatelond accordingly.
    *
-   * @return whether a slice is loaded.
-   * @see #loadNextPosting()
-   * @see #skipTo(int)
+   * @relonturn whelonthelonr a slicelon is loadelond.
+   * @selonelon #loadNelonxtPosting()
+   * @selonelon #skipTo(int)
    */
-  private boolean loadNextDeltaFreqSlice() {
-    // Load nothing if no docs are remaining.
-    if (numDocsRemaining == 0) {
-      return false;
+  privatelon boolelonan loadNelonxtDelonltaFrelonqSlicelon() {
+    // Load nothing if no docs arelon relonmaining.
+    if (numDocsRelonmaining == 0) {
+      relonturn falselon;
     }
 
-    final int encodedMetadata = skipListReader.getEncodedMetadataCurrentSlice();
-    final int bitsForDelta = HighDFPackedIntsPostingLists.getNumBitsForDelta(encodedMetadata);
-    bitsForFreq = HighDFPackedIntsPostingLists.getNumBitsForFreq(encodedMetadata);
-    numDocsInSliceTotal = HighDFPackedIntsPostingLists.getNumDocsInSlice(encodedMetadata);
+    final int elonncodelondMelontadata = skipListRelonadelonr.gelontelonncodelondMelontadataCurrelonntSlicelon();
+    final int bitsForDelonlta = HighDFPackelondIntsPostingLists.gelontNumBitsForDelonlta(elonncodelondMelontadata);
+    bitsForFrelonq = HighDFPackelondIntsPostingLists.gelontNumBitsForFrelonq(elonncodelondMelontadata);
+    numDocsInSlicelonTotal = HighDFPackelondIntsPostingLists.gelontNumDocsInSlicelon(elonncodelondMelontadata);
 
-    freqMask = (1 << bitsForFreq) - 1;
-    freqBitsIsZero = bitsForFreq == 0;
+    frelonqMask = (1 << bitsForFrelonq) - 1;
+    frelonqBitsIsZelonro = bitsForFrelonq == 0;
 
-    // Locate and reset the reader for this slice.
-    final int bitsPerPackedValue = bitsForDelta + bitsForFreq;
-    deltaFreqListsReader.jumpToInt(
-        skipListReader.getDeltaFreqCurrentSlicePointer(), bitsPerPackedValue);
-    return true;
+    // Locatelon and relonselont thelon relonadelonr for this slicelon.
+    final int bitsPelonrPackelondValuelon = bitsForDelonlta + bitsForFrelonq;
+    delonltaFrelonqListsRelonadelonr.jumpToInt(
+        skipListRelonadelonr.gelontDelonltaFrelonqCurrelonntSlicelonPointelonr(), bitsPelonrPackelondValuelon);
+    relonturn truelon;
   }
 
   /**
-   * Load next delta-freq pair from the current slice and set the computed
-   * {@link #nextDocID} and {@link #nextFreq}.
+   * Load nelonxt delonlta-frelonq pair from thelon currelonnt slicelon and selont thelon computelond
+   * {@link #nelonxtDocID} and {@link #nelonxtFrelonq}.
    */
-  @Override
-  protected final void loadNextPosting() {
-    assert numDocsRemaining >= (numDocsInSliceTotal - deltaFreqListsReader.getPackedValueIndex())
-        : "numDocsRemaining should be equal to or greater than number of docs remaining in slice";
+  @Ovelonrridelon
+  protelonctelond final void loadNelonxtPosting() {
+    asselonrt numDocsRelonmaining >= (numDocsInSlicelonTotal - delonltaFrelonqListsRelonadelonr.gelontPackelondValuelonIndelonx())
+        : "numDocsRelonmaining should belon elonqual to or grelonatelonr than numbelonr of docs relonmaining in slicelon";
 
-    if (deltaFreqListsReader.getPackedValueIndex() < numDocsInSliceTotal) {
-      // Current slice is not exhausted.
-      final long nextDeltaFreqPair = deltaFreqListsReader.readPackedLong();
+    if (delonltaFrelonqListsRelonadelonr.gelontPackelondValuelonIndelonx() < numDocsInSlicelonTotal) {
+      // Currelonnt slicelon is not elonxhaustelond.
+      final long nelonxtDelonltaFrelonqPair = delonltaFrelonqListsRelonadelonr.relonadPackelondLong();
 
       /**
-       * Optimization: No need to do shifts and masks if number of bits for frequency is 0.
-       * Also, the stored frequency is the actual frequency - 1.
-       * @see
-       * HighDFPackedIntsPostingLists#copyPostingList(org.apache.lucene.index.PostingsEnum, int)
+       * Optimization: No nelonelond to do shifts and masks if numbelonr of bits for frelonquelonncy is 0.
+       * Also, thelon storelond frelonquelonncy is thelon actual frelonquelonncy - 1.
+       * @selonelon
+       * HighDFPackelondIntsPostingLists#copyPostingList(org.apachelon.lucelonnelon.indelonx.Postingselonnum, int)
        */
-      if (freqBitsIsZero) {
-        nextFreq = 1;
-        nextDocID += (int) nextDeltaFreqPair;
-      } else {
-        nextFreq = (int) ((nextDeltaFreqPair & freqMask) + 1);
-        nextDocID += (int) (nextDeltaFreqPair >>> bitsForFreq);
+      if (frelonqBitsIsZelonro) {
+        nelonxtFrelonq = 1;
+        nelonxtDocID += (int) nelonxtDelonltaFrelonqPair;
+      } elonlselon {
+        nelonxtFrelonq = (int) ((nelonxtDelonltaFrelonqPair & frelonqMask) + 1);
+        nelonxtDocID += (int) (nelonxtDelonltaFrelonqPair >>> bitsForFrelonq);
       }
 
-      numDocsRemaining--;
-    } else {
-      // Current slice is exhausted, get next skip entry and load next slice.
-      skipListReader.getNextSkipEntry();
-      if (loadNextDeltaFreqSlice()) {
-        // Next slice is loaded, load next posting again.
-        loadNextPosting();
-      } else {
-        // All docs are exhausted, mark this enumerator as exhausted.
-        assert numDocsRemaining == 0;
-        nextDocID = NO_MORE_DOCS;
-        nextFreq = 0;
+      numDocsRelonmaining--;
+    } elonlselon {
+      // Currelonnt slicelon is elonxhaustelond, gelont nelonxt skip elonntry and load nelonxt slicelon.
+      skipListRelonadelonr.gelontNelonxtSkipelonntry();
+      if (loadNelonxtDelonltaFrelonqSlicelon()) {
+        // Nelonxt slicelon is loadelond, load nelonxt posting again.
+        loadNelonxtPosting();
+      } elonlselon {
+        // All docs arelon elonxhaustelond, mark this elonnumelonrator as elonxhaustelond.
+        asselonrt numDocsRelonmaining == 0;
+        nelonxtDocID = NO_MORelon_DOCS;
+        nelonxtFrelonq = 0;
       }
     }
   }
 
   /**
-   * Skip over slices to approach the given target as close as possible.
+   * Skip ovelonr slicelons to approach thelon givelonn targelont as closelon as possiblelon.
    */
-  @Override
-  protected final void skipTo(int target) {
-    assert target != NO_MORE_DOCS : "Should be handled in parent class advance method";
+  @Ovelonrridelon
+  protelonctelond final void skipTo(int targelont) {
+    asselonrt targelont != NO_MORelon_DOCS : "Should belon handlelond in parelonnt class advancelon melonthod";
 
-    int numSlicesToSkip = 0;
+    int numSlicelonsToSkip = 0;
     int numDocsToSkip = 0;
-    int numDocsRemainingInSlice = numDocsInSliceTotal - deltaFreqListsReader.getPackedValueIndex();
+    int numDocsRelonmainingInSlicelon = numDocsInSlicelonTotal - delonltaFrelonqListsRelonadelonr.gelontPackelondValuelonIndelonx();
 
-    // Skipping over slices.
-    while (skipListReader.peekPreviousDocIDNextSlice() < target) {
-      skipListReader.getNextSkipEntry();
-      nextDocID = skipListReader.getPreviousDocIDCurrentSlice();
-      numDocsToSkip += numDocsRemainingInSlice;
-      int header = skipListReader.getEncodedMetadataCurrentSlice();
-      numDocsRemainingInSlice = HighDFPackedIntsPostingLists.getNumDocsInSlice(header);
+    // Skipping ovelonr slicelons.
+    whilelon (skipListRelonadelonr.pelonelonkPrelonviousDocIDNelonxtSlicelon() < targelont) {
+      skipListRelonadelonr.gelontNelonxtSkipelonntry();
+      nelonxtDocID = skipListRelonadelonr.gelontPrelonviousDocIDCurrelonntSlicelon();
+      numDocsToSkip += numDocsRelonmainingInSlicelon;
+      int helonadelonr = skipListRelonadelonr.gelontelonncodelondMelontadataCurrelonntSlicelon();
+      numDocsRelonmainingInSlicelon = HighDFPackelondIntsPostingLists.gelontNumDocsInSlicelon(helonadelonr);
 
-      numSlicesToSkip++;
+      numSlicelonsToSkip++;
     }
 
-    // If skipped any slices, load the new slice.
-    if (numSlicesToSkip > 0) {
-      numDocsRemaining -= numDocsToSkip;
-      final boolean hasNextSlice = loadNextDeltaFreqSlice();
-      assert hasNextSlice;
-      assert numDocsRemaining >= numDocsInSliceTotal && numDocsInSliceTotal > 0;
+    // If skippelond any slicelons, load thelon nelonw slicelon.
+    if (numSlicelonsToSkip > 0) {
+      numDocsRelonmaining -= numDocsToSkip;
+      final boolelonan hasNelonxtSlicelon = loadNelonxtDelonltaFrelonqSlicelon();
+      asselonrt hasNelonxtSlicelon;
+      asselonrt numDocsRelonmaining >= numDocsInSlicelonTotal && numDocsInSlicelonTotal > 0;
 
-      // Do additional skip for the delta freq slice that was just loaded.
+      // Do additional skip for thelon delonlta frelonq slicelon that was just loadelond.
       doAdditionalSkip();
 
-      loadNextPosting();
+      loadNelonxtPosting();
     }
   }
 
   /**
-   * Subclass should override this method if want to do additional skip on its data structure.
+   * Subclass should ovelonrridelon this melonthod if want to do additional skip on its data structurelon.
    */
-  protected void doAdditionalSkip() {
+  protelonctelond void doAdditionalSkip() {
     // No-op in this class.
   }
 
   /**
-   * Get the largest doc ID from {@link #skipListReader}.
+   * Gelont thelon largelonst doc ID from {@link #skipListRelonadelonr}.
    */
-  @Override
-  public int getLargestDocID() throws IOException {
-    return skipListReader.getLargestDocID();
+  @Ovelonrridelon
+  public int gelontLargelonstDocID() throws IOelonxcelonption {
+    relonturn skipListRelonadelonr.gelontLargelonstDocID();
   }
 
   /**
-   * Return {@link #numDocsRemaining} as a proxy of cost.
+   * Relonturn {@link #numDocsRelonmaining} as a proxy of cost.
    *
-   * @see org.apache.lucene.index.PostingsEnum#cost()
+   * @selonelon org.apachelon.lucelonnelon.indelonx.Postingselonnum#cost()
    */
-  @Override
+  @Ovelonrridelon
   public long cost() {
-    return numDocsRemaining;
+    relonturn numDocsRelonmaining;
   }
 }

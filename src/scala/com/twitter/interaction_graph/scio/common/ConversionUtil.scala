@@ -1,110 +1,110 @@
-package com.twitter.interaction_graph.scio.common
+packagelon com.twittelonr.intelonraction_graph.scio.common
 
-import com.spotify.scio.ScioMetrics
-import com.twitter.interaction_graph.thriftscala.Edge
-import com.twitter.interaction_graph.thriftscala.FeatureName
-import com.twitter.interaction_graph.thriftscala.TimeSeriesStatistics
-import com.twitter.timelines.real_graph.v1.thriftscala.RealGraphEdgeFeatures
-import com.twitter.timelines.real_graph.v1.thriftscala.{
-  RealGraphEdgeFeature => RealGraphEdgeFeatureV1
+import com.spotify.scio.ScioMelontrics
+import com.twittelonr.intelonraction_graph.thriftscala.elondgelon
+import com.twittelonr.intelonraction_graph.thriftscala.FelonaturelonNamelon
+import com.twittelonr.intelonraction_graph.thriftscala.TimelonSelonrielonsStatistics
+import com.twittelonr.timelonlinelons.relonal_graph.v1.thriftscala.RelonalGraphelondgelonFelonaturelons
+import com.twittelonr.timelonlinelons.relonal_graph.v1.thriftscala.{
+  RelonalGraphelondgelonFelonaturelon => RelonalGraphelondgelonFelonaturelonV1
 }
 
-object ConversionUtil {
-  def toRealGraphEdgeFeatureV1(tss: TimeSeriesStatistics): RealGraphEdgeFeatureV1 = {
-    RealGraphEdgeFeatureV1(
-      mean = Some(tss.mean),
-      ewma = Some(tss.ewma),
-      m2ForVariance = Some(tss.m2ForVariance),
-      daysSinceLast = tss.numDaysSinceLast.map(_.toShort),
-      nonZeroDays = Some(tss.numNonZeroDays.toShort),
-      elapsedDays = Some(tss.numElapsedDays.toShort),
-      isMissing = Some(false)
+objelonct ConvelonrsionUtil {
+  delonf toRelonalGraphelondgelonFelonaturelonV1(tss: TimelonSelonrielonsStatistics): RelonalGraphelondgelonFelonaturelonV1 = {
+    RelonalGraphelondgelonFelonaturelonV1(
+      melonan = Somelon(tss.melonan),
+      elonwma = Somelon(tss.elonwma),
+      m2ForVariancelon = Somelon(tss.m2ForVariancelon),
+      daysSincelonLast = tss.numDaysSincelonLast.map(_.toShort),
+      nonZelonroDays = Somelon(tss.numNonZelonroDays.toShort),
+      elonlapselondDays = Somelon(tss.numelonlapselondDays.toShort),
+      isMissing = Somelon(falselon)
     )
   }
 
   /**
-   * Checks if the converted `RealGraphEdgeFeatures` has negative edges features.
-   * Our pipeline includes other negative interactions that aren't in the UserSession thrift
-   * so we'll just filter them away for now (for parity).
+   * Cheloncks if thelon convelonrtelond `RelonalGraphelondgelonFelonaturelons` has nelongativelon elondgelons felonaturelons.
+   * Our pipelonlinelon includelons othelonr nelongativelon intelonractions that arelonn't in thelon UselonrSelonssion thrift
+   * so welon'll just filtelonr thelonm away for now (for parity).
    */
-  def hasNegativeFeatures(rgef: RealGraphEdgeFeatures): Boolean = {
-    rgef.numMutes.nonEmpty ||
-    rgef.numBlocks.nonEmpty ||
-    rgef.numReportAsAbuses.nonEmpty ||
-    rgef.numReportAsSpams.nonEmpty
+  delonf hasNelongativelonFelonaturelons(rgelonf: RelonalGraphelondgelonFelonaturelons): Boolelonan = {
+    rgelonf.numMutelons.nonelonmpty ||
+    rgelonf.numBlocks.nonelonmpty ||
+    rgelonf.numRelonportAsAbuselons.nonelonmpty ||
+    rgelonf.numRelonportAsSpams.nonelonmpty
   }
 
   /**
-   * Checks if the converted `RealGraphEdgeFeatures` has some of the key interaction features present.
-   * This is adapted from timeline's code here:
+   * Cheloncks if thelon convelonrtelond `RelonalGraphelondgelonFelonaturelons` has somelon of thelon kelony intelonraction felonaturelons prelonselonnt.
+   * This is adaptelond from timelonlinelon's codelon helonrelon:
    */
-  def hasTimelinesRequiredFeatures(rgef: RealGraphEdgeFeatures): Boolean = {
-    rgef.retweetsFeature.nonEmpty ||
-    rgef.favsFeature.nonEmpty ||
-    rgef.mentionsFeature.nonEmpty ||
-    rgef.tweetClicksFeature.nonEmpty ||
-    rgef.linkClicksFeature.nonEmpty ||
-    rgef.profileViewsFeature.nonEmpty ||
-    rgef.dwellTimeFeature.nonEmpty ||
-    rgef.inspectedStatusesFeature.nonEmpty ||
-    rgef.photoTagsFeature.nonEmpty ||
-    rgef.numTweetQuotes.nonEmpty ||
-    rgef.followFeature.nonEmpty ||
-    rgef.mutualFollowFeature.nonEmpty ||
-    rgef.addressBookEmailFeature.nonEmpty ||
-    rgef.addressBookPhoneFeature.nonEmpty
+  delonf hasTimelonlinelonsRelonquirelondFelonaturelons(rgelonf: RelonalGraphelondgelonFelonaturelons): Boolelonan = {
+    rgelonf.relontwelonelontsFelonaturelon.nonelonmpty ||
+    rgelonf.favsFelonaturelon.nonelonmpty ||
+    rgelonf.melonntionsFelonaturelon.nonelonmpty ||
+    rgelonf.twelonelontClicksFelonaturelon.nonelonmpty ||
+    rgelonf.linkClicksFelonaturelon.nonelonmpty ||
+    rgelonf.profilelonVielonwsFelonaturelon.nonelonmpty ||
+    rgelonf.dwelonllTimelonFelonaturelon.nonelonmpty ||
+    rgelonf.inspelonctelondStatuselonsFelonaturelon.nonelonmpty ||
+    rgelonf.photoTagsFelonaturelon.nonelonmpty ||
+    rgelonf.numTwelonelontQuotelons.nonelonmpty ||
+    rgelonf.followFelonaturelon.nonelonmpty ||
+    rgelonf.mutualFollowFelonaturelon.nonelonmpty ||
+    rgelonf.addrelonssBookelonmailFelonaturelon.nonelonmpty ||
+    rgelonf.addrelonssBookPhonelonFelonaturelon.nonelonmpty
   }
 
   /**
-   * Convert an Edge into a RealGraphEdgeFeature.
-   * We return the converted RealGraphEdgeFeature when filterFn is true.
-   * This is to allow us to filter early on during the conversion if required, rather than map over the whole
-   * collection of records again to filter.
+   * Convelonrt an elondgelon into a RelonalGraphelondgelonFelonaturelon.
+   * Welon relonturn thelon convelonrtelond RelonalGraphelondgelonFelonaturelon whelonn filtelonrFn is truelon.
+   * This is to allow us to filtelonr elonarly on during thelon convelonrsion if relonquirelond, rathelonr than map ovelonr thelon wholelon
+   * collelonction of reloncords again to filtelonr.
    *
-   * @param filterFn true if and only if we want to keep the converted feature
+   * @param filtelonrFn truelon if and only if welon want to kelonelonp thelon convelonrtelond felonaturelon
    */
-  def toRealGraphEdgeFeatures(
-    filterFn: RealGraphEdgeFeatures => Boolean
+  delonf toRelonalGraphelondgelonFelonaturelons(
+    filtelonrFn: RelonalGraphelondgelonFelonaturelons => Boolelonan
   )(
-    e: Edge
-  ): Option[RealGraphEdgeFeatures] = {
-    val baseFeature = RealGraphEdgeFeatures(destId = e.destinationId)
-    val aggregatedFeature = e.features.foldLeft(baseFeature) {
-      case (aggregatedFeature, edgeFeature) =>
-        val f = Some(toRealGraphEdgeFeatureV1(edgeFeature.tss))
-        ScioMetrics.counter("toRealGraphEdgeFeatures", edgeFeature.name.name).inc()
-        edgeFeature.name match {
-          case FeatureName.NumRetweets => aggregatedFeature.copy(retweetsFeature = f)
-          case FeatureName.NumFavorites => aggregatedFeature.copy(favsFeature = f)
-          case FeatureName.NumMentions => aggregatedFeature.copy(mentionsFeature = f)
-          case FeatureName.NumTweetClicks => aggregatedFeature.copy(tweetClicksFeature = f)
-          case FeatureName.NumLinkClicks => aggregatedFeature.copy(linkClicksFeature = f)
-          case FeatureName.NumProfileViews => aggregatedFeature.copy(profileViewsFeature = f)
-          case FeatureName.TotalDwellTime => aggregatedFeature.copy(dwellTimeFeature = f)
-          case FeatureName.NumInspectedStatuses =>
-            aggregatedFeature.copy(inspectedStatusesFeature = f)
-          case FeatureName.NumPhotoTags => aggregatedFeature.copy(photoTagsFeature = f)
-          case FeatureName.NumFollows => aggregatedFeature.copy(followFeature = f)
-          case FeatureName.NumMutualFollows => aggregatedFeature.copy(mutualFollowFeature = f)
-          case FeatureName.AddressBookEmail => aggregatedFeature.copy(addressBookEmailFeature = f)
-          case FeatureName.AddressBookPhone => aggregatedFeature.copy(addressBookPhoneFeature = f)
-          case FeatureName.AddressBookInBoth => aggregatedFeature.copy(addressBookInBothFeature = f)
-          case FeatureName.AddressBookMutualEdgeEmail =>
-            aggregatedFeature.copy(addressBookMutualEdgeEmailFeature = f)
-          case FeatureName.AddressBookMutualEdgePhone =>
-            aggregatedFeature.copy(addressBookMutualEdgePhoneFeature = f)
-          case FeatureName.AddressBookMutualEdgeInBoth =>
-            aggregatedFeature.copy(addressBookMutualEdgeInBothFeature = f)
-          case FeatureName.NumTweetQuotes => aggregatedFeature.copy(numTweetQuotes = f)
-          case FeatureName.NumBlocks => aggregatedFeature.copy(numBlocks = f)
-          case FeatureName.NumMutes => aggregatedFeature.copy(numMutes = f)
-          case FeatureName.NumReportAsSpams => aggregatedFeature.copy(numReportAsSpams = f)
-          case FeatureName.NumReportAsAbuses => aggregatedFeature.copy(numReportAsAbuses = f)
-          case _ => aggregatedFeature
+    elon: elondgelon
+  ): Option[RelonalGraphelondgelonFelonaturelons] = {
+    val baselonFelonaturelon = RelonalGraphelondgelonFelonaturelons(delonstId = elon.delonstinationId)
+    val aggrelongatelondFelonaturelon = elon.felonaturelons.foldLelonft(baselonFelonaturelon) {
+      caselon (aggrelongatelondFelonaturelon, elondgelonFelonaturelon) =>
+        val f = Somelon(toRelonalGraphelondgelonFelonaturelonV1(elondgelonFelonaturelon.tss))
+        ScioMelontrics.countelonr("toRelonalGraphelondgelonFelonaturelons", elondgelonFelonaturelon.namelon.namelon).inc()
+        elondgelonFelonaturelon.namelon match {
+          caselon FelonaturelonNamelon.NumRelontwelonelonts => aggrelongatelondFelonaturelon.copy(relontwelonelontsFelonaturelon = f)
+          caselon FelonaturelonNamelon.NumFavoritelons => aggrelongatelondFelonaturelon.copy(favsFelonaturelon = f)
+          caselon FelonaturelonNamelon.NumMelonntions => aggrelongatelondFelonaturelon.copy(melonntionsFelonaturelon = f)
+          caselon FelonaturelonNamelon.NumTwelonelontClicks => aggrelongatelondFelonaturelon.copy(twelonelontClicksFelonaturelon = f)
+          caselon FelonaturelonNamelon.NumLinkClicks => aggrelongatelondFelonaturelon.copy(linkClicksFelonaturelon = f)
+          caselon FelonaturelonNamelon.NumProfilelonVielonws => aggrelongatelondFelonaturelon.copy(profilelonVielonwsFelonaturelon = f)
+          caselon FelonaturelonNamelon.TotalDwelonllTimelon => aggrelongatelondFelonaturelon.copy(dwelonllTimelonFelonaturelon = f)
+          caselon FelonaturelonNamelon.NumInspelonctelondStatuselons =>
+            aggrelongatelondFelonaturelon.copy(inspelonctelondStatuselonsFelonaturelon = f)
+          caselon FelonaturelonNamelon.NumPhotoTags => aggrelongatelondFelonaturelon.copy(photoTagsFelonaturelon = f)
+          caselon FelonaturelonNamelon.NumFollows => aggrelongatelondFelonaturelon.copy(followFelonaturelon = f)
+          caselon FelonaturelonNamelon.NumMutualFollows => aggrelongatelondFelonaturelon.copy(mutualFollowFelonaturelon = f)
+          caselon FelonaturelonNamelon.AddrelonssBookelonmail => aggrelongatelondFelonaturelon.copy(addrelonssBookelonmailFelonaturelon = f)
+          caselon FelonaturelonNamelon.AddrelonssBookPhonelon => aggrelongatelondFelonaturelon.copy(addrelonssBookPhonelonFelonaturelon = f)
+          caselon FelonaturelonNamelon.AddrelonssBookInBoth => aggrelongatelondFelonaturelon.copy(addrelonssBookInBothFelonaturelon = f)
+          caselon FelonaturelonNamelon.AddrelonssBookMutualelondgelonelonmail =>
+            aggrelongatelondFelonaturelon.copy(addrelonssBookMutualelondgelonelonmailFelonaturelon = f)
+          caselon FelonaturelonNamelon.AddrelonssBookMutualelondgelonPhonelon =>
+            aggrelongatelondFelonaturelon.copy(addrelonssBookMutualelondgelonPhonelonFelonaturelon = f)
+          caselon FelonaturelonNamelon.AddrelonssBookMutualelondgelonInBoth =>
+            aggrelongatelondFelonaturelon.copy(addrelonssBookMutualelondgelonInBothFelonaturelon = f)
+          caselon FelonaturelonNamelon.NumTwelonelontQuotelons => aggrelongatelondFelonaturelon.copy(numTwelonelontQuotelons = f)
+          caselon FelonaturelonNamelon.NumBlocks => aggrelongatelondFelonaturelon.copy(numBlocks = f)
+          caselon FelonaturelonNamelon.NumMutelons => aggrelongatelondFelonaturelon.copy(numMutelons = f)
+          caselon FelonaturelonNamelon.NumRelonportAsSpams => aggrelongatelondFelonaturelon.copy(numRelonportAsSpams = f)
+          caselon FelonaturelonNamelon.NumRelonportAsAbuselons => aggrelongatelondFelonaturelon.copy(numRelonportAsAbuselons = f)
+          caselon _ => aggrelongatelondFelonaturelon
         }
     }
-    if (filterFn(aggregatedFeature))
-      Some(aggregatedFeature.copy(weight = e.weight.orElse(Some(0.0))))
-    else None
+    if (filtelonrFn(aggrelongatelondFelonaturelon))
+      Somelon(aggrelongatelondFelonaturelon.copy(welonight = elon.welonight.orelonlselon(Somelon(0.0))))
+    elonlselon Nonelon
   }
 }

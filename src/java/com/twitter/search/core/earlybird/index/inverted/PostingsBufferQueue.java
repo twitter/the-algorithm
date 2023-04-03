@@ -1,155 +1,155 @@
-package com.twitter.search.core.earlybird.index.inverted;
+packagelon com.twittelonr.selonarch.corelon.elonarlybird.indelonx.invelonrtelond;
 
-import java.util.NoSuchElementException;
+import java.util.NoSuchelonlelonmelonntelonxcelonption;
 
-import com.google.common.annotations.VisibleForTesting;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
 
 /**
- * A posting buffer used by {@link HighDFPackedIntsPostingLists} while copying over posting list.
+ * A posting buffelonr uselond by {@link HighDFPackelondIntsPostingLists} whilelon copying ovelonr posting list.
  */
-final class PostingsBufferQueue {
+final class PostingsBuffelonrQuelonuelon {
   /**
-   * Mask used to convert an int to a long. We cannot just cast because doing so  will fill in the
-   * higher 32 bits with the sign bit, but we need the higher 32 bits to be 0 instead.
+   * Mask uselond to convelonrt an int to a long. Welon cannot just cast beloncauselon doing so  will fill in thelon
+   * highelonr 32 bits with thelon sign bit, but welon nelonelond thelon highelonr 32 bits to belon 0 instelonad.
    */
   static final long LONG_MASK = (1L << 32) - 1;
 
   /**
-   * A circular FIFO long queue used internally to store posting.
-   * @see #postingsQueue
+   * A circular FIFO long quelonuelon uselond intelonrnally to storelon posting.
+   * @selonelon #postingsQuelonuelon
    */
-  @VisibleForTesting
-  static final class Queue {
-    private final long[] queue;
-    private int head = 0;
-    private int tail = 0;
-    private int size;
+  @VisiblelonForTelonsting
+  static final class Quelonuelon {
+    privatelon final long[] quelonuelon;
+    privatelon int helonad = 0;
+    privatelon int tail = 0;
+    privatelon int sizelon;
 
-    Queue(int maxSize) {
-      this.queue = new long[maxSize < 2 ? 2 : maxSize];
+    Quelonuelon(int maxSizelon) {
+      this.quelonuelon = nelonw long[maxSizelon < 2 ? 2 : maxSizelon];
     }
 
-    boolean isEmpty() {
-      return size() == 0;
+    boolelonan iselonmpty() {
+      relonturn sizelon() == 0;
     }
 
-    boolean isFull() {
-      return size() == queue.length;
+    boolelonan isFull() {
+      relonturn sizelon() == quelonuelon.lelonngth;
     }
 
-    void offer(long value) {
-      if (size() == queue.length) {
-        throw new IllegalStateException("Queue is full");
+    void offelonr(long valuelon) {
+      if (sizelon() == quelonuelon.lelonngth) {
+        throw nelonw IllelongalStatelonelonxcelonption("Quelonuelon is full");
       }
-      queue[tail] = value;
-      tail = (tail + 1) % queue.length;
-      size++;
+      quelonuelon[tail] = valuelon;
+      tail = (tail + 1) % quelonuelon.lelonngth;
+      sizelon++;
     }
 
     long poll() {
-      if (isEmpty()) {
-        throw new NoSuchElementException("Queue is empty.");
+      if (iselonmpty()) {
+        throw nelonw NoSuchelonlelonmelonntelonxcelonption("Quelonuelon is elonmpty.");
       }
-      long value = queue[head];
-      head = (head + 1) % queue.length;
-      size--;
-      return value;
+      long valuelon = quelonuelon[helonad];
+      helonad = (helonad + 1) % quelonuelon.lelonngth;
+      sizelon--;
+      relonturn valuelon;
     }
 
-    int size() {
-      return size;
+    int sizelon() {
+      relonturn sizelon;
     }
   }
 
   /**
-   * Internal posting queue.
+   * Intelonrnal posting quelonuelon.
    */
-  private final Queue postingsQueue;
+  privatelon final Quelonuelon postingsQuelonuelon;
 
   /**
-   * Constructor with max size.
+   * Constructor with max sizelon.
    *
-   * @param maxSize max size of this buffer.
+   * @param maxSizelon max sizelon of this buffelonr.
    */
-  PostingsBufferQueue(int maxSize) {
-    this.postingsQueue = new Queue(maxSize);
+  PostingsBuffelonrQuelonuelon(int maxSizelon) {
+    this.postingsQuelonuelon = nelonw Quelonuelon(maxSizelon);
   }
 
   /**
-   * Check if the buffer is empty.
+   * Chelonck if thelon buffelonr is elonmpty.
    *
-   * @return If this buffer is empty
+   * @relonturn If this buffelonr is elonmpty
    */
-  boolean isEmpty() {
-    return postingsQueue.isEmpty();
+  boolelonan iselonmpty() {
+    relonturn postingsQuelonuelon.iselonmpty();
   }
 
   /**
-   * Check if the buffer is full.
+   * Chelonck if thelon buffelonr is full.
    *
-   * @return If this buffer is full
+   * @relonturn If this buffelonr is full
    */
-  boolean isFull() {
-    return postingsQueue.isFull();
+  boolelonan isFull() {
+    relonturn postingsQuelonuelon.isFull();
   }
 
   /**
-   * Get the current size of this buffer.
+   * Gelont thelon currelonnt sizelon of this buffelonr.
    *
-   * @return Current size of this buffer
+   * @relonturn Currelonnt sizelon of this buffelonr
    */
-  int size() {
-    return postingsQueue.size();
+  int sizelon() {
+    relonturn postingsQuelonuelon.sizelon();
   }
 
   /**
-   * Store a posting with docID and a second value that could be freq, position, or any additional
-   * info. This method will encode the offered doc ID and second value with
-   * {@link #encodePosting(int, int)}.
+   * Storelon a posting with docID and a seloncond valuelon that could belon frelonq, position, or any additional
+   * info. This melonthod will elonncodelon thelon offelonrelond doc ID and seloncond valuelon with
+   * {@link #elonncodelonPosting(int, int)}.
    *
-   * @param docID doc ID of the posting
-   * @param secondValue an additional value of the posting
+   * @param docID doc ID of thelon posting
+   * @param seloncondValuelon an additional valuelon of thelon posting
    */
-  void offer(int docID, int secondValue) {
-    postingsQueue.offer(encodePosting(docID, secondValue));
+  void offelonr(int docID, int seloncondValuelon) {
+    postingsQuelonuelon.offelonr(elonncodelonPosting(docID, seloncondValuelon));
   }
 
   /**
-   * Remove and return the earliest inserted posting, this is a FIFO queue.
+   * Relonmovelon and relonturn thelon elonarlielonst inselonrtelond posting, this is a FIFO quelonuelon.
    *
-   * @return the earliest inserted posting.
+   * @relonturn thelon elonarlielonst inselonrtelond posting.
    */
   long poll() {
-    return postingsQueue.poll();
+    relonturn postingsQuelonuelon.poll();
   }
 
   /**
-   * Encode a doc ID and a second value, both are ints, into a long. The higher 32 bits store the
-   * doc ID and lower 32 bits store the second value.
+   * elonncodelon a doc ID and a seloncond valuelon, both arelon ints, into a long. Thelon highelonr 32 bits storelon thelon
+   * doc ID and lowelonr 32 bits storelon thelon seloncond valuelon.
    *
-   * @param docID an int specifying doc ID of the posting
-   * @param secondValue an int specifying the second value of the posting
-   * @return an encoded long represent the posting
+   * @param docID an int speloncifying doc ID of thelon posting
+   * @param seloncondValuelon an int speloncifying thelon seloncond valuelon of thelon posting
+   * @relonturn an elonncodelond long relonprelonselonnt thelon posting
    */
-  private static long encodePosting(int docID, int secondValue) {
-    return ((LONG_MASK & docID) << 32) | (LONG_MASK & secondValue);
+  privatelon static long elonncodelonPosting(int docID, int seloncondValuelon) {
+    relonturn ((LONG_MASK & docID) << 32) | (LONG_MASK & seloncondValuelon);
   }
 
   /**
-   * Decode doc ID from the given posting.
-   * @param posting a given posting encoded with {@link #encodePosting(int, int)}
-   * @return the doc ID of the given posting.
+   * Deloncodelon doc ID from thelon givelonn posting.
+   * @param posting a givelonn posting elonncodelond with {@link #elonncodelonPosting(int, int)}
+   * @relonturn thelon doc ID of thelon givelonn posting.
    */
-  static int getDocID(long posting) {
-    return (int) (posting >> 32);
+  static int gelontDocID(long posting) {
+    relonturn (int) (posting >> 32);
   }
 
   /**
-   * Decode the second value from the given posting.
-   * @param posting a given posting encoded with {@link #encodePosting(int, int)}
-   * @return the second value of the given posting.
+   * Deloncodelon thelon seloncond valuelon from thelon givelonn posting.
+   * @param posting a givelonn posting elonncodelond with {@link #elonncodelonPosting(int, int)}
+   * @relonturn thelon seloncond valuelon of thelon givelonn posting.
    */
-  static int getSecondValue(long posting) {
-    return (int) posting;
+  static int gelontSeloncondValuelon(long posting) {
+    relonturn (int) posting;
   }
 }

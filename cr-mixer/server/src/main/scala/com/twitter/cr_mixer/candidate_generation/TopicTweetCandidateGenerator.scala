@@ -1,230 +1,230 @@
-package com.twitter.cr_mixer.candidate_generation
+packagelon com.twittelonr.cr_mixelonr.candidatelon_gelonnelonration
 
-import com.twitter.contentrecommender.thriftscala.TweetInfo
-import com.twitter.cr_mixer.config.TimeoutConfig
-import com.twitter.cr_mixer.model.CandidateGenerationInfo
-import com.twitter.cr_mixer.model.InitialCandidate
-import com.twitter.cr_mixer.model.SimilarityEngineInfo
-import com.twitter.cr_mixer.model.TopicTweetCandidateGeneratorQuery
-import com.twitter.cr_mixer.model.TopicTweetWithScore
-import com.twitter.cr_mixer.param.TopicTweetParams
-import com.twitter.cr_mixer.similarity_engine.CertoTopicTweetSimilarityEngine
-import com.twitter.cr_mixer.similarity_engine.SkitHighPrecisionTopicTweetSimilarityEngine
-import com.twitter.cr_mixer.similarity_engine.SkitTopicTweetSimilarityEngine
-import com.twitter.cr_mixer.thriftscala.SimilarityEngineType
-import com.twitter.cr_mixer.thriftscala.TopicTweet
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.util.DefaultTimer
-import com.twitter.frigate.common.util.StatsUtil
-import com.twitter.servo.util.MemoizingStatsReceiver
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.thriftscala.TopicId
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Duration
-import com.twitter.util.Future
-import com.twitter.util.Time
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.contelonntreloncommelonndelonr.thriftscala.TwelonelontInfo
+import com.twittelonr.cr_mixelonr.config.TimelonoutConfig
+import com.twittelonr.cr_mixelonr.modelonl.CandidatelonGelonnelonrationInfo
+import com.twittelonr.cr_mixelonr.modelonl.InitialCandidatelon
+import com.twittelonr.cr_mixelonr.modelonl.SimilarityelonnginelonInfo
+import com.twittelonr.cr_mixelonr.modelonl.TopicTwelonelontCandidatelonGelonnelonratorQuelonry
+import com.twittelonr.cr_mixelonr.modelonl.TopicTwelonelontWithScorelon
+import com.twittelonr.cr_mixelonr.param.TopicTwelonelontParams
+import com.twittelonr.cr_mixelonr.similarity_elonnginelon.CelonrtoTopicTwelonelontSimilarityelonnginelon
+import com.twittelonr.cr_mixelonr.similarity_elonnginelon.SkitHighPreloncisionTopicTwelonelontSimilarityelonnginelon
+import com.twittelonr.cr_mixelonr.similarity_elonnginelon.SkitTopicTwelonelontSimilarityelonnginelon
+import com.twittelonr.cr_mixelonr.thriftscala.SimilarityelonnginelonTypelon
+import com.twittelonr.cr_mixelonr.thriftscala.TopicTwelonelont
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.finaglelon.util.DelonfaultTimelonr
+import com.twittelonr.frigatelon.common.util.StatsUtil
+import com.twittelonr.selonrvo.util.MelonmoizingStatsReloncelonivelonr
+import com.twittelonr.simclustelonrs_v2.common.TwelonelontId
+import com.twittelonr.simclustelonrs_v2.thriftscala.TopicId
+import com.twittelonr.snowflakelon.id.SnowflakelonId
+import com.twittelonr.storelonhaus.RelonadablelonStorelon
+import com.twittelonr.util.Duration
+import com.twittelonr.util.Futurelon
+import com.twittelonr.util.Timelon
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
 /**
- * Formerly CrTopic in legacy Content Recommender. This generator finds top Tweets per Topic.
+ * Formelonrly CrTopic in lelongacy Contelonnt Reloncommelonndelonr. This gelonnelonrator finds top Twelonelonts pelonr Topic.
  */
-@Singleton
-class TopicTweetCandidateGenerator @Inject() (
-  certoTopicTweetSimilarityEngine: CertoTopicTweetSimilarityEngine,
-  skitTopicTweetSimilarityEngine: SkitTopicTweetSimilarityEngine,
-  skitHighPrecisionTopicTweetSimilarityEngine: SkitHighPrecisionTopicTweetSimilarityEngine,
-  tweetInfoStore: ReadableStore[TweetId, TweetInfo],
-  timeoutConfig: TimeoutConfig,
-  globalStats: StatsReceiver) {
-  private val timer = DefaultTimer
-  private val stats: StatsReceiver = globalStats.scope(this.getClass.getCanonicalName)
-  private val fetchCandidatesStats = stats.scope("fetchCandidates")
-  private val filterCandidatesStats = stats.scope("filterCandidates")
-  private val tweetyPieFilteredStats = filterCandidatesStats.stat("tweetypie_filtered")
-  private val memoizedStatsReceiver = new MemoizingStatsReceiver(stats)
+@Singlelonton
+class TopicTwelonelontCandidatelonGelonnelonrator @Injelonct() (
+  celonrtoTopicTwelonelontSimilarityelonnginelon: CelonrtoTopicTwelonelontSimilarityelonnginelon,
+  skitTopicTwelonelontSimilarityelonnginelon: SkitTopicTwelonelontSimilarityelonnginelon,
+  skitHighPreloncisionTopicTwelonelontSimilarityelonnginelon: SkitHighPreloncisionTopicTwelonelontSimilarityelonnginelon,
+  twelonelontInfoStorelon: RelonadablelonStorelon[TwelonelontId, TwelonelontInfo],
+  timelonoutConfig: TimelonoutConfig,
+  globalStats: StatsReloncelonivelonr) {
+  privatelon val timelonr = DelonfaultTimelonr
+  privatelon val stats: StatsReloncelonivelonr = globalStats.scopelon(this.gelontClass.gelontCanonicalNamelon)
+  privatelon val felontchCandidatelonsStats = stats.scopelon("felontchCandidatelons")
+  privatelon val filtelonrCandidatelonsStats = stats.scopelon("filtelonrCandidatelons")
+  privatelon val twelonelontyPielonFiltelonrelondStats = filtelonrCandidatelonsStats.stat("twelonelontypielon_filtelonrelond")
+  privatelon val melonmoizelondStatsReloncelonivelonr = nelonw MelonmoizingStatsReloncelonivelonr(stats)
 
-  def get(
-    query: TopicTweetCandidateGeneratorQuery
-  ): Future[Map[Long, Seq[TopicTweet]]] = {
-    val maxTweetAge = query.params(TopicTweetParams.MaxTweetAge)
-    val product = query.product
-    val allStats = memoizedStatsReceiver.scope("all")
-    val perProductStats = memoizedStatsReceiver.scope("perProduct", product.name)
-    StatsUtil.trackMapValueStats(allStats) {
-      StatsUtil.trackMapValueStats(perProductStats) {
-        val result = for {
-          retrievedTweets <- fetchCandidates(query)
-          initialTweetCandidates <- convertToInitialCandidates(retrievedTweets)
-          filteredTweetCandidates <- filterCandidates(
-            initialTweetCandidates,
-            maxTweetAge,
-            query.isVideoOnly,
-            query.impressedTweetList)
-          rankedTweetCandidates = rankCandidates(filteredTweetCandidates)
-          hydratedTweetCandidates = hydrateCandidates(rankedTweetCandidates)
-        } yield {
-          hydratedTweetCandidates.map {
-            case (topicId, topicTweets) =>
-              val topKTweets = topicTweets.take(query.maxNumResults)
-              topicId -> topKTweets
+  delonf gelont(
+    quelonry: TopicTwelonelontCandidatelonGelonnelonratorQuelonry
+  ): Futurelon[Map[Long, Selonq[TopicTwelonelont]]] = {
+    val maxTwelonelontAgelon = quelonry.params(TopicTwelonelontParams.MaxTwelonelontAgelon)
+    val product = quelonry.product
+    val allStats = melonmoizelondStatsReloncelonivelonr.scopelon("all")
+    val pelonrProductStats = melonmoizelondStatsReloncelonivelonr.scopelon("pelonrProduct", product.namelon)
+    StatsUtil.trackMapValuelonStats(allStats) {
+      StatsUtil.trackMapValuelonStats(pelonrProductStats) {
+        val relonsult = for {
+          relontrielonvelondTwelonelonts <- felontchCandidatelons(quelonry)
+          initialTwelonelontCandidatelons <- convelonrtToInitialCandidatelons(relontrielonvelondTwelonelonts)
+          filtelonrelondTwelonelontCandidatelons <- filtelonrCandidatelons(
+            initialTwelonelontCandidatelons,
+            maxTwelonelontAgelon,
+            quelonry.isVidelonoOnly,
+            quelonry.imprelonsselondTwelonelontList)
+          rankelondTwelonelontCandidatelons = rankCandidatelons(filtelonrelondTwelonelontCandidatelons)
+          hydratelondTwelonelontCandidatelons = hydratelonCandidatelons(rankelondTwelonelontCandidatelons)
+        } yielonld {
+          hydratelondTwelonelontCandidatelons.map {
+            caselon (topicId, topicTwelonelonts) =>
+              val topKTwelonelonts = topicTwelonelonts.takelon(quelonry.maxNumRelonsults)
+              topicId -> topKTwelonelonts
           }
         }
-        result.raiseWithin(timeoutConfig.topicTweetEndpointTimeout)(timer)
+        relonsult.raiselonWithin(timelonoutConfig.topicTwelonelontelonndpointTimelonout)(timelonr)
       }
     }
   }
 
-  private def fetchCandidates(
-    query: TopicTweetCandidateGeneratorQuery
-  ): Future[Map[TopicId, Option[Seq[TopicTweetWithScore]]]] = {
-    Future.collect {
-      query.topicIds.map { topicId =>
-        topicId -> StatsUtil.trackOptionStats(fetchCandidatesStats) {
-          Future
+  privatelon delonf felontchCandidatelons(
+    quelonry: TopicTwelonelontCandidatelonGelonnelonratorQuelonry
+  ): Futurelon[Map[TopicId, Option[Selonq[TopicTwelonelontWithScorelon]]]] = {
+    Futurelon.collelonct {
+      quelonry.topicIds.map { topicId =>
+        topicId -> StatsUtil.trackOptionStats(felontchCandidatelonsStats) {
+          Futurelon
             .join(
-              certoTopicTweetSimilarityEngine.get(CertoTopicTweetSimilarityEngine
-                .fromParams(topicId, query.isVideoOnly, query.params)),
-              skitTopicTweetSimilarityEngine
-                .get(SkitTopicTweetSimilarityEngine
-                  .fromParams(topicId, query.isVideoOnly, query.params)),
-              skitHighPrecisionTopicTweetSimilarityEngine
-                .get(SkitHighPrecisionTopicTweetSimilarityEngine
-                  .fromParams(topicId, query.isVideoOnly, query.params))
+              celonrtoTopicTwelonelontSimilarityelonnginelon.gelont(CelonrtoTopicTwelonelontSimilarityelonnginelon
+                .fromParams(topicId, quelonry.isVidelonoOnly, quelonry.params)),
+              skitTopicTwelonelontSimilarityelonnginelon
+                .gelont(SkitTopicTwelonelontSimilarityelonnginelon
+                  .fromParams(topicId, quelonry.isVidelonoOnly, quelonry.params)),
+              skitHighPreloncisionTopicTwelonelontSimilarityelonnginelon
+                .gelont(SkitHighPreloncisionTopicTwelonelontSimilarityelonnginelon
+                  .fromParams(topicId, quelonry.isVidelonoOnly, quelonry.params))
             ).map {
-              case (certoTopicTweets, skitTfgTopicTweets, skitHighPrecisionTopicTweets) =>
-                val uniqueCandidates = (certoTopicTweets.getOrElse(Nil) ++
-                  skitTfgTopicTweets.getOrElse(Nil) ++
-                  skitHighPrecisionTopicTweets.getOrElse(Nil))
-                  .groupBy(_.tweetId).map {
-                    case (_, dupCandidates) => dupCandidates.head
-                  }.toSeq
-                Some(uniqueCandidates)
+              caselon (celonrtoTopicTwelonelonts, skitTfgTopicTwelonelonts, skitHighPreloncisionTopicTwelonelonts) =>
+                val uniquelonCandidatelons = (celonrtoTopicTwelonelonts.gelontOrelonlselon(Nil) ++
+                  skitTfgTopicTwelonelonts.gelontOrelonlselon(Nil) ++
+                  skitHighPreloncisionTopicTwelonelonts.gelontOrelonlselon(Nil))
+                  .groupBy(_.twelonelontId).map {
+                    caselon (_, dupCandidatelons) => dupCandidatelons.helonad
+                  }.toSelonq
+                Somelon(uniquelonCandidatelons)
             }
         }
       }.toMap
     }
   }
 
-  private def convertToInitialCandidates(
-    candidatesMap: Map[TopicId, Option[Seq[TopicTweetWithScore]]]
-  ): Future[Map[TopicId, Seq[InitialCandidate]]] = {
-    val initialCandidates = candidatesMap.map {
-      case (topicId, candidatesOpt) =>
-        val candidates = candidatesOpt.getOrElse(Nil)
-        val tweetIds = candidates.map(_.tweetId).toSet
-        val numTweetsPreFilter = tweetIds.size
-        Future.collect(tweetInfoStore.multiGet(tweetIds)).map { tweetInfos =>
+  privatelon delonf convelonrtToInitialCandidatelons(
+    candidatelonsMap: Map[TopicId, Option[Selonq[TopicTwelonelontWithScorelon]]]
+  ): Futurelon[Map[TopicId, Selonq[InitialCandidatelon]]] = {
+    val initialCandidatelons = candidatelonsMap.map {
+      caselon (topicId, candidatelonsOpt) =>
+        val candidatelons = candidatelonsOpt.gelontOrelonlselon(Nil)
+        val twelonelontIds = candidatelons.map(_.twelonelontId).toSelont
+        val numTwelonelontsPrelonFiltelonr = twelonelontIds.sizelon
+        Futurelon.collelonct(twelonelontInfoStorelon.multiGelont(twelonelontIds)).map { twelonelontInfos =>
           /** *
-           * If tweetInfo does not exist, we will filter out this tweet candidate.
+           * If twelonelontInfo doelons not elonxist, welon will filtelonr out this twelonelont candidatelon.
            */
-          val tweetyPieFilteredInitialCandidates = candidates.collect {
-            case candidate if tweetInfos.getOrElse(candidate.tweetId, None).isDefined =>
-              val tweetInfo = tweetInfos(candidate.tweetId)
-                .getOrElse(throw new IllegalStateException("Check previous line's condition"))
+          val twelonelontyPielonFiltelonrelondInitialCandidatelons = candidatelons.collelonct {
+            caselon candidatelon if twelonelontInfos.gelontOrelonlselon(candidatelon.twelonelontId, Nonelon).isDelonfinelond =>
+              val twelonelontInfo = twelonelontInfos(candidatelon.twelonelontId)
+                .gelontOrelonlselon(throw nelonw IllelongalStatelonelonxcelonption("Chelonck prelonvious linelon's condition"))
 
-              InitialCandidate(
-                tweetId = candidate.tweetId,
-                tweetInfo = tweetInfo,
-                CandidateGenerationInfo(
-                  None,
-                  SimilarityEngineInfo(
-                    similarityEngineType = candidate.similarityEngineType,
-                    modelId = None,
-                    score = Some(candidate.score)),
-                  Seq.empty
+              InitialCandidatelon(
+                twelonelontId = candidatelon.twelonelontId,
+                twelonelontInfo = twelonelontInfo,
+                CandidatelonGelonnelonrationInfo(
+                  Nonelon,
+                  SimilarityelonnginelonInfo(
+                    similarityelonnginelonTypelon = candidatelon.similarityelonnginelonTypelon,
+                    modelonlId = Nonelon,
+                    scorelon = Somelon(candidatelon.scorelon)),
+                  Selonq.elonmpty
                 )
               )
           }
-          val numTweetsPostFilter = tweetyPieFilteredInitialCandidates.size
-          tweetyPieFilteredStats.add(numTweetsPreFilter - numTweetsPostFilter)
-          topicId -> tweetyPieFilteredInitialCandidates
+          val numTwelonelontsPostFiltelonr = twelonelontyPielonFiltelonrelondInitialCandidatelons.sizelon
+          twelonelontyPielonFiltelonrelondStats.add(numTwelonelontsPrelonFiltelonr - numTwelonelontsPostFiltelonr)
+          topicId -> twelonelontyPielonFiltelonrelondInitialCandidatelons
         }
     }
 
-    Future.collect(initialCandidates.toSeq).map(_.toMap)
+    Futurelon.collelonct(initialCandidatelons.toSelonq).map(_.toMap)
   }
 
-  private def filterCandidates(
-    topicTweetMap: Map[TopicId, Seq[InitialCandidate]],
-    maxTweetAge: Duration,
-    isVideoOnly: Boolean,
-    excludeTweetIds: Set[TweetId]
-  ): Future[Map[TopicId, Seq[InitialCandidate]]] = {
+  privatelon delonf filtelonrCandidatelons(
+    topicTwelonelontMap: Map[TopicId, Selonq[InitialCandidatelon]],
+    maxTwelonelontAgelon: Duration,
+    isVidelonoOnly: Boolelonan,
+    elonxcludelonTwelonelontIds: Selont[TwelonelontId]
+  ): Futurelon[Map[TopicId, Selonq[InitialCandidatelon]]] = {
 
-    val earliestTweetId = SnowflakeId.firstIdFor(Time.now - maxTweetAge)
+    val elonarlielonstTwelonelontId = SnowflakelonId.firstIdFor(Timelon.now - maxTwelonelontAgelon)
 
-    val filteredResults = topicTweetMap.map {
-      case (topicId, tweetsWithScore) =>
-        topicId -> StatsUtil.trackItemsStats(filterCandidatesStats) {
+    val filtelonrelondRelonsults = topicTwelonelontMap.map {
+      caselon (topicId, twelonelontsWithScorelon) =>
+        topicId -> StatsUtil.trackItelonmsStats(filtelonrCandidatelonsStats) {
 
-          val timeFilteredTweets =
-            tweetsWithScore.filter { tweetWithScore =>
-              tweetWithScore.tweetId >= earliestTweetId && !excludeTweetIds.contains(
-                tweetWithScore.tweetId)
+          val timelonFiltelonrelondTwelonelonts =
+            twelonelontsWithScorelon.filtelonr { twelonelontWithScorelon =>
+              twelonelontWithScorelon.twelonelontId >= elonarlielonstTwelonelontId && !elonxcludelonTwelonelontIds.contains(
+                twelonelontWithScorelon.twelonelontId)
             }
 
-          filterCandidatesStats
-            .stat("exclude_and_time_filtered").add(tweetsWithScore.size - timeFilteredTweets.size)
+          filtelonrCandidatelonsStats
+            .stat("elonxcludelon_and_timelon_filtelonrelond").add(twelonelontsWithScorelon.sizelon - timelonFiltelonrelondTwelonelonts.sizelon)
 
-          val tweetNudityFilteredTweets =
-            timeFilteredTweets.collect {
-              case tweet if tweet.tweetInfo.isPassTweetMediaNudityTag.contains(true) => tweet
+          val twelonelontNudityFiltelonrelondTwelonelonts =
+            timelonFiltelonrelondTwelonelonts.collelonct {
+              caselon twelonelont if twelonelont.twelonelontInfo.isPassTwelonelontMelondiaNudityTag.contains(truelon) => twelonelont
             }
 
-          filterCandidatesStats
-            .stat("tweet_nudity_filtered").add(
-              timeFilteredTweets.size - tweetNudityFilteredTweets.size)
+          filtelonrCandidatelonsStats
+            .stat("twelonelont_nudity_filtelonrelond").add(
+              timelonFiltelonrelondTwelonelonts.sizelon - twelonelontNudityFiltelonrelondTwelonelonts.sizelon)
 
-          val userNudityFilteredTweets =
-            tweetNudityFilteredTweets.collect {
-              case tweet if tweet.tweetInfo.isPassUserNudityRateStrict.contains(true) => tweet
+          val uselonrNudityFiltelonrelondTwelonelonts =
+            twelonelontNudityFiltelonrelondTwelonelonts.collelonct {
+              caselon twelonelont if twelonelont.twelonelontInfo.isPassUselonrNudityRatelonStrict.contains(truelon) => twelonelont
             }
 
-          filterCandidatesStats
-            .stat("user_nudity_filtered").add(
-              tweetNudityFilteredTweets.size - userNudityFilteredTweets.size)
+          filtelonrCandidatelonsStats
+            .stat("uselonr_nudity_filtelonrelond").add(
+              twelonelontNudityFiltelonrelondTwelonelonts.sizelon - uselonrNudityFiltelonrelondTwelonelonts.sizelon)
 
-          val videoFilteredTweets = {
-            if (isVideoOnly) {
-              userNudityFilteredTweets.collect {
-                case tweet if tweet.tweetInfo.hasVideo.contains(true) => tweet
+          val videlonoFiltelonrelondTwelonelonts = {
+            if (isVidelonoOnly) {
+              uselonrNudityFiltelonrelondTwelonelonts.collelonct {
+                caselon twelonelont if twelonelont.twelonelontInfo.hasVidelono.contains(truelon) => twelonelont
               }
-            } else {
-              userNudityFilteredTweets
+            } elonlselon {
+              uselonrNudityFiltelonrelondTwelonelonts
             }
           }
 
-          Future.value(videoFilteredTweets)
+          Futurelon.valuelon(videlonoFiltelonrelondTwelonelonts)
         }
     }
-    Future.collect(filteredResults)
+    Futurelon.collelonct(filtelonrelondRelonsults)
   }
 
-  private def rankCandidates(
-    tweetCandidatesMap: Map[TopicId, Seq[InitialCandidate]]
-  ): Map[TopicId, Seq[InitialCandidate]] = {
-    tweetCandidatesMap.mapValues { tweetCandidates =>
-      tweetCandidates.sortBy { candidate =>
-        -candidate.tweetInfo.favCount
+  privatelon delonf rankCandidatelons(
+    twelonelontCandidatelonsMap: Map[TopicId, Selonq[InitialCandidatelon]]
+  ): Map[TopicId, Selonq[InitialCandidatelon]] = {
+    twelonelontCandidatelonsMap.mapValuelons { twelonelontCandidatelons =>
+      twelonelontCandidatelons.sortBy { candidatelon =>
+        -candidatelon.twelonelontInfo.favCount
       }
     }
   }
 
-  private def hydrateCandidates(
-    topicCandidatesMap: Map[TopicId, Seq[InitialCandidate]]
-  ): Map[Long, Seq[TopicTweet]] = {
-    topicCandidatesMap.map {
-      case (topicId, tweetsWithScore) =>
-        topicId.entityId ->
-          tweetsWithScore.map { tweetWithScore =>
-            val similarityEngineType: SimilarityEngineType =
-              tweetWithScore.candidateGenerationInfo.similarityEngineInfo.similarityEngineType
-            TopicTweet(
-              tweetId = tweetWithScore.tweetId,
-              score = tweetWithScore.getSimilarityScore,
-              similarityEngineType = similarityEngineType
+  privatelon delonf hydratelonCandidatelons(
+    topicCandidatelonsMap: Map[TopicId, Selonq[InitialCandidatelon]]
+  ): Map[Long, Selonq[TopicTwelonelont]] = {
+    topicCandidatelonsMap.map {
+      caselon (topicId, twelonelontsWithScorelon) =>
+        topicId.elonntityId ->
+          twelonelontsWithScorelon.map { twelonelontWithScorelon =>
+            val similarityelonnginelonTypelon: SimilarityelonnginelonTypelon =
+              twelonelontWithScorelon.candidatelonGelonnelonrationInfo.similarityelonnginelonInfo.similarityelonnginelonTypelon
+            TopicTwelonelont(
+              twelonelontId = twelonelontWithScorelon.twelonelontId,
+              scorelon = twelonelontWithScorelon.gelontSimilarityScorelon,
+              similarityelonnginelonTypelon = similarityelonnginelonTypelon
             )
           }
     }

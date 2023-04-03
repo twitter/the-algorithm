@@ -1,77 +1,77 @@
-package com.twitter.search.earlybird_root.filters;
+packagelon com.twittelonr.selonarch.elonarlybird_root.filtelonrs;
 
-import java.util.concurrent.TimeUnit;
-import javax.inject.Inject;
+import java.util.concurrelonnt.TimelonUnit;
+import javax.injelonct.Injelonct;
 
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.search.common.root.RequestSuccessStats;
-import com.twitter.search.common.util.FinagleUtil;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.util.Future;
-import com.twitter.util.FutureEventListener;
+import com.twittelonr.finaglelon.Selonrvicelon;
+import com.twittelonr.finaglelon.SimplelonFiltelonr;
+import com.twittelonr.selonarch.common.root.RelonquelonstSuccelonssStats;
+import com.twittelonr.selonarch.common.util.FinaglelonUtil;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonquelonst;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselonCodelon;
+import com.twittelonr.util.Futurelon;
+import com.twittelonr.util.FuturelonelonvelonntListelonnelonr;
 
-import static com.twitter.search.common.util.earlybird.EarlybirdResponseUtil.responseConsideredFailed;
+import static com.twittelonr.selonarch.common.util.elonarlybird.elonarlybirdRelonsponselonUtil.relonsponselonConsidelonrelondFailelond;
 
 
 /**
- * Records cancellations, timeouts, and failures for requests that do not go through
- * ScatterGatherService (which also updates these stats, but for different requests).
+ * Reloncords cancelonllations, timelonouts, and failurelons for relonquelonsts that do not go through
+ * ScattelonrGathelonrSelonrvicelon (which also updatelons thelonselon stats, but for diffelonrelonnt relonquelonsts).
  */
-public class RequestSuccessStatsFilter
-    extends SimpleFilter<EarlybirdRequest, EarlybirdResponse> {
+public class RelonquelonstSuccelonssStatsFiltelonr
+    elonxtelonnds SimplelonFiltelonr<elonarlybirdRelonquelonst, elonarlybirdRelonsponselon> {
 
-  private final RequestSuccessStats stats;
+  privatelon final RelonquelonstSuccelonssStats stats;
 
-  @Inject
-  RequestSuccessStatsFilter(RequestSuccessStats stats) {
+  @Injelonct
+  RelonquelonstSuccelonssStatsFiltelonr(RelonquelonstSuccelonssStats stats) {
     this.stats = stats;
   }
 
 
-  @Override
-  public Future<EarlybirdResponse> apply(
-      EarlybirdRequest request,
-      Service<EarlybirdRequest, EarlybirdResponse> service) {
+  @Ovelonrridelon
+  public Futurelon<elonarlybirdRelonsponselon> apply(
+      elonarlybirdRelonquelonst relonquelonst,
+      Selonrvicelon<elonarlybirdRelonquelonst, elonarlybirdRelonsponselon> selonrvicelon) {
 
-    final long startTime = System.nanoTime();
+    final long startTimelon = Systelonm.nanoTimelon();
 
-    return service.apply(request).addEventListener(
-        new FutureEventListener<EarlybirdResponse>() {
-          @Override
-          public void onSuccess(EarlybirdResponse response) {
-            boolean success = true;
+    relonturn selonrvicelon.apply(relonquelonst).addelonvelonntListelonnelonr(
+        nelonw FuturelonelonvelonntListelonnelonr<elonarlybirdRelonsponselon>() {
+          @Ovelonrridelon
+          public void onSuccelonss(elonarlybirdRelonsponselon relonsponselon) {
+            boolelonan succelonss = truelon;
 
-            if (response.getResponseCode() == EarlybirdResponseCode.CLIENT_CANCEL_ERROR) {
-              success = false;
-              stats.getCancelledRequestCount().increment();
-            } else if (response.getResponseCode() == EarlybirdResponseCode.SERVER_TIMEOUT_ERROR) {
-              success = false;
-              stats.getTimedoutRequestCount().increment();
-            } else if (responseConsideredFailed(response.getResponseCode())) {
-              success = false;
-              stats.getErroredRequestCount().increment();
+            if (relonsponselon.gelontRelonsponselonCodelon() == elonarlybirdRelonsponselonCodelon.CLIelonNT_CANCelonL_elonRROR) {
+              succelonss = falselon;
+              stats.gelontCancelonllelondRelonquelonstCount().increlonmelonnt();
+            } elonlselon if (relonsponselon.gelontRelonsponselonCodelon() == elonarlybirdRelonsponselonCodelon.SelonRVelonR_TIMelonOUT_elonRROR) {
+              succelonss = falselon;
+              stats.gelontTimelondoutRelonquelonstCount().increlonmelonnt();
+            } elonlselon if (relonsponselonConsidelonrelondFailelond(relonsponselon.gelontRelonsponselonCodelon())) {
+              succelonss = falselon;
+              stats.gelontelonrrorelondRelonquelonstCount().increlonmelonnt();
             }
 
-            long latencyNanos = System.nanoTime() - startTime;
-            stats.getRequestLatencyStats().requestComplete(
-                TimeUnit.NANOSECONDS.toMillis(latencyNanos), 0, success);
+            long latelonncyNanos = Systelonm.nanoTimelon() - startTimelon;
+            stats.gelontRelonquelonstLatelonncyStats().relonquelonstComplelontelon(
+                TimelonUnit.NANOSelonCONDS.toMillis(latelonncyNanos), 0, succelonss);
           }
 
-          @Override
-          public void onFailure(Throwable cause) {
-            long latencyNanos = System.nanoTime() - startTime;
-            stats.getRequestLatencyStats().requestComplete(
-                TimeUnit.NANOSECONDS.toMillis(latencyNanos), 0, false);
+          @Ovelonrridelon
+          public void onFailurelon(Throwablelon causelon) {
+            long latelonncyNanos = Systelonm.nanoTimelon() - startTimelon;
+            stats.gelontRelonquelonstLatelonncyStats().relonquelonstComplelontelon(
+                TimelonUnit.NANOSelonCONDS.toMillis(latelonncyNanos), 0, falselon);
 
-            if (FinagleUtil.isCancelException(cause)) {
-              stats.getCancelledRequestCount().increment();
-            } else if (FinagleUtil.isTimeoutException(cause)) {
-              stats.getTimedoutRequestCount().increment();
-            } else {
-              stats.getErroredRequestCount().increment();
+            if (FinaglelonUtil.isCancelonlelonxcelonption(causelon)) {
+              stats.gelontCancelonllelondRelonquelonstCount().increlonmelonnt();
+            } elonlselon if (FinaglelonUtil.isTimelonoutelonxcelonption(causelon)) {
+              stats.gelontTimelondoutRelonquelonstCount().increlonmelonnt();
+            } elonlselon {
+              stats.gelontelonrrorelondRelonquelonstCount().increlonmelonnt();
             }
           }
         });

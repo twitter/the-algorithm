@@ -1,17 +1,17 @@
-package com.twitter.search.earlybird.exception;
+packagelon com.twittelonr.selonarch.elonarlybird.elonxcelonption;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 
-public class FlushVersionMismatchException extends IOException {
-  public FlushVersionMismatchException(Throwable cause) {
-    super(cause);
+public class FlushVelonrsionMismatchelonxcelonption elonxtelonnds IOelonxcelonption {
+  public FlushVelonrsionMismatchelonxcelonption(Throwablelon causelon) {
+    supelonr(causelon);
   }
 
-  public FlushVersionMismatchException(String message) {
-    super(message);
+  public FlushVelonrsionMismatchelonxcelonption(String melonssagelon) {
+    supelonr(melonssagelon);
   }
 
-  public FlushVersionMismatchException(String message, Throwable cause) {
-    super(message, cause);
+  public FlushVelonrsionMismatchelonxcelonption(String melonssagelon, Throwablelon causelon) {
+    supelonr(melonssagelon, causelon);
   }
 }

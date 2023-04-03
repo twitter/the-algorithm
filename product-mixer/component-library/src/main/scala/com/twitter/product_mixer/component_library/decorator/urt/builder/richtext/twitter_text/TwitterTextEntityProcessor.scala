@@ -1,51 +1,51 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.richtext.twitter_text
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.richtelonxt.twittelonr_telonxt
 
-import com.twitter.product_mixer.component_library.decorator.urt.builder.richtext.RichTextReferenceObjectBuilder
-import com.twitter.product_mixer.component_library.decorator.urt.builder.richtext.twitter_text.TwitterTextEntityProcessor.DefaultReferenceObjectBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ExternalUrl
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Url
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.ReferenceObject
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextCashtag
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextHashtag
-import com.twitter.twittertext.Extractor
-import scala.collection.convert.ImplicitConversions._
+import com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.richtelonxt.RichTelonxtRelonfelonrelonncelonObjelonctBuildelonr
+import com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.richtelonxt.twittelonr_telonxt.TwittelonrTelonxtelonntityProcelonssor.DelonfaultRelonfelonrelonncelonObjelonctBuildelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.elonxtelonrnalUrl
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.Url
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.richtelonxt.RelonfelonrelonncelonObjelonct
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.richtelonxt.RichTelonxtCashtag
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.richtelonxt.RichTelonxtHashtag
+import com.twittelonr.twittelonrtelonxt.elonxtractor
+import scala.collelonction.convelonrt.ImplicitConvelonrsions._
 
-object TwitterTextEntityProcessor {
-  object DefaultReferenceObjectBuilder extends RichTextReferenceObjectBuilder {
-    def apply(twitterEntity: Extractor.Entity): Option[ReferenceObject] = {
-      twitterEntity.getType match {
-        case Extractor.Entity.Type.URL =>
-          Some(Url(ExternalUrl, twitterEntity.getValue))
-        case Extractor.Entity.Type.HASHTAG =>
-          Some(RichTextHashtag(twitterEntity.getValue))
-        case Extractor.Entity.Type.CASHTAG =>
-          Some(RichTextCashtag(twitterEntity.getValue))
-        case _ => None
+objelonct TwittelonrTelonxtelonntityProcelonssor {
+  objelonct DelonfaultRelonfelonrelonncelonObjelonctBuildelonr elonxtelonnds RichTelonxtRelonfelonrelonncelonObjelonctBuildelonr {
+    delonf apply(twittelonrelonntity: elonxtractor.elonntity): Option[RelonfelonrelonncelonObjelonct] = {
+      twittelonrelonntity.gelontTypelon match {
+        caselon elonxtractor.elonntity.Typelon.URL =>
+          Somelon(Url(elonxtelonrnalUrl, twittelonrelonntity.gelontValuelon))
+        caselon elonxtractor.elonntity.Typelon.HASHTAG =>
+          Somelon(RichTelonxtHashtag(twittelonrelonntity.gelontValuelon))
+        caselon elonxtractor.elonntity.Typelon.CASHTAG =>
+          Somelon(RichTelonxtCashtag(twittelonrelonntity.gelontValuelon))
+        caselon _ => Nonelon
       }
     }
   }
 }
 
 /**
- * Add the corresponding  [[RichTextEntity]] extraction logic into [[TwitterTextRenderer]].
- * The [[TwitterTextRenderer]] after being processed will extract the defined entities.
+ * Add thelon correlonsponding  [[RichTelonxtelonntity]] elonxtraction logic into [[TwittelonrTelonxtRelonndelonrelonr]].
+ * Thelon [[TwittelonrTelonxtRelonndelonrelonr]] aftelonr beloning procelonsselond will elonxtract thelon delonfinelond elonntitielons.
  */
-case class TwitterTextEntityProcessor(
-  twitterTextReferenceObjectBuilder: RichTextReferenceObjectBuilder = DefaultReferenceObjectBuilder)
-    extends TwitterTextRendererProcessor {
+caselon class TwittelonrTelonxtelonntityProcelonssor(
+  twittelonrTelonxtRelonfelonrelonncelonObjelonctBuildelonr: RichTelonxtRelonfelonrelonncelonObjelonctBuildelonr = DelonfaultRelonfelonrelonncelonObjelonctBuildelonr)
+    elonxtelonnds TwittelonrTelonxtRelonndelonrelonrProcelonssor {
 
-  private[this] val extractor = new Extractor()
+  privatelon[this] val elonxtractor = nelonw elonxtractor()
 
-  def process(
-    twitterTextRenderer: TwitterTextRenderer
-  ): TwitterTextRenderer = {
-    val twitterEntities = extractor.extractEntitiesWithIndices(twitterTextRenderer.text)
+  delonf procelonss(
+    twittelonrTelonxtRelonndelonrelonr: TwittelonrTelonxtRelonndelonrelonr
+  ): TwittelonrTelonxtRelonndelonrelonr = {
+    val twittelonrelonntitielons = elonxtractor.elonxtractelonntitielonsWithIndicelons(twittelonrTelonxtRelonndelonrelonr.telonxt)
 
-    twitterEntities.foreach { twitterEntity =>
-      twitterTextReferenceObjectBuilder(twitterEntity).foreach { refObject =>
-        twitterTextRenderer.setRefObject(twitterEntity.getStart, twitterEntity.getEnd, refObject)
+    twittelonrelonntitielons.forelonach { twittelonrelonntity =>
+      twittelonrTelonxtRelonfelonrelonncelonObjelonctBuildelonr(twittelonrelonntity).forelonach { relonfObjelonct =>
+        twittelonrTelonxtRelonndelonrelonr.selontRelonfObjelonct(twittelonrelonntity.gelontStart, twittelonrelonntity.gelontelonnd, relonfObjelonct)
       }
     }
-    twitterTextRenderer
+    twittelonrTelonxtRelonndelonrelonr
   }
 }

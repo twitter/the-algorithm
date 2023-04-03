@@ -1,56 +1,56 @@
-package com.twitter.home_mixer.functional_component.feature_hydrator.real_time_aggregates
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator.relonal_timelon_aggrelongatelons
 
-import com.google.inject.name.Named
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.UserEngagementCache
-import com.twitter.ml.api.DataRecord
-import com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure
-import com.twitter.product_mixer.core.feature.datarecord.DataRecordInAFeature
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.servo.cache.ReadCache
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.AggregateGroup
-import com.twitter.timelines.prediction.common.aggregates.real_time.TimelinesOnlineAggregationFeaturesOnlyConfig._
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.googlelon.injelonct.namelon.Namelond
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.homelon_mixelonr.param.HomelonMixelonrInjelonctionNamelons.UselonrelonngagelonmelonntCachelon
+import com.twittelonr.ml.api.DataReloncord
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.FelonaturelonWithDelonfaultOnFailurelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.datareloncord.DataReloncordInAFelonaturelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.FelonaturelonHydratorIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.selonrvo.cachelon.RelonadCachelon
+import com.twittelonr.timelonlinelons.data_procelonssing.ml_util.aggrelongation_framelonwork.AggrelongatelonGroup
+import com.twittelonr.timelonlinelons.prelondiction.common.aggrelongatelons.relonal_timelon.TimelonlinelonsOnlinelonAggrelongationFelonaturelonsOnlyConfig._
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-object UserEngagementRealTimeAggregateFeature
-    extends DataRecordInAFeature[PipelineQuery]
-    with FeatureWithDefaultOnFailure[PipelineQuery, DataRecord] {
-  override def defaultValue: DataRecord = new DataRecord()
+objelonct UselonrelonngagelonmelonntRelonalTimelonAggrelongatelonFelonaturelon
+    elonxtelonnds DataReloncordInAFelonaturelon[PipelonlinelonQuelonry]
+    with FelonaturelonWithDelonfaultOnFailurelon[PipelonlinelonQuelonry, DataReloncord] {
+  ovelonrridelon delonf delonfaultValuelon: DataReloncord = nelonw DataReloncord()
 }
 
-@Singleton
-class UserEngagementRealTimeAggregatesFeatureHydrator @Inject() (
-  @Named(UserEngagementCache) override val client: ReadCache[Long, DataRecord],
-  override val statsReceiver: StatsReceiver)
-    extends BaseRealTimeAggregateQueryFeatureHydrator[Long] {
+@Singlelonton
+class UselonrelonngagelonmelonntRelonalTimelonAggrelongatelonsFelonaturelonHydrator @Injelonct() (
+  @Namelond(UselonrelonngagelonmelonntCachelon) ovelonrridelon val clielonnt: RelonadCachelon[Long, DataReloncord],
+  ovelonrridelon val statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds BaselonRelonalTimelonAggrelongatelonQuelonryFelonaturelonHydrator[Long] {
 
-  override val identifier: FeatureHydratorIdentifier =
-    FeatureHydratorIdentifier("UserEngagementRealTimeAggregates")
+  ovelonrridelon val idelonntifielonr: FelonaturelonHydratorIdelonntifielonr =
+    FelonaturelonHydratorIdelonntifielonr("UselonrelonngagelonmelonntRelonalTimelonAggrelongatelons")
 
-  override val outputFeature: DataRecordInAFeature[PipelineQuery] =
-    UserEngagementRealTimeAggregateFeature
+  ovelonrridelon val outputFelonaturelon: DataReloncordInAFelonaturelon[PipelonlinelonQuelonry] =
+    UselonrelonngagelonmelonntRelonalTimelonAggrelongatelonFelonaturelon
 
-  val aggregateGroups: Seq[AggregateGroup] = Seq(
-    userEngagementRealTimeAggregatesProd,
-    userShareEngagementsRealTimeAggregates,
-    userBCEDwellEngagementsRealTimeAggregates,
-    userEngagement48HourRealTimeAggregatesProd,
-    userNegativeEngagementAuthorUserState72HourRealTimeAggregates,
-    userNegativeEngagementAuthorUserStateRealTimeAggregates,
-    userProfileEngagementRealTimeAggregates,
+  val aggrelongatelonGroups: Selonq[AggrelongatelonGroup] = Selonq(
+    uselonrelonngagelonmelonntRelonalTimelonAggrelongatelonsProd,
+    uselonrSharelonelonngagelonmelonntsRelonalTimelonAggrelongatelons,
+    uselonrBCelonDwelonllelonngagelonmelonntsRelonalTimelonAggrelongatelons,
+    uselonrelonngagelonmelonnt48HourRelonalTimelonAggrelongatelonsProd,
+    uselonrNelongativelonelonngagelonmelonntAuthorUselonrStatelon72HourRelonalTimelonAggrelongatelons,
+    uselonrNelongativelonelonngagelonmelonntAuthorUselonrStatelonRelonalTimelonAggrelongatelons,
+    uselonrProfilelonelonngagelonmelonntRelonalTimelonAggrelongatelons,
   )
 
-  override val aggregateGroupToPrefix: Map[AggregateGroup, String] = Map(
-    userEngagementRealTimeAggregatesProd -> "user.timelines.user_share_engagements_real_time_aggregates.",
-    userBCEDwellEngagementsRealTimeAggregates -> "user.timelines.user_bce_dwell_engagements_real_time_aggregates.",
-    userEngagement48HourRealTimeAggregatesProd -> "user.timelines.user_engagement_48_hour_real_time_aggregates.",
-    userNegativeEngagementAuthorUserState72HourRealTimeAggregates -> "user.timelines.user_negative_engagement_author_user_state_72_hour_real_time_aggregates.",
-    userProfileEngagementRealTimeAggregates -> "user.timelines.user_profile_engagement_real_time_aggregates."
+  ovelonrridelon val aggrelongatelonGroupToPrelonfix: Map[AggrelongatelonGroup, String] = Map(
+    uselonrelonngagelonmelonntRelonalTimelonAggrelongatelonsProd -> "uselonr.timelonlinelons.uselonr_sharelon_elonngagelonmelonnts_relonal_timelon_aggrelongatelons.",
+    uselonrBCelonDwelonllelonngagelonmelonntsRelonalTimelonAggrelongatelons -> "uselonr.timelonlinelons.uselonr_bcelon_dwelonll_elonngagelonmelonnts_relonal_timelon_aggrelongatelons.",
+    uselonrelonngagelonmelonnt48HourRelonalTimelonAggrelongatelonsProd -> "uselonr.timelonlinelons.uselonr_elonngagelonmelonnt_48_hour_relonal_timelon_aggrelongatelons.",
+    uselonrNelongativelonelonngagelonmelonntAuthorUselonrStatelon72HourRelonalTimelonAggrelongatelons -> "uselonr.timelonlinelons.uselonr_nelongativelon_elonngagelonmelonnt_author_uselonr_statelon_72_hour_relonal_timelon_aggrelongatelons.",
+    uselonrProfilelonelonngagelonmelonntRelonalTimelonAggrelongatelons -> "uselonr.timelonlinelons.uselonr_profilelon_elonngagelonmelonnt_relonal_timelon_aggrelongatelons."
   )
 
-  override def keysFromQueryAndCandidates(query: PipelineQuery): Option[Long] = {
-    Some(query.getRequiredUserId)
+  ovelonrridelon delonf kelonysFromQuelonryAndCandidatelons(quelonry: PipelonlinelonQuelonry): Option[Long] = {
+    Somelon(quelonry.gelontRelonquirelondUselonrId)
   }
 }

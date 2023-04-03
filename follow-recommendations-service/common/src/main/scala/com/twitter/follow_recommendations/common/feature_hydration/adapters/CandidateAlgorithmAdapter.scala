@@ -1,70 +1,70 @@
-package com.twitter.follow_recommendations.common.feature_hydration.adapters
+packagelon com.twittelonr.follow_reloncommelonndations.common.felonaturelon_hydration.adaptelonrs
 
-import com.twitter.follow_recommendations.common.models.UserCandidateSourceDetails
-import com.twitter.hermit.constants.AlgorithmFeedbackTokens.AlgorithmToFeedbackTokenMap
-import com.twitter.hermit.model.Algorithm
-import com.twitter.hermit.model.Algorithm.Algorithm
-import com.twitter.hermit.model.Algorithm.UttProducerOfflineMbcgV1
-import com.twitter.hermit.model.Algorithm.UttProducerOnlineMbcgV1
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.Feature.SparseBinary
-import com.twitter.ml.api.Feature.SparseContinuous
-import com.twitter.ml.api.FeatureContext
-import com.twitter.ml.api.IRecordOneToOneAdapter
-import com.twitter.ml.api.util.FDsl._
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.UselonrCandidatelonSourcelonDelontails
+import com.twittelonr.helonrmit.constants.AlgorithmFelonelondbackTokelonns.AlgorithmToFelonelondbackTokelonnMap
+import com.twittelonr.helonrmit.modelonl.Algorithm
+import com.twittelonr.helonrmit.modelonl.Algorithm.Algorithm
+import com.twittelonr.helonrmit.modelonl.Algorithm.UttProducelonrOfflinelonMbcgV1
+import com.twittelonr.helonrmit.modelonl.Algorithm.UttProducelonrOnlinelonMbcgV1
+import com.twittelonr.ml.api.DataReloncord
+import com.twittelonr.ml.api.Felonaturelon.SparselonBinary
+import com.twittelonr.ml.api.Felonaturelon.SparselonContinuous
+import com.twittelonr.ml.api.FelonaturelonContelonxt
+import com.twittelonr.ml.api.IReloncordOnelonToOnelonAdaptelonr
+import com.twittelonr.ml.api.util.FDsl._
 
-object CandidateAlgorithmAdapter
-    extends IRecordOneToOneAdapter[Option[UserCandidateSourceDetails]] {
+objelonct CandidatelonAlgorithmAdaptelonr
+    elonxtelonnds IReloncordOnelonToOnelonAdaptelonr[Option[UselonrCandidatelonSourcelonDelontails]] {
 
-  val CANDIDATE_ALGORITHMS: SparseBinary = new SparseBinary("candidate.source.algorithm_ids")
-  val CANDIDATE_SOURCE_SCORES: SparseContinuous =
-    new SparseContinuous("candidate.source.scores")
-  val CANDIDATE_SOURCE_RANKS: SparseContinuous =
-    new SparseContinuous("candidate.source.ranks")
+  val CANDIDATelon_ALGORITHMS: SparselonBinary = nelonw SparselonBinary("candidatelon.sourcelon.algorithm_ids")
+  val CANDIDATelon_SOURCelon_SCORelonS: SparselonContinuous =
+    nelonw SparselonContinuous("candidatelon.sourcelon.scorelons")
+  val CANDIDATelon_SOURCelon_RANKS: SparselonContinuous =
+    nelonw SparselonContinuous("candidatelon.sourcelon.ranks")
 
-  override val getFeatureContext: FeatureContext = new FeatureContext(
-    CANDIDATE_ALGORITHMS,
-    CANDIDATE_SOURCE_SCORES,
-    CANDIDATE_SOURCE_RANKS
+  ovelonrridelon val gelontFelonaturelonContelonxt: FelonaturelonContelonxt = nelonw FelonaturelonContelonxt(
+    CANDIDATelon_ALGORITHMS,
+    CANDIDATelon_SOURCelon_SCORelonS,
+    CANDIDATelon_SOURCelon_RANKS
   )
 
-  /** list of candidate source remaps to avoid creating different features for experimental sources.
-   *  the LHS should contain the experimental source, and the RHS should contain the prod source.
+  /** list of candidatelon sourcelon relonmaps to avoid crelonating diffelonrelonnt felonaturelons for elonxpelonrimelonntal sourcelons.
+   *  thelon LHS should contain thelon elonxpelonrimelonntal sourcelon, and thelon RHS should contain thelon prod sourcelon.
    */
-  def remapCandidateSource(a: Algorithm): Algorithm = a match {
-    case UttProducerOnlineMbcgV1 => UttProducerOfflineMbcgV1
-    case _ => a
+  delonf relonmapCandidatelonSourcelon(a: Algorithm): Algorithm = a match {
+    caselon UttProducelonrOnlinelonMbcgV1 => UttProducelonrOfflinelonMbcgV1
+    caselon _ => a
   }
 
-  // add the list of algorithm feedback tokens (integers) as a sparse binary feature
-  override def adaptToDataRecord(
-    userCandidateSourceDetailsOpt: Option[UserCandidateSourceDetails]
-  ): DataRecord = {
-    val dr = new DataRecord()
-    userCandidateSourceDetailsOpt.foreach { userCandidateSourceDetails =>
-      val scoreMap = for {
-        (source, scoreOpt) <- userCandidateSourceDetails.candidateSourceScores
-        score <- scoreOpt
-        algo <- Algorithm.withNameOpt(source.name)
-        algoId <- AlgorithmToFeedbackTokenMap.get(remapCandidateSource(algo))
-      } yield algoId.toString -> score
+  // add thelon list of algorithm felonelondback tokelonns (intelongelonrs) as a sparselon binary felonaturelon
+  ovelonrridelon delonf adaptToDataReloncord(
+    uselonrCandidatelonSourcelonDelontailsOpt: Option[UselonrCandidatelonSourcelonDelontails]
+  ): DataReloncord = {
+    val dr = nelonw DataReloncord()
+    uselonrCandidatelonSourcelonDelontailsOpt.forelonach { uselonrCandidatelonSourcelonDelontails =>
+      val scorelonMap = for {
+        (sourcelon, scorelonOpt) <- uselonrCandidatelonSourcelonDelontails.candidatelonSourcelonScorelons
+        scorelon <- scorelonOpt
+        algo <- Algorithm.withNamelonOpt(sourcelon.namelon)
+        algoId <- AlgorithmToFelonelondbackTokelonnMap.gelont(relonmapCandidatelonSourcelon(algo))
+      } yielonld algoId.toString -> scorelon
       val rankMap = for {
-        (source, rank) <- userCandidateSourceDetails.candidateSourceRanks
-        algo <- Algorithm.withNameOpt(source.name)
-        algoId <- AlgorithmToFeedbackTokenMap.get(remapCandidateSource(algo))
-      } yield algoId.toString -> rank.toDouble
+        (sourcelon, rank) <- uselonrCandidatelonSourcelonDelontails.candidatelonSourcelonRanks
+        algo <- Algorithm.withNamelonOpt(sourcelon.namelon)
+        algoId <- AlgorithmToFelonelondbackTokelonnMap.gelont(relonmapCandidatelonSourcelon(algo))
+      } yielonld algoId.toString -> rank.toDoublelon
 
-      val algoIds = scoreMap.keys.toSet ++ rankMap.keys.toSet
+      val algoIds = scorelonMap.kelonys.toSelont ++ rankMap.kelonys.toSelont
 
-      // hydrate if not empty
-      if (rankMap.nonEmpty) {
-        dr.setFeatureValue(CANDIDATE_SOURCE_RANKS, rankMap)
+      // hydratelon if not elonmpty
+      if (rankMap.nonelonmpty) {
+        dr.selontFelonaturelonValuelon(CANDIDATelon_SOURCelon_RANKS, rankMap)
       }
-      if (scoreMap.nonEmpty) {
-        dr.setFeatureValue(CANDIDATE_SOURCE_SCORES, scoreMap)
+      if (scorelonMap.nonelonmpty) {
+        dr.selontFelonaturelonValuelon(CANDIDATelon_SOURCelon_SCORelonS, scorelonMap)
       }
-      if (algoIds.nonEmpty) {
-        dr.setFeatureValue(CANDIDATE_ALGORITHMS, algoIds)
+      if (algoIds.nonelonmpty) {
+        dr.selontFelonaturelonValuelon(CANDIDATelon_ALGORITHMS, algoIds)
       }
     }
     dr

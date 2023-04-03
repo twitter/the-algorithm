@@ -1,45 +1,45 @@
-package com.twitter.cr_mixer.logging
+packagelon com.twittelonr.cr_mixelonr.logging
 
-import com.twitter.cr_mixer.model.AdsCandidateGeneratorQuery
-import com.twitter.cr_mixer.model.CrCandidateGeneratorQuery
-import com.twitter.cr_mixer.model.RelatedTweetCandidateGeneratorQuery
-import com.twitter.cr_mixer.model.UtegTweetCandidateGeneratorQuery
-import com.twitter.cr_mixer.thriftscala.Product
-import com.twitter.product_mixer.core.thriftscala.ClientContext
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.thriftscala.InternalId
+import com.twittelonr.cr_mixelonr.modelonl.AdsCandidatelonGelonnelonratorQuelonry
+import com.twittelonr.cr_mixelonr.modelonl.CrCandidatelonGelonnelonratorQuelonry
+import com.twittelonr.cr_mixelonr.modelonl.RelonlatelondTwelonelontCandidatelonGelonnelonratorQuelonry
+import com.twittelonr.cr_mixelonr.modelonl.UtelongTwelonelontCandidatelonGelonnelonratorQuelonry
+import com.twittelonr.cr_mixelonr.thriftscala.Product
+import com.twittelonr.product_mixelonr.corelon.thriftscala.ClielonntContelonxt
+import com.twittelonr.simclustelonrs_v2.common.UselonrId
+import com.twittelonr.simclustelonrs_v2.thriftscala.IntelonrnalId
 
-case class ScribeMetadata(
-  requestUUID: Long,
-  userId: UserId,
+caselon class ScribelonMelontadata(
+  relonquelonstUUID: Long,
+  uselonrId: UselonrId,
   product: Product)
 
-object ScribeMetadata {
-  def from(query: CrCandidateGeneratorQuery): ScribeMetadata = {
-    ScribeMetadata(query.requestUUID, query.userId, query.product)
+objelonct ScribelonMelontadata {
+  delonf from(quelonry: CrCandidatelonGelonnelonratorQuelonry): ScribelonMelontadata = {
+    ScribelonMelontadata(quelonry.relonquelonstUUID, quelonry.uselonrId, quelonry.product)
   }
 
-  def from(query: UtegTweetCandidateGeneratorQuery): ScribeMetadata = {
-    ScribeMetadata(query.requestUUID, query.userId, query.product)
+  delonf from(quelonry: UtelongTwelonelontCandidatelonGelonnelonratorQuelonry): ScribelonMelontadata = {
+    ScribelonMelontadata(quelonry.relonquelonstUUID, quelonry.uselonrId, quelonry.product)
   }
 
-  def from(query: AdsCandidateGeneratorQuery): ScribeMetadata = {
-    ScribeMetadata(query.requestUUID, query.userId, query.product)
+  delonf from(quelonry: AdsCandidatelonGelonnelonratorQuelonry): ScribelonMelontadata = {
+    ScribelonMelontadata(quelonry.relonquelonstUUID, quelonry.uselonrId, quelonry.product)
   }
 }
 
-case class RelatedTweetScribeMetadata(
-  requestUUID: Long,
-  internalId: InternalId,
-  clientContext: ClientContext,
+caselon class RelonlatelondTwelonelontScribelonMelontadata(
+  relonquelonstUUID: Long,
+  intelonrnalId: IntelonrnalId,
+  clielonntContelonxt: ClielonntContelonxt,
   product: Product)
 
-object RelatedTweetScribeMetadata {
-  def from(query: RelatedTweetCandidateGeneratorQuery): RelatedTweetScribeMetadata = {
-    RelatedTweetScribeMetadata(
-      query.requestUUID,
-      query.internalId,
-      query.clientContext,
-      query.product)
+objelonct RelonlatelondTwelonelontScribelonMelontadata {
+  delonf from(quelonry: RelonlatelondTwelonelontCandidatelonGelonnelonratorQuelonry): RelonlatelondTwelonelontScribelonMelontadata = {
+    RelonlatelondTwelonelontScribelonMelontadata(
+      quelonry.relonquelonstUUID,
+      quelonry.intelonrnalId,
+      quelonry.clielonntContelonxt,
+      quelonry.product)
   }
 }

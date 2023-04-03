@@ -1,209 +1,209 @@
-package com.twitter.simclusters_v2.common
+packagelon com.twittelonr.simclustelonrs_v2.common
 
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.simclusters_v2.thriftscala.LocaleEntityId
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
-import com.twitter.simclusters_v2.thriftscala.TopicId
-import com.twitter.simclusters_v2.thriftscala.{
-  SimClustersEmbeddingId => ThriftSimClustersEmbeddingId
+import com.twittelonr.simclustelonrs_v2.thriftscala.elonmbelonddingTypelon
+import com.twittelonr.simclustelonrs_v2.thriftscala.IntelonrnalId
+import com.twittelonr.simclustelonrs_v2.thriftscala.LocalelonelonntityId
+import com.twittelonr.simclustelonrs_v2.thriftscala.ModelonlVelonrsion
+import com.twittelonr.simclustelonrs_v2.thriftscala.TopicId
+import com.twittelonr.simclustelonrs_v2.thriftscala.{
+  SimClustelonrselonmbelonddingId => ThriftSimClustelonrselonmbelonddingId
 }
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType._
-import com.twitter.simclusters_v2.thriftscala.InternalId.EntityId
-import com.twitter.simclusters_v2.thriftscala.InternalId.TweetId
-import com.twitter.simclusters_v2.thriftscala.InternalId.UserId
-import com.twitter.simclusters_v2.thriftscala.{EmbeddingType => SimClustersEmbeddingType}
+import com.twittelonr.simclustelonrs_v2.thriftscala.elonmbelonddingTypelon._
+import com.twittelonr.simclustelonrs_v2.thriftscala.IntelonrnalId.elonntityId
+import com.twittelonr.simclustelonrs_v2.thriftscala.IntelonrnalId.TwelonelontId
+import com.twittelonr.simclustelonrs_v2.thriftscala.IntelonrnalId.UselonrId
+import com.twittelonr.simclustelonrs_v2.thriftscala.{elonmbelonddingTypelon => SimClustelonrselonmbelonddingTypelon}
 
-object SimClustersEmbeddingId {
+objelonct SimClustelonrselonmbelonddingId {
 
-  val DefaultModelVersion: ModelVersion = ModelVersion.Model20m145k2020
+  val DelonfaultModelonlVelonrsion: ModelonlVelonrsion = ModelonlVelonrsion.Modelonl20m145k2020
 
-  // Embeddings which is available in Content-Recommender
-  val TweetEmbeddingTypes: Set[EmbeddingType] =
-    Set(
-      FavBasedTweet,
-      FollowBasedTweet,
-      LogFavBasedTweet,
-      LogFavLongestL2EmbeddingTweet
+  // elonmbelonddings which is availablelon in Contelonnt-Reloncommelonndelonr
+  val TwelonelontelonmbelonddingTypelons: Selont[elonmbelonddingTypelon] =
+    Selont(
+      FavBaselondTwelonelont,
+      FollowBaselondTwelonelont,
+      LogFavBaselondTwelonelont,
+      LogFavLongelonstL2elonmbelonddingTwelonelont
     )
-  val DefaultTweetEmbeddingType: EmbeddingType = LogFavLongestL2EmbeddingTweet
+  val DelonfaultTwelonelontelonmbelonddingTypelon: elonmbelonddingTypelon = LogFavLongelonstL2elonmbelonddingTwelonelont
 
-  val UserInterestedInEmbeddingTypes: Set[EmbeddingType] =
-    Set(
-      FavBasedUserInterestedIn,
-      FollowBasedUserInterestedIn,
-      LogFavBasedUserInterestedIn,
-      RecentFollowBasedUserInterestedIn,
-      FilteredUserInterestedIn,
-      FavBasedUserInterestedInFromPE,
-      FollowBasedUserInterestedInFromPE,
-      LogFavBasedUserInterestedInFromPE,
-      FilteredUserInterestedInFromPE,
-      LogFavBasedUserInterestedInFromAPE,
-      FollowBasedUserInterestedInFromAPE,
-      UnfilteredUserInterestedIn
+  val UselonrIntelonrelonstelondInelonmbelonddingTypelons: Selont[elonmbelonddingTypelon] =
+    Selont(
+      FavBaselondUselonrIntelonrelonstelondIn,
+      FollowBaselondUselonrIntelonrelonstelondIn,
+      LogFavBaselondUselonrIntelonrelonstelondIn,
+      ReloncelonntFollowBaselondUselonrIntelonrelonstelondIn,
+      FiltelonrelondUselonrIntelonrelonstelondIn,
+      FavBaselondUselonrIntelonrelonstelondInFromPelon,
+      FollowBaselondUselonrIntelonrelonstelondInFromPelon,
+      LogFavBaselondUselonrIntelonrelonstelondInFromPelon,
+      FiltelonrelondUselonrIntelonrelonstelondInFromPelon,
+      LogFavBaselondUselonrIntelonrelonstelondInFromAPelon,
+      FollowBaselondUselonrIntelonrelonstelondInFromAPelon,
+      UnfiltelonrelondUselonrIntelonrelonstelondIn
     )
-  val DefaultUserInterestInEmbeddingType: EmbeddingType = FavBasedUserInterestedIn
+  val DelonfaultUselonrIntelonrelonstInelonmbelonddingTypelon: elonmbelonddingTypelon = FavBaselondUselonrIntelonrelonstelondIn
 
-  val ProducerEmbeddingTypes: Set[EmbeddingType] =
-    Set(
-      FavBasedProducer,
-      FollowBasedProducer,
-      AggregatableFavBasedProducer,
-      AggregatableLogFavBasedProducer,
-      RelaxedAggregatableLogFavBasedProducer,
+  val ProducelonrelonmbelonddingTypelons: Selont[elonmbelonddingTypelon] =
+    Selont(
+      FavBaselondProducelonr,
+      FollowBaselondProducelonr,
+      AggrelongatablelonFavBaselondProducelonr,
+      AggrelongatablelonLogFavBaselondProducelonr,
+      RelonlaxelondAggrelongatablelonLogFavBaselondProducelonr,
       KnownFor
     )
-  val DefaultProducerEmbeddingType: EmbeddingType = FavBasedProducer
+  val DelonfaultProducelonrelonmbelonddingTypelon: elonmbelonddingTypelon = FavBaselondProducelonr
 
-  val LocaleEntityEmbeddingTypes: Set[EmbeddingType] =
-    Set(
+  val LocalelonelonntityelonmbelonddingTypelons: Selont[elonmbelonddingTypelon] =
+    Selont(
       FavTfgTopic,
       LogFavTfgTopic
     )
-  val DefaultLocaleEntityEmbeddingType: EmbeddingType = FavTfgTopic
+  val DelonfaultLocalelonelonntityelonmbelonddingTypelon: elonmbelonddingTypelon = FavTfgTopic
 
-  val TopicEmbeddingTypes: Set[EmbeddingType] =
-    Set(
-      LogFavBasedKgoApeTopic
+  val TopicelonmbelonddingTypelons: Selont[elonmbelonddingTypelon] =
+    Selont(
+      LogFavBaselondKgoApelonTopic
     )
-  val DefaultTopicEmbeddingType: EmbeddingType = LogFavBasedKgoApeTopic
+  val DelonfaultTopicelonmbelonddingTypelon: elonmbelonddingTypelon = LogFavBaselondKgoApelonTopic
 
-  val AllEmbeddingTypes: Set[EmbeddingType] =
-    TweetEmbeddingTypes ++
-      UserInterestedInEmbeddingTypes ++
-      ProducerEmbeddingTypes ++
-      LocaleEntityEmbeddingTypes ++
-      TopicEmbeddingTypes
+  val AllelonmbelonddingTypelons: Selont[elonmbelonddingTypelon] =
+    TwelonelontelonmbelonddingTypelons ++
+      UselonrIntelonrelonstelondInelonmbelonddingTypelons ++
+      ProducelonrelonmbelonddingTypelons ++
+      LocalelonelonntityelonmbelonddingTypelons ++
+      TopicelonmbelonddingTypelons
 
-  def buildTweetId(
-    tweetId: TweetId,
-    embeddingType: EmbeddingType = DefaultTweetEmbeddingType,
-    modelVersion: ModelVersion = DefaultModelVersion
-  ): ThriftSimClustersEmbeddingId = {
-    assert(TweetEmbeddingTypes.contains(embeddingType))
-    ThriftSimClustersEmbeddingId(
-      embeddingType,
-      modelVersion,
-      InternalId.TweetId(tweetId)
-    )
-  }
-
-  def buildUserInterestedInId(
-    userId: UserId,
-    embeddingType: EmbeddingType = DefaultUserInterestInEmbeddingType,
-    modelVersion: ModelVersion = DefaultModelVersion
-  ): ThriftSimClustersEmbeddingId = {
-    assert(UserInterestedInEmbeddingTypes.contains(embeddingType))
-    ThriftSimClustersEmbeddingId(
-      embeddingType,
-      modelVersion,
-      InternalId.UserId(userId)
+  delonf buildTwelonelontId(
+    twelonelontId: TwelonelontId,
+    elonmbelonddingTypelon: elonmbelonddingTypelon = DelonfaultTwelonelontelonmbelonddingTypelon,
+    modelonlVelonrsion: ModelonlVelonrsion = DelonfaultModelonlVelonrsion
+  ): ThriftSimClustelonrselonmbelonddingId = {
+    asselonrt(TwelonelontelonmbelonddingTypelons.contains(elonmbelonddingTypelon))
+    ThriftSimClustelonrselonmbelonddingId(
+      elonmbelonddingTypelon,
+      modelonlVelonrsion,
+      IntelonrnalId.TwelonelontId(twelonelontId)
     )
   }
 
-  def buildProducerId(
-    userId: UserId,
-    embeddingType: EmbeddingType = DefaultProducerEmbeddingType,
-    modelVersion: ModelVersion = DefaultModelVersion
-  ): ThriftSimClustersEmbeddingId = {
-    assert(ProducerEmbeddingTypes.contains(embeddingType))
-    ThriftSimClustersEmbeddingId(
-      embeddingType,
-      modelVersion,
-      InternalId.UserId(userId)
+  delonf buildUselonrIntelonrelonstelondInId(
+    uselonrId: UselonrId,
+    elonmbelonddingTypelon: elonmbelonddingTypelon = DelonfaultUselonrIntelonrelonstInelonmbelonddingTypelon,
+    modelonlVelonrsion: ModelonlVelonrsion = DelonfaultModelonlVelonrsion
+  ): ThriftSimClustelonrselonmbelonddingId = {
+    asselonrt(UselonrIntelonrelonstelondInelonmbelonddingTypelons.contains(elonmbelonddingTypelon))
+    ThriftSimClustelonrselonmbelonddingId(
+      elonmbelonddingTypelon,
+      modelonlVelonrsion,
+      IntelonrnalId.UselonrId(uselonrId)
     )
   }
 
-  def buildLocaleEntityId(
-    entityId: SemanticCoreEntityId,
-    language: String,
-    embeddingType: EmbeddingType = DefaultLocaleEntityEmbeddingType,
-    modelVersion: ModelVersion = DefaultModelVersion
-  ): ThriftSimClustersEmbeddingId = {
-    ThriftSimClustersEmbeddingId(
-      embeddingType,
-      modelVersion,
-      InternalId.LocaleEntityId(
-        LocaleEntityId(entityId, language)
+  delonf buildProducelonrId(
+    uselonrId: UselonrId,
+    elonmbelonddingTypelon: elonmbelonddingTypelon = DelonfaultProducelonrelonmbelonddingTypelon,
+    modelonlVelonrsion: ModelonlVelonrsion = DelonfaultModelonlVelonrsion
+  ): ThriftSimClustelonrselonmbelonddingId = {
+    asselonrt(ProducelonrelonmbelonddingTypelons.contains(elonmbelonddingTypelon))
+    ThriftSimClustelonrselonmbelonddingId(
+      elonmbelonddingTypelon,
+      modelonlVelonrsion,
+      IntelonrnalId.UselonrId(uselonrId)
+    )
+  }
+
+  delonf buildLocalelonelonntityId(
+    elonntityId: SelonmanticCorelonelonntityId,
+    languagelon: String,
+    elonmbelonddingTypelon: elonmbelonddingTypelon = DelonfaultLocalelonelonntityelonmbelonddingTypelon,
+    modelonlVelonrsion: ModelonlVelonrsion = DelonfaultModelonlVelonrsion
+  ): ThriftSimClustelonrselonmbelonddingId = {
+    ThriftSimClustelonrselonmbelonddingId(
+      elonmbelonddingTypelon,
+      modelonlVelonrsion,
+      IntelonrnalId.LocalelonelonntityId(
+        LocalelonelonntityId(elonntityId, languagelon)
       )
     )
   }
 
-  def buildTopicId(
+  delonf buildTopicId(
     topicId: TopicId,
-    language: Option[String] = None,
-    country: Option[String] = None,
-    embeddingType: EmbeddingType = DefaultTopicEmbeddingType,
-    modelVersion: ModelVersion = DefaultModelVersion
-  ): ThriftSimClustersEmbeddingId = {
-    ThriftSimClustersEmbeddingId(
-      embeddingType,
-      modelVersion,
-      InternalId.TopicId(
-        TopicId(topicId, language, country)
+    languagelon: Option[String] = Nonelon,
+    country: Option[String] = Nonelon,
+    elonmbelonddingTypelon: elonmbelonddingTypelon = DelonfaultTopicelonmbelonddingTypelon,
+    modelonlVelonrsion: ModelonlVelonrsion = DelonfaultModelonlVelonrsion
+  ): ThriftSimClustelonrselonmbelonddingId = {
+    ThriftSimClustelonrselonmbelonddingId(
+      elonmbelonddingTypelon,
+      modelonlVelonrsion,
+      IntelonrnalId.TopicId(
+        TopicId(topicId, languagelon, country)
       )
     )
   }
 
-  // Extractor object for InternalIds that wrap Long
-  object LongInternalId {
-    def unapply(iid: InternalId): Option[Long] = iid match {
-      case InternalId.TweetId(id) => Some(id)
-      case InternalId.UserId(id) => Some(id)
-      case InternalId.EntityId(id) => Some(id)
-      case _ => None
+  // elonxtractor objelonct for IntelonrnalIds that wrap Long
+  objelonct LongIntelonrnalId {
+    delonf unapply(iid: IntelonrnalId): Option[Long] = iid match {
+      caselon IntelonrnalId.TwelonelontId(id) => Somelon(id)
+      caselon IntelonrnalId.UselonrId(id) => Somelon(id)
+      caselon IntelonrnalId.elonntityId(id) => Somelon(id)
+      caselon _ => Nonelon
     }
   }
 
-  // Extractor object for SimClusterEmbeddingIds with InternalIds that wrap Long
-  object LongSimClustersEmbeddingId {
-    def unapply(id: ThriftSimClustersEmbeddingId): Option[Long] =
-      LongInternalId.unapply(id.internalId)
+  // elonxtractor objelonct for SimClustelonrelonmbelonddingIds with IntelonrnalIds that wrap Long
+  objelonct LongSimClustelonrselonmbelonddingId {
+    delonf unapply(id: ThriftSimClustelonrselonmbelonddingId): Option[Long] =
+      LongIntelonrnalId.unapply(id.intelonrnalId)
   }
 
-  // Only for debuggers.
-  def buildEmbeddingId(
-    entityId: String,
-    embeddingType: EmbeddingType,
-    modelVersion: ModelVersion = DefaultModelVersion
-  ): ThriftSimClustersEmbeddingId = {
-    if (TweetEmbeddingTypes.contains(embeddingType)) {
-      buildTweetId(entityId.toLong, embeddingType, modelVersion)
-    } else if (UserInterestedInEmbeddingTypes.contains(embeddingType)) {
-      buildUserInterestedInId(entityId.toLong, embeddingType, modelVersion)
-    } else if (ProducerEmbeddingTypes.contains(embeddingType)) {
-      buildProducerId(entityId.toLong, embeddingType, modelVersion)
-    } else if (LocaleEntityEmbeddingTypes.contains(embeddingType)) {
-      buildLocaleEntityId(entityId.toLong, "en", embeddingType, modelVersion)
-    } else if (TopicEmbeddingTypes.contains(embeddingType)) {
+  // Only for delonbuggelonrs.
+  delonf buildelonmbelonddingId(
+    elonntityId: String,
+    elonmbelonddingTypelon: elonmbelonddingTypelon,
+    modelonlVelonrsion: ModelonlVelonrsion = DelonfaultModelonlVelonrsion
+  ): ThriftSimClustelonrselonmbelonddingId = {
+    if (TwelonelontelonmbelonddingTypelons.contains(elonmbelonddingTypelon)) {
+      buildTwelonelontId(elonntityId.toLong, elonmbelonddingTypelon, modelonlVelonrsion)
+    } elonlselon if (UselonrIntelonrelonstelondInelonmbelonddingTypelons.contains(elonmbelonddingTypelon)) {
+      buildUselonrIntelonrelonstelondInId(elonntityId.toLong, elonmbelonddingTypelon, modelonlVelonrsion)
+    } elonlselon if (ProducelonrelonmbelonddingTypelons.contains(elonmbelonddingTypelon)) {
+      buildProducelonrId(elonntityId.toLong, elonmbelonddingTypelon, modelonlVelonrsion)
+    } elonlselon if (LocalelonelonntityelonmbelonddingTypelons.contains(elonmbelonddingTypelon)) {
+      buildLocalelonelonntityId(elonntityId.toLong, "elonn", elonmbelonddingTypelon, modelonlVelonrsion)
+    } elonlselon if (TopicelonmbelonddingTypelons.contains(elonmbelonddingTypelon)) {
       buildTopicId(
-        entityId.toLong,
-        Some("en"),
-        embeddingType = embeddingType,
-        modelVersion = modelVersion)
-    } else {
-      throw new IllegalArgumentException(s"Invalid embedding type: $embeddingType")
+        elonntityId.toLong,
+        Somelon("elonn"),
+        elonmbelonddingTypelon = elonmbelonddingTypelon,
+        modelonlVelonrsion = modelonlVelonrsion)
+    } elonlselon {
+      throw nelonw IllelongalArgumelonntelonxcelonption(s"Invalid elonmbelondding typelon: $elonmbelonddingTypelon")
     }
   }
 
-  implicit val internalIdOrdering: Ordering[InternalId] =
-    Ordering.by(internalId => internalId.hashCode())
+  implicit val intelonrnalIdOrdelonring: Ordelonring[IntelonrnalId] =
+    Ordelonring.by(intelonrnalId => intelonrnalId.hashCodelon())
 
-  implicit val simClustersEmbeddingIdOrdering: Ordering[ThriftSimClustersEmbeddingId] =
-    Ordering.by(embeddingId =>
-      (embeddingId.embeddingType.value, embeddingId.modelVersion.value, embeddingId.internalId))
+  implicit val simClustelonrselonmbelonddingIdOrdelonring: Ordelonring[ThriftSimClustelonrselonmbelonddingId] =
+    Ordelonring.by(elonmbelonddingId =>
+      (elonmbelonddingId.elonmbelonddingTypelon.valuelon, elonmbelonddingId.modelonlVelonrsion.valuelon, elonmbelonddingId.intelonrnalId))
 
-  // Use Enum for feature switch
-  object TopicEnum extends Enumeration {
-    protected case class EmbeddingType(embeddingType: SimClustersEmbeddingType) extends super.Val
-    import scala.language.implicitConversions
-    implicit def valueToEmbeddingType(value: Value): EmbeddingType =
-      value.asInstanceOf[EmbeddingType]
+  // Uselon elonnum for felonaturelon switch
+  objelonct Topicelonnum elonxtelonnds elonnumelonration {
+    protelonctelond caselon class elonmbelonddingTypelon(elonmbelonddingTypelon: SimClustelonrselonmbelonddingTypelon) elonxtelonnds supelonr.Val
+    import scala.languagelon.implicitConvelonrsions
+    implicit delonf valuelonToelonmbelonddingTypelon(valuelon: Valuelon): elonmbelonddingTypelon =
+      valuelon.asInstancelonOf[elonmbelonddingTypelon]
 
-    val FavTfgTopic: Value = EmbeddingType(SimClustersEmbeddingType.FavTfgTopic)
-    val LogFavBasedKgoApeTopic: Value = EmbeddingType(
-      SimClustersEmbeddingType.LogFavBasedKgoApeTopic)
+    val FavTfgTopic: Valuelon = elonmbelonddingTypelon(SimClustelonrselonmbelonddingTypelon.FavTfgTopic)
+    val LogFavBaselondKgoApelonTopic: Valuelon = elonmbelonddingTypelon(
+      SimClustelonrselonmbelonddingTypelon.LogFavBaselondKgoApelonTopic)
   }
 
 }

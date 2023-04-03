@@ -1,35 +1,35 @@
-package com.twitter.product_mixer.component_library.side_effect
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.sidelon_elonffelonct
 
-import com.twitter.product_mixer.core.functional_component.side_effect.PipelineResultSideEffect
-import com.twitter.product_mixer.core.model.marshalling.HasMarshalling
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.user_session_store.ReadWriteUserSessionStore
-import com.twitter.user_session_store.WriteRequest
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.sidelon_elonffelonct.PipelonlinelonRelonsultSidelonelonffelonct
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.HasMarshalling
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.uselonr_selonssion_storelon.RelonadWritelonUselonrSelonssionStorelon
+import com.twittelonr.uselonr_selonssion_storelon.WritelonRelonquelonst
 
 /**
- * A [[PipelineResultSideEffect]] that writes to a [[ReadWriteUserSessionStore]]
+ * A [[PipelonlinelonRelonsultSidelonelonffelonct]] that writelons to a [[RelonadWritelonUselonrSelonssionStorelon]]
  */
-trait UserSessionStoreUpdateSideEffect[
-  Request <: WriteRequest,
-  Query <: PipelineQuery,
-  ResponseType <: HasMarshalling]
-    extends PipelineResultSideEffect[Query, ResponseType] {
+trait UselonrSelonssionStorelonUpdatelonSidelonelonffelonct[
+  Relonquelonst <: WritelonRelonquelonst,
+  Quelonry <: PipelonlinelonQuelonry,
+  RelonsponselonTypelon <: HasMarshalling]
+    elonxtelonnds PipelonlinelonRelonsultSidelonelonffelonct[Quelonry, RelonsponselonTypelon] {
 
   /**
-   * Build the write request from the query
-   * @param query PipelineQuery
-   * @return WriteRequest
+   * Build thelon writelon relonquelonst from thelon quelonry
+   * @param quelonry PipelonlinelonQuelonry
+   * @relonturn WritelonRelonquelonst
    */
-  def buildWriteRequest(query: Query): Option[Request]
+  delonf buildWritelonRelonquelonst(quelonry: Quelonry): Option[Relonquelonst]
 
-  val userSessionStore: ReadWriteUserSessionStore
+  val uselonrSelonssionStorelon: RelonadWritelonUselonrSelonssionStorelon
 
-  final override def apply(
-    inputs: PipelineResultSideEffect.Inputs[Query, ResponseType]
+  final ovelonrridelon delonf apply(
+    inputs: PipelonlinelonRelonsultSidelonelonffelonct.Inputs[Quelonry, RelonsponselonTypelon]
   ): Stitch[Unit] = {
-    buildWriteRequest(inputs.query)
-      .map(userSessionStore.write)
-      .getOrElse(Stitch.Unit)
+    buildWritelonRelonquelonst(inputs.quelonry)
+      .map(uselonrSelonssionStorelon.writelon)
+      .gelontOrelonlselon(Stitch.Unit)
   }
 }

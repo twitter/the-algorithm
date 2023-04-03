@@ -1,95 +1,95 @@
-package com.twitter.follow_recommendations.modules
+packagelon com.twittelonr.follow_reloncommelonndations.modulelons
 
-import com.google.inject.Provides
-import com.google.inject.Singleton
-import com.google.inject.name.Named
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.constants.GuiceNamedConstants
-import com.twitter.inject.TwitterModule
-import com.twitter.logging.BareFormatter
-import com.twitter.logging.HandlerFactory
-import com.twitter.logging.Level
-import com.twitter.logging.LoggerFactory
-import com.twitter.logging.NullHandler
-import com.twitter.logging.QueueingHandler
-import com.twitter.logging.ScribeHandler
+import com.googlelon.injelonct.Providelons
+import com.googlelon.injelonct.Singlelonton
+import com.googlelon.injelonct.namelon.Namelond
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.follow_reloncommelonndations.common.constants.GuicelonNamelondConstants
+import com.twittelonr.injelonct.TwittelonrModulelon
+import com.twittelonr.logging.BarelonFormattelonr
+import com.twittelonr.logging.HandlelonrFactory
+import com.twittelonr.logging.Lelonvelonl
+import com.twittelonr.logging.LoggelonrFactory
+import com.twittelonr.logging.NullHandlelonr
+import com.twittelonr.logging.QuelonueloningHandlelonr
+import com.twittelonr.logging.ScribelonHandlelonr
 
-object ScribeModule extends TwitterModule {
-  val useProdLogger = flag(
-    name = "scribe.use_prod_loggers",
-    default = false,
-    help = "whether to use production logging for service"
+objelonct ScribelonModulelon elonxtelonnds TwittelonrModulelon {
+  val uselonProdLoggelonr = flag(
+    namelon = "scribelon.uselon_prod_loggelonrs",
+    delonfault = falselon,
+    helonlp = "whelonthelonr to uselon production logging for selonrvicelon"
   )
 
-  @Provides
-  @Singleton
-  @Named(GuiceNamedConstants.CLIENT_EVENT_LOGGER)
-  def provideClientEventsLoggerFactory(stats: StatsReceiver): LoggerFactory = {
-    val loggerCategory = "client_event"
-    val clientEventsHandler: HandlerFactory = if (useProdLogger()) {
-      QueueingHandler(
-        maxQueueSize = 10000,
-        handler = ScribeHandler(
-          category = loggerCategory,
-          formatter = BareFormatter,
-          level = Some(Level.INFO),
-          statsReceiver = stats.scope("client_event_scribe")
+  @Providelons
+  @Singlelonton
+  @Namelond(GuicelonNamelondConstants.CLIelonNT_elonVelonNT_LOGGelonR)
+  delonf providelonClielonntelonvelonntsLoggelonrFactory(stats: StatsReloncelonivelonr): LoggelonrFactory = {
+    val loggelonrCatelongory = "clielonnt_elonvelonnt"
+    val clielonntelonvelonntsHandlelonr: HandlelonrFactory = if (uselonProdLoggelonr()) {
+      QuelonueloningHandlelonr(
+        maxQuelonuelonSizelon = 10000,
+        handlelonr = ScribelonHandlelonr(
+          catelongory = loggelonrCatelongory,
+          formattelonr = BarelonFormattelonr,
+          lelonvelonl = Somelon(Lelonvelonl.INFO),
+          statsReloncelonivelonr = stats.scopelon("clielonnt_elonvelonnt_scribelon")
         )
       )
-    } else { () => NullHandler }
-    LoggerFactory(
-      node = "abdecider",
-      level = Some(Level.INFO),
-      useParents = false,
-      handlers = clientEventsHandler :: Nil
+    } elonlselon { () => NullHandlelonr }
+    LoggelonrFactory(
+      nodelon = "abdeloncidelonr",
+      lelonvelonl = Somelon(Lelonvelonl.INFO),
+      uselonParelonnts = falselon,
+      handlelonrs = clielonntelonvelonntsHandlelonr :: Nil
     )
   }
 
-  @Provides
-  @Singleton
-  @Named(GuiceNamedConstants.REQUEST_LOGGER)
-  def provideFollowRecommendationsLoggerFactory(stats: StatsReceiver): LoggerFactory = {
-    val loggerCategory = "follow_recommendations_logs"
-    val handlerFactory: HandlerFactory = if (useProdLogger()) {
-      QueueingHandler(
-        maxQueueSize = 10000,
-        handler = ScribeHandler(
-          category = loggerCategory,
-          formatter = BareFormatter,
-          level = Some(Level.INFO),
-          statsReceiver = stats.scope("follow_recommendations_logs_scribe")
+  @Providelons
+  @Singlelonton
+  @Namelond(GuicelonNamelondConstants.RelonQUelonST_LOGGelonR)
+  delonf providelonFollowReloncommelonndationsLoggelonrFactory(stats: StatsReloncelonivelonr): LoggelonrFactory = {
+    val loggelonrCatelongory = "follow_reloncommelonndations_logs"
+    val handlelonrFactory: HandlelonrFactory = if (uselonProdLoggelonr()) {
+      QuelonueloningHandlelonr(
+        maxQuelonuelonSizelon = 10000,
+        handlelonr = ScribelonHandlelonr(
+          catelongory = loggelonrCatelongory,
+          formattelonr = BarelonFormattelonr,
+          lelonvelonl = Somelon(Lelonvelonl.INFO),
+          statsReloncelonivelonr = stats.scopelon("follow_reloncommelonndations_logs_scribelon")
         )
       )
-    } else { () => NullHandler }
-    LoggerFactory(
-      node = loggerCategory,
-      level = Some(Level.INFO),
-      useParents = false,
-      handlers = handlerFactory :: Nil
+    } elonlselon { () => NullHandlelonr }
+    LoggelonrFactory(
+      nodelon = loggelonrCatelongory,
+      lelonvelonl = Somelon(Lelonvelonl.INFO),
+      uselonParelonnts = falselon,
+      handlelonrs = handlelonrFactory :: Nil
     )
   }
 
-  @Provides
-  @Singleton
-  @Named(GuiceNamedConstants.FLOW_LOGGER)
-  def provideFrsRecommendationFlowLoggerFactory(stats: StatsReceiver): LoggerFactory = {
-    val loggerCategory = "frs_recommendation_flow_logs"
-    val handlerFactory: HandlerFactory = if (useProdLogger()) {
-      QueueingHandler(
-        maxQueueSize = 10000,
-        handler = ScribeHandler(
-          category = loggerCategory,
-          formatter = BareFormatter,
-          level = Some(Level.INFO),
-          statsReceiver = stats.scope("frs_recommendation_flow_logs_scribe")
+  @Providelons
+  @Singlelonton
+  @Namelond(GuicelonNamelondConstants.FLOW_LOGGelonR)
+  delonf providelonFrsReloncommelonndationFlowLoggelonrFactory(stats: StatsReloncelonivelonr): LoggelonrFactory = {
+    val loggelonrCatelongory = "frs_reloncommelonndation_flow_logs"
+    val handlelonrFactory: HandlelonrFactory = if (uselonProdLoggelonr()) {
+      QuelonueloningHandlelonr(
+        maxQuelonuelonSizelon = 10000,
+        handlelonr = ScribelonHandlelonr(
+          catelongory = loggelonrCatelongory,
+          formattelonr = BarelonFormattelonr,
+          lelonvelonl = Somelon(Lelonvelonl.INFO),
+          statsReloncelonivelonr = stats.scopelon("frs_reloncommelonndation_flow_logs_scribelon")
         )
       )
-    } else { () => NullHandler }
-    LoggerFactory(
-      node = loggerCategory,
-      level = Some(Level.INFO),
-      useParents = false,
-      handlers = handlerFactory :: Nil
+    } elonlselon { () => NullHandlelonr }
+    LoggelonrFactory(
+      nodelon = loggelonrCatelongory,
+      lelonvelonl = Somelon(Lelonvelonl.INFO),
+      uselonParelonnts = falselon,
+      handlelonrs = handlelonrFactory :: Nil
     )
   }
 }

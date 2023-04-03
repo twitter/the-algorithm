@@ -1,80 +1,80 @@
-package com.twitter.simclustersann.controllers
+packagelon com.twittelonr.simclustelonrsann.controllelonrs
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finatra.thrift.Controller
-import com.twitter.simclustersann.thriftscala.SimClustersANNService.GetTweetCandidates
-import com.twitter.simclustersann.thriftscala.SimClustersANNService
-import com.twitter.simclustersann.thriftscala.Query
-import com.twitter.simclustersann.thriftscala.SimClustersANNTweetCandidate
-import com.twitter.scrooge.Request
-import com.twitter.scrooge.Response
-import javax.inject.Inject
-import com.twitter.finagle.Service
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.annotations.Flag
-import com.twitter.simclustersann.candidate_source.{
-  SimClustersANNCandidateSource => SANNSimClustersANNCandidateSource
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.finatra.thrift.Controllelonr
+import com.twittelonr.simclustelonrsann.thriftscala.SimClustelonrsANNSelonrvicelon.GelontTwelonelontCandidatelons
+import com.twittelonr.simclustelonrsann.thriftscala.SimClustelonrsANNSelonrvicelon
+import com.twittelonr.simclustelonrsann.thriftscala.Quelonry
+import com.twittelonr.simclustelonrsann.thriftscala.SimClustelonrsANNTwelonelontCandidatelon
+import com.twittelonr.scroogelon.Relonquelonst
+import com.twittelonr.scroogelon.Relonsponselon
+import javax.injelonct.Injelonct
+import com.twittelonr.finaglelon.Selonrvicelon
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.injelonct.annotations.Flag
+import com.twittelonr.simclustelonrsann.candidatelon_sourcelon.{
+  SimClustelonrsANNCandidatelonSourcelon => SANNSimClustelonrsANNCandidatelonSourcelon
 }
-import com.twitter.simclustersann.common.FlagNames
-import com.twitter.simclustersann.filters.GetTweetCandidatesResponseStatsFilter
-import com.twitter.simclustersann.filters.SimClustersAnnVariantFilter
-import com.twitter.util.Future
-import com.twitter.util.JavaTimer
-import com.twitter.util.Timer
+import com.twittelonr.simclustelonrsann.common.FlagNamelons
+import com.twittelonr.simclustelonrsann.filtelonrs.GelontTwelonelontCandidatelonsRelonsponselonStatsFiltelonr
+import com.twittelonr.simclustelonrsann.filtelonrs.SimClustelonrsAnnVariantFiltelonr
+import com.twittelonr.util.Futurelon
+import com.twittelonr.util.JavaTimelonr
+import com.twittelonr.util.Timelonr
 
-class SimClustersANNController @Inject() (
-  @Flag(FlagNames.ServiceTimeout) serviceTimeout: Int,
-  variantFilter: SimClustersAnnVariantFilter,
-  getTweetCandidatesResponseStatsFilter: GetTweetCandidatesResponseStatsFilter,
-  sannCandidateSource: SANNSimClustersANNCandidateSource,
-  globalStats: StatsReceiver)
-    extends Controller(SimClustersANNService) {
+class SimClustelonrsANNControllelonr @Injelonct() (
+  @Flag(FlagNamelons.SelonrvicelonTimelonout) selonrvicelonTimelonout: Int,
+  variantFiltelonr: SimClustelonrsAnnVariantFiltelonr,
+  gelontTwelonelontCandidatelonsRelonsponselonStatsFiltelonr: GelontTwelonelontCandidatelonsRelonsponselonStatsFiltelonr,
+  sannCandidatelonSourcelon: SANNSimClustelonrsANNCandidatelonSourcelon,
+  globalStats: StatsReloncelonivelonr)
+    elonxtelonnds Controllelonr(SimClustelonrsANNSelonrvicelon) {
 
-  import SimClustersANNController._
+  import SimClustelonrsANNControllelonr._
 
-  private val stats: StatsReceiver = globalStats.scope(this.getClass.getCanonicalName)
-  private val timer: Timer = new JavaTimer(true)
+  privatelon val stats: StatsReloncelonivelonr = globalStats.scopelon(this.gelontClass.gelontCanonicalNamelon)
+  privatelon val timelonr: Timelonr = nelonw JavaTimelonr(truelon)
 
-  val filteredService: Service[Request[GetTweetCandidates.Args], Response[
-    Seq[SimClustersANNTweetCandidate]
+  val filtelonrelondSelonrvicelon: Selonrvicelon[Relonquelonst[GelontTwelonelontCandidatelons.Args], Relonsponselon[
+    Selonq[SimClustelonrsANNTwelonelontCandidatelon]
   ]] = {
-    variantFilter
-      .andThen(getTweetCandidatesResponseStatsFilter)
-      .andThen(Service.mk(handler))
+    variantFiltelonr
+      .andThelonn(gelontTwelonelontCandidatelonsRelonsponselonStatsFiltelonr)
+      .andThelonn(Selonrvicelon.mk(handlelonr))
   }
 
-  handle(GetTweetCandidates).withService(filteredService)
+  handlelon(GelontTwelonelontCandidatelons).withSelonrvicelon(filtelonrelondSelonrvicelon)
 
-  private def handler(
-    request: Request[GetTweetCandidates.Args]
-  ): Future[Response[Seq[SimClustersANNTweetCandidate]]] = {
-    val query: Query = request.args.query
-    val simClustersANNCandidateSourceQuery = SANNSimClustersANNCandidateSource.Query(
-      sourceEmbeddingId = query.sourceEmbeddingId,
-      config = query.config
+  privatelon delonf handlelonr(
+    relonquelonst: Relonquelonst[GelontTwelonelontCandidatelons.Args]
+  ): Futurelon[Relonsponselon[Selonq[SimClustelonrsANNTwelonelontCandidatelon]]] = {
+    val quelonry: Quelonry = relonquelonst.args.quelonry
+    val simClustelonrsANNCandidatelonSourcelonQuelonry = SANNSimClustelonrsANNCandidatelonSourcelon.Quelonry(
+      sourcelonelonmbelonddingId = quelonry.sourcelonelonmbelonddingId,
+      config = quelonry.config
     )
 
-    val result = sannCandidateSource
-      .get(simClustersANNCandidateSourceQuery).map {
-        case Some(tweetCandidatesSeq) =>
-          Response(tweetCandidatesSeq.map { tweetCandidate =>
-            SimClustersANNTweetCandidate(
-              tweetId = tweetCandidate.tweetId,
-              score = tweetCandidate.score
+    val relonsult = sannCandidatelonSourcelon
+      .gelont(simClustelonrsANNCandidatelonSourcelonQuelonry).map {
+        caselon Somelon(twelonelontCandidatelonsSelonq) =>
+          Relonsponselon(twelonelontCandidatelonsSelonq.map { twelonelontCandidatelon =>
+            SimClustelonrsANNTwelonelontCandidatelon(
+              twelonelontId = twelonelontCandidatelon.twelonelontId,
+              scorelon = twelonelontCandidatelon.scorelon
             )
           })
-        case None =>
-          DefaultResponse
+        caselon Nonelon =>
+          DelonfaultRelonsponselon
       }
 
-    result.raiseWithin(serviceTimeout.milliseconds)(timer).rescue {
-      case e: Throwable =>
-        stats.scope("failures").counter(e.getClass.getCanonicalName).incr()
-        Future.value(DefaultResponse)
+    relonsult.raiselonWithin(selonrvicelonTimelonout.milliselonconds)(timelonr).relonscuelon {
+      caselon elon: Throwablelon =>
+        stats.scopelon("failurelons").countelonr(elon.gelontClass.gelontCanonicalNamelon).incr()
+        Futurelon.valuelon(DelonfaultRelonsponselon)
     }
   }
 }
 
-object SimClustersANNController {
-  val DefaultResponse: Response[Seq[SimClustersANNTweetCandidate]] = Response(Seq.empty)
+objelonct SimClustelonrsANNControllelonr {
+  val DelonfaultRelonsponselon: Relonsponselon[Selonq[SimClustelonrsANNTwelonelontCandidatelon]] = Relonsponselon(Selonq.elonmpty)
 }

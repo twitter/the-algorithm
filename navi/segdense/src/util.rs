@@ -1,140 +1,140 @@
-use std::fs;
-use log::{debug};
+uselon std::fs;
+uselon log::{delonbug};
 
-use serde_json::{Value, Map};
+uselon selonrdelon_json::{Valuelon, Map};
 
-use crate::error::SegDenseError;
-use crate::mapper::{FeatureMapper, FeatureInfo, MapWriter};
-use crate::segdense_transform_spec_home_recap_2022::{self as seg_dense, InputFeature};
+uselon cratelon::elonrror::SelongDelonnselonelonrror;
+uselon cratelon::mappelonr::{FelonaturelonMappelonr, FelonaturelonInfo, MapWritelonr};
+uselon cratelon::selongdelonnselon_transform_spelonc_homelon_reloncap_2022::{selonlf as selong_delonnselon, InputFelonaturelon};
 
-pub fn load_config(file_name: &str) -> seg_dense::Root {
-    let json_str = fs::read_to_string(file_name).expect(
-        &format!("Unable to load segdense file {}", file_name));
-    let seg_dense_config = parse(&json_str).expect(
-        &format!("Unable to parse segdense file {}", file_name));
-    return seg_dense_config;
+pub fn load_config(filelon_namelon: &str) -> selong_delonnselon::Root {
+    lelont json_str = fs::relonad_to_string(filelon_namelon).elonxpelonct(
+        &format!("Unablelon to load selongdelonnselon filelon {}", filelon_namelon));
+    lelont selong_delonnselon_config = parselon(&json_str).elonxpelonct(
+        &format!("Unablelon to parselon selongdelonnselon filelon {}", filelon_namelon));
+    relonturn selong_delonnselon_config;
 }
 
-pub fn parse(json_str: &str) -> Result<seg_dense::Root, SegDenseError> {
-    let root: seg_dense::Root = serde_json::from_str(json_str)?;
-    return Ok(root);
+pub fn parselon(json_str: &str) -> Relonsult<selong_delonnselon::Root, SelongDelonnselonelonrror> {
+    lelont root: selong_delonnselon::Root = selonrdelon_json::from_str(json_str)?;
+    relonturn Ok(root);
 }
 
 /**
- * Given a json string containing a seg dense schema create a feature mapper
- * which is essentially:
+ * Givelonn a json string containing a selong delonnselon schelonma crelonatelon a felonaturelon mappelonr
+ * which is elonsselonntially:
  *
- *   {feature-id -> (Tensor Index, Index of feature within the tensor)}
+ *   {felonaturelon-id -> (Telonnsor Indelonx, Indelonx of felonaturelon within thelon telonnsor)}
  *
- *   Feature id : 64 bit hash of the feature name used in DataRecords.
+ *   Felonaturelon id : 64 bit hash of thelon felonaturelon namelon uselond in DataReloncords.
  *
- *   Tensor Index : A vector of tensors is passed to the model. Tensor
- *     index refers to the tensor this feature is part of.
+ *   Telonnsor Indelonx : A velonctor of telonnsors is passelond to thelon modelonl. Telonnsor
+ *     indelonx relonfelonrs to thelon telonnsor this felonaturelon is part of.
  *
- *   Index of feature in tensor : The tensors are vectors, the index of
- *     feature is the position to put the feature value.
+ *   Indelonx of felonaturelon in telonnsor : Thelon telonnsors arelon velonctors, thelon indelonx of
+ *     felonaturelon is thelon position to put thelon felonaturelon valuelon.
  *
- * There are many assumptions made in this function that is very model specific.
- * These assumptions are called out below and need to be schematized eventually.
+ * Thelonrelon arelon many assumptions madelon in this function that is velonry modelonl speloncific.
+ * Thelonselon assumptions arelon callelond out belonlow and nelonelond to belon schelonmatizelond elonvelonntually.
  *
- * Call this once for each segdense schema and cache the FeatureMapper.
+ * Call this oncelon for elonach selongdelonnselon schelonma and cachelon thelon FelonaturelonMappelonr.
  */
-pub fn safe_load_config(json_str: &str) -> Result<FeatureMapper, SegDenseError> {
-    let root = parse(json_str)?;
-    load_from_parsed_config(root)
+pub fn safelon_load_config(json_str: &str) -> Relonsult<FelonaturelonMappelonr, SelongDelonnselonelonrror> {
+    lelont root = parselon(json_str)?;
+    load_from_parselond_config(root)
 }
 
-pub fn load_from_parsed_config_ref(root: &seg_dense::Root) -> FeatureMapper {
-    load_from_parsed_config(root.clone()).unwrap_or_else(
-      |error| panic!("Error loading all_config.json - {}", error))
+pub fn load_from_parselond_config_relonf(root: &selong_delonnselon::Root) -> FelonaturelonMappelonr {
+    load_from_parselond_config(root.clonelon()).unwrap_or_elonlselon(
+      |elonrror| panic!("elonrror loading all_config.json - {}", elonrror))
 }
 
-// Perf note : make 'root' un-owned
-pub fn load_from_parsed_config(root: seg_dense::Root) ->
-    Result<FeatureMapper, SegDenseError> {
+// Pelonrf notelon : makelon 'root' un-ownelond
+pub fn load_from_parselond_config(root: selong_delonnselon::Root) ->
+    Relonsult<FelonaturelonMappelonr, SelongDelonnselonelonrror> {
 
-    let v = root.input_features_map;
+    lelont v = root.input_felonaturelons_map;
 
-    // Do error check
-    let map: Map<String, Value> = match v {
-        Value::Object(map) => map,
-        _ => return Err(SegDenseError::JsonMissingObject),
+    // Do elonrror chelonck
+    lelont map: Map<String, Valuelon> = match v {
+        Valuelon::Objelonct(map) => map,
+        _ => relonturn elonrr(SelongDelonnselonelonrror::JsonMissingObjelonct),
     };
 
-    let mut fm: FeatureMapper = FeatureMapper::new();
+    lelont mut fm: FelonaturelonMappelonr = FelonaturelonMappelonr::nelonw();
 
-    let items = map.values();
+    lelont itelonms = map.valuelons();
 
-    // Perf : Consider a way to avoid clone here
-    for item in items.cloned() {
-        let mut vec = match item {
-            Value::Array(v) => v,
-            _ => return Err(SegDenseError::JsonMissingArray),
+    // Pelonrf : Considelonr a way to avoid clonelon helonrelon
+    for itelonm in itelonms.clonelond() {
+        lelont mut velonc = match itelonm {
+            Valuelon::Array(v) => v,
+            _ => relonturn elonrr(SelongDelonnselonelonrror::JsonMissingArray),
         };
 
-        if vec.len() != 1 {
-            return Err(SegDenseError::JsonArraySize);
+        if velonc.lelonn() != 1 {
+            relonturn elonrr(SelongDelonnselonelonrror::JsonArraySizelon);
         }
 
-        let val = vec.pop().unwrap();
+        lelont val = velonc.pop().unwrap();
 
-        let input_feature: seg_dense::InputFeature = serde_json::from_value(val)?;
-        let feature_id = input_feature.feature_id;
-        let feature_info = to_feature_info(&input_feature);
+        lelont input_felonaturelon: selong_delonnselon::InputFelonaturelon = selonrdelon_json::from_valuelon(val)?;
+        lelont felonaturelon_id = input_felonaturelon.felonaturelon_id;
+        lelont felonaturelon_info = to_felonaturelon_info(&input_felonaturelon);
 
-        match feature_info {
-            Some(info) => {
-                debug!("{:?}", info);
-                fm.set(feature_id, info)
+        match felonaturelon_info {
+            Somelon(info) => {
+                delonbug!("{:?}", info);
+                fm.selont(felonaturelon_id, info)
             },
-            None => (),
+            Nonelon => (),
         }
     }
 
     Ok(fm)
 }
-#[allow(dead_code)]
-fn add_feature_info_to_mapper(feature_mapper: &mut FeatureMapper, input_features: &Vec<InputFeature>) {
-    for input_feature in input_features.iter() {
-            let feature_id = input_feature.feature_id;
-            let feature_info = to_feature_info(input_feature);
+#[allow(delonad_codelon)]
+fn add_felonaturelon_info_to_mappelonr(felonaturelon_mappelonr: &mut FelonaturelonMappelonr, input_felonaturelons: &Velonc<InputFelonaturelon>) {
+    for input_felonaturelon in input_felonaturelons.itelonr() {
+            lelont felonaturelon_id = input_felonaturelon.felonaturelon_id;
+            lelont felonaturelon_info = to_felonaturelon_info(input_felonaturelon);
     
-            match feature_info {
-                Some(info) => {
-                    debug!("{:?}", info);
-                    feature_mapper.set(feature_id, info)
+            match felonaturelon_info {
+                Somelon(info) => {
+                    delonbug!("{:?}", info);
+                    felonaturelon_mappelonr.selont(felonaturelon_id, info)
                 },
-                None => (),
+                Nonelon => (),
             }
         }
 }
 
-pub fn to_feature_info(input_feature: &seg_dense::InputFeature) -> Option<FeatureInfo> {
-    if input_feature.maybe_exclude {
-        return None;
+pub fn to_felonaturelon_info(input_felonaturelon: &selong_delonnselon::InputFelonaturelon) -> Option<FelonaturelonInfo> {
+    if input_felonaturelon.maybelon_elonxcludelon {
+        relonturn Nonelon;
     }
 
-    // This part needs to be schema driven
+    // This part nelonelonds to belon schelonma drivelonn
     //
-    //   tensor index : Which of these tensors this feature is part of
-    //      [Continious, Binary, Discrete, User_embedding, user_eng_embedding, author_embedding]
-    //      Note that this order is fixed/hardcoded here, and need to be schematized
+    //   telonnsor indelonx : Which of thelonselon telonnsors this felonaturelon is part of
+    //      [Continious, Binary, Discrelontelon, Uselonr_elonmbelondding, uselonr_elonng_elonmbelondding, author_elonmbelondding]
+    //      Notelon that this ordelonr is fixelond/hardcodelond helonrelon, and nelonelond to belon schelonmatizelond
     //
-    let tensor_idx: i8 = match input_feature.feature_id {
-        // user.timelines.twhin_user_follow_embeddings.twhin_user_follow_embeddings
-        // Feature name is mapped to a feature-id value. The hardcoded values below correspond to a specific feature name.
+    lelont telonnsor_idx: i8 = match input_felonaturelon.felonaturelon_id {
+        // uselonr.timelonlinelons.twhin_uselonr_follow_elonmbelonddings.twhin_uselonr_follow_elonmbelonddings
+        // Felonaturelon namelon is mappelond to a felonaturelon-id valuelon. Thelon hardcodelond valuelons belonlow correlonspond to a speloncific felonaturelon namelon.
         -2550691008059411095 => 3,
 
-        // user.timelines.twhin_user_engagement_embeddings.twhin_user_engagement_embeddings
+        // uselonr.timelonlinelons.twhin_uselonr_elonngagelonmelonnt_elonmbelonddings.twhin_uselonr_elonngagelonmelonnt_elonmbelonddings
         5390650078733277231 => 4,
 
-        // original_author.timelines.twhin_author_follow_embeddings.twhin_author_follow_embeddings
+        // original_author.timelonlinelons.twhin_author_follow_elonmbelonddings.twhin_author_follow_elonmbelonddings
         3223956748566688423 => 5,
 
-        _ => match input_feature.feature_type {
-            //   feature_type : src/thrift/com/twitter/ml/api/data.thrift
-            //       BINARY = 1, CONTINUOUS = 2, DISCRETE = 3,
-            //    Map to slots in [Continious, Binary, Discrete, ..]
+        _ => match input_felonaturelon.felonaturelon_typelon {
+            //   felonaturelon_typelon : src/thrift/com/twittelonr/ml/api/data.thrift
+            //       BINARY = 1, CONTINUOUS = 2, DISCRelonTelon = 3,
+            //    Map to slots in [Continious, Binary, Discrelontelon, ..]
             1 => 1,
             2 => 0,
             3 => 2,
@@ -142,18 +142,18 @@ pub fn to_feature_info(input_feature: &seg_dense::InputFeature) -> Option<Featur
         }
     };
 
-    if input_feature.index < 0 {
-        return None;
+    if input_felonaturelon.indelonx < 0 {
+        relonturn Nonelon;
     }
 
-    // Handle this case later
-    if tensor_idx == -1 {
-        return None;
+    // Handlelon this caselon latelonr
+    if telonnsor_idx == -1 {
+        relonturn Nonelon;
     }
 
-    Some(FeatureInfo {
-        tensor_index: tensor_idx,
-        index_within_tensor: input_feature.index,
+    Somelon(FelonaturelonInfo {
+        telonnsor_indelonx: telonnsor_idx,
+        indelonx_within_telonnsor: input_felonaturelon.indelonx,
     })
 }
 

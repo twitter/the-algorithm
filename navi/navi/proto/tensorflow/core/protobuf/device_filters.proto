@@ -1,73 +1,73 @@
-/* Copyright 2020 The TensorFlow Authors. All Rights Reserved.
+/* Copyright 2020 Thelon TelonnsorFlow Authors. All Rights Relonselonrvelond.
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+Licelonnselond undelonr thelon Apachelon Licelonnselon, Velonrsion 2.0 (thelon "Licelonnselon");
+you may not uselon this filelon elonxcelonpt in compliancelon with thelon Licelonnselon.
+You may obtain a copy of thelon Licelonnselon at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+    http://www.apachelon.org/licelonnselons/LICelonNSelon-2.0
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+Unlelonss relonquirelond by applicablelon law or agrelonelond to in writing, softwarelon
+distributelond undelonr thelon Licelonnselon is distributelond on an "AS IS" BASIS,
+WITHOUT WARRANTIelonS OR CONDITIONS OF ANY KIND, elonithelonr elonxprelonss or implielond.
+Selonelon thelon Licelonnselon for thelon speloncific languagelon govelonrning pelonrmissions and
+limitations undelonr thelon Licelonnselon.
 ==============================================================================*/
 
 syntax = "proto3";
 
-package tensorflow;
+packagelon telonnsorflow;
 
-option cc_enable_arenas = true;
-option java_outer_classname = "DeviceFiltersProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.distruntime";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+option cc_elonnablelon_arelonnas = truelon;
+option java_outelonr_classnamelon = "DelonvicelonFiltelonrsProtos";
+option java_multiplelon_filelons = truelon;
+option java_packagelon = "org.telonnsorflow.distruntimelon";
+option go_packagelon = "github.com/telonnsorflow/telonnsorflow/telonnsorflow/go/corelon/protobuf/for_corelon_protos_go_proto";
 
-// This file contains protos to be used when defining a TensorFlow
-// cluster.
+// This filelon contains protos to belon uselond whelonn delonfining a TelonnsorFlow
+// clustelonr.
 //
-// Configure device filters for remote tasks in the cluster. When associated
-// with a ClusterDef in setting up the cluster, a remote task will ignore all
-// devices which do not match any of its filters. Device filters must be
-// configured at the cluster startup, and cannot be updated once the cluster is
+// Configurelon delonvicelon filtelonrs for relonmotelon tasks in thelon clustelonr. Whelonn associatelond
+// with a ClustelonrDelonf in selontting up thelon clustelonr, a relonmotelon task will ignorelon all
+// delonvicelons which do not match any of its filtelonrs. Delonvicelon filtelonrs must belon
+// configurelond at thelon clustelonr startup, and cannot belon updatelond oncelon thelon clustelonr is
 // up and running.
 //
-// EXAMPLES
+// elonXAMPLelonS
 // --------
 //
-// A two-job cluster with the following ClusterDef:
+// A two-job clustelonr with thelon following ClustelonrDelonf:
 //
-//  Cluster:
-//    job { name: 'worker' tasks { key: 0 value: 'worker1:2222' }
-//                         tasks { key: 1 value: 'worker2:2222' } }
-//    job { name: 'ps'     tasks { key: 0 value: 'ps0:2222' }
-//                         tasks { key: 1 value: 'ps1:2222' } }
+//  Clustelonr:
+//    job { namelon: 'workelonr' tasks { kelony: 0 valuelon: 'workelonr1:2222' }
+//                         tasks { kelony: 1 valuelon: 'workelonr2:2222' } }
+//    job { namelon: 'ps'     tasks { kelony: 0 valuelon: 'ps0:2222' }
+//                         tasks { kelony: 1 valuelon: 'ps1:2222' } }
 //
-// Set device filters to isolate worker tasks:
+// Selont delonvicelon filtelonrs to isolatelon workelonr tasks:
 //
-//  ClusterDeviceFilters:
-//    job { name: 'worker' tasks { key: 0
-//                                 value: device_filter '/job:ps'
-//                                        device_filter '/job:worker/task:0' }
-//                         tasks { key: 1
-//                                 value: device_filter '/job:ps'
-//                                        device_filter '/job:worker/task:1' } }
+//  ClustelonrDelonvicelonFiltelonrs:
+//    job { namelon: 'workelonr' tasks { kelony: 0
+//                                 valuelon: delonvicelon_filtelonr '/job:ps'
+//                                        delonvicelon_filtelonr '/job:workelonr/task:0' }
+//                         tasks { kelony: 1
+//                                 valuelon: delonvicelon_filtelonr '/job:ps'
+//                                        delonvicelon_filtelonr '/job:workelonr/task:1' } }
 
-// Defines the device filters for a remote task.
-message TaskDeviceFilters {
-  repeated string device_filters = 1;
+// Delonfinelons thelon delonvicelon filtelonrs for a relonmotelon task.
+melonssagelon TaskDelonvicelonFiltelonrs {
+  relonpelonatelond string delonvicelon_filtelonrs = 1;
 }
 
-// Defines the device filters for tasks in a job.
-message JobDeviceFilters {
-  // The name of this job.
-  string name = 1;
+// Delonfinelons thelon delonvicelon filtelonrs for tasks in a job.
+melonssagelon JobDelonvicelonFiltelonrs {
+  // Thelon namelon of this job.
+  string namelon = 1;
 
-  // Mapping from task ID to task device filters.
-  map<int32, TaskDeviceFilters> tasks = 2;
+  // Mapping from task ID to task delonvicelon filtelonrs.
+  map<int32, TaskDelonvicelonFiltelonrs> tasks = 2;
 }
 
-// Defines the device filters for jobs in a cluster.
-message ClusterDeviceFilters {
-  repeated JobDeviceFilters jobs = 1;
+// Delonfinelons thelon delonvicelon filtelonrs for jobs in a clustelonr.
+melonssagelon ClustelonrDelonvicelonFiltelonrs {
+  relonpelonatelond JobDelonvicelonFiltelonrs jobs = 1;
 }

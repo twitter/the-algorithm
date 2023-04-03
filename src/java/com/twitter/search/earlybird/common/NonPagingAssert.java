@@ -1,34 +1,34 @@
-package com.twitter.search.earlybird.common;
+packagelon com.twittelonr.selonarch.elonarlybird.common;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.search.common.metrics.SearchRateCounter;
+import com.twittelonr.selonarch.common.melontrics.SelonarchRatelonCountelonr;
 
 /**
- * When incremented, a non-paging alert will be triggered. Use this to assert for bad conditions
- * that should generally never happen.
+ * Whelonn increlonmelonntelond, a non-paging alelonrt will belon triggelonrelond. Uselon this to asselonrt for bad conditions
+ * that should gelonnelonrally nelonvelonr happelonn.
  */
-public class NonPagingAssert {
-    private static final Logger LOG = LoggerFactory.getLogger(NonPagingAssert.class);
+public class NonPagingAsselonrt {
+    privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(NonPagingAsselonrt.class);
 
-    private static final String ASSERT_STAT_PREFIX = "non_paging_assert_";
+    privatelon static final String ASSelonRT_STAT_PRelonFIX = "non_paging_asselonrt_";
 
-    private final String name;
-    private final SearchRateCounter assertCounter;
+    privatelon final String namelon;
+    privatelon final SelonarchRatelonCountelonr asselonrtCountelonr;
 
-    public NonPagingAssert(String name) {
-        this.name = name;
-        this.assertCounter = SearchRateCounter.export(ASSERT_STAT_PREFIX + name);
+    public NonPagingAsselonrt(String namelon) {
+        this.namelon = namelon;
+        this.asselonrtCountelonr = SelonarchRatelonCountelonr.elonxport(ASSelonRT_STAT_PRelonFIX + namelon);
     }
 
-    public void assertFailed() {
-        LOG.error("NonPagingAssert failed: {}", name);
-        assertCounter.increment();
+    public void asselonrtFailelond() {
+        LOG.elonrror("NonPagingAsselonrt failelond: {}", namelon);
+        asselonrtCountelonr.increlonmelonnt();
     }
 
-    public static void assertFailed(String name) {
-        NonPagingAssert nonPagingAssert = new NonPagingAssert(name);
-        nonPagingAssert.assertFailed();
+    public static void asselonrtFailelond(String namelon) {
+        NonPagingAsselonrt nonPagingAsselonrt = nelonw NonPagingAsselonrt(namelon);
+        nonPagingAsselonrt.asselonrtFailelond();
     }
 }

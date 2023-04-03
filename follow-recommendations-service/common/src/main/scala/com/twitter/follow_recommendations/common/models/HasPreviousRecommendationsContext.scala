@@ -1,12 +1,12 @@
-package com.twitter.follow_recommendations.common.models
+packagelon com.twittelonr.follow_reloncommelonndations.common.modelonls
 
-trait HasPreviousRecommendationsContext {
+trait HasPrelonviousReloncommelonndationsContelonxt {
 
-  def previouslyRecommendedUserIDs: Set[Long]
+  delonf prelonviouslyReloncommelonndelondUselonrIDs: Selont[Long]
 
-  def previouslyFollowedUserIds: Set[Long]
+  delonf prelonviouslyFollowelondUselonrIds: Selont[Long]
 
-  def skippedFollows: Set[Long] = {
-    previouslyRecommendedUserIDs.diff(previouslyFollowedUserIds)
+  delonf skippelondFollows: Selont[Long] = {
+    prelonviouslyReloncommelonndelondUselonrIDs.diff(prelonviouslyFollowelondUselonrIds)
   }
 }

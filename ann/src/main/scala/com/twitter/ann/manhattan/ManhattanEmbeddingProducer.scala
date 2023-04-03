@@ -1,63 +1,63 @@
-package com.twitter.ann.manhattan
+packagelon com.twittelonr.ann.manhattan
 
-import com.twitter.ann.common.EmbeddingType.EmbeddingVector
-import com.twitter.ann.common.{EmbeddingProducer, EmbeddingType}
-import com.twitter.bijection.Injection
-import com.twitter.ml.api.embedding.{EmbeddingBijection, EmbeddingSerDe}
-import com.twitter.ml.api.{thriftscala => thrift}
-import com.twitter.stitch.Stitch
-import com.twitter.storage.client.manhattan.bijections.Bijections
-import com.twitter.storage.client.manhattan.bijections.Bijections.BinaryScalaInjection
-import com.twitter.storage.client.manhattan.kv.ManhattanKVEndpoint
-import com.twitter.storage.client.manhattan.kv.impl.{
-  DescriptorP1L0,
-  ReadOnlyKeyDescriptor,
-  ValueDescriptor
+import com.twittelonr.ann.common.elonmbelonddingTypelon.elonmbelonddingVelonctor
+import com.twittelonr.ann.common.{elonmbelonddingProducelonr, elonmbelonddingTypelon}
+import com.twittelonr.bijelonction.Injelonction
+import com.twittelonr.ml.api.elonmbelondding.{elonmbelonddingBijelonction, elonmbelonddingSelonrDelon}
+import com.twittelonr.ml.api.{thriftscala => thrift}
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.storagelon.clielonnt.manhattan.bijelonctions.Bijelonctions
+import com.twittelonr.storagelon.clielonnt.manhattan.bijelonctions.Bijelonctions.BinaryScalaInjelonction
+import com.twittelonr.storagelon.clielonnt.manhattan.kv.ManhattanKVelonndpoint
+import com.twittelonr.storagelon.clielonnt.manhattan.kv.impl.{
+  DelonscriptorP1L0,
+  RelonadOnlyKelonyDelonscriptor,
+  ValuelonDelonscriptor
 }
 
-private[manhattan] class ManhattanEmbeddingProducer[T](
-  keyDescriptor: DescriptorP1L0.DKey[T],
-  valueDescriptor: ValueDescriptor.EmptyValue[EmbeddingVector],
-  manhattanEndpoint: ManhattanKVEndpoint)
-    extends EmbeddingProducer[T] {
+privatelon[manhattan] class ManhattanelonmbelonddingProducelonr[T](
+  kelonyDelonscriptor: DelonscriptorP1L0.DKelony[T],
+  valuelonDelonscriptor: ValuelonDelonscriptor.elonmptyValuelon[elonmbelonddingVelonctor],
+  manhattanelonndpoint: ManhattanKVelonndpoint)
+    elonxtelonnds elonmbelonddingProducelonr[T] {
 
   /**
-   * Lookup an embedding from manhattan given a key of type T.
+   * Lookup an elonmbelondding from manhattan givelonn a kelony of typelon T.
    *
-   * @return An embedding stitch.
-   *         An easy way to get a Future from a Stitch is to run Stitch.run(stitch)
+   * @relonturn An elonmbelondding stitch.
+   *         An elonasy way to gelont a Futurelon from a Stitch is to run Stitch.run(stitch)
    */
-  override def produceEmbedding(input: T): Stitch[Option[EmbeddingVector]] = {
-    val fullKey = keyDescriptor.withPkey(input)
-    val stitchResult = manhattanEndpoint.get(fullKey, valueDescriptor)
-    stitchResult.map { resultOption =>
-      resultOption.map(_.contents)
+  ovelonrridelon delonf producelonelonmbelondding(input: T): Stitch[Option[elonmbelonddingVelonctor]] = {
+    val fullKelony = kelonyDelonscriptor.withPkelony(input)
+    val stitchRelonsult = manhattanelonndpoint.gelont(fullKelony, valuelonDelonscriptor)
+    stitchRelonsult.map { relonsultOption =>
+      relonsultOption.map(_.contelonnts)
     }
   }
 }
 
-object ManhattanEmbeddingProducer {
-  private[manhattan] def keyDescriptor[T](
-    injection: Injection[T, Array[Byte]],
-    dataset: String
-  ): DescriptorP1L0.DKey[T] =
-    ReadOnlyKeyDescriptor(injection.andThen(Bijections.BytesBijection))
-      .withDataset(dataset)
+objelonct ManhattanelonmbelonddingProducelonr {
+  privatelon[manhattan] delonf kelonyDelonscriptor[T](
+    injelonction: Injelonction[T, Array[Bytelon]],
+    dataselont: String
+  ): DelonscriptorP1L0.DKelony[T] =
+    RelonadOnlyKelonyDelonscriptor(injelonction.andThelonn(Bijelonctions.BytelonsBijelonction))
+      .withDataselont(dataselont)
 
-  private[manhattan] val EmbeddingDescriptor: ValueDescriptor.EmptyValue[
-    EmbeddingType.EmbeddingVector
+  privatelon[manhattan] val elonmbelonddingDelonscriptor: ValuelonDelonscriptor.elonmptyValuelon[
+    elonmbelonddingTypelon.elonmbelonddingVelonctor
   ] = {
-    val embeddingBijection = new EmbeddingBijection(EmbeddingSerDe.floatEmbeddingSerDe)
-    val thriftInjection = BinaryScalaInjection[thrift.Embedding](thrift.Embedding)
-    ValueDescriptor(embeddingBijection.andThen(thriftInjection))
+    val elonmbelonddingBijelonction = nelonw elonmbelonddingBijelonction(elonmbelonddingSelonrDelon.floatelonmbelonddingSelonrDelon)
+    val thriftInjelonction = BinaryScalaInjelonction[thrift.elonmbelondding](thrift.elonmbelondding)
+    ValuelonDelonscriptor(elonmbelonddingBijelonction.andThelonn(thriftInjelonction))
   }
 
-  def apply[T](
-    dataset: String,
-    injection: Injection[T, Array[Byte]],
-    manhattanEndpoint: ManhattanKVEndpoint
-  ): EmbeddingProducer[T] = {
-    val descriptor = keyDescriptor(injection, dataset)
-    new ManhattanEmbeddingProducer(descriptor, EmbeddingDescriptor, manhattanEndpoint)
+  delonf apply[T](
+    dataselont: String,
+    injelonction: Injelonction[T, Array[Bytelon]],
+    manhattanelonndpoint: ManhattanKVelonndpoint
+  ): elonmbelonddingProducelonr[T] = {
+    val delonscriptor = kelonyDelonscriptor(injelonction, dataselont)
+    nelonw ManhattanelonmbelonddingProducelonr(delonscriptor, elonmbelonddingDelonscriptor, manhattanelonndpoint)
   }
 }

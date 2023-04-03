@@ -1,94 +1,94 @@
-package com.twitter.search.earlybird_root.filters;
+packagelon com.twittelonr.selonarch.elonarlybird_root.filtelonrs;
 
 import java.util.HashMap;
 import java.util.Map;
-import javax.annotation.Nullable;
-import javax.inject.Inject;
+import javax.annotation.Nullablelon;
+import javax.injelonct.Injelonct;
 
-import com.google.common.annotations.VisibleForTesting;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
 
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.search.common.constants.thriftjava.ThriftQuerySource;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.search.earlybird.thrift.ThriftSearchResults;
-import com.twitter.util.Future;
+import com.twittelonr.finaglelon.Selonrvicelon;
+import com.twittelonr.finaglelon.SimplelonFiltelonr;
+import com.twittelonr.selonarch.common.constants.thriftjava.ThriftQuelonrySourcelon;
+import com.twittelonr.selonarch.common.deloncidelonr.SelonarchDeloncidelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchRatelonCountelonr;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdClustelonr;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonquelonst;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselonCodelon;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsults;
+import com.twittelonr.util.Futurelon;
 
 /**
- * Rejects requests based on the query source of the request. Intended to be used at super-root
- * or archive-root. If used to reject client request at super-root, the client will get a response
- * with empty results and a REQUEST_BLOCKED_ERROR status code. If used at archive-root the client
- * will get a response which might contain some results from realtime and protected and the status
- * code of the response will depend on how super-root combines responses from the three downstream
+ * Relonjeloncts relonquelonsts baselond on thelon quelonry sourcelon of thelon relonquelonst. Intelonndelond to belon uselond at supelonr-root
+ * or archivelon-root. If uselond to relonjelonct clielonnt relonquelonst at supelonr-root, thelon clielonnt will gelont a relonsponselon
+ * with elonmpty relonsults and a RelonQUelonST_BLOCKelonD_elonRROR status codelon. If uselond at archivelon-root thelon clielonnt
+ * will gelont a relonsponselon which might contain somelon relonsults from relonaltimelon and protelonctelond and thelon status
+ * codelon of thelon relonsponselon will delonpelonnd on how supelonr-root combinelons relonsponselons from thelon threlonelon downstrelonam
  * roots.
  */
-public class RejectRequestsByQuerySourceFilter extends
-    SimpleFilter<EarlybirdRequest, EarlybirdResponse> {
+public class RelonjelonctRelonquelonstsByQuelonrySourcelonFiltelonr elonxtelonnds
+    SimplelonFiltelonr<elonarlybirdRelonquelonst, elonarlybirdRelonsponselon> {
 
-  @VisibleForTesting
-  protected static final String NUM_REJECTED_REQUESTS_STAT_NAME_PATTERN =
-      "num_root_%s_rejected_requests_with_query_source_%s";
-  @VisibleForTesting
-  protected static final String REJECT_REQUESTS_DECIDER_KEY_PATTERN =
-      "root_%s_reject_requests_with_query_source_%s";
-  private final Map<ThriftQuerySource, SearchRateCounter> rejectedRequestsCounterPerQuerySource =
-      new HashMap<>();
-  private final Map<ThriftQuerySource, String> rejectRequestsDeciderKeyPerQuerySource =
-      new HashMap<>();
-  private final SearchDecider searchDecider;
+  @VisiblelonForTelonsting
+  protelonctelond static final String NUM_RelonJelonCTelonD_RelonQUelonSTS_STAT_NAMelon_PATTelonRN =
+      "num_root_%s_relonjelonctelond_relonquelonsts_with_quelonry_sourcelon_%s";
+  @VisiblelonForTelonsting
+  protelonctelond static final String RelonJelonCT_RelonQUelonSTS_DelonCIDelonR_KelonY_PATTelonRN =
+      "root_%s_relonjelonct_relonquelonsts_with_quelonry_sourcelon_%s";
+  privatelon final Map<ThriftQuelonrySourcelon, SelonarchRatelonCountelonr> relonjelonctelondRelonquelonstsCountelonrPelonrQuelonrySourcelon =
+      nelonw HashMap<>();
+  privatelon final Map<ThriftQuelonrySourcelon, String> relonjelonctRelonquelonstsDeloncidelonrKelonyPelonrQuelonrySourcelon =
+      nelonw HashMap<>();
+  privatelon final SelonarchDeloncidelonr selonarchDeloncidelonr;
 
 
-  @Inject
-  public RejectRequestsByQuerySourceFilter(
-      @Nullable EarlybirdCluster cluster,
-      SearchDecider searchDecider) {
+  @Injelonct
+  public RelonjelonctRelonquelonstsByQuelonrySourcelonFiltelonr(
+      @Nullablelon elonarlybirdClustelonr clustelonr,
+      SelonarchDeloncidelonr selonarchDeloncidelonr) {
 
-    this.searchDecider = searchDecider;
+    this.selonarchDeloncidelonr = selonarchDeloncidelonr;
 
-    String clusterName = cluster != null
-        ? cluster.getNameForStats()
-        : EarlybirdCluster.SUPERROOT.getNameForStats();
+    String clustelonrNamelon = clustelonr != null
+        ? clustelonr.gelontNamelonForStats()
+        : elonarlybirdClustelonr.SUPelonRROOT.gelontNamelonForStats();
 
-    for (ThriftQuerySource querySource : ThriftQuerySource.values()) {
-      String querySourceName = querySource.name().toLowerCase();
+    for (ThriftQuelonrySourcelon quelonrySourcelon : ThriftQuelonrySourcelon.valuelons()) {
+      String quelonrySourcelonNamelon = quelonrySourcelon.namelon().toLowelonrCaselon();
 
-      rejectedRequestsCounterPerQuerySource.put(querySource,
-          SearchRateCounter.export(
+      relonjelonctelondRelonquelonstsCountelonrPelonrQuelonrySourcelon.put(quelonrySourcelon,
+          SelonarchRatelonCountelonr.elonxport(
               String.format(
-                  NUM_REJECTED_REQUESTS_STAT_NAME_PATTERN, clusterName, querySourceName)));
+                  NUM_RelonJelonCTelonD_RelonQUelonSTS_STAT_NAMelon_PATTelonRN, clustelonrNamelon, quelonrySourcelonNamelon)));
 
-      rejectRequestsDeciderKeyPerQuerySource.put(querySource,
+      relonjelonctRelonquelonstsDeloncidelonrKelonyPelonrQuelonrySourcelon.put(quelonrySourcelon,
           String.format(
-              REJECT_REQUESTS_DECIDER_KEY_PATTERN, clusterName, querySourceName));
+              RelonJelonCT_RelonQUelonSTS_DelonCIDelonR_KelonY_PATTelonRN, clustelonrNamelon, quelonrySourcelonNamelon));
     }
   }
 
-  @Override
-  public Future<EarlybirdResponse> apply(EarlybirdRequest request,
-                                         Service<EarlybirdRequest, EarlybirdResponse> service) {
+  @Ovelonrridelon
+  public Futurelon<elonarlybirdRelonsponselon> apply(elonarlybirdRelonquelonst relonquelonst,
+                                         Selonrvicelon<elonarlybirdRelonquelonst, elonarlybirdRelonsponselon> selonrvicelon) {
 
-    ThriftQuerySource querySource = request.isSetQuerySource()
-        ? request.getQuerySource()
-        : ThriftQuerySource.UNKNOWN;
+    ThriftQuelonrySourcelon quelonrySourcelon = relonquelonst.isSelontQuelonrySourcelon()
+        ? relonquelonst.gelontQuelonrySourcelon()
+        : ThriftQuelonrySourcelon.UNKNOWN;
 
-    String deciderKey = rejectRequestsDeciderKeyPerQuerySource.get(querySource);
-    if (searchDecider.isAvailable(deciderKey)) {
-      rejectedRequestsCounterPerQuerySource.get(querySource).increment();
-      return Future.value(getRejectedRequestResponse(querySource, deciderKey));
+    String deloncidelonrKelony = relonjelonctRelonquelonstsDeloncidelonrKelonyPelonrQuelonrySourcelon.gelont(quelonrySourcelon);
+    if (selonarchDeloncidelonr.isAvailablelon(deloncidelonrKelony)) {
+      relonjelonctelondRelonquelonstsCountelonrPelonrQuelonrySourcelon.gelont(quelonrySourcelon).increlonmelonnt();
+      relonturn Futurelon.valuelon(gelontRelonjelonctelondRelonquelonstRelonsponselon(quelonrySourcelon, deloncidelonrKelony));
     }
-    return service.apply(request);
+    relonturn selonrvicelon.apply(relonquelonst);
   }
 
-  private static EarlybirdResponse getRejectedRequestResponse(
-      ThriftQuerySource querySource, String deciderKey) {
-    return new EarlybirdResponse(EarlybirdResponseCode.REQUEST_BLOCKED_ERROR, 0)
-        .setSearchResults(new ThriftSearchResults())
-        .setDebugString(String.format(
-            "Request with query source %s is blocked by decider %s", querySource, deciderKey));
+  privatelon static elonarlybirdRelonsponselon gelontRelonjelonctelondRelonquelonstRelonsponselon(
+      ThriftQuelonrySourcelon quelonrySourcelon, String deloncidelonrKelony) {
+    relonturn nelonw elonarlybirdRelonsponselon(elonarlybirdRelonsponselonCodelon.RelonQUelonST_BLOCKelonD_elonRROR, 0)
+        .selontSelonarchRelonsults(nelonw ThriftSelonarchRelonsults())
+        .selontDelonbugString(String.format(
+            "Relonquelonst with quelonry sourcelon %s is blockelond by deloncidelonr %s", quelonrySourcelon, deloncidelonrKelony));
   }
 }

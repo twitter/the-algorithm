@@ -1,630 +1,630 @@
-package com.twitter.search.earlybird.search;
+packagelon com.twittelonr.selonarch.elonarlybird.selonarch;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.Selont;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import com.googlelon.common.baselon.Optional;
+import com.googlelon.common.baselon.Prelonconditions;
+import com.googlelon.common.collelonct.Maps;
+import com.googlelon.common.collelonct.Selonts;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.lucene.index.LeafReader;
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.search.ScoreMode;
+import org.apachelon.commons.collelonctions.CollelonctionUtils;
+import org.apachelon.lucelonnelon.indelonx.LelonafRelonadelonr;
+import org.apachelon.lucelonnelon.indelonx.LelonafRelonadelonrContelonxt;
+import org.apachelon.lucelonnelon.selonarch.DocIdSelontItelonrator;
+import org.apachelon.lucelonnelon.selonarch.ScorelonModelon;
 
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.constants.thriftjava.ThriftLanguage;
-import com.twitter.search.common.partitioning.snowflakeparser.SnowflakeIdParser;
-import com.twitter.search.common.relevance.features.EarlybirdDocumentFeatures;
-import com.twitter.search.common.results.thriftjava.FieldHitAttribution;
-import com.twitter.search.common.results.thriftjava.FieldHitList;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.common.search.TwitterEarlyTerminationCollector;
-import com.twitter.search.common.util.spatial.GeoUtil;
-import com.twitter.search.core.earlybird.facets.AbstractFacetCountingArray;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentData;
-import com.twitter.search.core.earlybird.index.TimeMapper;
-import com.twitter.search.core.earlybird.index.inverted.QueryCostTracker;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.common.userupdates.UserTable;
-import com.twitter.search.earlybird.index.EarlybirdSingleSegmentSearcher;
-import com.twitter.search.earlybird.index.TweetIDMapper;
-import com.twitter.search.earlybird.search.facets.FacetLabelCollector;
-import com.twitter.search.earlybird.stats.EarlybirdSearcherStats;
-import com.twitter.search.earlybird.thrift.ThriftFacetLabel;
-import com.twitter.search.earlybird.thrift.ThriftSearchQuery;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultExtraMetadata;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultGeoLocation;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultMetadata;
-import com.twitter.search.queryparser.util.IdTimeRanges;
+import com.twittelonr.common.util.Clock;
+import com.twittelonr.selonarch.common.constants.thriftjava.ThriftLanguagelon;
+import com.twittelonr.selonarch.common.partitioning.snowflakelonparselonr.SnowflakelonIdParselonr;
+import com.twittelonr.selonarch.common.relonlelonvancelon.felonaturelons.elonarlybirdDocumelonntFelonaturelons;
+import com.twittelonr.selonarch.common.relonsults.thriftjava.FielonldHitAttribution;
+import com.twittelonr.selonarch.common.relonsults.thriftjava.FielonldHitList;
+import com.twittelonr.selonarch.common.schelonma.baselon.ImmutablelonSchelonmaIntelonrfacelon;
+import com.twittelonr.selonarch.common.schelonma.baselon.Schelonma;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdClustelonr;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdFielonldConstants.elonarlybirdFielonldConstant;
+import com.twittelonr.selonarch.common.selonarch.TwittelonrelonarlyTelonrminationCollelonctor;
+import com.twittelonr.selonarch.common.util.spatial.GelonoUtil;
+import com.twittelonr.selonarch.corelon.elonarlybird.facelonts.AbstractFacelontCountingArray;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.elonarlybirdIndelonxSelongmelonntData;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.TimelonMappelonr;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.invelonrtelond.QuelonryCostTrackelonr;
+import com.twittelonr.selonarch.elonarlybird.common.config.elonarlybirdConfig;
+import com.twittelonr.selonarch.elonarlybird.common.uselonrupdatelons.UselonrTablelon;
+import com.twittelonr.selonarch.elonarlybird.indelonx.elonarlybirdSinglelonSelongmelonntSelonarchelonr;
+import com.twittelonr.selonarch.elonarlybird.indelonx.TwelonelontIDMappelonr;
+import com.twittelonr.selonarch.elonarlybird.selonarch.facelonts.FacelontLabelonlCollelonctor;
+import com.twittelonr.selonarch.elonarlybird.stats.elonarlybirdSelonarchelonrStats;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftFacelontLabelonl;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchQuelonry;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsultelonxtraMelontadata;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsultGelonoLocation;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsultMelontadata;
+import com.twittelonr.selonarch.quelonryparselonr.util.IdTimelonRangelons;
 
-import geo.google.datamodel.GeoCoordinate;
+import gelono.googlelon.datamodelonl.GelonoCoordinatelon;
 
 /**
- * Abstract parent class for all results collectors in earlybird.
- * This collector should be able to handle both single-segment and
- * multi-segment collection.
+ * Abstract parelonnt class for all relonsults collelonctors in elonarlybird.
+ * This collelonctor should belon ablelon to handlelon both singlelon-selongmelonnt and
+ * multi-selongmelonnt collelonction.
  */
-public abstract class AbstractResultsCollector<R extends SearchRequestInfo,
-    S extends SearchResultsInfo>
-    extends TwitterEarlyTerminationCollector {
-  enum IdAndRangeUpdateType {
-    BEGIN_SEGMENT,
-    END_SEGMENT,
+public abstract class AbstractRelonsultsCollelonctor<R elonxtelonnds SelonarchRelonquelonstInfo,
+    S elonxtelonnds SelonarchRelonsultsInfo>
+    elonxtelonnds TwittelonrelonarlyTelonrminationCollelonctor {
+  elonnum IdAndRangelonUpdatelonTypelon {
+    BelonGIN_SelonGMelonNT,
+    elonND_SelonGMelonNT,
     HIT
   }
 
-  // Earlybird used to have a special early termination logic: at segment boundaries
-  // the collector estimates how much time it'll take to search the next segment.
-  // If this estimate * 1.5 will cause the request to timeout, the search early terminates.
-  // That logic is removed in favor of more fine grained checks---now we check timeout
-  // within a segment, every 2,000,000 docs processed.
-  private static final int EXPENSIVE_TERMINATION_CHECK_INTERVAL =
-      EarlybirdConfig.getInt("expensive_termination_check_interval", 2000000);
+  // elonarlybird uselond to havelon a speloncial elonarly telonrmination logic: at selongmelonnt boundarielons
+  // thelon collelonctor elonstimatelons how much timelon it'll takelon to selonarch thelon nelonxt selongmelonnt.
+  // If this elonstimatelon * 1.5 will causelon thelon relonquelonst to timelonout, thelon selonarch elonarly telonrminatelons.
+  // That logic is relonmovelond in favor of morelon finelon grainelond cheloncks---now welon chelonck timelonout
+  // within a selongmelonnt, elonvelonry 2,000,000 docs procelonsselond.
+  privatelon static final int elonXPelonNSIVelon_TelonRMINATION_CHelonCK_INTelonRVAL =
+      elonarlybirdConfig.gelontInt("elonxpelonnsivelon_telonrmination_chelonck_intelonrval", 2000000);
 
-  private static final long NO_TIME_SLICE_ID = -1;
+  privatelon static final long NO_TIMelon_SLICelon_ID = -1;
 
-  protected final R searchRequestInfo;
+  protelonctelond final R selonarchRelonquelonstInfo;
 
-  // Sometimes maxHitsToProcess can also come from places other than collector params.
-  // E.g. from searchQuery.getRelevanceOptions(). This provides a way to allow
-  // subclasses to override the maxHitsToProcess on collector params.
-  private final long maxHitsToProcessOverride;
+  // Somelontimelons maxHitsToProcelonss can also comelon from placelons othelonr than collelonctor params.
+  // elon.g. from selonarchQuelonry.gelontRelonlelonvancelonOptions(). This providelons a way to allow
+  // subclasselons to ovelonrridelon thelon maxHitsToProcelonss on collelonctor params.
+  privatelon final long maxHitsToProcelonssOvelonrridelon;
 
-  // min and max status id actually considered in the search (may not be a hit)
-  private long minSearchedStatusID = Long.MAX_VALUE;
-  private long maxSearchedStatusID = Long.MIN_VALUE;
+  // min and max status id actually considelonrelond in thelon selonarch (may not belon a hit)
+  privatelon long minSelonarchelondStatusID = Long.MAX_VALUelon;
+  privatelon long maxSelonarchelondStatusID = Long.MIN_VALUelon;
 
-  private int minSearchedTime = Integer.MAX_VALUE;
-  private int maxSearchedTime = Integer.MIN_VALUE;
+  privatelon int minSelonarchelondTimelon = Intelongelonr.MAX_VALUelon;
+  privatelon int maxSelonarchelondTimelon = Intelongelonr.MIN_VALUelon;
 
-  // per-segment start time. Will be re-started in setNextReader().
-  private long segmentStartTime;
+  // pelonr-selongmelonnt start timelon. Will belon relon-startelond in selontNelonxtRelonadelonr().
+  privatelon long selongmelonntStartTimelon;
 
-  // Current segment being searched.
-  protected EarlybirdIndexSegmentAtomicReader currTwitterReader;
-  protected TweetIDMapper tweetIdMapper;
-  protected TimeMapper timeMapper;
-  protected long currTimeSliceID = NO_TIME_SLICE_ID;
+  // Currelonnt selongmelonnt beloning selonarchelond.
+  protelonctelond elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr currTwittelonrRelonadelonr;
+  protelonctelond TwelonelontIDMappelonr twelonelontIdMappelonr;
+  protelonctelond TimelonMappelonr timelonMappelonr;
+  protelonctelond long currTimelonSlicelonID = NO_TIMelon_SLICelon_ID;
 
-  private final long queryTime;
+  privatelon final long quelonryTimelon;
 
-  // Time periods, in milliseconds, for which hits are counted.
-  private final List<Long> hitCountsThresholdsMsec;
+  // Timelon pelonriods, in milliselonconds, for which hits arelon countelond.
+  privatelon final List<Long> hitCountsThrelonsholdsMselonc;
 
-  // hitCounts[i] is the number of hits that are more recent than hitCountsThresholdsMsec[i]
-  private final int[] hitCounts;
+  // hitCounts[i] is thelon numbelonr of hits that arelon morelon reloncelonnt than hitCountsThrelonsholdsMselonc[i]
+  privatelon final int[] hitCounts;
 
-  private final ImmutableSchemaInterface schema;
+  privatelon final ImmutablelonSchelonmaIntelonrfacelon schelonma;
 
-  private final EarlybirdSearcherStats searcherStats;
-  // For collectors that fill in the results' geo locations, this will be used to retrieve the
-  // documents' lat/lon coordinates.
-  private GeoCoordinate resultGeoCoordinate;
-  protected final boolean fillInLatLonForHits;
+  privatelon final elonarlybirdSelonarchelonrStats selonarchelonrStats;
+  // For collelonctors that fill in thelon relonsults' gelono locations, this will belon uselond to relontrielonvelon thelon
+  // documelonnts' lat/lon coordinatelons.
+  privatelon GelonoCoordinatelon relonsultGelonoCoordinatelon;
+  protelonctelond final boolelonan fillInLatLonForHits;
 
-  protected EarlybirdDocumentFeatures documentFeatures;
-  protected boolean featuresRequested = false;
+  protelonctelond elonarlybirdDocumelonntFelonaturelons documelonntFelonaturelons;
+  protelonctelond boolelonan felonaturelonsRelonquelonstelond = falselon;
 
-  private final FacetLabelCollector facetCollector;
+  privatelon final FacelontLabelonlCollelonctor facelontCollelonctor;
 
-  // debugMode set in request to determine debugging level.
-  private int requestDebugMode;
+  // delonbugModelon selont in relonquelonst to delontelonrminelon delonbugging lelonvelonl.
+  privatelon int relonquelonstDelonbugModelon;
 
-  // debug info to be returned in earlybird response
-  protected List<String> debugInfo;
+  // delonbug info to belon relonturnelond in elonarlybird relonsponselon
+  protelonctelond List<String> delonbugInfo;
 
-  private int numHitsCollectedPerSegment;
+  privatelon int numHitsCollelonctelondPelonrSelongmelonnt;
 
-  public AbstractResultsCollector(
-      ImmutableSchemaInterface schema,
-      R searchRequestInfo,
+  public AbstractRelonsultsCollelonctor(
+      ImmutablelonSchelonmaIntelonrfacelon schelonma,
+      R selonarchRelonquelonstInfo,
       Clock clock,
-      EarlybirdSearcherStats searcherStats,
-      int requestDebugMode) {
-    super(searchRequestInfo.getSearchQuery().getCollectorParams(),
-        searchRequestInfo.getTerminationTracker(),
-        QueryCostTracker.getTracker(),
-        EXPENSIVE_TERMINATION_CHECK_INTERVAL,
+      elonarlybirdSelonarchelonrStats selonarchelonrStats,
+      int relonquelonstDelonbugModelon) {
+    supelonr(selonarchRelonquelonstInfo.gelontSelonarchQuelonry().gelontCollelonctorParams(),
+        selonarchRelonquelonstInfo.gelontTelonrminationTrackelonr(),
+        QuelonryCostTrackelonr.gelontTrackelonr(),
+        elonXPelonNSIVelon_TelonRMINATION_CHelonCK_INTelonRVAL,
         clock);
 
-    this.schema = schema;
-    this.searchRequestInfo = searchRequestInfo;
-    ThriftSearchQuery thriftSearchQuery = searchRequestInfo.getSearchQuery();
-    this.maxHitsToProcessOverride = searchRequestInfo.getMaxHitsToProcess();
-    this.facetCollector = buildFacetCollector(searchRequestInfo, schema);
+    this.schelonma = schelonma;
+    this.selonarchRelonquelonstInfo = selonarchRelonquelonstInfo;
+    ThriftSelonarchQuelonry thriftSelonarchQuelonry = selonarchRelonquelonstInfo.gelontSelonarchQuelonry();
+    this.maxHitsToProcelonssOvelonrridelon = selonarchRelonquelonstInfo.gelontMaxHitsToProcelonss();
+    this.facelontCollelonctor = buildFacelontCollelonctor(selonarchRelonquelonstInfo, schelonma);
 
-    if (searchRequestInfo.getTimestamp() > 0) {
-      queryTime = searchRequestInfo.getTimestamp();
-    } else {
-      queryTime = System.currentTimeMillis();
+    if (selonarchRelonquelonstInfo.gelontTimelonstamp() > 0) {
+      quelonryTimelon = selonarchRelonquelonstInfo.gelontTimelonstamp();
+    } elonlselon {
+      quelonryTimelon = Systelonm.currelonntTimelonMillis();
     }
-    hitCountsThresholdsMsec = thriftSearchQuery.getHitCountBuckets();
-    hitCounts = hitCountsThresholdsMsec == null || hitCountsThresholdsMsec.size() == 0
+    hitCountsThrelonsholdsMselonc = thriftSelonarchQuelonry.gelontHitCountBuckelonts();
+    hitCounts = hitCountsThrelonsholdsMselonc == null || hitCountsThrelonsholdsMselonc.sizelon() == 0
         ? null
-        : new int[hitCountsThresholdsMsec.size()];
+        : nelonw int[hitCountsThrelonsholdsMselonc.sizelon()];
 
-    this.searcherStats = searcherStats;
+    this.selonarchelonrStats = selonarchelonrStats;
 
-    Schema.FieldInfo latLonCSFField =
-        schema.hasField(EarlybirdFieldConstant.LAT_LON_CSF_FIELD.getFieldName())
-            ? schema.getFieldInfo(EarlybirdFieldConstant.LAT_LON_CSF_FIELD.getFieldName())
+    Schelonma.FielonldInfo latLonCSFFielonld =
+        schelonma.hasFielonld(elonarlybirdFielonldConstant.LAT_LON_CSF_FIelonLD.gelontFielonldNamelon())
+            ? schelonma.gelontFielonldInfo(elonarlybirdFielonldConstant.LAT_LON_CSF_FIelonLD.gelontFielonldNamelon())
             : null;
-    boolean loadLatLonMapperIntoRam = true;
-    if (latLonCSFField != null) {
-      // If the latlon_csf field is explicitly defined, then take the config from the schema.
-      // If it's not defined, we assume that the latlon mapper is stored in memory.
-      loadLatLonMapperIntoRam = latLonCSFField.getFieldType().isCsfLoadIntoRam();
+    boolelonan loadLatLonMappelonrIntoRam = truelon;
+    if (latLonCSFFielonld != null) {
+      // If thelon latlon_csf fielonld is elonxplicitly delonfinelond, thelonn takelon thelon config from thelon schelonma.
+      // If it's not delonfinelond, welon assumelon that thelon latlon mappelonr is storelond in melonmory.
+      loadLatLonMappelonrIntoRam = latLonCSFFielonld.gelontFielonldTypelon().isCsfLoadIntoRam();
     }
-    // Default to not fill in lat/lon if the lat/lon CSF field is not loaded into RAM
-    this.fillInLatLonForHits = EarlybirdConfig.getBool("fill_in_lat_lon_for_hits",
-        loadLatLonMapperIntoRam);
-    this.requestDebugMode = requestDebugMode;
+    // Delonfault to not fill in lat/lon if thelon lat/lon CSF fielonld is not loadelond into RAM
+    this.fillInLatLonForHits = elonarlybirdConfig.gelontBool("fill_in_lat_lon_for_hits",
+        loadLatLonMappelonrIntoRam);
+    this.relonquelonstDelonbugModelon = relonquelonstDelonbugModelon;
 
-    if (shouldCollectDetailedDebugInfo()) {
-      this.debugInfo = new ArrayList<>();
-      debugInfo.add("Starting Search");
+    if (shouldCollelonctDelontailelondDelonbugInfo()) {
+      this.delonbugInfo = nelonw ArrayList<>();
+      delonbugInfo.add("Starting Selonarch");
     }
   }
 
-  private static FacetLabelCollector buildFacetCollector(
-      SearchRequestInfo request,
-      ImmutableSchemaInterface schema) {
-    if (CollectionUtils.isEmpty(request.getFacetFieldNames())) {
-      return null;
+  privatelon static FacelontLabelonlCollelonctor buildFacelontCollelonctor(
+      SelonarchRelonquelonstInfo relonquelonst,
+      ImmutablelonSchelonmaIntelonrfacelon schelonma) {
+    if (CollelonctionUtils.iselonmpty(relonquelonst.gelontFacelontFielonldNamelons())) {
+      relonturn null;
     }
 
-    // Get all facet field ids requested.
-    Set<String> requiredFields = Sets.newHashSet();
-    for (String fieldName : request.getFacetFieldNames()) {
-      Schema.FieldInfo field = schema.getFacetFieldByFacetName(fieldName);
-      if (field != null) {
-        requiredFields.add(field.getFieldType().getFacetName());
+    // Gelont all facelont fielonld ids relonquelonstelond.
+    Selont<String> relonquirelondFielonlds = Selonts.nelonwHashSelont();
+    for (String fielonldNamelon : relonquelonst.gelontFacelontFielonldNamelons()) {
+      Schelonma.FielonldInfo fielonld = schelonma.gelontFacelontFielonldByFacelontNamelon(fielonldNamelon);
+      if (fielonld != null) {
+        relonquirelondFielonlds.add(fielonld.gelontFielonldTypelon().gelontFacelontNamelon());
       }
     }
 
-    if (requiredFields.size() > 0) {
-      return new FacetLabelCollector(requiredFields);
-    } else {
-      return null;
+    if (relonquirelondFielonlds.sizelon() > 0) {
+      relonturn nelonw FacelontLabelonlCollelonctor(relonquirelondFielonlds);
+    } elonlselon {
+      relonturn null;
     }
   }
 
   /**
-   * Subclasses should implement the following methods.
+   * Subclasselons should implelonmelonnt thelon following melonthods.
    */
 
-  // Subclasses should process collected hits and construct a final
-  // AbstractSearchResults object.
-  protected abstract S doGetResults() throws IOException;
+  // Subclasselons should procelonss collelonctelond hits and construct a final
+  // AbstractSelonarchRelonsults objelonct.
+  protelonctelond abstract S doGelontRelonsults() throws IOelonxcelonption;
 
-  // Subclasses can override this method to add more collection logic.
-  protected abstract void doCollect(long tweetID) throws IOException;
+  // Subclasselons can ovelonrridelon this melonthod to add morelon collelonction logic.
+  protelonctelond abstract void doCollelonct(long twelonelontID) throws IOelonxcelonption;
 
-  public final ImmutableSchemaInterface getSchema() {
-    return schema;
+  public final ImmutablelonSchelonmaIntelonrfacelon gelontSchelonma() {
+    relonturn schelonma;
   }
 
-  // Updates the hit count array - each result only increments the first qualifying bucket.
-  protected final void updateHitCounts(long statusId) {
+  // Updatelons thelon hit count array - elonach relonsult only increlonmelonnts thelon first qualifying buckelont.
+  protelonctelond final void updatelonHitCounts(long statusId) {
     if (hitCounts == null) {
-      return;
+      relonturn;
     }
 
-    long delta = queryTime - SnowflakeIdParser.getTimestampFromTweetId(statusId);
-    for (int i = 0; i < hitCountsThresholdsMsec.size(); ++i) {
-      if (delta >= 0 && delta < hitCountsThresholdsMsec.get(i)) {
+    long delonlta = quelonryTimelon - SnowflakelonIdParselonr.gelontTimelonstampFromTwelonelontId(statusId);
+    for (int i = 0; i < hitCountsThrelonsholdsMselonc.sizelon(); ++i) {
+      if (delonlta >= 0 && delonlta < hitCountsThrelonsholdsMselonc.gelont(i)) {
         hitCounts[i]++;
-        // Increments to the rest of the count array are implied, and aggregated later, since the
-        // array is sorted.
-        break;
+        // Increlonmelonnts to thelon relonst of thelon count array arelon implielond, and aggrelongatelond latelonr, sincelon thelon
+        // array is sortelond.
+        brelonak;
       }
     }
   }
 
-  private boolean searchedStatusIDsAndTimesInitialized() {
-    return maxSearchedStatusID != Long.MIN_VALUE;
+  privatelon boolelonan selonarchelondStatusIDsAndTimelonsInitializelond() {
+    relonturn maxSelonarchelondStatusID != Long.MIN_VALUelon;
   }
 
-  // Updates the first searched status ID when starting to search a new segment.
-  private void updateFirstSearchedStatusID() {
-    // Only try to update the min/max searched ids, if this segment/reader actually has documents
-    // See SEARCH-4535
-    int minDocID = currTwitterReader.getSmallestDocID();
-    if (currTwitterReader.hasDocs() && minDocID >= 0 && !searchedStatusIDsAndTimesInitialized()) {
-      final long firstStatusID = tweetIdMapper.getTweetID(minDocID);
-      final int firstStatusTime = timeMapper.getTime(minDocID);
-      if (shouldCollectDetailedDebugInfo()) {
-        debugInfo.add(
-            "updateFirstSearchedStatusID. minDocId=" + minDocID + ", firstStatusID="
-                + firstStatusID + ", firstStatusTime=" + firstStatusTime);
+  // Updatelons thelon first selonarchelond status ID whelonn starting to selonarch a nelonw selongmelonnt.
+  privatelon void updatelonFirstSelonarchelondStatusID() {
+    // Only try to updatelon thelon min/max selonarchelond ids, if this selongmelonnt/relonadelonr actually has documelonnts
+    // Selonelon SelonARCH-4535
+    int minDocID = currTwittelonrRelonadelonr.gelontSmallelonstDocID();
+    if (currTwittelonrRelonadelonr.hasDocs() && minDocID >= 0 && !selonarchelondStatusIDsAndTimelonsInitializelond()) {
+      final long firstStatusID = twelonelontIdMappelonr.gelontTwelonelontID(minDocID);
+      final int firstStatusTimelon = timelonMappelonr.gelontTimelon(minDocID);
+      if (shouldCollelonctDelontailelondDelonbugInfo()) {
+        delonbugInfo.add(
+            "updatelonFirstSelonarchelondStatusID. minDocId=" + minDocID + ", firstStatusID="
+                + firstStatusID + ", firstStatusTimelon=" + firstStatusTimelon);
       }
-      updateIDandTimeRanges(firstStatusID, firstStatusTime, IdAndRangeUpdateType.BEGIN_SEGMENT);
+      updatelonIDandTimelonRangelons(firstStatusID, firstStatusTimelon, IdAndRangelonUpdatelonTypelon.BelonGIN_SelonGMelonNT);
     }
   }
 
-  public final R getSearchRequestInfo() {
-    return searchRequestInfo;
+  public final R gelontSelonarchRelonquelonstInfo() {
+    relonturn selonarchRelonquelonstInfo;
   }
 
-  public final long getMinSearchedStatusID() {
-    return minSearchedStatusID;
+  public final long gelontMinSelonarchelondStatusID() {
+    relonturn minSelonarchelondStatusID;
   }
 
-  public final long getMaxSearchedStatusID() {
-    return maxSearchedStatusID;
+  public final long gelontMaxSelonarchelondStatusID() {
+    relonturn maxSelonarchelondStatusID;
   }
 
-  public final int getMinSearchedTime() {
-    return minSearchedTime;
+  public final int gelontMinSelonarchelondTimelon() {
+    relonturn minSelonarchelondTimelon;
   }
 
-  public boolean isSetMinSearchedTime() {
-    return minSearchedTime != Integer.MAX_VALUE;
+  public boolelonan isSelontMinSelonarchelondTimelon() {
+    relonturn minSelonarchelondTimelon != Intelongelonr.MAX_VALUelon;
   }
 
-  public final int getMaxSearchedTime() {
-    return maxSearchedTime;
+  public final int gelontMaxSelonarchelondTimelon() {
+    relonturn maxSelonarchelondTimelon;
   }
 
-  @Override
-  public final long getMaxHitsToProcess() {
-    return maxHitsToProcessOverride;
+  @Ovelonrridelon
+  public final long gelontMaxHitsToProcelonss() {
+    relonturn maxHitsToProcelonssOvelonrridelon;
   }
 
-  // Notifies classes that a new index segment is about to be searched.
-  @Override
-  public final void setNextReader(LeafReaderContext context) throws IOException {
-    super.setNextReader(context);
-    setNextReader(context.reader());
+  // Notifielons classelons that a nelonw indelonx selongmelonnt is about to belon selonarchelond.
+  @Ovelonrridelon
+  public final void selontNelonxtRelonadelonr(LelonafRelonadelonrContelonxt contelonxt) throws IOelonxcelonption {
+    supelonr.selontNelonxtRelonadelonr(contelonxt);
+    selontNelonxtRelonadelonr(contelonxt.relonadelonr());
   }
 
   /**
-   * Notifies the collector that a new segment is about to be searched.
+   * Notifielons thelon collelonctor that a nelonw selongmelonnt is about to belon selonarchelond.
    *
-   * It's easier to use this method from tests, because LeafReader is not a final class, so it can
-   * be mocked (unlike LeafReaderContext).
+   * It's elonasielonr to uselon this melonthod from telonsts, beloncauselon LelonafRelonadelonr is not a final class, so it can
+   * belon mockelond (unlikelon LelonafRelonadelonrContelonxt).
    */
-  @VisibleForTesting
-  public final void setNextReader(LeafReader reader) throws IOException {
-    if (!(reader instanceof EarlybirdIndexSegmentAtomicReader)) {
-      throw new RuntimeException("IndexReader type not supported: " + reader.getClass());
+  @VisiblelonForTelonsting
+  public final void selontNelonxtRelonadelonr(LelonafRelonadelonr relonadelonr) throws IOelonxcelonption {
+    if (!(relonadelonr instancelonof elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr)) {
+      throw nelonw Runtimelonelonxcelonption("IndelonxRelonadelonr typelon not supportelond: " + relonadelonr.gelontClass());
     }
 
-    currTwitterReader = (EarlybirdIndexSegmentAtomicReader) reader;
-    documentFeatures = new EarlybirdDocumentFeatures(currTwitterReader);
-    tweetIdMapper = (TweetIDMapper) currTwitterReader.getSegmentData().getDocIDToTweetIDMapper();
-    timeMapper = currTwitterReader.getSegmentData().getTimeMapper();
-    currTimeSliceID = currTwitterReader.getSegmentData().getTimeSliceID();
-    updateFirstSearchedStatusID();
-    if (shouldCollectDetailedDebugInfo()) {
-      debugInfo.add("Starting search in segment with timeslice ID: " + currTimeSliceID);
+    currTwittelonrRelonadelonr = (elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr) relonadelonr;
+    documelonntFelonaturelons = nelonw elonarlybirdDocumelonntFelonaturelons(currTwittelonrRelonadelonr);
+    twelonelontIdMappelonr = (TwelonelontIDMappelonr) currTwittelonrRelonadelonr.gelontSelongmelonntData().gelontDocIDToTwelonelontIDMappelonr();
+    timelonMappelonr = currTwittelonrRelonadelonr.gelontSelongmelonntData().gelontTimelonMappelonr();
+    currTimelonSlicelonID = currTwittelonrRelonadelonr.gelontSelongmelonntData().gelontTimelonSlicelonID();
+    updatelonFirstSelonarchelondStatusID();
+    if (shouldCollelonctDelontailelondDelonbugInfo()) {
+      delonbugInfo.add("Starting selonarch in selongmelonnt with timelonslicelon ID: " + currTimelonSlicelonID);
     }
 
-    segmentStartTime = getClock().nowMillis();
-    startSegment();
+    selongmelonntStartTimelon = gelontClock().nowMillis();
+    startSelongmelonnt();
   }
 
-  protected abstract void startSegment() throws IOException;
+  protelonctelond abstract void startSelongmelonnt() throws IOelonxcelonption;
 
-  @Override
-  protected final void doCollect() throws IOException {
-    documentFeatures.advance(curDocId);
-    long tweetID = tweetIdMapper.getTweetID(curDocId);
-    updateIDandTimeRanges(tweetID, timeMapper.getTime(curDocId), IdAndRangeUpdateType.HIT);
-    doCollect(tweetID);
-    numHitsCollectedPerSegment++;
+  @Ovelonrridelon
+  protelonctelond final void doCollelonct() throws IOelonxcelonption {
+    documelonntFelonaturelons.advancelon(curDocId);
+    long twelonelontID = twelonelontIdMappelonr.gelontTwelonelontID(curDocId);
+    updatelonIDandTimelonRangelons(twelonelontID, timelonMappelonr.gelontTimelon(curDocId), IdAndRangelonUpdatelonTypelon.HIT);
+    doCollelonct(twelonelontID);
+    numHitsCollelonctelondPelonrSelongmelonnt++;
   }
 
-  protected void collectFeatures(ThriftSearchResultMetadata metadata) throws IOException {
-    if (featuresRequested) {
-      ensureExtraMetadataIsSet(metadata);
+  protelonctelond void collelonctFelonaturelons(ThriftSelonarchRelonsultMelontadata melontadata) throws IOelonxcelonption {
+    if (felonaturelonsRelonquelonstelond) {
+      elonnsurelonelonxtraMelontadataIsSelont(melontadata);
 
-      metadata.getExtraMetadata().setDirectedAtUserId(
-          documentFeatures.getFeatureValue(EarlybirdFieldConstant.DIRECTED_AT_USER_ID_CSF));
-      metadata.getExtraMetadata().setQuotedTweetId(
-          documentFeatures.getFeatureValue(EarlybirdFieldConstant.QUOTED_TWEET_ID_CSF));
-      metadata.getExtraMetadata().setQuotedUserId(
-          documentFeatures.getFeatureValue(EarlybirdFieldConstant.QUOTED_USER_ID_CSF));
+      melontadata.gelontelonxtraMelontadata().selontDirelonctelondAtUselonrId(
+          documelonntFelonaturelons.gelontFelonaturelonValuelon(elonarlybirdFielonldConstant.DIRelonCTelonD_AT_USelonR_ID_CSF));
+      melontadata.gelontelonxtraMelontadata().selontQuotelondTwelonelontId(
+          documelonntFelonaturelons.gelontFelonaturelonValuelon(elonarlybirdFielonldConstant.QUOTelonD_TWelonelonT_ID_CSF));
+      melontadata.gelontelonxtraMelontadata().selontQuotelondUselonrId(
+          documelonntFelonaturelons.gelontFelonaturelonValuelon(elonarlybirdFielonldConstant.QUOTelonD_USelonR_ID_CSF));
 
-      int cardLangValue =
-          (int) documentFeatures.getFeatureValue(EarlybirdFieldConstant.CARD_LANG_CSF);
-      ThriftLanguage thriftLanguage = ThriftLanguage.findByValue(cardLangValue);
-      metadata.getExtraMetadata().setCardLang(thriftLanguage);
+      int cardLangValuelon =
+          (int) documelonntFelonaturelons.gelontFelonaturelonValuelon(elonarlybirdFielonldConstant.CARD_LANG_CSF);
+      ThriftLanguagelon thriftLanguagelon = ThriftLanguagelon.findByValuelon(cardLangValuelon);
+      melontadata.gelontelonxtraMelontadata().selontCardLang(thriftLanguagelon);
 
-      long cardNumericUri =
-          (long) documentFeatures.getFeatureValue(EarlybirdFieldConstant.CARD_URI_CSF);
-      if (cardNumericUri > 0) {
-        metadata.getExtraMetadata().setCardUri(String.format("card://%s", cardNumericUri));
+      long cardNumelonricUri =
+          (long) documelonntFelonaturelons.gelontFelonaturelonValuelon(elonarlybirdFielonldConstant.CARD_URI_CSF);
+      if (cardNumelonricUri > 0) {
+        melontadata.gelontelonxtraMelontadata().selontCardUri(String.format("card://%s", cardNumelonricUri));
       }
     }
   }
 
-  protected void collectIsProtected(
-      ThriftSearchResultMetadata metadata, EarlybirdCluster cluster, UserTable userTable)
-      throws IOException {
-    // 'isUserProtected' field is only set for archive cluster because only archive cluster user
-    // table has IS_PROTECTED_BIT populated.
-    // Since this bit is checked after UserFlagsExcludeFilter checked this bit, there is a slight
-    // chance that this bit is updated in-between. When that happens, it is possible that we will
-    // see a small number of protected Tweets in the response when we meant to exclude them.
-    if (cluster == EarlybirdCluster.FULL_ARCHIVE) {
-      ensureExtraMetadataIsSet(metadata);
-      long userId = documentFeatures.getFeatureValue(EarlybirdFieldConstant.FROM_USER_ID_CSF);
-      boolean isProtected = userTable.isSet(userId, UserTable.IS_PROTECTED_BIT);
-      metadata.getExtraMetadata().setIsUserProtected(isProtected);
+  protelonctelond void collelonctIsProtelonctelond(
+      ThriftSelonarchRelonsultMelontadata melontadata, elonarlybirdClustelonr clustelonr, UselonrTablelon uselonrTablelon)
+      throws IOelonxcelonption {
+    // 'isUselonrProtelonctelond' fielonld is only selont for archivelon clustelonr beloncauselon only archivelon clustelonr uselonr
+    // tablelon has IS_PROTelonCTelonD_BIT populatelond.
+    // Sincelon this bit is chelonckelond aftelonr UselonrFlagselonxcludelonFiltelonr chelonckelond this bit, thelonrelon is a slight
+    // chancelon that this bit is updatelond in-belontwelonelonn. Whelonn that happelonns, it is possiblelon that welon will
+    // selonelon a small numbelonr of protelonctelond Twelonelonts in thelon relonsponselon whelonn welon melonant to elonxcludelon thelonm.
+    if (clustelonr == elonarlybirdClustelonr.FULL_ARCHIVelon) {
+      elonnsurelonelonxtraMelontadataIsSelont(melontadata);
+      long uselonrId = documelonntFelonaturelons.gelontFelonaturelonValuelon(elonarlybirdFielonldConstant.FROM_USelonR_ID_CSF);
+      boolelonan isProtelonctelond = uselonrTablelon.isSelont(uselonrId, UselonrTablelon.IS_PROTelonCTelonD_BIT);
+      melontadata.gelontelonxtraMelontadata().selontIsUselonrProtelonctelond(isProtelonctelond);
     }
   }
 
-  protected void collectExclusiveConversationAuthorId(ThriftSearchResultMetadata metadata)
-      throws IOException {
-    if (searchRequestInfo.isCollectExclusiveConversationAuthorId()) {
-      long exclusiveConversationAuthorId = documentFeatures.getFeatureValue(
-          EarlybirdFieldConstant.EXCLUSIVE_CONVERSATION_AUTHOR_ID_CSF);
-      if (exclusiveConversationAuthorId != 0L) {
-        ensureExtraMetadataIsSet(metadata);
-        metadata.getExtraMetadata().setExclusiveConversationAuthorId(exclusiveConversationAuthorId);
+  protelonctelond void collelonctelonxclusivelonConvelonrsationAuthorId(ThriftSelonarchRelonsultMelontadata melontadata)
+      throws IOelonxcelonption {
+    if (selonarchRelonquelonstInfo.isCollelonctelonxclusivelonConvelonrsationAuthorId()) {
+      long elonxclusivelonConvelonrsationAuthorId = documelonntFelonaturelons.gelontFelonaturelonValuelon(
+          elonarlybirdFielonldConstant.elonXCLUSIVelon_CONVelonRSATION_AUTHOR_ID_CSF);
+      if (elonxclusivelonConvelonrsationAuthorId != 0L) {
+        elonnsurelonelonxtraMelontadataIsSelont(melontadata);
+        melontadata.gelontelonxtraMelontadata().selontelonxclusivelonConvelonrsationAuthorId(elonxclusivelonConvelonrsationAuthorId);
       }
     }
   }
 
-  // It only makes sense to collectFacets for search types that return individual results (recency,
-  // relevance and top_tweets), which use the AbstractRelevanceCollector and SearchResultsCollector,
-  // so this method should only be called from these classes.
-  protected void collectFacets(ThriftSearchResultMetadata metadata) {
-    if (currTwitterReader == null) {
-      return;
+  // It only makelons selonnselon to collelonctFacelonts for selonarch typelons that relonturn individual relonsults (reloncelonncy,
+  // relonlelonvancelon and top_twelonelonts), which uselon thelon AbstractRelonlelonvancelonCollelonctor and SelonarchRelonsultsCollelonctor,
+  // so this melonthod should only belon callelond from thelonselon classelons.
+  protelonctelond void collelonctFacelonts(ThriftSelonarchRelonsultMelontadata melontadata) {
+    if (currTwittelonrRelonadelonr == null) {
+      relonturn;
     }
 
-    AbstractFacetCountingArray facetCountingArray = currTwitterReader.getFacetCountingArray();
-    EarlybirdIndexSegmentData segmentData = currTwitterReader.getSegmentData();
+    AbstractFacelontCountingArray facelontCountingArray = currTwittelonrRelonadelonr.gelontFacelontCountingArray();
+    elonarlybirdIndelonxSelongmelonntData selongmelonntData = currTwittelonrRelonadelonr.gelontSelongmelonntData();
 
-    if (facetCountingArray == null || facetCollector == null) {
-      return;
+    if (facelontCountingArray == null || facelontCollelonctor == null) {
+      relonturn;
     }
 
-    facetCollector.resetFacetLabelProviders(
-        segmentData.getFacetLabelProviders(),
-        segmentData.getFacetIDMap());
+    facelontCollelonctor.relonselontFacelontLabelonlProvidelonrs(
+        selongmelonntData.gelontFacelontLabelonlProvidelonrs(),
+        selongmelonntData.gelontFacelontIDMap());
 
-    facetCountingArray.collectForDocId(curDocId, facetCollector);
+    facelontCountingArray.collelonctForDocId(curDocId, facelontCollelonctor);
 
-    List<ThriftFacetLabel> labels = facetCollector.getLabels();
-    if (labels.size() > 0) {
-      metadata.setFacetLabels(labels);
-    }
-  }
-
-  protected void ensureExtraMetadataIsSet(ThriftSearchResultMetadata metadata) {
-    if (!metadata.isSetExtraMetadata()) {
-      metadata.setExtraMetadata(new ThriftSearchResultExtraMetadata());
+    List<ThriftFacelontLabelonl> labelonls = facelontCollelonctor.gelontLabelonls();
+    if (labelonls.sizelon() > 0) {
+      melontadata.selontFacelontLabelonls(labelonls);
     }
   }
 
-  @Override
-  protected final void doFinishSegment(int lastSearchedDocID) {
-    if (shouldCollectDetailedDebugInfo()) {
-      long timeSpentSearchingSegmentInMillis = getClock().nowMillis() - segmentStartTime;
-      debugInfo.add("Finished segment at doc id: " + lastSearchedDocID);
-      debugInfo.add("Time spent searching " + currTimeSliceID
-        + ": " + timeSpentSearchingSegmentInMillis + "ms");
-      debugInfo.add("Number of hits collected in segment " + currTimeSliceID + ": "
-          + numHitsCollectedPerSegment);
+  protelonctelond void elonnsurelonelonxtraMelontadataIsSelont(ThriftSelonarchRelonsultMelontadata melontadata) {
+    if (!melontadata.isSelontelonxtraMelontadata()) {
+      melontadata.selontelonxtraMelontadata(nelonw ThriftSelonarchRelonsultelonxtraMelontadata());
+    }
+  }
+
+  @Ovelonrridelon
+  protelonctelond final void doFinishSelongmelonnt(int lastSelonarchelondDocID) {
+    if (shouldCollelonctDelontailelondDelonbugInfo()) {
+      long timelonSpelonntSelonarchingSelongmelonntInMillis = gelontClock().nowMillis() - selongmelonntStartTimelon;
+      delonbugInfo.add("Finishelond selongmelonnt at doc id: " + lastSelonarchelondDocID);
+      delonbugInfo.add("Timelon spelonnt selonarching " + currTimelonSlicelonID
+        + ": " + timelonSpelonntSelonarchingSelongmelonntInMillis + "ms");
+      delonbugInfo.add("Numbelonr of hits collelonctelond in selongmelonnt " + currTimelonSlicelonID + ": "
+          + numHitsCollelonctelondPelonrSelongmelonnt);
     }
 
-    if (!currTwitterReader.hasDocs()) {
-      // Due to race between the reader and the indexing thread, a seemingly empty segment that
-      // does not have document committed in the posting lists, might already have a document
-      // inserted into the id/time mappers, which we do not want to take into account.
-      // If there are no documents in the segment, we don't update searched min/max ids to
+    if (!currTwittelonrRelonadelonr.hasDocs()) {
+      // Duelon to racelon belontwelonelonn thelon relonadelonr and thelon indelonxing threlonad, a selonelonmingly elonmpty selongmelonnt that
+      // doelons not havelon documelonnt committelond in thelon posting lists, might alrelonady havelon a documelonnt
+      // inselonrtelond into thelon id/timelon mappelonrs, which welon do not want to takelon into account.
+      // If thelonrelon arelon no documelonnts in thelon selongmelonnt, welon don't updatelon selonarchelond min/max ids to
       // anything.
-      return;
-    } else if (lastSearchedDocID == DocIdSetIterator.NO_MORE_DOCS) {
-      // Segment exhausted.
-      if (shouldCollectDetailedDebugInfo()) {
-        debugInfo.add("Segment exhausted");
+      relonturn;
+    } elonlselon if (lastSelonarchelondDocID == DocIdSelontItelonrator.NO_MORelon_DOCS) {
+      // Selongmelonnt elonxhaustelond.
+      if (shouldCollelonctDelontailelondDelonbugInfo()) {
+        delonbugInfo.add("Selongmelonnt elonxhaustelond");
       }
-      updateIDandTimeRanges(tweetIdMapper.getMinTweetID(), timeMapper.getFirstTime(),
-          IdAndRangeUpdateType.END_SEGMENT);
-    } else if (lastSearchedDocID >= 0) {
-      long lastSearchedTweetID = tweetIdMapper.getTweetID(lastSearchedDocID);
-      int lastSearchTweetTime = timeMapper.getTime(lastSearchedDocID);
-      if (shouldCollectDetailedDebugInfo()) {
-        debugInfo.add("lastSearchedDocId=" + lastSearchedDocID);
+      updatelonIDandTimelonRangelons(twelonelontIdMappelonr.gelontMinTwelonelontID(), timelonMappelonr.gelontFirstTimelon(),
+          IdAndRangelonUpdatelonTypelon.elonND_SelonGMelonNT);
+    } elonlselon if (lastSelonarchelondDocID >= 0) {
+      long lastSelonarchelondTwelonelontID = twelonelontIdMappelonr.gelontTwelonelontID(lastSelonarchelondDocID);
+      int lastSelonarchTwelonelontTimelon = timelonMappelonr.gelontTimelon(lastSelonarchelondDocID);
+      if (shouldCollelonctDelontailelondDelonbugInfo()) {
+        delonbugInfo.add("lastSelonarchelondDocId=" + lastSelonarchelondDocID);
       }
-      updateIDandTimeRanges(lastSearchedTweetID, lastSearchTweetTime,
-          IdAndRangeUpdateType.END_SEGMENT);
+      updatelonIDandTimelonRangelons(lastSelonarchelondTwelonelontID, lastSelonarchTwelonelontTimelon,
+          IdAndRangelonUpdatelonTypelon.elonND_SelonGMelonNT);
     }
 
-    numHitsCollectedPerSegment = 0;
+    numHitsCollelonctelondPelonrSelongmelonnt = 0;
   }
 
-  private void updateIDandTimeRanges(long tweetID, int time, IdAndRangeUpdateType updateType) {
-    // We need to update minSearchedStatusID/maxSearchedStatusID and
-    // minSearchedTime/maxSearchedTime independently: SEARCH-6139
-    minSearchedStatusID = Math.min(minSearchedStatusID, tweetID);
-    maxSearchedStatusID = Math.max(maxSearchedStatusID, tweetID);
-    if (time > 0) {
-      minSearchedTime = Math.min(minSearchedTime, time);
-      maxSearchedTime = Math.max(maxSearchedTime, time);
+  privatelon void updatelonIDandTimelonRangelons(long twelonelontID, int timelon, IdAndRangelonUpdatelonTypelon updatelonTypelon) {
+    // Welon nelonelond to updatelon minSelonarchelondStatusID/maxSelonarchelondStatusID and
+    // minSelonarchelondTimelon/maxSelonarchelondTimelon indelonpelonndelonntly: SelonARCH-6139
+    minSelonarchelondStatusID = Math.min(minSelonarchelondStatusID, twelonelontID);
+    maxSelonarchelondStatusID = Math.max(maxSelonarchelondStatusID, twelonelontID);
+    if (timelon > 0) {
+      minSelonarchelondTimelon = Math.min(minSelonarchelondTimelon, timelon);
+      maxSelonarchelondTimelon = Math.max(maxSelonarchelondTimelon, timelon);
     }
-    if (shouldCollectVerboseDebugInfo()) {
-      debugInfo.add(
-          String.format("call to updateIDandTimeRanges(%d, %d, %s)"
-                  + " set minSearchStatusID=%d, maxSearchedStatusID=%d,"
-                  + " minSearchedTime=%d, maxSearchedTime=%d)",
-              tweetID, time, updateType.toString(),
-              minSearchedStatusID, maxSearchedStatusID,
-              minSearchedTime, maxSearchedTime));
-    }
-  }
-
-  /**
-   * This is called when a segment is skipped but we would want to do accounting
-   * for minSearchDocId as well as numDocsProcessed.
-   */
-  public void skipSegment(EarlybirdSingleSegmentSearcher searcher) throws IOException {
-    setNextReader(searcher.getTwitterIndexReader().getContext());
-    trackCompleteSegment(DocIdSetIterator.NO_MORE_DOCS);
-    if (shouldCollectDetailedDebugInfo()) {
-      debugInfo.add("Skipping segment: " + currTimeSliceID);
+    if (shouldCollelonctVelonrboselonDelonbugInfo()) {
+      delonbugInfo.add(
+          String.format("call to updatelonIDandTimelonRangelons(%d, %d, %s)"
+                  + " selont minSelonarchStatusID=%d, maxSelonarchelondStatusID=%d,"
+                  + " minSelonarchelondTimelon=%d, maxSelonarchelondTimelon=%d)",
+              twelonelontID, timelon, updatelonTypelon.toString(),
+              minSelonarchelondStatusID, maxSelonarchelondStatusID,
+              minSelonarchelondTimelon, maxSelonarchelondTimelon));
     }
   }
 
   /**
-   * Returns the results collected by this collector.
+   * This is callelond whelonn a selongmelonnt is skippelond but welon would want to do accounting
+   * for minSelonarchDocId as welonll as numDocsProcelonsselond.
    */
-  public final S getResults() throws IOException {
-    // In order to make pagination work, if minSearchedStatusID is greater than the asked max_id.
-    // We force the minSearchedStatusID to be max_id + 1.
-    IdTimeRanges idTimeRanges = searchRequestInfo.getIdTimeRanges();
-    if (idTimeRanges != null) {
-      Optional<Long> maxIDInclusive = idTimeRanges.getMaxIDInclusive();
-      if (maxIDInclusive.isPresent() && minSearchedStatusID > maxIDInclusive.get()) {
-        searcherStats.numCollectorAdjustedMinSearchedStatusID.increment();
-        minSearchedStatusID = maxIDInclusive.get() + 1;
+  public void skipSelongmelonnt(elonarlybirdSinglelonSelongmelonntSelonarchelonr selonarchelonr) throws IOelonxcelonption {
+    selontNelonxtRelonadelonr(selonarchelonr.gelontTwittelonrIndelonxRelonadelonr().gelontContelonxt());
+    trackComplelontelonSelongmelonnt(DocIdSelontItelonrator.NO_MORelon_DOCS);
+    if (shouldCollelonctDelontailelondDelonbugInfo()) {
+      delonbugInfo.add("Skipping selongmelonnt: " + currTimelonSlicelonID);
+    }
+  }
+
+  /**
+   * Relonturns thelon relonsults collelonctelond by this collelonctor.
+   */
+  public final S gelontRelonsults() throws IOelonxcelonption {
+    // In ordelonr to makelon pagination work, if minSelonarchelondStatusID is grelonatelonr than thelon askelond max_id.
+    // Welon forcelon thelon minSelonarchelondStatusID to belon max_id + 1.
+    IdTimelonRangelons idTimelonRangelons = selonarchRelonquelonstInfo.gelontIdTimelonRangelons();
+    if (idTimelonRangelons != null) {
+      Optional<Long> maxIDInclusivelon = idTimelonRangelons.gelontMaxIDInclusivelon();
+      if (maxIDInclusivelon.isPrelonselonnt() && minSelonarchelondStatusID > maxIDInclusivelon.gelont()) {
+        selonarchelonrStats.numCollelonctorAdjustelondMinSelonarchelondStatusID.increlonmelonnt();
+        minSelonarchelondStatusID = maxIDInclusivelon.gelont() + 1;
       }
     }
 
-    S results = doGetResults();
-    results.setNumHitsProcessed((int) getNumHitsProcessed());
-    results.setNumSearchedSegments(getNumSearchedSegments());
-    if (searchedStatusIDsAndTimesInitialized()) {
-      results.setMaxSearchedStatusID(maxSearchedStatusID);
-      results.setMinSearchedStatusID(minSearchedStatusID);
-      results.setMaxSearchedTime(maxSearchedTime);
-      results.setMinSearchedTime(minSearchedTime);
+    S relonsults = doGelontRelonsults();
+    relonsults.selontNumHitsProcelonsselond((int) gelontNumHitsProcelonsselond());
+    relonsults.selontNumSelonarchelondSelongmelonnts(gelontNumSelonarchelondSelongmelonnts());
+    if (selonarchelondStatusIDsAndTimelonsInitializelond()) {
+      relonsults.selontMaxSelonarchelondStatusID(maxSelonarchelondStatusID);
+      relonsults.selontMinSelonarchelondStatusID(minSelonarchelondStatusID);
+      relonsults.selontMaxSelonarchelondTimelon(maxSelonarchelondTimelon);
+      relonsults.selontMinSelonarchelondTimelon(minSelonarchelondTimelon);
     }
-    results.setEarlyTerminated(getEarlyTerminationState().isTerminated());
-    if (getEarlyTerminationState().isTerminated()) {
-      results.setEarlyTerminationReason(getEarlyTerminationState().getTerminationReason());
+    relonsults.selontelonarlyTelonrminatelond(gelontelonarlyTelonrminationStatelon().isTelonrminatelond());
+    if (gelontelonarlyTelonrminationStatelon().isTelonrminatelond()) {
+      relonsults.selontelonarlyTelonrminationRelonason(gelontelonarlyTelonrminationStatelon().gelontTelonrminationRelonason());
     }
-    Map<Long, Integer> counts = getHitCountMap();
+    Map<Long, Intelongelonr> counts = gelontHitCountMap();
     if (counts != null) {
-      results.hitCounts.putAll(counts);
+      relonsults.hitCounts.putAll(counts);
     }
-    return results;
+    relonturn relonsults;
   }
 
   /**
-   * Returns a map of timestamps (specified in the query) to the number of hits that are more recent
-   * that the respective timestamps.
+   * Relonturns a map of timelonstamps (speloncifielond in thelon quelonry) to thelon numbelonr of hits that arelon morelon reloncelonnt
+   * that thelon relonspelonctivelon timelonstamps.
    */
-  public final Map<Long, Integer> getHitCountMap() {
+  public final Map<Long, Intelongelonr> gelontHitCountMap() {
     int total = 0;
     if (hitCounts == null) {
-      return null;
+      relonturn null;
     }
-    Map<Long, Integer> map = Maps.newHashMap();
-    // since the array is incremental, need to aggregate here.
-    for (int i = 0; i < hitCounts.length; ++i) {
-      map.put(hitCountsThresholdsMsec.get(i), total += hitCounts[i]);
+    Map<Long, Intelongelonr> map = Maps.nelonwHashMap();
+    // sincelon thelon array is increlonmelonntal, nelonelond to aggrelongatelon helonrelon.
+    for (int i = 0; i < hitCounts.lelonngth; ++i) {
+      map.put(hitCountsThrelonsholdsMselonc.gelont(i), total += hitCounts[i]);
     }
-    return map;
+    relonturn map;
   }
 
   /**
-   * Common helper for collecting per-field hit attribution data (if it's available).
+   * Common helonlpelonr for colleloncting pelonr-fielonld hit attribution data (if it's availablelon).
    *
-   * @param metadata the metadata to fill for this hit.
+   * @param melontadata thelon melontadata to fill for this hit.
    */
-  protected final void fillHitAttributionMetadata(ThriftSearchResultMetadata metadata) {
-    if (searchRequestInfo.getHitAttributeHelper() == null) {
-      return;
+  protelonctelond final void fillHitAttributionMelontadata(ThriftSelonarchRelonsultMelontadata melontadata) {
+    if (selonarchRelonquelonstInfo.gelontHitAttributelonHelonlpelonr() == null) {
+      relonturn;
     }
 
-    Map<Integer, List<String>> hitAttributeMapping =
-        searchRequestInfo.getHitAttributeHelper().getHitAttribution(curDocId);
-    Preconditions.checkNotNull(hitAttributeMapping);
+    Map<Intelongelonr, List<String>> hitAttributelonMapping =
+        selonarchRelonquelonstInfo.gelontHitAttributelonHelonlpelonr().gelontHitAttribution(curDocId);
+    Prelonconditions.chelonckNotNull(hitAttributelonMapping);
 
-    FieldHitAttribution fieldHitAttribution = new FieldHitAttribution();
-    for (Map.Entry<Integer, List<String>> entry : hitAttributeMapping.entrySet()) {
-      FieldHitList fieldHitList = new FieldHitList();
-      fieldHitList.setHitFields(entry.getValue());
+    FielonldHitAttribution fielonldHitAttribution = nelonw FielonldHitAttribution();
+    for (Map.elonntry<Intelongelonr, List<String>> elonntry : hitAttributelonMapping.elonntrySelont()) {
+      FielonldHitList fielonldHitList = nelonw FielonldHitList();
+      fielonldHitList.selontHitFielonlds(elonntry.gelontValuelon());
 
-      fieldHitAttribution.putToHitMap(entry.getKey(), fieldHitList);
+      fielonldHitAttribution.putToHitMap(elonntry.gelontKelony(), fielonldHitList);
     }
-    metadata.setFieldHitAttribution(fieldHitAttribution);
+    melontadata.selontFielonldHitAttribution(fielonldHitAttribution);
   }
 
   /**
-   * Fill the geo location of the given document in metadata, if we have the lat/lon for it.
-   * For queries that specify a geolocation, this will also have the distance from
-   * the location specified in the query, and the location of this document.
+   * Fill thelon gelono location of thelon givelonn documelonnt in melontadata, if welon havelon thelon lat/lon for it.
+   * For quelonrielons that speloncify a gelonolocation, this will also havelon thelon distancelon from
+   * thelon location speloncifielond in thelon quelonry, and thelon location of this documelonnt.
    */
-  protected final void fillResultGeoLocation(ThriftSearchResultMetadata metadata)
-      throws IOException {
-    Preconditions.checkNotNull(metadata);
-    if (currTwitterReader != null && fillInLatLonForHits) {
-      // See if we can have a lat/lon for this doc.
-      if (resultGeoCoordinate == null) {
-        resultGeoCoordinate = new GeoCoordinate();
+  protelonctelond final void fillRelonsultGelonoLocation(ThriftSelonarchRelonsultMelontadata melontadata)
+      throws IOelonxcelonption {
+    Prelonconditions.chelonckNotNull(melontadata);
+    if (currTwittelonrRelonadelonr != null && fillInLatLonForHits) {
+      // Selonelon if welon can havelon a lat/lon for this doc.
+      if (relonsultGelonoCoordinatelon == null) {
+        relonsultGelonoCoordinatelon = nelonw GelonoCoordinatelon();
       }
-      // Only fill if necessary
-      if (searchRequestInfo.isCollectResultLocation()
-          && GeoUtil.decodeLatLonFromInt64(
-              documentFeatures.getFeatureValue(EarlybirdFieldConstant.LAT_LON_CSF_FIELD),
-              resultGeoCoordinate)) {
-        ThriftSearchResultGeoLocation resultLocation = new ThriftSearchResultGeoLocation();
-        resultLocation.setLatitude(resultGeoCoordinate.getLatitude());
-        resultLocation.setLongitude(resultGeoCoordinate.getLongitude());
-        metadata.setResultLocation(resultLocation);
+      // Only fill if neloncelonssary
+      if (selonarchRelonquelonstInfo.isCollelonctRelonsultLocation()
+          && GelonoUtil.deloncodelonLatLonFromInt64(
+              documelonntFelonaturelons.gelontFelonaturelonValuelon(elonarlybirdFielonldConstant.LAT_LON_CSF_FIelonLD),
+              relonsultGelonoCoordinatelon)) {
+        ThriftSelonarchRelonsultGelonoLocation relonsultLocation = nelonw ThriftSelonarchRelonsultGelonoLocation();
+        relonsultLocation.selontLatitudelon(relonsultGelonoCoordinatelon.gelontLatitudelon());
+        relonsultLocation.selontLongitudelon(relonsultGelonoCoordinatelon.gelontLongitudelon());
+        melontadata.selontRelonsultLocation(relonsultLocation);
       }
     }
   }
 
-  @Override
-  public ScoreMode scoreMode() {
-    return ScoreMode.COMPLETE;
+  @Ovelonrridelon
+  public ScorelonModelon scorelonModelon() {
+    relonturn ScorelonModelon.COMPLelonTelon;
   }
 
-  private int terminationDocID = -1;
+  privatelon int telonrminationDocID = -1;
 
-  @Override
-  protected void collectedEnoughResults() throws IOException {
-    // We find 'terminationDocID' once we collect enough results, so that we know the point at which
-    // we can stop searching. We must do this because with the unordered doc ID mapper, tweets
-    // are not ordered within a millisecond, so we must search the entire millisecond bucket before
-    // terminating the search, otherwise we could skip over tweets and have an incorrect
-    // minSearchedStatusID.
-    if (curDocId != -1 && terminationDocID == -1) {
-      long tweetId = tweetIdMapper.getTweetID(curDocId);
-      // We want to find the highest possible doc ID for this tweetId, so pass true.
-      boolean findMaxDocID = true;
-      terminationDocID = tweetIdMapper.findDocIdBound(tweetId,
+  @Ovelonrridelon
+  protelonctelond void collelonctelondelonnoughRelonsults() throws IOelonxcelonption {
+    // Welon find 'telonrminationDocID' oncelon welon collelonct elonnough relonsults, so that welon know thelon point at which
+    // welon can stop selonarching. Welon must do this beloncauselon with thelon unordelonrelond doc ID mappelonr, twelonelonts
+    // arelon not ordelonrelond within a milliseloncond, so welon must selonarch thelon elonntirelon milliseloncond buckelont belonforelon
+    // telonrminating thelon selonarch, othelonrwiselon welon could skip ovelonr twelonelonts and havelon an incorrelonct
+    // minSelonarchelondStatusID.
+    if (curDocId != -1 && telonrminationDocID == -1) {
+      long twelonelontId = twelonelontIdMappelonr.gelontTwelonelontID(curDocId);
+      // Welon want to find thelon highelonst possiblelon doc ID for this twelonelontId, so pass truelon.
+      boolelonan findMaxDocID = truelon;
+      telonrminationDocID = twelonelontIdMappelonr.findDocIdBound(twelonelontId,
           findMaxDocID,
           curDocId,
           curDocId);
     }
   }
 
-  @Override
-  protected boolean shouldTerminate() {
-    return curDocId >= terminationDocID;
+  @Ovelonrridelon
+  protelonctelond boolelonan shouldTelonrminatelon() {
+    relonturn curDocId >= telonrminationDocID;
   }
 
-  @Override
-  public List<String> getDebugInfo() {
-    return debugInfo;
+  @Ovelonrridelon
+  public List<String> gelontDelonbugInfo() {
+    relonturn delonbugInfo;
   }
 
-  protected boolean shouldCollectDetailedDebugInfo() {
-    return requestDebugMode >= 5;
+  protelonctelond boolelonan shouldCollelonctDelontailelondDelonbugInfo() {
+    relonturn relonquelonstDelonbugModelon >= 5;
   }
 
-  // Use this for per-result debug info. Useful for queries with no results
-  // or a very small number of results.
-  protected boolean shouldCollectVerboseDebugInfo() {
-    return requestDebugMode >= 6;
+  // Uselon this for pelonr-relonsult delonbug info. Uselonful for quelonrielons with no relonsults
+  // or a velonry small numbelonr of relonsults.
+  protelonctelond boolelonan shouldCollelonctVelonrboselonDelonbugInfo() {
+    relonturn relonquelonstDelonbugModelon >= 6;
   }
 }

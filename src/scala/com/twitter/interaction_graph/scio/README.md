@@ -1,7 +1,7 @@
-# Interaction Graph
+# Intelonraction Graph
 
-This folder contains the code used in the offline pipeline for real graph v2.
+This foldelonr contains thelon codelon uselond in thelon offlinelon pipelonlinelon for relonal graph v2.
 
-The ETL jobs are contained in folders prefaced with `agg_*`, while the jobs powering the ml pipeline are in the ml folder.
+Thelon elonTL jobs arelon containelond in foldelonrs prelonfacelond with `agg_*`, whilelon thelon jobs powelonring thelon ml pipelonlinelon arelon in thelon ml foldelonr.
 
-Note that the jobs in the ml folder are mostly ETL jobs; the main training and scoring happens within BQML. 
+Notelon that thelon jobs in thelon ml foldelonr arelon mostly elonTL jobs; thelon main training and scoring happelonns within BQML. 

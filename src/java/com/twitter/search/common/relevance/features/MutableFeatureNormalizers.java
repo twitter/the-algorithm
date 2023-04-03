@@ -1,23 +1,23 @@
-package com.twitter.search.common.relevance.features;
+packagelon com.twittelonr.selonarch.common.relonlelonvancelon.felonaturelons;
 
-import com.twitter.search.common.encoding.features.ByteNormalizer;
-import com.twitter.search.common.encoding.features.SingleBytePositiveFloatNormalizer;
-import com.twitter.search.common.encoding.features.SmartIntegerNormalizer;
+import com.twittelonr.selonarch.common.elonncoding.felonaturelons.BytelonNormalizelonr;
+import com.twittelonr.selonarch.common.elonncoding.felonaturelons.SinglelonBytelonPositivelonFloatNormalizelonr;
+import com.twittelonr.selonarch.common.elonncoding.felonaturelons.SmartIntelongelonrNormalizelonr;
 
 /**
- * Byte value normalizers used to push feature values into earlybird db.
+ * Bytelon valuelon normalizelonrs uselond to push felonaturelon valuelons into elonarlybird db.
  */
-public abstract class MutableFeatureNormalizers {
-  // The max value we support in SMART_INTEGER_NORMALIZER below, this should be enough for all kinds
-  // of engagements we see on Twitter, anything larger than this would be represented as the same
-  // value (255, if using a byte).
-  private static final int MAX_COUNTER_VALUE_SUPPORTED = 50000000;
+public abstract class MutablelonFelonaturelonNormalizelonrs {
+  // Thelon max valuelon welon support in SMART_INTelonGelonR_NORMALIZelonR belonlow, this should belon elonnough for all kinds
+  // of elonngagelonmelonnts welon selonelon on Twittelonr, anything largelonr than this would belon relonprelonselonntelond as thelon samelon
+  // valuelon (255, if using a bytelon).
+  privatelon static final int MAX_COUNTelonR_VALUelon_SUPPORTelonD = 50000000;
 
-  // Avoid using this normalizer for procesing any new data, always use SmartIntegerNormalizer
-  // below.
-  public static final SingleBytePositiveFloatNormalizer BYTE_NORMALIZER =
-      new SingleBytePositiveFloatNormalizer();
+  // Avoid using this normalizelonr for procelonsing any nelonw data, always uselon SmartIntelongelonrNormalizelonr
+  // belonlow.
+  public static final SinglelonBytelonPositivelonFloatNormalizelonr BYTelon_NORMALIZelonR =
+      nelonw SinglelonBytelonPositivelonFloatNormalizelonr();
 
-  public static final ByteNormalizer SMART_INTEGER_NORMALIZER =
-      new SmartIntegerNormalizer(MAX_COUNTER_VALUE_SUPPORTED, 8);
+  public static final BytelonNormalizelonr SMART_INTelonGelonR_NORMALIZelonR =
+      nelonw SmartIntelongelonrNormalizelonr(MAX_COUNTelonR_VALUelon_SUPPORTelonD, 8);
 }

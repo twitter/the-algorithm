@@ -1,38 +1,38 @@
-package com.twitter.home_mixer.product.list_tweets.model
+packagelon com.twittelonr.homelon_mixelonr.product.list_twelonelonts.modelonl
 
-import com.twitter.adserver.thriftscala.HomeTimelineType
-import com.twitter.adserver.thriftscala.TimelineRequestParams
-import com.twitter.dspbidder.commons.{thriftscala => dsp}
-import com.twitter.home_mixer.model.HomeAdsQuery
-import com.twitter.home_mixer.model.request.DeviceContext
-import com.twitter.home_mixer.model.request.HasListId
-import com.twitter.home_mixer.model.request.ListTweetsProduct
-import com.twitter.product_mixer.component_library.model.cursor.UrtOrderedCursor
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.marshalling.request._
-import com.twitter.product_mixer.core.pipeline.HasPipelineCursor
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.configapi.Params
+import com.twittelonr.adselonrvelonr.thriftscala.HomelonTimelonlinelonTypelon
+import com.twittelonr.adselonrvelonr.thriftscala.TimelonlinelonRelonquelonstParams
+import com.twittelonr.dspbiddelonr.commons.{thriftscala => dsp}
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonAdsQuelonry
+import com.twittelonr.homelon_mixelonr.modelonl.relonquelonst.DelonvicelonContelonxt
+import com.twittelonr.homelon_mixelonr.modelonl.relonquelonst.HasListId
+import com.twittelonr.homelon_mixelonr.modelonl.relonquelonst.ListTwelonelontsProduct
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.cursor.UrtOrdelonrelondCursor
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst._
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.HasPipelonlinelonCursor
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.timelonlinelons.configapi.Params
 
-case class ListTweetsQuery(
-  override val params: Params,
-  override val clientContext: ClientContext,
-  override val pipelineCursor: Option[UrtOrderedCursor],
-  override val requestedMaxResults: Option[Int],
-  override val debugOptions: Option[DebugOptions],
-  override val features: Option[FeatureMap],
-  override val listId: Long,
-  override val deviceContext: Option[DeviceContext],
-  override val dspClientContext: Option[dsp.DspClientContext])
-    extends PipelineQuery
-    with HasPipelineCursor[UrtOrderedCursor]
+caselon class ListTwelonelontsQuelonry(
+  ovelonrridelon val params: Params,
+  ovelonrridelon val clielonntContelonxt: ClielonntContelonxt,
+  ovelonrridelon val pipelonlinelonCursor: Option[UrtOrdelonrelondCursor],
+  ovelonrridelon val relonquelonstelondMaxRelonsults: Option[Int],
+  ovelonrridelon val delonbugOptions: Option[DelonbugOptions],
+  ovelonrridelon val felonaturelons: Option[FelonaturelonMap],
+  ovelonrridelon val listId: Long,
+  ovelonrridelon val delonvicelonContelonxt: Option[DelonvicelonContelonxt],
+  ovelonrridelon val dspClielonntContelonxt: Option[dsp.DspClielonntContelonxt])
+    elonxtelonnds PipelonlinelonQuelonry
+    with HasPipelonlinelonCursor[UrtOrdelonrelondCursor]
     with HasListId
-    with HomeAdsQuery {
-  override val product: Product = ListTweetsProduct
+    with HomelonAdsQuelonry {
+  ovelonrridelon val product: Product = ListTwelonelontsProduct
 
-  override def withFeatureMap(features: FeatureMap): ListTweetsQuery =
-    copy(features = Some(features))
+  ovelonrridelon delonf withFelonaturelonMap(felonaturelons: FelonaturelonMap): ListTwelonelontsQuelonry =
+    copy(felonaturelons = Somelon(felonaturelons))
 
-  override val timelineRequestParams: Option[TimelineRequestParams] =
-    Some(TimelineRequestParams(homeTimelineType = Some(HomeTimelineType.HomeLatest)))
+  ovelonrridelon val timelonlinelonRelonquelonstParams: Option[TimelonlinelonRelonquelonstParams] =
+    Somelon(TimelonlinelonRelonquelonstParams(homelonTimelonlinelonTypelon = Somelon(HomelonTimelonlinelonTypelon.HomelonLatelonst)))
 }

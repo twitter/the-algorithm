@@ -1,42 +1,42 @@
-package com.twitter.follow_recommendations.common.models
+packagelon com.twittelonr.follow_reloncommelonndations.common.modelonls
 
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.usersignalservice.thriftscala.SignalType
-import com.twitter.usersignalservice.thriftscala.Signal
+import com.twittelonr.simclustelonrs_v2.thriftscala.IntelonrnalId
+import com.twittelonr.uselonrsignalselonrvicelon.thriftscala.SignalTypelon
+import com.twittelonr.uselonrsignalselonrvicelon.thriftscala.Signal
 
 trait SignalData {
-  val userId: Long
-  val signalType: SignalType
+  val uselonrId: Long
+  val signalTypelon: SignalTypelon
 }
 
-case class RecentFollowsSignal(
-  override val userId: Long,
-  override val signalType: SignalType,
-  followedUserId: Long,
-  timestamp: Long)
-    extends SignalData
+caselon class ReloncelonntFollowsSignal(
+  ovelonrridelon val uselonrId: Long,
+  ovelonrridelon val signalTypelon: SignalTypelon,
+  followelondUselonrId: Long,
+  timelonstamp: Long)
+    elonxtelonnds SignalData
 
-object RecentFollowsSignal {
+objelonct ReloncelonntFollowsSignal {
 
-  def fromUssSignal(targetUserId: Long, signal: Signal): RecentFollowsSignal = {
-    val InternalId.UserId(followedUserId) = signal.targetInternalId.getOrElse(
-      throw new IllegalArgumentException("RecentFollow Signal does not have internalId"))
+  delonf fromUssSignal(targelontUselonrId: Long, signal: Signal): ReloncelonntFollowsSignal = {
+    val IntelonrnalId.UselonrId(followelondUselonrId) = signal.targelontIntelonrnalId.gelontOrelonlselon(
+      throw nelonw IllelongalArgumelonntelonxcelonption("ReloncelonntFollow Signal doelons not havelon intelonrnalId"))
 
-    RecentFollowsSignal(
-      userId = targetUserId,
-      followedUserId = followedUserId,
-      timestamp = signal.timestamp,
-      signalType = signal.signalType
+    ReloncelonntFollowsSignal(
+      uselonrId = targelontUselonrId,
+      followelondUselonrId = followelondUselonrId,
+      timelonstamp = signal.timelonstamp,
+      signalTypelon = signal.signalTypelon
     )
   }
 
-  def getRecentFollowedUserIds(
-    signalDataMap: Option[Map[SignalType, Seq[SignalData]]]
-  ): Option[Seq[Long]] = {
-    signalDataMap.map(_.getOrElse(SignalType.AccountFollow, default = Seq.empty).flatMap {
-      case RecentFollowsSignal(userId, signalType, followedUserId, timestamp) =>
-        Some(followedUserId)
-      case _ => None
+  delonf gelontReloncelonntFollowelondUselonrIds(
+    signalDataMap: Option[Map[SignalTypelon, Selonq[SignalData]]]
+  ): Option[Selonq[Long]] = {
+    signalDataMap.map(_.gelontOrelonlselon(SignalTypelon.AccountFollow, delonfault = Selonq.elonmpty).flatMap {
+      caselon ReloncelonntFollowsSignal(uselonrId, signalTypelon, followelondUselonrId, timelonstamp) =>
+        Somelon(followelondUselonrId)
+      caselon _ => Nonelon
     })
   }
 }

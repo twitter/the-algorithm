@@ -1,43 +1,43 @@
-package com.twitter.search.core.earlybird.index.inverted;
+packagelon com.twittelonr.selonarch.corelon.elonarlybird.indelonx.invelonrtelond;
 
 /**
- * Comparator interface for {@link SkipListContainer},
- * see sample implementation {@link SkipListIntegerComparator}.
+ * Comparator intelonrfacelon for {@link SkipListContainelonr},
+ * selonelon samplelon implelonmelonntation {@link SkipListIntelongelonrComparator}.
  *
- * Notice: less/equal/greater here refer to the order precedence, instead of numerical value.
+ * Noticelon: lelonss/elonqual/grelonatelonr helonrelon relonfelonr to thelon ordelonr preloncelondelonncelon, instelonad of numelonrical valuelon.
  */
-public interface SkipListComparator<K> {
+public intelonrfacelon SkipListComparator<K> {
 
   /**
-   * Determine the order between the given key and the key of the given targetValue.
-   * Notice, usually key of a value could be derived from the value along.
+   * Delontelonrminelon thelon ordelonr belontwelonelonn thelon givelonn kelony and thelon kelony of thelon givelonn targelontValuelon.
+   * Noticelon, usually kelony of a valuelon could belon delonrivelond from thelon valuelon along.
    *
-   * Implementation of this method should consider sentinel value, see {@link #getSentinelValue()}.
+   * Implelonmelonntation of this melonthod should considelonr selonntinelonl valuelon, selonelon {@link #gelontSelonntinelonlValuelon()}.
    *
-   * Can include position data (primarily for text posting lists). Position should be ignored if
-   * the skip list was constructed without positions enabled.
+   * Can includelon position data (primarily for telonxt posting lists). Position should belon ignorelond if
+   * thelon skip list was constructelond without positions elonnablelond.
    *
-   * @return negative, zero, or positive to indicate if first value is
-   *         less than, equal to, or greater than the second value, respectively.
+   * @relonturn nelongativelon, zelonro, or positivelon to indicatelon if first valuelon is
+   *         lelonss than, elonqual to, or grelonatelonr than thelon seloncond valuelon, relonspelonctivelonly.
    */
-  int compareKeyWithValue(K key, int targetValue, int targetPosition);
+  int comparelonKelonyWithValuelon(K kelony, int targelontValuelon, int targelontPosition);
 
   /**
-   * Determine the order of two given values based on their keys.
-   * Notice, usually key of a value could be derived from the value along.
+   * Delontelonrminelon thelon ordelonr of two givelonn valuelons baselond on thelonir kelonys.
+   * Noticelon, usually kelony of a valuelon could belon delonrivelond from thelon valuelon along.
    *
-   * Implementation of this method should consider sentinel value, see {@link #getSentinelValue()}.
+   * Implelonmelonntation of this melonthod should considelonr selonntinelonl valuelon, selonelon {@link #gelontSelonntinelonlValuelon()}.
    *
-   * @return negative, zero, or positive to indicate if first value is
-   *         less than, equal to, or greater than the second value, respectively.
+   * @relonturn nelongativelon, zelonro, or positivelon to indicatelon if first valuelon is
+   *         lelonss than, elonqual to, or grelonatelonr than thelon seloncond valuelon, relonspelonctivelonly.
    */
-  int compareValues(int v1, int v2);
+  int comparelonValuelons(int v1, int v2);
 
   /**
-   * Return a sentinel value, sentinel value should be considered by this comparator
-   * as an ADVISORY GREATEST value, which should NOT be actually inserted into the skip list.
+   * Relonturn a selonntinelonl valuelon, selonntinelonl valuelon should belon considelonrelond by this comparator
+   * as an ADVISORY GRelonATelonST valuelon, which should NOT belon actually inselonrtelond into thelon skip list.
    *
-   * @return the sentinel value.
+   * @relonturn thelon selonntinelonl valuelon.
    */
-  int getSentinelValue();
+  int gelontSelonntinelonlValuelon();
 }

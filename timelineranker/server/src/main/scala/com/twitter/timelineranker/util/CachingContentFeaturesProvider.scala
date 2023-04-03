@@ -1,119 +1,119 @@
-package com.twitter.timelineranker.util
+packagelon com.twittelonr.timelonlinelonrankelonr.util
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.storehaus.Store
-import com.twitter.timelineranker.contentfeatures.ContentFeaturesProvider
-import com.twitter.timelineranker.model.RecapQuery
-import com.twitter.timelineranker.recap.model.ContentFeatures
-import com.twitter.timelines.model.TweetId
-import com.twitter.timelines.util.FailOpenHandler
-import com.twitter.timelines.util.FutureUtils
-import com.twitter.timelines.util.stats.FutureObserver
-import com.twitter.util.Future
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.storelonhaus.Storelon
+import com.twittelonr.timelonlinelonrankelonr.contelonntfelonaturelons.ContelonntFelonaturelonsProvidelonr
+import com.twittelonr.timelonlinelonrankelonr.modelonl.ReloncapQuelonry
+import com.twittelonr.timelonlinelonrankelonr.reloncap.modelonl.ContelonntFelonaturelons
+import com.twittelonr.timelonlinelons.modelonl.TwelonelontId
+import com.twittelonr.timelonlinelons.util.FailOpelonnHandlelonr
+import com.twittelonr.timelonlinelons.util.FuturelonUtils
+import com.twittelonr.timelonlinelons.util.stats.FuturelonObselonrvelonr
+import com.twittelonr.util.Futurelon
 
-object CachingContentFeaturesProvider {
-  private sealed trait CacheResult
-  private object CacheFailure extends CacheResult
-  private object CacheMiss extends CacheResult
-  private case class CacheHit(t: ContentFeatures) extends CacheResult
-  def isHit(result: CacheResult): Boolean = result != CacheMiss && result != CacheFailure
-  def isMiss(result: CacheResult): Boolean = result == CacheMiss
+objelonct CachingContelonntFelonaturelonsProvidelonr {
+  privatelon selonalelond trait CachelonRelonsult
+  privatelon objelonct CachelonFailurelon elonxtelonnds CachelonRelonsult
+  privatelon objelonct CachelonMiss elonxtelonnds CachelonRelonsult
+  privatelon caselon class CachelonHit(t: ContelonntFelonaturelons) elonxtelonnds CachelonRelonsult
+  delonf isHit(relonsult: CachelonRelonsult): Boolelonan = relonsult != CachelonMiss && relonsult != CachelonFailurelon
+  delonf isMiss(relonsult: CachelonRelonsult): Boolelonan = relonsult == CachelonMiss
 }
 
-class CachingContentFeaturesProvider(
-  underlying: ContentFeaturesProvider,
-  contentFeaturesCache: Store[TweetId, ContentFeatures],
-  statsReceiver: StatsReceiver)
-    extends ContentFeaturesProvider {
-  import CachingContentFeaturesProvider._
+class CachingContelonntFelonaturelonsProvidelonr(
+  undelonrlying: ContelonntFelonaturelonsProvidelonr,
+  contelonntFelonaturelonsCachelon: Storelon[TwelonelontId, ContelonntFelonaturelons],
+  statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds ContelonntFelonaturelonsProvidelonr {
+  import CachingContelonntFelonaturelonsProvidelonr._
 
-  private val scopedStatsReceiver = statsReceiver.scope("CachingContentFeaturesProvider")
-  private val cacheScope = scopedStatsReceiver.scope("cache")
-  private val cacheReadsCounter = cacheScope.counter("reads")
-  private val cacheReadFailOpenHandler = new FailOpenHandler(cacheScope.scope("reads"))
-  private val cacheHitsCounter = cacheScope.counter("hits")
-  private val cacheMissesCounter = cacheScope.counter("misses")
-  private val cacheFailuresCounter = cacheScope.counter("failures")
-  private val cacheWritesCounter = cacheScope.counter("writes")
-  private val cacheWriteObserver = FutureObserver(cacheScope.scope("writes"))
-  private val underlyingScope = scopedStatsReceiver.scope("underlying")
-  private val underlyingReadsCounter = underlyingScope.counter("reads")
+  privatelon val scopelondStatsReloncelonivelonr = statsReloncelonivelonr.scopelon("CachingContelonntFelonaturelonsProvidelonr")
+  privatelon val cachelonScopelon = scopelondStatsReloncelonivelonr.scopelon("cachelon")
+  privatelon val cachelonRelonadsCountelonr = cachelonScopelon.countelonr("relonads")
+  privatelon val cachelonRelonadFailOpelonnHandlelonr = nelonw FailOpelonnHandlelonr(cachelonScopelon.scopelon("relonads"))
+  privatelon val cachelonHitsCountelonr = cachelonScopelon.countelonr("hits")
+  privatelon val cachelonMisselonsCountelonr = cachelonScopelon.countelonr("misselons")
+  privatelon val cachelonFailurelonsCountelonr = cachelonScopelon.countelonr("failurelons")
+  privatelon val cachelonWritelonsCountelonr = cachelonScopelon.countelonr("writelons")
+  privatelon val cachelonWritelonObselonrvelonr = FuturelonObselonrvelonr(cachelonScopelon.scopelon("writelons"))
+  privatelon val undelonrlyingScopelon = scopelondStatsReloncelonivelonr.scopelon("undelonrlying")
+  privatelon val undelonrlyingRelonadsCountelonr = undelonrlyingScopelon.countelonr("relonads")
 
-  override def apply(
-    query: RecapQuery,
-    tweetIds: Seq[TweetId]
-  ): Future[Map[TweetId, ContentFeatures]] = {
-    if (tweetIds.nonEmpty) {
-      val distinctTweetIds = tweetIds.toSet
-      readFromCache(distinctTweetIds).flatMap { cacheResultsFuture =>
-        val (resultsFromCache, missedTweetIds) = partitionHitsMisses(cacheResultsFuture)
+  ovelonrridelon delonf apply(
+    quelonry: ReloncapQuelonry,
+    twelonelontIds: Selonq[TwelonelontId]
+  ): Futurelon[Map[TwelonelontId, ContelonntFelonaturelons]] = {
+    if (twelonelontIds.nonelonmpty) {
+      val distinctTwelonelontIds = twelonelontIds.toSelont
+      relonadFromCachelon(distinctTwelonelontIds).flatMap { cachelonRelonsultsFuturelon =>
+        val (relonsultsFromCachelon, misselondTwelonelontIds) = partitionHitsMisselons(cachelonRelonsultsFuturelon)
 
-        if (missedTweetIds.nonEmpty) {
-          underlyingReadsCounter.incr(missedTweetIds.size)
-          val resultsFromUnderlyingFu = underlying(query, missedTweetIds)
-          resultsFromUnderlyingFu.onSuccess(writeToCache)
-          resultsFromUnderlyingFu
-            .map(resultsFromUnderlying => resultsFromCache ++ resultsFromUnderlying)
-        } else {
-          Future.value(resultsFromCache)
+        if (misselondTwelonelontIds.nonelonmpty) {
+          undelonrlyingRelonadsCountelonr.incr(misselondTwelonelontIds.sizelon)
+          val relonsultsFromUndelonrlyingFu = undelonrlying(quelonry, misselondTwelonelontIds)
+          relonsultsFromUndelonrlyingFu.onSuccelonss(writelonToCachelon)
+          relonsultsFromUndelonrlyingFu
+            .map(relonsultsFromUndelonrlying => relonsultsFromCachelon ++ relonsultsFromUndelonrlying)
+        } elonlselon {
+          Futurelon.valuelon(relonsultsFromCachelon)
         }
       }
-    } else {
-      FutureUtils.EmptyMap
+    } elonlselon {
+      FuturelonUtils.elonmptyMap
     }
   }
 
-  private def readFromCache(tweetIds: Set[TweetId]): Future[Seq[(TweetId, CacheResult)]] = {
-    cacheReadsCounter.incr(tweetIds.size)
-    Future.collect(
-      contentFeaturesCache
-        .multiGet(tweetIds)
-        .toSeq
+  privatelon delonf relonadFromCachelon(twelonelontIds: Selont[TwelonelontId]): Futurelon[Selonq[(TwelonelontId, CachelonRelonsult)]] = {
+    cachelonRelonadsCountelonr.incr(twelonelontIds.sizelon)
+    Futurelon.collelonct(
+      contelonntFelonaturelonsCachelon
+        .multiGelont(twelonelontIds)
+        .toSelonq
         .map {
-          case (tweetId, cacheResultOptionFuture) =>
-            cacheReadFailOpenHandler(
-              cacheResultOptionFuture.map {
-                case Some(t: ContentFeatures) => tweetId -> CacheHit(t)
-                case None => tweetId -> CacheMiss
+          caselon (twelonelontId, cachelonRelonsultOptionFuturelon) =>
+            cachelonRelonadFailOpelonnHandlelonr(
+              cachelonRelonsultOptionFuturelon.map {
+                caselon Somelon(t: ContelonntFelonaturelons) => twelonelontId -> CachelonHit(t)
+                caselon Nonelon => twelonelontId -> CachelonMiss
               }
-            ) { _: Throwable => Future.value(tweetId -> CacheFailure) }
+            ) { _: Throwablelon => Futurelon.valuelon(twelonelontId -> CachelonFailurelon) }
         }
     )
   }
 
-  private def partitionHitsMisses(
-    cacheResults: Seq[(TweetId, CacheResult)]
-  ): (Map[TweetId, ContentFeatures], Seq[TweetId]) = {
-    val (hits, missesAndFailures) = cacheResults.partition {
-      case (_, cacheResult) => isHit(cacheResult)
+  privatelon delonf partitionHitsMisselons(
+    cachelonRelonsults: Selonq[(TwelonelontId, CachelonRelonsult)]
+  ): (Map[TwelonelontId, ContelonntFelonaturelons], Selonq[TwelonelontId]) = {
+    val (hits, misselonsAndFailurelons) = cachelonRelonsults.partition {
+      caselon (_, cachelonRelonsult) => isHit(cachelonRelonsult)
     }
 
-    val (misses, cacheFailures) = missesAndFailures.partition {
-      case (_, cacheResult) => isMiss(cacheResult)
+    val (misselons, cachelonFailurelons) = misselonsAndFailurelons.partition {
+      caselon (_, cachelonRelonsult) => isMiss(cachelonRelonsult)
     }
 
-    val cacheHits = hits.collect { case (tweetId, CacheHit(t)) => (tweetId, t) }.toMap
-    val cacheMisses = misses.collect { case (tweetId, _) => tweetId }
+    val cachelonHits = hits.collelonct { caselon (twelonelontId, CachelonHit(t)) => (twelonelontId, t) }.toMap
+    val cachelonMisselons = misselons.collelonct { caselon (twelonelontId, _) => twelonelontId }
 
-    cacheHitsCounter.incr(cacheHits.size)
-    cacheMissesCounter.incr(cacheMisses.size)
-    cacheFailuresCounter.incr(cacheFailures.size)
+    cachelonHitsCountelonr.incr(cachelonHits.sizelon)
+    cachelonMisselonsCountelonr.incr(cachelonMisselons.sizelon)
+    cachelonFailurelonsCountelonr.incr(cachelonFailurelons.sizelon)
 
-    (cacheHits, cacheMisses)
+    (cachelonHits, cachelonMisselons)
   }
 
-  private def writeToCache(results: Map[TweetId, ContentFeatures]): Unit = {
-    if (results.nonEmpty) {
-      cacheWritesCounter.incr(results.size)
-      val indexedResults = results.map {
-        case (tweetId, contentFeatures) =>
-          (tweetId, Some(contentFeatures))
+  privatelon delonf writelonToCachelon(relonsults: Map[TwelonelontId, ContelonntFelonaturelons]): Unit = {
+    if (relonsults.nonelonmpty) {
+      cachelonWritelonsCountelonr.incr(relonsults.sizelon)
+      val indelonxelondRelonsults = relonsults.map {
+        caselon (twelonelontId, contelonntFelonaturelons) =>
+          (twelonelontId, Somelon(contelonntFelonaturelons))
       }
-      contentFeaturesCache
-        .multiPut(indexedResults)
+      contelonntFelonaturelonsCachelon
+        .multiPut(indelonxelondRelonsults)
         .map {
-          case (_, statusFu) =>
-            cacheWriteObserver(statusFu)
+          caselon (_, statusFu) =>
+            cachelonWritelonObselonrvelonr(statusFu)
         }
     }
   }

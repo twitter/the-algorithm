@@ -1,232 +1,232 @@
-package com.twitter.product_mixer.component_library.side_effect
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.sidelon_elonffelonct
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.conversions.StorageUnitOps._
-import com.twitter.finatra.kafka.producers.FinagleKafkaProducerBuilder
-import com.twitter.finatra.kafka.producers.KafkaProducerBase
-import com.twitter.finatra.kafka.producers.TwitterKafkaProducerConfig
-import com.twitter.product_mixer.core.functional_component.side_effect.PipelineResultSideEffect
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.marshalling.HasMarshalling
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.util.Duration
-import com.twitter.util.StorageUnit
-import org.apache.kafka.clients.producer.ProducerRecord
-import org.apache.kafka.common.serialization.Serializer
-import org.apache.kafka.common.record.CompressionType
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.convelonrsions.StoragelonUnitOps._
+import com.twittelonr.finatra.kafka.producelonrs.FinaglelonKafkaProducelonrBuildelonr
+import com.twittelonr.finatra.kafka.producelonrs.KafkaProducelonrBaselon
+import com.twittelonr.finatra.kafka.producelonrs.TwittelonrKafkaProducelonrConfig
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.sidelon_elonffelonct.PipelonlinelonRelonsultSidelonelonffelonct
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.HasMarshalling
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.util.Duration
+import com.twittelonr.util.StoragelonUnit
+import org.apachelon.kafka.clielonnts.producelonr.ProducelonrReloncord
+import org.apachelon.kafka.common.selonrialization.Selonrializelonr
+import org.apachelon.kafka.common.reloncord.ComprelonssionTypelon
 
 /**
- * The Kafka publishing side effect.
- * This class creates a Kafka producer with provided and default parameters.
- * Note that callers may not provide arbitrary params as this class will do validity check on some
- * params, e.g. maxBlock, to make sure it is safe for online services.
+ * Thelon Kafka publishing sidelon elonffelonct.
+ * This class crelonatelons a Kafka producelonr with providelond and delonfault paramelontelonrs.
+ * Notelon that callelonrs may not providelon arbitrary params as this class will do validity chelonck on somelon
+ * params, elon.g. maxBlock, to makelon surelon it is safelon for onlinelon selonrvicelons.
  *
- * PLEASE NOTE: caller needs to add the following to the Aurora file to successfully enable the TLS
- * '-com.twitter.finatra.kafka.producers.principal={{role}}',
+ * PLelonASelon NOTelon: callelonr nelonelonds to add thelon following to thelon Aurora filelon to succelonssfully elonnablelon thelon TLS
+ * '-com.twittelonr.finatra.kafka.producelonrs.principal={{rolelon}}',
  *
- * @tparam K type of the key
- * @tparam V type of the value
- * @tparam Query pipeline query
+ * @tparam K typelon of thelon kelony
+ * @tparam V typelon of thelon valuelon
+ * @tparam Quelonry pipelonlinelon quelonry
  */
-trait KafkaPublishingSideEffect[K, V, Query <: PipelineQuery, ResponseType <: HasMarshalling]
-    extends PipelineResultSideEffect[Query, ResponseType] {
+trait KafkaPublishingSidelonelonffelonct[K, V, Quelonry <: PipelonlinelonQuelonry, RelonsponselonTypelon <: HasMarshalling]
+    elonxtelonnds PipelonlinelonRelonsultSidelonelonffelonct[Quelonry, RelonsponselonTypelon] {
 
   /**
-   * Kafka servers list. It is usually a WilyNs name at Twitter
+   * Kafka selonrvelonrs list. It is usually a WilyNs namelon at Twittelonr
    */
-  val bootstrapServer: String
+  val bootstrapSelonrvelonr: String
 
   /**
-   * The serde of the key
+   * Thelon selonrdelon of thelon kelony
    */
-  val keySerde: Serializer[K]
+  val kelonySelonrdelon: Selonrializelonr[K]
 
   /**
-   * The serde of the value
+   * Thelon selonrdelon of thelon valuelon
    */
-  val valueSerde: Serializer[V]
+  val valuelonSelonrdelon: Selonrializelonr[V]
 
   /**
-   * An id string to pass to the server when making requests.
-   * The purpose of this is to be able to track the source of requests beyond just ip/port by
-   * allowing a logical application name to be included in server-side request logging.
+   * An id string to pass to thelon selonrvelonr whelonn making relonquelonsts.
+   * Thelon purposelon of this is to belon ablelon to track thelon sourcelon of relonquelonsts belonyond just ip/port by
+   * allowing a logical application namelon to belon includelond in selonrvelonr-sidelon relonquelonst logging.
    */
-  val clientId: String
+  val clielonntId: String
 
   /**
-   * The configuration controls how long <code>KafkaProducer.send()</code> and
-   * <code>KafkaProducer.partitionsFor()</code> will block.
-   * These methods can be blocked either because the buffer is full or metadata unavailable.
-   * Blocking in the user-supplied serializers or partitioner will not be counted against this timeout.
+   * Thelon configuration controls how long <codelon>KafkaProducelonr.selonnd()</codelon> and
+   * <codelon>KafkaProducelonr.partitionsFor()</codelon> will block.
+   * Thelonselon melonthods can belon blockelond elonithelonr beloncauselon thelon buffelonr is full or melontadata unavailablelon.
+   * Blocking in thelon uselonr-supplielond selonrializelonrs or partitionelonr will not belon countelond against this timelonout.
    *
-   * Set 200ms by default to not blocking the thread too long which is critical to most ProMixer
-   * powered services. Please note that there is a hard limit check of not greater than 1 second.
+   * Selont 200ms by delonfault to not blocking thelon threlonad too long which is critical to most ProMixelonr
+   * powelonrelond selonrvicelons. Plelonaselon notelon that thelonrelon is a hard limit chelonck of not grelonatelonr than 1 seloncond.
    *
    */
-  val maxBlock: Duration = 200.milliseconds
+  val maxBlock: Duration = 200.milliselonconds
 
   /**
-   * Retries due to broker failures, etc., may write duplicates of the retried message in the
-   * stream. Note that enabling idempotence requires
-   * <code> MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION </code> to be less than or equal to 5,
-   * <code> RETRIES_CONFIG </code> to be greater than 0 and <code> ACKS_CONFIG </code>
-   * must be 'all'. If these values are not explicitly set by the user, suitable values will be
-   * chosen. If incompatible values are set, a <code>ConfigException</code> will be thrown.
+   * Relontrielons duelon to brokelonr failurelons, elontc., may writelon duplicatelons of thelon relontrielond melonssagelon in thelon
+   * strelonam. Notelon that elonnabling idelonmpotelonncelon relonquirelons
+   * <codelon> MAX_IN_FLIGHT_RelonQUelonSTS_PelonR_CONNelonCTION </codelon> to belon lelonss than or elonqual to 5,
+   * <codelon> RelonTRIelonS_CONFIG </codelon> to belon grelonatelonr than 0 and <codelon> ACKS_CONFIG </codelon>
+   * must belon 'all'. If thelonselon valuelons arelon not elonxplicitly selont by thelon uselonr, suitablelon valuelons will belon
+   * choselonn. If incompatiblelon valuelons arelon selont, a <codelon>Configelonxcelonption</codelon> will belon thrown.
    *
-   * false by default, setting to true may introduce issues to brokers since brokers will keep
-   * tracking all requests which is resource expensive.
+   * falselon by delonfault, selontting to truelon may introducelon issuelons to brokelonrs sincelon brokelonrs will kelonelonp
+   * tracking all relonquelonsts which is relonsourcelon elonxpelonnsivelon.
    */
-  val idempotence: Boolean = false
+  val idelonmpotelonncelon: Boolelonan = falselon
 
   /**
-   * The producer will attempt to batch records together into fewer requests whenever multiple
-   * records are being sent to the same partition. This helps performance on both the client and
-   * the server. This configuration controls the default batch size in bytes.
-   * No attempt will be made to batch records larger than this size.
-   * Requests sent to brokers will contain multiple batches, one for each partition with data
-   * available to be sent. A small batch size will make batching less common and may reduce
-   * throughput (a batch size of zero will disable batching entirely).
-   * A very large batch size may use memory a bit more wastefully as we will always allocate a
-   * buffer of the specified batch size in anticipation of additional records.
+   * Thelon producelonr will attelonmpt to batch reloncords togelonthelonr into felonwelonr relonquelonsts whelonnelonvelonr multiplelon
+   * reloncords arelon beloning selonnt to thelon samelon partition. This helonlps pelonrformancelon on both thelon clielonnt and
+   * thelon selonrvelonr. This configuration controls thelon delonfault batch sizelon in bytelons.
+   * No attelonmpt will belon madelon to batch reloncords largelonr than this sizelon.
+   * Relonquelonsts selonnt to brokelonrs will contain multiplelon batchelons, onelon for elonach partition with data
+   * availablelon to belon selonnt. A small batch sizelon will makelon batching lelonss common and may relonducelon
+   * throughput (a batch sizelon of zelonro will disablelon batching elonntirelonly).
+   * A velonry largelon batch sizelon may uselon melonmory a bit morelon wastelonfully as welon will always allocatelon a
+   * buffelonr of thelon speloncifielond batch sizelon in anticipation of additional reloncords.
    *
-   * Default 16KB which comes from Kafka's default
+   * Delonfault 16KB which comelons from Kafka's delonfault
    */
-  val batchSize: StorageUnit = 16.kilobytes
+  val batchSizelon: StoragelonUnit = 16.kilobytelons
 
   /**
-   * The producer groups together any records that arrive in between request transmissions into
-   * a single batched request. "Normally this occurs only under load when records arrive faster
-   * than they can be sent out. However in some circumstances the client may want to reduce the
-   * number of requests even under moderate load. This setting accomplishes this by adding a
-   * small amount of artificial delay&mdash;that is, rather than immediately sending out a record
-   * the producer will wait for up to the given delay to allow other records to be sent so that
-   * the sends can be batched together. This can be thought of as analogous to Nagle's algorithm
-   * in TCP. This setting gives the upper bound on the delay for batching: once we get
-   * BATCH_SIZE_CONFIG worth of records for a partition it will be sent immediately regardless
-   * of this setting, however if we have fewer than this many bytes accumulated for this
-   * partition we will 'linger' for the specified time waiting for more records to show up.
-   * This setting defaults to 0 (i.e. no delay). Setting LINGER_MS_CONFIG=5, for example,
-   * would have the effect of reducing the number of requests sent but would add up to 5ms of
-   * latency to records sent in the absence of load.
+   * Thelon producelonr groups togelonthelonr any reloncords that arrivelon in belontwelonelonn relonquelonst transmissions into
+   * a singlelon batchelond relonquelonst. "Normally this occurs only undelonr load whelonn reloncords arrivelon fastelonr
+   * than thelony can belon selonnt out. Howelonvelonr in somelon circumstancelons thelon clielonnt may want to relonducelon thelon
+   * numbelonr of relonquelonsts elonvelonn undelonr modelonratelon load. This selontting accomplishelons this by adding a
+   * small amount of artificial delonlay&mdash;that is, rathelonr than immelondiatelonly selonnding out a reloncord
+   * thelon producelonr will wait for up to thelon givelonn delonlay to allow othelonr reloncords to belon selonnt so that
+   * thelon selonnds can belon batchelond togelonthelonr. This can belon thought of as analogous to Naglelon's algorithm
+   * in TCP. This selontting givelons thelon uppelonr bound on thelon delonlay for batching: oncelon welon gelont
+   * BATCH_SIZelon_CONFIG worth of reloncords for a partition it will belon selonnt immelondiatelonly relongardlelonss
+   * of this selontting, howelonvelonr if welon havelon felonwelonr than this many bytelons accumulatelond for this
+   * partition welon will 'lingelonr' for thelon speloncifielond timelon waiting for morelon reloncords to show up.
+   * This selontting delonfaults to 0 (i.elon. no delonlay). Selontting LINGelonR_MS_CONFIG=5, for elonxamplelon,
+   * would havelon thelon elonffelonct of relonducing thelon numbelonr of relonquelonsts selonnt but would add up to 5ms of
+   * latelonncy to reloncords selonnt in thelon abselonncelon of load.
    *
-   * Default 0ms, which is Kafka's default. If the record size is much larger than the batchSize,
-   * you may consider to enlarge both batchSize and linger to have better compression (only when
-   * compression is enabled.)
+   * Delonfault 0ms, which is Kafka's delonfault. If thelon reloncord sizelon is much largelonr than thelon batchSizelon,
+   * you may considelonr to elonnlargelon both batchSizelon and lingelonr to havelon belonttelonr comprelonssion (only whelonn
+   * comprelonssion is elonnablelond.)
    */
-  val linger: Duration = 0.milliseconds
+  val lingelonr: Duration = 0.milliselonconds
 
   /**
-   * The total bytes of memory the producer can use to buffer records waiting to be sent to the
-   * server. If records are sent faster than they can be delivered to the server the producer
-   * will block for MAX_BLOCK_MS_CONFIG after which it will throw an exception.
-   * This setting should correspond roughly to the total memory the producer will use, but is not
-   * a hard bound since not all memory the producer uses is used for buffering.
-   * Some additional memory will be used for compression (if compression is enabled) as well as
-   * for maintaining in-flight requests.
+   * Thelon total bytelons of melonmory thelon producelonr can uselon to buffelonr reloncords waiting to belon selonnt to thelon
+   * selonrvelonr. If reloncords arelon selonnt fastelonr than thelony can belon delonlivelonrelond to thelon selonrvelonr thelon producelonr
+   * will block for MAX_BLOCK_MS_CONFIG aftelonr which it will throw an elonxcelonption.
+   * This selontting should correlonspond roughly to thelon total melonmory thelon producelonr will uselon, but is not
+   * a hard bound sincelon not all melonmory thelon producelonr uselons is uselond for buffelonring.
+   * Somelon additional melonmory will belon uselond for comprelonssion (if comprelonssion is elonnablelond) as welonll as
+   * for maintaining in-flight relonquelonsts.
    *
-   * Default 32MB which is Kafka's default. Please consider to enlarge this value if the EPS and
-   * the per-record size is large (millions EPS with >1KB per-record size) in case the broker has
-   * issues (which fills the buffer pretty quickly.)
+   * Delonfault 32MB which is Kafka's delonfault. Plelonaselon considelonr to elonnlargelon this valuelon if thelon elonPS and
+   * thelon pelonr-reloncord sizelon is largelon (millions elonPS with >1KB pelonr-reloncord sizelon) in caselon thelon brokelonr has
+   * issuelons (which fills thelon buffelonr prelontty quickly.)
    */
-  val bufferMemorySize: StorageUnit = 32.megabytes
+  val buffelonrMelonmorySizelon: StoragelonUnit = 32.melongabytelons
 
   /**
-   * Producer compression type
+   * Producelonr comprelonssion typelon
    *
-   * Default LZ4 which is a good tradeoff between compression and efficiency.
-   * Please be careful of choosing ZSTD, which the compression rate is better it might introduce
-   * huge burden to brokers once the topic is consumed, which needs decompression at the broker side.
+   * Delonfault LZ4 which is a good tradelonoff belontwelonelonn comprelonssion and elonfficielonncy.
+   * Plelonaselon belon carelonful of choosing ZSTD, which thelon comprelonssion ratelon is belonttelonr it might introducelon
+   * hugelon burdelonn to brokelonrs oncelon thelon topic is consumelond, which nelonelonds deloncomprelonssion at thelon brokelonr sidelon.
    */
-  val compressionType: CompressionType = CompressionType.LZ4
+  val comprelonssionTypelon: ComprelonssionTypelon = ComprelonssionTypelon.LZ4
 
   /**
-   * Setting a value greater than zero will cause the client to resend any request that fails
-   * with a potentially transient error
+   * Selontting a valuelon grelonatelonr than zelonro will causelon thelon clielonnt to relonselonnd any relonquelonst that fails
+   * with a potelonntially transielonnt elonrror
    *
-   * Default set to 3, to intentionally reduce the retries.
+   * Delonfault selont to 3, to intelonntionally relonducelon thelon relontrielons.
    */
-  val retries: Int = 3
+  val relontrielons: Int = 3
 
   /**
-   * The amount of time to wait before attempting to retry a failed request to a given topic
-   * partition. This avoids repeatedly sending requests in a tight loop under some failure
-   * scenarios
+   * Thelon amount of timelon to wait belonforelon attelonmpting to relontry a failelond relonquelonst to a givelonn topic
+   * partition. This avoids relonpelonatelondly selonnding relonquelonsts in a tight loop undelonr somelon failurelon
+   * scelonnarios
    */
-  val retryBackoff: Duration = 1.second
+  val relontryBackoff: Duration = 1.seloncond
 
   /**
-   * The configuration controls the maximum amount of time the client will wait
-   * for the response of a request. If the response is not received before the timeout
-   * elapses the client will resend the request if necessary or fail the request if
-   * retries are exhausted.
+   * Thelon configuration controls thelon maximum amount of timelon thelon clielonnt will wait
+   * for thelon relonsponselon of a relonquelonst. If thelon relonsponselon is not reloncelonivelond belonforelon thelon timelonout
+   * elonlapselons thelon clielonnt will relonselonnd thelon relonquelonst if neloncelonssary or fail thelon relonquelonst if
+   * relontrielons arelon elonxhaustelond.
    *
-   * Default 5 seconds which is intentionally low but not too low.
-   * Since Kafka's publishing is async this is in general safe (as long as the bufferMem is not full.)
+   * Delonfault 5 selonconds which is intelonntionally low but not too low.
+   * Sincelon Kafka's publishing is async this is in gelonnelonral safelon (as long as thelon buffelonrMelonm is not full.)
    */
-  val requestTimeout: Duration = 5.seconds
+  val relonquelonstTimelonout: Duration = 5.selonconds
 
-  require(
-    maxBlock.inMilliseconds <= 1000,
-    "We intentionally set the maxBlock to be smaller than 1 second to not block the thread for too long!")
+  relonquirelon(
+    maxBlock.inMilliselonconds <= 1000,
+    "Welon intelonntionally selont thelon maxBlock to belon smallelonr than 1 seloncond to not block thelon threlonad for too long!")
 
-  lazy val kafkaProducer: KafkaProducerBase[K, V] = {
-    val jaasConfig = TwitterKafkaProducerConfig().configMap
-    val builder = FinagleKafkaProducerBuilder[K, V]()
-      .keySerializer(keySerde)
-      .valueSerializer(valueSerde)
-      .dest(bootstrapServer, 1.second) // NOTE: this method blocks!
-      .clientId(clientId)
+  lazy val kafkaProducelonr: KafkaProducelonrBaselon[K, V] = {
+    val jaasConfig = TwittelonrKafkaProducelonrConfig().configMap
+    val buildelonr = FinaglelonKafkaProducelonrBuildelonr[K, V]()
+      .kelonySelonrializelonr(kelonySelonrdelon)
+      .valuelonSelonrializelonr(valuelonSelonrdelon)
+      .delonst(bootstrapSelonrvelonr, 1.seloncond) // NOTelon: this melonthod blocks!
+      .clielonntId(clielonntId)
       .maxBlock(maxBlock)
-      .batchSize(batchSize)
-      .linger(linger)
-      .bufferMemorySize(bufferMemorySize)
-      .maxRequestSize(4.megabytes)
-      .compressionType(compressionType)
-      .enableIdempotence(idempotence)
-      .maxInFlightRequestsPerConnection(5)
-      .retries(retries)
-      .retryBackoff(retryBackoff)
-      .requestTimeout(requestTimeout)
+      .batchSizelon(batchSizelon)
+      .lingelonr(lingelonr)
+      .buffelonrMelonmorySizelon(buffelonrMelonmorySizelon)
+      .maxRelonquelonstSizelon(4.melongabytelons)
+      .comprelonssionTypelon(comprelonssionTypelon)
+      .elonnablelonIdelonmpotelonncelon(idelonmpotelonncelon)
+      .maxInFlightRelonquelonstsPelonrConnelonction(5)
+      .relontrielons(relontrielons)
+      .relontryBackoff(relontryBackoff)
+      .relonquelonstTimelonout(relonquelonstTimelonout)
       .withConfig("acks", "all")
-      .withConfig("delivery.timeout.ms", requestTimeout + linger)
+      .withConfig("delonlivelonry.timelonout.ms", relonquelonstTimelonout + lingelonr)
 
-    builder.withConfig(jaasConfig).build()
+    buildelonr.withConfig(jaasConfig).build()
   }
 
   /**
-   * Build the record to be published to Kafka from query, selections and response
-   * @param query PipelineQuery
-   * @param selectedCandidates Result after Selectors are executed
-   * @param remainingCandidates Candidates which were not selected
-   * @param droppedCandidates Candidates dropped during selection
-   * @param response Result after Unmarshalling
-   * @return A sequence of to-be-published ProducerRecords
+   * Build thelon reloncord to belon publishelond to Kafka from quelonry, selonlelonctions and relonsponselon
+   * @param quelonry PipelonlinelonQuelonry
+   * @param selonlelonctelondCandidatelons Relonsult aftelonr Selonlelonctors arelon elonxeloncutelond
+   * @param relonmainingCandidatelons Candidatelons which welonrelon not selonlelonctelond
+   * @param droppelondCandidatelons Candidatelons droppelond during selonlelonction
+   * @param relonsponselon Relonsult aftelonr Unmarshalling
+   * @relonturn A selonquelonncelon of to-belon-publishelond ProducelonrReloncords
    */
-  def buildRecords(
-    query: Query,
-    selectedCandidates: Seq[CandidateWithDetails],
-    remainingCandidates: Seq[CandidateWithDetails],
-    droppedCandidates: Seq[CandidateWithDetails],
-    response: ResponseType
-  ): Seq[ProducerRecord[K, V]]
+  delonf buildReloncords(
+    quelonry: Quelonry,
+    selonlelonctelondCandidatelons: Selonq[CandidatelonWithDelontails],
+    relonmainingCandidatelons: Selonq[CandidatelonWithDelontails],
+    droppelondCandidatelons: Selonq[CandidatelonWithDelontails],
+    relonsponselon: RelonsponselonTypelon
+  ): Selonq[ProducelonrReloncord[K, V]]
 
-  final override def apply(
-    inputs: PipelineResultSideEffect.Inputs[Query, ResponseType]
+  final ovelonrridelon delonf apply(
+    inputs: PipelonlinelonRelonsultSidelonelonffelonct.Inputs[Quelonry, RelonsponselonTypelon]
   ): Stitch[Unit] = {
-    val records = buildRecords(
-      query = inputs.query,
-      selectedCandidates = inputs.selectedCandidates,
-      remainingCandidates = inputs.remainingCandidates,
-      droppedCandidates = inputs.droppedCandidates,
-      response = inputs.response
+    val reloncords = buildReloncords(
+      quelonry = inputs.quelonry,
+      selonlelonctelondCandidatelons = inputs.selonlelonctelondCandidatelons,
+      relonmainingCandidatelons = inputs.relonmainingCandidatelons,
+      droppelondCandidatelons = inputs.droppelondCandidatelons,
+      relonsponselon = inputs.relonsponselon
     )
 
     Stitch
-      .collect(
-        records
-          .map { record =>
-            Stitch.callFuture(kafkaProducer.send(record))
+      .collelonct(
+        reloncords
+          .map { reloncord =>
+            Stitch.callFuturelon(kafkaProducelonr.selonnd(reloncord))
           }
       ).unit
   }

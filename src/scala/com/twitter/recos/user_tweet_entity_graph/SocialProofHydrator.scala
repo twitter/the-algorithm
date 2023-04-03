@@ -1,109 +1,109 @@
-package com.twitter.recos.user_tweet_entity_graph
+packagelon com.twittelonr.reloncos.uselonr_twelonelont_elonntity_graph
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.graphjet.algorithms.counting.tweet.{
-  TweetMetadataRecommendationInfo,
-  TweetRecommendationInfo
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.graphjelont.algorithms.counting.twelonelont.{
+  TwelonelontMelontadataReloncommelonndationInfo,
+  TwelonelontReloncommelonndationInfo
 }
-import com.twitter.recos.recos_common.thriftscala.{SocialProof, SocialProofType}
+import com.twittelonr.reloncos.reloncos_common.thriftscala.{SocialProof, SocialProofTypelon}
 
-import scala.collection.JavaConverters._
+import scala.collelonction.JavaConvelonrtelonrs._
 
-class SocialProofHydrator(statsReceiver: StatsReceiver) {
-  private val stats = statsReceiver.scope(this.getClass.getSimpleName)
-  private val socialProofsDup = stats.counter("socialProofsDup")
-  private val socialProofsUni = stats.counter("socialProofsUni")
-  private val socialProofByTypeDup = stats.counter("socialProofByTypeDup")
-  private val socialProofByTypeUni = stats.counter("socialProofByTypeUni")
+class SocialProofHydrator(statsReloncelonivelonr: StatsReloncelonivelonr) {
+  privatelon val stats = statsReloncelonivelonr.scopelon(this.gelontClass.gelontSimplelonNamelon)
+  privatelon val socialProofsDup = stats.countelonr("socialProofsDup")
+  privatelon val socialProofsUni = stats.countelonr("socialProofsUni")
+  privatelon val socialProofByTypelonDup = stats.countelonr("socialProofByTypelonDup")
+  privatelon val socialProofByTypelonUni = stats.countelonr("socialProofByTypelonUni")
 
-  // If the social proof type is favorite, there are cases that one user favs, unfavs and then favs the same tweet again.
-  // In this case, UTEG only returns one valid social proof. Note that GraphJet library compares the number of unique users
-  // with the minSocialProofThreshold, so the threshold checking logic is correct.
-  // If the social proof type is reply or quote, there are valid cases that one user replies the same tweet multiple times.
-  // GraphJet does not handle this deduping because this is Twitter specific logic.
-  def getSocialProofs(
-    socialProofType: SocialProofType,
-    users: Seq[Long],
-    metadata: Seq[Long]
-  ): Seq[SocialProof] = {
-    if (socialProofType == SocialProofType.Favorite && users.size > 1 && users.size != users.distinct.size) {
+  // If thelon social proof typelon is favoritelon, thelonrelon arelon caselons that onelon uselonr favs, unfavs and thelonn favs thelon samelon twelonelont again.
+  // In this caselon, UTelonG only relonturns onelon valid social proof. Notelon that GraphJelont library comparelons thelon numbelonr of uniquelon uselonrs
+  // with thelon minSocialProofThrelonshold, so thelon threlonshold cheloncking logic is correlonct.
+  // If thelon social proof typelon is relonply or quotelon, thelonrelon arelon valid caselons that onelon uselonr relonplielons thelon samelon twelonelont multiplelon timelons.
+  // GraphJelont doelons not handlelon this delonduping beloncauselon this is Twittelonr speloncific logic.
+  delonf gelontSocialProofs(
+    socialProofTypelon: SocialProofTypelon,
+    uselonrs: Selonq[Long],
+    melontadata: Selonq[Long]
+  ): Selonq[SocialProof] = {
+    if (socialProofTypelon == SocialProofTypelon.Favoritelon && uselonrs.sizelon > 1 && uselonrs.sizelon != uselonrs.distinct.sizelon) {
       socialProofsDup.incr()
-      val unique = users
-        .zip(metadata)
-        .foldLeft[Seq[(Long, Long)]](Nil) { (list, next) =>
+      val uniquelon = uselonrs
+        .zip(melontadata)
+        .foldLelonft[Selonq[(Long, Long)]](Nil) { (list, nelonxt) =>
           {
-            val test = list find { _._1 == next._1 }
-            if (test.isEmpty) next +: list else list
+            val telonst = list find { _._1 == nelonxt._1 }
+            if (telonst.iselonmpty) nelonxt +: list elonlselon list
           }
         }
-        .reverse
-      unique.map { case (user, data) => SocialProof(user, Some(data)) }
-    } else {
+        .relonvelonrselon
+      uniquelon.map { caselon (uselonr, data) => SocialProof(uselonr, Somelon(data)) }
+    } elonlselon {
       socialProofsUni.incr()
-      users.zip(metadata).map { case (user, data) => SocialProof(user, Some(data)) }
+      uselonrs.zip(melontadata).map { caselon (uselonr, data) => SocialProof(uselonr, Somelon(data)) }
     }
 
   }
 
-  // Extract and dedup social proofs from GraphJet. Only Favorite based social proof needs to dedup.
-  // Return the social proofs (userId, metadata) pair in SocialProof thrift objects.
-  def addTweetSocialProofs(
-    tweet: TweetRecommendationInfo
-  ): Option[Map[SocialProofType, Seq[SocialProof]]] = {
-    Some(
-      tweet.getSocialProof.asScala.map {
-        case (socialProofType, socialProof) =>
-          val socialProofThriftType = SocialProofType(socialProofType.toByte)
+  // elonxtract and delondup social proofs from GraphJelont. Only Favoritelon baselond social proof nelonelonds to delondup.
+  // Relonturn thelon social proofs (uselonrId, melontadata) pair in SocialProof thrift objeloncts.
+  delonf addTwelonelontSocialProofs(
+    twelonelont: TwelonelontReloncommelonndationInfo
+  ): Option[Map[SocialProofTypelon, Selonq[SocialProof]]] = {
+    Somelon(
+      twelonelont.gelontSocialProof.asScala.map {
+        caselon (socialProofTypelon, socialProof) =>
+          val socialProofThriftTypelon = SocialProofTypelon(socialProofTypelon.toBytelon)
           (
-            socialProofThriftType,
-            getSocialProofs(
-              socialProofThriftType,
-              socialProof.getConnectingUsers.asScala.map(_.toLong),
-              socialProof.getMetadata.asScala.map(_.toLong)
+            socialProofThriftTypelon,
+            gelontSocialProofs(
+              socialProofThriftTypelon,
+              socialProof.gelontConnelonctingUselonrs.asScala.map(_.toLong),
+              socialProof.gelontMelontadata.asScala.map(_.toLong)
             )
           )
       }.toMap
     )
   }
 
-  def getSocialProofs(users: Seq[Long]): Seq[Long] = {
-    if (users.size > 1) {
-      val distinctUsers = users.distinct
-      if (users.size != distinctUsers.size) {
-        socialProofByTypeDup.incr()
-      } else {
-        socialProofByTypeUni.incr()
+  delonf gelontSocialProofs(uselonrs: Selonq[Long]): Selonq[Long] = {
+    if (uselonrs.sizelon > 1) {
+      val distinctUselonrs = uselonrs.distinct
+      if (uselonrs.sizelon != distinctUselonrs.sizelon) {
+        socialProofByTypelonDup.incr()
+      } elonlselon {
+        socialProofByTypelonUni.incr()
       }
-      distinctUsers
-    } else {
-      socialProofByTypeUni.incr()
-      users
+      distinctUselonrs
+    } elonlselon {
+      socialProofByTypelonUni.incr()
+      uselonrs
     }
   }
 
-  // Extract and dedup social proofs from GraphJet. All social proof types need to dedup.
-  // Return the userId social proofs without metadata.
-  def addTweetSocialProofByType(tweet: TweetRecommendationInfo): Map[SocialProofType, Seq[Long]] = {
-    tweet.getSocialProof.asScala.map {
-      case (socialProofType, socialProof) =>
+  // elonxtract and delondup social proofs from GraphJelont. All social proof typelons nelonelond to delondup.
+  // Relonturn thelon uselonrId social proofs without melontadata.
+  delonf addTwelonelontSocialProofByTypelon(twelonelont: TwelonelontReloncommelonndationInfo): Map[SocialProofTypelon, Selonq[Long]] = {
+    twelonelont.gelontSocialProof.asScala.map {
+      caselon (socialProofTypelon, socialProof) =>
         (
-          SocialProofType(socialProofType.toByte),
-          getSocialProofs(socialProof.getConnectingUsers.asScala.map(_.toLong))
+          SocialProofTypelon(socialProofTypelon.toBytelon),
+          gelontSocialProofs(socialProof.gelontConnelonctingUselonrs.asScala.map(_.toLong))
         )
     }.toMap
   }
 
-  // The Hashtag and URL Social Proof. Dedup is not necessary.
-  def addMetadataSocialProofByType(
-    tweetMetadataRec: TweetMetadataRecommendationInfo
-  ): Map[SocialProofType, Map[Long, Seq[Long]]] = {
-    tweetMetadataRec.getSocialProof.asScala.map {
-      case (socialProofType, socialProof) =>
+  // Thelon Hashtag and URL Social Proof. Delondup is not neloncelonssary.
+  delonf addMelontadataSocialProofByTypelon(
+    twelonelontMelontadataRelonc: TwelonelontMelontadataReloncommelonndationInfo
+  ): Map[SocialProofTypelon, Map[Long, Selonq[Long]]] = {
+    twelonelontMelontadataRelonc.gelontSocialProof.asScala.map {
+      caselon (socialProofTypelon, socialProof) =>
         (
-          SocialProofType(socialProofType.toByte),
+          SocialProofTypelon(socialProofTypelon.toBytelon),
           socialProof.asScala.map {
-            case (authorId, tweetIds) =>
-              (authorId.toLong, tweetIds.asScala.map(_.toLong))
+            caselon (authorId, twelonelontIds) =>
+              (authorId.toLong, twelonelontIds.asScala.map(_.toLong))
           }.toMap)
     }.toMap
   }

@@ -1,36 +1,36 @@
-package com.twitter.product_mixer.component_library.filter
-import com.twitter.product_mixer.component_library.feature_hydrator.candidate.tweet_tweetypie.IsReplyFeature
-import com.twitter.product_mixer.component_library.model.candidate.BaseTweetCandidate
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.filter.FilterResult
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.filtelonr
+import com.twittelonr.product_mixelonr.componelonnt_library.felonaturelon_hydrator.candidatelon.twelonelont_twelonelontypielon.IsRelonplyFelonaturelon
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.BaselonTwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.filtelonr.Filtelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.filtelonr.FiltelonrRelonsult
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.FiltelonrIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stitch.Stitch
 
 /**
- * Filters out tweets that is a reply to a tweet
+ * Filtelonrs out twelonelonts that is a relonply to a twelonelont
  */
-case class TweetIsNotReplyFilter[Candidate <: BaseTweetCandidate]()
-    extends Filter[PipelineQuery, Candidate] {
-  override val identifier: FilterIdentifier = FilterIdentifier("TweetIsNotReply")
+caselon class TwelonelontIsNotRelonplyFiltelonr[Candidatelon <: BaselonTwelonelontCandidatelon]()
+    elonxtelonnds Filtelonr[PipelonlinelonQuelonry, Candidatelon] {
+  ovelonrridelon val idelonntifielonr: FiltelonrIdelonntifielonr = FiltelonrIdelonntifielonr("TwelonelontIsNotRelonply")
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): Stitch[FilterResult[Candidate]] = {
+  ovelonrridelon delonf apply(
+    quelonry: PipelonlinelonQuelonry,
+    candidatelons: Selonq[CandidatelonWithFelonaturelons[Candidatelon]]
+  ): Stitch[FiltelonrRelonsult[Candidatelon]] = {
 
-    val (kept, removed) = candidates
-      .partition { candidate =>
-        !candidate.features.get(IsReplyFeature)
+    val (kelonpt, relonmovelond) = candidatelons
+      .partition { candidatelon =>
+        !candidatelon.felonaturelons.gelont(IsRelonplyFelonaturelon)
       }
 
-    val filterResult = FilterResult(
-      kept = kept.map(_.candidate),
-      removed = removed.map(_.candidate)
+    val filtelonrRelonsult = FiltelonrRelonsult(
+      kelonpt = kelonpt.map(_.candidatelon),
+      relonmovelond = relonmovelond.map(_.candidatelon)
     )
 
-    Stitch.value(filterResult)
+    Stitch.valuelon(filtelonrRelonsult)
   }
 
 }

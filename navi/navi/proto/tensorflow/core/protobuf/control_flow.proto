@@ -1,91 +1,91 @@
 syntax = "proto3";
 
-package tensorflow;
+packagelon telonnsorflow;
 
-option cc_enable_arenas = true;
-option java_outer_classname = "ControlFlowProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.framework";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+option cc_elonnablelon_arelonnas = truelon;
+option java_outelonr_classnamelon = "ControlFlowProtos";
+option java_multiplelon_filelons = truelon;
+option java_packagelon = "org.telonnsorflow.framelonwork";
+option go_packagelon = "github.com/telonnsorflow/telonnsorflow/telonnsorflow/go/corelon/protobuf/for_corelon_protos_go_proto";
 
-// Control flow context related protocol buffers.
+// Control flow contelonxt relonlatelond protocol buffelonrs.
 
-// Protocol buffer representing the values in ControlFlowContext.
-message ValuesDef {
-  // Value names that have been seen in this context.
-  repeated string values = 1;
+// Protocol buffelonr relonprelonselonnting thelon valuelons in ControlFlowContelonxt.
+melonssagelon ValuelonsDelonf {
+  // Valuelon namelons that havelon belonelonn selonelonn in this contelonxt.
+  relonpelonatelond string valuelons = 1;
 
-  // Value names referenced by but external to this context.
-  map<string, string> external_values = 2;
+  // Valuelon namelons relonfelonrelonncelond by but elonxtelonrnal to this contelonxt.
+  map<string, string> elonxtelonrnal_valuelons = 2;
 }
 
-// Container for any kind of control flow context. Any other control flow
-// contexts that are added below should also be added here.
-message ControlFlowContextDef {
-  oneof ctxt {
-    CondContextDef cond_ctxt = 1;
-    WhileContextDef while_ctxt = 2;
+// Containelonr for any kind of control flow contelonxt. Any othelonr control flow
+// contelonxts that arelon addelond belonlow should also belon addelond helonrelon.
+melonssagelon ControlFlowContelonxtDelonf {
+  onelonof ctxt {
+    CondContelonxtDelonf cond_ctxt = 1;
+    WhilelonContelonxtDelonf whilelon_ctxt = 2;
   }
 }
 
-// Protocol buffer representing a CondContext object.
-message CondContextDef {
-  // Name of the context.
-  string context_name = 1;
+// Protocol buffelonr relonprelonselonnting a CondContelonxt objelonct.
+melonssagelon CondContelonxtDelonf {
+  // Namelon of thelon contelonxt.
+  string contelonxt_namelon = 1;
 
-  // Name of the pred tensor.
-  string pred_name = 2;
+  // Namelon of thelon prelond telonnsor.
+  string prelond_namelon = 2;
 
-  // Name of the pivot tensor.
-  string pivot_name = 3;
+  // Namelon of thelon pivot telonnsor.
+  string pivot_namelon = 3;
 
-  // Branch prediction. 0 or 1.
+  // Branch prelondiction. 0 or 1.
   int32 branch = 4;
 
-  // Values and external values in control flow context.
-  ValuesDef values_def = 5;
+  // Valuelons and elonxtelonrnal valuelons in control flow contelonxt.
+  ValuelonsDelonf valuelons_delonf = 5;
 
-  // Contexts contained inside this context (e.g. nested conds).
-  repeated ControlFlowContextDef nested_contexts = 6;
+  // Contelonxts containelond insidelon this contelonxt (elon.g. nelonstelond conds).
+  relonpelonatelond ControlFlowContelonxtDelonf nelonstelond_contelonxts = 6;
 }
 
-// Protocol buffer representing a WhileContext object.
-message WhileContextDef {
-  // Name of the context.
-  string context_name = 1;
+// Protocol buffelonr relonprelonselonnting a WhilelonContelonxt objelonct.
+melonssagelon WhilelonContelonxtDelonf {
+  // Namelon of thelon contelonxt.
+  string contelonxt_namelon = 1;
 
-  // The number of iterations allowed to run in parallel.
-  int32 parallel_iterations = 2;
+  // Thelon numbelonr of itelonrations allowelond to run in parallelonl.
+  int32 parallelonl_itelonrations = 2;
 
-  // Whether backprop is enabled for this while loop.
+  // Whelonthelonr backprop is elonnablelond for this whilelon loop.
   bool back_prop = 3;
 
-  // Whether GPU-CPU memory swap is enabled for this loop.
-  bool swap_memory = 4;
+  // Whelonthelonr GPU-CPU melonmory swap is elonnablelond for this loop.
+  bool swap_melonmory = 4;
 
-  // Name of the pivot tensor.
-  string pivot_name = 5;
+  // Namelon of thelon pivot telonnsor.
+  string pivot_namelon = 5;
 
-  // Name of the pivot_for_pred tensor.
-  string pivot_for_pred_name = 6;
+  // Namelon of thelon pivot_for_prelond telonnsor.
+  string pivot_for_prelond_namelon = 6;
 
-  // Name of the pivot_for_body tensor.
-  string pivot_for_body_name = 7;
+  // Namelon of thelon pivot_for_body telonnsor.
+  string pivot_for_body_namelon = 7;
 
-  // List of names for exit tensors.
-  repeated string loop_exit_names = 8;
+  // List of namelons for elonxit telonnsors.
+  relonpelonatelond string loop_elonxit_namelons = 8;
 
-  // List of names for enter tensors.
-  repeated string loop_enter_names = 10;
+  // List of namelons for elonntelonr telonnsors.
+  relonpelonatelond string loop_elonntelonr_namelons = 10;
 
-  // Values and external values in control flow context.
-  ValuesDef values_def = 9;
+  // Valuelons and elonxtelonrnal valuelons in control flow contelonxt.
+  ValuelonsDelonf valuelons_delonf = 9;
 
-  // Optional name of the maximum_iterations tensor.
-  string maximum_iterations_name = 11;
+  // Optional namelon of thelon maximum_itelonrations telonnsor.
+  string maximum_itelonrations_namelon = 11;
 
-  // Contexts contained inside this context (e.g. nested whiles).
-  repeated ControlFlowContextDef nested_contexts = 12;
+  // Contelonxts containelond insidelon this contelonxt (elon.g. nelonstelond whilelons).
+  relonpelonatelond ControlFlowContelonxtDelonf nelonstelond_contelonxts = 12;
 
-  // Next available id: 13.
+  // Nelonxt availablelon id: 13.
 }

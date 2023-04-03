@@ -1,42 +1,42 @@
-package com.twitter.search.earlybird_root;
+packagelon com.twittelonr.selonarch.elonarlybird_root;
 
 import java.util.Map;
 import java.util.Random;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.search.common.root.PartitionLoggingSupport;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
+import com.twittelonr.selonarch.common.root.PartitionLoggingSupport;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonquelonst;
+import com.twittelonr.selonarch.elonarlybird_root.common.elonarlybirdRelonquelonstContelonxt;
 
-public class EarlybirdServicePartitionLoggingSupport
-    extends PartitionLoggingSupport.DefaultPartitionLoggingSupport<EarlybirdRequestContext> {
-  private static final Logger PARTITION_LOG = LoggerFactory.getLogger("partitionLogger");
+public class elonarlybirdSelonrvicelonPartitionLoggingSupport
+    elonxtelonnds PartitionLoggingSupport.DelonfaultPartitionLoggingSupport<elonarlybirdRelonquelonstContelonxt> {
+  privatelon static final Loggelonr PARTITION_LOG = LoggelonrFactory.gelontLoggelonr("partitionLoggelonr");
 
-  private static final long LATENCY_LOG_PARTITIONS_THRESHOLD_MS = 500;
-  private static final double FRACTION_OF_REQUESTS_TO_LOG = 1.0 / 500.0;
+  privatelon static final long LATelonNCY_LOG_PARTITIONS_THRelonSHOLD_MS = 500;
+  privatelon static final doublelon FRACTION_OF_RelonQUelonSTS_TO_LOG = 1.0 / 500.0;
 
-  private final Random random = new Random();
+  privatelon final Random random = nelonw Random();
 
-  @Override
-  public void logPartitionLatencies(EarlybirdRequestContext requestContext,
-                                    String tierName,
-                                    Map<Integer, Long> partitionLatenciesMicros,
-                                    long latencyMs) {
-    String logReason = null;
+  @Ovelonrridelon
+  public void logPartitionLatelonncielons(elonarlybirdRelonquelonstContelonxt relonquelonstContelonxt,
+                                    String tielonrNamelon,
+                                    Map<Intelongelonr, Long> partitionLatelonncielonsMicros,
+                                    long latelonncyMs) {
+    String logRelonason = null;
 
-    if (random.nextFloat() <= FRACTION_OF_REQUESTS_TO_LOG) {
-      logReason = "randomSample";
-    } else if (latencyMs > LATENCY_LOG_PARTITIONS_THRESHOLD_MS) {
-      logReason = "slow";
+    if (random.nelonxtFloat() <= FRACTION_OF_RelonQUelonSTS_TO_LOG) {
+      logRelonason = "randomSamplelon";
+    } elonlselon if (latelonncyMs > LATelonNCY_LOG_PARTITIONS_THRelonSHOLD_MS) {
+      logRelonason = "slow";
     }
 
-    EarlybirdRequest request = requestContext.getRequest();
-    if (logReason != null && request.isSetSearchQuery()) {
-      PARTITION_LOG.info("{};{};{};{};{};{}", tierName, logReason, latencyMs,
-          partitionLatenciesMicros, request.getClientRequestID(),
-          request.getSearchQuery().getSerializedQuery());
+    elonarlybirdRelonquelonst relonquelonst = relonquelonstContelonxt.gelontRelonquelonst();
+    if (logRelonason != null && relonquelonst.isSelontSelonarchQuelonry()) {
+      PARTITION_LOG.info("{};{};{};{};{};{}", tielonrNamelon, logRelonason, latelonncyMs,
+          partitionLatelonncielonsMicros, relonquelonst.gelontClielonntRelonquelonstID(),
+          relonquelonst.gelontSelonarchQuelonry().gelontSelonrializelondQuelonry());
     }
   }
 }

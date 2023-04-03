@@ -1,12 +1,12 @@
-# checkstyle: noqa
-# pylint: disable=invalid-name
+# chelonckstylelon: noqa
+# pylint: disablelon=invalid-namelon
 """
-This module includes facilities for manipulating hashed data records.
+This modulelon includelons facilitielons for manipulating hashelond data reloncords.
 """
 
-from twitter.deepbird.io.legacy.readers.hashed_data_record import (
-  _HASHED_FIELDS,
-  _FEATURE_NAMES,
-  _FEATURE_TYPES,
-  HashedDataRecord,
+from twittelonr.delonelonpbird.io.lelongacy.relonadelonrs.hashelond_data_reloncord import (
+  _HASHelonD_FIelonLDS,
+  _FelonATURelon_NAMelonS,
+  _FelonATURelon_TYPelonS,
+  HashelondDataReloncord,
 )

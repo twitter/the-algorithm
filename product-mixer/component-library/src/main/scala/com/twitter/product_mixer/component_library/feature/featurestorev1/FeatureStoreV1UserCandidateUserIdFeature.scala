@@ -1,40 +1,40 @@
-package com.twitter.product_mixer.component_library.feature.featurestorev1
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.felonaturelon.felonaturelonstorelonv1
 
-import com.twitter.ml.featurestore.catalog.entities
-import com.twitter.ml.featurestore.lib.EntityId
-import com.twitter.ml.featurestore.lib.UserId
-import com.twitter.ml.featurestore.lib.entity.Entity
-import com.twitter.ml.featurestore.lib.entity.EntityWithId
-import com.twitter.ml.featurestore.lib.feature.{Feature => FSv1Feature}
-import com.twitter.product_mixer.component_library.model.candidate.BaseUserCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featurestorev1._
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.configapi.FSParam
+import com.twittelonr.ml.felonaturelonstorelon.catalog.elonntitielons
+import com.twittelonr.ml.felonaturelonstorelon.lib.elonntityId
+import com.twittelonr.ml.felonaturelonstorelon.lib.UselonrId
+import com.twittelonr.ml.felonaturelonstorelon.lib.elonntity.elonntity
+import com.twittelonr.ml.felonaturelonstorelon.lib.elonntity.elonntityWithId
+import com.twittelonr.ml.felonaturelonstorelon.lib.felonaturelon.{Felonaturelon => FSv1Felonaturelon}
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.BaselonUselonrCandidatelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonstorelonv1._
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.timelonlinelons.configapi.FSParam
 
-object FeatureStoreV1UserCandidateUserIdFeature {
-  def apply[Query <: PipelineQuery, Candidate <: BaseUserCandidate, Value](
-    feature: FSv1Feature[UserId, Value],
-    legacyName: Option[String] = None,
-    defaultValue: Option[Value] = None,
-    enabledParam: Option[FSParam[Boolean]] = None
-  ): FeatureStoreV1CandidateFeature[Query, Candidate, _ <: EntityId, Value] =
-    FeatureStoreV1CandidateFeature(
-      feature,
-      UserCandidateUserIdEntity,
-      legacyName,
-      defaultValue,
-      enabledParam)
+objelonct FelonaturelonStorelonV1UselonrCandidatelonUselonrIdFelonaturelon {
+  delonf apply[Quelonry <: PipelonlinelonQuelonry, Candidatelon <: BaselonUselonrCandidatelon, Valuelon](
+    felonaturelon: FSv1Felonaturelon[UselonrId, Valuelon],
+    lelongacyNamelon: Option[String] = Nonelon,
+    delonfaultValuelon: Option[Valuelon] = Nonelon,
+    elonnablelondParam: Option[FSParam[Boolelonan]] = Nonelon
+  ): FelonaturelonStorelonV1CandidatelonFelonaturelon[Quelonry, Candidatelon, _ <: elonntityId, Valuelon] =
+    FelonaturelonStorelonV1CandidatelonFelonaturelon(
+      felonaturelon,
+      UselonrCandidatelonUselonrIdelonntity,
+      lelongacyNamelon,
+      delonfaultValuelon,
+      elonnablelondParam)
 }
 
-object UserCandidateUserIdEntity
-    extends FeatureStoreV1CandidateEntity[PipelineQuery, BaseUserCandidate, UserId] {
-  override val entity: Entity[UserId] = entities.core.User
+objelonct UselonrCandidatelonUselonrIdelonntity
+    elonxtelonnds FelonaturelonStorelonV1Candidatelonelonntity[PipelonlinelonQuelonry, BaselonUselonrCandidatelon, UselonrId] {
+  ovelonrridelon val elonntity: elonntity[UselonrId] = elonntitielons.corelon.Uselonr
 
-  override def entityWithId(
-    query: PipelineQuery,
-    user: BaseUserCandidate,
-    existingFeatures: FeatureMap
-  ): EntityWithId[UserId] =
-    entity.withId(UserId(user.id))
+  ovelonrridelon delonf elonntityWithId(
+    quelonry: PipelonlinelonQuelonry,
+    uselonr: BaselonUselonrCandidatelon,
+    elonxistingFelonaturelons: FelonaturelonMap
+  ): elonntityWithId[UselonrId] =
+    elonntity.withId(UselonrId(uselonr.id))
 }

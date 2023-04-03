@@ -1,39 +1,39 @@
-package com.twitter.cr_mixer.filter
+packagelon com.twittelonr.cr_mixelonr.filtelonr
 
-import com.twitter.cr_mixer.model.CandidateGeneratorQuery
-import com.twitter.cr_mixer.model.InitialCandidate
-import com.twitter.cr_mixer.param.GlobalParams
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.util.Duration
-import com.twitter.util.Future
-import com.twitter.util.Time
-import javax.inject.Singleton
-import com.twitter.conversions.DurationOps._
+import com.twittelonr.cr_mixelonr.modelonl.CandidatelonGelonnelonratorQuelonry
+import com.twittelonr.cr_mixelonr.modelonl.InitialCandidatelon
+import com.twittelonr.cr_mixelonr.param.GlobalParams
+import com.twittelonr.snowflakelon.id.SnowflakelonId
+import com.twittelonr.util.Duration
+import com.twittelonr.util.Futurelon
+import com.twittelonr.util.Timelon
+import javax.injelonct.Singlelonton
+import com.twittelonr.convelonrsions.DurationOps._
 
-@Singleton
-case class TweetAgeFilter() extends FilterBase {
-  override val name: String = this.getClass.getCanonicalName
+@Singlelonton
+caselon class TwelonelontAgelonFiltelonr() elonxtelonnds FiltelonrBaselon {
+  ovelonrridelon val namelon: String = this.gelontClass.gelontCanonicalNamelon
 
-  override type ConfigType = Duration
+  ovelonrridelon typelon ConfigTypelon = Duration
 
-  override def filter(
-    candidates: Seq[Seq[InitialCandidate]],
-    maxTweetAge: Duration
-  ): Future[Seq[Seq[InitialCandidate]]] = {
-    if (maxTweetAge >= 720.hours) {
-      Future.value(candidates)
-    } else {
-      // Tweet IDs are approximately chronological (see http://go/snowflake),
-      // so we are building the earliest tweet id once,
-      // and pass that as the value to filter candidates for each CandidateGenerationModel.
-      val earliestTweetId = SnowflakeId.firstIdFor(Time.now - maxTweetAge)
-      Future.value(candidates.map(_.filter(_.tweetId >= earliestTweetId)))
+  ovelonrridelon delonf filtelonr(
+    candidatelons: Selonq[Selonq[InitialCandidatelon]],
+    maxTwelonelontAgelon: Duration
+  ): Futurelon[Selonq[Selonq[InitialCandidatelon]]] = {
+    if (maxTwelonelontAgelon >= 720.hours) {
+      Futurelon.valuelon(candidatelons)
+    } elonlselon {
+      // Twelonelont IDs arelon approximatelonly chronological (selonelon http://go/snowflakelon),
+      // so welon arelon building thelon elonarlielonst twelonelont id oncelon,
+      // and pass that as thelon valuelon to filtelonr candidatelons for elonach CandidatelonGelonnelonrationModelonl.
+      val elonarlielonstTwelonelontId = SnowflakelonId.firstIdFor(Timelon.now - maxTwelonelontAgelon)
+      Futurelon.valuelon(candidatelons.map(_.filtelonr(_.twelonelontId >= elonarlielonstTwelonelontId)))
     }
   }
 
-  override def requestToConfig[CGQueryType <: CandidateGeneratorQuery](
-    query: CGQueryType
+  ovelonrridelon delonf relonquelonstToConfig[CGQuelonryTypelon <: CandidatelonGelonnelonratorQuelonry](
+    quelonry: CGQuelonryTypelon
   ): Duration = {
-    query.params(GlobalParams.MaxTweetAgeHoursParam)
+    quelonry.params(GlobalParams.MaxTwelonelontAgelonHoursParam)
   }
 }

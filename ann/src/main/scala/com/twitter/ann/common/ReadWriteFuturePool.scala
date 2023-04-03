@@ -1,29 +1,29 @@
-package com.twitter.ann.common
-import com.google.common.annotations.VisibleForTesting
-import com.twitter.util.{Future, FuturePool}
+packagelon com.twittelonr.ann.common
+import com.googlelon.common.annotations.VisiblelonForTelonsting
+import com.twittelonr.util.{Futurelon, FuturelonPool}
 
-trait ReadWriteFuturePool {
-  def read[T](f: => T): Future[T]
-  def write[T](f: => T): Future[T]
+trait RelonadWritelonFuturelonPool {
+  delonf relonad[T](f: => T): Futurelon[T]
+  delonf writelon[T](f: => T): Futurelon[T]
 }
 
-object ReadWriteFuturePool {
-  def apply(readPool: FuturePool, writePool: FuturePool): ReadWriteFuturePool = {
-    new ReadWriteFuturePoolANN(readPool, writePool)
+objelonct RelonadWritelonFuturelonPool {
+  delonf apply(relonadPool: FuturelonPool, writelonPool: FuturelonPool): RelonadWritelonFuturelonPool = {
+    nelonw RelonadWritelonFuturelonPoolANN(relonadPool, writelonPool)
   }
 
-  def apply(commonPool: FuturePool): ReadWriteFuturePool = {
-    new ReadWriteFuturePoolANN(commonPool, commonPool)
+  delonf apply(commonPool: FuturelonPool): RelonadWritelonFuturelonPool = {
+    nelonw RelonadWritelonFuturelonPoolANN(commonPool, commonPool)
   }
 }
 
-@VisibleForTesting
-private[ann] class ReadWriteFuturePoolANN(readPool: FuturePool, writePool: FuturePool)
-    extends ReadWriteFuturePool {
-  def read[T](f: => T): Future[T] = {
-    readPool.apply(f)
+@VisiblelonForTelonsting
+privatelon[ann] class RelonadWritelonFuturelonPoolANN(relonadPool: FuturelonPool, writelonPool: FuturelonPool)
+    elonxtelonnds RelonadWritelonFuturelonPool {
+  delonf relonad[T](f: => T): Futurelon[T] = {
+    relonadPool.apply(f)
   }
-  def write[T](f: => T): Future[T] = {
-    writePool.apply(f)
+  delonf writelon[T](f: => T): Futurelon[T] = {
+    writelonPool.apply(f)
   }
 }

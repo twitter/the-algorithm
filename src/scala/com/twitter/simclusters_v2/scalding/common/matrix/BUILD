@@ -1,8 +1,8 @@
 scala_library(
-    sources = ["*.scala"],
+    sourcelons = ["*.scala"],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "src/scala/com/twitter/scalding_internal/job/analytics_batch",
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/scalding_intelonrnal/job/analytics_batch",
     ],
 )

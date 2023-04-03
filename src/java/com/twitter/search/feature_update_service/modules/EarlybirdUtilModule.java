@@ -1,13 +1,13 @@
-package com.twitter.search.feature_update_service.modules;
+packagelon com.twittelonr.selonarch.felonaturelon_updatelon_selonrvicelon.modulelons;
 
-import com.twitter.app.Flaggable;
-import com.twitter.inject.TwitterModule;
+import com.twittelonr.app.Flaggablelon;
+import com.twittelonr.injelonct.TwittelonrModulelon;
 
-public class EarlybirdUtilModule extends TwitterModule {
-  public static final String PENGUIN_VERSIONS_FLAG = "penguin.versions";
+public class elonarlybirdUtilModulelon elonxtelonnds TwittelonrModulelon {
+  public static final String PelonNGUIN_VelonRSIONS_FLAG = "pelonnguin.velonrsions";
 
-  public EarlybirdUtilModule() {
-    flag(PENGUIN_VERSIONS_FLAG, "penguin_6",
-        "Comma-separated list of supported Penguin versions.", Flaggable.ofString());
+  public elonarlybirdUtilModulelon() {
+    flag(PelonNGUIN_VelonRSIONS_FLAG, "pelonnguin_6",
+        "Comma-selonparatelond list of supportelond Pelonnguin velonrsions.", Flaggablelon.ofString());
   }
 }

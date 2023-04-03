@@ -1,6 +1,6 @@
-package com.twitter.product_mixer.core.model.common.presentation
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation
 
-trait ItemPresentation extends UniversalPresentation {
-  // Optional field which if populated, will group the items into the specified module
-  def modulePresentation: Option[ModulePresentation] = None
+trait ItelonmPrelonselonntation elonxtelonnds UnivelonrsalPrelonselonntation {
+  // Optional fielonld which if populatelond, will group thelon itelonms into thelon speloncifielond modulelon
+  delonf modulelonPrelonselonntation: Option[ModulelonPrelonselonntation] = Nonelon
 }

@@ -1,32 +1,32 @@
-package com.twitter.search.earlybird.index;
+packagelon com.twittelonr.selonarch.elonarlybird.indelonx;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 
-import org.apache.lucene.util.AttributeSource;
+import org.apachelon.lucelonnelon.util.AttributelonSourcelon;
 
-import com.twitter.search.common.util.analysis.IntTermAttribute;
-import com.twitter.search.core.earlybird.index.EarlybirdRealtimeIndexSegmentWriter;
+import com.twittelonr.selonarch.common.util.analysis.IntTelonrmAttributelon;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.elonarlybirdRelonaltimelonIndelonxSelongmelonntWritelonr;
 
-public class TimeMappingWriter implements EarlybirdRealtimeIndexSegmentWriter.InvertedDocConsumer {
-  private IntTermAttribute termAtt;
-  private final RealtimeTimeMapper mapper;
+public class TimelonMappingWritelonr implelonmelonnts elonarlybirdRelonaltimelonIndelonxSelongmelonntWritelonr.InvelonrtelondDocConsumelonr {
+  privatelon IntTelonrmAttributelon telonrmAtt;
+  privatelon final RelonaltimelonTimelonMappelonr mappelonr;
 
-  public TimeMappingWriter(RealtimeTimeMapper mapper) {
-    this.mapper = mapper;
+  public TimelonMappingWritelonr(RelonaltimelonTimelonMappelonr mappelonr) {
+    this.mappelonr = mappelonr;
   }
 
-  @Override
-  public final void start(AttributeSource attributeSource, boolean currentDocIsOffensive) {
-    termAtt = attributeSource.addAttribute(IntTermAttribute.class);
+  @Ovelonrridelon
+  public final void start(AttributelonSourcelon attributelonSourcelon, boolelonan currelonntDocIsOffelonnsivelon) {
+    telonrmAtt = attributelonSourcelon.addAttributelon(IntTelonrmAttributelon.class);
   }
 
-  @Override
-  public final void add(int docId, int position) throws IOException {
-    final int timeSec = termAtt.getTerm();
-    mapper.addMapping(docId, timeSec);
+  @Ovelonrridelon
+  public final void add(int docId, int position) throws IOelonxcelonption {
+    final int timelonSelonc = telonrmAtt.gelontTelonrm();
+    mappelonr.addMapping(docId, timelonSelonc);
   }
 
-  @Override
+  @Ovelonrridelon
   public void finish() {
   }
 }

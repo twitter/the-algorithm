@@ -1,93 +1,93 @@
-package com.twitter.product_mixer.core.pipeline.candidate
+packagelon com.twittelonr.product_mixelonr.corelon.pipelonlinelon.candidatelon
 
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.asyncfeaturemap.AsyncFeatureMap
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineResult
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.service.async_feature_map_executor.AsyncFeatureMapExecutorResults
-import com.twitter.product_mixer.core.service.candidate_decorator_executor.CandidateDecoratorExecutorResult
-import com.twitter.product_mixer.core.service.candidate_feature_hydrator_executor.CandidateFeatureHydratorExecutorResult
-import com.twitter.product_mixer.core.service.candidate_source_executor.CandidateSourceExecutorResult
-import com.twitter.product_mixer.core.service.filter_executor.FilterExecutorResult
-import com.twitter.product_mixer.core.service.gate_executor.GateExecutorResult
-import com.twitter.product_mixer.core.service.query_feature_hydrator_executor.QueryFeatureHydratorExecutor
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.asyncfelonaturelonmap.AsyncFelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonSourcelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonRelonsult
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.PipelonlinelonFailurelon
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.async_felonaturelon_map_elonxeloncutor.AsyncFelonaturelonMapelonxeloncutorRelonsults
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.candidatelon_deloncorator_elonxeloncutor.CandidatelonDeloncoratorelonxeloncutorRelonsult
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.candidatelon_felonaturelon_hydrator_elonxeloncutor.CandidatelonFelonaturelonHydratorelonxeloncutorRelonsult
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.candidatelon_sourcelon_elonxeloncutor.CandidatelonSourcelonelonxeloncutorRelonsult
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.filtelonr_elonxeloncutor.FiltelonrelonxeloncutorRelonsult
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.gatelon_elonxeloncutor.GatelonelonxeloncutorRelonsult
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.quelonry_felonaturelon_hydrator_elonxeloncutor.QuelonryFelonaturelonHydratorelonxeloncutor
 
-case class CandidatePipelineResult(
-  candidateSourceIdentifier: CandidateSourceIdentifier,
-  gateResult: Option[GateExecutorResult],
-  queryFeatures: Option[QueryFeatureHydratorExecutor.Result],
-  queryFeaturesPhase2: Option[QueryFeatureHydratorExecutor.Result],
-  mergedAsyncQueryFeatures: Option[AsyncFeatureMap],
-  candidateSourceResult: Option[CandidateSourceExecutorResult[UniversalNoun[Any]]],
-  preFilterHydrationResult: Option[CandidateFeatureHydratorExecutorResult[UniversalNoun[Any]]],
-  preFilterHydrationResultPhase2: Option[
-    CandidateFeatureHydratorExecutorResult[UniversalNoun[Any]]
+caselon class CandidatelonPipelonlinelonRelonsult(
+  candidatelonSourcelonIdelonntifielonr: CandidatelonSourcelonIdelonntifielonr,
+  gatelonRelonsult: Option[GatelonelonxeloncutorRelonsult],
+  quelonryFelonaturelons: Option[QuelonryFelonaturelonHydratorelonxeloncutor.Relonsult],
+  quelonryFelonaturelonsPhaselon2: Option[QuelonryFelonaturelonHydratorelonxeloncutor.Relonsult],
+  melonrgelondAsyncQuelonryFelonaturelons: Option[AsyncFelonaturelonMap],
+  candidatelonSourcelonRelonsult: Option[CandidatelonSourcelonelonxeloncutorRelonsult[UnivelonrsalNoun[Any]]],
+  prelonFiltelonrHydrationRelonsult: Option[CandidatelonFelonaturelonHydratorelonxeloncutorRelonsult[UnivelonrsalNoun[Any]]],
+  prelonFiltelonrHydrationRelonsultPhaselon2: Option[
+    CandidatelonFelonaturelonHydratorelonxeloncutorRelonsult[UnivelonrsalNoun[Any]]
   ],
-  filterResult: Option[FilterExecutorResult[UniversalNoun[Any]]],
-  postFilterHydrationResult: Option[CandidateFeatureHydratorExecutorResult[UniversalNoun[Any]]],
-  candidateDecoratorResult: Option[CandidateDecoratorExecutorResult],
-  scorersResult: Option[CandidateFeatureHydratorExecutorResult[UniversalNoun[Any]]],
-  asyncFeatureHydrationResults: Option[AsyncFeatureMapExecutorResults],
-  failure: Option[PipelineFailure],
-  result: Option[Seq[CandidateWithDetails]])
-    extends PipelineResult[Seq[CandidateWithDetails]] {
+  filtelonrRelonsult: Option[FiltelonrelonxeloncutorRelonsult[UnivelonrsalNoun[Any]]],
+  postFiltelonrHydrationRelonsult: Option[CandidatelonFelonaturelonHydratorelonxeloncutorRelonsult[UnivelonrsalNoun[Any]]],
+  candidatelonDeloncoratorRelonsult: Option[CandidatelonDeloncoratorelonxeloncutorRelonsult],
+  scorelonrsRelonsult: Option[CandidatelonFelonaturelonHydratorelonxeloncutorRelonsult[UnivelonrsalNoun[Any]]],
+  asyncFelonaturelonHydrationRelonsults: Option[AsyncFelonaturelonMapelonxeloncutorRelonsults],
+  failurelon: Option[PipelonlinelonFailurelon],
+  relonsult: Option[Selonq[CandidatelonWithDelontails]])
+    elonxtelonnds PipelonlinelonRelonsult[Selonq[CandidatelonWithDelontails]] {
 
-  override def withFailure(failure: PipelineFailure): CandidatePipelineResult =
-    copy(failure = Some(failure))
+  ovelonrridelon delonf withFailurelon(failurelon: PipelonlinelonFailurelon): CandidatelonPipelonlinelonRelonsult =
+    copy(failurelon = Somelon(failurelon))
 
-  override def withResult(
-    result: Seq[CandidateWithDetails]
-  ): CandidatePipelineResult = copy(result = Some(result))
+  ovelonrridelon delonf withRelonsult(
+    relonsult: Selonq[CandidatelonWithDelontails]
+  ): CandidatelonPipelonlinelonRelonsult = copy(relonsult = Somelon(relonsult))
 
-  override val resultSize: Int = result.map(PipelineResult.resultSize).getOrElse(0)
+  ovelonrridelon val relonsultSizelon: Int = relonsult.map(PipelonlinelonRelonsult.relonsultSizelon).gelontOrelonlselon(0)
 }
 
-private[candidate] object IntermediateCandidatePipelineResult {
-  def empty[Candidate <: UniversalNoun[Any]](
-    candidateSourceIdentifier: CandidateSourceIdentifier
-  ): IntermediateCandidatePipelineResult[Candidate] = {
-    IntermediateCandidatePipelineResult(
-      CandidatePipelineResult(
-        candidateSourceIdentifier = candidateSourceIdentifier,
-        None,
-        None,
-        None,
-        None,
-        None,
-        None,
-        None,
-        None,
-        None,
-        None,
-        None,
-        None,
-        None,
-        None
+privatelon[candidatelon] objelonct IntelonrmelondiatelonCandidatelonPipelonlinelonRelonsult {
+  delonf elonmpty[Candidatelon <: UnivelonrsalNoun[Any]](
+    candidatelonSourcelonIdelonntifielonr: CandidatelonSourcelonIdelonntifielonr
+  ): IntelonrmelondiatelonCandidatelonPipelonlinelonRelonsult[Candidatelon] = {
+    IntelonrmelondiatelonCandidatelonPipelonlinelonRelonsult(
+      CandidatelonPipelonlinelonRelonsult(
+        candidatelonSourcelonIdelonntifielonr = candidatelonSourcelonIdelonntifielonr,
+        Nonelon,
+        Nonelon,
+        Nonelon,
+        Nonelon,
+        Nonelon,
+        Nonelon,
+        Nonelon,
+        Nonelon,
+        Nonelon,
+        Nonelon,
+        Nonelon,
+        Nonelon,
+        Nonelon,
+        Nonelon
       ),
-      None
+      Nonelon
     )
   }
 }
 
-private[candidate] case class IntermediateCandidatePipelineResult[Candidate <: UniversalNoun[Any]](
-  underlyingResult: CandidatePipelineResult,
-  featureMaps: Option[Map[Candidate, FeatureMap]])
-    extends PipelineResult[Seq[CandidateWithDetails]] {
-  override val failure: Option[PipelineFailure] = underlyingResult.failure
-  override val result: Option[Seq[CandidateWithDetails]] = underlyingResult.result
+privatelon[candidatelon] caselon class IntelonrmelondiatelonCandidatelonPipelonlinelonRelonsult[Candidatelon <: UnivelonrsalNoun[Any]](
+  undelonrlyingRelonsult: CandidatelonPipelonlinelonRelonsult,
+  felonaturelonMaps: Option[Map[Candidatelon, FelonaturelonMap]])
+    elonxtelonnds PipelonlinelonRelonsult[Selonq[CandidatelonWithDelontails]] {
+  ovelonrridelon val failurelon: Option[PipelonlinelonFailurelon] = undelonrlyingRelonsult.failurelon
+  ovelonrridelon val relonsult: Option[Selonq[CandidatelonWithDelontails]] = undelonrlyingRelonsult.relonsult
 
-  override def withFailure(
-    failure: PipelineFailure
-  ): IntermediateCandidatePipelineResult[Candidate] =
-    copy(underlyingResult = underlyingResult.withFailure(failure))
+  ovelonrridelon delonf withFailurelon(
+    failurelon: PipelonlinelonFailurelon
+  ): IntelonrmelondiatelonCandidatelonPipelonlinelonRelonsult[Candidatelon] =
+    copy(undelonrlyingRelonsult = undelonrlyingRelonsult.withFailurelon(failurelon))
 
-  override def withResult(
-    result: Seq[CandidateWithDetails]
-  ): IntermediateCandidatePipelineResult[Candidate] =
-    copy(underlyingResult = underlyingResult.withResult(result))
+  ovelonrridelon delonf withRelonsult(
+    relonsult: Selonq[CandidatelonWithDelontails]
+  ): IntelonrmelondiatelonCandidatelonPipelonlinelonRelonsult[Candidatelon] =
+    copy(undelonrlyingRelonsult = undelonrlyingRelonsult.withRelonsult(relonsult))
 
-  override def resultSize(): Int = underlyingResult.resultSize
+  ovelonrridelon delonf relonsultSizelon(): Int = undelonrlyingRelonsult.relonsultSizelon
 }

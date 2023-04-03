@@ -1,68 +1,68 @@
-package com.twitter.home_mixer.functional_component.side_effect
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.sidelon_elonffelonct
 
-import com.twitter.home_mixer.model.HomeFeatures.PersistenceEntriesFeature
-import com.twitter.home_mixer.model.request.FollowingProduct
-import com.twitter.home_mixer.model.request.ForYouProduct
-import com.twitter.home_mixer.param.HomeGlobalParams.TimelinesPersistenceStoreMaxEntriesPerClient
-import com.twitter.home_mixer.service.HomeMixerAlertConfig
-import com.twitter.product_mixer.core.functional_component.side_effect.PipelineResultSideEffect
-import com.twitter.product_mixer.core.model.common.identifier.SideEffectIdentifier
-import com.twitter.product_mixer.core.model.marshalling.response.urt.Timeline
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.timelinemixer.clients.persistence.TimelineResponseBatchesClient
-import com.twitter.timelinemixer.clients.persistence.TimelineResponseV3
-import com.twitter.timelineservice.model.TimelineQuery
-import com.twitter.timelineservice.model.core.TimelineKind
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.PelonrsistelonncelonelonntrielonsFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.relonquelonst.FollowingProduct
+import com.twittelonr.homelon_mixelonr.modelonl.relonquelonst.ForYouProduct
+import com.twittelonr.homelon_mixelonr.param.HomelonGlobalParams.TimelonlinelonsPelonrsistelonncelonStorelonMaxelonntrielonsPelonrClielonnt
+import com.twittelonr.homelon_mixelonr.selonrvicelon.HomelonMixelonrAlelonrtConfig
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.sidelon_elonffelonct.PipelonlinelonRelonsultSidelonelonffelonct
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.SidelonelonffelonctIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.Timelonlinelon
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.timelonlinelonmixelonr.clielonnts.pelonrsistelonncelon.TimelonlinelonRelonsponselonBatchelonsClielonnt
+import com.twittelonr.timelonlinelonmixelonr.clielonnts.pelonrsistelonncelon.TimelonlinelonRelonsponselonV3
+import com.twittelonr.timelonlinelonselonrvicelon.modelonl.TimelonlinelonQuelonry
+import com.twittelonr.timelonlinelonselonrvicelon.modelonl.corelon.TimelonlinelonKind
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
 /**
- * Side effect that truncates entries in the Timelines Persistence store
- * based on the number of entries per client.
+ * Sidelon elonffelonct that truncatelons elonntrielons in thelon Timelonlinelons Pelonrsistelonncelon storelon
+ * baselond on thelon numbelonr of elonntrielons pelonr clielonnt.
  */
-@Singleton
-class TruncateTimelinesPersistenceStoreSideEffect @Inject() (
-  timelineResponseBatchesClient: TimelineResponseBatchesClient[TimelineResponseV3])
-    extends PipelineResultSideEffect[PipelineQuery, Timeline] {
+@Singlelonton
+class TruncatelonTimelonlinelonsPelonrsistelonncelonStorelonSidelonelonffelonct @Injelonct() (
+  timelonlinelonRelonsponselonBatchelonsClielonnt: TimelonlinelonRelonsponselonBatchelonsClielonnt[TimelonlinelonRelonsponselonV3])
+    elonxtelonnds PipelonlinelonRelonsultSidelonelonffelonct[PipelonlinelonQuelonry, Timelonlinelon] {
 
-  override val identifier: SideEffectIdentifier =
-    SideEffectIdentifier("TruncateTimelinesPersistenceStore")
+  ovelonrridelon val idelonntifielonr: SidelonelonffelonctIdelonntifielonr =
+    SidelonelonffelonctIdelonntifielonr("TruncatelonTimelonlinelonsPelonrsistelonncelonStorelon")
 
-  def getResponsesToDelete(query: PipelineQuery): Seq[TimelineResponseV3] = {
-    val responses =
-      query.features.map(_.getOrElse(PersistenceEntriesFeature, Seq.empty)).toSeq.flatten
-    val responsesByClient = responses.groupBy(_.clientPlatform).values.toSeq
-    val maxEntriesPerClient = query.params(TimelinesPersistenceStoreMaxEntriesPerClient)
+  delonf gelontRelonsponselonsToDelonlelontelon(quelonry: PipelonlinelonQuelonry): Selonq[TimelonlinelonRelonsponselonV3] = {
+    val relonsponselons =
+      quelonry.felonaturelons.map(_.gelontOrelonlselon(PelonrsistelonncelonelonntrielonsFelonaturelon, Selonq.elonmpty)).toSelonq.flattelonn
+    val relonsponselonsByClielonnt = relonsponselons.groupBy(_.clielonntPlatform).valuelons.toSelonq
+    val maxelonntrielonsPelonrClielonnt = quelonry.params(TimelonlinelonsPelonrsistelonncelonStorelonMaxelonntrielonsPelonrClielonnt)
 
-    responsesByClient.flatMap {
-      _.sortBy(_.servedTime.inMilliseconds)
-        .foldRight((Seq.empty[TimelineResponseV3], maxEntriesPerClient)) {
-          case (response, (responsesToDelete, remainingCap)) =>
-            if (remainingCap > 0) (responsesToDelete, remainingCap - response.entries.size)
-            else (response +: responsesToDelete, remainingCap)
-        } match { case (responsesToDelete, _) => responsesToDelete }
+    relonsponselonsByClielonnt.flatMap {
+      _.sortBy(_.selonrvelondTimelon.inMilliselonconds)
+        .foldRight((Selonq.elonmpty[TimelonlinelonRelonsponselonV3], maxelonntrielonsPelonrClielonnt)) {
+          caselon (relonsponselon, (relonsponselonsToDelonlelontelon, relonmainingCap)) =>
+            if (relonmainingCap > 0) (relonsponselonsToDelonlelontelon, relonmainingCap - relonsponselon.elonntrielons.sizelon)
+            elonlselon (relonsponselon +: relonsponselonsToDelonlelontelon, relonmainingCap)
+        } match { caselon (relonsponselonsToDelonlelontelon, _) => relonsponselonsToDelonlelontelon }
     }
   }
 
-  final override def apply(
-    inputs: PipelineResultSideEffect.Inputs[PipelineQuery, Timeline]
+  final ovelonrridelon delonf apply(
+    inputs: PipelonlinelonRelonsultSidelonelonffelonct.Inputs[PipelonlinelonQuelonry, Timelonlinelon]
   ): Stitch[Unit] = {
-    val timelineKind = inputs.query.product match {
-      case FollowingProduct => TimelineKind.homeLatest
-      case ForYouProduct => TimelineKind.home
-      case other => throw new UnsupportedOperationException(s"Unknown product: $other")
+    val timelonlinelonKind = inputs.quelonry.product match {
+      caselon FollowingProduct => TimelonlinelonKind.homelonLatelonst
+      caselon ForYouProduct => TimelonlinelonKind.homelon
+      caselon othelonr => throw nelonw UnsupportelondOpelonrationelonxcelonption(s"Unknown product: $othelonr")
     }
-    val timelineQuery = TimelineQuery(id = inputs.query.getRequiredUserId, kind = timelineKind)
+    val timelonlinelonQuelonry = TimelonlinelonQuelonry(id = inputs.quelonry.gelontRelonquirelondUselonrId, kind = timelonlinelonKind)
 
-    val responsesToDelete = getResponsesToDelete(inputs.query)
+    val relonsponselonsToDelonlelontelon = gelontRelonsponselonsToDelonlelontelon(inputs.quelonry)
 
-    if (responsesToDelete.nonEmpty)
-      Stitch.callFuture(timelineResponseBatchesClient.delete(timelineQuery, responsesToDelete))
-    else Stitch.Unit
+    if (relonsponselonsToDelonlelontelon.nonelonmpty)
+      Stitch.callFuturelon(timelonlinelonRelonsponselonBatchelonsClielonnt.delonlelontelon(timelonlinelonQuelonry, relonsponselonsToDelonlelontelon))
+    elonlselon Stitch.Unit
   }
 
-  override val alerts = Seq(
-    HomeMixerAlertConfig.BusinessHours.defaultSuccessRateAlert(99.8)
+  ovelonrridelon val alelonrts = Selonq(
+    HomelonMixelonrAlelonrtConfig.BusinelonssHours.delonfaultSuccelonssRatelonAlelonrt(99.8)
   )
 }

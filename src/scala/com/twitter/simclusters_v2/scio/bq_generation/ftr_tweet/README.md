@@ -1,212 +1,212 @@
-# FTR Tweet embeddings 
+# FTR Twelonelont elonmbelonddings 
 
-export GCP_PROJECT_NAME='twttr-recos-ml-prod'
+elonxport GCP_PROJelonCT_NAMelon='twttr-reloncos-ml-prod'
 
 ## Running Adhoc jobs
-### Base ftrat5 
+### Baselon ftrat5 
 ```
-rm dist/ftr-tweet-adhoc-job-bundle/ftr-tweet-adhoc-job.jar
-./bazel bundle  src/scala/com/twitter/simclusters_v2/scio/bq_generation/ftr_tweet:ftr-tweet-adhoc-job && \
-bin/d6w create \
-${GCP_PROJECT_NAME}/us-central1/ftr-tweets-ann-adhoc-job \
-src/scala/com/twitter/simclusters_v2/scio/bq_generation/ftr_tweet/ftr-tweets-ann-adhoc-job.d6w \
---jar dist/ftr-tweet-adhoc-job-bundle/ftr-tweet-adhoc-job.jar \
---bind=profile.project=
-${GCP_PROJECT_NAME} \
---bind=profile.user_name=your_ldap \
---bind=profile.build_target="src/scala/com/twitter/simclusters_v2/scio/bq_generation/ftr_tweet:ftr-tweet-index-generation-adhoc-job" \
---bind=profile.date="2022-08-26T12" \
---bind=profile.machine="n2-standard-2" \
---bind=profile.job_name="ftr-tweets-ann-adhoc-job" --ignore-existing
+rm dist/ftr-twelonelont-adhoc-job-bundlelon/ftr-twelonelont-adhoc-job.jar
+./bazelonl bundlelon  src/scala/com/twittelonr/simclustelonrs_v2/scio/bq_gelonnelonration/ftr_twelonelont:ftr-twelonelont-adhoc-job && \
+bin/d6w crelonatelon \
+${GCP_PROJelonCT_NAMelon}/us-celonntral1/ftr-twelonelonts-ann-adhoc-job \
+src/scala/com/twittelonr/simclustelonrs_v2/scio/bq_gelonnelonration/ftr_twelonelont/ftr-twelonelonts-ann-adhoc-job.d6w \
+--jar dist/ftr-twelonelont-adhoc-job-bundlelon/ftr-twelonelont-adhoc-job.jar \
+--bind=profilelon.projelonct=
+${GCP_PROJelonCT_NAMelon} \
+--bind=profilelon.uselonr_namelon=your_ldap \
+--bind=profilelon.build_targelont="src/scala/com/twittelonr/simclustelonrs_v2/scio/bq_gelonnelonration/ftr_twelonelont:ftr-twelonelont-indelonx-gelonnelonration-adhoc-job" \
+--bind=profilelon.datelon="2022-08-26T12" \
+--bind=profilelon.machinelon="n2-standard-2" \
+--bind=profilelon.job_namelon="ftr-twelonelonts-ann-adhoc-job" --ignorelon-elonxisting
 ```
-### ClusterToTweet Index with base ftrat5
+### ClustelonrToTwelonelont Indelonx with baselon ftrat5
 ```
-export GCP_PROJECT_NAME='twttr-recos-ml-prod'
+elonxport GCP_PROJelonCT_NAMelon='twttr-reloncos-ml-prod'
 
-rm dist/ftr-tweet-index-generation-adhoc-job-bundle/ftr-tweet-index-generation-adhoc-job.jar
-./bazel bundle  src/scala/com/twitter/simclusters_v2/scio/bq_generation/ftr_tweet:ftr-tweet-index-generation-adhoc-job && \
-bin/d6w create \
-${GCP_PROJECT_NAME}/us-central1/ftr-tweet-index-generation-adhoc-job \
-src/scala/com/twitter/simclusters_v2/scio/bq_generation/ftr_tweet/ftr-based-simclusters-index-generation-job.d6w \
---jar dist/ftr-tweet-index-generation-adhoc-job-bundle/ftr-tweet-index-generation-adhoc-job.jar \
---bind=profile.project=${GCP_PROJECT_NAME} \
---bind=profile.user_name=your_ldap \
---bind=profile.date="2022-08-27T12" \
---bind=profile.machine="n2-standard-2" \
---bind=profile.build_target="src/scala/com/twitter/simclusters_v2/scio/bq_generation/ftr_tweet:ftr-tweet-index-generation-adhoc-job" \
---bind=profile.job_name="ftr-tweet-index-generation-adhoc-job" --ignore-existing
+rm dist/ftr-twelonelont-indelonx-gelonnelonration-adhoc-job-bundlelon/ftr-twelonelont-indelonx-gelonnelonration-adhoc-job.jar
+./bazelonl bundlelon  src/scala/com/twittelonr/simclustelonrs_v2/scio/bq_gelonnelonration/ftr_twelonelont:ftr-twelonelont-indelonx-gelonnelonration-adhoc-job && \
+bin/d6w crelonatelon \
+${GCP_PROJelonCT_NAMelon}/us-celonntral1/ftr-twelonelont-indelonx-gelonnelonration-adhoc-job \
+src/scala/com/twittelonr/simclustelonrs_v2/scio/bq_gelonnelonration/ftr_twelonelont/ftr-baselond-simclustelonrs-indelonx-gelonnelonration-job.d6w \
+--jar dist/ftr-twelonelont-indelonx-gelonnelonration-adhoc-job-bundlelon/ftr-twelonelont-indelonx-gelonnelonration-adhoc-job.jar \
+--bind=profilelon.projelonct=${GCP_PROJelonCT_NAMelon} \
+--bind=profilelon.uselonr_namelon=your_ldap \
+--bind=profilelon.datelon="2022-08-27T12" \
+--bind=profilelon.machinelon="n2-standard-2" \
+--bind=profilelon.build_targelont="src/scala/com/twittelonr/simclustelonrs_v2/scio/bq_gelonnelonration/ftr_twelonelont:ftr-twelonelont-indelonx-gelonnelonration-adhoc-job" \
+--bind=profilelon.job_namelon="ftr-twelonelont-indelonx-gelonnelonration-adhoc-job" --ignorelon-elonxisting
 ```
 
 ### OON ftrat5
 ```
-rm dist/oon-ftr-tweet-index-generation-adhoc-job-bundle/oon-ftr-tweet-index-generation-adhoc-job.jar
-./bazel bundle  src/scala/com/twitter/simclusters_v2/scio/bq_generation/ftr_tweet:oon-ftr-tweet-index-generation-adhoc-job && \
-bin/d6w create \
-${GCP_PROJECT_NAME}/us-central1/oon-ftr-ann-adhoc-job \
-src/scala/com/twitter/simclusters_v2/scio/bq_generation/ftr_tweet/ftr-based-simclusters-index-generation-job.d6w \
---jar dist/oon-ftr-tweet-index-generation-adhoc-job-bundle/oon-ftr-tweet-index-generation-adhoc-job.jar \
---bind=profile.project=${GCP_PROJECT_NAME} \
---bind=profile.user_name=${USER} \
---bind=profile.build_target="src/scala/com/twitter/simclusters_v2/scio/bq_generation/ftr_tweet:oon-ftr-tweet-index-generation-adhoc-job" \
---bind=profile.date="2022-09-21T12" \
---bind=profile.machine="n2-standard-2" \
---bind=profile.job_name="oon-ftr-ann-adhoc-job" --ignore-existing
+rm dist/oon-ftr-twelonelont-indelonx-gelonnelonration-adhoc-job-bundlelon/oon-ftr-twelonelont-indelonx-gelonnelonration-adhoc-job.jar
+./bazelonl bundlelon  src/scala/com/twittelonr/simclustelonrs_v2/scio/bq_gelonnelonration/ftr_twelonelont:oon-ftr-twelonelont-indelonx-gelonnelonration-adhoc-job && \
+bin/d6w crelonatelon \
+${GCP_PROJelonCT_NAMelon}/us-celonntral1/oon-ftr-ann-adhoc-job \
+src/scala/com/twittelonr/simclustelonrs_v2/scio/bq_gelonnelonration/ftr_twelonelont/ftr-baselond-simclustelonrs-indelonx-gelonnelonration-job.d6w \
+--jar dist/oon-ftr-twelonelont-indelonx-gelonnelonration-adhoc-job-bundlelon/oon-ftr-twelonelont-indelonx-gelonnelonration-adhoc-job.jar \
+--bind=profilelon.projelonct=${GCP_PROJelonCT_NAMelon} \
+--bind=profilelon.uselonr_namelon=${USelonR} \
+--bind=profilelon.build_targelont="src/scala/com/twittelonr/simclustelonrs_v2/scio/bq_gelonnelonration/ftr_twelonelont:oon-ftr-twelonelont-indelonx-gelonnelonration-adhoc-job" \
+--bind=profilelon.datelon="2022-09-21T12" \
+--bind=profilelon.machinelon="n2-standard-2" \
+--bind=profilelon.job_namelon="oon-ftr-ann-adhoc-job" --ignorelon-elonxisting
 ```
 
 
-## Scheduling jobs
-### decayed_sum_job
+## Schelonduling jobs
+### deloncayelond_sum_job
 ```
-export SERVICE_ACCOUNT='cassowary'
-export GCP_PROJECT_NAME='twttr-recos-ml-prod'
-export PROJECT_DATE='2022-07-24T16'
+elonxport SelonRVICelon_ACCOUNT='cassowary'
+elonxport GCP_PROJelonCT_NAMelon='twttr-reloncos-ml-prod'
+elonxport PROJelonCT_DATelon='2022-07-24T16'
 
-bin/d6w schedule \
-${GCP_PROJECT_NAME}/us-central1/iikf2020-decayed-sum-ann-batch-job \
-src/scala/com/twitter/simclusters_v2/scio/bq_generation/ftr_tweet/iikf2020-decayed-sum-ann-batch-job.d6w \
---bind=profile.project=${GCP_PROJECT_NAME} \
---bind=profile.user_name=${SERVICE_ACCOUNT} \
---bind=profile.machine="n2-highmem-4" \
---bind=profile.job_name="iikf2020-decayed-sum-ann-batch-job" \
---bind=profile.date=${PROJECT_DATE} \
---bind=profile.environment=prod
+bin/d6w schelondulelon \
+${GCP_PROJelonCT_NAMelon}/us-celonntral1/iikf2020-deloncayelond-sum-ann-batch-job \
+src/scala/com/twittelonr/simclustelonrs_v2/scio/bq_gelonnelonration/ftr_twelonelont/iikf2020-deloncayelond-sum-ann-batch-job.d6w \
+--bind=profilelon.projelonct=${GCP_PROJelonCT_NAMelon} \
+--bind=profilelon.uselonr_namelon=${SelonRVICelon_ACCOUNT} \
+--bind=profilelon.machinelon="n2-highmelonm-4" \
+--bind=profilelon.job_namelon="iikf2020-deloncayelond-sum-ann-batch-job" \
+--bind=profilelon.datelon=${PROJelonCT_DATelon} \
+--bind=profilelon.elonnvironmelonnt=prod
 ```
 
 ### ftrat5 pop1000
 
 ```
-export SERVICE_ACCOUNT='cassowary'
-export GCP_PROJECT_NAME='twttr-recos-ml-prod'
-export PROJECT_DATE='2022-07-24T17'
+elonxport SelonRVICelon_ACCOUNT='cassowary'
+elonxport GCP_PROJelonCT_NAMelon='twttr-reloncos-ml-prod'
+elonxport PROJelonCT_DATelon='2022-07-24T17'
 
-bin/d6w schedule \
-${GCP_PROJECT_NAME}/us-central1/iikf2020-ftrat5-pop1000-ann-batch-job \
-src/scala/com/twitter/simclusters_v2/scio/bq_generation/ftr_tweet/iikf2020-ftrat5-pop1000-ann-batch-job.d6w \
---bind=profile.project=${GCP_PROJECT_NAME} \
---bind=profile.user_name=${SERVICE_ACCOUNT} \
---bind=profile.machine="n2-highmem-4" \
---bind=profile.job_name="iikf2020-ftrat5-pop1000-ann-batch-job" \
---bind=profile.date=${PROJECT_DATE} \
---bind=profile.environment=prod
+bin/d6w schelondulelon \
+${GCP_PROJelonCT_NAMelon}/us-celonntral1/iikf2020-ftrat5-pop1000-ann-batch-job \
+src/scala/com/twittelonr/simclustelonrs_v2/scio/bq_gelonnelonration/ftr_twelonelont/iikf2020-ftrat5-pop1000-ann-batch-job.d6w \
+--bind=profilelon.projelonct=${GCP_PROJelonCT_NAMelon} \
+--bind=profilelon.uselonr_namelon=${SelonRVICelon_ACCOUNT} \
+--bind=profilelon.machinelon="n2-highmelonm-4" \
+--bind=profilelon.job_namelon="iikf2020-ftrat5-pop1000-ann-batch-job" \
+--bind=profilelon.datelon=${PROJelonCT_DATelon} \
+--bind=profilelon.elonnvironmelonnt=prod
 ```
 
 
 ### ftrat5 pop10000
 ```
-export SERVICE_ACCOUNT='cassowary'
-export GCP_PROJECT_NAME='twttr-recos-ml-prod'
-export PROJECT_DATE='2022-07-24T18'
+elonxport SelonRVICelon_ACCOUNT='cassowary'
+elonxport GCP_PROJelonCT_NAMelon='twttr-reloncos-ml-prod'
+elonxport PROJelonCT_DATelon='2022-07-24T18'
 
-bin/d6w schedule \
-${GCP_PROJECT_NAME}/us-central1/iikf2020-ftrat5-pop10000-ann-batch-job \
-src/scala/com/twitter/simclusters_v2/scio/bq_generation/ftr_tweet/iikf2020-ftrat5-pop10000-ann-batch-job.d6w \
---bind=profile.project=${GCP_PROJECT_NAME} \
---bind=profile.user_name=${SERVICE_ACCOUNT} \
---bind=profile.machine="n2-highmem-4" \
---bind=profile.job_name="iikf2020-ftrat5-pop10000-ann-batch-job"  \
---bind=profile.date=${PROJECT_DATE} \
---bind=profile.environment=prod
+bin/d6w schelondulelon \
+${GCP_PROJelonCT_NAMelon}/us-celonntral1/iikf2020-ftrat5-pop10000-ann-batch-job \
+src/scala/com/twittelonr/simclustelonrs_v2/scio/bq_gelonnelonration/ftr_twelonelont/iikf2020-ftrat5-pop10000-ann-batch-job.d6w \
+--bind=profilelon.projelonct=${GCP_PROJelonCT_NAMelon} \
+--bind=profilelon.uselonr_namelon=${SelonRVICelon_ACCOUNT} \
+--bind=profilelon.machinelon="n2-highmelonm-4" \
+--bind=profilelon.job_namelon="iikf2020-ftrat5-pop10000-ann-batch-job"  \
+--bind=profilelon.datelon=${PROJelonCT_DATelon} \
+--bind=profilelon.elonnvironmelonnt=prod
 ```
 
-### Deschedule
+### Delonschelondulelon
 ```
-export SERVICE_ACCOUNT='cassowary'
+elonxport SelonRVICelon_ACCOUNT='cassowary'
 
-aurora cron deschedule atla/${SERVICE_ACCOUNT}/prod/twttr-recos-ml-prod-us-central1-iikf2020-decayed-sum-ann-batch-job
-aurora cron deschedule atla/${SERVICE_ACCOUNT}/prod/twttr-recos-ml-prod-us-central1-iikf2020-ftrat5-pop1000-ann-batch-job
-aurora cron deschedule atla/${SERVICE_ACCOUNT}/prod/twttr-recos-ml-prod-us-central1-iikf2020-ftrat5-pop10000-ann-batch-job
+aurora cron delonschelondulelon atla/${SelonRVICelon_ACCOUNT}/prod/twttr-reloncos-ml-prod-us-celonntral1-iikf2020-deloncayelond-sum-ann-batch-job
+aurora cron delonschelondulelon atla/${SelonRVICelon_ACCOUNT}/prod/twttr-reloncos-ml-prod-us-celonntral1-iikf2020-ftrat5-pop1000-ann-batch-job
+aurora cron delonschelondulelon atla/${SelonRVICelon_ACCOUNT}/prod/twttr-reloncos-ml-prod-us-celonntral1-iikf2020-ftrat5-pop10000-ann-batch-job
 
-aurora cron deschedule atla/${SERVICE_ACCOUNT}/prod/twttr-recos-ml-prod-us-central1-iikf2020-decayed-sum-ann-batch-job
-aurora cron deschedule atla/${SERVICE_ACCOUNT}/prod/twttr-recos-ml-prod-us-central1-iikf2020-ftrat5-pop1000-ann-batch-job
-aurora cron deschedule atla/${SERVICE_ACCOUNT}/prod/twttr-recos-ml-prod-us-central1-iikf2020-ftrat5-pop10000-ann-batch-job
-```
-
-### pop1000-rnkdecay11
-```
-export SERVICE_ACCOUNT='cassowary'
-export GCP_PROJECT_NAME='twttr-recos-ml-prod'
-export PROJECT_DATE='2022-08-27T16'
-
-bin/d6w schedule \
-${GCP_PROJECT_NAME}/us-central1/ftr-pop1000-rnkdecay11-tweet-index-generation-batch-job \
-src/scala/com/twitter/simclusters_v2/scio/bq_generation/ftr_tweet/ftr-based-simclusters-index-generation-job.d6w \
---bind=profile.project=${GCP_PROJECT_NAME} \
---bind=profile.user_name=${SERVICE_ACCOUNT} \
---bind=profile.machine="n2-standard-2" \
---bind=profile.job_name="ftr-pop1000-rnkdecay11-tweet-index-generation-batch-job" \
---bind=profile.build_target="src/scala/com/twitter/simclusters_v2/scio/bq_generation/ftr_tweet:ftr-tweet-index-generation-pop1000-rnkdecay11-job" \
---bind=profile.date=${PROJECT_DATE} \
---bind=profile.environment=prod
+aurora cron delonschelondulelon atla/${SelonRVICelon_ACCOUNT}/prod/twttr-reloncos-ml-prod-us-celonntral1-iikf2020-deloncayelond-sum-ann-batch-job
+aurora cron delonschelondulelon atla/${SelonRVICelon_ACCOUNT}/prod/twttr-reloncos-ml-prod-us-celonntral1-iikf2020-ftrat5-pop1000-ann-batch-job
+aurora cron delonschelondulelon atla/${SelonRVICelon_ACCOUNT}/prod/twttr-reloncos-ml-prod-us-celonntral1-iikf2020-ftrat5-pop10000-ann-batch-job
 ```
 
-### pop10000-rnkdecay11
+### pop1000-rnkdeloncay11
 ```
-export SERVICE_ACCOUNT='cassowary'
-export GCP_PROJECT_NAME='twttr-recos-ml-prod'
-export PROJECT_DATE='2022-08-27T16'
+elonxport SelonRVICelon_ACCOUNT='cassowary'
+elonxport GCP_PROJelonCT_NAMelon='twttr-reloncos-ml-prod'
+elonxport PROJelonCT_DATelon='2022-08-27T16'
 
-bin/d6w schedule \
-${GCP_PROJECT_NAME}/us-central1/ftr-pop10000-rnkdecay11-tweet-index-generation-batch-job \
-src/scala/com/twitter/simclusters_v2/scio/bq_generation/ftr_tweet/ftr-based-simclusters-index-generation-job.d6w \
---bind=profile.project=${GCP_PROJECT_NAME} \
---bind=profile.user_name=${SERVICE_ACCOUNT} \
---bind=profile.machine="n2-standard-2" \
---bind=profile.job_name="ftr-pop10000-rnkdecay11-tweet-index-generation-batch-job" \
---bind=profile.build_target="src/scala/com/twitter/simclusters_v2/scio/bq_generation/ftr_tweet:ftr-tweet-index-generation-pop10000-rnkdecay11-job" \
---bind=profile.date=${PROJECT_DATE} \
---bind=profile.environment=prod
+bin/d6w schelondulelon \
+${GCP_PROJelonCT_NAMelon}/us-celonntral1/ftr-pop1000-rnkdeloncay11-twelonelont-indelonx-gelonnelonration-batch-job \
+src/scala/com/twittelonr/simclustelonrs_v2/scio/bq_gelonnelonration/ftr_twelonelont/ftr-baselond-simclustelonrs-indelonx-gelonnelonration-job.d6w \
+--bind=profilelon.projelonct=${GCP_PROJelonCT_NAMelon} \
+--bind=profilelon.uselonr_namelon=${SelonRVICelon_ACCOUNT} \
+--bind=profilelon.machinelon="n2-standard-2" \
+--bind=profilelon.job_namelon="ftr-pop1000-rnkdeloncay11-twelonelont-indelonx-gelonnelonration-batch-job" \
+--bind=profilelon.build_targelont="src/scala/com/twittelonr/simclustelonrs_v2/scio/bq_gelonnelonration/ftr_twelonelont:ftr-twelonelont-indelonx-gelonnelonration-pop1000-rnkdeloncay11-job" \
+--bind=profilelon.datelon=${PROJelonCT_DATelon} \
+--bind=profilelon.elonnvironmelonnt=prod
 ```
 
-### decayed_sum
+### pop10000-rnkdeloncay11
 ```
-export SERVICE_ACCOUNT='cassowary'
-export GCP_PROJECT_NAME='twttr-recos-ml-prod'
-export PROJECT_DATE='2022-09-05T16'
+elonxport SelonRVICelon_ACCOUNT='cassowary'
+elonxport GCP_PROJelonCT_NAMelon='twttr-reloncos-ml-prod'
+elonxport PROJelonCT_DATelon='2022-08-27T16'
 
-bin/d6w schedule \
-${GCP_PROJECT_NAME}/us-central1/decayed-sum-tweet-index-generation-batch-job \
-src/scala/com/twitter/simclusters_v2/scio/bq_generation/ftr_tweet/ftr-based-simclusters-index-generation-job.d6w \
---bind=profile.project=${GCP_PROJECT_NAME} \
---bind=profile.user_name=${SERVICE_ACCOUNT} \
---bind=profile.machine="n2-standard-2" \
---bind=profile.job_name="decayed-sum-tweet-index-generation-batch-job" \
---bind=profile.build_target="src/scala/com/twitter/simclusters_v2/scio/bq_generation/ftr_tweet:ftr-tweet-index-generation-decayed-sum-job" \
---bind=profile.date=${PROJECT_DATE} \
---bind=profile.environment=prod
+bin/d6w schelondulelon \
+${GCP_PROJelonCT_NAMelon}/us-celonntral1/ftr-pop10000-rnkdeloncay11-twelonelont-indelonx-gelonnelonration-batch-job \
+src/scala/com/twittelonr/simclustelonrs_v2/scio/bq_gelonnelonration/ftr_twelonelont/ftr-baselond-simclustelonrs-indelonx-gelonnelonration-job.d6w \
+--bind=profilelon.projelonct=${GCP_PROJelonCT_NAMelon} \
+--bind=profilelon.uselonr_namelon=${SelonRVICelon_ACCOUNT} \
+--bind=profilelon.machinelon="n2-standard-2" \
+--bind=profilelon.job_namelon="ftr-pop10000-rnkdeloncay11-twelonelont-indelonx-gelonnelonration-batch-job" \
+--bind=profilelon.build_targelont="src/scala/com/twittelonr/simclustelonrs_v2/scio/bq_gelonnelonration/ftr_twelonelont:ftr-twelonelont-indelonx-gelonnelonration-pop10000-rnkdeloncay11-job" \
+--bind=profilelon.datelon=${PROJelonCT_DATelon} \
+--bind=profilelon.elonnvironmelonnt=prod
+```
+
+### deloncayelond_sum
+```
+elonxport SelonRVICelon_ACCOUNT='cassowary'
+elonxport GCP_PROJelonCT_NAMelon='twttr-reloncos-ml-prod'
+elonxport PROJelonCT_DATelon='2022-09-05T16'
+
+bin/d6w schelondulelon \
+${GCP_PROJelonCT_NAMelon}/us-celonntral1/deloncayelond-sum-twelonelont-indelonx-gelonnelonration-batch-job \
+src/scala/com/twittelonr/simclustelonrs_v2/scio/bq_gelonnelonration/ftr_twelonelont/ftr-baselond-simclustelonrs-indelonx-gelonnelonration-job.d6w \
+--bind=profilelon.projelonct=${GCP_PROJelonCT_NAMelon} \
+--bind=profilelon.uselonr_namelon=${SelonRVICelon_ACCOUNT} \
+--bind=profilelon.machinelon="n2-standard-2" \
+--bind=profilelon.job_namelon="deloncayelond-sum-twelonelont-indelonx-gelonnelonration-batch-job" \
+--bind=profilelon.build_targelont="src/scala/com/twittelonr/simclustelonrs_v2/scio/bq_gelonnelonration/ftr_twelonelont:ftr-twelonelont-indelonx-gelonnelonration-deloncayelond-sum-job" \
+--bind=profilelon.datelon=${PROJelonCT_DATelon} \
+--bind=profilelon.elonnvironmelonnt=prod
 ```
 
 
 ### OON ftrat5
 ```
-export SERVICE_ACCOUNT='cassowary'
-export GCP_PROJECT_NAME='twttr-recos-ml-prod'
-export PROJECT_DATE='2022-09-21T16'
+elonxport SelonRVICelon_ACCOUNT='cassowary'
+elonxport GCP_PROJelonCT_NAMelon='twttr-reloncos-ml-prod'
+elonxport PROJelonCT_DATelon='2022-09-21T16'
 
-bin/d6w schedule \
-${GCP_PROJECT_NAME}/us-central1/oon-ftr-pop1000-rnkdecay-tweet-index-generation-batch-job \
-src/scala/com/twitter/simclusters_v2/scio/bq_generation/ftr_tweet/ftr-based-simclusters-index-generation-job.d6w \
---bind=profile.project=${GCP_PROJECT_NAME} \
---bind=profile.user_name=${SERVICE_ACCOUNT} \
---bind=profile.machine="n2-standard-2" \
---bind=profile.job_name="oon-ftr-pop1000-rnkdecay-tweet-index-generation-batch-job" \
---bind=profile.build_target="src/scala/com/twitter/simclusters_v2/scio/bq_generation/ftr_tweet:oon-ftr-tweet-index-generation-pop1000-rnkdecay-job" \
---bind=profile.date=${PROJECT_DATE} \
---bind=profile.environment=prod
+bin/d6w schelondulelon \
+${GCP_PROJelonCT_NAMelon}/us-celonntral1/oon-ftr-pop1000-rnkdeloncay-twelonelont-indelonx-gelonnelonration-batch-job \
+src/scala/com/twittelonr/simclustelonrs_v2/scio/bq_gelonnelonration/ftr_twelonelont/ftr-baselond-simclustelonrs-indelonx-gelonnelonration-job.d6w \
+--bind=profilelon.projelonct=${GCP_PROJelonCT_NAMelon} \
+--bind=profilelon.uselonr_namelon=${SelonRVICelon_ACCOUNT} \
+--bind=profilelon.machinelon="n2-standard-2" \
+--bind=profilelon.job_namelon="oon-ftr-pop1000-rnkdeloncay-twelonelont-indelonx-gelonnelonration-batch-job" \
+--bind=profilelon.build_targelont="src/scala/com/twittelonr/simclustelonrs_v2/scio/bq_gelonnelonration/ftr_twelonelont:oon-ftr-twelonelont-indelonx-gelonnelonration-pop1000-rnkdeloncay-job" \
+--bind=profilelon.datelon=${PROJelonCT_DATelon} \
+--bind=profilelon.elonnvironmelonnt=prod
 ```
 
-### Deschedule
+### Delonschelondulelon
 ```
-export SERVICE_ACCOUNT='cassowary'
+elonxport SelonRVICelon_ACCOUNT='cassowary'
 
-aurora cron deschedule atla/${SERVICE_ACCOUNT}/prod/twttr-recos-ml-prod-us-central1-ftr-pop1000-rnkdecay11-tweet-index-generation-batch-job
-aurora cron deschedule atla/${SERVICE_ACCOUNT}/prod/twttr-recos-ml-prod-us-central1-ftr-pop1000-rnkdecay11-tweet-index-generation-batch-job
+aurora cron delonschelondulelon atla/${SelonRVICelon_ACCOUNT}/prod/twttr-reloncos-ml-prod-us-celonntral1-ftr-pop1000-rnkdeloncay11-twelonelont-indelonx-gelonnelonration-batch-job
+aurora cron delonschelondulelon atla/${SelonRVICelon_ACCOUNT}/prod/twttr-reloncos-ml-prod-us-celonntral1-ftr-pop1000-rnkdeloncay11-twelonelont-indelonx-gelonnelonration-batch-job
 
-aurora cron deschedule atla/${SERVICE_ACCOUNT}/prod/twttr-recos-ml-prod-us-central1-ftr-pop10000-rnkdecay11-tweet-index-generation-batch-job
-aurora cron deschedule atla/${SERVICE_ACCOUNT}/prod/twttr-recos-ml-prod-us-central1-ftr-pop10000-rnkdecay11-tweet-index-generation-batch-job
+aurora cron delonschelondulelon atla/${SelonRVICelon_ACCOUNT}/prod/twttr-reloncos-ml-prod-us-celonntral1-ftr-pop10000-rnkdeloncay11-twelonelont-indelonx-gelonnelonration-batch-job
+aurora cron delonschelondulelon atla/${SelonRVICelon_ACCOUNT}/prod/twttr-reloncos-ml-prod-us-celonntral1-ftr-pop10000-rnkdeloncay11-twelonelont-indelonx-gelonnelonration-batch-job
 
-aurora cron deschedule atla/${SERVICE_ACCOUNT}/prod/twttr-recos-ml-prod-us-central1-decayed-sum-tweet-index-generation-batch-job
-aurora cron deschedule atla/${SERVICE_ACCOUNT}/prod/twttr-recos-ml-prod-us-central1-decayed-sum-tweet-index-generation-batch-job
+aurora cron delonschelondulelon atla/${SelonRVICelon_ACCOUNT}/prod/twttr-reloncos-ml-prod-us-celonntral1-deloncayelond-sum-twelonelont-indelonx-gelonnelonration-batch-job
+aurora cron delonschelondulelon atla/${SelonRVICelon_ACCOUNT}/prod/twttr-reloncos-ml-prod-us-celonntral1-deloncayelond-sum-twelonelont-indelonx-gelonnelonration-batch-job
 
-aurora cron deschedule atla/${SERVICE_ACCOUNT}/prod/twttr-recos-ml-prod-us-central1-oon-ftr-pop1000-rnkdecay-tweet-index-generation-batch-job
-aurora cron deschedule atla/${SERVICE_ACCOUNT}/prod/twttr-recos-ml-prod-us-central1-oon-ftr-pop1000-rnkdecay-tweet-index-generation-batch-job
+aurora cron delonschelondulelon atla/${SelonRVICelon_ACCOUNT}/prod/twttr-reloncos-ml-prod-us-celonntral1-oon-ftr-pop1000-rnkdeloncay-twelonelont-indelonx-gelonnelonration-batch-job
+aurora cron delonschelondulelon atla/${SelonRVICelon_ACCOUNT}/prod/twttr-reloncos-ml-prod-us-celonntral1-oon-ftr-pop1000-rnkdeloncay-twelonelont-indelonx-gelonnelonration-batch-job
 ```

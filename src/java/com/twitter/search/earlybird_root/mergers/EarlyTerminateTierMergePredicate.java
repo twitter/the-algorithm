@@ -1,9 +1,9 @@
-package com.twitter.search.earlybird_root.mergers;
+packagelon com.twittelonr.selonarch.elonarlybird_root.melonrgelonrs;
 
-public interface EarlyTerminateTierMergePredicate {
+public intelonrfacelon elonarlyTelonrminatelonTielonrMelonrgelonPrelondicatelon {
   /**
-   * Do we have enough results so far that we can early terminate and not continue onto next tier?
+   * Do welon havelon elonnough relonsults so far that welon can elonarly telonrminatelon and not continuelon onto nelonxt tielonr?
    */
-  boolean shouldEarlyTerminateTierMerge(int totalResultsFromSuccessfulShards,
-                                        boolean foundEarlyTermination);
+  boolelonan shouldelonarlyTelonrminatelonTielonrMelonrgelon(int totalRelonsultsFromSuccelonssfulShards,
+                                        boolelonan foundelonarlyTelonrmination);
 }

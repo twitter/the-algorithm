@@ -1,57 +1,57 @@
-package com.twitter.simclusters_v2.scalding.topic_recommendations.model_based_topic_recommendations
+packagelon com.twittelonr.simclustelonrs_v2.scalding.topic_reloncommelonndations.modelonl_baselond_topic_reloncommelonndations
 
-import com.twitter.ml.api.{Feature, FeatureContext}
-import com.twitter.ml.api.constant.SharedFeatures
+import com.twittelonr.ml.api.{Felonaturelon, FelonaturelonContelonxt}
+import com.twittelonr.ml.api.constant.SharelondFelonaturelons
 
-object UserFeatures {
-  val UserIdFeature = SharedFeatures.USER_ID // User-id
+objelonct UselonrFelonaturelons {
+  val UselonrIdFelonaturelon = SharelondFelonaturelons.USelonR_ID // Uselonr-id
 
-  val UserSimClusterFeatures =
-    new Feature.SparseContinuous(
-      "user.simclusters.interested_in"
-    ) // User's interestedIn simcluster embeddding
+  val UselonrSimClustelonrFelonaturelons =
+    nelonw Felonaturelon.SparselonContinuous(
+      "uselonr.simclustelonrs.intelonrelonstelond_in"
+    ) // Uselonr's intelonrelonstelondIn simclustelonr elonmbelonddding
 
-  val UserCountryFeature = new Feature.Text("user.country") // user's country code
+  val UselonrCountryFelonaturelon = nelonw Felonaturelon.Telonxt("uselonr.country") // uselonr's country codelon
 
-  val UserLanguageFeature = new Feature.Text("user.language") // user's language
+  val UselonrLanguagelonFelonaturelon = nelonw Felonaturelon.Telonxt("uselonr.languagelon") // uselonr's languagelon
 
-  val FollowedTopicIdFeatures =
-    new Feature.SparseBinary(
-      "followed_topics.id"
-    ) // SparseBinary features for the set of followed topics
+  val FollowelondTopicIdFelonaturelons =
+    nelonw Felonaturelon.SparselonBinary(
+      "followelond_topics.id"
+    ) // SparselonBinary felonaturelons for thelon selont of followelond topics
 
-  val NotInterestedTopicIdFeatures =
-    new Feature.SparseBinary(
-      "not_interested_topics.id"
-    ) // SparseBinary features for the set of not-interested topics
+  val NotIntelonrelonstelondTopicIdFelonaturelons =
+    nelonw Felonaturelon.SparselonBinary(
+      "not_intelonrelonstelond_topics.id"
+    ) // SparselonBinary felonaturelons for thelon selont of not-intelonrelonstelond topics
 
-  val FollowedTopicSimClusterAvgFeatures =
-    new Feature.SparseContinuous(
-      "followed_topics.simclusters.avg"
-    ) // Average SimCluster Embedding of the followed topics
+  val FollowelondTopicSimClustelonrAvgFelonaturelons =
+    nelonw Felonaturelon.SparselonContinuous(
+      "followelond_topics.simclustelonrs.avg"
+    ) // Avelonragelon SimClustelonr elonmbelondding of thelon followelond topics
 
-  val NotInterestedTopicSimClusterAvgFeatures =
-    new Feature.SparseContinuous(
-      "not_interested_topics.simclusters.avg"
-    ) // Average SimCluster Embedding of the followed topics
+  val NotIntelonrelonstelondTopicSimClustelonrAvgFelonaturelons =
+    nelonw Felonaturelon.SparselonContinuous(
+      "not_intelonrelonstelond_topics.simclustelonrs.avg"
+    ) // Avelonragelon SimClustelonr elonmbelondding of thelon followelond topics
 
-  val TargetTopicIdFeatures = new Feature.Discrete("target_topic.id") // target topic-id
+  val TargelontTopicIdFelonaturelons = nelonw Felonaturelon.Discrelontelon("targelont_topic.id") // targelont topic-id
 
-  val TargetTopicSimClustersFeature =
-    new Feature.SparseContinuous(
-      "target_topic.simclusters"
-    ) // SimCluster embedding of the target topic
+  val TargelontTopicSimClustelonrsFelonaturelon =
+    nelonw Felonaturelon.SparselonContinuous(
+      "targelont_topic.simclustelonrs"
+    ) // SimClustelonr elonmbelondding of thelon targelont topic
 
-  val FeatureContext = new FeatureContext(
-    UserIdFeature,
-    UserSimClusterFeatures,
-    UserCountryFeature,
-    UserLanguageFeature,
-    FollowedTopicIdFeatures,
-    NotInterestedTopicIdFeatures,
-    FollowedTopicSimClusterAvgFeatures,
-    NotInterestedTopicSimClusterAvgFeatures,
-    TargetTopicIdFeatures,
-    TargetTopicSimClustersFeature
+  val FelonaturelonContelonxt = nelonw FelonaturelonContelonxt(
+    UselonrIdFelonaturelon,
+    UselonrSimClustelonrFelonaturelons,
+    UselonrCountryFelonaturelon,
+    UselonrLanguagelonFelonaturelon,
+    FollowelondTopicIdFelonaturelons,
+    NotIntelonrelonstelondTopicIdFelonaturelons,
+    FollowelondTopicSimClustelonrAvgFelonaturelons,
+    NotIntelonrelonstelondTopicSimClustelonrAvgFelonaturelons,
+    TargelontTopicIdFelonaturelons,
+    TargelontTopicSimClustelonrsFelonaturelon
   )
 }

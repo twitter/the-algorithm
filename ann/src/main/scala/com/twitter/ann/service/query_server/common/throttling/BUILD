@@ -1,12 +1,12 @@
 scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "ann/src/main/scala/com/twitter/ann/common",
-        "ann/src/main/scala/com/twitter/ann/faiss",
-        "ann/src/main/scala/com/twitter/ann/hnsw",
-        "twitter-server-internal/src/main/scala",
-        "util/util-stats/src/main/scala/com/twitter/finagle/stats",
+    sourcelons = ["*.scala"],
+    compilelonr_option_selonts = ["fatal_warnings"],
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        "ann/src/main/scala/com/twittelonr/ann/common",
+        "ann/src/main/scala/com/twittelonr/ann/faiss",
+        "ann/src/main/scala/com/twittelonr/ann/hnsw",
+        "twittelonr-selonrvelonr-intelonrnal/src/main/scala",
+        "util/util-stats/src/main/scala/com/twittelonr/finaglelon/stats",
     ],
 )

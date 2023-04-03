@@ -1,131 +1,131 @@
-package com.twitter.simclusters_v2.scalding.evaluation
+packagelon com.twittelonr.simclustelonrs_v2.scalding.elonvaluation
 
-import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.remote_access.ExplicitLocation
-import com.twitter.scalding_internal.dalv2.remote_access.ProcAtla
-import com.twitter.scalding_internal.job.TwitterExecutionApp
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.candidate_source.ClusterRanker
-import com.twitter.simclusters_v2.hdfs_sources.AdhocKeyValSources
-import com.twitter.simclusters_v2.hdfs_sources.ClusterTopKTweetsHourlySuffixSource
-import com.twitter.simclusters_v2.hdfs_sources.SimclustersV2InterestedInScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.TweetEvaluationTimelinesReferenceSetScalaDataset
-import com.twitter.simclusters_v2.scalding.common.Util
-import com.twitter.simclusters_v2.thriftscala.CandidateTweet
-import com.twitter.simclusters_v2.thriftscala.CandidateTweets
-import com.twitter.simclusters_v2.thriftscala.ClusterTopKTweetsWithScores
-import com.twitter.simclusters_v2.thriftscala.ClustersUserIsInterestedIn
-import com.twitter.simclusters_v2.thriftscala.DisplayLocation
-import com.twitter.simclusters_v2.thriftscala.ReferenceTweets
-import com.twitter.simclusters_v2.scalding.offline_job.OfflineRecConfig
-import com.twitter.simclusters_v2.scalding.offline_job.OfflineTweetRecommendation
-import java.util.TimeZone
+import com.twittelonr.scalding._
+import com.twittelonr.scalding_intelonrnal.dalv2.DAL
+import com.twittelonr.scalding_intelonrnal.dalv2.relonmotelon_accelonss.elonxplicitLocation
+import com.twittelonr.scalding_intelonrnal.dalv2.relonmotelon_accelonss.ProcAtla
+import com.twittelonr.scalding_intelonrnal.job.TwittelonrelonxeloncutionApp
+import com.twittelonr.scalding_intelonrnal.multiformat.format.kelonyval.KelonyVal
+import com.twittelonr.simclustelonrs_v2.candidatelon_sourcelon.ClustelonrRankelonr
+import com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.AdhocKelonyValSourcelons
+import com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.ClustelonrTopKTwelonelontsHourlySuffixSourcelon
+import com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.SimclustelonrsV2IntelonrelonstelondInScalaDataselont
+import com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.TwelonelontelonvaluationTimelonlinelonsRelonfelonrelonncelonSelontScalaDataselont
+import com.twittelonr.simclustelonrs_v2.scalding.common.Util
+import com.twittelonr.simclustelonrs_v2.thriftscala.CandidatelonTwelonelont
+import com.twittelonr.simclustelonrs_v2.thriftscala.CandidatelonTwelonelonts
+import com.twittelonr.simclustelonrs_v2.thriftscala.ClustelonrTopKTwelonelontsWithScorelons
+import com.twittelonr.simclustelonrs_v2.thriftscala.ClustelonrsUselonrIsIntelonrelonstelondIn
+import com.twittelonr.simclustelonrs_v2.thriftscala.DisplayLocation
+import com.twittelonr.simclustelonrs_v2.thriftscala.RelonfelonrelonncelonTwelonelonts
+import com.twittelonr.simclustelonrs_v2.scalding.offlinelon_job.OfflinelonReloncConfig
+import com.twittelonr.simclustelonrs_v2.scalding.offlinelon_job.OfflinelonTwelonelontReloncommelonndation
+import java.util.TimelonZonelon
 
 /**
- * Do evaluations for SimClusters' tweet recommendations by using offline datasets.
- * The job does the following:
- *   1. Take in a test date range, for which the offline simclusters rec will be evaluated
- *   2. For all users that had tweet impressions in timelines during the period, generate offline
- *      SimClusters candidate tweets for these users
- *   3. Run offline evaluation and return metrics
+ * Do elonvaluations for SimClustelonrs' twelonelont reloncommelonndations by using offlinelon dataselonts.
+ * Thelon job doelons thelon following:
+ *   1. Takelon in a telonst datelon rangelon, for which thelon offlinelon simclustelonrs relonc will belon elonvaluatelond
+ *   2. For all uselonrs that had twelonelont imprelonssions in timelonlinelons during thelon pelonriod, gelonnelonratelon offlinelon
+ *      SimClustelonrs candidatelon twelonelonts for thelonselon uselonrs
+ *   3. Run offlinelon elonvaluation and relonturn melontrics
 
-./bazel bundle src/scala/com/twitter/simclusters_v2/scalding/evaluation:simcluster_offline_eval_adhoc
+./bazelonl bundlelon src/scala/com/twittelonr/simclustelonrs_v2/scalding/elonvaluation:simclustelonr_offlinelon_elonval_adhoc
 
-Note: Never specify reference date range across more than 1 day!
-oscar hdfs --user cassowary --screen --screen-detached --tee your_ldap/prod_percentile \
- --bundle simcluster_offline_eval_adhoc \
- --tool com.twitter.simclusters_v2.scalding.evaluation.SimClustersEvaluationAdhocApp \
- -- --cand_tweet_date 2019-03-04T00 2019-03-04T23 \
- --ref_tweet_date 2019-03-05T00 2019-03-05T01 \
- --timeline_tweet rectweet \
- --sample_rate 0.05 \
- --max_cand_tweets 16000000 \
- --min_tweet_score 0.0 \
- --user_interested_in_dir /user/frigate/your_ldap/interested_in_copiedFromAtlaProc_20190228 \
- --cluster_top_k_dir /user/cassowary/your_ldap/offline_simcluster_20190304/cluster_top_k_tweets \
- --output_dir /user/cassowary/your_ldap/prod_percentile \
- --toEmailAddress your_ldap@twitter.com \
- --testRunName TestingProdOn0305Data
+Notelon: Nelonvelonr speloncify relonfelonrelonncelon datelon rangelon across morelon than 1 day!
+oscar hdfs --uselonr cassowary --screlonelonn --screlonelonn-delontachelond --telonelon your_ldap/prod_pelonrcelonntilelon \
+ --bundlelon simclustelonr_offlinelon_elonval_adhoc \
+ --tool com.twittelonr.simclustelonrs_v2.scalding.elonvaluation.SimClustelonrselonvaluationAdhocApp \
+ -- --cand_twelonelont_datelon 2019-03-04T00 2019-03-04T23 \
+ --relonf_twelonelont_datelon 2019-03-05T00 2019-03-05T01 \
+ --timelonlinelon_twelonelont relonctwelonelont \
+ --samplelon_ratelon 0.05 \
+ --max_cand_twelonelonts 16000000 \
+ --min_twelonelont_scorelon 0.0 \
+ --uselonr_intelonrelonstelond_in_dir /uselonr/frigatelon/your_ldap/intelonrelonstelond_in_copielondFromAtlaProc_20190228 \
+ --clustelonr_top_k_dir /uselonr/cassowary/your_ldap/offlinelon_simclustelonr_20190304/clustelonr_top_k_twelonelonts \
+ --output_dir /uselonr/cassowary/your_ldap/prod_pelonrcelonntilelon \
+ --toelonmailAddrelonss your_ldap@twittelonr.com \
+ --telonstRunNamelon TelonstingProdOn0305Data
  */
-object SimClustersEvaluationAdhocApp extends TwitterExecutionApp {
-  private val maxTweetResults = 40
-  private val maxClustersToQuery = 20
+objelonct SimClustelonrselonvaluationAdhocApp elonxtelonnds TwittelonrelonxeloncutionApp {
+  privatelon val maxTwelonelontRelonsults = 40
+  privatelon val maxClustelonrsToQuelonry = 20
 
-  @Override
-  def job: Execution[Unit] = {
-    Execution.withArgs { args =>
-      Execution.withId { implicit uniqueId =>
-        implicit val tz: TimeZone = DateOps.UTC
-        implicit val dateParser: DateParser = DateParser.default
+  @Ovelonrridelon
+  delonf job: elonxeloncution[Unit] = {
+    elonxeloncution.withArgs { args =>
+      elonxeloncution.withId { implicit uniquelonId =>
+        implicit val tz: TimelonZonelon = DatelonOps.UTC
+        implicit val datelonParselonr: DatelonParselonr = DatelonParselonr.delonfault
 
-        val candTweetDateRange = DateRange.parse(args.list("cand_tweet_date"))
-        val refTweetDateRange = DateRange.parse(args.list("ref_tweet_date"))
-        val toEmailAddressOpt = args.optional("toEmailAddress")
-        val testRunName = args.optional("testRunName")
+        val candTwelonelontDatelonRangelon = DatelonRangelon.parselon(args.list("cand_twelonelont_datelon"))
+        val relonfTwelonelontDatelonRangelon = DatelonRangelon.parselon(args.list("relonf_twelonelont_datelon"))
+        val toelonmailAddrelonssOpt = args.optional("toelonmailAddrelonss")
+        val telonstRunNamelon = args.optional("telonstRunNamelon")
 
         println(
-          s"Using SimClusters tweets from ${candTweetDateRange.start} to ${candTweetDateRange.end}")
-        println(s"Using Timelines tweets on the day of ${refTweetDateRange.start}")
+          s"Using SimClustelonrs twelonelonts from ${candTwelonelontDatelonRangelon.start} to ${candTwelonelontDatelonRangelon.elonnd}")
+        println(s"Using Timelonlinelons twelonelonts on thelon day of ${relonfTwelonelontDatelonRangelon.start}")
 
-        // separate tweets from different display locations for now
-        val tweetType = args("timeline_tweet") match {
-          case "rectweet" => DisplayLocation.TimelinesRectweet
-          case "recap" => DisplayLocation.TimelinesRecap
-          case e =>
-            throw new IllegalArgumentException(s"$e isn't a valid timeline display location")
+        // selonparatelon twelonelonts from diffelonrelonnt display locations for now
+        val twelonelontTypelon = args("timelonlinelon_twelonelont") match {
+          caselon "relonctwelonelont" => DisplayLocation.TimelonlinelonsRelonctwelonelont
+          caselon "reloncap" => DisplayLocation.TimelonlinelonsReloncap
+          caselon elon =>
+            throw nelonw IllelongalArgumelonntelonxcelonption(s"$elon isn't a valid timelonlinelon display location")
         }
 
-        val sampleRate = args.double("sample_rate", 1.0)
-        val validRefPipe = getProdTimelineReference(tweetType, refTweetDateRange, sampleRate)
-        val targetUserPipe = validRefPipe.map { _.targetUserId }
+        val samplelonRatelon = args.doublelon("samplelon_ratelon", 1.0)
+        val validRelonfPipelon = gelontProdTimelonlinelonRelonfelonrelonncelon(twelonelontTypelon, relonfTwelonelontDatelonRangelon, samplelonRatelon)
+        val targelontUselonrPipelon = validRelonfPipelon.map { _.targelontUselonrId }
 
-        // Read a fixed-path in atla if provided, otherwise read prod data from atla for date range
-        val userInterestInPipe = args.optional("user_interested_in_dir") match {
-          case Some(fixedPath) =>
-            println(s"user_interested_in_dir is provided at: $fixedPath. Reading fixed path data.")
-            TypedPipe.from(AdhocKeyValSources.interestedInSource(fixedPath))
-          case _ =>
-            println(s"user_interested_in_dir isn't provided. Reading prod data.")
-            interestedInProdSource(candTweetDateRange)
+        // Relonad a fixelond-path in atla if providelond, othelonrwiselon relonad prod data from atla for datelon rangelon
+        val uselonrIntelonrelonstInPipelon = args.optional("uselonr_intelonrelonstelond_in_dir") match {
+          caselon Somelon(fixelondPath) =>
+            println(s"uselonr_intelonrelonstelond_in_dir is providelond at: $fixelondPath. Relonading fixelond path data.")
+            TypelondPipelon.from(AdhocKelonyValSourcelons.intelonrelonstelondInSourcelon(fixelondPath))
+          caselon _ =>
+            println(s"uselonr_intelonrelonstelond_in_dir isn't providelond. Relonading prod data.")
+            intelonrelonstelondInProdSourcelon(candTwelonelontDatelonRangelon)
         }
 
-        // Offline simulation of this dataset
-        val clusterTopKDir = args("cluster_top_k_dir")
-        println(s"cluster_top_k_dir is defined at: $clusterTopKDir")
-        val clusterTopKPipe = TypedPipe.from(
-          ClusterTopKTweetsHourlySuffixSource(clusterTopKDir, candTweetDateRange)
+        // Offlinelon simulation of this dataselont
+        val clustelonrTopKDir = args("clustelonr_top_k_dir")
+        println(s"clustelonr_top_k_dir is delonfinelond at: $clustelonrTopKDir")
+        val clustelonrTopKPipelon = TypelondPipelon.from(
+          ClustelonrTopKTwelonelontsHourlySuffixSourcelon(clustelonrTopKDir, candTwelonelontDatelonRangelon)
         )
 
-        // Configs for offline simcluster tweet recommendation
-        val maxTweetRecs = args.int("max_cand_tweets", 30000000)
-        val minTweetScoreThreshold = args.double("min_tweet_score", 0.0)
+        // Configs for offlinelon simclustelonr twelonelont reloncommelonndation
+        val maxTwelonelontReloncs = args.int("max_cand_twelonelonts", 30000000)
+        val minTwelonelontScorelonThrelonshold = args.doublelon("min_twelonelont_scorelon", 0.0)
 
-        val offlineRecConfig = OfflineRecConfig(
-          maxTweetRecs,
-          maxTweetResults,
-          maxClustersToQuery,
-          minTweetScoreThreshold,
-          ClusterRanker.RankByNormalizedFavScore
+        val offlinelonReloncConfig = OfflinelonReloncConfig(
+          maxTwelonelontReloncs,
+          maxTwelonelontRelonsults,
+          maxClustelonrsToQuelonry,
+          minTwelonelontScorelonThrelonshold,
+          ClustelonrRankelonr.RankByNormalizelondFavScorelon
         )
-        println("SimClusters offline config: " + offlineRecConfig)
+        println("SimClustelonrs offlinelon config: " + offlinelonReloncConfig)
 
-        getValidCandidate(
-          targetUserPipe,
-          userInterestInPipe,
-          clusterTopKPipe,
-          offlineRecConfig,
-          candTweetDateRange
-        ).flatMap { validCandPipe =>
+        gelontValidCandidatelon(
+          targelontUselonrPipelon,
+          uselonrIntelonrelonstInPipelon,
+          clustelonrTopKPipelon,
+          offlinelonReloncConfig,
+          candTwelonelontDatelonRangelon
+        ).flatMap { validCandPipelon =>
           val outputDir = args("output_dir")
-          EvaluationMetricHelper.runAllEvaluations(validRefPipe, validCandPipe).map { results =>
-            toEmailAddressOpt.foreach { address =>
-              Util.sendEmail(
-                results,
-                "Results from tweet evaluation test bed " + testRunName.getOrElse(""),
-                address)
+          elonvaluationMelontricHelonlpelonr.runAllelonvaluations(validRelonfPipelon, validCandPipelon).map { relonsults =>
+            toelonmailAddrelonssOpt.forelonach { addrelonss =>
+              Util.selonndelonmail(
+                relonsults,
+                "Relonsults from twelonelont elonvaluation telonst belond " + telonstRunNamelon.gelontOrelonlselon(""),
+                addrelonss)
             }
-            TypedPipe.from(Seq((results, ""))).writeExecution(TypedTsv[(String, String)](outputDir))
+            TypelondPipelon.from(Selonq((relonsults, ""))).writelonelonxeloncution(TypelondTsv[(String, String)](outputDir))
           }
         }
       }
@@ -133,78 +133,78 @@ object SimClustersEvaluationAdhocApp extends TwitterExecutionApp {
   }
 
   /**
-   * Given a pipe of raw timelines reference engagement data, collect the engagements that took
-   * place during the given date range, then sample these engagements
+   * Givelonn a pipelon of raw timelonlinelons relonfelonrelonncelon elonngagelonmelonnt data, collelonct thelon elonngagelonmelonnts that took
+   * placelon during thelon givelonn datelon rangelon, thelonn samplelon thelonselon elonngagelonmelonnts
    */
-  private def getProdTimelineReference(
+  privatelon delonf gelontProdTimelonlinelonRelonfelonrelonncelon(
     displayLocation: DisplayLocation,
-    batchDateRange: DateRange,
-    sampleRate: Double
+    batchDatelonRangelon: DatelonRangelon,
+    samplelonRatelon: Doublelon
   )(
-    implicit tz: TimeZone
-  ): TypedPipe[ReferenceTweets] = {
-    // Snapshot data timestamps itself with the last possible time of the day. +1 day to cover it
-    val snapshotRange = DateRange(batchDateRange.start, batchDateRange.start + Days(1))
-    val timelinesRefPipe = DAL
-      .readMostRecentSnapshot(TweetEvaluationTimelinesReferenceSetScalaDataset, snapshotRange)
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-      .toTypedPipe
+    implicit tz: TimelonZonelon
+  ): TypelondPipelon[RelonfelonrelonncelonTwelonelonts] = {
+    // Snapshot data timelonstamps itselonlf with thelon last possiblelon timelon of thelon day. +1 day to covelonr it
+    val snapshotRangelon = DatelonRangelon(batchDatelonRangelon.start, batchDatelonRangelon.start + Days(1))
+    val timelonlinelonsRelonfPipelon = DAL
+      .relonadMostReloncelonntSnapshot(TwelonelontelonvaluationTimelonlinelonsRelonfelonrelonncelonSelontScalaDataselont, snapshotRangelon)
+      .withRelonmotelonRelonadPolicy(elonxplicitLocation(ProcAtla))
+      .toTypelondPipelon
 
-    timelinesRefPipe
-      .flatMap { refTweets =>
-        val tweets = refTweets.impressedTweets
-          .filter { refTweet =>
-            refTweet.timestamp >= batchDateRange.start.timestamp &&
-            refTweet.timestamp <= batchDateRange.end.timestamp &&
-            refTweet.displayLocation == displayLocation
+    timelonlinelonsRelonfPipelon
+      .flatMap { relonfTwelonelonts =>
+        val twelonelonts = relonfTwelonelonts.imprelonsselondTwelonelonts
+          .filtelonr { relonfTwelonelont =>
+            relonfTwelonelont.timelonstamp >= batchDatelonRangelon.start.timelonstamp &&
+            relonfTwelonelont.timelonstamp <= batchDatelonRangelon.elonnd.timelonstamp &&
+            relonfTwelonelont.displayLocation == displayLocation
           }
-        if (tweets.nonEmpty) {
-          Some(ReferenceTweets(refTweets.targetUserId, tweets))
-        } else {
-          None
+        if (twelonelonts.nonelonmpty) {
+          Somelon(RelonfelonrelonncelonTwelonelonts(relonfTwelonelonts.targelontUselonrId, twelonelonts))
+        } elonlselon {
+          Nonelon
         }
       }
-      .sample(sampleRate)
+      .samplelon(samplelonRatelon)
   }
 
   /**
-   * Given a list of target users, simulate SimCluster's online serving logic offline for these
-   * users, then convert them into [[CandidateTweets]]
+   * Givelonn a list of targelont uselonrs, simulatelon SimClustelonr's onlinelon selonrving logic offlinelon for thelonselon
+   * uselonrs, thelonn convelonrt thelonm into [[CandidatelonTwelonelonts]]
    */
-  private def getValidCandidate(
-    targetUserPipe: TypedPipe[Long],
-    userIsInterestedInPipe: TypedPipe[(Long, ClustersUserIsInterestedIn)],
-    clusterTopKTweetsPipe: TypedPipe[ClusterTopKTweetsWithScores],
-    offlineConfig: OfflineRecConfig,
-    batchDateRange: DateRange
+  privatelon delonf gelontValidCandidatelon(
+    targelontUselonrPipelon: TypelondPipelon[Long],
+    uselonrIsIntelonrelonstelondInPipelon: TypelondPipelon[(Long, ClustelonrsUselonrIsIntelonrelonstelondIn)],
+    clustelonrTopKTwelonelontsPipelon: TypelondPipelon[ClustelonrTopKTwelonelontsWithScorelons],
+    offlinelonConfig: OfflinelonReloncConfig,
+    batchDatelonRangelon: DatelonRangelon
   )(
-    implicit uniqueID: UniqueID
-  ): Execution[TypedPipe[CandidateTweets]] = {
-    OfflineTweetRecommendation
-      .getTopTweets(offlineConfig, targetUserPipe, userIsInterestedInPipe, clusterTopKTweetsPipe)
+    implicit uniquelonID: UniquelonID
+  ): elonxeloncution[TypelondPipelon[CandidatelonTwelonelonts]] = {
+    OfflinelonTwelonelontReloncommelonndation
+      .gelontTopTwelonelonts(offlinelonConfig, targelontUselonrPipelon, uselonrIsIntelonrelonstelondInPipelon, clustelonrTopKTwelonelontsPipelon)
       .map(_.map {
-        case (userId, scoredTweets) =>
-          val tweets = scoredTweets.map { tweet =>
-            CandidateTweet(tweet.tweetId, Some(tweet.score), Some(batchDateRange.start.timestamp))
+        caselon (uselonrId, scorelondTwelonelonts) =>
+          val twelonelonts = scorelondTwelonelonts.map { twelonelont =>
+            CandidatelonTwelonelont(twelonelont.twelonelontId, Somelon(twelonelont.scorelon), Somelon(batchDatelonRangelon.start.timelonstamp))
           }
-          CandidateTweets(userId, tweets)
+          CandidatelonTwelonelonts(uselonrId, twelonelonts)
       })
   }
 
   /**
-   * Read interested in key-val store from atla-proc from the given date range
+   * Relonad intelonrelonstelond in kelony-val storelon from atla-proc from thelon givelonn datelon rangelon
    */
-  private def interestedInProdSource(
-    dateRange: DateRange
-  ): TypedPipe[(Long, ClustersUserIsInterestedIn)] = {
-    implicit val timeZone: TimeZone = DateOps.UTC
+  privatelon delonf intelonrelonstelondInProdSourcelon(
+    datelonRangelon: DatelonRangelon
+  ): TypelondPipelon[(Long, ClustelonrsUselonrIsIntelonrelonstelondIn)] = {
+    implicit val timelonZonelon: TimelonZonelon = DatelonOps.UTC
 
     DAL
-      .readMostRecentSnapshot(SimclustersV2InterestedInScalaDataset, dateRange.embiggen(Weeks(1)))
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-      .toTypedPipe
+      .relonadMostReloncelonntSnapshot(SimclustelonrsV2IntelonrelonstelondInScalaDataselont, datelonRangelon.elonmbiggelonn(Welonelonks(1)))
+      .withRelonmotelonRelonadPolicy(elonxplicitLocation(ProcAtla))
+      .toTypelondPipelon
       .map {
-        case KeyVal(key, value) => (key, value)
+        caselon KelonyVal(kelony, valuelon) => (kelony, valuelon)
       }
   }
 }

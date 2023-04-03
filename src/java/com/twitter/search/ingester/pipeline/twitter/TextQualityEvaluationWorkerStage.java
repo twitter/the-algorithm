@@ -1,179 +1,179 @@
-package com.twitter.search.ingester.pipeline.twitter;
+packagelon com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.twittelonr;
 import java.util.List;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ExecutorService;
-import javax.naming.NamingException;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Queues;
-import org.apache.commons.pipeline.StageException;
-import org.apache.commons.pipeline.validation.ConsumedTypes;
-import org.apache.commons.pipeline.validation.ProducesConsumed;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import com.twitter.common_internal.text.version.PenguinVersion;
-import com.twitter.search.common.metrics.SearchCustomGauge;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.relevance.classifiers.TweetEvaluator;
-import com.twitter.search.common.relevance.classifiers.TweetOffensiveEvaluator;
-import com.twitter.search.common.relevance.classifiers.TweetTextClassifier;
-import com.twitter.search.common.relevance.classifiers.TweetTextEvaluator;
-import com.twitter.search.common.relevance.entities.TwitterMessage;
-import com.twitter.search.common.relevance.scorers.TweetTextScorer;
+import java.util.concurrelonnt.BlockingQuelonuelon;
+import java.util.concurrelonnt.elonxeloncutorSelonrvicelon;
+import javax.naming.Namingelonxcelonption;
+import com.googlelon.common.collelonct.ImmutablelonList;
+import com.googlelon.common.collelonct.Quelonuelons;
+import org.apachelon.commons.pipelonlinelon.Stagelonelonxcelonption;
+import org.apachelon.commons.pipelonlinelon.validation.ConsumelondTypelons;
+import org.apachelon.commons.pipelonlinelon.validation.ProducelonsConsumelond;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
+import com.twittelonr.common_intelonrnal.telonxt.velonrsion.PelonnguinVelonrsion;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCustomGaugelon;
+import com.twittelonr.selonarch.common.melontrics.SelonarchRatelonCountelonr;
+import com.twittelonr.selonarch.common.relonlelonvancelon.classifielonrs.Twelonelontelonvaluator;
+import com.twittelonr.selonarch.common.relonlelonvancelon.classifielonrs.TwelonelontOffelonnsivelonelonvaluator;
+import com.twittelonr.selonarch.common.relonlelonvancelon.classifielonrs.TwelonelontTelonxtClassifielonr;
+import com.twittelonr.selonarch.common.relonlelonvancelon.classifielonrs.TwelonelontTelonxtelonvaluator;
+import com.twittelonr.selonarch.common.relonlelonvancelon.elonntitielons.TwittelonrMelonssagelon;
+import com.twittelonr.selonarch.common.relonlelonvancelon.scorelonrs.TwelonelontTelonxtScorelonr;
 
-@ConsumedTypes(TwitterMessage.class)
-@ProducesConsumed
-public class TextQualityEvaluationWorkerStage extends TwitterBaseStage
-    <TwitterMessage, TwitterMessage> {
-  private static final Logger LOG = LoggerFactory.getLogger(TextQualityEvaluationWorkerStage.class);
+@ConsumelondTypelons(TwittelonrMelonssagelon.class)
+@ProducelonsConsumelond
+public class TelonxtQualityelonvaluationWorkelonrStagelon elonxtelonnds TwittelonrBaselonStagelon
+    <TwittelonrMelonssagelon, TwittelonrMelonssagelon> {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(TelonxtQualityelonvaluationWorkelonrStagelon.class);
 
-  private static final int NUM_THREADS = 5;
-  private static final long SLOW_TWEET_TIME_MILLIS = 1000;
-  // based on the batched branch 3 elements in the queue times 200 tweets per batch.
-  private static final int MAX_QUEUE_SIZE = 100;
-  private final BlockingQueue<TwitterMessage> messages =
-      Queues.newLinkedBlockingQueue(MAX_QUEUE_SIZE);
+  privatelon static final int NUM_THRelonADS = 5;
+  privatelon static final long SLOW_TWelonelonT_TIMelon_MILLIS = 1000;
+  // baselond on thelon batchelond branch 3 elonlelonmelonnts in thelon quelonuelon timelons 200 twelonelonts pelonr batch.
+  privatelon static final int MAX_QUelonUelon_SIZelon = 100;
+  privatelon final BlockingQuelonuelon<TwittelonrMelonssagelon> melonssagelons =
+      Quelonuelons.nelonwLinkelondBlockingQuelonuelon(MAX_QUelonUelon_SIZelon);
 
-  private static final String DO_TEXT_QUALITY_EVALUATION_DECIDER_KEY_TEMPLATE =
-      "ingester_%s_do_text_quality_evaluation";
+  privatelon static final String DO_TelonXT_QUALITY_elonVALUATION_DelonCIDelonR_KelonY_TelonMPLATelon =
+      "ingelonstelonr_%s_do_telonxt_quality_elonvaluation";
 
-  private ExecutorService executorService = null;
-  private SearchRateCounter unscoredTweetCounter;
-  private TweetTextClassifier classifier;
-  private final TweetTextScorer scorer = new TweetTextScorer(null);
-  // Defined as static so that ClassifierWorker thread can use it
-  private static SearchRateCounter slowTweetCounter;
-  private SearchRateCounter threadErrorCounter;
-  private SearchRateCounter threadInterruptionCounter;
-  private String deciderKey;
+  privatelon elonxeloncutorSelonrvicelon elonxeloncutorSelonrvicelon = null;
+  privatelon SelonarchRatelonCountelonr unscorelondTwelonelontCountelonr;
+  privatelon TwelonelontTelonxtClassifielonr classifielonr;
+  privatelon final TwelonelontTelonxtScorelonr scorelonr = nelonw TwelonelontTelonxtScorelonr(null);
+  // Delonfinelond as static so that ClassifielonrWorkelonr threlonad can uselon it
+  privatelon static SelonarchRatelonCountelonr slowTwelonelontCountelonr;
+  privatelon SelonarchRatelonCountelonr threlonadelonrrorCountelonr;
+  privatelon SelonarchRatelonCountelonr threlonadIntelonrruptionCountelonr;
+  privatelon String deloncidelonrKelony;
 
-  @Override
+  @Ovelonrridelon
   public void initStats() {
-    super.initStats();
-    innerSetupStats();
+    supelonr.initStats();
+    innelonrSelontupStats();
   }
 
-  public SearchRateCounter getUnscoredTweetCounter() {
-    return unscoredTweetCounter;
+  public SelonarchRatelonCountelonr gelontUnscorelondTwelonelontCountelonr() {
+    relonturn unscorelondTwelonelontCountelonr;
   }
 
-  @Override
-  protected void innerSetupStats() {
-    threadErrorCounter = SearchRateCounter.export(
-        getStageNamePrefix() + "_text_quality_evaluation_thread_error");
-    threadInterruptionCounter = SearchRateCounter.export(
-        getStageNamePrefix() + "_text_quality_evaluation_thread_interruption");
-    unscoredTweetCounter = SearchRateCounter.export(
-        getStageNamePrefix() + "_text_quality_evaluation_tweets_unscored_count");
-    slowTweetCounter = SearchRateCounter.export(
-        getStageNamePrefix() + "_text_quality_evaluation_slow_tweet_count");
-    SearchCustomGauge.export(getStageNamePrefix() + "_queue_size", messages::size);
+  @Ovelonrridelon
+  protelonctelond void innelonrSelontupStats() {
+    threlonadelonrrorCountelonr = SelonarchRatelonCountelonr.elonxport(
+        gelontStagelonNamelonPrelonfix() + "_telonxt_quality_elonvaluation_threlonad_elonrror");
+    threlonadIntelonrruptionCountelonr = SelonarchRatelonCountelonr.elonxport(
+        gelontStagelonNamelonPrelonfix() + "_telonxt_quality_elonvaluation_threlonad_intelonrruption");
+    unscorelondTwelonelontCountelonr = SelonarchRatelonCountelonr.elonxport(
+        gelontStagelonNamelonPrelonfix() + "_telonxt_quality_elonvaluation_twelonelonts_unscorelond_count");
+    slowTwelonelontCountelonr = SelonarchRatelonCountelonr.elonxport(
+        gelontStagelonNamelonPrelonfix() + "_telonxt_quality_elonvaluation_slow_twelonelont_count");
+    SelonarchCustomGaugelon.elonxport(gelontStagelonNamelonPrelonfix() + "_quelonuelon_sizelon", melonssagelons::sizelon);
   }
 
-  @Override
-  protected void doInnerPreprocess() throws StageException, NamingException {
-    innerSetup();
-    executorService = wireModule.getThreadPool(NUM_THREADS);
-    for (int i = 0; i < NUM_THREADS; i++) {
-      executorService.submit(
-          new ClassifierWorker());
+  @Ovelonrridelon
+  protelonctelond void doInnelonrPrelonprocelonss() throws Stagelonelonxcelonption, Namingelonxcelonption {
+    innelonrSelontup();
+    elonxeloncutorSelonrvicelon = wirelonModulelon.gelontThrelonadPool(NUM_THRelonADS);
+    for (int i = 0; i < NUM_THRelonADS; i++) {
+      elonxeloncutorSelonrvicelon.submit(
+          nelonw ClassifielonrWorkelonr());
     }
-    LOG.info("Initialized {} classfiers and scorers.", NUM_THREADS);
+    LOG.info("Initializelond {} classfielonrs and scorelonrs.", NUM_THRelonADS);
   }
 
-  @Override
-  protected void innerSetup() throws NamingException {
-    deciderKey = String.format(DO_TEXT_QUALITY_EVALUATION_DECIDER_KEY_TEMPLATE,
-        earlybirdCluster.getNameForStats());
-    List<PenguinVersion> supportedPenguinVersions = wireModule.getPenguinVersions();
-    TweetOffensiveEvaluator tweetOffensiveEvaluator = wireModule.getTweetOffensiveEvaluator();
+  @Ovelonrridelon
+  protelonctelond void innelonrSelontup() throws Namingelonxcelonption {
+    deloncidelonrKelony = String.format(DO_TelonXT_QUALITY_elonVALUATION_DelonCIDelonR_KelonY_TelonMPLATelon,
+        elonarlybirdClustelonr.gelontNamelonForStats());
+    List<PelonnguinVelonrsion> supportelondPelonnguinVelonrsions = wirelonModulelon.gelontPelonnguinVelonrsions();
+    TwelonelontOffelonnsivelonelonvaluator twelonelontOffelonnsivelonelonvaluator = wirelonModulelon.gelontTwelonelontOffelonnsivelonelonvaluator();
 
-    ImmutableList<TweetEvaluator> evaluators =
-        ImmutableList.of(tweetOffensiveEvaluator, new TweetTextEvaluator());
-    classifier = new TweetTextClassifier(
-        evaluators,
-        wireModule.getServiceIdentifier(),
-        supportedPenguinVersions);
+    ImmutablelonList<Twelonelontelonvaluator> elonvaluators =
+        ImmutablelonList.of(twelonelontOffelonnsivelonelonvaluator, nelonw TwelonelontTelonxtelonvaluator());
+    classifielonr = nelonw TwelonelontTelonxtClassifielonr(
+        elonvaluators,
+        wirelonModulelon.gelontSelonrvicelonIdelonntifielonr(),
+        supportelondPelonnguinVelonrsions);
   }
 
-  @Override
-  public void innerProcess(Object obj) throws StageException {
-    if (!(obj instanceof TwitterMessage)) {
-      LOG.error("Object is not a TwitterMessage object: {}", obj);
-      return;
+  @Ovelonrridelon
+  public void innelonrProcelonss(Objelonct obj) throws Stagelonelonxcelonption {
+    if (!(obj instancelonof TwittelonrMelonssagelon)) {
+      LOG.elonrror("Objelonct is not a TwittelonrMelonssagelon objelonct: {}", obj);
+      relonturn;
     }
 
-    if (decider.isAvailable(deciderKey)) {
-      TwitterMessage message = TwitterMessage.class.cast(obj);
+    if (deloncidelonr.isAvailablelon(deloncidelonrKelony)) {
+      TwittelonrMelonssagelon melonssagelon = TwittelonrMelonssagelon.class.cast(obj);
       try {
-        messages.put(message);
-      } catch (InterruptedException ie) {
-        LOG.error("Interrupted exception adding to the queue", ie);
+        melonssagelons.put(melonssagelon);
+      } catch (Intelonrruptelondelonxcelonption ielon) {
+        LOG.elonrror("Intelonrruptelond elonxcelonption adding to thelon quelonuelon", ielon);
       }
-    } else {
-      unscoredTweetCounter.increment();
-      emitAndCount(obj);
+    } elonlselon {
+      unscorelondTwelonelontCountelonr.increlonmelonnt();
+      elonmitAndCount(obj);
     }
   }
 
-  @Override
-  protected TwitterMessage innerRunStageV2(TwitterMessage message) {
-    if (decider.isAvailable(deciderKey)) {
-      classifyAndScore(message);
-    } else {
-      unscoredTweetCounter.increment();
+  @Ovelonrridelon
+  protelonctelond TwittelonrMelonssagelon innelonrRunStagelonV2(TwittelonrMelonssagelon melonssagelon) {
+    if (deloncidelonr.isAvailablelon(deloncidelonrKelony)) {
+      classifyAndScorelon(melonssagelon);
+    } elonlselon {
+      unscorelondTwelonelontCountelonr.increlonmelonnt();
     }
 
-    return message;
+    relonturn melonssagelon;
   }
 
-  private void classifyAndScore(TwitterMessage message) {
-    long startTime = clock.nowMillis();
+  privatelon void classifyAndScorelon(TwittelonrMelonssagelon melonssagelon) {
+    long startTimelon = clock.nowMillis();
     try {
-      // The tweet signature computed here might not be correct, since we did not resolve the
-      // tweet URLs yet. This is why BasicIndexingConverter does not set the tweet signature
-      // feature on the event it builds.
+      // Thelon twelonelont signaturelon computelond helonrelon might not belon correlonct, sincelon welon did not relonsolvelon thelon
+      // twelonelont URLs yelont. This is why BasicIndelonxingConvelonrtelonr doelons not selont thelon twelonelont signaturelon
+      // felonaturelon on thelon elonvelonnt it builds.
       //
-      // We correct the tweet signature later in the ComputeTweetSignatureStage, and
-      // DelayedIndexingConverter sets this feature on the URL update event it creates.
-      synchronized (this) {
-        scorer.classifyAndScoreTweet(classifier, message);
+      // Welon correlonct thelon twelonelont signaturelon latelonr in thelon ComputelonTwelonelontSignaturelonStagelon, and
+      // DelonlayelondIndelonxingConvelonrtelonr selonts this felonaturelon on thelon URL updatelon elonvelonnt it crelonatelons.
+      synchronizelond (this) {
+        scorelonr.classifyAndScorelonTwelonelont(classifielonr, melonssagelon);
       }
-    } catch (Exception e) {
-      threadErrorCounter.increment();
-      LOG.error("Uncaught exception from classifyAndScoreTweet", e);
+    } catch (elonxcelonption elon) {
+      threlonadelonrrorCountelonr.increlonmelonnt();
+      LOG.elonrror("Uncaught elonxcelonption from classifyAndScorelonTwelonelont", elon);
     } finally {
-      long elapsedTime = clock.nowMillis() - startTime;
-      if (elapsedTime > SLOW_TWEET_TIME_MILLIS) {
-        LOG.warn("Took {}ms to classify and score tweet {}: {}",
-            elapsedTime, message.getId(), message);
-        slowTweetCounter.increment();
+      long elonlapselondTimelon = clock.nowMillis() - startTimelon;
+      if (elonlapselondTimelon > SLOW_TWelonelonT_TIMelon_MILLIS) {
+        LOG.warn("Took {}ms to classify and scorelon twelonelont {}: {}",
+            elonlapselondTimelon, melonssagelon.gelontId(), melonssagelon);
+        slowTwelonelontCountelonr.increlonmelonnt();
       }
     }
   }
 
-  @Override
-  public void innerPostprocess() {
-    if (executorService != null) {
-      executorService.shutdownNow();
+  @Ovelonrridelon
+  public void innelonrPostprocelonss() {
+    if (elonxeloncutorSelonrvicelon != null) {
+      elonxeloncutorSelonrvicelon.shutdownNow();
     }
-    executorService = null;
+    elonxeloncutorSelonrvicelon = null;
   }
 
-  private class ClassifierWorker implements Runnable {
+  privatelon class ClassifielonrWorkelonr implelonmelonnts Runnablelon {
     public void run() {
-      while (!Thread.currentThread().isInterrupted()) {
-        TwitterMessage message;
+      whilelon (!Threlonad.currelonntThrelonad().isIntelonrruptelond()) {
+        TwittelonrMelonssagelon melonssagelon;
         try {
-          message = messages.take();
-        } catch (InterruptedException ie) {
-          threadInterruptionCounter.increment();
-          LOG.error("Interrupted exception polling from the queue", ie);
-          continue;
+          melonssagelon = melonssagelons.takelon();
+        } catch (Intelonrruptelondelonxcelonption ielon) {
+          threlonadIntelonrruptionCountelonr.increlonmelonnt();
+          LOG.elonrror("Intelonrruptelond elonxcelonption polling from thelon quelonuelon", ielon);
+          continuelon;
         }
 
-        // We want to emit even if we couldn't score the tweet.
-        classifyAndScore(message);
-        emitAndCount(message);
+        // Welon want to elonmit elonvelonn if welon couldn't scorelon thelon twelonelont.
+        classifyAndScorelon(melonssagelon);
+        elonmitAndCount(melonssagelon);
       }
     }
   }

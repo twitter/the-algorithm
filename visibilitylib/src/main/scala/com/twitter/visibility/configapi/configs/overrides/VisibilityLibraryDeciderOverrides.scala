@@ -1,24 +1,24 @@
-package com.twitter.visibility.configapi.configs.overrides
+packagelon com.twittelonr.visibility.configapi.configs.ovelonrridelons
 
-import com.twitter.decider.LocalOverrides
+import com.twittelonr.deloncidelonr.LocalOvelonrridelons
 
-object VisibilityLibraryDeciderOverrides
-    extends LocalOverrides.Namespace("visibility-library", "") {
+objelonct VisibilityLibraryDeloncidelonrOvelonrridelons
+    elonxtelonnds LocalOvelonrridelons.Namelonspacelon("visibility-library", "") {
 
-  val EnableLocalizedTombstoneOnVisibilityResults = feature(
-    "visibility_library_enable_localized_tombstones_on_visibility_results")
+  val elonnablelonLocalizelondTombstonelonOnVisibilityRelonsults = felonaturelon(
+    "visibility_library_elonnablelon_localizelond_tombstonelons_on_visibility_relonsults")
 
-  val EnableLocalizedInterstitialGenerator: LocalOverrides.Override =
-    feature("visibility_library_enable_localized_interstitial_generator")
+  val elonnablelonLocalizelondIntelonrstitialGelonnelonrator: LocalOvelonrridelons.Ovelonrridelon =
+    felonaturelon("visibility_library_elonnablelon_localizelond_intelonrstitial_gelonnelonrator")
 
-  val EnableInnerQuotedTweetViewerBlocksAuthorInterstitialRule: LocalOverrides.Override =
-    feature("visibility_library_enable_inner_quoted_tweet_viewer_blocks_author_interstitial_rule")
-  val EnableInnerQuotedTweetViewerMutesAuthorInterstitialRule: LocalOverrides.Override =
-    feature("visibility_library_enable_inner_quoted_tweet_viewer_mutes_author_interstitial_rule")
+  val elonnablelonInnelonrQuotelondTwelonelontVielonwelonrBlocksAuthorIntelonrstitialRulelon: LocalOvelonrridelons.Ovelonrridelon =
+    felonaturelon("visibility_library_elonnablelon_innelonr_quotelond_twelonelont_vielonwelonr_blocks_author_intelonrstitial_rulelon")
+  val elonnablelonInnelonrQuotelondTwelonelontVielonwelonrMutelonsAuthorIntelonrstitialRulelon: LocalOvelonrridelons.Ovelonrridelon =
+    felonaturelon("visibility_library_elonnablelon_innelonr_quotelond_twelonelont_vielonwelonr_mutelons_author_intelonrstitial_rulelon")
 
-  val EnableBackendLimitedActions: LocalOverrides.Override =
-    feature("visibility_library_enable_backend_limited_actions")
+  val elonnablelonBackelonndLimitelondActions: LocalOvelonrridelons.Ovelonrridelon =
+    felonaturelon("visibility_library_elonnablelon_backelonnd_limitelond_actions")
 
-  val disableLegacyInterstitialFilteredReason: LocalOverrides.Override = feature(
-    "visibility_library_disable_legacy_interstitial_filtered_reason")
+  val disablelonLelongacyIntelonrstitialFiltelonrelondRelonason: LocalOvelonrridelons.Ovelonrridelon = felonaturelon(
+    "visibility_library_disablelon_lelongacy_intelonrstitial_filtelonrelond_relonason")
 }

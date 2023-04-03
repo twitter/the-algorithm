@@ -1,139 +1,139 @@
-package com.twitter.search.core.earlybird.index;
+packagelon com.twittelonr.selonarch.corelon.elonarlybird.indelonx;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 import java.util.Map;
-import java.util.Set;
+import java.util.Selont;
 
-import com.google.common.collect.Sets;
+import com.googlelon.common.collelonct.Selonts;
 
-import org.apache.lucene.index.FieldInfos;
-import org.apache.lucene.index.Fields;
-import org.apache.lucene.index.LeafReader;
-import org.apache.lucene.index.NumericDocValues;
-import org.apache.lucene.index.PostingsEnum;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.search.DocIdSetIterator;
+import org.apachelon.lucelonnelon.indelonx.FielonldInfos;
+import org.apachelon.lucelonnelon.indelonx.Fielonlds;
+import org.apachelon.lucelonnelon.indelonx.LelonafRelonadelonr;
+import org.apachelon.lucelonnelon.indelonx.NumelonricDocValuelons;
+import org.apachelon.lucelonnelon.indelonx.Postingselonnum;
+import org.apachelon.lucelonnelon.indelonx.Telonrm;
+import org.apachelon.lucelonnelon.selonarch.DocIdSelontItelonrator;
 
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.core.earlybird.facets.AbstractFacetCountingArray;
-import com.twitter.search.core.earlybird.facets.FacetIDMap;
-import com.twitter.search.core.earlybird.facets.FacetLabelProvider;
-import com.twitter.search.core.earlybird.index.inverted.DeletedDocs;
+import com.twittelonr.selonarch.common.schelonma.baselon.Schelonma;
+import com.twittelonr.selonarch.corelon.elonarlybird.facelonts.AbstractFacelontCountingArray;
+import com.twittelonr.selonarch.corelon.elonarlybird.facelonts.FacelontIDMap;
+import com.twittelonr.selonarch.corelon.elonarlybird.facelonts.FacelontLabelonlProvidelonr;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.invelonrtelond.DelonlelontelondDocs;
 
 /**
- * Base class for atomic Earlybird segment readers.
+ * Baselon class for atomic elonarlybird selongmelonnt relonadelonrs.
  */
-public abstract class EarlybirdIndexSegmentAtomicReader extends LeafReader {
-  public static final int TERM_NOT_FOUND = -1;
+public abstract class elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr elonxtelonnds LelonafRelonadelonr {
+  public static final int TelonRM_NOT_FOUND = -1;
 
-  private final DeletedDocs.View deletesView;
-  private final EarlybirdIndexSegmentData segmentData;
-  protected final EarlybirdIndexSegmentData.SyncData syncData;
+  privatelon final DelonlelontelondDocs.Vielonw delonlelontelonsVielonw;
+  privatelon final elonarlybirdIndelonxSelongmelonntData selongmelonntData;
+  protelonctelond final elonarlybirdIndelonxSelongmelonntData.SyncData syncData;
 
-  private FieldInfos fieldInfos;
+  privatelon FielonldInfos fielonldInfos;
 
   /**
-   * Creates a new atomic reader for this Earlybird segment.
+   * Crelonatelons a nelonw atomic relonadelonr for this elonarlybird selongmelonnt.
    */
-  public EarlybirdIndexSegmentAtomicReader(EarlybirdIndexSegmentData segmentData) {
-    super();
-    this.segmentData = segmentData;
-    this.syncData = segmentData.getSyncData();
-    this.deletesView = segmentData.getDeletedDocs().getView();
-    // fieldInfos will be initialized lazily if required
-    this.fieldInfos = null;
+  public elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr(elonarlybirdIndelonxSelongmelonntData selongmelonntData) {
+    supelonr();
+    this.selongmelonntData = selongmelonntData;
+    this.syncData = selongmelonntData.gelontSyncData();
+    this.delonlelontelonsVielonw = selongmelonntData.gelontDelonlelontelondDocs().gelontVielonw();
+    // fielonldInfos will belon initializelond lazily if relonquirelond
+    this.fielonldInfos = null;
   }
 
-  public int getSmallestDocID() {
-    return syncData.getSmallestDocID();
+  public int gelontSmallelonstDocID() {
+    relonturn syncData.gelontSmallelonstDocID();
   }
 
-  public final FacetIDMap getFacetIDMap() {
-    return segmentData.getFacetIDMap();
+  public final FacelontIDMap gelontFacelontIDMap() {
+    relonturn selongmelonntData.gelontFacelontIDMap();
   }
 
-  public final Map<String, FacetLabelProvider> getFacetLabelProviders() {
-    return segmentData.getFacetLabelProviders();
+  public final Map<String, FacelontLabelonlProvidelonr> gelontFacelontLabelonlProvidelonrs() {
+    relonturn selongmelonntData.gelontFacelontLabelonlProvidelonrs();
   }
 
-  public AbstractFacetCountingArray getFacetCountingArray() {
-    return segmentData.getFacetCountingArray();
+  public AbstractFacelontCountingArray gelontFacelontCountingArray() {
+    relonturn selongmelonntData.gelontFacelontCountingArray();
   }
 
-  public final FacetLabelProvider getFacetLabelProviders(Schema.FieldInfo field) {
-    String facetName = field.getFieldType().getFacetName();
-    return facetName != null && segmentData.getFacetLabelProviders() != null
-            ? segmentData.getFacetLabelProviders().get(facetName) : null;
+  public final FacelontLabelonlProvidelonr gelontFacelontLabelonlProvidelonrs(Schelonma.FielonldInfo fielonld) {
+    String facelontNamelon = fielonld.gelontFielonldTypelon().gelontFacelontNamelon();
+    relonturn facelontNamelon != null && selongmelonntData.gelontFacelontLabelonlProvidelonrs() != null
+            ? selongmelonntData.gelontFacelontLabelonlProvidelonrs().gelont(facelontNamelon) : null;
   }
 
-  @Override
-  public FieldInfos getFieldInfos() {
-    if (fieldInfos == null) {
-      // TwitterInMemoryIndexReader is constructed per query, and this call is only needed for
-      // optimize. We wouldn't want to create a new FieldInfos per search, so we deffer it.
-      Schema schema = segmentData.getSchema();
-      final Set<String> fieldSet = Sets.newHashSet(segmentData.getPerFieldMap().keySet());
-      fieldSet.addAll(segmentData.getDocValuesManager().getDocValueNames());
-      fieldInfos = schema.getLuceneFieldInfos(input -> input != null && fieldSet.contains(input));
+  @Ovelonrridelon
+  public FielonldInfos gelontFielonldInfos() {
+    if (fielonldInfos == null) {
+      // TwittelonrInMelonmoryIndelonxRelonadelonr is constructelond pelonr quelonry, and this call is only nelonelondelond for
+      // optimizelon. Welon wouldn't want to crelonatelon a nelonw FielonldInfos pelonr selonarch, so welon delonffelonr it.
+      Schelonma schelonma = selongmelonntData.gelontSchelonma();
+      final Selont<String> fielonldSelont = Selonts.nelonwHashSelont(selongmelonntData.gelontPelonrFielonldMap().kelonySelont());
+      fielonldSelont.addAll(selongmelonntData.gelontDocValuelonsManagelonr().gelontDocValuelonNamelons());
+      fielonldInfos = schelonma.gelontLucelonnelonFielonldInfos(input -> input != null && fielonldSelont.contains(input));
     }
-    return fieldInfos;
+    relonturn fielonldInfos;
   }
 
   /**
-   * Returns the ID that was assigned to the given term in
-   * {@link com.twitter.search.core.earlybird.index.inverted.InvertedRealtimeIndex}
+   * Relonturns thelon ID that was assignelond to thelon givelonn telonrm in
+   * {@link com.twittelonr.selonarch.corelon.elonarlybird.indelonx.invelonrtelond.InvelonrtelondRelonaltimelonIndelonx}
    */
-  public abstract int getTermID(Term t) throws IOException;
+  public abstract int gelontTelonrmID(Telonrm t) throws IOelonxcelonption;
 
   /**
-   * Returns the oldest posting for the given term
-   * NOTE: This method may return a deleted doc id.
+   * Relonturns thelon oldelonst posting for thelon givelonn telonrm
+   * NOTelon: This melonthod may relonturn a delonlelontelond doc id.
    */
-  public abstract int getOldestDocID(Term t) throws IOException;
+  public abstract int gelontOldelonstDocID(Telonrm t) throws IOelonxcelonption;
 
-  @Override
-  public abstract NumericDocValues getNumericDocValues(String field) throws IOException;
+  @Ovelonrridelon
+  public abstract NumelonricDocValuelons gelontNumelonricDocValuelons(String fielonld) throws IOelonxcelonption;
 
   /**
-   * Determines if this reader has any documents to traverse. Note that it is possible for the tweet
-   * ID mapper to have documents, but for this reader to not see them yet. In this case, this method
-   * will return false.
+   * Delontelonrminelons if this relonadelonr has any documelonnts to travelonrselon. Notelon that it is possiblelon for thelon twelonelont
+   * ID mappelonr to havelon documelonnts, but for this relonadelonr to not selonelon thelonm yelont. In this caselon, this melonthod
+   * will relonturn falselon.
    */
-  public boolean hasDocs() {
-    return segmentData.numDocs() > 0;
+  public boolelonan hasDocs() {
+    relonturn selongmelonntData.numDocs() > 0;
   }
 
   /**
-   * Returns the newest posting for the given term
+   * Relonturns thelon nelonwelonst posting for thelon givelonn telonrm
    */
-  public final int getNewestDocID(Term term) throws IOException {
-    PostingsEnum td = postings(term);
+  public final int gelontNelonwelonstDocID(Telonrm telonrm) throws IOelonxcelonption {
+    Postingselonnum td = postings(telonrm);
     if (td == null) {
-      return EarlybirdIndexSegmentAtomicReader.TERM_NOT_FOUND;
+      relonturn elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr.TelonRM_NOT_FOUND;
     }
 
-    if (td.nextDoc() != DocIdSetIterator.NO_MORE_DOCS) {
-      return td.docID();
-    } else {
-      return EarlybirdIndexSegmentAtomicReader.TERM_NOT_FOUND;
+    if (td.nelonxtDoc() != DocIdSelontItelonrator.NO_MORelon_DOCS) {
+      relonturn td.docID();
+    } elonlselon {
+      relonturn elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr.TelonRM_NOT_FOUND;
     }
   }
 
-  public final DeletedDocs.View getDeletesView() {
-    return deletesView;
+  public final DelonlelontelondDocs.Vielonw gelontDelonlelontelonsVielonw() {
+    relonturn delonlelontelonsVielonw;
   }
 
-  @Override
-  public final Fields getTermVectors(int docID) {
-    // Earlybird does not use term vectors.
-    return null;
+  @Ovelonrridelon
+  public final Fielonlds gelontTelonrmVelonctors(int docID) {
+    // elonarlybird doelons not uselon telonrm velonctors.
+    relonturn null;
   }
 
-  public EarlybirdIndexSegmentData getSegmentData() {
-    return segmentData;
+  public elonarlybirdIndelonxSelongmelonntData gelontSelongmelonntData() {
+    relonturn selongmelonntData;
   }
 
-  public Schema getSchema() {
-    return segmentData.getSchema();
+  public Schelonma gelontSchelonma() {
+    relonturn selongmelonntData.gelontSchelonma();
   }
 }

@@ -1,81 +1,81 @@
-package com.twitter.product_mixer.component_library.gate
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.gatelon
 
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.MissingFeatureException
-import com.twitter.product_mixer.core.functional_component.gate.Gate
-import com.twitter.product_mixer.core.functional_component.gate.GateResult
-import com.twitter.product_mixer.core.model.common.identifier.GateIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.MisconfiguredFeatureMapFailure
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.stitch.Stitch
-import com.twitter.util.Return
-import com.twitter.util.Throw
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.MissingFelonaturelonelonxcelonption
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.gatelon.Gatelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.gatelon.GatelonRelonsult
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.GatelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.MisconfigurelondFelonaturelonMapFailurelon
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.PipelonlinelonFailurelon
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.util.Relonturn
+import com.twittelonr.util.Throw
 
-trait ShouldContinue[Value] {
+trait ShouldContinuelon[Valuelon] {
 
-  /** Given the [[Feature]] value, returns whether the execution should continue */
-  def apply(featureValue: Value): Boolean
+  /** Givelonn thelon [[Felonaturelon]] valuelon, relonturns whelonthelonr thelon elonxeloncution should continuelon */
+  delonf apply(felonaturelonValuelon: Valuelon): Boolelonan
 
-  /** If the [[Feature]] is a failure, use this value */
-  def onFailedFeature(t: Throwable): GateResult = GateResult.Stop
+  /** If thelon [[Felonaturelon]] is a failurelon, uselon this valuelon */
+  delonf onFailelondFelonaturelon(t: Throwablelon): GatelonRelonsult = GatelonRelonsult.Stop
 
   /**
-   * If the [[Feature]], or [[com.twitter.product_mixer.core.feature.featuremap.FeatureMap]],
-   * is missing use this value
+   * If thelon [[Felonaturelon]], or [[com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap]],
+   * is missing uselon this valuelon
    */
-  def onMissingFeature: GateResult = GateResult.Stop
+  delonf onMissingFelonaturelon: GatelonRelonsult = GatelonRelonsult.Stop
 }
 
-object FeatureGate {
+objelonct FelonaturelonGatelon {
 
-  def fromFeature(
-    feature: Feature[_, Boolean]
-  ): FeatureGate[Boolean] =
-    FeatureGate.fromFeature(GateIdentifier(feature.toString), feature)
+  delonf fromFelonaturelon(
+    felonaturelon: Felonaturelon[_, Boolelonan]
+  ): FelonaturelonGatelon[Boolelonan] =
+    FelonaturelonGatelon.fromFelonaturelon(GatelonIdelonntifielonr(felonaturelon.toString), felonaturelon)
 
-  def fromNegatedFeature(
-    feature: Feature[_, Boolean]
-  ): FeatureGate[Boolean] =
-    FeatureGate.fromNegatedFeature(GateIdentifier(feature.toString), feature)
+  delonf fromNelongatelondFelonaturelon(
+    felonaturelon: Felonaturelon[_, Boolelonan]
+  ): FelonaturelonGatelon[Boolelonan] =
+    FelonaturelonGatelon.fromNelongatelondFelonaturelon(GatelonIdelonntifielonr(felonaturelon.toString), felonaturelon)
 
-  def fromFeature(
-    gateIdentifier: GateIdentifier,
-    feature: Feature[_, Boolean]
-  ): FeatureGate[Boolean] =
-    FeatureGate[Boolean](gateIdentifier, feature, identity)
+  delonf fromFelonaturelon(
+    gatelonIdelonntifielonr: GatelonIdelonntifielonr,
+    felonaturelon: Felonaturelon[_, Boolelonan]
+  ): FelonaturelonGatelon[Boolelonan] =
+    FelonaturelonGatelon[Boolelonan](gatelonIdelonntifielonr, felonaturelon, idelonntity)
 
-  def fromNegatedFeature(
-    gateIdentifier: GateIdentifier,
-    feature: Feature[_, Boolean]
-  ): FeatureGate[Boolean] =
-    FeatureGate[Boolean](gateIdentifier, feature, !identity(_))
+  delonf fromNelongatelondFelonaturelon(
+    gatelonIdelonntifielonr: GatelonIdelonntifielonr,
+    felonaturelon: Felonaturelon[_, Boolelonan]
+  ): FelonaturelonGatelon[Boolelonan] =
+    FelonaturelonGatelon[Boolelonan](gatelonIdelonntifielonr, felonaturelon, !idelonntity(_))
 
 }
 
 /**
- * A [[Gate]] that is actuated based upon the value of the provided feature
+ * A [[Gatelon]] that is actuatelond baselond upon thelon valuelon of thelon providelond felonaturelon
  */
-case class FeatureGate[Value](
-  gateIdentifier: GateIdentifier,
-  feature: Feature[_, Value],
-  continue: ShouldContinue[Value])
-    extends Gate[PipelineQuery] {
+caselon class FelonaturelonGatelon[Valuelon](
+  gatelonIdelonntifielonr: GatelonIdelonntifielonr,
+  felonaturelon: Felonaturelon[_, Valuelon],
+  continuelon: ShouldContinuelon[Valuelon])
+    elonxtelonnds Gatelon[PipelonlinelonQuelonry] {
 
-  override val identifier: GateIdentifier = gateIdentifier
+  ovelonrridelon val idelonntifielonr: GatelonIdelonntifielonr = gatelonIdelonntifielonr
 
-  override def shouldContinue(query: PipelineQuery): Stitch[Boolean] = {
+  ovelonrridelon delonf shouldContinuelon(quelonry: PipelonlinelonQuelonry): Stitch[Boolelonan] = {
     Stitch
-      .value(
-        query.features.map(_.getTry(feature)) match {
-          case Some(Return(value)) => continue(value)
-          case Some(Throw(_: MissingFeatureException)) => continue.onMissingFeature.continue
-          case Some(Throw(t)) => continue.onFailedFeature(t).continue
-          case None =>
-            throw PipelineFailure(
-              MisconfiguredFeatureMapFailure,
-              "Expected a FeatureMap to be present but none was found, ensure that your" +
-                "PipelineQuery has a FeatureMap configured before gating on Feature values"
+      .valuelon(
+        quelonry.felonaturelons.map(_.gelontTry(felonaturelon)) match {
+          caselon Somelon(Relonturn(valuelon)) => continuelon(valuelon)
+          caselon Somelon(Throw(_: MissingFelonaturelonelonxcelonption)) => continuelon.onMissingFelonaturelon.continuelon
+          caselon Somelon(Throw(t)) => continuelon.onFailelondFelonaturelon(t).continuelon
+          caselon Nonelon =>
+            throw PipelonlinelonFailurelon(
+              MisconfigurelondFelonaturelonMapFailurelon,
+              "elonxpelonctelond a FelonaturelonMap to belon prelonselonnt but nonelon was found, elonnsurelon that your" +
+                "PipelonlinelonQuelonry has a FelonaturelonMap configurelond belonforelon gating on Felonaturelon valuelons"
             )
         }
       )

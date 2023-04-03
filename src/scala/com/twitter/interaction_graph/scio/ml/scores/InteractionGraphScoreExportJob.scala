@@ -1,133 +1,133 @@
-package com.twitter.interaction_graph.scio.ml.scores
+packagelon com.twittelonr.intelonraction_graph.scio.ml.scorelons
 
-import com.google.cloud.bigquery.BigQueryOptions
-import com.google.cloud.bigquery.QueryJobConfiguration
-import com.spotify.scio.ScioContext
-import com.spotify.scio.values.SCollection
-import com.twitter.beam.io.dal.DAL
-import com.twitter.beam.io.exception.DataNotFoundException
-import com.twitter.beam.io.fs.multiformat.PathLayout
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.scio_internal.job.ScioBeamJob
-import com.twitter.wtf.candidate.thriftscala.Candidate
-import com.twitter.wtf.candidate.thriftscala.CandidateSeq
-import com.twitter.wtf.candidate.thriftscala.ScoredEdge
-import org.apache.avro.generic.GenericRecord
-import org.apache.beam.sdk.io.gcp.bigquery.BigQueryIO
-import org.apache.beam.sdk.io.gcp.bigquery.BigQueryIO.TypedRead
-import org.apache.beam.sdk.io.gcp.bigquery.SchemaAndRecord
-import org.apache.beam.sdk.transforms.SerializableFunction
-import scala.collection.JavaConverters._
+import com.googlelon.cloud.bigquelonry.BigQuelonryOptions
+import com.googlelon.cloud.bigquelonry.QuelonryJobConfiguration
+import com.spotify.scio.ScioContelonxt
+import com.spotify.scio.valuelons.SCollelonction
+import com.twittelonr.belonam.io.dal.DAL
+import com.twittelonr.belonam.io.elonxcelonption.DataNotFoundelonxcelonption
+import com.twittelonr.belonam.io.fs.multiformat.PathLayout
+import com.twittelonr.scalding_intelonrnal.multiformat.format.kelonyval.KelonyVal
+import com.twittelonr.scio_intelonrnal.job.ScioBelonamJob
+import com.twittelonr.wtf.candidatelon.thriftscala.Candidatelon
+import com.twittelonr.wtf.candidatelon.thriftscala.CandidatelonSelonq
+import com.twittelonr.wtf.candidatelon.thriftscala.Scorelondelondgelon
+import org.apachelon.avro.gelonnelonric.GelonnelonricReloncord
+import org.apachelon.belonam.sdk.io.gcp.bigquelonry.BigQuelonryIO
+import org.apachelon.belonam.sdk.io.gcp.bigquelonry.BigQuelonryIO.TypelondRelonad
+import org.apachelon.belonam.sdk.io.gcp.bigquelonry.SchelonmaAndReloncord
+import org.apachelon.belonam.sdk.transforms.SelonrializablelonFunction
+import scala.collelonction.JavaConvelonrtelonrs._
 
-object InteractionGraphScoreExportJob extends ScioBeamJob[InteractionGraphScoreExportOption] {
+objelonct IntelonractionGraphScorelonelonxportJob elonxtelonnds ScioBelonamJob[IntelonractionGraphScorelonelonxportOption] {
 
-  // to parse latest date from the BQ table we're reading from
-  val parseDateRow = new SerializableFunction[SchemaAndRecord, String] {
-    override def apply(input: SchemaAndRecord): String = {
-      val genericRecord: GenericRecord = input.getRecord()
-      genericRecord.get("ds").toString
+  // to parselon latelonst datelon from thelon BQ tablelon welon'relon relonading from
+  val parselonDatelonRow = nelonw SelonrializablelonFunction[SchelonmaAndReloncord, String] {
+    ovelonrridelon delonf apply(input: SchelonmaAndReloncord): String = {
+      val gelonnelonricReloncord: GelonnelonricReloncord = input.gelontReloncord()
+      gelonnelonricReloncord.gelont("ds").toString
     }
   }
 
-  // to parse each row from the BQ table we're reading from
-  val parseRow = new SerializableFunction[SchemaAndRecord, ScoredEdge] {
-    override def apply(record: SchemaAndRecord): ScoredEdge = {
-      val genericRecord: GenericRecord = record.getRecord()
-      ScoredEdge(
-        genericRecord.get("source_id").asInstanceOf[Long],
-        genericRecord.get("destination_id").asInstanceOf[Long],
-        genericRecord.get("prob").asInstanceOf[Double],
-        genericRecord.get("followed").asInstanceOf[Boolean],
+  // to parselon elonach row from thelon BQ tablelon welon'relon relonading from
+  val parselonRow = nelonw SelonrializablelonFunction[SchelonmaAndReloncord, Scorelondelondgelon] {
+    ovelonrridelon delonf apply(reloncord: SchelonmaAndReloncord): Scorelondelondgelon = {
+      val gelonnelonricReloncord: GelonnelonricReloncord = reloncord.gelontReloncord()
+      Scorelondelondgelon(
+        gelonnelonricReloncord.gelont("sourcelon_id").asInstancelonOf[Long],
+        gelonnelonricReloncord.gelont("delonstination_id").asInstancelonOf[Long],
+        gelonnelonricReloncord.gelont("prob").asInstancelonOf[Doublelon],
+        gelonnelonricReloncord.gelont("followelond").asInstancelonOf[Boolelonan],
       )
     }
   }
 
-  override def runPipeline(
-    sc: ScioContext,
-    opts: InteractionGraphScoreExportOption
+  ovelonrridelon delonf runPipelonlinelon(
+    sc: ScioContelonxt,
+    opts: IntelonractionGraphScorelonelonxportOption
   ): Unit = {
 
-    val dateStr: String = opts.getDate().value.getStart.toString("yyyyMMdd")
-    logger.info(s"dateStr $dateStr")
-    val project: String = "twttr-recos-ml-prod"
-    val datasetName: String = "realgraph"
-    val bqTableName: String = "scores"
-    val fullBqTableName: String = s"$project:$datasetName.$bqTableName"
+    val datelonStr: String = opts.gelontDatelon().valuelon.gelontStart.toString("yyyyMMdd")
+    loggelonr.info(s"datelonStr $datelonStr")
+    val projelonct: String = "twttr-reloncos-ml-prod"
+    val dataselontNamelon: String = "relonalgraph"
+    val bqTablelonNamelon: String = "scorelons"
+    val fullBqTablelonNamelon: String = s"$projelonct:$dataselontNamelon.$bqTablelonNamelon"
 
-    if (opts.getDALWriteEnvironment == "PROD") {
-      val bqClient =
-        BigQueryOptions.newBuilder.setProjectId("twttr-recos-ml-prod").build.getService
-      val query =
+    if (opts.gelontDALWritelonelonnvironmelonnt == "PROD") {
+      val bqClielonnt =
+        BigQuelonryOptions.nelonwBuildelonr.selontProjelonctId("twttr-reloncos-ml-prod").build.gelontSelonrvicelon
+      val quelonry =
         s"""
-           |SELECT total_rows
-           |FROM `$project.$datasetName.INFORMATION_SCHEMA.PARTITIONS`
-           |WHERE partition_id ="$dateStr" AND
-           |table_name="$bqTableName" AND total_rows > 0
+           |SelonLelonCT total_rows
+           |FROM `$projelonct.$dataselontNamelon.INFORMATION_SCHelonMA.PARTITIONS`
+           |WHelonRelon partition_id ="$datelonStr" AND
+           |tablelon_namelon="$bqTablelonNamelon" AND total_rows > 0
            |""".stripMargin
-      val queryConfig = QueryJobConfiguration.of(query)
-      val results = bqClient.query(queryConfig).getValues.asScala.toSeq
-      if (results.isEmpty || results.head.get(0).getLongValue == 0) {
-        throw new DataNotFoundException(s"$dateStr not present in $fullBqTableName.")
+      val quelonryConfig = QuelonryJobConfiguration.of(quelonry)
+      val relonsults = bqClielonnt.quelonry(quelonryConfig).gelontValuelons.asScala.toSelonq
+      if (relonsults.iselonmpty || relonsults.helonad.gelont(0).gelontLongValuelon == 0) {
+        throw nelonw DataNotFoundelonxcelonption(s"$datelonStr not prelonselonnt in $fullBqTablelonNamelon.")
       }
     }
     sc.run()
   }
 
-  override protected def configurePipeline(
-    sc: ScioContext,
-    opts: InteractionGraphScoreExportOption
+  ovelonrridelon protelonctelond delonf configurelonPipelonlinelon(
+    sc: ScioContelonxt,
+    opts: IntelonractionGraphScorelonelonxportOption
   ): Unit = {
 
-    val dateStr: String = opts.getDate().value.getStart.toString("yyyy-MM-dd")
-    logger.info(s"dateStr $dateStr")
-    val project: String = "twttr-recos-ml-prod"
-    val datasetName: String = "realgraph"
-    val bqTableName: String = "scores"
-    val fullBqTableName: String = s"$project:$datasetName.$bqTableName"
+    val datelonStr: String = opts.gelontDatelon().valuelon.gelontStart.toString("yyyy-MM-dd")
+    loggelonr.info(s"datelonStr $datelonStr")
+    val projelonct: String = "twttr-reloncos-ml-prod"
+    val dataselontNamelon: String = "relonalgraph"
+    val bqTablelonNamelon: String = "scorelons"
+    val fullBqTablelonNamelon: String = s"$projelonct:$dataselontNamelon.$bqTablelonNamelon"
 
-    val scoreExport: SCollection[ScoredEdge] = sc
+    val scorelonelonxport: SCollelonction[Scorelondelondgelon] = sc
       .customInput(
-        s"Read from BQ table $fullBqTableName",
-        BigQueryIO
-          .read(parseRow)
-          .from(fullBqTableName)
-          .withSelectedFields(List("source_id", "destination_id", "prob", "followed").asJava)
-          .withRowRestriction(s"ds = '$dateStr'")
-          .withMethod(TypedRead.Method.DIRECT_READ)
+        s"Relonad from BQ tablelon $fullBqTablelonNamelon",
+        BigQuelonryIO
+          .relonad(parselonRow)
+          .from(fullBqTablelonNamelon)
+          .withSelonlelonctelondFielonlds(List("sourcelon_id", "delonstination_id", "prob", "followelond").asJava)
+          .withRowRelonstriction(s"ds = '$datelonStr'")
+          .withMelonthod(TypelondRelonad.Melonthod.DIRelonCT_RelonAD)
       )
 
-    val inScores = scoreExport
-      .collect {
-        case ScoredEdge(src, dest, score, true) =>
-          (src, Candidate(dest, score))
+    val inScorelons = scorelonelonxport
+      .collelonct {
+        caselon Scorelondelondgelon(src, delonst, scorelon, truelon) =>
+          (src, Candidatelon(delonst, scorelon))
       }
-      .groupByKey
+      .groupByKelony
       .map {
-        case (src, candidateIter) => KeyVal(src, CandidateSeq(candidateIter.toSeq.sortBy(-_.score)))
+        caselon (src, candidatelonItelonr) => KelonyVal(src, CandidatelonSelonq(candidatelonItelonr.toSelonq.sortBy(-_.scorelon)))
       }
 
-    val outScores = scoreExport
-      .collect {
-        case ScoredEdge(src, dest, score, false) =>
-          (src, Candidate(dest, score))
+    val outScorelons = scorelonelonxport
+      .collelonct {
+        caselon Scorelondelondgelon(src, delonst, scorelon, falselon) =>
+          (src, Candidatelon(delonst, scorelon))
       }
-      .groupByKey
+      .groupByKelony
       .map {
-        case (src, candidateIter) => KeyVal(src, CandidateSeq(candidateIter.toSeq.sortBy(-_.score)))
+        caselon (src, candidatelonItelonr) => KelonyVal(src, CandidatelonSelonq(candidatelonItelonr.toSelonq.sortBy(-_.scorelon)))
       }
 
-    inScores.saveAsCustomOutput(
-      "Write real_graph_in_scores",
-      DAL.writeVersionedKeyVal(
-        RealGraphInScoresScalaDataset,
-        PathLayout.VersionedPath(opts.getOutputPath + "/in"),
+    inScorelons.savelonAsCustomOutput(
+      "Writelon relonal_graph_in_scorelons",
+      DAL.writelonVelonrsionelondKelonyVal(
+        RelonalGraphInScorelonsScalaDataselont,
+        PathLayout.VelonrsionelondPath(opts.gelontOutputPath + "/in"),
       )
     )
-    outScores.saveAsCustomOutput(
-      "Write real_graph_oon_scores",
-      DAL.writeVersionedKeyVal(
-        RealGraphOonScoresScalaDataset,
-        PathLayout.VersionedPath(opts.getOutputPath + "/oon"),
+    outScorelons.savelonAsCustomOutput(
+      "Writelon relonal_graph_oon_scorelons",
+      DAL.writelonVelonrsionelondKelonyVal(
+        RelonalGraphOonScorelonsScalaDataselont,
+        PathLayout.VelonrsionelondPath(opts.gelontOutputPath + "/oon"),
       )
     )
   }

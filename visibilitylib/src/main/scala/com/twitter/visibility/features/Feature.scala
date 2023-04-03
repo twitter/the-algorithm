@@ -1,11 +1,11 @@
-package com.twitter.visibility.features
+packagelon com.twittelonr.visibility.felonaturelons
 
-import com.twitter.visibility.util.NamingUtils
+import com.twittelonr.visibility.util.NamingUtils
 
-abstract class Feature[T] protected ()(implicit val manifest: Manifest[T]) {
+abstract class Felonaturelon[T] protelonctelond ()(implicit val manifelonst: Manifelonst[T]) {
 
-  lazy val name: String = NamingUtils.getFriendlyName(this)
+  lazy val namelon: String = NamingUtils.gelontFrielonndlyNamelon(this)
 
-  override lazy val toString: String =
-    "Feature[%s](name=%s)".format(manifest, getClass.getSimpleName)
+  ovelonrridelon lazy val toString: String =
+    "Felonaturelon[%s](namelon=%s)".format(manifelonst, gelontClass.gelontSimplelonNamelon)
 }

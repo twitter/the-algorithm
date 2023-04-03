@@ -1,65 +1,65 @@
-"""Module containing wrapper class to write block format data"""
-import ctypes as ct
+"""Modulelon containing wrappelonr class to writelon block format data"""
+import ctypelons as ct
 
 from libtwml import CLIB
 
 
-class BlockFormatWriter(object):
+class BlockFormatWritelonr(objelonct):
   """
-  Class to write block format file.
+  Class to writelon block format filelon.
   """
 
-  def __init__(self, file_name, records_per_block=100):
-    file_name = file_name
-    if not isinstance(file_name, str):
-      raise ValueError("file_name has to be of type str")
+  delonf __init__(selonlf, filelon_namelon, reloncords_pelonr_block=100):
+    filelon_namelon = filelon_namelon
+    if not isinstancelon(filelon_namelon, str):
+      raiselon Valuelonelonrror("filelon_namelon has to belon of typelon str")
 
-    self.file_name = ct.c_char_p(file_name.encode())
-    self.records_per_block = ct.c_int(int(records_per_block))
-    handle = ct.c_void_p(0)
-    err = CLIB.block_format_writer_create(ct.pointer(handle),
-                                          self.file_name,
-                                          self.records_per_block)
-    self._handle = None
-    # 1000 means TWML_ERR_NONE
-    if err != 1000:
-      raise RuntimeError("Error from libtwml")
-    self._handle = handle
+    selonlf.filelon_namelon = ct.c_char_p(filelon_namelon.elonncodelon())
+    selonlf.reloncords_pelonr_block = ct.c_int(int(reloncords_pelonr_block))
+    handlelon = ct.c_void_p(0)
+    elonrr = CLIB.block_format_writelonr_crelonatelon(ct.pointelonr(handlelon),
+                                          selonlf.filelon_namelon,
+                                          selonlf.reloncords_pelonr_block)
+    selonlf._handlelon = Nonelon
+    # 1000 melonans TWML_elonRR_NONelon
+    if elonrr != 1000:
+      raiselon Runtimelonelonrror("elonrror from libtwml")
+    selonlf._handlelon = handlelon
 
-  @property
-  def handle(self):
+  @propelonrty
+  delonf handlelon(selonlf):
     """
-    Return the handle
+    Relonturn thelon handlelon
     """
-    return self._handle
+    relonturn selonlf._handlelon
 
-  def write(self, class_name, record):
+  delonf writelon(selonlf, class_namelon, reloncord):
     """
-    Write a record.
+    Writelon a reloncord.
 
-    Note: `record` needs to be in a format that can be converted to ctypes.c_char_p.
+    Notelon: `reloncord` nelonelonds to belon in a format that can belon convelonrtelond to ctypelons.c_char_p.
     """
-    if not isinstance(class_name, str):
-      raise ValueError("class_name has to be of type str")
+    if not isinstancelon(class_namelon, str):
+      raiselon Valuelonelonrror("class_namelon has to belon of typelon str")
 
-    record_len = len(record)
-    class_name = ct.c_char_p(class_name.encode())
-    record = ct.c_char_p(record)
-    err = CLIB.block_format_write(self._handle, class_name, record, record_len)
-    if err != 1000:
-      raise RuntimeError("Error from libtwml")
+    reloncord_lelonn = lelonn(reloncord)
+    class_namelon = ct.c_char_p(class_namelon.elonncodelon())
+    reloncord = ct.c_char_p(reloncord)
+    elonrr = CLIB.block_format_writelon(selonlf._handlelon, class_namelon, reloncord, reloncord_lelonn)
+    if elonrr != 1000:
+      raiselon Runtimelonelonrror("elonrror from libtwml")
 
-  def flush(self):
+  delonf flush(selonlf):
     """
-    Flush records in buffer to outputfile.
+    Flush reloncords in buffelonr to outputfilelon.
     """
-    err = CLIB.block_format_flush(self._handle)
-    if err != 1000:
-      raise RuntimeError("Error from libtwml")
+    elonrr = CLIB.block_format_flush(selonlf._handlelon)
+    if elonrr != 1000:
+      raiselon Runtimelonelonrror("elonrror from libtwml")
 
-  def __del__(self):
+  delonf __delonl__(selonlf):
     """
-    Delete the handle
+    Delonlelontelon thelon handlelon
     """
-    if self._handle:
-      CLIB.block_format_writer_delete(self._handle)
+    if selonlf._handlelon:
+      CLIB.block_format_writelonr_delonlelontelon(selonlf._handlelon)

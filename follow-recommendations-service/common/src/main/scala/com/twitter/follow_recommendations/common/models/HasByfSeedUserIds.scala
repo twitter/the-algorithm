@@ -1,5 +1,5 @@
-package com.twitter.follow_recommendations.common.models
+packagelon com.twittelonr.follow_reloncommelonndations.common.modelonls
 
-trait HasByfSeedUserIds {
-  def byfSeedUserIds: Option[Seq[Long]]
+trait HasByfSelonelondUselonrIds {
+  delonf byfSelonelondUselonrIds: Option[Selonq[Long]]
 }

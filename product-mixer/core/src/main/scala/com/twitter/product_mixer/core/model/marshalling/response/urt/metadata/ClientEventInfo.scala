@@ -1,29 +1,29 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.metadata
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata
 
-trait HasClientEventInfo {
-  def clientEventInfo: Option[ClientEventInfo]
+trait HasClielonntelonvelonntInfo {
+  delonf clielonntelonvelonntInfo: Option[ClielonntelonvelonntInfo]
 }
 
 /**
- * Information used to build Client Events
- * @see [[http://go/client-events]]
+ * Information uselond to build Clielonnt elonvelonnts
+ * @selonelon [[http://go/clielonnt-elonvelonnts]]
  */
-case class ClientEventInfo(
-  component: Option[String],
-  element: Option[String],
-  details: Option[ClientEventDetails],
+caselon class ClielonntelonvelonntInfo(
+  componelonnt: Option[String],
+  elonlelonmelonnt: Option[String],
+  delontails: Option[ClielonntelonvelonntDelontails],
   action: Option[String],
-  entityToken: Option[String])
+  elonntityTokelonn: Option[String])
 
 /**
- * Additional client events fields
+ * Additional clielonnt elonvelonnts fielonlds
  *
- * @note if a field from [[http://go/client_app.thrift]] is needed but is not here
- *       contact the `#product-mixer` team to have it added.
+ * @notelon if a fielonld from [[http://go/clielonnt_app.thrift]] is nelonelondelond but is not helonrelon
+ *       contact thelon `#product-mixelonr` telonam to havelon it addelond.
  */
-case class ClientEventDetails(
-  conversationDetails: Option[ConversationDetails],
-  timelinesDetails: Option[TimelinesDetails],
-  articleDetails: Option[ArticleDetails],
-  liveEventDetails: Option[LiveEventDetails],
-  commerceDetails: Option[CommerceDetails])
+caselon class ClielonntelonvelonntDelontails(
+  convelonrsationDelontails: Option[ConvelonrsationDelontails],
+  timelonlinelonsDelontails: Option[TimelonlinelonsDelontails],
+  articlelonDelontails: Option[ArticlelonDelontails],
+  livelonelonvelonntDelontails: Option[LivelonelonvelonntDelontails],
+  commelonrcelonDelontails: Option[CommelonrcelonDelontails])

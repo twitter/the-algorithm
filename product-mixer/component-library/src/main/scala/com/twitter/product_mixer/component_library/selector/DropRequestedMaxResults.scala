@@ -1,55 +1,55 @@
-package com.twitter.product_mixer.component_library.selector
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.selonlelonctor
 
-import com.twitter.product_mixer.core.functional_component.common.AllPipelines
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.functional_component.selector.SelectorResult
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.configapi.BoundedParam
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.AllPipelonlinelons
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.CandidatelonScopelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.selonlelonctor.Selonlelonctor
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.selonlelonctor.SelonlelonctorRelonsult
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.timelonlinelons.configapi.BoundelondParam
 
 /**
- * Limit the number of results to min(PipelineQuery.requestedMaxResults, ServerMaxResultsParam)
+ * Limit thelon numbelonr of relonsults to min(PipelonlinelonQuelonry.relonquelonstelondMaxRelonsults, SelonrvelonrMaxRelonsultsParam)
  *
- * PipelineQuery.requestedMaxResults is optionally set in the pipelineQuery.
- * If it is not set, then the default value of DefaultRequestedMaxResultsParam is used.
+ * PipelonlinelonQuelonry.relonquelonstelondMaxRelonsults is optionally selont in thelon pipelonlinelonQuelonry.
+ * If it is not selont, thelonn thelon delonfault valuelon of DelonfaultRelonquelonstelondMaxRelonsultsParam is uselond.
  *
- * ServerMaxResultsParam specifies the maximum number of results supported, irrespective of what is
- * specified by the client in PipelineQuery.requestedMaxResults
- * (or the DefaultRequestedMaxResultsParam default if not specified)
+ * SelonrvelonrMaxRelonsultsParam speloncifielons thelon maximum numbelonr of relonsults supportelond, irrelonspelonctivelon of what is
+ * speloncifielond by thelon clielonnt in PipelonlinelonQuelonry.relonquelonstelondMaxRelonsults
+ * (or thelon DelonfaultRelonquelonstelondMaxRelonsultsParam delonfault if not speloncifielond)
  *
- * For example, if ServerMaxResultsParam is 5, PipelineQuery.requestedMaxResults is 3,
- * and the results contain 10 items, then these items will be reduced to the first 3 selected items.
+ * For elonxamplelon, if SelonrvelonrMaxRelonsultsParam is 5, PipelonlinelonQuelonry.relonquelonstelondMaxRelonsults is 3,
+ * and thelon relonsults contain 10 itelonms, thelonn thelonselon itelonms will belon relonducelond to thelon first 3 selonlelonctelond itelonms.
  *
- * If PipelineQuery.requestedMaxResults is not set, DefaultRequestedMaxResultsParam is 3,
- * ServerMaxResultsParam is 5 and the results contain 10 items,
- * then these items will be reduced to the first 3 selected items.
+ * If PipelonlinelonQuelonry.relonquelonstelondMaxRelonsults is not selont, DelonfaultRelonquelonstelondMaxRelonsultsParam is 3,
+ * SelonrvelonrMaxRelonsultsParam is 5 and thelon relonsults contain 10 itelonms,
+ * thelonn thelonselon itelonms will belon relonducelond to thelon first 3 selonlelonctelond itelonms.
  *
- * Another example, if ServerMaxResultsParam is 5, PipelineQuery.requestedMaxResults is 8,
- * and the results contain 10 items, then these will be reduced to the first 5 selected items.
+ * Anothelonr elonxamplelon, if SelonrvelonrMaxRelonsultsParam is 5, PipelonlinelonQuelonry.relonquelonstelondMaxRelonsults is 8,
+ * and thelon relonsults contain 10 itelonms, thelonn thelonselon will belon relonducelond to thelon first 5 selonlelonctelond itelonms.
  *
- * The items inside the modules will not be affected by this selector.
+ * Thelon itelonms insidelon thelon modulelons will not belon affelonctelond by this selonlelonctor.
  */
-case class DropRequestedMaxResults(
-  defaultRequestedMaxResultsParam: BoundedParam[Int],
-  serverMaxResultsParam: BoundedParam[Int])
-    extends Selector[PipelineQuery] {
+caselon class DropRelonquelonstelondMaxRelonsults(
+  delonfaultRelonquelonstelondMaxRelonsultsParam: BoundelondParam[Int],
+  selonrvelonrMaxRelonsultsParam: BoundelondParam[Int])
+    elonxtelonnds Selonlelonctor[PipelonlinelonQuelonry] {
 
-  override val pipelineScope: CandidateScope = AllPipelines
+  ovelonrridelon val pipelonlinelonScopelon: CandidatelonScopelon = AllPipelonlinelons
 
-  override def apply(
-    query: PipelineQuery,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
-  ): SelectorResult = {
-    val requestedMaxResults = query.maxResults(defaultRequestedMaxResultsParam)
-    val serverMaxResults = query.params(serverMaxResultsParam)
-    assert(requestedMaxResults > 0, "Requested max results must be greater than zero")
-    assert(serverMaxResults > 0, "Server max results must be greater than zero")
+  ovelonrridelon delonf apply(
+    quelonry: PipelonlinelonQuelonry,
+    relonmainingCandidatelons: Selonq[CandidatelonWithDelontails],
+    relonsult: Selonq[CandidatelonWithDelontails]
+  ): SelonlelonctorRelonsult = {
+    val relonquelonstelondMaxRelonsults = quelonry.maxRelonsults(delonfaultRelonquelonstelondMaxRelonsultsParam)
+    val selonrvelonrMaxRelonsults = quelonry.params(selonrvelonrMaxRelonsultsParam)
+    asselonrt(relonquelonstelondMaxRelonsults > 0, "Relonquelonstelond max relonsults must belon grelonatelonr than zelonro")
+    asselonrt(selonrvelonrMaxRelonsults > 0, "Selonrvelonr max relonsults must belon grelonatelonr than zelonro")
 
-    val appliedMaxResults = Math.min(requestedMaxResults, serverMaxResults)
-    val resultUpdated = DropSelector.takeUntil(appliedMaxResults, result)
+    val applielondMaxRelonsults = Math.min(relonquelonstelondMaxRelonsults, selonrvelonrMaxRelonsults)
+    val relonsultUpdatelond = DropSelonlelonctor.takelonUntil(applielondMaxRelonsults, relonsult)
 
-    SelectorResult(remainingCandidates = remainingCandidates, result = resultUpdated)
+    SelonlelonctorRelonsult(relonmainingCandidatelons = relonmainingCandidatelons, relonsult = relonsultUpdatelond)
   }
 }

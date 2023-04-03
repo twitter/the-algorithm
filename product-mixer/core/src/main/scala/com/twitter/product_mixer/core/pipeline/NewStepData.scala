@@ -1,13 +1,13 @@
-package com.twitter.product_mixer.core.pipeline
+packagelon com.twittelonr.product_mixelonr.corelon.pipelonlinelon
 
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.pipeline.state.HasExecutorResults
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.PipelonlinelonFailurelon
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.statelon.HaselonxeloncutorRelonsults
 
-case class NewStepData[State <: HasExecutorResults[State]](
-  pipelineState: State,
-  pipelineFailure: Option[PipelineFailure] = None) {
+caselon class NelonwStelonpData[Statelon <: HaselonxeloncutorRelonsults[Statelon]](
+  pipelonlinelonStatelon: Statelon,
+  pipelonlinelonFailurelon: Option[PipelonlinelonFailurelon] = Nonelon) {
 
-  val stopExecuting = pipelineFailure.isDefined
-  def withFailure(failure: PipelineFailure): NewStepData[State] =
-    this.copy(pipelineFailure = Some(failure))
+  val stopelonxeloncuting = pipelonlinelonFailurelon.isDelonfinelond
+  delonf withFailurelon(failurelon: PipelonlinelonFailurelon): NelonwStelonpData[Statelon] =
+    this.copy(pipelonlinelonFailurelon = Somelon(failurelon))
 }

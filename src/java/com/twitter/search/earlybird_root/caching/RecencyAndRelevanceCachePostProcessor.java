@@ -1,66 +1,66 @@
-package com.twitter.search.earlybird_root.caching;
+packagelon com.twittelonr.selonarch.elonarlybird_root.caching;
 
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
+import com.googlelon.common.baselon.Optional;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.search.common.caching.CacheUtil;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.queryparser.query.Query;
-import com.twitter.search.queryparser.query.QueryParserException;
-import com.twitter.search.queryparser.util.IdTimeRanges;
+import com.twittelonr.selonarch.common.caching.CachelonUtil;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonquelonst;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
+import com.twittelonr.selonarch.elonarlybird_root.common.elonarlybirdRelonquelonstContelonxt;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.Quelonry;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.QuelonryParselonrelonxcelonption;
+import com.twittelonr.selonarch.quelonryparselonr.util.IdTimelonRangelons;
 
-public class RecencyAndRelevanceCachePostProcessor extends EarlybirdCachePostProcessor {
+public class ReloncelonncyAndRelonlelonvancelonCachelonPostProcelonssor elonxtelonnds elonarlybirdCachelonPostProcelonssor {
 
-  private static final Logger LOG =
-      LoggerFactory.getLogger(RecencyAndRelevanceCachePostProcessor.class);
+  privatelon static final Loggelonr LOG =
+      LoggelonrFactory.gelontLoggelonr(ReloncelonncyAndRelonlelonvancelonCachelonPostProcelonssor.class);
 
-  protected Optional<EarlybirdResponse> postProcessCacheResponse(
-      EarlybirdRequest earlybirdRequest,
-      EarlybirdResponse earlybirdResponse, long sinceID, long maxID) {
-    return CacheUtil.postProcessCacheResult(
-        earlybirdRequest, earlybirdResponse, sinceID, maxID);
+  protelonctelond Optional<elonarlybirdRelonsponselon> postProcelonssCachelonRelonsponselon(
+      elonarlybirdRelonquelonst elonarlybirdRelonquelonst,
+      elonarlybirdRelonsponselon elonarlybirdRelonsponselon, long sincelonID, long maxID) {
+    relonturn CachelonUtil.postProcelonssCachelonRelonsult(
+        elonarlybirdRelonquelonst, elonarlybirdRelonsponselon, sincelonID, maxID);
   }
 
-  @Override
-  public final Optional<EarlybirdResponse> processCacheResponse(
-      EarlybirdRequestContext requestContext,
-      EarlybirdResponse cacheResponse) {
-    EarlybirdRequest originalRequest = requestContext.getRequest();
-    Preconditions.checkArgument(originalRequest.isSetSearchQuery());
+  @Ovelonrridelon
+  public final Optional<elonarlybirdRelonsponselon> procelonssCachelonRelonsponselon(
+      elonarlybirdRelonquelonstContelonxt relonquelonstContelonxt,
+      elonarlybirdRelonsponselon cachelonRelonsponselon) {
+    elonarlybirdRelonquelonst originalRelonquelonst = relonquelonstContelonxt.gelontRelonquelonst();
+    Prelonconditions.chelonckArgumelonnt(originalRelonquelonst.isSelontSelonarchQuelonry());
 
-    IdTimeRanges ranges;
-    Query query = requestContext.getParsedQuery();
-    if (query != null) {
+    IdTimelonRangelons rangelons;
+    Quelonry quelonry = relonquelonstContelonxt.gelontParselondQuelonry();
+    if (quelonry != null) {
       try {
-        ranges = IdTimeRanges.fromQuery(query);
-      } catch (QueryParserException e) {
-        LOG.error(
-            "Exception when parsing since and max IDs. Request: {} Response: {}",
-            originalRequest,
-            cacheResponse,
-            e);
-        return Optional.absent();
+        rangelons = IdTimelonRangelons.fromQuelonry(quelonry);
+      } catch (QuelonryParselonrelonxcelonption elon) {
+        LOG.elonrror(
+            "elonxcelonption whelonn parsing sincelon and max IDs. Relonquelonst: {} Relonsponselon: {}",
+            originalRelonquelonst,
+            cachelonRelonsponselon,
+            elon);
+        relonturn Optional.abselonnt();
       }
-    } else {
-      ranges = null;
+    } elonlselon {
+      rangelons = null;
     }
 
-    Optional<Long> sinceID;
+    Optional<Long> sincelonID;
     Optional<Long> maxID;
-    if (ranges != null) {
-      sinceID = ranges.getSinceIDExclusive();
-      maxID = ranges.getMaxIDInclusive();
-    } else {
-      sinceID = Optional.absent();
-      maxID = Optional.absent();
+    if (rangelons != null) {
+      sincelonID = rangelons.gelontSincelonIDelonxclusivelon();
+      maxID = rangelons.gelontMaxIDInclusivelon();
+    } elonlselon {
+      sincelonID = Optional.abselonnt();
+      maxID = Optional.abselonnt();
     }
 
-    return postProcessCacheResponse(
-        originalRequest, cacheResponse, sinceID.or(0L), maxID.or(Long.MAX_VALUE));
+    relonturn postProcelonssCachelonRelonsponselon(
+        originalRelonquelonst, cachelonRelonsponselon, sincelonID.or(0L), maxID.or(Long.MAX_VALUelon));
   }
 }

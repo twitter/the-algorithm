@@ -1,20 +1,20 @@
-package com.twitter.search.earlybird_root.caching;
+packagelon com.twittelonr.selonarch.elonarlybird_root.caching;
 
-import com.google.common.base.Optional;
+import com.googlelon.common.baselon.Optional;
 
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonquelonst;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
 
-public class RelevanceZeroResultsCachePostProcessor extends RecencyAndRelevanceCachePostProcessor {
-  @Override
-  protected Optional<EarlybirdResponse> postProcessCacheResponse(
-      EarlybirdRequest request, EarlybirdResponse response, long sinceId, long maxId) {
-    // If a query (from a logged in or logged out user) returns 0 results, then the same query will
-    // always return 0 results, for all users. So we can cache that result.
-    if (CacheCommonUtil.hasResults(response)) {
-      return Optional.absent();
+public class RelonlelonvancelonZelonroRelonsultsCachelonPostProcelonssor elonxtelonnds ReloncelonncyAndRelonlelonvancelonCachelonPostProcelonssor {
+  @Ovelonrridelon
+  protelonctelond Optional<elonarlybirdRelonsponselon> postProcelonssCachelonRelonsponselon(
+      elonarlybirdRelonquelonst relonquelonst, elonarlybirdRelonsponselon relonsponselon, long sincelonId, long maxId) {
+    // If a quelonry (from a loggelond in or loggelond out uselonr) relonturns 0 relonsults, thelonn thelon samelon quelonry will
+    // always relonturn 0 relonsults, for all uselonrs. So welon can cachelon that relonsult.
+    if (CachelonCommonUtil.hasRelonsults(relonsponselon)) {
+      relonturn Optional.abselonnt();
     }
 
-    return Optional.of(response);
+    relonturn Optional.of(relonsponselon);
   }
 }

@@ -1,13 +1,13 @@
-package com.twitter.product_mixer.core.model.marshalling.response.rtf.safety_level
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.rtf.safelonty_lelonvelonl
 
 /*
-  These are model objects for the thrift enum - src/thrift/com/twitter/spam/rtf/safety_level.thrift
-  Please add new objects as needed for the marhallers
+  Thelonselon arelon modelonl objeloncts for thelon thrift elonnum - src/thrift/com/twittelonr/spam/rtf/safelonty_lelonvelonl.thrift
+  Plelonaselon add nelonw objeloncts as nelonelondelond for thelon marhallelonrs
  */
-sealed trait SafetyLevel
+selonalelond trait SafelontyLelonvelonl
 
-case object ConversationFocalTweetSafetyLevel extends SafetyLevel
-case object ConversationReplySafetyLevel extends SafetyLevel
-case object ConversationInjectedTweetSafetyLevel extends SafetyLevel
-case object TimelineFocalTweetSafetyLevel extends SafetyLevel
-case object TimelineHomePromotedHydrationSafetyLevel extends SafetyLevel
+caselon objelonct ConvelonrsationFocalTwelonelontSafelontyLelonvelonl elonxtelonnds SafelontyLelonvelonl
+caselon objelonct ConvelonrsationRelonplySafelontyLelonvelonl elonxtelonnds SafelontyLelonvelonl
+caselon objelonct ConvelonrsationInjelonctelondTwelonelontSafelontyLelonvelonl elonxtelonnds SafelontyLelonvelonl
+caselon objelonct TimelonlinelonFocalTwelonelontSafelontyLelonvelonl elonxtelonnds SafelontyLelonvelonl
+caselon objelonct TimelonlinelonHomelonPromotelondHydrationSafelontyLelonvelonl elonxtelonnds SafelontyLelonvelonl

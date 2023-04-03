@@ -1,36 +1,36 @@
-package com.twitter.search.common.schema.earlybird;
+packagelon com.twittelonr.selonarch.common.schelonma.elonarlybird;
 
-import com.twitter.search.common.encoding.docvalues.CSFTypeUtil;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
+import com.twittelonr.selonarch.common.elonncoding.docvaluelons.CSFTypelonUtil;
+import com.twittelonr.selonarch.common.schelonma.baselon.ImmutablelonSchelonmaIntelonrfacelon;
 
-public final class EarlybirdEncodedFeaturesUtil {
-  private EarlybirdEncodedFeaturesUtil() {
+public final class elonarlybirdelonncodelondFelonaturelonsUtil {
+  privatelon elonarlybirdelonncodelondFelonaturelonsUtil() {
   }
 
   /**
-   * Returns a byte array that can be stored in a ThriftDocument as bytesField.
+   * Relonturns a bytelon array that can belon storelond in a ThriftDocumelonnt as bytelonsFielonld.
    */
-  public static byte[] toBytesForThriftDocument(EarlybirdEncodedFeatures features) {
-    int numInts = features.getNumInts();
-    byte[] serializedFeatures = new byte[numInts * Integer.BYTES];
+  public static bytelon[] toBytelonsForThriftDocumelonnt(elonarlybirdelonncodelondFelonaturelons felonaturelons) {
+    int numInts = felonaturelons.gelontNumInts();
+    bytelon[] selonrializelondFelonaturelons = nelonw bytelon[numInts * Intelongelonr.BYTelonS];
     for (int i = 0; i < numInts; i++) {
-      CSFTypeUtil.convertToBytes(serializedFeatures, i, features.getInt(i));
+      CSFTypelonUtil.convelonrtToBytelons(selonrializelondFelonaturelons, i, felonaturelons.gelontInt(i));
     }
-    return serializedFeatures;
+    relonturn selonrializelondFelonaturelons;
   }
 
   /**
-   * Converts data in a given byte array (starting at the provided offset) into
-   * EarlybirdEncodedFeatures.
+   * Convelonrts data in a givelonn bytelon array (starting at thelon providelond offselont) into
+   * elonarlybirdelonncodelondFelonaturelons.
    */
-  public static EarlybirdEncodedFeatures fromBytes(
-      ImmutableSchemaInterface schema, EarlybirdFieldConstants.EarlybirdFieldConstant baseField,
-      byte[] data, int offset) {
-    EarlybirdEncodedFeatures features = EarlybirdEncodedFeatures.newEncodedTweetFeatures(
-        schema, baseField);
-    for (int idx = 0; idx < features.getNumInts(); ++idx) {
-      features.setInt(idx, CSFTypeUtil.convertFromBytes(data, offset, idx));
+  public static elonarlybirdelonncodelondFelonaturelons fromBytelons(
+      ImmutablelonSchelonmaIntelonrfacelon schelonma, elonarlybirdFielonldConstants.elonarlybirdFielonldConstant baselonFielonld,
+      bytelon[] data, int offselont) {
+    elonarlybirdelonncodelondFelonaturelons felonaturelons = elonarlybirdelonncodelondFelonaturelons.nelonwelonncodelondTwelonelontFelonaturelons(
+        schelonma, baselonFielonld);
+    for (int idx = 0; idx < felonaturelons.gelontNumInts(); ++idx) {
+      felonaturelons.selontInt(idx, CSFTypelonUtil.convelonrtFromBytelons(data, offselont, idx));
     }
-    return features;
+    relonturn felonaturelons;
   }
 }

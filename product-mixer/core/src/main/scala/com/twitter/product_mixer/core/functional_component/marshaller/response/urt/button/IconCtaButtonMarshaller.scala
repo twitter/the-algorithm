@@ -1,21 +1,21 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.button
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.button
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.icon.HorizonIconMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.UrlMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.button.IconCtaButton
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.icon.HorizonIconMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.melontadata.UrlMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.button.IconCtaButton
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class IconCtaButtonMarshaller @Inject() (
-  horizonIconMarshaller: HorizonIconMarshaller,
-  urlMarshaller: UrlMarshaller) {
+@Singlelonton
+class IconCtaButtonMarshallelonr @Injelonct() (
+  horizonIconMarshallelonr: HorizonIconMarshallelonr,
+  urlMarshallelonr: UrlMarshallelonr) {
 
-  def apply(iconCtaButton: IconCtaButton): urt.IconCtaButton =
+  delonf apply(iconCtaButton: IconCtaButton): urt.IconCtaButton =
     urt.IconCtaButton(
-      buttonIcon = horizonIconMarshaller(iconCtaButton.buttonIcon),
-      accessibilityLabel = iconCtaButton.accessibilityLabel,
-      url = urlMarshaller(iconCtaButton.url)
+      buttonIcon = horizonIconMarshallelonr(iconCtaButton.buttonIcon),
+      accelonssibilityLabelonl = iconCtaButton.accelonssibilityLabelonl,
+      url = urlMarshallelonr(iconCtaButton.url)
     )
 }

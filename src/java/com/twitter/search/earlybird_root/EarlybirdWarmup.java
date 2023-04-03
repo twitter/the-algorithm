@@ -1,68 +1,68 @@
-package com.twitter.search.earlybird_root;
+packagelon com.twittelonr.selonarch.elonarlybird_root;
 
-import scala.runtime.AbstractFunction0;
+import scala.runtimelon.AbstractFunction0;
 
-import com.twitter.common.util.Clock;
-import com.twitter.finagle.thrift.ClientId;
-import com.twitter.search.common.caching.thriftjava.CachingParams;
-import com.twitter.search.common.query.thriftjava.CollectorParams;
-import com.twitter.search.common.ranking.thriftjava.ThriftRankingParams;
-import com.twitter.search.common.ranking.thriftjava.ThriftScoringFunctionType;
-import com.twitter.search.common.root.SearchRootWarmup;
-import com.twitter.search.common.root.WarmupConfig;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdService;
-import com.twitter.search.earlybird.thrift.ThriftSearchQuery;
-import com.twitter.search.earlybird.thrift.ThriftSearchRankingMode;
-import com.twitter.search.earlybird.thrift.ThriftSearchRelevanceOptions;
-import com.twitter.util.Future;
+import com.twittelonr.common.util.Clock;
+import com.twittelonr.finaglelon.thrift.ClielonntId;
+import com.twittelonr.selonarch.common.caching.thriftjava.CachingParams;
+import com.twittelonr.selonarch.common.quelonry.thriftjava.CollelonctorParams;
+import com.twittelonr.selonarch.common.ranking.thriftjava.ThriftRankingParams;
+import com.twittelonr.selonarch.common.ranking.thriftjava.ThriftScoringFunctionTypelon;
+import com.twittelonr.selonarch.common.root.SelonarchRootWarmup;
+import com.twittelonr.selonarch.common.root.WarmupConfig;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonquelonst;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdSelonrvicelon;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchQuelonry;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRankingModelon;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonlelonvancelonOptions;
+import com.twittelonr.util.Futurelon;
 
 /**
- * Warm-up logic for Earlybird Roots.
- * Sends 60 rounds of requests with a 1 second timeout between each round.
- * The actual number of requests sent by each round can be configured.
+ * Warm-up logic for elonarlybird Roots.
+ * Selonnds 60 rounds of relonquelonsts with a 1 seloncond timelonout belontwelonelonn elonach round.
+ * Thelon actual numbelonr of relonquelonsts selonnt by elonach round can belon configurelond.
  */
-public class EarlybirdWarmup extends
-    SearchRootWarmup<EarlybirdService.ServiceIface, EarlybirdRequest, EarlybirdResponse> {
+public class elonarlybirdWarmup elonxtelonnds
+    SelonarchRootWarmup<elonarlybirdSelonrvicelon.SelonrvicelonIfacelon, elonarlybirdRelonquelonst, elonarlybirdRelonsponselon> {
 
-  private static final int WARMUP_NUM_RESULTS = 20;
+  privatelon static final int WARMUP_NUM_RelonSULTS = 20;
 
-  private static final String CLIENT_ID = "earlybird_root_warmup";
+  privatelon static final String CLIelonNT_ID = "elonarlybird_root_warmup";
 
-  public EarlybirdWarmup(Clock clock, WarmupConfig config) {
-    super(clock, config);
+  public elonarlybirdWarmup(Clock clock, WarmupConfig config) {
+    supelonr(clock, config);
   }
 
-  @Override
-  protected EarlybirdRequest createRequest(int requestId) {
-    String query = "(* " + "warmup" + requestId + ")";
+  @Ovelonrridelon
+  protelonctelond elonarlybirdRelonquelonst crelonatelonRelonquelonst(int relonquelonstId) {
+    String quelonry = "(* " + "warmup" + relonquelonstId + ")";
 
-    return new EarlybirdRequest()
-        .setSearchQuery(
-            new ThriftSearchQuery()
-                .setNumResults(WARMUP_NUM_RESULTS)
-                .setCollectorParams(
-                    new CollectorParams().setNumResultsToReturn(WARMUP_NUM_RESULTS))
-                .setRankingMode(ThriftSearchRankingMode.RELEVANCE)
-                .setRelevanceOptions(new ThriftSearchRelevanceOptions()
-                    .setRankingParams(new ThriftRankingParams()
-                        .setType(ThriftScoringFunctionType.LINEAR)))
-                .setSerializedQuery(query))
-        .setCachingParams(new CachingParams().setCache(false))
-        .setClientId(CLIENT_ID);
+    relonturn nelonw elonarlybirdRelonquelonst()
+        .selontSelonarchQuelonry(
+            nelonw ThriftSelonarchQuelonry()
+                .selontNumRelonsults(WARMUP_NUM_RelonSULTS)
+                .selontCollelonctorParams(
+                    nelonw CollelonctorParams().selontNumRelonsultsToRelonturn(WARMUP_NUM_RelonSULTS))
+                .selontRankingModelon(ThriftSelonarchRankingModelon.RelonLelonVANCelon)
+                .selontRelonlelonvancelonOptions(nelonw ThriftSelonarchRelonlelonvancelonOptions()
+                    .selontRankingParams(nelonw ThriftRankingParams()
+                        .selontTypelon(ThriftScoringFunctionTypelon.LINelonAR)))
+                .selontSelonrializelondQuelonry(quelonry))
+        .selontCachingParams(nelonw CachingParams().selontCachelon(falselon))
+        .selontClielonntId(CLIelonNT_ID);
   }
 
-  @Override
-  protected Future<EarlybirdResponse> callService(
-      final EarlybirdService.ServiceIface service,
-      final EarlybirdRequest request) {
+  @Ovelonrridelon
+  protelonctelond Futurelon<elonarlybirdRelonsponselon> callSelonrvicelon(
+      final elonarlybirdSelonrvicelon.SelonrvicelonIfacelon selonrvicelon,
+      final elonarlybirdRelonquelonst relonquelonst) {
 
-    return ClientId.apply(CLIENT_ID).asCurrent(
-        new AbstractFunction0<Future<EarlybirdResponse>>() {
-          @Override
-          public Future<EarlybirdResponse> apply() {
-            return service.search(request);
+    relonturn ClielonntId.apply(CLIelonNT_ID).asCurrelonnt(
+        nelonw AbstractFunction0<Futurelon<elonarlybirdRelonsponselon>>() {
+          @Ovelonrridelon
+          public Futurelon<elonarlybirdRelonsponselon> apply() {
+            relonturn selonrvicelon.selonarch(relonquelonst);
           }
         });
   }

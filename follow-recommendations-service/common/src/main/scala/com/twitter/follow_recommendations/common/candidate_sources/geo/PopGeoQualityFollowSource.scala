@@ -1,99 +1,99 @@
-package com.twitter.follow_recommendations.common.candidate_sources.geo
-import com.google.inject.Singleton
-import com.twitter.escherbird.util.stitchcache.StitchCache
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.models.AccountProof
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.PopularInGeoProof
-import com.twitter.follow_recommendations.common.models.Reason
-import com.twitter.hermit.model.Algorithm
-import com.twitter.hermit.pop_geo.thriftscala.PopUsersInPlace
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.stitch.Stitch
-import com.twitter.strato.generated.client.onboarding.userrecs.UniquePopQualityFollowUsersInPlaceClientColumn
-import com.twitter.util.Duration
-import javax.inject.Inject
+packagelon com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.gelono
+import com.googlelon.injelonct.Singlelonton
+import com.twittelonr.elonschelonrbird.util.stitchcachelon.StitchCachelon
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.AccountProof
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.CandidatelonUselonr
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.PopularInGelonoProof
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.Relonason
+import com.twittelonr.helonrmit.modelonl.Algorithm
+import com.twittelonr.helonrmit.pop_gelono.thriftscala.PopUselonrsInPlacelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.CandidatelonSourcelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonSourcelonIdelonntifielonr
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.strato.gelonnelonratelond.clielonnt.onboarding.uselonrreloncs.UniquelonPopQualityFollowUselonrsInPlacelonClielonntColumn
+import com.twittelonr.util.Duration
+import javax.injelonct.Injelonct
 
-@Singleton
-class PopGeohashQualityFollowSource @Inject() (
-  popGeoSource: PopGeoQualityFollowSource,
-  statsReceiver: StatsReceiver)
-    extends BasePopGeohashSource(
-      popGeoSource = popGeoSource,
-      statsReceiver = statsReceiver.scope("PopGeohashQualityFollowSource"),
+@Singlelonton
+class PopGelonohashQualityFollowSourcelon @Injelonct() (
+  popGelonoSourcelon: PopGelonoQualityFollowSourcelon,
+  statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds BaselonPopGelonohashSourcelon(
+      popGelonoSourcelon = popGelonoSourcelon,
+      statsReloncelonivelonr = statsReloncelonivelonr.scopelon("PopGelonohashQualityFollowSourcelon"),
     ) {
-  override val identifier: CandidateSourceIdentifier = PopGeohashQualityFollowSource.Identifier
-  override def maxResults(target: Target): Int = {
-    target.params(PopGeoQualityFollowSourceParams.PopGeoSourceMaxResultsPerPrecision)
+  ovelonrridelon val idelonntifielonr: CandidatelonSourcelonIdelonntifielonr = PopGelonohashQualityFollowSourcelon.Idelonntifielonr
+  ovelonrridelon delonf maxRelonsults(targelont: Targelont): Int = {
+    targelont.params(PopGelonoQualityFollowSourcelonParams.PopGelonoSourcelonMaxRelonsultsPelonrPreloncision)
   }
-  override def minGeohashLength(target: Target): Int = {
-    target.params(PopGeoQualityFollowSourceParams.PopGeoSourceGeoHashMinPrecision)
+  ovelonrridelon delonf minGelonohashLelonngth(targelont: Targelont): Int = {
+    targelont.params(PopGelonoQualityFollowSourcelonParams.PopGelonoSourcelonGelonoHashMinPreloncision)
   }
-  override def maxGeohashLength(target: Target): Int = {
-    target.params(PopGeoQualityFollowSourceParams.PopGeoSourceGeoHashMaxPrecision)
+  ovelonrridelon delonf maxGelonohashLelonngth(targelont: Targelont): Int = {
+    targelont.params(PopGelonoQualityFollowSourcelonParams.PopGelonoSourcelonGelonoHashMaxPreloncision)
   }
-  override def returnResultFromAllPrecision(target: Target): Boolean = {
-    target.params(PopGeoQualityFollowSourceParams.PopGeoSourceReturnFromAllPrecisions)
+  ovelonrridelon delonf relonturnRelonsultFromAllPreloncision(targelont: Targelont): Boolelonan = {
+    targelont.params(PopGelonoQualityFollowSourcelonParams.PopGelonoSourcelonRelonturnFromAllPreloncisions)
   }
-  override def candidateSourceEnabled(target: Target): Boolean = {
-    target.params(PopGeoQualityFollowSourceParams.CandidateSourceEnabled)
+  ovelonrridelon delonf candidatelonSourcelonelonnablelond(targelont: Targelont): Boolelonan = {
+    targelont.params(PopGelonoQualityFollowSourcelonParams.CandidatelonSourcelonelonnablelond)
   }
 }
 
-object PopGeohashQualityFollowSource {
-  val Identifier: CandidateSourceIdentifier = CandidateSourceIdentifier(
-    Algorithm.PopGeohashQualityFollow.toString)
+objelonct PopGelonohashQualityFollowSourcelon {
+  val Idelonntifielonr: CandidatelonSourcelonIdelonntifielonr = CandidatelonSourcelonIdelonntifielonr(
+    Algorithm.PopGelonohashQualityFollow.toString)
 }
 
-object PopGeoQualityFollowSource {
-  val MaxCacheSize = 20000
-  val CacheTTL: Duration = Duration.fromHours(24)
-  val MaxResults = 200
+objelonct PopGelonoQualityFollowSourcelon {
+  val MaxCachelonSizelon = 20000
+  val CachelonTTL: Duration = Duration.fromHours(24)
+  val MaxRelonsults = 200
 }
 
-@Singleton
-class PopGeoQualityFollowSource @Inject() (
-  popGeoQualityFollowClientColumn: UniquePopQualityFollowUsersInPlaceClientColumn,
-  statsReceiver: StatsReceiver,
-) extends CandidateSource[String, CandidateUser] {
+@Singlelonton
+class PopGelonoQualityFollowSourcelon @Injelonct() (
+  popGelonoQualityFollowClielonntColumn: UniquelonPopQualityFollowUselonrsInPlacelonClielonntColumn,
+  statsReloncelonivelonr: StatsReloncelonivelonr,
+) elonxtelonnds CandidatelonSourcelon[String, CandidatelonUselonr] {
 
-  /** @see [[CandidateSourceIdentifier]] */
-  override val identifier: CandidateSourceIdentifier = CandidateSourceIdentifier(
-    "PopGeoQualityFollowSource")
+  /** @selonelon [[CandidatelonSourcelonIdelonntifielonr]] */
+  ovelonrridelon val idelonntifielonr: CandidatelonSourcelonIdelonntifielonr = CandidatelonSourcelonIdelonntifielonr(
+    "PopGelonoQualityFollowSourcelon")
 
-  private val cache = StitchCache[String, Option[PopUsersInPlace]](
-    maxCacheSize = PopGeoQualityFollowSource.MaxCacheSize,
-    ttl = PopGeoQualityFollowSource.CacheTTL,
-    statsReceiver = statsReceiver.scope(identifier.name, "cache"),
-    underlyingCall = (k: String) => {
-      popGeoQualityFollowClientColumn.fetcher
-        .fetch(k)
-        .map { result => result.v }
+  privatelon val cachelon = StitchCachelon[String, Option[PopUselonrsInPlacelon]](
+    maxCachelonSizelon = PopGelonoQualityFollowSourcelon.MaxCachelonSizelon,
+    ttl = PopGelonoQualityFollowSourcelon.CachelonTTL,
+    statsReloncelonivelonr = statsReloncelonivelonr.scopelon(idelonntifielonr.namelon, "cachelon"),
+    undelonrlyingCall = (k: String) => {
+      popGelonoQualityFollowClielonntColumn.felontchelonr
+        .felontch(k)
+        .map { relonsult => relonsult.v }
     }
   )
 
-  override def apply(target: String): Stitch[Seq[CandidateUser]] = {
-    val result: Stitch[Option[PopUsersInPlace]] = cache.readThrough(target)
-    result.map { pu =>
-      pu.map { candidates =>
-          candidates.popUsers.sortBy(-_.score).take(PopGeoQualityFollowSource.MaxResults).map {
-            candidate =>
-              CandidateUser(
-                id = candidate.userId,
-                score = Some(candidate.score),
-                reason = Some(
-                  Reason(
-                    Some(
+  ovelonrridelon delonf apply(targelont: String): Stitch[Selonq[CandidatelonUselonr]] = {
+    val relonsult: Stitch[Option[PopUselonrsInPlacelon]] = cachelon.relonadThrough(targelont)
+    relonsult.map { pu =>
+      pu.map { candidatelons =>
+          candidatelons.popUselonrs.sortBy(-_.scorelon).takelon(PopGelonoQualityFollowSourcelon.MaxRelonsults).map {
+            candidatelon =>
+              CandidatelonUselonr(
+                id = candidatelon.uselonrId,
+                scorelon = Somelon(candidatelon.scorelon),
+                relonason = Somelon(
+                  Relonason(
+                    Somelon(
                       AccountProof(
-                        popularInGeoProof = Some(PopularInGeoProof(location = candidates.place))
+                        popularInGelonoProof = Somelon(PopularInGelonoProof(location = candidatelons.placelon))
                       )
                     )
                   )
                 )
               )
           }
-        }.getOrElse(Nil)
+        }.gelontOrelonlselon(Nil)
     }
   }
 }

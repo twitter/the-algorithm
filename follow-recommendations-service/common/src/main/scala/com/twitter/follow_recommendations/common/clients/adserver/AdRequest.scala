@@ -1,45 +1,45 @@
-package com.twitter.follow_recommendations.common.clients.adserver
+packagelon com.twittelonr.follow_reloncommelonndations.common.clielonnts.adselonrvelonr
 
-import com.twitter.adserver.{thriftscala => t}
-import com.twitter.follow_recommendations.common.models.DisplayLocation
-import com.twitter.product_mixer.core.model.marshalling.request.ClientContext
+import com.twittelonr.adselonrvelonr.{thriftscala => t}
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.DisplayLocation
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.ClielonntContelonxt
 
-case class AdRequest(
-  clientContext: ClientContext,
+caselon class AdRelonquelonst(
+  clielonntContelonxt: ClielonntContelonxt,
   displayLocation: DisplayLocation,
-  isTest: Option[Boolean],
-  profileUserId: Option[Long]) {
-  def toThrift: t.AdRequestParams = {
+  isTelonst: Option[Boolelonan],
+  profilelonUselonrId: Option[Long]) {
+  delonf toThrift: t.AdRelonquelonstParams = {
 
-    val request = t.AdRequest(
-      displayLocation = displayLocation.toAdDisplayLocation.getOrElse(
-        throw new MissingAdDisplayLocation(displayLocation)),
-      isTest = isTest,
-      countImpressionsOnCallback = Some(true),
-      numOrganicItems = Some(AdRequest.DefaultNumOrganicItems.toShort),
-      profileUserId = profileUserId
+    val relonquelonst = t.AdRelonquelonst(
+      displayLocation = displayLocation.toAdDisplayLocation.gelontOrelonlselon(
+        throw nelonw MissingAdDisplayLocation(displayLocation)),
+      isTelonst = isTelonst,
+      countImprelonssionsOnCallback = Somelon(truelon),
+      numOrganicItelonms = Somelon(AdRelonquelonst.DelonfaultNumOrganicItelonms.toShort),
+      profilelonUselonrId = profilelonUselonrId
     )
 
-    val clientInfo = t.ClientInfo(
-      clientId = clientContext.appId.map(_.toInt),
-      userIp = clientContext.ipAddress,
-      userId64 = clientContext.userId,
-      guestId = clientContext.guestId,
-      userAgent = clientContext.userAgent,
-      referrer = None,
-      deviceId = clientContext.deviceId,
-      languageCode = clientContext.languageCode,
-      countryCode = clientContext.countryCode
+    val clielonntInfo = t.ClielonntInfo(
+      clielonntId = clielonntContelonxt.appId.map(_.toInt),
+      uselonrIp = clielonntContelonxt.ipAddrelonss,
+      uselonrId64 = clielonntContelonxt.uselonrId,
+      guelonstId = clielonntContelonxt.guelonstId,
+      uselonrAgelonnt = clielonntContelonxt.uselonrAgelonnt,
+      relonfelonrrelonr = Nonelon,
+      delonvicelonId = clielonntContelonxt.delonvicelonId,
+      languagelonCodelon = clielonntContelonxt.languagelonCodelon,
+      countryCodelon = clielonntContelonxt.countryCodelon
     )
 
-    t.AdRequestParams(request, clientInfo)
+    t.AdRelonquelonstParams(relonquelonst, clielonntInfo)
   }
 }
 
-object AdRequest {
-  val DefaultNumOrganicItems = 10
+objelonct AdRelonquelonst {
+  val DelonfaultNumOrganicItelonms = 10
 }
 
 class MissingAdDisplayLocation(displayLocation: DisplayLocation)
-    extends Exception(
-      s"Display Location ${displayLocation.toString} has no mapped AdsDisplayLocation set.")
+    elonxtelonnds elonxcelonption(
+      s"Display Location ${displayLocation.toString} has no mappelond AdsDisplayLocation selont.")

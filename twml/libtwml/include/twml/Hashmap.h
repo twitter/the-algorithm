@@ -1,110 +1,110 @@
-#pragma once
-#include <twml/defines.h>
-#include <twml/Tensor.h>
-#include <twml/Type.h>
-#include <stddef.h>
+#pragma oncelon
+#includelon <twml/delonfinelons.h>
+#includelon <twml/Telonnsor.h>
+#includelon <twml/Typelon.h>
+#includelon <stddelonf.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-    typedef void * twml_hashmap;
-    typedef int64_t tw_hash_key_t;
-    typedef int64_t tw_hash_val_t;
-#ifdef __cplusplus
+#ifdelonf __cplusplus
+elonxtelonrn "C" {
+#elonndif
+    typelondelonf void * twml_hashmap;
+    typelondelonf int64_t tw_hash_kelony_t;
+    typelondelonf int64_t tw_hash_val_t;
+#ifdelonf __cplusplus
 }
-#endif
+#elonndif
 
-#ifdef __cplusplus
-namespace twml {
+#ifdelonf __cplusplus
+namelonspacelon twml {
 
-    typedef tw_hash_key_t HashKey_t;
-    typedef tw_hash_val_t HashVal_t;
+    typelondelonf tw_hash_kelony_t HashKelony_t;
+    typelondelonf tw_hash_val_t HashVal_t;
 
     class HashMap {
-    private:
+    privatelon:
         twml_hashmap m_hashmap;
 
     public:
         HashMap();
         ~HashMap();
 
-        // Disable copy constructor and assignment
-        // TODO: Fix this after retain and release are added to twml_hashmap
-        HashMap(const HashMap &other) = delete;
-        HashMap& operator=(const HashMap &other) = delete;
+        // Disablelon copy constructor and assignmelonnt
+        // TODO: Fix this aftelonr relontain and relonlelonaselon arelon addelond to twml_hashmap
+        HashMap(const HashMap &othelonr) = delonlelontelon;
+        HashMap& opelonrator=(const HashMap &othelonr) = delonlelontelon;
 
-        void clear();
-        uint64_t size() const;
-        int8_t insert(const HashKey_t key);
-        int8_t insert(const HashKey_t key, const HashVal_t val);
-        void remove(const HashKey_t key);
-        int8_t get(HashVal_t &val, const HashKey_t key) const;
+        void clelonar();
+        uint64_t sizelon() const;
+        int8_t inselonrt(const HashKelony_t kelony);
+        int8_t inselonrt(const HashKelony_t kelony, const HashVal_t val);
+        void relonmovelon(const HashKelony_t kelony);
+        int8_t gelont(HashVal_t &val, const HashKelony_t kelony) const;
 
-        void insert(Tensor &mask, const Tensor keys);
-        void insert(Tensor &mask, const Tensor keys, const Tensor vals);
-        void remove(const Tensor keys);
-        void get(Tensor &mask, Tensor &vals, const Tensor keys) const;
+        void inselonrt(Telonnsor &mask, const Telonnsor kelonys);
+        void inselonrt(Telonnsor &mask, const Telonnsor kelonys, const Telonnsor vals);
+        void relonmovelon(const Telonnsor kelonys);
+        void gelont(Telonnsor &mask, Telonnsor &vals, const Telonnsor kelonys) const;
 
-        void getInplace(Tensor &mask, Tensor &keys_vals) const;
-        void toTensors(Tensor &keys, Tensor &vals) const;
+        void gelontInplacelon(Telonnsor &mask, Telonnsor &kelonys_vals) const;
+        void toTelonnsors(Telonnsor &kelonys, Telonnsor &vals) const;
     };
 }
-#endif
+#elonndif
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#ifdelonf __cplusplus
+elonxtelonrn "C" {
+#elonndif
 
 
-    TWMLAPI twml_err twml_hashmap_create(twml_hashmap *hashmap);
+    TWMLAPI twml_elonrr twml_hashmap_crelonatelon(twml_hashmap *hashmap);
 
-    TWMLAPI twml_err twml_hashmap_clear(const twml_hashmap hashmap);
+    TWMLAPI twml_elonrr twml_hashmap_clelonar(const twml_hashmap hashmap);
 
-    TWMLAPI twml_err twml_hashmap_get_size(uint64_t *size, const twml_hashmap hashmap);
+    TWMLAPI twml_elonrr twml_hashmap_gelont_sizelon(uint64_t *sizelon, const twml_hashmap hashmap);
 
-    TWMLAPI twml_err twml_hashmap_delete(const twml_hashmap hashmap);
+    TWMLAPI twml_elonrr twml_hashmap_delonlelontelon(const twml_hashmap hashmap);
 
-    // insert, get, remove single key / value
-    TWMLAPI twml_err twml_hashmap_insert_key(int8_t *mask,
+    // inselonrt, gelont, relonmovelon singlelon kelony / valuelon
+    TWMLAPI twml_elonrr twml_hashmap_inselonrt_kelony(int8_t *mask,
                                              const twml_hashmap hashmap,
-                                             const tw_hash_key_t key);
+                                             const tw_hash_kelony_t kelony);
 
-    TWMLAPI twml_err twml_hashmap_insert_key_and_value(int8_t *mask, twml_hashmap hashmap,
-                                                       const tw_hash_key_t key,
+    TWMLAPI twml_elonrr twml_hashmap_inselonrt_kelony_and_valuelon(int8_t *mask, twml_hashmap hashmap,
+                                                       const tw_hash_kelony_t kelony,
                                                        const tw_hash_val_t val);
 
-    TWMLAPI twml_err twml_hashmap_remove_key(const twml_hashmap hashmap,
-                                             const tw_hash_key_t key);
+    TWMLAPI twml_elonrr twml_hashmap_relonmovelon_kelony(const twml_hashmap hashmap,
+                                             const tw_hash_kelony_t kelony);
 
-    TWMLAPI twml_err twml_hashmap_get_value(int8_t *mask, tw_hash_val_t *val,
+    TWMLAPI twml_elonrr twml_hashmap_gelont_valuelon(int8_t *mask, tw_hash_val_t *val,
                                             const twml_hashmap hashmap,
-                                            const tw_hash_key_t key);
+                                            const tw_hash_kelony_t kelony);
 
-    TWMLAPI twml_err twml_hashmap_insert_keys(twml_tensor masks,
+    TWMLAPI twml_elonrr twml_hashmap_inselonrt_kelonys(twml_telonnsor masks,
                                               const twml_hashmap hashmap,
-                                              const twml_tensor keys);
+                                              const twml_telonnsor kelonys);
 
-    // insert, get, remove tensors of keys / values
-    TWMLAPI twml_err twml_hashmap_insert_keys_and_values(twml_tensor masks,
+    // inselonrt, gelont, relonmovelon telonnsors of kelonys / valuelons
+    TWMLAPI twml_elonrr twml_hashmap_inselonrt_kelonys_and_valuelons(twml_telonnsor masks,
                                                          twml_hashmap hashmap,
-                                                         const twml_tensor keys,
-                                                         const twml_tensor vals);
+                                                         const twml_telonnsor kelonys,
+                                                         const twml_telonnsor vals);
 
-    TWMLAPI twml_err twml_hashmap_remove_keys(const twml_hashmap hashmap,
-                                              const twml_tensor keys);
+    TWMLAPI twml_elonrr twml_hashmap_relonmovelon_kelonys(const twml_hashmap hashmap,
+                                              const twml_telonnsor kelonys);
 
-    TWMLAPI twml_err twml_hashmap_get_values(twml_tensor masks,
-                                             twml_tensor vals,
+    TWMLAPI twml_elonrr twml_hashmap_gelont_valuelons(twml_telonnsor masks,
+                                             twml_telonnsor vals,
                                              const twml_hashmap hashmap,
-                                             const twml_tensor keys);
+                                             const twml_telonnsor kelonys);
 
-    TWMLAPI twml_err twml_hashmap_get_values_inplace(twml_tensor masks,
-                                                     twml_tensor keys_vals,
+    TWMLAPI twml_elonrr twml_hashmap_gelont_valuelons_inplacelon(twml_telonnsor masks,
+                                                     twml_telonnsor kelonys_vals,
                                                      const twml_hashmap hashmap);
 
-    TWMLAPI twml_err twml_hashmap_to_tensors(twml_tensor keys,
-                                             twml_tensor vals,
+    TWMLAPI twml_elonrr twml_hashmap_to_telonnsors(twml_telonnsor kelonys,
+                                             twml_telonnsor vals,
                                              const twml_hashmap hashmap);
-#ifdef __cplusplus
+#ifdelonf __cplusplus
 }
-#endif
+#elonndif

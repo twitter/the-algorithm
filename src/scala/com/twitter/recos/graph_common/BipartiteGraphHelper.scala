@@ -1,40 +1,40 @@
-package com.twitter.recos.graph_common
+packagelon com.twittelonr.reloncos.graph_common
 
-import com.twitter.graphjet.algorithms.TweetIDMask
-import com.twitter.graphjet.bipartite.api.BipartiteGraph
-import scala.collection.mutable.ListBuffer
+import com.twittelonr.graphjelont.algorithms.TwelonelontIDMask
+import com.twittelonr.graphjelont.bipartitelon.api.BipartitelonGraph
+import scala.collelonction.mutablelon.ListBuffelonr
 
 /*
- * The helper class encodes and decodes tweet ids with tweetypie's card information
- * when querying recos salsa library. Inside salsa library, all tweet ids are
- * encoded with card information for the purpose of inline filtering.
+ * Thelon helonlpelonr class elonncodelons and deloncodelons twelonelont ids with twelonelontypielon's card information
+ * whelonn quelonrying reloncos salsa library. Insidelon salsa library, all twelonelont ids arelon
+ * elonncodelond with card information for thelon purposelon of inlinelon filtelonring.
  */
-class BipartiteGraphHelper(graph: BipartiteGraph) {
-  private val tweetIDMask = new TweetIDMask
+class BipartitelonGraphHelonlpelonr(graph: BipartitelonGraph) {
+  privatelon val twelonelontIDMask = nelonw TwelonelontIDMask
 
-  def getLeftNodeEdges(leftNode: Long): Seq[(Long, Byte)] = {
-    val iterator = graph.getLeftNodeEdges(leftNode)
+  delonf gelontLelonftNodelonelondgelons(lelonftNodelon: Long): Selonq[(Long, Bytelon)] = {
+    val itelonrator = graph.gelontLelonftNodelonelondgelons(lelonftNodelon)
 
-    val edges: ListBuffer[(Long, Byte)] = ListBuffer()
-    if (iterator != null) {
-      while (iterator.hasNext) {
-        val node = iterator.nextLong()
-        val engagementType = iterator.currentEdgeType()
-        edges += ((tweetIDMask.restore(node), engagementType))
+    val elondgelons: ListBuffelonr[(Long, Bytelon)] = ListBuffelonr()
+    if (itelonrator != null) {
+      whilelon (itelonrator.hasNelonxt) {
+        val nodelon = itelonrator.nelonxtLong()
+        val elonngagelonmelonntTypelon = itelonrator.currelonntelondgelonTypelon()
+        elondgelons += ((twelonelontIDMask.relonstorelon(nodelon), elonngagelonmelonntTypelon))
       }
     }
-    edges.reverse.distinct // Most recent edges first, no duplications
+    elondgelons.relonvelonrselon.distinct // Most reloncelonnt elondgelons first, no duplications
   }
 
-  def getRightNodeEdges(rightNode: Long): Seq[Long] = {
-    val iterator = graph.getRightNodeEdges(rightNode)
-    val leftNodes: ListBuffer[Long] = ListBuffer()
-    if (iterator != null) {
-      while (iterator.hasNext) {
-        leftNodes += iterator.nextLong()
+  delonf gelontRightNodelonelondgelons(rightNodelon: Long): Selonq[Long] = {
+    val itelonrator = graph.gelontRightNodelonelondgelons(rightNodelon)
+    val lelonftNodelons: ListBuffelonr[Long] = ListBuffelonr()
+    if (itelonrator != null) {
+      whilelon (itelonrator.hasNelonxt) {
+        lelonftNodelons += itelonrator.nelonxtLong()
       }
     }
 
-    leftNodes.reverse.distinct // Most recent edges first, no duplications
+    lelonftNodelons.relonvelonrselon.distinct // Most reloncelonnt elondgelons first, no duplications
   }
 }

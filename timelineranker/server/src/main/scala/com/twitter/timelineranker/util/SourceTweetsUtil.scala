@@ -1,88 +1,88 @@
-package com.twitter.timelineranker.util
+packagelon com.twittelonr.timelonlinelonrankelonr.util
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.search.earlybird.thriftscala.ThriftSearchResult
-import com.twitter.timelines.model.TweetId
-import com.twitter.timelines.model.UserId
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.selonarch.elonarlybird.thriftscala.ThriftSelonarchRelonsult
+import com.twittelonr.timelonlinelons.modelonl.TwelonelontId
+import com.twittelonr.timelonlinelons.modelonl.UselonrId
 
-object SourceTweetsUtil {
-  def getSourceTweetIds(
-    searchResults: Seq[ThriftSearchResult],
-    searchResultsTweetIds: Set[TweetId],
-    followedUserIds: Seq[TweetId],
-    shouldIncludeReplyRootTweets: Boolean,
-    statsReceiver: StatsReceiver
-  ): Seq[TweetId] = {
-    val replyRootTweetCounter = statsReceiver.counter("replyRootTweet")
+objelonct SourcelonTwelonelontsUtil {
+  delonf gelontSourcelonTwelonelontIds(
+    selonarchRelonsults: Selonq[ThriftSelonarchRelonsult],
+    selonarchRelonsultsTwelonelontIds: Selont[TwelonelontId],
+    followelondUselonrIds: Selonq[TwelonelontId],
+    shouldIncludelonRelonplyRootTwelonelonts: Boolelonan,
+    statsReloncelonivelonr: StatsReloncelonivelonr
+  ): Selonq[TwelonelontId] = {
+    val relonplyRootTwelonelontCountelonr = statsReloncelonivelonr.countelonr("relonplyRootTwelonelont")
 
-    val retweetSourceTweetIds = getRetweetSourceTweetIds(searchResults, searchResultsTweetIds)
+    val relontwelonelontSourcelonTwelonelontIds = gelontRelontwelonelontSourcelonTwelonelontIds(selonarchRelonsults, selonarchRelonsultsTwelonelontIds)
 
-    val inNetworkReplyInReplyToTweetIds = getInNetworkInReplyToTweetIds(
-      searchResults,
-      searchResultsTweetIds,
-      followedUserIds
+    val inNelontworkRelonplyInRelonplyToTwelonelontIds = gelontInNelontworkInRelonplyToTwelonelontIds(
+      selonarchRelonsults,
+      selonarchRelonsultsTwelonelontIds,
+      followelondUselonrIds
     )
 
-    val extendedRepliesSourceTweetIds = getExtendedReplySourceTweetIds(
-      searchResults,
-      searchResultsTweetIds,
-      followedUserIds
+    val elonxtelonndelondRelonplielonsSourcelonTwelonelontIds = gelontelonxtelonndelondRelonplySourcelonTwelonelontIds(
+      selonarchRelonsults,
+      selonarchRelonsultsTwelonelontIds,
+      followelondUselonrIds
     )
 
-    val replyRootTweetIds = if (shouldIncludeReplyRootTweets) {
-      val rootTweetIds = getReplyRootTweetIds(
-        searchResults,
-        searchResultsTweetIds
+    val relonplyRootTwelonelontIds = if (shouldIncludelonRelonplyRootTwelonelonts) {
+      val rootTwelonelontIds = gelontRelonplyRootTwelonelontIds(
+        selonarchRelonsults,
+        selonarchRelonsultsTwelonelontIds
       )
-      replyRootTweetCounter.incr(rootTweetIds.size)
+      relonplyRootTwelonelontCountelonr.incr(rootTwelonelontIds.sizelon)
 
-      rootTweetIds
-    } else {
-      Seq.empty
+      rootTwelonelontIds
+    } elonlselon {
+      Selonq.elonmpty
     }
 
-    (retweetSourceTweetIds ++ extendedRepliesSourceTweetIds ++
-      inNetworkReplyInReplyToTweetIds ++ replyRootTweetIds).distinct
+    (relontwelonelontSourcelonTwelonelontIds ++ elonxtelonndelondRelonplielonsSourcelonTwelonelontIds ++
+      inNelontworkRelonplyInRelonplyToTwelonelontIds ++ relonplyRootTwelonelontIds).distinct
   }
 
-  def getInNetworkInReplyToTweetIds(
-    searchResults: Seq[ThriftSearchResult],
-    searchResultsTweetIds: Set[TweetId],
-    followedUserIds: Seq[UserId]
-  ): Seq[TweetId] = {
-    searchResults
-      .filter(SearchResultUtil.isInNetworkReply(followedUserIds))
-      .flatMap(SearchResultUtil.getSourceTweetId)
-      .filterNot(searchResultsTweetIds.contains)
+  delonf gelontInNelontworkInRelonplyToTwelonelontIds(
+    selonarchRelonsults: Selonq[ThriftSelonarchRelonsult],
+    selonarchRelonsultsTwelonelontIds: Selont[TwelonelontId],
+    followelondUselonrIds: Selonq[UselonrId]
+  ): Selonq[TwelonelontId] = {
+    selonarchRelonsults
+      .filtelonr(SelonarchRelonsultUtil.isInNelontworkRelonply(followelondUselonrIds))
+      .flatMap(SelonarchRelonsultUtil.gelontSourcelonTwelonelontId)
+      .filtelonrNot(selonarchRelonsultsTwelonelontIds.contains)
   }
 
-  def getReplyRootTweetIds(
-    searchResults: Seq[ThriftSearchResult],
-    searchResultsTweetIds: Set[TweetId]
-  ): Seq[TweetId] = {
-    searchResults
-      .flatMap(SearchResultUtil.getReplyRootTweetId)
-      .filterNot(searchResultsTweetIds.contains)
+  delonf gelontRelonplyRootTwelonelontIds(
+    selonarchRelonsults: Selonq[ThriftSelonarchRelonsult],
+    selonarchRelonsultsTwelonelontIds: Selont[TwelonelontId]
+  ): Selonq[TwelonelontId] = {
+    selonarchRelonsults
+      .flatMap(SelonarchRelonsultUtil.gelontRelonplyRootTwelonelontId)
+      .filtelonrNot(selonarchRelonsultsTwelonelontIds.contains)
   }
 
-  def getRetweetSourceTweetIds(
-    searchResults: Seq[ThriftSearchResult],
-    searchResultsTweetIds: Set[TweetId]
-  ): Seq[TweetId] = {
-    searchResults
-      .filter(SearchResultUtil.isRetweet)
-      .flatMap(SearchResultUtil.getSourceTweetId)
-      .filterNot(searchResultsTweetIds.contains)
+  delonf gelontRelontwelonelontSourcelonTwelonelontIds(
+    selonarchRelonsults: Selonq[ThriftSelonarchRelonsult],
+    selonarchRelonsultsTwelonelontIds: Selont[TwelonelontId]
+  ): Selonq[TwelonelontId] = {
+    selonarchRelonsults
+      .filtelonr(SelonarchRelonsultUtil.isRelontwelonelont)
+      .flatMap(SelonarchRelonsultUtil.gelontSourcelonTwelonelontId)
+      .filtelonrNot(selonarchRelonsultsTwelonelontIds.contains)
   }
 
-  def getExtendedReplySourceTweetIds(
-    searchResults: Seq[ThriftSearchResult],
-    searchResultsTweetIds: Set[TweetId],
-    followedUserIds: Seq[UserId]
-  ): Seq[TweetId] = {
-    searchResults
-      .filter(SearchResultUtil.isExtendedReply(followedUserIds))
-      .flatMap(SearchResultUtil.getSourceTweetId)
-      .filterNot(searchResultsTweetIds.contains)
+  delonf gelontelonxtelonndelondRelonplySourcelonTwelonelontIds(
+    selonarchRelonsults: Selonq[ThriftSelonarchRelonsult],
+    selonarchRelonsultsTwelonelontIds: Selont[TwelonelontId],
+    followelondUselonrIds: Selonq[UselonrId]
+  ): Selonq[TwelonelontId] = {
+    selonarchRelonsults
+      .filtelonr(SelonarchRelonsultUtil.iselonxtelonndelondRelonply(followelondUselonrIds))
+      .flatMap(SelonarchRelonsultUtil.gelontSourcelonTwelonelontId)
+      .filtelonrNot(selonarchRelonsultsTwelonelontIds.contains)
   }
 }

@@ -1,41 +1,41 @@
-package com.twitter.visibility.builder.users
+packagelon com.twittelonr.visibility.buildelonr.uselonrs
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.NotFound
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.common.UserId
-import com.twitter.visibility.common.UserSensitiveMediaSettingsSource
-import com.twitter.visibility.features.ViewerId
-import com.twitter.visibility.features.ViewerSensitiveMediaSettings
-import com.twitter.visibility.models.UserSensitiveMediaSettings
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.stitch.NotFound
+import com.twittelonr.visibility.buildelonr.FelonaturelonMapBuildelonr
+import com.twittelonr.visibility.common.UselonrId
+import com.twittelonr.visibility.common.UselonrSelonnsitivelonMelondiaSelonttingsSourcelon
+import com.twittelonr.visibility.felonaturelons.VielonwelonrId
+import com.twittelonr.visibility.felonaturelons.VielonwelonrSelonnsitivelonMelondiaSelonttings
+import com.twittelonr.visibility.modelonls.UselonrSelonnsitivelonMelondiaSelonttings
 
 
-class ViewerSensitiveMediaSettingsFeatures(
-  userSensitiveMediaSettingsSource: UserSensitiveMediaSettingsSource,
-  statsReceiver: StatsReceiver) {
-  private[this] val scopedStatsReceiver =
-    statsReceiver.scope("viewer_sensitive_media_settings_features")
+class VielonwelonrSelonnsitivelonMelondiaSelonttingsFelonaturelons(
+  uselonrSelonnsitivelonMelondiaSelonttingsSourcelon: UselonrSelonnsitivelonMelondiaSelonttingsSourcelon,
+  statsReloncelonivelonr: StatsReloncelonivelonr) {
+  privatelon[this] val scopelondStatsReloncelonivelonr =
+    statsReloncelonivelonr.scopelon("vielonwelonr_selonnsitivelon_melondia_selonttings_felonaturelons")
 
-  private[this] val requests = scopedStatsReceiver.counter("requests")
+  privatelon[this] val relonquelonsts = scopelondStatsReloncelonivelonr.countelonr("relonquelonsts")
 
-  def forViewerId(viewerId: Option[UserId]): FeatureMapBuilder => FeatureMapBuilder = { builder =>
-    requests.incr()
+  delonf forVielonwelonrId(vielonwelonrId: Option[UselonrId]): FelonaturelonMapBuildelonr => FelonaturelonMapBuildelonr = { buildelonr =>
+    relonquelonsts.incr()
 
-    builder
-      .withConstantFeature(ViewerId, viewerId)
-      .withFeature(ViewerSensitiveMediaSettings, viewerSensitiveMediaSettings(viewerId))
+    buildelonr
+      .withConstantFelonaturelon(VielonwelonrId, vielonwelonrId)
+      .withFelonaturelon(VielonwelonrSelonnsitivelonMelondiaSelonttings, vielonwelonrSelonnsitivelonMelondiaSelonttings(vielonwelonrId))
   }
 
-  def viewerSensitiveMediaSettings(viewerId: Option[UserId]): Stitch[UserSensitiveMediaSettings] = {
-    (viewerId match {
-      case Some(userId) =>
-        userSensitiveMediaSettingsSource
-          .userSensitiveMediaSettings(userId)
-          .handle {
-            case NotFound => None
+  delonf vielonwelonrSelonnsitivelonMelondiaSelonttings(vielonwelonrId: Option[UselonrId]): Stitch[UselonrSelonnsitivelonMelondiaSelonttings] = {
+    (vielonwelonrId match {
+      caselon Somelon(uselonrId) =>
+        uselonrSelonnsitivelonMelondiaSelonttingsSourcelon
+          .uselonrSelonnsitivelonMelondiaSelonttings(uselonrId)
+          .handlelon {
+            caselon NotFound => Nonelon
           }
-      case _ => Stitch.value(None)
-    }).map(UserSensitiveMediaSettings)
+      caselon _ => Stitch.valuelon(Nonelon)
+    }).map(UselonrSelonnsitivelonMelondiaSelonttings)
   }
 }

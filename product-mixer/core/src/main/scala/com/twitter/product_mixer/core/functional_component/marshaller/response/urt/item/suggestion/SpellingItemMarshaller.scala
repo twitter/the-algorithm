@@ -1,21 +1,21 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.suggestion
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.itelonm.suggelonstion
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.suggestion.SpellingItem
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.suggelonstion.SpelonllingItelonm
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class SpellingItemMarshaller @Inject() (
-  textResultMarshaller: TextResultMarshaller,
-  spellingActionTypeMarshaller: SpellingActionTypeMarshaller) {
+@Singlelonton
+class SpelonllingItelonmMarshallelonr @Injelonct() (
+  telonxtRelonsultMarshallelonr: TelonxtRelonsultMarshallelonr,
+  spelonllingActionTypelonMarshallelonr: SpelonllingActionTypelonMarshallelonr) {
 
-  def apply(spellingItem: SpellingItem): urt.TimelineItemContent = {
-    urt.TimelineItemContent.Spelling(
-      urt.Spelling(
-        spellingResult = textResultMarshaller(spellingItem.textResult),
-        spellingAction = spellingItem.spellingActionType.map(spellingActionTypeMarshaller(_)),
-        originalQuery = spellingItem.originalQuery
+  delonf apply(spelonllingItelonm: SpelonllingItelonm): urt.TimelonlinelonItelonmContelonnt = {
+    urt.TimelonlinelonItelonmContelonnt.Spelonlling(
+      urt.Spelonlling(
+        spelonllingRelonsult = telonxtRelonsultMarshallelonr(spelonllingItelonm.telonxtRelonsult),
+        spelonllingAction = spelonllingItelonm.spelonllingActionTypelon.map(spelonllingActionTypelonMarshallelonr(_)),
+        originalQuelonry = spelonllingItelonm.originalQuelonry
       )
     )
   }

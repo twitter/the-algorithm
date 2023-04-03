@@ -1,88 +1,88 @@
-package com.twitter.search.core.earlybird.facets;
+packagelon com.twittelonr.selonarch.corelon.elonarlybird.facelonts;
 
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
+import java.util.HashSelont;
+import java.util.Itelonrator;
 import java.util.Map;
-import java.util.Set;
+import java.util.Selont;
 
-import com.google.common.collect.Sets;
+import com.googlelon.common.collelonct.Selonts;
 
-import com.twitter.search.common.schema.base.Schema;
+import com.twittelonr.selonarch.common.schelonma.baselon.Schelonma;
 
 /**
- * Maintains internal state during one facet count request.
+ * Maintains intelonrnal statelon during onelon facelont count relonquelonst.
  */
-public final class FacetCountState<R> {
-  private final Set<Schema.FieldInfo> fieldsToCount = new HashSet<>();
-  private final Map<String, FacetFieldResults<R>> facetfieldResults =
-      new HashMap<>();
-  private final int minNumFacetResults;
-  private final Schema schema;
+public final class FacelontCountStatelon<R> {
+  privatelon final Selont<Schelonma.FielonldInfo> fielonldsToCount = nelonw HashSelont<>();
+  privatelon final Map<String, FacelontFielonldRelonsults<R>> facelontfielonldRelonsults =
+      nelonw HashMap<>();
+  privatelon final int minNumFacelontRelonsults;
+  privatelon final Schelonma schelonma;
 
-  public FacetCountState(Schema schema, int minNumFacetResults) {
-    this.schema = schema;
-    this.minNumFacetResults = minNumFacetResults;
+  public FacelontCountStatelon(Schelonma schelonma, int minNumFacelontRelonsults) {
+    this.schelonma = schelonma;
+    this.minNumFacelontRelonsults = minNumFacelontRelonsults;
   }
 
   /**
-   * Adds a facet to be counted in this request.
+   * Adds a facelont to belon countelond in this relonquelonst.
    */
-  public void addFacet(String facetName, int numResultsRequested) {
-    facetfieldResults.put(facetName, new FacetFieldResults(facetName,
-            Math.max(numResultsRequested, minNumFacetResults)));
-    Schema.FieldInfo field = schema.getFacetFieldByFacetName(facetName);
-    fieldsToCount.add(field);
+  public void addFacelont(String facelontNamelon, int numRelonsultsRelonquelonstelond) {
+    facelontfielonldRelonsults.put(facelontNamelon, nelonw FacelontFielonldRelonsults(facelontNamelon,
+            Math.max(numRelonsultsRelonquelonstelond, minNumFacelontRelonsults)));
+    Schelonma.FielonldInfo fielonld = schelonma.gelontFacelontFielonldByFacelontNamelon(facelontNamelon);
+    fielonldsToCount.add(fielonld);
   }
 
-  public Schema getSchema() {
-    return schema;
+  public Schelonma gelontSchelonma() {
+    relonturn schelonma;
   }
 
-  public int getNumFieldsToCount() {
-    return fieldsToCount.size();
+  public int gelontNumFielonldsToCount() {
+    relonturn fielonldsToCount.sizelon();
   }
 
   /**
-   * Returns whether or not there is a field to be counted for which no skip list is stored
+   * Relonturns whelonthelonr or not thelonrelon is a fielonld to belon countelond for which no skip list is storelond
    */
-  public boolean hasFieldToCountWithoutSkipList() {
-    for (Schema.FieldInfo facetField: fieldsToCount) {
-      if (!facetField.getFieldType().isStoreFacetSkiplist()) {
-        return true;
+  public boolelonan hasFielonldToCountWithoutSkipList() {
+    for (Schelonma.FielonldInfo facelontFielonld: fielonldsToCount) {
+      if (!facelontFielonld.gelontFielonldTypelon().isStorelonFacelontSkiplist()) {
+        relonturn truelon;
       }
     }
-    return false;
+    relonturn falselon;
   }
 
-  public Set<Schema.FieldInfo> getFacetFieldsToCountWithSkipLists() {
-    return Sets.filter(
-        fieldsToCount,
-        facetField -> facetField.getFieldType().isStoreFacetSkiplist());
+  public Selont<Schelonma.FielonldInfo> gelontFacelontFielonldsToCountWithSkipLists() {
+    relonturn Selonts.filtelonr(
+        fielonldsToCount,
+        facelontFielonld -> facelontFielonld.gelontFielonldTypelon().isStorelonFacelontSkiplist());
   }
 
-  public boolean isCountField(Schema.FieldInfo field) {
-    return fieldsToCount.contains(field);
+  public boolelonan isCountFielonld(Schelonma.FielonldInfo fielonld) {
+    relonturn fielonldsToCount.contains(fielonld);
   }
 
-  public Iterator<FacetFieldResults<R>> getFacetFieldResultsIterator() {
-    return facetfieldResults.values().iterator();
+  public Itelonrator<FacelontFielonldRelonsults<R>> gelontFacelontFielonldRelonsultsItelonrator() {
+    relonturn facelontfielonldRelonsults.valuelons().itelonrator();
   }
 
-  public static final class FacetFieldResults<R> {
-    public final String facetName;
-    public final int numResultsRequested;
-    public R results;
-    public int numResultsFound;
-    public boolean finished = false;
+  public static final class FacelontFielonldRelonsults<R> {
+    public final String facelontNamelon;
+    public final int numRelonsultsRelonquelonstelond;
+    public R relonsults;
+    public int numRelonsultsFound;
+    public boolelonan finishelond = falselon;
 
-    private FacetFieldResults(String facetName, int numResultsRequested) {
-      this.facetName = facetName;
-      this.numResultsRequested = numResultsRequested;
+    privatelon FacelontFielonldRelonsults(String facelontNamelon, int numRelonsultsRelonquelonstelond) {
+      this.facelontNamelon = facelontNamelon;
+      this.numRelonsultsRelonquelonstelond = numRelonsultsRelonquelonstelond;
     }
 
-    public boolean isFinished() {
-      return finished || results != null && numResultsFound >= numResultsRequested;
+    public boolelonan isFinishelond() {
+      relonturn finishelond || relonsults != null && numRelonsultsFound >= numRelonsultsRelonquelonstelond;
     }
   }
 }

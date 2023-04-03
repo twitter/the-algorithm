@@ -1,14 +1,14 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.media
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melondia
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ImageVariant
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.ImagelonVariant
 
-sealed trait MediaEntity
+selonalelond trait Melondiaelonntity
 
-case class TweetMedia(
-  tweetId: Long,
-  momentId: Option[Long])
-    extends MediaEntity
+caselon class TwelonelontMelondia(
+  twelonelontId: Long,
+  momelonntId: Option[Long])
+    elonxtelonnds Melondiaelonntity
 
-case class BroadcastId(id: String) extends MediaEntity
+caselon class BroadcastId(id: String) elonxtelonnds Melondiaelonntity
 
-case class Image(image: ImageVariant) extends MediaEntity
+caselon class Imagelon(imagelon: ImagelonVariant) elonxtelonnds Melondiaelonntity

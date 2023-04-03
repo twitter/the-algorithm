@@ -1,9 +1,9 @@
-package com.twitter.product_mixer.core.pipeline.state
+packagelon com.twittelonr.product_mixelonr.corelon.pipelonlinelon.statelon
 
-import com.twitter.product_mixer.core.feature.featuremap.asyncfeaturemap.AsyncFeatureMap
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.asyncfelonaturelonmap.AsyncFelonaturelonMap
 
-trait HasAsyncFeatureMap[State] {
-  def asyncFeatureMap: AsyncFeatureMap
+trait HasAsyncFelonaturelonMap[Statelon] {
+  delonf asyncFelonaturelonMap: AsyncFelonaturelonMap
 
-  private[core] def addAsyncFeatureMap(newFeatureMap: AsyncFeatureMap): State
+  privatelon[corelon] delonf addAsyncFelonaturelonMap(nelonwFelonaturelonMap: AsyncFelonaturelonMap): Statelon
 }

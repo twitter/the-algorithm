@@ -1,9 +1,9 @@
-package com.twitter.follow_recommendations.products.home_timeline
+packagelon com.twittelonr.follow_reloncommelonndations.products.homelon_timelonlinelon
 
-import com.twitter.product_mixer.core.model.common.identifier.ProductIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.Product
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.ProductIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.Product
 
-case object HTLProductMixer extends Product {
-  override val identifier: ProductIdentifier = ProductIdentifier("HomeTimeline")
-  override val stringCenterProject: Option[String] = Some("people-discovery")
+caselon objelonct HTLProductMixelonr elonxtelonnds Product {
+  ovelonrridelon val idelonntifielonr: ProductIdelonntifielonr = ProductIdelonntifielonr("HomelonTimelonlinelon")
+  ovelonrridelon val stringCelonntelonrProjelonct: Option[String] = Somelon("pelonoplelon-discovelonry")
 }

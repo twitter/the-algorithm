@@ -1,20 +1,20 @@
-package com.twitter.product_mixer.core.service.candidate_feature_hydrator_executor
+packagelon com.twittelonr.product_mixelonr.corelon.selonrvicelon.candidatelon_felonaturelon_hydrator_elonxeloncutor
 
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
-import com.twitter.product_mixer.core.service.ExecutorResult
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.ComponelonntIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.elonxeloncutorRelonsult
 
-case class CandidateFeatureHydratorExecutorResult[+Result <: UniversalNoun[Any]](
-  results: Seq[CandidateWithFeatures[Result]],
-  individualFeatureHydratorResults: Map[
-    _ <: ComponentIdentifier,
-    BaseIndividualFeatureHydratorResult[Result]
-  ]) extends ExecutorResult
+caselon class CandidatelonFelonaturelonHydratorelonxeloncutorRelonsult[+Relonsult <: UnivelonrsalNoun[Any]](
+  relonsults: Selonq[CandidatelonWithFelonaturelons[Relonsult]],
+  individualFelonaturelonHydratorRelonsults: Map[
+    _ <: ComponelonntIdelonntifielonr,
+    BaselonIndividualFelonaturelonHydratorRelonsult[Relonsult]
+  ]) elonxtelonnds elonxeloncutorRelonsult
 
-sealed trait BaseIndividualFeatureHydratorResult[+Result <: UniversalNoun[Any]]
-case class FeatureHydratorDisabled[+Result <: UniversalNoun[Any]]()
-    extends BaseIndividualFeatureHydratorResult[Result]
-case class IndividualFeatureHydratorResult[+Result <: UniversalNoun[Any]](
-  result: Seq[CandidateWithFeatures[Result]])
-    extends BaseIndividualFeatureHydratorResult[Result]
+selonalelond trait BaselonIndividualFelonaturelonHydratorRelonsult[+Relonsult <: UnivelonrsalNoun[Any]]
+caselon class FelonaturelonHydratorDisablelond[+Relonsult <: UnivelonrsalNoun[Any]]()
+    elonxtelonnds BaselonIndividualFelonaturelonHydratorRelonsult[Relonsult]
+caselon class IndividualFelonaturelonHydratorRelonsult[+Relonsult <: UnivelonrsalNoun[Any]](
+  relonsult: Selonq[CandidatelonWithFelonaturelons[Relonsult]])
+    elonxtelonnds BaselonIndividualFelonaturelonHydratorRelonsult[Relonsult]

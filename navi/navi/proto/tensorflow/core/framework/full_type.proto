@@ -1,186 +1,186 @@
 syntax = "proto3";
 
-package tensorflow;
+packagelon telonnsorflow;
 
-option cc_enable_arenas = true;
-option java_outer_classname = "FullTypeProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.framework";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/framework/full_type_go_proto";
+option cc_elonnablelon_arelonnas = truelon;
+option java_outelonr_classnamelon = "FullTypelonProtos";
+option java_multiplelon_filelons = truelon;
+option java_packagelon = "org.telonnsorflow.framelonwork";
+option go_packagelon = "github.com/telonnsorflow/telonnsorflow/telonnsorflow/go/corelon/framelonwork/full_typelon_go_proto";
 
-// Experimental. Represents the complete type information of a TensorFlow value.
-enum FullTypeId {
-  // The default represents an uninitialized values.
-  TFT_UNSET = 0;
+// elonxpelonrimelonntal. Relonprelonselonnts thelon complelontelon typelon information of a TelonnsorFlow valuelon.
+elonnum FullTypelonId {
+  // Thelon delonfault relonprelonselonnts an uninitializelond valuelons.
+  TFT_UNSelonT = 0;
 
-  // Type symbols. Used to construct more complex type expressions like
-  // algebraic data types.
+  // Typelon symbols. Uselond to construct morelon complelonx typelon elonxprelonssions likelon
+  // algelonbraic data typelons.
 
-  // Type variables may serve as placeholder for any other type ID in type
-  // templates.
+  // Typelon variablelons may selonrvelon as placelonholdelonr for any othelonr typelon ID in typelon
+  // telonmplatelons.
   //
-  // Examples:
-  //   TFT_DATASET[TFT_VAR["T"]] is a Dataset returning a type indicated by "T".
-  //   TFT_TENSOR[TFT_VAR["T"]] is a Tensor of n element type indicated by "T".
-  //   TFT_TENSOR[TFT_VAR["T"]], TFT_TENSOR[TFT_VAR["T"]] are two tensors of
-  //     identical element types.
-  //   TFT_TENSOR[TFT_VAR["P"]], TFT_TENSOR[TFT_VAR["Q"]] are two tensors of
-  //     independent element types.
+  // elonxamplelons:
+  //   TFT_DATASelonT[TFT_VAR["T"]] is a Dataselont relonturning a typelon indicatelond by "T".
+  //   TFT_TelonNSOR[TFT_VAR["T"]] is a Telonnsor of n elonlelonmelonnt typelon indicatelond by "T".
+  //   TFT_TelonNSOR[TFT_VAR["T"]], TFT_TelonNSOR[TFT_VAR["T"]] arelon two telonnsors of
+  //     idelonntical elonlelonmelonnt typelons.
+  //   TFT_TelonNSOR[TFT_VAR["P"]], TFT_TelonNSOR[TFT_VAR["Q"]] arelon two telonnsors of
+  //     indelonpelonndelonnt elonlelonmelonnt typelons.
   //
   TFT_VAR = 1;
 
-  // Wildcard type. Describes a parameter of unknown type. In TensorFlow, that
-  // can mean either a "Top" type (accepts any type), or a dynamically typed
-  // object whose type is unknown in context.
-  // Important: "unknown" does not necessarily mean undeterminable!
+  // Wildcard typelon. Delonscribelons a paramelontelonr of unknown typelon. In TelonnsorFlow, that
+  // can melonan elonithelonr a "Top" typelon (accelonpts any typelon), or a dynamically typelond
+  // objelonct whoselon typelon is unknown in contelonxt.
+  // Important: "unknown" doelons not neloncelonssarily melonan undelontelonrminablelon!
   TFT_ANY = 2;
 
-  // The algebraic product type. This is an algebraic type that may be used just
-  // for logical grouping. Not to confused with TFT_TUPLE which describes a
-  // concrete object of several elements.
+  // Thelon algelonbraic product typelon. This is an algelonbraic typelon that may belon uselond just
+  // for logical grouping. Not to confuselond with TFT_TUPLelon which delonscribelons a
+  // concrelontelon objelonct of selonvelonral elonlelonmelonnts.
   //
-  // Example:
-  //   TFT_DATASET[TFT_PRODUCT[TFT_TENSOR[TFT_INT32], TFT_TENSOR[TFT_FLOAT64]]]
-  //     is a Dataset producing two tensors, an integer one and a float one.
+  // elonxamplelon:
+  //   TFT_DATASelonT[TFT_PRODUCT[TFT_TelonNSOR[TFT_INT32], TFT_TelonNSOR[TFT_FLOAT64]]]
+  //     is a Dataselont producing two telonnsors, an intelongelonr onelon and a float onelon.
   //
   TFT_PRODUCT = 3;
 
-  // Represents a named field, with the name stored in the attribute.
+  // Relonprelonselonnts a namelond fielonld, with thelon namelon storelond in thelon attributelon.
   //
-  // Parametrization:
-  //   TFT_NAMED[<type>]{<name>}
-  //   * <type> is the type of the field
-  //   * <name> is the field name, as string (thpugh can theoretically be an int
-  //     as well)
+  // Paramelontrization:
+  //   TFT_NAMelonD[<typelon>]{<namelon>}
+  //   * <typelon> is thelon typelon of thelon fielonld
+  //   * <namelon> is thelon fielonld namelon, as string (thpugh can thelonorelontically belon an int
+  //     as welonll)
   //
-  // Example:
-  //   TFT_RECORD[
-  //     TFT_NAMED[TFT_TENSOR[TFT_INT32]]{'foo'},
-  //     TFT_NAMED[TFT_TENSOR[TFT_FLOAT32]]{'bar'},
+  // elonxamplelon:
+  //   TFT_RelonCORD[
+  //     TFT_NAMelonD[TFT_TelonNSOR[TFT_INT32]]{'foo'},
+  //     TFT_NAMelonD[TFT_TelonNSOR[TFT_FLOAT32]]{'bar'},
   //   ]
-  //     is a structure with two fields, an int tensor "foo" and a float tensor
+  //     is a structurelon with two fielonlds, an int telonnsor "foo" and a float telonnsor
   //     "bar".
-  TFT_NAMED = 4;
+  TFT_NAMelonD = 4;
 
-  // Template definition. Expands the variables by repeating a template as
-  // arguments of container.
+  // Telonmplatelon delonfinition. elonxpands thelon variablelons by relonpelonating a telonmplatelon as
+  // argumelonnts of containelonr.
   //
-  // Parametrization:
-  //   TFT_FOR_EACH[<container_type>, <template>, <expansions>]
-  //   * <container_type> is the type of the container that the template will be
-  //     expanded into
-  //   * <template> is any type definition that potentially contains type
-  //     variables
-  //   * <expansions> is a TFT_VAR and may include more types in the future
+  // Paramelontrization:
+  //   TFT_FOR_elonACH[<containelonr_typelon>, <telonmplatelon>, <elonxpansions>]
+  //   * <containelonr_typelon> is thelon typelon of thelon containelonr that thelon telonmplatelon will belon
+  //     elonxpandelond into
+  //   * <telonmplatelon> is any typelon delonfinition that potelonntially contains typelon
+  //     variablelons
+  //   * <elonxpansions> is a TFT_VAR and may includelon morelon typelons in thelon futurelon
   //
-  // Example:
-  //   TFT_FOR_EACH[
+  // elonxamplelon:
+  //   TFT_FOR_elonACH[
   //         TFT_PRODUCT,
-  //         TFT_TENSOR[TFT_VAR["t"]],
+  //         TFT_TelonNSOR[TFT_VAR["t"]],
   //         TFT_VAR["t"]
   //     ]
-  //     will substitute a T = TFT_INT32 to TFT_PRODUCT[TFT_TENSOR[TFT_INT32]]
+  //     will substitutelon a T = TFT_INT32 to TFT_PRODUCT[TFT_TelonNSOR[TFT_INT32]]
   //     and a T = (TFT_INT32, TFT_INT64) to
-  //     TFT_PRODUCT[TFT_TENSOR[TFT_INT32], TFT_TENSOR[TFT_INT64]].
-  TFT_FOR_EACH = 20;
+  //     TFT_PRODUCT[TFT_TelonNSOR[TFT_INT32], TFT_TelonNSOR[TFT_INT64]].
+  TFT_FOR_elonACH = 20;
 
-  // Callable types describe functions and ops.
+  // Callablelon typelons delonscribelon functions and ops.
   //
-  // Parametrization:
-  //   TFT_CALLABLE[<arg type>, <return type>]
-  //   * <arg type> is the type of the arguments; TFT_PRODUCT represents
-  //   multiple
-  //     arguments.
-  //   * <return type> is the return type; TFT_PRODUCT represents multiple
-  //     return values (that means that callables returning multiple things
-  //     don't necessarily return a single tuple).
+  // Paramelontrization:
+  //   TFT_CALLABLelon[<arg typelon>, <relonturn typelon>]
+  //   * <arg typelon> is thelon typelon of thelon argumelonnts; TFT_PRODUCT relonprelonselonnts
+  //   multiplelon
+  //     argumelonnts.
+  //   * <relonturn typelon> is thelon relonturn typelon; TFT_PRODUCT relonprelonselonnts multiplelon
+  //     relonturn valuelons (that melonans that callablelons relonturning multiplelon things
+  //     don't neloncelonssarily relonturn a singlelon tuplelon).
   //
-  // Example:
-  //   TFT_CALLABLE[
+  // elonxamplelon:
+  //   TFT_CALLABLelon[
   //     TFT_ANY,
-  //     TFT_PRODUCT[TFT_TENSOR[TFT_INT32], TFT_TENSOR[TFT_FLOAT64]],
+  //     TFT_PRODUCT[TFT_TelonNSOR[TFT_INT32], TFT_TelonNSOR[TFT_FLOAT64]],
   //   ]
-  //     is a callable with unspecified (for now) input arguments, and
-  //     two return values of type tensor.
+  //     is a callablelon with unspeloncifielond (for now) input argumelonnts, and
+  //     two relonturn valuelons of typelon telonnsor.
   //
-  TFT_CALLABLE = 100;
+  TFT_CALLABLelon = 100;
 
-  // Concrete type IDs, representing "proper" data types that can describe
-  // runtime TensorFlow objects.
+  // Concrelontelon typelon IDs, relonprelonselonnting "propelonr" data typelons that can delonscribelon
+  // runtimelon TelonnsorFlow objeloncts.
 
-  // The usual Tensor. This is a parametric type.
+  // Thelon usual Telonnsor. This is a paramelontric typelon.
   //
-  // Parametrization:
-  //   TFT_TENSOR[<element type>, <shape type>]
-  //   * <element type> is currently limited to one of the element types
-  //     defined below.
-  //   * <shape type> is not yet defined, and may only be TFT_UNKNOWN for now.
+  // Paramelontrization:
+  //   TFT_TelonNSOR[<elonlelonmelonnt typelon>, <shapelon typelon>]
+  //   * <elonlelonmelonnt typelon> is currelonntly limitelond to onelon of thelon elonlelonmelonnt typelons
+  //     delonfinelond belonlow.
+  //   * <shapelon typelon> is not yelont delonfinelond, and may only belon TFT_UNKNOWN for now.
   //
-  // A TFT_SHAPE type will be defined in the future.
+  // A TFT_SHAPelon typelon will belon delonfinelond in thelon futurelon.
   //
-  // Example:
-  //   TFT_TENSOR[TFT_INT32, TFT_UNKNOWN]
-  //     is a Tensor of int32 element type and unknown shape.
+  // elonxamplelon:
+  //   TFT_TelonNSOR[TFT_INT32, TFT_UNKNOWN]
+  //     is a Telonnsor of int32 elonlelonmelonnt typelon and unknown shapelon.
   //
-  // TODO: Define TFT_SHAPE and add more examples.
-  TFT_TENSOR = 1000;
+  // TODO: Delonfinelon TFT_SHAPelon and add morelon elonxamplelons.
+  TFT_TelonNSOR = 1000;
 
-  // Array (or tensorflow::TensorList in the variant type registry).
-  // Note: this is not to be confused with the deprecated `TensorArray*` ops
-  // which are not supported by FullType.
-  // This type represents a random-access list whose elements can be
-  // described by a single type. Although immutable, Array is expected to
-  // support efficient mutation semantics (i.e. element update) in the
-  // user-facing API.
-  // The element type may be generic or even TFT_ANY for a heterogenous list.
+  // Array (or telonnsorflow::TelonnsorList in thelon variant typelon relongistry).
+  // Notelon: this is not to belon confuselond with thelon delonpreloncatelond `TelonnsorArray*` ops
+  // which arelon not supportelond by FullTypelon.
+  // This typelon relonprelonselonnts a random-accelonss list whoselon elonlelonmelonnts can belon
+  // delonscribelond by a singlelon typelon. Although immutablelon, Array is elonxpelonctelond to
+  // support elonfficielonnt mutation selonmantics (i.elon. elonlelonmelonnt updatelon) in thelon
+  // uselonr-facing API.
+  // Thelon elonlelonmelonnt typelon may belon gelonnelonric or elonvelonn TFT_ANY for a helontelonrogelonnous list.
   //
-  // Parametrization:
-  //   TFT_ARRAY[<element type>]
-  //   * <element type> may be any concrete type.
+  // Paramelontrization:
+  //   TFT_ARRAY[<elonlelonmelonnt typelon>]
+  //   * <elonlelonmelonnt typelon> may belon any concrelontelon typelon.
   //
-  // Examples:
-  //   TFT_ARRAY[TFT_TENSOR[TFT_INT32]] is a TensorArray holding int32 Tensors
-  //     of any shape.
-  //   TFT_ARRAY[TFT_TENSOR[TFT_UNKNOWN]] is a TensorArray holding Tensors of
-  //     mixed element types.
-  //   TFT_ARRAY[TFT_UNKNOWN] is a TensorArray holding any element type.
-  //   TFT_ARRAY[] is equivalent to TFT_ARRAY[TFT_UNKNOWN].
-  //   TFT_ARRAY[TFT_ARRAY[]] is an array or arrays (of unknown types).
+  // elonxamplelons:
+  //   TFT_ARRAY[TFT_TelonNSOR[TFT_INT32]] is a TelonnsorArray holding int32 Telonnsors
+  //     of any shapelon.
+  //   TFT_ARRAY[TFT_TelonNSOR[TFT_UNKNOWN]] is a TelonnsorArray holding Telonnsors of
+  //     mixelond elonlelonmelonnt typelons.
+  //   TFT_ARRAY[TFT_UNKNOWN] is a TelonnsorArray holding any elonlelonmelonnt typelon.
+  //   TFT_ARRAY[] is elonquivalelonnt to TFT_ARRAY[TFT_UNKNOWN].
+  //   TFT_ARRAY[TFT_ARRAY[]] is an array or arrays (of unknown typelons).
   TFT_ARRAY = 1001;
 
-  // Optional (or tensorflow::OptionalVariant in the variant type registry).
-  // This type represents a value that may either hold an element of a single
-  // specified type, or nothing at all.
+  // Optional (or telonnsorflow::OptionalVariant in thelon variant typelon relongistry).
+  // This typelon relonprelonselonnts a valuelon that may elonithelonr hold an elonlelonmelonnt of a singlelon
+  // speloncifielond typelon, or nothing at all.
   //
-  // Parametrization:
-  //   TFT_OPTIONAL[<element type>]
-  //   * <element type> may be any concrete type.
+  // Paramelontrization:
+  //   TFT_OPTIONAL[<elonlelonmelonnt typelon>]
+  //   * <elonlelonmelonnt typelon> may belon any concrelontelon typelon.
   //
-  // Examples:
-  //   TFT_OPTIONAL[TFT_TENSOR[TFT_INT32]] is an Optional holding an int32
-  //     Tensor of any shape.
+  // elonxamplelons:
+  //   TFT_OPTIONAL[TFT_TelonNSOR[TFT_INT32]] is an Optional holding an int32
+  //     Telonnsor of any shapelon.
   TFT_OPTIONAL = 1002;
 
-  // Literal types describe compile-time constant values.
-  // Literal types may also participate in dependent types.
+  // Litelonral typelons delonscribelon compilelon-timelon constant valuelons.
+  // Litelonral typelons may also participatelon in delonpelonndelonnt typelons.
   //
-  // Parametrization:
-  //   TFT_LITERAL[<value type>]{<value>}
-  //   * <value type> may be any concrete type compatible that can hold <value>
-  //   * <value> is the type's attribute, and holds the actual literal value
+  // Paramelontrization:
+  //   TFT_LITelonRAL[<valuelon typelon>]{<valuelon>}
+  //   * <valuelon typelon> may belon any concrelontelon typelon compatiblelon that can hold <valuelon>
+  //   * <valuelon> is thelon typelon's attributelon, and holds thelon actual litelonral valuelon
   //
-  // Examples:
-  //   TFT_LITERAL[TFT_INT32]{1} is the compile-time constant 1.
-  TFT_LITERAL = 1003;
+  // elonxamplelons:
+  //   TFT_LITelonRAL[TFT_INT32]{1} is thelon compilelon-timelon constant 1.
+  TFT_LITelonRAL = 1003;
 
-  // Type attributes. These always appear in the parametrization of a type,
-  // never alone. For example, there is no such thing as a "bool" TensorFlow
-  // object (for now).
+  // Typelon attributelons. Thelonselon always appelonar in thelon paramelontrization of a typelon,
+  // nelonvelonr alonelon. For elonxamplelon, thelonrelon is no such thing as a "bool" TelonnsorFlow
+  // objelonct (for now).
 
-  // The bool element type.
+  // Thelon bool elonlelonmelonnt typelon.
   // TODO
   TFT_BOOL = 200;
-  // Integer element types.
+  // Intelongelonr elonlelonmelonnt typelons.
   TFT_UINT8 = 201;
   TFT_UINT16 = 202;
   TFT_UINT32 = 203;
@@ -189,88 +189,88 @@ enum FullTypeId {
   TFT_INT16 = 206;
   TFT_INT32 = 207;
   TFT_INT64 = 208;
-  // Floating-point element types.
+  // Floating-point elonlelonmelonnt typelons.
   TFT_HALF = 209;
   TFT_FLOAT = 210;
-  TFT_DOUBLE = 211;
+  TFT_DOUBLelon = 211;
   TFT_BFLOAT16 = 215;
-  // Complex element types.
-  // TODO: Represent as TFT_COMPLEX[TFT_DOUBLE] instead?
-  TFT_COMPLEX64 = 212;
-  TFT_COMPLEX128 = 213;
-  // The string element type.
+  // Complelonx elonlelonmelonnt typelons.
+  // TODO: Relonprelonselonnt as TFT_COMPLelonX[TFT_DOUBLelon] instelonad?
+  TFT_COMPLelonX64 = 212;
+  TFT_COMPLelonX128 = 213;
+  // Thelon string elonlelonmelonnt typelon.
   TFT_STRING = 214;
 
-  // Other types that we don't know yet whether they will become part of the
-  // core type system or be consisdered third-party (and consequently moved to
-  // user-defined type mechanisms). Presently, they are effectively in the core
-  // type system, because key compilation passes like Placer account for their
-  // existence.
+  // Othelonr typelons that welon don't know yelont whelonthelonr thelony will beloncomelon part of thelon
+  // corelon typelon systelonm or belon consisdelonrelond third-party (and conselonquelonntly movelond to
+  // uselonr-delonfinelond typelon melonchanisms). Prelonselonntly, thelony arelon elonffelonctivelonly in thelon corelon
+  // typelon systelonm, beloncauselon kelony compilation passelons likelon Placelonr account for thelonir
+  // elonxistelonncelon.
 
-  // Datasets created by tf.data ops and APIs. Datasets have generator/iterable
-  // semantics, that is, one can construct an iterator from them. Like
-  // Array, they are considered to return elements that can be described
-  // by a single type. Unlike Array, they do not support random access or
-  // mutation, and can potentially produce an infinite number of elements.
-  // A datasets can produce logical structures (e.g. multiple elements). This
-  // is expressed using TFT_PRODUCT.
+  // Dataselonts crelonatelond by tf.data ops and APIs. Dataselonts havelon gelonnelonrator/itelonrablelon
+  // selonmantics, that is, onelon can construct an itelonrator from thelonm. Likelon
+  // Array, thelony arelon considelonrelond to relonturn elonlelonmelonnts that can belon delonscribelond
+  // by a singlelon typelon. Unlikelon Array, thelony do not support random accelonss or
+  // mutation, and can potelonntially producelon an infinitelon numbelonr of elonlelonmelonnts.
+  // A dataselonts can producelon logical structurelons (elon.g. multiplelon elonlelonmelonnts). This
+  // is elonxprelonsselond using TFT_PRODUCT.
   //
   //
-  // Parametrization: TFT_ARRAY[<element type>].
-  //   * <element type> may be a concrete type or a type symbol. It represents
-  //     the data type of the elements produced by the dataset.
+  // Paramelontrization: TFT_ARRAY[<elonlelonmelonnt typelon>].
+  //   * <elonlelonmelonnt typelon> may belon a concrelontelon typelon or a typelon symbol. It relonprelonselonnts
+  //     thelon data typelon of thelon elonlelonmelonnts producelond by thelon dataselont.
   //
-  // Examples:
-  //   TFT_DATSET[TFT_TENSOR[TFT_INT32]] is a Dataset producing single int32
-  //     Tensors of unknown shape.
-  //   TFT_DATSET[TFT_PRODUCT[TFT_TENSOR[TFT_INT32], TFT_TENSOR[TFT_FLOAT32]] is
-  //     a Dataset producing pairs of Tensors, one integer and one float.
-  // Note: The high ID number is to prepare for the eventuality that Datasets
-  // will be supported by user types in the future.
-  TFT_DATASET = 10102;
+  // elonxamplelons:
+  //   TFT_DATSelonT[TFT_TelonNSOR[TFT_INT32]] is a Dataselont producing singlelon int32
+  //     Telonnsors of unknown shapelon.
+  //   TFT_DATSelonT[TFT_PRODUCT[TFT_TelonNSOR[TFT_INT32], TFT_TelonNSOR[TFT_FLOAT32]] is
+  //     a Dataselont producing pairs of Telonnsors, onelon intelongelonr and onelon float.
+  // Notelon: Thelon high ID numbelonr is to prelonparelon for thelon elonvelonntuality that Dataselonts
+  // will belon supportelond by uselonr typelons in thelon futurelon.
+  TFT_DATASelonT = 10102;
 
-  // A ragged tensor created by tf.ragged ops and APIs.
+  // A raggelond telonnsor crelonatelond by tf.raggelond ops and APIs.
   //
-  // Parametrization: TFT_RAGGED[<element_type>].
-  TFT_RAGGED = 10103;
+  // Paramelontrization: TFT_RAGGelonD[<elonlelonmelonnt_typelon>].
+  TFT_RAGGelonD = 10103;
 
-  // A mutex lock tensor, produced by tf.raw_ops.MutexLock.
-  // Unlike strict execution models, where ownership of a lock is denoted by
-  // "running after the lock has been acquired", in non-strict mode, lock
-  // ownership is in the true sense: "the op argument representing the lock is
-  // available".
-  // Mutex locks are the dynamic counterpart of control dependencies.
-  // TODO: Properly document this thing.
+  // A mutelonx lock telonnsor, producelond by tf.raw_ops.MutelonxLock.
+  // Unlikelon strict elonxeloncution modelonls, whelonrelon ownelonrship of a lock is delonnotelond by
+  // "running aftelonr thelon lock has belonelonn acquirelond", in non-strict modelon, lock
+  // ownelonrship is in thelon truelon selonnselon: "thelon op argumelonnt relonprelonselonnting thelon lock is
+  // availablelon".
+  // Mutelonx locks arelon thelon dynamic countelonrpart of control delonpelonndelonncielons.
+  // TODO: Propelonrly documelonnt this thing.
   //
-  // Parametrization: TFT_MUTEX_LOCK[].
-  TFT_MUTEX_LOCK = 10202;
+  // Paramelontrization: TFT_MUTelonX_LOCK[].
+  TFT_MUTelonX_LOCK = 10202;
 
-  // The equivalent of a Tensor with DT_VARIANT dtype, kept here to simplify
-  // translation. This type should not normally appear after type inference.
-  // Note that LEGACY_VARIANT != ANY: TENSOR[INT32] is a subtype of ANY, but is
-  // not a subtype of LEGACY_VARIANT.
-  TFT_LEGACY_VARIANT = 10203;
+  // Thelon elonquivalelonnt of a Telonnsor with DT_VARIANT dtypelon, kelonpt helonrelon to simplify
+  // translation. This typelon should not normally appelonar aftelonr typelon infelonrelonncelon.
+  // Notelon that LelonGACY_VARIANT != ANY: TelonNSOR[INT32] is a subtypelon of ANY, but is
+  // not a subtypelon of LelonGACY_VARIANT.
+  TFT_LelonGACY_VARIANT = 10203;
 }
 
-// Highly experimental and very likely to change.
-// This encoding uses tags instead of dedicated messages for regularity. In
-// particular the encoding imposes no restrictions on what the parameters of any
-// type should be, which in particular needs to be true for type symbols.
-message FullTypeDef {
-  // The principal type represented by this object. This may be a concrete type
-  // (Tensor, Dataset) a type variable (used for dependent types) a type
-  // symbol (Any, Union). See FullTypeId for details.
-  FullTypeId type_id = 1;
+// Highly elonxpelonrimelonntal and velonry likelonly to changelon.
+// This elonncoding uselons tags instelonad of delondicatelond melonssagelons for relongularity. In
+// particular thelon elonncoding imposelons no relonstrictions on what thelon paramelontelonrs of any
+// typelon should belon, which in particular nelonelonds to belon truelon for typelon symbols.
+melonssagelon FullTypelonDelonf {
+  // Thelon principal typelon relonprelonselonntelond by this objelonct. This may belon a concrelontelon typelon
+  // (Telonnsor, Dataselont) a typelon variablelon (uselond for delonpelonndelonnt typelons) a typelon
+  // symbol (Any, Union). Selonelon FullTypelonId for delontails.
+  FullTypelonId typelon_id = 1;
 
-  repeated FullTypeDef args = 2;
+  relonpelonatelond FullTypelonDelonf args = 2;
 
-  // Literal values of this type object, if the the type admits one.
-  // For example, a type variable admits a string attribute - its name.
-  // Shape-related types may admit int attributes - their static shape values.
-  // Fields for more data types to be added as needed.
-  oneof attr {
+  // Litelonral valuelons of this typelon objelonct, if thelon thelon typelon admits onelon.
+  // For elonxamplelon, a typelon variablelon admits a string attributelon - its namelon.
+  // Shapelon-relonlatelond typelons may admit int attributelons - thelonir static shapelon valuelons.
+  // Fielonlds for morelon data typelons to belon addelond as nelonelondelond.
+  onelonof attr {
     string s = 3;
     int64 i = 4;
-    // TODO: list/tensor, map? Need to reconcile with TFT_RECORD, etc.
+    // TODO: list/telonnsor, map? Nelonelond to relonconcilelon with TFT_RelonCORD, elontc.
   }
 }

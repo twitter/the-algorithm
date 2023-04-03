@@ -1,20 +1,20 @@
-package com.twitter.home_mixer.marshaller.timelines
+packagelon com.twittelonr.homelon_mixelonr.marshallelonr.timelonlinelons
 
-import com.twitter.product_mixer.component_library.model.cursor.UrtUnorderedExcludeIdsCursor
-import com.twitter.timelines.service.{thriftscala => t}
-import com.twitter.util.Time
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.cursor.UrtUnordelonrelondelonxcludelonIdsCursor
+import com.twittelonr.timelonlinelons.selonrvicelon.{thriftscala => t}
+import com.twittelonr.util.Timelon
 
-object RecommendedUsersCursorUnmarshaller {
+objelonct ReloncommelonndelondUselonrsCursorUnmarshallelonr {
 
-  def apply(requestCursor: t.RequestCursor): Option[UrtUnorderedExcludeIdsCursor] = {
-    requestCursor match {
-      case t.RequestCursor.RecommendedUsersCursor(cursor) =>
-        Some(
-          UrtUnorderedExcludeIdsCursor(
-            initialSortIndex = cursor.minSortIndex.getOrElse(Time.now.inMilliseconds),
-            excludedIds = cursor.previouslyRecommendedUserIds
+  delonf apply(relonquelonstCursor: t.RelonquelonstCursor): Option[UrtUnordelonrelondelonxcludelonIdsCursor] = {
+    relonquelonstCursor match {
+      caselon t.RelonquelonstCursor.ReloncommelonndelondUselonrsCursor(cursor) =>
+        Somelon(
+          UrtUnordelonrelondelonxcludelonIdsCursor(
+            initialSortIndelonx = cursor.minSortIndelonx.gelontOrelonlselon(Timelon.now.inMilliselonconds),
+            elonxcludelondIds = cursor.prelonviouslyReloncommelonndelondUselonrIds
           ))
-      case _ => None
+      caselon _ => Nonelon
     }
   }
 }

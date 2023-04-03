@@ -1,23 +1,23 @@
-namespace java com.twitter.cr_mixer.thriftjava
-#@namespace scala com.twitter.cr_mixer.thriftscala
-#@namespace strato com.twitter.cr_mixer
+namelonspacelon java com.twittelonr.cr_mixelonr.thriftjava
+#@namelonspacelon scala com.twittelonr.cr_mixelonr.thriftscala
+#@namelonspacelon strato com.twittelonr.cr_mixelonr
 
-include "product.thrift"
-include "com/twitter/product_mixer/core/client_context.thrift"
-include "com/twitter/simclusters_v2/identifier.thrift"
+includelon "product.thrift"
+includelon "com/twittelonr/product_mixelonr/corelon/clielonnt_contelonxt.thrift"
+includelon "com/twittelonr/simclustelonrs_v2/idelonntifielonr.thrift"
 
-struct RelatedVideoTweetRequest {
-  1: required identifier.InternalId internalId
-	2: required product.Product product
-	3: required client_context.ClientContext clientContext # RUX LogOut will have clientContext.userId = None
-	4: optional list<i64> excludedTweetIds (personalDataType = 'TweetId')
-} (persisted='true', hasPersonalData='true')
+struct RelonlatelondVidelonoTwelonelontRelonquelonst {
+  1: relonquirelond idelonntifielonr.IntelonrnalId intelonrnalId
+	2: relonquirelond product.Product product
+	3: relonquirelond clielonnt_contelonxt.ClielonntContelonxt clielonntContelonxt # RUX LogOut will havelon clielonntContelonxt.uselonrId = Nonelon
+	4: optional list<i64> elonxcludelondTwelonelontIds (pelonrsonalDataTypelon = 'TwelonelontId')
+} (pelonrsistelond='truelon', hasPelonrsonalData='truelon')
 
-struct RelatedVideoTweet {
-  1: required i64 tweetId (personalDataType = 'TweetId')
-  2: optional double score
-} (persisted='true', hasPersonalData='true')
+struct RelonlatelondVidelonoTwelonelont {
+  1: relonquirelond i64 twelonelontId (pelonrsonalDataTypelon = 'TwelonelontId')
+  2: optional doublelon scorelon
+} (pelonrsistelond='truelon', hasPelonrsonalData='truelon')
 
-struct RelatedVideoTweetResponse {
-  1: required list<RelatedVideoTweet> tweets
-} (persisted='true')
+struct RelonlatelondVidelonoTwelonelontRelonsponselon {
+  1: relonquirelond list<RelonlatelondVidelonoTwelonelont> twelonelonts
+} (pelonrsistelond='truelon')

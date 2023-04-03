@@ -1,61 +1,61 @@
-package com.twitter.simclusters_v2.scalding.evaluation
+packagelon com.twittelonr.simclustelonrs_v2.scalding.elonvaluation
 
-import com.twitter.algebird.AveragedValue
-import com.twitter.scalding.Execution
-import com.twitter.scalding.typed.TypedPipe
-import com.twitter.simclusters_v2.scalding.common.Util
+import com.twittelonr.algelonbird.AvelonragelondValuelon
+import com.twittelonr.scalding.elonxeloncution
+import com.twittelonr.scalding.typelond.TypelondPipelon
+import com.twittelonr.simclustelonrs_v2.scalding.common.Util
 
 /**
- * Utility object for correlation measures between the algorithm scores and the user engagements,
- * such as the number of Likes.
+ * Utility objelonct for correlonlation melonasurelons belontwelonelonn thelon algorithm scorelons and thelon uselonr elonngagelonmelonnts,
+ * such as thelon numbelonr of Likelons.
  */
-object LabelCorrelationsHelper {
+objelonct LabelonlCorrelonlationsHelonlpelonr {
 
-  private def toDouble(bool: Boolean): Double = {
-    if (bool) 1.0 else 0.0
+  privatelon delonf toDoublelon(bool: Boolelonan): Doublelon = {
+    if (bool) 1.0 elonlselon 0.0
   }
 
   /**
-   * Given a pipe of labeled tweets, calculate the cosine similarity between the algorithm scores
-   * and users' favorite engagements.
+   * Givelonn a pipelon of labelonlelond twelonelonts, calculatelon thelon cosinelon similarity belontwelonelonn thelon algorithm scorelons
+   * and uselonrs' favoritelon elonngagelonmelonnts.
    */
-  def cosineSimilarityForLike(labeledTweets: TypedPipe[LabeledTweet]): Execution[Double] = {
-    labeledTweets
-      .map { tweet => (toDouble(tweet.labels.isLiked), tweet.algorithmScore.getOrElse(0.0)) }
-      .toIterableExecution.map { iter => Util.cosineSimilarity(iter.iterator) }
+  delonf cosinelonSimilarityForLikelon(labelonlelondTwelonelonts: TypelondPipelon[LabelonlelondTwelonelont]): elonxeloncution[Doublelon] = {
+    labelonlelondTwelonelonts
+      .map { twelonelont => (toDoublelon(twelonelont.labelonls.isLikelond), twelonelont.algorithmScorelon.gelontOrelonlselon(0.0)) }
+      .toItelonrablelonelonxeloncution.map { itelonr => Util.cosinelonSimilarity(itelonr.itelonrator) }
   }
 
   /**
-   * Given a pipe of labeled tweets, calculate cosine similarity between algorithm score and users'
-   * favorites engagements, on a per user basis, and return the average of all cosine
-   * similarities across all users.
+   * Givelonn a pipelon of labelonlelond twelonelonts, calculatelon cosinelon similarity belontwelonelonn algorithm scorelon and uselonrs'
+   * favoritelons elonngagelonmelonnts, on a pelonr uselonr basis, and relonturn thelon avelonragelon of all cosinelon
+   * similaritielons across all uselonrs.
    */
-  def cosineSimilarityForLikePerUser(labeledTweets: TypedPipe[LabeledTweet]): Execution[Double] = {
-    val avg = AveragedValue.aggregator.composePrepare[(Unit, Double)](_._2)
+  delonf cosinelonSimilarityForLikelonPelonrUselonr(labelonlelondTwelonelonts: TypelondPipelon[LabelonlelondTwelonelont]): elonxeloncution[Doublelon] = {
+    val avg = AvelonragelondValuelon.aggrelongator.composelonPrelonparelon[(Unit, Doublelon)](_._2)
 
-    labeledTweets
-      .map { tweet =>
+    labelonlelondTwelonelonts
+      .map { twelonelont =>
         (
-          tweet.targetUserId,
-          Seq((toDouble(tweet.labels.isLiked), tweet.algorithmScore.getOrElse(0.0)))
+          twelonelont.targelontUselonrId,
+          Selonq((toDoublelon(twelonelont.labelonls.isLikelond), twelonelont.algorithmScorelon.gelontOrelonlselon(0.0)))
         )
       }
-      .sumByKey
+      .sumByKelony
       .map {
-        case (userId, seq) =>
-          ((), Util.cosineSimilarity(seq.iterator))
+        caselon (uselonrId, selonq) =>
+          ((), Util.cosinelonSimilarity(selonq.itelonrator))
       }
-      .aggregate(avg)
-      .getOrElseExecution(0.0)
+      .aggrelongatelon(avg)
+      .gelontOrelonlselonelonxeloncution(0.0)
   }
 
   /**
-   * Calculates the Pearson correlation coefficient for the algorithm scores and user's favorite
-   * engagement. Note this function call triggers a writeToDisk execution.
+   * Calculatelons thelon Pelonarson correlonlation coelonfficielonnt for thelon algorithm scorelons and uselonr's favoritelon
+   * elonngagelonmelonnt. Notelon this function call triggelonrs a writelonToDisk elonxeloncution.
    */
-  def pearsonCoefficientForLike(labeledTweets: TypedPipe[LabeledTweet]): Execution[Double] = {
-    labeledTweets
-      .map { tweet => (toDouble(tweet.labels.isLiked), tweet.algorithmScore.getOrElse(0.0)) }
-      .toIterableExecution.map { iter => Util.computeCorrelation(iter.iterator) }
+  delonf pelonarsonCoelonfficielonntForLikelon(labelonlelondTwelonelonts: TypelondPipelon[LabelonlelondTwelonelont]): elonxeloncution[Doublelon] = {
+    labelonlelondTwelonelonts
+      .map { twelonelont => (toDoublelon(twelonelont.labelonls.isLikelond), twelonelont.algorithmScorelon.gelontOrelonlselon(0.0)) }
+      .toItelonrablelonelonxeloncution.map { itelonr => Util.computelonCorrelonlation(itelonr.itelonrator) }
   }
 }

@@ -1,13 +1,13 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.melontadata
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.DismissInfo
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.DismissInfo
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class DismissInfoMarshaller @Inject() (callbackMarshaller: CallbackMarshaller) {
+@Singlelonton
+class DismissInfoMarshallelonr @Injelonct() (callbackMarshallelonr: CallbackMarshallelonr) {
 
-  def apply(dismissInfo: DismissInfo): urt.DismissInfo =
-    urt.DismissInfo(dismissInfo.callbacks.map(_.map(callbackMarshaller(_))))
+  delonf apply(dismissInfo: DismissInfo): urt.DismissInfo =
+    urt.DismissInfo(dismissInfo.callbacks.map(_.map(callbackMarshallelonr(_))))
 }

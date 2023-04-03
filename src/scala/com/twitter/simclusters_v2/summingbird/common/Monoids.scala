@@ -1,477 +1,477 @@
-package com.twitter.simclusters_v2.summingbird.common
+packagelon com.twittelonr.simclustelonrs_v2.summingbird.common
 
-import com.twitter.algebird.DecayedValue
-import com.twitter.algebird.Monoid
-import com.twitter.algebird.OptionMonoid
-import com.twitter.algebird.ScMapMonoid
-import com.twitter.algebird_internal.thriftscala.{DecayedValue => ThriftDecayedValue}
-import com.twitter.simclusters_v2.common.SimClustersEmbedding
-import com.twitter.simclusters_v2.thriftscala.ClustersWithScores
-import com.twitter.simclusters_v2.thriftscala.MultiModelClustersWithScores
-import com.twitter.simclusters_v2.thriftscala.MultiModelTopKTweetsWithScores
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
-import com.twitter.simclusters_v2.thriftscala.MultiModelPersistentSimClustersEmbedding
-import com.twitter.simclusters_v2.thriftscala.PersistentSimClustersEmbedding
-import com.twitter.simclusters_v2.thriftscala.Scores
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingMetadata
-import com.twitter.simclusters_v2.thriftscala.TopKClustersWithScores
-import com.twitter.simclusters_v2.thriftscala.TopKTweetsWithScores
-import com.twitter.simclusters_v2.thriftscala.{SimClustersEmbedding => ThriftSimClustersEmbedding}
-import com.twitter.snowflake.id.SnowflakeId
-import scala.collection.mutable
+import com.twittelonr.algelonbird.DeloncayelondValuelon
+import com.twittelonr.algelonbird.Monoid
+import com.twittelonr.algelonbird.OptionMonoid
+import com.twittelonr.algelonbird.ScMapMonoid
+import com.twittelonr.algelonbird_intelonrnal.thriftscala.{DeloncayelondValuelon => ThriftDeloncayelondValuelon}
+import com.twittelonr.simclustelonrs_v2.common.SimClustelonrselonmbelondding
+import com.twittelonr.simclustelonrs_v2.thriftscala.ClustelonrsWithScorelons
+import com.twittelonr.simclustelonrs_v2.thriftscala.MultiModelonlClustelonrsWithScorelons
+import com.twittelonr.simclustelonrs_v2.thriftscala.MultiModelonlTopKTwelonelontsWithScorelons
+import com.twittelonr.simclustelonrs_v2.thriftscala.ModelonlVelonrsion
+import com.twittelonr.simclustelonrs_v2.thriftscala.MultiModelonlPelonrsistelonntSimClustelonrselonmbelondding
+import com.twittelonr.simclustelonrs_v2.thriftscala.PelonrsistelonntSimClustelonrselonmbelondding
+import com.twittelonr.simclustelonrs_v2.thriftscala.Scorelons
+import com.twittelonr.simclustelonrs_v2.thriftscala.SimClustelonrselonmbelonddingMelontadata
+import com.twittelonr.simclustelonrs_v2.thriftscala.TopKClustelonrsWithScorelons
+import com.twittelonr.simclustelonrs_v2.thriftscala.TopKTwelonelontsWithScorelons
+import com.twittelonr.simclustelonrs_v2.thriftscala.{SimClustelonrselonmbelondding => ThriftSimClustelonrselonmbelondding}
+import com.twittelonr.snowflakelon.id.SnowflakelonId
+import scala.collelonction.mutablelon
 
 /**
- * Contains various monoids used in the EntityJob
+ * Contains various monoids uselond in thelon elonntityJob
  */
-object Monoids {
+objelonct Monoids {
 
-  class ScoresMonoid(implicit thriftDecayedValueMonoid: ThriftDecayedValueMonoid)
-      extends Monoid[Scores] {
+  class ScorelonsMonoid(implicit thriftDeloncayelondValuelonMonoid: ThriftDeloncayelondValuelonMonoid)
+      elonxtelonnds Monoid[Scorelons] {
 
-    private val optionalThriftDecayedValueMonoid =
-      new OptionMonoid[ThriftDecayedValue]()
+    privatelon val optionalThriftDeloncayelondValuelonMonoid =
+      nelonw OptionMonoid[ThriftDeloncayelondValuelon]()
 
-    override val zero: Scores = Scores()
+    ovelonrridelon val zelonro: Scorelons = Scorelons()
 
-    override def plus(x: Scores, y: Scores): Scores = {
-      Scores(
-        optionalThriftDecayedValueMonoid.plus(
-          x.favClusterNormalized8HrHalfLifeScore,
-          y.favClusterNormalized8HrHalfLifeScore
+    ovelonrridelon delonf plus(x: Scorelons, y: Scorelons): Scorelons = {
+      Scorelons(
+        optionalThriftDeloncayelondValuelonMonoid.plus(
+          x.favClustelonrNormalizelond8HrHalfLifelonScorelon,
+          y.favClustelonrNormalizelond8HrHalfLifelonScorelon
         ),
-        optionalThriftDecayedValueMonoid.plus(
-          x.followClusterNormalized8HrHalfLifeScore,
-          y.followClusterNormalized8HrHalfLifeScore
+        optionalThriftDeloncayelondValuelonMonoid.plus(
+          x.followClustelonrNormalizelond8HrHalfLifelonScorelon,
+          y.followClustelonrNormalizelond8HrHalfLifelonScorelon
         )
       )
     }
   }
 
-  class ClustersWithScoresMonoid(implicit scoresMonoid: ScoresMonoid)
-      extends Monoid[ClustersWithScores] {
+  class ClustelonrsWithScorelonsMonoid(implicit scorelonsMonoid: ScorelonsMonoid)
+      elonxtelonnds Monoid[ClustelonrsWithScorelons] {
 
-    private val optionMapMonoid =
-      new OptionMonoid[collection.Map[Int, Scores]]()(new ScMapMonoid[Int, Scores]())
+    privatelon val optionMapMonoid =
+      nelonw OptionMonoid[collelonction.Map[Int, Scorelons]]()(nelonw ScMapMonoid[Int, Scorelons]())
 
-    override val zero: ClustersWithScores = ClustersWithScores()
+    ovelonrridelon val zelonro: ClustelonrsWithScorelons = ClustelonrsWithScorelons()
 
-    override def plus(x: ClustersWithScores, y: ClustersWithScores): ClustersWithScores = {
-      ClustersWithScores(
-        optionMapMonoid.plus(x.clustersToScore, y.clustersToScore)
+    ovelonrridelon delonf plus(x: ClustelonrsWithScorelons, y: ClustelonrsWithScorelons): ClustelonrsWithScorelons = {
+      ClustelonrsWithScorelons(
+        optionMapMonoid.plus(x.clustelonrsToScorelon, y.clustelonrsToScorelon)
       )
     }
   }
 
-  class MultiModelClustersWithScoresMonoid(implicit scoresMonoid: ScoresMonoid)
-      extends Monoid[MultiModelClustersWithScores] {
+  class MultiModelonlClustelonrsWithScorelonsMonoid(implicit scorelonsMonoid: ScorelonsMonoid)
+      elonxtelonnds Monoid[MultiModelonlClustelonrsWithScorelons] {
 
-    override val zero: MultiModelClustersWithScores = MultiModelClustersWithScores()
+    ovelonrridelon val zelonro: MultiModelonlClustelonrsWithScorelons = MultiModelonlClustelonrsWithScorelons()
 
-    override def plus(
-      x: MultiModelClustersWithScores,
-      y: MultiModelClustersWithScores
-    ): MultiModelClustersWithScores = {
-      // We reuse the logic from the Monoid for the Value here
-      val clustersWithScoreMonoid = Implicits.clustersWithScoreMonoid
+    ovelonrridelon delonf plus(
+      x: MultiModelonlClustelonrsWithScorelons,
+      y: MultiModelonlClustelonrsWithScorelons
+    ): MultiModelonlClustelonrsWithScorelons = {
+      // Welon relonuselon thelon logic from thelon Monoid for thelon Valuelon helonrelon
+      val clustelonrsWithScorelonMonoid = Implicits.clustelonrsWithScorelonMonoid
 
-      MultiModelClustersWithScores(
-        MultiModelUtils.mergeTwoMultiModelMaps(
-          x.multiModelClustersWithScores,
-          y.multiModelClustersWithScores,
-          clustersWithScoreMonoid))
+      MultiModelonlClustelonrsWithScorelons(
+        MultiModelonlUtils.melonrgelonTwoMultiModelonlMaps(
+          x.multiModelonlClustelonrsWithScorelons,
+          y.multiModelonlClustelonrsWithScorelons,
+          clustelonrsWithScorelonMonoid))
     }
   }
 
-  class TopKClustersWithScoresMonoid(
+  class TopKClustelonrsWithScorelonsMonoid(
     topK: Int,
-    threshold: Double
+    threlonshold: Doublelon
   )(
-    implicit thriftDecayedValueMonoid: ThriftDecayedValueMonoid)
-      extends Monoid[TopKClustersWithScores] {
+    implicit thriftDeloncayelondValuelonMonoid: ThriftDeloncayelondValuelonMonoid)
+      elonxtelonnds Monoid[TopKClustelonrsWithScorelons] {
 
-    override val zero: TopKClustersWithScores = TopKClustersWithScores()
+    ovelonrridelon val zelonro: TopKClustelonrsWithScorelons = TopKClustelonrsWithScorelons()
 
-    override def plus(
-      x: TopKClustersWithScores,
-      y: TopKClustersWithScores
-    ): TopKClustersWithScores = {
+    ovelonrridelon delonf plus(
+      x: TopKClustelonrsWithScorelons,
+      y: TopKClustelonrsWithScorelons
+    ): TopKClustelonrsWithScorelons = {
 
-      val mergedFavMap = TopKScoresUtils
-        .mergeTwoTopKMapWithDecayedValues(
-          x.topClustersByFavClusterNormalizedScore
-            .map(_.mapValues(
-              _.favClusterNormalized8HrHalfLifeScore.getOrElse(thriftDecayedValueMonoid.zero))),
-          y.topClustersByFavClusterNormalizedScore
-            .map(_.mapValues(
-              _.favClusterNormalized8HrHalfLifeScore.getOrElse(thriftDecayedValueMonoid.zero))),
+      val melonrgelondFavMap = TopKScorelonsUtils
+        .melonrgelonTwoTopKMapWithDeloncayelondValuelons(
+          x.topClustelonrsByFavClustelonrNormalizelondScorelon
+            .map(_.mapValuelons(
+              _.favClustelonrNormalizelond8HrHalfLifelonScorelon.gelontOrelonlselon(thriftDeloncayelondValuelonMonoid.zelonro))),
+          y.topClustelonrsByFavClustelonrNormalizelondScorelon
+            .map(_.mapValuelons(
+              _.favClustelonrNormalizelond8HrHalfLifelonScorelon.gelontOrelonlselon(thriftDeloncayelondValuelonMonoid.zelonro))),
           topK,
-          threshold
-        ).map(_.mapValues(decayedValue =>
-          Scores(favClusterNormalized8HrHalfLifeScore = Some(decayedValue))))
+          threlonshold
+        ).map(_.mapValuelons(deloncayelondValuelon =>
+          Scorelons(favClustelonrNormalizelond8HrHalfLifelonScorelon = Somelon(deloncayelondValuelon))))
 
-      val mergedFollowMap = TopKScoresUtils
-        .mergeTwoTopKMapWithDecayedValues(
-          x.topClustersByFollowClusterNormalizedScore
-            .map(_.mapValues(
-              _.followClusterNormalized8HrHalfLifeScore.getOrElse(thriftDecayedValueMonoid.zero))),
-          y.topClustersByFollowClusterNormalizedScore
-            .map(_.mapValues(
-              _.followClusterNormalized8HrHalfLifeScore.getOrElse(thriftDecayedValueMonoid.zero))),
+      val melonrgelondFollowMap = TopKScorelonsUtils
+        .melonrgelonTwoTopKMapWithDeloncayelondValuelons(
+          x.topClustelonrsByFollowClustelonrNormalizelondScorelon
+            .map(_.mapValuelons(
+              _.followClustelonrNormalizelond8HrHalfLifelonScorelon.gelontOrelonlselon(thriftDeloncayelondValuelonMonoid.zelonro))),
+          y.topClustelonrsByFollowClustelonrNormalizelondScorelon
+            .map(_.mapValuelons(
+              _.followClustelonrNormalizelond8HrHalfLifelonScorelon.gelontOrelonlselon(thriftDeloncayelondValuelonMonoid.zelonro))),
           topK,
-          threshold
-        ).map(_.mapValues(decayedValue =>
-          Scores(followClusterNormalized8HrHalfLifeScore = Some(decayedValue))))
+          threlonshold
+        ).map(_.mapValuelons(deloncayelondValuelon =>
+          Scorelons(followClustelonrNormalizelond8HrHalfLifelonScorelon = Somelon(deloncayelondValuelon))))
 
-      TopKClustersWithScores(
-        mergedFavMap,
-        mergedFollowMap
+      TopKClustelonrsWithScorelons(
+        melonrgelondFavMap,
+        melonrgelondFollowMap
       )
     }
   }
-  class TopKTweetsWithScoresMonoid(
+  class TopKTwelonelontsWithScorelonsMonoid(
     topK: Int,
-    threshold: Double,
-    tweetAgeThreshold: Long
+    threlonshold: Doublelon,
+    twelonelontAgelonThrelonshold: Long
   )(
-    implicit thriftDecayedValueMonoid: ThriftDecayedValueMonoid)
-      extends Monoid[TopKTweetsWithScores] {
+    implicit thriftDeloncayelondValuelonMonoid: ThriftDeloncayelondValuelonMonoid)
+      elonxtelonnds Monoid[TopKTwelonelontsWithScorelons] {
 
-    override val zero: TopKTweetsWithScores = TopKTweetsWithScores()
+    ovelonrridelon val zelonro: TopKTwelonelontsWithScorelons = TopKTwelonelontsWithScorelons()
 
-    override def plus(x: TopKTweetsWithScores, y: TopKTweetsWithScores): TopKTweetsWithScores = {
-      val oldestTweetId = SnowflakeId.firstIdFor(System.currentTimeMillis() - tweetAgeThreshold)
+    ovelonrridelon delonf plus(x: TopKTwelonelontsWithScorelons, y: TopKTwelonelontsWithScorelons): TopKTwelonelontsWithScorelons = {
+      val oldelonstTwelonelontId = SnowflakelonId.firstIdFor(Systelonm.currelonntTimelonMillis() - twelonelontAgelonThrelonshold)
 
-      val mergedFavMap = TopKScoresUtils
-        .mergeTwoTopKMapWithDecayedValues(
-          x.topTweetsByFavClusterNormalizedScore
-            .map(_.mapValues(
-              _.favClusterNormalized8HrHalfLifeScore.getOrElse(thriftDecayedValueMonoid.zero))),
-          y.topTweetsByFavClusterNormalizedScore
-            .map(_.mapValues(
-              _.favClusterNormalized8HrHalfLifeScore.getOrElse(thriftDecayedValueMonoid.zero))),
+      val melonrgelondFavMap = TopKScorelonsUtils
+        .melonrgelonTwoTopKMapWithDeloncayelondValuelons(
+          x.topTwelonelontsByFavClustelonrNormalizelondScorelon
+            .map(_.mapValuelons(
+              _.favClustelonrNormalizelond8HrHalfLifelonScorelon.gelontOrelonlselon(thriftDeloncayelondValuelonMonoid.zelonro))),
+          y.topTwelonelontsByFavClustelonrNormalizelondScorelon
+            .map(_.mapValuelons(
+              _.favClustelonrNormalizelond8HrHalfLifelonScorelon.gelontOrelonlselon(thriftDeloncayelondValuelonMonoid.zelonro))),
           topK,
-          threshold
-        ).map(_.filter(_._1 >= oldestTweetId).mapValues(decayedValue =>
-          Scores(favClusterNormalized8HrHalfLifeScore = Some(decayedValue))))
+          threlonshold
+        ).map(_.filtelonr(_._1 >= oldelonstTwelonelontId).mapValuelons(deloncayelondValuelon =>
+          Scorelons(favClustelonrNormalizelond8HrHalfLifelonScorelon = Somelon(deloncayelondValuelon))))
 
-      TopKTweetsWithScores(mergedFavMap, None)
+      TopKTwelonelontsWithScorelons(melonrgelondFavMap, Nonelon)
     }
   }
 
-  class MultiModelTopKTweetsWithScoresMonoid(
+  class MultiModelonlTopKTwelonelontsWithScorelonsMonoid(
   )(
-    implicit thriftDecayedValueMonoid: ThriftDecayedValueMonoid)
-      extends Monoid[MultiModelTopKTweetsWithScores] {
-    override val zero: MultiModelTopKTweetsWithScores = MultiModelTopKTweetsWithScores()
+    implicit thriftDeloncayelondValuelonMonoid: ThriftDeloncayelondValuelonMonoid)
+      elonxtelonnds Monoid[MultiModelonlTopKTwelonelontsWithScorelons] {
+    ovelonrridelon val zelonro: MultiModelonlTopKTwelonelontsWithScorelons = MultiModelonlTopKTwelonelontsWithScorelons()
 
-    override def plus(
-      x: MultiModelTopKTweetsWithScores,
-      y: MultiModelTopKTweetsWithScores
-    ): MultiModelTopKTweetsWithScores = {
-      // We reuse the logic from the Monoid for the Value here
-      val topKTweetsWithScoresMonoid = Implicits.topKTweetsWithScoresMonoid
+    ovelonrridelon delonf plus(
+      x: MultiModelonlTopKTwelonelontsWithScorelons,
+      y: MultiModelonlTopKTwelonelontsWithScorelons
+    ): MultiModelonlTopKTwelonelontsWithScorelons = {
+      // Welon relonuselon thelon logic from thelon Monoid for thelon Valuelon helonrelon
+      val topKTwelonelontsWithScorelonsMonoid = Implicits.topKTwelonelontsWithScorelonsMonoid
 
-      MultiModelTopKTweetsWithScores(
-        MultiModelUtils.mergeTwoMultiModelMaps(
-          x.multiModelTopKTweetsWithScores,
-          y.multiModelTopKTweetsWithScores,
-          topKTweetsWithScoresMonoid))
+      MultiModelonlTopKTwelonelontsWithScorelons(
+        MultiModelonlUtils.melonrgelonTwoMultiModelonlMaps(
+          x.multiModelonlTopKTwelonelontsWithScorelons,
+          y.multiModelonlTopKTwelonelontsWithScorelons,
+          topKTwelonelontsWithScorelonsMonoid))
     }
 
   }
 
   /**
-   * Merge two PersistentSimClustersEmbedding. The latest embedding overwrite the old embedding.
-   * The new count equals to the sum of the count.
+   * Melonrgelon two PelonrsistelonntSimClustelonrselonmbelondding. Thelon latelonst elonmbelondding ovelonrwritelon thelon old elonmbelondding.
+   * Thelon nelonw count elonquals to thelon sum of thelon count.
    */
-  class PersistentSimClustersEmbeddingMonoid extends Monoid[PersistentSimClustersEmbedding] {
+  class PelonrsistelonntSimClustelonrselonmbelonddingMonoid elonxtelonnds Monoid[PelonrsistelonntSimClustelonrselonmbelondding] {
 
-    override val zero: PersistentSimClustersEmbedding = PersistentSimClustersEmbedding(
-      ThriftSimClustersEmbedding(),
-      SimClustersEmbeddingMetadata()
+    ovelonrridelon val zelonro: PelonrsistelonntSimClustelonrselonmbelondding = PelonrsistelonntSimClustelonrselonmbelondding(
+      ThriftSimClustelonrselonmbelondding(),
+      SimClustelonrselonmbelonddingMelontadata()
     )
 
-    private val optionLongMonoid = new OptionMonoid[Long]()
+    privatelon val optionLongMonoid = nelonw OptionMonoid[Long]()
 
-    override def plus(
-      x: PersistentSimClustersEmbedding,
-      y: PersistentSimClustersEmbedding
-    ): PersistentSimClustersEmbedding = {
-      val latest =
-        if (x.metadata.updatedAtMs.getOrElse(0L) > y.metadata.updatedAtMs.getOrElse(0L)) x else y
-      latest.copy(
-        metadata = latest.metadata.copy(
-          updatedCount = optionLongMonoid.plus(x.metadata.updatedCount, y.metadata.updatedCount)))
+    ovelonrridelon delonf plus(
+      x: PelonrsistelonntSimClustelonrselonmbelondding,
+      y: PelonrsistelonntSimClustelonrselonmbelondding
+    ): PelonrsistelonntSimClustelonrselonmbelondding = {
+      val latelonst =
+        if (x.melontadata.updatelondAtMs.gelontOrelonlselon(0L) > y.melontadata.updatelondAtMs.gelontOrelonlselon(0L)) x elonlselon y
+      latelonst.copy(
+        melontadata = latelonst.melontadata.copy(
+          updatelondCount = optionLongMonoid.plus(x.melontadata.updatelondCount, y.melontadata.updatelondCount)))
     }
   }
 
-  class MultiModelPersistentSimClustersEmbeddingMonoid
-      extends Monoid[MultiModelPersistentSimClustersEmbedding] {
+  class MultiModelonlPelonrsistelonntSimClustelonrselonmbelonddingMonoid
+      elonxtelonnds Monoid[MultiModelonlPelonrsistelonntSimClustelonrselonmbelondding] {
 
-    override val zero: MultiModelPersistentSimClustersEmbedding =
-      MultiModelPersistentSimClustersEmbedding(Map[ModelVersion, PersistentSimClustersEmbedding]())
+    ovelonrridelon val zelonro: MultiModelonlPelonrsistelonntSimClustelonrselonmbelondding =
+      MultiModelonlPelonrsistelonntSimClustelonrselonmbelondding(Map[ModelonlVelonrsion, PelonrsistelonntSimClustelonrselonmbelondding]())
 
-    override def plus(
-      x: MultiModelPersistentSimClustersEmbedding,
-      y: MultiModelPersistentSimClustersEmbedding
-    ): MultiModelPersistentSimClustersEmbedding = {
-      val monoid = Implicits.persistentSimClustersEmbeddingMonoid
+    ovelonrridelon delonf plus(
+      x: MultiModelonlPelonrsistelonntSimClustelonrselonmbelondding,
+      y: MultiModelonlPelonrsistelonntSimClustelonrselonmbelondding
+    ): MultiModelonlPelonrsistelonntSimClustelonrselonmbelondding = {
+      val monoid = Implicits.pelonrsistelonntSimClustelonrselonmbelonddingMonoid
 
-      // PersistentSimClustersEmbeddings is the only required thrift object so we need to wrap it
-      // in Some
-      MultiModelUtils.mergeTwoMultiModelMaps(
-        Some(x.multiModelPersistentSimClustersEmbedding),
-        Some(y.multiModelPersistentSimClustersEmbedding),
+      // PelonrsistelonntSimClustelonrselonmbelonddings is thelon only relonquirelond thrift objelonct so welon nelonelond to wrap it
+      // in Somelon
+      MultiModelonlUtils.melonrgelonTwoMultiModelonlMaps(
+        Somelon(x.multiModelonlPelonrsistelonntSimClustelonrselonmbelondding),
+        Somelon(y.multiModelonlPelonrsistelonntSimClustelonrselonmbelondding),
         monoid) match {
-        // clean up the empty embeddings
-        case Some(res) =>
-          MultiModelPersistentSimClustersEmbedding(res.flatMap {
-            // in some cases the list of SimClustersScore is empty, so we want to remove the
-            // modelVersion from the list of Models for the embedding
-            case (modelVersion, persistentSimClustersEmbedding) =>
-              persistentSimClustersEmbedding.embedding.embedding match {
-                case embedding if embedding.nonEmpty =>
-                  Map(modelVersion -> persistentSimClustersEmbedding)
-                case _ =>
-                  None
+        // clelonan up thelon elonmpty elonmbelonddings
+        caselon Somelon(relons) =>
+          MultiModelonlPelonrsistelonntSimClustelonrselonmbelondding(relons.flatMap {
+            // in somelon caselons thelon list of SimClustelonrsScorelon is elonmpty, so welon want to relonmovelon thelon
+            // modelonlVelonrsion from thelon list of Modelonls for thelon elonmbelondding
+            caselon (modelonlVelonrsion, pelonrsistelonntSimClustelonrselonmbelondding) =>
+              pelonrsistelonntSimClustelonrselonmbelondding.elonmbelondding.elonmbelondding match {
+                caselon elonmbelondding if elonmbelondding.nonelonmpty =>
+                  Map(modelonlVelonrsion -> pelonrsistelonntSimClustelonrselonmbelondding)
+                caselon _ =>
+                  Nonelon
               }
           })
-        case _ => zero
+        caselon _ => zelonro
       }
     }
   }
 
   /**
-   * Merge two PersistentSimClustersEmbeddings. The embedding with the longest l2 norm overwrites
-   * the other embedding. The new count equals to the sum of the count.
+   * Melonrgelon two PelonrsistelonntSimClustelonrselonmbelonddings. Thelon elonmbelondding with thelon longelonst l2 norm ovelonrwritelons
+   * thelon othelonr elonmbelondding. Thelon nelonw count elonquals to thelon sum of thelon count.
    */
-  class PersistentSimClustersEmbeddingLongestL2NormMonoid
-      extends Monoid[PersistentSimClustersEmbedding] {
+  class PelonrsistelonntSimClustelonrselonmbelonddingLongelonstL2NormMonoid
+      elonxtelonnds Monoid[PelonrsistelonntSimClustelonrselonmbelondding] {
 
-    override val zero: PersistentSimClustersEmbedding = PersistentSimClustersEmbedding(
-      ThriftSimClustersEmbedding(),
-      SimClustersEmbeddingMetadata()
+    ovelonrridelon val zelonro: PelonrsistelonntSimClustelonrselonmbelondding = PelonrsistelonntSimClustelonrselonmbelondding(
+      ThriftSimClustelonrselonmbelondding(),
+      SimClustelonrselonmbelonddingMelontadata()
     )
 
-    override def plus(
-      x: PersistentSimClustersEmbedding,
-      y: PersistentSimClustersEmbedding
-    ): PersistentSimClustersEmbedding = {
-      if (SimClustersEmbedding(x.embedding).l2norm >= SimClustersEmbedding(y.embedding).l2norm) x
-      else y
+    ovelonrridelon delonf plus(
+      x: PelonrsistelonntSimClustelonrselonmbelondding,
+      y: PelonrsistelonntSimClustelonrselonmbelondding
+    ): PelonrsistelonntSimClustelonrselonmbelondding = {
+      if (SimClustelonrselonmbelondding(x.elonmbelondding).l2norm >= SimClustelonrselonmbelondding(y.elonmbelondding).l2norm) x
+      elonlselon y
     }
   }
 
-  class MultiModelPersistentSimClustersEmbeddingLongestL2NormMonoid
-      extends Monoid[MultiModelPersistentSimClustersEmbedding] {
+  class MultiModelonlPelonrsistelonntSimClustelonrselonmbelonddingLongelonstL2NormMonoid
+      elonxtelonnds Monoid[MultiModelonlPelonrsistelonntSimClustelonrselonmbelondding] {
 
-    override val zero: MultiModelPersistentSimClustersEmbedding =
-      MultiModelPersistentSimClustersEmbedding(Map[ModelVersion, PersistentSimClustersEmbedding]())
+    ovelonrridelon val zelonro: MultiModelonlPelonrsistelonntSimClustelonrselonmbelondding =
+      MultiModelonlPelonrsistelonntSimClustelonrselonmbelondding(Map[ModelonlVelonrsion, PelonrsistelonntSimClustelonrselonmbelondding]())
 
-    override def plus(
-      x: MultiModelPersistentSimClustersEmbedding,
-      y: MultiModelPersistentSimClustersEmbedding
-    ): MultiModelPersistentSimClustersEmbedding = {
-      val monoid = Implicits.persistentSimClustersEmbeddingLongestL2NormMonoid
+    ovelonrridelon delonf plus(
+      x: MultiModelonlPelonrsistelonntSimClustelonrselonmbelondding,
+      y: MultiModelonlPelonrsistelonntSimClustelonrselonmbelondding
+    ): MultiModelonlPelonrsistelonntSimClustelonrselonmbelondding = {
+      val monoid = Implicits.pelonrsistelonntSimClustelonrselonmbelonddingLongelonstL2NormMonoid
 
-      MultiModelUtils.mergeTwoMultiModelMaps(
-        Some(x.multiModelPersistentSimClustersEmbedding),
-        Some(y.multiModelPersistentSimClustersEmbedding),
+      MultiModelonlUtils.melonrgelonTwoMultiModelonlMaps(
+        Somelon(x.multiModelonlPelonrsistelonntSimClustelonrselonmbelondding),
+        Somelon(y.multiModelonlPelonrsistelonntSimClustelonrselonmbelondding),
         monoid) match {
-        // clean up empty embeddings
-        case Some(res) =>
-          MultiModelPersistentSimClustersEmbedding(res.flatMap {
-            case (modelVersion, persistentSimClustersEmbedding) =>
-              // in some cases the list of SimClustersScore is empty, so we want to remove the
-              // modelVersion from the list of Models for the embedding
-              persistentSimClustersEmbedding.embedding.embedding match {
-                case embedding if embedding.nonEmpty =>
-                  Map(modelVersion -> persistentSimClustersEmbedding)
-                case _ =>
-                  None
+        // clelonan up elonmpty elonmbelonddings
+        caselon Somelon(relons) =>
+          MultiModelonlPelonrsistelonntSimClustelonrselonmbelondding(relons.flatMap {
+            caselon (modelonlVelonrsion, pelonrsistelonntSimClustelonrselonmbelondding) =>
+              // in somelon caselons thelon list of SimClustelonrsScorelon is elonmpty, so welon want to relonmovelon thelon
+              // modelonlVelonrsion from thelon list of Modelonls for thelon elonmbelondding
+              pelonrsistelonntSimClustelonrselonmbelondding.elonmbelondding.elonmbelondding match {
+                caselon elonmbelondding if elonmbelondding.nonelonmpty =>
+                  Map(modelonlVelonrsion -> pelonrsistelonntSimClustelonrselonmbelondding)
+                caselon _ =>
+                  Nonelon
               }
           })
-        case _ => zero
+        caselon _ => zelonro
       }
     }
   }
 
-  object TopKScoresUtils {
+  objelonct TopKScorelonsUtils {
 
     /**
-     * Function for merging TopK scores with decayed values.
+     * Function for melonrging TopK scorelons with deloncayelond valuelons.
      *
-     * This is for use with topk scores where all scores are updated at the same time (i.e. most
-     * time-decayed embedding aggregations). Rather than storing individual scores as algebird.DecayedValue
-     * and replicating time information for every key, we can store a single timestamp for the entire
-     * embedding and replicate the decay logic when processing each score.
+     * This is for uselon with topk scorelons whelonrelon all scorelons arelon updatelond at thelon samelon timelon (i.elon. most
+     * timelon-deloncayelond elonmbelondding aggrelongations). Rathelonr than storing individual scorelons as algelonbird.DeloncayelondValuelon
+     * and relonplicating timelon information for elonvelonry kelony, welon can storelon a singlelon timelonstamp for thelon elonntirelon
+     * elonmbelondding and relonplicatelon thelon deloncay logic whelonn procelonssing elonach scorelon.
      *
-     * This should replicate the behaviour of `mergeTwoTopKMapWithDecayedValues`
+     * This should relonplicatelon thelon belonhaviour of `melonrgelonTwoTopKMapWithDeloncayelondValuelons`
      *
-     * The logic is:
-     * - Determine the most recent update and build a DecayedValue for it (decayedValueForLatestTime)
-     * - For each (cluster, score), decay the score relative to the time of the most-recently updated embedding
-     *   - This is a no-op for scores from the most recently-updated embedding, and will scale scores
-     *     for the older embedding.
-     *     - Drop any (cluster, score) which are below the `threshold` score
-     *     - If both input embeddings contribute a score for the same cluster, keep the one with the largest score (after scaling)
-     *     - Sort (cluster, score) by score and keep the `topK`
+     * Thelon logic is:
+     * - Delontelonrminelon thelon most reloncelonnt updatelon and build a DeloncayelondValuelon for it (deloncayelondValuelonForLatelonstTimelon)
+     * - For elonach (clustelonr, scorelon), deloncay thelon scorelon relonlativelon to thelon timelon of thelon most-reloncelonntly updatelond elonmbelondding
+     *   - This is a no-op for scorelons from thelon most reloncelonntly-updatelond elonmbelondding, and will scalelon scorelons
+     *     for thelon oldelonr elonmbelondding.
+     *     - Drop any (clustelonr, scorelon) which arelon belonlow thelon `threlonshold` scorelon
+     *     - If both input elonmbelonddings contributelon a scorelon for thelon samelon clustelonr, kelonelonp thelon onelon with thelon largelonst scorelon (aftelonr scaling)
+     *     - Sort (clustelonr, scorelon) by scorelon and kelonelonp thelon `topK`
      *
      */
-    def mergeClusterScoresWithUpdateTimes[Key](
-      x: Seq[(Key, Double)],
-      xUpdatedAtMs: Long,
-      y: Seq[(Key, Double)],
-      yUpdatedAtMs: Long,
-      halfLifeMs: Long,
+    delonf melonrgelonClustelonrScorelonsWithUpdatelonTimelons[Kelony](
+      x: Selonq[(Kelony, Doublelon)],
+      xUpdatelondAtMs: Long,
+      y: Selonq[(Kelony, Doublelon)],
+      yUpdatelondAtMs: Long,
+      halfLifelonMs: Long,
       topK: Int,
-      threshold: Double
-    ): Seq[(Key, Double)] = {
-      val latestUpdate = math.max(xUpdatedAtMs, yUpdatedAtMs)
-      val decayedValueForLatestTime = DecayedValue.build(0.0, latestUpdate, halfLifeMs)
+      threlonshold: Doublelon
+    ): Selonq[(Kelony, Doublelon)] = {
+      val latelonstUpdatelon = math.max(xUpdatelondAtMs, yUpdatelondAtMs)
+      val deloncayelondValuelonForLatelonstTimelon = DeloncayelondValuelon.build(0.0, latelonstUpdatelon, halfLifelonMs)
 
-      val merged = mutable.HashMap[Key, Double]()
+      val melonrgelond = mutablelon.HashMap[Kelony, Doublelon]()
 
-      x.foreach {
-        case (key, score) =>
-          val decayedScore = Implicits.decayedValueMonoid
+      x.forelonach {
+        caselon (kelony, scorelon) =>
+          val deloncayelondScorelon = Implicits.deloncayelondValuelonMonoid
             .plus(
-              DecayedValue.build(score, xUpdatedAtMs, halfLifeMs),
-              decayedValueForLatestTime
-            ).value
-          if (decayedScore > threshold)
-            merged += key -> decayedScore
+              DeloncayelondValuelon.build(scorelon, xUpdatelondAtMs, halfLifelonMs),
+              deloncayelondValuelonForLatelonstTimelon
+            ).valuelon
+          if (deloncayelondScorelon > threlonshold)
+            melonrgelond += kelony -> deloncayelondScorelon
       }
 
-      y.foreach {
-        case (key, score) =>
-          val decayedScore = Implicits.decayedValueMonoid
+      y.forelonach {
+        caselon (kelony, scorelon) =>
+          val deloncayelondScorelon = Implicits.deloncayelondValuelonMonoid
             .plus(
-              DecayedValue.build(score, yUpdatedAtMs, halfLifeMs),
-              decayedValueForLatestTime
-            ).value
-          if (decayedScore > threshold)
-            merged.get(key) match {
-              case Some(existingValue) =>
-                if (decayedScore > existingValue)
-                  merged += key -> decayedScore
-              case None =>
-                merged += key -> decayedScore
+              DeloncayelondValuelon.build(scorelon, yUpdatelondAtMs, halfLifelonMs),
+              deloncayelondValuelonForLatelonstTimelon
+            ).valuelon
+          if (deloncayelondScorelon > threlonshold)
+            melonrgelond.gelont(kelony) match {
+              caselon Somelon(elonxistingValuelon) =>
+                if (deloncayelondScorelon > elonxistingValuelon)
+                  melonrgelond += kelony -> deloncayelondScorelon
+              caselon Nonelon =>
+                melonrgelond += kelony -> deloncayelondScorelon
             }
       }
 
-      merged.toSeq
+      melonrgelond.toSelonq
         .sortBy(-_._2)
-        .take(topK)
+        .takelon(topK)
     }
 
     /**
-     * Function for merging to TopK map with decayed values.
+     * Function for melonrging to TopK map with deloncayelond valuelons.
      *
-     * First of all, all the values will be decayed to the latest scaled timestamp to be comparable.
+     * First of all, all thelon valuelons will belon deloncayelond to thelon latelonst scalelond timelonstamp to belon comparablelon.
      *
-     * If the same key appears at both a and b, the one with larger scaled time (or larger value when
-     * their scaled times are same) will be taken. The values smaller than the threshold will be dropped.
+     * If thelon samelon kelony appelonars at both a and b, thelon onelon with largelonr scalelond timelon (or largelonr valuelon whelonn
+     * thelonir scalelond timelons arelon samelon) will belon takelonn. Thelon valuelons smallelonr than thelon threlonshold will belon droppelond.
      *
-     * After merging, if the size is larger than TopK, only scores with topK largest value will be kept.
+     * Aftelonr melonrging, if thelon sizelon is largelonr than TopK, only scorelons with topK largelonst valuelon will belon kelonpt.
      */
-    def mergeTwoTopKMapWithDecayedValues[T](
-      a: Option[collection.Map[T, ThriftDecayedValue]],
-      b: Option[collection.Map[T, ThriftDecayedValue]],
+    delonf melonrgelonTwoTopKMapWithDeloncayelondValuelons[T](
+      a: Option[collelonction.Map[T, ThriftDeloncayelondValuelon]],
+      b: Option[collelonction.Map[T, ThriftDeloncayelondValuelon]],
       topK: Int,
-      threshold: Double
+      threlonshold: Doublelon
     )(
-      implicit thriftDecayedValueMonoid: ThriftDecayedValueMonoid
-    ): Option[collection.Map[T, ThriftDecayedValue]] = {
+      implicit thriftDeloncayelondValuelonMonoid: ThriftDeloncayelondValuelonMonoid
+    ): Option[collelonction.Map[T, ThriftDeloncayelondValuelon]] = {
 
-      if (a.isEmpty || a.exists(_.isEmpty)) {
-        return b
+      if (a.iselonmpty || a.elonxists(_.iselonmpty)) {
+        relonturn b
       }
 
-      if (b.isEmpty || b.exists(_.isEmpty)) {
-        return a
+      if (b.iselonmpty || b.elonxists(_.iselonmpty)) {
+        relonturn a
       }
 
-      val latestScaledTime = (a.get.view ++ b.get.view).map {
-        case (_, scores) =>
-          scores.scaledTime
+      val latelonstScalelondTimelon = (a.gelont.vielonw ++ b.gelont.vielonw).map {
+        caselon (_, scorelons) =>
+          scorelons.scalelondTimelon
       }.max
 
-      val decayedValueWithLatestScaledTime = ThriftDecayedValue(0.0, latestScaledTime)
+      val deloncayelondValuelonWithLatelonstScalelondTimelon = ThriftDeloncayelondValuelon(0.0, latelonstScalelondTimelon)
 
-      val merged = mutable.HashMap[T, ThriftDecayedValue]()
+      val melonrgelond = mutablelon.HashMap[T, ThriftDeloncayelondValuelon]()
 
-      a.foreach {
-        _.foreach {
-          case (k, v) =>
-            // decay the value to latest scaled time
-            val decayedScores = thriftDecayedValueMonoid
-              .plus(v, decayedValueWithLatestScaledTime)
+      a.forelonach {
+        _.forelonach {
+          caselon (k, v) =>
+            // deloncay thelon valuelon to latelonst scalelond timelon
+            val deloncayelondScorelons = thriftDeloncayelondValuelonMonoid
+              .plus(v, deloncayelondValuelonWithLatelonstScalelondTimelon)
 
-            // only merge if the value is larger than the threshold
-            if (decayedScores.value > threshold) {
-              merged += k -> decayedScores
+            // only melonrgelon if thelon valuelon is largelonr than thelon threlonshold
+            if (deloncayelondScorelons.valuelon > threlonshold) {
+              melonrgelond += k -> deloncayelondScorelons
             }
         }
       }
 
-      b.foreach {
-        _.foreach {
-          case (k, v) =>
-            val decayedScores = thriftDecayedValueMonoid
-              .plus(v, decayedValueWithLatestScaledTime)
+      b.forelonach {
+        _.forelonach {
+          caselon (k, v) =>
+            val deloncayelondScorelons = thriftDeloncayelondValuelonMonoid
+              .plus(v, deloncayelondValuelonWithLatelonstScalelondTimelon)
 
-            // only merge if the value is larger than the threshold
-            if (decayedScores.value > threshold) {
-              if (!merged.contains(k)) {
-                merged += k -> decayedScores
-              } else {
-                // only update if the value is larger than the one already merged
-                if (decayedScores.value > merged(k).value) {
-                  merged.update(k, decayedScores)
+            // only melonrgelon if thelon valuelon is largelonr than thelon threlonshold
+            if (deloncayelondScorelons.valuelon > threlonshold) {
+              if (!melonrgelond.contains(k)) {
+                melonrgelond += k -> deloncayelondScorelons
+              } elonlselon {
+                // only updatelon if thelon valuelon is largelonr than thelon onelon alrelonady melonrgelond
+                if (deloncayelondScorelons.valuelon > melonrgelond(k).valuelon) {
+                  melonrgelond.updatelon(k, deloncayelondScorelons)
                 }
               }
             }
         }
       }
 
-      // add some buffer size (~ 0.2 * topK) to avoid sorting and taking too frequently
-      if (merged.size > topK * 1.2) {
-        Some(
-          merged.toSeq
-            .sortBy { case (_, scores) => scores.value * -1 }
-            .take(topK)
+      // add somelon buffelonr sizelon (~ 0.2 * topK) to avoid sorting and taking too frelonquelonntly
+      if (melonrgelond.sizelon > topK * 1.2) {
+        Somelon(
+          melonrgelond.toSelonq
+            .sortBy { caselon (_, scorelons) => scorelons.valuelon * -1 }
+            .takelon(topK)
             .toMap
         )
-      } else {
-        Some(merged)
+      } elonlselon {
+        Somelon(melonrgelond)
       }
     }
   }
 
-  object MultiModelUtils {
+  objelonct MultiModelonlUtils {
 
     /**
-     * In order to reduce complexity we use the Monoid for the value to plus two MultiModel maps
+     * In ordelonr to relonducelon complelonxity welon uselon thelon Monoid for thelon valuelon to plus two MultiModelonl maps
      */
-    def mergeTwoMultiModelMaps[T](
-      a: Option[collection.Map[ModelVersion, T]],
-      b: Option[collection.Map[ModelVersion, T]],
+    delonf melonrgelonTwoMultiModelonlMaps[T](
+      a: Option[collelonction.Map[ModelonlVelonrsion, T]],
+      b: Option[collelonction.Map[ModelonlVelonrsion, T]],
       monoid: Monoid[T]
-    ): Option[collection.Map[ModelVersion, T]] = {
+    ): Option[collelonction.Map[ModelonlVelonrsion, T]] = {
       (a, b) match {
-        case (Some(_), None) => a
-        case (None, Some(_)) => b
-        case (Some(aa), Some(bb)) =>
-          val res = ModelVersionProfiles.ModelVersionProfiles.foldLeft(Map[ModelVersion, T]()) {
-            (map, model) =>
-              map + (model._1 -> monoid.plus(
-                aa.getOrElse(model._1, monoid.zero),
-                bb.getOrElse(model._1, monoid.zero)
+        caselon (Somelon(_), Nonelon) => a
+        caselon (Nonelon, Somelon(_)) => b
+        caselon (Somelon(aa), Somelon(bb)) =>
+          val relons = ModelonlVelonrsionProfilelons.ModelonlVelonrsionProfilelons.foldLelonft(Map[ModelonlVelonrsion, T]()) {
+            (map, modelonl) =>
+              map + (modelonl._1 -> monoid.plus(
+                aa.gelontOrelonlselon(modelonl._1, monoid.zelonro),
+                bb.gelontOrelonlselon(modelonl._1, monoid.zelonro)
               ))
           }
-          Some(res)
-        case _ => None
+          Somelon(relons)
+        caselon _ => Nonelon
       }
     }
   }

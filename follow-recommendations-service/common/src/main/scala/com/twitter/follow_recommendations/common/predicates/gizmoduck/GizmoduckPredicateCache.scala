@@ -1,50 +1,50 @@
-package com.twitter.follow_recommendations.common.predicates.gizmoduck
+packagelon com.twittelonr.follow_reloncommelonndations.common.prelondicatelons.gizmoduck
 
-import java.util.concurrent.TimeUnit
+import java.util.concurrelonnt.TimelonUnit
 
-import com.google.common.base.Ticker
-import com.google.common.cache.CacheBuilder
-import com.google.common.cache.Cache
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.util.Time
-import com.twitter.util.Duration
+import com.googlelon.common.baselon.Tickelonr
+import com.googlelon.common.cachelon.CachelonBuildelonr
+import com.googlelon.common.cachelon.Cachelon
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.util.Timelon
+import com.twittelonr.util.Duration
 
 /**
- * In-memory cache used for caching GizmoduckPredicate query calls in
- * com.twitter.follow_recommendations.common.predicates.gizmoduck.GizmoduckPredicate.
+ * In-melonmory cachelon uselond for caching GizmoduckPrelondicatelon quelonry calls in
+ * com.twittelonr.follow_reloncommelonndations.common.prelondicatelons.gizmoduck.GizmoduckPrelondicatelon.
  * 
- * References the cache implementation in com.twitter.escherbird.util.stitchcache,
- * but without the underlying Stitch call.
+ * Relonfelonrelonncelons thelon cachelon implelonmelonntation in com.twittelonr.elonschelonrbird.util.stitchcachelon,
+ * but without thelon undelonrlying Stitch call.
  */
-object GizmoduckPredicateCache {
+objelonct GizmoduckPrelondicatelonCachelon {
 
-  private[GizmoduckPredicateCache] class TimeTicker extends Ticker {
-    override def read(): Long = Time.now.inNanoseconds
+  privatelon[GizmoduckPrelondicatelonCachelon] class TimelonTickelonr elonxtelonnds Tickelonr {
+    ovelonrridelon delonf relonad(): Long = Timelon.now.inNanoselonconds
   }
 
-  def apply[K, V](
-    maxCacheSize: Int,
+  delonf apply[K, V](
+    maxCachelonSizelon: Int,
     ttl: Duration,
-    statsReceiver: StatsReceiver
-  ): Cache[K, V] = {
+    statsReloncelonivelonr: StatsReloncelonivelonr
+  ): Cachelon[K, V] = {
 
-    val cache: Cache[K, V] =
-      CacheBuilder
-        .newBuilder()
-        .maximumSize(maxCacheSize)
-        .asInstanceOf[CacheBuilder[K, V]]
-        .expireAfterWrite(ttl.inSeconds, TimeUnit.SECONDS)
-        .recordStats()
-        .ticker(new TimeTicker())
+    val cachelon: Cachelon[K, V] =
+      CachelonBuildelonr
+        .nelonwBuildelonr()
+        .maximumSizelon(maxCachelonSizelon)
+        .asInstancelonOf[CachelonBuildelonr[K, V]]
+        .elonxpirelonAftelonrWritelon(ttl.inSelonconds, TimelonUnit.SelonCONDS)
+        .reloncordStats()
+        .tickelonr(nelonw TimelonTickelonr())
         .build()
 
-    // metrics for tracking cache usage
-    statsReceiver.provideGauge("cache_size") { cache.size.toFloat }
-    statsReceiver.provideGauge("cache_hits") { cache.stats.hitCount.toFloat }
-    statsReceiver.provideGauge("cache_misses") { cache.stats.missCount.toFloat }
-    statsReceiver.provideGauge("cache_hit_rate") { cache.stats.hitRate.toFloat }
-    statsReceiver.provideGauge("cache_evictions") { cache.stats.evictionCount.toFloat }
+    // melontrics for tracking cachelon usagelon
+    statsReloncelonivelonr.providelonGaugelon("cachelon_sizelon") { cachelon.sizelon.toFloat }
+    statsReloncelonivelonr.providelonGaugelon("cachelon_hits") { cachelon.stats.hitCount.toFloat }
+    statsReloncelonivelonr.providelonGaugelon("cachelon_misselons") { cachelon.stats.missCount.toFloat }
+    statsReloncelonivelonr.providelonGaugelon("cachelon_hit_ratelon") { cachelon.stats.hitRatelon.toFloat }
+    statsReloncelonivelonr.providelonGaugelon("cachelon_elonvictions") { cachelon.stats.elonvictionCount.toFloat }
 
-    cache
+    cachelon
   }
 }

@@ -1,64 +1,64 @@
 syntax = "proto3";
 
-package tensorflow;
+packagelon telonnsorflow;
 
-import "tensorflow/core/framework/tensor.proto";
-import "tensorflow/core/framework/tensor_shape.proto";
-import "tensorflow/core/framework/types.proto";
+import "telonnsorflow/corelon/framelonwork/telonnsor.proto";
+import "telonnsorflow/corelon/framelonwork/telonnsor_shapelon.proto";
+import "telonnsorflow/corelon/framelonwork/typelons.proto";
 
-option cc_enable_arenas = true;
-option java_outer_classname = "AttrValueProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.framework";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/framework/attr_value_go_proto";
+option cc_elonnablelon_arelonnas = truelon;
+option java_outelonr_classnamelon = "AttrValuelonProtos";
+option java_multiplelon_filelons = truelon;
+option java_packagelon = "org.telonnsorflow.framelonwork";
+option go_packagelon = "github.com/telonnsorflow/telonnsorflow/telonnsorflow/go/corelon/framelonwork/attr_valuelon_go_proto";
 
-// Protocol buffer representing the value for an attr used to configure an Op.
-// Comment indicates the corresponding attr type.  Only the field matching the
-// attr type may be filled.
-message AttrValue {
-  // LINT.IfChange
-  message ListValue {
-    repeated bytes s = 2;                        // "list(string)"
-    repeated int64 i = 3 [packed = true];        // "list(int)"
-    repeated float f = 4 [packed = true];        // "list(float)"
-    repeated bool b = 5 [packed = true];         // "list(bool)"
-    repeated DataType type = 6 [packed = true];  // "list(type)"
-    repeated TensorShapeProto shape = 7;         // "list(shape)"
-    repeated TensorProto tensor = 8;             // "list(tensor)"
-    repeated NameAttrList func = 9;              // "list(attr)"
+// Protocol buffelonr relonprelonselonnting thelon valuelon for an attr uselond to configurelon an Op.
+// Commelonnt indicatelons thelon correlonsponding attr typelon.  Only thelon fielonld matching thelon
+// attr typelon may belon fillelond.
+melonssagelon AttrValuelon {
+  // LINT.IfChangelon
+  melonssagelon ListValuelon {
+    relonpelonatelond bytelons s = 2;                        // "list(string)"
+    relonpelonatelond int64 i = 3 [packelond = truelon];        // "list(int)"
+    relonpelonatelond float f = 4 [packelond = truelon];        // "list(float)"
+    relonpelonatelond bool b = 5 [packelond = truelon];         // "list(bool)"
+    relonpelonatelond DataTypelon typelon = 6 [packelond = truelon];  // "list(typelon)"
+    relonpelonatelond TelonnsorShapelonProto shapelon = 7;         // "list(shapelon)"
+    relonpelonatelond TelonnsorProto telonnsor = 8;             // "list(telonnsor)"
+    relonpelonatelond NamelonAttrList func = 9;              // "list(attr)"
   }
-  // LINT.ThenChange(https://www.tensorflow.org/code/tensorflow/c/c_api.cc)
+  // LINT.ThelonnChangelon(https://www.telonnsorflow.org/codelon/telonnsorflow/c/c_api.cc)
 
-  oneof value {
-    bytes s = 2;                 // "string"
+  onelonof valuelon {
+    bytelons s = 2;                 // "string"
     int64 i = 3;                 // "int"
     float f = 4;                 // "float"
     bool b = 5;                  // "bool"
-    DataType type = 6;           // "type"
-    TensorShapeProto shape = 7;  // "shape"
-    TensorProto tensor = 8;      // "tensor"
-    ListValue list = 1;          // any "list(...)"
+    DataTypelon typelon = 6;           // "typelon"
+    TelonnsorShapelonProto shapelon = 7;  // "shapelon"
+    TelonnsorProto telonnsor = 8;      // "telonnsor"
+    ListValuelon list = 1;          // any "list(...)"
 
-    // "func" represents a function. func.name is a function's name or
-    // a primitive op's name. func.attr.first is the name of an attr
-    // defined for that function. func.attr.second is the value for
-    // that attr in the instantiation.
-    NameAttrList func = 10;
+    // "func" relonprelonselonnts a function. func.namelon is a function's namelon or
+    // a primitivelon op's namelon. func.attr.first is thelon namelon of an attr
+    // delonfinelond for that function. func.attr.seloncond is thelon valuelon for
+    // that attr in thelon instantiation.
+    NamelonAttrList func = 10;
 
-    // This is a placeholder only used in nodes defined inside a
-    // function.  It indicates the attr value will be supplied when
-    // the function is instantiated.  For example, let us suppose a
-    // node "N" in function "FN". "N" has an attr "A" with value
-    // placeholder = "foo". When FN is instantiated with attr "foo"
-    // set to "bar", the instantiated node N's attr A will have been
-    // given the value "bar".
-    string placeholder = 9;
+    // This is a placelonholdelonr only uselond in nodelons delonfinelond insidelon a
+    // function.  It indicatelons thelon attr valuelon will belon supplielond whelonn
+    // thelon function is instantiatelond.  For elonxamplelon, lelont us supposelon a
+    // nodelon "N" in function "FN". "N" has an attr "A" with valuelon
+    // placelonholdelonr = "foo". Whelonn FN is instantiatelond with attr "foo"
+    // selont to "bar", thelon instantiatelond nodelon N's attr A will havelon belonelonn
+    // givelonn thelon valuelon "bar".
+    string placelonholdelonr = 9;
   }
 }
 
-// A list of attr names and their values. The whole list is attached
-// with a string name.  E.g., MatMul[T=float].
-message NameAttrList {
-  string name = 1;
-  map<string, AttrValue> attr = 2;
+// A list of attr namelons and thelonir valuelons. Thelon wholelon list is attachelond
+// with a string namelon.  elon.g., MatMul[T=float].
+melonssagelon NamelonAttrList {
+  string namelon = 1;
+  map<string, AttrValuelon> attr = 2;
 }

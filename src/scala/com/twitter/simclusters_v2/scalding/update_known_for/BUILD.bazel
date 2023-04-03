@@ -1,59 +1,59 @@
 scala_library(
-    sources = [
+    sourcelons = [
         "*.scala",
     ],
     platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-only",
+        "bazelonl-compatiblelon",
+        "bazelonl-only",
     ],
-    dependencies = [
-        "src/java/com/twitter/sbf/core",
-        "src/java/com/twitter/sbf/graph",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources:simclusters_v2_embeddings_lite-scala",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/presto_hdfs_sources",
-        "src/scala/com/twitter/simclusters_v2/scalding",
-        "src/scala/com/twitter/simclusters_v2/scalding/common",
-        "src/scala/com/twitter/simclusters_v2/scalding/common/matrix",
-        "src/scala/com/twitter/wtf/entity_real_graph/common",
-        "src/scala/com/twitter/wtf/entity_real_graph/scalding/common",
-        "src/scala/com/twitter/wtf/scalding/jobs/common:execution_app",
-        "src/scala/com/twitter/wtf/scalding/jobs/common:sources",
-        "src/scala/com/twitter/wtf/scalding/jobs/common:stats_util",
-        "src/thrift/com/twitter/recos/entities:entities-thrift-scala",
-        "src/thrift/com/twitter/wtf/entity_real_graph:entity_real_graph-thrift-scala",
-        "usersource/snapshot/src/main/scala/com/twitter/usersource/snapshot/flat:usersource_flat-scala",
-        "usersource/snapshot/src/main/thrift/com/twitter/usersource/snapshot/flat:flat-scala",
-    ],
-)
-
-hadoop_binary(
-    name = "update_known_for_20m_145k_2020-adhoc",
-    main = "com.twitter.simclusters_v2.scalding.update_known_for.UpdateKnownFor20M145K2020Adhoc",
-    platform = "java8",
-    runtime_platform = "java8",
-    tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
-    ],
-    dependencies = [
-        ":update_known_for",
+    delonpelonndelonncielons = [
+        "src/java/com/twittelonr/sbf/corelon",
+        "src/java/com/twittelonr/sbf/graph",
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons",
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons:simclustelonrs_v2_elonmbelonddings_litelon-scala",
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/prelonsto_hdfs_sourcelons",
+        "src/scala/com/twittelonr/simclustelonrs_v2/scalding",
+        "src/scala/com/twittelonr/simclustelonrs_v2/scalding/common",
+        "src/scala/com/twittelonr/simclustelonrs_v2/scalding/common/matrix",
+        "src/scala/com/twittelonr/wtf/elonntity_relonal_graph/common",
+        "src/scala/com/twittelonr/wtf/elonntity_relonal_graph/scalding/common",
+        "src/scala/com/twittelonr/wtf/scalding/jobs/common:elonxeloncution_app",
+        "src/scala/com/twittelonr/wtf/scalding/jobs/common:sourcelons",
+        "src/scala/com/twittelonr/wtf/scalding/jobs/common:stats_util",
+        "src/thrift/com/twittelonr/reloncos/elonntitielons:elonntitielons-thrift-scala",
+        "src/thrift/com/twittelonr/wtf/elonntity_relonal_graph:elonntity_relonal_graph-thrift-scala",
+        "uselonrsourcelon/snapshot/src/main/scala/com/twittelonr/uselonrsourcelon/snapshot/flat:uselonrsourcelon_flat-scala",
+        "uselonrsourcelon/snapshot/src/main/thrift/com/twittelonr/uselonrsourcelon/snapshot/flat:flat-scala",
     ],
 )
 
 hadoop_binary(
-    name = "update_known_for_20m_145k_2020",
-    main = "com.twitter.simclusters_v2.scalding.update_known_for.UpdateKnownFor20M145K2020",
+    namelon = "updatelon_known_for_20m_145k_2020-adhoc",
+    main = "com.twittelonr.simclustelonrs_v2.scalding.updatelon_known_for.UpdatelonKnownFor20M145K2020Adhoc",
     platform = "java8",
-    runtime_platform = "java8",
+    runtimelon_platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
+        "bazelonl-compatiblelon",
+        "bazelonl-compatiblelon:migratelond",
+        "bazelonl-only",
     ],
-    dependencies = [
-        ":update_known_for",
+    delonpelonndelonncielons = [
+        ":updatelon_known_for",
+    ],
+)
+
+hadoop_binary(
+    namelon = "updatelon_known_for_20m_145k_2020",
+    main = "com.twittelonr.simclustelonrs_v2.scalding.updatelon_known_for.UpdatelonKnownFor20M145K2020",
+    platform = "java8",
+    runtimelon_platform = "java8",
+    tags = [
+        "bazelonl-compatiblelon",
+        "bazelonl-compatiblelon:migratelond",
+        "bazelonl-only",
+    ],
+    delonpelonndelonncielons = [
+        ":updatelon_known_for",
     ],
 )

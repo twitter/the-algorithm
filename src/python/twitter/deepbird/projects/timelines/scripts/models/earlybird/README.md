@@ -1,63 +1,63 @@
-# Earlybird Light Ranker
+# elonarlybird Light Rankelonr
 
-*Note: the light ranker is an old part of the stack which we are currently in the process of replacing.
-The current model was last trained several years ago, and uses some very strange features.
-We are working on training a new model, and eventually rebuilding this part of the stack entirely.*
+*Notelon: thelon light rankelonr is an old part of thelon stack which welon arelon currelonntly in thelon procelonss of relonplacing.
+Thelon currelonnt modelonl was last trainelond selonvelonral yelonars ago, and uselons somelon velonry strangelon felonaturelons.
+Welon arelon working on training a nelonw modelonl, and elonvelonntually relonbuilding this part of thelon stack elonntirelonly.*
 
-The Earlybird light ranker is a logistic regression model which predicts the likelihood that the user will engage with a
-tweet.
-It is intended to be a simplified version of the heavy ranker which can run on a greater amount of tweets.
+Thelon elonarlybird light rankelonr is a logistic relongrelonssion modelonl which prelondicts thelon likelonlihood that thelon uselonr will elonngagelon with a
+twelonelont.
+It is intelonndelond to belon a simplifielond velonrsion of thelon helonavy rankelonr which can run on a grelonatelonr amount of twelonelonts.
 
-There are currently 2 main light ranker models in use: one for ranking in network tweets (`recap_earlybird`), and
-another for
-out of network (UTEG) tweets (`rectweet_earlybird`). Both models are trained using the `train.py` script which is
-included in this directory. They differ mainly in the set of features
-used by the model.
-The in network model uses
-the `src/python/twitter/deepbird/projects/timelines/configs/recap/feature_config.py` file to define the
-feature configuration, while the
-out of network model uses `src/python/twitter/deepbird/projects/timelines/configs/rectweet_earlybird/feature_config.py`.
+Thelonrelon arelon currelonntly 2 main light rankelonr modelonls in uselon: onelon for ranking in nelontwork twelonelonts (`reloncap_elonarlybird`), and
+anothelonr for
+out of nelontwork (UTelonG) twelonelonts (`relonctwelonelont_elonarlybird`). Both modelonls arelon trainelond using thelon `train.py` script which is
+includelond in this direlonctory. Thelony diffelonr mainly in thelon selont of felonaturelons
+uselond by thelon modelonl.
+Thelon in nelontwork modelonl uselons
+thelon `src/python/twittelonr/delonelonpbird/projeloncts/timelonlinelons/configs/reloncap/felonaturelon_config.py` filelon to delonfinelon thelon
+felonaturelon configuration, whilelon thelon
+out of nelontwork modelonl uselons `src/python/twittelonr/delonelonpbird/projeloncts/timelonlinelons/configs/relonctwelonelont_elonarlybird/felonaturelon_config.py`.
 
-The `train.py` script is essentially a series of hooks provided to for Twitter's `twml` framework to execute,
-which is included under `twml/`.
+Thelon `train.py` script is elonsselonntially a selonrielons of hooks providelond to for Twittelonr's `twml` framelonwork to elonxeloncutelon,
+which is includelond undelonr `twml/`.
 
-### Features
+### Felonaturelons
 
-The light ranker features pipeline is as follows:
-![earlybird_features.png](earlybird_features.png)
+Thelon light rankelonr felonaturelons pipelonlinelon is as follows:
+![elonarlybird_felonaturelons.png](elonarlybird_felonaturelons.png)
 
-Some of these components are explained below:
+Somelon of thelonselon componelonnts arelon elonxplainelond belonlow:
 
-- Index Ingester: an indexing pipeline that handles the tweets as they are generated. This is the main input of
-  Earlybird, it produces Tweet Data (the basic information about the tweet, the text, the urls, media entities, facets,
-  etc) and Static Features (the features you can compute directly from a tweet right now, like whether it has URL, has
-  Cards, has quotes, etc); All information computed here are stored in index and flushed as each realtime index segments
-  become full. They are loaded back later from disk when Earlybird restarts. Note that the features may be computed in a
-  non-trivial way (like deciding the value of hasUrl), they could be computed and combined from some more "raw"
-  information in the tweet and from other services.
-  Signal Ingester: the ingester for Realtime Features, per-tweet features that can change after the tweet has been
-  indexed, mostly social engagements like retweetCount, favCount, replyCount, etc, along with some (future) spam signals
-  that's computed with later activities. These were collected and computed in a Heron topology by processing multiple
-  event streams and can be extended to support more features.
-- User Table Features is another set of features per user. They are from User Table Updater, a different input that
-  processes a stream written by our user service. It's used to store sparse realtime user
-  information. These per-user features are propagated to the tweet being scored by
-  looking up the author of the tweet.
-- Search Context Features are basically the information of current searcher, like their UI language, their own
-  produced/consumed language, and the current time (implied). They are combined with Tweet Data to compute some of the
-  features used in scoring.
+- Indelonx Ingelonstelonr: an indelonxing pipelonlinelon that handlelons thelon twelonelonts as thelony arelon gelonnelonratelond. This is thelon main input of
+  elonarlybird, it producelons Twelonelont Data (thelon basic information about thelon twelonelont, thelon telonxt, thelon urls, melondia elonntitielons, facelonts,
+  elontc) and Static Felonaturelons (thelon felonaturelons you can computelon direlonctly from a twelonelont right now, likelon whelonthelonr it has URL, has
+  Cards, has quotelons, elontc); All information computelond helonrelon arelon storelond in indelonx and flushelond as elonach relonaltimelon indelonx selongmelonnts
+  beloncomelon full. Thelony arelon loadelond back latelonr from disk whelonn elonarlybird relonstarts. Notelon that thelon felonaturelons may belon computelond in a
+  non-trivial way (likelon delonciding thelon valuelon of hasUrl), thelony could belon computelond and combinelond from somelon morelon "raw"
+  information in thelon twelonelont and from othelonr selonrvicelons.
+  Signal Ingelonstelonr: thelon ingelonstelonr for Relonaltimelon Felonaturelons, pelonr-twelonelont felonaturelons that can changelon aftelonr thelon twelonelont has belonelonn
+  indelonxelond, mostly social elonngagelonmelonnts likelon relontwelonelontCount, favCount, relonplyCount, elontc, along with somelon (futurelon) spam signals
+  that's computelond with latelonr activitielons. Thelonselon welonrelon collelonctelond and computelond in a Helonron topology by procelonssing multiplelon
+  elonvelonnt strelonams and can belon elonxtelonndelond to support morelon felonaturelons.
+- Uselonr Tablelon Felonaturelons is anothelonr selont of felonaturelons pelonr uselonr. Thelony arelon from Uselonr Tablelon Updatelonr, a diffelonrelonnt input that
+  procelonsselons a strelonam writtelonn by our uselonr selonrvicelon. It's uselond to storelon sparselon relonaltimelon uselonr
+  information. Thelonselon pelonr-uselonr felonaturelons arelon propagatelond to thelon twelonelont beloning scorelond by
+  looking up thelon author of thelon twelonelont.
+- Selonarch Contelonxt Felonaturelons arelon basically thelon information of currelonnt selonarchelonr, likelon thelonir UI languagelon, thelonir own
+  producelond/consumelond languagelon, and thelon currelonnt timelon (implielond). Thelony arelon combinelond with Twelonelont Data to computelon somelon of thelon
+  felonaturelons uselond in scoring.
 
-The scoring function in Earlybird uses both static and realtime features. Examples of static features used are:
+Thelon scoring function in elonarlybird uselons both static and relonaltimelon felonaturelons. elonxamplelons of static felonaturelons uselond arelon:
 
-- Whether the tweet is a retweet
-- Whether the tweet contains a link
-- Whether this tweet has any trend words at ingestion time
-- Whether the tweet is a reply
-- A score for the static quality of the text, computed in TweetTextScorer.java in the Ingester. Based on the factors
-  such as offensiveness, content entropy, "shout" score, length, and readability.
-- tweepcred, see top-level README.md
+- Whelonthelonr thelon twelonelont is a relontwelonelont
+- Whelonthelonr thelon twelonelont contains a link
+- Whelonthelonr this twelonelont has any trelonnd words at ingelonstion timelon
+- Whelonthelonr thelon twelonelont is a relonply
+- A scorelon for thelon static quality of thelon telonxt, computelond in TwelonelontTelonxtScorelonr.java in thelon Ingelonstelonr. Baselond on thelon factors
+  such as offelonnsivelonnelonss, contelonnt elonntropy, "shout" scorelon, lelonngth, and relonadability.
+- twelonelonpcrelond, selonelon top-lelonvelonl RelonADMelon.md
 
-Examples of realtime features used are:
+elonxamplelons of relonaltimelon felonaturelons uselond arelon:
 
-- Number of tweet likes/replies/retweets
-- pToxicity and pBlock scores provided by health models
+- Numbelonr of twelonelont likelons/relonplielons/relontwelonelonts
+- pToxicity and pBlock scorelons providelond by helonalth modelonls

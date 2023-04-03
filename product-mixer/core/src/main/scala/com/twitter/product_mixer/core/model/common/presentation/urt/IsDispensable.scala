@@ -1,14 +1,14 @@
-package com.twitter.product_mixer.core.model.common.presentation.urt
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.urt
 
 /**
- * Whether an item is considered dispensable within a module.
- * Dispensable module items should never be left as the final remaining
- * items within a module. Whenever a module would be left with only
- * dispensable contents (through removal or dismissal of other items) the
- * entire module should be discarded as if contained 0 items.
+ * Whelonthelonr an itelonm is considelonrelond dispelonnsablelon within a modulelon.
+ * Dispelonnsablelon modulelon itelonms should nelonvelonr belon lelonft as thelon final relonmaining
+ * itelonms within a modulelon. Whelonnelonvelonr a modulelon would belon lelonft with only
+ * dispelonnsablelon contelonnts (through relonmoval or dismissal of othelonr itelonms) thelon
+ * elonntirelon modulelon should belon discardelond as if containelond 0 itelonms.
  *
- * @see http://go/urtDispensableModuleItems
+ * @selonelon http://go/urtDispelonnsablelonModulelonItelonms
  */
-trait IsDispensable { self: BaseUrtItemPresentation =>
-  def dispensable: Boolean
+trait IsDispelonnsablelon { selonlf: BaselonUrtItelonmPrelonselonntation =>
+  delonf dispelonnsablelon: Boolelonan
 }

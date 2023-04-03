@@ -1,12 +1,12 @@
-package com.twitter.follow_recommendations.common.clients.phone_storage_service
+packagelon com.twittelonr.follow_reloncommelonndations.common.clielonnts.phonelon_storagelon_selonrvicelon
 
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsClient
-import com.twitter.follow_recommendations.common.clients.common.BaseClientModule
-import com.twitter.phonestorage.api.thriftscala.PhoneStorageService
+import com.twittelonr.finatra.mtls.thriftmux.modulelons.MtlsClielonnt
+import com.twittelonr.follow_reloncommelonndations.common.clielonnts.common.BaselonClielonntModulelon
+import com.twittelonr.phonelonstoragelon.api.thriftscala.PhonelonStoragelonSelonrvicelon
 
-object PhoneStorageServiceModule
-    extends BaseClientModule[PhoneStorageService.MethodPerEndpoint]
-    with MtlsClient {
-  override val label = "phone-storage-service"
-  override val dest = "/s/ibis-ds-api/ibis-ds-api:thrift2"
+objelonct PhonelonStoragelonSelonrvicelonModulelon
+    elonxtelonnds BaselonClielonntModulelon[PhonelonStoragelonSelonrvicelon.MelonthodPelonrelonndpoint]
+    with MtlsClielonnt {
+  ovelonrridelon val labelonl = "phonelon-storagelon-selonrvicelon"
+  ovelonrridelon val delonst = "/s/ibis-ds-api/ibis-ds-api:thrift2"
 }

@@ -1,18 +1,18 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.alert
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.itelonm.alelonrt
 
-import com.twitter.product_mixer.component_library.model.candidate.ShowAlertCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.item.alert.BaseShowAlertDisplayLocationBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.alert.ShowAlertDisplayLocation
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.ShowAlelonrtCandidatelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.itelonm.alelonrt.BaselonShowAlelonrtDisplayLocationBuildelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.alelonrt.ShowAlelonrtDisplayLocation
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
-case class StaticShowAlertDisplayLocationBuilder[-Query <: PipelineQuery](
-  location: ShowAlertDisplayLocation)
-    extends BaseShowAlertDisplayLocationBuilder[Query] {
+caselon class StaticShowAlelonrtDisplayLocationBuildelonr[-Quelonry <: PipelonlinelonQuelonry](
+  location: ShowAlelonrtDisplayLocation)
+    elonxtelonnds BaselonShowAlelonrtDisplayLocationBuildelonr[Quelonry] {
 
-  def apply(
-    query: Query,
-    candidate: ShowAlertCandidate,
-    features: FeatureMap
-  ): ShowAlertDisplayLocation = location
+  delonf apply(
+    quelonry: Quelonry,
+    candidatelon: ShowAlelonrtCandidatelon,
+    felonaturelons: FelonaturelonMap
+  ): ShowAlelonrtDisplayLocation = location
 }

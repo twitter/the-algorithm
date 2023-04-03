@@ -1,15 +1,15 @@
-create_thrift_libraries(
-    base_name = "interaction_graph",
-    sources = ["*.thrift"],
+crelonatelon_thrift_librarielons(
+    baselon_namelon = "intelonraction_graph",
+    sourcelons = ["*.thrift"],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependency_roots = [
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncy_roots = [
     ],
-    generate_languages = [
+    gelonnelonratelon_languagelons = [
         "java",
         "scala",
         "strato",
     ],
-    provides_java_name = "interaction_graph-thrift-java",
-    provides_scala_name = "interaction_graph-thrift-scala",
+    providelons_java_namelon = "intelonraction_graph-thrift-java",
+    providelons_scala_namelon = "intelonraction_graph-thrift-scala",
 )

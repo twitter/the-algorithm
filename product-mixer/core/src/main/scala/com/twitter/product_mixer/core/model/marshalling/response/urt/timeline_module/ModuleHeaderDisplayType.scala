@@ -1,7 +1,7 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.timelonlinelon_modulelon
 
-sealed trait ModuleHeaderDisplayType
+selonalelond trait ModulelonHelonadelonrDisplayTypelon
 
-case object Classic extends ModuleHeaderDisplayType
-case object ContextEmphasis extends ModuleHeaderDisplayType
-case object ClassicNoDivider extends ModuleHeaderDisplayType
+caselon objelonct Classic elonxtelonnds ModulelonHelonadelonrDisplayTypelon
+caselon objelonct Contelonxtelonmphasis elonxtelonnds ModulelonHelonadelonrDisplayTypelon
+caselon objelonct ClassicNoDividelonr elonxtelonnds ModulelonHelonadelonrDisplayTypelon

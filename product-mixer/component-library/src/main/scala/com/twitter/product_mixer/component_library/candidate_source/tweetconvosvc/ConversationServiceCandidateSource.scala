@@ -1,173 +1,173 @@
-package com.twitter.product_mixer.component_library.candidate_source.tweetconvosvc
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.candidatelon_sourcelon.twelonelontconvosvc
 
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSourceWithExtractedFeatures
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidatesWithSourceFeatures
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.stitch.Stitch
-import com.twitter.tweetconvosvc.tweet_ancestor.{thriftscala => ta}
-import com.twitter.tweetconvosvc.{thriftscala => tcs}
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.CandidatelonSourcelonWithelonxtractelondFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.CandidatelonsWithSourcelonFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonSourcelonIdelonntifielonr
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.twelonelontconvosvc.twelonelont_ancelonstor.{thriftscala => ta}
+import com.twittelonr.twelonelontconvosvc.{thriftscala => tcs}
+import com.twittelonr.util.Relonturn
+import com.twittelonr.util.Throw
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-case class ConversationServiceCandidateSourceRequest(
-  tweetsWithConversationMetadata: Seq[TweetWithConversationMetadata])
+caselon class ConvelonrsationSelonrvicelonCandidatelonSourcelonRelonquelonst(
+  twelonelontsWithConvelonrsationMelontadata: Selonq[TwelonelontWithConvelonrsationMelontadata])
 
-case class TweetWithConversationMetadata(
-  tweetId: Long,
-  userId: Option[Long],
-  sourceTweetId: Option[Long],
-  sourceUserId: Option[Long],
-  inReplyToTweetId: Option[Long],
-  conversationId: Option[Long],
-  ancestors: Seq[ta.TweetAncestor])
+caselon class TwelonelontWithConvelonrsationMelontadata(
+  twelonelontId: Long,
+  uselonrId: Option[Long],
+  sourcelonTwelonelontId: Option[Long],
+  sourcelonUselonrId: Option[Long],
+  inRelonplyToTwelonelontId: Option[Long],
+  convelonrsationId: Option[Long],
+  ancelonstors: Selonq[ta.TwelonelontAncelonstor])
 
 /**
- * Candidate source that fetches ancestors of input candidates from Tweetconvosvc and
- * returns a flattened list of input and ancestor candidates.
+ * Candidatelon sourcelon that felontchelons ancelonstors of input candidatelons from Twelonelontconvosvc and
+ * relonturns a flattelonnelond list of input and ancelonstor candidatelons.
  */
-@Singleton
-class ConversationServiceCandidateSource @Inject() (
-  conversationServiceClient: tcs.ConversationService.MethodPerEndpoint)
-    extends CandidateSourceWithExtractedFeatures[
-      ConversationServiceCandidateSourceRequest,
-      TweetWithConversationMetadata
+@Singlelonton
+class ConvelonrsationSelonrvicelonCandidatelonSourcelon @Injelonct() (
+  convelonrsationSelonrvicelonClielonnt: tcs.ConvelonrsationSelonrvicelon.MelonthodPelonrelonndpoint)
+    elonxtelonnds CandidatelonSourcelonWithelonxtractelondFelonaturelons[
+      ConvelonrsationSelonrvicelonCandidatelonSourcelonRelonquelonst,
+      TwelonelontWithConvelonrsationMelontadata
     ] {
 
-  override val identifier: CandidateSourceIdentifier =
-    CandidateSourceIdentifier("ConversationService")
+  ovelonrridelon val idelonntifielonr: CandidatelonSourcelonIdelonntifielonr =
+    CandidatelonSourcelonIdelonntifielonr("ConvelonrsationSelonrvicelon")
 
-  private val maxModuleSize = 3
-  private val maxAncestorsInConversation = 2
-  private val numberOfRootTweets = 1
-  private val maxTweetsInConversationWithSameId = 1
+  privatelon val maxModulelonSizelon = 3
+  privatelon val maxAncelonstorsInConvelonrsation = 2
+  privatelon val numbelonrOfRootTwelonelonts = 1
+  privatelon val maxTwelonelontsInConvelonrsationWithSamelonId = 1
 
-  override def apply(
-    request: ConversationServiceCandidateSourceRequest
-  ): Stitch[CandidatesWithSourceFeatures[TweetWithConversationMetadata]] = {
-    val inputTweetsWithConversationMetadata: Seq[TweetWithConversationMetadata] =
-      request.tweetsWithConversationMetadata
-    val ancestorsRequest =
-      tcs.GetAncestorsRequest(inputTweetsWithConversationMetadata.map(_.tweetId))
+  ovelonrridelon delonf apply(
+    relonquelonst: ConvelonrsationSelonrvicelonCandidatelonSourcelonRelonquelonst
+  ): Stitch[CandidatelonsWithSourcelonFelonaturelons[TwelonelontWithConvelonrsationMelontadata]] = {
+    val inputTwelonelontsWithConvelonrsationMelontadata: Selonq[TwelonelontWithConvelonrsationMelontadata] =
+      relonquelonst.twelonelontsWithConvelonrsationMelontadata
+    val ancelonstorsRelonquelonst =
+      tcs.GelontAncelonstorsRelonquelonst(inputTwelonelontsWithConvelonrsationMelontadata.map(_.twelonelontId))
 
-    // build the tweets with conversation metadata by calling the conversation service with reduced
-    // ancestors to limit to maxModuleSize
-    val tweetsWithConversationMetadataFromAncestors: Stitch[Seq[TweetWithConversationMetadata]] =
+    // build thelon twelonelonts with convelonrsation melontadata by calling thelon convelonrsation selonrvicelon with relonducelond
+    // ancelonstors to limit to maxModulelonSizelon
+    val twelonelontsWithConvelonrsationMelontadataFromAncelonstors: Stitch[Selonq[TwelonelontWithConvelonrsationMelontadata]] =
       Stitch
-        .callFuture(conversationServiceClient.getAncestors(ancestorsRequest))
-        .map { getAncestorsResponse: tcs.GetAncestorsResponse =>
-          inputTweetsWithConversationMetadata
-            .zip(getAncestorsResponse.ancestors).collect {
-              case (focalTweet, tcs.TweetAncestorsResult.TweetAncestors(ancestorsResult))
-                  if ancestorsResult.nonEmpty =>
-                getTweetsInThread(focalTweet, ancestorsResult.head)
-            }.flatten
+        .callFuturelon(convelonrsationSelonrvicelonClielonnt.gelontAncelonstors(ancelonstorsRelonquelonst))
+        .map { gelontAncelonstorsRelonsponselon: tcs.GelontAncelonstorsRelonsponselon =>
+          inputTwelonelontsWithConvelonrsationMelontadata
+            .zip(gelontAncelonstorsRelonsponselon.ancelonstors).collelonct {
+              caselon (focalTwelonelont, tcs.TwelonelontAncelonstorsRelonsult.TwelonelontAncelonstors(ancelonstorsRelonsult))
+                  if ancelonstorsRelonsult.nonelonmpty =>
+                gelontTwelonelontsInThrelonad(focalTwelonelont, ancelonstorsRelonsult.helonad)
+            }.flattelonn
         }
 
-    // dedupe the tweets in the list and transform the calling error to
-    // return the requested tweets with conversation metadata
-    val transformedTweetsWithConversationMetadata: Stitch[Seq[TweetWithConversationMetadata]] =
-      tweetsWithConversationMetadataFromAncestors.transform {
-        case Return(ancestors) =>
-          Stitch.value(dedupeCandidates(inputTweetsWithConversationMetadata, ancestors))
-        case Throw(_) =>
-          Stitch.value(inputTweetsWithConversationMetadata)
+    // delondupelon thelon twelonelonts in thelon list and transform thelon calling elonrror to
+    // relonturn thelon relonquelonstelond twelonelonts with convelonrsation melontadata
+    val transformelondTwelonelontsWithConvelonrsationMelontadata: Stitch[Selonq[TwelonelontWithConvelonrsationMelontadata]] =
+      twelonelontsWithConvelonrsationMelontadataFromAncelonstors.transform {
+        caselon Relonturn(ancelonstors) =>
+          Stitch.valuelon(delondupelonCandidatelons(inputTwelonelontsWithConvelonrsationMelontadata, ancelonstors))
+        caselon Throw(_) =>
+          Stitch.valuelon(inputTwelonelontsWithConvelonrsationMelontadata)
       }
 
-    // return the candidates with empty source features from transformed tweetsWithConversationMetadata
-    transformedTweetsWithConversationMetadata.map {
-      responseTweetsWithConversationMetadata: Seq[TweetWithConversationMetadata] =>
-        CandidatesWithSourceFeatures(
-          responseTweetsWithConversationMetadata,
-          FeatureMap.empty
+    // relonturn thelon candidatelons with elonmpty sourcelon felonaturelons from transformelond twelonelontsWithConvelonrsationMelontadata
+    transformelondTwelonelontsWithConvelonrsationMelontadata.map {
+      relonsponselonTwelonelontsWithConvelonrsationMelontadata: Selonq[TwelonelontWithConvelonrsationMelontadata] =>
+        CandidatelonsWithSourcelonFelonaturelons(
+          relonsponselonTwelonelontsWithConvelonrsationMelontadata,
+          FelonaturelonMap.elonmpty
         )
     }
   }
 
-  private def getTweetsInThread(
-    focalTweet: TweetWithConversationMetadata,
-    ancestors: ta.TweetAncestors
-  ): Seq[TweetWithConversationMetadata] = {
-    // Re-add the focal tweet so we can easily build modules and dedupe later.
-    // Note, TweetConvoSVC returns the bottom of the thread first, so we
-    // reverse them for easy rendering.
-    val focalTweetWithConversationMetadata = TweetWithConversationMetadata(
-      tweetId = focalTweet.tweetId,
-      userId = focalTweet.userId,
-      sourceTweetId = focalTweet.sourceTweetId,
-      sourceUserId = focalTweet.sourceUserId,
-      inReplyToTweetId = focalTweet.inReplyToTweetId,
-      conversationId = Some(focalTweet.tweetId),
-      ancestors = ancestors.ancestors
+  privatelon delonf gelontTwelonelontsInThrelonad(
+    focalTwelonelont: TwelonelontWithConvelonrsationMelontadata,
+    ancelonstors: ta.TwelonelontAncelonstors
+  ): Selonq[TwelonelontWithConvelonrsationMelontadata] = {
+    // Relon-add thelon focal twelonelont so welon can elonasily build modulelons and delondupelon latelonr.
+    // Notelon, TwelonelontConvoSVC relonturns thelon bottom of thelon threlonad first, so welon
+    // relonvelonrselon thelonm for elonasy relonndelonring.
+    val focalTwelonelontWithConvelonrsationMelontadata = TwelonelontWithConvelonrsationMelontadata(
+      twelonelontId = focalTwelonelont.twelonelontId,
+      uselonrId = focalTwelonelont.uselonrId,
+      sourcelonTwelonelontId = focalTwelonelont.sourcelonTwelonelontId,
+      sourcelonUselonrId = focalTwelonelont.sourcelonUselonrId,
+      inRelonplyToTwelonelontId = focalTwelonelont.inRelonplyToTwelonelontId,
+      convelonrsationId = Somelon(focalTwelonelont.twelonelontId),
+      ancelonstors = ancelonstors.ancelonstors
     )
 
-    val parentTweets = ancestors.ancestors.map { ancestor =>
-      TweetWithConversationMetadata(
-        tweetId = ancestor.tweetId,
-        userId = Some(ancestor.userId),
-        sourceTweetId = None,
-        sourceUserId = None,
-        inReplyToTweetId = None,
-        conversationId = Some(focalTweet.tweetId),
-        ancestors = Seq.empty
+    val parelonntTwelonelonts = ancelonstors.ancelonstors.map { ancelonstor =>
+      TwelonelontWithConvelonrsationMelontadata(
+        twelonelontId = ancelonstor.twelonelontId,
+        uselonrId = Somelon(ancelonstor.uselonrId),
+        sourcelonTwelonelontId = Nonelon,
+        sourcelonUselonrId = Nonelon,
+        inRelonplyToTwelonelontId = Nonelon,
+        convelonrsationId = Somelon(focalTwelonelont.twelonelontId),
+        ancelonstors = Selonq.elonmpty
       )
-    } ++ getTruncatedRootTweet(ancestors, focalTweet.tweetId)
+    } ++ gelontTruncatelondRootTwelonelont(ancelonstors, focalTwelonelont.twelonelontId)
 
-    val (intermediates, root) = parentTweets.splitAt(parentTweets.size - numberOfRootTweets)
-    val truncatedIntermediates =
-      intermediates.take(maxModuleSize - maxAncestorsInConversation).reverse
-    root ++ truncatedIntermediates :+ focalTweetWithConversationMetadata
+    val (intelonrmelondiatelons, root) = parelonntTwelonelonts.splitAt(parelonntTwelonelonts.sizelon - numbelonrOfRootTwelonelonts)
+    val truncatelondIntelonrmelondiatelons =
+      intelonrmelondiatelons.takelon(maxModulelonSizelon - maxAncelonstorsInConvelonrsation).relonvelonrselon
+    root ++ truncatelondIntelonrmelondiatelons :+ focalTwelonelontWithConvelonrsationMelontadata
   }
 
   /**
-   * Ancestor store truncates at 256 ancestors. For very large reply threads, we try best effort
-   * to append the root tweet to the ancestor list based on the conversationId and
-   * conversationRootAuthorId. When rendering conversation modules, we can display the root tweet
-   * instead of the 256th highest ancestor.
+   * Ancelonstor storelon truncatelons at 256 ancelonstors. For velonry largelon relonply threlonads, welon try belonst elonffort
+   * to appelonnd thelon root twelonelont to thelon ancelonstor list baselond on thelon convelonrsationId and
+   * convelonrsationRootAuthorId. Whelonn relonndelonring convelonrsation modulelons, welon can display thelon root twelonelont
+   * instelonad of thelon 256th highelonst ancelonstor.
    */
-  private def getTruncatedRootTweet(
-    ancestors: ta.TweetAncestors,
-    focalTweetId: Long
-  ): Option[TweetWithConversationMetadata] = {
-    ancestors.conversationRootAuthorId.collect {
-      case rootAuthorId
-          if ancestors.state == ta.ReplyState.Partial &&
-            ancestors.ancestors.last.tweetId != ancestors.conversationId =>
-        TweetWithConversationMetadata(
-          tweetId = ancestors.conversationId,
-          userId = Some(rootAuthorId),
-          sourceTweetId = None,
-          sourceUserId = None,
-          inReplyToTweetId = None,
-          conversationId = Some(focalTweetId),
-          ancestors = Seq.empty
+  privatelon delonf gelontTruncatelondRootTwelonelont(
+    ancelonstors: ta.TwelonelontAncelonstors,
+    focalTwelonelontId: Long
+  ): Option[TwelonelontWithConvelonrsationMelontadata] = {
+    ancelonstors.convelonrsationRootAuthorId.collelonct {
+      caselon rootAuthorId
+          if ancelonstors.statelon == ta.RelonplyStatelon.Partial &&
+            ancelonstors.ancelonstors.last.twelonelontId != ancelonstors.convelonrsationId =>
+        TwelonelontWithConvelonrsationMelontadata(
+          twelonelontId = ancelonstors.convelonrsationId,
+          uselonrId = Somelon(rootAuthorId),
+          sourcelonTwelonelontId = Nonelon,
+          sourcelonUselonrId = Nonelon,
+          inRelonplyToTwelonelontId = Nonelon,
+          convelonrsationId = Somelon(focalTwelonelontId),
+          ancelonstors = Selonq.elonmpty
         )
     }
   }
 
-  private def dedupeCandidates(
-    inputTweetsWithConversationMetadata: Seq[TweetWithConversationMetadata],
-    ancestors: Seq[TweetWithConversationMetadata]
-  ): Seq[TweetWithConversationMetadata] = {
-    val dedupedAncestors: Iterable[TweetWithConversationMetadata] = ancestors
-      .groupBy(_.tweetId).map {
-        case (_, duplicateAncestors)
-            if duplicateAncestors.size > maxTweetsInConversationWithSameId =>
-          duplicateAncestors.maxBy(_.conversationId.getOrElse(0L))
-        case (_, nonDuplicateAncestors) => nonDuplicateAncestors.head
+  privatelon delonf delondupelonCandidatelons(
+    inputTwelonelontsWithConvelonrsationMelontadata: Selonq[TwelonelontWithConvelonrsationMelontadata],
+    ancelonstors: Selonq[TwelonelontWithConvelonrsationMelontadata]
+  ): Selonq[TwelonelontWithConvelonrsationMelontadata] = {
+    val delondupelondAncelonstors: Itelonrablelon[TwelonelontWithConvelonrsationMelontadata] = ancelonstors
+      .groupBy(_.twelonelontId).map {
+        caselon (_, duplicatelonAncelonstors)
+            if duplicatelonAncelonstors.sizelon > maxTwelonelontsInConvelonrsationWithSamelonId =>
+          duplicatelonAncelonstors.maxBy(_.convelonrsationId.gelontOrelonlselon(0L))
+        caselon (_, nonDuplicatelonAncelonstors) => nonDuplicatelonAncelonstors.helonad
       }
-    // Sort by tweet id to prevent issues with future assumptions of the root being the first
-    // tweet and the focal being the last tweet in a module. The tweets as a whole do not need
-    // to be sorted overall, only the relative order within modules must be kept.
-    val sortedDedupedAncestors: Seq[TweetWithConversationMetadata] =
-      dedupedAncestors.toSeq.sortBy(_.tweetId)
+    // Sort by twelonelont id to prelonvelonnt issuelons with futurelon assumptions of thelon root beloning thelon first
+    // twelonelont and thelon focal beloning thelon last twelonelont in a modulelon. Thelon twelonelonts as a wholelon do not nelonelond
+    // to belon sortelond ovelonrall, only thelon relonlativelon ordelonr within modulelons must belon kelonpt.
+    val sortelondDelondupelondAncelonstors: Selonq[TwelonelontWithConvelonrsationMelontadata] =
+      delondupelondAncelonstors.toSelonq.sortBy(_.twelonelontId)
 
-    val ancestorIds = sortedDedupedAncestors.map(_.tweetId).toSet
-    val updatedCandidates = inputTweetsWithConversationMetadata.filterNot { candidate =>
-      ancestorIds.contains(candidate.tweetId)
+    val ancelonstorIds = sortelondDelondupelondAncelonstors.map(_.twelonelontId).toSelont
+    val updatelondCandidatelons = inputTwelonelontsWithConvelonrsationMelontadata.filtelonrNot { candidatelon =>
+      ancelonstorIds.contains(candidatelon.twelonelontId)
     }
-    sortedDedupedAncestors ++ updatedCandidates
+    sortelondDelondupelondAncelonstors ++ updatelondCandidatelons
   }
 }

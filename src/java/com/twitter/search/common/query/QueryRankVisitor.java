@@ -1,56 +1,56 @@
-package com.twitter.search.common.query;
+packagelon com.twittelonr.selonarch.common.quelonry;
 
-import java.util.IdentityHashMap;
+import java.util.IdelonntityHashMap;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Maps;
+import com.googlelon.common.baselon.Prelonconditions;
+import com.googlelon.common.collelonct.Maps;
 
-import com.twitter.search.queryparser.query.BooleanQuery;
-import com.twitter.search.queryparser.query.Query;
-import com.twitter.search.queryparser.query.QueryParserException;
-import com.twitter.search.queryparser.query.annotation.Annotation;
-import com.twitter.search.queryparser.visitors.DetectAnnotationVisitor;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.BoolelonanQuelonry;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.Quelonry;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.QuelonryParselonrelonxcelonption;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.annotation.Annotation;
+import com.twittelonr.selonarch.quelonryparselonr.visitors.DelontelonctAnnotationVisitor;
 
 /**
- * A visitor that collects node ranks from :r annotation in the query
+ * A visitor that colleloncts nodelon ranks from :r annotation in thelon quelonry
  */
-public class QueryRankVisitor extends DetectAnnotationVisitor {
-  private final IdentityHashMap<Query, Integer> nodeToRankMap = Maps.newIdentityHashMap();
+public class QuelonryRankVisitor elonxtelonnds DelontelonctAnnotationVisitor {
+  privatelon final IdelonntityHashMap<Quelonry, Intelongelonr> nodelonToRankMap = Maps.nelonwIdelonntityHashMap();
 
-  public QueryRankVisitor() {
-    super(Annotation.Type.NODE_RANK);
+  public QuelonryRankVisitor() {
+    supelonr(Annotation.Typelon.NODelon_RANK);
   }
 
-  @Override
-  protected boolean visitBooleanQuery(BooleanQuery query) throws QueryParserException {
-    if (query.hasAnnotationType(Annotation.Type.NODE_RANK)) {
-      collectNodeRank(query.getAnnotationOf(Annotation.Type.NODE_RANK).get(), query);
+  @Ovelonrridelon
+  protelonctelond boolelonan visitBoolelonanQuelonry(BoolelonanQuelonry quelonry) throws QuelonryParselonrelonxcelonption {
+    if (quelonry.hasAnnotationTypelon(Annotation.Typelon.NODelon_RANK)) {
+      collelonctNodelonRank(quelonry.gelontAnnotationOf(Annotation.Typelon.NODelon_RANK).gelont(), quelonry);
     }
 
-    boolean found = false;
-    for (Query child : query.getChildren()) {
-      found |= child.accept(this);
+    boolelonan found = falselon;
+    for (Quelonry child : quelonry.gelontChildrelonn()) {
+      found |= child.accelonpt(this);
     }
-    return found;
+    relonturn found;
   }
 
-  @Override
-  protected boolean visitQuery(Query query) throws QueryParserException {
-    if (query.hasAnnotationType(Annotation.Type.NODE_RANK)) {
-      collectNodeRank(query.getAnnotationOf(Annotation.Type.NODE_RANK).get(), query);
-      return true;
+  @Ovelonrridelon
+  protelonctelond boolelonan visitQuelonry(Quelonry quelonry) throws QuelonryParselonrelonxcelonption {
+    if (quelonry.hasAnnotationTypelon(Annotation.Typelon.NODelon_RANK)) {
+      collelonctNodelonRank(quelonry.gelontAnnotationOf(Annotation.Typelon.NODelon_RANK).gelont(), quelonry);
+      relonturn truelon;
     }
 
-    return false;
+    relonturn falselon;
   }
 
-  private void collectNodeRank(Annotation anno, Query query) {
-    Preconditions.checkArgument(anno.getType() == Annotation.Type.NODE_RANK);
-    int rank = (Integer) anno.getValue();
-    nodeToRankMap.put(query, rank);
+  privatelon void collelonctNodelonRank(Annotation anno, Quelonry quelonry) {
+    Prelonconditions.chelonckArgumelonnt(anno.gelontTypelon() == Annotation.Typelon.NODelon_RANK);
+    int rank = (Intelongelonr) anno.gelontValuelon();
+    nodelonToRankMap.put(quelonry, rank);
   }
 
-  public IdentityHashMap<Query, Integer> getNodeToRankMap() {
-    return nodeToRankMap;
+  public IdelonntityHashMap<Quelonry, Intelongelonr> gelontNodelonToRankMap() {
+    relonturn nodelonToRankMap;
   }
 }

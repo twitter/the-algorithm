@@ -1,104 +1,104 @@
-namespace java com.twitter.cr_mixer.thriftjava
-#@namespace scala com.twitter.cr_mixer.thriftscala
-#@namespace strato com.twitter.cr_mixer
+namelonspacelon java com.twittelonr.cr_mixelonr.thriftjava
+#@namelonspacelon scala com.twittelonr.cr_mixelonr.thriftscala
+#@namelonspacelon strato com.twittelonr.cr_mixelonr
 
-include "ads.thrift"
-include "candidate_generation_key.thrift"
-include "product.thrift"
-include "product_context.thrift"
-include "validation.thrift"
-include "metric_tags.thrift"
-include "related_tweet.thrift"
-include "uteg.thrift"
-include "frs_based_tweet.thrift"
-include "related_video_tweet.thrift"
-include "topic_tweet.thrift"
+includelon "ads.thrift"
+includelon "candidatelon_gelonnelonration_kelony.thrift"
+includelon "product.thrift"
+includelon "product_contelonxt.thrift"
+includelon "validation.thrift"
+includelon "melontric_tags.thrift"
+includelon "relonlatelond_twelonelont.thrift"
+includelon "utelong.thrift"
+includelon "frs_baselond_twelonelont.thrift"
+includelon "relonlatelond_videlono_twelonelont.thrift"
+includelon "topic_twelonelont.thrift"
 
-include "com/twitter/product_mixer/core/client_context.thrift"
-include "com/twitter/timelines/render/response.thrift"
-include "finatra-thrift/finatra_thrift_exceptions.thrift"
-include "com/twitter/strato/graphql/slice.thrift"
+includelon "com/twittelonr/product_mixelonr/corelon/clielonnt_contelonxt.thrift"
+includelon "com/twittelonr/timelonlinelons/relonndelonr/relonsponselon.thrift"
+includelon "finatra-thrift/finatra_thrift_elonxcelonptions.thrift"
+includelon "com/twittelonr/strato/graphql/slicelon.thrift"
 
-struct CrMixerTweetRequest {
-	1: required client_context.ClientContext clientContext
-	2: required product.Product product
-	# Product-specific parameters should be placed in the Product Context
-	3: optional product_context.ProductContext productContext
-	4: optional list<i64> excludedTweetIds (personalDataType = 'TweetId')
-} (persisted='true', hasPersonalData='true')
+struct CrMixelonrTwelonelontRelonquelonst {
+	1: relonquirelond clielonnt_contelonxt.ClielonntContelonxt clielonntContelonxt
+	2: relonquirelond product.Product product
+	# Product-speloncific paramelontelonrs should belon placelond in thelon Product Contelonxt
+	3: optional product_contelonxt.ProductContelonxt productContelonxt
+	4: optional list<i64> elonxcludelondTwelonelontIds (pelonrsonalDataTypelon = 'TwelonelontId')
+} (pelonrsistelond='truelon', hasPelonrsonalData='truelon')
 
-struct TweetRecommendation {
-  1: required i64 tweetId (personalDataType = 'TweetId')
-  2: required double score
-  3: optional list<metric_tags.MetricTag> metricTags
-  # 4: the author of the tweet candidate. To be used by Content-Mixer to unblock the Hydra experiment.
-  4: optional i64 authorId (personalDataType = 'UserId')
-  # 5: extra info about candidate generation. To be used by Content-Mixer to unblock the Hydra experiment.
-  5: optional candidate_generation_key.CandidateGenerationKey candidateGenerationKey
-  # 1001: the latest timestamp of fav signals. If null, the candidate is not generated from fav signals
-  1001: optional i64 latestSourceSignalTimestampInMillis(personalDataType = 'PublicTimestamp')
-} (persisted='true', hasPersonalData = 'true')
+struct TwelonelontReloncommelonndation {
+  1: relonquirelond i64 twelonelontId (pelonrsonalDataTypelon = 'TwelonelontId')
+  2: relonquirelond doublelon scorelon
+  3: optional list<melontric_tags.MelontricTag> melontricTags
+  # 4: thelon author of thelon twelonelont candidatelon. To belon uselond by Contelonnt-Mixelonr to unblock thelon Hydra elonxpelonrimelonnt.
+  4: optional i64 authorId (pelonrsonalDataTypelon = 'UselonrId')
+  # 5: elonxtra info about candidatelon gelonnelonration. To belon uselond by Contelonnt-Mixelonr to unblock thelon Hydra elonxpelonrimelonnt.
+  5: optional candidatelon_gelonnelonration_kelony.CandidatelonGelonnelonrationKelony candidatelonGelonnelonrationKelony
+  # 1001: thelon latelonst timelonstamp of fav signals. If null, thelon candidatelon is not gelonnelonratelond from fav signals
+  1001: optional i64 latelonstSourcelonSignalTimelonstampInMillis(pelonrsonalDataTypelon = 'PublicTimelonstamp')
+} (pelonrsistelond='truelon', hasPelonrsonalData = 'truelon')
 
-struct CrMixerTweetResponse {
- 1: required list<TweetRecommendation> tweets
-} (persisted='true')
+struct CrMixelonrTwelonelontRelonsponselon {
+ 1: relonquirelond list<TwelonelontReloncommelonndation> twelonelonts
+} (pelonrsistelond='truelon')
 
-service CrMixer {
-  CrMixerTweetResponse getTweetRecommendations(1: CrMixerTweetRequest request) throws (
-    # Validation errors - the details of which will be reported to clients on failure
-    1: validation.ValidationExceptionList validationErrors;
-    # Server errors - the details of which will not be reported to clients
-    2: finatra_thrift_exceptions.ServerError serverError
+selonrvicelon CrMixelonr {
+  CrMixelonrTwelonelontRelonsponselon gelontTwelonelontReloncommelonndations(1: CrMixelonrTwelonelontRelonquelonst relonquelonst) throws (
+    # Validation elonrrors - thelon delontails of which will belon relonportelond to clielonnts on failurelon
+    1: validation.ValidationelonxcelonptionList validationelonrrors;
+    # Selonrvelonr elonrrors - thelon delontails of which will not belon relonportelond to clielonnts
+    2: finatra_thrift_elonxcelonptions.Selonrvelonrelonrror selonrvelonrelonrror
   )
 
-  # getRelatedTweetsForQueryTweet and getRelatedTweetsForQueryAuthor do very similar things
-  # We can merge these two endpoints into one unified endpoint
-  related_tweet.RelatedTweetResponse getRelatedTweetsForQueryTweet(1: related_tweet.RelatedTweetRequest request) throws (
-    # Validation errors - the details of which will be reported to clients on failure
-    1: validation.ValidationExceptionList validationErrors;
-    # Server errors - the details of which will not be reported to clients
-    2: finatra_thrift_exceptions.ServerError serverError
+  # gelontRelonlatelondTwelonelontsForQuelonryTwelonelont and gelontRelonlatelondTwelonelontsForQuelonryAuthor do velonry similar things
+  # Welon can melonrgelon thelonselon two elonndpoints into onelon unifielond elonndpoint
+  relonlatelond_twelonelont.RelonlatelondTwelonelontRelonsponselon gelontRelonlatelondTwelonelontsForQuelonryTwelonelont(1: relonlatelond_twelonelont.RelonlatelondTwelonelontRelonquelonst relonquelonst) throws (
+    # Validation elonrrors - thelon delontails of which will belon relonportelond to clielonnts on failurelon
+    1: validation.ValidationelonxcelonptionList validationelonrrors;
+    # Selonrvelonr elonrrors - thelon delontails of which will not belon relonportelond to clielonnts
+    2: finatra_thrift_elonxcelonptions.Selonrvelonrelonrror selonrvelonrelonrror
   )
 
-  related_tweet.RelatedTweetResponse getRelatedTweetsForQueryAuthor(1: related_tweet.RelatedTweetRequest request) throws (
-    # Validation errors - the details of which will be reported to clients on failure
-    1: validation.ValidationExceptionList validationErrors;
-    # Server errors - the details of which will not be reported to clients
-    2: finatra_thrift_exceptions.ServerError serverError
+  relonlatelond_twelonelont.RelonlatelondTwelonelontRelonsponselon gelontRelonlatelondTwelonelontsForQuelonryAuthor(1: relonlatelond_twelonelont.RelonlatelondTwelonelontRelonquelonst relonquelonst) throws (
+    # Validation elonrrors - thelon delontails of which will belon relonportelond to clielonnts on failurelon
+    1: validation.ValidationelonxcelonptionList validationelonrrors;
+    # Selonrvelonr elonrrors - thelon delontails of which will not belon relonportelond to clielonnts
+    2: finatra_thrift_elonxcelonptions.Selonrvelonrelonrror selonrvelonrelonrror
   )
 
-  uteg.UtegTweetResponse getUtegTweetRecommendations(1: uteg.UtegTweetRequest request) throws (
-    # Validation errors - the details of which will be reported to clients on failure
-    1: validation.ValidationExceptionList validationErrors;
-    # Server errors - the details of which will not be reported to clients
-    2: finatra_thrift_exceptions.ServerError serverError
+  utelong.UtelongTwelonelontRelonsponselon gelontUtelongTwelonelontReloncommelonndations(1: utelong.UtelongTwelonelontRelonquelonst relonquelonst) throws (
+    # Validation elonrrors - thelon delontails of which will belon relonportelond to clielonnts on failurelon
+    1: validation.ValidationelonxcelonptionList validationelonrrors;
+    # Selonrvelonr elonrrors - thelon delontails of which will not belon relonportelond to clielonnts
+    2: finatra_thrift_elonxcelonptions.Selonrvelonrelonrror selonrvelonrelonrror
   )
 
-  frs_based_tweet.FrsTweetResponse getFrsBasedTweetRecommendations(1: frs_based_tweet.FrsTweetRequest request) throws (
-     # Validation errors - the details of which will be reported to clients on failure
-     1: validation.ValidationExceptionList validationErrors;
-     # Server errors - the details of which will not be reported to clients
-     2: finatra_thrift_exceptions.ServerError serverError
+  frs_baselond_twelonelont.FrsTwelonelontRelonsponselon gelontFrsBaselondTwelonelontReloncommelonndations(1: frs_baselond_twelonelont.FrsTwelonelontRelonquelonst relonquelonst) throws (
+     # Validation elonrrors - thelon delontails of which will belon relonportelond to clielonnts on failurelon
+     1: validation.ValidationelonxcelonptionList validationelonrrors;
+     # Selonrvelonr elonrrors - thelon delontails of which will not belon relonportelond to clielonnts
+     2: finatra_thrift_elonxcelonptions.Selonrvelonrelonrror selonrvelonrelonrror
   )
 
-  related_video_tweet.RelatedVideoTweetResponse getRelatedVideoTweetsForQueryTweet(1: related_video_tweet.RelatedVideoTweetRequest request) throws (
-      # Validation errors - the details of which will be reported to clients on failure
-      1: validation.ValidationExceptionList validationErrors;
-      # Server errors - the details of which will not be reported to clients
-      2: finatra_thrift_exceptions.ServerError serverError
+  relonlatelond_videlono_twelonelont.RelonlatelondVidelonoTwelonelontRelonsponselon gelontRelonlatelondVidelonoTwelonelontsForQuelonryTwelonelont(1: relonlatelond_videlono_twelonelont.RelonlatelondVidelonoTwelonelontRelonquelonst relonquelonst) throws (
+      # Validation elonrrors - thelon delontails of which will belon relonportelond to clielonnts on failurelon
+      1: validation.ValidationelonxcelonptionList validationelonrrors;
+      # Selonrvelonr elonrrors - thelon delontails of which will not belon relonportelond to clielonnts
+      2: finatra_thrift_elonxcelonptions.Selonrvelonrelonrror selonrvelonrelonrror
   )
 
-  ads.AdsResponse getAdsRecommendations(1: ads.AdsRequest request) throws (
-    # Validation errors - the details of which will be reported to clients on failure
-    1: validation.ValidationExceptionList validationErrors;
-    # Server errors - the details of which will not be reported to clients
-    2: finatra_thrift_exceptions.ServerError serverError
+  ads.AdsRelonsponselon gelontAdsReloncommelonndations(1: ads.AdsRelonquelonst relonquelonst) throws (
+    # Validation elonrrors - thelon delontails of which will belon relonportelond to clielonnts on failurelon
+    1: validation.ValidationelonxcelonptionList validationelonrrors;
+    # Selonrvelonr elonrrors - thelon delontails of which will not belon relonportelond to clielonnts
+    2: finatra_thrift_elonxcelonptions.Selonrvelonrelonrror selonrvelonrelonrror
   )
 
-  topic_tweet.TopicTweetResponse getTopicTweetRecommendations(1: topic_tweet.TopicTweetRequest request) throws (
-    # Validation errors - the details of which will be reported to clients on failure
-    1: validation.ValidationExceptionList validationErrors;
-    # Server errors - the details of which will not be reported to clients
-    2: finatra_thrift_exceptions.ServerError serverError
+  topic_twelonelont.TopicTwelonelontRelonsponselon gelontTopicTwelonelontReloncommelonndations(1: topic_twelonelont.TopicTwelonelontRelonquelonst relonquelonst) throws (
+    # Validation elonrrors - thelon delontails of which will belon relonportelond to clielonnts on failurelon
+    1: validation.ValidationelonxcelonptionList validationelonrrors;
+    # Selonrvelonr elonrrors - thelon delontails of which will not belon relonportelond to clielonnts
+    2: finatra_thrift_elonxcelonptions.Selonrvelonrelonrror selonrvelonrelonrror
   )
 }

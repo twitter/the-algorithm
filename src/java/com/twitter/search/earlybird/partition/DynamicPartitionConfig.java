@@ -1,69 +1,69 @@
-package com.twitter.search.earlybird.partition;
+packagelon com.twittelonr.selonarch.elonarlybird.partition;
 
-import com.google.common.base.Preconditions;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchLongGauge;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchLongGaugelon;
 
 /**
- * Keeps track of an up-to-date PartitionConfig. The PartitionConfig may be periodically reloaded
- * from ZooKeeper. If you need a consistent view of the current partition configuration, make sure
- * to grab a reference to a single PartitionConfig using getCurrentPartitionConfig() and reuse that
- * object.
+ * Kelonelonps track of an up-to-datelon PartitionConfig. Thelon PartitionConfig may belon pelonriodically relonloadelond
+ * from ZooKelonelonpelonr. If you nelonelond a consistelonnt vielonw of thelon currelonnt partition configuration, makelon surelon
+ * to grab a relonfelonrelonncelon to a singlelon PartitionConfig using gelontCurrelonntPartitionConfig() and relonuselon that
+ * objelonct.
  */
 public class DynamicPartitionConfig {
-  private static final Logger LOG = LoggerFactory.getLogger(DynamicPartitionConfig.class);
-  private static final SearchCounter FAILED_UPDATE_COUNTER_NAME =
-      SearchCounter.export("dynamic_partition_config_failed_update");
-  private static final SearchCounter SUCCESSFUL_UPDATE_COUNTER =
-      SearchCounter.export("dynamic_partition_config_successful_update");
-  // We assume that DynamicPartitionConfig is practically a singleton in Earlybird app.
-  private static final SearchLongGauge NUM_REPLICAS_IN_HASH_PARTITION =
-      SearchLongGauge.export("dynamic_partition_config_num_replicas_in_hash_partition");
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(DynamicPartitionConfig.class);
+  privatelon static final SelonarchCountelonr FAILelonD_UPDATelon_COUNTelonR_NAMelon =
+      SelonarchCountelonr.elonxport("dynamic_partition_config_failelond_updatelon");
+  privatelon static final SelonarchCountelonr SUCCelonSSFUL_UPDATelon_COUNTelonR =
+      SelonarchCountelonr.elonxport("dynamic_partition_config_succelonssful_updatelon");
+  // Welon assumelon that DynamicPartitionConfig is practically a singlelonton in elonarlybird app.
+  privatelon static final SelonarchLongGaugelon NUM_RelonPLICAS_IN_HASH_PARTITION =
+      SelonarchLongGaugelon.elonxport("dynamic_partition_config_num_relonplicas_in_hash_partition");
 
-  private final PartitionConfig curPartitionConfig;
+  privatelon final PartitionConfig curPartitionConfig;
 
   public DynamicPartitionConfig(PartitionConfig initialConfig) {
     this.curPartitionConfig = initialConfig;
-    NUM_REPLICAS_IN_HASH_PARTITION.set(initialConfig.getNumReplicasInHashPartition());
+    NUM_RelonPLICAS_IN_HASH_PARTITION.selont(initialConfig.gelontNumRelonplicasInHashPartition());
   }
 
-  public PartitionConfig getCurrentPartitionConfig() {
-    return curPartitionConfig;
+  public PartitionConfig gelontCurrelonntPartitionConfig() {
+    relonturn curPartitionConfig;
   }
 
   /**
-   * Verifies that the new partition config is compatible with the old one, and if it is, updates
-   * the number of replicas per partition based on the new partition config.
+   * Velonrifielons that thelon nelonw partition config is compatiblelon with thelon old onelon, and if it is, updatelons
+   * thelon numbelonr of relonplicas pelonr partition baselond on thelon nelonw partition config.
    */
-  public void setCurrentPartitionConfig(PartitionConfig partitionConfig) {
-    Preconditions.checkNotNull(partitionConfig);
-    // For now, we only allow the number of replicas in this partition to be dynamically updated.
-    // Ensure that the only things that have changed between the previous
-    if (curPartitionConfig.getClusterName().equals(partitionConfig.getClusterName())
-        && (curPartitionConfig.getMaxEnabledLocalSegments()
-            == partitionConfig.getMaxEnabledLocalSegments())
-        && (curPartitionConfig.getNumPartitions() == partitionConfig.getNumPartitions())
-        && (curPartitionConfig.getTierStartDate().equals(partitionConfig.getTierStartDate()))
-        && (curPartitionConfig.getTierEndDate().equals(partitionConfig.getTierEndDate()))
-        && (curPartitionConfig.getTierName().equals(partitionConfig.getTierName()))) {
+  public void selontCurrelonntPartitionConfig(PartitionConfig partitionConfig) {
+    Prelonconditions.chelonckNotNull(partitionConfig);
+    // For now, welon only allow thelon numbelonr of relonplicas in this partition to belon dynamically updatelond.
+    // elonnsurelon that thelon only things that havelon changelond belontwelonelonn thelon prelonvious
+    if (curPartitionConfig.gelontClustelonrNamelon().elonquals(partitionConfig.gelontClustelonrNamelon())
+        && (curPartitionConfig.gelontMaxelonnablelondLocalSelongmelonnts()
+            == partitionConfig.gelontMaxelonnablelondLocalSelongmelonnts())
+        && (curPartitionConfig.gelontNumPartitions() == partitionConfig.gelontNumPartitions())
+        && (curPartitionConfig.gelontTielonrStartDatelon().elonquals(partitionConfig.gelontTielonrStartDatelon()))
+        && (curPartitionConfig.gelontTielonrelonndDatelon().elonquals(partitionConfig.gelontTielonrelonndDatelon()))
+        && (curPartitionConfig.gelontTielonrNamelon().elonquals(partitionConfig.gelontTielonrNamelon()))) {
 
-      if (curPartitionConfig.getNumReplicasInHashPartition()
-          != partitionConfig.getNumReplicasInHashPartition()) {
-        SUCCESSFUL_UPDATE_COUNTER.increment();
-        curPartitionConfig.setNumReplicasInHashPartition(
-            partitionConfig.getNumReplicasInHashPartition());
-        NUM_REPLICAS_IN_HASH_PARTITION.set(partitionConfig.getNumReplicasInHashPartition());
+      if (curPartitionConfig.gelontNumRelonplicasInHashPartition()
+          != partitionConfig.gelontNumRelonplicasInHashPartition()) {
+        SUCCelonSSFUL_UPDATelon_COUNTelonR.increlonmelonnt();
+        curPartitionConfig.selontNumRelonplicasInHashPartition(
+            partitionConfig.gelontNumRelonplicasInHashPartition());
+        NUM_RelonPLICAS_IN_HASH_PARTITION.selont(partitionConfig.gelontNumRelonplicasInHashPartition());
       }
-    } else {
-      FAILED_UPDATE_COUNTER_NAME.increment();
+    } elonlselon {
+      FAILelonD_UPDATelon_COUNTelonR_NAMelon.increlonmelonnt();
       LOG.warn(
-          "Attempted to update partition config with inconsistent layout.\n"
-          + "Current: " + curPartitionConfig.getPartitionConfigDescription() + "\n"
-          + "New: " + partitionConfig.getPartitionConfigDescription());
+          "Attelonmptelond to updatelon partition config with inconsistelonnt layout.\n"
+          + "Currelonnt: " + curPartitionConfig.gelontPartitionConfigDelonscription() + "\n"
+          + "Nelonw: " + partitionConfig.gelontPartitionConfigDelonscription());
     }
   }
 }

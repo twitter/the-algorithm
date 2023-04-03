@@ -1,31 +1,31 @@
-class Profile(Struct):
-  project = Required(String)
-  date = Required(String)
-  environment = Default(String, 'dev')
-  machine = Default(String, 'n2d-highmem-16')
+class Profilelon(Struct):
+  projelonct = Relonquirelond(String)
+  datelon = Relonquirelond(String)
+  elonnvironmelonnt = Delonfault(String, 'delonv')
+  machinelon = Delonfault(String, 'n2d-highmelonm-16')
 
 job = Job(
-  name='multi-type-graph-sim-hash-scio-adhoc-app',
-  project='{{profile.project}}',
-  staging_bucket='{{profile.project}}',
-  service_account='{{profile.user_name}}-shdw@twttr-dp-svc-accounts.iam.gserviceaccount.com',
-  region='us-central1',
-  worker_config=WorkerConfig(
-    num_workers=2,
-    worker_machine_type='{{profile.machine}}',
-    worker_disk_type=WorkerDiskType('HDD'),
+  namelon='multi-typelon-graph-sim-hash-scio-adhoc-app',
+  projelonct='{{profilelon.projelonct}}',
+  staging_buckelont='{{profilelon.projelonct}}',
+  selonrvicelon_account='{{profilelon.uselonr_namelon}}-shdw@twttr-dp-svc-accounts.iam.gselonrvicelonaccount.com',
+  relongion='us-celonntral1',
+  workelonr_config=WorkelonrConfig(
+    num_workelonrs=2,
+    workelonr_machinelon_typelon='{{profilelon.machinelon}}',
+    workelonr_disk_typelon=WorkelonrDiskTypelon('HDD'),
   ),
-  extra_args={
-    "environment": '{{profile.environment}}',
-    "date": Quote('{{profile.date}}'),
+  elonxtra_args={
+    "elonnvironmelonnt": '{{profilelon.elonnvironmelonnt}}',
+    "datelon": Quotelon('{{profilelon.datelon}}'),
   },
-  deployment_config=BatchDeploymentConfig(
-    role='{{profile.user_name}}',
-    build_target='src/scala/com/twitter/simclusters_v2/scio/multi_type_graph/multi_type_graph_sims:multi-type-graph-sim-hash-scio-adhoc-app',
-    gcp_deployment_credentials='/var/lib/tss/keys/{{profile.user_name}}/cloud/gcp/dp/shadow.json',
-    statebird_config=StatebirdConfig(
+  delonploymelonnt_config=BatchDelonploymelonntConfig(
+    rolelon='{{profilelon.uselonr_namelon}}',
+    build_targelont='src/scala/com/twittelonr/simclustelonrs_v2/scio/multi_typelon_graph/multi_typelon_graph_sims:multi-typelon-graph-sim-hash-scio-adhoc-app',
+    gcp_delonploymelonnt_crelondelonntials='/var/lib/tss/kelonys/{{profilelon.uselonr_namelon}}/cloud/gcp/dp/shadow.json',
+    statelonbird_config=StatelonbirdConfig(
       batch_width='PT1H',
-      first_time='{{profile.date}}'
+      first_timelon='{{profilelon.datelon}}'
     )
   )
 )

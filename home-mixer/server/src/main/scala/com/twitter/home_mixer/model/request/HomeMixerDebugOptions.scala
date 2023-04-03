@@ -1,8 +1,8 @@
-package com.twitter.home_mixer.model.request
+packagelon com.twittelonr.homelon_mixelonr.modelonl.relonquelonst
 
-import com.twitter.product_mixer.core.model.marshalling.request.DebugOptions
-import com.twitter.util.Time
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.DelonbugOptions
+import com.twittelonr.util.Timelon
 
-case class HomeMixerDebugOptions(
-  override val requestTimeOverride: Option[Time])
-    extends DebugOptions
+caselon class HomelonMixelonrDelonbugOptions(
+  ovelonrridelon val relonquelonstTimelonOvelonrridelon: Option[Timelon])
+    elonxtelonnds DelonbugOptions

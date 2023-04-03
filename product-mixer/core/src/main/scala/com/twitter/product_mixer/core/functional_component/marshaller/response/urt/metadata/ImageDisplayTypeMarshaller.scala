@@ -1,20 +1,20 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.melontadata
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ImageDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Icon
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FullWidth
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.IconSmall
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.ImagelonDisplayTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.Icon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.FullWidth
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.IconSmall
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class ImageDisplayTypeMarshaller @Inject() () {
+@Singlelonton
+class ImagelonDisplayTypelonMarshallelonr @Injelonct() () {
 
-  def apply(imageDisplayType: ImageDisplayType): urt.ImageDisplayType =
-    imageDisplayType match {
-      case Icon => urt.ImageDisplayType.Icon
-      case FullWidth => urt.ImageDisplayType.FullWidth
-      case IconSmall => urt.ImageDisplayType.IconSmall
+  delonf apply(imagelonDisplayTypelon: ImagelonDisplayTypelon): urt.ImagelonDisplayTypelon =
+    imagelonDisplayTypelon match {
+      caselon Icon => urt.ImagelonDisplayTypelon.Icon
+      caselon FullWidth => urt.ImagelonDisplayTypelon.FullWidth
+      caselon IconSmall => urt.ImagelonDisplayTypelon.IconSmall
     }
 }

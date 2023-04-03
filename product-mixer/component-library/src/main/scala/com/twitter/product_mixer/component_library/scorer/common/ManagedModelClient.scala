@@ -1,33 +1,33 @@
-package com.twitter.product_mixer.component_library.scorer.common
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.scorelonr.common
 
-import com.twitter.finagle.Http
-import com.twitter.finagle.grpc.FinagleChannelBuilder
-import com.twitter.finagle.grpc.FutureConverters
-import com.twitter.stitch.Stitch
-import inference.GRPCInferenceServiceGrpc
-import inference.GrpcService.ModelInferRequest
-import inference.GrpcService.ModelInferResponse
-import io.grpc.ManagedChannel
+import com.twittelonr.finaglelon.Http
+import com.twittelonr.finaglelon.grpc.FinaglelonChannelonlBuildelonr
+import com.twittelonr.finaglelon.grpc.FuturelonConvelonrtelonrs
+import com.twittelonr.stitch.Stitch
+import infelonrelonncelon.GRPCInfelonrelonncelonSelonrvicelonGrpc
+import infelonrelonncelon.GrpcSelonrvicelon.ModelonlInfelonrRelonquelonst
+import infelonrelonncelon.GrpcSelonrvicelon.ModelonlInfelonrRelonsponselon
+import io.grpc.ManagelondChannelonl
 
 /**
- * Client wrapper for calling a Cortex Managed Inference Service (go/cmis) ML Model using GRPC.
- * @param httpClient Finagle HTTP Client to use for connection.
- * @param modelPath Wily path to the ML Model service (e.g. /cluster/local/role/service/instance).
+ * Clielonnt wrappelonr for calling a Cortelonx Managelond Infelonrelonncelon Selonrvicelon (go/cmis) ML Modelonl using GRPC.
+ * @param httpClielonnt Finaglelon HTTP Clielonnt to uselon for connelonction.
+ * @param modelonlPath Wily path to thelon ML Modelonl selonrvicelon (elon.g. /clustelonr/local/rolelon/selonrvicelon/instancelon).
  */
-case class ManagedModelClient(
-  httpClient: Http.Client,
-  modelPath: String)
-    extends MLModelInferenceClient {
+caselon class ManagelondModelonlClielonnt(
+  httpClielonnt: Http.Clielonnt,
+  modelonlPath: String)
+    elonxtelonnds MLModelonlInfelonrelonncelonClielonnt {
 
-  private val channel: ManagedChannel =
-    FinagleChannelBuilder.forTarget(modelPath).httpClient(httpClient).build()
+  privatelon val channelonl: ManagelondChannelonl =
+    FinaglelonChannelonlBuildelonr.forTargelont(modelonlPath).httpClielonnt(httpClielonnt).build()
 
-  private val inferenceServiceStub = GRPCInferenceServiceGrpc.newFutureStub(channel)
+  privatelon val infelonrelonncelonSelonrvicelonStub = GRPCInfelonrelonncelonSelonrvicelonGrpc.nelonwFuturelonStub(channelonl)
 
-  def score(request: ModelInferRequest): Stitch[ModelInferResponse] = {
+  delonf scorelon(relonquelonst: ModelonlInfelonrRelonquelonst): Stitch[ModelonlInfelonrRelonsponselon] = {
     Stitch
-      .callFuture(
-        FutureConverters
-          .RichListenableFuture(inferenceServiceStub.modelInfer(request)).toTwitter)
+      .callFuturelon(
+        FuturelonConvelonrtelonrs
+          .RichListelonnablelonFuturelon(infelonrelonncelonSelonrvicelonStub.modelonlInfelonr(relonquelonst)).toTwittelonr)
   }
 }

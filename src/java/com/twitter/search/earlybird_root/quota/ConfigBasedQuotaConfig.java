@@ -1,161 +1,161 @@
-package com.twitter.search.earlybird_root.quota;
+packagelon com.twittelonr.selonarch.elonarlybird_root.quota;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-import java.util.Iterator;
+import java.io.IOelonxcelonption;
+import java.io.InputStrelonam;
+import java.nio.charselont.StandardCharselonts;
+import java.util.Itelonrator;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrelonnt.SchelondulelondelonxeloncutorSelonrvicelon;
+import java.util.concurrelonnt.atomic.AtomicRelonfelonrelonncelon;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import com.googlelon.common.collelonct.ImmutablelonMap;
+import com.googlelon.common.collelonct.Maps;
 
-import org.apache.commons.io.IOUtils;
-import org.json.JSONException;
-import org.json.JSONObject;
+import org.apachelon.commons.io.IOUtils;
+import org.json.JSONelonxcelonption;
+import org.json.JSONObjelonct;
 
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.metrics.SearchLongGauge;
-import com.twitter.search.common.util.io.periodic.PeriodicFileLoader;
-import com.twitter.search.common.util.json.JSONParsingUtil;
+import com.twittelonr.common.util.Clock;
+import com.twittelonr.selonarch.common.melontrics.SelonarchLongGaugelon;
+import com.twittelonr.selonarch.common.util.io.pelonriodic.PelonriodicFilelonLoadelonr;
+import com.twittelonr.selonarch.common.util.json.JSONParsingUtil;
 
 /**
- * Periodically loads a json serialized map that contains the quota information indexed by
- * client id.
+ * Pelonriodically loads a json selonrializelond map that contains thelon quota information indelonxelond by
+ * clielonnt id.
  *
- * Each json object from the map is required to have an int property that represents a client's quota.
- * The key for the quota property is passed to this class.
+ * elonach json objelonct from thelon map is relonquirelond to havelon an int propelonrty that relonprelonselonnts a clielonnt's quota.
+ * Thelon kelony for thelon quota propelonrty is passelond to this class.
  *
- * Optionally it can have a <b>should_enforce</b> property of type boolean
+ * Optionally it can havelon a <b>should_elonnforcelon</b> propelonrty of typelon boolelonan
  *
- * If this two properties are not present an exception will be thrown.
+ * If this two propelonrtielons arelon not prelonselonnt an elonxcelonption will belon thrown.
  */
-public class ConfigBasedQuotaConfig extends PeriodicFileLoader {
-  private static final String UNSET_EMAIL = "unset";
+public class ConfigBaselondQuotaConfig elonxtelonnds PelonriodicFilelonLoadelonr {
+  privatelon static final String UNSelonT_elonMAIL = "unselont";
 
-  private static final String PER_CLIENT_QUOTA_GAUGE_NAME_PATTERN =
-      "config_based_quota_for_client_id_%s";
-  private static final String PER_EMAIL_QUOTA_GAUGE_NAME_PATTERN =
-      "config_based_quota_for_email_%s";
+  privatelon static final String PelonR_CLIelonNT_QUOTA_GAUGelon_NAMelon_PATTelonRN =
+      "config_baselond_quota_for_clielonnt_id_%s";
+  privatelon static final String PelonR_elonMAIL_QUOTA_GAUGelon_NAMelon_PATTelonRN =
+      "config_baselond_quota_for_elonmail_%s";
 
-  @VisibleForTesting
-  static final SearchLongGauge TOTAL_QUOTA =
-     SearchLongGauge.export("total_config_based_quota");
+  @VisiblelonForTelonsting
+  static final SelonarchLongGaugelon TOTAL_QUOTA =
+     SelonarchLongGaugelon.elonxport("total_config_baselond_quota");
 
-  @VisibleForTesting
-  static final SearchLongGauge ENTRIES_COUNT =
-      SearchLongGauge.export("config_repo_quota_config_entries_count");
+  @VisiblelonForTelonsting
+  static final SelonarchLongGaugelon elonNTRIelonS_COUNT =
+      SelonarchLongGaugelon.elonxport("config_relonpo_quota_config_elonntrielons_count");
 
-  private final AtomicReference<ImmutableMap<String, QuotaInfo>> clientQuotas =
-    new AtomicReference<>();
+  privatelon final AtomicRelonfelonrelonncelon<ImmutablelonMap<String, QuotaInfo>> clielonntQuotas =
+    nelonw AtomicRelonfelonrelonncelon<>();
 
-  private String clientQuotaKey;
-  private boolean requireQuotaConfigForClients;
+  privatelon String clielonntQuotaKelony;
+  privatelon boolelonan relonquirelonQuotaConfigForClielonnts;
 
   /**
-   * Creates the object that manages loads the config from: quotaConfigPath. It periodically
-   * reloads the config file using the given executor service.
+   * Crelonatelons thelon objelonct that managelons loads thelon config from: quotaConfigPath. It pelonriodically
+   * relonloads thelon config filelon using thelon givelonn elonxeloncutor selonrvicelon.
    *
-   * @param quotaConfigPath Path to configuration file.
-   * @param executorService ScheduledExecutorService to be used for periodically reloading the file.
-   * @param clientQuotaKey The key that will be used to extract client quotas.
-   * @param requireQuotaConfigForClients Determines whether a client can be skipped
-   * if the associated object is missing the quota key
-   * (ie a client that is a SuperRoot client but the current service is Archive)
+   * @param quotaConfigPath Path to configuration filelon.
+   * @param elonxeloncutorSelonrvicelon SchelondulelondelonxeloncutorSelonrvicelon to belon uselond for pelonriodically relonloading thelon filelon.
+   * @param clielonntQuotaKelony Thelon kelony that will belon uselond to elonxtract clielonnt quotas.
+   * @param relonquirelonQuotaConfigForClielonnts Delontelonrminelons whelonthelonr a clielonnt can belon skippelond
+   * if thelon associatelond objelonct is missing thelon quota kelony
+   * (ielon a clielonnt that is a SupelonrRoot clielonnt but thelon currelonnt selonrvicelon is Archivelon)
    */
-  public static ConfigBasedQuotaConfig newConfigBasedQuotaConfig(
+  public static ConfigBaselondQuotaConfig nelonwConfigBaselondQuotaConfig(
       String quotaConfigPath,
-      String clientQuotaKey,
-      boolean requireQuotaConfigForClients,
-      ScheduledExecutorService executorService,
+      String clielonntQuotaKelony,
+      boolelonan relonquirelonQuotaConfigForClielonnts,
+      SchelondulelondelonxeloncutorSelonrvicelon elonxeloncutorSelonrvicelon,
       Clock clock
-  ) throws Exception {
-    ConfigBasedQuotaConfig configLoader = new ConfigBasedQuotaConfig(
+  ) throws elonxcelonption {
+    ConfigBaselondQuotaConfig configLoadelonr = nelonw ConfigBaselondQuotaConfig(
         quotaConfigPath,
-        clientQuotaKey,
-        requireQuotaConfigForClients,
-        executorService,
+        clielonntQuotaKelony,
+        relonquirelonQuotaConfigForClielonnts,
+        elonxeloncutorSelonrvicelon,
         clock
     );
-    configLoader.init();
-    return configLoader;
+    configLoadelonr.init();
+    relonturn configLoadelonr;
   }
 
-  public ConfigBasedQuotaConfig(
+  public ConfigBaselondQuotaConfig(
       String quotaConfigPath,
-      String clientQuotaKey,
-      boolean requireQuotaConfigForClients,
-      ScheduledExecutorService executorService,
+      String clielonntQuotaKelony,
+      boolelonan relonquirelonQuotaConfigForClielonnts,
+      SchelondulelondelonxeloncutorSelonrvicelon elonxeloncutorSelonrvicelon,
       Clock clock
-  ) throws Exception {
-    super("quotaConfig", quotaConfigPath, executorService, clock);
-    this.clientQuotaKey = clientQuotaKey;
-    this.requireQuotaConfigForClients = requireQuotaConfigForClients;
+  ) throws elonxcelonption {
+    supelonr("quotaConfig", quotaConfigPath, elonxeloncutorSelonrvicelon, clock);
+    this.clielonntQuotaKelony = clielonntQuotaKelony;
+    this.relonquirelonQuotaConfigForClielonnts = relonquirelonQuotaConfigForClielonnts;
   }
 
   /**
-   * Returns the quota information for a specific client id.
+   * Relonturns thelon quota information for a speloncific clielonnt id.
    */
-  public Optional<QuotaInfo> getQuotaForClient(String clientId) {
-    return Optional.ofNullable(clientQuotas.get().get(clientId));
+  public Optional<QuotaInfo> gelontQuotaForClielonnt(String clielonntId) {
+    relonturn Optional.ofNullablelon(clielonntQuotas.gelont().gelont(clielonntId));
   }
 
   /**
-   * Load the json format and store it in a map.
+   * Load thelon json format and storelon it in a map.
    */
-  @Override
-  protected void accept(InputStream fileStream) throws JSONException, IOException {
-    String fileContents = IOUtils.toString(fileStream, StandardCharsets.UTF_8);
-    JSONObject quotaConfig = new JSONObject(JSONParsingUtil.stripComments(fileContents));
+  @Ovelonrridelon
+  protelonctelond void accelonpt(InputStrelonam filelonStrelonam) throws JSONelonxcelonption, IOelonxcelonption {
+    String filelonContelonnts = IOUtils.toString(filelonStrelonam, StandardCharselonts.UTF_8);
+    JSONObjelonct quotaConfig = nelonw JSONObjelonct(JSONParsingUtil.stripCommelonnts(filelonContelonnts));
 
-    Map<String, Integer> perEmailQuotas = Maps.newHashMap();
-    ImmutableMap.Builder<String, QuotaInfo> quotasBuilder = new ImmutableMap.Builder<>();
-    Iterator<String> clientIds = quotaConfig.keys();
+    Map<String, Intelongelonr> pelonrelonmailQuotas = Maps.nelonwHashMap();
+    ImmutablelonMap.Buildelonr<String, QuotaInfo> quotasBuildelonr = nelonw ImmutablelonMap.Buildelonr<>();
+    Itelonrator<String> clielonntIds = quotaConfig.kelonys();
 
     long totalQuota = 0;
-    while (clientIds.hasNext()) {
-      String clientId = clientIds.next();
-      JSONObject clientQuota = quotaConfig.getJSONObject(clientId);
+    whilelon (clielonntIds.hasNelonxt()) {
+      String clielonntId = clielonntIds.nelonxt();
+      JSONObjelonct clielonntQuota = quotaConfig.gelontJSONObjelonct(clielonntId);
 
-      // Skip clients that don't send requests to this service.
-      // (ie some SuperRoot clients are not Archive clients)
-      if (!requireQuotaConfigForClients && !clientQuota.has(clientQuotaKey)) {
-        continue;
+      // Skip clielonnts that don't selonnd relonquelonsts to this selonrvicelon.
+      // (ielon somelon SupelonrRoot clielonnts arelon not Archivelon clielonnts)
+      if (!relonquirelonQuotaConfigForClielonnts && !clielonntQuota.has(clielonntQuotaKelony)) {
+        continuelon;
       }
 
-      int quotaValue = clientQuota.getInt(clientQuotaKey);
-      boolean shouldEnforce = clientQuota.optBoolean("should_enforce", false);
-      String tierValue = clientQuota.optString("tier", QuotaInfo.DEFAULT_TIER_VALUE);
-      boolean archiveAccess = clientQuota.optBoolean("archive_access",
-          QuotaInfo.DEFAULT_ARCHIVE_ACCESS_VALUE);
-      String email = clientQuota.optString("email", UNSET_EMAIL);
+      int quotaValuelon = clielonntQuota.gelontInt(clielonntQuotaKelony);
+      boolelonan shouldelonnforcelon = clielonntQuota.optBoolelonan("should_elonnforcelon", falselon);
+      String tielonrValuelon = clielonntQuota.optString("tielonr", QuotaInfo.DelonFAULT_TIelonR_VALUelon);
+      boolelonan archivelonAccelonss = clielonntQuota.optBoolelonan("archivelon_accelonss",
+          QuotaInfo.DelonFAULT_ARCHIVelon_ACCelonSS_VALUelon);
+      String elonmail = clielonntQuota.optString("elonmail", UNSelonT_elonMAIL);
 
-      quotasBuilder.put(
-          clientId,
-          new QuotaInfo(clientId, email, quotaValue, shouldEnforce, tierValue, archiveAccess));
+      quotasBuildelonr.put(
+          clielonntId,
+          nelonw QuotaInfo(clielonntId, elonmail, quotaValuelon, shouldelonnforcelon, tielonrValuelon, archivelonAccelonss));
 
-      SearchLongGauge perClientQuota = SearchLongGauge.export(
-          String.format(PER_CLIENT_QUOTA_GAUGE_NAME_PATTERN, clientId));
-      perClientQuota.set(quotaValue);
-      totalQuota += quotaValue;
+      SelonarchLongGaugelon pelonrClielonntQuota = SelonarchLongGaugelon.elonxport(
+          String.format(PelonR_CLIelonNT_QUOTA_GAUGelon_NAMelon_PATTelonRN, clielonntId));
+      pelonrClielonntQuota.selont(quotaValuelon);
+      totalQuota += quotaValuelon;
 
-      Integer emailQuota = perEmailQuotas.get(email);
-      if (emailQuota == null) {
-        emailQuota = 0;
+      Intelongelonr elonmailQuota = pelonrelonmailQuotas.gelont(elonmail);
+      if (elonmailQuota == null) {
+        elonmailQuota = 0;
       }
-      perEmailQuotas.put(email, emailQuota + quotaValue);
+      pelonrelonmailQuotas.put(elonmail, elonmailQuota + quotaValuelon);
     }
 
-    clientQuotas.set(quotasBuilder.build());
-    TOTAL_QUOTA.set(totalQuota);
-    ENTRIES_COUNT.set(clientQuotas.get().size());
+    clielonntQuotas.selont(quotasBuildelonr.build());
+    TOTAL_QUOTA.selont(totalQuota);
+    elonNTRIelonS_COUNT.selont(clielonntQuotas.gelont().sizelon());
 
-    for (String email : perEmailQuotas.keySet()) {
-      SearchLongGauge.export(String.format(PER_EMAIL_QUOTA_GAUGE_NAME_PATTERN, email)).set(
-          perEmailQuotas.get(email));
+    for (String elonmail : pelonrelonmailQuotas.kelonySelont()) {
+      SelonarchLongGaugelon.elonxport(String.format(PelonR_elonMAIL_QUOTA_GAUGelon_NAMelon_PATTelonRN, elonmail)).selont(
+          pelonrelonmailQuotas.gelont(elonmail));
     }
   }
 }

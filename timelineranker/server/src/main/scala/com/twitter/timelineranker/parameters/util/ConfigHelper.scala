@@ -1,39 +1,39 @@
-package com.twitter.timelineranker.parameters.util
+packagelon com.twittelonr.timelonlinelonrankelonr.paramelontelonrs.util
 
-import com.twitter.servo.decider.DeciderGateBuilder
-import com.twitter.servo.decider.DeciderKeyName
-import com.twitter.timelines.configapi._
-import com.twitter.timelines.configapi.decider.DeciderIntSpaceOverrideValue
-import com.twitter.timelines.configapi.decider.DeciderSwitchOverrideValue
-import com.twitter.timelines.configapi.decider.DeciderValueConverter
-import com.twitter.timelines.configapi.decider.RecipientBuilder
+import com.twittelonr.selonrvo.deloncidelonr.DeloncidelonrGatelonBuildelonr
+import com.twittelonr.selonrvo.deloncidelonr.DeloncidelonrKelonyNamelon
+import com.twittelonr.timelonlinelons.configapi._
+import com.twittelonr.timelonlinelons.configapi.deloncidelonr.DeloncidelonrIntSpacelonOvelonrridelonValuelon
+import com.twittelonr.timelonlinelons.configapi.deloncidelonr.DeloncidelonrSwitchOvelonrridelonValuelon
+import com.twittelonr.timelonlinelons.configapi.deloncidelonr.DeloncidelonrValuelonConvelonrtelonr
+import com.twittelonr.timelonlinelons.configapi.deloncidelonr.ReloncipielonntBuildelonr
 
-class ConfigHelper(
-  deciderByParam: Map[Param[_], DeciderKeyName],
-  deciderGateBuilder: DeciderGateBuilder) {
-  def createDeciderBasedBooleanOverrides(
-    parameters: Seq[Param[Boolean]]
-  ): Seq[OptionalOverride[Boolean]] = {
-    parameters.map { parameter =>
-      parameter.optionalOverrideValue(
-        DeciderSwitchOverrideValue(
-          feature = deciderGateBuilder.keyToFeature(deciderByParam(parameter)),
-          recipientBuilder = RecipientBuilder.User,
-          enabledValue = true,
-          disabledValueOption = Some(false)
+class ConfigHelonlpelonr(
+  deloncidelonrByParam: Map[Param[_], DeloncidelonrKelonyNamelon],
+  deloncidelonrGatelonBuildelonr: DeloncidelonrGatelonBuildelonr) {
+  delonf crelonatelonDeloncidelonrBaselondBoolelonanOvelonrridelons(
+    paramelontelonrs: Selonq[Param[Boolelonan]]
+  ): Selonq[OptionalOvelonrridelon[Boolelonan]] = {
+    paramelontelonrs.map { paramelontelonr =>
+      paramelontelonr.optionalOvelonrridelonValuelon(
+        DeloncidelonrSwitchOvelonrridelonValuelon(
+          felonaturelon = deloncidelonrGatelonBuildelonr.kelonyToFelonaturelon(deloncidelonrByParam(paramelontelonr)),
+          reloncipielonntBuildelonr = ReloncipielonntBuildelonr.Uselonr,
+          elonnablelondValuelon = truelon,
+          disablelondValuelonOption = Somelon(falselon)
         )
       )
     }
   }
 
-  def createDeciderBasedOverrides[T](
-    parameters: Seq[Param[T] with DeciderValueConverter[T]]
-  ): Seq[OptionalOverride[T]] = {
-    parameters.map { parameter =>
-      parameter.optionalOverrideValue(
-        DeciderIntSpaceOverrideValue(
-          feature = deciderGateBuilder.keyToFeature(deciderByParam(parameter)),
-          conversion = parameter.convert
+  delonf crelonatelonDeloncidelonrBaselondOvelonrridelons[T](
+    paramelontelonrs: Selonq[Param[T] with DeloncidelonrValuelonConvelonrtelonr[T]]
+  ): Selonq[OptionalOvelonrridelon[T]] = {
+    paramelontelonrs.map { paramelontelonr =>
+      paramelontelonr.optionalOvelonrridelonValuelon(
+        DeloncidelonrIntSpacelonOvelonrridelonValuelon(
+          felonaturelon = deloncidelonrGatelonBuildelonr.kelonyToFelonaturelon(deloncidelonrByParam(paramelontelonr)),
+          convelonrsion = paramelontelonr.convelonrt
         )
       )
     }

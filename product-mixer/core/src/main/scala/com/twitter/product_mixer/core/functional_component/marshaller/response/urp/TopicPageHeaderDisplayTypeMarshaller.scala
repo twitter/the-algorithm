@@ -1,19 +1,19 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urp
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urp
 
-import com.twitter.product_mixer.core.model.marshalling.response.urp.BasicTopicPageHeaderDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urp.PersonalizedTopicPageHeaderDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urp.TopicPageHeaderDisplayType
-import com.twitter.pages.render.{thriftscala => urp}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urp.BasicTopicPagelonHelonadelonrDisplayTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urp.PelonrsonalizelondTopicPagelonHelonadelonrDisplayTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urp.TopicPagelonHelonadelonrDisplayTypelon
+import com.twittelonr.pagelons.relonndelonr.{thriftscala => urp}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class TopicPageHeaderDisplayTypeMarshaller @Inject() () {
+@Singlelonton
+class TopicPagelonHelonadelonrDisplayTypelonMarshallelonr @Injelonct() () {
 
-  def apply(
-    topicPageHeaderDisplayType: TopicPageHeaderDisplayType
-  ): urp.TopicPageHeaderDisplayType = topicPageHeaderDisplayType match {
-    case BasicTopicPageHeaderDisplayType => urp.TopicPageHeaderDisplayType.Basic
-    case PersonalizedTopicPageHeaderDisplayType => urp.TopicPageHeaderDisplayType.Personalized
+  delonf apply(
+    topicPagelonHelonadelonrDisplayTypelon: TopicPagelonHelonadelonrDisplayTypelon
+  ): urp.TopicPagelonHelonadelonrDisplayTypelon = topicPagelonHelonadelonrDisplayTypelon match {
+    caselon BasicTopicPagelonHelonadelonrDisplayTypelon => urp.TopicPagelonHelonadelonrDisplayTypelon.Basic
+    caselon PelonrsonalizelondTopicPagelonHelonadelonrDisplayTypelon => urp.TopicPagelonHelonadelonrDisplayTypelon.Pelonrsonalizelond
   }
 }

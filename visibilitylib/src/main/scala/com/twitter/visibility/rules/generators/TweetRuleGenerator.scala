@@ -1,321 +1,321 @@
-package com.twitter.visibility.rules.generators
+packagelon com.twittelonr.visibility.rulelons.gelonnelonrators
 
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.models.SafetyLevelGroup
-import com.twitter.visibility.models.ViolationLevel
-import com.twitter.visibility.rules.FreedomOfSpeechNotReachActions
-import com.twitter.visibility.rules.FreedomOfSpeechNotReachRules
-import com.twitter.visibility.rules.Rule
-import com.twitter.visibility.rules.generators.TweetRuleGenerator.violationLevelPolicies
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonlGroup
+import com.twittelonr.visibility.modelonls.ViolationLelonvelonl
+import com.twittelonr.visibility.rulelons.FrelonelondomOfSpelonelonchNotRelonachActions
+import com.twittelonr.visibility.rulelons.FrelonelondomOfSpelonelonchNotRelonachRulelons
+import com.twittelonr.visibility.rulelons.Rulelon
+import com.twittelonr.visibility.rulelons.gelonnelonrators.TwelonelontRulelonGelonnelonrator.violationLelonvelonlPolicielons
 
-object TweetRuleGenerator {
-  private val level3LimitedActions: Seq[String] = Seq(
-    "like",
-    "reply",
-    "retweet",
-    "quote_tweet",
-    "share_tweet_via",
+objelonct TwelonelontRulelonGelonnelonrator {
+  privatelon val lelonvelonl3LimitelondActions: Selonq[String] = Selonq(
+    "likelon",
+    "relonply",
+    "relontwelonelont",
+    "quotelon_twelonelont",
+    "sharelon_twelonelont_via",
     "add_to_bookmarks",
-    "pin_to_profile",
+    "pin_to_profilelon",
     "copy_link",
-    "send_via_dm")
-  private val violationLevelPolicies: Map[
-    ViolationLevel,
-    Map[UserType, TweetVisibilityPolicy]
+    "selonnd_via_dm")
+  privatelon val violationLelonvelonlPolicielons: Map[
+    ViolationLelonvelonl,
+    Map[UselonrTypelon, TwelonelontVisibilityPolicy]
   ] = Map(
-    ViolationLevel.Level1 -> Map(
-      UserType.Follower -> TweetVisibilityPolicy
-        .builder()
-        .addGlobalRule(FreedomOfSpeechNotReachActions.SoftInterventionAvoidAction())
-        .addSafetyLevelGroupRule(
-          SafetyLevelGroup.Notifications,
-          FreedomOfSpeechNotReachActions.DropAction())
-        .addSafetyLevelGroupRule(
-          SafetyLevelGroup.Recommendations,
-          FreedomOfSpeechNotReachActions.DropAction())
-        .addSafetyLevelGroupRule(
-          SafetyLevelGroup.Search,
-          FreedomOfSpeechNotReachActions.DropAction())
-        .addSafetyLevelGroupRule(
-          SafetyLevelGroup.TopicRecommendations,
-          FreedomOfSpeechNotReachActions.DropAction())
-        .addSafetyLevelRule(
-          SafetyLevel.TimelineHomeRecommendations,
-          FreedomOfSpeechNotReachActions.DropAction())
-        .addSafetyLevelRule(
-          SafetyLevel.TrendsRepresentativeTweet,
-          FreedomOfSpeechNotReachActions.DropAction())
+    ViolationLelonvelonl.Lelonvelonl1 -> Map(
+      UselonrTypelon.Followelonr -> TwelonelontVisibilityPolicy
+        .buildelonr()
+        .addGlobalRulelon(FrelonelondomOfSpelonelonchNotRelonachActions.SoftIntelonrvelonntionAvoidAction())
+        .addSafelontyLelonvelonlGroupRulelon(
+          SafelontyLelonvelonlGroup.Notifications,
+          FrelonelondomOfSpelonelonchNotRelonachActions.DropAction())
+        .addSafelontyLelonvelonlGroupRulelon(
+          SafelontyLelonvelonlGroup.Reloncommelonndations,
+          FrelonelondomOfSpelonelonchNotRelonachActions.DropAction())
+        .addSafelontyLelonvelonlGroupRulelon(
+          SafelontyLelonvelonlGroup.Selonarch,
+          FrelonelondomOfSpelonelonchNotRelonachActions.DropAction())
+        .addSafelontyLelonvelonlGroupRulelon(
+          SafelontyLelonvelonlGroup.TopicReloncommelonndations,
+          FrelonelondomOfSpelonelonchNotRelonachActions.DropAction())
+        .addSafelontyLelonvelonlRulelon(
+          SafelontyLelonvelonl.TimelonlinelonHomelonReloncommelonndations,
+          FrelonelondomOfSpelonelonchNotRelonachActions.DropAction())
+        .addSafelontyLelonvelonlRulelon(
+          SafelontyLelonvelonl.TrelonndsRelonprelonselonntativelonTwelonelont,
+          FrelonelondomOfSpelonelonchNotRelonachActions.DropAction())
         .build,
-      UserType.Author -> TweetVisibilityPolicy
-        .builder()
-        .addGlobalRule(FreedomOfSpeechNotReachActions.AppealableAction())
+      UselonrTypelon.Author -> TwelonelontVisibilityPolicy
+        .buildelonr()
+        .addGlobalRulelon(FrelonelondomOfSpelonelonchNotRelonachActions.AppelonalablelonAction())
         .build,
-      UserType.Other -> TweetVisibilityPolicy
-        .builder()
-        .addGlobalRule(FreedomOfSpeechNotReachActions.SoftInterventionAvoidAction())
-        .addSafetyLevelGroupRule(
-          SafetyLevelGroup.Notifications,
-          FreedomOfSpeechNotReachActions.DropAction())
-        .addSafetyLevelGroupRule(
-          SafetyLevelGroup.Recommendations,
-          FreedomOfSpeechNotReachActions.DropAction())
-        .addSafetyLevelGroupRule(
-          SafetyLevelGroup.TimelineHome,
-          FreedomOfSpeechNotReachActions.DropAction())
-        .addSafetyLevelGroupRule(
-          SafetyLevelGroup.Search,
-          FreedomOfSpeechNotReachActions.DropAction())
-        .addSafetyLevelGroupRule(
-          SafetyLevelGroup.TopicRecommendations,
-          FreedomOfSpeechNotReachActions.DropAction())
-        .addSafetyLevelRule(
-          SafetyLevel.TrendsRepresentativeTweet,
-          FreedomOfSpeechNotReachActions.DropAction())
-        .addSafetyLevelRule(
-          SafetyLevel.ConversationReply,
-          FreedomOfSpeechNotReachActions.SoftInterventionAvoidAbusiveQualityReplyAction())
+      UselonrTypelon.Othelonr -> TwelonelontVisibilityPolicy
+        .buildelonr()
+        .addGlobalRulelon(FrelonelondomOfSpelonelonchNotRelonachActions.SoftIntelonrvelonntionAvoidAction())
+        .addSafelontyLelonvelonlGroupRulelon(
+          SafelontyLelonvelonlGroup.Notifications,
+          FrelonelondomOfSpelonelonchNotRelonachActions.DropAction())
+        .addSafelontyLelonvelonlGroupRulelon(
+          SafelontyLelonvelonlGroup.Reloncommelonndations,
+          FrelonelondomOfSpelonelonchNotRelonachActions.DropAction())
+        .addSafelontyLelonvelonlGroupRulelon(
+          SafelontyLelonvelonlGroup.TimelonlinelonHomelon,
+          FrelonelondomOfSpelonelonchNotRelonachActions.DropAction())
+        .addSafelontyLelonvelonlGroupRulelon(
+          SafelontyLelonvelonlGroup.Selonarch,
+          FrelonelondomOfSpelonelonchNotRelonachActions.DropAction())
+        .addSafelontyLelonvelonlGroupRulelon(
+          SafelontyLelonvelonlGroup.TopicReloncommelonndations,
+          FrelonelondomOfSpelonelonchNotRelonachActions.DropAction())
+        .addSafelontyLelonvelonlRulelon(
+          SafelontyLelonvelonl.TrelonndsRelonprelonselonntativelonTwelonelont,
+          FrelonelondomOfSpelonelonchNotRelonachActions.DropAction())
+        .addSafelontyLelonvelonlRulelon(
+          SafelontyLelonvelonl.ConvelonrsationRelonply,
+          FrelonelondomOfSpelonelonchNotRelonachActions.SoftIntelonrvelonntionAvoidAbusivelonQualityRelonplyAction())
         .build,
     ),
-    ViolationLevel.Level3 -> Map(
-      UserType.Follower -> TweetVisibilityPolicy
-        .builder()
-        .addGlobalRule(FreedomOfSpeechNotReachActions.DropAction())
-        .addSafetyLevelGroupRule(
-          SafetyLevelGroup.TimelineProfile,
-          FreedomOfSpeechNotReachActions.SoftInterventionAvoidLimitedEngagementsAction(
-            limitedActionStrings = Some(level3LimitedActions))
+    ViolationLelonvelonl.Lelonvelonl3 -> Map(
+      UselonrTypelon.Followelonr -> TwelonelontVisibilityPolicy
+        .buildelonr()
+        .addGlobalRulelon(FrelonelondomOfSpelonelonchNotRelonachActions.DropAction())
+        .addSafelontyLelonvelonlGroupRulelon(
+          SafelontyLelonvelonlGroup.TimelonlinelonProfilelon,
+          FrelonelondomOfSpelonelonchNotRelonachActions.SoftIntelonrvelonntionAvoidLimitelondelonngagelonmelonntsAction(
+            limitelondActionStrings = Somelon(lelonvelonl3LimitelondActions))
         )
-        .addSafetyLevelGroupRule(
-          SafetyLevelGroup.TweetDetails,
-          FreedomOfSpeechNotReachActions.SoftInterventionAvoidLimitedEngagementsAction(
-            limitedActionStrings = Some(level3LimitedActions))
+        .addSafelontyLelonvelonlGroupRulelon(
+          SafelontyLelonvelonlGroup.TwelonelontDelontails,
+          FrelonelondomOfSpelonelonchNotRelonachActions.SoftIntelonrvelonntionAvoidLimitelondelonngagelonmelonntsAction(
+            limitelondActionStrings = Somelon(lelonvelonl3LimitelondActions))
         )
-        .addSafetyLevelRule(
-          SafetyLevel.ConversationReply,
-          FreedomOfSpeechNotReachActions.SoftInterventionAvoidLimitedEngagementsAction(
-            limitedActionStrings = Some(level3LimitedActions))
+        .addSafelontyLelonvelonlRulelon(
+          SafelontyLelonvelonl.ConvelonrsationRelonply,
+          FrelonelondomOfSpelonelonchNotRelonachActions.SoftIntelonrvelonntionAvoidLimitelondelonngagelonmelonntsAction(
+            limitelondActionStrings = Somelon(lelonvelonl3LimitelondActions))
         )
-        .addSafetyLevelRule(
-          SafetyLevel.ConversationFocalTweet,
-          FreedomOfSpeechNotReachActions.SoftInterventionAvoidLimitedEngagementsAction(
-            limitedActionStrings = Some(level3LimitedActions))
+        .addSafelontyLelonvelonlRulelon(
+          SafelontyLelonvelonl.ConvelonrsationFocalTwelonelont,
+          FrelonelondomOfSpelonelonchNotRelonachActions.SoftIntelonrvelonntionAvoidLimitelondelonngagelonmelonntsAction(
+            limitelondActionStrings = Somelon(lelonvelonl3LimitelondActions))
         )
-        .addSafetyLevelRule(
-          SafetyLevel.TimelineMedia,
-          FreedomOfSpeechNotReachActions
-            .SoftInterventionAvoidLimitedEngagementsAction(limitedActionStrings =
-              Some(level3LimitedActions))
+        .addSafelontyLelonvelonlRulelon(
+          SafelontyLelonvelonl.TimelonlinelonMelondia,
+          FrelonelondomOfSpelonelonchNotRelonachActions
+            .SoftIntelonrvelonntionAvoidLimitelondelonngagelonmelonntsAction(limitelondActionStrings =
+              Somelon(lelonvelonl3LimitelondActions))
         )
-        .addSafetyLevelRule(
-          SafetyLevel.ProfileMixerMedia,
-          FreedomOfSpeechNotReachActions
-            .SoftInterventionAvoidLimitedEngagementsAction(limitedActionStrings =
-              Some(level3LimitedActions))
+        .addSafelontyLelonvelonlRulelon(
+          SafelontyLelonvelonl.ProfilelonMixelonrMelondia,
+          FrelonelondomOfSpelonelonchNotRelonachActions
+            .SoftIntelonrvelonntionAvoidLimitelondelonngagelonmelonntsAction(limitelondActionStrings =
+              Somelon(lelonvelonl3LimitelondActions))
         )
-        .addSafetyLevelRule(
-          SafetyLevel.TimelineFavorites,
-          FreedomOfSpeechNotReachActions
-            .SoftInterventionAvoidLimitedEngagementsAction(limitedActionStrings =
-              Some(level3LimitedActions))
+        .addSafelontyLelonvelonlRulelon(
+          SafelontyLelonvelonl.TimelonlinelonFavoritelons,
+          FrelonelondomOfSpelonelonchNotRelonachActions
+            .SoftIntelonrvelonntionAvoidLimitelondelonngagelonmelonntsAction(limitelondActionStrings =
+              Somelon(lelonvelonl3LimitelondActions))
         )
-        .addSafetyLevelRule(
-          SafetyLevel.ProfileMixerFavorites,
-          FreedomOfSpeechNotReachActions
-            .SoftInterventionAvoidLimitedEngagementsAction(limitedActionStrings =
-              Some(level3LimitedActions))
-        )
-        .build,
-      UserType.Author -> TweetVisibilityPolicy
-        .builder()
-        .addGlobalRule(
-          FreedomOfSpeechNotReachActions.AppealableAvoidLimitedEngagementsAction(
-            limitedActionStrings = Some(level3LimitedActions))
+        .addSafelontyLelonvelonlRulelon(
+          SafelontyLelonvelonl.ProfilelonMixelonrFavoritelons,
+          FrelonelondomOfSpelonelonchNotRelonachActions
+            .SoftIntelonrvelonntionAvoidLimitelondelonngagelonmelonntsAction(limitelondActionStrings =
+              Somelon(lelonvelonl3LimitelondActions))
         )
         .build,
-      UserType.Other -> TweetVisibilityPolicy
-        .builder()
-        .addGlobalRule(FreedomOfSpeechNotReachActions.DropAction())
-        .addSafetyLevelGroupRule(
-          SafetyLevelGroup.TimelineProfile,
-          FreedomOfSpeechNotReachActions
-            .InterstitialLimitedEngagementsAvoidAction(limitedActionStrings =
-              Some(level3LimitedActions))
+      UselonrTypelon.Author -> TwelonelontVisibilityPolicy
+        .buildelonr()
+        .addGlobalRulelon(
+          FrelonelondomOfSpelonelonchNotRelonachActions.AppelonalablelonAvoidLimitelondelonngagelonmelonntsAction(
+            limitelondActionStrings = Somelon(lelonvelonl3LimitelondActions))
         )
-        .addSafetyLevelGroupRule(
-          SafetyLevelGroup.TweetDetails,
-          FreedomOfSpeechNotReachActions
-            .InterstitialLimitedEngagementsAvoidAction(limitedActionStrings =
-              Some(level3LimitedActions))
+        .build,
+      UselonrTypelon.Othelonr -> TwelonelontVisibilityPolicy
+        .buildelonr()
+        .addGlobalRulelon(FrelonelondomOfSpelonelonchNotRelonachActions.DropAction())
+        .addSafelontyLelonvelonlGroupRulelon(
+          SafelontyLelonvelonlGroup.TimelonlinelonProfilelon,
+          FrelonelondomOfSpelonelonchNotRelonachActions
+            .IntelonrstitialLimitelondelonngagelonmelonntsAvoidAction(limitelondActionStrings =
+              Somelon(lelonvelonl3LimitelondActions))
         )
-        .addSafetyLevelRule(
-          SafetyLevel.ConversationReply,
-          FreedomOfSpeechNotReachActions
-            .InterstitialLimitedEngagementsAvoidAction(limitedActionStrings =
-              Some(level3LimitedActions))
+        .addSafelontyLelonvelonlGroupRulelon(
+          SafelontyLelonvelonlGroup.TwelonelontDelontails,
+          FrelonelondomOfSpelonelonchNotRelonachActions
+            .IntelonrstitialLimitelondelonngagelonmelonntsAvoidAction(limitelondActionStrings =
+              Somelon(lelonvelonl3LimitelondActions))
         )
-        .addSafetyLevelRule(
-          SafetyLevel.ConversationFocalTweet,
-          FreedomOfSpeechNotReachActions
-            .InterstitialLimitedEngagementsAvoidAction(limitedActionStrings =
-              Some(level3LimitedActions))
+        .addSafelontyLelonvelonlRulelon(
+          SafelontyLelonvelonl.ConvelonrsationRelonply,
+          FrelonelondomOfSpelonelonchNotRelonachActions
+            .IntelonrstitialLimitelondelonngagelonmelonntsAvoidAction(limitelondActionStrings =
+              Somelon(lelonvelonl3LimitelondActions))
         )
-        .addSafetyLevelRule(
-          SafetyLevel.TimelineMedia,
-          FreedomOfSpeechNotReachActions
-            .InterstitialLimitedEngagementsAvoidAction(limitedActionStrings =
-              Some(level3LimitedActions))
+        .addSafelontyLelonvelonlRulelon(
+          SafelontyLelonvelonl.ConvelonrsationFocalTwelonelont,
+          FrelonelondomOfSpelonelonchNotRelonachActions
+            .IntelonrstitialLimitelondelonngagelonmelonntsAvoidAction(limitelondActionStrings =
+              Somelon(lelonvelonl3LimitelondActions))
         )
-        .addSafetyLevelRule(
-          SafetyLevel.ProfileMixerMedia,
-          FreedomOfSpeechNotReachActions
-            .InterstitialLimitedEngagementsAvoidAction(limitedActionStrings =
-              Some(level3LimitedActions))
+        .addSafelontyLelonvelonlRulelon(
+          SafelontyLelonvelonl.TimelonlinelonMelondia,
+          FrelonelondomOfSpelonelonchNotRelonachActions
+            .IntelonrstitialLimitelondelonngagelonmelonntsAvoidAction(limitelondActionStrings =
+              Somelon(lelonvelonl3LimitelondActions))
         )
-        .addSafetyLevelRule(
-          SafetyLevel.TimelineFavorites,
-          FreedomOfSpeechNotReachActions
-            .InterstitialLimitedEngagementsAvoidAction(limitedActionStrings =
-              Some(level3LimitedActions))
+        .addSafelontyLelonvelonlRulelon(
+          SafelontyLelonvelonl.ProfilelonMixelonrMelondia,
+          FrelonelondomOfSpelonelonchNotRelonachActions
+            .IntelonrstitialLimitelondelonngagelonmelonntsAvoidAction(limitelondActionStrings =
+              Somelon(lelonvelonl3LimitelondActions))
         )
-        .addSafetyLevelRule(
-          SafetyLevel.ProfileMixerFavorites,
-          FreedomOfSpeechNotReachActions
-            .InterstitialLimitedEngagementsAvoidAction(limitedActionStrings =
-              Some(level3LimitedActions))
+        .addSafelontyLelonvelonlRulelon(
+          SafelontyLelonvelonl.TimelonlinelonFavoritelons,
+          FrelonelondomOfSpelonelonchNotRelonachActions
+            .IntelonrstitialLimitelondelonngagelonmelonntsAvoidAction(limitelondActionStrings =
+              Somelon(lelonvelonl3LimitelondActions))
+        )
+        .addSafelontyLelonvelonlRulelon(
+          SafelontyLelonvelonl.ProfilelonMixelonrFavoritelons,
+          FrelonelondomOfSpelonelonchNotRelonachActions
+            .IntelonrstitialLimitelondelonngagelonmelonntsAvoidAction(limitelondActionStrings =
+              Somelon(lelonvelonl3LimitelondActions))
         )
         .build,
     ),
   )
 }
-sealed trait UserType
-object UserType {
-  case object Author extends UserType
+selonalelond trait UselonrTypelon
+objelonct UselonrTypelon {
+  caselon objelonct Author elonxtelonnds UselonrTypelon
 
-  case object Follower extends UserType
+  caselon objelonct Followelonr elonxtelonnds UselonrTypelon
 
-  case object Other extends UserType
+  caselon objelonct Othelonr elonxtelonnds UselonrTypelon
 }
-class TweetRuleGenerator extends RuleGenerator {
+class TwelonelontRulelonGelonnelonrator elonxtelonnds RulelonGelonnelonrator {
 
-  private[rules] val tweetRulesForSurface: Map[SafetyLevel, Seq[Rule]] = generateTweetPolicies()
+  privatelon[rulelons] val twelonelontRulelonsForSurfacelon: Map[SafelontyLelonvelonl, Selonq[Rulelon]] = gelonnelonratelonTwelonelontPolicielons()
 
-  private[rules] def getViolationLevelPolicies = violationLevelPolicies
+  privatelon[rulelons] delonf gelontViolationLelonvelonlPolicielons = violationLelonvelonlPolicielons
 
-  override def rulesForSurface(safetyLevel: SafetyLevel): Seq[Rule] =
-    tweetRulesForSurface.getOrElse(safetyLevel, Seq())
+  ovelonrridelon delonf rulelonsForSurfacelon(safelontyLelonvelonl: SafelontyLelonvelonl): Selonq[Rulelon] =
+    twelonelontRulelonsForSurfacelon.gelontOrelonlselon(safelontyLelonvelonl, Selonq())
 
-  private def generateRulesForPolicy(
-    violationLevel: ViolationLevel,
-    userType: UserType,
-    tweetVisibilityPolicy: TweetVisibilityPolicy
-  ): Seq[(SafetyLevel, Rule)] = {
-    tweetVisibilityPolicy
-      .getRules()
+  privatelon delonf gelonnelonratelonRulelonsForPolicy(
+    violationLelonvelonl: ViolationLelonvelonl,
+    uselonrTypelon: UselonrTypelon,
+    twelonelontVisibilityPolicy: TwelonelontVisibilityPolicy
+  ): Selonq[(SafelontyLelonvelonl, Rulelon)] = {
+    twelonelontVisibilityPolicy
+      .gelontRulelons()
       .map {
-        case (safetyLevel, actionBuilder) =>
-          safetyLevel -> (userType match {
-            case UserType.Author =>
-              FreedomOfSpeechNotReachRules.ViewerIsAuthorAndTweetHasViolationOfLevel(
-                violationLevel = violationLevel,
-                actionBuilder = actionBuilder.withViolationLevel(violationLevel = violationLevel))
-            case UserType.Follower =>
-              FreedomOfSpeechNotReachRules.ViewerIsFollowerAndTweetHasViolationOfLevel(
-                violationLevel = violationLevel,
-                actionBuilder = actionBuilder.withViolationLevel(violationLevel = violationLevel))
-            case UserType.Other =>
-              FreedomOfSpeechNotReachRules.ViewerIsNonFollowerNonAuthorAndTweetHasViolationOfLevel(
-                violationLevel = violationLevel,
-                actionBuilder = actionBuilder.withViolationLevel(violationLevel = violationLevel))
+        caselon (safelontyLelonvelonl, actionBuildelonr) =>
+          safelontyLelonvelonl -> (uselonrTypelon match {
+            caselon UselonrTypelon.Author =>
+              FrelonelondomOfSpelonelonchNotRelonachRulelons.VielonwelonrIsAuthorAndTwelonelontHasViolationOfLelonvelonl(
+                violationLelonvelonl = violationLelonvelonl,
+                actionBuildelonr = actionBuildelonr.withViolationLelonvelonl(violationLelonvelonl = violationLelonvelonl))
+            caselon UselonrTypelon.Followelonr =>
+              FrelonelondomOfSpelonelonchNotRelonachRulelons.VielonwelonrIsFollowelonrAndTwelonelontHasViolationOfLelonvelonl(
+                violationLelonvelonl = violationLelonvelonl,
+                actionBuildelonr = actionBuildelonr.withViolationLelonvelonl(violationLelonvelonl = violationLelonvelonl))
+            caselon UselonrTypelon.Othelonr =>
+              FrelonelondomOfSpelonelonchNotRelonachRulelons.VielonwelonrIsNonFollowelonrNonAuthorAndTwelonelontHasViolationOfLelonvelonl(
+                violationLelonvelonl = violationLelonvelonl,
+                actionBuildelonr = actionBuildelonr.withViolationLelonvelonl(violationLelonvelonl = violationLelonvelonl))
           })
-      }.toSeq
+      }.toSelonq
   }
 
-  private def generatePoliciesForViolationLevel(
-    violationLevel: ViolationLevel
-  ): Seq[(SafetyLevel, Rule)] = {
-    getViolationLevelPolicies
-      .get(violationLevel).map { policiesPerUserType =>
-        Seq(UserType.Author, UserType.Follower, UserType.Other).foldLeft(
-          List.empty[(UserType, SafetyLevel, Rule)]) {
-          case (rulesForAllUserTypes, userType) =>
-            rulesForAllUserTypes ++ generateRulesForPolicy(
-              violationLevel = violationLevel,
-              userType = userType,
-              tweetVisibilityPolicy = policiesPerUserType(userType)).map {
-              case (safetyLevel, rule) => (userType, safetyLevel, rule)
+  privatelon delonf gelonnelonratelonPolicielonsForViolationLelonvelonl(
+    violationLelonvelonl: ViolationLelonvelonl
+  ): Selonq[(SafelontyLelonvelonl, Rulelon)] = {
+    gelontViolationLelonvelonlPolicielons
+      .gelont(violationLelonvelonl).map { policielonsPelonrUselonrTypelon =>
+        Selonq(UselonrTypelon.Author, UselonrTypelon.Followelonr, UselonrTypelon.Othelonr).foldLelonft(
+          List.elonmpty[(UselonrTypelon, SafelontyLelonvelonl, Rulelon)]) {
+          caselon (rulelonsForAllUselonrTypelons, uselonrTypelon) =>
+            rulelonsForAllUselonrTypelons ++ gelonnelonratelonRulelonsForPolicy(
+              violationLelonvelonl = violationLelonvelonl,
+              uselonrTypelon = uselonrTypelon,
+              twelonelontVisibilityPolicy = policielonsPelonrUselonrTypelon(uselonrTypelon)).map {
+              caselon (safelontyLelonvelonl, rulelon) => (uselonrTypelon, safelontyLelonvelonl, rulelon)
             }
         }
       }
-      .map(policy => optimizePolicy(policy = policy, violationLevel = violationLevel))
-      .getOrElse(List())
+      .map(policy => optimizelonPolicy(policy = policy, violationLelonvelonl = violationLelonvelonl))
+      .gelontOrelonlselon(List())
   }
 
-  private def injectFallbackRule(rules: Seq[Rule]): Seq[Rule] = {
-    rules :+ FreedomOfSpeechNotReachRules.TweetHasViolationOfAnyLevelFallbackDropRule
+  privatelon delonf injelonctFallbackRulelon(rulelons: Selonq[Rulelon]): Selonq[Rulelon] = {
+    rulelons :+ FrelonelondomOfSpelonelonchNotRelonachRulelons.TwelonelontHasViolationOfAnyLelonvelonlFallbackDropRulelon
   }
 
-  private def optimizePolicy(
-    policy: Seq[(UserType, SafetyLevel, Rule)],
-    violationLevel: ViolationLevel
-  ): Seq[(SafetyLevel, Rule)] = {
-    val policiesByUserType = policy.groupBy { case (userType, _, _) => userType }.map {
-      case (userType, aggregated) =>
-        (userType, aggregated.map { case (_, safetyLevel, rules) => (safetyLevel, rules) })
+  privatelon delonf optimizelonPolicy(
+    policy: Selonq[(UselonrTypelon, SafelontyLelonvelonl, Rulelon)],
+    violationLelonvelonl: ViolationLelonvelonl
+  ): Selonq[(SafelontyLelonvelonl, Rulelon)] = {
+    val policielonsByUselonrTypelon = policy.groupBy { caselon (uselonrTypelon, _, _) => uselonrTypelon }.map {
+      caselon (uselonrTypelon, aggrelongatelond) =>
+        (uselonrTypelon, aggrelongatelond.map { caselon (_, safelontyLelonvelonl, rulelons) => (safelontyLelonvelonl, rulelons) })
     }
-    val followerPolicies = aggregateRulesBySafetyLevel(
-      policiesByUserType.getOrElse(UserType.Follower, Seq()))
-    val otherPolicies = aggregateRulesBySafetyLevel(
-      policiesByUserType.getOrElse(UserType.Other, Seq()))
-    policiesByUserType(UserType.Author) ++
-      followerPolicies.collect {
-        case (safetyLevel, rule) if !otherPolicies.contains(safetyLevel) =>
-          (safetyLevel, rule)
+    val followelonrPolicielons = aggrelongatelonRulelonsBySafelontyLelonvelonl(
+      policielonsByUselonrTypelon.gelontOrelonlselon(UselonrTypelon.Followelonr, Selonq()))
+    val othelonrPolicielons = aggrelongatelonRulelonsBySafelontyLelonvelonl(
+      policielonsByUselonrTypelon.gelontOrelonlselon(UselonrTypelon.Othelonr, Selonq()))
+    policielonsByUselonrTypelon(UselonrTypelon.Author) ++
+      followelonrPolicielons.collelonct {
+        caselon (safelontyLelonvelonl, rulelon) if !othelonrPolicielons.contains(safelontyLelonvelonl) =>
+          (safelontyLelonvelonl, rulelon)
       } ++
-      otherPolicies.collect {
-        case (safetyLevel, rule) if !followerPolicies.contains(safetyLevel) =>
-          (safetyLevel, rule)
+      othelonrPolicielons.collelonct {
+        caselon (safelontyLelonvelonl, rulelon) if !followelonrPolicielons.contains(safelontyLelonvelonl) =>
+          (safelontyLelonvelonl, rulelon)
       } ++
-      followerPolicies.keySet
-        .intersect(otherPolicies.keySet).foldLeft(List.empty[(SafetyLevel, Rule)]) {
-          case (aggr, safetyLevel)
-              if followerPolicies(safetyLevel).actionBuilder == otherPolicies(
-                safetyLevel).actionBuilder =>
+      followelonrPolicielons.kelonySelont
+        .intelonrselonct(othelonrPolicielons.kelonySelont).foldLelonft(List.elonmpty[(SafelontyLelonvelonl, Rulelon)]) {
+          caselon (aggr, safelontyLelonvelonl)
+              if followelonrPolicielons(safelontyLelonvelonl).actionBuildelonr == othelonrPolicielons(
+                safelontyLelonvelonl).actionBuildelonr =>
             (
-              safetyLevel,
-              FreedomOfSpeechNotReachRules.ViewerIsNonAuthorAndTweetHasViolationOfLevel(
-                violationLevel = violationLevel,
-                actionBuilder = followerPolicies(safetyLevel).actionBuilder
+              safelontyLelonvelonl,
+              FrelonelondomOfSpelonelonchNotRelonachRulelons.VielonwelonrIsNonAuthorAndTwelonelontHasViolationOfLelonvelonl(
+                violationLelonvelonl = violationLelonvelonl,
+                actionBuildelonr = followelonrPolicielons(safelontyLelonvelonl).actionBuildelonr
               )) :: aggr
-          case (aggr, safetyLevel) =>
-            (safetyLevel, followerPolicies(safetyLevel)) ::
-              (safetyLevel, otherPolicies(safetyLevel)) :: aggr
+          caselon (aggr, safelontyLelonvelonl) =>
+            (safelontyLelonvelonl, followelonrPolicielons(safelontyLelonvelonl)) ::
+              (safelontyLelonvelonl, othelonrPolicielons(safelontyLelonvelonl)) :: aggr
         }
   }
 
-  private def aggregateRulesBySafetyLevel(
-    policy: Seq[(SafetyLevel, Rule)]
-  ): Map[SafetyLevel, Rule] = {
+  privatelon delonf aggrelongatelonRulelonsBySafelontyLelonvelonl(
+    policy: Selonq[(SafelontyLelonvelonl, Rulelon)]
+  ): Map[SafelontyLelonvelonl, Rulelon] = {
     policy
       .groupBy {
-        case (safetyLevel, _) => safetyLevel
+        caselon (safelontyLelonvelonl, _) => safelontyLelonvelonl
       }.map {
-        case (safetyLevel, Seq((_, rule))) =>
-          (safetyLevel, rule)
-        case _ => throw new Exception("Policy optimization failure")
+        caselon (safelontyLelonvelonl, Selonq((_, rulelon))) =>
+          (safelontyLelonvelonl, rulelon)
+        caselon _ => throw nelonw elonxcelonption("Policy optimization failurelon")
       }
   }
 
-  private def generateTweetPolicies(): Map[SafetyLevel, Seq[Rule]] = {
-    Seq(ViolationLevel.Level4, ViolationLevel.Level3, ViolationLevel.Level2, ViolationLevel.Level1)
-      .foldLeft(List.empty[(SafetyLevel, Rule)]) {
-        case (rulesForAllViolationLevels, violationLevel) =>
-          rulesForAllViolationLevels ++
-            generatePoliciesForViolationLevel(violationLevel)
+  privatelon delonf gelonnelonratelonTwelonelontPolicielons(): Map[SafelontyLelonvelonl, Selonq[Rulelon]] = {
+    Selonq(ViolationLelonvelonl.Lelonvelonl4, ViolationLelonvelonl.Lelonvelonl3, ViolationLelonvelonl.Lelonvelonl2, ViolationLelonvelonl.Lelonvelonl1)
+      .foldLelonft(List.elonmpty[(SafelontyLelonvelonl, Rulelon)]) {
+        caselon (rulelonsForAllViolationLelonvelonls, violationLelonvelonl) =>
+          rulelonsForAllViolationLelonvelonls ++
+            gelonnelonratelonPolicielonsForViolationLelonvelonl(violationLelonvelonl)
       }
-      .groupBy { case (safetyLevel, _) => safetyLevel }
+      .groupBy { caselon (safelontyLelonvelonl, _) => safelontyLelonvelonl }
       .map {
-        case (safetyLevel, list) =>
-          (safetyLevel, injectFallbackRule(list.map { case (_, rule) => rule }))
+        caselon (safelontyLelonvelonl, list) =>
+          (safelontyLelonvelonl, injelonctFallbackRulelon(list.map { caselon (_, rulelon) => rulelon }))
       }
   }
 }

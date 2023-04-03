@@ -1,39 +1,39 @@
-package com.twitter.search.common.relevance.features;
+packagelon com.twittelonr.selonarch.common.relonlelonvancelon.felonaturelons;
 
-import java.util.concurrent.TimeUnit;
+import java.util.concurrelonnt.TimelonUnit;
 
-import com.twitter.search.common.encoding.features.ByteNormalizer;
-import com.twitter.search.common.encoding.features.IntNormalizer;
-import com.twitter.search.common.encoding.features.PredictionScoreNormalizer;
+import com.twittelonr.selonarch.common.elonncoding.felonaturelons.BytelonNormalizelonr;
+import com.twittelonr.selonarch.common.elonncoding.felonaturelons.IntNormalizelonr;
+import com.twittelonr.selonarch.common.elonncoding.felonaturelons.PrelondictionScorelonNormalizelonr;
 
 /**
- * Int value normalizers used to push feature values into earlybird db. For the
- * 8-bit feature types, this class wraps the
- * com.twitter.search.common.relevance.features.MutableFeatureNormalizers
+ * Int valuelon normalizelonrs uselond to push felonaturelon valuelons into elonarlybird db. For thelon
+ * 8-bit felonaturelon typelons, this class wraps thelon
+ * com.twittelonr.selonarch.common.relonlelonvancelon.felonaturelons.MutablelonFelonaturelonNormalizelonrs
  */
-public final class IntNormalizers {
-  private IntNormalizers() {
+public final class IntNormalizelonrs {
+  privatelon IntNormalizelonrs() {
   }
 
-  public static final IntNormalizer LEGACY_NORMALIZER =
-      val -> ByteNormalizer.unsignedByteToInt(
-          MutableFeatureNormalizers.BYTE_NORMALIZER.normalize(val));
+  public static final IntNormalizelonr LelonGACY_NORMALIZelonR =
+      val -> BytelonNormalizelonr.unsignelondBytelonToInt(
+          MutablelonFelonaturelonNormalizelonrs.BYTelon_NORMALIZelonR.normalizelon(val));
 
-  public static final IntNormalizer SMART_INTEGER_NORMALIZER =
-      val -> ByteNormalizer.unsignedByteToInt(
-          MutableFeatureNormalizers.SMART_INTEGER_NORMALIZER.normalize(val));
+  public static final IntNormalizelonr SMART_INTelonGelonR_NORMALIZelonR =
+      val -> BytelonNormalizelonr.unsignelondBytelonToInt(
+          MutablelonFelonaturelonNormalizelonrs.SMART_INTelonGelonR_NORMALIZelonR.normalizelon(val));
 
-  // The PARUS_SCORE feature is deprecated and is never set in our indexes. However, we still need
-  // this normalizer for now, because some models do not work properly with "missing" features, so
-  // for now we still need to set the PARUS_SCORE feature to 0.
-  public static final IntNormalizer PARUS_SCORE_NORMALIZER = val -> 0;
+  // Thelon PARUS_SCORelon felonaturelon is delonpreloncatelond and is nelonvelonr selont in our indelonxelons. Howelonvelonr, welon still nelonelond
+  // this normalizelonr for now, beloncauselon somelon modelonls do not work propelonrly with "missing" felonaturelons, so
+  // for now welon still nelonelond to selont thelon PARUS_SCORelon felonaturelon to 0.
+  public static final IntNormalizelonr PARUS_SCORelon_NORMALIZelonR = val -> 0;
 
-  public static final IntNormalizer BOOLEAN_NORMALIZER =
+  public static final IntNormalizelonr BOOLelonAN_NORMALIZelonR =
       val -> val == 0 ? 0 : 1;
 
-  public static final IntNormalizer TIMESTAMP_SEC_TO_HR_NORMALIZER =
-      val -> (int) TimeUnit.SECONDS.toHours((long) val);
+  public static final IntNormalizelonr TIMelonSTAMP_SelonC_TO_HR_NORMALIZelonR =
+      val -> (int) TimelonUnit.SelonCONDS.toHours((long) val);
 
-  public static final PredictionScoreNormalizer PREDICTION_SCORE_NORMALIZER =
-      new PredictionScoreNormalizer(3);
+  public static final PrelondictionScorelonNormalizelonr PRelonDICTION_SCORelon_NORMALIZelonR =
+      nelonw PrelondictionScorelonNormalizelonr(3);
 }

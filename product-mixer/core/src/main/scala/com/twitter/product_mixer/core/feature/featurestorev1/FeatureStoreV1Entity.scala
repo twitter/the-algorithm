@@ -1,35 +1,35 @@
-package com.twitter.product_mixer.core.feature.featurestorev1
+packagelon com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonstorelonv1
 
-import com.twitter.ml.featurestore.lib.EntityId
-import com.twitter.ml.featurestore.lib.entity.Entity
-import com.twitter.ml.featurestore.lib.entity.EntityWithId
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.ml.felonaturelonstorelon.lib.elonntityId
+import com.twittelonr.ml.felonaturelonstorelon.lib.elonntity.elonntity
+import com.twittelonr.ml.felonaturelonstorelon.lib.elonntity.elonntityWithId
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
-sealed trait FeatureStoreV1Entity[
-  -Query <: PipelineQuery,
+selonalelond trait FelonaturelonStorelonV1elonntity[
+  -Quelonry <: PipelonlinelonQuelonry,
   -Input,
-  FeatureStoreEntityId <: EntityId] {
+  FelonaturelonStorelonelonntityId <: elonntityId] {
 
-  val entity: Entity[FeatureStoreEntityId]
+  val elonntity: elonntity[FelonaturelonStorelonelonntityId]
 }
 
-trait FeatureStoreV1QueryEntity[-Query <: PipelineQuery, FeatureStoreEntityId <: EntityId]
-    extends FeatureStoreV1Entity[Query, Query, FeatureStoreEntityId] {
+trait FelonaturelonStorelonV1Quelonryelonntity[-Quelonry <: PipelonlinelonQuelonry, FelonaturelonStorelonelonntityId <: elonntityId]
+    elonxtelonnds FelonaturelonStorelonV1elonntity[Quelonry, Quelonry, FelonaturelonStorelonelonntityId] {
 
-  def entityWithId(query: Query): EntityWithId[FeatureStoreEntityId]
+  delonf elonntityWithId(quelonry: Quelonry): elonntityWithId[FelonaturelonStorelonelonntityId]
 }
 
-trait FeatureStoreV1CandidateEntity[
-  -Query <: PipelineQuery,
-  -Input <: UniversalNoun[Any],
-  FeatureStoreEntityId <: EntityId]
-    extends FeatureStoreV1Entity[Query, Input, FeatureStoreEntityId] {
+trait FelonaturelonStorelonV1Candidatelonelonntity[
+  -Quelonry <: PipelonlinelonQuelonry,
+  -Input <: UnivelonrsalNoun[Any],
+  FelonaturelonStorelonelonntityId <: elonntityId]
+    elonxtelonnds FelonaturelonStorelonV1elonntity[Quelonry, Input, FelonaturelonStorelonelonntityId] {
 
-  def entityWithId(
-    query: Query,
+  delonf elonntityWithId(
+    quelonry: Quelonry,
     input: Input,
-    existingFeatures: FeatureMap
-  ): EntityWithId[FeatureStoreEntityId]
+    elonxistingFelonaturelons: FelonaturelonMap
+  ): elonntityWithId[FelonaturelonStorelonelonntityId]
 }

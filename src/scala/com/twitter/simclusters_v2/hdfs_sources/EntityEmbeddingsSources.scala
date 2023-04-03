@@ -1,222 +1,222 @@
-package com.twitter.simclusters_v2.hdfs_sources
+packagelon com.twittelonr.simclustelonrs_v2.hdfs_sourcelons
 
-import com.twitter.dal.client.dataset.KeyValDALDataset
-import com.twitter.scalding.DateRange
-import com.twitter.scalding.typed.TypedPipe
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.remote_access.AllowCrossDC
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.thriftscala._
-import com.twitter.wtf.entity_real_graph.thriftscala.EntityType
-import com.twitter.simclusters_v2.common.ClusterId
-import com.twitter.simclusters_v2.common.ModelVersions
+import com.twittelonr.dal.clielonnt.dataselont.KelonyValDALDataselont
+import com.twittelonr.scalding.DatelonRangelon
+import com.twittelonr.scalding.typelond.TypelondPipelon
+import com.twittelonr.scalding_intelonrnal.dalv2.DAL
+import com.twittelonr.scalding_intelonrnal.dalv2.relonmotelon_accelonss.AllowCrossDC
+import com.twittelonr.scalding_intelonrnal.multiformat.format.kelonyval.KelonyVal
+import com.twittelonr.simclustelonrs_v2.thriftscala._
+import com.twittelonr.wtf.elonntity_relonal_graph.thriftscala.elonntityTypelon
+import com.twittelonr.simclustelonrs_v2.common.ClustelonrId
+import com.twittelonr.simclustelonrs_v2.common.ModelonlVelonrsions
 
-object EntityEmbeddingsSources {
+objelonct elonntityelonmbelonddingsSourcelons {
 
-  final val SemanticCoreSimClustersEmbeddingsDec11Dataset =
-    SemanticCoreSimclustersEmbeddingsScalaDataset
+  final val SelonmanticCorelonSimClustelonrselonmbelonddingsDelonc11Dataselont =
+    SelonmanticCorelonSimclustelonrselonmbelonddingsScalaDataselont
 
-  final val SemanticCoreSimClustersEmbeddingsUpdatedDataset =
-    SemanticCoreSimclustersEmbeddingsUpdatedScalaDataset
+  final val SelonmanticCorelonSimClustelonrselonmbelonddingsUpdatelondDataselont =
+    SelonmanticCorelonSimclustelonrselonmbelonddingsUpdatelondScalaDataselont
 
-  final val SemanticCoreSimClustersEmbeddings2020Dataset =
-    SemanticCoreSimclustersEmbeddings2020ScalaDataset
+  final val SelonmanticCorelonSimClustelonrselonmbelonddings2020Dataselont =
+    SelonmanticCorelonSimclustelonrselonmbelonddings2020ScalaDataselont
 
-  final val SemanticCorePerLanguageSimClustersEmbeddingsDataset =
-    SemanticCorePerLanguageSimclustersEmbeddingsScalaDataset
+  final val SelonmanticCorelonPelonrLanguagelonSimClustelonrselonmbelonddingsDataselont =
+    SelonmanticCorelonPelonrLanguagelonSimclustelonrselonmbelonddingsScalaDataselont
 
-  final val LogFavSemanticCorePerLanguageSimClustersEmbeddingsDataset =
-    LogFavSemanticCorePerLanguageSimclustersEmbeddingsScalaDataset
+  final val LogFavSelonmanticCorelonPelonrLanguagelonSimClustelonrselonmbelonddingsDataselont =
+    LogFavSelonmanticCorelonPelonrLanguagelonSimclustelonrselonmbelonddingsScalaDataselont
 
-  final val HashtagSimClustersEmbeddingsUpdatedDataset =
-    HashtagSimclustersEmbeddingsUpdatedScalaDataset
+  final val HashtagSimClustelonrselonmbelonddingsUpdatelondDataselont =
+    HashtagSimclustelonrselonmbelonddingsUpdatelondScalaDataselont
 
-  final val ReverseIndexSemanticCoreSimClustersEmbeddingsDec11Dataset =
-    ReverseIndexSemanticCoreSimclustersEmbeddingsScalaDataset
+  final val RelonvelonrselonIndelonxSelonmanticCorelonSimClustelonrselonmbelonddingsDelonc11Dataselont =
+    RelonvelonrselonIndelonxSelonmanticCorelonSimclustelonrselonmbelonddingsScalaDataselont
 
-  final val ReverseIndexSemanticCoreSimClustersEmbeddingsUpdatedDataset =
-    ReverseIndexSemanticCoreSimclustersEmbeddingsUpdatedScalaDataset
+  final val RelonvelonrselonIndelonxSelonmanticCorelonSimClustelonrselonmbelonddingsUpdatelondDataselont =
+    RelonvelonrselonIndelonxSelonmanticCorelonSimclustelonrselonmbelonddingsUpdatelondScalaDataselont
 
-  final val ReverseIndexSemanticCoreSimClustersEmbeddings2020Dataset =
-    ReverseIndexSemanticCoreSimclustersEmbeddings2020ScalaDataset
+  final val RelonvelonrselonIndelonxSelonmanticCorelonSimClustelonrselonmbelonddings2020Dataselont =
+    RelonvelonrselonIndelonxSelonmanticCorelonSimclustelonrselonmbelonddings2020ScalaDataselont
 
-  final val ReverseIndexSemanticCorePerLanguageSimClustersEmbeddingsDataset =
-    ReverseIndexSemanticCorePerLanguageSimclustersEmbeddingsScalaDataset
+  final val RelonvelonrselonIndelonxSelonmanticCorelonPelonrLanguagelonSimClustelonrselonmbelonddingsDataselont =
+    RelonvelonrselonIndelonxSelonmanticCorelonPelonrLanguagelonSimclustelonrselonmbelonddingsScalaDataselont
 
-  final val LogFavReverseIndexSemanticCorePerLanguageSimClustersEmbeddingsDataset =
-    LogFavReverseIndexSemanticCorePerLanguageSimclustersEmbeddingsScalaDataset
+  final val LogFavRelonvelonrselonIndelonxSelonmanticCorelonPelonrLanguagelonSimClustelonrselonmbelonddingsDataselont =
+    LogFavRelonvelonrselonIndelonxSelonmanticCorelonPelonrLanguagelonSimclustelonrselonmbelonddingsScalaDataselont
 
-  final val ReverseIndexHashtagSimClustersEmbeddingsUpdatedDataset =
-    ReverseIndexHashtagSimclustersEmbeddingsUpdatedScalaDataset
+  final val RelonvelonrselonIndelonxHashtagSimClustelonrselonmbelonddingsUpdatelondDataselont =
+    RelonvelonrselonIndelonxHashtagSimclustelonrselonmbelonddingsUpdatelondScalaDataselont
 
-  // Fav-based TFG topic embeddings built from user device languages
-  // Keyed by SimClustersEmbeddingId with InternalId.TopicId ((topic, language) pair, with country = None)
-  final val FavTfgTopicEmbeddingsDataset = FavTfgTopicEmbeddingsScalaDataset
+  // Fav-baselond TFG topic elonmbelonddings built from uselonr delonvicelon languagelons
+  // Kelonyelond by SimClustelonrselonmbelonddingId with IntelonrnalId.TopicId ((topic, languagelon) pair, with country = Nonelon)
+  final val FavTfgTopicelonmbelonddingsDataselont = FavTfgTopicelonmbelonddingsScalaDataselont
 
-  final val FavTfgTopicEmbeddingsParquetDataset = FavTfgTopicEmbeddingsParquetScalaDataset
+  final val FavTfgTopicelonmbelonddingsParquelontDataselont = FavTfgTopicelonmbelonddingsParquelontScalaDataselont
 
-  final val FavTfgTopicEmbeddings2020Dataset = FavTfgTopicEmbeddings2020ScalaDataset
+  final val FavTfgTopicelonmbelonddings2020Dataselont = FavTfgTopicelonmbelonddings2020ScalaDataselont
 
-  final val FavTfgTopicEmbeddings2020ParquetDataset = FavTfgTopicEmbeddings2020ParquetScalaDataset
+  final val FavTfgTopicelonmbelonddings2020ParquelontDataselont = FavTfgTopicelonmbelonddings2020ParquelontScalaDataselont
 
-  // Logfav-based TFG topic embeddings built from user device languages
-  // Keyed by SimClustersEmbeddingId with InternalId.LocaleEntityId ((topic, language) pair)
-  final val LogFavTfgTopicEmbeddingsDataset = LogFavTfgTopicEmbeddingsScalaDataset
+  // Logfav-baselond TFG topic elonmbelonddings built from uselonr delonvicelon languagelons
+  // Kelonyelond by SimClustelonrselonmbelonddingId with IntelonrnalId.LocalelonelonntityId ((topic, languagelon) pair)
+  final val LogFavTfgTopicelonmbelonddingsDataselont = LogFavTfgTopicelonmbelonddingsScalaDataselont
 
-  final val LogFavTfgTopicEmbeddingsParquetDataset = LogFavTfgTopicEmbeddingsParquetScalaDataset
+  final val LogFavTfgTopicelonmbelonddingsParquelontDataselont = LogFavTfgTopicelonmbelonddingsParquelontScalaDataselont
 
-  // Fav-based TFG topic embeddings built from inferred user consumed languages
-  // Keyed by SimClustersEmbeddingId with InternalId.TopicId ((topic, country, language) tuple)
-  final val FavInferredLanguageTfgTopicEmbeddingsDataset =
-    FavInferredLanguageTfgTopicEmbeddingsScalaDataset
+  // Fav-baselond TFG topic elonmbelonddings built from infelonrrelond uselonr consumelond languagelons
+  // Kelonyelond by SimClustelonrselonmbelonddingId with IntelonrnalId.TopicId ((topic, country, languagelon) tuplelon)
+  final val FavInfelonrrelondLanguagelonTfgTopicelonmbelonddingsDataselont =
+    FavInfelonrrelondLanguagelonTfgTopicelonmbelonddingsScalaDataselont
 
-  private val validSemanticCoreEmbeddingTypes = Seq(
-    EmbeddingType.FavBasedSematicCoreEntity,
-    EmbeddingType.FollowBasedSematicCoreEntity
+  privatelon val validSelonmanticCorelonelonmbelonddingTypelons = Selonq(
+    elonmbelonddingTypelon.FavBaselondSelonmaticCorelonelonntity,
+    elonmbelonddingTypelon.FollowBaselondSelonmaticCorelonelonntity
   )
 
   /**
-   * Given a fav/follow/etc embedding type and a ModelVersion, retrieve the corresponding dataset to
-   * (SemanticCore entityId -> List(clusterId)) from a certain dateRange.
+   * Givelonn a fav/follow/elontc elonmbelondding typelon and a ModelonlVelonrsion, relontrielonvelon thelon correlonsponding dataselont to
+   * (SelonmanticCorelon elonntityId -> List(clustelonrId)) from a celonrtain datelonRangelon.
    */
-  def getSemanticCoreEntityEmbeddingsSource(
-    embeddingType: EmbeddingType,
-    modelVersion: String,
-    dateRange: DateRange
-  ): TypedPipe[(Long, SimClustersEmbedding)] = {
-    val dataSet = modelVersion match {
-      case ModelVersions.Model20M145KDec11 => SemanticCoreSimClustersEmbeddingsDec11Dataset
-      case ModelVersions.Model20M145KUpdated => SemanticCoreSimClustersEmbeddingsUpdatedDataset
-      case _ => throw new IllegalArgumentException(s"ModelVersion $modelVersion is not supported")
+  delonf gelontSelonmanticCorelonelonntityelonmbelonddingsSourcelon(
+    elonmbelonddingTypelon: elonmbelonddingTypelon,
+    modelonlVelonrsion: String,
+    datelonRangelon: DatelonRangelon
+  ): TypelondPipelon[(Long, SimClustelonrselonmbelondding)] = {
+    val dataSelont = modelonlVelonrsion match {
+      caselon ModelonlVelonrsions.Modelonl20M145KDelonc11 => SelonmanticCorelonSimClustelonrselonmbelonddingsDelonc11Dataselont
+      caselon ModelonlVelonrsions.Modelonl20M145KUpdatelond => SelonmanticCorelonSimClustelonrselonmbelonddingsUpdatelondDataselont
+      caselon _ => throw nelonw IllelongalArgumelonntelonxcelonption(s"ModelonlVelonrsion $modelonlVelonrsion is not supportelond")
     }
-    assert(validSemanticCoreEmbeddingTypes.contains(embeddingType))
-    entityEmbeddingsSource(dataSet, embeddingType, dateRange)
+    asselonrt(validSelonmanticCorelonelonmbelonddingTypelons.contains(elonmbelonddingTypelon))
+    elonntityelonmbelonddingsSourcelon(dataSelont, elonmbelonddingTypelon, datelonRangelon)
   }
 
   /**
-   * Given a fav/follow/etc embedding type and a ModelVersion, retrieve the corresponding dataset to
-   * (clusterId -> List(SemanticCore entityId)) from a certain dateRange.
+   * Givelonn a fav/follow/elontc elonmbelondding typelon and a ModelonlVelonrsion, relontrielonvelon thelon correlonsponding dataselont to
+   * (clustelonrId -> List(SelonmanticCorelon elonntityId)) from a celonrtain datelonRangelon.
    */
-  def getReverseIndexedSemanticCoreEntityEmbeddingsSource(
-    embeddingType: EmbeddingType,
-    modelVersion: String,
-    dateRange: DateRange
-  ): TypedPipe[(ClusterId, Seq[SemanticCoreEntityWithScore])] = {
-    val dataSet = modelVersion match {
-      case ModelVersions.Model20M145KDec11 =>
-        ReverseIndexSemanticCoreSimClustersEmbeddingsDec11Dataset
-      case ModelVersions.Model20M145KUpdated =>
-        ReverseIndexSemanticCoreSimClustersEmbeddingsUpdatedDataset
-      case ModelVersions.Model20M145K2020 =>
-        ReverseIndexSemanticCoreSimClustersEmbeddings2020Dataset
-      case _ => throw new IllegalArgumentException(s"ModelVersion $modelVersion is not supported")
+  delonf gelontRelonvelonrselonIndelonxelondSelonmanticCorelonelonntityelonmbelonddingsSourcelon(
+    elonmbelonddingTypelon: elonmbelonddingTypelon,
+    modelonlVelonrsion: String,
+    datelonRangelon: DatelonRangelon
+  ): TypelondPipelon[(ClustelonrId, Selonq[SelonmanticCorelonelonntityWithScorelon])] = {
+    val dataSelont = modelonlVelonrsion match {
+      caselon ModelonlVelonrsions.Modelonl20M145KDelonc11 =>
+        RelonvelonrselonIndelonxSelonmanticCorelonSimClustelonrselonmbelonddingsDelonc11Dataselont
+      caselon ModelonlVelonrsions.Modelonl20M145KUpdatelond =>
+        RelonvelonrselonIndelonxSelonmanticCorelonSimClustelonrselonmbelonddingsUpdatelondDataselont
+      caselon ModelonlVelonrsions.Modelonl20M145K2020 =>
+        RelonvelonrselonIndelonxSelonmanticCorelonSimClustelonrselonmbelonddings2020Dataselont
+      caselon _ => throw nelonw IllelongalArgumelonntelonxcelonption(s"ModelonlVelonrsion $modelonlVelonrsion is not supportelond")
     }
 
-    assert(validSemanticCoreEmbeddingTypes.contains(embeddingType))
-    reverseIndexedEntityEmbeddingsSource(dataSet, embeddingType, dateRange)
+    asselonrt(validSelonmanticCorelonelonmbelonddingTypelons.contains(elonmbelonddingTypelon))
+    relonvelonrselonIndelonxelondelonntityelonmbelonddingsSourcelon(dataSelont, elonmbelonddingTypelon, datelonRangelon)
   }
 
-  // Return the raw DAL dataset reference. Use this if you're writing to DAL.
-  def getEntityEmbeddingsDataset(
-    entityType: EntityType,
-    modelVersion: String,
-    isEmbeddingsPerLocale: Boolean = false
-  ): KeyValDALDataset[KeyVal[SimClustersEmbeddingId, SimClustersEmbedding]] = {
-    (entityType, modelVersion) match {
-      case (EntityType.SemanticCore, ModelVersions.Model20M145KDec11) =>
-        SemanticCoreSimClustersEmbeddingsDec11Dataset
-      case (EntityType.SemanticCore, ModelVersions.Model20M145KUpdated) =>
-        if (isEmbeddingsPerLocale) {
-          SemanticCorePerLanguageSimClustersEmbeddingsDataset
-        } else {
-          SemanticCoreSimClustersEmbeddingsUpdatedDataset
+  // Relonturn thelon raw DAL dataselont relonfelonrelonncelon. Uselon this if you'relon writing to DAL.
+  delonf gelontelonntityelonmbelonddingsDataselont(
+    elonntityTypelon: elonntityTypelon,
+    modelonlVelonrsion: String,
+    iselonmbelonddingsPelonrLocalelon: Boolelonan = falselon
+  ): KelonyValDALDataselont[KelonyVal[SimClustelonrselonmbelonddingId, SimClustelonrselonmbelondding]] = {
+    (elonntityTypelon, modelonlVelonrsion) match {
+      caselon (elonntityTypelon.SelonmanticCorelon, ModelonlVelonrsions.Modelonl20M145KDelonc11) =>
+        SelonmanticCorelonSimClustelonrselonmbelonddingsDelonc11Dataselont
+      caselon (elonntityTypelon.SelonmanticCorelon, ModelonlVelonrsions.Modelonl20M145KUpdatelond) =>
+        if (iselonmbelonddingsPelonrLocalelon) {
+          SelonmanticCorelonPelonrLanguagelonSimClustelonrselonmbelonddingsDataselont
+        } elonlselon {
+          SelonmanticCorelonSimClustelonrselonmbelonddingsUpdatelondDataselont
         }
-      case (EntityType.SemanticCore, ModelVersions.Model20M145K2020) =>
-        SemanticCoreSimClustersEmbeddings2020Dataset
-      case (EntityType.Hashtag, ModelVersions.Model20M145KUpdated) =>
-        HashtagSimClustersEmbeddingsUpdatedDataset
-      case (entityType, modelVersion) =>
-        throw new IllegalArgumentException(
-          s"(Entity Type, ModelVersion) ($entityType, $modelVersion) not supported.")
+      caselon (elonntityTypelon.SelonmanticCorelon, ModelonlVelonrsions.Modelonl20M145K2020) =>
+        SelonmanticCorelonSimClustelonrselonmbelonddings2020Dataselont
+      caselon (elonntityTypelon.Hashtag, ModelonlVelonrsions.Modelonl20M145KUpdatelond) =>
+        HashtagSimClustelonrselonmbelonddingsUpdatelondDataselont
+      caselon (elonntityTypelon, modelonlVelonrsion) =>
+        throw nelonw IllelongalArgumelonntelonxcelonption(
+          s"(elonntity Typelon, ModelonlVelonrsion) ($elonntityTypelon, $modelonlVelonrsion) not supportelond.")
     }
   }
 
-  // Return the raw DAL dataset reference. Use this if you're writing to DAL.
-  def getReverseIndexedEntityEmbeddingsDataset(
-    entityType: EntityType,
-    modelVersion: String,
-    isEmbeddingsPerLocale: Boolean = false
-  ): KeyValDALDataset[KeyVal[SimClustersEmbeddingId, InternalIdEmbedding]] = {
-    (entityType, modelVersion) match {
-      case (EntityType.SemanticCore, ModelVersions.Model20M145KDec11) =>
-        ReverseIndexSemanticCoreSimClustersEmbeddingsDec11Dataset
-      case (EntityType.SemanticCore, ModelVersions.Model20M145KUpdated) =>
-        if (isEmbeddingsPerLocale) {
-          ReverseIndexSemanticCorePerLanguageSimClustersEmbeddingsDataset
-        } else {
-          ReverseIndexSemanticCoreSimClustersEmbeddingsUpdatedDataset
+  // Relonturn thelon raw DAL dataselont relonfelonrelonncelon. Uselon this if you'relon writing to DAL.
+  delonf gelontRelonvelonrselonIndelonxelondelonntityelonmbelonddingsDataselont(
+    elonntityTypelon: elonntityTypelon,
+    modelonlVelonrsion: String,
+    iselonmbelonddingsPelonrLocalelon: Boolelonan = falselon
+  ): KelonyValDALDataselont[KelonyVal[SimClustelonrselonmbelonddingId, IntelonrnalIdelonmbelondding]] = {
+    (elonntityTypelon, modelonlVelonrsion) match {
+      caselon (elonntityTypelon.SelonmanticCorelon, ModelonlVelonrsions.Modelonl20M145KDelonc11) =>
+        RelonvelonrselonIndelonxSelonmanticCorelonSimClustelonrselonmbelonddingsDelonc11Dataselont
+      caselon (elonntityTypelon.SelonmanticCorelon, ModelonlVelonrsions.Modelonl20M145KUpdatelond) =>
+        if (iselonmbelonddingsPelonrLocalelon) {
+          RelonvelonrselonIndelonxSelonmanticCorelonPelonrLanguagelonSimClustelonrselonmbelonddingsDataselont
+        } elonlselon {
+          RelonvelonrselonIndelonxSelonmanticCorelonSimClustelonrselonmbelonddingsUpdatelondDataselont
         }
-      case (EntityType.SemanticCore, ModelVersions.Model20M145K2020) =>
-        ReverseIndexSemanticCoreSimClustersEmbeddings2020Dataset
-      case (EntityType.Hashtag, ModelVersions.Model20M145KUpdated) =>
-        ReverseIndexHashtagSimClustersEmbeddingsUpdatedDataset
-      case (entityType, modelVersion) =>
-        throw new IllegalArgumentException(
-          s"(Entity Type, ModelVersion) ($entityType, $modelVersion) not supported.")
+      caselon (elonntityTypelon.SelonmanticCorelon, ModelonlVelonrsions.Modelonl20M145K2020) =>
+        RelonvelonrselonIndelonxSelonmanticCorelonSimClustelonrselonmbelonddings2020Dataselont
+      caselon (elonntityTypelon.Hashtag, ModelonlVelonrsions.Modelonl20M145KUpdatelond) =>
+        RelonvelonrselonIndelonxHashtagSimClustelonrselonmbelonddingsUpdatelondDataselont
+      caselon (elonntityTypelon, modelonlVelonrsion) =>
+        throw nelonw IllelongalArgumelonntelonxcelonption(
+          s"(elonntity Typelon, ModelonlVelonrsion) ($elonntityTypelon, $modelonlVelonrsion) not supportelond.")
     }
   }
 
-  private def entityEmbeddingsSource(
-    dataset: KeyValDALDataset[KeyVal[SimClustersEmbeddingId, SimClustersEmbedding]],
-    embeddingType: EmbeddingType,
-    dateRange: DateRange
-  ): TypedPipe[(Long, SimClustersEmbedding)] = {
-    val pipe = DAL
-      .readMostRecentSnapshot(dataset, dateRange)
-      .withRemoteReadPolicy(AllowCrossDC)
-      .toTypedPipe
-    filterEntityEmbeddingsByType(pipe, embeddingType)
+  privatelon delonf elonntityelonmbelonddingsSourcelon(
+    dataselont: KelonyValDALDataselont[KelonyVal[SimClustelonrselonmbelonddingId, SimClustelonrselonmbelondding]],
+    elonmbelonddingTypelon: elonmbelonddingTypelon,
+    datelonRangelon: DatelonRangelon
+  ): TypelondPipelon[(Long, SimClustelonrselonmbelondding)] = {
+    val pipelon = DAL
+      .relonadMostReloncelonntSnapshot(dataselont, datelonRangelon)
+      .withRelonmotelonRelonadPolicy(AllowCrossDC)
+      .toTypelondPipelon
+    filtelonrelonntityelonmbelonddingsByTypelon(pipelon, elonmbelonddingTypelon)
   }
 
-  private def reverseIndexedEntityEmbeddingsSource(
-    dataset: KeyValDALDataset[KeyVal[SimClustersEmbeddingId, InternalIdEmbedding]],
-    embeddingType: EmbeddingType,
-    dateRange: DateRange
-  ): TypedPipe[(ClusterId, Seq[SemanticCoreEntityWithScore])] = {
-    val pipe = DAL
-      .readMostRecentSnapshot(dataset, dateRange)
-      .withRemoteReadPolicy(AllowCrossDC)
-      .toTypedPipe
-    filterReverseIndexedEntityEmbeddingsByType(pipe, embeddingType)
+  privatelon delonf relonvelonrselonIndelonxelondelonntityelonmbelonddingsSourcelon(
+    dataselont: KelonyValDALDataselont[KelonyVal[SimClustelonrselonmbelonddingId, IntelonrnalIdelonmbelondding]],
+    elonmbelonddingTypelon: elonmbelonddingTypelon,
+    datelonRangelon: DatelonRangelon
+  ): TypelondPipelon[(ClustelonrId, Selonq[SelonmanticCorelonelonntityWithScorelon])] = {
+    val pipelon = DAL
+      .relonadMostReloncelonntSnapshot(dataselont, datelonRangelon)
+      .withRelonmotelonRelonadPolicy(AllowCrossDC)
+      .toTypelondPipelon
+    filtelonrRelonvelonrselonIndelonxelondelonntityelonmbelonddingsByTypelon(pipelon, elonmbelonddingTypelon)
   }
 
-  private[hdfs_sources] def filterEntityEmbeddingsByType(
-    pipe: TypedPipe[KeyVal[SimClustersEmbeddingId, SimClustersEmbedding]],
-    embeddingType: EmbeddingType
-  ): TypedPipe[(Long, SimClustersEmbedding)] = {
-    pipe.collect {
-      case KeyVal(
-            SimClustersEmbeddingId(_embeddingType, _, InternalId.EntityId(entityId)),
-            embedding
-          ) if _embeddingType == embeddingType =>
-        (entityId, embedding)
+  privatelon[hdfs_sourcelons] delonf filtelonrelonntityelonmbelonddingsByTypelon(
+    pipelon: TypelondPipelon[KelonyVal[SimClustelonrselonmbelonddingId, SimClustelonrselonmbelondding]],
+    elonmbelonddingTypelon: elonmbelonddingTypelon
+  ): TypelondPipelon[(Long, SimClustelonrselonmbelondding)] = {
+    pipelon.collelonct {
+      caselon KelonyVal(
+            SimClustelonrselonmbelonddingId(_elonmbelonddingTypelon, _, IntelonrnalId.elonntityId(elonntityId)),
+            elonmbelondding
+          ) if _elonmbelonddingTypelon == elonmbelonddingTypelon =>
+        (elonntityId, elonmbelondding)
     }
   }
 
-  private[hdfs_sources] def filterReverseIndexedEntityEmbeddingsByType(
-    pipe: TypedPipe[KeyVal[SimClustersEmbeddingId, InternalIdEmbedding]],
-    embeddingType: EmbeddingType
-  ): TypedPipe[(ClusterId, Seq[SemanticCoreEntityWithScore])] = {
-    pipe.collect {
-      case KeyVal(
-            SimClustersEmbeddingId(_embeddingType, _, InternalId.ClusterId(clusterId)),
-            embedding
-          ) if _embeddingType == embeddingType =>
-        val entitiesWithScores = embedding.embedding.collect {
-          case InternalIdWithScore(InternalId.EntityId(entityId), score) =>
-            SemanticCoreEntityWithScore(entityId, score)
+  privatelon[hdfs_sourcelons] delonf filtelonrRelonvelonrselonIndelonxelondelonntityelonmbelonddingsByTypelon(
+    pipelon: TypelondPipelon[KelonyVal[SimClustelonrselonmbelonddingId, IntelonrnalIdelonmbelondding]],
+    elonmbelonddingTypelon: elonmbelonddingTypelon
+  ): TypelondPipelon[(ClustelonrId, Selonq[SelonmanticCorelonelonntityWithScorelon])] = {
+    pipelon.collelonct {
+      caselon KelonyVal(
+            SimClustelonrselonmbelonddingId(_elonmbelonddingTypelon, _, IntelonrnalId.ClustelonrId(clustelonrId)),
+            elonmbelondding
+          ) if _elonmbelonddingTypelon == elonmbelonddingTypelon =>
+        val elonntitielonsWithScorelons = elonmbelondding.elonmbelondding.collelonct {
+          caselon IntelonrnalIdWithScorelon(IntelonrnalId.elonntityId(elonntityId), scorelon) =>
+            SelonmanticCorelonelonntityWithScorelon(elonntityId, scorelon)
         }
-        (clusterId, entitiesWithScores)
+        (clustelonrId, elonntitielonsWithScorelons)
     }
   }
 }

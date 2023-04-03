@@ -1,34 +1,34 @@
-package com.twitter.search.feature_update_service.modules;
+packagelon com.twittelonr.selonarch.felonaturelon_updatelon_selonrvicelon.modulelons;
 
-import com.twitter.decider.Decider;
-import com.twitter.inject.Injector;
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsJavaDarkTrafficFilterModule;
-import com.twitter.search.common.decider.DeciderUtil;
-import com.twitter.util.Function;
+import com.twittelonr.deloncidelonr.Deloncidelonr;
+import com.twittelonr.injelonct.Injelonctor;
+import com.twittelonr.finatra.mtls.thriftmux.modulelons.MtlsJavaDarkTrafficFiltelonrModulelon;
+import com.twittelonr.selonarch.common.deloncidelonr.DeloncidelonrUtil;
+import com.twittelonr.util.Function;
 
 
 /**
- * Provide a filter that sends dark traffic to diffy, if the diffy.dest command-line parameter
- * is non-empty. If diffy.dest is empty, just provide a no-op filter.
+ * Providelon a filtelonr that selonnds dark traffic to diffy, if thelon diffy.delonst command-linelon paramelontelonr
+ * is non-elonmpty. If diffy.delonst is elonmpty, just providelon a no-op filtelonr.
  */
-public class FeatureUpdateServiceDiffyModule extends MtlsJavaDarkTrafficFilterModule {
-  @Override
-  public String destFlagName() {
-    return "diffy.dest";
+public class FelonaturelonUpdatelonSelonrvicelonDiffyModulelon elonxtelonnds MtlsJavaDarkTrafficFiltelonrModulelon {
+  @Ovelonrridelon
+  public String delonstFlagNamelon() {
+    relonturn "diffy.delonst";
   }
 
-  @Override
-  public String defaultClientId() {
-    return "feature_update_service.origin";
+  @Ovelonrridelon
+  public String delonfaultClielonntId() {
+    relonturn "felonaturelon_updatelon_selonrvicelon.origin";
   }
 
-  @Override
-  public Function<byte[], Object> enableSampling(Injector injector) {
-    Decider decider = injector.instance(Decider.class);
-    return new Function<byte[], Object>() {
-      @Override
-      public Object apply(byte[] v1) {
-        return DeciderUtil.isAvailableForRandomRecipient(decider, "dark_traffic_filter");
+  @Ovelonrridelon
+  public Function<bytelon[], Objelonct> elonnablelonSampling(Injelonctor injelonctor) {
+    Deloncidelonr deloncidelonr = injelonctor.instancelon(Deloncidelonr.class);
+    relonturn nelonw Function<bytelon[], Objelonct>() {
+      @Ovelonrridelon
+      public Objelonct apply(bytelon[] v1) {
+        relonturn DeloncidelonrUtil.isAvailablelonForRandomReloncipielonnt(deloncidelonr, "dark_traffic_filtelonr");
       }
     };
   }

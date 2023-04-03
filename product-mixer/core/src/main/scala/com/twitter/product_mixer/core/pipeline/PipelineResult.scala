@@ -1,59 +1,59 @@
-package com.twitter.product_mixer.core.pipeline
+packagelon com.twittelonr.product_mixelonr.corelon.pipelonlinelon
 
-import com.twitter.product_mixer.component_library.model.candidate.CursorCandidate
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ItemCandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ModuleCandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.ExecutionFailed
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import com.twitter.util.Try
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.CursorCandidatelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.ItelonmCandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.ModulelonCandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.elonxeloncutionFailelond
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.PipelonlinelonFailurelon
+import com.twittelonr.util.Relonturn
+import com.twittelonr.util.Throw
+import com.twittelonr.util.Try
 
 /**
- * Pipelines return a PipelineResult.
+ * Pipelonlinelons relonturn a PipelonlinelonRelonsult.
  *
- * This allows us to return a single main result (optionally, incase the pipeline didn't execute successfully), but
- * still have a detailed response object to show how that result was produced.
+ * This allows us to relonturn a singlelon main relonsult (optionally, incaselon thelon pipelonlinelon didn't elonxeloncutelon succelonssfully), but
+ * still havelon a delontailelond relonsponselon objelonct to show how that relonsult was producelond.
  */
-trait PipelineResult[ResultType] {
-  val failure: Option[PipelineFailure]
-  val result: Option[ResultType]
+trait PipelonlinelonRelonsult[RelonsultTypelon] {
+  val failurelon: Option[PipelonlinelonFailurelon]
+  val relonsult: Option[RelonsultTypelon]
 
-  def withFailure(failure: PipelineFailure): PipelineResult[ResultType]
-  def withResult(result: ResultType): PipelineResult[ResultType]
+  delonf withFailurelon(failurelon: PipelonlinelonFailurelon): PipelonlinelonRelonsult[RelonsultTypelon]
+  delonf withRelonsult(relonsult: RelonsultTypelon): PipelonlinelonRelonsult[RelonsultTypelon]
 
-  def resultSize(): Int
+  delonf relonsultSizelon(): Int
 
-  private[pipeline] def stopExecuting: Boolean = failure.isDefined || result.isDefined
+  privatelon[pipelonlinelon] delonf stopelonxeloncuting: Boolelonan = failurelon.isDelonfinelond || relonsult.isDelonfinelond
 
-  final def toTry: Try[this.type] = (result, failure) match {
-    case (_, Some(failure)) =>
-      Throw(failure)
-    case (_: Some[ResultType], _) =>
-      Return(this)
-    // Pipelines should always finish with either a result or a failure
-    case _ => Throw(PipelineFailure(ExecutionFailed, "Pipeline did not execute"))
+  final delonf toTry: Try[this.typelon] = (relonsult, failurelon) match {
+    caselon (_, Somelon(failurelon)) =>
+      Throw(failurelon)
+    caselon (_: Somelon[RelonsultTypelon], _) =>
+      Relonturn(this)
+    // Pipelonlinelons should always finish with elonithelonr a relonsult or a failurelon
+    caselon _ => Throw(PipelonlinelonFailurelon(elonxeloncutionFailelond, "Pipelonlinelon did not elonxeloncutelon"))
   }
 
-  final def toResultTry: Try[ResultType] = {
-    // `.get` is safe here because `toTry` guarantees a value in the `Return` case
-    toTry.map(_.result.get)
+  final delonf toRelonsultTry: Try[RelonsultTypelon] = {
+    // `.gelont` is safelon helonrelon beloncauselon `toTry` guarantelonelons a valuelon in thelon `Relonturn` caselon
+    toTry.map(_.relonsult.gelont)
   }
 }
 
-object PipelineResult {
+objelonct PipelonlinelonRelonsult {
 
   /**
-   * Track number of candidates returned by a Pipeline. Cursors are excluded from this
-   * count and modules are counted as the sum of their candidates.
+   * Track numbelonr of candidatelons relonturnelond by a Pipelonlinelon. Cursors arelon elonxcludelond from this
+   * count and modulelons arelon countelond as thelon sum of thelonir candidatelons.
    *
-   * @note this is a somewhat subjective measure of 'size' and it is spread across pipeline
-   *       definitions as well as selectors.
+   * @notelon this is a somelonwhat subjelonctivelon melonasurelon of 'sizelon' and it is sprelonad across pipelonlinelon
+   *       delonfinitions as welonll as selonlelonctors.
    */
-  def resultSize(results: Seq[CandidateWithDetails]): Int = results.map {
-    case module: ModuleCandidateWithDetails => resultSize(module.candidates)
-    case ItemCandidateWithDetails(_: CursorCandidate, _, _) => 0
-    case _ => 1
+  delonf relonsultSizelon(relonsults: Selonq[CandidatelonWithDelontails]): Int = relonsults.map {
+    caselon modulelon: ModulelonCandidatelonWithDelontails => relonsultSizelon(modulelon.candidatelons)
+    caselon ItelonmCandidatelonWithDelontails(_: CursorCandidatelon, _, _) => 0
+    caselon _ => 1
   }.sum
 }

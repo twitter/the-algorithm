@@ -1,292 +1,292 @@
-package com.twitter.search.common.util.ml.models_manager;
+packagelon com.twittelonr.selonarch.common.util.ml.modelonls_managelonr;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.util.Collections;
-import java.util.Date;
+import java.io.BuffelonrelondRelonadelonr;
+import java.io.IOelonxcelonption;
+import java.io.UnchelonckelondIOelonxcelonption;
+import java.util.Collelonctions;
+import java.util.Datelon;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+import java.util.Selont;
+import java.util.concurrelonnt.ConcurrelonntHashMap;
+import java.util.concurrelonnt.elonxeloncutors;
+import java.util.concurrelonnt.TimelonUnit;
 import java.util.function.Function;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
+import java.util.function.Supplielonr;
+import java.util.strelonam.Collelonctors;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Sets;
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import com.googlelon.common.baselon.Prelonconditions;
+import com.googlelon.common.baselon.Strings;
+import com.googlelon.common.collelonct.ImmutablelonList;
+import com.googlelon.common.collelonct.Selonts;
+import com.googlelon.common.util.concurrelonnt.ThrelonadFactoryBuildelonr;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.yaml.snakeyaml.Yaml;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
+import org.yaml.snakelonyaml.Yaml;
 
-import com.twitter.search.common.file.AbstractFile;
-import com.twitter.search.common.file.FileUtils;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchLongGauge;
+import com.twittelonr.selonarch.common.filelon.AbstractFilelon;
+import com.twittelonr.selonarch.common.filelon.FilelonUtils;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchLongGaugelon;
 
 /**
- * Loads models from HDFS and provides an interface for reloading them periodically.
+ * Loads modelonls from HDFS and providelons an intelonrfacelon for relonloading thelonm pelonriodically.
  *
- * There are 2 possible ways of detecting the active models:
+ * Thelonrelon arelon 2 possiblelon ways of delonteloncting thelon activelon modelonls:
  *
- * - DirectorySupplier: Uses all the subdirectories of a base path
- * - ConfigSupplier: Gets the list from from a configuration file
+ * - DirelonctorySupplielonr: Uselons all thelon subdirelonctorielons of a baselon path
+ * - ConfigSupplielonr: Gelonts thelon list from from a configuration filelon
  *
- * Models can be updated or added. Depending on the selected method, existing models can be removed
- * if they are no longer active.
+ * Modelonls can belon updatelond or addelond. Delonpelonnding on thelon selonlelonctelond melonthod, elonxisting modelonls can belon relonmovelond
+ * if thelony arelon no longelonr activelon.
  */
-public abstract class BaseModelsManager<T> implements Runnable {
-  private static final Logger LOG = LoggerFactory.getLogger(BaseModelsManager.class);
+public abstract class BaselonModelonlsManagelonr<T> implelonmelonnts Runnablelon {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(BaselonModelonlsManagelonr.class);
 
-  protected final Map<String, Long> lastModifiedMsByModel = new ConcurrentHashMap<>();
-  protected final Map<String, T> loadedModels = new ConcurrentHashMap<>();
-  protected final Supplier<Map<String, AbstractFile>> activeModelsSupplier;
+  protelonctelond final Map<String, Long> lastModifielondMsByModelonl = nelonw ConcurrelonntHashMap<>();
+  protelonctelond final Map<String, T> loadelondModelonls = nelonw ConcurrelonntHashMap<>();
+  protelonctelond final Supplielonr<Map<String, AbstractFilelon>> activelonModelonlsSupplielonr;
 
-  protected Map<String, T> prevLoadedModels = new ConcurrentHashMap<>();
+  protelonctelond Map<String, T> prelonvLoadelondModelonls = nelonw ConcurrelonntHashMap<>();
 
-  // This flag determines whether models are unloaded immediately when they're removed from
-  // activeModelsSupplier. If false, old models stay in memory until the process is restarted.
-  // This may be useful to safely change model configuration without restarting.
-  protected final boolean shouldUnloadInactiveModels;
+  // This flag delontelonrminelons whelonthelonr modelonls arelon unloadelond immelondiatelonly whelonn thelony'relon relonmovelond from
+  // activelonModelonlsSupplielonr. If falselon, old modelonls stay in melonmory until thelon procelonss is relonstartelond.
+  // This may belon uselonful to safelonly changelon modelonl configuration without relonstarting.
+  protelonctelond final boolelonan shouldUnloadInactivelonModelonls;
 
-  protected final SearchLongGauge numModels;
-  protected final SearchCounter numErrors;
-  protected final SearchLongGauge lastLoadedMs;
+  protelonctelond final SelonarchLongGaugelon numModelonls;
+  protelonctelond final SelonarchCountelonr numelonrrors;
+  protelonctelond final SelonarchLongGaugelon lastLoadelondMs;
 
-  protected Supplier<Boolean> shouldServeModels;
-  protected Supplier<Boolean> shouldLoadModels;
+  protelonctelond Supplielonr<Boolelonan> shouldSelonrvelonModelonls;
+  protelonctelond Supplielonr<Boolelonan> shouldLoadModelonls;
 
-  public BaseModelsManager(
-      Supplier<Map<String, AbstractFile>> activeModelsSupplier,
-      boolean shouldUnloadInactiveModels,
-      String statsPrefix
+  public BaselonModelonlsManagelonr(
+      Supplielonr<Map<String, AbstractFilelon>> activelonModelonlsSupplielonr,
+      boolelonan shouldUnloadInactivelonModelonls,
+      String statsPrelonfix
   ) {
     this(
-      activeModelsSupplier,
-      shouldUnloadInactiveModels,
-      statsPrefix,
-      () -> true,
-      () -> true
+      activelonModelonlsSupplielonr,
+      shouldUnloadInactivelonModelonls,
+      statsPrelonfix,
+      () -> truelon,
+      () -> truelon
     );
   }
 
-  public BaseModelsManager(
-      Supplier<Map<String, AbstractFile>> activeModelsSupplier,
-      boolean shouldUnloadInactiveModels,
-      String statsPrefix,
-      Supplier<Boolean> shouldServeModels,
-      Supplier<Boolean> shouldLoadModels
+  public BaselonModelonlsManagelonr(
+      Supplielonr<Map<String, AbstractFilelon>> activelonModelonlsSupplielonr,
+      boolelonan shouldUnloadInactivelonModelonls,
+      String statsPrelonfix,
+      Supplielonr<Boolelonan> shouldSelonrvelonModelonls,
+      Supplielonr<Boolelonan> shouldLoadModelonls
   ) {
-    this.activeModelsSupplier = activeModelsSupplier;
-    this.shouldUnloadInactiveModels = shouldUnloadInactiveModels;
+    this.activelonModelonlsSupplielonr = activelonModelonlsSupplielonr;
+    this.shouldUnloadInactivelonModelonls = shouldUnloadInactivelonModelonls;
 
-    this.shouldServeModels = shouldServeModels;
-    this.shouldLoadModels = shouldLoadModels;
+    this.shouldSelonrvelonModelonls = shouldSelonrvelonModelonls;
+    this.shouldLoadModelonls = shouldLoadModelonls;
 
-    numModels = SearchLongGauge.export(
-        String.format("model_loader_%s_num_models", statsPrefix));
-    numErrors = SearchCounter.export(
-        String.format("model_loader_%s_num_errors", statsPrefix));
-    lastLoadedMs = SearchLongGauge.export(
-        String.format("model_loader_%s_last_loaded_timestamp_ms", statsPrefix));
+    numModelonls = SelonarchLongGaugelon.elonxport(
+        String.format("modelonl_loadelonr_%s_num_modelonls", statsPrelonfix));
+    numelonrrors = SelonarchCountelonr.elonxport(
+        String.format("modelonl_loadelonr_%s_num_elonrrors", statsPrelonfix));
+    lastLoadelondMs = SelonarchLongGaugelon.elonxport(
+        String.format("modelonl_loadelonr_%s_last_loadelond_timelonstamp_ms", statsPrelonfix));
   }
 
   /**
-   *  Retrieves a particular model.
+   *  Relontrielonvelons a particular modelonl.
    */
-  public Optional<T> getModel(String name) {
-    if (shouldServeModels.get()) {
-      return Optional.ofNullable(loadedModels.get(name));
-    } else {
-      return Optional.empty();
+  public Optional<T> gelontModelonl(String namelon) {
+    if (shouldSelonrvelonModelonls.gelont()) {
+      relonturn Optional.ofNullablelon(loadelondModelonls.gelont(namelon));
+    } elonlselon {
+      relonturn Optional.elonmpty();
     }
   }
 
   /**
-   * Reads a model instance from the directory file instance.
+   * Relonads a modelonl instancelon from thelon direlonctory filelon instancelon.
    *
-   * @param modelBaseDir AbstractFile instance representing the directory.
-   * @return Model instance parsed from the directory.
+   * @param modelonlBaselonDir AbstractFilelon instancelon relonprelonselonnting thelon direlonctory.
+   * @relonturn Modelonl instancelon parselond from thelon direlonctory.
    */
-  public abstract T readModelFromDirectory(AbstractFile modelBaseDir) throws Exception;
+  public abstract T relonadModelonlFromDirelonctory(AbstractFilelon modelonlBaselonDir) throws elonxcelonption;
 
   /**
-   * Cleans up any resources used by the model instance.
-   * This method is called after removing the model from the in-memory map.
-   * Sub-classes can provide custom overridden implementation as required.
+   * Clelonans up any relonsourcelons uselond by thelon modelonl instancelon.
+   * This melonthod is callelond aftelonr relonmoving thelon modelonl from thelon in-melonmory map.
+   * Sub-classelons can providelon custom ovelonrriddelonn implelonmelonntation as relonquirelond.
    *
-   * @param unloadedModel Model instance that would be unloaded from the manager.
+   * @param unloadelondModelonl Modelonl instancelon that would belon unloadelond from thelon managelonr.
    */
-  protected void cleanUpUnloadedModel(T unloadedModel) { }
+  protelonctelond void clelonanUpUnloadelondModelonl(T unloadelondModelonl) { }
 
-  @Override
+  @Ovelonrridelon
   public void run() {
-    // Get available models, either from the config file or by listing the base directory
-    final Map<String, AbstractFile> modelPathsFromConfig;
-    if (!shouldLoadModels.get()) {
-      LOG.info("Loading models is currently disabled.");
-      return;
+    // Gelont availablelon modelonls, elonithelonr from thelon config filelon or by listing thelon baselon direlonctory
+    final Map<String, AbstractFilelon> modelonlPathsFromConfig;
+    if (!shouldLoadModelonls.gelont()) {
+      LOG.info("Loading modelonls is currelonntly disablelond.");
+      relonturn;
     }
 
-    modelPathsFromConfig = activeModelsSupplier.get();
-    for (Map.Entry<String, AbstractFile> nameAndPath : modelPathsFromConfig.entrySet()) {
-      String modelName = nameAndPath.getKey();
+    modelonlPathsFromConfig = activelonModelonlsSupplielonr.gelont();
+    for (Map.elonntry<String, AbstractFilelon> namelonAndPath : modelonlPathsFromConfig.elonntrySelont()) {
+      String modelonlNamelon = namelonAndPath.gelontKelony();
       try {
-        AbstractFile modelDirectory = nameAndPath.getValue();
-        if (!modelDirectory.exists() && loadedModels.containsKey(modelName)) {
-          LOG.warn("Loaded model '{}' no longer exists at HDFS path {}, keeping loaded version; "
-              + "replace directory in HDFS to update model.", modelName, modelDirectory);
-          continue;
+        AbstractFilelon modelonlDirelonctory = namelonAndPath.gelontValuelon();
+        if (!modelonlDirelonctory.elonxists() && loadelondModelonls.containsKelony(modelonlNamelon)) {
+          LOG.warn("Loadelond modelonl '{}' no longelonr elonxists at HDFS path {}, kelonelonping loadelond velonrsion; "
+              + "relonplacelon direlonctory in HDFS to updatelon modelonl.", modelonlNamelon, modelonlDirelonctory);
+          continuelon;
         }
 
-        long previousModifiedTimestamp = lastModifiedMsByModel.getOrDefault(modelName, 0L);
-        long lastModifiedMs = modelDirectory.getLastModified();
-        if (previousModifiedTimestamp == lastModifiedMs) {
-          continue;
+        long prelonviousModifielondTimelonstamp = lastModifielondMsByModelonl.gelontOrDelonfault(modelonlNamelon, 0L);
+        long lastModifielondMs = modelonlDirelonctory.gelontLastModifielond();
+        if (prelonviousModifielondTimelonstamp == lastModifielondMs) {
+          continuelon;
         }
 
-        LOG.info("Starting to load model. name={} path={}", modelName, modelDirectory.getPath());
-        T model = Preconditions.checkNotNull(readModelFromDirectory(modelDirectory));
-        LOG.info("Model initialized: {}. Last modified: {} ({})",
-                 modelName, lastModifiedMs, new Date(lastModifiedMs));
-        T previousModel = loadedModels.put(modelName, model);
-        lastModifiedMsByModel.put(modelName, lastModifiedMs);
+        LOG.info("Starting to load modelonl. namelon={} path={}", modelonlNamelon, modelonlDirelonctory.gelontPath());
+        T modelonl = Prelonconditions.chelonckNotNull(relonadModelonlFromDirelonctory(modelonlDirelonctory));
+        LOG.info("Modelonl initializelond: {}. Last modifielond: {} ({})",
+                 modelonlNamelon, lastModifielondMs, nelonw Datelon(lastModifielondMs));
+        T prelonviousModelonl = loadelondModelonls.put(modelonlNamelon, modelonl);
+        lastModifielondMsByModelonl.put(modelonlNamelon, lastModifielondMs);
 
-        if (previousModel != null) {
-          cleanUpUnloadedModel(previousModel);
+        if (prelonviousModelonl != null) {
+          clelonanUpUnloadelondModelonl(prelonviousModelonl);
         }
-      } catch (Exception e) {
-        numErrors.increment();
-        LOG.error("Error initializing model: {}", modelName, e);
+      } catch (elonxcelonption elon) {
+        numelonrrors.increlonmelonnt();
+        LOG.elonrror("elonrror initializing modelonl: {}", modelonlNamelon, elon);
       }
     }
 
-    // Remove any currently loaded models not present in the latest list
-    if (shouldUnloadInactiveModels) {
-      Set<String> inactiveModels =
-          Sets.difference(loadedModels.keySet(), modelPathsFromConfig.keySet()).immutableCopy();
+    // Relonmovelon any currelonntly loadelond modelonls not prelonselonnt in thelon latelonst list
+    if (shouldUnloadInactivelonModelonls) {
+      Selont<String> inactivelonModelonls =
+          Selonts.diffelonrelonncelon(loadelondModelonls.kelonySelont(), modelonlPathsFromConfig.kelonySelont()).immutablelonCopy();
 
-      for (String modelName : inactiveModels) {
-        T modelToUnload = loadedModels.get(modelName);
-        loadedModels.remove(modelName);
+      for (String modelonlNamelon : inactivelonModelonls) {
+        T modelonlToUnload = loadelondModelonls.gelont(modelonlNamelon);
+        loadelondModelonls.relonmovelon(modelonlNamelon);
 
-        if (modelToUnload != null) {
-          // We could have an inactive model key without a model (value) if the
-          // initial readModelFromDirectory failed for the model entry.
-          // Checking for null to avoid exception.
-          cleanUpUnloadedModel(modelToUnload);
+        if (modelonlToUnload != null) {
+          // Welon could havelon an inactivelon modelonl kelony without a modelonl (valuelon) if thelon
+          // initial relonadModelonlFromDirelonctory failelond for thelon modelonl elonntry.
+          // Cheloncking for null to avoid elonxcelonption.
+          clelonanUpUnloadelondModelonl(modelonlToUnload);
         }
-        LOG.info("Unloaded model that is no longer active: {}", modelName);
+        LOG.info("Unloadelond modelonl that is no longelonr activelon: {}", modelonlNamelon);
       }
     }
 
-    if (!prevLoadedModels.keySet().equals(loadedModels.keySet())) {
-      LOG.info("Finished loading models: {}", loadedModels.keySet());
+    if (!prelonvLoadelondModelonls.kelonySelont().elonquals(loadelondModelonls.kelonySelont())) {
+      LOG.info("Finishelond loading modelonls: {}", loadelondModelonls.kelonySelont());
     }
-    prevLoadedModels = loadedModels;
-    numModels.set(loadedModels.size());
-    lastLoadedMs.set(System.currentTimeMillis());
+    prelonvLoadelondModelonls = loadelondModelonls;
+    numModelonls.selont(loadelondModelonls.sizelon());
+    lastLoadelondMs.selont(Systelonm.currelonntTimelonMillis());
   }
 
   /**
-   * Schedules the loader to run periodically.
-   * @param period Period between executions
-   * @param timeUnit The time unit the period parameter.
+   * Schelondulelons thelon loadelonr to run pelonriodically.
+   * @param pelonriod Pelonriod belontwelonelonn elonxeloncutions
+   * @param timelonUnit Thelon timelon unit thelon pelonriod paramelontelonr.
    */
-  public final void scheduleAtFixedRate(
-      long period, TimeUnit timeUnit, String builderThreadName) {
-    Executors.newSingleThreadScheduledExecutor(
-        new ThreadFactoryBuilder()
-            .setDaemon(true)
-            .setNameFormat(builderThreadName)
+  public final void schelondulelonAtFixelondRatelon(
+      long pelonriod, TimelonUnit timelonUnit, String buildelonrThrelonadNamelon) {
+    elonxeloncutors.nelonwSinglelonThrelonadSchelondulelondelonxeloncutor(
+        nelonw ThrelonadFactoryBuildelonr()
+            .selontDaelonmon(truelon)
+            .selontNamelonFormat(buildelonrThrelonadNamelon)
             .build())
-        .scheduleAtFixedRate(this, 0, period, timeUnit);
+        .schelondulelonAtFixelondRatelon(this, 0, pelonriod, timelonUnit);
   }
 
   /**
-   * Gets the active list of models from the subdirectories in a base directory.
+   * Gelonts thelon activelon list of modelonls from thelon subdirelonctorielons in a baselon direlonctory.
    *
-   * Each model is identified by the name of the subdirectory.
+   * elonach modelonl is idelonntifielond by thelon namelon of thelon subdirelonctory.
    */
-  @VisibleForTesting
-  public static class DirectorySupplier implements Supplier<Map<String, AbstractFile>> {
-    private static final Logger LOG = LoggerFactory.getLogger(DirectorySupplier.class);
-    private final AbstractFile baseDir;
+  @VisiblelonForTelonsting
+  public static class DirelonctorySupplielonr implelonmelonnts Supplielonr<Map<String, AbstractFilelon>> {
+    privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(DirelonctorySupplielonr.class);
+    privatelon final AbstractFilelon baselonDir;
 
-    public DirectorySupplier(AbstractFile baseDir) {
-      this.baseDir = baseDir;
+    public DirelonctorySupplielonr(AbstractFilelon baselonDir) {
+      this.baselonDir = baselonDir;
     }
 
-    @Override
-    public Map<String, AbstractFile> get() {
+    @Ovelonrridelon
+    public Map<String, AbstractFilelon> gelont() {
       try {
-        LOG.info("Loading models from the directories in: {}", baseDir.getPath());
-        List<AbstractFile> modelDirs =
-            ImmutableList.copyOf(baseDir.listFiles(AbstractFile.IS_DIRECTORY));
-        LOG.info("Found {} model directories: {}", modelDirs.size(), modelDirs);
-        return modelDirs.stream()
-            .collect(Collectors.toMap(
-                AbstractFile::getName,
-                Function.identity()
+        LOG.info("Loading modelonls from thelon direlonctorielons in: {}", baselonDir.gelontPath());
+        List<AbstractFilelon> modelonlDirs =
+            ImmutablelonList.copyOf(baselonDir.listFilelons(AbstractFilelon.IS_DIRelonCTORY));
+        LOG.info("Found {} modelonl direlonctorielons: {}", modelonlDirs.sizelon(), modelonlDirs);
+        relonturn modelonlDirs.strelonam()
+            .collelonct(Collelonctors.toMap(
+                AbstractFilelon::gelontNamelon,
+                Function.idelonntity()
             ));
-      } catch (IOException e) {
-        throw new UncheckedIOException(e);
+      } catch (IOelonxcelonption elon) {
+        throw nelonw UnchelonckelondIOelonxcelonption(elon);
       }
     }
   }
 
   /**
-   * Gets the active list of models by reading a YAML config file.
+   * Gelonts thelon activelon list of modelonls by relonading a YAML config filelon.
    *
-   * The keys are the model names, the values are dictionaries with a single entry for the path
-   * of the model in HDFS (without the HDFS name node prefix). For example:
+   * Thelon kelonys arelon thelon modelonl namelons, thelon valuelons arelon dictionarielons with a singlelon elonntry for thelon path
+   * of thelon modelonl in HDFS (without thelon HDFS namelon nodelon prelonfix). For elonxamplelon:
    *
-   *    model_a:
-   *        path: /path/to/model_a
-   *    model_b:
-   *        path: /path/to/model_b
+   *    modelonl_a:
+   *        path: /path/to/modelonl_a
+   *    modelonl_b:
+   *        path: /path/to/modelonl_b
    *
    */
-  @VisibleForTesting
-  public static class ConfigSupplier implements Supplier<Map<String, AbstractFile>> {
+  @VisiblelonForTelonsting
+  public static class ConfigSupplielonr implelonmelonnts Supplielonr<Map<String, AbstractFilelon>> {
 
-    private final AbstractFile configFile;
+    privatelon final AbstractFilelon configFilelon;
 
-    public ConfigSupplier(AbstractFile configFile) {
-      this.configFile = configFile;
+    public ConfigSupplielonr(AbstractFilelon configFilelon) {
+      this.configFilelon = configFilelon;
     }
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public Map<String, AbstractFile> get() {
-      try (BufferedReader configReader = configFile.getCharSource().openBufferedStream()) {
-        Yaml yamlParser = new Yaml();
-        //noinspection unchecked
+    @SupprelonssWarnings("unchelonckelond")
+    @Ovelonrridelon
+    public Map<String, AbstractFilelon> gelont() {
+      try (BuffelonrelondRelonadelonr configRelonadelonr = configFilelon.gelontCharSourcelon().opelonnBuffelonrelondStrelonam()) {
+        Yaml yamlParselonr = nelonw Yaml();
+        //noinspelonction unchelonckelond
         Map<String, Map<String, String>> config =
-            (Map<String, Map<String, String>>) yamlParser.load(configReader);
+            (Map<String, Map<String, String>>) yamlParselonr.load(configRelonadelonr);
 
-        if (config == null || config.isEmpty()) {
-          return Collections.emptyMap();
+        if (config == null || config.iselonmpty()) {
+          relonturn Collelonctions.elonmptyMap();
         }
 
-        Map<String, AbstractFile> modelPaths = new HashMap<>();
-        for (Map.Entry<String, Map<String, String>> nameAndConfig : config.entrySet()) {
-          String path = Strings.emptyToNull(nameAndConfig.getValue().get("path"));
-          Preconditions.checkNotNull(path, "Missing path for model: %s", nameAndConfig.getKey());
-          modelPaths.put(nameAndConfig.getKey(), FileUtils.getHdfsFileHandle(path));
+        Map<String, AbstractFilelon> modelonlPaths = nelonw HashMap<>();
+        for (Map.elonntry<String, Map<String, String>> namelonAndConfig : config.elonntrySelont()) {
+          String path = Strings.elonmptyToNull(namelonAndConfig.gelontValuelon().gelont("path"));
+          Prelonconditions.chelonckNotNull(path, "Missing path for modelonl: %s", namelonAndConfig.gelontKelony());
+          modelonlPaths.put(namelonAndConfig.gelontKelony(), FilelonUtils.gelontHdfsFilelonHandlelon(path));
         }
-        return modelPaths;
-      } catch (IOException e) {
-        throw new UncheckedIOException(e);
+        relonturn modelonlPaths;
+      } catch (IOelonxcelonption elon) {
+        throw nelonw UnchelonckelondIOelonxcelonption(elon);
       }
     }
   }

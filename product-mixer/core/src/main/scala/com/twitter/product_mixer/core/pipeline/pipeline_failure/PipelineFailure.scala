@@ -1,49 +1,49 @@
-package com.twitter.product_mixer.core.pipeline.pipeline_failure
+packagelon com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifierStack
-import scala.util.control.NoStackTrace
+import com.fastelonrxml.jackson.databind.annotation.JsonSelonrializelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.ComponelonntIdelonntifielonrStack
+import scala.util.control.NoStackTracelon
 
 /**
- * Pipeline Failures represent pipeline requests that were not able to complete.
+ * Pipelonlinelon Failurelons relonprelonselonnt pipelonlinelon relonquelonsts that welonrelon not ablelon to complelontelon.
  *
- * A pipeline result will always define either a result or a failure.
+ * A pipelonlinelon relonsult will always delonfinelon elonithelonr a relonsult or a failurelon.
  *
- * The reason field should not be displayed to end-users, and is free to change over time.
- * It should always be free of private user data such that we can log it.
+ * Thelon relonason fielonld should not belon displayelond to elonnd-uselonrs, and is frelonelon to changelon ovelonr timelon.
+ * It should always belon frelonelon of privatelon uselonr data such that welon can log it.
  *
- * The pipeline can classify it's own failures into categories (timeouts, invalid arguments,
- * rate limited, etc) such that the caller can choose how to handle it.
+ * Thelon pipelonlinelon can classify it's own failurelons into catelongorielons (timelonouts, invalid argumelonnts,
+ * ratelon limitelond, elontc) such that thelon callelonr can chooselon how to handlelon it.
  *
- * @note [[componentStack]] should only be set by the product mixer framework,
- *       it should **NOT** be set when making a [[PipelineFailure]]
+ * @notelon [[componelonntStack]] should only belon selont by thelon product mixelonr framelonwork,
+ *       it should **NOT** belon selont whelonn making a [[PipelonlinelonFailurelon]]
  */
-@JsonSerialize(using = classOf[PipelineFailureSerializer])
-case class PipelineFailure(
-  category: PipelineFailureCategory,
-  reason: String,
-  underlying: Option[Throwable] = None,
-  componentStack: Option[ComponentIdentifierStack] = None)
-    extends Exception(
-      "PipelineFailure(" +
-        s"category = $category, " +
-        s"reason = $reason, " +
-        s"underlying = $underlying, " +
-        s"componentStack = $componentStack)",
-      underlying.orNull
+@JsonSelonrializelon(using = classOf[PipelonlinelonFailurelonSelonrializelonr])
+caselon class PipelonlinelonFailurelon(
+  catelongory: PipelonlinelonFailurelonCatelongory,
+  relonason: String,
+  undelonrlying: Option[Throwablelon] = Nonelon,
+  componelonntStack: Option[ComponelonntIdelonntifielonrStack] = Nonelon)
+    elonxtelonnds elonxcelonption(
+      "PipelonlinelonFailurelon(" +
+        s"catelongory = $catelongory, " +
+        s"relonason = $relonason, " +
+        s"undelonrlying = $undelonrlying, " +
+        s"componelonntStack = $componelonntStack)",
+      undelonrlying.orNull
     ) {
-  override def toString: String = getMessage
+  ovelonrridelon delonf toString: String = gelontMelonssagelon
 
-  /** Returns an updated copy of this [[PipelineFailure]] with the same exception stacktrace */
-  def copy(
-    category: PipelineFailureCategory = this.category,
-    reason: String = this.reason,
-    underlying: Option[Throwable] = this.underlying,
-    componentStack: Option[ComponentIdentifierStack] = this.componentStack
-  ): PipelineFailure = {
-    val newPipelineFailure =
-      new PipelineFailure(category, reason, underlying, componentStack) with NoStackTrace
-    newPipelineFailure.setStackTrace(this.getStackTrace)
-    newPipelineFailure
+  /** Relonturns an updatelond copy of this [[PipelonlinelonFailurelon]] with thelon samelon elonxcelonption stacktracelon */
+  delonf copy(
+    catelongory: PipelonlinelonFailurelonCatelongory = this.catelongory,
+    relonason: String = this.relonason,
+    undelonrlying: Option[Throwablelon] = this.undelonrlying,
+    componelonntStack: Option[ComponelonntIdelonntifielonrStack] = this.componelonntStack
+  ): PipelonlinelonFailurelon = {
+    val nelonwPipelonlinelonFailurelon =
+      nelonw PipelonlinelonFailurelon(catelongory, relonason, undelonrlying, componelonntStack) with NoStackTracelon
+    nelonwPipelonlinelonFailurelon.selontStackTracelon(this.gelontStackTracelon)
+    nelonwPipelonlinelonFailurelon
   }
 }

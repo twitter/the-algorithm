@@ -1,6 +1,6 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.label
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.labelonl
 
-sealed trait LabelDisplayType
+selonalelond trait LabelonlDisplayTypelon
 
-case object InlineHeaderLabelDisplayType extends LabelDisplayType
-case object OtherRepliesSectionHeaderLabelDisplayType extends LabelDisplayType
+caselon objelonct InlinelonHelonadelonrLabelonlDisplayTypelon elonxtelonnds LabelonlDisplayTypelon
+caselon objelonct OthelonrRelonplielonsSelonctionHelonadelonrLabelonlDisplayTypelon elonxtelonnds LabelonlDisplayTypelon

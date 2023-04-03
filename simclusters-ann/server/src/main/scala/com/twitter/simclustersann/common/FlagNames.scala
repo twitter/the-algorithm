@@ -1,31 +1,31 @@
-package com.twitter.simclustersann.common
+packagelon com.twittelonr.simclustelonrsann.common
 
-object FlagNames {
-
-  /**
-   * Global Settings
-   */
-  final val ServiceTimeout = "service.timeout"
-  final val DarkTrafficFilterDeciderKey = "thrift.dark.traffic.filter.decider_key"
+objelonct FlagNamelons {
 
   /**
-   * Cache Setting
+   * Global Selonttings
    */
-  final val CacheDest = "cache_module.dest"
-  final val CacheTimeout = "cache_module.timeout"
-  // Only turn on the async update when the SANN Cluster has the production taffic.
-  final val CacheAsyncUpdate = "cache_module.async_update"
+  final val SelonrvicelonTimelonout = "selonrvicelon.timelonout"
+  final val DarkTrafficFiltelonrDeloncidelonrKelony = "thrift.dark.traffic.filtelonr.deloncidelonr_kelony"
 
   /**
-   * Warmup Settings
+   * Cachelon Selontting
    */
-  final val DisableWarmup = "warmup.disable"
-  final val NumberOfThreads = "warmup.thread_number"
-  final val RateLimiterQPS = "warmup.rate_limiter_qps"
+  final val CachelonDelonst = "cachelon_modulelon.delonst"
+  final val CachelonTimelonout = "cachelon_modulelon.timelonout"
+  // Only turn on thelon async updatelon whelonn thelon SANN Clustelonr has thelon production taffic.
+  final val CachelonAsyncUpdatelon = "cachelon_modulelon.async_updatelon"
 
   /**
-   * Algorithm Parameters
+   * Warmup Selonttings
    */
-  final val MaxTopTweetPerCluster = "sim_clusters.ann.max_top_tweets_per_cluster"
+  final val DisablelonWarmup = "warmup.disablelon"
+  final val NumbelonrOfThrelonads = "warmup.threlonad_numbelonr"
+  final val RatelonLimitelonrQPS = "warmup.ratelon_limitelonr_qps"
+
+  /**
+   * Algorithm Paramelontelonrs
+   */
+  final val MaxTopTwelonelontPelonrClustelonr = "sim_clustelonrs.ann.max_top_twelonelonts_pelonr_clustelonr"
 
 }

@@ -1,10 +1,10 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urp
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urp
 
-sealed trait PageBody
+selonalelond trait PagelonBody
 
-case class TimelineKeyPageBody(timeline: TimelineKey) extends PageBody
+caselon class TimelonlinelonKelonyPagelonBody(timelonlinelon: TimelonlinelonKelony) elonxtelonnds PagelonBody
 
-case class SegmentedTimelinesPageBody(
-  initialTimeline: SegmentedTimeline,
-  timelines: Seq[SegmentedTimeline])
-    extends PageBody
+caselon class SelongmelonntelondTimelonlinelonsPagelonBody(
+  initialTimelonlinelon: SelongmelonntelondTimelonlinelon,
+  timelonlinelons: Selonq[SelongmelonntelondTimelonlinelon])
+    elonxtelonnds PagelonBody

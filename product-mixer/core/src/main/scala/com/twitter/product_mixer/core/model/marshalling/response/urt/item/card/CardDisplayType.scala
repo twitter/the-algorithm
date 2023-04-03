@@ -1,7 +1,7 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.card
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.card
 
-sealed trait CardDisplayType
+selonalelond trait CardDisplayTypelon
 
-case object HeroDisplayType extends CardDisplayType
-case object CellDisplayType extends CardDisplayType
-case object TweetCardDisplayType extends CardDisplayType
+caselon objelonct HelonroDisplayTypelon elonxtelonnds CardDisplayTypelon
+caselon objelonct CelonllDisplayTypelon elonxtelonnds CardDisplayTypelon
+caselon objelonct TwelonelontCardDisplayTypelon elonxtelonnds CardDisplayTypelon

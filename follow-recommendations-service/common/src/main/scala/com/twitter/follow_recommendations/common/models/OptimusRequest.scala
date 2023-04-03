@@ -1,15 +1,15 @@
-package com.twitter.follow_recommendations.common.models
+packagelon com.twittelonr.follow_reloncommelonndations.common.modelonls
 
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.timelines.configapi.HasParams
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.HasClielonntContelonxt
+import com.twittelonr.timelonlinelons.configapi.HasParams
 
 /**
-Convenience trait to group together all traits needed for optimus ranking
+Convelonnielonncelon trait to group togelonthelonr all traits nelonelondelond for optimus ranking
  */
-trait OptimusRequest
-    extends HasParams
-    with HasClientContext
+trait OptimusRelonquelonst
+    elonxtelonnds HasParams
+    with HasClielonntContelonxt
     with HasDisplayLocation
-    with HasInterestIds
-    with HasDebugOptions
-    with HasPreviousRecommendationsContext {}
+    with HasIntelonrelonstIds
+    with HasDelonbugOptions
+    with HasPrelonviousReloncommelonndationsContelonxt {}

@@ -1,284 +1,284 @@
-package com.twitter.simclusters_v2.stores
-import com.twitter.bijection.Bufferable
-import com.twitter.bijection.Injection
-import com.twitter.bijection.scrooge.CompactScalaCodec
-import com.twitter.simclusters_v2.common.Language
-import com.twitter.simclusters_v2.thriftscala.ClustersUserIsInterestedIn
-import com.twitter.simclusters_v2.thriftscala.LeftNode
-import com.twitter.simclusters_v2.thriftscala.NounWithFrequencyList
-import com.twitter.simclusters_v2.thriftscala.RightNode
-import com.twitter.simclusters_v2.thriftscala.RightNodeTypeStruct
-import com.twitter.simclusters_v2.thriftscala.RightNodeWithEdgeWeightList
-import com.twitter.simclusters_v2.thriftscala.SimilarRightNodes
-import com.twitter.simclusters_v2.thriftscala.CandidateTweetsList
-import com.twitter.storage.client.manhattan.kv.ManhattanKVClientMtlsParams
-import com.twitter.storehaus.ReadableStore
-import com.twitter.storehaus_internal.manhattan.Apollo
-import com.twitter.storehaus_internal.manhattan.ManhattanRO
-import com.twitter.storehaus_internal.manhattan.ManhattanROConfig
-import com.twitter.storehaus_internal.util.ApplicationID
-import com.twitter.storehaus_internal.util.DatasetName
-import com.twitter.storehaus_internal.util.HDFSPath
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.Long2BigEndian
-import com.twitter.simclusters_v2.thriftscala.FullClusterId
-import com.twitter.simclusters_v2.thriftscala.TopKTweetsWithScores
+packagelon com.twittelonr.simclustelonrs_v2.storelons
+import com.twittelonr.bijelonction.Buffelonrablelon
+import com.twittelonr.bijelonction.Injelonction
+import com.twittelonr.bijelonction.scroogelon.CompactScalaCodelonc
+import com.twittelonr.simclustelonrs_v2.common.Languagelon
+import com.twittelonr.simclustelonrs_v2.thriftscala.ClustelonrsUselonrIsIntelonrelonstelondIn
+import com.twittelonr.simclustelonrs_v2.thriftscala.LelonftNodelon
+import com.twittelonr.simclustelonrs_v2.thriftscala.NounWithFrelonquelonncyList
+import com.twittelonr.simclustelonrs_v2.thriftscala.RightNodelon
+import com.twittelonr.simclustelonrs_v2.thriftscala.RightNodelonTypelonStruct
+import com.twittelonr.simclustelonrs_v2.thriftscala.RightNodelonWithelondgelonWelonightList
+import com.twittelonr.simclustelonrs_v2.thriftscala.SimilarRightNodelons
+import com.twittelonr.simclustelonrs_v2.thriftscala.CandidatelonTwelonelontsList
+import com.twittelonr.storagelon.clielonnt.manhattan.kv.ManhattanKVClielonntMtlsParams
+import com.twittelonr.storelonhaus.RelonadablelonStorelon
+import com.twittelonr.storelonhaus_intelonrnal.manhattan.Apollo
+import com.twittelonr.storelonhaus_intelonrnal.manhattan.ManhattanRO
+import com.twittelonr.storelonhaus_intelonrnal.manhattan.ManhattanROConfig
+import com.twittelonr.storelonhaus_intelonrnal.util.ApplicationID
+import com.twittelonr.storelonhaus_intelonrnal.util.DataselontNamelon
+import com.twittelonr.storelonhaus_intelonrnal.util.HDFSPath
+import com.twittelonr.scalding_intelonrnal.multiformat.format.kelonyval.KelonyValInjelonction.Long2Bigelonndian
+import com.twittelonr.simclustelonrs_v2.thriftscala.FullClustelonrId
+import com.twittelonr.simclustelonrs_v2.thriftscala.TopKTwelonelontsWithScorelons
 
-object MultiTypeGraphStore {
+objelonct MultiTypelonGraphStorelon {
 
-  implicit val leftNodesInject: Injection[LeftNode, Array[Byte]] =
-    CompactScalaCodec(LeftNode)
-  implicit val truncatedMultiTypeGraphInject: Injection[RightNodeWithEdgeWeightList, Array[Byte]] =
-    CompactScalaCodec(RightNodeWithEdgeWeightList)
-  implicit val topKNounsListInject: Injection[NounWithFrequencyList, Array[Byte]] =
-    CompactScalaCodec(NounWithFrequencyList)
-  implicit val rightNodesStructInject: Injection[RightNodeTypeStruct, Array[Byte]] =
-    CompactScalaCodec(RightNodeTypeStruct)
-  implicit val similarRightNodesStructInject: Injection[SimilarRightNodes, Array[Byte]] =
-    CompactScalaCodec(SimilarRightNodes)
-  implicit val rightNodesInject: Injection[RightNode, Array[Byte]] =
-    CompactScalaCodec(RightNode)
-  implicit val tweetCandidatesInject: Injection[CandidateTweetsList, Array[Byte]] =
-    CompactScalaCodec(CandidateTweetsList)
-  implicit val fullClusterIdInject: Injection[FullClusterId, Array[Byte]] =
-    CompactScalaCodec(FullClusterId)
-  implicit val topKTweetsWithScoresInject: Injection[TopKTweetsWithScores, Array[Byte]] =
-    CompactScalaCodec(TopKTweetsWithScores)
-  implicit val clustersUserIsInterestedInInjection: Injection[ClustersUserIsInterestedIn, Array[
-    Byte
+  implicit val lelonftNodelonsInjelonct: Injelonction[LelonftNodelon, Array[Bytelon]] =
+    CompactScalaCodelonc(LelonftNodelon)
+  implicit val truncatelondMultiTypelonGraphInjelonct: Injelonction[RightNodelonWithelondgelonWelonightList, Array[Bytelon]] =
+    CompactScalaCodelonc(RightNodelonWithelondgelonWelonightList)
+  implicit val topKNounsListInjelonct: Injelonction[NounWithFrelonquelonncyList, Array[Bytelon]] =
+    CompactScalaCodelonc(NounWithFrelonquelonncyList)
+  implicit val rightNodelonsStructInjelonct: Injelonction[RightNodelonTypelonStruct, Array[Bytelon]] =
+    CompactScalaCodelonc(RightNodelonTypelonStruct)
+  implicit val similarRightNodelonsStructInjelonct: Injelonction[SimilarRightNodelons, Array[Bytelon]] =
+    CompactScalaCodelonc(SimilarRightNodelons)
+  implicit val rightNodelonsInjelonct: Injelonction[RightNodelon, Array[Bytelon]] =
+    CompactScalaCodelonc(RightNodelon)
+  implicit val twelonelontCandidatelonsInjelonct: Injelonction[CandidatelonTwelonelontsList, Array[Bytelon]] =
+    CompactScalaCodelonc(CandidatelonTwelonelontsList)
+  implicit val fullClustelonrIdInjelonct: Injelonction[FullClustelonrId, Array[Bytelon]] =
+    CompactScalaCodelonc(FullClustelonrId)
+  implicit val topKTwelonelontsWithScorelonsInjelonct: Injelonction[TopKTwelonelontsWithScorelons, Array[Bytelon]] =
+    CompactScalaCodelonc(TopKTwelonelontsWithScorelons)
+  implicit val clustelonrsUselonrIsIntelonrelonstelondInInjelonction: Injelonction[ClustelonrsUselonrIsIntelonrelonstelondIn, Array[
+    Bytelon
   ]] =
-    CompactScalaCodec(ClustersUserIsInterestedIn)
+    CompactScalaCodelonc(ClustelonrsUselonrIsIntelonrelonstelondIn)
 
-  private val appId = "multi_type_simclusters"
+  privatelon val appId = "multi_typelon_simclustelonrs"
 
-  def getTruncatedMultiTypeGraphRightNodesForUser(
-    mhMtlsParams: ManhattanKVClientMtlsParams
-  ): ReadableStore[LeftNode, RightNodeWithEdgeWeightList] = {
-    ManhattanRO.getReadableStoreWithMtls[LeftNode, RightNodeWithEdgeWeightList](
+  delonf gelontTruncatelondMultiTypelonGraphRightNodelonsForUselonr(
+    mhMtlsParams: ManhattanKVClielonntMtlsParams
+  ): RelonadablelonStorelon[LelonftNodelon, RightNodelonWithelondgelonWelonightList] = {
+    ManhattanRO.gelontRelonadablelonStorelonWithMtls[LelonftNodelon, RightNodelonWithelondgelonWelonightList](
       ManhattanROConfig(
         HDFSPath(""),
         ApplicationID(appId),
-        DatasetName("mts_user_truncated_graph"),
+        DataselontNamelon("mts_uselonr_truncatelond_graph"),
         Apollo
       ),
       mhMtlsParams
     )
   }
 
-  def getTopKNounsForRightNodeType(
-    mhMtlsParams: ManhattanKVClientMtlsParams
-  ): ReadableStore[RightNodeTypeStruct, NounWithFrequencyList] = {
-    ManhattanRO.getReadableStoreWithMtls[RightNodeTypeStruct, NounWithFrequencyList](
+  delonf gelontTopKNounsForRightNodelonTypelon(
+    mhMtlsParams: ManhattanKVClielonntMtlsParams
+  ): RelonadablelonStorelon[RightNodelonTypelonStruct, NounWithFrelonquelonncyList] = {
+    ManhattanRO.gelontRelonadablelonStorelonWithMtls[RightNodelonTypelonStruct, NounWithFrelonquelonncyList](
       ManhattanROConfig(
         HDFSPath(""),
         ApplicationID(appId),
-        DatasetName("mts_topk_frequent_nouns"),
+        DataselontNamelon("mts_topk_frelonquelonnt_nouns"),
         Apollo
       ),
       mhMtlsParams
     )
   }
 
-  def getTopKSimilarRightNodes(
-    mhMtlsParams: ManhattanKVClientMtlsParams
-  ): ReadableStore[RightNode, SimilarRightNodes] = {
-    ManhattanRO.getReadableStoreWithMtls[RightNode, SimilarRightNodes](
+  delonf gelontTopKSimilarRightNodelons(
+    mhMtlsParams: ManhattanKVClielonntMtlsParams
+  ): RelonadablelonStorelon[RightNodelon, SimilarRightNodelons] = {
+    ManhattanRO.gelontRelonadablelonStorelonWithMtls[RightNodelon, SimilarRightNodelons](
       ManhattanROConfig(
         HDFSPath(""),
         ApplicationID(appId),
-        DatasetName("mts_topk_similar_right_nodes_scio"),
+        DataselontNamelon("mts_topk_similar_right_nodelons_scio"),
         Apollo
       ),
       mhMtlsParams
     )
   }
 
-  def getOfflineTweetMTSCandidateStore(
-    mhMtlsParams: ManhattanKVClientMtlsParams
-  ): ReadableStore[Long, CandidateTweetsList] = {
-    ManhattanRO.getReadableStoreWithMtls[Long, CandidateTweetsList](
+  delonf gelontOfflinelonTwelonelontMTSCandidatelonStorelon(
+    mhMtlsParams: ManhattanKVClielonntMtlsParams
+  ): RelonadablelonStorelon[Long, CandidatelonTwelonelontsList] = {
+    ManhattanRO.gelontRelonadablelonStorelonWithMtls[Long, CandidatelonTwelonelontsList](
       ManhattanROConfig(
         HDFSPath(""),
         ApplicationID(appId),
-        DatasetName("offline_tweet_recommendations_from_mts_consumer_embeddings"),
+        DataselontNamelon("offlinelon_twelonelont_reloncommelonndations_from_mts_consumelonr_elonmbelonddings"),
         Apollo
       ),
       mhMtlsParams
     )
   }
 
-  def getOfflineTweet2020CandidateStore(
-    mhMtlsParams: ManhattanKVClientMtlsParams
-  ): ReadableStore[Long, CandidateTweetsList] = {
-    ManhattanRO.getReadableStoreWithMtls[Long, CandidateTweetsList](
+  delonf gelontOfflinelonTwelonelont2020CandidatelonStorelon(
+    mhMtlsParams: ManhattanKVClielonntMtlsParams
+  ): RelonadablelonStorelon[Long, CandidatelonTwelonelontsList] = {
+    ManhattanRO.gelontRelonadablelonStorelonWithMtls[Long, CandidatelonTwelonelontsList](
       ManhattanROConfig(
         HDFSPath(""),
         ApplicationID(appId),
-        DatasetName("offline_tweet_recommendations_from_interestedin_2020"),
+        DataselontNamelon("offlinelon_twelonelont_reloncommelonndations_from_intelonrelonstelondin_2020"),
         Apollo
       ),
       mhMtlsParams
     )
   }
 
-  def getVideoViewBasedClusterTopKTweets(
-    mhMtlsParams: ManhattanKVClientMtlsParams
-  ): ReadableStore[FullClusterId, TopKTweetsWithScores] = {
+  delonf gelontVidelonoVielonwBaselondClustelonrTopKTwelonelonts(
+    mhMtlsParams: ManhattanKVClielonntMtlsParams
+  ): RelonadablelonStorelon[FullClustelonrId, TopKTwelonelontsWithScorelons] = {
     ManhattanRO
-      .getReadableStoreWithMtls[FullClusterId, TopKTweetsWithScores](
+      .gelontRelonadablelonStorelonWithMtls[FullClustelonrId, TopKTwelonelontsWithScorelons](
         ManhattanROConfig(
           HDFSPath(""),
           ApplicationID(appId),
-          DatasetName("video_view_based_cluster_to_tweet_index"),
+          DataselontNamelon("videlono_vielonw_baselond_clustelonr_to_twelonelont_indelonx"),
           Apollo
         ),
         mhMtlsParams
       )
   }
 
-  def getRetweetBasedClusterTopKTweets(
-    mhMtlsParams: ManhattanKVClientMtlsParams
-  ): ReadableStore[FullClusterId, TopKTweetsWithScores] = {
+  delonf gelontRelontwelonelontBaselondClustelonrTopKTwelonelonts(
+    mhMtlsParams: ManhattanKVClielonntMtlsParams
+  ): RelonadablelonStorelon[FullClustelonrId, TopKTwelonelontsWithScorelons] = {
     ManhattanRO
-      .getReadableStoreWithMtls[FullClusterId, TopKTweetsWithScores](
+      .gelontRelonadablelonStorelonWithMtls[FullClustelonrId, TopKTwelonelontsWithScorelons](
         ManhattanROConfig(
           HDFSPath(""),
           ApplicationID(appId),
-          DatasetName("retweet_based_simclusters_cluster_to_tweet_index"),
+          DataselontNamelon("relontwelonelont_baselond_simclustelonrs_clustelonr_to_twelonelont_indelonx"),
           Apollo
         ),
         mhMtlsParams
       )
   }
 
-  def getReplyBasedClusterTopKTweets(
-    mhMtlsParams: ManhattanKVClientMtlsParams
-  ): ReadableStore[FullClusterId, TopKTweetsWithScores] = {
+  delonf gelontRelonplyBaselondClustelonrTopKTwelonelonts(
+    mhMtlsParams: ManhattanKVClielonntMtlsParams
+  ): RelonadablelonStorelon[FullClustelonrId, TopKTwelonelontsWithScorelons] = {
     ManhattanRO
-      .getReadableStoreWithMtls[FullClusterId, TopKTweetsWithScores](
+      .gelontRelonadablelonStorelonWithMtls[FullClustelonrId, TopKTwelonelontsWithScorelons](
         ManhattanROConfig(
           HDFSPath(""),
           ApplicationID(appId),
-          DatasetName("reply_based_simclusters_cluster_to_tweet_index"),
+          DataselontNamelon("relonply_baselond_simclustelonrs_clustelonr_to_twelonelont_indelonx"),
           Apollo
         ),
         mhMtlsParams
       )
   }
 
-  def getPushOpenBasedClusterTopKTweets(
-    mhMtlsParams: ManhattanKVClientMtlsParams
-  ): ReadableStore[FullClusterId, TopKTweetsWithScores] = {
+  delonf gelontPushOpelonnBaselondClustelonrTopKTwelonelonts(
+    mhMtlsParams: ManhattanKVClielonntMtlsParams
+  ): RelonadablelonStorelon[FullClustelonrId, TopKTwelonelontsWithScorelons] = {
     ManhattanRO
-      .getReadableStoreWithMtls[FullClusterId, TopKTweetsWithScores](
+      .gelontRelonadablelonStorelonWithMtls[FullClustelonrId, TopKTwelonelontsWithScorelons](
         ManhattanROConfig(
           HDFSPath(""),
           ApplicationID(appId),
-          DatasetName("push_open_based_simclusters_cluster_to_tweet_index"),
+          DataselontNamelon("push_opelonn_baselond_simclustelonrs_clustelonr_to_twelonelont_indelonx"),
           Apollo
         ),
         mhMtlsParams
       )
   }
 
-  def getAdsFavBasedClusterTopKTweets(
-    mhMtlsParams: ManhattanKVClientMtlsParams
-  ): ReadableStore[FullClusterId, TopKTweetsWithScores] = {
+  delonf gelontAdsFavBaselondClustelonrTopKTwelonelonts(
+    mhMtlsParams: ManhattanKVClielonntMtlsParams
+  ): RelonadablelonStorelon[FullClustelonrId, TopKTwelonelontsWithScorelons] = {
     ManhattanRO
-      .getReadableStoreWithMtls[FullClusterId, TopKTweetsWithScores](
+      .gelontRelonadablelonStorelonWithMtls[FullClustelonrId, TopKTwelonelontsWithScorelons](
         ManhattanROConfig(
           HDFSPath(""),
           ApplicationID(appId),
-          DatasetName("ads_fav_based_simclusters_cluster_to_tweet_index"),
+          DataselontNamelon("ads_fav_baselond_simclustelonrs_clustelonr_to_twelonelont_indelonx"),
           Apollo
         ),
         mhMtlsParams
       )
   }
 
-  def getAdsFavClickBasedClusterTopKTweets(
-    mhMtlsParams: ManhattanKVClientMtlsParams
-  ): ReadableStore[FullClusterId, TopKTweetsWithScores] = {
+  delonf gelontAdsFavClickBaselondClustelonrTopKTwelonelonts(
+    mhMtlsParams: ManhattanKVClielonntMtlsParams
+  ): RelonadablelonStorelon[FullClustelonrId, TopKTwelonelontsWithScorelons] = {
     ManhattanRO
-      .getReadableStoreWithMtls[FullClusterId, TopKTweetsWithScores](
+      .gelontRelonadablelonStorelonWithMtls[FullClustelonrId, TopKTwelonelontsWithScorelons](
         ManhattanROConfig(
           HDFSPath(""),
           ApplicationID(appId),
-          DatasetName("ads_fav_click_based_simclusters_cluster_to_tweet_index"),
+          DataselontNamelon("ads_fav_click_baselond_simclustelonrs_clustelonr_to_twelonelont_indelonx"),
           Apollo
         ),
         mhMtlsParams
       )
   }
 
-  def getFTRPop1000BasedClusterTopKTweets(
-    mhMtlsParams: ManhattanKVClientMtlsParams
-  ): ReadableStore[FullClusterId, TopKTweetsWithScores] = {
+  delonf gelontFTRPop1000BaselondClustelonrTopKTwelonelonts(
+    mhMtlsParams: ManhattanKVClielonntMtlsParams
+  ): RelonadablelonStorelon[FullClustelonrId, TopKTwelonelontsWithScorelons] = {
     ManhattanRO
-      .getReadableStoreWithMtls[FullClusterId, TopKTweetsWithScores](
+      .gelontRelonadablelonStorelonWithMtls[FullClustelonrId, TopKTwelonelontsWithScorelons](
         ManhattanROConfig(
           HDFSPath(""),
           ApplicationID(appId),
-          DatasetName("ftr_pop1000_rank_decay_1_1_cluster_to_tweet_index"),
+          DataselontNamelon("ftr_pop1000_rank_deloncay_1_1_clustelonr_to_twelonelont_indelonx"),
           Apollo
         ),
         mhMtlsParams
       )
   }
 
-  def getFTRPop10000BasedClusterTopKTweets(
-    mhMtlsParams: ManhattanKVClientMtlsParams
-  ): ReadableStore[FullClusterId, TopKTweetsWithScores] = {
+  delonf gelontFTRPop10000BaselondClustelonrTopKTwelonelonts(
+    mhMtlsParams: ManhattanKVClielonntMtlsParams
+  ): RelonadablelonStorelon[FullClustelonrId, TopKTwelonelontsWithScorelons] = {
     ManhattanRO
-      .getReadableStoreWithMtls[FullClusterId, TopKTweetsWithScores](
+      .gelontRelonadablelonStorelonWithMtls[FullClustelonrId, TopKTwelonelontsWithScorelons](
         ManhattanROConfig(
           HDFSPath(""),
           ApplicationID(appId),
-          DatasetName("ftr_pop10000_rank_decay_1_1_cluster_to_tweet_index"),
+          DataselontNamelon("ftr_pop10000_rank_deloncay_1_1_clustelonr_to_twelonelont_indelonx"),
           Apollo
         ),
         mhMtlsParams
       )
   }
 
-  def getOONFTRPop1000BasedClusterTopKTweets(
-    mhMtlsParams: ManhattanKVClientMtlsParams
-  ): ReadableStore[FullClusterId, TopKTweetsWithScores] = {
+  delonf gelontOONFTRPop1000BaselondClustelonrTopKTwelonelonts(
+    mhMtlsParams: ManhattanKVClielonntMtlsParams
+  ): RelonadablelonStorelon[FullClustelonrId, TopKTwelonelontsWithScorelons] = {
     ManhattanRO
-      .getReadableStoreWithMtls[FullClusterId, TopKTweetsWithScores](
+      .gelontRelonadablelonStorelonWithMtls[FullClustelonrId, TopKTwelonelontsWithScorelons](
         ManhattanROConfig(
           HDFSPath(""),
           ApplicationID(appId),
-          DatasetName("oon_ftr_pop1000_rnkdecay_cluster_to_tweet_index"),
+          DataselontNamelon("oon_ftr_pop1000_rnkdeloncay_clustelonr_to_twelonelont_indelonx"),
           Apollo
         ),
         mhMtlsParams
       )
   }
 
-  def getOfflineLogFavBasedTweetBasedClusterTopKTweets(
-    mhMtlsParams: ManhattanKVClientMtlsParams
-  ): ReadableStore[FullClusterId, TopKTweetsWithScores] = {
+  delonf gelontOfflinelonLogFavBaselondTwelonelontBaselondClustelonrTopKTwelonelonts(
+    mhMtlsParams: ManhattanKVClielonntMtlsParams
+  ): RelonadablelonStorelon[FullClustelonrId, TopKTwelonelontsWithScorelons] = {
     ManhattanRO
-      .getReadableStoreWithMtls[FullClusterId, TopKTweetsWithScores](
+      .gelontRelonadablelonStorelonWithMtls[FullClustelonrId, TopKTwelonelontsWithScorelons](
         ManhattanROConfig(
           HDFSPath(""),
           ApplicationID(appId),
-          DatasetName("decayed_sum_cluster_to_tweet_index"),
+          DataselontNamelon("deloncayelond_sum_clustelonr_to_twelonelont_indelonx"),
           Apollo
         ),
         mhMtlsParams
       )
   }
 
-  def getGlobalSimClustersLanguageEmbeddings(
-    mhMtlsParams: ManhattanKVClientMtlsParams
-  ): ReadableStore[Language, ClustersUserIsInterestedIn] = {
+  delonf gelontGlobalSimClustelonrsLanguagelonelonmbelonddings(
+    mhMtlsParams: ManhattanKVClielonntMtlsParams
+  ): RelonadablelonStorelon[Languagelon, ClustelonrsUselonrIsIntelonrelonstelondIn] = {
     ManhattanRO
-      .getReadableStoreWithMtls[Language, ClustersUserIsInterestedIn](
+      .gelontRelonadablelonStorelonWithMtls[Languagelon, ClustelonrsUselonrIsIntelonrelonstelondIn](
         ManhattanROConfig(
           HDFSPath(""),
           ApplicationID(appId),
-          DatasetName("global_simclusters_language_embeddings"),
+          DataselontNamelon("global_simclustelonrs_languagelon_elonmbelonddings"),
           Apollo
         ),
         mhMtlsParams

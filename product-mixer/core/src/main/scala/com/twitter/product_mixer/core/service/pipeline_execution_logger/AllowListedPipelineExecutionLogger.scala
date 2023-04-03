@@ -1,180 +1,180 @@
-package com.twitter.product_mixer.core.service.pipeline_execution_logger
+packagelon com.twittelonr.product_mixelonr.corelon.selonrvicelon.pipelonlinelon_elonxeloncution_loggelonr
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.annotations.Flag
-import com.twitter.product_mixer.core.module.product_mixer_flags.ProductMixerFlagModule.PipelineExecutionLoggerAllowList
-import com.twitter.product_mixer.core.module.product_mixer_flags.ProductMixerFlagModule.ServiceLocal
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.util.FuturePools
-import com.twitter.product_mixer.shared_library.observer.Observer.FutureObserver
-import com.twitter.util.Try
-import com.twitter.util.logging.Logging
-import pprint.PPrinter
-import pprint.Tree
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.injelonct.annotations.Flag
+import com.twittelonr.product_mixelonr.corelon.modulelon.product_mixelonr_flags.ProductMixelonrFlagModulelon.PipelonlinelonelonxeloncutionLoggelonrAllowList
+import com.twittelonr.product_mixelonr.corelon.modulelon.product_mixelonr_flags.ProductMixelonrFlagModulelon.SelonrvicelonLocal
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.product_mixelonr.corelon.util.FuturelonPools
+import com.twittelonr.product_mixelonr.sharelond_library.obselonrvelonr.Obselonrvelonr.FuturelonObselonrvelonr
+import com.twittelonr.util.Try
+import com.twittelonr.util.logging.Logging
+import pprint.PPrintelonr
+import pprint.Trelonelon
 import pprint.Util
-import pprint.tuplePrefix
-import javax.inject.Inject
-import javax.inject.Singleton
+import pprint.tuplelonPrelonfix
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
 /**
- * Initial implementation from:
- * https://stackoverflow.com/questions/15718506/scala-how-to-print-case-classes-like-pretty-printed-tree/57080463#57080463
+ * Initial implelonmelonntation from:
+ * https://stackovelonrflow.com/quelonstions/15718506/scala-how-to-print-caselon-classelons-likelon-prelontty-printelond-trelonelon/57080463#57080463
  */
-object AllowListedPipelineExecutionLogger {
+objelonct AllowListelondPipelonlinelonelonxeloncutionLoggelonr {
 
   /**
-   * Given a case class who's arguments are all declared fields on the class,
-   * returns an iterator of the field name and values
+   * Givelonn a caselon class who's argumelonnts arelon all delonclarelond fielonlds on thelon class,
+   * relonturns an itelonrator of thelon fielonld namelon and valuelons
    */
-  private[pipeline_execution_logger] def caseClassFields(
-    caseClass: Product
-  ): Iterator[(String, Any)] = {
-    val fieldValues = caseClass.productIterator.toSet
-    val fields = caseClass.getClass.getDeclaredFields.toSeq
-      .filterNot(f => f.isSynthetic || java.lang.reflect.Modifier.isStatic(f.getModifiers))
-    fields.iterator
+  privatelon[pipelonlinelon_elonxeloncution_loggelonr] delonf caselonClassFielonlds(
+    caselonClass: Product
+  ): Itelonrator[(String, Any)] = {
+    val fielonldValuelons = caselonClass.productItelonrator.toSelont
+    val fielonlds = caselonClass.gelontClass.gelontDelonclarelondFielonlds.toSelonq
+      .filtelonrNot(f => f.isSynthelontic || java.lang.relonflelonct.Modifielonr.isStatic(f.gelontModifielonrs))
+    fielonlds.itelonrator
       .map { f =>
-        f.setAccessible(true)
-        f.getName -> f.get(caseClass)
-      }.filter { case (_, v) => fieldValues.contains(v) }
+        f.selontAccelonssiblelon(truelon)
+        f.gelontNamelon -> f.gelont(caselonClass)
+      }.filtelonr { caselon (_, v) => fielonldValuelons.contains(v) }
   }
 
   /**
-   * Returns whether a given [[Product]] is a case class which we can render nicely which:
-   * - has a [[Product.productArity]] <= the number of declared fields
-   * - isn't a built in binary operator
-   * - isn't a tuple
-   * - who's arguments are fields (not methods)
-   * - every [[Product.productElement]] has a corresponding field
+   * Relonturns whelonthelonr a givelonn [[Product]] is a caselon class which welon can relonndelonr nicelonly which:
+   * - has a [[Product.productArity]] <= thelon numbelonr of delonclarelond fielonlds
+   * - isn't a built in binary opelonrator
+   * - isn't a tuplelon
+   * - who's argumelonnts arelon fielonlds (not melonthods)
+   * - elonvelonry [[Product.productelonlelonmelonnt]] has a correlonsponding fielonld
    *
-   * This will return false for some case classes where we can not reliably determine which field names correspond to
-   * each value in the case class (this can happen if a case class implements an abstract class resulting in val fields
-   * becoming methods.
+   * This will relonturn falselon for somelon caselon classelons whelonrelon welon can not relonliably delontelonrminelon which fielonld namelons correlonspond to
+   * elonach valuelon in thelon caselon class (this can happelonn if a caselon class implelonmelonnts an abstract class relonsulting in val fielonlds
+   * beloncoming melonthods.
    */
-  private[pipeline_execution_logger] def isRenderableCaseClass(caseClass: Product): Boolean = {
-    val possibleToBeRenderableCaseClass =
-      caseClass.getClass.getDeclaredFields.length >= caseClass.productArity
-    val isntBuiltInOperator =
-      !(caseClass.productArity == 2 && Util.isOperator(caseClass.productPrefix))
-    val isntTuple = !caseClass.getClass.getName.startsWith(tuplePrefix)
-    val declaredFieldsMatchesCaseClassFields = {
-      val caseClassFields = caseClass.productIterator.toSet
-      caseClass.getClass.getDeclaredFields.iterator
-        .filterNot(f => f.isSynthetic || java.lang.reflect.Modifier.isStatic(f.getModifiers))
+  privatelon[pipelonlinelon_elonxeloncution_loggelonr] delonf isRelonndelonrablelonCaselonClass(caselonClass: Product): Boolelonan = {
+    val possiblelonToBelonRelonndelonrablelonCaselonClass =
+      caselonClass.gelontClass.gelontDelonclarelondFielonlds.lelonngth >= caselonClass.productArity
+    val isntBuiltInOpelonrator =
+      !(caselonClass.productArity == 2 && Util.isOpelonrator(caselonClass.productPrelonfix))
+    val isntTuplelon = !caselonClass.gelontClass.gelontNamelon.startsWith(tuplelonPrelonfix)
+    val delonclarelondFielonldsMatchelonsCaselonClassFielonlds = {
+      val caselonClassFielonlds = caselonClass.productItelonrator.toSelont
+      caselonClass.gelontClass.gelontDelonclarelondFielonlds.itelonrator
+        .filtelonrNot(f => f.isSynthelontic || java.lang.relonflelonct.Modifielonr.isStatic(f.gelontModifielonrs))
         .count { f =>
-          f.setAccessible(true)
-          caseClassFields.contains(f.get(caseClass))
-        } >= caseClass.productArity
+          f.selontAccelonssiblelon(truelon)
+          caselonClassFielonlds.contains(f.gelont(caselonClass))
+        } >= caselonClass.productArity
     }
 
-    possibleToBeRenderableCaseClass && isntBuiltInOperator && isntTuple && declaredFieldsMatchesCaseClassFields
+    possiblelonToBelonRelonndelonrablelonCaselonClass && isntBuiltInOpelonrator && isntTuplelon && delonclarelondFielonldsMatchelonsCaselonClassFielonlds
   }
 
-  /** Makes a [[Tree]] which will render as `key = value` */
-  private def keyValuePair(key: String, value: Tree): Tree = {
-    Tree.Infix(Tree.Literal(key), "=", value)
+  /** Makelons a [[Trelonelon]] which will relonndelonr as `kelony = valuelon` */
+  privatelon delonf kelonyValuelonPair(kelony: String, valuelon: Trelonelon): Trelonelon = {
+    Trelonelon.Infix(Trelonelon.Litelonral(kelony), "=", valuelon)
   }
 
   /**
-   * Special handling for case classes who's field names can be easily paired with their values.
-   * This will make the [[PPrinter]] render them as
+   * Speloncial handling for caselon classelons who's fielonld namelons can belon elonasily pairelond with thelonir valuelons.
+   * This will makelon thelon [[PPrintelonr]] relonndelonr thelonm as
    * {{{
-   *   CaseClassName(
-   *     field1 = value1,
-   *     field2 = value2
+   *   CaselonClassNamelon(
+   *     fielonld1 = valuelon1,
+   *     fielonld2 = valuelon2
    *   )
    * }}}
-   * instead of
+   * instelonad of
    * {{{
-   *   CaseClassName(
-   *     value1,
-   *     value2
+   *   CaselonClassNamelon(
+   *     valuelon1,
+   *     valuelon2
    *   )
    * }}}
    *
-   * For case classes who's fields end up being compiled as methods, this will fall back
-   * to the built in handling of case classes without their field names.
+   * For caselon classelons who's fielonlds elonnd up beloning compilelond as melonthods, this will fall back
+   * to thelon built in handling of caselon classelons without thelonir fielonld namelons.
    */
-  private[pipeline_execution_logger] def additionalHandlers: PartialFunction[Any, Tree] = {
-    case caseClass: Product if isRenderableCaseClass(caseClass) =>
-      Tree.Apply(
-        caseClass.productPrefix,
-        caseClassFields(caseClass).flatMap {
-          case (key, value) =>
-            val valueTree = printer.treeify(value, false, true)
-            Seq(keyValuePair(key, valueTree))
+  privatelon[pipelonlinelon_elonxeloncution_loggelonr] delonf additionalHandlelonrs: PartialFunction[Any, Trelonelon] = {
+    caselon caselonClass: Product if isRelonndelonrablelonCaselonClass(caselonClass) =>
+      Trelonelon.Apply(
+        caselonClass.productPrelonfix,
+        caselonClassFielonlds(caselonClass).flatMap {
+          caselon (kelony, valuelon) =>
+            val valuelonTrelonelon = printelonr.trelonelonify(valuelon, falselon, truelon)
+            Selonq(kelonyValuelonPair(kelony, valuelonTrelonelon))
         }
       )
   }
 
   /**
-   * [[PPrinter]] instance to use when rendering scala objects
-   * uses BlackAndWhite because colors mangle the output when looking at the logs in plain text
+   * [[PPrintelonr]] instancelon to uselon whelonn relonndelonring scala objeloncts
+   * uselons BlackAndWhitelon beloncauselon colors manglelon thelon output whelonn looking at thelon logs in plain telonxt
    */
-  private val printer: PPrinter = PPrinter.BlackWhite.copy(
-    // arbitrary high value to turn off truncation
-    defaultHeight = Int.MaxValue,
-    // the relatively high width will cause some wrapping but many of the pretty printed objects
-    // will be sparse (e.g. None,\n None,\n, None,\n)
-    defaultWidth = 300,
-    // use reflection to print field names (can be deleted in Scala 2.13)
-    additionalHandlers = additionalHandlers
+  privatelon val printelonr: PPrintelonr = PPrintelonr.BlackWhitelon.copy(
+    // arbitrary high valuelon to turn off truncation
+    delonfaultHelonight = Int.MaxValuelon,
+    // thelon relonlativelonly high width will causelon somelon wrapping but many of thelon prelontty printelond objeloncts
+    // will belon sparselon (elon.g. Nonelon,\n Nonelon,\n, Nonelon,\n)
+    delonfaultWidth = 300,
+    // uselon relonflelonction to print fielonld namelons (can belon delonlelontelond in Scala 2.13)
+    additionalHandlelonrs = additionalHandlelonrs
   )
 
-  /** Given any scala object, return a String representation of it */
-  private[pipeline_execution_logger] def objectAsString(o: Any): String =
-    printer.tokenize(o).mkString
+  /** Givelonn any scala objelonct, relonturn a String relonprelonselonntation of it */
+  privatelon[pipelonlinelon_elonxeloncution_loggelonr] delonf objelonctAsString(o: Any): String =
+    printelonr.tokelonnizelon(o).mkString
 }
 
-@Singleton
-class AllowListedPipelineExecutionLogger @Inject() (
-  @Flag(ServiceLocal) isServiceLocal: Boolean,
-  @Flag(PipelineExecutionLoggerAllowList) allowList: Seq[String],
-  statsReceiver: StatsReceiver)
-    extends PipelineExecutionLogger
+@Singlelonton
+class AllowListelondPipelonlinelonelonxeloncutionLoggelonr @Injelonct() (
+  @Flag(SelonrvicelonLocal) isSelonrvicelonLocal: Boolelonan,
+  @Flag(PipelonlinelonelonxeloncutionLoggelonrAllowList) allowList: Selonq[String],
+  statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds PipelonlinelonelonxeloncutionLoggelonr
     with Logging {
 
-  private val scopedStats = statsReceiver.scope("AllowListedPipelineExecutionLogger")
+  privatelon val scopelondStats = statsReloncelonivelonr.scopelon("AllowListelondPipelonlinelonelonxeloncutionLoggelonr")
 
-  val allowListRoles: Set[String] = allowList.toSet
+  val allowListRolelons: Selont[String] = allowList.toSelont
 
-  private val futurePool =
-    FuturePools.boundedFixedThreadPool(
-      "AllowListedPipelineExecutionLogger",
-      // single thread, may need to be adjusted higher if it cant keep up with the work queue
-      fixedThreadCount = 1,
-      // arbitrarily large enough to handle spikes without causing large allocations or retaining past multiple GC cycles
-      workQueueSize = 100,
-      scopedStats
+  privatelon val futurelonPool =
+    FuturelonPools.boundelondFixelondThrelonadPool(
+      "AllowListelondPipelonlinelonelonxeloncutionLoggelonr",
+      // singlelon threlonad, may nelonelond to belon adjustelond highelonr if it cant kelonelonp up with thelon work quelonuelon
+      fixelondThrelonadCount = 1,
+      // arbitrarily largelon elonnough to handlelon spikelons without causing largelon allocations or relontaining past multiplelon GC cyclelons
+      workQuelonuelonSizelon = 100,
+      scopelondStats
     )
 
-  private val futureObserver = new FutureObserver[Unit](scopedStats, Seq.empty)
+  privatelon val futurelonObselonrvelonr = nelonw FuturelonObselonrvelonr[Unit](scopelondStats, Selonq.elonmpty)
 
-  private val loggerOutputPath = Try(System.getProperty("log.allow_listed_execution_logger.output"))
+  privatelon val loggelonrOutputPath = Try(Systelonm.gelontPropelonrty("log.allow_listelond_elonxeloncution_loggelonr.output"))
 
-  override def apply(pipelineQuery: PipelineQuery, message: Any): Unit = {
+  ovelonrridelon delonf apply(pipelonlinelonQuelonry: PipelonlinelonQuelonry, melonssagelon: Any): Unit = {
 
-    val userRoles: Set[String] = pipelineQuery.clientContext.userRoles.getOrElse(Set.empty)
+    val uselonrRolelons: Selont[String] = pipelonlinelonQuelonry.clielonntContelonxt.uselonrRolelons.gelontOrelonlselon(Selont.elonmpty)
 
-    // Check if this request is in the allowlist via a cleverly optimized set intersection
-    val allowListed =
-      if (allowListRoles.size > userRoles.size)
-        userRoles.exists(allowListRoles.contains)
-      else
-        allowListRoles.exists(userRoles.contains)
+    // Chelonck if this relonquelonst is in thelon allowlist via a clelonvelonrly optimizelond selont intelonrselonction
+    val allowListelond =
+      if (allowListRolelons.sizelon > uselonrRolelons.sizelon)
+        uselonrRolelons.elonxists(allowListRolelons.contains)
+      elonlselon
+        allowListRolelons.elonxists(uselonrRolelons.contains)
 
-    if (isServiceLocal || allowListed) {
-      futureObserver(
+    if (isSelonrvicelonLocal || allowListelond) {
+      futurelonObselonrvelonr(
         /**
-         * failure to enqueue the work will result with a failed [[com.twitter.util.Future]]
-         * containing a [[java.util.concurrent.RejectedExecutionException]] which the wrapping [[futureObserver]]
-         * will record metrics for.
+         * failurelon to elonnquelonuelon thelon work will relonsult with a failelond [[com.twittelonr.util.Futurelon]]
+         * containing a [[java.util.concurrelonnt.Relonjelonctelondelonxeloncutionelonxcelonption]] which thelon wrapping [[futurelonObselonrvelonr]]
+         * will reloncord melontrics for.
          */
-        futurePool {
-          logger.info(AllowListedPipelineExecutionLogger.objectAsString(message))
+        futurelonPool {
+          loggelonr.info(AllowListelondPipelonlinelonelonxeloncutionLoggelonr.objelonctAsString(melonssagelon))
 
-          if (isServiceLocal && loggerOutputPath.isReturn) {
-            println(s"Logged request to: ${loggerOutputPath.get()}")
+          if (isSelonrvicelonLocal && loggelonrOutputPath.isRelonturn) {
+            println(s"Loggelond relonquelonst to: ${loggelonrOutputPath.gelont()}")
           }
         }
       )

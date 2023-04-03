@@ -1,53 +1,53 @@
-package com.twitter.timelineranker.model
+packagelon com.twittelonr.timelonlinelonrankelonr.modelonl
 
-import com.twitter.timelineranker.{thriftscala => thrift}
-import com.twitter.timelines.model.TweetId
+import com.twittelonr.timelonlinelonrankelonr.{thriftscala => thrift}
+import com.twittelonr.timelonlinelons.modelonl.TwelonelontId
 
-object TweetIdRange {
-  val default: TweetIdRange = TweetIdRange(None, None)
-  val empty: TweetIdRange = TweetIdRange(Some(0L), Some(0L))
+objelonct TwelonelontIdRangelon {
+  val delonfault: TwelonelontIdRangelon = TwelonelontIdRangelon(Nonelon, Nonelon)
+  val elonmpty: TwelonelontIdRangelon = TwelonelontIdRangelon(Somelon(0L), Somelon(0L))
 
-  def fromThrift(range: thrift.TweetIdRange): TweetIdRange = {
-    TweetIdRange(fromId = range.fromId, toId = range.toId)
+  delonf fromThrift(rangelon: thrift.TwelonelontIdRangelon): TwelonelontIdRangelon = {
+    TwelonelontIdRangelon(fromId = rangelon.fromId, toId = rangelon.toId)
   }
 
-  def fromTimelineRange(range: TimelineRange): TweetIdRange = {
-    range match {
-      case r: TweetIdRange => r
-      case _ =>
-        throw new IllegalArgumentException(s"Only Tweet ID range is supported. Found: $range")
+  delonf fromTimelonlinelonRangelon(rangelon: TimelonlinelonRangelon): TwelonelontIdRangelon = {
+    rangelon match {
+      caselon r: TwelonelontIdRangelon => r
+      caselon _ =>
+        throw nelonw IllelongalArgumelonntelonxcelonption(s"Only Twelonelont ID rangelon is supportelond. Found: $rangelon")
     }
   }
 }
 
 /**
- * A range of Tweet IDs with exclusive bounds.
+ * A rangelon of Twelonelont IDs with elonxclusivelon bounds.
  */
-case class TweetIdRange(fromId: Option[TweetId] = None, toId: Option[TweetId] = None)
-    extends TimelineRange {
+caselon class TwelonelontIdRangelon(fromId: Option[TwelonelontId] = Nonelon, toId: Option[TwelonelontId] = Nonelon)
+    elonxtelonnds TimelonlinelonRangelon {
 
   throwIfInvalid()
 
-  def throwIfInvalid(): Unit = {
+  delonf throwIfInvalid(): Unit = {
     (fromId, toId) match {
-      case (Some(fromTweetId), Some(toTweetId)) =>
-        require(fromTweetId <= toTweetId, "fromId must be less than or equal to toId.")
-      case _ => // valid, do nothing.
+      caselon (Somelon(fromTwelonelontId), Somelon(toTwelonelontId)) =>
+        relonquirelon(fromTwelonelontId <= toTwelonelontId, "fromId must belon lelonss than or elonqual to toId.")
+      caselon _ => // valid, do nothing.
     }
   }
 
-  def toThrift: thrift.TweetIdRange = {
-    thrift.TweetIdRange(fromId = fromId, toId = toId)
+  delonf toThrift: thrift.TwelonelontIdRangelon = {
+    thrift.TwelonelontIdRangelon(fromId = fromId, toId = toId)
   }
 
-  def toTimelineRangeThrift: thrift.TimelineRange = {
-    thrift.TimelineRange.TweetIdRange(toThrift)
+  delonf toTimelonlinelonRangelonThrift: thrift.TimelonlinelonRangelon = {
+    thrift.TimelonlinelonRangelon.TwelonelontIdRangelon(toThrift)
   }
 
-  def isEmpty: Boolean = {
+  delonf iselonmpty: Boolelonan = {
     (fromId, toId) match {
-      case (Some(fromId), Some(toId)) if fromId == toId => true
-      case _ => false
+      caselon (Somelon(fromId), Somelon(toId)) if fromId == toId => truelon
+      caselon _ => falselon
     }
   }
 }

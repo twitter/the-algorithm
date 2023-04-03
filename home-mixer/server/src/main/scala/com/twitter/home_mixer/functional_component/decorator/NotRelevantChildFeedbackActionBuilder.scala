@@ -1,54 +1,54 @@
-package com.twitter.home_mixer.functional_component.decorator
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.deloncorator
 
-import com.twitter.home_mixer.model.HomeFeatures.SuggestTypeFeature
-import com.twitter.home_mixer.product.following.model.HomeMixerExternalStrings
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ChildFeedbackAction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.NotRelevant
-import com.twitter.product_mixer.core.product.guice.scope.ProductScoped
-import com.twitter.stringcenter.client.StringCenter
-import com.twitter.timelines.common.{thriftscala => tlc}
-import com.twitter.timelineservice.model.FeedbackInfo
-import com.twitter.timelineservice.model.FeedbackMetadata
-import com.twitter.timelineservice.{thriftscala => tlst}
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.SuggelonstTypelonFelonaturelon
+import com.twittelonr.homelon_mixelonr.product.following.modelonl.HomelonMixelonrelonxtelonrnalStrings
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.TwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.ChildFelonelondbackAction
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.NotRelonlelonvant
+import com.twittelonr.product_mixelonr.corelon.product.guicelon.scopelon.ProductScopelond
+import com.twittelonr.stringcelonntelonr.clielonnt.StringCelonntelonr
+import com.twittelonr.timelonlinelons.common.{thriftscala => tlc}
+import com.twittelonr.timelonlinelonselonrvicelon.modelonl.FelonelondbackInfo
+import com.twittelonr.timelonlinelonselonrvicelon.modelonl.FelonelondbackMelontadata
+import com.twittelonr.timelonlinelonselonrvicelon.{thriftscala => tlst}
 
-import javax.inject.Inject
-import javax.inject.Singleton
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-case class NotRelevantChildFeedbackActionBuilder @Inject() (
-  @ProductScoped stringCenter: StringCenter,
-  externalStrings: HomeMixerExternalStrings) {
+@Singlelonton
+caselon class NotRelonlelonvantChildFelonelondbackActionBuildelonr @Injelonct() (
+  @ProductScopelond stringCelonntelonr: StringCelonntelonr,
+  elonxtelonrnalStrings: HomelonMixelonrelonxtelonrnalStrings) {
 
-  def apply(
-    candidate: TweetCandidate,
-    candidateFeatures: FeatureMap
-  ): Option[ChildFeedbackAction] = {
-    val prompt = stringCenter.prepare(externalStrings.notRelevantString)
-    val confirmation = stringCenter.prepare(externalStrings.notRelevantConfirmationString)
-    val feedbackMetadata = FeedbackMetadata(
-      engagementType = None,
-      entityIds = Seq(tlc.FeedbackEntity.TweetId(candidate.id)),
-      ttl = Some(FeedbackUtil.FeedbackTtl))
-    val feedbackUrl = FeedbackInfo.feedbackUrl(
-      feedbackType = tlst.FeedbackType.NotRelevant,
-      feedbackMetadata = feedbackMetadata,
-      injectionType = candidateFeatures.getOrElse(SuggestTypeFeature, None)
+  delonf apply(
+    candidatelon: TwelonelontCandidatelon,
+    candidatelonFelonaturelons: FelonaturelonMap
+  ): Option[ChildFelonelondbackAction] = {
+    val prompt = stringCelonntelonr.prelonparelon(elonxtelonrnalStrings.notRelonlelonvantString)
+    val confirmation = stringCelonntelonr.prelonparelon(elonxtelonrnalStrings.notRelonlelonvantConfirmationString)
+    val felonelondbackMelontadata = FelonelondbackMelontadata(
+      elonngagelonmelonntTypelon = Nonelon,
+      elonntityIds = Selonq(tlc.Felonelondbackelonntity.TwelonelontId(candidatelon.id)),
+      ttl = Somelon(FelonelondbackUtil.FelonelondbackTtl))
+    val felonelondbackUrl = FelonelondbackInfo.felonelondbackUrl(
+      felonelondbackTypelon = tlst.FelonelondbackTypelon.NotRelonlelonvant,
+      felonelondbackMelontadata = felonelondbackMelontadata,
+      injelonctionTypelon = candidatelonFelonaturelons.gelontOrelonlselon(SuggelonstTypelonFelonaturelon, Nonelon)
     )
 
-    Some(
-      ChildFeedbackAction(
-        feedbackType = NotRelevant,
-        prompt = Some(prompt),
-        confirmation = Some(confirmation),
-        feedbackUrl = Some(feedbackUrl),
-        hasUndoAction = Some(true),
-        confirmationDisplayType = None,
-        clientEventInfo = None,
-        icon = None,
-        richBehavior = None,
-        subprompt = None
+    Somelon(
+      ChildFelonelondbackAction(
+        felonelondbackTypelon = NotRelonlelonvant,
+        prompt = Somelon(prompt),
+        confirmation = Somelon(confirmation),
+        felonelondbackUrl = Somelon(felonelondbackUrl),
+        hasUndoAction = Somelon(truelon),
+        confirmationDisplayTypelon = Nonelon,
+        clielonntelonvelonntInfo = Nonelon,
+        icon = Nonelon,
+        richBelonhavior = Nonelon,
+        subprompt = Nonelon
       )
     )
   }

@@ -1,242 +1,242 @@
-package com.twitter.simclusters_v2.scio.bq_generation
-package ftr_tweet
+packagelon com.twittelonr.simclustelonrs_v2.scio.bq_gelonnelonration
+packagelon ftr_twelonelont
 
-import com.google.api.services.bigquery.model.TimePartitioning
-import com.spotify.scio.ScioContext
-import com.spotify.scio.coders.Coder
-import com.twitter.beam.io.dal.DAL
-import com.twitter.beam.io.fs.multiformat.PathLayout
-import com.twitter.beam.job.DateRangeOptions
-import com.twitter.conversions.DurationOps.richDurationFromInt
-import com.twitter.dal.client.dataset.KeyValDALDataset
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.scio_internal.coders.ThriftStructLazyBinaryScroogeCoder
-import com.twitter.scio_internal.job.ScioBeamJob
-import com.twitter.scrooge.ThriftStruct
-import com.twitter.simclusters_v2.scio.bq_generation.common.BQTableDetails
-import com.twitter.simclusters_v2.scio.bq_generation.common.BQGenerationUtil.getInterestedIn2020SQL
-import com.twitter.simclusters_v2.thriftscala.CandidateTweets
-import com.twitter.simclusters_v2.thriftscala.CandidateTweetsList
-import com.twitter.tcdc.bqblaster.beam.syntax._
-import com.twitter.tcdc.bqblaster.core.avro.TypedProjection
-import com.twitter.tcdc.bqblaster.core.transform.RootTransform
-import java.time.Instant
-import org.apache.beam.sdk.io.gcp.bigquery.BigQueryIO
-import com.twitter.simclusters_v2.thriftscala.CandidateTweet
-import org.apache.avro.generic.GenericData
-import scala.collection.mutable.ListBuffer
-import org.apache.beam.sdk.io.gcp.bigquery.SchemaAndRecord
-import org.apache.beam.sdk.transforms.SerializableFunction
-import org.apache.avro.generic.GenericRecord
-import com.twitter.wtf.beam.bq_embedding_export.BQQueryUtils
+import com.googlelon.api.selonrvicelons.bigquelonry.modelonl.TimelonPartitioning
+import com.spotify.scio.ScioContelonxt
+import com.spotify.scio.codelonrs.Codelonr
+import com.twittelonr.belonam.io.dal.DAL
+import com.twittelonr.belonam.io.fs.multiformat.PathLayout
+import com.twittelonr.belonam.job.DatelonRangelonOptions
+import com.twittelonr.convelonrsions.DurationOps.richDurationFromInt
+import com.twittelonr.dal.clielonnt.dataselont.KelonyValDALDataselont
+import com.twittelonr.scalding_intelonrnal.multiformat.format.kelonyval.KelonyVal
+import com.twittelonr.scio_intelonrnal.codelonrs.ThriftStructLazyBinaryScroogelonCodelonr
+import com.twittelonr.scio_intelonrnal.job.ScioBelonamJob
+import com.twittelonr.scroogelon.ThriftStruct
+import com.twittelonr.simclustelonrs_v2.scio.bq_gelonnelonration.common.BQTablelonDelontails
+import com.twittelonr.simclustelonrs_v2.scio.bq_gelonnelonration.common.BQGelonnelonrationUtil.gelontIntelonrelonstelondIn2020SQL
+import com.twittelonr.simclustelonrs_v2.thriftscala.CandidatelonTwelonelonts
+import com.twittelonr.simclustelonrs_v2.thriftscala.CandidatelonTwelonelontsList
+import com.twittelonr.tcdc.bqblastelonr.belonam.syntax._
+import com.twittelonr.tcdc.bqblastelonr.corelon.avro.TypelondProjelonction
+import com.twittelonr.tcdc.bqblastelonr.corelon.transform.RootTransform
+import java.timelon.Instant
+import org.apachelon.belonam.sdk.io.gcp.bigquelonry.BigQuelonryIO
+import com.twittelonr.simclustelonrs_v2.thriftscala.CandidatelonTwelonelont
+import org.apachelon.avro.gelonnelonric.GelonnelonricData
+import scala.collelonction.mutablelon.ListBuffelonr
+import org.apachelon.belonam.sdk.io.gcp.bigquelonry.SchelonmaAndReloncord
+import org.apachelon.belonam.sdk.transforms.SelonrializablelonFunction
+import org.apachelon.avro.gelonnelonric.GelonnelonricReloncord
+import com.twittelonr.wtf.belonam.bq_elonmbelondding_elonxport.BQQuelonryUtils
 
-trait FTRJob extends ScioBeamJob[DateRangeOptions] {
-  // Configs to set for different type of embeddings and jobs
-  val isAdhoc: Boolean
-  val outputTable: BQTableDetails
-  val keyValDatasetOutputPath: String
-  val tweetRecommentationsSnapshotDataset: KeyValDALDataset[KeyVal[Long, CandidateTweetsList]]
-  val scoreKey: String
-  val scoreColumn: String
+trait FTRJob elonxtelonnds ScioBelonamJob[DatelonRangelonOptions] {
+  // Configs to selont for diffelonrelonnt typelon of elonmbelonddings and jobs
+  val isAdhoc: Boolelonan
+  val outputTablelon: BQTablelonDelontails
+  val kelonyValDataselontOutputPath: String
+  val twelonelontReloncommelonntationsSnapshotDataselont: KelonyValDALDataselont[KelonyVal[Long, CandidatelonTwelonelontsList]]
+  val scorelonKelony: String
+  val scorelonColumn: String
 
-  // Base configs
-  val projectId = "twttr-recos-ml-prod"
-  val environment: DAL.Env = if (isAdhoc) DAL.Environment.Dev else DAL.Environment.Prod
+  // Baselon configs
+  val projelonctId = "twttr-reloncos-ml-prod"
+  val elonnvironmelonnt: DAL.elonnv = if (isAdhoc) DAL.elonnvironmelonnt.Delonv elonlselon DAL.elonnvironmelonnt.Prod
 
-  override implicit def scroogeCoder[T <: ThriftStruct: Manifest]: Coder[T] =
-    ThriftStructLazyBinaryScroogeCoder.scroogeCoder
+  ovelonrridelon implicit delonf scroogelonCodelonr[T <: ThriftStruct: Manifelonst]: Codelonr[T] =
+    ThriftStructLazyBinaryScroogelonCodelonr.scroogelonCodelonr
 
-  override def configurePipeline(sc: ScioContext, opts: DateRangeOptions): Unit = {
-    // The time when the job is scheduled
-    val queryTimestamp = opts.interval.getEnd
+  ovelonrridelon delonf configurelonPipelonlinelon(sc: ScioContelonxt, opts: DatelonRangelonOptions): Unit = {
+    // Thelon timelon whelonn thelon job is schelondulelond
+    val quelonryTimelonstamp = opts.intelonrval.gelontelonnd
 
-    // Parse tweetId candidates column
-    def parseTweetIdColumn(
-      genericRecord: GenericRecord,
-      columnName: String
-    ): List[CandidateTweet] = {
-      val tweetIds: GenericData.Array[GenericRecord] =
-        genericRecord.get(columnName).asInstanceOf[GenericData.Array[GenericRecord]]
-      val results: ListBuffer[CandidateTweet] = new ListBuffer[CandidateTweet]()
-      tweetIds.forEach((sc: GenericRecord) => {
-        results += CandidateTweet(
-          tweetId = sc.get("tweetId").toString.toLong,
-          score = Some(sc.get("cosineSimilarityScore").toString.toDouble)
+    // Parselon twelonelontId candidatelons column
+    delonf parselonTwelonelontIdColumn(
+      gelonnelonricReloncord: GelonnelonricReloncord,
+      columnNamelon: String
+    ): List[CandidatelonTwelonelont] = {
+      val twelonelontIds: GelonnelonricData.Array[GelonnelonricReloncord] =
+        gelonnelonricReloncord.gelont(columnNamelon).asInstancelonOf[GelonnelonricData.Array[GelonnelonricReloncord]]
+      val relonsults: ListBuffelonr[CandidatelonTwelonelont] = nelonw ListBuffelonr[CandidatelonTwelonelont]()
+      twelonelontIds.forelonach((sc: GelonnelonricReloncord) => {
+        relonsults += CandidatelonTwelonelont(
+          twelonelontId = sc.gelont("twelonelontId").toString.toLong,
+          scorelon = Somelon(sc.gelont("cosinelonSimilarityScorelon").toString.toDoublelon)
         )
       })
-      results.toList
+      relonsults.toList
     }
 
-    //Function that parses the GenericRecord results we read from BQ
-    val parseUserToTweetRecommendationsFunc =
-      new SerializableFunction[SchemaAndRecord, UserToTweetRecommendations] {
-        override def apply(record: SchemaAndRecord): UserToTweetRecommendations = {
-          val genericRecord: GenericRecord = record.getRecord
-          UserToTweetRecommendations(
-            userId = genericRecord.get("userId").toString.toLong,
-            tweetCandidates = parseTweetIdColumn(genericRecord, "tweets"),
+    //Function that parselons thelon GelonnelonricReloncord relonsults welon relonad from BQ
+    val parselonUselonrToTwelonelontReloncommelonndationsFunc =
+      nelonw SelonrializablelonFunction[SchelonmaAndReloncord, UselonrToTwelonelontReloncommelonndations] {
+        ovelonrridelon delonf apply(reloncord: SchelonmaAndReloncord): UselonrToTwelonelontReloncommelonndations = {
+          val gelonnelonricReloncord: GelonnelonricReloncord = reloncord.gelontReloncord
+          UselonrToTwelonelontReloncommelonndations(
+            uselonrId = gelonnelonricReloncord.gelont("uselonrId").toString.toLong,
+            twelonelontCandidatelons = parselonTwelonelontIdColumn(gelonnelonricReloncord, "twelonelonts"),
           )
         }
       }
 
-    val tweetEmbeddingTemplateVariables =
+    val twelonelontelonmbelonddingTelonmplatelonVariablelons =
       Map(
-        "START_TIME" -> queryTimestamp.minusDays(1).toString(),
-        "END_TIME" -> queryTimestamp.toString(),
-        "TWEET_SAMPLE_RATE" -> Config.TweetSampleRate.toString,
-        "ENG_SAMPLE_RATE" -> Config.EngSampleRate.toString,
-        "MIN_TWEET_FAVS" -> Config.MinTweetFavs.toString,
-        "MIN_TWEET_IMPS" -> Config.MinTweetImps.toString,
-        "MAX_TWEET_FTR" -> Config.MaxTweetFTR.toString,
-        "MAX_USER_LOG_N_IMPS" -> Config.MaxUserLogNImps.toString,
-        "MAX_USER_LOG_N_FAVS" -> Config.MaxUserLogNFavs.toString,
-        "MAX_USER_FTR" -> Config.MaxUserFTR.toString,
-        "TWEET_EMBEDDING_LENGTH" -> Config.SimClustersTweetEmbeddingsGenerationEmbeddingLength.toString,
-        "HALFLIFE" -> Config.SimClustersTweetEmbeddingsGenerationHalfLife.toString,
-        "SCORE_COLUMN" -> scoreColumn,
-        "SCORE_KEY" -> scoreKey,
+        "START_TIMelon" -> quelonryTimelonstamp.minusDays(1).toString(),
+        "elonND_TIMelon" -> quelonryTimelonstamp.toString(),
+        "TWelonelonT_SAMPLelon_RATelon" -> Config.TwelonelontSamplelonRatelon.toString,
+        "elonNG_SAMPLelon_RATelon" -> Config.elonngSamplelonRatelon.toString,
+        "MIN_TWelonelonT_FAVS" -> Config.MinTwelonelontFavs.toString,
+        "MIN_TWelonelonT_IMPS" -> Config.MinTwelonelontImps.toString,
+        "MAX_TWelonelonT_FTR" -> Config.MaxTwelonelontFTR.toString,
+        "MAX_USelonR_LOG_N_IMPS" -> Config.MaxUselonrLogNImps.toString,
+        "MAX_USelonR_LOG_N_FAVS" -> Config.MaxUselonrLogNFavs.toString,
+        "MAX_USelonR_FTR" -> Config.MaxUselonrFTR.toString,
+        "TWelonelonT_elonMBelonDDING_LelonNGTH" -> Config.SimClustelonrsTwelonelontelonmbelonddingsGelonnelonrationelonmbelonddingLelonngth.toString,
+        "HALFLIFelon" -> Config.SimClustelonrsTwelonelontelonmbelonddingsGelonnelonrationHalfLifelon.toString,
+        "SCORelon_COLUMN" -> scorelonColumn,
+        "SCORelon_KelonY" -> scorelonKelony,
       )
 
-    val tweetEmbeddingSql = BQQueryUtils.getBQQueryFromSqlFile(
-      "/com/twitter/simclusters_v2/scio/bq_generation/ftr_tweet/sql/ftr_tweet_embeddings.sql",
-      tweetEmbeddingTemplateVariables)
-    val consumerEmbeddingSql = getInterestedIn2020SQL(queryTimestamp, 14)
+    val twelonelontelonmbelonddingSql = BQQuelonryUtils.gelontBQQuelonryFromSqlFilelon(
+      "/com/twittelonr/simclustelonrs_v2/scio/bq_gelonnelonration/ftr_twelonelont/sql/ftr_twelonelont_elonmbelonddings.sql",
+      twelonelontelonmbelonddingTelonmplatelonVariablelons)
+    val consumelonrelonmbelonddingSql = gelontIntelonrelonstelondIn2020SQL(quelonryTimelonstamp, 14)
 
-    val tweetRecommendationsTemplateVariables =
+    val twelonelontReloncommelonndationsTelonmplatelonVariablelons =
       Map(
-        "CONSUMER_EMBEDDINGS_SQL" -> consumerEmbeddingSql,
-        "TWEET_EMBEDDINGS_SQL" -> tweetEmbeddingSql,
-        "TOP_N_CLUSTER_PER_SOURCE_EMBEDDING" -> Config.SimClustersANNTopNClustersPerSourceEmbedding.toString,
-        "TOP_M_TWEETS_PER_CLUSTER" -> Config.SimClustersANNTopMTweetsPerCluster.toString,
-        "TOP_K_TWEETS_PER_USER_REQUEST" -> Config.SimClustersANNTopKTweetsPerUserRequest.toString,
+        "CONSUMelonR_elonMBelonDDINGS_SQL" -> consumelonrelonmbelonddingSql,
+        "TWelonelonT_elonMBelonDDINGS_SQL" -> twelonelontelonmbelonddingSql,
+        "TOP_N_CLUSTelonR_PelonR_SOURCelon_elonMBelonDDING" -> Config.SimClustelonrsANNTopNClustelonrsPelonrSourcelonelonmbelondding.toString,
+        "TOP_M_TWelonelonTS_PelonR_CLUSTelonR" -> Config.SimClustelonrsANNTopMTwelonelontsPelonrClustelonr.toString,
+        "TOP_K_TWelonelonTS_PelonR_USelonR_RelonQUelonST" -> Config.SimClustelonrsANNTopKTwelonelontsPelonrUselonrRelonquelonst.toString,
       )
-    val tweetRecommendationsSql = BQQueryUtils.getBQQueryFromSqlFile(
-      "/com/twitter/simclusters_v2/scio/bq_generation/sql/tweets_ann.sql",
-      tweetRecommendationsTemplateVariables)
+    val twelonelontReloncommelonndationsSql = BQQuelonryUtils.gelontBQQuelonryFromSqlFilelon(
+      "/com/twittelonr/simclustelonrs_v2/scio/bq_gelonnelonration/sql/twelonelonts_ann.sql",
+      twelonelontReloncommelonndationsTelonmplatelonVariablelons)
 
-    val tweetRecommendations = sc.customInput(
-      s"SimClusters FTR BQ ANN",
-      BigQueryIO
-        .read(parseUserToTweetRecommendationsFunc)
-        .fromQuery(tweetRecommendationsSql)
+    val twelonelontReloncommelonndations = sc.customInput(
+      s"SimClustelonrs FTR BQ ANN",
+      BigQuelonryIO
+        .relonad(parselonUselonrToTwelonelontReloncommelonndationsFunc)
+        .fromQuelonry(twelonelontReloncommelonndationsSql)
         .usingStandardSql()
     )
 
-    //Setup BQ writer
-    val ingestionTime = opts.getDate().value.getEnd.toDate
-    val bqFieldsTransform = RootTransform
-      .Builder()
-      .withPrependedFields("ingestionTime" -> TypedProjection.fromConstant(ingestionTime))
-    val timePartitioning = new TimePartitioning()
-      .setType("HOUR").setField("ingestionTime").setExpirationMs(3.days.inMilliseconds)
-    val bqWriter = BigQueryIO
-      .write[CandidateTweets]
-      .to(outputTable.toString)
-      .withExtendedErrorInfo()
-      .withTimePartitioning(timePartitioning)
-      .withLoadJobProjectId(projectId)
-      .withThriftSupport(bqFieldsTransform.build(), AvroConverter.Legacy)
-      .withCreateDisposition(BigQueryIO.Write.CreateDisposition.CREATE_IF_NEEDED)
-      .withWriteDisposition(BigQueryIO.Write.WriteDisposition.WRITE_APPEND)
+    //Selontup BQ writelonr
+    val ingelonstionTimelon = opts.gelontDatelon().valuelon.gelontelonnd.toDatelon
+    val bqFielonldsTransform = RootTransform
+      .Buildelonr()
+      .withPrelonpelonndelondFielonlds("ingelonstionTimelon" -> TypelondProjelonction.fromConstant(ingelonstionTimelon))
+    val timelonPartitioning = nelonw TimelonPartitioning()
+      .selontTypelon("HOUR").selontFielonld("ingelonstionTimelon").selontelonxpirationMs(3.days.inMilliselonconds)
+    val bqWritelonr = BigQuelonryIO
+      .writelon[CandidatelonTwelonelonts]
+      .to(outputTablelon.toString)
+      .withelonxtelonndelondelonrrorInfo()
+      .withTimelonPartitioning(timelonPartitioning)
+      .withLoadJobProjelonctId(projelonctId)
+      .withThriftSupport(bqFielonldsTransform.build(), AvroConvelonrtelonr.Lelongacy)
+      .withCrelonatelonDisposition(BigQuelonryIO.Writelon.CrelonatelonDisposition.CRelonATelon_IF_NelonelonDelonD)
+      .withWritelonDisposition(BigQuelonryIO.Writelon.WritelonDisposition.WRITelon_APPelonND)
 
-    // Save Tweet ANN results to BQ
-    tweetRecommendations
-      .map { userToTweetRecommendations =>
+    // Savelon Twelonelont ANN relonsults to BQ
+    twelonelontReloncommelonndations
+      .map { uselonrToTwelonelontReloncommelonndations =>
         {
-          CandidateTweets(
-            targetUserId = userToTweetRecommendations.userId,
-            recommendedTweets = userToTweetRecommendations.tweetCandidates)
+          CandidatelonTwelonelonts(
+            targelontUselonrId = uselonrToTwelonelontReloncommelonndations.uselonrId,
+            reloncommelonndelondTwelonelonts = uselonrToTwelonelontReloncommelonndations.twelonelontCandidatelons)
         }
       }
-      .saveAsCustomOutput(s"WriteToBQTable - $outputTable", bqWriter)
+      .savelonAsCustomOutput(s"WritelonToBQTablelon - $outputTablelon", bqWritelonr)
 
     val RootMHPath: String = Config.FTRRootMHPath
     val AdhocRootPath = Config.FTRAdhocpath
 
-    // Save Tweet ANN results as KeyValSnapshotDataset
-    tweetRecommendations
-      .map { userToTweetRecommendations =>
-        KeyVal(
-          userToTweetRecommendations.userId,
-          CandidateTweetsList(userToTweetRecommendations.tweetCandidates))
-      }.saveAsCustomOutput(
-        name = "WriteFtrTweetRecommendationsToKeyValDataset",
-        DAL.writeVersionedKeyVal(
-          tweetRecommentationsSnapshotDataset,
-          PathLayout.VersionedPath(prefix =
+    // Savelon Twelonelont ANN relonsults as KelonyValSnapshotDataselont
+    twelonelontReloncommelonndations
+      .map { uselonrToTwelonelontReloncommelonndations =>
+        KelonyVal(
+          uselonrToTwelonelontReloncommelonndations.uselonrId,
+          CandidatelonTwelonelontsList(uselonrToTwelonelontReloncommelonndations.twelonelontCandidatelons))
+      }.savelonAsCustomOutput(
+        namelon = "WritelonFtrTwelonelontReloncommelonndationsToKelonyValDataselont",
+        DAL.writelonVelonrsionelondKelonyVal(
+          twelonelontReloncommelonntationsSnapshotDataselont,
+          PathLayout.VelonrsionelondPath(prelonfix =
             ((if (!isAdhoc)
                 RootMHPath
-              else
+              elonlselon
                 AdhocRootPath)
-              + keyValDatasetOutputPath)),
-          instant = Instant.ofEpochMilli(opts.interval.getEndMillis - 1L),
-          environmentOverride = environment,
+              + kelonyValDataselontOutputPath)),
+          instant = Instant.ofelonpochMilli(opts.intelonrval.gelontelonndMillis - 1L),
+          elonnvironmelonntOvelonrridelon = elonnvironmelonnt,
         )
       )
   }
 
 }
 
-object FTRAdhocJob extends FTRJob {
-  override val isAdhoc = true
-  override val outputTable: BQTableDetails =
-    BQTableDetails("twttr-recos-ml-prod", "simclusters", "offline_tweet_recommendations_ftr_adhoc")
-  override val keyValDatasetOutputPath = Config.IIKFFTRAdhocANNOutputPath
+objelonct FTRAdhocJob elonxtelonnds FTRJob {
+  ovelonrridelon val isAdhoc = truelon
+  ovelonrridelon val outputTablelon: BQTablelonDelontails =
+    BQTablelonDelontails("twttr-reloncos-ml-prod", "simclustelonrs", "offlinelon_twelonelont_reloncommelonndations_ftr_adhoc")
+  ovelonrridelon val kelonyValDataselontOutputPath = Config.IIKFFTRAdhocANNOutputPath
 
-  override val tweetRecommentationsSnapshotDataset: KeyValDALDataset[
-    KeyVal[Long, CandidateTweetsList]
+  ovelonrridelon val twelonelontReloncommelonntationsSnapshotDataselont: KelonyValDALDataselont[
+    KelonyVal[Long, CandidatelonTwelonelontsList]
   ] =
-    OfflineTweetRecommendationsFtrAdhocScalaDataset
-  override val scoreColumn = "ftrat5_decayed_pop_bias_1000_rank_decay_1_1_embedding"
-  override val scoreKey = "ftrat5_decayed_pop_bias_1000_rank_decay_1_1"
+    OfflinelonTwelonelontReloncommelonndationsFtrAdhocScalaDataselont
+  ovelonrridelon val scorelonColumn = "ftrat5_deloncayelond_pop_bias_1000_rank_deloncay_1_1_elonmbelondding"
+  ovelonrridelon val scorelonKelony = "ftrat5_deloncayelond_pop_bias_1000_rank_deloncay_1_1"
 }
 
-object IIKF2020DecayedSumBatchJobProd extends FTRJob {
-  override val isAdhoc = false
-  override val outputTable: BQTableDetails = BQTableDetails(
+objelonct IIKF2020DeloncayelondSumBatchJobProd elonxtelonnds FTRJob {
+  ovelonrridelon val isAdhoc = falselon
+  ovelonrridelon val outputTablelon: BQTablelonDelontails = BQTablelonDelontails(
     "twttr-bq-cassowary-prod",
-    "user",
-    "offline_tweet_recommendations_decayed_sum"
+    "uselonr",
+    "offlinelon_twelonelont_reloncommelonndations_deloncayelond_sum"
   )
-  override val keyValDatasetOutputPath = Config.IIKFDecayedSumANNOutputPath
-  override val tweetRecommentationsSnapshotDataset: KeyValDALDataset[
-    KeyVal[Long, CandidateTweetsList]
+  ovelonrridelon val kelonyValDataselontOutputPath = Config.IIKFDeloncayelondSumANNOutputPath
+  ovelonrridelon val twelonelontReloncommelonntationsSnapshotDataselont: KelonyValDALDataselont[
+    KelonyVal[Long, CandidatelonTwelonelontsList]
   ] =
-    OfflineTweetRecommendationsDecayedSumScalaDataset
-  override val scoreColumn = "dec_sum_logfavScoreClusterNormalizedOnly_embedding"
-  override val scoreKey = "dec_sum_logfavScoreClusterNormalizedOnly"
+    OfflinelonTwelonelontReloncommelonndationsDeloncayelondSumScalaDataselont
+  ovelonrridelon val scorelonColumn = "delonc_sum_logfavScorelonClustelonrNormalizelondOnly_elonmbelondding"
+  ovelonrridelon val scorelonKelony = "delonc_sum_logfavScorelonClustelonrNormalizelondOnly"
 }
 
-object IIKF2020FTRAt5Pop1000batchJobProd extends FTRJob {
-  override val isAdhoc = false
-  override val outputTable: BQTableDetails = BQTableDetails(
+objelonct IIKF2020FTRAt5Pop1000batchJobProd elonxtelonnds FTRJob {
+  ovelonrridelon val isAdhoc = falselon
+  ovelonrridelon val outputTablelon: BQTablelonDelontails = BQTablelonDelontails(
     "twttr-bq-cassowary-prod",
-    "user",
-    "offline_tweet_recommendations_ftrat5_pop_biased_1000")
-  override val keyValDatasetOutputPath = Config.IIKFFTRAt5Pop1000ANNOutputPath
-  override val tweetRecommentationsSnapshotDataset: KeyValDALDataset[
-    KeyVal[Long, CandidateTweetsList]
+    "uselonr",
+    "offlinelon_twelonelont_reloncommelonndations_ftrat5_pop_biaselond_1000")
+  ovelonrridelon val kelonyValDataselontOutputPath = Config.IIKFFTRAt5Pop1000ANNOutputPath
+  ovelonrridelon val twelonelontReloncommelonntationsSnapshotDataselont: KelonyValDALDataselont[
+    KelonyVal[Long, CandidatelonTwelonelontsList]
   ] =
-    OfflineTweetRecommendationsFtrat5PopBiased1000ScalaDataset
-  override val scoreColumn = "ftrat5_decayed_pop_bias_1000_rank_decay_1_1_embedding"
-  override val scoreKey = "ftrat5_decayed_pop_bias_1000_rank_decay_1_1"
+    OfflinelonTwelonelontReloncommelonndationsFtrat5PopBiaselond1000ScalaDataselont
+  ovelonrridelon val scorelonColumn = "ftrat5_deloncayelond_pop_bias_1000_rank_deloncay_1_1_elonmbelondding"
+  ovelonrridelon val scorelonKelony = "ftrat5_deloncayelond_pop_bias_1000_rank_deloncay_1_1"
 }
 
-object IIKF2020FTRAt5Pop10000batchJobProd extends FTRJob {
-  override val isAdhoc = false
-  override val outputTable: BQTableDetails = BQTableDetails(
+objelonct IIKF2020FTRAt5Pop10000batchJobProd elonxtelonnds FTRJob {
+  ovelonrridelon val isAdhoc = falselon
+  ovelonrridelon val outputTablelon: BQTablelonDelontails = BQTablelonDelontails(
     "twttr-bq-cassowary-prod",
-    "user",
-    "offline_tweet_recommendations_ftrat5_pop_biased_10000")
-  override val keyValDatasetOutputPath = Config.IIKFFTRAt5Pop10000ANNOutputPath
-  override val tweetRecommentationsSnapshotDataset: KeyValDALDataset[
-    KeyVal[Long, CandidateTweetsList]
+    "uselonr",
+    "offlinelon_twelonelont_reloncommelonndations_ftrat5_pop_biaselond_10000")
+  ovelonrridelon val kelonyValDataselontOutputPath = Config.IIKFFTRAt5Pop10000ANNOutputPath
+  ovelonrridelon val twelonelontReloncommelonntationsSnapshotDataselont: KelonyValDALDataselont[
+    KelonyVal[Long, CandidatelonTwelonelontsList]
   ] =
-    OfflineTweetRecommendationsFtrat5PopBiased10000ScalaDataset
-  override val scoreColumn = "ftrat5_decayed_pop_bias_10000_rank_decay_1_1_embedding"
-  override val scoreKey = "ftrat5_decayed_pop_bias_10000_rank_decay_1_1"
+    OfflinelonTwelonelontReloncommelonndationsFtrat5PopBiaselond10000ScalaDataselont
+  ovelonrridelon val scorelonColumn = "ftrat5_deloncayelond_pop_bias_10000_rank_deloncay_1_1_elonmbelondding"
+  ovelonrridelon val scorelonKelony = "ftrat5_deloncayelond_pop_bias_10000_rank_deloncay_1_1"
 }
 
-case class UserToTweetRecommendations(
-  userId: Long,
-  tweetCandidates: List[CandidateTweet])
+caselon class UselonrToTwelonelontReloncommelonndations(
+  uselonrId: Long,
+  twelonelontCandidatelons: List[CandidatelonTwelonelont])

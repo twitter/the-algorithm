@@ -1,202 +1,202 @@
-package com.twitter.search.earlybird_root;
+packagelon com.twittelonr.selonarch.elonarlybird_root;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import javax.inject.Inject;
+import javax.injelonct.Injelonct;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
+import com.googlelon.common.baselon.Prelonconditions;
+import com.googlelon.common.collelonct.Lists;
+import com.googlelon.common.collelonct.Maps;
+import com.googlelon.common.collelonct.Selonts;
 
-import com.twitter.search.common.partitioning.base.PartitionDataType;
-import com.twitter.search.common.partitioning.base.PartitionMappingManager;
-import com.twitter.search.common.root.ScatterGatherSupport;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.common.util.earlybird.EarlybirdResponseUtil;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.search.earlybird.thrift.ThriftSearchResults;
-import com.twitter.search.earlybird_root.common.EarlybirdFeatureSchemaMerger;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.earlybird_root.mergers.EarlybirdResponseMerger;
-import com.twitter.search.earlybird_root.mergers.PartitionResponseAccumulator;
-import com.twitter.search.queryparser.query.Query;
-import com.twitter.util.Future;
+import com.twittelonr.selonarch.common.partitioning.baselon.PartitionDataTypelon;
+import com.twittelonr.selonarch.common.partitioning.baselon.PartitionMappingManagelonr;
+import com.twittelonr.selonarch.common.root.ScattelonrGathelonrSupport;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdClustelonr;
+import com.twittelonr.selonarch.common.util.elonarlybird.elonarlybirdRelonsponselonUtil;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonquelonst;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselonCodelon;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsults;
+import com.twittelonr.selonarch.elonarlybird_root.common.elonarlybirdFelonaturelonSchelonmaMelonrgelonr;
+import com.twittelonr.selonarch.elonarlybird_root.common.elonarlybirdRelonquelonstContelonxt;
+import com.twittelonr.selonarch.elonarlybird_root.melonrgelonrs.elonarlybirdRelonsponselonMelonrgelonr;
+import com.twittelonr.selonarch.elonarlybird_root.melonrgelonrs.PartitionRelonsponselonAccumulator;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.Quelonry;
+import com.twittelonr.util.Futurelon;
 
-import static com.twitter.search.earlybird_root.visitors.MultiTermDisjunctionPerPartitionVisitor.NO_MATCH_CONJUNCTION;
+import static com.twittelonr.selonarch.elonarlybird_root.visitors.MultiTelonrmDisjunctionPelonrPartitionVisitor.NO_MATCH_CONJUNCTION;
 
-public class EarlybirdServiceScatterGatherSupport
-    implements ScatterGatherSupport<EarlybirdRequestContext, EarlybirdResponse> {
+public class elonarlybirdSelonrvicelonScattelonrGathelonrSupport
+    implelonmelonnts ScattelonrGathelonrSupport<elonarlybirdRelonquelonstContelonxt, elonarlybirdRelonsponselon> {
 
-  private static final EarlybirdResponse EMPTY_RESPONSE = newEmptyResponse();
+  privatelon static final elonarlybirdRelonsponselon elonMPTY_RelonSPONSelon = nelonwelonmptyRelonsponselon();
 
-  private final PartitionMappingManager partitionMappingManager;
-  private final EarlybirdCluster cluster;
-  private final EarlybirdFeatureSchemaMerger featureSchemaMerger;
+  privatelon final PartitionMappingManagelonr partitionMappingManagelonr;
+  privatelon final elonarlybirdClustelonr clustelonr;
+  privatelon final elonarlybirdFelonaturelonSchelonmaMelonrgelonr felonaturelonSchelonmaMelonrgelonr;
 
-  @Inject
-  protected EarlybirdServiceScatterGatherSupport(PartitionMappingManager partitionMappingManager,
-                                                 EarlybirdCluster cluster,
-                                                 EarlybirdFeatureSchemaMerger featureSchemaMerger) {
-    this.partitionMappingManager = partitionMappingManager;
-    this.cluster = cluster;
-    this.featureSchemaMerger = featureSchemaMerger;
+  @Injelonct
+  protelonctelond elonarlybirdSelonrvicelonScattelonrGathelonrSupport(PartitionMappingManagelonr partitionMappingManagelonr,
+                                                 elonarlybirdClustelonr clustelonr,
+                                                 elonarlybirdFelonaturelonSchelonmaMelonrgelonr felonaturelonSchelonmaMelonrgelonr) {
+    this.partitionMappingManagelonr = partitionMappingManagelonr;
+    this.clustelonr = clustelonr;
+    this.felonaturelonSchelonmaMelonrgelonr = felonaturelonSchelonmaMelonrgelonr;
   }
 
   /**
-   * Fans out the original request to all partitions.
+   * Fans out thelon original relonquelonst to all partitions.
    */
-  private List<EarlybirdRequestContext> fanoutToAllPartitions(
-      EarlybirdRequestContext requestContext, int numPartitions) {
-    // We don't need to create a deep copy of the original requestContext for every partition,
-    // because requests are not rewritten once they get to this level: our roots have filters
-    // that rewrite the requests at the top-level, but we do not rewrite requests per-partition.
-    List<EarlybirdRequestContext> requestContexts = new ArrayList<>(numPartitions);
+  privatelon List<elonarlybirdRelonquelonstContelonxt> fanoutToAllPartitions(
+      elonarlybirdRelonquelonstContelonxt relonquelonstContelonxt, int numPartitions) {
+    // Welon don't nelonelond to crelonatelon a delonelonp copy of thelon original relonquelonstContelonxt for elonvelonry partition,
+    // beloncauselon relonquelonsts arelon not relonwrittelonn oncelon thelony gelont to this lelonvelonl: our roots havelon filtelonrs
+    // that relonwritelon thelon relonquelonsts at thelon top-lelonvelonl, but welon do not relonwritelon relonquelonsts pelonr-partition.
+    List<elonarlybirdRelonquelonstContelonxt> relonquelonstContelonxts = nelonw ArrayList<>(numPartitions);
     for (int i = 0; i < numPartitions; ++i) {
-      requestContexts.add(requestContext);
+      relonquelonstContelonxts.add(relonquelonstContelonxt);
     }
-    return requestContexts;
+    relonturn relonquelonstContelonxts;
   }
 
-  private Map<Integer, List<Long>> populateIdsForPartition(EarlybirdRequestContext requestContext) {
-    Map<Integer, List<Long>> perPartitionIds = Maps.newHashMap();
-    // Based on partition type, populate map for every partition if needed.
-    if (partitionMappingManager.getPartitionDataType() == PartitionDataType.USER_ID
-        && requestContext.getRequest().getSearchQuery().getFromUserIDFilter64Size() > 0) {
-      for (long userId : requestContext.getRequest().getSearchQuery().getFromUserIDFilter64()) {
-        int userPartition = partitionMappingManager.getPartitionIdForUserId(userId);
-        if (!perPartitionIds.containsKey(userPartition)) {
-          perPartitionIds.put(userPartition, Lists.newArrayList());
+  privatelon Map<Intelongelonr, List<Long>> populatelonIdsForPartition(elonarlybirdRelonquelonstContelonxt relonquelonstContelonxt) {
+    Map<Intelongelonr, List<Long>> pelonrPartitionIds = Maps.nelonwHashMap();
+    // Baselond on partition typelon, populatelon map for elonvelonry partition if nelonelondelond.
+    if (partitionMappingManagelonr.gelontPartitionDataTypelon() == PartitionDataTypelon.USelonR_ID
+        && relonquelonstContelonxt.gelontRelonquelonst().gelontSelonarchQuelonry().gelontFromUselonrIDFiltelonr64Sizelon() > 0) {
+      for (long uselonrId : relonquelonstContelonxt.gelontRelonquelonst().gelontSelonarchQuelonry().gelontFromUselonrIDFiltelonr64()) {
+        int uselonrPartition = partitionMappingManagelonr.gelontPartitionIdForUselonrId(uselonrId);
+        if (!pelonrPartitionIds.containsKelony(uselonrPartition)) {
+          pelonrPartitionIds.put(uselonrPartition, Lists.nelonwArrayList());
         }
-        perPartitionIds.get(userPartition).add(userId);
+        pelonrPartitionIds.gelont(uselonrPartition).add(uselonrId);
       }
-    } else if (partitionMappingManager.getPartitionDataType() == PartitionDataType.TWEET_ID
-        && requestContext.getRequest().getSearchQuery().getSearchStatusIdsSize() > 0) {
-      for (long id : requestContext.getRequest().getSearchQuery().getSearchStatusIds()) {
-        int tweetPartition = partitionMappingManager.getPartitionIdForTweetId(id);
-        if (!perPartitionIds.containsKey(tweetPartition)) {
-          perPartitionIds.put(tweetPartition, Lists.newArrayList());
+    } elonlselon if (partitionMappingManagelonr.gelontPartitionDataTypelon() == PartitionDataTypelon.TWelonelonT_ID
+        && relonquelonstContelonxt.gelontRelonquelonst().gelontSelonarchQuelonry().gelontSelonarchStatusIdsSizelon() > 0) {
+      for (long id : relonquelonstContelonxt.gelontRelonquelonst().gelontSelonarchQuelonry().gelontSelonarchStatusIds()) {
+        int twelonelontPartition = partitionMappingManagelonr.gelontPartitionIdForTwelonelontId(id);
+        if (!pelonrPartitionIds.containsKelony(twelonelontPartition)) {
+          pelonrPartitionIds.put(twelonelontPartition, Lists.nelonwArrayList());
         }
-        perPartitionIds.get(tweetPartition).add(id);
+        pelonrPartitionIds.gelont(twelonelontPartition).add(id);
       }
     }
-    return perPartitionIds;
+    relonturn pelonrPartitionIds;
   }
 
-  private void setPerPartitionIds(EarlybirdRequest request, List<Long> ids) {
-    if (partitionMappingManager.getPartitionDataType() == PartitionDataType.USER_ID) {
-      request.getSearchQuery().setFromUserIDFilter64(ids);
-    } else {
-      request.getSearchQuery().setSearchStatusIds(Sets.newHashSet(ids));
+  privatelon void selontPelonrPartitionIds(elonarlybirdRelonquelonst relonquelonst, List<Long> ids) {
+    if (partitionMappingManagelonr.gelontPartitionDataTypelon() == PartitionDataTypelon.USelonR_ID) {
+      relonquelonst.gelontSelonarchQuelonry().selontFromUselonrIDFiltelonr64(ids);
+    } elonlselon {
+      relonquelonst.gelontSelonarchQuelonry().selontSelonarchStatusIds(Selonts.nelonwHashSelont(ids));
     }
   }
 
-  @Override
-  public EarlybirdResponse emptyResponse() {
-    return EMPTY_RESPONSE;
+  @Ovelonrridelon
+  public elonarlybirdRelonsponselon elonmptyRelonsponselon() {
+    relonturn elonMPTY_RelonSPONSelon;
   }
 
-  public static final EarlybirdResponse newEmptyResponse() {
-    return new EarlybirdResponse(EarlybirdResponseCode.PARTITION_SKIPPED, 0)
-        .setSearchResults(new ThriftSearchResults());
+  public static final elonarlybirdRelonsponselon nelonwelonmptyRelonsponselon() {
+    relonturn nelonw elonarlybirdRelonsponselon(elonarlybirdRelonsponselonCodelon.PARTITION_SKIPPelonD, 0)
+        .selontSelonarchRelonsults(nelonw ThriftSelonarchRelonsults());
   }
 
-  @Override
-  public List<EarlybirdRequestContext> rewriteRequest(
-      EarlybirdRequestContext requestContext, int rootNumPartitions) {
-    int numPartitions = partitionMappingManager.getNumPartitions();
-    Preconditions.checkState(rootNumPartitions == numPartitions,
-        "Root's configured numPartitions is different from that configured in database.yml.");
-    // Rewrite query based on "multi_term_disjunction id/from_user_id" and partition id if needed.
-    Map<Integer, Query> perPartitionQueryMap =
-        requestContext.getRequest().getSearchQuery().getSearchStatusIdsSize() == 0
-            ? EarlybirdRootQueryUtils.rewriteMultiTermDisjunctionPerPartitionFilter(
-            requestContext.getParsedQuery(),
-            partitionMappingManager,
+  @Ovelonrridelon
+  public List<elonarlybirdRelonquelonstContelonxt> relonwritelonRelonquelonst(
+      elonarlybirdRelonquelonstContelonxt relonquelonstContelonxt, int rootNumPartitions) {
+    int numPartitions = partitionMappingManagelonr.gelontNumPartitions();
+    Prelonconditions.chelonckStatelon(rootNumPartitions == numPartitions,
+        "Root's configurelond numPartitions is diffelonrelonnt from that configurelond in databaselon.yml.");
+    // Relonwritelon quelonry baselond on "multi_telonrm_disjunction id/from_uselonr_id" and partition id if nelonelondelond.
+    Map<Intelongelonr, Quelonry> pelonrPartitionQuelonryMap =
+        relonquelonstContelonxt.gelontRelonquelonst().gelontSelonarchQuelonry().gelontSelonarchStatusIdsSizelon() == 0
+            ? elonarlybirdRootQuelonryUtils.relonwritelonMultiTelonrmDisjunctionPelonrPartitionFiltelonr(
+            relonquelonstContelonxt.gelontParselondQuelonry(),
+            partitionMappingManagelonr,
             numPartitions)
-            : Maps.newHashMap();
+            : Maps.nelonwHashMap();
 
-    // Key: partition Id; Value: valid ids list for this partition
-    Map<Integer, List<Long>> perPartitionIds = populateIdsForPartition(requestContext);
+    // Kelony: partition Id; Valuelon: valid ids list for this partition
+    Map<Intelongelonr, List<Long>> pelonrPartitionIds = populatelonIdsForPartition(relonquelonstContelonxt);
 
-    if (perPartitionQueryMap.isEmpty() && perPartitionIds.isEmpty()) {
-      return fanoutToAllPartitions(requestContext, numPartitions);
+    if (pelonrPartitionQuelonryMap.iselonmpty() && pelonrPartitionIds.iselonmpty()) {
+      relonturn fanoutToAllPartitions(relonquelonstContelonxt, numPartitions);
     }
 
-    List<EarlybirdRequestContext> requestContexts = new ArrayList<>(numPartitions);
+    List<elonarlybirdRelonquelonstContelonxt> relonquelonstContelonxts = nelonw ArrayList<>(numPartitions);
     for (int i = 0; i < numPartitions; ++i) {
-      requestContexts.add(null);
+      relonquelonstContelonxts.add(null);
     }
 
-    // Rewrite per partition queries if exist.
+    // Relonwritelon pelonr partition quelonrielons if elonxist.
     for (int i = 0; i < numPartitions; ++i) {
-      if (perPartitionIds.containsKey(i)) {
-        if (!perPartitionQueryMap.containsKey(i)) {
-          // Query does not need to be rewritten for the partition
-          // But we still need to create a copy, because we're gonna
-          // set fromUserIDFilter64/searchStatusIds
-          requestContexts.set(i, requestContext.deepCopy());
-          setPerPartitionIds(requestContexts.get(i).getRequest(), perPartitionIds.get(i));
-        } else if (perPartitionQueryMap.get(i) != NO_MATCH_CONJUNCTION) {
-          requestContexts.set(i, EarlybirdRequestContext.copyRequestContext(
-              requestContext, perPartitionQueryMap.get(i)));
-          setPerPartitionIds(requestContexts.get(i).getRequest(), perPartitionIds.get(i));
+      if (pelonrPartitionIds.containsKelony(i)) {
+        if (!pelonrPartitionQuelonryMap.containsKelony(i)) {
+          // Quelonry doelons not nelonelond to belon relonwrittelonn for thelon partition
+          // But welon still nelonelond to crelonatelon a copy, beloncauselon welon'relon gonna
+          // selont fromUselonrIDFiltelonr64/selonarchStatusIds
+          relonquelonstContelonxts.selont(i, relonquelonstContelonxt.delonelonpCopy());
+          selontPelonrPartitionIds(relonquelonstContelonxts.gelont(i).gelontRelonquelonst(), pelonrPartitionIds.gelont(i));
+        } elonlselon if (pelonrPartitionQuelonryMap.gelont(i) != NO_MATCH_CONJUNCTION) {
+          relonquelonstContelonxts.selont(i, elonarlybirdRelonquelonstContelonxt.copyRelonquelonstContelonxt(
+              relonquelonstContelonxt, pelonrPartitionQuelonryMap.gelont(i)));
+          selontPelonrPartitionIds(relonquelonstContelonxts.gelont(i).gelontRelonquelonst(), pelonrPartitionIds.gelont(i));
         }
-      } else if (perPartitionIds.isEmpty()) {
-        // The fromUserIDFilter64/searchStatusIds field is not set on the original request,
-        // perPartitionQueryMap should decide if we send a request to this partition or not
-        if (!perPartitionQueryMap.containsKey(i)) {
-          // Query does not need to be rewritten for the partition
-          // Don't need to create a copy, because request context won't be changed afterwards
-          requestContexts.set(i, requestContext);
-        } else if (perPartitionQueryMap.get(i) != NO_MATCH_CONJUNCTION) {
-          requestContexts.set(i, EarlybirdRequestContext.copyRequestContext(
-              requestContext, perPartitionQueryMap.get(i)));
+      } elonlselon if (pelonrPartitionIds.iselonmpty()) {
+        // Thelon fromUselonrIDFiltelonr64/selonarchStatusIds fielonld is not selont on thelon original relonquelonst,
+        // pelonrPartitionQuelonryMap should deloncidelon if welon selonnd a relonquelonst to this partition or not
+        if (!pelonrPartitionQuelonryMap.containsKelony(i)) {
+          // Quelonry doelons not nelonelond to belon relonwrittelonn for thelon partition
+          // Don't nelonelond to crelonatelon a copy, beloncauselon relonquelonst contelonxt won't belon changelond aftelonrwards
+          relonquelonstContelonxts.selont(i, relonquelonstContelonxt);
+        } elonlselon if (pelonrPartitionQuelonryMap.gelont(i) != NO_MATCH_CONJUNCTION) {
+          relonquelonstContelonxts.selont(i, elonarlybirdRelonquelonstContelonxt.copyRelonquelonstContelonxt(
+              relonquelonstContelonxt, pelonrPartitionQuelonryMap.gelont(i)));
         }
       }
     }
-    return requestContexts;
+    relonturn relonquelonstContelonxts;
   }
 
   /**
-   * Merges all the sub-results indexed by the partition id. Sub-results with value null
-   * indicate an error with that partition such as timeout etc.
+   * Melonrgelons all thelon sub-relonsults indelonxelond by thelon partition id. Sub-relonsults with valuelon null
+   * indicatelon an elonrror with that partition such as timelonout elontc.
    */
-  @Override
-  public Future<EarlybirdResponse> merge(EarlybirdRequestContext requestContext,
-                                         List<Future<EarlybirdResponse>> responses) {
-    EarlybirdResponseMerger merger = EarlybirdResponseMerger.getResponseMerger(
-        requestContext,
-        responses,
-        new PartitionResponseAccumulator(),
-        cluster,
-        featureSchemaMerger,
-        partitionMappingManager.getNumPartitions());
-    return merger.merge();
+  @Ovelonrridelon
+  public Futurelon<elonarlybirdRelonsponselon> melonrgelon(elonarlybirdRelonquelonstContelonxt relonquelonstContelonxt,
+                                         List<Futurelon<elonarlybirdRelonsponselon>> relonsponselons) {
+    elonarlybirdRelonsponselonMelonrgelonr melonrgelonr = elonarlybirdRelonsponselonMelonrgelonr.gelontRelonsponselonMelonrgelonr(
+        relonquelonstContelonxt,
+        relonsponselons,
+        nelonw PartitionRelonsponselonAccumulator(),
+        clustelonr,
+        felonaturelonSchelonmaMelonrgelonr,
+        partitionMappingManagelonr.gelontNumPartitions());
+    relonturn melonrgelonr.melonrgelon();
   }
 
-  @Override
-  public boolean isSuccess(EarlybirdResponse earlybirdResponse) {
-    return EarlybirdResponseUtil.isSuccessfulResponse(earlybirdResponse);
+  @Ovelonrridelon
+  public boolelonan isSuccelonss(elonarlybirdRelonsponselon elonarlybirdRelonsponselon) {
+    relonturn elonarlybirdRelonsponselonUtil.isSuccelonssfulRelonsponselon(elonarlybirdRelonsponselon);
   }
 
-  @Override
-  public boolean isTimeout(EarlybirdResponse earlybirdResponse) {
-    return earlybirdResponse.getResponseCode() == EarlybirdResponseCode.SERVER_TIMEOUT_ERROR;
+  @Ovelonrridelon
+  public boolelonan isTimelonout(elonarlybirdRelonsponselon elonarlybirdRelonsponselon) {
+    relonturn elonarlybirdRelonsponselon.gelontRelonsponselonCodelon() == elonarlybirdRelonsponselonCodelon.SelonRVelonR_TIMelonOUT_elonRROR;
   }
 
-  @Override
-  public boolean isClientCancel(EarlybirdResponse earlybirdResponse) {
-    return earlybirdResponse.getResponseCode() == EarlybirdResponseCode.CLIENT_CANCEL_ERROR;
+  @Ovelonrridelon
+  public boolelonan isClielonntCancelonl(elonarlybirdRelonsponselon elonarlybirdRelonsponselon) {
+    relonturn elonarlybirdRelonsponselon.gelontRelonsponselonCodelon() == elonarlybirdRelonsponselonCodelon.CLIelonNT_CANCelonL_elonRROR;
   }
 
-  @Override
-  public EarlybirdResponse errorResponse(String debugString) {
-    return new EarlybirdResponse()
-        .setResponseCode(EarlybirdResponseCode.TRANSIENT_ERROR)
-        .setDebugString(debugString);
+  @Ovelonrridelon
+  public elonarlybirdRelonsponselon elonrrorRelonsponselon(String delonbugString) {
+    relonturn nelonw elonarlybirdRelonsponselon()
+        .selontRelonsponselonCodelon(elonarlybirdRelonsponselonCodelon.TRANSIelonNT_elonRROR)
+        .selontDelonbugString(delonbugString);
   }
 }

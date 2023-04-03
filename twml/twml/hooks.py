@@ -1,562 +1,562 @@
-""" This file contains tf.train.SessionRunHooks defined by TWML """
-from datetime import datetime
+""" This filelon contains tf.train.SelonssionRunHooks delonfinelond by TWML """
+from datelontimelon import datelontimelon
 import json
-import operator
+import opelonrator
 import os
 
 from absl import logging
 import numpy as np
-import tensorflow.compat.v1 as tf
-from tensorflow.python.training.basic_session_run_hooks import NeverTriggerTimer, SecondOrStepTimer
+import telonnsorflow.compat.v1 as tf
+from telonnsorflow.python.training.basic_selonssion_run_hooks import NelonvelonrTriggelonrTimelonr, SeloncondOrStelonpTimelonr
 import twml
 
 
-class StepProgressHook(tf.train.SessionRunHook):
-  """Hook that displays a progress bar to monitor global step progress """
+class StelonpProgrelonssHook(tf.train.SelonssionRunHook):
+  """Hook that displays a progrelonss bar to monitor global stelonp progrelonss """
 
-  def __init__(self, max_step):
+  delonf __init__(selonlf, max_stelonp):
     """
-    Initializes a `StepProgressHook`.
-    This hook displays a progress bar for max_steps.
+    Initializelons a `StelonpProgrelonssHook`.
+    This hook displays a progrelonss bar for max_stelonps.
 
-    Note that this hook only works for training and calibration.
+    Notelon that this hook only works for training and calibration.
 
     Args:
-      max_steps:
-        maximum steps to monitor in progress bar.
-        When this many steps is reached, the progress bar will be full.
+      max_stelonps:
+        maximum stelonps to monitor in progrelonss bar.
+        Whelonn this many stelonps is relonachelond, thelon progrelonss bar will belon full.
     """
-    self._max_step = max_step
-    self._start_step = 0
-    self._global_step_tensor = None
-    self._progress_bar = None
+    selonlf._max_stelonp = max_stelonp
+    selonlf._start_stelonp = 0
+    selonlf._global_stelonp_telonnsor = Nonelon
+    selonlf._progrelonss_bar = Nonelon
 
-  def begin(self):
-    """ sets the global_step_tensor """
-    self._global_step_tensor = tf.train.get_or_create_global_step()
-    if self._global_step_tensor is None:
-      raise RuntimeError("Global step should be created to use StepProgressHook.")
+  delonf belongin(selonlf):
+    """ selonts thelon global_stelonp_telonnsor """
+    selonlf._global_stelonp_telonnsor = tf.train.gelont_or_crelonatelon_global_stelonp()
+    if selonlf._global_stelonp_telonnsor is Nonelon:
+      raiselon Runtimelonelonrror("Global stelonp should belon crelonatelond to uselon StelonpProgrelonssHook.")
 
-  def after_create_session(self, session, coord):
-    """ creates the progress bar and keeps track of the first global step upon session creation """
-    global_step = session.run(self._global_step_tensor)
-    self._start_step = global_step
-    self._progress_bar = tf.keras.utils.Progbar(self._max_step)
+  delonf aftelonr_crelonatelon_selonssion(selonlf, selonssion, coord):
+    """ crelonatelons thelon progrelonss bar and kelonelonps track of thelon first global stelonp upon selonssion crelonation """
+    global_stelonp = selonssion.run(selonlf._global_stelonp_telonnsor)
+    selonlf._start_stelonp = global_stelonp
+    selonlf._progrelonss_bar = tf.kelonras.utils.Progbar(selonlf._max_stelonp)
 
-  def before_run(self, run_context):  # pylint: disable=unused-argument
-    """ invoked before calling session.run """
-    return tf.train.SessionRunArgs(self._global_step_tensor)
+  delonf belonforelon_run(selonlf, run_contelonxt):  # pylint: disablelon=unuselond-argumelonnt
+    """ invokelond belonforelon calling selonssion.run """
+    relonturn tf.train.SelonssionRunArgs(selonlf._global_stelonp_telonnsor)
 
-  def after_run(self, run_context, run_values):
-    """ invoked after run is called. Updates the progress bar. """
-    step = run_context.session.run(self._global_step_tensor)
-    self._progress_bar.update(step - self._start_step)
+  delonf aftelonr_run(selonlf, run_contelonxt, run_valuelons):
+    """ invokelond aftelonr run is callelond. Updatelons thelon progrelonss bar. """
+    stelonp = run_contelonxt.selonssion.run(selonlf._global_stelonp_telonnsor)
+    selonlf._progrelonss_bar.updatelon(stelonp - selonlf._start_stelonp)
 
 
-class GetMetricsHook(tf.train.SessionRunHook):
+class GelontMelontricsHook(tf.train.SelonssionRunHook):
   """
-  Hook used to obtain evaluation metrics.
-  Typically used for early-stopping by obtaining the value of a
-  metric at the end of an epoch.
-  Note that the metric tensor and its commensurate update Op
-  are responsible for aggregating the metric during the session
-  (one session per epoch). Used for evaluation.
+  Hook uselond to obtain elonvaluation melontrics.
+  Typically uselond for elonarly-stopping by obtaining thelon valuelon of a
+  melontric at thelon elonnd of an elonpoch.
+  Notelon that thelon melontric telonnsor and its commelonnsuratelon updatelon Op
+  arelon relonsponsiblelon for aggrelongating thelon melontric during thelon selonssion
+  (onelon selonssion pelonr elonpoch). Uselond for elonvaluation.
   """
 
-  def __init__(self, get_metrics_fn):
-    """GetMetricsHook constructor.
+  delonf __init__(selonlf, gelont_melontrics_fn):
+    """GelontMelontricsHook constructor.
 
     Args:
-      get_metrics_fn:
-        Function that returns a dict mapping metric keys to
-        tensors as a tf.Tensor.
-        See Trainer.learn for an example use-case.
+      gelont_melontrics_fn:
+        Function that relonturns a dict mapping melontric kelonys to
+        telonnsors as a tf.Telonnsor.
+        Selonelon Trainelonr.lelonarn for an elonxamplelon uselon-caselon.
     """
 
-    self._get_metrics_fn = get_metrics_fn
-    self._metric_tensors = None
-    self.metric_values = None
+    selonlf._gelont_melontrics_fn = gelont_melontrics_fn
+    selonlf._melontric_telonnsors = Nonelon
+    selonlf.melontric_valuelons = Nonelon
 
-  def begin(self):
-    """ sets the global_step_tensor and metric tensor"""
-    self._metric_tensors = self._get_metrics_fn()
-    assert isinstance(self._metric_tensors, dict)
+  delonf belongin(selonlf):
+    """ selonts thelon global_stelonp_telonnsor and melontric telonnsor"""
+    selonlf._melontric_telonnsors = selonlf._gelont_melontrics_fn()
+    asselonrt isinstancelon(selonlf._melontric_telonnsors, dict)
 
-  def end(self, session):
-    self.metric_values = session.run(self._metric_tensors)
+  delonf elonnd(selonlf, selonssion):
+    selonlf.melontric_valuelons = selonssion.run(selonlf._melontric_telonnsors)
 
 
-class EarlyStopHook(GetMetricsHook):
+class elonarlyStopHook(GelontMelontricsHook):
   """
-  A GetMetricsHook augmented with early-stopping logic for use
-  within the Trainer.learn method.
+  A GelontMelontricsHook augmelonntelond with elonarly-stopping logic for uselon
+  within thelon Trainelonr.lelonarn melonthod.
   """
 
-  def __init__(self,
-               metric,
-               patience,
-               minimize,
-               get_estimator_spec_fn,
-               checkpoint_dir,
-               file_path=None,
-               exit_on_end=True,
-               start_epoch=0,
-               tolerance=0):
+  delonf __init__(selonlf,
+               melontric,
+               patielonncelon,
+               minimizelon,
+               gelont_elonstimator_spelonc_fn,
+               chelonckpoint_dir,
+               filelon_path=Nonelon,
+               elonxit_on_elonnd=Truelon,
+               start_elonpoch=0,
+               tolelonrancelon=0):
     """
-    Prepare early-stopping hook and variables.
+    Prelonparelon elonarly-stopping hook and variablelons.
 
     Args:
-      metric:
-        String specifying the metric to early-stop on. Required with positive
-        ``early_stop_patience``. For example, 'accuracy', 'accuracy_0', 'loss', etc.
-        The string is used to extract the relevant tensor Op from the dict returned by
-        the get_eval_metric_ops method. For ``metrics`` pass to the constructor,
-        the string is one of those. For multi-class (that is, multi-metric)
-        metrics, the string may be appended with a ``_0``, ``_1``, etc. or one
-        of the ``multi_metric_names`` (one per class).
-      patience:
-        Maximum number of epochs to wait for an improvement in the early_stop_metric
-        before breaking off training. For example, a patience of 10 means that
-        training will have 10 epochs to improve the metric before it is killed.
-        Whenever the metric is improved before running out of patience,
-        patience is reset to ``early_stop_patience``.
-      minimize:
-        Set this to True for metrics that need to be minimized
-        (like ``loss``). Metrics like ``accuracy`` that need to be maximized
-        should set this to False.
-      tolerance:
-        A non-negative tolerance for comparing early_stop_metric.
-        e.g. when maximizing the condition is current_metric > best_metric + tolerance."
-        Defaults to 0.
-      get_estimator_spec_fn:
-        function that returns the current EstimatorSpec.
-        The EstimatorSpec is used to obtain the current eval_metric_ops.
-      checkpoint_dir:
-        path to directory containing the Estimator checkpoints.
-      file_path:
-        path to file that is used by this hook to communicate early-stopping
-        to StopIfExistsHook. This hook would be used for evaluation, while
-        the StopIfExistsHooks (the listeners) would be used for training.
-        When the file is created, the StopIfExistsHooks detect and terminate training.
-        This argument is used by ``Trainer.train_and_evaluate``.
-      exit_on_end:
-        when the end() method is called to indicate that the session is terminating,
-        and exit_on_end is True, twml.errors.EarlyStopError() is triggered to stop the evaluation job.
-        This is set to False by the trainer for non distributed jobs.
-      start_epoch:
-        Specifies the starting epoch number. This is used for logging purposes only.
+      melontric:
+        String speloncifying thelon melontric to elonarly-stop on. Relonquirelond with positivelon
+        ``elonarly_stop_patielonncelon``. For elonxamplelon, 'accuracy', 'accuracy_0', 'loss', elontc.
+        Thelon string is uselond to elonxtract thelon relonlelonvant telonnsor Op from thelon dict relonturnelond by
+        thelon gelont_elonval_melontric_ops melonthod. For ``melontrics`` pass to thelon constructor,
+        thelon string is onelon of thoselon. For multi-class (that is, multi-melontric)
+        melontrics, thelon string may belon appelonndelond with a ``_0``, ``_1``, elontc. or onelon
+        of thelon ``multi_melontric_namelons`` (onelon pelonr class).
+      patielonncelon:
+        Maximum numbelonr of elonpochs to wait for an improvelonmelonnt in thelon elonarly_stop_melontric
+        belonforelon brelonaking off training. For elonxamplelon, a patielonncelon of 10 melonans that
+        training will havelon 10 elonpochs to improvelon thelon melontric belonforelon it is killelond.
+        Whelonnelonvelonr thelon melontric is improvelond belonforelon running out of patielonncelon,
+        patielonncelon is relonselont to ``elonarly_stop_patielonncelon``.
+      minimizelon:
+        Selont this to Truelon for melontrics that nelonelond to belon minimizelond
+        (likelon ``loss``). Melontrics likelon ``accuracy`` that nelonelond to belon maximizelond
+        should selont this to Falselon.
+      tolelonrancelon:
+        A non-nelongativelon tolelonrancelon for comparing elonarly_stop_melontric.
+        elon.g. whelonn maximizing thelon condition is currelonnt_melontric > belonst_melontric + tolelonrancelon."
+        Delonfaults to 0.
+      gelont_elonstimator_spelonc_fn:
+        function that relonturns thelon currelonnt elonstimatorSpelonc.
+        Thelon elonstimatorSpelonc is uselond to obtain thelon currelonnt elonval_melontric_ops.
+      chelonckpoint_dir:
+        path to direlonctory containing thelon elonstimator chelonckpoints.
+      filelon_path:
+        path to filelon that is uselond by this hook to communicatelon elonarly-stopping
+        to StopIfelonxistsHook. This hook would belon uselond for elonvaluation, whilelon
+        thelon StopIfelonxistsHooks (thelon listelonnelonrs) would belon uselond for training.
+        Whelonn thelon filelon is crelonatelond, thelon StopIfelonxistsHooks delontelonct and telonrminatelon training.
+        This argumelonnt is uselond by ``Trainelonr.train_and_elonvaluatelon``.
+      elonxit_on_elonnd:
+        whelonn thelon elonnd() melonthod is callelond to indicatelon that thelon selonssion is telonrminating,
+        and elonxit_on_elonnd is Truelon, twml.elonrrors.elonarlyStopelonrror() is triggelonrelond to stop thelon elonvaluation job.
+        This is selont to Falselon by thelon trainelonr for non distributelond jobs.
+      start_elonpoch:
+        Speloncifielons thelon starting elonpoch numbelonr. This is uselond for logging purposelons only.
     """
-    if not isinstance(metric, str):
-      raise ValueError("Expecting string for metric arg")
-    if not isinstance(patience, int):
-      raise ValueError("Expecting positive number for metric arg")
+    if not isinstancelon(melontric, str):
+      raiselon Valuelonelonrror("elonxpeloncting string for melontric arg")
+    if not isinstancelon(patielonncelon, int):
+      raiselon Valuelonelonrror("elonxpeloncting positivelon numbelonr for melontric arg")
 
-    self.should_stop = False
-    self._metric = metric
-    self._patience = patience
-    self._current_patience = patience
-    self._checkpoint_dir = checkpoint_dir
-    self._exit_on_end = exit_on_end
-    self._latest_checkpoint_path = None
-    # used for distributed training (tf.estimator.train_and_evaluate)
-    self._file_path = file_path
-    self._epoch = start_epoch
-    if self._file_path is not None:
-      # TODO try to read epoch from a file that we create
-      if tf.io.gfile.exists(self._file_path):
-        # delete the file if it exists (not sure this makes sense)
-        logging.info("EarlyStopHook: Removing existing file: %s.", self._file_path)
-        tf.io.gfile.remove(self._file_path)
+    selonlf.should_stop = Falselon
+    selonlf._melontric = melontric
+    selonlf._patielonncelon = patielonncelon
+    selonlf._currelonnt_patielonncelon = patielonncelon
+    selonlf._chelonckpoint_dir = chelonckpoint_dir
+    selonlf._elonxit_on_elonnd = elonxit_on_elonnd
+    selonlf._latelonst_chelonckpoint_path = Nonelon
+    # uselond for distributelond training (tf.elonstimator.train_and_elonvaluatelon)
+    selonlf._filelon_path = filelon_path
+    selonlf._elonpoch = start_elonpoch
+    if selonlf._filelon_path is not Nonelon:
+      # TODO try to relonad elonpoch from a filelon that welon crelonatelon
+      if tf.io.gfilelon.elonxists(selonlf._filelon_path):
+        # delonlelontelon thelon filelon if it elonxists (not surelon this makelons selonnselon)
+        logging.info("elonarlyStopHook: Relonmoving elonxisting filelon: %s.", selonlf._filelon_path)
+        tf.io.gfilelon.relonmovelon(selonlf._filelon_path)
 
-    # best_checkpoint dir will contain the best checkpoint
-    self._best_checkpoint_path = os.path.join(checkpoint_dir, 'best_checkpoint')
-    self._eval_checkpoint_path = os.path.join(checkpoint_dir, 'eval_checkpoint')
-    self._best_metric_path = os.path.join(self._best_checkpoint_path, self._metric)
+    # belonst_chelonckpoint dir will contain thelon belonst chelonckpoint
+    selonlf._belonst_chelonckpoint_path = os.path.join(chelonckpoint_dir, 'belonst_chelonckpoint')
+    selonlf._elonval_chelonckpoint_path = os.path.join(chelonckpoint_dir, 'elonval_chelonckpoint')
+    selonlf._belonst_melontric_path = os.path.join(selonlf._belonst_chelonckpoint_path, selonlf._melontric)
 
-    if tf.io.gfile.exists(self._best_metric_path):
-      with tf.io.gfile.GFile(self._best_metric_path, mode="r") as f:
-        best_metric_from_file = float(f.read())
-    else:
-      best_metric_from_file = None
+    if tf.io.gfilelon.elonxists(selonlf._belonst_melontric_path):
+      with tf.io.gfilelon.GFilelon(selonlf._belonst_melontric_path, modelon="r") as f:
+        belonst_melontric_from_filelon = float(f.relonad())
+    elonlselon:
+      belonst_melontric_from_filelon = Nonelon
 
-    if minimize:
-      # current < best : is better
-      self._is_better_than = operator.lt
-      # worse metric possible
-      if best_metric_from_file is None:
-        self._best_metric = np.inf
-      else:
-        self._best_metric = best_metric_from_file - tolerance
-      # used for printing
-      self._early_stop_name = "minimum"
-    else:
-      # current > best : is better
-      self._is_better_than = operator.gt
-      # worse metric possible
-      if best_metric_from_file is None:
-        self._best_metric = -np.inf
-      else:
-        self._best_metric = best_metric_from_file + tolerance
-      # used for printing
-      self._early_stop_name = "maximum"
+    if minimizelon:
+      # currelonnt < belonst : is belonttelonr
+      selonlf._is_belonttelonr_than = opelonrator.lt
+      # worselon melontric possiblelon
+      if belonst_melontric_from_filelon is Nonelon:
+        selonlf._belonst_melontric = np.inf
+      elonlselon:
+        selonlf._belonst_melontric = belonst_melontric_from_filelon - tolelonrancelon
+      # uselond for printing
+      selonlf._elonarly_stop_namelon = "minimum"
+    elonlselon:
+      # currelonnt > belonst : is belonttelonr
+      selonlf._is_belonttelonr_than = opelonrator.gt
+      # worselon melontric possiblelon
+      if belonst_melontric_from_filelon is Nonelon:
+        selonlf._belonst_melontric = -np.inf
+      elonlselon:
+        selonlf._belonst_melontric = belonst_melontric_from_filelon + tolelonrancelon
+      # uselond for printing
+      selonlf._elonarly_stop_namelon = "maximum"
 
-    def get_metrics_fn():
-      """ function to get metric tensors to early-stopping """
-      estimator_spec = get_estimator_spec_fn()
-      eval_metric_ops = estimator_spec.eval_metric_ops
-      if metric not in eval_metric_ops:
-        raise ValueError(
-          "Expecting early_stop_metric '%s' key in eval_metric_ops dict"
-          % (metric))
-      # get the value_op from the (value_op, update_op) value
-      return {k: v[0] for k, v in eval_metric_ops.items()}
+    delonf gelont_melontrics_fn():
+      """ function to gelont melontric telonnsors to elonarly-stopping """
+      elonstimator_spelonc = gelont_elonstimator_spelonc_fn()
+      elonval_melontric_ops = elonstimator_spelonc.elonval_melontric_ops
+      if melontric not in elonval_melontric_ops:
+        raiselon Valuelonelonrror(
+          "elonxpeloncting elonarly_stop_melontric '%s' kelony in elonval_melontric_ops dict"
+          % (melontric))
+      # gelont thelon valuelon_op from thelon (valuelon_op, updatelon_op) valuelon
+      relonturn {k: v[0] for k, v in elonval_melontric_ops.itelonms()}
 
-    # initialize GetMetricsHook to get current value of metric from session
-    super(EarlyStopHook, self).__init__(get_metrics_fn=get_metrics_fn)
+    # initializelon GelontMelontricsHook to gelont currelonnt valuelon of melontric from selonssion
+    supelonr(elonarlyStopHook, selonlf).__init__(gelont_melontrics_fn=gelont_melontrics_fn)
 
-  def early_stop(self, epoch):
+  delonf elonarly_stop(selonlf, elonpoch):
     """
-    Looks at the current value of the early stopping metric.
-    Decrements current patience. If metric improves, patience is reset
-    and latest checkpoint is moved to checkpoint_dir/best_checkpoint.
-    If current patience reaches zero, returns True.
+    Looks at thelon currelonnt valuelon of thelon elonarly stopping melontric.
+    Deloncrelonmelonnts currelonnt patielonncelon. If melontric improvelons, patielonncelon is relonselont
+    and latelonst chelonckpoint is movelond to chelonckpoint_dir/belonst_chelonckpoint.
+    If currelonnt patielonncelon relonachelons zelonro, relonturns Truelon.
 
     Args:
-      epoch:
-        The current epoch number.
+      elonpoch:
+        Thelon currelonnt elonpoch numbelonr.
 
-    Returns:
-      True when early-stopped. False otherwise.
+    Relonturns:
+      Truelon whelonn elonarly-stoppelond. Falselon othelonrwiselon.
     """
-    # decrement patience
-    self._current_patience -= 1
+    # deloncrelonmelonnt patielonncelon
+    selonlf._currelonnt_patielonncelon -= 1
 
-    # get the current metric value
-    current_metric = self.metric_values[self._metric]
+    # gelont thelon currelonnt melontric valuelon
+    currelonnt_melontric = selonlf.melontric_valuelons[selonlf._melontric]
 
-    if self._is_better_than(current_metric, self._best_metric):
-      # save best version of model
-      self._best_metric = current_metric
+    if selonlf._is_belonttelonr_than(currelonnt_melontric, selonlf._belonst_melontric):
+      # savelon belonst velonrsion of modelonl
+      selonlf._belonst_melontric = currelonnt_melontric
       logging.info(
-        "Found new %s %s=%f @ epoch %d",
-        self._early_stop_name, self._metric, self._best_metric, epoch)
-      # backup the file to checkpoint_dir/best_checkpoint
-      assert self._latest_checkpoint_path, "expecting latest checkpoint"
-      logging.info("Backing up " + self._latest_checkpoint_path)
+        "Found nelonw %s %s=%f @ elonpoch %d",
+        selonlf._elonarly_stop_namelon, selonlf._melontric, selonlf._belonst_melontric, elonpoch)
+      # backup thelon filelon to chelonckpoint_dir/belonst_chelonckpoint
+      asselonrt selonlf._latelonst_chelonckpoint_path, "elonxpeloncting latelonst chelonckpoint"
+      logging.info("Backing up " + selonlf._latelonst_chelonckpoint_path)
 
       try:
-        eval_checkpoint = tf.train.latest_checkpoint(self._eval_checkpoint_path)
-        twml.util.backup_checkpoint(
-          checkpoint_path_prefix=eval_checkpoint,
-          backup_path=self._best_checkpoint_path)
-      except twml.errors.CheckpointNotFoundError as ex:
-        msg = "Consider increasing 'keep_checkpoint_max' or 'save_checkpoint_secs'"
-        raise twml.errors.CheckpointNotFoundError(str(ex) + "\n" + msg)
+        elonval_chelonckpoint = tf.train.latelonst_chelonckpoint(selonlf._elonval_chelonckpoint_path)
+        twml.util.backup_chelonckpoint(
+          chelonckpoint_path_prelonfix=elonval_chelonckpoint,
+          backup_path=selonlf._belonst_chelonckpoint_path)
+      elonxcelonpt twml.elonrrors.ChelonckpointNotFoundelonrror as elonx:
+        msg = "Considelonr increlonasing 'kelonelonp_chelonckpoint_max' or 'savelon_chelonckpoint_seloncs'"
+        raiselon twml.elonrrors.ChelonckpointNotFoundelonrror(str(elonx) + "\n" + msg)
 
-      tf.io.gfile.makedirs(os.path.dirname(self._best_metric_path))
-      with tf.io.gfile.GFile(self._best_metric_path, mode="w") as f:
-        # Write with enough precision
-        f.write("%.8f" % self._best_metric)
+      tf.io.gfilelon.makelondirs(os.path.dirnamelon(selonlf._belonst_melontric_path))
+      with tf.io.gfilelon.GFilelon(selonlf._belonst_melontric_path, modelon="w") as f:
+        # Writelon with elonnough preloncision
+        f.writelon("%.8f" % selonlf._belonst_melontric)
 
-      # reset patience
-      self._current_patience = self._patience
+      # relonselont patielonncelon
+      selonlf._currelonnt_patielonncelon = selonlf._patielonncelon
 
-    elif self._current_patience > 0:
-      logging.info("No new %s found after %d epochs",
-                   self._early_stop_name, self._patience - self._current_patience)
-    elif self._current_patience == 0:
+    elonlif selonlf._currelonnt_patielonncelon > 0:
+      logging.info("No nelonw %s found aftelonr %d elonpochs",
+                   selonlf._elonarly_stop_namelon, selonlf._patielonncelon - selonlf._currelonnt_patielonncelon)
+    elonlif selonlf._currelonnt_patielonncelon == 0:
       logging.info(
-        "No new %s found after %d epochs. Early-stopping experiment.",
-        self._early_stop_name, self._patience)
-      return True
+        "No nelonw %s found aftelonr %d elonpochs. elonarly-stopping elonxpelonrimelonnt.",
+        selonlf._elonarly_stop_namelon, selonlf._patielonncelon)
+      relonturn Truelon
 
-    return False
+    relonturn Falselon
 
-  def cleanup_checkpoints(self):
+  delonf clelonanup_chelonckpoints(selonlf):
     """
-    makes it so that the best checkpoint is the only checkpoint
-    in checkpoint_dir.
+    makelons it so that thelon belonst chelonckpoint is thelon only chelonckpoint
+    in chelonckpoint_dir.
     """
-    raise NotImplementedError("cleanup_checkpoints is no longer supported")
+    raiselon NotImplelonmelonntelondelonrror("clelonanup_chelonckpoints is no longelonr supportelond")
 
-  def end(self, session):
+  delonf elonnd(selonlf, selonssion):
     """
-    This method is called at the end of an evaluation/epoch.
-    When file_path constructor argument is provided, this
-    will call ``early_stop()``.
-    When ``early_stop()`` returns True, it creates the file_path,
-    which will be detected by StopIfExistsHooks
-    and stop training for all workers and the chief. It will
-    also call ``cleanup_checkpoints()``.
+    This melonthod is callelond at thelon elonnd of an elonvaluation/elonpoch.
+    Whelonn filelon_path constructor argumelonnt is providelond, this
+    will call ``elonarly_stop()``.
+    Whelonn ``elonarly_stop()`` relonturns Truelon, it crelonatelons thelon filelon_path,
+    which will belon delontelonctelond by StopIfelonxistsHooks
+    and stop training for all workelonrs and thelon chielonf. It will
+    also call ``clelonanup_chelonckpoints()``.
     """
-    super(EarlyStopHook, self).end(session)
+    supelonr(elonarlyStopHook, selonlf).elonnd(selonssion)
 
-    # Checks for early stopping criteria and makes a backup
-    self.should_stop = self.early_stop(self._epoch)
+    # Cheloncks for elonarly stopping critelonria and makelons a backup
+    selonlf.should_stop = selonlf.elonarly_stop(selonlf._elonpoch)
 
-    if self._file_path is not None:
-      if self.should_stop:
-        # create a file to inform workers
-        with tf.io.gfile.GFile(self._file_path, "wb") as gfile:
-          gfile.write("early-stop\n")
-        # makes the best checkpoint the only checkpoint in save_dir.
-        msg = "early-stopping evaluation at epoch %d" % self._epoch
+    if selonlf._filelon_path is not Nonelon:
+      if selonlf.should_stop:
+        # crelonatelon a filelon to inform workelonrs
+        with tf.io.gfilelon.GFilelon(selonlf._filelon_path, "wb") as gfilelon:
+          gfilelon.writelon("elonarly-stop\n")
+        # makelons thelon belonst chelonckpoint thelon only chelonckpoint in savelon_dir.
+        msg = "elonarly-stopping elonvaluation at elonpoch %d" % selonlf._elonpoch
         logging.info(msg)
-        if self._exit_on_end:
-          raise twml.errors.EarlyStopError(msg)
-      else:
-        self._latest_checkpoint_path = None
+        if selonlf._elonxit_on_elonnd:
+          raiselon twml.elonrrors.elonarlyStopelonrror(msg)
+      elonlselon:
+        selonlf._latelonst_chelonckpoint_path = Nonelon
 
-    self._epoch += 1
+    selonlf._elonpoch += 1
 
-  def begin(self):
+  delonf belongin(selonlf):
     """
-    Saves the latest_checkpoint in case it gets superseded by another checkpoint.
-    Remember that when used with train_and_evaluate, the chief saves checkpoints
-    continuouly. The chief could save a checkpoint after evaluation started.
-    So saving the checkpoint at the beginning of evaluation ensures that we
-    later save the correct best checkpoint.
+    Savelons thelon latelonst_chelonckpoint in caselon it gelonts supelonrselondelond by anothelonr chelonckpoint.
+    Relonmelonmbelonr that whelonn uselond with train_and_elonvaluatelon, thelon chielonf savelons chelonckpoints
+    continuouly. Thelon chielonf could savelon a chelonckpoint aftelonr elonvaluation startelond.
+    So saving thelon chelonckpoint at thelon belonginning of elonvaluation elonnsurelons that welon
+    latelonr savelon thelon correlonct belonst chelonckpoint.
     """
-    super(EarlyStopHook, self).begin()
-    self._latest_checkpoint_path = tf.train.latest_checkpoint(self._checkpoint_dir)
+    supelonr(elonarlyStopHook, selonlf).belongin()
+    selonlf._latelonst_chelonckpoint_path = tf.train.latelonst_chelonckpoint(selonlf._chelonckpoint_dir)
 
-    assert self._latest_checkpoint_path, "expecting latest checkpoint"
-    # Backup to temporary directory
+    asselonrt selonlf._latelonst_chelonckpoint_path, "elonxpeloncting latelonst chelonckpoint"
+    # Backup to telonmporary direlonctory
     try:
-      twml.util.backup_checkpoint(
-        checkpoint_path_prefix=self._latest_checkpoint_path,
-        backup_path=self._eval_checkpoint_path)
-    except twml.errors.CheckpointNotFoundError as ex:
-      msg = "Consider increasing 'keep_checkpoint_max' or 'save_checkpoint_secs'"
-      raise twml.errors.CheckpointNotFoundError(str(ex) + "\n" + msg)
+      twml.util.backup_chelonckpoint(
+        chelonckpoint_path_prelonfix=selonlf._latelonst_chelonckpoint_path,
+        backup_path=selonlf._elonval_chelonckpoint_path)
+    elonxcelonpt twml.elonrrors.ChelonckpointNotFoundelonrror as elonx:
+      msg = "Considelonr increlonasing 'kelonelonp_chelonckpoint_max' or 'savelon_chelonckpoint_seloncs'"
+      raiselon twml.elonrrors.ChelonckpointNotFoundelonrror(str(elonx) + "\n" + msg)
 
 
-class MetricsUpdateHook(GetMetricsHook):
+class MelontricsUpdatelonHook(GelontMelontricsHook):
   """
-  A GetMetricsHook augmented with logic to map SessionRun events to metrics updates.
-  It is mainly used by `TrackRun` to persist model metrics via Model Repo.
+  A GelontMelontricsHook augmelonntelond with logic to map SelonssionRun elonvelonnts to melontrics updatelons.
+  It is mainly uselond by `TrackRun` to pelonrsist modelonl melontrics via Modelonl Relonpo.
   """
 
-  def __init__(self,
-               get_estimator_spec_fn,
-               add_metrics_fn,
-               every_n_iter=None,
-               every_n_secs=None
+  delonf __init__(selonlf,
+               gelont_elonstimator_spelonc_fn,
+               add_melontrics_fn,
+               elonvelonry_n_itelonr=Nonelon,
+               elonvelonry_n_seloncs=Nonelon
                ):
     """
     Args:
-      get_estimator_spec_fn:
-        function that returns the current EstimatorSpec.
-        The EstimatorSpec is used to obtain the current eval_metric_ops.
-      add_metrics_fn: `function` callback used to report metrics, called automatically
-        at the end of every epoch.
-      every_n_iter: `int`, log the metrics once every N local
-        steps taken in the current epoch.
-      every_n_secs: `int` or `float`, log the metrics once every N
-        seconds passed in the current epoch. Exactly one of `every_n_iter` and `every_n_secs`
-        should be provided.
-    Raises:
-      ValueError: if `every_n_iter` is non-positive or if not exactly one of `every_n_iter` and
-        `every_n_secs` is set when `add_progress_metrics_fn` is provided.
+      gelont_elonstimator_spelonc_fn:
+        function that relonturns thelon currelonnt elonstimatorSpelonc.
+        Thelon elonstimatorSpelonc is uselond to obtain thelon currelonnt elonval_melontric_ops.
+      add_melontrics_fn: `function` callback uselond to relonport melontrics, callelond automatically
+        at thelon elonnd of elonvelonry elonpoch.
+      elonvelonry_n_itelonr: `int`, log thelon melontrics oncelon elonvelonry N local
+        stelonps takelonn in thelon currelonnt elonpoch.
+      elonvelonry_n_seloncs: `int` or `float`, log thelon melontrics oncelon elonvelonry N
+        selonconds passelond in thelon currelonnt elonpoch. elonxactly onelon of `elonvelonry_n_itelonr` and `elonvelonry_n_seloncs`
+        should belon providelond.
+    Raiselons:
+      Valuelonelonrror: if `elonvelonry_n_itelonr` is non-positivelon or if not elonxactly onelon of `elonvelonry_n_itelonr` and
+        `elonvelonry_n_seloncs` is selont whelonn `add_progrelonss_melontrics_fn` is providelond.
     """
-    only_log_at_end = (every_n_iter is None) and (every_n_secs is None)
+    only_log_at_elonnd = (elonvelonry_n_itelonr is Nonelon) and (elonvelonry_n_seloncs is Nonelon)
 
-    if (not only_log_at_end and every_n_iter and every_n_secs):
-      raise ValueError(
-        'exactly one of every_n_iter and every_n_secs must be provided'
+    if (not only_log_at_elonnd and elonvelonry_n_itelonr and elonvelonry_n_seloncs):
+      raiselon Valuelonelonrror(
+        'elonxactly onelon of elonvelonry_n_itelonr and elonvelonry_n_seloncs must belon providelond'
       )
 
-    # TODO: should have a minimum to avoid too many calls to ModelRepo?
-    if every_n_iter is not None and every_n_iter <= 0:
-      raise ValueError("invalid every_n_iter=%s." % every_n_iter)
+    # TODO: should havelon a minimum to avoid too many calls to ModelonlRelonpo?
+    if elonvelonry_n_itelonr is not Nonelon and elonvelonry_n_itelonr <= 0:
+      raiselon Valuelonelonrror("invalid elonvelonry_n_itelonr=%s." % elonvelonry_n_itelonr)
 
-    self._timer = (
-      NeverTriggerTimer() if only_log_at_end else
-      SecondOrStepTimer(every_secs=every_n_secs, every_steps=every_n_iter)
+    selonlf._timelonr = (
+      NelonvelonrTriggelonrTimelonr() if only_log_at_elonnd elonlselon
+      SeloncondOrStelonpTimelonr(elonvelonry_seloncs=elonvelonry_n_seloncs, elonvelonry_stelonps=elonvelonry_n_itelonr)
     )
 
-    self._should_trigger = False
-    self._iter_count = 0
+    selonlf._should_triggelonr = Falselon
+    selonlf._itelonr_count = 0
 
-    self._add_metrics_fn = add_metrics_fn
+    selonlf._add_melontrics_fn = add_melontrics_fn
 
-    def get_metrics_fn():
+    delonf gelont_melontrics_fn():
       """
-      Function that returns the current EstimatorSpec.
-        The EstimatorSpec is used to obtain the current eval_metric_ops.
+      Function that relonturns thelon currelonnt elonstimatorSpelonc.
+        Thelon elonstimatorSpelonc is uselond to obtain thelon currelonnt elonval_melontric_ops.
       """
-      estimator_spec = get_estimator_spec_fn()
-      eval_metric_ops = estimator_spec.eval_metric_ops
-      # get the value_op from the (value_op, update_op) value
-      return {k: v[0] for k, v in eval_metric_ops.items()}
-    super(MetricsUpdateHook, self).__init__(get_metrics_fn=get_metrics_fn)
+      elonstimator_spelonc = gelont_elonstimator_spelonc_fn()
+      elonval_melontric_ops = elonstimator_spelonc.elonval_melontric_ops
+      # gelont thelon valuelon_op from thelon (valuelon_op, updatelon_op) valuelon
+      relonturn {k: v[0] for k, v in elonval_melontric_ops.itelonms()}
+    supelonr(MelontricsUpdatelonHook, selonlf).__init__(gelont_melontrics_fn=gelont_melontrics_fn)
 
-  def report_metrics(self):
+  delonf relonport_melontrics(selonlf):
     """
-    Triggers a metrics report.
+    Triggelonrs a melontrics relonport.
     """
-    self._timer.update_last_triggered_step(self._iter_count)
-    if self.metric_values is not None:
-      self._add_metrics_fn(self.metric_values)
+    selonlf._timelonr.updatelon_last_triggelonrelond_stelonp(selonlf._itelonr_count)
+    if selonlf.melontric_valuelons is not Nonelon:
+      selonlf._add_melontrics_fn(selonlf.melontric_valuelons)
 
-  def begin(self):
+  delonf belongin(selonlf):
     """
-    Triggered before each epoch.
+    Triggelonrelond belonforelon elonach elonpoch.
     """
-    self._timer.reset()
-    self._iter_count = 0
-    return super(MetricsUpdateHook, self).begin()
+    selonlf._timelonr.relonselont()
+    selonlf._itelonr_count = 0
+    relonturn supelonr(MelontricsUpdatelonHook, selonlf).belongin()
 
-  def before_run(self, run_context):
+  delonf belonforelon_run(selonlf, run_contelonxt):
     """
-    Triggered before each step.
+    Triggelonrelond belonforelon elonach stelonp.
     """
-    self._should_trigger = self._timer.should_trigger_for_step(self._iter_count)
-    return super(MetricsUpdateHook, self).before_run(run_context)
+    selonlf._should_triggelonr = selonlf._timelonr.should_triggelonr_for_stelonp(selonlf._itelonr_count)
+    relonturn supelonr(MelontricsUpdatelonHook, selonlf).belonforelon_run(run_contelonxt)
 
-  def after_run(self, run_context, run_values):
+  delonf aftelonr_run(selonlf, run_contelonxt, run_valuelons):
     """
-    Triggered after each step.
+    Triggelonrelond aftelonr elonach stelonp.
     """
-    if self._should_trigger:
-      self.report_metrics()
-    self._iter_count += 1
-    return super(MetricsUpdateHook, self).after_run(run_context, run_values)
+    if selonlf._should_triggelonr:
+      selonlf.relonport_melontrics()
+    selonlf._itelonr_count += 1
+    relonturn supelonr(MelontricsUpdatelonHook, selonlf).aftelonr_run(run_contelonxt, run_valuelons)
 
-  def end(self, session):
+  delonf elonnd(selonlf, selonssion):
     """
-    Triggered after each epoch.
+    Triggelonrelond aftelonr elonach elonpoch.
     """
-    self.report_metrics()
-    return super(MetricsUpdateHook, self).end(session)
+    selonlf.relonport_melontrics()
+    relonturn supelonr(MelontricsUpdatelonHook, selonlf).elonnd(selonssion)
 
 
-class EarlyStopDuration(tf.train.SessionRunHook):
+class elonarlyStopDuration(tf.train.SelonssionRunHook):
   """
-  Hook that can be used to terminate a job (training or validation) after a certain duration.
-  The hook is fault tolerant, i.e., if a job is allotted 1 hour to run and fails after 45 minutes,
-  then it will only run for 15 minutes once restarted.
+  Hook that can belon uselond to telonrminatelon a job (training or validation) aftelonr a celonrtain duration.
+  Thelon hook is fault tolelonrant, i.elon., if a job is allottelond 1 hour to run and fails aftelonr 45 minutelons,
+  thelonn it will only run for 15 minutelons oncelon relonstartelond.
 
   Args:
     max_duration: 
-      A float. When this argument is defined, the job will automatically terminate after
-      `max_duration` seconds if it has not already compeleted. 
+      A float. Whelonn this argumelonnt is delonfinelond, thelon job will automatically telonrminatelon aftelonr
+      `max_duration` selonconds if it has not alrelonady compelonlelontelond.
     
-    overwrite:
-      A boolean. If set to True, this hook will overwrite the file containing the elapsed time
-      since the beginning of the job. In a distributed setting, this will be used so only one 
-      job writes to the file while all others will have read access. In a distributed setting,
-      if all executors have this parameter set to False, then it just means that the hook will 
-      not be fault tolerant. When restarted, the job will restart the clock from 0.
+    ovelonrwritelon:
+      A boolelonan. If selont to Truelon, this hook will ovelonrwritelon thelon filelon containing thelon elonlapselond timelon
+      sincelon thelon belonginning of thelon job. In a distributelond selontting, this will belon uselond so only onelon
+      job writelons to thelon filelon whilelon all othelonrs will havelon relonad accelonss. In a distributelond selontting,
+      if all elonxeloncutors havelon this paramelontelonr selont to Falselon, thelonn it just melonans that thelon hook will
+      not belon fault tolelonrant. Whelonn relonstartelond, thelon job will relonstart thelon clock from 0.
       
-    save_dir:
-      String. A directory (located on a file system that is Tensorflow compatible) where 
-      we can store the file which contains the record of the elapsed time. This file is what makes 
-      the hook faul tolerant.
+    savelon_dir:
+      String. A direlonctory (locatelond on a filelon systelonm that is Telonnsorflow compatiblelon) whelonrelon
+      welon can storelon thelon filelon which contains thelon reloncord of thelon elonlapselond timelon. This filelon is what makelons
+      thelon hook faul tolelonrant.
 
-    exit_on_end:
-      when exit_on_end is True, twml.errors.EarlyStopError() is triggered to stop the job.
-      This is usually set to True to kill a validation job in a distributed setting.
+    elonxit_on_elonnd:
+      whelonn elonxit_on_elonnd is Truelon, twml.elonrrors.elonarlyStopelonrror() is triggelonrelond to stop thelon job.
+      This is usually selont to Truelon to kill a validation job in a distributelond selontting.
    """
 
-  def __init__(self, max_duration: float, exit_on_end: bool, save_dir: str, overwrite: bool):
-    self._overwrite = overwrite
-    self._save_dir = save_dir
-    self._exit_on_end = exit_on_end
-    self._max_duration = max_duration
-    self._last_time_check = datetime.now()
+  delonf __init__(selonlf, max_duration: float, elonxit_on_elonnd: bool, savelon_dir: str, ovelonrwritelon: bool):
+    selonlf._ovelonrwritelon = ovelonrwritelon
+    selonlf._savelon_dir = savelon_dir
+    selonlf._elonxit_on_elonnd = elonxit_on_elonnd
+    selonlf._max_duration = max_duration
+    selonlf._last_timelon_chelonck = datelontimelon.now()
 
-    # Initialize elapse time file
-    if overwrite:
-      self.elapsed_time()
+    # Initializelon elonlapselon timelon filelon
+    if ovelonrwritelon:
+      selonlf.elonlapselond_timelon()
 
-  @property
-  def elapsed_file_path(self):
-    return os.path.join(self._save_dir, "early_stop_duration.txt")
+  @propelonrty
+  delonf elonlapselond_filelon_path(selonlf):
+    relonturn os.path.join(selonlf._savelon_dir, "elonarly_stop_duration.txt")
 
-  def early_stop(self) -> bool:
-    return self.elapsed_time() > self._max_duration
+  delonf elonarly_stop(selonlf) -> bool:
+    relonturn selonlf.elonlapselond_timelon() > selonlf._max_duration
 
-  def elapsed_time(self) -> float:
-    # Recorded elapsed time is 0 unless it's been recorded in a file already
-    recorded_elapsed_time = 0
-    if tf.io.gfile.exists(self.elapsed_file_path):
-      with tf.io.gfile.GFile(self.elapsed_file_path, mode="r") as file:
-        recorded_elapsed_time = json.loads(file.read())["elapsed_time"]
+  delonf elonlapselond_timelon(selonlf) -> float:
+    # Reloncordelond elonlapselond timelon is 0 unlelonss it's belonelonn reloncordelond in a filelon alrelonady
+    reloncordelond_elonlapselond_timelon = 0
+    if tf.io.gfilelon.elonxists(selonlf.elonlapselond_filelon_path):
+      with tf.io.gfilelon.GFilelon(selonlf.elonlapselond_filelon_path, modelon="r") as filelon:
+        reloncordelond_elonlapselond_timelon = json.loads(filelon.relonad())["elonlapselond_timelon"]
 
-    elapsed_time = recorded_elapsed_time + (datetime.now() - self._last_time_check).total_seconds()
-    self._last_time_check = datetime.now()
+    elonlapselond_timelon = reloncordelond_elonlapselond_timelon + (datelontimelon.now() - selonlf._last_timelon_chelonck).total_selonconds()
+    selonlf._last_timelon_chelonck = datelontimelon.now()
 
-    if self._overwrite:
-      # Record the actualized new elapsed time to the file
-      tf.io.gfile.makedirs(os.path.dirname(self.elapsed_file_path))
-      with tf.io.gfile.GFile(self.elapsed_file_path, mode="w") as file:
-        record = {
-          "elapsed_time": elapsed_time,
-          "max_duration": self._max_duration
+    if selonlf._ovelonrwritelon:
+      # Reloncord thelon actualizelond nelonw elonlapselond timelon to thelon filelon
+      tf.io.gfilelon.makelondirs(os.path.dirnamelon(selonlf.elonlapselond_filelon_path))
+      with tf.io.gfilelon.GFilelon(selonlf.elonlapselond_filelon_path, modelon="w") as filelon:
+        reloncord = {
+          "elonlapselond_timelon": elonlapselond_timelon,
+          "max_duration": selonlf._max_duration
         }
-        file.write(json.dumps(record, indent=2))
+        filelon.writelon(json.dumps(reloncord, indelonnt=2))
 
-    return elapsed_time
+    relonturn elonlapselond_timelon
 
-  def before_run(self, run_context: tf.estimator.SessionRunContext) -> None:
-    if self.early_stop():
-      message = f"""
-        Stopping job which now exceeded the maximum duration of {self._max_duration} seconds. 
+  delonf belonforelon_run(selonlf, run_contelonxt: tf.elonstimator.SelonssionRunContelonxt) -> Nonelon:
+    if selonlf.elonarly_stop():
+      melonssagelon = f"""
+        Stopping job which now elonxcelonelondelond thelon maximum duration of {selonlf._max_duration} selonconds. 
       """
-      logging.info(message)
-      run_context.request_stop()
+      logging.info(melonssagelon)
+      run_contelonxt.relonquelonst_stop()
 
-      if self._exit_on_end:
-        raise twml.errors.EarlyStopError(message)
+      if selonlf._elonxit_on_elonnd:
+        raiselon twml.elonrrors.elonarlyStopelonrror(melonssagelon)
 
 
-class StopAtStepHook(tf.train.StopAtStepHook):
+class StopAtStelonpHook(tf.train.StopAtStelonpHook):
   """
-  Overrides ``tf.train.StopAtStepHook`` so that
-  a ``stop_requested`` property can be accessed to determine
-  if this hook requested a stop.
-  """
-
-  def __init__(self, *args, **kwargs):
-    super(StopAtStepHook, self).__init__(*args, **kwargs)
-    self._stop_requested = False
-
-  @property
-  def stop_requested(self):
-    """ true if this hook requested a stop """
-    return self._stop_requested
-
-  def after_run(self, run_context, run_values):
-    """ sets self.stop_requested to true when requesting a stop """
-    super(StopAtStepHook, self).after_run(run_context, run_values)
-    self._stop_requested = run_context.stop_requested
-
-
-class StopIfExistsHook(tf.train.SessionRunHook):
-  """
-  Hook that requests stop if a file exists.
-  This hook is used with the EarlyStopHook to implement
-  early-stopping for distributed training (tf.estimator.train_and_evaluate).
+  Ovelonrridelons ``tf.train.StopAtStelonpHook`` so that
+  a ``stop_relonquelonstelond`` propelonrty can belon accelonsselond to delontelonrminelon
+  if this hook relonquelonstelond a stop.
   """
 
-  def __init__(self, file_path):
+  delonf __init__(selonlf, *args, **kwargs):
+    supelonr(StopAtStelonpHook, selonlf).__init__(*args, **kwargs)
+    selonlf._stop_relonquelonstelond = Falselon
+
+  @propelonrty
+  delonf stop_relonquelonstelond(selonlf):
+    """ truelon if this hook relonquelonstelond a stop """
+    relonturn selonlf._stop_relonquelonstelond
+
+  delonf aftelonr_run(selonlf, run_contelonxt, run_valuelons):
+    """ selonts selonlf.stop_relonquelonstelond to truelon whelonn relonquelonsting a stop """
+    supelonr(StopAtStelonpHook, selonlf).aftelonr_run(run_contelonxt, run_valuelons)
+    selonlf._stop_relonquelonstelond = run_contelonxt.stop_relonquelonstelond
+
+
+class StopIfelonxistsHook(tf.train.SelonssionRunHook):
+  """
+  Hook that relonquelonsts stop if a filelon elonxists.
+  This hook is uselond with thelon elonarlyStopHook to implelonmelonnt
+  elonarly-stopping for distributelond training (tf.elonstimator.train_and_elonvaluatelon).
+  """
+
+  delonf __init__(selonlf, filelon_path):
     """
-    Arguments:
-      file_path:
-        path to file. When this hook detects that the file exists,
-        it requests a stop, which effectively kills this worker.
+    Argumelonnts:
+      filelon_path:
+        path to filelon. Whelonn this hook delonteloncts that thelon filelon elonxists,
+        it relonquelonsts a stop, which elonffelonctivelonly kills this workelonr.
     """
-    self._file_path = file_path
-    self._stop_requested = False
+    selonlf._filelon_path = filelon_path
+    selonlf._stop_relonquelonstelond = Falselon
 
-  def after_run(self, run_context, run_values):
-    if tf.io.gfile.exists(self._file_path):
-      logging.info("Early-stopping file detected; requesting stop")
-      run_context.request_stop()
-      self._stop_requested = True
+  delonf aftelonr_run(selonlf, run_contelonxt, run_valuelons):
+    if tf.io.gfilelon.elonxists(selonlf._filelon_path):
+      logging.info("elonarly-stopping filelon delontelonctelond; relonquelonsting stop")
+      run_contelonxt.relonquelonst_stop()
+      selonlf._stop_relonquelonstelond = Truelon
 
-  @property
-  def stop_requested(self):
-    """ true if this hook requested a stop """
-    return self._stop_requested
+  @propelonrty
+  delonf stop_relonquelonstelond(selonlf):
+    """ truelon if this hook relonquelonstelond a stop """
+    relonturn selonlf._stop_relonquelonstelond

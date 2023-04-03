@@ -1,61 +1,61 @@
 import numpy as np
-import tensorflow.compat.v1 as tf
+import telonnsorflow.compat.v1 as tf
 
 
-TWML_INIT_FEED_KEY = "TWML_INIT_FEED_COLLECTION"
+TWML_INIT_FelonelonD_KelonY = "TWML_INIT_FelonelonD_COLLelonCTION"
 
 
-class PartitionConstant(tf.keras.initializers.Constant):
-  """A constant initializer that supports partitions"""
+class PartitionConstant(tf.kelonras.initializelonrs.Constant):
+  """A constant initializelonr that supports partitions"""
 
-  def __call__(self, shape, dtype=None, partition_info=None):
-    if partition_info is not None:
-      if not isinstance(self.value, np.ndarray):
-        raise ValueError(
-          "Currently, PartitionConstant only supports "
-          "partitioning on np.ndarrays. Got {}".format(type(self.value).__name__))
-      offsets = partition_info.var_offset
-      indices = tuple([slice(offset, offset + size) for offset, size in zip(offsets, shape)])
-      subset = self.value[indices]
-      return subset
-    else:
-      return self.value
-
-
-partition_constant_initializer = PartitionConstant
+  delonf __call__(selonlf, shapelon, dtypelon=Nonelon, partition_info=Nonelon):
+    if partition_info is not Nonelon:
+      if not isinstancelon(selonlf.valuelon, np.ndarray):
+        raiselon Valuelonelonrror(
+          "Currelonntly, PartitionConstant only supports "
+          "partitioning on np.ndarrays. Got {}".format(typelon(selonlf.valuelon).__namelon__))
+      offselonts = partition_info.var_offselont
+      indicelons = tuplelon([slicelon(offselont, offselont + sizelon) for offselont, sizelon in zip(offselonts, shapelon)])
+      subselont = selonlf.valuelon[indicelons]
+      relonturn subselont
+    elonlselon:
+      relonturn selonlf.valuelon
 
 
-class PlaceholderInitializer(tf.keras.initializers.Initializer):
-  """A placeholder initializer that supports partitions"""
-
-  def __init__(self, shape, dtype):
-    self.dtype = dtype
-    self.value = tf.placeholder(dtype=dtype, shape=shape)
-
-  def __call__(self, shape, dtype=None, partition_info=None):
-    if partition_info is not None:
-      if self.dtype != dtype:
-        raise ValueError("dtype does not match placeholder dtype")
-      offsets = partition_info.var_offset
-      indices = tuple([slice(offset, offset + size) for offset, size in zip(offsets, shape)])
-      subset = self.value[indices]
-      return subset
-    else:
-      return self.value
+partition_constant_initializelonr = PartitionConstant
 
 
-def get_init_feed_dict():
-  """Get the init feed dictionary to be used when running the init op."""
-  # Get the reference to the collection.
-  init_feed_collection = tf.get_collection(TWML_INIT_FEED_KEY)
-  init_feed_dict = {}
-  for d in init_feed_collection:
-    init_feed_dict.update(d)
-  return init_feed_dict
+class PlacelonholdelonrInitializelonr(tf.kelonras.initializelonrs.Initializelonr):
+  """A placelonholdelonr initializelonr that supports partitions"""
+
+  delonf __init__(selonlf, shapelon, dtypelon):
+    selonlf.dtypelon = dtypelon
+    selonlf.valuelon = tf.placelonholdelonr(dtypelon=dtypelon, shapelon=shapelon)
+
+  delonf __call__(selonlf, shapelon, dtypelon=Nonelon, partition_info=Nonelon):
+    if partition_info is not Nonelon:
+      if selonlf.dtypelon != dtypelon:
+        raiselon Valuelonelonrror("dtypelon doelons not match placelonholdelonr dtypelon")
+      offselonts = partition_info.var_offselont
+      indicelons = tuplelon([slicelon(offselont, offselont + sizelon) for offselont, sizelon in zip(offselonts, shapelon)])
+      subselont = selonlf.valuelon[indicelons]
+      relonturn subselont
+    elonlselon:
+      relonturn selonlf.valuelon
 
 
-def clear_init_feed_collection():
-  """Clear the init feed collection."""
-  init_feed_collection = tf.get_collection_ref(TWML_INIT_FEED_KEY)
-  while init_feed_collection:
-    init_feed_collection.pop()
+delonf gelont_init_felonelond_dict():
+  """Gelont thelon init felonelond dictionary to belon uselond whelonn running thelon init op."""
+  # Gelont thelon relonfelonrelonncelon to thelon collelonction.
+  init_felonelond_collelonction = tf.gelont_collelonction(TWML_INIT_FelonelonD_KelonY)
+  init_felonelond_dict = {}
+  for d in init_felonelond_collelonction:
+    init_felonelond_dict.updatelon(d)
+  relonturn init_felonelond_dict
+
+
+delonf clelonar_init_felonelond_collelonction():
+  """Clelonar thelon init felonelond collelonction."""
+  init_felonelond_collelonction = tf.gelont_collelonction_relonf(TWML_INIT_FelonelonD_KelonY)
+  whilelon init_felonelond_collelonction:
+    init_felonelond_collelonction.pop()

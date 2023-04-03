@@ -1,54 +1,54 @@
-package com.twitter.search.ingester.pipeline.strato_fetchers;
+packagelon com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.strato_felontchelonrs;
 
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.Selont;
+import java.util.strelonam.Collelonctors;
 
-import com.twitter.periscope.api.thriftjava.AudioSpacesLookupContext;
-import com.twitter.stitch.Stitch;
-import com.twitter.strato.catalog.Fetch;
-import com.twitter.strato.client.Client;
-import com.twitter.strato.client.Fetcher;
-import com.twitter.strato.data.Conv;
-import com.twitter.strato.thrift.TBaseConv;
-import com.twitter.ubs.thriftjava.AudioSpace;
-import com.twitter.util.Future;
-import com.twitter.util.Try;
+import com.twittelonr.pelonriscopelon.api.thriftjava.AudioSpacelonsLookupContelonxt;
+import com.twittelonr.stitch.Stitch;
+import com.twittelonr.strato.catalog.Felontch;
+import com.twittelonr.strato.clielonnt.Clielonnt;
+import com.twittelonr.strato.clielonnt.Felontchelonr;
+import com.twittelonr.strato.data.Conv;
+import com.twittelonr.strato.thrift.TBaselonConv;
+import com.twittelonr.ubs.thriftjava.AudioSpacelon;
+import com.twittelonr.util.Futurelon;
+import com.twittelonr.util.Try;
 
 /**
- * Fetches from the audio space core strato column.
+ * Felontchelons from thelon audio spacelon corelon strato column.
  */
-public class AudioSpaceCoreFetcher {
-  private static final String CORE_STRATO_COLUMN = "";
+public class AudioSpacelonCorelonFelontchelonr {
+  privatelon static final String CORelon_STRATO_COLUMN = "";
 
-  private static final AudioSpacesLookupContext
-      EMPTY_AUDIO_LOOKUP_CONTEXT = new AudioSpacesLookupContext();
+  privatelon static final AudioSpacelonsLookupContelonxt
+      elonMPTY_AUDIO_LOOKUP_CONTelonXT = nelonw AudioSpacelonsLookupContelonxt();
 
-  private final Fetcher<String, AudioSpacesLookupContext, AudioSpace> fetcher;
+  privatelon final Felontchelonr<String, AudioSpacelonsLookupContelonxt, AudioSpacelon> felontchelonr;
 
-  public AudioSpaceCoreFetcher(Client stratoClient) {
-    fetcher = stratoClient.fetcher(
-        CORE_STRATO_COLUMN,
-        true, // enables checking types against catalog
+  public AudioSpacelonCorelonFelontchelonr(Clielonnt stratoClielonnt) {
+    felontchelonr = stratoClielonnt.felontchelonr(
+        CORelon_STRATO_COLUMN,
+        truelon, // elonnablelons cheloncking typelons against catalog
         Conv.stringConv(),
-        TBaseConv.forClass(AudioSpacesLookupContext.class),
-        TBaseConv.forClass(AudioSpace.class));
+        TBaselonConv.forClass(AudioSpacelonsLookupContelonxt.class),
+        TBaselonConv.forClass(AudioSpacelon.class));
   }
 
-  public Future<Fetch.Result<AudioSpace>> fetch(String spaceId) {
-    return Stitch.run(fetcher.fetch(spaceId, EMPTY_AUDIO_LOOKUP_CONTEXT));
+  public Futurelon<Felontch.Relonsult<AudioSpacelon>> felontch(String spacelonId) {
+    relonturn Stitch.run(felontchelonr.felontch(spacelonId, elonMPTY_AUDIO_LOOKUP_CONTelonXT));
   }
 
   /**
-   * Use stitch to fetch mulitiple AudioSpace Objects at once
+   * Uselon stitch to felontch mulitiplelon AudioSpacelon Objeloncts at oncelon
    */
-  public Future<List<Try<Fetch.Result<AudioSpace>>>> fetchBulkSpaces(Set<String> spaceIds) {
-    return Stitch.run(
-        Stitch.collectToTry(
-            spaceIds
-                .stream()
-                .map(spaceId -> fetcher.fetch(spaceId, EMPTY_AUDIO_LOOKUP_CONTEXT))
-                .collect(Collectors.toList())
+  public Futurelon<List<Try<Felontch.Relonsult<AudioSpacelon>>>> felontchBulkSpacelons(Selont<String> spacelonIds) {
+    relonturn Stitch.run(
+        Stitch.collelonctToTry(
+            spacelonIds
+                .strelonam()
+                .map(spacelonId -> felontchelonr.felontch(spacelonId, elonMPTY_AUDIO_LOOKUP_CONTelonXT))
+                .collelonct(Collelonctors.toList())
         )
     );
   }

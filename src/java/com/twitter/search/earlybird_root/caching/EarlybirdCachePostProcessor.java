@@ -1,22 +1,22 @@
-package com.twitter.search.earlybird_root.caching;
+packagelon com.twittelonr.selonarch.elonarlybird_root.caching;
 
-import com.google.common.base.Optional;
+import com.googlelon.common.baselon.Optional;
 
-import com.twitter.search.common.caching.filter.CachePostProcessor;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
+import com.twittelonr.selonarch.common.caching.filtelonr.CachelonPostProcelonssor;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
+import com.twittelonr.selonarch.elonarlybird_root.common.elonarlybirdRelonquelonstContelonxt;
 
-public class EarlybirdCachePostProcessor
-    extends CachePostProcessor<EarlybirdRequestContext, EarlybirdResponse> {
+public class elonarlybirdCachelonPostProcelonssor
+    elonxtelonnds CachelonPostProcelonssor<elonarlybirdRelonquelonstContelonxt, elonarlybirdRelonsponselon> {
 
-  @Override
-  public final void recordCacheHit(EarlybirdResponse response) {
-    response.setCacheHit(true);
+  @Ovelonrridelon
+  public final void reloncordCachelonHit(elonarlybirdRelonsponselon relonsponselon) {
+    relonsponselon.selontCachelonHit(truelon);
   }
 
-  @Override
-  public Optional<EarlybirdResponse> processCacheResponse(EarlybirdRequestContext originalRequest,
-                                                          EarlybirdResponse cacheResponse) {
-    return Optional.of(cacheResponse);
+  @Ovelonrridelon
+  public Optional<elonarlybirdRelonsponselon> procelonssCachelonRelonsponselon(elonarlybirdRelonquelonstContelonxt originalRelonquelonst,
+                                                          elonarlybirdRelonsponselon cachelonRelonsponselon) {
+    relonturn Optional.of(cachelonRelonsponselon);
   }
 }

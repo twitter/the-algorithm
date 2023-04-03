@@ -1,60 +1,60 @@
-package com.twitter.product_mixer.core.controllers
+packagelon com.twittelonr.product_mixelonr.corelon.controllelonrs
 
-import com.twitter.finagle.http.Request
-import com.twitter.scrooge.BinaryThriftStructSerializer
-import com.twitter.scrooge.ThriftMethod
-import com.twitter.scrooge.schema.ThriftDefinitions
-import com.twitter.scrooge.schema.scrooge.scala.CompiledScroogeDefBuilder
-import com.twitter.scrooge.schema.serialization.thrift.ReferenceResolver
-import com.twitter.scrooge.schema.serialization.thrift.ThriftDefinitionsSerializer
-import com.twitter.scrooge.schema.{thriftscala => THRIFT}
+import com.twittelonr.finaglelon.http.Relonquelonst
+import com.twittelonr.scroogelon.BinaryThriftStructSelonrializelonr
+import com.twittelonr.scroogelon.ThriftMelonthod
+import com.twittelonr.scroogelon.schelonma.ThriftDelonfinitions
+import com.twittelonr.scroogelon.schelonma.scroogelon.scala.CompilelondScroogelonDelonfBuildelonr
+import com.twittelonr.scroogelon.schelonma.selonrialization.thrift.RelonfelonrelonncelonRelonsolvelonr
+import com.twittelonr.scroogelon.schelonma.selonrialization.thrift.ThriftDelonfinitionsSelonrializelonr
+import com.twittelonr.scroogelon.schelonma.{thriftscala => THRIFT}
 
 /**
- * Endpoint to expose a Mixer's expected query configuration, including the request schema.
+ * elonndpoint to elonxposelon a Mixelonr's elonxpelonctelond quelonry configuration, including thelon relonquelonst schelonma.
  *
- * @param debugEndpoint the debug Thrift endpoint. Passing [[None]] disables the query debugging
- *                      feature.
- * @tparam ServiceIface a thrift service containing the [[debugEndpoint]]
+ * @param delonbugelonndpoint thelon delonbug Thrift elonndpoint. Passing [[Nonelon]] disablelons thelon quelonry delonbugging
+ *                      felonaturelon.
+ * @tparam SelonrvicelonIfacelon a thrift selonrvicelon containing thelon [[delonbugelonndpoint]]
  */
-case class GetDebugConfigurationHandler[ServiceIface](
-  thriftMethod: ThriftMethod
+caselon class GelontDelonbugConfigurationHandlelonr[SelonrvicelonIfacelon](
+  thriftMelonthod: ThriftMelonthod
 )(
-  implicit val serviceIFace: Manifest[ServiceIface]) {
+  implicit val selonrvicelonIFacelon: Manifelonst[SelonrvicelonIfacelon]) {
 
-  // We need to binary encode the service def because the underlying Thrift isn't sufficiently
-  // annotated to be serialized/deserialized by Jackson
-  private val serviceDef = {
-    val fullServiceDefinition: ThriftDefinitions.ServiceDef = CompiledScroogeDefBuilder
-      .build(serviceIFace).asInstanceOf[ThriftDefinitions.ServiceDef]
+  // Welon nelonelond to binary elonncodelon thelon selonrvicelon delonf beloncauselon thelon undelonrlying Thrift isn't sufficielonntly
+  // annotatelond to belon selonrializelond/delonselonrializelond by Jackson
+  privatelon val selonrvicelonDelonf = {
+    val fullSelonrvicelonDelonfinition: ThriftDelonfinitions.SelonrvicelonDelonf = CompilelondScroogelonDelonfBuildelonr
+      .build(selonrvicelonIFacelon).asInstancelonOf[ThriftDelonfinitions.SelonrvicelonDelonf]
 
-    val endpointDefinition: ThriftDefinitions.ServiceEndpointDef =
-      fullServiceDefinition.endpointsByName(thriftMethod.name)
+    val elonndpointDelonfinition: ThriftDelonfinitions.SelonrvicelonelonndpointDelonf =
+      fullSelonrvicelonDelonfinition.elonndpointsByNamelon(thriftMelonthod.namelon)
 
-    // Create a service definition which just contains the debug endpoint. At a bare minimum, we need
-    // to give callers a way to identify the debug endpoint. Sending back all the endpoints is
-    // redundant.
-    val serviceDefinition: ThriftDefinitions.ServiceDef =
-      fullServiceDefinition.copy(endpoints = Seq(endpointDefinition))
+    // Crelonatelon a selonrvicelon delonfinition which just contains thelon delonbug elonndpoint. At a barelon minimum, welon nelonelond
+    // to givelon callelonrs a way to idelonntify thelon delonbug elonndpoint. Selonnding back all thelon elonndpoints is
+    // relondundant.
+    val selonrvicelonDelonfinition: ThriftDelonfinitions.SelonrvicelonDelonf =
+      fullSelonrvicelonDelonfinition.copy(elonndpoints = Selonq(elonndpointDelonfinition))
 
-    val thriftDefinitionsSerializer = {
-      // We don't make use of references but a reference resolver is required by the Scrooge API
-      val noopReferenceResolver: ReferenceResolver =
-        (_: THRIFT.ReferenceDef) => throw new Exception("no references")
+    val thriftDelonfinitionsSelonrializelonr = {
+      // Welon don't makelon uselon of relonfelonrelonncelons but a relonfelonrelonncelon relonsolvelonr is relonquirelond by thelon Scroogelon API
+      val noopRelonfelonrelonncelonRelonsolvelonr: RelonfelonrelonncelonRelonsolvelonr =
+        (_: THRIFT.RelonfelonrelonncelonDelonf) => throw nelonw elonxcelonption("no relonfelonrelonncelons")
 
-      new ThriftDefinitionsSerializer(noopReferenceResolver, enableReferences = false)
+      nelonw ThriftDelonfinitionsSelonrializelonr(noopRelonfelonrelonncelonRelonsolvelonr, elonnablelonRelonfelonrelonncelons = falselon)
     }
 
-    val thriftBinarySerializer = BinaryThriftStructSerializer.apply(THRIFT.Definition)
+    val thriftBinarySelonrializelonr = BinaryThriftStructSelonrializelonr.apply(THRIFT.Delonfinition)
 
-    val serializedServiceDef = thriftDefinitionsSerializer(serviceDefinition)
+    val selonrializelondSelonrvicelonDelonf = thriftDelonfinitionsSelonrializelonr(selonrvicelonDelonfinition)
 
-    thriftBinarySerializer.toBytes(serializedServiceDef)
+    thriftBinarySelonrializelonr.toBytelons(selonrializelondSelonrvicelonDelonf)
   }
 
-  def apply(request: Request): DebugConfigurationResponse =
-    DebugConfigurationResponse(thriftMethod.name, serviceDef)
+  delonf apply(relonquelonst: Relonquelonst): DelonbugConfigurationRelonsponselon =
+    DelonbugConfigurationRelonsponselon(thriftMelonthod.namelon, selonrvicelonDelonf)
 }
 
-case class DebugConfigurationResponse(
-  debugEndpointName: String,
-  serviceDefinition: Array[Byte])
+caselon class DelonbugConfigurationRelonsponselon(
+  delonbugelonndpointNamelon: String,
+  selonrvicelonDelonfinition: Array[Bytelon])

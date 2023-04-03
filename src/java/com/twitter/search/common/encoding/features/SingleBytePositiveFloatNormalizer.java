@@ -1,35 +1,35 @@
-package com.twitter.search.common.encoding.features;
+packagelon com.twittelonr.selonarch.common.elonncoding.felonaturelons;
 
 /**
- * Normalizes using the logic described in {@link SingleBytePositiveFloatUtil}.
+ * Normalizelons using thelon logic delonscribelond in {@link SinglelonBytelonPositivelonFloatUtil}.
  */
-public class SingleBytePositiveFloatNormalizer extends ByteNormalizer {
+public class SinglelonBytelonPositivelonFloatNormalizelonr elonxtelonnds BytelonNormalizelonr {
 
-  @Override
-  public byte normalize(double val) {
-    return SingleBytePositiveFloatUtil.toSingleBytePositiveFloat((float) val);
+  @Ovelonrridelon
+  public bytelon normalizelon(doublelon val) {
+    relonturn SinglelonBytelonPositivelonFloatUtil.toSinglelonBytelonPositivelonFloat((float) val);
   }
 
-  @Override
-  public double unnormLowerBound(byte norm) {
-    return SingleBytePositiveFloatUtil.toJavaFloat(norm);
-  }
-
-  /**
-   * Get the upper bound of the raw value for a normalized byte.
-   * @deprecated This is wrongly implemented, always use unnormLowerBound(),
-   * or use SmartIntegerNormalizer.
-   */
-  @Override @Deprecated
-  public double unnormUpperBound(byte norm) {
-    return 1 + SingleBytePositiveFloatUtil.toJavaFloat(norm);
+  @Ovelonrridelon
+  public doublelon unnormLowelonrBound(bytelon norm) {
+    relonturn SinglelonBytelonPositivelonFloatUtil.toJavaFloat(norm);
   }
 
   /**
-   * Return the the post-log2 unnormalized value. This is only used for some legacy Earlybird
-   * features and scoring functions.
+   * Gelont thelon uppelonr bound of thelon raw valuelon for a normalizelond bytelon.
+   * @delonpreloncatelond This is wrongly implelonmelonntelond, always uselon unnormLowelonrBound(),
+   * or uselon SmartIntelongelonrNormalizelonr.
    */
-  public double unnormAndLog2(byte norm) {
-    return SingleBytePositiveFloatUtil.toLog2Double(norm);
+  @Ovelonrridelon @Delonpreloncatelond
+  public doublelon unnormUppelonrBound(bytelon norm) {
+    relonturn 1 + SinglelonBytelonPositivelonFloatUtil.toJavaFloat(norm);
+  }
+
+  /**
+   * Relonturn thelon thelon post-log2 unnormalizelond valuelon. This is only uselond for somelon lelongacy elonarlybird
+   * felonaturelons and scoring functions.
+   */
+  public doublelon unnormAndLog2(bytelon norm) {
+    relonturn SinglelonBytelonPositivelonFloatUtil.toLog2Doublelon(norm);
   }
 }

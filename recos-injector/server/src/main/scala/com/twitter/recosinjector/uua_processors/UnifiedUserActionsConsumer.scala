@@ -1,71 +1,71 @@
-package com.twitter.recosinjector.uua_processors
+packagelon com.twittelonr.reloncosinjelonctor.uua_procelonssors
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finatra.kafka.consumers.FinagleKafkaConsumerBuilder
-import com.twitter.finatra.kafka.domain.KafkaGroupId
-import com.twitter.finatra.kafka.domain.SeekStrategy
-import com.twitter.finatra.kafka.serde.ScalaSerdes
-import com.twitter.finatra.kafka.serde.UnKeyed
-import com.twitter.finatra.kafka.serde.UnKeyedSerde
-import org.apache.kafka.clients.CommonClientConfigs
-import org.apache.kafka.common.config.SaslConfigs
-import org.apache.kafka.common.config.SslConfigs
-import org.apache.kafka.common.security.auth.SecurityProtocol
-import com.twitter.unified_user_actions.thriftscala.UnifiedUserAction
-import com.twitter.kafka.client.processor.AtLeastOnceProcessor
-import com.twitter.kafka.client.processor.ThreadSafeKafkaConsumerClient
-import com.twitter.conversions.StorageUnitOps._
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.finatra.kafka.consumelonrs.FinaglelonKafkaConsumelonrBuildelonr
+import com.twittelonr.finatra.kafka.domain.KafkaGroupId
+import com.twittelonr.finatra.kafka.domain.SelonelonkStratelongy
+import com.twittelonr.finatra.kafka.selonrdelon.ScalaSelonrdelons
+import com.twittelonr.finatra.kafka.selonrdelon.UnKelonyelond
+import com.twittelonr.finatra.kafka.selonrdelon.UnKelonyelondSelonrdelon
+import org.apachelon.kafka.clielonnts.CommonClielonntConfigs
+import org.apachelon.kafka.common.config.SaslConfigs
+import org.apachelon.kafka.common.config.SslConfigs
+import org.apachelon.kafka.common.seloncurity.auth.SeloncurityProtocol
+import com.twittelonr.unifielond_uselonr_actions.thriftscala.UnifielondUselonrAction
+import com.twittelonr.kafka.clielonnt.procelonssor.AtLelonastOncelonProcelonssor
+import com.twittelonr.kafka.clielonnt.procelonssor.ThrelonadSafelonKafkaConsumelonrClielonnt
+import com.twittelonr.convelonrsions.StoragelonUnitOps._
 
-class UnifiedUserActionsConsumer(
-  processor: UnifiedUserActionProcessor,
-  truststoreLocation: String
+class UnifielondUselonrActionsConsumelonr(
+  procelonssor: UnifielondUselonrActionProcelonssor,
+  truststorelonLocation: String
 )(
-  implicit statsReceiver: StatsReceiver) {
-  import UnifiedUserActionsConsumer._
+  implicit statsReloncelonivelonr: StatsReloncelonivelonr) {
+  import UnifielondUselonrActionsConsumelonr._
 
-  private val kafkaClient = new ThreadSafeKafkaConsumerClient[UnKeyed, UnifiedUserAction](
-    FinagleKafkaConsumerBuilder[UnKeyed, UnifiedUserAction]()
-      .groupId(KafkaGroupId(uuaRecosInjectorGroupId))
-      .keyDeserializer(UnKeyedSerde.deserializer)
-      .valueDeserializer(ScalaSerdes.Thrift[UnifiedUserAction].deserializer)
-      .dest(uuaDest)
-      .maxPollRecords(maxPollRecords)
-      .maxPollInterval(maxPollInterval)
-      .fetchMax(fetchMax)
-      .seekStrategy(SeekStrategy.END)
-      .enableAutoCommit(false) // AtLeastOnceProcessor performs commits manually
-      .withConfig(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, SecurityProtocol.SASL_SSL.toString)
-      .withConfig(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, truststoreLocation)
-      .withConfig(SaslConfigs.SASL_MECHANISM, SaslConfigs.GSSAPI_MECHANISM)
-      .withConfig(SaslConfigs.SASL_KERBEROS_SERVICE_NAME, "kafka")
-      .withConfig(SaslConfigs.SASL_KERBEROS_SERVER_NAME, "kafka")
+  privatelon val kafkaClielonnt = nelonw ThrelonadSafelonKafkaConsumelonrClielonnt[UnKelonyelond, UnifielondUselonrAction](
+    FinaglelonKafkaConsumelonrBuildelonr[UnKelonyelond, UnifielondUselonrAction]()
+      .groupId(KafkaGroupId(uuaReloncosInjelonctorGroupId))
+      .kelonyDelonselonrializelonr(UnKelonyelondSelonrdelon.delonselonrializelonr)
+      .valuelonDelonselonrializelonr(ScalaSelonrdelons.Thrift[UnifielondUselonrAction].delonselonrializelonr)
+      .delonst(uuaDelonst)
+      .maxPollReloncords(maxPollReloncords)
+      .maxPollIntelonrval(maxPollIntelonrval)
+      .felontchMax(felontchMax)
+      .selonelonkStratelongy(SelonelonkStratelongy.elonND)
+      .elonnablelonAutoCommit(falselon) // AtLelonastOncelonProcelonssor pelonrforms commits manually
+      .withConfig(CommonClielonntConfigs.SelonCURITY_PROTOCOL_CONFIG, SeloncurityProtocol.SASL_SSL.toString)
+      .withConfig(SslConfigs.SSL_TRUSTSTORelon_LOCATION_CONFIG, truststorelonLocation)
+      .withConfig(SaslConfigs.SASL_MelonCHANISM, SaslConfigs.GSSAPI_MelonCHANISM)
+      .withConfig(SaslConfigs.SASL_KelonRBelonROS_SelonRVICelon_NAMelon, "kafka")
+      .withConfig(SaslConfigs.SASL_KelonRBelonROS_SelonRVelonR_NAMelon, "kafka")
       .config)
 
-  val atLeastOnceProcessor: AtLeastOnceProcessor[UnKeyed, UnifiedUserAction] = {
-    AtLeastOnceProcessor[UnKeyed, UnifiedUserAction](
-      name = processorName,
+  val atLelonastOncelonProcelonssor: AtLelonastOncelonProcelonssor[UnKelonyelond, UnifielondUselonrAction] = {
+    AtLelonastOncelonProcelonssor[UnKelonyelond, UnifielondUselonrAction](
+      namelon = procelonssorNamelon,
       topic = uuaTopic,
-      consumer = kafkaClient,
-      processor = processor.apply,
-      maxPendingRequests = maxPendingRequests,
-      workerThreads = workerThreads,
-      commitIntervalMs = commitIntervalMs,
-      statsReceiver = statsReceiver.scope(processorName)
+      consumelonr = kafkaClielonnt,
+      procelonssor = procelonssor.apply,
+      maxPelonndingRelonquelonsts = maxPelonndingRelonquelonsts,
+      workelonrThrelonads = workelonrThrelonads,
+      commitIntelonrvalMs = commitIntelonrvalMs,
+      statsReloncelonivelonr = statsReloncelonivelonr.scopelon(procelonssorNamelon)
     )
   }
 
 }
 
-object UnifiedUserActionsConsumer {
-  val maxPollRecords = 1000
-  val maxPollInterval = 5.minutes
-  val fetchMax = 1.megabytes
-  val maxPendingRequests = 1000
-  val workerThreads = 16
-  val commitIntervalMs = 10.seconds.inMilliseconds
-  val processorName = "unified_user_actions_processor"
-  val uuaTopic = "unified_user_actions_engagements"
-  val uuaDest = "/s/kafka/bluebird-1:kafka-tls"
-  val uuaRecosInjectorGroupId = "recos-injector"
+objelonct UnifielondUselonrActionsConsumelonr {
+  val maxPollReloncords = 1000
+  val maxPollIntelonrval = 5.minutelons
+  val felontchMax = 1.melongabytelons
+  val maxPelonndingRelonquelonsts = 1000
+  val workelonrThrelonads = 16
+  val commitIntelonrvalMs = 10.selonconds.inMilliselonconds
+  val procelonssorNamelon = "unifielond_uselonr_actions_procelonssor"
+  val uuaTopic = "unifielond_uselonr_actions_elonngagelonmelonnts"
+  val uuaDelonst = "/s/kafka/bluelonbird-1:kafka-tls"
+  val uuaReloncosInjelonctorGroupId = "reloncos-injelonctor"
 }

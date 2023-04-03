@@ -1,22 +1,22 @@
-package com.twitter.visibility.util
+packagelon com.twittelonr.visibility.util
 
-import com.twitter.abdecider.ABDecider
-import com.twitter.featureswitches.v2.FeatureSwitches
-import com.twitter.featureswitches.v2.builder.FeatureSwitchesBuilder
-import com.twitter.finagle.stats.StatsReceiver
+import com.twittelonr.abdeloncidelonr.ABDeloncidelonr
+import com.twittelonr.felonaturelonswitchelons.v2.FelonaturelonSwitchelons
+import com.twittelonr.felonaturelonswitchelons.v2.buildelonr.FelonaturelonSwitchelonsBuildelonr
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
 
-object FeatureSwitchUtil {
-  private val LibraryFeaturesConfigPath = "/features/visibility/main"
-  private val LimitedActionsFeaturesConfigPath = "/features/visibility-limited-actions/main"
+objelonct FelonaturelonSwitchUtil {
+  privatelon val LibraryFelonaturelonsConfigPath = "/felonaturelons/visibility/main"
+  privatelon val LimitelondActionsFelonaturelonsConfigPath = "/felonaturelons/visibility-limitelond-actions/main"
 
-  def mkVisibilityLibraryFeatureSwitches(
-    abDecider: ABDecider,
-    statsReceiver: StatsReceiver
-  ): FeatureSwitches =
-    FeatureSwitchesBuilder
-      .createDefault(LibraryFeaturesConfigPath, abDecider, Some(statsReceiver)).build()
+  delonf mkVisibilityLibraryFelonaturelonSwitchelons(
+    abDeloncidelonr: ABDeloncidelonr,
+    statsReloncelonivelonr: StatsReloncelonivelonr
+  ): FelonaturelonSwitchelons =
+    FelonaturelonSwitchelonsBuildelonr
+      .crelonatelonDelonfault(LibraryFelonaturelonsConfigPath, abDeloncidelonr, Somelon(statsReloncelonivelonr)).build()
 
-  def mkLimitedActionsFeatureSwitches(statsReceiver: StatsReceiver): FeatureSwitches =
-    FeatureSwitchesBuilder
-      .createWithNoExperiments(LimitedActionsFeaturesConfigPath, Some(statsReceiver)).build()
+  delonf mkLimitelondActionsFelonaturelonSwitchelons(statsReloncelonivelonr: StatsReloncelonivelonr): FelonaturelonSwitchelons =
+    FelonaturelonSwitchelonsBuildelonr
+      .crelonatelonWithNoelonxpelonrimelonnts(LimitelondActionsFelonaturelonsConfigPath, Somelon(statsReloncelonivelonr)).build()
 }

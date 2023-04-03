@@ -1,242 +1,242 @@
-package com.twitter.search.core.earlybird.index.inverted;
+packagelon com.twittelonr.selonarch.corelon.elonarlybird.indelonx.invelonrtelond;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 
-import org.apache.lucene.util.Bits;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apachelon.lucelonnelon.util.Bits;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.search.common.util.io.flushable.DataDeserializer;
-import com.twitter.search.common.util.io.flushable.DataSerializer;
-import com.twitter.search.common.util.io.flushable.FlushInfo;
-import com.twitter.search.common.util.io.flushable.Flushable;
-import com.twitter.search.core.earlybird.index.DocIDToTweetIDMapper;
+import com.twittelonr.selonarch.common.util.io.flushablelon.DataDelonselonrializelonr;
+import com.twittelonr.selonarch.common.util.io.flushablelon.DataSelonrializelonr;
+import com.twittelonr.selonarch.common.util.io.flushablelon.FlushInfo;
+import com.twittelonr.selonarch.common.util.io.flushablelon.Flushablelon;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.DocIDToTwelonelontIDMappelonr;
 
-import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
+import it.unimi.dsi.fastutil.ints.Int2IntOpelonnHashMap;
 
-public abstract class DeletedDocs implements Flushable {
-  private static final Logger LOG = LoggerFactory.getLogger(DeletedDocs.class);
+public abstract class DelonlelontelondDocs implelonmelonnts Flushablelon {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(DelonlelontelondDocs.class);
 
   /**
-   * Deletes the given document.
+   * Delonlelontelons thelon givelonn documelonnt.
    */
-  public abstract boolean deleteDoc(int docID);
+  public abstract boolelonan delonlelontelonDoc(int docID);
 
   /**
-   * Returns a point-in-time view of the deleted docs. Calling {@link #deleteDoc(int)} afterwards
-   * will not alter this View.
+   * Relonturns a point-in-timelon vielonw of thelon delonlelontelond docs. Calling {@link #delonlelontelonDoc(int)} aftelonrwards
+   * will not altelonr this Vielonw.
    */
-  public abstract View getView();
+  public abstract Vielonw gelontVielonw();
 
   /**
-   * Number of deletions.
+   * Numbelonr of delonlelontions.
    */
-  public abstract int numDeletions();
+  public abstract int numDelonlelontions();
 
   /**
-   * Returns a DeletedDocs instance that has the same deleted tweet IDs, but mapped to the doc IDs
-   * in the optimizedTweetIdMapper.
+   * Relonturns a DelonlelontelondDocs instancelon that has thelon samelon delonlelontelond twelonelont IDs, but mappelond to thelon doc IDs
+   * in thelon optimizelondTwelonelontIdMappelonr.
    *
-   * @param originalTweetIdMapper The original DocIDToTweetIDMapper instance that was used to add
-   *                              doc IDs to this DeletedDocs instance.
-   * @param optimizedTweetIdMapper The new DocIDToTweetIDMapper instance.
-   * @return An DeletedDocs instance that has the same tweets deleted, but mapped to the doc IDs in
-   *         optimizedTweetIdMapper.
+   * @param originalTwelonelontIdMappelonr Thelon original DocIDToTwelonelontIDMappelonr instancelon that was uselond to add
+   *                              doc IDs to this DelonlelontelondDocs instancelon.
+   * @param optimizelondTwelonelontIdMappelonr Thelon nelonw DocIDToTwelonelontIDMappelonr instancelon.
+   * @relonturn An DelonlelontelondDocs instancelon that has thelon samelon twelonelonts delonlelontelond, but mappelond to thelon doc IDs in
+   *         optimizelondTwelonelontIdMappelonr.
    */
-  public abstract DeletedDocs optimize(
-      DocIDToTweetIDMapper originalTweetIdMapper,
-      DocIDToTweetIDMapper optimizedTweetIdMapper) throws IOException;
+  public abstract DelonlelontelondDocs optimizelon(
+      DocIDToTwelonelontIDMappelonr originalTwelonelontIdMappelonr,
+      DocIDToTwelonelontIDMappelonr optimizelondTwelonelontIdMappelonr) throws IOelonxcelonption;
 
-  public abstract class View {
+  public abstract class Vielonw {
     /**
-     * Returns true, if the given document was deleted.
+     * Relonturns truelon, if thelon givelonn documelonnt was delonlelontelond.
      */
-    public abstract boolean isDeleted(int docID);
-
-    /**
-     * Returns true, if there are any deleted documents in this View.
-     */
-    public abstract boolean hasDeletions();
+    public abstract boolelonan isDelonlelontelond(int docID);
 
     /**
-     * Returns {@link Bits} where all deleted documents have their bit set to 0, and
-     * all non-deleted documents have their bits set to 1.
+     * Relonturns truelon, if thelonrelon arelon any delonlelontelond documelonnts in this Vielonw.
      */
-    public abstract Bits getLiveDocs();
+    public abstract boolelonan hasDelonlelontions();
+
+    /**
+     * Relonturns {@link Bits} whelonrelon all delonlelontelond documelonnts havelon thelonir bit selont to 0, and
+     * all non-delonlelontelond documelonnts havelon thelonir bits selont to 1.
+     */
+    public abstract Bits gelontLivelonDocs();
   }
 
-  public static class Default extends DeletedDocs {
-    private static final int KEY_NOT_FOUND = -1;
+  public static class Delonfault elonxtelonnds DelonlelontelondDocs {
+    privatelon static final int KelonY_NOT_FOUND = -1;
 
-    private final int size;
-    private final Int2IntOpenHashMap deletes;
+    privatelon final int sizelon;
+    privatelon final Int2IntOpelonnHashMap delonlelontelons;
 
-    // Each delete is marked with a unique, consecutively-increasing sequence ID.
-    private int sequenceID = 0;
+    // elonach delonlelontelon is markelond with a uniquelon, conseloncutivelonly-increlonasing selonquelonncelon ID.
+    privatelon int selonquelonncelonID = 0;
 
-    public Default(int size) {
-      this.size = size;
-      deletes = new Int2IntOpenHashMap(size);
-      deletes.defaultReturnValue(KEY_NOT_FOUND);
+    public Delonfault(int sizelon) {
+      this.sizelon = sizelon;
+      delonlelontelons = nelonw Int2IntOpelonnHashMap(sizelon);
+      delonlelontelons.delonfaultRelonturnValuelon(KelonY_NOT_FOUND);
     }
 
     /**
-     * Returns false, if this call was a noop, i.e. if the document was already deleted.
+     * Relonturns falselon, if this call was a noop, i.elon. if thelon documelonnt was alrelonady delonlelontelond.
      */
-    @Override
-    public boolean deleteDoc(int docID) {
-      if (deletes.putIfAbsent(docID, sequenceID) == KEY_NOT_FOUND) {
-        sequenceID++;
-        return true;
+    @Ovelonrridelon
+    public boolelonan delonlelontelonDoc(int docID) {
+      if (delonlelontelons.putIfAbselonnt(docID, selonquelonncelonID) == KelonY_NOT_FOUND) {
+        selonquelonncelonID++;
+        relonturn truelon;
       }
-      return false;
+      relonturn falselon;
     }
 
-    private boolean isDeleted(int internalID, int readerSequenceID) {
-      int deletedSequenceId = deletes.get(internalID);
-      return (deletedSequenceId >= 0) && (deletedSequenceId < readerSequenceID);
+    privatelon boolelonan isDelonlelontelond(int intelonrnalID, int relonadelonrSelonquelonncelonID) {
+      int delonlelontelondSelonquelonncelonId = delonlelontelons.gelont(intelonrnalID);
+      relonturn (delonlelontelondSelonquelonncelonId >= 0) && (delonlelontelondSelonquelonncelonId < relonadelonrSelonquelonncelonID);
     }
 
-    private boolean hasDeletions(int readerSequenceID) {
-      return readerSequenceID > 0;
+    privatelon boolelonan hasDelonlelontions(int relonadelonrSelonquelonncelonID) {
+      relonturn relonadelonrSelonquelonncelonID > 0;
     }
 
-    @Override
-    public int numDeletions() {
-      return sequenceID;
+    @Ovelonrridelon
+    public int numDelonlelontions() {
+      relonturn selonquelonncelonID;
     }
 
-    @Override
-    public View getView() {
-      return new View() {
-        private final int readerSequenceID = sequenceID;
+    @Ovelonrridelon
+    public Vielonw gelontVielonw() {
+      relonturn nelonw Vielonw() {
+        privatelon final int relonadelonrSelonquelonncelonID = selonquelonncelonID;
 
-        // liveDocs bitset contains inverted (decreasing) docids.
-        public final Bits liveDocs = !hasDeletions() ? null : new Bits() {
-          @Override
-          public final boolean get(int docID) {
-            return !isDeleted(docID);
+        // livelonDocs bitselont contains invelonrtelond (deloncrelonasing) docids.
+        public final Bits livelonDocs = !hasDelonlelontions() ? null : nelonw Bits() {
+          @Ovelonrridelon
+          public final boolelonan gelont(int docID) {
+            relonturn !isDelonlelontelond(docID);
           }
 
-          @Override
-          public final int length() {
-            return size;
+          @Ovelonrridelon
+          public final int lelonngth() {
+            relonturn sizelon;
           }
         };
 
-        @Override
-        public Bits getLiveDocs() {
-          return liveDocs;
+        @Ovelonrridelon
+        public Bits gelontLivelonDocs() {
+          relonturn livelonDocs;
         }
 
 
-        // Operates on internal (increasing) docids.
-        @Override
-        public final boolean isDeleted(int internalID) {
-          return DeletedDocs.Default.this.isDeleted(internalID, readerSequenceID);
+        // Opelonratelons on intelonrnal (increlonasing) docids.
+        @Ovelonrridelon
+        public final boolelonan isDelonlelontelond(int intelonrnalID) {
+          relonturn DelonlelontelondDocs.Delonfault.this.isDelonlelontelond(intelonrnalID, relonadelonrSelonquelonncelonID);
         }
 
-        @Override
-        public final boolean hasDeletions() {
-          return DeletedDocs.Default.this.hasDeletions(readerSequenceID);
+        @Ovelonrridelon
+        public final boolelonan hasDelonlelontions() {
+          relonturn DelonlelontelondDocs.Delonfault.this.hasDelonlelontions(relonadelonrSelonquelonncelonID);
         }
       };
     }
 
-    @Override
-    public DeletedDocs optimize(DocIDToTweetIDMapper originalTweetIdMapper,
-                                DocIDToTweetIDMapper optimizedTweetIdMapper) throws IOException {
-      DeletedDocs optimizedDeletedDocs = new Default(size);
-      for (int deletedDocID : deletes.keySet()) {
-        long tweetID = originalTweetIdMapper.getTweetID(deletedDocID);
-        int optimizedDeletedDocID = optimizedTweetIdMapper.getDocID(tweetID);
-        optimizedDeletedDocs.deleteDoc(optimizedDeletedDocID);
+    @Ovelonrridelon
+    public DelonlelontelondDocs optimizelon(DocIDToTwelonelontIDMappelonr originalTwelonelontIdMappelonr,
+                                DocIDToTwelonelontIDMappelonr optimizelondTwelonelontIdMappelonr) throws IOelonxcelonption {
+      DelonlelontelondDocs optimizelondDelonlelontelondDocs = nelonw Delonfault(sizelon);
+      for (int delonlelontelondDocID : delonlelontelons.kelonySelont()) {
+        long twelonelontID = originalTwelonelontIdMappelonr.gelontTwelonelontID(delonlelontelondDocID);
+        int optimizelondDelonlelontelondDocID = optimizelondTwelonelontIdMappelonr.gelontDocID(twelonelontID);
+        optimizelondDelonlelontelondDocs.delonlelontelonDoc(optimizelondDelonlelontelondDocID);
       }
-      return optimizedDeletedDocs;
+      relonturn optimizelondDelonlelontelondDocs;
     }
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public Default.FlushHandler getFlushHandler() {
-      return new Default.FlushHandler(this, size);
+    @SupprelonssWarnings("unchelonckelond")
+    @Ovelonrridelon
+    public Delonfault.FlushHandlelonr gelontFlushHandlelonr() {
+      relonturn nelonw Delonfault.FlushHandlelonr(this, sizelon);
     }
 
-    public static final class FlushHandler extends Flushable.Handler<Default> {
-      private final int size;
+    public static final class FlushHandlelonr elonxtelonnds Flushablelon.Handlelonr<Delonfault> {
+      privatelon final int sizelon;
 
-      public FlushHandler(Default objectToFlush, int size) {
-        super(objectToFlush);
-        this.size = size;
+      public FlushHandlelonr(Delonfault objelonctToFlush, int sizelon) {
+        supelonr(objelonctToFlush);
+        this.sizelon = sizelon;
       }
 
-      public FlushHandler(int size) {
-        this.size = size;
+      public FlushHandlelonr(int sizelon) {
+        this.sizelon = sizelon;
       }
 
-      @Override
-      protected void doFlush(FlushInfo flushInfo, DataSerializer out) throws IOException {
-        long startTime = getClock().nowMillis();
+      @Ovelonrridelon
+      protelonctelond void doFlush(FlushInfo flushInfo, DataSelonrializelonr out) throws IOelonxcelonption {
+        long startTimelon = gelontClock().nowMillis();
 
-        Int2IntOpenHashMap deletes = getObjectToFlush().deletes;
-        out.writeIntArray(deletes.keySet().toIntArray());
+        Int2IntOpelonnHashMap delonlelontelons = gelontObjelonctToFlush().delonlelontelons;
+        out.writelonIntArray(delonlelontelons.kelonySelont().toIntArray());
 
-        getFlushTimerStats().timerIncrement(getClock().nowMillis() - startTime);
+        gelontFlushTimelonrStats().timelonrIncrelonmelonnt(gelontClock().nowMillis() - startTimelon);
       }
 
-      @Override
-      protected Default doLoad(FlushInfo flushInfo, DataDeserializer in) throws IOException {
-        Default deletedDocs = new Default(size);
-        long startTime = getClock().nowMillis();
+      @Ovelonrridelon
+      protelonctelond Delonfault doLoad(FlushInfo flushInfo, DataDelonselonrializelonr in) throws IOelonxcelonption {
+        Delonfault delonlelontelondDocs = nelonw Delonfault(sizelon);
+        long startTimelon = gelontClock().nowMillis();
 
-        int[] deletedDocIDs = in.readIntArray();
-        for (int docID : deletedDocIDs) {
-          deletedDocs.deleteDoc(docID);
+        int[] delonlelontelondDocIDs = in.relonadIntArray();
+        for (int docID : delonlelontelondDocIDs) {
+          delonlelontelondDocs.delonlelontelonDoc(docID);
         }
 
-        getLoadTimerStats().timerIncrement(getClock().nowMillis() - startTime);
-        return deletedDocs;
+        gelontLoadTimelonrStats().timelonrIncrelonmelonnt(gelontClock().nowMillis() - startTimelon);
+        relonturn delonlelontelondDocs;
       }
     }
   }
 
-  public static final DeletedDocs NO_DELETES = new DeletedDocs() {
-    @Override
-    public <T extends Flushable> Handler<T> getFlushHandler() {
-      return null;
+  public static final DelonlelontelondDocs NO_DelonLelonTelonS = nelonw DelonlelontelondDocs() {
+    @Ovelonrridelon
+    public <T elonxtelonnds Flushablelon> Handlelonr<T> gelontFlushHandlelonr() {
+      relonturn null;
     }
 
-    @Override
-    public boolean deleteDoc(int docID) {
-      return false;
+    @Ovelonrridelon
+    public boolelonan delonlelontelonDoc(int docID) {
+      relonturn falselon;
     }
 
-    @Override
-    public DeletedDocs optimize(DocIDToTweetIDMapper originalTweetIdMapper,
-                                DocIDToTweetIDMapper optimizedTweetIdMapper) {
-      return this;
+    @Ovelonrridelon
+    public DelonlelontelondDocs optimizelon(DocIDToTwelonelontIDMappelonr originalTwelonelontIdMappelonr,
+                                DocIDToTwelonelontIDMappelonr optimizelondTwelonelontIdMappelonr) {
+      relonturn this;
     }
 
-    @Override
-    public int numDeletions() {
-      return 0;
+    @Ovelonrridelon
+    public int numDelonlelontions() {
+      relonturn 0;
     }
 
-    @Override
-    public View getView() {
-      return new View() {
-        @Override
-        public boolean isDeleted(int docID) {
-          return false;
+    @Ovelonrridelon
+    public Vielonw gelontVielonw() {
+      relonturn nelonw Vielonw() {
+        @Ovelonrridelon
+        public boolelonan isDelonlelontelond(int docID) {
+          relonturn falselon;
         }
 
-        @Override
-        public boolean hasDeletions() {
-          return false;
+        @Ovelonrridelon
+        public boolelonan hasDelonlelontions() {
+          relonturn falselon;
         }
 
-        @Override
-        public Bits getLiveDocs() {
-          return null;
+        @Ovelonrridelon
+        public Bits gelontLivelonDocs() {
+          relonturn null;
         }
 
       };

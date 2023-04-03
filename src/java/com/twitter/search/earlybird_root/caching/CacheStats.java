@@ -1,13 +1,13 @@
-package com.twitter.search.earlybird_root.caching;
+packagelon com.twittelonr.selonarch.elonarlybird_root.caching;
 
-import com.twitter.search.common.metrics.SearchRateCounter;
+import com.twittelonr.selonarch.common.melontrics.SelonarchRatelonCountelonr;
 
-public final class CacheStats {
-  public static final SearchRateCounter REQUEST_FAILED_COUNTER =
-      SearchRateCounter.export("memcache_request_failed");
-  public static final SearchRateCounter REQUEST_TIMEOUT_COUNTER =
-      SearchRateCounter.export("memcache_request_timeout");
+public final class CachelonStats {
+  public static final SelonarchRatelonCountelonr RelonQUelonST_FAILelonD_COUNTelonR =
+      SelonarchRatelonCountelonr.elonxport("melonmcachelon_relonquelonst_failelond");
+  public static final SelonarchRatelonCountelonr RelonQUelonST_TIMelonOUT_COUNTelonR =
+      SelonarchRatelonCountelonr.elonxport("melonmcachelon_relonquelonst_timelonout");
 
-  private CacheStats() {
+  privatelon CachelonStats() {
   }
 }

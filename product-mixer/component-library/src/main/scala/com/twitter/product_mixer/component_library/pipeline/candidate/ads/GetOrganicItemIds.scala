@@ -1,29 +1,29 @@
-package com.twitter.product_mixer.component_library.pipeline.candidate.ads
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.pipelonlinelon.candidatelon.ads
 
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.CandidatelonScopelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonWithDelontails
 
 /**
- * Get organic item candidates from the set of previous candidates
+ * Gelont organic itelonm candidatelons from thelon selont of prelonvious candidatelons
  */
-trait GetOrganicItemIds {
+trait GelontOrganicItelonmIds {
 
-  def apply(previousCandidates: Seq[CandidateWithDetails]): Option[Seq[Long]]
+  delonf apply(prelonviousCandidatelons: Selonq[CandidatelonWithDelontails]): Option[Selonq[Long]]
 }
 
 /**
- * Get organic items from specified pipelines
+ * Gelont organic itelonms from speloncifielond pipelonlinelons
  */
-case class PipelineScopedOrganicItemIds(pipelines: CandidateScope) extends GetOrganicItemIds {
+caselon class PipelonlinelonScopelondOrganicItelonmIds(pipelonlinelons: CandidatelonScopelon) elonxtelonnds GelontOrganicItelonmIds {
 
-  def apply(previousCandidates: Seq[CandidateWithDetails]): Option[Seq[Long]] =
-    Some(previousCandidates.filter(pipelines.contains).map(_.candidateIdLong))
+  delonf apply(prelonviousCandidatelons: Selonq[CandidatelonWithDelontails]): Option[Selonq[Long]] =
+    Somelon(prelonviousCandidatelons.filtelonr(pipelonlinelons.contains).map(_.candidatelonIdLong))
 }
 
 /**
- * Get an empty list of organic item candidates
+ * Gelont an elonmpty list of organic itelonm candidatelons
  */
-case object EmptyOrganicItemIds extends GetOrganicItemIds {
+caselon objelonct elonmptyOrganicItelonmIds elonxtelonnds GelontOrganicItelonmIds {
 
-  def apply(previousCandidates: Seq[CandidateWithDetails]): Option[Seq[Long]] = None
+  delonf apply(prelonviousCandidatelons: Selonq[CandidatelonWithDelontails]): Option[Selonq[Long]] = Nonelon
 }

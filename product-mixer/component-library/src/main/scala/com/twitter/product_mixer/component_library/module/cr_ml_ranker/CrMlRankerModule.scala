@@ -1,39 +1,39 @@
-package com.twitter.product_mixer.component_library.module.cr_ml_ranker
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.modulelon.cr_ml_rankelonr
 
-import com.google.inject.Provides
-import com.twitter.conversions.DurationOps._
-import com.twitter.cr_ml_ranker.thriftscala.CrMLRanker
-import com.twitter.finagle.thriftmux.MethodBuilder
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsClient
-import com.twitter.inject.Injector
-import com.twitter.inject.thrift.modules.ThriftMethodBuilderClientModule
-import com.twitter.product_mixer.component_library.scorer.cr_ml_ranker.CrMlRankerScoreStitchClient
-import com.twitter.util.Duration
-import javax.inject.Singleton
+import com.googlelon.injelonct.Providelons
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.cr_ml_rankelonr.thriftscala.CrMLRankelonr
+import com.twittelonr.finaglelon.thriftmux.MelonthodBuildelonr
+import com.twittelonr.finatra.mtls.thriftmux.modulelons.MtlsClielonnt
+import com.twittelonr.injelonct.Injelonctor
+import com.twittelonr.injelonct.thrift.modulelons.ThriftMelonthodBuildelonrClielonntModulelon
+import com.twittelonr.product_mixelonr.componelonnt_library.scorelonr.cr_ml_rankelonr.CrMlRankelonrScorelonStitchClielonnt
+import com.twittelonr.util.Duration
+import javax.injelonct.Singlelonton
 
-case class CrMLRankerModule(totalTimeout: Duration = 100.milliseconds, batchSize: Int = 50)
-    extends ThriftMethodBuilderClientModule[
-      CrMLRanker.ServicePerEndpoint,
-      CrMLRanker.MethodPerEndpoint
+caselon class CrMLRankelonrModulelon(totalTimelonout: Duration = 100.milliselonconds, batchSizelon: Int = 50)
+    elonxtelonnds ThriftMelonthodBuildelonrClielonntModulelon[
+      CrMLRankelonr.SelonrvicelonPelonrelonndpoint,
+      CrMLRankelonr.MelonthodPelonrelonndpoint
     ]
-    with MtlsClient {
-  override val label = "cr-ml-ranker"
-  override val dest = "/s/cr-ml-ranker/cr-ml-ranker"
+    with MtlsClielonnt {
+  ovelonrridelon val labelonl = "cr-ml-rankelonr"
+  ovelonrridelon val delonst = "/s/cr-ml-rankelonr/cr-ml-rankelonr"
 
-  override protected def configureMethodBuilder(
-    injector: Injector,
-    methodBuilder: MethodBuilder
-  ): MethodBuilder = {
-    methodBuilder
-      .withTimeoutTotal(totalTimeout)
+  ovelonrridelon protelonctelond delonf configurelonMelonthodBuildelonr(
+    injelonctor: Injelonctor,
+    melonthodBuildelonr: MelonthodBuildelonr
+  ): MelonthodBuildelonr = {
+    melonthodBuildelonr
+      .withTimelonoutTotal(totalTimelonout)
   }
 
-  @Provides
-  @Singleton
-  def providesStitchClient(
-    crMlRankerThriftClient: CrMLRanker.MethodPerEndpoint
-  ): CrMlRankerScoreStitchClient = new CrMlRankerScoreStitchClient(
-    crMlRankerThriftClient,
-    maxBatchSize = batchSize
+  @Providelons
+  @Singlelonton
+  delonf providelonsStitchClielonnt(
+    crMlRankelonrThriftClielonnt: CrMLRankelonr.MelonthodPelonrelonndpoint
+  ): CrMlRankelonrScorelonStitchClielonnt = nelonw CrMlRankelonrScorelonStitchClielonnt(
+    crMlRankelonrThriftClielonnt,
+    maxBatchSizelon = batchSizelon
   )
 }

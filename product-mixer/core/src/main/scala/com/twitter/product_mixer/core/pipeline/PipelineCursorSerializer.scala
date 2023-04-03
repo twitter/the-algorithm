@@ -1,57 +1,57 @@
-package com.twitter.product_mixer.core.pipeline
+packagelon com.twittelonr.product_mixelonr.corelon.pipelonlinelon
 
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.MalformedCursor
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.scrooge.BinaryThriftStructSerializer
-import com.twitter.scrooge.ThriftStruct
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import com.twitter.util.Try
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.MalformelondCursor
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.PipelonlinelonFailurelon
+import com.twittelonr.scroogelon.BinaryThriftStructSelonrializelonr
+import com.twittelonr.scroogelon.ThriftStruct
+import com.twittelonr.util.Relonturn
+import com.twittelonr.util.Throw
+import com.twittelonr.util.Try
 
 /**
- * Serializes a [[PipelineCursor]] into thrift and then into a base64 encoded string
+ * Selonrializelons a [[PipelonlinelonCursor]] into thrift and thelonn into a baselon64 elonncodelond string
  */
-trait PipelineCursorSerializer[-Cursor <: PipelineCursor] {
-  def serializeCursor(cursor: Cursor): String
+trait PipelonlinelonCursorSelonrializelonr[-Cursor <: PipelonlinelonCursor] {
+  delonf selonrializelonCursor(cursor: Cursor): String
 }
 
-object PipelineCursorSerializer {
+objelonct PipelonlinelonCursorSelonrializelonr {
 
   /**
-   * Deserializes a cursor string into thrift and then into a [[PipelineCursor]]
+   * Delonselonrializelons a cursor string into thrift and thelonn into a [[PipelonlinelonCursor]]
    *
-   * @param cursorString to deserialize, which is base64 encoded thrift
-   * @param cursorThriftSerializer to deserialize the cursor string into thrift
-   * @param deserializePf specifies how to transform the serialized thrift into a [[PipelineCursor]]
-   * @return optional [[PipelineCursor]]. `None` may or may not be a failure depending on the
-   *         implementation of deserializePf.
+   * @param cursorString to delonselonrializelon, which is baselon64 elonncodelond thrift
+   * @param cursorThriftSelonrializelonr to delonselonrializelon thelon cursor string into thrift
+   * @param delonselonrializelonPf speloncifielons how to transform thelon selonrializelond thrift into a [[PipelonlinelonCursor]]
+   * @relonturn optional [[PipelonlinelonCursor]]. `Nonelon` may or may not belon a failurelon delonpelonnding on thelon
+   *         implelonmelonntation of delonselonrializelonPf.
    *
-   * @note The "A" type of deserializePf cannot be inferred due to the thrift type not being present
-   *       on the PipelineCursorSerializer trait. Therefore invokers must often add an explicit type
-   *       on the deserializeCursor call to help out the compiler when passing deserializePf inline.
-   *       Alternatively, deserializePf can be declared as a val with a type annotation before it is
-   *       passed into this method.
+   * @notelon Thelon "A" typelon of delonselonrializelonPf cannot belon infelonrrelond duelon to thelon thrift typelon not beloning prelonselonnt
+   *       on thelon PipelonlinelonCursorSelonrializelonr trait. Thelonrelonforelon invokelonrs must oftelonn add an elonxplicit typelon
+   *       on thelon delonselonrializelonCursor call to helonlp out thelon compilelonr whelonn passing delonselonrializelonPf inlinelon.
+   *       Altelonrnativelonly, delonselonrializelonPf can belon delonclarelond as a val with a typelon annotation belonforelon it is
+   *       passelond into this melonthod.
    */
-  def deserializeCursor[Thrift <: ThriftStruct, Cursor <: PipelineCursor](
+  delonf delonselonrializelonCursor[Thrift <: ThriftStruct, Cursor <: PipelonlinelonCursor](
     cursorString: String,
-    cursorThriftSerializer: BinaryThriftStructSerializer[Thrift],
-    deserializePf: PartialFunction[Option[Thrift], Option[Cursor]]
+    cursorThriftSelonrializelonr: BinaryThriftStructSelonrializelonr[Thrift],
+    delonselonrializelonPf: PartialFunction[Option[Thrift], Option[Cursor]]
   ): Option[Cursor] = {
     val thriftCursor: Option[Thrift] =
       Try {
-        cursorThriftSerializer.fromString(cursorString)
+        cursorThriftSelonrializelonr.fromString(cursorString)
       } match {
-        case Return(thriftCursor) => Some(thriftCursor)
-        case Throw(_) => None
+        caselon Relonturn(thriftCursor) => Somelon(thriftCursor)
+        caselon Throw(_) => Nonelon
       }
 
-    // Add type annotation to help out the compiler since the type is lost due to the _ match
-    val defaultDeserializePf: PartialFunction[Option[Thrift], Option[Cursor]] = {
-      case _ =>
-        // This case is the result of the client submitting a cursor we do not expect
-        throw PipelineFailure(MalformedCursor, s"Unknown request cursor: $cursorString")
+    // Add typelon annotation to helonlp out thelon compilelonr sincelon thelon typelon is lost duelon to thelon _ match
+    val delonfaultDelonselonrializelonPf: PartialFunction[Option[Thrift], Option[Cursor]] = {
+      caselon _ =>
+        // This caselon is thelon relonsult of thelon clielonnt submitting a cursor welon do not elonxpelonct
+        throw PipelonlinelonFailurelon(MalformelondCursor, s"Unknown relonquelonst cursor: $cursorString")
     }
 
-    (deserializePf orElse defaultDeserializePf)(thriftCursor)
+    (delonselonrializelonPf orelonlselon delonfaultDelonselonrializelonPf)(thriftCursor)
   }
 }

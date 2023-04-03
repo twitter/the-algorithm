@@ -1,133 +1,133 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.richtext
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.richtelonxt
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ExternalUrl
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Url
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.UrlType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichText
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextAlignment
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextEntity
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.Strong
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.elonxtelonrnalUrl
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.Url
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.UrlTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.richtelonxt.RichTelonxt
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.richtelonxt.RichTelonxtAlignmelonnt
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.richtelonxt.RichTelonxtelonntity
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.richtelonxt.Strong
 
 /*
- * RichTextMarkupUtil facilitates building a Product Mixer URT RichText object out of
- * a string with inline XML markup.
+ * RichTelonxtMarkupUtil facilitatelons building a Product Mixelonr URT RichTelonxt objelonct out of
+ * a string with inlinelon XML markup.
  *
- * This allows us to use a string like "Our system <a href="#promix">Product Mixer</a> is the <b>best</b>". Using
- * inline markup like this is advantageous since the string can go through translation/localization and the
- * translators will move the tags around in each language as appropriate.
+ * This allows us to uselon a string likelon "Our systelonm <a hrelonf="#promix">Product Mixelonr</a> is thelon <b>belonst</b>". Using
+ * inlinelon markup likelon this is advantagelonous sincelon thelon string can go through translation/localization and thelon
+ * translators will movelon thelon tags around in elonach languagelon as appropriatelon.
  *
- * This class is derived from the OCF (onboarding/serve)'s RichTextUtil, but they diverge because:
- * - We generate ProMix URT structures, not OCF URT structures
- * - The OCF supports some internal OCF tags, like <data>
- * - The OCF has additional legacy support and processing that we don't need
+ * This class is delonrivelond from thelon OCF (onboarding/selonrvelon)'s RichTelonxtUtil, but thelony divelonrgelon beloncauselon:
+ * - Welon gelonnelonratelon ProMix URT structurelons, not OCF URT structurelons
+ * - Thelon OCF supports somelon intelonrnal OCF tags, likelon <data>
+ * - Thelon OCF has additional lelongacy support and procelonssing that welon don't nelonelond
  */
 
-object RichTextMarkupUtil {
+objelonct RichTelonxtMarkupUtil {
 
-  // Matches a anchor element, extracting the 'a' tag and the display text.
-  // First group is the tag
-  // Second group is the display text
-  // Allows any character in the display text, but matches reluctantly
-  private val LinkAnchorRegex = """(?i)(?s)<a\s+href\s*=\s*"#([\w-]*)">(.*?)</a>""".r
+  // Matchelons a anchor elonlelonmelonnt, elonxtracting thelon 'a' tag and thelon display telonxt.
+  // First group is thelon tag
+  // Seloncond group is thelon display telonxt
+  // Allows any charactelonr in thelon display telonxt, but matchelons relonluctantly
+  privatelon val LinkAnchorRelongelonx = """(?i)(?s)<a\s+hrelonf\s*=\s*"#([\w-]*)">(.*?)</a>""".r
 
-  // Matches a <b>bold text section</b>
-  private val BoldRegex = """(?i)(?s)<b>(.*?)</b>""".r
+  // Matchelons a <b>bold telonxt selonction</b>
+  privatelon val BoldRelongelonx = """(?i)(?s)<b>(.*?)</b>""".r
 
-  def richTextFromMarkup(
-    text: String,
+  delonf richTelonxtFromMarkup(
+    telonxt: String,
     linkMap: Map[String, String],
-    rtl: Option[Boolean] = None,
-    alignment: Option[RichTextAlignment] = None,
-    linkTypeMap: Map[String, UrlType] = Map.empty
-  ): RichText = {
+    rtl: Option[Boolelonan] = Nonelon,
+    alignmelonnt: Option[RichTelonxtAlignmelonnt] = Nonelon,
+    linkTypelonMap: Map[String, UrlTypelon] = Map.elonmpty
+  ): RichTelonxt = {
 
-    // Mutable!
-    var currentText = text
-    val entities = scala.collection.mutable.ArrayBuffer.empty[RichTextEntity]
+    // Mutablelon!
+    var currelonntTelonxt = telonxt
+    val elonntitielons = scala.collelonction.mutablelon.ArrayBuffelonr.elonmpty[RichTelonxtelonntity]
 
-    // Using a while loop since we want to execute the regex after each iteration, so our indexes remain consistent
+    // Using a whilelon loop sincelon welon want to elonxeloncutelon thelon relongelonx aftelonr elonach itelonration, so our indelonxelons relonmain consistelonnt
 
-    // Handle Links
-    var matchOpt = LinkAnchorRegex.findFirstMatchIn(currentText)
-    while (matchOpt.isDefined) {
-      matchOpt.foreach { linkMatch =>
+    // Handlelon Links
+    var matchOpt = LinkAnchorRelongelonx.findFirstMatchIn(currelonntTelonxt)
+    whilelon (matchOpt.isDelonfinelond) {
+      matchOpt.forelonach { linkMatch =>
         val tag = linkMatch.group(1)
-        val displayText = linkMatch.group(2)
+        val displayTelonxt = linkMatch.group(2)
 
-        currentText = currentText.substring(0, linkMatch.start) + displayText + currentText
-          .substring(linkMatch.end)
+        currelonntTelonxt = currelonntTelonxt.substring(0, linkMatch.start) + displayTelonxt + currelonntTelonxt
+          .substring(linkMatch.elonnd)
 
-        adjustEntities(
-          entities,
+        adjustelonntitielons(
+          elonntitielons,
           linkMatch.start,
-          linkMatch.end - (linkMatch.start + displayText.length))
+          linkMatch.elonnd - (linkMatch.start + displayTelonxt.lelonngth))
 
-        entities.append(
-          RichTextEntity(
-            fromIndex = linkMatch.start,
-            toIndex = linkMatch.start + displayText.length,
-            ref = linkMap.get(tag).map { url =>
+        elonntitielons.appelonnd(
+          RichTelonxtelonntity(
+            fromIndelonx = linkMatch.start,
+            toIndelonx = linkMatch.start + displayTelonxt.lelonngth,
+            relonf = linkMap.gelont(tag).map { url =>
               Url(
-                urlType = linkTypeMap.getOrElse(tag, ExternalUrl),
+                urlTypelon = linkTypelonMap.gelontOrelonlselon(tag, elonxtelonrnalUrl),
                 url = url
               )
             },
-            format = None
+            format = Nonelon
           )
         )
       }
-      matchOpt = LinkAnchorRegex.findFirstMatchIn(currentText)
+      matchOpt = LinkAnchorRelongelonx.findFirstMatchIn(currelonntTelonxt)
     }
 
-    // Handle Bold
-    matchOpt = BoldRegex.findFirstMatchIn(currentText)
-    while (matchOpt.isDefined) {
-      matchOpt.foreach { boldMatch =>
-        val text = boldMatch.group(1)
+    // Handlelon Bold
+    matchOpt = BoldRelongelonx.findFirstMatchIn(currelonntTelonxt)
+    whilelon (matchOpt.isDelonfinelond) {
+      matchOpt.forelonach { boldMatch =>
+        val telonxt = boldMatch.group(1)
 
-        currentText =
-          currentText.substring(0, boldMatch.start) + text + currentText.substring(boldMatch.end)
+        currelonntTelonxt =
+          currelonntTelonxt.substring(0, boldMatch.start) + telonxt + currelonntTelonxt.substring(boldMatch.elonnd)
 
-        adjustEntities(entities, boldMatch.start, boldMatch.end - (boldMatch.start + text.length))
+        adjustelonntitielons(elonntitielons, boldMatch.start, boldMatch.elonnd - (boldMatch.start + telonxt.lelonngth))
 
-        entities.append(
-          RichTextEntity(
-            fromIndex = boldMatch.start,
-            toIndex = boldMatch.start + text.length,
-            ref = None,
-            format = Some(Strong),
+        elonntitielons.appelonnd(
+          RichTelonxtelonntity(
+            fromIndelonx = boldMatch.start,
+            toIndelonx = boldMatch.start + telonxt.lelonngth,
+            relonf = Nonelon,
+            format = Somelon(Strong),
           )
         )
       }
 
-      matchOpt = BoldRegex.findFirstMatchIn(currentText)
+      matchOpt = BoldRelongelonx.findFirstMatchIn(currelonntTelonxt)
     }
 
-    RichText(
-      currentText,
-      entities.sortBy(_.fromIndex).toList, // always return immutable copies!
+    RichTelonxt(
+      currelonntTelonxt,
+      elonntitielons.sortBy(_.fromIndelonx).toList, // always relonturn immutablelon copielons!
       rtl,
-      alignment
+      alignmelonnt
     )
   }
 
-  /* When we create a new entity, we need to adjust
-   * any already existing entities that have been moved.
-   * Entities cannot overlap, so we can just compare start positions.
+  /* Whelonn welon crelonatelon a nelonw elonntity, welon nelonelond to adjust
+   * any alrelonady elonxisting elonntitielons that havelon belonelonn movelond.
+   * elonntitielons cannot ovelonrlap, so welon can just comparelon start positions.
    */
-  private def adjustEntities(
-    entities: scala.collection.mutable.ArrayBuffer[RichTextEntity],
+  privatelon delonf adjustelonntitielons(
+    elonntitielons: scala.collelonction.mutablelon.ArrayBuffelonr[RichTelonxtelonntity],
     start: Int,
-    length: Int
+    lelonngth: Int
   ): Unit = {
-    for (i <- entities.indices) {
-      if (entities(i).fromIndex > start) {
-        val old = entities(i)
-        entities.update(
+    for (i <- elonntitielons.indicelons) {
+      if (elonntitielons(i).fromIndelonx > start) {
+        val old = elonntitielons(i)
+        elonntitielons.updatelon(
           i,
-          entities(i).copy(
-            fromIndex = old.fromIndex - length,
-            toIndex = old.toIndex - length
+          elonntitielons(i).copy(
+            fromIndelonx = old.fromIndelonx - lelonngth,
+            toIndelonx = old.toIndelonx - lelonngth
           ))
       }
     }

@@ -1,54 +1,54 @@
-package com.twitter.product_mixer.component_library.selector
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.selonlelonctor
 
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.functional_component.common.SpecificPipelines
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.functional_component.selector.SelectorResult
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.CandidatelonScopelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.SpeloncificPipelonlinelons
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.selonlelonctor.Selonlelonctor
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.selonlelonctor.SelonlelonctorRelonsult
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonPipelonlinelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
 /**
- * Limit candidates to the first candidate source in the provided orthogonalCandidatePipelines
- * seq that has candidates in the candidate pool. For the subsequent candidate sources in the seq,
- * remove their candidates from the candidate pool.
+ * Limit candidatelons to thelon first candidatelon sourcelon in thelon providelond orthogonalCandidatelonPipelonlinelons
+ * selonq that has candidatelons in thelon candidatelon pool. For thelon subselonquelonnt candidatelon sourcelons in thelon selonq,
+ * relonmovelon thelonir candidatelons from thelon candidatelon pool.
  *
- * @example if [[orthogonalCandidatePipelines]] is `Seq(D, A, C)`, and the remaining candidates
- * component identifiers are `Seq(A, A, A, B, B, C, C, D, D, D)`, then `Seq(B, B, D, D, D)` will remain
- * in the candidate pool.
+ * @elonxamplelon if [[orthogonalCandidatelonPipelonlinelons]] is `Selonq(D, A, C)`, and thelon relonmaining candidatelons
+ * componelonnt idelonntifielonrs arelon `Selonq(A, A, A, B, B, C, C, D, D, D)`, thelonn `Selonq(B, B, D, D, D)` will relonmain
+ * in thelon candidatelon pool.
  *
- * @example if [[orthogonalCandidatePipelines]] is `Seq(D, A, C)`, and the remaining candidates
- * component identifiers are `Seq(A, A, A, B, B, C, C)`, then `Seq(A, A, A, B, B)` will remain
- * in the candidate pool.
+ * @elonxamplelon if [[orthogonalCandidatelonPipelonlinelons]] is `Selonq(D, A, C)`, and thelon relonmaining candidatelons
+ * componelonnt idelonntifielonrs arelon `Selonq(A, A, A, B, B, C, C)`, thelonn `Selonq(A, A, A, B, B)` will relonmain
+ * in thelon candidatelon pool.
  */
-case class DropOrthogonalCandidates(
-  orthogonalCandidatePipelines: Seq[CandidatePipelineIdentifier])
-    extends Selector[PipelineQuery] {
+caselon class DropOrthogonalCandidatelons(
+  orthogonalCandidatelonPipelonlinelons: Selonq[CandidatelonPipelonlinelonIdelonntifielonr])
+    elonxtelonnds Selonlelonctor[PipelonlinelonQuelonry] {
 
-  override val pipelineScope: CandidateScope =
-    SpecificPipelines(orthogonalCandidatePipelines.toSet)
+  ovelonrridelon val pipelonlinelonScopelon: CandidatelonScopelon =
+    SpeloncificPipelonlinelons(orthogonalCandidatelonPipelonlinelons.toSelont)
 
-  override def apply(
-    query: PipelineQuery,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
-  ): SelectorResult = {
-    val firstMatchingOrthogonalSourceOpt = orthogonalCandidatePipelines
-      .find { orthogonalCandidatePipeline =>
-        remainingCandidates.exists(_.source == orthogonalCandidatePipeline)
+  ovelonrridelon delonf apply(
+    quelonry: PipelonlinelonQuelonry,
+    relonmainingCandidatelons: Selonq[CandidatelonWithDelontails],
+    relonsult: Selonq[CandidatelonWithDelontails]
+  ): SelonlelonctorRelonsult = {
+    val firstMatchingOrthogonalSourcelonOpt = orthogonalCandidatelonPipelonlinelons
+      .find { orthogonalCandidatelonPipelonlinelon =>
+        relonmainingCandidatelons.elonxists(_.sourcelon == orthogonalCandidatelonPipelonlinelon)
       }
 
-    val remainingCandidatesLimited = firstMatchingOrthogonalSourceOpt match {
-      case Some(firstMatchingOrthogonalSource) =>
-        val subsequentOrthogonalSources =
-          orthogonalCandidatePipelines.toSet - firstMatchingOrthogonalSource
+    val relonmainingCandidatelonsLimitelond = firstMatchingOrthogonalSourcelonOpt match {
+      caselon Somelon(firstMatchingOrthogonalSourcelon) =>
+        val subselonquelonntOrthogonalSourcelons =
+          orthogonalCandidatelonPipelonlinelons.toSelont - firstMatchingOrthogonalSourcelon
 
-        remainingCandidates.filterNot { candidate =>
-          subsequentOrthogonalSources.contains(candidate.source)
+        relonmainingCandidatelons.filtelonrNot { candidatelon =>
+          subselonquelonntOrthogonalSourcelons.contains(candidatelon.sourcelon)
         }
-      case None => remainingCandidates
+      caselon Nonelon => relonmainingCandidatelons
     }
 
-    SelectorResult(remainingCandidates = remainingCandidatesLimited, result = result)
+    SelonlelonctorRelonsult(relonmainingCandidatelons = relonmainingCandidatelonsLimitelond, relonsult = relonsult)
   }
 }

@@ -1,69 +1,69 @@
-package com.twitter.product_mixer.component_library.pipeline.candidate.flexible_injection_pipeline
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.pipelonlinelon.candidatelon.flelonxiblelon_injelonction_pipelonlinelon
 
-import com.twitter.onboarding.task.service.thriftscala.GetInjectionsRequest
-import com.twitter.onboarding.task.service.{thriftscala => servicethrift}
-import com.twitter.product_mixer.component_library.candidate_source.flexible_injection_pipeline.IntermediatePrompt
-import com.twitter.product_mixer.component_library.candidate_source.flexible_injection_pipeline.PromptCandidateSource
-import com.twitter.product_mixer.component_library.decorator.urt.UrtItemCandidateDecorator
-import com.twitter.product_mixer.component_library.decorator.urt.UrtMultipleModulesDecorator
-import com.twitter.product_mixer.component_library.decorator.urt.builder.flexible_injection_pipeline.FlipPromptCandidateUrtItemBuilder
-import com.twitter.product_mixer.component_library.decorator.urt.builder.flexible_injection_pipeline.FlipPromptModuleGrouping
-import com.twitter.product_mixer.component_library.decorator.urt.builder.flexible_injection_pipeline.FlipPromptUrtModuleBuilder
-import com.twitter.product_mixer.component_library.model.candidate.BasePromptCandidate
-import com.twitter.product_mixer.component_library.pipeline.candidate.flexible_injection_pipeline.transformer.FlipCandidateFeatureTransformer
-import com.twitter.product_mixer.component_library.pipeline.candidate.flexible_injection_pipeline.transformer.FlipQueryTransformer
-import com.twitter.product_mixer.component_library.pipeline.candidate.flexible_injection_pipeline.transformer.HasFlipInjectionParams
-import com.twitter.product_mixer.component_library.pipeline.candidate.flexible_injection_pipeline.transformer.PromptResultsTransformer
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.functional_component.decorator.CandidateDecorator
-import com.twitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineResultsTransformer
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.candidate.DependentCandidatePipelineConfig
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.decider.DeciderParam
+import com.twittelonr.onboarding.task.selonrvicelon.thriftscala.GelontInjelonctionsRelonquelonst
+import com.twittelonr.onboarding.task.selonrvicelon.{thriftscala => selonrvicelonthrift}
+import com.twittelonr.product_mixelonr.componelonnt_library.candidatelon_sourcelon.flelonxiblelon_injelonction_pipelonlinelon.IntelonrmelondiatelonPrompt
+import com.twittelonr.product_mixelonr.componelonnt_library.candidatelon_sourcelon.flelonxiblelon_injelonction_pipelonlinelon.PromptCandidatelonSourcelon
+import com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.UrtItelonmCandidatelonDeloncorator
+import com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.UrtMultiplelonModulelonsDeloncorator
+import com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.flelonxiblelon_injelonction_pipelonlinelon.FlipPromptCandidatelonUrtItelonmBuildelonr
+import com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.flelonxiblelon_injelonction_pipelonlinelon.FlipPromptModulelonGrouping
+import com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.flelonxiblelon_injelonction_pipelonlinelon.FlipPromptUrtModulelonBuildelonr
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.BaselonPromptCandidatelon
+import com.twittelonr.product_mixelonr.componelonnt_library.pipelonlinelon.candidatelon.flelonxiblelon_injelonction_pipelonlinelon.transformelonr.FlipCandidatelonFelonaturelonTransformelonr
+import com.twittelonr.product_mixelonr.componelonnt_library.pipelonlinelon.candidatelon.flelonxiblelon_injelonction_pipelonlinelon.transformelonr.FlipQuelonryTransformelonr
+import com.twittelonr.product_mixelonr.componelonnt_library.pipelonlinelon.candidatelon.flelonxiblelon_injelonction_pipelonlinelon.transformelonr.HasFlipInjelonctionParams
+import com.twittelonr.product_mixelonr.componelonnt_library.pipelonlinelon.candidatelon.flelonxiblelon_injelonction_pipelonlinelon.transformelonr.PromptRelonsultsTransformelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.CandidatelonSourcelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.CandidatelonDeloncorator
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.transformelonr.CandidatelonFelonaturelonTransformelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.transformelonr.CandidatelonPipelonlinelonQuelonryTransformelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.transformelonr.CandidatelonPipelonlinelonRelonsultsTransformelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonPipelonlinelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.candidatelon.DelonpelonndelonntCandidatelonPipelonlinelonConfig
+import com.twittelonr.timelonlinelons.configapi.FSParam
+import com.twittelonr.timelonlinelons.configapi.deloncidelonr.DeloncidelonrParam
 
 /**
- * A dependent candidate pipeline for Flexible Injection Pipeline Candidates.
- * Fetches prompts from FLIP (inside onboarding-task-service).
+ * A delonpelonndelonnt candidatelon pipelonlinelon for Flelonxiblelon Injelonction Pipelonlinelon Candidatelons.
+ * Felontchelons prompts from FLIP (insidelon onboarding-task-selonrvicelon).
  */
-class FlipPromptDependentCandidatePipelineConfig[
-  Query <: PipelineQuery with HasFlipInjectionParams
+class FlipPromptDelonpelonndelonntCandidatelonPipelonlinelonConfig[
+  Quelonry <: PipelonlinelonQuelonry with HasFlipInjelonctionParams
 ](
-  override val identifier: CandidatePipelineIdentifier,
-  override val enabledDeciderParam: Option[DeciderParam[Boolean]],
-  override val supportedClientParam: Option[FSParam[Boolean]],
-  promptCandidateSource: PromptCandidateSource)
-    extends DependentCandidatePipelineConfig[
-      Query,
-      servicethrift.GetInjectionsRequest,
-      IntermediatePrompt,
-      BasePromptCandidate[Any]
+  ovelonrridelon val idelonntifielonr: CandidatelonPipelonlinelonIdelonntifielonr,
+  ovelonrridelon val elonnablelondDeloncidelonrParam: Option[DeloncidelonrParam[Boolelonan]],
+  ovelonrridelon val supportelondClielonntParam: Option[FSParam[Boolelonan]],
+  promptCandidatelonSourcelon: PromptCandidatelonSourcelon)
+    elonxtelonnds DelonpelonndelonntCandidatelonPipelonlinelonConfig[
+      Quelonry,
+      selonrvicelonthrift.GelontInjelonctionsRelonquelonst,
+      IntelonrmelondiatelonPrompt,
+      BaselonPromptCandidatelon[Any]
     ] {
 
-  override val candidateSource: CandidateSource[GetInjectionsRequest, IntermediatePrompt] =
-    promptCandidateSource
+  ovelonrridelon val candidatelonSourcelon: CandidatelonSourcelon[GelontInjelonctionsRelonquelonst, IntelonrmelondiatelonPrompt] =
+    promptCandidatelonSourcelon
 
-  override val queryTransformer: CandidatePipelineQueryTransformer[Query, GetInjectionsRequest] =
-    FlipQueryTransformer
+  ovelonrridelon val quelonryTransformelonr: CandidatelonPipelonlinelonQuelonryTransformelonr[Quelonry, GelontInjelonctionsRelonquelonst] =
+    FlipQuelonryTransformelonr
 
-  override val resultTransformer: CandidatePipelineResultsTransformer[
-    IntermediatePrompt,
-    BasePromptCandidate[Any]
-  ] = PromptResultsTransformer
+  ovelonrridelon val relonsultTransformelonr: CandidatelonPipelonlinelonRelonsultsTransformelonr[
+    IntelonrmelondiatelonPrompt,
+    BaselonPromptCandidatelon[Any]
+  ] = PromptRelonsultsTransformelonr
 
-  override val decorator: Option[
-    CandidateDecorator[Query, BasePromptCandidate[Any]]
-  ] = Some(
-    UrtMultipleModulesDecorator(
-      urtItemCandidateDecorator = UrtItemCandidateDecorator(FlipPromptCandidateUrtItemBuilder()),
-      moduleBuilder = FlipPromptUrtModuleBuilder(),
-      groupByKey = FlipPromptModuleGrouping
+  ovelonrridelon val deloncorator: Option[
+    CandidatelonDeloncorator[Quelonry, BaselonPromptCandidatelon[Any]]
+  ] = Somelon(
+    UrtMultiplelonModulelonsDeloncorator(
+      urtItelonmCandidatelonDeloncorator = UrtItelonmCandidatelonDeloncorator(FlipPromptCandidatelonUrtItelonmBuildelonr()),
+      modulelonBuildelonr = FlipPromptUrtModulelonBuildelonr(),
+      groupByKelony = FlipPromptModulelonGrouping
     ))
 
-  override val featuresFromCandidateSourceTransformers: Seq[
-    CandidateFeatureTransformer[IntermediatePrompt]
-  ] = Seq(FlipCandidateFeatureTransformer)
+  ovelonrridelon val felonaturelonsFromCandidatelonSourcelonTransformelonrs: Selonq[
+    CandidatelonFelonaturelonTransformelonr[IntelonrmelondiatelonPrompt]
+  ] = Selonq(FlipCandidatelonFelonaturelonTransformelonr)
 }

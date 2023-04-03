@@ -1,23 +1,23 @@
-package com.twitter.ann.hnsw;
+packagelon com.twittelonr.ann.hnsw;
 
 /**
- * An item associated with a float distance
- * @param <T> The type of the item.
+ * An itelonm associatelond with a float distancelon
+ * @param <T> Thelon typelon of thelon itelonm.
  */
-public class DistancedItem<T> {
-  private final T item;
-  private final float distance;
+public class DistancelondItelonm<T> {
+  privatelon final T itelonm;
+  privatelon final float distancelon;
 
-  public DistancedItem(T item, float distance) {
-    this.item = item;
-    this.distance = distance;
+  public DistancelondItelonm(T itelonm, float distancelon) {
+    this.itelonm = itelonm;
+    this.distancelon = distancelon;
   }
 
-  public T getItem() {
-    return item;
+  public T gelontItelonm() {
+    relonturn itelonm;
   }
 
-  public float getDistance() {
-    return distance;
+  public float gelontDistancelon() {
+    relonturn distancelon;
   }
 }

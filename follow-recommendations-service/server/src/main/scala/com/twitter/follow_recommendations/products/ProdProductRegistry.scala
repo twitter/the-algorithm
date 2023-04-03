@@ -1,44 +1,44 @@
-package com.twitter.follow_recommendations.products
+packagelon com.twittelonr.follow_reloncommelonndations.products
 
-import com.twitter.follow_recommendations.common.models.DisplayLocation
-import com.twitter.follow_recommendations.products.common.ProductRegistry
-import com.twitter.follow_recommendations.products.explore_tab.ExploreTabProduct
-import com.twitter.follow_recommendations.products.home_timeline.HomeTimelineProduct
-import com.twitter.follow_recommendations.products.home_timeline_tweet_recs.HomeTimelineTweetRecsProduct
-import com.twitter.follow_recommendations.products.sidebar.SidebarProduct
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.DisplayLocation
+import com.twittelonr.follow_reloncommelonndations.products.common.ProductRelongistry
+import com.twittelonr.follow_reloncommelonndations.products.elonxplorelon_tab.elonxplorelonTabProduct
+import com.twittelonr.follow_reloncommelonndations.products.homelon_timelonlinelon.HomelonTimelonlinelonProduct
+import com.twittelonr.follow_reloncommelonndations.products.homelon_timelonlinelon_twelonelont_reloncs.HomelonTimelonlinelonTwelonelontReloncsProduct
+import com.twittelonr.follow_reloncommelonndations.products.sidelonbar.SidelonbarProduct
 
-import javax.inject.Inject
-import javax.inject.Singleton
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class ProdProductRegistry @Inject() (
-  exploreTabProduct: ExploreTabProduct,
-  homeTimelineProduct: HomeTimelineProduct,
-  homeTimelineTweetRecsProduct: HomeTimelineTweetRecsProduct,
-  sidebarProduct: SidebarProduct,
-) extends ProductRegistry {
+@Singlelonton
+class ProdProductRelongistry @Injelonct() (
+  elonxplorelonTabProduct: elonxplorelonTabProduct,
+  homelonTimelonlinelonProduct: HomelonTimelonlinelonProduct,
+  homelonTimelonlinelonTwelonelontReloncsProduct: HomelonTimelonlinelonTwelonelontReloncsProduct,
+  sidelonbarProduct: SidelonbarProduct,
+) elonxtelonnds ProductRelongistry {
 
-  override val products: Seq[common.Product] =
-    Seq(
-      exploreTabProduct,
-      homeTimelineProduct,
-      homeTimelineTweetRecsProduct,
-      sidebarProduct
+  ovelonrridelon val products: Selonq[common.Product] =
+    Selonq(
+      elonxplorelonTabProduct,
+      homelonTimelonlinelonProduct,
+      homelonTimelonlinelonTwelonelontReloncsProduct,
+      sidelonbarProduct
     )
 
-  override val displayLocationProductMap: Map[DisplayLocation, common.Product] =
+  ovelonrridelon val displayLocationProductMap: Map[DisplayLocation, common.Product] =
     products.groupBy(_.displayLocation).flatMap {
-      case (loc, products) =>
-        assert(products.size == 1, s"Found more than 1 Product for ${loc}")
-        products.headOption.map { product => loc -> product }
+      caselon (loc, products) =>
+        asselonrt(products.sizelon == 1, s"Found morelon than 1 Product for ${loc}")
+        products.helonadOption.map { product => loc -> product }
     }
 
-  override def getProductByDisplayLocation(displayLocation: DisplayLocation): common.Product = {
-    displayLocationProductMap.getOrElse(
+  ovelonrridelon delonf gelontProductByDisplayLocation(displayLocation: DisplayLocation): common.Product = {
+    displayLocationProductMap.gelontOrelonlselon(
       displayLocation,
-      throw new MissingProductException(displayLocation))
+      throw nelonw MissingProductelonxcelonption(displayLocation))
   }
 }
 
-class MissingProductException(displayLocation: DisplayLocation)
-    extends Exception(s"No Product found for ${displayLocation}")
+class MissingProductelonxcelonption(displayLocation: DisplayLocation)
+    elonxtelonnds elonxcelonption(s"No Product found for ${displayLocation}")

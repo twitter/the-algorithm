@@ -1,56 +1,56 @@
-package com.twitter.product_mixer.component_library.selector
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.selonlelonctor
 
-import com.twitter.product_mixer.component_library.selector.InsertIntoModule.ModuleAndIndex
-import com.twitter.product_mixer.component_library.selector.InsertIntoModule.ModuleWithItemsToAddAndOtherCandidates
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.functional_component.common.SpecificPipelines
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.functional_component.selector.SelectorResult
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.product_mixelonr.componelonnt_library.selonlelonctor.InselonrtIntoModulelon.ModulelonAndIndelonx
+import com.twittelonr.product_mixelonr.componelonnt_library.selonlelonctor.InselonrtIntoModulelon.ModulelonWithItelonmsToAddAndOthelonrCandidatelons
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.CandidatelonScopelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.SpeloncificPipelonlinelons
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.selonlelonctor.Selonlelonctor
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.selonlelonctor.SelonlelonctorRelonsult
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonPipelonlinelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
 /**
- * Append all candidates from [[candidatePipeline]] into a module from [[targetModuleCandidatePipeline]].
- * If the results contain multiple modules from the target candidate pipeline,
- * then the candidates will be inserted into the first module.
+ * Appelonnd all candidatelons from [[candidatelonPipelonlinelon]] into a modulelon from [[targelontModulelonCandidatelonPipelonlinelon]].
+ * If thelon relonsults contain multiplelon modulelons from thelon targelont candidatelon pipelonlinelon,
+ * thelonn thelon candidatelons will belon inselonrtelond into thelon first modulelon.
  *
- * @note this will throw an [[UnsupportedOperationException]] if the [[candidatePipeline]] contains any modules.
+ * @notelon this will throw an [[UnsupportelondOpelonrationelonxcelonption]] if thelon [[candidatelonPipelonlinelon]] contains any modulelons.
  *
- * @note this updates the module in the `remainingCandidates`
+ * @notelon this updatelons thelon modulelon in thelon `relonmainingCandidatelons`
  */
-case class InsertAppendIntoModuleCandidates(
-  candidatePipeline: CandidatePipelineIdentifier,
-  targetModuleCandidatePipeline: CandidatePipelineIdentifier)
-    extends Selector[PipelineQuery] {
+caselon class InselonrtAppelonndIntoModulelonCandidatelons(
+  candidatelonPipelonlinelon: CandidatelonPipelonlinelonIdelonntifielonr,
+  targelontModulelonCandidatelonPipelonlinelon: CandidatelonPipelonlinelonIdelonntifielonr)
+    elonxtelonnds Selonlelonctor[PipelonlinelonQuelonry] {
 
-  override val pipelineScope: CandidateScope =
-    SpecificPipelines(candidatePipeline, targetModuleCandidatePipeline)
+  ovelonrridelon val pipelonlinelonScopelon: CandidatelonScopelon =
+    SpeloncificPipelonlinelons(candidatelonPipelonlinelon, targelontModulelonCandidatelonPipelonlinelon)
 
-  override def apply(
-    query: PipelineQuery,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
-  ): SelectorResult = {
+  ovelonrridelon delonf apply(
+    quelonry: PipelonlinelonQuelonry,
+    relonmainingCandidatelons: Selonq[CandidatelonWithDelontails],
+    relonsult: Selonq[CandidatelonWithDelontails]
+  ): SelonlelonctorRelonsult = {
 
-    val ModuleWithItemsToAddAndOtherCandidates(
-      moduleToUpdateAndIndex,
-      itemsToInsertIntoModule,
-      otherCandidates) =
-      InsertIntoModule.moduleToUpdate(
-        candidatePipeline,
-        targetModuleCandidatePipeline,
-        remainingCandidates)
+    val ModulelonWithItelonmsToAddAndOthelonrCandidatelons(
+      modulelonToUpdatelonAndIndelonx,
+      itelonmsToInselonrtIntoModulelon,
+      othelonrCandidatelons) =
+      InselonrtIntoModulelon.modulelonToUpdatelon(
+        candidatelonPipelonlinelon,
+        targelontModulelonCandidatelonPipelonlinelon,
+        relonmainingCandidatelons)
 
-    val updatedRemainingCandidates = moduleToUpdateAndIndex match {
-      case None => remainingCandidates
-      case _ if itemsToInsertIntoModule.isEmpty => remainingCandidates
-      case Some(ModuleAndIndex(moduleToUpdate, indexOfModuleInOtherCandidates)) =>
-        val updatedModuleItems = moduleToUpdate.candidates ++ itemsToInsertIntoModule
-        val updatedModule = moduleToUpdate.copy(candidates = updatedModuleItems)
-        otherCandidates.updated(indexOfModuleInOtherCandidates, updatedModule)
+    val updatelondRelonmainingCandidatelons = modulelonToUpdatelonAndIndelonx match {
+      caselon Nonelon => relonmainingCandidatelons
+      caselon _ if itelonmsToInselonrtIntoModulelon.iselonmpty => relonmainingCandidatelons
+      caselon Somelon(ModulelonAndIndelonx(modulelonToUpdatelon, indelonxOfModulelonInOthelonrCandidatelons)) =>
+        val updatelondModulelonItelonms = modulelonToUpdatelon.candidatelons ++ itelonmsToInselonrtIntoModulelon
+        val updatelondModulelon = modulelonToUpdatelon.copy(candidatelons = updatelondModulelonItelonms)
+        othelonrCandidatelons.updatelond(indelonxOfModulelonInOthelonrCandidatelons, updatelondModulelon)
     }
 
-    SelectorResult(remainingCandidates = updatedRemainingCandidates, result = result)
+    SelonlelonctorRelonsult(relonmainingCandidatelons = updatelondRelonmainingCandidatelons, relonsult = relonsult)
   }
 }

@@ -1,40 +1,40 @@
-package com.twitter.product_mixer.component_library.filter
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.filtelonr
 
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.filter.FilterResult
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.search.common.util.bloomfilter.AdaptiveLongIntBloomFilter
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.filtelonr.Filtelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.filtelonr.FiltelonrRelonsult
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.FiltelonrIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.selonarch.common.util.bloomfiltelonr.AdaptivelonLongIntBloomFiltelonr
 
-trait GetAdaptiveLongIntBloomFilter[Query <: PipelineQuery] {
-  def apply(query: Query): Option[AdaptiveLongIntBloomFilter]
+trait GelontAdaptivelonLongIntBloomFiltelonr[Quelonry <: PipelonlinelonQuelonry] {
+  delonf apply(quelonry: Quelonry): Option[AdaptivelonLongIntBloomFiltelonr]
 }
 
-case class AdaptiveLongIntBloomFilterDedupFilter[
-  Query <: PipelineQuery,
-  Candidate <: UniversalNoun[Long]
+caselon class AdaptivelonLongIntBloomFiltelonrDelondupFiltelonr[
+  Quelonry <: PipelonlinelonQuelonry,
+  Candidatelon <: UnivelonrsalNoun[Long]
 ](
-  getBloomFilter: GetAdaptiveLongIntBloomFilter[Query])
-    extends Filter[Query, Candidate] {
+  gelontBloomFiltelonr: GelontAdaptivelonLongIntBloomFiltelonr[Quelonry])
+    elonxtelonnds Filtelonr[Quelonry, Candidatelon] {
 
-  override val identifier: FilterIdentifier = FilterIdentifier(
-    "AdaptiveLongIntBloomFilterDedupFilter")
+  ovelonrridelon val idelonntifielonr: FiltelonrIdelonntifielonr = FiltelonrIdelonntifielonr(
+    "AdaptivelonLongIntBloomFiltelonrDelondupFiltelonr")
 
-  override def apply(
-    query: Query,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): Stitch[FilterResult[Candidate]] = {
+  ovelonrridelon delonf apply(
+    quelonry: Quelonry,
+    candidatelons: Selonq[CandidatelonWithFelonaturelons[Candidatelon]]
+  ): Stitch[FiltelonrRelonsult[Candidatelon]] = {
 
-    val filterResult = getBloomFilter(query)
-      .map { bloomFilter =>
-        val (kept, removed) =
-          candidates.map(_.candidate).partition(candidate => !bloomFilter.contains(candidate.id))
-        FilterResult(kept, removed)
-      }.getOrElse(FilterResult(candidates.map(_.candidate), Seq.empty))
+    val filtelonrRelonsult = gelontBloomFiltelonr(quelonry)
+      .map { bloomFiltelonr =>
+        val (kelonpt, relonmovelond) =
+          candidatelons.map(_.candidatelon).partition(candidatelon => !bloomFiltelonr.contains(candidatelon.id))
+        FiltelonrRelonsult(kelonpt, relonmovelond)
+      }.gelontOrelonlselon(FiltelonrRelonsult(candidatelons.map(_.candidatelon), Selonq.elonmpty))
 
-    Stitch.value(filterResult)
+    Stitch.valuelon(filtelonrRelonsult)
   }
 }

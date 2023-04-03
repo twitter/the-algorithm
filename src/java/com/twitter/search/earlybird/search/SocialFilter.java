@@ -1,98 +1,98 @@
-package com.twitter.search.earlybird.search;
+packagelon com.twittelonr.selonarch.elonarlybird.selonarch;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 
-import com.google.common.base.Preconditions;
-import com.google.common.primitives.Longs;
+import com.googlelon.common.baselon.Prelonconditions;
+import com.googlelon.common.primitivelons.Longs;
 
-import org.apache.lucene.index.NumericDocValues;
+import org.apachelon.lucelonnelon.indelonx.NumelonricDocValuelons;
 
-import com.twitter.common_internal.bloomfilter.BloomFilter;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
-import com.twitter.search.earlybird.thrift.ThriftSocialFilterType;
+import com.twittelonr.common_intelonrnal.bloomfiltelonr.BloomFiltelonr;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdFielonldConstants.elonarlybirdFielonldConstant;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSocialFiltelonrTypelon;
 
 /**
- * Filter class used by the SearchResultsCollector to filter social tweets
- * from the hits.
+ * Filtelonr class uselond by thelon SelonarchRelonsultsCollelonctor to filtelonr social twelonelonts
+ * from thelon hits.
  */
-public class SocialFilter {
-  private interface Acceptor {
-    boolean accept(long fromUserLong, byte[] userIDInBytes);
+public class SocialFiltelonr {
+  privatelon intelonrfacelon Accelonptor {
+    boolelonan accelonpt(long fromUselonrLong, bytelon[] uselonrIDInBytelons);
   }
 
-  private NumericDocValues fromUserID;
-  private final Acceptor acceptor;
-  private final long searcherId;
-  private final BloomFilter trustedFilter;
-  private final BloomFilter followFilter;
+  privatelon NumelonricDocValuelons fromUselonrID;
+  privatelon final Accelonptor accelonptor;
+  privatelon final long selonarchelonrId;
+  privatelon final BloomFiltelonr trustelondFiltelonr;
+  privatelon final BloomFiltelonr followFiltelonr;
 
-  private class FollowsAcceptor implements Acceptor {
-    @Override
-    public boolean accept(long fromUserLong, byte[] userIdInBytes) {
-      return followFilter.contains(userIdInBytes);
+  privatelon class FollowsAccelonptor implelonmelonnts Accelonptor {
+    @Ovelonrridelon
+    public boolelonan accelonpt(long fromUselonrLong, bytelon[] uselonrIdInBytelons) {
+      relonturn followFiltelonr.contains(uselonrIdInBytelons);
     }
   }
 
-  private class TrustedAcceptor implements Acceptor {
-    @Override
-    public boolean accept(long fromUserLong, byte[] userIdInBytes) {
-      return trustedFilter.contains(userIdInBytes);
+  privatelon class TrustelondAccelonptor implelonmelonnts Accelonptor {
+    @Ovelonrridelon
+    public boolelonan accelonpt(long fromUselonrLong, bytelon[] uselonrIdInBytelons) {
+      relonturn trustelondFiltelonr.contains(uselonrIdInBytelons);
     }
   }
 
-  private class AllAcceptor implements Acceptor {
-    @Override
-    public boolean accept(long fromUserLong, byte[] userIdInBytes) {
-      return trustedFilter.contains(userIdInBytes)
-          || followFilter.contains(userIdInBytes)
-          || fromUserLong == searcherId;
+  privatelon class AllAccelonptor implelonmelonnts Accelonptor {
+    @Ovelonrridelon
+    public boolelonan accelonpt(long fromUselonrLong, bytelon[] uselonrIdInBytelons) {
+      relonturn trustelondFiltelonr.contains(uselonrIdInBytelons)
+          || followFiltelonr.contains(uselonrIdInBytelons)
+          || fromUselonrLong == selonarchelonrId;
     }
   }
 
-  public SocialFilter(
-      ThriftSocialFilterType socialFilterType,
-      final long searcherId,
-      final byte[] trustedFilter,
-      final byte[] followFilter) throws IOException {
-    Preconditions.checkNotNull(socialFilterType);
-    Preconditions.checkNotNull(trustedFilter);
-    Preconditions.checkNotNull(followFilter);
-    this.searcherId = searcherId;
-    this.trustedFilter = new BloomFilter(trustedFilter);
-    this.followFilter = new BloomFilter(followFilter);
+  public SocialFiltelonr(
+      ThriftSocialFiltelonrTypelon socialFiltelonrTypelon,
+      final long selonarchelonrId,
+      final bytelon[] trustelondFiltelonr,
+      final bytelon[] followFiltelonr) throws IOelonxcelonption {
+    Prelonconditions.chelonckNotNull(socialFiltelonrTypelon);
+    Prelonconditions.chelonckNotNull(trustelondFiltelonr);
+    Prelonconditions.chelonckNotNull(followFiltelonr);
+    this.selonarchelonrId = selonarchelonrId;
+    this.trustelondFiltelonr = nelonw BloomFiltelonr(trustelondFiltelonr);
+    this.followFiltelonr = nelonw BloomFiltelonr(followFiltelonr);
 
 
-    switch (socialFilterType) {
-      case FOLLOWS:
-        this.acceptor = new FollowsAcceptor();
-        break;
-      case TRUSTED:
-        this.acceptor = new TrustedAcceptor();
-        break;
-      case ALL:
-        this.acceptor = new AllAcceptor();
-        break;
-      default:
-        throw new UnsupportedOperationException("Invalid social filter type passed");
+    switch (socialFiltelonrTypelon) {
+      caselon FOLLOWS:
+        this.accelonptor = nelonw FollowsAccelonptor();
+        brelonak;
+      caselon TRUSTelonD:
+        this.accelonptor = nelonw TrustelondAccelonptor();
+        brelonak;
+      caselon ALL:
+        this.accelonptor = nelonw AllAccelonptor();
+        brelonak;
+      delonfault:
+        throw nelonw UnsupportelondOpelonrationelonxcelonption("Invalid social filtelonr typelon passelond");
     }
   }
 
-  public void startSegment(EarlybirdIndexSegmentAtomicReader indexReader) throws IOException {
-    fromUserID =
-        indexReader.getNumericDocValues(EarlybirdFieldConstant.FROM_USER_ID_CSF.getFieldName());
+  public void startSelongmelonnt(elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr indelonxRelonadelonr) throws IOelonxcelonption {
+    fromUselonrID =
+        indelonxRelonadelonr.gelontNumelonricDocValuelons(elonarlybirdFielonldConstant.FROM_USelonR_ID_CSF.gelontFielonldNamelon());
   }
 
   /**
-   * Determines if the given doc ID should be accepted.
+   * Delontelonrminelons if thelon givelonn doc ID should belon accelonptelond.
    */
-  public boolean accept(int internalDocID) throws IOException {
-    if (!fromUserID.advanceExact(internalDocID)) {
-      return false;
+  public boolelonan accelonpt(int intelonrnalDocID) throws IOelonxcelonption {
+    if (!fromUselonrID.advancelonelonxact(intelonrnalDocID)) {
+      relonturn falselon;
     }
 
-    long fromUserLong = fromUserID.longValue();
-    byte[] userIDInBytes = Longs.toByteArray(fromUserLong);
-    return acceptor.accept(fromUserLong, userIDInBytes);
+    long fromUselonrLong = fromUselonrID.longValuelon();
+    bytelon[] uselonrIDInBytelons = Longs.toBytelonArray(fromUselonrLong);
+    relonturn accelonptor.accelonpt(fromUselonrLong, uselonrIDInBytelons);
   }
 }

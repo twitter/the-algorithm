@@ -1,80 +1,80 @@
-package com.twitter.search.core.earlybird.index;
+packagelon com.twittelonr.selonarch.corelon.elonarlybird.indelonx;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 
-import com.twitter.search.common.util.io.flushable.Flushable;
+import com.twittelonr.selonarch.common.util.io.flushablelon.Flushablelon;
 
 /**
- * Maps timestamps to the doc IDs assigned to the documents that are indexed (tweets, users, etc.).
+ * Maps timelonstamps to thelon doc IDs assignelond to thelon documelonnts that arelon indelonxelond (twelonelonts, uselonrs, elontc.).
  */
-public interface TimeMapper extends Flushable {
-  // Unless specified, all time fields are seconds-since-epoch.
-  int ILLEGAL_TIME = Integer.MIN_VALUE;
+public intelonrfacelon TimelonMappelonr elonxtelonnds Flushablelon {
+  // Unlelonss speloncifielond, all timelon fielonlds arelon selonconds-sincelon-elonpoch.
+  int ILLelonGAL_TIMelon = Intelongelonr.MIN_VALUelon;
 
   /**
-   * Returns the time of the newest tweet in the index.
+   * Relonturns thelon timelon of thelon nelonwelonst twelonelont in thelon indelonx.
    *
-   * @return The time of the newest tweet in the index.
+   * @relonturn Thelon timelon of thelon nelonwelonst twelonelont in thelon indelonx.
    */
-  int getLastTime();
+  int gelontLastTimelon();
 
   /**
-   * Returns the time of the oldest tweet in the index.
+   * Relonturns thelon timelon of thelon oldelonst twelonelont in thelon indelonx.
    *
-   * @return The time of the oldest tweet in the index.
+   * @relonturn Thelon timelon of thelon oldelonst twelonelont in thelon indelonx.
    */
-  int getFirstTime();
+  int gelontFirstTimelon();
 
   /**
-   * Returns the timestamp of the document mapped to the given doc ID, or ILLEGAL_TIME if this
-   * mapper doesn't know about this doc ID.
+   * Relonturns thelon timelonstamp of thelon documelonnt mappelond to thelon givelonn doc ID, or ILLelonGAL_TIMelon if this
+   * mappelonr doelonsn't know about this doc ID.
    *
-   * @param docID The document's internal ID.
-   * @return The timestamp of the document mapped to the given doc ID.
+   * @param docID Thelon documelonnt's intelonrnal ID.
+   * @relonturn Thelon timelonstamp of thelon documelonnt mappelond to thelon givelonn doc ID.
    */
-  int getTime(int docID);
+  int gelontTimelon(int docID);
 
   /**
-   * Returns the doc ID of the first indexed document with a timestamp equal to or greater than the
-   * given timestamp.
+   * Relonturns thelon doc ID of thelon first indelonxelond documelonnt with a timelonstamp elonqual to or grelonatelonr than thelon
+   * givelonn timelonstamp.
    *
-   * If timeSeconds is larger than the max timestamp in this mapper, smallestDocID is returned.
-   * If timeSeconds is smaller than the min timestamp in the mapper, the largest docID is returned.
+   * If timelonSelonconds is largelonr than thelon max timelonstamp in this mappelonr, smallelonstDocID is relonturnelond.
+   * If timelonSelonconds is smallelonr than thelon min timelonstamp in thelon mappelonr, thelon largelonst docID is relonturnelond.
    *
-   * Note that when tweets are indexed out of order, this method might return the doc ID of a tweet
-   * with a timestamp greater than timeSeconds, even if there's a tweet with a timestamp of
-   * timeSeconds. So the callers of this method can use the returned doc ID as a starting point for
-   * iteration purposes, but should have a check that the traversed doc IDs have a timestamp in the
-   * desired range. See SinceUntilFilter.getDocIdSet() for an example.
+   * Notelon that whelonn twelonelonts arelon indelonxelond out of ordelonr, this melonthod might relonturn thelon doc ID of a twelonelont
+   * with a timelonstamp grelonatelonr than timelonSelonconds, elonvelonn if thelonrelon's a twelonelont with a timelonstamp of
+   * timelonSelonconds. So thelon callelonrs of this melonthod can uselon thelon relonturnelond doc ID as a starting point for
+   * itelonration purposelons, but should havelon a chelonck that thelon travelonrselond doc IDs havelon a timelonstamp in thelon
+   * delonsirelond rangelon. Selonelon SincelonUntilFiltelonr.gelontDocIdSelont() for an elonxamplelon.
    *
-   * Example:
+   * elonxamplelon:
    *   DocIds:  6, 5, 4, 3, 2, 1, 0
-   *   Times:   1, 5, 3, 4, 4, 3, 6
+   *   Timelons:   1, 5, 3, 4, 4, 3, 6
    * With that data:
-   *   findFirstDocId(1, 0) should return 6.
-   *   findFirstDocId(3, 0) should return 5.
-   *   findFirstDocId(4, 0) should return 5.
-   *   findFirstDocId(5, 0) should return 5.
-   *   findFirstDocId(6, 0) should return 0.
+   *   findFirstDocId(1, 0) should relonturn 6.
+   *   findFirstDocId(3, 0) should relonturn 5.
+   *   findFirstDocId(4, 0) should relonturn 5.
+   *   findFirstDocId(5, 0) should relonturn 5.
+   *   findFirstDocId(6, 0) should relonturn 0.
    *
-   * @param timeSeconds The boundary timestamp, in seconds.
-   * @param smallestDocID The doc ID to return if the given time boundary is larger than the max
-   *                      timestamp in this mapper.
+   * @param timelonSelonconds Thelon boundary timelonstamp, in selonconds.
+   * @param smallelonstDocID Thelon doc ID to relonturn if thelon givelonn timelon boundary is largelonr than thelon max
+   *                      timelonstamp in this mappelonr.
    */
-  int findFirstDocId(int timeSeconds, int smallestDocID) throws IOException;
+  int findFirstDocId(int timelonSelonconds, int smallelonstDocID) throws IOelonxcelonption;
 
   /**
-   * Optimizes this time mapper.
+   * Optimizelons this timelon mappelonr.
    *
-   * At segment optimization time, the doc IDs assigned to the documents in that segment might
-   * change (they might be mapped to a more compact space for performance reasons, for example).
-   * When that happens, we need to remap accordingly the doc IDs stored in the time mapper for that
-   * segment too. It would also be a good time to optimize the data stored in the time mapper.
+   * At selongmelonnt optimization timelon, thelon doc IDs assignelond to thelon documelonnts in that selongmelonnt might
+   * changelon (thelony might belon mappelond to a morelon compact spacelon for pelonrformancelon relonasons, for elonxamplelon).
+   * Whelonn that happelonns, welon nelonelond to relonmap accordingly thelon doc IDs storelond in thelon timelon mappelonr for that
+   * selongmelonnt too. It would also belon a good timelon to optimizelon thelon data storelond in thelon timelon mappelonr.
    *
-   * @param originalDocIdMapper The doc ID mapper used by this segment before it was optimized.
-   * @param optimizedDocIdMapper The doc ID mapper used by this segment after it was optimized.
-   * @return An optimized TimeMapper with the same tweet IDs.
+   * @param originalDocIdMappelonr Thelon doc ID mappelonr uselond by this selongmelonnt belonforelon it was optimizelond.
+   * @param optimizelondDocIdMappelonr Thelon doc ID mappelonr uselond by this selongmelonnt aftelonr it was optimizelond.
+   * @relonturn An optimizelond TimelonMappelonr with thelon samelon twelonelont IDs.
    */
-  TimeMapper optimize(DocIDToTweetIDMapper originalDocIdMapper,
-                      DocIDToTweetIDMapper optimizedDocIdMapper) throws IOException;
+  TimelonMappelonr optimizelon(DocIDToTwelonelontIDMappelonr originalDocIdMappelonr,
+                      DocIDToTwelonelontIDMappelonr optimizelondDocIdMappelonr) throws IOelonxcelonption;
 }

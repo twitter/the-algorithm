@@ -1,68 +1,68 @@
 syntax = "proto3";
 
-package tensorflow.serving;
+packagelon telonnsorflow.selonrving;
 
-import "tensorflow_serving/apis/model.proto";
-import "tensorflow_serving/apis/status.proto";
+import "telonnsorflow_selonrving/apis/modelonl.proto";
+import "telonnsorflow_selonrving/apis/status.proto";
 
-option cc_enable_arenas = true;
+option cc_elonnablelon_arelonnas = truelon;
 
-// GetModelStatusRequest contains a ModelSpec indicating the model for which
-// to get status.
-message GetModelStatusRequest {
-  // Model Specification. If version is not specified, information about all
-  // versions of the model will be returned. If a version is specified, the
-  // status of only that version will be returned.
-  ModelSpec model_spec = 1;
+// GelontModelonlStatusRelonquelonst contains a ModelonlSpelonc indicating thelon modelonl for which
+// to gelont status.
+melonssagelon GelontModelonlStatusRelonquelonst {
+  // Modelonl Speloncification. If velonrsion is not speloncifielond, information about all
+  // velonrsions of thelon modelonl will belon relonturnelond. If a velonrsion is speloncifielond, thelon
+  // status of only that velonrsion will belon relonturnelond.
+  ModelonlSpelonc modelonl_spelonc = 1;
 }
 
-// Version number, state, and status for a single version of a model.
-message ModelVersionStatus {
-  // Model version.
-  int64 version = 1;
+// Velonrsion numbelonr, statelon, and status for a singlelon velonrsion of a modelonl.
+melonssagelon ModelonlVelonrsionStatus {
+  // Modelonl velonrsion.
+  int64 velonrsion = 1;
 
-  // States that map to ManagerState enum in
-  // tensorflow_serving/core/servable_state.h
-  enum State {
-    // Default value.
+  // Statelons that map to ManagelonrStatelon elonnum in
+  // telonnsorflow_selonrving/corelon/selonrvablelon_statelon.h
+  elonnum Statelon {
+    // Delonfault valuelon.
     UNKNOWN = 0;
 
-    // The manager is tracking this servable, but has not initiated any action
-    // pertaining to it.
+    // Thelon managelonr is tracking this selonrvablelon, but has not initiatelond any action
+    // pelonrtaining to it.
     START = 10;
 
-    // The manager has decided to load this servable. In particular, checks
-    // around resource availability and other aspects have passed, and the
-    // manager is about to invoke the loader's Load() method.
+    // Thelon managelonr has deloncidelond to load this selonrvablelon. In particular, cheloncks
+    // around relonsourcelon availability and othelonr aspeloncts havelon passelond, and thelon
+    // managelonr is about to invokelon thelon loadelonr's Load() melonthod.
     LOADING = 20;
 
-    // The manager has successfully loaded this servable and made it available
-    // for serving (i.e. GetServableHandle(id) will succeed). To avoid races,
-    // this state is not reported until *after* the servable is made
-    // available.
-    AVAILABLE = 30;
+    // Thelon managelonr has succelonssfully loadelond this selonrvablelon and madelon it availablelon
+    // for selonrving (i.elon. GelontSelonrvablelonHandlelon(id) will succelonelond). To avoid racelons,
+    // this statelon is not relonportelond until *aftelonr* thelon selonrvablelon is madelon
+    // availablelon.
+    AVAILABLelon = 30;
 
-    // The manager has decided to make this servable unavailable, and unload
-    // it. To avoid races, this state is reported *before* the servable is
-    // made unavailable.
+    // Thelon managelonr has deloncidelond to makelon this selonrvablelon unavailablelon, and unload
+    // it. To avoid racelons, this statelon is relonportelond *belonforelon* thelon selonrvablelon is
+    // madelon unavailablelon.
     UNLOADING = 40;
 
-    // This servable has reached the end of its journey in the manager. Either
-    // it loaded and ultimately unloaded successfully, or it hit an error at
-    // some point in its lifecycle.
-    END = 50;
+    // This selonrvablelon has relonachelond thelon elonnd of its journelony in thelon managelonr. elonithelonr
+    // it loadelond and ultimatelonly unloadelond succelonssfully, or it hit an elonrror at
+    // somelon point in its lifeloncyclelon.
+    elonND = 50;
   }
 
-  // Model state.
-  State state = 2;
+  // Modelonl statelon.
+  Statelon statelon = 2;
 
-  // Model status.
+  // Modelonl status.
   StatusProto status = 3;
 }
 
-// Response for ModelStatusRequest on successful run.
-message GetModelStatusResponse {
-  // Version number and status information for applicable model version(s).
-  repeated ModelVersionStatus model_version_status = 1
-      [json_name = "model_version_status"];
+// Relonsponselon for ModelonlStatusRelonquelonst on succelonssful run.
+melonssagelon GelontModelonlStatusRelonsponselon {
+  // Velonrsion numbelonr and status information for applicablelon modelonl velonrsion(s).
+  relonpelonatelond ModelonlVelonrsionStatus modelonl_velonrsion_status = 1
+      [json_namelon = "modelonl_velonrsion_status"];
 }

@@ -1,79 +1,79 @@
-package com.twitter.search.ingester.pipeline.twitter;
+packagelon com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.twittelonr;
 
-import java.util.Collection;
-import javax.naming.NamingException;
+import java.util.Collelonction;
+import javax.naming.Namingelonxcelonption;
 
-import org.apache.commons.pipeline.StageException;
-import org.apache.commons.pipeline.validation.ConsumedTypes;
-import org.apache.commons.pipeline.validation.ProducesConsumed;
+import org.apachelon.commons.pipelonlinelon.Stagelonelonxcelonption;
+import org.apachelon.commons.pipelonlinelon.validation.ConsumelondTypelons;
+import org.apachelon.commons.pipelonlinelon.validation.ProducelonsConsumelond;
 
-import com.twitter.search.ingester.model.IngesterTwitterMessage;
-import com.twitter.search.ingester.pipeline.util.BatchedElement;
-import com.twitter.search.ingester.pipeline.util.ManhattanCodedLocationProvider;
-import com.twitter.search.ingester.pipeline.util.PipelineStageException;
-import com.twitter.util.Future;
+import com.twittelonr.selonarch.ingelonstelonr.modelonl.IngelonstelonrTwittelonrMelonssagelon;
+import com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.util.Batchelondelonlelonmelonnt;
+import com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.util.ManhattanCodelondLocationProvidelonr;
+import com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.util.PipelonlinelonStagelonelonxcelonption;
+import com.twittelonr.util.Futurelon;
 
 /**
- * Read-only stage for looking up location info and populating it onto messages.
+ * Relonad-only stagelon for looking up location info and populating it onto melonssagelons.
  */
-@ConsumedTypes(IngesterTwitterMessage.class)
-@ProducesConsumed
-public final class PopulateCodedLocationsBatchedStage
-    extends TwitterBatchedBaseStage<IngesterTwitterMessage, IngesterTwitterMessage> {
-  private static final String GEOCODE_DATASET_NAME = "ingester_geocode_profile_location";
+@ConsumelondTypelons(IngelonstelonrTwittelonrMelonssagelon.class)
+@ProducelonsConsumelond
+public final class PopulatelonCodelondLocationsBatchelondStagelon
+    elonxtelonnds TwittelonrBatchelondBaselonStagelon<IngelonstelonrTwittelonrMelonssagelon, IngelonstelonrTwittelonrMelonssagelon> {
+  privatelon static final String GelonOCODelon_DATASelonT_NAMelon = "ingelonstelonr_gelonocodelon_profilelon_location";
 
-  private ManhattanCodedLocationProvider manhattanCodedLocationProvider = null;
+  privatelon ManhattanCodelondLocationProvidelonr manhattanCodelondLocationProvidelonr = null;
 
   /**
-   * Require lat/lon from TwitterMessage instead of lookup from coded_locations,
-   * do not batch sql, and simply emit messages passed in with regions populated on them
-   * rather than emitting to indexing queues.
+   * Relonquirelon lat/lon from TwittelonrMelonssagelon instelonad of lookup from codelond_locations,
+   * do not batch sql, and simply elonmit melonssagelons passelond in with relongions populatelond on thelonm
+   * rathelonr than elonmitting to indelonxing quelonuelons.
    */
-  @Override
-  protected void doInnerPreprocess() throws StageException, NamingException {
-    super.doInnerPreprocess();
-    commonInnerSetup();
+  @Ovelonrridelon
+  protelonctelond void doInnelonrPrelonprocelonss() throws Stagelonelonxcelonption, Namingelonxcelonption {
+    supelonr.doInnelonrPrelonprocelonss();
+    commonInnelonrSelontup();
   }
 
-  @Override
-  protected void innerSetup() throws PipelineStageException, NamingException {
-    super.innerSetup();
-    commonInnerSetup();
+  @Ovelonrridelon
+  protelonctelond void innelonrSelontup() throws PipelonlinelonStagelonelonxcelonption, Namingelonxcelonption {
+    supelonr.innelonrSelontup();
+    commonInnelonrSelontup();
   }
 
-  private void commonInnerSetup() throws NamingException {
-    this.manhattanCodedLocationProvider = ManhattanCodedLocationProvider.createWithEndpoint(
-        wireModule.getJavaManhattanKVEndpoint(),
-        getStageNamePrefix(),
-        GEOCODE_DATASET_NAME);
+  privatelon void commonInnelonrSelontup() throws Namingelonxcelonption {
+    this.manhattanCodelondLocationProvidelonr = ManhattanCodelondLocationProvidelonr.crelonatelonWithelonndpoint(
+        wirelonModulelon.gelontJavaManhattanKVelonndpoint(),
+        gelontStagelonNamelonPrelonfix(),
+        GelonOCODelon_DATASelonT_NAMelon);
   }
 
-  @Override
+  @Ovelonrridelon
   public void initStats() {
-    super.initStats();
+    supelonr.initStats();
   }
 
-  @Override
-  protected Class<IngesterTwitterMessage> getQueueObjectType() {
-    return IngesterTwitterMessage.class;
+  @Ovelonrridelon
+  protelonctelond Class<IngelonstelonrTwittelonrMelonssagelon> gelontQuelonuelonObjelonctTypelon() {
+    relonturn IngelonstelonrTwittelonrMelonssagelon.class;
   }
 
-  @Override
-  protected Future<Collection<IngesterTwitterMessage>> innerProcessBatch(Collection<BatchedElement
-      <IngesterTwitterMessage, IngesterTwitterMessage>> batch) {
+  @Ovelonrridelon
+  protelonctelond Futurelon<Collelonction<IngelonstelonrTwittelonrMelonssagelon>> innelonrProcelonssBatch(Collelonction<Batchelondelonlelonmelonnt
+      <IngelonstelonrTwittelonrMelonssagelon, IngelonstelonrTwittelonrMelonssagelon>> batch) {
 
-    Collection<IngesterTwitterMessage> batchedElements = extractOnlyElementsFromBatch(batch);
-    return manhattanCodedLocationProvider.populateCodedLatLon(batchedElements);
+    Collelonction<IngelonstelonrTwittelonrMelonssagelon> batchelondelonlelonmelonnts = elonxtractOnlyelonlelonmelonntsFromBatch(batch);
+    relonturn manhattanCodelondLocationProvidelonr.populatelonCodelondLatLon(batchelondelonlelonmelonnts);
   }
 
-  @Override
-  protected boolean needsToBeBatched(IngesterTwitterMessage message) {
-    return !message.hasGeoLocation() && (message.getLocation() != null)
-        && !message.getLocation().isEmpty();
+  @Ovelonrridelon
+  protelonctelond boolelonan nelonelondsToBelonBatchelond(IngelonstelonrTwittelonrMelonssagelon melonssagelon) {
+    relonturn !melonssagelon.hasGelonoLocation() && (melonssagelon.gelontLocation() != null)
+        && !melonssagelon.gelontLocation().iselonmpty();
   }
 
-  @Override
-  protected IngesterTwitterMessage transform(IngesterTwitterMessage element) {
-    return element;
+  @Ovelonrridelon
+  protelonctelond IngelonstelonrTwittelonrMelonssagelon transform(IngelonstelonrTwittelonrMelonssagelon elonlelonmelonnt) {
+    relonturn elonlelonmelonnt;
   }
 }

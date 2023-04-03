@@ -1,28 +1,28 @@
-package com.twitter.product_mixer.core.pipeline.product
+packagelon com.twittelonr.product_mixelonr.corelon.pipelonlinelon.product
 
-import com.twitter.product_mixer.core.functional_component.common.access_policy.WithDebugAccessPolicies
-import com.twitter.product_mixer.core.model.common.identifier.ProductPipelineIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.Request
-import com.twitter.product_mixer.core.pipeline.Pipeline
-import com.twitter.stitch.Arrow
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.accelonss_policy.WithDelonbugAccelonssPolicielons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.ProductPipelonlinelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.Relonquelonst
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.Pipelonlinelon
+import com.twittelonr.stitch.Arrow
 
 /**
- * A Product Pipeline
+ * A Product Pipelonlinelon
  *
- * This is an abstract class, as we only construct these via the [[ProductPipelineBuilder]].
+ * This is an abstract class, as welon only construct thelonselon via thelon [[ProductPipelonlinelonBuildelonr]].
  *
- * A [[ProductPipeline]] is capable of processing a [[Request]] and returning a response.
+ * A [[ProductPipelonlinelon]] is capablelon of procelonssing a [[Relonquelonst]] and relonturning a relonsponselon.
  *
- * @tparam RequestType the domain model for the query or request
- * @tparam ResponseType the final marshalled result type
+ * @tparam RelonquelonstTypelon thelon domain modelonl for thelon quelonry or relonquelonst
+ * @tparam RelonsponselonTypelon thelon final marshallelond relonsult typelon
  */
-abstract class ProductPipeline[RequestType <: Request, ResponseType] private[product]
-    extends Pipeline[ProductPipelineRequest[RequestType], ResponseType]
-    with WithDebugAccessPolicies {
-  override private[core] val config: ProductPipelineConfig[RequestType, _, ResponseType]
-  override val arrow: Arrow[
-    ProductPipelineRequest[RequestType],
-    ProductPipelineResult[ResponseType]
+abstract class ProductPipelonlinelon[RelonquelonstTypelon <: Relonquelonst, RelonsponselonTypelon] privatelon[product]
+    elonxtelonnds Pipelonlinelon[ProductPipelonlinelonRelonquelonst[RelonquelonstTypelon], RelonsponselonTypelon]
+    with WithDelonbugAccelonssPolicielons {
+  ovelonrridelon privatelon[corelon] val config: ProductPipelonlinelonConfig[RelonquelonstTypelon, _, RelonsponselonTypelon]
+  ovelonrridelon val arrow: Arrow[
+    ProductPipelonlinelonRelonquelonst[RelonquelonstTypelon],
+    ProductPipelonlinelonRelonsult[RelonsponselonTypelon]
   ]
-  override val identifier: ProductPipelineIdentifier
+  ovelonrridelon val idelonntifielonr: ProductPipelonlinelonIdelonntifielonr
 }

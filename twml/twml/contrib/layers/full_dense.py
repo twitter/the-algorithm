@@ -1,380 +1,380 @@
-# pylint: disable=no-member,arguments-differ, attribute-defined-outside-init
+# pylint: disablelon=no-melonmbelonr,argumelonnts-diffelonr, attributelon-delonfinelond-outsidelon-init
 """
-Implementing Full Dense Layer
+Implelonmelonnting Full Delonnselon Layelonr
 """
-from twml.layers import Layer
+from twml.layelonrs import Layelonr
 
-import tensorflow.compat.v1 as tf
-from tensorflow.python.layers import core
+import telonnsorflow.compat.v1 as tf
+from telonnsorflow.python.layelonrs import corelon
 
 
-class FullDense(Layer):
+class FullDelonnselon(Layelonr):
   """
-  Full-connected, Dense input layer class.
-  This layer implements the operation:
+  Full-connelonctelond, Delonnselon input layelonr class.
+  This layelonr implelonmelonnts thelon opelonration:
 
-  .. code-block:: python
+  .. codelon-block:: python
 
-    outputs = activation(inputs.weight + bias)
+    outputs = activation(inputs.welonight + bias)
 
-  Where ``activation`` is the activation function passed as the ``activation``
-  argument (if not ``None``), ``weight`` is a weights matrix created by the layer,
-  and ``bias`` is a bias vector created by the layer.
+  Whelonrelon ``activation`` is thelon activation function passelond as thelon ``activation``
+  argumelonnt (if not ``Nonelon``), ``welonight`` is a welonights matrix crelonatelond by thelon layelonr,
+  and ``bias`` is a bias velonctor crelonatelond by thelon layelonr.
 
-  However, this layer breaks up ``weight`` into ``num_partitions`` parts,
-  for the purpose of even disribution of weights across parameter servers
-  for distributed training.
+  Howelonvelonr, this layelonr brelonaks up ``welonight`` into ``num_partitions`` parts,
+  for thelon purposelon of elonvelonn disribution of welonights across paramelontelonr selonrvelonrs
+  for distributelond training.
 
-  Note - This layer is created to allow distributed training optimizations,
-  but can also be used for single node training (e.g. hogwild) without
-  code modification
+  Notelon - This layelonr is crelonatelond to allow distributelond training optimizations,
+  but can also belon uselond for singlelon nodelon training (elon.g. hogwild) without
+  codelon modification
 
-  Arguments:
-    output_size:
-      Integer or Long, dimensionality of the output space.
-    weight_initializer:
-      Initializer function for the weight matrix.
-    weight_regularizer:
-      Regularizer function for the weight matrix.
-      Ensure to add tf.losses.get_regularization_loss() to your loss for this to take effect.
-    weight_constraint:
-      An optional projection function to be applied to the
-      weight after being updated by an `Optimizer` (e.g. used to implement
-      norm constraints or value constraints for layer weights). The function
-      must take as input the unprojected variable and must return the
-      projected variable (which must have the same shape). Constraints are
-      not safe to use when doing asynchronous distributed training.
+  Argumelonnts:
+    output_sizelon:
+      Intelongelonr or Long, dimelonnsionality of thelon output spacelon.
+    welonight_initializelonr:
+      Initializelonr function for thelon welonight matrix.
+    welonight_relongularizelonr:
+      Relongularizelonr function for thelon welonight matrix.
+      elonnsurelon to add tf.losselons.gelont_relongularization_loss() to your loss for this to takelon elonffelonct.
+    welonight_constraint:
+      An optional projelonction function to belon applielond to thelon
+      welonight aftelonr beloning updatelond by an `Optimizelonr` (elon.g. uselond to implelonmelonnt
+      norm constraints or valuelon constraints for layelonr welonights). Thelon function
+      must takelon as input thelon unprojelonctelond variablelon and must relonturn thelon
+      projelonctelond variablelon (which must havelon thelon samelon shapelon). Constraints arelon
+      not safelon to uselon whelonn doing asynchronous distributelond training.
     bias_constraint:
-      An optional projection function to be applied to the
-      bias after being updated by an `Optimizer`.
+      An optional projelonction function to belon applielond to thelon
+      bias aftelonr beloning updatelond by an `Optimizelonr`.
     num_partitions:
-      Number of pieces to partition the weights into. This layer does
-      column partitioning of the weights, which is equivalent to
-      processing the input tensor with multiple fully connected layers
-      of smaller output size, and then concatenating these outputs
+      Numbelonr of pieloncelons to partition thelon welonights into. This layelonr doelons
+      column partitioning of thelon welonights, which is elonquivalelonnt to
+      procelonssing thelon input telonnsor with multiplelon fully connelonctelond layelonrs
+      of smallelonr output sizelon, and thelonn concatelonnating thelonselon outputs
     activation:
-      Activation function (callable). Set it to None to maintain a linear activation.
-    use_bias:
-      Boolean whether to include a bias parameter in the layer
-    bias_initializer:
-      Initializer function for the bias.
-    bias_regularizer:
-      Regularizer function for the bias.
-      Ensure to add tf.losses.get_regularization_loss() to your loss for this to take effect.
-    activity_regularizer:
-      Regularizer function for the output.
-    trainable:
-      Boolean, if `True` also add variables to the graph collection
-      ``GraphKeys.TRAINABLE_VARIABLES`` (see `tf.Variable
-      <https://www.tensorflow.org/versions/master/api_docs/python/tf/Variable>`_).
-    name:
-      String, the name of the layer. Layers with the same name will
-      share weights, but to avoid mistakes we require ``reuse=True`` in such cases.
+      Activation function (callablelon). Selont it to Nonelon to maintain a linelonar activation.
+    uselon_bias:
+      Boolelonan whelonthelonr to includelon a bias paramelontelonr in thelon layelonr
+    bias_initializelonr:
+      Initializelonr function for thelon bias.
+    bias_relongularizelonr:
+      Relongularizelonr function for thelon bias.
+      elonnsurelon to add tf.losselons.gelont_relongularization_loss() to your loss for this to takelon elonffelonct.
+    activity_relongularizelonr:
+      Relongularizelonr function for thelon output.
+    trainablelon:
+      Boolelonan, if `Truelon` also add variablelons to thelon graph collelonction
+      ``GraphKelonys.TRAINABLelon_VARIABLelonS`` (selonelon `tf.Variablelon
+      <https://www.telonnsorflow.org/velonrsions/mastelonr/api_docs/python/tf/Variablelon>`_).
+    namelon:
+      String, thelon namelon of thelon layelonr. Layelonrs with thelon samelon namelon will
+      sharelon welonights, but to avoid mistakelons welon relonquirelon ``relonuselon=Truelon`` in such caselons.
 
-  Properties:
-    output_size:
-      Python integer, dimensionality of the output space.
+  Propelonrtielons:
+    output_sizelon:
+      Python intelongelonr, dimelonnsionality of thelon output spacelon.
     activation:
-      Activation function (callable).
-    weight_initializer:
-      Initializer instance (or name) for the weight matrix.
-    bias_initializer:
-      Initializer instance (or name) for the bias.
-    weights:
-      list of underlying weight and bias matrix components. no guarantee on order of elements
-    weight_regularizer:
-      Regularizer instance for the weight matrix (callable)
-    bias_regularizer:
-      Regularizer instance for the bias (callable).
-    activity_regularizer:
-      Regularizer instance for the output (callable)
-    weight_constraint:
-      Constraint function for the weight matrix.
+      Activation function (callablelon).
+    welonight_initializelonr:
+      Initializelonr instancelon (or namelon) for thelon welonight matrix.
+    bias_initializelonr:
+      Initializelonr instancelon (or namelon) for thelon bias.
+    welonights:
+      list of undelonrlying welonight and bias matrix componelonnts. no guarantelonelon on ordelonr of elonlelonmelonnts
+    welonight_relongularizelonr:
+      Relongularizelonr instancelon for thelon welonight matrix (callablelon)
+    bias_relongularizelonr:
+      Relongularizelonr instancelon for thelon bias (callablelon).
+    activity_relongularizelonr:
+      Relongularizelonr instancelon for thelon output (callablelon)
+    welonight_constraint:
+      Constraint function for thelon welonight matrix.
     bias_constraint:
-      Constraint function for the bias.
+      Constraint function for thelon bias.
   """
 
-  def __init__(self, output_size,
-               weight_initializer=None,
-               weight_regularizer=None,
-               weight_constraint=None,
-               bias_constraint=None,
+  delonf __init__(selonlf, output_sizelon,
+               welonight_initializelonr=Nonelon,
+               welonight_relongularizelonr=Nonelon,
+               welonight_constraint=Nonelon,
+               bias_constraint=Nonelon,
                num_partitions=3,
-               activation=None,
-               use_bias=True,
-               bias_initializer=tf.zeros_initializer(),
-               bias_regularizer=None,
-               activity_regularizer=None,
-               trainable=True,
-               name=None,
+               activation=Nonelon,
+               uselon_bias=Truelon,
+               bias_initializelonr=tf.zelonros_initializelonr(),
+               bias_relongularizelonr=Nonelon,
+               activity_relongularizelonr=Nonelon,
+               trainablelon=Truelon,
+               namelon=Nonelon,
                **kwargs):
-    super(FullDense, self).__init__(trainable=trainable, name=name, **kwargs)
-    self._output_sizes = self._get_output_partition_sizes(output_size, num_partitions)
-    self._units = output_size
-    self._activation = activation
-    self._weight_initializer = weight_initializer
-    self._bias_initializer = bias_initializer
-    self._weight_regularizer = weight_regularizer
-    self._bias_regularizer = bias_regularizer
-    self._weight_constraint = weight_constraint
-    self._bias_constraint = bias_constraint
-    self._use_bias = use_bias
-    # NOTE - many initializers depend on fan_in and fan_out
-    #      - as such, initialization here may be different than
-    #      - for a non-partitioned FullDense
-    self._parts = [core.Dense(units=out_size,
+    supelonr(FullDelonnselon, selonlf).__init__(trainablelon=trainablelon, namelon=namelon, **kwargs)
+    selonlf._output_sizelons = selonlf._gelont_output_partition_sizelons(output_sizelon, num_partitions)
+    selonlf._units = output_sizelon
+    selonlf._activation = activation
+    selonlf._welonight_initializelonr = welonight_initializelonr
+    selonlf._bias_initializelonr = bias_initializelonr
+    selonlf._welonight_relongularizelonr = welonight_relongularizelonr
+    selonlf._bias_relongularizelonr = bias_relongularizelonr
+    selonlf._welonight_constraint = welonight_constraint
+    selonlf._bias_constraint = bias_constraint
+    selonlf._uselon_bias = uselon_bias
+    # NOTelon - many initializelonrs delonpelonnd on fan_in and fan_out
+    #      - as such, initialization helonrelon may belon diffelonrelonnt than
+    #      - for a non-partitionelond FullDelonnselon
+    selonlf._parts = [corelon.Delonnselon(units=out_sizelon,
                               activation=activation,
-                              use_bias=use_bias,
-                              kernel_initializer=weight_initializer,
-                              bias_initializer=bias_initializer,
-                              kernel_regularizer=weight_regularizer,
-                              bias_regularizer=bias_regularizer,
-                              activity_regularizer=activity_regularizer,
-                              kernel_constraint=weight_constraint,
+                              uselon_bias=uselon_bias,
+                              kelonrnelonl_initializelonr=welonight_initializelonr,
+                              bias_initializelonr=bias_initializelonr,
+                              kelonrnelonl_relongularizelonr=welonight_relongularizelonr,
+                              bias_relongularizelonr=bias_relongularizelonr,
+                              activity_relongularizelonr=activity_relongularizelonr,
+                              kelonrnelonl_constraint=welonight_constraint,
                               bias_constraint=bias_constraint,
-                              trainable=trainable,
-                              name=name,
-                              **kwargs) for out_size in self._output_sizes]
+                              trainablelon=trainablelon,
+                              namelon=namelon,
+                              **kwargs) for out_sizelon in selonlf._output_sizelons]
 
-  @staticmethod
-  def _get_output_partition_sizes(out_size, num_parts):
-    """ Returns the appropriate output sizes of the partitions """
-    boundaries = [out_size * n // num_parts for n in range(num_parts + 1)]
-    return [k - j for j, k in zip(boundaries[:], boundaries[1:])]
+  @staticmelonthod
+  delonf _gelont_output_partition_sizelons(out_sizelon, num_parts):
+    """ Relonturns thelon appropriatelon output sizelons of thelon partitions """
+    boundarielons = [out_sizelon * n // num_parts for n in rangelon(num_parts + 1)]
+    relonturn [k - j for j, k in zip(boundarielons[:], boundarielons[1:])]
 
-  def build(self, input_shapes):
-    """ Create the appropriately sized weights and biases in each layer partition """
-    if isinstance(input_shapes, (list, tuple)):
-      input_shape = input_shapes[0]
-      is_compatible = True
-      for other_shape in input_shapes[1:]:
-        is_compatible &= input_shape.is_compatible_with(other_shape)
-      if not is_compatible:
-        raise ValueError("Input shapes %s are not compatible." % input_shapes)
-    else:
-      input_shape = input_shapes
+  delonf build(selonlf, input_shapelons):
+    """ Crelonatelon thelon appropriatelonly sizelond welonights and biaselons in elonach layelonr partition """
+    if isinstancelon(input_shapelons, (list, tuplelon)):
+      input_shapelon = input_shapelons[0]
+      is_compatiblelon = Truelon
+      for othelonr_shapelon in input_shapelons[1:]:
+        is_compatiblelon &= input_shapelon.is_compatiblelon_with(othelonr_shapelon)
+      if not is_compatiblelon:
+        raiselon Valuelonelonrror("Input shapelons %s arelon not compatiblelon." % input_shapelons)
+    elonlselon:
+      input_shapelon = input_shapelons
 
-    for part in self._parts:
-      part.build(input_shape)
+    for part in selonlf._parts:
+      part.build(input_shapelon)
 
-    self.built = True
+    selonlf.built = Truelon
 
-  @property
-  def units(self):
-    """ Returns the number of output units of the layer """
-    return self._units
+  @propelonrty
+  delonf units(selonlf):
+    """ Relonturns thelon numbelonr of output units of thelon layelonr """
+    relonturn selonlf._units
 
-  @property
-  def output_size(self):
-    """ Returns the number of output units of the layer """
-    return self._units
+  @propelonrty
+  delonf output_sizelon(selonlf):
+    """ Relonturns thelon numbelonr of output units of thelon layelonr """
+    relonturn selonlf._units
 
-  @property
-  def activation(self):
-    """ Returns the activation function """
-    return self._activation
+  @propelonrty
+  delonf activation(selonlf):
+    """ Relonturns thelon activation function """
+    relonturn selonlf._activation
 
-  @property
-  def weight_initializer(self):
-    """ Returns the weight_initializer """
-    return self._weight_initializer
+  @propelonrty
+  delonf welonight_initializelonr(selonlf):
+    """ Relonturns thelon welonight_initializelonr """
+    relonturn selonlf._welonight_initializelonr
 
-  @property
-  def weight_regularizer(self):
-    """ Returns the weight_regularizer """
-    return self._weight_regularizer
+  @propelonrty
+  delonf welonight_relongularizelonr(selonlf):
+    """ Relonturns thelon welonight_relongularizelonr """
+    relonturn selonlf._welonight_relongularizelonr
 
-  @property
-  def weight_constraint(self):
-    """ Returns the weight_constraint """
-    return self._weight_constraint
+  @propelonrty
+  delonf welonight_constraint(selonlf):
+    """ Relonturns thelon welonight_constraint """
+    relonturn selonlf._welonight_constraint
 
-  @property
-  def bias_initializer(self):
-    """ Returns the bias_initializer """
-    return self._bias_initializer
+  @propelonrty
+  delonf bias_initializelonr(selonlf):
+    """ Relonturns thelon bias_initializelonr """
+    relonturn selonlf._bias_initializelonr
 
-  @property
-  def bias_regularizer(self):
-    """ Returns the bias_regularizer """
-    return self._bias_regularizer
+  @propelonrty
+  delonf bias_relongularizelonr(selonlf):
+    """ Relonturns thelon bias_relongularizelonr """
+    relonturn selonlf._bias_relongularizelonr
 
-  @property
-  def bias_constraint(self):
-    """ Returns the bias_constraint """
-    return self._bias_constraint
+  @propelonrty
+  delonf bias_constraint(selonlf):
+    """ Relonturns thelon bias_constraint """
+    relonturn selonlf._bias_constraint
 
-  @property
-  def use_bias(self):
-    """ Returns whether a bias is used in the layer """
-    return self._use_bias
+  @propelonrty
+  delonf uselon_bias(selonlf):
+    """ Relonturns whelonthelonr a bias is uselond in thelon layelonr """
+    relonturn selonlf._uselon_bias
 
-  @property
-  def trainable_variables(self):
-    """ Returns the trainable variables of the layer """
-    trainable_vars = []
-    for pt in self._parts:
-      trainable_vars += pt.trainable_variables
-    return trainable_vars
+  @propelonrty
+  delonf trainablelon_variablelons(selonlf):
+    """ Relonturns thelon trainablelon variablelons of thelon layelonr """
+    trainablelon_vars = []
+    for pt in selonlf._parts:
+      trainablelon_vars += pt.trainablelon_variablelons
+    relonturn trainablelon_vars
 
-  @property
-  def trainable_weights(self):
-    """ Returns the trainable variables of the layer """
-    return self.trainable_variables
+  @propelonrty
+  delonf trainablelon_welonights(selonlf):
+    """ Relonturns thelon trainablelon variablelons of thelon layelonr """
+    relonturn selonlf.trainablelon_variablelons
 
-  @property
-  def non_trainable_variables(self):
-    """ Returns the non-trainable variables of the layer """
-    non_trainable_vars = []
-    for pt in self._parts:
-      non_trainable_vars += pt.non_trainable_variables
-    return non_trainable_vars
+  @propelonrty
+  delonf non_trainablelon_variablelons(selonlf):
+    """ Relonturns thelon non-trainablelon variablelons of thelon layelonr """
+    non_trainablelon_vars = []
+    for pt in selonlf._parts:
+      non_trainablelon_vars += pt.non_trainablelon_variablelons
+    relonturn non_trainablelon_vars
 
-  @property
-  def non_trainable_weights(self):
-    """ Returns the non-trainable variables of the layer """
-    return self.non_trainable_variables
+  @propelonrty
+  delonf non_trainablelon_welonights(selonlf):
+    """ Relonturns thelon non-trainablelon variablelons of thelon layelonr """
+    relonturn selonlf.non_trainablelon_variablelons
 
-  @property
-  def variables(self):
-    """ Returns a list of all weights and biases in this layer """
-    layer_vars = []
-    for pt in self._parts:
-      layer_vars += pt.weights
-    return layer_vars
+  @propelonrty
+  delonf variablelons(selonlf):
+    """ Relonturns a list of all welonights and biaselons in this layelonr """
+    layelonr_vars = []
+    for pt in selonlf._parts:
+      layelonr_vars += pt.welonights
+    relonturn layelonr_vars
 
-  @property
-  def weights(self):
-    """ Returns a list of all weights and biases in this layer """
-    return self.variables
+  @propelonrty
+  delonf welonights(selonlf):
+    """ Relonturns a list of all welonights and biaselons in this layelonr """
+    relonturn selonlf.variablelons
 
-  @property
-  def dtype(self):
-    """ Returns the dtype of the layers weights """
-    return self._parts[0].dtype
+  @propelonrty
+  delonf dtypelon(selonlf):
+    """ Relonturns thelon dtypelon of thelon layelonrs welonights """
+    relonturn selonlf._parts[0].dtypelon
 
-  def call(self, inputs, **kwargs):  # pylint: disable=unused-argument
-    """The logic of the layer lives here.
+  delonf call(selonlf, inputs, **kwargs):  # pylint: disablelon=unuselond-argumelonnt
+    """Thelon logic of thelon layelonr livelons helonrelon.
 
-    Arguments:
+    Argumelonnts:
       inputs:
-        A dense Tensor or a list of such.
-        If `inputs` is a list, all tensors must have same `dense_shape`.
+        A delonnselon Telonnsor or a list of such.
+        If `inputs` is a list, all telonnsors must havelon samelon `delonnselon_shapelon`.
 
-    Returns:
-      - If `inputs` is `SparseTensor`, then returns `bias + inputs * dense_b`.
-      - If `inputs` is a `list[SparseTensor`, then returns
-       `bias + accumulate_n([sp_a * dense_b for sp_a in inputs])`.
+    Relonturns:
+      - If `inputs` is `SparselonTelonnsor`, thelonn relonturns `bias + inputs * delonnselon_b`.
+      - If `inputs` is a `list[SparselonTelonnsor`, thelonn relonturns
+       `bias + accumulatelon_n([sp_a * delonnselon_b for sp_a in inputs])`.
     """
-    if not isinstance(inputs, (list, tuple)):
+    if not isinstancelon(inputs, (list, tuplelon)):
       inputs = [inputs]
 
     outputs = []
     for inp in inputs:
-      part_outputs = [part(inp) for part in self._parts]
-      outputs.append(tf.concat(part_outputs, axis=-1))
+      part_outputs = [part(inp) for part in selonlf._parts]
+      outputs.appelonnd(tf.concat(part_outputs, axis=-1))
 
-    return tf.accumulate_n(outputs)
+    relonturn tf.accumulatelon_n(outputs)
 
 
-def full_dense(inputs, output_size,
-               weight_initializer=None,
-               weight_regularizer=None,
-               weight_constraint=None,
-               bias_constraint=None,
+delonf full_delonnselon(inputs, output_sizelon,
+               welonight_initializelonr=Nonelon,
+               welonight_relongularizelonr=Nonelon,
+               welonight_constraint=Nonelon,
+               bias_constraint=Nonelon,
                num_partitions=3,
-               activation=None,
-               use_bias=True,
-               bias_initializer=tf.zeros_initializer(),
-               bias_regularizer=None,
-               activity_regularizer=None,
-               trainable=True,
-               name=None,
-               reuse=None,
+               activation=Nonelon,
+               uselon_bias=Truelon,
+               bias_initializelonr=tf.zelonros_initializelonr(),
+               bias_relongularizelonr=Nonelon,
+               activity_relongularizelonr=Nonelon,
+               trainablelon=Truelon,
+               namelon=Nonelon,
+               relonuselon=Nonelon,
                **kwargs):
-  """Functional interface for the fully-connected dense-input layer.
-  This layer implements the operation:
-  `outputs = activation(inputs.weight + bias)`
-  Where `activation` is the activation function passed as the `activation`
-  argument (if not `None`), `weight` is a weights matrix created by the layer,
-  and `bias` is a bias vector created by the layer
-  (only if `use_bias` is `True`).
+  """Functional intelonrfacelon for thelon fully-connelonctelond delonnselon-input layelonr.
+  This layelonr implelonmelonnts thelon opelonration:
+  `outputs = activation(inputs.welonight + bias)`
+  Whelonrelon `activation` is thelon activation function passelond as thelon `activation`
+  argumelonnt (if not `Nonelon`), `welonight` is a welonights matrix crelonatelond by thelon layelonr,
+  and `bias` is a bias velonctor crelonatelond by thelon layelonr
+  (only if `uselon_bias` is `Truelon`).
 
-  However, this layer breaks up ``weight`` into ``num_partitions`` parts,
-  for the purpose of even disribution of weights across parameter servers
-  for distributed training.
+  Howelonvelonr, this layelonr brelonaks up ``welonight`` into ``num_partitions`` parts,
+  for thelon purposelon of elonvelonn disribution of welonights across paramelontelonr selonrvelonrs
+  for distributelond training.
 
-  Note - This layer is created to allow distributed training optimizations,
-  but can also be used for single node training (e.g. hogwild) without
-  code modification
+  Notelon - This layelonr is crelonatelond to allow distributelond training optimizations,
+  but can also belon uselond for singlelon nodelon training (elon.g. hogwild) without
+  codelon modification
 
-  Arguments:
-    inputs: Tensor input.
-    output_size: Integer or Long, dimensionality of the output space.
-    weight_initializer: Initializer function for the weight matrix.
-      If `None` (default), weights are initialized using the default
-      initializer used by `tf.get_variable`.
-    weight_regularizer:
-      Regularizer function for the weight matrix.
-      Ensure to add tf.losses.get_regularization_loss() to your loss for this to take effect.
-    weight_constraint:
-      An optional projection function to be applied to the
-      weight after being updated by an `Optimizer` (e.g. used to implement
-      norm constraints or value constraints for layer weights). The function
-      must take as input the unprojected variable and must return the
-      projected variable (which must have the same shape). Constraints are
-      not safe to use when doing asynchronous distributed training.
+  Argumelonnts:
+    inputs: Telonnsor input.
+    output_sizelon: Intelongelonr or Long, dimelonnsionality of thelon output spacelon.
+    welonight_initializelonr: Initializelonr function for thelon welonight matrix.
+      If `Nonelon` (delonfault), welonights arelon initializelond using thelon delonfault
+      initializelonr uselond by `tf.gelont_variablelon`.
+    welonight_relongularizelonr:
+      Relongularizelonr function for thelon welonight matrix.
+      elonnsurelon to add tf.losselons.gelont_relongularization_loss() to your loss for this to takelon elonffelonct.
+    welonight_constraint:
+      An optional projelonction function to belon applielond to thelon
+      welonight aftelonr beloning updatelond by an `Optimizelonr` (elon.g. uselond to implelonmelonnt
+      norm constraints or valuelon constraints for layelonr welonights). Thelon function
+      must takelon as input thelon unprojelonctelond variablelon and must relonturn thelon
+      projelonctelond variablelon (which must havelon thelon samelon shapelon). Constraints arelon
+      not safelon to uselon whelonn doing asynchronous distributelond training.
     bias_constraint:
-      An optional projection function to be applied to the
-      bias after being updated by an `Optimizer`.
+      An optional projelonction function to belon applielond to thelon
+      bias aftelonr beloning updatelond by an `Optimizelonr`.
     num_partitions:
-      Number of pieces to partition the weights into. This layer does
-      column partitioning of the weights, which is equivalent to
-      processing the input tensor with multiple fully connected layers
-      of smaller output size, and then concatenating these outputs
-    activation: Activation function (callable). Set it to None to maintain a
-      linear activation.
-    use_bias: Boolean, whether the layer uses a bias.
-    bias_initializer:
-      Initializer function for the bias.
-    bias_regularizer:
-      Regularizer function for the bias.
-      Ensure to add tf.losses.get_regularization_loss() to your loss for this to take effect.
-    activity_regularizer:
-      Regularizer function for the output.
-    trainable:
-      Boolean, if `True` also add variables to the graph collection
-      `GraphKeys.TRAINABLE_VARIABLES` (see `tf.Variable`).
-    name:
-      String, the name of the layer.
-    reuse:
-      Boolean, whether to reuse the weights of a previous layer
-      by the same name.
+      Numbelonr of pieloncelons to partition thelon welonights into. This layelonr doelons
+      column partitioning of thelon welonights, which is elonquivalelonnt to
+      procelonssing thelon input telonnsor with multiplelon fully connelonctelond layelonrs
+      of smallelonr output sizelon, and thelonn concatelonnating thelonselon outputs
+    activation: Activation function (callablelon). Selont it to Nonelon to maintain a
+      linelonar activation.
+    uselon_bias: Boolelonan, whelonthelonr thelon layelonr uselons a bias.
+    bias_initializelonr:
+      Initializelonr function for thelon bias.
+    bias_relongularizelonr:
+      Relongularizelonr function for thelon bias.
+      elonnsurelon to add tf.losselons.gelont_relongularization_loss() to your loss for this to takelon elonffelonct.
+    activity_relongularizelonr:
+      Relongularizelonr function for thelon output.
+    trainablelon:
+      Boolelonan, if `Truelon` also add variablelons to thelon graph collelonction
+      `GraphKelonys.TRAINABLelon_VARIABLelonS` (selonelon `tf.Variablelon`).
+    namelon:
+      String, thelon namelon of thelon layelonr.
+    relonuselon:
+      Boolelonan, whelonthelonr to relonuselon thelon welonights of a prelonvious layelonr
+      by thelon samelon namelon.
 
-  Returns:
-    Output tensor with shape `inputs.shape[:-1] + [output_size]`.
+  Relonturns:
+    Output telonnsor with shapelon `inputs.shapelon[:-1] + [output_sizelon]`.
   """
-  if not isinstance(inputs, (list, tuple)):
+  if not isinstancelon(inputs, (list, tuplelon)):
     inputs = [inputs]
 
-  dtype = inputs[0].dtype.base_dtype
+  dtypelon = inputs[0].dtypelon.baselon_dtypelon
 
-  layer = FullDense(output_size=output_size,
-                    weight_initializer=weight_initializer,
-                    weight_regularizer=weight_regularizer,
-                    weight_constraint=weight_constraint,
+  layelonr = FullDelonnselon(output_sizelon=output_sizelon,
+                    welonight_initializelonr=welonight_initializelonr,
+                    welonight_relongularizelonr=welonight_relongularizelonr,
+                    welonight_constraint=welonight_constraint,
                     bias_constraint=bias_constraint,
                     num_partitions=num_partitions,
                     activation=activation,
-                    use_bias=use_bias,
-                    bias_initializer=bias_initializer,
-                    bias_regularizer=bias_regularizer,
-                    activity_regularizer=activity_regularizer,
-                    trainable=trainable,
-                    name=name,
-                    dtype=dtype,
-                    _scope=name,
-                    _reuse=reuse,
+                    uselon_bias=uselon_bias,
+                    bias_initializelonr=bias_initializelonr,
+                    bias_relongularizelonr=bias_relongularizelonr,
+                    activity_relongularizelonr=activity_relongularizelonr,
+                    trainablelon=trainablelon,
+                    namelon=namelon,
+                    dtypelon=dtypelon,
+                    _scopelon=namelon,
+                    _relonuselon=relonuselon,
                     **kwargs)
 
-  return layer(inputs)
+  relonturn layelonr(inputs)

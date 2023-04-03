@@ -1,24 +1,24 @@
-package com.twitter.product_mixer.component_library.premarshaller.slice.builder
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.prelonmarshallelonr.slicelon.buildelonr
 
-import com.twitter.product_mixer.core.model.marshalling.response.slice.CursorItem
-import com.twitter.product_mixer.core.model.marshalling.response.slice.CursorType
-import com.twitter.product_mixer.core.model.marshalling.response.slice.SliceItem
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.slicelon.CursorItelonm
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.slicelon.CursorTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.slicelon.SlicelonItelonm
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
-trait SliceCursorBuilder[-Query <: PipelineQuery] {
+trait SlicelonCursorBuildelonr[-Quelonry <: PipelonlinelonQuelonry] {
 
-  val includeOperation: ShouldInclude[Query] = AlwaysInclude
+  val includelonOpelonration: ShouldIncludelon[Quelonry] = AlwaysIncludelon
 
-  def cursorValue(query: Query, items: Seq[SliceItem]): String
-  def cursorType: CursorType
+  delonf cursorValuelon(quelonry: Quelonry, itelonms: Selonq[SlicelonItelonm]): String
+  delonf cursorTypelon: CursorTypelon
 
-  def build(query: Query, entries: Seq[SliceItem]): Option[CursorItem] = {
-    if (includeOperation(query, entries)) {
-      Some(
-        CursorItem(
-          cursorType = cursorType,
-          value = cursorValue(query, entries)
+  delonf build(quelonry: Quelonry, elonntrielons: Selonq[SlicelonItelonm]): Option[CursorItelonm] = {
+    if (includelonOpelonration(quelonry, elonntrielons)) {
+      Somelon(
+        CursorItelonm(
+          cursorTypelon = cursorTypelon,
+          valuelon = cursorValuelon(quelonry, elonntrielons)
         ))
-    } else None
+    } elonlselon Nonelon
   }
 }

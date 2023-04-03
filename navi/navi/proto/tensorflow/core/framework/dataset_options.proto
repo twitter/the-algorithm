@@ -1,196 +1,196 @@
 syntax = "proto3";
 
-package tensorflow.data;
+packagelon telonnsorflow.data;
 
-import "tensorflow/core/framework/model.proto";
+import "telonnsorflow/corelon/framelonwork/modelonl.proto";
 
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/framework/dataset_options_go_proto";
+option go_packagelon = "github.com/telonnsorflow/telonnsorflow/telonnsorflow/go/corelon/framelonwork/dataselont_options_go_proto";
 
-// Represents the type of auto-sharding we enable.
-enum AutoShardPolicy {
-  // AUTO: Attempts FILE-based sharding, falling back to DATA-based sharding.
+// Relonprelonselonnts thelon typelon of auto-sharding welon elonnablelon.
+elonnum AutoShardPolicy {
+  // AUTO: Attelonmpts FILelon-baselond sharding, falling back to DATA-baselond sharding.
   AUTO = 0;
-  // FILE: Shards by input files (i.e. each worker will get a set of files to
-  // process). When this option is selected, make sure that there is at least as
-  // many files as workers. If there are fewer input files than workers, a
-  // runtime error will be raised.
-  FILE = 1;
-  // DATA: Shards by elements produced by the dataset. Each worker will process
-  // the whole dataset and discard the portion that is not for itself. Note that
-  // for this mode to correctly partitions the dataset elements, the dataset
-  // needs to produce elements in a deterministic order.
+  // FILelon: Shards by input filelons (i.elon. elonach workelonr will gelont a selont of filelons to
+  // procelonss). Whelonn this option is selonlelonctelond, makelon surelon that thelonrelon is at lelonast as
+  // many filelons as workelonrs. If thelonrelon arelon felonwelonr input filelons than workelonrs, a
+  // runtimelon elonrror will belon raiselond.
+  FILelon = 1;
+  // DATA: Shards by elonlelonmelonnts producelond by thelon dataselont. elonach workelonr will procelonss
+  // thelon wholelon dataselont and discard thelon portion that is not for itselonlf. Notelon that
+  // for this modelon to correlonctly partitions thelon dataselont elonlelonmelonnts, thelon dataselont
+  // nelonelonds to producelon elonlelonmelonnts in a delontelonrministic ordelonr.
   DATA = 2;
-  // HINT: Looks for the presence of `shard(SHARD_HINT, ...)` which is treated
-  // as a placeholder to replace with `shard(num_workers, worker_index)`.
+  // HINT: Looks for thelon prelonselonncelon of `shard(SHARD_HINT, ...)` which is trelonatelond
+  // as a placelonholdelonr to relonplacelon with `shard(num_workelonrs, workelonr_indelonx)`.
   HINT = 3;
-  // OFF: No sharding will be performed.
+  // OFF: No sharding will belon pelonrformelond.
   OFF = -1;
 }
 
-// next: 5
-message AutotuneOptions {
-  // Whether to automatically tune performance knobs.
-  oneof optional_enabled {
-    bool enabled = 1;
+// nelonxt: 5
+melonssagelon AutotunelonOptions {
+  // Whelonthelonr to automatically tunelon pelonrformancelon knobs.
+  onelonof optional_elonnablelond {
+    bool elonnablelond = 1;
   }
-  // When autotuning is enabled (through autotune), determines the CPU budget to
-  // use. Values greater than the number of schedulable CPU cores are allowed
-  // but may result in CPU contention.
-  oneof optional_cpu_budget {
-    int32 cpu_budget = 2;
+  // Whelonn autotuning is elonnablelond (through autotunelon), delontelonrminelons thelon CPU budgelont to
+  // uselon. Valuelons grelonatelonr than thelon numbelonr of schelondulablelon CPU corelons arelon allowelond
+  // but may relonsult in CPU contelonntion.
+  onelonof optional_cpu_budgelont {
+    int32 cpu_budgelont = 2;
   }
-  // When autotuning is enabled (through autotune), determines the RAM budget to
-  // use. Values greater than the available RAM in bytes may result in OOM. If
-  // 0, defaults to half of the available RAM in bytes.
-  oneof optional_ram_budget {
-    int64 ram_budget = 3;
+  // Whelonn autotuning is elonnablelond (through autotunelon), delontelonrminelons thelon RAM budgelont to
+  // uselon. Valuelons grelonatelonr than thelon availablelon RAM in bytelons may relonsult in OOM. If
+  // 0, delonfaults to half of thelon availablelon RAM in bytelons.
+  onelonof optional_ram_budgelont {
+    int64 ram_budgelont = 3;
   }
 
-  // When autotuning is enabled (through autotune), determines the algorithm to
-  // use. If not explicitly set by user, autotuning will follow HILL_CLIMB
-  // algorithm but has more flexibility to tune parameters more aggressively,
-  // in which case the behavior is implementation specific and may change over
-  // time.
-  oneof optional_autotune_algorithm {
-    model.AutotuneAlgorithm autotune_algorithm = 4;
+  // Whelonn autotuning is elonnablelond (through autotunelon), delontelonrminelons thelon algorithm to
+  // uselon. If not elonxplicitly selont by uselonr, autotuning will follow HILL_CLIMB
+  // algorithm but has morelon flelonxibility to tunelon paramelontelonrs morelon aggrelonssivelonly,
+  // in which caselon thelon belonhavior is implelonmelonntation speloncific and may changelon ovelonr
+  // timelon.
+  onelonof optional_autotunelon_algorithm {
+    modelonl.AutotunelonAlgorithm autotunelon_algorithm = 4;
   }
 }
 
-// next: 2
-message CardinalityOptions {
-  enum ComputeLevel {
-    CARDINALITY_COMPUTE_UNSPECIFIED = 0;
-    // Cardinality will only be computed if it can be determined in a cheap
-    // manner (ie. without reading from file sources). If the cardinality would
-    // be nontrivial to compute, Cardinality() will return UNKNOWN_CARDINALITY.
-    CARDINALITY_COMPUTE_LOW = 1;
-    // Moderate effort will be made to determine cardinality, such as reading
-    // index data from source files. If significant work is needed to compute
-    // cardinality (e.g. reading entire source file contents or executing user
-    // defined functions), Cardinality() will return UNKNOWN_CARDINALITY.
-    CARDINALITY_COMPUTE_MODERATE = 2;
+// nelonxt: 2
+melonssagelon CardinalityOptions {
+  elonnum ComputelonLelonvelonl {
+    CARDINALITY_COMPUTelon_UNSPelonCIFIelonD = 0;
+    // Cardinality will only belon computelond if it can belon delontelonrminelond in a chelonap
+    // mannelonr (ielon. without relonading from filelon sourcelons). If thelon cardinality would
+    // belon nontrivial to computelon, Cardinality() will relonturn UNKNOWN_CARDINALITY.
+    CARDINALITY_COMPUTelon_LOW = 1;
+    // Modelonratelon elonffort will belon madelon to delontelonrminelon cardinality, such as relonading
+    // indelonx data from sourcelon filelons. If significant work is nelonelondelond to computelon
+    // cardinality (elon.g. relonading elonntirelon sourcelon filelon contelonnts or elonxeloncuting uselonr
+    // delonfinelond functions), Cardinality() will relonturn UNKNOWN_CARDINALITY.
+    CARDINALITY_COMPUTelon_MODelonRATelon = 2;
   }
-  ComputeLevel compute_level = 1;
+  ComputelonLelonvelonl computelon_lelonvelonl = 1;
 }
 
-// next: 3
-message DistributeOptions {
+// nelonxt: 3
+melonssagelon DistributelonOptions {
   AutoShardPolicy auto_shard_policy = 1;
-  // The number of devices attached to this input pipeline.
-  oneof optional_num_devices {
-    int32 num_devices = 2;
+  // Thelon numbelonr of delonvicelons attachelond to this input pipelonlinelon.
+  onelonof optional_num_delonvicelons {
+    int32 num_delonvicelons = 2;
   }
 }
 
-// next: 18
-message OptimizationOptions {
-  // Whether to apply default graph optimizations. If False, only graph
-  // optimizations that have been explicitly enabled will be applied.
-  oneof optional_apply_default_optimizations {
-    bool apply_default_optimizations = 1;
+// nelonxt: 18
+melonssagelon OptimizationOptions {
+  // Whelonthelonr to apply delonfault graph optimizations. If Falselon, only graph
+  // optimizations that havelon belonelonn elonxplicitly elonnablelond will belon applielond.
+  onelonof optional_apply_delonfault_optimizations {
+    bool apply_delonfault_optimizations = 1;
   }
-  reserved 2;
-  reserved 3;
-  reserved 4;
-  reserved 5;
-  // Whether to fuse filter transformations.
-  oneof optional_filter_fusion {
-    bool filter_fusion = 6;
+  relonselonrvelond 2;
+  relonselonrvelond 3;
+  relonselonrvelond 4;
+  relonselonrvelond 5;
+  // Whelonthelonr to fuselon filtelonr transformations.
+  onelonof optional_filtelonr_fusion {
+    bool filtelonr_fusion = 6;
   }
-  // NOTE: field id 7 deleted in June 2021.
-  reserved 7;
-  // NOTE: field id 8 deleted in June 2021.
-  reserved 8;
-  // Whether to fuse map and batch transformations.
-  oneof optional_map_and_batch_fusion {
+  // NOTelon: fielonld id 7 delonlelontelond in Junelon 2021.
+  relonselonrvelond 7;
+  // NOTelon: fielonld id 8 delonlelontelond in Junelon 2021.
+  relonselonrvelond 8;
+  // Whelonthelonr to fuselon map and batch transformations.
+  onelonof optional_map_and_batch_fusion {
     bool map_and_batch_fusion = 9;
   }
-  // Whether to fuse map and filter transformations.
-  oneof optional_map_and_filter_fusion {
-    bool map_and_filter_fusion = 10;
+  // Whelonthelonr to fuselon map and filtelonr transformations.
+  onelonof optional_map_and_filtelonr_fusion {
+    bool map_and_filtelonr_fusion = 10;
   }
-  // Whether to fuse map transformations.
-  oneof optional_map_fusion {
+  // Whelonthelonr to fuselon map transformations.
+  onelonof optional_map_fusion {
     bool map_fusion = 11;
   }
-  // Whether to parallelize stateless map transformations.
-  oneof optional_map_parallelization {
-    bool map_parallelization = 12;
+  // Whelonthelonr to parallelonlizelon statelonlelonss map transformations.
+  onelonof optional_map_parallelonlization {
+    bool map_parallelonlization = 12;
   }
 
-  // NOTE: field id 13 deleted in June 2021.
-  reserved 13;
+  // NOTelon: fielonld id 13 delonlelontelond in Junelon 2021.
+  relonselonrvelond 13;
 
-  // Whether to eliminate no-op transformations.
-  oneof optional_noop_elimination {
-    bool noop_elimination = 14;
+  // Whelonthelonr to elonliminatelon no-op transformations.
+  onelonof optional_noop_elonlimination {
+    bool noop_elonlimination = 14;
   }
-  // Whether to parallelize copying of batch elements. This optimization is
-  // highly experimental and can cause performance degradation (e.g. when the
-  // parallelization overhead exceeds the benefits of performing the data copies
-  // in parallel). You should only enable this optimization if a) your input
-  // pipeline is bottlenecked on batching and b) you have validated that this
-  // optimization improves performance.
-  oneof optional_parallel_batch {
-    bool parallel_batch = 15;
+  // Whelonthelonr to parallelonlizelon copying of batch elonlelonmelonnts. This optimization is
+  // highly elonxpelonrimelonntal and can causelon pelonrformancelon delongradation (elon.g. whelonn thelon
+  // parallelonlization ovelonrhelonad elonxcelonelonds thelon belonnelonfits of pelonrforming thelon data copielons
+  // in parallelonl). You should only elonnablelon this optimization if a) your input
+  // pipelonlinelon is bottlelonnelonckelond on batching and b) you havelon validatelond that this
+  // optimization improvelons pelonrformancelon.
+  onelonof optional_parallelonl_batch {
+    bool parallelonl_batch = 15;
   }
-  // Field id 16 was removed in 06/2021.
-  reserved 16;
-  // Whether to fuse shuffle and repeat transformations.
-  oneof optional_shuffle_and_repeat_fusion {
-    bool shuffle_and_repeat_fusion = 17;
+  // Fielonld id 16 was relonmovelond in 06/2021.
+  relonselonrvelond 16;
+  // Whelonthelonr to fuselon shufflelon and relonpelonat transformations.
+  onelonof optional_shufflelon_and_relonpelonat_fusion {
+    bool shufflelon_and_relonpelonat_fusion = 17;
   }
 }
 
-// next: 3
-message ThreadingOptions {
-  // If set, it overrides the maximum degree of intra-op parallelism.
-  oneof optional_max_intra_op_parallelism {
-    int32 max_intra_op_parallelism = 1;
+// nelonxt: 3
+melonssagelon ThrelonadingOptions {
+  // If selont, it ovelonrridelons thelon maximum delongrelonelon of intra-op parallelonlism.
+  onelonof optional_max_intra_op_parallelonlism {
+    int32 max_intra_op_parallelonlism = 1;
   }
-  // If set, the dataset will use a private threadpool of the given size.
-  oneof optional_private_threadpool_size {
-    int32 private_threadpool_size = 2;
+  // If selont, thelon dataselont will uselon a privatelon threlonadpool of thelon givelonn sizelon.
+  onelonof optional_privatelon_threlonadpool_sizelon {
+    int32 privatelon_threlonadpool_sizelon = 2;
   }
 }
 
-// Represents how to handle external state during serialization.
-enum ExternalStatePolicy {
+// Relonprelonselonnts how to handlelon elonxtelonrnal statelon during selonrialization.
+elonnum elonxtelonrnalStatelonPolicy {
   POLICY_WARN = 0;
-  POLICY_IGNORE = 1;
+  POLICY_IGNORelon = 1;
   POLICY_FAIL = 2;
 }
 
-// Message stored with Dataset objects to control how datasets are processed and
-// optimized.
+// Melonssagelon storelond with Dataselont objeloncts to control how dataselonts arelon procelonsselond and
+// optimizelond.
 //
-// next: 8
-message Options {
-  // Whether the outputs need to be produced in deterministic order.
-  oneof optional_deterministic {
-    bool deterministic = 1;
+// nelonxt: 8
+melonssagelon Options {
+  // Whelonthelonr thelon outputs nelonelond to belon producelond in delontelonrministic ordelonr.
+  onelonof optional_delontelonrministic {
+    bool delontelonrministic = 1;
   }
-  // The distribution strategy options associated with the dataset.
-  AutotuneOptions autotune_options = 7;
-  // The distribution strategy options associated with the dataset.
-  DistributeOptions distribute_options = 2;
-  // The optimization options associated with the dataset.
+  // Thelon distribution stratelongy options associatelond with thelon dataselont.
+  AutotunelonOptions autotunelon_options = 7;
+  // Thelon distribution stratelongy options associatelond with thelon dataselont.
+  DistributelonOptions distributelon_options = 2;
+  // Thelon optimization options associatelond with thelon dataselont.
   OptimizationOptions optimization_options = 3;
-  // Whether to introduce 'slack' in the last `prefetch` of the input pipeline,
-  // if it exists. This may reduce CPU contention with accelerator host-side
-  // activity at the start of a step. The slack frequency is determined by the
-  // number of devices attached to this input pipeline.
-  oneof optional_slack {
+  // Whelonthelonr to introducelon 'slack' in thelon last `prelonfelontch` of thelon input pipelonlinelon,
+  // if it elonxists. This may relonducelon CPU contelonntion with accelonlelonrator host-sidelon
+  // activity at thelon start of a stelonp. Thelon slack frelonquelonncy is delontelonrminelond by thelon
+  // numbelonr of delonvicelons attachelond to this input pipelonlinelon.
+  onelonof optional_slack {
     bool slack = 4;
   }
-  // The threading options associated with the dataset.
-  ThreadingOptions threading_options = 5;
-  // This option can be used to override the default policy for how to handle
-  // external state when serializing a dataset or checkpointing its iterator.
-  // There are three settings available - IGNORE: External state is ignored
-  // without a warning; WARN: External state is ignored and a warning is logged;
-  // FAIL: External state results in an error.
-  oneof optional_external_state_policy {
-    ExternalStatePolicy external_state_policy = 6;
+  // Thelon threlonading options associatelond with thelon dataselont.
+  ThrelonadingOptions threlonading_options = 5;
+  // This option can belon uselond to ovelonrridelon thelon delonfault policy for how to handlelon
+  // elonxtelonrnal statelon whelonn selonrializing a dataselont or chelonckpointing its itelonrator.
+  // Thelonrelon arelon threlonelon selonttings availablelon - IGNORelon: elonxtelonrnal statelon is ignorelond
+  // without a warning; WARN: elonxtelonrnal statelon is ignorelond and a warning is loggelond;
+  // FAIL: elonxtelonrnal statelon relonsults in an elonrror.
+  onelonof optional_elonxtelonrnal_statelon_policy {
+    elonxtelonrnalStatelonPolicy elonxtelonrnal_statelon_policy = 6;
   }
 }

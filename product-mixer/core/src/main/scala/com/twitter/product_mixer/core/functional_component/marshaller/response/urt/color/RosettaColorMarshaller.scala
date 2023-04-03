@@ -1,48 +1,48 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.color
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.color
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color._
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.color._
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class RosettaColorMarshaller @Inject() () {
+@Singlelonton
+class RoselonttaColorMarshallelonr @Injelonct() () {
 
-  def apply(rosettaColor: RosettaColor): urt.RosettaColor = rosettaColor match {
-    case WhiteRosettaColor => urt.RosettaColor.White
-    case BlackRosettaColor => urt.RosettaColor.Black
-    case ClearRosettaColor => urt.RosettaColor.Clear
-    case TextBlackRosettaColor => urt.RosettaColor.TextBlack
-    case TextBlueRosettaColor => urt.RosettaColor.TextBlue
-    case DeepGrayRosettaColor => urt.RosettaColor.DeepGray
-    case MediumGrayRosettaColor => urt.RosettaColor.MediumGray
-    case LightGrayRosettaColor => urt.RosettaColor.LightGray
-    case FadedGrayRosettaColor => urt.RosettaColor.FadedGray
-    case FaintGrayRosettaColor => urt.RosettaColor.FaintGray
-    case DeepOrangeRosettaColor => urt.RosettaColor.DeepOrange
-    case MediumOrangeRosettaColor => urt.RosettaColor.MediumOrange
-    case LightOrangeRosettaColor => urt.RosettaColor.LightOrange
-    case FadedOrangeRosettaColor => urt.RosettaColor.FadedOrange
-    case DeepYellowRosettaColor => urt.RosettaColor.DeepYellow
-    case MediumYellowRosettaColor => urt.RosettaColor.MediumYellow
-    case LightYellowRosettaColor => urt.RosettaColor.LightYellow
-    case FadedYellowRosettaColor => urt.RosettaColor.FadedYellow
-    case DeepGreenRosettaColor => urt.RosettaColor.DeepGreen
-    case MediumGreenRosettaColor => urt.RosettaColor.MediumGreen
-    case LightGreenRosettaColor => urt.RosettaColor.LightGreen
-    case FadedGreenRosettaColor => urt.RosettaColor.FadedGreen
-    case DeepBlueRosettaColor => urt.RosettaColor.DeepBlue
-    case TwitterBlueRosettaColor => urt.RosettaColor.TwitterBlue
-    case LightBlueRosettaColor => urt.RosettaColor.LightBlue
-    case FadedBlueRosettaColor => urt.RosettaColor.FadedBlue
-    case FaintBlueRosettaColor => urt.RosettaColor.FaintBlue
-    case DeepPurpleRosettaColor => urt.RosettaColor.DeepPurple
-    case MediumPurpleRosettaColor => urt.RosettaColor.MediumPurple
-    case LightPurpleRosettaColor => urt.RosettaColor.LightPurple
-    case FadedPurpleRosettaColor => urt.RosettaColor.FadedPurple
-    case DeepRedRosettaColor => urt.RosettaColor.DeepRed
-    case MediumRedRosettaColor => urt.RosettaColor.MediumRed
-    case LightRedRosettaColor => urt.RosettaColor.LightRed
-    case FadedRedRosettaColor => urt.RosettaColor.FadedRed
+  delonf apply(roselonttaColor: RoselonttaColor): urt.RoselonttaColor = roselonttaColor match {
+    caselon WhitelonRoselonttaColor => urt.RoselonttaColor.Whitelon
+    caselon BlackRoselonttaColor => urt.RoselonttaColor.Black
+    caselon ClelonarRoselonttaColor => urt.RoselonttaColor.Clelonar
+    caselon TelonxtBlackRoselonttaColor => urt.RoselonttaColor.TelonxtBlack
+    caselon TelonxtBluelonRoselonttaColor => urt.RoselonttaColor.TelonxtBluelon
+    caselon DelonelonpGrayRoselonttaColor => urt.RoselonttaColor.DelonelonpGray
+    caselon MelondiumGrayRoselonttaColor => urt.RoselonttaColor.MelondiumGray
+    caselon LightGrayRoselonttaColor => urt.RoselonttaColor.LightGray
+    caselon FadelondGrayRoselonttaColor => urt.RoselonttaColor.FadelondGray
+    caselon FaintGrayRoselonttaColor => urt.RoselonttaColor.FaintGray
+    caselon DelonelonpOrangelonRoselonttaColor => urt.RoselonttaColor.DelonelonpOrangelon
+    caselon MelondiumOrangelonRoselonttaColor => urt.RoselonttaColor.MelondiumOrangelon
+    caselon LightOrangelonRoselonttaColor => urt.RoselonttaColor.LightOrangelon
+    caselon FadelondOrangelonRoselonttaColor => urt.RoselonttaColor.FadelondOrangelon
+    caselon DelonelonpYelonllowRoselonttaColor => urt.RoselonttaColor.DelonelonpYelonllow
+    caselon MelondiumYelonllowRoselonttaColor => urt.RoselonttaColor.MelondiumYelonllow
+    caselon LightYelonllowRoselonttaColor => urt.RoselonttaColor.LightYelonllow
+    caselon FadelondYelonllowRoselonttaColor => urt.RoselonttaColor.FadelondYelonllow
+    caselon DelonelonpGrelonelonnRoselonttaColor => urt.RoselonttaColor.DelonelonpGrelonelonn
+    caselon MelondiumGrelonelonnRoselonttaColor => urt.RoselonttaColor.MelondiumGrelonelonn
+    caselon LightGrelonelonnRoselonttaColor => urt.RoselonttaColor.LightGrelonelonn
+    caselon FadelondGrelonelonnRoselonttaColor => urt.RoselonttaColor.FadelondGrelonelonn
+    caselon DelonelonpBluelonRoselonttaColor => urt.RoselonttaColor.DelonelonpBluelon
+    caselon TwittelonrBluelonRoselonttaColor => urt.RoselonttaColor.TwittelonrBluelon
+    caselon LightBluelonRoselonttaColor => urt.RoselonttaColor.LightBluelon
+    caselon FadelondBluelonRoselonttaColor => urt.RoselonttaColor.FadelondBluelon
+    caselon FaintBluelonRoselonttaColor => urt.RoselonttaColor.FaintBluelon
+    caselon DelonelonpPurplelonRoselonttaColor => urt.RoselonttaColor.DelonelonpPurplelon
+    caselon MelondiumPurplelonRoselonttaColor => urt.RoselonttaColor.MelondiumPurplelon
+    caselon LightPurplelonRoselonttaColor => urt.RoselonttaColor.LightPurplelon
+    caselon FadelondPurplelonRoselonttaColor => urt.RoselonttaColor.FadelondPurplelon
+    caselon DelonelonpRelondRoselonttaColor => urt.RoselonttaColor.DelonelonpRelond
+    caselon MelondiumRelondRoselonttaColor => urt.RoselonttaColor.MelondiumRelond
+    caselon LightRelondRoselonttaColor => urt.RoselonttaColor.LightRelond
+    caselon FadelondRelondRoselonttaColor => urt.RoselonttaColor.FadelondRelond
   }
 }

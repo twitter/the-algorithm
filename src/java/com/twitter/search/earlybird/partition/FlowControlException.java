@@ -1,16 +1,16 @@
-package com.twitter.search.earlybird.partition;
+packagelon com.twittelonr.selonarch.elonarlybird.partition;
 
 /**
- * Exception used to cause a ScheduledExecutorService to stop executing. Used when the
- * success condition of the class has been achieved.
+ * elonxcelonption uselond to causelon a SchelondulelondelonxeloncutorSelonrvicelon to stop elonxeloncuting. Uselond whelonn thelon
+ * succelonss condition of thelon class has belonelonn achielonvelond.
  */
-public class FlowControlException extends RuntimeException {
+public class FlowControlelonxcelonption elonxtelonnds Runtimelonelonxcelonption {
 
-  public FlowControlException() {
-    super();
+  public FlowControlelonxcelonption() {
+    supelonr();
   }
 
-  public FlowControlException(String message) {
-    super(message);
+  public FlowControlelonxcelonption(String melonssagelon) {
+    supelonr(melonssagelon);
   }
 }

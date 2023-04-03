@@ -1,10 +1,10 @@
-package com.twitter.product_mixer.core.product.guice
-import com.twitter.product_mixer.core.model.marshalling.request.Product
-import com.google.inject.Key
+packagelon com.twittelonr.product_mixelonr.corelon.product.guicelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.Product
+import com.googlelon.injelonct.Kelony
 
 /**
- * A specialization of SimpleScope - a simple Guice Scope that takes an initial Product Mixer Product as a key
+ * A speloncialization of SimplelonScopelon - a simplelon Guicelon Scopelon that takelons an initial Product Mixelonr Product as a kelony
  */
-class ProductScope extends SimpleScope {
-  def let[T](product: Product)(f: => T): T = super.let(Map(Key.get(classOf[Product]) -> product))(f)
+class ProductScopelon elonxtelonnds SimplelonScopelon {
+  delonf lelont[T](product: Product)(f: => T): T = supelonr.lelont(Map(Kelony.gelont(classOf[Product]) -> product))(f)
 }

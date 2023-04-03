@@ -1,23 +1,23 @@
-package com.twitter.home_mixer.functional_component.gate
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.gatelon
 
-import com.twitter.gizmoduck.{thriftscala => t}
-import com.twitter.home_mixer.model.HomeFeatures.UserTypeFeature
-import com.twitter.product_mixer.core.functional_component.gate.Gate
-import com.twitter.product_mixer.core.model.common.identifier.GateIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+import com.twittelonr.gizmoduck.{thriftscala => t}
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.UselonrTypelonFelonaturelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.gatelon.Gatelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.GatelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stitch.Stitch
 
 /**
- * A Soft User is a user who is in the gradual onboarding state. This gate can be
- * used to turn off certain functionality like ads for these users.
+ * A Soft Uselonr is a uselonr who is in thelon gradual onboarding statelon. This gatelon can belon
+ * uselond to turn off celonrtain functionality likelon ads for thelonselon uselonrs.
  */
-object ExcludeSoftUserGate extends Gate[PipelineQuery] {
+objelonct elonxcludelonSoftUselonrGatelon elonxtelonnds Gatelon[PipelonlinelonQuelonry] {
 
-  override val identifier: GateIdentifier = GateIdentifier("ExcludeSoftUser")
+  ovelonrridelon val idelonntifielonr: GatelonIdelonntifielonr = GatelonIdelonntifielonr("elonxcludelonSoftUselonr")
 
-  override def shouldContinue(query: PipelineQuery): Stitch[Boolean] = {
-    val softUser = query.features
-      .exists(_.getOrElse(UserTypeFeature, None).exists(_ == t.UserType.Soft))
-    Stitch.value(!softUser)
+  ovelonrridelon delonf shouldContinuelon(quelonry: PipelonlinelonQuelonry): Stitch[Boolelonan] = {
+    val softUselonr = quelonry.felonaturelons
+      .elonxists(_.gelontOrelonlselon(UselonrTypelonFelonaturelon, Nonelon).elonxists(_ == t.UselonrTypelon.Soft))
+    Stitch.valuelon(!softUselonr)
   }
 }

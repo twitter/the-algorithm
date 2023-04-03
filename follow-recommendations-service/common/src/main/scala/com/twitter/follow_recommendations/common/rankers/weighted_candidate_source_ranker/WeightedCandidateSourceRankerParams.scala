@@ -1,8 +1,8 @@
-package com.twitter.follow_recommendations.common.rankers.weighted_candidate_source_ranker
+packagelon com.twittelonr.follow_reloncommelonndations.common.rankelonrs.welonightelond_candidatelon_sourcelon_rankelonr
 
-import com.twitter.timelines.configapi.FSParam
+import com.twittelonr.timelonlinelons.configapi.FSParam
 
-object WeightedCandidateSourceRankerParams {
-  case object ScribeRankingInfoInWeightedRanker
-      extends FSParam[Boolean]("weighted_ranker_scribe_ranking_info", false)
+objelonct WelonightelondCandidatelonSourcelonRankelonrParams {
+  caselon objelonct ScribelonRankingInfoInWelonightelondRankelonr
+      elonxtelonnds FSParam[Boolelonan]("welonightelond_rankelonr_scribelon_ranking_info", falselon)
 }

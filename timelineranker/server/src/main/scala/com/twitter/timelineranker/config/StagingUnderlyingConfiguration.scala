@@ -1,6 +1,6 @@
-package com.twitter.timelineranker.config
+packagelon com.twittelonr.timelonlinelonrankelonr.config
 
-import com.twitter.finagle.stats.StatsReceiver
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
 
-class StagingUnderlyingClientConfiguration(flags: TimelineRankerFlags, statsReceiver: StatsReceiver)
-    extends DefaultUnderlyingClientConfiguration(flags, statsReceiver)
+class StagingUndelonrlyingClielonntConfiguration(flags: TimelonlinelonRankelonrFlags, statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds DelonfaultUndelonrlyingClielonntConfiguration(flags, statsReloncelonivelonr)

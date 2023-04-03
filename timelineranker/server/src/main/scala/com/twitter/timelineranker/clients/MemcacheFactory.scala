@@ -1,48 +1,48 @@
-package com.twitter.timelineranker.clients
+packagelon com.twittelonr.timelonlinelonrankelonr.clielonnts
 
-import com.twitter.finagle.memcached.{Client => FinagleMemcacheClient}
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.logging.Logger
-import com.twitter.servo.cache.FinagleMemcache
-import com.twitter.servo.cache.MemcacheCache
-import com.twitter.servo.cache.ObservableMemcache
-import com.twitter.servo.cache.Serializer
-import com.twitter.servo.cache.StatsReceiverCacheObserver
-import com.twitter.timelines.util.stats.RequestScope
-import com.twitter.timelines.util.stats.ScopedFactory
-import com.twitter.util.Duration
+import com.twittelonr.finaglelon.melonmcachelond.{Clielonnt => FinaglelonMelonmcachelonClielonnt}
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.logging.Loggelonr
+import com.twittelonr.selonrvo.cachelon.FinaglelonMelonmcachelon
+import com.twittelonr.selonrvo.cachelon.MelonmcachelonCachelon
+import com.twittelonr.selonrvo.cachelon.ObselonrvablelonMelonmcachelon
+import com.twittelonr.selonrvo.cachelon.Selonrializelonr
+import com.twittelonr.selonrvo.cachelon.StatsReloncelonivelonrCachelonObselonrvelonr
+import com.twittelonr.timelonlinelons.util.stats.RelonquelonstScopelon
+import com.twittelonr.timelonlinelons.util.stats.ScopelondFactory
+import com.twittelonr.util.Duration
 
 /**
- * Factory to create a servo Memcache-backed Cache object. Clients are required to provide a
- * serializer/deserializer for keys and values.
+ * Factory to crelonatelon a selonrvo Melonmcachelon-backelond Cachelon objelonct. Clielonnts arelon relonquirelond to providelon a
+ * selonrializelonr/delonselonrializelonr for kelonys and valuelons.
  */
-class MemcacheFactory(memcacheClient: FinagleMemcacheClient, statsReceiver: StatsReceiver) {
-  private[this] val logger = Logger.get(getClass.getSimpleName)
+class MelonmcachelonFactory(melonmcachelonClielonnt: FinaglelonMelonmcachelonClielonnt, statsReloncelonivelonr: StatsReloncelonivelonr) {
+  privatelon[this] val loggelonr = Loggelonr.gelont(gelontClass.gelontSimplelonNamelon)
 
-  def apply[K, V](
-    keySerializer: K => String,
-    valueSerializer: Serializer[V],
+  delonf apply[K, V](
+    kelonySelonrializelonr: K => String,
+    valuelonSelonrializelonr: Selonrializelonr[V],
     ttl: Duration
-  ): MemcacheCache[K, V] = {
-    new MemcacheCache[K, V](
-      memcache = new ObservableMemcache(
-        new FinagleMemcache(memcacheClient),
-        new StatsReceiverCacheObserver(statsReceiver, 1000, logger)
+  ): MelonmcachelonCachelon[K, V] = {
+    nelonw MelonmcachelonCachelon[K, V](
+      melonmcachelon = nelonw ObselonrvablelonMelonmcachelon(
+        nelonw FinaglelonMelonmcachelon(melonmcachelonClielonnt),
+        nelonw StatsReloncelonivelonrCachelonObselonrvelonr(statsReloncelonivelonr, 1000, loggelonr)
       ),
       ttl = ttl,
-      serializer = valueSerializer,
-      transformKey = keySerializer
+      selonrializelonr = valuelonSelonrializelonr,
+      transformKelony = kelonySelonrializelonr
     )
   }
 }
 
-class ScopedMemcacheFactory(memcacheClient: FinagleMemcacheClient, statsReceiver: StatsReceiver)
-    extends ScopedFactory[MemcacheFactory] {
+class ScopelondMelonmcachelonFactory(melonmcachelonClielonnt: FinaglelonMelonmcachelonClielonnt, statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds ScopelondFactory[MelonmcachelonFactory] {
 
-  override def scope(scope: RequestScope): MemcacheFactory = {
-    new MemcacheFactory(
-      memcacheClient,
-      statsReceiver.scope("memcache", scope.scope)
+  ovelonrridelon delonf scopelon(scopelon: RelonquelonstScopelon): MelonmcachelonFactory = {
+    nelonw MelonmcachelonFactory(
+      melonmcachelonClielonnt,
+      statsReloncelonivelonr.scopelon("melonmcachelon", scopelon.scopelon)
     )
   }
 }

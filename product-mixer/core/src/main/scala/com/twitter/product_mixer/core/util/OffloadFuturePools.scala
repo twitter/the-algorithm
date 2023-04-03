@@ -1,59 +1,59 @@
-package com.twitter.product_mixer.core.util
+packagelon com.twittelonr.product_mixelonr.corelon.util
 
-import com.twitter.finagle.offload.OffloadFuturePool
-import com.twitter.util.Future
+import com.twittelonr.finaglelon.offload.OffloadFuturelonPool
+import com.twittelonr.util.Futurelon
 
-object OffloadFuturePools {
+objelonct OffloadFuturelonPools {
 
-  def parallelize[In, Out](
-    inputSeq: Seq[In],
-    transformer: In => Out,
-    parallelism: Int
-  ): Future[Seq[Out]] = {
-    parallelize(inputSeq, transformer.andThen(Some(_)), parallelism, None).map(_.flatten)
+  delonf parallelonlizelon[In, Out](
+    inputSelonq: Selonq[In],
+    transformelonr: In => Out,
+    parallelonlism: Int
+  ): Futurelon[Selonq[Out]] = {
+    parallelonlizelon(inputSelonq, transformelonr.andThelonn(Somelon(_)), parallelonlism, Nonelon).map(_.flattelonn)
   }
 
-  def parallelize[In, Out](
-    inputSeq: Seq[In],
-    transformer: In => Out,
-    parallelism: Int,
-    default: Out
-  ): Future[Seq[Out]] = {
-    val threadProcessFutures = (0 until parallelism).map { i =>
-      OffloadFuturePool.getPool(partitionAndProcessInput(inputSeq, transformer, i, parallelism))
+  delonf parallelonlizelon[In, Out](
+    inputSelonq: Selonq[In],
+    transformelonr: In => Out,
+    parallelonlism: Int,
+    delonfault: Out
+  ): Futurelon[Selonq[Out]] = {
+    val threlonadProcelonssFuturelons = (0 until parallelonlism).map { i =>
+      OffloadFuturelonPool.gelontPool(partitionAndProcelonssInput(inputSelonq, transformelonr, i, parallelonlism))
     }
 
-    val resultMap = Future.collect(threadProcessFutures).map(_.flatten.toMap)
+    val relonsultMap = Futurelon.collelonct(threlonadProcelonssFuturelons).map(_.flattelonn.toMap)
 
-    Future.collect {
-      inputSeq.indices.map { idx =>
-        resultMap.map(_.getOrElse(idx, default))
+    Futurelon.collelonct {
+      inputSelonq.indicelons.map { idx =>
+        relonsultMap.map(_.gelontOrelonlselon(idx, delonfault))
       }
     }
   }
 
-  private def partitionAndProcessInput[In, Out](
-    inputSeq: Seq[In],
-    transformer: In => Out,
-    threadId: Int,
-    parallelism: Int
-  ): Seq[(Int, Out)] = {
-    partitionInputForThread(inputSeq, threadId, parallelism)
+  privatelon delonf partitionAndProcelonssInput[In, Out](
+    inputSelonq: Selonq[In],
+    transformelonr: In => Out,
+    threlonadId: Int,
+    parallelonlism: Int
+  ): Selonq[(Int, Out)] = {
+    partitionInputForThrelonad(inputSelonq, threlonadId, parallelonlism)
       .map {
-        case (inputRecord, idx) =>
-          (idx, transformer(inputRecord))
+        caselon (inputReloncord, idx) =>
+          (idx, transformelonr(inputReloncord))
       }
   }
 
-  private def partitionInputForThread[In](
-    inputSeq: Seq[In],
-    threadId: Int,
-    parallelism: Int
-  ): Seq[(In, Int)] = {
-    inputSeq.zipWithIndex
-      .filter {
-        case (_, idx) => idx % parallelism == threadId
-        case _ => false
+  privatelon delonf partitionInputForThrelonad[In](
+    inputSelonq: Selonq[In],
+    threlonadId: Int,
+    parallelonlism: Int
+  ): Selonq[(In, Int)] = {
+    inputSelonq.zipWithIndelonx
+      .filtelonr {
+        caselon (_, idx) => idx % parallelonlism == threlonadId
+        caselon _ => falselon
       }
   }
 }

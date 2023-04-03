@@ -1,69 +1,69 @@
-package com.twitter.cr_mixer.source_signal
+packagelon com.twittelonr.cr_mixelonr.sourcelon_signal
 
-import com.twitter.cr_mixer.model.GraphSourceInfo
-import com.twitter.cr_mixer.source_signal.SourceFetcher.FetcherQuery
-import com.twitter.cr_mixer.thriftscala.SourceType
-import com.twitter.frigate.common.util.StatsUtil
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.util.Future
+import com.twittelonr.cr_mixelonr.modelonl.GraphSourcelonInfo
+import com.twittelonr.cr_mixelonr.sourcelon_signal.SourcelonFelontchelonr.FelontchelonrQuelonry
+import com.twittelonr.cr_mixelonr.thriftscala.SourcelonTypelon
+import com.twittelonr.frigatelon.common.util.StatsUtil
+import com.twittelonr.simclustelonrs_v2.common.UselonrId
+import com.twittelonr.util.Futurelon
 
 /***
- * A SourceGraphFetcher is a trait that extends from `SourceFetcher`
- * and is specialized in tackling User Graph (eg., RealGraphOon, FRS) fetch.
+ * A SourcelonGraphFelontchelonr is a trait that elonxtelonnds from `SourcelonFelontchelonr`
+ * and is speloncializelond in tackling Uselonr Graph (elong., RelonalGraphOon, FRS) felontch.
  *
- * The [[ResultType]] of a SourceGraphFetcher is a `GraphSourceInfo` which contains a userSeedSet.
- * When we pass in userId, the underlying store returns one GraphSourceInfo.
+ * Thelon [[RelonsultTypelon]] of a SourcelonGraphFelontchelonr is a `GraphSourcelonInfo` which contains a uselonrSelonelondSelont.
+ * Whelonn welon pass in uselonrId, thelon undelonrlying storelon relonturns onelon GraphSourcelonInfo.
  */
-trait SourceGraphFetcher extends SourceFetcher[GraphSourceInfo] {
-  protected final val DefaultSeedScore = 1.0
-  protected def graphSourceType: SourceType
+trait SourcelonGraphFelontchelonr elonxtelonnds SourcelonFelontchelonr[GraphSourcelonInfo] {
+  protelonctelond final val DelonfaultSelonelondScorelon = 1.0
+  protelonctelond delonf graphSourcelonTypelon: SourcelonTypelon
 
   /***
-   * RawDataType contains a consumers seed UserId and a score (weight)
+   * RawDataTypelon contains a consumelonrs selonelond UselonrId and a scorelon (welonight)
    */
-  protected type RawDataType = (UserId, Double)
+  protelonctelond typelon RawDataTypelon = (UselonrId, Doublelon)
 
-  def trackStats(
-    query: FetcherQuery
+  delonf trackStats(
+    quelonry: FelontchelonrQuelonry
   )(
-    func: => Future[Option[GraphSourceInfo]]
-  ): Future[Option[GraphSourceInfo]] = {
-    val productScopedStats = stats.scope(query.product.originalName)
-    val productUserStateScopedStats = productScopedStats.scope(query.userState.toString)
+    func: => Futurelon[Option[GraphSourcelonInfo]]
+  ): Futurelon[Option[GraphSourcelonInfo]] = {
+    val productScopelondStats = stats.scopelon(quelonry.product.originalNamelon)
+    val productUselonrStatelonScopelondStats = productScopelondStats.scopelon(quelonry.uselonrStatelon.toString)
     StatsUtil
-      .trackOptionStats(productScopedStats) {
+      .trackOptionStats(productScopelondStats) {
         StatsUtil
-          .trackOptionStats(productUserStateScopedStats) {
+          .trackOptionStats(productUselonrStatelonScopelondStats) {
             func
           }
       }
   }
 
-  // Track per item stats on the fetched graph results
-  def trackPerItemStats(
-    query: FetcherQuery
+  // Track pelonr itelonm stats on thelon felontchelond graph relonsults
+  delonf trackPelonrItelonmStats(
+    quelonry: FelontchelonrQuelonry
   )(
-    func: => Future[Option[Seq[RawDataType]]]
-  ): Future[Option[Seq[RawDataType]]] = {
-    val productScopedStats = stats.scope(query.product.originalName)
-    val productUserStateScopedStats = productScopedStats.scope(query.userState.toString)
-    StatsUtil.trackOptionItemsStats(productScopedStats) {
-      StatsUtil.trackOptionItemsStats(productUserStateScopedStats) {
+    func: => Futurelon[Option[Selonq[RawDataTypelon]]]
+  ): Futurelon[Option[Selonq[RawDataTypelon]]] = {
+    val productScopelondStats = stats.scopelon(quelonry.product.originalNamelon)
+    val productUselonrStatelonScopelondStats = productScopelondStats.scopelon(quelonry.uselonrStatelon.toString)
+    StatsUtil.trackOptionItelonmsStats(productScopelondStats) {
+      StatsUtil.trackOptionItelonmsStats(productUselonrStatelonScopelondStats) {
         func
       }
     }
   }
 
   /***
-   * Convert Seq[RawDataType] into GraphSourceInfo
+   * Convelonrt Selonq[RawDataTypelon] into GraphSourcelonInfo
    */
-  protected final def convertGraphSourceInfo(
-    userWithScores: Seq[RawDataType]
-  ): GraphSourceInfo = {
-    GraphSourceInfo(
-      sourceType = graphSourceType,
-      seedWithScores = userWithScores.map { userWithScore =>
-        userWithScore._1 -> userWithScore._2
+  protelonctelond final delonf convelonrtGraphSourcelonInfo(
+    uselonrWithScorelons: Selonq[RawDataTypelon]
+  ): GraphSourcelonInfo = {
+    GraphSourcelonInfo(
+      sourcelonTypelon = graphSourcelonTypelon,
+      selonelondWithScorelons = uselonrWithScorelons.map { uselonrWithScorelon =>
+        uselonrWithScorelon._1 -> uselonrWithScorelon._2
       }.toMap
     )
   }

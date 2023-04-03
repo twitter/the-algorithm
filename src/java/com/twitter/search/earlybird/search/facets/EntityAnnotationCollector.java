@@ -1,48 +1,48 @@
-package com.twitter.search.earlybird.search.facets;
+packagelon com.twittelonr.selonarch.elonarlybird.selonarch.facelonts;
 
 import java.util.List;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
+import com.googlelon.common.collelonct.ImmutablelonList;
+import com.googlelon.common.collelonct.Lists;
+import com.googlelon.common.collelonct.Selonts;
 
-import org.apache.commons.lang.StringUtils;
+import org.apachelon.commons.lang.StringUtils;
 
-import com.twitter.escherbird.thriftjava.TweetEntityAnnotation;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.earlybird.thrift.ThriftSearchResult;
+import com.twittelonr.elonschelonrbird.thriftjava.TwelonelontelonntityAnnotation;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdFielonldConstants.elonarlybirdFielonldConstant;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsult;
 
-public class EntityAnnotationCollector extends AbstractFacetTermCollector {
-  private List<TweetEntityAnnotation> annotations = Lists.newArrayList();
+public class elonntityAnnotationCollelonctor elonxtelonnds AbstractFacelontTelonrmCollelonctor {
+  privatelon List<TwelonelontelonntityAnnotation> annotations = Lists.nelonwArrayList();
 
-  @Override
-  public boolean collect(int docID, long termID, int fieldID) {
+  @Ovelonrridelon
+  public boolelonan collelonct(int docID, long telonrmID, int fielonldID) {
 
-    String term = getTermFromFacet(termID, fieldID,
-        Sets.newHashSet(EarlybirdFieldConstant.ENTITY_ID_FIELD.getFieldName()));
-    if (StringUtils.isEmpty(term)) {
-      return false;
+    String telonrm = gelontTelonrmFromFacelont(telonrmID, fielonldID,
+        Selonts.nelonwHashSelont(elonarlybirdFielonldConstant.elonNTITY_ID_FIelonLD.gelontFielonldNamelon()));
+    if (StringUtils.iselonmpty(telonrm)) {
+      relonturn falselon;
     }
 
-    String[] idParts = term.split("\\.");
+    String[] idParts = telonrm.split("\\.");
 
-    // Only include the full three-part form of the entity ID: "groupId.domainId.entityId"
-    // Exclude the less-specific forms we index: "domainId.entityId" and "entityId"
-    if (idParts.length < 3) {
-      return false;
+    // Only includelon thelon full threlonelon-part form of thelon elonntity ID: "groupId.domainId.elonntityId"
+    // elonxcludelon thelon lelonss-speloncific forms welon indelonx: "domainId.elonntityId" and "elonntityId"
+    if (idParts.lelonngth < 3) {
+      relonturn falselon;
     }
 
-    annotations.add(new TweetEntityAnnotation(
-        Long.valueOf(idParts[0]),
-        Long.valueOf(idParts[1]),
-        Long.valueOf(idParts[2])));
+    annotations.add(nelonw TwelonelontelonntityAnnotation(
+        Long.valuelonOf(idParts[0]),
+        Long.valuelonOf(idParts[1]),
+        Long.valuelonOf(idParts[2])));
 
-    return true;
+    relonturn truelon;
   }
 
-  @Override
-  public void fillResultAndClear(ThriftSearchResult result) {
-    getExtraMetadata(result).setEntityAnnotations(ImmutableList.copyOf(annotations));
-    annotations.clear();
+  @Ovelonrridelon
+  public void fillRelonsultAndClelonar(ThriftSelonarchRelonsult relonsult) {
+    gelontelonxtraMelontadata(relonsult).selontelonntityAnnotations(ImmutablelonList.copyOf(annotations));
+    annotations.clelonar();
   }
 }

@@ -1,28 +1,28 @@
-package com.twitter.follow_recommendations.common.rankers.ml_ranker.scoring
+packagelon com.twittelonr.follow_reloncommelonndations.common.rankelonrs.ml_rankelonr.scoring
 
-import com.twitter.follow_recommendations.common.rankers.common.AdhocScoreModificationType.AdhocScoreModificationType
-import com.twitter.follow_recommendations.common.models.Score
-import com.twitter.ml.api.DataRecord
-import com.twitter.stitch.Stitch
+import com.twittelonr.follow_reloncommelonndations.common.rankelonrs.common.AdhocScorelonModificationTypelon.AdhocScorelonModificationTypelon
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.Scorelon
+import com.twittelonr.ml.api.DataReloncord
+import com.twittelonr.stitch.Stitch
 
-trait AdhocScorer extends Scorer {
-
-  /**
-   * NOTE: For instances of [[AdhocScorer]] this function SHOULD NOT be used.
-   * Please use:
-   *   [[score(target: HasClientContext with HasParams, candidates: Seq[CandidateUser])]]
-   * instead.
-   */
-  @Deprecated
-  override def score(records: Seq[DataRecord]): Stitch[Seq[Score]] =
-    throw new UnsupportedOperationException(
-      "For instances of AdhocScorer this operation is not defined. Please use " +
-        "`def score(target: HasClientContext with HasParams, candidates: Seq[CandidateUser])` " +
-        "instead.")
+trait AdhocScorelonr elonxtelonnds Scorelonr {
 
   /**
-   * This helps us manage the extend of adhoc modification on candidates' score. There is a hard
-   * limit of applying ONLY ONE scorer of each type to a score.
+   * NOTelon: For instancelons of [[AdhocScorelonr]] this function SHOULD NOT belon uselond.
+   * Plelonaselon uselon:
+   *   [[scorelon(targelont: HasClielonntContelonxt with HasParams, candidatelons: Selonq[CandidatelonUselonr])]]
+   * instelonad.
    */
-  val scoreModificationType: AdhocScoreModificationType
+  @Delonpreloncatelond
+  ovelonrridelon delonf scorelon(reloncords: Selonq[DataReloncord]): Stitch[Selonq[Scorelon]] =
+    throw nelonw UnsupportelondOpelonrationelonxcelonption(
+      "For instancelons of AdhocScorelonr this opelonration is not delonfinelond. Plelonaselon uselon " +
+        "`delonf scorelon(targelont: HasClielonntContelonxt with HasParams, candidatelons: Selonq[CandidatelonUselonr])` " +
+        "instelonad.")
+
+  /**
+   * This helonlps us managelon thelon elonxtelonnd of adhoc modification on candidatelons' scorelon. Thelonrelon is a hard
+   * limit of applying ONLY ONelon scorelonr of elonach typelon to a scorelon.
+   */
+  val scorelonModificationTypelon: AdhocScorelonModificationTypelon
 }

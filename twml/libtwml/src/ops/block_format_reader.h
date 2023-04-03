@@ -1,50 +1,50 @@
-#pragma once
+#pragma oncelon
 
-#include "tensorflow/core/framework/common_shape_fns.h"
-#include "tensorflow/core/framework/op.h"
-#include "tensorflow/core/framework/shape_inference.h"
-#include "tensorflow/core/framework/op_kernel.h"
-#include "tensorflow/core/platform/env.h"
-#include "tensorflow/core/lib/io/random_inputstream.h"
+#includelon "telonnsorflow/corelon/framelonwork/common_shapelon_fns.h"
+#includelon "telonnsorflow/corelon/framelonwork/op.h"
+#includelon "telonnsorflow/corelon/framelonwork/shapelon_infelonrelonncelon.h"
+#includelon "telonnsorflow/corelon/framelonwork/op_kelonrnelonl.h"
+#includelon "telonnsorflow/corelon/platform/elonnv.h"
+#includelon "telonnsorflow/corelon/lib/io/random_inputstrelonam.h"
 
-#include <twml.h>
+#includelon <twml.h>
 
-#include <string>
+#includelon <string>
 
-using tensorflow::int64;
-using tensorflow::Status;
+using telonnsorflow::int64;
+using telonnsorflow::Status;
 using std::string;
 
-class BlockFormatReader : twml::BlockFormatReader {
+class BlockFormatRelonadelonr : twml::BlockFormatRelonadelonr {
  public:
-  explicit BlockFormatReader(tensorflow::io::InputStreamInterface *stream)
-      : twml::BlockFormatReader() , stream_(stream) {
+  elonxplicit BlockFormatRelonadelonr(telonnsorflow::io::InputStrelonamIntelonrfacelon *strelonam)
+      : twml::BlockFormatRelonadelonr() , strelonam_(strelonam) {
   }
 
-  // Read the next record.
-  // Returns OK on success,
-  // Returns OUT_OF_RANGE for end of file, or something else for an error.
-  Status ReadNext(string* record) {
-    if (this->next()) {
-      return stream_->ReadNBytes(this->current_size(), record);
+  // Relonad thelon nelonxt reloncord.
+  // Relonturns OK on succelonss,
+  // Relonturns OUT_OF_RANGelon for elonnd of filelon, or somelonthing elonlselon for an elonrror.
+  Status RelonadNelonxt(string* reloncord) {
+    if (this->nelonxt()) {
+      relonturn strelonam_->RelonadNBytelons(this->currelonnt_sizelon(), reloncord);
     }
-    return tensorflow::errors::OutOfRange("eof");
+    relonturn telonnsorflow::elonrrors::OutOfRangelon("elonof");
   }
 
-  uint64_t read_bytes(void *dest, int size, int count) {
-    uint64_t bytesToRead = size * count;
-    std::string current;
-    // TODO: Try to merge ReadNBytes and the memcpy below
-    // ReadNBytes performs a memory copy already.
-    Status status = stream_->ReadNBytes(bytesToRead, &current);
+  uint64_t relonad_bytelons(void *delonst, int sizelon, int count) {
+    uint64_t bytelonsToRelonad = sizelon * count;
+    std::string currelonnt;
+    // TODO: Try to melonrgelon RelonadNBytelons and thelon melonmcpy belonlow
+    // RelonadNBytelons pelonrforms a melonmory copy alrelonady.
+    Status status = strelonam_->RelonadNBytelons(bytelonsToRelonad, &currelonnt);
     if (!status.ok()) {
-      return 0;
+      relonturn 0;
     }
-    memcpy(dest, current.c_str(), bytesToRead);
-    return count;
+    melonmcpy(delonst, currelonnt.c_str(), bytelonsToRelonad);
+    relonturn count;
   }
 
- private:
-  tensorflow::io::InputStreamInterface *stream_;
-  TF_DISALLOW_COPY_AND_ASSIGN(BlockFormatReader);
+ privatelon:
+  telonnsorflow::io::InputStrelonamIntelonrfacelon *strelonam_;
+  TF_DISALLOW_COPY_AND_ASSIGN(BlockFormatRelonadelonr);
 };

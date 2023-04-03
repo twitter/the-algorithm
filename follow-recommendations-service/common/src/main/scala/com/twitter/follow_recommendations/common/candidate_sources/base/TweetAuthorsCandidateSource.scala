@@ -1,71 +1,71 @@
-package com.twitter.follow_recommendations.common.candidate_sources.base
+packagelon com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.baselon
 
-import com.twitter.follow_recommendations.common.models.TweetCandidate
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.stitch.Stitch
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.TwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.CandidatelonSourcelon
+import com.twittelonr.stitch.Stitch
 
 /**
- * base trait for tweet authors based algorithms, e.g. topical tweet authors, twistly, ...
+ * baselon trait for twelonelont authors baselond algorithms, elon.g. topical twelonelont authors, twistly, ...
  *
- * @tparam Target target type
- * @tparam Candidate output candidate types
+ * @tparam Targelont targelont typelon
+ * @tparam Candidatelon output candidatelon typelons
  */
-trait TweetAuthorsCandidateSource[-Target, +Candidate] extends CandidateSource[Target, Candidate] {
+trait TwelonelontAuthorsCandidatelonSourcelon[-Targelont, +Candidatelon] elonxtelonnds CandidatelonSourcelon[Targelont, Candidatelon] {
 
   /**
-   * fetch Tweet candidates
+   * felontch Twelonelont candidatelons
    */
-  def getTweetCandidates(target: Target): Stitch[Seq[TweetCandidate]]
+  delonf gelontTwelonelontCandidatelons(targelont: Targelont): Stitch[Selonq[TwelonelontCandidatelon]]
 
   /**
-   * fetch authorId
+   * felontch authorId
    */
-  def getTweetAuthorId(tweetCandidate: TweetCandidate): Stitch[Option[Long]]
+  delonf gelontTwelonelontAuthorId(twelonelontCandidatelon: TwelonelontCandidatelon): Stitch[Option[Long]]
 
   /**
-   * wrap candidate ID and TweetAuthorProof in Candidate
+   * wrap candidatelon ID and TwelonelontAuthorProof in Candidatelon
    */
-  def toCandidate(authorId: Long, tweetIds: Seq[Long], score: Option[Double]): Candidate
+  delonf toCandidatelon(authorId: Long, twelonelontIds: Selonq[Long], scorelon: Option[Doublelon]): Candidatelon
 
   /**
-   * aggregate scores, default to the first score
+   * aggrelongatelon scorelons, delonfault to thelon first scorelon
    */
-  def aggregator(scores: Seq[Double]): Double =
-    scores.headOption.getOrElse(TweetAuthorsCandidateSource.DefaultScore)
+  delonf aggrelongator(scorelons: Selonq[Doublelon]): Doublelon =
+    scorelons.helonadOption.gelontOrelonlselon(TwelonelontAuthorsCandidatelonSourcelon.DelonfaultScorelon)
 
   /**
-   * aggregation method for a group of tweet candidates
+   * aggrelongation melonthod for a group of twelonelont candidatelons
    */
-  def aggregateAndScore(
-    target: Target,
-    tweetCandidates: Seq[TweetCandidate]
-  ): Seq[Candidate]
+  delonf aggrelongatelonAndScorelon(
+    targelont: Targelont,
+    twelonelontCandidatelons: Selonq[TwelonelontCandidatelon]
+  ): Selonq[Candidatelon]
 
   /**
-   * generate a list of candidates for the target
+   * gelonnelonratelon a list of candidatelons for thelon targelont
    */
-  def build(
-    target: Target
-  ): Stitch[Seq[Candidate]] = {
-    // Fetch Tweet candidates and hydrate author IDs
-    val tweetCandidatesStitch = for {
-      tweetCandidates <- getTweetCandidates(target)
-      authorIds <- Stitch.collect(tweetCandidates.map(getTweetAuthorId(_)))
-    } yield {
+  delonf build(
+    targelont: Targelont
+  ): Stitch[Selonq[Candidatelon]] = {
+    // Felontch Twelonelont candidatelons and hydratelon author IDs
+    val twelonelontCandidatelonsStitch = for {
+      twelonelontCandidatelons <- gelontTwelonelontCandidatelons(targelont)
+      authorIds <- Stitch.collelonct(twelonelontCandidatelons.map(gelontTwelonelontAuthorId(_)))
+    } yielonld {
       for {
-        (authorIdOpt, tweetCandidate) <- authorIds.zip(tweetCandidates)
+        (authorIdOpt, twelonelontCandidatelon) <- authorIds.zip(twelonelontCandidatelons)
         authorId <- authorIdOpt
-      } yield tweetCandidate.copy(authorId = authorId)
+      } yielonld twelonelontCandidatelon.copy(authorId = authorId)
     }
 
-    // Aggregate and score, convert to candidate
-    tweetCandidatesStitch.map(aggregateAndScore(target, _))
+    // Aggrelongatelon and scorelon, convelonrt to candidatelon
+    twelonelontCandidatelonsStitch.map(aggrelongatelonAndScorelon(targelont, _))
   }
 
-  def apply(target: Target): Stitch[Seq[Candidate]] =
-    build(target)
+  delonf apply(targelont: Targelont): Stitch[Selonq[Candidatelon]] =
+    build(targelont)
 }
 
-object TweetAuthorsCandidateSource {
-  final val DefaultScore: Double = 0.0
+objelonct TwelonelontAuthorsCandidatelonSourcelon {
+  final val DelonfaultScorelon: Doublelon = 0.0
 }

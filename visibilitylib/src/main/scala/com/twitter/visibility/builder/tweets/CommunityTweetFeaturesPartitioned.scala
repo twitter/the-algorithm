@@ -1,26 +1,26 @@
-package com.twitter.visibility.builder.tweets
+packagelon com.twittelonr.visibility.buildelonr.twelonelonts
 
-import com.twitter.servo.util.Gate
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.models.ViewerContext
+import com.twittelonr.selonrvo.util.Gatelon
+import com.twittelonr.twelonelontypielon.thriftscala.Twelonelont
+import com.twittelonr.visibility.buildelonr.FelonaturelonMapBuildelonr
+import com.twittelonr.visibility.modelonls.VielonwelonrContelonxt
 
-class CommunityTweetFeaturesPartitioned(
-  a: CommunityTweetFeatures,
-  b: CommunityTweetFeatures,
-  bEnabled: Gate[Unit],
-) extends CommunityTweetFeatures {
-  override def forTweet(
-    tweet: Tweet,
-    viewerContext: ViewerContext
-  ): FeatureMapBuilder => FeatureMapBuilder =
-    bEnabled.pick(
-      b.forTweet(tweet, viewerContext),
-      a.forTweet(tweet, viewerContext),
+class CommunityTwelonelontFelonaturelonsPartitionelond(
+  a: CommunityTwelonelontFelonaturelons,
+  b: CommunityTwelonelontFelonaturelons,
+  belonnablelond: Gatelon[Unit],
+) elonxtelonnds CommunityTwelonelontFelonaturelons {
+  ovelonrridelon delonf forTwelonelont(
+    twelonelont: Twelonelont,
+    vielonwelonrContelonxt: VielonwelonrContelonxt
+  ): FelonaturelonMapBuildelonr => FelonaturelonMapBuildelonr =
+    belonnablelond.pick(
+      b.forTwelonelont(twelonelont, vielonwelonrContelonxt),
+      a.forTwelonelont(twelonelont, vielonwelonrContelonxt),
     )
 
-  override def forTweetOnly(tweet: Tweet): FeatureMapBuilder => FeatureMapBuilder = bEnabled.pick(
-    b.forTweetOnly(tweet),
-    a.forTweetOnly(tweet),
+  ovelonrridelon delonf forTwelonelontOnly(twelonelont: Twelonelont): FelonaturelonMapBuildelonr => FelonaturelonMapBuildelonr = belonnablelond.pick(
+    b.forTwelonelontOnly(twelonelont),
+    a.forTwelonelontOnly(twelonelont),
   )
 }

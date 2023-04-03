@@ -1,51 +1,51 @@
-package com.twitter.search.common.encoding.features;
+packagelon com.twittelonr.selonarch.common.elonncoding.felonaturelons;
 
-import com.google.common.base.Preconditions;
+import com.googlelon.common.baselon.Prelonconditions;
 
 /**
- * A normalizer that normalizes the prediction score from a machine learning classifier, which
- * ranges within [0.0, 1.0], to an integer value by multiplying by (10 ^ precision), and returns
- * the rounded value. The lower the precision, the less amount of bits it takes to encode the score.
- * @see #precision
+ * A normalizelonr that normalizelons thelon prelondiction scorelon from a machinelon lelonarning classifielonr, which
+ * rangelons within [0.0, 1.0], to an intelongelonr valuelon by multiplying by (10 ^ preloncision), and relonturns
+ * thelon roundelond valuelon. Thelon lowelonr thelon preloncision, thelon lelonss amount of bits it takelons to elonncodelon thelon scorelon.
+ * @selonelon #preloncision
  *
- * This normalizer also could denormalize the normalized value from integer back to double using the
- * same precision.
+ * This normalizelonr also could delonnormalizelon thelon normalizelond valuelon from intelongelonr back to doublelon using thelon
+ * samelon preloncision.
  */
-public class PredictionScoreNormalizer {
+public class PrelondictionScorelonNormalizelonr {
 
-  private final int precision;
-  private final double normalizingBase;
+  privatelon final int preloncision;
+  privatelon final doublelon normalizingBaselon;
 
-  public PredictionScoreNormalizer(int precision) {
-    this.precision = precision;
-    this.normalizingBase = Math.pow(10, this.precision);
+  public PrelondictionScorelonNormalizelonr(int preloncision) {
+    this.preloncision = preloncision;
+    this.normalizingBaselon = Math.pow(10, this.preloncision);
   }
 
   /**
-   * Returns the normalized int value for prediction score {@code score} by multiplying
-   * by {@code normalizingBase}, and round the result.
-   * @throws IllegalArgumentException when parameter {@code score} is not within [0.0, 1.0]
+   * Relonturns thelon normalizelond int valuelon for prelondiction scorelon {@codelon scorelon} by multiplying
+   * by {@codelon normalizingBaselon}, and round thelon relonsult.
+   * @throws IllelongalArgumelonntelonxcelonption whelonn paramelontelonr {@codelon scorelon} is not within [0.0, 1.0]
    */
-  public int normalize(double score) {
-    Preconditions.checkArgument(isScoreWithinRange(score));
-    return (int) Math.round(score * this.normalizingBase);
+  public int normalizelon(doublelon scorelon) {
+    Prelonconditions.chelonckArgumelonnt(isScorelonWithinRangelon(scorelon));
+    relonturn (int) Math.round(scorelon * this.normalizingBaselon);
   }
 
   /**
-   * Converts the normalized int value back to a double score by dividing by {@code normalizingBase}
-   * @throws IllegalStateException when the denormalized value is not within [0.0, 1.0]
+   * Convelonrts thelon normalizelond int valuelon back to a doublelon scorelon by dividing by {@codelon normalizingBaselon}
+   * @throws IllelongalStatelonelonxcelonption whelonn thelon delonnormalizelond valuelon is not within [0.0, 1.0]
    */
-  public double denormalize(int normalizedScore) {
-    double denormalizedValue = normalizedScore / this.normalizingBase;
-    if (!isScoreWithinRange(denormalizedValue)) {
-      throw new IllegalStateException(
-          String.format("The denormalized value %s is not within [0.0, 1.0]", denormalizedValue)
+  public doublelon delonnormalizelon(int normalizelondScorelon) {
+    doublelon delonnormalizelondValuelon = normalizelondScorelon / this.normalizingBaselon;
+    if (!isScorelonWithinRangelon(delonnormalizelondValuelon)) {
+      throw nelonw IllelongalStatelonelonxcelonption(
+          String.format("Thelon delonnormalizelond valuelon %s is not within [0.0, 1.0]", delonnormalizelondValuelon)
       );
     }
-    return denormalizedValue;
+    relonturn delonnormalizelondValuelon;
   }
 
-  private static boolean isScoreWithinRange(double score) {
-    return 0.0 <= score && score <= 1.0;
+  privatelon static boolelonan isScorelonWithinRangelon(doublelon scorelon) {
+    relonturn 0.0 <= scorelon && scorelon <= 1.0;
   }
 }

@@ -1,42 +1,42 @@
-package com.twitter.home_mixer.functional_component.decorator
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.deloncorator
 
-import com.twitter.home_mixer.model.HomeFeatures.InNetworkFeature
-import com.twitter.home_mixer.model.HomeFeatures.TopicContextFunctionalityTypeFeature
-import com.twitter.home_mixer.model.HomeFeatures.TopicIdSocialContextFeature
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.social_context.BaseSocialContextBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.SocialContext
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.TopicContext
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.InNelontworkFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.TopicContelonxtFunctionalityTypelonFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.TopicIdSocialContelonxtFelonaturelon
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.TwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.social_contelonxt.BaselonSocialContelonxtBuildelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.SocialContelonxt
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.TopicContelonxt
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-case class TopicSocialContextBuilder @Inject() ()
-    extends BaseSocialContextBuilder[PipelineQuery, TweetCandidate] {
+@Singlelonton
+caselon class TopicSocialContelonxtBuildelonr @Injelonct() ()
+    elonxtelonnds BaselonSocialContelonxtBuildelonr[PipelonlinelonQuelonry, TwelonelontCandidatelon] {
 
-  def apply(
-    query: PipelineQuery,
-    candidate: TweetCandidate,
-    candidateFeatures: FeatureMap
-  ): Option[SocialContext] = {
-    val inNetwork = candidateFeatures.getOrElse(InNetworkFeature, true)
-    if (!inNetwork) {
-      val topicIdSocialContextOpt = candidateFeatures.getOrElse(TopicIdSocialContextFeature, None)
-      val topicContextFunctionalityTypeOpt =
-        candidateFeatures.getOrElse(TopicContextFunctionalityTypeFeature, None)
-      (topicIdSocialContextOpt, topicContextFunctionalityTypeOpt) match {
-        case (Some(topicId), Some(topicContextFunctionalityType)) =>
-          Some(
-            TopicContext(
+  delonf apply(
+    quelonry: PipelonlinelonQuelonry,
+    candidatelon: TwelonelontCandidatelon,
+    candidatelonFelonaturelons: FelonaturelonMap
+  ): Option[SocialContelonxt] = {
+    val inNelontwork = candidatelonFelonaturelons.gelontOrelonlselon(InNelontworkFelonaturelon, truelon)
+    if (!inNelontwork) {
+      val topicIdSocialContelonxtOpt = candidatelonFelonaturelons.gelontOrelonlselon(TopicIdSocialContelonxtFelonaturelon, Nonelon)
+      val topicContelonxtFunctionalityTypelonOpt =
+        candidatelonFelonaturelons.gelontOrelonlselon(TopicContelonxtFunctionalityTypelonFelonaturelon, Nonelon)
+      (topicIdSocialContelonxtOpt, topicContelonxtFunctionalityTypelonOpt) match {
+        caselon (Somelon(topicId), Somelon(topicContelonxtFunctionalityTypelon)) =>
+          Somelon(
+            TopicContelonxt(
               topicId = topicId.toString,
-              functionalityType = Some(topicContextFunctionalityType)
+              functionalityTypelon = Somelon(topicContelonxtFunctionalityTypelon)
             ))
-        case _ => None
+        caselon _ => Nonelon
       }
-    } else {
-      None
+    } elonlselon {
+      Nonelon
     }
   }
 }

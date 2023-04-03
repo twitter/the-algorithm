@@ -1,60 +1,60 @@
-package com.twitter.search.earlybird_root;
+packagelon com.twittelonr.selonarch.elonarlybird_root;
 
-import java.util.concurrent.TimeUnit;
+import java.util.concurrelonnt.TimelonUnit;
 
-import com.google.common.base.Preconditions;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.common.metrics.Timer;
-import com.twitter.search.common.root.LoggingSupport;
-import com.twitter.search.earlybird.common.EarlybirdRequestPostLogger;
-import com.twitter.search.earlybird.common.EarlybirdRequestPreLogger;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
+import com.twittelonr.selonarch.common.deloncidelonr.SelonarchDeloncidelonr;
+import com.twittelonr.selonarch.common.melontrics.Timelonr;
+import com.twittelonr.selonarch.common.root.LoggingSupport;
+import com.twittelonr.selonarch.elonarlybird.common.elonarlybirdRelonquelonstPostLoggelonr;
+import com.twittelonr.selonarch.elonarlybird.common.elonarlybirdRelonquelonstPrelonLoggelonr;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonquelonst;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
 
-public class EarlybirdServiceLoggingSupport extends
-    LoggingSupport.DefaultLoggingSupport<EarlybirdRequest, EarlybirdResponse> {
-  private static final int LATENCY_WARN_THRESHOLD_MS = 100;
+public class elonarlybirdSelonrvicelonLoggingSupport elonxtelonnds
+    LoggingSupport.DelonfaultLoggingSupport<elonarlybirdRelonquelonst, elonarlybirdRelonsponselon> {
+  privatelon static final int LATelonNCY_WARN_THRelonSHOLD_MS = 100;
 
-  private static final Timer DUMMY_TIMER;
+  privatelon static final Timelonr DUMMY_TIMelonR;
 
-  private final EarlybirdRequestPreLogger requestPreLogger;
-  private final EarlybirdRequestPostLogger requestPostLogger;
+  privatelon final elonarlybirdRelonquelonstPrelonLoggelonr relonquelonstPrelonLoggelonr;
+  privatelon final elonarlybirdRelonquelonstPostLoggelonr relonquelonstPostLoggelonr;
 
 
   static {
-    DUMMY_TIMER = new Timer(TimeUnit.MILLISECONDS);
-    DUMMY_TIMER.stop();
+    DUMMY_TIMelonR = nelonw Timelonr(TimelonUnit.MILLISelonCONDS);
+    DUMMY_TIMelonR.stop();
   }
 
-  public EarlybirdServiceLoggingSupport(SearchDecider decider) {
-    requestPreLogger = EarlybirdRequestPreLogger.buildForRoot(decider.getDecider());
-    requestPostLogger = EarlybirdRequestPostLogger.buildForRoot(LATENCY_WARN_THRESHOLD_MS,
-                                                                decider.getDecider());
+  public elonarlybirdSelonrvicelonLoggingSupport(SelonarchDeloncidelonr deloncidelonr) {
+    relonquelonstPrelonLoggelonr = elonarlybirdRelonquelonstPrelonLoggelonr.buildForRoot(deloncidelonr.gelontDeloncidelonr());
+    relonquelonstPostLoggelonr = elonarlybirdRelonquelonstPostLoggelonr.buildForRoot(LATelonNCY_WARN_THRelonSHOLD_MS,
+                                                                deloncidelonr.gelontDeloncidelonr());
   }
 
-  @Override
-  public void prelogRequest(EarlybirdRequest req) {
-    requestPreLogger.logRequest(req);
+  @Ovelonrridelon
+  public void prelonlogRelonquelonst(elonarlybirdRelonquelonst relonq) {
+    relonquelonstPrelonLoggelonr.logRelonquelonst(relonq);
   }
 
-  @Override
-  public void postLogRequest(
-      EarlybirdRequest request,
-      EarlybirdResponse response,
-      long latencyNanos) {
+  @Ovelonrridelon
+  public void postLogRelonquelonst(
+      elonarlybirdRelonquelonst relonquelonst,
+      elonarlybirdRelonsponselon relonsponselon,
+      long latelonncyNanos) {
 
-    Preconditions.checkNotNull(request);
-    Preconditions.checkNotNull(response);
+    Prelonconditions.chelonckNotNull(relonquelonst);
+    Prelonconditions.chelonckNotNull(relonsponselon);
 
-    response.setResponseTimeMicros(TimeUnit.NANOSECONDS.toMicros(latencyNanos));
-    response.setResponseTime(TimeUnit.NANOSECONDS.toMillis(latencyNanos));
+    relonsponselon.selontRelonsponselonTimelonMicros(TimelonUnit.NANOSelonCONDS.toMicros(latelonncyNanos));
+    relonsponselon.selontRelonsponselonTimelon(TimelonUnit.NANOSelonCONDS.toMillis(latelonncyNanos));
 
-    requestPostLogger.logRequest(request, response, DUMMY_TIMER);
+    relonquelonstPostLoggelonr.logRelonquelonst(relonquelonst, relonsponselon, DUMMY_TIMelonR);
   }
 
-  @Override
-  public void logExceptions(EarlybirdRequest req, Throwable t) {
-    ExceptionHandler.logException(req, t);
+  @Ovelonrridelon
+  public void logelonxcelonptions(elonarlybirdRelonquelonst relonq, Throwablelon t) {
+    elonxcelonptionHandlelonr.logelonxcelonption(relonq, t);
   }
 }

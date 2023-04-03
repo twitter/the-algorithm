@@ -1,176 +1,176 @@
-package com.twitter.simclusters_v2.scio.bq_generation
-package simclusters_index_generation
+packagelon com.twittelonr.simclustelonrs_v2.scio.bq_gelonnelonration
+packagelon simclustelonrs_indelonx_gelonnelonration
 
-import com.spotify.scio.ScioContext
-import com.spotify.scio.values.SCollection
-import com.twitter.simclusters_v2.scio.bq_generation.common.BQGenerationUtil.getNSFWTweetIdDenylistSQL
-import com.twitter.simclusters_v2.scio.bq_generation.common.BQGenerationUtil.getTweetIdWithFavCountSQL
-import com.twitter.simclusters_v2.scio.bq_generation.common.BQGenerationUtil.getTweetIdWithMediaAndNSFWAuthorFilterSQL
-import com.twitter.simclusters_v2.scio.bq_generation.common.BQGenerationUtil.getUserTweetEngagementEventPairSQL
-import com.twitter.simclusters_v2.scio.bq_generation.common.BQGenerationUtil.generateClusterTopTweetIntersectionWithFavBasedIndexSQL
-import com.twitter.simclusters_v2.scio.bq_generation.simclusters_index_generation.Config.simclustersEngagementBasedIndexGenerationSQLPath
-import com.twitter.simclusters_v2.scio.bq_generation.common.IndexGenerationUtil.TopKTweetsForClusterKey
-import com.twitter.simclusters_v2.scio.bq_generation.common.IndexGenerationUtil.parseClusterTopKTweetsFn
-import com.twitter.wtf.beam.bq_embedding_export.BQQueryUtils
-import org.apache.beam.sdk.io.gcp.bigquery.BigQueryIO
-import org.joda.time.DateTime
+import com.spotify.scio.ScioContelonxt
+import com.spotify.scio.valuelons.SCollelonction
+import com.twittelonr.simclustelonrs_v2.scio.bq_gelonnelonration.common.BQGelonnelonrationUtil.gelontNSFWTwelonelontIdDelonnylistSQL
+import com.twittelonr.simclustelonrs_v2.scio.bq_gelonnelonration.common.BQGelonnelonrationUtil.gelontTwelonelontIdWithFavCountSQL
+import com.twittelonr.simclustelonrs_v2.scio.bq_gelonnelonration.common.BQGelonnelonrationUtil.gelontTwelonelontIdWithMelondiaAndNSFWAuthorFiltelonrSQL
+import com.twittelonr.simclustelonrs_v2.scio.bq_gelonnelonration.common.BQGelonnelonrationUtil.gelontUselonrTwelonelontelonngagelonmelonntelonvelonntPairSQL
+import com.twittelonr.simclustelonrs_v2.scio.bq_gelonnelonration.common.BQGelonnelonrationUtil.gelonnelonratelonClustelonrTopTwelonelontIntelonrselonctionWithFavBaselondIndelonxSQL
+import com.twittelonr.simclustelonrs_v2.scio.bq_gelonnelonration.simclustelonrs_indelonx_gelonnelonration.Config.simclustelonrselonngagelonmelonntBaselondIndelonxGelonnelonrationSQLPath
+import com.twittelonr.simclustelonrs_v2.scio.bq_gelonnelonration.common.IndelonxGelonnelonrationUtil.TopKTwelonelontsForClustelonrKelony
+import com.twittelonr.simclustelonrs_v2.scio.bq_gelonnelonration.common.IndelonxGelonnelonrationUtil.parselonClustelonrTopKTwelonelontsFn
+import com.twittelonr.wtf.belonam.bq_elonmbelondding_elonxport.BQQuelonryUtils
+import org.apachelon.belonam.sdk.io.gcp.bigquelonry.BigQuelonryIO
+import org.joda.timelon.DatelonTimelon
 
-object EngagementEventBasedClusterToTweetIndexFromBQ {
+objelonct elonngagelonmelonntelonvelonntBaselondClustelonrToTwelonelontIndelonxFromBQ {
 
   /*
-   * Reads the user-tweet-interaction table and apply tweet fav count filter
-   * Returns the post processed table results in SQL string format
+   * Relonads thelon uselonr-twelonelont-intelonraction tablelon and apply twelonelont fav count filtelonr
+   * Relonturns thelon post procelonsselond tablelon relonsults in SQL string format
    *
 * Input:
-   *   - startTime: DateTime
-   *       The earliest timestamp from the user-tweet-interaction table
-   *   - endTime: DateTime
-   *       The latest timestamp from the user-tweet-interaction table
+   *   - startTimelon: DatelonTimelon
+   *       Thelon elonarlielonst timelonstamp from thelon uselonr-twelonelont-intelonraction tablelon
+   *   - elonndTimelon: DatelonTimelon
+   *       Thelon latelonst timelonstamp from thelon uselonr-twelonelont-intelonraction tablelon
    *   - minFavCount: Int
-   *       Whether we want to enable tweet fav count filters
+   *       Whelonthelonr welon want to elonnablelon twelonelont fav count filtelonrs
    *
-* Return:
-   *   String - Post processed table results in SQL string format
+* Relonturn:
+   *   String - Post procelonsselond tablelon relonsults in SQL string format
    */
-  def getTweetInteractionTableWithFavCountFilter(
-    startTime: DateTime,
-    endTime: DateTime,
+  delonf gelontTwelonelontIntelonractionTablelonWithFavCountFiltelonr(
+    startTimelon: DatelonTimelon,
+    elonndTimelon: DatelonTimelon,
     minFavCount: Int
   ): String = {
     if (minFavCount > 0) {
-      val tweetFavCountSQL = getTweetIdWithFavCountSQL(startTime, endTime)
+      val twelonelontFavCountSQL = gelontTwelonelontIdWithFavCountSQL(startTimelon, elonndTimelon)
       s"""
-         |  WITH tweet_fav_count AS (${tweetFavCountSQL})
-         |  SELECT userId, tweetId, tsMillis
-         |  FROM user_tweet_interaction_with_min_interaction_count_filter
-         |  JOIN tweet_fav_count
-         |  USING(tweetId)
-         |  WHERE tweet_fav_count.favCount >= ${minFavCount}
+         |  WITH twelonelont_fav_count AS (${twelonelontFavCountSQL})
+         |  SelonLelonCT uselonrId, twelonelontId, tsMillis
+         |  FROM uselonr_twelonelont_intelonraction_with_min_intelonraction_count_filtelonr
+         |  JOIN twelonelont_fav_count
+         |  USING(twelonelontId)
+         |  WHelonRelon twelonelont_fav_count.favCount >= ${minFavCount}
          |""".stripMargin
-    } else {
-      // Directly read from the table without applying any filters
-      s"SELECT userId, tweetId, tsMillis FROM user_tweet_interaction_with_min_interaction_count_filter"
+    } elonlselon {
+      // Direlonctly relonad from thelon tablelon without applying any filtelonrs
+      s"SelonLelonCT uselonrId, twelonelontId, tsMillis FROM uselonr_twelonelont_intelonraction_with_min_intelonraction_count_filtelonr"
     }
   }
 
   /*
-   * Reads the user-tweet-interaction table and apply health and video filters if specified.
-   * Returns the post processed table results in SQL string format
+   * Relonads thelon uselonr-twelonelont-intelonraction tablelon and apply helonalth and videlono filtelonrs if speloncifielond.
+   * Relonturns thelon post procelonsselond tablelon relonsults in SQL string format
    *
   * Input:
-   *   - tableName: String
-   *       Schema of the table
-   *         userId: Long
-   *         tweetId: Long
+   *   - tablelonNamelon: String
+   *       Schelonma of thelon tablelon
+   *         uselonrId: Long
+   *         twelonelontId: Long
    *         tsMillis: Long
-   *   - startTime: DateTime
-   *       The earliest timestamp from the user-tweet-interaction table
-   *   - endTime: DateTime
-   *       The latest timestamp from the user-tweet-interaction table
-   *   - enableHealthAndVideoFilters: Boolean
-   *       Whether we want to enable health filters and video only filters
+   *   - startTimelon: DatelonTimelon
+   *       Thelon elonarlielonst timelonstamp from thelon uselonr-twelonelont-intelonraction tablelon
+   *   - elonndTimelon: DatelonTimelon
+   *       Thelon latelonst timelonstamp from thelon uselonr-twelonelont-intelonraction tablelon
+   *   - elonnablelonHelonalthAndVidelonoFiltelonrs: Boolelonan
+   *       Whelonthelonr welon want to elonnablelon helonalth filtelonrs and videlono only filtelonrs
    *
-  * Return:
-   *   String - Post processed table results in SQL string format
+  * Relonturn:
+   *   String - Post procelonsselond tablelon relonsults in SQL string format
    */
-  def getTweetInteractionTableWithHealthFilter(
-    startTime: DateTime,
-    endTime: DateTime,
-    enableHealthAndVideoFilters: Boolean,
+  delonf gelontTwelonelontIntelonractionTablelonWithHelonalthFiltelonr(
+    startTimelon: DatelonTimelon,
+    elonndTimelon: DatelonTimelon,
+    elonnablelonHelonalthAndVidelonoFiltelonrs: Boolelonan,
   ): String = {
-    if (enableHealthAndVideoFilters) {
-      // Get SQL for tweets with media and NSFW filter
-      val tweetWithMediaAndNSFWAuthorFilterSQL = getTweetIdWithMediaAndNSFWAuthorFilterSQL(
-        startTime,
-        endTime,
-        filterMediaType = Some(3), // VideoTweets MediaType = 3
-        filterNSFWAuthor = true
+    if (elonnablelonHelonalthAndVidelonoFiltelonrs) {
+      // Gelont SQL for twelonelonts with melondia and NSFW filtelonr
+      val twelonelontWithMelondiaAndNSFWAuthorFiltelonrSQL = gelontTwelonelontIdWithMelondiaAndNSFWAuthorFiltelonrSQL(
+        startTimelon,
+        elonndTimelon,
+        filtelonrMelondiaTypelon = Somelon(3), // VidelonoTwelonelonts MelondiaTypelon = 3
+        filtelonrNSFWAuthor = truelon
       )
-      // Get SQL for NSFW tweet id deny list
-      val nsfwTweetDenylistSQL = getNSFWTweetIdDenylistSQL(startTime, endTime)
-      // Combine the health filter SQLs
+      // Gelont SQL for NSFW twelonelont id delonny list
+      val nsfwTwelonelontDelonnylistSQL = gelontNSFWTwelonelontIdDelonnylistSQL(startTimelon, elonndTimelon)
+      // Combinelon thelon helonalth filtelonr SQLs
       s"""
-         |SELECT userId, tweetId, tsMillis FROM user_tweet_interaction_with_fav_count_filter JOIN (
-         |  ${tweetWithMediaAndNSFWAuthorFilterSQL}
-         |    AND tweetId NOT IN (${nsfwTweetDenylistSQL})
-         |) USING(tweetId)
+         |SelonLelonCT uselonrId, twelonelontId, tsMillis FROM uselonr_twelonelont_intelonraction_with_fav_count_filtelonr JOIN (
+         |  ${twelonelontWithMelondiaAndNSFWAuthorFiltelonrSQL}
+         |    AND twelonelontId NOT IN (${nsfwTwelonelontDelonnylistSQL})
+         |) USING(twelonelontId)
          |""".stripMargin
-    } else {
-      // Directly read from the table without applying any filters
-      s"SELECT userId, tweetId, tsMillis FROM user_tweet_interaction_with_fav_count_filter"
+    } elonlselon {
+      // Direlonctly relonad from thelon tablelon without applying any filtelonrs
+      s"SelonLelonCT uselonrId, twelonelontId, tsMillis FROM uselonr_twelonelont_intelonraction_with_fav_count_filtelonr"
     }
   }
 
-  def getTopKTweetsForClusterKeyBQ(
-    sc: ScioContext,
-    queryTimestamp: DateTime,
-    maxTweetAgeHours: Int,
-    consumerEmbeddingsSQL: String,
-    userTweetEngagementEventPairSqlPath: String,
-    userTweetEngagementEventPairTemplateVariable: Map[String, String],
-    enableHealthAndVideoFilters: Boolean,
-    enableFavClusterTopKTweetsIntersection: Boolean,
-    minInteractionCount: Int,
+  delonf gelontTopKTwelonelontsForClustelonrKelonyBQ(
+    sc: ScioContelonxt,
+    quelonryTimelonstamp: DatelonTimelon,
+    maxTwelonelontAgelonHours: Int,
+    consumelonrelonmbelonddingsSQL: String,
+    uselonrTwelonelontelonngagelonmelonntelonvelonntPairSqlPath: String,
+    uselonrTwelonelontelonngagelonmelonntelonvelonntPairTelonmplatelonVariablelon: Map[String, String],
+    elonnablelonHelonalthAndVidelonoFiltelonrs: Boolelonan,
+    elonnablelonFavClustelonrTopKTwelonelontsIntelonrselonction: Boolelonan,
+    minIntelonractionCount: Int,
     minFavCount: Int,
-    tweetEmbeddingsLength: Int,
-    tweetEmbeddingsHalfLife: Int,
-    minEngagementPerCluster: Int,
-    clusterTopKTweets: Int
-  ): SCollection[TopKTweetsForClusterKey] = {
-    // Define template variables which we would like to be replaced in the corresponding sql file
-    val startTime = queryTimestamp.minusHours(maxTweetAgeHours)
-    val endTime = queryTimestamp
+    twelonelontelonmbelonddingsLelonngth: Int,
+    twelonelontelonmbelonddingsHalfLifelon: Int,
+    minelonngagelonmelonntPelonrClustelonr: Int,
+    clustelonrTopKTwelonelonts: Int
+  ): SCollelonction[TopKTwelonelontsForClustelonrKelony] = {
+    // Delonfinelon telonmplatelon variablelons which welon would likelon to belon relonplacelond in thelon correlonsponding sql filelon
+    val startTimelon = quelonryTimelonstamp.minusHours(maxTwelonelontAgelonHours)
+    val elonndTimelon = quelonryTimelonstamp
 
-    val indexGenerationTemplateVariables =
+    val indelonxGelonnelonrationTelonmplatelonVariablelons =
       Map(
-        "HALF_LIFE" -> tweetEmbeddingsHalfLife.toString,
-        "CURRENT_TS" -> queryTimestamp.toString(),
-        "START_TIME" -> startTime.toString(),
-        "END_TIME" -> endTime.toString(),
-        "USER_TWEET_ENGAGEMENT_TABLE_SQL" ->
-          getUserTweetEngagementEventPairSQL(
-            startTime,
-            endTime,
-            userTweetEngagementEventPairSqlPath,
-            userTweetEngagementEventPairTemplateVariable
+        "HALF_LIFelon" -> twelonelontelonmbelonddingsHalfLifelon.toString,
+        "CURRelonNT_TS" -> quelonryTimelonstamp.toString(),
+        "START_TIMelon" -> startTimelon.toString(),
+        "elonND_TIMelon" -> elonndTimelon.toString(),
+        "USelonR_TWelonelonT_elonNGAGelonMelonNT_TABLelon_SQL" ->
+          gelontUselonrTwelonelontelonngagelonmelonntelonvelonntPairSQL(
+            startTimelon,
+            elonndTimelon,
+            uselonrTwelonelontelonngagelonmelonntelonvelonntPairSqlPath,
+            uselonrTwelonelontelonngagelonmelonntelonvelonntPairTelonmplatelonVariablelon
           ),
-        // Min interaction count filter
-        "MIN_INTERACTION_COUNT" -> minInteractionCount.toString,
-        // Min fav count filter
-        "TWEET_INTERACTION_WITH_FAV_COUNT_FILTER_SQL" -> getTweetInteractionTableWithFavCountFilter(
-          startTime,
-          endTime,
+        // Min intelonraction count filtelonr
+        "MIN_INTelonRACTION_COUNT" -> minIntelonractionCount.toString,
+        // Min fav count filtelonr
+        "TWelonelonT_INTelonRACTION_WITH_FAV_COUNT_FILTelonR_SQL" -> gelontTwelonelontIntelonractionTablelonWithFavCountFiltelonr(
+          startTimelon,
+          elonndTimelon,
           minFavCount
         ),
-        // Health filter
-        "TWEET_INTERACTION_WITH_HEALTH_FILTER_SQL" -> getTweetInteractionTableWithHealthFilter(
-          startTime,
-          endTime,
-          enableHealthAndVideoFilters),
-        "CONSUMER_EMBEDDINGS_SQL" -> consumerEmbeddingsSQL,
-        "TWEET_EMBEDDING_LENGTH" -> tweetEmbeddingsLength.toString,
-        "MIN_ENGAGEMENT_PER_CLUSTER" -> minEngagementPerCluster.toString,
-        "CLUSTER_TOP_K_TWEETS" -> clusterTopKTweets.toString
+        // Helonalth filtelonr
+        "TWelonelonT_INTelonRACTION_WITH_HelonALTH_FILTelonR_SQL" -> gelontTwelonelontIntelonractionTablelonWithHelonalthFiltelonr(
+          startTimelon,
+          elonndTimelon,
+          elonnablelonHelonalthAndVidelonoFiltelonrs),
+        "CONSUMelonR_elonMBelonDDINGS_SQL" -> consumelonrelonmbelonddingsSQL,
+        "TWelonelonT_elonMBelonDDING_LelonNGTH" -> twelonelontelonmbelonddingsLelonngth.toString,
+        "MIN_elonNGAGelonMelonNT_PelonR_CLUSTelonR" -> minelonngagelonmelonntPelonrClustelonr.toString,
+        "CLUSTelonR_TOP_K_TWelonelonTS" -> clustelonrTopKTwelonelonts.toString
       )
-    val query = BQQueryUtils.getBQQueryFromSqlFile(
-      simclustersEngagementBasedIndexGenerationSQLPath,
-      indexGenerationTemplateVariables)
+    val quelonry = BQQuelonryUtils.gelontBQQuelonryFromSqlFilelon(
+      simclustelonrselonngagelonmelonntBaselondIndelonxGelonnelonrationSQLPath,
+      indelonxGelonnelonrationTelonmplatelonVariablelons)
 
-    val postFilterQuery = if (enableFavClusterTopKTweetsIntersection) {
-      generateClusterTopTweetIntersectionWithFavBasedIndexSQL(
-        startTime,
-        endTime,
-        clusterTopKTweets,
-        query)
-    } else {
-      query
+    val postFiltelonrQuelonry = if (elonnablelonFavClustelonrTopKTwelonelontsIntelonrselonction) {
+      gelonnelonratelonClustelonrTopTwelonelontIntelonrselonctionWithFavBaselondIndelonxSQL(
+        startTimelon,
+        elonndTimelon,
+        clustelonrTopKTwelonelonts,
+        quelonry)
+    } elonlselon {
+      quelonry
     }
-    // Generate SimClusters cluster-to-tweet index
+    // Gelonnelonratelon SimClustelonrs clustelonr-to-twelonelont indelonx
     sc.customInput(
-      s"SimClusters cluster-to-tweet index generation BQ job",
-      BigQueryIO
-        .read(parseClusterTopKTweetsFn(tweetEmbeddingsHalfLife))
-        .fromQuery(postFilterQuery)
+      s"SimClustelonrs clustelonr-to-twelonelont indelonx gelonnelonration BQ job",
+      BigQuelonryIO
+        .relonad(parselonClustelonrTopKTwelonelontsFn(twelonelontelonmbelonddingsHalfLifelon))
+        .fromQuelonry(postFiltelonrQuelonry)
         .usingStandardSql()
     )
   }

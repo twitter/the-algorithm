@@ -1,7 +1,7 @@
-package com.twitter.follow_recommendations.common.features
+packagelon com.twittelonr.follow_reloncommelonndations.common.felonaturelons
 
-import com.twitter.core_workflows.user_model.thriftscala.UserState
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.corelon_workflows.uselonr_modelonl.thriftscala.UselonrStatelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
-case object UserStateFeature extends Feature[PipelineQuery, Option[UserState]] {}
+caselon objelonct UselonrStatelonFelonaturelon elonxtelonnds Felonaturelon[PipelonlinelonQuelonry, Option[UselonrStatelon]] {}

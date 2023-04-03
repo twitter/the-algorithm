@@ -1,149 +1,149 @@
-package com.twitter.visibility.interfaces.tweets
+packagelon com.twittelonr.visibility.intelonrfacelons.twelonelonts
 
-import com.twitter.decider.Decider
-import com.twitter.servo.util.Gate
-import com.twitter.stitch.Stitch
-import com.twitter.visibility.VisibilityLibrary
-import com.twitter.visibility.builder.VisibilityResult
-import com.twitter.visibility.builder.users.AuthorFeatures
-import com.twitter.visibility.builder.users.QuotedTweetFeatures
-import com.twitter.visibility.builder.users.RelationshipFeatures
-import com.twitter.visibility.builder.users.ViewerFeatures
-import com.twitter.visibility.common.UserRelationshipSource
-import com.twitter.visibility.common.UserSource
-import com.twitter.visibility.configapi.configs.VisibilityDeciderGates
-import com.twitter.visibility.features.FeatureMap
-import com.twitter.visibility.models.ContentId.QuotedTweetRelationship
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.models.UserUnavailableStateEnum
-import com.twitter.visibility.models.ViewerContext
-import com.twitter.visibility.rules.Drop
-import com.twitter.visibility.rules.EvaluationContext
-import com.twitter.visibility.rules.Reason.AuthorBlocksViewer
-import com.twitter.visibility.rules.Reason.DeactivatedAuthor
-import com.twitter.visibility.rules.Reason.ErasedAuthor
-import com.twitter.visibility.rules.Reason.OffboardedAuthor
-import com.twitter.visibility.rules.Reason.ProtectedAuthor
-import com.twitter.visibility.rules.Reason.SuspendedAuthor
-import com.twitter.visibility.rules.Reason.ViewerBlocksAuthor
-import com.twitter.visibility.rules.Reason.ViewerHardMutedAuthor
-import com.twitter.visibility.rules.Reason.ViewerMutesAuthor
-import com.twitter.visibility.rules.providers.ProvidedEvaluationContext
-import com.twitter.visibility.rules.utils.ShimUtils
+import com.twittelonr.deloncidelonr.Deloncidelonr
+import com.twittelonr.selonrvo.util.Gatelon
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.visibility.VisibilityLibrary
+import com.twittelonr.visibility.buildelonr.VisibilityRelonsult
+import com.twittelonr.visibility.buildelonr.uselonrs.AuthorFelonaturelons
+import com.twittelonr.visibility.buildelonr.uselonrs.QuotelondTwelonelontFelonaturelons
+import com.twittelonr.visibility.buildelonr.uselonrs.RelonlationshipFelonaturelons
+import com.twittelonr.visibility.buildelonr.uselonrs.VielonwelonrFelonaturelons
+import com.twittelonr.visibility.common.UselonrRelonlationshipSourcelon
+import com.twittelonr.visibility.common.UselonrSourcelon
+import com.twittelonr.visibility.configapi.configs.VisibilityDeloncidelonrGatelons
+import com.twittelonr.visibility.felonaturelons.FelonaturelonMap
+import com.twittelonr.visibility.modelonls.ContelonntId.QuotelondTwelonelontRelonlationship
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl
+import com.twittelonr.visibility.modelonls.UselonrUnavailablelonStatelonelonnum
+import com.twittelonr.visibility.modelonls.VielonwelonrContelonxt
+import com.twittelonr.visibility.rulelons.Drop
+import com.twittelonr.visibility.rulelons.elonvaluationContelonxt
+import com.twittelonr.visibility.rulelons.Relonason.AuthorBlocksVielonwelonr
+import com.twittelonr.visibility.rulelons.Relonason.DelonactivatelondAuthor
+import com.twittelonr.visibility.rulelons.Relonason.elonraselondAuthor
+import com.twittelonr.visibility.rulelons.Relonason.OffboardelondAuthor
+import com.twittelonr.visibility.rulelons.Relonason.ProtelonctelondAuthor
+import com.twittelonr.visibility.rulelons.Relonason.SuspelonndelondAuthor
+import com.twittelonr.visibility.rulelons.Relonason.VielonwelonrBlocksAuthor
+import com.twittelonr.visibility.rulelons.Relonason.VielonwelonrHardMutelondAuthor
+import com.twittelonr.visibility.rulelons.Relonason.VielonwelonrMutelonsAuthor
+import com.twittelonr.visibility.rulelons.providelonrs.ProvidelondelonvaluationContelonxt
+import com.twittelonr.visibility.rulelons.utils.ShimUtils
 
-case class TweetAndAuthor(tweetId: Long, authorId: Long)
+caselon class TwelonelontAndAuthor(twelonelontId: Long, authorId: Long)
 
-case class QuotedTweetVisibilityRequest(
-  quotedTweet: TweetAndAuthor,
-  outerTweet: TweetAndAuthor,
-  viewerContext: ViewerContext,
-  safetyLevel: SafetyLevel)
+caselon class QuotelondTwelonelontVisibilityRelonquelonst(
+  quotelondTwelonelont: TwelonelontAndAuthor,
+  outelonrTwelonelont: TwelonelontAndAuthor,
+  vielonwelonrContelonxt: VielonwelonrContelonxt,
+  safelontyLelonvelonl: SafelontyLelonvelonl)
 
-object QuotedTweetVisibilityLibrary {
+objelonct QuotelondTwelonelontVisibilityLibrary {
 
-  type Type = QuotedTweetVisibilityRequest => Stitch[VisibilityResult]
+  typelon Typelon = QuotelondTwelonelontVisibilityRelonquelonst => Stitch[VisibilityRelonsult]
 
-  def apply(
+  delonf apply(
     visibilityLibrary: VisibilityLibrary,
-    userSource: UserSource,
-    userRelationshipSource: UserRelationshipSource,
-    decider: Decider,
-    userStateVisibilityLibrary: UserUnavailableStateVisibilityLibrary.Type,
-    enableVfFeatureHydration: Gate[Unit] = Gate.False
-  ): Type = {
-    val libraryStatsReceiver = visibilityLibrary.statsReceiver
-    val visibilityDeciderGates = VisibilityDeciderGates(decider)
-    val vfEngineCounter = libraryStatsReceiver.counter("vf_engine_requests")
+    uselonrSourcelon: UselonrSourcelon,
+    uselonrRelonlationshipSourcelon: UselonrRelonlationshipSourcelon,
+    deloncidelonr: Deloncidelonr,
+    uselonrStatelonVisibilityLibrary: UselonrUnavailablelonStatelonVisibilityLibrary.Typelon,
+    elonnablelonVfFelonaturelonHydration: Gatelon[Unit] = Gatelon.Falselon
+  ): Typelon = {
+    val libraryStatsReloncelonivelonr = visibilityLibrary.statsReloncelonivelonr
+    val visibilityDeloncidelonrGatelons = VisibilityDeloncidelonrGatelons(deloncidelonr)
+    val vfelonnginelonCountelonr = libraryStatsReloncelonivelonr.countelonr("vf_elonnginelon_relonquelonsts")
 
     {
-      case QuotedTweetVisibilityRequest(quotedTweet, outerTweet, viewerContext, safetyLevel) =>
-        vfEngineCounter.incr()
-        val contentId = QuotedTweetRelationship(
-          outer = outerTweet.tweetId,
-          inner = quotedTweet.tweetId
+      caselon QuotelondTwelonelontVisibilityRelonquelonst(quotelondTwelonelont, outelonrTwelonelont, vielonwelonrContelonxt, safelontyLelonvelonl) =>
+        vfelonnginelonCountelonr.incr()
+        val contelonntId = QuotelondTwelonelontRelonlationship(
+          outelonr = outelonrTwelonelont.twelonelontId,
+          innelonr = quotelondTwelonelont.twelonelontId
         )
 
-        val innerAuthorId = quotedTweet.authorId
-        val outerAuthorId = outerTweet.authorId
-        val viewerId = viewerContext.userId
-        val isFeatureHydrationInShimEnabled = enableVfFeatureHydration()
+        val innelonrAuthorId = quotelondTwelonelont.authorId
+        val outelonrAuthorId = outelonrTwelonelont.authorId
+        val vielonwelonrId = vielonwelonrContelonxt.uselonrId
+        val isFelonaturelonHydrationInShimelonnablelond = elonnablelonVfFelonaturelonHydration()
 
-        val authorFeatures = new AuthorFeatures(userSource, libraryStatsReceiver)
-        val viewerFeatures = new ViewerFeatures(userSource, libraryStatsReceiver)
-        val relationshipFeatures =
-          new RelationshipFeatures(userRelationshipSource, libraryStatsReceiver)
-        val quotedTweetFeatures =
-          new QuotedTweetFeatures(relationshipFeatures, libraryStatsReceiver)
+        val authorFelonaturelons = nelonw AuthorFelonaturelons(uselonrSourcelon, libraryStatsReloncelonivelonr)
+        val vielonwelonrFelonaturelons = nelonw VielonwelonrFelonaturelons(uselonrSourcelon, libraryStatsReloncelonivelonr)
+        val relonlationshipFelonaturelons =
+          nelonw RelonlationshipFelonaturelons(uselonrRelonlationshipSourcelon, libraryStatsReloncelonivelonr)
+        val quotelondTwelonelontFelonaturelons =
+          nelonw QuotelondTwelonelontFelonaturelons(relonlationshipFelonaturelons, libraryStatsReloncelonivelonr)
 
-        val featureMap = visibilityLibrary.featureMapBuilder(
-          Seq(
-            viewerFeatures.forViewerContext(viewerContext),
-            authorFeatures.forAuthorId(innerAuthorId),
-            relationshipFeatures.forAuthorId(innerAuthorId, viewerId),
-            quotedTweetFeatures.forOuterAuthor(outerAuthorId, innerAuthorId)
+        val felonaturelonMap = visibilityLibrary.felonaturelonMapBuildelonr(
+          Selonq(
+            vielonwelonrFelonaturelons.forVielonwelonrContelonxt(vielonwelonrContelonxt),
+            authorFelonaturelons.forAuthorId(innelonrAuthorId),
+            relonlationshipFelonaturelons.forAuthorId(innelonrAuthorId, vielonwelonrId),
+            quotelondTwelonelontFelonaturelons.forOutelonrAuthor(outelonrAuthorId, innelonrAuthorId)
           )
         )
 
-        val resp = if (isFeatureHydrationInShimEnabled) {
-          val evaluationContext = ProvidedEvaluationContext.injectRuntimeRulesIntoEvaluationContext(
-            evaluationContext = EvaluationContext(
-              SafetyLevel.QuotedTweetRules,
-              visibilityLibrary.getParams(viewerContext, SafetyLevel.QuotedTweetRules),
-              visibilityLibrary.statsReceiver)
+        val relonsp = if (isFelonaturelonHydrationInShimelonnablelond) {
+          val elonvaluationContelonxt = ProvidelondelonvaluationContelonxt.injelonctRuntimelonRulelonsIntoelonvaluationContelonxt(
+            elonvaluationContelonxt = elonvaluationContelonxt(
+              SafelontyLelonvelonl.QuotelondTwelonelontRulelons,
+              visibilityLibrary.gelontParams(vielonwelonrContelonxt, SafelontyLelonvelonl.QuotelondTwelonelontRulelons),
+              visibilityLibrary.statsReloncelonivelonr)
           )
 
-          val preFilteredFeatureMap =
-            ShimUtils.preFilterFeatureMap(
-              featureMap,
-              SafetyLevel.QuotedTweetRules,
-              contentId,
-              evaluationContext)
+          val prelonFiltelonrelondFelonaturelonMap =
+            ShimUtils.prelonFiltelonrFelonaturelonMap(
+              felonaturelonMap,
+              SafelontyLelonvelonl.QuotelondTwelonelontRulelons,
+              contelonntId,
+              elonvaluationContelonxt)
 
-          FeatureMap.resolve(preFilteredFeatureMap, libraryStatsReceiver).flatMap {
-            resolvedFeatureMap =>
+          FelonaturelonMap.relonsolvelon(prelonFiltelonrelondFelonaturelonMap, libraryStatsReloncelonivelonr).flatMap {
+            relonsolvelondFelonaturelonMap =>
               visibilityLibrary
-                .runRuleEngine(
-                  contentId,
-                  resolvedFeatureMap,
-                  viewerContext,
-                  SafetyLevel.QuotedTweetRules
+                .runRulelonelonnginelon(
+                  contelonntId,
+                  relonsolvelondFelonaturelonMap,
+                  vielonwelonrContelonxt,
+                  SafelontyLelonvelonl.QuotelondTwelonelontRulelons
                 )
           }
-        } else {
+        } elonlselon {
           visibilityLibrary
-            .runRuleEngine(
-              contentId,
-              featureMap,
-              viewerContext,
-              SafetyLevel.QuotedTweetRules
+            .runRulelonelonnginelon(
+              contelonntId,
+              felonaturelonMap,
+              vielonwelonrContelonxt,
+              SafelontyLelonvelonl.QuotelondTwelonelontRulelons
             )
         }
 
-        resp.flatMap { visResult =>
-          val userStateOpt = visResult.verdict match {
-            case Drop(DeactivatedAuthor, _) => Some(UserUnavailableStateEnum.Deactivated)
-            case Drop(OffboardedAuthor, _) => Some(UserUnavailableStateEnum.Offboarded)
-            case Drop(ErasedAuthor, _) => Some(UserUnavailableStateEnum.Erased)
-            case Drop(ProtectedAuthor, _) => Some(UserUnavailableStateEnum.Protected)
-            case Drop(SuspendedAuthor, _) => Some(UserUnavailableStateEnum.Suspended)
-            case Drop(AuthorBlocksViewer, _) => Some(UserUnavailableStateEnum.AuthorBlocksViewer)
-            case Drop(ViewerBlocksAuthor, _) => Some(UserUnavailableStateEnum.ViewerBlocksAuthor)
-            case Drop(ViewerMutesAuthor, _) => Some(UserUnavailableStateEnum.ViewerMutesAuthor)
-            case Drop(ViewerHardMutedAuthor, _) => Some(UserUnavailableStateEnum.ViewerMutesAuthor)
-            case _ => None
+        relonsp.flatMap { visRelonsult =>
+          val uselonrStatelonOpt = visRelonsult.velonrdict match {
+            caselon Drop(DelonactivatelondAuthor, _) => Somelon(UselonrUnavailablelonStatelonelonnum.Delonactivatelond)
+            caselon Drop(OffboardelondAuthor, _) => Somelon(UselonrUnavailablelonStatelonelonnum.Offboardelond)
+            caselon Drop(elonraselondAuthor, _) => Somelon(UselonrUnavailablelonStatelonelonnum.elonraselond)
+            caselon Drop(ProtelonctelondAuthor, _) => Somelon(UselonrUnavailablelonStatelonelonnum.Protelonctelond)
+            caselon Drop(SuspelonndelondAuthor, _) => Somelon(UselonrUnavailablelonStatelonelonnum.Suspelonndelond)
+            caselon Drop(AuthorBlocksVielonwelonr, _) => Somelon(UselonrUnavailablelonStatelonelonnum.AuthorBlocksVielonwelonr)
+            caselon Drop(VielonwelonrBlocksAuthor, _) => Somelon(UselonrUnavailablelonStatelonelonnum.VielonwelonrBlocksAuthor)
+            caselon Drop(VielonwelonrMutelonsAuthor, _) => Somelon(UselonrUnavailablelonStatelonelonnum.VielonwelonrMutelonsAuthor)
+            caselon Drop(VielonwelonrHardMutelondAuthor, _) => Somelon(UselonrUnavailablelonStatelonelonnum.VielonwelonrMutelonsAuthor)
+            caselon _ => Nonelon
           }
 
-          userStateOpt
-            .map(userState =>
-              userStateVisibilityLibrary(
-                UserUnavailableStateVisibilityRequest(
-                  safetyLevel,
-                  quotedTweet.tweetId,
-                  viewerContext,
-                  userState,
-                  isRetweet = false,
-                  isInnerQuotedTweet = true,
-                ))).getOrElse(Stitch.value(visResult))
+          uselonrStatelonOpt
+            .map(uselonrStatelon =>
+              uselonrStatelonVisibilityLibrary(
+                UselonrUnavailablelonStatelonVisibilityRelonquelonst(
+                  safelontyLelonvelonl,
+                  quotelondTwelonelont.twelonelontId,
+                  vielonwelonrContelonxt,
+                  uselonrStatelon,
+                  isRelontwelonelont = falselon,
+                  isInnelonrQuotelondTwelonelont = truelon,
+                ))).gelontOrelonlselon(Stitch.valuelon(visRelonsult))
         }
     }
   }

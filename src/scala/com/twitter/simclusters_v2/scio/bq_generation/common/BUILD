@@ -1,10 +1,10 @@
 scala_library(
-    sources = [
+    sourcelons = [
         "*.scala",
     ],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "src/scala/com/twitter/wtf/beam/bq_embedding_export:bq_embedding_export_lib",
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/wtf/belonam/bq_elonmbelondding_elonxport:bq_elonmbelondding_elonxport_lib",
     ],
 )

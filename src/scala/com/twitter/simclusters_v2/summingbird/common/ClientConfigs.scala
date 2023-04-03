@@ -1,81 +1,81 @@
-package com.twitter.simclusters_v2.summingbird.common
+packagelon com.twittelonr.simclustelonrs_v2.summingbird.common
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.storehaus_internal.memcache.ConnectionConfig
-import com.twitter.storehaus_internal.memcache.MemcacheConfig
-import com.twitter.storehaus_internal.util.KeyPrefix
-import com.twitter.storehaus_internal.util.TTL
-import com.twitter.strato.client.Strato
-import com.twitter.strato.client.{Client => StratoClient}
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.finaglelon.mtls.authelonntication.SelonrvicelonIdelonntifielonr
+import com.twittelonr.finaglelon.thrift.ClielonntId
+import com.twittelonr.storelonhaus_intelonrnal.melonmcachelon.ConnelonctionConfig
+import com.twittelonr.storelonhaus_intelonrnal.melonmcachelon.MelonmcachelonConfig
+import com.twittelonr.storelonhaus_intelonrnal.util.KelonyPrelonfix
+import com.twittelonr.storelonhaus_intelonrnal.util.TTL
+import com.twittelonr.strato.clielonnt.Strato
+import com.twittelonr.strato.clielonnt.{Clielonnt => StratoClielonnt}
 
-object ClientConfigs {
+objelonct ClielonntConfigs {
 
-  com.twitter.server.Init() // necessary in order to use WilyNS path
+  com.twittelonr.selonrvelonr.Init() // neloncelonssary in ordelonr to uselon WilyNS path
 
-  final lazy val simClustersCoreAltCachePath =
-    "/srv#/prod/local/cache/simclusters_core_alt"
+  final lazy val simClustelonrsCorelonAltCachelonPath =
+    "/srv#/prod/local/cachelon/simclustelonrs_corelon_alt"
 
-  final lazy val simClustersCoreAltLightCachePath =
-    "/srv#/prod/local/cache/simclusters_core_alt_light"
+  final lazy val simClustelonrsCorelonAltLightCachelonPath =
+    "/srv#/prod/local/cachelon/simclustelonrs_corelon_alt_light"
 
-  final lazy val develSimClustersCoreCachePath =
-    "/srv#/test/local/cache/twemcache_simclusters_core"
+  final lazy val delonvelonlSimClustelonrsCorelonCachelonPath =
+    "/srv#/telonst/local/cachelon/twelonmcachelon_simclustelonrs_corelon"
 
-  final lazy val develSimClustersCoreLightCachePath =
-    "/srv#/test/local/cache/twemcache_simclusters_core_light"
+  final lazy val delonvelonlSimClustelonrsCorelonLightCachelonPath =
+    "/srv#/telonst/local/cachelon/twelonmcachelon_simclustelonrs_corelon_light"
 
-  final lazy val logFavBasedTweet20M145K2020StratoPath =
-    "recommendations/simclusters_v2/embeddings/logFavBasedTweet20M145K2020Persistent"
+  final lazy val logFavBaselondTwelonelont20M145K2020StratoPath =
+    "reloncommelonndations/simclustelonrs_v2/elonmbelonddings/logFavBaselondTwelonelont20M145K2020Pelonrsistelonnt"
 
-  final lazy val logFavBasedTweet20M145K2020UncachedStratoPath =
-    "recommendations/simclusters_v2/embeddings/logFavBasedTweet20M145K2020-UNCACHED"
+  final lazy val logFavBaselondTwelonelont20M145K2020UncachelondStratoPath =
+    "reloncommelonndations/simclustelonrs_v2/elonmbelonddings/logFavBaselondTwelonelont20M145K2020-UNCACHelonD"
 
-  final lazy val develLogFavBasedTweet20M145K2020StratoPath =
-    "recommendations/simclusters_v2/embeddings/logFavBasedTweet20M145K2020Devel"
+  final lazy val delonvelonlLogFavBaselondTwelonelont20M145K2020StratoPath =
+    "reloncommelonndations/simclustelonrs_v2/elonmbelonddings/logFavBaselondTwelonelont20M145K2020Delonvelonl"
 
-  final lazy val entityClusterScoreMemcacheConfig: (String, ServiceIdentifier) => MemcacheConfig = {
-    (path: String, serviceIdentifier: ServiceIdentifier) =>
-      new MemcacheConfig {
-        val connectionConfig: ConnectionConfig = ConnectionConfig(path, serviceIdentifier = serviceIdentifier)
-        override val keyPrefix: KeyPrefix = KeyPrefix(s"ecs_")
-        override val ttl: TTL = TTL(8.hours)
+  final lazy val elonntityClustelonrScorelonMelonmcachelonConfig: (String, SelonrvicelonIdelonntifielonr) => MelonmcachelonConfig = {
+    (path: String, selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr) =>
+      nelonw MelonmcachelonConfig {
+        val connelonctionConfig: ConnelonctionConfig = ConnelonctionConfig(path, selonrvicelonIdelonntifielonr = selonrvicelonIdelonntifielonr)
+        ovelonrridelon val kelonyPrelonfix: KelonyPrelonfix = KelonyPrelonfix(s"eloncs_")
+        ovelonrridelon val ttl: TTL = TTL(8.hours)
       }
   }
 
-  // note: this should in dedicated cache for tweet
-  final lazy val tweetTopKClustersMemcacheConfig: (String, ServiceIdentifier) => MemcacheConfig = {
-    (path: String, serviceIdentifier: ServiceIdentifier) =>
-      new MemcacheConfig {
-        val connectionConfig: ConnectionConfig =
-          ConnectionConfig(path, serviceIdentifier = serviceIdentifier)
-        override val keyPrefix: KeyPrefix = KeyPrefix(s"etk_")
-        override val ttl: TTL = TTL(2.days)
+  // notelon: this should in delondicatelond cachelon for twelonelont
+  final lazy val twelonelontTopKClustelonrsMelonmcachelonConfig: (String, SelonrvicelonIdelonntifielonr) => MelonmcachelonConfig = {
+    (path: String, selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr) =>
+      nelonw MelonmcachelonConfig {
+        val connelonctionConfig: ConnelonctionConfig =
+          ConnelonctionConfig(path, selonrvicelonIdelonntifielonr = selonrvicelonIdelonntifielonr)
+        ovelonrridelon val kelonyPrelonfix: KelonyPrelonfix = KelonyPrelonfix(s"elontk_")
+        ovelonrridelon val ttl: TTL = TTL(2.days)
       }
   }
 
-  // note: this should in dedicated cache for tweet
-  final lazy val clusterTopTweetsMemcacheConfig: (String, ServiceIdentifier) => MemcacheConfig = {
-    (path: String, serviceIdentifier: ServiceIdentifier) =>
-      new MemcacheConfig {
-        val connectionConfig: ConnectionConfig =
-          ConnectionConfig(path, serviceIdentifier = serviceIdentifier)
-        override val keyPrefix: KeyPrefix = KeyPrefix(s"ctkt_")
-        override val ttl: TTL = TTL(8.hours)
+  // notelon: this should in delondicatelond cachelon for twelonelont
+  final lazy val clustelonrTopTwelonelontsMelonmcachelonConfig: (String, SelonrvicelonIdelonntifielonr) => MelonmcachelonConfig = {
+    (path: String, selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr) =>
+      nelonw MelonmcachelonConfig {
+        val connelonctionConfig: ConnelonctionConfig =
+          ConnelonctionConfig(path, selonrvicelonIdelonntifielonr = selonrvicelonIdelonntifielonr)
+        ovelonrridelon val kelonyPrelonfix: KelonyPrelonfix = KelonyPrelonfix(s"ctkt_")
+        ovelonrridelon val ttl: TTL = TTL(8.hours)
       }
   }
 
-  final lazy val stratoClient: ServiceIdentifier => StratoClient = { serviceIdentifier =>
-    Strato.client
-      .withRequestTimeout(2.seconds)
-      .withMutualTls(serviceIdentifier)
+  final lazy val stratoClielonnt: SelonrvicelonIdelonntifielonr => StratoClielonnt = { selonrvicelonIdelonntifielonr =>
+    Strato.clielonnt
+      .withRelonquelonstTimelonout(2.selonconds)
+      .withMutualTls(selonrvicelonIdelonntifielonr)
       .build()
   }
 
-  // thrift client id
-  private final lazy val thriftClientId: String => ClientId = { env: String =>
-    ClientId(s"simclusters_v2_summingbird.$env")
+  // thrift clielonnt id
+  privatelon final lazy val thriftClielonntId: String => ClielonntId = { elonnv: String =>
+    ClielonntId(s"simclustelonrs_v2_summingbird.$elonnv")
   }
 
 }

@@ -1,29 +1,29 @@
-package com.twitter.recosinjector.config
+packagelon com.twittelonr.reloncosinjelonctor.config
 
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.logging.Logger
-import com.twitter.recosinjector.decider.RecosInjectorDecider
+import com.twittelonr.finaglelon.mtls.authelonntication.SelonrvicelonIdelonntifielonr
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.finaglelon.thrift.ClielonntId
+import com.twittelonr.logging.Loggelonr
+import com.twittelonr.reloncosinjelonctor.deloncidelonr.ReloncosInjelonctorDeloncidelonr
 
-case class ProdConfig(
-  override val serviceIdentifier: ServiceIdentifier
-)(implicit val statsReceiver: StatsReceiver) extends {
-  // Due to trait initialization logic in Scala, any abstract members declared in Config or
-  // DeployConfig should be declared in this block. Otherwise the abstract member might initialize
-  // to null if invoked before before object creation finishing.
+caselon class ProdConfig(
+  ovelonrridelon val selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr
+)(implicit val statsReloncelonivelonr: StatsReloncelonivelonr) elonxtelonnds {
+  // Duelon to trait initialization logic in Scala, any abstract melonmbelonrs delonclarelond in Config or
+  // DelonployConfig should belon delonclarelond in this block. Othelonrwiselon thelon abstract melonmbelonr might initializelon
+  // to null if invokelond belonforelon belonforelon objelonct crelonation finishing.
 
-  val recosInjectorThriftClientId = ClientId("recos-injector.prod")
+  val reloncosInjelonctorThriftClielonntId = ClielonntId("reloncos-injelonctor.prod")
 
-  val outputKafkaTopicPrefix = "recos_injector"
+  val outputKafkaTopicPrelonfix = "reloncos_injelonctor"
 
-  val log = Logger("ProdConfig")
+  val log = Loggelonr("ProdConfig")
 
-  val recosInjectorCoreSvcsCacheDest = "/srv#/prod/local/cache/recos_metadata"
+  val reloncosInjelonctorCorelonSvcsCachelonDelonst = "/srv#/prod/local/cachelon/reloncos_melontadata"
 
-  val recosInjectorDecider = RecosInjectorDecider(
-    isProd = true,
-    dataCenter = serviceIdentifier.zone
+  val reloncosInjelonctorDeloncidelonr = ReloncosInjelonctorDeloncidelonr(
+    isProd = truelon,
+    dataCelonntelonr = selonrvicelonIdelonntifielonr.zonelon
   )
 
-} with DeployConfig
+} with DelonployConfig

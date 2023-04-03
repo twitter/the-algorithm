@@ -1,21 +1,21 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.vertical_grid_item
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.itelonm.velonrtical_grid_itelonm
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.vertical_grid_item.PivotVerticalGridItemTopicFunctionalityType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.vertical_grid_item.RecommendationVerticalGridItemTopicFunctionalityType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.vertical_grid_item.VerticalGridItemTopicFunctionalityType
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.velonrtical_grid_itelonm.PivotVelonrticalGridItelonmTopicFunctionalityTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.velonrtical_grid_itelonm.ReloncommelonndationVelonrticalGridItelonmTopicFunctionalityTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.velonrtical_grid_itelonm.VelonrticalGridItelonmTopicFunctionalityTypelon
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class VerticalGridItemTopicFunctionalityTypeMarshaller @Inject() () {
+@Singlelonton
+class VelonrticalGridItelonmTopicFunctionalityTypelonMarshallelonr @Injelonct() () {
 
-  def apply(
-    verticalGridItemTopicFunctionalityType: VerticalGridItemTopicFunctionalityType
-  ): urt.VerticalGridItemTopicFunctionalityType = verticalGridItemTopicFunctionalityType match {
-    case PivotVerticalGridItemTopicFunctionalityType =>
-      urt.VerticalGridItemTopicFunctionalityType.Pivot
-    case RecommendationVerticalGridItemTopicFunctionalityType =>
-      urt.VerticalGridItemTopicFunctionalityType.Recommendation
+  delonf apply(
+    velonrticalGridItelonmTopicFunctionalityTypelon: VelonrticalGridItelonmTopicFunctionalityTypelon
+  ): urt.VelonrticalGridItelonmTopicFunctionalityTypelon = velonrticalGridItelonmTopicFunctionalityTypelon match {
+    caselon PivotVelonrticalGridItelonmTopicFunctionalityTypelon =>
+      urt.VelonrticalGridItelonmTopicFunctionalityTypelon.Pivot
+    caselon ReloncommelonndationVelonrticalGridItelonmTopicFunctionalityTypelon =>
+      urt.VelonrticalGridItelonmTopicFunctionalityTypelon.Reloncommelonndation
   }
 }

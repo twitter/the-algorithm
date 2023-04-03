@@ -1,24 +1,24 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt
 
-import com.twitter.product_mixer.core.functional_component.marshaller.TransportMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.operation.CursorOperationMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineOperation
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.CursorOperation
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.TransportMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.opelonration.CursorOpelonrationMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.TimelonlinelonOpelonration
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.opelonration.CursorOpelonration
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class TimelineOperationMarshaller @Inject() (
-  cursorOperationMarshaller: CursorOperationMarshaller) {
+@Singlelonton
+class TimelonlinelonOpelonrationMarshallelonr @Injelonct() (
+  cursorOpelonrationMarshallelonr: CursorOpelonrationMarshallelonr) {
 
-  def apply(operation: TimelineOperation): urt.TimelineOperation = operation match {
-    case cursorOperation: CursorOperation => cursorOperationMarshaller(cursorOperation)
-    case _ =>
-      throw new UnsupportedTimelineOperationException(operation)
+  delonf apply(opelonration: TimelonlinelonOpelonration): urt.TimelonlinelonOpelonration = opelonration match {
+    caselon cursorOpelonration: CursorOpelonration => cursorOpelonrationMarshallelonr(cursorOpelonration)
+    caselon _ =>
+      throw nelonw UnsupportelondTimelonlinelonOpelonrationelonxcelonption(opelonration)
   }
 }
 
-class UnsupportedTimelineOperationException(operation: TimelineOperation)
-    extends UnsupportedOperationException(
-      "Unsupported timeline operation " + TransportMarshaller.getSimpleName(operation.getClass))
+class UnsupportelondTimelonlinelonOpelonrationelonxcelonption(opelonration: TimelonlinelonOpelonration)
+    elonxtelonnds UnsupportelondOpelonrationelonxcelonption(
+      "Unsupportelond timelonlinelon opelonration " + TransportMarshallelonr.gelontSimplelonNamelon(opelonration.gelontClass))

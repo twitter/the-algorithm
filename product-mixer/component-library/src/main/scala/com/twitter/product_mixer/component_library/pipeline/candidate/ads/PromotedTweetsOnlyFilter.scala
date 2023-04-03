@@ -1,39 +1,39 @@
-package com.twitter.product_mixer.component_library.pipeline.candidate.ads
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.pipelonlinelon.candidatelon.ads
 
-import com.twitter.product_mixer.component_library.model.candidate.ads.AdsCandidate
-import com.twitter.product_mixer.component_library.model.candidate.ads.AdsTweetCandidate
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.filter.FilterResult
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.ads.AdsCandidatelon
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.ads.AdsTwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.filtelonr.Filtelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.filtelonr.FiltelonrRelonsult
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.FiltelonrIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stitch.Stitch
 
-case class PromotedTweetsOnlyFilter[Query <: PipelineQuery](
-  underlyingFilter: Filter[Query, AdsTweetCandidate])
-    extends Filter[Query, AdsCandidate] {
+caselon class PromotelondTwelonelontsOnlyFiltelonr[Quelonry <: PipelonlinelonQuelonry](
+  undelonrlyingFiltelonr: Filtelonr[Quelonry, AdsTwelonelontCandidatelon])
+    elonxtelonnds Filtelonr[Quelonry, AdsCandidatelon] {
 
-  override val identifier: FilterIdentifier =
-    FilterIdentifier(s"PromotedTweets${underlyingFilter.identifier.name}")
+  ovelonrridelon val idelonntifielonr: FiltelonrIdelonntifielonr =
+    FiltelonrIdelonntifielonr(s"PromotelondTwelonelonts${undelonrlyingFiltelonr.idelonntifielonr.namelon}")
 
-  override def apply(
-    query: Query,
-    candidatesWithFeatures: Seq[CandidateWithFeatures[AdsCandidate]]
-  ): Stitch[FilterResult[AdsCandidate]] = {
+  ovelonrridelon delonf apply(
+    quelonry: Quelonry,
+    candidatelonsWithFelonaturelons: Selonq[CandidatelonWithFelonaturelons[AdsCandidatelon]]
+  ): Stitch[FiltelonrRelonsult[AdsCandidatelon]] = {
 
-    val adsTweetCandidates: Seq[CandidateWithFeatures[AdsTweetCandidate]] =
-      candidatesWithFeatures.flatMap {
-        case tweetCandidateWithFeatures @ CandidateWithFeatures(_: AdsTweetCandidate, _) =>
-          Some(tweetCandidateWithFeatures.asInstanceOf[CandidateWithFeatures[AdsTweetCandidate]])
-        case _ => None
+    val adsTwelonelontCandidatelons: Selonq[CandidatelonWithFelonaturelons[AdsTwelonelontCandidatelon]] =
+      candidatelonsWithFelonaturelons.flatMap {
+        caselon twelonelontCandidatelonWithFelonaturelons @ CandidatelonWithFelonaturelons(_: AdsTwelonelontCandidatelon, _) =>
+          Somelon(twelonelontCandidatelonWithFelonaturelons.asInstancelonOf[CandidatelonWithFelonaturelons[AdsTwelonelontCandidatelon]])
+        caselon _ => Nonelon
       }
 
-    underlyingFilter
-      .apply(query, adsTweetCandidates)
-      .map { filterResult =>
-        val removedSet = filterResult.removed.toSet[AdsCandidate]
-        val (removed, kept) = candidatesWithFeatures.map(_.candidate).partition(removedSet.contains)
-        FilterResult(kept, removed)
+    undelonrlyingFiltelonr
+      .apply(quelonry, adsTwelonelontCandidatelons)
+      .map { filtelonrRelonsult =>
+        val relonmovelondSelont = filtelonrRelonsult.relonmovelond.toSelont[AdsCandidatelon]
+        val (relonmovelond, kelonpt) = candidatelonsWithFelonaturelons.map(_.candidatelon).partition(relonmovelondSelont.contains)
+        FiltelonrRelonsult(kelonpt, relonmovelond)
       }
   }
 }

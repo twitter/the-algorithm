@@ -1,53 +1,53 @@
-package com.twitter.cr_mixer.param
+packagelon com.twittelonr.cr_mixelonr.param
 
-import com.twitter.timelines.configapi.BaseConfig
-import com.twitter.timelines.configapi.BaseConfigBuilder
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil
-import com.twitter.timelines.configapi.Param
+import com.twittelonr.timelonlinelons.configapi.BaselonConfig
+import com.twittelonr.timelonlinelons.configapi.BaselonConfigBuildelonr
+import com.twittelonr.timelonlinelons.configapi.FSBoundelondParam
+import com.twittelonr.timelonlinelons.configapi.FSNamelon
+import com.twittelonr.timelonlinelons.configapi.FelonaturelonSwitchOvelonrridelonUtil
+import com.twittelonr.timelonlinelons.configapi.Param
 
-object ProducerBasedUserAdGraphParams {
+objelonct ProducelonrBaselondUselonrAdGraphParams {
 
-  object MinCoOccurrenceParam
-      extends FSBoundedParam[Int](
-        name = "producer_based_user_ad_graph_min_co_occurrence",
-        default = 2,
+  objelonct MinCoOccurrelonncelonParam
+      elonxtelonnds FSBoundelondParam[Int](
+        namelon = "producelonr_baselond_uselonr_ad_graph_min_co_occurrelonncelon",
+        delonfault = 2,
         min = 0,
         max = 500
       )
 
-  object MinScoreParam
-      extends FSBoundedParam[Double](
-        name = "producer_based_user_ad_graph_min_score",
-        default = 3.0,
+  objelonct MinScorelonParam
+      elonxtelonnds FSBoundelondParam[Doublelon](
+        namelon = "producelonr_baselond_uselonr_ad_graph_min_scorelon",
+        delonfault = 3.0,
         min = 0.0,
         max = 10.0
       )
 
-  object MaxNumFollowersParam
-      extends FSBoundedParam[Int](
-        name = "producer_based_user_ad_graph_max_num_followers",
-        default = 500,
+  objelonct MaxNumFollowelonrsParam
+      elonxtelonnds FSBoundelondParam[Int](
+        namelon = "producelonr_baselond_uselonr_ad_graph_max_num_followelonrs",
+        delonfault = 500,
         min = 100,
         max = 1000
       )
 
-  val AllParams: Seq[Param[_] with FSName] =
-    Seq(MinCoOccurrenceParam, MaxNumFollowersParam, MinScoreParam)
+  val AllParams: Selonq[Param[_] with FSNamelon] =
+    Selonq(MinCoOccurrelonncelonParam, MaxNumFollowelonrsParam, MinScorelonParam)
 
-  lazy val config: BaseConfig = {
+  lazy val config: BaselonConfig = {
 
-    val intOverrides = FeatureSwitchOverrideUtil.getBoundedIntFSOverrides(
-      MinCoOccurrenceParam,
-      MaxNumFollowersParam,
+    val intOvelonrridelons = FelonaturelonSwitchOvelonrridelonUtil.gelontBoundelondIntFSOvelonrridelons(
+      MinCoOccurrelonncelonParam,
+      MaxNumFollowelonrsParam,
     )
 
-    val doubleOverrides = FeatureSwitchOverrideUtil.getBoundedDoubleFSOverrides(MinScoreParam)
+    val doublelonOvelonrridelons = FelonaturelonSwitchOvelonrridelonUtil.gelontBoundelondDoublelonFSOvelonrridelons(MinScorelonParam)
 
-    BaseConfigBuilder()
-      .set(intOverrides: _*)
-      .set(doubleOverrides: _*)
+    BaselonConfigBuildelonr()
+      .selont(intOvelonrridelons: _*)
+      .selont(doublelonOvelonrridelons: _*)
       .build()
   }
 }

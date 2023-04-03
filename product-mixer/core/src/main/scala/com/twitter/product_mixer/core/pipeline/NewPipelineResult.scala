@@ -1,22 +1,22 @@
-package com.twitter.product_mixer.core.pipeline
+packagelon com.twittelonr.product_mixelonr.corelon.pipelonlinelon
 
-import com.twitter.product_mixer.core.model.common.identifier.PipelineStepIdentifier
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.service.ExecutorResult
-import scala.collection.immutable.ListMap
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.PipelonlinelonStelonpIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.PipelonlinelonFailurelon
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.elonxeloncutorRelonsult
+import scala.collelonction.immutablelon.ListMap
 
-sealed trait NewPipelineResult[-Result] {
-  def executorResultsByPipelineStep: ListMap[PipelineStepIdentifier, ExecutorResult]
+selonalelond trait NelonwPipelonlinelonRelonsult[-Relonsult] {
+  delonf elonxeloncutorRelonsultsByPipelonlinelonStelonp: ListMap[PipelonlinelonStelonpIdelonntifielonr, elonxeloncutorRelonsult]
 }
 
-object NewPipelineResult {
-  case class Failure(
-    failure: PipelineFailure,
-    override val executorResultsByPipelineStep: ListMap[PipelineStepIdentifier, ExecutorResult])
-      extends NewPipelineResult[Any]
+objelonct NelonwPipelonlinelonRelonsult {
+  caselon class Failurelon(
+    failurelon: PipelonlinelonFailurelon,
+    ovelonrridelon val elonxeloncutorRelonsultsByPipelonlinelonStelonp: ListMap[PipelonlinelonStelonpIdelonntifielonr, elonxeloncutorRelonsult])
+      elonxtelonnds NelonwPipelonlinelonRelonsult[Any]
 
-  case class Success[Result](
-    result: Result,
-    override val executorResultsByPipelineStep: ListMap[PipelineStepIdentifier, ExecutorResult])
-      extends NewPipelineResult[Result]
+  caselon class Succelonss[Relonsult](
+    relonsult: Relonsult,
+    ovelonrridelon val elonxeloncutorRelonsultsByPipelonlinelonStelonp: ListMap[PipelonlinelonStelonpIdelonntifielonr, elonxeloncutorRelonsult])
+      elonxtelonnds NelonwPipelonlinelonRelonsult[Relonsult]
 }

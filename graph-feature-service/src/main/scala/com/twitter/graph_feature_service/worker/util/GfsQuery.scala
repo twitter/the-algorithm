@@ -1,14 +1,14 @@
-package com.twitter.graph_feature_service.worker.util
+packagelon com.twittelonr.graph_felonaturelon_selonrvicelon.workelonr.util
 
-import com.twitter.graph_feature_service.thriftscala.EdgeType
+import com.twittelonr.graph_felonaturelon_selonrvicelon.thriftscala.elondgelonTypelon
 
-sealed trait GfsQuery {
-  def edgeType: EdgeType
-  def userId: Long
+selonalelond trait GfsQuelonry {
+  delonf elondgelonTypelon: elondgelonTypelon
+  delonf uselonrId: Long
 }
 
 /**
- * Search for edges for any users to users in local partition.
+ * Selonarch for elondgelons for any uselonrs to uselonrs in local partition.
  */
-case class ToPartialQuery(edgeType: EdgeType, userId: Long) extends GfsQuery
+caselon class ToPartialQuelonry(elondgelonTypelon: elondgelonTypelon, uselonrId: Long) elonxtelonnds GfsQuelonry
 

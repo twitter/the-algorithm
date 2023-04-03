@@ -1,215 +1,215 @@
-package com.twitter.recosinjector.config
+packagelon com.twittelonr.reloncosinjelonctor.config
 
-import com.twitter.bijection.scrooge.BinaryScalaCodec
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.client.ClientRegistry
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.store.TweetCreationTimeMHStore
-import com.twitter.frigate.common.util.Finagle._
-import com.twitter.frigate.common.util.{UrlInfo, UrlInfoInjection, UrlResolver}
-import com.twitter.gizmoduck.thriftscala.{LookupContext, QueryFields, User, UserService}
-import com.twitter.hermit.store.common.{ObservedCachedReadableStore, ObservedMemcachedReadableStore}
-import com.twitter.hermit.store.gizmoduck.GizmoduckUserStore
-import com.twitter.hermit.store.tweetypie.TweetyPieStore
-import com.twitter.logging.Logger
-import com.twitter.pink_floyd.thriftscala.{ClientIdentifier, Storer}
-import com.twitter.socialgraph.thriftscala.{IdsRequest, SocialGraphService}
-import com.twitter.spam.rtf.thriftscala.SafetyLevel
-import com.twitter.stitch.socialgraph.SocialGraph
-import com.twitter.stitch.storehaus.ReadableStoreOfStitch
-import com.twitter.stitch.tweetypie.TweetyPie.TweetyPieResult
-import com.twitter.storage.client.manhattan.kv.{
-  ManhattanKVClient,
-  ManhattanKVClientMtlsParams,
-  ManhattanKVEndpointBuilder
+import com.twittelonr.bijelonction.scroogelon.BinaryScalaCodelonc
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.finaglelon.clielonnt.ClielonntRelongistry
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.frigatelon.common.storelon.TwelonelontCrelonationTimelonMHStorelon
+import com.twittelonr.frigatelon.common.util.Finaglelon._
+import com.twittelonr.frigatelon.common.util.{UrlInfo, UrlInfoInjelonction, UrlRelonsolvelonr}
+import com.twittelonr.gizmoduck.thriftscala.{LookupContelonxt, QuelonryFielonlds, Uselonr, UselonrSelonrvicelon}
+import com.twittelonr.helonrmit.storelon.common.{ObselonrvelondCachelondRelonadablelonStorelon, ObselonrvelondMelonmcachelondRelonadablelonStorelon}
+import com.twittelonr.helonrmit.storelon.gizmoduck.GizmoduckUselonrStorelon
+import com.twittelonr.helonrmit.storelon.twelonelontypielon.TwelonelontyPielonStorelon
+import com.twittelonr.logging.Loggelonr
+import com.twittelonr.pink_floyd.thriftscala.{ClielonntIdelonntifielonr, Storelonr}
+import com.twittelonr.socialgraph.thriftscala.{IdsRelonquelonst, SocialGraphSelonrvicelon}
+import com.twittelonr.spam.rtf.thriftscala.SafelontyLelonvelonl
+import com.twittelonr.stitch.socialgraph.SocialGraph
+import com.twittelonr.stitch.storelonhaus.RelonadablelonStorelonOfStitch
+import com.twittelonr.stitch.twelonelontypielon.TwelonelontyPielon.TwelonelontyPielonRelonsult
+import com.twittelonr.storagelon.clielonnt.manhattan.kv.{
+  ManhattanKVClielonnt,
+  ManhattanKVClielonntMtlsParams,
+  ManhattanKVelonndpointBuildelonr
 }
-import com.twitter.storehaus.ReadableStore
-import com.twitter.tweetypie.thriftscala.{GetTweetOptions, TweetService}
-import com.twitter.util.Future
+import com.twittelonr.storelonhaus.RelonadablelonStorelon
+import com.twittelonr.twelonelontypielon.thriftscala.{GelontTwelonelontOptions, TwelonelontSelonrvicelon}
+import com.twittelonr.util.Futurelon
 
 /*
- * Any finagle clients should not be defined as lazy. If defined lazy,
- * ClientRegistry.expAllRegisteredClientsResolved() call in init will not ensure that the clients
- * are active before thrift endpoint is active. We want the clients to be active, because zookeeper
- * resolution triggered by first request(s) might result in the request(s) failing.
+ * Any finaglelon clielonnts should not belon delonfinelond as lazy. If delonfinelond lazy,
+ * ClielonntRelongistry.elonxpAllRelongistelonrelondClielonntsRelonsolvelond() call in init will not elonnsurelon that thelon clielonnts
+ * arelon activelon belonforelon thrift elonndpoint is activelon. Welon want thelon clielonnts to belon activelon, beloncauselon zookelonelonpelonr
+ * relonsolution triggelonrelond by first relonquelonst(s) might relonsult in thelon relonquelonst(s) failing.
  */
-trait DeployConfig extends Config with CacheConfig {
-  implicit def statsReceiver: StatsReceiver
+trait DelonployConfig elonxtelonnds Config with CachelonConfig {
+  implicit delonf statsReloncelonivelonr: StatsReloncelonivelonr
 
-  def log: Logger
+  delonf log: Loggelonr
 
-  // Clients
-  val gizmoduckClient = new UserService.FinagledClient(
-    readOnlyThriftService(
+  // Clielonnts
+  val gizmoduckClielonnt = nelonw UselonrSelonrvicelon.FinaglelondClielonnt(
+    relonadOnlyThriftSelonrvicelon(
       "gizmoduck",
       "/s/gizmoduck/gizmoduck",
-      statsReceiver,
-      recosInjectorThriftClientId,
-      requestTimeout = 450.milliseconds,
-      mTLSServiceIdentifier = Some(serviceIdentifier)
+      statsReloncelonivelonr,
+      reloncosInjelonctorThriftClielonntId,
+      relonquelonstTimelonout = 450.milliselonconds,
+      mTLSSelonrvicelonIdelonntifielonr = Somelon(selonrvicelonIdelonntifielonr)
     )
   )
-  val tweetyPieClient = new TweetService.FinagledClient(
-    readOnlyThriftService(
-      "tweetypie",
-      "/s/tweetypie/tweetypie",
-      statsReceiver,
-      recosInjectorThriftClientId,
-      requestTimeout = 450.milliseconds,
-      mTLSServiceIdentifier = Some(serviceIdentifier)
+  val twelonelontyPielonClielonnt = nelonw TwelonelontSelonrvicelon.FinaglelondClielonnt(
+    relonadOnlyThriftSelonrvicelon(
+      "twelonelontypielon",
+      "/s/twelonelontypielon/twelonelontypielon",
+      statsReloncelonivelonr,
+      reloncosInjelonctorThriftClielonntId,
+      relonquelonstTimelonout = 450.milliselonconds,
+      mTLSSelonrvicelonIdelonntifielonr = Somelon(selonrvicelonIdelonntifielonr)
     )
   )
 
-  val sgsClient = new SocialGraphService.FinagledClient(
-    readOnlyThriftService(
+  val sgsClielonnt = nelonw SocialGraphSelonrvicelon.FinaglelondClielonnt(
+    relonadOnlyThriftSelonrvicelon(
       "socialgraph",
       "/s/socialgraph/socialgraph",
-      statsReceiver,
-      recosInjectorThriftClientId,
-      requestTimeout = 450.milliseconds,
-      mTLSServiceIdentifier = Some(serviceIdentifier)
+      statsReloncelonivelonr,
+      reloncosInjelonctorThriftClielonntId,
+      relonquelonstTimelonout = 450.milliselonconds,
+      mTLSSelonrvicelonIdelonntifielonr = Somelon(selonrvicelonIdelonntifielonr)
     )
   )
 
-  val pinkStoreClient = new Storer.FinagledClient(
-    readOnlyThriftService(
-      "pink_store",
-      "/s/spiderduck/pink-store",
-      statsReceiver,
-      recosInjectorThriftClientId,
-      requestTimeout = 450.milliseconds,
-      mTLSServiceIdentifier = Some(serviceIdentifier)
+  val pinkStorelonClielonnt = nelonw Storelonr.FinaglelondClielonnt(
+    relonadOnlyThriftSelonrvicelon(
+      "pink_storelon",
+      "/s/spidelonrduck/pink-storelon",
+      statsReloncelonivelonr,
+      reloncosInjelonctorThriftClielonntId,
+      relonquelonstTimelonout = 450.milliselonconds,
+      mTLSSelonrvicelonIdelonntifielonr = Somelon(selonrvicelonIdelonntifielonr)
     )
   )
 
-  // Stores
-  private val _gizmoduckStore = {
-    val queryFields: Set[QueryFields] = Set(
-      QueryFields.Discoverability,
-      QueryFields.Labels,
-      QueryFields.Safety
+  // Storelons
+  privatelon val _gizmoduckStorelon = {
+    val quelonryFielonlds: Selont[QuelonryFielonlds] = Selont(
+      QuelonryFielonlds.Discovelonrability,
+      QuelonryFielonlds.Labelonls,
+      QuelonryFielonlds.Safelonty
     )
-    val context: LookupContext = LookupContext(
-      includeDeactivated = true,
-      safetyLevel = Some(SafetyLevel.Recommendations)
+    val contelonxt: LookupContelonxt = LookupContelonxt(
+      includelonDelonactivatelond = truelon,
+      safelontyLelonvelonl = Somelon(SafelontyLelonvelonl.Reloncommelonndations)
     )
 
-    GizmoduckUserStore(
-      client = gizmoduckClient,
-      queryFields = queryFields,
-      context = context,
-      statsReceiver = statsReceiver
+    GizmoduckUselonrStorelon(
+      clielonnt = gizmoduckClielonnt,
+      quelonryFielonlds = quelonryFielonlds,
+      contelonxt = contelonxt,
+      statsReloncelonivelonr = statsReloncelonivelonr
     )
   }
 
-  override val userStore: ReadableStore[Long, User] = {
-    // memcache based cache
-    ObservedMemcachedReadableStore.fromCacheClient(
-      backingStore = _gizmoduckStore,
-      cacheClient = recosInjectorCoreSvcsCacheClient,
+  ovelonrridelon val uselonrStorelon: RelonadablelonStorelon[Long, Uselonr] = {
+    // melonmcachelon baselond cachelon
+    ObselonrvelondMelonmcachelondRelonadablelonStorelon.fromCachelonClielonnt(
+      backingStorelon = _gizmoduckStorelon,
+      cachelonClielonnt = reloncosInjelonctorCorelonSvcsCachelonClielonnt,
       ttl = 2.hours
     )(
-      valueInjection = BinaryScalaCodec(User),
-      statsReceiver = statsReceiver.scope("UserStore"),
-      keyToString = { k: Long =>
+      valuelonInjelonction = BinaryScalaCodelonc(Uselonr),
+      statsReloncelonivelonr = statsReloncelonivelonr.scopelon("UselonrStorelon"),
+      kelonyToString = { k: Long =>
         s"usri/$k"
       }
     )
   }
 
   /**
-   * TweetyPie store, used to fetch tweet objects when unavailable, and also as a source of
-   * tweet SafetyLevel filtering.
-   * Note: we do NOT cache TweetyPie calls, as it makes tweet SafetyLevel filtering less accurate.
-   * TweetyPie QPS is < 20K/cluster.
-   * More info is here:
-   * https://cgit.twitter.biz/source/tree/src/thrift/com/twitter/spam/rtf/safety_level.thrift
+   * TwelonelontyPielon storelon, uselond to felontch twelonelont objeloncts whelonn unavailablelon, and also as a sourcelon of
+   * twelonelont SafelontyLelonvelonl filtelonring.
+   * Notelon: welon do NOT cachelon TwelonelontyPielon calls, as it makelons twelonelont SafelontyLelonvelonl filtelonring lelonss accuratelon.
+   * TwelonelontyPielon QPS is < 20K/clustelonr.
+   * Morelon info is helonrelon:
+   * https://cgit.twittelonr.biz/sourcelon/trelonelon/src/thrift/com/twittelonr/spam/rtf/safelonty_lelonvelonl.thrift
    */
-  override val tweetyPieStore: ReadableStore[Long, TweetyPieResult] = {
-    val getTweetOptions = Some(
-      GetTweetOptions(
-        includeCards = true,
-        safetyLevel = Some(SafetyLevel.RecosWritePath)
+  ovelonrridelon val twelonelontyPielonStorelon: RelonadablelonStorelon[Long, TwelonelontyPielonRelonsult] = {
+    val gelontTwelonelontOptions = Somelon(
+      GelontTwelonelontOptions(
+        includelonCards = truelon,
+        safelontyLelonvelonl = Somelon(SafelontyLelonvelonl.ReloncosWritelonPath)
       )
     )
-    TweetyPieStore(
-      tweetyPieClient,
-      getTweetOptions,
-      convertExceptionsToNotFound = false // Do not suppress TweetyPie errors. Leave it to caller
+    TwelonelontyPielonStorelon(
+      twelonelontyPielonClielonnt,
+      gelontTwelonelontOptions,
+      convelonrtelonxcelonptionsToNotFound = falselon // Do not supprelonss TwelonelontyPielon elonrrors. Lelonavelon it to callelonr
     )
   }
 
-  private val _urlInfoStore = {
-    //Initialize pink store client, for parsing url
-    UrlResolver(
-      pinkStoreClient,
-      statsReceiver.scope("urlFetcher"),
-      clientId = ClientIdentifier.Recoshose
+  privatelon val _urlInfoStorelon = {
+    //Initializelon pink storelon clielonnt, for parsing url
+    UrlRelonsolvelonr(
+      pinkStorelonClielonnt,
+      statsReloncelonivelonr.scopelon("urlFelontchelonr"),
+      clielonntId = ClielonntIdelonntifielonr.Reloncoshoselon
     )
   }
 
-  override val urlInfoStore: ReadableStore[String, UrlInfo] = {
-    // memcache based cache
-    val memcachedStore = ObservedMemcachedReadableStore.fromCacheClient(
-      backingStore = _urlInfoStore,
-      cacheClient = recosInjectorCoreSvcsCacheClient,
+  ovelonrridelon val urlInfoStorelon: RelonadablelonStorelon[String, UrlInfo] = {
+    // melonmcachelon baselond cachelon
+    val melonmcachelondStorelon = ObselonrvelondMelonmcachelondRelonadablelonStorelon.fromCachelonClielonnt(
+      backingStorelon = _urlInfoStorelon,
+      cachelonClielonnt = reloncosInjelonctorCorelonSvcsCachelonClielonnt,
       ttl = 2.hours
     )(
-      valueInjection = UrlInfoInjection,
-      statsReceiver = statsReceiver.scope("UrlInfoStore"),
-      keyToString = { k: String =>
+      valuelonInjelonction = UrlInfoInjelonction,
+      statsReloncelonivelonr = statsReloncelonivelonr.scopelon("UrlInfoStorelon"),
+      kelonyToString = { k: String =>
         s"uisri/$k"
       }
     )
 
-    ObservedCachedReadableStore.from(
-      memcachedStore,
-      ttl = 1.minutes,
-      maxKeys = 1e5.toInt,
-      windowSize = 10000L,
-      cacheName = "url_store_in_proc_cache"
-    )(statsReceiver.scope("url_store_in_proc_cache"))
+    ObselonrvelondCachelondRelonadablelonStorelon.from(
+      melonmcachelondStorelon,
+      ttl = 1.minutelons,
+      maxKelonys = 1elon5.toInt,
+      windowSizelon = 10000L,
+      cachelonNamelon = "url_storelon_in_proc_cachelon"
+    )(statsReloncelonivelonr.scopelon("url_storelon_in_proc_cachelon"))
   }
 
-  override val socialGraphIdStore = ReadableStoreOfStitch { idsRequest: IdsRequest =>
-    SocialGraph(sgsClient).ids(idsRequest)
+  ovelonrridelon val socialGraphIdStorelon = RelonadablelonStorelonOfStitch { idsRelonquelonst: IdsRelonquelonst =>
+    SocialGraph(sgsClielonnt).ids(idsRelonquelonst)
   }
 
   /**
-   * MH Store for updating the last time user created a tweet
+   * MH Storelon for updating thelon last timelon uselonr crelonatelond a twelonelont
    */
-  val tweetCreationStore: TweetCreationTimeMHStore = {
-    val client = ManhattanKVClient(
-      appId = "recos_tweet_creation_info",
-      dest = "/s/manhattan/omega.native-thrift",
-      mtlsParams = ManhattanKVClientMtlsParams(serviceIdentifier)
+  val twelonelontCrelonationStorelon: TwelonelontCrelonationTimelonMHStorelon = {
+    val clielonnt = ManhattanKVClielonnt(
+      appId = "reloncos_twelonelont_crelonation_info",
+      delonst = "/s/manhattan/omelonga.nativelon-thrift",
+      mtlsParams = ManhattanKVClielonntMtlsParams(selonrvicelonIdelonntifielonr)
     )
 
-    val endpoint = ManhattanKVEndpointBuilder(client)
-      .defaultMaxTimeout(700.milliseconds)
-      .statsReceiver(
-        statsReceiver
-          .scope(serviceIdentifier.zone)
-          .scope(serviceIdentifier.environment)
-          .scope("recos_injector_tweet_creation_info_store")
+    val elonndpoint = ManhattanKVelonndpointBuildelonr(clielonnt)
+      .delonfaultMaxTimelonout(700.milliselonconds)
+      .statsReloncelonivelonr(
+        statsReloncelonivelonr
+          .scopelon(selonrvicelonIdelonntifielonr.zonelon)
+          .scopelon(selonrvicelonIdelonntifielonr.elonnvironmelonnt)
+          .scopelon("reloncos_injelonctor_twelonelont_crelonation_info_storelon")
       )
       .build()
 
-    val dataset = if (serviceIdentifier.environment == "prod") {
-      "recos_injector_tweet_creation_info"
-    } else {
-      "recos_injector_tweet_creation_info_staging"
+    val dataselont = if (selonrvicelonIdelonntifielonr.elonnvironmelonnt == "prod") {
+      "reloncos_injelonctor_twelonelont_crelonation_info"
+    } elonlselon {
+      "reloncos_injelonctor_twelonelont_crelonation_info_staging"
     }
 
-    new TweetCreationTimeMHStore(
-      cluster = serviceIdentifier.zone,
-      endpoint = endpoint,
-      dataset = dataset,
-      writeTtl = Some(14.days),
-      statsReceiver.scope("recos_injector_tweet_creation_info_store")
+    nelonw TwelonelontCrelonationTimelonMHStorelon(
+      clustelonr = selonrvicelonIdelonntifielonr.zonelon,
+      elonndpoint = elonndpoint,
+      dataselont = dataselont,
+      writelonTtl = Somelon(14.days),
+      statsReloncelonivelonr.scopelon("reloncos_injelonctor_twelonelont_crelonation_info_storelon")
     )
   }
 
-  // wait for all serversets to populate
-  override def init(): Future[Unit] = ClientRegistry.expAllRegisteredClientsResolved().unit
+  // wait for all selonrvelonrselonts to populatelon
+  ovelonrridelon delonf init(): Futurelon[Unit] = ClielonntRelongistry.elonxpAllRelongistelonrelondClielonntsRelonsolvelond().unit
 }

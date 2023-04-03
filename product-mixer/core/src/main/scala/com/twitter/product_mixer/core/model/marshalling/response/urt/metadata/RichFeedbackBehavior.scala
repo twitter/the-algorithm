@@ -1,15 +1,15 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.metadata
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata
 
-sealed trait RichFeedbackBehavior
+selonalelond trait RichFelonelondbackBelonhavior
 
-case class RichFeedbackBehaviorReportList(listId: Long, userId: Long) extends RichFeedbackBehavior
-case class RichFeedbackBehaviorBlockUser(userId: Long) extends RichFeedbackBehavior
-case class RichFeedbackBehaviorToggleFollowTopic(topicId: Long) extends RichFeedbackBehavior
-case class RichFeedbackBehaviorToggleFollowTopicV2(topicId: String) extends RichFeedbackBehavior
-case class RichFeedbackBehaviorToggleMuteList(listId: Long) extends RichFeedbackBehavior
-case class RichFeedbackBehaviorMarkNotInterestedTopic(topicId: String) extends RichFeedbackBehavior
-case class RichFeedbackBehaviorReplyPinState(replyPinState: ReplyPinState)
-    extends RichFeedbackBehavior
-case class RichFeedbackBehaviorToggleMuteUser(userId: Long) extends RichFeedbackBehavior
-case class RichFeedbackBehaviorToggleFollowUser(userId: Long) extends RichFeedbackBehavior
-case class RichFeedbackBehaviorReportTweet(entryId: Long) extends RichFeedbackBehavior
+caselon class RichFelonelondbackBelonhaviorRelonportList(listId: Long, uselonrId: Long) elonxtelonnds RichFelonelondbackBelonhavior
+caselon class RichFelonelondbackBelonhaviorBlockUselonr(uselonrId: Long) elonxtelonnds RichFelonelondbackBelonhavior
+caselon class RichFelonelondbackBelonhaviorTogglelonFollowTopic(topicId: Long) elonxtelonnds RichFelonelondbackBelonhavior
+caselon class RichFelonelondbackBelonhaviorTogglelonFollowTopicV2(topicId: String) elonxtelonnds RichFelonelondbackBelonhavior
+caselon class RichFelonelondbackBelonhaviorTogglelonMutelonList(listId: Long) elonxtelonnds RichFelonelondbackBelonhavior
+caselon class RichFelonelondbackBelonhaviorMarkNotIntelonrelonstelondTopic(topicId: String) elonxtelonnds RichFelonelondbackBelonhavior
+caselon class RichFelonelondbackBelonhaviorRelonplyPinStatelon(relonplyPinStatelon: RelonplyPinStatelon)
+    elonxtelonnds RichFelonelondbackBelonhavior
+caselon class RichFelonelondbackBelonhaviorTogglelonMutelonUselonr(uselonrId: Long) elonxtelonnds RichFelonelondbackBelonhavior
+caselon class RichFelonelondbackBelonhaviorTogglelonFollowUselonr(uselonrId: Long) elonxtelonnds RichFelonelondbackBelonhavior
+caselon class RichFelonelondbackBelonhaviorRelonportTwelonelont(elonntryId: Long) elonxtelonnds RichFelonelondbackBelonhavior

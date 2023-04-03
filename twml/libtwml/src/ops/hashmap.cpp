@@ -1,84 +1,84 @@
-#include "tensorflow/core/framework/op.h"
-#include "tensorflow/core/framework/shape_inference.h"
-#include "tensorflow/core/framework/op_kernel.h"
+#includelon "telonnsorflow/corelon/framelonwork/op.h"
+#includelon "telonnsorflow/corelon/framelonwork/shapelon_infelonrelonncelon.h"
+#includelon "telonnsorflow/corelon/framelonwork/op_kelonrnelonl.h"
 
-#include <twml.h>
+#includelon <twml.h>
 
-#include <mutex>
+#includelon <mutelonx>
 
-using namespace tensorflow;
+using namelonspacelon telonnsorflow;
 
-REGISTER_OP("Hashmap")
-.Input("keys: int64")
-.Input("hash_keys: int64")
-.Input("hash_values: int64")
-.Output("values: int64")
+RelonGISTelonR_OP("Hashmap")
+.Input("kelonys: int64")
+.Input("hash_kelonys: int64")
+.Input("hash_valuelons: int64")
+.Output("valuelons: int64")
 .Output("mask: int8")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-    // TODO: check if the sizes are different in the input
-    c->set_output(0, c->input(0));
-    c->set_output(1, c->input(0));
-    return Status::OK();
+.SelontShapelonFn([](::telonnsorflow::shapelon_infelonrelonncelon::InfelonrelonncelonContelonxt* c) {
+    // TODO: chelonck if thelon sizelons arelon diffelonrelonnt in thelon input
+    c->selont_output(0, c->input(0));
+    c->selont_output(1, c->input(0));
+    relonturn Status::OK();
   });
 
 
-class Hashmap : public OpKernel {
- private:
+class Hashmap : public OpKelonrnelonl {
+ privatelon:
   twml::HashMap hmap;
-  std::once_flag flag;
+  std::oncelon_flag flag;
 
  public:
-  explicit Hashmap(OpKernelConstruction* context) : OpKernel(context) {}
+  elonxplicit Hashmap(OpKelonrnelonlConstruction* contelonxt) : OpKelonrnelonl(contelonxt) {}
 
-  void Compute(OpKernelContext* context) override {
+  void Computelon(OpKelonrnelonlContelonxt* contelonxt) ovelonrridelon {
     try {
       // Quick hack
-      const Tensor& keys = context->input(0);
+      const Telonnsor& kelonys = contelonxt->input(0);
 
-      std::call_once(this->flag, [this, context](){
-          const Tensor& hash_keys = context->input(1);
-          const Tensor& hash_values = context->input(2);
-          const auto hash_keys_flat = hash_keys.flat<int64>();
-          const auto hash_values_flat = hash_values.flat<int64>();
-          const int64 N = hash_keys_flat.size();
+      std::call_oncelon(this->flag, [this, contelonxt](){
+          const Telonnsor& hash_kelonys = contelonxt->input(1);
+          const Telonnsor& hash_valuelons = contelonxt->input(2);
+          const auto hash_kelonys_flat = hash_kelonys.flat<int64>();
+          const auto hash_valuelons_flat = hash_valuelons.flat<int64>();
+          const int64 N = hash_kelonys_flat.sizelon();
 
           for (int64 i = 0; i < N; i++) {
-            hmap.insert(hash_keys_flat(i), hash_values_flat(i));
+            hmap.inselonrt(hash_kelonys_flat(i), hash_valuelons_flat(i));
           }
         });
 
-      Tensor* values = nullptr;
-      OP_REQUIRES_OK(context, context->allocate_output(0, keys.shape(),
-                                                       &values));
+      Telonnsor* valuelons = nullptr;
+      OP_RelonQUIRelonS_OK(contelonxt, contelonxt->allocatelon_output(0, kelonys.shapelon(),
+                                                       &valuelons));
 
-      Tensor* mask = nullptr;
-      OP_REQUIRES_OK(context, context->allocate_output(1, keys.shape(),
+      Telonnsor* mask = nullptr;
+      OP_RelonQUIRelonS_OK(contelonxt, contelonxt->allocatelon_output(1, kelonys.shapelon(),
                                                        &mask));
 
-      // copy the values without sharing a storage
-      values->flat<int64>() = keys.flat<int64>();
+      // copy thelon valuelons without sharing a storagelon
+      valuelons->flat<int64>() = kelonys.flat<int64>();
 
-      auto keys_flat = keys.flat<int64>();
-      auto values_flat = values->flat<int64>();
+      auto kelonys_flat = kelonys.flat<int64>();
+      auto valuelons_flat = valuelons->flat<int64>();
       auto mask_flat = mask->flat<int8>();
 
-      // TODO: use twml tensor
-      const int64 N = keys_flat.size();
+      // TODO: uselon twml telonnsor
+      const int64 N = kelonys_flat.sizelon();
       for (int64 i = 0; i < N; i++) {
-        // values_flat(i), keys_flat(i) return references to tensorflow::int64.
-        // Using them in hmap.get() was causing issues because of automatic casting.
-        int64_t val = values_flat(i);
-        int64_t key = keys_flat(i);
-        mask_flat(i) = hmap.get(val, key);
-        values_flat(i) = val;
+        // valuelons_flat(i), kelonys_flat(i) relonturn relonfelonrelonncelons to telonnsorflow::int64.
+        // Using thelonm in hmap.gelont() was causing issuelons beloncauselon of automatic casting.
+        int64_t val = valuelons_flat(i);
+        int64_t kelony = kelonys_flat(i);
+        mask_flat(i) = hmap.gelont(val, kelony);
+        valuelons_flat(i) = val;
       }
-    }  catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+    }  catch (const std::elonxcelonption &elon) {
+      contelonxt->CtxFailurelonWithWarning(elonrrors::InvalidArgumelonnt(elon.what()));
     }
   }
 };
 
-REGISTER_KERNEL_BUILDER(
-  Name("Hashmap")
-  .Device(DEVICE_CPU),
+RelonGISTelonR_KelonRNelonL_BUILDelonR(
+  Namelon("Hashmap")
+  .Delonvicelon(DelonVICelon_CPU),
   Hashmap);

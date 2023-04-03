@@ -1,49 +1,49 @@
-package com.twitter.product_mixer.component_library.premarshaller.urt.builder
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.prelonmarshallelonr.urt.buildelonr
 
-import com.twitter.product_mixer.component_library.model.cursor.UrtUnorderedExcludeIdsCursor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.BottomCursor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.CursorType
-import com.twitter.product_mixer.core.pipeline.HasPipelineCursor
-import com.twitter.product_mixer.core.pipeline.PipelineCursorSerializer
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.configapi.Param
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.cursor.UrtUnordelonrelondelonxcludelonIdsCursor
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.Timelonlinelonelonntry
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.opelonration.BottomCursor
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.opelonration.CursorTypelon
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.HasPipelonlinelonCursor
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonCursorSelonrializelonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.timelonlinelons.configapi.Param
 
-trait BaseUnorderedExcludeIdsBottomCursorBuilder
-    extends UrtCursorBuilder[
-      PipelineQuery with HasPipelineCursor[UrtUnorderedExcludeIdsCursor]
+trait BaselonUnordelonrelondelonxcludelonIdsBottomCursorBuildelonr
+    elonxtelonnds UrtCursorBuildelonr[
+      PipelonlinelonQuelonry with HasPipelonlinelonCursor[UrtUnordelonrelondelonxcludelonIdsCursor]
     ] {
 
-  def excludedIdsMaxLengthParam: Param[Int]
+  delonf elonxcludelondIdsMaxLelonngthParam: Param[Int]
 
-  def excludeEntriesCollector(entries: Seq[TimelineEntry]): Seq[Long]
+  delonf elonxcludelonelonntrielonsCollelonctor(elonntrielons: Selonq[Timelonlinelonelonntry]): Selonq[Long]
 
-  def serializer: PipelineCursorSerializer[UrtUnorderedExcludeIdsCursor]
+  delonf selonrializelonr: PipelonlinelonCursorSelonrializelonr[UrtUnordelonrelondelonxcludelonIdsCursor]
 
-  override val cursorType: CursorType = BottomCursor
+  ovelonrridelon val cursorTypelon: CursorTypelon = BottomCursor
 
-  override def cursorValue(
-    query: PipelineQuery with HasPipelineCursor[UrtUnorderedExcludeIdsCursor],
-    entries: Seq[TimelineEntry]
+  ovelonrridelon delonf cursorValuelon(
+    quelonry: PipelonlinelonQuelonry with HasPipelonlinelonCursor[UrtUnordelonrelondelonxcludelonIdsCursor],
+    elonntrielons: Selonq[Timelonlinelonelonntry]
   ): String = {
-    val excludedIdsMaxLength = query.params(excludedIdsMaxLengthParam)
-    assert(excludedIdsMaxLength > 0, "Excluded IDs max length must be greater than zero")
+    val elonxcludelondIdsMaxLelonngth = quelonry.params(elonxcludelondIdsMaxLelonngthParam)
+    asselonrt(elonxcludelondIdsMaxLelonngth > 0, "elonxcludelond IDs max lelonngth must belon grelonatelonr than zelonro")
 
-    val newEntryIds = excludeEntriesCollector(entries)
-    assert(
-      newEntryIds.length < excludedIdsMaxLength,
-      "New entry IDs length must be smaller than excluded IDs max length")
+    val nelonwelonntryIds = elonxcludelonelonntrielonsCollelonctor(elonntrielons)
+    asselonrt(
+      nelonwelonntryIds.lelonngth < elonxcludelondIdsMaxLelonngth,
+      "Nelonw elonntry IDs lelonngth must belon smallelonr than elonxcludelond IDs max lelonngth")
 
-    val excludedIds = query.pipelineCursor
-      .map(_.excludedIds ++ newEntryIds)
-      .getOrElse(newEntryIds)
-      .takeRight(excludedIdsMaxLength)
+    val elonxcludelondIds = quelonry.pipelonlinelonCursor
+      .map(_.elonxcludelondIds ++ nelonwelonntryIds)
+      .gelontOrelonlselon(nelonwelonntryIds)
+      .takelonRight(elonxcludelondIdsMaxLelonngth)
 
-    val cursor = UrtUnorderedExcludeIdsCursor(
-      initialSortIndex = nextBottomInitialSortIndex(query, entries),
-      excludedIds = excludedIds
+    val cursor = UrtUnordelonrelondelonxcludelonIdsCursor(
+      initialSortIndelonx = nelonxtBottomInitialSortIndelonx(quelonry, elonntrielons),
+      elonxcludelondIds = elonxcludelondIds
     )
 
-    serializer.serializeCursor(cursor)
+    selonrializelonr.selonrializelonCursor(cursor)
   }
 }

@@ -1,92 +1,92 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.tweet
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.itelonm.twelonelont
 
-import com.twitter.product_mixer.component_library.decorator.urt.builder.contextual_ref.ContextualTweetRefBuilder
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.tweet.TweetCandidateUrtItemBuilder.TweetClientEventInfoElement
-import com.twitter.product_mixer.component_library.model.candidate.BaseTweetCandidate
-import com.twitter.product_mixer.component_library.model.candidate.IsPinnedFeature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.item.tweet.BaseEntryIdToReplaceBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.item.tweet.BaseTimelinesScoreInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.item.tweet.BaseTweetHighlightsBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseUrlBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.social_context.BaseSocialContextBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.conversation_annotation.ConversationAnnotation
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.forward_pivot.ForwardPivot
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tombstone.TombstoneInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet.Tweet
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet.TweetDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet.TweetItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Badge
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.PrerollMetadata
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.PromotedMetadata
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.contelonxtual_relonf.ContelonxtualTwelonelontRelonfBuildelonr
+import com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.itelonm.twelonelont.TwelonelontCandidatelonUrtItelonmBuildelonr.TwelonelontClielonntelonvelonntInfoelonlelonmelonnt
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.BaselonTwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.IsPinnelondFelonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.CandidatelonUrtelonntryBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.itelonm.twelonelont.BaselonelonntryIdToRelonplacelonBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.itelonm.twelonelont.BaselonTimelonlinelonsScorelonInfoBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.itelonm.twelonelont.BaselonTwelonelontHighlightsBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.melontadata.BaselonClielonntelonvelonntInfoBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.melontadata.BaselonFelonelondbackActionInfoBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.melontadata.BaselonUrlBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.social_contelonxt.BaselonSocialContelonxtBuildelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.convelonrsation_annotation.ConvelonrsationAnnotation
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.forward_pivot.ForwardPivot
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.tombstonelon.TombstonelonInfo
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.twelonelont.Twelonelont
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.twelonelont.TwelonelontDisplayTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.twelonelont.TwelonelontItelonm
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.Badgelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.promotelond.PrelonrollMelontadata
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.promotelond.PromotelondMelontadata
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
-case object TweetCandidateUrtItemBuilder {
-  val TweetClientEventInfoElement = "tweet"
+caselon objelonct TwelonelontCandidatelonUrtItelonmBuildelonr {
+  val TwelonelontClielonntelonvelonntInfoelonlelonmelonnt = "twelonelont"
 }
 
-case class TweetCandidateUrtItemBuilder[Query <: PipelineQuery, Candidate <: BaseTweetCandidate](
-  clientEventInfoBuilder: BaseClientEventInfoBuilder[Query, Candidate],
-  displayType: TweetDisplayType = Tweet,
-  entryIdToReplaceBuilder: Option[BaseEntryIdToReplaceBuilder[Query, Candidate]] = None,
-  socialContextBuilder: Option[BaseSocialContextBuilder[Query, Candidate]] = None,
-  highlightsBuilder: Option[BaseTweetHighlightsBuilder[Query, Candidate]] = None,
-  innerTombstoneInfo: Option[TombstoneInfo] = None,
-  timelinesScoreInfoBuilder: Option[BaseTimelinesScoreInfoBuilder[Query, Candidate]] = None,
-  hasModeratedReplies: Option[Boolean] = None,
-  forwardPivot: Option[ForwardPivot] = None,
-  innerForwardPivot: Option[ForwardPivot] = None,
-  feedbackActionInfoBuilder: Option[BaseFeedbackActionInfoBuilder[Query, Candidate]] = None,
-  promotedMetadata: Option[PromotedMetadata] = None,
-  conversationAnnotation: Option[ConversationAnnotation] = None,
-  contextualTweetRefBuilder: Option[ContextualTweetRefBuilder[Candidate]] = None,
-  prerollMetadata: Option[PrerollMetadata] = None,
-  replyBadge: Option[Badge] = None,
-  destinationBuilder: Option[BaseUrlBuilder[Query, Candidate]] = None)
-    extends CandidateUrtEntryBuilder[Query, Candidate, TweetItem] {
+caselon class TwelonelontCandidatelonUrtItelonmBuildelonr[Quelonry <: PipelonlinelonQuelonry, Candidatelon <: BaselonTwelonelontCandidatelon](
+  clielonntelonvelonntInfoBuildelonr: BaselonClielonntelonvelonntInfoBuildelonr[Quelonry, Candidatelon],
+  displayTypelon: TwelonelontDisplayTypelon = Twelonelont,
+  elonntryIdToRelonplacelonBuildelonr: Option[BaselonelonntryIdToRelonplacelonBuildelonr[Quelonry, Candidatelon]] = Nonelon,
+  socialContelonxtBuildelonr: Option[BaselonSocialContelonxtBuildelonr[Quelonry, Candidatelon]] = Nonelon,
+  highlightsBuildelonr: Option[BaselonTwelonelontHighlightsBuildelonr[Quelonry, Candidatelon]] = Nonelon,
+  innelonrTombstonelonInfo: Option[TombstonelonInfo] = Nonelon,
+  timelonlinelonsScorelonInfoBuildelonr: Option[BaselonTimelonlinelonsScorelonInfoBuildelonr[Quelonry, Candidatelon]] = Nonelon,
+  hasModelonratelondRelonplielons: Option[Boolelonan] = Nonelon,
+  forwardPivot: Option[ForwardPivot] = Nonelon,
+  innelonrForwardPivot: Option[ForwardPivot] = Nonelon,
+  felonelondbackActionInfoBuildelonr: Option[BaselonFelonelondbackActionInfoBuildelonr[Quelonry, Candidatelon]] = Nonelon,
+  promotelondMelontadata: Option[PromotelondMelontadata] = Nonelon,
+  convelonrsationAnnotation: Option[ConvelonrsationAnnotation] = Nonelon,
+  contelonxtualTwelonelontRelonfBuildelonr: Option[ContelonxtualTwelonelontRelonfBuildelonr[Candidatelon]] = Nonelon,
+  prelonrollMelontadata: Option[PrelonrollMelontadata] = Nonelon,
+  relonplyBadgelon: Option[Badgelon] = Nonelon,
+  delonstinationBuildelonr: Option[BaselonUrlBuildelonr[Quelonry, Candidatelon]] = Nonelon)
+    elonxtelonnds CandidatelonUrtelonntryBuildelonr[Quelonry, Candidatelon, TwelonelontItelonm] {
 
-  override def apply(
-    pipelineQuery: Query,
-    tweetCandidate: Candidate,
-    candidateFeatures: FeatureMap
-  ): TweetItem = {
-    val isPinned = candidateFeatures.getTry(IsPinnedFeature).toOption
+  ovelonrridelon delonf apply(
+    pipelonlinelonQuelonry: Quelonry,
+    twelonelontCandidatelon: Candidatelon,
+    candidatelonFelonaturelons: FelonaturelonMap
+  ): TwelonelontItelonm = {
+    val isPinnelond = candidatelonFelonaturelons.gelontTry(IsPinnelondFelonaturelon).toOption
 
-    TweetItem(
-      id = tweetCandidate.id,
-      entryNamespace = TweetItem.TweetEntryNamespace,
-      sortIndex = None, // Sort indexes are automatically set in the domain marshaller phase
-      clientEventInfo = clientEventInfoBuilder(
-        pipelineQuery,
-        tweetCandidate,
-        candidateFeatures,
-        Some(TweetClientEventInfoElement)),
-      feedbackActionInfo = feedbackActionInfoBuilder.flatMap(
-        _.apply(pipelineQuery, tweetCandidate, candidateFeatures)),
-      isPinned = isPinned,
-      entryIdToReplace =
-        entryIdToReplaceBuilder.flatMap(_.apply(pipelineQuery, tweetCandidate, candidateFeatures)),
-      socialContext =
-        socialContextBuilder.flatMap(_.apply(pipelineQuery, tweetCandidate, candidateFeatures)),
+    TwelonelontItelonm(
+      id = twelonelontCandidatelon.id,
+      elonntryNamelonspacelon = TwelonelontItelonm.TwelonelontelonntryNamelonspacelon,
+      sortIndelonx = Nonelon, // Sort indelonxelons arelon automatically selont in thelon domain marshallelonr phaselon
+      clielonntelonvelonntInfo = clielonntelonvelonntInfoBuildelonr(
+        pipelonlinelonQuelonry,
+        twelonelontCandidatelon,
+        candidatelonFelonaturelons,
+        Somelon(TwelonelontClielonntelonvelonntInfoelonlelonmelonnt)),
+      felonelondbackActionInfo = felonelondbackActionInfoBuildelonr.flatMap(
+        _.apply(pipelonlinelonQuelonry, twelonelontCandidatelon, candidatelonFelonaturelons)),
+      isPinnelond = isPinnelond,
+      elonntryIdToRelonplacelon =
+        elonntryIdToRelonplacelonBuildelonr.flatMap(_.apply(pipelonlinelonQuelonry, twelonelontCandidatelon, candidatelonFelonaturelons)),
+      socialContelonxt =
+        socialContelonxtBuildelonr.flatMap(_.apply(pipelonlinelonQuelonry, twelonelontCandidatelon, candidatelonFelonaturelons)),
       highlights =
-        highlightsBuilder.flatMap(_.apply(pipelineQuery, tweetCandidate, candidateFeatures)),
-      displayType = displayType,
-      innerTombstoneInfo = innerTombstoneInfo,
-      timelinesScoreInfo = timelinesScoreInfoBuilder
-        .flatMap(_.apply(pipelineQuery, tweetCandidate, candidateFeatures)),
-      hasModeratedReplies = hasModeratedReplies,
+        highlightsBuildelonr.flatMap(_.apply(pipelonlinelonQuelonry, twelonelontCandidatelon, candidatelonFelonaturelons)),
+      displayTypelon = displayTypelon,
+      innelonrTombstonelonInfo = innelonrTombstonelonInfo,
+      timelonlinelonsScorelonInfo = timelonlinelonsScorelonInfoBuildelonr
+        .flatMap(_.apply(pipelonlinelonQuelonry, twelonelontCandidatelon, candidatelonFelonaturelons)),
+      hasModelonratelondRelonplielons = hasModelonratelondRelonplielons,
       forwardPivot = forwardPivot,
-      innerForwardPivot = innerForwardPivot,
-      promotedMetadata = promotedMetadata,
-      conversationAnnotation = conversationAnnotation,
-      contextualTweetRef = contextualTweetRefBuilder.flatMap(_.apply(tweetCandidate)),
-      prerollMetadata = prerollMetadata,
-      replyBadge = replyBadge,
-      destination =
-        destinationBuilder.map(_.apply(pipelineQuery, tweetCandidate, candidateFeatures))
+      innelonrForwardPivot = innelonrForwardPivot,
+      promotelondMelontadata = promotelondMelontadata,
+      convelonrsationAnnotation = convelonrsationAnnotation,
+      contelonxtualTwelonelontRelonf = contelonxtualTwelonelontRelonfBuildelonr.flatMap(_.apply(twelonelontCandidatelon)),
+      prelonrollMelontadata = prelonrollMelontadata,
+      relonplyBadgelon = relonplyBadgelon,
+      delonstination =
+        delonstinationBuildelonr.map(_.apply(pipelonlinelonQuelonry, twelonelontCandidatelon, candidatelonFelonaturelons))
     )
   }
 }

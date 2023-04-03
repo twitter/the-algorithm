@@ -1,58 +1,58 @@
-package com.twitter.search.earlybird.index;
+packagelon com.twittelonr.selonarch.elonarlybird.indelonx;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 
-import org.apache.lucene.store.Directory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apachelon.lucelonnelon.storelon.Direlonctory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.partitioning.base.Segment;
-import com.twitter.search.earlybird.EarlybirdIndexConfig;
-import com.twitter.search.earlybird.partition.SearchIndexingMetricSet;
-import com.twitter.search.earlybird.partition.SegmentSyncInfo;
-import com.twitter.search.earlybird.stats.EarlybirdSearcherStats;
+import com.twittelonr.common.util.Clock;
+import com.twittelonr.selonarch.common.partitioning.baselon.Selongmelonnt;
+import com.twittelonr.selonarch.elonarlybird.elonarlybirdIndelonxConfig;
+import com.twittelonr.selonarch.elonarlybird.partition.SelonarchIndelonxingMelontricSelont;
+import com.twittelonr.selonarch.elonarlybird.partition.SelongmelonntSyncInfo;
+import com.twittelonr.selonarch.elonarlybird.stats.elonarlybirdSelonarchelonrStats;
 
-public class EarlybirdSegmentFactory {
-  private static final Logger LOG = LoggerFactory.getLogger(EarlybirdSegmentFactory.class);
+public class elonarlybirdSelongmelonntFactory {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(elonarlybirdSelongmelonntFactory.class);
 
-  private final EarlybirdIndexConfig earlybirdIndexConfig;
-  private final SearchIndexingMetricSet searchIndexingMetricSet;
-  private final EarlybirdSearcherStats searcherStats;
-  private Clock clock;
+  privatelon final elonarlybirdIndelonxConfig elonarlybirdIndelonxConfig;
+  privatelon final SelonarchIndelonxingMelontricSelont selonarchIndelonxingMelontricSelont;
+  privatelon final elonarlybirdSelonarchelonrStats selonarchelonrStats;
+  privatelon Clock clock;
 
-  public EarlybirdSegmentFactory(
-      EarlybirdIndexConfig earlybirdIndexConfig,
-      SearchIndexingMetricSet searchIndexingMetricSet,
-      EarlybirdSearcherStats searcherStats,
+  public elonarlybirdSelongmelonntFactory(
+      elonarlybirdIndelonxConfig elonarlybirdIndelonxConfig,
+      SelonarchIndelonxingMelontricSelont selonarchIndelonxingMelontricSelont,
+      elonarlybirdSelonarchelonrStats selonarchelonrStats,
       Clock clock) {
-    this.earlybirdIndexConfig = earlybirdIndexConfig;
-    this.searchIndexingMetricSet = searchIndexingMetricSet;
-    this.searcherStats = searcherStats;
+    this.elonarlybirdIndelonxConfig = elonarlybirdIndelonxConfig;
+    this.selonarchIndelonxingMelontricSelont = selonarchIndelonxingMelontricSelont;
+    this.selonarchelonrStats = selonarchelonrStats;
     this.clock = clock;
   }
 
-  public EarlybirdIndexConfig getEarlybirdIndexConfig() {
-    return earlybirdIndexConfig;
+  public elonarlybirdIndelonxConfig gelontelonarlybirdIndelonxConfig() {
+    relonturn elonarlybirdIndelonxConfig;
   }
 
   /**
-   * Creates a new earlybird segment.
+   * Crelonatelons a nelonw elonarlybird selongmelonnt.
    */
-  public EarlybirdSegment newEarlybirdSegment(Segment segment, SegmentSyncInfo segmentSyncInfo)
-      throws IOException {
-    Directory dir = earlybirdIndexConfig.newLuceneDirectory(segmentSyncInfo);
+  public elonarlybirdSelongmelonnt nelonwelonarlybirdSelongmelonnt(Selongmelonnt selongmelonnt, SelongmelonntSyncInfo selongmelonntSyncInfo)
+      throws IOelonxcelonption {
+    Direlonctory dir = elonarlybirdIndelonxConfig.nelonwLucelonnelonDirelonctory(selongmelonntSyncInfo);
 
-    LOG.info("Creating EarlybirdSegment on " + dir.toString());
+    LOG.info("Crelonating elonarlybirdSelongmelonnt on " + dir.toString());
 
-    return new EarlybirdSegment(
-        segment.getSegmentName(),
-        segment.getTimeSliceID(),
-        segment.getMaxSegmentSize(),
+    relonturn nelonw elonarlybirdSelongmelonnt(
+        selongmelonnt.gelontSelongmelonntNamelon(),
+        selongmelonnt.gelontTimelonSlicelonID(),
+        selongmelonnt.gelontMaxSelongmelonntSizelon(),
         dir,
-        earlybirdIndexConfig,
-        searchIndexingMetricSet,
-        searcherStats,
+        elonarlybirdIndelonxConfig,
+        selonarchIndelonxingMelontricSelont,
+        selonarchelonrStats,
         clock);
   }
 }

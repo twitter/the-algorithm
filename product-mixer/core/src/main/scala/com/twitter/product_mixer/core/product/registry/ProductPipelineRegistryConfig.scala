@@ -1,9 +1,9 @@
-package com.twitter.product_mixer.core.product.registry
+packagelon com.twittelonr.product_mixelonr.corelon.product.relongistry
 
-import com.twitter.product_mixer.core.model.marshalling.request.Request
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.product.ProductPipelineConfig
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.Relonquelonst
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.product.ProductPipelonlinelonConfig
 
-trait ProductPipelineRegistryConfig {
-  def productPipelineConfigs: Seq[ProductPipelineConfig[_ <: Request, _ <: PipelineQuery, _]]
+trait ProductPipelonlinelonRelongistryConfig {
+  delonf productPipelonlinelonConfigs: Selonq[ProductPipelonlinelonConfig[_ <: Relonquelonst, _ <: PipelonlinelonQuelonry, _]]
 }

@@ -1,113 +1,113 @@
-package com.twitter.follow_recommendations.common.candidate_sources.sims_expansion
+packagelon com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.sims_elonxpansion
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.candidate_sources.sims.SwitchingSimsSource
-import com.twitter.follow_recommendations.common.clients.real_time_real_graph.RealTimeRealGraphClient
-import com.twitter.follow_recommendations.common.models.AccountProof
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.Reason
-import com.twitter.follow_recommendations.common.models.SimilarToProof
-import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.sims.SwitchingSimsSourcelon
+import com.twittelonr.follow_reloncommelonndations.common.clielonnts.relonal_timelon_relonal_graph.RelonalTimelonRelonalGraphClielonnt
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.AccountProof
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.CandidatelonUselonr
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.Relonason
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.SimilarToProof
+import com.twittelonr.helonrmit.modelonl.Algorithm
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonSourcelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.HasClielonntContelonxt
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.timelonlinelons.configapi.HasParams
 
-import javax.inject.Inject
-import javax.inject.Singleton
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class RecentEngagementSimilarUsersSource @Inject() (
-  realTimeRealGraphClient: RealTimeRealGraphClient,
-  switchingSimsSource: SwitchingSimsSource,
-  statsReceiver: StatsReceiver)
-    extends SimsExpansionBasedCandidateSource[HasClientContext with HasParams](
-      switchingSimsSource) {
-  override def maxSecondaryDegreeNodes(req: HasClientContext with HasParams): Int = Int.MaxValue
+@Singlelonton
+class ReloncelonntelonngagelonmelonntSimilarUselonrsSourcelon @Injelonct() (
+  relonalTimelonRelonalGraphClielonnt: RelonalTimelonRelonalGraphClielonnt,
+  switchingSimsSourcelon: SwitchingSimsSourcelon,
+  statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds SimselonxpansionBaselondCandidatelonSourcelon[HasClielonntContelonxt with HasParams](
+      switchingSimsSourcelon) {
+  ovelonrridelon delonf maxSeloncondaryDelongrelonelonNodelons(relonq: HasClielonntContelonxt with HasParams): Int = Int.MaxValuelon
 
-  override def maxResults(req: HasClientContext with HasParams): Int =
-    RecentEngagementSimilarUsersSource.MaxResults
+  ovelonrridelon delonf maxRelonsults(relonq: HasClielonntContelonxt with HasParams): Int =
+    ReloncelonntelonngagelonmelonntSimilarUselonrsSourcelon.MaxRelonsults
 
-  override val identifier: CandidateSourceIdentifier = RecentEngagementSimilarUsersSource.Identifier
-  private val stats = statsReceiver.scope(identifier.name)
-  private val calibratedScoreCounter = stats.counter("calibrated_scores_counter")
+  ovelonrridelon val idelonntifielonr: CandidatelonSourcelonIdelonntifielonr = ReloncelonntelonngagelonmelonntSimilarUselonrsSourcelon.Idelonntifielonr
+  privatelon val stats = statsReloncelonivelonr.scopelon(idelonntifielonr.namelon)
+  privatelon val calibratelondScorelonCountelonr = stats.countelonr("calibratelond_scorelons_countelonr")
 
-  override def scoreCandidate(sourceScore: Double, similarToScore: Double): Double = {
-    sourceScore * similarToScore
+  ovelonrridelon delonf scorelonCandidatelon(sourcelonScorelon: Doublelon, similarToScorelon: Doublelon): Doublelon = {
+    sourcelonScorelon * similarToScorelon
   }
 
-  override def calibrateDivisor(req: HasClientContext with HasParams): Double = {
-    req.params(DBV2SimsExpansionParams.RecentEngagementSimilarUsersDBV2CalibrateDivisor)
+  ovelonrridelon delonf calibratelonDivisor(relonq: HasClielonntContelonxt with HasParams): Doublelon = {
+    relonq.params(DBV2SimselonxpansionParams.ReloncelonntelonngagelonmelonntSimilarUselonrsDBV2CalibratelonDivisor)
   }
 
-  override def calibrateScore(
-    candidateScore: Double,
-    req: HasClientContext with HasParams
-  ): Double = {
-    calibratedScoreCounter.incr()
-    candidateScore / calibrateDivisor(req)
+  ovelonrridelon delonf calibratelonScorelon(
+    candidatelonScorelon: Doublelon,
+    relonq: HasClielonntContelonxt with HasParams
+  ): Doublelon = {
+    calibratelondScorelonCountelonr.incr()
+    candidatelonScorelon / calibratelonDivisor(relonq)
   }
 
   /**
-   * fetch first degree nodes given request
+   * felontch first delongrelonelon nodelons givelonn relonquelonst
    */
-  override def firstDegreeNodes(
-    target: HasClientContext with HasParams
-  ): Stitch[Seq[CandidateUser]] = {
-    target.getOptionalUserId
-      .map { userId =>
-        realTimeRealGraphClient
-          .getUsersRecentlyEngagedWith(
-            userId,
-            RealTimeRealGraphClient.EngagementScoreMap,
-            includeDirectFollowCandidates = true,
-            includeNonDirectFollowCandidates = true
-          ).map(_.sortBy(-_.score.getOrElse(0.0d))
-            .take(RecentEngagementSimilarUsersSource.MaxFirstDegreeNodes))
-      }.getOrElse(Stitch.Nil)
+  ovelonrridelon delonf firstDelongrelonelonNodelons(
+    targelont: HasClielonntContelonxt with HasParams
+  ): Stitch[Selonq[CandidatelonUselonr]] = {
+    targelont.gelontOptionalUselonrId
+      .map { uselonrId =>
+        relonalTimelonRelonalGraphClielonnt
+          .gelontUselonrsReloncelonntlyelonngagelondWith(
+            uselonrId,
+            RelonalTimelonRelonalGraphClielonnt.elonngagelonmelonntScorelonMap,
+            includelonDirelonctFollowCandidatelons = truelon,
+            includelonNonDirelonctFollowCandidatelons = truelon
+          ).map(_.sortBy(-_.scorelon.gelontOrelonlselon(0.0d))
+            .takelon(ReloncelonntelonngagelonmelonntSimilarUselonrsSourcelon.MaxFirstDelongrelonelonNodelons))
+      }.gelontOrelonlselon(Stitch.Nil)
   }
 
-  override def aggregateAndScore(
-    request: HasClientContext with HasParams,
-    firstDegreeToSecondDegreeNodesMap: Map[CandidateUser, Seq[SimilarUser]]
-  ): Stitch[Seq[CandidateUser]] = {
+  ovelonrridelon delonf aggrelongatelonAndScorelon(
+    relonquelonst: HasClielonntContelonxt with HasParams,
+    firstDelongrelonelonToSeloncondDelongrelonelonNodelonsMap: Map[CandidatelonUselonr, Selonq[SimilarUselonr]]
+  ): Stitch[Selonq[CandidatelonUselonr]] = {
 
-    val inputNodes = firstDegreeToSecondDegreeNodesMap.keys.map(_.id).toSet
-    val aggregator = request.params(RecentEngagementSimilarUsersParams.Aggregator) match {
-      case SimsExpansionSourceAggregatorId.Max =>
-        SimsExpansionBasedCandidateSource.ScoreAggregator.Max
-      case SimsExpansionSourceAggregatorId.Sum =>
-        SimsExpansionBasedCandidateSource.ScoreAggregator.Sum
-      case SimsExpansionSourceAggregatorId.MultiDecay =>
-        SimsExpansionBasedCandidateSource.ScoreAggregator.MultiDecay
+    val inputNodelons = firstDelongrelonelonToSeloncondDelongrelonelonNodelonsMap.kelonys.map(_.id).toSelont
+    val aggrelongator = relonquelonst.params(ReloncelonntelonngagelonmelonntSimilarUselonrsParams.Aggrelongator) match {
+      caselon SimselonxpansionSourcelonAggrelongatorId.Max =>
+        SimselonxpansionBaselondCandidatelonSourcelon.ScorelonAggrelongator.Max
+      caselon SimselonxpansionSourcelonAggrelongatorId.Sum =>
+        SimselonxpansionBaselondCandidatelonSourcelon.ScorelonAggrelongator.Sum
+      caselon SimselonxpansionSourcelonAggrelongatorId.MultiDeloncay =>
+        SimselonxpansionBaselondCandidatelonSourcelon.ScorelonAggrelongator.MultiDeloncay
     }
 
-    val groupedCandidates = firstDegreeToSecondDegreeNodesMap.values.flatten
-      .filterNot(c => inputNodes.contains(c.candidateId))
-      .groupBy(_.candidateId)
+    val groupelondCandidatelons = firstDelongrelonelonToSeloncondDelongrelonelonNodelonsMap.valuelons.flattelonn
+      .filtelonrNot(c => inputNodelons.contains(c.candidatelonId))
+      .groupBy(_.candidatelonId)
       .map {
-        case (id, candidates) =>
-          // Different aggregators for final score
-          val finalScore = aggregator(candidates.map(_.score).toSeq)
-          val proofs = candidates.map(_.similarTo).toSet
+        caselon (id, candidatelons) =>
+          // Diffelonrelonnt aggrelongators for final scorelon
+          val finalScorelon = aggrelongator(candidatelons.map(_.scorelon).toSelonq)
+          val proofs = candidatelons.map(_.similarTo).toSelont
 
-          CandidateUser(
+          CandidatelonUselonr(
             id = id,
-            score = Some(finalScore),
-            reason =
-              Some(Reason(Some(AccountProof(similarToProof = Some(SimilarToProof(proofs.toSeq))))))
-          ).withCandidateSource(identifier)
+            scorelon = Somelon(finalScorelon),
+            relonason =
+              Somelon(Relonason(Somelon(AccountProof(similarToProof = Somelon(SimilarToProof(proofs.toSelonq))))))
+          ).withCandidatelonSourcelon(idelonntifielonr)
       }
-      .toSeq
-      .sortBy(-_.score.getOrElse(0.0d))
-      .take(maxResults(request))
+      .toSelonq
+      .sortBy(-_.scorelon.gelontOrelonlselon(0.0d))
+      .takelon(maxRelonsults(relonquelonst))
 
-    Stitch.value(groupedCandidates)
+    Stitch.valuelon(groupelondCandidatelons)
   }
 }
 
-object RecentEngagementSimilarUsersSource {
-  val Identifier = CandidateSourceIdentifier(Algorithm.RecentEngagementSimilarUser.toString)
-  val MaxFirstDegreeNodes = 10
-  val MaxResults = 200
+objelonct ReloncelonntelonngagelonmelonntSimilarUselonrsSourcelon {
+  val Idelonntifielonr = CandidatelonSourcelonIdelonntifielonr(Algorithm.ReloncelonntelonngagelonmelonntSimilarUselonr.toString)
+  val MaxFirstDelongrelonelonNodelons = 10
+  val MaxRelonsults = 200
 }

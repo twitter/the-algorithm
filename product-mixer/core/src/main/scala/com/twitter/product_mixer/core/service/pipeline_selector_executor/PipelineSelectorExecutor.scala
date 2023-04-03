@@ -1,48 +1,48 @@
-package com.twitter.product_mixer.core.service.pipeline_selector_executor
+packagelon com.twittelonr.product_mixelonr.corelon.selonrvicelon.pipelonlinelon_selonlelonctor_elonxeloncutor
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.util.logging.Logging
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.PlatformIdentifier
-import com.twitter.product_mixer.core.pipeline.Pipeline
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.InvalidPipelineSelected
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.stitch.Arrow
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.util.logging.Logging
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.ComponelonntIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.PlatformIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.Pipelonlinelon
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.InvalidPipelonlinelonSelonlelonctelond
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.PipelonlinelonFailurelon
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.elonxeloncutor
+import com.twittelonr.stitch.Arrow
 
-import javax.inject.Inject
-import javax.inject.Singleton
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class PipelineSelectorExecutor @Inject() (override val statsReceiver: StatsReceiver)
-    extends Executor
+@Singlelonton
+class PipelonlinelonSelonlelonctorelonxeloncutor @Injelonct() (ovelonrridelon val statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds elonxeloncutor
     with Logging {
 
-  val identifier: ComponentIdentifier = PlatformIdentifier("PipelineSelector")
+  val idelonntifielonr: ComponelonntIdelonntifielonr = PlatformIdelonntifielonr("PipelonlinelonSelonlelonctor")
 
-  def arrow[Query <: PipelineQuery, Response](
-    pipelineByIdentifier: Map[ComponentIdentifier, Pipeline[Query, Response]],
-    pipelineSelector: Query => ComponentIdentifier,
-    context: Executor.Context
-  ): Arrow[Query, PipelineSelectorExecutorResult] = {
+  delonf arrow[Quelonry <: PipelonlinelonQuelonry, Relonsponselon](
+    pipelonlinelonByIdelonntifielonr: Map[ComponelonntIdelonntifielonr, Pipelonlinelon[Quelonry, Relonsponselon]],
+    pipelonlinelonSelonlelonctor: Quelonry => ComponelonntIdelonntifielonr,
+    contelonxt: elonxeloncutor.Contelonxt
+  ): Arrow[Quelonry, PipelonlinelonSelonlelonctorelonxeloncutorRelonsult] = {
 
-    val validateSelectedPipelineExists = Arrow
-      .map(pipelineSelector)
-      .map { chosenIdentifier =>
-        if (pipelineByIdentifier.contains(chosenIdentifier)) {
-          PipelineSelectorExecutorResult(chosenIdentifier)
-        } else {
-          // throwing instead of returning a `Throw(_)` and then `.lowerFromTry` because this is an exceptional case and we want to emphasize that by explicitly throwing
-          throw PipelineFailure(
-            InvalidPipelineSelected,
-            s"${context.componentStack.peek} attempted to select $chosenIdentifier",
-            // the `componentStack` includes the missing pipeline so it can show up in metrics easier
-            componentStack = Some(context.componentStack.push(chosenIdentifier))
+    val validatelonSelonlelonctelondPipelonlinelonelonxists = Arrow
+      .map(pipelonlinelonSelonlelonctor)
+      .map { choselonnIdelonntifielonr =>
+        if (pipelonlinelonByIdelonntifielonr.contains(choselonnIdelonntifielonr)) {
+          PipelonlinelonSelonlelonctorelonxeloncutorRelonsult(choselonnIdelonntifielonr)
+        } elonlselon {
+          // throwing instelonad of relonturning a `Throw(_)` and thelonn `.lowelonrFromTry` beloncauselon this is an elonxcelonptional caselon and welon want to elonmphasizelon that by elonxplicitly throwing
+          throw PipelonlinelonFailurelon(
+            InvalidPipelonlinelonSelonlelonctelond,
+            s"${contelonxt.componelonntStack.pelonelonk} attelonmptelond to selonlelonct $choselonnIdelonntifielonr",
+            // thelon `componelonntStack` includelons thelon missing pipelonlinelon so it can show up in melontrics elonasielonr
+            componelonntStack = Somelon(contelonxt.componelonntStack.push(choselonnIdelonntifielonr))
           )
         }
       }
 
-    wrapWithErrorHandling(context, identifier)(validateSelectedPipelineExists)
+    wrapWithelonrrorHandling(contelonxt, idelonntifielonr)(validatelonSelonlelonctelondPipelonlinelonelonxists)
   }
 }

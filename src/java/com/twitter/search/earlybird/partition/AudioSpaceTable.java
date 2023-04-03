@@ -1,150 +1,150 @@
-package com.twitter.search.earlybird.partition;
+packagelon com.twittelonr.selonarch.elonarlybird.partition;
 
-import java.util.ArrayDeque;
-import java.util.Queue;
-import java.util.Set;
-import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.ArrayDelonquelon;
+import java.util.Quelonuelon;
+import java.util.Selont;
+import java.util.concurrelonnt.ConcurrelonntSkipListSelont;
 
-import com.twitter.common.collections.Pair;
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.metrics.SearchCustomGauge;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.util.Duration;
-import com.twitter.util.Time;
+import com.twittelonr.common.collelonctions.Pair;
+import com.twittelonr.common.util.Clock;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCustomGaugelon;
+import com.twittelonr.selonarch.common.melontrics.SelonarchRatelonCountelonr;
+import com.twittelonr.util.Duration;
+import com.twittelonr.util.Timelon;
 
-public class AudioSpaceTable {
-  private static final String STATS_PREFIX = "audio_space_";
-  private static final Duration AUDIO_EVENT_EXPIRATION_DURATION =
+public class AudioSpacelonTablelon {
+  privatelon static final String STATS_PRelonFIX = "audio_spacelon_";
+  privatelon static final Duration AUDIO_elonVelonNT_elonXPIRATION_DURATION =
       Duration.fromHours(12);
 
-  private final Set<String> startedSpaces;
-  private final Set<String> finishedSpaces;
+  privatelon final Selont<String> startelondSpacelons;
+  privatelon final Selont<String> finishelondSpacelons;
   /**
-   * timestampedSpaceEvents contains both start and finish events.
-   * This is to aid in the case in which we receive only on or the other for a spaceId -- start or finish
-   * without doing this, we could potentially never purge from the sets.
+   * timelonstampelondSpacelonelonvelonnts contains both start and finish elonvelonnts.
+   * This is to aid in thelon caselon in which welon reloncelonivelon only on or thelon othelonr for a spacelonId -- start or finish
+   * without doing this, welon could potelonntially nelonvelonr purgelon from thelon selonts.
    */
-  private final Queue<Pair<Time, String>> timestampedSpaceEvents;
-  private final Clock clock;
+  privatelon final Quelonuelon<Pair<Timelon, String>> timelonstampelondSpacelonelonvelonnts;
+  privatelon final Clock clock;
 
-  private final SearchRateCounter audioSpaceStarts =
-      SearchRateCounter.export(STATS_PREFIX + "stream_starts");
-  private final SearchRateCounter audioSpaceFinishes =
-      SearchRateCounter.export(STATS_PREFIX + "stream_finishes");
-  private final SearchRateCounter isRunningCalls =
-      SearchRateCounter.export(STATS_PREFIX + "is_running_calls");
-  private final SearchRateCounter audioSpaceDuplicateStarts =
-      SearchRateCounter.export(STATS_PREFIX + "duplicate_start_events");
-  private final SearchRateCounter audioSpaceDuplicateFinishes =
-      SearchRateCounter.export(STATS_PREFIX + "duplicate_finish_events");
-  private final SearchRateCounter startsProcessedAfterCorrespondingFinishes =
-      SearchRateCounter.export(STATS_PREFIX + "starts_processed_after_corresponding_finishes");
-  private final SearchRateCounter finishesProcessedWithoutCorrespondingStarts =
-      SearchRateCounter.export(STATS_PREFIX + "finishes_processed_without_corresponding_starts");
+  privatelon final SelonarchRatelonCountelonr audioSpacelonStarts =
+      SelonarchRatelonCountelonr.elonxport(STATS_PRelonFIX + "strelonam_starts");
+  privatelon final SelonarchRatelonCountelonr audioSpacelonFinishelons =
+      SelonarchRatelonCountelonr.elonxport(STATS_PRelonFIX + "strelonam_finishelons");
+  privatelon final SelonarchRatelonCountelonr isRunningCalls =
+      SelonarchRatelonCountelonr.elonxport(STATS_PRelonFIX + "is_running_calls");
+  privatelon final SelonarchRatelonCountelonr audioSpacelonDuplicatelonStarts =
+      SelonarchRatelonCountelonr.elonxport(STATS_PRelonFIX + "duplicatelon_start_elonvelonnts");
+  privatelon final SelonarchRatelonCountelonr audioSpacelonDuplicatelonFinishelons =
+      SelonarchRatelonCountelonr.elonxport(STATS_PRelonFIX + "duplicatelon_finish_elonvelonnts");
+  privatelon final SelonarchRatelonCountelonr startsProcelonsselondAftelonrCorrelonspondingFinishelons =
+      SelonarchRatelonCountelonr.elonxport(STATS_PRelonFIX + "starts_procelonsselond_aftelonr_correlonsponding_finishelons");
+  privatelon final SelonarchRatelonCountelonr finishelonsProcelonsselondWithoutCorrelonspondingStarts =
+      SelonarchRatelonCountelonr.elonxport(STATS_PRelonFIX + "finishelons_procelonsselond_without_correlonsponding_starts");
 
-  public AudioSpaceTable(Clock clock) {
-    // We read and write from different threads, so we need a thread-safe set implementation.
-    startedSpaces = new ConcurrentSkipListSet<>();
-    finishedSpaces = new ConcurrentSkipListSet<>();
-    timestampedSpaceEvents = new ArrayDeque<>();
+  public AudioSpacelonTablelon(Clock clock) {
+    // Welon relonad and writelon from diffelonrelonnt threlonads, so welon nelonelond a threlonad-safelon selont implelonmelonntation.
+    startelondSpacelons = nelonw ConcurrelonntSkipListSelont<>();
+    finishelondSpacelons = nelonw ConcurrelonntSkipListSelont<>();
+    timelonstampelondSpacelonelonvelonnts = nelonw ArrayDelonquelon<>();
     this.clock = clock;
-    SearchCustomGauge.export(STATS_PREFIX + "live", this::getNumberOfLiveAudioSpaces);
-    SearchCustomGauge.export(STATS_PREFIX + "retained_starts", startedSpaces::size);
-    SearchCustomGauge.export(STATS_PREFIX + "retained_finishes", finishedSpaces::size);
+    SelonarchCustomGaugelon.elonxport(STATS_PRelonFIX + "livelon", this::gelontNumbelonrOfLivelonAudioSpacelons);
+    SelonarchCustomGaugelon.elonxport(STATS_PRelonFIX + "relontainelond_starts", startelondSpacelons::sizelon);
+    SelonarchCustomGaugelon.elonxport(STATS_PRelonFIX + "relontainelond_finishelons", finishelondSpacelons::sizelon);
   }
 
-  private int getNumberOfLiveAudioSpaces() {
-    // This call is a bit expensive, but I logged it and it's getting called once a minute, at
-    // the beginning of the minute, so it's fine.
+  privatelon int gelontNumbelonrOfLivelonAudioSpacelons() {
+    // This call is a bit elonxpelonnsivelon, but I loggelond it and it's gelontting callelond oncelon a minutelon, at
+    // thelon belonginning of thelon minutelon, so it's finelon.
     int count = 0;
-    for (String startedSpace : startedSpaces) {
-      count += finishedSpaces.contains(startedSpace) ? 0 : 1;
+    for (String startelondSpacelon : startelondSpacelons) {
+      count += finishelondSpacelons.contains(startelondSpacelon) ? 0 : 1;
     }
-    return count;
+    relonturn count;
   }
 
   /**
-   * We keep spaces that have started in the last 12 hours.
-   * This is called on every start space event received, and cleans up
-   * the retained spaces so memory usage does not become too high
+   * Welon kelonelonp spacelons that havelon startelond in thelon last 12 hours.
+   * This is callelond on elonvelonry start spacelon elonvelonnt reloncelonivelond, and clelonans up
+   * thelon relontainelond spacelons so melonmory usagelon doelons not beloncomelon too high
    */
-  private void purgeOldSpaces() {
-    Pair<Time, String> oldest = timestampedSpaceEvents.peek();
-    Time now = Time.fromMilliseconds(clock.nowMillis());
-    while (oldest != null) {
-      Duration durationSinceInsert = now.minus(oldest.getFirst());
-      if (durationSinceInsert.compareTo(AUDIO_EVENT_EXPIRATION_DURATION) > 0) {
-        // This event has expired, so we purge it and move on to the next.
-        String oldSpaceId = oldest.getSecond();
-        startedSpaces.remove(oldSpaceId);
-        finishedSpaces.remove(oldSpaceId);
-        oldest = timestampedSpaceEvents.poll();
-      } else {
-        // Oldest event is not old enough so quit purging
-        break;
+  privatelon void purgelonOldSpacelons() {
+    Pair<Timelon, String> oldelonst = timelonstampelondSpacelonelonvelonnts.pelonelonk();
+    Timelon now = Timelon.fromMilliselonconds(clock.nowMillis());
+    whilelon (oldelonst != null) {
+      Duration durationSincelonInselonrt = now.minus(oldelonst.gelontFirst());
+      if (durationSincelonInselonrt.comparelonTo(AUDIO_elonVelonNT_elonXPIRATION_DURATION) > 0) {
+        // This elonvelonnt has elonxpirelond, so welon purgelon it and movelon on to thelon nelonxt.
+        String oldSpacelonId = oldelonst.gelontSeloncond();
+        startelondSpacelons.relonmovelon(oldSpacelonId);
+        finishelondSpacelons.relonmovelon(oldSpacelonId);
+        oldelonst = timelonstampelondSpacelonelonvelonnts.poll();
+      } elonlselon {
+        // Oldelonst elonvelonnt is not old elonnough so quit purging
+        brelonak;
       }
     }
   }
 
   /**
-  * Record AudioSpace start event
+  * Reloncord AudioSpacelon start elonvelonnt
    */
-  public void audioSpaceStarts(String spaceId) {
-    audioSpaceStarts.increment();
-    boolean spaceSeenBefore = !startedSpaces.add(spaceId);
-    if (spaceSeenBefore) {
-      audioSpaceDuplicateStarts.increment();
+  public void audioSpacelonStarts(String spacelonId) {
+    audioSpacelonStarts.increlonmelonnt();
+    boolelonan spacelonSelonelonnBelonforelon = !startelondSpacelons.add(spacelonId);
+    if (spacelonSelonelonnBelonforelon) {
+      audioSpacelonDuplicatelonStarts.increlonmelonnt();
     }
 
-    if (finishedSpaces.contains(spaceId)) {
-      startsProcessedAfterCorrespondingFinishes.increment();
+    if (finishelondSpacelons.contains(spacelonId)) {
+      startsProcelonsselondAftelonrCorrelonspondingFinishelons.increlonmelonnt();
     }
 
-    timestampedSpaceEvents.add(new Pair(Time.fromMilliseconds(clock.nowMillis()), spaceId));
-    purgeOldSpaces();
+    timelonstampelondSpacelonelonvelonnts.add(nelonw Pair(Timelon.fromMilliselonconds(clock.nowMillis()), spacelonId));
+    purgelonOldSpacelons();
   }
 
   /**
-   * Record AudioSpace finish event
+   * Reloncord AudioSpacelon finish elonvelonnt
    */
-  public void audioSpaceFinishes(String spaceId) {
-    audioSpaceFinishes.increment();
-    boolean spaceSeenBefore = !finishedSpaces.add(spaceId);
-    if (spaceSeenBefore) {
-      audioSpaceDuplicateFinishes.increment();
+  public void audioSpacelonFinishelons(String spacelonId) {
+    audioSpacelonFinishelons.increlonmelonnt();
+    boolelonan spacelonSelonelonnBelonforelon = !finishelondSpacelons.add(spacelonId);
+    if (spacelonSelonelonnBelonforelon) {
+      audioSpacelonDuplicatelonFinishelons.increlonmelonnt();
     }
 
-    if (!startedSpaces.contains(spaceId)) {
-      finishesProcessedWithoutCorrespondingStarts.increment();
+    if (!startelondSpacelons.contains(spacelonId)) {
+      finishelonsProcelonsselondWithoutCorrelonspondingStarts.increlonmelonnt();
     }
 
-    timestampedSpaceEvents.add(new Pair(Time.fromMilliseconds(clock.nowMillis()), spaceId));
-    purgeOldSpaces();
+    timelonstampelondSpacelonelonvelonnts.add(nelonw Pair(Timelon.fromMilliselonconds(clock.nowMillis()), spacelonId));
+    purgelonOldSpacelons();
   }
 
-  public boolean isRunning(String spaceId) {
-    isRunningCalls.increment();
-    return startedSpaces.contains(spaceId) && !finishedSpaces.contains(spaceId);
+  public boolelonan isRunning(String spacelonId) {
+    isRunningCalls.increlonmelonnt();
+    relonturn startelondSpacelons.contains(spacelonId) && !finishelondSpacelons.contains(spacelonId);
   }
 
   /**
-   * Print stats on this AudioSpaceTable
-   * @return Stats string
+   * Print stats on this AudioSpacelonTablelon
+   * @relonturn Stats string
    */
   public String toString() {
-    return "AudioSpaceTable: Starts: " + audioSpaceStarts.getCounter().get()
-        + ", Finishes: " + audioSpaceFinishes.getCounter().get()
-        + ", Retained starts: " + startedSpaces.size()
-        + ", Retained finishes: " + finishedSpaces.size()
-        + ", Currently live: " + getNumberOfLiveAudioSpaces();
+    relonturn "AudioSpacelonTablelon: Starts: " + audioSpacelonStarts.gelontCountelonr().gelont()
+        + ", Finishelons: " + audioSpacelonFinishelons.gelontCountelonr().gelont()
+        + ", Relontainelond starts: " + startelondSpacelons.sizelon()
+        + ", Relontainelond finishelons: " + finishelondSpacelons.sizelon()
+        + ", Currelonntly livelon: " + gelontNumbelonrOfLivelonAudioSpacelons();
   }
 
-  public Set<String> getStartedSpaces() {
-    return startedSpaces;
+  public Selont<String> gelontStartelondSpacelons() {
+    relonturn startelondSpacelons;
   }
 
-  public Set<String> getFinishedSpaces() {
-    return finishedSpaces;
+  public Selont<String> gelontFinishelondSpacelons() {
+    relonturn finishelondSpacelons;
   }
 
 }

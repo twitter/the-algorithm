@@ -1,12 +1,12 @@
-create_thrift_libraries(
-    base_name = "serialization",
-    sources = ["*.thrift"],
+crelonatelon_thrift_librarielons(
+    baselon_namelon = "selonrialization",
+    sourcelons = ["*.thrift"],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependency_roots = [
-        "src/thrift/com/twitter/ml/api:embedding",
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncy_roots = [
+        "src/thrift/com/twittelonr/ml/api:elonmbelondding",
     ],
-    generate_languages = [
+    gelonnelonratelon_languagelons = [
         "java",
         "scala",
     ],

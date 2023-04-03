@@ -1,50 +1,50 @@
-package com.twitter.follow_recommendations.products.home_timeline_tweet_recs
+packagelon com.twittelonr.follow_reloncommelonndations.products.homelon_timelonlinelon_twelonelont_reloncs
 
-import com.twitter.follow_recommendations.common.base.BaseRecommendationFlow
-import com.twitter.follow_recommendations.common.base.IdentityTransform
-import com.twitter.follow_recommendations.common.base.Transform
-import com.twitter.follow_recommendations.common.models.DisplayLocation
-import com.twitter.follow_recommendations.common.models.Recommendation
-import com.twitter.follow_recommendations.flows.content_recommender_flow.ContentRecommenderFlow
-import com.twitter.follow_recommendations.flows.content_recommender_flow.ContentRecommenderRequestBuilder
-import com.twitter.follow_recommendations.products.common.Product
-import com.twitter.follow_recommendations.products.common.ProductRequest
-import com.twitter.follow_recommendations.products.home_timeline_tweet_recs.configapi.HomeTimelineTweetRecsParams._
-import com.twitter.stitch.Stitch
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.follow_reloncommelonndations.common.baselon.BaselonReloncommelonndationFlow
+import com.twittelonr.follow_reloncommelonndations.common.baselon.IdelonntityTransform
+import com.twittelonr.follow_reloncommelonndations.common.baselon.Transform
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.DisplayLocation
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.Reloncommelonndation
+import com.twittelonr.follow_reloncommelonndations.flows.contelonnt_reloncommelonndelonr_flow.ContelonntReloncommelonndelonrFlow
+import com.twittelonr.follow_reloncommelonndations.flows.contelonnt_reloncommelonndelonr_flow.ContelonntReloncommelonndelonrRelonquelonstBuildelonr
+import com.twittelonr.follow_reloncommelonndations.products.common.Product
+import com.twittelonr.follow_reloncommelonndations.products.common.ProductRelonquelonst
+import com.twittelonr.follow_reloncommelonndations.products.homelon_timelonlinelon_twelonelont_reloncs.configapi.HomelonTimelonlinelonTwelonelontReloncsParams._
+import com.twittelonr.stitch.Stitch
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
 /*
- * This "DisplayLocation" is used to generate user recommendations using the ContentRecommenderFlow. These recommendations are later used downstream
- * to generate recommended tweets on Home Timeline.
+ * This "DisplayLocation" is uselond to gelonnelonratelon uselonr reloncommelonndations using thelon ContelonntReloncommelonndelonrFlow. Thelonselon reloncommelonndations arelon latelonr uselond downstrelonam
+ * to gelonnelonratelon reloncommelonndelond twelonelonts on Homelon Timelonlinelon.
  */
-@Singleton
-class HomeTimelineTweetRecsProduct @Inject() (
-  contentRecommenderFlow: ContentRecommenderFlow,
-  contentRecommenderRequestBuilder: ContentRecommenderRequestBuilder)
-    extends Product {
-  override val name: String = "Home Timeline Tweet Recs"
+@Singlelonton
+class HomelonTimelonlinelonTwelonelontReloncsProduct @Injelonct() (
+  contelonntReloncommelonndelonrFlow: ContelonntReloncommelonndelonrFlow,
+  contelonntReloncommelonndelonrRelonquelonstBuildelonr: ContelonntReloncommelonndelonrRelonquelonstBuildelonr)
+    elonxtelonnds Product {
+  ovelonrridelon val namelon: String = "Homelon Timelonlinelon Twelonelont Reloncs"
 
-  override val identifier: String = "home-timeline-tweet-recs"
+  ovelonrridelon val idelonntifielonr: String = "homelon-timelonlinelon-twelonelont-reloncs"
 
-  override val displayLocation: DisplayLocation = DisplayLocation.HomeTimelineTweetRecs
+  ovelonrridelon val displayLocation: DisplayLocation = DisplayLocation.HomelonTimelonlinelonTwelonelontReloncs
 
-  override def selectWorkflows(
-    request: ProductRequest
-  ): Stitch[Seq[BaseRecommendationFlow[ProductRequest, _ <: Recommendation]]] = {
-    contentRecommenderRequestBuilder.build(request).map { contentRecommenderRequest =>
-      Seq(contentRecommenderFlow.mapKey({ request: ProductRequest => contentRecommenderRequest }))
+  ovelonrridelon delonf selonlelonctWorkflows(
+    relonquelonst: ProductRelonquelonst
+  ): Stitch[Selonq[BaselonReloncommelonndationFlow[ProductRelonquelonst, _ <: Reloncommelonndation]]] = {
+    contelonntReloncommelonndelonrRelonquelonstBuildelonr.build(relonquelonst).map { contelonntReloncommelonndelonrRelonquelonst =>
+      Selonq(contelonntReloncommelonndelonrFlow.mapKelony({ relonquelonst: ProductRelonquelonst => contelonntReloncommelonndelonrRelonquelonst }))
     }
   }
 
-  override val blender: Transform[ProductRequest, Recommendation] =
-    new IdentityTransform[ProductRequest, Recommendation]
+  ovelonrridelon val blelonndelonr: Transform[ProductRelonquelonst, Reloncommelonndation] =
+    nelonw IdelonntityTransform[ProductRelonquelonst, Reloncommelonndation]
 
-  override def resultsTransformer(
-    request: ProductRequest
-  ): Stitch[Transform[ProductRequest, Recommendation]] =
-    Stitch.value(new IdentityTransform[ProductRequest, Recommendation])
+  ovelonrridelon delonf relonsultsTransformelonr(
+    relonquelonst: ProductRelonquelonst
+  ): Stitch[Transform[ProductRelonquelonst, Reloncommelonndation]] =
+    Stitch.valuelon(nelonw IdelonntityTransform[ProductRelonquelonst, Reloncommelonndation])
 
-  override def enabled(request: ProductRequest): Stitch[Boolean] =
-    Stitch.value(request.params(EnableProduct))
+  ovelonrridelon delonf elonnablelond(relonquelonst: ProductRelonquelonst): Stitch[Boolelonan] =
+    Stitch.valuelon(relonquelonst.params(elonnablelonProduct))
 }

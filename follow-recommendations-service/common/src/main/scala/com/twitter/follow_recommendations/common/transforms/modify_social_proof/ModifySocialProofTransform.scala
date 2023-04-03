@@ -1,202 +1,202 @@
-package com.twitter.follow_recommendations.common.transforms.modify_social_proof
+packagelon com.twittelonr.follow_reloncommelonndations.common.transforms.modify_social_proof
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.decider.Decider
-import com.twitter.decider.RandomRecipient
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.util.DefaultTimer
-import com.twitter.follow_recommendations.common.base.GatedTransform
-import com.twitter.follow_recommendations.common.clients.graph_feature_service.GraphFeatureServiceClient
-import com.twitter.follow_recommendations.common.clients.socialgraph.SocialGraphClient
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.FollowProof
-import com.twitter.follow_recommendations.configapi.deciders.DeciderKey
-import com.twitter.graph_feature_service.thriftscala.EdgeType
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.util.logging.Logging
-import com.twitter.util.Duration
-import com.twitter.util.Time
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.deloncidelonr.Deloncidelonr
+import com.twittelonr.deloncidelonr.RandomReloncipielonnt
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.finaglelon.util.DelonfaultTimelonr
+import com.twittelonr.follow_reloncommelonndations.common.baselon.GatelondTransform
+import com.twittelonr.follow_reloncommelonndations.common.clielonnts.graph_felonaturelon_selonrvicelon.GraphFelonaturelonSelonrvicelonClielonnt
+import com.twittelonr.follow_reloncommelonndations.common.clielonnts.socialgraph.SocialGraphClielonnt
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.CandidatelonUselonr
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.FollowProof
+import com.twittelonr.follow_reloncommelonndations.configapi.deloncidelonrs.DeloncidelonrKelony
+import com.twittelonr.graph_felonaturelon_selonrvicelon.thriftscala.elondgelonTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.HasClielonntContelonxt
+import com.twittelonr.snowflakelon.id.SnowflakelonId
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.timelonlinelons.configapi.HasParams
+import com.twittelonr.util.logging.Logging
+import com.twittelonr.util.Duration
+import com.twittelonr.util.Timelon
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-object ModifySocialProof {
+objelonct ModifySocialProof {
   val GfsLagDuration: Duration = 14.days
-  val GfsIntersectionIds: Int = 3
-  val SgsIntersectionIds: Int = 10
-  val LeftEdgeTypes: Set[EdgeType] = Set(EdgeType.Following)
-  val RightEdgeTypes: Set[EdgeType] = Set(EdgeType.FollowedBy)
+  val GfsIntelonrselonctionIds: Int = 3
+  val SgsIntelonrselonctionIds: Int = 10
+  val LelonftelondgelonTypelons: Selont[elondgelonTypelon] = Selont(elondgelonTypelon.Following)
+  val RightelondgelonTypelons: Selont[elondgelonTypelon] = Selont(elondgelonTypelon.FollowelondBy)
 
   /**
-   * Given the intersection ID's for a particular candidate, update the candidate's social proof
-   * @param candidate          candidate object
-   * @param followProof        follow proof to be added (includes id's and count)
+   * Givelonn thelon intelonrselonction ID's for a particular candidatelon, updatelon thelon candidatelon's social proof
+   * @param candidatelon          candidatelon objelonct
+   * @param followProof        follow proof to belon addelond (includelons id's and count)
    * @param stats              stats for tracking
-   * @return                   updated candidate object
+   * @relonturn                   updatelond candidatelon objelonct
    */
-  def addIntersectionIdsToCandidate(
-    candidate: CandidateUser,
+  delonf addIntelonrselonctionIdsToCandidatelon(
+    candidatelon: CandidatelonUselonr,
     followProof: FollowProof,
-    stats: StatsReceiver
-  ): CandidateUser = {
-    // create updated set of social proof
-    val updatedFollowedByOpt = candidate.followedBy match {
-      case Some(existingFollowedBy) => Some((followProof.followedBy ++ existingFollowedBy).distinct)
-      case None if followProof.followedBy.nonEmpty => Some(followProof.followedBy.distinct)
-      case _ => None
+    stats: StatsReloncelonivelonr
+  ): CandidatelonUselonr = {
+    // crelonatelon updatelond selont of social proof
+    val updatelondFollowelondByOpt = candidatelon.followelondBy match {
+      caselon Somelon(elonxistingFollowelondBy) => Somelon((followProof.followelondBy ++ elonxistingFollowelondBy).distinct)
+      caselon Nonelon if followProof.followelondBy.nonelonmpty => Somelon(followProof.followelondBy.distinct)
+      caselon _ => Nonelon
     }
 
-    val updatedFollowProof = updatedFollowedByOpt.map { updatedFollowedBy =>
-      val updatedCount = followProof.numIds.max(updatedFollowedBy.size)
+    val updatelondFollowProof = updatelondFollowelondByOpt.map { updatelondFollowelondBy =>
+      val updatelondCount = followProof.numIds.max(updatelondFollowelondBy.sizelon)
       // track stats
-      val numSocialProofAdded = updatedFollowedBy.size - candidate.followedBy.size
-      addCandidatesWithSocialContextCountStat(stats, numSocialProofAdded)
-      FollowProof(updatedFollowedBy, updatedCount)
+      val numSocialProofAddelond = updatelondFollowelondBy.sizelon - candidatelon.followelondBy.sizelon
+      addCandidatelonsWithSocialContelonxtCountStat(stats, numSocialProofAddelond)
+      FollowProof(updatelondFollowelondBy, updatelondCount)
     }
 
-    candidate.setFollowProof(updatedFollowProof)
+    candidatelon.selontFollowProof(updatelondFollowProof)
   }
 
-  private def addCandidatesWithSocialContextCountStat(
-    statsReceiver: StatsReceiver,
+  privatelon delonf addCandidatelonsWithSocialContelonxtCountStat(
+    statsReloncelonivelonr: StatsReloncelonivelonr,
     count: Int
   ): Unit = {
     if (count > 3) {
-      statsReceiver.counter("4_and_more").incr()
-    } else {
-      statsReceiver.counter(count.toString).incr()
+      statsReloncelonivelonr.countelonr("4_and_morelon").incr()
+    } elonlselon {
+      statsReloncelonivelonr.countelonr(count.toString).incr()
     }
   }
 }
 
 /**
- * This class makes a request to gfs/sgs for hydrating additional social proof on each of the
- * provided candidates.
+ * This class makelons a relonquelonst to gfs/sgs for hydrating additional social proof on elonach of thelon
+ * providelond candidatelons.
  */
-@Singleton
-class ModifySocialProof @Inject() (
-  gfsClient: GraphFeatureServiceClient,
-  socialGraphClient: SocialGraphClient,
-  statsReceiver: StatsReceiver,
-  decider: Decider = Decider.True)
-    extends Logging {
+@Singlelonton
+class ModifySocialProof @Injelonct() (
+  gfsClielonnt: GraphFelonaturelonSelonrvicelonClielonnt,
+  socialGraphClielonnt: SocialGraphClielonnt,
+  statsReloncelonivelonr: StatsReloncelonivelonr,
+  deloncidelonr: Deloncidelonr = Deloncidelonr.Truelon)
+    elonxtelonnds Logging {
   import ModifySocialProof._
 
-  private val stats = statsReceiver.scope(this.getClass.getSimpleName)
-  private val addedStats = stats.scope("num_social_proof_added_per_candidate")
-  private val gfsStats = stats.scope("graph_feature_service")
-  private val sgsStats = stats.scope("social_graph_service")
-  private val previousProofEmptyCounter = stats.counter("previous_proof_empty")
-  private val emptyFollowProofCounter = stats.counter("empty_followed_proof")
+  privatelon val stats = statsReloncelonivelonr.scopelon(this.gelontClass.gelontSimplelonNamelon)
+  privatelon val addelondStats = stats.scopelon("num_social_proof_addelond_pelonr_candidatelon")
+  privatelon val gfsStats = stats.scopelon("graph_felonaturelon_selonrvicelon")
+  privatelon val sgsStats = stats.scopelon("social_graph_selonrvicelon")
+  privatelon val prelonviousProofelonmptyCountelonr = stats.countelonr("prelonvious_proof_elonmpty")
+  privatelon val elonmptyFollowProofCountelonr = stats.countelonr("elonmpty_followelond_proof")
 
   /**
-   * For each candidate provided, we get the intersectionIds between the user and the candidate,
-   * appending the unique results to the social proof (followedBy field) if not already previously
-   * seen we query GFS for all users, except for cases specified via the mustCallSgs field or for
-   * very new users, who would not have any data in GFS, due to the lag duration of the service's
-   * processing. this is determined by GfsLagDuration
-   * @param userId id of the target user whom we provide recommendations for
-   * @param candidates list of candidates
-   * @param intersectionIdsNum if provided, determines the maximum number of accounts we want to be hydrated for social proof
-   * @param mustCallSgs Determines if we should query SGS regardless of user age or not.
-   * @return list of candidates updated with additional social proof
+   * For elonach candidatelon providelond, welon gelont thelon intelonrselonctionIds belontwelonelonn thelon uselonr and thelon candidatelon,
+   * appelonnding thelon uniquelon relonsults to thelon social proof (followelondBy fielonld) if not alrelonady prelonviously
+   * selonelonn welon quelonry GFS for all uselonrs, elonxcelonpt for caselons speloncifielond via thelon mustCallSgs fielonld or for
+   * velonry nelonw uselonrs, who would not havelon any data in GFS, duelon to thelon lag duration of thelon selonrvicelon's
+   * procelonssing. this is delontelonrminelond by GfsLagDuration
+   * @param uselonrId id of thelon targelont uselonr whom welon providelon reloncommelonndations for
+   * @param candidatelons list of candidatelons
+   * @param intelonrselonctionIdsNum if providelond, delontelonrminelons thelon maximum numbelonr of accounts welon want to belon hydratelond for social proof
+   * @param mustCallSgs Delontelonrminelons if welon should quelonry SGS relongardlelonss of uselonr agelon or not.
+   * @relonturn list of candidatelons updatelond with additional social proof
    */
-  def hydrateSocialProof(
-    userId: Long,
-    candidates: Seq[CandidateUser],
-    intersectionIdsNum: Option[Int] = None,
-    mustCallSgs: Boolean = false,
-    callSgsCachedColumn: Boolean = false,
+  delonf hydratelonSocialProof(
+    uselonrId: Long,
+    candidatelons: Selonq[CandidatelonUselonr],
+    intelonrselonctionIdsNum: Option[Int] = Nonelon,
+    mustCallSgs: Boolelonan = falselon,
+    callSgsCachelondColumn: Boolelonan = falselon,
     gfsLagDuration: Duration = GfsLagDuration,
-    gfsIntersectionIds: Int = GfsIntersectionIds,
-    sgsIntersectionIds: Int = SgsIntersectionIds,
-  ): Stitch[Seq[CandidateUser]] = {
-    addCandidatesWithSocialContextCountStat(
-      stats.scope("social_context_count_before_hydration"),
-      candidates.count(_.followedBy.isDefined)
+    gfsIntelonrselonctionIds: Int = GfsIntelonrselonctionIds,
+    sgsIntelonrselonctionIds: Int = SgsIntelonrselonctionIds,
+  ): Stitch[Selonq[CandidatelonUselonr]] = {
+    addCandidatelonsWithSocialContelonxtCountStat(
+      stats.scopelon("social_contelonxt_count_belonforelon_hydration"),
+      candidatelons.count(_.followelondBy.isDelonfinelond)
     )
-    val candidateIds = candidates.map(_.id)
-    val userAgeOpt = SnowflakeId.timeFromIdOpt(userId).map(Time.now - _)
+    val candidatelonIds = candidatelons.map(_.id)
+    val uselonrAgelonOpt = SnowflakelonId.timelonFromIdOpt(uselonrId).map(Timelon.now - _)
 
-    // this decider gate is used to determine what % of requests is allowed to call
-    // Graph Feature Service. this is useful for ramping down requests to Graph Feature Service
-    // when necessary
-    val deciderKey: String = DeciderKey.EnableGraphFeatureServiceRequests.toString
-    val enableGfsRequests: Boolean = decider.isAvailable(deciderKey, Some(RandomRecipient))
+    // this deloncidelonr gatelon is uselond to delontelonrminelon what % of relonquelonsts is allowelond to call
+    // Graph Felonaturelon Selonrvicelon. this is uselonful for ramping down relonquelonsts to Graph Felonaturelon Selonrvicelon
+    // whelonn neloncelonssary
+    val deloncidelonrKelony: String = DeloncidelonrKelony.elonnablelonGraphFelonaturelonSelonrvicelonRelonquelonsts.toString
+    val elonnablelonGfsRelonquelonsts: Boolelonan = deloncidelonr.isAvailablelon(deloncidelonrKelony, Somelon(RandomReloncipielonnt))
 
-    // if new query sgs
-    val (candidateToIntersectionIdsMapFut, isGfs) =
-      if (!enableGfsRequests || mustCallSgs || userAgeOpt.exists(_ < gfsLagDuration)) {
+    // if nelonw quelonry sgs
+    val (candidatelonToIntelonrselonctionIdsMapFut, isGfs) =
+      if (!elonnablelonGfsRelonquelonsts || mustCallSgs || uselonrAgelonOpt.elonxists(_ < gfsLagDuration)) {
         (
-          if (callSgsCachedColumn)
-            socialGraphClient.getIntersectionsFromCachedColumn(
-              userId,
-              candidateIds,
-              intersectionIdsNum.getOrElse(sgsIntersectionIds)
+          if (callSgsCachelondColumn)
+            socialGraphClielonnt.gelontIntelonrselonctionsFromCachelondColumn(
+              uselonrId,
+              candidatelonIds,
+              intelonrselonctionIdsNum.gelontOrelonlselon(sgsIntelonrselonctionIds)
             )
-          else
-            socialGraphClient.getIntersections(
-              userId,
-              candidateIds,
-              intersectionIdsNum.getOrElse(sgsIntersectionIds)),
-          false)
-      } else {
+          elonlselon
+            socialGraphClielonnt.gelontIntelonrselonctions(
+              uselonrId,
+              candidatelonIds,
+              intelonrselonctionIdsNum.gelontOrelonlselon(sgsIntelonrselonctionIds)),
+          falselon)
+      } elonlselon {
         (
-          gfsClient.getIntersections(
-            userId,
-            candidateIds,
-            intersectionIdsNum.getOrElse(gfsIntersectionIds)),
-          true)
+          gfsClielonnt.gelontIntelonrselonctions(
+            uselonrId,
+            candidatelonIds,
+            intelonrselonctionIdsNum.gelontOrelonlselon(gfsIntelonrselonctionIds)),
+          truelon)
       }
-    val finalCandidates = candidateToIntersectionIdsMapFut
-      .map { candidateToIntersectionIdsMap =>
+    val finalCandidatelons = candidatelonToIntelonrselonctionIdsMapFut
+      .map { candidatelonToIntelonrselonctionIdsMap =>
         {
-          previousProofEmptyCounter.incr(candidates.count(_.followedBy.exists(_.isEmpty)))
-          candidates.map { candidate =>
-            addIntersectionIdsToCandidate(
-              candidate,
-              candidateToIntersectionIdsMap.getOrElse(candidate.id, FollowProof(Seq.empty, 0)),
-              addedStats)
+          prelonviousProofelonmptyCountelonr.incr(candidatelons.count(_.followelondBy.elonxists(_.iselonmpty)))
+          candidatelons.map { candidatelon =>
+            addIntelonrselonctionIdsToCandidatelon(
+              candidatelon,
+              candidatelonToIntelonrselonctionIdsMap.gelontOrelonlselon(candidatelon.id, FollowProof(Selonq.elonmpty, 0)),
+              addelondStats)
           }
         }
       }
-      .within(250.milliseconds)(DefaultTimer)
-      .rescue {
-        case e: Exception =>
-          error(e.getMessage)
+      .within(250.milliselonconds)(DelonfaultTimelonr)
+      .relonscuelon {
+        caselon elon: elonxcelonption =>
+          elonrror(elon.gelontMelonssagelon)
           if (isGfs) {
-            gfsStats.scope("rescued").counter(e.getClass.getSimpleName).incr()
-          } else {
-            sgsStats.scope("rescued").counter(e.getClass.getSimpleName).incr()
+            gfsStats.scopelon("relonscuelond").countelonr(elon.gelontClass.gelontSimplelonNamelon).incr()
+          } elonlselon {
+            sgsStats.scopelon("relonscuelond").countelonr(elon.gelontClass.gelontSimplelonNamelon).incr()
           }
-          Stitch.value(candidates)
+          Stitch.valuelon(candidatelons)
       }
 
-    finalCandidates.onSuccess { candidatesSeq =>
-      emptyFollowProofCounter.incr(candidatesSeq.count(_.followedBy.exists(_.isEmpty)))
-      addCandidatesWithSocialContextCountStat(
-        stats.scope("social_context_count_after_hydration"),
-        candidatesSeq.count(_.followedBy.isDefined)
+    finalCandidatelons.onSuccelonss { candidatelonsSelonq =>
+      elonmptyFollowProofCountelonr.incr(candidatelonsSelonq.count(_.followelondBy.elonxists(_.iselonmpty)))
+      addCandidatelonsWithSocialContelonxtCountStat(
+        stats.scopelon("social_contelonxt_count_aftelonr_hydration"),
+        candidatelonsSelonq.count(_.followelondBy.isDelonfinelond)
       )
     }
   }
 }
 
 /**
- * This transform uses ModifySocialProof (which makes a request to gfs/sgs) for hydrating additional
- * social proof on each of the provided candidates.
+ * This transform uselons ModifySocialProof (which makelons a relonquelonst to gfs/sgs) for hydrating additional
+ * social proof on elonach of thelon providelond candidatelons.
  */
-@Singleton
-class ModifySocialProofTransform @Inject() (modifySocialProof: ModifySocialProof)
-    extends GatedTransform[HasClientContext with HasParams, CandidateUser]
+@Singlelonton
+class ModifySocialProofTransform @Injelonct() (modifySocialProof: ModifySocialProof)
+    elonxtelonnds GatelondTransform[HasClielonntContelonxt with HasParams, CandidatelonUselonr]
     with Logging {
 
-  override def transform(
-    target: HasClientContext with HasParams,
-    candidates: Seq[CandidateUser]
-  ): Stitch[Seq[CandidateUser]] =
-    target.getOptionalUserId
-      .map(modifySocialProof.hydrateSocialProof(_, candidates)).getOrElse(Stitch.value(candidates))
+  ovelonrridelon delonf transform(
+    targelont: HasClielonntContelonxt with HasParams,
+    candidatelons: Selonq[CandidatelonUselonr]
+  ): Stitch[Selonq[CandidatelonUselonr]] =
+    targelont.gelontOptionalUselonrId
+      .map(modifySocialProof.hydratelonSocialProof(_, candidatelons)).gelontOrelonlselon(Stitch.valuelon(candidatelons))
 }

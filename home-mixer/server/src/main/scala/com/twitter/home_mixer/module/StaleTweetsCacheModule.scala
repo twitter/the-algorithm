@@ -1,37 +1,37 @@
-package com.twitter.home_mixer.module
+packagelon com.twittelonr.homelon_mixelonr.modulelon
 
-import com.google.inject.Provides
-import com.google.inject.name.Named
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.memcached.{Client => MemcachedClient}
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.hashing.KeyHasher
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.StaleTweetsCache
-import com.twitter.inject.TwitterModule
-import com.twitter.product_mixer.shared_library.memcached_client.MemcachedClientBuilder
-import javax.inject.Singleton
+import com.googlelon.injelonct.Providelons
+import com.googlelon.injelonct.namelon.Namelond
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.finaglelon.melonmcachelond.{Clielonnt => MelonmcachelondClielonnt}
+import com.twittelonr.finaglelon.mtls.authelonntication.SelonrvicelonIdelonntifielonr
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.hashing.KelonyHashelonr
+import com.twittelonr.homelon_mixelonr.param.HomelonMixelonrInjelonctionNamelons.StalelonTwelonelontsCachelon
+import com.twittelonr.injelonct.TwittelonrModulelon
+import com.twittelonr.product_mixelonr.sharelond_library.melonmcachelond_clielonnt.MelonmcachelondClielonntBuildelonr
+import javax.injelonct.Singlelonton
 
-object StaleTweetsCacheModule extends TwitterModule {
+objelonct StalelonTwelonelontsCachelonModulelon elonxtelonnds TwittelonrModulelon {
 
-  @Singleton
-  @Provides
-  @Named(StaleTweetsCache)
-  def providesCache(
-    serviceIdentifier: ServiceIdentifier,
-    statsReceiver: StatsReceiver
-  ): MemcachedClient = {
-    MemcachedClientBuilder.buildMemcachedClient(
-      destName = "/srv#/prod/local/cache/staletweetscache:twemcaches",
-      numTries = 3,
-      requestTimeout = 200.milliseconds,
-      globalTimeout = 500.milliseconds,
-      connectTimeout = 200.milliseconds,
-      acquisitionTimeout = 200.milliseconds,
-      serviceIdentifier = serviceIdentifier,
-      statsReceiver = statsReceiver,
-      failureAccrualPolicy = None,
-      keyHasher = Some(KeyHasher.FNV1_32)
+  @Singlelonton
+  @Providelons
+  @Namelond(StalelonTwelonelontsCachelon)
+  delonf providelonsCachelon(
+    selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr,
+    statsReloncelonivelonr: StatsReloncelonivelonr
+  ): MelonmcachelondClielonnt = {
+    MelonmcachelondClielonntBuildelonr.buildMelonmcachelondClielonnt(
+      delonstNamelon = "/srv#/prod/local/cachelon/stalelontwelonelontscachelon:twelonmcachelons",
+      numTrielons = 3,
+      relonquelonstTimelonout = 200.milliselonconds,
+      globalTimelonout = 500.milliselonconds,
+      connelonctTimelonout = 200.milliselonconds,
+      acquisitionTimelonout = 200.milliselonconds,
+      selonrvicelonIdelonntifielonr = selonrvicelonIdelonntifielonr,
+      statsReloncelonivelonr = statsReloncelonivelonr,
+      failurelonAccrualPolicy = Nonelon,
+      kelonyHashelonr = Somelon(KelonyHashelonr.FNV1_32)
     )
   }
 }

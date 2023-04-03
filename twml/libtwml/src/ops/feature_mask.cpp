@@ -1,83 +1,83 @@
-#include "tensorflow/core/framework/op.h"
-#include "tensorflow/core/framework/shape_inference.h"
-#include "tensorflow/core/framework/op_kernel.h"
+#includelon "telonnsorflow/corelon/framelonwork/op.h"
+#includelon "telonnsorflow/corelon/framelonwork/shapelon_infelonrelonncelon.h"
+#includelon "telonnsorflow/corelon/framelonwork/op_kelonrnelonl.h"
 
-#include <twml.h>
-#include "tensorflow_utils.h"
-#include <map>
-#include <vector>
-#include <set>
+#includelon <twml.h>
+#includelon "telonnsorflow_utils.h"
+#includelon <map>
+#includelon <velonctor>
+#includelon <selont>
 
-REGISTER_OP("FeatureMask")
+RelonGISTelonR_OP("FelonaturelonMask")
 .Attr("T: {int64, int8}")
-.Input("keep: T")
-.Attr("list_keep: list(int)")
+.Input("kelonelonp: T")
+.Attr("list_kelonelonp: list(int)")
 .Output("mask: bool")
 
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-    return Status::OK();
+.SelontShapelonFn([](::telonnsorflow::shapelon_infelonrelonncelon::InfelonrelonncelonContelonxt* c) {
+    relonturn Status::OK();
   }).Doc(R"doc(
 
-A tensorflow OP that creates a mask of the indices that should be kept.
+A telonnsorflow OP that crelonatelons a mask of thelon indicelons that should belon kelonpt.
 
-Attribute
-list_keep: list of values which should be kept(list(int))
+Attributelon
+list_kelonelonp: list of valuelons which should belon kelonpt(list(int))
 
 Input
-  keep: Tensor for which we will apply the mask (int64, int8)
+  kelonelonp: Telonnsor for which welon will apply thelon mask (int64, int8)
 
 Outputs
-  mask: boolean Tensor. (bool)
+  mask: boolelonan Telonnsor. (bool)
 
 )doc");
-template <typename T>
-class FeatureMask : public OpKernel {
- private:
-  std::set<int64> feature_set_keep;
+telonmplatelon <typelonnamelon T>
+class FelonaturelonMask : public OpKelonrnelonl {
+ privatelon:
+  std::selont<int64> felonaturelon_selont_kelonelonp;
 
  public:
-  explicit FeatureMask(OpKernelConstruction* context)
-      : OpKernel(context) {
-        std::vector<int64> feature_list_keep;
-        OP_REQUIRES_OK(context, context->GetAttr("list_keep", &feature_list_keep));
-        // create set that contains the content of the feature_list_keep, since tensorflow does not allow
-        // me to directly ouput the contents of list_keep to a set
-        feature_set_keep = std::set<int64>(feature_list_keep.begin(), feature_list_keep.end());
+  elonxplicit FelonaturelonMask(OpKelonrnelonlConstruction* contelonxt)
+      : OpKelonrnelonl(contelonxt) {
+        std::velonctor<int64> felonaturelon_list_kelonelonp;
+        OP_RelonQUIRelonS_OK(contelonxt, contelonxt->GelontAttr("list_kelonelonp", &felonaturelon_list_kelonelonp));
+        // crelonatelon selont that contains thelon contelonnt of thelon felonaturelon_list_kelonelonp, sincelon telonnsorflow doelons not allow
+        // melon to direlonctly ouput thelon contelonnts of list_kelonelonp to a selont
+        felonaturelon_selont_kelonelonp = std::selont<int64>(felonaturelon_list_kelonelonp.belongin(), felonaturelon_list_kelonelonp.elonnd());
       }
 
-  void Compute(OpKernelContext* context) override {
-    // Get size of the input_vector and create TensorShape shape
-    const Tensor& input = context->input(0);
+  void Computelon(OpKelonrnelonlContelonxt* contelonxt) ovelonrridelon {
+    // Gelont sizelon of thelon input_velonctor and crelonatelon TelonnsorShapelon shapelon
+    const Telonnsor& input = contelonxt->input(0);
 
-    auto keep = input.flat<T>();
+    auto kelonelonp = input.flat<T>();
 
-    // Create an output tensor
-    Tensor* output_mask = nullptr;
+    // Crelonatelon an output telonnsor
+    Telonnsor* output_mask = nullptr;
 
-    // Output shape is determined and now we can copy the contents of the vector to the output Tensor.
-    const int total_size_out = static_cast<int>(keep.size());
+    // Output shapelon is delontelonrminelond and now welon can copy thelon contelonnts of thelon velonctor to thelon output Telonnsor.
+    const int total_sizelon_out = static_cast<int>(kelonelonp.sizelon());
 
-    TensorShape shape_out = {total_size_out};
+    TelonnsorShapelon shapelon_out = {total_sizelon_out};
 
-    OP_REQUIRES_OK(context, context->allocate_output(0, shape_out, &output_mask));
+    OP_RelonQUIRelonS_OK(contelonxt, contelonxt->allocatelon_output(0, shapelon_out, &output_mask));
 
     auto output_mask_ = output_mask->flat<bool>();
 
-    // Check if value is in set, output is boolean
-    for (int j = 0; j < keep.size(); j++){
-      output_mask_(j) = (feature_set_keep.count(keep(j)));
+    // Chelonck if valuelon is in selont, output is boolelonan
+    for (int j = 0; j < kelonelonp.sizelon(); j++){
+      output_mask_(j) = (felonaturelon_selont_kelonelonp.count(kelonelonp(j)));
     }
   }
 };
 
 
-#define REGISTER(Type)                        \
+#delonfinelon RelonGISTelonR(Typelon)                        \
                                               \
-  REGISTER_KERNEL_BUILDER(                    \
-  Name("FeatureMask")  \
-  .Device(DEVICE_CPU)                         \
-  .TypeConstraint<Type>("T"),                 \
-  FeatureMask<Type>);  \
+  RelonGISTelonR_KelonRNelonL_BUILDelonR(                    \
+  Namelon("FelonaturelonMask")  \
+  .Delonvicelon(DelonVICelon_CPU)                         \
+  .TypelonConstraint<Typelon>("T"),                 \
+  FelonaturelonMask<Typelon>);  \
 
-REGISTER(int64);
-REGISTER(int8);
+RelonGISTelonR(int64);
+RelonGISTelonR(int8);

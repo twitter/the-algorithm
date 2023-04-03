@@ -1,14 +1,14 @@
-package com.twitter.product_mixer.core.model.common.identifier
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr
 
-import com.fasterxml.jackson.core.JsonGenerator
-import com.fasterxml.jackson.databind.JsonSerializer
-import com.fasterxml.jackson.databind.SerializerProvider
+import com.fastelonrxml.jackson.corelon.JsonGelonnelonrator
+import com.fastelonrxml.jackson.databind.JsonSelonrializelonr
+import com.fastelonrxml.jackson.databind.SelonrializelonrProvidelonr
 
-private[identifier] class ComponentIdentifierStackSerializer()
-    extends JsonSerializer[ComponentIdentifierStack] {
-  override def serialize(
-    componentIdentifierStack: ComponentIdentifierStack,
-    gen: JsonGenerator,
-    serializers: SerializerProvider
-  ): Unit = serializers.defaultSerializeValue(componentIdentifierStack.componentIdentifiers, gen)
+privatelon[idelonntifielonr] class ComponelonntIdelonntifielonrStackSelonrializelonr()
+    elonxtelonnds JsonSelonrializelonr[ComponelonntIdelonntifielonrStack] {
+  ovelonrridelon delonf selonrializelon(
+    componelonntIdelonntifielonrStack: ComponelonntIdelonntifielonrStack,
+    gelonn: JsonGelonnelonrator,
+    selonrializelonrs: SelonrializelonrProvidelonr
+  ): Unit = selonrializelonrs.delonfaultSelonrializelonValuelon(componelonntIdelonntifielonrStack.componelonntIdelonntifielonrs, gelonn)
 }

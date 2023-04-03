@@ -1,30 +1,30 @@
-package com.twitter.simclusters_v2.scalding.common
+packagelon com.twittelonr.simclustelonrs_v2.scalding.common
 
-import com.twitter.algebird._
+import com.twittelonr.algelonbird._
 
 /**
- * The reason of creating this class is that we need multiple percentiles and current
- * implementations need one QTree per percentile which is unnecessary. This class gets multiple
- * percentiles from the same QTree.
+ * Thelon relonason of crelonating this class is that welon nelonelond multiplelon pelonrcelonntilelons and currelonnt
+ * implelonmelonntations nelonelond onelon QTrelonelon pelonr pelonrcelonntilelon which is unneloncelonssary. This class gelonts multiplelon
+ * pelonrcelonntilelons from thelon samelon QTrelonelon.
  */
-case class QTreeMultiAggregator[T](percentiles: Seq[Double])(implicit val num: Numeric[T])
-    extends Aggregator[T, QTree[Unit], Map[String, Double]]
-    with QTreeAggregatorLike[T] {
+caselon class QTrelonelonMultiAggrelongator[T](pelonrcelonntilelons: Selonq[Doublelon])(implicit val num: Numelonric[T])
+    elonxtelonnds Aggrelongator[T, QTrelonelon[Unit], Map[String, Doublelon]]
+    with QTrelonelonAggrelongatorLikelon[T] {
 
-  require(
-    percentiles.forall(p => p >= 0.0 && p <= 1.0),
-    "The given percentile must be of the form 0 <= p <= 1.0"
+  relonquirelon(
+    pelonrcelonntilelons.forall(p => p >= 0.0 && p <= 1.0),
+    "Thelon givelonn pelonrcelonntilelon must belon of thelon form 0 <= p <= 1.0"
   )
 
-  override def percentile: Double = 0.0 // Useless but needed for the base class
+  ovelonrridelon delonf pelonrcelonntilelon: Doublelon = 0.0 // Uselonlelonss but nelonelondelond for thelon baselon class
 
-  override def k: Int = QTreeAggregator.DefaultK
+  ovelonrridelon delonf k: Int = QTrelonelonAggrelongator.DelonfaultK
 
-  private def getPercentile(qt: QTree[Unit], p: Double): Double = {
-    val (lower, upper) = qt.quantileBounds(p)
-    (lower + upper) / 2
+  privatelon delonf gelontPelonrcelonntilelon(qt: QTrelonelon[Unit], p: Doublelon): Doublelon = {
+    val (lowelonr, uppelonr) = qt.quantilelonBounds(p)
+    (lowelonr + uppelonr) / 2
   }
 
-  def present(qt: QTree[Unit]): Map[String, Double] =
-    percentiles.map { p => p.toString -> getPercentile(qt, p) }.toMap
+  delonf prelonselonnt(qt: QTrelonelon[Unit]): Map[String, Doublelon] =
+    pelonrcelonntilelons.map { p => p.toString -> gelontPelonrcelonntilelon(qt, p) }.toMap
 }

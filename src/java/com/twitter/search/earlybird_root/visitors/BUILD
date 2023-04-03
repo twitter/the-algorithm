@@ -1,13 +1,13 @@
 java_library(
-    sources = ["*.java"],
+    sourcelons = ["*.java"],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/com/google/guava",
-        "src/java/com/twitter/search/common/partitioning/base",
-        "src/java/com/twitter/search/common/schema/base",
-        "src/java/com/twitter/search/common/schema/earlybird",
-        "src/java/com/twitter/search/queryparser/query:core-query-nodes",
-        "src/java/com/twitter/search/queryparser/query/search:search-query-nodes",
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        "3rdparty/jvm/com/googlelon/guava",
+        "src/java/com/twittelonr/selonarch/common/partitioning/baselon",
+        "src/java/com/twittelonr/selonarch/common/schelonma/baselon",
+        "src/java/com/twittelonr/selonarch/common/schelonma/elonarlybird",
+        "src/java/com/twittelonr/selonarch/quelonryparselonr/quelonry:corelon-quelonry-nodelons",
+        "src/java/com/twittelonr/selonarch/quelonryparselonr/quelonry/selonarch:selonarch-quelonry-nodelons",
     ],
 )

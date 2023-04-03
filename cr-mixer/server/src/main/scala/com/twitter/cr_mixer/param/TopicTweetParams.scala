@@ -1,115 +1,115 @@
-package com.twitter.cr_mixer.param
+packagelon com.twittelonr.cr_mixelonr.param
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.logging.Logger
-import com.twitter.timelines.configapi.BaseConfig
-import com.twitter.timelines.configapi.BaseConfigBuilder
-import com.twitter.timelines.configapi.DurationConversion
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil
-import com.twitter.timelines.configapi.HasDurationConversion
-import com.twitter.timelines.configapi.Param
-import com.twitter.util.Duration
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.finaglelon.stats.NullStatsReloncelonivelonr
+import com.twittelonr.logging.Loggelonr
+import com.twittelonr.timelonlinelons.configapi.BaselonConfig
+import com.twittelonr.timelonlinelons.configapi.BaselonConfigBuildelonr
+import com.twittelonr.timelonlinelons.configapi.DurationConvelonrsion
+import com.twittelonr.timelonlinelons.configapi.FSBoundelondParam
+import com.twittelonr.timelonlinelons.configapi.FSNamelon
+import com.twittelonr.timelonlinelons.configapi.FSParam
+import com.twittelonr.timelonlinelons.configapi.FelonaturelonSwitchOvelonrridelonUtil
+import com.twittelonr.timelonlinelons.configapi.HasDurationConvelonrsion
+import com.twittelonr.timelonlinelons.configapi.Param
+import com.twittelonr.util.Duration
 
-object TopicTweetParams {
-  object MaxTweetAge
-      extends FSBoundedParam[Duration](
-        name = "topic_tweet_candidate_generation_max_tweet_age_hours",
-        default = 24.hours,
+objelonct TopicTwelonelontParams {
+  objelonct MaxTwelonelontAgelon
+      elonxtelonnds FSBoundelondParam[Duration](
+        namelon = "topic_twelonelont_candidatelon_gelonnelonration_max_twelonelont_agelon_hours",
+        delonfault = 24.hours,
         min = 12.hours,
         max = 48.hours
       )
-      with HasDurationConversion {
-    override val durationConversion: DurationConversion = DurationConversion.FromHours
+      with HasDurationConvelonrsion {
+    ovelonrridelon val durationConvelonrsion: DurationConvelonrsion = DurationConvelonrsion.FromHours
   }
 
-  object MaxTopicTweetCandidatesParam
-      extends FSBoundedParam[Int](
-        name = "topic_tweet_max_candidates_num",
-        default = 200,
+  objelonct MaxTopicTwelonelontCandidatelonsParam
+      elonxtelonnds FSBoundelondParam[Int](
+        namelon = "topic_twelonelont_max_candidatelons_num",
+        delonfault = 200,
         min = 0,
         max = 1000
       )
 
-  object MaxSkitTfgCandidatesParam
-      extends FSBoundedParam[Int](
-        name = "topic_tweet_skit_tfg_max_candidates_num",
-        default = 100,
+  objelonct MaxSkitTfgCandidatelonsParam
+      elonxtelonnds FSBoundelondParam[Int](
+        namelon = "topic_twelonelont_skit_tfg_max_candidatelons_num",
+        delonfault = 100,
         min = 0,
         max = 1000
       )
 
-  object MaxSkitHighPrecisionCandidatesParam
-      extends FSBoundedParam[Int](
-        name = "topic_tweet_skit_high_precision_max_candidates_num",
-        default = 100,
+  objelonct MaxSkitHighPreloncisionCandidatelonsParam
+      elonxtelonnds FSBoundelondParam[Int](
+        namelon = "topic_twelonelont_skit_high_preloncision_max_candidatelons_num",
+        delonfault = 100,
         min = 0,
         max = 1000
       )
 
-  object MaxCertoCandidatesParam
-      extends FSBoundedParam[Int](
-        name = "topic_tweet_certo_max_candidates_num",
-        default = 100,
+  objelonct MaxCelonrtoCandidatelonsParam
+      elonxtelonnds FSBoundelondParam[Int](
+        namelon = "topic_twelonelont_celonrto_max_candidatelons_num",
+        delonfault = 100,
         min = 0,
         max = 1000
       )
 
-  // The min prod score for Certo L2-normalized cosine candidates
-  object CertoScoreThresholdParam
-      extends FSBoundedParam[Double](
-        name = "topic_tweet_certo_score_threshold",
-        default = 0.015,
+  // Thelon min prod scorelon for Celonrto L2-normalizelond cosinelon candidatelons
+  objelonct CelonrtoScorelonThrelonsholdParam
+      elonxtelonnds FSBoundelondParam[Doublelon](
+        namelon = "topic_twelonelont_celonrto_scorelon_threlonshold",
+        delonfault = 0.015,
         min = 0,
         max = 1
       )
 
-  object SemanticCoreVersionIdParam
-      extends FSParam[Long](
-        name = "semantic_core_version_id",
-        default = 1380520918896713735L
+  objelonct SelonmanticCorelonVelonrsionIdParam
+      elonxtelonnds FSParam[Long](
+        namelon = "selonmantic_corelon_velonrsion_id",
+        delonfault = 1380520918896713735L
       )
 
-  val AllParams: Seq[Param[_] with FSName] = Seq(
-    CertoScoreThresholdParam,
-    MaxTopicTweetCandidatesParam,
-    MaxTweetAge,
-    MaxCertoCandidatesParam,
-    MaxSkitTfgCandidatesParam,
-    MaxSkitHighPrecisionCandidatesParam,
-    SemanticCoreVersionIdParam
+  val AllParams: Selonq[Param[_] with FSNamelon] = Selonq(
+    CelonrtoScorelonThrelonsholdParam,
+    MaxTopicTwelonelontCandidatelonsParam,
+    MaxTwelonelontAgelon,
+    MaxCelonrtoCandidatelonsParam,
+    MaxSkitTfgCandidatelonsParam,
+    MaxSkitHighPreloncisionCandidatelonsParam,
+    SelonmanticCorelonVelonrsionIdParam
   )
 
-  lazy val config: BaseConfig = {
-    val booleanOverrides = FeatureSwitchOverrideUtil.getBooleanFSOverrides()
+  lazy val config: BaselonConfig = {
+    val boolelonanOvelonrridelons = FelonaturelonSwitchOvelonrridelonUtil.gelontBoolelonanFSOvelonrridelons()
 
-    val doubleOverrides =
-      FeatureSwitchOverrideUtil.getBoundedDoubleFSOverrides(CertoScoreThresholdParam)
+    val doublelonOvelonrridelons =
+      FelonaturelonSwitchOvelonrridelonUtil.gelontBoundelondDoublelonFSOvelonrridelons(CelonrtoScorelonThrelonsholdParam)
 
-    val intOverrides = FeatureSwitchOverrideUtil.getBoundedIntFSOverrides(
-      MaxCertoCandidatesParam,
-      MaxSkitTfgCandidatesParam,
-      MaxSkitHighPrecisionCandidatesParam,
-      MaxTopicTweetCandidatesParam
+    val intOvelonrridelons = FelonaturelonSwitchOvelonrridelonUtil.gelontBoundelondIntFSOvelonrridelons(
+      MaxCelonrtoCandidatelonsParam,
+      MaxSkitTfgCandidatelonsParam,
+      MaxSkitHighPreloncisionCandidatelonsParam,
+      MaxTopicTwelonelontCandidatelonsParam
     )
 
-    val longOverrides = FeatureSwitchOverrideUtil.getLongFSOverrides(SemanticCoreVersionIdParam)
+    val longOvelonrridelons = FelonaturelonSwitchOvelonrridelonUtil.gelontLongFSOvelonrridelons(SelonmanticCorelonVelonrsionIdParam)
 
-    val durationFSOverrides = FeatureSwitchOverrideUtil.getDurationFSOverrides(MaxTweetAge)
+    val durationFSOvelonrridelons = FelonaturelonSwitchOvelonrridelonUtil.gelontDurationFSOvelonrridelons(MaxTwelonelontAgelon)
 
-    val enumOverrides =
-      FeatureSwitchOverrideUtil.getEnumFSOverrides(NullStatsReceiver, Logger(getClass))
+    val elonnumOvelonrridelons =
+      FelonaturelonSwitchOvelonrridelonUtil.gelontelonnumFSOvelonrridelons(NullStatsReloncelonivelonr, Loggelonr(gelontClass))
 
-    BaseConfigBuilder()
-      .set(booleanOverrides: _*)
-      .set(doubleOverrides: _*)
-      .set(intOverrides: _*)
-      .set(longOverrides: _*)
-      .set(enumOverrides: _*)
-      .set(durationFSOverrides: _*)
+    BaselonConfigBuildelonr()
+      .selont(boolelonanOvelonrridelons: _*)
+      .selont(doublelonOvelonrridelons: _*)
+      .selont(intOvelonrridelons: _*)
+      .selont(longOvelonrridelons: _*)
+      .selont(elonnumOvelonrridelons: _*)
+      .selont(durationFSOvelonrridelons: _*)
       .build()
   }
 }

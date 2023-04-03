@@ -1,53 +1,53 @@
-package com.twitter.ann.service.query_server.common
+packagelon com.twittelonr.ann.selonrvicelon.quelonry_selonrvelonr.common
 
-import com.google.inject.Module
-import com.twitter.ann.common.thriftscala.AnnQueryService
-import com.twitter.app.Flag
-import com.twitter.finatra.decider.modules.DeciderModule
-import com.twitter.finatra.thrift.ThriftServer
-import com.twitter.finatra.mtls.thriftmux.Mtls
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsThriftWebFormsModule
-import com.twitter.finatra.thrift.filters.{
-  AccessLoggingFilter,
-  LoggingMDCFilter,
-  StatsFilter,
-  ThriftMDCFilter,
-  TraceIdMDCFilter
+import com.googlelon.injelonct.Modulelon
+import com.twittelonr.ann.common.thriftscala.AnnQuelonrySelonrvicelon
+import com.twittelonr.app.Flag
+import com.twittelonr.finatra.deloncidelonr.modulelons.DeloncidelonrModulelon
+import com.twittelonr.finatra.thrift.ThriftSelonrvelonr
+import com.twittelonr.finatra.mtls.thriftmux.Mtls
+import com.twittelonr.finatra.mtls.thriftmux.modulelons.MtlsThriftWelonbFormsModulelon
+import com.twittelonr.finatra.thrift.filtelonrs.{
+  AccelonssLoggingFiltelonr,
+  LoggingMDCFiltelonr,
+  StatsFiltelonr,
+  ThriftMDCFiltelonr,
+  TracelonIdMDCFiltelonr
 }
-import com.twitter.finatra.thrift.routing.ThriftRouter
+import com.twittelonr.finatra.thrift.routing.ThriftRoutelonr
 
 /**
- * This class provides most of the configuration needed for logging, stats, deciders etc.
+ * This class providelons most of thelon configuration nelonelondelond for logging, stats, deloncidelonrs elontc.
  */
-abstract class BaseQueryIndexServer extends ThriftServer with Mtls {
+abstract class BaselonQuelonryIndelonxSelonrvelonr elonxtelonnds ThriftSelonrvelonr with Mtls {
 
-  protected val environment: Flag[String] = flag[String]("environment", "service environment")
-
-  /**
-   * Override with method to provide more module to guice.
-   */
-  protected def additionalModules: Seq[Module]
+  protelonctelond val elonnvironmelonnt: Flag[String] = flag[String]("elonnvironmelonnt", "selonrvicelon elonnvironmelonnt")
 
   /**
-   * Override this method to add the controller to the thrift router. BaseQueryIndexServer takes
-   * care of most of the other configuration for you.
-   * @param router
+   * Ovelonrridelon with melonthod to providelon morelon modulelon to guicelon.
    */
-  protected def addController(router: ThriftRouter): Unit
+  protelonctelond delonf additionalModulelons: Selonq[Modulelon]
 
-  override protected final lazy val modules: Seq[Module] = Seq(
-    DeciderModule,
-    new MtlsThriftWebFormsModule[AnnQueryService.MethodPerEndpoint](this)
-  ) ++ additionalModules
+  /**
+   * Ovelonrridelon this melonthod to add thelon controllelonr to thelon thrift routelonr. BaselonQuelonryIndelonxSelonrvelonr takelons
+   * carelon of most of thelon othelonr configuration for you.
+   * @param routelonr
+   */
+  protelonctelond delonf addControllelonr(routelonr: ThriftRoutelonr): Unit
 
-  override protected final def configureThrift(router: ThriftRouter): Unit = {
-    router
-      .filter[LoggingMDCFilter]
-      .filter[TraceIdMDCFilter]
-      .filter[ThriftMDCFilter]
-      .filter[AccessLoggingFilter]
-      .filter[StatsFilter]
+  ovelonrridelon protelonctelond final lazy val modulelons: Selonq[Modulelon] = Selonq(
+    DeloncidelonrModulelon,
+    nelonw MtlsThriftWelonbFormsModulelon[AnnQuelonrySelonrvicelon.MelonthodPelonrelonndpoint](this)
+  ) ++ additionalModulelons
 
-    addController(router)
+  ovelonrridelon protelonctelond final delonf configurelonThrift(routelonr: ThriftRoutelonr): Unit = {
+    routelonr
+      .filtelonr[LoggingMDCFiltelonr]
+      .filtelonr[TracelonIdMDCFiltelonr]
+      .filtelonr[ThriftMDCFiltelonr]
+      .filtelonr[AccelonssLoggingFiltelonr]
+      .filtelonr[StatsFiltelonr]
+
+    addControllelonr(routelonr)
   }
 }

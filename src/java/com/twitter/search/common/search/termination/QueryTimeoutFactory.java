@@ -1,34 +1,34 @@
-package com.twitter.search.common.search.termination;
+packagelon com.twittelonr.selonarch.common.selonarch.telonrmination;
 
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.search.TerminationTracker;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
+import com.twittelonr.common.util.Clock;
+import com.twittelonr.selonarch.common.selonarch.TelonrminationTrackelonr;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonquelonst;
 
-public class QueryTimeoutFactory {
+public class QuelonryTimelonoutFactory {
   /**
-   * Creates a QueryTimeout instance for a given EarlybirdRequest and TerminationTracker, if the
-   * required conditions for leaf-level timeout checking are met. Returns null otherwise.
+   * Crelonatelons a QuelonryTimelonout instancelon for a givelonn elonarlybirdRelonquelonst and TelonrminationTrackelonr, if thelon
+   * relonquirelond conditions for lelonaf-lelonvelonl timelonout cheloncking arelon melont. Relonturns null othelonrwiselon.
    *
-   * The conditions are:
-   *   1) CollectorTerminationParams.isEnforceQueryTimeout()
-   *   2) CollectorTerminationParams.isSetTimeoutMs()
+   * Thelon conditions arelon:
+   *   1) CollelonctorTelonrminationParams.iselonnforcelonQuelonryTimelonout()
+   *   2) CollelonctorTelonrminationParams.isSelontTimelonoutMs()
    */
-  public QueryTimeout createQueryTimeout(
-      EarlybirdRequest request,
-      TerminationTracker tracker,
+  public QuelonryTimelonout crelonatelonQuelonryTimelonout(
+      elonarlybirdRelonquelonst relonquelonst,
+      TelonrminationTrackelonr trackelonr,
       Clock clock) {
-    if (tracker != null
-        && request != null
-        && request.isSetSearchQuery()
-        && request.getSearchQuery().isSetCollectorParams()
-        && request.getSearchQuery().getCollectorParams().isSetTerminationParams()
-        && request.getSearchQuery().getCollectorParams().getTerminationParams()
-            .isEnforceQueryTimeout()
-        && request.getSearchQuery().getCollectorParams().getTerminationParams()
-            .isSetTimeoutMs()) {
-      return new QueryTimeoutImpl(request.getClientId(), tracker, clock);
-    } else {
-      return null;
+    if (trackelonr != null
+        && relonquelonst != null
+        && relonquelonst.isSelontSelonarchQuelonry()
+        && relonquelonst.gelontSelonarchQuelonry().isSelontCollelonctorParams()
+        && relonquelonst.gelontSelonarchQuelonry().gelontCollelonctorParams().isSelontTelonrminationParams()
+        && relonquelonst.gelontSelonarchQuelonry().gelontCollelonctorParams().gelontTelonrminationParams()
+            .iselonnforcelonQuelonryTimelonout()
+        && relonquelonst.gelontSelonarchQuelonry().gelontCollelonctorParams().gelontTelonrminationParams()
+            .isSelontTimelonoutMs()) {
+      relonturn nelonw QuelonryTimelonoutImpl(relonquelonst.gelontClielonntId(), trackelonr, clock);
+    } elonlselon {
+      relonturn null;
     }
   }
 }

@@ -1,348 +1,348 @@
-from abc import ABC, abstractmethod
-from datetime import date
-from importlib import import_module
-import pickle
+from abc import ABC, abstractmelonthod
+from datelontimelon import datelon
+from importlib import import_modulelon
+import picklelon
 
-from toxicity_ml_pipeline.settings.default_settings_tox import (
-  CLIENT,
-  EXISTING_TASK_VERSIONS,
-  GCS_ADDRESS,
+from toxicity_ml_pipelonlinelon.selonttings.delonfault_selonttings_tox import (
+  CLIelonNT,
+  elonXISTING_TASK_VelonRSIONS,
+  GCS_ADDRelonSS,
   TRAINING_DATA_LOCATION,
 )
-from toxicity_ml_pipeline.utils.helpers import execute_command, execute_query
-from toxicity_ml_pipeline.utils.queries import (
-  FULL_QUERY,
-  FULL_QUERY_W_TWEET_TYPES,
-  PARSER_UDF,
-  QUERY_SETTINGS,
+from toxicity_ml_pipelonlinelon.utils.helonlpelonrs import elonxeloncutelon_command, elonxeloncutelon_quelonry
+from toxicity_ml_pipelonlinelon.utils.quelonrielons import (
+  FULL_QUelonRY,
+  FULL_QUelonRY_W_TWelonelonT_TYPelonS,
+  PARSelonR_UDF,
+  QUelonRY_SelonTTINGS,
 )
 
 import numpy as np
 import pandas
 
 
-class DataframeLoader(ABC):
+class DataframelonLoadelonr(ABC):
 
-  def __init__(self, project):
-    self.project = project
+  delonf __init__(selonlf, projelonct):
+    selonlf.projelonct = projelonct
 
-  @abstractmethod
-  def produce_query(self):
+  @abstractmelonthod
+  delonf producelon_quelonry(selonlf):
     pass
 
-  @abstractmethod
-  def load_data(self, test=False):
+  @abstractmelonthod
+  delonf load_data(selonlf, telonst=Falselon):
     pass
 
 
-class ENLoader(DataframeLoader):
-  def __init__(self, project, setting_file):
-    super(ENLoader, self).__init__(project=project)
-    self.date_begin = setting_file.DATE_BEGIN
-    self.date_end = setting_file.DATE_END
-    TASK_VERSION = setting_file.TASK_VERSION
-    if TASK_VERSION not in EXISTING_TASK_VERSIONS:
-      raise ValueError
-    self.task_version = TASK_VERSION
-    self.query_settings = dict(QUERY_SETTINGS)
-    self.full_query = FULL_QUERY
+class elonNLoadelonr(DataframelonLoadelonr):
+  delonf __init__(selonlf, projelonct, selontting_filelon):
+    supelonr(elonNLoadelonr, selonlf).__init__(projelonct=projelonct)
+    selonlf.datelon_belongin = selontting_filelon.DATelon_BelonGIN
+    selonlf.datelon_elonnd = selontting_filelon.DATelon_elonND
+    TASK_VelonRSION = selontting_filelon.TASK_VelonRSION
+    if TASK_VelonRSION not in elonXISTING_TASK_VelonRSIONS:
+      raiselon Valuelonelonrror
+    selonlf.task_velonrsion = TASK_VelonRSION
+    selonlf.quelonry_selonttings = dict(QUelonRY_SelonTTINGS)
+    selonlf.full_quelonry = FULL_QUelonRY
 
-  def produce_query(self, date_begin, date_end, task_version=None, **keys):
-    task_version = self.task_version if task_version is None else task_version
+  delonf producelon_quelonry(selonlf, datelon_belongin, datelon_elonnd, task_velonrsion=Nonelon, **kelonys):
+    task_velonrsion = selonlf.task_velonrsion if task_velonrsion is Nonelon elonlselon task_velonrsion
 
-    if task_version in keys["table"]:
-      table_name = keys["table"][task_version]
-      print(f"Loading {table_name}")
+    if task_velonrsion in kelonys["tablelon"]:
+      tablelon_namelon = kelonys["tablelon"][task_velonrsion]
+      print(f"Loading {tablelon_namelon}")
 
-      main_query = keys["main"].format(
-        table=table_name,
-        parser_udf=PARSER_UDF[task_version],
-        date_begin=date_begin,
-        date_end=date_end,
+      main_quelonry = kelonys["main"].format(
+        tablelon=tablelon_namelon,
+        parselonr_udf=PARSelonR_UDF[task_velonrsion],
+        datelon_belongin=datelon_belongin,
+        datelon_elonnd=datelon_elonnd,
       )
 
-      return self.full_query.format(
-        main_table_query=main_query, date_begin=date_begin, date_end=date_end
+      relonturn selonlf.full_quelonry.format(
+        main_tablelon_quelonry=main_quelonry, datelon_belongin=datelon_belongin, datelon_elonnd=datelon_elonnd
       )
-    return ""
+    relonturn ""
 
-  def _reload(self, test, file_keyword):
-    query = f"SELECT * from `{TRAINING_DATA_LOCATION.format(project=self.project)}_{file_keyword}`"
+  delonf _relonload(selonlf, telonst, filelon_kelonyword):
+    quelonry = f"SelonLelonCT * from `{TRAINING_DATA_LOCATION.format(projelonct=selonlf.projelonct)}_{filelon_kelonyword}`"
 
-    if test:
-      query += " ORDER BY RAND() LIMIT 1000"
+    if telonst:
+      quelonry += " ORDelonR BY RAND() LIMIT 1000"
     try:
-      df = execute_query(client=CLIENT, query=query)
-    except Exception:
+      df = elonxeloncutelon_quelonry(clielonnt=CLIelonNT, quelonry=quelonry)
+    elonxcelonpt elonxcelonption:
       print(
-        "Loading from BQ failed, trying to load from GCS. "
-        "NB: use this option only for intermediate files, which will be deleted at the end of "
-        "the project."
+        "Loading from BQ failelond, trying to load from GCS. "
+        "NB: uselon this option only for intelonrmelondiatelon filelons, which will belon delonlelontelond at thelon elonnd of "
+        "thelon projelonct."
       )
-      copy_cmd = f"gsutil cp {GCS_ADDRESS.format(project=self.project)}/training_data/{file_keyword}.pkl ."
-      execute_command(copy_cmd)
+      copy_cmd = f"gsutil cp {GCS_ADDRelonSS.format(projelonct=selonlf.projelonct)}/training_data/{filelon_kelonyword}.pkl ."
+      elonxeloncutelon_command(copy_cmd)
       try:
-        with open(f"{file_keyword}.pkl", "rb") as file:
-          df = pickle.load(file)
-      except Exception:
-        return None
+        with opelonn(f"{filelon_kelonyword}.pkl", "rb") as filelon:
+          df = picklelon.load(filelon)
+      elonxcelonpt elonxcelonption:
+        relonturn Nonelon
 
-      if test:
-        df = df.sample(frac=1)
-        return df.iloc[:1000]
+      if telonst:
+        df = df.samplelon(frac=1)
+        relonturn df.iloc[:1000]
 
-    return df
+    relonturn df
 
-  def load_data(self, test=False, **kwargs):
-    if "reload" in kwargs and kwargs["reload"]:
-      df = self._reload(test, kwargs["reload"])
-      if df is not None and df.shape[0] > 0:
-        return df
+  delonf load_data(selonlf, telonst=Falselon, **kwargs):
+    if "relonload" in kwargs and kwargs["relonload"]:
+      df = selonlf._relonload(telonst, kwargs["relonload"])
+      if df is not Nonelon and df.shapelon[0] > 0:
+        relonturn df
 
-    df = None
-    query_settings = self.query_settings
-    if test:
-      query_settings = {"fairness": self.query_settings["fairness"]}
-      query_settings["fairness"]["main"] += " LIMIT 500"
+    df = Nonelon
+    quelonry_selonttings = selonlf.quelonry_selonttings
+    if telonst:
+      quelonry_selonttings = {"fairnelonss": selonlf.quelonry_selonttings["fairnelonss"]}
+      quelonry_selonttings["fairnelonss"]["main"] += " LIMIT 500"
 
-    for table, query_info in query_settings.items():
-      curr_query = self.produce_query(
-        date_begin=self.date_begin, date_end=self.date_end, **query_info
+    for tablelon, quelonry_info in quelonry_selonttings.itelonms():
+      curr_quelonry = selonlf.producelon_quelonry(
+        datelon_belongin=selonlf.datelon_belongin, datelon_elonnd=selonlf.datelon_elonnd, **quelonry_info
       )
-      if curr_query == "":
-        continue
-      curr_df = execute_query(client=CLIENT, query=curr_query)
-      curr_df["origin"] = table
-      df = curr_df if df is None else pandas.concat((df, curr_df))
+      if curr_quelonry == "":
+        continuelon
+      curr_df = elonxeloncutelon_quelonry(clielonnt=CLIelonNT, quelonry=curr_quelonry)
+      curr_df["origin"] = tablelon
+      df = curr_df if df is Nonelon elonlselon pandas.concat((df, curr_df))
 
-    df["loading_date"] = date.today()
-    df["date"] = pandas.to_datetime(df.date)
-    return df
+    df["loading_datelon"] = datelon.today()
+    df["datelon"] = pandas.to_datelontimelon(df.datelon)
+    relonturn df
 
-  def load_precision_set(
-    self, begin_date="...", end_date="...", with_tweet_types=False, task_version=3.5
+  delonf load_preloncision_selont(
+    selonlf, belongin_datelon="...", elonnd_datelon="...", with_twelonelont_typelons=Falselon, task_velonrsion=3.5
   ):
-    if with_tweet_types:
-      self.full_query = FULL_QUERY_W_TWEET_TYPES
+    if with_twelonelont_typelons:
+      selonlf.full_quelonry = FULL_QUelonRY_W_TWelonelonT_TYPelonS
 
-    query_settings = self.query_settings
-    curr_query = self.produce_query(
-      date_begin=begin_date,
-      date_end=end_date,
-      task_version=task_version,
-      **query_settings["precision"],
+    quelonry_selonttings = selonlf.quelonry_selonttings
+    curr_quelonry = selonlf.producelon_quelonry(
+      datelon_belongin=belongin_datelon,
+      datelon_elonnd=elonnd_datelon,
+      task_velonrsion=task_velonrsion,
+      **quelonry_selonttings["preloncision"],
     )
-    curr_df = execute_query(client=CLIENT, query=curr_query)
+    curr_df = elonxeloncutelon_quelonry(clielonnt=CLIelonNT, quelonry=curr_quelonry)
 
-    curr_df.rename(columns={"media_url": "media_presence"}, inplace=True)
-    return curr_df
+    curr_df.relonnamelon(columns={"melondia_url": "melondia_prelonselonncelon"}, inplacelon=Truelon)
+    relonturn curr_df
 
 
-class ENLoaderWithSampling(ENLoader):
+class elonNLoadelonrWithSampling(elonNLoadelonr):
 
-  keywords = {
+  kelonywords = {
     "politics": [
 ...
     ],
     "insults": [
 ...    
     ],
-    "race": [
+    "racelon": [
 ...
     ],
   }
   n = ...
   N = ...
 
-  def __init__(self, project):
-    self.raw_loader = ENLoader(project=project)
-    if project == ...:
-      self.project = project
-    else:
-      raise ValueError
+  delonf __init__(selonlf, projelonct):
+    selonlf.raw_loadelonr = elonNLoadelonr(projelonct=projelonct)
+    if projelonct == ...:
+      selonlf.projelonct = projelonct
+    elonlselon:
+      raiselon Valuelonelonrror
 
-  def sample_with_weights(self, df, n):
-    w = df["label"].value_counts(normalize=True)[1]
-    dist = np.full((df.shape[0],), w)
-    sampled_df = df.sample(n=n, weights=dist, replace=False)
-    return sampled_df
+  delonf samplelon_with_welonights(selonlf, df, n):
+    w = df["labelonl"].valuelon_counts(normalizelon=Truelon)[1]
+    dist = np.full((df.shapelon[0],), w)
+    samplelond_df = df.samplelon(n=n, welonights=dist, relonplacelon=Falselon)
+    relonturn samplelond_df
 
-  def sample_keywords(self, df, N, group):
-    print("\nmatching", group, "keywords...")
+  delonf samplelon_kelonywords(selonlf, df, N, group):
+    print("\nmatching", group, "kelonywords...")
 
-    keyword_list = self.keywords[group]
-    match_df = df.loc[df.text.str.lower().str.contains("|".join(keyword_list), regex=True)]
+    kelonyword_list = selonlf.kelonywords[group]
+    match_df = df.loc[df.telonxt.str.lowelonr().str.contains("|".join(kelonyword_list), relongelonx=Truelon)]
 
     print("sampling N/3 from", group)
-    if match_df.shape[0] <= N / 3:
+    if match_df.shapelon[0] <= N / 3:
       print(
         "WARNING: Sampling only",
-        match_df.shape[0],
-        "instead of",
+        match_df.shapelon[0],
+        "instelonad of",
         N / 3,
-        "examples from race focused tweets due to insufficient data",
+        "elonxamplelons from racelon focuselond twelonelonts duelon to insufficielonnt data",
       )
-      sample_df = match_df
+      samplelon_df = match_df
 
-    else:
+    elonlselon:
       print(
         "sampling",
         group,
         "at",
-        round(match_df["label"].value_counts(normalize=True)[1], 3),
-        "% action rate",
+        round(match_df["labelonl"].valuelon_counts(normalizelon=Truelon)[1], 3),
+        "% action ratelon",
       )
-      sample_df = self.sample_with_weights(match_df, int(N / 3))
-    print(sample_df.shape)
-    print(sample_df.label.value_counts(normalize=True))
+      samplelon_df = selonlf.samplelon_with_welonights(match_df, int(N / 3))
+    print(samplelon_df.shapelon)
+    print(samplelon_df.labelonl.valuelon_counts(normalizelon=Truelon))
 
-    print("\nshape of df before dropping sampled rows after", group, "matching..", df.shape[0])
+    print("\nshapelon of df belonforelon dropping samplelond rows aftelonr", group, "matching..", df.shapelon[0])
     df = df.loc[
-      df.index.difference(sample_df.index),
+      df.indelonx.diffelonrelonncelon(samplelon_df.indelonx),
     ]
-    print("\nshape of df after dropping sampled rows after", group, "matching..", df.shape[0])
+    print("\nshapelon of df aftelonr dropping samplelond rows aftelonr", group, "matching..", df.shapelon[0])
 
-    return df, sample_df
+    relonturn df, samplelon_df
 
-  def sample_first_set_helper(self, train_df, first_set, new_n):
-    if first_set == "prev":
-      fset = train_df.loc[train_df["origin"].isin(["prevalence", "causal prevalence"])]
+  delonf samplelon_first_selont_helonlpelonr(selonlf, train_df, first_selont, nelonw_n):
+    if first_selont == "prelonv":
+      fselont = train_df.loc[train_df["origin"].isin(["prelonvalelonncelon", "causal prelonvalelonncelon"])]
       print(
-        "sampling prev at", round(fset["label"].value_counts(normalize=True)[1], 3), "% action rate"
+        "sampling prelonv at", round(fselont["labelonl"].valuelon_counts(normalizelon=Truelon)[1], 3), "% action ratelon"
       )
-    else:
-      fset = train_df
+    elonlselon:
+      fselont = train_df
 
-    n_fset = self.sample_with_weights(fset, new_n)
-    print("len of sampled first set", n_fset.shape[0])
-    print(n_fset.label.value_counts(normalize=True))
+    n_fselont = selonlf.samplelon_with_welonights(fselont, nelonw_n)
+    print("lelonn of samplelond first selont", n_fselont.shapelon[0])
+    print(n_fselont.labelonl.valuelon_counts(normalizelon=Truelon))
 
-    return n_fset
+    relonturn n_fselont
 
-  def sample(self, df, first_set, second_set, keyword_sampling, n, N):
-    train_df = df[df.origin != "precision"]
-    val_test_df = df[df.origin == "precision"]
+  delonf samplelon(selonlf, df, first_selont, seloncond_selont, kelonyword_sampling, n, N):
+    train_df = df[df.origin != "preloncision"]
+    val_telonst_df = df[df.origin == "preloncision"]
 
-    print("\nsampling first set of data")
-    new_n = n - N if second_set is not None else n
-    n_fset = self.sample_first_set_helper(train_df, first_set, new_n)
+    print("\nsampling first selont of data")
+    nelonw_n = n - N if seloncond_selont is not Nonelon elonlselon n
+    n_fselont = selonlf.samplelon_first_selont_helonlpelonr(train_df, first_selont, nelonw_n)
 
-    print("\nsampling second set of data")
+    print("\nsampling seloncond selont of data")
     train_df = train_df.loc[
-      train_df.index.difference(n_fset.index),
+      train_df.indelonx.diffelonrelonncelon(n_fselont.indelonx),
     ]
 
-    if second_set is None:
-      print("no second set sampling being done")
-      df = n_fset.append(val_test_df)
-      return df
+    if seloncond_selont is Nonelon:
+      print("no seloncond selont sampling beloning donelon")
+      df = n_fselont.appelonnd(val_telonst_df)
+      relonturn df
 
-    if second_set == "prev":
-      sset = train_df.loc[train_df["origin"].isin(["prevalence", "causal prevalence"])]
+    if seloncond_selont == "prelonv":
+      sselont = train_df.loc[train_df["origin"].isin(["prelonvalelonncelon", "causal prelonvalelonncelon"])]
 
-    elif second_set == "fdr":
-      sset = train_df.loc[train_df["origin"] == "fdr"]
+    elonlif seloncond_selont == "fdr":
+      sselont = train_df.loc[train_df["origin"] == "fdr"]
 
-    else: 
-      sset = train_df
+    elonlselon:
+      sselont = train_df
 
-    if keyword_sampling == True:
-      print("sampling based off of keywords defined...")
-      print("second set is", second_set, "with length", sset.shape[0])
+    if kelonyword_sampling == Truelon:
+      print("sampling baselond off of kelonywords delonfinelond...")
+      print("seloncond selont is", seloncond_selont, "with lelonngth", sselont.shapelon[0])
 
-      sset, n_politics = self.sample_keywords(sset, N, "politics")
-      sset, n_insults = self.sample_keywords(sset, N, "insults")
-      sset, n_race = self.sample_keywords(sset, N, "race")
+      sselont, n_politics = selonlf.samplelon_kelonywords(sselont, N, "politics")
+      sselont, n_insults = selonlf.samplelon_kelonywords(sselont, N, "insults")
+      sselont, n_racelon = selonlf.samplelon_kelonywords(sselont, N, "racelon")
 
-      n_sset = n_politics.append([n_insults, n_race]) 
-      print("len of sampled second set", n_sset.shape[0])
+      n_sselont = n_politics.appelonnd([n_insults, n_racelon])
+      print("lelonn of samplelond seloncond selont", n_sselont.shapelon[0])
 
-    else:
+    elonlselon:
       print(
-        "No keyword sampling. Instead random sampling from",
-        second_set,
+        "No kelonyword sampling. Instelonad random sampling from",
+        seloncond_selont,
         "at",
-        round(sset["label"].value_counts(normalize=True)[1], 3),
-        "% action rate",
+        round(sselont["labelonl"].valuelon_counts(normalizelon=Truelon)[1], 3),
+        "% action ratelon",
       )
-      n_sset = self.sample_with_weights(sset, N)
-      print("len of sampled second set", n_sset.shape[0])
-      print(n_sset.label.value_counts(normalize=True))
+      n_sselont = selonlf.samplelon_with_welonights(sselont, N)
+      print("lelonn of samplelond seloncond selont", n_sselont.shapelon[0])
+      print(n_sselont.labelonl.valuelon_counts(normalizelon=Truelon))
 
-    df = n_fset.append([n_sset, val_test_df])
-    df = df.sample(frac=1).reset_index(drop=True)
+    df = n_fselont.appelonnd([n_sselont, val_telonst_df])
+    df = df.samplelon(frac=1).relonselont_indelonx(drop=Truelon)
 
-    return df
+    relonturn df
 
-  def load_data(
-    self, first_set="prev", second_set=None, keyword_sampling=False, test=False, **kwargs
+  delonf load_data(
+    selonlf, first_selont="prelonv", seloncond_selont=Nonelon, kelonyword_sampling=Falselon, telonst=Falselon, **kwargs
   ):
-    n = kwargs.get("n", self.n)
-    N = kwargs.get("N", self.N)
+    n = kwargs.gelont("n", selonlf.n)
+    N = kwargs.gelont("N", selonlf.N)
 
-    df = self.raw_loader.load_data(test=test, **kwargs)
-    return self.sample(df, first_set, second_set, keyword_sampling, n, N)
+    df = selonlf.raw_loadelonr.load_data(telonst=telonst, **kwargs)
+    relonturn selonlf.samplelon(df, first_selont, seloncond_selont, kelonyword_sampling, n, N)
 
 
-class I18nLoader(DataframeLoader):
-  def __init__(self):
-    super().__init__(project=...)
-    from archive.settings.... import ACCEPTED_LANGUAGES, QUERY_SETTINGS
+class I18nLoadelonr(DataframelonLoadelonr):
+  delonf __init__(selonlf):
+    supelonr().__init__(projelonct=...)
+    from archivelon.selonttings.... import ACCelonPTelonD_LANGUAGelonS, QUelonRY_SelonTTINGS
 
-    self.accepted_languages = ACCEPTED_LANGUAGES
-    self.query_settings = dict(QUERY_SETTINGS)
+    selonlf.accelonptelond_languagelons = ACCelonPTelonD_LANGUAGelonS
+    selonlf.quelonry_selonttings = dict(QUelonRY_SelonTTINGS)
 
-  def produce_query(self, language, query, dataset, table, lang):
-    query = query.format(dataset=dataset, table=table)
-    add_query = f"AND reviewed.{lang}='{language}'"
-    query += add_query
+  delonf producelon_quelonry(selonlf, languagelon, quelonry, dataselont, tablelon, lang):
+    quelonry = quelonry.format(dataselont=dataselont, tablelon=tablelon)
+    add_quelonry = f"AND relonvielonwelond.{lang}='{languagelon}'"
+    quelonry += add_quelonry
 
-    return query
+    relonturn quelonry
 
-  def query_keys(self, language, task=2, size="50"):
+  delonf quelonry_kelonys(selonlf, languagelon, task=2, sizelon="50"):
     if task == 2:
-      if language == "ar":
-        self.query_settings["adhoc_v2"]["table"] = "..."
-      elif language == "tr":
-        self.query_settings["adhoc_v2"]["table"] = "..."
-      elif language == "es":
-        self.query_settings["adhoc_v2"]["table"] = f"..."
-      else:
-        self.query_settings["adhoc_v2"]["table"] = "..."
+      if languagelon == "ar":
+        selonlf.quelonry_selonttings["adhoc_v2"]["tablelon"] = "..."
+      elonlif languagelon == "tr":
+        selonlf.quelonry_selonttings["adhoc_v2"]["tablelon"] = "..."
+      elonlif languagelon == "elons":
+        selonlf.quelonry_selonttings["adhoc_v2"]["tablelon"] = f"..."
+      elonlselon:
+        selonlf.quelonry_selonttings["adhoc_v2"]["tablelon"] = "..."
 
-      return self.query_settings["adhoc_v2"]
+      relonturn selonlf.quelonry_selonttings["adhoc_v2"]
 
     if task == 3:
-      return self.query_settings["adhoc_v3"]
+      relonturn selonlf.quelonry_selonttings["adhoc_v3"]
 
-    raise ValueError(f"There are no other tasks than 2 or 3. {task} does not exist.")
+    raiselon Valuelonelonrror(f"Thelonrelon arelon no othelonr tasks than 2 or 3. {task} doelons not elonxist.")
 
-  def load_data(self, language, test=False, task=2):
-    if language not in self.accepted_languages:
-      raise ValueError(
-        f"Language not in the data {language}. Accepted values are " f"{self.accepted_languages}"
+  delonf load_data(selonlf, languagelon, telonst=Falselon, task=2):
+    if languagelon not in selonlf.accelonptelond_languagelons:
+      raiselon Valuelonelonrror(
+        f"Languagelon not in thelon data {languagelon}. Accelonptelond valuelons arelon " f"{selonlf.accelonptelond_languagelons}"
       )
 
     print(".... adhoc data")
-    key_dict = self.query_keys(language=language, task=task)
-    query_adhoc = self.produce_query(language=language, **key_dict)
-    if test:
-      query_adhoc += " LIMIT 500"
-    adhoc_df = execute_query(CLIENT, query_adhoc)
+    kelony_dict = selonlf.quelonry_kelonys(languagelon=languagelon, task=task)
+    quelonry_adhoc = selonlf.producelon_quelonry(languagelon=languagelon, **kelony_dict)
+    if telonst:
+      quelonry_adhoc += " LIMIT 500"
+    adhoc_df = elonxeloncutelon_quelonry(CLIelonNT, quelonry_adhoc)
 
-    if not (test or language == "tr" or task == 3):
-      if language == "es":
+    if not (telonst or languagelon == "tr" or task == 3):
+      if languagelon == "elons":
         print(".... additional adhoc data")
-        key_dict = self.query_keys(language=language, size="100")
-        query_adhoc = self.produce_query(language=language, **key_dict)
+        kelony_dict = selonlf.quelonry_kelonys(languagelon=languagelon, sizelon="100")
+        quelonry_adhoc = selonlf.producelon_quelonry(languagelon=languagelon, **kelony_dict)
         adhoc_df = pandas.concat(
-          (adhoc_df, execute_query(CLIENT, query_adhoc)), axis=0, ignore_index=True
+          (adhoc_df, elonxeloncutelon_quelonry(CLIelonNT, quelonry_adhoc)), axis=0, ignorelon_indelonx=Truelon
         )
 
-      print(".... prevalence data")
-      query_prev = self.produce_query(language=language, **self.query_settings["prevalence_v2"])
-      prev_df = execute_query(CLIENT, query_prev)
-      prev_df["description"] = "Prevalence"
-      adhoc_df = pandas.concat((adhoc_df, prev_df), axis=0, ignore_index=True)
+      print(".... prelonvalelonncelon data")
+      quelonry_prelonv = selonlf.producelon_quelonry(languagelon=languagelon, **selonlf.quelonry_selonttings["prelonvalelonncelon_v2"])
+      prelonv_df = elonxeloncutelon_quelonry(CLIelonNT, quelonry_prelonv)
+      prelonv_df["delonscription"] = "Prelonvalelonncelon"
+      adhoc_df = pandas.concat((adhoc_df, prelonv_df), axis=0, ignorelon_indelonx=Truelon)
 
-    return self.clean(adhoc_df)
+    relonturn selonlf.clelonan(adhoc_df)

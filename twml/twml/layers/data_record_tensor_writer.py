@@ -1,50 +1,50 @@
-# pylint: disable=no-member, invalid-name
+# pylint: disablelon=no-melonmbelonr, invalid-namelon
 """
-Implementing Writer Layer
+Implelonmelonnting Writelonr Layelonr
 """
-from .layer import Layer
+from .layelonr import Layelonr
 
 import libtwml
 
 
-class DataRecordTensorWriter(Layer):
+class DataReloncordTelonnsorWritelonr(Layelonr):
   """
-  A layer that packages keys and dense tensors into a DataRecord.
-  This layer was initially added to support exporting user embeddings as tensors.
+  A layelonr that packagelons kelonys and delonnselon telonnsors into a DataReloncord.
+  This layelonr was initially addelond to support elonxporting uselonr elonmbelonddings as telonnsors.
 
-  Arguments:
-      keys:
-        keys to hashmap
+  Argumelonnts:
+      kelonys:
+        kelonys to hashmap
   Output:
       output:
-        a DataRecord serialized using Thrift into a uint8 tensor
+        a DataReloncord selonrializelond using Thrift into a uint8 telonnsor
    """
 
-  def __init__(self, keys, **kwargs):  # pylint: disable=useless-super-delegation
-    super(DataRecordTensorWriter, self).__init__(**kwargs)
-    self.keys = keys
+  delonf __init__(selonlf, kelonys, **kwargs):  # pylint: disablelon=uselonlelonss-supelonr-delonlelongation
+    supelonr(DataReloncordTelonnsorWritelonr, selonlf).__init__(**kwargs)
+    selonlf.kelonys = kelonys
 
-  def compute_output_shape(self, input_shape):
-    """Computes the output shape of the layer given the input shape.
+  delonf computelon_output_shapelon(selonlf, input_shapelon):
+    """Computelons thelon output shapelon of thelon layelonr givelonn thelon input shapelon.
 
     Args:
-      input_shape: A (possibly nested tuple of) `TensorShape`.  It need not
-        be fully defined (e.g. the batch size may be unknown).
+      input_shapelon: A (possibly nelonstelond tuplelon of) `TelonnsorShapelon`.  It nelonelond not
+        belon fully delonfinelond (elon.g. thelon batch sizelon may belon unknown).
 
-    Raises NotImplementedError.
+    Raiselons NotImplelonmelonntelondelonrror.
 
     """
-    raise NotImplementedError
+    raiselon NotImplelonmelonntelondelonrror
 
-  def call(self, values, **kwargs):  # pylint: disable=unused-argument, arguments-differ
-    """The logic of the layer lives here.
+  delonf call(selonlf, valuelons, **kwargs):  # pylint: disablelon=unuselond-argumelonnt, argumelonnts-diffelonr
+    """Thelon logic of thelon layelonr livelons helonrelon.
 
-    Arguments:
-      values:
-        dense tensors corresponding to keys in hashmap
+    Argumelonnts:
+      valuelons:
+        delonnselon telonnsors correlonsponding to kelonys in hashmap
 
-    Returns:
-      The output from the layer
+    Relonturns:
+      Thelon output from thelon layelonr
     """
-    write_op = libtwml.ops.data_record_tensor_writer(self.keys, values)
-    return write_op
+    writelon_op = libtwml.ops.data_reloncord_telonnsor_writelonr(selonlf.kelonys, valuelons)
+    relonturn writelon_op

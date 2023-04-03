@@ -1,68 +1,68 @@
-package com.twitter.home_mixer.functional_component.feature_hydrator
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator
 
-import com.twitter.home_mixer.model.HomeFeatures.FollowingLastNonPollingTimeFeature
-import com.twitter.home_mixer.model.HomeFeatures.LastNonPollingTimeFeature
-import com.twitter.home_mixer.model.HomeFeatures.NonPollingTimesFeature
-import com.twitter.home_mixer.service.HomeMixerAlertConfig
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.QueryFeatureHydrator
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.user_session_store.ReadRequest
-import com.twitter.user_session_store.ReadWriteUserSessionStore
-import com.twitter.user_session_store.UserSessionDataset
-import com.twitter.user_session_store.UserSessionDataset.UserSessionDataset
-import com.twitter.util.Time
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.FollowingLastNonPollingTimelonFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.LastNonPollingTimelonFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.NonPollingTimelonsFelonaturelon
+import com.twittelonr.homelon_mixelonr.selonrvicelon.HomelonMixelonrAlelonrtConfig
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMapBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator.QuelonryFelonaturelonHydrator
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.FelonaturelonHydratorIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.uselonr_selonssion_storelon.RelonadRelonquelonst
+import com.twittelonr.uselonr_selonssion_storelon.RelonadWritelonUselonrSelonssionStorelon
+import com.twittelonr.uselonr_selonssion_storelon.UselonrSelonssionDataselont
+import com.twittelonr.uselonr_selonssion_storelon.UselonrSelonssionDataselont.UselonrSelonssionDataselont
+import com.twittelonr.util.Timelon
 
-import javax.inject.Inject
-import javax.inject.Singleton
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-case class LastNonPollingTimeQueryFeatureHydrator @Inject() (
-  userSessionStore: ReadWriteUserSessionStore)
-    extends QueryFeatureHydrator[PipelineQuery] {
+@Singlelonton
+caselon class LastNonPollingTimelonQuelonryFelonaturelonHydrator @Injelonct() (
+  uselonrSelonssionStorelon: RelonadWritelonUselonrSelonssionStorelon)
+    elonxtelonnds QuelonryFelonaturelonHydrator[PipelonlinelonQuelonry] {
 
-  override val identifier: FeatureHydratorIdentifier =
-    FeatureHydratorIdentifier("LastNonPollingTime")
+  ovelonrridelon val idelonntifielonr: FelonaturelonHydratorIdelonntifielonr =
+    FelonaturelonHydratorIdelonntifielonr("LastNonPollingTimelon")
 
-  override val features: Set[Feature[_, _]] = Set(
-    FollowingLastNonPollingTimeFeature,
-    LastNonPollingTimeFeature,
-    NonPollingTimesFeature
+  ovelonrridelon val felonaturelons: Selont[Felonaturelon[_, _]] = Selont(
+    FollowingLastNonPollingTimelonFelonaturelon,
+    LastNonPollingTimelonFelonaturelon,
+    NonPollingTimelonsFelonaturelon
   )
 
-  private val datasets: Set[UserSessionDataset] = Set(UserSessionDataset.NonPollingTimes)
+  privatelon val dataselonts: Selont[UselonrSelonssionDataselont] = Selont(UselonrSelonssionDataselont.NonPollingTimelons)
 
-  override def hydrate(query: PipelineQuery): Stitch[FeatureMap] = {
-    userSessionStore
-      .read(ReadRequest(query.getRequiredUserId, datasets))
-      .map { userSession =>
-        val nonPollingTimestamps = userSession.flatMap(_.nonPollingTimestamps)
+  ovelonrridelon delonf hydratelon(quelonry: PipelonlinelonQuelonry): Stitch[FelonaturelonMap] = {
+    uselonrSelonssionStorelon
+      .relonad(RelonadRelonquelonst(quelonry.gelontRelonquirelondUselonrId, dataselonts))
+      .map { uselonrSelonssion =>
+        val nonPollingTimelonstamps = uselonrSelonssion.flatMap(_.nonPollingTimelonstamps)
 
-        val lastNonPollingTime = nonPollingTimestamps
-          .flatMap(_.nonPollingTimestampsMs.headOption)
-          .map(Time.fromMilliseconds)
+        val lastNonPollingTimelon = nonPollingTimelonstamps
+          .flatMap(_.nonPollingTimelonstampsMs.helonadOption)
+          .map(Timelon.fromMilliselonconds)
 
-        val followingLastNonPollingTime = nonPollingTimestamps
-          .flatMap(_.mostRecentHomeLatestNonPollingTimestampMs)
-          .map(Time.fromMilliseconds)
+        val followingLastNonPollingTimelon = nonPollingTimelonstamps
+          .flatMap(_.mostReloncelonntHomelonLatelonstNonPollingTimelonstampMs)
+          .map(Timelon.fromMilliselonconds)
 
-        val nonPollingTimes = nonPollingTimestamps
-          .map(_.nonPollingTimestampsMs)
-          .getOrElse(Seq.empty)
+        val nonPollingTimelons = nonPollingTimelonstamps
+          .map(_.nonPollingTimelonstampsMs)
+          .gelontOrelonlselon(Selonq.elonmpty)
 
-        FeatureMapBuilder()
-          .add(FollowingLastNonPollingTimeFeature, followingLastNonPollingTime)
-          .add(LastNonPollingTimeFeature, lastNonPollingTime)
-          .add(NonPollingTimesFeature, nonPollingTimes)
+        FelonaturelonMapBuildelonr()
+          .add(FollowingLastNonPollingTimelonFelonaturelon, followingLastNonPollingTimelon)
+          .add(LastNonPollingTimelonFelonaturelon, lastNonPollingTimelon)
+          .add(NonPollingTimelonsFelonaturelon, nonPollingTimelons)
           .build()
       }
   }
 
-  override val alerts = Seq(
-    HomeMixerAlertConfig.BusinessHours.defaultSuccessRateAlert(99.9)
+  ovelonrridelon val alelonrts = Selonq(
+    HomelonMixelonrAlelonrtConfig.BusinelonssHours.delonfaultSuccelonssRatelonAlelonrt(99.9)
   )
 }

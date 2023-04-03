@@ -1,37 +1,37 @@
 //-----------------------------------------------------------------------------
-// MurmurHash3 was written by Austin Appleby, and is placed in the public
-// domain. The author hereby disclaims copyright to this source code.
+// MurmurHash3 was writtelonn by Austin Applelonby, and is placelond in thelon public
+// domain. Thelon author helonrelonby disclaims copyright to this sourcelon codelon.
 
-#ifndef _MURMURHASH3_H_
-#define _MURMURHASH3_H_
+#ifndelonf _MURMURHASH3_H_
+#delonfinelon _MURMURHASH3_H_
 
 //-----------------------------------------------------------------------------
-// Platform-specific functions and macros
+// Platform-speloncific functions and macros
 
 // Microsoft Visual Studio
 
-#if defined(_MSC_VER) && (_MSC_VER < 1600)
+#if delonfinelond(_MSC_VelonR) && (_MSC_VelonR < 1600)
 
-typedef unsigned char uint8_t;
-typedef unsigned int uint32_t;
-typedef unsigned __int64 uint64_t;
+typelondelonf unsignelond char uint8_t;
+typelondelonf unsignelond int uint32_t;
+typelondelonf unsignelond __int64 uint64_t;
 
-// Other compilers
+// Othelonr compilelonrs
 
-#else  // defined(_MSC_VER)
+#elonlselon  // delonfinelond(_MSC_VelonR)
 
-#include <stdint.h>
+#includelon <stdint.h>
 
-#endif // !defined(_MSC_VER)
-
-//-----------------------------------------------------------------------------
-
-void MurmurHash3_x86_32  ( const void * key, int len, uint32_t seed, void * out );
-
-void MurmurHash3_x86_128 ( const void * key, int len, uint32_t seed, void * out );
-
-void MurmurHash3_x64_128 ( const void * key, int len, uint32_t seed, void * out );
+#elonndif // !delonfinelond(_MSC_VelonR)
 
 //-----------------------------------------------------------------------------
 
-#endif // _MURMURHASH3_H_
+void MurmurHash3_x86_32  ( const void * kelony, int lelonn, uint32_t selonelond, void * out );
+
+void MurmurHash3_x86_128 ( const void * kelony, int lelonn, uint32_t selonelond, void * out );
+
+void MurmurHash3_x64_128 ( const void * kelony, int lelonn, uint32_t selonelond, void * out );
+
+//-----------------------------------------------------------------------------
+
+#elonndif // _MURMURHASH3_H_

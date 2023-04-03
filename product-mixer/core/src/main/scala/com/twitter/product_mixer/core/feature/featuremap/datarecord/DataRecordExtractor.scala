@@ -1,60 +1,60 @@
-package com.twitter.product_mixer.core.feature.featuremap.datarecord
+packagelon com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.datareloncord
 
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.FeatureContext
-import com.twitter.ml.api.util.SRichDataRecord
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.datarecord._
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.IllegalStateFailure
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import scala.collection.JavaConverters._
+import com.twittelonr.ml.api.DataReloncord
+import com.twittelonr.ml.api.FelonaturelonContelonxt
+import com.twittelonr.ml.api.util.SRichDataReloncord
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.datareloncord._
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMapBuildelonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.IllelongalStatelonFailurelon
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.PipelonlinelonFailurelon
+import scala.collelonction.JavaConvelonrtelonrs._
 
 /**
- * Constructs a DataRecord from a FeatureMap, given a predefined set of features.
+ * Constructs a DataReloncord from a FelonaturelonMap, givelonn a prelondelonfinelond selont of felonaturelons.
  *
- * @param features predefined set of BaseDataRecordFeatures that should be included in the output DataRecord.
+ * @param felonaturelons prelondelonfinelond selont of BaselonDataReloncordFelonaturelons that should belon includelond in thelon output DataReloncord.
  */
-class DataRecordExtractor[DRFeature <: BaseDataRecordFeature[_, _]](
-  features: Set[DRFeature]) {
+class DataReloncordelonxtractor[DRFelonaturelon <: BaselonDataReloncordFelonaturelon[_, _]](
+  felonaturelons: Selont[DRFelonaturelon]) {
 
-  private val featureContext = new FeatureContext(features.collect {
-    case dataRecordCompatible: DataRecordCompatible[_] => dataRecordCompatible.mlFeature
+  privatelon val felonaturelonContelonxt = nelonw FelonaturelonContelonxt(felonaturelons.collelonct {
+    caselon dataReloncordCompatiblelon: DataReloncordCompatiblelon[_] => dataReloncordCompatiblelon.mlFelonaturelon
   }.asJava)
 
-  def fromDataRecord(dataRecord: DataRecord): FeatureMap = {
-    val featureMapBuilder = FeatureMapBuilder()
-    val richDataRecord = SRichDataRecord(dataRecord, featureContext)
-    features.foreach {
-      // FeatureStoreDataRecordFeature is currently not supported
-      case _: FeatureStoreDataRecordFeature[_, _] =>
-        throw new UnsupportedOperationException(
-          "FeatureStoreDataRecordFeature cannot be extracted from a DataRecord")
-      case feature: DataRecordFeature[_, _] with DataRecordCompatible[_] =>
-        // Java API will return null, so use Option to convert it to Scala Option which is None when null.
-        richDataRecord.getFeatureValueOpt(feature.mlFeature)(
-          feature.fromDataRecordFeatureValue) match {
-          case Some(value) =>
-            featureMapBuilder.add(feature.asInstanceOf[Feature[_, feature.FeatureType]], value)
-          case None =>
-            featureMapBuilder.addFailure(
-              feature,
-              PipelineFailure(
-                IllegalStateFailure,
-                s"Required DataRecord feature is missing: ${feature.mlFeature.getFeatureName}")
+  delonf fromDataReloncord(dataReloncord: DataReloncord): FelonaturelonMap = {
+    val felonaturelonMapBuildelonr = FelonaturelonMapBuildelonr()
+    val richDataReloncord = SRichDataReloncord(dataReloncord, felonaturelonContelonxt)
+    felonaturelons.forelonach {
+      // FelonaturelonStorelonDataReloncordFelonaturelon is currelonntly not supportelond
+      caselon _: FelonaturelonStorelonDataReloncordFelonaturelon[_, _] =>
+        throw nelonw UnsupportelondOpelonrationelonxcelonption(
+          "FelonaturelonStorelonDataReloncordFelonaturelon cannot belon elonxtractelond from a DataReloncord")
+      caselon felonaturelon: DataReloncordFelonaturelon[_, _] with DataReloncordCompatiblelon[_] =>
+        // Java API will relonturn null, so uselon Option to convelonrt it to Scala Option which is Nonelon whelonn null.
+        richDataReloncord.gelontFelonaturelonValuelonOpt(felonaturelon.mlFelonaturelon)(
+          felonaturelon.fromDataReloncordFelonaturelonValuelon) match {
+          caselon Somelon(valuelon) =>
+            felonaturelonMapBuildelonr.add(felonaturelon.asInstancelonOf[Felonaturelon[_, felonaturelon.FelonaturelonTypelon]], valuelon)
+          caselon Nonelon =>
+            felonaturelonMapBuildelonr.addFailurelon(
+              felonaturelon,
+              PipelonlinelonFailurelon(
+                IllelongalStatelonFailurelon,
+                s"Relonquirelond DataReloncord felonaturelon is missing: ${felonaturelon.mlFelonaturelon.gelontFelonaturelonNamelon}")
             )
         }
-      case feature: DataRecordOptionalFeature[_, _] with DataRecordCompatible[_] =>
-        val featureValue =
-          richDataRecord.getFeatureValueOpt(feature.mlFeature)(feature.fromDataRecordFeatureValue)
-        featureMapBuilder
-          .add(feature.asInstanceOf[Feature[_, Option[feature.FeatureType]]], featureValue)
-      // DataRecordInAFeature is currently not supported
-      case _: DataRecordInAFeature[_] =>
-        throw new UnsupportedOperationException(
-          "DataRecordInAFeature cannot be extracted from a DataRecord")
+      caselon felonaturelon: DataReloncordOptionalFelonaturelon[_, _] with DataReloncordCompatiblelon[_] =>
+        val felonaturelonValuelon =
+          richDataReloncord.gelontFelonaturelonValuelonOpt(felonaturelon.mlFelonaturelon)(felonaturelon.fromDataReloncordFelonaturelonValuelon)
+        felonaturelonMapBuildelonr
+          .add(felonaturelon.asInstancelonOf[Felonaturelon[_, Option[felonaturelon.FelonaturelonTypelon]]], felonaturelonValuelon)
+      // DataReloncordInAFelonaturelon is currelonntly not supportelond
+      caselon _: DataReloncordInAFelonaturelon[_] =>
+        throw nelonw UnsupportelondOpelonrationelonxcelonption(
+          "DataReloncordInAFelonaturelon cannot belon elonxtractelond from a DataReloncord")
     }
-    featureMapBuilder.build()
+    felonaturelonMapBuildelonr.build()
   }
 }

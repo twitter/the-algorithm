@@ -1,184 +1,184 @@
-package com.twitter.simclusters_v2.scalding
-package multi_type_graph.assemble_multi_type_graph
+packagelon com.twittelonr.simclustelonrs_v2.scalding
+packagelon multi_typelon_graph.asselonmblelon_multi_typelon_graph
 
-import com.twitter.dal.client.dataset.{KeyValDALDataset, SnapshotDALDataset}
-import com.twitter.scalding.{Execution, _}
-import com.twitter.scalding_internal.dalv2.DALWrite.{D, _}
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.scalding.common.TypedRichPipe.typedPipeToRichPipe
-import com.twitter.simclusters_v2.scalding.common.Util
-import com.twitter.simclusters_v2.thriftscala.{
-  LeftNode,
+import com.twittelonr.dal.clielonnt.dataselont.{KelonyValDALDataselont, SnapshotDALDataselont}
+import com.twittelonr.scalding.{elonxeloncution, _}
+import com.twittelonr.scalding_intelonrnal.dalv2.DALWritelon.{D, _}
+import com.twittelonr.scalding_intelonrnal.multiformat.format.kelonyval.KelonyVal
+import com.twittelonr.simclustelonrs_v2.scalding.common.TypelondRichPipelon.typelondPipelonToRichPipelon
+import com.twittelonr.simclustelonrs_v2.scalding.common.Util
+import com.twittelonr.simclustelonrs_v2.thriftscala.{
+  LelonftNodelon,
   Noun,
-  NounWithFrequency,
-  NounWithFrequencyList,
-  RightNodeType,
-  RightNodeTypeStruct,
-  RightNodeWithEdgeWeight,
-  RightNodeWithEdgeWeightList,
-  MultiTypeGraphEdge
+  NounWithFrelonquelonncy,
+  NounWithFrelonquelonncyList,
+  RightNodelonTypelon,
+  RightNodelonTypelonStruct,
+  RightNodelonWithelondgelonWelonight,
+  RightNodelonWithelondgelonWelonightList,
+  MultiTypelonGraphelondgelon
 }
-import com.twitter.wtf.scalding.jobs.common.DateRangeExecutionApp
-import java.util.TimeZone
+import com.twittelonr.wtf.scalding.jobs.common.DatelonRangelonelonxeloncutionApp
+import java.util.TimelonZonelon
 
 /**
- * In this file, we assemble the multi_type_graph user-entity engagement signals
+ * In this filelon, welon asselonmblelon thelon multi_typelon_graph uselonr-elonntity elonngagelonmelonnt signals
  *
- * It works as follows and the following datasets are produced as a result:
+ * It works as follows and thelon following dataselonts arelon producelond as a relonsult:
  *
- * 1. FullGraph (fullMultiTypeGraphSnapshotDataset) : reads datasets from multiple sources and generates
- * a bipartite graph with LeftNode -> RightNode edges, capturing a user's engagement with varied entity types
+ * 1. FullGraph (fullMultiTypelonGraphSnapshotDataselont) : relonads dataselonts from multiplelon sourcelons and gelonnelonratelons
+ * a bipartitelon graph with LelonftNodelon -> RightNodelon elondgelons, capturing a uselonr's elonngagelonmelonnt with varielond elonntity typelons
  *
- * 2. TruncatedGraph (truncatedMultiTypeGraphKeyValDataset): a truncated version of the FullGraph
- * where we only store the topK most frequently occurring RightNodes in the bipartite graph LeftNode -> RightNode
+ * 2. TruncatelondGraph (truncatelondMultiTypelonGraphKelonyValDataselont): a truncatelond velonrsion of thelon FullGraph
+ * whelonrelon welon only storelon thelon topK most frelonquelonntly occurring RightNodelons in thelon bipartitelon graph LelonftNodelon -> RightNodelon
  *
- * 3. TopKNouns (topKRightNounsKeyValDataset): this stores the topK most frequent Nouns for each engagement type
- * Please note that this dataset is currently only being used for the debugger to find which nodes we consider as the
- * most frequently occurring, in FullGraph
+ * 3. TopKNouns (topKRightNounsKelonyValDataselont): this storelons thelon topK most frelonquelonnt Nouns for elonach elonngagelonmelonnt typelon
+ * Plelonaselon notelon that this dataselont is currelonntly only beloning uselond for thelon delonbuggelonr to find which nodelons welon considelonr as thelon
+ * most frelonquelonntly occurring, in FullGraph
  */
 
-trait AssembleMultiTypeGraphBaseApp extends DateRangeExecutionApp {
-  val truncatedMultiTypeGraphKeyValDataset: KeyValDALDataset[
-    KeyVal[LeftNode, RightNodeWithEdgeWeightList]
+trait AsselonmblelonMultiTypelonGraphBaselonApp elonxtelonnds DatelonRangelonelonxeloncutionApp {
+  val truncatelondMultiTypelonGraphKelonyValDataselont: KelonyValDALDataselont[
+    KelonyVal[LelonftNodelon, RightNodelonWithelondgelonWelonightList]
   ]
-  val topKRightNounsKeyValDataset: KeyValDALDataset[
-    KeyVal[RightNodeTypeStruct, NounWithFrequencyList]
+  val topKRightNounsKelonyValDataselont: KelonyValDALDataselont[
+    KelonyVal[RightNodelonTypelonStruct, NounWithFrelonquelonncyList]
   ]
-  val fullMultiTypeGraphSnapshotDataset: SnapshotDALDataset[MultiTypeGraphEdge]
-  val isAdhoc: Boolean
-  val truncatedMultiTypeGraphMHOutputPath: String
+  val fullMultiTypelonGraphSnapshotDataselont: SnapshotDALDataselont[MultiTypelonGraphelondgelon]
+  val isAdhoc: Boolelonan
+  val truncatelondMultiTypelonGraphMHOutputPath: String
   val topKRightNounsMHOutputPath: String
-  val fullMultiTypeGraphThriftOutputPath: String
+  val fullMultiTypelonGraphThriftOutputPath: String
 
-  override def runOnDateRange(
+  ovelonrridelon delonf runOnDatelonRangelon(
     args: Args
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon,
+    uniquelonID: UniquelonID
+  ): elonxeloncution[Unit] = {
     import Config._
-    import AssembleMultiTypeGraph._
+    import AsselonmblelonMultiTypelonGraph._
 
-    val numKeysInTruncatedGraph = Stat("num_keys_truncated_mts")
-    val numKeysInTopKNounsGraph = Stat("num_keys_topk_nouns_mts")
+    val numKelonysInTruncatelondGraph = Stat("num_kelonys_truncatelond_mts")
+    val numKelonysInTopKNounsGraph = Stat("num_kelonys_topk_nouns_mts")
 
-    val fullGraph: TypedPipe[(LeftNode, RightNodeWithEdgeWeight)] =
-      getFullGraph().count("num_entries_full_graph")
+    val fullGraph: TypelondPipelon[(LelonftNodelon, RightNodelonWithelondgelonWelonight)] =
+      gelontFullGraph().count("num_elonntrielons_full_graph")
 
-    val topKRightNodes: TypedPipe[(RightNodeType, Seq[(Noun, Double)])] =
-      getTopKRightNounsWithFrequencies(
+    val topKRightNodelons: TypelondPipelon[(RightNodelonTypelon, Selonq[(Noun, Doublelon)])] =
+      gelontTopKRightNounsWithFrelonquelonncielons(
         fullGraph,
         TopKConfig,
-        GlobalDefaultMinFrequencyOfRightNodeType)
+        GlobalDelonfaultMinFrelonquelonncyOfRightNodelonTypelon)
 
-    val truncatedGraph: TypedPipe[(LeftNode, RightNodeWithEdgeWeight)] =
-      getTruncatedGraph(fullGraph, topKRightNodes).count("num_entries_truncated_graph")
+    val truncatelondGraph: TypelondPipelon[(LelonftNodelon, RightNodelonWithelondgelonWelonight)] =
+      gelontTruncatelondGraph(fullGraph, topKRightNodelons).count("num_elonntrielons_truncatelond_graph")
 
-    // key transformations - truncated graph, keyed by LeftNode
-    val truncatedGraphKeyedBySrc: TypedPipe[(LeftNode, RightNodeWithEdgeWeightList)] =
-      truncatedGraph
+    // kelony transformations - truncatelond graph, kelonyelond by LelonftNodelon
+    val truncatelondGraphKelonyelondBySrc: TypelondPipelon[(LelonftNodelon, RightNodelonWithelondgelonWelonightList)] =
+      truncatelondGraph
         .map {
-          case (LeftNode.UserId(userId), rightNodeWithWeight) =>
-            userId -> List(rightNodeWithWeight)
+          caselon (LelonftNodelon.UselonrId(uselonrId), rightNodelonWithWelonight) =>
+            uselonrId -> List(rightNodelonWithWelonight)
         }
-        .sumByKey
+        .sumByKelony
         .map {
-          case (userId, rightNodeWithWeightList) =>
-            (LeftNode.UserId(userId), RightNodeWithEdgeWeightList(rightNodeWithWeightList))
+          caselon (uselonrId, rightNodelonWithWelonightList) =>
+            (LelonftNodelon.UselonrId(uselonrId), RightNodelonWithelondgelonWelonightList(rightNodelonWithWelonightList))
         }
 
-    // key transformation - topK nouns, keyed by the RightNodeNounType
-    val topKNounsKeyedByType: TypedPipe[(RightNodeTypeStruct, NounWithFrequencyList)] =
-      topKRightNodes
+    // kelony transformation - topK nouns, kelonyelond by thelon RightNodelonNounTypelon
+    val topKNounsKelonyelondByTypelon: TypelondPipelon[(RightNodelonTypelonStruct, NounWithFrelonquelonncyList)] =
+      topKRightNodelons
         .map {
-          case (rightNodeType, rightNounsWithScoresList) =>
-            val nounsListWithFrequency: Seq[NounWithFrequency] = rightNounsWithScoresList
+          caselon (rightNodelonTypelon, rightNounsWithScorelonsList) =>
+            val nounsListWithFrelonquelonncy: Selonq[NounWithFrelonquelonncy] = rightNounsWithScorelonsList
               .map {
-                case (noun, aggregatedFrequency) =>
-                  NounWithFrequency(noun, aggregatedFrequency)
+                caselon (noun, aggrelongatelondFrelonquelonncy) =>
+                  NounWithFrelonquelonncy(noun, aggrelongatelondFrelonquelonncy)
               }
-            (RightNodeTypeStruct(rightNodeType), NounWithFrequencyList(nounsListWithFrequency))
+            (RightNodelonTypelonStruct(rightNodelonTypelon), NounWithFrelonquelonncyList(nounsListWithFrelonquelonncy))
         }
 
-    //WriteExecs - truncated graph
-    val truncatedGraphTsvExec: Execution[Unit] =
-      truncatedGraphKeyedBySrc.writeExecution(
-        TypedTsv[(LeftNode, RightNodeWithEdgeWeightList)](AdhocRootPrefix + "truncated_graph_tsv"))
+    //Writelonelonxeloncs - truncatelond graph
+    val truncatelondGraphTsvelonxelonc: elonxeloncution[Unit] =
+      truncatelondGraphKelonyelondBySrc.writelonelonxeloncution(
+        TypelondTsv[(LelonftNodelon, RightNodelonWithelondgelonWelonightList)](AdhocRootPrelonfix + "truncatelond_graph_tsv"))
 
-    val truncatedGraphDALExec: Execution[Unit] = truncatedGraphKeyedBySrc
+    val truncatelondGraphDALelonxelonc: elonxeloncution[Unit] = truncatelondGraphKelonyelondBySrc
       .map {
-        case (leftNode, rightNodeWithWeightList) =>
-          numKeysInTruncatedGraph.inc()
-          KeyVal(leftNode, rightNodeWithWeightList)
+        caselon (lelonftNodelon, rightNodelonWithWelonightList) =>
+          numKelonysInTruncatelondGraph.inc()
+          KelonyVal(lelonftNodelon, rightNodelonWithWelonightList)
       }
-      .writeDALVersionedKeyValExecution(
-        truncatedMultiTypeGraphKeyValDataset,
+      .writelonDALVelonrsionelondKelonyValelonxeloncution(
+        truncatelondMultiTypelonGraphKelonyValDataselont,
         D.Suffix(
           (if (!isAdhoc)
              RootPath
-           else
-             AdhocRootPrefix)
-            + truncatedMultiTypeGraphMHOutputPath),
-        ExplicitEndTime(dateRange.`end`)
+           elonlselon
+             AdhocRootPrelonfix)
+            + truncatelondMultiTypelonGraphMHOutputPath),
+        elonxplicitelonndTimelon(datelonRangelon.`elonnd`)
       )
 
-    //WriteExec - topK rightnouns
-    val topKNounsTsvExec: Execution[Unit] =
-      topKNounsKeyedByType.writeExecution(
-        TypedTsv[(RightNodeTypeStruct, NounWithFrequencyList)](
-          AdhocRootPrefix + "top_k_right_nouns_tsv"))
+    //Writelonelonxelonc - topK rightnouns
+    val topKNounsTsvelonxelonc: elonxeloncution[Unit] =
+      topKNounsKelonyelondByTypelon.writelonelonxeloncution(
+        TypelondTsv[(RightNodelonTypelonStruct, NounWithFrelonquelonncyList)](
+          AdhocRootPrelonfix + "top_k_right_nouns_tsv"))
 
-    // writing topKNouns MH dataset for debugger
-    val topKNounsDALExec: Execution[Unit] = topKNounsKeyedByType
+    // writing topKNouns MH dataselont for delonbuggelonr
+    val topKNounsDALelonxelonc: elonxeloncution[Unit] = topKNounsKelonyelondByTypelon
       .map {
-        case (engagementType, rightList) =>
+        caselon (elonngagelonmelonntTypelon, rightList) =>
           val rightListMH =
-            NounWithFrequencyList(rightList.nounWithFrequencyList.take(TopKRightNounsForMHDump))
-          numKeysInTopKNounsGraph.inc()
-          KeyVal(engagementType, rightListMH)
+            NounWithFrelonquelonncyList(rightList.nounWithFrelonquelonncyList.takelon(TopKRightNounsForMHDump))
+          numKelonysInTopKNounsGraph.inc()
+          KelonyVal(elonngagelonmelonntTypelon, rightListMH)
       }
-      .writeDALVersionedKeyValExecution(
-        topKRightNounsKeyValDataset,
+      .writelonDALVelonrsionelondKelonyValelonxeloncution(
+        topKRightNounsKelonyValDataselont,
         D.Suffix(
           (if (!isAdhoc)
              RootPath
-           else
-             AdhocRootPrefix)
+           elonlselon
+             AdhocRootPrelonfix)
             + topKRightNounsMHOutputPath),
-        ExplicitEndTime(dateRange.`end`)
+        elonxplicitelonndTimelon(datelonRangelon.`elonnd`)
       )
 
-    //WriteExec - fullGraph
-    val fullGraphDALExec: Execution[Unit] = fullGraph
+    //Writelonelonxelonc - fullGraph
+    val fullGraphDALelonxelonc: elonxeloncution[Unit] = fullGraph
       .map {
-        case (leftNode, rightNodeWithWeight) =>
-          MultiTypeGraphEdge(leftNode, rightNodeWithWeight)
-      }.writeDALSnapshotExecution(
-        fullMultiTypeGraphSnapshotDataset,
+        caselon (lelonftNodelon, rightNodelonWithWelonight) =>
+          MultiTypelonGraphelondgelon(lelonftNodelon, rightNodelonWithWelonight)
+      }.writelonDALSnapshotelonxeloncution(
+        fullMultiTypelonGraphSnapshotDataselont,
         D.Daily,
         D.Suffix(
           (if (!isAdhoc)
              RootThriftPath
-           else
-             AdhocRootPrefix)
-            + fullMultiTypeGraphThriftOutputPath),
-        D.Parquet,
-        dateRange.`end`
+           elonlselon
+             AdhocRootPrelonfix)
+            + fullMultiTypelonGraphThriftOutputPath),
+        D.Parquelont,
+        datelonRangelon.`elonnd`
       )
 
     if (isAdhoc) {
-      Util.printCounters(
-        Execution
+      Util.printCountelonrs(
+        elonxeloncution
           .zip(
-            truncatedGraphTsvExec,
-            topKNounsTsvExec,
-            truncatedGraphDALExec,
-            topKNounsDALExec,
-            fullGraphDALExec).unit)
-    } else {
-      Util.printCounters(
-        Execution.zip(truncatedGraphDALExec, topKNounsDALExec, fullGraphDALExec).unit)
+            truncatelondGraphTsvelonxelonc,
+            topKNounsTsvelonxelonc,
+            truncatelondGraphDALelonxelonc,
+            topKNounsDALelonxelonc,
+            fullGraphDALelonxelonc).unit)
+    } elonlselon {
+      Util.printCountelonrs(
+        elonxeloncution.zip(truncatelondGraphDALelonxelonc, topKNounsDALelonxelonc, fullGraphDALelonxelonc).unit)
     }
 
   }

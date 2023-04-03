@@ -1,9 +1,9 @@
-package com.twitter.follow_recommendations.assembler.models
+packagelon com.twittelonr.follow_reloncommelonndations.asselonmblelonr.modelonls
 
-import com.twitter.follow_recommendations.{thriftscala => t}
+import com.twittelonr.follow_reloncommelonndations.{thriftscala => t}
 
-case class Title(text: String) {
-  lazy val toThrift: t.Title = {
-    t.Title(text)
+caselon class Titlelon(telonxt: String) {
+  lazy val toThrift: t.Titlelon = {
+    t.Titlelon(telonxt)
   }
 }

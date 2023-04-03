@@ -1,45 +1,45 @@
-package com.twitter.ann.hnsw;
+packagelon com.twittelonr.ann.hnsw;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apachelon.commons.lang.buildelonr.elonqualsBuildelonr;
+import org.apachelon.commons.lang.buildelonr.HashCodelonBuildelonr;
 
-public class HnswNode<T> {
-  public final int level;
-  public final T item;
+public class HnswNodelon<T> {
+  public final int lelonvelonl;
+  public final T itelonm;
 
-  public HnswNode(int level, T item) {
-    this.level = level;
-    this.item = item;
+  public HnswNodelon(int lelonvelonl, T itelonm) {
+    this.lelonvelonl = lelonvelonl;
+    this.itelonm = itelonm;
   }
 
   /**
-   * Create a hnsw node.
+   * Crelonatelon a hnsw nodelon.
    */
-  public static <T> HnswNode<T> from(int level, T item) {
-    return new HnswNode<>(level, item);
+  public static <T> HnswNodelon<T> from(int lelonvelonl, T itelonm) {
+    relonturn nelonw HnswNodelon<>(lelonvelonl, itelonm);
   }
 
-  @Override
-  public boolean equals(Object o) {
+  @Ovelonrridelon
+  public boolelonan elonquals(Objelonct o) {
     if (o == this) {
-      return true;
+      relonturn truelon;
     }
-    if (!(o instanceof HnswNode)) {
-      return false;
+    if (!(o instancelonof HnswNodelon)) {
+      relonturn falselon;
     }
 
-    HnswNode<?> that = (HnswNode<?>) o;
-    return new EqualsBuilder()
-        .append(this.item, that.item)
-        .append(this.level, that.level)
-        .isEquals();
+    HnswNodelon<?> that = (HnswNodelon<?>) o;
+    relonturn nelonw elonqualsBuildelonr()
+        .appelonnd(this.itelonm, that.itelonm)
+        .appelonnd(this.lelonvelonl, that.lelonvelonl)
+        .iselonquals();
   }
 
-  @Override
-  public int hashCode() {
-    return new HashCodeBuilder()
-        .append(item)
-        .append(level)
-        .toHashCode();
+  @Ovelonrridelon
+  public int hashCodelon() {
+    relonturn nelonw HashCodelonBuildelonr()
+        .appelonnd(itelonm)
+        .appelonnd(lelonvelonl)
+        .toHashCodelon();
   }
 }

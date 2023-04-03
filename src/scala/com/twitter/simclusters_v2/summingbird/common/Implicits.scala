@@ -1,140 +1,140 @@
-package com.twitter.simclusters_v2.summingbird.common
+packagelon com.twittelonr.simclustelonrs_v2.summingbird.common
 
-import com.twitter.algebird.DecayedValueMonoid
-import com.twitter.algebird.Monoid
-import com.twitter.algebird_internal.injection.AlgebirdImplicits
-import com.twitter.algebird_internal.thriftscala.{DecayedValue => ThriftDecayedValue}
-import com.twitter.bijection.Bufferable
-import com.twitter.bijection.Injection
-import com.twitter.bijection.scrooge.CompactScalaCodec
-import com.twitter.simclusters_v2.summingbird.common.Monoids.ClustersWithScoresMonoid
-import com.twitter.simclusters_v2.summingbird.common.Monoids.MultiModelClustersWithScoresMonoid
-import com.twitter.simclusters_v2.summingbird.common.Monoids.MultiModelPersistentSimClustersEmbeddingLongestL2NormMonoid
-import com.twitter.simclusters_v2.summingbird.common.Monoids.MultiModelPersistentSimClustersEmbeddingMonoid
-import com.twitter.simclusters_v2.summingbird.common.Monoids.MultiModelTopKTweetsWithScoresMonoid
-import com.twitter.simclusters_v2.summingbird.common.Monoids.PersistentSimClustersEmbeddingLongestL2NormMonoid
-import com.twitter.simclusters_v2.summingbird.common.Monoids.PersistentSimClustersEmbeddingMonoid
-import com.twitter.simclusters_v2.summingbird.common.Monoids.ScoresMonoid
-import com.twitter.simclusters_v2.summingbird.common.Monoids.TopKClustersWithScoresMonoid
-import com.twitter.simclusters_v2.summingbird.common.Monoids.TopKTweetsWithScoresMonoid
-import com.twitter.simclusters_v2.thriftscala.FullClusterIdBucket
-import com.twitter.simclusters_v2.thriftscala._
-import com.twitter.summingbird.batch.Batcher
-import com.twitter.tweetypie.thriftscala.StatusCounts
+import com.twittelonr.algelonbird.DeloncayelondValuelonMonoid
+import com.twittelonr.algelonbird.Monoid
+import com.twittelonr.algelonbird_intelonrnal.injelonction.AlgelonbirdImplicits
+import com.twittelonr.algelonbird_intelonrnal.thriftscala.{DeloncayelondValuelon => ThriftDeloncayelondValuelon}
+import com.twittelonr.bijelonction.Buffelonrablelon
+import com.twittelonr.bijelonction.Injelonction
+import com.twittelonr.bijelonction.scroogelon.CompactScalaCodelonc
+import com.twittelonr.simclustelonrs_v2.summingbird.common.Monoids.ClustelonrsWithScorelonsMonoid
+import com.twittelonr.simclustelonrs_v2.summingbird.common.Monoids.MultiModelonlClustelonrsWithScorelonsMonoid
+import com.twittelonr.simclustelonrs_v2.summingbird.common.Monoids.MultiModelonlPelonrsistelonntSimClustelonrselonmbelonddingLongelonstL2NormMonoid
+import com.twittelonr.simclustelonrs_v2.summingbird.common.Monoids.MultiModelonlPelonrsistelonntSimClustelonrselonmbelonddingMonoid
+import com.twittelonr.simclustelonrs_v2.summingbird.common.Monoids.MultiModelonlTopKTwelonelontsWithScorelonsMonoid
+import com.twittelonr.simclustelonrs_v2.summingbird.common.Monoids.PelonrsistelonntSimClustelonrselonmbelonddingLongelonstL2NormMonoid
+import com.twittelonr.simclustelonrs_v2.summingbird.common.Monoids.PelonrsistelonntSimClustelonrselonmbelonddingMonoid
+import com.twittelonr.simclustelonrs_v2.summingbird.common.Monoids.ScorelonsMonoid
+import com.twittelonr.simclustelonrs_v2.summingbird.common.Monoids.TopKClustelonrsWithScorelonsMonoid
+import com.twittelonr.simclustelonrs_v2.summingbird.common.Monoids.TopKTwelonelontsWithScorelonsMonoid
+import com.twittelonr.simclustelonrs_v2.thriftscala.FullClustelonrIdBuckelont
+import com.twittelonr.simclustelonrs_v2.thriftscala._
+import com.twittelonr.summingbird.batch.Batchelonr
+import com.twittelonr.twelonelontypielon.thriftscala.StatusCounts
 
-object Implicits {
+objelonct Implicits {
 
   // -------------------- Monoids -------------------- //
-  implicit val decayedValueMonoid: DecayedValueMonoid = DecayedValueMonoid(0.0)
+  implicit val deloncayelondValuelonMonoid: DeloncayelondValuelonMonoid = DeloncayelondValuelonMonoid(0.0)
 
-  implicit val thriftDecayedValueMonoid: ThriftDecayedValueMonoid =
-    new ThriftDecayedValueMonoid(Configs.HalfLifeInMs)(decayedValueMonoid)
+  implicit val thriftDeloncayelondValuelonMonoid: ThriftDeloncayelondValuelonMonoid =
+    nelonw ThriftDeloncayelondValuelonMonoid(Configs.HalfLifelonInMs)(deloncayelondValuelonMonoid)
 
-  implicit val scoresMonoid: ScoresMonoid = new Monoids.ScoresMonoid()
+  implicit val scorelonsMonoid: ScorelonsMonoid = nelonw Monoids.ScorelonsMonoid()
 
-  implicit val clustersWithScoreMonoid: ClustersWithScoresMonoid =
-    new Monoids.ClustersWithScoresMonoid()(scoresMonoid)
+  implicit val clustelonrsWithScorelonMonoid: ClustelonrsWithScorelonsMonoid =
+    nelonw Monoids.ClustelonrsWithScorelonsMonoid()(scorelonsMonoid)
 
-  implicit val multiModelClustersWithScoresMonoid: Monoid[MultiModelClustersWithScores] =
-    new MultiModelClustersWithScoresMonoid()
+  implicit val multiModelonlClustelonrsWithScorelonsMonoid: Monoid[MultiModelonlClustelonrsWithScorelons] =
+    nelonw MultiModelonlClustelonrsWithScorelonsMonoid()
 
-  implicit val topKClustersWithScoresMonoid: Monoid[TopKClustersWithScores] =
-    new TopKClustersWithScoresMonoid(
-      Configs.topKClustersPerEntity,
-      Configs.scoreThresholdForEntityTopKClustersCache
-    )(thriftDecayedValueMonoid)
+  implicit val topKClustelonrsWithScorelonsMonoid: Monoid[TopKClustelonrsWithScorelons] =
+    nelonw TopKClustelonrsWithScorelonsMonoid(
+      Configs.topKClustelonrsPelonrelonntity,
+      Configs.scorelonThrelonsholdForelonntityTopKClustelonrsCachelon
+    )(thriftDeloncayelondValuelonMonoid)
 
-  implicit val topKTweetsWithScoresMonoid: Monoid[TopKTweetsWithScores] =
-    new TopKTweetsWithScoresMonoid(
-      Configs.topKTweetsPerCluster,
-      Configs.scoreThresholdForClusterTopKTweetsCache,
-      Configs.OldestTweetFavEventTimeInMillis
-    )(thriftDecayedValueMonoid)
+  implicit val topKTwelonelontsWithScorelonsMonoid: Monoid[TopKTwelonelontsWithScorelons] =
+    nelonw TopKTwelonelontsWithScorelonsMonoid(
+      Configs.topKTwelonelontsPelonrClustelonr,
+      Configs.scorelonThrelonsholdForClustelonrTopKTwelonelontsCachelon,
+      Configs.OldelonstTwelonelontFavelonvelonntTimelonInMillis
+    )(thriftDeloncayelondValuelonMonoid)
 
-  implicit val topKTweetsWithScoresLightMonoid: Monoid[TopKTweetsWithScores] =
-    new TopKTweetsWithScoresMonoid(
-      Configs.topKTweetsPerCluster,
-      Configs.scoreThresholdForClusterTopKTweetsCache,
-      Configs.OldestTweetInLightIndexInMillis
-    )(thriftDecayedValueMonoid)
+  implicit val topKTwelonelontsWithScorelonsLightMonoid: Monoid[TopKTwelonelontsWithScorelons] =
+    nelonw TopKTwelonelontsWithScorelonsMonoid(
+      Configs.topKTwelonelontsPelonrClustelonr,
+      Configs.scorelonThrelonsholdForClustelonrTopKTwelonelontsCachelon,
+      Configs.OldelonstTwelonelontInLightIndelonxInMillis
+    )(thriftDeloncayelondValuelonMonoid)
 
-  implicit val MultiModeltopKTweetsWithScoresMonoid: Monoid[MultiModelTopKTweetsWithScores] =
-    new MultiModelTopKTweetsWithScoresMonoid(
-    )(thriftDecayedValueMonoid)
+  implicit val MultiModelonltopKTwelonelontsWithScorelonsMonoid: Monoid[MultiModelonlTopKTwelonelontsWithScorelons] =
+    nelonw MultiModelonlTopKTwelonelontsWithScorelonsMonoid(
+    )(thriftDeloncayelondValuelonMonoid)
 
-  implicit val persistentSimClustersEmbeddingMonoid: Monoid[PersistentSimClustersEmbedding] =
-    new PersistentSimClustersEmbeddingMonoid()
+  implicit val pelonrsistelonntSimClustelonrselonmbelonddingMonoid: Monoid[PelonrsistelonntSimClustelonrselonmbelondding] =
+    nelonw PelonrsistelonntSimClustelonrselonmbelonddingMonoid()
 
-  implicit val persistentSimClustersEmbeddingLongestL2NormMonoid: Monoid[
-    PersistentSimClustersEmbedding
+  implicit val pelonrsistelonntSimClustelonrselonmbelonddingLongelonstL2NormMonoid: Monoid[
+    PelonrsistelonntSimClustelonrselonmbelondding
   ] =
-    new PersistentSimClustersEmbeddingLongestL2NormMonoid()
+    nelonw PelonrsistelonntSimClustelonrselonmbelonddingLongelonstL2NormMonoid()
 
-  implicit val multiModelPersistentSimClustersEmbeddingMonoid: Monoid[
-    MultiModelPersistentSimClustersEmbedding
+  implicit val multiModelonlPelonrsistelonntSimClustelonrselonmbelonddingMonoid: Monoid[
+    MultiModelonlPelonrsistelonntSimClustelonrselonmbelondding
   ] =
-    new MultiModelPersistentSimClustersEmbeddingMonoid()
+    nelonw MultiModelonlPelonrsistelonntSimClustelonrselonmbelonddingMonoid()
 
-  implicit val multiModelPersistentSimClustersEmbeddingLongestL2NormMonoid: Monoid[
-    MultiModelPersistentSimClustersEmbedding
-  ] = new MultiModelPersistentSimClustersEmbeddingLongestL2NormMonoid()
+  implicit val multiModelonlPelonrsistelonntSimClustelonrselonmbelonddingLongelonstL2NormMonoid: Monoid[
+    MultiModelonlPelonrsistelonntSimClustelonrselonmbelondding
+  ] = nelonw MultiModelonlPelonrsistelonntSimClustelonrselonmbelonddingLongelonstL2NormMonoid()
 
-  // -------------------- Codecs -------------------- //
-  implicit val longIntPairCodec: Injection[(Long, Int), Array[Byte]] =
-    Bufferable.injectionOf[(Long, Int)]
+  // -------------------- Codeloncs -------------------- //
+  implicit val longIntPairCodelonc: Injelonction[(Long, Int), Array[Bytelon]] =
+    Buffelonrablelon.injelonctionOf[(Long, Int)]
 
-  implicit val simClusterEntityCodec: Injection[SimClusterEntity, Array[Byte]] =
-    CompactScalaCodec(SimClusterEntity)
+  implicit val simClustelonrelonntityCodelonc: Injelonction[SimClustelonrelonntity, Array[Bytelon]] =
+    CompactScalaCodelonc(SimClustelonrelonntity)
 
-  implicit val fullClusterIdBucket: Injection[FullClusterIdBucket, Array[Byte]] =
-    CompactScalaCodec(FullClusterIdBucket)
+  implicit val fullClustelonrIdBuckelont: Injelonction[FullClustelonrIdBuckelont, Array[Bytelon]] =
+    CompactScalaCodelonc(FullClustelonrIdBuckelont)
 
-  implicit val clustersWithScoresCodec: Injection[ClustersWithScores, Array[Byte]] =
-    CompactScalaCodec(ClustersWithScores)
+  implicit val clustelonrsWithScorelonsCodelonc: Injelonction[ClustelonrsWithScorelons, Array[Bytelon]] =
+    CompactScalaCodelonc(ClustelonrsWithScorelons)
 
-  implicit val topKClustersKeyCodec: Injection[EntityWithVersion, Array[Byte]] =
-    CompactScalaCodec(EntityWithVersion)
+  implicit val topKClustelonrsKelonyCodelonc: Injelonction[elonntityWithVelonrsion, Array[Bytelon]] =
+    CompactScalaCodelonc(elonntityWithVelonrsion)
 
-  implicit val topKClustersWithScoresCodec: Injection[TopKClustersWithScores, Array[Byte]] =
-    CompactScalaCodec(TopKClustersWithScores)
+  implicit val topKClustelonrsWithScorelonsCodelonc: Injelonction[TopKClustelonrsWithScorelons, Array[Bytelon]] =
+    CompactScalaCodelonc(TopKClustelonrsWithScorelons)
 
-  implicit val fullClusterIdCodec: Injection[FullClusterId, Array[Byte]] =
-    CompactScalaCodec(FullClusterId)
+  implicit val fullClustelonrIdCodelonc: Injelonction[FullClustelonrId, Array[Bytelon]] =
+    CompactScalaCodelonc(FullClustelonrId)
 
-  implicit val topKEntitiesWithScoresCodec: Injection[TopKEntitiesWithScores, Array[Byte]] =
-    CompactScalaCodec(TopKEntitiesWithScores)
+  implicit val topKelonntitielonsWithScorelonsCodelonc: Injelonction[TopKelonntitielonsWithScorelons, Array[Bytelon]] =
+    CompactScalaCodelonc(TopKelonntitielonsWithScorelons)
 
-  implicit val topKTweetsWithScoresCodec: Injection[TopKTweetsWithScores, Array[Byte]] =
-    CompactScalaCodec(TopKTweetsWithScores)
+  implicit val topKTwelonelontsWithScorelonsCodelonc: Injelonction[TopKTwelonelontsWithScorelons, Array[Bytelon]] =
+    CompactScalaCodelonc(TopKTwelonelontsWithScorelons)
 
-  implicit val pairedArrayBytesCodec: Injection[(Array[Byte], Array[Byte]), Array[Byte]] =
-    Bufferable.injectionOf[(Array[Byte], Array[Byte])]
+  implicit val pairelondArrayBytelonsCodelonc: Injelonction[(Array[Bytelon], Array[Bytelon]), Array[Bytelon]] =
+    Buffelonrablelon.injelonctionOf[(Array[Bytelon], Array[Bytelon])]
 
-  implicit val entityWithClusterInjection: Injection[(SimClusterEntity, FullClusterIdBucket), Array[
-    Byte
+  implicit val elonntityWithClustelonrInjelonction: Injelonction[(SimClustelonrelonntity, FullClustelonrIdBuckelont), Array[
+    Bytelon
   ]] =
-    Injection
-      .connect[(SimClusterEntity, FullClusterIdBucket), (Array[Byte], Array[Byte]), Array[Byte]]
+    Injelonction
+      .connelonct[(SimClustelonrelonntity, FullClustelonrIdBuckelont), (Array[Bytelon], Array[Bytelon]), Array[Bytelon]]
 
-  implicit val topKClustersCodec: Injection[TopKClusters, Array[Byte]] =
-    CompactScalaCodec(TopKClusters)
+  implicit val topKClustelonrsCodelonc: Injelonction[TopKClustelonrs, Array[Bytelon]] =
+    CompactScalaCodelonc(TopKClustelonrs)
 
-  implicit val topKTweetsCodec: Injection[TopKTweets, Array[Byte]] =
-    CompactScalaCodec(TopKTweets)
+  implicit val topKTwelonelontsCodelonc: Injelonction[TopKTwelonelonts, Array[Bytelon]] =
+    CompactScalaCodelonc(TopKTwelonelonts)
 
-  implicit val simClustersEmbeddingCodec: Injection[SimClustersEmbedding, Array[Byte]] =
-    CompactScalaCodec(SimClustersEmbedding)
+  implicit val simClustelonrselonmbelonddingCodelonc: Injelonction[SimClustelonrselonmbelondding, Array[Bytelon]] =
+    CompactScalaCodelonc(SimClustelonrselonmbelondding)
 
-  implicit val persistentSimClustersEmbeddingCodec: Injection[PersistentSimClustersEmbedding, Array[
-    Byte
+  implicit val pelonrsistelonntSimClustelonrselonmbelonddingCodelonc: Injelonction[PelonrsistelonntSimClustelonrselonmbelondding, Array[
+    Bytelon
   ]] =
-    CompactScalaCodec(PersistentSimClustersEmbedding)
+    CompactScalaCodelonc(PelonrsistelonntSimClustelonrselonmbelondding)
 
-  implicit val statusCountsCodec: Injection[StatusCounts, Array[Byte]] =
-    CompactScalaCodec(StatusCounts)
+  implicit val statusCountsCodelonc: Injelonction[StatusCounts, Array[Bytelon]] =
+    CompactScalaCodelonc(StatusCounts)
 
-  implicit val thriftDecayedValueCodec: Injection[ThriftDecayedValue, Array[Byte]] =
-    AlgebirdImplicits.decayedValueCodec
+  implicit val thriftDeloncayelondValuelonCodelonc: Injelonction[ThriftDeloncayelondValuelon, Array[Bytelon]] =
+    AlgelonbirdImplicits.deloncayelondValuelonCodelonc
 
-  implicit val batcher: Batcher = Batcher.unit
+  implicit val batchelonr: Batchelonr = Batchelonr.unit
 }

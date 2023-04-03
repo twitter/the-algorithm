@@ -1,54 +1,54 @@
 scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
+    sourcelons = ["*.scala"],
+    compilelonr_option_selonts = ["fatal_warnings"],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        ":real_graph_in_scores-scala",
-        ":real_graph_oon_scores-scala",
-        "beam-internal/src/main/scala/com/twitter/beam/io/dal",
-        "beam-internal/src/main/scala/com/twitter/scio_internal/job",
-        "beam-internal/src/main/scala/com/twitter/scio_internal/runner/dataflow",
-        "tcdc/bq_blaster/src/main/scala/com/twitter/tcdc/bqblaster/beam",
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        ":relonal_graph_in_scorelons-scala",
+        ":relonal_graph_oon_scorelons-scala",
+        "belonam-intelonrnal/src/main/scala/com/twittelonr/belonam/io/dal",
+        "belonam-intelonrnal/src/main/scala/com/twittelonr/scio_intelonrnal/job",
+        "belonam-intelonrnal/src/main/scala/com/twittelonr/scio_intelonrnal/runnelonr/dataflow",
+        "tcdc/bq_blastelonr/src/main/scala/com/twittelonr/tcdc/bqblastelonr/belonam",
     ],
 )
 
 jvm_binary(
-    name = "interaction_graph_scores_scio",
-    main = "com.twitter.interaction_graph.scio.ml.scores.InteractionGraphScoreExportJob",
+    namelon = "intelonraction_graph_scorelons_scio",
+    main = "com.twittelonr.intelonraction_graph.scio.ml.scorelons.IntelonractionGraphScorelonelonxportJob",
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        ":scores",
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        ":scorelons",
     ],
 )
 
-create_datasets(
-    base_name = "real_graph_in_scores",
-    description = "Real Graph in network scores",
-    key_type = "Long",
+crelonatelon_dataselonts(
+    baselon_namelon = "relonal_graph_in_scorelons",
+    delonscription = "Relonal Graph in nelontwork scorelons",
+    kelony_typelon = "Long",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.wtf.scalding.jobs.injection.CandidateSeqInjection.injection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.wtf.candidate.thriftscala.CandidateSeq",
-    scala_dependencies = [
-        "src/scala/com/twitter/wtf/scalding/jobs/injection",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.wtf.scalding.jobs.injelonction.CandidatelonSelonqInjelonction.injelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.wtf.candidatelon.thriftscala.CandidatelonSelonq",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/wtf/scalding/jobs/injelonction",
     ],
 )
 
-create_datasets(
-    base_name = "real_graph_oon_scores",
-    description = "Real Graph OON Scores",
-    key_type = "Long",
+crelonatelon_dataselonts(
+    baselon_namelon = "relonal_graph_oon_scorelons",
+    delonscription = "Relonal Graph OON Scorelons",
+    kelony_typelon = "Long",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.wtf.scalding.jobs.injection.CandidateSeqInjection.injection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.wtf.candidate.thriftscala.CandidateSeq",
-    scala_dependencies = [
-        "src/scala/com/twitter/wtf/scalding/jobs/injection",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.wtf.scalding.jobs.injelonction.CandidatelonSelonqInjelonction.injelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.wtf.candidatelon.thriftscala.CandidatelonSelonq",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/wtf/scalding/jobs/injelonction",
     ],
 )

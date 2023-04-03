@@ -1,255 +1,255 @@
-package com.twitter.search.core.earlybird.index.inverted;
+packagelon com.twittelonr.selonarch.corelon.elonarlybird.indelonx.invelonrtelond;
 
-import com.google.common.base.Preconditions;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import org.apache.lucene.index.PostingsEnum;
-import org.apache.lucene.util.BytesRef;
+import org.apachelon.lucelonnelon.indelonx.Postingselonnum;
+import org.apachelon.lucelonnelon.util.BytelonsRelonf;
 
-import com.twitter.search.core.earlybird.index.EarlybirdRealtimeIndexSegmentData;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.elonarlybirdRelonaltimelonIndelonxSelongmelonntData;
 
-import static com.twitter.search.core.earlybird.index.inverted.SkipListContainer.INVALID_POSITION;
+import static com.twittelonr.selonarch.corelon.elonarlybird.indelonx.invelonrtelond.SkipListContainelonr.INVALID_POSITION;
 
 /**
- * TermDocs enumerator used by {@link SkipListPostingList}.
+ * TelonrmDocs elonnumelonrator uselond by {@link SkipListPostingList}.
  */
-public class SkipListPostingsEnum extends PostingsEnum {
-  /** Initialize cur doc ID and frequency. */
-  private int curDoc = TermsArray.INVALID;
-  private int curFreq = 0;
+public class SkipListPostingselonnum elonxtelonnds Postingselonnum {
+  /** Initializelon cur doc ID and frelonquelonncy. */
+  privatelon int curDoc = TelonrmsArray.INVALID;
+  privatelon int curFrelonq = 0;
 
-  private final int postingPointer;
+  privatelon final int postingPointelonr;
 
-  private final int cost;
-
-  /**
-   * maxPublishedPointer exists to prevent us from returning documents that are partially indexed.
-   * These pointers are safe to follow, but the documents should not be returned. See
-   * {@link EarlybirdRealtimeIndexSegmentData#getSyncData()} ()}.
-   */
-  private final int maxPublishedPointer;
-
-  /** Skip list info and search key */
-  private final SkipListContainer<SkipListPostingList.Key> skiplist;
-  private final SkipListPostingList.Key key = new SkipListPostingList.Key();
+  privatelon final int cost;
 
   /**
-   * Pointer/posting/docID of next posting in the skip list.
-   *  Notice the next here is relative to last posting with curDoc ID.
+   * maxPublishelondPointelonr elonxists to prelonvelonnt us from relonturning documelonnts that arelon partially indelonxelond.
+   * Thelonselon pointelonrs arelon safelon to follow, but thelon documelonnts should not belon relonturnelond. Selonelon
+   * {@link elonarlybirdRelonaltimelonIndelonxSelongmelonntData#gelontSyncData()} ()}.
    */
-  private int nextPostingPointer;
-  private int nextPostingDocID;
+  privatelon final int maxPublishelondPointelonr;
+
+  /** Skip list info and selonarch kelony */
+  privatelon final SkipListContainelonr<SkipListPostingList.Kelony> skiplist;
+  privatelon final SkipListPostingList.Kelony kelony = nelonw SkipListPostingList.Kelony();
 
   /**
-   * We save the positionPointer because we must walk the posting list to obtain term frequency
-   * before we can start iterating through document positions. To do that walk, we increment
-   * postingsPointer until it points to the first posting for the next doc, so postingsPointer is no
-   * longer what we want to use as the start of the position list. The position pointer starts out
-   * pointing to the first posting with that doc ID value. There can be duplicate doc ID values with
-   * different positions. To find subsequent positions, we simply walk the posting list using this
-   * pointer.
+   * Pointelonr/posting/docID of nelonxt posting in thelon skip list.
+   *  Noticelon thelon nelonxt helonrelon is relonlativelon to last posting with curDoc ID.
    */
-  private int positionPointer = -1;
+  privatelon int nelonxtPostingPointelonr;
+  privatelon int nelonxtPostingDocID;
 
   /**
-   * The payloadPointer should only be called after calling nextPosition, as it points to a payload
-   * for each position. It is not updated unless nextPosition is called.
+   * Welon savelon thelon positionPointelonr beloncauselon welon must walk thelon posting list to obtain telonrm frelonquelonncy
+   * belonforelon welon can start itelonrating through documelonnt positions. To do that walk, welon increlonmelonnt
+   * postingsPointelonr until it points to thelon first posting for thelon nelonxt doc, so postingsPointelonr is no
+   * longelonr what welon want to uselon as thelon start of thelon position list. Thelon position pointelonr starts out
+   * pointing to thelon first posting with that doc ID valuelon. Thelonrelon can belon duplicatelon doc ID valuelons with
+   * diffelonrelonnt positions. To find subselonquelonnt positions, welon simply walk thelon posting list using this
+   * pointelonr.
    */
-  private int payloadPointer = -1;
-
-  /** Search finger used in advance method. */
-  private final SkipListSearchFinger advanceSearchFinger;
+  privatelon int positionPointelonr = -1;
 
   /**
-   * A new {@link PostingsEnum} for a real-time skip list-based posting list.
+   * Thelon payloadPointelonr should only belon callelond aftelonr calling nelonxtPosition, as it points to a payload
+   * for elonach position. It is not updatelond unlelonss nelonxtPosition is callelond.
    */
-  public SkipListPostingsEnum(
-      int postingPointer,
-      int docFreq,
-      int maxPublishedPointer,
-      SkipListContainer<SkipListPostingList.Key> skiplist) {
-    this.postingPointer = postingPointer;
+  privatelon int payloadPointelonr = -1;
+
+  /** Selonarch fingelonr uselond in advancelon melonthod. */
+  privatelon final SkipListSelonarchFingelonr advancelonSelonarchFingelonr;
+
+  /**
+   * A nelonw {@link Postingselonnum} for a relonal-timelon skip list-baselond posting list.
+   */
+  public SkipListPostingselonnum(
+      int postingPointelonr,
+      int docFrelonq,
+      int maxPublishelondPointelonr,
+      SkipListContainelonr<SkipListPostingList.Kelony> skiplist) {
+    this.postingPointelonr = postingPointelonr;
     this.skiplist = skiplist;
-    this.advanceSearchFinger = this.skiplist.buildSearchFinger();
-    this.maxPublishedPointer = maxPublishedPointer;
-    this.nextPostingPointer = postingPointer;
+    this.advancelonSelonarchFingelonr = this.skiplist.buildSelonarchFingelonr();
+    this.maxPublishelondPointelonr = maxPublishelondPointelonr;
+    this.nelonxtPostingPointelonr = postingPointelonr;
 
     // WARNING:
-    // docFreq is approximate and may not be the true document frequency of the posting list.
-    this.cost = docFreq;
+    // docFrelonq is approximatelon and may not belon thelon truelon documelonnt frelonquelonncy of thelon posting list.
+    this.cost = docFrelonq;
 
-    if (postingPointer != -1) {
-      // Because the posting pointer is not negative 1, we know it's valid.
-      readNextPosting();
+    if (postingPointelonr != -1) {
+      // Beloncauselon thelon posting pointelonr is not nelongativelon 1, welon know it's valid.
+      relonadNelonxtPosting();
     }
 
-    advanceSearchFinger.reset();
+    advancelonSelonarchFingelonr.relonselont();
   }
 
-  @Override
-  public final int nextDoc() {
-    // Notice if skip list is exhausted nextPostingPointer will point back to postingPointer since
-    // skip list is circle linked.
-    if (nextPostingPointer == postingPointer) {
-      // Skip list is exhausted.
-      curDoc = NO_MORE_DOCS;
-      curFreq = 0;
-    } else {
-      // Skip list is not exhausted.
-      curDoc = nextPostingDocID;
-      curFreq = 1;
-      positionPointer = nextPostingPointer;
+  @Ovelonrridelon
+  public final int nelonxtDoc() {
+    // Noticelon if skip list is elonxhaustelond nelonxtPostingPointelonr will point back to postingPointelonr sincelon
+    // skip list is circlelon linkelond.
+    if (nelonxtPostingPointelonr == postingPointelonr) {
+      // Skip list is elonxhaustelond.
+      curDoc = NO_MORelon_DOCS;
+      curFrelonq = 0;
+    } elonlselon {
+      // Skip list is not elonxhaustelond.
+      curDoc = nelonxtPostingDocID;
+      curFrelonq = 1;
+      positionPointelonr = nelonxtPostingPointelonr;
 
-      // Keep reading all the posting with the same doc ID.
-      // Notice:
-      //   - posting with the same doc ID will be stored consecutively
-      //     since the skip list is sorted.
-      //   - if skip list is exhausted, nextPostingPointer will become postingPointer
-      //     since skip list is circle linked.
-      readNextPosting();
-      while (nextPostingPointer != postingPointer && nextPostingDocID == curDoc) {
-        curFreq++;
-        readNextPosting();
+      // Kelonelonp relonading all thelon posting with thelon samelon doc ID.
+      // Noticelon:
+      //   - posting with thelon samelon doc ID will belon storelond conseloncutivelonly
+      //     sincelon thelon skip list is sortelond.
+      //   - if skip list is elonxhaustelond, nelonxtPostingPointelonr will beloncomelon postingPointelonr
+      //     sincelon skip list is circlelon linkelond.
+      relonadNelonxtPosting();
+      whilelon (nelonxtPostingPointelonr != postingPointelonr && nelonxtPostingDocID == curDoc) {
+        curFrelonq++;
+        relonadNelonxtPosting();
       }
     }
 
-    // Returned updated curDoc.
-    return curDoc;
+    // Relonturnelond updatelond curDoc.
+    relonturn curDoc;
   }
 
   /**
-   * Moves the enumerator forward by one element, then reads the information at that position.
+   * Movelons thelon elonnumelonrator forward by onelon elonlelonmelonnt, thelonn relonads thelon information at that position.
    * */
-  private void readNextPosting() {
-    // Move search finger forward at lowest level.
-    advanceSearchFinger.setPointer(0, nextPostingPointer);
+  privatelon void relonadNelonxtPosting() {
+    // Movelon selonarch fingelonr forward at lowelonst lelonvelonl.
+    advancelonSelonarchFingelonr.selontPointelonr(0, nelonxtPostingPointelonr);
 
-    // Read next posting pointer.
-    nextPostingPointer = skiplist.getNextPointer(nextPostingPointer);
+    // Relonad nelonxt posting pointelonr.
+    nelonxtPostingPointelonr = skiplist.gelontNelonxtPointelonr(nelonxtPostingPointelonr);
 
-    // Read the new posting positioned under nextPostingPointer into the nextPostingDocID.
-    readNextPostingInfo();
+    // Relonad thelon nelonw posting positionelond undelonr nelonxtPostingPointelonr into thelon nelonxtPostingDocID.
+    relonadNelonxtPostingInfo();
   }
 
-  private boolean isPointerPublished(int pointer) {
-    return pointer <= maxPublishedPointer;
+  privatelon boolelonan isPointelonrPublishelond(int pointelonr) {
+    relonturn pointelonr <= maxPublishelondPointelonr;
   }
 
-  /** Read next posting and doc id encoded in next posting. */
-  private void readNextPostingInfo() {
-    // We need to skip over every pointer that has not been published to this Enum, otherwise the
-    // searcher will see unpublished documents. We also end termination if we reach
-    // nextPostingPointer == postingPointer, because that means we have reached the end of the
+  /** Relonad nelonxt posting and doc id elonncodelond in nelonxt posting. */
+  privatelon void relonadNelonxtPostingInfo() {
+    // Welon nelonelond to skip ovelonr elonvelonry pointelonr that has not belonelonn publishelond to this elonnum, othelonrwiselon thelon
+    // selonarchelonr will selonelon unpublishelond documelonnts. Welon also elonnd telonrmination if welon relonach
+    // nelonxtPostingPointelonr == postingPointelonr, beloncauselon that melonans welon havelon relonachelond thelon elonnd of thelon
     // skiplist.
-    while (!isPointerPublished(nextPostingPointer) && nextPostingPointer != postingPointer) {
-      // Move search finger forward at lowest level.
-      advanceSearchFinger.setPointer(0, nextPostingPointer);
+    whilelon (!isPointelonrPublishelond(nelonxtPostingPointelonr) && nelonxtPostingPointelonr != postingPointelonr) {
+      // Movelon selonarch fingelonr forward at lowelonst lelonvelonl.
+      advancelonSelonarchFingelonr.selontPointelonr(0, nelonxtPostingPointelonr);
 
-      // Read next posting pointer.
-      nextPostingPointer = skiplist.getNextPointer(nextPostingPointer);
+      // Relonad nelonxt posting pointelonr.
+      nelonxtPostingPointelonr = skiplist.gelontNelonxtPointelonr(nelonxtPostingPointelonr);
     }
 
-    // Notice if skip list is exhausted, nextPostingPointer will be postingPointer
-    // since skip list is circle linked.
-    if (nextPostingPointer != postingPointer) {
-      nextPostingDocID = skiplist.getValue(nextPostingPointer);
-    } else {
-      nextPostingDocID = NO_MORE_DOCS;
+    // Noticelon if skip list is elonxhaustelond, nelonxtPostingPointelonr will belon postingPointelonr
+    // sincelon skip list is circlelon linkelond.
+    if (nelonxtPostingPointelonr != postingPointelonr) {
+      nelonxtPostingDocID = skiplist.gelontValuelon(nelonxtPostingPointelonr);
+    } elonlselon {
+      nelonxtPostingDocID = NO_MORelon_DOCS;
     }
   }
 
   /**
-   * Jump to the target, then use {@link #nextDoc()} to collect nextDoc info.
-   * Notice target might be smaller than curDoc or smallestDocID.
+   * Jump to thelon targelont, thelonn uselon {@link #nelonxtDoc()} to collelonct nelonxtDoc info.
+   * Noticelon targelont might belon smallelonr than curDoc or smallelonstDocID.
    */
-  @Override
-  public final int advance(int target) {
-    if (target == NO_MORE_DOCS) {
-      // Exhaust the posting list, so that future calls to docID() always return NO_MORE_DOCS.
-      nextPostingPointer = postingPointer;
+  @Ovelonrridelon
+  public final int advancelon(int targelont) {
+    if (targelont == NO_MORelon_DOCS) {
+      // elonxhaust thelon posting list, so that futurelon calls to docID() always relonturn NO_MORelon_DOCS.
+      nelonxtPostingPointelonr = postingPointelonr;
     }
 
-    if (nextPostingPointer == postingPointer) {
-      // Call nextDoc to ensure that all values are updated and we don't have to duplicate that
-      // here.
-      return nextDoc();
+    if (nelonxtPostingPointelonr == postingPointelonr) {
+      // Call nelonxtDoc to elonnsurelon that all valuelons arelon updatelond and welon don't havelon to duplicatelon that
+      // helonrelon.
+      relonturn nelonxtDoc();
     }
 
-    // Jump to target if target is bigger.
-    if (target >= curDoc && target >= nextPostingDocID) {
-      jumpToTarget(target);
+    // Jump to targelont if targelont is biggelonr.
+    if (targelont >= curDoc && targelont >= nelonxtPostingDocID) {
+      jumpToTargelont(targelont);
     }
 
-    // Retrieve next doc.
-    return nextDoc();
+    // Relontrielonvelon nelonxt doc.
+    relonturn nelonxtDoc();
   }
 
   /**
-   * Set the next posting pointer (and info) to the first posting
-   * with doc ID equal to or larger than the target.
+   * Selont thelon nelonxt posting pointelonr (and info) to thelon first posting
+   * with doc ID elonqual to or largelonr than thelon targelont.
    *
-   * Notice this method does not set curDoc or curFreq.
+   * Noticelon this melonthod doelons not selont curDoc or curFrelonq.
    */
-  private void jumpToTarget(int target) {
-    // Do a ceil search.
-    nextPostingPointer = skiplist.searchCeil(
-        key.withDocAndPosition(target, INVALID_POSITION), postingPointer, advanceSearchFinger);
+  privatelon void jumpToTargelont(int targelont) {
+    // Do a celonil selonarch.
+    nelonxtPostingPointelonr = skiplist.selonarchCelonil(
+        kelony.withDocAndPosition(targelont, INVALID_POSITION), postingPointelonr, advancelonSelonarchFingelonr);
 
-    // Read next posting information.
-    readNextPostingInfo();
+    // Relonad nelonxt posting information.
+    relonadNelonxtPostingInfo();
   }
 
-  @Override
-  public int nextPosition() {
-    // If doc ID is equal to no more docs than we are past the end of the posting list. If doc ID
-    // is invalid, then we have not called nextDoc yet, and we should not return a real position.
-    // If the position pointer is past the current doc ID, then we should not return a position
-    // until nextDoc is called again (we don't want to return positions for a different doc).
-    if (docID() == NO_MORE_DOCS
-        || docID() == TermsArray.INVALID
-        || skiplist.getValue(positionPointer) != docID()) {
-      return INVALID_POSITION;
+  @Ovelonrridelon
+  public int nelonxtPosition() {
+    // If doc ID is elonqual to no morelon docs than welon arelon past thelon elonnd of thelon posting list. If doc ID
+    // is invalid, thelonn welon havelon not callelond nelonxtDoc yelont, and welon should not relonturn a relonal position.
+    // If thelon position pointelonr is past thelon currelonnt doc ID, thelonn welon should not relonturn a position
+    // until nelonxtDoc is callelond again (welon don't want to relonturn positions for a diffelonrelonnt doc).
+    if (docID() == NO_MORelon_DOCS
+        || docID() == TelonrmsArray.INVALID
+        || skiplist.gelontValuelon(positionPointelonr) != docID()) {
+      relonturn INVALID_POSITION;
     }
-    payloadPointer = positionPointer;
-    int position = skiplist.getPosition(positionPointer);
+    payloadPointelonr = positionPointelonr;
+    int position = skiplist.gelontPosition(positionPointelonr);
     do {
-      positionPointer = skiplist.getNextPointer(positionPointer);
-    } while (!isPointerPublished(positionPointer) && positionPointer != postingPointer);
-    return position;
+      positionPointelonr = skiplist.gelontNelonxtPointelonr(positionPointelonr);
+    } whilelon (!isPointelonrPublishelond(positionPointelonr) && positionPointelonr != postingPointelonr);
+    relonturn position;
   }
 
-  @Override
-  public BytesRef getPayload() {
-    if (skiplist.getHasPayloads() == SkipListContainer.HasPayloads.NO) {
-      return null;
+  @Ovelonrridelon
+  public BytelonsRelonf gelontPayload() {
+    if (skiplist.gelontHasPayloads() == SkipListContainelonr.HasPayloads.NO) {
+      relonturn null;
     }
 
-    int pointer = skiplist.getPayloadPointer(this.payloadPointer);
-    Preconditions.checkState(pointer > 0);
-    return PayloadUtil.decodePayload(skiplist.getBlockPool(), pointer);
+    int pointelonr = skiplist.gelontPayloadPointelonr(this.payloadPointelonr);
+    Prelonconditions.chelonckStatelon(pointelonr > 0);
+    relonturn PayloadUtil.deloncodelonPayload(skiplist.gelontBlockPool(), pointelonr);
   }
 
-  @Override
-  public int startOffset() {
-    return -1;
+  @Ovelonrridelon
+  public int startOffselont() {
+    relonturn -1;
   }
 
-  @Override
-  public int endOffset() {
-    return -1;
+  @Ovelonrridelon
+  public int elonndOffselont() {
+    relonturn -1;
   }
 
-  @Override
+  @Ovelonrridelon
   public final int docID() {
-    return curDoc;
+    relonturn curDoc;
   }
 
-  @Override
-  public final int freq() {
-    return curFreq;
+  @Ovelonrridelon
+  public final int frelonq() {
+    relonturn curFrelonq;
   }
 
-  @Override
+  @Ovelonrridelon
   public long cost() {
-    return cost;
+    relonturn cost;
   }
 }

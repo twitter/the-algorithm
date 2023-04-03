@@ -1,50 +1,50 @@
-package com.twitter.product_mixer.core.functional_component.candidate_source
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon
 
-import com.twitter.product_mixer.core.model.common.Component
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.stitch.Stitch
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.Componelonnt
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonSourcelonIdelonntifielonr
+import com.twittelonr.stitch.Stitch
 
-sealed trait BaseCandidateSource[-Request, +Candidate] extends Component {
+selonalelond trait BaselonCandidatelonSourcelon[-Relonquelonst, +Candidatelon] elonxtelonnds Componelonnt {
 
-  /** @see [[CandidateSourceIdentifier]] */
-  val identifier: CandidateSourceIdentifier
+  /** @selonelon [[CandidatelonSourcelonIdelonntifielonr]] */
+  val idelonntifielonr: CandidatelonSourcelonIdelonntifielonr
 }
 
 /**
- * A [[CandidateSource]] returns a Seq of ''potential'' content
+ * A [[CandidatelonSourcelon]] relonturns a Selonq of ''potelonntial'' contelonnt
  *
- * @note [[CandidateSource]]s that return a single value need to transform
- *       it into a Seq, either by doing `Seq(value)` or extracting
- *       candidates from the value.
+ * @notelon [[CandidatelonSourcelon]]s that relonturn a singlelon valuelon nelonelond to transform
+ *       it into a Selonq, elonithelonr by doing `Selonq(valuelon)` or elonxtracting
+ *       candidatelons from thelon valuelon.
  *
- * @tparam Request arguments to get the potential content
- * @tparam Candidate the potential content
+ * @tparam Relonquelonst argumelonnts to gelont thelon potelonntial contelonnt
+ * @tparam Candidatelon thelon potelonntial contelonnt
  */
-trait CandidateSource[-Request, +Candidate] extends BaseCandidateSource[Request, Candidate] {
+trait CandidatelonSourcelon[-Relonquelonst, +Candidatelon] elonxtelonnds BaselonCandidatelonSourcelon[Relonquelonst, Candidatelon] {
 
-  /** returns a Seq of ''potential'' content */
-  def apply(request: Request): Stitch[Seq[Candidate]]
+  /** relonturns a Selonq of ''potelonntial'' contelonnt */
+  delonf apply(relonquelonst: Relonquelonst): Stitch[Selonq[Candidatelon]]
 }
 
 /**
- * A [[CandidateSourceWithExtractedFeatures]] returns a result containing both a Seq of
- * ''potential'' candidates as well as an extracted feature map that will later be appended
- * to the pipeline's [[com.twitter.product_mixer.core.pipeline.PipelineQuery]] feature map. This is
- * useful for candidate sources that return features that might be useful later on without needing
- * to re-hydrate them.
+ * A [[CandidatelonSourcelonWithelonxtractelondFelonaturelons]] relonturns a relonsult containing both a Selonq of
+ * ''potelonntial'' candidatelons as welonll as an elonxtractelond felonaturelon map that will latelonr belon appelonndelond
+ * to thelon pipelonlinelon's [[com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry]] felonaturelon map. This is
+ * uselonful for candidatelon sourcelons that relonturn felonaturelons that might belon uselonful latelonr on without nelonelonding
+ * to relon-hydratelon thelonm.
  *
- * @note [[CandidateSource]]s that return a single value need to transform
- *       it into a Seq, either by doing `Seq(value)` or extracting
- *       candidates from the value.
+ * @notelon [[CandidatelonSourcelon]]s that relonturn a singlelon valuelon nelonelond to transform
+ *       it into a Selonq, elonithelonr by doing `Selonq(valuelon)` or elonxtracting
+ *       candidatelons from thelon valuelon.
  *
- * @tparam Request arguments to get the potential content
- * @tparam Candidate the potential content
+ * @tparam Relonquelonst argumelonnts to gelont thelon potelonntial contelonnt
+ * @tparam Candidatelon thelon potelonntial contelonnt
  */
-trait CandidateSourceWithExtractedFeatures[-Request, +Candidate]
-    extends BaseCandidateSource[Request, Candidate] {
+trait CandidatelonSourcelonWithelonxtractelondFelonaturelons[-Relonquelonst, +Candidatelon]
+    elonxtelonnds BaselonCandidatelonSourcelon[Relonquelonst, Candidatelon] {
 
-  /** returns a result containing a seq of ''potential'' content and extracted features
-   * from the candidate source.
+  /** relonturns a relonsult containing a selonq of ''potelonntial'' contelonnt and elonxtractelond felonaturelons
+   * from thelon candidatelon sourcelon.
    * */
-  def apply(request: Request): Stitch[CandidatesWithSourceFeatures[Candidate]]
+  delonf apply(relonquelonst: Relonquelonst): Stitch[CandidatelonsWithSourcelonFelonaturelons[Candidatelon]]
 }

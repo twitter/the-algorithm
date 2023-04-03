@@ -1,30 +1,30 @@
-package com.twitter.product_mixer.component_library.candidate_source.timelines_impression_store
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.candidatelon_sourcelon.timelonlinelons_imprelonssion_storelon
 
-import com.twitter.product_mixer.core.functional_component.candidate_source.strato.StratoKeyFetcherSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.strato.client.Fetcher
-import com.twitter.strato.generated.client.timelines.impression_store.TweetImpressionStoreManhattanV2OnUserClientColumn
-import com.twitter.timelines.impression.thriftscala.TweetImpressionsEntries
-import com.twitter.timelines.impression.{thriftscala => t}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.strato.StratoKelonyFelontchelonrSourcelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonSourcelonIdelonntifielonr
+import com.twittelonr.strato.clielonnt.Felontchelonr
+import com.twittelonr.strato.gelonnelonratelond.clielonnt.timelonlinelons.imprelonssion_storelon.TwelonelontImprelonssionStorelonManhattanV2OnUselonrClielonntColumn
+import com.twittelonr.timelonlinelons.imprelonssion.thriftscala.TwelonelontImprelonssionselonntrielons
+import com.twittelonr.timelonlinelons.imprelonssion.{thriftscala => t}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class TimelinesImpressionStoreCandidateSourceV2 @Inject() (
-  client: TweetImpressionStoreManhattanV2OnUserClientColumn)
-    extends StratoKeyFetcherSource[
+@Singlelonton
+class TimelonlinelonsImprelonssionStorelonCandidatelonSourcelonV2 @Injelonct() (
+  clielonnt: TwelonelontImprelonssionStorelonManhattanV2OnUselonrClielonntColumn)
+    elonxtelonnds StratoKelonyFelontchelonrSourcelon[
       Long,
-      t.TweetImpressionsEntries,
-      t.TweetImpressionsEntry
+      t.TwelonelontImprelonssionselonntrielons,
+      t.TwelonelontImprelonssionselonntry
     ] {
 
-  override val identifier: CandidateSourceIdentifier = CandidateSourceIdentifier(
-    "TimelinesImpressionStore")
+  ovelonrridelon val idelonntifielonr: CandidatelonSourcelonIdelonntifielonr = CandidatelonSourcelonIdelonntifielonr(
+    "TimelonlinelonsImprelonssionStorelon")
 
-  override val fetcher: Fetcher[Long, Unit, TweetImpressionsEntries] = client.fetcher
+  ovelonrridelon val felontchelonr: Felontchelonr[Long, Unit, TwelonelontImprelonssionselonntrielons] = clielonnt.felontchelonr
 
-  override def stratoResultTransformer(
-    stratoResult: t.TweetImpressionsEntries
-  ): Seq[t.TweetImpressionsEntry] =
-    stratoResult.entries
+  ovelonrridelon delonf stratoRelonsultTransformelonr(
+    stratoRelonsult: t.TwelonelontImprelonssionselonntrielons
+  ): Selonq[t.TwelonelontImprelonssionselonntry] =
+    stratoRelonsult.elonntrielons
 }

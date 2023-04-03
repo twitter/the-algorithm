@@ -1,43 +1,43 @@
-package com.twitter.product_mixer.component_library.candidate_source.ann
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.candidatelon_sourcelon.ann
 
-import com.twitter.ann.common._
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.stitch.Stitch
-import com.twitter.util.{Time => _, _}
-import com.twitter.finagle.util.DefaultTimer
+import com.twittelonr.ann.common._
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.CandidatelonSourcelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonSourcelonIdelonntifielonr
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.util.{Timelon => _, _}
+import com.twittelonr.finaglelon.util.DelonfaultTimelonr
 
 /**
- * @param annQueryableById Ann Queryable by Id client that returns nearest neighbors for a sequence of queries
- * @param identifier Candidate Source Identifier
- * @tparam T1 type of the query.
- * @tparam T2 type of the result.
- * @tparam P  runtime parameters supported by the index.
- * @tparam D  distance function used in the index.
+ * @param annQuelonryablelonById Ann Quelonryablelon by Id clielonnt that relonturns nelonarelonst nelonighbors for a selonquelonncelon of quelonrielons
+ * @param idelonntifielonr Candidatelon Sourcelon Idelonntifielonr
+ * @tparam T1 typelon of thelon quelonry.
+ * @tparam T2 typelon of thelon relonsult.
+ * @tparam P  runtimelon paramelontelonrs supportelond by thelon indelonx.
+ * @tparam D  distancelon function uselond in thelon indelonx.
  */
-class AnnCandidateSource[T1, T2, P <: RuntimeParams, D <: Distance[D]](
-  val annQueryableById: QueryableById[T1, T2, P, D],
-  val batchSize: Int,
-  val timeoutPerRequest: Duration,
-  override val identifier: CandidateSourceIdentifier)
-    extends CandidateSource[AnnIdQuery[T1, P], NeighborWithDistanceWithSeed[T1, T2, D]] {
+class AnnCandidatelonSourcelon[T1, T2, P <: RuntimelonParams, D <: Distancelon[D]](
+  val annQuelonryablelonById: QuelonryablelonById[T1, T2, P, D],
+  val batchSizelon: Int,
+  val timelonoutPelonrRelonquelonst: Duration,
+  ovelonrridelon val idelonntifielonr: CandidatelonSourcelonIdelonntifielonr)
+    elonxtelonnds CandidatelonSourcelon[AnnIdQuelonry[T1, P], NelonighborWithDistancelonWithSelonelond[T1, T2, D]] {
 
-  implicit val timer = DefaultTimer
+  implicit val timelonr = DelonfaultTimelonr
 
-  override def apply(
-    request: AnnIdQuery[T1, P]
-  ): Stitch[Seq[NeighborWithDistanceWithSeed[T1, T2, D]]] = {
-    val ids = request.ids
-    val numOfNeighbors = request.numOfNeighbors
-    val runtimeParams = request.runtimeParams
+  ovelonrridelon delonf apply(
+    relonquelonst: AnnIdQuelonry[T1, P]
+  ): Stitch[Selonq[NelonighborWithDistancelonWithSelonelond[T1, T2, D]]] = {
+    val ids = relonquelonst.ids
+    val numOfNelonighbors = relonquelonst.numOfNelonighbors
+    val runtimelonParams = relonquelonst.runtimelonParams
     Stitch
-      .collect(
+      .collelonct(
         ids
-          .grouped(batchSize).map { batchedIds =>
-            annQueryableById
-              .batchQueryWithDistanceById(batchedIds, numOfNeighbors, runtimeParams).map {
-                annResult => annResult.toSeq
-              }.within(timeoutPerRequest).handle { case _ => Seq.empty }
-          }.toSeq).map(_.flatten)
+          .groupelond(batchSizelon).map { batchelondIds =>
+            annQuelonryablelonById
+              .batchQuelonryWithDistancelonById(batchelondIds, numOfNelonighbors, runtimelonParams).map {
+                annRelonsult => annRelonsult.toSelonq
+              }.within(timelonoutPelonrRelonquelonst).handlelon { caselon _ => Selonq.elonmpty }
+          }.toSelonq).map(_.flattelonn)
   }
 }

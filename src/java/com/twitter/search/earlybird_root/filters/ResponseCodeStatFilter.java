@@ -1,49 +1,49 @@
-package com.twitter.search.earlybird_root.filters;
+packagelon com.twittelonr.selonarch.elonarlybird_root.filtelonrs;
 
 import java.util.Map;
 
-import com.google.common.collect.Maps;
+import com.googlelon.common.collelonct.Maps;
 
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.util.Future;
-import com.twitter.util.FutureEventListener;
+import com.twittelonr.finaglelon.Selonrvicelon;
+import com.twittelonr.finaglelon.SimplelonFiltelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonquelonst;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselonCodelon;
+import com.twittelonr.util.Futurelon;
+import com.twittelonr.util.FuturelonelonvelonntListelonnelonr;
 
-public class ResponseCodeStatFilter
-    extends SimpleFilter<EarlybirdRequest, EarlybirdResponse> {
+public class RelonsponselonCodelonStatFiltelonr
+    elonxtelonnds SimplelonFiltelonr<elonarlybirdRelonquelonst, elonarlybirdRelonsponselon> {
 
-  private final Map<EarlybirdResponseCode, SearchCounter> responseCodeCounters;
+  privatelon final Map<elonarlybirdRelonsponselonCodelon, SelonarchCountelonr> relonsponselonCodelonCountelonrs;
 
   /**
-   * Create ResponseCodeStatFilter
+   * Crelonatelon RelonsponselonCodelonStatFiltelonr
    */
-  public ResponseCodeStatFilter() {
-    responseCodeCounters = Maps.newEnumMap(EarlybirdResponseCode.class);
-    for (EarlybirdResponseCode code : EarlybirdResponseCode.values()) {
-      SearchCounter stat = SearchCounter.export("response_code_" + code.name().toLowerCase());
-      responseCodeCounters.put(code, stat);
+  public RelonsponselonCodelonStatFiltelonr() {
+    relonsponselonCodelonCountelonrs = Maps.nelonwelonnumMap(elonarlybirdRelonsponselonCodelon.class);
+    for (elonarlybirdRelonsponselonCodelon codelon : elonarlybirdRelonsponselonCodelon.valuelons()) {
+      SelonarchCountelonr stat = SelonarchCountelonr.elonxport("relonsponselon_codelon_" + codelon.namelon().toLowelonrCaselon());
+      relonsponselonCodelonCountelonrs.put(codelon, stat);
     }
   }
 
-  @Override
-  public Future<EarlybirdResponse> apply(
-      final EarlybirdRequest request,
-      final Service<EarlybirdRequest, EarlybirdResponse> service) {
+  @Ovelonrridelon
+  public Futurelon<elonarlybirdRelonsponselon> apply(
+      final elonarlybirdRelonquelonst relonquelonst,
+      final Selonrvicelon<elonarlybirdRelonquelonst, elonarlybirdRelonsponselon> selonrvicelon) {
 
-    return service.apply(request).addEventListener(
-        new FutureEventListener<EarlybirdResponse>() {
+    relonturn selonrvicelon.apply(relonquelonst).addelonvelonntListelonnelonr(
+        nelonw FuturelonelonvelonntListelonnelonr<elonarlybirdRelonsponselon>() {
 
-          @Override
-          public void onSuccess(final EarlybirdResponse response) {
-            responseCodeCounters.get(response.getResponseCode()).increment();
+          @Ovelonrridelon
+          public void onSuccelonss(final elonarlybirdRelonsponselon relonsponselon) {
+            relonsponselonCodelonCountelonrs.gelont(relonsponselon.gelontRelonsponselonCodelon()).increlonmelonnt();
           }
 
-          @Override
-          public void onFailure(final Throwable cause) { }
+          @Ovelonrridelon
+          public void onFailurelon(final Throwablelon causelon) { }
         });
 
   }

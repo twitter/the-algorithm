@@ -1,37 +1,37 @@
-package com.twitter.product_mixer.component_library.filter.tweet_impression
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.filtelonr.twelonelont_imprelonssion
 
-import com.twitter.product_mixer.component_library.feature_hydrator.query.impressed_tweets.ImpressedTweets
-import com.twitter.product_mixer.component_library.model.candidate.BaseTweetCandidate
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.filter.FilterResult
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+import com.twittelonr.product_mixelonr.componelonnt_library.felonaturelon_hydrator.quelonry.imprelonsselond_twelonelonts.ImprelonsselondTwelonelonts
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.BaselonTwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.filtelonr.Filtelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.filtelonr.FiltelonrRelonsult
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.FiltelonrIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stitch.Stitch
 
 /**
- * Filters out tweets that the user has seen
+ * Filtelonrs out twelonelonts that thelon uselonr has selonelonn
  */
-case class TweetImpressionFilter[Candidate <: BaseTweetCandidate](
-) extends Filter[PipelineQuery, Candidate] {
+caselon class TwelonelontImprelonssionFiltelonr[Candidatelon <: BaselonTwelonelontCandidatelon](
+) elonxtelonnds Filtelonr[PipelonlinelonQuelonry, Candidatelon] {
 
-  override val identifier: FilterIdentifier = FilterIdentifier("TweetImpression")
+  ovelonrridelon val idelonntifielonr: FiltelonrIdelonntifielonr = FiltelonrIdelonntifielonr("TwelonelontImprelonssion")
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): Stitch[FilterResult[Candidate]] = {
+  ovelonrridelon delonf apply(
+    quelonry: PipelonlinelonQuelonry,
+    candidatelons: Selonq[CandidatelonWithFelonaturelons[Candidatelon]]
+  ): Stitch[FiltelonrRelonsult[Candidatelon]] = {
 
-    // Set of Tweets that have impressed the user
-    val impressedTweetsSet: Set[Long] = query.features match {
-      case Some(featureMap) => featureMap.getOrElse(ImpressedTweets, Seq.empty).toSet
-      case None => Set.empty
+    // Selont of Twelonelonts that havelon imprelonsselond thelon uselonr
+    val imprelonsselondTwelonelontsSelont: Selont[Long] = quelonry.felonaturelons match {
+      caselon Somelon(felonaturelonMap) => felonaturelonMap.gelontOrelonlselon(ImprelonsselondTwelonelonts, Selonq.elonmpty).toSelont
+      caselon Nonelon => Selont.elonmpty
     }
 
-    val (keptCandidates, removedCandidates) = candidates.partition { filteredCandidate =>
-      !impressedTweetsSet.contains(filteredCandidate.candidate.id)
+    val (kelonptCandidatelons, relonmovelondCandidatelons) = candidatelons.partition { filtelonrelondCandidatelon =>
+      !imprelonsselondTwelonelontsSelont.contains(filtelonrelondCandidatelon.candidatelon.id)
     }
 
-    Stitch.value(FilterResult(keptCandidates.map(_.candidate), removedCandidates.map(_.candidate)))
+    Stitch.valuelon(FiltelonrRelonsult(kelonptCandidatelons.map(_.candidatelon), relonmovelondCandidatelons.map(_.candidatelon)))
   }
 }

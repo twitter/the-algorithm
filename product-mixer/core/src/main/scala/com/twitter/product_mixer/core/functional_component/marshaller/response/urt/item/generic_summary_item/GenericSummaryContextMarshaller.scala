@@ -1,20 +1,20 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.generic_summary_item
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.itelonm.gelonnelonric_summary_itelonm
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.icon.HorizonIconMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.richtext.RichTextMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.generic_summary.GenericSummaryContext
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.icon.HorizonIconMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.richtelonxt.RichTelonxtMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.gelonnelonric_summary.GelonnelonricSummaryContelonxt
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class GenericSummaryContextMarshaller @Inject() (
-  richTextMarshaller: RichTextMarshaller,
-  horizonIconMarshaller: HorizonIconMarshaller) {
+@Singlelonton
+class GelonnelonricSummaryContelonxtMarshallelonr @Injelonct() (
+  richTelonxtMarshallelonr: RichTelonxtMarshallelonr,
+  horizonIconMarshallelonr: HorizonIconMarshallelonr) {
 
-  def apply(genericSummaryItemContext: GenericSummaryContext): urt.GenericSummaryContext =
-    urt.GenericSummaryContext(
-      text = richTextMarshaller(genericSummaryItemContext.text),
-      icon = genericSummaryItemContext.icon.map(horizonIconMarshaller(_))
+  delonf apply(gelonnelonricSummaryItelonmContelonxt: GelonnelonricSummaryContelonxt): urt.GelonnelonricSummaryContelonxt =
+    urt.GelonnelonricSummaryContelonxt(
+      telonxt = richTelonxtMarshallelonr(gelonnelonricSummaryItelonmContelonxt.telonxt),
+      icon = gelonnelonricSummaryItelonmContelonxt.icon.map(horizonIconMarshallelonr(_))
     )
 }

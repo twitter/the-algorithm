@@ -1,35 +1,35 @@
-package com.twitter.product_mixer.component_library.model.cursor
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.modelonl.cursor
 
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.model.marshalling.response.slice.CursorType
-import com.twitter.product_mixer.core.pipeline.HasPipelineCursor
-import com.twitter.product_mixer.core.pipeline.PipelineCursor
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.UrtPipelineCursor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.{
-  CursorType => UrtCursorType
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.slicelon.CursorTypelon
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.HasPipelonlinelonCursor
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonCursor
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.UrtPipelonlinelonCursor
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.opelonration.{
+  CursorTypelon => UrtCursorTypelon
 }
 
-case object PreviousCursorFeature
-    extends Feature[PipelineQuery with HasPipelineCursor[UrtPassThroughCursor], String]
+caselon objelonct PrelonviousCursorFelonaturelon
+    elonxtelonnds Felonaturelon[PipelonlinelonQuelonry with HasPipelonlinelonCursor[UrtPassThroughCursor], String]
 
-case object NextCursorFeature
-    extends Feature[PipelineQuery with HasPipelineCursor[UrtPassThroughCursor], String]
+caselon objelonct NelonxtCursorFelonaturelon
+    elonxtelonnds Felonaturelon[PipelonlinelonQuelonry with HasPipelonlinelonCursor[UrtPassThroughCursor], String]
 
 /**
- * Cursor model that may be used when we want to pass through the cursor value from and back to
- * a downstream as-is.
+ * Cursor modelonl that may belon uselond whelonn welon want to pass through thelon cursor valuelon from and back to
+ * a downstrelonam as-is.
  *
- * @param initialSortIndex See [[UrtPipelineCursor]]
- * @param cursorValue the pass through cursor
+ * @param initialSortIndelonx Selonelon [[UrtPipelonlinelonCursor]]
+ * @param cursorValuelon thelon pass through cursor
  */
-case class UrtPassThroughCursor(
-  override val initialSortIndex: Long,
-  cursorValue: String,
-  cursorType: Option[UrtCursorType] = None)
-    extends UrtPipelineCursor
+caselon class UrtPassThroughCursor(
+  ovelonrridelon val initialSortIndelonx: Long,
+  cursorValuelon: String,
+  cursorTypelon: Option[UrtCursorTypelon] = Nonelon)
+    elonxtelonnds UrtPipelonlinelonCursor
 
-case class PassThroughCursor(
-  cursorValue: String,
-  cursorType: Option[CursorType] = None)
-    extends PipelineCursor
+caselon class PassThroughCursor(
+  cursorValuelon: String,
+  cursorTypelon: Option[CursorTypelon] = Nonelon)
+    elonxtelonnds PipelonlinelonCursor

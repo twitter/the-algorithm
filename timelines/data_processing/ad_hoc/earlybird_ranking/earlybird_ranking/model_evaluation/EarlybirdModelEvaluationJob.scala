@@ -1,214 +1,214 @@
-package com.twitter.timelines.data_processing.ad_hoc.earlybird_ranking.model_evaluation
+packagelon com.twittelonr.timelonlinelons.data_procelonssing.ad_hoc.elonarlybird_ranking.modelonl_elonvaluation
 
-import com.twitter.algebird.Aggregator
-import com.twitter.algebird.AveragedValue
-import com.twitter.ml.api.prediction_engine.PredictionEnginePlugin
-import com.twitter.ml.api.util.FDsl
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.IRecordOneToManyAdapter
-import com.twitter.scalding.Args
-import com.twitter.scalding.DateRange
-import com.twitter.scalding.Execution
-import com.twitter.scalding.TypedJson
-import com.twitter.scalding.TypedPipe
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.job.TwitterExecutionApp
-import com.twitter.timelines.data_processing.ad_hoc.earlybird_ranking.common.EarlybirdTrainingRecapConfiguration
-import com.twitter.timelines.data_processing.util.RequestImplicits.RichRequest
-import com.twitter.timelines.data_processing.util.example.RecapTweetExample
-import com.twitter.timelines.data_processing.util.execution.UTCDateRangeFromArgs
-import com.twitter.timelines.prediction.adapters.recap.RecapSuggestionRecordAdapter
-import com.twitter.timelines.prediction.features.recap.RecapFeatures
-import com.twitter.timelines.suggests.common.record.thriftscala.SuggestionRecord
-import com.twitter.timelineservice.suggests.logging.recap.thriftscala.HighlightTweet
-import com.twitter.timelineservice.suggests.logging.thriftscala.SuggestsRequestLog
-import scala.collection.JavaConverters._
-import scala.language.reflectiveCalls
+import com.twittelonr.algelonbird.Aggrelongator
+import com.twittelonr.algelonbird.AvelonragelondValuelon
+import com.twittelonr.ml.api.prelondiction_elonnginelon.PrelondictionelonnginelonPlugin
+import com.twittelonr.ml.api.util.FDsl
+import com.twittelonr.ml.api.DataReloncord
+import com.twittelonr.ml.api.IReloncordOnelonToManyAdaptelonr
+import com.twittelonr.scalding.Args
+import com.twittelonr.scalding.DatelonRangelon
+import com.twittelonr.scalding.elonxeloncution
+import com.twittelonr.scalding.TypelondJson
+import com.twittelonr.scalding.TypelondPipelon
+import com.twittelonr.scalding_intelonrnal.dalv2.DAL
+import com.twittelonr.scalding_intelonrnal.job.TwittelonrelonxeloncutionApp
+import com.twittelonr.timelonlinelons.data_procelonssing.ad_hoc.elonarlybird_ranking.common.elonarlybirdTrainingReloncapConfiguration
+import com.twittelonr.timelonlinelons.data_procelonssing.util.RelonquelonstImplicits.RichRelonquelonst
+import com.twittelonr.timelonlinelons.data_procelonssing.util.elonxamplelon.ReloncapTwelonelontelonxamplelon
+import com.twittelonr.timelonlinelons.data_procelonssing.util.elonxeloncution.UTCDatelonRangelonFromArgs
+import com.twittelonr.timelonlinelons.prelondiction.adaptelonrs.reloncap.ReloncapSuggelonstionReloncordAdaptelonr
+import com.twittelonr.timelonlinelons.prelondiction.felonaturelons.reloncap.ReloncapFelonaturelons
+import com.twittelonr.timelonlinelons.suggelonsts.common.reloncord.thriftscala.SuggelonstionReloncord
+import com.twittelonr.timelonlinelonselonrvicelon.suggelonsts.logging.reloncap.thriftscala.HighlightTwelonelont
+import com.twittelonr.timelonlinelonselonrvicelon.suggelonsts.logging.thriftscala.SuggelonstsRelonquelonstLog
+import scala.collelonction.JavaConvelonrtelonrs._
+import scala.languagelon.relonflelonctivelonCalls
 import scala.util.Random
-import twadoop_config.configuration.log_categories.group.timelines.TimelineserviceInjectionRequestLogScalaDataset
+import twadoop_config.configuration.log_catelongorielons.group.timelonlinelons.TimelonlinelonselonrvicelonInjelonctionRelonquelonstLogScalaDataselont
 
 /**
- * Evaluates an Earlybird model using 1% injection request logs.
+ * elonvaluatelons an elonarlybird modelonl using 1% injelonction relonquelonst logs.
  *
- * Arguments:
- * --model_base_path  path to Earlybird model snapshots
- * --models           list of model names to evaluate
+ * Argumelonnts:
+ * --modelonl_baselon_path  path to elonarlybird modelonl snapshots
+ * --modelonls           list of modelonl namelons to elonvaluatelon
  * --output           path to output stats
- * --parallelism      (default: 3) number of tasks to run in parallel
- * --topks            (optional) list of values of `k` (integers) for top-K metrics
- * --topn_fractions   (optional) list of values of `n` (doubles) for top-N-fraction metrics
- * --seed             (optional) seed for random number generator
+ * --parallelonlism      (delonfault: 3) numbelonr of tasks to run in parallelonl
+ * --topks            (optional) list of valuelons of `k` (intelongelonrs) for top-K melontrics
+ * --topn_fractions   (optional) list of valuelons of `n` (doublelons) for top-N-fraction melontrics
+ * --selonelond             (optional) selonelond for random numbelonr gelonnelonrator
  */
-object EarlybirdModelEvaluationJob extends TwitterExecutionApp with UTCDateRangeFromArgs {
+objelonct elonarlybirdModelonlelonvaluationJob elonxtelonnds TwittelonrelonxeloncutionApp with UTCDatelonRangelonFromArgs {
 
   import FDsl._
-  import PredictionEnginePlugin._
+  import PrelondictionelonnginelonPlugin._
 
-  private[this] val averager: Aggregator[Double, AveragedValue, Double] =
-    AveragedValue.aggregator
-  private[this] val recapAdapter: IRecordOneToManyAdapter[SuggestionRecord] =
-    new RecapSuggestionRecordAdapter(checkDwellTime = false)
+  privatelon[this] val avelonragelonr: Aggrelongator[Doublelon, AvelonragelondValuelon, Doublelon] =
+    AvelonragelondValuelon.aggrelongator
+  privatelon[this] val reloncapAdaptelonr: IReloncordOnelonToManyAdaptelonr[SuggelonstionReloncord] =
+    nelonw ReloncapSuggelonstionReloncordAdaptelonr(chelonckDwelonllTimelon = falselon)
 
-  override def job: Execution[Unit] = {
+  ovelonrridelon delonf job: elonxeloncution[Unit] = {
     for {
-      args <- Execution.getArgs
-      dateRange <- dateRangeEx
-      metrics = getMetrics(args)
+      args <- elonxeloncution.gelontArgs
+      datelonRangelon <- datelonRangelonelonx
+      melontrics = gelontMelontrics(args)
       random = buildRandom(args)
-      modelBasePath = args("model_base_path")
-      models = args.list("models")
-      parallelism = args.int("parallelism", 3)
-      logs = logsHavingCandidates(dateRange)
-      modelScoredCandidates = models.map { model =>
-        (model, scoreCandidatesUsingModel(logs, s"$modelBasePath/$model"))
+      modelonlBaselonPath = args("modelonl_baselon_path")
+      modelonls = args.list("modelonls")
+      parallelonlism = args.int("parallelonlism", 3)
+      logs = logsHavingCandidatelons(datelonRangelon)
+      modelonlScorelondCandidatelons = modelonls.map { modelonl =>
+        (modelonl, scorelonCandidatelonsUsingModelonl(logs, s"$modelonlBaselonPath/$modelonl"))
       }
-      functionScoredCandidates = List(
-        ("random", scoreCandidatesUsingFunction(logs, _ => Some(random.nextDouble()))),
-        ("original_earlybird", scoreCandidatesUsingFunction(logs, extractOriginalEarlybirdScore)),
-        ("blender", scoreCandidatesUsingFunction(logs, extractBlenderScore))
+      functionScorelondCandidatelons = List(
+        ("random", scorelonCandidatelonsUsingFunction(logs, _ => Somelon(random.nelonxtDoublelon()))),
+        ("original_elonarlybird", scorelonCandidatelonsUsingFunction(logs, elonxtractOriginalelonarlybirdScorelon)),
+        ("blelonndelonr", scorelonCandidatelonsUsingFunction(logs, elonxtractBlelonndelonrScorelon))
       )
-      allCandidates = modelScoredCandidates ++ functionScoredCandidates
-      statsExecutions = allCandidates.map {
-        case (name, pipe) =>
+      allCandidatelons = modelonlScorelondCandidatelons ++ functionScorelondCandidatelons
+      statselonxeloncutions = allCandidatelons.map {
+        caselon (namelon, pipelon) =>
           for {
-            saved <- pipe.forceToDiskExecution
-            stats <- computeMetrics(saved, metrics, parallelism)
-          } yield (name, stats)
+            savelond <- pipelon.forcelonToDiskelonxeloncution
+            stats <- computelonMelontrics(savelond, melontrics, parallelonlism)
+          } yielonld (namelon, stats)
       }
-      stats <- Execution.withParallelism(statsExecutions, parallelism)
-      _ <- TypedPipe.from(stats).writeExecution(TypedJson(args("output")))
-    } yield ()
+      stats <- elonxeloncution.withParallelonlism(statselonxeloncutions, parallelonlism)
+      _ <- TypelondPipelon.from(stats).writelonelonxeloncution(TypelondJson(args("output")))
+    } yielonld ()
   }
 
-  private[this] def computeMetrics(
-    requests: TypedPipe[Seq[CandidateRecord]],
-    metricsToCompute: Seq[EarlybirdEvaluationMetric],
-    parallelism: Int
-  ): Execution[Map[String, Double]] = {
-    val metricExecutions = metricsToCompute.map { metric =>
-      val metricEx = requests.flatMap(metric(_)).aggregate(averager).toOptionExecution
-      metricEx.map { value => value.map((metric.name, _)) }
+  privatelon[this] delonf computelonMelontrics(
+    relonquelonsts: TypelondPipelon[Selonq[CandidatelonReloncord]],
+    melontricsToComputelon: Selonq[elonarlybirdelonvaluationMelontric],
+    parallelonlism: Int
+  ): elonxeloncution[Map[String, Doublelon]] = {
+    val melontricelonxeloncutions = melontricsToComputelon.map { melontric =>
+      val melontricelonx = relonquelonsts.flatMap(melontric(_)).aggrelongatelon(avelonragelonr).toOptionelonxeloncution
+      melontricelonx.map { valuelon => valuelon.map((melontric.namelon, _)) }
     }
-    Execution.withParallelism(metricExecutions, parallelism).map(_.flatten.toMap)
+    elonxeloncution.withParallelonlism(melontricelonxeloncutions, parallelonlism).map(_.flattelonn.toMap)
   }
 
-  private[this] def getMetrics(args: Args): Seq[EarlybirdEvaluationMetric] = {
+  privatelon[this] delonf gelontMelontrics(args: Args): Selonq[elonarlybirdelonvaluationMelontric] = {
     val topKs = args.list("topks").map(_.toInt)
-    val topNFractions = args.list("topn_fractions").map(_.toDouble)
-    val topKMetrics = topKs.flatMap { topK =>
-      Seq(
-        TopKRecall(topK, filterFewerThanK = false),
-        TopKRecall(topK, filterFewerThanK = true),
-        ShownTweetRecall(topK),
-        AverageFullScoreForTopLight(topK),
-        SumScoreRecallForTopLight(topK),
-        HasFewerThanKCandidates(topK),
-        ShownTweetRecallWithFullScores(topK),
-        ProbabilityOfCorrectOrdering
+    val topNFractions = args.list("topn_fractions").map(_.toDoublelon)
+    val topKMelontrics = topKs.flatMap { topK =>
+      Selonq(
+        TopKReloncall(topK, filtelonrFelonwelonrThanK = falselon),
+        TopKReloncall(topK, filtelonrFelonwelonrThanK = truelon),
+        ShownTwelonelontReloncall(topK),
+        AvelonragelonFullScorelonForTopLight(topK),
+        SumScorelonReloncallForTopLight(topK),
+        HasFelonwelonrThanKCandidatelons(topK),
+        ShownTwelonelontReloncallWithFullScorelons(topK),
+        ProbabilityOfCorrelonctOrdelonring
       )
     }
-    val topNPercentMetrics = topNFractions.flatMap { topNPercent =>
-      Seq(
-        TopNPercentRecall(topNPercent),
-        ShownTweetPercentRecall(topNPercent)
+    val topNPelonrcelonntMelontrics = topNFractions.flatMap { topNPelonrcelonnt =>
+      Selonq(
+        TopNPelonrcelonntReloncall(topNPelonrcelonnt),
+        ShownTwelonelontPelonrcelonntReloncall(topNPelonrcelonnt)
       )
     }
-    topKMetrics ++ topNPercentMetrics ++ Seq(NumberOfCandidates)
+    topKMelontrics ++ topNPelonrcelonntMelontrics ++ Selonq(NumbelonrOfCandidatelons)
   }
 
-  private[this] def buildRandom(args: Args): Random = {
-    val seedOpt = args.optional("seed").map(_.toLong)
-    seedOpt.map(new Random(_)).getOrElse(new Random())
+  privatelon[this] delonf buildRandom(args: Args): Random = {
+    val selonelondOpt = args.optional("selonelond").map(_.toLong)
+    selonelondOpt.map(nelonw Random(_)).gelontOrelonlselon(nelonw Random())
   }
 
-  private[this] def logsHavingCandidates(dateRange: DateRange): TypedPipe[SuggestsRequestLog] =
+  privatelon[this] delonf logsHavingCandidatelons(datelonRangelon: DatelonRangelon): TypelondPipelon[SuggelonstsRelonquelonstLog] =
     DAL
-      .read(TimelineserviceInjectionRequestLogScalaDataset, dateRange)
-      .toTypedPipe
-      .filter(_.recapCandidates.exists(_.nonEmpty))
+      .relonad(TimelonlinelonselonrvicelonInjelonctionRelonquelonstLogScalaDataselont, datelonRangelon)
+      .toTypelondPipelon
+      .filtelonr(_.reloncapCandidatelons.elonxists(_.nonelonmpty))
 
   /**
-   * Uses a model defined at `earlybirdModelPath` to score candidates and
-   * returns a Seq[CandidateRecord] for each request.
+   * Uselons a modelonl delonfinelond at `elonarlybirdModelonlPath` to scorelon candidatelons and
+   * relonturns a Selonq[CandidatelonReloncord] for elonach relonquelonst.
    */
-  private[this] def scoreCandidatesUsingModel(
-    logs: TypedPipe[SuggestsRequestLog],
-    earlybirdModelPath: String
-  ): TypedPipe[Seq[CandidateRecord]] = {
+  privatelon[this] delonf scorelonCandidatelonsUsingModelonl(
+    logs: TypelondPipelon[SuggelonstsRelonquelonstLog],
+    elonarlybirdModelonlPath: String
+  ): TypelondPipelon[Selonq[CandidatelonReloncord]] = {
     logs
-      .usingScorer(earlybirdModelPath)
+      .usingScorelonr(elonarlybirdModelonlPath)
       .map {
-        case (scorer: PredictionEngineScorer, log: SuggestsRequestLog) =>
-          val suggestionRecords =
-            RecapTweetExample
-              .extractCandidateTweetExamples(log)
-              .map(_.asSuggestionRecord)
-          val servedTweetIds = log.servedHighlightTweets.flatMap(_.tweetId).toSet
-          val renamer = (new EarlybirdTrainingRecapConfiguration).EarlybirdFeatureRenamer
-          suggestionRecords.flatMap { suggestionRecord =>
-            val dataRecordOpt = recapAdapter.adaptToDataRecords(suggestionRecord).asScala.headOption
-            dataRecordOpt.foreach(renamer.transform)
+        caselon (scorelonr: PrelondictionelonnginelonScorelonr, log: SuggelonstsRelonquelonstLog) =>
+          val suggelonstionReloncords =
+            ReloncapTwelonelontelonxamplelon
+              .elonxtractCandidatelonTwelonelontelonxamplelons(log)
+              .map(_.asSuggelonstionReloncord)
+          val selonrvelondTwelonelontIds = log.selonrvelondHighlightTwelonelonts.flatMap(_.twelonelontId).toSelont
+          val relonnamelonr = (nelonw elonarlybirdTrainingReloncapConfiguration).elonarlybirdFelonaturelonRelonnamelonr
+          suggelonstionReloncords.flatMap { suggelonstionReloncord =>
+            val dataReloncordOpt = reloncapAdaptelonr.adaptToDataReloncords(suggelonstionReloncord).asScala.helonadOption
+            dataReloncordOpt.forelonach(relonnamelonr.transform)
             for {
-              tweetId <- suggestionRecord.itemId
-              fullScore <- suggestionRecord.recapFeatures.flatMap(_.combinedModelScore)
-              earlybirdScore <- dataRecordOpt.flatMap(calculateLightScore(_, scorer))
-            } yield CandidateRecord(
-              tweetId = tweetId,
-              fullScore = fullScore,
-              earlyScore = earlybirdScore,
-              served = servedTweetIds.contains(tweetId)
+              twelonelontId <- suggelonstionReloncord.itelonmId
+              fullScorelon <- suggelonstionReloncord.reloncapFelonaturelons.flatMap(_.combinelondModelonlScorelon)
+              elonarlybirdScorelon <- dataReloncordOpt.flatMap(calculatelonLightScorelon(_, scorelonr))
+            } yielonld CandidatelonReloncord(
+              twelonelontId = twelonelontId,
+              fullScorelon = fullScorelon,
+              elonarlyScorelon = elonarlybirdScorelon,
+              selonrvelond = selonrvelondTwelonelontIds.contains(twelonelontId)
             )
           }
       }
   }
 
   /**
-   * Uses a simple function to score candidates and returns a Seq[CandidateRecord] for each
-   * request.
+   * Uselons a simplelon function to scorelon candidatelons and relonturns a Selonq[CandidatelonReloncord] for elonach
+   * relonquelonst.
    */
-  private[this] def scoreCandidatesUsingFunction(
-    logs: TypedPipe[SuggestsRequestLog],
-    earlyScoreExtractor: HighlightTweet => Option[Double]
-  ): TypedPipe[Seq[CandidateRecord]] = {
+  privatelon[this] delonf scorelonCandidatelonsUsingFunction(
+    logs: TypelondPipelon[SuggelonstsRelonquelonstLog],
+    elonarlyScorelonelonxtractor: HighlightTwelonelont => Option[Doublelon]
+  ): TypelondPipelon[Selonq[CandidatelonReloncord]] = {
     logs
       .map { log =>
-        val tweetCandidates = log.recapTweetCandidates.getOrElse(Nil)
-        val servedTweetIds = log.servedHighlightTweets.flatMap(_.tweetId).toSet
+        val twelonelontCandidatelons = log.reloncapTwelonelontCandidatelons.gelontOrelonlselon(Nil)
+        val selonrvelondTwelonelontIds = log.selonrvelondHighlightTwelonelonts.flatMap(_.twelonelontId).toSelont
         for {
-          candidate <- tweetCandidates
-          tweetId <- candidate.tweetId
-          fullScore <- candidate.recapFeatures.flatMap(_.combinedModelScore)
-          earlyScore <- earlyScoreExtractor(candidate)
-        } yield CandidateRecord(
-          tweetId = tweetId,
-          fullScore = fullScore,
-          earlyScore = earlyScore,
-          served = servedTweetIds.contains(tweetId)
+          candidatelon <- twelonelontCandidatelons
+          twelonelontId <- candidatelon.twelonelontId
+          fullScorelon <- candidatelon.reloncapFelonaturelons.flatMap(_.combinelondModelonlScorelon)
+          elonarlyScorelon <- elonarlyScorelonelonxtractor(candidatelon)
+        } yielonld CandidatelonReloncord(
+          twelonelontId = twelonelontId,
+          fullScorelon = fullScorelon,
+          elonarlyScorelon = elonarlyScorelon,
+          selonrvelond = selonrvelondTwelonelontIds.contains(twelonelontId)
         )
       }
   }
 
-  private[this] def extractOriginalEarlybirdScore(candidate: HighlightTweet): Option[Double] =
+  privatelon[this] delonf elonxtractOriginalelonarlybirdScorelon(candidatelon: HighlightTwelonelont): Option[Doublelon] =
     for {
-      recapFeatures <- candidate.recapFeatures
-      tweetFeatures <- recapFeatures.tweetFeatures
-    } yield tweetFeatures.earlybirdScore
+      reloncapFelonaturelons <- candidatelon.reloncapFelonaturelons
+      twelonelontFelonaturelons <- reloncapFelonaturelons.twelonelontFelonaturelons
+    } yielonld twelonelontFelonaturelons.elonarlybirdScorelon
 
-  private[this] def extractBlenderScore(candidate: HighlightTweet): Option[Double] =
+  privatelon[this] delonf elonxtractBlelonndelonrScorelon(candidatelon: HighlightTwelonelont): Option[Doublelon] =
     for {
-      recapFeatures <- candidate.recapFeatures
-      tweetFeatures <- recapFeatures.tweetFeatures
-    } yield tweetFeatures.blenderScore
+      reloncapFelonaturelons <- candidatelon.reloncapFelonaturelons
+      twelonelontFelonaturelons <- reloncapFelonaturelons.twelonelontFelonaturelons
+    } yielonld twelonelontFelonaturelons.blelonndelonrScorelon
 
-  private[this] def calculateLightScore(
-    dataRecord: DataRecord,
-    scorer: PredictionEngineScorer
-  ): Option[Double] = {
-    val scoredRecord = scorer(dataRecord)
-    if (scoredRecord.hasFeature(RecapFeatures.PREDICTED_IS_UNIFIED_ENGAGEMENT)) {
-      Some(scoredRecord.getFeatureValue(RecapFeatures.PREDICTED_IS_UNIFIED_ENGAGEMENT).toDouble)
-    } else {
-      None
+  privatelon[this] delonf calculatelonLightScorelon(
+    dataReloncord: DataReloncord,
+    scorelonr: PrelondictionelonnginelonScorelonr
+  ): Option[Doublelon] = {
+    val scorelondReloncord = scorelonr(dataReloncord)
+    if (scorelondReloncord.hasFelonaturelon(ReloncapFelonaturelons.PRelonDICTelonD_IS_UNIFIelonD_elonNGAGelonMelonNT)) {
+      Somelon(scorelondReloncord.gelontFelonaturelonValuelon(ReloncapFelonaturelons.PRelonDICTelonD_IS_UNIFIelonD_elonNGAGelonMelonNT).toDoublelon)
+    } elonlselon {
+      Nonelon
     }
   }
 }

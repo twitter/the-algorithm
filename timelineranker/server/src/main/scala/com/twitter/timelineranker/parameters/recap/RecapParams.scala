@@ -1,231 +1,231 @@
-package com.twitter.timelineranker.parameters.recap
+packagelon com.twittelonr.timelonlinelonrankelonr.paramelontelonrs.reloncap
 
-import com.twitter.timelines.configapi.decider._
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.Param
-import com.twitter.timelines.util.bounds.BoundsWithDefault
+import com.twittelonr.timelonlinelons.configapi.deloncidelonr._
+import com.twittelonr.timelonlinelons.configapi.FSBoundelondParam
+import com.twittelonr.timelonlinelons.configapi.FSParam
+import com.twittelonr.timelonlinelons.configapi.Param
+import com.twittelonr.timelonlinelons.util.bounds.BoundsWithDelonfault
 
-object RecapParams {
-  val MaxFollowedUsers: BoundsWithDefault[Int] = BoundsWithDefault[Int](1, 3000, 1000)
-  val MaxCountMultiplier: BoundsWithDefault[Double] = BoundsWithDefault[Double](0.1, 2.0, 2.0)
-  val MaxRealGraphAndFollowedUsers: BoundsWithDefault[Int] = BoundsWithDefault[Int](0, 2000, 1000)
-  val ProbabilityRandomTweet: BoundsWithDefault[Double] = BoundsWithDefault[Double](0.0, 1.0, 0.0)
+objelonct ReloncapParams {
+  val MaxFollowelondUselonrs: BoundsWithDelonfault[Int] = BoundsWithDelonfault[Int](1, 3000, 1000)
+  val MaxCountMultiplielonr: BoundsWithDelonfault[Doublelon] = BoundsWithDelonfault[Doublelon](0.1, 2.0, 2.0)
+  val MaxRelonalGraphAndFollowelondUselonrs: BoundsWithDelonfault[Int] = BoundsWithDelonfault[Int](0, 2000, 1000)
+  val ProbabilityRandomTwelonelont: BoundsWithDelonfault[Doublelon] = BoundsWithDelonfault[Doublelon](0.0, 1.0, 0.0)
 
   /**
-   * Controls limit on the number of followed users fetched from SGS.
+   * Controls limit on thelon numbelonr of followelond uselonrs felontchelond from SGS.
    *
-   * The specific default value below is for blender-timelines parity.
+   * Thelon speloncific delonfault valuelon belonlow is for blelonndelonr-timelonlinelons parity.
    */
-  object MaxFollowedUsersParam
-      extends FSBoundedParam[Int](
-        name = "recap_max_followed_users",
-        default = MaxFollowedUsers.default,
-        min = MaxFollowedUsers.bounds.minInclusive,
-        max = MaxFollowedUsers.bounds.maxInclusive
+  objelonct MaxFollowelondUselonrsParam
+      elonxtelonnds FSBoundelondParam[Int](
+        namelon = "reloncap_max_followelond_uselonrs",
+        delonfault = MaxFollowelondUselonrs.delonfault,
+        min = MaxFollowelondUselonrs.bounds.minInclusivelon,
+        max = MaxFollowelondUselonrs.bounds.maxInclusivelon
       )
 
   /**
-   * Controls limit on the number of hits for Earlybird.
-   * We added it solely for backward compatibility, to align with recycled.
-   * RecapSource is deprecated, but, this param is used by RecapAuthor source
+   * Controls limit on thelon numbelonr of hits for elonarlybird.
+   * Welon addelond it solelonly for backward compatibility, to align with reloncyclelond.
+   * ReloncapSourcelon is delonpreloncatelond, but, this param is uselond by ReloncapAuthor sourcelon
    */
-  object RelevanceOptionsMaxHitsToProcessParam
-      extends FSBoundedParam[Int](
-        name = "recap_relevance_options_max_hits_to_process",
-        default = 500,
+  objelonct RelonlelonvancelonOptionsMaxHitsToProcelonssParam
+      elonxtelonnds FSBoundelondParam[Int](
+        namelon = "reloncap_relonlelonvancelon_options_max_hits_to_procelonss",
+        delonfault = 500,
         min = 100,
         max = 20000
       )
 
   /**
-   * Enables fetching author seedset from real graph users. Only used if user follows >= 1000.
-   * If true, expands author seedset with real graph users and recent followed users.
-   * Otherwise, user seedset only includes followed users.
+   * elonnablelons felontching author selonelondselont from relonal graph uselonrs. Only uselond if uselonr follows >= 1000.
+   * If truelon, elonxpands author selonelondselont with relonal graph uselonrs and reloncelonnt followelond uselonrs.
+   * Othelonrwiselon, uselonr selonelondselont only includelons followelond uselonrs.
    */
-  object EnableRealGraphUsersParam extends Param(false)
+  objelonct elonnablelonRelonalGraphUselonrsParam elonxtelonnds Param(falselon)
 
   /**
-   * Only used if EnableRealGraphUsersParam is true and OnlyRealGraphUsersParam is false.
-   * Maximum number of real graph users and recent followed users when mixing recent/real-graph users.
+   * Only uselond if elonnablelonRelonalGraphUselonrsParam is truelon and OnlyRelonalGraphUselonrsParam is falselon.
+   * Maximum numbelonr of relonal graph uselonrs and reloncelonnt followelond uselonrs whelonn mixing reloncelonnt/relonal-graph uselonrs.
    */
-  object MaxRealGraphAndFollowedUsersParam
-      extends Param(MaxRealGraphAndFollowedUsers.default)
-      with DeciderValueConverter[Int] {
-    override def convert: IntConverter[Int] =
-      OutputBoundIntConverter(MaxRealGraphAndFollowedUsers.bounds)
+  objelonct MaxRelonalGraphAndFollowelondUselonrsParam
+      elonxtelonnds Param(MaxRelonalGraphAndFollowelondUselonrs.delonfault)
+      with DeloncidelonrValuelonConvelonrtelonr[Int] {
+    ovelonrridelon delonf convelonrt: IntConvelonrtelonr[Int] =
+      OutputBoundIntConvelonrtelonr(MaxRelonalGraphAndFollowelondUselonrs.bounds)
   }
 
   /**
-   * FS-controlled param to override the MaxRealGraphAndFollowedUsersParam decider value for experiments
+   * FS-controllelond param to ovelonrridelon thelon MaxRelonalGraphAndFollowelondUselonrsParam deloncidelonr valuelon for elonxpelonrimelonnts
    */
-  object MaxRealGraphAndFollowedUsersFSOverrideParam
-      extends FSBoundedParam[Option[Int]](
-        name = "max_real_graph_and_followers_users_fs_override_param",
-        default = None,
-        min = Some(100),
-        max = Some(10000)
+  objelonct MaxRelonalGraphAndFollowelondUselonrsFSOvelonrridelonParam
+      elonxtelonnds FSBoundelondParam[Option[Int]](
+        namelon = "max_relonal_graph_and_followelonrs_uselonrs_fs_ovelonrridelon_param",
+        delonfault = Nonelon,
+        min = Somelon(100),
+        max = Somelon(10000)
       )
 
   /**
-   * Experimental params for leveling the playing field between user folowees received from
-   * real-graph and follow-graph stores.
-   * Author relevance scores returned by real-graph are currently being used for light-ranking
-   * in-network tweet candidates.
-   * Follow-graph store returns the most recent followees without any relevance scores
-   * We are trying to impute the missing scores by using aggregated statistics (min, avg, p50, etc.)
-   * of real-graph scores.
+   * elonxpelonrimelonntal params for lelonvelonling thelon playing fielonld belontwelonelonn uselonr folowelonelons reloncelonivelond from
+   * relonal-graph and follow-graph storelons.
+   * Author relonlelonvancelon scorelons relonturnelond by relonal-graph arelon currelonntly beloning uselond for light-ranking
+   * in-nelontwork twelonelont candidatelons.
+   * Follow-graph storelon relonturns thelon most reloncelonnt followelonelons without any relonlelonvancelon scorelons
+   * Welon arelon trying to imputelon thelon missing scorelons by using aggrelongatelond statistics (min, avg, p50, elontc.)
+   * of relonal-graph scorelons.
    */
-  object ImputeRealGraphAuthorWeightsParam
-      extends FSParam(name = "impute_real_graph_author_weights", default = false)
+  objelonct ImputelonRelonalGraphAuthorWelonightsParam
+      elonxtelonnds FSParam(namelon = "imputelon_relonal_graph_author_welonights", delonfault = falselon)
 
-  object ImputeRealGraphAuthorWeightsPercentileParam
-      extends FSBoundedParam[Int](
-        name = "impute_real_graph_author_weights_percentile",
-        default = 50,
+  objelonct ImputelonRelonalGraphAuthorWelonightsPelonrcelonntilelonParam
+      elonxtelonnds FSBoundelondParam[Int](
+        namelon = "imputelon_relonal_graph_author_welonights_pelonrcelonntilelon",
+        delonfault = 50,
         min = 0,
         max = 99)
 
   /**
-   * Enable running the new pipeline for recap author source
+   * elonnablelon running thelon nelonw pipelonlinelon for reloncap author sourcelon
    */
-  object EnableNewRecapAuthorPipeline extends Param(false)
+  objelonct elonnablelonNelonwReloncapAuthorPipelonlinelon elonxtelonnds Param(falselon)
 
   /**
-   * Fallback value for maximum number of search results, if not specified by query.maxCount
+   * Fallback valuelon for maximum numbelonr of selonarch relonsults, if not speloncifielond by quelonry.maxCount
    */
-  object DefaultMaxTweetCount extends Param(200)
+  objelonct DelonfaultMaxTwelonelontCount elonxtelonnds Param(200)
 
   /**
-   * We multiply maxCount (caller supplied value) by this multiplier and fetch those many
-   * candidates from search so that we are left with sufficient number of candidates after
-   * hydration and filtering.
+   * Welon multiply maxCount (callelonr supplielond valuelon) by this multiplielonr and felontch thoselon many
+   * candidatelons from selonarch so that welon arelon lelonft with sufficielonnt numbelonr of candidatelons aftelonr
+   * hydration and filtelonring.
    */
-  object MaxCountMultiplierParam
-      extends Param(MaxCountMultiplier.default)
-      with DeciderValueConverter[Double] {
-    override def convert: IntConverter[Double] =
-      OutputBoundIntConverter[Double](divideDeciderBy100 _, MaxCountMultiplier.bounds)
+  objelonct MaxCountMultiplielonrParam
+      elonxtelonnds Param(MaxCountMultiplielonr.delonfault)
+      with DeloncidelonrValuelonConvelonrtelonr[Doublelon] {
+    ovelonrridelon delonf convelonrt: IntConvelonrtelonr[Doublelon] =
+      OutputBoundIntConvelonrtelonr[Doublelon](dividelonDeloncidelonrBy100 _, MaxCountMultiplielonr.bounds)
   }
 
   /**
-   * Enables return all results from search index.
+   * elonnablelons relonturn all relonsults from selonarch indelonx.
    */
-  object EnableReturnAllResultsParam
-      extends FSParam(name = "recap_enable_return_all_results", default = false)
+  objelonct elonnablelonRelonturnAllRelonsultsParam
+      elonxtelonnds FSParam(namelon = "reloncap_elonnablelon_relonturn_all_relonsults", delonfault = falselon)
 
   /**
-   * Includes one or multiple random tweets in the response.
+   * Includelons onelon or multiplelon random twelonelonts in thelon relonsponselon.
    */
-  object IncludeRandomTweetParam
-      extends FSParam(name = "recap_include_random_tweet", default = false)
+  objelonct IncludelonRandomTwelonelontParam
+      elonxtelonnds FSParam(namelon = "reloncap_includelon_random_twelonelont", delonfault = falselon)
 
   /**
-   * One single random tweet (true) or tag tweet as random with given probability (false).
+   * Onelon singlelon random twelonelont (truelon) or tag twelonelont as random with givelonn probability (falselon).
    */
-  object IncludeSingleRandomTweetParam
-      extends FSParam(name = "recap_include_random_tweet_single", default = true)
+  objelonct IncludelonSinglelonRandomTwelonelontParam
+      elonxtelonnds FSParam(namelon = "reloncap_includelon_random_twelonelont_singlelon", delonfault = truelon)
 
   /**
-   * Probability to tag a tweet as random (will not be ranked).
+   * Probability to tag a twelonelont as random (will not belon rankelond).
    */
-  object ProbabilityRandomTweetParam
-      extends FSBoundedParam(
-        name = "recap_include_random_tweet_probability",
-        default = ProbabilityRandomTweet.default,
-        min = ProbabilityRandomTweet.bounds.minInclusive,
-        max = ProbabilityRandomTweet.bounds.maxInclusive)
+  objelonct ProbabilityRandomTwelonelontParam
+      elonxtelonnds FSBoundelondParam(
+        namelon = "reloncap_includelon_random_twelonelont_probability",
+        delonfault = ProbabilityRandomTwelonelont.delonfault,
+        min = ProbabilityRandomTwelonelont.bounds.minInclusivelon,
+        max = ProbabilityRandomTwelonelont.bounds.maxInclusivelon)
 
   /**
-   * Enable extra sorting by score for search results.
+   * elonnablelon elonxtra sorting by scorelon for selonarch relonsults.
    */
-  object EnableExtraSortingInSearchResultParam extends Param(true)
+  objelonct elonnablelonelonxtraSortingInSelonarchRelonsultParam elonxtelonnds Param(truelon)
 
   /**
-   * Enables semantic core, penguin, and tweetypie content features in recap source.
+   * elonnablelons selonmantic corelon, pelonnguin, and twelonelontypielon contelonnt felonaturelons in reloncap sourcelon.
    */
-  object EnableContentFeaturesHydrationParam extends Param(true)
+  objelonct elonnablelonContelonntFelonaturelonsHydrationParam elonxtelonnds Param(truelon)
 
   /**
-   * additionally enables tokens when hydrating content features.
+   * additionally elonnablelons tokelonns whelonn hydrating contelonnt felonaturelons.
    */
-  object EnableTokensInContentFeaturesHydrationParam
-      extends FSParam(
-        name = "recap_enable_tokens_in_content_features_hydration",
-        default = false
+  objelonct elonnablelonTokelonnsInContelonntFelonaturelonsHydrationParam
+      elonxtelonnds FSParam(
+        namelon = "reloncap_elonnablelon_tokelonns_in_contelonnt_felonaturelons_hydration",
+        delonfault = falselon
       )
 
   /**
-   * additionally enables tweet text when hydrating content features.
-   * This only works if EnableContentFeaturesHydrationParam is set to true
+   * additionally elonnablelons twelonelont telonxt whelonn hydrating contelonnt felonaturelons.
+   * This only works if elonnablelonContelonntFelonaturelonsHydrationParam is selont to truelon
    */
-  object EnableTweetTextInContentFeaturesHydrationParam
-      extends FSParam(
-        name = "recap_enable_tweet_text_in_content_features_hydration",
-        default = false
+  objelonct elonnablelonTwelonelontTelonxtInContelonntFelonaturelonsHydrationParam
+      elonxtelonnds FSParam(
+        namelon = "reloncap_elonnablelon_twelonelont_telonxt_in_contelonnt_felonaturelons_hydration",
+        delonfault = falselon
       )
 
   /**
-   * Enables hydrating in-network inReplyToTweet features
+   * elonnablelons hydrating in-nelontwork inRelonplyToTwelonelont felonaturelons
    */
-  object EnableInNetworkInReplyToTweetFeaturesHydrationParam
-      extends FSParam(
-        name = "recap_enable_in_network_in_reply_to_tweet_features_hydration",
-        default = false
+  objelonct elonnablelonInNelontworkInRelonplyToTwelonelontFelonaturelonsHydrationParam
+      elonxtelonnds FSParam(
+        namelon = "reloncap_elonnablelon_in_nelontwork_in_relonply_to_twelonelont_felonaturelons_hydration",
+        delonfault = falselon
       )
 
   /**
-   * Enables hydrating root tweet of in-network replies and extended replies
+   * elonnablelons hydrating root twelonelont of in-nelontwork relonplielons and elonxtelonndelond relonplielons
    */
-  object EnableReplyRootTweetHydrationParam
-      extends FSParam(
-        name = "recap_enable_reply_root_tweet_hydration",
-        default = false
+  objelonct elonnablelonRelonplyRootTwelonelontHydrationParam
+      elonxtelonnds FSParam(
+        namelon = "reloncap_elonnablelon_relonply_root_twelonelont_hydration",
+        delonfault = falselon
       )
 
   /**
-   * Enable setting tweetTypes in search queries with TweetKindOption in RecapQuery
+   * elonnablelon selontting twelonelontTypelons in selonarch quelonrielons with TwelonelontKindOption in ReloncapQuelonry
    */
-  object EnableSettingTweetTypesWithTweetKindOption
-      extends FSParam(
-        name = "recap_enable_setting_tweet_types_with_tweet_kind_option",
-        default = false
+  objelonct elonnablelonSelonttingTwelonelontTypelonsWithTwelonelontKindOption
+      elonxtelonnds FSParam(
+        namelon = "reloncap_elonnablelon_selontting_twelonelont_typelons_with_twelonelont_kind_option",
+        delonfault = falselon
       )
 
   /**
-   * Enable relevance search, otherwise recency search from earlybird.
+   * elonnablelon relonlelonvancelon selonarch, othelonrwiselon reloncelonncy selonarch from elonarlybird.
    */
-  object EnableRelevanceSearchParam
-      extends FSParam(
-        name = "recap_enable_relevance_search",
-        default = true
+  objelonct elonnablelonRelonlelonvancelonSelonarchParam
+      elonxtelonnds FSParam(
+        namelon = "reloncap_elonnablelon_relonlelonvancelon_selonarch",
+        delonfault = truelon
       )
 
-  object EnableExpandedExtendedRepliesFilterParam
-      extends FSParam(
-        name = "recap_enable_expanded_extended_replies_filter",
-        default = false
+  objelonct elonnablelonelonxpandelondelonxtelonndelondRelonplielonsFiltelonrParam
+      elonxtelonnds FSParam(
+        namelon = "reloncap_elonnablelon_elonxpandelond_elonxtelonndelond_relonplielons_filtelonr",
+        delonfault = falselon
       )
 
   /**
-   * additionally enables conversationControl when hydrating content features.
-   * This only works if EnableContentFeaturesHydrationParam is set to true
+   * additionally elonnablelons convelonrsationControl whelonn hydrating contelonnt felonaturelons.
+   * This only works if elonnablelonContelonntFelonaturelonsHydrationParam is selont to truelon
    */
-  object EnableConversationControlInContentFeaturesHydrationParam
-      extends FSParam(
-        name = "conversation_control_in_content_features_hydration_recap_enable",
-        default = false
+  objelonct elonnablelonConvelonrsationControlInContelonntFelonaturelonsHydrationParam
+      elonxtelonnds FSParam(
+        namelon = "convelonrsation_control_in_contelonnt_felonaturelons_hydration_reloncap_elonnablelon",
+        delonfault = falselon
       )
 
-  object EnableTweetMediaHydrationParam
-      extends FSParam(
-        name = "tweet_media_hydration_recap_enable",
-        default = false
+  objelonct elonnablelonTwelonelontMelondiaHydrationParam
+      elonxtelonnds FSParam(
+        namelon = "twelonelont_melondia_hydration_reloncap_elonnablelon",
+        delonfault = falselon
       )
 
-  object EnableExcludeSourceTweetIdsQueryParam
-      extends FSParam[Boolean](
-        name = "recap_exclude_source_tweet_ids_query_enable",
-        default = false
+  objelonct elonnablelonelonxcludelonSourcelonTwelonelontIdsQuelonryParam
+      elonxtelonnds FSParam[Boolelonan](
+        namelon = "reloncap_elonxcludelon_sourcelon_twelonelont_ids_quelonry_elonnablelon",
+        delonfault = falselon
       )
 }

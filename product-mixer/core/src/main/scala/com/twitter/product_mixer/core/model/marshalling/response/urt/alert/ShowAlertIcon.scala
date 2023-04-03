@@ -1,5 +1,5 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.alert
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.alelonrt
 
-sealed trait ShowAlertIcon
-case object UpArrow extends ShowAlertIcon
-case object DownArrow extends ShowAlertIcon
+selonalelond trait ShowAlelonrtIcon
+caselon objelonct UpArrow elonxtelonnds ShowAlelonrtIcon
+caselon objelonct DownArrow elonxtelonnds ShowAlelonrtIcon

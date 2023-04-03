@@ -1,77 +1,77 @@
-package com.twitter.cr_mixer.model
+packagelon com.twittelonr.cr_mixelonr.modelonl
 
 /**
- * A Configuration class for all Model Based Candidate Sources.
+ * A Configuration class for all Modelonl Baselond Candidatelon Sourcelons.
  *
- * The Model Name Guideline. Please your modelId as "Algorithm_Product_Date"
- * If your model is used for multiple product surfaces, name it as all
- * Don't name your algorithm as MBCG. All the algorithms here are MBCG =.=
+ * Thelon Modelonl Namelon Guidelonlinelon. Plelonaselon your modelonlId as "Algorithm_Product_Datelon"
+ * If your modelonl is uselond for multiplelon product surfacelons, namelon it as all
+ * Don't namelon your algorithm as MBCG. All thelon algorithms helonrelon arelon MBCG =.=
  *
- * Don't forgot to add your new models into allHnswANNSimilarityEngineModelIds list.
+ * Don't forgot to add your nelonw modelonls into allHnswANNSimilarityelonnginelonModelonlIds list.
  */
-object ModelConfig {
-  // Offline SimClusters CG Experiment related Model Ids
-  val OfflineInterestedInFromKnownFor2020: String = "OfflineIIKF_ALL_20220414"
-  val OfflineInterestedInFromKnownFor2020Hl0El15: String = "OfflineIIKF_ALL_20220414_Hl0_El15"
-  val OfflineInterestedInFromKnownFor2020Hl2El15: String = "OfflineIIKF_ALL_20220414_Hl2_El15"
-  val OfflineInterestedInFromKnownFor2020Hl2El50: String = "OfflineIIKF_ALL_20220414_Hl2_El50"
-  val OfflineInterestedInFromKnownFor2020Hl8El50: String = "OfflineIIKF_ALL_20220414_Hl8_El50"
-  val OfflineMTSConsumerEmbeddingsFav90P20M: String =
-    "OfflineMTSConsumerEmbeddingsFav90P20M_ALL_20220414"
+objelonct ModelonlConfig {
+  // Offlinelon SimClustelonrs CG elonxpelonrimelonnt relonlatelond Modelonl Ids
+  val OfflinelonIntelonrelonstelondInFromKnownFor2020: String = "OfflinelonIIKF_ALL_20220414"
+  val OfflinelonIntelonrelonstelondInFromKnownFor2020Hl0elonl15: String = "OfflinelonIIKF_ALL_20220414_Hl0_elonl15"
+  val OfflinelonIntelonrelonstelondInFromKnownFor2020Hl2elonl15: String = "OfflinelonIIKF_ALL_20220414_Hl2_elonl15"
+  val OfflinelonIntelonrelonstelondInFromKnownFor2020Hl2elonl50: String = "OfflinelonIIKF_ALL_20220414_Hl2_elonl50"
+  val OfflinelonIntelonrelonstelondInFromKnownFor2020Hl8elonl50: String = "OfflinelonIIKF_ALL_20220414_Hl8_elonl50"
+  val OfflinelonMTSConsumelonrelonmbelonddingsFav90P20M: String =
+    "OfflinelonMTSConsumelonrelonmbelonddingsFav90P20M_ALL_20220414"
 
-  // Twhin Model Ids
-  val ConsumerBasedTwHINRegularUpdateAll20221024: String =
-    "ConsumerBasedTwHINRegularUpdate_All_20221024"
+  // Twhin Modelonl Ids
+  val ConsumelonrBaselondTwHINRelongularUpdatelonAll20221024: String =
+    "ConsumelonrBaselondTwHINRelongularUpdatelon_All_20221024"
 
-  // Averaged Twhin Model Ids
-  val TweetBasedTwHINRegularUpdateAll20221024: String =
-    "TweetBasedTwHINRegularUpdate_All_20221024"
+  // Avelonragelond Twhin Modelonl Ids
+  val TwelonelontBaselondTwHINRelongularUpdatelonAll20221024: String =
+    "TwelonelontBaselondTwHINRelongularUpdatelon_All_20221024"
 
-  // Collaborative Filtering Twhin Model Ids
-  val TwhinCollabFilterForFollow: String =
-    "TwhinCollabFilterForFollow"
-  val TwhinCollabFilterForEngagement: String =
-    "TwhinCollabFilterForEngagement"
-  val TwhinMultiClusterForFollow: String =
-    "TwhinMultiClusterForFollow"
-  val TwhinMultiClusterForEngagement: String =
-    "TwhinMultiClusterForEngagement"
+  // Collaborativelon Filtelonring Twhin Modelonl Ids
+  val TwhinCollabFiltelonrForFollow: String =
+    "TwhinCollabFiltelonrForFollow"
+  val TwhinCollabFiltelonrForelonngagelonmelonnt: String =
+    "TwhinCollabFiltelonrForelonngagelonmelonnt"
+  val TwhinMultiClustelonrForFollow: String =
+    "TwhinMultiClustelonrForFollow"
+  val TwhinMultiClustelonrForelonngagelonmelonnt: String =
+    "TwhinMultiClustelonrForelonngagelonmelonnt"
 
-  // Two Tower model Ids
-  val TwoTowerFavALL20220808: String =
-    "TwoTowerFav_ALL_20220808"
+  // Two Towelonr modelonl Ids
+  val TwoTowelonrFavALL20220808: String =
+    "TwoTowelonrFav_ALL_20220808"
 
-  // Debugger Demo-Only Model Ids
-  val DebuggerDemo: String = "DebuggerDemo"
+  // Delonbuggelonr Delonmo-Only Modelonl Ids
+  val DelonbuggelonrDelonmo: String = "DelonbuggelonrDelonmo"
 
-  // ColdStartLookalike - this is not really a model name, it is as a placeholder to
-  // indicate ColdStartLookalike candidate source, which is currently being pluged into
-  // CustomizedRetrievalCandidateGeneration temporarily.
-  val ColdStartLookalikeModelName: String = "ConsumersBasedUtgColdStartLookalike20220707"
+  // ColdStartLookalikelon - this is not relonally a modelonl namelon, it is as a placelonholdelonr to
+  // indicatelon ColdStartLookalikelon candidatelon sourcelon, which is currelonntly beloning plugelond into
+  // CustomizelondRelontrielonvalCandidatelonGelonnelonration telonmporarily.
+  val ColdStartLookalikelonModelonlNamelon: String = "ConsumelonrsBaselondUtgColdStartLookalikelon20220707"
 
-  // consumersBasedUTG-RealGraphOon Model Id
-  val ConsumersBasedUtgRealGraphOon20220705: String = "ConsumersBasedUtgRealGraphOon_All_20220705"
-  // consumersBasedUAG-RealGraphOon Model Id
-  val ConsumersBasedUagRealGraphOon20221205: String = "ConsumersBasedUagRealGraphOon_All_20221205"
+  // consumelonrsBaselondUTG-RelonalGraphOon Modelonl Id
+  val ConsumelonrsBaselondUtgRelonalGraphOon20220705: String = "ConsumelonrsBaselondUtgRelonalGraphOon_All_20220705"
+  // consumelonrsBaselondUAG-RelonalGraphOon Modelonl Id
+  val ConsumelonrsBaselondUagRelonalGraphOon20221205: String = "ConsumelonrsBaselondUagRelonalGraphOon_All_20221205"
 
   // FTR
-  val OfflineFavDecayedSum: String = "OfflineFavDecayedSum"
-  val OfflineFtrAt5Pop1000RnkDcy11: String = "OfflineFtrAt5Pop1000RnkDcy11"
-  val OfflineFtrAt5Pop10000RnkDcy11: String = "OfflineFtrAt5Pop10000RnkDcy11"
+  val OfflinelonFavDeloncayelondSum: String = "OfflinelonFavDeloncayelondSum"
+  val OfflinelonFtrAt5Pop1000RnkDcy11: String = "OfflinelonFtrAt5Pop1000RnkDcy11"
+  val OfflinelonFtrAt5Pop10000RnkDcy11: String = "OfflinelonFtrAt5Pop10000RnkDcy11"
 
-  // All Model Ids of HnswANNSimilarityEngines
-  val allHnswANNSimilarityEngineModelIds = Seq(
-    ConsumerBasedTwHINRegularUpdateAll20221024,
-    TwoTowerFavALL20220808,
-    DebuggerDemo
+  // All Modelonl Ids of HnswANNSimilarityelonnginelons
+  val allHnswANNSimilarityelonnginelonModelonlIds = Selonq(
+    ConsumelonrBaselondTwHINRelongularUpdatelonAll20221024,
+    TwoTowelonrFavALL20220808,
+    DelonbuggelonrDelonmo
   )
 
-  val ConsumerLogFavBasedInterestedInEmbedding: String =
-    "ConsumerLogFavBasedInterestedIn_ALL_20221228"
-  val ConsumerFollowBasedInterestedInEmbedding: String =
-    "ConsumerFollowBasedInterestedIn_ALL_20221228"
+  val ConsumelonrLogFavBaselondIntelonrelonstelondInelonmbelondding: String =
+    "ConsumelonrLogFavBaselondIntelonrelonstelondIn_ALL_20221228"
+  val ConsumelonrFollowBaselondIntelonrelonstelondInelonmbelondding: String =
+    "ConsumelonrFollowBaselondIntelonrelonstelondIn_ALL_20221228"
 
-  val RetweetBasedDiffusion: String =
-    "RetweetBasedDiffusion"
+  val RelontwelonelontBaselondDiffusion: String =
+    "RelontwelonelontBaselondDiffusion"
 
 }

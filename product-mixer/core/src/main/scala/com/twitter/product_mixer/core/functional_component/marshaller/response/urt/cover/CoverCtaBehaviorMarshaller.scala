@@ -1,25 +1,25 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.cover
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.covelonr
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.UrlMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.CoverCtaBehavior
-import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.CoverBehaviorDismiss
-import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.CoverBehaviorNavigate
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.richtext.RichTextMarshaller
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.melontadata.UrlMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.covelonr.CovelonrCtaBelonhavior
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.covelonr.CovelonrBelonhaviorDismiss
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.covelonr.CovelonrBelonhaviorNavigatelon
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.richtelonxt.RichTelonxtMarshallelonr
 
-@Singleton
-class CoverCtaBehaviorMarshaller @Inject() (
-  richTextMarshaller: RichTextMarshaller,
-  urlMarshaller: UrlMarshaller) {
+@Singlelonton
+class CovelonrCtaBelonhaviorMarshallelonr @Injelonct() (
+  richTelonxtMarshallelonr: RichTelonxtMarshallelonr,
+  urlMarshallelonr: UrlMarshallelonr) {
 
-  def apply(coverCtaBehavior: CoverCtaBehavior): urt.CoverCtaBehavior =
-    coverCtaBehavior match {
-      case dismiss: CoverBehaviorDismiss =>
-        urt.CoverCtaBehavior.Dismiss(
-          urt.CoverBehaviorDismiss(dismiss.feedbackMessage.map(richTextMarshaller(_))))
-      case nav: CoverBehaviorNavigate =>
-        urt.CoverCtaBehavior.Navigate(urt.CoverBehaviorNavigate(urlMarshaller(nav.url)))
+  delonf apply(covelonrCtaBelonhavior: CovelonrCtaBelonhavior): urt.CovelonrCtaBelonhavior =
+    covelonrCtaBelonhavior match {
+      caselon dismiss: CovelonrBelonhaviorDismiss =>
+        urt.CovelonrCtaBelonhavior.Dismiss(
+          urt.CovelonrBelonhaviorDismiss(dismiss.felonelondbackMelonssagelon.map(richTelonxtMarshallelonr(_))))
+      caselon nav: CovelonrBelonhaviorNavigatelon =>
+        urt.CovelonrCtaBelonhavior.Navigatelon(urt.CovelonrBelonhaviorNavigatelon(urlMarshallelonr(nav.url)))
     }
 }

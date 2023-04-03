@@ -1,46 +1,46 @@
-package com.twitter.timelineranker.server
+packagelon com.twittelonr.timelonlinelonrankelonr.selonrvelonr
 
-import com.twitter.thriftwebforms.MethodOptions
-import com.twitter.thriftwebforms.view.ServiceResponseView
-import com.twitter.timelineranker.{thriftscala => thrift}
-import com.twitter.util.Future
+import com.twittelonr.thriftwelonbforms.MelonthodOptions
+import com.twittelonr.thriftwelonbforms.vielonw.SelonrvicelonRelonsponselonVielonw
+import com.twittelonr.timelonlinelonrankelonr.{thriftscala => thrift}
+import com.twittelonr.util.Futurelon
 
-object TimelineRankerThriftWebForms {
+objelonct TimelonlinelonRankelonrThriftWelonbForms {
 
-  private def renderTweetIds(tweetIDs: Seq[Long]): Future[ServiceResponseView] = {
-    val html = tweetIDs.map { tweetID =>
-      s"""<blockquote class="twitter-tweet"><a href="https://twitter.com/tweet/statuses/$tweetID"></a></blockquote>"""
+  privatelon delonf relonndelonrTwelonelontIds(twelonelontIDs: Selonq[Long]): Futurelon[SelonrvicelonRelonsponselonVielonw] = {
+    val html = twelonelontIDs.map { twelonelontID =>
+      s"""<blockquotelon class="twittelonr-twelonelont"><a hrelonf="https://twittelonr.com/twelonelont/statuselons/$twelonelontID"></a></blockquotelon>"""
     }.mkString
-    Future.value(
-      ServiceResponseView(
-        "Tweets",
+    Futurelon.valuelon(
+      SelonrvicelonRelonsponselonVielonw(
+        "Twelonelonts",
         html,
-        Seq("//platform.twitter.com/widgets.js")
+        Selonq("//platform.twittelonr.com/widgelonts.js")
       )
     )
   }
 
-  private def renderGetCandidateTweetsResponse(r: AnyRef): Future[ServiceResponseView] = {
-    val responses = r.asInstanceOf[Seq[thrift.GetCandidateTweetsResponse]]
-    val tweetIds = responses.flatMap(
-      _.candidates.map(_.flatMap(_.tweet.map(_.id))).getOrElse(Nil)
+  privatelon delonf relonndelonrGelontCandidatelonTwelonelontsRelonsponselon(r: AnyRelonf): Futurelon[SelonrvicelonRelonsponselonVielonw] = {
+    val relonsponselons = r.asInstancelonOf[Selonq[thrift.GelontCandidatelonTwelonelontsRelonsponselon]]
+    val twelonelontIds = relonsponselons.flatMap(
+      _.candidatelons.map(_.flatMap(_.twelonelont.map(_.id))).gelontOrelonlselon(Nil)
     )
-    renderTweetIds(tweetIds)
+    relonndelonrTwelonelontIds(twelonelontIds)
   }
 
-  def methodOptions: Map[String, MethodOptions] =
+  delonf melonthodOptions: Map[String, MelonthodOptions] =
     Map(
-      thrift.TimelineRanker.GetRecycledTweetCandidates.name -> MethodOptions(
-        responseRenderers = Seq(renderGetCandidateTweetsResponse)
+      thrift.TimelonlinelonRankelonr.GelontReloncyclelondTwelonelontCandidatelons.namelon -> MelonthodOptions(
+        relonsponselonRelonndelonrelonrs = Selonq(relonndelonrGelontCandidatelonTwelonelontsRelonsponselon)
       ),
-      thrift.TimelineRanker.HydrateTweetCandidates.name -> MethodOptions(
-        responseRenderers = Seq(renderGetCandidateTweetsResponse)
+      thrift.TimelonlinelonRankelonr.HydratelonTwelonelontCandidatelons.namelon -> MelonthodOptions(
+        relonsponselonRelonndelonrelonrs = Selonq(relonndelonrGelontCandidatelonTwelonelontsRelonsponselon)
       ),
-      thrift.TimelineRanker.GetRecapCandidatesFromAuthors.name -> MethodOptions(
-        responseRenderers = Seq(renderGetCandidateTweetsResponse)
+      thrift.TimelonlinelonRankelonr.GelontReloncapCandidatelonsFromAuthors.namelon -> MelonthodOptions(
+        relonsponselonRelonndelonrelonrs = Selonq(relonndelonrGelontCandidatelonTwelonelontsRelonsponselon)
       ),
-      thrift.TimelineRanker.GetEntityTweetCandidates.name -> MethodOptions(
-        responseRenderers = Seq(renderGetCandidateTweetsResponse)
+      thrift.TimelonlinelonRankelonr.GelontelonntityTwelonelontCandidatelons.namelon -> MelonthodOptions(
+        relonsponselonRelonndelonrelonrs = Selonq(relonndelonrGelontCandidatelonTwelonelontsRelonsponselon)
       )
     )
 }

@@ -1,44 +1,44 @@
-package com.twitter.product_mixer.component_library.module
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.modulelon
 
-import com.google.inject.Provides
-import com.twitter.conversions.DurationOps._
-import com.twitter.conversions.PercentOps._
-import com.twitter.finagle.thriftmux.MethodBuilder
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsClient
-import com.twitter.inject.Injector
-import com.twitter.inject.thrift.modules.ThriftMethodBuilderClientModule
-import com.twitter.stitch.timelineservice.TimelineService
-import com.twitter.timelineservice.{thriftscala => t}
-import com.twitter.util.Duration
-import javax.inject.Singleton
+import com.googlelon.injelonct.Providelons
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.convelonrsions.PelonrcelonntOps._
+import com.twittelonr.finaglelon.thriftmux.MelonthodBuildelonr
+import com.twittelonr.finatra.mtls.thriftmux.modulelons.MtlsClielonnt
+import com.twittelonr.injelonct.Injelonctor
+import com.twittelonr.injelonct.thrift.modulelons.ThriftMelonthodBuildelonrClielonntModulelon
+import com.twittelonr.stitch.timelonlinelonselonrvicelon.TimelonlinelonSelonrvicelon
+import com.twittelonr.timelonlinelonselonrvicelon.{thriftscala => t}
+import com.twittelonr.util.Duration
+import javax.injelonct.Singlelonton
 
-object TimelineServiceClientModule
-    extends ThriftMethodBuilderClientModule[
-      t.TimelineService.ServicePerEndpoint,
-      t.TimelineService.MethodPerEndpoint
+objelonct TimelonlinelonSelonrvicelonClielonntModulelon
+    elonxtelonnds ThriftMelonthodBuildelonrClielonntModulelon[
+      t.TimelonlinelonSelonrvicelon.SelonrvicelonPelonrelonndpoint,
+      t.TimelonlinelonSelonrvicelon.MelonthodPelonrelonndpoint
     ]
-    with MtlsClient {
+    with MtlsClielonnt {
 
-  override val label = "timelineservice"
-  override val dest = "/s/timelineservice/timelineservice"
+  ovelonrridelon val labelonl = "timelonlinelonselonrvicelon"
+  ovelonrridelon val delonst = "/s/timelonlinelonselonrvicelon/timelonlinelonselonrvicelon"
 
-  override protected def configureMethodBuilder(
-    injector: Injector,
-    methodBuilder: MethodBuilder
-  ): MethodBuilder = {
-    methodBuilder
-      .withTimeoutPerRequest(1200.millis)
-      .withTimeoutTotal(2400.millis)
-      .idempotent(1.percent)
+  ovelonrridelon protelonctelond delonf configurelonMelonthodBuildelonr(
+    injelonctor: Injelonctor,
+    melonthodBuildelonr: MelonthodBuildelonr
+  ): MelonthodBuildelonr = {
+    melonthodBuildelonr
+      .withTimelonoutPelonrRelonquelonst(1200.millis)
+      .withTimelonoutTotal(2400.millis)
+      .idelonmpotelonnt(1.pelonrcelonnt)
   }
 
-  override protected def sessionAcquisitionTimeout: Duration = 500.milliseconds
+  ovelonrridelon protelonctelond delonf selonssionAcquisitionTimelonout: Duration = 500.milliselonconds
 
-  @Singleton
-  @Provides
-  def providesTimelineServiceStitchClient(
-    client: t.TimelineService.MethodPerEndpoint
-  ): TimelineService = {
-    new TimelineService(client)
+  @Singlelonton
+  @Providelons
+  delonf providelonsTimelonlinelonSelonrvicelonStitchClielonnt(
+    clielonnt: t.TimelonlinelonSelonrvicelon.MelonthodPelonrelonndpoint
+  ): TimelonlinelonSelonrvicelon = {
+    nelonw TimelonlinelonSelonrvicelon(clielonnt)
   }
 }

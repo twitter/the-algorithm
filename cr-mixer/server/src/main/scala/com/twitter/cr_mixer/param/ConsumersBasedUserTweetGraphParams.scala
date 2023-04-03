@@ -1,44 +1,44 @@
-package com.twitter.cr_mixer.param
+packagelon com.twittelonr.cr_mixelonr.param
 
-import com.twitter.timelines.configapi.BaseConfig
-import com.twitter.timelines.configapi.BaseConfigBuilder
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil
-import com.twitter.timelines.configapi.Param
+import com.twittelonr.timelonlinelons.configapi.BaselonConfig
+import com.twittelonr.timelonlinelons.configapi.BaselonConfigBuildelonr
+import com.twittelonr.timelonlinelons.configapi.FSNamelon
+import com.twittelonr.timelonlinelons.configapi.FSParam
+import com.twittelonr.timelonlinelons.configapi.FelonaturelonSwitchOvelonrridelonUtil
+import com.twittelonr.timelonlinelons.configapi.Param
 
 /**
- * ConsumersBasedUserTweetGraph Params, there are multiple ways (e.g. FRS, RealGraphOon) to generate consumersSeedSet for ConsumersBasedUserTweetGraph
- * for now we allow flexibility in tuning UTG params for different consumersSeedSet generation algo by giving the param name {consumerSeedSetAlgo}{ParamName}
+ * ConsumelonrsBaselondUselonrTwelonelontGraph Params, thelonrelon arelon multiplelon ways (elon.g. FRS, RelonalGraphOon) to gelonnelonratelon consumelonrsSelonelondSelont for ConsumelonrsBaselondUselonrTwelonelontGraph
+ * for now welon allow flelonxibility in tuning UTG params for diffelonrelonnt consumelonrsSelonelondSelont gelonnelonration algo by giving thelon param namelon {consumelonrSelonelondSelontAlgo}{ParamNamelon}
  */
 
-object ConsumersBasedUserTweetGraphParams {
+objelonct ConsumelonrsBaselondUselonrTwelonelontGraphParams {
 
-  object EnableSourceParam
-      extends FSParam[Boolean](
-        name = "consumers_based_user_tweet_graph_enable_source",
-        default = false
+  objelonct elonnablelonSourcelonParam
+      elonxtelonnds FSParam[Boolelonan](
+        namelon = "consumelonrs_baselond_uselonr_twelonelont_graph_elonnablelon_sourcelon",
+        delonfault = falselon
       )
 
-  val AllParams: Seq[Param[_] with FSName] = Seq(
-    EnableSourceParam,
+  val AllParams: Selonq[Param[_] with FSNamelon] = Selonq(
+    elonnablelonSourcelonParam,
   )
 
-  lazy val config: BaseConfig = {
+  lazy val config: BaselonConfig = {
 
-    val intOverrides = FeatureSwitchOverrideUtil.getBoundedIntFSOverrides()
+    val intOvelonrridelons = FelonaturelonSwitchOvelonrridelonUtil.gelontBoundelondIntFSOvelonrridelons()
 
-    val doubleOverrides =
-      FeatureSwitchOverrideUtil.getBoundedDoubleFSOverrides()
+    val doublelonOvelonrridelons =
+      FelonaturelonSwitchOvelonrridelonUtil.gelontBoundelondDoublelonFSOvelonrridelons()
 
-    val booleanOverrides = FeatureSwitchOverrideUtil.getBooleanFSOverrides(
-      EnableSourceParam
+    val boolelonanOvelonrridelons = FelonaturelonSwitchOvelonrridelonUtil.gelontBoolelonanFSOvelonrridelons(
+      elonnablelonSourcelonParam
     )
 
-    BaseConfigBuilder()
-      .set(intOverrides: _*)
-      .set(booleanOverrides: _*)
-      .set(doubleOverrides: _*)
+    BaselonConfigBuildelonr()
+      .selont(intOvelonrridelons: _*)
+      .selont(boolelonanOvelonrridelons: _*)
+      .selont(doublelonOvelonrridelons: _*)
       .build()
   }
 }

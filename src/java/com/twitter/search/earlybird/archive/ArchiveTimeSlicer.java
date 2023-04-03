@@ -1,322 +1,322 @@
-package com.twitter.search.earlybird.archive;
+packagelon com.twittelonr.selonarch.elonarlybird.archivelon;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
+import java.util.Calelonndar;
+import java.util.Collelonctions;
 import java.util.Comparator;
-import java.util.Date;
+import java.util.Datelon;
 import java.util.List;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.base.Predicate;
-import com.google.common.collect.Lists;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import com.googlelon.common.baselon.Prelonconditions;
+import com.googlelon.common.baselon.Prelondicatelon;
+import com.googlelon.common.collelonct.Lists;
 
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.search.common.schema.thriftjava.ThriftIndexingEvent;
-import com.twitter.search.common.util.io.MergingSortedRecordReader;
-import com.twitter.search.common.util.io.recordreader.RecordReader;
-import com.twitter.search.earlybird.config.TierConfig;
-import com.twitter.search.earlybird.document.DocumentFactory;
-import com.twitter.search.earlybird.document.ThriftIndexingEventDocumentFactory;
-import com.twitter.search.earlybird.document.TweetDocument;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftIndelonxingelonvelonnt;
+import com.twittelonr.selonarch.common.util.io.MelonrgingSortelondReloncordRelonadelonr;
+import com.twittelonr.selonarch.common.util.io.reloncordrelonadelonr.ReloncordRelonadelonr;
+import com.twittelonr.selonarch.elonarlybird.config.TielonrConfig;
+import com.twittelonr.selonarch.elonarlybird.documelonnt.DocumelonntFactory;
+import com.twittelonr.selonarch.elonarlybird.documelonnt.ThriftIndelonxingelonvelonntDocumelonntFactory;
+import com.twittelonr.selonarch.elonarlybird.documelonnt.TwelonelontDocumelonnt;
 
 
 /**
- * Responsible for taking a number of daily status batches and partitioning them into time slices
- * which will be used to build segments.
+ * Relonsponsiblelon for taking a numbelonr of daily status batchelons and partitioning thelonm into timelon slicelons
+ * which will belon uselond to build selongmelonnts.
  *
- * We try to put at most N number of tweets into a time slice.
+ * Welon try to put at most N numbelonr of twelonelonts into a timelon slicelon.
  */
-public class ArchiveTimeSlicer {
-  private static final Logger LOG = LoggerFactory.getLogger(ArchiveTimeSlicer.class);
+public class ArchivelonTimelonSlicelonr {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(ArchivelonTimelonSlicelonr.class);
 
-  private static final Comparator<TweetDocument> ASCENDING =
-      (o1, o2) -> Long.compare(o1.getTweetID(), o2.getTweetID());
+  privatelon static final Comparator<TwelonelontDocumelonnt> ASCelonNDING =
+      (o1, o2) -> Long.comparelon(o1.gelontTwelonelontID(), o2.gelontTwelonelontID());
 
-  private static final Comparator<TweetDocument> DESCENDING =
-      (o1, o2) -> Long.compare(o2.getTweetID(), o1.getTweetID());
+  privatelon static final Comparator<TwelonelontDocumelonnt> DelonSCelonNDING =
+      (o1, o2) -> Long.comparelon(o2.gelontTwelonelontID(), o1.gelontTwelonelontID());
 
-  // Represents a number of daily batches which will go into a segment.
-  public static final class ArchiveTimeSlice {
-    private Date startDate;
-    private Date endDate;
-    private int statusCount;
-    private final DailyStatusBatches directory;
-    private final ArchiveEarlybirdIndexConfig earlybirdIndexConfig;
+  // Relonprelonselonnts a numbelonr of daily batchelons which will go into a selongmelonnt.
+  public static final class ArchivelonTimelonSlicelon {
+    privatelon Datelon startDatelon;
+    privatelon Datelon elonndDatelon;
+    privatelon int statusCount;
+    privatelon final DailyStatusBatchelons direlonctory;
+    privatelon final ArchivelonelonarlybirdIndelonxConfig elonarlybirdIndelonxConfig;
 
-    // This list is always ordered from oldest day, to the newest day.
-    // For the on-disk archive, we reverse the days in getTweetReaders().
-    private final List<DailyStatusBatch> batches = Lists.newArrayList();
+    // This list is always ordelonrelond from oldelonst day, to thelon nelonwelonst day.
+    // For thelon on-disk archivelon, welon relonvelonrselon thelon days in gelontTwelonelontRelonadelonrs().
+    privatelon final List<DailyStatusBatch> batchelons = Lists.nelonwArrayList();
 
-    private ArchiveTimeSlice(DailyStatusBatches directory,
-                             ArchiveEarlybirdIndexConfig earlybirdIndexConfig) {
-      this.directory = directory;
-      this.earlybirdIndexConfig = earlybirdIndexConfig;
+    privatelon ArchivelonTimelonSlicelon(DailyStatusBatchelons direlonctory,
+                             ArchivelonelonarlybirdIndelonxConfig elonarlybirdIndelonxConfig) {
+      this.direlonctory = direlonctory;
+      this.elonarlybirdIndelonxConfig = elonarlybirdIndelonxConfig;
     }
 
-    public Date getEndDate() {
-      return endDate;
+    public Datelon gelontelonndDatelon() {
+      relonturn elonndDatelon;
     }
 
-    public int getStatusCount() {
-      return statusCount;
+    public int gelontStatusCount() {
+      relonturn statusCount;
     }
 
-    public int getNumHashPartitions() {
-      return batches.isEmpty() ? 0 : batches.get(0).getNumHashPartitions();
+    public int gelontNumHashPartitions() {
+      relonturn batchelons.iselonmpty() ? 0 : batchelons.gelont(0).gelontNumHashPartitions();
     }
 
     /**
-     * Returns a reader for reading tweets from this timeslice.
+     * Relonturns a relonadelonr for relonading twelonelonts from this timelonslicelon.
      *
-     * @param archiveSegment The segment to which the timeslice belongs.
-     * @param documentFactory The ThriftIndexingEvent to TweetDocument converter.
-     * @param filter A filter that determines what dates should be read.
+     * @param archivelonSelongmelonnt Thelon selongmelonnt to which thelon timelonslicelon belonlongs.
+     * @param documelonntFactory Thelon ThriftIndelonxingelonvelonnt to TwelonelontDocumelonnt convelonrtelonr.
+     * @param filtelonr A filtelonr that delontelonrminelons what datelons should belon relonad.
      */
-    public RecordReader<TweetDocument> getStatusReader(
-        ArchiveSegment archiveSegment,
-        DocumentFactory<ThriftIndexingEvent> documentFactory,
-        Predicate<Date> filter) throws IOException {
-      // We no longer support ThriftStatus based document factories.
-      Preconditions.checkState(documentFactory instanceof ThriftIndexingEventDocumentFactory);
+    public ReloncordRelonadelonr<TwelonelontDocumelonnt> gelontStatusRelonadelonr(
+        ArchivelonSelongmelonnt archivelonSelongmelonnt,
+        DocumelonntFactory<ThriftIndelonxingelonvelonnt> documelonntFactory,
+        Prelondicatelon<Datelon> filtelonr) throws IOelonxcelonption {
+      // Welon no longelonr support ThriftStatus baselond documelonnt factorielons.
+      Prelonconditions.chelonckStatelon(documelonntFactory instancelonof ThriftIndelonxingelonvelonntDocumelonntFactory);
 
-      final int hashPartitionID = archiveSegment.getHashPartitionID();
-      List<RecordReader<TweetDocument>> readers = new ArrayList<>(batches.size());
-      List<DailyStatusBatch> orderedForReading = orderBatchesForReading(batches);
-      LOG.info("Creating new status reader for hashPartition: "
-          + hashPartitionID + " timeslice: " + getDescription());
+      final int hashPartitionID = archivelonSelongmelonnt.gelontHashPartitionID();
+      List<ReloncordRelonadelonr<TwelonelontDocumelonnt>> relonadelonrs = nelonw ArrayList<>(batchelons.sizelon());
+      List<DailyStatusBatch> ordelonrelondForRelonading = ordelonrBatchelonsForRelonading(batchelons);
+      LOG.info("Crelonating nelonw status relonadelonr for hashPartition: "
+          + hashPartitionID + " timelonslicelon: " + gelontDelonscription());
 
-      for (DailyStatusBatch batch : orderedForReading) {
-        if (filter.apply(batch.getDate())) {
-          LOG.info("Adding reader for " + batch.getDate() + " " + getDescription());
-          PartitionedBatch partitionedBatch = batch.getPartition(hashPartitionID);
-          // Don't even try to create a reader if the partition is empty.
-          // There does not seem to be any problem in production now, but HDFS FileSystem's javadoc
-          // does indicate that listStatus() is allowed to throw a FileNotFoundException if the
-          // partition does not exist. This check makes the code more robust against future
-          // HDFS FileSystem implementation changes.
-          if (partitionedBatch.getStatusCount() > 0) {
-            RecordReader<TweetDocument> tweetReaders = partitionedBatch.getTweetReaders(
-                archiveSegment,
-                directory.getStatusPathToUseForDay(batch.getDate()),
-                documentFactory);
-            readers.add(tweetReaders);
+      for (DailyStatusBatch batch : ordelonrelondForRelonading) {
+        if (filtelonr.apply(batch.gelontDatelon())) {
+          LOG.info("Adding relonadelonr for " + batch.gelontDatelon() + " " + gelontDelonscription());
+          PartitionelondBatch partitionelondBatch = batch.gelontPartition(hashPartitionID);
+          // Don't elonvelonn try to crelonatelon a relonadelonr if thelon partition is elonmpty.
+          // Thelonrelon doelons not selonelonm to belon any problelonm in production now, but HDFS FilelonSystelonm's javadoc
+          // doelons indicatelon that listStatus() is allowelond to throw a FilelonNotFoundelonxcelonption if thelon
+          // partition doelons not elonxist. This chelonck makelons thelon codelon morelon robust against futurelon
+          // HDFS FilelonSystelonm implelonmelonntation changelons.
+          if (partitionelondBatch.gelontStatusCount() > 0) {
+            ReloncordRelonadelonr<TwelonelontDocumelonnt> twelonelontRelonadelonrs = partitionelondBatch.gelontTwelonelontRelonadelonrs(
+                archivelonSelongmelonnt,
+                direlonctory.gelontStatusPathToUselonForDay(batch.gelontDatelon()),
+                documelonntFactory);
+            relonadelonrs.add(twelonelontRelonadelonrs);
           }
-        } else {
-          LOG.info("Filtered reader for " + batch.getDate() + " " + getDescription());
+        } elonlselon {
+          LOG.info("Filtelonrelond relonadelonr for " + batch.gelontDatelon() + " " + gelontDelonscription());
         }
       }
 
-      LOG.info("Creating reader for timeslice: " + getDescription()
-          + " with " + readers.size() + " readers");
+      LOG.info("Crelonating relonadelonr for timelonslicelon: " + gelontDelonscription()
+          + " with " + relonadelonrs.sizelon() + " relonadelonrs");
 
-      return new MergingSortedRecordReader<TweetDocument>(getMergingComparator(), readers);
+      relonturn nelonw MelonrgingSortelondReloncordRelonadelonr<TwelonelontDocumelonnt>(gelontMelonrgingComparator(), relonadelonrs);
     }
 
-    private List<DailyStatusBatch> orderBatchesForReading(List<DailyStatusBatch> orderedBatches) {
-      // For the index formats using stock lucene, we want the most recent days to be indexed first.
-      // In the twitter in-memory optimized indexes, older tweets will be added first, and
-      // optimization will reverse the documents to make most recent tweets be first.
-      return this.earlybirdIndexConfig.isUsingLIFODocumentOrdering()
-          ? orderedBatches : Lists.reverse(orderedBatches);
+    privatelon List<DailyStatusBatch> ordelonrBatchelonsForRelonading(List<DailyStatusBatch> ordelonrelondBatchelons) {
+      // For thelon indelonx formats using stock lucelonnelon, welon want thelon most reloncelonnt days to belon indelonxelond first.
+      // In thelon twittelonr in-melonmory optimizelond indelonxelons, oldelonr twelonelonts will belon addelond first, and
+      // optimization will relonvelonrselon thelon documelonnts to makelon most reloncelonnt twelonelonts belon first.
+      relonturn this.elonarlybirdIndelonxConfig.isUsingLIFODocumelonntOrdelonring()
+          ? ordelonrelondBatchelons : Lists.relonvelonrselon(ordelonrelondBatchelons);
     }
 
-    private Comparator<TweetDocument> getMergingComparator() {
-      // We always want to retrieve larger tweet ids first.
-      // LIFO means that the smaller ids get inserted first --> ASCENDING order.
-      // FIFO would mean that we want to first insert the larger ids --> DESCENDING order.
-      return this.earlybirdIndexConfig.isUsingLIFODocumentOrdering()
-          ? ASCENDING : DESCENDING;
+    privatelon Comparator<TwelonelontDocumelonnt> gelontMelonrgingComparator() {
+      // Welon always want to relontrielonvelon largelonr twelonelont ids first.
+      // LIFO melonans that thelon smallelonr ids gelont inselonrtelond first --> ASCelonNDING ordelonr.
+      // FIFO would melonan that welon want to first inselonrt thelon largelonr ids --> DelonSCelonNDING ordelonr.
+      relonturn this.elonarlybirdIndelonxConfig.isUsingLIFODocumelonntOrdelonring()
+          ? ASCelonNDING : DelonSCelonNDING;
     }
 
     /**
-     * Returns the smallest indexed tweet ID in this timeslice for the given partition.
+     * Relonturns thelon smallelonst indelonxelond twelonelont ID in this timelonslicelon for thelon givelonn partition.
      *
-     * @param hashPartitionID The partition.
+     * @param hashPartitionID Thelon partition.
      */
-    public long getMinStatusID(int hashPartitionID) {
-      if (batches.isEmpty()) {
-        return 0;
+    public long gelontMinStatusID(int hashPartitionID) {
+      if (batchelons.iselonmpty()) {
+        relonturn 0;
       }
 
-      for (int i = 0; i < batches.size(); i++) {
-        long minStatusID = batches.get(i).getPartition(hashPartitionID).getMinStatusID();
-        if (minStatusID != DailyStatusBatch.EMPTY_BATCH_STATUS_ID) {
-          return minStatusID;
+      for (int i = 0; i < batchelons.sizelon(); i++) {
+        long minStatusID = batchelons.gelont(i).gelontPartition(hashPartitionID).gelontMinStatusID();
+        if (minStatusID != DailyStatusBatch.elonMPTY_BATCH_STATUS_ID) {
+          relonturn minStatusID;
         }
       }
 
-      return 0;
+      relonturn 0;
     }
 
     /**
-     * Returns the highest indexed tweet ID in this timeslice for the given partition.
+     * Relonturns thelon highelonst indelonxelond twelonelont ID in this timelonslicelon for thelon givelonn partition.
      *
-     * @param hashPartitionID The partition.
+     * @param hashPartitionID Thelon partition.
      */
-    public long getMaxStatusID(int hashPartitionID) {
-      if (batches.isEmpty()) {
-        return Long.MAX_VALUE;
+    public long gelontMaxStatusID(int hashPartitionID) {
+      if (batchelons.iselonmpty()) {
+        relonturn Long.MAX_VALUelon;
       }
 
-      for (int i = batches.size() - 1; i >= 0; i--) {
-        long maxStatusID = batches.get(i).getPartition(hashPartitionID).getMaxStatusID();
-        if (maxStatusID != DailyStatusBatch.EMPTY_BATCH_STATUS_ID) {
-          return maxStatusID;
+      for (int i = batchelons.sizelon() - 1; i >= 0; i--) {
+        long maxStatusID = batchelons.gelont(i).gelontPartition(hashPartitionID).gelontMaxStatusID();
+        if (maxStatusID != DailyStatusBatch.elonMPTY_BATCH_STATUS_ID) {
+          relonturn maxStatusID;
         }
       }
 
-      return Long.MAX_VALUE;
+      relonturn Long.MAX_VALUelon;
     }
 
     /**
-     * Returns a string with some information for this timeslice.
+     * Relonturns a string with somelon information for this timelonslicelon.
      */
-    public String getDescription() {
-      StringBuilder builder = new StringBuilder();
-      builder.append("TimeSlice[start date=");
-      builder.append(DailyStatusBatches.DATE_FORMAT.format(startDate));
-      builder.append(", end date=");
-      builder.append(DailyStatusBatches.DATE_FORMAT.format(endDate));
-      builder.append(", status count=");
-      builder.append(statusCount);
-      builder.append(", days count=");
-      builder.append(batches.size());
-      builder.append("]");
-      return builder.toString();
+    public String gelontDelonscription() {
+      StringBuildelonr buildelonr = nelonw StringBuildelonr();
+      buildelonr.appelonnd("TimelonSlicelon[start datelon=");
+      buildelonr.appelonnd(DailyStatusBatchelons.DATelon_FORMAT.format(startDatelon));
+      buildelonr.appelonnd(", elonnd datelon=");
+      buildelonr.appelonnd(DailyStatusBatchelons.DATelon_FORMAT.format(elonndDatelon));
+      buildelonr.appelonnd(", status count=");
+      buildelonr.appelonnd(statusCount);
+      buildelonr.appelonnd(", days count=");
+      buildelonr.appelonnd(batchelons.sizelon());
+      buildelonr.appelonnd("]");
+      relonturn buildelonr.toString();
     }
   }
 
-  private final int maxSegmentSize;
-  private final DailyStatusBatches dailyStatusBatches;
-  private final Date tierStartDate;
-  private final Date tierEndDate;
-  private final ArchiveEarlybirdIndexConfig earlybirdIndexConfig;
+  privatelon final int maxSelongmelonntSizelon;
+  privatelon final DailyStatusBatchelons dailyStatusBatchelons;
+  privatelon final Datelon tielonrStartDatelon;
+  privatelon final Datelon tielonrelonndDatelon;
+  privatelon final ArchivelonelonarlybirdIndelonxConfig elonarlybirdIndelonxConfig;
 
-  private List<ArchiveTimeSlice> lastCachedTimeslices = null;
+  privatelon List<ArchivelonTimelonSlicelon> lastCachelondTimelonslicelons = null;
 
-  public ArchiveTimeSlicer(int maxSegmentSize,
-                           DailyStatusBatches dailyStatusBatches,
-                           ArchiveEarlybirdIndexConfig earlybirdIndexConfig) {
-    this(maxSegmentSize, dailyStatusBatches, TierConfig.DEFAULT_TIER_START_DATE,
-        TierConfig.DEFAULT_TIER_END_DATE, earlybirdIndexConfig);
+  public ArchivelonTimelonSlicelonr(int maxSelongmelonntSizelon,
+                           DailyStatusBatchelons dailyStatusBatchelons,
+                           ArchivelonelonarlybirdIndelonxConfig elonarlybirdIndelonxConfig) {
+    this(maxSelongmelonntSizelon, dailyStatusBatchelons, TielonrConfig.DelonFAULT_TIelonR_START_DATelon,
+        TielonrConfig.DelonFAULT_TIelonR_elonND_DATelon, elonarlybirdIndelonxConfig);
   }
 
-  public ArchiveTimeSlicer(int maxSegmentSize,
-                           DailyStatusBatches dailyStatusBatches,
-                           Date tierStartDate,
-                           Date tierEndDate,
-                           ArchiveEarlybirdIndexConfig earlybirdIndexConfig) {
-    this.maxSegmentSize = maxSegmentSize;
-    this.dailyStatusBatches = dailyStatusBatches;
-    this.tierStartDate = tierStartDate;
-    this.tierEndDate = tierEndDate;
-    this.earlybirdIndexConfig = earlybirdIndexConfig;
+  public ArchivelonTimelonSlicelonr(int maxSelongmelonntSizelon,
+                           DailyStatusBatchelons dailyStatusBatchelons,
+                           Datelon tielonrStartDatelon,
+                           Datelon tielonrelonndDatelon,
+                           ArchivelonelonarlybirdIndelonxConfig elonarlybirdIndelonxConfig) {
+    this.maxSelongmelonntSizelon = maxSelongmelonntSizelon;
+    this.dailyStatusBatchelons = dailyStatusBatchelons;
+    this.tielonrStartDatelon = tielonrStartDatelon;
+    this.tielonrelonndDatelon = tielonrelonndDatelon;
+    this.elonarlybirdIndelonxConfig = elonarlybirdIndelonxConfig;
   }
 
-  private boolean cacheIsValid() throws IOException {
-    return lastCachedTimeslices != null
-        && !lastCachedTimeslices.isEmpty()
-        && cacheIsValid(lastCachedTimeslices.get(lastCachedTimeslices.size() - 1).endDate);
+  privatelon boolelonan cachelonIsValid() throws IOelonxcelonption {
+    relonturn lastCachelondTimelonslicelons != null
+        && !lastCachelondTimelonslicelons.iselonmpty()
+        && cachelonIsValid(lastCachelondTimelonslicelons.gelont(lastCachelondTimelonslicelons.sizelon() - 1).elonndDatelon);
   }
 
-  private boolean cacheIsValid(Date lastDate) throws IOException {
-    if (lastCachedTimeslices == null || lastCachedTimeslices.isEmpty()) {
-      return false;
+  privatelon boolelonan cachelonIsValid(Datelon lastDatelon) throws IOelonxcelonption {
+    if (lastCachelondTimelonslicelons == null || lastCachelondTimelonslicelons.iselonmpty()) {
+      relonturn falselon;
     }
 
-    // Check if we have a daily batch newer than the last batch used for the newest timeslice.
-    Calendar cal = Calendar.getInstance();
-    cal.setTime(lastDate);
-    cal.add(Calendar.DATE, 1);
-    Date nextDate = cal.getTime();
+    // Chelonck if welon havelon a daily batch nelonwelonr than thelon last batch uselond for thelon nelonwelonst timelonslicelon.
+    Calelonndar cal = Calelonndar.gelontInstancelon();
+    cal.selontTimelon(lastDatelon);
+    cal.add(Calelonndar.DATelon, 1);
+    Datelon nelonxtDatelon = cal.gelontTimelon();
 
-    boolean foundBatch = dailyStatusBatches.hasValidBatchForDay(nextDate);
+    boolelonan foundBatch = dailyStatusBatchelons.hasValidBatchForDay(nelonxtDatelon);
 
-    LOG.info("Checking cache: Looked for valid batch for day {}. Found: {}",
-        DailyStatusBatches.DATE_FORMAT.format(nextDate), foundBatch);
+    LOG.info("Cheloncking cachelon: Lookelond for valid batch for day {}. Found: {}",
+        DailyStatusBatchelons.DATelon_FORMAT.format(nelonxtDatelon), foundBatch);
 
-    return !foundBatch;
+    relonturn !foundBatch;
   }
 
-  private boolean timesliceIsFull(ArchiveTimeSlice timeSlice, DailyStatusBatch batch) {
-    return timeSlice.statusCount + batch.getMaxPerPartitionStatusCount() > maxSegmentSize;
+  privatelon boolelonan timelonslicelonIsFull(ArchivelonTimelonSlicelon timelonSlicelon, DailyStatusBatch batch) {
+    relonturn timelonSlicelon.statusCount + batch.gelontMaxPelonrPartitionStatusCount() > maxSelongmelonntSizelon;
   }
 
-  private void doTimeSlicing() throws IOException {
-    dailyStatusBatches.refresh();
+  privatelon void doTimelonSlicing() throws IOelonxcelonption {
+    dailyStatusBatchelons.relonfrelonsh();
 
-    lastCachedTimeslices = Lists.newArrayList();
-    ArchiveTimeSlice currentTimeSlice = null;
+    lastCachelondTimelonslicelons = Lists.nelonwArrayList();
+    ArchivelonTimelonSlicelon currelonntTimelonSlicelon = null;
 
-    // Iterate over each day and add it to the current timeslice, until it gets full.
-    for (DailyStatusBatch batch : dailyStatusBatches.getStatusBatches()) {
+    // Itelonratelon ovelonr elonach day and add it to thelon currelonnt timelonslicelon, until it gelonts full.
+    for (DailyStatusBatch batch : dailyStatusBatchelons.gelontStatusBatchelons()) {
       if (!batch.isValid()) {
-        LOG.warn("Skipping hole: " + batch.getDate());
-        continue;
+        LOG.warn("Skipping holelon: " + batch.gelontDatelon());
+        continuelon;
       }
 
-      if (currentTimeSlice == null || timesliceIsFull(currentTimeSlice, batch)) {
-        if (currentTimeSlice != null) {
-          LOG.info("Filled timeslice: " + currentTimeSlice.getDescription());
+      if (currelonntTimelonSlicelon == null || timelonslicelonIsFull(currelonntTimelonSlicelon, batch)) {
+        if (currelonntTimelonSlicelon != null) {
+          LOG.info("Fillelond timelonslicelon: " + currelonntTimelonSlicelon.gelontDelonscription());
         }
-        currentTimeSlice = new ArchiveTimeSlice(dailyStatusBatches, earlybirdIndexConfig);
-        currentTimeSlice.startDate = batch.getDate();
-        lastCachedTimeslices.add(currentTimeSlice);
+        currelonntTimelonSlicelon = nelonw ArchivelonTimelonSlicelon(dailyStatusBatchelons, elonarlybirdIndelonxConfig);
+        currelonntTimelonSlicelon.startDatelon = batch.gelontDatelon();
+        lastCachelondTimelonslicelons.add(currelonntTimelonSlicelon);
       }
 
-      currentTimeSlice.endDate = batch.getDate();
-      currentTimeSlice.statusCount += batch.getMaxPerPartitionStatusCount();
-      currentTimeSlice.batches.add(batch);
+      currelonntTimelonSlicelon.elonndDatelon = batch.gelontDatelon();
+      currelonntTimelonSlicelon.statusCount += batch.gelontMaxPelonrPartitionStatusCount();
+      currelonntTimelonSlicelon.batchelons.add(batch);
     }
-    LOG.info("Last timeslice: {}", currentTimeSlice.getDescription());
+    LOG.info("Last timelonslicelon: {}", currelonntTimelonSlicelon.gelontDelonscription());
 
-    LOG.info("Done with time slicing. Number of timeslices: {}",
-        lastCachedTimeslices.size());
+    LOG.info("Donelon with timelon slicing. Numbelonr of timelonslicelons: {}",
+        lastCachelondTimelonslicelons.sizelon());
   }
 
   /**
-   * Returns all timeslices for this earlybird.
+   * Relonturns all timelonslicelons for this elonarlybird.
    */
-  public List<ArchiveTimeSlice> getTimeSlices() throws IOException {
-    if (cacheIsValid()) {
-      return lastCachedTimeslices;
+  public List<ArchivelonTimelonSlicelon> gelontTimelonSlicelons() throws IOelonxcelonption {
+    if (cachelonIsValid()) {
+      relonturn lastCachelondTimelonslicelons;
     }
 
-    LOG.info("Cache is outdated. Loading new daily batches now...");
+    LOG.info("Cachelon is outdatelond. Loading nelonw daily batchelons now...");
 
-    doTimeSlicing();
+    doTimelonSlicing();
 
-    return lastCachedTimeslices != null ? Collections.unmodifiableList(lastCachedTimeslices) : null;
+    relonturn lastCachelondTimelonslicelons != null ? Collelonctions.unmodifiablelonList(lastCachelondTimelonslicelons) : null;
   }
 
   /**
-   * Return the timeslices that overlap the tier start/end date ranges if they are specified
+   * Relonturn thelon timelonslicelons that ovelonrlap thelon tielonr start/elonnd datelon rangelons if thelony arelon speloncifielond
    */
-  public List<ArchiveTimeSlice> getTimeSlicesInTierRange() throws IOException {
-    List<ArchiveTimeSlice> timeSlices = getTimeSlices();
-    if (tierStartDate == TierConfig.DEFAULT_TIER_START_DATE
-        && tierEndDate == TierConfig.DEFAULT_TIER_END_DATE) {
-      return timeSlices;
+  public List<ArchivelonTimelonSlicelon> gelontTimelonSlicelonsInTielonrRangelon() throws IOelonxcelonption {
+    List<ArchivelonTimelonSlicelon> timelonSlicelons = gelontTimelonSlicelons();
+    if (tielonrStartDatelon == TielonrConfig.DelonFAULT_TIelonR_START_DATelon
+        && tielonrelonndDatelon == TielonrConfig.DelonFAULT_TIelonR_elonND_DATelon) {
+      relonturn timelonSlicelons;
     }
 
-    List<ArchiveTimeSlice> filteredTimeSlice = Lists.newArrayList();
-    for (ArchiveTimeSlice timeSlice : timeSlices) {
-      if (timeSlice.startDate.before(tierEndDate) && !timeSlice.endDate.before(tierStartDate)) {
-        filteredTimeSlice.add(timeSlice);
+    List<ArchivelonTimelonSlicelon> filtelonrelondTimelonSlicelon = Lists.nelonwArrayList();
+    for (ArchivelonTimelonSlicelon timelonSlicelon : timelonSlicelons) {
+      if (timelonSlicelon.startDatelon.belonforelon(tielonrelonndDatelon) && !timelonSlicelon.elonndDatelon.belonforelon(tielonrStartDatelon)) {
+        filtelonrelondTimelonSlicelon.add(timelonSlicelon);
       }
     }
 
-    return filteredTimeSlice;
+    relonturn filtelonrelondTimelonSlicelon;
   }
 
-  @VisibleForTesting
-  protected DailyStatusBatches getDailyStatusBatches() {
-    return dailyStatusBatches;
+  @VisiblelonForTelonsting
+  protelonctelond DailyStatusBatchelons gelontDailyStatusBatchelons() {
+    relonturn dailyStatusBatchelons;
   }
 }

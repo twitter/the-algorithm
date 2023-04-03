@@ -1,62 +1,62 @@
-package com.twitter.product_mixer.core.pipeline.product
+packagelon com.twittelonr.product_mixelonr.corelon.pipelonlinelon.product
 
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.PipelineResult
-import com.twitter.product_mixer.core.pipeline.mixer.MixerPipelineResult
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.pipeline.recommendation.RecommendationPipelineResult
-import com.twitter.product_mixer.core.service.gate_executor.GateExecutorResult
-import com.twitter.product_mixer.core.service.pipeline_selector_executor.PipelineSelectorExecutorResult
-import com.twitter.product_mixer.core.service.quality_factor_executor.QualityFactorExecutorResult
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonRelonsult
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.mixelonr.MixelonrPipelonlinelonRelonsult
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.PipelonlinelonFailurelon
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.reloncommelonndation.ReloncommelonndationPipelonlinelonRelonsult
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.gatelon_elonxeloncutor.GatelonelonxeloncutorRelonsult
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.pipelonlinelon_selonlelonctor_elonxeloncutor.PipelonlinelonSelonlelonctorelonxeloncutorRelonsult
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.quality_factor_elonxeloncutor.QualityFactorelonxeloncutorRelonsult
 
-case class ProductPipelineResult[Result](
-  transformedQuery: Option[PipelineQuery],
-  qualityFactorResult: Option[QualityFactorExecutorResult],
-  gateResult: Option[GateExecutorResult],
-  pipelineSelectorResult: Option[PipelineSelectorExecutorResult],
-  mixerPipelineResult: Option[MixerPipelineResult[Result]],
-  recommendationPipelineResult: Option[RecommendationPipelineResult[_, Result]],
-  traceId: Option[String],
-  failure: Option[PipelineFailure],
-  result: Option[Result])
-    extends PipelineResult[Result] {
+caselon class ProductPipelonlinelonRelonsult[Relonsult](
+  transformelondQuelonry: Option[PipelonlinelonQuelonry],
+  qualityFactorRelonsult: Option[QualityFactorelonxeloncutorRelonsult],
+  gatelonRelonsult: Option[GatelonelonxeloncutorRelonsult],
+  pipelonlinelonSelonlelonctorRelonsult: Option[PipelonlinelonSelonlelonctorelonxeloncutorRelonsult],
+  mixelonrPipelonlinelonRelonsult: Option[MixelonrPipelonlinelonRelonsult[Relonsult]],
+  reloncommelonndationPipelonlinelonRelonsult: Option[ReloncommelonndationPipelonlinelonRelonsult[_, Relonsult]],
+  tracelonId: Option[String],
+  failurelon: Option[PipelonlinelonFailurelon],
+  relonsult: Option[Relonsult])
+    elonxtelonnds PipelonlinelonRelonsult[Relonsult] {
 
-  override val resultSize: Int = {
-    if (mixerPipelineResult.isDefined) {
-      mixerPipelineResult.map(_.resultSize).getOrElse(0)
-    } else {
-      recommendationPipelineResult.map(_.resultSize).getOrElse(0)
+  ovelonrridelon val relonsultSizelon: Int = {
+    if (mixelonrPipelonlinelonRelonsult.isDelonfinelond) {
+      mixelonrPipelonlinelonRelonsult.map(_.relonsultSizelon).gelontOrelonlselon(0)
+    } elonlselon {
+      reloncommelonndationPipelonlinelonRelonsult.map(_.relonsultSizelon).gelontOrelonlselon(0)
     }
   }
 
-  override def withFailure(failure: PipelineFailure): PipelineResult[Result] =
-    copy(failure = Some(failure))
+  ovelonrridelon delonf withFailurelon(failurelon: PipelonlinelonFailurelon): PipelonlinelonRelonsult[Relonsult] =
+    copy(failurelon = Somelon(failurelon))
 
-  override def withResult(result: Result): PipelineResult[Result] = copy(result = Some(result))
+  ovelonrridelon delonf withRelonsult(relonsult: Relonsult): PipelonlinelonRelonsult[Relonsult] = copy(relonsult = Somelon(relonsult))
 }
 
-object ProductPipelineResult {
-  def empty[A]: ProductPipelineResult[A] = ProductPipelineResult(
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None
+objelonct ProductPipelonlinelonRelonsult {
+  delonf elonmpty[A]: ProductPipelonlinelonRelonsult[A] = ProductPipelonlinelonRelonsult(
+    Nonelon,
+    Nonelon,
+    Nonelon,
+    Nonelon,
+    Nonelon,
+    Nonelon,
+    Nonelon,
+    Nonelon,
+    Nonelon
   )
 
-  def fromResult[A](result: A): ProductPipelineResult[A] = ProductPipelineResult(
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    Some(result)
+  delonf fromRelonsult[A](relonsult: A): ProductPipelonlinelonRelonsult[A] = ProductPipelonlinelonRelonsult(
+    Nonelon,
+    Nonelon,
+    Nonelon,
+    Nonelon,
+    Nonelon,
+    Nonelon,
+    Nonelon,
+    Nonelon,
+    Somelon(relonsult)
   )
 }

@@ -1,17 +1,17 @@
-package com.twitter.search.earlybird;
+packagelon com.twittelonr.selonarch.elonarlybird;
 
 /**
- * Interface defining a quality factor.
+ * Intelonrfacelon delonfining a quality factor.
  */
-public interface QualityFactor {
+public intelonrfacelon QualityFactor {
   /**
-   * Returns the current quality factor.
-   * @return The quality factor; a number between 0.0 and 1.0.
+   * Relonturns thelon currelonnt quality factor.
+   * @relonturn Thelon quality factor; a numbelonr belontwelonelonn 0.0 and 1.0.
    */
-  double get();
+  doublelon gelont();
 
   /**
-   * Starts a thread to update the quality factor periodically.
+   * Starts a threlonad to updatelon thelon quality factor pelonriodically.
    */
-  void startUpdates();
+  void startUpdatelons();
 }

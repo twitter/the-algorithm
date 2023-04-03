@@ -1,16 +1,16 @@
 scala_library(
-    sources = ["com/twitter/timelineranker/client/*.scala"],
+    sourcelons = ["com/twittelonr/timelonlinelonrankelonr/clielonnt/*.scala"],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "finagle/finagle-core/src/main",
-        "finagle/finagle-stats",
-        "finagle/finagle-thrift/src/main/java",
-        "servo/client/src/main/scala/com/twitter/servo/client",
-        "src/thrift/com/twitter/timelineranker:thrift-scala",
-        "src/thrift/com/twitter/timelineranker/server/model:thrift-scala",
-        "timelineranker/common:model",
-        "timelines/src/main/scala/com/twitter/timelines/util/stats",
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        "finaglelon/finaglelon-corelon/src/main",
+        "finaglelon/finaglelon-stats",
+        "finaglelon/finaglelon-thrift/src/main/java",
+        "selonrvo/clielonnt/src/main/scala/com/twittelonr/selonrvo/clielonnt",
+        "src/thrift/com/twittelonr/timelonlinelonrankelonr:thrift-scala",
+        "src/thrift/com/twittelonr/timelonlinelonrankelonr/selonrvelonr/modelonl:thrift-scala",
+        "timelonlinelonrankelonr/common:modelonl",
+        "timelonlinelons/src/main/scala/com/twittelonr/timelonlinelons/util/stats",
         "util/util-stats/src/main/scala",
     ],
 )

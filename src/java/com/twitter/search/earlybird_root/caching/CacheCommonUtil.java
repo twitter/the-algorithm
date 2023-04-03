@@ -1,16 +1,16 @@
-package com.twitter.search.earlybird_root.caching;
+packagelon com.twittelonr.selonarch.elonarlybird_root.caching;
 
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
 
-public final class CacheCommonUtil {
-  public static final String NAMED_MAX_CACHE_RESULTS = "maxCacheResults";
+public final class CachelonCommonUtil {
+  public static final String NAMelonD_MAX_CACHelon_RelonSULTS = "maxCachelonRelonsults";
 
-  private CacheCommonUtil() {
+  privatelon CachelonCommonUtil() {
   }
 
-  public static boolean hasResults(EarlybirdResponse response) {
-    return response.isSetSearchResults()
-      && (response.getSearchResults().getResults() != null)
-      && !response.getSearchResults().getResults().isEmpty();
+  public static boolelonan hasRelonsults(elonarlybirdRelonsponselon relonsponselon) {
+    relonturn relonsponselon.isSelontSelonarchRelonsults()
+      && (relonsponselon.gelontSelonarchRelonsults().gelontRelonsults() != null)
+      && !relonsponselon.gelontSelonarchRelonsults().gelontRelonsults().iselonmpty();
   }
 }

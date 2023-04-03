@@ -1,65 +1,65 @@
-package com.twitter.home_mixer.module
+packagelon com.twittelonr.homelon_mixelonr.modulelon
 
-import com.google.inject.Provides
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.home_mixer.{thriftscala => t}
-import com.twitter.inject.TwitterModule
-import com.twitter.product_mixer.shared_library.memcached_client.MemcachedClientBuilder
-import com.twitter.servo.cache.FinagleMemcache
-import com.twitter.servo.cache.KeyTransformer
-import com.twitter.servo.cache.KeyValueTransformingTtlCache
-import com.twitter.servo.cache.ObservableTtlCache
-import com.twitter.servo.cache.Serializer
-import com.twitter.servo.cache.ThriftSerializer
-import com.twitter.servo.cache.TtlCache
-import com.twitter.timelines.model.UserId
-import org.apache.thrift.protocol.TCompactProtocol
+import com.googlelon.injelonct.Providelons
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.finaglelon.mtls.authelonntication.SelonrvicelonIdelonntifielonr
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.homelon_mixelonr.{thriftscala => t}
+import com.twittelonr.injelonct.TwittelonrModulelon
+import com.twittelonr.product_mixelonr.sharelond_library.melonmcachelond_clielonnt.MelonmcachelondClielonntBuildelonr
+import com.twittelonr.selonrvo.cachelon.FinaglelonMelonmcachelon
+import com.twittelonr.selonrvo.cachelon.KelonyTransformelonr
+import com.twittelonr.selonrvo.cachelon.KelonyValuelonTransformingTtlCachelon
+import com.twittelonr.selonrvo.cachelon.ObselonrvablelonTtlCachelon
+import com.twittelonr.selonrvo.cachelon.Selonrializelonr
+import com.twittelonr.selonrvo.cachelon.ThriftSelonrializelonr
+import com.twittelonr.selonrvo.cachelon.TtlCachelon
+import com.twittelonr.timelonlinelons.modelonl.UselonrId
+import org.apachelon.thrift.protocol.TCompactProtocol
 
-import javax.inject.Singleton
+import javax.injelonct.Singlelonton
 
-object ScoredTweetsMemcacheModule extends TwitterModule {
+objelonct ScorelondTwelonelontsMelonmcachelonModulelon elonxtelonnds TwittelonrModulelon {
 
-  private val ScopeName = "ScoredTweetsCache"
-  private val ProdDestName = "/srv#/prod/local/cache/home_scored_tweets:twemcaches"
-  private val StagingDestName = "/srv#/test/local/cache/twemcache_home_scored_tweets:twemcaches"
-  private val cachedScoredTweetsSerializer: Serializer[t.CachedScoredTweets] =
-    new ThriftSerializer[t.CachedScoredTweets](t.CachedScoredTweets, new TCompactProtocol.Factory())
-  private val userIdKeyTransformer: KeyTransformer[UserId] = (userId: UserId) => userId.toString
+  privatelon val ScopelonNamelon = "ScorelondTwelonelontsCachelon"
+  privatelon val ProdDelonstNamelon = "/srv#/prod/local/cachelon/homelon_scorelond_twelonelonts:twelonmcachelons"
+  privatelon val StagingDelonstNamelon = "/srv#/telonst/local/cachelon/twelonmcachelon_homelon_scorelond_twelonelonts:twelonmcachelons"
+  privatelon val cachelondScorelondTwelonelontsSelonrializelonr: Selonrializelonr[t.CachelondScorelondTwelonelonts] =
+    nelonw ThriftSelonrializelonr[t.CachelondScorelondTwelonelonts](t.CachelondScorelondTwelonelonts, nelonw TCompactProtocol.Factory())
+  privatelon val uselonrIdKelonyTransformelonr: KelonyTransformelonr[UselonrId] = (uselonrId: UselonrId) => uselonrId.toString
 
-  @Singleton
-  @Provides
-  def providesScoredTweetsCache(
-    serviceIdentifier: ServiceIdentifier,
-    statsReceiver: StatsReceiver
-  ): TtlCache[UserId, t.CachedScoredTweets] = {
-    val destName = serviceIdentifier.environment.toLowerCase match {
-      case "prod" => ProdDestName
-      case _ => StagingDestName
+  @Singlelonton
+  @Providelons
+  delonf providelonsScorelondTwelonelontsCachelon(
+    selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr,
+    statsReloncelonivelonr: StatsReloncelonivelonr
+  ): TtlCachelon[UselonrId, t.CachelondScorelondTwelonelonts] = {
+    val delonstNamelon = selonrvicelonIdelonntifielonr.elonnvironmelonnt.toLowelonrCaselon match {
+      caselon "prod" => ProdDelonstNamelon
+      caselon _ => StagingDelonstNamelon
     }
-    val client = MemcachedClientBuilder.buildMemcachedClient(
-      destName = destName,
-      numTries = 2,
-      requestTimeout = 200.milliseconds,
-      globalTimeout = 400.milliseconds,
-      connectTimeout = 100.milliseconds,
-      acquisitionTimeout = 100.milliseconds,
-      serviceIdentifier = serviceIdentifier,
-      statsReceiver = statsReceiver.scope(ScopeName)
+    val clielonnt = MelonmcachelondClielonntBuildelonr.buildMelonmcachelondClielonnt(
+      delonstNamelon = delonstNamelon,
+      numTrielons = 2,
+      relonquelonstTimelonout = 200.milliselonconds,
+      globalTimelonout = 400.milliselonconds,
+      connelonctTimelonout = 100.milliselonconds,
+      acquisitionTimelonout = 100.milliselonconds,
+      selonrvicelonIdelonntifielonr = selonrvicelonIdelonntifielonr,
+      statsReloncelonivelonr = statsReloncelonivelonr.scopelon(ScopelonNamelon)
     )
-    val underlyingCache = new FinagleMemcache(client)
-    val baseCache: KeyValueTransformingTtlCache[UserId, String, t.CachedScoredTweets, Array[Byte]] =
-      new KeyValueTransformingTtlCache(
-        underlyingCache = underlyingCache,
-        transformer = cachedScoredTweetsSerializer,
-        underlyingKey = userIdKeyTransformer
+    val undelonrlyingCachelon = nelonw FinaglelonMelonmcachelon(clielonnt)
+    val baselonCachelon: KelonyValuelonTransformingTtlCachelon[UselonrId, String, t.CachelondScorelondTwelonelonts, Array[Bytelon]] =
+      nelonw KelonyValuelonTransformingTtlCachelon(
+        undelonrlyingCachelon = undelonrlyingCachelon,
+        transformelonr = cachelondScorelondTwelonelontsSelonrializelonr,
+        undelonrlyingKelony = uselonrIdKelonyTransformelonr
       )
-    ObservableTtlCache(
-      underlyingCache = baseCache,
-      statsReceiver = statsReceiver,
-      windowSize = 1000L,
-      name = ScopeName
+    ObselonrvablelonTtlCachelon(
+      undelonrlyingCachelon = baselonCachelon,
+      statsReloncelonivelonr = statsReloncelonivelonr,
+      windowSizelon = 1000L,
+      namelon = ScopelonNamelon
     )
   }
 }

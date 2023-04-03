@@ -1,15 +1,15 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urp
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urp
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.HasClientEventInfo
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.ClielonntelonvelonntInfo
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.HasClielonntelonvelonntInfo
 
-sealed trait PageHeader
+selonalelond trait PagelonHelonadelonr
 
-case class TopicPageHeader(
+caselon class TopicPagelonHelonadelonr(
   topicId: String,
-  facepile: Option[TopicPageHeaderFacepile] = None,
-  override val clientEventInfo: Option[ClientEventInfo] = None,
-  landingContext: Option[String] = None,
-  displayType: Option[TopicPageHeaderDisplayType] = Some(BasicTopicPageHeaderDisplayType))
-    extends PageHeader
-    with HasClientEventInfo
+  facelonpilelon: Option[TopicPagelonHelonadelonrFacelonpilelon] = Nonelon,
+  ovelonrridelon val clielonntelonvelonntInfo: Option[ClielonntelonvelonntInfo] = Nonelon,
+  landingContelonxt: Option[String] = Nonelon,
+  displayTypelon: Option[TopicPagelonHelonadelonrDisplayTypelon] = Somelon(BasicTopicPagelonHelonadelonrDisplayTypelon))
+    elonxtelonnds PagelonHelonadelonr
+    with HasClielonntelonvelonntInfo

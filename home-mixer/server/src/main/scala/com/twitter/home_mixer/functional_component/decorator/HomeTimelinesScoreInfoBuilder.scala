@@ -1,26 +1,26 @@
-package com.twitter.home_mixer.functional_component.decorator
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.deloncorator
 
-import com.twitter.home_mixer.model.HomeFeatures.ScoreFeature
-import com.twitter.home_mixer.param.HomeGlobalParams.EnableSendScoresToClient
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.item.tweet.BaseTimelinesScoreInfoBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet.TimelinesScoreInfo
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.ScorelonFelonaturelon
+import com.twittelonr.homelon_mixelonr.param.HomelonGlobalParams.elonnablelonSelonndScorelonsToClielonnt
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.TwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.itelonm.twelonelont.BaselonTimelonlinelonsScorelonInfoBuildelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.twelonelont.TimelonlinelonsScorelonInfo
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
-object HomeTimelinesScoreInfoBuilder
-    extends BaseTimelinesScoreInfoBuilder[PipelineQuery, TweetCandidate] {
+objelonct HomelonTimelonlinelonsScorelonInfoBuildelonr
+    elonxtelonnds BaselonTimelonlinelonsScorelonInfoBuildelonr[PipelonlinelonQuelonry, TwelonelontCandidatelon] {
 
-  private val UndefinedTweetScore = -1.0
+  privatelon val UndelonfinelondTwelonelontScorelon = -1.0
 
-  override def apply(
-    query: PipelineQuery,
-    candidate: TweetCandidate,
-    candidateFeatures: FeatureMap
-  ): Option[TimelinesScoreInfo] = {
-    if (query.params(EnableSendScoresToClient)) {
-      val score = candidateFeatures.getOrElse(ScoreFeature, None).getOrElse(UndefinedTweetScore)
-      Some(TimelinesScoreInfo(score))
-    } else None
+  ovelonrridelon delonf apply(
+    quelonry: PipelonlinelonQuelonry,
+    candidatelon: TwelonelontCandidatelon,
+    candidatelonFelonaturelons: FelonaturelonMap
+  ): Option[TimelonlinelonsScorelonInfo] = {
+    if (quelonry.params(elonnablelonSelonndScorelonsToClielonnt)) {
+      val scorelon = candidatelonFelonaturelons.gelontOrelonlselon(ScorelonFelonaturelon, Nonelon).gelontOrelonlselon(UndelonfinelondTwelonelontScorelon)
+      Somelon(TimelonlinelonsScorelonInfo(scorelon))
+    } elonlselon Nonelon
   }
 }

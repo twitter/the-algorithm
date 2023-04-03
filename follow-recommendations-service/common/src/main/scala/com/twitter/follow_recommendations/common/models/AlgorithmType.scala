@@ -1,20 +1,20 @@
-package com.twitter.follow_recommendations.common.models
+packagelon com.twittelonr.follow_reloncommelonndations.common.modelonls
 
 /**
- * Each candidate source algorithm could be based on one, or more, of the 4 general type of
- * information we have on a user:
- *   1. Social: the user's connections in Twitter's social graph.
- *   2. Geo: the user's geographical information.
- *   3. Interest: information on the user's chosen interests.
- *   4. Activity: information on the user's past activity.
+ * elonach candidatelon sourcelon algorithm could belon baselond on onelon, or morelon, of thelon 4 gelonnelonral typelon of
+ * information welon havelon on a uselonr:
+ *   1. Social: thelon uselonr's connelonctions in Twittelonr's social graph.
+ *   2. Gelono: thelon uselonr's gelonographical information.
+ *   3. Intelonrelonst: information on thelon uselonr's choselonn intelonrelonsts.
+ *   4. Activity: information on thelon uselonr's past activity.
  *
- * Note that an algorithm can fall under more than one of these categories.
+ * Notelon that an algorithm can fall undelonr morelon than onelon of thelonselon catelongorielons.
  */
-object AlgorithmType extends Enumeration {
-  type AlgorithmType = Value
+objelonct AlgorithmTypelon elonxtelonnds elonnumelonration {
+  typelon AlgorithmTypelon = Valuelon
 
-  val Social: Value = Value("social")
-  val Geo: Value = Value("geo")
-  val Activity: Value = Value("activity")
-  val Interest: Value = Value("interest")
+  val Social: Valuelon = Valuelon("social")
+  val Gelono: Valuelon = Valuelon("gelono")
+  val Activity: Valuelon = Valuelon("activity")
+  val Intelonrelonst: Valuelon = Valuelon("intelonrelonst")
 }

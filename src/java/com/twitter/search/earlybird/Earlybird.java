@@ -1,267 +1,267 @@
-package com.twitter.search.earlybird;
+packagelon com.twittelonr.selonarch.elonarlybird;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
+import java.io.Filelon;
+import java.io.IOelonxcelonption;
+import java.nelont.InelontAddrelonss;
+import java.nelont.UnknownHostelonxcelonption;
 import java.util.Arrays;
 import java.util.Map;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
+import java.util.function.Prelondicatelon;
+import java.util.strelonam.Collelonctors;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.app.Flag;
-import com.twitter.app.Flaggable;
-import com.twitter.finagle.Http;
-import com.twitter.finagle.http.HttpMuxer;
-import com.twitter.search.common.aurora.AuroraInstanceKey;
-import com.twitter.search.common.config.Config;
-import com.twitter.search.common.config.LoggerConfiguration;
-import com.twitter.search.common.constants.SearchThriftWebFormsAccess;
-import com.twitter.search.common.metrics.BuildInfoStats;
-import com.twitter.search.common.util.Kerberos;
-import com.twitter.search.common.util.PlatformStatsExporter;
-import com.twitter.search.earlybird.admin.EarlybirdAdminManager;
-import com.twitter.search.earlybird.admin.EarlybirdHealthHandler;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.common.config.EarlybirdProperty;
-import com.twitter.search.earlybird.exception.EarlybirdStartupException;
-import com.twitter.search.earlybird.exception.UncaughtExceptionHandler;
-import com.twitter.search.earlybird.factory.EarlybirdServerFactory;
-import com.twitter.search.earlybird.factory.EarlybirdWireModule;
-import com.twitter.search.earlybird.thrift.EarlybirdService;
-import com.twitter.search.earlybird.util.EarlybirdDecider;
-import com.twitter.server.handler.DeciderHandler$;
-import com.twitter.server.AbstractTwitterServer;
-import com.twitter.thriftwebforms.DisplaySettingsConfig;
-import com.twitter.thriftwebforms.MethodOptionsAccessConfig;
-import com.twitter.thriftwebforms.ThriftClientSettingsConfig;
-import com.twitter.thriftwebforms.ThriftMethodSettingsConfig;
-import com.twitter.thriftwebforms.ThriftServiceSettings;
-import com.twitter.thriftwebforms.ThriftWebFormsSettings;
-import com.twitter.thriftwebforms.TwitterServerThriftWebForms;
-import com.twitter.util.Await;
-import com.twitter.util.TimeoutException;
+import com.twittelonr.app.Flag;
+import com.twittelonr.app.Flaggablelon;
+import com.twittelonr.finaglelon.Http;
+import com.twittelonr.finaglelon.http.HttpMuxelonr;
+import com.twittelonr.selonarch.common.aurora.AuroraInstancelonKelony;
+import com.twittelonr.selonarch.common.config.Config;
+import com.twittelonr.selonarch.common.config.LoggelonrConfiguration;
+import com.twittelonr.selonarch.common.constants.SelonarchThriftWelonbFormsAccelonss;
+import com.twittelonr.selonarch.common.melontrics.BuildInfoStats;
+import com.twittelonr.selonarch.common.util.Kelonrbelonros;
+import com.twittelonr.selonarch.common.util.PlatformStatselonxportelonr;
+import com.twittelonr.selonarch.elonarlybird.admin.elonarlybirdAdminManagelonr;
+import com.twittelonr.selonarch.elonarlybird.admin.elonarlybirdHelonalthHandlelonr;
+import com.twittelonr.selonarch.elonarlybird.common.config.elonarlybirdConfig;
+import com.twittelonr.selonarch.elonarlybird.common.config.elonarlybirdPropelonrty;
+import com.twittelonr.selonarch.elonarlybird.elonxcelonption.elonarlybirdStartupelonxcelonption;
+import com.twittelonr.selonarch.elonarlybird.elonxcelonption.UncaughtelonxcelonptionHandlelonr;
+import com.twittelonr.selonarch.elonarlybird.factory.elonarlybirdSelonrvelonrFactory;
+import com.twittelonr.selonarch.elonarlybird.factory.elonarlybirdWirelonModulelon;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdSelonrvicelon;
+import com.twittelonr.selonarch.elonarlybird.util.elonarlybirdDeloncidelonr;
+import com.twittelonr.selonrvelonr.handlelonr.DeloncidelonrHandlelonr$;
+import com.twittelonr.selonrvelonr.AbstractTwittelonrSelonrvelonr;
+import com.twittelonr.thriftwelonbforms.DisplaySelonttingsConfig;
+import com.twittelonr.thriftwelonbforms.MelonthodOptionsAccelonssConfig;
+import com.twittelonr.thriftwelonbforms.ThriftClielonntSelonttingsConfig;
+import com.twittelonr.thriftwelonbforms.ThriftMelonthodSelonttingsConfig;
+import com.twittelonr.thriftwelonbforms.ThriftSelonrvicelonSelonttings;
+import com.twittelonr.thriftwelonbforms.ThriftWelonbFormsSelonttings;
+import com.twittelonr.thriftwelonbforms.TwittelonrSelonrvelonrThriftWelonbForms;
+import com.twittelonr.util.Await;
+import com.twittelonr.util.Timelonoutelonxcelonption;
 
-public class Earlybird extends AbstractTwitterServer {
-  private static final Logger LOG = LoggerFactory.getLogger(Earlybird.class);
+public class elonarlybird elonxtelonnds AbstractTwittelonrSelonrvelonr {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(elonarlybird.class);
 
-  // Flags defined here need to be processed before setting override values to EarlybirdConfig.
+  // Flags delonfinelond helonrelon nelonelond to belon procelonsselond belonforelon selontting ovelonrridelon valuelons to elonarlybirdConfig.
 
-  private final Flag<File> configFile = flag().create(
-      "config_file",
-      new File("earlybird-search.yml"),
-      "specify config file",
-      Flaggable.ofFile()
+  privatelon final Flag<Filelon> configFilelon = flag().crelonatelon(
+      "config_filelon",
+      nelonw Filelon("elonarlybird-selonarch.yml"),
+      "speloncify config filelon",
+      Flaggablelon.ofFilelon()
   );
 
-  private final Flag<String> logDir = flag().create(
-      "earlybird_log_dir",
+  privatelon final Flag<String> logDir = flag().crelonatelon(
+      "elonarlybird_log_dir",
       "",
-      "override log dir from config file",
-      Flaggable.ofString()
+      "ovelonrridelon log dir from config filelon",
+      Flaggablelon.ofString()
   );
 
-  private final Map<String, Flag<?>> flagMap = Arrays.stream(EarlybirdProperty.values())
-      .collect(Collectors.toMap(
-          property -> property.name(),
-          property -> property.createFlag(flag())));
+  privatelon final Map<String, Flag<?>> flagMap = Arrays.strelonam(elonarlybirdPropelonrty.valuelons())
+      .collelonct(Collelonctors.toMap(
+          propelonrty -> propelonrty.namelon(),
+          propelonrty -> propelonrty.crelonatelonFlag(flag())));
 
-  private final UncaughtExceptionHandler uncaughtExceptionHandler =
-      new UncaughtExceptionHandler();
+  privatelon final UncaughtelonxcelonptionHandlelonr uncaughtelonxcelonptionHandlelonr =
+      nelonw UncaughtelonxcelonptionHandlelonr();
 
-  private EarlybirdServer earlybirdServer;
-  private EarlybirdAdminManager earlybirdAdminManager;
+  privatelon elonarlybirdSelonrvelonr elonarlybirdSelonrvelonr;
+  privatelon elonarlybirdAdminManagelonr elonarlybirdAdminManagelonr;
 
-  public Earlybird() {
-    // Default health handler is added inside Lifecycle trait.  To override that we need to set it
-    // in the constructor since HttpAdminServer is started before Earlybird.preMain() is called.
-    HttpMuxer.addHandler("/health", new EarlybirdHealthHandler());
+  public elonarlybird() {
+    // Delonfault helonalth handlelonr is addelond insidelon Lifeloncyclelon trait.  To ovelonrridelon that welon nelonelond to selont it
+    // in thelon constructor sincelon HttpAdminSelonrvelonr is startelond belonforelon elonarlybird.prelonMain() is callelond.
+    HttpMuxelonr.addHandlelonr("/helonalth", nelonw elonarlybirdHelonalthHandlelonr());
   }
 
   /**
-   * Needs to be called from preMain and not from onInit() as flags / args parsing happens after
-   * onInit() is called.
+   * Nelonelonds to belon callelond from prelonMain and not from onInit() as flags / args parsing happelonns aftelonr
+   * onInit() is callelond.
    */
-  @VisibleForTesting
-  void configureFromFlagsAndSetupLogging() {
-    // Makes sure the EarlybirdStats is injected with a variable repository.
-    EarlybirdConfig.init(configFile.getWithDefault().get().getName());
+  @VisiblelonForTelonsting
+  void configurelonFromFlagsAndSelontupLogging() {
+    // Makelons surelon thelon elonarlybirdStats is injelonctelond with a variablelon relonpository.
+    elonarlybirdConfig.init(configFilelon.gelontWithDelonfault().gelont().gelontNamelon());
 
-    if (logDir.isDefined()) {
-      EarlybirdConfig.overrideLogDir(logDir.get().get());
+    if (logDir.isDelonfinelond()) {
+      elonarlybirdConfig.ovelonrridelonLogDir(logDir.gelont().gelont());
     }
-    new LoggerConfiguration(EarlybirdConfig.getLogPropertiesFile(),
-        EarlybirdConfig.getLogDir()).configure();
+    nelonw LoggelonrConfiguration(elonarlybirdConfig.gelontLogPropelonrtielonsFilelon(),
+        elonarlybirdConfig.gelontLogDir()).configurelon();
 
-    String instanceKey = System.getProperty("aurora.instanceKey");
-    if (instanceKey != null) {
-      EarlybirdConfig.setAuroraInstanceKey(AuroraInstanceKey.fromInstanceKey(instanceKey));
-      LOG.info("Earlybird is running on Aurora");
-      checkRequiredProperties(EarlybirdProperty::isRequiredOnAurora, "Aurora");
-    } else {
-      LOG.info("Earlybird is running on dedicated hardware");
-      checkRequiredProperties(EarlybirdProperty::isRequiredOnDedicated, "dedicated hardware");
+    String instancelonKelony = Systelonm.gelontPropelonrty("aurora.instancelonKelony");
+    if (instancelonKelony != null) {
+      elonarlybirdConfig.selontAuroraInstancelonKelony(AuroraInstancelonKelony.fromInstancelonKelony(instancelonKelony));
+      LOG.info("elonarlybird is running on Aurora");
+      chelonckRelonquirelondPropelonrtielons(elonarlybirdPropelonrty::isRelonquirelondOnAurora, "Aurora");
+    } elonlselon {
+      LOG.info("elonarlybird is running on delondicatelond hardwarelon");
+      chelonckRelonquirelondPropelonrtielons(elonarlybirdPropelonrty::isRelonquirelondOnDelondicatelond, "delondicatelond hardwarelon");
     }
-    LOG.info("Config environment: {}", Config.getEnvironment());
+    LOG.info("Config elonnvironmelonnt: {}", Config.gelontelonnvironmelonnt());
 
-    if (adminPort().isDefined() && adminPort().get().isDefined()) {
-      int adminPort = adminPort().get().get().getPort();
+    if (adminPort().isDelonfinelond() && adminPort().gelont().isDelonfinelond()) {
+      int adminPort = adminPort().gelont().gelont().gelontPort();
       LOG.info("Admin port is {}", adminPort);
-      EarlybirdConfig.setAdminPort(adminPort);
+      elonarlybirdConfig.selontAdminPort(adminPort);
     }
 
-    EarlybirdConfig.setOverrideValues(
-        flagMap.values().stream()
-            .filter(Flag::isDefined)
-            .collect(Collectors.toMap(Flag::name, flag -> flag.get().get())));
+    elonarlybirdConfig.selontOvelonrridelonValuelons(
+        flagMap.valuelons().strelonam()
+            .filtelonr(Flag::isDelonfinelond)
+            .collelonct(Collelonctors.toMap(Flag::namelon, flag -> flag.gelont().gelont())));
   }
 
-  private void checkRequiredProperties(
-      Predicate<EarlybirdProperty> propertyPredicate, String location) {
-    Arrays.stream(EarlybirdProperty.values())
-        .filter(propertyPredicate)
-        .map(property -> flagMap.get(property.name()))
-        .forEach(flag ->
-            Preconditions.checkState(flag.isDefined(),
-                "-%s is required on %s", flag.name(), location));
+  privatelon void chelonckRelonquirelondPropelonrtielons(
+      Prelondicatelon<elonarlybirdPropelonrty> propelonrtyPrelondicatelon, String location) {
+    Arrays.strelonam(elonarlybirdPropelonrty.valuelons())
+        .filtelonr(propelonrtyPrelondicatelon)
+        .map(propelonrty -> flagMap.gelont(propelonrty.namelon()))
+        .forelonach(flag ->
+            Prelonconditions.chelonckStatelon(flag.isDelonfinelond(),
+                "-%s is relonquirelond on %s", flag.namelon(), location));
   }
 
-  private void logEarlybirdInfo() {
+  privatelon void logelonarlybirdInfo() {
     try {
-      LOG.info("Hostname: {}", InetAddress.getLocalHost().getHostName());
-    } catch (UnknownHostException e) {
-      LOG.info("Unable to be get local host: {}", e.getMessage());
+      LOG.info("Hostnamelon: {}", InelontAddrelonss.gelontLocalHost().gelontHostNamelon());
+    } catch (UnknownHostelonxcelonption elon) {
+      LOG.info("Unablelon to belon gelont local host: {}", elon.gelontMelonssagelon());
     }
-    LOG.info("Earlybird info [Name: {}, Zone: {}, Env: {}]",
-            EarlybirdProperty.EARLYBIRD_NAME.get(),
-            EarlybirdProperty.ZONE.get(),
-            EarlybirdProperty.ENV.get());
-    LOG.info("Earlybird scrubgen from Aurora: {}]",
-        EarlybirdProperty.EARLYBIRD_SCRUB_GEN.get());
-    LOG.info("Find final partition config by searching the log for \"Partition config info\"");
+    LOG.info("elonarlybird info [Namelon: {}, Zonelon: {}, elonnv: {}]",
+            elonarlybirdPropelonrty.elonARLYBIRD_NAMelon.gelont(),
+            elonarlybirdPropelonrty.ZONelon.gelont(),
+            elonarlybirdPropelonrty.elonNV.gelont());
+    LOG.info("elonarlybird scrubgelonn from Aurora: {}]",
+        elonarlybirdPropelonrty.elonARLYBIRD_SCRUB_GelonN.gelont());
+    LOG.info("Find final partition config by selonarching thelon log for \"Partition config info\"");
   }
 
-  private EarlybirdServer makeEarlybirdServer() {
-    EarlybirdWireModule earlybirdWireModule = new EarlybirdWireModule();
-    EarlybirdServerFactory earlybirdFactory = new EarlybirdServerFactory();
+  privatelon elonarlybirdSelonrvelonr makelonelonarlybirdSelonrvelonr() {
+    elonarlybirdWirelonModulelon elonarlybirdWirelonModulelon = nelonw elonarlybirdWirelonModulelon();
+    elonarlybirdSelonrvelonrFactory elonarlybirdFactory = nelonw elonarlybirdSelonrvelonrFactory();
     try {
-      return earlybirdFactory.makeEarlybirdServer(earlybirdWireModule);
-    } catch (IOException e) {
-      LOG.error("Exception while constructing EarlybirdServer.", e);
-      throw new RuntimeException(e);
+      relonturn elonarlybirdFactory.makelonelonarlybirdSelonrvelonr(elonarlybirdWirelonModulelon);
+    } catch (IOelonxcelonption elon) {
+      LOG.elonrror("elonxcelonption whilelon constructing elonarlybirdSelonrvelonr.", elon);
+      throw nelonw Runtimelonelonxcelonption(elon);
     }
   }
 
-  private void setupThriftWebForms() {
-    TwitterServerThriftWebForms.addAdminRoutes(this, TwitterServerThriftWebForms.apply(
-        ThriftWebFormsSettings.apply(
-            DisplaySettingsConfig.DEFAULT,
-            ThriftServiceSettings.apply(
-                EarlybirdService.ServiceIface.class.getSimpleName(),
-                EarlybirdConfig.getThriftPort()),
-            ThriftClientSettingsConfig.makeCompactRequired(
-                EarlybirdProperty.getServiceIdentifier()),
-            ThriftMethodSettingsConfig.access(
-              MethodOptionsAccessConfig.byLdapGroup(
-                SearchThriftWebFormsAccess.READ_LDAP_GROUP))),
-        scala.reflect.ClassTag$.MODULE$.apply(EarlybirdService.ServiceIface.class)));
+  privatelon void selontupThriftWelonbForms() {
+    TwittelonrSelonrvelonrThriftWelonbForms.addAdminRoutelons(this, TwittelonrSelonrvelonrThriftWelonbForms.apply(
+        ThriftWelonbFormsSelonttings.apply(
+            DisplaySelonttingsConfig.DelonFAULT,
+            ThriftSelonrvicelonSelonttings.apply(
+                elonarlybirdSelonrvicelon.SelonrvicelonIfacelon.class.gelontSimplelonNamelon(),
+                elonarlybirdConfig.gelontThriftPort()),
+            ThriftClielonntSelonttingsConfig.makelonCompactRelonquirelond(
+                elonarlybirdPropelonrty.gelontSelonrvicelonIdelonntifielonr()),
+            ThriftMelonthodSelonttingsConfig.accelonss(
+              MelonthodOptionsAccelonssConfig.byLdapGroup(
+                SelonarchThriftWelonbFormsAccelonss.RelonAD_LDAP_GROUP))),
+        scala.relonflelonct.ClassTag$.MODULelon$.apply(elonarlybirdSelonrvicelon.SelonrvicelonIfacelon.class)));
   }
 
-  private void setupDeciderWebForms() {
-    addAdminRoute(
-        DeciderHandler$.MODULE$.route(
-            "earlybird",
-            EarlybirdDecider.getMutableDecisionMaker(),
-            EarlybirdDecider.getDecider()));
+  privatelon void selontupDeloncidelonrWelonbForms() {
+    addAdminRoutelon(
+        DeloncidelonrHandlelonr$.MODULelon$.routelon(
+            "elonarlybird",
+            elonarlybirdDeloncidelonr.gelontMutablelonDeloncisionMakelonr(),
+            elonarlybirdDeloncidelonr.gelontDeloncidelonr()));
   }
 
-  @Override
-  public Http.Server configureAdminHttpServer(Http.Server server) {
-    return server.withMonitor(uncaughtExceptionHandler);
+  @Ovelonrridelon
+  public Http.Selonrvelonr configurelonAdminHttpSelonrvelonr(Http.Selonrvelonr selonrvelonr) {
+    relonturn selonrvelonr.withMonitor(uncaughtelonxcelonptionHandlelonr);
   }
 
-  @Override
-  public void preMain() {
-    configureFromFlagsAndSetupLogging();
-    logEarlybirdInfo();
-    LOG.info("Starting preMain()");
+  @Ovelonrridelon
+  public void prelonMain() {
+    configurelonFromFlagsAndSelontupLogging();
+    logelonarlybirdInfo();
+    LOG.info("Starting prelonMain()");
 
-    BuildInfoStats.export();
-    PlatformStatsExporter.exportPlatformStats();
+    BuildInfoStats.elonxport();
+    PlatformStatselonxportelonr.elonxportPlatformStats();
 
-    // Use our own exception handler to monitor all unhandled exceptions.
-    Thread.setDefaultUncaughtExceptionHandler((thread, e) -> {
-      LOG.error("Invoked default uncaught exception handler.");
-      uncaughtExceptionHandler.handle(e);
+    // Uselon our own elonxcelonption handlelonr to monitor all unhandlelond elonxcelonptions.
+    Threlonad.selontDelonfaultUncaughtelonxcelonptionHandlelonr((threlonad, elon) -> {
+      LOG.elonrror("Invokelond delonfault uncaught elonxcelonption handlelonr.");
+      uncaughtelonxcelonptionHandlelonr.handlelon(elon);
     });
-    LOG.info("Registered unhandled exception monitor.");
+    LOG.info("Relongistelonrelond unhandlelond elonxcelonption monitor.");
 
-    Kerberos.kinit(
-        EarlybirdConfig.getString("kerberos_user", ""),
-        EarlybirdConfig.getString("kerberos_keytab_path", "")
+    Kelonrbelonros.kinit(
+        elonarlybirdConfig.gelontString("kelonrbelonros_uselonr", ""),
+        elonarlybirdConfig.gelontString("kelonrbelonros_kelonytab_path", "")
     );
 
-    LOG.info("Creating earlybird server.");
-    earlybirdServer = makeEarlybirdServer();
+    LOG.info("Crelonating elonarlybird selonrvelonr.");
+    elonarlybirdSelonrvelonr = makelonelonarlybirdSelonrvelonr();
 
-    uncaughtExceptionHandler.setShutdownHook(() -> {
-      earlybirdServer.shutdown();
-      this.close();
+    uncaughtelonxcelonptionHandlelonr.selontShutdownHook(() -> {
+      elonarlybirdSelonrvelonr.shutdown();
+      this.closelon();
     });
 
-    earlybirdAdminManager = EarlybirdAdminManager.create(earlybirdServer);
-    earlybirdAdminManager.start();
-    LOG.info("Started admin interface.");
+    elonarlybirdAdminManagelonr = elonarlybirdAdminManagelonr.crelonatelon(elonarlybirdSelonrvelonr);
+    elonarlybirdAdminManagelonr.start();
+    LOG.info("Startelond admin intelonrfacelon.");
 
-    setupThriftWebForms();
-    setupDeciderWebForms();
+    selontupThriftWelonbForms();
+    selontupDeloncidelonrWelonbForms();
 
-    LOG.info("Opened thrift serving form.");
+    LOG.info("Opelonnelond thrift selonrving form.");
 
-    LOG.info("preMain() complete.");
+    LOG.info("prelonMain() complelontelon.");
   }
 
-  @Override
-  public void main() throws InterruptedException, TimeoutException, EarlybirdStartupException {
-    innerMain();
+  @Ovelonrridelon
+  public void main() throws Intelonrruptelondelonxcelonption, Timelonoutelonxcelonption, elonarlybirdStartupelonxcelonption {
+    innelonrMain();
   }
 
   /**
-   * Setting up an innerMain() so that tests can mock out the contents of main without interfering
-   * with reflection being done in App.scala looking for a method named "main".
+   * Selontting up an innelonrMain() so that telonsts can mock out thelon contelonnts of main without intelonrfelonring
+   * with relonflelonction beloning donelon in App.scala looking for a melonthod namelond "main".
    */
-  @VisibleForTesting
-  void innerMain() throws TimeoutException, InterruptedException, EarlybirdStartupException {
+  @VisiblelonForTelonsting
+  void innelonrMain() throws Timelonoutelonxcelonption, Intelonrruptelondelonxcelonption, elonarlybirdStartupelonxcelonption {
     LOG.info("Starting main().");
 
-    // If this method throws, TwitterServer will catch the exception and call close, so we don't
-    // catch it here.
+    // If this melonthod throws, TwittelonrSelonrvelonr will catch thelon elonxcelonption and call closelon, so welon don't
+    // catch it helonrelon.
     try {
-      earlybirdServer.start();
-    } catch (Throwable throwable) {
-      LOG.error("Exception while starting:", throwable);
-      throw throwable;
+      elonarlybirdSelonrvelonr.start();
+    } catch (Throwablelon throwablelon) {
+      LOG.elonrror("elonxcelonption whilelon starting:", throwablelon);
+      throw throwablelon;
     }
 
-    Await.ready(adminHttpServer());
-    LOG.info("main() complete.");
+    Await.relonady(adminHttpSelonrvelonr());
+    LOG.info("main() complelontelon.");
   }
 
-  @Override
-  public void onExit() {
-    LOG.info("Starting onExit()");
-    earlybirdServer.shutdown();
+  @Ovelonrridelon
+  public void onelonxit() {
+    LOG.info("Starting onelonxit()");
+    elonarlybirdSelonrvelonr.shutdown();
     try {
-      earlybirdAdminManager.doShutdown();
-    } catch (InterruptedException e) {
-      LOG.warn("earlybirdAdminManager shutdown was interrupted with " + e);
+      elonarlybirdAdminManagelonr.doShutdown();
+    } catch (Intelonrruptelondelonxcelonption elon) {
+      LOG.warn("elonarlybirdAdminManagelonr shutdown was intelonrruptelond with " + elon);
     }
-    LOG.info("onExit() complete.");
+    LOG.info("onelonxit() complelontelon.");
   }
 }

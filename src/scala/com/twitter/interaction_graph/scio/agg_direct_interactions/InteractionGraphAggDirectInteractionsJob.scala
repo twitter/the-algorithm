@@ -1,77 +1,77 @@
-package com.twitter.interaction_graph.scio.agg_direct_interactions
+packagelon com.twittelonr.intelonraction_graph.scio.agg_direlonct_intelonractions
 
-import com.spotify.scio.ScioContext
-import com.twitter.beam.io.dal.DAL
-import com.twitter.beam.io.dal.DAL.DiskFormat
-import com.twitter.beam.io.fs.multiformat.PathLayout
-import com.twitter.beam.io.fs.multiformat.WriteOptions
-import com.twitter.beam.job.ServiceIdentifierOptions
-import com.twitter.interaction_graph.scio.common.UserUtil
-import com.twitter.interaction_graph.thriftscala.Edge
-import com.twitter.interaction_graph.thriftscala.Vertex
-import com.twitter.scio_internal.job.ScioBeamJob
-import com.twitter.statebird.v2.thriftscala.Environment
-import org.joda.time.Interval
+import com.spotify.scio.ScioContelonxt
+import com.twittelonr.belonam.io.dal.DAL
+import com.twittelonr.belonam.io.dal.DAL.DiskFormat
+import com.twittelonr.belonam.io.fs.multiformat.PathLayout
+import com.twittelonr.belonam.io.fs.multiformat.WritelonOptions
+import com.twittelonr.belonam.job.SelonrvicelonIdelonntifielonrOptions
+import com.twittelonr.intelonraction_graph.scio.common.UselonrUtil
+import com.twittelonr.intelonraction_graph.thriftscala.elondgelon
+import com.twittelonr.intelonraction_graph.thriftscala.Velonrtelonx
+import com.twittelonr.scio_intelonrnal.job.ScioBelonamJob
+import com.twittelonr.statelonbird.v2.thriftscala.elonnvironmelonnt
+import org.joda.timelon.Intelonrval
 
-object InteractionGraphAggDirectInteractionsJob
-    extends ScioBeamJob[InteractionGraphAggDirectInteractionsOption] {
-  override protected def configurePipeline(
-    scioContext: ScioContext,
-    pipelineOptions: InteractionGraphAggDirectInteractionsOption
+objelonct IntelonractionGraphAggDirelonctIntelonractionsJob
+    elonxtelonnds ScioBelonamJob[IntelonractionGraphAggDirelonctIntelonractionsOption] {
+  ovelonrridelon protelonctelond delonf configurelonPipelonlinelon(
+    scioContelonxt: ScioContelonxt,
+    pipelonlinelonOptions: IntelonractionGraphAggDirelonctIntelonractionsOption
   ): Unit = {
-    @transient
-    implicit lazy val sc: ScioContext = scioContext
-    implicit lazy val dateInterval: Interval = pipelineOptions.interval
+    @transielonnt
+    implicit lazy val sc: ScioContelonxt = scioContelonxt
+    implicit lazy val datelonIntelonrval: Intelonrval = pipelonlinelonOptions.intelonrval
 
-    val dalEnvironment: String = pipelineOptions
-      .as(classOf[ServiceIdentifierOptions])
-      .getEnvironment()
-    val dalWriteEnvironment = if (pipelineOptions.getDALWriteEnvironment != null) {
-      pipelineOptions.getDALWriteEnvironment
-    } else {
-      dalEnvironment
+    val dalelonnvironmelonnt: String = pipelonlinelonOptions
+      .as(classOf[SelonrvicelonIdelonntifielonrOptions])
+      .gelontelonnvironmelonnt()
+    val dalWritelonelonnvironmelonnt = if (pipelonlinelonOptions.gelontDALWritelonelonnvironmelonnt != null) {
+      pipelonlinelonOptions.gelontDALWritelonelonnvironmelonnt
+    } elonlselon {
+      dalelonnvironmelonnt
     }
 
-    val source = InteractionGraphAggDirectInteractionsSource(pipelineOptions)
+    val sourcelon = IntelonractionGraphAggDirelonctIntelonractionsSourcelon(pipelonlinelonOptions)
 
-    val rawUsers = source.readCombinedUsers()
-    val safeUsers = UserUtil.getValidUsers(rawUsers)
+    val rawUselonrs = sourcelon.relonadCombinelondUselonrs()
+    val safelonUselonrs = UselonrUtil.gelontValidUselonrs(rawUselonrs)
 
-    val rawFavorites = source.readFavorites(dateInterval)
-    val rawPhotoTags = source.readPhotoTags(dateInterval)
-    val tweetSource = source.readTweetSource(dateInterval)
+    val rawFavoritelons = sourcelon.relonadFavoritelons(datelonIntelonrval)
+    val rawPhotoTags = sourcelon.relonadPhotoTags(datelonIntelonrval)
+    val twelonelontSourcelon = sourcelon.relonadTwelonelontSourcelon(datelonIntelonrval)
 
-    val (vertex, edges) = InteractionGraphAggDirectInteractionsUtil.process(
-      rawFavorites,
-      tweetSource,
+    val (velonrtelonx, elondgelons) = IntelonractionGraphAggDirelonctIntelonractionsUtil.procelonss(
+      rawFavoritelons,
+      twelonelontSourcelon,
       rawPhotoTags,
-      safeUsers
+      safelonUselonrs
     )
 
-    vertex.saveAsCustomOutput(
-      "Write Vertex Records",
-      DAL.write[Vertex](
-        InteractionGraphAggDirectInteractionsVertexDailyScalaDataset,
+    velonrtelonx.savelonAsCustomOutput(
+      "Writelon Velonrtelonx Reloncords",
+      DAL.writelon[Velonrtelonx](
+        IntelonractionGraphAggDirelonctIntelonractionsVelonrtelonxDailyScalaDataselont,
         PathLayout.DailyPath(
-          pipelineOptions.getOutputPath + "/aggregated_direct_interactions_vertex_daily"),
-        dateInterval,
-        DiskFormat.Parquet,
-        Environment.valueOf(dalWriteEnvironment),
-        writeOption =
-          WriteOptions(numOfShards = Some((pipelineOptions.getNumberOfShards / 8.0).ceil.toInt))
+          pipelonlinelonOptions.gelontOutputPath + "/aggrelongatelond_direlonct_intelonractions_velonrtelonx_daily"),
+        datelonIntelonrval,
+        DiskFormat.Parquelont,
+        elonnvironmelonnt.valuelonOf(dalWritelonelonnvironmelonnt),
+        writelonOption =
+          WritelonOptions(numOfShards = Somelon((pipelonlinelonOptions.gelontNumbelonrOfShards / 8.0).celonil.toInt))
       )
     )
 
-    edges.saveAsCustomOutput(
-      "Write Edge Records",
-      DAL.write[Edge](
-        InteractionGraphAggDirectInteractionsEdgeDailyScalaDataset,
+    elondgelons.savelonAsCustomOutput(
+      "Writelon elondgelon Reloncords",
+      DAL.writelon[elondgelon](
+        IntelonractionGraphAggDirelonctIntelonractionselondgelonDailyScalaDataselont,
         PathLayout.DailyPath(
-          pipelineOptions.getOutputPath + "/aggregated_direct_interactions_edge_daily"),
-        dateInterval,
-        DiskFormat.Parquet,
-        Environment.valueOf(dalWriteEnvironment),
-        writeOption = WriteOptions(numOfShards = Some(pipelineOptions.getNumberOfShards))
+          pipelonlinelonOptions.gelontOutputPath + "/aggrelongatelond_direlonct_intelonractions_elondgelon_daily"),
+        datelonIntelonrval,
+        DiskFormat.Parquelont,
+        elonnvironmelonnt.valuelonOf(dalWritelonelonnvironmelonnt),
+        writelonOption = WritelonOptions(numOfShards = Somelon(pipelonlinelonOptions.gelontNumbelonrOfShards))
       )
     )
 

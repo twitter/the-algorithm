@@ -1,51 +1,51 @@
-package com.twitter.search.common.search;
+packagelon com.twittelonr.selonarch.common.selonarch;
 
 import javax.annotation.Nonnull;
 
-import com.google.common.base.Preconditions;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import com.twitter.search.common.metrics.SearchCounter;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
 
 /**
- * This is not an enum to allow different clusters to define their own EarlyTerminationStates.
+ * This is not an elonnum to allow diffelonrelonnt clustelonrs to delonfinelon thelonir own elonarlyTelonrminationStatelons.
  */
-public final class EarlyTerminationState {
-  private static final String STATS_PREFIX = "early_termination_";
+public final class elonarlyTelonrminationStatelon {
+  privatelon static final String STATS_PRelonFIX = "elonarly_telonrmination_";
 
-  public static final EarlyTerminationState COLLECTING =
-      new EarlyTerminationState("no_early_termination", false);
-  public static final EarlyTerminationState TERMINATED_TIME_OUT_EXCEEDED =
-      new EarlyTerminationState("terminated_timeout_exceeded", true);
-  public static final EarlyTerminationState TERMINATED_MAX_QUERY_COST_EXCEEDED =
-      new EarlyTerminationState("terminated_max_query_cost_exceeded", true);
-  public static final EarlyTerminationState TERMINATED_MAX_HITS_EXCEEDED =
-      new EarlyTerminationState("terminated_max_hits_exceeded", true);
-  public static final EarlyTerminationState TERMINATED_NUM_RESULTS_EXCEEDED =
-      new EarlyTerminationState("terminated_num_results_exceeded", true);
+  public static final elonarlyTelonrminationStatelon COLLelonCTING =
+      nelonw elonarlyTelonrminationStatelon("no_elonarly_telonrmination", falselon);
+  public static final elonarlyTelonrminationStatelon TelonRMINATelonD_TIMelon_OUT_elonXCelonelonDelonD =
+      nelonw elonarlyTelonrminationStatelon("telonrminatelond_timelonout_elonxcelonelondelond", truelon);
+  public static final elonarlyTelonrminationStatelon TelonRMINATelonD_MAX_QUelonRY_COST_elonXCelonelonDelonD =
+      nelonw elonarlyTelonrminationStatelon("telonrminatelond_max_quelonry_cost_elonxcelonelondelond", truelon);
+  public static final elonarlyTelonrminationStatelon TelonRMINATelonD_MAX_HITS_elonXCelonelonDelonD =
+      nelonw elonarlyTelonrminationStatelon("telonrminatelond_max_hits_elonxcelonelondelond", truelon);
+  public static final elonarlyTelonrminationStatelon TelonRMINATelonD_NUM_RelonSULTS_elonXCelonelonDelonD =
+      nelonw elonarlyTelonrminationStatelon("telonrminatelond_num_relonsults_elonxcelonelondelond", truelon);
 
 
-  // This string can be returned as a part of a search response, to tell the searcher
-  // why the search got early terminated.
-  private final String terminationReason;
-  private final boolean terminated;
-  private final SearchCounter count;
+  // This string can belon relonturnelond as a part of a selonarch relonsponselon, to telonll thelon selonarchelonr
+  // why thelon selonarch got elonarly telonrminatelond.
+  privatelon final String telonrminationRelonason;
+  privatelon final boolelonan telonrminatelond;
+  privatelon final SelonarchCountelonr count;
 
-  public EarlyTerminationState(@Nonnull String terminationReason, boolean terminated) {
-    this.terminationReason = Preconditions.checkNotNull(terminationReason);
-    this.terminated = terminated;
-    count = SearchCounter.export(STATS_PREFIX + terminationReason + "_count");
+  public elonarlyTelonrminationStatelon(@Nonnull String telonrminationRelonason, boolelonan telonrminatelond) {
+    this.telonrminationRelonason = Prelonconditions.chelonckNotNull(telonrminationRelonason);
+    this.telonrminatelond = telonrminatelond;
+    count = SelonarchCountelonr.elonxport(STATS_PRelonFIX + telonrminationRelonason + "_count");
 
   }
 
-  public boolean isTerminated() {
-    return terminated;
+  public boolelonan isTelonrminatelond() {
+    relonturn telonrminatelond;
   }
 
-  public String getTerminationReason() {
-    return terminationReason;
+  public String gelontTelonrminationRelonason() {
+    relonturn telonrminationRelonason;
   }
 
-  public void incrementCount() {
-    count.increment();
+  public void increlonmelonntCount() {
+    count.increlonmelonnt();
   }
 }

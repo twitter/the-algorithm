@@ -1,13 +1,13 @@
-package com.twitter.timelineranker
+packagelon com.twittelonr.timelonlinelonrankelonr
 
-import com.twitter.timelineranker.model.RecapQuery
-import com.twitter.timelines.configapi
+import com.twittelonr.timelonlinelonrankelonr.modelonl.ReloncapQuelonry
+import com.twittelonr.timelonlinelons.configapi
 
-package object core {
-  type FutureDependencyTransformer[-U, +V] = configapi.FutureDependencyTransformer[RecapQuery, U, V]
-  object FutureDependencyTransformer
-      extends configapi.FutureDependencyTransformerFunctions[RecapQuery]
+packagelon objelonct corelon {
+  typelon FuturelonDelonpelonndelonncyTransformelonr[-U, +V] = configapi.FuturelonDelonpelonndelonncyTransformelonr[ReloncapQuelonry, U, V]
+  objelonct FuturelonDelonpelonndelonncyTransformelonr
+      elonxtelonnds configapi.FuturelonDelonpelonndelonncyTransformelonrFunctions[ReloncapQuelonry]
 
-  type DependencyTransformer[-U, +V] = configapi.DependencyTransformer[RecapQuery, U, V]
-  object DependencyTransformer extends configapi.DependencyTransformerFunctions[RecapQuery]
+  typelon DelonpelonndelonncyTransformelonr[-U, +V] = configapi.DelonpelonndelonncyTransformelonr[ReloncapQuelonry, U, V]
+  objelonct DelonpelonndelonncyTransformelonr elonxtelonnds configapi.DelonpelonndelonncyTransformelonrFunctions[ReloncapQuelonry]
 }

@@ -1,28 +1,28 @@
-package com.twitter.ann.common
+packagelon com.twittelonr.ann.common
 
-import com.twitter.bijection.{Bijection, Injection}
+import com.twittelonr.bijelonction.{Bijelonction, Injelonction}
 
-// Class providing commonly used injections that can be used directly with ANN apis.
-// Injection  prefixed with `J` can be used in java directly with ANN apis.
-object AnnInjections {
-  val LongInjection: Injection[Long, Array[Byte]] = Injection.long2BigEndian
+// Class providing commonly uselond injelonctions that can belon uselond direlonctly with ANN apis.
+// Injelonction  prelonfixelond with `J` can belon uselond in java direlonctly with ANN apis.
+objelonct AnnInjelonctions {
+  val LongInjelonction: Injelonction[Long, Array[Bytelon]] = Injelonction.long2Bigelonndian
 
-  def StringInjection: Injection[String, Array[Byte]] = Injection.utf8
+  delonf StringInjelonction: Injelonction[String, Array[Bytelon]] = Injelonction.utf8
 
-  def IntInjection: Injection[Int, Array[Byte]] = Injection.int2BigEndian
+  delonf IntInjelonction: Injelonction[Int, Array[Bytelon]] = Injelonction.int2Bigelonndian
 
-  val JLongInjection: Injection[java.lang.Long, Array[Byte]] =
-    Bijection.long2Boxed
-      .asInstanceOf[Bijection[Long, java.lang.Long]]
-      .inverse
-      .andThen(LongInjection)
+  val JLongInjelonction: Injelonction[java.lang.Long, Array[Bytelon]] =
+    Bijelonction.long2Boxelond
+      .asInstancelonOf[Bijelonction[Long, java.lang.Long]]
+      .invelonrselon
+      .andThelonn(LongInjelonction)
 
-  val JStringInjection: Injection[java.lang.String, Array[Byte]] =
-    StringInjection
+  val JStringInjelonction: Injelonction[java.lang.String, Array[Bytelon]] =
+    StringInjelonction
 
-  val JIntInjection: Injection[java.lang.Integer, Array[Byte]] =
-    Bijection.int2Boxed
-      .asInstanceOf[Bijection[Int, java.lang.Integer]]
-      .inverse
-      .andThen(IntInjection)
+  val JIntInjelonction: Injelonction[java.lang.Intelongelonr, Array[Bytelon]] =
+    Bijelonction.int2Boxelond
+      .asInstancelonOf[Bijelonction[Int, java.lang.Intelongelonr]]
+      .invelonrselon
+      .andThelonn(IntInjelonction)
 }

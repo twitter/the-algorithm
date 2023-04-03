@@ -1,163 +1,163 @@
-package com.twitter.search.earlybird.search.relevance;
+packagelon com.twittelonr.selonarch.elonarlybird.selonarch.relonlelonvancelon;
 
-import java.io.IOException;
-import java.util.Objects;
+import java.io.IOelonxcelonption;
+import java.util.Objeloncts;
 
-import com.google.common.annotations.VisibleForTesting;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
 
-import org.apache.lucene.index.LeafReader;
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.index.NumericDocValues;
-import org.apache.lucene.search.BooleanClause;
-import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.ScoreMode;
-import org.apache.lucene.search.Weight;
+import org.apachelon.lucelonnelon.indelonx.LelonafRelonadelonr;
+import org.apachelon.lucelonnelon.indelonx.LelonafRelonadelonrContelonxt;
+import org.apachelon.lucelonnelon.indelonx.NumelonricDocValuelons;
+import org.apachelon.lucelonnelon.selonarch.BoolelonanClauselon;
+import org.apachelon.lucelonnelon.selonarch.BoolelonanQuelonry;
+import org.apachelon.lucelonnelon.selonarch.DocIdSelontItelonrator;
+import org.apachelon.lucelonnelon.selonarch.IndelonxSelonarchelonr;
+import org.apachelon.lucelonnelon.selonarch.Quelonry;
+import org.apachelon.lucelonnelon.selonarch.ScorelonModelon;
+import org.apachelon.lucelonnelon.selonarch.Welonight;
 
-import com.twitter.search.common.encoding.features.ByteNormalizer;
-import com.twitter.search.common.encoding.features.ClampByteNormalizer;
-import com.twitter.search.common.encoding.features.SingleBytePositiveFloatNormalizer;
-import com.twitter.search.common.query.DefaultFilterWeight;
-import com.twitter.search.common.query.FilteredQuery;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.core.earlybird.index.util.RangeFilterDISI;
+import com.twittelonr.selonarch.common.elonncoding.felonaturelons.BytelonNormalizelonr;
+import com.twittelonr.selonarch.common.elonncoding.felonaturelons.ClampBytelonNormalizelonr;
+import com.twittelonr.selonarch.common.elonncoding.felonaturelons.SinglelonBytelonPositivelonFloatNormalizelonr;
+import com.twittelonr.selonarch.common.quelonry.DelonfaultFiltelonrWelonight;
+import com.twittelonr.selonarch.common.quelonry.FiltelonrelondQuelonry;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdFielonldConstants.elonarlybirdFielonldConstant;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.util.RangelonFiltelonrDISI;
 
-public final class MinFeatureValueFilter extends Query implements FilteredQuery.DocIdFilterFactory {
-  private final String featureName;
-  private final ByteNormalizer normalizer;
-  private final double minValue;
+public final class MinFelonaturelonValuelonFiltelonr elonxtelonnds Quelonry implelonmelonnts FiltelonrelondQuelonry.DocIdFiltelonrFactory {
+  privatelon final String felonaturelonNamelon;
+  privatelon final BytelonNormalizelonr normalizelonr;
+  privatelon final doublelon minValuelon;
 
   /**
-   * Creates a query that filters out all hits that have a value smaller than the given threshold
-   * for the given feature.
+   * Crelonatelons a quelonry that filtelonrs out all hits that havelon a valuelon smallelonr than thelon givelonn threlonshold
+   * for thelon givelonn felonaturelon.
    *
-   * @param featureName The feature.
-   * @param minValue The threshold for the feature values.
-   * @return A query that filters out all hits that have a value smaller than the given threshold
-   *         for the given feature.
+   * @param felonaturelonNamelon Thelon felonaturelon.
+   * @param minValuelon Thelon threlonshold for thelon felonaturelon valuelons.
+   * @relonturn A quelonry that filtelonrs out all hits that havelon a valuelon smallelonr than thelon givelonn threlonshold
+   *         for thelon givelonn felonaturelon.
    */
-  public static Query getMinFeatureValueFilter(String featureName, double minValue) {
-    return new BooleanQuery.Builder()
-        .add(new MinFeatureValueFilter(featureName, minValue), BooleanClause.Occur.FILTER)
+  public static Quelonry gelontMinFelonaturelonValuelonFiltelonr(String felonaturelonNamelon, doublelon minValuelon) {
+    relonturn nelonw BoolelonanQuelonry.Buildelonr()
+        .add(nelonw MinFelonaturelonValuelonFiltelonr(felonaturelonNamelon, minValuelon), BoolelonanClauselon.Occur.FILTelonR)
         .build();
   }
 
-  public static FilteredQuery.DocIdFilterFactory getDocIdFilterFactory(
-      String featureName, double minValue) {
-    return new MinFeatureValueFilter(featureName, minValue);
+  public static FiltelonrelondQuelonry.DocIdFiltelonrFactory gelontDocIdFiltelonrFactory(
+      String felonaturelonNamelon, doublelon minValuelon) {
+    relonturn nelonw MinFelonaturelonValuelonFiltelonr(felonaturelonNamelon, minValuelon);
   }
 
   /**
-   * Returns the normalizer that should be used to normalize the values for the given feature.
+   * Relonturns thelon normalizelonr that should belon uselond to normalizelon thelon valuelons for thelon givelonn felonaturelon.
    *
-   * @param featureName The feature.
-   * @return The normalizer that should be used to normalize the values for the given feature.
+   * @param felonaturelonNamelon Thelon felonaturelon.
+   * @relonturn Thelon normalizelonr that should belon uselond to normalizelon thelon valuelons for thelon givelonn felonaturelon.
    */
-  @VisibleForTesting
-  public static ByteNormalizer getMinFeatureValueNormalizer(String featureName) {
-    if (featureName.equals(EarlybirdFieldConstant.USER_REPUTATION.getFieldName())) {
-      return new ClampByteNormalizer(0, 100);
+  @VisiblelonForTelonsting
+  public static BytelonNormalizelonr gelontMinFelonaturelonValuelonNormalizelonr(String felonaturelonNamelon) {
+    if (felonaturelonNamelon.elonquals(elonarlybirdFielonldConstant.USelonR_RelonPUTATION.gelontFielonldNamelon())) {
+      relonturn nelonw ClampBytelonNormalizelonr(0, 100);
     }
 
-    if (featureName.equals(EarlybirdFieldConstant.FAVORITE_COUNT.getFieldName())
-        || featureName.equals(EarlybirdFieldConstant.PARUS_SCORE.getFieldName())
-        || featureName.equals(EarlybirdFieldConstant.REPLY_COUNT.getFieldName())
-        || featureName.equals(EarlybirdFieldConstant.RETWEET_COUNT.getFieldName())) {
-      return new SingleBytePositiveFloatNormalizer();
+    if (felonaturelonNamelon.elonquals(elonarlybirdFielonldConstant.FAVORITelon_COUNT.gelontFielonldNamelon())
+        || felonaturelonNamelon.elonquals(elonarlybirdFielonldConstant.PARUS_SCORelon.gelontFielonldNamelon())
+        || felonaturelonNamelon.elonquals(elonarlybirdFielonldConstant.RelonPLY_COUNT.gelontFielonldNamelon())
+        || felonaturelonNamelon.elonquals(elonarlybirdFielonldConstant.RelonTWelonelonT_COUNT.gelontFielonldNamelon())) {
+      relonturn nelonw SinglelonBytelonPositivelonFloatNormalizelonr();
     }
 
-    throw new IllegalArgumentException("Unknown normalization method for field " + featureName);
+    throw nelonw IllelongalArgumelonntelonxcelonption("Unknown normalization melonthod for fielonld " + felonaturelonNamelon);
   }
 
-  @Override
-  public int hashCode() {
-    // Probably doesn't make sense to include the schemaSnapshot and normalizer here.
-    return (int) ((featureName == null ? 0 : featureName.hashCode() * 7) + minValue);
+  @Ovelonrridelon
+  public int hashCodelon() {
+    // Probably doelonsn't makelon selonnselon to includelon thelon schelonmaSnapshot and normalizelonr helonrelon.
+    relonturn (int) ((felonaturelonNamelon == null ? 0 : felonaturelonNamelon.hashCodelon() * 7) + minValuelon);
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (!(obj instanceof MinFeatureValueFilter)) {
-      return false;
+  @Ovelonrridelon
+  public boolelonan elonquals(Objelonct obj) {
+    if (!(obj instancelonof MinFelonaturelonValuelonFiltelonr)) {
+      relonturn falselon;
     }
 
-    // Probably doesn't make sense to include the schemaSnapshot and normalizer here.
-    MinFeatureValueFilter filter = MinFeatureValueFilter.class.cast(obj);
-    return Objects.equals(featureName, filter.featureName) && (minValue == filter.minValue);
+    // Probably doelonsn't makelon selonnselon to includelon thelon schelonmaSnapshot and normalizelonr helonrelon.
+    MinFelonaturelonValuelonFiltelonr filtelonr = MinFelonaturelonValuelonFiltelonr.class.cast(obj);
+    relonturn Objeloncts.elonquals(felonaturelonNamelon, filtelonr.felonaturelonNamelon) && (minValuelon == filtelonr.minValuelon);
   }
 
-  @Override
-  public String toString(String field) {
-    return String.format("MinFeatureValueFilter(%s, %f)", featureName, minValue);
+  @Ovelonrridelon
+  public String toString(String fielonld) {
+    relonturn String.format("MinFelonaturelonValuelonFiltelonr(%s, %f)", felonaturelonNamelon, minValuelon);
   }
 
-  private MinFeatureValueFilter(String featureName, double minValue) {
-    this.featureName = featureName;
-    this.normalizer = getMinFeatureValueNormalizer(featureName);
-    this.minValue = normalizer.normalize(minValue);
+  privatelon MinFelonaturelonValuelonFiltelonr(String felonaturelonNamelon, doublelon minValuelon) {
+    this.felonaturelonNamelon = felonaturelonNamelon;
+    this.normalizelonr = gelontMinFelonaturelonValuelonNormalizelonr(felonaturelonNamelon);
+    this.minValuelon = normalizelonr.normalizelon(minValuelon);
   }
 
-  @Override
-  public FilteredQuery.DocIdFilter getDocIdFilter(LeafReaderContext context) throws IOException {
-    final NumericDocValues featureDocValues = context.reader().getNumericDocValues(featureName);
-    return (docId) -> featureDocValues.advanceExact(docId)
-        && ((byte) featureDocValues.longValue() >= minValue);
+  @Ovelonrridelon
+  public FiltelonrelondQuelonry.DocIdFiltelonr gelontDocIdFiltelonr(LelonafRelonadelonrContelonxt contelonxt) throws IOelonxcelonption {
+    final NumelonricDocValuelons felonaturelonDocValuelons = contelonxt.relonadelonr().gelontNumelonricDocValuelons(felonaturelonNamelon);
+    relonturn (docId) -> felonaturelonDocValuelons.advancelonelonxact(docId)
+        && ((bytelon) felonaturelonDocValuelons.longValuelon() >= minValuelon);
   }
 
-  @Override
-  public Weight createWeight(IndexSearcher searcher, ScoreMode scoreMode, float boost) {
-    return new DefaultFilterWeight(this) {
-      @Override
-      protected DocIdSetIterator getDocIdSetIterator(LeafReaderContext context) throws IOException {
-        return new MinFeatureValueDocIdSetIterator(
-            context.reader(), featureName, minValue);
+  @Ovelonrridelon
+  public Welonight crelonatelonWelonight(IndelonxSelonarchelonr selonarchelonr, ScorelonModelon scorelonModelon, float boost) {
+    relonturn nelonw DelonfaultFiltelonrWelonight(this) {
+      @Ovelonrridelon
+      protelonctelond DocIdSelontItelonrator gelontDocIdSelontItelonrator(LelonafRelonadelonrContelonxt contelonxt) throws IOelonxcelonption {
+        relonturn nelonw MinFelonaturelonValuelonDocIdSelontItelonrator(
+            contelonxt.relonadelonr(), felonaturelonNamelon, minValuelon);
       }
     };
   }
 
-  private static final class MinFeatureValueDocIdSetIterator extends RangeFilterDISI {
-    private final NumericDocValues featureDocValues;
-    private final double minValue;
+  privatelon static final class MinFelonaturelonValuelonDocIdSelontItelonrator elonxtelonnds RangelonFiltelonrDISI {
+    privatelon final NumelonricDocValuelons felonaturelonDocValuelons;
+    privatelon final doublelon minValuelon;
 
-    MinFeatureValueDocIdSetIterator(LeafReader indexReader,
-                                    String featureName,
-                                    double minValue) throws IOException {
-      super(indexReader);
-      this.featureDocValues = indexReader.getNumericDocValues(featureName);
-      this.minValue = minValue;
+    MinFelonaturelonValuelonDocIdSelontItelonrator(LelonafRelonadelonr indelonxRelonadelonr,
+                                    String felonaturelonNamelon,
+                                    doublelon minValuelon) throws IOelonxcelonption {
+      supelonr(indelonxRelonadelonr);
+      this.felonaturelonDocValuelons = indelonxRelonadelonr.gelontNumelonricDocValuelons(felonaturelonNamelon);
+      this.minValuelon = minValuelon;
     }
 
-    @Override
-    public boolean shouldReturnDoc() throws IOException {
-      // We need this explicit casting to byte, because of how we encode and decode features in our
-      // encoded_tweet_features field. If a feature is an int (uses all 32 bits of the int), then
-      // encoding the feature and then decoding it preserves its original value. However, if the
-      // feature does not use the entire int (and especially if it uses bits somewhere in the middle
-      // of the int), then the feature value is assumed to be unsigned when it goes through this
-      // process of encoding and decoding. So a user rep of
-      // RelevanceSignalConstants.UNSET_REPUTATION_SENTINEL (-128) will be correctly encoded as the
-      // binary value 10000000, but will be treated as an unsigned value when decoded, and therefore
-      // the decoded value will be 128.
+    @Ovelonrridelon
+    public boolelonan shouldRelonturnDoc() throws IOelonxcelonption {
+      // Welon nelonelond this elonxplicit casting to bytelon, beloncauselon of how welon elonncodelon and deloncodelon felonaturelons in our
+      // elonncodelond_twelonelont_felonaturelons fielonld. If a felonaturelon is an int (uselons all 32 bits of thelon int), thelonn
+      // elonncoding thelon felonaturelon and thelonn deloncoding it prelonselonrvelons its original valuelon. Howelonvelonr, if thelon
+      // felonaturelon doelons not uselon thelon elonntirelon int (and elonspeloncially if it uselons bits somelonwhelonrelon in thelon middlelon
+      // of thelon int), thelonn thelon felonaturelon valuelon is assumelond to belon unsignelond whelonn it goelons through this
+      // procelonss of elonncoding and deloncoding. So a uselonr relonp of
+      // RelonlelonvancelonSignalConstants.UNSelonT_RelonPUTATION_SelonNTINelonL (-128) will belon correlonctly elonncodelond as thelon
+      // binary valuelon 10000000, but will belon trelonatelond as an unsignelond valuelon whelonn deloncodelond, and thelonrelonforelon
+      // thelon deloncodelond valuelon will belon 128.
       //
-      // In retrospect, this seems like a really poor design decision. It seems like it would be
-      // better if all feature values were considered to be signed, even if most features can never
-      // have negative values. Unfortunately, making this change is not easy, because some features
-      // store normalized values, so we would also need to change the range of allowed values
-      // produced by those normalizers, as well as all code that depends on those values.
+      // In relontrospelonct, this selonelonms likelon a relonally poor delonsign deloncision. It selonelonms likelon it would belon
+      // belonttelonr if all felonaturelon valuelons welonrelon considelonrelond to belon signelond, elonvelonn if most felonaturelons can nelonvelonr
+      // havelon nelongativelon valuelons. Unfortunatelonly, making this changelon is not elonasy, beloncauselon somelon felonaturelons
+      // storelon normalizelond valuelons, so welon would also nelonelond to changelon thelon rangelon of allowelond valuelons
+      // producelond by thoselon normalizelonrs, as welonll as all codelon that delonpelonnds on thoselon valuelons.
       //
-      // So for now, just cast this value to a byte, to get the proper negative value.
-      return featureDocValues.advanceExact(docID())
-          && ((byte) featureDocValues.longValue() >= minValue);
+      // So for now, just cast this valuelon to a bytelon, to gelont thelon propelonr nelongativelon valuelon.
+      relonturn felonaturelonDocValuelons.advancelonelonxact(docID())
+          && ((bytelon) felonaturelonDocValuelons.longValuelon() >= minValuelon);
     }
   }
 
-  public double getMinValue() {
-    return minValue;
+  public doublelon gelontMinValuelon() {
+    relonturn minValuelon;
   }
 
-  public ByteNormalizer getNormalizer() {
-    return normalizer;
+  public BytelonNormalizelonr gelontNormalizelonr() {
+    relonturn normalizelonr;
   }
 }

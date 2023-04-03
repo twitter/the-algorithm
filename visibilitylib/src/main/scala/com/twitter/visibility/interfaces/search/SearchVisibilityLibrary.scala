@@ -1,466 +1,466 @@
-package com.twitter.visibility.interfaces.search
+packagelon com.twittelonr.visibility.intelonrfacelons.selonarch
 
-import com.twitter.decider.Decider
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.mediaservices.media_util.GenericMediaKey
-import com.twitter.servo.util.Gate
-import com.twitter.stitch.Stitch
-import com.twitter.strato.client.{Client => StratoClient}
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.util.Return
-import com.twitter.util.Stopwatch
-import com.twitter.util.Try
-import com.twitter.visibility.VisibilityLibrary
-import com.twitter.visibility.builder.VerdictLogger
-import com.twitter.visibility.builder.VisibilityResult
-import com.twitter.visibility.builder.media.MediaFeatures
-import com.twitter.visibility.builder.media.StratoMediaLabelMaps
-import com.twitter.visibility.builder.tweets._
-import com.twitter.visibility.builder.users.AuthorFeatures
-import com.twitter.visibility.builder.users.RelationshipFeatures
-import com.twitter.visibility.builder.users.ViewerFeatures
-import com.twitter.visibility.common.MediaSafetyLabelMapSource
-import com.twitter.visibility.common.MisinformationPolicySource
-import com.twitter.visibility.common.SafetyLabelMapSource
-import com.twitter.visibility.common.TrustedFriendsSource
-import com.twitter.visibility.common.UserRelationshipSource
-import com.twitter.visibility.common.UserSource
-import com.twitter.visibility.rules.ComposableActions._
-import com.twitter.visibility.configapi.configs.VisibilityDeciderGates
-import com.twitter.visibility.features.FeatureMap
-import com.twitter.visibility.features.TweetIsInnerQuotedTweet
-import com.twitter.visibility.features.TweetIsRetweet
-import com.twitter.visibility.features.TweetIsSourceTweet
-import com.twitter.visibility.interfaces.common.search.SearchVFRequestContext
-import com.twitter.visibility.interfaces.search.SearchVisibilityLibrary.EvaluateTweet
-import com.twitter.visibility.interfaces.search.SearchVisibilityLibrary.RequestTweetId
-import com.twitter.visibility.interfaces.search.TweetType.EvaluateTweetType
-import com.twitter.visibility.logging.thriftscala.VFLibType
-import com.twitter.visibility.models.ContentId
-import com.twitter.visibility.models.ContentId.BlenderTweetId
-import com.twitter.visibility.models.ContentId.TweetId
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.models.SafetyLevel.toThrift
-import com.twitter.visibility.models.ViewerContext
-import com.twitter.visibility.rules.Action
-import com.twitter.visibility.rules.Allow
-import com.twitter.visibility.rules.Drop
-import com.twitter.visibility.rules.Interstitial
-import com.twitter.visibility.rules.TweetInterstitial
+import com.twittelonr.deloncidelonr.Deloncidelonr
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.melondiaselonrvicelons.melondia_util.GelonnelonricMelondiaKelony
+import com.twittelonr.selonrvo.util.Gatelon
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.strato.clielonnt.{Clielonnt => StratoClielonnt}
+import com.twittelonr.twelonelontypielon.thriftscala.Twelonelont
+import com.twittelonr.util.Relonturn
+import com.twittelonr.util.Stopwatch
+import com.twittelonr.util.Try
+import com.twittelonr.visibility.VisibilityLibrary
+import com.twittelonr.visibility.buildelonr.VelonrdictLoggelonr
+import com.twittelonr.visibility.buildelonr.VisibilityRelonsult
+import com.twittelonr.visibility.buildelonr.melondia.MelondiaFelonaturelons
+import com.twittelonr.visibility.buildelonr.melondia.StratoMelondiaLabelonlMaps
+import com.twittelonr.visibility.buildelonr.twelonelonts._
+import com.twittelonr.visibility.buildelonr.uselonrs.AuthorFelonaturelons
+import com.twittelonr.visibility.buildelonr.uselonrs.RelonlationshipFelonaturelons
+import com.twittelonr.visibility.buildelonr.uselonrs.VielonwelonrFelonaturelons
+import com.twittelonr.visibility.common.MelondiaSafelontyLabelonlMapSourcelon
+import com.twittelonr.visibility.common.MisinformationPolicySourcelon
+import com.twittelonr.visibility.common.SafelontyLabelonlMapSourcelon
+import com.twittelonr.visibility.common.TrustelondFrielonndsSourcelon
+import com.twittelonr.visibility.common.UselonrRelonlationshipSourcelon
+import com.twittelonr.visibility.common.UselonrSourcelon
+import com.twittelonr.visibility.rulelons.ComposablelonActions._
+import com.twittelonr.visibility.configapi.configs.VisibilityDeloncidelonrGatelons
+import com.twittelonr.visibility.felonaturelons.FelonaturelonMap
+import com.twittelonr.visibility.felonaturelons.TwelonelontIsInnelonrQuotelondTwelonelont
+import com.twittelonr.visibility.felonaturelons.TwelonelontIsRelontwelonelont
+import com.twittelonr.visibility.felonaturelons.TwelonelontIsSourcelonTwelonelont
+import com.twittelonr.visibility.intelonrfacelons.common.selonarch.SelonarchVFRelonquelonstContelonxt
+import com.twittelonr.visibility.intelonrfacelons.selonarch.SelonarchVisibilityLibrary.elonvaluatelonTwelonelont
+import com.twittelonr.visibility.intelonrfacelons.selonarch.SelonarchVisibilityLibrary.RelonquelonstTwelonelontId
+import com.twittelonr.visibility.intelonrfacelons.selonarch.TwelonelontTypelon.elonvaluatelonTwelonelontTypelon
+import com.twittelonr.visibility.logging.thriftscala.VFLibTypelon
+import com.twittelonr.visibility.modelonls.ContelonntId
+import com.twittelonr.visibility.modelonls.ContelonntId.BlelonndelonrTwelonelontId
+import com.twittelonr.visibility.modelonls.ContelonntId.TwelonelontId
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.toThrift
+import com.twittelonr.visibility.modelonls.VielonwelonrContelonxt
+import com.twittelonr.visibility.rulelons.Action
+import com.twittelonr.visibility.rulelons.Allow
+import com.twittelonr.visibility.rulelons.Drop
+import com.twittelonr.visibility.rulelons.Intelonrstitial
+import com.twittelonr.visibility.rulelons.TwelonelontIntelonrstitial
 
-object TweetType extends Enumeration {
-  type EvaluateTweetType = Value
-  val REQUEST: TweetType.Value = Value(1)
-  val QUOTED: TweetType.Value = Value(2)
-  val SOURCE: TweetType.Value = Value(3)
+objelonct TwelonelontTypelon elonxtelonnds elonnumelonration {
+  typelon elonvaluatelonTwelonelontTypelon = Valuelon
+  val RelonQUelonST: TwelonelontTypelon.Valuelon = Valuelon(1)
+  val QUOTelonD: TwelonelontTypelon.Valuelon = Valuelon(2)
+  val SOURCelon: TwelonelontTypelon.Valuelon = Valuelon(3)
 }
 
-import com.twitter.visibility.interfaces.search.TweetType._
+import com.twittelonr.visibility.intelonrfacelons.selonarch.TwelonelontTypelon._
 
-object SearchVisibilityLibrary {
-  type RequestTweetId = Long
-  type EvaluateTweetId = Long
-  type EvaluateTweet = Tweet
+objelonct SelonarchVisibilityLibrary {
+  typelon RelonquelonstTwelonelontId = Long
+  typelon elonvaluatelonTwelonelontId = Long
+  typelon elonvaluatelonTwelonelont = Twelonelont
 
-  def buildWithStratoClient(
+  delonf buildWithStratoClielonnt(
     visibilityLibrary: VisibilityLibrary,
-    decider: Decider,
-    stratoClient: StratoClient,
-    userSource: UserSource,
-    userRelationshipSource: UserRelationshipSource
-  ): SearchVisibilityLibrary = new SearchVisibilityLibrary(
+    deloncidelonr: Deloncidelonr,
+    stratoClielonnt: StratoClielonnt,
+    uselonrSourcelon: UselonrSourcelon,
+    uselonrRelonlationshipSourcelon: UselonrRelonlationshipSourcelon
+  ): SelonarchVisibilityLibrary = nelonw SelonarchVisibilityLibrary(
     visibilityLibrary,
-    decider,
-    stratoClient,
-    userSource,
-    userRelationshipSource,
-    None
+    deloncidelonr,
+    stratoClielonnt,
+    uselonrSourcelon,
+    uselonrRelonlationshipSourcelon,
+    Nonelon
   )
 
-  def buildWithSafetyLabelMapSource(
+  delonf buildWithSafelontyLabelonlMapSourcelon(
     visibilityLibrary: VisibilityLibrary,
-    decider: Decider,
-    stratoClient: StratoClient,
-    userSource: UserSource,
-    userRelationshipSource: UserRelationshipSource,
-    safetyLabelMapSource: SafetyLabelMapSource
-  ): SearchVisibilityLibrary = new SearchVisibilityLibrary(
+    deloncidelonr: Deloncidelonr,
+    stratoClielonnt: StratoClielonnt,
+    uselonrSourcelon: UselonrSourcelon,
+    uselonrRelonlationshipSourcelon: UselonrRelonlationshipSourcelon,
+    safelontyLabelonlMapSourcelon: SafelontyLabelonlMapSourcelon
+  ): SelonarchVisibilityLibrary = nelonw SelonarchVisibilityLibrary(
     visibilityLibrary,
-    decider,
-    stratoClient,
-    userSource,
-    userRelationshipSource,
-    Some(safetyLabelMapSource)
+    deloncidelonr,
+    stratoClielonnt,
+    uselonrSourcelon,
+    uselonrRelonlationshipSourcelon,
+    Somelon(safelontyLabelonlMapSourcelon)
   )
 
-  def createVerdictLogger(
-    enableVerdictLogger: Gate[Unit],
-    decider: Decider,
-    statsReceiver: StatsReceiver
-  ): VerdictLogger = {
-    if (enableVerdictLogger()) {
-      VerdictLogger(statsReceiver, decider)
-    } else {
-      VerdictLogger.Empty
+  delonf crelonatelonVelonrdictLoggelonr(
+    elonnablelonVelonrdictLoggelonr: Gatelon[Unit],
+    deloncidelonr: Deloncidelonr,
+    statsReloncelonivelonr: StatsReloncelonivelonr
+  ): VelonrdictLoggelonr = {
+    if (elonnablelonVelonrdictLoggelonr()) {
+      VelonrdictLoggelonr(statsReloncelonivelonr, deloncidelonr)
+    } elonlselon {
+      VelonrdictLoggelonr.elonmpty
     }
   }
 
-  def scribeVisibilityVerdict(
-    result: CombinedVisibilityResult,
-    enableVerdictScribing: Gate[Unit],
-    verdictLogger: VerdictLogger,
-    viewerId: Option[Long],
-    safetyLevel: SafetyLevel
-  ): Unit = if (enableVerdictScribing()) {
-    verdictLogger.scribeVerdict(
-      visibilityResult = result.tweetVisibilityResult,
-      viewerId = viewerId,
-      safetyLevel = toThrift(safetyLevel),
-      vfLibType = VFLibType.SearchVisibilityLibrary)
+  delonf scribelonVisibilityVelonrdict(
+    relonsult: CombinelondVisibilityRelonsult,
+    elonnablelonVelonrdictScribing: Gatelon[Unit],
+    velonrdictLoggelonr: VelonrdictLoggelonr,
+    vielonwelonrId: Option[Long],
+    safelontyLelonvelonl: SafelontyLelonvelonl
+  ): Unit = if (elonnablelonVelonrdictScribing()) {
+    velonrdictLoggelonr.scribelonVelonrdict(
+      visibilityRelonsult = relonsult.twelonelontVisibilityRelonsult,
+      vielonwelonrId = vielonwelonrId,
+      safelontyLelonvelonl = toThrift(safelontyLelonvelonl),
+      vfLibTypelon = VFLibTypelon.SelonarchVisibilityLibrary)
 
-    result.quotedTweetVisibilityResult.map(quotedTweetVisibilityResult =>
-      verdictLogger.scribeVerdict(
-        visibilityResult = quotedTweetVisibilityResult,
-        viewerId = viewerId,
-        safetyLevel = toThrift(safetyLevel),
-        vfLibType = VFLibType.SearchVisibilityLibrary))
+    relonsult.quotelondTwelonelontVisibilityRelonsult.map(quotelondTwelonelontVisibilityRelonsult =>
+      velonrdictLoggelonr.scribelonVelonrdict(
+        visibilityRelonsult = quotelondTwelonelontVisibilityRelonsult,
+        vielonwelonrId = vielonwelonrId,
+        safelontyLelonvelonl = toThrift(safelontyLelonvelonl),
+        vfLibTypelon = VFLibTypelon.SelonarchVisibilityLibrary))
   }
 }
 
-class SearchVisibilityLibrary(
+class SelonarchVisibilityLibrary(
   visibilityLibrary: VisibilityLibrary,
-  decider: Decider,
-  stratoClient: StratoClient,
-  userSource: UserSource,
-  userRelationshipSource: UserRelationshipSource,
-  safetyLabelMapSourceOption: Option[SafetyLabelMapSource]) {
+  deloncidelonr: Deloncidelonr,
+  stratoClielonnt: StratoClielonnt,
+  uselonrSourcelon: UselonrSourcelon,
+  uselonrRelonlationshipSourcelon: UselonrRelonlationshipSourcelon,
+  safelontyLabelonlMapSourcelonOption: Option[SafelontyLabelonlMapSourcelon]) {
 
-  val libraryStatsReceiver = visibilityLibrary.statsReceiver
-  val stratoClientStatsReceiver = visibilityLibrary.statsReceiver.scope("strato")
-  val vfEngineCounter = libraryStatsReceiver.counter("vf_engine_requests")
-  val svlRequestCounter = libraryStatsReceiver.counter("svl_requests")
-  val vfLatencyOverallStat = libraryStatsReceiver.stat("vf_latency_overall")
-  val vfLatencyStitchBuildStat = libraryStatsReceiver.stat("vf_latency_stitch_build")
-  val vfLatencyStitchRunStat = libraryStatsReceiver.stat("vf_latency_stitch_run")
-  val visibilityDeciderGates = VisibilityDeciderGates(decider)
-  val verdictLogger = SearchVisibilityLibrary.createVerdictLogger(
-    visibilityDeciderGates.enableVerdictLoggerSVL,
-    decider,
-    libraryStatsReceiver)
+  val libraryStatsReloncelonivelonr = visibilityLibrary.statsReloncelonivelonr
+  val stratoClielonntStatsReloncelonivelonr = visibilityLibrary.statsReloncelonivelonr.scopelon("strato")
+  val vfelonnginelonCountelonr = libraryStatsReloncelonivelonr.countelonr("vf_elonnginelon_relonquelonsts")
+  val svlRelonquelonstCountelonr = libraryStatsReloncelonivelonr.countelonr("svl_relonquelonsts")
+  val vfLatelonncyOvelonrallStat = libraryStatsReloncelonivelonr.stat("vf_latelonncy_ovelonrall")
+  val vfLatelonncyStitchBuildStat = libraryStatsReloncelonivelonr.stat("vf_latelonncy_stitch_build")
+  val vfLatelonncyStitchRunStat = libraryStatsReloncelonivelonr.stat("vf_latelonncy_stitch_run")
+  val visibilityDeloncidelonrGatelons = VisibilityDeloncidelonrGatelons(deloncidelonr)
+  val velonrdictLoggelonr = SelonarchVisibilityLibrary.crelonatelonVelonrdictLoggelonr(
+    visibilityDeloncidelonrGatelons.elonnablelonVelonrdictLoggelonrSVL,
+    deloncidelonr,
+    libraryStatsReloncelonivelonr)
 
-  val tweetLabels = safetyLabelMapSourceOption match {
-    case Some(safetyLabelMapSource) =>
-      new StratoTweetLabelMaps(safetyLabelMapSource)
-    case None =>
-      new StratoTweetLabelMaps(
-        SafetyLabelMapSource.fromStrato(stratoClient, stratoClientStatsReceiver))
+  val twelonelontLabelonls = safelontyLabelonlMapSourcelonOption match {
+    caselon Somelon(safelontyLabelonlMapSourcelon) =>
+      nelonw StratoTwelonelontLabelonlMaps(safelontyLabelonlMapSourcelon)
+    caselon Nonelon =>
+      nelonw StratoTwelonelontLabelonlMaps(
+        SafelontyLabelonlMapSourcelon.fromStrato(stratoClielonnt, stratoClielonntStatsReloncelonivelonr))
   }
 
-  val mediaLabelMaps = new StratoMediaLabelMaps(
-    MediaSafetyLabelMapSource.fromStrato(stratoClient, stratoClientStatsReceiver))
+  val melondiaLabelonlMaps = nelonw StratoMelondiaLabelonlMaps(
+    MelondiaSafelontyLabelonlMapSourcelon.fromStrato(stratoClielonnt, stratoClielonntStatsReloncelonivelonr))
 
-  val tweetFeatures = new TweetFeatures(tweetLabels, libraryStatsReceiver)
-  val searchContextFeatures = new SearchContextFeatures(libraryStatsReceiver)
-  val authorFeatures = new AuthorFeatures(userSource, libraryStatsReceiver)
-  val viewerFeatures = new ViewerFeatures(userSource, libraryStatsReceiver)
-  val relationshipFeatures =
-    new RelationshipFeatures(userRelationshipSource, libraryStatsReceiver)
-  val misinfoPolicySource =
-    MisinformationPolicySource.fromStrato(stratoClient, stratoClientStatsReceiver)
-  val misinfoPolicyFeatures =
-    new MisinformationPolicyFeatures(misinfoPolicySource, stratoClientStatsReceiver)
-  val exclusiveTweetFeatures =
-    new ExclusiveTweetFeatures(userRelationshipSource, libraryStatsReceiver)
-  val mediaFeatures = new MediaFeatures(mediaLabelMaps, libraryStatsReceiver)
-  val trustedFriendsTweetFeatures = new TrustedFriendsFeatures(
-    trustedFriendsSource = TrustedFriendsSource.fromStrato(stratoClient, stratoClientStatsReceiver))
-  val editTweetFeatures = new EditTweetFeatures(libraryStatsReceiver)
+  val twelonelontFelonaturelons = nelonw TwelonelontFelonaturelons(twelonelontLabelonls, libraryStatsReloncelonivelonr)
+  val selonarchContelonxtFelonaturelons = nelonw SelonarchContelonxtFelonaturelons(libraryStatsReloncelonivelonr)
+  val authorFelonaturelons = nelonw AuthorFelonaturelons(uselonrSourcelon, libraryStatsReloncelonivelonr)
+  val vielonwelonrFelonaturelons = nelonw VielonwelonrFelonaturelons(uselonrSourcelon, libraryStatsReloncelonivelonr)
+  val relonlationshipFelonaturelons =
+    nelonw RelonlationshipFelonaturelons(uselonrRelonlationshipSourcelon, libraryStatsReloncelonivelonr)
+  val misinfoPolicySourcelon =
+    MisinformationPolicySourcelon.fromStrato(stratoClielonnt, stratoClielonntStatsReloncelonivelonr)
+  val misinfoPolicyFelonaturelons =
+    nelonw MisinformationPolicyFelonaturelons(misinfoPolicySourcelon, stratoClielonntStatsReloncelonivelonr)
+  val elonxclusivelonTwelonelontFelonaturelons =
+    nelonw elonxclusivelonTwelonelontFelonaturelons(uselonrRelonlationshipSourcelon, libraryStatsReloncelonivelonr)
+  val melondiaFelonaturelons = nelonw MelondiaFelonaturelons(melondiaLabelonlMaps, libraryStatsReloncelonivelonr)
+  val trustelondFrielonndsTwelonelontFelonaturelons = nelonw TrustelondFrielonndsFelonaturelons(
+    trustelondFrielonndsSourcelon = TrustelondFrielonndsSourcelon.fromStrato(stratoClielonnt, stratoClielonntStatsReloncelonivelonr))
+  val elonditTwelonelontFelonaturelons = nelonw elonditTwelonelontFelonaturelons(libraryStatsReloncelonivelonr)
 
-  def batchProcessSearchVisibilityRequest(
-    batchSvRequest: BatchSearchVisibilityRequest
-  ): Stitch[BatchSearchVisibilityResponse] = {
-    val elapsed = Stopwatch.start()
-    svlRequestCounter.incr()
+  delonf batchProcelonssSelonarchVisibilityRelonquelonst(
+    batchSvRelonquelonst: BatchSelonarchVisibilityRelonquelonst
+  ): Stitch[BatchSelonarchVisibilityRelonsponselon] = {
+    val elonlapselond = Stopwatch.start()
+    svlRelonquelonstCountelonr.incr()
 
-    val response: Stitch[BatchSearchVisibilityResponse] =
-      batchSvRequest.tweetContexts.groupBy(tweetContext => tweetContext.safetyLevel) map {
-        case (safetyLevel: SafetyLevel, tweetContexts: Seq[TweetContext]) =>
-          val (contentsToBeEvaluated, contentVisResultTypes) =
-            extractContentsToBeEvaluated(tweetContexts, batchSvRequest.viewerContext)
+    val relonsponselon: Stitch[BatchSelonarchVisibilityRelonsponselon] =
+      batchSvRelonquelonst.twelonelontContelonxts.groupBy(twelonelontContelonxt => twelonelontContelonxt.safelontyLelonvelonl) map {
+        caselon (safelontyLelonvelonl: SafelontyLelonvelonl, twelonelontContelonxts: Selonq[TwelonelontContelonxt]) =>
+          val (contelonntsToBelonelonvaluatelond, contelonntVisRelonsultTypelons) =
+            elonxtractContelonntsToBelonelonvaluatelond(twelonelontContelonxts, batchSvRelonquelonst.vielonwelonrContelonxt)
 
-          getVisibilityResult(
-            contentsToBeEvaluated,
-            safetyLevel,
-            batchSvRequest.viewerContext,
-            batchSvRequest.searchVFRequestContext)
-            .map { contentVisResults: Seq[Try[VisibilityResult]] =>
-              (contentVisResultTypes zip contentVisResults)
-                .map(handleVisibilityResultByTweetType)
+          gelontVisibilityRelonsult(
+            contelonntsToBelonelonvaluatelond,
+            safelontyLelonvelonl,
+            batchSvRelonquelonst.vielonwelonrContelonxt,
+            batchSvRelonquelonst.selonarchVFRelonquelonstContelonxt)
+            .map { contelonntVisRelonsults: Selonq[Try[VisibilityRelonsult]] =>
+              (contelonntVisRelonsultTypelons zip contelonntVisRelonsults)
+                .map(handlelonVisibilityRelonsultByTwelonelontTypelon)
                 .groupBy {
-                  case (requestTweetId: RequestTweetId, (_, _)) => requestTweetId
-                }.mapValues(combineVisibilityResult)
-            }.onSuccess(res =>
-              res.values.flatten.foreach(_ =>
-                SearchVisibilityLibrary.scribeVisibilityVerdict(
+                  caselon (relonquelonstTwelonelontId: RelonquelonstTwelonelontId, (_, _)) => relonquelonstTwelonelontId
+                }.mapValuelons(combinelonVisibilityRelonsult)
+            }.onSuccelonss(relons =>
+              relons.valuelons.flattelonn.forelonach(_ =>
+                SelonarchVisibilityLibrary.scribelonVisibilityVelonrdict(
                   _,
-                  visibilityDeciderGates.enableVerdictScribingSVL,
-                  verdictLogger,
-                  batchSvRequest.viewerContext.userId,
-                  safetyLevel)))
-      } reduceLeft { (left, right) =>
-        Stitch.joinMap(left, right)((visResultsA, visResultsB) => visResultsA ++ visResultsB)
-      } map { visResults =>
-        val (succeed, failed) = visResults.partition { case (_, visResult) => visResult.nonEmpty }
-        val failedTweetIds: Seq[Long] = failed.keys.toSeq
-        BatchSearchVisibilityResponse(
-          visibilityResults = succeed.mapValues(visResult => visResult.get),
-          failedTweetIds = failedTweetIds
+                  visibilityDeloncidelonrGatelons.elonnablelonVelonrdictScribingSVL,
+                  velonrdictLoggelonr,
+                  batchSvRelonquelonst.vielonwelonrContelonxt.uselonrId,
+                  safelontyLelonvelonl)))
+      } relonducelonLelonft { (lelonft, right) =>
+        Stitch.joinMap(lelonft, right)((visRelonsultsA, visRelonsultsB) => visRelonsultsA ++ visRelonsultsB)
+      } map { visRelonsults =>
+        val (succelonelond, failelond) = visRelonsults.partition { caselon (_, visRelonsult) => visRelonsult.nonelonmpty }
+        val failelondTwelonelontIds: Selonq[Long] = failelond.kelonys.toSelonq
+        BatchSelonarchVisibilityRelonsponselon(
+          visibilityRelonsults = succelonelond.mapValuelons(visRelonsult => visRelonsult.gelont),
+          failelondTwelonelontIds = failelondTwelonelontIds
         )
       }
 
-    val runStitchStartMs = elapsed().inMilliseconds
-    val buildStitchStatMs = elapsed().inMilliseconds
-    vfLatencyStitchBuildStat.add(buildStitchStatMs)
+    val runStitchStartMs = elonlapselond().inMilliselonconds
+    val buildStitchStatMs = elonlapselond().inMilliselonconds
+    vfLatelonncyStitchBuildStat.add(buildStitchStatMs)
 
-    response
-      .onSuccess(_ => {
-        val overallMs = elapsed().inMilliseconds
-        vfLatencyOverallStat.add(overallMs)
-        val stitchRunMs = elapsed().inMilliseconds - runStitchStartMs
-        vfLatencyStitchRunStat.add(stitchRunMs)
+    relonsponselon
+      .onSuccelonss(_ => {
+        val ovelonrallMs = elonlapselond().inMilliselonconds
+        vfLatelonncyOvelonrallStat.add(ovelonrallMs)
+        val stitchRunMs = elonlapselond().inMilliselonconds - runStitchStartMs
+        vfLatelonncyStitchRunStat.add(stitchRunMs)
       })
   }
 
-  private def extractContentsToBeEvaluated(
-    tweetContexts: Seq[TweetContext],
-    viewerContext: ViewerContext
+  privatelon delonf elonxtractContelonntsToBelonelonvaluatelond(
+    twelonelontContelonxts: Selonq[TwelonelontContelonxt],
+    vielonwelonrContelonxt: VielonwelonrContelonxt
   ): (
-    Seq[(TweetContext, EvaluateTweetType, EvaluateTweet, ContentId)],
-    Seq[
-      (RequestTweetId, EvaluateTweetType)
+    Selonq[(TwelonelontContelonxt, elonvaluatelonTwelonelontTypelon, elonvaluatelonTwelonelont, ContelonntId)],
+    Selonq[
+      (RelonquelonstTwelonelontId, elonvaluatelonTwelonelontTypelon)
     ]
   ) = {
-    val contentsToBeEvaluated: Seq[
-      (TweetContext, EvaluateTweetType, EvaluateTweet, ContentId)
-    ] = tweetContexts.map(tc =>
+    val contelonntsToBelonelonvaluatelond: Selonq[
+      (TwelonelontContelonxt, elonvaluatelonTwelonelontTypelon, elonvaluatelonTwelonelont, ContelonntId)
+    ] = twelonelontContelonxts.map(tc =>
       (
         tc,
-        REQUEST,
-        tc.tweet,
-        getContentId(
-          viewerId = viewerContext.userId,
-          authorId = tc.tweet.coreData.get.userId,
-          tweet = tc.tweet))) ++
-      tweetContexts
-        .filter(tc => tc.quotedTweet.nonEmpty).map(tc =>
+        RelonQUelonST,
+        tc.twelonelont,
+        gelontContelonntId(
+          vielonwelonrId = vielonwelonrContelonxt.uselonrId,
+          authorId = tc.twelonelont.corelonData.gelont.uselonrId,
+          twelonelont = tc.twelonelont))) ++
+      twelonelontContelonxts
+        .filtelonr(tc => tc.quotelondTwelonelont.nonelonmpty).map(tc =>
           (
             tc,
-            QUOTED,
-            tc.quotedTweet.get,
-            getContentId(
-              viewerId = viewerContext.userId,
-              authorId = tc.quotedTweet.get.coreData.get.userId,
-              tweet = tc.quotedTweet.get))) ++
-      tweetContexts
-        .filter(tc => tc.retweetSourceTweet.nonEmpty).map(tc =>
+            QUOTelonD,
+            tc.quotelondTwelonelont.gelont,
+            gelontContelonntId(
+              vielonwelonrId = vielonwelonrContelonxt.uselonrId,
+              authorId = tc.quotelondTwelonelont.gelont.corelonData.gelont.uselonrId,
+              twelonelont = tc.quotelondTwelonelont.gelont))) ++
+      twelonelontContelonxts
+        .filtelonr(tc => tc.relontwelonelontSourcelonTwelonelont.nonelonmpty).map(tc =>
           (
             tc,
-            SOURCE,
-            tc.retweetSourceTweet.get,
-            getContentId(
-              viewerId = viewerContext.userId,
-              authorId = tc.retweetSourceTweet.get.coreData.get.userId,
-              tweet = tc.retweetSourceTweet.get)))
+            SOURCelon,
+            tc.relontwelonelontSourcelonTwelonelont.gelont,
+            gelontContelonntId(
+              vielonwelonrId = vielonwelonrContelonxt.uselonrId,
+              authorId = tc.relontwelonelontSourcelonTwelonelont.gelont.corelonData.gelont.uselonrId,
+              twelonelont = tc.relontwelonelontSourcelonTwelonelont.gelont)))
 
-    val contentVisResultTypes: Seq[(RequestTweetId, EvaluateTweetType)] = {
-      contentsToBeEvaluated.map {
-        case (tc: TweetContext, tweetType: EvaluateTweetType, _, _) =>
-          (tc.tweet.id, tweetType)
+    val contelonntVisRelonsultTypelons: Selonq[(RelonquelonstTwelonelontId, elonvaluatelonTwelonelontTypelon)] = {
+      contelonntsToBelonelonvaluatelond.map {
+        caselon (tc: TwelonelontContelonxt, twelonelontTypelon: elonvaluatelonTwelonelontTypelon, _, _) =>
+          (tc.twelonelont.id, twelonelontTypelon)
       }
     }
 
-    (contentsToBeEvaluated, contentVisResultTypes)
+    (contelonntsToBelonelonvaluatelond, contelonntVisRelonsultTypelons)
   }
 
-  private def combineVisibilityResult(
-    visResults: Seq[(RequestTweetId, (EvaluateTweetType, Try[VisibilityResult]))]
-  ): Option[CombinedVisibilityResult] = {
-    visResults.sortBy(_._2._1)(ValueOrdering) match {
-      case Seq(
-            (_, (REQUEST, Return(requestTweetVisResult))),
-            (_, (QUOTED, Return(quotedTweetVisResult))),
-            (_, (SOURCE, Return(sourceTweetVisResult)))) =>
-        requestTweetVisResult.verdict match {
-          case Allow =>
-            Some(CombinedVisibilityResult(sourceTweetVisResult, Some(quotedTweetVisResult)))
-          case _ =>
-            Some(CombinedVisibilityResult(requestTweetVisResult, Some(quotedTweetVisResult)))
+  privatelon delonf combinelonVisibilityRelonsult(
+    visRelonsults: Selonq[(RelonquelonstTwelonelontId, (elonvaluatelonTwelonelontTypelon, Try[VisibilityRelonsult]))]
+  ): Option[CombinelondVisibilityRelonsult] = {
+    visRelonsults.sortBy(_._2._1)(ValuelonOrdelonring) match {
+      caselon Selonq(
+            (_, (RelonQUelonST, Relonturn(relonquelonstTwelonelontVisRelonsult))),
+            (_, (QUOTelonD, Relonturn(quotelondTwelonelontVisRelonsult))),
+            (_, (SOURCelon, Relonturn(sourcelonTwelonelontVisRelonsult)))) =>
+        relonquelonstTwelonelontVisRelonsult.velonrdict match {
+          caselon Allow =>
+            Somelon(CombinelondVisibilityRelonsult(sourcelonTwelonelontVisRelonsult, Somelon(quotelondTwelonelontVisRelonsult)))
+          caselon _ =>
+            Somelon(CombinelondVisibilityRelonsult(relonquelonstTwelonelontVisRelonsult, Somelon(quotelondTwelonelontVisRelonsult)))
         }
-      case Seq(
-            (_, (REQUEST, Return(requestTweetVisResult))),
-            (_, (QUOTED, Return(quotedTweetVisResult)))) =>
-        Some(CombinedVisibilityResult(requestTweetVisResult, Some(quotedTweetVisResult)))
-      case Seq(
-            (_, (REQUEST, Return(requestTweetVisResult))),
-            (_, (SOURCE, Return(sourceTweetVisResult)))) =>
-        requestTweetVisResult.verdict match {
-          case Allow =>
-            Some(CombinedVisibilityResult(sourceTweetVisResult, None))
-          case _ =>
-            Some(CombinedVisibilityResult(requestTweetVisResult, None))
+      caselon Selonq(
+            (_, (RelonQUelonST, Relonturn(relonquelonstTwelonelontVisRelonsult))),
+            (_, (QUOTelonD, Relonturn(quotelondTwelonelontVisRelonsult)))) =>
+        Somelon(CombinelondVisibilityRelonsult(relonquelonstTwelonelontVisRelonsult, Somelon(quotelondTwelonelontVisRelonsult)))
+      caselon Selonq(
+            (_, (RelonQUelonST, Relonturn(relonquelonstTwelonelontVisRelonsult))),
+            (_, (SOURCelon, Relonturn(sourcelonTwelonelontVisRelonsult)))) =>
+        relonquelonstTwelonelontVisRelonsult.velonrdict match {
+          caselon Allow =>
+            Somelon(CombinelondVisibilityRelonsult(sourcelonTwelonelontVisRelonsult, Nonelon))
+          caselon _ =>
+            Somelon(CombinelondVisibilityRelonsult(relonquelonstTwelonelontVisRelonsult, Nonelon))
         }
 
-      case Seq((_, (REQUEST, Return(requestTweetVisResult)))) =>
-        Some(CombinedVisibilityResult(requestTweetVisResult, None))
-      case _ => None
+      caselon Selonq((_, (RelonQUelonST, Relonturn(relonquelonstTwelonelontVisRelonsult)))) =>
+        Somelon(CombinelondVisibilityRelonsult(relonquelonstTwelonelontVisRelonsult, Nonelon))
+      caselon _ => Nonelon
     }
   }
 
-  private def getVisibilityResult(
-    contents: Seq[(TweetContext, EvaluateTweetType, EvaluateTweet, ContentId)],
-    safetyLevel: SafetyLevel,
-    viewerContext: ViewerContext,
-    svRequestContext: SearchVFRequestContext
-  ): Stitch[Seq[Try[VisibilityResult]]] = {
+  privatelon delonf gelontVisibilityRelonsult(
+    contelonnts: Selonq[(TwelonelontContelonxt, elonvaluatelonTwelonelontTypelon, elonvaluatelonTwelonelont, ContelonntId)],
+    safelontyLelonvelonl: SafelontyLelonvelonl,
+    vielonwelonrContelonxt: VielonwelonrContelonxt,
+    svRelonquelonstContelonxt: SelonarchVFRelonquelonstContelonxt
+  ): Stitch[Selonq[Try[VisibilityRelonsult]]] = {
 
-    val contentContext: Map[ContentId, (TweetContext, EvaluateTweetType, EvaluateTweet)] =
-      contents.map {
-        case (
-              tweetContext: TweetContext,
-              tweetType: EvaluateTweetType,
-              tweet: EvaluateTweet,
-              contentId: ContentId) =>
-          contentId -> ((tweetContext, tweetType, tweet))
+    val contelonntContelonxt: Map[ContelonntId, (TwelonelontContelonxt, elonvaluatelonTwelonelontTypelon, elonvaluatelonTwelonelont)] =
+      contelonnts.map {
+        caselon (
+              twelonelontContelonxt: TwelonelontContelonxt,
+              twelonelontTypelon: elonvaluatelonTwelonelontTypelon,
+              twelonelont: elonvaluatelonTwelonelont,
+              contelonntId: ContelonntId) =>
+          contelonntId -> ((twelonelontContelonxt, twelonelontTypelon, twelonelont))
       }.toMap
 
-    val featureMapProvider: (ContentId, SafetyLevel) => FeatureMap = {
-      case (contentId: ContentId, _) =>
-        val (tweetContext, tweetType, tweet) = contentContext(contentId)
-        buildFeatureMap(
-          evaluatedTweet = tweet,
-          tweetType = tweetType,
-          tweetContext = tweetContext,
-          viewerContext = viewerContext,
-          svRequestContext = svRequestContext
+    val felonaturelonMapProvidelonr: (ContelonntId, SafelontyLelonvelonl) => FelonaturelonMap = {
+      caselon (contelonntId: ContelonntId, _) =>
+        val (twelonelontContelonxt, twelonelontTypelon, twelonelont) = contelonntContelonxt(contelonntId)
+        buildFelonaturelonMap(
+          elonvaluatelondTwelonelont = twelonelont,
+          twelonelontTypelon = twelonelontTypelon,
+          twelonelontContelonxt = twelonelontContelonxt,
+          vielonwelonrContelonxt = vielonwelonrContelonxt,
+          svRelonquelonstContelonxt = svRelonquelonstContelonxt
         )
     }
 
-    visibilityLibrary.runRuleEngineBatch(
-      contentIds = contents.map { case (_, _, _, id: ContentId) => id },
-      featureMapProvider = featureMapProvider,
-      viewerContext = viewerContext,
-      safetyLevel = safetyLevel
+    visibilityLibrary.runRulelonelonnginelonBatch(
+      contelonntIds = contelonnts.map { caselon (_, _, _, id: ContelonntId) => id },
+      felonaturelonMapProvidelonr = felonaturelonMapProvidelonr,
+      vielonwelonrContelonxt = vielonwelonrContelonxt,
+      safelontyLelonvelonl = safelontyLelonvelonl
     )
   }
 
-  private def getContentId(viewerId: Option[Long], authorId: Long, tweet: Tweet): ContentId = {
-    if (viewerId.contains(authorId))
-      TweetId(tweet.id)
-    else BlenderTweetId(tweet.id)
+  privatelon delonf gelontContelonntId(vielonwelonrId: Option[Long], authorId: Long, twelonelont: Twelonelont): ContelonntId = {
+    if (vielonwelonrId.contains(authorId))
+      TwelonelontId(twelonelont.id)
+    elonlselon BlelonndelonrTwelonelontId(twelonelont.id)
   }
 
-  private def buildFeatureMap(
-    evaluatedTweet: Tweet,
-    tweetType: EvaluateTweetType,
-    tweetContext: TweetContext,
-    viewerContext: ViewerContext,
-    svRequestContext: SearchVFRequestContext
-  ): FeatureMap = {
-    val authorId = evaluatedTweet.coreData.get.userId
-    val viewerId = viewerContext.userId
-    val isRetweet =
-      if (tweetType.equals(REQUEST)) tweetContext.retweetSourceTweet.nonEmpty else false
-    val isSourceTweet = tweetType.equals(SOURCE)
-    val isQuotedTweet = tweetType.equals(QUOTED)
-    val tweetMediaKeys: Seq[GenericMediaKey] = evaluatedTweet.media
-      .getOrElse(Seq.empty)
-      .flatMap(_.mediaKey.map(GenericMediaKey.apply))
+  privatelon delonf buildFelonaturelonMap(
+    elonvaluatelondTwelonelont: Twelonelont,
+    twelonelontTypelon: elonvaluatelonTwelonelontTypelon,
+    twelonelontContelonxt: TwelonelontContelonxt,
+    vielonwelonrContelonxt: VielonwelonrContelonxt,
+    svRelonquelonstContelonxt: SelonarchVFRelonquelonstContelonxt
+  ): FelonaturelonMap = {
+    val authorId = elonvaluatelondTwelonelont.corelonData.gelont.uselonrId
+    val vielonwelonrId = vielonwelonrContelonxt.uselonrId
+    val isRelontwelonelont =
+      if (twelonelontTypelon.elonquals(RelonQUelonST)) twelonelontContelonxt.relontwelonelontSourcelonTwelonelont.nonelonmpty elonlselon falselon
+    val isSourcelonTwelonelont = twelonelontTypelon.elonquals(SOURCelon)
+    val isQuotelondTwelonelont = twelonelontTypelon.elonquals(QUOTelonD)
+    val twelonelontMelondiaKelonys: Selonq[GelonnelonricMelondiaKelony] = elonvaluatelondTwelonelont.melondia
+      .gelontOrelonlselon(Selonq.elonmpty)
+      .flatMap(_.melondiaKelony.map(GelonnelonricMelondiaKelony.apply))
 
-    visibilityLibrary.featureMapBuilder(
-      Seq(
-        viewerFeatures
-          .forViewerSearchContext(svRequestContext, viewerContext),
-        relationshipFeatures.forAuthorId(authorId, viewerId),
-        tweetFeatures.forTweet(evaluatedTweet),
-        mediaFeatures.forMediaKeys(tweetMediaKeys),
-        authorFeatures.forAuthorId(authorId),
-        searchContextFeatures.forSearchContext(svRequestContext),
-        _.withConstantFeature(TweetIsRetweet, isRetweet),
-        misinfoPolicyFeatures.forTweet(evaluatedTweet, viewerContext),
-        exclusiveTweetFeatures.forTweet(evaluatedTweet, viewerContext),
-        trustedFriendsTweetFeatures.forTweet(evaluatedTweet, viewerId),
-        editTweetFeatures.forTweet(evaluatedTweet),
-        _.withConstantFeature(TweetIsInnerQuotedTweet, isQuotedTweet),
-        _.withConstantFeature(TweetIsSourceTweet, isSourceTweet),
+    visibilityLibrary.felonaturelonMapBuildelonr(
+      Selonq(
+        vielonwelonrFelonaturelons
+          .forVielonwelonrSelonarchContelonxt(svRelonquelonstContelonxt, vielonwelonrContelonxt),
+        relonlationshipFelonaturelons.forAuthorId(authorId, vielonwelonrId),
+        twelonelontFelonaturelons.forTwelonelont(elonvaluatelondTwelonelont),
+        melondiaFelonaturelons.forMelondiaKelonys(twelonelontMelondiaKelonys),
+        authorFelonaturelons.forAuthorId(authorId),
+        selonarchContelonxtFelonaturelons.forSelonarchContelonxt(svRelonquelonstContelonxt),
+        _.withConstantFelonaturelon(TwelonelontIsRelontwelonelont, isRelontwelonelont),
+        misinfoPolicyFelonaturelons.forTwelonelont(elonvaluatelondTwelonelont, vielonwelonrContelonxt),
+        elonxclusivelonTwelonelontFelonaturelons.forTwelonelont(elonvaluatelondTwelonelont, vielonwelonrContelonxt),
+        trustelondFrielonndsTwelonelontFelonaturelons.forTwelonelont(elonvaluatelondTwelonelont, vielonwelonrId),
+        elonditTwelonelontFelonaturelons.forTwelonelont(elonvaluatelondTwelonelont),
+        _.withConstantFelonaturelon(TwelonelontIsInnelonrQuotelondTwelonelont, isQuotelondTwelonelont),
+        _.withConstantFelonaturelon(TwelonelontIsSourcelonTwelonelont, isSourcelonTwelonelont),
       )
     )
   }
 
-  private def handleVisibilityResultByTweetType(
-    zipVisResult: ((RequestTweetId, EvaluateTweetType), Try[VisibilityResult])
-  ): (RequestTweetId, (EvaluateTweetType, Try[VisibilityResult])) = {
-    zipVisResult match {
-      case ((id: RequestTweetId, REQUEST), Return(visResult)) =>
-        (id, (REQUEST, Return(handleComposableVisibilityResult(visResult))))
-      case ((id: RequestTweetId, QUOTED), Return(visResult)) =>
+  privatelon delonf handlelonVisibilityRelonsultByTwelonelontTypelon(
+    zipVisRelonsult: ((RelonquelonstTwelonelontId, elonvaluatelonTwelonelontTypelon), Try[VisibilityRelonsult])
+  ): (RelonquelonstTwelonelontId, (elonvaluatelonTwelonelontTypelon, Try[VisibilityRelonsult])) = {
+    zipVisRelonsult match {
+      caselon ((id: RelonquelonstTwelonelontId, RelonQUelonST), Relonturn(visRelonsult)) =>
+        (id, (RelonQUelonST, Relonturn(handlelonComposablelonVisibilityRelonsult(visRelonsult))))
+      caselon ((id: RelonquelonstTwelonelontId, QUOTelonD), Relonturn(visRelonsult)) =>
         (
           id,
           (
-            QUOTED,
-            Return(
-              handleInnerQuotedTweetVisibilityResult(handleComposableVisibilityResult(visResult)))))
-      case ((id: RequestTweetId, SOURCE), Return(visResult)) =>
-        (id, (SOURCE, Return(handleComposableVisibilityResult(visResult))))
-      case ((id: RequestTweetId, tweetType: EvaluateTweetType), result: Try[VisibilityResult]) =>
-        (id, (tweetType, result))
+            QUOTelonD,
+            Relonturn(
+              handlelonInnelonrQuotelondTwelonelontVisibilityRelonsult(handlelonComposablelonVisibilityRelonsult(visRelonsult)))))
+      caselon ((id: RelonquelonstTwelonelontId, SOURCelon), Relonturn(visRelonsult)) =>
+        (id, (SOURCelon, Relonturn(handlelonComposablelonVisibilityRelonsult(visRelonsult))))
+      caselon ((id: RelonquelonstTwelonelontId, twelonelontTypelon: elonvaluatelonTwelonelontTypelon), relonsult: Try[VisibilityRelonsult]) =>
+        (id, (twelonelontTypelon, relonsult))
     }
   }
 
-  private def handleComposableVisibilityResult(result: VisibilityResult): VisibilityResult = {
-    if (result.secondaryVerdicts.nonEmpty) {
-      result.copy(verdict = composeActions(result.verdict, result.secondaryVerdicts))
-    } else {
-      result
+  privatelon delonf handlelonComposablelonVisibilityRelonsult(relonsult: VisibilityRelonsult): VisibilityRelonsult = {
+    if (relonsult.seloncondaryVelonrdicts.nonelonmpty) {
+      relonsult.copy(velonrdict = composelonActions(relonsult.velonrdict, relonsult.seloncondaryVelonrdicts))
+    } elonlselon {
+      relonsult
     }
   }
 
-  private def composeActions(primary: Action, secondary: Seq[Action]): Action = {
-    if (primary.isComposable && secondary.nonEmpty) {
-      val actions = Seq[Action] { primary } ++ secondary
-      val interstitialOpt = Action.getFirstInterstitial(actions: _*)
-      val softInterventionOpt = Action.getFirstSoftIntervention(actions: _*)
-      val limitedEngagementsOpt = Action.getFirstLimitedEngagements(actions: _*)
-      val avoidOpt = Action.getFirstAvoid(actions: _*)
+  privatelon delonf composelonActions(primary: Action, seloncondary: Selonq[Action]): Action = {
+    if (primary.isComposablelon && seloncondary.nonelonmpty) {
+      val actions = Selonq[Action] { primary } ++ seloncondary
+      val intelonrstitialOpt = Action.gelontFirstIntelonrstitial(actions: _*)
+      val softIntelonrvelonntionOpt = Action.gelontFirstSoftIntelonrvelonntion(actions: _*)
+      val limitelondelonngagelonmelonntsOpt = Action.gelontFirstLimitelondelonngagelonmelonnts(actions: _*)
+      val avoidOpt = Action.gelontFirstAvoid(actions: _*)
 
       val numActions =
-        Seq[Option[_]](interstitialOpt, softInterventionOpt, limitedEngagementsOpt, avoidOpt)
-          .count(_.isDefined)
+        Selonq[Option[_]](intelonrstitialOpt, softIntelonrvelonntionOpt, limitelondelonngagelonmelonntsOpt, avoidOpt)
+          .count(_.isDelonfinelond)
       if (numActions > 1) {
-        TweetInterstitial(
-          interstitialOpt,
-          softInterventionOpt,
-          limitedEngagementsOpt,
-          None,
+        TwelonelontIntelonrstitial(
+          intelonrstitialOpt,
+          softIntelonrvelonntionOpt,
+          limitelondelonngagelonmelonntsOpt,
+          Nonelon,
           avoidOpt
         )
-      } else {
+      } elonlselon {
         primary
       }
-    } else {
+    } elonlselon {
       primary
     }
   }
 
-  private def handleInnerQuotedTweetVisibilityResult(
-    result: VisibilityResult
-  ): VisibilityResult = {
-    val newVerdict: Action =
-      result.verdict match {
-        case interstitial: Interstitial => Drop(interstitial.reason)
-        case ComposableActionsWithInterstitial(tweetInterstitial) => Drop(tweetInterstitial.reason)
-        case verdict => verdict
+  privatelon delonf handlelonInnelonrQuotelondTwelonelontVisibilityRelonsult(
+    relonsult: VisibilityRelonsult
+  ): VisibilityRelonsult = {
+    val nelonwVelonrdict: Action =
+      relonsult.velonrdict match {
+        caselon intelonrstitial: Intelonrstitial => Drop(intelonrstitial.relonason)
+        caselon ComposablelonActionsWithIntelonrstitial(twelonelontIntelonrstitial) => Drop(twelonelontIntelonrstitial.relonason)
+        caselon velonrdict => velonrdict
       }
 
-    result.copy(verdict = newVerdict)
+    relonsult.copy(velonrdict = nelonwVelonrdict)
   }
 }

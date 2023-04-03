@@ -1,37 +1,37 @@
-package com.twitter.home_mixer.functional_component.filter
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.filtelonr
 
-import com.twitter.home_mixer.model.HomeFeatures.InNetworkFeature
-import com.twitter.home_mixer.model.HomeFeatures.IsRetweetFeature
-import com.twitter.home_mixer.model.HomeFeatures.TweetUrlsFeature
-import com.twitter.home_mixer.product.scored_tweets.param.ScoredTweetsParam.CompetitorURLSeqParam
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.filter.FilterResult
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.InNelontworkFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.IsRelontwelonelontFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.TwelonelontUrlsFelonaturelon
+import com.twittelonr.homelon_mixelonr.product.scorelond_twelonelonts.param.ScorelondTwelonelontsParam.CompelontitorURLSelonqParam
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.TwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.filtelonr.Filtelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.filtelonr.FiltelonrRelonsult
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.FiltelonrIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stitch.Stitch
 
-object OutOfNetworkCompetitorURLFilter extends Filter[PipelineQuery, TweetCandidate] {
+objelonct OutOfNelontworkCompelontitorURLFiltelonr elonxtelonnds Filtelonr[PipelonlinelonQuelonry, TwelonelontCandidatelon] {
 
-  override val identifier: FilterIdentifier = FilterIdentifier("OutOfNetworkCompetitorURL")
+  ovelonrridelon val idelonntifielonr: FiltelonrIdelonntifielonr = FiltelonrIdelonntifielonr("OutOfNelontworkCompelontitorURL")
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[FilterResult[TweetCandidate]] = {
-    val competitorUrls = query.params(CompetitorURLSeqParam).toSet
-    val (removed, kept) = candidates.partition(hasOutOfNetworkUrlFromCompetitor(_, competitorUrls))
+  ovelonrridelon delonf apply(
+    quelonry: PipelonlinelonQuelonry,
+    candidatelons: Selonq[CandidatelonWithFelonaturelons[TwelonelontCandidatelon]]
+  ): Stitch[FiltelonrRelonsult[TwelonelontCandidatelon]] = {
+    val compelontitorUrls = quelonry.params(CompelontitorURLSelonqParam).toSelont
+    val (relonmovelond, kelonpt) = candidatelons.partition(hasOutOfNelontworkUrlFromCompelontitor(_, compelontitorUrls))
 
-    Stitch.value(FilterResult(kept = kept.map(_.candidate), removed = removed.map(_.candidate)))
+    Stitch.valuelon(FiltelonrRelonsult(kelonpt = kelonpt.map(_.candidatelon), relonmovelond = relonmovelond.map(_.candidatelon)))
   }
 
-  def hasOutOfNetworkUrlFromCompetitor(
-    candidate: CandidateWithFeatures[TweetCandidate],
-    competitorUrls: Set[String]
-  ): Boolean = {
-    !candidate.features.getOrElse(InNetworkFeature, true) &&
-    !candidate.features.getOrElse(IsRetweetFeature, false) &&
-    candidate.features.get(TweetUrlsFeature).toSet.intersect(competitorUrls).nonEmpty
+  delonf hasOutOfNelontworkUrlFromCompelontitor(
+    candidatelon: CandidatelonWithFelonaturelons[TwelonelontCandidatelon],
+    compelontitorUrls: Selont[String]
+  ): Boolelonan = {
+    !candidatelon.felonaturelons.gelontOrelonlselon(InNelontworkFelonaturelon, truelon) &&
+    !candidatelon.felonaturelons.gelontOrelonlselon(IsRelontwelonelontFelonaturelon, falselon) &&
+    candidatelon.felonaturelons.gelont(TwelonelontUrlsFelonaturelon).toSelont.intelonrselonct(compelontitorUrls).nonelonmpty
   }
 }

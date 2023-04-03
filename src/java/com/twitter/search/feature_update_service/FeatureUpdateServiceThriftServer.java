@@ -1,149 +1,149 @@
-package com.twitter.search.feature_update_service;
+packagelon com.twittelonr.selonarch.felonaturelon_updatelon_selonrvicelon;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
+import java.util.Collelonction;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrelonnt.TimelonUnit;
 
-import com.google.common.base.Preconditions;
-import com.google.inject.Module;
+import com.googlelon.common.baselon.Prelonconditions;
+import com.googlelon.injelonct.Modulelon;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.app.Flag;
-import com.twitter.app.Flaggable;
-import com.twitter.finagle.Filter;
-import com.twitter.finagle.Service;
-import com.twitter.finagle.ThriftMux;
-import com.twitter.finatra.annotations.DarkTrafficFilterType;
-import com.twitter.finatra.decider.modules.DeciderModule$;
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsThriftWebFormsModule;
-import com.twitter.finatra.mtls.thriftmux.AbstractMtlsThriftServer;
-import com.twitter.finatra.thrift.filters.AccessLoggingFilter;
-import com.twitter.finatra.thrift.filters.LoggingMDCFilter;
-import com.twitter.finatra.thrift.filters.StatsFilter;
-import com.twitter.finatra.thrift.filters.ThriftMDCFilter;
-import com.twitter.finatra.thrift.filters.TraceIdMDCFilter;
-import com.twitter.finatra.thrift.routing.JavaThriftRouter;
-import com.twitter.inject.thrift.modules.ThriftClientIdModule$;
-import com.twitter.search.common.constants.SearchThriftWebFormsAccess;
-import com.twitter.search.common.metrics.BuildInfoStats;
-import com.twitter.search.common.util.PlatformStatsExporter;
-import com.twitter.search.feature_update_service.filters.ClientIdWhitelistFilter;
-import com.twitter.search.feature_update_service.modules.ClientIdWhitelistModule;
-import com.twitter.search.feature_update_service.modules.EarlybirdUtilModule;
-import com.twitter.search.feature_update_service.modules.FeatureUpdateServiceDiffyModule;
-import com.twitter.search.feature_update_service.modules.FinagleKafkaProducerModule;
-import com.twitter.search.feature_update_service.modules.FuturePoolModule;
-import com.twitter.search.feature_update_service.modules.TweetypieModule;
-import com.twitter.search.feature_update_service.thriftjava.FeatureUpdateService;
-import com.twitter.thriftwebforms.MethodOptionsAccessConfig;
-import com.twitter.util.ExecutorServiceFuturePool;
+import com.twittelonr.app.Flag;
+import com.twittelonr.app.Flaggablelon;
+import com.twittelonr.finaglelon.Filtelonr;
+import com.twittelonr.finaglelon.Selonrvicelon;
+import com.twittelonr.finaglelon.ThriftMux;
+import com.twittelonr.finatra.annotations.DarkTrafficFiltelonrTypelon;
+import com.twittelonr.finatra.deloncidelonr.modulelons.DeloncidelonrModulelon$;
+import com.twittelonr.finatra.mtls.thriftmux.modulelons.MtlsThriftWelonbFormsModulelon;
+import com.twittelonr.finatra.mtls.thriftmux.AbstractMtlsThriftSelonrvelonr;
+import com.twittelonr.finatra.thrift.filtelonrs.AccelonssLoggingFiltelonr;
+import com.twittelonr.finatra.thrift.filtelonrs.LoggingMDCFiltelonr;
+import com.twittelonr.finatra.thrift.filtelonrs.StatsFiltelonr;
+import com.twittelonr.finatra.thrift.filtelonrs.ThriftMDCFiltelonr;
+import com.twittelonr.finatra.thrift.filtelonrs.TracelonIdMDCFiltelonr;
+import com.twittelonr.finatra.thrift.routing.JavaThriftRoutelonr;
+import com.twittelonr.injelonct.thrift.modulelons.ThriftClielonntIdModulelon$;
+import com.twittelonr.selonarch.common.constants.SelonarchThriftWelonbFormsAccelonss;
+import com.twittelonr.selonarch.common.melontrics.BuildInfoStats;
+import com.twittelonr.selonarch.common.util.PlatformStatselonxportelonr;
+import com.twittelonr.selonarch.felonaturelon_updatelon_selonrvicelon.filtelonrs.ClielonntIdWhitelonlistFiltelonr;
+import com.twittelonr.selonarch.felonaturelon_updatelon_selonrvicelon.modulelons.ClielonntIdWhitelonlistModulelon;
+import com.twittelonr.selonarch.felonaturelon_updatelon_selonrvicelon.modulelons.elonarlybirdUtilModulelon;
+import com.twittelonr.selonarch.felonaturelon_updatelon_selonrvicelon.modulelons.FelonaturelonUpdatelonSelonrvicelonDiffyModulelon;
+import com.twittelonr.selonarch.felonaturelon_updatelon_selonrvicelon.modulelons.FinaglelonKafkaProducelonrModulelon;
+import com.twittelonr.selonarch.felonaturelon_updatelon_selonrvicelon.modulelons.FuturelonPoolModulelon;
+import com.twittelonr.selonarch.felonaturelon_updatelon_selonrvicelon.modulelons.TwelonelontypielonModulelon;
+import com.twittelonr.selonarch.felonaturelon_updatelon_selonrvicelon.thriftjava.FelonaturelonUpdatelonSelonrvicelon;
+import com.twittelonr.thriftwelonbforms.MelonthodOptionsAccelonssConfig;
+import com.twittelonr.util.elonxeloncutorSelonrvicelonFuturelonPool;
 
-public class FeatureUpdateServiceThriftServer extends AbstractMtlsThriftServer {
-  private static final Logger LOG =
-      LoggerFactory.getLogger(FeatureUpdateServiceThriftServer.class);
+public class FelonaturelonUpdatelonSelonrvicelonThriftSelonrvelonr elonxtelonnds AbstractMtlsThriftSelonrvelonr {
+  privatelon static final Loggelonr LOG =
+      LoggelonrFactory.gelontLoggelonr(FelonaturelonUpdatelonSelonrvicelonThriftSelonrvelonr.class);
 
-  // Ideally we would not have to access the "environment" flag here and we could instead pass
-  // a flag to the ThriftWebFormsModule that would either enable or disable thrift web forms.
-  // However, it is not simple to create our own TwitterModule that both extends the
-  // ThriftWebFormsModule and consumes an injected flag.
-  private Flag<String> envFlag = flag().create("environment",
+  // Idelonally welon would not havelon to accelonss thelon "elonnvironmelonnt" flag helonrelon and welon could instelonad pass
+  // a flag to thelon ThriftWelonbFormsModulelon that would elonithelonr elonnablelon or disablelon thrift welonb forms.
+  // Howelonvelonr, it is not simplelon to crelonatelon our own TwittelonrModulelon that both elonxtelonnds thelon
+  // ThriftWelonbFormsModulelon and consumelons an injelonctelond flag.
+  privatelon Flag<String> elonnvFlag = flag().crelonatelon("elonnvironmelonnt",
       "",
-      "Environment for service (prod, staging, staging1, devel)",
-      Flaggable.ofString());
+      "elonnvironmelonnt for selonrvicelon (prod, staging, staging1, delonvelonl)",
+      Flaggablelon.ofString());
 
-  FeatureUpdateServiceThriftServer(String[] args) {
-    BuildInfoStats.export();
-    PlatformStatsExporter.exportPlatformStats();
+  FelonaturelonUpdatelonSelonrvicelonThriftSelonrvelonr(String[] args) {
+    BuildInfoStats.elonxport();
+    PlatformStatselonxportelonr.elonxportPlatformStats();
 
-    flag().parseArgs(args, true);
+    flag().parselonArgs(args, truelon);
   }
 
-  @Override
-  @SuppressWarnings("unchecked")
-  public Collection<Module> javaModules() {
-    List<Module> modules = new ArrayList<>();
-    modules.addAll(Arrays.asList(
-        ThriftClientIdModule$.MODULE$,
-        DeciderModule$.MODULE$,
-        new ClientIdWhitelistModule(),
-        new FinagleKafkaProducerModule(),
-        new EarlybirdUtilModule(),
-        new FuturePoolModule(),
-        new FeatureUpdateServiceDiffyModule(),
-        new TweetypieModule()));
+  @Ovelonrridelon
+  @SupprelonssWarnings("unchelonckelond")
+  public Collelonction<Modulelon> javaModulelons() {
+    List<Modulelon> modulelons = nelonw ArrayList<>();
+    modulelons.addAll(Arrays.asList(
+        ThriftClielonntIdModulelon$.MODULelon$,
+        DeloncidelonrModulelon$.MODULelon$,
+        nelonw ClielonntIdWhitelonlistModulelon(),
+        nelonw FinaglelonKafkaProducelonrModulelon(),
+        nelonw elonarlybirdUtilModulelon(),
+        nelonw FuturelonPoolModulelon(),
+        nelonw FelonaturelonUpdatelonSelonrvicelonDiffyModulelon(),
+        nelonw TwelonelontypielonModulelon()));
 
-    // Only add the Thrift Web Forms module for non-prod services because we should
-    // not allow write access to production data through Thrift Web Forms.
-    String environment = envFlag.apply();
-    if ("prod".equals(environment)) {
-      LOG.info("Not including Thrift Web Forms because the environment is prod");
-    } else {
-      LOG.info("Including Thrift Web Forms because the environment is " + environment);
-      modules.add(
-        MtlsThriftWebFormsModule.create(
+    // Only add thelon Thrift Welonb Forms modulelon for non-prod selonrvicelons beloncauselon welon should
+    // not allow writelon accelonss to production data through Thrift Welonb Forms.
+    String elonnvironmelonnt = elonnvFlag.apply();
+    if ("prod".elonquals(elonnvironmelonnt)) {
+      LOG.info("Not including Thrift Welonb Forms beloncauselon thelon elonnvironmelonnt is prod");
+    } elonlselon {
+      LOG.info("Including Thrift Welonb Forms beloncauselon thelon elonnvironmelonnt is " + elonnvironmelonnt);
+      modulelons.add(
+        MtlsThriftWelonbFormsModulelon.crelonatelon(
           this,
-          FeatureUpdateService.ServiceIface.class,
-          MethodOptionsAccessConfig.byLdapGroup(SearchThriftWebFormsAccess.WRITE_LDAP_GROUP)
+          FelonaturelonUpdatelonSelonrvicelon.SelonrvicelonIfacelon.class,
+          MelonthodOptionsAccelonssConfig.byLdapGroup(SelonarchThriftWelonbFormsAccelonss.WRITelon_LDAP_GROUP)
         )
       );
     }
 
-    return modules;
+    relonturn modulelons;
   }
 
-  @Override
-  public void configureThrift(JavaThriftRouter router) {
-    router
-        // Initialize Mapped Diagnostic Context (MDC) for logging
-        // (see https://logback.qos.ch/manual/mdc.html)
-        .filter(LoggingMDCFilter.class)
-        // Inject trace ID in MDC for logging
-        .filter(TraceIdMDCFilter.class)
-        // Inject request method and client ID in MDC for logging
-        .filter(ThriftMDCFilter.class)
-        // Log client access
-        .filter(AccessLoggingFilter.class)
-        // Export basic service stats
-        .filter(StatsFilter.class)
-        .filter(ClientIdWhitelistFilter.class)
-        .add(FeatureUpdateController.class);
+  @Ovelonrridelon
+  public void configurelonThrift(JavaThriftRoutelonr routelonr) {
+    routelonr
+        // Initializelon Mappelond Diagnostic Contelonxt (MDC) for logging
+        // (selonelon https://logback.qos.ch/manual/mdc.html)
+        .filtelonr(LoggingMDCFiltelonr.class)
+        // Injelonct tracelon ID in MDC for logging
+        .filtelonr(TracelonIdMDCFiltelonr.class)
+        // Injelonct relonquelonst melonthod and clielonnt ID in MDC for logging
+        .filtelonr(ThriftMDCFiltelonr.class)
+        // Log clielonnt accelonss
+        .filtelonr(AccelonssLoggingFiltelonr.class)
+        // elonxport basic selonrvicelon stats
+        .filtelonr(StatsFiltelonr.class)
+        .filtelonr(ClielonntIdWhitelonlistFiltelonr.class)
+        .add(FelonaturelonUpdatelonControllelonr.class);
   }
 
-  @Override
-  public Service<byte[], byte[]> configureService(Service<byte[], byte[]> service) {
-    // Add the DarkTrafficFilter in "front" of the service being served.
-    return injector()
-        .instance(Filter.TypeAgnostic.class, DarkTrafficFilterType.class)
-        .andThen(service);
+  @Ovelonrridelon
+  public Selonrvicelon<bytelon[], bytelon[]> configurelonSelonrvicelon(Selonrvicelon<bytelon[], bytelon[]> selonrvicelon) {
+    // Add thelon DarkTrafficFiltelonr in "front" of thelon selonrvicelon beloning selonrvelond.
+    relonturn injelonctor()
+        .instancelon(Filtelonr.TypelonAgnostic.class, DarkTrafficFiltelonrTypelon.class)
+        .andThelonn(selonrvicelon);
   }
 
-  @Override
-  public ThriftMux.Server configureThriftServer(ThriftMux.Server server) {
-    // This cast looks redundant, but it is required for pants to compile this file.
-    return (ThriftMux.Server) server.withResponseClassifier(new FeatureUpdateResponseClassifier());
+  @Ovelonrridelon
+  public ThriftMux.Selonrvelonr configurelonThriftSelonrvelonr(ThriftMux.Selonrvelonr selonrvelonr) {
+    // This cast looks relondundant, but it is relonquirelond for pants to compilelon this filelon.
+    relonturn (ThriftMux.Selonrvelonr) selonrvelonr.withRelonsponselonClassifielonr(nelonw FelonaturelonUpdatelonRelonsponselonClassifielonr());
   }
 
-  @Override
+  @Ovelonrridelon
   public void postWarmup() {
-    super.postWarmup();
+    supelonr.postWarmup();
 
-    ExecutorServiceFuturePool futurePool = injector().instance(ExecutorServiceFuturePool.class);
-    Preconditions.checkNotNull(futurePool);
+    elonxeloncutorSelonrvicelonFuturelonPool futurelonPool = injelonctor().instancelon(elonxeloncutorSelonrvicelonFuturelonPool.class);
+    Prelonconditions.chelonckNotNull(futurelonPool);
 
-    onExit(() -> {
+    onelonxit(() -> {
       try {
-        futurePool.executor().shutdownNow();
+        futurelonPool.elonxeloncutor().shutdownNow();
 
-        futurePool.executor().awaitTermination(10L, TimeUnit.SECONDS);
-      } catch (InterruptedException e) {
-        LOG.error("Interrupted while awaiting future pool termination", e);
+        futurelonPool.elonxeloncutor().awaitTelonrmination(10L, TimelonUnit.SelonCONDS);
+      } catch (Intelonrruptelondelonxcelonption elon) {
+        LOG.elonrror("Intelonrruptelond whilelon awaiting futurelon pool telonrmination", elon);
       }
 
-      return null;
+      relonturn null;
     });
   }
 }

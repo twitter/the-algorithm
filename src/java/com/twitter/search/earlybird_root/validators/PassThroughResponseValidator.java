@@ -1,12 +1,12 @@
-package com.twitter.search.earlybird_root.validators;
+packagelon com.twittelonr.selonarch.elonarlybird_root.validators;
 
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.util.Future;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
+import com.twittelonr.util.Futurelon;
 
-/** A no-op ServiceResponseValidator. */
-public class PassThroughResponseValidator implements ServiceResponseValidator<EarlybirdResponse> {
-  @Override
-  public Future<EarlybirdResponse> validate(EarlybirdResponse response) {
-    return Future.value(response);
+/** A no-op SelonrvicelonRelonsponselonValidator. */
+public class PassThroughRelonsponselonValidator implelonmelonnts SelonrvicelonRelonsponselonValidator<elonarlybirdRelonsponselon> {
+  @Ovelonrridelon
+  public Futurelon<elonarlybirdRelonsponselon> validatelon(elonarlybirdRelonsponselon relonsponselon) {
+    relonturn Futurelon.valuelon(relonsponselon);
   }
 }

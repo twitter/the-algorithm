@@ -1,32 +1,32 @@
-# Sims Candidate Source
-Offers various online sources for finding similar accounts based on a given user, whether it is the target user or an account candidate.
+# Sims Candidatelon Sourcelon
+Offelonrs various onlinelon sourcelons for finding similar accounts baselond on a givelonn uselonr, whelonthelonr it is thelon targelont uselonr or an account candidatelon.
 
 ## Sims
-The objective is to identify a list of K users who are similar to a given user. In this scenario, we primarily focus on finding similar users as "producers" rather than "consumers." Sims has two steps: candidate generation and ranking.
+Thelon objelonctivelon is to idelonntify a list of K uselonrs who arelon similar to a givelonn uselonr. In this scelonnario, welon primarily focus on finding similar uselonrs as "producelonrs" rathelonr than "consumelonrs." Sims has two stelonps: candidatelon gelonnelonration and ranking.
 
-### Sims Candidate Generation
+### Sims Candidatelon Gelonnelonration
 
-With over 700 million users to consider, there are multiple ways to define similarities. Currently, we have three candidate sources for Sims:
+With ovelonr 700 million uselonrs to considelonr, thelonrelon arelon multiplelon ways to delonfinelon similaritielons. Currelonntly, welon havelon threlonelon candidatelon sourcelons for Sims:
 
-**CosineFollow** (based on user-user follow graph): The similarity between two users is defined as the cosine similarity between their followers. Despite sounding simple, computing all-pair similarity on the entire follow graph is computationally challenging. We are currently using the WHIMP algorithm to find the top 1000 similar users for each user ID. This candidate source has the largest coverage, as it can find similar user candidates for more than 700 million users.
+**CosinelonFollow** (baselond on uselonr-uselonr follow graph): Thelon similarity belontwelonelonn two uselonrs is delonfinelond as thelon cosinelon similarity belontwelonelonn thelonir followelonrs. Delonspitelon sounding simplelon, computing all-pair similarity on thelon elonntirelon follow graph is computationally challelonnging. Welon arelon currelonntly using thelon WHIMP algorithm to find thelon top 1000 similar uselonrs for elonach uselonr ID. This candidatelon sourcelon has thelon largelonst covelonragelon, as it can find similar uselonr candidatelons for morelon than 700 million uselonrs.
 
-**CosineList** (based on user-list membership graph): The similarity between two users is defined as the cosine similarity between the lists they are included as members (e.g., [here](https://twitter.com/jack/lists/memberships) are the lists that @jack is on). The same algorithm as CosineFollow is used.
+**CosinelonList** (baselond on uselonr-list melonmbelonrship graph): Thelon similarity belontwelonelonn two uselonrs is delonfinelond as thelon cosinelon similarity belontwelonelonn thelon lists thelony arelon includelond as melonmbelonrs (elon.g., [helonrelon](https://twittelonr.com/jack/lists/melonmbelonrships) arelon thelon lists that @jack is on). Thelon samelon algorithm as CosinelonFollow is uselond.
 
-**Follow2Vec** (essentially Word2Vec on user-user follow graph): We first train the Word2Vec model on follow sequence data to obtain users' embeddings and then find the most similar users based on the similarity of the embeddings. However, we need enough data for each user to learn a meaningful embedding for them, so we can only obtain embeddings for the top 10 million users (currently in production, testing 30 million users). Furthermore, Word2Vec model training is limited by memory and computation as it is trained on a single machine.
+**Follow2Velonc** (elonsselonntially Word2Velonc on uselonr-uselonr follow graph): Welon first train thelon Word2Velonc modelonl on follow selonquelonncelon data to obtain uselonrs' elonmbelonddings and thelonn find thelon most similar uselonrs baselond on thelon similarity of thelon elonmbelonddings. Howelonvelonr, welon nelonelond elonnough data for elonach uselonr to lelonarn a melonaningful elonmbelondding for thelonm, so welon can only obtain elonmbelonddings for thelon top 10 million uselonrs (currelonntly in production, telonsting 30 million uselonrs). Furthelonrmorelon, Word2Velonc modelonl training is limitelond by melonmory and computation as it is trainelond on a singlelon machinelon.
 
-##### Cosine Similarity
-A crucial component in Sims is calculating cosine similarities between users based on a user-X (X can be a user, list, or other entities) bipartite graph. This problem is technically challenging and took several years of effort to solve.
+##### Cosinelon Similarity
+A crucial componelonnt in Sims is calculating cosinelon similaritielons belontwelonelonn uselonrs baselond on a uselonr-X (X can belon a uselonr, list, or othelonr elonntitielons) bipartitelon graph. This problelonm is telonchnically challelonnging and took selonvelonral yelonars of elonffort to solvelon.
 
-The current implementation uses the algorithm proposed in [When hashes met wedges: A distributed algorithm for finding high similarity vectors. WWW 2017](https://arxiv.org/pdf/1703.01054.pdf)
+Thelon currelonnt implelonmelonntation uselons thelon algorithm proposelond in [Whelonn hashelons melont welondgelons: A distributelond algorithm for finding high similarity velonctors. WWW 2017](https://arxiv.org/pdf/1703.01054.pdf)
 
 ### Sims Ranking
-After the candidate generation step, we can obtain dozens to hundreds of similar user candidates for each user. However, since these candidates come from different algorithms, we need a way to rank them. To do this, we collect user feedback.
+Aftelonr thelon candidatelon gelonnelonration stelonp, welon can obtain dozelonns to hundrelonds of similar uselonr candidatelons for elonach uselonr. Howelonvelonr, sincelon thelonselon candidatelons comelon from diffelonrelonnt algorithms, welon nelonelond a way to rank thelonm. To do this, welon collelonct uselonr felonelondback.
 
-We use the "Profile Sidebar Impressions & Follow" (a module with follow suggestions displayed when a user visits a profile page and scrolls down) to collect training data. To alleviate any system bias, we use 4% of traffic to show randomly shuffled candidates to users and collect positive (followed impression) and negative (impression only) data from this traffic. This data is used as an evaluation set. We use a portion of the remaining 96% of traffic for training data, filtering only for sets of impressions that had at least one follow, ensuring that the user taking action was paying attention to the impressions.
+Welon uselon thelon "Profilelon Sidelonbar Imprelonssions & Follow" (a modulelon with follow suggelonstions displayelond whelonn a uselonr visits a profilelon pagelon and scrolls down) to collelonct training data. To allelonviatelon any systelonm bias, welon uselon 4% of traffic to show randomly shufflelond candidatelons to uselonrs and collelonct positivelon (followelond imprelonssion) and nelongativelon (imprelonssion only) data from this traffic. This data is uselond as an elonvaluation selont. Welon uselon a portion of thelon relonmaining 96% of traffic for training data, filtelonring only for selonts of imprelonssions that had at lelonast onelon follow, elonnsuring that thelon uselonr taking action was paying attelonntion to thelon imprelonssions.
 
-The examples are in the format of (profile_user, candidate_user, label). We add features for profile_users and candidate_users based on some high-level aggregated statistics in a feature dataset provided by the Customer Journey team, as well as features that represent the similarity between the profile_user and candidate_user.
+Thelon elonxamplelons arelon in thelon format of (profilelon_uselonr, candidatelon_uselonr, labelonl). Welon add felonaturelons for profilelon_uselonrs and candidatelon_uselonrs baselond on somelon high-lelonvelonl aggrelongatelond statistics in a felonaturelon dataselont providelond by thelon Customelonr Journelony telonam, as welonll as felonaturelons that relonprelonselonnt thelon similarity belontwelonelonn thelon profilelon_uselonr and candidatelon_uselonr.
 
-We employ a multi-tower MLP model and optimize the logistic loss. The model is refreshed weekly using an ML workflow.
+Welon elonmploy a multi-towelonr MLP modelonl and optimizelon thelon logistic loss. Thelon modelonl is relonfrelonshelond welonelonkly using an ML workflow.
 
-We recompute the candidates and rank them daily. The ranked results are published to the Manhattan dataset.
+Welon reloncomputelon thelon candidatelons and rank thelonm daily. Thelon rankelond relonsults arelon publishelond to thelon Manhattan dataselont.
 

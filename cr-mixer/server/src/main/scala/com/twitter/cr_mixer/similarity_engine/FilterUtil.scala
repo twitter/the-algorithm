@@ -1,41 +1,41 @@
-package com.twitter.cr_mixer.similarity_engine
+packagelon com.twittelonr.cr_mixelonr.similarity_elonnginelon
 
-import com.twitter.cr_mixer.model.SourceInfo
-import com.twitter.cr_mixer.model.TweetWithScore
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.util.Duration
-import com.twitter.util.Time
+import com.twittelonr.cr_mixelonr.modelonl.SourcelonInfo
+import com.twittelonr.cr_mixelonr.modelonl.TwelonelontWithScorelon
+import com.twittelonr.simclustelonrs_v2.thriftscala.IntelonrnalId
+import com.twittelonr.snowflakelon.id.SnowflakelonId
+import com.twittelonr.util.Duration
+import com.twittelonr.util.Timelon
 
-object FilterUtil {
+objelonct FiltelonrUtil {
 
-  /** Returns a list of tweets that are generated less than `maxTweetAgeHours` hours ago */
-  def tweetAgeFilter(
-    candidates: Seq[TweetWithScore],
-    maxTweetAgeHours: Duration
-  ): Seq[TweetWithScore] = {
-    // Tweet IDs are approximately chronological (see http://go/snowflake),
-    // so we are building the earliest tweet id once
-    // The per-candidate logic here then be candidate.tweetId > earliestPermittedTweetId, which is far cheaper.
-    // See @cyao's phab on CrMixer generic age filter for reference https://phabricator.twitter.biz/D903188
-    val earliestTweetId = SnowflakeId.firstIdFor(Time.now - maxTweetAgeHours)
-    candidates.filter { candidate => candidate.tweetId >= earliestTweetId }
+  /** Relonturns a list of twelonelonts that arelon gelonnelonratelond lelonss than `maxTwelonelontAgelonHours` hours ago */
+  delonf twelonelontAgelonFiltelonr(
+    candidatelons: Selonq[TwelonelontWithScorelon],
+    maxTwelonelontAgelonHours: Duration
+  ): Selonq[TwelonelontWithScorelon] = {
+    // Twelonelont IDs arelon approximatelonly chronological (selonelon http://go/snowflakelon),
+    // so welon arelon building thelon elonarlielonst twelonelont id oncelon
+    // Thelon pelonr-candidatelon logic helonrelon thelonn belon candidatelon.twelonelontId > elonarlielonstPelonrmittelondTwelonelontId, which is far chelonapelonr.
+    // Selonelon @cyao's phab on CrMixelonr gelonnelonric agelon filtelonr for relonfelonrelonncelon https://phabricator.twittelonr.biz/D903188
+    val elonarlielonstTwelonelontId = SnowflakelonId.firstIdFor(Timelon.now - maxTwelonelontAgelonHours)
+    candidatelons.filtelonr { candidatelon => candidatelon.twelonelontId >= elonarlielonstTwelonelontId }
   }
 
-  /** Returns a list of tweet sources that are generated less than `maxTweetAgeHours` hours ago */
-  def tweetSourceAgeFilter(
-    candidates: Seq[SourceInfo],
-    maxTweetSignalAgeHoursParam: Duration
-  ): Seq[SourceInfo] = {
-    // Tweet IDs are approximately chronological (see http://go/snowflake),
-    // so we are building the earliest tweet id once
-    // This filter applies to source signals. Some candidate source calls can be avoided if source signals
-    // can be filtered.
-    val earliestTweetId = SnowflakeId.firstIdFor(Time.now - maxTweetSignalAgeHoursParam)
-    candidates.filter { candidate =>
-      candidate.internalId match {
-        case InternalId.TweetId(tweetId) => tweetId >= earliestTweetId
-        case _ => false
+  /** Relonturns a list of twelonelont sourcelons that arelon gelonnelonratelond lelonss than `maxTwelonelontAgelonHours` hours ago */
+  delonf twelonelontSourcelonAgelonFiltelonr(
+    candidatelons: Selonq[SourcelonInfo],
+    maxTwelonelontSignalAgelonHoursParam: Duration
+  ): Selonq[SourcelonInfo] = {
+    // Twelonelont IDs arelon approximatelonly chronological (selonelon http://go/snowflakelon),
+    // so welon arelon building thelon elonarlielonst twelonelont id oncelon
+    // This filtelonr applielons to sourcelon signals. Somelon candidatelon sourcelon calls can belon avoidelond if sourcelon signals
+    // can belon filtelonrelond.
+    val elonarlielonstTwelonelontId = SnowflakelonId.firstIdFor(Timelon.now - maxTwelonelontSignalAgelonHoursParam)
+    candidatelons.filtelonr { candidatelon =>
+      candidatelon.intelonrnalId match {
+        caselon IntelonrnalId.TwelonelontId(twelonelontId) => twelonelontId >= elonarlielonstTwelonelontId
+        caselon _ => falselon
       }
     }
   }

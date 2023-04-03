@@ -1,75 +1,75 @@
-package com.twitter.cr_mixer
+packagelon com.twittelonr.cr_mixelonr
 
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.finatra.thrift.routing.ThriftWarmup
-import com.twitter.inject.Logging
-import com.twitter.inject.utils.Handler
-import com.twitter.product_mixer.core.{thriftscala => pt}
-import com.twitter.cr_mixer.{thriftscala => st}
-import com.twitter.scrooge.Request
-import com.twitter.scrooge.Response
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import com.twitter.util.Try
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.finaglelon.thrift.ClielonntId
+import com.twittelonr.finatra.thrift.routing.ThriftWarmup
+import com.twittelonr.injelonct.Logging
+import com.twittelonr.injelonct.utils.Handlelonr
+import com.twittelonr.product_mixelonr.corelon.{thriftscala => pt}
+import com.twittelonr.cr_mixelonr.{thriftscala => st}
+import com.twittelonr.scroogelon.Relonquelonst
+import com.twittelonr.scroogelon.Relonsponselon
+import com.twittelonr.util.Relonturn
+import com.twittelonr.util.Throw
+import com.twittelonr.util.Try
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class CrMixerThriftServerWarmupHandler @Inject() (warmup: ThriftWarmup)
-    extends Handler
+@Singlelonton
+class CrMixelonrThriftSelonrvelonrWarmupHandlelonr @Injelonct() (warmup: ThriftWarmup)
+    elonxtelonnds Handlelonr
     with Logging {
 
-  private val clientId = ClientId("thrift-warmup-client")
+  privatelon val clielonntId = ClielonntId("thrift-warmup-clielonnt")
 
-  def handle(): Unit = {
-    val testIds = Seq(1, 2, 3)
+  delonf handlelon(): Unit = {
+    val telonstIds = Selonq(1, 2, 3)
     try {
-      clientId.asCurrent {
-        testIds.foreach { id =>
-          val warmupReq = warmupQuery(id)
-          info(s"Sending warm-up request to service with query: $warmupReq")
-          warmup.sendRequest(
-            method = st.CrMixer.GetTweetRecommendations,
-            req = Request(st.CrMixer.GetTweetRecommendations.Args(warmupReq)))(assertWarmupResponse)
+      clielonntId.asCurrelonnt {
+        telonstIds.forelonach { id =>
+          val warmupRelonq = warmupQuelonry(id)
+          info(s"Selonnding warm-up relonquelonst to selonrvicelon with quelonry: $warmupRelonq")
+          warmup.selonndRelonquelonst(
+            melonthod = st.CrMixelonr.GelontTwelonelontReloncommelonndations,
+            relonq = Relonquelonst(st.CrMixelonr.GelontTwelonelontReloncommelonndations.Args(warmupRelonq)))(asselonrtWarmupRelonsponselon)
         }
       }
     } catch {
-      case e: Throwable =>
-        // we don't want a warmup failure to prevent start-up
-        error(e.getMessage, e)
+      caselon elon: Throwablelon =>
+        // welon don't want a warmup failurelon to prelonvelonnt start-up
+        elonrror(elon.gelontMelonssagelon, elon)
     }
-    info("Warm-up done.")
+    info("Warm-up donelon.")
   }
 
-  private def warmupQuery(userId: Long): st.CrMixerTweetRequest = {
-    val clientContext = pt.ClientContext(
-      userId = Some(userId),
-      guestId = None,
-      appId = Some(258901L),
-      ipAddress = Some("0.0.0.0"),
-      userAgent = Some("FAKE_USER_AGENT_FOR_WARMUPS"),
-      countryCode = Some("US"),
-      languageCode = Some("en"),
-      isTwoffice = None,
-      userRoles = None,
-      deviceId = Some("FAKE_DEVICE_ID_FOR_WARMUPS")
+  privatelon delonf warmupQuelonry(uselonrId: Long): st.CrMixelonrTwelonelontRelonquelonst = {
+    val clielonntContelonxt = pt.ClielonntContelonxt(
+      uselonrId = Somelon(uselonrId),
+      guelonstId = Nonelon,
+      appId = Somelon(258901L),
+      ipAddrelonss = Somelon("0.0.0.0"),
+      uselonrAgelonnt = Somelon("FAKelon_USelonR_AGelonNT_FOR_WARMUPS"),
+      countryCodelon = Somelon("US"),
+      languagelonCodelon = Somelon("elonn"),
+      isTwofficelon = Nonelon,
+      uselonrRolelons = Nonelon,
+      delonvicelonId = Somelon("FAKelon_DelonVICelon_ID_FOR_WARMUPS")
     )
-    st.CrMixerTweetRequest(
-      clientContext = clientContext,
-      product = st.Product.Home,
-      productContext = Some(st.ProductContext.HomeContext(st.HomeContext())),
+    st.CrMixelonrTwelonelontRelonquelonst(
+      clielonntContelonxt = clielonntContelonxt,
+      product = st.Product.Homelon,
+      productContelonxt = Somelon(st.ProductContelonxt.HomelonContelonxt(st.HomelonContelonxt())),
     )
   }
 
-  private def assertWarmupResponse(
-    result: Try[Response[st.CrMixer.GetTweetRecommendations.SuccessType]]
+  privatelon delonf asselonrtWarmupRelonsponselon(
+    relonsult: Try[Relonsponselon[st.CrMixelonr.GelontTwelonelontReloncommelonndations.SuccelonssTypelon]]
   ): Unit = {
-    // we collect and log any exceptions from the result.
-    result match {
-      case Return(_) => // ok
-      case Throw(exception) =>
-        warn("Error performing warm-up request.")
-        error(exception.getMessage, exception)
+    // welon collelonct and log any elonxcelonptions from thelon relonsult.
+    relonsult match {
+      caselon Relonturn(_) => // ok
+      caselon Throw(elonxcelonption) =>
+        warn("elonrror pelonrforming warm-up relonquelonst.")
+        elonrror(elonxcelonption.gelontMelonssagelon, elonxcelonption)
     }
   }
 }

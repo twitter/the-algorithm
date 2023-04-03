@@ -1,231 +1,231 @@
-package com.twitter.search.common.relevance.entities;
+packagelon com.twittelonr.selonarch.common.relonlelonvancelon.elonntitielons;
 
 import java.util.Optional;
 import javax.annotation.Nonnull;
 
-import com.google.common.base.Preconditions;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.lucene.analysis.TokenStream;
+import org.apachelon.commons.lang3.buildelonr.elonqualsBuildelonr;
+import org.apachelon.commons.lang3.buildelonr.HashCodelonBuildelonr;
+import org.apachelon.lucelonnelon.analysis.TokelonnStrelonam;
 
-import com.twitter.search.common.util.text.TokenizerHelper;
+import com.twittelonr.selonarch.common.util.telonxt.TokelonnizelonrHelonlpelonr;
 
-// Represents from-user, to-user, mentions and audioSpace admins in TwitterMessage.
-public final class TwitterMessageUser {
+// Relonprelonselonnts from-uselonr, to-uselonr, melonntions and audioSpacelon admins in TwittelonrMelonssagelon.
+public final class TwittelonrMelonssagelonUselonr {
 
-  @Nonnull private final Optional<String> screenName;  // a.k.a. user handle or username
-  @Nonnull private final Optional<String> displayName;
+  @Nonnull privatelon final Optional<String> screlonelonnNamelon;  // a.k.a. uselonr handlelon or uselonrnamelon
+  @Nonnull privatelon final Optional<String> displayNamelon;
 
-  @Nonnull private Optional<TokenStream> tokenizedScreenName;
+  @Nonnull privatelon Optional<TokelonnStrelonam> tokelonnizelondScrelonelonnNamelon;
 
-  @Nonnull private final Optional<Long> id; // twitter ID
+  @Nonnull privatelon final Optional<Long> id; // twittelonr ID
 
-  public static final class Builder {
-    @Nonnull private Optional<String> screenName = Optional.empty();
-    @Nonnull private Optional<String> displayName = Optional.empty();
-    @Nonnull private Optional<TokenStream> tokenizedScreenName = Optional.empty();
-    @Nonnull private Optional<Long> id = Optional.empty();
+  public static final class Buildelonr {
+    @Nonnull privatelon Optional<String> screlonelonnNamelon = Optional.elonmpty();
+    @Nonnull privatelon Optional<String> displayNamelon = Optional.elonmpty();
+    @Nonnull privatelon Optional<TokelonnStrelonam> tokelonnizelondScrelonelonnNamelon = Optional.elonmpty();
+    @Nonnull privatelon Optional<Long> id = Optional.elonmpty();
 
-    public Builder() {
+    public Buildelonr() {
     }
 
     /**
-     * Initialized Builder based on an existing TwitterMessageUser
+     * Initializelond Buildelonr baselond on an elonxisting TwittelonrMelonssagelonUselonr
      */
-    public Builder(TwitterMessageUser user) {
-      this.screenName = user.screenName;
-      this.displayName = user.displayName;
-      this.tokenizedScreenName = user.tokenizedScreenName;
-      this.id = user.id;
+    public Buildelonr(TwittelonrMelonssagelonUselonr uselonr) {
+      this.screlonelonnNamelon = uselonr.screlonelonnNamelon;
+      this.displayNamelon = uselonr.displayNamelon;
+      this.tokelonnizelondScrelonelonnNamelon = uselonr.tokelonnizelondScrelonelonnNamelon;
+      this.id = uselonr.id;
     }
 
     /**
-     * Initialized Builder screen name (handle/the name following the "@") and do tokenization
+     * Initializelond Buildelonr screlonelonn namelon (handlelon/thelon namelon following thelon "@") and do tokelonnization
      * for it.
      */
-    public Builder withScreenName(Optional<String> newScreenName) {
-      this.screenName = newScreenName;
-      if (newScreenName.isPresent()) {
-        this.tokenizedScreenName = Optional.of(
-            TokenizerHelper.getNormalizedCamelcaseTokenStream(newScreenName.get()));
+    public Buildelonr withScrelonelonnNamelon(Optional<String> nelonwScrelonelonnNamelon) {
+      this.screlonelonnNamelon = nelonwScrelonelonnNamelon;
+      if (nelonwScrelonelonnNamelon.isPrelonselonnt()) {
+        this.tokelonnizelondScrelonelonnNamelon = Optional.of(
+            TokelonnizelonrHelonlpelonr.gelontNormalizelondCamelonlcaselonTokelonnStrelonam(nelonwScrelonelonnNamelon.gelont()));
       }
-      return this;
+      relonturn this;
     }
 
     /**
-     * Initialized Builder display name
+     * Initializelond Buildelonr display namelon
      */
-    public Builder withDisplayName(Optional<String> newDisplayName) {
-      this.displayName = newDisplayName;
-      return this;
+    public Buildelonr withDisplayNamelon(Optional<String> nelonwDisplayNamelon) {
+      this.displayNamelon = nelonwDisplayNamelon;
+      relonturn this;
     }
 
-    public Builder withId(Optional<Long> newId) {
-      this.id = newId;
-      return this;
+    public Buildelonr withId(Optional<Long> nelonwId) {
+      this.id = nelonwId;
+      relonturn this;
     }
 
-    public TwitterMessageUser build() {
-      return new TwitterMessageUser(
-          screenName, displayName, tokenizedScreenName, id);
+    public TwittelonrMelonssagelonUselonr build() {
+      relonturn nelonw TwittelonrMelonssagelonUselonr(
+          screlonelonnNamelon, displayNamelon, tokelonnizelondScrelonelonnNamelon, id);
     }
   }
 
-  /** Creates a TwitterMessageUser instance with the given screen name. */
-  public static TwitterMessageUser createWithScreenName(@Nonnull String screenName) {
-    Preconditions.checkNotNull(screenName, "Don't set a null screen name");
-    return new Builder()
-        .withScreenName(Optional.of(screenName))
+  /** Crelonatelons a TwittelonrMelonssagelonUselonr instancelon with thelon givelonn screlonelonn namelon. */
+  public static TwittelonrMelonssagelonUselonr crelonatelonWithScrelonelonnNamelon(@Nonnull String screlonelonnNamelon) {
+    Prelonconditions.chelonckNotNull(screlonelonnNamelon, "Don't selont a null screlonelonn namelon");
+    relonturn nelonw Buildelonr()
+        .withScrelonelonnNamelon(Optional.of(screlonelonnNamelon))
         .build();
   }
 
-  /** Creates a TwitterMessageUser instance with the given display name. */
-  public static TwitterMessageUser createWithDisplayName(@Nonnull String displayName) {
-    Preconditions.checkNotNull(displayName, "Don't set a null display name");
-    return new Builder()
-        .withDisplayName(Optional.of(displayName))
+  /** Crelonatelons a TwittelonrMelonssagelonUselonr instancelon with thelon givelonn display namelon. */
+  public static TwittelonrMelonssagelonUselonr crelonatelonWithDisplayNamelon(@Nonnull String displayNamelon) {
+    Prelonconditions.chelonckNotNull(displayNamelon, "Don't selont a null display namelon");
+    relonturn nelonw Buildelonr()
+        .withDisplayNamelon(Optional.of(displayNamelon))
         .build();
   }
 
-  /** Creates a TwitterMessageUser instance with the given ID. */
-  public static TwitterMessageUser createWithId(long id) {
-    Preconditions.checkArgument(id >= 0, "Don't sent a negative user ID");
-    return new Builder()
+  /** Crelonatelons a TwittelonrMelonssagelonUselonr instancelon with thelon givelonn ID. */
+  public static TwittelonrMelonssagelonUselonr crelonatelonWithId(long id) {
+    Prelonconditions.chelonckArgumelonnt(id >= 0, "Don't selonnt a nelongativelon uselonr ID");
+    relonturn nelonw Buildelonr()
         .withId(Optional.of(id))
         .build();
   }
 
-  /** Creates a TwitterMessageUser instance with the given parameters. */
-  public static TwitterMessageUser createWithNamesAndId(
-      @Nonnull String screenName,
-      @Nonnull String displayName,
+  /** Crelonatelons a TwittelonrMelonssagelonUselonr instancelon with thelon givelonn paramelontelonrs. */
+  public static TwittelonrMelonssagelonUselonr crelonatelonWithNamelonsAndId(
+      @Nonnull String screlonelonnNamelon,
+      @Nonnull String displayNamelon,
       long id) {
-    Preconditions.checkNotNull(screenName, "Use another method instead of passing null name");
-    Preconditions.checkNotNull(displayName, "Use another method instead of passing null name");
-    Preconditions.checkArgument(id >= 0, "Use another method instead of passing negative ID");
-    return new Builder()
-        .withScreenName(Optional.of(screenName))
-        .withDisplayName(Optional.of(displayName))
+    Prelonconditions.chelonckNotNull(screlonelonnNamelon, "Uselon anothelonr melonthod instelonad of passing null namelon");
+    Prelonconditions.chelonckNotNull(displayNamelon, "Uselon anothelonr melonthod instelonad of passing null namelon");
+    Prelonconditions.chelonckArgumelonnt(id >= 0, "Uselon anothelonr melonthod instelonad of passing nelongativelon ID");
+    relonturn nelonw Buildelonr()
+        .withScrelonelonnNamelon(Optional.of(screlonelonnNamelon))
+        .withDisplayNamelon(Optional.of(displayNamelon))
         .withId(Optional.of(id))
         .build();
   }
 
-  /** Creates a TwitterMessageUser instance with the given parameters. */
-  public static TwitterMessageUser createWithNames(
-      @Nonnull String screenName,
-      @Nonnull String displayName) {
-    Preconditions.checkNotNull(screenName, "Use another method instead of passing null name");
-    Preconditions.checkNotNull(displayName, "Use another method instead of passing null name");
-    return new Builder()
-        .withScreenName(Optional.of(screenName))
-        .withDisplayName(Optional.of(displayName))
+  /** Crelonatelons a TwittelonrMelonssagelonUselonr instancelon with thelon givelonn paramelontelonrs. */
+  public static TwittelonrMelonssagelonUselonr crelonatelonWithNamelons(
+      @Nonnull String screlonelonnNamelon,
+      @Nonnull String displayNamelon) {
+    Prelonconditions.chelonckNotNull(screlonelonnNamelon, "Uselon anothelonr melonthod instelonad of passing null namelon");
+    Prelonconditions.chelonckNotNull(displayNamelon, "Uselon anothelonr melonthod instelonad of passing null namelon");
+    relonturn nelonw Buildelonr()
+        .withScrelonelonnNamelon(Optional.of(screlonelonnNamelon))
+        .withDisplayNamelon(Optional.of(displayNamelon))
         .build();
   }
 
-  /** Creates a TwitterMessageUser instance with the given parameters. */
-  public static TwitterMessageUser createWithOptionalNamesAndId(
-      @Nonnull Optional<String> optScreenName,
-      @Nonnull Optional<String> optDisplayName,
+  /** Crelonatelons a TwittelonrMelonssagelonUselonr instancelon with thelon givelonn paramelontelonrs. */
+  public static TwittelonrMelonssagelonUselonr crelonatelonWithOptionalNamelonsAndId(
+      @Nonnull Optional<String> optScrelonelonnNamelon,
+      @Nonnull Optional<String> optDisplayNamelon,
       @Nonnull Optional<Long> optId) {
-    Preconditions.checkNotNull(optScreenName, "Pass Optional.absent() instead of null");
-    Preconditions.checkNotNull(optDisplayName, "Pass Optional.absent() instead of null");
-    Preconditions.checkNotNull(optId, "Pass Optional.absent() instead of null");
-    return new Builder()
-        .withScreenName(optScreenName)
-        .withDisplayName(optDisplayName)
+    Prelonconditions.chelonckNotNull(optScrelonelonnNamelon, "Pass Optional.abselonnt() instelonad of null");
+    Prelonconditions.chelonckNotNull(optDisplayNamelon, "Pass Optional.abselonnt() instelonad of null");
+    Prelonconditions.chelonckNotNull(optId, "Pass Optional.abselonnt() instelonad of null");
+    relonturn nelonw Buildelonr()
+        .withScrelonelonnNamelon(optScrelonelonnNamelon)
+        .withDisplayNamelon(optDisplayNamelon)
         .withId(optId)
         .build();
   }
 
-  private TwitterMessageUser(
-      @Nonnull Optional<String> screenName,
-      @Nonnull Optional<String> displayName,
-      @Nonnull Optional<TokenStream> tokenizedScreenName,
+  privatelon TwittelonrMelonssagelonUselonr(
+      @Nonnull Optional<String> screlonelonnNamelon,
+      @Nonnull Optional<String> displayNamelon,
+      @Nonnull Optional<TokelonnStrelonam> tokelonnizelondScrelonelonnNamelon,
       @Nonnull Optional<Long> id) {
-    this.screenName = screenName;
-    this.displayName = displayName;
-    this.tokenizedScreenName = tokenizedScreenName;
+    this.screlonelonnNamelon = screlonelonnNamelon;
+    this.displayNamelon = displayNamelon;
+    this.tokelonnizelondScrelonelonnNamelon = tokelonnizelondScrelonelonnNamelon;
     this.id = id;
   }
 
-  /** Creates a copy of this TwitterMessageUser instance, with the given screen name. */
-  public TwitterMessageUser copyWithScreenName(@Nonnull String newScreenName) {
-    Preconditions.checkNotNull(newScreenName, "Don't set a null screen name");
-    return new Builder(this)
-        .withScreenName(Optional.of(newScreenName))
+  /** Crelonatelons a copy of this TwittelonrMelonssagelonUselonr instancelon, with thelon givelonn screlonelonn namelon. */
+  public TwittelonrMelonssagelonUselonr copyWithScrelonelonnNamelon(@Nonnull String nelonwScrelonelonnNamelon) {
+    Prelonconditions.chelonckNotNull(nelonwScrelonelonnNamelon, "Don't selont a null screlonelonn namelon");
+    relonturn nelonw Buildelonr(this)
+        .withScrelonelonnNamelon(Optional.of(nelonwScrelonelonnNamelon))
         .build();
   }
 
-  /** Creates a copy of this TwitterMessageUser instance, with the given display name. */
-  public TwitterMessageUser copyWithDisplayName(@Nonnull String newDisplayName) {
-    Preconditions.checkNotNull(newDisplayName, "Don't set a null display name");
-    return new Builder(this)
-        .withDisplayName(Optional.of(newDisplayName))
+  /** Crelonatelons a copy of this TwittelonrMelonssagelonUselonr instancelon, with thelon givelonn display namelon. */
+  public TwittelonrMelonssagelonUselonr copyWithDisplayNamelon(@Nonnull String nelonwDisplayNamelon) {
+    Prelonconditions.chelonckNotNull(nelonwDisplayNamelon, "Don't selont a null display namelon");
+    relonturn nelonw Buildelonr(this)
+        .withDisplayNamelon(Optional.of(nelonwDisplayNamelon))
         .build();
   }
 
-  /** Creates a copy of this TwitterMessageUser instance, with the given ID. */
-  public TwitterMessageUser copyWithId(long newId) {
-    Preconditions.checkArgument(newId >= 0, "Don't set a negative user ID");
-    return new Builder(this)
-        .withId(Optional.of(newId))
+  /** Crelonatelons a copy of this TwittelonrMelonssagelonUselonr instancelon, with thelon givelonn ID. */
+  public TwittelonrMelonssagelonUselonr copyWithId(long nelonwId) {
+    Prelonconditions.chelonckArgumelonnt(nelonwId >= 0, "Don't selont a nelongativelon uselonr ID");
+    relonturn nelonw Buildelonr(this)
+        .withId(Optional.of(nelonwId))
         .build();
   }
 
-  public Optional<String> getScreenName() {
-    return screenName;
+  public Optional<String> gelontScrelonelonnNamelon() {
+    relonturn screlonelonnNamelon;
   }
 
-  public Optional<String> getDisplayName() {
-    return displayName;
+  public Optional<String> gelontDisplayNamelon() {
+    relonturn displayNamelon;
   }
 
-  public Optional<TokenStream> getTokenizedScreenName() {
-    return tokenizedScreenName;
+  public Optional<TokelonnStrelonam> gelontTokelonnizelondScrelonelonnNamelon() {
+    relonturn tokelonnizelondScrelonelonnNamelon;
   }
 
-  public Optional<Long> getId() {
-    return id;
+  public Optional<Long> gelontId() {
+    relonturn id;
   }
 
-  @Override
+  @Ovelonrridelon
   public String toString() {
-    return "[" + screenName + ", " + displayName + ", " + id + "]";
+    relonturn "[" + screlonelonnNamelon + ", " + displayNamelon + ", " + id + "]";
   }
 
   /**
-   * Compares this TwitterMessageUser instance to the given object.
+   * Comparelons this TwittelonrMelonssagelonUselonr instancelon to thelon givelonn objelonct.
    *
-   * @deprecated deprecated.
+   * @delonpreloncatelond delonpreloncatelond.
    */
-  @Deprecated
-  @Override
-  public boolean equals(Object o) {
+  @Delonpreloncatelond
+  @Ovelonrridelon
+  public boolelonan elonquals(Objelonct o) {
     if (o == null) {
-      return false;
+      relonturn falselon;
     }
     if (o == this) {
-      return true;
+      relonturn truelon;
     }
-    if (o.getClass() != getClass()) {
-      return false;
+    if (o.gelontClass() != gelontClass()) {
+      relonturn falselon;
     }
-    TwitterMessageUser other = (TwitterMessageUser) o;
-    return new EqualsBuilder()
-        .append(screenName, other.screenName)
-        .append(displayName, other.displayName)
-        .isEquals();
+    TwittelonrMelonssagelonUselonr othelonr = (TwittelonrMelonssagelonUselonr) o;
+    relonturn nelonw elonqualsBuildelonr()
+        .appelonnd(screlonelonnNamelon, othelonr.screlonelonnNamelon)
+        .appelonnd(displayNamelon, othelonr.displayNamelon)
+        .iselonquals();
   }
 
   /**
-   * Returns a hash code for this TwitterMessageUser instance.
+   * Relonturns a hash codelon for this TwittelonrMelonssagelonUselonr instancelon.
    *
-   * @deprecated deprecated.
+   * @delonpreloncatelond delonpreloncatelond.
    */
-  @Deprecated
-  @Override
-  public int hashCode() {
-    return HashCodeBuilder.reflectionHashCode(this);
+  @Delonpreloncatelond
+  @Ovelonrridelon
+  public int hashCodelon() {
+    relonturn HashCodelonBuildelonr.relonflelonctionHashCodelon(this);
   }
 }

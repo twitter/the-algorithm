@@ -1,118 +1,118 @@
-package com.twitter.follow_recommendations
+packagelon com.twittelonr.follow_reloncommelonndations
 
-import com.google.inject.Module
-import com.twitter.finagle.ThriftMux
-import com.twitter.finatra.decider.modules.DeciderModule
-import com.twitter.finatra.http.HttpServer
-import com.twitter.finatra.http.routing.HttpRouter
-import com.twitter.finatra.international.modules.I18nFactoryModule
-import com.twitter.finatra.international.modules.LanguagesModule
-import com.twitter.finatra.jackson.modules.ScalaObjectMapperModule
-import com.twitter.finatra.mtls.http.{Mtls => HttpMtls}
-import com.twitter.finatra.mtls.thriftmux.Mtls
-import com.twitter.finatra.thrift.ThriftServer
-import com.twitter.finatra.thrift.filters._
-import com.twitter.finagle.thrift.Protocols
-import com.twitter.finatra.thrift.routing.ThriftRouter
-import com.twitter.follow_recommendations.common.clients.addressbook.AddressbookModule
-import com.twitter.follow_recommendations.common.clients.adserver.AdserverModule
-import com.twitter.follow_recommendations.common.clients.cache.MemcacheModule
-import com.twitter.follow_recommendations.common.clients.deepbirdv2.DeepBirdV2PredictionServiceClientModule
-import com.twitter.follow_recommendations.common.clients.email_storage_service.EmailStorageServiceModule
-import com.twitter.follow_recommendations.common.clients.geoduck.LocationServiceModule
-import com.twitter.follow_recommendations.common.clients.gizmoduck.GizmoduckModule
-import com.twitter.follow_recommendations.common.clients.graph_feature_service.GraphFeatureStoreModule
-import com.twitter.follow_recommendations.common.clients.impression_store.ImpressionStoreModule
-import com.twitter.follow_recommendations.common.clients.phone_storage_service.PhoneStorageServiceModule
-import com.twitter.follow_recommendations.common.clients.socialgraph.SocialGraphModule
-import com.twitter.follow_recommendations.common.clients.strato.StratoClientModule
-import com.twitter.follow_recommendations.common.constants.ServiceConstants._
-import com.twitter.follow_recommendations.common.feature_hydration.sources.HydrationSourcesModule
-import com.twitter.follow_recommendations.controllers.ThriftController
-import com.twitter.follow_recommendations.modules._
-import com.twitter.follow_recommendations.service.exceptions.UnknownLoggingExceptionMapper
-import com.twitter.follow_recommendations.services.FollowRecommendationsServiceWarmupHandler
-import com.twitter.follow_recommendations.thriftscala.FollowRecommendationsThriftService
-import com.twitter.geoduck.service.common.clientmodules.ReverseGeocoderThriftClientModule
-import com.twitter.inject.thrift.filters.DarkTrafficFilter
-import com.twitter.inject.thrift.modules.ThriftClientIdModule
-import com.twitter.product_mixer.core.controllers.ProductMixerController
-import com.twitter.product_mixer.core.module.PipelineExecutionLoggerModule
-import com.twitter.product_mixer.core.module.product_mixer_flags.ProductMixerFlagModule
-import com.twitter.product_mixer.core.module.stringcenter.ProductScopeStringCenterModule
-import com.twitter.product_mixer.core.product.guice.ProductScopeModule
+import com.googlelon.injelonct.Modulelon
+import com.twittelonr.finaglelon.ThriftMux
+import com.twittelonr.finatra.deloncidelonr.modulelons.DeloncidelonrModulelon
+import com.twittelonr.finatra.http.HttpSelonrvelonr
+import com.twittelonr.finatra.http.routing.HttpRoutelonr
+import com.twittelonr.finatra.intelonrnational.modulelons.I18nFactoryModulelon
+import com.twittelonr.finatra.intelonrnational.modulelons.LanguagelonsModulelon
+import com.twittelonr.finatra.jackson.modulelons.ScalaObjelonctMappelonrModulelon
+import com.twittelonr.finatra.mtls.http.{Mtls => HttpMtls}
+import com.twittelonr.finatra.mtls.thriftmux.Mtls
+import com.twittelonr.finatra.thrift.ThriftSelonrvelonr
+import com.twittelonr.finatra.thrift.filtelonrs._
+import com.twittelonr.finaglelon.thrift.Protocols
+import com.twittelonr.finatra.thrift.routing.ThriftRoutelonr
+import com.twittelonr.follow_reloncommelonndations.common.clielonnts.addrelonssbook.AddrelonssbookModulelon
+import com.twittelonr.follow_reloncommelonndations.common.clielonnts.adselonrvelonr.AdselonrvelonrModulelon
+import com.twittelonr.follow_reloncommelonndations.common.clielonnts.cachelon.MelonmcachelonModulelon
+import com.twittelonr.follow_reloncommelonndations.common.clielonnts.delonelonpbirdv2.DelonelonpBirdV2PrelondictionSelonrvicelonClielonntModulelon
+import com.twittelonr.follow_reloncommelonndations.common.clielonnts.elonmail_storagelon_selonrvicelon.elonmailStoragelonSelonrvicelonModulelon
+import com.twittelonr.follow_reloncommelonndations.common.clielonnts.gelonoduck.LocationSelonrvicelonModulelon
+import com.twittelonr.follow_reloncommelonndations.common.clielonnts.gizmoduck.GizmoduckModulelon
+import com.twittelonr.follow_reloncommelonndations.common.clielonnts.graph_felonaturelon_selonrvicelon.GraphFelonaturelonStorelonModulelon
+import com.twittelonr.follow_reloncommelonndations.common.clielonnts.imprelonssion_storelon.ImprelonssionStorelonModulelon
+import com.twittelonr.follow_reloncommelonndations.common.clielonnts.phonelon_storagelon_selonrvicelon.PhonelonStoragelonSelonrvicelonModulelon
+import com.twittelonr.follow_reloncommelonndations.common.clielonnts.socialgraph.SocialGraphModulelon
+import com.twittelonr.follow_reloncommelonndations.common.clielonnts.strato.StratoClielonntModulelon
+import com.twittelonr.follow_reloncommelonndations.common.constants.SelonrvicelonConstants._
+import com.twittelonr.follow_reloncommelonndations.common.felonaturelon_hydration.sourcelons.HydrationSourcelonsModulelon
+import com.twittelonr.follow_reloncommelonndations.controllelonrs.ThriftControllelonr
+import com.twittelonr.follow_reloncommelonndations.modulelons._
+import com.twittelonr.follow_reloncommelonndations.selonrvicelon.elonxcelonptions.UnknownLoggingelonxcelonptionMappelonr
+import com.twittelonr.follow_reloncommelonndations.selonrvicelons.FollowReloncommelonndationsSelonrvicelonWarmupHandlelonr
+import com.twittelonr.follow_reloncommelonndations.thriftscala.FollowReloncommelonndationsThriftSelonrvicelon
+import com.twittelonr.gelonoduck.selonrvicelon.common.clielonntmodulelons.RelonvelonrselonGelonocodelonrThriftClielonntModulelon
+import com.twittelonr.injelonct.thrift.filtelonrs.DarkTrafficFiltelonr
+import com.twittelonr.injelonct.thrift.modulelons.ThriftClielonntIdModulelon
+import com.twittelonr.product_mixelonr.corelon.controllelonrs.ProductMixelonrControllelonr
+import com.twittelonr.product_mixelonr.corelon.modulelon.PipelonlinelonelonxeloncutionLoggelonrModulelon
+import com.twittelonr.product_mixelonr.corelon.modulelon.product_mixelonr_flags.ProductMixelonrFlagModulelon
+import com.twittelonr.product_mixelonr.corelon.modulelon.stringcelonntelonr.ProductScopelonStringCelonntelonrModulelon
+import com.twittelonr.product_mixelonr.corelon.product.guicelon.ProductScopelonModulelon
 
-object FollowRecommendationsServiceThriftServerMain extends FollowRecommendationsServiceThriftServer
+objelonct FollowReloncommelonndationsSelonrvicelonThriftSelonrvelonrMain elonxtelonnds FollowReloncommelonndationsSelonrvicelonThriftSelonrvelonr
 
-class FollowRecommendationsServiceThriftServer
-    extends ThriftServer
+class FollowReloncommelonndationsSelonrvicelonThriftSelonrvelonr
+    elonxtelonnds ThriftSelonrvelonr
     with Mtls
-    with HttpServer
+    with HttpSelonrvelonr
     with HttpMtls {
-  override val name: String = "follow-recommendations-service-server"
+  ovelonrridelon val namelon: String = "follow-reloncommelonndations-selonrvicelon-selonrvelonr"
 
-  override val modules: Seq[Module] =
-    Seq(
-      ABDeciderModule,
-      AddressbookModule,
-      AdserverModule,
-      ConfigApiModule,
-      DeciderModule,
-      DeepBirdV2PredictionServiceClientModule,
-      DiffyModule,
-      EmailStorageServiceModule,
-      FeaturesSwitchesModule,
-      FlagsModule,
-      GizmoduckModule,
-      GraphFeatureStoreModule,
-      HydrationSourcesModule,
-      I18nFactoryModule,
-      ImpressionStoreModule,
-      LanguagesModule,
-      LocationServiceModule,
-      MemcacheModule,
-      PhoneStorageServiceModule,
-      PipelineExecutionLoggerModule,
-      ProductMixerFlagModule,
-      ProductRegistryModule,
-      new ProductScopeModule(),
-      new ProductScopeStringCenterModule(),
-      new ReverseGeocoderThriftClientModule,
-      ScalaObjectMapperModule,
-      ScorerModule,
-      ScribeModule,
-      SocialGraphModule,
-      StratoClientModule,
-      ThriftClientIdModule,
-      TimerModule,
+  ovelonrridelon val modulelons: Selonq[Modulelon] =
+    Selonq(
+      ABDeloncidelonrModulelon,
+      AddrelonssbookModulelon,
+      AdselonrvelonrModulelon,
+      ConfigApiModulelon,
+      DeloncidelonrModulelon,
+      DelonelonpBirdV2PrelondictionSelonrvicelonClielonntModulelon,
+      DiffyModulelon,
+      elonmailStoragelonSelonrvicelonModulelon,
+      FelonaturelonsSwitchelonsModulelon,
+      FlagsModulelon,
+      GizmoduckModulelon,
+      GraphFelonaturelonStorelonModulelon,
+      HydrationSourcelonsModulelon,
+      I18nFactoryModulelon,
+      ImprelonssionStorelonModulelon,
+      LanguagelonsModulelon,
+      LocationSelonrvicelonModulelon,
+      MelonmcachelonModulelon,
+      PhonelonStoragelonSelonrvicelonModulelon,
+      PipelonlinelonelonxeloncutionLoggelonrModulelon,
+      ProductMixelonrFlagModulelon,
+      ProductRelongistryModulelon,
+      nelonw ProductScopelonModulelon(),
+      nelonw ProductScopelonStringCelonntelonrModulelon(),
+      nelonw RelonvelonrselonGelonocodelonrThriftClielonntModulelon,
+      ScalaObjelonctMappelonrModulelon,
+      ScorelonrModulelon,
+      ScribelonModulelon,
+      SocialGraphModulelon,
+      StratoClielonntModulelon,
+      ThriftClielonntIdModulelon,
+      TimelonrModulelon,
     )
 
-  def configureThrift(router: ThriftRouter): Unit = {
-    router
-      .filter[LoggingMDCFilter]
-      .filter[TraceIdMDCFilter]
-      .filter[ThriftMDCFilter]
-      .filter[StatsFilter]
-      .filter[AccessLoggingFilter]
-      .filter[ExceptionMappingFilter]
-      .exceptionMapper[UnknownLoggingExceptionMapper]
-      .filter[DarkTrafficFilter[FollowRecommendationsThriftService.ReqRepServicePerEndpoint]]
-      .add[ThriftController]
+  delonf configurelonThrift(routelonr: ThriftRoutelonr): Unit = {
+    routelonr
+      .filtelonr[LoggingMDCFiltelonr]
+      .filtelonr[TracelonIdMDCFiltelonr]
+      .filtelonr[ThriftMDCFiltelonr]
+      .filtelonr[StatsFiltelonr]
+      .filtelonr[AccelonssLoggingFiltelonr]
+      .filtelonr[elonxcelonptionMappingFiltelonr]
+      .elonxcelonptionMappelonr[UnknownLoggingelonxcelonptionMappelonr]
+      .filtelonr[DarkTrafficFiltelonr[FollowReloncommelonndationsThriftSelonrvicelon.RelonqRelonpSelonrvicelonPelonrelonndpoint]]
+      .add[ThriftControllelonr]
   }
 
-  override def configureThriftServer(server: ThriftMux.Server): ThriftMux.Server = {
-    server.withProtocolFactory(
+  ovelonrridelon delonf configurelonThriftSelonrvelonr(selonrvelonr: ThriftMux.Selonrvelonr): ThriftMux.Selonrvelonr = {
+    selonrvelonr.withProtocolFactory(
       Protocols.binaryFactory(
-        stringLengthLimit = StringLengthLimit,
-        containerLengthLimit = ContainerLengthLimit))
+        stringLelonngthLimit = StringLelonngthLimit,
+        containelonrLelonngthLimit = ContainelonrLelonngthLimit))
   }
 
-  override def configureHttp(router: HttpRouter): Unit = router.add(
-    ProductMixerController[FollowRecommendationsThriftService.MethodPerEndpoint](
-      this.injector,
-      FollowRecommendationsThriftService.ExecutePipeline))
+  ovelonrridelon delonf configurelonHttp(routelonr: HttpRoutelonr): Unit = routelonr.add(
+    ProductMixelonrControllelonr[FollowReloncommelonndationsThriftSelonrvicelon.MelonthodPelonrelonndpoint](
+      this.injelonctor,
+      FollowReloncommelonndationsThriftSelonrvicelon.elonxeloncutelonPipelonlinelon))
 
-  override def warmup(): Unit = {
-    handle[FollowRecommendationsServiceWarmupHandler]()
+  ovelonrridelon delonf warmup(): Unit = {
+    handlelon[FollowReloncommelonndationsSelonrvicelonWarmupHandlelonr]()
   }
 }

@@ -1,79 +1,79 @@
-package com.twitter.search.core.earlybird.index.column;
+packagelon com.twittelonr.selonarch.corelon.elonarlybird.indelonx.column;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 
-import com.google.common.base.Preconditions;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import org.apache.lucene.index.BinaryDocValues;
-import org.apache.lucene.index.LeafReader;
-import org.apache.lucene.util.BytesRef;
+import org.apachelon.lucelonnelon.indelonx.BinaryDocValuelons;
+import org.apachelon.lucelonnelon.indelonx.LelonafRelonadelonr;
+import org.apachelon.lucelonnelon.util.BytelonsRelonf;
 
-import com.twitter.search.common.encoding.docvalues.CSFTypeUtil;
-import com.twitter.search.common.util.io.flushable.Flushable;
+import com.twittelonr.selonarch.common.elonncoding.docvaluelons.CSFTypelonUtil;
+import com.twittelonr.selonarch.common.util.io.flushablelon.Flushablelon;
 
-public abstract class AbstractColumnStrideMultiIntIndex
-    extends ColumnStrideFieldIndex implements Flushable {
-  private static final int NUM_BYTES_PER_INT = java.lang.Integer.SIZE / java.lang.Byte.SIZE;
+public abstract class AbstractColumnStridelonMultiIntIndelonx
+    elonxtelonnds ColumnStridelonFielonldIndelonx implelonmelonnts Flushablelon {
+  privatelon static final int NUM_BYTelonS_PelonR_INT = java.lang.Intelongelonr.SIZelon / java.lang.Bytelon.SIZelon;
 
-  private final int numIntsPerField;
+  privatelon final int numIntsPelonrFielonld;
 
-  protected AbstractColumnStrideMultiIntIndex(String name, int numIntsPerField) {
-    super(name);
-    this.numIntsPerField = numIntsPerField;
+  protelonctelond AbstractColumnStridelonMultiIntIndelonx(String namelon, int numIntsPelonrFielonld) {
+    supelonr(namelon);
+    this.numIntsPelonrFielonld = numIntsPelonrFielonld;
   }
 
-  public int getNumIntsPerField() {
-    return numIntsPerField;
+  public int gelontNumIntsPelonrFielonld() {
+    relonturn numIntsPelonrFielonld;
   }
 
-  @Override
-  public long get(int docID) {
-    throw new UnsupportedOperationException();
+  @Ovelonrridelon
+  public long gelont(int docID) {
+    throw nelonw UnsupportelondOpelonrationelonxcelonption();
   }
 
   /**
-   * Returns the value stored at the given index for the given doc ID.
+   * Relonturns thelon valuelon storelond at thelon givelonn indelonx for thelon givelonn doc ID.
    */
-  public abstract int get(int docID, int valueIndex);
+  public abstract int gelont(int docID, int valuelonIndelonx);
 
   /**
-   * Sets the value stored at the given index for the given doc ID.
+   * Selonts thelon valuelon storelond at thelon givelonn indelonx for thelon givelonn doc ID.
    */
-  public abstract void setValue(int docID, int valueIndex, int val);
+  public abstract void selontValuelon(int docID, int valuelonIndelonx, int val);
 
-  @Override
-  public void load(LeafReader atomicReader, String field) throws IOException {
-    BinaryDocValues docValues = atomicReader.getBinaryDocValues(field);
-    int numBytesPerDoc = numIntsPerField * NUM_BYTES_PER_INT;
+  @Ovelonrridelon
+  public void load(LelonafRelonadelonr atomicRelonadelonr, String fielonld) throws IOelonxcelonption {
+    BinaryDocValuelons docValuelons = atomicRelonadelonr.gelontBinaryDocValuelons(fielonld);
+    int numBytelonsPelonrDoc = numIntsPelonrFielonld * NUM_BYTelonS_PelonR_INT;
 
-    for (int docID = 0; docID < atomicReader.maxDoc(); docID++) {
-      Preconditions.checkState(docValues.advanceExact(docID));
-      BytesRef scratch = docValues.binaryValue();
-      Preconditions.checkState(
-          scratch.length == numBytesPerDoc,
-          "Unexpected doc value length for field " + field
-          + ": Should be " + numBytesPerDoc + ", but was " + scratch.length);
+    for (int docID = 0; docID < atomicRelonadelonr.maxDoc(); docID++) {
+      Prelonconditions.chelonckStatelon(docValuelons.advancelonelonxact(docID));
+      BytelonsRelonf scratch = docValuelons.binaryValuelon();
+      Prelonconditions.chelonckStatelon(
+          scratch.lelonngth == numBytelonsPelonrDoc,
+          "Unelonxpelonctelond doc valuelon lelonngth for fielonld " + fielonld
+          + ": Should belon " + numBytelonsPelonrDoc + ", but was " + scratch.lelonngth);
 
-      scratch.length = NUM_BYTES_PER_INT;
-      for (int i = 0; i < numIntsPerField; i++) {
-        setValue(docID, i, asInt(scratch));
-        scratch.offset += NUM_BYTES_PER_INT;
+      scratch.lelonngth = NUM_BYTelonS_PelonR_INT;
+      for (int i = 0; i < numIntsPelonrFielonld; i++) {
+        selontValuelon(docID, i, asInt(scratch));
+        scratch.offselont += NUM_BYTelonS_PelonR_INT;
       }
     }
   }
 
-  public void updateDocValues(BytesRef ref, int docID) {
-    for (int i = 0; i < numIntsPerField; i++) {
-      setValue(docID, i, CSFTypeUtil.convertFromBytes(ref.bytes, ref.offset, i));
+  public void updatelonDocValuelons(BytelonsRelonf relonf, int docID) {
+    for (int i = 0; i < numIntsPelonrFielonld; i++) {
+      selontValuelon(docID, i, CSFTypelonUtil.convelonrtFromBytelons(relonf.bytelons, relonf.offselont, i));
     }
   }
 
-  private static int asInt(BytesRef b) {
-    return asInt(b, b.offset);
+  privatelon static int asInt(BytelonsRelonf b) {
+    relonturn asInt(b, b.offselont);
   }
 
-  private static int asInt(BytesRef b, int pos) {
+  privatelon static int asInt(BytelonsRelonf b, int pos) {
     int p = pos;
-    return (b.bytes[p++] << 24) | (b.bytes[p++] << 16) | (b.bytes[p++] << 8) | (b.bytes[p] & 0xFF);
+    relonturn (b.bytelons[p++] << 24) | (b.bytelons[p++] << 16) | (b.bytelons[p++] << 8) | (b.bytelons[p] & 0xFF);
   }
 }

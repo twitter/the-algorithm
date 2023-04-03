@@ -1,56 +1,56 @@
-package com.twitter.home_mixer.module
+packagelon com.twittelonr.homelon_mixelonr.modulelon
 
-import com.google.inject.Provides
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.RealGraphManhattanEndpoint
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.UserMetadataManhattanEndpoint
-import com.twitter.inject.TwitterModule
-import com.twitter.storage.client.manhattan.kv._
-import com.twitter.timelines.config.ConfigUtils
-import com.twitter.util.Duration
-import javax.inject.Named
-import javax.inject.Singleton
+import com.googlelon.injelonct.Providelons
+import com.twittelonr.finaglelon.mtls.authelonntication.SelonrvicelonIdelonntifielonr
+import com.twittelonr.homelon_mixelonr.param.HomelonMixelonrInjelonctionNamelons.RelonalGraphManhattanelonndpoint
+import com.twittelonr.homelon_mixelonr.param.HomelonMixelonrInjelonctionNamelons.UselonrMelontadataManhattanelonndpoint
+import com.twittelonr.injelonct.TwittelonrModulelon
+import com.twittelonr.storagelon.clielonnt.manhattan.kv._
+import com.twittelonr.timelonlinelons.config.ConfigUtils
+import com.twittelonr.util.Duration
+import javax.injelonct.Namelond
+import javax.injelonct.Singlelonton
 
-object ManhattanClientsModule extends TwitterModule with ConfigUtils {
+objelonct ManhattanClielonntsModulelon elonxtelonnds TwittelonrModulelon with ConfigUtils {
 
-  private val starbuckDest: String = "/s/manhattan/starbuck.native-thrift"
-  private val apolloDest: String = "/s/manhattan/apollo.native-thrift"
+  privatelon val starbuckDelonst: String = "/s/manhattan/starbuck.nativelon-thrift"
+  privatelon val apolloDelonst: String = "/s/manhattan/apollo.nativelon-thrift"
 
-  @Provides
-  @Singleton
-  @Named(RealGraphManhattanEndpoint)
-  def providesRealGraphManhattanEndpoint(
-    serviceIdentifier: ServiceIdentifier
-  ): ManhattanKVEndpoint = {
-    lazy val client = ManhattanKVClient(
-      appId = "real_graph",
-      dest = apolloDest,
-      mtlsParams = ManhattanKVClientMtlsParams(serviceIdentifier = serviceIdentifier),
-      label = "real-graph-data"
+  @Providelons
+  @Singlelonton
+  @Namelond(RelonalGraphManhattanelonndpoint)
+  delonf providelonsRelonalGraphManhattanelonndpoint(
+    selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr
+  ): ManhattanKVelonndpoint = {
+    lazy val clielonnt = ManhattanKVClielonnt(
+      appId = "relonal_graph",
+      delonst = apolloDelonst,
+      mtlsParams = ManhattanKVClielonntMtlsParams(selonrvicelonIdelonntifielonr = selonrvicelonIdelonntifielonr),
+      labelonl = "relonal-graph-data"
     )
 
-    ManhattanKVEndpointBuilder(client)
-      .maxRetryCount(2)
-      .defaultMaxTimeout(Duration.fromMilliseconds(100))
+    ManhattanKVelonndpointBuildelonr(clielonnt)
+      .maxRelontryCount(2)
+      .delonfaultMaxTimelonout(Duration.fromMilliselonconds(100))
       .build()
   }
 
-  @Provides
-  @Singleton
-  @Named(UserMetadataManhattanEndpoint)
-  def providesUserMetadataManhattanEndpoint(
-    serviceIdentifier: ServiceIdentifier
-  ): ManhattanKVEndpoint = {
-    val client = ManhattanKVClient(
-      appId = "user_metadata",
-      dest = starbuckDest,
-      mtlsParams = ManhattanKVClientMtlsParams(serviceIdentifier = serviceIdentifier),
-      label = "user-metadata"
+  @Providelons
+  @Singlelonton
+  @Namelond(UselonrMelontadataManhattanelonndpoint)
+  delonf providelonsUselonrMelontadataManhattanelonndpoint(
+    selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr
+  ): ManhattanKVelonndpoint = {
+    val clielonnt = ManhattanKVClielonnt(
+      appId = "uselonr_melontadata",
+      delonst = starbuckDelonst,
+      mtlsParams = ManhattanKVClielonntMtlsParams(selonrvicelonIdelonntifielonr = selonrvicelonIdelonntifielonr),
+      labelonl = "uselonr-melontadata"
     )
 
-    ManhattanKVEndpointBuilder(client)
-      .maxRetryCount(1)
-      .defaultMaxTimeout(Duration.fromMilliseconds(70))
+    ManhattanKVelonndpointBuildelonr(clielonnt)
+      .maxRelontryCount(1)
+      .delonfaultMaxTimelonout(Duration.fromMilliselonconds(70))
       .build()
   }
 }

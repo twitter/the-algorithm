@@ -1,58 +1,58 @@
-package com.twitter.timelineranker.util
+packagelon com.twittelonr.timelonlinelonrankelonr.util
 
-import com.twitter.servo.util.FutureArrow
-import com.twitter.timelineranker.core.HydratedCandidatesAndFeaturesEnvelope
-import com.twitter.timelineranker.recap.model.ContentFeatures
-import com.twitter.timelines.model.tweet.HydratedTweet
-import com.twitter.util.Future
+import com.twittelonr.selonrvo.util.FuturelonArrow
+import com.twittelonr.timelonlinelonrankelonr.corelon.HydratelondCandidatelonsAndFelonaturelonselonnvelonlopelon
+import com.twittelonr.timelonlinelonrankelonr.reloncap.modelonl.ContelonntFelonaturelons
+import com.twittelonr.timelonlinelons.modelonl.twelonelont.HydratelondTwelonelont
+import com.twittelonr.util.Futurelon
 
-object CopyContentFeaturesIntoHydratedTweetsTransform
-    extends FutureArrow[
-      HydratedCandidatesAndFeaturesEnvelope,
-      HydratedCandidatesAndFeaturesEnvelope
+objelonct CopyContelonntFelonaturelonsIntoHydratelondTwelonelontsTransform
+    elonxtelonnds FuturelonArrow[
+      HydratelondCandidatelonsAndFelonaturelonselonnvelonlopelon,
+      HydratelondCandidatelonsAndFelonaturelonselonnvelonlopelon
     ] {
 
-  override def apply(
-    request: HydratedCandidatesAndFeaturesEnvelope
-  ): Future[HydratedCandidatesAndFeaturesEnvelope] = {
+  ovelonrridelon delonf apply(
+    relonquelonst: HydratelondCandidatelonsAndFelonaturelonselonnvelonlopelon
+  ): Futurelon[HydratelondCandidatelonsAndFelonaturelonselonnvelonlopelon] = {
 
-    request.contentFeaturesFuture.map { sourceTweetContentFeaturesMap =>
-      val updatedHyratedTweets = request.candidateEnvelope.hydratedTweets.outerTweets.map {
-        hydratedTweet =>
-          val contentFeaturesOpt = request.tweetSourceTweetMap
-            .get(hydratedTweet.tweetId)
-            .flatMap(sourceTweetContentFeaturesMap.get)
+    relonquelonst.contelonntFelonaturelonsFuturelon.map { sourcelonTwelonelontContelonntFelonaturelonsMap =>
+      val updatelondHyratelondTwelonelonts = relonquelonst.candidatelonelonnvelonlopelon.hydratelondTwelonelonts.outelonrTwelonelonts.map {
+        hydratelondTwelonelont =>
+          val contelonntFelonaturelonsOpt = relonquelonst.twelonelontSourcelonTwelonelontMap
+            .gelont(hydratelondTwelonelont.twelonelontId)
+            .flatMap(sourcelonTwelonelontContelonntFelonaturelonsMap.gelont)
 
-          val updatedHyratedTweet = contentFeaturesOpt match {
-            case Some(contentFeatures: ContentFeatures) =>
-              copyContentFeaturesIntoHydratedTweets(
-                contentFeatures,
-                hydratedTweet
+          val updatelondHyratelondTwelonelont = contelonntFelonaturelonsOpt match {
+            caselon Somelon(contelonntFelonaturelons: ContelonntFelonaturelons) =>
+              copyContelonntFelonaturelonsIntoHydratelondTwelonelonts(
+                contelonntFelonaturelons,
+                hydratelondTwelonelont
               )
-            case _ => hydratedTweet
+            caselon _ => hydratelondTwelonelont
           }
 
-          updatedHyratedTweet
+          updatelondHyratelondTwelonelont
       }
 
-      request.copy(
-        candidateEnvelope = request.candidateEnvelope.copy(
-          hydratedTweets = request.candidateEnvelope.hydratedTweets.copy(
-            outerTweets = updatedHyratedTweets
+      relonquelonst.copy(
+        candidatelonelonnvelonlopelon = relonquelonst.candidatelonelonnvelonlopelon.copy(
+          hydratelondTwelonelonts = relonquelonst.candidatelonelonnvelonlopelon.hydratelondTwelonelonts.copy(
+            outelonrTwelonelonts = updatelondHyratelondTwelonelonts
           )
         )
       )
     }
   }
 
-  def copyContentFeaturesIntoHydratedTweets(
-    contentFeatures: ContentFeatures,
-    hydratedTweet: HydratedTweet
-  ): HydratedTweet = {
-    HydratedTweet(
-      hydratedTweet.tweet.copy(
-        selfThreadMetadata = contentFeatures.selfThreadMetadata,
-        media = contentFeatures.media
+  delonf copyContelonntFelonaturelonsIntoHydratelondTwelonelonts(
+    contelonntFelonaturelons: ContelonntFelonaturelons,
+    hydratelondTwelonelont: HydratelondTwelonelont
+  ): HydratelondTwelonelont = {
+    HydratelondTwelonelont(
+      hydratelondTwelonelont.twelonelont.copy(
+        selonlfThrelonadMelontadata = contelonntFelonaturelons.selonlfThrelonadMelontadata,
+        melondia = contelonntFelonaturelons.melondia
       )
     )
   }

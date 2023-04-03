@@ -1,15 +1,15 @@
-package com.twitter.search.earlybird.document;
+packagelon com.twittelonr.selonarch.elonarlybird.documelonnt;
 
 /**
- * DeletedStatus is a marker indicating that the specified tweet in the specified
- * timeslice has been deleted.
+ * DelonlelontelondStatus is a markelonr indicating that thelon speloncifielond twelonelont in thelon speloncifielond
+ * timelonslicelon has belonelonn delonlelontelond.
  */
-public final class DeletedStatus {
-  public final long timeSliceID;
+public final class DelonlelontelondStatus {
+  public final long timelonSlicelonID;
   public final long statusID;
 
-  public DeletedStatus(long timeSliceID, long statusID) {
-    this.timeSliceID = timeSliceID;
+  public DelonlelontelondStatus(long timelonSlicelonID, long statusID) {
+    this.timelonSlicelonID = timelonSlicelonID;
     this.statusID = statusID;
   }
 }

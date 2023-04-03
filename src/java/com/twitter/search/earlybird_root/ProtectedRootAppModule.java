@@ -1,78 +1,78 @@
-package com.twitter.search.earlybird_root;
+packagelon com.twittelonr.selonarch.elonarlybird_root;
 
-import javax.inject.Named;
-import javax.inject.Singleton;
+import javax.injelonct.Namelond;
+import javax.injelonct.Singlelonton;
 
-import com.google.inject.Key;
-import com.google.inject.Provides;
+import com.googlelon.injelonct.Kelony;
+import com.googlelon.injelonct.Providelons;
 
-import com.twitter.common.util.Clock;
-import com.twitter.finagle.memcached.JavaClient;
-import com.twitter.inject.TwitterModule;
-import com.twitter.search.common.caching.Cache;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.common.root.LoggingSupport;
-import com.twitter.search.common.root.PartitionLoggingSupport;
-import com.twitter.search.common.root.SearchRootModule;
-import com.twitter.search.common.root.SearchRootWarmup;
-import com.twitter.search.common.root.ValidationBehavior;
-import com.twitter.search.common.root.WarmupConfig;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdService;
-import com.twitter.search.earlybird_root.caching.DefaultForcedCacheMissDecider;
-import com.twitter.search.earlybird_root.caching.RecencyCache;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
+import com.twittelonr.common.util.Clock;
+import com.twittelonr.finaglelon.melonmcachelond.JavaClielonnt;
+import com.twittelonr.injelonct.TwittelonrModulelon;
+import com.twittelonr.selonarch.common.caching.Cachelon;
+import com.twittelonr.selonarch.common.deloncidelonr.SelonarchDeloncidelonr;
+import com.twittelonr.selonarch.common.root.LoggingSupport;
+import com.twittelonr.selonarch.common.root.PartitionLoggingSupport;
+import com.twittelonr.selonarch.common.root.SelonarchRootModulelon;
+import com.twittelonr.selonarch.common.root.SelonarchRootWarmup;
+import com.twittelonr.selonarch.common.root.ValidationBelonhavior;
+import com.twittelonr.selonarch.common.root.WarmupConfig;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdClustelonr;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonquelonst;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdSelonrvicelon;
+import com.twittelonr.selonarch.elonarlybird_root.caching.DelonfaultForcelondCachelonMissDeloncidelonr;
+import com.twittelonr.selonarch.elonarlybird_root.caching.ReloncelonncyCachelon;
+import com.twittelonr.selonarch.elonarlybird_root.common.elonarlybirdRelonquelonstContelonxt;
 
-public class ProtectedRootAppModule extends TwitterModule {
-  @Override
-  public void configure() {
-    bind(Key.get(EarlybirdCluster.class)).toInstance(EarlybirdCluster.PROTECTED);
+public class ProtelonctelondRootAppModulelon elonxtelonnds TwittelonrModulelon {
+  @Ovelonrridelon
+  public void configurelon() {
+    bind(Kelony.gelont(elonarlybirdClustelonr.class)).toInstancelon(elonarlybirdClustelonr.PROTelonCTelonD);
 
-    bind(EarlybirdServiceScatterGatherSupport.class)
-        .to(EarlybirdProtectedScatterGatherSupport.class);
+    bind(elonarlybirdSelonrvicelonScattelonrGathelonrSupport.class)
+        .to(elonarlybirdProtelonctelondScattelonrGathelonrSupport.class);
 
-    bind(EarlybirdService.ServiceIface.class).to(ProtectedRootService.class);
+    bind(elonarlybirdSelonrvicelon.SelonrvicelonIfacelon.class).to(ProtelonctelondRootSelonrvicelon.class);
   }
 
-  @Provides
-  @Singleton
-  LoggingSupport<EarlybirdRequest, EarlybirdResponse> provideLoggingSupport(
-      SearchDecider decider) {
-    return new EarlybirdServiceLoggingSupport(decider);
+  @Providelons
+  @Singlelonton
+  LoggingSupport<elonarlybirdRelonquelonst, elonarlybirdRelonsponselon> providelonLoggingSupport(
+      SelonarchDeloncidelonr deloncidelonr) {
+    relonturn nelonw elonarlybirdSelonrvicelonLoggingSupport(deloncidelonr);
   }
 
-  @Provides
-  @Singleton
-  PartitionLoggingSupport<EarlybirdRequestContext> providePartitionLoggingSupport() {
-    return new EarlybirdServicePartitionLoggingSupport();
+  @Providelons
+  @Singlelonton
+  PartitionLoggingSupport<elonarlybirdRelonquelonstContelonxt> providelonPartitionLoggingSupport() {
+    relonturn nelonw elonarlybirdSelonrvicelonPartitionLoggingSupport();
   }
 
-  @Provides
-  @Singleton
-  ValidationBehavior<EarlybirdRequest, EarlybirdResponse> providesValidation() {
-    return new EarlybirdProtectedValidationBehavior();
+  @Providelons
+  @Singlelonton
+  ValidationBelonhavior<elonarlybirdRelonquelonst, elonarlybirdRelonsponselon> providelonsValidation() {
+    relonturn nelonw elonarlybirdProtelonctelondValidationBelonhavior();
   }
 
-  @Provides
-  @Singleton
-  @RecencyCache
-  Cache<EarlybirdRequest, EarlybirdResponse> provideRecencyCache(
-      JavaClient client,
-      DefaultForcedCacheMissDecider decider,
-      @Named(SearchRootModule.NAMED_SERIALIZED_KEY_PREFIX) String serializedKeyPrefix,
-      @Named(SearchRootModule.NAMED_CACHE_KEY_MAX_BYTES) int cacheKeyMaxBytes,
-      @Named(SearchRootModule.NAMED_CACHE_VALUE_MAX_BYTES) int cacheValueMaxBytes) {
-    return EarlybirdCacheCommonModule
-        .createCache(client, decider, "realtime_protected_recency_root", serializedKeyPrefix,
-            20000L, cacheKeyMaxBytes, cacheValueMaxBytes);
+  @Providelons
+  @Singlelonton
+  @ReloncelonncyCachelon
+  Cachelon<elonarlybirdRelonquelonst, elonarlybirdRelonsponselon> providelonReloncelonncyCachelon(
+      JavaClielonnt clielonnt,
+      DelonfaultForcelondCachelonMissDeloncidelonr deloncidelonr,
+      @Namelond(SelonarchRootModulelon.NAMelonD_SelonRIALIZelonD_KelonY_PRelonFIX) String selonrializelondKelonyPrelonfix,
+      @Namelond(SelonarchRootModulelon.NAMelonD_CACHelon_KelonY_MAX_BYTelonS) int cachelonKelonyMaxBytelons,
+      @Namelond(SelonarchRootModulelon.NAMelonD_CACHelon_VALUelon_MAX_BYTelonS) int cachelonValuelonMaxBytelons) {
+    relonturn elonarlybirdCachelonCommonModulelon
+        .crelonatelonCachelon(clielonnt, deloncidelonr, "relonaltimelon_protelonctelond_reloncelonncy_root", selonrializelondKelonyPrelonfix,
+            20000L, cachelonKelonyMaxBytelons, cachelonValuelonMaxBytelons);
   }
 
-  @Provides
-  SearchRootWarmup<EarlybirdService.ServiceIface, ?, ?> providesSearchRootWarmup(
+  @Providelons
+  SelonarchRootWarmup<elonarlybirdSelonrvicelon.SelonrvicelonIfacelon, ?, ?> providelonsSelonarchRootWarmup(
       Clock clock,
       WarmupConfig config) {
-    return new EarlybirdProtectedWarmup(clock, config);
+    relonturn nelonw elonarlybirdProtelonctelondWarmup(clock, config);
   }
 }

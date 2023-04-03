@@ -1,38 +1,38 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.social_context
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.social_contelonxt
 
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseModuleStr
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.social_context.BaseModuleSocialContextBuilder
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.GeneralContext
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.GeneralContextType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Url
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.melontadata.BaselonModulelonStr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.social_contelonxt.BaselonModulelonSocialContelonxtBuildelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.GelonnelonralContelonxt
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.GelonnelonralContelonxtTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.Url
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
 /**
- * This class works the same as [[GeneralSocialContextBuilder]] but passes a list of candidates
- * into [[BaseModuleStr]] when rendering the string.
+ * This class works thelon samelon as [[GelonnelonralSocialContelonxtBuildelonr]] but passelons a list of candidatelons
+ * into [[BaselonModulelonStr]] whelonn relonndelonring thelon string.
  */
-case class GeneralModuleSocialContextBuilder[
-  -Query <: PipelineQuery,
-  -Candidate <: UniversalNoun[Any]
+caselon class GelonnelonralModulelonSocialContelonxtBuildelonr[
+  -Quelonry <: PipelonlinelonQuelonry,
+  -Candidatelon <: UnivelonrsalNoun[Any]
 ](
-  textBuilder: BaseModuleStr[Query, Candidate],
-  contextType: GeneralContextType,
-  url: Option[String] = None,
-  contextImageUrls: Option[List[String]] = None,
-  landingUrl: Option[Url] = None)
-    extends BaseModuleSocialContextBuilder[Query, Candidate] {
+  telonxtBuildelonr: BaselonModulelonStr[Quelonry, Candidatelon],
+  contelonxtTypelon: GelonnelonralContelonxtTypelon,
+  url: Option[String] = Nonelon,
+  contelonxtImagelonUrls: Option[List[String]] = Nonelon,
+  landingUrl: Option[Url] = Nonelon)
+    elonxtelonnds BaselonModulelonSocialContelonxtBuildelonr[Quelonry, Candidatelon] {
 
-  def apply(
-    query: Query,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): Option[GeneralContext] =
-    Some(
-      GeneralContext(
-        text = textBuilder(query, candidates),
-        contextType = contextType,
+  delonf apply(
+    quelonry: Quelonry,
+    candidatelons: Selonq[CandidatelonWithFelonaturelons[Candidatelon]]
+  ): Option[GelonnelonralContelonxt] =
+    Somelon(
+      GelonnelonralContelonxt(
+        telonxt = telonxtBuildelonr(quelonry, candidatelons),
+        contelonxtTypelon = contelonxtTypelon,
         url = url,
-        contextImageUrls = contextImageUrls,
+        contelonxtImagelonUrls = contelonxtImagelonUrls,
         landingUrl = landingUrl))
 }

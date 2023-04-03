@@ -1,338 +1,338 @@
-package com.twitter.search.earlybird.search.relevance.scoring;
+packagelon com.twittelonr.selonarch.elonarlybird.selonarch.relonlelonvancelon.scoring;
 
-import java.io.IOException;
-import java.nio.FloatBuffer;
+import java.io.IOelonxcelonption;
+import java.nio.FloatBuffelonr;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import com.googlelon.common.baselon.Prelonconditions;
+import com.googlelon.common.collelonct.ImmutablelonList;
+import com.googlelon.common.collelonct.ImmutablelonMap;
 
-import org.apache.lucene.search.Explanation;
-import org.tensorflow.Tensor;
+import org.apachelon.lucelonnelon.selonarch.elonxplanation;
+import org.telonnsorflow.Telonnsor;
 
-import com.twitter.common.collections.Pair;
-import com.twitter.search.common.constants.thriftjava.ThriftQuerySource;
-import com.twitter.search.common.features.EarlybirdRankingDerivedFeature;
-import com.twitter.search.common.features.FeatureHandler;
-import com.twitter.search.common.features.thrift.ThriftSearchResultFeatures;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.util.ml.tensorflow_engine.TensorflowModelsManager;
-import com.twitter.search.earlybird.EarlybirdSearcher;
-import com.twitter.search.earlybird.common.userupdates.UserTable;
-import com.twitter.search.earlybird.exception.ClientException;
-import com.twitter.search.earlybird.search.AntiGamingFilter;
-import com.twitter.search.earlybird.search.relevance.LinearScoringData;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.ThriftSearchQuery;
-import com.twitter.search.earlybird.thrift.ThriftSearchRelevanceOptions;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultType;
-import com.twitter.search.modeling.common.TweetFeaturesUtils;
-import com.twitter.tfcompute_java.TFModelRunner;
+import com.twittelonr.common.collelonctions.Pair;
+import com.twittelonr.selonarch.common.constants.thriftjava.ThriftQuelonrySourcelon;
+import com.twittelonr.selonarch.common.felonaturelons.elonarlybirdRankingDelonrivelondFelonaturelon;
+import com.twittelonr.selonarch.common.felonaturelons.FelonaturelonHandlelonr;
+import com.twittelonr.selonarch.common.felonaturelons.thrift.ThriftSelonarchRelonsultFelonaturelons;
+import com.twittelonr.selonarch.common.schelonma.baselon.ImmutablelonSchelonmaIntelonrfacelon;
+import com.twittelonr.selonarch.common.util.ml.telonnsorflow_elonnginelon.TelonnsorflowModelonlsManagelonr;
+import com.twittelonr.selonarch.elonarlybird.elonarlybirdSelonarchelonr;
+import com.twittelonr.selonarch.elonarlybird.common.uselonrupdatelons.UselonrTablelon;
+import com.twittelonr.selonarch.elonarlybird.elonxcelonption.Clielonntelonxcelonption;
+import com.twittelonr.selonarch.elonarlybird.selonarch.AntiGamingFiltelonr;
+import com.twittelonr.selonarch.elonarlybird.selonarch.relonlelonvancelon.LinelonarScoringData;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonquelonst;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchQuelonry;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonlelonvancelonOptions;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsultTypelon;
+import com.twittelonr.selonarch.modelonling.common.TwelonelontFelonaturelonsUtils;
+import com.twittelonr.tfcomputelon_java.TFModelonlRunnelonr;
 
 /**
- * TensorflowBasedScoringFunction relies on a TF model for scoring tweets
- * Only the `batchScore` part is implemented
+ * TelonnsorflowBaselondScoringFunction relonlielons on a TF modelonl for scoring twelonelonts
+ * Only thelon `batchScorelon` part is implelonmelonntelond
  */
-public class TensorflowBasedScoringFunction extends FeatureBasedScoringFunction {
-  private final TFModelRunner tfModelRunner;
+public class TelonnsorflowBaselondScoringFunction elonxtelonnds FelonaturelonBaselondScoringFunction {
+  privatelon final TFModelonlRunnelonr tfModelonlRunnelonr;
 
-  // https://stackoverflow.com/questions/37849322/how-to-understand-the-term-tensor-in-tensorflow
-  // for more information on this notation - in short, a TF graph is made
-  // of TF operations and doesn't have a first order notion of tensors
-  // The notation <operation>:<index> will maps to the <index> output of the
-  // <operation> contained in the TF graph.
-  private static final String INPUT_VALUES = "input_sparse_tensor_values:0";
-  private static final String INPUT_INDICES = "input_sparse_tensor_indices:0";
-  private static final String INPUT_SHAPE = "input_sparse_tensor_shape:0";
-  private static final String OUTPUT_NODE = "output_scores:0";
+  // https://stackovelonrflow.com/quelonstions/37849322/how-to-undelonrstand-thelon-telonrm-telonnsor-in-telonnsorflow
+  // for morelon information on this notation - in short, a TF graph is madelon
+  // of TF opelonrations and doelonsn't havelon a first ordelonr notion of telonnsors
+  // Thelon notation <opelonration>:<indelonx> will maps to thelon <indelonx> output of thelon
+  // <opelonration> containelond in thelon TF graph.
+  privatelon static final String INPUT_VALUelonS = "input_sparselon_telonnsor_valuelons:0";
+  privatelon static final String INPUT_INDICelonS = "input_sparselon_telonnsor_indicelons:0";
+  privatelon static final String INPUT_SHAPelon = "input_sparselon_telonnsor_shapelon:0";
+  privatelon static final String OUTPUT_NODelon = "output_scorelons:0";
 
-  private final Map<Integer, Long> featureSchemaIdToMlApiId;
-  private final Map<Long, Float> tweetIdToScoreMap = new HashMap<>();
-  private final EarlybirdRequest request;
+  privatelon final Map<Intelongelonr, Long> felonaturelonSchelonmaIdToMlApiId;
+  privatelon final Map<Long, Float> twelonelontIdToScorelonMap = nelonw HashMap<>();
+  privatelon final elonarlybirdRelonquelonst relonquelonst;
 
-  public TensorflowBasedScoringFunction(
-      EarlybirdRequest request,
-      ImmutableSchemaInterface schema,
-      ThriftSearchQuery searchQuery,
-      AntiGamingFilter antiGamingFilter,
-      ThriftSearchResultType searchResultType,
-      UserTable userTable,
-      TensorflowModelsManager tensorflowModelsManager
-      ) throws IOException, ClientException {
-    super(
-      "TensorflowBasedScoringFunction",
-      schema,
-      searchQuery,
-      antiGamingFilter,
-      searchResultType,
-        userTable
+  public TelonnsorflowBaselondScoringFunction(
+      elonarlybirdRelonquelonst relonquelonst,
+      ImmutablelonSchelonmaIntelonrfacelon schelonma,
+      ThriftSelonarchQuelonry selonarchQuelonry,
+      AntiGamingFiltelonr antiGamingFiltelonr,
+      ThriftSelonarchRelonsultTypelon selonarchRelonsultTypelon,
+      UselonrTablelon uselonrTablelon,
+      TelonnsorflowModelonlsManagelonr telonnsorflowModelonlsManagelonr
+      ) throws IOelonxcelonption, Clielonntelonxcelonption {
+    supelonr(
+      "TelonnsorflowBaselondScoringFunction",
+      schelonma,
+      selonarchQuelonry,
+      antiGamingFiltelonr,
+      selonarchRelonsultTypelon,
+        uselonrTablelon
     );
-    this.request = request;
-    String modelName = searchQuery.getRelevanceOptions().getRankingParams().selectedTensorflowModel;
-    this.featureSchemaIdToMlApiId = tensorflowModelsManager.getFeatureSchemaIdToMlApiId();
+    this.relonquelonst = relonquelonst;
+    String modelonlNamelon = selonarchQuelonry.gelontRelonlelonvancelonOptions().gelontRankingParams().selonlelonctelondTelonnsorflowModelonl;
+    this.felonaturelonSchelonmaIdToMlApiId = telonnsorflowModelonlsManagelonr.gelontFelonaturelonSchelonmaIdToMlApiId();
 
-    if (modelName == null) {
-      throw new ClientException("Scoring type is TENSORFLOW_BASED but no model was selected");
-    } else if (!tensorflowModelsManager.getModel(modelName).isPresent()) {
-      throw new ClientException(
-        "Scoring type is TENSORFLOW_BASED. Model "
-        + modelName
-        + " is not present."
+    if (modelonlNamelon == null) {
+      throw nelonw Clielonntelonxcelonption("Scoring typelon is TelonNSORFLOW_BASelonD but no modelonl was selonlelonctelond");
+    } elonlselon if (!telonnsorflowModelonlsManagelonr.gelontModelonl(modelonlNamelon).isPrelonselonnt()) {
+      throw nelonw Clielonntelonxcelonption(
+        "Scoring typelon is TelonNSORFLOW_BASelonD. Modelonl "
+        + modelonlNamelon
+        + " is not prelonselonnt."
       );
     }
 
-    if (searchQuery.getRelevanceOptions().getRankingParams().isEnableHitDemotion()) {
-      throw new ClientException(
-          "Hit attribute demotion is not supported with TENSORFLOW_BASED scoring type");
+    if (selonarchQuelonry.gelontRelonlelonvancelonOptions().gelontRankingParams().iselonnablelonHitDelonmotion()) {
+      throw nelonw Clielonntelonxcelonption(
+          "Hit attributelon delonmotion is not supportelond with TelonNSORFLOW_BASelonD scoring typelon");
     }
 
-    tfModelRunner = tensorflowModelsManager.getModel(modelName).get();
+    tfModelonlRunnelonr = telonnsorflowModelonlsManagelonr.gelontModelonl(modelonlNamelon).gelont();
   }
 
   /**
-   * Single item scoring just returns the lucene score to be used during the batching phase.
+   * Singlelon itelonm scoring just relonturns thelon lucelonnelon scorelon to belon uselond during thelon batching phaselon.
    */
-  @Override
-  protected float score(float luceneQueryScore) {
-    return luceneQueryScore;
+  @Ovelonrridelon
+  protelonctelond float scorelon(float lucelonnelonQuelonryScorelon) {
+    relonturn lucelonnelonQuelonryScorelon;
   }
 
-  @Override
-  public Pair<LinearScoringData, ThriftSearchResultFeatures> collectFeatures(
-      float luceneQueryScore) throws IOException {
-    LinearScoringData linearScoringData = updateLinearScoringData(luceneQueryScore);
-    ThriftSearchResultFeatures features =
-        createFeaturesForDocument(linearScoringData, true).getFeatures();
+  @Ovelonrridelon
+  public Pair<LinelonarScoringData, ThriftSelonarchRelonsultFelonaturelons> collelonctFelonaturelons(
+      float lucelonnelonQuelonryScorelon) throws IOelonxcelonption {
+    LinelonarScoringData linelonarScoringData = updatelonLinelonarScoringData(lucelonnelonQuelonryScorelon);
+    ThriftSelonarchRelonsultFelonaturelons felonaturelons =
+        crelonatelonFelonaturelonsForDocumelonnt(linelonarScoringData, truelon).gelontFelonaturelons();
 
-    return new Pair<>(linearScoringData, features);
+    relonturn nelonw Pair<>(linelonarScoringData, felonaturelons);
   }
 
-  @Override
-  protected FeatureHandler createFeaturesForDocument(
-      LinearScoringData linearScoringData,
-      boolean ignoreDefaultValues) throws IOException {
-    return super.createFeaturesForDocument(linearScoringData,
-            ignoreDefaultValues)
-        .addBoolean(EarlybirdRankingDerivedFeature.QUERY_SOURCE_TREND_CLICK,
-            request.querySource == ThriftQuerySource.TREND_CLICK)
-        .addBoolean(EarlybirdRankingDerivedFeature.QUERY_SOURCE_TYPED_QUERY,
-            request.querySource == ThriftQuerySource.TYPED_QUERY)
-        .addBoolean(EarlybirdRankingDerivedFeature.QUERY_SOURCE_TYPEAHEAD_CLICK,
-            request.querySource == ThriftQuerySource.TYPEAHEAD_CLICK)
-        .addBoolean(EarlybirdRankingDerivedFeature.QUERY_SOURCE_HASHTAG_CLICK,
-            request.querySource == ThriftQuerySource.RECENT_SEARCH_CLICK)
-        .addBoolean(EarlybirdRankingDerivedFeature.QUERY_SOURCE_RECENT_SEARCH_CLICK,
-            request.querySource == ThriftQuerySource.RECENT_SEARCH_CLICK)
-        .addBoolean(EarlybirdRankingDerivedFeature.QUERY_SOURCE_PROFILE_CLICK,
-            request.querySource == ThriftQuerySource.PROFILE_CLICK)
-        .addBoolean(EarlybirdRankingDerivedFeature.QUERY_SOURCE_API_CALL,
-            request.querySource == ThriftQuerySource.API_CALL)
-        .addBoolean(EarlybirdRankingDerivedFeature.QUERY_SOURCE_PROMOTED_TREND_CLICK,
-            request.querySource == ThriftQuerySource.PROMOTED_TREND_CLICK)
-        .addBoolean(EarlybirdRankingDerivedFeature.QUERY_SOURCE_SAVED_SEARCH_CLICK,
-            request.querySource == ThriftQuerySource.SAVED_SEARCH_CLICK)
-        .addBoolean(EarlybirdRankingDerivedFeature.QUERY_SOURCE_CASHTAG_CLICK,
-            request.querySource == ThriftQuerySource.CASHTAG_CLICK)
-        .addBoolean(EarlybirdRankingDerivedFeature.QUERY_SOURCE_SPELLING_EXPANSION_REVERT_CLICK,
-            request.querySource == ThriftQuerySource.SPELLING_EXPANSION_REVERT_CLICK)
-        .addBoolean(EarlybirdRankingDerivedFeature.QUERY_SOURCE_SPELLING_SUGGESTION_CLICK,
-            request.querySource == ThriftQuerySource.SPELLING_SUGGESTION_CLICK)
-        .addBoolean(EarlybirdRankingDerivedFeature.QUERY_SOURCE_LOGGED_OUT_HOME_TREND_CLICK,
-            request.querySource == ThriftQuerySource.LOGGED_OUT_HOME_TREND_CLICK)
-        .addBoolean(EarlybirdRankingDerivedFeature.QUERY_SOURCE_RELATED_QUERY_CLICK,
-            request.querySource == ThriftQuerySource.RELATED_QUERY_CLICK)
-        .addBoolean(EarlybirdRankingDerivedFeature.QUERY_SOURCE_AUTO_SPELL_CORRECT_REVERT_CLICK,
-            request.querySource == ThriftQuerySource.AUTO_SPELL_CORRECT_REVERT_CLICK);
+  @Ovelonrridelon
+  protelonctelond FelonaturelonHandlelonr crelonatelonFelonaturelonsForDocumelonnt(
+      LinelonarScoringData linelonarScoringData,
+      boolelonan ignorelonDelonfaultValuelons) throws IOelonxcelonption {
+    relonturn supelonr.crelonatelonFelonaturelonsForDocumelonnt(linelonarScoringData,
+            ignorelonDelonfaultValuelons)
+        .addBoolelonan(elonarlybirdRankingDelonrivelondFelonaturelon.QUelonRY_SOURCelon_TRelonND_CLICK,
+            relonquelonst.quelonrySourcelon == ThriftQuelonrySourcelon.TRelonND_CLICK)
+        .addBoolelonan(elonarlybirdRankingDelonrivelondFelonaturelon.QUelonRY_SOURCelon_TYPelonD_QUelonRY,
+            relonquelonst.quelonrySourcelon == ThriftQuelonrySourcelon.TYPelonD_QUelonRY)
+        .addBoolelonan(elonarlybirdRankingDelonrivelondFelonaturelon.QUelonRY_SOURCelon_TYPelonAHelonAD_CLICK,
+            relonquelonst.quelonrySourcelon == ThriftQuelonrySourcelon.TYPelonAHelonAD_CLICK)
+        .addBoolelonan(elonarlybirdRankingDelonrivelondFelonaturelon.QUelonRY_SOURCelon_HASHTAG_CLICK,
+            relonquelonst.quelonrySourcelon == ThriftQuelonrySourcelon.RelonCelonNT_SelonARCH_CLICK)
+        .addBoolelonan(elonarlybirdRankingDelonrivelondFelonaturelon.QUelonRY_SOURCelon_RelonCelonNT_SelonARCH_CLICK,
+            relonquelonst.quelonrySourcelon == ThriftQuelonrySourcelon.RelonCelonNT_SelonARCH_CLICK)
+        .addBoolelonan(elonarlybirdRankingDelonrivelondFelonaturelon.QUelonRY_SOURCelon_PROFILelon_CLICK,
+            relonquelonst.quelonrySourcelon == ThriftQuelonrySourcelon.PROFILelon_CLICK)
+        .addBoolelonan(elonarlybirdRankingDelonrivelondFelonaturelon.QUelonRY_SOURCelon_API_CALL,
+            relonquelonst.quelonrySourcelon == ThriftQuelonrySourcelon.API_CALL)
+        .addBoolelonan(elonarlybirdRankingDelonrivelondFelonaturelon.QUelonRY_SOURCelon_PROMOTelonD_TRelonND_CLICK,
+            relonquelonst.quelonrySourcelon == ThriftQuelonrySourcelon.PROMOTelonD_TRelonND_CLICK)
+        .addBoolelonan(elonarlybirdRankingDelonrivelondFelonaturelon.QUelonRY_SOURCelon_SAVelonD_SelonARCH_CLICK,
+            relonquelonst.quelonrySourcelon == ThriftQuelonrySourcelon.SAVelonD_SelonARCH_CLICK)
+        .addBoolelonan(elonarlybirdRankingDelonrivelondFelonaturelon.QUelonRY_SOURCelon_CASHTAG_CLICK,
+            relonquelonst.quelonrySourcelon == ThriftQuelonrySourcelon.CASHTAG_CLICK)
+        .addBoolelonan(elonarlybirdRankingDelonrivelondFelonaturelon.QUelonRY_SOURCelon_SPelonLLING_elonXPANSION_RelonVelonRT_CLICK,
+            relonquelonst.quelonrySourcelon == ThriftQuelonrySourcelon.SPelonLLING_elonXPANSION_RelonVelonRT_CLICK)
+        .addBoolelonan(elonarlybirdRankingDelonrivelondFelonaturelon.QUelonRY_SOURCelon_SPelonLLING_SUGGelonSTION_CLICK,
+            relonquelonst.quelonrySourcelon == ThriftQuelonrySourcelon.SPelonLLING_SUGGelonSTION_CLICK)
+        .addBoolelonan(elonarlybirdRankingDelonrivelondFelonaturelon.QUelonRY_SOURCelon_LOGGelonD_OUT_HOMelon_TRelonND_CLICK,
+            relonquelonst.quelonrySourcelon == ThriftQuelonrySourcelon.LOGGelonD_OUT_HOMelon_TRelonND_CLICK)
+        .addBoolelonan(elonarlybirdRankingDelonrivelondFelonaturelon.QUelonRY_SOURCelon_RelonLATelonD_QUelonRY_CLICK,
+            relonquelonst.quelonrySourcelon == ThriftQuelonrySourcelon.RelonLATelonD_QUelonRY_CLICK)
+        .addBoolelonan(elonarlybirdRankingDelonrivelondFelonaturelon.QUelonRY_SOURCelon_AUTO_SPelonLL_CORRelonCT_RelonVelonRT_CLICK,
+            relonquelonst.quelonrySourcelon == ThriftQuelonrySourcelon.AUTO_SPelonLL_CORRelonCT_RelonVelonRT_CLICK);
   }
 
   /**
-   * Return scores computed in batchScore() if forExplanation is true.
+   * Relonturn scorelons computelond in batchScorelon() if forelonxplanation is truelon.
    */
-  @Override
-  protected double computeScore(LinearScoringData data, boolean forExplanation) {
-    Preconditions.checkState(forExplanation,
-        "forExplanation is false. computeScore() should only be used for explanation creation");
-    return tweetIdToScoreMap.get(tweetIDMapper.getTweetID(getCurrentDocID()));
+  @Ovelonrridelon
+  protelonctelond doublelon computelonScorelon(LinelonarScoringData data, boolelonan forelonxplanation) {
+    Prelonconditions.chelonckStatelon(forelonxplanation,
+        "forelonxplanation is falselon. computelonScorelon() should only belon uselond for elonxplanation crelonation");
+    relonturn twelonelontIdToScorelonMap.gelont(twelonelontIDMappelonr.gelontTwelonelontID(gelontCurrelonntDocID()));
   }
 
-  @Override
-  protected void generateExplanationForScoring(
-      LinearScoringData scoringData, boolean isHit, List<Explanation> details) {
+  @Ovelonrridelon
+  protelonctelond void gelonnelonratelonelonxplanationForScoring(
+      LinelonarScoringData scoringData, boolelonan isHit, List<elonxplanation> delontails) {
   }
 
-  @VisibleForTesting
-  SparseTensor createInputTensor(ThriftSearchResultFeatures[] featuresForDocs) {
-    // Moving this across outside of the request path
-    // would reduce the allocation cost and make the `ByteBuffer`s
-    // long lived - would need one per thread.
-    SparseTensor sparseTensor =
-        new SparseTensor(featuresForDocs.length, featureSchemaIdToMlApiId.size());
-    for (ThriftSearchResultFeatures features : featuresForDocs) {
-      updateSparseTensor(sparseTensor, features);
+  @VisiblelonForTelonsting
+  SparselonTelonnsor crelonatelonInputTelonnsor(ThriftSelonarchRelonsultFelonaturelons[] felonaturelonsForDocs) {
+    // Moving this across outsidelon of thelon relonquelonst path
+    // would relonducelon thelon allocation cost and makelon thelon `BytelonBuffelonr`s
+    // long livelond - would nelonelond onelon pelonr threlonad.
+    SparselonTelonnsor sparselonTelonnsor =
+        nelonw SparselonTelonnsor(felonaturelonsForDocs.lelonngth, felonaturelonSchelonmaIdToMlApiId.sizelon());
+    for (ThriftSelonarchRelonsultFelonaturelons felonaturelons : felonaturelonsForDocs) {
+      updatelonSparselonTelonnsor(sparselonTelonnsor, felonaturelons);
     }
-    return sparseTensor;
+    relonturn sparselonTelonnsor;
   }
 
-  private void addSchemaBooleanFeatures(SparseTensor sparseTensor,
-                                        Map<Integer, Boolean> booleanMap) {
-    if (booleanMap == null || booleanMap.isEmpty()) {
-      return;
+  privatelon void addSchelonmaBoolelonanFelonaturelons(SparselonTelonnsor sparselonTelonnsor,
+                                        Map<Intelongelonr, Boolelonan> boolelonanMap) {
+    if (boolelonanMap == null || boolelonanMap.iselonmpty()) {
+      relonturn;
     }
-    for (Map.Entry<Integer, Boolean> entry : booleanMap.entrySet()) {
-      Preconditions.checkState(featureSchemaIdToMlApiId.containsKey(entry.getKey()));
-      sparseTensor.addValue(
-          featureSchemaIdToMlApiId.get(entry.getKey()), entry.getValue() ? 1f : 0f);
+    for (Map.elonntry<Intelongelonr, Boolelonan> elonntry : boolelonanMap.elonntrySelont()) {
+      Prelonconditions.chelonckStatelon(felonaturelonSchelonmaIdToMlApiId.containsKelony(elonntry.gelontKelony()));
+      sparselonTelonnsor.addValuelon(
+          felonaturelonSchelonmaIdToMlApiId.gelont(elonntry.gelontKelony()), elonntry.gelontValuelon() ? 1f : 0f);
     }
   }
 
-  private void addSchemaContinuousFeatures(SparseTensor sparseTensor,
-                                           Map<Integer, ? extends Number> valueMap) {
-    if (valueMap == null || valueMap.isEmpty()) {
-      return;
+  privatelon void addSchelonmaContinuousFelonaturelons(SparselonTelonnsor sparselonTelonnsor,
+                                           Map<Intelongelonr, ? elonxtelonnds Numbelonr> valuelonMap) {
+    if (valuelonMap == null || valuelonMap.iselonmpty()) {
+      relonturn;
     }
-    for (Map.Entry<Integer, ? extends Number> entry : valueMap.entrySet()) {
-      Integer id = entry.getKey();
-      // SEARCH-26795
-      if (!TweetFeaturesUtils.isFeatureDiscrete(id)) {
-        Preconditions.checkState(featureSchemaIdToMlApiId.containsKey(id));
-        sparseTensor.addValue(
-            featureSchemaIdToMlApiId.get(id), entry.getValue().floatValue());
+    for (Map.elonntry<Intelongelonr, ? elonxtelonnds Numbelonr> elonntry : valuelonMap.elonntrySelont()) {
+      Intelongelonr id = elonntry.gelontKelony();
+      // SelonARCH-26795
+      if (!TwelonelontFelonaturelonsUtils.isFelonaturelonDiscrelontelon(id)) {
+        Prelonconditions.chelonckStatelon(felonaturelonSchelonmaIdToMlApiId.containsKelony(id));
+        sparselonTelonnsor.addValuelon(
+            felonaturelonSchelonmaIdToMlApiId.gelont(id), elonntry.gelontValuelon().floatValuelon());
       }
     }
   }
 
-  private void updateSparseTensor(SparseTensor sparseTensor, ThriftSearchResultFeatures features) {
-    addSchemaBooleanFeatures(sparseTensor, features.getBoolValues());
-    addSchemaContinuousFeatures(sparseTensor, features.getIntValues());
-    addSchemaContinuousFeatures(sparseTensor, features.getLongValues());
-    addSchemaContinuousFeatures(sparseTensor, features.getDoubleValues());
+  privatelon void updatelonSparselonTelonnsor(SparselonTelonnsor sparselonTelonnsor, ThriftSelonarchRelonsultFelonaturelons felonaturelons) {
+    addSchelonmaBoolelonanFelonaturelons(sparselonTelonnsor, felonaturelons.gelontBoolValuelons());
+    addSchelonmaContinuousFelonaturelons(sparselonTelonnsor, felonaturelons.gelontIntValuelons());
+    addSchelonmaContinuousFelonaturelons(sparselonTelonnsor, felonaturelons.gelontLongValuelons());
+    addSchelonmaContinuousFelonaturelons(sparselonTelonnsor, felonaturelons.gelontDoublelonValuelons());
 
-    sparseTensor.incNumRecordsSeen();
+    sparselonTelonnsor.incNumReloncordsSelonelonn();
   }
 
-  private float[] batchScoreInternal(ThriftSearchResultFeatures[] featuresForDocs) {
-    int nbDocs = featuresForDocs.length;
-    float[] backingArrayResults = new float[nbDocs];
-    SparseTensor sparseTensor = createInputTensor(featuresForDocs);
-    Tensor<?> sparseValues =
-      Tensor.create(
+  privatelon float[] batchScorelonIntelonrnal(ThriftSelonarchRelonsultFelonaturelons[] felonaturelonsForDocs) {
+    int nbDocs = felonaturelonsForDocs.lelonngth;
+    float[] backingArrayRelonsults = nelonw float[nbDocs];
+    SparselonTelonnsor sparselonTelonnsor = crelonatelonInputTelonnsor(felonaturelonsForDocs);
+    Telonnsor<?> sparselonValuelons =
+      Telonnsor.crelonatelon(
         Float.class,
-        sparseTensor.getSparseValuesShape(),
-        sparseTensor.getSparseValues());
-    Tensor<?> sparseIndices =
-      Tensor.create(
+        sparselonTelonnsor.gelontSparselonValuelonsShapelon(),
+        sparselonTelonnsor.gelontSparselonValuelons());
+    Telonnsor<?> sparselonIndicelons =
+      Telonnsor.crelonatelon(
         Long.class,
-        sparseTensor.getSparseIndicesShape(),
-        sparseTensor.getSparseIndices());
-    Tensor<?> sparseShape =
-      Tensor.create(
+        sparselonTelonnsor.gelontSparselonIndicelonsShapelon(),
+        sparselonTelonnsor.gelontSparselonIndicelons());
+    Telonnsor<?> sparselonShapelon =
+      Telonnsor.crelonatelon(
         Long.class,
-        sparseTensor.getSparseShapeShape(),
-        sparseTensor.getSparseShape());
-    Map<String, Tensor<?>> inputMap = ImmutableMap.of(
-      INPUT_VALUES, sparseValues,
-      INPUT_INDICES, sparseIndices,
-      INPUT_SHAPE, sparseShape
+        sparselonTelonnsor.gelontSparselonShapelonShapelon(),
+        sparselonTelonnsor.gelontSparselonShapelon());
+    Map<String, Telonnsor<?>> inputMap = ImmutablelonMap.of(
+      INPUT_VALUelonS, sparselonValuelons,
+      INPUT_INDICelonS, sparselonIndicelons,
+      INPUT_SHAPelon, sparselonShapelon
       );
-    List<String> output = ImmutableList.of(OUTPUT_NODE);
+    List<String> output = ImmutablelonList.of(OUTPUT_NODelon);
 
-    Map<String, Tensor<?>> outputs = tfModelRunner.run(
+    Map<String, Telonnsor<?>> outputs = tfModelonlRunnelonr.run(
       inputMap,
       output,
-      ImmutableList.of()
+      ImmutablelonList.of()
     );
-    Tensor<?> outputTensor = outputs.get(OUTPUT_NODE);
+    Telonnsor<?> outputTelonnsor = outputs.gelont(OUTPUT_NODelon);
     try {
-      FloatBuffer finalResultBuffer =
-        FloatBuffer.wrap(backingArrayResults, 0, nbDocs);
+      FloatBuffelonr finalRelonsultBuffelonr =
+        FloatBuffelonr.wrap(backingArrayRelonsults, 0, nbDocs);
 
-      outputTensor.writeTo(finalResultBuffer);
+      outputTelonnsor.writelonTo(finalRelonsultBuffelonr);
     } finally {
-      // Close tensors to avoid memory leaks
-      sparseValues.close();
-      sparseIndices.close();
-      sparseShape.close();
-      if (outputTensor != null) {
-        outputTensor.close();
+      // Closelon telonnsors to avoid melonmory lelonaks
+      sparselonValuelons.closelon();
+      sparselonIndicelons.closelon();
+      sparselonShapelon.closelon();
+      if (outputTelonnsor != null) {
+        outputTelonnsor.closelon();
       }
     }
-    return backingArrayResults;
+    relonturn backingArrayRelonsults;
   }
 
   /**
-   * Compute the score for a list of hits. Not thread safe.
-   * @return Array of scores
+   * Computelon thelon scorelon for a list of hits. Not threlonad safelon.
+   * @relonturn Array of scorelons
    */
-  @Override
-  public float[] batchScore(List<BatchHit> hits) throws IOException {
-    ThriftSearchResultFeatures[] featuresForDocs = new ThriftSearchResultFeatures[hits.size()];
+  @Ovelonrridelon
+  public float[] batchScorelon(List<BatchHit> hits) throws IOelonxcelonption {
+    ThriftSelonarchRelonsultFelonaturelons[] felonaturelonsForDocs = nelonw ThriftSelonarchRelonsultFelonaturelons[hits.sizelon()];
 
-    for (int i = 0; i < hits.size(); i++) {
-      // This is a gigantic allocation, but the models are trained to depend on unset values having
-      // a default.
-      BatchHit hit = hits.get(i);
-      ThriftSearchResultFeatures features = hit.getFeatures().deepCopy();
+    for (int i = 0; i < hits.sizelon(); i++) {
+      // This is a gigantic allocation, but thelon modelonls arelon trainelond to delonpelonnd on unselont valuelons having
+      // a delonfault.
+      BatchHit hit = hits.gelont(i);
+      ThriftSelonarchRelonsultFelonaturelons felonaturelons = hit.gelontFelonaturelons().delonelonpCopy();
 
-      // Adjust features of a hit based on overrides provided by relevance options. Should mostly
-      // be used for debugging purposes.
-      adjustHitScoringFeatures(hit, features);
+      // Adjust felonaturelons of a hit baselond on ovelonrridelons providelond by relonlelonvancelon options. Should mostly
+      // belon uselond for delonbugging purposelons.
+      adjustHitScoringFelonaturelons(hit, felonaturelons);
 
-      setDefaultFeatureValues(features);
-      featuresForDocs[i] = features;
+      selontDelonfaultFelonaturelonValuelons(felonaturelons);
+      felonaturelonsForDocs[i] = felonaturelons;
     }
 
-    float[] scores = batchScoreInternal(featuresForDocs);
-    float[] finalScores = new float[hits.size()];
+    float[] scorelons = batchScorelonIntelonrnal(felonaturelonsForDocs);
+    float[] finalScorelons = nelonw float[hits.sizelon()];
 
-    for (int i = 0; i < hits.size(); i++) {
-      LinearScoringData data = hits.get(i).getScoringData();
-      if (data.skipReason != null && data.skipReason != LinearScoringData.SkipReason.NOT_SKIPPED) {
-        // If the hit should be skipped, overwrite the score with SKIP_HIT
-        scores[i] = SKIP_HIT;
+    for (int i = 0; i < hits.sizelon(); i++) {
+      LinelonarScoringData data = hits.gelont(i).gelontScoringData();
+      if (data.skipRelonason != null && data.skipRelonason != LinelonarScoringData.SkipRelonason.NOT_SKIPPelonD) {
+        // If thelon hit should belon skippelond, ovelonrwritelon thelon scorelon with SKIP_HIT
+        scorelons[i] = SKIP_HIT;
       }
 
-      // If explanations enabled, Add scores to map. Will be used in computeScore()
-      if (EarlybirdSearcher.explanationsEnabled(debugMode)) {
-        tweetIdToScoreMap.put(hits.get(i).getTweetID(), scores[i]);
+      // If elonxplanations elonnablelond, Add scorelons to map. Will belon uselond in computelonScorelon()
+      if (elonarlybirdSelonarchelonr.elonxplanationselonnablelond(delonbugModelon)) {
+        twelonelontIdToScorelonMap.put(hits.gelont(i).gelontTwelonelontID(), scorelons[i]);
       }
 
-      finalScores[i] = postScoreComputation(
+      finalScorelons[i] = postScorelonComputation(
           data,
-          scores[i],
-          false,  // cannot get the hit attribution info for this hit at this point in time
+          scorelons[i],
+          falselon,  // cannot gelont thelon hit attribution info for this hit at this point in timelon
           null);
     }
-    return finalScores;
+    relonturn finalScorelons;
   }
 
-  private void adjustHitScoringFeatures(BatchHit hit, ThriftSearchResultFeatures features) {
+  privatelon void adjustHitScoringFelonaturelons(BatchHit hit, ThriftSelonarchRelonsultFelonaturelons felonaturelons) {
 
-    if (request.isSetSearchQuery() && request.getSearchQuery().isSetRelevanceOptions()) {
-      ThriftSearchRelevanceOptions relevanceOptions =
-          request.getSearchQuery().getRelevanceOptions();
+    if (relonquelonst.isSelontSelonarchQuelonry() && relonquelonst.gelontSelonarchQuelonry().isSelontRelonlelonvancelonOptions()) {
+      ThriftSelonarchRelonlelonvancelonOptions relonlelonvancelonOptions =
+          relonquelonst.gelontSelonarchQuelonry().gelontRelonlelonvancelonOptions();
 
-      if (relevanceOptions.isSetPerTweetFeaturesOverride()
-          && relevanceOptions.getPerTweetFeaturesOverride().containsKey(hit.getTweetID())) {
-        overrideFeatureValues(
-            features,
-            relevanceOptions.getPerTweetFeaturesOverride().get(hit.getTweetID()));
+      if (relonlelonvancelonOptions.isSelontPelonrTwelonelontFelonaturelonsOvelonrridelon()
+          && relonlelonvancelonOptions.gelontPelonrTwelonelontFelonaturelonsOvelonrridelon().containsKelony(hit.gelontTwelonelontID())) {
+        ovelonrridelonFelonaturelonValuelons(
+            felonaturelons,
+            relonlelonvancelonOptions.gelontPelonrTwelonelontFelonaturelonsOvelonrridelon().gelont(hit.gelontTwelonelontID()));
       }
 
-      if (relevanceOptions.isSetPerUserFeaturesOverride()
-          && relevanceOptions.getPerUserFeaturesOverride().containsKey(
-              hit.getScoringData().fromUserId)) {
-        overrideFeatureValues(
-            features,
-            relevanceOptions.getPerUserFeaturesOverride().get(hit.getScoringData().fromUserId));
+      if (relonlelonvancelonOptions.isSelontPelonrUselonrFelonaturelonsOvelonrridelon()
+          && relonlelonvancelonOptions.gelontPelonrUselonrFelonaturelonsOvelonrridelon().containsKelony(
+              hit.gelontScoringData().fromUselonrId)) {
+        ovelonrridelonFelonaturelonValuelons(
+            felonaturelons,
+            relonlelonvancelonOptions.gelontPelonrUselonrFelonaturelonsOvelonrridelon().gelont(hit.gelontScoringData().fromUselonrId));
       }
 
-      if (relevanceOptions.isSetGlobalFeaturesOverride()) {
-        overrideFeatureValues(
-            features, relevanceOptions.getGlobalFeaturesOverride());
+      if (relonlelonvancelonOptions.isSelontGlobalFelonaturelonsOvelonrridelon()) {
+        ovelonrridelonFelonaturelonValuelons(
+            felonaturelons, relonlelonvancelonOptions.gelontGlobalFelonaturelonsOvelonrridelon());
       }
     }
   }

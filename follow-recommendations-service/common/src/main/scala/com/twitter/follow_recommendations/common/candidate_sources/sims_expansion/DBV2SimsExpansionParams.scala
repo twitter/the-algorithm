@@ -1,22 +1,22 @@
-package com.twitter.follow_recommendations.common.candidate_sources.sims_expansion
+packagelon com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.sims_elonxpansion
 
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSParam
+import com.twittelonr.timelonlinelons.configapi.FSBoundelondParam
+import com.twittelonr.timelonlinelons.configapi.FSParam
 
-object DBV2SimsExpansionParams {
-  // Theses divisors are used to calibrate DBv2Sims extension candidates scores
-  case object RecentFollowingSimilarUsersDBV2CalibrateDivisor
-      extends FSBoundedParam[Double](
-        "sims_expansion_recent_following_similar_users_dbv2_divisor",
-        default = 1.0d,
+objelonct DBV2SimselonxpansionParams {
+  // Thelonselons divisors arelon uselond to calibratelon DBv2Sims elonxtelonnsion candidatelons scorelons
+  caselon objelonct ReloncelonntFollowingSimilarUselonrsDBV2CalibratelonDivisor
+      elonxtelonnds FSBoundelondParam[Doublelon](
+        "sims_elonxpansion_reloncelonnt_following_similar_uselonrs_dbv2_divisor",
+        delonfault = 1.0d,
         min = 0.1d,
         max = 100d)
-  case object RecentEngagementSimilarUsersDBV2CalibrateDivisor
-      extends FSBoundedParam[Double](
-        "sims_expansion_recent_engagement_similar_users_dbv2_divisor",
-        default = 1.0d,
+  caselon objelonct ReloncelonntelonngagelonmelonntSimilarUselonrsDBV2CalibratelonDivisor
+      elonxtelonnds FSBoundelondParam[Doublelon](
+        "sims_elonxpansion_reloncelonnt_elonngagelonmelonnt_similar_uselonrs_dbv2_divisor",
+        delonfault = 1.0d,
         min = 0.1d,
         max = 100d)
-  case object DisableHeavyRanker
-      extends FSParam[Boolean]("sims_expansion_disable_heavy_ranker", default = false)
+  caselon objelonct DisablelonHelonavyRankelonr
+      elonxtelonnds FSParam[Boolelonan]("sims_elonxpansion_disablelon_helonavy_rankelonr", delonfault = falselon)
 }

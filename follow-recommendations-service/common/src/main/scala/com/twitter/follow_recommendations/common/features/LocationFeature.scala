@@ -1,10 +1,10 @@
-package com.twitter.follow_recommendations.common.features
+packagelon com.twittelonr.follow_reloncommelonndations.common.felonaturelons
 
-import com.twitter.follow_recommendations.common.models.GeohashAndCountryCode
-import com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.GelonohashAndCountryCodelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.FelonaturelonWithDelonfaultOnFailurelon
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
-case object LocationFeature
-    extends FeatureWithDefaultOnFailure[PipelineQuery, Option[GeohashAndCountryCode]] {
-  override val defaultValue: Option[GeohashAndCountryCode] = None
+caselon objelonct LocationFelonaturelon
+    elonxtelonnds FelonaturelonWithDelonfaultOnFailurelon[PipelonlinelonQuelonry, Option[GelonohashAndCountryCodelon]] {
+  ovelonrridelon val delonfaultValuelon: Option[GelonohashAndCountryCodelon] = Nonelon
 }

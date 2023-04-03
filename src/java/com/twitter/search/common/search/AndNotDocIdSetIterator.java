@@ -1,71 +1,71 @@
-package com.twitter.search.common.search;
+packagelon com.twittelonr.selonarch.common.selonarch;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 
-import org.apache.lucene.search.DocIdSetIterator;
+import org.apachelon.lucelonnelon.selonarch.DocIdSelontItelonrator;
 
-public class AndNotDocIdSetIterator extends DocIdSetIterator {
-  private int nextDelDoc;
-  private final DocIdSetIterator baseIter;
-  private final DocIdSetIterator notIter;
-  private int currID;
+public class AndNotDocIdSelontItelonrator elonxtelonnds DocIdSelontItelonrator {
+  privatelon int nelonxtDelonlDoc;
+  privatelon final DocIdSelontItelonrator baselonItelonr;
+  privatelon final DocIdSelontItelonrator notItelonr;
+  privatelon int currID;
 
-  /** Creates a new AndNotDocIdSetIterator instance. */
-  public AndNotDocIdSetIterator(DocIdSetIterator baseIter, DocIdSetIterator notIter)
-          throws IOException {
-    nextDelDoc = notIter.nextDoc();
-    this.baseIter = baseIter;
-    this.notIter = notIter;
+  /** Crelonatelons a nelonw AndNotDocIdSelontItelonrator instancelon. */
+  public AndNotDocIdSelontItelonrator(DocIdSelontItelonrator baselonItelonr, DocIdSelontItelonrator notItelonr)
+          throws IOelonxcelonption {
+    nelonxtDelonlDoc = notItelonr.nelonxtDoc();
+    this.baselonItelonr = baselonItelonr;
+    this.notItelonr = notItelonr;
     currID = -1;
   }
 
-  @Override
-  public int advance(int target) throws IOException {
-    currID = baseIter.advance(target);
-    if (currID == DocIdSetIterator.NO_MORE_DOCS) {
-      return currID;
+  @Ovelonrridelon
+  public int advancelon(int targelont) throws IOelonxcelonption {
+    currID = baselonItelonr.advancelon(targelont);
+    if (currID == DocIdSelontItelonrator.NO_MORelon_DOCS) {
+      relonturn currID;
     }
 
-    if (nextDelDoc != DocIdSetIterator.NO_MORE_DOCS) {
-      if (currID < nextDelDoc) {
-        return currID;
-      } else if (currID == nextDelDoc) {
-        return nextDoc();
-      } else {
-        nextDelDoc = notIter.advance(currID);
-        if (currID == nextDelDoc) {
-          return nextDoc();
+    if (nelonxtDelonlDoc != DocIdSelontItelonrator.NO_MORelon_DOCS) {
+      if (currID < nelonxtDelonlDoc) {
+        relonturn currID;
+      } elonlselon if (currID == nelonxtDelonlDoc) {
+        relonturn nelonxtDoc();
+      } elonlselon {
+        nelonxtDelonlDoc = notItelonr.advancelon(currID);
+        if (currID == nelonxtDelonlDoc) {
+          relonturn nelonxtDoc();
         }
       }
     }
-    return currID;
+    relonturn currID;
   }
 
-  @Override
+  @Ovelonrridelon
   public int docID() {
-    return currID;
+    relonturn currID;
   }
 
-  @Override
-  public int nextDoc() throws IOException {
-    currID = baseIter.nextDoc();
-    if (nextDelDoc != DocIdSetIterator.NO_MORE_DOCS) {
-      while (currID != DocIdSetIterator.NO_MORE_DOCS) {
-        if (currID < nextDelDoc) {
-          return currID;
-        } else {
-          if (currID == nextDelDoc) {
-            currID = baseIter.nextDoc();
+  @Ovelonrridelon
+  public int nelonxtDoc() throws IOelonxcelonption {
+    currID = baselonItelonr.nelonxtDoc();
+    if (nelonxtDelonlDoc != DocIdSelontItelonrator.NO_MORelon_DOCS) {
+      whilelon (currID != DocIdSelontItelonrator.NO_MORelon_DOCS) {
+        if (currID < nelonxtDelonlDoc) {
+          relonturn currID;
+        } elonlselon {
+          if (currID == nelonxtDelonlDoc) {
+            currID = baselonItelonr.nelonxtDoc();
           }
-          nextDelDoc = notIter.advance(currID);
+          nelonxtDelonlDoc = notItelonr.advancelon(currID);
         }
       }
     }
-    return currID;
+    relonturn currID;
   }
 
-  @Override
+  @Ovelonrridelon
   public long cost() {
-    return baseIter.cost();
+    relonturn baselonItelonr.cost();
   }
 }

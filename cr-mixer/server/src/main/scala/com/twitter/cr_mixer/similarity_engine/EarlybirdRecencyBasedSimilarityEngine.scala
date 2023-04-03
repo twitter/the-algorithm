@@ -1,86 +1,86 @@
-package com.twitter.cr_mixer.similarity_engine
-import com.twitter.cr_mixer.config.TimeoutConfig
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.cr_mixer.model.TweetWithAuthor
-import com.twitter.cr_mixer.similarity_engine.EarlybirdRecencyBasedSimilarityEngine.EarlybirdRecencyBasedSearchQuery
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.util.StatsUtil
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Duration
-import com.twitter.util.Future
-import com.twitter.util.Time
-import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Singleton
+packagelon com.twittelonr.cr_mixelonr.similarity_elonnginelon
+import com.twittelonr.cr_mixelonr.config.TimelonoutConfig
+import com.twittelonr.cr_mixelonr.modelonl.ModulelonNamelons
+import com.twittelonr.cr_mixelonr.modelonl.TwelonelontWithAuthor
+import com.twittelonr.cr_mixelonr.similarity_elonnginelon.elonarlybirdReloncelonncyBaselondSimilarityelonnginelon.elonarlybirdReloncelonncyBaselondSelonarchQuelonry
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.frigatelon.common.util.StatsUtil
+import com.twittelonr.simclustelonrs_v2.common.TwelonelontId
+import com.twittelonr.simclustelonrs_v2.common.UselonrId
+import com.twittelonr.snowflakelon.id.SnowflakelonId
+import com.twittelonr.storelonhaus.RelonadablelonStorelon
+import com.twittelonr.util.Duration
+import com.twittelonr.util.Futurelon
+import com.twittelonr.util.Timelon
+import javax.injelonct.Injelonct
+import javax.injelonct.Namelond
+import javax.injelonct.Singlelonton
 
-@Singleton
-case class EarlybirdRecencyBasedSimilarityEngine @Inject() (
-  @Named(ModuleNames.EarlybirdRecencyBasedWithoutRetweetsRepliesTweetsCache)
-  earlybirdRecencyBasedWithoutRetweetsRepliesTweetsCacheStore: ReadableStore[
-    UserId,
-    Seq[TweetId]
+@Singlelonton
+caselon class elonarlybirdReloncelonncyBaselondSimilarityelonnginelon @Injelonct() (
+  @Namelond(ModulelonNamelons.elonarlybirdReloncelonncyBaselondWithoutRelontwelonelontsRelonplielonsTwelonelontsCachelon)
+  elonarlybirdReloncelonncyBaselondWithoutRelontwelonelontsRelonplielonsTwelonelontsCachelonStorelon: RelonadablelonStorelon[
+    UselonrId,
+    Selonq[TwelonelontId]
   ],
-  @Named(ModuleNames.EarlybirdRecencyBasedWithRetweetsRepliesTweetsCache)
-  earlybirdRecencyBasedWithRetweetsRepliesTweetsCacheStore: ReadableStore[
-    UserId,
-    Seq[TweetId]
+  @Namelond(ModulelonNamelons.elonarlybirdReloncelonncyBaselondWithRelontwelonelontsRelonplielonsTwelonelontsCachelon)
+  elonarlybirdReloncelonncyBaselondWithRelontwelonelontsRelonplielonsTwelonelontsCachelonStorelon: RelonadablelonStorelon[
+    UselonrId,
+    Selonq[TwelonelontId]
   ],
-  timeoutConfig: TimeoutConfig,
-  stats: StatsReceiver)
-    extends ReadableStore[EarlybirdRecencyBasedSearchQuery, Seq[TweetWithAuthor]] {
-  import EarlybirdRecencyBasedSimilarityEngine._
-  val statsReceiver: StatsReceiver = stats.scope(this.getClass.getSimpleName)
+  timelonoutConfig: TimelonoutConfig,
+  stats: StatsReloncelonivelonr)
+    elonxtelonnds RelonadablelonStorelon[elonarlybirdReloncelonncyBaselondSelonarchQuelonry, Selonq[TwelonelontWithAuthor]] {
+  import elonarlybirdReloncelonncyBaselondSimilarityelonnginelon._
+  val statsReloncelonivelonr: StatsReloncelonivelonr = stats.scopelon(this.gelontClass.gelontSimplelonNamelon)
 
-  override def get(
-    query: EarlybirdRecencyBasedSearchQuery
-  ): Future[Option[Seq[TweetWithAuthor]]] = {
-    Future
-      .collect {
-        if (query.filterOutRetweetsAndReplies) {
-          query.seedUserIds.map { seedUserId =>
-            StatsUtil.trackOptionItemsStats(statsReceiver.scope("WithoutRetweetsAndReplies")) {
-              earlybirdRecencyBasedWithoutRetweetsRepliesTweetsCacheStore
-                .get(seedUserId).map(_.map(_.map(tweetId =>
-                  TweetWithAuthor(tweetId = tweetId, authorId = seedUserId))))
+  ovelonrridelon delonf gelont(
+    quelonry: elonarlybirdReloncelonncyBaselondSelonarchQuelonry
+  ): Futurelon[Option[Selonq[TwelonelontWithAuthor]]] = {
+    Futurelon
+      .collelonct {
+        if (quelonry.filtelonrOutRelontwelonelontsAndRelonplielons) {
+          quelonry.selonelondUselonrIds.map { selonelondUselonrId =>
+            StatsUtil.trackOptionItelonmsStats(statsReloncelonivelonr.scopelon("WithoutRelontwelonelontsAndRelonplielons")) {
+              elonarlybirdReloncelonncyBaselondWithoutRelontwelonelontsRelonplielonsTwelonelontsCachelonStorelon
+                .gelont(selonelondUselonrId).map(_.map(_.map(twelonelontId =>
+                  TwelonelontWithAuthor(twelonelontId = twelonelontId, authorId = selonelondUselonrId))))
             }
           }
-        } else {
-          query.seedUserIds.map { seedUserId =>
-            StatsUtil.trackOptionItemsStats(statsReceiver.scope("WithRetweetsAndReplies")) {
-              earlybirdRecencyBasedWithRetweetsRepliesTweetsCacheStore
-                .get(seedUserId)
-                .map(_.map(_.map(tweetId =>
-                  TweetWithAuthor(tweetId = tweetId, authorId = seedUserId))))
+        } elonlselon {
+          quelonry.selonelondUselonrIds.map { selonelondUselonrId =>
+            StatsUtil.trackOptionItelonmsStats(statsReloncelonivelonr.scopelon("WithRelontwelonelontsAndRelonplielons")) {
+              elonarlybirdReloncelonncyBaselondWithRelontwelonelontsRelonplielonsTwelonelontsCachelonStorelon
+                .gelont(selonelondUselonrId)
+                .map(_.map(_.map(twelonelontId =>
+                  TwelonelontWithAuthor(twelonelontId = twelonelontId, authorId = selonelondUselonrId))))
             }
           }
         }
       }
-      .map { tweetWithAuthorList =>
-        val earliestTweetId = SnowflakeId.firstIdFor(Time.now - query.maxTweetAge)
-        tweetWithAuthorList
-          .flatMap(_.getOrElse(Seq.empty))
-          .filter(tweetWithAuthor =>
-            tweetWithAuthor.tweetId >= earliestTweetId // tweet age filter
-              && !query.excludedTweetIds
-                .contains(tweetWithAuthor.tweetId)) // excluded tweet filter
-          .sortBy(tweetWithAuthor =>
-            -SnowflakeId.unixTimeMillisFromId(tweetWithAuthor.tweetId)) // sort by recency
-          .take(query.maxNumTweets) // take most recent N tweets
+      .map { twelonelontWithAuthorList =>
+        val elonarlielonstTwelonelontId = SnowflakelonId.firstIdFor(Timelon.now - quelonry.maxTwelonelontAgelon)
+        twelonelontWithAuthorList
+          .flatMap(_.gelontOrelonlselon(Selonq.elonmpty))
+          .filtelonr(twelonelontWithAuthor =>
+            twelonelontWithAuthor.twelonelontId >= elonarlielonstTwelonelontId // twelonelont agelon filtelonr
+              && !quelonry.elonxcludelondTwelonelontIds
+                .contains(twelonelontWithAuthor.twelonelontId)) // elonxcludelond twelonelont filtelonr
+          .sortBy(twelonelontWithAuthor =>
+            -SnowflakelonId.unixTimelonMillisFromId(twelonelontWithAuthor.twelonelontId)) // sort by reloncelonncy
+          .takelon(quelonry.maxNumTwelonelonts) // takelon most reloncelonnt N twelonelonts
       }
-      .map(result => Some(result))
+      .map(relonsult => Somelon(relonsult))
   }
 
 }
 
-object EarlybirdRecencyBasedSimilarityEngine {
-  case class EarlybirdRecencyBasedSearchQuery(
-    seedUserIds: Seq[UserId],
-    maxNumTweets: Int,
-    excludedTweetIds: Set[TweetId],
-    maxTweetAge: Duration,
-    filterOutRetweetsAndReplies: Boolean)
+objelonct elonarlybirdReloncelonncyBaselondSimilarityelonnginelon {
+  caselon class elonarlybirdReloncelonncyBaselondSelonarchQuelonry(
+    selonelondUselonrIds: Selonq[UselonrId],
+    maxNumTwelonelonts: Int,
+    elonxcludelondTwelonelontIds: Selont[TwelonelontId],
+    maxTwelonelontAgelon: Duration,
+    filtelonrOutRelontwelonelontsAndRelonplielons: Boolelonan)
 
 }

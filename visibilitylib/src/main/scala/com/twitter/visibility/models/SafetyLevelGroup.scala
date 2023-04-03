@@ -1,557 +1,557 @@
-package com.twitter.visibility.models
+packagelon com.twittelonr.visibility.modelonls
 
-import com.twitter.visibility.models.SafetyLevel.AccessInternalPromotedContent
-import com.twitter.visibility.models.SafetyLevel.AdsBusinessSettings
-import com.twitter.visibility.models.SafetyLevel.AdsCampaign
-import com.twitter.visibility.models.SafetyLevel.AdsManager
-import com.twitter.visibility.models.SafetyLevel.AdsReportingDashboard
-import com.twitter.visibility.models.SafetyLevel.AllSubscribedLists
-import com.twitter.visibility.models.SafetyLevel.Appeals
-import com.twitter.visibility.models.SafetyLevel.ArticleTweetTimeline
-import com.twitter.visibility.models.SafetyLevel.BaseQig
-import com.twitter.visibility.models.SafetyLevel.BirdwatchNeedsYourHelpNotifications
-import com.twitter.visibility.models.SafetyLevel.BirdwatchNoteAuthor
-import com.twitter.visibility.models.SafetyLevel.BirdwatchNoteTweetsTimeline
-import com.twitter.visibility.models.SafetyLevel.BlockMuteUsersTimeline
-import com.twitter.visibility.models.SafetyLevel.BrandSafety
-import com.twitter.visibility.models.SafetyLevel.CardPollVoting
-import com.twitter.visibility.models.SafetyLevel.CardsService
-import com.twitter.visibility.models.SafetyLevel.ContentControlToolInstall
-import com.twitter.visibility.models.SafetyLevel.ConversationFocalPrehydration
-import com.twitter.visibility.models.SafetyLevel.ConversationFocalTweet
-import com.twitter.visibility.models.SafetyLevel.ConversationInjectedTweet
-import com.twitter.visibility.models.SafetyLevel.ConversationReply
-import com.twitter.visibility.models.SafetyLevel.CuratedTrendsRepresentativeTweet
-import com.twitter.visibility.models.SafetyLevel.CurationPolicyViolations
-import com.twitter.visibility.models.SafetyLevel.DesFollowingAndFollowersUserList
-import com.twitter.visibility.models.SafetyLevel.DesHomeTimeline
-import com.twitter.visibility.models.SafetyLevel.DesQuoteTweetTimeline
-import com.twitter.visibility.models.SafetyLevel.DesRealtime
-import com.twitter.visibility.models.SafetyLevel.DesRealtimeSpamEnrichment
-import com.twitter.visibility.models.SafetyLevel.DesRealtimeTweetFilter
-import com.twitter.visibility.models.SafetyLevel.DesRetweetingUsers
-import com.twitter.visibility.models.SafetyLevel.DesTweetDetail
-import com.twitter.visibility.models.SafetyLevel.DesTweetLikingUsers
-import com.twitter.visibility.models.SafetyLevel.DesUserBookmarks
-import com.twitter.visibility.models.SafetyLevel.DesUserLikedTweets
-import com.twitter.visibility.models.SafetyLevel.DesUserMentions
-import com.twitter.visibility.models.SafetyLevel.DesUserTweets
-import com.twitter.visibility.models.SafetyLevel.DevPlatformComplianceStream
-import com.twitter.visibility.models.SafetyLevel.DevPlatformGetListTweets
-import com.twitter.visibility.models.SafetyLevel.DirectMessages
-import com.twitter.visibility.models.SafetyLevel.DirectMessagesConversationList
-import com.twitter.visibility.models.SafetyLevel.DirectMessagesConversationTimeline
-import com.twitter.visibility.models.SafetyLevel.DirectMessagesInbox
-import com.twitter.visibility.models.SafetyLevel.DirectMessagesMutedUsers
-import com.twitter.visibility.models.SafetyLevel.DirectMessagesPinned
-import com.twitter.visibility.models.SafetyLevel.DirectMessagesSearch
-import com.twitter.visibility.models.SafetyLevel.EditHistoryTimeline
-import com.twitter.visibility.models.SafetyLevel.ElevatedQuoteTweetTimeline
-import com.twitter.visibility.models.SafetyLevel.EmbedTweetMarkup
-import com.twitter.visibility.models.SafetyLevel.EmbeddedTweet
-import com.twitter.visibility.models.SafetyLevel.EmbedsPublicInterestNotice
-import com.twitter.visibility.models.SafetyLevel.ExploreRecommendations
-import com.twitter.visibility.models.SafetyLevel.FilterAll
-import com.twitter.visibility.models.SafetyLevel.FilterAllPlaceholder
-import com.twitter.visibility.models.SafetyLevel.FilterDefault
-import com.twitter.visibility.models.SafetyLevel.FilterNone
-import com.twitter.visibility.models.SafetyLevel.FollowedTopicsTimeline
-import com.twitter.visibility.models.SafetyLevel.FollowerConnections
-import com.twitter.visibility.models.SafetyLevel.FollowingAndFollowersUserList
-import com.twitter.visibility.models.SafetyLevel.ForDevelopmentOnly
-import com.twitter.visibility.models.SafetyLevel.FriendsFollowingList
-import com.twitter.visibility.models.SafetyLevel.GraphqlDefault
-import com.twitter.visibility.models.SafetyLevel.GryphonDecksAndColumns
-import com.twitter.visibility.models.SafetyLevel.HumanizationNudge
-import com.twitter.visibility.models.SafetyLevel.KitchenSinkDevelopment
-import com.twitter.visibility.models.SafetyLevel.ListHeader
-import com.twitter.visibility.models.SafetyLevel.ListMemberships
-import com.twitter.visibility.models.SafetyLevel.ListOwnerships
-import com.twitter.visibility.models.SafetyLevel.ListRecommendations
-import com.twitter.visibility.models.SafetyLevel.ListSearch
-import com.twitter.visibility.models.SafetyLevel.ListSubscriptions
-import com.twitter.visibility.models.SafetyLevel.LivePipelineEngagementCounts
-import com.twitter.visibility.models.SafetyLevel.LiveVideoTimeline
-import com.twitter.visibility.models.SafetyLevel.MagicRecs
-import com.twitter.visibility.models.SafetyLevel.MagicRecsAggressive
-import com.twitter.visibility.models.SafetyLevel.MagicRecsAggressiveV2
-import com.twitter.visibility.models.SafetyLevel.MagicRecsV2
-import com.twitter.visibility.models.SafetyLevel.Minimal
-import com.twitter.visibility.models.SafetyLevel.ModeratedTweetsTimeline
-import com.twitter.visibility.models.SafetyLevel.Moments
-import com.twitter.visibility.models.SafetyLevel.NearbyTimeline
-import com.twitter.visibility.models.SafetyLevel.NewUserExperience
-import com.twitter.visibility.models.SafetyLevel.NotificationsIbis
-import com.twitter.visibility.models.SafetyLevel.NotificationsPlatform
-import com.twitter.visibility.models.SafetyLevel.NotificationsPlatformPush
-import com.twitter.visibility.models.SafetyLevel.NotificationsQig
-import com.twitter.visibility.models.SafetyLevel.NotificationsRead
-import com.twitter.visibility.models.SafetyLevel.NotificationsTimelineDeviceFollow
-import com.twitter.visibility.models.SafetyLevel.NotificationsWrite
-import com.twitter.visibility.models.SafetyLevel.NotificationsWriterTweetHydrator
-import com.twitter.visibility.models.SafetyLevel.NotificationsWriterV2
-import com.twitter.visibility.models.SafetyLevel.ProfileMixerFavorites
-import com.twitter.visibility.models.SafetyLevel.ProfileMixerMedia
-import com.twitter.visibility.models.SafetyLevel.QuickPromoteTweetEligibility
-import com.twitter.visibility.models.SafetyLevel.QuoteTweetTimeline
-import com.twitter.visibility.models.SafetyLevel.QuotedTweetRules
-import com.twitter.visibility.models.SafetyLevel.RecosVideo
-import com.twitter.visibility.models.SafetyLevel.RecosWritePath
-import com.twitter.visibility.models.SafetyLevel.RepliesGrouping
-import com.twitter.visibility.models.SafetyLevel.ReportCenter
-import com.twitter.visibility.models.SafetyLevel.ReturningUserExperienceFocalTweet
-import com.twitter.visibility.models.SafetyLevel.Revenue
-import com.twitter.visibility.models.SafetyLevel.SafeSearchMinimal
-import com.twitter.visibility.models.SafetyLevel.SafeSearchStrict
-import com.twitter.visibility.models.SafetyLevel.SearchBlenderUserRules
-import com.twitter.visibility.models.SafetyLevel.SearchHydration
-import com.twitter.visibility.models.SafetyLevel.SearchLatest
-import com.twitter.visibility.models.SafetyLevel.SearchLatestUserRules
-import com.twitter.visibility.models.SafetyLevel.SearchMixerSrpMinimal
-import com.twitter.visibility.models.SafetyLevel.SearchMixerSrpStrict
-import com.twitter.visibility.models.SafetyLevel.SearchPeopleSrp
-import com.twitter.visibility.models.SafetyLevel.SearchPeopleTypeahead
-import com.twitter.visibility.models.SafetyLevel.SearchPhoto
-import com.twitter.visibility.models.SafetyLevel.SearchTop
-import com.twitter.visibility.models.SafetyLevel.SearchTopQig
-import com.twitter.visibility.models.SafetyLevel.SearchTrendTakeoverPromotedTweet
-import com.twitter.visibility.models.SafetyLevel.SearchVideo
-import com.twitter.visibility.models.SafetyLevel.ShoppingManagerSpyMode
-import com.twitter.visibility.models.SafetyLevel.SignalsReactions
-import com.twitter.visibility.models.SafetyLevel.SignalsTweetReactingUsers
-import com.twitter.visibility.models.SafetyLevel.SoftInterventionPivot
-import com.twitter.visibility.models.SafetyLevel.SpaceFleetline
-import com.twitter.visibility.models.SafetyLevel.SpaceHomeTimelineUpranking
-import com.twitter.visibility.models.SafetyLevel.SpaceJoinScreen
-import com.twitter.visibility.models.SafetyLevel.SpaceNotifications
-import com.twitter.visibility.models.SafetyLevel.SpaceTweetAvatarHomeTimeline
-import com.twitter.visibility.models.SafetyLevel.SpacesParticipants
-import com.twitter.visibility.models.SafetyLevel.SpacesSellerApplicationStatus
-import com.twitter.visibility.models.SafetyLevel.SpacesSharing
-import com.twitter.visibility.models.SafetyLevel.StickersTimeline
-import com.twitter.visibility.models.SafetyLevel.StratoExtLimitedEngagements
-import com.twitter.visibility.models.SafetyLevel.StreamServices
-import com.twitter.visibility.models.SafetyLevel.SuperFollowerConnections
-import com.twitter.visibility.models.SafetyLevel.SuperLike
-import com.twitter.visibility.models.SafetyLevel.Test
-import com.twitter.visibility.models.SafetyLevel.TimelineBookmark
-import com.twitter.visibility.models.SafetyLevel.TimelineContentControls
-import com.twitter.visibility.models.SafetyLevel.TimelineConversations
-import com.twitter.visibility.models.SafetyLevel.TimelineConversationsDownranking
-import com.twitter.visibility.models.SafetyLevel.TimelineConversationsDownrankingMinimal
-import com.twitter.visibility.models.SafetyLevel.TimelineFavorites
-import com.twitter.visibility.models.SafetyLevel.TimelineFavoritesSelfView
-import com.twitter.visibility.models.SafetyLevel.TimelineFocalTweet
-import com.twitter.visibility.models.SafetyLevel.TimelineFollowingActivity
-import com.twitter.visibility.models.SafetyLevel.TimelineHomeCommunities
-import com.twitter.visibility.models.SafetyLevel.TimelineHomeHydration
-import com.twitter.visibility.models.SafetyLevel.TimelineHomeLatest
-import com.twitter.visibility.models.SafetyLevel.TimelineHomePromotedHydration
-import com.twitter.visibility.models.SafetyLevel.TimelineHomeRecommendations
-import com.twitter.visibility.models.SafetyLevel.TimelineHomeTopicFollowRecommendations
-import com.twitter.visibility.models.SafetyLevel.TimelineInjection
-import com.twitter.visibility.models.SafetyLevel.TimelineLikedBy
-import com.twitter.visibility.models.SafetyLevel.TimelineLists
-import com.twitter.visibility.models.SafetyLevel.TimelineMedia
-import com.twitter.visibility.models.SafetyLevel.TimelineMentions
-import com.twitter.visibility.models.SafetyLevel.TimelineModeratedTweetsHydration
-import com.twitter.visibility.models.SafetyLevel.TimelineProfileAll
-import com.twitter.visibility.models.SafetyLevel.TimelineProfileSpaces
-import com.twitter.visibility.models.SafetyLevel.TimelineProfileSuperFollows
-import com.twitter.visibility.models.SafetyLevel.TimelineScorer
-import com.twitter.visibility.models.SafetyLevel.Tombstoning
-import com.twitter.visibility.models.SafetyLevel.TopicsLandingPageTopicRecommendations
-import com.twitter.visibility.models.SafetyLevel.TrendsRepresentativeTweet
-import com.twitter.visibility.models.SafetyLevel.TrustedFriendsUserList
-import com.twitter.visibility.models.SafetyLevel.TweetDetail
-import com.twitter.visibility.models.SafetyLevel.TweetDetailNonToo
-import com.twitter.visibility.models.SafetyLevel.TweetDetailWithInjectionsHydration
-import com.twitter.visibility.models.SafetyLevel.TweetEngagers
-import com.twitter.visibility.models.SafetyLevel.TweetReplyNudge
-import com.twitter.visibility.models.SafetyLevel.TweetWritesApi
-import com.twitter.visibility.models.SafetyLevel.TwitterArticleCompose
-import com.twitter.visibility.models.SafetyLevel.TwitterArticleProfileTab
-import com.twitter.visibility.models.SafetyLevel.TwitterArticleRead
-import com.twitter.visibility.models.SafetyLevel.UserMilestoneRecommendation
-import com.twitter.visibility.models.SafetyLevel.UserProfileHeader
-import com.twitter.visibility.models.SafetyLevel.UserSelfViewOnly
-import com.twitter.visibility.models.SafetyLevel.UserSettings
-import com.twitter.visibility.models.SafetyLevel.VideoAds
-import com.twitter.visibility.models.SafetyLevel.WritePathLimitedActionsEnforcement
-import com.twitter.visibility.models.SafetyLevel.ZipbirdConsumerArchives
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.AccelonssIntelonrnalPromotelondContelonnt
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.AdsBusinelonssSelonttings
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.AdsCampaign
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.AdsManagelonr
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.AdsRelonportingDashboard
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.AllSubscribelondLists
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.Appelonals
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.ArticlelonTwelonelontTimelonlinelon
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.BaselonQig
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.BirdwatchNelonelondsYourHelonlpNotifications
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.BirdwatchNotelonAuthor
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.BirdwatchNotelonTwelonelontsTimelonlinelon
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.BlockMutelonUselonrsTimelonlinelon
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.BrandSafelonty
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.CardPollVoting
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.CardsSelonrvicelon
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.ContelonntControlToolInstall
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.ConvelonrsationFocalPrelonhydration
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.ConvelonrsationFocalTwelonelont
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.ConvelonrsationInjelonctelondTwelonelont
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.ConvelonrsationRelonply
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.CuratelondTrelonndsRelonprelonselonntativelonTwelonelont
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.CurationPolicyViolations
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.DelonsFollowingAndFollowelonrsUselonrList
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.DelonsHomelonTimelonlinelon
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.DelonsQuotelonTwelonelontTimelonlinelon
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.DelonsRelonaltimelon
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.DelonsRelonaltimelonSpamelonnrichmelonnt
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.DelonsRelonaltimelonTwelonelontFiltelonr
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.DelonsRelontwelonelontingUselonrs
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.DelonsTwelonelontDelontail
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.DelonsTwelonelontLikingUselonrs
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.DelonsUselonrBookmarks
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.DelonsUselonrLikelondTwelonelonts
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.DelonsUselonrMelonntions
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.DelonsUselonrTwelonelonts
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.DelonvPlatformCompliancelonStrelonam
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.DelonvPlatformGelontListTwelonelonts
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.DirelonctMelonssagelons
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.DirelonctMelonssagelonsConvelonrsationList
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.DirelonctMelonssagelonsConvelonrsationTimelonlinelon
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.DirelonctMelonssagelonsInbox
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.DirelonctMelonssagelonsMutelondUselonrs
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.DirelonctMelonssagelonsPinnelond
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.DirelonctMelonssagelonsSelonarch
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.elonditHistoryTimelonlinelon
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.elonlelonvatelondQuotelonTwelonelontTimelonlinelon
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.elonmbelondTwelonelontMarkup
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.elonmbelonddelondTwelonelont
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.elonmbelondsPublicIntelonrelonstNoticelon
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.elonxplorelonReloncommelonndations
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.FiltelonrAll
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.FiltelonrAllPlacelonholdelonr
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.FiltelonrDelonfault
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.FiltelonrNonelon
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.FollowelondTopicsTimelonlinelon
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.FollowelonrConnelonctions
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.FollowingAndFollowelonrsUselonrList
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.ForDelonvelonlopmelonntOnly
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.FrielonndsFollowingList
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.GraphqlDelonfault
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.GryphonDeloncksAndColumns
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.HumanizationNudgelon
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.KitchelonnSinkDelonvelonlopmelonnt
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.ListHelonadelonr
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.ListMelonmbelonrships
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.ListOwnelonrships
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.ListReloncommelonndations
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.ListSelonarch
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.ListSubscriptions
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.LivelonPipelonlinelonelonngagelonmelonntCounts
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.LivelonVidelonoTimelonlinelon
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.MagicReloncs
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.MagicReloncsAggrelonssivelon
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.MagicReloncsAggrelonssivelonV2
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.MagicReloncsV2
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.Minimal
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.ModelonratelondTwelonelontsTimelonlinelon
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.Momelonnts
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.NelonarbyTimelonlinelon
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.NelonwUselonrelonxpelonrielonncelon
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.NotificationsIbis
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.NotificationsPlatform
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.NotificationsPlatformPush
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.NotificationsQig
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.NotificationsRelonad
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.NotificationsTimelonlinelonDelonvicelonFollow
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.NotificationsWritelon
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.NotificationsWritelonrTwelonelontHydrator
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.NotificationsWritelonrV2
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.ProfilelonMixelonrFavoritelons
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.ProfilelonMixelonrMelondia
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.QuickPromotelonTwelonelontelonligibility
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.QuotelonTwelonelontTimelonlinelon
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.QuotelondTwelonelontRulelons
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.ReloncosVidelono
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.ReloncosWritelonPath
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.RelonplielonsGrouping
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.RelonportCelonntelonr
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.RelonturningUselonrelonxpelonrielonncelonFocalTwelonelont
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.Relonvelonnuelon
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.SafelonSelonarchMinimal
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.SafelonSelonarchStrict
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.SelonarchBlelonndelonrUselonrRulelons
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.SelonarchHydration
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.SelonarchLatelonst
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.SelonarchLatelonstUselonrRulelons
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.SelonarchMixelonrSrpMinimal
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.SelonarchMixelonrSrpStrict
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.SelonarchPelonoplelonSrp
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.SelonarchPelonoplelonTypelonahelonad
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.SelonarchPhoto
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.SelonarchTop
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.SelonarchTopQig
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.SelonarchTrelonndTakelonovelonrPromotelondTwelonelont
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.SelonarchVidelono
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.ShoppingManagelonrSpyModelon
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.SignalsRelonactions
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.SignalsTwelonelontRelonactingUselonrs
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.SoftIntelonrvelonntionPivot
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.SpacelonFlelonelontlinelon
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.SpacelonHomelonTimelonlinelonUpranking
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.SpacelonJoinScrelonelonn
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.SpacelonNotifications
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.SpacelonTwelonelontAvatarHomelonTimelonlinelon
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.SpacelonsParticipants
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.SpacelonsSelonllelonrApplicationStatus
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.SpacelonsSharing
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.StickelonrsTimelonlinelon
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.StratoelonxtLimitelondelonngagelonmelonnts
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.StrelonamSelonrvicelons
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.SupelonrFollowelonrConnelonctions
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.SupelonrLikelon
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.Telonst
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.TimelonlinelonBookmark
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.TimelonlinelonContelonntControls
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.TimelonlinelonConvelonrsations
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.TimelonlinelonConvelonrsationsDownranking
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.TimelonlinelonConvelonrsationsDownrankingMinimal
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.TimelonlinelonFavoritelons
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.TimelonlinelonFavoritelonsSelonlfVielonw
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.TimelonlinelonFocalTwelonelont
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.TimelonlinelonFollowingActivity
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.TimelonlinelonHomelonCommunitielons
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.TimelonlinelonHomelonHydration
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.TimelonlinelonHomelonLatelonst
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.TimelonlinelonHomelonPromotelondHydration
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.TimelonlinelonHomelonReloncommelonndations
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.TimelonlinelonHomelonTopicFollowReloncommelonndations
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.TimelonlinelonInjelonction
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.TimelonlinelonLikelondBy
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.TimelonlinelonLists
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.TimelonlinelonMelondia
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.TimelonlinelonMelonntions
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.TimelonlinelonModelonratelondTwelonelontsHydration
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.TimelonlinelonProfilelonAll
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.TimelonlinelonProfilelonSpacelons
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.TimelonlinelonProfilelonSupelonrFollows
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.TimelonlinelonScorelonr
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.Tombstoning
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.TopicsLandingPagelonTopicReloncommelonndations
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.TrelonndsRelonprelonselonntativelonTwelonelont
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.TrustelondFrielonndsUselonrList
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.TwelonelontDelontail
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.TwelonelontDelontailNonToo
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.TwelonelontDelontailWithInjelonctionsHydration
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.Twelonelontelonngagelonrs
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.TwelonelontRelonplyNudgelon
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.TwelonelontWritelonsApi
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.TwittelonrArticlelonComposelon
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.TwittelonrArticlelonProfilelonTab
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.TwittelonrArticlelonRelonad
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.UselonrMilelonstonelonReloncommelonndation
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.UselonrProfilelonHelonadelonr
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.UselonrSelonlfVielonwOnly
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.UselonrSelonttings
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.VidelonoAds
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.WritelonPathLimitelondActionselonnforcelonmelonnt
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.ZipbirdConsumelonrArchivelons
 
-sealed trait SafetyLevelGroup { val levels: Set[SafetyLevel] }
+selonalelond trait SafelontyLelonvelonlGroup { val lelonvelonls: Selont[SafelontyLelonvelonl] }
 
-object SafetyLevelGroup {
-  case object Ads extends SafetyLevelGroup {
-    override val levels: Set[SafetyLevel] = Set(
-      AdsBusinessSettings,
+objelonct SafelontyLelonvelonlGroup {
+  caselon objelonct Ads elonxtelonnds SafelontyLelonvelonlGroup {
+    ovelonrridelon val lelonvelonls: Selont[SafelontyLelonvelonl] = Selont(
+      AdsBusinelonssSelonttings,
       AdsCampaign,
-      AdsManager,
-      AdsReportingDashboard,
-      BrandSafety,
-      VideoAds,
-      QuickPromoteTweetEligibility
+      AdsManagelonr,
+      AdsRelonportingDashboard,
+      BrandSafelonty,
+      VidelonoAds,
+      QuickPromotelonTwelonelontelonligibility
     )
   }
 
-  case object ArticleTimeline extends SafetyLevelGroup {
-    override val levels: Set[SafetyLevel] = Set(
-      ArticleTweetTimeline,
+  caselon objelonct ArticlelonTimelonlinelon elonxtelonnds SafelontyLelonvelonlGroup {
+    ovelonrridelon val lelonvelonls: Selont[SafelontyLelonvelonl] = Selont(
+      ArticlelonTwelonelontTimelonlinelon,
     )
   }
 
-  case object ArticleTweets extends SafetyLevelGroup {
-    override val levels: Set[SafetyLevel] = Set(
-      TwitterArticleCompose,
-      TwitterArticleProfileTab,
-      TwitterArticleRead,
+  caselon objelonct ArticlelonTwelonelonts elonxtelonnds SafelontyLelonvelonlGroup {
+    ovelonrridelon val lelonvelonls: Selont[SafelontyLelonvelonl] = Selont(
+      TwittelonrArticlelonComposelon,
+      TwittelonrArticlelonProfilelonTab,
+      TwittelonrArticlelonRelonad,
     )
   }
 
-  case object Birdwatch extends SafetyLevelGroup {
-    override val levels: Set[SafetyLevel] = Set(
-      BirdwatchNoteAuthor,
-      BirdwatchNoteTweetsTimeline,
-      BirdwatchNeedsYourHelpNotifications,
+  caselon objelonct Birdwatch elonxtelonnds SafelontyLelonvelonlGroup {
+    ovelonrridelon val lelonvelonls: Selont[SafelontyLelonvelonl] = Selont(
+      BirdwatchNotelonAuthor,
+      BirdwatchNotelonTwelonelontsTimelonlinelon,
+      BirdwatchNelonelondsYourHelonlpNotifications,
     )
   }
 
-  case object Cards extends SafetyLevelGroup {
-    override val levels: Set[SafetyLevel] = Set(
+  caselon objelonct Cards elonxtelonnds SafelontyLelonvelonlGroup {
+    ovelonrridelon val lelonvelonls: Selont[SafelontyLelonvelonl] = Selont(
       CardPollVoting,
-      CardsService,
+      CardsSelonrvicelon,
     )
   }
 
-  case object Communities extends SafetyLevelGroup {
-    override val levels: Set[SafetyLevel] = Set(
-      SafetyLevel.Communities
+  caselon objelonct Communitielons elonxtelonnds SafelontyLelonvelonlGroup {
+    ovelonrridelon val lelonvelonls: Selont[SafelontyLelonvelonl] = Selont(
+      SafelontyLelonvelonl.Communitielons
     )
   }
 
-  case object Conversation extends SafetyLevelGroup {
-    override val levels: Set[SafetyLevel] = Set(
-      ConversationFocalPrehydration,
-      ConversationFocalTweet,
-      ConversationInjectedTweet,
-      ConversationReply,
+  caselon objelonct Convelonrsation elonxtelonnds SafelontyLelonvelonlGroup {
+    ovelonrridelon val lelonvelonls: Selont[SafelontyLelonvelonl] = Selont(
+      ConvelonrsationFocalPrelonhydration,
+      ConvelonrsationFocalTwelonelont,
+      ConvelonrsationInjelonctelondTwelonelont,
+      ConvelonrsationRelonply,
       Tombstoning,
     )
   }
 
-  case object CreativeContainerService extends SafetyLevelGroup {
-    override val levels: Set[SafetyLevel] = Set(
-      AccessInternalPromotedContent
+  caselon objelonct CrelonativelonContainelonrSelonrvicelon elonxtelonnds SafelontyLelonvelonlGroup {
+    ovelonrridelon val lelonvelonls: Selont[SafelontyLelonvelonl] = Selont(
+      AccelonssIntelonrnalPromotelondContelonnt
     )
   }
 
-  case object Des extends SafetyLevelGroup {
-    override val levels: Set[SafetyLevel] = Set(
-      DevPlatformGetListTweets,
-      DesFollowingAndFollowersUserList,
-      DesHomeTimeline,
-      DesQuoteTweetTimeline,
-      DesRetweetingUsers,
-      DesTweetDetail,
-      DesTweetLikingUsers,
-      DesUserBookmarks,
-      DesUserLikedTweets,
-      DesUserMentions,
-      DesUserTweets,
-      DevPlatformComplianceStream,
+  caselon objelonct Delons elonxtelonnds SafelontyLelonvelonlGroup {
+    ovelonrridelon val lelonvelonls: Selont[SafelontyLelonvelonl] = Selont(
+      DelonvPlatformGelontListTwelonelonts,
+      DelonsFollowingAndFollowelonrsUselonrList,
+      DelonsHomelonTimelonlinelon,
+      DelonsQuotelonTwelonelontTimelonlinelon,
+      DelonsRelontwelonelontingUselonrs,
+      DelonsTwelonelontDelontail,
+      DelonsTwelonelontLikingUselonrs,
+      DelonsUselonrBookmarks,
+      DelonsUselonrLikelondTwelonelonts,
+      DelonsUselonrMelonntions,
+      DelonsUselonrTwelonelonts,
+      DelonvPlatformCompliancelonStrelonam,
     )
   }
 
-  case object DesStream extends SafetyLevelGroup {
-    override val levels: Set[SafetyLevel] = Set(
-      DesRealtime,
-      DesRealtimeSpamEnrichment,
-      DesRealtimeTweetFilter,
+  caselon objelonct DelonsStrelonam elonxtelonnds SafelontyLelonvelonlGroup {
+    ovelonrridelon val lelonvelonls: Selont[SafelontyLelonvelonl] = Selont(
+      DelonsRelonaltimelon,
+      DelonsRelonaltimelonSpamelonnrichmelonnt,
+      DelonsRelonaltimelonTwelonelontFiltelonr,
     )
   }
 
-  case object Dm extends SafetyLevelGroup {
-    override val levels: Set[SafetyLevel] = Set(
-      DirectMessages,
-      DirectMessagesConversationList,
-      DirectMessagesConversationTimeline,
-      DirectMessagesInbox,
-      DirectMessagesMutedUsers,
-      DirectMessagesPinned,
-      DirectMessagesSearch,
+  caselon objelonct Dm elonxtelonnds SafelontyLelonvelonlGroup {
+    ovelonrridelon val lelonvelonls: Selont[SafelontyLelonvelonl] = Selont(
+      DirelonctMelonssagelons,
+      DirelonctMelonssagelonsConvelonrsationList,
+      DirelonctMelonssagelonsConvelonrsationTimelonlinelon,
+      DirelonctMelonssagelonsInbox,
+      DirelonctMelonssagelonsMutelondUselonrs,
+      DirelonctMelonssagelonsPinnelond,
+      DirelonctMelonssagelonsSelonarch,
     )
   }
 
-  case object Followers extends SafetyLevelGroup {
-    override val levels: Set[SafetyLevel] = Set(
-      FollowedTopicsTimeline,
-      FollowerConnections,
-      FollowingAndFollowersUserList,
-      FriendsFollowingList,
+  caselon objelonct Followelonrs elonxtelonnds SafelontyLelonvelonlGroup {
+    ovelonrridelon val lelonvelonls: Selont[SafelontyLelonvelonl] = Selont(
+      FollowelondTopicsTimelonlinelon,
+      FollowelonrConnelonctions,
+      FollowingAndFollowelonrsUselonrList,
+      FrielonndsFollowingList,
     )
   }
 
-  case object Graphql extends SafetyLevelGroup {
-    override val levels: Set[SafetyLevel] = Set(
-      FilterDefault,
-      GraphqlDefault,
-      SoftInterventionPivot,
+  caselon objelonct Graphql elonxtelonnds SafelontyLelonvelonlGroup {
+    ovelonrridelon val lelonvelonls: Selont[SafelontyLelonvelonl] = Selont(
+      FiltelonrDelonfault,
+      GraphqlDelonfault,
+      SoftIntelonrvelonntionPivot,
     )
   }
 
-  case object Jiminy extends SafetyLevelGroup {
-    override val levels: Set[SafetyLevel] = Set(
-      HumanizationNudge,
-      TweetReplyNudge,
+  caselon objelonct Jiminy elonxtelonnds SafelontyLelonvelonlGroup {
+    ovelonrridelon val lelonvelonls: Selont[SafelontyLelonvelonl] = Selont(
+      HumanizationNudgelon,
+      TwelonelontRelonplyNudgelon,
     )
   }
 
-  case object Lists extends SafetyLevelGroup {
-    override val levels: Set[SafetyLevel] = Set(
-      AllSubscribedLists,
-      ListHeader,
-      ListMemberships,
-      ListOwnerships,
-      ListRecommendations,
-      ListSearch,
+  caselon objelonct Lists elonxtelonnds SafelontyLelonvelonlGroup {
+    ovelonrridelon val lelonvelonls: Selont[SafelontyLelonvelonl] = Selont(
+      AllSubscribelondLists,
+      ListHelonadelonr,
+      ListMelonmbelonrships,
+      ListOwnelonrships,
+      ListReloncommelonndations,
+      ListSelonarch,
       ListSubscriptions,
     )
   }
 
-  case object Notifications extends SafetyLevelGroup {
-    override val levels: Set[SafetyLevel] = Set(
+  caselon objelonct Notifications elonxtelonnds SafelontyLelonvelonlGroup {
+    ovelonrridelon val lelonvelonls: Selont[SafelontyLelonvelonl] = Selont(
       NotificationsIbis,
       NotificationsPlatform,
       NotificationsPlatformPush,
       NotificationsQig,
-      NotificationsRead,
-      NotificationsTimelineDeviceFollow,
-      NotificationsWrite,
-      NotificationsWriterTweetHydrator,
-      NotificationsWriterV2,
+      NotificationsRelonad,
+      NotificationsTimelonlinelonDelonvicelonFollow,
+      NotificationsWritelon,
+      NotificationsWritelonrTwelonelontHydrator,
+      NotificationsWritelonrV2,
     )
   }
 
-  case object Other extends SafetyLevelGroup {
-    override val levels: Set[SafetyLevel] = Set(
-      CuratedTrendsRepresentativeTweet,
+  caselon objelonct Othelonr elonxtelonnds SafelontyLelonvelonlGroup {
+    ovelonrridelon val lelonvelonls: Selont[SafelontyLelonvelonl] = Selont(
+      CuratelondTrelonndsRelonprelonselonntativelonTwelonelont,
       CurationPolicyViolations,
-      BaseQig,
-      Appeals,
-      ContentControlToolInstall,
-      EditHistoryTimeline,
-      ElevatedQuoteTweetTimeline,
-      EmbeddedTweet,
-      EmbedsPublicInterestNotice,
-      EmbedTweetMarkup,
-      ExploreRecommendations,
-      WritePathLimitedActionsEnforcement,
-      LiveVideoTimeline,
-      LivePipelineEngagementCounts,
+      BaselonQig,
+      Appelonals,
+      ContelonntControlToolInstall,
+      elonditHistoryTimelonlinelon,
+      elonlelonvatelondQuotelonTwelonelontTimelonlinelon,
+      elonmbelonddelondTwelonelont,
+      elonmbelondsPublicIntelonrelonstNoticelon,
+      elonmbelondTwelonelontMarkup,
+      elonxplorelonReloncommelonndations,
+      WritelonPathLimitelondActionselonnforcelonmelonnt,
+      LivelonVidelonoTimelonlinelon,
+      LivelonPipelonlinelonelonngagelonmelonntCounts,
       Minimal,
-      Moments,
-      NearbyTimeline,
-      NewUserExperience,
-      QuoteTweetTimeline,
-      QuotedTweetRules,
-      ReportCenter,
-      Revenue,
-      ShoppingManagerSpyMode,
-      StickersTimeline,
-      SuperLike,
-      TrendsRepresentativeTweet,
-      TrustedFriendsUserList,
-      GryphonDecksAndColumns,
-      TweetEngagers,
-      TweetWritesApi,
-      UserMilestoneRecommendation,
-      StreamServices,
-      ZipbirdConsumerArchives
+      Momelonnts,
+      NelonarbyTimelonlinelon,
+      NelonwUselonrelonxpelonrielonncelon,
+      QuotelonTwelonelontTimelonlinelon,
+      QuotelondTwelonelontRulelons,
+      RelonportCelonntelonr,
+      Relonvelonnuelon,
+      ShoppingManagelonrSpyModelon,
+      StickelonrsTimelonlinelon,
+      SupelonrLikelon,
+      TrelonndsRelonprelonselonntativelonTwelonelont,
+      TrustelondFrielonndsUselonrList,
+      GryphonDeloncksAndColumns,
+      Twelonelontelonngagelonrs,
+      TwelonelontWritelonsApi,
+      UselonrMilelonstonelonReloncommelonndation,
+      StrelonamSelonrvicelons,
+      ZipbirdConsumelonrArchivelons
     )
   }
 
-  case object Profile extends SafetyLevelGroup {
-    override val levels: Set[SafetyLevel] = Set(
-      UserProfileHeader,
-      UserSelfViewOnly,
-      UserSettings,
+  caselon objelonct Profilelon elonxtelonnds SafelontyLelonvelonlGroup {
+    ovelonrridelon val lelonvelonls: Selont[SafelontyLelonvelonl] = Selont(
+      UselonrProfilelonHelonadelonr,
+      UselonrSelonlfVielonwOnly,
+      UselonrSelonttings,
     )
   }
 
-  case object ProfileMixer extends SafetyLevelGroup {
-    override val levels: Set[SafetyLevel] = Set(
-      ProfileMixerMedia,
-      ProfileMixerFavorites,
+  caselon objelonct ProfilelonMixelonr elonxtelonnds SafelontyLelonvelonlGroup {
+    ovelonrridelon val lelonvelonls: Selont[SafelontyLelonvelonl] = Selont(
+      ProfilelonMixelonrMelondia,
+      ProfilelonMixelonrFavoritelons,
     )
   }
 
-  case object Reactions extends SafetyLevelGroup {
-    override val levels: Set[SafetyLevel] = Set(
-      SignalsReactions,
-      SignalsTweetReactingUsers,
+  caselon objelonct Relonactions elonxtelonnds SafelontyLelonvelonlGroup {
+    ovelonrridelon val lelonvelonls: Selont[SafelontyLelonvelonl] = Selont(
+      SignalsRelonactions,
+      SignalsTwelonelontRelonactingUselonrs,
     )
   }
 
-  case object Recommendations extends SafetyLevelGroup {
-    override val levels: Set[SafetyLevel] = Set(
-      MagicRecs,
-      MagicRecsV2,
-      MagicRecsAggressive,
-      MagicRecsAggressiveV2,
-      SafetyLevel.Recommendations,
-      RecosVideo,
-      RecosWritePath,
+  caselon objelonct Reloncommelonndations elonxtelonnds SafelontyLelonvelonlGroup {
+    ovelonrridelon val lelonvelonls: Selont[SafelontyLelonvelonl] = Selont(
+      MagicReloncs,
+      MagicReloncsV2,
+      MagicReloncsAggrelonssivelon,
+      MagicReloncsAggrelonssivelonV2,
+      SafelontyLelonvelonl.Reloncommelonndations,
+      ReloncosVidelono,
+      ReloncosWritelonPath,
     )
   }
 
-  case object ReturningUserExperience extends SafetyLevelGroup {
-    override val levels: Set[SafetyLevel] = Set(
-      SafetyLevel.ReturningUserExperience,
-      ReturningUserExperienceFocalTweet,
+  caselon objelonct RelonturningUselonrelonxpelonrielonncelon elonxtelonnds SafelontyLelonvelonlGroup {
+    ovelonrridelon val lelonvelonls: Selont[SafelontyLelonvelonl] = Selont(
+      SafelontyLelonvelonl.RelonturningUselonrelonxpelonrielonncelon,
+      RelonturningUselonrelonxpelonrielonncelonFocalTwelonelont,
     )
   }
 
-  case object SafeSearch extends SafetyLevelGroup {
-    override val levels: Set[SafetyLevel] = Set(
-      SafeSearchMinimal,
-      SafeSearchStrict,
+  caselon objelonct SafelonSelonarch elonxtelonnds SafelontyLelonvelonlGroup {
+    ovelonrridelon val lelonvelonls: Selont[SafelontyLelonvelonl] = Selont(
+      SafelonSelonarchMinimal,
+      SafelonSelonarchStrict,
     )
   }
 
-  case object Search extends SafetyLevelGroup {
-    override val levels: Set[SafetyLevel] = Set(
-      SearchHydration,
-      SearchLatest,
-      SearchTop,
-      SearchTopQig,
-      SearchPeopleSrp,
-      SearchPeopleTypeahead,
-      SearchPhoto,
-      SearchTrendTakeoverPromotedTweet,
-      SearchVideo,
-      SearchBlenderUserRules,
-      SearchLatestUserRules,
+  caselon objelonct Selonarch elonxtelonnds SafelontyLelonvelonlGroup {
+    ovelonrridelon val lelonvelonls: Selont[SafelontyLelonvelonl] = Selont(
+      SelonarchHydration,
+      SelonarchLatelonst,
+      SelonarchTop,
+      SelonarchTopQig,
+      SelonarchPelonoplelonSrp,
+      SelonarchPelonoplelonTypelonahelonad,
+      SelonarchPhoto,
+      SelonarchTrelonndTakelonovelonrPromotelondTwelonelont,
+      SelonarchVidelono,
+      SelonarchBlelonndelonrUselonrRulelons,
+      SelonarchLatelonstUselonrRulelons,
     )
   }
 
-  case object SearchMixer extends SafetyLevelGroup {
-    override val levels: Set[SafetyLevel] = Set(
-      SearchMixerSrpMinimal,
-      SearchMixerSrpStrict,
+  caselon objelonct SelonarchMixelonr elonxtelonnds SafelontyLelonvelonlGroup {
+    ovelonrridelon val lelonvelonls: Selont[SafelontyLelonvelonl] = Selont(
+      SelonarchMixelonrSrpMinimal,
+      SelonarchMixelonrSrpStrict,
     )
   }
 
-  case object Socialproof extends SafetyLevelGroup {
-    override val levels: Set[SafetyLevel] = Set(
-      SafetyLevel.SocialProof
+  caselon objelonct Socialproof elonxtelonnds SafelontyLelonvelonlGroup {
+    ovelonrridelon val lelonvelonls: Selont[SafelontyLelonvelonl] = Selont(
+      SafelontyLelonvelonl.SocialProof
     )
   }
 
-  case object Spaces extends SafetyLevelGroup {
-    override val levels: Set[SafetyLevel] = Set(
-      SpaceFleetline,
-      SpaceHomeTimelineUpranking,
-      SpaceJoinScreen,
-      SpaceNotifications,
-      SafetyLevel.Spaces,
-      SpacesParticipants,
-      SpacesSellerApplicationStatus,
-      SpacesSharing,
-      SpaceTweetAvatarHomeTimeline,
+  caselon objelonct Spacelons elonxtelonnds SafelontyLelonvelonlGroup {
+    ovelonrridelon val lelonvelonls: Selont[SafelontyLelonvelonl] = Selont(
+      SpacelonFlelonelontlinelon,
+      SpacelonHomelonTimelonlinelonUpranking,
+      SpacelonJoinScrelonelonn,
+      SpacelonNotifications,
+      SafelontyLelonvelonl.Spacelons,
+      SpacelonsParticipants,
+      SpacelonsSelonllelonrApplicationStatus,
+      SpacelonsSharing,
+      SpacelonTwelonelontAvatarHomelonTimelonlinelon,
     )
   }
 
-  case object Strato extends SafetyLevelGroup {
-    override val levels: Set[SafetyLevel] = Set(
-      StratoExtLimitedEngagements
+  caselon objelonct Strato elonxtelonnds SafelontyLelonvelonlGroup {
+    ovelonrridelon val lelonvelonls: Selont[SafelontyLelonvelonl] = Selont(
+      StratoelonxtLimitelondelonngagelonmelonnts
     )
   }
 
-  case object Superfollows extends SafetyLevelGroup {
-    override val levels: Set[SafetyLevel] = Set(
-      SuperFollowerConnections,
-      TimelineProfileSuperFollows,
+  caselon objelonct Supelonrfollows elonxtelonnds SafelontyLelonvelonlGroup {
+    ovelonrridelon val lelonvelonls: Selont[SafelontyLelonvelonl] = Selont(
+      SupelonrFollowelonrConnelonctions,
+      TimelonlinelonProfilelonSupelonrFollows,
     )
   }
 
-  case object Testing extends SafetyLevelGroup {
-    override val levels: Set[SafetyLevel] = Set(
-      ForDevelopmentOnly,
-      KitchenSinkDevelopment,
-      Test,
+  caselon objelonct Telonsting elonxtelonnds SafelontyLelonvelonlGroup {
+    ovelonrridelon val lelonvelonls: Selont[SafelontyLelonvelonl] = Selont(
+      ForDelonvelonlopmelonntOnly,
+      KitchelonnSinkDelonvelonlopmelonnt,
+      Telonst,
     )
   }
 
-  case object Timeline extends SafetyLevelGroup {
-    override val levels: Set[SafetyLevel] = Set(
-      BlockMuteUsersTimeline,
-      TimelineBookmark,
-      TimelineContentControls,
-      TimelineConversationsDownranking,
-      TimelineConversationsDownrankingMinimal,
-      TimelineFavorites,
-      TimelineFavoritesSelfView,
-      TimelineFollowingActivity,
-      TimelineScorer,
-      TimelineInjection,
-      TimelineLikedBy,
-      TimelineLists,
-      TimelineMedia,
-      TimelineMentions,
-      ModeratedTweetsTimeline,
-      TimelineModeratedTweetsHydration,
+  caselon objelonct Timelonlinelon elonxtelonnds SafelontyLelonvelonlGroup {
+    ovelonrridelon val lelonvelonls: Selont[SafelontyLelonvelonl] = Selont(
+      BlockMutelonUselonrsTimelonlinelon,
+      TimelonlinelonBookmark,
+      TimelonlinelonContelonntControls,
+      TimelonlinelonConvelonrsationsDownranking,
+      TimelonlinelonConvelonrsationsDownrankingMinimal,
+      TimelonlinelonFavoritelons,
+      TimelonlinelonFavoritelonsSelonlfVielonw,
+      TimelonlinelonFollowingActivity,
+      TimelonlinelonScorelonr,
+      TimelonlinelonInjelonction,
+      TimelonlinelonLikelondBy,
+      TimelonlinelonLists,
+      TimelonlinelonMelondia,
+      TimelonlinelonMelonntions,
+      ModelonratelondTwelonelontsTimelonlinelon,
+      TimelonlinelonModelonratelondTwelonelontsHydration,
     )
   }
 
-  case object TopicRecommendations extends SafetyLevelGroup {
-    override val levels: Set[SafetyLevel] = Set(
-      SafetyLevel.TopicRecommendations,
-      TopicsLandingPageTopicRecommendations,
+  caselon objelonct TopicReloncommelonndations elonxtelonnds SafelontyLelonvelonlGroup {
+    ovelonrridelon val lelonvelonls: Selont[SafelontyLelonvelonl] = Selont(
+      SafelontyLelonvelonl.TopicReloncommelonndations,
+      TopicsLandingPagelonTopicReloncommelonndations,
     )
   }
 
-  case object TimelineProfile extends SafetyLevelGroup {
-    override val levels: Set[SafetyLevel] = Set(
-      SafetyLevel.TimelineProfile,
-      TimelineProfileAll,
-      TimelineProfileSpaces,
+  caselon objelonct TimelonlinelonProfilelon elonxtelonnds SafelontyLelonvelonlGroup {
+    ovelonrridelon val lelonvelonls: Selont[SafelontyLelonvelonl] = Selont(
+      SafelontyLelonvelonl.TimelonlinelonProfilelon,
+      TimelonlinelonProfilelonAll,
+      TimelonlinelonProfilelonSpacelons,
     )
   }
 
-  case object TimelineHome extends SafetyLevelGroup {
-    override val levels: Set[SafetyLevel] = Set(
-      SafetyLevel.TimelineHome,
-      TimelineHomeCommunities,
-      TimelineHomeHydration,
-      TimelineHomeLatest,
-      TimelineHomePromotedHydration,
-      TimelineHomeRecommendations,
-      TimelineHomeTopicFollowRecommendations,
+  caselon objelonct TimelonlinelonHomelon elonxtelonnds SafelontyLelonvelonlGroup {
+    ovelonrridelon val lelonvelonls: Selont[SafelontyLelonvelonl] = Selont(
+      SafelontyLelonvelonl.TimelonlinelonHomelon,
+      TimelonlinelonHomelonCommunitielons,
+      TimelonlinelonHomelonHydration,
+      TimelonlinelonHomelonLatelonst,
+      TimelonlinelonHomelonPromotelondHydration,
+      TimelonlinelonHomelonReloncommelonndations,
+      TimelonlinelonHomelonTopicFollowReloncommelonndations,
     )
   }
 
-  case object TlsApi extends SafetyLevelGroup {
-    override val levels: Set[SafetyLevel] = Set(
-      TimelineConversations,
-      TimelineFocalTweet,
+  caselon objelonct TlsApi elonxtelonnds SafelontyLelonvelonlGroup {
+    ovelonrridelon val lelonvelonls: Selont[SafelontyLelonvelonl] = Selont(
+      TimelonlinelonConvelonrsations,
+      TimelonlinelonFocalTwelonelont,
     )
   }
 
-  case object TweetDetails extends SafetyLevelGroup {
-    override val levels: Set[SafetyLevel] = Set(
-      TweetDetail,
-      TweetDetailNonToo,
-      TweetDetailWithInjectionsHydration,
-      RepliesGrouping,
+  caselon objelonct TwelonelontDelontails elonxtelonnds SafelontyLelonvelonlGroup {
+    ovelonrridelon val lelonvelonls: Selont[SafelontyLelonvelonl] = Selont(
+      TwelonelontDelontail,
+      TwelonelontDelontailNonToo,
+      TwelonelontDelontailWithInjelonctionsHydration,
+      RelonplielonsGrouping,
     )
   }
 
-  case object Special extends SafetyLevelGroup {
-    override val levels: Set[SafetyLevel] = Set(
-      FilterAll,
-      FilterAllPlaceholder,
-      FilterNone,
+  caselon objelonct Speloncial elonxtelonnds SafelontyLelonvelonlGroup {
+    ovelonrridelon val lelonvelonls: Selont[SafelontyLelonvelonl] = Selont(
+      FiltelonrAll,
+      FiltelonrAllPlacelonholdelonr,
+      FiltelonrNonelon,
     )
   }
 }

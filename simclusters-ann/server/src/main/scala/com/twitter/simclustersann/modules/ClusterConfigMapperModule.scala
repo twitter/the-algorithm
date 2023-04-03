@@ -1,15 +1,15 @@
-package com.twitter.simclustersann.modules
+packagelon com.twittelonr.simclustelonrsann.modulelons
 
-import com.google.inject.Provides
-import com.twitter.inject.TwitterModule
-import com.twitter.relevance_platform.simclustersann.multicluster.ClusterConfigMapper
-import javax.inject.Singleton
+import com.googlelon.injelonct.Providelons
+import com.twittelonr.injelonct.TwittelonrModulelon
+import com.twittelonr.relonlelonvancelon_platform.simclustelonrsann.multiclustelonr.ClustelonrConfigMappelonr
+import javax.injelonct.Singlelonton
 
-object ClusterConfigMapperModule extends TwitterModule {
-  @Singleton
-  @Provides
-  def providesClusterConfigMapper(
-  ): ClusterConfigMapper = {
-    ClusterConfigMapper
+objelonct ClustelonrConfigMappelonrModulelon elonxtelonnds TwittelonrModulelon {
+  @Singlelonton
+  @Providelons
+  delonf providelonsClustelonrConfigMappelonr(
+  ): ClustelonrConfigMappelonr = {
+    ClustelonrConfigMappelonr
   }
 }

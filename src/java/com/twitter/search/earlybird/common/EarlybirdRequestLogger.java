@@ -1,365 +1,365 @@
-package com.twitter.search.earlybird.common;
+packagelon com.twittelonr.selonarch.elonarlybird.common;
 
-import java.util.EnumMap;
+import java.util.elonnumMap;
 import java.util.Map;
 
 import scala.Option;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.Maps;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import com.googlelon.common.collelonct.Maps;
 
-import com.twitter.context.TwitterContext;
-import com.twitter.context.thriftscala.Viewer;
-import com.twitter.decider.Decider;
-import com.twitter.finagle.thrift.ClientId;
-import com.twitter.finagle.thrift.ClientId$;
-import com.twitter.search.TwitterContextPermit;
-import com.twitter.search.common.constants.thriftjava.ThriftQuerySource;
-import com.twitter.search.common.decider.DeciderUtil;
-import com.twitter.search.common.logging.RPCLogger;
-import com.twitter.search.common.metrics.FailureRatioCounter;
-import com.twitter.search.common.metrics.Timer;
-import com.twitter.search.common.util.earlybird.TermStatisticsUtil;
-import com.twitter.search.common.util.earlybird.ThriftSearchResultUtil;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.ThriftFacetFieldRequest;
-import com.twitter.search.earlybird.thrift.ThriftHistogramSettings;
-import com.twitter.search.earlybird.thrift.ThriftSearchQuery;
-import com.twitter.search.earlybird.thrift.ThriftTermStatisticsRequest;
+import com.twittelonr.contelonxt.TwittelonrContelonxt;
+import com.twittelonr.contelonxt.thriftscala.Vielonwelonr;
+import com.twittelonr.deloncidelonr.Deloncidelonr;
+import com.twittelonr.finaglelon.thrift.ClielonntId;
+import com.twittelonr.finaglelon.thrift.ClielonntId$;
+import com.twittelonr.selonarch.TwittelonrContelonxtPelonrmit;
+import com.twittelonr.selonarch.common.constants.thriftjava.ThriftQuelonrySourcelon;
+import com.twittelonr.selonarch.common.deloncidelonr.DeloncidelonrUtil;
+import com.twittelonr.selonarch.common.logging.RPCLoggelonr;
+import com.twittelonr.selonarch.common.melontrics.FailurelonRatioCountelonr;
+import com.twittelonr.selonarch.common.melontrics.Timelonr;
+import com.twittelonr.selonarch.common.util.elonarlybird.TelonrmStatisticsUtil;
+import com.twittelonr.selonarch.common.util.elonarlybird.ThriftSelonarchRelonsultUtil;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonquelonst;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftFacelontFielonldRelonquelonst;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftHistogramSelonttings;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchQuelonry;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftTelonrmStatisticsRelonquelonst;
 
-import static com.twitter.search.common.util.earlybird.EarlybirdResponseUtil
-    .responseConsideredFailed;
+import static com.twittelonr.selonarch.common.util.elonarlybird.elonarlybirdRelonsponselonUtil
+    .relonsponselonConsidelonrelondFailelond;
 
 
-public class EarlybirdRequestLogger extends RPCLogger {
-  protected enum ExtraFields {
-    QUERY_MAX_HITS_TO_PROCESS,
-    COLLECTOR_PARAMS_MAX_HITS_TO_PROCESS,
-    RELEVANCE_OPTIONS_MAX_HITS_TO_PROCESS,
-    NUM_HITS_PROCESSED,
-    QUERY_COST,
+public class elonarlybirdRelonquelonstLoggelonr elonxtelonnds RPCLoggelonr {
+  protelonctelond elonnum elonxtraFielonlds {
+    QUelonRY_MAX_HITS_TO_PROCelonSS,
+    COLLelonCTOR_PARAMS_MAX_HITS_TO_PROCelonSS,
+    RelonLelonVANCelon_OPTIONS_MAX_HITS_TO_PROCelonSS,
+    NUM_HITS_PROCelonSSelonD,
+    QUelonRY_COST,
     CPU_TOTAL,
-    QUERY_SOURCE,
-    CLIENT_ID,
-    FINAGLE_CLIENT_ID
+    QUelonRY_SOURCelon,
+    CLIelonNT_ID,
+    FINAGLelon_CLIelonNT_ID
   }
 
-  protected enum ShardOnlyExtraFields {
-    NUM_SEARCHED_SEGMENTS,
-    SCORING_TIME_NANOS
+  protelonctelond elonnum ShardOnlyelonxtraFielonlds {
+    NUM_SelonARCHelonD_SelonGMelonNTS,
+    SCORING_TIMelon_NANOS
   }
 
-  protected enum RootOnlyExtraFields {
-    CACHING_ALLOWED,
-    DEBUG_MODE,
-    CACHE_HIT,
-    USER_AGENT,
-    // See JIRA APPSEC-2303 for IP addresses logging
+  protelonctelond elonnum RootOnlyelonxtraFielonlds {
+    CACHING_ALLOWelonD,
+    DelonBUG_MODelon,
+    CACHelon_HIT,
+    USelonR_AGelonNT,
+    // Selonelon JIRA APPSelonC-2303 for IP addrelonsselons logging
   }
 
-  private static final String LOG_FULL_REQUEST_DETAILS_ON_ERROR_DECIDER_KEY =
-      "log_full_request_details_on_error";
-  private static final String LOG_FULL_REQUEST_DETAILS_RANDOM_FRACTION_DECIDER_KEY =
-      "log_full_request_details_random_fraction";
-  private static final String LOG_FULL_SLOW_REQUEST_DETAILS_RANDOM_FRACTION_DECIDER_KEY =
-      "log_full_slow_request_details_random_fraction";
-  private static final String SLOW_REQUEST_LATENCY_THRESHOLD_MS_DECIDER_KEY =
-      "slow_request_latency_threshold_ms";
+  privatelon static final String LOG_FULL_RelonQUelonST_DelonTAILS_ON_elonRROR_DelonCIDelonR_KelonY =
+      "log_full_relonquelonst_delontails_on_elonrror";
+  privatelon static final String LOG_FULL_RelonQUelonST_DelonTAILS_RANDOM_FRACTION_DelonCIDelonR_KelonY =
+      "log_full_relonquelonst_delontails_random_fraction";
+  privatelon static final String LOG_FULL_SLOW_RelonQUelonST_DelonTAILS_RANDOM_FRACTION_DelonCIDelonR_KelonY =
+      "log_full_slow_relonquelonst_delontails_random_fraction";
+  privatelon static final String SLOW_RelonQUelonST_LATelonNCY_THRelonSHOLD_MS_DelonCIDelonR_KelonY =
+      "slow_relonquelonst_latelonncy_threlonshold_ms";
 
-  private final Decider decider;
-  private final boolean enableLogUnknownClientRequests;
+  privatelon final Deloncidelonr deloncidelonr;
+  privatelon final boolelonan elonnablelonLogUnknownClielonntRelonquelonsts;
 
-  private static final Map<ThriftQuerySource, FailureRatioCounter>
-      FAILURE_RATIO_COUNTER_BY_QUERY_SOURCE = preBuildFailureRatioCounters();
-  private static final FailureRatioCounter NO_QUERY_SOURCE_FAILURE_RATIO_COUNTER =
-      new FailureRatioCounter("earlybird_logger", "query_source", "not_set");
+  privatelon static final Map<ThriftQuelonrySourcelon, FailurelonRatioCountelonr>
+      FAILURelon_RATIO_COUNTelonR_BY_QUelonRY_SOURCelon = prelonBuildFailurelonRatioCountelonrs();
+  privatelon static final FailurelonRatioCountelonr NO_QUelonRY_SOURCelon_FAILURelon_RATIO_COUNTelonR =
+      nelonw FailurelonRatioCountelonr("elonarlybird_loggelonr", "quelonry_sourcelon", "not_selont");
 
-  static EarlybirdRequestLogger buildForRoot(
-      String loggerName, int latencyWarnThreshold, Decider decider) {
+  static elonarlybirdRelonquelonstLoggelonr buildForRoot(
+      String loggelonrNamelon, int latelonncyWarnThrelonshold, Deloncidelonr deloncidelonr) {
 
-    return new EarlybirdRequestLogger(loggerName, latencyWarnThreshold,
-        decider, true, RPCLogger.Fields.values(), ExtraFields.values(),
-        RootOnlyExtraFields.values());
+    relonturn nelonw elonarlybirdRelonquelonstLoggelonr(loggelonrNamelon, latelonncyWarnThrelonshold,
+        deloncidelonr, truelon, RPCLoggelonr.Fielonlds.valuelons(), elonxtraFielonlds.valuelons(),
+        RootOnlyelonxtraFielonlds.valuelons());
   }
 
-  static EarlybirdRequestLogger buildForShard(
-      String loggerName, int latencyWarnThreshold, Decider decider) {
+  static elonarlybirdRelonquelonstLoggelonr buildForShard(
+      String loggelonrNamelon, int latelonncyWarnThrelonshold, Deloncidelonr deloncidelonr) {
 
-    return new EarlybirdRequestLogger(loggerName, latencyWarnThreshold,
-        decider, false, RPCLogger.Fields.values(), ExtraFields.values(),
-        ShardOnlyExtraFields.values());
+    relonturn nelonw elonarlybirdRelonquelonstLoggelonr(loggelonrNamelon, latelonncyWarnThrelonshold,
+        deloncidelonr, falselon, RPCLoggelonr.Fielonlds.valuelons(), elonxtraFielonlds.valuelons(),
+        ShardOnlyelonxtraFielonlds.valuelons());
   }
 
-  @VisibleForTesting
-  EarlybirdRequestLogger(String loggerName, int latencyWarnThreshold, Decider decider) {
-    this(loggerName, latencyWarnThreshold, decider, false, RPCLogger.Fields.values(),
-        ExtraFields.values(), RootOnlyExtraFields.values(), ShardOnlyExtraFields.values());
+  @VisiblelonForTelonsting
+  elonarlybirdRelonquelonstLoggelonr(String loggelonrNamelon, int latelonncyWarnThrelonshold, Deloncidelonr deloncidelonr) {
+    this(loggelonrNamelon, latelonncyWarnThrelonshold, deloncidelonr, falselon, RPCLoggelonr.Fielonlds.valuelons(),
+        elonxtraFielonlds.valuelons(), RootOnlyelonxtraFielonlds.valuelons(), ShardOnlyelonxtraFielonlds.valuelons());
   }
 
-  private EarlybirdRequestLogger(String loggerName, int latencyWarnThreshold, Decider decider,
-                                 boolean enableLogUnknownClientRequests, Enum[]... fieldEnums) {
-    super(loggerName, fieldEnums);
-    this.decider = decider;
-    this.enableLogUnknownClientRequests = enableLogUnknownClientRequests;
-    setLatencyWarnThreshold(latencyWarnThreshold);
+  privatelon elonarlybirdRelonquelonstLoggelonr(String loggelonrNamelon, int latelonncyWarnThrelonshold, Deloncidelonr deloncidelonr,
+                                 boolelonan elonnablelonLogUnknownClielonntRelonquelonsts, elonnum[]... fielonldelonnums) {
+    supelonr(loggelonrNamelon, fielonldelonnums);
+    this.deloncidelonr = deloncidelonr;
+    this.elonnablelonLogUnknownClielonntRelonquelonsts = elonnablelonLogUnknownClielonntRelonquelonsts;
+    selontLatelonncyWarnThrelonshold(latelonncyWarnThrelonshold);
   }
 
   /**
-   * Logs the given earlybird request and response.
+   * Logs thelon givelonn elonarlybird relonquelonst and relonsponselon.
    *
-   * @param request The earlybird request.
-   * @param response The earlybird response.
-   * @param timer The time it took to process this request.
+   * @param relonquelonst Thelon elonarlybird relonquelonst.
+   * @param relonsponselon Thelon elonarlybird relonsponselon.
+   * @param timelonr Thelon timelon it took to procelonss this relonquelonst.
    */
-  public void logRequest(EarlybirdRequest request, EarlybirdResponse response, Timer timer) {
+  public void logRelonquelonst(elonarlybirdRelonquelonst relonquelonst, elonarlybirdRelonsponselon relonsponselon, Timelonr timelonr) {
     try {
-      LogEntry entry = newLogEntry();
+      Logelonntry elonntry = nelonwLogelonntry();
 
-      setRequestLogEntries(entry, request);
-      setResponseLogEntries(entry, response);
-      if (timer != null) {
-        entry.setField(ExtraFields.CPU_TOTAL, Long.toString(timer.getElapsedCpuTotal()));
+      selontRelonquelonstLogelonntrielons(elonntry, relonquelonst);
+      selontRelonsponselonLogelonntrielons(elonntry, relonsponselon);
+      if (timelonr != null) {
+        elonntry.selontFielonld(elonxtraFielonlds.CPU_TOTAL, Long.toString(timelonr.gelontelonlapselondCpuTotal()));
       }
 
-      boolean wasError = response != null && responseConsideredFailed(response.getResponseCode());
+      boolelonan waselonrror = relonsponselon != null && relonsponselonConsidelonrelondFailelond(relonsponselon.gelontRelonsponselonCodelon());
 
-      long responseTime = response != null ? response.getResponseTime() : 0L;
+      long relonsponselonTimelon = relonsponselon != null ? relonsponselon.gelontRelonsponselonTimelon() : 0L;
 
-      String logLine = writeLogLine(entry, responseTime, wasError);
+      String logLinelon = writelonLogLinelon(elonntry, relonsponselonTimelon, waselonrror);
 
-      // This code path is called for pre/post logging
-      // Prevent same request showing up twice by only logging on post logging
-      if (response != null && DeciderUtil.isAvailableForRandomRecipient(
-          decider, LOG_FULL_REQUEST_DETAILS_RANDOM_FRACTION_DECIDER_KEY)) {
-        Base64RequestResponseForLogging.randomRequest(logLine, request, response).log();
+      // This codelon path is callelond for prelon/post logging
+      // Prelonvelonnt samelon relonquelonst showing up twicelon by only logging on post logging
+      if (relonsponselon != null && DeloncidelonrUtil.isAvailablelonForRandomReloncipielonnt(
+          deloncidelonr, LOG_FULL_RelonQUelonST_DelonTAILS_RANDOM_FRACTION_DelonCIDelonR_KelonY)) {
+        Baselon64RelonquelonstRelonsponselonForLogging.randomRelonquelonst(logLinelon, relonquelonst, relonsponselon).log();
       }
 
-      // Unknown client request logging only applies to pre-logging.
-      if (enableLogUnknownClientRequests && response == null) {
-        UnknownClientRequestForLogging unknownClientRequestLogger =
-            UnknownClientRequestForLogging.unknownClientRequest(logLine, request);
-        if (unknownClientRequestLogger != null) {
-          unknownClientRequestLogger.log();
+      // Unknown clielonnt relonquelonst logging only applielons to prelon-logging.
+      if (elonnablelonLogUnknownClielonntRelonquelonsts && relonsponselon == null) {
+        UnknownClielonntRelonquelonstForLogging unknownClielonntRelonquelonstLoggelonr =
+            UnknownClielonntRelonquelonstForLogging.unknownClielonntRelonquelonst(logLinelon, relonquelonst);
+        if (unknownClielonntRelonquelonstLoggelonr != null) {
+          unknownClielonntRelonquelonstLoggelonr.log();
         }
       }
 
-      if (wasError
-          && DeciderUtil.isAvailableForRandomRecipient(
-          decider, LOG_FULL_REQUEST_DETAILS_ON_ERROR_DECIDER_KEY)) {
-        new RequestResponseForLogging(request, response).logFailedRequest();
-        Base64RequestResponseForLogging.failedRequest(logLine, request, response).log();
+      if (waselonrror
+          && DeloncidelonrUtil.isAvailablelonForRandomReloncipielonnt(
+          deloncidelonr, LOG_FULL_RelonQUelonST_DelonTAILS_ON_elonRROR_DelonCIDelonR_KelonY)) {
+        nelonw RelonquelonstRelonsponselonForLogging(relonquelonst, relonsponselon).logFailelondRelonquelonst();
+        Baselon64RelonquelonstRelonsponselonForLogging.failelondRelonquelonst(logLinelon, relonquelonst, relonsponselon).log();
       }
 
-      boolean wasSlow = response != null
-          && responseTime >= DeciderUtil.getAvailability(
-              decider, SLOW_REQUEST_LATENCY_THRESHOLD_MS_DECIDER_KEY);
+      boolelonan wasSlow = relonsponselon != null
+          && relonsponselonTimelon >= DeloncidelonrUtil.gelontAvailability(
+              deloncidelonr, SLOW_RelonQUelonST_LATelonNCY_THRelonSHOLD_MS_DelonCIDelonR_KelonY);
       if (wasSlow
-          && DeciderUtil.isAvailableForRandomRecipient(
-              decider, LOG_FULL_SLOW_REQUEST_DETAILS_RANDOM_FRACTION_DECIDER_KEY)) {
-        Base64RequestResponseForLogging.slowRequest(logLine, request, response).log();
+          && DeloncidelonrUtil.isAvailablelonForRandomReloncipielonnt(
+              deloncidelonr, LOG_FULL_SLOW_RelonQUelonST_DelonTAILS_RANDOM_FRACTION_DelonCIDelonR_KelonY)) {
+        Baselon64RelonquelonstRelonsponselonForLogging.slowRelonquelonst(logLinelon, relonquelonst, relonsponselon).log();
       }
 
-      FailureRatioCounter failureRatioCounter =
-          FAILURE_RATIO_COUNTER_BY_QUERY_SOURCE.get(request.getQuerySource());
-      if (failureRatioCounter != null) {
-        failureRatioCounter.requestFinished(!wasError);
-      } else {
-        NO_QUERY_SOURCE_FAILURE_RATIO_COUNTER.requestFinished(!wasError);
+      FailurelonRatioCountelonr failurelonRatioCountelonr =
+          FAILURelon_RATIO_COUNTelonR_BY_QUelonRY_SOURCelon.gelont(relonquelonst.gelontQuelonrySourcelon());
+      if (failurelonRatioCountelonr != null) {
+        failurelonRatioCountelonr.relonquelonstFinishelond(!waselonrror);
+      } elonlselon {
+        NO_QUelonRY_SOURCelon_FAILURelon_RATIO_COUNTelonR.relonquelonstFinishelond(!waselonrror);
       }
 
-    } catch (Exception e) {
-      LOG.error("Exception building log entry ", e);
+    } catch (elonxcelonption elon) {
+      LOG.elonrror("elonxcelonption building log elonntry ", elon);
     }
   }
 
-  private void setRequestLogEntries(LogEntry entry, EarlybirdRequest request) {
-    entry.setField(Fields.CLIENT_HOST, request.getClientHost());
-    entry.setField(Fields.CLIENT_REQUEST_ID, request.getClientRequestID());
-    entry.setField(Fields.REQUEST_TYPE, requestTypeForLog(request));
+  privatelon void selontRelonquelonstLogelonntrielons(Logelonntry elonntry, elonarlybirdRelonquelonst relonquelonst) {
+    elonntry.selontFielonld(Fielonlds.CLIelonNT_HOST, relonquelonst.gelontClielonntHost());
+    elonntry.selontFielonld(Fielonlds.CLIelonNT_RelonQUelonST_ID, relonquelonst.gelontClielonntRelonquelonstID());
+    elonntry.selontFielonld(Fielonlds.RelonQUelonST_TYPelon, relonquelonstTypelonForLog(relonquelonst));
 
-    if (request.isSetSearchQuery()) {
-      ThriftSearchQuery searchQuery = request.getSearchQuery();
-      entry.setField(Fields.QUERY, searchQuery.getSerializedQuery());
+    if (relonquelonst.isSelontSelonarchQuelonry()) {
+      ThriftSelonarchQuelonry selonarchQuelonry = relonquelonst.gelontSelonarchQuelonry();
+      elonntry.selontFielonld(Fielonlds.QUelonRY, selonarchQuelonry.gelontSelonrializelondQuelonry());
 
-      if (searchQuery.isSetMaxHitsToProcess()) {
-        entry.setField(ExtraFields.QUERY_MAX_HITS_TO_PROCESS,
-                       Integer.toString(searchQuery.getMaxHitsToProcess()));
+      if (selonarchQuelonry.isSelontMaxHitsToProcelonss()) {
+        elonntry.selontFielonld(elonxtraFielonlds.QUelonRY_MAX_HITS_TO_PROCelonSS,
+                       Intelongelonr.toString(selonarchQuelonry.gelontMaxHitsToProcelonss()));
       }
 
-      if (searchQuery.isSetCollectorParams()
-          && searchQuery.getCollectorParams().isSetTerminationParams()
-          && searchQuery.getCollectorParams().getTerminationParams().isSetMaxHitsToProcess()) {
-        entry.setField(ExtraFields.COLLECTOR_PARAMS_MAX_HITS_TO_PROCESS,
-                       Integer.toString(searchQuery.getCollectorParams().getTerminationParams()
-                                        .getMaxHitsToProcess()));
+      if (selonarchQuelonry.isSelontCollelonctorParams()
+          && selonarchQuelonry.gelontCollelonctorParams().isSelontTelonrminationParams()
+          && selonarchQuelonry.gelontCollelonctorParams().gelontTelonrminationParams().isSelontMaxHitsToProcelonss()) {
+        elonntry.selontFielonld(elonxtraFielonlds.COLLelonCTOR_PARAMS_MAX_HITS_TO_PROCelonSS,
+                       Intelongelonr.toString(selonarchQuelonry.gelontCollelonctorParams().gelontTelonrminationParams()
+                                        .gelontMaxHitsToProcelonss()));
       }
 
-      if (searchQuery.isSetRelevanceOptions()
-          && searchQuery.getRelevanceOptions().isSetMaxHitsToProcess()) {
-        entry.setField(ExtraFields.RELEVANCE_OPTIONS_MAX_HITS_TO_PROCESS,
-                       Integer.toString(searchQuery.getRelevanceOptions().getMaxHitsToProcess()));
+      if (selonarchQuelonry.isSelontRelonlelonvancelonOptions()
+          && selonarchQuelonry.gelontRelonlelonvancelonOptions().isSelontMaxHitsToProcelonss()) {
+        elonntry.selontFielonld(elonxtraFielonlds.RelonLelonVANCelon_OPTIONS_MAX_HITS_TO_PROCelonSS,
+                       Intelongelonr.toString(selonarchQuelonry.gelontRelonlelonvancelonOptions().gelontMaxHitsToProcelonss()));
       }
     }
 
-    entry.setField(Fields.NUM_REQUESTED, Integer.toString(numRequestedForLog(request)));
+    elonntry.selontFielonld(Fielonlds.NUM_RelonQUelonSTelonD, Intelongelonr.toString(numRelonquelonstelondForLog(relonquelonst)));
 
-    if (request.isSetQuerySource()) {
-      entry.setField(ExtraFields.QUERY_SOURCE, request.getQuerySource().name());
+    if (relonquelonst.isSelontQuelonrySourcelon()) {
+      elonntry.selontFielonld(elonxtraFielonlds.QUelonRY_SOURCelon, relonquelonst.gelontQuelonrySourcelon().namelon());
     }
 
-    if (request.isSetClientId()) {
-      entry.setField(ExtraFields.CLIENT_ID, request.getClientId());
+    if (relonquelonst.isSelontClielonntId()) {
+      elonntry.selontFielonld(elonxtraFielonlds.CLIelonNT_ID, relonquelonst.gelontClielonntId());
     }
 
-    entry.setField(RootOnlyExtraFields.CACHING_ALLOWED,
-                   Boolean.toString(EarlybirdRequestUtil.isCachingAllowed(request)));
+    elonntry.selontFielonld(RootOnlyelonxtraFielonlds.CACHING_ALLOWelonD,
+                   Boolelonan.toString(elonarlybirdRelonquelonstUtil.isCachingAllowelond(relonquelonst)));
 
-    entry.setField(RootOnlyExtraFields.DEBUG_MODE, Byte.toString(request.getDebugMode()));
+    elonntry.selontFielonld(RootOnlyelonxtraFielonlds.DelonBUG_MODelon, Bytelon.toString(relonquelonst.gelontDelonbugModelon()));
 
-    Option<ClientId> clientIdOption = ClientId$.MODULE$.current();
-    if (clientIdOption.isDefined()) {
-      entry.setField(ExtraFields.FINAGLE_CLIENT_ID, clientIdOption.get().name());
+    Option<ClielonntId> clielonntIdOption = ClielonntId$.MODULelon$.currelonnt();
+    if (clielonntIdOption.isDelonfinelond()) {
+      elonntry.selontFielonld(elonxtraFielonlds.FINAGLelon_CLIelonNT_ID, clielonntIdOption.gelont().namelon());
     }
 
-    setLogEntriesFromTwitterContext(entry);
+    selontLogelonntrielonsFromTwittelonrContelonxt(elonntry);
   }
 
-  @VisibleForTesting
-  Option<Viewer> getTwitterContext() {
-    return TwitterContext.acquire(TwitterContextPermit.get()).apply();
+  @VisiblelonForTelonsting
+  Option<Vielonwelonr> gelontTwittelonrContelonxt() {
+    relonturn TwittelonrContelonxt.acquirelon(TwittelonrContelonxtPelonrmit.gelont()).apply();
   }
 
-  private void setLogEntriesFromTwitterContext(LogEntry entry) {
-    Option<Viewer> viewerOption = getTwitterContext();
-    if (viewerOption.nonEmpty()) {
-      Viewer viewer = viewerOption.get();
+  privatelon void selontLogelonntrielonsFromTwittelonrContelonxt(Logelonntry elonntry) {
+    Option<Vielonwelonr> vielonwelonrOption = gelontTwittelonrContelonxt();
+    if (vielonwelonrOption.nonelonmpty()) {
+      Vielonwelonr vielonwelonr = vielonwelonrOption.gelont();
 
-      if (viewer.userAgent().nonEmpty()) {
-        String userAgent = viewer.userAgent().get();
+      if (vielonwelonr.uselonrAgelonnt().nonelonmpty()) {
+        String uselonrAgelonnt = vielonwelonr.uselonrAgelonnt().gelont();
 
-        // we only replace the comma in the user-agent with %2C to make it easily parseable,
-        // specially with command line tools like cut/sed/awk
-        userAgent = userAgent.replace(",", "%2C");
+        // welon only relonplacelon thelon comma in thelon uselonr-agelonnt with %2C to makelon it elonasily parselonablelon,
+        // speloncially with command linelon tools likelon cut/selond/awk
+        uselonrAgelonnt = uselonrAgelonnt.relonplacelon(",", "%2C");
 
-        entry.setField(RootOnlyExtraFields.USER_AGENT, userAgent);
+        elonntry.selontFielonld(RootOnlyelonxtraFielonlds.USelonR_AGelonNT, uselonrAgelonnt);
       }
     }
   }
 
-  private void setResponseLogEntries(LogEntry entry, EarlybirdResponse response) {
-    if (response != null) {
-      entry.setField(Fields.NUM_RETURNED, Integer.toString(numResultsForLog(response)));
-      entry.setField(Fields.RESPONSE_CODE, String.valueOf(response.getResponseCode()));
-      entry.setField(Fields.RESPONSE_TIME_MICROS, Long.toString(response.getResponseTimeMicros()));
-      if (response.isSetSearchResults()) {
-        entry.setField(ExtraFields.NUM_HITS_PROCESSED,
-            Integer.toString(response.getSearchResults().getNumHitsProcessed()));
-        entry.setField(ExtraFields.QUERY_COST,
-            Double.toString(response.getSearchResults().getQueryCost()));
-        if (response.getSearchResults().isSetScoringTimeNanos()) {
-          entry.setField(ShardOnlyExtraFields.SCORING_TIME_NANOS,
-              Long.toString(response.getSearchResults().getScoringTimeNanos()));
+  privatelon void selontRelonsponselonLogelonntrielons(Logelonntry elonntry, elonarlybirdRelonsponselon relonsponselon) {
+    if (relonsponselon != null) {
+      elonntry.selontFielonld(Fielonlds.NUM_RelonTURNelonD, Intelongelonr.toString(numRelonsultsForLog(relonsponselon)));
+      elonntry.selontFielonld(Fielonlds.RelonSPONSelon_CODelon, String.valuelonOf(relonsponselon.gelontRelonsponselonCodelon()));
+      elonntry.selontFielonld(Fielonlds.RelonSPONSelon_TIMelon_MICROS, Long.toString(relonsponselon.gelontRelonsponselonTimelonMicros()));
+      if (relonsponselon.isSelontSelonarchRelonsults()) {
+        elonntry.selontFielonld(elonxtraFielonlds.NUM_HITS_PROCelonSSelonD,
+            Intelongelonr.toString(relonsponselon.gelontSelonarchRelonsults().gelontNumHitsProcelonsselond()));
+        elonntry.selontFielonld(elonxtraFielonlds.QUelonRY_COST,
+            Doublelon.toString(relonsponselon.gelontSelonarchRelonsults().gelontQuelonryCost()));
+        if (relonsponselon.gelontSelonarchRelonsults().isSelontScoringTimelonNanos()) {
+          elonntry.selontFielonld(ShardOnlyelonxtraFielonlds.SCORING_TIMelon_NANOS,
+              Long.toString(relonsponselon.gelontSelonarchRelonsults().gelontScoringTimelonNanos()));
         }
       }
-      if (response.isSetCacheHit()) {
-        entry.setField(RootOnlyExtraFields.CACHE_HIT, String.valueOf(response.isCacheHit()));
+      if (relonsponselon.isSelontCachelonHit()) {
+        elonntry.selontFielonld(RootOnlyelonxtraFielonlds.CACHelon_HIT, String.valuelonOf(relonsponselon.isCachelonHit()));
       }
-      if (response.isSetNumSearchedSegments()) {
-        entry.setField(ShardOnlyExtraFields.NUM_SEARCHED_SEGMENTS,
-            Integer.toString(response.getNumSearchedSegments()));
+      if (relonsponselon.isSelontNumSelonarchelondSelongmelonnts()) {
+        elonntry.selontFielonld(ShardOnlyelonxtraFielonlds.NUM_SelonARCHelonD_SelonGMelonNTS,
+            Intelongelonr.toString(relonsponselon.gelontNumSelonarchelondSelongmelonnts()));
       }
     }
   }
 
-  private static int numRequestedForLog(EarlybirdRequest request) {
+  privatelon static int numRelonquelonstelondForLog(elonarlybirdRelonquelonst relonquelonst) {
     int num = 0;
-    if (request.isSetFacetRequest() && request.getFacetRequest().isSetFacetFields()) {
-      for (ThriftFacetFieldRequest field : request.getFacetRequest().getFacetFields()) {
-        num += field.getNumResults();
+    if (relonquelonst.isSelontFacelontRelonquelonst() && relonquelonst.gelontFacelontRelonquelonst().isSelontFacelontFielonlds()) {
+      for (ThriftFacelontFielonldRelonquelonst fielonld : relonquelonst.gelontFacelontRelonquelonst().gelontFacelontFielonlds()) {
+        num += fielonld.gelontNumRelonsults();
       }
-    } else if (request.isSetTermStatisticsRequest()) {
-      num = request.getTermStatisticsRequest().getTermRequestsSize();
-    } else if (request.isSetSearchQuery()) {
-      num =  request.getSearchQuery().isSetCollectorParams()
-          ? request.getSearchQuery().getCollectorParams().getNumResultsToReturn() : 0;
-      if (request.getSearchQuery().getSearchStatusIdsSize() > 0) {
-        num = Math.max(num, request.getSearchQuery().getSearchStatusIdsSize());
+    } elonlselon if (relonquelonst.isSelontTelonrmStatisticsRelonquelonst()) {
+      num = relonquelonst.gelontTelonrmStatisticsRelonquelonst().gelontTelonrmRelonquelonstsSizelon();
+    } elonlselon if (relonquelonst.isSelontSelonarchQuelonry()) {
+      num =  relonquelonst.gelontSelonarchQuelonry().isSelontCollelonctorParams()
+          ? relonquelonst.gelontSelonarchQuelonry().gelontCollelonctorParams().gelontNumRelonsultsToRelonturn() : 0;
+      if (relonquelonst.gelontSelonarchQuelonry().gelontSelonarchStatusIdsSizelon() > 0) {
+        num = Math.max(num, relonquelonst.gelontSelonarchQuelonry().gelontSelonarchStatusIdsSizelon());
       }
     }
-    return num;
+    relonturn num;
   }
 
   /**
-   * Returns the number of results in the given response. If the response is a term stats response,
-   * then the returned value will be the number of term results. If the response is a facet
-   * response, then the returned value will be the number of facet results. Otherwise, the returned
-   * value will be the number of search results.
+   * Relonturns thelon numbelonr of relonsults in thelon givelonn relonsponselon. If thelon relonsponselon is a telonrm stats relonsponselon,
+   * thelonn thelon relonturnelond valuelon will belon thelon numbelonr of telonrm relonsults. If thelon relonsponselon is a facelont
+   * relonsponselon, thelonn thelon relonturnelond valuelon will belon thelon numbelonr of facelont relonsults. Othelonrwiselon, thelon relonturnelond
+   * valuelon will belon thelon numbelonr of selonarch relonsults.
    */
-  public static int numResultsForLog(EarlybirdResponse response) {
-    if (response == null) {
-      return 0;
-    } else if (response.isSetFacetResults()) {
-      return ThriftSearchResultUtil.numFacetResults(response.getFacetResults());
-    } else if (response.isSetTermStatisticsResults()) {
-      return response.getTermStatisticsResults().getTermResultsSize();
-    } else {
-      return ThriftSearchResultUtil.numResults(response.getSearchResults());
+  public static int numRelonsultsForLog(elonarlybirdRelonsponselon relonsponselon) {
+    if (relonsponselon == null) {
+      relonturn 0;
+    } elonlselon if (relonsponselon.isSelontFacelontRelonsults()) {
+      relonturn ThriftSelonarchRelonsultUtil.numFacelontRelonsults(relonsponselon.gelontFacelontRelonsults());
+    } elonlselon if (relonsponselon.isSelontTelonrmStatisticsRelonsults()) {
+      relonturn relonsponselon.gelontTelonrmStatisticsRelonsults().gelontTelonrmRelonsultsSizelon();
+    } elonlselon {
+      relonturn ThriftSelonarchRelonsultUtil.numRelonsults(relonsponselon.gelontSelonarchRelonsults());
     }
   }
 
-  private static String requestTypeForLog(EarlybirdRequest request) {
-    StringBuilder requestType = new StringBuilder(64);
-    if (request.isSetFacetRequest()) {
-      requestType.append("FACETS");
-      int numFields = request.getFacetRequest().getFacetFieldsSize();
-      if (numFields > 0) {
-        // For 1 or 2 fields, just put them in the request type.  For more, just log the number.
-        if (numFields <= 2) {
-          for (ThriftFacetFieldRequest field : request.getFacetRequest().getFacetFields()) {
-            requestType.append(":").append(field.getFieldName().toUpperCase());
+  privatelon static String relonquelonstTypelonForLog(elonarlybirdRelonquelonst relonquelonst) {
+    StringBuildelonr relonquelonstTypelon = nelonw StringBuildelonr(64);
+    if (relonquelonst.isSelontFacelontRelonquelonst()) {
+      relonquelonstTypelon.appelonnd("FACelonTS");
+      int numFielonlds = relonquelonst.gelontFacelontRelonquelonst().gelontFacelontFielonldsSizelon();
+      if (numFielonlds > 0) {
+        // For 1 or 2 fielonlds, just put thelonm in thelon relonquelonst typelon.  For morelon, just log thelon numbelonr.
+        if (numFielonlds <= 2) {
+          for (ThriftFacelontFielonldRelonquelonst fielonld : relonquelonst.gelontFacelontRelonquelonst().gelontFacelontFielonlds()) {
+            relonquelonstTypelon.appelonnd(":").appelonnd(fielonld.gelontFielonldNamelon().toUppelonrCaselon());
           }
-        } else {
-          requestType.append(":MULTI-").append(numFields);
+        } elonlselon {
+          relonquelonstTypelon.appelonnd(":MULTI-").appelonnd(numFielonlds);
         }
       }
-    } else if (request.isSetTermStatisticsRequest()) {
-      ThriftTermStatisticsRequest termStatsRequest = request.getTermStatisticsRequest();
-      requestType.append("TERMSTATS-")
-          .append(termStatsRequest.getTermRequestsSize());
+    } elonlselon if (relonquelonst.isSelontTelonrmStatisticsRelonquelonst()) {
+      ThriftTelonrmStatisticsRelonquelonst telonrmStatsRelonquelonst = relonquelonst.gelontTelonrmStatisticsRelonquelonst();
+      relonquelonstTypelon.appelonnd("TelonRMSTATS-")
+          .appelonnd(telonrmStatsRelonquelonst.gelontTelonrmRelonquelonstsSizelon());
 
-      ThriftHistogramSettings histoSettings = termStatsRequest.getHistogramSettings();
-      if (histoSettings != null) {
-        String binSizeVal = String.valueOf(TermStatisticsUtil.determineBinSize(histoSettings));
-        String numBinsVal = String.valueOf(histoSettings.getNumBins());
-        requestType.append(":NUMBINS-").append(numBinsVal).append(":BINSIZE-").append(binSizeVal);
+      ThriftHistogramSelonttings histoSelonttings = telonrmStatsRelonquelonst.gelontHistogramSelonttings();
+      if (histoSelonttings != null) {
+        String binSizelonVal = String.valuelonOf(TelonrmStatisticsUtil.delontelonrminelonBinSizelon(histoSelonttings));
+        String numBinsVal = String.valuelonOf(histoSelonttings.gelontNumBins());
+        relonquelonstTypelon.appelonnd(":NUMBINS-").appelonnd(numBinsVal).appelonnd(":BINSIZelon-").appelonnd(binSizelonVal);
       }
-    } else if (request.isSetSearchQuery()) {
-      requestType.append("SEARCH:");
-      requestType.append(request.getSearchQuery().getRankingMode().name());
-      // Denote when a from user id is present.
-      if (request.getSearchQuery().isSetFromUserIDFilter64()) {
-        requestType.append(":NETWORK-")
-            .append(request.getSearchQuery().getFromUserIDFilter64Size());
+    } elonlselon if (relonquelonst.isSelontSelonarchQuelonry()) {
+      relonquelonstTypelon.appelonnd("SelonARCH:");
+      relonquelonstTypelon.appelonnd(relonquelonst.gelontSelonarchQuelonry().gelontRankingModelon().namelon());
+      // Delonnotelon whelonn a from uselonr id is prelonselonnt.
+      if (relonquelonst.gelontSelonarchQuelonry().isSelontFromUselonrIDFiltelonr64()) {
+        relonquelonstTypelon.appelonnd(":NelonTWORK-")
+            .appelonnd(relonquelonst.gelontSelonarchQuelonry().gelontFromUselonrIDFiltelonr64Sizelon());
       }
-      // Denote when required status ids are present.
-      if (request.getSearchQuery().getSearchStatusIdsSize() > 0) {
-        requestType.append(":IDS-").append(request.getSearchQuery().getSearchStatusIdsSize());
+      // Delonnotelon whelonn relonquirelond status ids arelon prelonselonnt.
+      if (relonquelonst.gelontSelonarchQuelonry().gelontSelonarchStatusIdsSizelon() > 0) {
+        relonquelonstTypelon.appelonnd(":IDS-").appelonnd(relonquelonst.gelontSelonarchQuelonry().gelontSelonarchStatusIdsSizelon());
       }
     }
-    return requestType.toString();
+    relonturn relonquelonstTypelon.toString();
   }
 
-  private static Map<ThriftQuerySource, FailureRatioCounter> preBuildFailureRatioCounters() {
-    Map<ThriftQuerySource, FailureRatioCounter> counterByQuerySource =
-        new EnumMap<>(ThriftQuerySource.class);
+  privatelon static Map<ThriftQuelonrySourcelon, FailurelonRatioCountelonr> prelonBuildFailurelonRatioCountelonrs() {
+    Map<ThriftQuelonrySourcelon, FailurelonRatioCountelonr> countelonrByQuelonrySourcelon =
+        nelonw elonnumMap<>(ThriftQuelonrySourcelon.class);
 
-    for (ThriftQuerySource thriftQuerySource : ThriftQuerySource.values()) {
-      FailureRatioCounter counter = new FailureRatioCounter("earlybird_logger", "query_source",
-          thriftQuerySource.toString());
-      counterByQuerySource.put(thriftQuerySource, counter);
+    for (ThriftQuelonrySourcelon thriftQuelonrySourcelon : ThriftQuelonrySourcelon.valuelons()) {
+      FailurelonRatioCountelonr countelonr = nelonw FailurelonRatioCountelonr("elonarlybird_loggelonr", "quelonry_sourcelon",
+          thriftQuelonrySourcelon.toString());
+      countelonrByQuelonrySourcelon.put(thriftQuelonrySourcelon, countelonr);
     }
 
-    return Maps.immutableEnumMap(counterByQuerySource);
+    relonturn Maps.immutablelonelonnumMap(countelonrByQuelonrySourcelon);
   }
 }

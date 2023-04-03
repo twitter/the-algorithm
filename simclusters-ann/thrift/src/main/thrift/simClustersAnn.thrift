@@ -1,59 +1,59 @@
-namespace java com.twitter.simclustersann.thriftjava
-#@namespace scala com.twitter.simclustersann.thriftscala
+namelonspacelon java com.twittelonr.simclustelonrsann.thriftjava
+#@namelonspacelon scala com.twittelonr.simclustelonrsann.thriftscala
 
-include "finatra-thrift/finatra_thrift_exceptions.thrift"
-include "com/twitter/simclusters_v2/identifier.thrift"
-include "com/twitter/simclusters_v2/score.thrift"
+includelon "finatra-thrift/finatra_thrift_elonxcelonptions.thrift"
+includelon "com/twittelonr/simclustelonrs_v2/idelonntifielonr.thrift"
+includelon "com/twittelonr/simclustelonrs_v2/scorelon.thrift"
 
-struct Query {
-    1: required identifier.SimClustersEmbeddingId sourceEmbeddingId;
-    2: required SimClustersANNConfig config;
+struct Quelonry {
+    1: relonquirelond idelonntifielonr.SimClustelonrselonmbelonddingId sourcelonelonmbelonddingId;
+    2: relonquirelond SimClustelonrsANNConfig config;
 }
 
-struct SimClustersANNTweetCandidate {
-    1: required i64 tweetId (personalDataType = 'TweetId');
-    2: required double score;
+struct SimClustelonrsANNTwelonelontCandidatelon {
+    1: relonquirelond i64 twelonelontId (pelonrsonalDataTypelon = 'TwelonelontId');
+    2: relonquirelond doublelon scorelon;
 }
 
-struct SimClustersANNConfig {
-    1: required i32 maxNumResults;
-    2: required double minScore;
-    3: required identifier.EmbeddingType candidateEmbeddingType;
-    4: required i32 maxTopTweetsPerCluster;
-    5: required i32 maxScanClusters;
-    6: required i32 maxTweetCandidateAgeHours;
-    7: required i32 minTweetCandidateAgeHours;
-    8: required ScoringAlgorithm annAlgorithm;
+struct SimClustelonrsANNConfig {
+    1: relonquirelond i32 maxNumRelonsults;
+    2: relonquirelond doublelon minScorelon;
+    3: relonquirelond idelonntifielonr.elonmbelonddingTypelon candidatelonelonmbelonddingTypelon;
+    4: relonquirelond i32 maxTopTwelonelontsPelonrClustelonr;
+    5: relonquirelond i32 maxScanClustelonrs;
+    6: relonquirelond i32 maxTwelonelontCandidatelonAgelonHours;
+    7: relonquirelond i32 minTwelonelontCandidatelonAgelonHours;
+    8: relonquirelond ScoringAlgorithm annAlgorithm;
 }
 
 /**
-  * The algorithm type to identify the score algorithm.
+  * Thelon algorithm typelon to idelonntify thelon scorelon algorithm.
   **/
-enum ScoringAlgorithm {
+elonnum ScoringAlgorithm {
 	DotProduct = 1,
-	CosineSimilarity = 2,
-  LogCosineSimilarity = 3,
-  CosineSimilarityNoSourceEmbeddingNormalization = 4,  // Score = (Source dot Candidate) / candidate_l2_norm
-}(hasPersonalData = 'false')
+	CosinelonSimilarity = 2,
+  LogCosinelonSimilarity = 3,
+  CosinelonSimilarityNoSourcelonelonmbelonddingNormalization = 4,  // Scorelon = (Sourcelon dot Candidatelon) / candidatelon_l2_norm
+}(hasPelonrsonalData = 'falselon')
 
-enum InvalidResponseParameter {
-	INVALID_EMBEDDING_TYPE = 1,
-	INVALID_MODEL_VERSION = 2,
+elonnum InvalidRelonsponselonParamelontelonr {
+	INVALID_elonMBelonDDING_TYPelon = 1,
+	INVALID_MODelonL_VelonRSION = 2,
 }
 
-exception InvalidResponseParameterException {
-	1: required InvalidResponseParameter errorCode,
-	2: optional string message // failure reason
+elonxcelonption InvalidRelonsponselonParamelontelonrelonxcelonption {
+	1: relonquirelond InvalidRelonsponselonParamelontelonr elonrrorCodelon,
+	2: optional string melonssagelon // failurelon relonason
 }
 
-service SimClustersANNService {
+selonrvicelon SimClustelonrsANNSelonrvicelon {
 
-    list<SimClustersANNTweetCandidate> getTweetCandidates(
-        1: required Query query;
+    list<SimClustelonrsANNTwelonelontCandidatelon> gelontTwelonelontCandidatelons(
+        1: relonquirelond Quelonry quelonry;
     ) throws (
-      1: InvalidResponseParameterException e;
-      2: finatra_thrift_exceptions.ServerError serverError;
-      3: finatra_thrift_exceptions.ClientError clientError;
+      1: InvalidRelonsponselonParamelontelonrelonxcelonption elon;
+      2: finatra_thrift_elonxcelonptions.Selonrvelonrelonrror selonrvelonrelonrror;
+      3: finatra_thrift_elonxcelonptions.Clielonntelonrror clielonntelonrror;
     );
 
 }

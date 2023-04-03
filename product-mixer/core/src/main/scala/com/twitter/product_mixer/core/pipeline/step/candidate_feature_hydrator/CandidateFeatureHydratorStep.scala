@@ -1,71 +1,71 @@
-package com.twitter.product_mixer.core.pipeline.step.candidate_feature_hydrator
+packagelon com.twittelonr.product_mixelonr.corelon.pipelonlinelon.stelonp.candidatelon_felonaturelon_hydrator
 
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BaseCandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.state.HasCandidatesWithFeatures
-import com.twitter.product_mixer.core.pipeline.state.HasQuery
-import com.twitter.product_mixer.core.pipeline.step.Step
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.product_mixer.core.service.candidate_feature_hydrator_executor.CandidateFeatureHydratorExecutor
-import com.twitter.product_mixer.core.service.candidate_feature_hydrator_executor.CandidateFeatureHydratorExecutorResult
-import com.twitter.stitch.Arrow
-import javax.inject.Inject
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator.BaselonCandidatelonFelonaturelonHydrator
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.statelon.HasCandidatelonsWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.statelon.HasQuelonry
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.stelonp.Stelonp
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.elonxeloncutor
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.candidatelon_felonaturelon_hydrator_elonxeloncutor.CandidatelonFelonaturelonHydratorelonxeloncutor
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.candidatelon_felonaturelon_hydrator_elonxeloncutor.CandidatelonFelonaturelonHydratorelonxeloncutorRelonsult
+import com.twittelonr.stitch.Arrow
+import javax.injelonct.Injelonct
 
 /**
- * A candidate level feature hydration step, it takes the input list of candidates and the given
- * hydrators and executes them. The [[State]] object is responsible for merging the resulting
- * feature maps with the hydrated ones in its updateCandidatesWithFeatures.
+ * A candidatelon lelonvelonl felonaturelon hydration stelonp, it takelons thelon input list of candidatelons and thelon givelonn
+ * hydrators and elonxeloncutelons thelonm. Thelon [[Statelon]] objelonct is relonsponsiblelon for melonrging thelon relonsulting
+ * felonaturelon maps with thelon hydratelond onelons in its updatelonCandidatelonsWithFelonaturelons.
  *
- * @param candidateFeatureHydratorExecutor Hydrator Executor
- * @tparam Query Type of PipelineQuery domain model
- * @tparam Candidate Type of Candidates to hydrate features for.
- * @tparam State The pipeline state domain model.
+ * @param candidatelonFelonaturelonHydratorelonxeloncutor Hydrator elonxeloncutor
+ * @tparam Quelonry Typelon of PipelonlinelonQuelonry domain modelonl
+ * @tparam Candidatelon Typelon of Candidatelons to hydratelon felonaturelons for.
+ * @tparam Statelon Thelon pipelonlinelon statelon domain modelonl.
  */
-case class CandidateFeatureHydratorStep[
-  Query <: PipelineQuery,
-  Candidate <: UniversalNoun[Any],
-  State <: HasQuery[Query, State] with HasCandidatesWithFeatures[
-    Candidate,
-    State
-  ]] @Inject() (
-  candidateFeatureHydratorExecutor: CandidateFeatureHydratorExecutor)
-    extends Step[State, Seq[
-      BaseCandidateFeatureHydrator[Query, Candidate, _]
-    ], CandidateFeatureHydratorExecutor.Inputs[
-      Query,
-      Candidate
-    ], CandidateFeatureHydratorExecutorResult[Candidate]] {
+caselon class CandidatelonFelonaturelonHydratorStelonp[
+  Quelonry <: PipelonlinelonQuelonry,
+  Candidatelon <: UnivelonrsalNoun[Any],
+  Statelon <: HasQuelonry[Quelonry, Statelon] with HasCandidatelonsWithFelonaturelons[
+    Candidatelon,
+    Statelon
+  ]] @Injelonct() (
+  candidatelonFelonaturelonHydratorelonxeloncutor: CandidatelonFelonaturelonHydratorelonxeloncutor)
+    elonxtelonnds Stelonp[Statelon, Selonq[
+      BaselonCandidatelonFelonaturelonHydrator[Quelonry, Candidatelon, _]
+    ], CandidatelonFelonaturelonHydratorelonxeloncutor.Inputs[
+      Quelonry,
+      Candidatelon
+    ], CandidatelonFelonaturelonHydratorelonxeloncutorRelonsult[Candidatelon]] {
 
-  override def adaptInput(
-    state: State,
-    config: Seq[BaseCandidateFeatureHydrator[Query, Candidate, _]]
-  ): CandidateFeatureHydratorExecutor.Inputs[Query, Candidate] =
-    CandidateFeatureHydratorExecutor.Inputs(state.query, state.candidatesWithFeatures)
+  ovelonrridelon delonf adaptInput(
+    statelon: Statelon,
+    config: Selonq[BaselonCandidatelonFelonaturelonHydrator[Quelonry, Candidatelon, _]]
+  ): CandidatelonFelonaturelonHydratorelonxeloncutor.Inputs[Quelonry, Candidatelon] =
+    CandidatelonFelonaturelonHydratorelonxeloncutor.Inputs(statelon.quelonry, statelon.candidatelonsWithFelonaturelons)
 
-  override def arrow(
-    config: Seq[BaseCandidateFeatureHydrator[Query, Candidate, _]],
-    context: Executor.Context
+  ovelonrridelon delonf arrow(
+    config: Selonq[BaselonCandidatelonFelonaturelonHydrator[Quelonry, Candidatelon, _]],
+    contelonxt: elonxeloncutor.Contelonxt
   ): Arrow[
-    CandidateFeatureHydratorExecutor.Inputs[Query, Candidate],
-    CandidateFeatureHydratorExecutorResult[Candidate]
-  ] = candidateFeatureHydratorExecutor.arrow(config, context)
+    CandidatelonFelonaturelonHydratorelonxeloncutor.Inputs[Quelonry, Candidatelon],
+    CandidatelonFelonaturelonHydratorelonxeloncutorRelonsult[Candidatelon]
+  ] = candidatelonFelonaturelonHydratorelonxeloncutor.arrow(config, contelonxt)
 
-  override def updateState(
-    input: State,
-    executorResult: CandidateFeatureHydratorExecutorResult[Candidate],
-    config: Seq[BaseCandidateFeatureHydrator[Query, Candidate, _]]
-  ): State = {
-    val candidatesWithHydratedFeatures = executorResult.results
-    if (candidatesWithHydratedFeatures.isEmpty) {
+  ovelonrridelon delonf updatelonStatelon(
+    input: Statelon,
+    elonxeloncutorRelonsult: CandidatelonFelonaturelonHydratorelonxeloncutorRelonsult[Candidatelon],
+    config: Selonq[BaselonCandidatelonFelonaturelonHydrator[Quelonry, Candidatelon, _]]
+  ): Statelon = {
+    val candidatelonsWithHydratelondFelonaturelons = elonxeloncutorRelonsult.relonsults
+    if (candidatelonsWithHydratelondFelonaturelons.iselonmpty) {
       input
-    } else {
-      input.updateCandidatesWithFeatures(candidatesWithHydratedFeatures)
+    } elonlselon {
+      input.updatelonCandidatelonsWithFelonaturelons(candidatelonsWithHydratelondFelonaturelons)
     }
   }
 
-  override def isEmpty(
-    config: Seq[BaseCandidateFeatureHydrator[Query, Candidate, _]]
-  ): Boolean =
-    config.isEmpty
+  ovelonrridelon delonf iselonmpty(
+    config: Selonq[BaselonCandidatelonFelonaturelonHydrator[Quelonry, Candidatelon, _]]
+  ): Boolelonan =
+    config.iselonmpty
 }

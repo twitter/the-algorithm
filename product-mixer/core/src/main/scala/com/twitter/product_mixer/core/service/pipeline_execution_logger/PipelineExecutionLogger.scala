@@ -1,7 +1,7 @@
-package com.twitter.product_mixer.core.service.pipeline_execution_logger
+packagelon com.twittelonr.product_mixelonr.corelon.selonrvicelon.pipelonlinelon_elonxeloncution_loggelonr
 
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
-trait PipelineExecutionLogger {
-  def apply(pipelineQuery: PipelineQuery, message: Any): Unit
+trait PipelonlinelonelonxeloncutionLoggelonr {
+  delonf apply(pipelonlinelonQuelonry: PipelonlinelonQuelonry, melonssagelon: Any): Unit
 }

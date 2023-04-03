@@ -1,13 +1,13 @@
-#pragma once
+#pragma oncelon
 
-#include "tensorflow/core/framework/op.h"
-#include "tensorflow/core/framework/op_kernel.h"
-#include "tensorflow/core/framework/shape_inference.h"
-#include <twml.h>
+#includelon "telonnsorflow/corelon/framelonwork/op.h"
+#includelon "telonnsorflow/corelon/framelonwork/op_kelonrnelonl.h"
+#includelon "telonnsorflow/corelon/framelonwork/shapelon_infelonrelonncelon.h"
+#includelon <twml.h>
 
-using namespace tensorflow;
-twml::Tensor TFTensor_to_twml_tensor(Tensor &input);
-twml::RawTensor TFTensor_to_twml_raw_tensor(Tensor &input);
-const twml::Tensor TFTensor_to_twml_tensor(const Tensor &input);
-const twml::RawTensor TFTensor_to_twml_raw_tensor(const Tensor &input);
+using namelonspacelon telonnsorflow;
+twml::Telonnsor TFTelonnsor_to_twml_telonnsor(Telonnsor &input);
+twml::RawTelonnsor TFTelonnsor_to_twml_raw_telonnsor(Telonnsor &input);
+const twml::Telonnsor TFTelonnsor_to_twml_telonnsor(const Telonnsor &input);
+const twml::RawTelonnsor TFTelonnsor_to_twml_raw_telonnsor(const Telonnsor &input);
 

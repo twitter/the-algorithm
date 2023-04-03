@@ -1,12 +1,12 @@
-package com.twitter.follow_recommendations.common.clients.geoduck
+packagelon com.twittelonr.follow_reloncommelonndations.common.clielonnts.gelonoduck
 
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsClient
-import com.twitter.follow_recommendations.common.clients.common.BaseClientModule
-import com.twitter.geoduck.thriftscala.LocationService
+import com.twittelonr.finatra.mtls.thriftmux.modulelons.MtlsClielonnt
+import com.twittelonr.follow_reloncommelonndations.common.clielonnts.common.BaselonClielonntModulelon
+import com.twittelonr.gelonoduck.thriftscala.LocationSelonrvicelon
 
-object LocationServiceModule
-    extends BaseClientModule[LocationService.MethodPerEndpoint]
-    with MtlsClient {
-  override val label = "geoduck_locationservice"
-  override val dest = "/s/geo/geoduck_locationservice"
+objelonct LocationSelonrvicelonModulelon
+    elonxtelonnds BaselonClielonntModulelon[LocationSelonrvicelon.MelonthodPelonrelonndpoint]
+    with MtlsClielonnt {
+  ovelonrridelon val labelonl = "gelonoduck_locationselonrvicelon"
+  ovelonrridelon val delonst = "/s/gelono/gelonoduck_locationselonrvicelon"
 }

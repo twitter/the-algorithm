@@ -1,67 +1,67 @@
-package com.twitter.home_mixer.product.scored_tweets.candidate_pipeline
+packagelon com.twittelonr.homelon_mixelonr.product.scorelond_twelonelonts.candidatelon_pipelonlinelon
 
-import com.twitter.home_mixer.functional_component.gate.MinCachedTweetsGate
-import com.twitter.home_mixer.product.scored_tweets.model.ScoredTweetsQuery
-import com.twitter.home_mixer.product.scored_tweets.param.ScoredTweetsParam.CachedScoredTweets
-import com.twitter.home_mixer.product.scored_tweets.query_feature_hydrator.FrsSeedUsersQueryFeatureHydrator
-import com.twitter.home_mixer.product.scored_tweets.query_transformer.TimelineRankerFrsQueryTransformer
-import com.twitter.home_mixer.product.scored_tweets.response_transformer.ScoredTweetsFrsResponseFeatureTransformer
-import com.twitter.product_mixer.component_library.candidate_source.timeline_ranker.TimelineRankerRecapCandidateSource
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.functional_component.candidate_source.BaseCandidateSource
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BaseQueryFeatureHydrator
-import com.twitter.product_mixer.core.functional_component.gate.Gate
-import com.twitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineResultsTransformer
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.pipeline.candidate.CandidatePipelineConfig
-import com.twitter.timelineranker.{thriftscala => tlr}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.homelon_mixelonr.functional_componelonnt.gatelon.MinCachelondTwelonelontsGatelon
+import com.twittelonr.homelon_mixelonr.product.scorelond_twelonelonts.modelonl.ScorelondTwelonelontsQuelonry
+import com.twittelonr.homelon_mixelonr.product.scorelond_twelonelonts.param.ScorelondTwelonelontsParam.CachelondScorelondTwelonelonts
+import com.twittelonr.homelon_mixelonr.product.scorelond_twelonelonts.quelonry_felonaturelon_hydrator.FrsSelonelondUselonrsQuelonryFelonaturelonHydrator
+import com.twittelonr.homelon_mixelonr.product.scorelond_twelonelonts.quelonry_transformelonr.TimelonlinelonRankelonrFrsQuelonryTransformelonr
+import com.twittelonr.homelon_mixelonr.product.scorelond_twelonelonts.relonsponselon_transformelonr.ScorelondTwelonelontsFrsRelonsponselonFelonaturelonTransformelonr
+import com.twittelonr.product_mixelonr.componelonnt_library.candidatelon_sourcelon.timelonlinelon_rankelonr.TimelonlinelonRankelonrReloncapCandidatelonSourcelon
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.TwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.BaselonCandidatelonSourcelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator.BaselonQuelonryFelonaturelonHydrator
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.gatelon.Gatelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.transformelonr.CandidatelonFelonaturelonTransformelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.transformelonr.CandidatelonPipelonlinelonQuelonryTransformelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.transformelonr.CandidatelonPipelonlinelonRelonsultsTransformelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonPipelonlinelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.candidatelon.CandidatelonPipelonlinelonConfig
+import com.twittelonr.timelonlinelonrankelonr.{thriftscala => tlr}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
 /**
- * Candidate Pipeline Config that takes user recommendations from Follow Recommendation Service (FRS)
- * and makes a TimelineRanker->Earlybird query for tweet candidates from those users.
- * Additionally, the candidate pipeline hydrates followedByUserIds so that followed-by social proof
- * can be used.
+ * Candidatelon Pipelonlinelon Config that takelons uselonr reloncommelonndations from Follow Reloncommelonndation Selonrvicelon (FRS)
+ * and makelons a TimelonlinelonRankelonr->elonarlybird quelonry for twelonelont candidatelons from thoselon uselonrs.
+ * Additionally, thelon candidatelon pipelonlinelon hydratelons followelondByUselonrIds so that followelond-by social proof
+ * can belon uselond.
  */
-@Singleton
-class ScoredTweetsFrsCandidatePipelineConfig @Inject() (
-  timelineRankerRecapCandidateSource: TimelineRankerRecapCandidateSource,
-  frsSeedUsersQueryFeatureHydrator: FrsSeedUsersQueryFeatureHydrator)
-    extends CandidatePipelineConfig[
-      ScoredTweetsQuery,
-      tlr.RecapQuery,
-      tlr.CandidateTweet,
-      TweetCandidate
+@Singlelonton
+class ScorelondTwelonelontsFrsCandidatelonPipelonlinelonConfig @Injelonct() (
+  timelonlinelonRankelonrReloncapCandidatelonSourcelon: TimelonlinelonRankelonrReloncapCandidatelonSourcelon,
+  frsSelonelondUselonrsQuelonryFelonaturelonHydrator: FrsSelonelondUselonrsQuelonryFelonaturelonHydrator)
+    elonxtelonnds CandidatelonPipelonlinelonConfig[
+      ScorelondTwelonelontsQuelonry,
+      tlr.ReloncapQuelonry,
+      tlr.CandidatelonTwelonelont,
+      TwelonelontCandidatelon
     ] {
 
-  override val identifier: CandidatePipelineIdentifier =
-    CandidatePipelineIdentifier("ScoredTweetsFrs")
+  ovelonrridelon val idelonntifielonr: CandidatelonPipelonlinelonIdelonntifielonr =
+    CandidatelonPipelonlinelonIdelonntifielonr("ScorelondTwelonelontsFrs")
 
-  override val gates: Seq[Gate[ScoredTweetsQuery]] = Seq(
-    MinCachedTweetsGate(identifier, CachedScoredTweets.MinCachedTweetsParam)
+  ovelonrridelon val gatelons: Selonq[Gatelon[ScorelondTwelonelontsQuelonry]] = Selonq(
+    MinCachelondTwelonelontsGatelon(idelonntifielonr, CachelondScorelondTwelonelonts.MinCachelondTwelonelontsParam)
   )
 
-  override val queryFeatureHydration: Seq[
-    BaseQueryFeatureHydrator[ScoredTweetsQuery, _]
-  ] = Seq(frsSeedUsersQueryFeatureHydrator)
+  ovelonrridelon val quelonryFelonaturelonHydration: Selonq[
+    BaselonQuelonryFelonaturelonHydrator[ScorelondTwelonelontsQuelonry, _]
+  ] = Selonq(frsSelonelondUselonrsQuelonryFelonaturelonHydrator)
 
-  override val candidateSource: BaseCandidateSource[tlr.RecapQuery, tlr.CandidateTweet] =
-    timelineRankerRecapCandidateSource
+  ovelonrridelon val candidatelonSourcelon: BaselonCandidatelonSourcelon[tlr.ReloncapQuelonry, tlr.CandidatelonTwelonelont] =
+    timelonlinelonRankelonrReloncapCandidatelonSourcelon
 
-  override val queryTransformer: CandidatePipelineQueryTransformer[
-    ScoredTweetsQuery,
-    tlr.RecapQuery
-  ] = TimelineRankerFrsQueryTransformer(identifier)
+  ovelonrridelon val quelonryTransformelonr: CandidatelonPipelonlinelonQuelonryTransformelonr[
+    ScorelondTwelonelontsQuelonry,
+    tlr.ReloncapQuelonry
+  ] = TimelonlinelonRankelonrFrsQuelonryTransformelonr(idelonntifielonr)
 
-  override val featuresFromCandidateSourceTransformers: Seq[
-    CandidateFeatureTransformer[tlr.CandidateTweet]
-  ] = Seq(ScoredTweetsFrsResponseFeatureTransformer)
+  ovelonrridelon val felonaturelonsFromCandidatelonSourcelonTransformelonrs: Selonq[
+    CandidatelonFelonaturelonTransformelonr[tlr.CandidatelonTwelonelont]
+  ] = Selonq(ScorelondTwelonelontsFrsRelonsponselonFelonaturelonTransformelonr)
 
-  override val resultTransformer: CandidatePipelineResultsTransformer[
-    tlr.CandidateTweet,
-    TweetCandidate
-  ] = { candidate => TweetCandidate(candidate.tweet.get.id) }
+  ovelonrridelon val relonsultTransformelonr: CandidatelonPipelonlinelonRelonsultsTransformelonr[
+    tlr.CandidatelonTwelonelont,
+    TwelonelontCandidatelon
+  ] = { candidatelon => TwelonelontCandidatelon(candidatelon.twelonelont.gelont.id) }
 }

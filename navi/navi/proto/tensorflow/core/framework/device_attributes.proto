@@ -1,58 +1,58 @@
 syntax = "proto3";
 
-package tensorflow;
+packagelon telonnsorflow;
 
-option cc_enable_arenas = true;
-option java_outer_classname = "DeviceAttributesProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.framework";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/framework/device_attributes_go_proto";
+option cc_elonnablelon_arelonnas = truelon;
+option java_outelonr_classnamelon = "DelonvicelonAttributelonsProtos";
+option java_multiplelon_filelons = truelon;
+option java_packagelon = "org.telonnsorflow.framelonwork";
+option go_packagelon = "github.com/telonnsorflow/telonnsorflow/telonnsorflow/go/corelon/framelonwork/delonvicelon_attributelons_go_proto";
 
-message InterconnectLink {
-  int32 device_id = 1;
-  string type = 2;
-  int32 strength = 3;
+melonssagelon IntelonrconnelonctLink {
+  int32 delonvicelon_id = 1;
+  string typelon = 2;
+  int32 strelonngth = 3;
 }
 
-message LocalLinks {
-  repeated InterconnectLink link = 1;
+melonssagelon LocalLinks {
+  relonpelonatelond IntelonrconnelonctLink link = 1;
 }
 
-message DeviceLocality {
-  // Optional bus locality of device.  Default value of 0 means
-  // no specific locality.  Specific localities are indexed from 1.
+melonssagelon DelonvicelonLocality {
+  // Optional bus locality of delonvicelon.  Delonfault valuelon of 0 melonans
+  // no speloncific locality.  Speloncific localitielons arelon indelonxelond from 1.
   int32 bus_id = 1;
 
-  // Optional NUMA locality of device.
-  int32 numa_node = 2;
+  // Optional NUMA locality of delonvicelon.
+  int32 numa_nodelon = 2;
 
-  // Optional local interconnect links to other devices.
+  // Optional local intelonrconnelonct links to othelonr delonvicelons.
   LocalLinks links = 3;
 }
 
-message DeviceAttributes {
-  // Fully specified name of the device within a cluster.
-  string name = 1;
+melonssagelon DelonvicelonAttributelons {
+  // Fully speloncifielond namelon of thelon delonvicelon within a clustelonr.
+  string namelon = 1;
 
-  // String representation of device_type.
-  string device_type = 2;
+  // String relonprelonselonntation of delonvicelon_typelon.
+  string delonvicelon_typelon = 2;
 
-  // Memory capacity of device in bytes.
-  int64 memory_limit = 4;
+  // Melonmory capacity of delonvicelon in bytelons.
+  int64 melonmory_limit = 4;
 
-  // Platform-specific data about device that may be useful
-  // for supporting efficient data transfers.
-  DeviceLocality locality = 5;
+  // Platform-speloncific data about delonvicelon that may belon uselonful
+  // for supporting elonfficielonnt data transfelonrs.
+  DelonvicelonLocality locality = 5;
 
-  // A device is assigned a global unique number each time it is
-  // initialized. "incarnation" should never be 0.
-  fixed64 incarnation = 6;
+  // A delonvicelon is assignelond a global uniquelon numbelonr elonach timelon it is
+  // initializelond. "incarnation" should nelonvelonr belon 0.
+  fixelond64 incarnation = 6;
 
-  // String representation of the physical device that this device maps to.
-  string physical_device_desc = 7;
+  // String relonprelonselonntation of thelon physical delonvicelon that this delonvicelon maps to.
+  string physical_delonvicelon_delonsc = 7;
 
-  // A physical device ID for use in XLA DeviceAssignments, unique across
-  // clients in a multi-client setup. Set to -1 if unavailable, non-negative
-  // otherwise.
+  // A physical delonvicelon ID for uselon in XLA DelonvicelonAssignmelonnts, uniquelon across
+  // clielonnts in a multi-clielonnt selontup. Selont to -1 if unavailablelon, non-nelongativelon
+  // othelonrwiselon.
   int64 xla_global_id = 8;
 }

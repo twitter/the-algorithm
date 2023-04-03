@@ -1,12 +1,12 @@
 java_library(
-    sources = ["*.java"],
+    sourcelons = ["*.java"],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/com/google/guava",
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        "3rdparty/jvm/com/googlelon/guava",
         "3rdparty/jvm/log4j",
-        "src/java/com/twitter/search/common/relevance:utils",
-        "src/java/com/twitter/search/common/util/earlybird",
-        "src/thrift/com/twitter/search:earlybird-java",
+        "src/java/com/twittelonr/selonarch/common/relonlelonvancelon:utils",
+        "src/java/com/twittelonr/selonarch/common/util/elonarlybird",
+        "src/thrift/com/twittelonr/selonarch:elonarlybird-java",
     ],
 )

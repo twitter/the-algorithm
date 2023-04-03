@@ -1,254 +1,254 @@
-package com.twitter.home_mixer.product.scored_tweets
+packagelon com.twittelonr.homelon_mixelonr.product.scorelond_twelonelonts
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.home_mixer.functional_component.feature_hydrator.LastNonPollingTimeQueryFeatureHydrator
-import com.twitter.home_mixer.functional_component.feature_hydrator.RealGraphInNetworkScoresQueryFeatureHydrator
-import com.twitter.home_mixer.functional_component.feature_hydrator.RealGraphQueryFeatureHydrator
-import com.twitter.home_mixer.functional_component.feature_hydrator.RealTimeInteractionGraphUserVertexQueryFeatureHydrator
-import com.twitter.home_mixer.functional_component.feature_hydrator.RequestQueryFeatureHydrator
-import com.twitter.home_mixer.functional_component.feature_hydrator.TweetImpressionsQueryFeatureHydrator
-import com.twitter.home_mixer.functional_component.feature_hydrator.TwhinUserEngagementQueryFeatureHydrator
-import com.twitter.home_mixer.functional_component.feature_hydrator.TwhinUserFollowQueryFeatureHydrator
-import com.twitter.home_mixer.functional_component.feature_hydrator.UserLanguagesFeatureHydrator
-import com.twitter.home_mixer.functional_component.feature_hydrator.UserStateQueryFeatureHydrator
-import com.twitter.home_mixer.functional_component.feature_hydrator.offline_aggregates.PartAAggregateQueryFeatureHydrator
-import com.twitter.home_mixer.functional_component.feature_hydrator.offline_aggregates.PartBAggregateQueryFeatureHydrator
-import com.twitter.home_mixer.functional_component.feature_hydrator.real_time_aggregates.UserEngagementRealTimeAggregatesFeatureHydrator
-import com.twitter.home_mixer.functional_component.filter.KeepBestOutOfNetworkTweetPerAuthorFilter
-import com.twitter.home_mixer.functional_component.filter.OutOfNetworkCompetitorFilter
-import com.twitter.home_mixer.functional_component.filter.OutOfNetworkCompetitorURLFilter
-import com.twitter.home_mixer.functional_component.filter.PreviouslySeenTweetsFilter
-import com.twitter.home_mixer.functional_component.filter.PreviouslyServedTweetsFilter
-import com.twitter.home_mixer.functional_component.filter.RejectTweetFromViewerFilter
-import com.twitter.home_mixer.functional_component.filter.RetweetDeduplicationFilter
-import com.twitter.home_mixer.functional_component.side_effect.PublishClientSentImpressionsEventBusSideEffect
-import com.twitter.home_mixer.functional_component.side_effect.PublishClientSentImpressionsManhattanSideEffect
-import com.twitter.home_mixer.functional_component.side_effect.UpdateLastNonPollingTimeSideEffect
-import com.twitter.home_mixer.model.HomeFeatures.ScoreFeature
-import com.twitter.home_mixer.param.HomeMixerFlagName.TargetFetchLatency
-import com.twitter.home_mixer.param.HomeMixerFlagName.TargetScoringLatency
-import com.twitter.home_mixer.product.scored_tweets.candidate_pipeline.CachedScoredTweetsCandidatePipelineConfig
-import com.twitter.home_mixer.product.scored_tweets.candidate_pipeline.ScoredTweetsCrMixerCandidatePipelineConfig
-import com.twitter.home_mixer.product.scored_tweets.candidate_pipeline.ScoredTweetsFrsCandidatePipelineConfig
-import com.twitter.home_mixer.product.scored_tweets.candidate_pipeline.ScoredTweetsInNetworkCandidatePipelineConfig
-import com.twitter.home_mixer.product.scored_tweets.candidate_pipeline.ScoredTweetsUtegCandidatePipelineConfig
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.CachedScoredTweetsQueryFeatureHydrator
-import com.twitter.home_mixer.product.scored_tweets.marshaller.ScoredTweetsResponseDomainMarshaller
-import com.twitter.home_mixer.product.scored_tweets.marshaller.ScoredTweetsResponseTransportMarshaller
-import com.twitter.home_mixer.product.scored_tweets.model.ScoredTweetsQuery
-import com.twitter.home_mixer.product.scored_tweets.model.ScoredTweetsResponse
-import com.twitter.home_mixer.product.scored_tweets.param.ScoredTweetsParam.ServerMaxResultsParam
-import com.twitter.home_mixer.product.scored_tweets.scoring_pipeline.ScoredTweetsDiversityScoringPipelineConfig
-import com.twitter.home_mixer.product.scored_tweets.scoring_pipeline.ScoredTweetsRescoreOONScoringPipelineConfig
-import com.twitter.home_mixer.product.scored_tweets.scoring_pipeline.ScoredTweetsRescoreVerifiedAuthorScoringPipelineConfig
-import com.twitter.home_mixer.product.scored_tweets.scoring_pipeline.ScoredTweetsScoringPipelineConfig
-import com.twitter.home_mixer.product.scored_tweets.scoring_pipeline.ScoredTweetsWeightedScoresSumScoringPipelineConfig
-import com.twitter.home_mixer.product.scored_tweets.side_effect.CachedScoredTweetsSideEffect
-import com.twitter.home_mixer.product.scored_tweets.side_effect.ScribeServedCommonFeaturesAndCandidateFeaturesSideEffect
-import com.twitter.home_mixer.{thriftscala => t}
-import com.twitter.inject.annotations.Flag
-import com.twitter.product_mixer.component_library.feature_hydrator.query.async.AsyncQueryFeatureHydrator
-import com.twitter.product_mixer.component_library.feature_hydrator.query.impressed_tweets.ImpressedTweetsQueryFeatureHydrator
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.component_library.selector.DropDuplicateCandidates
-import com.twitter.product_mixer.component_library.selector.DropMaxCandidates
-import com.twitter.product_mixer.component_library.selector.IdAndClassDuplicationKey
-import com.twitter.product_mixer.component_library.selector.InsertAppendResults
-import com.twitter.product_mixer.component_library.selector.PickFirstCandidateMerger
-import com.twitter.product_mixer.component_library.selector.UpdateSortCandidates
-import com.twitter.product_mixer.component_library.selector.sorter.FeatureValueSorter
-import com.twitter.product_mixer.core.functional_component.common.AllPipelines
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.QueryFeatureHydrator
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.marshaller.TransportMarshaller
-import com.twitter.product_mixer.core.functional_component.premarshaller.DomainMarshaller
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.functional_component.side_effect.PipelineResultSideEffect
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.RecommendationPipelineIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.ScoringPipelineIdentifier
-import com.twitter.product_mixer.core.pipeline.FailOpenPolicy
-import com.twitter.product_mixer.core.pipeline.candidate.CandidatePipelineConfig
-import com.twitter.product_mixer.core.pipeline.recommendation.RecommendationPipelineConfig
-import com.twitter.product_mixer.core.pipeline.scoring.ScoringPipelineConfig
-import com.twitter.product_mixer.core.quality_factor.BoundsWithDefault
-import com.twitter.product_mixer.core.quality_factor.LinearLatencyQualityFactorConfig
-import com.twitter.product_mixer.core.quality_factor.QualityFactorConfig
-import com.twitter.util.Duration
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator.LastNonPollingTimelonQuelonryFelonaturelonHydrator
+import com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator.RelonalGraphInNelontworkScorelonsQuelonryFelonaturelonHydrator
+import com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator.RelonalGraphQuelonryFelonaturelonHydrator
+import com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator.RelonalTimelonIntelonractionGraphUselonrVelonrtelonxQuelonryFelonaturelonHydrator
+import com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator.RelonquelonstQuelonryFelonaturelonHydrator
+import com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator.TwelonelontImprelonssionsQuelonryFelonaturelonHydrator
+import com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator.TwhinUselonrelonngagelonmelonntQuelonryFelonaturelonHydrator
+import com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator.TwhinUselonrFollowQuelonryFelonaturelonHydrator
+import com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator.UselonrLanguagelonsFelonaturelonHydrator
+import com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator.UselonrStatelonQuelonryFelonaturelonHydrator
+import com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator.offlinelon_aggrelongatelons.PartAAggrelongatelonQuelonryFelonaturelonHydrator
+import com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator.offlinelon_aggrelongatelons.PartBAggrelongatelonQuelonryFelonaturelonHydrator
+import com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator.relonal_timelon_aggrelongatelons.UselonrelonngagelonmelonntRelonalTimelonAggrelongatelonsFelonaturelonHydrator
+import com.twittelonr.homelon_mixelonr.functional_componelonnt.filtelonr.KelonelonpBelonstOutOfNelontworkTwelonelontPelonrAuthorFiltelonr
+import com.twittelonr.homelon_mixelonr.functional_componelonnt.filtelonr.OutOfNelontworkCompelontitorFiltelonr
+import com.twittelonr.homelon_mixelonr.functional_componelonnt.filtelonr.OutOfNelontworkCompelontitorURLFiltelonr
+import com.twittelonr.homelon_mixelonr.functional_componelonnt.filtelonr.PrelonviouslySelonelonnTwelonelontsFiltelonr
+import com.twittelonr.homelon_mixelonr.functional_componelonnt.filtelonr.PrelonviouslySelonrvelondTwelonelontsFiltelonr
+import com.twittelonr.homelon_mixelonr.functional_componelonnt.filtelonr.RelonjelonctTwelonelontFromVielonwelonrFiltelonr
+import com.twittelonr.homelon_mixelonr.functional_componelonnt.filtelonr.RelontwelonelontDelonduplicationFiltelonr
+import com.twittelonr.homelon_mixelonr.functional_componelonnt.sidelon_elonffelonct.PublishClielonntSelonntImprelonssionselonvelonntBusSidelonelonffelonct
+import com.twittelonr.homelon_mixelonr.functional_componelonnt.sidelon_elonffelonct.PublishClielonntSelonntImprelonssionsManhattanSidelonelonffelonct
+import com.twittelonr.homelon_mixelonr.functional_componelonnt.sidelon_elonffelonct.UpdatelonLastNonPollingTimelonSidelonelonffelonct
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.ScorelonFelonaturelon
+import com.twittelonr.homelon_mixelonr.param.HomelonMixelonrFlagNamelon.TargelontFelontchLatelonncy
+import com.twittelonr.homelon_mixelonr.param.HomelonMixelonrFlagNamelon.TargelontScoringLatelonncy
+import com.twittelonr.homelon_mixelonr.product.scorelond_twelonelonts.candidatelon_pipelonlinelon.CachelondScorelondTwelonelontsCandidatelonPipelonlinelonConfig
+import com.twittelonr.homelon_mixelonr.product.scorelond_twelonelonts.candidatelon_pipelonlinelon.ScorelondTwelonelontsCrMixelonrCandidatelonPipelonlinelonConfig
+import com.twittelonr.homelon_mixelonr.product.scorelond_twelonelonts.candidatelon_pipelonlinelon.ScorelondTwelonelontsFrsCandidatelonPipelonlinelonConfig
+import com.twittelonr.homelon_mixelonr.product.scorelond_twelonelonts.candidatelon_pipelonlinelon.ScorelondTwelonelontsInNelontworkCandidatelonPipelonlinelonConfig
+import com.twittelonr.homelon_mixelonr.product.scorelond_twelonelonts.candidatelon_pipelonlinelon.ScorelondTwelonelontsUtelongCandidatelonPipelonlinelonConfig
+import com.twittelonr.homelon_mixelonr.product.scorelond_twelonelonts.felonaturelon_hydrator.CachelondScorelondTwelonelontsQuelonryFelonaturelonHydrator
+import com.twittelonr.homelon_mixelonr.product.scorelond_twelonelonts.marshallelonr.ScorelondTwelonelontsRelonsponselonDomainMarshallelonr
+import com.twittelonr.homelon_mixelonr.product.scorelond_twelonelonts.marshallelonr.ScorelondTwelonelontsRelonsponselonTransportMarshallelonr
+import com.twittelonr.homelon_mixelonr.product.scorelond_twelonelonts.modelonl.ScorelondTwelonelontsQuelonry
+import com.twittelonr.homelon_mixelonr.product.scorelond_twelonelonts.modelonl.ScorelondTwelonelontsRelonsponselon
+import com.twittelonr.homelon_mixelonr.product.scorelond_twelonelonts.param.ScorelondTwelonelontsParam.SelonrvelonrMaxRelonsultsParam
+import com.twittelonr.homelon_mixelonr.product.scorelond_twelonelonts.scoring_pipelonlinelon.ScorelondTwelonelontsDivelonrsityScoringPipelonlinelonConfig
+import com.twittelonr.homelon_mixelonr.product.scorelond_twelonelonts.scoring_pipelonlinelon.ScorelondTwelonelontsRelonscorelonOONScoringPipelonlinelonConfig
+import com.twittelonr.homelon_mixelonr.product.scorelond_twelonelonts.scoring_pipelonlinelon.ScorelondTwelonelontsRelonscorelonVelonrifielondAuthorScoringPipelonlinelonConfig
+import com.twittelonr.homelon_mixelonr.product.scorelond_twelonelonts.scoring_pipelonlinelon.ScorelondTwelonelontsScoringPipelonlinelonConfig
+import com.twittelonr.homelon_mixelonr.product.scorelond_twelonelonts.scoring_pipelonlinelon.ScorelondTwelonelontsWelonightelondScorelonsSumScoringPipelonlinelonConfig
+import com.twittelonr.homelon_mixelonr.product.scorelond_twelonelonts.sidelon_elonffelonct.CachelondScorelondTwelonelontsSidelonelonffelonct
+import com.twittelonr.homelon_mixelonr.product.scorelond_twelonelonts.sidelon_elonffelonct.ScribelonSelonrvelondCommonFelonaturelonsAndCandidatelonFelonaturelonsSidelonelonffelonct
+import com.twittelonr.homelon_mixelonr.{thriftscala => t}
+import com.twittelonr.injelonct.annotations.Flag
+import com.twittelonr.product_mixelonr.componelonnt_library.felonaturelon_hydrator.quelonry.async.AsyncQuelonryFelonaturelonHydrator
+import com.twittelonr.product_mixelonr.componelonnt_library.felonaturelon_hydrator.quelonry.imprelonsselond_twelonelonts.ImprelonsselondTwelonelontsQuelonryFelonaturelonHydrator
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.TwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.componelonnt_library.selonlelonctor.DropDuplicatelonCandidatelons
+import com.twittelonr.product_mixelonr.componelonnt_library.selonlelonctor.DropMaxCandidatelons
+import com.twittelonr.product_mixelonr.componelonnt_library.selonlelonctor.IdAndClassDuplicationKelony
+import com.twittelonr.product_mixelonr.componelonnt_library.selonlelonctor.InselonrtAppelonndRelonsults
+import com.twittelonr.product_mixelonr.componelonnt_library.selonlelonctor.PickFirstCandidatelonMelonrgelonr
+import com.twittelonr.product_mixelonr.componelonnt_library.selonlelonctor.UpdatelonSortCandidatelons
+import com.twittelonr.product_mixelonr.componelonnt_library.selonlelonctor.sortelonr.FelonaturelonValuelonSortelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.AllPipelonlinelons
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator.QuelonryFelonaturelonHydrator
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.filtelonr.Filtelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.TransportMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.prelonmarshallelonr.DomainMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.selonlelonctor.Selonlelonctor
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.sidelon_elonffelonct.PipelonlinelonRelonsultSidelonelonffelonct
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonPipelonlinelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.ComponelonntIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.ReloncommelonndationPipelonlinelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.ScoringPipelonlinelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.FailOpelonnPolicy
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.candidatelon.CandidatelonPipelonlinelonConfig
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.reloncommelonndation.ReloncommelonndationPipelonlinelonConfig
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.scoring.ScoringPipelonlinelonConfig
+import com.twittelonr.product_mixelonr.corelon.quality_factor.BoundsWithDelonfault
+import com.twittelonr.product_mixelonr.corelon.quality_factor.LinelonarLatelonncyQualityFactorConfig
+import com.twittelonr.product_mixelonr.corelon.quality_factor.QualityFactorConfig
+import com.twittelonr.util.Duration
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class ScoredTweetsRecommendationPipelineConfig @Inject() (
-  scoredTweetsInNetworkCandidatePipelineConfig: ScoredTweetsInNetworkCandidatePipelineConfig,
-  scoredTweetsUtegCandidatePipelineConfig: ScoredTweetsUtegCandidatePipelineConfig,
-  scoredTweetsCrMixerCandidatePipelineConfig: ScoredTweetsCrMixerCandidatePipelineConfig,
-  scoredTweetsFrsCandidatePipelineConfig: ScoredTweetsFrsCandidatePipelineConfig,
-  cachedScoredTweetsCandidatePipelineConfig: CachedScoredTweetsCandidatePipelineConfig,
-  requestQueryFeatureHydrator: RequestQueryFeatureHydrator[ScoredTweetsQuery],
-  lastNonPollingTimeQueryFeatureHydrator: LastNonPollingTimeQueryFeatureHydrator,
-  realTimeInteractionGraphUserVertexQueryFeatureHydrator: RealTimeInteractionGraphUserVertexQueryFeatureHydrator,
-  userStateQueryFeatureHydrator: UserStateQueryFeatureHydrator,
-  userEngagementRealTimeAggregatesFeatureHydrator: UserEngagementRealTimeAggregatesFeatureHydrator,
-  twhinUserEngagementQueryFeatureHydrator: TwhinUserEngagementQueryFeatureHydrator,
-  twhinUserFollowQueryFeatureHydrator: TwhinUserFollowQueryFeatureHydrator,
-  cachedScoredTweetsQueryFeatureHydrator: CachedScoredTweetsQueryFeatureHydrator,
-  scoredTweetsScoringPipelineConfig: ScoredTweetsScoringPipelineConfig,
-  scoredTweetsWeightedScoresSumScoringPipelineConfig: ScoredTweetsWeightedScoresSumScoringPipelineConfig,
-  manhattanTweetImpressionsQueryFeatureHydrator: TweetImpressionsQueryFeatureHydrator[
-    ScoredTweetsQuery
+@Singlelonton
+class ScorelondTwelonelontsReloncommelonndationPipelonlinelonConfig @Injelonct() (
+  scorelondTwelonelontsInNelontworkCandidatelonPipelonlinelonConfig: ScorelondTwelonelontsInNelontworkCandidatelonPipelonlinelonConfig,
+  scorelondTwelonelontsUtelongCandidatelonPipelonlinelonConfig: ScorelondTwelonelontsUtelongCandidatelonPipelonlinelonConfig,
+  scorelondTwelonelontsCrMixelonrCandidatelonPipelonlinelonConfig: ScorelondTwelonelontsCrMixelonrCandidatelonPipelonlinelonConfig,
+  scorelondTwelonelontsFrsCandidatelonPipelonlinelonConfig: ScorelondTwelonelontsFrsCandidatelonPipelonlinelonConfig,
+  cachelondScorelondTwelonelontsCandidatelonPipelonlinelonConfig: CachelondScorelondTwelonelontsCandidatelonPipelonlinelonConfig,
+  relonquelonstQuelonryFelonaturelonHydrator: RelonquelonstQuelonryFelonaturelonHydrator[ScorelondTwelonelontsQuelonry],
+  lastNonPollingTimelonQuelonryFelonaturelonHydrator: LastNonPollingTimelonQuelonryFelonaturelonHydrator,
+  relonalTimelonIntelonractionGraphUselonrVelonrtelonxQuelonryFelonaturelonHydrator: RelonalTimelonIntelonractionGraphUselonrVelonrtelonxQuelonryFelonaturelonHydrator,
+  uselonrStatelonQuelonryFelonaturelonHydrator: UselonrStatelonQuelonryFelonaturelonHydrator,
+  uselonrelonngagelonmelonntRelonalTimelonAggrelongatelonsFelonaturelonHydrator: UselonrelonngagelonmelonntRelonalTimelonAggrelongatelonsFelonaturelonHydrator,
+  twhinUselonrelonngagelonmelonntQuelonryFelonaturelonHydrator: TwhinUselonrelonngagelonmelonntQuelonryFelonaturelonHydrator,
+  twhinUselonrFollowQuelonryFelonaturelonHydrator: TwhinUselonrFollowQuelonryFelonaturelonHydrator,
+  cachelondScorelondTwelonelontsQuelonryFelonaturelonHydrator: CachelondScorelondTwelonelontsQuelonryFelonaturelonHydrator,
+  scorelondTwelonelontsScoringPipelonlinelonConfig: ScorelondTwelonelontsScoringPipelonlinelonConfig,
+  scorelondTwelonelontsWelonightelondScorelonsSumScoringPipelonlinelonConfig: ScorelondTwelonelontsWelonightelondScorelonsSumScoringPipelonlinelonConfig,
+  manhattanTwelonelontImprelonssionsQuelonryFelonaturelonHydrator: TwelonelontImprelonssionsQuelonryFelonaturelonHydrator[
+    ScorelondTwelonelontsQuelonry
   ],
-  memcacheTweetImpressionsQueryFeatureHydrator: ImpressedTweetsQueryFeatureHydrator,
-  publishClientSentImpressionsEventBusSideEffect: PublishClientSentImpressionsEventBusSideEffect,
-  publishClientSentImpressionsManhattanSideEffect: PublishClientSentImpressionsManhattanSideEffect,
-  realGraphInNetworkScoresQueryFeatureHydrator: RealGraphInNetworkScoresQueryFeatureHydrator,
-  realGraphQueryFeatureHydrator: RealGraphQueryFeatureHydrator,
-  userLanguagesFeatureHydrator: UserLanguagesFeatureHydrator,
-  partAAggregateQueryFeatureHydrator: PartAAggregateQueryFeatureHydrator,
-  partBAggregateQueryFeatureHydrator: PartBAggregateQueryFeatureHydrator,
-  cachedScoredTweetsSideEffect: CachedScoredTweetsSideEffect,
-  scribeServedCommonFeaturesAndCandidateFeaturesSideEffect: ScribeServedCommonFeaturesAndCandidateFeaturesSideEffect,
-  updateLastNonPollingTimeSideEffect: UpdateLastNonPollingTimeSideEffect[
-    ScoredTweetsQuery,
-    ScoredTweetsResponse
+  melonmcachelonTwelonelontImprelonssionsQuelonryFelonaturelonHydrator: ImprelonsselondTwelonelontsQuelonryFelonaturelonHydrator,
+  publishClielonntSelonntImprelonssionselonvelonntBusSidelonelonffelonct: PublishClielonntSelonntImprelonssionselonvelonntBusSidelonelonffelonct,
+  publishClielonntSelonntImprelonssionsManhattanSidelonelonffelonct: PublishClielonntSelonntImprelonssionsManhattanSidelonelonffelonct,
+  relonalGraphInNelontworkScorelonsQuelonryFelonaturelonHydrator: RelonalGraphInNelontworkScorelonsQuelonryFelonaturelonHydrator,
+  relonalGraphQuelonryFelonaturelonHydrator: RelonalGraphQuelonryFelonaturelonHydrator,
+  uselonrLanguagelonsFelonaturelonHydrator: UselonrLanguagelonsFelonaturelonHydrator,
+  partAAggrelongatelonQuelonryFelonaturelonHydrator: PartAAggrelongatelonQuelonryFelonaturelonHydrator,
+  partBAggrelongatelonQuelonryFelonaturelonHydrator: PartBAggrelongatelonQuelonryFelonaturelonHydrator,
+  cachelondScorelondTwelonelontsSidelonelonffelonct: CachelondScorelondTwelonelontsSidelonelonffelonct,
+  scribelonSelonrvelondCommonFelonaturelonsAndCandidatelonFelonaturelonsSidelonelonffelonct: ScribelonSelonrvelondCommonFelonaturelonsAndCandidatelonFelonaturelonsSidelonelonffelonct,
+  updatelonLastNonPollingTimelonSidelonelonffelonct: UpdatelonLastNonPollingTimelonSidelonelonffelonct[
+    ScorelondTwelonelontsQuelonry,
+    ScorelondTwelonelontsRelonsponselon
   ],
-  @Flag(TargetFetchLatency) targetFetchLatency: Duration,
-  @Flag(TargetScoringLatency) targetScoringLatency: Duration)
-    extends RecommendationPipelineConfig[
-      ScoredTweetsQuery,
-      TweetCandidate,
-      ScoredTweetsResponse,
-      t.ScoredTweetsResponse
+  @Flag(TargelontFelontchLatelonncy) targelontFelontchLatelonncy: Duration,
+  @Flag(TargelontScoringLatelonncy) targelontScoringLatelonncy: Duration)
+    elonxtelonnds ReloncommelonndationPipelonlinelonConfig[
+      ScorelondTwelonelontsQuelonry,
+      TwelonelontCandidatelon,
+      ScorelondTwelonelontsRelonsponselon,
+      t.ScorelondTwelonelontsRelonsponselon
     ] {
 
-  override val identifier: RecommendationPipelineIdentifier =
-    RecommendationPipelineIdentifier("ScoredTweets")
+  ovelonrridelon val idelonntifielonr: ReloncommelonndationPipelonlinelonIdelonntifielonr =
+    ReloncommelonndationPipelonlinelonIdelonntifielonr("ScorelondTwelonelonts")
 
-  private val scoringStep = RecommendationPipelineConfig.scoringPipelinesStep
+  privatelon val scoringStelonp = ReloncommelonndationPipelonlinelonConfig.scoringPipelonlinelonsStelonp
 
-  override val fetchQueryFeatures: Seq[QueryFeatureHydrator[ScoredTweetsQuery]] = Seq(
-    requestQueryFeatureHydrator,
-    realGraphInNetworkScoresQueryFeatureHydrator,
-    cachedScoredTweetsQueryFeatureHydrator,
-    manhattanTweetImpressionsQueryFeatureHydrator,
-    memcacheTweetImpressionsQueryFeatureHydrator,
-    AsyncQueryFeatureHydrator(scoringStep, realGraphQueryFeatureHydrator),
-    AsyncQueryFeatureHydrator(scoringStep, lastNonPollingTimeQueryFeatureHydrator),
-    AsyncQueryFeatureHydrator(scoringStep, userStateQueryFeatureHydrator),
-    AsyncQueryFeatureHydrator(scoringStep, userLanguagesFeatureHydrator),
-    AsyncQueryFeatureHydrator(scoringStep, userEngagementRealTimeAggregatesFeatureHydrator),
-    AsyncQueryFeatureHydrator(scoringStep, realTimeInteractionGraphUserVertexQueryFeatureHydrator),
-    AsyncQueryFeatureHydrator(scoringStep, twhinUserFollowQueryFeatureHydrator),
-    AsyncQueryFeatureHydrator(scoringStep, twhinUserEngagementQueryFeatureHydrator),
-    AsyncQueryFeatureHydrator(scoringStep, partAAggregateQueryFeatureHydrator),
-    AsyncQueryFeatureHydrator(scoringStep, partBAggregateQueryFeatureHydrator),
+  ovelonrridelon val felontchQuelonryFelonaturelons: Selonq[QuelonryFelonaturelonHydrator[ScorelondTwelonelontsQuelonry]] = Selonq(
+    relonquelonstQuelonryFelonaturelonHydrator,
+    relonalGraphInNelontworkScorelonsQuelonryFelonaturelonHydrator,
+    cachelondScorelondTwelonelontsQuelonryFelonaturelonHydrator,
+    manhattanTwelonelontImprelonssionsQuelonryFelonaturelonHydrator,
+    melonmcachelonTwelonelontImprelonssionsQuelonryFelonaturelonHydrator,
+    AsyncQuelonryFelonaturelonHydrator(scoringStelonp, relonalGraphQuelonryFelonaturelonHydrator),
+    AsyncQuelonryFelonaturelonHydrator(scoringStelonp, lastNonPollingTimelonQuelonryFelonaturelonHydrator),
+    AsyncQuelonryFelonaturelonHydrator(scoringStelonp, uselonrStatelonQuelonryFelonaturelonHydrator),
+    AsyncQuelonryFelonaturelonHydrator(scoringStelonp, uselonrLanguagelonsFelonaturelonHydrator),
+    AsyncQuelonryFelonaturelonHydrator(scoringStelonp, uselonrelonngagelonmelonntRelonalTimelonAggrelongatelonsFelonaturelonHydrator),
+    AsyncQuelonryFelonaturelonHydrator(scoringStelonp, relonalTimelonIntelonractionGraphUselonrVelonrtelonxQuelonryFelonaturelonHydrator),
+    AsyncQuelonryFelonaturelonHydrator(scoringStelonp, twhinUselonrFollowQuelonryFelonaturelonHydrator),
+    AsyncQuelonryFelonaturelonHydrator(scoringStelonp, twhinUselonrelonngagelonmelonntQuelonryFelonaturelonHydrator),
+    AsyncQuelonryFelonaturelonHydrator(scoringStelonp, partAAggrelongatelonQuelonryFelonaturelonHydrator),
+    AsyncQuelonryFelonaturelonHydrator(scoringStelonp, partBAggrelongatelonQuelonryFelonaturelonHydrator),
   )
 
-  override val candidatePipelines: Seq[
-    CandidatePipelineConfig[ScoredTweetsQuery, _, _, TweetCandidate]
-  ] = Seq(
-    cachedScoredTweetsCandidatePipelineConfig,
-    scoredTweetsInNetworkCandidatePipelineConfig,
-    scoredTweetsUtegCandidatePipelineConfig,
-    scoredTweetsCrMixerCandidatePipelineConfig,
-    scoredTweetsFrsCandidatePipelineConfig
+  ovelonrridelon val candidatelonPipelonlinelons: Selonq[
+    CandidatelonPipelonlinelonConfig[ScorelondTwelonelontsQuelonry, _, _, TwelonelontCandidatelon]
+  ] = Selonq(
+    cachelondScorelondTwelonelontsCandidatelonPipelonlinelonConfig,
+    scorelondTwelonelontsInNelontworkCandidatelonPipelonlinelonConfig,
+    scorelondTwelonelontsUtelongCandidatelonPipelonlinelonConfig,
+    scorelondTwelonelontsCrMixelonrCandidatelonPipelonlinelonConfig,
+    scorelondTwelonelontsFrsCandidatelonPipelonlinelonConfig
   )
 
-  override val postCandidatePipelinesSelectors: Seq[Selector[ScoredTweetsQuery]] = Seq(
-    DropDuplicateCandidates(
-      pipelineScope = AllPipelines,
-      duplicationKey = IdAndClassDuplicationKey,
-      mergeStrategy = PickFirstCandidateMerger
+  ovelonrridelon val postCandidatelonPipelonlinelonsSelonlelonctors: Selonq[Selonlelonctor[ScorelondTwelonelontsQuelonry]] = Selonq(
+    DropDuplicatelonCandidatelons(
+      pipelonlinelonScopelon = AllPipelonlinelons,
+      duplicationKelony = IdAndClassDuplicationKelony,
+      melonrgelonStratelongy = PickFirstCandidatelonMelonrgelonr
     ),
-    InsertAppendResults(AllPipelines)
+    InselonrtAppelonndRelonsults(AllPipelonlinelons)
   )
 
-  override val globalFilters: Seq[Filter[ScoredTweetsQuery, TweetCandidate]] = Seq(
-    // sort these to have the "cheaper" filters run first
-    RejectTweetFromViewerFilter,
-    RetweetDeduplicationFilter,
-    PreviouslyServedTweetsFilter,
-    PreviouslySeenTweetsFilter,
-    OutOfNetworkCompetitorFilter
+  ovelonrridelon val globalFiltelonrs: Selonq[Filtelonr[ScorelondTwelonelontsQuelonry, TwelonelontCandidatelon]] = Selonq(
+    // sort thelonselon to havelon thelon "chelonapelonr" filtelonrs run first
+    RelonjelonctTwelonelontFromVielonwelonrFiltelonr,
+    RelontwelonelontDelonduplicationFiltelonr,
+    PrelonviouslySelonrvelondTwelonelontsFiltelonr,
+    PrelonviouslySelonelonnTwelonelontsFiltelonr,
+    OutOfNelontworkCompelontitorFiltelonr
   )
 
-  override val candidatePipelineFailOpenPolicies: Map[CandidatePipelineIdentifier, FailOpenPolicy] =
+  ovelonrridelon val candidatelonPipelonlinelonFailOpelonnPolicielons: Map[CandidatelonPipelonlinelonIdelonntifielonr, FailOpelonnPolicy] =
     Map(
-      cachedScoredTweetsCandidatePipelineConfig.identifier -> FailOpenPolicy.Always,
-      scoredTweetsInNetworkCandidatePipelineConfig.identifier -> FailOpenPolicy.Always,
-      scoredTweetsUtegCandidatePipelineConfig.identifier -> FailOpenPolicy.Always,
-      scoredTweetsCrMixerCandidatePipelineConfig.identifier -> FailOpenPolicy.Always,
-      scoredTweetsFrsCandidatePipelineConfig.identifier -> FailOpenPolicy.Always
+      cachelondScorelondTwelonelontsCandidatelonPipelonlinelonConfig.idelonntifielonr -> FailOpelonnPolicy.Always,
+      scorelondTwelonelontsInNelontworkCandidatelonPipelonlinelonConfig.idelonntifielonr -> FailOpelonnPolicy.Always,
+      scorelondTwelonelontsUtelongCandidatelonPipelonlinelonConfig.idelonntifielonr -> FailOpelonnPolicy.Always,
+      scorelondTwelonelontsCrMixelonrCandidatelonPipelonlinelonConfig.idelonntifielonr -> FailOpelonnPolicy.Always,
+      scorelondTwelonelontsFrsCandidatelonPipelonlinelonConfig.idelonntifielonr -> FailOpelonnPolicy.Always
     )
 
-  override val scoringPipelineFailOpenPolicies: Map[ScoringPipelineIdentifier, FailOpenPolicy] =
+  ovelonrridelon val scoringPipelonlinelonFailOpelonnPolicielons: Map[ScoringPipelonlinelonIdelonntifielonr, FailOpelonnPolicy] =
     Map(
-      ScoredTweetsRescoreOONScoringPipelineConfig.identifier -> FailOpenPolicy.Always,
-      ScoredTweetsRescoreVerifiedAuthorScoringPipelineConfig.identifier -> FailOpenPolicy.Always,
-      ScoredTweetsDiversityScoringPipelineConfig.identifier -> FailOpenPolicy.Always
+      ScorelondTwelonelontsRelonscorelonOONScoringPipelonlinelonConfig.idelonntifielonr -> FailOpelonnPolicy.Always,
+      ScorelondTwelonelontsRelonscorelonVelonrifielondAuthorScoringPipelonlinelonConfig.idelonntifielonr -> FailOpelonnPolicy.Always,
+      ScorelondTwelonelontsDivelonrsityScoringPipelonlinelonConfig.idelonntifielonr -> FailOpelonnPolicy.Always
     )
 
-  private val candidatePipelineQualityFactorConfig = LinearLatencyQualityFactorConfig(
-    qualityFactorBounds = BoundsWithDefault(minInclusive = 0.1, maxInclusive = 1.0, default = 0.4),
-    initialDelay = 60.seconds,
-    targetLatency = targetFetchLatency,
-    targetLatencyPercentile = 95.0,
-    delta = 0.00125
+  privatelon val candidatelonPipelonlinelonQualityFactorConfig = LinelonarLatelonncyQualityFactorConfig(
+    qualityFactorBounds = BoundsWithDelonfault(minInclusivelon = 0.1, maxInclusivelon = 1.0, delonfault = 0.4),
+    initialDelonlay = 60.selonconds,
+    targelontLatelonncy = targelontFelontchLatelonncy,
+    targelontLatelonncyPelonrcelonntilelon = 95.0,
+    delonlta = 0.00125
   )
 
-  private val scoringPipelineQualityFactorConfig =
-    candidatePipelineQualityFactorConfig.copy(targetLatency = targetScoringLatency)
+  privatelon val scoringPipelonlinelonQualityFactorConfig =
+    candidatelonPipelonlinelonQualityFactorConfig.copy(targelontLatelonncy = targelontScoringLatelonncy)
 
-  override val qualityFactorConfigs: Map[ComponentIdentifier, QualityFactorConfig] = Map(
-    // candidate pipelines
-    scoredTweetsInNetworkCandidatePipelineConfig.identifier -> candidatePipelineQualityFactorConfig,
-    scoredTweetsUtegCandidatePipelineConfig.identifier -> candidatePipelineQualityFactorConfig,
-    scoredTweetsCrMixerCandidatePipelineConfig.identifier -> candidatePipelineQualityFactorConfig,
-    scoredTweetsFrsCandidatePipelineConfig.identifier -> candidatePipelineQualityFactorConfig,
-    // scoring pipelines
-    scoredTweetsScoringPipelineConfig.identifier -> scoringPipelineQualityFactorConfig,
+  ovelonrridelon val qualityFactorConfigs: Map[ComponelonntIdelonntifielonr, QualityFactorConfig] = Map(
+    // candidatelon pipelonlinelons
+    scorelondTwelonelontsInNelontworkCandidatelonPipelonlinelonConfig.idelonntifielonr -> candidatelonPipelonlinelonQualityFactorConfig,
+    scorelondTwelonelontsUtelongCandidatelonPipelonlinelonConfig.idelonntifielonr -> candidatelonPipelonlinelonQualityFactorConfig,
+    scorelondTwelonelontsCrMixelonrCandidatelonPipelonlinelonConfig.idelonntifielonr -> candidatelonPipelonlinelonQualityFactorConfig,
+    scorelondTwelonelontsFrsCandidatelonPipelonlinelonConfig.idelonntifielonr -> candidatelonPipelonlinelonQualityFactorConfig,
+    // scoring pipelonlinelons
+    scorelondTwelonelontsScoringPipelonlinelonConfig.idelonntifielonr -> scoringPipelonlinelonQualityFactorConfig,
   )
 
-  override val scoringPipelines: Seq[ScoringPipelineConfig[ScoredTweetsQuery, TweetCandidate]] =
-    Seq(
-      // scoring pipielines - run on non-cached candidates only since cached ones are already scored
-      scoredTweetsScoringPipelineConfig,
-      scoredTweetsWeightedScoresSumScoringPipelineConfig,
-      // re-scoring pipielines - run on all candidates since these are request specific
-      ScoredTweetsRescoreOONScoringPipelineConfig,
-      ScoredTweetsRescoreVerifiedAuthorScoringPipelineConfig,
-      ScoredTweetsDiversityScoringPipelineConfig
+  ovelonrridelon val scoringPipelonlinelons: Selonq[ScoringPipelonlinelonConfig[ScorelondTwelonelontsQuelonry, TwelonelontCandidatelon]] =
+    Selonq(
+      // scoring pipielonlinelons - run on non-cachelond candidatelons only sincelon cachelond onelons arelon alrelonady scorelond
+      scorelondTwelonelontsScoringPipelonlinelonConfig,
+      scorelondTwelonelontsWelonightelondScorelonsSumScoringPipelonlinelonConfig,
+      // relon-scoring pipielonlinelons - run on all candidatelons sincelon thelonselon arelon relonquelonst speloncific
+      ScorelondTwelonelontsRelonscorelonOONScoringPipelonlinelonConfig,
+      ScorelondTwelonelontsRelonscorelonVelonrifielondAuthorScoringPipelonlinelonConfig,
+      ScorelondTwelonelontsDivelonrsityScoringPipelonlinelonConfig
     )
 
-  override val resultSelectors: Seq[Selector[ScoredTweetsQuery]] = Seq(
-    UpdateSortCandidates(AllPipelines, FeatureValueSorter.descending(ScoreFeature)),
-    DropMaxCandidates(AllPipelines, ServerMaxResultsParam),
-    InsertAppendResults(AllPipelines)
+  ovelonrridelon val relonsultSelonlelonctors: Selonq[Selonlelonctor[ScorelondTwelonelontsQuelonry]] = Selonq(
+    UpdatelonSortCandidatelons(AllPipelonlinelons, FelonaturelonValuelonSortelonr.delonscelonnding(ScorelonFelonaturelon)),
+    DropMaxCandidatelons(AllPipelonlinelons, SelonrvelonrMaxRelonsultsParam),
+    InselonrtAppelonndRelonsults(AllPipelonlinelons)
   )
 
-  override val postSelectionFilters = Seq(
-    OutOfNetworkCompetitorURLFilter,
-    KeepBestOutOfNetworkTweetPerAuthorFilter,
+  ovelonrridelon val postSelonlelonctionFiltelonrs = Selonq(
+    OutOfNelontworkCompelontitorURLFiltelonr,
+    KelonelonpBelonstOutOfNelontworkTwelonelontPelonrAuthorFiltelonr,
   )
 
-  override val resultSideEffects: Seq[
-    PipelineResultSideEffect[ScoredTweetsQuery, ScoredTweetsResponse]
-  ] = Seq(
-    cachedScoredTweetsSideEffect,
-    scribeServedCommonFeaturesAndCandidateFeaturesSideEffect,
-    publishClientSentImpressionsEventBusSideEffect,
-    publishClientSentImpressionsManhattanSideEffect,
-    updateLastNonPollingTimeSideEffect
+  ovelonrridelon val relonsultSidelonelonffeloncts: Selonq[
+    PipelonlinelonRelonsultSidelonelonffelonct[ScorelondTwelonelontsQuelonry, ScorelondTwelonelontsRelonsponselon]
+  ] = Selonq(
+    cachelondScorelondTwelonelontsSidelonelonffelonct,
+    scribelonSelonrvelondCommonFelonaturelonsAndCandidatelonFelonaturelonsSidelonelonffelonct,
+    publishClielonntSelonntImprelonssionselonvelonntBusSidelonelonffelonct,
+    publishClielonntSelonntImprelonssionsManhattanSidelonelonffelonct,
+    updatelonLastNonPollingTimelonSidelonelonffelonct
   )
 
-  override val domainMarshaller: DomainMarshaller[
-    ScoredTweetsQuery,
-    ScoredTweetsResponse
-  ] = ScoredTweetsResponseDomainMarshaller
+  ovelonrridelon val domainMarshallelonr: DomainMarshallelonr[
+    ScorelondTwelonelontsQuelonry,
+    ScorelondTwelonelontsRelonsponselon
+  ] = ScorelondTwelonelontsRelonsponselonDomainMarshallelonr
 
-  override val transportMarshaller: TransportMarshaller[
-    ScoredTweetsResponse,
-    t.ScoredTweetsResponse
-  ] = ScoredTweetsResponseTransportMarshaller
+  ovelonrridelon val transportMarshallelonr: TransportMarshallelonr[
+    ScorelondTwelonelontsRelonsponselon,
+    t.ScorelondTwelonelontsRelonsponselon
+  ] = ScorelondTwelonelontsRelonsponselonTransportMarshallelonr
 }

@@ -1,101 +1,101 @@
-package com.twitter.recos.user_tweet_entity_graph
+packagelon com.twittelonr.reloncos.uselonr_twelonelont_elonntity_graph
 
-import com.twitter.finagle.tracing.Trace
-import com.twitter.logging.Logger
-import com.twitter.recos.user_tweet_entity_graph.thriftscala._
-import com.twitter.util.Future
+import com.twittelonr.finaglelon.tracing.Tracelon
+import com.twittelonr.logging.Loggelonr
+import com.twittelonr.reloncos.uselonr_twelonelont_elonntity_graph.thriftscala._
+import com.twittelonr.util.Futurelon
 
-trait LoggingUserTweetEntityGraph extends thriftscala.UserTweetEntityGraph.MethodPerEndpoint {
-  private[this] val accessLog = Logger("access")
+trait LoggingUselonrTwelonelontelonntityGraph elonxtelonnds thriftscala.UselonrTwelonelontelonntityGraph.MelonthodPelonrelonndpoint {
+  privatelon[this] val accelonssLog = Loggelonr("accelonss")
 
-  abstract override def recommendTweets(
-    request: RecommendTweetEntityRequest
-  ): Future[RecommendTweetEntityResponse] = {
-    val time = System.currentTimeMillis
-    super.recommendTweets(request) onSuccess { resp =>
-      accessLog.info(
-        "%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\tRecommendTweetResponse size: %s\t%s in %d ms"
+  abstract ovelonrridelon delonf reloncommelonndTwelonelonts(
+    relonquelonst: ReloncommelonndTwelonelontelonntityRelonquelonst
+  ): Futurelon[ReloncommelonndTwelonelontelonntityRelonsponselon] = {
+    val timelon = Systelonm.currelonntTimelonMillis
+    supelonr.reloncommelonndTwelonelonts(relonquelonst) onSuccelonss { relonsp =>
+      accelonssLog.info(
+        "%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\tReloncommelonndTwelonelontRelonsponselon sizelon: %s\t%s in %d ms"
           .format(
-            time,
-            Trace.id.toString(),
-            request.requesterId,
-            request.displayLocation,
-            request.recommendationTypes,
-            request.maxResultsByType,
-            request.excludedTweetIds.map(_.take(5)),
-            request.excludedTweetIds.map(_.size),
-            request.seedsWithWeights.take(5),
-            request.seedsWithWeights.size,
-            request.maxTweetAgeInMillis,
-            request.maxUserSocialProofSize,
-            request.maxTweetSocialProofSize,
-            request.minUserSocialProofSizes,
-            request.tweetTypes,
-            request.socialProofTypes,
-            request.socialProofTypeUnions,
-            resp.recommendations.size,
-            resp.recommendations.take(20).toList map {
-              case UserTweetEntityRecommendationUnion.TweetRec(tweetRec) =>
-                (tweetRec.tweetId, tweetRec.socialProofByType.map { case (k, v) => (k, v.size) })
-              case UserTweetEntityRecommendationUnion.HashtagRec(hashtagRec) =>
-                (hashtagRec.id, hashtagRec.socialProofByType.map { case (k, v) => (k, v.size) })
-              case UserTweetEntityRecommendationUnion.UrlRec(urlRec) =>
-                (urlRec.id, urlRec.socialProofByType.map { case (k, v) => (k, v.size) })
-              case _ =>
-                throw new Exception("Unsupported recommendation types")
+            timelon,
+            Tracelon.id.toString(),
+            relonquelonst.relonquelonstelonrId,
+            relonquelonst.displayLocation,
+            relonquelonst.reloncommelonndationTypelons,
+            relonquelonst.maxRelonsultsByTypelon,
+            relonquelonst.elonxcludelondTwelonelontIds.map(_.takelon(5)),
+            relonquelonst.elonxcludelondTwelonelontIds.map(_.sizelon),
+            relonquelonst.selonelondsWithWelonights.takelon(5),
+            relonquelonst.selonelondsWithWelonights.sizelon,
+            relonquelonst.maxTwelonelontAgelonInMillis,
+            relonquelonst.maxUselonrSocialProofSizelon,
+            relonquelonst.maxTwelonelontSocialProofSizelon,
+            relonquelonst.minUselonrSocialProofSizelons,
+            relonquelonst.twelonelontTypelons,
+            relonquelonst.socialProofTypelons,
+            relonquelonst.socialProofTypelonUnions,
+            relonsp.reloncommelonndations.sizelon,
+            relonsp.reloncommelonndations.takelon(20).toList map {
+              caselon UselonrTwelonelontelonntityReloncommelonndationUnion.TwelonelontRelonc(twelonelontRelonc) =>
+                (twelonelontRelonc.twelonelontId, twelonelontRelonc.socialProofByTypelon.map { caselon (k, v) => (k, v.sizelon) })
+              caselon UselonrTwelonelontelonntityReloncommelonndationUnion.HashtagRelonc(hashtagRelonc) =>
+                (hashtagRelonc.id, hashtagRelonc.socialProofByTypelon.map { caselon (k, v) => (k, v.sizelon) })
+              caselon UselonrTwelonelontelonntityReloncommelonndationUnion.UrlRelonc(urlRelonc) =>
+                (urlRelonc.id, urlRelonc.socialProofByTypelon.map { caselon (k, v) => (k, v.sizelon) })
+              caselon _ =>
+                throw nelonw elonxcelonption("Unsupportelond reloncommelonndation typelons")
             },
-            System.currentTimeMillis - time
+            Systelonm.currelonntTimelonMillis - timelon
           )
       )
-    } onFailure { exc =>
-      accessLog.error(
+    } onFailurelon { elonxc =>
+      accelonssLog.elonrror(
         "%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s in %d ms".format(
-          time,
-          Trace.id.toString(),
-          request.requesterId,
-          request.displayLocation,
-          request.recommendationTypes,
-          request.maxResultsByType,
-          request.excludedTweetIds.map(_.take(5)),
-          request.excludedTweetIds.map(_.size),
-          request.seedsWithWeights.take(5),
-          request.seedsWithWeights.size,
-          request.maxTweetAgeInMillis,
-          request.maxUserSocialProofSize,
-          request.maxTweetSocialProofSize,
-          request.minUserSocialProofSizes,
-          request.tweetTypes,
-          request.socialProofTypes,
-          request.socialProofTypeUnions,
-          exc,
-          System.currentTimeMillis - time
+          timelon,
+          Tracelon.id.toString(),
+          relonquelonst.relonquelonstelonrId,
+          relonquelonst.displayLocation,
+          relonquelonst.reloncommelonndationTypelons,
+          relonquelonst.maxRelonsultsByTypelon,
+          relonquelonst.elonxcludelondTwelonelontIds.map(_.takelon(5)),
+          relonquelonst.elonxcludelondTwelonelontIds.map(_.sizelon),
+          relonquelonst.selonelondsWithWelonights.takelon(5),
+          relonquelonst.selonelondsWithWelonights.sizelon,
+          relonquelonst.maxTwelonelontAgelonInMillis,
+          relonquelonst.maxUselonrSocialProofSizelon,
+          relonquelonst.maxTwelonelontSocialProofSizelon,
+          relonquelonst.minUselonrSocialProofSizelons,
+          relonquelonst.twelonelontTypelons,
+          relonquelonst.socialProofTypelons,
+          relonquelonst.socialProofTypelonUnions,
+          elonxc,
+          Systelonm.currelonntTimelonMillis - timelon
         )
       )
     }
   }
 
-  abstract override def findTweetSocialProofs(
-    request: SocialProofRequest
-  ): Future[SocialProofResponse] = {
-    val time = System.currentTimeMillis
-    super.findTweetSocialProofs(request) onSuccess { resp =>
-      accessLog.info(
-        "%s\t%s\t%d\tResponse: %s\tin %d ms".format(
-          Trace.id.toString,
-          request.requesterId,
-          request.seedsWithWeights.size,
-          resp.socialProofResults.toList,
-          System.currentTimeMillis - time
+  abstract ovelonrridelon delonf findTwelonelontSocialProofs(
+    relonquelonst: SocialProofRelonquelonst
+  ): Futurelon[SocialProofRelonsponselon] = {
+    val timelon = Systelonm.currelonntTimelonMillis
+    supelonr.findTwelonelontSocialProofs(relonquelonst) onSuccelonss { relonsp =>
+      accelonssLog.info(
+        "%s\t%s\t%d\tRelonsponselon: %s\tin %d ms".format(
+          Tracelon.id.toString,
+          relonquelonst.relonquelonstelonrId,
+          relonquelonst.selonelondsWithWelonights.sizelon,
+          relonsp.socialProofRelonsults.toList,
+          Systelonm.currelonntTimelonMillis - timelon
         )
       )
-    } onFailure { exc =>
-      accessLog.info(
-        "%s\t%s\t%d\tException: %s\tin %d ms".format(
-          Trace.id.toString,
-          request.requesterId,
-          request.seedsWithWeights.size,
-          exc,
-          System.currentTimeMillis - time
+    } onFailurelon { elonxc =>
+      accelonssLog.info(
+        "%s\t%s\t%d\telonxcelonption: %s\tin %d ms".format(
+          Tracelon.id.toString,
+          relonquelonst.relonquelonstelonrId,
+          relonquelonst.selonelondsWithWelonights.sizelon,
+          elonxc,
+          Systelonm.currelonntTimelonMillis - timelon
         )
       )
     }

@@ -1,56 +1,56 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.timeline_module
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.timelonlinelon_modulelon
 
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.EntryNamespace
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineModule
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.timeline_module.BaseModuleDisplayTypeBuilder
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.timeline_module.BaseModuleFooterBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.timeline_module.BaseModuleHeaderBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.timeline_module.BaseModuleMetadataBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.timeline_module.BaseModuleShowMoreBehaviorBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.timeline_module.BaseTimelineModuleBuilder
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.elonntryNamelonspacelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.TimelonlinelonModulelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.timelonlinelon_modulelon.BaselonModulelonDisplayTypelonBuildelonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.melontadata.BaselonClielonntelonvelonntInfoBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.melontadata.BaselonFelonelondbackActionInfoBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.timelonlinelon_modulelon.BaselonModulelonFootelonrBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.timelonlinelon_modulelon.BaselonModulelonHelonadelonrBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.timelonlinelon_modulelon.BaselonModulelonMelontadataBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.timelonlinelon_modulelon.BaselonModulelonShowMorelonBelonhaviorBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.timelonlinelon_modulelon.BaselonTimelonlinelonModulelonBuildelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
 
-case class TimelineModuleBuilder[-Query <: PipelineQuery, -Candidate <: UniversalNoun[Any]](
-  entryNamespace: EntryNamespace,
-  displayTypeBuilder: BaseModuleDisplayTypeBuilder[Query, Candidate],
-  clientEventInfoBuilder: BaseClientEventInfoBuilder[Query, Candidate],
-  moduleIdGeneration: ModuleIdGeneration = AutomaticUniqueModuleId(),
-  feedbackActionInfoBuilder: Option[
-    BaseFeedbackActionInfoBuilder[Query, Candidate]
-  ] = None,
-  headerBuilder: Option[BaseModuleHeaderBuilder[Query, Candidate]] = None,
-  footerBuilder: Option[BaseModuleFooterBuilder[Query, Candidate]] = None,
-  metadataBuilder: Option[BaseModuleMetadataBuilder[Query, Candidate]] = None,
-  showMoreBehaviorBuilder: Option[BaseModuleShowMoreBehaviorBuilder[Query, Candidate]] = None)
-    extends BaseTimelineModuleBuilder[Query, Candidate] {
+caselon class TimelonlinelonModulelonBuildelonr[-Quelonry <: PipelonlinelonQuelonry, -Candidatelon <: UnivelonrsalNoun[Any]](
+  elonntryNamelonspacelon: elonntryNamelonspacelon,
+  displayTypelonBuildelonr: BaselonModulelonDisplayTypelonBuildelonr[Quelonry, Candidatelon],
+  clielonntelonvelonntInfoBuildelonr: BaselonClielonntelonvelonntInfoBuildelonr[Quelonry, Candidatelon],
+  modulelonIdGelonnelonration: ModulelonIdGelonnelonration = AutomaticUniquelonModulelonId(),
+  felonelondbackActionInfoBuildelonr: Option[
+    BaselonFelonelondbackActionInfoBuildelonr[Quelonry, Candidatelon]
+  ] = Nonelon,
+  helonadelonrBuildelonr: Option[BaselonModulelonHelonadelonrBuildelonr[Quelonry, Candidatelon]] = Nonelon,
+  footelonrBuildelonr: Option[BaselonModulelonFootelonrBuildelonr[Quelonry, Candidatelon]] = Nonelon,
+  melontadataBuildelonr: Option[BaselonModulelonMelontadataBuildelonr[Quelonry, Candidatelon]] = Nonelon,
+  showMorelonBelonhaviorBuildelonr: Option[BaselonModulelonShowMorelonBelonhaviorBuildelonr[Quelonry, Candidatelon]] = Nonelon)
+    elonxtelonnds BaselonTimelonlinelonModulelonBuildelonr[Quelonry, Candidatelon] {
 
-  override def apply(
-    query: Query,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): TimelineModule = {
-    val firstCandidate = candidates.head
-    TimelineModule(
-      id = moduleIdGeneration.moduleId,
-      // Sort indexes are automatically set in the domain marshaller phase
-      sortIndex = None,
-      entryNamespace = entryNamespace,
-      // Modules should not need an element by default; only items should
-      clientEventInfo =
-        clientEventInfoBuilder(query, firstCandidate.candidate, firstCandidate.features, None),
-      feedbackActionInfo = feedbackActionInfoBuilder.flatMap(
-        _.apply(query, firstCandidate.candidate, firstCandidate.features)),
-      isPinned = None,
-      // Items are automatically set in the domain marshaller phase
-      items = Seq.empty,
-      displayType = displayTypeBuilder(query, candidates),
-      header = headerBuilder.flatMap(_.apply(query, candidates)),
-      footer = footerBuilder.flatMap(_.apply(query, candidates)),
-      metadata = metadataBuilder.map(_.apply(query, candidates)),
-      showMoreBehavior = showMoreBehaviorBuilder.map(_.apply(query, candidates))
+  ovelonrridelon delonf apply(
+    quelonry: Quelonry,
+    candidatelons: Selonq[CandidatelonWithFelonaturelons[Candidatelon]]
+  ): TimelonlinelonModulelon = {
+    val firstCandidatelon = candidatelons.helonad
+    TimelonlinelonModulelon(
+      id = modulelonIdGelonnelonration.modulelonId,
+      // Sort indelonxelons arelon automatically selont in thelon domain marshallelonr phaselon
+      sortIndelonx = Nonelon,
+      elonntryNamelonspacelon = elonntryNamelonspacelon,
+      // Modulelons should not nelonelond an elonlelonmelonnt by delonfault; only itelonms should
+      clielonntelonvelonntInfo =
+        clielonntelonvelonntInfoBuildelonr(quelonry, firstCandidatelon.candidatelon, firstCandidatelon.felonaturelons, Nonelon),
+      felonelondbackActionInfo = felonelondbackActionInfoBuildelonr.flatMap(
+        _.apply(quelonry, firstCandidatelon.candidatelon, firstCandidatelon.felonaturelons)),
+      isPinnelond = Nonelon,
+      // Itelonms arelon automatically selont in thelon domain marshallelonr phaselon
+      itelonms = Selonq.elonmpty,
+      displayTypelon = displayTypelonBuildelonr(quelonry, candidatelons),
+      helonadelonr = helonadelonrBuildelonr.flatMap(_.apply(quelonry, candidatelons)),
+      footelonr = footelonrBuildelonr.flatMap(_.apply(quelonry, candidatelons)),
+      melontadata = melontadataBuildelonr.map(_.apply(quelonry, candidatelons)),
+      showMorelonBelonhavior = showMorelonBelonhaviorBuildelonr.map(_.apply(quelonry, candidatelons))
     )
   }
 }

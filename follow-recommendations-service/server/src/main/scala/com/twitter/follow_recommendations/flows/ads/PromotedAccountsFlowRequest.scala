@@ -1,33 +1,33 @@
-package com.twitter.follow_recommendations.flows.ads
-import com.twitter.follow_recommendations.common.clients.adserver.AdRequest
-import com.twitter.follow_recommendations.common.models.DisplayLocation
-import com.twitter.follow_recommendations.common.models.HasDisplayLocation
-import com.twitter.follow_recommendations.common.models.HasExcludedUserIds
-import com.twitter.product_mixer.core.model.marshalling.request.ClientContext
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.timelines.configapi.Params
+packagelon com.twittelonr.follow_reloncommelonndations.flows.ads
+import com.twittelonr.follow_reloncommelonndations.common.clielonnts.adselonrvelonr.AdRelonquelonst
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.DisplayLocation
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.HasDisplayLocation
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.HaselonxcludelondUselonrIds
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.ClielonntContelonxt
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.HasClielonntContelonxt
+import com.twittelonr.timelonlinelons.configapi.HasParams
+import com.twittelonr.timelonlinelons.configapi.Params
 
-case class PromotedAccountsFlowRequest(
-  override val clientContext: ClientContext,
-  override val params: Params,
+caselon class PromotelondAccountsFlowRelonquelonst(
+  ovelonrridelon val clielonntContelonxt: ClielonntContelonxt,
+  ovelonrridelon val params: Params,
   displayLocation: DisplayLocation,
-  profileId: Option[Long],
-  // note we also add userId and profileId to excludeUserIds
-  excludeIds: Seq[Long])
-    extends HasParams
-    with HasClientContext
-    with HasExcludedUserIds
+  profilelonId: Option[Long],
+  // notelon welon also add uselonrId and profilelonId to elonxcludelonUselonrIds
+  elonxcludelonIds: Selonq[Long])
+    elonxtelonnds HasParams
+    with HasClielonntContelonxt
+    with HaselonxcludelondUselonrIds
     with HasDisplayLocation {
-  def toAdsRequest(fetchProductionPromotedAccounts: Boolean): AdRequest = {
-    AdRequest(
-      clientContext = clientContext,
+  delonf toAdsRelonquelonst(felontchProductionPromotelondAccounts: Boolelonan): AdRelonquelonst = {
+    AdRelonquelonst(
+      clielonntContelonxt = clielonntContelonxt,
       displayLocation = displayLocation,
-      isTest = Some(!fetchProductionPromotedAccounts),
-      profileUserId = profileId
+      isTelonst = Somelon(!felontchProductionPromotelondAccounts),
+      profilelonUselonrId = profilelonId
     )
   }
-  override val excludedUserIds: Seq[Long] = {
-    excludeIds ++ clientContext.userId.toSeq ++ profileId.toSeq
+  ovelonrridelon val elonxcludelondUselonrIds: Selonq[Long] = {
+    elonxcludelonIds ++ clielonntContelonxt.uselonrId.toSelonq ++ profilelonId.toSelonq
   }
 }

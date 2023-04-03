@@ -1,12 +1,12 @@
 scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
+    sourcelons = ["*.scala"],
+    compilelonr_option_selonts = ["fatal_warnings"],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "ann/src/main/scala/com/twitter/ann/common",
-        "ann/src/main/scala/com/twitter/ann/serialization",
-        "ann/src/main/thrift/com/twitter/ann/serialization:serialization-scala",
-        "src/java/com/twitter/search/common/file",
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        "ann/src/main/scala/com/twittelonr/ann/common",
+        "ann/src/main/scala/com/twittelonr/ann/selonrialization",
+        "ann/src/main/thrift/com/twittelonr/ann/selonrialization:selonrialization-scala",
+        "src/java/com/twittelonr/selonarch/common/filelon",
     ],
 )

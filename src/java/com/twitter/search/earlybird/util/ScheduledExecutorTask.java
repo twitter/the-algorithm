@@ -1,27 +1,27 @@
-package com.twitter.search.earlybird.util;
+packagelon com.twittelonr.selonarch.elonarlybird.util;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.metrics.SearchCounter;
+import com.twittelonr.common.util.Clock;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
 
-public abstract class ScheduledExecutorTask implements Runnable {
-  private final SearchCounter counter;
-  protected final Clock clock;
+public abstract class SchelondulelondelonxeloncutorTask implelonmelonnts Runnablelon {
+  privatelon final SelonarchCountelonr countelonr;
+  protelonctelond final Clock clock;
 
-  public ScheduledExecutorTask(SearchCounter counter, Clock clock) {
-    Preconditions.checkNotNull(counter);
-    this.counter = counter;
+  public SchelondulelondelonxeloncutorTask(SelonarchCountelonr countelonr, Clock clock) {
+    Prelonconditions.chelonckNotNull(countelonr);
+    this.countelonr = countelonr;
     this.clock = clock;
   }
 
-  @Override
+  @Ovelonrridelon
   public final void run() {
-    counter.increment();
-    runOneIteration();
+    countelonr.increlonmelonnt();
+    runOnelonItelonration();
   }
 
-  @VisibleForTesting
-  protected abstract void runOneIteration();
+  @VisiblelonForTelonsting
+  protelonctelond abstract void runOnelonItelonration();
 }

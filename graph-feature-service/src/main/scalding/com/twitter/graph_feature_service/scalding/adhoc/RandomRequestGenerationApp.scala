@@ -1,75 +1,75 @@
-package com.twitter.graph_feature_service.scalding.adhoc
+packagelon com.twittelonr.graph_felonaturelon_selonrvicelon.scalding.adhoc
 
-import com.twitter.bijection.Injection
-import com.twitter.frigate.common.constdb_util.Injections
-import com.twitter.ml.api.Feature.Discrete
-import com.twitter.ml.api.{DailySuffixFeatureSource, DataSetPipe, RichDataRecord}
-import com.twitter.scalding._
-import com.twitter.scalding_internal.job.TwitterExecutionApp
-import java.nio.ByteBuffer
-import java.util.TimeZone
+import com.twittelonr.bijelonction.Injelonction
+import com.twittelonr.frigatelon.common.constdb_util.Injelonctions
+import com.twittelonr.ml.api.Felonaturelon.Discrelontelon
+import com.twittelonr.ml.api.{DailySuffixFelonaturelonSourcelon, DataSelontPipelon, RichDataReloncord}
+import com.twittelonr.scalding._
+import com.twittelonr.scalding_intelonrnal.job.TwittelonrelonxeloncutionApp
+import java.nio.BytelonBuffelonr
+import java.util.TimelonZonelon
 
-object RandomRequestGenerationJob {
-  implicit val timeZone: TimeZone = DateOps.UTC
-  implicit val dateParser: DateParser = DateParser.default
+objelonct RandomRelonquelonstGelonnelonrationJob {
+  implicit val timelonZonelon: TimelonZonelon = DatelonOps.UTC
+  implicit val datelonParselonr: DatelonParselonr = DatelonParselonr.delonfault
 
-  val timelineRecapDataSetPath: String =
-    "/atla/proc2/user/timelines/processed/suggests/recap/data_records"
+  val timelonlinelonReloncapDataSelontPath: String =
+    "/atla/proc2/uselonr/timelonlinelons/procelonsselond/suggelonsts/reloncap/data_reloncords"
 
-  val USER_ID = new Discrete("meta.user_id")
-  val AUTHOR_ID = new Discrete("meta.author_id")
+  val USelonR_ID = nelonw Discrelontelon("melonta.uselonr_id")
+  val AUTHOR_ID = nelonw Discrelontelon("melonta.author_id")
 
-  val timelineRecapOutPutPath: String = "/user/cassowary/gfs/adhoc/timeline_data"
+  val timelonlinelonReloncapOutPutPath: String = "/uselonr/cassowary/gfs/adhoc/timelonlinelon_data"
 
-  implicit val inj: Injection[Long, ByteBuffer] = Injections.long2Varint
+  implicit val inj: Injelonction[Long, BytelonBuffelonr] = Injelonctions.long2Varint
 
-  def run(
-    dataSetPath: String,
+  delonf run(
+    dataSelontPath: String,
     outPutPath: String,
-    numOfPairsToTake: Int
+    numOfPairsToTakelon: Int
   )(
-    implicit dateRange: DateRange,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+    implicit datelonRangelon: DatelonRangelon,
+    uniquelonID: UniquelonID
+  ): elonxeloncution[Unit] = {
 
-    val NumUserAuthorPairs = Stat("NumUserAuthorPairs")
+    val NumUselonrAuthorPairs = Stat("NumUselonrAuthorPairs")
 
-    val dataSet: DataSetPipe = DailySuffixFeatureSource(dataSetPath).read
+    val dataSelont: DataSelontPipelon = DailySuffixFelonaturelonSourcelon(dataSelontPath).relonad
 
-    val userAuthorPairs: TypedPipe[(Long, Long)] = dataSet.records.map { record =>
-      val richRecord = new RichDataRecord(record, dataSet.featureContext)
+    val uselonrAuthorPairs: TypelondPipelon[(Long, Long)] = dataSelont.reloncords.map { reloncord =>
+      val richReloncord = nelonw RichDataReloncord(reloncord, dataSelont.felonaturelonContelonxt)
 
-      val userId = richRecord.getFeatureValue(USER_ID)
-      val authorId = richRecord.getFeatureValue(AUTHOR_ID)
-      NumUserAuthorPairs.inc()
-      (userId, authorId)
+      val uselonrId = richReloncord.gelontFelonaturelonValuelon(USelonR_ID)
+      val authorId = richReloncord.gelontFelonaturelonValuelon(AUTHOR_ID)
+      NumUselonrAuthorPairs.inc()
+      (uselonrId, authorId)
     }
 
-    userAuthorPairs
-      .limit(numOfPairsToTake)
-      .writeExecution(
-        TypedTsv[(Long, Long)](outPutPath)
+    uselonrAuthorPairs
+      .limit(numOfPairsToTakelon)
+      .writelonelonxeloncution(
+        TypelondTsv[(Long, Long)](outPutPath)
       )
   }
 }
 
 /**
- * ./bazel bundle graph-feature-service/src/main/scalding/com/twitter/graph_feature_service/scalding/adhoc:all
+ * ./bazelonl bundlelon graph-felonaturelon-selonrvicelon/src/main/scalding/com/twittelonr/graph_felonaturelon_selonrvicelon/scalding/adhoc:all
  *
- * oscar hdfs --screen --user cassowary --tee gfs_log --bundle gfs_random_request-adhoc \
-      --tool com.twitter.graph_feature_service.scalding.adhoc.RandomRequestGenerationApp \
-      -- --date 2018-08-11  \
-      --input /atla/proc2/user/timelines/processed/suggests/recap/data_records \
-      --output /user/cassowary/gfs/adhoc/timeline_data
+ * oscar hdfs --screlonelonn --uselonr cassowary --telonelon gfs_log --bundlelon gfs_random_relonquelonst-adhoc \
+      --tool com.twittelonr.graph_felonaturelon_selonrvicelon.scalding.adhoc.RandomRelonquelonstGelonnelonrationApp \
+      -- --datelon 2018-08-11  \
+      --input /atla/proc2/uselonr/timelonlinelons/procelonsselond/suggelonsts/reloncap/data_reloncords \
+      --output /uselonr/cassowary/gfs/adhoc/timelonlinelon_data
  */
-object RandomRequestGenerationApp extends TwitterExecutionApp {
-  import RandomRequestGenerationJob._
-  override def job: Execution[Unit] = Execution.withId { implicit uniqueId =>
-    Execution.getArgs.flatMap { args: Args =>
-      implicit val dateRange: DateRange = DateRange.parse(args.list("date"))(timeZone, dateParser)
+objelonct RandomRelonquelonstGelonnelonrationApp elonxtelonnds TwittelonrelonxeloncutionApp {
+  import RandomRelonquelonstGelonnelonrationJob._
+  ovelonrridelon delonf job: elonxeloncution[Unit] = elonxeloncution.withId { implicit uniquelonId =>
+    elonxeloncution.gelontArgs.flatMap { args: Args =>
+      implicit val datelonRangelon: DatelonRangelon = DatelonRangelon.parselon(args.list("datelon"))(timelonZonelon, datelonParselonr)
       run(
-        args.optional("input").getOrElse(timelineRecapDataSetPath),
-        args.optional("output").getOrElse(timelineRecapOutPutPath),
+        args.optional("input").gelontOrelonlselon(timelonlinelonReloncapDataSelontPath),
+        args.optional("output").gelontOrelonlselon(timelonlinelonReloncapOutPutPath),
         args.int("num_pairs", 3000)
       )
     }

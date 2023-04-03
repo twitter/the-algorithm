@@ -1,3 +1,3 @@
-package com.twitter.product_mixer.core.model.common.presentation
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation
 
-trait ModulePresentation extends UniversalPresentation
+trait ModulelonPrelonselonntation elonxtelonnds UnivelonrsalPrelonselonntation

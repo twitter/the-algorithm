@@ -1,40 +1,40 @@
-package com.twitter.follow_recommendations.common.candidate_sources.salsa
+packagelon com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.salsa
 
-import com.twitter.follow_recommendations.common.clients.real_time_real_graph.RealTimeRealGraphClient
-import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.stitch.Stitch
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.follow_reloncommelonndations.common.clielonnts.relonal_timelon_relonal_graph.RelonalTimelonRelonalGraphClielonnt
+import com.twittelonr.helonrmit.modelonl.Algorithm
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonSourcelonIdelonntifielonr
+import com.twittelonr.stitch.Stitch
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class RecentEngagementDirectFollowSalsaExpansionSource @Inject() (
-  realTimeRealGraphClient: RealTimeRealGraphClient,
-  salsaExpander: SalsaExpander)
-    extends SalsaExpansionBasedCandidateSource[Long](salsaExpander) {
+@Singlelonton
+class ReloncelonntelonngagelonmelonntDirelonctFollowSalsaelonxpansionSourcelon @Injelonct() (
+  relonalTimelonRelonalGraphClielonnt: RelonalTimelonRelonalGraphClielonnt,
+  salsaelonxpandelonr: Salsaelonxpandelonr)
+    elonxtelonnds SalsaelonxpansionBaselondCandidatelonSourcelon[Long](salsaelonxpandelonr) {
 
-  override val identifier: CandidateSourceIdentifier =
-    RecentEngagementDirectFollowSalsaExpansionSource.Identifier
+  ovelonrridelon val idelonntifielonr: CandidatelonSourcelonIdelonntifielonr =
+    ReloncelonntelonngagelonmelonntDirelonctFollowSalsaelonxpansionSourcelon.Idelonntifielonr
 
-  override def firstDegreeNodes(target: Long): Stitch[Seq[Long]] = realTimeRealGraphClient
-    .getUsersRecentlyEngagedWith(
-      target,
-      RealTimeRealGraphClient.EngagementScoreMap,
-      includeDirectFollowCandidates = true,
-      includeNonDirectFollowCandidates = false
-    ).map { recentlyFollowed =>
-      recentlyFollowed
-        .take(RecentEngagementDirectFollowSalsaExpansionSource.NumFirstDegreeNodesToRetrieve)
+  ovelonrridelon delonf firstDelongrelonelonNodelons(targelont: Long): Stitch[Selonq[Long]] = relonalTimelonRelonalGraphClielonnt
+    .gelontUselonrsReloncelonntlyelonngagelondWith(
+      targelont,
+      RelonalTimelonRelonalGraphClielonnt.elonngagelonmelonntScorelonMap,
+      includelonDirelonctFollowCandidatelons = truelon,
+      includelonNonDirelonctFollowCandidatelons = falselon
+    ).map { reloncelonntlyFollowelond =>
+      reloncelonntlyFollowelond
+        .takelon(ReloncelonntelonngagelonmelonntDirelonctFollowSalsaelonxpansionSourcelon.NumFirstDelongrelonelonNodelonsToRelontrielonvelon)
         .map(_.id)
     }
 
-  override def maxResults(target: Long): Int =
-    RecentEngagementDirectFollowSalsaExpansionSource.OutputSize
+  ovelonrridelon delonf maxRelonsults(targelont: Long): Int =
+    ReloncelonntelonngagelonmelonntDirelonctFollowSalsaelonxpansionSourcelon.OutputSizelon
 }
 
-object RecentEngagementDirectFollowSalsaExpansionSource {
-  val Identifier: CandidateSourceIdentifier = CandidateSourceIdentifier(
-    Algorithm.RecentEngagementSarusOcCur.toString)
-  val NumFirstDegreeNodesToRetrieve = 10
-  val OutputSize = 200
+objelonct ReloncelonntelonngagelonmelonntDirelonctFollowSalsaelonxpansionSourcelon {
+  val Idelonntifielonr: CandidatelonSourcelonIdelonntifielonr = CandidatelonSourcelonIdelonntifielonr(
+    Algorithm.ReloncelonntelonngagelonmelonntSarusOcCur.toString)
+  val NumFirstDelongrelonelonNodelonsToRelontrielonvelon = 10
+  val OutputSizelon = 200
 }

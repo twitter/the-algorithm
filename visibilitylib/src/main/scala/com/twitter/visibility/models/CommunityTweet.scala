@@ -1,23 +1,23 @@
-package com.twitter.visibility.models
+packagelon com.twittelonr.visibility.modelonls
 
-import com.twitter.tweetypie.thriftscala.Communities
-import com.twitter.tweetypie.thriftscala.Tweet
+import com.twittelonr.twelonelontypielon.thriftscala.Communitielons
+import com.twittelonr.twelonelontypielon.thriftscala.Twelonelont
 
-object CommunityTweet {
-  def getCommunityId(communities: Communities): Option[CommunityId] =
-    communities.communityIds.headOption
+objelonct CommunityTwelonelont {
+  delonf gelontCommunityId(communitielons: Communitielons): Option[CommunityId] =
+    communitielons.communityIds.helonadOption
 
-  def getCommunityId(tweet: Tweet): Option[CommunityId] =
-    tweet.communities.flatMap(getCommunityId)
+  delonf gelontCommunityId(twelonelont: Twelonelont): Option[CommunityId] =
+    twelonelont.communitielons.flatMap(gelontCommunityId)
 
-  def apply(tweet: Tweet): Option[CommunityTweet] =
-    getCommunityId(tweet).map { communityId =>
-      val authorId = tweet.coreData.get.userId
-      CommunityTweet(tweet, communityId, authorId)
+  delonf apply(twelonelont: Twelonelont): Option[CommunityTwelonelont] =
+    gelontCommunityId(twelonelont).map { communityId =>
+      val authorId = twelonelont.corelonData.gelont.uselonrId
+      CommunityTwelonelont(twelonelont, communityId, authorId)
     }
 }
 
-case class CommunityTweet(
-  tweet: Tweet,
+caselon class CommunityTwelonelont(
+  twelonelont: Twelonelont,
   communityId: CommunityId,
   authorId: Long)

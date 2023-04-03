@@ -1,63 +1,63 @@
-package com.twitter.timelines.data_processing.ad_hoc.earlybird_ranking.training_data_generation
+packagelon com.twittelonr.timelonlinelons.data_procelonssing.ad_hoc.elonarlybird_ranking.training_data_gelonnelonration
 
-import com.twitter.ml.api.analytics.DataSetAnalyticsPlugin
-import com.twitter.ml.api.matcher.FeatureMatcher
-import com.twitter.ml.api.util.FDsl
-import com.twitter.ml.api.DailySuffixFeatureSource
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.DataSetPipe
-import com.twitter.ml.api.FeatureStats
-import com.twitter.ml.api.IMatcher
-import com.twitter.scalding.typed.TypedPipe
-import com.twitter.scalding.Execution
-import com.twitter.scalding.TypedJson
-import com.twitter.scalding_internal.job.TwitterExecutionApp
-import com.twitter.timelines.data_processing.util.execution.UTCDateRangeFromArgs
-import com.twitter.timelines.data_processing.ad_hoc.earlybird_ranking.common.EarlybirdTrainingConfiguration
-import com.twitter.timelines.data_processing.ad_hoc.earlybird_ranking.common.EarlybirdTrainingRecapConfiguration
-import com.twitter.timelines.prediction.features.recap.RecapFeatures
-import scala.collection.JavaConverters._
+import com.twittelonr.ml.api.analytics.DataSelontAnalyticsPlugin
+import com.twittelonr.ml.api.matchelonr.FelonaturelonMatchelonr
+import com.twittelonr.ml.api.util.FDsl
+import com.twittelonr.ml.api.DailySuffixFelonaturelonSourcelon
+import com.twittelonr.ml.api.DataReloncord
+import com.twittelonr.ml.api.DataSelontPipelon
+import com.twittelonr.ml.api.FelonaturelonStats
+import com.twittelonr.ml.api.IMatchelonr
+import com.twittelonr.scalding.typelond.TypelondPipelon
+import com.twittelonr.scalding.elonxeloncution
+import com.twittelonr.scalding.TypelondJson
+import com.twittelonr.scalding_intelonrnal.job.TwittelonrelonxeloncutionApp
+import com.twittelonr.timelonlinelons.data_procelonssing.util.elonxeloncution.UTCDatelonRangelonFromArgs
+import com.twittelonr.timelonlinelons.data_procelonssing.ad_hoc.elonarlybird_ranking.common.elonarlybirdTrainingConfiguration
+import com.twittelonr.timelonlinelons.data_procelonssing.ad_hoc.elonarlybird_ranking.common.elonarlybirdTrainingReloncapConfiguration
+import com.twittelonr.timelonlinelons.prelondiction.felonaturelons.reloncap.ReloncapFelonaturelons
+import scala.collelonction.JavaConvelonrtelonrs._
 
 /**
- * Compute counts and fractions for all labels in a Recap data source.
+ * Computelon counts and fractions for all labelonls in a Reloncap data sourcelon.
  *
- * Arguments:
- * --input   recap data source (containing all labels)
- * --output  path to output JSON file containing stats
+ * Argumelonnts:
+ * --input   reloncap data sourcelon (containing all labelonls)
+ * --output  path to output JSON filelon containing stats
  */
-object EarlybirdStatsJob extends TwitterExecutionApp with UTCDateRangeFromArgs {
+objelonct elonarlybirdStatsJob elonxtelonnds TwittelonrelonxeloncutionApp with UTCDatelonRangelonFromArgs {
 
-  import DataSetAnalyticsPlugin._
+  import DataSelontAnalyticsPlugin._
   import FDsl._
-  import RecapFeatures.IS_EARLYBIRD_UNIFIED_ENGAGEMENT
+  import ReloncapFelonaturelons.IS_elonARLYBIRD_UNIFIelonD_elonNGAGelonMelonNT
 
-  lazy val constants: EarlybirdTrainingConfiguration = new EarlybirdTrainingRecapConfiguration
-  private[this] def addGlobalEngagementLabel(record: DataRecord) = {
-    if (constants.LabelInfos.exists { labelInfo => record.hasFeature(labelInfo.feature) }) {
-      record.setFeatureValue(IS_EARLYBIRD_UNIFIED_ENGAGEMENT, true)
+  lazy val constants: elonarlybirdTrainingConfiguration = nelonw elonarlybirdTrainingReloncapConfiguration
+  privatelon[this] delonf addGlobalelonngagelonmelonntLabelonl(reloncord: DataReloncord) = {
+    if (constants.LabelonlInfos.elonxists { labelonlInfo => reloncord.hasFelonaturelon(labelonlInfo.felonaturelon) }) {
+      reloncord.selontFelonaturelonValuelon(IS_elonARLYBIRD_UNIFIelonD_elonNGAGelonMelonNT, truelon)
     }
-    record
+    reloncord
   }
 
-  private[this] def labelFeatureMatcher: IMatcher = {
-    val allLabels =
-      (IS_EARLYBIRD_UNIFIED_ENGAGEMENT :: constants.LabelInfos.map(_.feature)).map(_.getFeatureName)
-    FeatureMatcher.names(allLabels.asJava)
+  privatelon[this] delonf labelonlFelonaturelonMatchelonr: IMatchelonr = {
+    val allLabelonls =
+      (IS_elonARLYBIRD_UNIFIelonD_elonNGAGelonMelonNT :: constants.LabelonlInfos.map(_.felonaturelon)).map(_.gelontFelonaturelonNamelon)
+    FelonaturelonMatchelonr.namelons(allLabelonls.asJava)
   }
 
-  private[this] def computeStats(data: DataSetPipe): TypedPipe[FeatureStats] = {
+  privatelon[this] delonf computelonStats(data: DataSelontPipelon): TypelondPipelon[FelonaturelonStats] = {
     data
-      .viaRecords { _.map(addGlobalEngagementLabel) }
-      .project(labelFeatureMatcher)
-      .collectFeatureStats()
+      .viaReloncords { _.map(addGlobalelonngagelonmelonntLabelonl) }
+      .projelonct(labelonlFelonaturelonMatchelonr)
+      .collelonctFelonaturelonStats()
   }
 
-  override def job: Execution[Unit] = {
+  ovelonrridelon delonf job: elonxeloncution[Unit] = {
     for {
-      args <- Execution.getArgs
-      dateRange <- dateRangeEx
-      data = DailySuffixFeatureSource(args("input"))(dateRange).read
-      _ <- computeStats(data).writeExecution(TypedJson(args("output")))
-    } yield ()
+      args <- elonxeloncution.gelontArgs
+      datelonRangelon <- datelonRangelonelonx
+      data = DailySuffixFelonaturelonSourcelon(args("input"))(datelonRangelon).relonad
+      _ <- computelonStats(data).writelonelonxeloncution(TypelondJson(args("output")))
+    } yielonld ()
   }
 }

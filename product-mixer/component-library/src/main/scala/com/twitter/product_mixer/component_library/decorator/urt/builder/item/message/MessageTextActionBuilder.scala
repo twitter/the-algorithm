@@ -1,35 +1,35 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.message
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.itelonm.melonssagelon
 
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseStr
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.MessageAction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.MessageTextAction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Callback
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventInfo
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.melontadata.BaselonStr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.melonssagelon.MelonssagelonAction
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.melonssagelon.MelonssagelonTelonxtAction
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.Callback
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.ClielonntelonvelonntInfo
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
-object MessageTextActionBuilder {
-  val MessageTextActionClientEventInfoElement: String = "message-text-action"
+objelonct MelonssagelonTelonxtActionBuildelonr {
+  val MelonssagelonTelonxtActionClielonntelonvelonntInfoelonlelonmelonnt: String = "melonssagelon-telonxt-action"
 }
 
-case class MessageTextActionBuilder[-Query <: PipelineQuery, -Candidate <: UniversalNoun[Any]](
-  textBuilder: BaseStr[Query, Candidate],
-  dismissOnClick: Boolean,
-  url: Option[String] = None,
-  clientEventInfo: Option[ClientEventInfo] = None,
-  onClickCallbacks: Option[List[Callback]] = None) {
+caselon class MelonssagelonTelonxtActionBuildelonr[-Quelonry <: PipelonlinelonQuelonry, -Candidatelon <: UnivelonrsalNoun[Any]](
+  telonxtBuildelonr: BaselonStr[Quelonry, Candidatelon],
+  dismissOnClick: Boolelonan,
+  url: Option[String] = Nonelon,
+  clielonntelonvelonntInfo: Option[ClielonntelonvelonntInfo] = Nonelon,
+  onClickCallbacks: Option[List[Callback]] = Nonelon) {
 
-  def apply(
-    query: Query,
-    candidate: Candidate,
-    candidateFeatures: FeatureMap
-  ): MessageTextAction = MessageTextAction(
-    text = textBuilder(query, candidate, candidateFeatures),
-    action = MessageAction(
+  delonf apply(
+    quelonry: Quelonry,
+    candidatelon: Candidatelon,
+    candidatelonFelonaturelons: FelonaturelonMap
+  ): MelonssagelonTelonxtAction = MelonssagelonTelonxtAction(
+    telonxt = telonxtBuildelonr(quelonry, candidatelon, candidatelonFelonaturelons),
+    action = MelonssagelonAction(
       dismissOnClick,
       url,
-      clientEventInfo,
+      clielonntelonvelonntInfo,
       onClickCallbacks
     )
   )

@@ -1,26 +1,26 @@
 java_library(
-    name = "swig-local",
-    sources = ["*.java"],
-    compiler_option_sets = ["fatal_warnings"],
+    namelonlon = "swig-local",
+    sourcelonlons = ["*.java"],
+    compilelonlonr_option_selonlonts = ["fatal_warnings"],
     platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-only",
+        "bazelonlonl-compatiblelonlon",
+        "bazelonlonl-only",
     ],
-    dependencies = [
-        "ann/src/main/java/com/twitter/ann/faiss:swig-native-utils",
-        "ann/src/main/java/com/twitter/ann/faiss/swig/resources",
+    delonlonpelonlonndelonlonncielonlons = [
+        "ann/src/main/java/com/twittelonlonr/ann/faiss:swig-nativelonlon-utils",
+        "ann/src/main/java/com/twittelonlonr/ann/faiss/swig/relonlonsourcelonlons",
     ],
 )
 
 java_library(
-    name = "swig-artifactory",
-    sources = ["*.java"],
-    compiler_option_sets = ["fatal_warnings"],
+    namelonlon = "swig-artifactory",
+    sourcelonlons = ["*.java"],
+    compilelonlonr_option_selonlonts = ["fatal_warnings"],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/com/twitter/ann/faiss/swig:resources",
-        "ann/src/main/java/com/twitter/ann/faiss:swig-native-utils",
+    tags = ["bazelonlonl-compatiblelonlon"],
+    delonlonpelonlonndelonlonncielonlons = [
+        "3rdparty/jvm/com/twittelonlonr/ann/faiss/swig:relonlonsourcelonlons",
+        "ann/src/main/java/com/twittelonlonr/ann/faiss:swig-nativelonlon-utils",
     ],
 )

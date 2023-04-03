@@ -1,110 +1,110 @@
-package com.twitter.follow_recommendations.common.candidate_sources.top_organic_follows_accounts
+packagelon com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.top_organic_follows_accounts
 
-import com.twitter.escherbird.util.stitchcache.StitchCache
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.candidate_sources.top_organic_follows_accounts.TopOrganicFollowsAccountsParams.AccountsFilteringAndRankingLogics
-import com.twitter.follow_recommendations.common.candidate_sources.top_organic_follows_accounts.TopOrganicFollowsAccountsParams.CandidateSourceEnabled
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.HasGeohashAndCountryCode
-import com.twitter.hermit.model.Algorithm
-import com.twitter.onboarding.relevance.organic_follows_accounts.thriftscala.OrganicFollowsAccounts
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.strato.generated.client.onboarding.userrecs.OrganicFollowsAccountsClientColumn
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.util.Duration
-import com.twitter.util.logging.Logging
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.elonschelonrbird.util.stitchcachelon.StitchCachelon
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.top_organic_follows_accounts.TopOrganicFollowsAccountsParams.AccountsFiltelonringAndRankingLogics
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.top_organic_follows_accounts.TopOrganicFollowsAccountsParams.CandidatelonSourcelonelonnablelond
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.CandidatelonUselonr
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.HasGelonohashAndCountryCodelon
+import com.twittelonr.helonrmit.modelonl.Algorithm
+import com.twittelonr.onboarding.relonlelonvancelon.organic_follows_accounts.thriftscala.OrganicFollowsAccounts
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.CandidatelonSourcelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonSourcelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.HasClielonntContelonxt
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.strato.gelonnelonratelond.clielonnt.onboarding.uselonrreloncs.OrganicFollowsAccountsClielonntColumn
+import com.twittelonr.timelonlinelons.configapi.HasParams
+import com.twittelonr.util.Duration
+import com.twittelonr.util.logging.Logging
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-object AccountsFilteringAndRankingLogicId extends Enumeration {
-  type AccountsFilteringAndRankingLogicId = Value
+objelonct AccountsFiltelonringAndRankingLogicId elonxtelonnds elonnumelonration {
+  typelon AccountsFiltelonringAndRankingLogicId = Valuelon
 
-  val NewOrganicFollows: AccountsFilteringAndRankingLogicId = Value("new_organic_follows")
-  val NonNewOrganicFollows: AccountsFilteringAndRankingLogicId = Value("non_new_organic_follows")
-  val OrganicFollows: AccountsFilteringAndRankingLogicId = Value("organic_follows")
+  val NelonwOrganicFollows: AccountsFiltelonringAndRankingLogicId = Valuelon("nelonw_organic_follows")
+  val NonNelonwOrganicFollows: AccountsFiltelonringAndRankingLogicId = Valuelon("non_nelonw_organic_follows")
+  val OrganicFollows: AccountsFiltelonringAndRankingLogicId = Valuelon("organic_follows")
 }
 
-object TopOrganicFollowsAccountsSource {
-  val MaxCacheSize = 500
-  val CacheTTL: Duration = Duration.fromHours(24)
+objelonct TopOrganicFollowsAccountsSourcelon {
+  val MaxCachelonSizelon = 500
+  val CachelonTTL: Duration = Duration.fromHours(24)
 
-  type Target = HasParams with HasClientContext with HasGeohashAndCountryCode
+  typelon Targelont = HasParams with HasClielonntContelonxt with HasGelonohashAndCountryCodelon
 
-  val Identifier: CandidateSourceIdentifier = CandidateSourceIdentifier(
+  val Idelonntifielonr: CandidatelonSourcelonIdelonntifielonr = CandidatelonSourcelonIdelonntifielonr(
     Algorithm.OrganicFollowAccounts.toString)
 }
 
-@Singleton
-class TopOrganicFollowsAccountsSource @Inject() (
-  organicFollowsAccountsClientColumn: OrganicFollowsAccountsClientColumn,
-  statsReceiver: StatsReceiver,
-) extends CandidateSource[TopOrganicFollowsAccountsSource.Target, CandidateUser]
+@Singlelonton
+class TopOrganicFollowsAccountsSourcelon @Injelonct() (
+  organicFollowsAccountsClielonntColumn: OrganicFollowsAccountsClielonntColumn,
+  statsReloncelonivelonr: StatsReloncelonivelonr,
+) elonxtelonnds CandidatelonSourcelon[TopOrganicFollowsAccountsSourcelon.Targelont, CandidatelonUselonr]
     with Logging {
 
-  /** @see [[CandidateSourceIdentifier]] */
-  override val identifier: CandidateSourceIdentifier =
-    TopOrganicFollowsAccountsSource.Identifier
+  /** @selonelon [[CandidatelonSourcelonIdelonntifielonr]] */
+  ovelonrridelon val idelonntifielonr: CandidatelonSourcelonIdelonntifielonr =
+    TopOrganicFollowsAccountsSourcelon.Idelonntifielonr
 
-  private val stats = statsReceiver.scope(identifier.name)
-  private val requestsStats = stats.counter("requests")
-  private val noCountryCodeStats = stats.counter("no_country_code")
-  private val successStats = stats.counter("success")
-  private val errorStats = stats.counter("error")
+  privatelon val stats = statsReloncelonivelonr.scopelon(idelonntifielonr.namelon)
+  privatelon val relonquelonstsStats = stats.countelonr("relonquelonsts")
+  privatelon val noCountryCodelonStats = stats.countelonr("no_country_codelon")
+  privatelon val succelonssStats = stats.countelonr("succelonss")
+  privatelon val elonrrorStats = stats.countelonr("elonrror")
 
-  private val cache = StitchCache[String, Option[OrganicFollowsAccounts]](
-    maxCacheSize = TopOrganicFollowsAccountsSource.MaxCacheSize,
-    ttl = TopOrganicFollowsAccountsSource.CacheTTL,
-    statsReceiver = statsReceiver.scope(identifier.name, "cache"),
-    underlyingCall = (k: String) => {
-      organicFollowsAccountsClientColumn.fetcher
-        .fetch(k)
-        .map { result => result.v }
+  privatelon val cachelon = StitchCachelon[String, Option[OrganicFollowsAccounts]](
+    maxCachelonSizelon = TopOrganicFollowsAccountsSourcelon.MaxCachelonSizelon,
+    ttl = TopOrganicFollowsAccountsSourcelon.CachelonTTL,
+    statsReloncelonivelonr = statsReloncelonivelonr.scopelon(idelonntifielonr.namelon, "cachelon"),
+    undelonrlyingCall = (k: String) => {
+      organicFollowsAccountsClielonntColumn.felontchelonr
+        .felontch(k)
+        .map { relonsult => relonsult.v }
     }
   )
 
-  /** returns a Seq of ''potential'' content */
-  override def apply(
-    target: TopOrganicFollowsAccountsSource.Target
-  ): Stitch[Seq[CandidateUser]] = {
-    if (!target.params(CandidateSourceEnabled)) {
-      return Stitch.value(Seq[CandidateUser]())
+  /** relonturns a Selonq of ''potelonntial'' contelonnt */
+  ovelonrridelon delonf apply(
+    targelont: TopOrganicFollowsAccountsSourcelon.Targelont
+  ): Stitch[Selonq[CandidatelonUselonr]] = {
+    if (!targelont.params(CandidatelonSourcelonelonnablelond)) {
+      relonturn Stitch.valuelon(Selonq[CandidatelonUselonr]())
     }
-    requestsStats.incr()
-    target.getCountryCode
-      .orElse(target.geohashAndCountryCode.flatMap(_.countryCode)).map { countryCode =>
+    relonquelonstsStats.incr()
+    targelont.gelontCountryCodelon
+      .orelonlselon(targelont.gelonohashAndCountryCodelon.flatMap(_.countryCodelon)).map { countryCodelon =>
         Stitch
-          .collect(target
-            .params(AccountsFilteringAndRankingLogics).map(logic =>
-              cache.readThrough(countryCode.toUpperCase() + "-" + logic)))
-          .onSuccess(_ => {
-            successStats.incr()
+          .collelonct(targelont
+            .params(AccountsFiltelonringAndRankingLogics).map(logic =>
+              cachelon.relonadThrough(countryCodelon.toUppelonrCaselon() + "-" + logic)))
+          .onSuccelonss(_ => {
+            succelonssStats.incr()
           })
-          .onFailure(t => {
-            debug("candidate source failed identifier = %s".format(identifier), t)
-            errorStats.incr()
+          .onFailurelon(t => {
+            delonbug("candidatelon sourcelon failelond idelonntifielonr = %s".format(idelonntifielonr), t)
+            elonrrorStats.incr()
           })
-          .map(transformOrganicFollowAccountssToCandidateSource)
-      }.getOrElse {
-        noCountryCodeStats.incr()
-        Stitch.value(Seq[CandidateUser]())
+          .map(transformOrganicFollowAccountssToCandidatelonSourcelon)
+      }.gelontOrelonlselon {
+        noCountryCodelonStats.incr()
+        Stitch.valuelon(Selonq[CandidatelonUselonr]())
       }
   }
 
-  private def transformOrganicFollowAccountssToCandidateSource(
-    organicFollowsAccounts: Seq[Option[OrganicFollowsAccounts]]
-  ): Seq[CandidateUser] = {
+  privatelon delonf transformOrganicFollowAccountssToCandidatelonSourcelon(
+    organicFollowsAccounts: Selonq[Option[OrganicFollowsAccounts]]
+  ): Selonq[CandidatelonUselonr] = {
     organicFollowsAccounts
       .flatMap(opt =>
         opt
           .map(accounts =>
             accounts.accounts.map(account =>
-              CandidateUser(
+              CandidatelonUselonr(
                 id = account.accountId,
-                score = Some(account.followedCountScore),
-              ).withCandidateSource(identifier)))
-          .getOrElse(Seq[CandidateUser]()))
+                scorelon = Somelon(account.followelondCountScorelon),
+              ).withCandidatelonSourcelon(idelonntifielonr)))
+          .gelontOrelonlselon(Selonq[CandidatelonUselonr]()))
   }
 }

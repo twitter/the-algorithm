@@ -1,216 +1,216 @@
-package com.twitter.search.earlybird.search.relevance.scoring;
+packagelon com.twittelonr.selonarch.elonarlybird.selonarch.relonlelonvancelon.scoring;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.query.HitAttributeHelper;
-import com.twitter.search.common.ranking.thriftjava.ThriftRankingParams;
-import com.twitter.search.common.ranking.thriftjava.ThriftScoringFunctionType;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.util.ml.tensorflow_engine.TensorflowModelsManager;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.common.userupdates.UserTable;
-import com.twitter.search.earlybird.exception.ClientException;
-import com.twitter.search.earlybird.ml.ScoringModelsManager;
-import com.twitter.search.earlybird.search.AntiGamingFilter;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.ThriftSearchQuery;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultType;
-import com.twitter.search.queryparser.query.Query;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.common.quelonry.HitAttributelonHelonlpelonr;
+import com.twittelonr.selonarch.common.ranking.thriftjava.ThriftRankingParams;
+import com.twittelonr.selonarch.common.ranking.thriftjava.ThriftScoringFunctionTypelon;
+import com.twittelonr.selonarch.common.schelonma.baselon.ImmutablelonSchelonmaIntelonrfacelon;
+import com.twittelonr.selonarch.common.util.ml.telonnsorflow_elonnginelon.TelonnsorflowModelonlsManagelonr;
+import com.twittelonr.selonarch.elonarlybird.common.config.elonarlybirdConfig;
+import com.twittelonr.selonarch.elonarlybird.common.uselonrupdatelons.UselonrTablelon;
+import com.twittelonr.selonarch.elonarlybird.elonxcelonption.Clielonntelonxcelonption;
+import com.twittelonr.selonarch.elonarlybird.ml.ScoringModelonlsManagelonr;
+import com.twittelonr.selonarch.elonarlybird.selonarch.AntiGamingFiltelonr;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonquelonst;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchQuelonry;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsultTypelon;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.Quelonry;
 
 /**
- * Returns a scoring function for a particular experiment ID.
+ * Relonturns a scoring function for a particular elonxpelonrimelonnt ID.
  *
- * Can be used for a/b testing of different scoring formulas.
+ * Can belon uselond for a/b telonsting of diffelonrelonnt scoring formulas.
  */
-public abstract class ScoringFunctionProvider {
-  private static final Logger LOG = LoggerFactory.getLogger(ScoringFunctionProvider.class);
+public abstract class ScoringFunctionProvidelonr {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(ScoringFunctionProvidelonr.class);
 
   /**
-   * Returns the scoring function.
+   * Relonturns thelon scoring function.
    */
-  public abstract ScoringFunction getScoringFunction() throws IOException, ClientException;
+  public abstract ScoringFunction gelontScoringFunction() throws IOelonxcelonption, Clielonntelonxcelonption;
 
-  public static final String RETWEETS_SCORER_NAME = "retweets";
-  public static final String NO_SPAM_SCORER_NAME = "no_spam";
-  public static final String TEST_SCORER_NAME = "test";
+  public static final String RelonTWelonelonTS_SCORelonR_NAMelon = "relontwelonelonts";
+  public static final String NO_SPAM_SCORelonR_NAMelon = "no_spam";
+  public static final String TelonST_SCORelonR_NAMelon = "telonst";
 
-  // Whether to avoid time decay when scoring top tweets.
-  // Top archive does not need time decay.
-  private static final boolean TOP_TWEET_WITH_DECAY =
-          EarlybirdConfig.getBool("top_tweet_scoring_with_decay", true);
+  // Whelonthelonr to avoid timelon deloncay whelonn scoring top twelonelonts.
+  // Top archivelon doelons not nelonelond timelon deloncay.
+  privatelon static final boolelonan TOP_TWelonelonT_WITH_DelonCAY =
+          elonarlybirdConfig.gelontBool("top_twelonelont_scoring_with_deloncay", truelon);
 
   /**
-   * Abstract class that can be used for ScoringFunctions that don't throw a ClientException.
+   * Abstract class that can belon uselond for ScoringFunctions that don't throw a Clielonntelonxcelonption.
    *
-   * It does throw an IOException but it doesn't throw a ClientException so the name can be a bit
-   * misleading.
+   * It doelons throw an IOelonxcelonption but it doelonsn't throw a Clielonntelonxcelonption so thelon namelon can belon a bit
+   * mislelonading.
    */
-  public abstract static class NamedScoringFunctionProvider extends ScoringFunctionProvider {
+  public abstract static class NamelondScoringFunctionProvidelonr elonxtelonnds ScoringFunctionProvidelonr {
     /**
-     * Returns the scoring function.
+     * Relonturns thelon scoring function.
      */
-    public abstract ScoringFunction getScoringFunction() throws IOException;
+    public abstract ScoringFunction gelontScoringFunction() throws IOelonxcelonption;
   }
 
   /**
-   * Returns the scoring function provider with the given name, or null if no such provider exists.
+   * Relonturns thelon scoring function providelonr with thelon givelonn namelon, or null if no such providelonr elonxists.
    */
-  public static NamedScoringFunctionProvider getScoringFunctionProviderByName(
-      String name, final ImmutableSchemaInterface schema) {
-    if (name.equals(NO_SPAM_SCORER_NAME)) {
-      return new NamedScoringFunctionProvider() {
-        @Override
-        public ScoringFunction getScoringFunction() throws IOException {
-          return new SpamVectorScoringFunction(schema);
+  public static NamelondScoringFunctionProvidelonr gelontScoringFunctionProvidelonrByNamelon(
+      String namelon, final ImmutablelonSchelonmaIntelonrfacelon schelonma) {
+    if (namelon.elonquals(NO_SPAM_SCORelonR_NAMelon)) {
+      relonturn nelonw NamelondScoringFunctionProvidelonr() {
+        @Ovelonrridelon
+        public ScoringFunction gelontScoringFunction() throws IOelonxcelonption {
+          relonturn nelonw SpamVelonctorScoringFunction(schelonma);
         }
       };
-    } else if (name.equals(RETWEETS_SCORER_NAME)) {
-      return new NamedScoringFunctionProvider() {
-        @Override
-        public ScoringFunction getScoringFunction() throws IOException {
-          // Production top tweet actually uses this.
-          if (TOP_TWEET_WITH_DECAY) {
-            return new RetweetBasedTopTweetsScoringFunction(schema);
-          } else {
-            return new RetweetBasedTopTweetsScoringFunction(schema, true);
+    } elonlselon if (namelon.elonquals(RelonTWelonelonTS_SCORelonR_NAMelon)) {
+      relonturn nelonw NamelondScoringFunctionProvidelonr() {
+        @Ovelonrridelon
+        public ScoringFunction gelontScoringFunction() throws IOelonxcelonption {
+          // Production top twelonelont actually uselons this.
+          if (TOP_TWelonelonT_WITH_DelonCAY) {
+            relonturn nelonw RelontwelonelontBaselondTopTwelonelontsScoringFunction(schelonma);
+          } elonlselon {
+            relonturn nelonw RelontwelonelontBaselondTopTwelonelontsScoringFunction(schelonma, truelon);
           }
         }
       };
-    } else if (name.equals(TEST_SCORER_NAME)) {
-      return new NamedScoringFunctionProvider() {
-        @Override
-        public ScoringFunction getScoringFunction() throws IOException {
-          return new TestScoringFunction(schema);
+    } elonlselon if (namelon.elonquals(TelonST_SCORelonR_NAMelon)) {
+      relonturn nelonw NamelondScoringFunctionProvidelonr() {
+        @Ovelonrridelon
+        public ScoringFunction gelontScoringFunction() throws IOelonxcelonption {
+          relonturn nelonw TelonstScoringFunction(schelonma);
         }
       };
     }
-    return null;
+    relonturn null;
   }
 
   /**
-   * Returns default scoring functions for different scoring function type
-   * and provides fallback behavior if model-based scoring function fails
+   * Relonturns delonfault scoring functions for diffelonrelonnt scoring function typelon
+   * and providelons fallback belonhavior if modelonl-baselond scoring function fails
    */
-  public static class DefaultScoringFunctionProvider extends ScoringFunctionProvider {
-    private final EarlybirdRequest request;
-    private final ImmutableSchemaInterface schema;
-    private final ThriftSearchQuery searchQuery;
-    private final AntiGamingFilter antiGamingFilter;
-    private final UserTable userTable;
-    private final HitAttributeHelper hitAttributeHelper;
-    private final Query parsedQuery;
-    private final ScoringModelsManager scoringModelsManager;
-    private final TensorflowModelsManager tensorflowModelsManager;
+  public static class DelonfaultScoringFunctionProvidelonr elonxtelonnds ScoringFunctionProvidelonr {
+    privatelon final elonarlybirdRelonquelonst relonquelonst;
+    privatelon final ImmutablelonSchelonmaIntelonrfacelon schelonma;
+    privatelon final ThriftSelonarchQuelonry selonarchQuelonry;
+    privatelon final AntiGamingFiltelonr antiGamingFiltelonr;
+    privatelon final UselonrTablelon uselonrTablelon;
+    privatelon final HitAttributelonHelonlpelonr hitAttributelonHelonlpelonr;
+    privatelon final Quelonry parselondQuelonry;
+    privatelon final ScoringModelonlsManagelonr scoringModelonlsManagelonr;
+    privatelon final TelonnsorflowModelonlsManagelonr telonnsorflowModelonlsManagelonr;
 
-    private static final SearchCounter MODEL_BASED_SCORING_FUNCTION_CREATED =
-        SearchCounter.export("model_based_scoring_function_created");
-    private static final SearchCounter MODEL_BASED_FALLBACK_TO_LINEAR_SCORING_FUNCTION =
-        SearchCounter.export("model_based_fallback_to_linear_scoring_function");
+    privatelon static final SelonarchCountelonr MODelonL_BASelonD_SCORING_FUNCTION_CRelonATelonD =
+        SelonarchCountelonr.elonxport("modelonl_baselond_scoring_function_crelonatelond");
+    privatelon static final SelonarchCountelonr MODelonL_BASelonD_FALLBACK_TO_LINelonAR_SCORING_FUNCTION =
+        SelonarchCountelonr.elonxport("modelonl_baselond_fallback_to_linelonar_scoring_function");
 
-    private static final SearchCounter TENSORFLOW_BASED_SCORING_FUNCTION_CREATED =
-        SearchCounter.export("tensorflow_based_scoring_function_created");
-    private static final SearchCounter TENSORFLOW_BASED_FALLBACK_TO_LINEAR_SCORING_FUNCTION =
-        SearchCounter.export("tensorflow_fallback_to_linear_function_scoring_function");
+    privatelon static final SelonarchCountelonr TelonNSORFLOW_BASelonD_SCORING_FUNCTION_CRelonATelonD =
+        SelonarchCountelonr.elonxport("telonnsorflow_baselond_scoring_function_crelonatelond");
+    privatelon static final SelonarchCountelonr TelonNSORFLOW_BASelonD_FALLBACK_TO_LINelonAR_SCORING_FUNCTION =
+        SelonarchCountelonr.elonxport("telonnsorflow_fallback_to_linelonar_function_scoring_function");
 
-    public DefaultScoringFunctionProvider(
-        final EarlybirdRequest request,
-        final ImmutableSchemaInterface schema,
-        final ThriftSearchQuery searchQuery,
-        final AntiGamingFilter antiGamingFilter,
-        final UserTable userTable,
-        final HitAttributeHelper hitAttributeHelper,
-        final Query parsedQuery,
-        final ScoringModelsManager scoringModelsManager,
-        final TensorflowModelsManager tensorflowModelsManager) {
-      this.request = request;
-      this.schema = schema;
-      this.searchQuery = searchQuery;
-      this.antiGamingFilter = antiGamingFilter;
-      this.userTable = userTable;
-      this.hitAttributeHelper = hitAttributeHelper;
-      this.parsedQuery = parsedQuery;
-      this.scoringModelsManager = scoringModelsManager;
-      this.tensorflowModelsManager = tensorflowModelsManager;
+    public DelonfaultScoringFunctionProvidelonr(
+        final elonarlybirdRelonquelonst relonquelonst,
+        final ImmutablelonSchelonmaIntelonrfacelon schelonma,
+        final ThriftSelonarchQuelonry selonarchQuelonry,
+        final AntiGamingFiltelonr antiGamingFiltelonr,
+        final UselonrTablelon uselonrTablelon,
+        final HitAttributelonHelonlpelonr hitAttributelonHelonlpelonr,
+        final Quelonry parselondQuelonry,
+        final ScoringModelonlsManagelonr scoringModelonlsManagelonr,
+        final TelonnsorflowModelonlsManagelonr telonnsorflowModelonlsManagelonr) {
+      this.relonquelonst = relonquelonst;
+      this.schelonma = schelonma;
+      this.selonarchQuelonry = selonarchQuelonry;
+      this.antiGamingFiltelonr = antiGamingFiltelonr;
+      this.uselonrTablelon = uselonrTablelon;
+      this.hitAttributelonHelonlpelonr = hitAttributelonHelonlpelonr;
+      this.parselondQuelonry = parselondQuelonry;
+      this.scoringModelonlsManagelonr = scoringModelonlsManagelonr;
+      this.telonnsorflowModelonlsManagelonr = telonnsorflowModelonlsManagelonr;
     }
 
-    @Override
-    public ScoringFunction getScoringFunction() throws IOException, ClientException {
-      if (searchQuery.isSetRelevanceOptions()
-          && searchQuery.getRelevanceOptions().isSetRankingParams()) {
-        ThriftRankingParams params = searchQuery.getRelevanceOptions().getRankingParams();
-        ThriftScoringFunctionType type = params.isSetType()
-            ? params.getType() : ThriftScoringFunctionType.LINEAR;  // default type
-        switch (type) {
-          case LINEAR:
-            return createLinear();
-          case MODEL_BASED:
-            if (scoringModelsManager.isEnabled()) {
-              MODEL_BASED_SCORING_FUNCTION_CREATED.increment();
-              return createModelBased();
-            } else {
-              // From ScoringModelsManager.NO_OP_MANAGER. Fall back to LinearScoringFunction
-              MODEL_BASED_FALLBACK_TO_LINEAR_SCORING_FUNCTION.increment();
-              return createLinear();
+    @Ovelonrridelon
+    public ScoringFunction gelontScoringFunction() throws IOelonxcelonption, Clielonntelonxcelonption {
+      if (selonarchQuelonry.isSelontRelonlelonvancelonOptions()
+          && selonarchQuelonry.gelontRelonlelonvancelonOptions().isSelontRankingParams()) {
+        ThriftRankingParams params = selonarchQuelonry.gelontRelonlelonvancelonOptions().gelontRankingParams();
+        ThriftScoringFunctionTypelon typelon = params.isSelontTypelon()
+            ? params.gelontTypelon() : ThriftScoringFunctionTypelon.LINelonAR;  // delonfault typelon
+        switch (typelon) {
+          caselon LINelonAR:
+            relonturn crelonatelonLinelonar();
+          caselon MODelonL_BASelonD:
+            if (scoringModelonlsManagelonr.iselonnablelond()) {
+              MODelonL_BASelonD_SCORING_FUNCTION_CRelonATelonD.increlonmelonnt();
+              relonturn crelonatelonModelonlBaselond();
+            } elonlselon {
+              // From ScoringModelonlsManagelonr.NO_OP_MANAGelonR. Fall back to LinelonarScoringFunction
+              MODelonL_BASelonD_FALLBACK_TO_LINelonAR_SCORING_FUNCTION.increlonmelonnt();
+              relonturn crelonatelonLinelonar();
             }
-          case TENSORFLOW_BASED:
-            if (tensorflowModelsManager.isEnabled()) {
-              TENSORFLOW_BASED_SCORING_FUNCTION_CREATED.increment();
-              return createTensorflowBased();
-            } else {
-              // Fallback to linear scoring if tf manager is disabled
-              TENSORFLOW_BASED_FALLBACK_TO_LINEAR_SCORING_FUNCTION.increment();
-              return createLinear();
+          caselon TelonNSORFLOW_BASelonD:
+            if (telonnsorflowModelonlsManagelonr.iselonnablelond()) {
+              TelonNSORFLOW_BASelonD_SCORING_FUNCTION_CRelonATelonD.increlonmelonnt();
+              relonturn crelonatelonTelonnsorflowBaselond();
+            } elonlselon {
+              // Fallback to linelonar scoring if tf managelonr is disablelond
+              TelonNSORFLOW_BASelonD_FALLBACK_TO_LINelonAR_SCORING_FUNCTION.increlonmelonnt();
+              relonturn crelonatelonLinelonar();
             }
-          case TOPTWEETS:
-            return createTopTweets();
-          default:
-            throw new IllegalArgumentException("Unknown scoring type: in " + searchQuery);
+          caselon TOPTWelonelonTS:
+            relonturn crelonatelonTopTwelonelonts();
+          delonfault:
+            throw nelonw IllelongalArgumelonntelonxcelonption("Unknown scoring typelon: in " + selonarchQuelonry);
         }
-      } else {
-        LOG.error("No relevance options provided query = " + searchQuery);
-        return new DefaultScoringFunction(schema);
+      } elonlselon {
+        LOG.elonrror("No relonlelonvancelon options providelond quelonry = " + selonarchQuelonry);
+        relonturn nelonw DelonfaultScoringFunction(schelonma);
       }
     }
 
-    private ScoringFunction createLinear() throws IOException {
-      LinearScoringFunction scoringFunction = new LinearScoringFunction(
-          schema, searchQuery, antiGamingFilter, ThriftSearchResultType.RELEVANCE,
-          userTable);
-      scoringFunction.setHitAttributeHelperAndQuery(hitAttributeHelper, parsedQuery);
+    privatelon ScoringFunction crelonatelonLinelonar() throws IOelonxcelonption {
+      LinelonarScoringFunction scoringFunction = nelonw LinelonarScoringFunction(
+          schelonma, selonarchQuelonry, antiGamingFiltelonr, ThriftSelonarchRelonsultTypelon.RelonLelonVANCelon,
+          uselonrTablelon);
+      scoringFunction.selontHitAttributelonHelonlpelonrAndQuelonry(hitAttributelonHelonlpelonr, parselondQuelonry);
 
-      return scoringFunction;
+      relonturn scoringFunction;
     }
 
     /**
-     * For model based scoring function, ClientException will be throw if client selects an
-     * unknown model for scoring manager.
-     * {@link com.twitter.search.earlybird.search.relevance.scoring.ModelBasedScoringFunction}
+     * For modelonl baselond scoring function, Clielonntelonxcelonption will belon throw if clielonnt selonleloncts an
+     * unknown modelonl for scoring managelonr.
+     * {@link com.twittelonr.selonarch.elonarlybird.selonarch.relonlelonvancelon.scoring.ModelonlBaselondScoringFunction}
      */
-    private ScoringFunction createModelBased() throws IOException, ClientException {
-      ModelBasedScoringFunction scoringFunction = new ModelBasedScoringFunction(
-          schema, searchQuery, antiGamingFilter, ThriftSearchResultType.RELEVANCE, userTable,
-          scoringModelsManager);
-      scoringFunction.setHitAttributeHelperAndQuery(hitAttributeHelper, parsedQuery);
+    privatelon ScoringFunction crelonatelonModelonlBaselond() throws IOelonxcelonption, Clielonntelonxcelonption {
+      ModelonlBaselondScoringFunction scoringFunction = nelonw ModelonlBaselondScoringFunction(
+          schelonma, selonarchQuelonry, antiGamingFiltelonr, ThriftSelonarchRelonsultTypelon.RelonLelonVANCelon, uselonrTablelon,
+          scoringModelonlsManagelonr);
+      scoringFunction.selontHitAttributelonHelonlpelonrAndQuelonry(hitAttributelonHelonlpelonr, parselondQuelonry);
 
-      return scoringFunction;
+      relonturn scoringFunction;
     }
 
-    private ScoringFunction createTopTweets() throws IOException {
-      return new LinearScoringFunction(
-          schema, searchQuery, antiGamingFilter, ThriftSearchResultType.POPULAR, userTable);
+    privatelon ScoringFunction crelonatelonTopTwelonelonts() throws IOelonxcelonption {
+      relonturn nelonw LinelonarScoringFunction(
+          schelonma, selonarchQuelonry, antiGamingFiltelonr, ThriftSelonarchRelonsultTypelon.POPULAR, uselonrTablelon);
     }
 
-    private TensorflowBasedScoringFunction createTensorflowBased()
-      throws IOException, ClientException {
-      TensorflowBasedScoringFunction tfScoringFunction = new TensorflowBasedScoringFunction(
-          request, schema, searchQuery, antiGamingFilter,
-          ThriftSearchResultType.RELEVANCE, userTable, tensorflowModelsManager);
-      tfScoringFunction.setHitAttributeHelperAndQuery(hitAttributeHelper, parsedQuery);
-      return tfScoringFunction;
+    privatelon TelonnsorflowBaselondScoringFunction crelonatelonTelonnsorflowBaselond()
+      throws IOelonxcelonption, Clielonntelonxcelonption {
+      TelonnsorflowBaselondScoringFunction tfScoringFunction = nelonw TelonnsorflowBaselondScoringFunction(
+          relonquelonst, schelonma, selonarchQuelonry, antiGamingFiltelonr,
+          ThriftSelonarchRelonsultTypelon.RelonLelonVANCelon, uselonrTablelon, telonnsorflowModelonlsManagelonr);
+      tfScoringFunction.selontHitAttributelonHelonlpelonrAndQuelonry(hitAttributelonHelonlpelonr, parselondQuelonry);
+      relonturn tfScoringFunction;
     }
   }
 }

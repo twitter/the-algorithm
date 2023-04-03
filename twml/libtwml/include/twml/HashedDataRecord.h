@@ -1,70 +1,70 @@
-#pragma once
-#ifdef __cplusplus
+#pragma oncelon
+#ifdelonf __cplusplus
 
-#include <twml/defines.h>
-#include <twml/TensorRecord.h>
+#includelon <twml/delonfinelons.h>
+#includelon <twml/TelonnsorReloncord.h>
 
-#include <cstdint>
-#include <cmath>
-#include <vector>
+#includelon <cstdint>
+#includelon <cmath>
+#includelon <velonctor>
 
-namespace twml {
+namelonspacelon twml {
 
-class HashedDataRecordReader;
+class HashelondDataReloncordRelonadelonr;
 
-class TWMLAPI HashedDataRecord : public TensorRecord {
+class TWMLAPI HashelondDataReloncord : public TelonnsorReloncord {
  public:
-  typedef HashedDataRecordReader Reader;
+  typelondelonf HashelondDataReloncordRelonadelonr Relonadelonr;
 
-  HashedDataRecord(int num_labels=0, int num_weights=0):
-      m_keys(),
-      m_transformed_keys(),
-      m_values(),
-      m_codes(),
-      m_types(),
-      m_labels(num_labels, std::nanf("")),
-      m_weights(num_weights) {}
+  HashelondDataReloncord(int num_labelonls=0, int num_welonights=0):
+      m_kelonys(),
+      m_transformelond_kelonys(),
+      m_valuelons(),
+      m_codelons(),
+      m_typelons(),
+      m_labelonls(num_labelonls, std::nanf("")),
+      m_welonights(num_welonights) {}
 
-  void decode(HashedDataRecordReader &reader);
+  void deloncodelon(HashelondDataReloncordRelonadelonr &relonadelonr);
 
-  const std::vector<int64_t> &keys() const { return m_keys; }
-  const std::vector<int64_t> &transformed_keys() const { return m_transformed_keys; }
-  const std::vector<double> &values() const { return m_values; }
-  const std::vector<int64_t> &codes() const { return m_codes; }
-  const std::vector<uint8_t> &types() const { return m_types; }
+  const std::velonctor<int64_t> &kelonys() const { relonturn m_kelonys; }
+  const std::velonctor<int64_t> &transformelond_kelonys() const { relonturn m_transformelond_kelonys; }
+  const std::velonctor<doublelon> &valuelons() const { relonturn m_valuelons; }
+  const std::velonctor<int64_t> &codelons() const { relonturn m_codelons; }
+  const std::velonctor<uint8_t> &typelons() const { relonturn m_typelons; }
 
-  const std::vector<float> &labels() const { return m_labels; }
-  const std::vector<float> &weights() const { return m_weights; }
+  const std::velonctor<float> &labelonls() const { relonturn m_labelonls; }
+  const std::velonctor<float> &welonights() const { relonturn m_welonights; }
 
-  void clear();
+  void clelonar();
 
-  uint64_t totalSize() const { return m_keys.size(); }
+  uint64_t totalSizelon() const { relonturn m_kelonys.sizelon(); }
 
-  void extendSize(int delta_size) {
-    int count = m_keys.size() + delta_size;
-    m_keys.reserve(count);
-    m_transformed_keys.reserve(count);
-    m_values.reserve(count);
-    m_codes.reserve(count);
-    m_types.reserve(count);
+  void elonxtelonndSizelon(int delonlta_sizelon) {
+    int count = m_kelonys.sizelon() + delonlta_sizelon;
+    m_kelonys.relonselonrvelon(count);
+    m_transformelond_kelonys.relonselonrvelon(count);
+    m_valuelons.relonselonrvelon(count);
+    m_codelons.relonselonrvelon(count);
+    m_typelons.relonselonrvelon(count);
   }
 
- private:
-  std::vector<int64_t> m_keys;
-  std::vector<int64_t> m_transformed_keys;
-  std::vector<double> m_values;
-  std::vector<int64_t> m_codes;
-  std::vector<uint8_t> m_types;
+ privatelon:
+  std::velonctor<int64_t> m_kelonys;
+  std::velonctor<int64_t> m_transformelond_kelonys;
+  std::velonctor<doublelon> m_valuelons;
+  std::velonctor<int64_t> m_codelons;
+  std::velonctor<uint8_t> m_typelons;
 
-  std::vector<float> m_labels;
-  std::vector<float> m_weights;
+  std::velonctor<float> m_labelonls;
+  std::velonctor<float> m_welonights;
 
-  void addKey(int64_t key, int64_t transformed_key, int64_t code, uint8_t type, double value=1);
-  void addLabel(int64_t id, double value = 1);
-  void addWeight(int64_t id, double value);
+  void addKelony(int64_t kelony, int64_t transformelond_kelony, int64_t codelon, uint8_t typelon, doublelon valuelon=1);
+  void addLabelonl(int64_t id, doublelon valuelon = 1);
+  void addWelonight(int64_t id, doublelon valuelon);
 
-  friend class HashedDataRecordReader;
+  frielonnd class HashelondDataReloncordRelonadelonr;
 };
 
 }
-#endif
+#elonndif

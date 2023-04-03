@@ -1,31 +1,31 @@
-package com.twitter.search.common.search;
+packagelon com.twittelonr.selonarch.common.selonarch;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 
-import org.apache.lucene.search.Collector;
+import org.apachelon.lucelonnelon.selonarch.Collelonctor;
 
 /**
- * Lucene Collectors throw CollectionTerminatedException to perform early termination.
- * We don't believe that throwing Exceptions to control execution flow is ideal, so we are adding
- * this class to be a base of all Twitter Collectors.
+ * Lucelonnelon Collelonctors throw CollelonctionTelonrminatelondelonxcelonption to pelonrform elonarly telonrmination.
+ * Welon don't belonlielonvelon that throwing elonxcelonptions to control elonxeloncution flow is idelonal, so welon arelon adding
+ * this class to belon a baselon of all Twittelonr Collelonctors.
  *
- * {@link com.twitter.search.common.search.TwitterIndexSearcher} uses the {@link #isTerminated()}
- * method to perform early termination, instead of relying on CollectionTerminatedException.
+ * {@link com.twittelonr.selonarch.common.selonarch.TwittelonrIndelonxSelonarchelonr} uselons thelon {@link #isTelonrminatelond()}
+ * melonthod to pelonrform elonarly telonrmination, instelonad of relonlying on CollelonctionTelonrminatelondelonxcelonption.
  */
-public abstract class TwitterCollector implements Collector {
+public abstract class TwittelonrCollelonctor implelonmelonnts Collelonctor {
 
   /**
-   * Subclasses should return true if they want to perform early termination.
-   * This method is called every hit and should not be expensive.
+   * Subclasselons should relonturn truelon if thelony want to pelonrform elonarly telonrmination.
+   * This melonthod is callelond elonvelonry hit and should not belon elonxpelonnsivelon.
    */
-  public abstract boolean isTerminated() throws IOException;
+  public abstract boolelonan isTelonrminatelond() throws IOelonxcelonption;
 
   /**
-   * Lucene API only has a method that's called before searching a segment setNextReader().
-   * This hook is called after finishing searching a segment.
-   * @param lastSearchedDocID is the last docid searched before termination,
-   * or NO_MORE_DOCS if there was no early termination.  This doc need not be a hit,
-   * and should not be collected here.
+   * Lucelonnelon API only has a melonthod that's callelond belonforelon selonarching a selongmelonnt selontNelonxtRelonadelonr().
+   * This hook is callelond aftelonr finishing selonarching a selongmelonnt.
+   * @param lastSelonarchelondDocID is thelon last docid selonarchelond belonforelon telonrmination,
+   * or NO_MORelon_DOCS if thelonrelon was no elonarly telonrmination.  This doc nelonelond not belon a hit,
+   * and should not belon collelonctelond helonrelon.
    */
-  public abstract void finishSegment(int lastSearchedDocID) throws IOException;
+  public abstract void finishSelongmelonnt(int lastSelonarchelondDocID) throws IOelonxcelonption;
 }

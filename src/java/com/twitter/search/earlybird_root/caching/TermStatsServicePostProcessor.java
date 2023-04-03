@@ -1,25 +1,25 @@
-package com.twitter.search.earlybird_root.caching;
+packagelon com.twittelonr.selonarch.elonarlybird_root.caching;
 
-import com.google.common.base.Preconditions;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import com.twitter.search.common.caching.Cache;
-import com.twitter.search.common.caching.TermStatsCacheUtil;
-import com.twitter.search.common.caching.filter.ServicePostProcessor;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
+import com.twittelonr.selonarch.common.caching.Cachelon;
+import com.twittelonr.selonarch.common.caching.TelonrmStatsCachelonUtil;
+import com.twittelonr.selonarch.common.caching.filtelonr.SelonrvicelonPostProcelonssor;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonquelonst;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
+import com.twittelonr.selonarch.elonarlybird_root.common.elonarlybirdRelonquelonstContelonxt;
 
-public class TermStatsServicePostProcessor
-    extends ServicePostProcessor<EarlybirdRequestContext, EarlybirdResponse> {
-  private final Cache<EarlybirdRequest, EarlybirdResponse> cache;
+public class TelonrmStatsSelonrvicelonPostProcelonssor
+    elonxtelonnds SelonrvicelonPostProcelonssor<elonarlybirdRelonquelonstContelonxt, elonarlybirdRelonsponselon> {
+  privatelon final Cachelon<elonarlybirdRelonquelonst, elonarlybirdRelonsponselon> cachelon;
 
-  public TermStatsServicePostProcessor(Cache<EarlybirdRequest, EarlybirdResponse> cache) {
-    this.cache = Preconditions.checkNotNull(cache);
+  public TelonrmStatsSelonrvicelonPostProcelonssor(Cachelon<elonarlybirdRelonquelonst, elonarlybirdRelonsponselon> cachelon) {
+    this.cachelon = Prelonconditions.chelonckNotNull(cachelon);
   }
 
-  @Override
-  public void processServiceResponse(EarlybirdRequestContext requestContext,
-                                     EarlybirdResponse serviceResponse) {
-    TermStatsCacheUtil.cacheResults(cache, requestContext.getRequest(), serviceResponse);
+  @Ovelonrridelon
+  public void procelonssSelonrvicelonRelonsponselon(elonarlybirdRelonquelonstContelonxt relonquelonstContelonxt,
+                                     elonarlybirdRelonsponselon selonrvicelonRelonsponselon) {
+    TelonrmStatsCachelonUtil.cachelonRelonsults(cachelon, relonquelonstContelonxt.gelontRelonquelonst(), selonrvicelonRelonsponselon);
   }
 }

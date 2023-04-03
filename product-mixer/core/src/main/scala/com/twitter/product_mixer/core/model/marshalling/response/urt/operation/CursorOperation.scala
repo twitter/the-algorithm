@@ -1,31 +1,31 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.operation
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.opelonration
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.CursorOperation.CursorEntryNamespace
-import com.twitter.product_mixer.core.model.marshalling.response.urt.EntryNamespace
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineOperation
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.opelonration.CursorOpelonration.CursorelonntryNamelonspacelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.elonntryNamelonspacelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.Timelonlinelonelonntry
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.TimelonlinelonOpelonration
 
-object CursorOperation {
-  val CursorEntryNamespace = EntryNamespace("cursor")
+objelonct CursorOpelonration {
+  val CursorelonntryNamelonspacelon = elonntryNamelonspacelon("cursor")
 
-  private def entryIdentifier(cursorType: CursorType, identifier: Long): String =
-    s"$CursorEntryNamespace-${cursorType.entryNamespace.toString}-$identifier"
+  privatelon delonf elonntryIdelonntifielonr(cursorTypelon: CursorTypelon, idelonntifielonr: Long): String =
+    s"$CursorelonntryNamelonspacelon-${cursorTypelon.elonntryNamelonspacelon.toString}-$idelonntifielonr"
 }
 
-case class CursorOperation(
-  override val id: Long,
-  override val sortIndex: Option[Long],
-  value: String,
-  cursorType: CursorType,
-  displayTreatment: Option[CursorDisplayTreatment],
-  idToReplace: Option[Long])
-    extends TimelineOperation {
-  override val entryNamespace: EntryNamespace = CursorEntryNamespace
+caselon class CursorOpelonration(
+  ovelonrridelon val id: Long,
+  ovelonrridelon val sortIndelonx: Option[Long],
+  valuelon: String,
+  cursorTypelon: CursorTypelon,
+  displayTrelonatmelonnt: Option[CursorDisplayTrelonatmelonnt],
+  idToRelonplacelon: Option[Long])
+    elonxtelonnds TimelonlinelonOpelonration {
+  ovelonrridelon val elonntryNamelonspacelon: elonntryNamelonspacelon = CursorelonntryNamelonspacelon
 
-  override lazy val entryIdentifier: String = CursorOperation.entryIdentifier(cursorType, id)
+  ovelonrridelon lazy val elonntryIdelonntifielonr: String = CursorOpelonration.elonntryIdelonntifielonr(cursorTypelon, id)
 
-  override def entryIdToReplace: Option[String] =
-    idToReplace.map(CursorOperation.entryIdentifier(cursorType, _))
+  ovelonrridelon delonf elonntryIdToRelonplacelon: Option[String] =
+    idToRelonplacelon.map(CursorOpelonration.elonntryIdelonntifielonr(cursorTypelon, _))
 
-  override def withSortIndex(sortIndex: Long): TimelineEntry = copy(sortIndex = Some(sortIndex))
+  ovelonrridelon delonf withSortIndelonx(sortIndelonx: Long): Timelonlinelonelonntry = copy(sortIndelonx = Somelon(sortIndelonx))
 }

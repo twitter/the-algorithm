@@ -1,33 +1,33 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.melontadata
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.icon.HorizonIconMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ChildFeedbackAction
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.icon.HorizonIconMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.ChildFelonelondbackAction
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class ChildFeedbackActionMarshaller @Inject() (
-  feedbackTypeMarshaller: FeedbackTypeMarshaller,
-  confirmationDisplayTypeMarshaller: ConfirmationDisplayTypeMarshaller,
-  clientEventInfoMarshaller: ClientEventInfoMarshaller,
-  horizonIconMarshaller: HorizonIconMarshaller,
-  richFeedbackBehaviorMarshaller: RichFeedbackBehaviorMarshaller) {
+@Singlelonton
+class ChildFelonelondbackActionMarshallelonr @Injelonct() (
+  felonelondbackTypelonMarshallelonr: FelonelondbackTypelonMarshallelonr,
+  confirmationDisplayTypelonMarshallelonr: ConfirmationDisplayTypelonMarshallelonr,
+  clielonntelonvelonntInfoMarshallelonr: ClielonntelonvelonntInfoMarshallelonr,
+  horizonIconMarshallelonr: HorizonIconMarshallelonr,
+  richFelonelondbackBelonhaviorMarshallelonr: RichFelonelondbackBelonhaviorMarshallelonr) {
 
-  def apply(feedbackAction: ChildFeedbackAction): urt.FeedbackAction = {
-    urt.FeedbackAction(
-      feedbackType = feedbackTypeMarshaller(feedbackAction.feedbackType),
-      prompt = feedbackAction.prompt,
-      confirmation = feedbackAction.confirmation,
-      childKeys = None,
-      feedbackUrl = feedbackAction.feedbackUrl,
-      hasUndoAction = feedbackAction.hasUndoAction,
-      confirmationDisplayType =
-        feedbackAction.confirmationDisplayType.map(confirmationDisplayTypeMarshaller(_)),
-      clientEventInfo = feedbackAction.clientEventInfo.map(clientEventInfoMarshaller(_)),
-      icon = feedbackAction.icon.map(horizonIconMarshaller(_)),
-      richBehavior = feedbackAction.richBehavior.map(richFeedbackBehaviorMarshaller(_)),
-      subprompt = feedbackAction.subprompt
+  delonf apply(felonelondbackAction: ChildFelonelondbackAction): urt.FelonelondbackAction = {
+    urt.FelonelondbackAction(
+      felonelondbackTypelon = felonelondbackTypelonMarshallelonr(felonelondbackAction.felonelondbackTypelon),
+      prompt = felonelondbackAction.prompt,
+      confirmation = felonelondbackAction.confirmation,
+      childKelonys = Nonelon,
+      felonelondbackUrl = felonelondbackAction.felonelondbackUrl,
+      hasUndoAction = felonelondbackAction.hasUndoAction,
+      confirmationDisplayTypelon =
+        felonelondbackAction.confirmationDisplayTypelon.map(confirmationDisplayTypelonMarshallelonr(_)),
+      clielonntelonvelonntInfo = felonelondbackAction.clielonntelonvelonntInfo.map(clielonntelonvelonntInfoMarshallelonr(_)),
+      icon = felonelondbackAction.icon.map(horizonIconMarshallelonr(_)),
+      richBelonhavior = felonelondbackAction.richBelonhavior.map(richFelonelondbackBelonhaviorMarshallelonr(_)),
+      subprompt = felonelondbackAction.subprompt
     )
   }
 }

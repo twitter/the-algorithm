@@ -1,35 +1,35 @@
-package com.twitter.product_mixer.component_library.pipeline.candidate.flexible_injection_pipeline
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.pipelonlinelon.candidatelon.flelonxiblelon_injelonction_pipelonlinelon
 
-import com.twitter.product_mixer.component_library.candidate_source.flexible_injection_pipeline.PromptCandidateSource
-import com.twitter.product_mixer.component_library.pipeline.candidate.flexible_injection_pipeline.transformer.HasFlipInjectionParams
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.decider.DeciderParam
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.componelonnt_library.candidatelon_sourcelon.flelonxiblelon_injelonction_pipelonlinelon.PromptCandidatelonSourcelon
+import com.twittelonr.product_mixelonr.componelonnt_library.pipelonlinelon.candidatelon.flelonxiblelon_injelonction_pipelonlinelon.transformelonr.HasFlipInjelonctionParams
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonPipelonlinelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.timelonlinelons.configapi.FSParam
+import com.twittelonr.timelonlinelons.configapi.deloncidelonr.DeloncidelonrParam
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class FlipPromptDependentCandidatePipelineConfigBuilder @Inject() (
-  promptCandidateSource: PromptCandidateSource) {
+@Singlelonton
+class FlipPromptDelonpelonndelonntCandidatelonPipelonlinelonConfigBuildelonr @Injelonct() (
+  promptCandidatelonSourcelon: PromptCandidatelonSourcelon) {
 
   /**
-   * Build a FlipPromptDependentCandidatePipelineConfig
+   * Build a FlipPromptDelonpelonndelonntCandidatelonPipelonlinelonConfig
    *
-   * @note If injected classes are needed to populate parameters in this method, consider creating a
-   *       ProductFlipPromptDependentCandidatePipelineConfigBuilder with a single `def build()` method.
-   *       That product-specific builder class can then inject everything it needs (including this
-   *       class), and delegate to this class's build() method within its own build() method.
+   * @notelon If injelonctelond classelons arelon nelonelondelond to populatelon paramelontelonrs in this melonthod, considelonr crelonating a
+   *       ProductFlipPromptDelonpelonndelonntCandidatelonPipelonlinelonConfigBuildelonr with a singlelon `delonf build()` melonthod.
+   *       That product-speloncific buildelonr class can thelonn injelonct elonvelonrything it nelonelonds (including this
+   *       class), and delonlelongatelon to this class's build() melonthod within its own build() melonthod.
    */
-  def build[Query <: PipelineQuery with HasFlipInjectionParams](
-    identifier: CandidatePipelineIdentifier = CandidatePipelineIdentifier("FlipPrompt"),
-    enabledDeciderParam: Option[DeciderParam[Boolean]] = None,
-    supportedClientParam: Option[FSParam[Boolean]] = None,
-  ): FlipPromptDependentCandidatePipelineConfig[Query] = {
-    new FlipPromptDependentCandidatePipelineConfig(
-      identifier = identifier,
-      enabledDeciderParam = enabledDeciderParam,
-      supportedClientParam = supportedClientParam,
-      promptCandidateSource = promptCandidateSource)
+  delonf build[Quelonry <: PipelonlinelonQuelonry with HasFlipInjelonctionParams](
+    idelonntifielonr: CandidatelonPipelonlinelonIdelonntifielonr = CandidatelonPipelonlinelonIdelonntifielonr("FlipPrompt"),
+    elonnablelondDeloncidelonrParam: Option[DeloncidelonrParam[Boolelonan]] = Nonelon,
+    supportelondClielonntParam: Option[FSParam[Boolelonan]] = Nonelon,
+  ): FlipPromptDelonpelonndelonntCandidatelonPipelonlinelonConfig[Quelonry] = {
+    nelonw FlipPromptDelonpelonndelonntCandidatelonPipelonlinelonConfig(
+      idelonntifielonr = idelonntifielonr,
+      elonnablelondDeloncidelonrParam = elonnablelondDeloncidelonrParam,
+      supportelondClielonntParam = supportelondClielonntParam,
+      promptCandidatelonSourcelon = promptCandidatelonSourcelon)
   }
 }

@@ -1,8 +1,8 @@
-package com.twitter.product_mixer.core.pipeline.state
+packagelon com.twittelonr.product_mixelonr.corelon.pipelonlinelon.statelon
 
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
-trait HasQuery[Query <: PipelineQuery, T] {
-  def query: Query
-  def updateQuery(query: Query): T
+trait HasQuelonry[Quelonry <: PipelonlinelonQuelonry, T] {
+  delonf quelonry: Quelonry
+  delonf updatelonQuelonry(quelonry: Quelonry): T
 }

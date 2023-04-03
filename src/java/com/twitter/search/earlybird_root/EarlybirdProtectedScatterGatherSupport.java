@@ -1,25 +1,25 @@
-package com.twitter.search.earlybird_root;
+packagelon com.twittelonr.selonarch.elonarlybird_root;
 
-import javax.inject.Inject;
+import javax.injelonct.Injelonct;
 
-import com.twitter.search.common.partitioning.base.PartitionMappingManager;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.earlybird_root.common.EarlybirdFeatureSchemaMerger;
+import com.twittelonr.selonarch.common.partitioning.baselon.PartitionMappingManagelonr;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdClustelonr;
+import com.twittelonr.selonarch.elonarlybird_root.common.elonarlybirdFelonaturelonSchelonmaMelonrgelonr;
 
 /**
- * The EarlybirdServiceScatterGatherSupport implementation used to fan out requests to the earlybird
- * partitions in the protected cluster.
+ * Thelon elonarlybirdSelonrvicelonScattelonrGathelonrSupport implelonmelonntation uselond to fan out relonquelonsts to thelon elonarlybird
+ * partitions in thelon protelonctelond clustelonr.
  */
-public class EarlybirdProtectedScatterGatherSupport extends EarlybirdServiceScatterGatherSupport {
+public class elonarlybirdProtelonctelondScattelonrGathelonrSupport elonxtelonnds elonarlybirdSelonrvicelonScattelonrGathelonrSupport {
   /**
-   * Construct a EarlybirdProtectedScatterGatherSupport to do minUserFanOut,
-   * used only by protected. The main difference from the base class is that
-   * if the from user ID is not set, exception is thrown.
+   * Construct a elonarlybirdProtelonctelondScattelonrGathelonrSupport to do minUselonrFanOut,
+   * uselond only by protelonctelond. Thelon main diffelonrelonncelon from thelon baselon class is that
+   * if thelon from uselonr ID is not selont, elonxcelonption is thrown.
    */
-  @Inject
-  EarlybirdProtectedScatterGatherSupport(
-      PartitionMappingManager partitionMappingManager,
-      EarlybirdFeatureSchemaMerger featureSchemaMerger) {
-    super(partitionMappingManager, EarlybirdCluster.PROTECTED, featureSchemaMerger);
+  @Injelonct
+  elonarlybirdProtelonctelondScattelonrGathelonrSupport(
+      PartitionMappingManagelonr partitionMappingManagelonr,
+      elonarlybirdFelonaturelonSchelonmaMelonrgelonr felonaturelonSchelonmaMelonrgelonr) {
+    supelonr(partitionMappingManagelonr, elonarlybirdClustelonr.PROTelonCTelonD, felonaturelonSchelonmaMelonrgelonr);
   }
 }

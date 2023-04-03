@@ -1,11 +1,11 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.button
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.button
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.icon.HorizonIcon
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Url
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.icon.HorizonIcon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.Url
 
-sealed trait CtaButton
+selonalelond trait CtaButton
 
-case class TextCtaButton(buttonText: String, url: Url) extends CtaButton
+caselon class TelonxtCtaButton(buttonTelonxt: String, url: Url) elonxtelonnds CtaButton
 
-case class IconCtaButton(buttonIcon: HorizonIcon, accessibilityLabel: String, url: Url)
-    extends CtaButton
+caselon class IconCtaButton(buttonIcon: HorizonIcon, accelonssibilityLabelonl: String, url: Url)
+    elonxtelonnds CtaButton

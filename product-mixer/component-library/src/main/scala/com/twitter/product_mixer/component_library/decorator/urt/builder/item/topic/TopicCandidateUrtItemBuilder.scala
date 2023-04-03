@@ -1,47 +1,47 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.topic
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.itelonm.topic
 
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.topic.TopicCandidateUrtItemBuilder.TopicClientEventInfoElement
-import com.twitter.product_mixer.component_library.model.candidate.BaseTopicCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.item.topic.BaseTopicDisplayTypeBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.item.topic.BaseTopicFunctionalityTypeBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.topic.TopicItem
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.itelonm.topic.TopicCandidatelonUrtItelonmBuildelonr.TopicClielonntelonvelonntInfoelonlelonmelonnt
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.BaselonTopicCandidatelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.CandidatelonUrtelonntryBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.itelonm.topic.BaselonTopicDisplayTypelonBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.itelonm.topic.BaselonTopicFunctionalityTypelonBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.melontadata.BaselonClielonntelonvelonntInfoBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.melontadata.BaselonFelonelondbackActionInfoBuildelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.topic.TopicItelonm
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
-object TopicCandidateUrtItemBuilder {
-  val TopicClientEventInfoElement: String = "topic"
+objelonct TopicCandidatelonUrtItelonmBuildelonr {
+  val TopicClielonntelonvelonntInfoelonlelonmelonnt: String = "topic"
 }
 
-case class TopicCandidateUrtItemBuilder[-Query <: PipelineQuery, Candidate <: BaseTopicCandidate](
-  clientEventInfoBuilder: BaseClientEventInfoBuilder[Query, Candidate],
-  topicFunctionalityTypeBuilder: Option[BaseTopicFunctionalityTypeBuilder[Query, Candidate]] = None,
-  topicDisplayTypeBuilder: Option[BaseTopicDisplayTypeBuilder[Query, Candidate]] = None,
-  feedbackActionInfoBuilder: Option[
-    BaseFeedbackActionInfoBuilder[Query, Candidate]
-  ] = None)
-    extends CandidateUrtEntryBuilder[Query, Candidate, TopicItem] {
+caselon class TopicCandidatelonUrtItelonmBuildelonr[-Quelonry <: PipelonlinelonQuelonry, Candidatelon <: BaselonTopicCandidatelon](
+  clielonntelonvelonntInfoBuildelonr: BaselonClielonntelonvelonntInfoBuildelonr[Quelonry, Candidatelon],
+  topicFunctionalityTypelonBuildelonr: Option[BaselonTopicFunctionalityTypelonBuildelonr[Quelonry, Candidatelon]] = Nonelon,
+  topicDisplayTypelonBuildelonr: Option[BaselonTopicDisplayTypelonBuildelonr[Quelonry, Candidatelon]] = Nonelon,
+  felonelondbackActionInfoBuildelonr: Option[
+    BaselonFelonelondbackActionInfoBuildelonr[Quelonry, Candidatelon]
+  ] = Nonelon)
+    elonxtelonnds CandidatelonUrtelonntryBuildelonr[Quelonry, Candidatelon, TopicItelonm] {
 
-  override def apply(
-    query: Query,
-    topicCandidate: Candidate,
-    candidateFeatures: FeatureMap
-  ): TopicItem =
-    TopicItem(
-      id = topicCandidate.id,
-      sortIndex = None, // Sort indexes are automatically set in the domain marshaller phase
-      clientEventInfo = clientEventInfoBuilder(
-        query,
-        topicCandidate,
-        candidateFeatures,
-        Some(TopicClientEventInfoElement)),
-      feedbackActionInfo =
-        feedbackActionInfoBuilder.flatMap(_.apply(query, topicCandidate, candidateFeatures)),
-      topicFunctionalityType =
-        topicFunctionalityTypeBuilder.flatMap(_.apply(query, topicCandidate, candidateFeatures)),
-      topicDisplayType =
-        topicDisplayTypeBuilder.flatMap(_.apply(query, topicCandidate, candidateFeatures))
+  ovelonrridelon delonf apply(
+    quelonry: Quelonry,
+    topicCandidatelon: Candidatelon,
+    candidatelonFelonaturelons: FelonaturelonMap
+  ): TopicItelonm =
+    TopicItelonm(
+      id = topicCandidatelon.id,
+      sortIndelonx = Nonelon, // Sort indelonxelons arelon automatically selont in thelon domain marshallelonr phaselon
+      clielonntelonvelonntInfo = clielonntelonvelonntInfoBuildelonr(
+        quelonry,
+        topicCandidatelon,
+        candidatelonFelonaturelons,
+        Somelon(TopicClielonntelonvelonntInfoelonlelonmelonnt)),
+      felonelondbackActionInfo =
+        felonelondbackActionInfoBuildelonr.flatMap(_.apply(quelonry, topicCandidatelon, candidatelonFelonaturelons)),
+      topicFunctionalityTypelon =
+        topicFunctionalityTypelonBuildelonr.flatMap(_.apply(quelonry, topicCandidatelon, candidatelonFelonaturelons)),
+      topicDisplayTypelon =
+        topicDisplayTypelonBuildelonr.flatMap(_.apply(quelonry, topicCandidatelon, candidatelonFelonaturelons))
     )
 }

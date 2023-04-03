@@ -1,54 +1,54 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urp
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urp
 
-import com.twitter.product_mixer.core.model.marshalling.response.urp.FollowedTopicsMeTimeline
-import com.twitter.product_mixer.core.model.marshalling.response.urp.FollowedTopicsOtherTimeline
-import com.twitter.product_mixer.core.model.marshalling.response.urp.ForYouExploreMixerTimeline
-import com.twitter.product_mixer.core.model.marshalling.response.urp.NoteworthyAccountsTimeline
-import com.twitter.product_mixer.core.model.marshalling.response.urp.NotInterestedTopicsMeTimeline
-import com.twitter.product_mixer.core.model.marshalling.response.urp.NuxForYouCategoryUserRecommendationsTimeline
-import com.twitter.product_mixer.core.model.marshalling.response.urp.NuxGeoCategoryUserRecommendationsTimeline
-import com.twitter.product_mixer.core.model.marshalling.response.urp.NuxPymkCategoryUserRecommendationsTimeline
-import com.twitter.product_mixer.core.model.marshalling.response.urp.NuxSingleInterestCategoryUserRecommendationsTimeline
-import com.twitter.product_mixer.core.model.marshalling.response.urp.NuxUserRecommendationsTimeline
-import com.twitter.product_mixer.core.model.marshalling.response.urp.ShoppingHomeTimeline
-import com.twitter.product_mixer.core.model.marshalling.response.urp.TimelineKey
-import com.twitter.product_mixer.core.model.marshalling.response.urp.TopicsLandingTimeline
-import com.twitter.product_mixer.core.model.marshalling.response.urp.TopicsPickerTimeline
-import com.twitter.product_mixer.core.model.marshalling.response.urp.TrendingExploreMixerTimeline
-import com.twitter.strato.graphql.timelines.{thriftscala => graphql}
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urp.FollowelondTopicsMelonTimelonlinelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urp.FollowelondTopicsOthelonrTimelonlinelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urp.ForYouelonxplorelonMixelonrTimelonlinelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urp.NotelonworthyAccountsTimelonlinelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urp.NotIntelonrelonstelondTopicsMelonTimelonlinelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urp.NuxForYouCatelongoryUselonrReloncommelonndationsTimelonlinelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urp.NuxGelonoCatelongoryUselonrReloncommelonndationsTimelonlinelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urp.NuxPymkCatelongoryUselonrReloncommelonndationsTimelonlinelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urp.NuxSinglelonIntelonrelonstCatelongoryUselonrReloncommelonndationsTimelonlinelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urp.NuxUselonrReloncommelonndationsTimelonlinelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urp.ShoppingHomelonTimelonlinelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urp.TimelonlinelonKelony
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urp.TopicsLandingTimelonlinelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urp.TopicsPickelonrTimelonlinelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urp.TrelonndingelonxplorelonMixelonrTimelonlinelon
+import com.twittelonr.strato.graphql.timelonlinelons.{thriftscala => graphql}
+import javax.injelonct.Singlelonton
 
-@Singleton
-class TimelineKeyMarshaller {
+@Singlelonton
+class TimelonlinelonKelonyMarshallelonr {
 
-  def apply(timelineKey: TimelineKey): graphql.TimelineKey = timelineKey match {
-    case TopicsLandingTimeline(topicId) =>
-      graphql.TimelineKey.TopicTimeline(graphql.TopicId(topicId))
-    case NoteworthyAccountsTimeline(topicId) =>
-      graphql.TimelineKey.NoteworthyAccountsTimeline(graphql.TopicId(topicId))
-    case TopicsPickerTimeline(topicId) =>
-      graphql.TimelineKey.TopicsPickerTimeline(graphql.TopicId(topicId))
-    case FollowedTopicsMeTimeline() =>
-      graphql.TimelineKey.FollowedTopicsMeTimeline(graphql.Void())
-    case NotInterestedTopicsMeTimeline() =>
-      graphql.TimelineKey.NotInterestedTopicsMeTimeline(graphql.Void())
-    case FollowedTopicsOtherTimeline(userId) =>
-      graphql.TimelineKey.FollowedTopicsOtherTimeline(userId)
-    case NuxUserRecommendationsTimeline() =>
-      graphql.TimelineKey.NuxUserRecommendationsTimeline(graphql.Void())
-    case NuxForYouCategoryUserRecommendationsTimeline() =>
-      graphql.TimelineKey.NuxForYouCategoryUserRecommendationsTimeline(graphql.Void())
-    case NuxPymkCategoryUserRecommendationsTimeline() =>
-      graphql.TimelineKey.NuxPymkCategoryUserRecommendationsTimeline(graphql.Void())
-    case NuxGeoCategoryUserRecommendationsTimeline() =>
-      graphql.TimelineKey.NuxGeoCategoryUserRecommendationsTimeline(graphql.Void())
-    case NuxSingleInterestCategoryUserRecommendationsTimeline(topicId) =>
-      graphql.TimelineKey.NuxSingleInterestCategoryUserRecommendationsTimeline(
+  delonf apply(timelonlinelonKelony: TimelonlinelonKelony): graphql.TimelonlinelonKelony = timelonlinelonKelony match {
+    caselon TopicsLandingTimelonlinelon(topicId) =>
+      graphql.TimelonlinelonKelony.TopicTimelonlinelon(graphql.TopicId(topicId))
+    caselon NotelonworthyAccountsTimelonlinelon(topicId) =>
+      graphql.TimelonlinelonKelony.NotelonworthyAccountsTimelonlinelon(graphql.TopicId(topicId))
+    caselon TopicsPickelonrTimelonlinelon(topicId) =>
+      graphql.TimelonlinelonKelony.TopicsPickelonrTimelonlinelon(graphql.TopicId(topicId))
+    caselon FollowelondTopicsMelonTimelonlinelon() =>
+      graphql.TimelonlinelonKelony.FollowelondTopicsMelonTimelonlinelon(graphql.Void())
+    caselon NotIntelonrelonstelondTopicsMelonTimelonlinelon() =>
+      graphql.TimelonlinelonKelony.NotIntelonrelonstelondTopicsMelonTimelonlinelon(graphql.Void())
+    caselon FollowelondTopicsOthelonrTimelonlinelon(uselonrId) =>
+      graphql.TimelonlinelonKelony.FollowelondTopicsOthelonrTimelonlinelon(uselonrId)
+    caselon NuxUselonrReloncommelonndationsTimelonlinelon() =>
+      graphql.TimelonlinelonKelony.NuxUselonrReloncommelonndationsTimelonlinelon(graphql.Void())
+    caselon NuxForYouCatelongoryUselonrReloncommelonndationsTimelonlinelon() =>
+      graphql.TimelonlinelonKelony.NuxForYouCatelongoryUselonrReloncommelonndationsTimelonlinelon(graphql.Void())
+    caselon NuxPymkCatelongoryUselonrReloncommelonndationsTimelonlinelon() =>
+      graphql.TimelonlinelonKelony.NuxPymkCatelongoryUselonrReloncommelonndationsTimelonlinelon(graphql.Void())
+    caselon NuxGelonoCatelongoryUselonrReloncommelonndationsTimelonlinelon() =>
+      graphql.TimelonlinelonKelony.NuxGelonoCatelongoryUselonrReloncommelonndationsTimelonlinelon(graphql.Void())
+    caselon NuxSinglelonIntelonrelonstCatelongoryUselonrReloncommelonndationsTimelonlinelon(topicId) =>
+      graphql.TimelonlinelonKelony.NuxSinglelonIntelonrelonstCatelongoryUselonrReloncommelonndationsTimelonlinelon(
         graphql.TopicId(topicId))
-    case ShoppingHomeTimeline() => graphql.TimelineKey.ShoppingHome(graphql.Void())
-    case ForYouExploreMixerTimeline() =>
-      graphql.TimelineKey.ForYouExploreMixerTimeline(graphql.Void())
-    case TrendingExploreMixerTimeline() =>
-      graphql.TimelineKey.TrendingExploreMixerTimeline(graphql.Void())
+    caselon ShoppingHomelonTimelonlinelon() => graphql.TimelonlinelonKelony.ShoppingHomelon(graphql.Void())
+    caselon ForYouelonxplorelonMixelonrTimelonlinelon() =>
+      graphql.TimelonlinelonKelony.ForYouelonxplorelonMixelonrTimelonlinelon(graphql.Void())
+    caselon TrelonndingelonxplorelonMixelonrTimelonlinelon() =>
+      graphql.TimelonlinelonKelony.TrelonndingelonxplorelonMixelonrTimelonlinelon(graphql.Void())
   }
 }

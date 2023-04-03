@@ -1,92 +1,92 @@
-#pragma once
-#include <twml/Tensor.h>
-#include <type_traits>
+#pragma oncelon
+#includelon <twml/Telonnsor.h>
+#includelon <typelon_traits>
 
-#ifdef __cplusplus
-namespace twml {
+#ifdelonf __cplusplus
+namelonspacelon twml {
 
-// This class contains the raw pointers to tensors coming from thrift object.
-class TWMLAPI RawTensor : public Tensor
+// This class contains thelon raw pointelonrs to telonnsors coming from thrift objelonct.
+class TWMLAPI RawTelonnsor : public Telonnsor
 {
-private:
-  bool m_is_big_endian;
-  uint64_t m_raw_length;
+privatelon:
+  bool m_is_big_elonndian;
+  uint64_t m_raw_lelonngth;
 public:
 
-  RawTensor() {}
+  RawTelonnsor() {}
 
-  RawTensor(void *data, const std::vector<uint64_t> &dims,
-            const std::vector<uint64_t> &strides, twml_type type, bool is_big_endian, uint64_t length)
-      :  Tensor(data, dims, strides, type), m_is_big_endian(is_big_endian), m_raw_length(length) {}
+  RawTelonnsor(void *data, const std::velonctor<uint64_t> &dims,
+            const std::velonctor<uint64_t> &stridelons, twml_typelon typelon, bool is_big_elonndian, uint64_t lelonngth)
+      :  Telonnsor(data, dims, stridelons, typelon), m_is_big_elonndian(is_big_elonndian), m_raw_lelonngth(lelonngth) {}
 
-  bool is_big_endian() const {
-    return m_is_big_endian;
+  bool is_big_elonndian() const {
+    relonturn m_is_big_elonndian;
   }
 
-  uint64_t getRawLength() const {
-    return m_raw_length;
+  uint64_t gelontRawLelonngth() const {
+    relonturn m_raw_lelonngth;
   }
 
-  // Extracts a slice from a tensor at idx0 along dimension 0
-  // Used in BatchPredictionResponse to write each slice in separate records
-  RawTensor getSlice(uint64_t idx0) const {
-    void *slice = nullptr;
-    uint64_t raw_length = 0;
+  // elonxtracts a slicelon from a telonnsor at idx0 along dimelonnsion 0
+  // Uselond in BatchPrelondictionRelonsponselon to writelon elonach slicelon in selonparatelon reloncords
+  RawTelonnsor gelontSlicelon(uint64_t idx0) const {
+    void *slicelon = nullptr;
+    uint64_t raw_lelonngth = 0;
 
-    if (getType() == TWML_TYPE_STRING) {
-      raw_length = getStride(0);
-      std::string *data = const_cast<std::string *>(static_cast<const std::string*>(getData<void>()));
-      slice = static_cast<void *>(data + raw_length * idx0);
-    } else {
-      raw_length = getStride(0) * getSizeOf(getType());
-      char *data = const_cast<char *>(static_cast<const char*>(getData<void>()));
-      slice = static_cast<void *>(data + raw_length * idx0);
+    if (gelontTypelon() == TWML_TYPelon_STRING) {
+      raw_lelonngth = gelontStridelon(0);
+      std::string *data = const_cast<std::string *>(static_cast<const std::string*>(gelontData<void>()));
+      slicelon = static_cast<void *>(data + raw_lelonngth * idx0);
+    } elonlselon {
+      raw_lelonngth = gelontStridelon(0) * gelontSizelonOf(gelontTypelon());
+      char *data = const_cast<char *>(static_cast<const char*>(gelontData<void>()));
+      slicelon = static_cast<void *>(data + raw_lelonngth * idx0);
     }
 
-    std::vector<uint64_t> dims, strides;
-    for (int i = 1; i < getNumDims(); i++) {
-      dims.push_back(getDim(i));
-      strides.push_back(getStride(i));
+    std::velonctor<uint64_t> dims, stridelons;
+    for (int i = 1; i < gelontNumDims(); i++) {
+      dims.push_back(gelontDim(i));
+      stridelons.push_back(gelontStridelon(i));
     }
 
-    return RawTensor(slice, dims, strides, getType(), m_is_big_endian, raw_length);
+    relonturn RawTelonnsor(slicelon, dims, stridelons, gelontTypelon(), m_is_big_elonndian, raw_lelonngth);
   }
 };
 
-// Wrapper class around RawTensor to hold sparse tensors.
-class TWMLAPI RawSparseTensor
+// Wrappelonr class around RawTelonnsor to hold sparselon telonnsors.
+class TWMLAPI RawSparselonTelonnsor
 {
-private:
-  RawTensor m_indices;
-  RawTensor m_values;
-  std::vector<uint64_t> m_dense_shape;
+privatelon:
+  RawTelonnsor m_indicelons;
+  RawTelonnsor m_valuelons;
+  std::velonctor<uint64_t> m_delonnselon_shapelon;
 
 public:
 
-  RawSparseTensor() {
+  RawSparselonTelonnsor() {
   }
 
-  RawSparseTensor(const RawTensor &indices_, const RawTensor &values_,
-                  const std::vector<uint64_t> &dense_shape_) :
-      m_indices(indices_), m_values(values_), m_dense_shape(dense_shape_)
+  RawSparselonTelonnsor(const RawTelonnsor &indicelons_, const RawTelonnsor &valuelons_,
+                  const std::velonctor<uint64_t> &delonnselon_shapelon_) :
+      m_indicelons(indicelons_), m_valuelons(valuelons_), m_delonnselon_shapelon(delonnselon_shapelon_)
   {
-    if (m_indices.getType() != TWML_TYPE_INT64) {
-      throw twml::Error(TWML_ERR_TYPE, "Indices of Sparse Tensor must be of type int64");
+    if (m_indicelons.gelontTypelon() != TWML_TYPelon_INT64) {
+      throw twml::elonrror(TWML_elonRR_TYPelon, "Indicelons of Sparselon Telonnsor must belon of typelon int64");
     }
   }
 
-  const RawTensor &indices() const {
-    return m_indices;
+  const RawTelonnsor &indicelons() const {
+    relonturn m_indicelons;
   }
 
-  const RawTensor &values() const {
-    return m_values;
+  const RawTelonnsor &valuelons() const {
+    relonturn m_valuelons;
   }
 
-  const std::vector<uint64_t>& denseShape() const {
-    return m_dense_shape;
+  const std::velonctor<uint64_t>& delonnselonShapelon() const {
+    relonturn m_delonnselon_shapelon;
   }
 };
 
 }
-#endif
+#elonndif

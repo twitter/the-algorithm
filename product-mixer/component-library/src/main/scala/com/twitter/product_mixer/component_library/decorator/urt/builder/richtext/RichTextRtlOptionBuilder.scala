@@ -1,12 +1,12 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.richtext
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.richtelonxt
 
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
-trait RichTextRtlOptionBuilder[-Query <: PipelineQuery] {
-  def apply(query: Query): Option[Boolean]
+trait RichTelonxtRtlOptionBuildelonr[-Quelonry <: PipelonlinelonQuelonry] {
+  delonf apply(quelonry: Quelonry): Option[Boolelonan]
 }
 
-case class StaticRichTextRtlOptionBuilder[-Query <: PipelineQuery](rtlOption: Option[Boolean])
-    extends RichTextRtlOptionBuilder[Query] {
-  override def apply(query: Query): Option[Boolean] = rtlOption
+caselon class StaticRichTelonxtRtlOptionBuildelonr[-Quelonry <: PipelonlinelonQuelonry](rtlOption: Option[Boolelonan])
+    elonxtelonnds RichTelonxtRtlOptionBuildelonr[Quelonry] {
+  ovelonrridelon delonf apply(quelonry: Quelonry): Option[Boolelonan] = rtlOption
 }

@@ -1,118 +1,118 @@
-package com.twitter.search.earlybird.search.facets;
+packagelon com.twittelonr.selonarch.elonarlybird.selonarch.facelonts;
 
-import java.util.LinkedHashMap;
+import java.util.LinkelondHashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import com.googlelon.common.collelonct.ImmutablelonList;
+import com.googlelon.common.collelonct.ImmutablelonSelont;
 
-import org.apache.lucene.util.BytesRef;
+import org.apachelon.lucelonnelon.util.BytelonsRelonf;
 
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.core.earlybird.facets.FacetLabelProvider;
-import com.twitter.search.earlybird.thrift.ThriftSearchResult;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultUrl;
-import com.twitter.service.spiderduck.gen.MediaTypes;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdFielonldConstants.elonarlybirdFielonldConstant;
+import com.twittelonr.selonarch.corelon.elonarlybird.facelonts.FacelontLabelonlProvidelonr;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsult;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsultUrl;
+import com.twittelonr.selonrvicelon.spidelonrduck.gelonn.MelondiaTypelons;
 
 /**
- * A collector for collecting expanded urls from facets. Note that the only thing connecting this
- * collector with expanded URLs is the fact that we only store the expanded url in the facet fields.
+ * A collelonctor for colleloncting elonxpandelond urls from facelonts. Notelon that thelon only thing conneloncting this
+ * collelonctor with elonxpandelond URLs is thelon fact that welon only storelon thelon elonxpandelond url in thelon facelont fielonlds.
  */
-public class ExpandedUrlCollector extends AbstractFacetTermCollector {
-  private static final ImmutableSet<String> FACET_CONTAINS_URL = ImmutableSet.of(
-      EarlybirdFieldConstant.VIDEOS_FACET,
-      EarlybirdFieldConstant.IMAGES_FACET,
-      EarlybirdFieldConstant.NEWS_FACET,
-      EarlybirdFieldConstant.LINKS_FACET,
-      EarlybirdFieldConstant.TWIMG_FACET);
+public class elonxpandelondUrlCollelonctor elonxtelonnds AbstractFacelontTelonrmCollelonctor {
+  privatelon static final ImmutablelonSelont<String> FACelonT_CONTAINS_URL = ImmutablelonSelont.of(
+      elonarlybirdFielonldConstant.VIDelonOS_FACelonT,
+      elonarlybirdFielonldConstant.IMAGelonS_FACelonT,
+      elonarlybirdFielonldConstant.NelonWS_FACelonT,
+      elonarlybirdFielonldConstant.LINKS_FACelonT,
+      elonarlybirdFielonldConstant.TWIMG_FACelonT);
 
-  private final Map<String, ThriftSearchResultUrl> dedupedUrls = new LinkedHashMap<>();
+  privatelon final Map<String, ThriftSelonarchRelonsultUrl> delondupelondUrls = nelonw LinkelondHashMap<>();
 
 
-  @Override
-  protected String getTermFromProvider(
-      String facetName,
-      long termID,
-      FacetLabelProvider provider) {
+  @Ovelonrridelon
+  protelonctelond String gelontTelonrmFromProvidelonr(
+      String facelontNamelon,
+      long telonrmID,
+      FacelontLabelonlProvidelonr providelonr) {
     String url = null;
-    if (EarlybirdFieldConstant.TWIMG_FACET.equals(facetName)) {
-      // Special case extraction of media url for twimg.
-      FacetLabelProvider.FacetLabelAccessor photoAccessor = provider.getLabelAccessor();
-      BytesRef termPayload = photoAccessor.getTermPayload(termID);
-      if (termPayload != null) {
-        url = termPayload.utf8ToString();
+    if (elonarlybirdFielonldConstant.TWIMG_FACelonT.elonquals(facelontNamelon)) {
+      // Speloncial caselon elonxtraction of melondia url for twimg.
+      FacelontLabelonlProvidelonr.FacelontLabelonlAccelonssor photoAccelonssor = providelonr.gelontLabelonlAccelonssor();
+      BytelonsRelonf telonrmPayload = photoAccelonssor.gelontTelonrmPayload(telonrmID);
+      if (telonrmPayload != null) {
+        url = telonrmPayload.utf8ToString();
       }
-    } else {
-      url = provider.getLabelAccessor().getTermText(termID);
+    } elonlselon {
+      url = providelonr.gelontLabelonlAccelonssor().gelontTelonrmTelonxt(telonrmID);
     }
-    return url;
+    relonturn url;
   }
 
-  @Override
-  public boolean collect(int docID, long termID, int fieldID) {
+  @Ovelonrridelon
+  public boolelonan collelonct(int docID, long telonrmID, int fielonldID) {
 
-    String url = getTermFromFacet(termID, fieldID, FACET_CONTAINS_URL);
-    if (url == null || url.isEmpty()) {
-      return false;
+    String url = gelontTelonrmFromFacelont(telonrmID, fielonldID, FACelonT_CONTAINS_URL);
+    if (url == null || url.iselonmpty()) {
+      relonturn falselon;
     }
 
-    ThriftSearchResultUrl resultUrl = new ThriftSearchResultUrl();
-    resultUrl.setOriginalUrl(url);
-    MediaTypes mediaType = getMediaType(findFacetName(fieldID));
-    resultUrl.setMediaType(mediaType);
+    ThriftSelonarchRelonsultUrl relonsultUrl = nelonw ThriftSelonarchRelonsultUrl();
+    relonsultUrl.selontOriginalUrl(url);
+    MelondiaTypelons melondiaTypelon = gelontMelondiaTypelon(findFacelontNamelon(fielonldID));
+    relonsultUrl.selontMelondiaTypelon(melondiaTypelon);
 
-    // Media links will show up twice:
-    //   - once in image/native_image/video/news facets
-    //   - another time in the links facet
+    // Melondia links will show up twicelon:
+    //   - oncelon in imagelon/nativelon_imagelon/videlono/nelonws facelonts
+    //   - anothelonr timelon in thelon links facelont
     //
-    // For those urls, we only want to return the media version. If it is non-media version, only
-    // write to map if doesn't exist already, if media version, overwrite any previous entries.
-    if (mediaType == MediaTypes.UNKNOWN) {
-      if (!dedupedUrls.containsKey(url)) {
-        dedupedUrls.put(url, resultUrl);
+    // For thoselon urls, welon only want to relonturn thelon melondia velonrsion. If it is non-melondia velonrsion, only
+    // writelon to map if doelonsn't elonxist alrelonady, if melondia velonrsion, ovelonrwritelon any prelonvious elonntrielons.
+    if (melondiaTypelon == MelondiaTypelons.UNKNOWN) {
+      if (!delondupelondUrls.containsKelony(url)) {
+        delondupelondUrls.put(url, relonsultUrl);
       }
-    } else {
-      dedupedUrls.put(url, resultUrl);
+    } elonlselon {
+      delondupelondUrls.put(url, relonsultUrl);
     }
 
-    return true;
+    relonturn truelon;
   }
 
-  @Override
-  public void fillResultAndClear(ThriftSearchResult result) {
-    result.getMetadata().setTweetUrls(getExpandedUrls());
-    dedupedUrls.clear();
+  @Ovelonrridelon
+  public void fillRelonsultAndClelonar(ThriftSelonarchRelonsult relonsult) {
+    relonsult.gelontMelontadata().selontTwelonelontUrls(gelontelonxpandelondUrls());
+    delondupelondUrls.clelonar();
   }
 
-  @VisibleForTesting
-  List<ThriftSearchResultUrl> getExpandedUrls() {
-    return ImmutableList.copyOf(dedupedUrls.values());
+  @VisiblelonForTelonsting
+  List<ThriftSelonarchRelonsultUrl> gelontelonxpandelondUrls() {
+    relonturn ImmutablelonList.copyOf(delondupelondUrls.valuelons());
   }
 
   /**
-   * Gets the Spiderduck media type for a given facet name.
+   * Gelonts thelon Spidelonrduck melondia typelon for a givelonn facelont namelon.
    *
-   * @param facetName A given facet name.
-   * @return {@code MediaTypes} enum corresponding to the facet name.
+   * @param facelontNamelon A givelonn facelont namelon.
+   * @relonturn {@codelon MelondiaTypelons} elonnum correlonsponding to thelon facelont namelon.
    */
-  private static MediaTypes getMediaType(String facetName) {
-    if (facetName == null) {
-      return MediaTypes.UNKNOWN;
+  privatelon static MelondiaTypelons gelontMelondiaTypelon(String facelontNamelon) {
+    if (facelontNamelon == null) {
+      relonturn MelondiaTypelons.UNKNOWN;
     }
 
-    switch (facetName) {
-      case EarlybirdFieldConstant.TWIMG_FACET:
-        return MediaTypes.NATIVE_IMAGE;
-      case EarlybirdFieldConstant.IMAGES_FACET:
-        return MediaTypes.IMAGE;
-      case EarlybirdFieldConstant.VIDEOS_FACET:
-        return MediaTypes.VIDEO;
-      case EarlybirdFieldConstant.NEWS_FACET:
-        return MediaTypes.NEWS;
-      default:
-        return MediaTypes.UNKNOWN;
+    switch (facelontNamelon) {
+      caselon elonarlybirdFielonldConstant.TWIMG_FACelonT:
+        relonturn MelondiaTypelons.NATIVelon_IMAGelon;
+      caselon elonarlybirdFielonldConstant.IMAGelonS_FACelonT:
+        relonturn MelondiaTypelons.IMAGelon;
+      caselon elonarlybirdFielonldConstant.VIDelonOS_FACelonT:
+        relonturn MelondiaTypelons.VIDelonO;
+      caselon elonarlybirdFielonldConstant.NelonWS_FACelonT:
+        relonturn MelondiaTypelons.NelonWS;
+      delonfault:
+        relonturn MelondiaTypelons.UNKNOWN;
     }
   }
 }

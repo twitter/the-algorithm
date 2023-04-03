@@ -1,31 +1,31 @@
-package com.twitter.product_mixer.component_library.premarshaller.urt.builder
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.prelonmarshallelonr.urt.buildelonr
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.AddEntriesTimelineInstruction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.AddelonntrielonsTimelonlinelonInstruction
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.Timelonlinelonelonntry
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
 /**
- * Iterates over all the [[TimelineEntry]] passed it and creates `addEntry` entries in the URT for
- * any entries which are not pinned and not replaceable(cursors are replaceable)
+ * Itelonratelons ovelonr all thelon [[Timelonlinelonelonntry]] passelond it and crelonatelons `addelonntry` elonntrielons in thelon URT for
+ * any elonntrielons which arelon not pinnelond and not relonplacelonablelon(cursors arelon relonplacelonablelon)
  *
- * This is because pinned entries always show up in the `pinEntry` section, and replaceable entries
- * will show up in the `replaceEntry` section.
+ * This is beloncauselon pinnelond elonntrielons always show up in thelon `pinelonntry` selonction, and relonplacelonablelon elonntrielons
+ * will show up in thelon `relonplacelonelonntry` selonction.
  */
-case class AddEntriesWithPinnedAndReplaceInstructionBuilder[Query <: PipelineQuery](
-  override val includeInstruction: IncludeInstruction[Query] = AlwaysInclude)
-    extends UrtInstructionBuilder[Query, AddEntriesTimelineInstruction] {
+caselon class AddelonntrielonsWithPinnelondAndRelonplacelonInstructionBuildelonr[Quelonry <: PipelonlinelonQuelonry](
+  ovelonrridelon val includelonInstruction: IncludelonInstruction[Quelonry] = AlwaysIncludelon)
+    elonxtelonnds UrtInstructionBuildelonr[Quelonry, AddelonntrielonsTimelonlinelonInstruction] {
 
-  override def build(
-    query: Query,
-    entries: Seq[TimelineEntry]
-  ): Seq[AddEntriesTimelineInstruction] = {
-    if (includeInstruction(query, entries)) {
-      val entriesToAdd = entries
-        .filterNot(_.isPinned.getOrElse(false))
-        .filter(_.entryIdToReplace.isEmpty)
-      if (entriesToAdd.nonEmpty) Seq(AddEntriesTimelineInstruction(entriesToAdd))
-      else Seq.empty
-    } else
-      Seq.empty
+  ovelonrridelon delonf build(
+    quelonry: Quelonry,
+    elonntrielons: Selonq[Timelonlinelonelonntry]
+  ): Selonq[AddelonntrielonsTimelonlinelonInstruction] = {
+    if (includelonInstruction(quelonry, elonntrielons)) {
+      val elonntrielonsToAdd = elonntrielons
+        .filtelonrNot(_.isPinnelond.gelontOrelonlselon(falselon))
+        .filtelonr(_.elonntryIdToRelonplacelon.iselonmpty)
+      if (elonntrielonsToAdd.nonelonmpty) Selonq(AddelonntrielonsTimelonlinelonInstruction(elonntrielonsToAdd))
+      elonlselon Selonq.elonmpty
+    } elonlselon
+      Selonq.elonmpty
   }
 }

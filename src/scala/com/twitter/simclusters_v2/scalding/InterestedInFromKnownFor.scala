@@ -1,124 +1,124 @@
-package com.twitter.simclusters_v2.scalding
+packagelon com.twittelonr.simclustelonrs_v2.scalding
 
-import com.twitter.algebird.Semigroup
-import com.twitter.bijection.Injection
-import com.twitter.dal.client.dataset.KeyValDALDataset
-import com.twitter.scalding.TypedPipe
-import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.scalding_internal.job.TwitterExecutionApp
-import com.twitter.scalding_internal.job.analytics_batch.AnalyticsBatchExecution
-import com.twitter.scalding_internal.job.analytics_batch.AnalyticsBatchExecutionArgs
-import com.twitter.scalding_internal.job.analytics_batch.BatchDescription
-import com.twitter.scalding_internal.job.analytics_batch.BatchFirstTime
-import com.twitter.scalding_internal.job.analytics_batch.BatchIncrement
-import com.twitter.scalding_internal.job.analytics_batch.TwitterScheduledExecutionApp
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.ClusterId
-import com.twitter.simclusters_v2.common.ModelVersions
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.hdfs_sources._
-import com.twitter.simclusters_v2.scalding.common.Util
-import com.twitter.simclusters_v2.thriftscala._
+import com.twittelonr.algelonbird.Selonmigroup
+import com.twittelonr.bijelonction.Injelonction
+import com.twittelonr.dal.clielonnt.dataselont.KelonyValDALDataselont
+import com.twittelonr.scalding.TypelondPipelon
+import com.twittelonr.scalding._
+import com.twittelonr.scalding_intelonrnal.dalv2.DAL
+import com.twittelonr.scalding_intelonrnal.dalv2.DALWritelon._
+import com.twittelonr.scalding_intelonrnal.job.TwittelonrelonxeloncutionApp
+import com.twittelonr.scalding_intelonrnal.job.analytics_batch.AnalyticsBatchelonxeloncution
+import com.twittelonr.scalding_intelonrnal.job.analytics_batch.AnalyticsBatchelonxeloncutionArgs
+import com.twittelonr.scalding_intelonrnal.job.analytics_batch.BatchDelonscription
+import com.twittelonr.scalding_intelonrnal.job.analytics_batch.BatchFirstTimelon
+import com.twittelonr.scalding_intelonrnal.job.analytics_batch.BatchIncrelonmelonnt
+import com.twittelonr.scalding_intelonrnal.job.analytics_batch.TwittelonrSchelondulelondelonxeloncutionApp
+import com.twittelonr.scalding_intelonrnal.multiformat.format.kelonyval.KelonyVal
+import com.twittelonr.simclustelonrs_v2.common.ClustelonrId
+import com.twittelonr.simclustelonrs_v2.common.ModelonlVelonrsions
+import com.twittelonr.simclustelonrs_v2.common.UselonrId
+import com.twittelonr.simclustelonrs_v2.hdfs_sourcelons._
+import com.twittelonr.simclustelonrs_v2.scalding.common.Util
+import com.twittelonr.simclustelonrs_v2.thriftscala._
 
 /**
- * This file implements the job for computing users' interestedIn vector from KnownFor data set.
+ * This filelon implelonmelonnts thelon job for computing uselonrs' intelonrelonstelondIn velonctor from KnownFor data selont.
  *
- * It reads the UserUserNormalizedGraphScalaDataset to get user-user follow + fav graph, and then
- * based on the known-for clusters of each followed/faved user, we calculate how much a user is
- * interestedIn a cluster.
+ * It relonads thelon UselonrUselonrNormalizelondGraphScalaDataselont to gelont uselonr-uselonr follow + fav graph, and thelonn
+ * baselond on thelon known-for clustelonrs of elonach followelond/favelond uselonr, welon calculatelon how much a uselonr is
+ * intelonrelonstelondIn a clustelonr.
  */
 
 /**
- * Production job for computing interestedIn data set for the model version 20M145K2020.
+ * Production job for computing intelonrelonstelondIn data selont for thelon modelonl velonrsion 20M145K2020.
  *
- * To deploy the job:
+ * To delonploy thelon job:
  *
- * capesospy-v2 update --build_locally --start_cron interested_in_for_20M_145k_2020 \
- src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc.yaml
+ * capelonsospy-v2 updatelon --build_locally --start_cron intelonrelonstelond_in_for_20M_145k_2020 \
+ src/scala/com/twittelonr/simclustelonrs_v2/capelonsos_config/atla_proc.yaml
  */
-object InterestedInFromKnownFor20M145K2020 extends InterestedInFromKnownForBatchBase {
-  override val firstTime: String = "2020-10-06"
-  override val outputKVDataset: KeyValDALDataset[KeyVal[Long, ClustersUserIsInterestedIn]] =
-    SimclustersV2RawInterestedIn20M145K2020ScalaDataset
-  override val outputPath: String = InternalDataPaths.RawInterestedIn2020Path
-  override val knownForModelVersion: String = ModelVersions.Model20M145K2020
-  override val knownForDALDataset: KeyValDALDataset[KeyVal[Long, ClustersUserIsKnownFor]] =
-    SimclustersV2KnownFor20M145K2020ScalaDataset
+objelonct IntelonrelonstelondInFromKnownFor20M145K2020 elonxtelonnds IntelonrelonstelondInFromKnownForBatchBaselon {
+  ovelonrridelon val firstTimelon: String = "2020-10-06"
+  ovelonrridelon val outputKVDataselont: KelonyValDALDataselont[KelonyVal[Long, ClustelonrsUselonrIsIntelonrelonstelondIn]] =
+    SimclustelonrsV2RawIntelonrelonstelondIn20M145K2020ScalaDataselont
+  ovelonrridelon val outputPath: String = IntelonrnalDataPaths.RawIntelonrelonstelondIn2020Path
+  ovelonrridelon val knownForModelonlVelonrsion: String = ModelonlVelonrsions.Modelonl20M145K2020
+  ovelonrridelon val knownForDALDataselont: KelonyValDALDataselont[KelonyVal[Long, ClustelonrsUselonrIsKnownFor]] =
+    SimclustelonrsV2KnownFor20M145K2020ScalaDataselont
 }
 
 /**
- * base class for the main logic of computing interestedIn from KnownFor data set.
+ * baselon class for thelon main logic of computing intelonrelonstelondIn from KnownFor data selont.
  */
-trait InterestedInFromKnownForBatchBase extends TwitterScheduledExecutionApp {
-  implicit val tz = DateOps.UTC
-  implicit val parser = DateParser.default
+trait IntelonrelonstelondInFromKnownForBatchBaselon elonxtelonnds TwittelonrSchelondulelondelonxeloncutionApp {
+  implicit val tz = DatelonOps.UTC
+  implicit val parselonr = DatelonParselonr.delonfault
 
-  def firstTime: String
-  val batchIncrement: Duration = Days(7)
+  delonf firstTimelon: String
+  val batchIncrelonmelonnt: Duration = Days(7)
   val lookBackDays: Duration = Days(30)
 
-  def outputKVDataset: KeyValDALDataset[KeyVal[Long, ClustersUserIsInterestedIn]]
-  def outputPath: String
-  def knownForModelVersion: String
-  def knownForDALDataset: KeyValDALDataset[KeyVal[Long, ClustersUserIsKnownFor]]
+  delonf outputKVDataselont: KelonyValDALDataselont[KelonyVal[Long, ClustelonrsUselonrIsIntelonrelonstelondIn]]
+  delonf outputPath: String
+  delonf knownForModelonlVelonrsion: String
+  delonf knownForDALDataselont: KelonyValDALDataselont[KelonyVal[Long, ClustelonrsUselonrIsKnownFor]]
 
-  private lazy val execArgs = AnalyticsBatchExecutionArgs(
-    batchDesc = BatchDescription(this.getClass.getName.replace("$", "")),
-    firstTime = BatchFirstTime(RichDate(firstTime)),
-    lastTime = None,
-    batchIncrement = BatchIncrement(batchIncrement)
+  privatelon lazy val elonxeloncArgs = AnalyticsBatchelonxeloncutionArgs(
+    batchDelonsc = BatchDelonscription(this.gelontClass.gelontNamelon.relonplacelon("$", "")),
+    firstTimelon = BatchFirstTimelon(RichDatelon(firstTimelon)),
+    lastTimelon = Nonelon,
+    batchIncrelonmelonnt = BatchIncrelonmelonnt(batchIncrelonmelonnt)
   )
 
-  override def scheduledJob: Execution[Unit] = AnalyticsBatchExecution(execArgs) {
-    implicit dateRange =>
-      Execution.withId { implicit uniqueId =>
-        Execution.withArgs { args =>
-          val normalizedGraph =
-            DAL.readMostRecentSnapshot(UserUserNormalizedGraphScalaDataset).toTypedPipe
-          val knownFor = KnownForSources.fromKeyVal(
-            DAL.readMostRecentSnapshot(knownForDALDataset, dateRange.extend(Days(30))).toTypedPipe,
-            knownForModelVersion
+  ovelonrridelon delonf schelondulelondJob: elonxeloncution[Unit] = AnalyticsBatchelonxeloncution(elonxeloncArgs) {
+    implicit datelonRangelon =>
+      elonxeloncution.withId { implicit uniquelonId =>
+        elonxeloncution.withArgs { args =>
+          val normalizelondGraph =
+            DAL.relonadMostReloncelonntSnapshot(UselonrUselonrNormalizelondGraphScalaDataselont).toTypelondPipelon
+          val knownFor = KnownForSourcelons.fromKelonyVal(
+            DAL.relonadMostReloncelonntSnapshot(knownForDALDataselont, datelonRangelon.elonxtelonnd(Days(30))).toTypelondPipelon,
+            knownForModelonlVelonrsion
           )
 
-          val socialProofThreshold = args.int("socialProofThreshold", 2)
-          val maxClustersPerUser = args.int("maxClustersPerUser", 50)
+          val socialProofThrelonshold = args.int("socialProofThrelonshold", 2)
+          val maxClustelonrsPelonrUselonr = args.int("maxClustelonrsPelonrUselonr", 50)
 
-          val result = InterestedInFromKnownFor
+          val relonsult = IntelonrelonstelondInFromKnownFor
             .run(
-              normalizedGraph,
+              normalizelondGraph,
               knownFor,
-              socialProofThreshold,
-              maxClustersPerUser,
-              knownForModelVersion
+              socialProofThrelonshold,
+              maxClustelonrsPelonrUselonr,
+              knownForModelonlVelonrsion
             )
 
-          val writeKeyValResultExec = result
-            .map { case (userId, clusters) => KeyVal(userId, clusters) }
-            .writeDALVersionedKeyValExecution(
-              outputKVDataset,
+          val writelonKelonyValRelonsultelonxelonc = relonsult
+            .map { caselon (uselonrId, clustelonrs) => KelonyVal(uselonrId, clustelonrs) }
+            .writelonDALVelonrsionelondKelonyValelonxeloncution(
+              outputKVDataselont,
               D.Suffix(outputPath)
             )
 
-          // read previous data set for validation purpose
-          val previousDataset = if (RichDate(firstTime).timestamp != dateRange.start.timestamp) {
+          // relonad prelonvious data selont for validation purposelon
+          val prelonviousDataselont = if (RichDatelon(firstTimelon).timelonstamp != datelonRangelon.start.timelonstamp) {
             DAL
-              .readMostRecentSnapshot(outputKVDataset, dateRange.prepend(lookBackDays)).toTypedPipe
+              .relonadMostReloncelonntSnapshot(outputKVDataselont, datelonRangelon.prelonpelonnd(lookBackDays)).toTypelondPipelon
               .map {
-                case KeyVal(user, interestedIn) =>
-                  (user, interestedIn)
+                caselon KelonyVal(uselonr, intelonrelonstelondIn) =>
+                  (uselonr, intelonrelonstelondIn)
               }
-          } else {
-            TypedPipe.empty
+          } elonlselon {
+            TypelondPipelon.elonmpty
           }
 
-          Util.printCounters(
-            Execution
+          Util.printCountelonrs(
+            elonxeloncution
               .zip(
-                writeKeyValResultExec,
-                InterestedInFromKnownFor.dataSetStats(result, "NewResult"),
-                InterestedInFromKnownFor.dataSetStats(previousDataset, "OldResult")
+                writelonKelonyValRelonsultelonxelonc,
+                IntelonrelonstelondInFromKnownFor.dataSelontStats(relonsult, "NelonwRelonsult"),
+                IntelonrelonstelondInFromKnownFor.dataSelontStats(prelonviousDataselont, "OldRelonsult")
               ).unit
           )
         }
@@ -127,304 +127,304 @@ trait InterestedInFromKnownForBatchBase extends TwitterScheduledExecutionApp {
 }
 
 /**
- * Adhoc job to compute user interestedIn.
+ * Adhoc job to computelon uselonr intelonrelonstelondIn.
  *
- * scalding remote run --target src/scala/com/twitter/simclusters_v2/scalding:interested_in_adhoc \
- * --user recos-platform \
- * --submitter hadoopnest2.atla.twitter.com \
- * --main-class com.twitter.simclusters_v2.scalding.InterestedInFromKnownForAdhoc -- \
- * --date 2019-08-26  --outputDir /user/recos-platform/adhoc/simclusters_interested_in_log_fav
+ * scalding relonmotelon run --targelont src/scala/com/twittelonr/simclustelonrs_v2/scalding:intelonrelonstelond_in_adhoc \
+ * --uselonr reloncos-platform \
+ * --submittelonr hadoopnelonst2.atla.twittelonr.com \
+ * --main-class com.twittelonr.simclustelonrs_v2.scalding.IntelonrelonstelondInFromKnownForAdhoc -- \
+ * --datelon 2019-08-26  --outputDir /uselonr/reloncos-platform/adhoc/simclustelonrs_intelonrelonstelond_in_log_fav
  */
-object InterestedInFromKnownForAdhoc extends TwitterExecutionApp {
-  def job: Execution[Unit] =
-    Execution.getConfigMode.flatMap {
-      case (config, mode) =>
-        Execution.withId { implicit uniqueId =>
-          val args = config.getArgs
-          val normalizedGraph = TypedPipe.from(
-            UserAndNeighborsFixedPathSource(args("graphInputDir"))
+objelonct IntelonrelonstelondInFromKnownForAdhoc elonxtelonnds TwittelonrelonxeloncutionApp {
+  delonf job: elonxeloncution[Unit] =
+    elonxeloncution.gelontConfigModelon.flatMap {
+      caselon (config, modelon) =>
+        elonxeloncution.withId { implicit uniquelonId =>
+          val args = config.gelontArgs
+          val normalizelondGraph = TypelondPipelon.from(
+            UselonrAndNelonighborsFixelondPathSourcelon(args("graphInputDir"))
           )
-          val socialProofThreshold = args.int("socialProofThreshold", 2)
-          val maxClustersPerUser = args.int("maxClustersPerUser", 20)
-          val knownForModelVersion = args("knownForModelVersion")
-          val knownFor = KnownForSources.readKnownFor(args("knownForInputDir"))
+          val socialProofThrelonshold = args.int("socialProofThrelonshold", 2)
+          val maxClustelonrsPelonrUselonr = args.int("maxClustelonrsPelonrUselonr", 20)
+          val knownForModelonlVelonrsion = args("knownForModelonlVelonrsion")
+          val knownFor = KnownForSourcelons.relonadKnownFor(args("knownForInputDir"))
 
-          val outputSink = AdhocKeyValSources.interestedInSource(args("outputDir"))
-          Util.printCounters(
-            InterestedInFromKnownFor
+          val outputSink = AdhocKelonyValSourcelons.intelonrelonstelondInSourcelon(args("outputDir"))
+          Util.printCountelonrs(
+            IntelonrelonstelondInFromKnownFor
               .run(
-                normalizedGraph,
+                normalizelondGraph,
                 knownFor,
-                socialProofThreshold,
-                maxClustersPerUser,
-                knownForModelVersion
-              ).writeExecution(outputSink)
+                socialProofThrelonshold,
+                maxClustelonrsPelonrUselonr,
+                knownForModelonlVelonrsion
+              ).writelonelonxeloncution(outputSink)
           )
         }
     }
 }
 
 /**
- * Adhoc job to check the output of an adhoc interestedInSource.
+ * Adhoc job to chelonck thelon output of an adhoc intelonrelonstelondInSourcelon.
  */
-object DumpInterestedInAdhoc extends TwitterExecutionApp {
-  def job: Execution[Unit] =
-    Execution.getConfigMode.flatMap {
-      case (config, mode) =>
-        Execution.withId { implicit uniqueId =>
-          val args = config.getArgs
-          val users = args.list("users").map(_.toLong).toSet
-          val input = TypedPipe.from(AdhocKeyValSources.interestedInSource(args("inputDir")))
-          input.filter { case (userId, rec) => users.contains(userId) }.toIterableExecution.map {
-            s => println(s.map(Util.prettyJsonMapper.writeValueAsString).mkString("\n"))
+objelonct DumpIntelonrelonstelondInAdhoc elonxtelonnds TwittelonrelonxeloncutionApp {
+  delonf job: elonxeloncution[Unit] =
+    elonxeloncution.gelontConfigModelon.flatMap {
+      caselon (config, modelon) =>
+        elonxeloncution.withId { implicit uniquelonId =>
+          val args = config.gelontArgs
+          val uselonrs = args.list("uselonrs").map(_.toLong).toSelont
+          val input = TypelondPipelon.from(AdhocKelonyValSourcelons.intelonrelonstelondInSourcelon(args("inputDir")))
+          input.filtelonr { caselon (uselonrId, relonc) => uselonrs.contains(uselonrId) }.toItelonrablelonelonxeloncution.map {
+            s => println(s.map(Util.prelonttyJsonMappelonr.writelonValuelonAsString).mkString("\n"))
           }
         }
     }
 }
 
 /**
- * Helper functions
+ * Helonlpelonr functions
  */
-object InterestedInFromKnownFor {
-  private def ifNanMake0(x: Double): Double = if (x.isNaN) 0.0 else x
+objelonct IntelonrelonstelondInFromKnownFor {
+  privatelon delonf ifNanMakelon0(x: Doublelon): Doublelon = if (x.isNaN) 0.0 elonlselon x
 
-  case class SrcClusterIntermediateInfo(
-    followScore: Double,
-    followScoreProducerNormalized: Double,
-    favScore: Double,
-    favScoreProducerNormalized: Double,
-    logFavScore: Double,
-    logFavScoreProducerNormalized: Double,
+  caselon class SrcClustelonrIntelonrmelondiatelonInfo(
+    followScorelon: Doublelon,
+    followScorelonProducelonrNormalizelond: Doublelon,
+    favScorelon: Doublelon,
+    favScorelonProducelonrNormalizelond: Doublelon,
+    logFavScorelon: Doublelon,
+    logFavScorelonProducelonrNormalizelond: Doublelon,
     followSocialProof: List[Long],
     favSocialProof: List[Long]) {
-    // overriding for the sake of unit tests
-    override def equals(obj: scala.Any): Boolean = {
+    // ovelonrriding for thelon sakelon of unit telonsts
+    ovelonrridelon delonf elonquals(obj: scala.Any): Boolelonan = {
       obj match {
-        case that: SrcClusterIntermediateInfo =>
-          math.abs(followScore - that.followScore) < 1e-5 &&
-            math.abs(followScoreProducerNormalized - that.followScoreProducerNormalized) < 1e-5 &&
-            math.abs(favScore - that.favScore) < 1e-5 &&
-            math.abs(favScoreProducerNormalized - that.favScoreProducerNormalized) < 1e-5 &&
-            math.abs(logFavScore - that.logFavScore) < 1e-5 &&
-            math.abs(logFavScoreProducerNormalized - that.logFavScoreProducerNormalized) < 1e-5 &&
-            followSocialProof.toSet == that.followSocialProof.toSet &&
-            favSocialProof.toSet == that.favSocialProof.toSet
-        case _ => false
+        caselon that: SrcClustelonrIntelonrmelondiatelonInfo =>
+          math.abs(followScorelon - that.followScorelon) < 1elon-5 &&
+            math.abs(followScorelonProducelonrNormalizelond - that.followScorelonProducelonrNormalizelond) < 1elon-5 &&
+            math.abs(favScorelon - that.favScorelon) < 1elon-5 &&
+            math.abs(favScorelonProducelonrNormalizelond - that.favScorelonProducelonrNormalizelond) < 1elon-5 &&
+            math.abs(logFavScorelon - that.logFavScorelon) < 1elon-5 &&
+            math.abs(logFavScorelonProducelonrNormalizelond - that.logFavScorelonProducelonrNormalizelond) < 1elon-5 &&
+            followSocialProof.toSelont == that.followSocialProof.toSelont &&
+            favSocialProof.toSelont == that.favSocialProof.toSelont
+        caselon _ => falselon
       }
     }
   }
 
-  implicit object SrcClusterIntermediateInfoSemigroup
-      extends Semigroup[SrcClusterIntermediateInfo] {
-    override def plus(
-      left: SrcClusterIntermediateInfo,
-      right: SrcClusterIntermediateInfo
-    ): SrcClusterIntermediateInfo = {
-      SrcClusterIntermediateInfo(
-        followScore = left.followScore + right.followScore,
-        followScoreProducerNormalized =
-          left.followScoreProducerNormalized + right.followScoreProducerNormalized,
-        favScore = left.favScore + right.favScore,
-        favScoreProducerNormalized =
-          left.favScoreProducerNormalized + right.favScoreProducerNormalized,
-        logFavScore = left.logFavScore + right.logFavScore,
-        logFavScoreProducerNormalized =
-          left.logFavScoreProducerNormalized + right.logFavScoreProducerNormalized,
+  implicit objelonct SrcClustelonrIntelonrmelondiatelonInfoSelonmigroup
+      elonxtelonnds Selonmigroup[SrcClustelonrIntelonrmelondiatelonInfo] {
+    ovelonrridelon delonf plus(
+      lelonft: SrcClustelonrIntelonrmelondiatelonInfo,
+      right: SrcClustelonrIntelonrmelondiatelonInfo
+    ): SrcClustelonrIntelonrmelondiatelonInfo = {
+      SrcClustelonrIntelonrmelondiatelonInfo(
+        followScorelon = lelonft.followScorelon + right.followScorelon,
+        followScorelonProducelonrNormalizelond =
+          lelonft.followScorelonProducelonrNormalizelond + right.followScorelonProducelonrNormalizelond,
+        favScorelon = lelonft.favScorelon + right.favScorelon,
+        favScorelonProducelonrNormalizelond =
+          lelonft.favScorelonProducelonrNormalizelond + right.favScorelonProducelonrNormalizelond,
+        logFavScorelon = lelonft.logFavScorelon + right.logFavScorelon,
+        logFavScorelonProducelonrNormalizelond =
+          lelonft.logFavScorelonProducelonrNormalizelond + right.logFavScorelonProducelonrNormalizelond,
         followSocialProof =
-          Semigroup.plus(left.followSocialProof, right.followSocialProof).distinct,
-        favSocialProof = Semigroup.plus(left.favSocialProof, right.favSocialProof).distinct
+          Selonmigroup.plus(lelonft.followSocialProof, right.followSocialProof).distinct,
+        favSocialProof = Selonmigroup.plus(lelonft.favSocialProof, right.favSocialProof).distinct
       )
     }
   }
 
   /**
-   * @param adjacencyLists User-User follow/fav graph
-   * @param knownFor KnownFor data set. Each user can be known for several clusters with certain
-   *                 knownFor weights.
-   * @param socialProofThreshold A user will only be interested in a cluster if they follow/fav at
-   *                             least certain number of users known for this cluster.
-   * @param uniqueId required for these Stat
-   * @return
+   * @param adjacelonncyLists Uselonr-Uselonr follow/fav graph
+   * @param knownFor KnownFor data selont. elonach uselonr can belon known for selonvelonral clustelonrs with celonrtain
+   *                 knownFor welonights.
+   * @param socialProofThrelonshold A uselonr will only belon intelonrelonstelond in a clustelonr if thelony follow/fav at
+   *                             lelonast celonrtain numbelonr of uselonrs known for this clustelonr.
+   * @param uniquelonId relonquirelond for thelonselon Stat
+   * @relonturn
    */
-  def userClusterPairsWithoutNormalization(
-    adjacencyLists: TypedPipe[UserAndNeighbors],
-    knownFor: TypedPipe[(Long, Array[(Int, Float)])],
-    socialProofThreshold: Int
+  delonf uselonrClustelonrPairsWithoutNormalization(
+    adjacelonncyLists: TypelondPipelon[UselonrAndNelonighbors],
+    knownFor: TypelondPipelon[(Long, Array[(Int, Float)])],
+    socialProofThrelonshold: Int
   )(
-    implicit uniqueId: UniqueID
-  ): TypedPipe[((Long, Int), SrcClusterIntermediateInfo)] = {
-    val edgesToUsersWithKnownFor = Stat("num_edges_to_users_with_known_for")
-    val srcDestClusterTriples = Stat("num_src_dest_cluster_triples")
-    val srcClusterPairsBeforeSocialProofThresholding =
-      Stat("num_src_cluster_pairs_before_social_proof_thresholding")
-    val srcClusterPairsAfterSocialProofThresholding =
-      Stat("num_src_cluster_pairs_after_social_proof_thresholding")
+    implicit uniquelonId: UniquelonID
+  ): TypelondPipelon[((Long, Int), SrcClustelonrIntelonrmelondiatelonInfo)] = {
+    val elondgelonsToUselonrsWithKnownFor = Stat("num_elondgelons_to_uselonrs_with_known_for")
+    val srcDelonstClustelonrTriplelons = Stat("num_src_delonst_clustelonr_triplelons")
+    val srcClustelonrPairsBelonforelonSocialProofThrelonsholding =
+      Stat("num_src_clustelonr_pairs_belonforelon_social_proof_threlonsholding")
+    val srcClustelonrPairsAftelonrSocialProofThrelonsholding =
+      Stat("num_src_clustelonr_pairs_aftelonr_social_proof_threlonsholding")
 
-    val edges = adjacencyLists.flatMap {
-      case UserAndNeighbors(srcId, neighborsWithWeights) =>
-        neighborsWithWeights.map { neighborWithWeights =>
+    val elondgelons = adjacelonncyLists.flatMap {
+      caselon UselonrAndNelonighbors(srcId, nelonighborsWithWelonights) =>
+        nelonighborsWithWelonights.map { nelonighborWithWelonights =>
           (
-            neighborWithWeights.neighborId,
-            neighborWithWeights.copy(neighborId = srcId)
+            nelonighborWithWelonights.nelonighborId,
+            nelonighborWithWelonights.copy(nelonighborId = srcId)
           )
         }
     }
 
-    implicit val l2b: Long => Array[Byte] = Injection.long2BigEndian
+    implicit val l2b: Long => Array[Bytelon] = Injelonction.long2Bigelonndian
 
-    edges
-      .sketch(4000)
+    elondgelons
+      .skelontch(4000)
       .join(knownFor)
       .flatMap {
-        case (destId, (srcWithWeights, clusterArray)) =>
-          edgesToUsersWithKnownFor.inc()
-          clusterArray.toList.map {
-            case (clusterId, knownForScoreF) =>
-              val knownForScore = math.max(0.0, knownForScoreF.toDouble)
+        caselon (delonstId, (srcWithWelonights, clustelonrArray)) =>
+          elondgelonsToUselonrsWithKnownFor.inc()
+          clustelonrArray.toList.map {
+            caselon (clustelonrId, knownForScorelonF) =>
+              val knownForScorelon = math.max(0.0, knownForScorelonF.toDoublelon)
 
-              srcDestClusterTriples.inc()
-              val followScore =
-                if (srcWithWeights.isFollowed.contains(true)) knownForScore else 0.0
-              val followScoreProducerNormalizedOnly =
-                srcWithWeights.followScoreNormalizedByNeighborFollowersL2.getOrElse(
-                  0.0) * knownForScore
-              val favScore =
-                srcWithWeights.favScoreHalfLife100Days.getOrElse(0.0) * knownForScore
+              srcDelonstClustelonrTriplelons.inc()
+              val followScorelon =
+                if (srcWithWelonights.isFollowelond.contains(truelon)) knownForScorelon elonlselon 0.0
+              val followScorelonProducelonrNormalizelondOnly =
+                srcWithWelonights.followScorelonNormalizelondByNelonighborFollowelonrsL2.gelontOrelonlselon(
+                  0.0) * knownForScorelon
+              val favScorelon =
+                srcWithWelonights.favScorelonHalfLifelon100Days.gelontOrelonlselon(0.0) * knownForScorelon
 
-              val favScoreProducerNormalizedOnly =
-                srcWithWeights.favScoreHalfLife100DaysNormalizedByNeighborFaversL2.getOrElse(
-                  0.0) * knownForScore
+              val favScorelonProducelonrNormalizelondOnly =
+                srcWithWelonights.favScorelonHalfLifelon100DaysNormalizelondByNelonighborFavelonrsL2.gelontOrelonlselon(
+                  0.0) * knownForScorelon
 
-              val logFavScore = srcWithWeights.logFavScore.getOrElse(0.0) * knownForScore
+              val logFavScorelon = srcWithWelonights.logFavScorelon.gelontOrelonlselon(0.0) * knownForScorelon
 
-              val logFavScoreProducerNormalizedOnly = srcWithWeights.logFavScoreL2Normalized
-                .getOrElse(0.0) * knownForScore
+              val logFavScorelonProducelonrNormalizelondOnly = srcWithWelonights.logFavScorelonL2Normalizelond
+                .gelontOrelonlselon(0.0) * knownForScorelon
 
-              val followSocialProof = if (srcWithWeights.isFollowed.contains(true)) {
-                List(destId)
-              } else Nil
-              val favSocialProof = if (srcWithWeights.favScoreHalfLife100Days.exists(_ > 0)) {
-                List(destId)
-              } else Nil
+              val followSocialProof = if (srcWithWelonights.isFollowelond.contains(truelon)) {
+                List(delonstId)
+              } elonlselon Nil
+              val favSocialProof = if (srcWithWelonights.favScorelonHalfLifelon100Days.elonxists(_ > 0)) {
+                List(delonstId)
+              } elonlselon Nil
 
               (
-                (srcWithWeights.neighborId, clusterId),
-                SrcClusterIntermediateInfo(
-                  followScore,
-                  followScoreProducerNormalizedOnly,
-                  favScore,
-                  favScoreProducerNormalizedOnly,
-                  logFavScore,
-                  logFavScoreProducerNormalizedOnly,
+                (srcWithWelonights.nelonighborId, clustelonrId),
+                SrcClustelonrIntelonrmelondiatelonInfo(
+                  followScorelon,
+                  followScorelonProducelonrNormalizelondOnly,
+                  favScorelon,
+                  favScorelonProducelonrNormalizelondOnly,
+                  logFavScorelon,
+                  logFavScorelonProducelonrNormalizelondOnly,
                   followSocialProof,
                   favSocialProof
                 )
               )
           }
       }
-      .sumByKey
-      .withReducers(10000)
-      .filter {
-        case ((_, _), SrcClusterIntermediateInfo(_, _, _, _, _, _, followProof, favProof)) =>
-          srcClusterPairsBeforeSocialProofThresholding.inc()
-          val distinctSocialProof = (followProof ++ favProof).toSet
-          val result = distinctSocialProof.size >= socialProofThreshold
-          if (result) {
-            srcClusterPairsAfterSocialProofThresholding.inc()
+      .sumByKelony
+      .withRelonducelonrs(10000)
+      .filtelonr {
+        caselon ((_, _), SrcClustelonrIntelonrmelondiatelonInfo(_, _, _, _, _, _, followProof, favProof)) =>
+          srcClustelonrPairsBelonforelonSocialProofThrelonsholding.inc()
+          val distinctSocialProof = (followProof ++ favProof).toSelont
+          val relonsult = distinctSocialProof.sizelon >= socialProofThrelonshold
+          if (relonsult) {
+            srcClustelonrPairsAftelonrSocialProofThrelonsholding.inc()
           }
-          result
+          relonsult
       }
   }
 
   /**
-   * Add the cluster-level l2 norm scores, and use them to normalize follow/fav scores.
+   * Add thelon clustelonr-lelonvelonl l2 norm scorelons, and uselon thelonm to normalizelon follow/fav scorelons.
    */
-  def attachNormalizedScores(
-    intermediate: TypedPipe[((Long, Int), SrcClusterIntermediateInfo)]
+  delonf attachNormalizelondScorelons(
+    intelonrmelondiatelon: TypelondPipelon[((Long, Int), SrcClustelonrIntelonrmelondiatelonInfo)]
   )(
-    implicit uniqueId: UniqueID
-  ): TypedPipe[(Long, List[(Int, UserToInterestedInClusterScores)])] = {
+    implicit uniquelonId: UniquelonID
+  ): TypelondPipelon[(Long, List[(Int, UselonrToIntelonrelonstelondInClustelonrScorelons)])] = {
 
-    def square(x: Double): Double = x * x
+    delonf squarelon(x: Doublelon): Doublelon = x * x
 
-    val clusterCountsAndNorms =
-      intermediate
+    val clustelonrCountsAndNorms =
+      intelonrmelondiatelon
         .map {
-          case (
-                (_, clusterId),
-                SrcClusterIntermediateInfo(
-                  followScore,
-                  followScoreProducerNormalizedOnly,
-                  favScore,
-                  favScoreProducerNormalizedOnly,
-                  logFavScore,
-                  logFavScoreProducerNormalizedOnly,
+          caselon (
+                (_, clustelonrId),
+                SrcClustelonrIntelonrmelondiatelonInfo(
+                  followScorelon,
+                  followScorelonProducelonrNormalizelondOnly,
+                  favScorelon,
+                  favScorelonProducelonrNormalizelondOnly,
+                  logFavScorelon,
+                  logFavScorelonProducelonrNormalizelondOnly,
                   _,
                   _
                 )
               ) =>
             (
-              clusterId,
+              clustelonrId,
               (
                 1,
-                square(followScore),
-                square(followScoreProducerNormalizedOnly),
-                square(favScore),
-                square(favScoreProducerNormalizedOnly),
-                square(logFavScore),
-                square(logFavScoreProducerNormalizedOnly)
+                squarelon(followScorelon),
+                squarelon(followScorelonProducelonrNormalizelondOnly),
+                squarelon(favScorelon),
+                squarelon(favScorelonProducelonrNormalizelondOnly),
+                squarelon(logFavScorelon),
+                squarelon(logFavScorelonProducelonrNormalizelondOnly)
               )
             )
         }
-        .sumByKey
-        //        .withReducers(100)
+        .sumByKelony
+        //        .withRelonducelonrs(100)
         .map {
-          case (
-                clusterId,
+          caselon (
+                clustelonrId,
                 (
                   cnt,
-                  squareFollowScore,
-                  squareFollowScoreProducerNormalizedOnly,
-                  squareFavScore,
-                  squareFavScoreProducerNormalizedOnly,
-                  squareLogFavScore,
-                  squareLogFavScoreProducerNormalizedOnly
+                  squarelonFollowScorelon,
+                  squarelonFollowScorelonProducelonrNormalizelondOnly,
+                  squarelonFavScorelon,
+                  squarelonFavScorelonProducelonrNormalizelondOnly,
+                  squarelonLogFavScorelon,
+                  squarelonLogFavScorelonProducelonrNormalizelondOnly
                 )) =>
             (
-              clusterId,
+              clustelonrId,
               (
                 cnt,
-                math.sqrt(squareFollowScore),
-                math.sqrt(squareFollowScoreProducerNormalizedOnly),
-                math.sqrt(squareFavScore),
-                math.sqrt(squareFavScoreProducerNormalizedOnly),
-                math.sqrt(squareLogFavScore),
-                math.sqrt(squareLogFavScoreProducerNormalizedOnly)
+                math.sqrt(squarelonFollowScorelon),
+                math.sqrt(squarelonFollowScorelonProducelonrNormalizelondOnly),
+                math.sqrt(squarelonFavScorelon),
+                math.sqrt(squarelonFavScorelonProducelonrNormalizelondOnly),
+                math.sqrt(squarelonLogFavScorelon),
+                math.sqrt(squarelonLogFavScorelonProducelonrNormalizelondOnly)
               ))
         }
 
-    implicit val i2b: Int => Array[Byte] = Injection.int2BigEndian
+    implicit val i2b: Int => Array[Bytelon] = Injelonction.int2Bigelonndian
 
-    intermediate
+    intelonrmelondiatelon
       .map {
-        case ((srcId, clusterId), clusterScoresTuple) =>
-          (clusterId, (srcId, clusterScoresTuple))
+        caselon ((srcId, clustelonrId), clustelonrScorelonsTuplelon) =>
+          (clustelonrId, (srcId, clustelonrScorelonsTuplelon))
       }
-      .sketch(reducers = 900)
-      .join(clusterCountsAndNorms)
+      .skelontch(relonducelonrs = 900)
+      .join(clustelonrCountsAndNorms)
       .map {
-        case (
-              clusterId,
+        caselon (
+              clustelonrId,
               (
                 (
                   srcId,
-                  SrcClusterIntermediateInfo(
-                    followScore,
-                    followScoreProducerNormalizedOnly,
-                    favScore,
-                    favScoreProducerNormalizedOnly,
-                    logFavScore,
-                    logFavScoreProducerNormalizedOnly, // not used for now
+                  SrcClustelonrIntelonrmelondiatelonInfo(
+                    followScorelon,
+                    followScorelonProducelonrNormalizelondOnly,
+                    favScorelon,
+                    favScorelonProducelonrNormalizelondOnly,
+                    logFavScorelon,
+                    logFavScorelonProducelonrNormalizelondOnly, // not uselond for now
                     followProof,
                     favProof
                   )
@@ -432,11 +432,11 @@ object InterestedInFromKnownFor {
                 (
                   cnt,
                   followNorm,
-                  followProducerNormalizedNorm,
+                  followProducelonrNormalizelondNorm,
                   favNorm,
-                  favProducerNormalizedNorm,
+                  favProducelonrNormalizelondNorm,
                   logFavNorm,
-                  logFavProducerNormalizedNorm // not used for now
+                  logFavProducelonrNormalizelondNorm // not uselond for now
                 )
               )
             ) =>
@@ -444,54 +444,54 @@ object InterestedInFromKnownFor {
             srcId,
             List(
               (
-                clusterId,
-                UserToInterestedInClusterScores(
-                  followScore = Some(ifNanMake0(followScore)),
-                  followScoreClusterNormalizedOnly = Some(ifNanMake0(followScore / followNorm)),
-                  followScoreProducerNormalizedOnly =
-                    Some(ifNanMake0(followScoreProducerNormalizedOnly)),
-                  followScoreClusterAndProducerNormalized = Some(
-                    ifNanMake0(followScoreProducerNormalizedOnly / followProducerNormalizedNorm)),
-                  favScore = Some(ifNanMake0(favScore)),
-                  favScoreClusterNormalizedOnly = Some(ifNanMake0(favScore / favNorm)),
-                  favScoreProducerNormalizedOnly = Some(ifNanMake0(favScoreProducerNormalizedOnly)),
-                  favScoreClusterAndProducerNormalized =
-                    Some(ifNanMake0(favScoreProducerNormalizedOnly / favProducerNormalizedNorm)),
-                  usersBeingFollowed = Some(followProof),
-                  usersThatWereFaved = Some(favProof),
-                  numUsersInterestedInThisClusterUpperBound = Some(cnt),
-                  logFavScore = Some(ifNanMake0(logFavScore)),
-                  logFavScoreClusterNormalizedOnly = Some(ifNanMake0(logFavScore / logFavNorm))
+                clustelonrId,
+                UselonrToIntelonrelonstelondInClustelonrScorelons(
+                  followScorelon = Somelon(ifNanMakelon0(followScorelon)),
+                  followScorelonClustelonrNormalizelondOnly = Somelon(ifNanMakelon0(followScorelon / followNorm)),
+                  followScorelonProducelonrNormalizelondOnly =
+                    Somelon(ifNanMakelon0(followScorelonProducelonrNormalizelondOnly)),
+                  followScorelonClustelonrAndProducelonrNormalizelond = Somelon(
+                    ifNanMakelon0(followScorelonProducelonrNormalizelondOnly / followProducelonrNormalizelondNorm)),
+                  favScorelon = Somelon(ifNanMakelon0(favScorelon)),
+                  favScorelonClustelonrNormalizelondOnly = Somelon(ifNanMakelon0(favScorelon / favNorm)),
+                  favScorelonProducelonrNormalizelondOnly = Somelon(ifNanMakelon0(favScorelonProducelonrNormalizelondOnly)),
+                  favScorelonClustelonrAndProducelonrNormalizelond =
+                    Somelon(ifNanMakelon0(favScorelonProducelonrNormalizelondOnly / favProducelonrNormalizelondNorm)),
+                  uselonrsBeloningFollowelond = Somelon(followProof),
+                  uselonrsThatWelonrelonFavelond = Somelon(favProof),
+                  numUselonrsIntelonrelonstelondInThisClustelonrUppelonrBound = Somelon(cnt),
+                  logFavScorelon = Somelon(ifNanMakelon0(logFavScorelon)),
+                  logFavScorelonClustelonrNormalizelondOnly = Somelon(ifNanMakelon0(logFavScorelon / logFavNorm))
                 ))
             )
           )
       }
-      .sumByKey
-      //      .withReducers(1000)
-      .toTypedPipe
+      .sumByKelony
+      //      .withRelonducelonrs(1000)
+      .toTypelondPipelon
   }
 
   /**
-   * aggregate cluster scores for each user, to be used instead of attachNormalizedScores
-   * when we donot want to compute cluster-level l2 norm scores
+   * aggrelongatelon clustelonr scorelons for elonach uselonr, to belon uselond instelonad of attachNormalizelondScorelons
+   * whelonn welon donot want to computelon clustelonr-lelonvelonl l2 norm scorelons
    */
-  def groupClusterScores(
-    intermediate: TypedPipe[((Long, Int), SrcClusterIntermediateInfo)]
+  delonf groupClustelonrScorelons(
+    intelonrmelondiatelon: TypelondPipelon[((Long, Int), SrcClustelonrIntelonrmelondiatelonInfo)]
   )(
-    implicit uniqueId: UniqueID
-  ): TypedPipe[(Long, List[(Int, UserToInterestedInClusterScores)])] = {
+    implicit uniquelonId: UniquelonID
+  ): TypelondPipelon[(Long, List[(Int, UselonrToIntelonrelonstelondInClustelonrScorelons)])] = {
 
-    intermediate
+    intelonrmelondiatelon
       .map {
-        case (
-              (srcId, clusterId),
-              SrcClusterIntermediateInfo(
-                followScore,
-                followScoreProducerNormalizedOnly,
-                favScore,
-                favScoreProducerNormalizedOnly,
-                logFavScore,
-                logFavScoreProducerNormalizedOnly,
+        caselon (
+              (srcId, clustelonrId),
+              SrcClustelonrIntelonrmelondiatelonInfo(
+                followScorelon,
+                followScorelonProducelonrNormalizelondOnly,
+                favScorelon,
+                favScorelonProducelonrNormalizelondOnly,
+                logFavScorelon,
+                logFavScorelonProducelonrNormalizelondOnly,
                 followProof,
                 favProof
               )
@@ -500,166 +500,166 @@ object InterestedInFromKnownFor {
             srcId,
             List(
               (
-                clusterId,
-                UserToInterestedInClusterScores(
-                  followScore = Some(ifNanMake0(followScore)),
-                  followScoreProducerNormalizedOnly =
-                    Some(ifNanMake0(followScoreProducerNormalizedOnly)),
-                  favScore = Some(ifNanMake0(favScore)),
-                  favScoreProducerNormalizedOnly = Some(ifNanMake0(favScoreProducerNormalizedOnly)),
-                  usersBeingFollowed = Some(followProof),
-                  usersThatWereFaved = Some(favProof),
-                  logFavScore = Some(ifNanMake0(logFavScore)),
+                clustelonrId,
+                UselonrToIntelonrelonstelondInClustelonrScorelons(
+                  followScorelon = Somelon(ifNanMakelon0(followScorelon)),
+                  followScorelonProducelonrNormalizelondOnly =
+                    Somelon(ifNanMakelon0(followScorelonProducelonrNormalizelondOnly)),
+                  favScorelon = Somelon(ifNanMakelon0(favScorelon)),
+                  favScorelonProducelonrNormalizelondOnly = Somelon(ifNanMakelon0(favScorelonProducelonrNormalizelondOnly)),
+                  uselonrsBeloningFollowelond = Somelon(followProof),
+                  uselonrsThatWelonrelonFavelond = Somelon(favProof),
+                  logFavScorelon = Somelon(ifNanMakelon0(logFavScorelon)),
                 ))
             )
           )
       }
-      .sumByKey
-      .withReducers(1000)
-      .toTypedPipe
+      .sumByKelony
+      .withRelonducelonrs(1000)
+      .toTypelondPipelon
   }
 
   /**
-   * For each user, only keep up to a certain number of clusters.
-   * @param allInterests user with a list of interestedIn clusters.
-   * @param maxClustersPerUser number of clusters to keep for each user
-   * @param knownForModelVersion known for model version
-   * @param uniqueId required for these Stat
-   * @return
+   * For elonach uselonr, only kelonelonp up to a celonrtain numbelonr of clustelonrs.
+   * @param allIntelonrelonsts uselonr with a list of intelonrelonstelondIn clustelonrs.
+   * @param maxClustelonrsPelonrUselonr numbelonr of clustelonrs to kelonelonp for elonach uselonr
+   * @param knownForModelonlVelonrsion known for modelonl velonrsion
+   * @param uniquelonId relonquirelond for thelonselon Stat
+   * @relonturn
    */
-  def keepOnlyTopClusters(
-    allInterests: TypedPipe[(Long, List[(Int, UserToInterestedInClusterScores)])],
-    maxClustersPerUser: Int,
-    knownForModelVersion: String
+  delonf kelonelonpOnlyTopClustelonrs(
+    allIntelonrelonsts: TypelondPipelon[(Long, List[(Int, UselonrToIntelonrelonstelondInClustelonrScorelons)])],
+    maxClustelonrsPelonrUselonr: Int,
+    knownForModelonlVelonrsion: String
   )(
-    implicit uniqueId: UniqueID
-  ): TypedPipe[(Long, ClustersUserIsInterestedIn)] = {
-    val userClusterPairsBeforeUserTruncation =
-      Stat("num_user_cluster_pairs_before_user_truncation")
-    val userClusterPairsAfterUserTruncation =
-      Stat("num_user_cluster_pairs_after_user_truncation")
-    val usersWithALotOfClusters =
-      Stat(s"num_users_with_more_than_${maxClustersPerUser}_clusters")
+    implicit uniquelonId: UniquelonID
+  ): TypelondPipelon[(Long, ClustelonrsUselonrIsIntelonrelonstelondIn)] = {
+    val uselonrClustelonrPairsBelonforelonUselonrTruncation =
+      Stat("num_uselonr_clustelonr_pairs_belonforelon_uselonr_truncation")
+    val uselonrClustelonrPairsAftelonrUselonrTruncation =
+      Stat("num_uselonr_clustelonr_pairs_aftelonr_uselonr_truncation")
+    val uselonrsWithALotOfClustelonrs =
+      Stat(s"num_uselonrs_with_morelon_than_${maxClustelonrsPelonrUselonr}_clustelonrs")
 
-    allInterests
+    allIntelonrelonsts
       .map {
-        case (srcId, fullClusterList) =>
-          userClusterPairsBeforeUserTruncation.incBy(fullClusterList.size)
-          val truncatedClusters = if (fullClusterList.size > maxClustersPerUser) {
-            usersWithALotOfClusters.inc()
-            fullClusterList
+        caselon (srcId, fullClustelonrList) =>
+          uselonrClustelonrPairsBelonforelonUselonrTruncation.incBy(fullClustelonrList.sizelon)
+          val truncatelondClustelonrs = if (fullClustelonrList.sizelon > maxClustelonrsPelonrUselonr) {
+            uselonrsWithALotOfClustelonrs.inc()
+            fullClustelonrList
               .sortBy {
-                case (_, clusterScores) =>
+                caselon (_, clustelonrScorelons) =>
                   (
-                    -clusterScores.favScore.getOrElse(0.0),
-                    -clusterScores.logFavScore.getOrElse(0.0),
-                    -clusterScores.followScore.getOrElse(0.0),
-                    -clusterScores.logFavScoreClusterNormalizedOnly.getOrElse(0.0),
-                    -clusterScores.followScoreProducerNormalizedOnly.getOrElse(0.0)
+                    -clustelonrScorelons.favScorelon.gelontOrelonlselon(0.0),
+                    -clustelonrScorelons.logFavScorelon.gelontOrelonlselon(0.0),
+                    -clustelonrScorelons.followScorelon.gelontOrelonlselon(0.0),
+                    -clustelonrScorelons.logFavScorelonClustelonrNormalizelondOnly.gelontOrelonlselon(0.0),
+                    -clustelonrScorelons.followScorelonProducelonrNormalizelondOnly.gelontOrelonlselon(0.0)
                   )
               }
-              .take(maxClustersPerUser)
-          } else {
-            fullClusterList
+              .takelon(maxClustelonrsPelonrUselonr)
+          } elonlselon {
+            fullClustelonrList
           }
-          userClusterPairsAfterUserTruncation.incBy(truncatedClusters.size)
-          (srcId, ClustersUserIsInterestedIn(knownForModelVersion, truncatedClusters.toMap))
+          uselonrClustelonrPairsAftelonrUselonrTruncation.incBy(truncatelondClustelonrs.sizelon)
+          (srcId, ClustelonrsUselonrIsIntelonrelonstelondIn(knownForModelonlVelonrsion, truncatelondClustelonrs.toMap))
       }
   }
 
-  def run(
-    adjacencyLists: TypedPipe[UserAndNeighbors],
-    knownFor: TypedPipe[(UserId, Array[(ClusterId, Float)])],
-    socialProofThreshold: Int,
-    maxClustersPerUser: Int,
-    knownForModelVersion: String
+  delonf run(
+    adjacelonncyLists: TypelondPipelon[UselonrAndNelonighbors],
+    knownFor: TypelondPipelon[(UselonrId, Array[(ClustelonrId, Float)])],
+    socialProofThrelonshold: Int,
+    maxClustelonrsPelonrUselonr: Int,
+    knownForModelonlVelonrsion: String
   )(
-    implicit uniqueId: UniqueID
-  ): TypedPipe[(UserId, ClustersUserIsInterestedIn)] = {
-    keepOnlyTopClusters(
-      attachNormalizedScores(
-        userClusterPairsWithoutNormalization(
-          adjacencyLists,
+    implicit uniquelonId: UniquelonID
+  ): TypelondPipelon[(UselonrId, ClustelonrsUselonrIsIntelonrelonstelondIn)] = {
+    kelonelonpOnlyTopClustelonrs(
+      attachNormalizelondScorelons(
+        uselonrClustelonrPairsWithoutNormalization(
+          adjacelonncyLists,
           knownFor,
-          socialProofThreshold
+          socialProofThrelonshold
         )
       ),
-      maxClustersPerUser,
-      knownForModelVersion
+      maxClustelonrsPelonrUselonr,
+      knownForModelonlVelonrsion
     )
   }
 
   /**
-   * run the interestedIn job, cluster normalized scores are not attached to user's clusters.
+   * run thelon intelonrelonstelondIn job, clustelonr normalizelond scorelons arelon not attachelond to uselonr's clustelonrs.
    */
-  def runWithoutClusterNormalizedScores(
-    adjacencyLists: TypedPipe[UserAndNeighbors],
-    knownFor: TypedPipe[(UserId, Array[(ClusterId, Float)])],
-    socialProofThreshold: Int,
-    maxClustersPerUser: Int,
-    knownForModelVersion: String
+  delonf runWithoutClustelonrNormalizelondScorelons(
+    adjacelonncyLists: TypelondPipelon[UselonrAndNelonighbors],
+    knownFor: TypelondPipelon[(UselonrId, Array[(ClustelonrId, Float)])],
+    socialProofThrelonshold: Int,
+    maxClustelonrsPelonrUselonr: Int,
+    knownForModelonlVelonrsion: String
   )(
-    implicit uniqueId: UniqueID
-  ): TypedPipe[(UserId, ClustersUserIsInterestedIn)] = {
-    keepOnlyTopClusters(
-      groupClusterScores(
-        userClusterPairsWithoutNormalization(
-          adjacencyLists,
+    implicit uniquelonId: UniquelonID
+  ): TypelondPipelon[(UselonrId, ClustelonrsUselonrIsIntelonrelonstelondIn)] = {
+    kelonelonpOnlyTopClustelonrs(
+      groupClustelonrScorelons(
+        uselonrClustelonrPairsWithoutNormalization(
+          adjacelonncyLists,
           knownFor,
-          socialProofThreshold
+          socialProofThrelonshold
         )
       ),
-      maxClustersPerUser,
-      knownForModelVersion
+      maxClustelonrsPelonrUselonr,
+      knownForModelonlVelonrsion
     )
   }
 
   /**
-   * print out some basic stats of the data set to make sure things are not broken
+   * print out somelon basic stats of thelon data selont to makelon surelon things arelon not brokelonn
    */
-  def dataSetStats(
-    interestedInData: TypedPipe[(UserId, ClustersUserIsInterestedIn)],
-    dataSetName: String = ""
-  ): Execution[Unit] = {
+  delonf dataSelontStats(
+    intelonrelonstelondInData: TypelondPipelon[(UselonrId, ClustelonrsUselonrIsIntelonrelonstelondIn)],
+    dataSelontNamelon: String = ""
+  ): elonxeloncution[Unit] = {
 
-    Execution
+    elonxeloncution
       .zip(
-        Util.printSummaryOfNumericColumn(
-          interestedInData.map {
-            case (user, interestedIn) =>
-              interestedIn.clusterIdToScores.size
+        Util.printSummaryOfNumelonricColumn(
+          intelonrelonstelondInData.map {
+            caselon (uselonr, intelonrelonstelondIn) =>
+              intelonrelonstelondIn.clustelonrIdToScorelons.sizelon
           },
-          Some(s"$dataSetName UserInterestedIn Size")
+          Somelon(s"$dataSelontNamelon UselonrIntelonrelonstelondIn Sizelon")
         ),
-        Util.printSummaryOfNumericColumn(
-          interestedInData.flatMap {
-            case (user, interestedIn) =>
-              interestedIn.clusterIdToScores.map {
-                case (_, scores) =>
-                  scores.favScore.getOrElse(0.0)
+        Util.printSummaryOfNumelonricColumn(
+          intelonrelonstelondInData.flatMap {
+            caselon (uselonr, intelonrelonstelondIn) =>
+              intelonrelonstelondIn.clustelonrIdToScorelons.map {
+                caselon (_, scorelons) =>
+                  scorelons.favScorelon.gelontOrelonlselon(0.0)
               }
           },
-          Some(s"$dataSetName UserInterestedIn favScore")
+          Somelon(s"$dataSelontNamelon UselonrIntelonrelonstelondIn favScorelon")
         ),
-        Util.printSummaryOfNumericColumn(
-          interestedInData.flatMap {
-            case (user, interestedIn) =>
-              interestedIn.clusterIdToScores.map {
-                case (_, scores) =>
-                  scores.favScoreClusterNormalizedOnly.getOrElse(0.0)
+        Util.printSummaryOfNumelonricColumn(
+          intelonrelonstelondInData.flatMap {
+            caselon (uselonr, intelonrelonstelondIn) =>
+              intelonrelonstelondIn.clustelonrIdToScorelons.map {
+                caselon (_, scorelons) =>
+                  scorelons.favScorelonClustelonrNormalizelondOnly.gelontOrelonlselon(0.0)
               }
           },
-          Some(s"$dataSetName UserInterestedIn favScoreClusterNormalizedOnly")
+          Somelon(s"$dataSelontNamelon UselonrIntelonrelonstelondIn favScorelonClustelonrNormalizelondOnly")
         ),
-        Util.printSummaryOfNumericColumn(
-          interestedInData.flatMap {
-            case (user, interestedIn) =>
-              interestedIn.clusterIdToScores.map {
-                case (_, scores) =>
-                  scores.logFavScoreClusterNormalizedOnly.getOrElse(0.0)
+        Util.printSummaryOfNumelonricColumn(
+          intelonrelonstelondInData.flatMap {
+            caselon (uselonr, intelonrelonstelondIn) =>
+              intelonrelonstelondIn.clustelonrIdToScorelons.map {
+                caselon (_, scorelons) =>
+                  scorelons.logFavScorelonClustelonrNormalizelondOnly.gelontOrelonlselon(0.0)
               }
           },
-          Some(s"$dataSetName UserInterestedIn logFavScoreClusterNormalizedOnly")
+          Somelon(s"$dataSelontNamelon UselonrIntelonrelonstelondIn logFavScorelonClustelonrNormalizelondOnly")
         )
       ).unit
   }

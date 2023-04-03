@@ -1,70 +1,70 @@
-package com.twitter.product_mixer.core.pipeline.step.async_feature_map
+packagelon com.twittelonr.product_mixelonr.corelon.pipelonlinelon.stelonp.async_felonaturelon_map
 
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.asyncfeaturemap.AsyncFeatureMap
-import com.twitter.product_mixer.core.model.common.identifier.PipelineStepIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.state.HasAsyncFeatureMap
-import com.twitter.product_mixer.core.pipeline.state.HasQuery
-import com.twitter.product_mixer.core.pipeline.step.Step
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.product_mixer.core.service.async_feature_map_executor.AsyncFeatureMapExecutor
-import com.twitter.product_mixer.core.service.async_feature_map_executor.AsyncFeatureMapExecutorResults
-import com.twitter.stitch.Arrow
-import javax.inject.Inject
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.asyncfelonaturelonmap.AsyncFelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.PipelonlinelonStelonpIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.statelon.HasAsyncFelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.statelon.HasQuelonry
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.stelonp.Stelonp
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.elonxeloncutor
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.async_felonaturelon_map_elonxeloncutor.AsyncFelonaturelonMapelonxeloncutor
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.async_felonaturelon_map_elonxeloncutor.AsyncFelonaturelonMapelonxeloncutorRelonsults
+import com.twittelonr.stitch.Arrow
+import javax.injelonct.Injelonct
 
 /**
- * Async Feature Hydrator Step, it takes an existing asyn feature map and executes any hydration
- * needed before the next step. The state object is responsible for keeping the updated query
- * with the updated feature map.
+ * Async Felonaturelon Hydrator Stelonp, it takelons an elonxisting asyn felonaturelon map and elonxeloncutelons any hydration
+ * nelonelondelond belonforelon thelon nelonxt stelonp. Thelon statelon objelonct is relonsponsiblelon for kelonelonping thelon updatelond quelonry
+ * with thelon updatelond felonaturelon map.
  *
- * @param asyncFeatureMapExecutor Async feature map executor
+ * @param asyncFelonaturelonMapelonxeloncutor Async felonaturelon map elonxeloncutor
  *
- * @tparam Query Type of PipelineQuery domain model
- * @tparam State The pipeline state domain model.
+ * @tparam Quelonry Typelon of PipelonlinelonQuelonry domain modelonl
+ * @tparam Statelon Thelon pipelonlinelon statelon domain modelonl.
  */
-case class AsyncFeatureMapStep[
-  Query <: PipelineQuery,
-  State <: HasQuery[Query, State] with HasAsyncFeatureMap[State]] @Inject() (
-  asyncFeatureMapExecutor: AsyncFeatureMapExecutor)
-    extends Step[
-      State,
-      AsyncFeatureMapStepConfig,
-      AsyncFeatureMap,
-      AsyncFeatureMapExecutorResults
+caselon class AsyncFelonaturelonMapStelonp[
+  Quelonry <: PipelonlinelonQuelonry,
+  Statelon <: HasQuelonry[Quelonry, Statelon] with HasAsyncFelonaturelonMap[Statelon]] @Injelonct() (
+  asyncFelonaturelonMapelonxeloncutor: AsyncFelonaturelonMapelonxeloncutor)
+    elonxtelonnds Stelonp[
+      Statelon,
+      AsyncFelonaturelonMapStelonpConfig,
+      AsyncFelonaturelonMap,
+      AsyncFelonaturelonMapelonxeloncutorRelonsults
     ] {
-  override def isEmpty(config: AsyncFeatureMapStepConfig): Boolean = false
+  ovelonrridelon delonf iselonmpty(config: AsyncFelonaturelonMapStelonpConfig): Boolelonan = falselon
 
-  override def adaptInput(
-    state: State,
-    config: AsyncFeatureMapStepConfig
-  ): AsyncFeatureMap = state.asyncFeatureMap
+  ovelonrridelon delonf adaptInput(
+    statelon: Statelon,
+    config: AsyncFelonaturelonMapStelonpConfig
+  ): AsyncFelonaturelonMap = statelon.asyncFelonaturelonMap
 
-  override def arrow(
-    config: AsyncFeatureMapStepConfig,
-    context: Executor.Context
-  ): Arrow[AsyncFeatureMap, AsyncFeatureMapExecutorResults] =
-    asyncFeatureMapExecutor.arrow(config.stepToHydrateFor, config.currentStep, context)
+  ovelonrridelon delonf arrow(
+    config: AsyncFelonaturelonMapStelonpConfig,
+    contelonxt: elonxeloncutor.Contelonxt
+  ): Arrow[AsyncFelonaturelonMap, AsyncFelonaturelonMapelonxeloncutorRelonsults] =
+    asyncFelonaturelonMapelonxeloncutor.arrow(config.stelonpToHydratelonFor, config.currelonntStelonp, contelonxt)
 
-  override def updateState(
-    state: State,
-    executorResult: AsyncFeatureMapExecutorResults,
-    config: AsyncFeatureMapStepConfig
-  ): State = {
-    val hydratedFeatureMap =
-      executorResult.featureMapsByStep.getOrElse(config.stepToHydrateFor, FeatureMap.empty)
-    if (hydratedFeatureMap.isEmpty) {
-      state
-    } else {
-      val updatedFeatureMap = state.query.features
-        .getOrElse(FeatureMap.empty) ++ hydratedFeatureMap
-      state.updateQuery(
-        state.query
-          .withFeatureMap(updatedFeatureMap).asInstanceOf[Query])
+  ovelonrridelon delonf updatelonStatelon(
+    statelon: Statelon,
+    elonxeloncutorRelonsult: AsyncFelonaturelonMapelonxeloncutorRelonsults,
+    config: AsyncFelonaturelonMapStelonpConfig
+  ): Statelon = {
+    val hydratelondFelonaturelonMap =
+      elonxeloncutorRelonsult.felonaturelonMapsByStelonp.gelontOrelonlselon(config.stelonpToHydratelonFor, FelonaturelonMap.elonmpty)
+    if (hydratelondFelonaturelonMap.iselonmpty) {
+      statelon
+    } elonlselon {
+      val updatelondFelonaturelonMap = statelon.quelonry.felonaturelons
+        .gelontOrelonlselon(FelonaturelonMap.elonmpty) ++ hydratelondFelonaturelonMap
+      statelon.updatelonQuelonry(
+        statelon.quelonry
+          .withFelonaturelonMap(updatelondFelonaturelonMap).asInstancelonOf[Quelonry])
     }
   }
 }
 
-case class AsyncFeatureMapStepConfig(
-  stepToHydrateFor: PipelineStepIdentifier,
-  currentStep: PipelineStepIdentifier)
+caselon class AsyncFelonaturelonMapStelonpConfig(
+  stelonpToHydratelonFor: PipelonlinelonStelonpIdelonntifielonr,
+  currelonntStelonp: PipelonlinelonStelonpIdelonntifielonr)

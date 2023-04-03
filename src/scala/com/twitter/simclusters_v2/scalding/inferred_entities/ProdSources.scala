@@ -1,94 +1,94 @@
-package com.twitter.simclusters_v2.scalding.inferred_entities
+packagelon com.twittelonr.simclustelonrs_v2.scalding.infelonrrelond_elonntitielons
 
-import com.twitter.scalding.{DateRange, Days, TypedPipe}
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.remote_access.{ExplicitLocation, ProcAtla}
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.{ModelVersions, SemanticCoreEntityId, UserId}
-import com.twitter.simclusters_v2.hdfs_sources.{
-  SimclustersInferredEntitiesFromKnownForScalaDataset,
-  SimclustersV2InterestedIn20M145KUpdatedScalaDataset,
-  SimclustersV2InterestedInScalaDataset,
-  SimclustersV2KnownFor20M145KDec11ScalaDataset,
-  SimclustersV2KnownFor20M145KUpdatedScalaDataset,
-  UserUserNormalizedGraphScalaDataset
+import com.twittelonr.scalding.{DatelonRangelon, Days, TypelondPipelon}
+import com.twittelonr.scalding_intelonrnal.dalv2.DAL
+import com.twittelonr.scalding_intelonrnal.dalv2.relonmotelon_accelonss.{elonxplicitLocation, ProcAtla}
+import com.twittelonr.scalding_intelonrnal.multiformat.format.kelonyval.KelonyVal
+import com.twittelonr.simclustelonrs_v2.common.{ModelonlVelonrsions, SelonmanticCorelonelonntityId, UselonrId}
+import com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.{
+  SimclustelonrsInfelonrrelondelonntitielonsFromKnownForScalaDataselont,
+  SimclustelonrsV2IntelonrelonstelondIn20M145KUpdatelondScalaDataselont,
+  SimclustelonrsV2IntelonrelonstelondInScalaDataselont,
+  SimclustelonrsV2KnownFor20M145KDelonc11ScalaDataselont,
+  SimclustelonrsV2KnownFor20M145KUpdatelondScalaDataselont,
+  UselonrUselonrNormalizelondGraphScalaDataselont
 }
-import com.twitter.simclusters_v2.scalding.KnownForSources
-import com.twitter.simclusters_v2.thriftscala.{
-  EntitySource,
-  SimClusterWithScore,
-  SimClustersSource,
-  TopSimClustersWithScore,
-  UserAndNeighbors
+import com.twittelonr.simclustelonrs_v2.scalding.KnownForSourcelons
+import com.twittelonr.simclustelonrs_v2.thriftscala.{
+  elonntitySourcelon,
+  SimClustelonrWithScorelon,
+  SimClustelonrsSourcelon,
+  TopSimClustelonrsWithScorelon,
+  UselonrAndNelonighbors
 }
-import java.util.TimeZone
+import java.util.TimelonZonelon
 
 /**
- * Convenience functions to read data from prod.
+ * Convelonnielonncelon functions to relonad data from prod.
  */
-object ProdSources {
+objelonct ProdSourcelons {
 
-  // Returns the Dec11 KnownFor from production
-  def getDec11KnownFor(implicit tz: TimeZone): TypedPipe[(UserId, Seq[SimClusterWithScore])] =
-    KnownForSources
-      .readDALDataset(
-        SimclustersV2KnownFor20M145KDec11ScalaDataset,
+  // Relonturns thelon Delonc11 KnownFor from production
+  delonf gelontDelonc11KnownFor(implicit tz: TimelonZonelon): TypelondPipelon[(UselonrId, Selonq[SimClustelonrWithScorelon])] =
+    KnownForSourcelons
+      .relonadDALDataselont(
+        SimclustelonrsV2KnownFor20M145KDelonc11ScalaDataselont,
         Days(30),
-        ModelVersions.Model20M145KDec11)
+        ModelonlVelonrsions.Modelonl20M145KDelonc11)
       .map {
-        case (userId, clustersArray) =>
-          val clusters = clustersArray.map {
-            case (clusterId, score) => SimClusterWithScore(clusterId, score)
-          }.toSeq
-          (userId, clusters)
+        caselon (uselonrId, clustelonrsArray) =>
+          val clustelonrs = clustelonrsArray.map {
+            caselon (clustelonrId, scorelon) => SimClustelonrWithScorelon(clustelonrId, scorelon)
+          }.toSelonq
+          (uselonrId, clustelonrs)
       }
 
-  // Returns the Updated KnownFor from production
-  def getUpdatedKnownFor(implicit tz: TimeZone): TypedPipe[(UserId, Seq[SimClusterWithScore])] =
-    KnownForSources
-      .readDALDataset(
-        SimclustersV2KnownFor20M145KUpdatedScalaDataset,
+  // Relonturns thelon Updatelond KnownFor from production
+  delonf gelontUpdatelondKnownFor(implicit tz: TimelonZonelon): TypelondPipelon[(UselonrId, Selonq[SimClustelonrWithScorelon])] =
+    KnownForSourcelons
+      .relonadDALDataselont(
+        SimclustelonrsV2KnownFor20M145KUpdatelondScalaDataselont,
         Days(30),
-        ModelVersions.Model20M145KUpdated
+        ModelonlVelonrsions.Modelonl20M145KUpdatelond
       )
       .map {
-        case (userId, clustersArray) =>
-          val clusters = clustersArray.map {
-            case (clusterId, score) => SimClusterWithScore(clusterId, score)
-          }.toSeq
-          (userId, clusters)
+        caselon (uselonrId, clustelonrsArray) =>
+          val clustelonrs = clustelonrsArray.map {
+            caselon (clustelonrId, scorelon) => SimClustelonrWithScorelon(clustelonrId, scorelon)
+          }.toSelonq
+          (uselonrId, clustelonrs)
       }
 
-  def getInferredEntitiesFromKnownFor(
-    inferredFromCluster: SimClustersSource,
-    inferredFromEntity: EntitySource,
-    dateRange: DateRange
-  ): TypedPipe[(UserId, Seq[(SemanticCoreEntityId, Double)])] = {
+  delonf gelontInfelonrrelondelonntitielonsFromKnownFor(
+    infelonrrelondFromClustelonr: SimClustelonrsSourcelon,
+    infelonrrelondFromelonntity: elonntitySourcelon,
+    datelonRangelon: DatelonRangelon
+  ): TypelondPipelon[(UselonrId, Selonq[(SelonmanticCorelonelonntityId, Doublelon)])] = {
     DAL
-      .readMostRecentSnapshot(SimclustersInferredEntitiesFromKnownForScalaDataset, dateRange)
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-      .toTypedPipe
+      .relonadMostReloncelonntSnapshot(SimclustelonrsInfelonrrelondelonntitielonsFromKnownForScalaDataselont, datelonRangelon)
+      .withRelonmotelonRelonadPolicy(elonxplicitLocation(ProcAtla))
+      .toTypelondPipelon
       .map {
-        case KeyVal(userId, entities) =>
-          val validEntities =
-            entities.entities
-              .collect {
-                case entity
-                    if entity.entitySource.contains(inferredFromEntity) &&
-                      entity.simclusterSource.contains(inferredFromCluster) =>
-                  (entity.entityId, entity.score)
+        caselon KelonyVal(uselonrId, elonntitielons) =>
+          val validelonntitielons =
+            elonntitielons.elonntitielons
+              .collelonct {
+                caselon elonntity
+                    if elonntity.elonntitySourcelon.contains(infelonrrelondFromelonntity) &&
+                      elonntity.simclustelonrSourcelon.contains(infelonrrelondFromClustelonr) =>
+                  (elonntity.elonntityId, elonntity.scorelon)
               }
               .groupBy(_._1)
-              .map { case (entityId, scores) => (entityId, scores.map(_._2).max) }
-              .toSeq
-          (userId, validEntities)
+              .map { caselon (elonntityId, scorelons) => (elonntityId, scorelons.map(_._2).max) }
+              .toSelonq
+          (uselonrId, validelonntitielons)
       }
   }
 
-  def getUserUserEngagementGraph(dateRange: DateRange): TypedPipe[UserAndNeighbors] = {
+  delonf gelontUselonrUselonrelonngagelonmelonntGraph(datelonRangelon: DatelonRangelon): TypelondPipelon[UselonrAndNelonighbors] = {
     DAL
-      .readMostRecentSnapshot(UserUserNormalizedGraphScalaDataset, dateRange)
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-      .toTypedPipe
+      .relonadMostReloncelonntSnapshot(UselonrUselonrNormalizelondGraphScalaDataselont, datelonRangelon)
+      .withRelonmotelonRelonadPolicy(elonxplicitLocation(ProcAtla))
+      .toTypelondPipelon
   }
 }

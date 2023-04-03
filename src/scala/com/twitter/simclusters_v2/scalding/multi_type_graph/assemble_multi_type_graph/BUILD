@@ -1,91 +1,91 @@
 scala_library(
-    sources = [
+    sourcelons = [
         "*.scala",
     ],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        ":full_multi_type_graph_adhoc-scala",
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        ":full_multi_typelon_graph_adhoc-scala",
         ":top_k_right_nouns_adhoc-scala",
-        ":truncated_multi_type_graph_adhoc-scala",
-        "3rdparty/src/jvm/com/twitter/scalding:commons",
-        "3rdparty/src/jvm/com/twitter/scalding:core",
-        "src/scala/com/twitter/scalding_internal/job",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources",
-        "src/scala/com/twitter/simclusters_v2/scalding",
-        "src/thrift/com/twitter/twadoop/user/gen:gen-scala",
-        "usersource/snapshot/src/main/scala/com/twitter/usersource/snapshot/flat:usersource_flat-scala",
-        "usersource/snapshot/src/main/thrift/com/twitter/usersource/snapshot/flat:flat-scala",
+        ":truncatelond_multi_typelon_graph_adhoc-scala",
+        "3rdparty/src/jvm/com/twittelonr/scalding:commons",
+        "3rdparty/src/jvm/com/twittelonr/scalding:corelon",
+        "src/scala/com/twittelonr/scalding_intelonrnal/job",
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons",
+        "src/scala/com/twittelonr/simclustelonrs_v2/scalding",
+        "src/thrift/com/twittelonr/twadoop/uselonr/gelonn:gelonn-scala",
+        "uselonrsourcelon/snapshot/src/main/scala/com/twittelonr/uselonrsourcelon/snapshot/flat:uselonrsourcelon_flat-scala",
+        "uselonrsourcelon/snapshot/src/main/thrift/com/twittelonr/uselonrsourcelon/snapshot/flat:flat-scala",
     ],
 )
 
 scalding_job(
-    name = "multi_type_graph-adhoc",
-    main = "com.twitter.simclusters_v2.scalding.multi_type_graph.assemble_multi_type_graph.AssembleMultiTypeGraphAdhocApp",
+    namelon = "multi_typelon_graph-adhoc",
+    main = "com.twittelonr.simclustelonrs_v2.scalding.multi_typelon_graph.asselonmblelon_multi_typelon_graph.AsselonmblelonMultiTypelonGraphAdhocApp",
     config = [
-        ("hadoop.map.jvm.total-memory", "8192m"),
-        ("hadoop.reduce.jvm.total-memory", "8192m"),
-        ("hadoop.submitter.jvm.total-memory", "8192m"),
-        ("hadoop.am.jvm.total-memory", "8192m"),
+        ("hadoop.map.jvm.total-melonmory", "8192m"),
+        ("hadoop.relonducelon.jvm.total-melonmory", "8192m"),
+        ("hadoop.submittelonr.jvm.total-melonmory", "8192m"),
+        ("hadoop.am.jvm.total-melonmory", "8192m"),
         (
             "job.args",
             [
-                "--date 2021-07-14",
+                "--datelon 2021-07-14",
             ],
         ),
     ],
-    hadoop_cluster = "qus1-bluebird",
-    hadoop_properties = [("mapreduce.task.timeout", "3600000")],
+    hadoop_clustelonr = "qus1-bluelonbird",
+    hadoop_propelonrtielons = [("maprelonducelon.task.timelonout", "3600000")],
     platform = "java8",
-    role = "cassowary",
-    runtime_platform = "java8",
+    rolelon = "cassowary",
+    runtimelon_platform = "java8",
     tags = [
-        "bazel-compatible:migrated",
-        "bazel-only",
+        "bazelonl-compatiblelon:migratelond",
+        "bazelonl-only",
     ],
-    dependencies = [":assemble_multi_type_graph"],
+    delonpelonndelonncielons = [":asselonmblelon_multi_typelon_graph"],
 )
 
-create_datasets(
-    base_name = "truncated_multi_type_graph_adhoc",
-    key_type = "com.twitter.simclusters_v2.thriftscala.LeftNode",
+crelonatelon_dataselonts(
+    baselon_namelon = "truncatelond_multi_typelon_graph_adhoc",
+    kelony_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.LelonftNodelon",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.MultiTypeGraphInjections.truncatedMultiTypeGraphInjection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.RightNodeWithEdgeWeightList",
-    scala_dependencies = [
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
-    ],
-)
-
-create_datasets(
-    base_name = "top_k_right_nouns_adhoc",
-    key_type = "com.twitter.simclusters_v2.thriftscala.RightNodeTypeStruct",
-    platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.MultiTypeGraphInjections.topKRightNounListInjection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.NounWithFrequencyList",
-    scala_dependencies = [
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.MultiTypelonGraphInjelonctions.truncatelondMultiTypelonGraphInjelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.RightNodelonWithelondgelonWelonightList",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "full_multi_type_graph_adhoc",
-    java_schema = "com.twitter.simclusters_v2.thriftjava.MultiTypeGraphEdge",
+crelonatelon_dataselonts(
+    baselon_namelon = "top_k_right_nouns_adhoc",
+    kelony_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.RightNodelonTypelonStruct",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.thriftscala.MultiTypeGraphEdge",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    java_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-java",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.MultiTypelonGraphInjelonctions.topKRightNounListInjelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.NounWithFrelonquelonncyList",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
-    scala_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-scala",
+)
+
+crelonatelon_dataselonts(
+    baselon_namelon = "full_multi_typelon_graph_adhoc",
+    java_schelonma = "com.twittelonr.simclustelonrs_v2.thriftjava.MultiTypelonGraphelondgelon",
+    platform = "java8",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.thriftscala.MultiTypelonGraphelondgelon",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    java_delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/simclustelonrs_v2:simclustelonrs_v2-thrift-java",
+    ],
+    scala_delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/simclustelonrs_v2:simclustelonrs_v2-thrift-scala",
     ],
 )

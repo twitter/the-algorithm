@@ -1,50 +1,50 @@
-package com.twitter.product_mixer.component_library.scorer.cr_ml_ranker
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.scorelonr.cr_ml_rankelonr
 
-import com.twitter.product_mixer.component_library.feature_hydrator.query.cr_ml_ranker.CrMlRankerCommonFeatures
-import com.twitter.product_mixer.component_library.feature_hydrator.query.cr_ml_ranker.CrMlRankerRankingConfig
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.scorer.Scorer
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.ScorerIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.componelonnt_library.felonaturelon_hydrator.quelonry.cr_ml_rankelonr.CrMlRankelonrCommonFelonaturelons
+import com.twittelonr.product_mixelonr.componelonnt_library.felonaturelon_hydrator.quelonry.cr_ml_rankelonr.CrMlRankelonrRankingConfig
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.TwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMapBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.scorelonr.Scorelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.ScorelonrIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stitch.Stitch
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-object CrMlRankerScore extends Feature[TweetCandidate, Double]
+objelonct CrMlRankelonrScorelon elonxtelonnds Felonaturelon[TwelonelontCandidatelon, Doublelon]
 
 /**
- * Scorer that scores tweets using the Content Recommender ML Light Ranker: http://go/cr-ml-ranker
+ * Scorelonr that scorelons twelonelonts using thelon Contelonnt Reloncommelonndelonr ML Light Rankelonr: http://go/cr-ml-rankelonr
  */
-@Singleton
-class CrMlRankerScorer @Inject() (crMlRanker: CrMlRankerScoreStitchClient)
-    extends Scorer[PipelineQuery, TweetCandidate] {
+@Singlelonton
+class CrMlRankelonrScorelonr @Injelonct() (crMlRankelonr: CrMlRankelonrScorelonStitchClielonnt)
+    elonxtelonnds Scorelonr[PipelonlinelonQuelonry, TwelonelontCandidatelon] {
 
-  override val identifier: ScorerIdentifier = ScorerIdentifier("CrMlRanker")
+  ovelonrridelon val idelonntifielonr: ScorelonrIdelonntifielonr = ScorelonrIdelonntifielonr("CrMlRankelonr")
 
-  override val features: Set[Feature[_, _]] = Set(CrMlRankerScore)
+  ovelonrridelon val felonaturelons: Selont[Felonaturelon[_, _]] = Selont(CrMlRankelonrScorelon)
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[Seq[FeatureMap]] = {
-    val queryFeatureMap = query.features.getOrElse(FeatureMap.empty)
-    val rankingConfig = queryFeatureMap.get(CrMlRankerRankingConfig)
-    val commonFeatures = queryFeatureMap.get(CrMlRankerCommonFeatures)
-    val userId = query.getRequiredUserId
+  ovelonrridelon delonf apply(
+    quelonry: PipelonlinelonQuelonry,
+    candidatelons: Selonq[CandidatelonWithFelonaturelons[TwelonelontCandidatelon]]
+  ): Stitch[Selonq[FelonaturelonMap]] = {
+    val quelonryFelonaturelonMap = quelonry.felonaturelons.gelontOrelonlselon(FelonaturelonMap.elonmpty)
+    val rankingConfig = quelonryFelonaturelonMap.gelont(CrMlRankelonrRankingConfig)
+    val commonFelonaturelons = quelonryFelonaturelonMap.gelont(CrMlRankelonrCommonFelonaturelons)
+    val uselonrId = quelonry.gelontRelonquirelondUselonrId
 
-    val scoresStitch = Stitch.collect(candidates.map { candidateWithFeatures =>
-      crMlRanker
-        .getScore(userId, candidateWithFeatures.candidate, rankingConfig, commonFeatures).map(
-          _.score)
+    val scorelonsStitch = Stitch.collelonct(candidatelons.map { candidatelonWithFelonaturelons =>
+      crMlRankelonr
+        .gelontScorelon(uselonrId, candidatelonWithFelonaturelons.candidatelon, rankingConfig, commonFelonaturelons).map(
+          _.scorelon)
     })
-    scoresStitch.map { scores =>
-      scores.map { score =>
-        FeatureMapBuilder()
-          .add(CrMlRankerScore, score)
+    scorelonsStitch.map { scorelons =>
+      scorelons.map { scorelon =>
+        FelonaturelonMapBuildelonr()
+          .add(CrMlRankelonrScorelon, scorelon)
           .build()
       }
     }

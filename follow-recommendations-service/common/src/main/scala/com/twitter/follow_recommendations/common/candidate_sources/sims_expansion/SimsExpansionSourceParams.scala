@@ -1,17 +1,17 @@
-package com.twitter.follow_recommendations.common.candidate_sources.sims_expansion
-import com.twitter.timelines.configapi.FSEnumParam
+packagelon com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.sims_elonxpansion
+import com.twittelonr.timelonlinelons.configapi.FSelonnumParam
 
-object SimsExpansionSourceParams {
-  case object Aggregator
-      extends FSEnumParam[SimsExpansionSourceAggregatorId.type](
-        name = "sims_expansion_aggregator_id",
-        default = SimsExpansionSourceAggregatorId.Sum,
-        enum = SimsExpansionSourceAggregatorId)
+objelonct SimselonxpansionSourcelonParams {
+  caselon objelonct Aggrelongator
+      elonxtelonnds FSelonnumParam[SimselonxpansionSourcelonAggrelongatorId.typelon](
+        namelon = "sims_elonxpansion_aggrelongator_id",
+        delonfault = SimselonxpansionSourcelonAggrelongatorId.Sum,
+        elonnum = SimselonxpansionSourcelonAggrelongatorId)
 }
 
-object SimsExpansionSourceAggregatorId extends Enumeration {
-  type AggregatorId = Value
-  val Sum: AggregatorId = Value("sum")
-  val Max: AggregatorId = Value("max")
-  val MultiDecay: AggregatorId = Value("multi_decay")
+objelonct SimselonxpansionSourcelonAggrelongatorId elonxtelonnds elonnumelonration {
+  typelon AggrelongatorId = Valuelon
+  val Sum: AggrelongatorId = Valuelon("sum")
+  val Max: AggrelongatorId = Valuelon("max")
+  val MultiDeloncay: AggrelongatorId = Valuelon("multi_deloncay")
 }

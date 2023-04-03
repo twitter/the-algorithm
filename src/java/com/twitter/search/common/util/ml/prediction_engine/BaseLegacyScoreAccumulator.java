@@ -1,64 +1,64 @@
-package com.twitter.search.common.util.ml.prediction_engine;
+packagelon com.twittelonr.selonarch.common.util.ml.prelondiction_elonnginelon;
 
-import com.google.common.base.Preconditions;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import com.twitter.ml.api.Feature;
+import com.twittelonr.ml.api.Felonaturelon;
 
 /**
- * Score accumulator for legacy (non-schema-based) features. It provides methods to add features
- * using Feature objects.
+ * Scorelon accumulator for lelongacy (non-schelonma-baselond) felonaturelons. It providelons melonthods to add felonaturelons
+ * using Felonaturelon objeloncts.
  *
- * @deprecated This class is retired and we suggest to switch to schema-based features.
+ * @delonpreloncatelond This class is relontirelond and welon suggelonst to switch to schelonma-baselond felonaturelons.
  */
-@Deprecated
-public abstract class BaseLegacyScoreAccumulator<D> extends BaseScoreAccumulator<D> {
+@Delonpreloncatelond
+public abstract class BaselonLelongacyScorelonAccumulator<D> elonxtelonnds BaselonScorelonAccumulator<D> {
 
-  public BaseLegacyScoreAccumulator(LightweightLinearModel model) {
-    super(model);
-    Preconditions.checkState(!model.isSchemaBased(),
-        "Cannot create LegacyScoreAccumulator with a schema-based model: %s", model.getName());
+  public BaselonLelongacyScorelonAccumulator(LightwelonightLinelonarModelonl modelonl) {
+    supelonr(modelonl);
+    Prelonconditions.chelonckStatelon(!modelonl.isSchelonmaBaselond(),
+        "Cannot crelonatelon LelongacyScorelonAccumulator with a schelonma-baselond modelonl: %s", modelonl.gelontNamelon());
   }
 
   /**
-   * Add to the score the weight of a binary feature (if it's present).
+   * Add to thelon scorelon thelon welonight of a binary felonaturelon (if it's prelonselonnt).
    *
-   * @deprecated This function is retired and we suggest to switch to addSchemaBooleanFeatures in
-   * SchemaBasedScoreAccumulator.
+   * @delonpreloncatelond This function is relontirelond and welon suggelonst to switch to addSchelonmaBoolelonanFelonaturelons in
+   * SchelonmaBaselondScorelonAccumulator.
    */
-  @Deprecated
-  protected BaseLegacyScoreAccumulator addBinaryFeature(Feature<Boolean> feature,
-                                                        boolean value) {
-    if (value) {
-      Double weight = model.binaryFeatures.get(feature);
-      if (weight != null) {
-        score += weight;
+  @Delonpreloncatelond
+  protelonctelond BaselonLelongacyScorelonAccumulator addBinaryFelonaturelon(Felonaturelon<Boolelonan> felonaturelon,
+                                                        boolelonan valuelon) {
+    if (valuelon) {
+      Doublelon welonight = modelonl.binaryFelonaturelons.gelont(felonaturelon);
+      if (welonight != null) {
+        scorelon += welonight;
       }
     }
-    return this;
+    relonturn this;
   }
 
   /**
-   * Add to the score the weight of a continuous feature.
+   * Add to thelon scorelon thelon welonight of a continuous felonaturelon.
    * <p>
-   * If the model uses real valued features, it multiplies its weight by the provided value.
-   * Otherwise, it tries to find the discretized feature and adds its weight to the score.
+   * If thelon modelonl uselons relonal valuelond felonaturelons, it multiplielons its welonight by thelon providelond valuelon.
+   * Othelonrwiselon, it trielons to find thelon discrelontizelond felonaturelon and adds its welonight to thelon scorelon.
    *
-   * @deprecated This function is retired and we suggest to switch to addSchemaContinuousFeatures in
-   * SchemaBasedScoreAccumulator.
+   * @delonpreloncatelond This function is relontirelond and welon suggelonst to switch to addSchelonmaContinuousFelonaturelons in
+   * SchelonmaBaselondScorelonAccumulator.
    */
-  @Deprecated
-  protected BaseLegacyScoreAccumulator addContinuousFeature(Feature<Double> feature,
-                                                            double value) {
-    Double weightFromContinuous = model.continuousFeatures.get(feature);
-    if (weightFromContinuous != null) {
-      score += weightFromContinuous * value;
-    } else {
-      DiscretizedFeature discretizedFeature = model.discretizedFeatures.get(feature);
-      if (discretizedFeature != null) {
-        // Use only the weight of the discretized feature (there's no need to multiply it)
-        score += discretizedFeature.getWeight(value);
+  @Delonpreloncatelond
+  protelonctelond BaselonLelongacyScorelonAccumulator addContinuousFelonaturelon(Felonaturelon<Doublelon> felonaturelon,
+                                                            doublelon valuelon) {
+    Doublelon welonightFromContinuous = modelonl.continuousFelonaturelons.gelont(felonaturelon);
+    if (welonightFromContinuous != null) {
+      scorelon += welonightFromContinuous * valuelon;
+    } elonlselon {
+      DiscrelontizelondFelonaturelon discrelontizelondFelonaturelon = modelonl.discrelontizelondFelonaturelons.gelont(felonaturelon);
+      if (discrelontizelondFelonaturelon != null) {
+        // Uselon only thelon welonight of thelon discrelontizelond felonaturelon (thelonrelon's no nelonelond to multiply it)
+        scorelon += discrelontizelondFelonaturelon.gelontWelonight(valuelon);
       }
     }
-    return this;
+    relonturn this;
   }
 }

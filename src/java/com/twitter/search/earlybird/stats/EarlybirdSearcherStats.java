@@ -1,213 +1,213 @@
-package com.twitter.search.earlybird.stats;
+packagelon com.twittelonr.selonarch.elonarlybird.stats;
 
-import java.util.EnumMap;
+import java.util.elonnumMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrelonnt.ConcurrelonntHashMap;
+import java.util.concurrelonnt.TimelonUnit;
 
-import com.google.common.base.Preconditions;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchMetricTimerOptions;
-import com.twitter.search.common.metrics.SearchStatsReceiver;
-import com.twitter.search.common.metrics.SearchTimer;
-import com.twitter.search.common.metrics.SearchTimerStats;
-import com.twitter.search.common.ranking.thriftjava.ThriftRankingParams;
-import com.twitter.search.common.ranking.thriftjava.ThriftScoringFunctionType;
-import com.twitter.search.earlybird.EarlybirdSearcher;
-import com.twitter.search.earlybird.common.ClientIdUtil;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.ThriftSearchRelevanceOptions;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchMelontricTimelonrOptions;
+import com.twittelonr.selonarch.common.melontrics.SelonarchStatsReloncelonivelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchTimelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchTimelonrStats;
+import com.twittelonr.selonarch.common.ranking.thriftjava.ThriftRankingParams;
+import com.twittelonr.selonarch.common.ranking.thriftjava.ThriftScoringFunctionTypelon;
+import com.twittelonr.selonarch.elonarlybird.elonarlybirdSelonarchelonr;
+import com.twittelonr.selonarch.elonarlybird.common.ClielonntIdUtil;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonquelonst;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonlelonvancelonOptions;
 
 /**
- * Manages counter and timer stats for EarlybirdSearcher.
+ * Managelons countelonr and timelonr stats for elonarlybirdSelonarchelonr.
  */
-public class EarlybirdSearcherStats {
-  private static final TimeUnit TIME_UNIT = TimeUnit.MICROSECONDS;
+public class elonarlybirdSelonarchelonrStats {
+  privatelon static final TimelonUnit TIMelon_UNIT = TimelonUnit.MICROSelonCONDS;
 
-  private final SearchStatsReceiver earlybirdServerStatsReceiver;
+  privatelon final SelonarchStatsReloncelonivelonr elonarlybirdSelonrvelonrStatsReloncelonivelonr;
 
-  public final SearchCounter thriftQueryWithSerializedQuery;
-  public final SearchCounter thriftQueryWithLuceneQuery;
-  public final SearchCounter thriftQueryWithoutTextQuery;
-  public final SearchCounter addedFilterBadUserRep;
-  public final SearchCounter addedFilterFromUserIds;
-  public final SearchCounter addedFilterTweetIds;
-  public final SearchCounter unsetFiltersForSocialFilterTypeQuery;
-  public final SearchCounter querySpecificSignalMapTotalSize;
-  public final SearchCounter querySpecificSignalQueriesUsed;
-  public final SearchCounter querySpecificSignalQueriesErased;
-  public final SearchCounter authorSpecificSignalMapTotalSize;
-  public final SearchCounter authorSpecificSignalQueriesUsed;
-  public final SearchCounter authorSpecificSignalQueriesErased;
-  public final SearchCounter nullcastTweetsForceExcluded;
-  public final SearchCounter nullcastUnexpectedResults;
-  public final SearchCounter nullcastUnexpectedQueries;
-  public final SearchCounter relevanceAntiGamingFilterUsed;
-  public final SearchCounter relevanceAntiGamingFilterNotRequested;
-  public final SearchCounter relevanceAntiGamingFilterSpecifiedTweetsAndFromUserIds;
-  public final SearchCounter relevanceAntiGamingFilterSpecifiedTweets;
-  public final SearchCounter relevanceAntiGamingFilterSpecifiedFromUserIds;
-  public final SearchCounter numCollectorAdjustedMinSearchedStatusID;
+  public final SelonarchCountelonr thriftQuelonryWithSelonrializelondQuelonry;
+  public final SelonarchCountelonr thriftQuelonryWithLucelonnelonQuelonry;
+  public final SelonarchCountelonr thriftQuelonryWithoutTelonxtQuelonry;
+  public final SelonarchCountelonr addelondFiltelonrBadUselonrRelonp;
+  public final SelonarchCountelonr addelondFiltelonrFromUselonrIds;
+  public final SelonarchCountelonr addelondFiltelonrTwelonelontIds;
+  public final SelonarchCountelonr unselontFiltelonrsForSocialFiltelonrTypelonQuelonry;
+  public final SelonarchCountelonr quelonrySpeloncificSignalMapTotalSizelon;
+  public final SelonarchCountelonr quelonrySpeloncificSignalQuelonrielonsUselond;
+  public final SelonarchCountelonr quelonrySpeloncificSignalQuelonrielonselonraselond;
+  public final SelonarchCountelonr authorSpeloncificSignalMapTotalSizelon;
+  public final SelonarchCountelonr authorSpeloncificSignalQuelonrielonsUselond;
+  public final SelonarchCountelonr authorSpeloncificSignalQuelonrielonselonraselond;
+  public final SelonarchCountelonr nullcastTwelonelontsForcelonelonxcludelond;
+  public final SelonarchCountelonr nullcastUnelonxpelonctelondRelonsults;
+  public final SelonarchCountelonr nullcastUnelonxpelonctelondQuelonrielons;
+  public final SelonarchCountelonr relonlelonvancelonAntiGamingFiltelonrUselond;
+  public final SelonarchCountelonr relonlelonvancelonAntiGamingFiltelonrNotRelonquelonstelond;
+  public final SelonarchCountelonr relonlelonvancelonAntiGamingFiltelonrSpeloncifielondTwelonelontsAndFromUselonrIds;
+  public final SelonarchCountelonr relonlelonvancelonAntiGamingFiltelonrSpeloncifielondTwelonelonts;
+  public final SelonarchCountelonr relonlelonvancelonAntiGamingFiltelonrSpeloncifielondFromUselonrIds;
+  public final SelonarchCountelonr numCollelonctorAdjustelondMinSelonarchelondStatusID;
 
-  public final Map<EarlybirdSearcher.QueryMode, SearchCounter> numRequestsWithBlankQuery;
-  private final Map<ThriftScoringFunctionType, SearchTimerStats> latencyByScoringFunctionType;
-  private final Map<ThriftScoringFunctionType,
-      Map<String, SearchTimerStats>> latencyByScoringFunctionTypeAndClient;
-  private final Map<String, SearchTimerStats> latencyByTensorflowModel;
+  public final Map<elonarlybirdSelonarchelonr.QuelonryModelon, SelonarchCountelonr> numRelonquelonstsWithBlankQuelonry;
+  privatelon final Map<ThriftScoringFunctionTypelon, SelonarchTimelonrStats> latelonncyByScoringFunctionTypelon;
+  privatelon final Map<ThriftScoringFunctionTypelon,
+      Map<String, SelonarchTimelonrStats>> latelonncyByScoringFunctionTypelonAndClielonnt;
+  privatelon final Map<String, SelonarchTimelonrStats> latelonncyByTelonnsorflowModelonl;
 
-  public EarlybirdSearcherStats(SearchStatsReceiver earlybirdServerStatsReceiver) {
-    this.earlybirdServerStatsReceiver = earlybirdServerStatsReceiver;
+  public elonarlybirdSelonarchelonrStats(SelonarchStatsReloncelonivelonr elonarlybirdSelonrvelonrStatsReloncelonivelonr) {
+    this.elonarlybirdSelonrvelonrStatsReloncelonivelonr = elonarlybirdSelonrvelonrStatsReloncelonivelonr;
 
-    this.thriftQueryWithLuceneQuery =
-        earlybirdServerStatsReceiver.getCounter("thrift_query_with_lucene_query");
-    this.thriftQueryWithSerializedQuery =
-        earlybirdServerStatsReceiver.getCounter("thrift_query_with_serialized_query");
-    this.thriftQueryWithoutTextQuery =
-        earlybirdServerStatsReceiver.getCounter("thrift_query_without_text_query");
+    this.thriftQuelonryWithLucelonnelonQuelonry =
+        elonarlybirdSelonrvelonrStatsReloncelonivelonr.gelontCountelonr("thrift_quelonry_with_lucelonnelon_quelonry");
+    this.thriftQuelonryWithSelonrializelondQuelonry =
+        elonarlybirdSelonrvelonrStatsReloncelonivelonr.gelontCountelonr("thrift_quelonry_with_selonrializelond_quelonry");
+    this.thriftQuelonryWithoutTelonxtQuelonry =
+        elonarlybirdSelonrvelonrStatsReloncelonivelonr.gelontCountelonr("thrift_quelonry_without_telonxt_quelonry");
 
-    this.addedFilterBadUserRep =
-        earlybirdServerStatsReceiver.getCounter("added_filter_bad_user_rep");
-    this.addedFilterFromUserIds =
-        earlybirdServerStatsReceiver.getCounter("added_filter_from_user_ids");
-    this.addedFilterTweetIds =
-        earlybirdServerStatsReceiver.getCounter("added_filter_tweet_ids");
+    this.addelondFiltelonrBadUselonrRelonp =
+        elonarlybirdSelonrvelonrStatsReloncelonivelonr.gelontCountelonr("addelond_filtelonr_bad_uselonr_relonp");
+    this.addelondFiltelonrFromUselonrIds =
+        elonarlybirdSelonrvelonrStatsReloncelonivelonr.gelontCountelonr("addelond_filtelonr_from_uselonr_ids");
+    this.addelondFiltelonrTwelonelontIds =
+        elonarlybirdSelonrvelonrStatsReloncelonivelonr.gelontCountelonr("addelond_filtelonr_twelonelont_ids");
 
-    this.unsetFiltersForSocialFilterTypeQuery =
-        earlybirdServerStatsReceiver.getCounter("unset_filters_for_social_filter_type_query");
-    this.querySpecificSignalMapTotalSize =
-        earlybirdServerStatsReceiver.getCounter("query_specific_signal_map_total_size");
-    this.querySpecificSignalQueriesUsed =
-        earlybirdServerStatsReceiver.getCounter("query_specific_signal_queries_used");
-    this.querySpecificSignalQueriesErased =
-        earlybirdServerStatsReceiver.getCounter("query_specific_signal_queries_erased");
-    this.authorSpecificSignalMapTotalSize =
-        earlybirdServerStatsReceiver.getCounter("author_specific_signal_map_total_size");
-    this.authorSpecificSignalQueriesUsed =
-        earlybirdServerStatsReceiver.getCounter("author_specific_signal_queries_used");
-    this.authorSpecificSignalQueriesErased =
-        earlybirdServerStatsReceiver.getCounter("author_specific_signal_queries_erased");
-    this.nullcastTweetsForceExcluded =
-        earlybirdServerStatsReceiver.getCounter("force_excluded_nullcast_result_count");
-    this.nullcastUnexpectedResults =
-        earlybirdServerStatsReceiver.getCounter("unexpected_nullcast_result_count");
-    this.nullcastUnexpectedQueries =
-        earlybirdServerStatsReceiver.getCounter("queries_with_unexpected_nullcast_results");
-    this.numCollectorAdjustedMinSearchedStatusID =
-        earlybirdServerStatsReceiver.getCounter("collector_adjusted_min_searched_status_id");
+    this.unselontFiltelonrsForSocialFiltelonrTypelonQuelonry =
+        elonarlybirdSelonrvelonrStatsReloncelonivelonr.gelontCountelonr("unselont_filtelonrs_for_social_filtelonr_typelon_quelonry");
+    this.quelonrySpeloncificSignalMapTotalSizelon =
+        elonarlybirdSelonrvelonrStatsReloncelonivelonr.gelontCountelonr("quelonry_speloncific_signal_map_total_sizelon");
+    this.quelonrySpeloncificSignalQuelonrielonsUselond =
+        elonarlybirdSelonrvelonrStatsReloncelonivelonr.gelontCountelonr("quelonry_speloncific_signal_quelonrielons_uselond");
+    this.quelonrySpeloncificSignalQuelonrielonselonraselond =
+        elonarlybirdSelonrvelonrStatsReloncelonivelonr.gelontCountelonr("quelonry_speloncific_signal_quelonrielons_elonraselond");
+    this.authorSpeloncificSignalMapTotalSizelon =
+        elonarlybirdSelonrvelonrStatsReloncelonivelonr.gelontCountelonr("author_speloncific_signal_map_total_sizelon");
+    this.authorSpeloncificSignalQuelonrielonsUselond =
+        elonarlybirdSelonrvelonrStatsReloncelonivelonr.gelontCountelonr("author_speloncific_signal_quelonrielons_uselond");
+    this.authorSpeloncificSignalQuelonrielonselonraselond =
+        elonarlybirdSelonrvelonrStatsReloncelonivelonr.gelontCountelonr("author_speloncific_signal_quelonrielons_elonraselond");
+    this.nullcastTwelonelontsForcelonelonxcludelond =
+        elonarlybirdSelonrvelonrStatsReloncelonivelonr.gelontCountelonr("forcelon_elonxcludelond_nullcast_relonsult_count");
+    this.nullcastUnelonxpelonctelondRelonsults =
+        elonarlybirdSelonrvelonrStatsReloncelonivelonr.gelontCountelonr("unelonxpelonctelond_nullcast_relonsult_count");
+    this.nullcastUnelonxpelonctelondQuelonrielons =
+        elonarlybirdSelonrvelonrStatsReloncelonivelonr.gelontCountelonr("quelonrielons_with_unelonxpelonctelond_nullcast_relonsults");
+    this.numCollelonctorAdjustelondMinSelonarchelondStatusID =
+        elonarlybirdSelonrvelonrStatsReloncelonivelonr.gelontCountelonr("collelonctor_adjustelond_min_selonarchelond_status_id");
 
-    this.relevanceAntiGamingFilterUsed = earlybirdServerStatsReceiver
-        .getCounter("relevance_anti_gaming_filter_used");
-    this.relevanceAntiGamingFilterNotRequested = earlybirdServerStatsReceiver
-        .getCounter("relevance_anti_gaming_filter_not_requested");
-    this.relevanceAntiGamingFilterSpecifiedTweetsAndFromUserIds = earlybirdServerStatsReceiver
-        .getCounter("relevance_anti_gaming_filter_specified_tweets_and_from_user_ids");
-    this.relevanceAntiGamingFilterSpecifiedTweets = earlybirdServerStatsReceiver
-        .getCounter("relevance_anti_gaming_filter_specified_tweets");
-    this.relevanceAntiGamingFilterSpecifiedFromUserIds = earlybirdServerStatsReceiver
-        .getCounter("relevance_anti_gaming_filter_specified_from_user_ids");
+    this.relonlelonvancelonAntiGamingFiltelonrUselond = elonarlybirdSelonrvelonrStatsReloncelonivelonr
+        .gelontCountelonr("relonlelonvancelon_anti_gaming_filtelonr_uselond");
+    this.relonlelonvancelonAntiGamingFiltelonrNotRelonquelonstelond = elonarlybirdSelonrvelonrStatsReloncelonivelonr
+        .gelontCountelonr("relonlelonvancelon_anti_gaming_filtelonr_not_relonquelonstelond");
+    this.relonlelonvancelonAntiGamingFiltelonrSpeloncifielondTwelonelontsAndFromUselonrIds = elonarlybirdSelonrvelonrStatsReloncelonivelonr
+        .gelontCountelonr("relonlelonvancelon_anti_gaming_filtelonr_speloncifielond_twelonelonts_and_from_uselonr_ids");
+    this.relonlelonvancelonAntiGamingFiltelonrSpeloncifielondTwelonelonts = elonarlybirdSelonrvelonrStatsReloncelonivelonr
+        .gelontCountelonr("relonlelonvancelon_anti_gaming_filtelonr_speloncifielond_twelonelonts");
+    this.relonlelonvancelonAntiGamingFiltelonrSpeloncifielondFromUselonrIds = elonarlybirdSelonrvelonrStatsReloncelonivelonr
+        .gelontCountelonr("relonlelonvancelon_anti_gaming_filtelonr_speloncifielond_from_uselonr_ids");
 
-    this.latencyByScoringFunctionType = new EnumMap<>(ThriftScoringFunctionType.class);
-    this.latencyByScoringFunctionTypeAndClient = new EnumMap<>(ThriftScoringFunctionType.class);
-    this.latencyByTensorflowModel = new ConcurrentHashMap<>();
+    this.latelonncyByScoringFunctionTypelon = nelonw elonnumMap<>(ThriftScoringFunctionTypelon.class);
+    this.latelonncyByScoringFunctionTypelonAndClielonnt = nelonw elonnumMap<>(ThriftScoringFunctionTypelon.class);
+    this.latelonncyByTelonnsorflowModelonl = nelonw ConcurrelonntHashMap<>();
 
-    for (ThriftScoringFunctionType type : ThriftScoringFunctionType.values()) {
-      this.latencyByScoringFunctionType.put(type, getTimerStatsByName(getStatsNameByType(type)));
-      this.latencyByScoringFunctionTypeAndClient.put(type, new ConcurrentHashMap<>());
+    for (ThriftScoringFunctionTypelon typelon : ThriftScoringFunctionTypelon.valuelons()) {
+      this.latelonncyByScoringFunctionTypelon.put(typelon, gelontTimelonrStatsByNamelon(gelontStatsNamelonByTypelon(typelon)));
+      this.latelonncyByScoringFunctionTypelonAndClielonnt.put(typelon, nelonw ConcurrelonntHashMap<>());
     }
 
-    this.numRequestsWithBlankQuery = new EnumMap<>(EarlybirdSearcher.QueryMode.class);
+    this.numRelonquelonstsWithBlankQuelonry = nelonw elonnumMap<>(elonarlybirdSelonarchelonr.QuelonryModelon.class);
 
-    for (EarlybirdSearcher.QueryMode queryMode : EarlybirdSearcher.QueryMode.values()) {
-      String counterName =
-          String.format("num_requests_with_blank_query_%s", queryMode.name().toLowerCase());
+    for (elonarlybirdSelonarchelonr.QuelonryModelon quelonryModelon : elonarlybirdSelonarchelonr.QuelonryModelon.valuelons()) {
+      String countelonrNamelon =
+          String.format("num_relonquelonsts_with_blank_quelonry_%s", quelonryModelon.namelon().toLowelonrCaselon());
 
-      this.numRequestsWithBlankQuery.put(
-          queryMode, earlybirdServerStatsReceiver.getCounter(counterName));
-    }
-  }
-
-  /**
-   * Records the latency for a request for the applicable stats.
-   * @param timer A stopped timer that timed the request.
-   * @param request The request that was timed.
-   */
-  public void recordRelevanceStats(SearchTimer timer, EarlybirdRequest request) {
-    Preconditions.checkNotNull(timer);
-    Preconditions.checkNotNull(request);
-    Preconditions.checkArgument(!timer.isRunning());
-
-    ThriftSearchRelevanceOptions relevanceOptions = request.getSearchQuery().getRelevanceOptions();
-
-    // Only record ranking searches with a set type.
-    if (!relevanceOptions.isSetRankingParams()
-        || !relevanceOptions.getRankingParams().isSetType()) {
-      return;
-    }
-
-    ThriftRankingParams rankingParams = relevanceOptions.getRankingParams();
-    ThriftScoringFunctionType scoringFunctionType = rankingParams.getType();
-
-    latencyByScoringFunctionType.get(scoringFunctionType).stoppedTimerIncrement(timer);
-
-    if (request.getClientId() != null) {
-      getTimerStatsByClient(scoringFunctionType, request.getClientId())
-          .stoppedTimerIncrement(timer);
-    }
-
-    if (scoringFunctionType != ThriftScoringFunctionType.TENSORFLOW_BASED) {
-      return;
-    }
-
-    String modelName = rankingParams.getSelectedTensorflowModel();
-
-    if (modelName != null) {
-      getTimerStatsByTensorflowModel(modelName).stoppedTimerIncrement(timer);
+      this.numRelonquelonstsWithBlankQuelonry.put(
+          quelonryModelon, elonarlybirdSelonrvelonrStatsReloncelonivelonr.gelontCountelonr(countelonrNamelon));
     }
   }
 
   /**
-   * Creates a search timer with options specified by TweetsEarlybirdSearcherStats.
-   * @return A new SearchTimer.
+   * Reloncords thelon latelonncy for a relonquelonst for thelon applicablelon stats.
+   * @param timelonr A stoppelond timelonr that timelond thelon relonquelonst.
+   * @param relonquelonst Thelon relonquelonst that was timelond.
    */
-  public SearchTimer createTimer() {
-    return new SearchTimer(new SearchMetricTimerOptions.Builder()
-        .withTimeUnit(TIME_UNIT)
+  public void reloncordRelonlelonvancelonStats(SelonarchTimelonr timelonr, elonarlybirdRelonquelonst relonquelonst) {
+    Prelonconditions.chelonckNotNull(timelonr);
+    Prelonconditions.chelonckNotNull(relonquelonst);
+    Prelonconditions.chelonckArgumelonnt(!timelonr.isRunning());
+
+    ThriftSelonarchRelonlelonvancelonOptions relonlelonvancelonOptions = relonquelonst.gelontSelonarchQuelonry().gelontRelonlelonvancelonOptions();
+
+    // Only reloncord ranking selonarchelons with a selont typelon.
+    if (!relonlelonvancelonOptions.isSelontRankingParams()
+        || !relonlelonvancelonOptions.gelontRankingParams().isSelontTypelon()) {
+      relonturn;
+    }
+
+    ThriftRankingParams rankingParams = relonlelonvancelonOptions.gelontRankingParams();
+    ThriftScoringFunctionTypelon scoringFunctionTypelon = rankingParams.gelontTypelon();
+
+    latelonncyByScoringFunctionTypelon.gelont(scoringFunctionTypelon).stoppelondTimelonrIncrelonmelonnt(timelonr);
+
+    if (relonquelonst.gelontClielonntId() != null) {
+      gelontTimelonrStatsByClielonnt(scoringFunctionTypelon, relonquelonst.gelontClielonntId())
+          .stoppelondTimelonrIncrelonmelonnt(timelonr);
+    }
+
+    if (scoringFunctionTypelon != ThriftScoringFunctionTypelon.TelonNSORFLOW_BASelonD) {
+      relonturn;
+    }
+
+    String modelonlNamelon = rankingParams.gelontSelonlelonctelondTelonnsorflowModelonl();
+
+    if (modelonlNamelon != null) {
+      gelontTimelonrStatsByTelonnsorflowModelonl(modelonlNamelon).stoppelondTimelonrIncrelonmelonnt(timelonr);
+    }
+  }
+
+  /**
+   * Crelonatelons a selonarch timelonr with options speloncifielond by TwelonelontselonarlybirdSelonarchelonrStats.
+   * @relonturn A nelonw SelonarchTimelonr.
+   */
+  public SelonarchTimelonr crelonatelonTimelonr() {
+    relonturn nelonw SelonarchTimelonr(nelonw SelonarchMelontricTimelonrOptions.Buildelonr()
+        .withTimelonUnit(TIMelon_UNIT)
         .build());
   }
 
-  private SearchTimerStats getTimerStatsByClient(
-      ThriftScoringFunctionType type,
-      String clientId) {
-    Map<String, SearchTimerStats> latencyByClient = latencyByScoringFunctionTypeAndClient.get(type);
+  privatelon SelonarchTimelonrStats gelontTimelonrStatsByClielonnt(
+      ThriftScoringFunctionTypelon typelon,
+      String clielonntId) {
+    Map<String, SelonarchTimelonrStats> latelonncyByClielonnt = latelonncyByScoringFunctionTypelonAndClielonnt.gelont(typelon);
 
-    return latencyByClient.computeIfAbsent(clientId,
-        cid -> getTimerStatsByName(getStatsNameByClientAndType(type, cid)));
+    relonturn latelonncyByClielonnt.computelonIfAbselonnt(clielonntId,
+        cid -> gelontTimelonrStatsByNamelon(gelontStatsNamelonByClielonntAndTypelon(typelon, cid)));
   }
 
-  private SearchTimerStats getTimerStatsByTensorflowModel(String modelName) {
-    return latencyByTensorflowModel.computeIfAbsent(modelName,
-        mn -> getTimerStatsByName(getStatsNameByTensorflowModel(mn)));
+  privatelon SelonarchTimelonrStats gelontTimelonrStatsByTelonnsorflowModelonl(String modelonlNamelon) {
+    relonturn latelonncyByTelonnsorflowModelonl.computelonIfAbselonnt(modelonlNamelon,
+        mn -> gelontTimelonrStatsByNamelon(gelontStatsNamelonByTelonnsorflowModelonl(mn)));
   }
 
-  private SearchTimerStats getTimerStatsByName(String name) {
-    return earlybirdServerStatsReceiver.getTimerStats(
-        name, TIME_UNIT, false, true, false);
+  privatelon SelonarchTimelonrStats gelontTimelonrStatsByNamelon(String namelon) {
+    relonturn elonarlybirdSelonrvelonrStatsReloncelonivelonr.gelontTimelonrStats(
+        namelon, TIMelon_UNIT, falselon, truelon, falselon);
   }
 
-  public static String getStatsNameByType(ThriftScoringFunctionType type) {
-    return String.format(
-        "search_relevance_scoring_function_%s_requests", type.name().toLowerCase());
+  public static String gelontStatsNamelonByTypelon(ThriftScoringFunctionTypelon typelon) {
+    relonturn String.format(
+        "selonarch_relonlelonvancelon_scoring_function_%s_relonquelonsts", typelon.namelon().toLowelonrCaselon());
   }
 
-  public static String getStatsNameByClientAndType(
-      ThriftScoringFunctionType type,
-      String clientId) {
-    return String.format("%s_%s", ClientIdUtil.formatClientId(clientId), getStatsNameByType(type));
+  public static String gelontStatsNamelonByClielonntAndTypelon(
+      ThriftScoringFunctionTypelon typelon,
+      String clielonntId) {
+    relonturn String.format("%s_%s", ClielonntIdUtil.formatClielonntId(clielonntId), gelontStatsNamelonByTypelon(typelon));
   }
 
-  public static String getStatsNameByTensorflowModel(String modelName) {
-    return String.format(
-        "model_%s_%s", modelName, getStatsNameByType(ThriftScoringFunctionType.TENSORFLOW_BASED));
+  public static String gelontStatsNamelonByTelonnsorflowModelonl(String modelonlNamelon) {
+    relonturn String.format(
+        "modelonl_%s_%s", modelonlNamelon, gelontStatsNamelonByTypelon(ThriftScoringFunctionTypelon.TelonNSORFLOW_BASelonD));
   }
 }

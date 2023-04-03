@@ -1,21 +1,21 @@
-package com.twitter.product_mixer.core.functional_component.candidate_source.strato
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.strato
 
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.Unauthorized
-import com.twitter.stitch.Stitch
-import com.twitter.strato.response.Err
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.PipelonlinelonFailurelon
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.Unauthorizelond
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.strato.relonsponselon.elonrr
 
 /**
- * Categorize Strato's Err messages to our PipelineFailures.
+ * Catelongorizelon Strato's elonrr melonssagelons to our PipelonlinelonFailurelons.
  *
- * This should be used by all strato-based candidate source, and we can
- * add more cases here as they're useful.
+ * This should belon uselond by all strato-baselond candidatelon sourcelon, and welon can
+ * add morelon caselons helonrelon as thelony'relon uselonful.
  */
-object StratoErrCategorizer {
-  val CategorizeStratoException: PartialFunction[Throwable, Stitch[Nothing]] = {
-    case err @ Err(Err.Authorization, reason, context) =>
-      Stitch.exception(
-        PipelineFailure(Unauthorized, s"$reason [${context.toString}]", underlying = Some(err))
+objelonct StratoelonrrCatelongorizelonr {
+  val CatelongorizelonStratoelonxcelonption: PartialFunction[Throwablelon, Stitch[Nothing]] = {
+    caselon elonrr @ elonrr(elonrr.Authorization, relonason, contelonxt) =>
+      Stitch.elonxcelonption(
+        PipelonlinelonFailurelon(Unauthorizelond, s"$relonason [${contelonxt.toString}]", undelonrlying = Somelon(elonrr))
       )
   }
 }

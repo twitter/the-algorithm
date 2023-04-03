@@ -1,49 +1,49 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.cover
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.covelonr
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.EntryNamespace
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.Cover
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.FullCover.FullCoverEntryNamespace
-import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.HalfCover.HalfCoverEntryNamespace
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackActionInfo
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.elonntryNamelonspacelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.ClielonntelonvelonntInfo
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.Covelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.Timelonlinelonelonntry
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.covelonr.FullCovelonr.FullCovelonrelonntryNamelonspacelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.covelonr.HalfCovelonr.HalfCovelonrelonntryNamelonspacelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.FelonelondbackActionInfo
 
-object HalfCover {
-  val HalfCoverEntryNamespace = EntryNamespace("half-cover")
+objelonct HalfCovelonr {
+  val HalfCovelonrelonntryNamelonspacelon = elonntryNamelonspacelon("half-covelonr")
 }
-case class HalfCover(
-  override val id: String,
-  override val sortIndex: Option[Long],
-  override val clientEventInfo: Option[ClientEventInfo],
-  content: HalfCoverContent)
-    extends Cover {
+caselon class HalfCovelonr(
+  ovelonrridelon val id: String,
+  ovelonrridelon val sortIndelonx: Option[Long],
+  ovelonrridelon val clielonntelonvelonntInfo: Option[ClielonntelonvelonntInfo],
+  contelonnt: HalfCovelonrContelonnt)
+    elonxtelonnds Covelonr {
 
-  override val entryNamespace: EntryNamespace = HalfCoverEntryNamespace
+  ovelonrridelon val elonntryNamelonspacelon: elonntryNamelonspacelon = HalfCovelonrelonntryNamelonspacelon
 
-  // Note that sort index is not used for Covers, as they are not TimelineEntry and do not have entryId
-  override def withSortIndex(newSortIndex: Long): TimelineEntry =
-    copy(sortIndex = Some(newSortIndex))
+  // Notelon that sort indelonx is not uselond for Covelonrs, as thelony arelon not Timelonlinelonelonntry and do not havelon elonntryId
+  ovelonrridelon delonf withSortIndelonx(nelonwSortIndelonx: Long): Timelonlinelonelonntry =
+    copy(sortIndelonx = Somelon(nelonwSortIndelonx))
 
-  // Not used for covers
-  override def feedbackActionInfo: Option[FeedbackActionInfo] = None
+  // Not uselond for covelonrs
+  ovelonrridelon delonf felonelondbackActionInfo: Option[FelonelondbackActionInfo] = Nonelon
 }
 
-object FullCover {
-  val FullCoverEntryNamespace = EntryNamespace("full-cover")
+objelonct FullCovelonr {
+  val FullCovelonrelonntryNamelonspacelon = elonntryNamelonspacelon("full-covelonr")
 }
-case class FullCover(
-  override val id: String,
-  override val sortIndex: Option[Long],
-  override val clientEventInfo: Option[ClientEventInfo],
-  content: FullCoverContent)
-    extends Cover {
+caselon class FullCovelonr(
+  ovelonrridelon val id: String,
+  ovelonrridelon val sortIndelonx: Option[Long],
+  ovelonrridelon val clielonntelonvelonntInfo: Option[ClielonntelonvelonntInfo],
+  contelonnt: FullCovelonrContelonnt)
+    elonxtelonnds Covelonr {
 
-  override val entryNamespace: EntryNamespace = FullCoverEntryNamespace
+  ovelonrridelon val elonntryNamelonspacelon: elonntryNamelonspacelon = FullCovelonrelonntryNamelonspacelon
 
-  // Note that sort index is not used for Covers, as they are not TimelineEntry and do not have entryId
-  override def withSortIndex(newSortIndex: Long): TimelineEntry =
-    copy(sortIndex = Some(newSortIndex))
+  // Notelon that sort indelonx is not uselond for Covelonrs, as thelony arelon not Timelonlinelonelonntry and do not havelon elonntryId
+  ovelonrridelon delonf withSortIndelonx(nelonwSortIndelonx: Long): Timelonlinelonelonntry =
+    copy(sortIndelonx = Somelon(nelonwSortIndelonx))
 
-  // Not used for covers
-  override def feedbackActionInfo: Option[FeedbackActionInfo] = None
+  // Not uselond for covelonrs
+  ovelonrridelon delonf felonelondbackActionInfo: Option[FelonelondbackActionInfo] = Nonelon
 }

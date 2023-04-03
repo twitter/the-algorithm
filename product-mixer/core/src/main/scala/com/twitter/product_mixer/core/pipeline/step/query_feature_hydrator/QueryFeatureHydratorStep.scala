@@ -1,59 +1,59 @@
-package com.twitter.product_mixer.core.pipeline.step.query_feature_hydrator
+packagelon com.twittelonr.product_mixelonr.corelon.pipelonlinelon.stelonp.quelonry_felonaturelon_hydrator
 
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BaseQueryFeatureHydrator
-import com.twitter.product_mixer.core.model.common.identifier.PipelineStepIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.state.HasAsyncFeatureMap
-import com.twitter.product_mixer.core.pipeline.state.HasQuery
-import com.twitter.product_mixer.core.pipeline.step.Step
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.product_mixer.core.service.query_feature_hydrator_executor.QueryFeatureHydratorExecutor
-import com.twitter.stitch.Arrow
-import javax.inject.Inject
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator.BaselonQuelonryFelonaturelonHydrator
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.PipelonlinelonStelonpIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.statelon.HasAsyncFelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.statelon.HasQuelonry
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.stelonp.Stelonp
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.elonxeloncutor
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.quelonry_felonaturelon_hydrator_elonxeloncutor.QuelonryFelonaturelonHydratorelonxeloncutor
+import com.twittelonr.stitch.Arrow
+import javax.injelonct.Injelonct
 
 /**
- * A query level feature hydration step, it takes the input list of candidates and the given
- * hydrators and executes them. The [[State]] object is responsible for merging the resulting
- * feature maps with the hydrated ones in its updateCandidatesWithFeatures.
+ * A quelonry lelonvelonl felonaturelon hydration stelonp, it takelons thelon input list of candidatelons and thelon givelonn
+ * hydrators and elonxeloncutelons thelonm. Thelon [[Statelon]] objelonct is relonsponsiblelon for melonrging thelon relonsulting
+ * felonaturelon maps with thelon hydratelond onelons in its updatelonCandidatelonsWithFelonaturelons.
  *
- * @param queryFeatureHydratorExecutor Hydrator Executor
- * @tparam Query Type of PipelineQuery domain model
- * @tparam State The pipeline state domain model.
+ * @param quelonryFelonaturelonHydratorelonxeloncutor Hydrator elonxeloncutor
+ * @tparam Quelonry Typelon of PipelonlinelonQuelonry domain modelonl
+ * @tparam Statelon Thelon pipelonlinelon statelon domain modelonl.
  */
-case class QueryFeatureHydratorStep[
-  Query <: PipelineQuery,
-  State <: HasQuery[Query, State] with HasAsyncFeatureMap[State]] @Inject() (
-  queryFeatureHydratorExecutor: QueryFeatureHydratorExecutor)
-    extends Step[State, QueryFeatureHydratorStepConfig[
-      Query
-    ], Query, QueryFeatureHydratorExecutor.Result] {
-  override def isEmpty(config: QueryFeatureHydratorStepConfig[Query]): Boolean =
-    config.hydrators.isEmpty
+caselon class QuelonryFelonaturelonHydratorStelonp[
+  Quelonry <: PipelonlinelonQuelonry,
+  Statelon <: HasQuelonry[Quelonry, Statelon] with HasAsyncFelonaturelonMap[Statelon]] @Injelonct() (
+  quelonryFelonaturelonHydratorelonxeloncutor: QuelonryFelonaturelonHydratorelonxeloncutor)
+    elonxtelonnds Stelonp[Statelon, QuelonryFelonaturelonHydratorStelonpConfig[
+      Quelonry
+    ], Quelonry, QuelonryFelonaturelonHydratorelonxeloncutor.Relonsult] {
+  ovelonrridelon delonf iselonmpty(config: QuelonryFelonaturelonHydratorStelonpConfig[Quelonry]): Boolelonan =
+    config.hydrators.iselonmpty
 
-  override def adaptInput(state: State, config: QueryFeatureHydratorStepConfig[Query]): Query =
-    state.query
+  ovelonrridelon delonf adaptInput(statelon: Statelon, config: QuelonryFelonaturelonHydratorStelonpConfig[Quelonry]): Quelonry =
+    statelon.quelonry
 
-  override def arrow(
-    config: QueryFeatureHydratorStepConfig[Query],
-    context: Executor.Context
-  ): Arrow[Query, QueryFeatureHydratorExecutor.Result] =
-    queryFeatureHydratorExecutor.arrow(
+  ovelonrridelon delonf arrow(
+    config: QuelonryFelonaturelonHydratorStelonpConfig[Quelonry],
+    contelonxt: elonxeloncutor.Contelonxt
+  ): Arrow[Quelonry, QuelonryFelonaturelonHydratorelonxeloncutor.Relonsult] =
+    quelonryFelonaturelonHydratorelonxeloncutor.arrow(
       config.hydrators,
-      config.validPipelineStepIdentifiers,
-      context)
+      config.validPipelonlinelonStelonpIdelonntifielonrs,
+      contelonxt)
 
-  override def updateState(
-    state: State,
-    executorResult: QueryFeatureHydratorExecutor.Result,
-    config: QueryFeatureHydratorStepConfig[Query]
-  ): State = {
-    val updatedQuery = state.query
-      .withFeatureMap(executorResult.featureMap).asInstanceOf[Query]
-    state
-      .updateQuery(updatedQuery).addAsyncFeatureMap(executorResult.asyncFeatureMap)
+  ovelonrridelon delonf updatelonStatelon(
+    statelon: Statelon,
+    elonxeloncutorRelonsult: QuelonryFelonaturelonHydratorelonxeloncutor.Relonsult,
+    config: QuelonryFelonaturelonHydratorStelonpConfig[Quelonry]
+  ): Statelon = {
+    val updatelondQuelonry = statelon.quelonry
+      .withFelonaturelonMap(elonxeloncutorRelonsult.felonaturelonMap).asInstancelonOf[Quelonry]
+    statelon
+      .updatelonQuelonry(updatelondQuelonry).addAsyncFelonaturelonMap(elonxeloncutorRelonsult.asyncFelonaturelonMap)
   }
 }
 
-case class QueryFeatureHydratorStepConfig[Query <: PipelineQuery](
-  hydrators: Seq[BaseQueryFeatureHydrator[Query, _]],
-  validPipelineStepIdentifiers: Set[PipelineStepIdentifier])
+caselon class QuelonryFelonaturelonHydratorStelonpConfig[Quelonry <: PipelonlinelonQuelonry](
+  hydrators: Selonq[BaselonQuelonryFelonaturelonHydrator[Quelonry, _]],
+  validPipelonlinelonStelonpIdelonntifielonrs: Selont[PipelonlinelonStelonpIdelonntifielonr])

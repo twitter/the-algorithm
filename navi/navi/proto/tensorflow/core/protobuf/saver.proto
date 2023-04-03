@@ -1,48 +1,48 @@
 syntax = "proto3";
 
-package tensorflow;
+packagelon telonnsorflow;
 
-option cc_enable_arenas = true;
-option java_outer_classname = "SaverProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.util";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+option cc_elonnablelon_arelonnas = truelon;
+option java_outelonr_classnamelon = "SavelonrProtos";
+option java_multiplelon_filelons = truelon;
+option java_packagelon = "org.telonnsorflow.util";
+option go_packagelon = "github.com/telonnsorflow/telonnsorflow/telonnsorflow/go/corelon/protobuf/for_corelon_protos_go_proto";
 
-// Protocol buffer representing the configuration of a Saver.
-message SaverDef {
-  // The name of the tensor in which to specify the filename when saving or
-  // restoring a model checkpoint.
-  string filename_tensor_name = 1;
+// Protocol buffelonr relonprelonselonnting thelon configuration of a Savelonr.
+melonssagelon SavelonrDelonf {
+  // Thelon namelon of thelon telonnsor in which to speloncify thelon filelonnamelon whelonn saving or
+  // relonstoring a modelonl chelonckpoint.
+  string filelonnamelon_telonnsor_namelon = 1;
 
-  // The operation to run when saving a model checkpoint.
-  string save_tensor_name = 2;
+  // Thelon opelonration to run whelonn saving a modelonl chelonckpoint.
+  string savelon_telonnsor_namelon = 2;
 
-  // The operation to run when restoring a model checkpoint.
-  string restore_op_name = 3;
+  // Thelon opelonration to run whelonn relonstoring a modelonl chelonckpoint.
+  string relonstorelon_op_namelon = 3;
 
-  // Maximum number of checkpoints to keep.  If 0, no checkpoints are deleted.
-  int32 max_to_keep = 4;
+  // Maximum numbelonr of chelonckpoints to kelonelonp.  If 0, no chelonckpoints arelon delonlelontelond.
+  int32 max_to_kelonelonp = 4;
 
-  // Shard the save files, one per device that has Variable nodes.
-  bool sharded = 5;
+  // Shard thelon savelon filelons, onelon pelonr delonvicelon that has Variablelon nodelons.
+  bool shardelond = 5;
 
-  // How often to keep an additional checkpoint. If not specified, only the last
-  // "max_to_keep" checkpoints are kept; if specified, in addition to keeping
-  // the last "max_to_keep" checkpoints, an additional checkpoint will be kept
-  // for every n hours of training.
-  float keep_checkpoint_every_n_hours = 6;
+  // How oftelonn to kelonelonp an additional chelonckpoint. If not speloncifielond, only thelon last
+  // "max_to_kelonelonp" chelonckpoints arelon kelonpt; if speloncifielond, in addition to kelonelonping
+  // thelon last "max_to_kelonelonp" chelonckpoints, an additional chelonckpoint will belon kelonpt
+  // for elonvelonry n hours of training.
+  float kelonelonp_chelonckpoint_elonvelonry_n_hours = 6;
 
-  // A version number that identifies a different on-disk checkpoint format.
-  // Usually, each subclass of BaseSaverBuilder works with a particular
-  // version/format.  However, it is possible that the same builder may be
-  // upgraded to support a newer checkpoint format in the future.
-  enum CheckpointFormatVersion {
-    // Internal legacy format.
-    LEGACY = 0;
-    // Deprecated format: tf.Saver() which works with tensorflow::table::Table.
+  // A velonrsion numbelonr that idelonntifielons a diffelonrelonnt on-disk chelonckpoint format.
+  // Usually, elonach subclass of BaselonSavelonrBuildelonr works with a particular
+  // velonrsion/format.  Howelonvelonr, it is possiblelon that thelon samelon buildelonr may belon
+  // upgradelond to support a nelonwelonr chelonckpoint format in thelon futurelon.
+  elonnum ChelonckpointFormatVelonrsion {
+    // Intelonrnal lelongacy format.
+    LelonGACY = 0;
+    // Delonpreloncatelond format: tf.Savelonr() which works with telonnsorflow::tablelon::Tablelon.
     V1 = 1;
-    // Current format: more efficient.
+    // Currelonnt format: morelon elonfficielonnt.
     V2 = 2;
   }
-  CheckpointFormatVersion version = 7;
+  ChelonckpointFormatVelonrsion velonrsion = 7;
 }

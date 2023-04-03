@@ -1,21 +1,21 @@
 scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
+    sourcelons = ["*.scala"],
+    compilelonr_option_selonts = ["fatal_warnings"],
     platform = "java8",
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/feature",
-        "src/java/com/twitter/ml/api:api-base",
-        "src/scala/com/twitter/ml/api/util:datarecord",
-        "src/thrift/com/twitter/dal/personal_data:personal_data-java",
-        "src/thrift/com/twitter/ml/api:data-java",
-        "src/thrift/com/twitter/ml/api:data-scala",
+    strict_delonps = Truelon,
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        "product-mixelonr/corelon/src/main/scala/com/twittelonr/product_mixelonr/corelon/felonaturelon",
+        "src/java/com/twittelonr/ml/api:api-baselon",
+        "src/scala/com/twittelonr/ml/api/util:datareloncord",
+        "src/thrift/com/twittelonr/dal/pelonrsonal_data:pelonrsonal_data-java",
+        "src/thrift/com/twittelonr/ml/api:data-java",
+        "src/thrift/com/twittelonr/ml/api:data-scala",
     ],
-    exports = [
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/feature",
-        "src/thrift/com/twitter/dal/personal_data:personal_data-java",
-        "src/thrift/com/twitter/ml/api:data-java",
-        "src/thrift/com/twitter/ml/api:data-scala",
+    elonxports = [
+        "product-mixelonr/corelon/src/main/scala/com/twittelonr/product_mixelonr/corelon/felonaturelon",
+        "src/thrift/com/twittelonr/dal/pelonrsonal_data:pelonrsonal_data-java",
+        "src/thrift/com/twittelonr/ml/api:data-java",
+        "src/thrift/com/twittelonr/ml/api:data-scala",
     ],
 )

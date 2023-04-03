@@ -1,29 +1,29 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.slice
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.slicelon
 
-import javax.inject.Inject
-import javax.inject.Singleton
-import com.twitter.product_mixer.component_library.{thriftscala => t}
-import com.twitter.product_mixer.core.model.marshalling.response.slice.NextCursor
-import com.twitter.product_mixer.core.model.marshalling.response.slice.PreviousCursor
-import com.twitter.product_mixer.core.model.marshalling.response.slice.CursorType
-import com.twitter.product_mixer.core.model.marshalling.response.slice.GapCursor
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
+import com.twittelonr.product_mixelonr.componelonnt_library.{thriftscala => t}
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.slicelon.NelonxtCursor
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.slicelon.PrelonviousCursor
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.slicelon.CursorTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.slicelon.GapCursor
 
-@Singleton
-class CursorTypeMarshaller @Inject() () {
+@Singlelonton
+class CursorTypelonMarshallelonr @Injelonct() () {
 
-  def apply(cursorType: CursorType): t.CursorType = cursorType match {
-    case NextCursor => t.CursorType.Next
-    case PreviousCursor => t.CursorType.Previous
-    case GapCursor => t.CursorType.Gap
+  delonf apply(cursorTypelon: CursorTypelon): t.CursorTypelon = cursorTypelon match {
+    caselon NelonxtCursor => t.CursorTypelon.Nelonxt
+    caselon PrelonviousCursor => t.CursorTypelon.Prelonvious
+    caselon GapCursor => t.CursorTypelon.Gap
   }
 
-  def unmarshall(cursorType: t.CursorType): CursorType = cursorType match {
-    case t.CursorType.Next => NextCursor
-    case t.CursorType.Previous => PreviousCursor
-    case t.CursorType.Gap => GapCursor
-    case t.CursorType.EnumUnknownCursorType(id) =>
-      throw new UnsupportedOperationException(
-        s"Attempted to unmarshall unrecognized cursor type: $id")
+  delonf unmarshall(cursorTypelon: t.CursorTypelon): CursorTypelon = cursorTypelon match {
+    caselon t.CursorTypelon.Nelonxt => NelonxtCursor
+    caselon t.CursorTypelon.Prelonvious => PrelonviousCursor
+    caselon t.CursorTypelon.Gap => GapCursor
+    caselon t.CursorTypelon.elonnumUnknownCursorTypelon(id) =>
+      throw nelonw UnsupportelondOpelonrationelonxcelonption(
+        s"Attelonmptelond to unmarshall unreloncognizelond cursor typelon: $id")
   }
 
 }

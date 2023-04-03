@@ -1,157 +1,157 @@
-package com.twitter.follow_recommendations.common.candidate_sources.recent_engagement
+packagelon com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.reloncelonnt_elonngagelonmelonnt
 
-import com.google.inject.Inject
-import com.google.inject.Singleton
-import com.twitter.dds.jobs.repeated_profile_visits.thriftscala.ProfileVisitorInfo
-import com.twitter.experiments.general_metrics.thriftscala.IdType
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.clients.real_time_real_graph.Engagement
-import com.twitter.follow_recommendations.common.clients.real_time_real_graph.RealTimeRealGraphClient
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.timelines.configapi.Params
-import com.twitter.hermit.model.Algorithm
-import com.twitter.inject.Logging
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.strato.generated.client.rux.RepeatedProfileVisitsAggregateClientColumn
+import com.googlelon.injelonct.Injelonct
+import com.googlelon.injelonct.Singlelonton
+import com.twittelonr.dds.jobs.relonpelonatelond_profilelon_visits.thriftscala.ProfilelonVisitorInfo
+import com.twittelonr.elonxpelonrimelonnts.gelonnelonral_melontrics.thriftscala.IdTypelon
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.follow_reloncommelonndations.common.clielonnts.relonal_timelon_relonal_graph.elonngagelonmelonnt
+import com.twittelonr.follow_reloncommelonndations.common.clielonnts.relonal_timelon_relonal_graph.RelonalTimelonRelonalGraphClielonnt
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.CandidatelonUselonr
+import com.twittelonr.timelonlinelons.configapi.HasParams
+import com.twittelonr.timelonlinelons.configapi.Params
+import com.twittelonr.helonrmit.modelonl.Algorithm
+import com.twittelonr.injelonct.Logging
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.CandidatelonSourcelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonSourcelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.HasClielonntContelonxt
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.strato.gelonnelonratelond.clielonnt.rux.RelonpelonatelondProfilelonVisitsAggrelongatelonClielonntColumn
 
-@Singleton
-class RepeatedProfileVisitsSource @Inject() (
-  repeatedProfileVisitsAggregateClientColumn: RepeatedProfileVisitsAggregateClientColumn,
-  realTimeRealGraphClient: RealTimeRealGraphClient,
-  statsReceiver: StatsReceiver)
-    extends CandidateSource[HasParams with HasClientContext, CandidateUser]
+@Singlelonton
+class RelonpelonatelondProfilelonVisitsSourcelon @Injelonct() (
+  relonpelonatelondProfilelonVisitsAggrelongatelonClielonntColumn: RelonpelonatelondProfilelonVisitsAggrelongatelonClielonntColumn,
+  relonalTimelonRelonalGraphClielonnt: RelonalTimelonRelonalGraphClielonnt,
+  statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds CandidatelonSourcelon[HasParams with HasClielonntContelonxt, CandidatelonUselonr]
     with Logging {
 
-  val identifier: CandidateSourceIdentifier =
-    RepeatedProfileVisitsSource.Identifier
+  val idelonntifielonr: CandidatelonSourcelonIdelonntifielonr =
+    RelonpelonatelondProfilelonVisitsSourcelon.Idelonntifielonr
 
-  val sourceStatsReceiver = statsReceiver.scope("repeated_profile_visits_source")
-  val offlineFetchErrorCounter = sourceStatsReceiver.counter("offline_fetch_error")
-  val offlineFetchSuccessCounter = sourceStatsReceiver.counter("offline_fetch_success")
-  val onlineFetchErrorCounter = sourceStatsReceiver.counter("online_fetch_error")
-  val onlineFetchSuccessCounter = sourceStatsReceiver.counter("online_fetch_success")
-  val noRepeatedProfileVisitsAboveBucketingThresholdCounter =
-    sourceStatsReceiver.counter("no_repeated_profile_visits_above_bucketing_threshold")
-  val hasRepeatedProfileVisitsAboveBucketingThresholdCounter =
-    sourceStatsReceiver.counter("has_repeated_profile_visits_above_bucketing_threshold")
-  val noRepeatedProfileVisitsAboveRecommendationsThresholdCounter =
-    sourceStatsReceiver.counter("no_repeated_profile_visits_above_recommendations_threshold")
-  val hasRepeatedProfileVisitsAboveRecommendationsThresholdCounter =
-    sourceStatsReceiver.counter("has_repeated_profile_visits_above_recommendations_threshold")
-  val includeCandidatesCounter = sourceStatsReceiver.counter("include_candidates")
-  val noIncludeCandidatesCounter = sourceStatsReceiver.counter("no_include_candidates")
+  val sourcelonStatsReloncelonivelonr = statsReloncelonivelonr.scopelon("relonpelonatelond_profilelon_visits_sourcelon")
+  val offlinelonFelontchelonrrorCountelonr = sourcelonStatsReloncelonivelonr.countelonr("offlinelon_felontch_elonrror")
+  val offlinelonFelontchSuccelonssCountelonr = sourcelonStatsReloncelonivelonr.countelonr("offlinelon_felontch_succelonss")
+  val onlinelonFelontchelonrrorCountelonr = sourcelonStatsReloncelonivelonr.countelonr("onlinelon_felontch_elonrror")
+  val onlinelonFelontchSuccelonssCountelonr = sourcelonStatsReloncelonivelonr.countelonr("onlinelon_felontch_succelonss")
+  val noRelonpelonatelondProfilelonVisitsAbovelonBuckelontingThrelonsholdCountelonr =
+    sourcelonStatsReloncelonivelonr.countelonr("no_relonpelonatelond_profilelon_visits_abovelon_buckelonting_threlonshold")
+  val hasRelonpelonatelondProfilelonVisitsAbovelonBuckelontingThrelonsholdCountelonr =
+    sourcelonStatsReloncelonivelonr.countelonr("has_relonpelonatelond_profilelon_visits_abovelon_buckelonting_threlonshold")
+  val noRelonpelonatelondProfilelonVisitsAbovelonReloncommelonndationsThrelonsholdCountelonr =
+    sourcelonStatsReloncelonivelonr.countelonr("no_relonpelonatelond_profilelon_visits_abovelon_reloncommelonndations_threlonshold")
+  val hasRelonpelonatelondProfilelonVisitsAbovelonReloncommelonndationsThrelonsholdCountelonr =
+    sourcelonStatsReloncelonivelonr.countelonr("has_relonpelonatelond_profilelon_visits_abovelon_reloncommelonndations_threlonshold")
+  val includelonCandidatelonsCountelonr = sourcelonStatsReloncelonivelonr.countelonr("includelon_candidatelons")
+  val noIncludelonCandidatelonsCountelonr = sourcelonStatsReloncelonivelonr.countelonr("no_includelon_candidatelons")
 
-  // Returns visited user -> visit count, via off dataset.
-  def applyWithOfflineDataset(targetUserId: Long): Stitch[Map[Long, Int]] = {
-    repeatedProfileVisitsAggregateClientColumn.fetcher
-      .fetch(ProfileVisitorInfo(id = targetUserId, idType = IdType.User)).map(_.v)
-      .handle {
-        case e: Throwable =>
-          logger.error("Strato fetch for RepeatedProfileVisitsAggregateClientColumn failed: " + e)
-          offlineFetchErrorCounter.incr()
-          None
-      }.onSuccess { result =>
-        offlineFetchSuccessCounter.incr()
-      }.map { resultOption =>
-        resultOption
-          .flatMap { result =>
-            result.profileVisitSet.map { profileVisitSet =>
-              profileVisitSet
-                .filter(profileVisit => profileVisit.totalTargetVisitsInLast14Days.getOrElse(0) > 0)
-                .filter(profileVisit => !profileVisit.doesSourceIdFollowTargetId.getOrElse(false))
-                .flatMap { profileVisit =>
-                  (profileVisit.targetId, profileVisit.totalTargetVisitsInLast14Days) match {
-                    case (Some(targetId), Some(totalVisitsInLast14Days)) =>
-                      Some(targetId -> totalVisitsInLast14Days)
-                    case _ => None
+  // Relonturns visitelond uselonr -> visit count, via off dataselont.
+  delonf applyWithOfflinelonDataselont(targelontUselonrId: Long): Stitch[Map[Long, Int]] = {
+    relonpelonatelondProfilelonVisitsAggrelongatelonClielonntColumn.felontchelonr
+      .felontch(ProfilelonVisitorInfo(id = targelontUselonrId, idTypelon = IdTypelon.Uselonr)).map(_.v)
+      .handlelon {
+        caselon elon: Throwablelon =>
+          loggelonr.elonrror("Strato felontch for RelonpelonatelondProfilelonVisitsAggrelongatelonClielonntColumn failelond: " + elon)
+          offlinelonFelontchelonrrorCountelonr.incr()
+          Nonelon
+      }.onSuccelonss { relonsult =>
+        offlinelonFelontchSuccelonssCountelonr.incr()
+      }.map { relonsultOption =>
+        relonsultOption
+          .flatMap { relonsult =>
+            relonsult.profilelonVisitSelont.map { profilelonVisitSelont =>
+              profilelonVisitSelont
+                .filtelonr(profilelonVisit => profilelonVisit.totalTargelontVisitsInLast14Days.gelontOrelonlselon(0) > 0)
+                .filtelonr(profilelonVisit => !profilelonVisit.doelonsSourcelonIdFollowTargelontId.gelontOrelonlselon(falselon))
+                .flatMap { profilelonVisit =>
+                  (profilelonVisit.targelontId, profilelonVisit.totalTargelontVisitsInLast14Days) match {
+                    caselon (Somelon(targelontId), Somelon(totalVisitsInLast14Days)) =>
+                      Somelon(targelontId -> totalVisitsInLast14Days)
+                    caselon _ => Nonelon
                   }
                 }.toMap[Long, Int]
             }
-          }.getOrElse(Map.empty)
+          }.gelontOrelonlselon(Map.elonmpty)
       }
   }
 
-  // Returns visited user -> visit count, via online dataset.
-  def applyWithOnlineData(targetUserId: Long): Stitch[Map[Long, Int]] = {
-    val visitedUserToEngagementsStitch: Stitch[Map[Long, Seq[Engagement]]] =
-      realTimeRealGraphClient.getRecentProfileViewEngagements(targetUserId)
-    visitedUserToEngagementsStitch
-      .onFailure { f =>
-        onlineFetchErrorCounter.incr()
-      }.onSuccess { result =>
-        onlineFetchSuccessCounter.incr()
-      }.map { visitedUserToEngagements =>
-        visitedUserToEngagements
-          .mapValues(engagements => engagements.size)
+  // Relonturns visitelond uselonr -> visit count, via onlinelon dataselont.
+  delonf applyWithOnlinelonData(targelontUselonrId: Long): Stitch[Map[Long, Int]] = {
+    val visitelondUselonrToelonngagelonmelonntsStitch: Stitch[Map[Long, Selonq[elonngagelonmelonnt]]] =
+      relonalTimelonRelonalGraphClielonnt.gelontReloncelonntProfilelonVielonwelonngagelonmelonnts(targelontUselonrId)
+    visitelondUselonrToelonngagelonmelonntsStitch
+      .onFailurelon { f =>
+        onlinelonFelontchelonrrorCountelonr.incr()
+      }.onSuccelonss { relonsult =>
+        onlinelonFelontchSuccelonssCountelonr.incr()
+      }.map { visitelondUselonrToelonngagelonmelonnts =>
+        visitelondUselonrToelonngagelonmelonnts
+          .mapValuelons(elonngagelonmelonnts => elonngagelonmelonnts.sizelon)
       }
   }
 
-  def getRepeatedVisitedAccounts(params: Params, targetUserId: Long): Stitch[Map[Long, Int]] = {
-    var results: Stitch[Map[Long, Int]] = Stitch.value(Map.empty)
-    if (params.getBoolean(RepeatedProfileVisitsParams.UseOnlineDataset)) {
-      results = applyWithOnlineData(targetUserId)
-    } else {
-      results = applyWithOfflineDataset(targetUserId)
+  delonf gelontRelonpelonatelondVisitelondAccounts(params: Params, targelontUselonrId: Long): Stitch[Map[Long, Int]] = {
+    var relonsults: Stitch[Map[Long, Int]] = Stitch.valuelon(Map.elonmpty)
+    if (params.gelontBoolelonan(RelonpelonatelondProfilelonVisitsParams.UselonOnlinelonDataselont)) {
+      relonsults = applyWithOnlinelonData(targelontUselonrId)
+    } elonlselon {
+      relonsults = applyWithOfflinelonDataselont(targelontUselonrId)
     }
-    // Only keep users that had non-zero engagement counts.
-    results.map(_.filter(input => input._2 > 0))
+    // Only kelonelonp uselonrs that had non-zelonro elonngagelonmelonnt counts.
+    relonsults.map(_.filtelonr(input => input._2 > 0))
   }
 
-  def getRecommendations(params: Params, userId: Long): Stitch[Seq[CandidateUser]] = {
-    val recommendationThreshold = params.getInt(RepeatedProfileVisitsParams.RecommendationThreshold)
-    val bucketingThreshold = params.getInt(RepeatedProfileVisitsParams.BucketingThreshold)
+  delonf gelontReloncommelonndations(params: Params, uselonrId: Long): Stitch[Selonq[CandidatelonUselonr]] = {
+    val reloncommelonndationThrelonshold = params.gelontInt(RelonpelonatelondProfilelonVisitsParams.ReloncommelonndationThrelonshold)
+    val buckelontingThrelonshold = params.gelontInt(RelonpelonatelondProfilelonVisitsParams.BuckelontingThrelonshold)
 
-    // Get the list of repeatedly visited profilts. Only keep accounts with >= bucketingThreshold visits.
-    val repeatedVisitedAccountsStitch: Stitch[Map[Long, Int]] =
-      getRepeatedVisitedAccounts(params, userId).map(_.filter(kv => kv._2 >= bucketingThreshold))
+    // Gelont thelon list of relonpelonatelondly visitelond profilts. Only kelonelonp accounts with >= buckelontingThrelonshold visits.
+    val relonpelonatelondVisitelondAccountsStitch: Stitch[Map[Long, Int]] =
+      gelontRelonpelonatelondVisitelondAccounts(params, uselonrId).map(_.filtelonr(kv => kv._2 >= buckelontingThrelonshold))
 
-    repeatedVisitedAccountsStitch.map { candidates =>
-      // Now check if we should includeCandidates (e.g. whether user is in control bucket or treatment buckets).
-      if (candidates.isEmpty) {
-        // User has not visited any accounts above bucketing threshold. We will not bucket user into experiment. Just
-        // don't return no candidates.
-        noRepeatedProfileVisitsAboveBucketingThresholdCounter.incr()
-        Seq.empty
-      } else {
-        hasRepeatedProfileVisitsAboveBucketingThresholdCounter.incr()
-        if (!params.getBoolean(RepeatedProfileVisitsParams.IncludeCandidates)) {
-          // User has reached bucketing criteria. We check whether to include candidates (e.g. checking which bucket
-          // the user is in for the experiment). In this case the user is in a bucket to not include any candidates.
-          noIncludeCandidatesCounter.incr()
-          Seq.empty
-        } else {
-          includeCandidatesCounter.incr()
-          // We should include candidates. Include any candidates above recommendation thresholds.
-          val outputCandidatesSeq = candidates
-            .filter(kv => kv._2 >= recommendationThreshold).map { kv =>
-              val user = kv._1
+    relonpelonatelondVisitelondAccountsStitch.map { candidatelons =>
+      // Now chelonck if welon should includelonCandidatelons (elon.g. whelonthelonr uselonr is in control buckelont or trelonatmelonnt buckelonts).
+      if (candidatelons.iselonmpty) {
+        // Uselonr has not visitelond any accounts abovelon buckelonting threlonshold. Welon will not buckelont uselonr into elonxpelonrimelonnt. Just
+        // don't relonturn no candidatelons.
+        noRelonpelonatelondProfilelonVisitsAbovelonBuckelontingThrelonsholdCountelonr.incr()
+        Selonq.elonmpty
+      } elonlselon {
+        hasRelonpelonatelondProfilelonVisitsAbovelonBuckelontingThrelonsholdCountelonr.incr()
+        if (!params.gelontBoolelonan(RelonpelonatelondProfilelonVisitsParams.IncludelonCandidatelons)) {
+          // Uselonr has relonachelond buckelonting critelonria. Welon chelonck whelonthelonr to includelon candidatelons (elon.g. cheloncking which buckelont
+          // thelon uselonr is in for thelon elonxpelonrimelonnt). In this caselon thelon uselonr is in a buckelont to not includelon any candidatelons.
+          noIncludelonCandidatelonsCountelonr.incr()
+          Selonq.elonmpty
+        } elonlselon {
+          includelonCandidatelonsCountelonr.incr()
+          // Welon should includelon candidatelons. Includelon any candidatelons abovelon reloncommelonndation threlonsholds.
+          val outputCandidatelonsSelonq = candidatelons
+            .filtelonr(kv => kv._2 >= reloncommelonndationThrelonshold).map { kv =>
+              val uselonr = kv._1
               val visitCount = kv._2
-              CandidateUser(user, Some(visitCount.toDouble))
-                .withCandidateSource(RepeatedProfileVisitsSource.Identifier)
-            }.toSeq
-          if (outputCandidatesSeq.isEmpty) {
-            noRepeatedProfileVisitsAboveRecommendationsThresholdCounter.incr()
-          } else {
-            hasRepeatedProfileVisitsAboveRecommendationsThresholdCounter.incr()
+              CandidatelonUselonr(uselonr, Somelon(visitCount.toDoublelon))
+                .withCandidatelonSourcelon(RelonpelonatelondProfilelonVisitsSourcelon.Idelonntifielonr)
+            }.toSelonq
+          if (outputCandidatelonsSelonq.iselonmpty) {
+            noRelonpelonatelondProfilelonVisitsAbovelonReloncommelonndationsThrelonsholdCountelonr.incr()
+          } elonlselon {
+            hasRelonpelonatelondProfilelonVisitsAbovelonReloncommelonndationsThrelonsholdCountelonr.incr()
           }
-          outputCandidatesSeq
+          outputCandidatelonsSelonq
         }
       }
     }
   }
 
-  override def apply(request: HasParams with HasClientContext): Stitch[Seq[CandidateUser]] = {
-    request.getOptionalUserId
-      .map { userId =>
-        getRecommendations(request.params, userId)
-      }.getOrElse(Stitch.Nil)
+  ovelonrridelon delonf apply(relonquelonst: HasParams with HasClielonntContelonxt): Stitch[Selonq[CandidatelonUselonr]] = {
+    relonquelonst.gelontOptionalUselonrId
+      .map { uselonrId =>
+        gelontReloncommelonndations(relonquelonst.params, uselonrId)
+      }.gelontOrelonlselon(Stitch.Nil)
   }
 }
 
-object RepeatedProfileVisitsSource {
-  val Identifier = CandidateSourceIdentifier(Algorithm.RepeatedProfileVisits.toString)
+objelonct RelonpelonatelondProfilelonVisitsSourcelon {
+  val Idelonntifielonr = CandidatelonSourcelonIdelonntifielonr(Algorithm.RelonpelonatelondProfilelonVisits.toString)
 }

@@ -1,538 +1,538 @@
-package com.twitter.simclusters_v2.scalding.evaluation
+packagelon com.twittelonr.simclustelonrs_v2.scalding.elonvaluation
 
-import com.twitter.scalding.{Execution, TypedPipe, UniqueID}
-import com.twitter.simclusters_v2.thriftscala.{
-  CandidateTweet,
-  CandidateTweets,
-  ReferenceTweet,
-  ReferenceTweets,
-  TweetLabels
+import com.twittelonr.scalding.{elonxeloncution, TypelondPipelon, UniquelonID}
+import com.twittelonr.simclustelonrs_v2.thriftscala.{
+  CandidatelonTwelonelont,
+  CandidatelonTwelonelonts,
+  RelonfelonrelonncelonTwelonelont,
+  RelonfelonrelonncelonTwelonelonts,
+  TwelonelontLabelonls
 }
-import com.twitter.algebird.Aggregator.size
-import com.twitter.scalding.typed.{CoGrouped, ValuePipe}
-import com.twitter.util.TwitterDateFormat
-import java.util.Calendar
+import com.twittelonr.algelonbird.Aggrelongator.sizelon
+import com.twittelonr.scalding.typelond.{CoGroupelond, ValuelonPipelon}
+import com.twittelonr.util.TwittelonrDatelonFormat
+import java.util.Calelonndar
 
 /**
- * Statistics about the number of users who have engaged with tweets
+ * Statistics about thelon numbelonr of uselonrs who havelon elonngagelond with twelonelonts
  */
-case class UserEngagerCounts(
-  numDistinctTargetUsers: Long,
-  numDistinctLikeEngagers: Long,
-  numDistinctRetweetEngagers: Long)
+caselon class UselonrelonngagelonrCounts(
+  numDistinctTargelontUselonrs: Long,
+  numDistinctLikelonelonngagelonrs: Long,
+  numDistinctRelontwelonelontelonngagelonrs: Long)
 
 /**
- * Tweet side statistics, e.x. number of tweets, authors, etc.
+ * Twelonelont sidelon statistics, elon.x. numbelonr of twelonelonts, authors, elontc.
  */
-case class TweetStats(
-  numTweets: Long,
-  numDistinctTweets: Long,
+caselon class TwelonelontStats(
+  numTwelonelonts: Long,
+  numDistinctTwelonelonts: Long,
   numDistinctAuthors: Option[Long],
-  avgScore: Option[Double])
+  avgScorelon: Option[Doublelon])
 
 /**
- * Helper data container class for storing engagement counts
+ * Helonlpelonr data containelonr class for storing elonngagelonmelonnt counts
  */
-case class TweetEngagementCounts(like: Long, retweet: Long, click: Long, hasEngagement: Long)
+caselon class TwelonelontelonngagelonmelonntCounts(likelon: Long, relontwelonelont: Long, click: Long, haselonngagelonmelonnt: Long)
 
 /**
- * Helper data container class for storing engagement rates
+ * Helonlpelonr data containelonr class for storing elonngagelonmelonnt ratelons
  */
-case class TweetEngagementRates(like: Double, retweet: Double, click: Double, hasEngagement: Double)
+caselon class TwelonelontelonngagelonmelonntRatelons(likelon: Doublelon, relontwelonelont: Doublelon, click: Doublelon, haselonngagelonmelonnt: Doublelon)
 
-case class LabelCorrelations(
-  pearsonCoefficientForLikes: Double,
-  cosineSimilarityGlobal: Double,
-  cosineSimilarityPerUserAvg: Double) {
-  private val f = java.text.NumberFormat.getInstance
-  def format(): String = {
-    Seq(
-      s"\tPearson Coefficient: ${f.format(pearsonCoefficientForLikes)}",
-      s"\tCosine similarity: ${f.format(cosineSimilarityGlobal)}",
-      s"\tAverage cosine similarity for all users: ${f.format(cosineSimilarityPerUserAvg)}"
+caselon class LabelonlCorrelonlations(
+  pelonarsonCoelonfficielonntForLikelons: Doublelon,
+  cosinelonSimilarityGlobal: Doublelon,
+  cosinelonSimilarityPelonrUselonrAvg: Doublelon) {
+  privatelon val f = java.telonxt.NumbelonrFormat.gelontInstancelon
+  delonf format(): String = {
+    Selonq(
+      s"\tPelonarson Coelonfficielonnt: ${f.format(pelonarsonCoelonfficielonntForLikelons)}",
+      s"\tCosinelon similarity: ${f.format(cosinelonSimilarityGlobal)}",
+      s"\tAvelonragelon cosinelon similarity for all uselonrs: ${f.format(cosinelonSimilarityPelonrUselonrAvg)}"
     ).mkString("\n")
   }
 }
 
 /**
- * Helper tweet data container that can hold both the reference label engagements as well as the
- * recommendation algorithm's scores. Helpful for evaluating joint data
+ * Helonlpelonr twelonelont data containelonr that can hold both thelon relonfelonrelonncelon labelonl elonngagelonmelonnts as welonll as thelon
+ * reloncommelonndation algorithm's scorelons. Helonlpful for elonvaluating joint data
  */
-case class LabeledTweet(
-  targetUserId: Long,
-  tweetId: Long,
+caselon class LabelonlelondTwelonelont(
+  targelontUselonrId: Long,
+  twelonelontId: Long,
   authorId: Long,
-  labels: TweetLabels,
-  algorithmScore: Option[Double])
+  labelonls: TwelonelontLabelonls,
+  algorithmScorelon: Option[Doublelon])
 
-case class LabeledTweetsResults(
-  tweetStats: TweetStats,
-  userEngagerCounts: UserEngagerCounts,
-  tweetEngagementCounts: TweetEngagementCounts,
-  tweetEngagementRates: TweetEngagementRates,
-  labelCorrelations: Option[LabelCorrelations] = None) {
-  private val f = java.text.NumberFormat.getInstance
+caselon class LabelonlelondTwelonelontsRelonsults(
+  twelonelontStats: TwelonelontStats,
+  uselonrelonngagelonrCounts: UselonrelonngagelonrCounts,
+  twelonelontelonngagelonmelonntCounts: TwelonelontelonngagelonmelonntCounts,
+  twelonelontelonngagelonmelonntRatelons: TwelonelontelonngagelonmelonntRatelons,
+  labelonlCorrelonlations: Option[LabelonlCorrelonlations] = Nonelon) {
+  privatelon val f = java.telonxt.NumbelonrFormat.gelontInstancelon
 
-  def format(title: String = ""): String = {
-    val str = Seq(
-      s"Number of tweets: ${f.format(tweetStats.numTweets)}",
-      s"Number of distinct tweets: ${f.format(tweetStats.numDistinctTweets)}",
-      s"Number of distinct users targeted: ${f.format(userEngagerCounts.numDistinctTargetUsers)}",
-      s"Number of distinct authors: ${tweetStats.numDistinctAuthors.map(f.format).getOrElse("N/A")}",
-      s"Average algorithm score of tweets: ${tweetStats.avgScore.map(f.format).getOrElse("N/A")}",
-      s"Engager counts:",
-      s"\tNumber of users who liked tweets: ${f.format(userEngagerCounts.numDistinctLikeEngagers)}",
-      s"\tNumber of users who retweeted tweets: ${f.format(userEngagerCounts.numDistinctRetweetEngagers)}",
-      s"Tweet engagement counts:",
-      s"\tNumber of Likes: ${f.format(tweetEngagementCounts.like)}",
-      s"\tNumber of Retweets: ${f.format(tweetEngagementCounts.retweet)}",
-      s"\tNumber of Clicks: ${f.format(tweetEngagementCounts.click)}",
-      s"\tNumber of tweets with any engagements: ${f.format(tweetEngagementCounts.hasEngagement)}",
-      s"Tweet engagement rates:",
-      s"\tRate of Likes: ${f.format(tweetEngagementRates.like * 100)}%",
-      s"\tRate of Retweets: ${f.format(tweetEngagementRates.retweet * 100)}%",
-      s"\tRate of Clicks: ${f.format(tweetEngagementRates.click * 100)}%",
-      s"\tRate of any engagement: ${f.format(tweetEngagementRates.hasEngagement * 100)}%"
+  delonf format(titlelon: String = ""): String = {
+    val str = Selonq(
+      s"Numbelonr of twelonelonts: ${f.format(twelonelontStats.numTwelonelonts)}",
+      s"Numbelonr of distinct twelonelonts: ${f.format(twelonelontStats.numDistinctTwelonelonts)}",
+      s"Numbelonr of distinct uselonrs targelontelond: ${f.format(uselonrelonngagelonrCounts.numDistinctTargelontUselonrs)}",
+      s"Numbelonr of distinct authors: ${twelonelontStats.numDistinctAuthors.map(f.format).gelontOrelonlselon("N/A")}",
+      s"Avelonragelon algorithm scorelon of twelonelonts: ${twelonelontStats.avgScorelon.map(f.format).gelontOrelonlselon("N/A")}",
+      s"elonngagelonr counts:",
+      s"\tNumbelonr of uselonrs who likelond twelonelonts: ${f.format(uselonrelonngagelonrCounts.numDistinctLikelonelonngagelonrs)}",
+      s"\tNumbelonr of uselonrs who relontwelonelontelond twelonelonts: ${f.format(uselonrelonngagelonrCounts.numDistinctRelontwelonelontelonngagelonrs)}",
+      s"Twelonelont elonngagelonmelonnt counts:",
+      s"\tNumbelonr of Likelons: ${f.format(twelonelontelonngagelonmelonntCounts.likelon)}",
+      s"\tNumbelonr of Relontwelonelonts: ${f.format(twelonelontelonngagelonmelonntCounts.relontwelonelont)}",
+      s"\tNumbelonr of Clicks: ${f.format(twelonelontelonngagelonmelonntCounts.click)}",
+      s"\tNumbelonr of twelonelonts with any elonngagelonmelonnts: ${f.format(twelonelontelonngagelonmelonntCounts.haselonngagelonmelonnt)}",
+      s"Twelonelont elonngagelonmelonnt ratelons:",
+      s"\tRatelon of Likelons: ${f.format(twelonelontelonngagelonmelonntRatelons.likelon * 100)}%",
+      s"\tRatelon of Relontwelonelonts: ${f.format(twelonelontelonngagelonmelonntRatelons.relontwelonelont * 100)}%",
+      s"\tRatelon of Clicks: ${f.format(twelonelontelonngagelonmelonntRatelons.click * 100)}%",
+      s"\tRatelon of any elonngagelonmelonnt: ${f.format(twelonelontelonngagelonmelonntRatelons.haselonngagelonmelonnt * 100)}%"
     ).mkString("\n")
 
-    val correlations = labelCorrelations.map("\n" + _.format()).getOrElse("")
+    val correlonlations = labelonlCorrelonlations.map("\n" + _.format()).gelontOrelonlselon("")
 
-    s"$title\n$str$correlations"
+    s"$titlelon\n$str$correlonlations"
   }
 }
 
-case class CandidateResults(tweetStats: TweetStats, numDistinctTargetUsers: Long) {
-  private val f = java.text.NumberFormat.getInstance
+caselon class CandidatelonRelonsults(twelonelontStats: TwelonelontStats, numDistinctTargelontUselonrs: Long) {
+  privatelon val f = java.telonxt.NumbelonrFormat.gelontInstancelon
 
-  def format(title: String = ""): String = {
-    val str = Seq(
-      s"Number of tweets: ${f.format(tweetStats.numTweets)}",
-      s"Number of distinct tweets: ${f.format(tweetStats.numDistinctTweets)}",
-      s"Number of distinct users targeted: ${f.format(numDistinctTargetUsers)}",
-      s"Number of distinct authors: ${tweetStats.numDistinctAuthors.map(f.format).getOrElse("N/A")}",
-      s"Average algorithm score of tweets: ${tweetStats.avgScore.map(f.format).getOrElse("N/A")}"
+  delonf format(titlelon: String = ""): String = {
+    val str = Selonq(
+      s"Numbelonr of twelonelonts: ${f.format(twelonelontStats.numTwelonelonts)}",
+      s"Numbelonr of distinct twelonelonts: ${f.format(twelonelontStats.numDistinctTwelonelonts)}",
+      s"Numbelonr of distinct uselonrs targelontelond: ${f.format(numDistinctTargelontUselonrs)}",
+      s"Numbelonr of distinct authors: ${twelonelontStats.numDistinctAuthors.map(f.format).gelontOrelonlselon("N/A")}",
+      s"Avelonragelon algorithm scorelon of twelonelonts: ${twelonelontStats.avgScorelon.map(f.format).gelontOrelonlselon("N/A")}"
     ).mkString("\n")
-    s"$title\n$str"
+    s"$titlelon\n$str"
   }
 }
 
 /**
- * Helper class for evaluating a given candidate tweet set against a reference tweet set.
- * It provides aggregation evaluation metrics such as sum of engagements, rate of engagements, etc.
+ * Helonlpelonr class for elonvaluating a givelonn candidatelon twelonelont selont against a relonfelonrelonncelon twelonelont selont.
+ * It providelons aggrelongation elonvaluation melontrics such as sum of elonngagelonmelonnts, ratelon of elonngagelonmelonnts, elontc.
  */
-object EvaluationMetricHelper {
-  private def toLong(bool: Boolean): Long = {
-    if (bool) 1L else 0L
+objelonct elonvaluationMelontricHelonlpelonr {
+  privatelon delonf toLong(bool: Boolelonan): Long = {
+    if (bool) 1L elonlselon 0L
   }
 
   /**
-   * Core engagements are user actions that count towards core metrics, e.x. like, RT, etc
+   * Corelon elonngagelonmelonnts arelon uselonr actions that count towards corelon melontrics, elon.x. likelon, RT, elontc
    */
-  private def hasCoreEngagements(labels: TweetLabels): Boolean = {
-    labels.isRetweeted ||
-    labels.isLiked ||
-    labels.isQuoted ||
-    labels.isReplied
+  privatelon delonf hasCorelonelonngagelonmelonnts(labelonls: TwelonelontLabelonls): Boolelonan = {
+    labelonls.isRelontwelonelontelond ||
+    labelonls.isLikelond ||
+    labelonls.isQuotelond ||
+    labelonls.isRelonplielond
   }
 
   /**
-   * Whether there are core engagements or click on the tweet
+   * Whelonthelonr thelonrelon arelon corelon elonngagelonmelonnts or click on thelon twelonelont
    */
-  private def hasCoreEngagementsOrClick(labels: TweetLabels): Boolean = {
-    hasCoreEngagements(labels) || labels.isClicked
+  privatelon delonf hasCorelonelonngagelonmelonntsOrClick(labelonls: TwelonelontLabelonls): Boolelonan = {
+    hasCorelonelonngagelonmelonnts(labelonls) || labelonls.isClickelond
   }
 
   /**
-   * Return outer join of reference tweets and candidate tweets, keyed by (targetUserId, tweetId).
-   * The output of this can then be reused to fetch the inner join / left / right join,
-   * without having to redo the expensive join
+   * Relonturn outelonr join of relonfelonrelonncelon twelonelonts and candidatelon twelonelonts, kelonyelond by (targelontUselonrId, twelonelontId).
+   * Thelon output of this can thelonn belon relonuselond to felontch thelon innelonr join / lelonft / right join,
+   * without having to relondo thelon elonxpelonnsivelon join
    *
-   * NOTE: Assumes the uniqueness of keys (i.e. (targetId, tweetId)). Make sure to dedup tweetIds
-   * for each targetId, otherwise .join() will yield duplicate results.
+   * NOTelon: Assumelons thelon uniquelonnelonss of kelonys (i.elon. (targelontId, twelonelontId)). Makelon surelon to delondup twelonelontIds
+   * for elonach targelontId, othelonrwiselon .join() will yielonld duplicatelon relonsults.
    */
-  def outerJoinReferenceAndCandidate(
-    referencePipe: TypedPipe[ReferenceTweets],
-    candidatePipe: TypedPipe[CandidateTweets]
-  ): CoGrouped[(Long, Long), (Option[ReferenceTweet], Option[CandidateTweet])] = {
+  delonf outelonrJoinRelonfelonrelonncelonAndCandidatelon(
+    relonfelonrelonncelonPipelon: TypelondPipelon[RelonfelonrelonncelonTwelonelonts],
+    candidatelonPipelon: TypelondPipelon[CandidatelonTwelonelonts]
+  ): CoGroupelond[(Long, Long), (Option[RelonfelonrelonncelonTwelonelont], Option[CandidatelonTwelonelont])] = {
 
-    val references = referencePipe
-      .flatMap { refTweets =>
-        refTweets.impressedTweets.map { refTweet =>
-          ((refTweets.targetUserId, refTweet.tweetId), refTweet)
+    val relonfelonrelonncelons = relonfelonrelonncelonPipelon
+      .flatMap { relonfTwelonelonts =>
+        relonfTwelonelonts.imprelonsselondTwelonelonts.map { relonfTwelonelont =>
+          ((relonfTwelonelonts.targelontUselonrId, relonfTwelonelont.twelonelontId), relonfTwelonelont)
         }
       }
 
-    val candidates = candidatePipe
-      .flatMap { candTweets =>
-        candTweets.recommendedTweets.map { candTweet =>
-          ((candTweets.targetUserId, candTweet.tweetId), candTweet)
+    val candidatelons = candidatelonPipelon
+      .flatMap { candTwelonelonts =>
+        candTwelonelonts.reloncommelonndelondTwelonelonts.map { candTwelonelont =>
+          ((candTwelonelonts.targelontUselonrId, candTwelonelont.twelonelontId), candTwelonelont)
         }
       }
 
-    references.outerJoin(candidates).withReducers(50)
+    relonfelonrelonncelons.outelonrJoin(candidatelons).withRelonducelonrs(50)
   }
 
   /**
-   * Convert reference tweets to labeled tweets. We do this so that we can re-use the common
-   * metric calculations for labeled tweets on reference tweets
+   * Convelonrt relonfelonrelonncelon twelonelonts to labelonlelond twelonelonts. Welon do this so that welon can relon-uselon thelon common
+   * melontric calculations for labelonlelond twelonelonts on relonfelonrelonncelon twelonelonts
    */
-  def getLabeledReference(referencePipe: TypedPipe[ReferenceTweets]): TypedPipe[LabeledTweet] = {
-    referencePipe
-      .flatMap { refTweets =>
-        refTweets.impressedTweets.map { tweet =>
-          // Reference tweets do not have scores
-          LabeledTweet(refTweets.targetUserId, tweet.tweetId, tweet.authorId, tweet.labels, None)
+  delonf gelontLabelonlelondRelonfelonrelonncelon(relonfelonrelonncelonPipelon: TypelondPipelon[RelonfelonrelonncelonTwelonelonts]): TypelondPipelon[LabelonlelondTwelonelont] = {
+    relonfelonrelonncelonPipelon
+      .flatMap { relonfTwelonelonts =>
+        relonfTwelonelonts.imprelonsselondTwelonelonts.map { twelonelont =>
+          // Relonfelonrelonncelon twelonelonts do not havelon scorelons
+          LabelonlelondTwelonelont(relonfTwelonelonts.targelontUselonrId, twelonelont.twelonelontId, twelonelont.authorId, twelonelont.labelonls, Nonelon)
         }
       }
   }
 
-  def getUniqueCount[T](pipe: TypedPipe[T])(implicit ord: scala.Ordering[T]): Execution[Long] = {
-    pipe.distinct
-      .aggregate(size)
-      .toOptionExecution
-      .map(_.getOrElse(0L))
+  delonf gelontUniquelonCount[T](pipelon: TypelondPipelon[T])(implicit ord: scala.Ordelonring[T]): elonxeloncution[Long] = {
+    pipelon.distinct
+      .aggrelongatelon(sizelon)
+      .toOptionelonxeloncution
+      .map(_.gelontOrelonlselon(0L))
   }
 
-  def countUniqueEngagedUsersBy(
-    labeledTweetsPipe: TypedPipe[LabeledTweet],
-    f: TweetLabels => Boolean
-  ): Execution[Long] = {
-    getUniqueCount[Long](labeledTweetsPipe.collect { case t if f(t.labels) => t.targetUserId })
+  delonf countUniquelonelonngagelondUselonrsBy(
+    labelonlelondTwelonelontsPipelon: TypelondPipelon[LabelonlelondTwelonelont],
+    f: TwelonelontLabelonls => Boolelonan
+  ): elonxeloncution[Long] = {
+    gelontUniquelonCount[Long](labelonlelondTwelonelontsPipelon.collelonct { caselon t if f(t.labelonls) => t.targelontUselonrId })
   }
 
-  def countUniqueLabeledTargetUsers(labeledTweetsPipe: TypedPipe[LabeledTweet]): Execution[Long] = {
-    getUniqueCount[Long](labeledTweetsPipe.map(_.targetUserId))
+  delonf countUniquelonLabelonlelondTargelontUselonrs(labelonlelondTwelonelontsPipelon: TypelondPipelon[LabelonlelondTwelonelont]): elonxeloncution[Long] = {
+    gelontUniquelonCount[Long](labelonlelondTwelonelontsPipelon.map(_.targelontUselonrId))
   }
 
-  def countUniqueCandTargetUsers(candidatePipe: TypedPipe[CandidateTweets]): Execution[Long] = {
-    getUniqueCount[Long](candidatePipe.map(_.targetUserId))
+  delonf countUniquelonCandTargelontUselonrs(candidatelonPipelon: TypelondPipelon[CandidatelonTwelonelonts]): elonxeloncution[Long] = {
+    gelontUniquelonCount[Long](candidatelonPipelon.map(_.targelontUselonrId))
   }
 
-  def countUniqueLabeledAuthors(labeledTweetPipe: TypedPipe[LabeledTweet]): Execution[Long] = {
-    getUniqueCount[Long](labeledTweetPipe.map(_.authorId))
-  }
-
-  /**
-   * Helper function to calculate the basic engagement rates
-   */
-  def getEngagementRate(
-    basicStats: TweetStats,
-    engagementCount: TweetEngagementCounts
-  ): TweetEngagementRates = {
-    val numTweets = basicStats.numTweets.toDouble
-    if (numTweets <= 0) throw new IllegalArgumentException("Invalid tweet counts")
-    val likeRate = engagementCount.like / numTweets
-    val rtRate = engagementCount.retweet / numTweets
-    val clickRate = engagementCount.click / numTweets
-    val engagementRate = engagementCount.hasEngagement / numTweets
-    TweetEngagementRates(likeRate, rtRate, clickRate, engagementRate)
+  delonf countUniquelonLabelonlelondAuthors(labelonlelondTwelonelontPipelon: TypelondPipelon[LabelonlelondTwelonelont]): elonxeloncution[Long] = {
+    gelontUniquelonCount[Long](labelonlelondTwelonelontPipelon.map(_.authorId))
   }
 
   /**
-   * Helper function to calculate the basic stats for a pipe of candidate tweets
+   * Helonlpelonr function to calculatelon thelon basic elonngagelonmelonnt ratelons
    */
-  def getTweetStatsForCandidateExec(
-    candidatePipe: TypedPipe[CandidateTweets]
-  ): Execution[TweetStats] = {
-    val pipe = candidatePipe.map { candTweets =>
-      (candTweets.targetUserId, candTweets.recommendedTweets)
-    }.sumByKey // Dedup by targetId, in case there exists multiple entries.
+  delonf gelontelonngagelonmelonntRatelon(
+    basicStats: TwelonelontStats,
+    elonngagelonmelonntCount: TwelonelontelonngagelonmelonntCounts
+  ): TwelonelontelonngagelonmelonntRatelons = {
+    val numTwelonelonts = basicStats.numTwelonelonts.toDoublelon
+    if (numTwelonelonts <= 0) throw nelonw IllelongalArgumelonntelonxcelonption("Invalid twelonelont counts")
+    val likelonRatelon = elonngagelonmelonntCount.likelon / numTwelonelonts
+    val rtRatelon = elonngagelonmelonntCount.relontwelonelont / numTwelonelonts
+    val clickRatelon = elonngagelonmelonntCount.click / numTwelonelonts
+    val elonngagelonmelonntRatelon = elonngagelonmelonntCount.haselonngagelonmelonnt / numTwelonelonts
+    TwelonelontelonngagelonmelonntRatelons(likelonRatelon, rtRatelon, clickRatelon, elonngagelonmelonntRatelon)
+  }
 
-    val distinctTweetPipe = pipe.flatMap(_._2.map(_.tweetId)).distinct.aggregate(size)
+  /**
+   * Helonlpelonr function to calculatelon thelon basic stats for a pipelon of candidatelon twelonelonts
+   */
+  delonf gelontTwelonelontStatsForCandidatelonelonxelonc(
+    candidatelonPipelon: TypelondPipelon[CandidatelonTwelonelonts]
+  ): elonxeloncution[TwelonelontStats] = {
+    val pipelon = candidatelonPipelon.map { candTwelonelonts =>
+      (candTwelonelonts.targelontUselonrId, candTwelonelonts.reloncommelonndelondTwelonelonts)
+    }.sumByKelony // Delondup by targelontId, in caselon thelonrelon elonxists multiplelon elonntrielons.
 
-    val otherStats = pipe
+    val distinctTwelonelontPipelon = pipelon.flatMap(_._2.map(_.twelonelontId)).distinct.aggrelongatelon(sizelon)
+
+    val othelonrStats = pipelon
       .map {
-        case (uid, recommendedTweets) =>
-          val scoreSum = recommendedTweets.flatMap(_.score).sum
-          (recommendedTweets.size.toLong, scoreSum)
+        caselon (uid, reloncommelonndelondTwelonelonts) =>
+          val scorelonSum = reloncommelonndelondTwelonelonts.flatMap(_.scorelon).sum
+          (reloncommelonndelondTwelonelonts.sizelon.toLong, scorelonSum)
       }
       .sum
       .map {
-        case (numTweets, scoreSum) =>
-          if (numTweets <= 0) throw new IllegalArgumentException("Invalid tweet counts")
-          val avgScore = scoreSum / numTweets.toDouble
-          (numTweets, avgScore)
+        caselon (numTwelonelonts, scorelonSum) =>
+          if (numTwelonelonts <= 0) throw nelonw IllelongalArgumelonntelonxcelonption("Invalid twelonelont counts")
+          val avgScorelon = scorelonSum / numTwelonelonts.toDoublelon
+          (numTwelonelonts, avgScorelon)
       }
-    ValuePipe
-      .fold(distinctTweetPipe, otherStats) {
-        case (numDistinctTweet, (numTweets, avgScore)) =>
-          // no author side information for candidate tweets yet
-          TweetStats(numTweets, numDistinctTweet, None, Some(avgScore))
-      }.getOrElseExecution(TweetStats(0L, 0L, None, None))
+    ValuelonPipelon
+      .fold(distinctTwelonelontPipelon, othelonrStats) {
+        caselon (numDistinctTwelonelont, (numTwelonelonts, avgScorelon)) =>
+          // no author sidelon information for candidatelon twelonelonts yelont
+          TwelonelontStats(numTwelonelonts, numDistinctTwelonelont, Nonelon, Somelon(avgScorelon))
+      }.gelontOrelonlselonelonxeloncution(TwelonelontStats(0L, 0L, Nonelon, Nonelon))
   }
 
   /**
-   * Helper function to count the total number of engagements
+   * Helonlpelonr function to count thelon total numbelonr of elonngagelonmelonnts
    */
-  def getLabeledEngagementCountExec(
-    labeledTweets: TypedPipe[LabeledTweet]
-  ): Execution[TweetEngagementCounts] = {
-    labeledTweets
-      .map { labeledTweet =>
-        val like = toLong(labeledTweet.labels.isLiked)
-        val retweet = toLong(labeledTweet.labels.isRetweeted)
-        val click = toLong(labeledTweet.labels.isClicked)
-        val hasEngagement = toLong(hasCoreEngagementsOrClick(labeledTweet.labels))
+  delonf gelontLabelonlelondelonngagelonmelonntCountelonxelonc(
+    labelonlelondTwelonelonts: TypelondPipelon[LabelonlelondTwelonelont]
+  ): elonxeloncution[TwelonelontelonngagelonmelonntCounts] = {
+    labelonlelondTwelonelonts
+      .map { labelonlelondTwelonelont =>
+        val likelon = toLong(labelonlelondTwelonelont.labelonls.isLikelond)
+        val relontwelonelont = toLong(labelonlelondTwelonelont.labelonls.isRelontwelonelontelond)
+        val click = toLong(labelonlelondTwelonelont.labelonls.isClickelond)
+        val haselonngagelonmelonnt = toLong(hasCorelonelonngagelonmelonntsOrClick(labelonlelondTwelonelont.labelonls))
 
-        (like, retweet, click, hasEngagement)
+        (likelon, relontwelonelont, click, haselonngagelonmelonnt)
       }
       .sum
       .map {
-        case (like, retweet, click, hasEngagement) =>
-          TweetEngagementCounts(like, retweet, click, hasEngagement)
+        caselon (likelon, relontwelonelont, click, haselonngagelonmelonnt) =>
+          TwelonelontelonngagelonmelonntCounts(likelon, relontwelonelont, click, haselonngagelonmelonnt)
       }
-      .getOrElseExecution(TweetEngagementCounts(0L, 0L, 0L, 0L))
+      .gelontOrelonlselonelonxeloncution(TwelonelontelonngagelonmelonntCounts(0L, 0L, 0L, 0L))
   }
 
   /**
-   * Count the total number of unique users who have engaged with tweets
+   * Count thelon total numbelonr of uniquelon uselonrs who havelon elonngagelond with twelonelonts
    */
-  def getTargetUserStatsForLabeledTweetsExec(
-    labeledTweetsPipe: TypedPipe[LabeledTweet]
-  ): Execution[UserEngagerCounts] = {
-    val numUniqueTargetUsersExec = countUniqueLabeledTargetUsers(labeledTweetsPipe)
-    val numUniqueLikeUsersExec =
-      countUniqueEngagedUsersBy(labeledTweetsPipe, labels => labels.isLiked)
-    val numUniqueRetweetUsersExec =
-      countUniqueEngagedUsersBy(labeledTweetsPipe, labels => labels.isRetweeted)
+  delonf gelontTargelontUselonrStatsForLabelonlelondTwelonelontselonxelonc(
+    labelonlelondTwelonelontsPipelon: TypelondPipelon[LabelonlelondTwelonelont]
+  ): elonxeloncution[UselonrelonngagelonrCounts] = {
+    val numUniquelonTargelontUselonrselonxelonc = countUniquelonLabelonlelondTargelontUselonrs(labelonlelondTwelonelontsPipelon)
+    val numUniquelonLikelonUselonrselonxelonc =
+      countUniquelonelonngagelondUselonrsBy(labelonlelondTwelonelontsPipelon, labelonls => labelonls.isLikelond)
+    val numUniquelonRelontwelonelontUselonrselonxelonc =
+      countUniquelonelonngagelondUselonrsBy(labelonlelondTwelonelontsPipelon, labelonls => labelonls.isRelontwelonelontelond)
 
-    Execution
+    elonxeloncution
       .zip(
-        numUniqueTargetUsersExec,
-        numUniqueLikeUsersExec,
-        numUniqueRetweetUsersExec
+        numUniquelonTargelontUselonrselonxelonc,
+        numUniquelonLikelonUselonrselonxelonc,
+        numUniquelonRelontwelonelontUselonrselonxelonc
       )
       .map {
-        case (numTarget, like, retweet) =>
-          UserEngagerCounts(
-            numDistinctTargetUsers = numTarget,
-            numDistinctLikeEngagers = like,
-            numDistinctRetweetEngagers = retweet
+        caselon (numTargelont, likelon, relontwelonelont) =>
+          UselonrelonngagelonrCounts(
+            numDistinctTargelontUselonrs = numTargelont,
+            numDistinctLikelonelonngagelonrs = likelon,
+            numDistinctRelontwelonelontelonngagelonrs = relontwelonelont
           )
       }
   }
 
   /**
-   * Helper function to calculate the basic stats for a pipe of labeled tweets.
+   * Helonlpelonr function to calculatelon thelon basic stats for a pipelon of labelonlelond twelonelonts.
    */
-  def getTweetStatsForLabeledTweetsExec(
-    labeledTweetPipe: TypedPipe[LabeledTweet]
-  ): Execution[TweetStats] = {
-    val uniqueAuthorsExec = countUniqueLabeledAuthors(labeledTweetPipe)
+  delonf gelontTwelonelontStatsForLabelonlelondTwelonelontselonxelonc(
+    labelonlelondTwelonelontPipelon: TypelondPipelon[LabelonlelondTwelonelont]
+  ): elonxeloncution[TwelonelontStats] = {
+    val uniquelonAuthorselonxelonc = countUniquelonLabelonlelondAuthors(labelonlelondTwelonelontPipelon)
 
-    val uniqueTweetExec =
-      labeledTweetPipe.map(_.tweetId).distinct.aggregate(size).getOrElseExecution(0L)
-    val scoresExec = labeledTweetPipe
-      .map { t => (t.targetUserId, (1, t.algorithmScore.getOrElse(0.0))) }
-      .sumByKey // Dedup by targetId, in case there exists multiple entries.
+    val uniquelonTwelonelontelonxelonc =
+      labelonlelondTwelonelontPipelon.map(_.twelonelontId).distinct.aggrelongatelon(sizelon).gelontOrelonlselonelonxeloncution(0L)
+    val scorelonselonxelonc = labelonlelondTwelonelontPipelon
+      .map { t => (t.targelontUselonrId, (1, t.algorithmScorelon.gelontOrelonlselon(0.0))) }
+      .sumByKelony // Delondup by targelontId, in caselon thelonrelon elonxists multiplelon elonntrielons.
       .map {
-        case (uid, (c1, c2)) =>
+        caselon (uid, (c1, c2)) =>
           (c1.toLong, c2)
       }
       .sum
       .map {
-        case (numTweets, scoreSum) =>
-          if (numTweets <= 0) throw new IllegalArgumentException("Invalid tweet counts")
-          val avgScore = scoreSum / numTweets.toDouble
-          (numTweets, Option(avgScore))
+        caselon (numTwelonelonts, scorelonSum) =>
+          if (numTwelonelonts <= 0) throw nelonw IllelongalArgumelonntelonxcelonption("Invalid twelonelont counts")
+          val avgScorelon = scorelonSum / numTwelonelonts.toDoublelon
+          (numTwelonelonts, Option(avgScorelon))
       }
-      .getOrElseExecution((0L, None))
+      .gelontOrelonlselonelonxeloncution((0L, Nonelon))
 
-    Execution
-      .zip(uniqueAuthorsExec, uniqueTweetExec, scoresExec)
+    elonxeloncution
+      .zip(uniquelonAuthorselonxelonc, uniquelonTwelonelontelonxelonc, scorelonselonxelonc)
       .map {
-        case (numDistinctAuthors, numUniqueTweets, (numTweets, avgScores)) =>
-          TweetStats(numTweets, numUniqueTweets, Some(numDistinctAuthors), avgScores)
+        caselon (numDistinctAuthors, numUniquelonTwelonelonts, (numTwelonelonts, avgScorelons)) =>
+          TwelonelontStats(numTwelonelonts, numUniquelonTwelonelonts, Somelon(numDistinctAuthors), avgScorelons)
       }
   }
 
   /**
-   * Print a update message to the stdout when a step is done.
+   * Print a updatelon melonssagelon to thelon stdout whelonn a stelonp is donelon.
    */
-  private def printOnCompleteMsg(stepDescription: String, startTimeMillis: Long): Unit = {
-    val formatDate = TwitterDateFormat("yyyy-MM-dd hh:mm:ss")
-    val now = Calendar.getInstance().getTime
+  privatelon delonf printOnComplelontelonMsg(stelonpDelonscription: String, startTimelonMillis: Long): Unit = {
+    val formatDatelon = TwittelonrDatelonFormat("yyyy-MM-dd hh:mm:ss")
+    val now = Calelonndar.gelontInstancelon().gelontTimelon
 
-    val secondsSpent = (now.getTime - startTimeMillis) / 1000
+    val seloncondsSpelonnt = (now.gelontTimelon - startTimelonMillis) / 1000
     println(
-      s"- ${formatDate.format(now)}\tStep complete: $stepDescription\t " +
-        s"Time spent: ${secondsSpent / 60}m${secondsSpent % 60}s"
+      s"- ${formatDatelon.format(now)}\tStelonp complelontelon: $stelonpDelonscription\t " +
+        s"Timelon spelonnt: ${seloncondsSpelonnt / 60}m${seloncondsSpelonnt % 60}s"
     )
   }
 
   /**
-   * Calculate the metrics of a pipe of [[CandidateTweets]]
+   * Calculatelon thelon melontrics of a pipelon of [[CandidatelonTwelonelonts]]
    */
-  private def getEvaluationResultsForCandidates(
-    candidatePipe: TypedPipe[CandidateTweets]
-  ): Execution[CandidateResults] = {
-    val tweetStatsExec = getTweetStatsForCandidateExec(candidatePipe)
-    val numDistinctTargetUsersExec = countUniqueCandTargetUsers(candidatePipe)
+  privatelon delonf gelontelonvaluationRelonsultsForCandidatelons(
+    candidatelonPipelon: TypelondPipelon[CandidatelonTwelonelonts]
+  ): elonxeloncution[CandidatelonRelonsults] = {
+    val twelonelontStatselonxelonc = gelontTwelonelontStatsForCandidatelonelonxelonc(candidatelonPipelon)
+    val numDistinctTargelontUselonrselonxelonc = countUniquelonCandTargelontUselonrs(candidatelonPipelon)
 
-    Execution
-      .zip(tweetStatsExec, numDistinctTargetUsersExec)
+    elonxeloncution
+      .zip(twelonelontStatselonxelonc, numDistinctTargelontUselonrselonxelonc)
       .map {
-        case (tweetStats, numDistinctTargetUsers) =>
-          CandidateResults(tweetStats, numDistinctTargetUsers)
+        caselon (twelonelontStats, numDistinctTargelontUselonrs) =>
+          CandidatelonRelonsults(twelonelontStats, numDistinctTargelontUselonrs)
       }
   }
 
   /**
-   * Calculate the metrics of a pipe of [[LabeledTweet]]
+   * Calculatelon thelon melontrics of a pipelon of [[LabelonlelondTwelonelont]]
    */
-  private def getEvaluationResultsForLabeledTweets(
-    labeledTweetPipe: TypedPipe[LabeledTweet],
-    getLabelCorrelations: Boolean = false
-  ): Execution[LabeledTweetsResults] = {
-    val tweetStatsExec = getTweetStatsForLabeledTweetsExec(labeledTweetPipe)
-    val userStatsExec = getTargetUserStatsForLabeledTweetsExec(labeledTweetPipe)
-    val engagementCountExec = getLabeledEngagementCountExec(labeledTweetPipe)
+  privatelon delonf gelontelonvaluationRelonsultsForLabelonlelondTwelonelonts(
+    labelonlelondTwelonelontPipelon: TypelondPipelon[LabelonlelondTwelonelont],
+    gelontLabelonlCorrelonlations: Boolelonan = falselon
+  ): elonxeloncution[LabelonlelondTwelonelontsRelonsults] = {
+    val twelonelontStatselonxelonc = gelontTwelonelontStatsForLabelonlelondTwelonelontselonxelonc(labelonlelondTwelonelontPipelon)
+    val uselonrStatselonxelonc = gelontTargelontUselonrStatsForLabelonlelondTwelonelontselonxelonc(labelonlelondTwelonelontPipelon)
+    val elonngagelonmelonntCountelonxelonc = gelontLabelonlelondelonngagelonmelonntCountelonxelonc(labelonlelondTwelonelontPipelon)
 
-    val correlationsExec = if (getLabelCorrelations) {
-      Execution
+    val correlonlationselonxelonc = if (gelontLabelonlCorrelonlations) {
+      elonxeloncution
         .zip(
-          LabelCorrelationsHelper.pearsonCoefficientForLike(labeledTweetPipe),
-          LabelCorrelationsHelper.cosineSimilarityForLike(labeledTweetPipe),
-          LabelCorrelationsHelper.cosineSimilarityForLikePerUser(labeledTweetPipe)
+          LabelonlCorrelonlationsHelonlpelonr.pelonarsonCoelonfficielonntForLikelon(labelonlelondTwelonelontPipelon),
+          LabelonlCorrelonlationsHelonlpelonr.cosinelonSimilarityForLikelon(labelonlelondTwelonelontPipelon),
+          LabelonlCorrelonlationsHelonlpelonr.cosinelonSimilarityForLikelonPelonrUselonr(labelonlelondTwelonelontPipelon)
         ).map {
-          case (pearsonCoeff, globalCos, avgCos) =>
-            Some(LabelCorrelations(pearsonCoeff, globalCos, avgCos))
+          caselon (pelonarsonCoelonff, globalCos, avgCos) =>
+            Somelon(LabelonlCorrelonlations(pelonarsonCoelonff, globalCos, avgCos))
         }
-    } else {
-      ValuePipe(None).getOrElseExecution(None) // Empty pipe with a None value
+    } elonlselon {
+      ValuelonPipelon(Nonelon).gelontOrelonlselonelonxeloncution(Nonelon) // elonmpty pipelon with a Nonelon valuelon
     }
 
-    Execution
-      .zip(tweetStatsExec, engagementCountExec, userStatsExec, correlationsExec)
+    elonxeloncution
+      .zip(twelonelontStatselonxelonc, elonngagelonmelonntCountelonxelonc, uselonrStatselonxelonc, correlonlationselonxelonc)
       .map {
-        case (tweetStats, engagementCount, engagerCount, correlationsOpt) =>
-          val engagementRate = getEngagementRate(tweetStats, engagementCount)
-          LabeledTweetsResults(
-            tweetStats,
-            engagerCount,
-            engagementCount,
-            engagementRate,
-            correlationsOpt)
+        caselon (twelonelontStats, elonngagelonmelonntCount, elonngagelonrCount, correlonlationsOpt) =>
+          val elonngagelonmelonntRatelon = gelontelonngagelonmelonntRatelon(twelonelontStats, elonngagelonmelonntCount)
+          LabelonlelondTwelonelontsRelonsults(
+            twelonelontStats,
+            elonngagelonrCount,
+            elonngagelonmelonntCount,
+            elonngagelonmelonntRatelon,
+            correlonlationsOpt)
       }
   }
 
-  private def runAllEvalForCandidates(
-    candidatePipe: TypedPipe[CandidateTweets],
-    outerJoinPipe: TypedPipe[((Long, Long), (Option[ReferenceTweet], Option[CandidateTweet]))]
-  ): Execution[(CandidateResults, CandidateResults)] = {
-    val t0 = System.currentTimeMillis()
+  privatelon delonf runAllelonvalForCandidatelons(
+    candidatelonPipelon: TypelondPipelon[CandidatelonTwelonelonts],
+    outelonrJoinPipelon: TypelondPipelon[((Long, Long), (Option[RelonfelonrelonncelonTwelonelont], Option[CandidatelonTwelonelont]))]
+  ): elonxeloncution[(CandidatelonRelonsults, CandidatelonRelonsults)] = {
+    val t0 = Systelonm.currelonntTimelonMillis()
 
-    val candidateNotInIntersectionPipe =
-      outerJoinPipe
-        .collect {
-          case ((targetUserId, _), (None, Some(candTweet))) => (targetUserId, Seq(candTweet))
+    val candidatelonNotInIntelonrselonctionPipelon =
+      outelonrJoinPipelon
+        .collelonct {
+          caselon ((targelontUselonrId, _), (Nonelon, Somelon(candTwelonelont))) => (targelontUselonrId, Selonq(candTwelonelont))
         }
-        .sumByKey
-        .map { case (targetUserId, candTweets) => CandidateTweets(targetUserId, candTweets) }
-        .forceToDisk
+        .sumByKelony
+        .map { caselon (targelontUselonrId, candTwelonelonts) => CandidatelonTwelonelonts(targelontUselonrId, candTwelonelonts) }
+        .forcelonToDisk
 
-    Execution
+    elonxeloncution
       .zip(
-        getEvaluationResultsForCandidates(candidatePipe),
-        getEvaluationResultsForCandidates(candidateNotInIntersectionPipe)
-      ).onComplete(_ => printOnCompleteMsg("runAllEvalForCandidates()", t0))
+        gelontelonvaluationRelonsultsForCandidatelons(candidatelonPipelon),
+        gelontelonvaluationRelonsultsForCandidatelons(candidatelonNotInIntelonrselonctionPipelon)
+      ).onComplelontelon(_ => printOnComplelontelonMsg("runAllelonvalForCandidatelons()", t0))
   }
 
-  private def runAllEvalForIntersection(
-    outerJoinPipe: TypedPipe[((Long, Long), (Option[ReferenceTweet], Option[CandidateTweet]))]
+  privatelon delonf runAllelonvalForIntelonrselonction(
+    outelonrJoinPipelon: TypelondPipelon[((Long, Long), (Option[RelonfelonrelonncelonTwelonelont], Option[CandidatelonTwelonelont]))]
   )(
-    implicit uniqueID: UniqueID
-  ): Execution[(LabeledTweetsResults, LabeledTweetsResults, LabeledTweetsResults)] = {
-    val t0 = System.currentTimeMillis()
-    val intersectionTweetsPipe = outerJoinPipe.collect {
-      case ((targetUserId, tweetId), (Some(refTweet), Some(candTweet))) =>
-        LabeledTweet(targetUserId, tweetId, refTweet.authorId, refTweet.labels, candTweet.score)
-    }.forceToDisk
+    implicit uniquelonID: UniquelonID
+  ): elonxeloncution[(LabelonlelondTwelonelontsRelonsults, LabelonlelondTwelonelontsRelonsults, LabelonlelondTwelonelontsRelonsults)] = {
+    val t0 = Systelonm.currelonntTimelonMillis()
+    val intelonrselonctionTwelonelontsPipelon = outelonrJoinPipelon.collelonct {
+      caselon ((targelontUselonrId, twelonelontId), (Somelon(relonfTwelonelont), Somelon(candTwelonelont))) =>
+        LabelonlelondTwelonelont(targelontUselonrId, twelonelontId, relonfTwelonelont.authorId, relonfTwelonelont.labelonls, candTwelonelont.scorelon)
+    }.forcelonToDisk
 
-    val likedTweetsPipe = intersectionTweetsPipe.filter(_.labels.isLiked)
-    val notLikedTweetsPipe = intersectionTweetsPipe.filter(!_.labels.isLiked)
+    val likelondTwelonelontsPipelon = intelonrselonctionTwelonelontsPipelon.filtelonr(_.labelonls.isLikelond)
+    val notLikelondTwelonelontsPipelon = intelonrselonctionTwelonelontsPipelon.filtelonr(!_.labelonls.isLikelond)
 
-    Execution
+    elonxeloncution
       .zip(
-        getEvaluationResultsForLabeledTweets(intersectionTweetsPipe, getLabelCorrelations = true),
-        getEvaluationResultsForLabeledTweets(likedTweetsPipe),
-        getEvaluationResultsForLabeledTweets(notLikedTweetsPipe)
-      ).onComplete(_ => printOnCompleteMsg("runAllEvalForIntersection()", t0))
+        gelontelonvaluationRelonsultsForLabelonlelondTwelonelonts(intelonrselonctionTwelonelontsPipelon, gelontLabelonlCorrelonlations = truelon),
+        gelontelonvaluationRelonsultsForLabelonlelondTwelonelonts(likelondTwelonelontsPipelon),
+        gelontelonvaluationRelonsultsForLabelonlelondTwelonelonts(notLikelondTwelonelontsPipelon)
+      ).onComplelontelon(_ => printOnComplelontelonMsg("runAllelonvalForIntelonrselonction()", t0))
   }
 
-  private def runAllEvalForReferences(
-    referencePipe: TypedPipe[ReferenceTweets],
-    outerJoinPipe: TypedPipe[((Long, Long), (Option[ReferenceTweet], Option[CandidateTweet]))]
-  ): Execution[(LabeledTweetsResults, LabeledTweetsResults)] = {
-    val t0 = System.currentTimeMillis()
-    val labeledReferenceNotInIntersectionPipe =
-      outerJoinPipe.collect {
-        case ((targetUserId, _), (Some(refTweet), None)) =>
-          LabeledTweet(targetUserId, refTweet.tweetId, refTweet.authorId, refTweet.labels, None)
-      }.forceToDisk
+  privatelon delonf runAllelonvalForRelonfelonrelonncelons(
+    relonfelonrelonncelonPipelon: TypelondPipelon[RelonfelonrelonncelonTwelonelonts],
+    outelonrJoinPipelon: TypelondPipelon[((Long, Long), (Option[RelonfelonrelonncelonTwelonelont], Option[CandidatelonTwelonelont]))]
+  ): elonxeloncution[(LabelonlelondTwelonelontsRelonsults, LabelonlelondTwelonelontsRelonsults)] = {
+    val t0 = Systelonm.currelonntTimelonMillis()
+    val labelonlelondRelonfelonrelonncelonNotInIntelonrselonctionPipelon =
+      outelonrJoinPipelon.collelonct {
+        caselon ((targelontUselonrId, _), (Somelon(relonfTwelonelont), Nonelon)) =>
+          LabelonlelondTwelonelont(targelontUselonrId, relonfTwelonelont.twelonelontId, relonfTwelonelont.authorId, relonfTwelonelont.labelonls, Nonelon)
+      }.forcelonToDisk
 
-    Execution
+    elonxeloncution
       .zip(
-        getEvaluationResultsForLabeledTweets(getLabeledReference(referencePipe)),
-        getEvaluationResultsForLabeledTweets(labeledReferenceNotInIntersectionPipe)
-      ).onComplete(_ => printOnCompleteMsg("runAllEvalForReferences()", t0))
+        gelontelonvaluationRelonsultsForLabelonlelondTwelonelonts(gelontLabelonlelondRelonfelonrelonncelon(relonfelonrelonncelonPipelon)),
+        gelontelonvaluationRelonsultsForLabelonlelondTwelonelonts(labelonlelondRelonfelonrelonncelonNotInIntelonrselonctionPipelon)
+      ).onComplelontelon(_ => printOnComplelontelonMsg("runAllelonvalForRelonfelonrelonncelons()", t0))
   }
 
-  def runAllEvaluations(
-    referencePipe: TypedPipe[ReferenceTweets],
-    candidatePipe: TypedPipe[CandidateTweets]
+  delonf runAllelonvaluations(
+    relonfelonrelonncelonPipelon: TypelondPipelon[RelonfelonrelonncelonTwelonelonts],
+    candidatelonPipelon: TypelondPipelon[CandidatelonTwelonelonts]
   )(
-    implicit uniqueID: UniqueID
-  ): Execution[String] = {
-    val t0 = System.currentTimeMillis()
+    implicit uniquelonID: UniquelonID
+  ): elonxeloncution[String] = {
+    val t0 = Systelonm.currelonntTimelonMillis()
 
-    // Force everything to disk to maximize data re-use
-    Execution
+    // Forcelon elonvelonrything to disk to maximizelon data relon-uselon
+    elonxeloncution
       .zip(
-        referencePipe.forceToDiskExecution,
-        candidatePipe.forceToDiskExecution
+        relonfelonrelonncelonPipelon.forcelonToDiskelonxeloncution,
+        candidatelonPipelon.forcelonToDiskelonxeloncution
       ).flatMap {
-        case (referenceDiskPipe, candidateDiskPipe) =>
-          outerJoinReferenceAndCandidate(referenceDiskPipe, candidateDiskPipe).forceToDiskExecution
-            .flatMap { outerJoinPipe =>
-              val referenceResultsExec = runAllEvalForReferences(referenceDiskPipe, outerJoinPipe)
-              val intersectionResultsExec = runAllEvalForIntersection(outerJoinPipe)
-              val candidateResultsExec = runAllEvalForCandidates(candidateDiskPipe, outerJoinPipe)
+        caselon (relonfelonrelonncelonDiskPipelon, candidatelonDiskPipelon) =>
+          outelonrJoinRelonfelonrelonncelonAndCandidatelon(relonfelonrelonncelonDiskPipelon, candidatelonDiskPipelon).forcelonToDiskelonxeloncution
+            .flatMap { outelonrJoinPipelon =>
+              val relonfelonrelonncelonRelonsultselonxelonc = runAllelonvalForRelonfelonrelonncelons(relonfelonrelonncelonDiskPipelon, outelonrJoinPipelon)
+              val intelonrselonctionRelonsultselonxelonc = runAllelonvalForIntelonrselonction(outelonrJoinPipelon)
+              val candidatelonRelonsultselonxelonc = runAllelonvalForCandidatelons(candidatelonDiskPipelon, outelonrJoinPipelon)
 
-              Execution
+              elonxeloncution
                 .zip(
-                  referenceResultsExec,
-                  intersectionResultsExec,
-                  candidateResultsExec
+                  relonfelonrelonncelonRelonsultselonxelonc,
+                  intelonrselonctionRelonsultselonxelonc,
+                  candidatelonRelonsultselonxelonc
                 ).map {
-                  case (
-                        (allReference, referenceNotInIntersection),
-                        (allIntersection, intersectionLiked, intersectionNotLiked),
-                        (allCandidate, candidateNotInIntersection)) =>
-                    val timeSpent = (System.currentTimeMillis() - t0) / 1000
-                    val resultStr = Seq(
+                  caselon (
+                        (allRelonfelonrelonncelon, relonfelonrelonncelonNotInIntelonrselonction),
+                        (allIntelonrselonction, intelonrselonctionLikelond, intelonrselonctionNotLikelond),
+                        (allCandidatelon, candidatelonNotInIntelonrselonction)) =>
+                    val timelonSpelonnt = (Systelonm.currelonntTimelonMillis() - t0) / 1000
+                    val relonsultStr = Selonq(
                       "===================================================",
-                      s"Evaluation complete. Took ${timeSpent / 60}m${timeSpent % 60}s ",
-                      allReference.format("-----Metrics for all Reference Tweets-----"),
-                      referenceNotInIntersection.format(
-                        "-----Metrics for Reference Tweets that are not in the intersection-----"
+                      s"elonvaluation complelontelon. Took ${timelonSpelonnt / 60}m${timelonSpelonnt % 60}s ",
+                      allRelonfelonrelonncelon.format("-----Melontrics for all Relonfelonrelonncelon Twelonelonts-----"),
+                      relonfelonrelonncelonNotInIntelonrselonction.format(
+                        "-----Melontrics for Relonfelonrelonncelon Twelonelonts that arelon not in thelon intelonrselonction-----"
                       ),
-                      allIntersection.format("-----Metrics for all Intersection Tweets-----"),
-                      intersectionLiked.format("-----Metrics for Liked Intersection Tweets-----"),
-                      intersectionNotLiked.format(
-                        "-----Metrics for not Liked Intersection Tweets-----"),
-                      allCandidate.format("-----Metrics for all Candidate Tweets-----"),
-                      candidateNotInIntersection.format(
-                        "-----Metrics for Candidate Tweets that are not in the intersection-----"
+                      allIntelonrselonction.format("-----Melontrics for all Intelonrselonction Twelonelonts-----"),
+                      intelonrselonctionLikelond.format("-----Melontrics for Likelond Intelonrselonction Twelonelonts-----"),
+                      intelonrselonctionNotLikelond.format(
+                        "-----Melontrics for not Likelond Intelonrselonction Twelonelonts-----"),
+                      allCandidatelon.format("-----Melontrics for all Candidatelon Twelonelonts-----"),
+                      candidatelonNotInIntelonrselonction.format(
+                        "-----Melontrics for Candidatelon Twelonelonts that arelon not in thelon intelonrselonction-----"
                       ),
                       "===================================================\n"
                     ).mkString("\n")
-                    println(resultStr)
-                    resultStr
+                    println(relonsultStr)
+                    relonsultStr
                 }
-                .onComplete(_ =>
-                  printOnCompleteMsg(
-                    "Evaluation complete. Check stdout or output logs for results.",
+                .onComplelontelon(_ =>
+                  printOnComplelontelonMsg(
+                    "elonvaluation complelontelon. Chelonck stdout or output logs for relonsults.",
                     t0))
             }
       }

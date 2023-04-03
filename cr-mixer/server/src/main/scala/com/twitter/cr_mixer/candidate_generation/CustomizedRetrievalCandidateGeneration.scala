@@ -1,345 +1,345 @@
-package com.twitter.cr_mixer.candidate_generation
+packagelon com.twittelonr.cr_mixelonr.candidatelon_gelonnelonration
 
-import com.twitter.cr_mixer.candidate_generation.CustomizedRetrievalCandidateGeneration.Query
-import com.twitter.cr_mixer.model.CandidateGenerationInfo
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.cr_mixer.model.TweetWithCandidateGenerationInfo
-import com.twitter.cr_mixer.model.TweetWithScore
-import com.twitter.cr_mixer.param.CustomizedRetrievalBasedCandidateGenerationParams._
-import com.twitter.cr_mixer.param.CustomizedRetrievalBasedTwhinParams._
-import com.twitter.cr_mixer.param.GlobalParams
-import com.twitter.cr_mixer.similarity_engine.DiffusionBasedSimilarityEngine
-import com.twitter.cr_mixer.similarity_engine.LookupEngineQuery
-import com.twitter.cr_mixer.similarity_engine.LookupSimilarityEngine
-import com.twitter.cr_mixer.similarity_engine.TwhinCollabFilterSimilarityEngine
-import com.twitter.cr_mixer.util.InterleaveUtil
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.CandidateSource
-import com.twitter.frigate.common.base.Stats
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.timelines.configapi
-import com.twitter.util.Duration
-import com.twitter.util.Future
-import com.twitter.util.Time
-import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Singleton
-import scala.collection.mutable.ArrayBuffer
+import com.twittelonr.cr_mixelonr.candidatelon_gelonnelonration.CustomizelondRelontrielonvalCandidatelonGelonnelonration.Quelonry
+import com.twittelonr.cr_mixelonr.modelonl.CandidatelonGelonnelonrationInfo
+import com.twittelonr.cr_mixelonr.modelonl.ModulelonNamelons
+import com.twittelonr.cr_mixelonr.modelonl.TwelonelontWithCandidatelonGelonnelonrationInfo
+import com.twittelonr.cr_mixelonr.modelonl.TwelonelontWithScorelon
+import com.twittelonr.cr_mixelonr.param.CustomizelondRelontrielonvalBaselondCandidatelonGelonnelonrationParams._
+import com.twittelonr.cr_mixelonr.param.CustomizelondRelontrielonvalBaselondTwhinParams._
+import com.twittelonr.cr_mixelonr.param.GlobalParams
+import com.twittelonr.cr_mixelonr.similarity_elonnginelon.DiffusionBaselondSimilarityelonnginelon
+import com.twittelonr.cr_mixelonr.similarity_elonnginelon.LookupelonnginelonQuelonry
+import com.twittelonr.cr_mixelonr.similarity_elonnginelon.LookupSimilarityelonnginelon
+import com.twittelonr.cr_mixelonr.similarity_elonnginelon.TwhinCollabFiltelonrSimilarityelonnginelon
+import com.twittelonr.cr_mixelonr.util.IntelonrlelonavelonUtil
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.frigatelon.common.baselon.CandidatelonSourcelon
+import com.twittelonr.frigatelon.common.baselon.Stats
+import com.twittelonr.simclustelonrs_v2.thriftscala.IntelonrnalId
+import com.twittelonr.snowflakelon.id.SnowflakelonId
+import com.twittelonr.timelonlinelons.configapi
+import com.twittelonr.util.Duration
+import com.twittelonr.util.Futurelon
+import com.twittelonr.util.Timelon
+import javax.injelonct.Injelonct
+import javax.injelonct.Namelond
+import javax.injelonct.Singlelonton
+import scala.collelonction.mutablelon.ArrayBuffelonr
 
 /**
- * A candidate generator that fetches similar tweets from multiple customized retrieval based candidate sources
+ * A candidatelon gelonnelonrator that felontchelons similar twelonelonts from multiplelon customizelond relontrielonval baselond candidatelon sourcelons
  *
- * Different from [[TweetBasedCandidateGeneration]], this store returns candidates from different
- * similarity engines without blending. In other words, this class shall not be thought of as a
- * Unified Similarity Engine. It is a CG that calls multiple singular Similarity Engines.
+ * Diffelonrelonnt from [[TwelonelontBaselondCandidatelonGelonnelonration]], this storelon relonturns candidatelons from diffelonrelonnt
+ * similarity elonnginelons without blelonnding. In othelonr words, this class shall not belon thought of as a
+ * Unifielond Similarity elonnginelon. It is a CG that calls multiplelon singular Similarity elonnginelons.
  */
-@Singleton
-case class CustomizedRetrievalCandidateGeneration @Inject() (
-  @Named(ModuleNames.TwhinCollabFilterSimilarityEngine)
-  twhinCollabFilterSimilarityEngine: LookupSimilarityEngine[
-    TwhinCollabFilterSimilarityEngine.Query,
-    TweetWithScore
+@Singlelonton
+caselon class CustomizelondRelontrielonvalCandidatelonGelonnelonration @Injelonct() (
+  @Namelond(ModulelonNamelons.TwhinCollabFiltelonrSimilarityelonnginelon)
+  twhinCollabFiltelonrSimilarityelonnginelon: LookupSimilarityelonnginelon[
+    TwhinCollabFiltelonrSimilarityelonnginelon.Quelonry,
+    TwelonelontWithScorelon
   ],
-  @Named(ModuleNames.DiffusionBasedSimilarityEngine)
-  diffusionBasedSimilarityEngine: LookupSimilarityEngine[
-    DiffusionBasedSimilarityEngine.Query,
-    TweetWithScore
+  @Namelond(ModulelonNamelons.DiffusionBaselondSimilarityelonnginelon)
+  diffusionBaselondSimilarityelonnginelon: LookupSimilarityelonnginelon[
+    DiffusionBaselondSimilarityelonnginelon.Quelonry,
+    TwelonelontWithScorelon
   ],
-  statsReceiver: StatsReceiver)
-    extends CandidateSource[
-      Query,
-      Seq[TweetWithCandidateGenerationInfo]
+  statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds CandidatelonSourcelon[
+      Quelonry,
+      Selonq[TwelonelontWithCandidatelonGelonnelonrationInfo]
     ] {
 
-  override def name: String = this.getClass.getSimpleName
+  ovelonrridelon delonf namelon: String = this.gelontClass.gelontSimplelonNamelon
 
-  private val stats = statsReceiver.scope(name)
-  private val fetchCandidatesStat = stats.scope("fetchCandidates")
+  privatelon val stats = statsReloncelonivelonr.scopelon(namelon)
+  privatelon val felontchCandidatelonsStat = stats.scopelon("felontchCandidatelons")
 
   /**
-   * For each Similarity Engine Model, return a list of tweet candidates
+   * For elonach Similarity elonnginelon Modelonl, relonturn a list of twelonelont candidatelons
    */
-  override def get(
-    query: Query
-  ): Future[Option[Seq[Seq[TweetWithCandidateGenerationInfo]]]] = {
-    query.internalId match {
-      case InternalId.UserId(_) =>
-        Stats.trackOption(fetchCandidatesStat) {
-          val twhinCollabFilterForFollowCandidatesFut = if (query.enableTwhinCollabFilter) {
-            twhinCollabFilterSimilarityEngine.getCandidates(query.twhinCollabFilterFollowQuery)
-          } else Future.None
+  ovelonrridelon delonf gelont(
+    quelonry: Quelonry
+  ): Futurelon[Option[Selonq[Selonq[TwelonelontWithCandidatelonGelonnelonrationInfo]]]] = {
+    quelonry.intelonrnalId match {
+      caselon IntelonrnalId.UselonrId(_) =>
+        Stats.trackOption(felontchCandidatelonsStat) {
+          val twhinCollabFiltelonrForFollowCandidatelonsFut = if (quelonry.elonnablelonTwhinCollabFiltelonr) {
+            twhinCollabFiltelonrSimilarityelonnginelon.gelontCandidatelons(quelonry.twhinCollabFiltelonrFollowQuelonry)
+          } elonlselon Futurelon.Nonelon
 
-          val twhinCollabFilterForEngagementCandidatesFut =
-            if (query.enableTwhinCollabFilter) {
-              twhinCollabFilterSimilarityEngine.getCandidates(
-                query.twhinCollabFilterEngagementQuery)
-            } else Future.None
+          val twhinCollabFiltelonrForelonngagelonmelonntCandidatelonsFut =
+            if (quelonry.elonnablelonTwhinCollabFiltelonr) {
+              twhinCollabFiltelonrSimilarityelonnginelon.gelontCandidatelons(
+                quelonry.twhinCollabFiltelonrelonngagelonmelonntQuelonry)
+            } elonlselon Futurelon.Nonelon
 
-          val twhinMultiClusterForFollowCandidatesFut = if (query.enableTwhinMultiCluster) {
-            twhinCollabFilterSimilarityEngine.getCandidates(query.twhinMultiClusterFollowQuery)
-          } else Future.None
+          val twhinMultiClustelonrForFollowCandidatelonsFut = if (quelonry.elonnablelonTwhinMultiClustelonr) {
+            twhinCollabFiltelonrSimilarityelonnginelon.gelontCandidatelons(quelonry.twhinMultiClustelonrFollowQuelonry)
+          } elonlselon Futurelon.Nonelon
 
-          val twhinMultiClusterForEngagementCandidatesFut =
-            if (query.enableTwhinMultiCluster) {
-              twhinCollabFilterSimilarityEngine.getCandidates(
-                query.twhinMultiClusterEngagementQuery)
-            } else Future.None
+          val twhinMultiClustelonrForelonngagelonmelonntCandidatelonsFut =
+            if (quelonry.elonnablelonTwhinMultiClustelonr) {
+              twhinCollabFiltelonrSimilarityelonnginelon.gelontCandidatelons(
+                quelonry.twhinMultiClustelonrelonngagelonmelonntQuelonry)
+            } elonlselon Futurelon.Nonelon
 
-          val diffusionBasedSimilarityEngineCandidatesFut = if (query.enableRetweetBasedDiffusion) {
-            diffusionBasedSimilarityEngine.getCandidates(query.diffusionBasedSimilarityEngineQuery)
-          } else Future.None
+          val diffusionBaselondSimilarityelonnginelonCandidatelonsFut = if (quelonry.elonnablelonRelontwelonelontBaselondDiffusion) {
+            diffusionBaselondSimilarityelonnginelon.gelontCandidatelons(quelonry.diffusionBaselondSimilarityelonnginelonQuelonry)
+          } elonlselon Futurelon.Nonelon
 
-          Future
+          Futurelon
             .join(
-              twhinCollabFilterForFollowCandidatesFut,
-              twhinCollabFilterForEngagementCandidatesFut,
-              twhinMultiClusterForFollowCandidatesFut,
-              twhinMultiClusterForEngagementCandidatesFut,
-              diffusionBasedSimilarityEngineCandidatesFut
+              twhinCollabFiltelonrForFollowCandidatelonsFut,
+              twhinCollabFiltelonrForelonngagelonmelonntCandidatelonsFut,
+              twhinMultiClustelonrForFollowCandidatelonsFut,
+              twhinMultiClustelonrForelonngagelonmelonntCandidatelonsFut,
+              diffusionBaselondSimilarityelonnginelonCandidatelonsFut
             ).map {
-              case (
-                    twhinCollabFilterForFollowCandidates,
-                    twhinCollabFilterForEngagementCandidates,
-                    twhinMultiClusterForFollowCandidates,
-                    twhinMultiClusterForEngagementCandidates,
-                    diffusionBasedSimilarityEngineCandidates) =>
-                val maxCandidateNumPerSourceKey = 200
-                val twhinCollabFilterForFollowWithCGInfo =
-                  getTwhinCollabCandidatesWithCGInfo(
-                    twhinCollabFilterForFollowCandidates,
-                    maxCandidateNumPerSourceKey,
-                    query.twhinCollabFilterFollowQuery,
+              caselon (
+                    twhinCollabFiltelonrForFollowCandidatelons,
+                    twhinCollabFiltelonrForelonngagelonmelonntCandidatelons,
+                    twhinMultiClustelonrForFollowCandidatelons,
+                    twhinMultiClustelonrForelonngagelonmelonntCandidatelons,
+                    diffusionBaselondSimilarityelonnginelonCandidatelons) =>
+                val maxCandidatelonNumPelonrSourcelonKelony = 200
+                val twhinCollabFiltelonrForFollowWithCGInfo =
+                  gelontTwhinCollabCandidatelonsWithCGInfo(
+                    twhinCollabFiltelonrForFollowCandidatelons,
+                    maxCandidatelonNumPelonrSourcelonKelony,
+                    quelonry.twhinCollabFiltelonrFollowQuelonry,
                   )
-                val twhinCollabFilterForEngagementWithCGInfo =
-                  getTwhinCollabCandidatesWithCGInfo(
-                    twhinCollabFilterForEngagementCandidates,
-                    maxCandidateNumPerSourceKey,
-                    query.twhinCollabFilterEngagementQuery,
+                val twhinCollabFiltelonrForelonngagelonmelonntWithCGInfo =
+                  gelontTwhinCollabCandidatelonsWithCGInfo(
+                    twhinCollabFiltelonrForelonngagelonmelonntCandidatelons,
+                    maxCandidatelonNumPelonrSourcelonKelony,
+                    quelonry.twhinCollabFiltelonrelonngagelonmelonntQuelonry,
                   )
-                val twhinMultiClusterForFollowWithCGInfo =
-                  getTwhinCollabCandidatesWithCGInfo(
-                    twhinMultiClusterForFollowCandidates,
-                    maxCandidateNumPerSourceKey,
-                    query.twhinMultiClusterFollowQuery,
+                val twhinMultiClustelonrForFollowWithCGInfo =
+                  gelontTwhinCollabCandidatelonsWithCGInfo(
+                    twhinMultiClustelonrForFollowCandidatelons,
+                    maxCandidatelonNumPelonrSourcelonKelony,
+                    quelonry.twhinMultiClustelonrFollowQuelonry,
                   )
-                val twhinMultiClusterForEngagementWithCGInfo =
-                  getTwhinCollabCandidatesWithCGInfo(
-                    twhinMultiClusterForEngagementCandidates,
-                    maxCandidateNumPerSourceKey,
-                    query.twhinMultiClusterEngagementQuery,
+                val twhinMultiClustelonrForelonngagelonmelonntWithCGInfo =
+                  gelontTwhinCollabCandidatelonsWithCGInfo(
+                    twhinMultiClustelonrForelonngagelonmelonntCandidatelons,
+                    maxCandidatelonNumPelonrSourcelonKelony,
+                    quelonry.twhinMultiClustelonrelonngagelonmelonntQuelonry,
                   )
-                val retweetBasedDiffusionWithCGInfo =
-                  getDiffusionBasedCandidatesWithCGInfo(
-                    diffusionBasedSimilarityEngineCandidates,
-                    maxCandidateNumPerSourceKey,
-                    query.diffusionBasedSimilarityEngineQuery,
-                  )
-
-                val twhinCollabCandidateSourcesToBeInterleaved =
-                  ArrayBuffer[Seq[TweetWithCandidateGenerationInfo]](
-                    twhinCollabFilterForFollowWithCGInfo,
-                    twhinCollabFilterForEngagementWithCGInfo,
+                val relontwelonelontBaselondDiffusionWithCGInfo =
+                  gelontDiffusionBaselondCandidatelonsWithCGInfo(
+                    diffusionBaselondSimilarityelonnginelonCandidatelons,
+                    maxCandidatelonNumPelonrSourcelonKelony,
+                    quelonry.diffusionBaselondSimilarityelonnginelonQuelonry,
                   )
 
-                val twhinMultiClusterCandidateSourcesToBeInterleaved =
-                  ArrayBuffer[Seq[TweetWithCandidateGenerationInfo]](
-                    twhinMultiClusterForFollowWithCGInfo,
-                    twhinMultiClusterForEngagementWithCGInfo,
+                val twhinCollabCandidatelonSourcelonsToBelonIntelonrlelonavelond =
+                  ArrayBuffelonr[Selonq[TwelonelontWithCandidatelonGelonnelonrationInfo]](
+                    twhinCollabFiltelonrForFollowWithCGInfo,
+                    twhinCollabFiltelonrForelonngagelonmelonntWithCGInfo,
                   )
 
-                val interleavedTwhinCollabCandidates =
-                  InterleaveUtil.interleave(twhinCollabCandidateSourcesToBeInterleaved)
+                val twhinMultiClustelonrCandidatelonSourcelonsToBelonIntelonrlelonavelond =
+                  ArrayBuffelonr[Selonq[TwelonelontWithCandidatelonGelonnelonrationInfo]](
+                    twhinMultiClustelonrForFollowWithCGInfo,
+                    twhinMultiClustelonrForelonngagelonmelonntWithCGInfo,
+                  )
 
-                val interleavedTwhinMultiClusterCandidates =
-                  InterleaveUtil.interleave(twhinMultiClusterCandidateSourcesToBeInterleaved)
+                val intelonrlelonavelondTwhinCollabCandidatelons =
+                  IntelonrlelonavelonUtil.intelonrlelonavelon(twhinCollabCandidatelonSourcelonsToBelonIntelonrlelonavelond)
 
-                val twhinCollabFilterResults =
-                  if (interleavedTwhinCollabCandidates.nonEmpty) {
-                    Some(interleavedTwhinCollabCandidates.take(maxCandidateNumPerSourceKey))
-                  } else None
+                val intelonrlelonavelondTwhinMultiClustelonrCandidatelons =
+                  IntelonrlelonavelonUtil.intelonrlelonavelon(twhinMultiClustelonrCandidatelonSourcelonsToBelonIntelonrlelonavelond)
 
-                val twhinMultiClusterResults =
-                  if (interleavedTwhinMultiClusterCandidates.nonEmpty) {
-                    Some(interleavedTwhinMultiClusterCandidates.take(maxCandidateNumPerSourceKey))
-                  } else None
+                val twhinCollabFiltelonrRelonsults =
+                  if (intelonrlelonavelondTwhinCollabCandidatelons.nonelonmpty) {
+                    Somelon(intelonrlelonavelondTwhinCollabCandidatelons.takelon(maxCandidatelonNumPelonrSourcelonKelony))
+                  } elonlselon Nonelon
 
-                val diffusionResults =
-                  if (retweetBasedDiffusionWithCGInfo.nonEmpty) {
-                    Some(retweetBasedDiffusionWithCGInfo.take(maxCandidateNumPerSourceKey))
-                  } else None
+                val twhinMultiClustelonrRelonsults =
+                  if (intelonrlelonavelondTwhinMultiClustelonrCandidatelons.nonelonmpty) {
+                    Somelon(intelonrlelonavelondTwhinMultiClustelonrCandidatelons.takelon(maxCandidatelonNumPelonrSourcelonKelony))
+                  } elonlselon Nonelon
 
-                Some(
-                  Seq(
-                    twhinCollabFilterResults,
-                    twhinMultiClusterResults,
-                    diffusionResults
-                  ).flatten)
+                val diffusionRelonsults =
+                  if (relontwelonelontBaselondDiffusionWithCGInfo.nonelonmpty) {
+                    Somelon(relontwelonelontBaselondDiffusionWithCGInfo.takelon(maxCandidatelonNumPelonrSourcelonKelony))
+                  } elonlselon Nonelon
+
+                Somelon(
+                  Selonq(
+                    twhinCollabFiltelonrRelonsults,
+                    twhinMultiClustelonrRelonsults,
+                    diffusionRelonsults
+                  ).flattelonn)
             }
         }
-      case _ =>
-        throw new IllegalArgumentException("sourceId_is_not_userId_cnt")
+      caselon _ =>
+        throw nelonw IllelongalArgumelonntelonxcelonption("sourcelonId_is_not_uselonrId_cnt")
     }
   }
 
-  /** Returns a list of tweets that are generated less than `maxTweetAgeHours` hours ago */
-  private def tweetAgeFilter(
-    candidates: Seq[TweetWithScore],
-    maxTweetAgeHours: Duration
-  ): Seq[TweetWithScore] = {
-    // Tweet IDs are approximately chronological (see http://go/snowflake),
-    // so we are building the earliest tweet id once
-    // The per-candidate logic here then be candidate.tweetId > earliestPermittedTweetId, which is far cheaper.
-    val earliestTweetId = SnowflakeId.firstIdFor(Time.now - maxTweetAgeHours)
-    candidates.filter { candidate => candidate.tweetId >= earliestTweetId }
+  /** Relonturns a list of twelonelonts that arelon gelonnelonratelond lelonss than `maxTwelonelontAgelonHours` hours ago */
+  privatelon delonf twelonelontAgelonFiltelonr(
+    candidatelons: Selonq[TwelonelontWithScorelon],
+    maxTwelonelontAgelonHours: Duration
+  ): Selonq[TwelonelontWithScorelon] = {
+    // Twelonelont IDs arelon approximatelonly chronological (selonelon http://go/snowflakelon),
+    // so welon arelon building thelon elonarlielonst twelonelont id oncelon
+    // Thelon pelonr-candidatelon logic helonrelon thelonn belon candidatelon.twelonelontId > elonarlielonstPelonrmittelondTwelonelontId, which is far chelonapelonr.
+    val elonarlielonstTwelonelontId = SnowflakelonId.firstIdFor(Timelon.now - maxTwelonelontAgelonHours)
+    candidatelons.filtelonr { candidatelon => candidatelon.twelonelontId >= elonarlielonstTwelonelontId }
   }
 
   /**
-   * AgeFilters tweetCandidates with stats
-   * Only age filter logic is effective here (through tweetAgeFilter). This function acts mostly for metric logging.
+   * AgelonFiltelonrs twelonelontCandidatelons with stats
+   * Only agelon filtelonr logic is elonffelonctivelon helonrelon (through twelonelontAgelonFiltelonr). This function acts mostly for melontric logging.
    */
-  private def ageFilterWithStats(
-    offlineInterestedInCandidates: Seq[TweetWithScore],
-    maxTweetAgeHours: Duration,
-    scopedStatsReceiver: StatsReceiver
-  ): Seq[TweetWithScore] = {
-    scopedStatsReceiver.stat("size").add(offlineInterestedInCandidates.size)
-    val candidates = offlineInterestedInCandidates.map { candidate =>
-      TweetWithScore(candidate.tweetId, candidate.score)
+  privatelon delonf agelonFiltelonrWithStats(
+    offlinelonIntelonrelonstelondInCandidatelons: Selonq[TwelonelontWithScorelon],
+    maxTwelonelontAgelonHours: Duration,
+    scopelondStatsReloncelonivelonr: StatsReloncelonivelonr
+  ): Selonq[TwelonelontWithScorelon] = {
+    scopelondStatsReloncelonivelonr.stat("sizelon").add(offlinelonIntelonrelonstelondInCandidatelons.sizelon)
+    val candidatelons = offlinelonIntelonrelonstelondInCandidatelons.map { candidatelon =>
+      TwelonelontWithScorelon(candidatelon.twelonelontId, candidatelon.scorelon)
     }
-    val filteredCandidates = tweetAgeFilter(candidates, maxTweetAgeHours)
-    scopedStatsReceiver.stat(f"filtered_size").add(filteredCandidates.size)
-    if (filteredCandidates.isEmpty) scopedStatsReceiver.counter(f"empty").incr()
+    val filtelonrelondCandidatelons = twelonelontAgelonFiltelonr(candidatelons, maxTwelonelontAgelonHours)
+    scopelondStatsReloncelonivelonr.stat(f"filtelonrelond_sizelon").add(filtelonrelondCandidatelons.sizelon)
+    if (filtelonrelondCandidatelons.iselonmpty) scopelondStatsReloncelonivelonr.countelonr(f"elonmpty").incr()
 
-    filteredCandidates
+    filtelonrelondCandidatelons
   }
 
-  private def getTwhinCollabCandidatesWithCGInfo(
-    tweetCandidates: Option[Seq[TweetWithScore]],
-    maxCandidateNumPerSourceKey: Int,
-    twhinCollabFilterQuery: LookupEngineQuery[
-      TwhinCollabFilterSimilarityEngine.Query
+  privatelon delonf gelontTwhinCollabCandidatelonsWithCGInfo(
+    twelonelontCandidatelons: Option[Selonq[TwelonelontWithScorelon]],
+    maxCandidatelonNumPelonrSourcelonKelony: Int,
+    twhinCollabFiltelonrQuelonry: LookupelonnginelonQuelonry[
+      TwhinCollabFiltelonrSimilarityelonnginelon.Quelonry
     ],
-  ): Seq[TweetWithCandidateGenerationInfo] = {
-    val twhinTweets = tweetCandidates match {
-      case Some(tweetsWithScores) =>
-        tweetsWithScores.map { tweetWithScore =>
-          TweetWithCandidateGenerationInfo(
-            tweetWithScore.tweetId,
-            CandidateGenerationInfo(
-              None,
-              TwhinCollabFilterSimilarityEngine
-                .toSimilarityEngineInfo(twhinCollabFilterQuery, tweetWithScore.score),
-              Seq.empty
+  ): Selonq[TwelonelontWithCandidatelonGelonnelonrationInfo] = {
+    val twhinTwelonelonts = twelonelontCandidatelons match {
+      caselon Somelon(twelonelontsWithScorelons) =>
+        twelonelontsWithScorelons.map { twelonelontWithScorelon =>
+          TwelonelontWithCandidatelonGelonnelonrationInfo(
+            twelonelontWithScorelon.twelonelontId,
+            CandidatelonGelonnelonrationInfo(
+              Nonelon,
+              TwhinCollabFiltelonrSimilarityelonnginelon
+                .toSimilarityelonnginelonInfo(twhinCollabFiltelonrQuelonry, twelonelontWithScorelon.scorelon),
+              Selonq.elonmpty
             )
           )
         }
-      case _ => Seq.empty
+      caselon _ => Selonq.elonmpty
     }
-    twhinTweets.take(maxCandidateNumPerSourceKey)
+    twhinTwelonelonts.takelon(maxCandidatelonNumPelonrSourcelonKelony)
   }
 
-  private def getDiffusionBasedCandidatesWithCGInfo(
-    tweetCandidates: Option[Seq[TweetWithScore]],
-    maxCandidateNumPerSourceKey: Int,
-    diffusionBasedSimilarityEngineQuery: LookupEngineQuery[
-      DiffusionBasedSimilarityEngine.Query
+  privatelon delonf gelontDiffusionBaselondCandidatelonsWithCGInfo(
+    twelonelontCandidatelons: Option[Selonq[TwelonelontWithScorelon]],
+    maxCandidatelonNumPelonrSourcelonKelony: Int,
+    diffusionBaselondSimilarityelonnginelonQuelonry: LookupelonnginelonQuelonry[
+      DiffusionBaselondSimilarityelonnginelon.Quelonry
     ],
-  ): Seq[TweetWithCandidateGenerationInfo] = {
-    val diffusionTweets = tweetCandidates match {
-      case Some(tweetsWithScores) =>
-        tweetsWithScores.map { tweetWithScore =>
-          TweetWithCandidateGenerationInfo(
-            tweetWithScore.tweetId,
-            CandidateGenerationInfo(
-              None,
-              DiffusionBasedSimilarityEngine
-                .toSimilarityEngineInfo(diffusionBasedSimilarityEngineQuery, tweetWithScore.score),
-              Seq.empty
+  ): Selonq[TwelonelontWithCandidatelonGelonnelonrationInfo] = {
+    val diffusionTwelonelonts = twelonelontCandidatelons match {
+      caselon Somelon(twelonelontsWithScorelons) =>
+        twelonelontsWithScorelons.map { twelonelontWithScorelon =>
+          TwelonelontWithCandidatelonGelonnelonrationInfo(
+            twelonelontWithScorelon.twelonelontId,
+            CandidatelonGelonnelonrationInfo(
+              Nonelon,
+              DiffusionBaselondSimilarityelonnginelon
+                .toSimilarityelonnginelonInfo(diffusionBaselondSimilarityelonnginelonQuelonry, twelonelontWithScorelon.scorelon),
+              Selonq.elonmpty
             )
           )
         }
-      case _ => Seq.empty
+      caselon _ => Selonq.elonmpty
     }
-    diffusionTweets.take(maxCandidateNumPerSourceKey)
+    diffusionTwelonelonts.takelon(maxCandidatelonNumPelonrSourcelonKelony)
   }
 }
 
-object CustomizedRetrievalCandidateGeneration {
+objelonct CustomizelondRelontrielonvalCandidatelonGelonnelonration {
 
-  case class Query(
-    internalId: InternalId,
-    maxCandidateNumPerSourceKey: Int,
-    maxTweetAgeHours: Duration,
-    // twhinCollabFilter
-    enableTwhinCollabFilter: Boolean,
-    twhinCollabFilterFollowQuery: LookupEngineQuery[
-      TwhinCollabFilterSimilarityEngine.Query
+  caselon class Quelonry(
+    intelonrnalId: IntelonrnalId,
+    maxCandidatelonNumPelonrSourcelonKelony: Int,
+    maxTwelonelontAgelonHours: Duration,
+    // twhinCollabFiltelonr
+    elonnablelonTwhinCollabFiltelonr: Boolelonan,
+    twhinCollabFiltelonrFollowQuelonry: LookupelonnginelonQuelonry[
+      TwhinCollabFiltelonrSimilarityelonnginelon.Quelonry
     ],
-    twhinCollabFilterEngagementQuery: LookupEngineQuery[
-      TwhinCollabFilterSimilarityEngine.Query
+    twhinCollabFiltelonrelonngagelonmelonntQuelonry: LookupelonnginelonQuelonry[
+      TwhinCollabFiltelonrSimilarityelonnginelon.Quelonry
     ],
-    // twhinMultiCluster
-    enableTwhinMultiCluster: Boolean,
-    twhinMultiClusterFollowQuery: LookupEngineQuery[
-      TwhinCollabFilterSimilarityEngine.Query
+    // twhinMultiClustelonr
+    elonnablelonTwhinMultiClustelonr: Boolelonan,
+    twhinMultiClustelonrFollowQuelonry: LookupelonnginelonQuelonry[
+      TwhinCollabFiltelonrSimilarityelonnginelon.Quelonry
     ],
-    twhinMultiClusterEngagementQuery: LookupEngineQuery[
-      TwhinCollabFilterSimilarityEngine.Query
+    twhinMultiClustelonrelonngagelonmelonntQuelonry: LookupelonnginelonQuelonry[
+      TwhinCollabFiltelonrSimilarityelonnginelon.Quelonry
     ],
-    enableRetweetBasedDiffusion: Boolean,
-    diffusionBasedSimilarityEngineQuery: LookupEngineQuery[
-      DiffusionBasedSimilarityEngine.Query
+    elonnablelonRelontwelonelontBaselondDiffusion: Boolelonan,
+    diffusionBaselondSimilarityelonnginelonQuelonry: LookupelonnginelonQuelonry[
+      DiffusionBaselondSimilarityelonnginelon.Quelonry
     ],
   )
 
-  def fromParams(
-    internalId: InternalId,
+  delonf fromParams(
+    intelonrnalId: IntelonrnalId,
     params: configapi.Params
-  ): Query = {
-    val twhinCollabFilterFollowQuery =
-      TwhinCollabFilterSimilarityEngine.fromParams(
-        internalId,
-        params(CustomizedRetrievalBasedTwhinCollabFilterFollowSource),
+  ): Quelonry = {
+    val twhinCollabFiltelonrFollowQuelonry =
+      TwhinCollabFiltelonrSimilarityelonnginelon.fromParams(
+        intelonrnalId,
+        params(CustomizelondRelontrielonvalBaselondTwhinCollabFiltelonrFollowSourcelon),
         params)
 
-    val twhinCollabFilterEngagementQuery =
-      TwhinCollabFilterSimilarityEngine.fromParams(
-        internalId,
-        params(CustomizedRetrievalBasedTwhinCollabFilterEngagementSource),
+    val twhinCollabFiltelonrelonngagelonmelonntQuelonry =
+      TwhinCollabFiltelonrSimilarityelonnginelon.fromParams(
+        intelonrnalId,
+        params(CustomizelondRelontrielonvalBaselondTwhinCollabFiltelonrelonngagelonmelonntSourcelon),
         params)
 
-    val twhinMultiClusterFollowQuery =
-      TwhinCollabFilterSimilarityEngine.fromParams(
-        internalId,
-        params(CustomizedRetrievalBasedTwhinMultiClusterFollowSource),
+    val twhinMultiClustelonrFollowQuelonry =
+      TwhinCollabFiltelonrSimilarityelonnginelon.fromParams(
+        intelonrnalId,
+        params(CustomizelondRelontrielonvalBaselondTwhinMultiClustelonrFollowSourcelon),
         params)
 
-    val twhinMultiClusterEngagementQuery =
-      TwhinCollabFilterSimilarityEngine.fromParams(
-        internalId,
-        params(CustomizedRetrievalBasedTwhinMultiClusterEngagementSource),
+    val twhinMultiClustelonrelonngagelonmelonntQuelonry =
+      TwhinCollabFiltelonrSimilarityelonnginelon.fromParams(
+        intelonrnalId,
+        params(CustomizelondRelontrielonvalBaselondTwhinMultiClustelonrelonngagelonmelonntSourcelon),
         params)
 
-    val diffusionBasedSimilarityEngineQuery =
-      DiffusionBasedSimilarityEngine.fromParams(
-        internalId,
-        params(CustomizedRetrievalBasedRetweetDiffusionSource),
+    val diffusionBaselondSimilarityelonnginelonQuelonry =
+      DiffusionBaselondSimilarityelonnginelon.fromParams(
+        intelonrnalId,
+        params(CustomizelondRelontrielonvalBaselondRelontwelonelontDiffusionSourcelon),
         params)
 
-    Query(
-      internalId = internalId,
-      maxCandidateNumPerSourceKey = params(GlobalParams.MaxCandidateNumPerSourceKeyParam),
-      maxTweetAgeHours = params(GlobalParams.MaxTweetAgeHoursParam),
-      // twhinCollabFilter
-      enableTwhinCollabFilter = params(EnableTwhinCollabFilterClusterParam),
-      twhinCollabFilterFollowQuery = twhinCollabFilterFollowQuery,
-      twhinCollabFilterEngagementQuery = twhinCollabFilterEngagementQuery,
-      enableTwhinMultiCluster = params(EnableTwhinMultiClusterParam),
-      twhinMultiClusterFollowQuery = twhinMultiClusterFollowQuery,
-      twhinMultiClusterEngagementQuery = twhinMultiClusterEngagementQuery,
-      enableRetweetBasedDiffusion = params(EnableRetweetBasedDiffusionParam),
-      diffusionBasedSimilarityEngineQuery = diffusionBasedSimilarityEngineQuery
+    Quelonry(
+      intelonrnalId = intelonrnalId,
+      maxCandidatelonNumPelonrSourcelonKelony = params(GlobalParams.MaxCandidatelonNumPelonrSourcelonKelonyParam),
+      maxTwelonelontAgelonHours = params(GlobalParams.MaxTwelonelontAgelonHoursParam),
+      // twhinCollabFiltelonr
+      elonnablelonTwhinCollabFiltelonr = params(elonnablelonTwhinCollabFiltelonrClustelonrParam),
+      twhinCollabFiltelonrFollowQuelonry = twhinCollabFiltelonrFollowQuelonry,
+      twhinCollabFiltelonrelonngagelonmelonntQuelonry = twhinCollabFiltelonrelonngagelonmelonntQuelonry,
+      elonnablelonTwhinMultiClustelonr = params(elonnablelonTwhinMultiClustelonrParam),
+      twhinMultiClustelonrFollowQuelonry = twhinMultiClustelonrFollowQuelonry,
+      twhinMultiClustelonrelonngagelonmelonntQuelonry = twhinMultiClustelonrelonngagelonmelonntQuelonry,
+      elonnablelonRelontwelonelontBaselondDiffusion = params(elonnablelonRelontwelonelontBaselondDiffusionParam),
+      diffusionBaselondSimilarityelonnginelonQuelonry = diffusionBaselondSimilarityelonnginelonQuelonry
     )
   }
 }

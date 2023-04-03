@@ -1,35 +1,35 @@
-## InteractionGraphNegative Dataflow Job
+## IntelonractionGraphNelongativelon Dataflow Job
 
-#### IntelliJ
+#### IntelonlliJ
 ```
-fastpass create --name rg_neg --intellij src/scala/com/twitter/interaction_graph/scio/agg_negative
+fastpass crelonatelon --namelon rg_nelong --intelonllij src/scala/com/twittelonr/intelonraction_graph/scio/agg_nelongativelon
 ```
 
-#### Compile
+#### Compilelon
 ```
-bazel build src/scala/com/twitter/interaction_graph/scio/agg_negative:interaction_graph_negative_scio
+bazelonl build src/scala/com/twittelonr/intelonraction_graph/scio/agg_nelongativelon:intelonraction_graph_nelongativelon_scio
 ```
 
 #### Build Jar
 ```
-bazel bundle src/scala/com/twitter/interaction_graph/scio/agg_negative:interaction_graph_negative_scio
+bazelonl bundlelon src/scala/com/twittelonr/intelonraction_graph/scio/agg_nelongativelon:intelonraction_graph_nelongativelon_scio
 ```
 
-#### Run Scheduled Job
+#### Run Schelondulelond Job
 ```
-export PROJECTID=twttr-recos-ml-prod
-export REGION=us-central1
-export JOB_NAME=interaction-graph-negative-dataflow
+elonxport PROJelonCTID=twttr-reloncos-ml-prod
+elonxport RelonGION=us-celonntral1
+elonxport JOB_NAMelon=intelonraction-graph-nelongativelon-dataflow
 
-bin/d6w schedule \
-  ${PROJECTID}/${REGION}/${JOB_NAME} \
-  src/scala/com/twitter/interaction_graph/scio/agg_negative/config.d6w \
-  --bind=profile.user_name=cassowary \
-  --bind=profile.project=${PROJECTID} \
-  --bind=profile.region=${REGION} \
-  --bind=profile.job_name=${JOB_NAME} \
-  --bind=profile.environment=prod \
-  --bind=profile.date=2022-10-19 \
-  --bind=profile.output_path=processed/interaction_graph_agg_negative_dataflow \
-  --bind=profile.bq_dataset="twttr-bq-cassowary-prod:user"
+bin/d6w schelondulelon \
+  ${PROJelonCTID}/${RelonGION}/${JOB_NAMelon} \
+  src/scala/com/twittelonr/intelonraction_graph/scio/agg_nelongativelon/config.d6w \
+  --bind=profilelon.uselonr_namelon=cassowary \
+  --bind=profilelon.projelonct=${PROJelonCTID} \
+  --bind=profilelon.relongion=${RelonGION} \
+  --bind=profilelon.job_namelon=${JOB_NAMelon} \
+  --bind=profilelon.elonnvironmelonnt=prod \
+  --bind=profilelon.datelon=2022-10-19 \
+  --bind=profilelon.output_path=procelonsselond/intelonraction_graph_agg_nelongativelon_dataflow \
+  --bind=profilelon.bq_dataselont="twttr-bq-cassowary-prod:uselonr"
 ```

@@ -1,53 +1,53 @@
-package com.twitter.search.earlybird_root.filters;
+packagelon com.twittelonr.selonarch.elonarlybird_root.filtelonrs;
 
-import com.twitter.search.common.clientstats.RequestCounters;
-import com.twitter.search.common.clientstats.RequestCountersEventListener;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.search.earlybird.thrift.ThriftSearchResults;
-import com.twitter.search.earlybird.thrift.ThriftTermStatisticsResults;
+import com.twittelonr.selonarch.common.clielonntstats.RelonquelonstCountelonrs;
+import com.twittelonr.selonarch.common.clielonntstats.RelonquelonstCountelonrselonvelonntListelonnelonr;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselonCodelon;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsults;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftTelonrmStatisticsRelonsults;
 
-import static com.twitter.search.common.util.earlybird.EarlybirdResponseUtil
-    .responseConsideredFailed;
+import static com.twittelonr.selonarch.common.util.elonarlybird.elonarlybirdRelonsponselonUtil
+    .relonsponselonConsidelonrelondFailelond;
 
 
 /**
- * Checks EarlybirdResponse's response to update stats.
+ * Cheloncks elonarlybirdRelonsponselon's relonsponselon to updatelon stats.
  */
-public final class EarlybirdSuccessfulResponseHandler
-    implements RequestCountersEventListener.SuccessfulResponseHandler<EarlybirdResponse> {
+public final class elonarlybirdSuccelonssfulRelonsponselonHandlelonr
+    implelonmelonnts RelonquelonstCountelonrselonvelonntListelonnelonr.SuccelonssfulRelonsponselonHandlelonr<elonarlybirdRelonsponselon> {
 
-  public static final EarlybirdSuccessfulResponseHandler INSTANCE =
-      new EarlybirdSuccessfulResponseHandler();
+  public static final elonarlybirdSuccelonssfulRelonsponselonHandlelonr INSTANCelon =
+      nelonw elonarlybirdSuccelonssfulRelonsponselonHandlelonr();
 
-  private EarlybirdSuccessfulResponseHandler() { }
+  privatelon elonarlybirdSuccelonssfulRelonsponselonHandlelonr() { }
 
-  @Override
-  public void handleSuccessfulResponse(
-      EarlybirdResponse response,
-      RequestCounters requestCounters) {
+  @Ovelonrridelon
+  public void handlelonSuccelonssfulRelonsponselon(
+      elonarlybirdRelonsponselon relonsponselon,
+      RelonquelonstCountelonrs relonquelonstCountelonrs) {
 
-    if (response == null) {
-      requestCounters.incrementRequestFailedCounter();
-      return;
+    if (relonsponselon == null) {
+      relonquelonstCountelonrs.increlonmelonntRelonquelonstFailelondCountelonr();
+      relonturn;
     }
 
-    if (response.getResponseCode() == EarlybirdResponseCode.CLIENT_CANCEL_ERROR) {
-      requestCounters.incrementRequestCancelCounter();
-    } else if (response.getResponseCode() == EarlybirdResponseCode.SERVER_TIMEOUT_ERROR) {
-      requestCounters.incrementRequestTimedOutCounter();
-    } else if (responseConsideredFailed(response.getResponseCode())) {
-      requestCounters.incrementRequestFailedCounter();
+    if (relonsponselon.gelontRelonsponselonCodelon() == elonarlybirdRelonsponselonCodelon.CLIelonNT_CANCelonL_elonRROR) {
+      relonquelonstCountelonrs.increlonmelonntRelonquelonstCancelonlCountelonr();
+    } elonlselon if (relonsponselon.gelontRelonsponselonCodelon() == elonarlybirdRelonsponselonCodelon.SelonRVelonR_TIMelonOUT_elonRROR) {
+      relonquelonstCountelonrs.increlonmelonntRelonquelonstTimelondOutCountelonr();
+    } elonlselon if (relonsponselonConsidelonrelondFailelond(relonsponselon.gelontRelonsponselonCodelon())) {
+      relonquelonstCountelonrs.increlonmelonntRelonquelonstFailelondCountelonr();
     }
 
-    ThriftSearchResults results = response.getSearchResults();
-    if (results != null) {
-      requestCounters.incrementResultCounter(results.getResultsSize());
+    ThriftSelonarchRelonsults relonsults = relonsponselon.gelontSelonarchRelonsults();
+    if (relonsults != null) {
+      relonquelonstCountelonrs.increlonmelonntRelonsultCountelonr(relonsults.gelontRelonsultsSizelon());
     }
 
-    ThriftTermStatisticsResults termStats = response.getTermStatisticsResults();
-    if (termStats != null) {
-      requestCounters.incrementResultCounter(termStats.getTermResultsSize());
+    ThriftTelonrmStatisticsRelonsults telonrmStats = relonsponselon.gelontTelonrmStatisticsRelonsults();
+    if (telonrmStats != null) {
+      relonquelonstCountelonrs.increlonmelonntRelonsultCountelonr(telonrmStats.gelontTelonrmRelonsultsSizelon());
     }
   }
 

@@ -1,19 +1,19 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urp
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urp
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.HasClientEventInfo
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.ClielonntelonvelonntInfo
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.HasClielonntelonvelonntInfo
 
-sealed trait PageNavBar
+selonalelond trait PagelonNavBar
 
-case class TopicPageNavBar(
+caselon class TopicPagelonNavBar(
   topicId: String,
-  override val clientEventInfo: Option[ClientEventInfo] = None)
-    extends PageNavBar
-    with HasClientEventInfo
+  ovelonrridelon val clielonntelonvelonntInfo: Option[ClielonntelonvelonntInfo] = Nonelon)
+    elonxtelonnds PagelonNavBar
+    with HasClielonntelonvelonntInfo
 
-case class TitleNavBar(
-  title: String,
-  subtitle: Option[String] = None,
-  override val clientEventInfo: Option[ClientEventInfo] = None)
-    extends PageNavBar
-    with HasClientEventInfo
+caselon class TitlelonNavBar(
+  titlelon: String,
+  subtitlelon: Option[String] = Nonelon,
+  ovelonrridelon val clielonntelonvelonntInfo: Option[ClielonntelonvelonntInfo] = Nonelon)
+    elonxtelonnds PagelonNavBar
+    with HasClielonntelonvelonntInfo

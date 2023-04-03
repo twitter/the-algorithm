@@ -1,150 +1,150 @@
-package com.twitter.search.earlybird.util;
+packagelon com.twittelonr.selonarch.elonarlybird.util;
 
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrelonnt.SchelondulelondelonxeloncutorSelonrvicelon;
+import java.util.concurrelonnt.SchelondulelondFuturelon;
+import java.util.concurrelonnt.TimelonUnit;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchStatsReceiver;
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
+import com.twittelonr.common.util.Clock;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchStatsReloncelonivelonr;
+import com.twittelonr.selonarch.elonarlybird.elonxcelonption.CriticalelonxcelonptionHandlelonr;
 
 /**
- * Base class for classes that run periodic tasks.
+ * Baselon class for classelons that run pelonriodic tasks.
  */
-public abstract class ScheduledExecutorManager {
-  private static final Logger LOG = LoggerFactory.getLogger(ScheduledExecutorManager.class);
-  private static final long SHUTDOWN_WAIT_INTERVAL_SEC = 30;
+public abstract class SchelondulelondelonxeloncutorManagelonr {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(SchelondulelondelonxeloncutorManagelonr.class);
+  privatelon static final long SHUTDOWN_WAIT_INTelonRVAL_SelonC = 30;
 
-  public static final String SCHEDULED_EXECUTOR_TASK_PREFIX = "scheduled_executor_task_";
+  public static final String SCHelonDULelonD_elonXelonCUTOR_TASK_PRelonFIX = "schelondulelond_elonxeloncutor_task_";
 
-  private final String name;
-  private final ScheduledExecutorService executor;
+  privatelon final String namelon;
+  privatelon final SchelondulelondelonxeloncutorSelonrvicelon elonxeloncutor;
 
-  private final ShutdownWaitTimeParams shutdownWaitTimeParams;
+  privatelon final ShutdownWaitTimelonParams shutdownWaitTimelonParams;
 
-  private final SearchCounter iterationCounter;
-  private final SearchStatsReceiver searchStatsReceiver;
+  privatelon final SelonarchCountelonr itelonrationCountelonr;
+  privatelon final SelonarchStatsReloncelonivelonr selonarchStatsReloncelonivelonr;
 
-  protected final CriticalExceptionHandler criticalExceptionHandler;
-  private final Clock clock;
+  protelonctelond final CriticalelonxcelonptionHandlelonr criticalelonxcelonptionHandlelonr;
+  privatelon final Clock clock;
 
-  protected boolean shouldLog = true;
+  protelonctelond boolelonan shouldLog = truelon;
 
-  public ScheduledExecutorManager(
-      ScheduledExecutorService executor,
-      ShutdownWaitTimeParams shutdownWaitTimeParams,
-      SearchStatsReceiver searchStatsReceiver,
-      CriticalExceptionHandler criticalExceptionHandler,
+  public SchelondulelondelonxeloncutorManagelonr(
+      SchelondulelondelonxeloncutorSelonrvicelon elonxeloncutor,
+      ShutdownWaitTimelonParams shutdownWaitTimelonParams,
+      SelonarchStatsReloncelonivelonr selonarchStatsReloncelonivelonr,
+      CriticalelonxcelonptionHandlelonr criticalelonxcelonptionHandlelonr,
       Clock clock) {
-    this(executor, shutdownWaitTimeParams, searchStatsReceiver, null,
-        criticalExceptionHandler, clock);
+    this(elonxeloncutor, shutdownWaitTimelonParams, selonarchStatsReloncelonivelonr, null,
+        criticalelonxcelonptionHandlelonr, clock);
   }
 
-  ScheduledExecutorManager(
-      ScheduledExecutorService executor,
-      ShutdownWaitTimeParams shutdownWaitTimeParams,
-      SearchStatsReceiver searchStatsReceiver,
-      SearchCounter iterationCounter,
-      CriticalExceptionHandler criticalExceptionHandler,
+  SchelondulelondelonxeloncutorManagelonr(
+      SchelondulelondelonxeloncutorSelonrvicelon elonxeloncutor,
+      ShutdownWaitTimelonParams shutdownWaitTimelonParams,
+      SelonarchStatsReloncelonivelonr selonarchStatsReloncelonivelonr,
+      SelonarchCountelonr itelonrationCountelonr,
+      CriticalelonxcelonptionHandlelonr criticalelonxcelonptionHandlelonr,
       Clock clock) {
-    this.name = getClass().getSimpleName();
-    this.executor = executor;
-    this.criticalExceptionHandler = criticalExceptionHandler;
-    this.shutdownWaitTimeParams = shutdownWaitTimeParams;
+    this.namelon = gelontClass().gelontSimplelonNamelon();
+    this.elonxeloncutor = elonxeloncutor;
+    this.criticalelonxcelonptionHandlelonr = criticalelonxcelonptionHandlelonr;
+    this.shutdownWaitTimelonParams = shutdownWaitTimelonParams;
 
-    if (iterationCounter != null) {
-      this.iterationCounter = iterationCounter;
-    } else {
-      this.iterationCounter = searchStatsReceiver.getCounter(SCHEDULED_EXECUTOR_TASK_PREFIX + name);
+    if (itelonrationCountelonr != null) {
+      this.itelonrationCountelonr = itelonrationCountelonr;
+    } elonlselon {
+      this.itelonrationCountelonr = selonarchStatsReloncelonivelonr.gelontCountelonr(SCHelonDULelonD_elonXelonCUTOR_TASK_PRelonFIX + namelon);
     }
 
-    this.searchStatsReceiver = searchStatsReceiver;
+    this.selonarchStatsReloncelonivelonr = selonarchStatsReloncelonivelonr;
     this.clock = clock;
   }
 
   /**
-   * Schedule a task.
+   * Schelondulelon a task.
    */
-  protected final ScheduledFuture scheduleNewTask(
-      ScheduledExecutorTask task,
-      PeriodicActionParams periodicActionParams) {
-    long interval = periodicActionParams.getIntervalDuration();
-    TimeUnit timeUnit = periodicActionParams.getIntervalUnit();
-    long initialDelay = periodicActionParams.getInitialDelayDuration();
+  protelonctelond final SchelondulelondFuturelon schelondulelonNelonwTask(
+      SchelondulelondelonxeloncutorTask task,
+      PelonriodicActionParams pelonriodicActionParams) {
+    long intelonrval = pelonriodicActionParams.gelontIntelonrvalDuration();
+    TimelonUnit timelonUnit = pelonriodicActionParams.gelontIntelonrvalUnit();
+    long initialDelonlay = pelonriodicActionParams.gelontInitialDelonlayDuration();
 
-    if (interval <= 0) {
-      String message = String.format(
-          "Not scheduling manager %s for wrong interval %d %s", name, interval, timeUnit);
-      LOG.error(message);
-      throw new UnsupportedOperationException(message);
+    if (intelonrval <= 0) {
+      String melonssagelon = String.format(
+          "Not schelonduling managelonr %s for wrong intelonrval %d %s", namelon, intelonrval, timelonUnit);
+      LOG.elonrror(melonssagelon);
+      throw nelonw UnsupportelondOpelonrationelonxcelonption(melonssagelon);
     }
 
     if (shouldLog) {
-      LOG.info("Scheduling to run {} every {} {} with {}", name, interval, timeUnit,
-              periodicActionParams.getDelayType());
+      LOG.info("Schelonduling to run {} elonvelonry {} {} with {}", namelon, intelonrval, timelonUnit,
+              pelonriodicActionParams.gelontDelonlayTypelon());
     }
-    final ScheduledFuture scheduledFuture;
-    if (periodicActionParams.isFixedDelay()) {
-      scheduledFuture = executor.scheduleWithFixedDelay(task, initialDelay, interval, timeUnit);
-    } else {
-      scheduledFuture = executor.scheduleAtFixedRate(task, initialDelay, interval, timeUnit);
+    final SchelondulelondFuturelon schelondulelondFuturelon;
+    if (pelonriodicActionParams.isFixelondDelonlay()) {
+      schelondulelondFuturelon = elonxeloncutor.schelondulelonWithFixelondDelonlay(task, initialDelonlay, intelonrval, timelonUnit);
+    } elonlselon {
+      schelondulelondFuturelon = elonxeloncutor.schelondulelonAtFixelondRatelon(task, initialDelonlay, intelonrval, timelonUnit);
     }
-    return scheduledFuture;
+    relonturn schelondulelondFuturelon;
   }
 
   /**
-   * Shutdown everything that's running with the executor.
+   * Shutdown elonvelonrything that's running with thelon elonxeloncutor.
    */
-  public boolean shutdown() throws InterruptedException {
-    LOG.info("Start shutting down {}.", name);
-    executor.shutdownNow();
+  public boolelonan shutdown() throws Intelonrruptelondelonxcelonption {
+    LOG.info("Start shutting down {}.", namelon);
+    elonxeloncutor.shutdownNow();
 
-    boolean terminated = false;
-    long waitSeconds = shutdownWaitTimeParams.getWaitUnit().toSeconds(
-        shutdownWaitTimeParams.getWaitDuration()
+    boolelonan telonrminatelond = falselon;
+    long waitSelonconds = shutdownWaitTimelonParams.gelontWaitUnit().toSelonconds(
+        shutdownWaitTimelonParams.gelontWaitDuration()
     );
 
-    if (waitSeconds == 0) {
-      LOG.info("Not waiting at all for {}, wait time is set to zero.", name);
-    } else {
-      while (!terminated && waitSeconds > 0) {
-        long waitTime = Math.min(waitSeconds, SHUTDOWN_WAIT_INTERVAL_SEC);
-        terminated = executor.awaitTermination(waitTime, TimeUnit.SECONDS);
-        waitSeconds -= waitTime;
+    if (waitSelonconds == 0) {
+      LOG.info("Not waiting at all for {}, wait timelon is selont to zelonro.", namelon);
+    } elonlselon {
+      whilelon (!telonrminatelond && waitSelonconds > 0) {
+        long waitTimelon = Math.min(waitSelonconds, SHUTDOWN_WAIT_INTelonRVAL_SelonC);
+        telonrminatelond = elonxeloncutor.awaitTelonrmination(waitTimelon, TimelonUnit.SelonCONDS);
+        waitSelonconds -= waitTimelon;
 
-        if (!terminated) {
-          LOG.info("Still shutting down {} ...", name);
+        if (!telonrminatelond) {
+          LOG.info("Still shutting down {} ...", namelon);
         }
       }
     }
 
-    LOG.info("Done shutting down {}, terminated: {}", name, terminated);
+    LOG.info("Donelon shutting down {}, telonrminatelond: {}", namelon, telonrminatelond);
 
-    shutdownComponent();
-    return terminated;
+    shutdownComponelonnt();
+    relonturn telonrminatelond;
   }
 
-  protected ScheduledExecutorService getExecutor() {
-    return executor;
+  protelonctelond SchelondulelondelonxeloncutorSelonrvicelon gelontelonxeloncutor() {
+    relonturn elonxeloncutor;
   }
 
-  public final String getName() {
-    return name;
+  public final String gelontNamelon() {
+    relonturn namelon;
   }
 
-  public SearchCounter getIterationCounter() {
-    return iterationCounter;
+  public SelonarchCountelonr gelontItelonrationCountelonr() {
+    relonturn itelonrationCountelonr;
   }
 
-  protected final SearchStatsReceiver getSearchStatsReceiver() {
-    return searchStatsReceiver;
+  protelonctelond final SelonarchStatsReloncelonivelonr gelontSelonarchStatsReloncelonivelonr() {
+    relonturn selonarchStatsReloncelonivelonr;
   }
 
-  // Override if you need to shutdown additional services.
-  protected void shutdownComponent() {
+  // Ovelonrridelon if you nelonelond to shutdown additional selonrvicelons.
+  protelonctelond void shutdownComponelonnt() {
   }
 }

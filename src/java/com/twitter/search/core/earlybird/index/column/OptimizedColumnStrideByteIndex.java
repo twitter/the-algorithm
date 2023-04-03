@@ -1,81 +1,81 @@
-package com.twitter.search.core.earlybird.index.column;
+packagelon com.twittelonr.selonarch.corelon.elonarlybird.indelonx.column;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 
-import com.twitter.search.common.util.io.flushable.DataDeserializer;
-import com.twitter.search.common.util.io.flushable.DataSerializer;
-import com.twitter.search.common.util.io.flushable.FlushInfo;
-import com.twitter.search.common.util.io.flushable.Flushable;
-import com.twitter.search.core.earlybird.index.DocIDToTweetIDMapper;
+import com.twittelonr.selonarch.common.util.io.flushablelon.DataDelonselonrializelonr;
+import com.twittelonr.selonarch.common.util.io.flushablelon.DataSelonrializelonr;
+import com.twittelonr.selonarch.common.util.io.flushablelon.FlushInfo;
+import com.twittelonr.selonarch.common.util.io.flushablelon.Flushablelon;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.DocIDToTwelonelontIDMappelonr;
 
-public class OptimizedColumnStrideByteIndex extends ColumnStrideFieldIndex implements Flushable {
-  private final byte[] values;
+public class OptimizelondColumnStridelonBytelonIndelonx elonxtelonnds ColumnStridelonFielonldIndelonx implelonmelonnts Flushablelon {
+  privatelon final bytelon[] valuelons;
 
-  public OptimizedColumnStrideByteIndex(String name, int maxSize) {
-    super(name);
-    values = new byte[maxSize];
+  public OptimizelondColumnStridelonBytelonIndelonx(String namelon, int maxSizelon) {
+    supelonr(namelon);
+    valuelons = nelonw bytelon[maxSizelon];
   }
 
-  public OptimizedColumnStrideByteIndex(
-      ColumnStrideByteIndex columnStrideByteIndex,
-      DocIDToTweetIDMapper originalTweetIdMapper,
-      DocIDToTweetIDMapper optimizedTweetIdMapper) throws IOException {
-    super(columnStrideByteIndex.getName());
-    int maxDocId = optimizedTweetIdMapper.getPreviousDocID(Integer.MAX_VALUE);
-    values = new byte[maxDocId + 1];
+  public OptimizelondColumnStridelonBytelonIndelonx(
+      ColumnStridelonBytelonIndelonx columnStridelonBytelonIndelonx,
+      DocIDToTwelonelontIDMappelonr originalTwelonelontIdMappelonr,
+      DocIDToTwelonelontIDMappelonr optimizelondTwelonelontIdMappelonr) throws IOelonxcelonption {
+    supelonr(columnStridelonBytelonIndelonx.gelontNamelon());
+    int maxDocId = optimizelondTwelonelontIdMappelonr.gelontPrelonviousDocID(Intelongelonr.MAX_VALUelon);
+    valuelons = nelonw bytelon[maxDocId + 1];
 
-    int docId = optimizedTweetIdMapper.getNextDocID(Integer.MIN_VALUE);
-    while (docId != DocIDToTweetIDMapper.ID_NOT_FOUND) {
-      int originalDocId = originalTweetIdMapper.getDocID(optimizedTweetIdMapper.getTweetID(docId));
-      setValue(docId, columnStrideByteIndex.get(originalDocId));
-      docId = optimizedTweetIdMapper.getNextDocID(docId);
+    int docId = optimizelondTwelonelontIdMappelonr.gelontNelonxtDocID(Intelongelonr.MIN_VALUelon);
+    whilelon (docId != DocIDToTwelonelontIDMappelonr.ID_NOT_FOUND) {
+      int originalDocId = originalTwelonelontIdMappelonr.gelontDocID(optimizelondTwelonelontIdMappelonr.gelontTwelonelontID(docId));
+      selontValuelon(docId, columnStridelonBytelonIndelonx.gelont(originalDocId));
+      docId = optimizelondTwelonelontIdMappelonr.gelontNelonxtDocID(docId);
     }
   }
 
-  private OptimizedColumnStrideByteIndex(String name, byte[] values) {
-    super(name);
-    this.values = values;
+  privatelon OptimizelondColumnStridelonBytelonIndelonx(String namelon, bytelon[] valuelons) {
+    supelonr(namelon);
+    this.valuelons = valuelons;
   }
 
-  @Override
-  public void setValue(int docID, long value) {
-    this.values[docID] = (byte) value;
+  @Ovelonrridelon
+  public void selontValuelon(int docID, long valuelon) {
+    this.valuelons[docID] = (bytelon) valuelon;
   }
 
-  @Override
-  public long get(int docID) {
-    return values[docID];
+  @Ovelonrridelon
+  public long gelont(int docID) {
+    relonturn valuelons[docID];
   }
 
-  @Override
-  public FlushHandler getFlushHandler() {
-    return new FlushHandler(this);
+  @Ovelonrridelon
+  public FlushHandlelonr gelontFlushHandlelonr() {
+    relonturn nelonw FlushHandlelonr(this);
   }
 
-  public static final class FlushHandler extends Flushable.Handler<OptimizedColumnStrideByteIndex> {
-    private static final String NAME_PROP_NAME = "fieldName";
+  public static final class FlushHandlelonr elonxtelonnds Flushablelon.Handlelonr<OptimizelondColumnStridelonBytelonIndelonx> {
+    privatelon static final String NAMelon_PROP_NAMelon = "fielonldNamelon";
 
-    public FlushHandler() {
-      super();
+    public FlushHandlelonr() {
+      supelonr();
     }
 
-    public FlushHandler(OptimizedColumnStrideByteIndex objectToFlush) {
-      super(objectToFlush);
+    public FlushHandlelonr(OptimizelondColumnStridelonBytelonIndelonx objelonctToFlush) {
+      supelonr(objelonctToFlush);
     }
 
-    @Override
-    protected void doFlush(FlushInfo flushInfo, DataSerializer out) throws IOException {
-      OptimizedColumnStrideByteIndex columnStrideByteIndex = getObjectToFlush();
-      flushInfo.addStringProperty(NAME_PROP_NAME, columnStrideByteIndex.getName());
-      out.writeByteArray(columnStrideByteIndex.values);
+    @Ovelonrridelon
+    protelonctelond void doFlush(FlushInfo flushInfo, DataSelonrializelonr out) throws IOelonxcelonption {
+      OptimizelondColumnStridelonBytelonIndelonx columnStridelonBytelonIndelonx = gelontObjelonctToFlush();
+      flushInfo.addStringPropelonrty(NAMelon_PROP_NAMelon, columnStridelonBytelonIndelonx.gelontNamelon());
+      out.writelonBytelonArray(columnStridelonBytelonIndelonx.valuelons);
     }
 
-    @Override
-    protected OptimizedColumnStrideByteIndex doLoad(FlushInfo flushInfo, DataDeserializer in)
-        throws IOException {
-      byte[] values = in.readByteArray();
-      return new OptimizedColumnStrideByteIndex(
-          flushInfo.getStringProperty(NAME_PROP_NAME), values);
+    @Ovelonrridelon
+    protelonctelond OptimizelondColumnStridelonBytelonIndelonx doLoad(FlushInfo flushInfo, DataDelonselonrializelonr in)
+        throws IOelonxcelonption {
+      bytelon[] valuelons = in.relonadBytelonArray();
+      relonturn nelonw OptimizelondColumnStridelonBytelonIndelonx(
+          flushInfo.gelontStringPropelonrty(NAMelon_PROP_NAMelon), valuelons);
     }
   }
 }

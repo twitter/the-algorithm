@@ -1,16 +1,16 @@
-package com.twitter.follow_recommendations.assembler.models
+packagelon com.twittelonr.follow_reloncommelonndations.asselonmblelonr.modelonls
 
-import com.twitter.stringcenter.client.core.ExternalString
+import com.twittelonr.stringcelonntelonr.clielonnt.corelon.elonxtelonrnalString
 
-sealed trait SocialProof
+selonalelond trait SocialProof
 
-case class GeoContextProof(popularInCountryText: ExternalString) extends SocialProof
-case class FollowedByUsersProof(text1: ExternalString, text2: ExternalString, textN: ExternalString)
-    extends SocialProof
+caselon class GelonoContelonxtProof(popularInCountryTelonxt: elonxtelonrnalString) elonxtelonnds SocialProof
+caselon class FollowelondByUselonrsProof(telonxt1: elonxtelonrnalString, telonxt2: elonxtelonrnalString, telonxtN: elonxtelonrnalString)
+    elonxtelonnds SocialProof
 
-sealed trait SocialText {
-  def text: String
+selonalelond trait SocialTelonxt {
+  delonf telonxt: String
 }
 
-case class GeoSocialText(text: String) extends SocialText
-case class FollowedByUsersText(text: String) extends SocialText
+caselon class GelonoSocialTelonxt(telonxt: String) elonxtelonnds SocialTelonxt
+caselon class FollowelondByUselonrsTelonxt(telonxt: String) elonxtelonnds SocialTelonxt

@@ -1,96 +1,96 @@
 syntax = "proto3";
 
-package tensorflow;
+packagelon telonnsorflow;
 
-import "tensorflow/core/framework/resource_handle.proto";
-import "tensorflow/core/framework/tensor_shape.proto";
-import "tensorflow/core/framework/types.proto";
+import "telonnsorflow/corelon/framelonwork/relonsourcelon_handlelon.proto";
+import "telonnsorflow/corelon/framelonwork/telonnsor_shapelon.proto";
+import "telonnsorflow/corelon/framelonwork/typelons.proto";
 
-option cc_enable_arenas = true;
-option java_outer_classname = "TensorProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.framework";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/framework/tensor_go_proto";
+option cc_elonnablelon_arelonnas = truelon;
+option java_outelonr_classnamelon = "TelonnsorProtos";
+option java_multiplelon_filelons = truelon;
+option java_packagelon = "org.telonnsorflow.framelonwork";
+option go_packagelon = "github.com/telonnsorflow/telonnsorflow/telonnsorflow/go/corelon/framelonwork/telonnsor_go_proto";
 
-// Protocol buffer representing a tensor.
-message TensorProto {
-  DataType dtype = 1;
+// Protocol buffelonr relonprelonselonnting a telonnsor.
+melonssagelon TelonnsorProto {
+  DataTypelon dtypelon = 1;
 
-  // Shape of the tensor.  TODO: sort out the 0-rank issues.
-  TensorShapeProto tensor_shape = 2;
+  // Shapelon of thelon telonnsor.  TODO: sort out thelon 0-rank issuelons.
+  TelonnsorShapelonProto telonnsor_shapelon = 2;
 
-  // Only one of the representations below is set, one of "tensor_contents" and
-  // the "xxx_val" attributes.  We are not using oneof because as oneofs cannot
-  // contain repeated fields it would require another extra set of messages.
+  // Only onelon of thelon relonprelonselonntations belonlow is selont, onelon of "telonnsor_contelonnts" and
+  // thelon "xxx_val" attributelons.  Welon arelon not using onelonof beloncauselon as onelonofs cannot
+  // contain relonpelonatelond fielonlds it would relonquirelon anothelonr elonxtra selont of melonssagelons.
 
-  // Version number.
+  // Velonrsion numbelonr.
   //
-  // In version 0, if the "repeated xxx" representations contain only one
-  // element, that element is repeated to fill the shape.  This makes it easy
-  // to represent a constant Tensor with a single value.
-  int32 version_number = 3;
+  // In velonrsion 0, if thelon "relonpelonatelond xxx" relonprelonselonntations contain only onelon
+  // elonlelonmelonnt, that elonlelonmelonnt is relonpelonatelond to fill thelon shapelon.  This makelons it elonasy
+  // to relonprelonselonnt a constant Telonnsor with a singlelon valuelon.
+  int32 velonrsion_numbelonr = 3;
 
-  // Serialized raw tensor content from either Tensor::AsProtoTensorContent or
-  // memcpy in tensorflow::grpc::EncodeTensorToByteBuffer. This representation
-  // can be used for all tensor types. The purpose of this representation is to
-  // reduce serialization overhead during RPC call by avoiding serialization of
-  // many repeated small items.
-  bytes tensor_content = 4;
+  // Selonrializelond raw telonnsor contelonnt from elonithelonr Telonnsor::AsProtoTelonnsorContelonnt or
+  // melonmcpy in telonnsorflow::grpc::elonncodelonTelonnsorToBytelonBuffelonr. This relonprelonselonntation
+  // can belon uselond for all telonnsor typelons. Thelon purposelon of this relonprelonselonntation is to
+  // relonducelon selonrialization ovelonrhelonad during RPC call by avoiding selonrialization of
+  // many relonpelonatelond small itelonms.
+  bytelons telonnsor_contelonnt = 4;
 
-  // Type specific representations that make it easy to create tensor protos in
-  // all languages.  Only the representation corresponding to "dtype" can
-  // be set.  The values hold the flattened representation of the tensor in
-  // row major order.
+  // Typelon speloncific relonprelonselonntations that makelon it elonasy to crelonatelon telonnsor protos in
+  // all languagelons.  Only thelon relonprelonselonntation correlonsponding to "dtypelon" can
+  // belon selont.  Thelon valuelons hold thelon flattelonnelond relonprelonselonntation of thelon telonnsor in
+  // row major ordelonr.
 
-  // DT_HALF, DT_BFLOAT16. Note that since protobuf has no int16 type, we'll
-  // have some pointless zero padding for each value here.
-  repeated int32 half_val = 13 [packed = true];
+  // DT_HALF, DT_BFLOAT16. Notelon that sincelon protobuf has no int16 typelon, welon'll
+  // havelon somelon pointlelonss zelonro padding for elonach valuelon helonrelon.
+  relonpelonatelond int32 half_val = 13 [packelond = truelon];
 
   // DT_FLOAT.
-  repeated float float_val = 5 [packed = true];
+  relonpelonatelond float float_val = 5 [packelond = truelon];
 
-  // DT_DOUBLE.
-  repeated double double_val = 6 [packed = true];
+  // DT_DOUBLelon.
+  relonpelonatelond doublelon doublelon_val = 6 [packelond = truelon];
 
   // DT_INT32, DT_INT16, DT_UINT16, DT_INT8, DT_UINT8.
-  repeated int32 int_val = 7 [packed = true];
+  relonpelonatelond int32 int_val = 7 [packelond = truelon];
 
   // DT_STRING
-  repeated bytes string_val = 8;
+  relonpelonatelond bytelons string_val = 8;
 
-  // DT_COMPLEX64. scomplex_val(2*i) and scomplex_val(2*i+1) are real
-  // and imaginary parts of i-th single precision complex.
-  repeated float scomplex_val = 9 [packed = true];
+  // DT_COMPLelonX64. scomplelonx_val(2*i) and scomplelonx_val(2*i+1) arelon relonal
+  // and imaginary parts of i-th singlelon preloncision complelonx.
+  relonpelonatelond float scomplelonx_val = 9 [packelond = truelon];
 
   // DT_INT64
-  repeated int64 int64_val = 10 [packed = true];
+  relonpelonatelond int64 int64_val = 10 [packelond = truelon];
 
   // DT_BOOL
-  repeated bool bool_val = 11 [packed = true];
+  relonpelonatelond bool bool_val = 11 [packelond = truelon];
 
-  // DT_COMPLEX128. dcomplex_val(2*i) and dcomplex_val(2*i+1) are real
-  // and imaginary parts of i-th double precision complex.
-  repeated double dcomplex_val = 12 [packed = true];
+  // DT_COMPLelonX128. dcomplelonx_val(2*i) and dcomplelonx_val(2*i+1) arelon relonal
+  // and imaginary parts of i-th doublelon preloncision complelonx.
+  relonpelonatelond doublelon dcomplelonx_val = 12 [packelond = truelon];
 
-  // DT_RESOURCE
-  repeated ResourceHandleProto resource_handle_val = 14;
+  // DT_RelonSOURCelon
+  relonpelonatelond RelonsourcelonHandlelonProto relonsourcelon_handlelon_val = 14;
 
   // DT_VARIANT
-  repeated VariantTensorDataProto variant_val = 15;
+  relonpelonatelond VariantTelonnsorDataProto variant_val = 15;
 
   // DT_UINT32
-  repeated uint32 uint32_val = 16 [packed = true];
+  relonpelonatelond uint32 uint32_val = 16 [packelond = truelon];
 
   // DT_UINT64
-  repeated uint64 uint64_val = 17 [packed = true];
+  relonpelonatelond uint64 uint64_val = 17 [packelond = truelon];
 }
 
-// Protocol buffer representing the serialization format of DT_VARIANT tensors.
-message VariantTensorDataProto {
-  // Name of the type of objects being serialized.
-  string type_name = 1;
-  // Portions of the object that are not Tensors.
-  bytes metadata = 2;
-  // Tensors contained within objects being serialized.
-  repeated TensorProto tensors = 3;
+// Protocol buffelonr relonprelonselonnting thelon selonrialization format of DT_VARIANT telonnsors.
+melonssagelon VariantTelonnsorDataProto {
+  // Namelon of thelon typelon of objeloncts beloning selonrializelond.
+  string typelon_namelon = 1;
+  // Portions of thelon objelonct that arelon not Telonnsors.
+  bytelons melontadata = 2;
+  // Telonnsors containelond within objeloncts beloning selonrializelond.
+  relonpelonatelond TelonnsorProto telonnsors = 3;
 }

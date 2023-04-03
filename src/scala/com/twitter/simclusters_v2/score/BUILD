@@ -1,9 +1,9 @@
 scala_library(
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "finagle/finagle-stats",
-        "hermit/hermit-core/src/main/scala/com/twitter/hermit/store/common",
-        "src/scala/com/twitter/simclusters_v2/stores",
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        "finaglelon/finaglelon-stats",
+        "helonrmit/helonrmit-corelon/src/main/scala/com/twittelonr/helonrmit/storelon/common",
+        "src/scala/com/twittelonr/simclustelonrs_v2/storelons",
     ],
 )

@@ -1,94 +1,94 @@
-package com.twitter.visibility.generators
+packagelon com.twittelonr.visibility.gelonnelonrators
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.servo.util.MemoizingStatsReceiver
-import com.twitter.visibility.builder.VisibilityResult
-import com.twitter.visibility.common.actions.TombstoneReason
-import com.twitter.visibility.configapi.VisibilityParams
-import com.twitter.visibility.rules.Epitaph
-import com.twitter.visibility.rules.LocalizedTombstone
-import com.twitter.visibility.rules.Tombstone
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.selonrvo.util.MelonmoizingStatsReloncelonivelonr
+import com.twittelonr.visibility.buildelonr.VisibilityRelonsult
+import com.twittelonr.visibility.common.actions.TombstonelonRelonason
+import com.twittelonr.visibility.configapi.VisibilityParams
+import com.twittelonr.visibility.rulelons.elonpitaph
+import com.twittelonr.visibility.rulelons.LocalizelondTombstonelon
+import com.twittelonr.visibility.rulelons.Tombstonelon
 
-object TombstoneGenerator {
-  def apply(
+objelonct TombstonelonGelonnelonrator {
+  delonf apply(
     visibilityParams: VisibilityParams,
-    countryNameGenerator: CountryNameGenerator,
-    statsReceiver: StatsReceiver
-  ): TombstoneGenerator = {
-    new TombstoneGenerator(visibilityParams, countryNameGenerator, statsReceiver)
+    countryNamelonGelonnelonrator: CountryNamelonGelonnelonrator,
+    statsReloncelonivelonr: StatsReloncelonivelonr
+  ): TombstonelonGelonnelonrator = {
+    nelonw TombstonelonGelonnelonrator(visibilityParams, countryNamelonGelonnelonrator, statsReloncelonivelonr)
   }
 }
 
-class TombstoneGenerator(
+class TombstonelonGelonnelonrator(
   paramsFactory: VisibilityParams,
-  countryNameGenerator: CountryNameGenerator,
-  baseStatsReceiver: StatsReceiver) {
+  countryNamelonGelonnelonrator: CountryNamelonGelonnelonrator,
+  baselonStatsReloncelonivelonr: StatsReloncelonivelonr) {
 
-  private[this] val statsReceiver = new MemoizingStatsReceiver(
-    baseStatsReceiver.scope("tombstone_generator"))
-  private[this] val deletedReceiver = statsReceiver.scope("deleted_state")
-  private[this] val authorStateReceiver = statsReceiver.scope("tweet_author_state")
-  private[this] val visResultReceiver = statsReceiver.scope("visibility_result")
+  privatelon[this] val statsReloncelonivelonr = nelonw MelonmoizingStatsReloncelonivelonr(
+    baselonStatsReloncelonivelonr.scopelon("tombstonelon_gelonnelonrator"))
+  privatelon[this] val delonlelontelondReloncelonivelonr = statsReloncelonivelonr.scopelon("delonlelontelond_statelon")
+  privatelon[this] val authorStatelonReloncelonivelonr = statsReloncelonivelonr.scopelon("twelonelont_author_statelon")
+  privatelon[this] val visRelonsultReloncelonivelonr = statsReloncelonivelonr.scopelon("visibility_relonsult")
 
-  def apply(
-    result: VisibilityResult,
-    language: String
-  ): VisibilityResult = {
+  delonf apply(
+    relonsult: VisibilityRelonsult,
+    languagelon: String
+  ): VisibilityRelonsult = {
 
-    result.verdict match {
-      case tombstone: Tombstone =>
-        val epitaph = tombstone.epitaph
-        visResultReceiver.scope("tombstone").counter(epitaph.name.toLowerCase())
+    relonsult.velonrdict match {
+      caselon tombstonelon: Tombstonelon =>
+        val elonpitaph = tombstonelon.elonpitaph
+        visRelonsultReloncelonivelonr.scopelon("tombstonelon").countelonr(elonpitaph.namelon.toLowelonrCaselon())
 
-        val overriddenLanguage = epitaph match {
-          case Epitaph.LegalDemandsWithheldMedia | Epitaph.LocalLawsWithheldMedia => "en"
-          case _ => language
+        val ovelonrriddelonnLanguagelon = elonpitaph match {
+          caselon elonpitaph.LelongalDelonmandsWithhelonldMelondia | elonpitaph.LocalLawsWithhelonldMelondia => "elonn"
+          caselon _ => languagelon
         }
 
-        tombstone.applicableCountryCodes match {
-          case Some(countryCodes) => {
-            val countryNames = countryCodes.map(countryNameGenerator.getCountryName(_))
+        tombstonelon.applicablelonCountryCodelons match {
+          caselon Somelon(countryCodelons) => {
+            val countryNamelons = countryCodelons.map(countryNamelonGelonnelonrator.gelontCountryNamelon(_))
 
-            result.copy(verdict = LocalizedTombstone(
-              reason = epitaphToTombstoneReason(epitaph),
-              message = EpitaphToLocalizedMessage(epitaph, overriddenLanguage, countryNames)))
+            relonsult.copy(velonrdict = LocalizelondTombstonelon(
+              relonason = elonpitaphToTombstonelonRelonason(elonpitaph),
+              melonssagelon = elonpitaphToLocalizelondMelonssagelon(elonpitaph, ovelonrriddelonnLanguagelon, countryNamelons)))
           }
-          case _ => {
-            result.copy(verdict = LocalizedTombstone(
-              reason = epitaphToTombstoneReason(epitaph),
-              message = EpitaphToLocalizedMessage(epitaph, overriddenLanguage)))
+          caselon _ => {
+            relonsult.copy(velonrdict = LocalizelondTombstonelon(
+              relonason = elonpitaphToTombstonelonRelonason(elonpitaph),
+              melonssagelon = elonpitaphToLocalizelondMelonssagelon(elonpitaph, ovelonrriddelonnLanguagelon)))
           }
         }
-      case _ =>
-        result
+      caselon _ =>
+        relonsult
     }
   }
 
-  private def epitaphToTombstoneReason(epitaph: Epitaph): TombstoneReason = {
-    epitaph match {
-      case Epitaph.Deleted => TombstoneReason.Deleted
-      case Epitaph.Bounced => TombstoneReason.Bounced
-      case Epitaph.BounceDeleted => TombstoneReason.BounceDeleted
-      case Epitaph.Protected => TombstoneReason.ProtectedAuthor
-      case Epitaph.Suspended => TombstoneReason.SuspendedAuthor
-      case Epitaph.BlockedBy => TombstoneReason.AuthorBlocksViewer
-      case Epitaph.SuperFollowsContent => TombstoneReason.ExclusiveTweet
-      case Epitaph.Underage => TombstoneReason.NsfwViewerIsUnderage
-      case Epitaph.NoStatedAge => TombstoneReason.NsfwViewerHasNoStatedAge
-      case Epitaph.LoggedOutAge => TombstoneReason.NsfwLoggedOut
-      case Epitaph.Deactivated => TombstoneReason.DeactivatedAuthor
-      case Epitaph.CommunityTweetHidden => TombstoneReason.CommunityTweetHidden
-      case Epitaph.CommunityTweetCommunityIsSuspended =>
-        TombstoneReason.CommunityTweetCommunityIsSuspended
-      case Epitaph.DevelopmentOnly => TombstoneReason.DevelopmentOnly
-      case Epitaph.AdultMedia => TombstoneReason.AdultMedia
-      case Epitaph.ViolentMedia => TombstoneReason.ViolentMedia
-      case Epitaph.OtherSensitiveMedia => TombstoneReason.OtherSensitiveMedia
-      case Epitaph.DmcaWithheldMedia => TombstoneReason.DmcaWithheldMedia
-      case Epitaph.LegalDemandsWithheldMedia => TombstoneReason.LegalDemandsWithheldMedia
-      case Epitaph.LocalLawsWithheldMedia => TombstoneReason.LocalLawsWithheldMedia
-      case Epitaph.ToxicReplyFiltered => TombstoneReason.ReplyFiltered
-      case _ => TombstoneReason.Unspecified
+  privatelon delonf elonpitaphToTombstonelonRelonason(elonpitaph: elonpitaph): TombstonelonRelonason = {
+    elonpitaph match {
+      caselon elonpitaph.Delonlelontelond => TombstonelonRelonason.Delonlelontelond
+      caselon elonpitaph.Bouncelond => TombstonelonRelonason.Bouncelond
+      caselon elonpitaph.BouncelonDelonlelontelond => TombstonelonRelonason.BouncelonDelonlelontelond
+      caselon elonpitaph.Protelonctelond => TombstonelonRelonason.ProtelonctelondAuthor
+      caselon elonpitaph.Suspelonndelond => TombstonelonRelonason.SuspelonndelondAuthor
+      caselon elonpitaph.BlockelondBy => TombstonelonRelonason.AuthorBlocksVielonwelonr
+      caselon elonpitaph.SupelonrFollowsContelonnt => TombstonelonRelonason.elonxclusivelonTwelonelont
+      caselon elonpitaph.Undelonragelon => TombstonelonRelonason.NsfwVielonwelonrIsUndelonragelon
+      caselon elonpitaph.NoStatelondAgelon => TombstonelonRelonason.NsfwVielonwelonrHasNoStatelondAgelon
+      caselon elonpitaph.LoggelondOutAgelon => TombstonelonRelonason.NsfwLoggelondOut
+      caselon elonpitaph.Delonactivatelond => TombstonelonRelonason.DelonactivatelondAuthor
+      caselon elonpitaph.CommunityTwelonelontHiddelonn => TombstonelonRelonason.CommunityTwelonelontHiddelonn
+      caselon elonpitaph.CommunityTwelonelontCommunityIsSuspelonndelond =>
+        TombstonelonRelonason.CommunityTwelonelontCommunityIsSuspelonndelond
+      caselon elonpitaph.DelonvelonlopmelonntOnly => TombstonelonRelonason.DelonvelonlopmelonntOnly
+      caselon elonpitaph.AdultMelondia => TombstonelonRelonason.AdultMelondia
+      caselon elonpitaph.ViolelonntMelondia => TombstonelonRelonason.ViolelonntMelondia
+      caselon elonpitaph.OthelonrSelonnsitivelonMelondia => TombstonelonRelonason.OthelonrSelonnsitivelonMelondia
+      caselon elonpitaph.DmcaWithhelonldMelondia => TombstonelonRelonason.DmcaWithhelonldMelondia
+      caselon elonpitaph.LelongalDelonmandsWithhelonldMelondia => TombstonelonRelonason.LelongalDelonmandsWithhelonldMelondia
+      caselon elonpitaph.LocalLawsWithhelonldMelondia => TombstonelonRelonason.LocalLawsWithhelonldMelondia
+      caselon elonpitaph.ToxicRelonplyFiltelonrelond => TombstonelonRelonason.RelonplyFiltelonrelond
+      caselon _ => TombstonelonRelonason.Unspeloncifielond
     }
   }
 }

@@ -1,75 +1,75 @@
-package com.twitter.product_mixer.component_library.selector
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.selonlelonctor
 
-import com.twitter.product_mixer.component_library.model.candidate.CursorCandidate
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.functional_component.selector.SelectorResult
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ItemCandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ModuleCandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.CursorCandidatelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.CandidatelonScopelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.selonlelonctor.Selonlelonctor
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.selonlelonctor.SelonlelonctorRelonsult
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.ItelonmCandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.ModulelonCandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
 /**
- * Keep only the candidates in `remainingCandidates` that appear multiple times.
- * This ignores modules and cursors from being removed.
+ * Kelonelonp only thelon candidatelons in `relonmainingCandidatelons` that appelonar multiplelon timelons.
+ * This ignorelons modulelons and cursors from beloning relonmovelond.
  *
- * @param duplicationKey how to generate the key used to identify duplicate candidates
+ * @param duplicationKelony how to gelonnelonratelon thelon kelony uselond to idelonntify duplicatelon candidatelons
  *
- * @note [[com.twitter.product_mixer.component_library.model.candidate.CursorCandidate]] are ignored.
- * @note [[com.twitter.product_mixer.core.model.common.presentation.ModuleCandidateWithDetails]] are ignored.
+ * @notelon [[com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.CursorCandidatelon]] arelon ignorelond.
+ * @notelon [[com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.ModulelonCandidatelonWithDelontails]] arelon ignorelond.
  *
- * @example if `remainingCandidates`
- * `Seq(sourceA_Id1, sourceA_Id1, sourceA_Id2, sourceB_id1, sourceB_id2, sourceB_id3, sourceC_id4)`
- * then the output result will be `Seq(sourceA_Id1, sourceA_Id2)`
+ * @elonxamplelon if `relonmainingCandidatelons`
+ * `Selonq(sourcelonA_Id1, sourcelonA_Id1, sourcelonA_Id2, sourcelonB_id1, sourcelonB_id2, sourcelonB_id3, sourcelonC_id4)`
+ * thelonn thelon output relonsult will belon `Selonq(sourcelonA_Id1, sourcelonA_Id2)`
  */
-case class DropNonDuplicateCandidates(
-  override val pipelineScope: CandidateScope,
-  duplicationKey: DeduplicationKey[_] = IdAndClassDuplicationKey)
-    extends Selector[PipelineQuery] {
+caselon class DropNonDuplicatelonCandidatelons(
+  ovelonrridelon val pipelonlinelonScopelon: CandidatelonScopelon,
+  duplicationKelony: DelonduplicationKelony[_] = IdAndClassDuplicationKelony)
+    elonxtelonnds Selonlelonctor[PipelonlinelonQuelonry] {
 
-  override def apply(
-    query: PipelineQuery,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
-  ): SelectorResult = {
-    val duplicateCandidates = dropNonDuplicates(
-      pipelineScope = pipelineScope,
-      candidates = remainingCandidates,
-      duplicationKey = duplicationKey)
+  ovelonrridelon delonf apply(
+    quelonry: PipelonlinelonQuelonry,
+    relonmainingCandidatelons: Selonq[CandidatelonWithDelontails],
+    relonsult: Selonq[CandidatelonWithDelontails]
+  ): SelonlelonctorRelonsult = {
+    val duplicatelonCandidatelons = dropNonDuplicatelons(
+      pipelonlinelonScopelon = pipelonlinelonScopelon,
+      candidatelons = relonmainingCandidatelons,
+      duplicationKelony = duplicationKelony)
 
-    SelectorResult(remainingCandidates = duplicateCandidates, result = result)
+    SelonlelonctorRelonsult(relonmainingCandidatelons = duplicatelonCandidatelons, relonsult = relonsult)
   }
 
   /**
-   * Identify and keep candidates using the supplied key extraction and merger functions. By default
-   * this will keep only candidates that appear multiple times as determined by comparing
-   * the contained candidate ID and class type. Candidates appearing only once will be dropped.
+   * Idelonntify and kelonelonp candidatelons using thelon supplielond kelony elonxtraction and melonrgelonr functions. By delonfault
+   * this will kelonelonp only candidatelons that appelonar multiplelon timelons as delontelonrminelond by comparing
+   * thelon containelond candidatelon ID and class typelon. Candidatelons appelonaring only oncelon will belon droppelond.
    *
-   * @note [[com.twitter.product_mixer.component_library.model.candidate.CursorCandidate]] are ignored.
-   * @note [[com.twitter.product_mixer.core.model.common.presentation.ModuleCandidateWithDetails]] are ignored.
+   * @notelon [[com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.CursorCandidatelon]] arelon ignorelond.
+   * @notelon [[com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.ModulelonCandidatelonWithDelontails]] arelon ignorelond.
    *
-   * @param candidates which may have elements to drop
-   * @param duplicationKey how to generate a key for a candidate for identifying duplicates
+   * @param candidatelons which may havelon elonlelonmelonnts to drop
+   * @param duplicationKelony how to gelonnelonratelon a kelony for a candidatelon for idelonntifying duplicatelons
    */
-  private[this] def dropNonDuplicates[Candidate <: CandidateWithDetails, Key](
-    pipelineScope: CandidateScope,
-    candidates: Seq[Candidate],
-    duplicationKey: DeduplicationKey[Key],
-  ): Seq[Candidate] = {
-    // Here we are checking if each candidate has multiple appearances or not
-    val isCandidateADuplicate: Map[Key, Boolean] = candidates
-      .collect {
-        case item: ItemCandidateWithDetails
-            if pipelineScope.contains(item) && !item.candidate.isInstanceOf[CursorCandidate] =>
-          item
-      }.groupBy(duplicationKey(_))
-      .mapValues(_.length > 1)
+  privatelon[this] delonf dropNonDuplicatelons[Candidatelon <: CandidatelonWithDelontails, Kelony](
+    pipelonlinelonScopelon: CandidatelonScopelon,
+    candidatelons: Selonq[Candidatelon],
+    duplicationKelony: DelonduplicationKelony[Kelony],
+  ): Selonq[Candidatelon] = {
+    // Helonrelon welon arelon cheloncking if elonach candidatelon has multiplelon appelonarancelons or not
+    val isCandidatelonADuplicatelon: Map[Kelony, Boolelonan] = candidatelons
+      .collelonct {
+        caselon itelonm: ItelonmCandidatelonWithDelontails
+            if pipelonlinelonScopelon.contains(itelonm) && !itelonm.candidatelon.isInstancelonOf[CursorCandidatelon] =>
+          itelonm
+      }.groupBy(duplicationKelony(_))
+      .mapValuelons(_.lelonngth > 1)
 
-    candidates.filter {
-      case item: ItemCandidateWithDetails =>
-        isCandidateADuplicate.getOrElse(duplicationKey(item), true)
-      case _: ModuleCandidateWithDetails => true
-      case _ => false
+    candidatelons.filtelonr {
+      caselon itelonm: ItelonmCandidatelonWithDelontails =>
+        isCandidatelonADuplicatelon.gelontOrelonlselon(duplicationKelony(itelonm), truelon)
+      caselon _: ModulelonCandidatelonWithDelontails => truelon
+      caselon _ => falselon
     }
   }
 }

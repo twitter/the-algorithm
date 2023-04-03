@@ -1,141 +1,141 @@
-package com.twitter.simclusters_v2.scalding.tweet_similarity
+packagelon com.twittelonr.simclustelonrs_v2.scalding.twelonelont_similarity
 
-import com.twitter.dal.client.dataset.TimePartitionedDALDataset
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.DataSetPipe
-import com.twitter.scalding._
-import com.twitter.scalding.typed.TypedPipe
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.remote_access.ExplicitLocation
-import com.twitter.scalding_internal.dalv2.remote_access.Proc3Atla
-import com.twitter.scalding_internal.job.TwitterExecutionApp
-import com.twitter.simclusters_v2.hdfs_sources.TweetSimilarityUnhydratedPairsSource
-import com.twitter.simclusters_v2.scalding.common.LogFavBasedPersistentTweetEmbeddingMhExportSource
-import com.twitter.simclusters_v2.scalding.tweet_similarity.TweetPairLabelCollectionUtil.FeaturedTweet
-import com.twitter.simclusters_v2.thriftscala.LabelledTweetPairs
-import com.twitter.wtf.scalding.jobs.common.ScheduledExecutionApp
-import java.util.TimeZone
+import com.twittelonr.dal.clielonnt.dataselont.TimelonPartitionelondDALDataselont
+import com.twittelonr.ml.api.DataReloncord
+import com.twittelonr.ml.api.DataSelontPipelon
+import com.twittelonr.scalding._
+import com.twittelonr.scalding.typelond.TypelondPipelon
+import com.twittelonr.scalding_intelonrnal.dalv2.DAL
+import com.twittelonr.scalding_intelonrnal.dalv2.relonmotelon_accelonss.elonxplicitLocation
+import com.twittelonr.scalding_intelonrnal.dalv2.relonmotelon_accelonss.Proc3Atla
+import com.twittelonr.scalding_intelonrnal.job.TwittelonrelonxeloncutionApp
+import com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.TwelonelontSimilarityUnhydratelondPairsSourcelon
+import com.twittelonr.simclustelonrs_v2.scalding.common.LogFavBaselondPelonrsistelonntTwelonelontelonmbelonddingMhelonxportSourcelon
+import com.twittelonr.simclustelonrs_v2.scalding.twelonelont_similarity.TwelonelontPairLabelonlCollelonctionUtil.FelonaturelondTwelonelont
+import com.twittelonr.simclustelonrs_v2.thriftscala.LabelonllelondTwelonelontPairs
+import com.twittelonr.wtf.scalding.jobs.common.SchelondulelondelonxeloncutionApp
+import java.util.TimelonZonelon
 
 /**
- * Hydrate tweet pairs with features
+ * Hydratelon twelonelont pairs with felonaturelons
  */
-object TrainingDataCollectionJob {
-  val LookbackDays = 2 //lookbackdays considered when looking for author information
-  val testLookbackHours = 2 //hours in test dataset if doing time-based train/test split
-  val testRatio = 0.1 //ratio for test dataset if doing query-based train/test split
+objelonct TrainingDataCollelonctionJob {
+  val LookbackDays = 2 //lookbackdays considelonrelond whelonn looking for author information
+  val telonstLookbackHours = 2 //hours in telonst dataselont if doing timelon-baselond train/telonst split
+  val telonstRatio = 0.1 //ratio for telonst dataselont if doing quelonry-baselond train/telonst split
 
-  def getHydratedDataPipe(
-    dateRange: DateRange,
-    useAuthorFeatures: Boolean,
-    unhydratedPairs: TypedPipe[LabelledTweetPairs]
+  delonf gelontHydratelondDataPipelon(
+    datelonRangelon: DatelonRangelon,
+    uselonAuthorFelonaturelons: Boolelonan,
+    unhydratelondPairs: TypelondPipelon[LabelonllelondTwelonelontPairs]
   )(
-    implicit timeZone: TimeZone
-  ): DataSetPipe = {
+    implicit timelonZonelon: TimelonZonelon
+  ): DataSelontPipelon = {
 
-    val persistentEmbeddingRecords =
-      TypedPipe.from(new LogFavBasedPersistentTweetEmbeddingMhExportSource(range = dateRange))
+    val pelonrsistelonntelonmbelonddingReloncords =
+      TypelondPipelon.from(nelonw LogFavBaselondPelonrsistelonntTwelonelontelonmbelonddingMhelonxportSourcelon(rangelon = datelonRangelon))
 
-    val tweetAuthorPairs =
-      TweetPairLabelCollectionUtil.getTweetAuthorPairs(dateRange.prepend(Days(LookbackDays)))
+    val twelonelontAuthorPairs =
+      TwelonelontPairLabelonlCollelonctionUtil.gelontTwelonelontAuthorPairs(datelonRangelon.prelonpelonnd(Days(LookbackDays)))
 
-    val labelledPairs = unhydratedPairs
-      .map { labelledPair =>
+    val labelonllelondPairs = unhydratelondPairs
+      .map { labelonllelondPair =>
         (
-          FeaturedTweet(
-            labelledPair.queryFeaturedTweet.tweetId,
-            labelledPair.queryFeaturedTweet.timestamp,
-            None,
-            None),
-          FeaturedTweet(
-            labelledPair.candidateFeaturedTweet.tweetId,
-            labelledPair.candidateFeaturedTweet.timestamp,
-            None,
-            None),
-          labelledPair.label
+          FelonaturelondTwelonelont(
+            labelonllelondPair.quelonryFelonaturelondTwelonelont.twelonelontId,
+            labelonllelondPair.quelonryFelonaturelondTwelonelont.timelonstamp,
+            Nonelon,
+            Nonelon),
+          FelonaturelondTwelonelont(
+            labelonllelondPair.candidatelonFelonaturelondTwelonelont.twelonelontId,
+            labelonllelondPair.candidatelonFelonaturelondTwelonelont.timelonstamp,
+            Nonelon,
+            Nonelon),
+          labelonllelondPair.labelonl
         )
       }
 
-    TweetPairFeatureHydrationUtil.getDataSetPipeWithFeatures(
-      labelledPairs,
-      persistentEmbeddingRecords,
-      tweetAuthorPairs,
-      useAuthorFeatures)
+    TwelonelontPairFelonaturelonHydrationUtil.gelontDataSelontPipelonWithFelonaturelons(
+      labelonllelondPairs,
+      pelonrsistelonntelonmbelonddingReloncords,
+      twelonelontAuthorPairs,
+      uselonAuthorFelonaturelons)
   }
 
-  def getTrainTestExec(
-    dataSetPipe: DataSetPipe,
+  delonf gelontTrainTelonstelonxelonc(
+    dataSelontPipelon: DataSelontPipelon,
     splitBy: Option[String],
-    trainDataset: TimePartitionedDALDataset[DataRecord],
-    testDataset: TimePartitionedDALDataset[DataRecord],
+    trainDataselont: TimelonPartitionelondDALDataselont[DataReloncord],
+    telonstDataselont: TimelonPartitionelondDALDataselont[DataReloncord],
     outputPath: String
   )(
-    implicit timeZone: TimeZone,
-    dateRange: DateRange
-  ): Execution[Unit] = {
+    implicit timelonZonelon: TimelonZonelon,
+    datelonRangelon: DatelonRangelon
+  ): elonxeloncution[Unit] = {
     splitBy match {
-      case Some("time") =>
-        TrainingDataCollectionUtil.getTrainTestByTimeExec(
-          dataSetPipe,
-          dateRange.end - Hours(testLookbackHours),
-          trainDataset,
-          testDataset,
-          outputPath)(dateRange)
-      case Some("query_tweet") =>
-        TrainingDataCollectionUtil.getTrainTestByQueryExec(
-          dataSetPipe,
-          testRatio,
-          trainDataset,
-          testDataset,
-          outputPath)(dateRange)
-      // Default at no splitting
-      case _ =>
-        TrainingDataCollectionUtil.getTrainTestByQueryExec(
-          dataSetPipe,
+      caselon Somelon("timelon") =>
+        TrainingDataCollelonctionUtil.gelontTrainTelonstByTimelonelonxelonc(
+          dataSelontPipelon,
+          datelonRangelon.elonnd - Hours(telonstLookbackHours),
+          trainDataselont,
+          telonstDataselont,
+          outputPath)(datelonRangelon)
+      caselon Somelon("quelonry_twelonelont") =>
+        TrainingDataCollelonctionUtil.gelontTrainTelonstByQuelonryelonxelonc(
+          dataSelontPipelon,
+          telonstRatio,
+          trainDataselont,
+          telonstDataselont,
+          outputPath)(datelonRangelon)
+      // Delonfault at no splitting
+      caselon _ =>
+        TrainingDataCollelonctionUtil.gelontTrainTelonstByQuelonryelonxelonc(
+          dataSelontPipelon,
           0.0,
-          trainDataset,
-          testDataset,
-          outputPath)(dateRange)
+          trainDataselont,
+          telonstDataselont,
+          outputPath)(datelonRangelon)
     }
   }
 }
 
 /** To run:
-scalding remote run --target src/scala/com/twitter/simclusters_v2/scalding/tweet_similarity:training_data_collection-adhoc \
---user cassowary \
---submitter hadoopnest2.atla.twitter.com \
---hadoop-properties "mapreduce.reduce.java.opts=-Xmx8000m mapreduce.reduce.memory.mb=8000 scalding.with.reducers.set.explicitly=true mapreduce.job.reduces=2000 mapreduce.task.timeout=0" \
---main-class com.twitter.simclusters_v2.scalding.tweet_similarity.TrainingDataCollectionAdhocApp -- \
---date 2020-04-15 \
---input_path /user/cassowary/adhoc/unhydrated_pairs/2020-04-15_30min/ \
---output_path /user/cassowary/adhoc/training_data/2020-04-15_30min_2xneg_qtweet_split \
---split_by query_tweet
+scalding relonmotelon run --targelont src/scala/com/twittelonr/simclustelonrs_v2/scalding/twelonelont_similarity:training_data_collelonction-adhoc \
+--uselonr cassowary \
+--submittelonr hadoopnelonst2.atla.twittelonr.com \
+--hadoop-propelonrtielons "maprelonducelon.relonducelon.java.opts=-Xmx8000m maprelonducelon.relonducelon.melonmory.mb=8000 scalding.with.relonducelonrs.selont.elonxplicitly=truelon maprelonducelon.job.relonducelons=2000 maprelonducelon.task.timelonout=0" \
+--main-class com.twittelonr.simclustelonrs_v2.scalding.twelonelont_similarity.TrainingDataCollelonctionAdhocApp -- \
+--datelon 2020-04-15 \
+--input_path /uselonr/cassowary/adhoc/unhydratelond_pairs/2020-04-15_30min/ \
+--output_path /uselonr/cassowary/adhoc/training_data/2020-04-15_30min_2xnelong_qtwelonelont_split \
+--split_by quelonry_twelonelont
  * */
-object TrainingDataCollectionAdhocApp extends TwitterExecutionApp {
-  implicit val timeZone: TimeZone = DateOps.UTC
-  implicit val dateParser: DateParser = DateParser.default
+objelonct TrainingDataCollelonctionAdhocApp elonxtelonnds TwittelonrelonxeloncutionApp {
+  implicit val timelonZonelon: TimelonZonelon = DatelonOps.UTC
+  implicit val datelonParselonr: DatelonParselonr = DatelonParselonr.delonfault
 
-  override def job: Execution[Unit] =
-    Execution.withId { implicit uniqueId =>
-      Execution.withArgs { args: Args =>
-        implicit val dateRange: DateRange = DateRange.parse(args.list("date"))
-        val useAuthorFeatures: Boolean = args.boolean("use_author_features")
+  ovelonrridelon delonf job: elonxeloncution[Unit] =
+    elonxeloncution.withId { implicit uniquelonId =>
+      elonxeloncution.withArgs { args: Args =>
+        implicit val datelonRangelon: DatelonRangelon = DatelonRangelon.parselon(args.list("datelon"))
+        val uselonAuthorFelonaturelons: Boolelonan = args.boolelonan("uselon_author_felonaturelons")
         val inputPath: String = args("input_path")
         val outputPath: String = args("output_path")
         val splitBy: Option[String] = args.optional("split_by")
 
-        val labelledPairs = TypedPipe
-          .from(TweetSimilarityUnhydratedPairsSource(inputPath, dateRange))
+        val labelonllelondPairs = TypelondPipelon
+          .from(TwelonelontSimilarityUnhydratelondPairsSourcelon(inputPath, datelonRangelon))
 
-        val dataSetPipe = TrainingDataCollectionJob.getHydratedDataPipe(
-          dateRange,
-          useAuthorFeatures,
-          labelledPairs
+        val dataSelontPipelon = TrainingDataCollelonctionJob.gelontHydratelondDataPipelon(
+          datelonRangelon,
+          uselonAuthorFelonaturelons,
+          labelonllelondPairs
         )
-        TrainingDataCollectionJob.getTrainTestExec(
-          dataSetPipe,
+        TrainingDataCollelonctionJob.gelontTrainTelonstelonxelonc(
+          dataSelontPipelon,
           splitBy,
-          TweetSimilarityTrainDatarecords30MinJavaDataset,
-          TweetSimilarityTestDatarecords30MinJavaDataset,
+          TwelonelontSimilarityTrainDatareloncords30MinJavaDataselont,
+          TwelonelontSimilarityTelonstDatareloncords30MinJavaDataselont,
           outputPath
         )
       }
@@ -143,86 +143,86 @@ object TrainingDataCollectionAdhocApp extends TwitterExecutionApp {
 }
 
 /**
-  capesospy-v2 update --build_locally --start_cron \
-  training_data_collection_30min src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
+  capelonsospy-v2 updatelon --build_locally --start_cron \
+  training_data_collelonction_30min src/scala/com/twittelonr/simclustelonrs_v2/capelonsos_config/atla_proc3.yaml
  */
-object TrainingDataCollection30MinScheduledApp extends ScheduledExecutionApp {
+objelonct TrainingDataCollelonction30MinSchelondulelondApp elonxtelonnds SchelondulelondelonxeloncutionApp {
 
-  private val outputPath: String =
-    "/user/cassowary/processed/tweet_similarity/training_data_30min"
+  privatelon val outputPath: String =
+    "/uselonr/cassowary/procelonsselond/twelonelont_similarity/training_data_30min"
 
-  override def batchIncrement: Duration = Hours(24)
+  ovelonrridelon delonf batchIncrelonmelonnt: Duration = Hours(24)
 
-  override def firstTime: RichDate = RichDate("2020-03-26")
+  ovelonrridelon delonf firstTimelon: RichDatelon = RichDatelon("2020-03-26")
 
-  override def runOnDateRange(
+  ovelonrridelon delonf runOnDatelonRangelon(
     args: Args
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
-    val useAuthorFeatures: Boolean = args.boolean("use_author_features")
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon,
+    uniquelonID: UniquelonID
+  ): elonxeloncution[Unit] = {
+    val uselonAuthorFelonaturelons: Boolelonan = args.boolelonan("uselon_author_felonaturelons")
     val splitBy: Option[String] = args.optional("split_by")
 
-    val unhydratedPairs = DAL
-      .read(TweetSimilarityUnhydratedPairs30MinScalaDataset, dateRange)
-      .withRemoteReadPolicy(ExplicitLocation(Proc3Atla))
-      .toTypedPipe
+    val unhydratelondPairs = DAL
+      .relonad(TwelonelontSimilarityUnhydratelondPairs30MinScalaDataselont, datelonRangelon)
+      .withRelonmotelonRelonadPolicy(elonxplicitLocation(Proc3Atla))
+      .toTypelondPipelon
 
-    val dataSetPipe = TrainingDataCollectionJob.getHydratedDataPipe(
-      dateRange,
-      useAuthorFeatures,
-      unhydratedPairs
+    val dataSelontPipelon = TrainingDataCollelonctionJob.gelontHydratelondDataPipelon(
+      datelonRangelon,
+      uselonAuthorFelonaturelons,
+      unhydratelondPairs
     )
-    TrainingDataCollectionJob.getTrainTestExec(
-      dataSetPipe,
+    TrainingDataCollelonctionJob.gelontTrainTelonstelonxelonc(
+      dataSelontPipelon,
       splitBy,
-      TweetSimilarityTrainDatarecords30MinJavaDataset,
-      TweetSimilarityTestDatarecords30MinJavaDataset,
+      TwelonelontSimilarityTrainDatareloncords30MinJavaDataselont,
+      TwelonelontSimilarityTelonstDatareloncords30MinJavaDataselont,
       outputPath)
   }
 }
 
 /**
-capesospy-v2 update --build_locally --start_cron \
-  training_data_collection_120min src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
+capelonsospy-v2 updatelon --build_locally --start_cron \
+  training_data_collelonction_120min src/scala/com/twittelonr/simclustelonrs_v2/capelonsos_config/atla_proc3.yaml
  */
-object TrainingDataCollection120MinScheduledApp extends ScheduledExecutionApp {
+objelonct TrainingDataCollelonction120MinSchelondulelondApp elonxtelonnds SchelondulelondelonxeloncutionApp {
 
-  private val outputPath: String =
-    "/user/cassowary/processed/tweet_similarity/training_data_120min"
+  privatelon val outputPath: String =
+    "/uselonr/cassowary/procelonsselond/twelonelont_similarity/training_data_120min"
 
-  override def batchIncrement: Duration = Hours(24)
+  ovelonrridelon delonf batchIncrelonmelonnt: Duration = Hours(24)
 
-  override def firstTime: RichDate = RichDate("2020-03-26")
+  ovelonrridelon delonf firstTimelon: RichDatelon = RichDatelon("2020-03-26")
 
-  override def runOnDateRange(
+  ovelonrridelon delonf runOnDatelonRangelon(
     args: Args
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
-    val useAuthorFeatures: Boolean = args.boolean("use_author_features")
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon,
+    uniquelonID: UniquelonID
+  ): elonxeloncution[Unit] = {
+    val uselonAuthorFelonaturelons: Boolelonan = args.boolelonan("uselon_author_felonaturelons")
     val splitBy: Option[String] = args.optional("split_by")
 
-    val unhydratedPairs = DAL
-      .read(TweetSimilarityUnhydratedPairs120MinScalaDataset, dateRange)
-      .withRemoteReadPolicy(ExplicitLocation(Proc3Atla))
-      .toTypedPipe
+    val unhydratelondPairs = DAL
+      .relonad(TwelonelontSimilarityUnhydratelondPairs120MinScalaDataselont, datelonRangelon)
+      .withRelonmotelonRelonadPolicy(elonxplicitLocation(Proc3Atla))
+      .toTypelondPipelon
 
-    val dataSetPipe = TrainingDataCollectionJob.getHydratedDataPipe(
-      dateRange,
-      useAuthorFeatures,
-      unhydratedPairs
+    val dataSelontPipelon = TrainingDataCollelonctionJob.gelontHydratelondDataPipelon(
+      datelonRangelon,
+      uselonAuthorFelonaturelons,
+      unhydratelondPairs
     )
 
-    TrainingDataCollectionJob.getTrainTestExec(
-      dataSetPipe,
+    TrainingDataCollelonctionJob.gelontTrainTelonstelonxelonc(
+      dataSelontPipelon,
       splitBy,
-      TweetSimilarityTrainDatarecords120MinJavaDataset,
-      TweetSimilarityTestDatarecords120MinJavaDataset,
+      TwelonelontSimilarityTrainDatareloncords120MinJavaDataselont,
+      TwelonelontSimilarityTelonstDatareloncords120MinJavaDataselont,
       outputPath)
   }
 }

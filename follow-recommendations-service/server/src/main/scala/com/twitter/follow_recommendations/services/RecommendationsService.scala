@@ -1,28 +1,28 @@
-package com.twitter.follow_recommendations.services
+packagelon com.twittelonr.follow_reloncommelonndations.selonrvicelons
 
-import com.twitter.follow_recommendations.configapi.deciders.DeciderParams
-import com.twitter.follow_recommendations.logging.FrsLogger
-import com.twitter.follow_recommendations.models.RecommendationRequest
-import com.twitter.follow_recommendations.models.RecommendationResponse
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.Params
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.follow_reloncommelonndations.configapi.deloncidelonrs.DeloncidelonrParams
+import com.twittelonr.follow_reloncommelonndations.logging.FrsLoggelonr
+import com.twittelonr.follow_reloncommelonndations.modelonls.ReloncommelonndationRelonquelonst
+import com.twittelonr.follow_reloncommelonndations.modelonls.ReloncommelonndationRelonsponselon
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.timelonlinelons.configapi.Params
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class RecommendationsService @Inject() (
-  productRecommenderService: ProductRecommenderService,
-  resultLogger: FrsLogger) {
-  def get(request: RecommendationRequest, params: Params): Stitch[RecommendationResponse] = {
-    if (params(DeciderParams.EnableRecommendations)) {
-      productRecommenderService
-        .getRecommendations(request, params).map(RecommendationResponse).onSuccess { response =>
-          if (resultLogger.shouldLog(request.debugParams)) {
-            resultLogger.logRecommendationResult(request, response)
+@Singlelonton
+class ReloncommelonndationsSelonrvicelon @Injelonct() (
+  productReloncommelonndelonrSelonrvicelon: ProductReloncommelonndelonrSelonrvicelon,
+  relonsultLoggelonr: FrsLoggelonr) {
+  delonf gelont(relonquelonst: ReloncommelonndationRelonquelonst, params: Params): Stitch[ReloncommelonndationRelonsponselon] = {
+    if (params(DeloncidelonrParams.elonnablelonReloncommelonndations)) {
+      productReloncommelonndelonrSelonrvicelon
+        .gelontReloncommelonndations(relonquelonst, params).map(ReloncommelonndationRelonsponselon).onSuccelonss { relonsponselon =>
+          if (relonsultLoggelonr.shouldLog(relonquelonst.delonbugParams)) {
+            relonsultLoggelonr.logReloncommelonndationRelonsult(relonquelonst, relonsponselon)
           }
         }
-    } else {
-      Stitch.value(RecommendationResponse(Nil))
+    } elonlselon {
+      Stitch.valuelon(ReloncommelonndationRelonsponselon(Nil))
     }
   }
 }

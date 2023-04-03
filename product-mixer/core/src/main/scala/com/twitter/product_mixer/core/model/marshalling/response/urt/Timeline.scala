@@ -1,10 +1,10 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt
 
-import com.twitter.product_mixer.core.model.marshalling.HasMarshalling
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.HasMarshalling
 
-case class Timeline(
+caselon class Timelonlinelon(
   id: String,
-  instructions: Seq[TimelineInstruction],
-  // responseObjects::feedbackActions actions are populated implicitly, see UrtTransportMarshaller
-  metadata: Option[TimelineMetadata] = None)
-    extends HasMarshalling
+  instructions: Selonq[TimelonlinelonInstruction],
+  // relonsponselonObjeloncts::felonelondbackActions actions arelon populatelond implicitly, selonelon UrtTransportMarshallelonr
+  melontadata: Option[TimelonlinelonMelontadata] = Nonelon)
+    elonxtelonnds HasMarshalling

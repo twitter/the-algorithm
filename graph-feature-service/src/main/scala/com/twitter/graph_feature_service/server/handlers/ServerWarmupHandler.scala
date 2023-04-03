@@ -1,45 +1,45 @@
-package com.twitter.graph_feature_service.server.handlers
+packagelon com.twittelonr.graph_felonaturelon_selonrvicelon.selonrvelonr.handlelonrs
 
-import com.twitter.finatra.thrift.routing.ThriftWarmup
-import com.twitter.graph_feature_service.thriftscala.EdgeType.FavoritedBy
-import com.twitter.graph_feature_service.thriftscala.EdgeType.FollowedBy
-import com.twitter.graph_feature_service.thriftscala.EdgeType.Following
-import com.twitter.graph_feature_service.thriftscala.Server.GetIntersection
-import com.twitter.graph_feature_service.thriftscala.FeatureType
-import com.twitter.graph_feature_service.thriftscala.GfsIntersectionRequest
-import com.twitter.inject.utils.Handler
-import com.twitter.scrooge.Request
-import com.twitter.util.logging.Logger
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.finatra.thrift.routing.ThriftWarmup
+import com.twittelonr.graph_felonaturelon_selonrvicelon.thriftscala.elondgelonTypelon.FavoritelondBy
+import com.twittelonr.graph_felonaturelon_selonrvicelon.thriftscala.elondgelonTypelon.FollowelondBy
+import com.twittelonr.graph_felonaturelon_selonrvicelon.thriftscala.elondgelonTypelon.Following
+import com.twittelonr.graph_felonaturelon_selonrvicelon.thriftscala.Selonrvelonr.GelontIntelonrselonction
+import com.twittelonr.graph_felonaturelon_selonrvicelon.thriftscala.FelonaturelonTypelon
+import com.twittelonr.graph_felonaturelon_selonrvicelon.thriftscala.GfsIntelonrselonctionRelonquelonst
+import com.twittelonr.injelonct.utils.Handlelonr
+import com.twittelonr.scroogelon.Relonquelonst
+import com.twittelonr.util.logging.Loggelonr
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 import scala.util.Random
 
-@Singleton
-class ServerWarmupHandler @Inject() (warmup: ThriftWarmup) extends Handler {
+@Singlelonton
+class SelonrvelonrWarmupHandlelonr @Injelonct() (warmup: ThriftWarmup) elonxtelonnds Handlelonr {
 
-  val logger: Logger = Logger("WarmupHandler")
+  val loggelonr: Loggelonr = Loggelonr("WarmupHandlelonr")
 
-  // TODO: Add the testing accounts to warm-up the service.
-  private val testingAccounts: Array[Long] = Seq.empty.toArray
+  // TODO: Add thelon telonsting accounts to warm-up thelon selonrvicelon.
+  privatelon val telonstingAccounts: Array[Long] = Selonq.elonmpty.toArray
 
-  private def getRandomRequest: GfsIntersectionRequest = {
-    GfsIntersectionRequest(
-      testingAccounts(Random.nextInt(testingAccounts.length)),
-      testingAccounts,
-      Seq(FeatureType(Following, FollowedBy), FeatureType(Following, FavoritedBy))
+  privatelon delonf gelontRandomRelonquelonst: GfsIntelonrselonctionRelonquelonst = {
+    GfsIntelonrselonctionRelonquelonst(
+      telonstingAccounts(Random.nelonxtInt(telonstingAccounts.lelonngth)),
+      telonstingAccounts,
+      Selonq(FelonaturelonTypelon(Following, FollowelondBy), FelonaturelonTypelon(Following, FavoritelondBy))
     )
   }
 
-  override def handle(): Unit = {
-    warmup.sendRequest(
-      GetIntersection,
-      Request(
-        GetIntersection.Args(
-          getRandomRequest
+  ovelonrridelon delonf handlelon(): Unit = {
+    warmup.selonndRelonquelonst(
+      GelontIntelonrselonction,
+      Relonquelonst(
+        GelontIntelonrselonction.Args(
+          gelontRandomRelonquelonst
         )),
       10
     )()
 
-    logger.info("Warmup Done!")
+    loggelonr.info("Warmup Donelon!")
   }
 }

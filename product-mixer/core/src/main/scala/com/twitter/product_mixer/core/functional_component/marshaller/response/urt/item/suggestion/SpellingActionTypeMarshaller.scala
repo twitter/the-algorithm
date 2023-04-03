@@ -1,16 +1,16 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.suggestion
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.itelonm.suggelonstion
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.suggestion._
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.suggelonstion._
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Singlelonton
 
-@Singleton
-class SpellingActionTypeMarshaller {
+@Singlelonton
+class SpelonllingActionTypelonMarshallelonr {
 
-  def apply(spellingActionType: SpellingActionType): urt.SpellingActionType =
-    spellingActionType match {
-      case ReplaceSpellingActionType => urt.SpellingActionType.Replace
-      case ExpandSpellingActionType => urt.SpellingActionType.Expand
-      case SuggestSpellingActionType => urt.SpellingActionType.Suggest
+  delonf apply(spelonllingActionTypelon: SpelonllingActionTypelon): urt.SpelonllingActionTypelon =
+    spelonllingActionTypelon match {
+      caselon RelonplacelonSpelonllingActionTypelon => urt.SpelonllingActionTypelon.Relonplacelon
+      caselon elonxpandSpelonllingActionTypelon => urt.SpelonllingActionTypelon.elonxpand
+      caselon SuggelonstSpelonllingActionTypelon => urt.SpelonllingActionTypelon.Suggelonst
     }
 }

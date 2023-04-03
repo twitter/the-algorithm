@@ -1,13 +1,13 @@
-package com.twitter.visibility.models
+packagelon com.twittelonr.visibility.modelonls
 
-import com.twitter.contenthealth.sensitivemediasettings.thriftscala.SensitiveMediaSettings
+import com.twittelonr.contelonnthelonalth.selonnsitivelonmelondiaselonttings.thriftscala.SelonnsitivelonMelondiaSelonttings
 
 
-case class UserSensitiveMediaSettings(sensitiveMediaSettings: Option[SensitiveMediaSettings]) {
+caselon class UselonrSelonnsitivelonMelondiaSelonttings(selonnsitivelonMelondiaSelonttings: Option[SelonnsitivelonMelondiaSelonttings]) {
 
-  def unapply(
-    userSensitiveMediaSettings: UserSensitiveMediaSettings
-  ): Option[SensitiveMediaSettings] = {
-    sensitiveMediaSettings
+  delonf unapply(
+    uselonrSelonnsitivelonMelondiaSelonttings: UselonrSelonnsitivelonMelondiaSelonttings
+  ): Option[SelonnsitivelonMelondiaSelonttings] = {
+    selonnsitivelonMelondiaSelonttings
   }
 }

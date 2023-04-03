@@ -1,113 +1,113 @@
-package com.twitter.follow_recommendations.models
+packagelon com.twittelonr.follow_reloncommelonndations.modelonls
 
-import com.twitter.follow_recommendations.common.models.FlowContext
-import com.twitter.follow_recommendations.common.models.RecentlyEngagedUserId
-import com.twitter.follow_recommendations.logging.thriftscala.OfflineDisplayContext
-import com.twitter.follow_recommendations.logging.{thriftscala => offline}
-import com.twitter.follow_recommendations.{thriftscala => t}
-import scala.reflect.ClassTag
-import scala.reflect.classTag
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.FlowContelonxt
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.ReloncelonntlyelonngagelondUselonrId
+import com.twittelonr.follow_reloncommelonndations.logging.thriftscala.OfflinelonDisplayContelonxt
+import com.twittelonr.follow_reloncommelonndations.logging.{thriftscala => offlinelon}
+import com.twittelonr.follow_reloncommelonndations.{thriftscala => t}
+import scala.relonflelonct.ClassTag
+import scala.relonflelonct.classTag
 
-trait DisplayContext {
-  def toOfflineThrift: offline.OfflineDisplayContext
+trait DisplayContelonxt {
+  delonf toOfflinelonThrift: offlinelon.OfflinelonDisplayContelonxt
 }
 
-object DisplayContext {
-  case class Profile(profileId: Long) extends DisplayContext {
-    override val toOfflineThrift: OfflineDisplayContext =
-      offline.OfflineDisplayContext.Profile(offline.OfflineProfile(profileId))
+objelonct DisplayContelonxt {
+  caselon class Profilelon(profilelonId: Long) elonxtelonnds DisplayContelonxt {
+    ovelonrridelon val toOfflinelonThrift: OfflinelonDisplayContelonxt =
+      offlinelon.OfflinelonDisplayContelonxt.Profilelon(offlinelon.OfflinelonProfilelon(profilelonId))
   }
-  case class Search(searchQuery: String) extends DisplayContext {
-    override val toOfflineThrift: OfflineDisplayContext =
-      offline.OfflineDisplayContext.Search(offline.OfflineSearch(searchQuery))
+  caselon class Selonarch(selonarchQuelonry: String) elonxtelonnds DisplayContelonxt {
+    ovelonrridelon val toOfflinelonThrift: OfflinelonDisplayContelonxt =
+      offlinelon.OfflinelonDisplayContelonxt.Selonarch(offlinelon.OfflinelonSelonarch(selonarchQuelonry))
   }
-  case class Rux(focalAuthorId: Long) extends DisplayContext {
-    override val toOfflineThrift: OfflineDisplayContext =
-      offline.OfflineDisplayContext.Rux(offline.OfflineRux(focalAuthorId))
-  }
-
-  case class Topic(topicId: Long) extends DisplayContext {
-    override val toOfflineThrift: OfflineDisplayContext =
-      offline.OfflineDisplayContext.Topic(offline.OfflineTopic(topicId))
+  caselon class Rux(focalAuthorId: Long) elonxtelonnds DisplayContelonxt {
+    ovelonrridelon val toOfflinelonThrift: OfflinelonDisplayContelonxt =
+      offlinelon.OfflinelonDisplayContelonxt.Rux(offlinelon.OfflinelonRux(focalAuthorId))
   }
 
-  case class ReactiveFollow(followedUserIds: Seq[Long]) extends DisplayContext {
-    override val toOfflineThrift: OfflineDisplayContext =
-      offline.OfflineDisplayContext.ReactiveFollow(offline.OfflineReactiveFollow(followedUserIds))
+  caselon class Topic(topicId: Long) elonxtelonnds DisplayContelonxt {
+    ovelonrridelon val toOfflinelonThrift: OfflinelonDisplayContelonxt =
+      offlinelon.OfflinelonDisplayContelonxt.Topic(offlinelon.OfflinelonTopic(topicId))
   }
 
-  case class NuxInterests(flowContext: Option[FlowContext], uttInterestIds: Option[Seq[Long]])
-      extends DisplayContext {
-    override val toOfflineThrift: OfflineDisplayContext =
-      offline.OfflineDisplayContext.NuxInterests(
-        offline.OfflineNuxInterests(flowContext.map(_.toOfflineThrift)))
+  caselon class RelonactivelonFollow(followelondUselonrIds: Selonq[Long]) elonxtelonnds DisplayContelonxt {
+    ovelonrridelon val toOfflinelonThrift: OfflinelonDisplayContelonxt =
+      offlinelon.OfflinelonDisplayContelonxt.RelonactivelonFollow(offlinelon.OfflinelonRelonactivelonFollow(followelondUselonrIds))
   }
 
-  case class PostNuxFollowTask(flowContext: Option[FlowContext]) extends DisplayContext {
-    override val toOfflineThrift: OfflineDisplayContext =
-      offline.OfflineDisplayContext.PostNuxFollowTask(
-        offline.OfflinePostNuxFollowTask(flowContext.map(_.toOfflineThrift)))
+  caselon class NuxIntelonrelonsts(flowContelonxt: Option[FlowContelonxt], uttIntelonrelonstIds: Option[Selonq[Long]])
+      elonxtelonnds DisplayContelonxt {
+    ovelonrridelon val toOfflinelonThrift: OfflinelonDisplayContelonxt =
+      offlinelon.OfflinelonDisplayContelonxt.NuxIntelonrelonsts(
+        offlinelon.OfflinelonNuxIntelonrelonsts(flowContelonxt.map(_.toOfflinelonThrift)))
   }
 
-  case class AdCampaignTarget(similarToUserIds: Seq[Long]) extends DisplayContext {
-    override val toOfflineThrift: OfflineDisplayContext =
-      offline.OfflineDisplayContext.AdCampaignTarget(
-        offline.OfflineAdCampaignTarget(similarToUserIds))
+  caselon class PostNuxFollowTask(flowContelonxt: Option[FlowContelonxt]) elonxtelonnds DisplayContelonxt {
+    ovelonrridelon val toOfflinelonThrift: OfflinelonDisplayContelonxt =
+      offlinelon.OfflinelonDisplayContelonxt.PostNuxFollowTask(
+        offlinelon.OfflinelonPostNuxFollowTask(flowContelonxt.map(_.toOfflinelonThrift)))
   }
 
-  case class ConnectTab(
-    byfSeedUserIds: Seq[Long],
-    similarToUserIds: Seq[Long],
-    engagedUserIds: Seq[RecentlyEngagedUserId])
-      extends DisplayContext {
-    override val toOfflineThrift: OfflineDisplayContext =
-      offline.OfflineDisplayContext.ConnectTab(
-        offline.OfflineConnectTab(
-          byfSeedUserIds,
-          similarToUserIds,
-          engagedUserIds.map(user => user.toOfflineThrift)))
+  caselon class AdCampaignTargelont(similarToUselonrIds: Selonq[Long]) elonxtelonnds DisplayContelonxt {
+    ovelonrridelon val toOfflinelonThrift: OfflinelonDisplayContelonxt =
+      offlinelon.OfflinelonDisplayContelonxt.AdCampaignTargelont(
+        offlinelon.OfflinelonAdCampaignTargelont(similarToUselonrIds))
   }
 
-  case class SimilarToUser(similarToUserId: Long) extends DisplayContext {
-    override val toOfflineThrift: OfflineDisplayContext =
-      offline.OfflineDisplayContext.SimilarToUser(offline.OfflineSimilarToUser(similarToUserId))
+  caselon class ConnelonctTab(
+    byfSelonelondUselonrIds: Selonq[Long],
+    similarToUselonrIds: Selonq[Long],
+    elonngagelondUselonrIds: Selonq[ReloncelonntlyelonngagelondUselonrId])
+      elonxtelonnds DisplayContelonxt {
+    ovelonrridelon val toOfflinelonThrift: OfflinelonDisplayContelonxt =
+      offlinelon.OfflinelonDisplayContelonxt.ConnelonctTab(
+        offlinelon.OfflinelonConnelonctTab(
+          byfSelonelondUselonrIds,
+          similarToUselonrIds,
+          elonngagelondUselonrIds.map(uselonr => uselonr.toOfflinelonThrift)))
   }
 
-  def fromThrift(tDisplayContext: t.DisplayContext): DisplayContext = tDisplayContext match {
-    case t.DisplayContext.Profile(p) => Profile(p.profileId)
-    case t.DisplayContext.Search(s) => Search(s.searchQuery)
-    case t.DisplayContext.Rux(r) => Rux(r.focalAuthorId)
-    case t.DisplayContext.Topic(t) => Topic(t.topicId)
-    case t.DisplayContext.ReactiveFollow(f) => ReactiveFollow(f.followedUserIds)
-    case t.DisplayContext.NuxInterests(n) =>
-      NuxInterests(n.flowContext.map(FlowContext.fromThrift), n.uttInterestIds)
-    case t.DisplayContext.AdCampaignTarget(a) =>
-      AdCampaignTarget(a.similarToUserIds)
-    case t.DisplayContext.ConnectTab(connect) =>
-      ConnectTab(
-        connect.byfSeedUserIds,
-        connect.similarToUserIds,
-        connect.recentlyEngagedUserIds.map(RecentlyEngagedUserId.fromThrift))
-    case t.DisplayContext.SimilarToUser(r) =>
-      SimilarToUser(r.similarToUserId)
-    case t.DisplayContext.PostNuxFollowTask(p) =>
-      PostNuxFollowTask(p.flowContext.map(FlowContext.fromThrift))
-    case t.DisplayContext.UnknownUnionField(t) =>
-      throw new UnknownDisplayContextException(t.field.name)
+  caselon class SimilarToUselonr(similarToUselonrId: Long) elonxtelonnds DisplayContelonxt {
+    ovelonrridelon val toOfflinelonThrift: OfflinelonDisplayContelonxt =
+      offlinelon.OfflinelonDisplayContelonxt.SimilarToUselonr(offlinelon.OfflinelonSimilarToUselonr(similarToUselonrId))
   }
 
-  def getDisplayContextAs[T <: DisplayContext: ClassTag](displayContext: DisplayContext): T =
-    displayContext match {
-      case context: T => context
-      case _ =>
-        throw new UnexpectedDisplayContextTypeException(
-          displayContext,
-          classTag[T].getClass.getSimpleName)
+  delonf fromThrift(tDisplayContelonxt: t.DisplayContelonxt): DisplayContelonxt = tDisplayContelonxt match {
+    caselon t.DisplayContelonxt.Profilelon(p) => Profilelon(p.profilelonId)
+    caselon t.DisplayContelonxt.Selonarch(s) => Selonarch(s.selonarchQuelonry)
+    caselon t.DisplayContelonxt.Rux(r) => Rux(r.focalAuthorId)
+    caselon t.DisplayContelonxt.Topic(t) => Topic(t.topicId)
+    caselon t.DisplayContelonxt.RelonactivelonFollow(f) => RelonactivelonFollow(f.followelondUselonrIds)
+    caselon t.DisplayContelonxt.NuxIntelonrelonsts(n) =>
+      NuxIntelonrelonsts(n.flowContelonxt.map(FlowContelonxt.fromThrift), n.uttIntelonrelonstIds)
+    caselon t.DisplayContelonxt.AdCampaignTargelont(a) =>
+      AdCampaignTargelont(a.similarToUselonrIds)
+    caselon t.DisplayContelonxt.ConnelonctTab(connelonct) =>
+      ConnelonctTab(
+        connelonct.byfSelonelondUselonrIds,
+        connelonct.similarToUselonrIds,
+        connelonct.reloncelonntlyelonngagelondUselonrIds.map(ReloncelonntlyelonngagelondUselonrId.fromThrift))
+    caselon t.DisplayContelonxt.SimilarToUselonr(r) =>
+      SimilarToUselonr(r.similarToUselonrId)
+    caselon t.DisplayContelonxt.PostNuxFollowTask(p) =>
+      PostNuxFollowTask(p.flowContelonxt.map(FlowContelonxt.fromThrift))
+    caselon t.DisplayContelonxt.UnknownUnionFielonld(t) =>
+      throw nelonw UnknownDisplayContelonxtelonxcelonption(t.fielonld.namelon)
+  }
+
+  delonf gelontDisplayContelonxtAs[T <: DisplayContelonxt: ClassTag](displayContelonxt: DisplayContelonxt): T =
+    displayContelonxt match {
+      caselon contelonxt: T => contelonxt
+      caselon _ =>
+        throw nelonw UnelonxpelonctelondDisplayContelonxtTypelonelonxcelonption(
+          displayContelonxt,
+          classTag[T].gelontClass.gelontSimplelonNamelon)
     }
 }
 
-class UnknownDisplayContextException(name: String)
-    extends Exception(s"Unknown DisplayContext in Thrift: ${name}")
+class UnknownDisplayContelonxtelonxcelonption(namelon: String)
+    elonxtelonnds elonxcelonption(s"Unknown DisplayContelonxt in Thrift: ${namelon}")
 
-class UnexpectedDisplayContextTypeException(displayContext: DisplayContext, expectedType: String)
-    extends Exception(s"DisplayContext ${displayContext} not of expected type ${expectedType}")
+class UnelonxpelonctelondDisplayContelonxtTypelonelonxcelonption(displayContelonxt: DisplayContelonxt, elonxpelonctelondTypelon: String)
+    elonxtelonnds elonxcelonption(s"DisplayContelonxt ${displayContelonxt} not of elonxpelonctelond typelon ${elonxpelonctelondTypelon}")

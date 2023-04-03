@@ -1,65 +1,65 @@
-package com.twitter.visibility.builder.tweets
+packagelon com.twittelonr.visibility.buildelonr.twelonelonts
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.builder.users.ViewerVerbsAuthor
-import com.twitter.visibility.common.UserRelationshipSource
-import com.twitter.visibility.features.TweetIsExclusiveTweet
-import com.twitter.visibility.features.ViewerIsExclusiveTweetRootAuthor
-import com.twitter.visibility.features.ViewerSuperFollowsExclusiveTweetRootAuthor
-import com.twitter.visibility.models.ViewerContext
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.twelonelontypielon.thriftscala.Twelonelont
+import com.twittelonr.visibility.buildelonr.FelonaturelonMapBuildelonr
+import com.twittelonr.visibility.buildelonr.uselonrs.VielonwelonrVelonrbsAuthor
+import com.twittelonr.visibility.common.UselonrRelonlationshipSourcelon
+import com.twittelonr.visibility.felonaturelons.TwelonelontIselonxclusivelonTwelonelont
+import com.twittelonr.visibility.felonaturelons.VielonwelonrIselonxclusivelonTwelonelontRootAuthor
+import com.twittelonr.visibility.felonaturelons.VielonwelonrSupelonrFollowselonxclusivelonTwelonelontRootAuthor
+import com.twittelonr.visibility.modelonls.VielonwelonrContelonxt
 
-class ExclusiveTweetFeatures(
-  userRelationshipSource: UserRelationshipSource,
-  statsReceiver: StatsReceiver) {
+class elonxclusivelonTwelonelontFelonaturelons(
+  uselonrRelonlationshipSourcelon: UselonrRelonlationshipSourcelon,
+  statsReloncelonivelonr: StatsReloncelonivelonr) {
 
-  private[this] val scopedStatsReceiver = statsReceiver.scope("exclusive_tweet_features")
-  private[this] val viewerSuperFollowsAuthor =
-    scopedStatsReceiver.scope(ViewerSuperFollowsExclusiveTweetRootAuthor.name).counter("requests")
+  privatelon[this] val scopelondStatsReloncelonivelonr = statsReloncelonivelonr.scopelon("elonxclusivelon_twelonelont_felonaturelons")
+  privatelon[this] val vielonwelonrSupelonrFollowsAuthor =
+    scopelondStatsReloncelonivelonr.scopelon(VielonwelonrSupelonrFollowselonxclusivelonTwelonelontRootAuthor.namelon).countelonr("relonquelonsts")
 
-  def rootAuthorId(tweet: Tweet): Option[Long] =
-    tweet.exclusiveTweetControl.map(_.conversationAuthorId)
+  delonf rootAuthorId(twelonelont: Twelonelont): Option[Long] =
+    twelonelont.elonxclusivelonTwelonelontControl.map(_.convelonrsationAuthorId)
 
-  def viewerIsRootAuthor(
-    tweet: Tweet,
-    viewerIdOpt: Option[Long]
-  ): Boolean =
-    (rootAuthorId(tweet), viewerIdOpt) match {
-      case (Some(rootAuthorId), Some(viewerId)) if rootAuthorId == viewerId => true
-      case _ => false
+  delonf vielonwelonrIsRootAuthor(
+    twelonelont: Twelonelont,
+    vielonwelonrIdOpt: Option[Long]
+  ): Boolelonan =
+    (rootAuthorId(twelonelont), vielonwelonrIdOpt) match {
+      caselon (Somelon(rootAuthorId), Somelon(vielonwelonrId)) if rootAuthorId == vielonwelonrId => truelon
+      caselon _ => falselon
     }
 
-  def viewerSuperFollowsRootAuthor(
-    tweet: Tweet,
-    viewerId: Option[Long]
-  ): Stitch[Boolean] =
-    rootAuthorId(tweet) match {
-      case Some(authorId) =>
-        ViewerVerbsAuthor(
+  delonf vielonwelonrSupelonrFollowsRootAuthor(
+    twelonelont: Twelonelont,
+    vielonwelonrId: Option[Long]
+  ): Stitch[Boolelonan] =
+    rootAuthorId(twelonelont) match {
+      caselon Somelon(authorId) =>
+        VielonwelonrVelonrbsAuthor(
           authorId,
-          viewerId,
-          userRelationshipSource.superFollows,
-          viewerSuperFollowsAuthor)
-      case None =>
-        Stitch.False
+          vielonwelonrId,
+          uselonrRelonlationshipSourcelon.supelonrFollows,
+          vielonwelonrSupelonrFollowsAuthor)
+      caselon Nonelon =>
+        Stitch.Falselon
     }
 
-  def forTweet(
-    tweet: Tweet,
-    viewerContext: ViewerContext
-  ): FeatureMapBuilder => FeatureMapBuilder = {
-    val viewerId = viewerContext.userId
+  delonf forTwelonelont(
+    twelonelont: Twelonelont,
+    vielonwelonrContelonxt: VielonwelonrContelonxt
+  ): FelonaturelonMapBuildelonr => FelonaturelonMapBuildelonr = {
+    val vielonwelonrId = vielonwelonrContelonxt.uselonrId
 
-    _.withConstantFeature(TweetIsExclusiveTweet, tweet.exclusiveTweetControl.isDefined)
-      .withConstantFeature(ViewerIsExclusiveTweetRootAuthor, viewerIsRootAuthor(tweet, viewerId))
-      .withFeature(
-        ViewerSuperFollowsExclusiveTweetRootAuthor,
-        viewerSuperFollowsRootAuthor(tweet, viewerId))
+    _.withConstantFelonaturelon(TwelonelontIselonxclusivelonTwelonelont, twelonelont.elonxclusivelonTwelonelontControl.isDelonfinelond)
+      .withConstantFelonaturelon(VielonwelonrIselonxclusivelonTwelonelontRootAuthor, vielonwelonrIsRootAuthor(twelonelont, vielonwelonrId))
+      .withFelonaturelon(
+        VielonwelonrSupelonrFollowselonxclusivelonTwelonelontRootAuthor,
+        vielonwelonrSupelonrFollowsRootAuthor(twelonelont, vielonwelonrId))
   }
 
-  def forTweetOnly(tweet: Tweet): FeatureMapBuilder => FeatureMapBuilder = {
-    _.withConstantFeature(TweetIsExclusiveTweet, tweet.exclusiveTweetControl.isDefined)
+  delonf forTwelonelontOnly(twelonelont: Twelonelont): FelonaturelonMapBuildelonr => FelonaturelonMapBuildelonr = {
+    _.withConstantFelonaturelon(TwelonelontIselonxclusivelonTwelonelont, twelonelont.elonxclusivelonTwelonelontControl.isDelonfinelond)
   }
 }

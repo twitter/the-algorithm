@@ -1,46 +1,46 @@
-package com.twitter.search.earlybird_root.caching;
+packagelon com.twittelonr.selonarch.elonarlybird_root.caching;
 
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrelonnt.ConcurrelonntHashMap;
 
-import com.twitter.search.common.caching.filter.PerClientCacheStats;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.earlybird.common.EarlybirdRequestUtil;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
+import com.twittelonr.selonarch.common.caching.filtelonr.PelonrClielonntCachelonStats;
+import com.twittelonr.selonarch.common.melontrics.SelonarchRatelonCountelonr;
+import com.twittelonr.selonarch.elonarlybird.common.elonarlybirdRelonquelonstUtil;
+import com.twittelonr.selonarch.elonarlybird_root.common.elonarlybirdRelonquelonstContelonxt;
 
-public class EarlybirdRequestPerClientCacheStats
-    extends PerClientCacheStats<EarlybirdRequestContext> {
+public class elonarlybirdRelonquelonstPelonrClielonntCachelonStats
+    elonxtelonnds PelonrClielonntCachelonStats<elonarlybirdRelonquelonstContelonxt> {
 
-  private String cacheOffByClientStatFormat;
-  private final Map<String, SearchRateCounter> cacheTurnedOffByClient;
+  privatelon String cachelonOffByClielonntStatFormat;
+  privatelon final Map<String, SelonarchRatelonCountelonr> cachelonTurnelondOffByClielonnt;
 
-  private String cacheHitsByClientStatFormat;
-  private final Map<String, SearchRateCounter> cacheHitsByClient;
+  privatelon String cachelonHitsByClielonntStatFormat;
+  privatelon final Map<String, SelonarchRatelonCountelonr> cachelonHitsByClielonnt;
 
-  public EarlybirdRequestPerClientCacheStats(String cacheRequestType) {
-    this.cacheOffByClientStatFormat =
-        cacheRequestType + "_client_id_%s_cache_turned_off_in_request";
-    this.cacheTurnedOffByClient = new ConcurrentHashMap<>();
+  public elonarlybirdRelonquelonstPelonrClielonntCachelonStats(String cachelonRelonquelonstTypelon) {
+    this.cachelonOffByClielonntStatFormat =
+        cachelonRelonquelonstTypelon + "_clielonnt_id_%s_cachelon_turnelond_off_in_relonquelonst";
+    this.cachelonTurnelondOffByClielonnt = nelonw ConcurrelonntHashMap<>();
 
-    this.cacheHitsByClientStatFormat = cacheRequestType + "_client_id_%s_cache_hit_total";
-    this.cacheHitsByClient = new ConcurrentHashMap<>();
+    this.cachelonHitsByClielonntStatFormat = cachelonRelonquelonstTypelon + "_clielonnt_id_%s_cachelon_hit_total";
+    this.cachelonHitsByClielonnt = nelonw ConcurrelonntHashMap<>();
   }
 
-  @Override
-  public void recordRequest(EarlybirdRequestContext requestContext) {
-    if (!EarlybirdRequestUtil.isCachingAllowed(requestContext.getRequest())) {
-      String client = requestContext.getRequest().getClientId();
-      SearchRateCounter counter = cacheTurnedOffByClient.computeIfAbsent(client,
-          cl -> SearchRateCounter.export(String.format(cacheOffByClientStatFormat, cl)));
-      counter.increment();
+  @Ovelonrridelon
+  public void reloncordRelonquelonst(elonarlybirdRelonquelonstContelonxt relonquelonstContelonxt) {
+    if (!elonarlybirdRelonquelonstUtil.isCachingAllowelond(relonquelonstContelonxt.gelontRelonquelonst())) {
+      String clielonnt = relonquelonstContelonxt.gelontRelonquelonst().gelontClielonntId();
+      SelonarchRatelonCountelonr countelonr = cachelonTurnelondOffByClielonnt.computelonIfAbselonnt(clielonnt,
+          cl -> SelonarchRatelonCountelonr.elonxport(String.format(cachelonOffByClielonntStatFormat, cl)));
+      countelonr.increlonmelonnt();
     }
   }
 
-  @Override
-  public void recordCacheHit(EarlybirdRequestContext requestContext) {
-    String client = requestContext.getRequest().getClientId();
-    SearchRateCounter counter = cacheHitsByClient.computeIfAbsent(client,
-        cl -> SearchRateCounter.export(String.format(cacheHitsByClientStatFormat, cl)));
-    counter.increment();
+  @Ovelonrridelon
+  public void reloncordCachelonHit(elonarlybirdRelonquelonstContelonxt relonquelonstContelonxt) {
+    String clielonnt = relonquelonstContelonxt.gelontRelonquelonst().gelontClielonntId();
+    SelonarchRatelonCountelonr countelonr = cachelonHitsByClielonnt.computelonIfAbselonnt(clielonnt,
+        cl -> SelonarchRatelonCountelonr.elonxport(String.format(cachelonHitsByClielonntStatFormat, cl)));
+    countelonr.increlonmelonnt();
   }
 }

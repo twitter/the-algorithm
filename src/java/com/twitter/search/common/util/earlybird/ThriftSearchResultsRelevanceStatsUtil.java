@@ -1,46 +1,46 @@
-package com.twitter.search.common.util.earlybird;
+packagelon com.twittelonr.selonarch.common.util.elonarlybird;
 
-import com.twitter.search.earlybird.thrift.ThriftSearchResultsRelevanceStats;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsultsRelonlelonvancelonStats;
 
-public final class ThriftSearchResultsRelevanceStatsUtil {
-  private ThriftSearchResultsRelevanceStatsUtil() { }
+public final class ThriftSelonarchRelonsultsRelonlelonvancelonStatsUtil {
+  privatelon ThriftSelonarchRelonsultsRelonlelonvancelonStatsUtil() { }
 
   /**
-   * Adding ThriftSearchResultsRelevanceStats from one set of results onto a base set.
-   * Assumes all values are set on both of the inputs.
+   * Adding ThriftSelonarchRelonsultsRelonlelonvancelonStats from onelon selont of relonsults onto a baselon selont.
+   * Assumelons all valuelons arelon selont on both of thelon inputs.
    *
-   * @param base the stats to add to.
-   * @param delta the stats to be added.
+   * @param baselon thelon stats to add to.
+   * @param delonlta thelon stats to belon addelond.
    */
-  public static void addRelevanceStats(ThriftSearchResultsRelevanceStats base,
-                                       ThriftSearchResultsRelevanceStats delta) {
-    base.setNumScored(base.getNumScored() + delta.getNumScored());
-    base.setNumSkipped(base.getNumSkipped() + delta.getNumSkipped());
-    base.setNumSkippedForAntiGaming(
-            base.getNumSkippedForAntiGaming() + delta.getNumSkippedForAntiGaming());
-    base.setNumSkippedForLowReputation(
-            base.getNumSkippedForLowReputation() + delta.getNumSkippedForLowReputation());
-    base.setNumSkippedForLowTextScore(
-            base.getNumSkippedForLowTextScore() + delta.getNumSkippedForLowTextScore());
-    base.setNumSkippedForSocialFilter(
-            base.getNumSkippedForSocialFilter() + delta.getNumSkippedForSocialFilter());
-    base.setNumSkippedForLowFinalScore(
-            base.getNumSkippedForLowFinalScore() + delta.getNumSkippedForLowFinalScore());
-    if (delta.getOldestScoredTweetAgeInSeconds() > base.getOldestScoredTweetAgeInSeconds()) {
-      base.setOldestScoredTweetAgeInSeconds(delta.getOldestScoredTweetAgeInSeconds());
+  public static void addRelonlelonvancelonStats(ThriftSelonarchRelonsultsRelonlelonvancelonStats baselon,
+                                       ThriftSelonarchRelonsultsRelonlelonvancelonStats delonlta) {
+    baselon.selontNumScorelond(baselon.gelontNumScorelond() + delonlta.gelontNumScorelond());
+    baselon.selontNumSkippelond(baselon.gelontNumSkippelond() + delonlta.gelontNumSkippelond());
+    baselon.selontNumSkippelondForAntiGaming(
+            baselon.gelontNumSkippelondForAntiGaming() + delonlta.gelontNumSkippelondForAntiGaming());
+    baselon.selontNumSkippelondForLowRelonputation(
+            baselon.gelontNumSkippelondForLowRelonputation() + delonlta.gelontNumSkippelondForLowRelonputation());
+    baselon.selontNumSkippelondForLowTelonxtScorelon(
+            baselon.gelontNumSkippelondForLowTelonxtScorelon() + delonlta.gelontNumSkippelondForLowTelonxtScorelon());
+    baselon.selontNumSkippelondForSocialFiltelonr(
+            baselon.gelontNumSkippelondForSocialFiltelonr() + delonlta.gelontNumSkippelondForSocialFiltelonr());
+    baselon.selontNumSkippelondForLowFinalScorelon(
+            baselon.gelontNumSkippelondForLowFinalScorelon() + delonlta.gelontNumSkippelondForLowFinalScorelon());
+    if (delonlta.gelontOldelonstScorelondTwelonelontAgelonInSelonconds() > baselon.gelontOldelonstScorelondTwelonelontAgelonInSelonconds()) {
+      baselon.selontOldelonstScorelondTwelonelontAgelonInSelonconds(delonlta.gelontOldelonstScorelondTwelonelontAgelonInSelonconds());
     }
 
-    base.setNumFromDirectFollows(base.getNumFromDirectFollows() + delta.getNumFromDirectFollows());
-    base.setNumFromTrustedCircle(base.getNumFromTrustedCircle() + delta.getNumFromTrustedCircle());
-    base.setNumReplies(base.getNumReplies() + delta.getNumReplies());
-    base.setNumRepliesTrusted(base.getNumRepliesTrusted() + delta.getNumRepliesTrusted());
-    base.setNumRepliesOutOfNetwork(
-            base.getNumRepliesOutOfNetwork() + delta.getNumRepliesOutOfNetwork());
-    base.setNumSelfTweets(base.getNumSelfTweets() + delta.getNumSelfTweets());
-    base.setNumWithMedia(base.getNumWithMedia() + delta.getNumWithMedia());
-    base.setNumWithNews(base.getNumWithNews() + delta.getNumWithNews());
-    base.setNumSpamUser(base.getNumSpamUser() + delta.getNumSpamUser());
-    base.setNumOffensive(base.getNumOffensive() + delta.getNumOffensive());
-    base.setNumBot(base.getNumBot() + delta.getNumBot());
+    baselon.selontNumFromDirelonctFollows(baselon.gelontNumFromDirelonctFollows() + delonlta.gelontNumFromDirelonctFollows());
+    baselon.selontNumFromTrustelondCirclelon(baselon.gelontNumFromTrustelondCirclelon() + delonlta.gelontNumFromTrustelondCirclelon());
+    baselon.selontNumRelonplielons(baselon.gelontNumRelonplielons() + delonlta.gelontNumRelonplielons());
+    baselon.selontNumRelonplielonsTrustelond(baselon.gelontNumRelonplielonsTrustelond() + delonlta.gelontNumRelonplielonsTrustelond());
+    baselon.selontNumRelonplielonsOutOfNelontwork(
+            baselon.gelontNumRelonplielonsOutOfNelontwork() + delonlta.gelontNumRelonplielonsOutOfNelontwork());
+    baselon.selontNumSelonlfTwelonelonts(baselon.gelontNumSelonlfTwelonelonts() + delonlta.gelontNumSelonlfTwelonelonts());
+    baselon.selontNumWithMelondia(baselon.gelontNumWithMelondia() + delonlta.gelontNumWithMelondia());
+    baselon.selontNumWithNelonws(baselon.gelontNumWithNelonws() + delonlta.gelontNumWithNelonws());
+    baselon.selontNumSpamUselonr(baselon.gelontNumSpamUselonr() + delonlta.gelontNumSpamUselonr());
+    baselon.selontNumOffelonnsivelon(baselon.gelontNumOffelonnsivelon() + delonlta.gelontNumOffelonnsivelon());
+    baselon.selontNumBot(baselon.gelontNumBot() + delonlta.gelontNumBot());
   }
 }

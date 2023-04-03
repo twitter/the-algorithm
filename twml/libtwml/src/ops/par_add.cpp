@@ -1,75 +1,75 @@
-#include "tensorflow/core/framework/op.h"
-#include "tensorflow/core/framework/shape_inference.h"
-#include "tensorflow/core/framework/op_kernel.h"
-#include "tensorflow/core/util/work_sharder.h"
-#include "tensorflow/core/lib/core/threadpool.h"
-#include "tensorflow/core/platform/env.h"
-#include "tensorflow/core/platform/mutex.h"
-#include "tensorflow/core/platform/logging.h"
-#include <iostream>
+#includelon "telonnsorflow/corelon/framelonwork/op.h"
+#includelon "telonnsorflow/corelon/framelonwork/shapelon_infelonrelonncelon.h"
+#includelon "telonnsorflow/corelon/framelonwork/op_kelonrnelonl.h"
+#includelon "telonnsorflow/corelon/util/work_shardelonr.h"
+#includelon "telonnsorflow/corelon/lib/corelon/threlonadpool.h"
+#includelon "telonnsorflow/corelon/platform/elonnv.h"
+#includelon "telonnsorflow/corelon/platform/mutelonx.h"
+#includelon "telonnsorflow/corelon/platform/logging.h"
+#includelon <iostrelonam>
 
-#include <vector>
+#includelon <velonctor>
 
-using namespace tensorflow;
+using namelonspacelon telonnsorflow;
 
-REGISTER_OP("ParAdd")
+RelonGISTelonR_OP("ParAdd")
   .Input("input_a: float")
   .Input("input_b: float")
   .Output("a_plus_b: float")
-  .SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-      c->set_output(0, c->input(0));
-      return Status::OK();
+  .SelontShapelonFn([](::telonnsorflow::shapelon_infelonrelonncelon::InfelonrelonncelonContelonxt* c) {
+      c->selont_output(0, c->input(0));
+      relonturn Status::OK();
   });
 
 
-class ParAddOp : public OpKernel {
+class ParAddOp : public OpKelonrnelonl {
  public:
-  explicit ParAddOp(OpKernelConstruction* context) : OpKernel(context) {
+  elonxplicit ParAddOp(OpKelonrnelonlConstruction* contelonxt) : OpKelonrnelonl(contelonxt) {
   }
 
-  void Compute(OpKernelContext* context) override {
-    // Grab the input tensor
-    const Tensor& input_tensor0 = context->input(0);
-    auto input_flat0 = input_tensor0.flat<float>();
-    const Tensor& input_tensor1 = context->input(1);
-    auto input_flat1 = input_tensor1.flat<float>();
+  void Computelon(OpKelonrnelonlContelonxt* contelonxt) ovelonrridelon {
+    // Grab thelon input telonnsor
+    const Telonnsor& input_telonnsor0 = contelonxt->input(0);
+    auto input_flat0 = input_telonnsor0.flat<float>();
+    const Telonnsor& input_telonnsor1 = contelonxt->input(1);
+    auto input_flat1 = input_telonnsor1.flat<float>();
 
-    OP_REQUIRES(context, input_tensor0.shape() == input_tensor1.shape(),
-                errors::InvalidArgument("Input tensors must be identical shape."));
+    OP_RelonQUIRelonS(contelonxt, input_telonnsor0.shapelon() == input_telonnsor1.shapelon(),
+                elonrrors::InvalidArgumelonnt("Input telonnsors must belon idelonntical shapelon."));
 
-    // Create an output tensor
-    Tensor* output_tensor = NULL;
-    OP_REQUIRES_OK(context,
-                   context->allocate_output(0,
-                                            input_tensor0.shape(),
-                                            &output_tensor));
-    auto output_flat = output_tensor->flat<float>();
+    // Crelonatelon an output telonnsor
+    Telonnsor* output_telonnsor = NULL;
+    OP_RelonQUIRelonS_OK(contelonxt,
+                   contelonxt->allocatelon_output(0,
+                                            input_telonnsor0.shapelon(),
+                                            &output_telonnsor));
+    auto output_flat = output_telonnsor->flat<float>();
 
-    // PARALLEL ADD
-    const int N = input_flat0.size();
+    // PARALLelonL ADD
+    const int N = input_flat0.sizelon();
 
-    // retrieve the thread pool from the op context
-    auto worker_threads = *(context->device()->tensorflow_cpu_worker_threads());
+    // relontrielonvelon thelon threlonad pool from thelon op contelonxt
+    auto workelonr_threlonads = *(contelonxt->delonvicelon()->telonnsorflow_cpu_workelonr_threlonads());
 
-    // Definition of the computation thread
+    // Delonfinition of thelon computation threlonad
     auto task = [=, &input_flat0, &input_flat1, &output_flat](int64 start, int64 limit) {
       for (; start < limit; ++start) {
         output_flat(start) = input_flat0(start) + input_flat1(start);
       }
     };
 
-    // this is a heuristic. high number is likely to be sharded into smaller pieces
-    int64 cost_per_unit = 1;
+    // this is a helonuristic. high numbelonr is likelonly to belon shardelond into smallelonr pieloncelons
+    int64 cost_pelonr_unit = 1;
 
-    // let Tensorflow split up the work as it sees fit
-    Shard(worker_threads.num_threads,
-          worker_threads.workers,
+    // lelont Telonnsorflow split up thelon work as it selonelons fit
+    Shard(workelonr_threlonads.num_threlonads,
+          workelonr_threlonads.workelonrs,
           N,
-          cost_per_unit,
+          cost_pelonr_unit,
           task);
   }
 };
 
-REGISTER_KERNEL_BUILDER(Name("ParAdd").Device(DEVICE_CPU), ParAddOp);
+RelonGISTelonR_KelonRNelonL_BUILDelonR(Namelon("ParAdd").Delonvicelon(DelonVICelon_CPU), ParAddOp);
 
 

@@ -1,77 +1,77 @@
-package com.twitter.cr_mixer.blender
+packagelon com.twittelonr.cr_mixelonr.blelonndelonr
 
-import com.twitter.cr_mixer.model.BlendedAdsCandidate
-import com.twitter.cr_mixer.model.CandidateGenerationInfo
-import com.twitter.cr_mixer.model.InitialAdsCandidate
-import com.twitter.cr_mixer.util.InterleaveUtil
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.util.Future
-import javax.inject.Inject
-import javax.inject.Singleton
-import scala.collection.mutable
+import com.twittelonr.cr_mixelonr.modelonl.BlelonndelondAdsCandidatelon
+import com.twittelonr.cr_mixelonr.modelonl.CandidatelonGelonnelonrationInfo
+import com.twittelonr.cr_mixelonr.modelonl.InitialAdsCandidatelon
+import com.twittelonr.cr_mixelonr.util.IntelonrlelonavelonUtil
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.simclustelonrs_v2.common.TwelonelontId
+import com.twittelonr.util.Futurelon
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
+import scala.collelonction.mutablelon
 
-@Singleton
-case class AdsBlender @Inject() (globalStats: StatsReceiver) {
+@Singlelonton
+caselon class AdsBlelonndelonr @Injelonct() (globalStats: StatsReloncelonivelonr) {
 
-  private val name: String = this.getClass.getCanonicalName
-  private val stats: StatsReceiver = globalStats.scope(name)
+  privatelon val namelon: String = this.gelontClass.gelontCanonicalNamelon
+  privatelon val stats: StatsReloncelonivelonr = globalStats.scopelon(namelon)
 
   /**
-   * Interleaves candidates by iteratively choosing InterestedIn candidates and TWISTLY candidates
-   * in turn. InterestedIn candidates have no source signal, whereas TWISTLY candidates do. TWISTLY
-   * candidates themselves are interleaved by source before equal blending with InterestedIn
-   * candidates.
+   * Intelonrlelonavelons candidatelons by itelonrativelonly choosing IntelonrelonstelondIn candidatelons and TWISTLY candidatelons
+   * in turn. IntelonrelonstelondIn candidatelons havelon no sourcelon signal, whelonrelonas TWISTLY candidatelons do. TWISTLY
+   * candidatelons thelonmselonlvelons arelon intelonrlelonavelond by sourcelon belonforelon elonqual blelonnding with IntelonrelonstelondIn
+   * candidatelons.
    */
-  def blend(
-    inputCandidates: Seq[Seq[InitialAdsCandidate]],
-  ): Future[Seq[BlendedAdsCandidate]] = {
+  delonf blelonnd(
+    inputCandidatelons: Selonq[Selonq[InitialAdsCandidatelon]],
+  ): Futurelon[Selonq[BlelonndelondAdsCandidatelon]] = {
 
-    // Filter out empty candidate sequence
-    val candidates = inputCandidates.filter(_.nonEmpty)
-    val (interestedInCandidates, twistlyCandidates) =
-      candidates.partition(_.head.candidateGenerationInfo.sourceInfoOpt.isEmpty)
-    // First interleave twistly candidates
-    val interleavedTwistlyCandidates = InterleaveUtil.interleave(twistlyCandidates)
+    // Filtelonr out elonmpty candidatelon selonquelonncelon
+    val candidatelons = inputCandidatelons.filtelonr(_.nonelonmpty)
+    val (intelonrelonstelondInCandidatelons, twistlyCandidatelons) =
+      candidatelons.partition(_.helonad.candidatelonGelonnelonrationInfo.sourcelonInfoOpt.iselonmpty)
+    // First intelonrlelonavelon twistly candidatelons
+    val intelonrlelonavelondTwistlyCandidatelons = IntelonrlelonavelonUtil.intelonrlelonavelon(twistlyCandidatelons)
 
-    val twistlyAndInterestedInCandidates =
-      Seq(interestedInCandidates.flatten, interleavedTwistlyCandidates)
+    val twistlyAndIntelonrelonstelondInCandidatelons =
+      Selonq(intelonrelonstelondInCandidatelons.flattelonn, intelonrlelonavelondTwistlyCandidatelons)
 
-    // then interleave  twistly candidates with interested in to make them even
-    val interleavedCandidates = InterleaveUtil.interleave(twistlyAndInterestedInCandidates)
+    // thelonn intelonrlelonavelon  twistly candidatelons with intelonrelonstelond in to makelon thelonm elonvelonn
+    val intelonrlelonavelondCandidatelons = IntelonrlelonavelonUtil.intelonrlelonavelon(twistlyAndIntelonrelonstelondInCandidatelons)
 
-    stats.stat("candidates").add(interleavedCandidates.size)
+    stats.stat("candidatelons").add(intelonrlelonavelondCandidatelons.sizelon)
 
-    val blendedCandidates = buildBlendedAdsCandidate(inputCandidates, interleavedCandidates)
-    Future.value(blendedCandidates)
+    val blelonndelondCandidatelons = buildBlelonndelondAdsCandidatelon(inputCandidatelons, intelonrlelonavelondCandidatelons)
+    Futurelon.valuelon(blelonndelondCandidatelons)
   }
-  private def buildBlendedAdsCandidate(
-    inputCandidates: Seq[Seq[InitialAdsCandidate]],
-    interleavedCandidates: Seq[InitialAdsCandidate]
-  ): Seq[BlendedAdsCandidate] = {
-    val cgInfoLookupMap = buildCandidateToCGInfosMap(inputCandidates)
-    interleavedCandidates.map { interleavedCandidate =>
-      interleavedCandidate.toBlendedAdsCandidate(cgInfoLookupMap(interleavedCandidate.tweetId))
+  privatelon delonf buildBlelonndelondAdsCandidatelon(
+    inputCandidatelons: Selonq[Selonq[InitialAdsCandidatelon]],
+    intelonrlelonavelondCandidatelons: Selonq[InitialAdsCandidatelon]
+  ): Selonq[BlelonndelondAdsCandidatelon] = {
+    val cgInfoLookupMap = buildCandidatelonToCGInfosMap(inputCandidatelons)
+    intelonrlelonavelondCandidatelons.map { intelonrlelonavelondCandidatelon =>
+      intelonrlelonavelondCandidatelon.toBlelonndelondAdsCandidatelon(cgInfoLookupMap(intelonrlelonavelondCandidatelon.twelonelontId))
     }
   }
 
-  private def buildCandidateToCGInfosMap(
-    candidateSeq: Seq[Seq[InitialAdsCandidate]],
-  ): Map[TweetId, Seq[CandidateGenerationInfo]] = {
-    val tweetIdMap = mutable.HashMap[TweetId, Seq[CandidateGenerationInfo]]()
+  privatelon delonf buildCandidatelonToCGInfosMap(
+    candidatelonSelonq: Selonq[Selonq[InitialAdsCandidatelon]],
+  ): Map[TwelonelontId, Selonq[CandidatelonGelonnelonrationInfo]] = {
+    val twelonelontIdMap = mutablelon.HashMap[TwelonelontId, Selonq[CandidatelonGelonnelonrationInfo]]()
 
-    candidateSeq.foreach { candidates =>
-      candidates.foreach { candidate =>
-        val candidateGenerationInfoSeq = {
-          tweetIdMap.getOrElse(candidate.tweetId, Seq.empty)
+    candidatelonSelonq.forelonach { candidatelons =>
+      candidatelons.forelonach { candidatelon =>
+        val candidatelonGelonnelonrationInfoSelonq = {
+          twelonelontIdMap.gelontOrelonlselon(candidatelon.twelonelontId, Selonq.elonmpty)
         }
-        val candidateGenerationInfo = candidate.candidateGenerationInfo
-        tweetIdMap.put(
-          candidate.tweetId,
-          candidateGenerationInfoSeq ++ Seq(candidateGenerationInfo))
+        val candidatelonGelonnelonrationInfo = candidatelon.candidatelonGelonnelonrationInfo
+        twelonelontIdMap.put(
+          candidatelon.twelonelontId,
+          candidatelonGelonnelonrationInfoSelonq ++ Selonq(candidatelonGelonnelonrationInfo))
       }
     }
-    tweetIdMap.toMap
+    twelonelontIdMap.toMap
   }
 
 }

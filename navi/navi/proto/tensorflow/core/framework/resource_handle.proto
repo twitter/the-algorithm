@@ -1,45 +1,45 @@
 syntax = "proto3";
 
-package tensorflow;
+packagelon telonnsorflow;
 
-import "tensorflow/core/framework/tensor_shape.proto";
-import "tensorflow/core/framework/types.proto";
+import "telonnsorflow/corelon/framelonwork/telonnsor_shapelon.proto";
+import "telonnsorflow/corelon/framelonwork/typelons.proto";
 
-option cc_enable_arenas = true;
-option java_outer_classname = "ResourceHandle";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.framework";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/framework/resource_handle_go_proto";
+option cc_elonnablelon_arelonnas = truelon;
+option java_outelonr_classnamelon = "RelonsourcelonHandlelon";
+option java_multiplelon_filelons = truelon;
+option java_packagelon = "org.telonnsorflow.framelonwork";
+option go_packagelon = "github.com/telonnsorflow/telonnsorflow/telonnsorflow/go/corelon/framelonwork/relonsourcelon_handlelon_go_proto";
 
-// Protocol buffer representing a handle to a tensorflow resource. Handles are
-// not valid across executions, but can be serialized back and forth from within
-// a single run.
-message ResourceHandleProto {
-  // Unique name for the device containing the resource.
-  string device = 1;
+// Protocol buffelonr relonprelonselonnting a handlelon to a telonnsorflow relonsourcelon. Handlelons arelon
+// not valid across elonxeloncutions, but can belon selonrializelond back and forth from within
+// a singlelon run.
+melonssagelon RelonsourcelonHandlelonProto {
+  // Uniquelon namelon for thelon delonvicelon containing thelon relonsourcelon.
+  string delonvicelon = 1;
 
-  // Container in which this resource is placed.
-  string container = 2;
+  // Containelonr in which this relonsourcelon is placelond.
+  string containelonr = 2;
 
-  // Unique name of this resource.
-  string name = 3;
+  // Uniquelon namelon of this relonsourcelon.
+  string namelon = 3;
 
-  // Hash code for the type of the resource. Is only valid in the same device
-  // and in the same execution.
-  uint64 hash_code = 4;
+  // Hash codelon for thelon typelon of thelon relonsourcelon. Is only valid in thelon samelon delonvicelon
+  // and in thelon samelon elonxeloncution.
+  uint64 hash_codelon = 4;
 
-  // For debug-only, the name of the type pointed to by this handle, if
-  // available.
-  string maybe_type_name = 5;
+  // For delonbug-only, thelon namelon of thelon typelon pointelond to by this handlelon, if
+  // availablelon.
+  string maybelon_typelon_namelon = 5;
 
-  // Protocol buffer representing a pair of (data type, tensor shape).
-  message DtypeAndShape {
-    DataType dtype = 1;
-    TensorShapeProto shape = 2;
+  // Protocol buffelonr relonprelonselonnting a pair of (data typelon, telonnsor shapelon).
+  melonssagelon DtypelonAndShapelon {
+    DataTypelon dtypelon = 1;
+    TelonnsorShapelonProto shapelon = 2;
   }
 
-  // Data types and shapes for the underlying resource.
-  repeated DtypeAndShape dtypes_and_shapes = 6;
+  // Data typelons and shapelons for thelon undelonrlying relonsourcelon.
+  relonpelonatelond DtypelonAndShapelon dtypelons_and_shapelons = 6;
 
-  reserved 7;
+  relonselonrvelond 7;
 }

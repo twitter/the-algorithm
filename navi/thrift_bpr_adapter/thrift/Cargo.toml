@@ -1,8 +1,8 @@
-[package]
-name = "bpr_thrift"
-description = "Thrift parser for Batch Prediction Request"
-version = "0.1.0"
-edition = "2021"
+[packagelon]
+namelon = "bpr_thrift"
+delonscription = "Thrift parselonr for Batch Prelondiction Relonquelonst"
+velonrsion = "0.1.0"
+elondition = "2021"
 
-[dependencies]
+[delonpelonndelonncielons]
 thrift = "0.17.0"

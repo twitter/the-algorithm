@@ -1,40 +1,40 @@
-package com.twitter.follow_recommendations.controllers
+packagelon com.twittelonr.follow_reloncommelonndations.controllelonrs
 
-import com.twitter.finatra.thrift.Controller
-import com.twitter.follow_recommendations.configapi.ParamsFactory
-import com.twitter.follow_recommendations.services.ProductPipelineSelector
-import com.twitter.follow_recommendations.services.UserScoringService
-import com.twitter.follow_recommendations.thriftscala.FollowRecommendationsThriftService
-import com.twitter.follow_recommendations.thriftscala.FollowRecommendationsThriftService._
-import com.twitter.stitch.Stitch
-import javax.inject.Inject
+import com.twittelonr.finatra.thrift.Controllelonr
+import com.twittelonr.follow_reloncommelonndations.configapi.ParamsFactory
+import com.twittelonr.follow_reloncommelonndations.selonrvicelons.ProductPipelonlinelonSelonlelonctor
+import com.twittelonr.follow_reloncommelonndations.selonrvicelons.UselonrScoringSelonrvicelon
+import com.twittelonr.follow_reloncommelonndations.thriftscala.FollowReloncommelonndationsThriftSelonrvicelon
+import com.twittelonr.follow_reloncommelonndations.thriftscala.FollowReloncommelonndationsThriftSelonrvicelon._
+import com.twittelonr.stitch.Stitch
+import javax.injelonct.Injelonct
 
-class ThriftController @Inject() (
-  userScoringService: UserScoringService,
-  recommendationRequestBuilder: RecommendationRequestBuilder,
-  scoringUserRequestBuilder: ScoringUserRequestBuilder,
-  productPipelineSelector: ProductPipelineSelector,
+class ThriftControllelonr @Injelonct() (
+  uselonrScoringSelonrvicelon: UselonrScoringSelonrvicelon,
+  reloncommelonndationRelonquelonstBuildelonr: ReloncommelonndationRelonquelonstBuildelonr,
+  scoringUselonrRelonquelonstBuildelonr: ScoringUselonrRelonquelonstBuildelonr,
+  productPipelonlinelonSelonlelonctor: ProductPipelonlinelonSelonlelonctor,
   paramsFactory: ParamsFactory)
-    extends Controller(FollowRecommendationsThriftService) {
+    elonxtelonnds Controllelonr(FollowReloncommelonndationsThriftSelonrvicelon) {
 
-  handle(GetRecommendations) { args: GetRecommendations.Args =>
-    val stitch = recommendationRequestBuilder.fromThrift(args.request).flatMap { request =>
+  handlelon(GelontReloncommelonndations) { args: GelontReloncommelonndations.Args =>
+    val stitch = reloncommelonndationRelonquelonstBuildelonr.fromThrift(args.relonquelonst).flatMap { relonquelonst =>
       val params = paramsFactory(
-        request.clientContext,
-        request.displayLocation,
-        request.debugParams.flatMap(_.featureOverrides).getOrElse(Map.empty))
-      productPipelineSelector.selectPipeline(request, params).map(_.toThrift)
+        relonquelonst.clielonntContelonxt,
+        relonquelonst.displayLocation,
+        relonquelonst.delonbugParams.flatMap(_.felonaturelonOvelonrridelons).gelontOrelonlselon(Map.elonmpty))
+      productPipelonlinelonSelonlelonctor.selonlelonctPipelonlinelon(relonquelonst, params).map(_.toThrift)
     }
     Stitch.run(stitch)
   }
 
-  handle(ScoreUserCandidates) { args: ScoreUserCandidates.Args =>
-    val stitch = scoringUserRequestBuilder.fromThrift(args.request).flatMap { request =>
+  handlelon(ScorelonUselonrCandidatelons) { args: ScorelonUselonrCandidatelons.Args =>
+    val stitch = scoringUselonrRelonquelonstBuildelonr.fromThrift(args.relonquelonst).flatMap { relonquelonst =>
       val params = paramsFactory(
-        request.clientContext,
-        request.displayLocation,
-        request.debugParams.flatMap(_.featureOverrides).getOrElse(Map.empty))
-      userScoringService.get(request.copy(params = params)).map(_.toThrift)
+        relonquelonst.clielonntContelonxt,
+        relonquelonst.displayLocation,
+        relonquelonst.delonbugParams.flatMap(_.felonaturelonOvelonrridelons).gelontOrelonlselon(Map.elonmpty))
+      uselonrScoringSelonrvicelon.gelont(relonquelonst.copy(params = params)).map(_.toThrift)
     }
     Stitch.run(stitch)
   }

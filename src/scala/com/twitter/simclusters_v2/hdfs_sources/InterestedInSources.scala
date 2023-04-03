@@ -1,177 +1,177 @@
-package com.twitter.simclusters_v2.hdfs_sources
+packagelon com.twittelonr.simclustelonrs_v2.hdfs_sourcelons
 
-import com.twitter.dal.client.dataset.KeyValDALDataset
-import com.twitter.scalding.{DateOps, DateRange, Days, TypedPipe}
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.remote_access.{ExplicitLocation, ProcAtla}
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
-import com.twitter.simclusters_v2.thriftscala.ClustersUserIsInterestedIn
-import java.util.TimeZone
+import com.twittelonr.dal.clielonnt.dataselont.KelonyValDALDataselont
+import com.twittelonr.scalding.{DatelonOps, DatelonRangelon, Days, TypelondPipelon}
+import com.twittelonr.scalding_intelonrnal.dalv2.DAL
+import com.twittelonr.scalding_intelonrnal.dalv2.relonmotelon_accelonss.{elonxplicitLocation, ProcAtla}
+import com.twittelonr.scalding_intelonrnal.multiformat.format.kelonyval.KelonyVal
+import com.twittelonr.simclustelonrs_v2.common.UselonrId
+import com.twittelonr.simclustelonrs_v2.thriftscala.ModelonlVelonrsion
+import com.twittelonr.simclustelonrs_v2.thriftscala.ClustelonrsUselonrIsIntelonrelonstelondIn
+import java.util.TimelonZonelon
 
-object InterestedInSources {
+objelonct IntelonrelonstelondInSourcelons {
 
-  private val ModelVersionInterestedInDatasetMap: Map[ModelVersion, KeyValDALDataset[
-    KeyVal[UserId, ClustersUserIsInterestedIn]
+  privatelon val ModelonlVelonrsionIntelonrelonstelondInDataselontMap: Map[ModelonlVelonrsion, KelonyValDALDataselont[
+    KelonyVal[UselonrId, ClustelonrsUselonrIsIntelonrelonstelondIn]
   ]] = Map(
-    ModelVersion.Model20m145kDec11 -> SimclustersV2InterestedInScalaDataset,
-    ModelVersion.Model20m145kUpdated -> SimclustersV2InterestedIn20M145KUpdatedScalaDataset,
-    ModelVersion.Model20m145k2020 -> SimclustersV2InterestedIn20M145K2020ScalaDataset
+    ModelonlVelonrsion.Modelonl20m145kDelonc11 -> SimclustelonrsV2IntelonrelonstelondInScalaDataselont,
+    ModelonlVelonrsion.Modelonl20m145kUpdatelond -> SimclustelonrsV2IntelonrelonstelondIn20M145KUpdatelondScalaDataselont,
+    ModelonlVelonrsion.Modelonl20m145k2020 -> SimclustelonrsV2IntelonrelonstelondIn20M145K2020ScalaDataselont
   )
 
   /**
-   * Internal version, not PDP compliant, not to be used outside simclusters_v2
-   * Reads 20M145KDec11 production InterestedIn data from atla-proc, with a 14-day extended window
+   * Intelonrnal velonrsion, not PDP compliant, not to belon uselond outsidelon simclustelonrs_v2
+   * Relonads 20M145KDelonc11 production IntelonrelonstelondIn data from atla-proc, with a 14-day elonxtelonndelond window
    */
-  private[simclusters_v2] def simClustersRawInterestedInDec11Source(
-    dateRange: DateRange,
-    timeZone: TimeZone
-  ): TypedPipe[(UserId, ClustersUserIsInterestedIn)] = {
+  privatelon[simclustelonrs_v2] delonf simClustelonrsRawIntelonrelonstelondInDelonc11Sourcelon(
+    datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon
+  ): TypelondPipelon[(UselonrId, ClustelonrsUselonrIsIntelonrelonstelondIn)] = {
 
     DAL
-      .readMostRecentSnapshot(
-        SimclustersV2RawInterestedIn20M145KDec11ScalaDataset,
-        dateRange.prepend(Days(14)(timeZone))
+      .relonadMostReloncelonntSnapshot(
+        SimclustelonrsV2RawIntelonrelonstelondIn20M145KDelonc11ScalaDataselont,
+        datelonRangelon.prelonpelonnd(Days(14)(timelonZonelon))
       )
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-      .toTypedPipe
+      .withRelonmotelonRelonadPolicy(elonxplicitLocation(ProcAtla))
+      .toTypelondPipelon
       .map {
-        case KeyVal(userId, clustersUserIsInterestedIn) =>
-          (userId, clustersUserIsInterestedIn)
+        caselon KelonyVal(uselonrId, clustelonrsUselonrIsIntelonrelonstelondIn) =>
+          (uselonrId, clustelonrsUselonrIsIntelonrelonstelondIn)
       }
   }
 
   /**
-   * Internal version, not PDP compliant, not to be used outside simclusters_v2
-   * Reads 20M145KUpdated InterestedIn data from atla-proc, with a 14-day extended window
+   * Intelonrnal velonrsion, not PDP compliant, not to belon uselond outsidelon simclustelonrs_v2
+   * Relonads 20M145KUpdatelond IntelonrelonstelondIn data from atla-proc, with a 14-day elonxtelonndelond window
    */
-  private[simclusters_v2] def simClustersRawInterestedInUpdatedSource(
-    dateRange: DateRange,
-    timeZone: TimeZone
-  ): TypedPipe[(UserId, ClustersUserIsInterestedIn)] = {
+  privatelon[simclustelonrs_v2] delonf simClustelonrsRawIntelonrelonstelondInUpdatelondSourcelon(
+    datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon
+  ): TypelondPipelon[(UselonrId, ClustelonrsUselonrIsIntelonrelonstelondIn)] = {
     DAL
-      .readMostRecentSnapshot(
-        SimclustersV2RawInterestedIn20M145KUpdatedScalaDataset,
-        dateRange.prepend(Days(14)(timeZone))
+      .relonadMostReloncelonntSnapshot(
+        SimclustelonrsV2RawIntelonrelonstelondIn20M145KUpdatelondScalaDataselont,
+        datelonRangelon.prelonpelonnd(Days(14)(timelonZonelon))
       )
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-      .toTypedPipe.map {
-        case KeyVal(userId, clustersUserIsInterestedIn) =>
-          (userId, clustersUserIsInterestedIn)
+      .withRelonmotelonRelonadPolicy(elonxplicitLocation(ProcAtla))
+      .toTypelondPipelon.map {
+        caselon KelonyVal(uselonrId, clustelonrsUselonrIsIntelonrelonstelondIn) =>
+          (uselonrId, clustelonrsUselonrIsIntelonrelonstelondIn)
       }
   }
 
   /**
-   * Internal version, not PDP compliant, not to be used outside simclusters_v2
-   * Reads 20M145K2020 InterestedIn data from atla-proc, with a 14-day extended window
+   * Intelonrnal velonrsion, not PDP compliant, not to belon uselond outsidelon simclustelonrs_v2
+   * Relonads 20M145K2020 IntelonrelonstelondIn data from atla-proc, with a 14-day elonxtelonndelond window
    */
-  private[simclusters_v2] def simClustersRawInterestedIn2020Source(
-    dateRange: DateRange,
-    timeZone: TimeZone
-  ): TypedPipe[(UserId, ClustersUserIsInterestedIn)] = {
+  privatelon[simclustelonrs_v2] delonf simClustelonrsRawIntelonrelonstelondIn2020Sourcelon(
+    datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon
+  ): TypelondPipelon[(UselonrId, ClustelonrsUselonrIsIntelonrelonstelondIn)] = {
     DAL
-      .readMostRecentSnapshot(
-        SimclustersV2RawInterestedIn20M145K2020ScalaDataset,
-        dateRange.prepend(Days(14)(timeZone))
+      .relonadMostReloncelonntSnapshot(
+        SimclustelonrsV2RawIntelonrelonstelondIn20M145K2020ScalaDataselont,
+        datelonRangelon.prelonpelonnd(Days(14)(timelonZonelon))
       )
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-      .toTypedPipe.map {
-        case KeyVal(userId, clustersUserIsInterestedIn) =>
-          (userId, clustersUserIsInterestedIn)
+      .withRelonmotelonRelonadPolicy(elonxplicitLocation(ProcAtla))
+      .toTypelondPipelon.map {
+        caselon KelonyVal(uselonrId, clustelonrsUselonrIsIntelonrelonstelondIn) =>
+          (uselonrId, clustelonrsUselonrIsIntelonrelonstelondIn)
       }
   }
 
-  private[simclusters_v2] def simClustersRawInterestedInLite2020Source(
-    dateRange: DateRange,
-    timeZone: TimeZone
-  ): TypedPipe[(UserId, ClustersUserIsInterestedIn)] = {
+  privatelon[simclustelonrs_v2] delonf simClustelonrsRawIntelonrelonstelondInLitelon2020Sourcelon(
+    datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon
+  ): TypelondPipelon[(UselonrId, ClustelonrsUselonrIsIntelonrelonstelondIn)] = {
     DAL
-      .readMostRecentSnapshot(
-        SimclustersV2RawInterestedInLite20M145K2020ScalaDataset,
-        dateRange.extend(Days(14)(timeZone)))
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-      .toTypedPipe.map {
-        case KeyVal(userId, clustersUserIsInterestedIn) =>
-          (userId, clustersUserIsInterestedIn)
-      }
-  }
-
-  /**
-   * Reads 20M145KDec11 production InterestedIn data from atla-proc, with a 14-day extended window
-   */
-  def simClustersInterestedInDec11Source(
-    dateRange: DateRange,
-    timeZone: TimeZone
-  ): TypedPipe[(UserId, ClustersUserIsInterestedIn)] = {
-
-    DAL
-      .readMostRecentSnapshot(
-        SimclustersV2InterestedInScalaDataset,
-        dateRange.prepend(Days(14)(timeZone)))
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-      .toTypedPipe.map {
-        case KeyVal(userId, clustersUserIsInterestedIn) =>
-          (userId, clustersUserIsInterestedIn)
+      .relonadMostReloncelonntSnapshot(
+        SimclustelonrsV2RawIntelonrelonstelondInLitelon20M145K2020ScalaDataselont,
+        datelonRangelon.elonxtelonnd(Days(14)(timelonZonelon)))
+      .withRelonmotelonRelonadPolicy(elonxplicitLocation(ProcAtla))
+      .toTypelondPipelon.map {
+        caselon KelonyVal(uselonrId, clustelonrsUselonrIsIntelonrelonstelondIn) =>
+          (uselonrId, clustelonrsUselonrIsIntelonrelonstelondIn)
       }
   }
 
   /**
-   * Reads 20M145KUpdated InterestedIn data from atla-proc, with a 14-day extended window
+   * Relonads 20M145KDelonc11 production IntelonrelonstelondIn data from atla-proc, with a 14-day elonxtelonndelond window
    */
-  def simClustersInterestedInUpdatedSource(
-    dateRange: DateRange,
-    timeZone: TimeZone
-  ): TypedPipe[(UserId, ClustersUserIsInterestedIn)] = {
+  delonf simClustelonrsIntelonrelonstelondInDelonc11Sourcelon(
+    datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon
+  ): TypelondPipelon[(UselonrId, ClustelonrsUselonrIsIntelonrelonstelondIn)] = {
+
     DAL
-      .readMostRecentSnapshot(
-        SimclustersV2InterestedIn20M145KUpdatedScalaDataset,
-        dateRange.prepend(Days(14)(timeZone))
+      .relonadMostReloncelonntSnapshot(
+        SimclustelonrsV2IntelonrelonstelondInScalaDataselont,
+        datelonRangelon.prelonpelonnd(Days(14)(timelonZonelon)))
+      .withRelonmotelonRelonadPolicy(elonxplicitLocation(ProcAtla))
+      .toTypelondPipelon.map {
+        caselon KelonyVal(uselonrId, clustelonrsUselonrIsIntelonrelonstelondIn) =>
+          (uselonrId, clustelonrsUselonrIsIntelonrelonstelondIn)
+      }
+  }
+
+  /**
+   * Relonads 20M145KUpdatelond IntelonrelonstelondIn data from atla-proc, with a 14-day elonxtelonndelond window
+   */
+  delonf simClustelonrsIntelonrelonstelondInUpdatelondSourcelon(
+    datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon
+  ): TypelondPipelon[(UselonrId, ClustelonrsUselonrIsIntelonrelonstelondIn)] = {
+    DAL
+      .relonadMostReloncelonntSnapshot(
+        SimclustelonrsV2IntelonrelonstelondIn20M145KUpdatelondScalaDataselont,
+        datelonRangelon.prelonpelonnd(Days(14)(timelonZonelon))
       )
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-      .toTypedPipe.map {
-        case KeyVal(userId, clustersUserIsInterestedIn) =>
-          (userId, clustersUserIsInterestedIn)
+      .withRelonmotelonRelonadPolicy(elonxplicitLocation(ProcAtla))
+      .toTypelondPipelon.map {
+        caselon KelonyVal(uselonrId, clustelonrsUselonrIsIntelonrelonstelondIn) =>
+          (uselonrId, clustelonrsUselonrIsIntelonrelonstelondIn)
       }
   }
 
   /**
-   * Reads 20M145K2020 InterestedIn data from atla-proc, with a 14-day extended window
+   * Relonads 20M145K2020 IntelonrelonstelondIn data from atla-proc, with a 14-day elonxtelonndelond window
    */
-  def simClustersInterestedIn2020Source(
-    dateRange: DateRange,
-    timeZone: TimeZone
-  ): TypedPipe[(UserId, ClustersUserIsInterestedIn)] = {
+  delonf simClustelonrsIntelonrelonstelondIn2020Sourcelon(
+    datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon
+  ): TypelondPipelon[(UselonrId, ClustelonrsUselonrIsIntelonrelonstelondIn)] = {
     DAL
-      .readMostRecentSnapshot(
-        SimclustersV2InterestedIn20M145K2020ScalaDataset,
-        dateRange.prepend(Days(14)(timeZone))
+      .relonadMostReloncelonntSnapshot(
+        SimclustelonrsV2IntelonrelonstelondIn20M145K2020ScalaDataselont,
+        datelonRangelon.prelonpelonnd(Days(14)(timelonZonelon))
       )
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-      .toTypedPipe.map {
-        case KeyVal(userId, clustersUserIsInterestedIn) =>
-          (userId, clustersUserIsInterestedIn)
+      .withRelonmotelonRelonadPolicy(elonxplicitLocation(ProcAtla))
+      .toTypelondPipelon.map {
+        caselon KelonyVal(uselonrId, clustelonrsUselonrIsIntelonrelonstelondIn) =>
+          (uselonrId, clustelonrsUselonrIsIntelonrelonstelondIn)
       }
   }
 
   /**
-   * Reads InterestedIn data based on ModelVersion from atla-proc, with a 14-day extended window
+   * Relonads IntelonrelonstelondIn data baselond on ModelonlVelonrsion from atla-proc, with a 14-day elonxtelonndelond window
    */
-  def simClustersInterestedInSource(
-    modelVersion: ModelVersion,
-    dateRange: DateRange,
-    timeZone: TimeZone
-  ): TypedPipe[(UserId, ClustersUserIsInterestedIn)] = {
+  delonf simClustelonrsIntelonrelonstelondInSourcelon(
+    modelonlVelonrsion: ModelonlVelonrsion,
+    datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon
+  ): TypelondPipelon[(UselonrId, ClustelonrsUselonrIsIntelonrelonstelondIn)] = {
 
     DAL
-      .readMostRecentSnapshot(
-        ModelVersionInterestedInDatasetMap(modelVersion),
-        dateRange.prepend(Days(14)(timeZone))
+      .relonadMostReloncelonntSnapshot(
+        ModelonlVelonrsionIntelonrelonstelondInDataselontMap(modelonlVelonrsion),
+        datelonRangelon.prelonpelonnd(Days(14)(timelonZonelon))
       )
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-      .toTypedPipe.map {
-        case KeyVal(userId, clustersUserIsInterestedIn) =>
-          (userId, clustersUserIsInterestedIn)
+      .withRelonmotelonRelonadPolicy(elonxplicitLocation(ProcAtla))
+      .toTypelondPipelon.map {
+        caselon KelonyVal(uselonrId, clustelonrsUselonrIsIntelonrelonstelondIn) =>
+          (uselonrId, clustelonrsUselonrIsIntelonrelonstelondIn)
       }
   }
 

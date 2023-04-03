@@ -1,63 +1,63 @@
-package com.twitter.interaction_graph.scio.ml.labels
+packagelon com.twittelonr.intelonraction_graph.scio.ml.labelonls
 
-import com.spotify.scio.ScioMetrics
-import com.twitter.interaction_graph.thriftscala.EdgeFeature
-import com.twitter.interaction_graph.thriftscala.EdgeLabel
-import com.twitter.interaction_graph.thriftscala.FeatureName
-import com.twitter.interaction_graph.thriftscala.{Edge => TEdge}
-import com.twitter.socialgraph.event.thriftscala.FollowEvent
+import com.spotify.scio.ScioMelontrics
+import com.twittelonr.intelonraction_graph.thriftscala.elondgelonFelonaturelon
+import com.twittelonr.intelonraction_graph.thriftscala.elondgelonLabelonl
+import com.twittelonr.intelonraction_graph.thriftscala.FelonaturelonNamelon
+import com.twittelonr.intelonraction_graph.thriftscala.{elondgelon => Telondgelon}
+import com.twittelonr.socialgraph.elonvelonnt.thriftscala.Followelonvelonnt
 
-object LabelUtil {
+objelonct LabelonlUtil {
 
-  val LabelExplicit = Set(
-    FeatureName.NumFollows,
-    FeatureName.NumFavorites,
-    FeatureName.NumRetweets,
-    FeatureName.NumMentions,
-    FeatureName.NumTweetQuotes,
-    FeatureName.NumPhotoTags,
-    FeatureName.NumRtFavories,
-    FeatureName.NumRtReplies,
-    FeatureName.NumRtTweetQuotes,
-    FeatureName.NumRtRetweets,
-    FeatureName.NumRtMentions,
-    FeatureName.NumShares,
-    FeatureName.NumReplies,
+  val Labelonlelonxplicit = Selont(
+    FelonaturelonNamelon.NumFollows,
+    FelonaturelonNamelon.NumFavoritelons,
+    FelonaturelonNamelon.NumRelontwelonelonts,
+    FelonaturelonNamelon.NumMelonntions,
+    FelonaturelonNamelon.NumTwelonelontQuotelons,
+    FelonaturelonNamelon.NumPhotoTags,
+    FelonaturelonNamelon.NumRtFavorielons,
+    FelonaturelonNamelon.NumRtRelonplielons,
+    FelonaturelonNamelon.NumRtTwelonelontQuotelons,
+    FelonaturelonNamelon.NumRtRelontwelonelonts,
+    FelonaturelonNamelon.NumRtMelonntions,
+    FelonaturelonNamelon.NumSharelons,
+    FelonaturelonNamelon.NumRelonplielons,
   )
 
-  val LabelImplicit = Set(
-    FeatureName.NumTweetClicks,
-    FeatureName.NumProfileViews,
-    FeatureName.NumLinkClicks,
-    FeatureName.NumPushOpens,
-    FeatureName.NumNtabClicks,
-    FeatureName.NumRtTweetClicks,
-    FeatureName.NumRtLinkClicks,
-    FeatureName.NumEmailOpen,
-    FeatureName.NumEmailClick,
+  val LabelonlImplicit = Selont(
+    FelonaturelonNamelon.NumTwelonelontClicks,
+    FelonaturelonNamelon.NumProfilelonVielonws,
+    FelonaturelonNamelon.NumLinkClicks,
+    FelonaturelonNamelon.NumPushOpelonns,
+    FelonaturelonNamelon.NumNtabClicks,
+    FelonaturelonNamelon.NumRtTwelonelontClicks,
+    FelonaturelonNamelon.NumRtLinkClicks,
+    FelonaturelonNamelon.NumelonmailOpelonn,
+    FelonaturelonNamelon.NumelonmailClick,
   )
 
-  val LabelSet = (LabelExplicit ++ LabelImplicit).map(_.value)
+  val LabelonlSelont = (Labelonlelonxplicit ++ LabelonlImplicit).map(_.valuelon)
 
-  def fromFollowEvent(f: FollowEvent): Option[EdgeLabel] = {
+  delonf fromFollowelonvelonnt(f: Followelonvelonnt): Option[elondgelonLabelonl] = {
     for {
-      srcId <- f.sourceId
-      destId <- f.targetId
-    } yield EdgeLabel(srcId, destId, labels = Set(FeatureName.NumFollows))
+      srcId <- f.sourcelonId
+      delonstId <- f.targelontId
+    } yielonld elondgelonLabelonl(srcId, delonstId, labelonls = Selont(FelonaturelonNamelon.NumFollows))
   }
 
-  def fromInteractionGraphEdge(e: TEdge): Option[EdgeLabel] = {
-    val labels = e.features.collect {
-      case EdgeFeature(featureName: FeatureName, _) if LabelSet.contains(featureName.value) =>
-        ScioMetrics.counter("fromInteractionGraphEdge", featureName.toString).inc()
-        featureName
-    }.toSet
-    if (labels.nonEmpty) {
-      Some(EdgeLabel(e.sourceId, e.destinationId, labels))
-    } else None
+  delonf fromIntelonractionGraphelondgelon(elon: Telondgelon): Option[elondgelonLabelonl] = {
+    val labelonls = elon.felonaturelons.collelonct {
+      caselon elondgelonFelonaturelon(felonaturelonNamelon: FelonaturelonNamelon, _) if LabelonlSelont.contains(felonaturelonNamelon.valuelon) =>
+        ScioMelontrics.countelonr("fromIntelonractionGraphelondgelon", felonaturelonNamelon.toString).inc()
+        felonaturelonNamelon
+    }.toSelont
+    if (labelonls.nonelonmpty) {
+      Somelon(elondgelonLabelonl(elon.sourcelonId, elon.delonstinationId, labelonls))
+    } elonlselon Nonelon
   }
 
-  def toTEdge(e: EdgeLabel): EdgeLabel = {
-    EdgeLabel(e.sourceId, e.destinationId, labels = e.labels)
+  delonf toTelondgelon(elon: elondgelonLabelonl): elondgelonLabelonl = {
+    elondgelonLabelonl(elon.sourcelonId, elon.delonstinationId, labelonls = elon.labelonls)
   }
 }

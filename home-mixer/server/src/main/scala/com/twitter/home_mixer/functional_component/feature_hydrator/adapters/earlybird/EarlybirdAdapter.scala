@@ -1,452 +1,452 @@
-package com.twitter.home_mixer.functional_component.feature_hydrator.adapters.earlybird
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator.adaptelonrs.elonarlybird
 
-import com.twitter.ml.api.Feature
-import com.twitter.ml.api.FeatureContext
-import com.twitter.ml.api.RichDataRecord
-import com.twitter.ml.api.util.DataRecordConverters._
-import com.twitter.timelines.prediction.common.adapters.TimelinesMutatingAdapterBase
-import com.twitter.search.common.features.{thriftscala => sc}
-import com.twitter.timelines.prediction.features.common.TimelinesSharedFeatures
-import com.twitter.timelines.prediction.features.recap.RecapFeatures
-import com.twitter.timelines.util.UrlExtractorUtil
-import java.lang.{Boolean => JBoolean}
-import java.lang.{Double => JDouble}
+import com.twittelonr.ml.api.Felonaturelon
+import com.twittelonr.ml.api.FelonaturelonContelonxt
+import com.twittelonr.ml.api.RichDataReloncord
+import com.twittelonr.ml.api.util.DataReloncordConvelonrtelonrs._
+import com.twittelonr.timelonlinelons.prelondiction.common.adaptelonrs.TimelonlinelonsMutatingAdaptelonrBaselon
+import com.twittelonr.selonarch.common.felonaturelons.{thriftscala => sc}
+import com.twittelonr.timelonlinelons.prelondiction.felonaturelons.common.TimelonlinelonsSharelondFelonaturelons
+import com.twittelonr.timelonlinelons.prelondiction.felonaturelons.reloncap.ReloncapFelonaturelons
+import com.twittelonr.timelonlinelons.util.UrlelonxtractorUtil
+import java.lang.{Boolelonan => JBoolelonan}
+import java.lang.{Doublelon => JDoublelon}
 import java.util.{Map => JMap}
-import scala.collection.JavaConverters._
+import scala.collelonction.JavaConvelonrtelonrs._
 
-object EarlybirdAdapter extends TimelinesMutatingAdapterBase[Option[sc.ThriftTweetFeatures]] {
+objelonct elonarlybirdAdaptelonr elonxtelonnds TimelonlinelonsMutatingAdaptelonrBaselon[Option[sc.ThriftTwelonelontFelonaturelons]] {
 
-  override val getFeatureContext: FeatureContext = new FeatureContext(
-    RecapFeatures.BIDIRECTIONAL_FAV_COUNT,
-    RecapFeatures.BIDIRECTIONAL_REPLY_COUNT,
-    RecapFeatures.BIDIRECTIONAL_RETWEET_COUNT,
-    RecapFeatures.BLENDER_SCORE,
-    RecapFeatures.CONTAINS_MEDIA,
-    RecapFeatures.CONVERSATIONAL_COUNT,
-    RecapFeatures.EMBEDS_IMPRESSION_COUNT,
-    RecapFeatures.EMBEDS_URL_COUNT,
-    RecapFeatures.FAV_COUNT,
-    RecapFeatures.FAV_COUNT_V2,
-    RecapFeatures.FROM_INACTIVE_USER,
-    RecapFeatures.FROM_MUTUAL_FOLLOW,
-    RecapFeatures.FROM_VERIFIED_ACCOUNT,
-    RecapFeatures.HAS_CARD,
-    RecapFeatures.HAS_CONSUMER_VIDEO,
-    RecapFeatures.HAS_HASHTAG,
-    RecapFeatures.HAS_IMAGE,
-    RecapFeatures.HAS_LINK,
-    RecapFeatures.HAS_MENTION,
-    RecapFeatures.HAS_MULTIPLE_HASHTAGS_OR_TRENDS,
-    RecapFeatures.HAS_MULTIPLE_MEDIA,
-    RecapFeatures.HAS_NATIVE_IMAGE,
-    RecapFeatures.HAS_NATIVE_VIDEO,
-    RecapFeatures.HAS_NEWS,
-    RecapFeatures.HAS_PERISCOPE,
-    RecapFeatures.HAS_PRO_VIDEO,
-    RecapFeatures.HAS_TREND,
-    RecapFeatures.HAS_VIDEO,
-    RecapFeatures.HAS_VINE,
-    RecapFeatures.HAS_VISIBLE_LINK,
-    RecapFeatures.IS_AUTHOR_BOT,
-    RecapFeatures.IS_AUTHOR_NEW,
-    RecapFeatures.IS_AUTHOR_NSFW,
-    RecapFeatures.IS_AUTHOR_PROFILE_EGG,
-    RecapFeatures.IS_AUTHOR_SPAM,
-    RecapFeatures.IS_BUSINESS_SCORE,
-    RecapFeatures.IS_OFFENSIVE,
-    RecapFeatures.IS_REPLY,
-    RecapFeatures.IS_RETWEET,
-    RecapFeatures.IS_RETWEETER_BOT,
-    RecapFeatures.IS_RETWEETER_NEW,
-    RecapFeatures.IS_RETWEETER_NSFW,
-    RecapFeatures.IS_RETWEETER_PROFILE_EGG,
-    RecapFeatures.IS_RETWEETER_SPAM,
-    RecapFeatures.IS_RETWEET_OF_REPLY,
-    RecapFeatures.IS_SENSITIVE,
-    RecapFeatures.LANGUAGE,
-    RecapFeatures.LINK_COUNT,
-    RecapFeatures.LINK_LANGUAGE,
-    RecapFeatures.MATCH_SEARCHER_LANGS,
-    RecapFeatures.MATCH_SEARCHER_MAIN_LANG,
-    RecapFeatures.MATCH_UI_LANG,
-    RecapFeatures.MENTIONED_SCREEN_NAMES,
-    RecapFeatures.MENTION_SEARCHER,
-    RecapFeatures.NUM_HASHTAGS,
-    RecapFeatures.NUM_MENTIONS,
-    RecapFeatures.PREV_USER_TWEET_ENGAGEMENT,
-    RecapFeatures.PROBABLY_FROM_FOLLOWED_AUTHOR,
-    RecapFeatures.REPLY_COUNT,
-    RecapFeatures.REPLY_COUNT_V2,
-    RecapFeatures.REPLY_OTHER,
-    RecapFeatures.REPLY_SEARCHER,
-    RecapFeatures.RETWEET_COUNT,
-    RecapFeatures.RETWEET_COUNT_V2,
-    RecapFeatures.RETWEET_DIRECTED_AT_USER_IN_FIRST_DEGREE,
-    RecapFeatures.RETWEET_OF_MUTUAL_FOLLOW,
-    RecapFeatures.RETWEET_OTHER,
-    RecapFeatures.RETWEET_SEARCHER,
-    RecapFeatures.SIGNATURE,
-    RecapFeatures.SOURCE_AUTHOR_REP,
-    RecapFeatures.TEXT_SCORE,
-    RecapFeatures.TWEET_COUNT_FROM_USER_IN_SNAPSHOT,
-    RecapFeatures.UNIDIRECTIONAL_FAV_COUNT,
-    RecapFeatures.UNIDIRECTIONAL_REPLY_COUNT,
-    RecapFeatures.UNIDIRECTIONAL_RETWEET_COUNT,
-    RecapFeatures.URL_DOMAINS,
-    RecapFeatures.USER_REP,
-    RecapFeatures.VIDEO_VIEW_COUNT,
-    // shared features
-    TimelinesSharedFeatures.WEIGHTED_FAV_COUNT,
-    TimelinesSharedFeatures.WEIGHTED_RETWEET_COUNT,
-    TimelinesSharedFeatures.WEIGHTED_REPLY_COUNT,
-    TimelinesSharedFeatures.WEIGHTED_QUOTE_COUNT,
-    TimelinesSharedFeatures.EMBEDS_IMPRESSION_COUNT_V2,
-    TimelinesSharedFeatures.EMBEDS_URL_COUNT_V2,
-    TimelinesSharedFeatures.DECAYED_FAVORITE_COUNT,
-    TimelinesSharedFeatures.DECAYED_RETWEET_COUNT,
-    TimelinesSharedFeatures.DECAYED_REPLY_COUNT,
-    TimelinesSharedFeatures.DECAYED_QUOTE_COUNT,
-    TimelinesSharedFeatures.FAKE_FAVORITE_COUNT,
-    TimelinesSharedFeatures.FAKE_RETWEET_COUNT,
-    TimelinesSharedFeatures.FAKE_REPLY_COUNT,
-    TimelinesSharedFeatures.FAKE_QUOTE_COUNT,
-    TimelinesSharedFeatures.QUOTE_COUNT,
-    TimelinesSharedFeatures.EARLYBIRD_SCORE,
-    // Safety features
-    TimelinesSharedFeatures.LABEL_ABUSIVE_FLAG,
-    TimelinesSharedFeatures.LABEL_ABUSIVE_HI_RCL_FLAG,
-    TimelinesSharedFeatures.LABEL_DUP_CONTENT_FLAG,
-    TimelinesSharedFeatures.LABEL_NSFW_HI_PRC_FLAG,
-    TimelinesSharedFeatures.LABEL_NSFW_HI_RCL_FLAG,
-    TimelinesSharedFeatures.LABEL_SPAM_FLAG,
-    TimelinesSharedFeatures.LABEL_SPAM_HI_RCL_FLAG,
-    // periscope features
-    TimelinesSharedFeatures.PERISCOPE_EXISTS,
-    TimelinesSharedFeatures.PERISCOPE_IS_LIVE,
-    TimelinesSharedFeatures.PERISCOPE_HAS_BEEN_FEATURED,
-    TimelinesSharedFeatures.PERISCOPE_IS_CURRENTLY_FEATURED,
-    TimelinesSharedFeatures.PERISCOPE_IS_FROM_QUALITY_SOURCE,
-    // VISIBLE_TOKEN_RATIO
-    TimelinesSharedFeatures.VISIBLE_TOKEN_RATIO,
-    TimelinesSharedFeatures.HAS_QUOTE,
-    TimelinesSharedFeatures.IS_COMPOSER_SOURCE_CAMERA,
-    // health features
-    TimelinesSharedFeatures.PREPORTED_TWEET_SCORE,
-    // media
-    TimelinesSharedFeatures.CLASSIFICATION_LABELS
+  ovelonrridelon val gelontFelonaturelonContelonxt: FelonaturelonContelonxt = nelonw FelonaturelonContelonxt(
+    ReloncapFelonaturelons.BIDIRelonCTIONAL_FAV_COUNT,
+    ReloncapFelonaturelons.BIDIRelonCTIONAL_RelonPLY_COUNT,
+    ReloncapFelonaturelons.BIDIRelonCTIONAL_RelonTWelonelonT_COUNT,
+    ReloncapFelonaturelons.BLelonNDelonR_SCORelon,
+    ReloncapFelonaturelons.CONTAINS_MelonDIA,
+    ReloncapFelonaturelons.CONVelonRSATIONAL_COUNT,
+    ReloncapFelonaturelons.elonMBelonDS_IMPRelonSSION_COUNT,
+    ReloncapFelonaturelons.elonMBelonDS_URL_COUNT,
+    ReloncapFelonaturelons.FAV_COUNT,
+    ReloncapFelonaturelons.FAV_COUNT_V2,
+    ReloncapFelonaturelons.FROM_INACTIVelon_USelonR,
+    ReloncapFelonaturelons.FROM_MUTUAL_FOLLOW,
+    ReloncapFelonaturelons.FROM_VelonRIFIelonD_ACCOUNT,
+    ReloncapFelonaturelons.HAS_CARD,
+    ReloncapFelonaturelons.HAS_CONSUMelonR_VIDelonO,
+    ReloncapFelonaturelons.HAS_HASHTAG,
+    ReloncapFelonaturelons.HAS_IMAGelon,
+    ReloncapFelonaturelons.HAS_LINK,
+    ReloncapFelonaturelons.HAS_MelonNTION,
+    ReloncapFelonaturelons.HAS_MULTIPLelon_HASHTAGS_OR_TRelonNDS,
+    ReloncapFelonaturelons.HAS_MULTIPLelon_MelonDIA,
+    ReloncapFelonaturelons.HAS_NATIVelon_IMAGelon,
+    ReloncapFelonaturelons.HAS_NATIVelon_VIDelonO,
+    ReloncapFelonaturelons.HAS_NelonWS,
+    ReloncapFelonaturelons.HAS_PelonRISCOPelon,
+    ReloncapFelonaturelons.HAS_PRO_VIDelonO,
+    ReloncapFelonaturelons.HAS_TRelonND,
+    ReloncapFelonaturelons.HAS_VIDelonO,
+    ReloncapFelonaturelons.HAS_VINelon,
+    ReloncapFelonaturelons.HAS_VISIBLelon_LINK,
+    ReloncapFelonaturelons.IS_AUTHOR_BOT,
+    ReloncapFelonaturelons.IS_AUTHOR_NelonW,
+    ReloncapFelonaturelons.IS_AUTHOR_NSFW,
+    ReloncapFelonaturelons.IS_AUTHOR_PROFILelon_elonGG,
+    ReloncapFelonaturelons.IS_AUTHOR_SPAM,
+    ReloncapFelonaturelons.IS_BUSINelonSS_SCORelon,
+    ReloncapFelonaturelons.IS_OFFelonNSIVelon,
+    ReloncapFelonaturelons.IS_RelonPLY,
+    ReloncapFelonaturelons.IS_RelonTWelonelonT,
+    ReloncapFelonaturelons.IS_RelonTWelonelonTelonR_BOT,
+    ReloncapFelonaturelons.IS_RelonTWelonelonTelonR_NelonW,
+    ReloncapFelonaturelons.IS_RelonTWelonelonTelonR_NSFW,
+    ReloncapFelonaturelons.IS_RelonTWelonelonTelonR_PROFILelon_elonGG,
+    ReloncapFelonaturelons.IS_RelonTWelonelonTelonR_SPAM,
+    ReloncapFelonaturelons.IS_RelonTWelonelonT_OF_RelonPLY,
+    ReloncapFelonaturelons.IS_SelonNSITIVelon,
+    ReloncapFelonaturelons.LANGUAGelon,
+    ReloncapFelonaturelons.LINK_COUNT,
+    ReloncapFelonaturelons.LINK_LANGUAGelon,
+    ReloncapFelonaturelons.MATCH_SelonARCHelonR_LANGS,
+    ReloncapFelonaturelons.MATCH_SelonARCHelonR_MAIN_LANG,
+    ReloncapFelonaturelons.MATCH_UI_LANG,
+    ReloncapFelonaturelons.MelonNTIONelonD_SCRelonelonN_NAMelonS,
+    ReloncapFelonaturelons.MelonNTION_SelonARCHelonR,
+    ReloncapFelonaturelons.NUM_HASHTAGS,
+    ReloncapFelonaturelons.NUM_MelonNTIONS,
+    ReloncapFelonaturelons.PRelonV_USelonR_TWelonelonT_elonNGAGelonMelonNT,
+    ReloncapFelonaturelons.PROBABLY_FROM_FOLLOWelonD_AUTHOR,
+    ReloncapFelonaturelons.RelonPLY_COUNT,
+    ReloncapFelonaturelons.RelonPLY_COUNT_V2,
+    ReloncapFelonaturelons.RelonPLY_OTHelonR,
+    ReloncapFelonaturelons.RelonPLY_SelonARCHelonR,
+    ReloncapFelonaturelons.RelonTWelonelonT_COUNT,
+    ReloncapFelonaturelons.RelonTWelonelonT_COUNT_V2,
+    ReloncapFelonaturelons.RelonTWelonelonT_DIRelonCTelonD_AT_USelonR_IN_FIRST_DelonGRelonelon,
+    ReloncapFelonaturelons.RelonTWelonelonT_OF_MUTUAL_FOLLOW,
+    ReloncapFelonaturelons.RelonTWelonelonT_OTHelonR,
+    ReloncapFelonaturelons.RelonTWelonelonT_SelonARCHelonR,
+    ReloncapFelonaturelons.SIGNATURelon,
+    ReloncapFelonaturelons.SOURCelon_AUTHOR_RelonP,
+    ReloncapFelonaturelons.TelonXT_SCORelon,
+    ReloncapFelonaturelons.TWelonelonT_COUNT_FROM_USelonR_IN_SNAPSHOT,
+    ReloncapFelonaturelons.UNIDIRelonCTIONAL_FAV_COUNT,
+    ReloncapFelonaturelons.UNIDIRelonCTIONAL_RelonPLY_COUNT,
+    ReloncapFelonaturelons.UNIDIRelonCTIONAL_RelonTWelonelonT_COUNT,
+    ReloncapFelonaturelons.URL_DOMAINS,
+    ReloncapFelonaturelons.USelonR_RelonP,
+    ReloncapFelonaturelons.VIDelonO_VIelonW_COUNT,
+    // sharelond felonaturelons
+    TimelonlinelonsSharelondFelonaturelons.WelonIGHTelonD_FAV_COUNT,
+    TimelonlinelonsSharelondFelonaturelons.WelonIGHTelonD_RelonTWelonelonT_COUNT,
+    TimelonlinelonsSharelondFelonaturelons.WelonIGHTelonD_RelonPLY_COUNT,
+    TimelonlinelonsSharelondFelonaturelons.WelonIGHTelonD_QUOTelon_COUNT,
+    TimelonlinelonsSharelondFelonaturelons.elonMBelonDS_IMPRelonSSION_COUNT_V2,
+    TimelonlinelonsSharelondFelonaturelons.elonMBelonDS_URL_COUNT_V2,
+    TimelonlinelonsSharelondFelonaturelons.DelonCAYelonD_FAVORITelon_COUNT,
+    TimelonlinelonsSharelondFelonaturelons.DelonCAYelonD_RelonTWelonelonT_COUNT,
+    TimelonlinelonsSharelondFelonaturelons.DelonCAYelonD_RelonPLY_COUNT,
+    TimelonlinelonsSharelondFelonaturelons.DelonCAYelonD_QUOTelon_COUNT,
+    TimelonlinelonsSharelondFelonaturelons.FAKelon_FAVORITelon_COUNT,
+    TimelonlinelonsSharelondFelonaturelons.FAKelon_RelonTWelonelonT_COUNT,
+    TimelonlinelonsSharelondFelonaturelons.FAKelon_RelonPLY_COUNT,
+    TimelonlinelonsSharelondFelonaturelons.FAKelon_QUOTelon_COUNT,
+    TimelonlinelonsSharelondFelonaturelons.QUOTelon_COUNT,
+    TimelonlinelonsSharelondFelonaturelons.elonARLYBIRD_SCORelon,
+    // Safelonty felonaturelons
+    TimelonlinelonsSharelondFelonaturelons.LABelonL_ABUSIVelon_FLAG,
+    TimelonlinelonsSharelondFelonaturelons.LABelonL_ABUSIVelon_HI_RCL_FLAG,
+    TimelonlinelonsSharelondFelonaturelons.LABelonL_DUP_CONTelonNT_FLAG,
+    TimelonlinelonsSharelondFelonaturelons.LABelonL_NSFW_HI_PRC_FLAG,
+    TimelonlinelonsSharelondFelonaturelons.LABelonL_NSFW_HI_RCL_FLAG,
+    TimelonlinelonsSharelondFelonaturelons.LABelonL_SPAM_FLAG,
+    TimelonlinelonsSharelondFelonaturelons.LABelonL_SPAM_HI_RCL_FLAG,
+    // pelonriscopelon felonaturelons
+    TimelonlinelonsSharelondFelonaturelons.PelonRISCOPelon_elonXISTS,
+    TimelonlinelonsSharelondFelonaturelons.PelonRISCOPelon_IS_LIVelon,
+    TimelonlinelonsSharelondFelonaturelons.PelonRISCOPelon_HAS_BelonelonN_FelonATURelonD,
+    TimelonlinelonsSharelondFelonaturelons.PelonRISCOPelon_IS_CURRelonNTLY_FelonATURelonD,
+    TimelonlinelonsSharelondFelonaturelons.PelonRISCOPelon_IS_FROM_QUALITY_SOURCelon,
+    // VISIBLelon_TOKelonN_RATIO
+    TimelonlinelonsSharelondFelonaturelons.VISIBLelon_TOKelonN_RATIO,
+    TimelonlinelonsSharelondFelonaturelons.HAS_QUOTelon,
+    TimelonlinelonsSharelondFelonaturelons.IS_COMPOSelonR_SOURCelon_CAMelonRA,
+    // helonalth felonaturelons
+    TimelonlinelonsSharelondFelonaturelons.PRelonPORTelonD_TWelonelonT_SCORelon,
+    // melondia
+    TimelonlinelonsSharelondFelonaturelons.CLASSIFICATION_LABelonLS
   )
 
-  override val commonFeatures: Set[Feature[_]] = Set.empty
+  ovelonrridelon val commonFelonaturelons: Selont[Felonaturelon[_]] = Selont.elonmpty
 
-  override def setFeatures(
-    ebFeatures: Option[sc.ThriftTweetFeatures],
-    richDataRecord: RichDataRecord
+  ovelonrridelon delonf selontFelonaturelons(
+    elonbFelonaturelons: Option[sc.ThriftTwelonelontFelonaturelons],
+    richDataReloncord: RichDataReloncord
   ): Unit = {
-    if (ebFeatures.nonEmpty) {
-      val features = ebFeatures.get
-      richDataRecord.setFeatureValue[JDouble](
-        RecapFeatures.PREV_USER_TWEET_ENGAGEMENT,
-        features.prevUserTweetEngagement.toDouble
+    if (elonbFelonaturelons.nonelonmpty) {
+      val felonaturelons = elonbFelonaturelons.gelont
+      richDataReloncord.selontFelonaturelonValuelon[JDoublelon](
+        ReloncapFelonaturelons.PRelonV_USelonR_TWelonelonT_elonNGAGelonMelonNT,
+        felonaturelons.prelonvUselonrTwelonelontelonngagelonmelonnt.toDoublelon
       )
-      richDataRecord
-        .setFeatureValue[JBoolean](RecapFeatures.IS_SENSITIVE, features.isSensitiveContent)
-      richDataRecord
-        .setFeatureValue[JBoolean](RecapFeatures.HAS_MULTIPLE_MEDIA, features.hasMultipleMedia)
-      richDataRecord
-        .setFeatureValue[JBoolean](RecapFeatures.IS_AUTHOR_PROFILE_EGG, features.isAuthorProfileEgg)
-      richDataRecord.setFeatureValue[JBoolean](RecapFeatures.IS_AUTHOR_NEW, features.isAuthorNew)
-      richDataRecord
-        .setFeatureValue[JDouble](RecapFeatures.NUM_MENTIONS, features.numMentions.toDouble)
-      richDataRecord.setFeatureValue[JBoolean](RecapFeatures.HAS_MENTION, features.numMentions > 0)
-      richDataRecord
-        .setFeatureValue[JDouble](RecapFeatures.NUM_HASHTAGS, features.numHashtags.toDouble)
-      richDataRecord.setFeatureValue[JBoolean](RecapFeatures.HAS_HASHTAG, features.numHashtags > 0)
-      richDataRecord
-        .setFeatureValue[JDouble](RecapFeatures.LINK_LANGUAGE, features.linkLanguage.toDouble)
-      richDataRecord.setFeatureValue[JBoolean](RecapFeatures.IS_AUTHOR_NSFW, features.isAuthorNSFW)
-      richDataRecord.setFeatureValue[JBoolean](RecapFeatures.IS_AUTHOR_SPAM, features.isAuthorSpam)
-      richDataRecord.setFeatureValue[JBoolean](RecapFeatures.IS_AUTHOR_BOT, features.isAuthorBot)
-      richDataRecord.setFeatureValueFromOption(
-        RecapFeatures.LANGUAGE,
-        features.language.map(_.getValue.toLong))
-      richDataRecord.setFeatureValueFromOption(
-        RecapFeatures.SIGNATURE,
-        features.signature.map(_.toLong))
-      richDataRecord
-        .setFeatureValue[JBoolean](RecapFeatures.FROM_INACTIVE_USER, features.fromInActiveUser)
-      richDataRecord
-        .setFeatureValue[JBoolean](
-          RecapFeatures.PROBABLY_FROM_FOLLOWED_AUTHOR,
-          features.probablyFromFollowedAuthor)
-      richDataRecord
-        .setFeatureValue[JBoolean](RecapFeatures.FROM_MUTUAL_FOLLOW, features.fromMutualFollow)
-      richDataRecord.setFeatureValue[JBoolean](
-        RecapFeatures.FROM_VERIFIED_ACCOUNT,
-        features.fromVerifiedAccount)
-      richDataRecord.setFeatureValue[JDouble](RecapFeatures.USER_REP, features.userRep)
-      richDataRecord
-        .setFeatureValue[JDouble](RecapFeatures.IS_BUSINESS_SCORE, features.isBusinessScore)
-      richDataRecord
-        .setFeatureValue[JBoolean](RecapFeatures.HAS_CONSUMER_VIDEO, features.hasConsumerVideo)
-      richDataRecord.setFeatureValue[JBoolean](RecapFeatures.HAS_PRO_VIDEO, features.hasProVideo)
-      richDataRecord.setFeatureValue[JBoolean](RecapFeatures.HAS_VINE, features.hasVine)
-      richDataRecord.setFeatureValue[JBoolean](RecapFeatures.HAS_PERISCOPE, features.hasPeriscope)
-      richDataRecord
-        .setFeatureValue[JBoolean](RecapFeatures.HAS_NATIVE_VIDEO, features.hasNativeVideo)
-      richDataRecord
-        .setFeatureValue[JBoolean](RecapFeatures.HAS_NATIVE_IMAGE, features.hasNativeImage)
-      richDataRecord.setFeatureValue[JBoolean](RecapFeatures.HAS_CARD, features.hasCard)
-      richDataRecord.setFeatureValue[JBoolean](RecapFeatures.HAS_IMAGE, features.hasImage)
-      richDataRecord.setFeatureValue[JBoolean](RecapFeatures.HAS_NEWS, features.hasNews)
-      richDataRecord.setFeatureValue[JBoolean](RecapFeatures.HAS_VIDEO, features.hasVideo)
-      richDataRecord.setFeatureValue[JBoolean](RecapFeatures.CONTAINS_MEDIA, features.containsMedia)
-      richDataRecord
-        .setFeatureValue[JBoolean](RecapFeatures.RETWEET_SEARCHER, features.retweetSearcher)
-      richDataRecord.setFeatureValue[JBoolean](RecapFeatures.REPLY_SEARCHER, features.replySearcher)
-      richDataRecord
-        .setFeatureValue[JBoolean](RecapFeatures.MENTION_SEARCHER, features.mentionSearcher)
-      richDataRecord.setFeatureValue[JBoolean](RecapFeatures.REPLY_OTHER, features.replyOther)
-      richDataRecord.setFeatureValue[JBoolean](RecapFeatures.RETWEET_OTHER, features.retweetOther)
-      richDataRecord.setFeatureValue[JBoolean](RecapFeatures.IS_REPLY, features.isReply)
-      richDataRecord.setFeatureValue[JBoolean](RecapFeatures.IS_RETWEET, features.isRetweet)
-      richDataRecord.setFeatureValue[JBoolean](RecapFeatures.IS_OFFENSIVE, features.isOffensive)
-      richDataRecord.setFeatureValue[JBoolean](RecapFeatures.MATCH_UI_LANG, features.matchesUILang)
-      richDataRecord
-        .setFeatureValue[JBoolean](
-          RecapFeatures.MATCH_SEARCHER_MAIN_LANG,
-          features.matchesSearcherMainLang)
-      richDataRecord.setFeatureValue[JBoolean](
-        RecapFeatures.MATCH_SEARCHER_LANGS,
-        features.matchesSearcherLangs)
-      richDataRecord
-        .setFeatureValue[JDouble](
-          RecapFeatures.BIDIRECTIONAL_FAV_COUNT,
-          features.bidirectionalFavCount)
-      richDataRecord
-        .setFeatureValue[JDouble](
-          RecapFeatures.UNIDIRECTIONAL_FAV_COUNT,
-          features.unidirectionalFavCount)
-      richDataRecord
-        .setFeatureValue[JDouble](
-          RecapFeatures.BIDIRECTIONAL_REPLY_COUNT,
-          features.bidirectionalReplyCount)
-      richDataRecord
-        .setFeatureValue[JDouble](
-          RecapFeatures.UNIDIRECTIONAL_REPLY_COUNT,
-          features.unidirectionalReplyCount)
-      richDataRecord
-        .setFeatureValue[JDouble](
-          RecapFeatures.BIDIRECTIONAL_RETWEET_COUNT,
-          features.bidirectionalRetweetCount)
-      richDataRecord
-        .setFeatureValue[JDouble](
-          RecapFeatures.UNIDIRECTIONAL_RETWEET_COUNT,
-          features.unidirectionalRetweetCount)
-      richDataRecord
-        .setFeatureValue[JDouble](RecapFeatures.CONVERSATIONAL_COUNT, features.conversationCount)
-      richDataRecord.setFeatureValue[JDouble](
-        RecapFeatures.TWEET_COUNT_FROM_USER_IN_SNAPSHOT,
-        features.tweetCountFromUserInSnapshot
+      richDataReloncord
+        .selontFelonaturelonValuelon[JBoolelonan](ReloncapFelonaturelons.IS_SelonNSITIVelon, felonaturelons.isSelonnsitivelonContelonnt)
+      richDataReloncord
+        .selontFelonaturelonValuelon[JBoolelonan](ReloncapFelonaturelons.HAS_MULTIPLelon_MelonDIA, felonaturelons.hasMultiplelonMelondia)
+      richDataReloncord
+        .selontFelonaturelonValuelon[JBoolelonan](ReloncapFelonaturelons.IS_AUTHOR_PROFILelon_elonGG, felonaturelons.isAuthorProfilelonelongg)
+      richDataReloncord.selontFelonaturelonValuelon[JBoolelonan](ReloncapFelonaturelons.IS_AUTHOR_NelonW, felonaturelons.isAuthorNelonw)
+      richDataReloncord
+        .selontFelonaturelonValuelon[JDoublelon](ReloncapFelonaturelons.NUM_MelonNTIONS, felonaturelons.numMelonntions.toDoublelon)
+      richDataReloncord.selontFelonaturelonValuelon[JBoolelonan](ReloncapFelonaturelons.HAS_MelonNTION, felonaturelons.numMelonntions > 0)
+      richDataReloncord
+        .selontFelonaturelonValuelon[JDoublelon](ReloncapFelonaturelons.NUM_HASHTAGS, felonaturelons.numHashtags.toDoublelon)
+      richDataReloncord.selontFelonaturelonValuelon[JBoolelonan](ReloncapFelonaturelons.HAS_HASHTAG, felonaturelons.numHashtags > 0)
+      richDataReloncord
+        .selontFelonaturelonValuelon[JDoublelon](ReloncapFelonaturelons.LINK_LANGUAGelon, felonaturelons.linkLanguagelon.toDoublelon)
+      richDataReloncord.selontFelonaturelonValuelon[JBoolelonan](ReloncapFelonaturelons.IS_AUTHOR_NSFW, felonaturelons.isAuthorNSFW)
+      richDataReloncord.selontFelonaturelonValuelon[JBoolelonan](ReloncapFelonaturelons.IS_AUTHOR_SPAM, felonaturelons.isAuthorSpam)
+      richDataReloncord.selontFelonaturelonValuelon[JBoolelonan](ReloncapFelonaturelons.IS_AUTHOR_BOT, felonaturelons.isAuthorBot)
+      richDataReloncord.selontFelonaturelonValuelonFromOption(
+        ReloncapFelonaturelons.LANGUAGelon,
+        felonaturelons.languagelon.map(_.gelontValuelon.toLong))
+      richDataReloncord.selontFelonaturelonValuelonFromOption(
+        ReloncapFelonaturelons.SIGNATURelon,
+        felonaturelons.signaturelon.map(_.toLong))
+      richDataReloncord
+        .selontFelonaturelonValuelon[JBoolelonan](ReloncapFelonaturelons.FROM_INACTIVelon_USelonR, felonaturelons.fromInActivelonUselonr)
+      richDataReloncord
+        .selontFelonaturelonValuelon[JBoolelonan](
+          ReloncapFelonaturelons.PROBABLY_FROM_FOLLOWelonD_AUTHOR,
+          felonaturelons.probablyFromFollowelondAuthor)
+      richDataReloncord
+        .selontFelonaturelonValuelon[JBoolelonan](ReloncapFelonaturelons.FROM_MUTUAL_FOLLOW, felonaturelons.fromMutualFollow)
+      richDataReloncord.selontFelonaturelonValuelon[JBoolelonan](
+        ReloncapFelonaturelons.FROM_VelonRIFIelonD_ACCOUNT,
+        felonaturelons.fromVelonrifielondAccount)
+      richDataReloncord.selontFelonaturelonValuelon[JDoublelon](ReloncapFelonaturelons.USelonR_RelonP, felonaturelons.uselonrRelonp)
+      richDataReloncord
+        .selontFelonaturelonValuelon[JDoublelon](ReloncapFelonaturelons.IS_BUSINelonSS_SCORelon, felonaturelons.isBusinelonssScorelon)
+      richDataReloncord
+        .selontFelonaturelonValuelon[JBoolelonan](ReloncapFelonaturelons.HAS_CONSUMelonR_VIDelonO, felonaturelons.hasConsumelonrVidelono)
+      richDataReloncord.selontFelonaturelonValuelon[JBoolelonan](ReloncapFelonaturelons.HAS_PRO_VIDelonO, felonaturelons.hasProVidelono)
+      richDataReloncord.selontFelonaturelonValuelon[JBoolelonan](ReloncapFelonaturelons.HAS_VINelon, felonaturelons.hasVinelon)
+      richDataReloncord.selontFelonaturelonValuelon[JBoolelonan](ReloncapFelonaturelons.HAS_PelonRISCOPelon, felonaturelons.hasPelonriscopelon)
+      richDataReloncord
+        .selontFelonaturelonValuelon[JBoolelonan](ReloncapFelonaturelons.HAS_NATIVelon_VIDelonO, felonaturelons.hasNativelonVidelono)
+      richDataReloncord
+        .selontFelonaturelonValuelon[JBoolelonan](ReloncapFelonaturelons.HAS_NATIVelon_IMAGelon, felonaturelons.hasNativelonImagelon)
+      richDataReloncord.selontFelonaturelonValuelon[JBoolelonan](ReloncapFelonaturelons.HAS_CARD, felonaturelons.hasCard)
+      richDataReloncord.selontFelonaturelonValuelon[JBoolelonan](ReloncapFelonaturelons.HAS_IMAGelon, felonaturelons.hasImagelon)
+      richDataReloncord.selontFelonaturelonValuelon[JBoolelonan](ReloncapFelonaturelons.HAS_NelonWS, felonaturelons.hasNelonws)
+      richDataReloncord.selontFelonaturelonValuelon[JBoolelonan](ReloncapFelonaturelons.HAS_VIDelonO, felonaturelons.hasVidelono)
+      richDataReloncord.selontFelonaturelonValuelon[JBoolelonan](ReloncapFelonaturelons.CONTAINS_MelonDIA, felonaturelons.containsMelondia)
+      richDataReloncord
+        .selontFelonaturelonValuelon[JBoolelonan](ReloncapFelonaturelons.RelonTWelonelonT_SelonARCHelonR, felonaturelons.relontwelonelontSelonarchelonr)
+      richDataReloncord.selontFelonaturelonValuelon[JBoolelonan](ReloncapFelonaturelons.RelonPLY_SelonARCHelonR, felonaturelons.relonplySelonarchelonr)
+      richDataReloncord
+        .selontFelonaturelonValuelon[JBoolelonan](ReloncapFelonaturelons.MelonNTION_SelonARCHelonR, felonaturelons.melonntionSelonarchelonr)
+      richDataReloncord.selontFelonaturelonValuelon[JBoolelonan](ReloncapFelonaturelons.RelonPLY_OTHelonR, felonaturelons.relonplyOthelonr)
+      richDataReloncord.selontFelonaturelonValuelon[JBoolelonan](ReloncapFelonaturelons.RelonTWelonelonT_OTHelonR, felonaturelons.relontwelonelontOthelonr)
+      richDataReloncord.selontFelonaturelonValuelon[JBoolelonan](ReloncapFelonaturelons.IS_RelonPLY, felonaturelons.isRelonply)
+      richDataReloncord.selontFelonaturelonValuelon[JBoolelonan](ReloncapFelonaturelons.IS_RelonTWelonelonT, felonaturelons.isRelontwelonelont)
+      richDataReloncord.selontFelonaturelonValuelon[JBoolelonan](ReloncapFelonaturelons.IS_OFFelonNSIVelon, felonaturelons.isOffelonnsivelon)
+      richDataReloncord.selontFelonaturelonValuelon[JBoolelonan](ReloncapFelonaturelons.MATCH_UI_LANG, felonaturelons.matchelonsUILang)
+      richDataReloncord
+        .selontFelonaturelonValuelon[JBoolelonan](
+          ReloncapFelonaturelons.MATCH_SelonARCHelonR_MAIN_LANG,
+          felonaturelons.matchelonsSelonarchelonrMainLang)
+      richDataReloncord.selontFelonaturelonValuelon[JBoolelonan](
+        ReloncapFelonaturelons.MATCH_SelonARCHelonR_LANGS,
+        felonaturelons.matchelonsSelonarchelonrLangs)
+      richDataReloncord
+        .selontFelonaturelonValuelon[JDoublelon](
+          ReloncapFelonaturelons.BIDIRelonCTIONAL_FAV_COUNT,
+          felonaturelons.bidirelonctionalFavCount)
+      richDataReloncord
+        .selontFelonaturelonValuelon[JDoublelon](
+          ReloncapFelonaturelons.UNIDIRelonCTIONAL_FAV_COUNT,
+          felonaturelons.unidirelonctionalFavCount)
+      richDataReloncord
+        .selontFelonaturelonValuelon[JDoublelon](
+          ReloncapFelonaturelons.BIDIRelonCTIONAL_RelonPLY_COUNT,
+          felonaturelons.bidirelonctionalRelonplyCount)
+      richDataReloncord
+        .selontFelonaturelonValuelon[JDoublelon](
+          ReloncapFelonaturelons.UNIDIRelonCTIONAL_RelonPLY_COUNT,
+          felonaturelons.unidirelonctionalRelonplyCount)
+      richDataReloncord
+        .selontFelonaturelonValuelon[JDoublelon](
+          ReloncapFelonaturelons.BIDIRelonCTIONAL_RelonTWelonelonT_COUNT,
+          felonaturelons.bidirelonctionalRelontwelonelontCount)
+      richDataReloncord
+        .selontFelonaturelonValuelon[JDoublelon](
+          ReloncapFelonaturelons.UNIDIRelonCTIONAL_RelonTWelonelonT_COUNT,
+          felonaturelons.unidirelonctionalRelontwelonelontCount)
+      richDataReloncord
+        .selontFelonaturelonValuelon[JDoublelon](ReloncapFelonaturelons.CONVelonRSATIONAL_COUNT, felonaturelons.convelonrsationCount)
+      richDataReloncord.selontFelonaturelonValuelon[JDoublelon](
+        ReloncapFelonaturelons.TWelonelonT_COUNT_FROM_USelonR_IN_SNAPSHOT,
+        felonaturelons.twelonelontCountFromUselonrInSnapshot
       )
-      richDataRecord
-        .setFeatureValue[JBoolean](
-          RecapFeatures.IS_RETWEETER_PROFILE_EGG,
-          features.isRetweeterProfileEgg)
-      richDataRecord
-        .setFeatureValue[JBoolean](RecapFeatures.IS_RETWEETER_NEW, features.isRetweeterNew)
-      richDataRecord
-        .setFeatureValue[JBoolean](RecapFeatures.IS_RETWEETER_BOT, features.isRetweeterBot)
-      richDataRecord
-        .setFeatureValue[JBoolean](RecapFeatures.IS_RETWEETER_NSFW, features.isRetweeterNSFW)
-      richDataRecord
-        .setFeatureValue[JBoolean](RecapFeatures.IS_RETWEETER_SPAM, features.isRetweeterSpam)
-      richDataRecord
-        .setFeatureValue[JBoolean](
-          RecapFeatures.RETWEET_OF_MUTUAL_FOLLOW,
-          features.retweetOfMutualFollow)
-      richDataRecord
-        .setFeatureValue[JDouble](RecapFeatures.SOURCE_AUTHOR_REP, features.sourceAuthorRep)
-      richDataRecord
-        .setFeatureValue[JBoolean](RecapFeatures.IS_RETWEET_OF_REPLY, features.isRetweetOfReply)
-      richDataRecord.setFeatureValueFromOption(
-        RecapFeatures.RETWEET_DIRECTED_AT_USER_IN_FIRST_DEGREE,
-        features.retweetDirectedAtUserInFirstDegree
+      richDataReloncord
+        .selontFelonaturelonValuelon[JBoolelonan](
+          ReloncapFelonaturelons.IS_RelonTWelonelonTelonR_PROFILelon_elonGG,
+          felonaturelons.isRelontwelonelontelonrProfilelonelongg)
+      richDataReloncord
+        .selontFelonaturelonValuelon[JBoolelonan](ReloncapFelonaturelons.IS_RelonTWelonelonTelonR_NelonW, felonaturelons.isRelontwelonelontelonrNelonw)
+      richDataReloncord
+        .selontFelonaturelonValuelon[JBoolelonan](ReloncapFelonaturelons.IS_RelonTWelonelonTelonR_BOT, felonaturelons.isRelontwelonelontelonrBot)
+      richDataReloncord
+        .selontFelonaturelonValuelon[JBoolelonan](ReloncapFelonaturelons.IS_RelonTWelonelonTelonR_NSFW, felonaturelons.isRelontwelonelontelonrNSFW)
+      richDataReloncord
+        .selontFelonaturelonValuelon[JBoolelonan](ReloncapFelonaturelons.IS_RelonTWelonelonTelonR_SPAM, felonaturelons.isRelontwelonelontelonrSpam)
+      richDataReloncord
+        .selontFelonaturelonValuelon[JBoolelonan](
+          ReloncapFelonaturelons.RelonTWelonelonT_OF_MUTUAL_FOLLOW,
+          felonaturelons.relontwelonelontOfMutualFollow)
+      richDataReloncord
+        .selontFelonaturelonValuelon[JDoublelon](ReloncapFelonaturelons.SOURCelon_AUTHOR_RelonP, felonaturelons.sourcelonAuthorRelonp)
+      richDataReloncord
+        .selontFelonaturelonValuelon[JBoolelonan](ReloncapFelonaturelons.IS_RelonTWelonelonT_OF_RelonPLY, felonaturelons.isRelontwelonelontOfRelonply)
+      richDataReloncord.selontFelonaturelonValuelonFromOption(
+        ReloncapFelonaturelons.RelonTWelonelonT_DIRelonCTelonD_AT_USelonR_IN_FIRST_DelonGRelonelon,
+        felonaturelons.relontwelonelontDirelonctelondAtUselonrInFirstDelongrelonelon
       )
-      richDataRecord
-        .setFeatureValue[JDouble](
-          RecapFeatures.EMBEDS_IMPRESSION_COUNT,
-          features.embedsImpressionCount.toDouble)
-      richDataRecord
-        .setFeatureValue[JDouble](RecapFeatures.EMBEDS_URL_COUNT, features.embedsUrlCount.toDouble)
-      richDataRecord
-        .setFeatureValue[JDouble](RecapFeatures.VIDEO_VIEW_COUNT, features.videoViewCount.toDouble)
-      richDataRecord
-        .setFeatureValue[JDouble](RecapFeatures.REPLY_COUNT, features.replyCount.toDouble)
-      richDataRecord
-        .setFeatureValue[JDouble](RecapFeatures.RETWEET_COUNT, features.retweetCount.toDouble)
-      richDataRecord.setFeatureValue[JDouble](RecapFeatures.FAV_COUNT, features.favCount.toDouble)
-      richDataRecord.setFeatureValue[JDouble](RecapFeatures.BLENDER_SCORE, features.blenderScore)
-      richDataRecord.setFeatureValue[JDouble](RecapFeatures.TEXT_SCORE, features.textScore)
-      richDataRecord
-        .setFeatureValue[JBoolean](RecapFeatures.HAS_VISIBLE_LINK, features.hasVisibleLink)
-      richDataRecord.setFeatureValue[JBoolean](RecapFeatures.HAS_LINK, features.hasLink)
-      richDataRecord.setFeatureValue[JBoolean](RecapFeatures.HAS_TREND, features.hasTrend)
-      richDataRecord.setFeatureValue[JBoolean](
-        RecapFeatures.HAS_MULTIPLE_HASHTAGS_OR_TRENDS,
-        features.hasMultipleHashtagsOrTrends
+      richDataReloncord
+        .selontFelonaturelonValuelon[JDoublelon](
+          ReloncapFelonaturelons.elonMBelonDS_IMPRelonSSION_COUNT,
+          felonaturelons.elonmbelondsImprelonssionCount.toDoublelon)
+      richDataReloncord
+        .selontFelonaturelonValuelon[JDoublelon](ReloncapFelonaturelons.elonMBelonDS_URL_COUNT, felonaturelons.elonmbelondsUrlCount.toDoublelon)
+      richDataReloncord
+        .selontFelonaturelonValuelon[JDoublelon](ReloncapFelonaturelons.VIDelonO_VIelonW_COUNT, felonaturelons.videlonoVielonwCount.toDoublelon)
+      richDataReloncord
+        .selontFelonaturelonValuelon[JDoublelon](ReloncapFelonaturelons.RelonPLY_COUNT, felonaturelons.relonplyCount.toDoublelon)
+      richDataReloncord
+        .selontFelonaturelonValuelon[JDoublelon](ReloncapFelonaturelons.RelonTWelonelonT_COUNT, felonaturelons.relontwelonelontCount.toDoublelon)
+      richDataReloncord.selontFelonaturelonValuelon[JDoublelon](ReloncapFelonaturelons.FAV_COUNT, felonaturelons.favCount.toDoublelon)
+      richDataReloncord.selontFelonaturelonValuelon[JDoublelon](ReloncapFelonaturelons.BLelonNDelonR_SCORelon, felonaturelons.blelonndelonrScorelon)
+      richDataReloncord.selontFelonaturelonValuelon[JDoublelon](ReloncapFelonaturelons.TelonXT_SCORelon, felonaturelons.telonxtScorelon)
+      richDataReloncord
+        .selontFelonaturelonValuelon[JBoolelonan](ReloncapFelonaturelons.HAS_VISIBLelon_LINK, felonaturelons.hasVisiblelonLink)
+      richDataReloncord.selontFelonaturelonValuelon[JBoolelonan](ReloncapFelonaturelons.HAS_LINK, felonaturelons.hasLink)
+      richDataReloncord.selontFelonaturelonValuelon[JBoolelonan](ReloncapFelonaturelons.HAS_TRelonND, felonaturelons.hasTrelonnd)
+      richDataReloncord.selontFelonaturelonValuelon[JBoolelonan](
+        ReloncapFelonaturelons.HAS_MULTIPLelon_HASHTAGS_OR_TRelonNDS,
+        felonaturelons.hasMultiplelonHashtagsOrTrelonnds
       )
-      richDataRecord.setFeatureValueFromOption(
-        RecapFeatures.FAV_COUNT_V2,
-        features.favCountV2.map(_.toDouble))
-      richDataRecord.setFeatureValueFromOption(
-        RecapFeatures.RETWEET_COUNT_V2,
-        features.retweetCountV2.map(_.toDouble)
+      richDataReloncord.selontFelonaturelonValuelonFromOption(
+        ReloncapFelonaturelons.FAV_COUNT_V2,
+        felonaturelons.favCountV2.map(_.toDoublelon))
+      richDataReloncord.selontFelonaturelonValuelonFromOption(
+        ReloncapFelonaturelons.RelonTWelonelonT_COUNT_V2,
+        felonaturelons.relontwelonelontCountV2.map(_.toDoublelon)
       )
-      richDataRecord.setFeatureValueFromOption(
-        RecapFeatures.REPLY_COUNT_V2,
-        features.replyCountV2.map(_.toDouble))
-      val urls = features.urlsList.getOrElse(Seq.empty)
-      richDataRecord.setFeatureValue(
-        RecapFeatures.URL_DOMAINS,
-        urls.toSet.flatMap(UrlExtractorUtil.extractDomain).asJava)
-      richDataRecord.setFeatureValue[JDouble](RecapFeatures.LINK_COUNT, urls.size.toDouble)
-      // shared features
-      richDataRecord.setFeatureValueFromOption(
-        TimelinesSharedFeatures.WEIGHTED_FAV_COUNT,
-        features.weightedFavoriteCount.map(_.toDouble)
+      richDataReloncord.selontFelonaturelonValuelonFromOption(
+        ReloncapFelonaturelons.RelonPLY_COUNT_V2,
+        felonaturelons.relonplyCountV2.map(_.toDoublelon))
+      val urls = felonaturelons.urlsList.gelontOrelonlselon(Selonq.elonmpty)
+      richDataReloncord.selontFelonaturelonValuelon(
+        ReloncapFelonaturelons.URL_DOMAINS,
+        urls.toSelont.flatMap(UrlelonxtractorUtil.elonxtractDomain).asJava)
+      richDataReloncord.selontFelonaturelonValuelon[JDoublelon](ReloncapFelonaturelons.LINK_COUNT, urls.sizelon.toDoublelon)
+      // sharelond felonaturelons
+      richDataReloncord.selontFelonaturelonValuelonFromOption(
+        TimelonlinelonsSharelondFelonaturelons.WelonIGHTelonD_FAV_COUNT,
+        felonaturelons.welonightelondFavoritelonCount.map(_.toDoublelon)
       )
-      richDataRecord.setFeatureValueFromOption(
-        TimelinesSharedFeatures.WEIGHTED_RETWEET_COUNT,
-        features.weightedRetweetCount.map(_.toDouble)
+      richDataReloncord.selontFelonaturelonValuelonFromOption(
+        TimelonlinelonsSharelondFelonaturelons.WelonIGHTelonD_RelonTWelonelonT_COUNT,
+        felonaturelons.welonightelondRelontwelonelontCount.map(_.toDoublelon)
       )
-      richDataRecord.setFeatureValueFromOption(
-        TimelinesSharedFeatures.WEIGHTED_REPLY_COUNT,
-        features.weightedReplyCount.map(_.toDouble)
+      richDataReloncord.selontFelonaturelonValuelonFromOption(
+        TimelonlinelonsSharelondFelonaturelons.WelonIGHTelonD_RelonPLY_COUNT,
+        felonaturelons.welonightelondRelonplyCount.map(_.toDoublelon)
       )
-      richDataRecord.setFeatureValueFromOption(
-        TimelinesSharedFeatures.WEIGHTED_QUOTE_COUNT,
-        features.weightedQuoteCount.map(_.toDouble)
+      richDataReloncord.selontFelonaturelonValuelonFromOption(
+        TimelonlinelonsSharelondFelonaturelons.WelonIGHTelonD_QUOTelon_COUNT,
+        felonaturelons.welonightelondQuotelonCount.map(_.toDoublelon)
       )
-      richDataRecord.setFeatureValueFromOption(
-        TimelinesSharedFeatures.EMBEDS_IMPRESSION_COUNT_V2,
-        features.embedsImpressionCountV2.map(_.toDouble)
+      richDataReloncord.selontFelonaturelonValuelonFromOption(
+        TimelonlinelonsSharelondFelonaturelons.elonMBelonDS_IMPRelonSSION_COUNT_V2,
+        felonaturelons.elonmbelondsImprelonssionCountV2.map(_.toDoublelon)
       )
-      richDataRecord.setFeatureValueFromOption(
-        TimelinesSharedFeatures.EMBEDS_URL_COUNT_V2,
-        features.embedsUrlCountV2.map(_.toDouble)
+      richDataReloncord.selontFelonaturelonValuelonFromOption(
+        TimelonlinelonsSharelondFelonaturelons.elonMBelonDS_URL_COUNT_V2,
+        felonaturelons.elonmbelondsUrlCountV2.map(_.toDoublelon)
       )
-      richDataRecord.setFeatureValueFromOption(
-        TimelinesSharedFeatures.DECAYED_FAVORITE_COUNT,
-        features.decayedFavoriteCount.map(_.toDouble)
+      richDataReloncord.selontFelonaturelonValuelonFromOption(
+        TimelonlinelonsSharelondFelonaturelons.DelonCAYelonD_FAVORITelon_COUNT,
+        felonaturelons.deloncayelondFavoritelonCount.map(_.toDoublelon)
       )
-      richDataRecord.setFeatureValueFromOption(
-        TimelinesSharedFeatures.DECAYED_RETWEET_COUNT,
-        features.decayedRetweetCount.map(_.toDouble)
+      richDataReloncord.selontFelonaturelonValuelonFromOption(
+        TimelonlinelonsSharelondFelonaturelons.DelonCAYelonD_RelonTWelonelonT_COUNT,
+        felonaturelons.deloncayelondRelontwelonelontCount.map(_.toDoublelon)
       )
-      richDataRecord.setFeatureValueFromOption(
-        TimelinesSharedFeatures.DECAYED_REPLY_COUNT,
-        features.decayedReplyCount.map(_.toDouble)
+      richDataReloncord.selontFelonaturelonValuelonFromOption(
+        TimelonlinelonsSharelondFelonaturelons.DelonCAYelonD_RelonPLY_COUNT,
+        felonaturelons.deloncayelondRelonplyCount.map(_.toDoublelon)
       )
-      richDataRecord.setFeatureValueFromOption(
-        TimelinesSharedFeatures.DECAYED_QUOTE_COUNT,
-        features.decayedQuoteCount.map(_.toDouble)
+      richDataReloncord.selontFelonaturelonValuelonFromOption(
+        TimelonlinelonsSharelondFelonaturelons.DelonCAYelonD_QUOTelon_COUNT,
+        felonaturelons.deloncayelondQuotelonCount.map(_.toDoublelon)
       )
-      richDataRecord.setFeatureValueFromOption(
-        TimelinesSharedFeatures.FAKE_FAVORITE_COUNT,
-        features.fakeFavoriteCount.map(_.toDouble)
+      richDataReloncord.selontFelonaturelonValuelonFromOption(
+        TimelonlinelonsSharelondFelonaturelons.FAKelon_FAVORITelon_COUNT,
+        felonaturelons.fakelonFavoritelonCount.map(_.toDoublelon)
       )
-      richDataRecord.setFeatureValueFromOption(
-        TimelinesSharedFeatures.FAKE_RETWEET_COUNT,
-        features.fakeRetweetCount.map(_.toDouble)
+      richDataReloncord.selontFelonaturelonValuelonFromOption(
+        TimelonlinelonsSharelondFelonaturelons.FAKelon_RelonTWelonelonT_COUNT,
+        felonaturelons.fakelonRelontwelonelontCount.map(_.toDoublelon)
       )
-      richDataRecord.setFeatureValueFromOption(
-        TimelinesSharedFeatures.FAKE_REPLY_COUNT,
-        features.fakeReplyCount.map(_.toDouble)
+      richDataReloncord.selontFelonaturelonValuelonFromOption(
+        TimelonlinelonsSharelondFelonaturelons.FAKelon_RelonPLY_COUNT,
+        felonaturelons.fakelonRelonplyCount.map(_.toDoublelon)
       )
-      richDataRecord.setFeatureValueFromOption(
-        TimelinesSharedFeatures.FAKE_QUOTE_COUNT,
-        features.fakeQuoteCount.map(_.toDouble)
+      richDataReloncord.selontFelonaturelonValuelonFromOption(
+        TimelonlinelonsSharelondFelonaturelons.FAKelon_QUOTelon_COUNT,
+        felonaturelons.fakelonQuotelonCount.map(_.toDoublelon)
       )
-      richDataRecord.setFeatureValueFromOption(
-        TimelinesSharedFeatures.QUOTE_COUNT,
-        features.quoteCount.map(_.toDouble)
+      richDataReloncord.selontFelonaturelonValuelonFromOption(
+        TimelonlinelonsSharelondFelonaturelons.QUOTelon_COUNT,
+        felonaturelons.quotelonCount.map(_.toDoublelon)
       )
-      richDataRecord.setFeatureValue[JDouble](
-        TimelinesSharedFeatures.EARLYBIRD_SCORE,
-        features.earlybirdScore
+      richDataReloncord.selontFelonaturelonValuelon[JDoublelon](
+        TimelonlinelonsSharelondFelonaturelons.elonARLYBIRD_SCORelon,
+        felonaturelons.elonarlybirdScorelon
       )
-      // safety features
-      richDataRecord.setFeatureValueFromOption(
-        TimelinesSharedFeatures.LABEL_ABUSIVE_FLAG,
-        features.labelAbusiveFlag
+      // safelonty felonaturelons
+      richDataReloncord.selontFelonaturelonValuelonFromOption(
+        TimelonlinelonsSharelondFelonaturelons.LABelonL_ABUSIVelon_FLAG,
+        felonaturelons.labelonlAbusivelonFlag
       )
-      richDataRecord.setFeatureValueFromOption(
-        TimelinesSharedFeatures.LABEL_ABUSIVE_HI_RCL_FLAG,
-        features.labelAbusiveHiRclFlag
+      richDataReloncord.selontFelonaturelonValuelonFromOption(
+        TimelonlinelonsSharelondFelonaturelons.LABelonL_ABUSIVelon_HI_RCL_FLAG,
+        felonaturelons.labelonlAbusivelonHiRclFlag
       )
-      richDataRecord.setFeatureValueFromOption(
-        TimelinesSharedFeatures.LABEL_DUP_CONTENT_FLAG,
-        features.labelDupContentFlag
+      richDataReloncord.selontFelonaturelonValuelonFromOption(
+        TimelonlinelonsSharelondFelonaturelons.LABelonL_DUP_CONTelonNT_FLAG,
+        felonaturelons.labelonlDupContelonntFlag
       )
-      richDataRecord.setFeatureValueFromOption(
-        TimelinesSharedFeatures.LABEL_NSFW_HI_PRC_FLAG,
-        features.labelNsfwHiPrcFlag
+      richDataReloncord.selontFelonaturelonValuelonFromOption(
+        TimelonlinelonsSharelondFelonaturelons.LABelonL_NSFW_HI_PRC_FLAG,
+        felonaturelons.labelonlNsfwHiPrcFlag
       )
-      richDataRecord.setFeatureValueFromOption(
-        TimelinesSharedFeatures.LABEL_NSFW_HI_RCL_FLAG,
-        features.labelNsfwHiRclFlag
+      richDataReloncord.selontFelonaturelonValuelonFromOption(
+        TimelonlinelonsSharelondFelonaturelons.LABelonL_NSFW_HI_RCL_FLAG,
+        felonaturelons.labelonlNsfwHiRclFlag
       )
-      richDataRecord.setFeatureValueFromOption(
-        TimelinesSharedFeatures.LABEL_SPAM_FLAG,
-        features.labelSpamFlag
+      richDataReloncord.selontFelonaturelonValuelonFromOption(
+        TimelonlinelonsSharelondFelonaturelons.LABelonL_SPAM_FLAG,
+        felonaturelons.labelonlSpamFlag
       )
-      richDataRecord.setFeatureValueFromOption(
-        TimelinesSharedFeatures.LABEL_SPAM_HI_RCL_FLAG,
-        features.labelSpamHiRclFlag
+      richDataReloncord.selontFelonaturelonValuelonFromOption(
+        TimelonlinelonsSharelondFelonaturelons.LABelonL_SPAM_HI_RCL_FLAG,
+        felonaturelons.labelonlSpamHiRclFlag
       )
-      // periscope features
-      richDataRecord.setFeatureValueFromOption(
-        TimelinesSharedFeatures.PERISCOPE_EXISTS,
-        features.periscopeExists
+      // pelonriscopelon felonaturelons
+      richDataReloncord.selontFelonaturelonValuelonFromOption(
+        TimelonlinelonsSharelondFelonaturelons.PelonRISCOPelon_elonXISTS,
+        felonaturelons.pelonriscopelonelonxists
       )
-      richDataRecord.setFeatureValueFromOption(
-        TimelinesSharedFeatures.PERISCOPE_IS_LIVE,
-        features.periscopeIsLive
+      richDataReloncord.selontFelonaturelonValuelonFromOption(
+        TimelonlinelonsSharelondFelonaturelons.PelonRISCOPelon_IS_LIVelon,
+        felonaturelons.pelonriscopelonIsLivelon
       )
-      richDataRecord.setFeatureValueFromOption(
-        TimelinesSharedFeatures.PERISCOPE_HAS_BEEN_FEATURED,
-        features.periscopeHasBeenFeatured
+      richDataReloncord.selontFelonaturelonValuelonFromOption(
+        TimelonlinelonsSharelondFelonaturelons.PelonRISCOPelon_HAS_BelonelonN_FelonATURelonD,
+        felonaturelons.pelonriscopelonHasBelonelonnFelonaturelond
       )
-      richDataRecord.setFeatureValueFromOption(
-        TimelinesSharedFeatures.PERISCOPE_IS_CURRENTLY_FEATURED,
-        features.periscopeIsCurrentlyFeatured
+      richDataReloncord.selontFelonaturelonValuelonFromOption(
+        TimelonlinelonsSharelondFelonaturelons.PelonRISCOPelon_IS_CURRelonNTLY_FelonATURelonD,
+        felonaturelons.pelonriscopelonIsCurrelonntlyFelonaturelond
       )
-      richDataRecord.setFeatureValueFromOption(
-        TimelinesSharedFeatures.PERISCOPE_IS_FROM_QUALITY_SOURCE,
-        features.periscopeIsFromQualitySource
+      richDataReloncord.selontFelonaturelonValuelonFromOption(
+        TimelonlinelonsSharelondFelonaturelons.PelonRISCOPelon_IS_FROM_QUALITY_SOURCelon,
+        felonaturelons.pelonriscopelonIsFromQualitySourcelon
       )
-      // misc features
-      richDataRecord.setFeatureValueFromOption(
-        TimelinesSharedFeatures.VISIBLE_TOKEN_RATIO,
-        features.visibleTokenRatio.map(_.toDouble)
+      // misc felonaturelons
+      richDataReloncord.selontFelonaturelonValuelonFromOption(
+        TimelonlinelonsSharelondFelonaturelons.VISIBLelon_TOKelonN_RATIO,
+        felonaturelons.visiblelonTokelonnRatio.map(_.toDoublelon)
       )
-      richDataRecord.setFeatureValueFromOption(
-        TimelinesSharedFeatures.HAS_QUOTE,
-        features.hasQuote
+      richDataReloncord.selontFelonaturelonValuelonFromOption(
+        TimelonlinelonsSharelondFelonaturelons.HAS_QUOTelon,
+        felonaturelons.hasQuotelon
       )
-      richDataRecord.setFeatureValueFromOption(
-        TimelinesSharedFeatures.IS_COMPOSER_SOURCE_CAMERA,
-        features.isComposerSourceCamera
+      richDataReloncord.selontFelonaturelonValuelonFromOption(
+        TimelonlinelonsSharelondFelonaturelons.IS_COMPOSelonR_SOURCelon_CAMelonRA,
+        felonaturelons.isComposelonrSourcelonCamelonra
       )
-      // health scores
-      richDataRecord.setFeatureValueFromOption(
-        TimelinesSharedFeatures.PREPORTED_TWEET_SCORE,
-        features.pReportedTweetScore
+      // helonalth scorelons
+      richDataReloncord.selontFelonaturelonValuelonFromOption(
+        TimelonlinelonsSharelondFelonaturelons.PRelonPORTelonD_TWelonelonT_SCORelon,
+        felonaturelons.pRelonportelondTwelonelontScorelon
       )
-      // media
-      richDataRecord.setFeatureValueFromOption(
-        TimelinesSharedFeatures.CLASSIFICATION_LABELS,
-        features.mediaClassificationInfo.map(_.toMap.asJava.asInstanceOf[JMap[String, JDouble]])
+      // melondia
+      richDataReloncord.selontFelonaturelonValuelonFromOption(
+        TimelonlinelonsSharelondFelonaturelons.CLASSIFICATION_LABelonLS,
+        felonaturelons.melondiaClassificationInfo.map(_.toMap.asJava.asInstancelonOf[JMap[String, JDoublelon]])
       )
     }
   }

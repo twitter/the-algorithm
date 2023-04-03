@@ -1,55 +1,55 @@
-package com.twitter.search.earlybird_root;
+packagelon com.twittelonr.selonarch.elonarlybird_root;
 
 import java.util.List;
 
-import javax.inject.Inject;
+import javax.injelonct.Injelonct;
 
-import com.twitter.finagle.Filter;
-import com.twitter.finagle.Service;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird_root.common.EarlybirdFeatureSchemaMerger;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.earlybird_root.mergers.EarlybirdResponseMerger;
-import com.twitter.search.earlybird_root.mergers.TierResponseAccumulator;
-import com.twitter.util.Function;
-import com.twitter.util.Future;
+import com.twittelonr.finaglelon.Filtelonr;
+import com.twittelonr.finaglelon.Selonrvicelon;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdClustelonr;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
+import com.twittelonr.selonarch.elonarlybird_root.common.elonarlybirdFelonaturelonSchelonmaMelonrgelonr;
+import com.twittelonr.selonarch.elonarlybird_root.common.elonarlybirdRelonquelonstContelonxt;
+import com.twittelonr.selonarch.elonarlybird_root.melonrgelonrs.elonarlybirdRelonsponselonMelonrgelonr;
+import com.twittelonr.selonarch.elonarlybird_root.melonrgelonrs.TielonrRelonsponselonAccumulator;
+import com.twittelonr.util.Function;
+import com.twittelonr.util.Futurelon;
 
 /**
- * Filter used to merge results from multiple tiers
+ * Filtelonr uselond to melonrgelon relonsults from multiplelon tielonrs
  */
-public class MultiTierResultsMergeFilter extends
-    Filter<EarlybirdRequestContext, EarlybirdResponse,
-        EarlybirdRequestContext, List<Future<EarlybirdResponse>>> {
+public class MultiTielonrRelonsultsMelonrgelonFiltelonr elonxtelonnds
+    Filtelonr<elonarlybirdRelonquelonstContelonxt, elonarlybirdRelonsponselon,
+        elonarlybirdRelonquelonstContelonxt, List<Futurelon<elonarlybirdRelonsponselon>>> {
 
-  private final EarlybirdFeatureSchemaMerger featureSchemaMerger;
+  privatelon final elonarlybirdFelonaturelonSchelonmaMelonrgelonr felonaturelonSchelonmaMelonrgelonr;
 
-  @Inject
-  public MultiTierResultsMergeFilter(EarlybirdFeatureSchemaMerger featureSchemaMerger) {
-    this.featureSchemaMerger = featureSchemaMerger;
+  @Injelonct
+  public MultiTielonrRelonsultsMelonrgelonFiltelonr(elonarlybirdFelonaturelonSchelonmaMelonrgelonr felonaturelonSchelonmaMelonrgelonr) {
+    this.felonaturelonSchelonmaMelonrgelonr = felonaturelonSchelonmaMelonrgelonr;
   }
 
-  @Override
-  public Future<EarlybirdResponse> apply(
-      final EarlybirdRequestContext request,
-      Service<EarlybirdRequestContext, List<Future<EarlybirdResponse>>> service) {
-    return service.apply(request).flatMap(Function.func(responses -> merge(request, responses)));
+  @Ovelonrridelon
+  public Futurelon<elonarlybirdRelonsponselon> apply(
+      final elonarlybirdRelonquelonstContelonxt relonquelonst,
+      Selonrvicelon<elonarlybirdRelonquelonstContelonxt, List<Futurelon<elonarlybirdRelonsponselon>>> selonrvicelon) {
+    relonturn selonrvicelon.apply(relonquelonst).flatMap(Function.func(relonsponselons -> melonrgelon(relonquelonst, relonsponselons)));
   }
 
-  private Future<EarlybirdResponse> merge(
-      EarlybirdRequestContext requestContext,
-      List<Future<EarlybirdResponse>> responses) {
+  privatelon Futurelon<elonarlybirdRelonsponselon> melonrgelon(
+      elonarlybirdRelonquelonstContelonxt relonquelonstContelonxt,
+      List<Futurelon<elonarlybirdRelonsponselon>> relonsponselons) {
 
-    // For multi-tier response merging, the number of partitions do not have meaning because
-    // the response is not uniformly partitioned anymore.  We pass Integer.MAX_VALUE for stats
-    // counting purpose.
-    EarlybirdResponseMerger merger = EarlybirdResponseMerger.getResponseMerger(
-        requestContext,
-        responses,
-        new TierResponseAccumulator(),
-        EarlybirdCluster.FULL_ARCHIVE,
-        featureSchemaMerger,
-        Integer.MAX_VALUE);
-    return merger.merge();
+    // For multi-tielonr relonsponselon melonrging, thelon numbelonr of partitions do not havelon melonaning beloncauselon
+    // thelon relonsponselon is not uniformly partitionelond anymorelon.  Welon pass Intelongelonr.MAX_VALUelon for stats
+    // counting purposelon.
+    elonarlybirdRelonsponselonMelonrgelonr melonrgelonr = elonarlybirdRelonsponselonMelonrgelonr.gelontRelonsponselonMelonrgelonr(
+        relonquelonstContelonxt,
+        relonsponselons,
+        nelonw TielonrRelonsponselonAccumulator(),
+        elonarlybirdClustelonr.FULL_ARCHIVelon,
+        felonaturelonSchelonmaMelonrgelonr,
+        Intelongelonr.MAX_VALUelon);
+    relonturn melonrgelonr.melonrgelon();
   }
 }

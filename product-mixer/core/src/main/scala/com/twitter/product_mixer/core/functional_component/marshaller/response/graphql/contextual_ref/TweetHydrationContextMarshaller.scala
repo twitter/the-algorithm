@@ -1,20 +1,20 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.graphql.contextual_ref
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.graphql.contelonxtual_relonf
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.rtf.safety_level.SafetyLevelMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.contextual_ref.TweetHydrationContext
-import com.twitter.strato.graphql.contextual_refs.{thriftscala => thrift}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.rtf.safelonty_lelonvelonl.SafelontyLelonvelonlMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.contelonxtual_relonf.TwelonelontHydrationContelonxt
+import com.twittelonr.strato.graphql.contelonxtual_relonfs.{thriftscala => thrift}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class TweetHydrationContextMarshaller @Inject() (
-  safetyLevelMarshaller: SafetyLevelMarshaller,
-  outerTweetContextMarshaller: OuterTweetContextMarshaller) {
+@Singlelonton
+class TwelonelontHydrationContelonxtMarshallelonr @Injelonct() (
+  safelontyLelonvelonlMarshallelonr: SafelontyLelonvelonlMarshallelonr,
+  outelonrTwelonelontContelonxtMarshallelonr: OutelonrTwelonelontContelonxtMarshallelonr) {
 
-  def apply(tweetHydrationContext: TweetHydrationContext): thrift.TweetHydrationContext =
-    thrift.TweetHydrationContext(
-      safetyLevelOverride = tweetHydrationContext.safetyLevelOverride.map(safetyLevelMarshaller(_)),
-      outerTweetContext =
-        tweetHydrationContext.outerTweetContext.map(outerTweetContextMarshaller(_))
+  delonf apply(twelonelontHydrationContelonxt: TwelonelontHydrationContelonxt): thrift.TwelonelontHydrationContelonxt =
+    thrift.TwelonelontHydrationContelonxt(
+      safelontyLelonvelonlOvelonrridelon = twelonelontHydrationContelonxt.safelontyLelonvelonlOvelonrridelon.map(safelontyLelonvelonlMarshallelonr(_)),
+      outelonrTwelonelontContelonxt =
+        twelonelontHydrationContelonxt.outelonrTwelonelontContelonxt.map(outelonrTwelonelontContelonxtMarshallelonr(_))
     )
 }

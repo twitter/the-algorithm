@@ -1,14 +1,14 @@
 java_library(
-    sources = ["*.java"],
+    sourcelons = ["*.java"],
     platform = "java8",
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/com/google/guava",
-        "3rdparty/jvm/org/apache/hadoop:hadoop-client-default",
+    strict_delonps = Truelon,
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        "3rdparty/jvm/com/googlelon/guava",
+        "3rdparty/jvm/org/apachelon/hadoop:hadoop-clielonnt-delonfault",
         "3rdparty/jvm/org/slf4j:slf4j-api",
-        "3rdparty/jvm/org/yaml:snakeyaml",
-        "src/java/com/twitter/search/common/file",
-        "src/java/com/twitter/search/common/metrics",
+        "3rdparty/jvm/org/yaml:snakelonyaml",
+        "src/java/com/twittelonr/selonarch/common/filelon",
+        "src/java/com/twittelonr/selonarch/common/melontrics",
     ],
 )

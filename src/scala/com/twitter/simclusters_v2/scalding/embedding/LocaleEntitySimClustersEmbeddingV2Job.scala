@@ -1,248 +1,248 @@
-package com.twitter.simclusters_v2.scalding.embedding
+packagelon com.twittelonr.simclustelonrs_v2.scalding.elonmbelondding
 
-import com.twitter.bijection.{Bufferable, Injection}
-import com.twitter.recos.entities.thriftscala.{Entity, SemanticCoreEntity}
-import com.twitter.scalding.{DateRange, Days, Duration, Execution, RichDate, TypedPipe, UniqueID}
-import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common._
-import com.twitter.simclusters_v2.hdfs_sources.{AdhocKeyValSources, EntityEmbeddingsSources}
-import com.twitter.simclusters_v2.scalding.common.matrix.{SparseMatrix, SparseRowMatrix}
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil.ClusterId
-import com.twitter.simclusters_v2.scalding.embedding.common.{
-  EmbeddingUtil,
-  ExternalDataSources,
-  SimClustersEmbeddingBaseJob
+import com.twittelonr.bijelonction.{Buffelonrablelon, Injelonction}
+import com.twittelonr.reloncos.elonntitielons.thriftscala.{elonntity, SelonmanticCorelonelonntity}
+import com.twittelonr.scalding.{DatelonRangelon, Days, Duration, elonxeloncution, RichDatelon, TypelondPipelon, UniquelonID}
+import com.twittelonr.scalding_intelonrnal.dalv2.DALWritelon._
+import com.twittelonr.scalding_intelonrnal.multiformat.format.kelonyval.KelonyVal
+import com.twittelonr.simclustelonrs_v2.common._
+import com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.{AdhocKelonyValSourcelons, elonntityelonmbelonddingsSourcelons}
+import com.twittelonr.simclustelonrs_v2.scalding.common.matrix.{SparselonMatrix, SparselonRowMatrix}
+import com.twittelonr.simclustelonrs_v2.scalding.elonmbelondding.common.elonmbelonddingUtil.ClustelonrId
+import com.twittelonr.simclustelonrs_v2.scalding.elonmbelondding.common.{
+  elonmbelonddingUtil,
+  elonxtelonrnalDataSourcelons,
+  SimClustelonrselonmbelonddingBaselonJob
 }
-import com.twitter.simclusters_v2.thriftscala.{
-  EmbeddingType,
-  InternalId,
-  InternalIdEmbedding,
-  InternalIdWithScore,
-  LocaleEntityId,
-  ModelVersion,
-  SimClustersEmbeddingId
+import com.twittelonr.simclustelonrs_v2.thriftscala.{
+  elonmbelonddingTypelon,
+  IntelonrnalId,
+  IntelonrnalIdelonmbelondding,
+  IntelonrnalIdWithScorelon,
+  LocalelonelonntityId,
+  ModelonlVelonrsion,
+  SimClustelonrselonmbelonddingId
 }
-import com.twitter.wtf.entity_real_graph.thriftscala.{Edge, FeatureName}
-import com.twitter.wtf.scalding.jobs.common.{AdhocExecutionApp, DataSources, ScheduledExecutionApp}
-import java.util.TimeZone
+import com.twittelonr.wtf.elonntity_relonal_graph.thriftscala.{elondgelon, FelonaturelonNamelon}
+import com.twittelonr.wtf.scalding.jobs.common.{AdhocelonxeloncutionApp, DataSourcelons, SchelondulelondelonxeloncutionApp}
+import java.util.TimelonZonelon
 
 /**
- * Scheduled production job which generates topic embeddings per locale based on Entity Real Graph.
+ * Schelondulelond production job which gelonnelonratelons topic elonmbelonddings pelonr localelon baselond on elonntity Relonal Graph.
  *
- * V2 Uses the log transform of the ERG favScores and the SimCluster InterestedIn scores.
+ * V2 Uselons thelon log transform of thelon elonRG favScorelons and thelon SimClustelonr IntelonrelonstelondIn scorelons.
  *
- * $ ./bazel bundle src/scala/com/twitter/simclusters_v2/scalding/embedding:locale_entity_simclusters_embedding_v2
- * $ capesospy-v2 update \
+ * $ ./bazelonl bundlelon src/scala/com/twittelonr/simclustelonrs_v2/scalding/elonmbelondding:localelon_elonntity_simclustelonrs_elonmbelondding_v2
+ * $ capelonsospy-v2 updatelon \
   --build_locally \
-  --start_cron locale_entity_simclusters_embedding_v2 src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
+  --start_cron localelon_elonntity_simclustelonrs_elonmbelondding_v2 src/scala/com/twittelonr/simclustelonrs_v2/capelonsos_config/atla_proc3.yaml
  */
-object LocaleEntitySimClustersEmbeddingV2ScheduledApp
-    extends LocaleEntitySimClustersEmbeddingV2Job
-    with ScheduledExecutionApp {
+objelonct LocalelonelonntitySimClustelonrselonmbelonddingV2SchelondulelondApp
+    elonxtelonnds LocalelonelonntitySimClustelonrselonmbelonddingV2Job
+    with SchelondulelondelonxeloncutionApp {
 
-  override val firstTime: RichDate = RichDate("2020-04-08")
+  ovelonrridelon val firstTimelon: RichDatelon = RichDatelon("2020-04-08")
 
-  override val batchIncrement: Duration = Days(1)
+  ovelonrridelon val batchIncrelonmelonnt: Duration = Days(1)
 
-  override def writeNounToClustersIndex(
-    output: TypedPipe[(LocaleEntity, Seq[(ClusterId, Double)])]
+  ovelonrridelon delonf writelonNounToClustelonrsIndelonx(
+    output: TypelondPipelon[(Localelonelonntity, Selonq[(ClustelonrId, Doublelon)])]
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon,
+    uniquelonID: UniquelonID
+  ): elonxeloncution[Unit] = {
 
     output
       .map {
-        case ((entityId, lang), clustersWithScores) =>
-          KeyVal(
-            SimClustersEmbeddingId(
-              EmbeddingType.LogFavBasedLocaleSemanticCoreEntity,
-              ModelVersion.Model20m145kUpdated,
-              InternalId.LocaleEntityId(LocaleEntityId(entityId, lang))
+        caselon ((elonntityId, lang), clustelonrsWithScorelons) =>
+          KelonyVal(
+            SimClustelonrselonmbelonddingId(
+              elonmbelonddingTypelon.LogFavBaselondLocalelonSelonmanticCorelonelonntity,
+              ModelonlVelonrsion.Modelonl20m145kUpdatelond,
+              IntelonrnalId.LocalelonelonntityId(LocalelonelonntityId(elonntityId, lang))
             ),
-            SimClustersEmbedding(clustersWithScores).toThrift
+            SimClustelonrselonmbelondding(clustelonrsWithScorelons).toThrift
           )
       }
-      .writeDALVersionedKeyValExecution(
-        EntityEmbeddingsSources.LogFavSemanticCorePerLanguageSimClustersEmbeddingsDataset,
+      .writelonDALVelonrsionelondKelonyValelonxeloncution(
+        elonntityelonmbelonddingsSourcelons.LogFavSelonmanticCorelonPelonrLanguagelonSimClustelonrselonmbelonddingsDataselont,
         D.Suffix(
-          EmbeddingUtil.getHdfsPath(
-            isAdhoc = false,
-            isManhattanKeyVal = true,
-            ModelVersion.Model20m145kUpdated,
-            pathSuffix = "log_fav_erg_based_embeddings"))
+          elonmbelonddingUtil.gelontHdfsPath(
+            isAdhoc = falselon,
+            isManhattanKelonyVal = truelon,
+            ModelonlVelonrsion.Modelonl20m145kUpdatelond,
+            pathSuffix = "log_fav_elonrg_baselond_elonmbelonddings"))
       )
   }
 
-  override def writeClusterToNounsIndex(
-    output: TypedPipe[(ClusterId, Seq[(LocaleEntity, Double)])]
+  ovelonrridelon delonf writelonClustelonrToNounsIndelonx(
+    output: TypelondPipelon[(ClustelonrId, Selonq[(Localelonelonntity, Doublelon)])]
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon,
+    uniquelonID: UniquelonID
+  ): elonxeloncution[Unit] = {
     output
       .map {
-        case (clusterId, nounsWithScore) =>
-          KeyVal(
-            SimClustersEmbeddingId(
-              EmbeddingType.LogFavBasedLocaleSemanticCoreEntity,
-              ModelVersion.Model20m145kUpdated,
-              InternalId.ClusterId(clusterId)
+        caselon (clustelonrId, nounsWithScorelon) =>
+          KelonyVal(
+            SimClustelonrselonmbelonddingId(
+              elonmbelonddingTypelon.LogFavBaselondLocalelonSelonmanticCorelonelonntity,
+              ModelonlVelonrsion.Modelonl20m145kUpdatelond,
+              IntelonrnalId.ClustelonrId(clustelonrId)
             ),
-            InternalIdEmbedding(nounsWithScore.map {
-              case ((entityId, lang), score) =>
-                InternalIdWithScore(
-                  InternalId.LocaleEntityId(LocaleEntityId(entityId, lang)),
-                  score)
+            IntelonrnalIdelonmbelondding(nounsWithScorelon.map {
+              caselon ((elonntityId, lang), scorelon) =>
+                IntelonrnalIdWithScorelon(
+                  IntelonrnalId.LocalelonelonntityId(LocalelonelonntityId(elonntityId, lang)),
+                  scorelon)
             })
           )
       }
-      .writeDALVersionedKeyValExecution(
-        EntityEmbeddingsSources.LogFavReverseIndexSemanticCorePerLanguageSimClustersEmbeddingsDataset,
+      .writelonDALVelonrsionelondKelonyValelonxeloncution(
+        elonntityelonmbelonddingsSourcelons.LogFavRelonvelonrselonIndelonxSelonmanticCorelonPelonrLanguagelonSimClustelonrselonmbelonddingsDataselont,
         D.Suffix(
-          EmbeddingUtil.getHdfsPath(
-            isAdhoc = false,
-            isManhattanKeyVal = true,
-            ModelVersion.Model20m145kUpdated,
-            pathSuffix = "reverse_index_log_fav_erg_based_embeddings"))
+          elonmbelonddingUtil.gelontHdfsPath(
+            isAdhoc = falselon,
+            isManhattanKelonyVal = truelon,
+            ModelonlVelonrsion.Modelonl20m145kUpdatelond,
+            pathSuffix = "relonvelonrselon_indelonx_log_fav_elonrg_baselond_elonmbelonddings"))
       )
   }
 }
 
 /**
- * $ ./bazel bundle src/scala/com/twitter/simclusters_v2/scalding/embedding:locale_entity_simclusters_embedding_v2-adhoc
+ * $ ./bazelonl bundlelon src/scala/com/twittelonr/simclustelonrs_v2/scalding/elonmbelondding:localelon_elonntity_simclustelonrs_elonmbelondding_v2-adhoc
  *
- * $ scalding remote run \
-  --main-class com.twitter.simclusters_v2.scalding.embedding.LocaleEntitySimClustersEmbeddingV2AdhocApp \
-  --target src/scala/com/twitter/simclusters_v2/scalding/embedding:locale_entity_simclusters_embedding_v2-adhoc \
-  --user recos-platform --reducers 2000\
-  -- --date 2020-04-06
+ * $ scalding relonmotelon run \
+  --main-class com.twittelonr.simclustelonrs_v2.scalding.elonmbelondding.LocalelonelonntitySimClustelonrselonmbelonddingV2AdhocApp \
+  --targelont src/scala/com/twittelonr/simclustelonrs_v2/scalding/elonmbelondding:localelon_elonntity_simclustelonrs_elonmbelondding_v2-adhoc \
+  --uselonr reloncos-platform --relonducelonrs 2000\
+  -- --datelon 2020-04-06
  */
-object LocaleEntitySimClustersEmbeddingV2AdhocApp
-    extends LocaleEntitySimClustersEmbeddingV2Job
-    with AdhocExecutionApp {
+objelonct LocalelonelonntitySimClustelonrselonmbelonddingV2AdhocApp
+    elonxtelonnds LocalelonelonntitySimClustelonrselonmbelonddingV2Job
+    with AdhocelonxeloncutionApp {
 
-  override def writeNounToClustersIndex(
-    output: TypedPipe[(LocaleEntity, Seq[(ClusterId, Double)])]
+  ovelonrridelon delonf writelonNounToClustelonrsIndelonx(
+    output: TypelondPipelon[(Localelonelonntity, Selonq[(ClustelonrId, Doublelon)])]
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon,
+    uniquelonID: UniquelonID
+  ): elonxeloncution[Unit] = {
 
     output
       .map {
-        case ((entityId, lang), clustersWithScores) =>
-          SimClustersEmbeddingId(
-            EmbeddingType.LogFavBasedLocaleSemanticCoreEntity,
-            ModelVersion.Model20m145kUpdated,
-            InternalId.LocaleEntityId(LocaleEntityId(entityId, lang))
-          ) -> SimClustersEmbedding(clustersWithScores).toThrift
+        caselon ((elonntityId, lang), clustelonrsWithScorelons) =>
+          SimClustelonrselonmbelonddingId(
+            elonmbelonddingTypelon.LogFavBaselondLocalelonSelonmanticCorelonelonntity,
+            ModelonlVelonrsion.Modelonl20m145kUpdatelond,
+            IntelonrnalId.LocalelonelonntityId(LocalelonelonntityId(elonntityId, lang))
+          ) -> SimClustelonrselonmbelondding(clustelonrsWithScorelons).toThrift
 
-      }.writeExecution(
-        AdhocKeyValSources.entityToClustersSource(
-          EmbeddingUtil.getHdfsPath(
-            isAdhoc = true,
-            isManhattanKeyVal = true,
-            ModelVersion.Model20m145kUpdated,
-            pathSuffix = "log_fav_erg_based_embeddings")))
+      }.writelonelonxeloncution(
+        AdhocKelonyValSourcelons.elonntityToClustelonrsSourcelon(
+          elonmbelonddingUtil.gelontHdfsPath(
+            isAdhoc = truelon,
+            isManhattanKelonyVal = truelon,
+            ModelonlVelonrsion.Modelonl20m145kUpdatelond,
+            pathSuffix = "log_fav_elonrg_baselond_elonmbelonddings")))
   }
 
-  override def writeClusterToNounsIndex(
-    output: TypedPipe[(ClusterId, Seq[(LocaleEntity, Double)])]
+  ovelonrridelon delonf writelonClustelonrToNounsIndelonx(
+    output: TypelondPipelon[(ClustelonrId, Selonq[(Localelonelonntity, Doublelon)])]
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon,
+    uniquelonID: UniquelonID
+  ): elonxeloncution[Unit] = {
 
     output
       .map {
-        case (clusterId, nounsWithScore) =>
-          SimClustersEmbeddingId(
-            EmbeddingType.LogFavBasedLocaleSemanticCoreEntity,
-            ModelVersion.Model20m145kUpdated,
-            InternalId.ClusterId(clusterId)
+        caselon (clustelonrId, nounsWithScorelon) =>
+          SimClustelonrselonmbelonddingId(
+            elonmbelonddingTypelon.LogFavBaselondLocalelonSelonmanticCorelonelonntity,
+            ModelonlVelonrsion.Modelonl20m145kUpdatelond,
+            IntelonrnalId.ClustelonrId(clustelonrId)
           ) ->
-            InternalIdEmbedding(nounsWithScore.map {
-              case ((entityId, lang), score) =>
-                InternalIdWithScore(
-                  InternalId.LocaleEntityId(LocaleEntityId(entityId, lang)),
-                  score)
+            IntelonrnalIdelonmbelondding(nounsWithScorelon.map {
+              caselon ((elonntityId, lang), scorelon) =>
+                IntelonrnalIdWithScorelon(
+                  IntelonrnalId.LocalelonelonntityId(LocalelonelonntityId(elonntityId, lang)),
+                  scorelon)
             })
       }
-      .writeExecution(
-        AdhocKeyValSources.clusterToEntitiesSource(
-          EmbeddingUtil.getHdfsPath(
-            isAdhoc = true,
-            isManhattanKeyVal = true,
-            ModelVersion.Model20m145kUpdated,
-            pathSuffix = "reverse_index_log_fav_erg_based_embeddings")))
+      .writelonelonxeloncution(
+        AdhocKelonyValSourcelons.clustelonrToelonntitielonsSourcelon(
+          elonmbelonddingUtil.gelontHdfsPath(
+            isAdhoc = truelon,
+            isManhattanKelonyVal = truelon,
+            ModelonlVelonrsion.Modelonl20m145kUpdatelond,
+            pathSuffix = "relonvelonrselon_indelonx_log_fav_elonrg_baselond_elonmbelonddings")))
   }
 }
 
-trait LocaleEntitySimClustersEmbeddingV2Job extends SimClustersEmbeddingBaseJob[LocaleEntity] {
+trait LocalelonelonntitySimClustelonrselonmbelonddingV2Job elonxtelonnds SimClustelonrselonmbelonddingBaselonJob[Localelonelonntity] {
 
-  override val numClustersPerNoun = 100
+  ovelonrridelon val numClustelonrsPelonrNoun = 100
 
-  override val numNounsPerClusters = 100
+  ovelonrridelon val numNounsPelonrClustelonrs = 100
 
-  override val thresholdForEmbeddingScores: Double = 0.001
+  ovelonrridelon val threlonsholdForelonmbelonddingScorelons: Doublelon = 0.001
 
-  override val numReducersOpt: Option[Int] = Some(8000)
+  ovelonrridelon val numRelonducelonrsOpt: Option[Int] = Somelon(8000)
 
-  private val DefaultERGHalfLifeInDays = 14
+  privatelon val DelonfaultelonRGHalfLifelonInDays = 14
 
-  private val MinInterestedInLogFavScore = 0.0
+  privatelon val MinIntelonrelonstelondInLogFavScorelon = 0.0
 
-  implicit val inj: Injection[LocaleEntity, Array[Byte]] = Bufferable.injectionOf[LocaleEntity]
+  implicit val inj: Injelonction[Localelonelonntity, Array[Bytelon]] = Buffelonrablelon.injelonctionOf[Localelonelonntity]
 
-  override def prepareNounToUserMatrix(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): SparseMatrix[LocaleEntity, UserId, Double] = {
+  ovelonrridelon delonf prelonparelonNounToUselonrMatrix(
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon,
+    uniquelonID: UniquelonID
+  ): SparselonMatrix[Localelonelonntity, UselonrId, Doublelon] = {
 
-    val erg: TypedPipe[(SemanticCoreEntityId, (UserId, Double))] =
-      DataSources.entityRealGraphAggregationDataSetSource(dateRange.embiggen(Days(7))).flatMap {
-        case Edge(
-              userId,
-              Entity.SemanticCore(SemanticCoreEntity(entityId, _)),
-              consumerFeatures,
+    val elonrg: TypelondPipelon[(SelonmanticCorelonelonntityId, (UselonrId, Doublelon))] =
+      DataSourcelons.elonntityRelonalGraphAggrelongationDataSelontSourcelon(datelonRangelon.elonmbiggelonn(Days(7))).flatMap {
+        caselon elondgelon(
+              uselonrId,
+              elonntity.SelonmanticCorelon(SelonmanticCorelonelonntity(elonntityId, _)),
+              consumelonrFelonaturelons,
               _,
-              _) if consumerFeatures.exists(_.exists(_.featureName == FeatureName.Favorites)) =>
+              _) if consumelonrFelonaturelons.elonxists(_.elonxists(_.felonaturelonNamelon == FelonaturelonNamelon.Favoritelons)) =>
           for {
-            features <- consumerFeatures
-            favFeatures <- features.find(_.featureName == FeatureName.Favorites)
-            ewmaMap <- favFeatures.featureValues.ewmaMap
-            favScore <- ewmaMap.get(DefaultERGHalfLifeInDays)
-          } yield (entityId, (userId, Math.log(favScore + 1)))
+            felonaturelons <- consumelonrFelonaturelons
+            favFelonaturelons <- felonaturelons.find(_.felonaturelonNamelon == FelonaturelonNamelon.Favoritelons)
+            elonwmaMap <- favFelonaturelons.felonaturelonValuelons.elonwmaMap
+            favScorelon <- elonwmaMap.gelont(DelonfaultelonRGHalfLifelonInDays)
+          } yielonld (elonntityId, (uselonrId, Math.log(favScorelon + 1)))
 
-        case _ => None
+        caselon _ => Nonelon
       }
 
-    SparseMatrix[LocaleEntity, UserId, Double](
-      erg
-        .hashJoin(ExternalDataSources.uttEntitiesSource().asKeys).map {
-          case (entityId, ((userId, score), _)) => (userId, (entityId, score))
-        }.join(ExternalDataSources.userSource).map {
-          case (userId, ((entityId, score), (_, language))) =>
-            ((entityId, language), userId, score)
+    SparselonMatrix[Localelonelonntity, UselonrId, Doublelon](
+      elonrg
+        .hashJoin(elonxtelonrnalDataSourcelons.uttelonntitielonsSourcelon().asKelonys).map {
+          caselon (elonntityId, ((uselonrId, scorelon), _)) => (uselonrId, (elonntityId, scorelon))
+        }.join(elonxtelonrnalDataSourcelons.uselonrSourcelon).map {
+          caselon (uselonrId, ((elonntityId, scorelon), (_, languagelon))) =>
+            ((elonntityId, languagelon), uselonrId, scorelon)
         }
     )
   }
 
-  override def prepareUserToClusterMatrix(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): SparseRowMatrix[UserId, ClusterId, Double] = {
-    SparseRowMatrix(
-      ExternalDataSources.simClustersInterestInLogFavSource(MinInterestedInLogFavScore),
-      isSkinnyMatrix = true
+  ovelonrridelon delonf prelonparelonUselonrToClustelonrMatrix(
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon,
+    uniquelonID: UniquelonID
+  ): SparselonRowMatrix[UselonrId, ClustelonrId, Doublelon] = {
+    SparselonRowMatrix(
+      elonxtelonrnalDataSourcelons.simClustelonrsIntelonrelonstInLogFavSourcelon(MinIntelonrelonstelondInLogFavScorelon),
+      isSkinnyMatrix = truelon
     )
   }
 }

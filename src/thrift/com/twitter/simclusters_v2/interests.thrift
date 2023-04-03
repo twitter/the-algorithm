@@ -1,259 +1,259 @@
-namespace java com.twitter.simclusters_v2.thriftjava
-namespace py gen.twitter.simclusters_v2.interests
-#@namespace scala com.twitter.simclusters_v2.thriftscala
-#@namespace strato com.twitter.simclusters_v2
+namelonspacelon java com.twittelonr.simclustelonrs_v2.thriftjava
+namelonspacelon py gelonn.twittelonr.simclustelonrs_v2.intelonrelonsts
+#@namelonspacelon scala com.twittelonr.simclustelonrs_v2.thriftscala
+#@namelonspacelon strato com.twittelonr.simclustelonrs_v2
 
 /**
- * All of the scores below assume that the knownFor vector for each cluster is already
- * of unit L2 norm i.e. sum of squares is 1. 
+ * All of thelon scorelons belonlow assumelon that thelon knownFor velonctor for elonach clustelonr is alrelonady
+ * of unit L2 norm i.elon. sum of squarelons is 1.
  **/
-struct UserToInterestedInClusterScores {
-  // dot product of user's binary follow vector with knownFor vector for this cluster
-  // TIP: By default, use this score or favScore. 
-  1: optional double followScore(personalDataType = 'CountOfFollowersAndFollowees')
+struct UselonrToIntelonrelonstelondInClustelonrScorelons {
+  // dot product of uselonr's binary follow velonctor with knownFor velonctor for this clustelonr
+  // TIP: By delonfault, uselon this scorelon or favScorelon.
+  1: optional doublelon followScorelon(pelonrsonalDataTypelon = 'CountOfFollowelonrsAndFollowelonelons')
 
-  // first compute followScore as defined above
-  // then compute L2 norm of the vector of these scores for this cluster
-  // divide by that.
-  // essentially the more people are interested in this cluster, the lower this score gets
-  // TIP: Use this score if your use case needs to penalize clusters that a lot of other 
-  // users are also interested in
-  2: optional double followScoreClusterNormalizedOnly(personalDataType = 'CountOfFollowersAndFollowees')
+  // first computelon followScorelon as delonfinelond abovelon
+  // thelonn computelon L2 norm of thelon velonctor of thelonselon scorelons for this clustelonr
+  // dividelon by that.
+  // elonsselonntially thelon morelon pelonoplelon arelon intelonrelonstelond in this clustelonr, thelon lowelonr this scorelon gelonts
+  // TIP: Uselon this scorelon if your uselon caselon nelonelonds to pelonnalizelon clustelonrs that a lot of othelonr
+  // uselonrs arelon also intelonrelonstelond in
+  2: optional doublelon followScorelonClustelonrNormalizelondOnly(pelonrsonalDataTypelon = 'CountOfFollowelonrsAndFollowelonelons')
 
-  // dot product of user's producer normalized follow vector and knownFor vector for this cluster
-  // i.e. i^th entry in the normalized follow vector = 1.0/sqrt(number of followers of user i)
-  // TIP: Use this score if your use case needs to penalize clusters where the users known for
-  // that cluster are popular. 
-  3: optional double followScoreProducerNormalizedOnly(personalDataType = 'CountOfFollowersAndFollowees')
+  // dot product of uselonr's producelonr normalizelond follow velonctor and knownFor velonctor for this clustelonr
+  // i.elon. i^th elonntry in thelon normalizelond follow velonctor = 1.0/sqrt(numbelonr of followelonrs of uselonr i)
+  // TIP: Uselon this scorelon if your uselon caselon nelonelonds to pelonnalizelon clustelonrs whelonrelon thelon uselonrs known for
+  // that clustelonr arelon popular.
+  3: optional doublelon followScorelonProducelonrNormalizelondOnly(pelonrsonalDataTypelon = 'CountOfFollowelonrsAndFollowelonelons')
 
-  // first compute followScoreProducerNormalizedOnly
-  // then compute L2 norm of the vector of these scores for this cluster
-  // divide by that.
-  // essentially the more people are interested in this cluster, the lower this score gets
-  // TIP: Use this score if your use case needs to penalize both clusters that a lot of other
-  // users are interested in, as well as clusters where the users known for that cluster are 
+  // first computelon followScorelonProducelonrNormalizelondOnly
+  // thelonn computelon L2 norm of thelon velonctor of thelonselon scorelons for this clustelonr
+  // dividelon by that.
+  // elonsselonntially thelon morelon pelonoplelon arelon intelonrelonstelond in this clustelonr, thelon lowelonr this scorelon gelonts
+  // TIP: Uselon this scorelon if your uselon caselon nelonelonds to pelonnalizelon both clustelonrs that a lot of othelonr
+  // uselonrs arelon intelonrelonstelond in, as welonll as clustelonrs whelonrelon thelon uselonrs known for that clustelonr arelon
   // popular.
-  4: optional double followScoreClusterAndProducerNormalized(personalDataType = 'CountOfFollowersAndFollowees')
+  4: optional doublelon followScorelonClustelonrAndProducelonrNormalizelond(pelonrsonalDataTypelon = 'CountOfFollowelonrsAndFollowelonelons')
 
-  // dot product of user's favScoreHalfLife100Days vector with knownFor vector for this cluster 
-  // TIP: By default, use this score or followScore. 
-  5: optional double favScore(personalDataType = 'EngagementsPublic')
+  // dot product of uselonr's favScorelonHalfLifelon100Days velonctor with knownFor velonctor for this clustelonr
+  // TIP: By delonfault, uselon this scorelon or followScorelon.
+  5: optional doublelon favScorelon(pelonrsonalDataTypelon = 'elonngagelonmelonntsPublic')
 
-  // first compute favScore as defined above
-  // then compute L2 norm of the vector of these scores for this cluster
-  // divide by that.
-  // essentially the more people are interested in this cluster, the lower this score gets
-  // TIP: Use this score if your use case needs to penalize clusters that a lot of other 
-  // users are also interested in
-  6: optional double favScoreClusterNormalizedOnly(personalDataType = 'EngagementsPublic')
+  // first computelon favScorelon as delonfinelond abovelon
+  // thelonn computelon L2 norm of thelon velonctor of thelonselon scorelons for this clustelonr
+  // dividelon by that.
+  // elonsselonntially thelon morelon pelonoplelon arelon intelonrelonstelond in this clustelonr, thelon lowelonr this scorelon gelonts
+  // TIP: Uselon this scorelon if your uselon caselon nelonelonds to pelonnalizelon clustelonrs that a lot of othelonr
+  // uselonrs arelon also intelonrelonstelond in
+  6: optional doublelon favScorelonClustelonrNormalizelondOnly(pelonrsonalDataTypelon = 'elonngagelonmelonntsPublic')
 
-  // dot product of user's favScoreHalfLife100DaysNormalizedByNeighborFaversL2 vector with 
-  // knownFor vector for this cluster
-  // TIP: Use this score if your use case needs to penalize clusters where the users known for
-  // that cluster are popular. 
-  7: optional double favScoreProducerNormalizedOnly(personalDataType = 'EngagementsPublic')
+  // dot product of uselonr's favScorelonHalfLifelon100DaysNormalizelondByNelonighborFavelonrsL2 velonctor with
+  // knownFor velonctor for this clustelonr
+  // TIP: Uselon this scorelon if your uselon caselon nelonelonds to pelonnalizelon clustelonrs whelonrelon thelon uselonrs known for
+  // that clustelonr arelon popular.
+  7: optional doublelon favScorelonProducelonrNormalizelondOnly(pelonrsonalDataTypelon = 'elonngagelonmelonntsPublic')
 
-  // first compute favScoreProducerNormalizedOnly as defined above
-  // then compute L2 norm of the vector of these scores for this cluster
-  // divide by that.
-  // essentially the more people are interested in this cluster, the lower this score gets
-  // TIP: Use this score if your use case needs to penalize both clusters that a lot of other
-  // users are interested in, as well as clusters where the users known for that cluster are 
+  // first computelon favScorelonProducelonrNormalizelondOnly as delonfinelond abovelon
+  // thelonn computelon L2 norm of thelon velonctor of thelonselon scorelons for this clustelonr
+  // dividelon by that.
+  // elonsselonntially thelon morelon pelonoplelon arelon intelonrelonstelond in this clustelonr, thelon lowelonr this scorelon gelonts
+  // TIP: Uselon this scorelon if your uselon caselon nelonelonds to pelonnalizelon both clustelonrs that a lot of othelonr
+  // uselonrs arelon intelonrelonstelond in, as welonll as clustelonrs whelonrelon thelon uselonrs known for that clustelonr arelon
   // popular.
-  8: optional double favScoreClusterAndProducerNormalized(personalDataType = 'EngagementsPublic')
+  8: optional doublelon favScorelonClustelonrAndProducelonrNormalizelond(pelonrsonalDataTypelon = 'elonngagelonmelonntsPublic')
 
-  // list of users who're known for this cluster as well as are being followed by the user.
-  9: optional list<i64> usersBeingFollowed(personalDataType = 'UserId')
+  // list of uselonrs who'relon known for this clustelonr as welonll as arelon beloning followelond by thelon uselonr.
+  9: optional list<i64> uselonrsBeloningFollowelond(pelonrsonalDataTypelon = 'UselonrId')
  
-  // list of users who're known for this cluster as well as were faved at some point by the user. 
-  10: optional list<i64> usersThatWereFaved(personalDataType = 'UserId')
+  // list of uselonrs who'relon known for this clustelonr as welonll as welonrelon favelond at somelon point by thelon uselonr.
+  10: optional list<i64> uselonrsThatWelonrelonFavelond(pelonrsonalDataTypelon = 'UselonrId')
 
-  // A pretty close upper bound on the number of users who are interested in this cluster. 
-  // Useful to know if this is a niche community or a popular topic. 
-  11: optional i32 numUsersInterestedInThisClusterUpperBound
+  // A prelontty closelon uppelonr bound on thelon numbelonr of uselonrs who arelon intelonrelonstelond in this clustelonr.
+  // Uselonful to know if this is a nichelon community or a popular topic.
+  11: optional i32 numUselonrsIntelonrelonstelondInThisClustelonrUppelonrBound
 
-  // dot product of user's logFavScore vector with knownFor vector for this cluster 
-  // TIP: this score is under experimentations
-  12: optional double logFavScore(personalDataType = 'EngagementsPublic')
+  // dot product of uselonr's logFavScorelon velonctor with knownFor velonctor for this clustelonr
+  // TIP: this scorelon is undelonr elonxpelonrimelonntations
+  12: optional doublelon logFavScorelon(pelonrsonalDataTypelon = 'elonngagelonmelonntsPublic')
 
-  // first compute logFavScore as defined above
-  // then compute L2 norm of the vector of these scores for this cluster
-  // divide by that.
-  // essentially the more people are interested in this cluster, the lower this score gets
-  // TIP: this score is under experimentations
-  13: optional double logFavScoreClusterNormalizedOnly(personalDataType = 'EngagementsPublic')
+  // first computelon logFavScorelon as delonfinelond abovelon
+  // thelonn computelon L2 norm of thelon velonctor of thelonselon scorelons for this clustelonr
+  // dividelon by that.
+  // elonsselonntially thelon morelon pelonoplelon arelon intelonrelonstelond in this clustelonr, thelon lowelonr this scorelon gelonts
+  // TIP: this scorelon is undelonr elonxpelonrimelonntations
+  13: optional doublelon logFavScorelonClustelonrNormalizelondOnly(pelonrsonalDataTypelon = 'elonngagelonmelonntsPublic')
 
-  // actual count of number of users who're known for this cluster as well as are being followed by the user.
-  14: optional i32 numUsersBeingFollowed
+  // actual count of numbelonr of uselonrs who'relon known for this clustelonr as welonll as arelon beloning followelond by thelon uselonr.
+  14: optional i32 numUselonrsBeloningFollowelond
 
-  // actual count of number of users who're known for this cluster as well as were faved at some point by the user. 
-  15: optional i32 numUsersThatWereFaved
-}(persisted = 'true', hasPersonalData = 'true')
+  // actual count of numbelonr of uselonrs who'relon known for this clustelonr as welonll as welonrelon favelond at somelon point by thelon uselonr.
+  15: optional i32 numUselonrsThatWelonrelonFavelond
+}(pelonrsistelond = 'truelon', hasPelonrsonalData = 'truelon')
 
-struct UserToInterestedInClusters {
-  1: required i64 userId(personalDataType = 'UserId')
-  2: required string knownForModelVersion
-  3: required map<i32, UserToInterestedInClusterScores> clusterIdToScores(personalDataTypeKey = 'InferredInterests')
-}(persisted="true", hasPersonalData = 'true')
+struct UselonrToIntelonrelonstelondInClustelonrs {
+  1: relonquirelond i64 uselonrId(pelonrsonalDataTypelon = 'UselonrId')
+  2: relonquirelond string knownForModelonlVelonrsion
+  3: relonquirelond map<i32, UselonrToIntelonrelonstelondInClustelonrScorelons> clustelonrIdToScorelons(pelonrsonalDataTypelonKelony = 'InfelonrrelondIntelonrelonsts')
+}(pelonrsistelond="truelon", hasPelonrsonalData = 'truelon')
 
-struct LanguageToClusters {
-  1: required string language
-  2: required string knownForModelVersion
-  3: required map<i32, UserToInterestedInClusterScores> clusterIdToScores(personalDataTypeKey = 'InferredInterests')
-}(persisted="true", hasPersonalData = 'true')
+struct LanguagelonToClustelonrs {
+  1: relonquirelond string languagelon
+  2: relonquirelond string knownForModelonlVelonrsion
+  3: relonquirelond map<i32, UselonrToIntelonrelonstelondInClustelonrScorelons> clustelonrIdToScorelons(pelonrsonalDataTypelonKelony = 'InfelonrrelondIntelonrelonsts')
+}(pelonrsistelond="truelon", hasPelonrsonalData = 'truelon')
 
-struct ClustersUserIsInterestedIn {
-  1: required string knownForModelVersion
-  2: required map<i32, UserToInterestedInClusterScores> clusterIdToScores(personalDataTypeKey = 'InferredInterests')
-}(persisted = 'true', hasPersonalData = 'true')
+struct ClustelonrsUselonrIsIntelonrelonstelondIn {
+  1: relonquirelond string knownForModelonlVelonrsion
+  2: relonquirelond map<i32, UselonrToIntelonrelonstelondInClustelonrScorelons> clustelonrIdToScorelons(pelonrsonalDataTypelonKelony = 'InfelonrrelondIntelonrelonsts')
+}(pelonrsistelond = 'truelon', hasPelonrsonalData = 'truelon')
 
-struct UserToKnownForClusters {
-  1: required i64 userId(personalDataType = 'UserId')
-  2: required string knownForModelVersion
-  3: required map<i32, UserToKnownForClusterScores> clusterIdToScores(personalDataTypeKey = 'InferredInterests')
-}(persisted="true", hasPersonalData = 'true')
+struct UselonrToKnownForClustelonrs {
+  1: relonquirelond i64 uselonrId(pelonrsonalDataTypelon = 'UselonrId')
+  2: relonquirelond string knownForModelonlVelonrsion
+  3: relonquirelond map<i32, UselonrToKnownForClustelonrScorelons> clustelonrIdToScorelons(pelonrsonalDataTypelonKelony = 'InfelonrrelondIntelonrelonsts')
+}(pelonrsistelond="truelon", hasPelonrsonalData = 'truelon')
 
-struct UserToKnownForClusterScores {
-  1: optional double knownForScore
-}(persisted = 'true', hasPersonalData = 'false')
+struct UselonrToKnownForClustelonrScorelons {
+  1: optional doublelon knownForScorelon
+}(pelonrsistelond = 'truelon', hasPelonrsonalData = 'falselon')
 
-struct ClustersUserIsKnownFor {
-  1: required string knownForModelVersion
-  2: required map<i32, UserToKnownForClusterScores> clusterIdToScores(personalDataTypeKey = 'InferredInterests')
-}(persisted = 'true', hasPersonalData = 'true')
+struct ClustelonrsUselonrIsKnownFor {
+  1: relonquirelond string knownForModelonlVelonrsion
+  2: relonquirelond map<i32, UselonrToKnownForClustelonrScorelons> clustelonrIdToScorelons(pelonrsonalDataTypelonKelony = 'InfelonrrelondIntelonrelonsts')
+}(pelonrsistelond = 'truelon', hasPelonrsonalData = 'truelon')
 
-/** Thrift struct for storing quantile bounds output by QTreeMonoid in Algebird */
-struct QuantileBounds {
-  1: required double lowerBound
-  2: required double upperBound
-}(persisted = 'true', hasPersonalData = 'false')
+/** Thrift struct for storing quantilelon bounds output by QTrelonelonMonoid in Algelonbird */
+struct QuantilelonBounds {
+  1: relonquirelond doublelon lowelonrBound
+  2: relonquirelond doublelon uppelonrBound
+}(pelonrsistelond = 'truelon', hasPelonrsonalData = 'falselon')
 
-/** Thrift struct giving the details of the distribution of a set of doubles */
-struct DistributionDetails {
-  1: required double mean
-  2: optional double standardDeviation
-  3: optional double min
-  4: optional QuantileBounds p25
-  5: optional QuantileBounds p50
-  6: optional QuantileBounds p75
-  7: optional QuantileBounds p95
-  8: optional double max
-}(persisted = 'true', hasPersonalData = 'false')
+/** Thrift struct giving thelon delontails of thelon distribution of a selont of doublelons */
+struct DistributionDelontails {
+  1: relonquirelond doublelon melonan
+  2: optional doublelon standardDelonviation
+  3: optional doublelon min
+  4: optional QuantilelonBounds p25
+  5: optional QuantilelonBounds p50
+  6: optional QuantilelonBounds p75
+  7: optional QuantilelonBounds p95
+  8: optional doublelon max
+}(pelonrsistelond = 'truelon', hasPelonrsonalData = 'falselon')
 
-/** Note that the modelVersion here is specified somewhere outside, specifically, as part of the key */
-struct ClusterNeighbor {
-  1: required i32 clusterId
-  /** Note that followCosineSimilarity is same as dot product over followScoreClusterNormalizedOnly
-   * since those scores form a unit vector **/
-  2: optional double followCosineSimilarity
-  /** Note that favCosineSimilarity is same as dot product over favScoreClusterNormalizedOnly
-   * since those scores form a unit vector **/
-  3: optional double favCosineSimilarity
-  /** Note that logFavCosineSimilarity is same as dot product over logFavScoreClusterNormalizedOnly
-   * since those scores form a unit vector **/
-  4: optional double logFavCosineSimilarity
-}(persisted = 'true', hasPersonalData = 'false')
+/** Notelon that thelon modelonlVelonrsion helonrelon is speloncifielond somelonwhelonrelon outsidelon, speloncifically, as part of thelon kelony */
+struct ClustelonrNelonighbor {
+  1: relonquirelond i32 clustelonrId
+  /** Notelon that followCosinelonSimilarity is samelon as dot product ovelonr followScorelonClustelonrNormalizelondOnly
+   * sincelon thoselon scorelons form a unit velonctor **/
+  2: optional doublelon followCosinelonSimilarity
+  /** Notelon that favCosinelonSimilarity is samelon as dot product ovelonr favScorelonClustelonrNormalizelondOnly
+   * sincelon thoselon scorelons form a unit velonctor **/
+  3: optional doublelon favCosinelonSimilarity
+  /** Notelon that logFavCosinelonSimilarity is samelon as dot product ovelonr logFavScorelonClustelonrNormalizelondOnly
+   * sincelon thoselon scorelons form a unit velonctor **/
+  4: optional doublelon logFavCosinelonSimilarity
+}(pelonrsistelond = 'truelon', hasPelonrsonalData = 'falselon')
 
-/** Useful for storing the list of users known for a cluster */
-struct UserWithScore {
-  1: required i64 userId(personalDataType = 'UserId')
-  2: required double score
-}(persisted="true", hasPersonalData = 'true')
+/** Uselonful for storing thelon list of uselonrs known for a clustelonr */
+struct UselonrWithScorelon {
+  1: relonquirelond i64 uselonrId(pelonrsonalDataTypelon = 'UselonrId')
+  2: relonquirelond doublelon scorelon
+}(pelonrsistelond="truelon", hasPelonrsonalData = 'truelon')
 
-// deprecated
-struct EdgeCut {
-  1: required double cutEdges
-  2: required double totalVolume
-}(persisted = 'true', hasPersonalData = 'false')
+// delonpreloncatelond
+struct elondgelonCut {
+  1: relonquirelond doublelon cutelondgelons
+  2: relonquirelond doublelon totalVolumelon
+}(pelonrsistelond = 'truelon', hasPelonrsonalData = 'falselon')
 
-struct ClusterQuality {
-  // deprecated
-  1: optional EdgeCut deprecated_unweightedEdgeCut
-  // deprecated
-  2: optional EdgeCut deprecated_edgeWeightedCut
-  // deprecated
-  3: optional EdgeCut deprecated_nodeAndEdgeWeightedCut
+struct ClustelonrQuality {
+  // delonpreloncatelond
+  1: optional elondgelonCut delonpreloncatelond_unwelonightelondelondgelonCut
+  // delonpreloncatelond
+  2: optional elondgelonCut delonpreloncatelond_elondgelonWelonightelondCut
+  // delonpreloncatelond
+  3: optional elondgelonCut delonpreloncatelond_nodelonAndelondgelonWelonightelondCut
 
-  // correlation of actual weight of (u, v) with I(u & v in same cluster) * score(u) * score(v)
-  4: optional double weightAndProductOfNodeScoresCorrelation
+  // correlonlation of actual welonight of (u, v) with I(u & v in samelon clustelonr) * scorelon(u) * scorelon(v)
+  4: optional doublelon welonightAndProductOfNodelonScorelonsCorrelonlation
 
-  // fraction of edges staying inside cluster divided by total edges from nodes in the cluster
-  5: optional double unweightedRecall
+  // fraction of elondgelons staying insidelon clustelonr dividelond by total elondgelons from nodelons in thelon clustelonr
+  5: optional doublelon unwelonightelondReloncall
 
-  // fraction of edge weights staying inside cluster divided by total edge weights from nodes in the cluster
-  6: optional double weightedRecall
+  // fraction of elondgelon welonights staying insidelon clustelonr dividelond by total elondgelon welonights from nodelons in thelon clustelonr
+  6: optional doublelon welonightelondReloncall
 
-  // total edges from nodes in the cluster
-  7: optional double unweightedRecallDenominator
+  // total elondgelons from nodelons in thelon clustelonr
+  7: optional doublelon unwelonightelondReloncallDelonnominator
 
-  // total edge weights from nodes in the cluster
-  8: optional double weightedRecallDenominator
+  // total elondgelon welonights from nodelons in thelon clustelonr
+  8: optional doublelon welonightelondReloncallDelonnominator
 
-  // sum of edge weights inside cluster / { #nodes * (#nodes - 1) }
-  9: optional double relativePrecisionNumerator
+  // sum of elondgelon welonights insidelon clustelonr / { #nodelons * (#nodelons - 1) }
+  9: optional doublelon relonlativelonPreloncisionNumelonrator
 
-  // above divided by the sum of edge weights in the total graph / { n * (n - 1) }
-  10: optional double relativePrecision
-}(persisted = 'true', hasPersonalData = 'false')
-
-/**
-* This struct is the value of the ClusterDetails key-value dataset.
-* The key is (modelVersion, clusterId)
-**/
-struct ClusterDetails {
-  1: required i32 numUsersWithAnyNonZeroScore
-  2: required i32 numUsersWithNonZeroFollowScore
-  3: required i32 numUsersWithNonZeroFavScore
-  4: optional DistributionDetails followScoreDistributionDetails
-  5: optional DistributionDetails favScoreDistributionDetails
-  6: optional list<UserWithScore> knownForUsersAndScores
-  7: optional list<ClusterNeighbor> neighborClusters
-  // fraction of users who're known for this cluster who're marked NSFW_User in UserSource
-  8: optional double fractionKnownForMarkedNSFWUser
-  // the major languages that this cluster's known_fors have as their "language" field in
-  // UserSource, and the fractions
-  9: optional map<string, double> languageToFractionDeviceLanguage
-  // the major country codes that this cluster's known_fors have as their "account_country_code"
-  // field in UserSource, and the fractions
-  10: optional map<string, double> countryCodeToFractionKnownForWithCountryCode
-  11: optional ClusterQuality qualityMeasuredOnSimsGraph
-  12: optional DistributionDetails logFavScoreDistributionDetails
-  // fraction of languages this cluster's known_fors produce based on what penguin_user_languages dataset infers
-  13: optional map<string, double> languageToFractionInferredLanguage
-}(persisted="true", hasPersonalData = 'true')
-
-struct SampledEdge {
-  1: required i64 followerId(personalDataType = 'UserId')
-  2: required i64 followeeId(personalDataType = 'UserId')
-  3: optional double favWtIfFollowEdge
-  4: optional double favWtIfFavEdge
-  5: optional double followScoreToCluster
-  6: optional double favScoreToCluster
-  7: optional double predictedFollowScore
-  8: optional double predictedFavScore
-}(persisted="true", hasPersonalData = 'true')
+  // abovelon dividelond by thelon sum of elondgelon welonights in thelon total graph / { n * (n - 1) }
+  10: optional doublelon relonlativelonPreloncision
+}(pelonrsistelond = 'truelon', hasPelonrsonalData = 'falselon')
 
 /**
-* The key here is (modelVersion, clusterId)
+* This struct is thelon valuelon of thelon ClustelonrDelontails kelony-valuelon dataselont.
+* Thelon kelony is (modelonlVelonrsion, clustelonrId)
 **/
-struct BipartiteClusterQuality {
-  1: optional double inClusterFollowEdges
-  2: optional double inClusterFavEdges
-  3: optional double favWtSumOfInClusterFollowEdges
-  4: optional double favWtSumOfInClusterFavEdges
-  5: optional double outgoingFollowEdges
-  6: optional double outgoingFavEdges
-  7: optional double favWtSumOfOutgoingFollowEdges
-  8: optional double favWtSumOfOutgoingFavEdges
-  9: optional double incomingFollowEdges
-  10: optional double incomingFavEdges
-  11: optional double favWtSumOfIncomingFollowEdges
-  12: optional double favWtSumOfIncomingFavEdges
-  13: optional i32 interestedInSize
-  14: optional list<SampledEdge> sampledEdges
-  15: optional i32 knownForSize
-  16: optional double correlationOfFavWtIfFollowWithPredictedFollow
-  17: optional double correlationOfFavWtIfFavWithPredictedFav
-  18: optional double relativePrecisionUsingFavWtIfFav
-  19: optional double averagePrecisionOfWholeGraphUsingFavWtIfFav
-}(persisted="true", hasPersonalData = 'true')
+struct ClustelonrDelontails {
+  1: relonquirelond i32 numUselonrsWithAnyNonZelonroScorelon
+  2: relonquirelond i32 numUselonrsWithNonZelonroFollowScorelon
+  3: relonquirelond i32 numUselonrsWithNonZelonroFavScorelon
+  4: optional DistributionDelontails followScorelonDistributionDelontails
+  5: optional DistributionDelontails favScorelonDistributionDelontails
+  6: optional list<UselonrWithScorelon> knownForUselonrsAndScorelons
+  7: optional list<ClustelonrNelonighbor> nelonighborClustelonrs
+  // fraction of uselonrs who'relon known for this clustelonr who'relon markelond NSFW_Uselonr in UselonrSourcelon
+  8: optional doublelon fractionKnownForMarkelondNSFWUselonr
+  // thelon major languagelons that this clustelonr's known_fors havelon as thelonir "languagelon" fielonld in
+  // UselonrSourcelon, and thelon fractions
+  9: optional map<string, doublelon> languagelonToFractionDelonvicelonLanguagelon
+  // thelon major country codelons that this clustelonr's known_fors havelon as thelonir "account_country_codelon"
+  // fielonld in UselonrSourcelon, and thelon fractions
+  10: optional map<string, doublelon> countryCodelonToFractionKnownForWithCountryCodelon
+  11: optional ClustelonrQuality qualityMelonasurelondOnSimsGraph
+  12: optional DistributionDelontails logFavScorelonDistributionDelontails
+  // fraction of languagelons this clustelonr's known_fors producelon baselond on what pelonnguin_uselonr_languagelons dataselont infelonrs
+  13: optional map<string, doublelon> languagelonToFractionInfelonrrelondLanguagelon
+}(pelonrsistelond="truelon", hasPelonrsonalData = 'truelon')
+
+struct Samplelondelondgelon {
+  1: relonquirelond i64 followelonrId(pelonrsonalDataTypelon = 'UselonrId')
+  2: relonquirelond i64 followelonelonId(pelonrsonalDataTypelon = 'UselonrId')
+  3: optional doublelon favWtIfFollowelondgelon
+  4: optional doublelon favWtIfFavelondgelon
+  5: optional doublelon followScorelonToClustelonr
+  6: optional doublelon favScorelonToClustelonr
+  7: optional doublelon prelondictelondFollowScorelon
+  8: optional doublelon prelondictelondFavScorelon
+}(pelonrsistelond="truelon", hasPelonrsonalData = 'truelon')
+
+/**
+* Thelon kelony helonrelon is (modelonlVelonrsion, clustelonrId)
+**/
+struct BipartitelonClustelonrQuality {
+  1: optional doublelon inClustelonrFollowelondgelons
+  2: optional doublelon inClustelonrFavelondgelons
+  3: optional doublelon favWtSumOfInClustelonrFollowelondgelons
+  4: optional doublelon favWtSumOfInClustelonrFavelondgelons
+  5: optional doublelon outgoingFollowelondgelons
+  6: optional doublelon outgoingFavelondgelons
+  7: optional doublelon favWtSumOfOutgoingFollowelondgelons
+  8: optional doublelon favWtSumOfOutgoingFavelondgelons
+  9: optional doublelon incomingFollowelondgelons
+  10: optional doublelon incomingFavelondgelons
+  11: optional doublelon favWtSumOfIncomingFollowelondgelons
+  12: optional doublelon favWtSumOfIncomingFavelondgelons
+  13: optional i32 intelonrelonstelondInSizelon
+  14: optional list<Samplelondelondgelon> samplelondelondgelons
+  15: optional i32 knownForSizelon
+  16: optional doublelon correlonlationOfFavWtIfFollowWithPrelondictelondFollow
+  17: optional doublelon correlonlationOfFavWtIfFavWithPrelondictelondFav
+  18: optional doublelon relonlativelonPreloncisionUsingFavWtIfFav
+  19: optional doublelon avelonragelonPreloncisionOfWholelonGraphUsingFavWtIfFav
+}(pelonrsistelond="truelon", hasPelonrsonalData = 'truelon')

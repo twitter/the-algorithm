@@ -1,54 +1,54 @@
-package com.twitter.product_mixer.component_library.pipeline.candidate.flexible_injection_pipeline.transformer
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.pipelonlinelon.candidatelon.flelonxiblelon_injelonction_pipelonlinelon.transformelonr
 
-import com.twitter.onboarding.injections.{thriftscala => flipinjection}
-import com.twitter.product_mixer.component_library.candidate_source.flexible_injection_pipeline.IntermediatePrompt
-import com.twitter.product_mixer.component_library.model.candidate.BasePromptCandidate
-import com.twitter.product_mixer.component_library.model.candidate.FullCoverPromptCandidate
-import com.twitter.product_mixer.component_library.model.candidate.HalfCoverPromptCandidate
-import com.twitter.product_mixer.component_library.model.candidate.InlinePromptCandidate
-import com.twitter.product_mixer.component_library.model.candidate.PromptCarouselTileCandidate
-import com.twitter.product_mixer.component_library.model.candidate.RelevancePromptCandidate
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineResultsTransformer
-import com.twitter.product_mixer.core.functional_component.marshaller.TransportMarshaller
+import com.twittelonr.onboarding.injelonctions.{thriftscala => flipinjelonction}
+import com.twittelonr.product_mixelonr.componelonnt_library.candidatelon_sourcelon.flelonxiblelon_injelonction_pipelonlinelon.IntelonrmelondiatelonPrompt
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.BaselonPromptCandidatelon
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.FullCovelonrPromptCandidatelon
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.HalfCovelonrPromptCandidatelon
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.InlinelonPromptCandidatelon
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.PromptCarouselonlTilelonCandidatelon
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.RelonlelonvancelonPromptCandidatelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.transformelonr.CandidatelonPipelonlinelonRelonsultsTransformelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.TransportMarshallelonr
 
-object PromptResultsTransformer
-    extends CandidatePipelineResultsTransformer[
-      IntermediatePrompt,
-      BasePromptCandidate[Any]
+objelonct PromptRelonsultsTransformelonr
+    elonxtelonnds CandidatelonPipelonlinelonRelonsultsTransformelonr[
+      IntelonrmelondiatelonPrompt,
+      BaselonPromptCandidatelon[Any]
     ] {
 
   /**
-   * Transforms a Flip Injection to a Product Mixer domain object deriving from BasePromptCandidate.
-   * Supported injection types have to match those declared in com.twitter.product_mixer.component_library.transformer.flexible_injection_pipeline.FlipQueryTransformer#supportedPromptFormats
+   * Transforms a Flip Injelonction to a Product Mixelonr domain objelonct delonriving from BaselonPromptCandidatelon.
+   * Supportelond injelonction typelons havelon to match thoselon delonclarelond in com.twittelonr.product_mixelonr.componelonnt_library.transformelonr.flelonxiblelon_injelonction_pipelonlinelon.FlipQuelonryTransformelonr#supportelondPromptFormats
    */
-  override def transform(input: IntermediatePrompt): BasePromptCandidate[Any] =
-    input.injection match {
-      case inlinePrompt: flipinjection.Injection.InlinePrompt =>
-        InlinePromptCandidate(id = inlinePrompt.inlinePrompt.injectionIdentifier
-          .getOrElse(throw new MissingInjectionId(input.injection)))
-      case _: flipinjection.Injection.FullCover =>
-        FullCoverPromptCandidate(id = "0")
-      case _: flipinjection.Injection.HalfCover =>
-        HalfCoverPromptCandidate(id = "0")
-      case _: flipinjection.Injection.TilesCarousel =>
-        PromptCarouselTileCandidate(id =
-          input.offsetInModule.getOrElse(throw FlipPromptOffsetInModuleMissing))
-      case relevancePrompt: flipinjection.Injection.RelevancePrompt =>
-        RelevancePromptCandidate(
-          id = relevancePrompt.relevancePrompt.injectionIdentifier,
-          position = relevancePrompt.relevancePrompt.requestedPosition.map(_.toInt))
-      case injection => throw new UnsupportedInjectionType(injection)
+  ovelonrridelon delonf transform(input: IntelonrmelondiatelonPrompt): BaselonPromptCandidatelon[Any] =
+    input.injelonction match {
+      caselon inlinelonPrompt: flipinjelonction.Injelonction.InlinelonPrompt =>
+        InlinelonPromptCandidatelon(id = inlinelonPrompt.inlinelonPrompt.injelonctionIdelonntifielonr
+          .gelontOrelonlselon(throw nelonw MissingInjelonctionId(input.injelonction)))
+      caselon _: flipinjelonction.Injelonction.FullCovelonr =>
+        FullCovelonrPromptCandidatelon(id = "0")
+      caselon _: flipinjelonction.Injelonction.HalfCovelonr =>
+        HalfCovelonrPromptCandidatelon(id = "0")
+      caselon _: flipinjelonction.Injelonction.TilelonsCarouselonl =>
+        PromptCarouselonlTilelonCandidatelon(id =
+          input.offselontInModulelon.gelontOrelonlselon(throw FlipPromptOffselontInModulelonMissing))
+      caselon relonlelonvancelonPrompt: flipinjelonction.Injelonction.RelonlelonvancelonPrompt =>
+        RelonlelonvancelonPromptCandidatelon(
+          id = relonlelonvancelonPrompt.relonlelonvancelonPrompt.injelonctionIdelonntifielonr,
+          position = relonlelonvancelonPrompt.relonlelonvancelonPrompt.relonquelonstelondPosition.map(_.toInt))
+      caselon injelonction => throw nelonw UnsupportelondInjelonctionTypelon(injelonction)
     }
 }
 
-class MissingInjectionId(injection: flipinjection.Injection)
-    extends IllegalArgumentException(
-      s"Injection identifier is missing ${TransportMarshaller.getSimpleName(injection.getClass)}")
+class MissingInjelonctionId(injelonction: flipinjelonction.Injelonction)
+    elonxtelonnds IllelongalArgumelonntelonxcelonption(
+      s"Injelonction idelonntifielonr is missing ${TransportMarshallelonr.gelontSimplelonNamelon(injelonction.gelontClass)}")
 
-class UnsupportedInjectionType(injection: flipinjection.Injection)
-    extends UnsupportedOperationException(
-      s"Unsupported FLIP injection Type : ${TransportMarshaller.getSimpleName(injection.getClass)}")
+class UnsupportelondInjelonctionTypelon(injelonction: flipinjelonction.Injelonction)
+    elonxtelonnds UnsupportelondOpelonrationelonxcelonption(
+      s"Unsupportelond FLIP injelonction Typelon : ${TransportMarshallelonr.gelontSimplelonNamelon(injelonction.gelontClass)}")
 
-object FlipPromptOffsetInModuleMissing
-    extends NoSuchElementException(
-      "FlipPromptOffsetInModuleFeature must be set for the TilesCarousel FLIP injection in PromptCandidateSource")
+objelonct FlipPromptOffselontInModulelonMissing
+    elonxtelonnds NoSuchelonlelonmelonntelonxcelonption(
+      "FlipPromptOffselontInModulelonFelonaturelon must belon selont for thelon TilelonsCarouselonl FLIP injelonction in PromptCandidatelonSourcelon")

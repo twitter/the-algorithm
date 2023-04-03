@@ -1,196 +1,196 @@
-package com.twitter.home_mixer.functional_component.feature_hydrator
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.home_mixer.model.HomeFeatures._
-import com.twitter.home_mixer.util.ReplyRetweetUtil
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BulkCandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.search.common.features.thriftscala.ThriftTweetFeatures
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.conversation_features.v1.thriftscala.ConversationFeatures
-import com.twitter.util.Duration
-import com.twitter.util.Time
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons._
+import com.twittelonr.homelon_mixelonr.util.RelonplyRelontwelonelontUtil
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.TwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMapBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator.BulkCandidatelonFelonaturelonHydrator
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.FelonaturelonHydratorIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.selonarch.common.felonaturelons.thriftscala.ThriftTwelonelontFelonaturelons
+import com.twittelonr.snowflakelon.id.SnowflakelonId
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.timelonlinelons.convelonrsation_felonaturelons.v1.thriftscala.ConvelonrsationFelonaturelons
+import com.twittelonr.util.Duration
+import com.twittelonr.util.Timelon
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-object InReplyToTweetHydratedEarlybirdFeature
-    extends Feature[TweetCandidate, Option[ThriftTweetFeatures]]
+objelonct InRelonplyToTwelonelontHydratelondelonarlybirdFelonaturelon
+    elonxtelonnds Felonaturelon[TwelonelontCandidatelon, Option[ThriftTwelonelontFelonaturelons]]
 
 /**
- * The purpose of this hydrator is to
- * 1) hydrate simple features into replies and their ancestor tweets
- * 2) keep both the normal replies and ancestor source candidates, but hydrate into the candidates
- * features useful for predicting the quality of the replies and source ancestor tweets.
+ * Thelon purposelon of this hydrator is to
+ * 1) hydratelon simplelon felonaturelons into relonplielons and thelonir ancelonstor twelonelonts
+ * 2) kelonelonp both thelon normal relonplielons and ancelonstor sourcelon candidatelons, but hydratelon into thelon candidatelons
+ * felonaturelons uselonful for prelondicting thelon quality of thelon relonplielons and sourcelon ancelonstor twelonelonts.
  */
-@Singleton
-class ReplyFeatureHydrator @Inject() (statsReceiver: StatsReceiver)
-    extends BulkCandidateFeatureHydrator[PipelineQuery, TweetCandidate] {
+@Singlelonton
+class RelonplyFelonaturelonHydrator @Injelonct() (statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds BulkCandidatelonFelonaturelonHydrator[PipelonlinelonQuelonry, TwelonelontCandidatelon] {
 
-  override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier("ReplyTweet")
+  ovelonrridelon val idelonntifielonr: FelonaturelonHydratorIdelonntifielonr = FelonaturelonHydratorIdelonntifielonr("RelonplyTwelonelont")
 
-  override val features: Set[Feature[_, _]] = Set(
-    ConversationFeature,
-    InReplyToTweetHydratedEarlybirdFeature
+  ovelonrridelon val felonaturelons: Selont[Felonaturelon[_, _]] = Selont(
+    ConvelonrsationFelonaturelon,
+    InRelonplyToTwelonelontHydratelondelonarlybirdFelonaturelon
   )
 
-  private val DefaultFeatureMap = FeatureMapBuilder()
-    .add(ConversationFeature, None)
-    .add(InReplyToTweetHydratedEarlybirdFeature, None)
+  privatelon val DelonfaultFelonaturelonMap = FelonaturelonMapBuildelonr()
+    .add(ConvelonrsationFelonaturelon, Nonelon)
+    .add(InRelonplyToTwelonelontHydratelondelonarlybirdFelonaturelon, Nonelon)
     .build()
 
-  private val scopedStatsReceiver = statsReceiver.scope(getClass.getSimpleName)
-  private val hydratedReplyCounter = scopedStatsReceiver.counter("hydratedReply")
-  private val hydratedAncestorCounter = scopedStatsReceiver.counter("hydratedAncestor")
+  privatelon val scopelondStatsReloncelonivelonr = statsReloncelonivelonr.scopelon(gelontClass.gelontSimplelonNamelon)
+  privatelon val hydratelondRelonplyCountelonr = scopelondStatsReloncelonivelonr.countelonr("hydratelondRelonply")
+  privatelon val hydratelondAncelonstorCountelonr = scopelondStatsReloncelonivelonr.countelonr("hydratelondAncelonstor")
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[Seq[FeatureMap]] = {
-    val replyToInReplyToTweetMap =
-      ReplyRetweetUtil.replyTweetIdToInReplyToTweetMap(candidates)
-    val candidatesWithRepliesHydrated = candidates.map { candidate =>
-      replyToInReplyToTweetMap
-        .get(candidate.candidate.id).map { inReplyToTweet =>
-          hydratedReplyCounter.incr()
-          hydratedReplyCandidate(candidate, inReplyToTweet)
-        }.getOrElse((candidate, None, None))
+  ovelonrridelon delonf apply(
+    quelonry: PipelonlinelonQuelonry,
+    candidatelons: Selonq[CandidatelonWithFelonaturelons[TwelonelontCandidatelon]]
+  ): Stitch[Selonq[FelonaturelonMap]] = {
+    val relonplyToInRelonplyToTwelonelontMap =
+      RelonplyRelontwelonelontUtil.relonplyTwelonelontIdToInRelonplyToTwelonelontMap(candidatelons)
+    val candidatelonsWithRelonplielonsHydratelond = candidatelons.map { candidatelon =>
+      relonplyToInRelonplyToTwelonelontMap
+        .gelont(candidatelon.candidatelon.id).map { inRelonplyToTwelonelont =>
+          hydratelondRelonplyCountelonr.incr()
+          hydratelondRelonplyCandidatelon(candidatelon, inRelonplyToTwelonelont)
+        }.gelontOrelonlselon((candidatelon, Nonelon, Nonelon))
     }
 
     /**
-     * Update ancestor tweets with descendant replies and hydrate simple features from one of
-     * the descendants.
+     * Updatelon ancelonstor twelonelonts with delonscelonndant relonplielons and hydratelon simplelon felonaturelons from onelon of
+     * thelon delonscelonndants.
      */
-    val ancestorTweetToDescendantRepliesMap =
-      ReplyRetweetUtil.ancestorTweetIdToDescendantRepliesMap(candidates)
-    val candidatesWithRepliesAndAncestorTweetsHydrated = candidatesWithRepliesHydrated.map {
-      case (
-            maybeAncestorTweetCandidate,
-            updatedReplyConversationFeatures,
-            inReplyToTweetEarlyBirdFeature) =>
-        ancestorTweetToDescendantRepliesMap
-          .get(maybeAncestorTweetCandidate.candidate.id)
-          .map { descendantReplies =>
-            hydratedAncestorCounter.incr()
-            val (ancestorTweetCandidate, updatedConversationFeatures): (
-              CandidateWithFeatures[TweetCandidate],
-              Option[ConversationFeatures]
+    val ancelonstorTwelonelontToDelonscelonndantRelonplielonsMap =
+      RelonplyRelontwelonelontUtil.ancelonstorTwelonelontIdToDelonscelonndantRelonplielonsMap(candidatelons)
+    val candidatelonsWithRelonplielonsAndAncelonstorTwelonelontsHydratelond = candidatelonsWithRelonplielonsHydratelond.map {
+      caselon (
+            maybelonAncelonstorTwelonelontCandidatelon,
+            updatelondRelonplyConvelonrsationFelonaturelons,
+            inRelonplyToTwelonelontelonarlyBirdFelonaturelon) =>
+        ancelonstorTwelonelontToDelonscelonndantRelonplielonsMap
+          .gelont(maybelonAncelonstorTwelonelontCandidatelon.candidatelon.id)
+          .map { delonscelonndantRelonplielons =>
+            hydratelondAncelonstorCountelonr.incr()
+            val (ancelonstorTwelonelontCandidatelon, updatelondConvelonrsationFelonaturelons): (
+              CandidatelonWithFelonaturelons[TwelonelontCandidatelon],
+              Option[ConvelonrsationFelonaturelons]
             ) =
-              hydrateAncestorTweetCandidate(
-                maybeAncestorTweetCandidate,
-                descendantReplies,
-                updatedReplyConversationFeatures)
-            (ancestorTweetCandidate, inReplyToTweetEarlyBirdFeature, updatedConversationFeatures)
+              hydratelonAncelonstorTwelonelontCandidatelon(
+                maybelonAncelonstorTwelonelontCandidatelon,
+                delonscelonndantRelonplielons,
+                updatelondRelonplyConvelonrsationFelonaturelons)
+            (ancelonstorTwelonelontCandidatelon, inRelonplyToTwelonelontelonarlyBirdFelonaturelon, updatelondConvelonrsationFelonaturelons)
           }
-          .getOrElse(
+          .gelontOrelonlselon(
             (
-              maybeAncestorTweetCandidate,
-              inReplyToTweetEarlyBirdFeature,
-              updatedReplyConversationFeatures))
+              maybelonAncelonstorTwelonelontCandidatelon,
+              inRelonplyToTwelonelontelonarlyBirdFelonaturelon,
+              updatelondRelonplyConvelonrsationFelonaturelons))
     }
-    Stitch.value(
-      candidatesWithRepliesAndAncestorTweetsHydrated.map {
-        case (candidate, inReplyToTweetEarlyBirdFeature, updatedConversationFeatures) =>
-          FeatureMapBuilder()
-            .add(ConversationFeature, updatedConversationFeatures)
-            .add(InReplyToTweetHydratedEarlybirdFeature, inReplyToTweetEarlyBirdFeature)
+    Stitch.valuelon(
+      candidatelonsWithRelonplielonsAndAncelonstorTwelonelontsHydratelond.map {
+        caselon (candidatelon, inRelonplyToTwelonelontelonarlyBirdFelonaturelon, updatelondConvelonrsationFelonaturelons) =>
+          FelonaturelonMapBuildelonr()
+            .add(ConvelonrsationFelonaturelon, updatelondConvelonrsationFelonaturelons)
+            .add(InRelonplyToTwelonelontHydratelondelonarlybirdFelonaturelon, inRelonplyToTwelonelontelonarlyBirdFelonaturelon)
             .build()
-        case _ => DefaultFeatureMap
+        caselon _ => DelonfaultFelonaturelonMap
       }
     )
   }
 
-  private def hydratedReplyCandidate(
-    replyCandidate: CandidateWithFeatures[TweetCandidate],
-    inReplyToTweetCandidate: CandidateWithFeatures[TweetCandidate]
+  privatelon delonf hydratelondRelonplyCandidatelon(
+    relonplyCandidatelon: CandidatelonWithFelonaturelons[TwelonelontCandidatelon],
+    inRelonplyToTwelonelontCandidatelon: CandidatelonWithFelonaturelons[TwelonelontCandidatelon]
   ): (
-    CandidateWithFeatures[TweetCandidate],
-    Option[ConversationFeatures],
-    Option[ThriftTweetFeatures]
+    CandidatelonWithFelonaturelons[TwelonelontCandidatelon],
+    Option[ConvelonrsationFelonaturelons],
+    Option[ThriftTwelonelontFelonaturelons]
   ) = {
-    val tweetedAfterInReplyToTweetInSecs =
+    val twelonelontelondAftelonrInRelonplyToTwelonelontInSeloncs =
       (
-        originalTweetAgeFromSnowflake(inReplyToTweetCandidate),
-        originalTweetAgeFromSnowflake(replyCandidate)) match {
-        case (Some(inReplyToTweetAge), Some(replyTweetAge)) =>
-          Some((inReplyToTweetAge - replyTweetAge).inSeconds.toLong)
-        case _ => None
+        originalTwelonelontAgelonFromSnowflakelon(inRelonplyToTwelonelontCandidatelon),
+        originalTwelonelontAgelonFromSnowflakelon(relonplyCandidatelon)) match {
+        caselon (Somelon(inRelonplyToTwelonelontAgelon), Somelon(relonplyTwelonelontAgelon)) =>
+          Somelon((inRelonplyToTwelonelontAgelon - relonplyTwelonelontAgelon).inSelonconds.toLong)
+        caselon _ => Nonelon
       }
 
-    val existingConversationFeatures = Some(
-      replyCandidate.features
-        .getOrElse(ConversationFeature, None).getOrElse(ConversationFeatures()))
+    val elonxistingConvelonrsationFelonaturelons = Somelon(
+      relonplyCandidatelon.felonaturelons
+        .gelontOrelonlselon(ConvelonrsationFelonaturelon, Nonelon).gelontOrelonlselon(ConvelonrsationFelonaturelons()))
 
-    val updatedConversationFeatures = existingConversationFeatures match {
-      case Some(v1) =>
-        Some(
+    val updatelondConvelonrsationFelonaturelons = elonxistingConvelonrsationFelonaturelons match {
+      caselon Somelon(v1) =>
+        Somelon(
           v1.copy(
-            tweetedAfterInReplyToTweetInSecs = tweetedAfterInReplyToTweetInSecs,
-            isSelfReply = Some(
-              replyCandidate.features.getOrElse(
-                AuthorIdFeature,
-                None) == inReplyToTweetCandidate.features.getOrElse(AuthorIdFeature, None))
+            twelonelontelondAftelonrInRelonplyToTwelonelontInSeloncs = twelonelontelondAftelonrInRelonplyToTwelonelontInSeloncs,
+            isSelonlfRelonply = Somelon(
+              relonplyCandidatelon.felonaturelons.gelontOrelonlselon(
+                AuthorIdFelonaturelon,
+                Nonelon) == inRelonplyToTwelonelontCandidatelon.felonaturelons.gelontOrelonlselon(AuthorIdFelonaturelon, Nonelon))
           )
         )
-      case _ => None
+      caselon _ => Nonelon
     }
 
-    // Note: if inReplyToTweet is a retweet, we need to read early bird feature from the merged
-    // early bird feature field from RetweetSourceTweetFeatureHydrator class.
-    // But if inReplyToTweet is a reply, we return its early bird feature directly
-    val inReplyToTweetThriftTweetFeaturesOpt = {
-      if (inReplyToTweetCandidate.features.getOrElse(IsRetweetFeature, false)) {
-        inReplyToTweetCandidate.features.getOrElse(SourceTweetEarlybirdFeature, None)
-      } else {
-        inReplyToTweetCandidate.features.getOrElse(EarlybirdFeature, None)
+    // Notelon: if inRelonplyToTwelonelont is a relontwelonelont, welon nelonelond to relonad elonarly bird felonaturelon from thelon melonrgelond
+    // elonarly bird felonaturelon fielonld from RelontwelonelontSourcelonTwelonelontFelonaturelonHydrator class.
+    // But if inRelonplyToTwelonelont is a relonply, welon relonturn its elonarly bird felonaturelon direlonctly
+    val inRelonplyToTwelonelontThriftTwelonelontFelonaturelonsOpt = {
+      if (inRelonplyToTwelonelontCandidatelon.felonaturelons.gelontOrelonlselon(IsRelontwelonelontFelonaturelon, falselon)) {
+        inRelonplyToTwelonelontCandidatelon.felonaturelons.gelontOrelonlselon(SourcelonTwelonelontelonarlybirdFelonaturelon, Nonelon)
+      } elonlselon {
+        inRelonplyToTwelonelontCandidatelon.felonaturelons.gelontOrelonlselon(elonarlybirdFelonaturelon, Nonelon)
       }
     }
 
-    (replyCandidate, updatedConversationFeatures, inReplyToTweetThriftTweetFeaturesOpt)
+    (relonplyCandidatelon, updatelondConvelonrsationFelonaturelons, inRelonplyToTwelonelontThriftTwelonelontFelonaturelonsOpt)
   }
 
-  private def hydrateAncestorTweetCandidate(
-    ancestorTweetCandidate: CandidateWithFeatures[TweetCandidate],
-    descendantReplies: Seq[CandidateWithFeatures[TweetCandidate]],
-    updatedReplyConversationFeatures: Option[ConversationFeatures]
-  ): (CandidateWithFeatures[TweetCandidate], Option[ConversationFeatures]) = {
-    // Ancestor could be a reply. For example, in thread: tweetA -> tweetB -> tweetC,
-    // tweetB is a reply and ancestor at the same time. Hence, tweetB's conversation feature
-    // will be updated by hydratedReplyCandidate and hydrateAncestorTweetCandidate functions.
-    val existingConversationFeatures =
-      if (updatedReplyConversationFeatures.nonEmpty)
-        updatedReplyConversationFeatures
-      else
-        Some(
-          ancestorTweetCandidate.features
-            .getOrElse(ConversationFeature, None).getOrElse(ConversationFeatures()))
+  privatelon delonf hydratelonAncelonstorTwelonelontCandidatelon(
+    ancelonstorTwelonelontCandidatelon: CandidatelonWithFelonaturelons[TwelonelontCandidatelon],
+    delonscelonndantRelonplielons: Selonq[CandidatelonWithFelonaturelons[TwelonelontCandidatelon]],
+    updatelondRelonplyConvelonrsationFelonaturelons: Option[ConvelonrsationFelonaturelons]
+  ): (CandidatelonWithFelonaturelons[TwelonelontCandidatelon], Option[ConvelonrsationFelonaturelons]) = {
+    // Ancelonstor could belon a relonply. For elonxamplelon, in threlonad: twelonelontA -> twelonelontB -> twelonelontC,
+    // twelonelontB is a relonply and ancelonstor at thelon samelon timelon. Helonncelon, twelonelontB's convelonrsation felonaturelon
+    // will belon updatelond by hydratelondRelonplyCandidatelon and hydratelonAncelonstorTwelonelontCandidatelon functions.
+    val elonxistingConvelonrsationFelonaturelons =
+      if (updatelondRelonplyConvelonrsationFelonaturelons.nonelonmpty)
+        updatelondRelonplyConvelonrsationFelonaturelons
+      elonlselon
+        Somelon(
+          ancelonstorTwelonelontCandidatelon.felonaturelons
+            .gelontOrelonlselon(ConvelonrsationFelonaturelon, Nonelon).gelontOrelonlselon(ConvelonrsationFelonaturelons()))
 
-    val updatedConversationFeatures = existingConversationFeatures match {
-      case Some(v1) =>
-        Some(
+    val updatelondConvelonrsationFelonaturelons = elonxistingConvelonrsationFelonaturelons match {
+      caselon Somelon(v1) =>
+        Somelon(
           v1.copy(
-            hasDescendantReplyCandidate = Some(true),
-            hasInNetworkDescendantReply =
-              Some(descendantReplies.exists(_.features.getOrElse(InNetworkFeature, false)))
+            hasDelonscelonndantRelonplyCandidatelon = Somelon(truelon),
+            hasInNelontworkDelonscelonndantRelonply =
+              Somelon(delonscelonndantRelonplielons.elonxists(_.felonaturelons.gelontOrelonlselon(InNelontworkFelonaturelon, falselon)))
           ))
-      case _ => None
+      caselon _ => Nonelon
     }
-    (ancestorTweetCandidate, updatedConversationFeatures)
+    (ancelonstorTwelonelontCandidatelon, updatelondConvelonrsationFelonaturelons)
   }
 
-  private def originalTweetAgeFromSnowflake(
-    candidate: CandidateWithFeatures[TweetCandidate]
+  privatelon delonf originalTwelonelontAgelonFromSnowflakelon(
+    candidatelon: CandidatelonWithFelonaturelons[TwelonelontCandidatelon]
   ): Option[Duration] = {
-    SnowflakeId
-      .timeFromIdOpt(
-        candidate.features
-          .getOrElse(SourceTweetIdFeature, None).getOrElse(candidate.candidate.id))
-      .map(Time.now - _)
+    SnowflakelonId
+      .timelonFromIdOpt(
+        candidatelon.felonaturelons
+          .gelontOrelonlselon(SourcelonTwelonelontIdFelonaturelon, Nonelon).gelontOrelonlselon(candidatelon.candidatelon.id))
+      .map(Timelon.now - _)
   }
 }

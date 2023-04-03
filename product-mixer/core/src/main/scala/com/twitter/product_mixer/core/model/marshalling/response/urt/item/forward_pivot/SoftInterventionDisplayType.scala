@@ -1,8 +1,8 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.forward_pivot
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.forward_pivot
 
-sealed trait SoftInterventionDisplayType
+selonalelond trait SoftIntelonrvelonntionDisplayTypelon
 
-case object GetTheLatest extends SoftInterventionDisplayType
-case object StayInformed extends SoftInterventionDisplayType
-case object Misleading extends SoftInterventionDisplayType
-case object GovernmentRequested extends SoftInterventionDisplayType
+caselon objelonct GelontThelonLatelonst elonxtelonnds SoftIntelonrvelonntionDisplayTypelon
+caselon objelonct StayInformelond elonxtelonnds SoftIntelonrvelonntionDisplayTypelon
+caselon objelonct Mislelonading elonxtelonnds SoftIntelonrvelonntionDisplayTypelon
+caselon objelonct GovelonrnmelonntRelonquelonstelond elonxtelonnds SoftIntelonrvelonntionDisplayTypelon

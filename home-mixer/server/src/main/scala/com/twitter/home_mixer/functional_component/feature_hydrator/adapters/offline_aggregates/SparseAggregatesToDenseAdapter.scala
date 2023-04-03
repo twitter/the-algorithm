@@ -1,17 +1,17 @@
-package com.twitter.home_mixer.functional_component.feature_hydrator.adapters.offline_aggregates
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator.adaptelonrs.offlinelon_aggrelongatelons
 
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.FeatureContext
-import com.twitter.ml.api.RichDataRecord
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.conversion.CombineCountsPolicy
-import com.twitter.timelines.prediction.common.adapters.TimelinesIRecordAdapter
+import com.twittelonr.ml.api.DataReloncord
+import com.twittelonr.ml.api.FelonaturelonContelonxt
+import com.twittelonr.ml.api.RichDataReloncord
+import com.twittelonr.timelonlinelons.data_procelonssing.ml_util.aggrelongation_framelonwork.convelonrsion.CombinelonCountsPolicy
+import com.twittelonr.timelonlinelons.prelondiction.common.adaptelonrs.TimelonlinelonsIReloncordAdaptelonr
 
-class SparseAggregatesToDenseAdapter(policy: CombineCountsPolicy)
-    extends TimelinesIRecordAdapter[Seq[DataRecord]] {
+class SparselonAggrelongatelonsToDelonnselonAdaptelonr(policy: CombinelonCountsPolicy)
+    elonxtelonnds TimelonlinelonsIReloncordAdaptelonr[Selonq[DataReloncord]] {
 
-  override def setFeatures(input: Seq[DataRecord], mutableDataRecord: RichDataRecord): Unit =
-    policy.defaultMergeRecord(mutableDataRecord.getRecord, input.toList)
+  ovelonrridelon delonf selontFelonaturelons(input: Selonq[DataReloncord], mutablelonDataReloncord: RichDataReloncord): Unit =
+    policy.delonfaultMelonrgelonReloncord(mutablelonDataReloncord.gelontReloncord, input.toList)
 
-  override val getFeatureContext: FeatureContext =
-    new FeatureContext(policy.outputFeaturesPostMerge.toSeq: _*)
+  ovelonrridelon val gelontFelonaturelonContelonxt: FelonaturelonContelonxt =
+    nelonw FelonaturelonContelonxt(policy.outputFelonaturelonsPostMelonrgelon.toSelonq: _*)
 }

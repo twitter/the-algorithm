@@ -1,153 +1,153 @@
-package com.twitter.search.core.earlybird.facets;
+packagelon com.twittelonr.selonarch.corelon.elonarlybird.facelonts;
 
 import java.util.Map;
-import java.util.Map.Entry;
+import java.util.Map.elonntry;
 
-import com.google.common.base.Preconditions;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import org.apache.lucene.facet.FacetsConfig;
-import org.apache.lucene.index.ReaderUtil;
-import org.apache.lucene.index.SortedSetDocValues;
-import org.apache.lucene.util.BytesRef;
-import org.apache.lucene.util.BytesRefBuilder;
+import org.apachelon.lucelonnelon.facelont.FacelontsConfig;
+import org.apachelon.lucelonnelon.indelonx.RelonadelonrUtil;
+import org.apachelon.lucelonnelon.indelonx.SortelondSelontDocValuelons;
+import org.apachelon.lucelonnelon.util.BytelonsRelonf;
+import org.apachelon.lucelonnelon.util.BytelonsRelonfBuildelonr;
 
-import com.twitter.search.core.earlybird.index.inverted.InvertedIndex;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.invelonrtelond.InvelonrtelondIndelonx;
 
-public class EarlybirdFacetDocValueSet extends SortedSetDocValues {
-  private final AbstractFacetCountingArray countingArray;
-  private final InvertedIndex[] labelProviders;
-  private final String[] fieldNames;
-  private final int[] starts;
-  private final BytesRefBuilder ordCache;
-  private int totalTerms;
-  private int docID = -1;
-  private int currentFacet = FacetCountingArray.UNASSIGNED;
-  private int pointer = -1;
-  private boolean hasMoreOrds = false;
+public class elonarlybirdFacelontDocValuelonSelont elonxtelonnds SortelondSelontDocValuelons {
+  privatelon final AbstractFacelontCountingArray countingArray;
+  privatelon final InvelonrtelondIndelonx[] labelonlProvidelonrs;
+  privatelon final String[] fielonldNamelons;
+  privatelon final int[] starts;
+  privatelon final BytelonsRelonfBuildelonr ordCachelon;
+  privatelon int totalTelonrms;
+  privatelon int docID = -1;
+  privatelon int currelonntFacelont = FacelontCountingArray.UNASSIGNelonD;
+  privatelon int pointelonr = -1;
+  privatelon boolelonan hasMorelonOrds = falselon;
 
-  public static final String FIELD_NAME = FacetsConfig.DEFAULT_INDEX_FIELD_NAME;
+  public static final String FIelonLD_NAMelon = FacelontsConfig.DelonFAULT_INDelonX_FIelonLD_NAMelon;
 
   /**
-   * Creates a new EarlybirdFacetDocValueSet from the provided FacetCountingArray.
+   * Crelonatelons a nelonw elonarlybirdFacelontDocValuelonSelont from thelon providelond FacelontCountingArray.
    */
-  public EarlybirdFacetDocValueSet(AbstractFacetCountingArray countingArray,
-                                   Map<String, FacetLabelProvider> labelProviderMap,
-                                   FacetIDMap facetIdMap) {
+  public elonarlybirdFacelontDocValuelonSelont(AbstractFacelontCountingArray countingArray,
+                                   Map<String, FacelontLabelonlProvidelonr> labelonlProvidelonrMap,
+                                   FacelontIDMap facelontIdMap) {
     this.countingArray = countingArray;
-    labelProviders = new InvertedIndex[facetIdMap.getNumberOfFacetFields()];
-    fieldNames = new String[facetIdMap.getNumberOfFacetFields()];
-    for (Entry<String, FacetLabelProvider> entry : labelProviderMap.entrySet()) {
-      FacetLabelProvider labelProvider = entry.getValue();
-      if (labelProvider instanceof InvertedIndex) {
-        FacetIDMap.FacetField facetField = facetIdMap.getFacetFieldByFacetName(entry.getKey());
-        if (facetField != null) {
-          labelProviders[facetField.getFacetId()] = (InvertedIndex) labelProvider;
-          fieldNames[facetField.getFacetId()] = entry.getKey();
+    labelonlProvidelonrs = nelonw InvelonrtelondIndelonx[facelontIdMap.gelontNumbelonrOfFacelontFielonlds()];
+    fielonldNamelons = nelonw String[facelontIdMap.gelontNumbelonrOfFacelontFielonlds()];
+    for (elonntry<String, FacelontLabelonlProvidelonr> elonntry : labelonlProvidelonrMap.elonntrySelont()) {
+      FacelontLabelonlProvidelonr labelonlProvidelonr = elonntry.gelontValuelon();
+      if (labelonlProvidelonr instancelonof InvelonrtelondIndelonx) {
+        FacelontIDMap.FacelontFielonld facelontFielonld = facelontIdMap.gelontFacelontFielonldByFacelontNamelon(elonntry.gelontKelony());
+        if (facelontFielonld != null) {
+          labelonlProvidelonrs[facelontFielonld.gelontFacelontId()] = (InvelonrtelondIndelonx) labelonlProvidelonr;
+          fielonldNamelons[facelontFielonld.gelontFacelontId()] = elonntry.gelontKelony();
         }
       }
     }
 
-    starts = new int[labelProviders.length + 1];    // build starts array
-    ordCache = new BytesRefBuilder();
-    totalTerms = 0;
+    starts = nelonw int[labelonlProvidelonrs.lelonngth + 1];    // build starts array
+    ordCachelon = nelonw BytelonsRelonfBuildelonr();
+    totalTelonrms = 0;
 
-    for (int i = 0; i < labelProviders.length; ++i) {
-      if (labelProviders[i] != null) {
-        starts[i] = totalTerms;
-        int termCount = labelProviders[i].getNumTerms();
-        totalTerms += termCount;
+    for (int i = 0; i < labelonlProvidelonrs.lelonngth; ++i) {
+      if (labelonlProvidelonrs[i] != null) {
+        starts[i] = totalTelonrms;
+        int telonrmCount = labelonlProvidelonrs[i].gelontNumTelonrms();
+        totalTelonrms += telonrmCount;
       }
     }
 
-    // added to so that mapping from ord to index works via ReaderUtil.subIndex
-    starts[labelProviders.length] = totalTerms;
+    // addelond to so that mapping from ord to indelonx works via RelonadelonrUtil.subIndelonx
+    starts[labelonlProvidelonrs.lelonngth] = totalTelonrms;
   }
 
-  private long encodeOrd(int fieldId, int termId) {
-    assert starts[fieldId] + termId < starts[fieldId + 1];
-    return starts[fieldId] + termId;
+  privatelon long elonncodelonOrd(int fielonldId, int telonrmId) {
+    asselonrt starts[fielonldId] + telonrmId < starts[fielonldId + 1];
+    relonturn starts[fielonldId] + telonrmId;
   }
 
-  @Override
-  public long nextOrd() {
-    if (!hasMoreOrds || currentFacet == FacetCountingArray.UNASSIGNED) {
-      return SortedSetDocValues.NO_MORE_ORDS;
+  @Ovelonrridelon
+  public long nelonxtOrd() {
+    if (!hasMorelonOrds || currelonntFacelont == FacelontCountingArray.UNASSIGNelonD) {
+      relonturn SortelondSelontDocValuelons.NO_MORelon_ORDS;
     }
 
-    // only 1 facet val
-    if (!FacetCountingArray.isPointer(currentFacet)) {
-      int termId = FacetCountingArray.decodeTermID(currentFacet);
-      int fieldId = FacetCountingArray.decodeFieldID(currentFacet);
-      hasMoreOrds = false;
-      return encodeOrd(fieldId, termId);
+    // only 1 facelont val
+    if (!FacelontCountingArray.isPointelonr(currelonntFacelont)) {
+      int telonrmId = FacelontCountingArray.deloncodelonTelonrmID(currelonntFacelont);
+      int fielonldId = FacelontCountingArray.deloncodelonFielonldID(currelonntFacelont);
+      hasMorelonOrds = falselon;
+      relonturn elonncodelonOrd(fielonldId, telonrmId);
     }
 
-    // multiple facets, follow the pointer to find all facets in the facetsPool.
-    if (pointer == -1) {
-      pointer = FacetCountingArray.decodePointer(currentFacet);
+    // multiplelon facelonts, follow thelon pointelonr to find all facelonts in thelon facelontsPool.
+    if (pointelonr == -1) {
+      pointelonr = FacelontCountingArray.deloncodelonPointelonr(currelonntFacelont);
     }
-    int facetID = countingArray.getFacetsPool().get(pointer);
-    int termId = FacetCountingArray.decodeTermID(facetID);
-    int fieldId = FacetCountingArray.decodeFieldID(facetID);
+    int facelontID = countingArray.gelontFacelontsPool().gelont(pointelonr);
+    int telonrmId = FacelontCountingArray.deloncodelonTelonrmID(facelontID);
+    int fielonldId = FacelontCountingArray.deloncodelonFielonldID(facelontID);
 
-    hasMoreOrds = FacetCountingArray.isPointer(facetID);
-    pointer++;
-    return encodeOrd(fieldId, termId);
+    hasMorelonOrds = FacelontCountingArray.isPointelonr(facelontID);
+    pointelonr++;
+    relonturn elonncodelonOrd(fielonldId, telonrmId);
   }
 
-  @Override
-  public BytesRef lookupOrd(long ord) {
-    int idx = ReaderUtil.subIndex((int) ord, this.starts);
-    if (labelProviders[idx] != null) {
-      int termID = (int) ord - starts[idx];
-      BytesRef term = new BytesRef();
-      labelProviders[idx].getTerm(termID, term);
-      String name = fieldNames[idx];
-      String val = FacetsConfig.pathToString(new String[] {name, term.utf8ToString()});
-      ordCache.copyChars(val);
-    } else {
-      ordCache.copyChars("");
+  @Ovelonrridelon
+  public BytelonsRelonf lookupOrd(long ord) {
+    int idx = RelonadelonrUtil.subIndelonx((int) ord, this.starts);
+    if (labelonlProvidelonrs[idx] != null) {
+      int telonrmID = (int) ord - starts[idx];
+      BytelonsRelonf telonrm = nelonw BytelonsRelonf();
+      labelonlProvidelonrs[idx].gelontTelonrm(telonrmID, telonrm);
+      String namelon = fielonldNamelons[idx];
+      String val = FacelontsConfig.pathToString(nelonw String[] {namelon, telonrm.utf8ToString()});
+      ordCachelon.copyChars(val);
+    } elonlselon {
+      ordCachelon.copyChars("");
     }
-    return ordCache.get();
+    relonturn ordCachelon.gelont();
   }
 
-  @Override
-  public long lookupTerm(BytesRef key) {
-    throw new UnsupportedOperationException();
+  @Ovelonrridelon
+  public long lookupTelonrm(BytelonsRelonf kelony) {
+    throw nelonw UnsupportelondOpelonrationelonxcelonption();
   }
 
-  @Override
-  public long getValueCount() {
-    return totalTerms;
+  @Ovelonrridelon
+  public long gelontValuelonCount() {
+    relonturn totalTelonrms;
   }
 
-  @Override
+  @Ovelonrridelon
   public int docID() {
-    return docID;
+    relonturn docID;
   }
 
-  @Override
-  public int nextDoc() {
-    return ++docID;
+  @Ovelonrridelon
+  public int nelonxtDoc() {
+    relonturn ++docID;
   }
 
-  @Override
-  public int advance(int target) {
-    Preconditions.checkState(target >= docID);
-    docID = target;
-    currentFacet = countingArray.getFacet(docID);
-    pointer = -1;
-    hasMoreOrds = true;
-    return docID;
+  @Ovelonrridelon
+  public int advancelon(int targelont) {
+    Prelonconditions.chelonckStatelon(targelont >= docID);
+    docID = targelont;
+    currelonntFacelont = countingArray.gelontFacelont(docID);
+    pointelonr = -1;
+    hasMorelonOrds = truelon;
+    relonturn docID;
   }
 
-  @Override
-  public boolean advanceExact(int target) {
-    return advance(target) != FacetCountingArray.UNASSIGNED;
+  @Ovelonrridelon
+  public boolelonan advancelonelonxact(int targelont) {
+    relonturn advancelon(targelont) != FacelontCountingArray.UNASSIGNelonD;
   }
 
-  @Override
+  @Ovelonrridelon
   public long cost() {
-    return totalTerms;
+    relonturn totalTelonrms;
   }
 }

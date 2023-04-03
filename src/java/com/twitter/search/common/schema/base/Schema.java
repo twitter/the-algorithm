@@ -1,231 +1,231 @@
-package com.twitter.search.common.schema.base;
+packagelon com.twittelonr.selonarch.common.schelonma.baselon;
 
-import java.util.Collection;
+import java.util.Collelonction;
 import java.util.Map;
 
-import javax.annotation.Nullable;
+import javax.annotation.Nullablelon;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.ImmutableCollection;
-import com.google.common.collect.ImmutableMap;
+import com.googlelon.common.baselon.Prelondicatelon;
+import com.googlelon.common.collelonct.ImmutablelonCollelonction;
+import com.googlelon.common.collelonct.ImmutablelonMap;
 
-import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.facet.FacetsConfig;
-import org.apache.lucene.index.FieldInfos;
+import org.apachelon.lucelonnelon.analysis.Analyzelonr;
+import org.apachelon.lucelonnelon.facelont.FacelontsConfig;
+import org.apachelon.lucelonnelon.indelonx.FielonldInfos;
 
-import com.twitter.search.common.features.thrift.ThriftSearchFeatureSchema;
-import com.twitter.search.common.schema.thriftjava.ThriftAnalyzer;
-import com.twitter.search.common.schema.thriftjava.ThriftCSFType;
-import com.twitter.search.common.schema.thriftjava.ThriftFieldConfiguration;
+import com.twittelonr.selonarch.common.felonaturelons.thrift.ThriftSelonarchFelonaturelonSchelonma;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftAnalyzelonr;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftCSFTypelon;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftFielonldConfiguration;
 
 /**
- * Search Schema.
+ * Selonarch Schelonma.
  */
-public interface Schema {
+public intelonrfacelon Schelonma {
   /**
-   * Certain Schema implementations can evolve at run time.  This call returns a snapshot of
-   * of the schema which is guaranteed to not change.
+   * Celonrtain Schelonma implelonmelonntations can elonvolvelon at run timelon.  This call relonturns a snapshot of
+   * of thelon schelonma which is guarantelonelond to not changelon.
    */
-  ImmutableSchemaInterface getSchemaSnapshot();
+  ImmutablelonSchelonmaIntelonrfacelon gelontSchelonmaSnapshot();
 
   /**
-   * Returns a string describing the current schema version.
+   * Relonturns a string delonscribing thelon currelonnt schelonma velonrsion.
    */
-  String getVersionDescription();
+  String gelontVelonrsionDelonscription();
 
   /**
-   * Returns whether the schema version is official. Only official segments are uploaded to HDFS.
+   * Relonturns whelonthelonr thelon schelonma velonrsion is official. Only official selongmelonnts arelon uploadelond to HDFS.
    */
-  boolean isVersionOfficial();
+  boolelonan isVelonrsionOfficial();
 
   /**
-   * Returns the schema's major version.
+   * Relonturns thelon schelonma's major velonrsion.
    */
-  int getMajorVersionNumber();
+  int gelontMajorVelonrsionNumbelonr();
 
   /**
-   * Returns the schema's minor version.
+   * Relonturns thelon schelonma's minor velonrsion.
    */
-  int getMinorVersionNumber();
+  int gelontMinorVelonrsionNumbelonr();
 
   /**
-   * Returns the default analyzer. This analyzer is used when none is specified on the field info.
+   * Relonturns thelon delonfault analyzelonr. This analyzelonr is uselond whelonn nonelon is speloncifielond on thelon fielonld info.
    */
-  Analyzer getDefaultAnalyzer(ThriftAnalyzer override);
+  Analyzelonr gelontDelonfaultAnalyzelonr(ThriftAnalyzelonr ovelonrridelon);
 
   /**
-   * Returns whether the given field is configured in the schema.
+   * Relonturns whelonthelonr thelon givelonn fielonld is configurelond in thelon schelonma.
    */
-  boolean hasField(int fieldConfigId);
+  boolelonan hasFielonld(int fielonldConfigId);
 
   /**
-   * Returns whether the given field is configured in the schema.
+   * Relonturns whelonthelonr thelon givelonn fielonld is configurelond in thelon schelonma.
    */
-  boolean hasField(String fieldName);
+  boolelonan hasFielonld(String fielonldNamelon);
 
   /**
-   * Get the field name corresponding to the given field id.
+   * Gelont thelon fielonld namelon correlonsponding to thelon givelonn fielonld id.
    */
-  String getFieldName(int fieldConfigId);
+  String gelontFielonldNamelon(int fielonldConfigId);
 
   /**
-   * Return the FieldInfo of all fields.
+   * Relonturn thelon FielonldInfo of all fielonlds.
    */
-  ImmutableCollection<FieldInfo> getFieldInfos();
+  ImmutablelonCollelonction<FielonldInfo> gelontFielonldInfos();
 
   /**
-   * Get the field info for the given field id. If an override is given, attempt to merge the
-   * base field info with the override config.
+   * Gelont thelon fielonld info for thelon givelonn fielonld id. If an ovelonrridelon is givelonn, attelonmpt to melonrgelon thelon
+   * baselon fielonld info with thelon ovelonrridelon config.
    */
-  FieldInfo getFieldInfo(int fieldConfigId, ThriftFieldConfiguration override);
+  FielonldInfo gelontFielonldInfo(int fielonldConfigId, ThriftFielonldConfiguration ovelonrridelon);
 
 
   /**
-   * Get the field info for the given field id. No override.
+   * Gelont thelon fielonld info for thelon givelonn fielonld id. No ovelonrridelon.
    */
-  @Nullable
-  FieldInfo getFieldInfo(int fieldConfigId);
+  @Nullablelon
+  FielonldInfo gelontFielonldInfo(int fielonldConfigId);
 
   /**
-   * Get the field info for the given field name. No override.
+   * Gelont thelon fielonld info for thelon givelonn fielonld namelon. No ovelonrridelon.
    */
-  @Nullable
-  FieldInfo getFieldInfo(String fieldName);
+  @Nullablelon
+  FielonldInfo gelontFielonldInfo(String fielonldNamelon);
 
   /**
-   * Builds a lucene FieldInfos instance, usually used for indexing.
+   * Builds a lucelonnelon FielonldInfos instancelon, usually uselond for indelonxing.
    */
-  FieldInfos getLuceneFieldInfos(Predicate<String> acceptedFields);
+  FielonldInfos gelontLucelonnelonFielonldInfos(Prelondicatelon<String> accelonptelondFielonlds);
 
   /**
-   * Returns the number of facet fields in this schema.
+   * Relonturns thelon numbelonr of facelont fielonlds in this schelonma.
    */
-  int getNumFacetFields();
+  int gelontNumFacelontFielonlds();
 
   /**
-   * Return facet configurations.
+   * Relonturn facelont configurations.
    */
-  FacetsConfig getFacetsConfig();
+  FacelontsConfig gelontFacelontsConfig();
 
   /**
-   * Get the facet field's field info by facet name.
+   * Gelont thelon facelont fielonld's fielonld info by facelont namelon.
    */
-  FieldInfo getFacetFieldByFacetName(String facetName);
+  FielonldInfo gelontFacelontFielonldByFacelontNamelon(String facelontNamelon);
 
   /**
-   * Get the facet field's field info by field name.
+   * Gelont thelon facelont fielonld's fielonld info by fielonld namelon.
    */
-  FieldInfo getFacetFieldByFieldName(String fieldName);
+  FielonldInfo gelontFacelontFielonldByFielonldNamelon(String fielonldNamelon);
 
   /**
-   * Get the field infos for all facet fields.
+   * Gelont thelon fielonld infos for all facelont fielonlds.
    */
-  Collection<FieldInfo> getFacetFields();
+  Collelonction<FielonldInfo> gelontFacelontFielonlds();
 
   /**
-   * Get the field infos for all facet fields backed by column stride fields.
+   * Gelont thelon fielonld infos for all facelont fielonlds backelond by column stridelon fielonlds.
    */
-  Collection<FieldInfo> getCsfFacetFields();
+  Collelonction<FielonldInfo> gelontCsfFacelontFielonlds();
 
   /**
-   * Get the field weight map for text searchable fields.
+   * Gelont thelon fielonld welonight map for telonxt selonarchablelon fielonlds.
    */
-  Map<String, FieldWeightDefault> getFieldWeightMap();
+  Map<String, FielonldWelonightDelonfault> gelontFielonldWelonightMap();
 
   /**
-   * Get scoring feature configuration by feature name.
+   * Gelont scoring felonaturelon configuration by felonaturelon namelon.
    */
-  FeatureConfiguration getFeatureConfigurationByName(String featureName);
+  FelonaturelonConfiguration gelontFelonaturelonConfigurationByNamelon(String felonaturelonNamelon);
 
   /**
-   * Get scoring feature configuration by feature field id.  The feature configuration is
-   * guaranteed to be not null, or a NullPointerException will be thrown out.
+   * Gelont scoring felonaturelon configuration by felonaturelon fielonld id.  Thelon felonaturelon configuration is
+   * guarantelonelond to belon not null, or a NullPointelonrelonxcelonption will belon thrown out.
    */
-  FeatureConfiguration getFeatureConfigurationById(int featureFieldId);
+  FelonaturelonConfiguration gelontFelonaturelonConfigurationById(int felonaturelonFielonldId);
 
   /**
-   * Returns the ThriftCSFType for a CSF field.
-   * Note: for non-CSF field, null will be returned.
+   * Relonturns thelon ThriftCSFTypelon for a CSF fielonld.
+   * Notelon: for non-CSF fielonld, null will belon relonturnelond.
    */
-  @Nullable
-  ThriftCSFType getCSFFieldType(String fieldName);
+  @Nullablelon
+  ThriftCSFTypelon gelontCSFFielonldTypelon(String fielonldNamelon);
 
   /**
-   * Get the search result feature schema for all possible features in all search results.
+   * Gelont thelon selonarch relonsult felonaturelon schelonma for all possiblelon felonaturelons in all selonarch relonsults.
    *
-   * The returned value is not really immutable (because it's a pre-generated thrift struct).
-   * We want to return it directly because we want to pre-build it once and return with the thrift
-   * search results as is.
+   * Thelon relonturnelond valuelon is not relonally immutablelon (beloncauselon it's a prelon-gelonnelonratelond thrift struct).
+   * Welon want to relonturn it direlonctly beloncauselon welon want to prelon-build it oncelon and relonturn with thelon thrift
+   * selonarch relonsults as is.
    */
-  ThriftSearchFeatureSchema getSearchFeatureSchema();
+  ThriftSelonarchFelonaturelonSchelonma gelontSelonarchFelonaturelonSchelonma();
 
   /**
-   * Get the mapping from feature id to feature configuration.
+   * Gelont thelon mapping from felonaturelon id to felonaturelon configuration.
    */
-  ImmutableMap<Integer, FeatureConfiguration> getFeatureIdToFeatureConfig();
+  ImmutablelonMap<Intelongelonr, FelonaturelonConfiguration> gelontFelonaturelonIdToFelonaturelonConfig();
 
   /**
-   * Get the mapping from feature name to feature configuration.
+   * Gelont thelon mapping from felonaturelon namelon to felonaturelon configuration.
    */
-  ImmutableMap<String, FeatureConfiguration> getFeatureNameToFeatureConfig();
+  ImmutablelonMap<String, FelonaturelonConfiguration> gelontFelonaturelonNamelonToFelonaturelonConfig();
 
   /**
-   * Field configuration for a single field.
+   * Fielonld configuration for a singlelon fielonld.
    */
-  final class FieldInfo {
-    private final int fieldId;
-    private final String name;
-    private final EarlybirdFieldType luceneFieldType;
+  final class FielonldInfo {
+    privatelon final int fielonldId;
+    privatelon final String namelon;
+    privatelon final elonarlybirdFielonldTypelon lucelonnelonFielonldTypelon;
 
-    public FieldInfo(int fieldId, String name, EarlybirdFieldType luceneFieldType) {
-      this.fieldId = fieldId;
-      this.name = name;
-      this.luceneFieldType = luceneFieldType;
+    public FielonldInfo(int fielonldId, String namelon, elonarlybirdFielonldTypelon lucelonnelonFielonldTypelon) {
+      this.fielonldId = fielonldId;
+      this.namelon = namelon;
+      this.lucelonnelonFielonldTypelon = lucelonnelonFielonldTypelon;
     }
 
-    public int getFieldId() {
-      return fieldId;
+    public int gelontFielonldId() {
+      relonturn fielonldId;
     }
 
-    public String getName() {
-      return name;
+    public String gelontNamelon() {
+      relonturn namelon;
     }
 
-    public EarlybirdFieldType getFieldType() {
-      return luceneFieldType;
+    public elonarlybirdFielonldTypelon gelontFielonldTypelon() {
+      relonturn lucelonnelonFielonldTypelon;
     }
 
-    public String getDescription() {
-      return String.format(
-          "(FieldInfo [fieldId: %d, name: %s, luceneFieldType: %s])",
-          fieldId, name, luceneFieldType.getFacetName()
+    public String gelontDelonscription() {
+      relonturn String.format(
+          "(FielonldInfo [fielonldId: %d, namelon: %s, lucelonnelonFielonldTypelon: %s])",
+          fielonldId, namelon, lucelonnelonFielonldTypelon.gelontFacelontNamelon()
       );
     }
 
-    @Override
-    public boolean equals(Object obj) {
-      if (!(obj instanceof FieldInfo)) {
-        return false;
+    @Ovelonrridelon
+    public boolelonan elonquals(Objelonct obj) {
+      if (!(obj instancelonof FielonldInfo)) {
+        relonturn falselon;
       }
-      return fieldId == ((FieldInfo) obj).fieldId;
+      relonturn fielonldId == ((FielonldInfo) obj).fielonldId;
     }
 
-    @Override
-    public int hashCode() {
-      return fieldId;
+    @Ovelonrridelon
+    public int hashCodelon() {
+      relonturn fielonldId;
     }
   }
 
   /**
-   * Exception thrown when errors or inconsistences are detected in a search schema.
+   * elonxcelonption thrown whelonn elonrrors or inconsistelonncelons arelon delontelonctelond in a selonarch schelonma.
    */
-  final class SchemaValidationException extends Exception {
-    public SchemaValidationException(String msg) {
-      super(msg);
+  final class SchelonmaValidationelonxcelonption elonxtelonnds elonxcelonption {
+    public SchelonmaValidationelonxcelonption(String msg) {
+      supelonr(msg);
     }
 
-    public SchemaValidationException(String msg, Exception e) {
-      super(msg, e);
+    public SchelonmaValidationelonxcelonption(String msg, elonxcelonption elon) {
+      supelonr(msg, elon);
     }
   }
 }

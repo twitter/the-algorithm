@@ -1,135 +1,135 @@
-package com.twitter.cr_mixer.util
+packagelon com.twittelonr.cr_mixelonr.util
 
-import com.twitter.cr_mixer.model.RankedCandidate
-import com.twitter.cr_mixer.model.SimilarityEngineInfo
-import com.twitter.cr_mixer.model.SourceInfo
-import com.twitter.cr_mixer.thriftscala.MetricTag
-import com.twitter.cr_mixer.thriftscala.SimilarityEngineType
-import com.twitter.cr_mixer.thriftscala.SourceType
+import com.twittelonr.cr_mixelonr.modelonl.RankelondCandidatelon
+import com.twittelonr.cr_mixelonr.modelonl.SimilarityelonnginelonInfo
+import com.twittelonr.cr_mixelonr.modelonl.SourcelonInfo
+import com.twittelonr.cr_mixelonr.thriftscala.MelontricTag
+import com.twittelonr.cr_mixelonr.thriftscala.SimilarityelonnginelonTypelon
+import com.twittelonr.cr_mixelonr.thriftscala.SourcelonTypelon
 
-object MetricTagUtil {
+objelonct MelontricTagUtil {
 
-  def buildMetricTags(candidate: RankedCandidate): Seq[MetricTag] = {
-    val interestedInMetricTag = isFromInterestedIn(candidate)
+  delonf buildMelontricTags(candidatelon: RankelondCandidatelon): Selonq[MelontricTag] = {
+    val intelonrelonstelondInMelontricTag = isFromIntelonrelonstelondIn(candidatelon)
 
-    val cgInfoMetricTags = candidate.potentialReasons
+    val cgInfoMelontricTags = candidatelon.potelonntialRelonasons
       .flatMap { cgInfo =>
-        val sourceMetricTag = cgInfo.sourceInfoOpt.flatMap { sourceInfo =>
-          toMetricTagFromSource(sourceInfo.sourceType)
+        val sourcelonMelontricTag = cgInfo.sourcelonInfoOpt.flatMap { sourcelonInfo =>
+          toMelontricTagFromSourcelon(sourcelonInfo.sourcelonTypelon)
         }
-        val similarityEngineTags = toMetricTagFromSimilarityEngine(
-          cgInfo.similarityEngineInfo,
-          cgInfo.contributingSimilarityEngines)
+        val similarityelonnginelonTags = toMelontricTagFromSimilarityelonnginelon(
+          cgInfo.similarityelonnginelonInfo,
+          cgInfo.contributingSimilarityelonnginelons)
 
-        val combinedMetricTag = cgInfo.sourceInfoOpt.flatMap { sourceInfo =>
-          toMetricTagFromSourceAndSimilarityEngine(sourceInfo, cgInfo.similarityEngineInfo)
+        val combinelondMelontricTag = cgInfo.sourcelonInfoOpt.flatMap { sourcelonInfo =>
+          toMelontricTagFromSourcelonAndSimilarityelonnginelon(sourcelonInfo, cgInfo.similarityelonnginelonInfo)
         }
 
-        Seq(sourceMetricTag) ++ similarityEngineTags ++ Seq(combinedMetricTag)
-      }.flatten.toSet
-    (interestedInMetricTag ++ cgInfoMetricTags).toSeq
+        Selonq(sourcelonMelontricTag) ++ similarityelonnginelonTags ++ Selonq(combinelondMelontricTag)
+      }.flattelonn.toSelont
+    (intelonrelonstelondInMelontricTag ++ cgInfoMelontricTags).toSelonq
   }
 
   /***
-   * match a sourceType to a metricTag
+   * match a sourcelonTypelon to a melontricTag
    */
-  private def toMetricTagFromSource(sourceType: SourceType): Option[MetricTag] = {
-    sourceType match {
-      case SourceType.TweetFavorite => Some(MetricTag.TweetFavorite) // Personalized Topics in Home
-      case SourceType.Retweet => Some(MetricTag.Retweet) // Personalized Topics in Home
-      case SourceType.NotificationClick =>
-        Some(MetricTag.PushOpenOrNtabClick) // Health Filter in MR
-      case SourceType.OriginalTweet =>
-        Some(MetricTag.OriginalTweet)
-      case SourceType.Reply =>
-        Some(MetricTag.Reply)
-      case SourceType.TweetShare =>
-        Some(MetricTag.TweetShare)
-      case SourceType.UserFollow =>
-        Some(MetricTag.UserFollow)
-      case SourceType.UserRepeatedProfileVisit =>
-        Some(MetricTag.UserRepeatedProfileVisit)
-      case SourceType.TwiceUserId =>
-        Some(MetricTag.TwiceUserId)
-      case _ => None
+  privatelon delonf toMelontricTagFromSourcelon(sourcelonTypelon: SourcelonTypelon): Option[MelontricTag] = {
+    sourcelonTypelon match {
+      caselon SourcelonTypelon.TwelonelontFavoritelon => Somelon(MelontricTag.TwelonelontFavoritelon) // Pelonrsonalizelond Topics in Homelon
+      caselon SourcelonTypelon.Relontwelonelont => Somelon(MelontricTag.Relontwelonelont) // Pelonrsonalizelond Topics in Homelon
+      caselon SourcelonTypelon.NotificationClick =>
+        Somelon(MelontricTag.PushOpelonnOrNtabClick) // Helonalth Filtelonr in MR
+      caselon SourcelonTypelon.OriginalTwelonelont =>
+        Somelon(MelontricTag.OriginalTwelonelont)
+      caselon SourcelonTypelon.Relonply =>
+        Somelon(MelontricTag.Relonply)
+      caselon SourcelonTypelon.TwelonelontSharelon =>
+        Somelon(MelontricTag.TwelonelontSharelon)
+      caselon SourcelonTypelon.UselonrFollow =>
+        Somelon(MelontricTag.UselonrFollow)
+      caselon SourcelonTypelon.UselonrRelonpelonatelondProfilelonVisit =>
+        Somelon(MelontricTag.UselonrRelonpelonatelondProfilelonVisit)
+      caselon SourcelonTypelon.TwicelonUselonrId =>
+        Somelon(MelontricTag.TwicelonUselonrId)
+      caselon _ => Nonelon
     }
   }
 
   /***
-   * If the SEInfo is built by a unified sim engine, we un-wrap the contributing sim engines.
-   * If not, we log the sim engine as usual.
-   * @param seInfo (CandidateGenerationInfo.similarityEngineInfo): SimilarityEngineInfo,
-   * @param cseInfo (CandidateGenerationInfo.contributingSimilarityEngines): Seq[SimilarityEngineInfo]
+   * If thelon SelonInfo is built by a unifielond sim elonnginelon, welon un-wrap thelon contributing sim elonnginelons.
+   * If not, welon log thelon sim elonnginelon as usual.
+   * @param selonInfo (CandidatelonGelonnelonrationInfo.similarityelonnginelonInfo): SimilarityelonnginelonInfo,
+   * @param cselonInfo (CandidatelonGelonnelonrationInfo.contributingSimilarityelonnginelons): Selonq[SimilarityelonnginelonInfo]
    */
-  private def toMetricTagFromSimilarityEngine(
-    seInfo: SimilarityEngineInfo,
-    cseInfo: Seq[SimilarityEngineInfo]
-  ): Seq[Option[MetricTag]] = {
-    seInfo.similarityEngineType match {
-      case SimilarityEngineType.TweetBasedUnifiedSimilarityEngine => // un-wrap the unified sim engine
-        cseInfo.map { contributingSimEngine =>
-          toMetricTagFromSimilarityEngine(contributingSimEngine, Seq.empty)
-        }.flatten
-      case SimilarityEngineType.ProducerBasedUnifiedSimilarityEngine => // un-wrap the unified sim engine
-        cseInfo.map { contributingSimEngine =>
-          toMetricTagFromSimilarityEngine(contributingSimEngine, Seq.empty)
-        }.flatten
-      // SimClustersANN can either be called on its own, or be called under unified sim engine
-      case SimilarityEngineType.SimClustersANN => // the old "UserInterestedIn" will be replaced by this. Also, OfflineTwice
-        Seq(Some(MetricTag.SimClustersANN), seInfo.modelId.flatMap(toMetricTagFromModelId(_)))
-      case SimilarityEngineType.ConsumerEmbeddingBasedTwHINANN =>
-        Seq(Some(MetricTag.ConsumerEmbeddingBasedTwHINANN))
-      case SimilarityEngineType.TwhinCollabFilter => Seq(Some(MetricTag.TwhinCollabFilter))
-      // In the current implementation, TweetBasedUserTweetGraph/TweetBasedTwHINANN has a tag when
-      // it's either a base SE or a contributing SE. But for now they only show up in contributing SE.
-      case SimilarityEngineType.TweetBasedUserTweetGraph =>
-        Seq(Some(MetricTag.TweetBasedUserTweetGraph))
-      case SimilarityEngineType.TweetBasedTwHINANN =>
-        Seq(Some(MetricTag.TweetBasedTwHINANN))
-      case _ => Seq.empty
+  privatelon delonf toMelontricTagFromSimilarityelonnginelon(
+    selonInfo: SimilarityelonnginelonInfo,
+    cselonInfo: Selonq[SimilarityelonnginelonInfo]
+  ): Selonq[Option[MelontricTag]] = {
+    selonInfo.similarityelonnginelonTypelon match {
+      caselon SimilarityelonnginelonTypelon.TwelonelontBaselondUnifielondSimilarityelonnginelon => // un-wrap thelon unifielond sim elonnginelon
+        cselonInfo.map { contributingSimelonnginelon =>
+          toMelontricTagFromSimilarityelonnginelon(contributingSimelonnginelon, Selonq.elonmpty)
+        }.flattelonn
+      caselon SimilarityelonnginelonTypelon.ProducelonrBaselondUnifielondSimilarityelonnginelon => // un-wrap thelon unifielond sim elonnginelon
+        cselonInfo.map { contributingSimelonnginelon =>
+          toMelontricTagFromSimilarityelonnginelon(contributingSimelonnginelon, Selonq.elonmpty)
+        }.flattelonn
+      // SimClustelonrsANN can elonithelonr belon callelond on its own, or belon callelond undelonr unifielond sim elonnginelon
+      caselon SimilarityelonnginelonTypelon.SimClustelonrsANN => // thelon old "UselonrIntelonrelonstelondIn" will belon relonplacelond by this. Also, OfflinelonTwicelon
+        Selonq(Somelon(MelontricTag.SimClustelonrsANN), selonInfo.modelonlId.flatMap(toMelontricTagFromModelonlId(_)))
+      caselon SimilarityelonnginelonTypelon.ConsumelonrelonmbelonddingBaselondTwHINANN =>
+        Selonq(Somelon(MelontricTag.ConsumelonrelonmbelonddingBaselondTwHINANN))
+      caselon SimilarityelonnginelonTypelon.TwhinCollabFiltelonr => Selonq(Somelon(MelontricTag.TwhinCollabFiltelonr))
+      // In thelon currelonnt implelonmelonntation, TwelonelontBaselondUselonrTwelonelontGraph/TwelonelontBaselondTwHINANN has a tag whelonn
+      // it's elonithelonr a baselon Selon or a contributing Selon. But for now thelony only show up in contributing Selon.
+      caselon SimilarityelonnginelonTypelon.TwelonelontBaselondUselonrTwelonelontGraph =>
+        Selonq(Somelon(MelontricTag.TwelonelontBaselondUselonrTwelonelontGraph))
+      caselon SimilarityelonnginelonTypelon.TwelonelontBaselondTwHINANN =>
+        Selonq(Somelon(MelontricTag.TwelonelontBaselondTwHINANN))
+      caselon _ => Selonq.elonmpty
     }
   }
 
   /***
-   * pass in a model id, and match it with the metric tag type.
+   * pass in a modelonl id, and match it with thelon melontric tag typelon.
    */
-  private def toMetricTagFromModelId(
-    modelId: String
-  ): Option[MetricTag] = {
+  privatelon delonf toMelontricTagFromModelonlId(
+    modelonlId: String
+  ): Option[MelontricTag] = {
 
-    val pushOpenBasedModelRegex = "(.*_Model20m145k2020_20220819)".r
+    val pushOpelonnBaselondModelonlRelongelonx = "(.*_Modelonl20m145k2020_20220819)".r
 
-    modelId match {
-      case pushOpenBasedModelRegex(_*) =>
-        Some(MetricTag.RequestHealthFilterPushOpenBasedTweetEmbedding)
-      case _ => None
+    modelonlId match {
+      caselon pushOpelonnBaselondModelonlRelongelonx(_*) =>
+        Somelon(MelontricTag.RelonquelonstHelonalthFiltelonrPushOpelonnBaselondTwelonelontelonmbelondding)
+      caselon _ => Nonelon
     }
   }
 
-  private def toMetricTagFromSourceAndSimilarityEngine(
-    sourceInfo: SourceInfo,
-    seInfo: SimilarityEngineInfo
-  ): Option[MetricTag] = {
-    sourceInfo.sourceType match {
-      case SourceType.Lookalike
-          if seInfo.similarityEngineType == SimilarityEngineType.ConsumersBasedUserTweetGraph =>
-        Some(MetricTag.LookalikeUTG)
-      case _ => None
+  privatelon delonf toMelontricTagFromSourcelonAndSimilarityelonnginelon(
+    sourcelonInfo: SourcelonInfo,
+    selonInfo: SimilarityelonnginelonInfo
+  ): Option[MelontricTag] = {
+    sourcelonInfo.sourcelonTypelon match {
+      caselon SourcelonTypelon.Lookalikelon
+          if selonInfo.similarityelonnginelonTypelon == SimilarityelonnginelonTypelon.ConsumelonrsBaselondUselonrTwelonelontGraph =>
+        Somelon(MelontricTag.LookalikelonUTG)
+      caselon _ => Nonelon
     }
   }
 
   /**
-   * Special use case: used by Notifications team to generate the UserInterestedIn CRT push copy.
+   * Speloncial uselon caselon: uselond by Notifications telonam to gelonnelonratelon thelon UselonrIntelonrelonstelondIn CRT push copy.
    *
-   * if we have different types of InterestedIn (eg. UserInterestedIn, NextInterestedIn),
-   * this if statement will have to be refactored to contain the real UserInterestedIn.
-   * @return
+   * if welon havelon diffelonrelonnt typelons of IntelonrelonstelondIn (elong. UselonrIntelonrelonstelondIn, NelonxtIntelonrelonstelondIn),
+   * this if statelonmelonnt will havelon to belon relonfactorelond to contain thelon relonal UselonrIntelonrelonstelondIn.
+   * @relonturn
    */
-  private def isFromInterestedIn(candidate: RankedCandidate): Set[MetricTag] = {
-    if (candidate.reasonChosen.sourceInfoOpt.isEmpty
-      && candidate.reasonChosen.similarityEngineInfo.similarityEngineType == SimilarityEngineType.SimClustersANN) {
-      Set(MetricTag.UserInterestedIn)
-    } else Set.empty
+  privatelon delonf isFromIntelonrelonstelondIn(candidatelon: RankelondCandidatelon): Selont[MelontricTag] = {
+    if (candidatelon.relonasonChoselonn.sourcelonInfoOpt.iselonmpty
+      && candidatelon.relonasonChoselonn.similarityelonnginelonInfo.similarityelonnginelonTypelon == SimilarityelonnginelonTypelon.SimClustelonrsANN) {
+      Selont(MelontricTag.UselonrIntelonrelonstelondIn)
+    } elonlselon Selont.elonmpty
   }
 
 }

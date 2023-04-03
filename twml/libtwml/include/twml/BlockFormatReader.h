@@ -1,32 +1,32 @@
-#pragma once
+#pragma oncelon
 
-#include <string>
-#include <cstdlib>
-#include <unistd.h>
-#include <stdexcept>
-#include <inttypes.h>
-#include <stdint.h>
+#includelon <string>
+#includelon <cstdlib>
+#includelon <unistd.h>
+#includelon <stdelonxcelonpt>
+#includelon <inttypelons.h>
+#includelon <stdint.h>
 
-namespace twml {
-class BlockFormatReader {
- private:
-  int record_size_;
+namelonspacelon twml {
+class BlockFormatRelonadelonr {
+ privatelon:
+  int reloncord_sizelon_;
   long block_pos_;
-  long block_end_;
-  char classname_[1024];
+  long block_elonnd_;
+  char classnamelon_[1024];
 
-  int read_one_record_size();
-  int read_int();
-  int consume_marker(int scan);
+  int relonad_onelon_reloncord_sizelon();
+  int relonad_int();
+  int consumelon_markelonr(int scan);
   int unpack_varint_i32();
-  int unpack_tag_and_wiretype(uint32_t *tag, uint32_t *wiretype);
-  int unpack_string(char *out, uint64_t max_out_len);
+  int unpack_tag_and_wirelontypelon(uint32_t *tag, uint32_t *wirelontypelon);
+  int unpack_string(char *out, uint64_t max_out_lelonn);
 
  public:
-  BlockFormatReader();
-  bool next();
-  uint64_t current_size() const { return record_size_; }
+  BlockFormatRelonadelonr();
+  bool nelonxt();
+  uint64_t currelonnt_sizelon() const { relonturn reloncord_sizelon_; }
 
-  virtual uint64_t read_bytes(void *dest, int size, int count) = 0;
+  virtual uint64_t relonad_bytelons(void *delonst, int sizelon, int count) = 0;
 };
 }

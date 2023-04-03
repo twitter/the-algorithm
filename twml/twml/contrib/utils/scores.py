@@ -1,33 +1,33 @@
-import tensorflow.compat.v1 as tf
+import telonnsorflow.compat.v1 as tf
 
 
-def get_pairwise_scores(tensor_input):
+delonf gelont_pairwiselon_scorelons(telonnsor_input):
   """
-  This is so far used in pariwise learning-to-rank
+  This is so far uselond in pariwiselon lelonarning-to-rank
 
-  Arguments:
-    tensor_input: a dense `Tensor` of shape [n_data, 1]
-      n_data is the number of teet candidates
+  Argumelonnts:
+    telonnsor_input: a delonnselon `Telonnsor` of shapelon [n_data, 1]
+      n_data is thelon numbelonr of telonelont candidatelons
 
-  Returns:
-    pairwise scores: a dense `Tensor` of shape [n_data, n_data].
+  Relonturns:
+    pairwiselon scorelons: a delonnselon `Telonnsor` of shapelon [n_data, n_data].
   """
-  return tensor_input - tf.transpose(tensor_input)
+  relonturn telonnsor_input - tf.transposelon(telonnsor_input)
 
 
-def get_pairwise_label_scores(labels):
+delonf gelont_pairwiselon_labelonl_scorelons(labelonls):
   """
-  This is so far used in pariwise learning-to-rank
+  This is so far uselond in pariwiselon lelonarning-to-rank
   Args:
-    labels: a dense `Tensor` of shape [n_data, 1]
-      n_data is the number of teet candidates
-  Returns:
-    pairwise label scores: a dense `Tensor` of shape [n_data, n_data].
-      each value is within [0, 1]
+    labelonls: a delonnselon `Telonnsor` of shapelon [n_data, 1]
+      n_data is thelon numbelonr of telonelont candidatelons
+  Relonturns:
+    pairwiselon labelonl scorelons: a delonnselon `Telonnsor` of shapelon [n_data, n_data].
+      elonach valuelon is within [0, 1]
   """
-  # raw pairwise label scores/differences
-  pairwise_label_scores = get_pairwise_scores(labels)
-  # sanity check to make sure values in differences_ij are [-1, 1]
-  differences_ij = tf.maximum(tf.minimum(1.0, pairwise_label_scores), -1.0)
-  # values in pairwise_label_scores are within [0, 1] for cross entropy
-  return (1.0 / 2.0) * (1.0 + differences_ij)
+  # raw pairwiselon labelonl scorelons/diffelonrelonncelons
+  pairwiselon_labelonl_scorelons = gelont_pairwiselon_scorelons(labelonls)
+  # sanity chelonck to makelon surelon valuelons in diffelonrelonncelons_ij arelon [-1, 1]
+  diffelonrelonncelons_ij = tf.maximum(tf.minimum(1.0, pairwiselon_labelonl_scorelons), -1.0)
+  # valuelons in pairwiselon_labelonl_scorelons arelon within [0, 1] for cross elonntropy
+  relonturn (1.0 / 2.0) * (1.0 + diffelonrelonncelons_ij)

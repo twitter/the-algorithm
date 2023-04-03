@@ -1,122 +1,122 @@
-package com.twitter.cr_mixer.model
+packagelon com.twittelonr.cr_mixelonr.modelonl
 
 /**
- * Define name annotated module names here
+ * Delonfinelon namelon annotatelond modulelon namelons helonrelon
  */
-object ModuleNames {
+objelonct ModulelonNamelons {
 
-  final val FrsStore = "FrsStore"
-  final val UssStore = "UssStore"
+  final val FrsStorelon = "FrsStorelon"
+  final val UssStorelon = "UssStorelon"
   final val UssStratoColumn = "UssStratoColumn"
-  final val RsxStore = "RsxStore"
-  final val RmsTweetLogFavLongestL2EmbeddingStore = "RmsTweetLogFavLongestL2EmbeddingStore"
-  final val RmsUserFavBasedProducerEmbeddingStore = "RmsUserFavBasedProducerEmbeddingStore"
-  final val RmsUserLogFavInterestedInEmbeddingStore = "RmsUserLogFavInterestedInEmbeddingStore"
-  final val RmsUserFollowInterestedInEmbeddingStore = "RmsUserFollowInterestedInEmbeddingStore"
-  final val StpStore = "StpStore"
-  final val TwiceClustersMembersStore = "TwiceClustersMembersStore"
-  final val TripCandidateStore = "TripCandidateStore"
+  final val RsxStorelon = "RsxStorelon"
+  final val RmsTwelonelontLogFavLongelonstL2elonmbelonddingStorelon = "RmsTwelonelontLogFavLongelonstL2elonmbelonddingStorelon"
+  final val RmsUselonrFavBaselondProducelonrelonmbelonddingStorelon = "RmsUselonrFavBaselondProducelonrelonmbelonddingStorelon"
+  final val RmsUselonrLogFavIntelonrelonstelondInelonmbelonddingStorelon = "RmsUselonrLogFavIntelonrelonstelondInelonmbelonddingStorelon"
+  final val RmsUselonrFollowIntelonrelonstelondInelonmbelonddingStorelon = "RmsUselonrFollowIntelonrelonstelondInelonmbelonddingStorelon"
+  final val StpStorelon = "StpStorelon"
+  final val TwicelonClustelonrsMelonmbelonrsStorelon = "TwicelonClustelonrsMelonmbelonrsStorelon"
+  final val TripCandidatelonStorelon = "TripCandidatelonStorelon"
 
-  final val ConsumerEmbeddingBasedTripSimilarityEngine =
-    "ConsumerEmbeddingBasedTripSimilarityEngine"
-  final val ConsumerEmbeddingBasedTwHINANNSimilarityEngine =
-    "ConsumerEmbeddingBasedTwHINANNSimilarityEngine"
-  final val ConsumerEmbeddingBasedTwoTowerANNSimilarityEngine =
-    "ConsumerEmbeddingBasedTwoTowerANNSimilarityEngine"
-  final val ConsumersBasedUserAdGraphSimilarityEngine =
-    "ConsumersBasedUserAdGraphSimilarityEngine"
-  final val ConsumersBasedUserVideoGraphSimilarityEngine =
-    "ConsumersBasedUserVideoGraphSimilarityEngine"
+  final val ConsumelonrelonmbelonddingBaselondTripSimilarityelonnginelon =
+    "ConsumelonrelonmbelonddingBaselondTripSimilarityelonnginelon"
+  final val ConsumelonrelonmbelonddingBaselondTwHINANNSimilarityelonnginelon =
+    "ConsumelonrelonmbelonddingBaselondTwHINANNSimilarityelonnginelon"
+  final val ConsumelonrelonmbelonddingBaselondTwoTowelonrANNSimilarityelonnginelon =
+    "ConsumelonrelonmbelonddingBaselondTwoTowelonrANNSimilarityelonnginelon"
+  final val ConsumelonrsBaselondUselonrAdGraphSimilarityelonnginelon =
+    "ConsumelonrsBaselondUselonrAdGraphSimilarityelonnginelon"
+  final val ConsumelonrsBaselondUselonrVidelonoGraphSimilarityelonnginelon =
+    "ConsumelonrsBaselondUselonrVidelonoGraphSimilarityelonnginelon"
 
-  final val ConsumerBasedWalsSimilarityEngine = "ConsumerBasedWalsSimilarityEngine"
+  final val ConsumelonrBaselondWalsSimilarityelonnginelon = "ConsumelonrBaselondWalsSimilarityelonnginelon"
 
-  final val TweetBasedTwHINANNSimilarityEngine = "TweetBasedTwHINANNSimilarityEngine"
+  final val TwelonelontBaselondTwHINANNSimilarityelonnginelon = "TwelonelontBaselondTwHINANNSimilarityelonnginelon"
 
-  final val SimClustersANNSimilarityEngine = "SimClustersANNSimilarityEngine"
+  final val SimClustelonrsANNSimilarityelonnginelon = "SimClustelonrsANNSimilarityelonnginelon"
 
-  final val ProdSimClustersANNServiceClientName = "ProdSimClustersANNServiceClient"
-  final val ExperimentalSimClustersANNServiceClientName = "ExperimentalSimClustersANNServiceClient"
-  final val SimClustersANNServiceClientName1 = "SimClustersANNServiceClient1"
-  final val SimClustersANNServiceClientName2 = "SimClustersANNServiceClient2"
-  final val SimClustersANNServiceClientName3 = "SimClustersANNServiceClient3"
-  final val SimClustersANNServiceClientName5 = "SimClustersANNServiceClient5"
-  final val SimClustersANNServiceClientName4 = "SimClustersANNServiceClient4"
-  final val UnifiedCache = "unifiedCache"
-  final val MLScoreCache = "mlScoreCache"
-  final val TweetRecommendationResultsCache = "tweetRecommendationResultsCache"
-  final val EarlybirdTweetsCache = "earlybirdTweetsCache"
-  final val EarlybirdRecencyBasedWithoutRetweetsRepliesTweetsCache =
-    "earlybirdTweetsWithoutRetweetsRepliesCacheStore"
-  final val EarlybirdRecencyBasedWithRetweetsRepliesTweetsCache =
-    "earlybirdTweetsWithRetweetsRepliesCacheStore"
+  final val ProdSimClustelonrsANNSelonrvicelonClielonntNamelon = "ProdSimClustelonrsANNSelonrvicelonClielonnt"
+  final val elonxpelonrimelonntalSimClustelonrsANNSelonrvicelonClielonntNamelon = "elonxpelonrimelonntalSimClustelonrsANNSelonrvicelonClielonnt"
+  final val SimClustelonrsANNSelonrvicelonClielonntNamelon1 = "SimClustelonrsANNSelonrvicelonClielonnt1"
+  final val SimClustelonrsANNSelonrvicelonClielonntNamelon2 = "SimClustelonrsANNSelonrvicelonClielonnt2"
+  final val SimClustelonrsANNSelonrvicelonClielonntNamelon3 = "SimClustelonrsANNSelonrvicelonClielonnt3"
+  final val SimClustelonrsANNSelonrvicelonClielonntNamelon5 = "SimClustelonrsANNSelonrvicelonClielonnt5"
+  final val SimClustelonrsANNSelonrvicelonClielonntNamelon4 = "SimClustelonrsANNSelonrvicelonClielonnt4"
+  final val UnifielondCachelon = "unifielondCachelon"
+  final val MLScorelonCachelon = "mlScorelonCachelon"
+  final val TwelonelontReloncommelonndationRelonsultsCachelon = "twelonelontReloncommelonndationRelonsultsCachelon"
+  final val elonarlybirdTwelonelontsCachelon = "elonarlybirdTwelonelontsCachelon"
+  final val elonarlybirdReloncelonncyBaselondWithoutRelontwelonelontsRelonplielonsTwelonelontsCachelon =
+    "elonarlybirdTwelonelontsWithoutRelontwelonelontsRelonplielonsCachelonStorelon"
+  final val elonarlybirdReloncelonncyBaselondWithRelontwelonelontsRelonplielonsTwelonelontsCachelon =
+    "elonarlybirdTwelonelontsWithRelontwelonelontsRelonplielonsCachelonStorelon"
 
-  final val AbDeciderLogger = "abDeciderLogger"
-  final val TopLevelApiDdgMetricsLogger = "topLevelApiDdgMetricsLogger"
-  final val TweetRecsLogger = "tweetRecsLogger"
-  final val BlueVerifiedTweetRecsLogger = "blueVerifiedTweetRecsLogger"
-  final val RelatedTweetsLogger = "relatedTweetsLogger"
-  final val UtegTweetsLogger = "utegTweetsLogger"
-  final val AdsRecommendationsLogger = "adsRecommendationLogger"
+  final val AbDeloncidelonrLoggelonr = "abDeloncidelonrLoggelonr"
+  final val TopLelonvelonlApiDdgMelontricsLoggelonr = "topLelonvelonlApiDdgMelontricsLoggelonr"
+  final val TwelonelontReloncsLoggelonr = "twelonelontReloncsLoggelonr"
+  final val BluelonVelonrifielondTwelonelontReloncsLoggelonr = "bluelonVelonrifielondTwelonelontReloncsLoggelonr"
+  final val RelonlatelondTwelonelontsLoggelonr = "relonlatelondTwelonelontsLoggelonr"
+  final val UtelongTwelonelontsLoggelonr = "utelongTwelonelontsLoggelonr"
+  final val AdsReloncommelonndationsLoggelonr = "adsReloncommelonndationLoggelonr"
 
-  final val OfflineSimClustersANNInterestedInSimilarityEngine =
-    "OfflineSimClustersANNInterestedInSimilarityEngine"
+  final val OfflinelonSimClustelonrsANNIntelonrelonstelondInSimilarityelonnginelon =
+    "OfflinelonSimClustelonrsANNIntelonrelonstelondInSimilarityelonnginelon"
 
-  final val RealGraphOonStore = "RealGraphOonStore"
-  final val RealGraphInStore = "RealGraphInStore"
+  final val RelonalGraphOonStorelon = "RelonalGraphOonStorelon"
+  final val RelonalGraphInStorelon = "RelonalGraphInStorelon"
 
-  final val OfflineTweet2020CandidateStore = "OfflineTweet2020CandidateStore"
-  final val OfflineTweet2020Hl0El15CandidateStore = "OfflineTweet2020Hl0El15CandidateStore"
-  final val OfflineTweet2020Hl2El15CandidateStore = "OfflineTweet2020Hl2El15CandidateStore"
-  final val OfflineTweet2020Hl2El50CandidateStore = "OfflineTweet2020Hl2El50CandidateStore"
-  final val OfflineTweet2020Hl8El50CandidateStore = "OfflineTweet2020Hl8El50CandidateStore"
-  final val OfflineTweetMTSCandidateStore = "OfflineTweetMTSCandidateStore"
+  final val OfflinelonTwelonelont2020CandidatelonStorelon = "OfflinelonTwelonelont2020CandidatelonStorelon"
+  final val OfflinelonTwelonelont2020Hl0elonl15CandidatelonStorelon = "OfflinelonTwelonelont2020Hl0elonl15CandidatelonStorelon"
+  final val OfflinelonTwelonelont2020Hl2elonl15CandidatelonStorelon = "OfflinelonTwelonelont2020Hl2elonl15CandidatelonStorelon"
+  final val OfflinelonTwelonelont2020Hl2elonl50CandidatelonStorelon = "OfflinelonTwelonelont2020Hl2elonl50CandidatelonStorelon"
+  final val OfflinelonTwelonelont2020Hl8elonl50CandidatelonStorelon = "OfflinelonTwelonelont2020Hl8elonl50CandidatelonStorelon"
+  final val OfflinelonTwelonelontMTSCandidatelonStorelon = "OfflinelonTwelonelontMTSCandidatelonStorelon"
 
-  final val OfflineFavDecayedSumCandidateStore = "OfflineFavDecayedSumCandidateStore"
-  final val OfflineFtrAt5Pop1000RankDecay11CandidateStore =
-    "OfflineFtrAt5Pop1000RankDecay11CandidateStore"
-  final val OfflineFtrAt5Pop10000RankDecay11CandidateStore =
-    "OfflineFtrAt5Pop10000RankDecay11CandidateStore"
+  final val OfflinelonFavDeloncayelondSumCandidatelonStorelon = "OfflinelonFavDeloncayelondSumCandidatelonStorelon"
+  final val OfflinelonFtrAt5Pop1000RankDeloncay11CandidatelonStorelon =
+    "OfflinelonFtrAt5Pop1000RankDeloncay11CandidatelonStorelon"
+  final val OfflinelonFtrAt5Pop10000RankDeloncay11CandidatelonStorelon =
+    "OfflinelonFtrAt5Pop10000RankDeloncay11CandidatelonStorelon"
 
-  final val TwhinCollabFilterStratoStoreForFollow = "TwhinCollabFilterStratoStoreForFollow"
-  final val TwhinCollabFilterStratoStoreForEngagement = "TwhinCollabFilterStratoStoreForEngagement"
-  final val TwhinMultiClusterStratoStoreForFollow = "TwhinMultiClusterStratoStoreForFollow"
-  final val TwhinMultiClusterStratoStoreForEngagement = "TwhinMultiClusterStratoStoreForEngagement"
+  final val TwhinCollabFiltelonrStratoStorelonForFollow = "TwhinCollabFiltelonrStratoStorelonForFollow"
+  final val TwhinCollabFiltelonrStratoStorelonForelonngagelonmelonnt = "TwhinCollabFiltelonrStratoStorelonForelonngagelonmelonnt"
+  final val TwhinMultiClustelonrStratoStorelonForFollow = "TwhinMultiClustelonrStratoStorelonForFollow"
+  final val TwhinMultiClustelonrStratoStorelonForelonngagelonmelonnt = "TwhinMultiClustelonrStratoStorelonForelonngagelonmelonnt"
 
-  final val ProducerBasedUserAdGraphSimilarityEngine =
-    "ProducerBasedUserAdGraphSimilarityEngine"
-  final val ProducerBasedUserTweetGraphSimilarityEngine =
-    "ProducerBasedUserTweetGraphSimilarityEngine"
-  final val ProducerBasedUnifiedSimilarityEngine = "ProducerBasedUnifiedSimilarityEngine"
+  final val ProducelonrBaselondUselonrAdGraphSimilarityelonnginelon =
+    "ProducelonrBaselondUselonrAdGraphSimilarityelonnginelon"
+  final val ProducelonrBaselondUselonrTwelonelontGraphSimilarityelonnginelon =
+    "ProducelonrBaselondUselonrTwelonelontGraphSimilarityelonnginelon"
+  final val ProducelonrBaselondUnifielondSimilarityelonnginelon = "ProducelonrBaselondUnifielondSimilarityelonnginelon"
 
-  final val TweetBasedUserAdGraphSimilarityEngine = "TweetBasedUserAdGraphSimilarityEngine"
-  final val TweetBasedUserTweetGraphSimilarityEngine = "TweetBasedUserTweetGraphSimilarityEngine"
-  final val TweetBasedUserVideoGraphSimilarityEngine = "TweetBasedUserVideoGraphSimilarityEngine"
-  final val TweetBasedQigSimilarityEngine = "TweetBasedQigSimilarityEngine"
-  final val TweetBasedUnifiedSimilarityEngine = "TweetBasedUnifiedSimilarityEngine"
+  final val TwelonelontBaselondUselonrAdGraphSimilarityelonnginelon = "TwelonelontBaselondUselonrAdGraphSimilarityelonnginelon"
+  final val TwelonelontBaselondUselonrTwelonelontGraphSimilarityelonnginelon = "TwelonelontBaselondUselonrTwelonelontGraphSimilarityelonnginelon"
+  final val TwelonelontBaselondUselonrVidelonoGraphSimilarityelonnginelon = "TwelonelontBaselondUselonrVidelonoGraphSimilarityelonnginelon"
+  final val TwelonelontBaselondQigSimilarityelonnginelon = "TwelonelontBaselondQigSimilarityelonnginelon"
+  final val TwelonelontBaselondUnifielondSimilarityelonnginelon = "TwelonelontBaselondUnifielondSimilarityelonnginelon"
 
-  final val TwhinCollabFilterSimilarityEngine = "TwhinCollabFilterSimilarityEngine"
+  final val TwhinCollabFiltelonrSimilarityelonnginelon = "TwhinCollabFiltelonrSimilarityelonnginelon"
 
-  final val ConsumerBasedUserTweetGraphStore = "ConsumerBasedUserTweetGraphStore"
-  final val ConsumerBasedUserVideoGraphStore = "ConsumerBasedUserVideoGraphStore"
-  final val ConsumerBasedUserAdGraphStore = "ConsumerBasedUserAdGraphStore"
+  final val ConsumelonrBaselondUselonrTwelonelontGraphStorelon = "ConsumelonrBaselondUselonrTwelonelontGraphStorelon"
+  final val ConsumelonrBaselondUselonrVidelonoGraphStorelon = "ConsumelonrBaselondUselonrVidelonoGraphStorelon"
+  final val ConsumelonrBaselondUselonrAdGraphStorelon = "ConsumelonrBaselondUselonrAdGraphStorelon"
 
-  final val UserTweetEntityGraphSimilarityEngine =
-    "UserTweetEntityGraphSimilarityEngine"
+  final val UselonrTwelonelontelonntityGraphSimilarityelonnginelon =
+    "UselonrTwelonelontelonntityGraphSimilarityelonnginelon"
 
-  final val CertoTopicTweetSimilarityEngine = "CertoTopicTweetSimilarityEngine"
-  final val CertoStratoStoreName = "CertoStratoStore"
+  final val CelonrtoTopicTwelonelontSimilarityelonnginelon = "CelonrtoTopicTwelonelontSimilarityelonnginelon"
+  final val CelonrtoStratoStorelonNamelon = "CelonrtoStratoStorelon"
 
-  final val SkitTopicTweetSimilarityEngine = "SkitTopicTweetSimilarityEngine"
-  final val SkitHighPrecisionTopicTweetSimilarityEngine =
-    "SkitHighPrecisionTopicTweetSimilarityEngine"
-  final val SkitStratoStoreName = "SkitStratoStore"
+  final val SkitTopicTwelonelontSimilarityelonnginelon = "SkitTopicTwelonelontSimilarityelonnginelon"
+  final val SkitHighPreloncisionTopicTwelonelontSimilarityelonnginelon =
+    "SkitHighPreloncisionTopicTwelonelontSimilarityelonnginelon"
+  final val SkitStratoStorelonNamelon = "SkitStratoStorelon"
 
-  final val HomeNaviGRPCClient = "HomeNaviGRPCClient"
-  final val AdsFavedNaviGRPCClient = "AdsFavedNaviGRPCClient"
-  final val AdsMonetizableNaviGRPCClient = "AdsMonetizableNaviGRPCClient"
+  final val HomelonNaviGRPCClielonnt = "HomelonNaviGRPCClielonnt"
+  final val AdsFavelondNaviGRPCClielonnt = "AdsFavelondNaviGRPCClielonnt"
+  final val AdsMonelontizablelonNaviGRPCClielonnt = "AdsMonelontizablelonNaviGRPCClielonnt"
 
-  final val RetweetBasedDiffusionRecsMhStore = "RetweetBasedDiffusionRecsMhStore"
-  final val DiffusionBasedSimilarityEngine = "DiffusionBasedSimilarityEngine"
+  final val RelontwelonelontBaselondDiffusionReloncsMhStorelon = "RelontwelonelontBaselondDiffusionReloncsMhStorelon"
+  final val DiffusionBaselondSimilarityelonnginelon = "DiffusionBaselondSimilarityelonnginelon"
 
-  final val BlueVerifiedAnnotationStore = "BlueVerifiedAnnotationStore"
+  final val BluelonVelonrifielondAnnotationStorelon = "BluelonVelonrifielondAnnotationStorelon"
 }

@@ -1,12 +1,12 @@
-package com.twitter.follow_recommendations.common.clients.graph_feature_service
+packagelon com.twittelonr.follow_reloncommelonndations.common.clielonnts.graph_felonaturelon_selonrvicelon
 
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsClient
-import com.twitter.follow_recommendations.common.clients.common.BaseClientModule
-import com.twitter.graph_feature_service.thriftscala.{Server => GraphFeatureService}
+import com.twittelonr.finatra.mtls.thriftmux.modulelons.MtlsClielonnt
+import com.twittelonr.follow_reloncommelonndations.common.clielonnts.common.BaselonClielonntModulelon
+import com.twittelonr.graph_felonaturelon_selonrvicelon.thriftscala.{Selonrvelonr => GraphFelonaturelonSelonrvicelon}
 
-object GraphFeatureStoreModule
-    extends BaseClientModule[GraphFeatureService.MethodPerEndpoint]
-    with MtlsClient {
-  override val label = "graph_feature_service"
-  override val dest = "/s/cassowary/graph_feature_service-server"
+objelonct GraphFelonaturelonStorelonModulelon
+    elonxtelonnds BaselonClielonntModulelon[GraphFelonaturelonSelonrvicelon.MelonthodPelonrelonndpoint]
+    with MtlsClielonnt {
+  ovelonrridelon val labelonl = "graph_felonaturelon_selonrvicelon"
+  ovelonrridelon val delonst = "/s/cassowary/graph_felonaturelon_selonrvicelon-selonrvelonr"
 }

@@ -1,24 +1,24 @@
-package com.twitter.search.ingester.pipeline.twitter.kafka;
+packagelon com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.twittelonr.kafka;
 
-import org.apache.commons.pipeline.validation.ConsumedTypes;
+import org.apachelon.commons.pipelonlinelon.validation.ConsumelondTypelons;
 
-import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
-import com.twitter.search.ingester.model.IngesterThriftVersionedEvents;
+import com.twittelonr.selonarch.common.indelonxing.thriftjava.ThriftVelonrsionelondelonvelonnts;
+import com.twittelonr.selonarch.ingelonstelonr.modelonl.IngelonstelonrThriftVelonrsionelondelonvelonnts;
 
-@ConsumedTypes(ThriftVersionedEvents.class)
-public class RetweetAndReplyUpdateEventsKafkaProducerStage extends KafkaProducerStage
-    <IngesterThriftVersionedEvents> {
-  public RetweetAndReplyUpdateEventsKafkaProducerStage(String kafkaTopic, String clientId,
-                                            String clusterPath) {
-    super(kafkaTopic, clientId, clusterPath);
+@ConsumelondTypelons(ThriftVelonrsionelondelonvelonnts.class)
+public class RelontwelonelontAndRelonplyUpdatelonelonvelonntsKafkaProducelonrStagelon elonxtelonnds KafkaProducelonrStagelon
+    <IngelonstelonrThriftVelonrsionelondelonvelonnts> {
+  public RelontwelonelontAndRelonplyUpdatelonelonvelonntsKafkaProducelonrStagelon(String kafkaTopic, String clielonntId,
+                                            String clustelonrPath) {
+    supelonr(kafkaTopic, clielonntId, clustelonrPath);
   }
 
-  public RetweetAndReplyUpdateEventsKafkaProducerStage() {
-    super();
+  public RelontwelonelontAndRelonplyUpdatelonelonvelonntsKafkaProducelonrStagelon() {
+    supelonr();
   }
 
-  @Override
-  protected void innerRunFinalStageOfBranchV2(IngesterThriftVersionedEvents events) {
-    super.tryToSendEventsToKafka(events);
+  @Ovelonrridelon
+  protelonctelond void innelonrRunFinalStagelonOfBranchV2(IngelonstelonrThriftVelonrsionelondelonvelonnts elonvelonnts) {
+    supelonr.tryToSelonndelonvelonntsToKafka(elonvelonnts);
   }
 }

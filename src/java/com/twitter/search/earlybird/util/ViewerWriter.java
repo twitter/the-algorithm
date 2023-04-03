@@ -1,47 +1,47 @@
-package com.twitter.search.earlybird.util;
+packagelon com.twittelonr.selonarch.elonarlybird.util;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 
 /**
- * Interface class for writer.  Writer should be passed in
- * and have these methods.  Currently keeps the hierarchy for
- * completed and valid json, methods mirror the ones found in
- * JsonWriter
- * http://google-gson.googlecode.com/svn/trunk/gson/docs/javadocs/com/google/gson/stream/JsonWriter.html
+ * Intelonrfacelon class for writelonr.  Writelonr should belon passelond in
+ * and havelon thelonselon melonthods.  Currelonntly kelonelonps thelon hielonrarchy for
+ * complelontelond and valid json, melonthods mirror thelon onelons found in
+ * JsonWritelonr
+ * http://googlelon-gson.googleloncodelon.com/svn/trunk/gson/docs/javadocs/com/googlelon/gson/strelonam/JsonWritelonr.html
  */
-public interface ViewerWriter {
+public intelonrfacelon VielonwelonrWritelonr {
   /**
-   * Writes a mark for the beginning of an array.
+   * Writelons a mark for thelon belonginning of an array.
    */
-  ViewerWriter beginArray() throws IOException;
+  VielonwelonrWritelonr belonginArray() throws IOelonxcelonption;
 
   /**
-   * Writes a mark for the beginning of an object.
+   * Writelons a mark for thelon belonginning of an objelonct.
    */
-  ViewerWriter beginObject() throws IOException;
+  VielonwelonrWritelonr belonginObjelonct() throws IOelonxcelonption;
 
   /**
-   * Writes a mark for the end of an array.
+   * Writelons a mark for thelon elonnd of an array.
    */
-  ViewerWriter endArray() throws IOException;
+  VielonwelonrWritelonr elonndArray() throws IOelonxcelonption;
 
   /**
-   * Writes a mark for the end of an object.
+   * Writelons a mark for thelon elonnd of an objelonct.
    */
-  ViewerWriter endObject() throws IOException;
+  VielonwelonrWritelonr elonndObjelonct() throws IOelonxcelonption;
 
   /**
-   * Writes the name (key) of a property.
+   * Writelons thelon namelon (kelony) of a propelonrty.
    */
-  ViewerWriter name(String field) throws IOException;
+  VielonwelonrWritelonr namelon(String fielonld) throws IOelonxcelonption;
 
   /**
-   * Writes the value of a property.
+   * Writelons thelon valuelon of a propelonrty.
    */
-  ViewerWriter value(String s) throws IOException;
+  VielonwelonrWritelonr valuelon(String s) throws IOelonxcelonption;
 
   /**
-   * Writes a new line.
+   * Writelons a nelonw linelon.
    */
-  ViewerWriter newline() throws IOException;
+  VielonwelonrWritelonr nelonwlinelon() throws IOelonxcelonption;
 }

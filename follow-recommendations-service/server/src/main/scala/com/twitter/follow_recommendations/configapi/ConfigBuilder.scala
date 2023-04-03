@@ -1,16 +1,16 @@
-package com.twitter.follow_recommendations.configapi
+packagelon com.twittelonr.follow_reloncommelonndations.configapi
 
-import com.twitter.timelines.configapi.CompositeConfig
-import com.twitter.timelines.configapi.Config
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.timelonlinelons.configapi.CompositelonConfig
+import com.twittelonr.timelonlinelons.configapi.Config
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class ConfigBuilder @Inject() (
-  deciderConfigs: DeciderConfigs,
-  featureSwitchConfigs: FeatureSwitchConfigs) {
-  // The order of configs added to `CompositeConfig` is important. The config will be matched with
-  // the first possible rule. So, current setup will give priority to Deciders instead of FS
-  def build(): Config =
-    new CompositeConfig(Seq(deciderConfigs.config, featureSwitchConfigs.config))
+@Singlelonton
+class ConfigBuildelonr @Injelonct() (
+  deloncidelonrConfigs: DeloncidelonrConfigs,
+  felonaturelonSwitchConfigs: FelonaturelonSwitchConfigs) {
+  // Thelon ordelonr of configs addelond to `CompositelonConfig` is important. Thelon config will belon matchelond with
+  // thelon first possiblelon rulelon. So, currelonnt selontup will givelon priority to Deloncidelonrs instelonad of FS
+  delonf build(): Config =
+    nelonw CompositelonConfig(Selonq(deloncidelonrConfigs.config, felonaturelonSwitchConfigs.config))
 }

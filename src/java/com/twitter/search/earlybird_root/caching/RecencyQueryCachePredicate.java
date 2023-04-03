@@ -1,24 +1,24 @@
-package com.twitter.search.earlybird_root.caching;
+packagelon com.twittelonr.selonarch.elonarlybird_root.caching;
 
-import com.twitter.search.common.caching.filter.QueryCachePredicate;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.earlybird.common.EarlybirdRequestUtil;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestType;
+import com.twittelonr.selonarch.common.caching.filtelonr.QuelonryCachelonPrelondicatelon;
+import com.twittelonr.selonarch.common.deloncidelonr.SelonarchDeloncidelonr;
+import com.twittelonr.selonarch.elonarlybird.common.elonarlybirdRelonquelonstUtil;
+import com.twittelonr.selonarch.elonarlybird_root.common.elonarlybirdRelonquelonstContelonxt;
+import com.twittelonr.selonarch.elonarlybird_root.common.elonarlybirdRelonquelonstTypelon;
 
-public class RecencyQueryCachePredicate extends QueryCachePredicate<EarlybirdRequestContext> {
-  private final SearchDecider decider;
-  private final String recencyCacheEnabledDeciderKey;
+public class ReloncelonncyQuelonryCachelonPrelondicatelon elonxtelonnds QuelonryCachelonPrelondicatelon<elonarlybirdRelonquelonstContelonxt> {
+  privatelon final SelonarchDeloncidelonr deloncidelonr;
+  privatelon final String reloncelonncyCachelonelonnablelondDeloncidelonrKelony;
 
-  public RecencyQueryCachePredicate(SearchDecider decider, String normalizedSearchRootName) {
-    this.decider = decider;
-    this.recencyCacheEnabledDeciderKey = "recency_cache_enabled_" + normalizedSearchRootName;
+  public ReloncelonncyQuelonryCachelonPrelondicatelon(SelonarchDeloncidelonr deloncidelonr, String normalizelondSelonarchRootNamelon) {
+    this.deloncidelonr = deloncidelonr;
+    this.reloncelonncyCachelonelonnablelondDeloncidelonrKelony = "reloncelonncy_cachelon_elonnablelond_" + normalizelondSelonarchRootNamelon;
   }
 
-  @Override
-  public Boolean shouldQueryCache(EarlybirdRequestContext request) {
-    return EarlybirdRequestType.RECENCY == request.getEarlybirdRequestType()
-        && EarlybirdRequestUtil.isCachingAllowed(request.getRequest())
-        && decider.isAvailable(recencyCacheEnabledDeciderKey);
+  @Ovelonrridelon
+  public Boolelonan shouldQuelonryCachelon(elonarlybirdRelonquelonstContelonxt relonquelonst) {
+    relonturn elonarlybirdRelonquelonstTypelon.RelonCelonNCY == relonquelonst.gelontelonarlybirdRelonquelonstTypelon()
+        && elonarlybirdRelonquelonstUtil.isCachingAllowelond(relonquelonst.gelontRelonquelonst())
+        && deloncidelonr.isAvailablelon(reloncelonncyCachelonelonnablelondDeloncidelonrKelony);
   }
 }

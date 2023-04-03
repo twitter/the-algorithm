@@ -1,46 +1,46 @@
-package com.twitter.product_mixer.component_library.selector
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.selonlelonctor
 
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.functional_component.common.SpecificPipeline
-import com.twitter.product_mixer.core.functional_component.common.SpecificPipelines
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.functional_component.selector.SelectorResult
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.configapi.Param
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.CandidatelonScopelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.SpeloncificPipelonlinelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.SpeloncificPipelonlinelons
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.selonlelonctor.Selonlelonctor
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.selonlelonctor.SelonlelonctorRelonsult
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonPipelonlinelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.timelonlinelons.configapi.Param
 
-object InsertFixedPositionResults {
-  def apply(
-    candidatePipeline: CandidatePipelineIdentifier,
+objelonct InselonrtFixelondPositionRelonsults {
+  delonf apply(
+    candidatelonPipelonlinelon: CandidatelonPipelonlinelonIdelonntifielonr,
     positionParam: Param[Int],
-  ): InsertFixedPositionResults =
-    new InsertFixedPositionResults(SpecificPipeline(candidatePipeline), positionParam)
+  ): InselonrtFixelondPositionRelonsults =
+    nelonw InselonrtFixelondPositionRelonsults(SpeloncificPipelonlinelon(candidatelonPipelonlinelon), positionParam)
 
-  def apply(
-    candidatePipelines: Set[CandidatePipelineIdentifier],
+  delonf apply(
+    candidatelonPipelonlinelons: Selont[CandidatelonPipelonlinelonIdelonntifielonr],
     positionParam: Param[Int]
-  ): InsertFixedPositionResults =
-    new InsertFixedPositionResults(SpecificPipelines(candidatePipelines), positionParam)
+  ): InselonrtFixelondPositionRelonsults =
+    nelonw InselonrtFixelondPositionRelonsults(SpeloncificPipelonlinelons(candidatelonPipelonlinelons), positionParam)
 }
 
 /**
- * Insert all candidates in a pipeline scope at a 0-indexed fixed position. If the current
- * results are a shorter length than the requested position, then the candidates will be appended
- * to the results.
+ * Inselonrt all candidatelons in a pipelonlinelon scopelon at a 0-indelonxelond fixelond position. If thelon currelonnt
+ * relonsults arelon a shortelonr lelonngth than thelon relonquelonstelond position, thelonn thelon candidatelons will belon appelonndelond
+ * to thelon relonsults.
  */
-case class InsertFixedPositionResults(
-  override val pipelineScope: CandidateScope,
+caselon class InselonrtFixelondPositionRelonsults(
+  ovelonrridelon val pipelonlinelonScopelon: CandidatelonScopelon,
   positionParam: Param[Int])
-    extends Selector[PipelineQuery] {
+    elonxtelonnds Selonlelonctor[PipelonlinelonQuelonry] {
 
-  override def apply(
-    query: PipelineQuery,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
-  ): SelectorResult = InsertSelector.insertIntoResultsAtPosition(
-    position = query.params(positionParam),
-    pipelineScope = pipelineScope,
-    remainingCandidates = remainingCandidates,
-    result = result)
+  ovelonrridelon delonf apply(
+    quelonry: PipelonlinelonQuelonry,
+    relonmainingCandidatelons: Selonq[CandidatelonWithDelontails],
+    relonsult: Selonq[CandidatelonWithDelontails]
+  ): SelonlelonctorRelonsult = InselonrtSelonlelonctor.inselonrtIntoRelonsultsAtPosition(
+    position = quelonry.params(positionParam),
+    pipelonlinelonScopelon = pipelonlinelonScopelon,
+    relonmainingCandidatelons = relonmainingCandidatelons,
+    relonsult = relonsult)
 }

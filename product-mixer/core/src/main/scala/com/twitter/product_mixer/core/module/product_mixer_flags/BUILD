@@ -1,15 +1,15 @@
 scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
+    sourcelons = ["*.scala"],
+    compilelonr_option_selonts = ["fatal_warnings"],
     platform = "java8",
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "finatra/inject/inject-app/src/main/java/com/twitter/inject/annotations",
-        "finatra/inject/inject-core/src/main/scala",
+    strict_delonps = Truelon,
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        "finatra/injelonct/injelonct-app/src/main/java/com/twittelonr/injelonct/annotations",
+        "finatra/injelonct/injelonct-corelon/src/main/scala",
     ],
-    exports = [
-        "finatra/inject/inject-app/src/main/java/com/twitter/inject/annotations",
-        "finatra/inject/inject-core/src/main/scala",
+    elonxports = [
+        "finatra/injelonct/injelonct-app/src/main/java/com/twittelonr/injelonct/annotations",
+        "finatra/injelonct/injelonct-corelon/src/main/scala",
     ],
 )

@@ -1,38 +1,38 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.trend
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.itelonm.trelonnd
 
-import com.twitter.product_mixer.component_library.decorator.urt.builder.stringcenter.Str
-import com.twitter.product_mixer.component_library.model.candidate.trends_events.PromotedTrendAdvertiserNameFeature
-import com.twitter.product_mixer.component_library.model.candidate.trends_events.TrendTweetCount
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.trends.trending_content.util.CompactingNumberLocalizer
+import com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.stringcelonntelonr.Str
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.trelonnds_elonvelonnts.PromotelondTrelonndAdvelonrtiselonrNamelonFelonaturelon
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.trelonnds_elonvelonnts.TrelonndTwelonelontCount
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.trelonnds.trelonnding_contelonnt.util.CompactingNumbelonrLocalizelonr
 
-case class TrendMetaDescriptionBuilder[-Query <: PipelineQuery, -Candidate <: UniversalNoun[Any]](
-  promotedByMetaDescriptionStr: Str[PipelineQuery, UniversalNoun[Any]],
-  tweetCountMetaDescriptionStr: Str[PipelineQuery, UniversalNoun[Any]],
-  compactingNumberLocalizer: CompactingNumberLocalizer) {
+caselon class TrelonndMelontaDelonscriptionBuildelonr[-Quelonry <: PipelonlinelonQuelonry, -Candidatelon <: UnivelonrsalNoun[Any]](
+  promotelondByMelontaDelonscriptionStr: Str[PipelonlinelonQuelonry, UnivelonrsalNoun[Any]],
+  twelonelontCountMelontaDelonscriptionStr: Str[PipelonlinelonQuelonry, UnivelonrsalNoun[Any]],
+  compactingNumbelonrLocalizelonr: CompactingNumbelonrLocalizelonr) {
 
-  def apply(
-    query: Query,
-    candidate: Candidate,
-    candidateFeatures: FeatureMap
+  delonf apply(
+    quelonry: Quelonry,
+    candidatelon: Candidatelon,
+    candidatelonFelonaturelons: FelonaturelonMap
   ): Option[String] = {
-    val promotedMetaDescription =
-      candidateFeatures.getOrElse(PromotedTrendAdvertiserNameFeature, None).map { advertiserName =>
-        promotedByMetaDescriptionStr(query, candidate, candidateFeatures).format(advertiserName)
+    val promotelondMelontaDelonscription =
+      candidatelonFelonaturelons.gelontOrelonlselon(PromotelondTrelonndAdvelonrtiselonrNamelonFelonaturelon, Nonelon).map { advelonrtiselonrNamelon =>
+        promotelondByMelontaDelonscriptionStr(quelonry, candidatelon, candidatelonFelonaturelons).format(advelonrtiselonrNamelon)
       }
 
-    val organicMetaDescription = candidateFeatures.getOrElse(TrendTweetCount, None).map {
-      tweetCount =>
-        val compactedTweetCount = compactingNumberLocalizer.localizeAndCompact(
-          query.getLanguageCode
-            .getOrElse("en"),
-          tweetCount)
-        tweetCountMetaDescriptionStr(query, candidate, candidateFeatures).format(
-          compactedTweetCount)
+    val organicMelontaDelonscription = candidatelonFelonaturelons.gelontOrelonlselon(TrelonndTwelonelontCount, Nonelon).map {
+      twelonelontCount =>
+        val compactelondTwelonelontCount = compactingNumbelonrLocalizelonr.localizelonAndCompact(
+          quelonry.gelontLanguagelonCodelon
+            .gelontOrelonlselon("elonn"),
+          twelonelontCount)
+        twelonelontCountMelontaDelonscriptionStr(quelonry, candidatelon, candidatelonFelonaturelons).format(
+          compactelondTwelonelontCount)
     }
 
-    promotedMetaDescription.orElse(organicMetaDescription)
+    promotelondMelontaDelonscription.orelonlselon(organicMelontaDelonscription)
   }
 }

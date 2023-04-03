@@ -1,79 +1,79 @@
-package com.twitter.cr_mixer
-package featureswitch
+packagelon com.twittelonr.cr_mixelonr
+packagelon felonaturelonswitch
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.abdecider.LoggingABDecider
-import com.twitter.abdecider.Recipient
-import com.twitter.abdecider.Bucket
-import com.twitter.frigate.common.util.StatsUtil
-import com.twitter.util.Local
-import scala.collection.concurrent.{Map => ConcurrentMap}
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.abdeloncidelonr.LoggingABDeloncidelonr
+import com.twittelonr.abdeloncidelonr.Reloncipielonnt
+import com.twittelonr.abdeloncidelonr.Buckelont
+import com.twittelonr.frigatelon.common.util.StatsUtil
+import com.twittelonr.util.Local
+import scala.collelonction.concurrelonnt.{Map => ConcurrelonntMap}
 
 /**
- * Wraps a LoggingABDecider, so all impressed buckets are recorded to a 'LocalContext' on a given request.
+ * Wraps a LoggingABDeloncidelonr, so all imprelonsselond buckelonts arelon reloncordelond to a 'LocalContelonxt' on a givelonn relonquelonst.
  *
- * Contexts (https://twitter.github.io/finagle/guide/Contexts.html) are Finagle's mechanism for
- * storing state/variables without having to pass these variables all around the request.
+ * Contelonxts (https://twittelonr.github.io/finaglelon/guidelon/Contelonxts.html) arelon Finaglelon's melonchanism for
+ * storing statelon/variablelons without having to pass thelonselon variablelons all around thelon relonquelonst.
  *
- * In order for this class to be used the [[SetImpressedBucketsLocalContextFilter]] must be applied
- * at the beginning of the request, to initialize a concurrent map used to store impressed buckets.
+ * In ordelonr for this class to belon uselond thelon [[SelontImprelonsselondBuckelontsLocalContelonxtFiltelonr]] must belon applielond
+ * at thelon belonginning of thelon relonquelonst, to initializelon a concurrelonnt map uselond to storelon imprelonsselond buckelonts.
  *
- * Whenever we get an a/b impression, the bucket information is logged to the concurrent hashmap.
+ * Whelonnelonvelonr welon gelont an a/b imprelonssion, thelon buckelont information is loggelond to thelon concurrelonnt hashmap.
  */
-case class CrMixerLoggingABDecider(
-  loggingAbDecider: LoggingABDecider,
-  statsReceiver: StatsReceiver)
-    extends LoggingABDecider {
+caselon class CrMixelonrLoggingABDeloncidelonr(
+  loggingAbDeloncidelonr: LoggingABDeloncidelonr,
+  statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds LoggingABDeloncidelonr {
 
-  private val scopedStatsReceiver = statsReceiver.scope("cr_logging_ab_decider")
+  privatelon val scopelondStatsReloncelonivelonr = statsReloncelonivelonr.scopelon("cr_logging_ab_deloncidelonr")
 
-  override def impression(
-    experimentName: String,
-    recipient: Recipient
-  ): Option[Bucket] = {
+  ovelonrridelon delonf imprelonssion(
+    elonxpelonrimelonntNamelon: String,
+    reloncipielonnt: Reloncipielonnt
+  ): Option[Buckelont] = {
 
-    StatsUtil.trackNonFutureBlockStats(scopedStatsReceiver.scope("log_impression")) {
-      val maybeBuckets = loggingAbDecider.impression(experimentName, recipient)
-      maybeBuckets.foreach { b =>
-        scopedStatsReceiver.counter("impressions").incr()
-        CrMixerImpressedBuckets.recordImpressedBucket(b)
+    StatsUtil.trackNonFuturelonBlockStats(scopelondStatsReloncelonivelonr.scopelon("log_imprelonssion")) {
+      val maybelonBuckelonts = loggingAbDeloncidelonr.imprelonssion(elonxpelonrimelonntNamelon, reloncipielonnt)
+      maybelonBuckelonts.forelonach { b =>
+        scopelondStatsReloncelonivelonr.countelonr("imprelonssions").incr()
+        CrMixelonrImprelonsselondBuckelonts.reloncordImprelonsselondBuckelont(b)
       }
-      maybeBuckets
+      maybelonBuckelonts
     }
   }
 
-  override def track(
-    experimentName: String,
-    eventName: String,
-    recipient: Recipient
+  ovelonrridelon delonf track(
+    elonxpelonrimelonntNamelon: String,
+    elonvelonntNamelon: String,
+    reloncipielonnt: Reloncipielonnt
   ): Unit = {
-    loggingAbDecider.track(experimentName, eventName, recipient)
+    loggingAbDeloncidelonr.track(elonxpelonrimelonntNamelon, elonvelonntNamelon, reloncipielonnt)
   }
 
-  override def bucket(
-    experimentName: String,
-    recipient: Recipient
-  ): Option[Bucket] = {
-    loggingAbDecider.bucket(experimentName, recipient)
+  ovelonrridelon delonf buckelont(
+    elonxpelonrimelonntNamelon: String,
+    reloncipielonnt: Reloncipielonnt
+  ): Option[Buckelont] = {
+    loggingAbDeloncidelonr.buckelont(elonxpelonrimelonntNamelon, reloncipielonnt)
   }
 
-  override def experiments: Seq[String] = loggingAbDecider.experiments
+  ovelonrridelon delonf elonxpelonrimelonnts: Selonq[String] = loggingAbDeloncidelonr.elonxpelonrimelonnts
 
-  override def experiment(experimentName: String) =
-    loggingAbDecider.experiment(experimentName)
+  ovelonrridelon delonf elonxpelonrimelonnt(elonxpelonrimelonntNamelon: String) =
+    loggingAbDeloncidelonr.elonxpelonrimelonnt(elonxpelonrimelonntNamelon)
 }
 
-object CrMixerImpressedBuckets {
-  private[featureswitch] val localImpressedBucketsMap = new Local[ConcurrentMap[Bucket, Boolean]]
+objelonct CrMixelonrImprelonsselondBuckelonts {
+  privatelon[felonaturelonswitch] val localImprelonsselondBuckelontsMap = nelonw Local[ConcurrelonntMap[Buckelont, Boolelonan]]
 
   /**
-   * Gets all impressed buckets for this request.
+   * Gelonts all imprelonsselond buckelonts for this relonquelonst.
    **/
-  def getAllImpressedBuckets: Option[List[Bucket]] = {
-    localImpressedBucketsMap.apply().map(_.map { case (k, _) => k }.toList)
+  delonf gelontAllImprelonsselondBuckelonts: Option[List[Buckelont]] = {
+    localImprelonsselondBuckelontsMap.apply().map(_.map { caselon (k, _) => k }.toList)
   }
 
-  private[featureswitch] def recordImpressedBucket(bucket: Bucket) = {
-    localImpressedBucketsMap().foreach { m => m += bucket -> true }
+  privatelon[felonaturelonswitch] delonf reloncordImprelonsselondBuckelont(buckelont: Buckelont) = {
+    localImprelonsselondBuckelontsMap().forelonach { m => m += buckelont -> truelon }
   }
 }

@@ -1,17 +1,17 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.alert
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.alelonrt
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.alert.Navigate
-import com.twitter.product_mixer.core.model.marshalling.response.urt.alert.NewTweets
-import com.twitter.product_mixer.core.model.marshalling.response.urt.alert.ShowAlertType
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.alelonrt.Navigatelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.alelonrt.NelonwTwelonelonts
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.alelonrt.ShowAlelonrtTypelon
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class ShowAlertTypeMarshaller @Inject() () {
+@Singlelonton
+class ShowAlelonrtTypelonMarshallelonr @Injelonct() () {
 
-  def apply(alertType: ShowAlertType): urt.AlertType = alertType match {
-    case NewTweets => urt.AlertType.NewTweets
-    case Navigate => urt.AlertType.Navigate
+  delonf apply(alelonrtTypelon: ShowAlelonrtTypelon): urt.AlelonrtTypelon = alelonrtTypelon match {
+    caselon NelonwTwelonelonts => urt.AlelonrtTypelon.NelonwTwelonelonts
+    caselon Navigatelon => urt.AlelonrtTypelon.Navigatelon
   }
 }

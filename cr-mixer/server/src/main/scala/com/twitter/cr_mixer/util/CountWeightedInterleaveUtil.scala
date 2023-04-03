@@ -1,86 +1,86 @@
-package com.twitter.cr_mixer.util
+packagelon com.twittelonr.cr_mixelonr.util
 
-import com.twitter.cr_mixer.model.Candidate
-import com.twitter.cr_mixer.model.InitialCandidate
-import com.twitter.cr_mixer.model.RankedCandidate
-import com.twitter.cr_mixer.model.SourceInfo
-import com.twitter.cr_mixer.param.BlenderParams.BlendGroupingMethodEnum
-import com.twitter.cr_mixer.thriftscala.SimilarityEngineType
-import com.twitter.simclusters_v2.thriftscala.InternalId
+import com.twittelonr.cr_mixelonr.modelonl.Candidatelon
+import com.twittelonr.cr_mixelonr.modelonl.InitialCandidatelon
+import com.twittelonr.cr_mixelonr.modelonl.RankelondCandidatelon
+import com.twittelonr.cr_mixelonr.modelonl.SourcelonInfo
+import com.twittelonr.cr_mixelonr.param.BlelonndelonrParams.BlelonndGroupingMelonthodelonnum
+import com.twittelonr.cr_mixelonr.thriftscala.SimilarityelonnginelonTypelon
+import com.twittelonr.simclustelonrs_v2.thriftscala.IntelonrnalId
 
-object CountWeightedInterleaveUtil {
+objelonct CountWelonightelondIntelonrlelonavelonUtil {
 
   /**
-   * Grouping key for interleaving candidates
+   * Grouping kelony for intelonrlelonaving candidatelons
    *
-   * @param sourceInfoOpt optional SourceInfo, containing the source information
-   * @param similarityEngineTypeOpt optional SimilarityEngineType, containing similarity engine
+   * @param sourcelonInfoOpt optional SourcelonInfo, containing thelon sourcelon information
+   * @param similarityelonnginelonTypelonOpt optional SimilarityelonnginelonTypelon, containing similarity elonnginelon
    *                                information
-   * @param modelIdOpt optional modelId, containing the model ID
-   * @param authorIdOpt optional authorId, containing the tweet author ID
-   * @param groupIdOpt optional groupId, containing the ID corresponding to the blending group
+   * @param modelonlIdOpt optional modelonlId, containing thelon modelonl ID
+   * @param authorIdOpt optional authorId, containing thelon twelonelont author ID
+   * @param groupIdOpt optional groupId, containing thelon ID correlonsponding to thelon blelonnding group
    */
-  case class GroupingKey(
-    sourceInfoOpt: Option[SourceInfo],
-    similarityEngineTypeOpt: Option[SimilarityEngineType],
-    modelIdOpt: Option[String],
+  caselon class GroupingKelony(
+    sourcelonInfoOpt: Option[SourcelonInfo],
+    similarityelonnginelonTypelonOpt: Option[SimilarityelonnginelonTypelon],
+    modelonlIdOpt: Option[String],
     authorIdOpt: Option[Long],
     groupIdOpt: Option[Int])
 
   /**
-   * Converts candidates to grouping key based upon the feature that we interleave with.
+   * Convelonrts candidatelons to grouping kelony baselond upon thelon felonaturelon that welon intelonrlelonavelon with.
    */
-  def toGroupingKey[CandidateType <: Candidate](
-    candidate: CandidateType,
-    interleaveFeature: Option[BlendGroupingMethodEnum.Value],
+  delonf toGroupingKelony[CandidatelonTypelon <: Candidatelon](
+    candidatelon: CandidatelonTypelon,
+    intelonrlelonavelonFelonaturelon: Option[BlelonndGroupingMelonthodelonnum.Valuelon],
     groupId: Option[Int],
-  ): GroupingKey = {
-    val grouping: GroupingKey = candidate match {
-      case c: RankedCandidate =>
-        interleaveFeature.getOrElse(BlendGroupingMethodEnum.SourceKeyDefault) match {
-          case BlendGroupingMethodEnum.SourceKeyDefault =>
-            GroupingKey(
-              sourceInfoOpt = c.reasonChosen.sourceInfoOpt,
-              similarityEngineTypeOpt =
-                Some(c.reasonChosen.similarityEngineInfo.similarityEngineType),
-              modelIdOpt = c.reasonChosen.similarityEngineInfo.modelId,
-              authorIdOpt = None,
+  ): GroupingKelony = {
+    val grouping: GroupingKelony = candidatelon match {
+      caselon c: RankelondCandidatelon =>
+        intelonrlelonavelonFelonaturelon.gelontOrelonlselon(BlelonndGroupingMelonthodelonnum.SourcelonKelonyDelonfault) match {
+          caselon BlelonndGroupingMelonthodelonnum.SourcelonKelonyDelonfault =>
+            GroupingKelony(
+              sourcelonInfoOpt = c.relonasonChoselonn.sourcelonInfoOpt,
+              similarityelonnginelonTypelonOpt =
+                Somelon(c.relonasonChoselonn.similarityelonnginelonInfo.similarityelonnginelonTypelon),
+              modelonlIdOpt = c.relonasonChoselonn.similarityelonnginelonInfo.modelonlId,
+              authorIdOpt = Nonelon,
               groupIdOpt = groupId
             )
-          // Some candidate sources don't have a sourceType, so it defaults to similarityEngine
-          case BlendGroupingMethodEnum.SourceTypeSimilarityEngine =>
-            val sourceInfoOpt = c.reasonChosen.sourceInfoOpt.map(_.sourceType).map { sourceType =>
-              SourceInfo(
-                sourceType = sourceType,
-                internalId = InternalId.UserId(0),
-                sourceEventTime = None)
+          // Somelon candidatelon sourcelons don't havelon a sourcelonTypelon, so it delonfaults to similarityelonnginelon
+          caselon BlelonndGroupingMelonthodelonnum.SourcelonTypelonSimilarityelonnginelon =>
+            val sourcelonInfoOpt = c.relonasonChoselonn.sourcelonInfoOpt.map(_.sourcelonTypelon).map { sourcelonTypelon =>
+              SourcelonInfo(
+                sourcelonTypelon = sourcelonTypelon,
+                intelonrnalId = IntelonrnalId.UselonrId(0),
+                sourcelonelonvelonntTimelon = Nonelon)
             }
-            GroupingKey(
-              sourceInfoOpt = sourceInfoOpt,
-              similarityEngineTypeOpt =
-                Some(c.reasonChosen.similarityEngineInfo.similarityEngineType),
-              modelIdOpt = c.reasonChosen.similarityEngineInfo.modelId,
-              authorIdOpt = None,
+            GroupingKelony(
+              sourcelonInfoOpt = sourcelonInfoOpt,
+              similarityelonnginelonTypelonOpt =
+                Somelon(c.relonasonChoselonn.similarityelonnginelonInfo.similarityelonnginelonTypelon),
+              modelonlIdOpt = c.relonasonChoselonn.similarityelonnginelonInfo.modelonlId,
+              authorIdOpt = Nonelon,
               groupIdOpt = groupId
             )
-          case BlendGroupingMethodEnum.AuthorId =>
-            GroupingKey(
-              sourceInfoOpt = None,
-              similarityEngineTypeOpt = None,
-              modelIdOpt = None,
-              authorIdOpt = Some(c.tweetInfo.authorId),
+          caselon BlelonndGroupingMelonthodelonnum.AuthorId =>
+            GroupingKelony(
+              sourcelonInfoOpt = Nonelon,
+              similarityelonnginelonTypelonOpt = Nonelon,
+              modelonlIdOpt = Nonelon,
+              authorIdOpt = Somelon(c.twelonelontInfo.authorId),
               groupIdOpt = groupId
             )
-          case _ =>
-            throw new UnsupportedOperationException(
-              s"Unsupported interleave feature: $interleaveFeature")
+          caselon _ =>
+            throw nelonw UnsupportelondOpelonrationelonxcelonption(
+              s"Unsupportelond intelonrlelonavelon felonaturelon: $intelonrlelonavelonFelonaturelon")
         }
-      case _ =>
-        GroupingKey(
-          sourceInfoOpt = None,
-          similarityEngineTypeOpt = None,
-          modelIdOpt = None,
-          authorIdOpt = None,
+      caselon _ =>
+        GroupingKelony(
+          sourcelonInfoOpt = Nonelon,
+          similarityelonnginelonTypelonOpt = Nonelon,
+          modelonlIdOpt = Nonelon,
+          authorIdOpt = Nonelon,
           groupIdOpt = groupId
         )
     }
@@ -88,93 +88,93 @@ object CountWeightedInterleaveUtil {
   }
 
   /**
-   * Rather than manually calculating and maintaining the weights to rank with, we instead
-   * calculate the weights on the fly, based upon the frequencies of the candidates within each
-   * group. To ensure that diversity of the feature is maintained, we additionally employ a
-   * 'shrinkage' parameter which enforces more diversity by moving the weights closer to uniformity.
-   * More details are available at go/weighted-interleave.
+   * Rathelonr than manually calculating and maintaining thelon welonights to rank with, welon instelonad
+   * calculatelon thelon welonights on thelon fly, baselond upon thelon frelonquelonncielons of thelon candidatelons within elonach
+   * group. To elonnsurelon that divelonrsity of thelon felonaturelon is maintainelond, welon additionally elonmploy a
+   * 'shrinkagelon' paramelontelonr which elonnforcelons morelon divelonrsity by moving thelon welonights closelonr to uniformity.
+   * Morelon delontails arelon availablelon at go/welonightelond-intelonrlelonavelon.
    *
-   * @param candidateSeqKeyByFeature candidate to key.
-   * @param rankerWeightShrinkage value between [0, 1] with 1 being complete uniformity.
-   * @return Interleaving weights keyed by feature.
+   * @param candidatelonSelonqKelonyByFelonaturelon candidatelon to kelony.
+   * @param rankelonrWelonightShrinkagelon valuelon belontwelonelonn [0, 1] with 1 beloning complelontelon uniformity.
+   * @relonturn Intelonrlelonaving welonights kelonyelond by felonaturelon.
    */
-  private def calculateWeightsKeyByFeature[CandidateType <: Candidate](
-    candidateSeqKeyByFeature: Map[GroupingKey, Seq[CandidateType]],
-    rankerWeightShrinkage: Double
-  ): Map[GroupingKey, Double] = {
-    val maxNumberCandidates: Double = candidateSeqKeyByFeature.values
-      .map { candidates =>
-        candidates.size
-      }.max.toDouble
-    candidateSeqKeyByFeature.map {
-      case (featureKey: GroupingKey, candidateSeq: Seq[CandidateType]) =>
-        val observedWeight: Double = candidateSeq.size.toDouble / maxNumberCandidates
-        // How much to shrink empirical estimates to 1 (Default is to make all weights 1).
-        val finalWeight =
-          (1.0 - rankerWeightShrinkage) * observedWeight + rankerWeightShrinkage * 1.0
-        featureKey -> finalWeight
+  privatelon delonf calculatelonWelonightsKelonyByFelonaturelon[CandidatelonTypelon <: Candidatelon](
+    candidatelonSelonqKelonyByFelonaturelon: Map[GroupingKelony, Selonq[CandidatelonTypelon]],
+    rankelonrWelonightShrinkagelon: Doublelon
+  ): Map[GroupingKelony, Doublelon] = {
+    val maxNumbelonrCandidatelons: Doublelon = candidatelonSelonqKelonyByFelonaturelon.valuelons
+      .map { candidatelons =>
+        candidatelons.sizelon
+      }.max.toDoublelon
+    candidatelonSelonqKelonyByFelonaturelon.map {
+      caselon (felonaturelonKelony: GroupingKelony, candidatelonSelonq: Selonq[CandidatelonTypelon]) =>
+        val obselonrvelondWelonight: Doublelon = candidatelonSelonq.sizelon.toDoublelon / maxNumbelonrCandidatelons
+        // How much to shrink elonmpirical elonstimatelons to 1 (Delonfault is to makelon all welonights 1).
+        val finalWelonight =
+          (1.0 - rankelonrWelonightShrinkagelon) * obselonrvelondWelonight + rankelonrWelonightShrinkagelon * 1.0
+        felonaturelonKelony -> finalWelonight
     }
   }
 
   /**
-   * Builds out the groups and weights for weighted interleaving of the candidates.
-   * More details are available at go/weighted-interleave.
+   * Builds out thelon groups and welonights for welonightelond intelonrlelonaving of thelon candidatelons.
+   * Morelon delontails arelon availablelon at go/welonightelond-intelonrlelonavelon.
    *
-   * @param rankedCandidateSeq candidates to interleave.
-   * @param rankerWeightShrinkage value between [0, 1] with 1 being complete uniformity.
-   * @return Candidates grouped by feature key and with calculated interleaving weights.
+   * @param rankelondCandidatelonSelonq candidatelons to intelonrlelonavelon.
+   * @param rankelonrWelonightShrinkagelon valuelon belontwelonelonn [0, 1] with 1 beloning complelontelon uniformity.
+   * @relonturn Candidatelons groupelond by felonaturelon kelony and with calculatelond intelonrlelonaving welonights.
    */
-  def buildRankedCandidatesWithWeightKeyByFeature(
-    rankedCandidateSeq: Seq[RankedCandidate],
-    rankerWeightShrinkage: Double,
-    interleaveFeature: BlendGroupingMethodEnum.Value
-  ): Seq[(Seq[RankedCandidate], Double)] = {
-    // To accommodate the re-grouping in InterleaveRanker
-    // In InterleaveBlender, we have already abandoned the grouping keys, and use Seq[Seq[]] to do interleave
-    // Since that we build the candidateSeq with groupingKey, we can guarantee there is no empty candidateSeq
-    val candidateSeqKeyByFeature: Map[GroupingKey, Seq[RankedCandidate]] =
-      rankedCandidateSeq.groupBy { candidate: RankedCandidate =>
-        toGroupingKey(candidate, Some(interleaveFeature), None)
+  delonf buildRankelondCandidatelonsWithWelonightKelonyByFelonaturelon(
+    rankelondCandidatelonSelonq: Selonq[RankelondCandidatelon],
+    rankelonrWelonightShrinkagelon: Doublelon,
+    intelonrlelonavelonFelonaturelon: BlelonndGroupingMelonthodelonnum.Valuelon
+  ): Selonq[(Selonq[RankelondCandidatelon], Doublelon)] = {
+    // To accommodatelon thelon relon-grouping in IntelonrlelonavelonRankelonr
+    // In IntelonrlelonavelonBlelonndelonr, welon havelon alrelonady abandonelond thelon grouping kelonys, and uselon Selonq[Selonq[]] to do intelonrlelonavelon
+    // Sincelon that welon build thelon candidatelonSelonq with groupingKelony, welon can guarantelonelon thelonrelon is no elonmpty candidatelonSelonq
+    val candidatelonSelonqKelonyByFelonaturelon: Map[GroupingKelony, Selonq[RankelondCandidatelon]] =
+      rankelondCandidatelonSelonq.groupBy { candidatelon: RankelondCandidatelon =>
+        toGroupingKelony(candidatelon, Somelon(intelonrlelonavelonFelonaturelon), Nonelon)
       }
 
-    // These weights [0, 1] are used to do weighted interleaving
-    // The default value of 1.0 ensures the group is always sampled.
-    val candidateWeightsKeyByFeature: Map[GroupingKey, Double] =
-      calculateWeightsKeyByFeature(candidateSeqKeyByFeature, rankerWeightShrinkage)
+    // Thelonselon welonights [0, 1] arelon uselond to do welonightelond intelonrlelonaving
+    // Thelon delonfault valuelon of 1.0 elonnsurelons thelon group is always samplelond.
+    val candidatelonWelonightsKelonyByFelonaturelon: Map[GroupingKelony, Doublelon] =
+      calculatelonWelonightsKelonyByFelonaturelon(candidatelonSelonqKelonyByFelonaturelon, rankelonrWelonightShrinkagelon)
 
-    candidateSeqKeyByFeature.map {
-      case (groupingKey: GroupingKey, candidateSeq: Seq[RankedCandidate]) =>
-        Tuple2(
-          candidateSeq.sortBy(-_.predictionScore),
-          candidateWeightsKeyByFeature.getOrElse(groupingKey, 1.0))
-    }.toSeq
+    candidatelonSelonqKelonyByFelonaturelon.map {
+      caselon (groupingKelony: GroupingKelony, candidatelonSelonq: Selonq[RankelondCandidatelon]) =>
+        Tuplelon2(
+          candidatelonSelonq.sortBy(-_.prelondictionScorelon),
+          candidatelonWelonightsKelonyByFelonaturelon.gelontOrelonlselon(groupingKelony, 1.0))
+    }.toSelonq
   }
 
   /**
-   * Takes current grouping (as implied by the outer Seq) and computes blending weights.
+   * Takelons currelonnt grouping (as implielond by thelon outelonr Selonq) and computelons blelonnding welonights.
    *
-   * @param initialCandidatesSeqSeq grouped candidates to interleave.
-   * @param rankerWeightShrinkage value between [0, 1] with 1 being complete uniformity.
-   * @return Grouped candidates with calculated interleaving weights.
+   * @param initialCandidatelonsSelonqSelonq groupelond candidatelons to intelonrlelonavelon.
+   * @param rankelonrWelonightShrinkagelon valuelon belontwelonelonn [0, 1] with 1 beloning complelontelon uniformity.
+   * @relonturn Groupelond candidatelons with calculatelond intelonrlelonaving welonights.
    */
-  def buildInitialCandidatesWithWeightKeyByFeature(
-    initialCandidatesSeqSeq: Seq[Seq[InitialCandidate]],
-    rankerWeightShrinkage: Double,
-  ): Seq[(Seq[InitialCandidate], Double)] = {
-    val candidateSeqKeyByFeature: Map[GroupingKey, Seq[InitialCandidate]] =
-      initialCandidatesSeqSeq.zipWithIndex.map(_.swap).toMap.map {
-        case (groupId: Int, initialCandidatesSeq: Seq[InitialCandidate]) =>
-          toGroupingKey(initialCandidatesSeq.head, None, Some(groupId)) -> initialCandidatesSeq
+  delonf buildInitialCandidatelonsWithWelonightKelonyByFelonaturelon(
+    initialCandidatelonsSelonqSelonq: Selonq[Selonq[InitialCandidatelon]],
+    rankelonrWelonightShrinkagelon: Doublelon,
+  ): Selonq[(Selonq[InitialCandidatelon], Doublelon)] = {
+    val candidatelonSelonqKelonyByFelonaturelon: Map[GroupingKelony, Selonq[InitialCandidatelon]] =
+      initialCandidatelonsSelonqSelonq.zipWithIndelonx.map(_.swap).toMap.map {
+        caselon (groupId: Int, initialCandidatelonsSelonq: Selonq[InitialCandidatelon]) =>
+          toGroupingKelony(initialCandidatelonsSelonq.helonad, Nonelon, Somelon(groupId)) -> initialCandidatelonsSelonq
       }
 
-    // These weights [0, 1] are used to do weighted interleaving
-    // The default value of 1.0 ensures the group is always sampled.
-    val candidateWeightsKeyByFeature =
-      calculateWeightsKeyByFeature(candidateSeqKeyByFeature, rankerWeightShrinkage)
+    // Thelonselon welonights [0, 1] arelon uselond to do welonightelond intelonrlelonaving
+    // Thelon delonfault valuelon of 1.0 elonnsurelons thelon group is always samplelond.
+    val candidatelonWelonightsKelonyByFelonaturelon =
+      calculatelonWelonightsKelonyByFelonaturelon(candidatelonSelonqKelonyByFelonaturelon, rankelonrWelonightShrinkagelon)
 
-    candidateSeqKeyByFeature.map {
-      case (groupingKey: GroupingKey, candidateSeq: Seq[InitialCandidate]) =>
-        Tuple2(candidateSeq, candidateWeightsKeyByFeature.getOrElse(groupingKey, 1.0))
-    }.toSeq
+    candidatelonSelonqKelonyByFelonaturelon.map {
+      caselon (groupingKelony: GroupingKelony, candidatelonSelonq: Selonq[InitialCandidatelon]) =>
+        Tuplelon2(candidatelonSelonq, candidatelonWelonightsKelonyByFelonaturelon.gelontOrelonlselon(groupingKelony, 1.0))
+    }.toSelonq
   }
 }

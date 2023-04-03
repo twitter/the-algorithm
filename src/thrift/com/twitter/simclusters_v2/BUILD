@@ -1,15 +1,15 @@
-create_thrift_libraries(
-    base_name = "simclusters_v2-thrift",
-    sources = ["*.thrift"],
+crelonatelon_thrift_librarielons(
+    baselon_namelon = "simclustelonrs_v2-thrift",
+    sourcelons = ["*.thrift"],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependency_roots = [
-        "src/thrift/com/twitter/algebird_internal",
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncy_roots = [
+        "src/thrift/com/twittelonr/algelonbird_intelonrnal",
     ],
-    export_roots = [
-        "src/thrift/com/twitter/algebird_internal:algebird_internal",
+    elonxport_roots = [
+        "src/thrift/com/twittelonr/algelonbird_intelonrnal:algelonbird_intelonrnal",
     ],
-    generate_languages = [
+    gelonnelonratelon_languagelons = [
         "go",
         "java",
         "lua",
@@ -18,6 +18,6 @@ create_thrift_libraries(
         "scala",
         "strato",
     ],
-    provides_java_name = "simclusters_v2-thrift-java",
-    provides_scala_name = "simclusters_v2-thrift-scala",
+    providelons_java_namelon = "simclustelonrs_v2-thrift-java",
+    providelons_scala_namelon = "simclustelonrs_v2-thrift-scala",
 )

@@ -1,65 +1,65 @@
-package com.twitter.home_mixer.product.scored_tweets.response_transformer
+packagelon com.twittelonr.homelon_mixelonr.product.scorelond_twelonelonts.relonsponselon_transformelonr
 
-import com.twitter.cr_mixer.{thriftscala => crm}
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.CandidateSourceIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.FromInNetworkSourceFeature
-import com.twitter.home_mixer.model.HomeFeatures.IsRandomTweetFeature
-import com.twitter.home_mixer.model.HomeFeatures.StreamToKafkaFeature
-import com.twitter.home_mixer.model.HomeFeatures.SuggestTypeFeature
-import com.twitter.home_mixer.model.HomeFeatures.TSPMetricTagFeature
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
-import com.twitter.product_mixer.core.model.common.identifier.TransformerIdentifier
-import com.twitter.timelineservice.suggests.logging.candidate_tweet_source_id.{thriftscala => cts}
-import com.twitter.timelineservice.suggests.{thriftscala => st}
-import com.twitter.tsp.{thriftscala => tsp}
+import com.twittelonr.cr_mixelonr.{thriftscala => crm}
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.AuthorIdFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.CandidatelonSourcelonIdFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.FromInNelontworkSourcelonFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.IsRandomTwelonelontFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.StrelonamToKafkaFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.SuggelonstTypelonFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.TSPMelontricTagFelonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMapBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.transformelonr.CandidatelonFelonaturelonTransformelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.TransformelonrIdelonntifielonr
+import com.twittelonr.timelonlinelonselonrvicelon.suggelonsts.logging.candidatelon_twelonelont_sourcelon_id.{thriftscala => cts}
+import com.twittelonr.timelonlinelonselonrvicelon.suggelonsts.{thriftscala => st}
+import com.twittelonr.tsp.{thriftscala => tsp}
 
-object ScoredTweetsCrMixerResponseFeatureTransformer
-    extends CandidateFeatureTransformer[crm.TweetRecommendation] {
+objelonct ScorelondTwelonelontsCrMixelonrRelonsponselonFelonaturelonTransformelonr
+    elonxtelonnds CandidatelonFelonaturelonTransformelonr[crm.TwelonelontReloncommelonndation] {
 
-  override val identifier: TransformerIdentifier =
-    TransformerIdentifier("ScoredTweetsCrMixerResponse")
+  ovelonrridelon val idelonntifielonr: TransformelonrIdelonntifielonr =
+    TransformelonrIdelonntifielonr("ScorelondTwelonelontsCrMixelonrRelonsponselon")
 
-  override val features: Set[Feature[_, _]] = Set(
-    AuthorIdFeature,
-    CandidateSourceIdFeature,
-    FromInNetworkSourceFeature,
-    IsRandomTweetFeature,
-    StreamToKafkaFeature,
-    SuggestTypeFeature,
-    TSPMetricTagFeature
+  ovelonrridelon val felonaturelons: Selont[Felonaturelon[_, _]] = Selont(
+    AuthorIdFelonaturelon,
+    CandidatelonSourcelonIdFelonaturelon,
+    FromInNelontworkSourcelonFelonaturelon,
+    IsRandomTwelonelontFelonaturelon,
+    StrelonamToKafkaFelonaturelon,
+    SuggelonstTypelonFelonaturelon,
+    TSPMelontricTagFelonaturelon
   )
 
-  override def transform(candidate: crm.TweetRecommendation): FeatureMap = {
-    val crMixerMetricTags = candidate.metricTags.getOrElse(Seq.empty)
-    val tspMetricTag = crMixerMetricTags
-      .map(CrMixerMetricTagToTspMetricTag)
-      .filter(_.nonEmpty).map(_.get).toSet
+  ovelonrridelon delonf transform(candidatelon: crm.TwelonelontReloncommelonndation): FelonaturelonMap = {
+    val crMixelonrMelontricTags = candidatelon.melontricTags.gelontOrelonlselon(Selonq.elonmpty)
+    val tspMelontricTag = crMixelonrMelontricTags
+      .map(CrMixelonrMelontricTagToTspMelontricTag)
+      .filtelonr(_.nonelonmpty).map(_.gelont).toSelont
 
-    FeatureMapBuilder()
-      .add(AuthorIdFeature, candidate.authorId)
-      .add(CandidateSourceIdFeature, Some(cts.CandidateTweetSourceId.Simcluster))
-      .add(FromInNetworkSourceFeature, false)
-      .add(IsRandomTweetFeature, false)
-      .add(StreamToKafkaFeature, true)
-      .add(SuggestTypeFeature, Some(st.SuggestType.ScTweet))
-      .add(TSPMetricTagFeature, tspMetricTag)
+    FelonaturelonMapBuildelonr()
+      .add(AuthorIdFelonaturelon, candidatelon.authorId)
+      .add(CandidatelonSourcelonIdFelonaturelon, Somelon(cts.CandidatelonTwelonelontSourcelonId.Simclustelonr))
+      .add(FromInNelontworkSourcelonFelonaturelon, falselon)
+      .add(IsRandomTwelonelontFelonaturelon, falselon)
+      .add(StrelonamToKafkaFelonaturelon, truelon)
+      .add(SuggelonstTypelonFelonaturelon, Somelon(st.SuggelonstTypelon.ScTwelonelont))
+      .add(TSPMelontricTagFelonaturelon, tspMelontricTag)
       .build()
   }
 
-  private def CrMixerMetricTagToTspMetricTag(
-    crMixerMetricTag: crm.MetricTag
-  ): Option[tsp.MetricTag] = crMixerMetricTag match {
-    case crm.MetricTag.TweetFavorite => Some(tsp.MetricTag.TweetFavorite)
-    case crm.MetricTag.Retweet => Some(tsp.MetricTag.Retweet)
-    case crm.MetricTag.UserFollow => Some(tsp.MetricTag.UserFollow)
-    case crm.MetricTag.PushOpenOrNtabClick => Some(tsp.MetricTag.PushOpenOrNtabClick)
-    case crm.MetricTag.UserInterestedIn => Some(tsp.MetricTag.UserInterestedIn)
-    case crm.MetricTag.HomeTweetClick => Some(tsp.MetricTag.HomeTweetClick)
-    case crm.MetricTag.HomeVideoView => Some(tsp.MetricTag.HomeVideoView)
-    case _ => None
+  privatelon delonf CrMixelonrMelontricTagToTspMelontricTag(
+    crMixelonrMelontricTag: crm.MelontricTag
+  ): Option[tsp.MelontricTag] = crMixelonrMelontricTag match {
+    caselon crm.MelontricTag.TwelonelontFavoritelon => Somelon(tsp.MelontricTag.TwelonelontFavoritelon)
+    caselon crm.MelontricTag.Relontwelonelont => Somelon(tsp.MelontricTag.Relontwelonelont)
+    caselon crm.MelontricTag.UselonrFollow => Somelon(tsp.MelontricTag.UselonrFollow)
+    caselon crm.MelontricTag.PushOpelonnOrNtabClick => Somelon(tsp.MelontricTag.PushOpelonnOrNtabClick)
+    caselon crm.MelontricTag.UselonrIntelonrelonstelondIn => Somelon(tsp.MelontricTag.UselonrIntelonrelonstelondIn)
+    caselon crm.MelontricTag.HomelonTwelonelontClick => Somelon(tsp.MelontricTag.HomelonTwelonelontClick)
+    caselon crm.MelontricTag.HomelonVidelonoVielonw => Somelon(tsp.MelontricTag.HomelonVidelonoVielonw)
+    caselon _ => Nonelon
   }
 }

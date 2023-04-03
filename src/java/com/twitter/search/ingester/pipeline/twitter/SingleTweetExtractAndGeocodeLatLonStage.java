@@ -1,99 +1,99 @@
-package com.twitter.search.ingester.pipeline.twitter;
+packagelon com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.twittelonr;
 
-import org.apache.commons.pipeline.StageException;
-import org.apache.commons.pipeline.validation.ConsumedTypes;
-import org.apache.commons.pipeline.validation.ProducesConsumed;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apachelon.commons.pipelonlinelon.Stagelonelonxcelonption;
+import org.apachelon.commons.pipelonlinelon.validation.ConsumelondTypelons;
+import org.apachelon.commons.pipelonlinelon.validation.ProducelonsConsumelond;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.search.common.indexing.thriftjava.ThriftGeoLocationSource;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.relevance.entities.GeoObject;
-import com.twitter.search.common.relevance.entities.TwitterMessage;
-import com.twitter.search.common.relevance.text.LocationUtils;
-import com.twitter.search.ingester.model.IngesterTwitterMessage;
-import com.twitter.search.ingester.pipeline.util.PipelineStageRuntimeException;
+import com.twittelonr.selonarch.common.indelonxing.thriftjava.ThriftGelonoLocationSourcelon;
+import com.twittelonr.selonarch.common.melontrics.SelonarchRatelonCountelonr;
+import com.twittelonr.selonarch.common.relonlelonvancelon.elonntitielons.GelonoObjelonct;
+import com.twittelonr.selonarch.common.relonlelonvancelon.elonntitielons.TwittelonrMelonssagelon;
+import com.twittelonr.selonarch.common.relonlelonvancelon.telonxt.LocationUtils;
+import com.twittelonr.selonarch.ingelonstelonr.modelonl.IngelonstelonrTwittelonrMelonssagelon;
+import com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.util.PipelonlinelonStagelonRuntimelonelonxcelonption;
 
 /**
- * Read-only stage to extract lat/lon pairs from the tweet text and populate
- * the geoLocation field.
+ * Relonad-only stagelon to elonxtract lat/lon pairs from thelon twelonelont telonxt and populatelon
+ * thelon gelonoLocation fielonld.
  * <p>
- * If the tweet is geotagged by mobile devices, the geo coordinates extracted from the JSON
- * is used.
+ * If thelon twelonelont is gelonotaggelond by mobilelon delonvicelons, thelon gelono coordinatelons elonxtractelond from thelon JSON
+ * is uselond.
  */
-@ConsumedTypes(IngesterTwitterMessage.class)
-@ProducesConsumed
-public class SingleTweetExtractAndGeocodeLatLonStage extends TwitterBaseStage
-    <TwitterMessage, IngesterTwitterMessage> {
-  private static final Logger LOG =
-      LoggerFactory.getLogger(SingleTweetExtractAndGeocodeLatLonStage.class);
+@ConsumelondTypelons(IngelonstelonrTwittelonrMelonssagelon.class)
+@ProducelonsConsumelond
+public class SinglelonTwelonelontelonxtractAndGelonocodelonLatLonStagelon elonxtelonnds TwittelonrBaselonStagelon
+    <TwittelonrMelonssagelon, IngelonstelonrTwittelonrMelonssagelon> {
+  privatelon static final Loggelonr LOG =
+      LoggelonrFactory.gelontLoggelonr(SinglelonTwelonelontelonxtractAndGelonocodelonLatLonStagelon.class);
 
-  private SearchRateCounter extractedLatLons;
-  private SearchRateCounter badLatLons;
+  privatelon SelonarchRatelonCountelonr elonxtractelondLatLons;
+  privatelon SelonarchRatelonCountelonr badLatLons;
 
-  @Override
+  @Ovelonrridelon
   public void initStats() {
-    super.initStats();
-    innerSetupStats();
+    supelonr.initStats();
+    innelonrSelontupStats();
   }
 
-  @Override
-  protected void innerSetupStats() {
-    extractedLatLons = SearchRateCounter.export(getStageNamePrefix() + "_extracted_lat_lons");
-    badLatLons = SearchRateCounter.export(getStageNamePrefix() + "_invalid_lat_lons");
+  @Ovelonrridelon
+  protelonctelond void innelonrSelontupStats() {
+    elonxtractelondLatLons = SelonarchRatelonCountelonr.elonxport(gelontStagelonNamelonPrelonfix() + "_elonxtractelond_lat_lons");
+    badLatLons = SelonarchRatelonCountelonr.elonxport(gelontStagelonNamelonPrelonfix() + "_invalid_lat_lons");
   }
 
-  @Override
-  public void innerProcess(Object obj) throws StageException {
-    if (!(obj instanceof IngesterTwitterMessage)) {
-      throw new StageException(this, "Object is not IngesterTwitterMessage object: " + obj);
+  @Ovelonrridelon
+  public void innelonrProcelonss(Objelonct obj) throws Stagelonelonxcelonption {
+    if (!(obj instancelonof IngelonstelonrTwittelonrMelonssagelon)) {
+      throw nelonw Stagelonelonxcelonption(this, "Objelonct is not IngelonstelonrTwittelonrMelonssagelon objelonct: " + obj);
     }
 
-    IngesterTwitterMessage message = IngesterTwitterMessage.class.cast(obj);
-    tryToSetGeoLocation(message);
-    emitAndCount(message);
+    IngelonstelonrTwittelonrMelonssagelon melonssagelon = IngelonstelonrTwittelonrMelonssagelon.class.cast(obj);
+    tryToSelontGelonoLocation(melonssagelon);
+    elonmitAndCount(melonssagelon);
   }
 
-  @Override
-  protected IngesterTwitterMessage innerRunStageV2(TwitterMessage message) {
-    // Previous stage takes in a TwitterMessage and returns a TwitterMessage. I think it was
-    // done to simplify testing. From this stage onwards, we only count the message that are of type
-    // IngesterTwitterMessage.
-    if (!(message instanceof IngesterTwitterMessage)) {
-      throw new PipelineStageRuntimeException("Message needs to be of type IngesterTwitterMessage");
+  @Ovelonrridelon
+  protelonctelond IngelonstelonrTwittelonrMelonssagelon innelonrRunStagelonV2(TwittelonrMelonssagelon melonssagelon) {
+    // Prelonvious stagelon takelons in a TwittelonrMelonssagelon and relonturns a TwittelonrMelonssagelon. I think it was
+    // donelon to simplify telonsting. From this stagelon onwards, welon only count thelon melonssagelon that arelon of typelon
+    // IngelonstelonrTwittelonrMelonssagelon.
+    if (!(melonssagelon instancelonof IngelonstelonrTwittelonrMelonssagelon)) {
+      throw nelonw PipelonlinelonStagelonRuntimelonelonxcelonption("Melonssagelon nelonelonds to belon of typelon IngelonstelonrTwittelonrMelonssagelon");
     }
 
-    IngesterTwitterMessage ingesterTwitterMessage = IngesterTwitterMessage.class.cast(message);
-    tryToSetGeoLocation(ingesterTwitterMessage);
-    return ingesterTwitterMessage;
+    IngelonstelonrTwittelonrMelonssagelon ingelonstelonrTwittelonrMelonssagelon = IngelonstelonrTwittelonrMelonssagelon.class.cast(melonssagelon);
+    tryToSelontGelonoLocation(ingelonstelonrTwittelonrMelonssagelon);
+    relonturn ingelonstelonrTwittelonrMelonssagelon;
   }
 
-  private void tryToSetGeoLocation(IngesterTwitterMessage message) {
-    if (message.getGeoTaggedLocation() != null) {
-      message.setGeoLocation(message.getGeoTaggedLocation());
-    } else if (message.hasGeoLocation()) {
-      LOG.warn("Message {} already contains geoLocation", message.getId());
-    } else {
+  privatelon void tryToSelontGelonoLocation(IngelonstelonrTwittelonrMelonssagelon melonssagelon) {
+    if (melonssagelon.gelontGelonoTaggelondLocation() != null) {
+      melonssagelon.selontGelonoLocation(melonssagelon.gelontGelonoTaggelondLocation());
+    } elonlselon if (melonssagelon.hasGelonoLocation()) {
+      LOG.warn("Melonssagelon {} alrelonady contains gelonoLocation", melonssagelon.gelontId());
+    } elonlselon {
       try {
-        GeoObject extracted = extractLatLon(message);
-        if (extracted != null) {
-          message.setGeoLocation(extracted);
-          extractedLatLons.increment();
+        GelonoObjelonct elonxtractelond = elonxtractLatLon(melonssagelon);
+        if (elonxtractelond != null) {
+          melonssagelon.selontGelonoLocation(elonxtractelond);
+          elonxtractelondLatLons.increlonmelonnt();
         }
-      } catch (NumberFormatException e) {
-        LOG.debug("Message contains bad latitude and longitude: " + message.getOrigLocation(), e);
-        badLatLons.increment();
-      } catch (Exception e) {
-        LOG.error("Failed to extract geo location from " + message.getOrigLocation() + " for tweet "
-            + message.getId(), e);
+      } catch (NumbelonrFormatelonxcelonption elon) {
+        LOG.delonbug("Melonssagelon contains bad latitudelon and longitudelon: " + melonssagelon.gelontOrigLocation(), elon);
+        badLatLons.increlonmelonnt();
+      } catch (elonxcelonption elon) {
+        LOG.elonrror("Failelond to elonxtract gelono location from " + melonssagelon.gelontOrigLocation() + " for twelonelont "
+            + melonssagelon.gelontId(), elon);
       }
     }
   }
 
-  private GeoObject extractLatLon(IngesterTwitterMessage message) throws NumberFormatException {
-    double[] latlon = LocationUtils.extractLatLon(message);
-    return latlon == null
+  privatelon GelonoObjelonct elonxtractLatLon(IngelonstelonrTwittelonrMelonssagelon melonssagelon) throws NumbelonrFormatelonxcelonption {
+    doublelon[] latlon = LocationUtils.elonxtractLatLon(melonssagelon);
+    relonturn latlon == null
         ? null
-        : new GeoObject(latlon[0], latlon[1], ThriftGeoLocationSource.TWEET_TEXT);
+        : nelonw GelonoObjelonct(latlon[0], latlon[1], ThriftGelonoLocationSourcelon.TWelonelonT_TelonXT);
   }
 }

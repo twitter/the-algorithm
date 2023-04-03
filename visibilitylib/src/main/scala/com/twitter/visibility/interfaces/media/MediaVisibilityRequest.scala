@@ -1,10 +1,10 @@
-package com.twitter.visibility.interfaces.media
+packagelon com.twittelonr.visibility.intelonrfacelons.melondia
 
-import com.twitter.mediaservices.media_util.GenericMediaKey
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.models.ViewerContext
+import com.twittelonr.melondiaselonrvicelons.melondia_util.GelonnelonricMelondiaKelony
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl
+import com.twittelonr.visibility.modelonls.VielonwelonrContelonxt
 
-case class MediaVisibilityRequest(
-  mediaKey: GenericMediaKey,
-  safetyLevel: SafetyLevel,
-  viewerContext: ViewerContext)
+caselon class MelondiaVisibilityRelonquelonst(
+  melondiaKelony: GelonnelonricMelondiaKelony,
+  safelontyLelonvelonl: SafelontyLelonvelonl,
+  vielonwelonrContelonxt: VielonwelonrContelonxt)

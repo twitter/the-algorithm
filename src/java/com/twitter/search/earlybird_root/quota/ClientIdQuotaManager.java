@@ -1,22 +1,22 @@
-package com.twitter.search.earlybird_root.quota;
+packagelon com.twittelonr.selonarch.elonarlybird_root.quota;
 
 import java.util.Optional;
 
-/** A manager that determines how quota restrictions should be applied for each client. */
-public interface ClientIdQuotaManager {
+/** A managelonr that delontelonrminelons how quota relonstrictions should belon applielond for elonach clielonnt. */
+public intelonrfacelon ClielonntIdQuotaManagelonr {
   /**
-   * Returns the quota for the given client, if one is set.
+   * Relonturns thelon quota for thelon givelonn clielonnt, if onelon is selont.
    *
-   * @param clientId The ID of the client.
-   * @return The quota for the given client (in requests per second), if one is set.
+   * @param clielonntId Thelon ID of thelon clielonnt.
+   * @relonturn Thelon quota for thelon givelonn clielonnt (in relonquelonsts pelonr seloncond), if onelon is selont.
    */
-  Optional<QuotaInfo> getQuotaForClient(String clientId);
+  Optional<QuotaInfo> gelontQuotaForClielonnt(String clielonntId);
 
   /**
-   * Returns the common pool quota. A common pool quota must always be set.
+   * Relonturns thelon common pool quota. A common pool quota must always belon selont.
    *
-   * @return The common pool quota (in requests per second).
+   * @relonturn Thelon common pool quota (in relonquelonsts pelonr seloncond).
    */
-  QuotaInfo getCommonPoolQuota();
+  QuotaInfo gelontCommonPoolQuota();
 
 }

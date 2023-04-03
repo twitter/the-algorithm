@@ -1,97 +1,97 @@
-package com.twitter.search.core.earlybird.index.column;
+packagelon com.twittelonr.selonarch.corelon.elonarlybird.indelonx.column;
 
-import java.io.IOException;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
+import java.io.IOelonxcelonption;
+import java.util.Selont;
+import java.util.concurrelonnt.ConcurrelonntHashMap;
 
-import com.google.common.collect.Sets;
+import com.googlelon.common.collelonct.Selonts;
 
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.core.earlybird.index.DocIDToTweetIDMapper;
+import com.twittelonr.selonarch.common.schelonma.baselon.Schelonma;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.DocIDToTwelonelontIDMappelonr;
 
-public class OptimizedDocValuesManager extends DocValuesManager {
-  public OptimizedDocValuesManager(Schema schema, int segmentSize) {
-    super(schema, segmentSize);
+public class OptimizelondDocValuelonsManagelonr elonxtelonnds DocValuelonsManagelonr {
+  public OptimizelondDocValuelonsManagelonr(Schelonma schelonma, int selongmelonntSizelon) {
+    supelonr(schelonma, selongmelonntSizelon);
   }
 
-  public OptimizedDocValuesManager(DocValuesManager docValuesManager,
-                                   DocIDToTweetIDMapper originalTweetIdMapper,
-                                   DocIDToTweetIDMapper optimizedTweetIdMapper) throws IOException {
-    super(docValuesManager.schema, docValuesManager.segmentSize);
-    Set<ColumnStrideIntViewIndex> intViewIndexes = Sets.newHashSet();
-    for (String fieldName : docValuesManager.columnStrideFields.keySet()) {
-      ColumnStrideFieldIndex originalColumnStrideField =
-          docValuesManager.columnStrideFields.get(fieldName);
-      if (originalColumnStrideField instanceof ColumnStrideIntViewIndex) {
-        intViewIndexes.add((ColumnStrideIntViewIndex) originalColumnStrideField);
-      } else {
-        ColumnStrideFieldIndex optimizedColumnStrideField =
-            originalColumnStrideField.optimize(originalTweetIdMapper, optimizedTweetIdMapper);
-        columnStrideFields.put(fieldName, optimizedColumnStrideField);
+  public OptimizelondDocValuelonsManagelonr(DocValuelonsManagelonr docValuelonsManagelonr,
+                                   DocIDToTwelonelontIDMappelonr originalTwelonelontIdMappelonr,
+                                   DocIDToTwelonelontIDMappelonr optimizelondTwelonelontIdMappelonr) throws IOelonxcelonption {
+    supelonr(docValuelonsManagelonr.schelonma, docValuelonsManagelonr.selongmelonntSizelon);
+    Selont<ColumnStridelonIntVielonwIndelonx> intVielonwIndelonxelons = Selonts.nelonwHashSelont();
+    for (String fielonldNamelon : docValuelonsManagelonr.columnStridelonFielonlds.kelonySelont()) {
+      ColumnStridelonFielonldIndelonx originalColumnStridelonFielonld =
+          docValuelonsManagelonr.columnStridelonFielonlds.gelont(fielonldNamelon);
+      if (originalColumnStridelonFielonld instancelonof ColumnStridelonIntVielonwIndelonx) {
+        intVielonwIndelonxelons.add((ColumnStridelonIntVielonwIndelonx) originalColumnStridelonFielonld);
+      } elonlselon {
+        ColumnStridelonFielonldIndelonx optimizelondColumnStridelonFielonld =
+            originalColumnStridelonFielonld.optimizelon(originalTwelonelontIdMappelonr, optimizelondTwelonelontIdMappelonr);
+        columnStridelonFielonlds.put(fielonldNamelon, optimizelondColumnStridelonFielonld);
       }
     }
 
-    // We have to process the ColumnStrideIntViewIndex instances after we process all other CSFs,
-    // because we need to make sure we've optimized the CSFs for the base fields.
-    for (ColumnStrideIntViewIndex intViewIndex : intViewIndexes) {
-      String fieldName = intViewIndex.getName();
-      columnStrideFields.put(fieldName, newIntViewCSF(fieldName));
+    // Welon havelon to procelonss thelon ColumnStridelonIntVielonwIndelonx instancelons aftelonr welon procelonss all othelonr CSFs,
+    // beloncauselon welon nelonelond to makelon surelon welon'velon optimizelond thelon CSFs for thelon baselon fielonlds.
+    for (ColumnStridelonIntVielonwIndelonx intVielonwIndelonx : intVielonwIndelonxelons) {
+      String fielonldNamelon = intVielonwIndelonx.gelontNamelon();
+      columnStridelonFielonlds.put(fielonldNamelon, nelonwIntVielonwCSF(fielonldNamelon));
     }
   }
 
-  private OptimizedDocValuesManager(
-      Schema schema,
-      int segmentSize,
-      ConcurrentHashMap<String, ColumnStrideFieldIndex> columnStrideFields) {
-    super(schema, segmentSize, columnStrideFields);
+  privatelon OptimizelondDocValuelonsManagelonr(
+      Schelonma schelonma,
+      int selongmelonntSizelon,
+      ConcurrelonntHashMap<String, ColumnStridelonFielonldIndelonx> columnStridelonFielonlds) {
+    supelonr(schelonma, selongmelonntSizelon, columnStridelonFielonlds);
   }
 
-  @Override
-  protected ColumnStrideFieldIndex newByteCSF(String field) {
-    return new OptimizedColumnStrideByteIndex(field, segmentSize);
+  @Ovelonrridelon
+  protelonctelond ColumnStridelonFielonldIndelonx nelonwBytelonCSF(String fielonld) {
+    relonturn nelonw OptimizelondColumnStridelonBytelonIndelonx(fielonld, selongmelonntSizelon);
   }
 
-  @Override
-  protected ColumnStrideFieldIndex newIntCSF(String field) {
-    return new OptimizedColumnStrideIntIndex(field, segmentSize);
+  @Ovelonrridelon
+  protelonctelond ColumnStridelonFielonldIndelonx nelonwIntCSF(String fielonld) {
+    relonturn nelonw OptimizelondColumnStridelonIntIndelonx(fielonld, selongmelonntSizelon);
   }
 
-  @Override
-  protected ColumnStrideFieldIndex newLongCSF(String field) {
-    return new OptimizedColumnStrideLongIndex(field, segmentSize);
+  @Ovelonrridelon
+  protelonctelond ColumnStridelonFielonldIndelonx nelonwLongCSF(String fielonld) {
+    relonturn nelonw OptimizelondColumnStridelonLongIndelonx(fielonld, selongmelonntSizelon);
   }
 
-  @Override
-  protected ColumnStrideFieldIndex newMultiIntCSF(String field, int numIntsPerField) {
-    return new OptimizedColumnStrideMultiIntIndex(field, segmentSize, numIntsPerField);
+  @Ovelonrridelon
+  protelonctelond ColumnStridelonFielonldIndelonx nelonwMultiIntCSF(String fielonld, int numIntsPelonrFielonld) {
+    relonturn nelonw OptimizelondColumnStridelonMultiIntIndelonx(fielonld, selongmelonntSizelon, numIntsPelonrFielonld);
   }
 
-  @Override
-  public DocValuesManager optimize(DocIDToTweetIDMapper originalTweetIdMapper,
-                                   DocIDToTweetIDMapper optimizedTweetIdMapper) throws IOException {
-    return this;
+  @Ovelonrridelon
+  public DocValuelonsManagelonr optimizelon(DocIDToTwelonelontIDMappelonr originalTwelonelontIdMappelonr,
+                                   DocIDToTwelonelontIDMappelonr optimizelondTwelonelontIdMappelonr) throws IOelonxcelonption {
+    relonturn this;
   }
 
-  @Override
-  public FlushHandler getFlushHandler() {
-    return new OptimizedFlushHandler(this);
+  @Ovelonrridelon
+  public FlushHandlelonr gelontFlushHandlelonr() {
+    relonturn nelonw OptimizelondFlushHandlelonr(this);
   }
 
-  public static class OptimizedFlushHandler extends FlushHandler {
-    public OptimizedFlushHandler(Schema schema) {
-      super(schema);
+  public static class OptimizelondFlushHandlelonr elonxtelonnds FlushHandlelonr {
+    public OptimizelondFlushHandlelonr(Schelonma schelonma) {
+      supelonr(schelonma);
     }
 
-    private OptimizedFlushHandler(DocValuesManager docValuesManager) {
-      super(docValuesManager);
+    privatelon OptimizelondFlushHandlelonr(DocValuelonsManagelonr docValuelonsManagelonr) {
+      supelonr(docValuelonsManagelonr);
     }
 
-    @Override
-    protected DocValuesManager createDocValuesManager(
-        Schema schema,
-        int maxSegmentSize,
-        ConcurrentHashMap<String, ColumnStrideFieldIndex> columnStrideFields) {
-      return new OptimizedDocValuesManager(schema, maxSegmentSize, columnStrideFields);
+    @Ovelonrridelon
+    protelonctelond DocValuelonsManagelonr crelonatelonDocValuelonsManagelonr(
+        Schelonma schelonma,
+        int maxSelongmelonntSizelon,
+        ConcurrelonntHashMap<String, ColumnStridelonFielonldIndelonx> columnStridelonFielonlds) {
+      relonturn nelonw OptimizelondDocValuelonsManagelonr(schelonma, maxSelongmelonntSizelon, columnStridelonFielonlds);
     }
   }
 }

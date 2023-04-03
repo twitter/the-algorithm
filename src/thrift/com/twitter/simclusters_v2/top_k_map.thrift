@@ -1,14 +1,14 @@
-namespace java com.twitter.simclusters_v2.thriftjava
-namespace py gen.twitter.simclusters_v2.top_k_map
-#@namespace scala com.twitter.simclusters_v2.thriftscala
-#@namespace strato com.twitter.simclusters_v2
+namelonspacelon java com.twittelonr.simclustelonrs_v2.thriftjava
+namelonspacelon py gelonn.twittelonr.simclustelonrs_v2.top_k_map
+#@namelonspacelon scala com.twittelonr.simclustelonrs_v2.thriftscala
+#@namelonspacelon strato com.twittelonr.simclustelonrs_v2
 
-include "com/twitter/algebird_internal/algebird.thrift"
+includelon "com/twittelonr/algelonbird_intelonrnal/algelonbird.thrift"
 
-struct TopKClusters {
-	1: required map<i32, algebird.DecayedValue> topK(personalDataTypeKey = 'InferredInterests')
-}(hasPersonalData = 'true')
+struct TopKClustelonrs {
+	1: relonquirelond map<i32, algelonbird.DeloncayelondValuelon> topK(pelonrsonalDataTypelonKelony = 'InfelonrrelondIntelonrelonsts')
+}(hasPelonrsonalData = 'truelon')
 
-struct TopKTweets {
-	1: required map<i64, algebird.DecayedValue> topK(personalDataTypeKey='TweetId')
-}(hasPersonalData = 'true') 
+struct TopKTwelonelonts {
+	1: relonquirelond map<i64, algelonbird.DeloncayelondValuelon> topK(pelonrsonalDataTypelonKelony='TwelonelontId')
+}(hasPelonrsonalData = 'truelon')

@@ -1,34 +1,34 @@
-package com.twitter.home_mixer.product.scored_tweets.scoring_pipeline
+packagelon com.twittelonr.homelon_mixelonr.product.scorelond_twelonelonts.scoring_pipelonlinelon
 
-import com.twitter.home_mixer.product.scored_tweets.candidate_pipeline.CachedScoredTweetsCandidatePipelineConfig
-import com.twitter.home_mixer.product.scored_tweets.model.ScoredTweetsQuery
-import com.twitter.home_mixer.product.scored_tweets.scorer.WeightedScoresSumScorer
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.component_library.selector.InsertAppendResults
-import com.twitter.product_mixer.core.functional_component.common.AllExceptPipelines
-import com.twitter.product_mixer.core.functional_component.scorer.Scorer
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.model.common.identifier.ScoringPipelineIdentifier
-import com.twitter.product_mixer.core.pipeline.scoring.ScoringPipelineConfig
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.homelon_mixelonr.product.scorelond_twelonelonts.candidatelon_pipelonlinelon.CachelondScorelondTwelonelontsCandidatelonPipelonlinelonConfig
+import com.twittelonr.homelon_mixelonr.product.scorelond_twelonelonts.modelonl.ScorelondTwelonelontsQuelonry
+import com.twittelonr.homelon_mixelonr.product.scorelond_twelonelonts.scorelonr.WelonightelondScorelonsSumScorelonr
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.TwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.componelonnt_library.selonlelonctor.InselonrtAppelonndRelonsults
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.AllelonxcelonptPipelonlinelons
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.scorelonr.Scorelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.selonlelonctor.Selonlelonctor
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.ScoringPipelonlinelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.scoring.ScoringPipelonlinelonConfig
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class ScoredTweetsWeightedScoresSumScoringPipelineConfig @Inject() (
-  weightedScoresSumScorer: WeightedScoresSumScorer)
-    extends ScoringPipelineConfig[ScoredTweetsQuery, TweetCandidate] {
+@Singlelonton
+class ScorelondTwelonelontsWelonightelondScorelonsSumScoringPipelonlinelonConfig @Injelonct() (
+  welonightelondScorelonsSumScorelonr: WelonightelondScorelonsSumScorelonr)
+    elonxtelonnds ScoringPipelonlinelonConfig[ScorelondTwelonelontsQuelonry, TwelonelontCandidatelon] {
 
-  override val identifier: ScoringPipelineIdentifier =
-    ScoringPipelineIdentifier("ScoredTweetsWeightedScoresSum")
+  ovelonrridelon val idelonntifielonr: ScoringPipelonlinelonIdelonntifielonr =
+    ScoringPipelonlinelonIdelonntifielonr("ScorelondTwelonelontsWelonightelondScorelonsSum")
 
-  override val selectors: Seq[Selector[ScoredTweetsQuery]] = Seq(
-    InsertAppendResults(
-      AllExceptPipelines(pipelinesToExclude =
-        Set(CachedScoredTweetsCandidatePipelineConfig.Identifier))
+  ovelonrridelon val selonlelonctors: Selonq[Selonlelonctor[ScorelondTwelonelontsQuelonry]] = Selonq(
+    InselonrtAppelonndRelonsults(
+      AllelonxcelonptPipelonlinelons(pipelonlinelonsToelonxcludelon =
+        Selont(CachelondScorelondTwelonelontsCandidatelonPipelonlinelonConfig.Idelonntifielonr))
     )
   )
 
-  override val scorers: Seq[Scorer[ScoredTweetsQuery, TweetCandidate]] = Seq(
-    weightedScoresSumScorer
+  ovelonrridelon val scorelonrs: Selonq[Scorelonr[ScorelondTwelonelontsQuelonry, TwelonelontCandidatelon]] = Selonq(
+    welonightelondScorelonsSumScorelonr
   )
 }

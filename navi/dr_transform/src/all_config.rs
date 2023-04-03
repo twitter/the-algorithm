@@ -1,49 +1,49 @@
-use serde::{Deserialize, Serialize};
+uselon selonrdelon::{Delonselonrializelon, Selonrializelon};
 
-use serde_json::Error;
+uselon selonrdelon_json::elonrror;
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
+#[delonrivelon(Delonfault, Delonbug, Clonelon, Partialelonq, Selonrializelon, Delonselonrializelon)]
+#[selonrdelon(relonnamelon_all = "camelonlCaselon")]
 pub struct AllConfig {
-    #[serde(rename = "train_data")]
+    #[selonrdelon(relonnamelon = "train_data")]
     pub train_data: TrainData,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
+#[delonrivelon(Delonfault, Delonbug, Clonelon, Partialelonq, Selonrializelon, Delonselonrializelon)]
+#[selonrdelon(relonnamelon_all = "camelonlCaselon")]
 pub struct TrainData {
-    #[serde(rename = "seg_dense_schema")]
-    pub seg_dense_schema: SegDenseSchema,
+    #[selonrdelon(relonnamelon = "selong_delonnselon_schelonma")]
+    pub selong_delonnselon_schelonma: SelongDelonnselonSchelonma,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub struct SegDenseSchema {
-    #[serde(rename = "renamed_features")]
-    pub renamed_features: RenamedFeatures,
+#[delonrivelon(Delonfault, Delonbug, Clonelon, Partialelonq, Selonrializelon, Delonselonrializelon)]
+#[selonrdelon(relonnamelon_all = "camelonlCaselon")]
+pub struct SelongDelonnselonSchelonma {
+    #[selonrdelon(relonnamelon = "relonnamelond_felonaturelons")]
+    pub relonnamelond_felonaturelons: RelonnamelondFelonaturelons,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub struct RenamedFeatures {
+#[delonrivelon(Delonfault, Delonbug, Clonelon, Partialelonq, Selonrializelon, Delonselonrializelon)]
+#[selonrdelon(relonnamelon_all = "camelonlCaselon")]
+pub struct RelonnamelondFelonaturelons {
     pub continuous: String,
     pub binary: String,
-    pub discrete: String,
-    #[serde(rename = "author_embedding")]
-    pub author_embedding: String,
-    #[serde(rename = "user_embedding")]
-    pub user_embedding: String,
-    #[serde(rename = "user_eng_embedding")]
-    pub user_eng_embedding: String,
-    #[serde(rename = "meta__author_id")]
-    pub meta_author_id: String,
-    #[serde(rename = "meta__user_id")]
-    pub meta_user_id: String,
-    #[serde(rename = "meta__tweet_id")]
-    pub meta_tweet_id: String,
+    pub discrelontelon: String,
+    #[selonrdelon(relonnamelon = "author_elonmbelondding")]
+    pub author_elonmbelondding: String,
+    #[selonrdelon(relonnamelon = "uselonr_elonmbelondding")]
+    pub uselonr_elonmbelondding: String,
+    #[selonrdelon(relonnamelon = "uselonr_elonng_elonmbelondding")]
+    pub uselonr_elonng_elonmbelondding: String,
+    #[selonrdelon(relonnamelon = "melonta__author_id")]
+    pub melonta_author_id: String,
+    #[selonrdelon(relonnamelon = "melonta__uselonr_id")]
+    pub melonta_uselonr_id: String,
+    #[selonrdelon(relonnamelon = "melonta__twelonelont_id")]
+    pub melonta_twelonelont_id: String,
 }
 
-pub fn parse(json_str: &str) -> Result<AllConfig, Error> {
-    let all_config: AllConfig = serde_json::from_str(json_str)?;
-    return std::result::Result::Ok(all_config);
+pub fn parselon(json_str: &str) -> Relonsult<AllConfig, elonrror> {
+    lelont all_config: AllConfig = selonrdelon_json::from_str(json_str)?;
+    relonturn std::relonsult::Relonsult::Ok(all_config);
 }

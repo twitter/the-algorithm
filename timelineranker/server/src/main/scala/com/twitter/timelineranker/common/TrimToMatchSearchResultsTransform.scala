@@ -1,56 +1,56 @@
-package com.twitter.timelineranker.common
+packagelon com.twittelonr.timelonlinelonrankelonr.common
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.servo.util.FutureArrow
-import com.twitter.timelineranker.core.CandidateEnvelope
-import com.twitter.timelineranker.model.RecapQuery.DependencyProvider
-import com.twitter.timelineranker.util.SourceTweetsUtil
-import com.twitter.util.Future
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.selonrvo.util.FuturelonArrow
+import com.twittelonr.timelonlinelonrankelonr.corelon.Candidatelonelonnvelonlopelon
+import com.twittelonr.timelonlinelonrankelonr.modelonl.ReloncapQuelonry.DelonpelonndelonncyProvidelonr
+import com.twittelonr.timelonlinelonrankelonr.util.SourcelonTwelonelontsUtil
+import com.twittelonr.util.Futurelon
 
 /**
- * trims elements of the envelope other than the searchResults
- * (i.e. sourceSearchResults, hydratedTweets, sourceHydratedTweets) to match with searchResults.
+ * trims elonlelonmelonnts of thelon elonnvelonlopelon othelonr than thelon selonarchRelonsults
+ * (i.elon. sourcelonSelonarchRelonsults, hydratelondTwelonelonts, sourcelonHydratelondTwelonelonts) to match with selonarchRelonsults.
  */
-class TrimToMatchSearchResultsTransform(
-  hydrateReplyRootTweetProvider: DependencyProvider[Boolean],
-  statsReceiver: StatsReceiver)
-    extends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
+class TrimToMatchSelonarchRelonsultsTransform(
+  hydratelonRelonplyRootTwelonelontProvidelonr: DelonpelonndelonncyProvidelonr[Boolelonan],
+  statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds FuturelonArrow[Candidatelonelonnvelonlopelon, Candidatelonelonnvelonlopelon] {
 
-  private val scopedStatsReceiver = statsReceiver.scope(getClass.getSimpleName)
+  privatelon val scopelondStatsReloncelonivelonr = statsReloncelonivelonr.scopelon(gelontClass.gelontSimplelonNamelon)
 
-  override def apply(envelope: CandidateEnvelope): Future[CandidateEnvelope] = {
-    val searchResults = envelope.searchResults
-    val searchResultsIds = searchResults.map(_.id).toSet
+  ovelonrridelon delonf apply(elonnvelonlopelon: Candidatelonelonnvelonlopelon): Futurelon[Candidatelonelonnvelonlopelon] = {
+    val selonarchRelonsults = elonnvelonlopelon.selonarchRelonsults
+    val selonarchRelonsultsIds = selonarchRelonsults.map(_.id).toSelont
 
-    // Trim rest of the seqs to match top search results.
-    val hydratedTweets = envelope.hydratedTweets.outerTweets
-    val topHydratedTweets = hydratedTweets.filter(ht => searchResultsIds.contains(ht.tweetId))
+    // Trim relonst of thelon selonqs to match top selonarch relonsults.
+    val hydratelondTwelonelonts = elonnvelonlopelon.hydratelondTwelonelonts.outelonrTwelonelonts
+    val topHydratelondTwelonelonts = hydratelondTwelonelonts.filtelonr(ht => selonarchRelonsultsIds.contains(ht.twelonelontId))
 
-    envelope.followGraphData.followedUserIdsFuture.map { followedUserIds =>
-      val sourceTweetIdsOfTopResults =
-        SourceTweetsUtil
-          .getSourceTweetIds(
-            searchResults = searchResults,
-            searchResultsTweetIds = searchResultsIds,
-            followedUserIds = followedUserIds,
-            shouldIncludeReplyRootTweets = hydrateReplyRootTweetProvider(envelope.query),
-            statsReceiver = scopedStatsReceiver
-          ).toSet
-      val sourceTweetSearchResultsForTopN =
-        envelope.sourceSearchResults.filter(r => sourceTweetIdsOfTopResults.contains(r.id))
-      val hydratedSourceTweetsForTopN =
-        envelope.sourceHydratedTweets.outerTweets.filter(ht =>
-          sourceTweetIdsOfTopResults.contains(ht.tweetId))
+    elonnvelonlopelon.followGraphData.followelondUselonrIdsFuturelon.map { followelondUselonrIds =>
+      val sourcelonTwelonelontIdsOfTopRelonsults =
+        SourcelonTwelonelontsUtil
+          .gelontSourcelonTwelonelontIds(
+            selonarchRelonsults = selonarchRelonsults,
+            selonarchRelonsultsTwelonelontIds = selonarchRelonsultsIds,
+            followelondUselonrIds = followelondUselonrIds,
+            shouldIncludelonRelonplyRootTwelonelonts = hydratelonRelonplyRootTwelonelontProvidelonr(elonnvelonlopelon.quelonry),
+            statsReloncelonivelonr = scopelondStatsReloncelonivelonr
+          ).toSelont
+      val sourcelonTwelonelontSelonarchRelonsultsForTopN =
+        elonnvelonlopelon.sourcelonSelonarchRelonsults.filtelonr(r => sourcelonTwelonelontIdsOfTopRelonsults.contains(r.id))
+      val hydratelondSourcelonTwelonelontsForTopN =
+        elonnvelonlopelon.sourcelonHydratelondTwelonelonts.outelonrTwelonelonts.filtelonr(ht =>
+          sourcelonTwelonelontIdsOfTopRelonsults.contains(ht.twelonelontId))
 
-      val hydratedTweetsForEnvelope = envelope.hydratedTweets.copy(outerTweets = topHydratedTweets)
-      val hydratedSourceTweetsForEnvelope =
-        envelope.sourceHydratedTweets.copy(outerTweets = hydratedSourceTweetsForTopN)
+      val hydratelondTwelonelontsForelonnvelonlopelon = elonnvelonlopelon.hydratelondTwelonelonts.copy(outelonrTwelonelonts = topHydratelondTwelonelonts)
+      val hydratelondSourcelonTwelonelontsForelonnvelonlopelon =
+        elonnvelonlopelon.sourcelonHydratelondTwelonelonts.copy(outelonrTwelonelonts = hydratelondSourcelonTwelonelontsForTopN)
 
-      envelope.copy(
-        hydratedTweets = hydratedTweetsForEnvelope,
-        searchResults = searchResults,
-        sourceHydratedTweets = hydratedSourceTweetsForEnvelope,
-        sourceSearchResults = sourceTweetSearchResultsForTopN
+      elonnvelonlopelon.copy(
+        hydratelondTwelonelonts = hydratelondTwelonelontsForelonnvelonlopelon,
+        selonarchRelonsults = selonarchRelonsults,
+        sourcelonHydratelondTwelonelonts = hydratelondSourcelonTwelonelontsForelonnvelonlopelon,
+        sourcelonSelonarchRelonsults = sourcelonTwelonelontSelonarchRelonsultsForTopN
       )
     }
   }

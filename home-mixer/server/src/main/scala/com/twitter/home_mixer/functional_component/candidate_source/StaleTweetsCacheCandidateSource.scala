@@ -1,30 +1,30 @@
-package com.twitter.home_mixer.functional_component.candidate_source
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.candidatelon_sourcelon
 
-import com.google.inject.name.Named
-import com.twitter.finagle.memcached.{Client => MemcachedClient}
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.StaleTweetsCache
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.stitch.Stitch
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.googlelon.injelonct.namelon.Namelond
+import com.twittelonr.finaglelon.melonmcachelond.{Clielonnt => MelonmcachelondClielonnt}
+import com.twittelonr.homelon_mixelonr.param.HomelonMixelonrInjelonctionNamelons.StalelonTwelonelontsCachelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.CandidatelonSourcelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonSourcelonIdelonntifielonr
+import com.twittelonr.stitch.Stitch
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class StaleTweetsCacheCandidateSource @Inject() (
-  @Named(StaleTweetsCache) staleTweetsCache: MemcachedClient)
-    extends CandidateSource[Seq[Long], Long] {
+@Singlelonton
+class StalelonTwelonelontsCachelonCandidatelonSourcelon @Injelonct() (
+  @Namelond(StalelonTwelonelontsCachelon) stalelonTwelonelontsCachelon: MelonmcachelondClielonnt)
+    elonxtelonnds CandidatelonSourcelon[Selonq[Long], Long] {
 
-  override val identifier: CandidateSourceIdentifier = CandidateSourceIdentifier("StaleTweetsCache")
+  ovelonrridelon val idelonntifielonr: CandidatelonSourcelonIdelonntifielonr = CandidatelonSourcelonIdelonntifielonr("StalelonTwelonelontsCachelon")
 
-  private val StaleTweetsCacheKeyPrefix = "v1_"
+  privatelon val StalelonTwelonelontsCachelonKelonyPrelonfix = "v1_"
 
-  override def apply(request: Seq[Long]): Stitch[Seq[Long]] = {
-    val keys = request.map(StaleTweetsCacheKeyPrefix + _)
+  ovelonrridelon delonf apply(relonquelonst: Selonq[Long]): Stitch[Selonq[Long]] = {
+    val kelonys = relonquelonst.map(StalelonTwelonelontsCachelonKelonyPrelonfix + _)
 
-    Stitch.callFuture(staleTweetsCache.get(keys).map { tweets =>
-      tweets.map {
-        case (k, _) => k.replaceFirst(StaleTweetsCacheKeyPrefix, "").toLong
-      }.toSeq
+    Stitch.callFuturelon(stalelonTwelonelontsCachelon.gelont(kelonys).map { twelonelonts =>
+      twelonelonts.map {
+        caselon (k, _) => k.relonplacelonFirst(StalelonTwelonelontsCachelonKelonyPrelonfix, "").toLong
+      }.toSelonq
     })
   }
 }

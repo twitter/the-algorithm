@@ -1,259 +1,259 @@
-package com.twitter.home_mixer.functional_component.feature_hydrator.adapters.content
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator.adaptelonrs.contelonnt
 
-import com.twitter.home_mixer.model.ContentFeatures
-import com.twitter.ml.api.Feature
-import com.twitter.ml.api.FeatureContext
-import com.twitter.ml.api.RichDataRecord
-import com.twitter.ml.api.util.DataRecordConverters._
-import com.twitter.timelines.prediction.common.adapters.TimelinesMutatingAdapterBase
-import com.twitter.timelines.prediction.common.adapters.TweetLengthType
-import com.twitter.timelines.prediction.features.common.TimelinesSharedFeatures
-import scala.collection.JavaConverters._
+import com.twittelonr.homelon_mixelonr.modelonl.ContelonntFelonaturelons
+import com.twittelonr.ml.api.Felonaturelon
+import com.twittelonr.ml.api.FelonaturelonContelonxt
+import com.twittelonr.ml.api.RichDataReloncord
+import com.twittelonr.ml.api.util.DataReloncordConvelonrtelonrs._
+import com.twittelonr.timelonlinelons.prelondiction.common.adaptelonrs.TimelonlinelonsMutatingAdaptelonrBaselon
+import com.twittelonr.timelonlinelons.prelondiction.common.adaptelonrs.TwelonelontLelonngthTypelon
+import com.twittelonr.timelonlinelons.prelondiction.felonaturelons.common.TimelonlinelonsSharelondFelonaturelons
+import scala.collelonction.JavaConvelonrtelonrs._
 
-object ContentFeatureAdapter extends TimelinesMutatingAdapterBase[Option[ContentFeatures]] {
+objelonct ContelonntFelonaturelonAdaptelonr elonxtelonnds TimelonlinelonsMutatingAdaptelonrBaselon[Option[ContelonntFelonaturelons]] {
 
-  override val getFeatureContext: FeatureContext = new FeatureContext(
-    TimelinesSharedFeatures.ASPECT_RATIO_DEN,
-    TimelinesSharedFeatures.ASPECT_RATIO_NUM,
-    TimelinesSharedFeatures.BIT_RATE,
-    TimelinesSharedFeatures.CLASSIFICATION_LABELS,
-    TimelinesSharedFeatures.COLOR_1_BLUE,
-    TimelinesSharedFeatures.COLOR_1_GREEN,
-    TimelinesSharedFeatures.COLOR_1_PERCENTAGE,
-    TimelinesSharedFeatures.COLOR_1_RED,
-    TimelinesSharedFeatures.FACE_AREAS,
-    TimelinesSharedFeatures.HAS_APP_INSTALL_CALL_TO_ACTION,
-    TimelinesSharedFeatures.HAS_DESCRIPTION,
-    TimelinesSharedFeatures.HAS_QUESTION,
-    TimelinesSharedFeatures.HAS_SELECTED_PREVIEW_IMAGE,
-    TimelinesSharedFeatures.HAS_TITLE,
-    TimelinesSharedFeatures.HAS_VISIT_SITE_CALL_TO_ACTION,
-    TimelinesSharedFeatures.HAS_WATCH_NOW_CALL_TO_ACTION,
-    TimelinesSharedFeatures.HEIGHT_1,
-    TimelinesSharedFeatures.HEIGHT_2,
-    TimelinesSharedFeatures.HEIGHT_3,
-    TimelinesSharedFeatures.HEIGHT_4,
-    TimelinesSharedFeatures.IS_360,
-    TimelinesSharedFeatures.IS_EMBEDDABLE,
-    TimelinesSharedFeatures.IS_MANAGED,
-    TimelinesSharedFeatures.IS_MONETIZABLE,
-    TimelinesSharedFeatures.MEDIA_PROVIDERS,
-    TimelinesSharedFeatures.NUM_CAPS,
-    TimelinesSharedFeatures.NUM_COLOR_PALLETTE_ITEMS,
-    TimelinesSharedFeatures.NUM_FACES,
-    TimelinesSharedFeatures.NUM_MEDIA_TAGS,
-    TimelinesSharedFeatures.NUM_NEWLINES,
-    TimelinesSharedFeatures.NUM_STICKERS,
-    TimelinesSharedFeatures.NUM_WHITESPACES,
-    TimelinesSharedFeatures.RESIZE_METHOD_1,
-    TimelinesSharedFeatures.RESIZE_METHOD_2,
-    TimelinesSharedFeatures.RESIZE_METHOD_3,
-    TimelinesSharedFeatures.RESIZE_METHOD_4,
-    TimelinesSharedFeatures.TWEET_LENGTH,
-    TimelinesSharedFeatures.TWEET_LENGTH_TYPE,
-    TimelinesSharedFeatures.VIDEO_DURATION,
-    TimelinesSharedFeatures.VIEW_COUNT,
-    TimelinesSharedFeatures.WIDTH_1,
-    TimelinesSharedFeatures.WIDTH_2,
-    TimelinesSharedFeatures.WIDTH_3,
-    TimelinesSharedFeatures.WIDTH_4,
+  ovelonrridelon val gelontFelonaturelonContelonxt: FelonaturelonContelonxt = nelonw FelonaturelonContelonxt(
+    TimelonlinelonsSharelondFelonaturelons.ASPelonCT_RATIO_DelonN,
+    TimelonlinelonsSharelondFelonaturelons.ASPelonCT_RATIO_NUM,
+    TimelonlinelonsSharelondFelonaturelons.BIT_RATelon,
+    TimelonlinelonsSharelondFelonaturelons.CLASSIFICATION_LABelonLS,
+    TimelonlinelonsSharelondFelonaturelons.COLOR_1_BLUelon,
+    TimelonlinelonsSharelondFelonaturelons.COLOR_1_GRelonelonN,
+    TimelonlinelonsSharelondFelonaturelons.COLOR_1_PelonRCelonNTAGelon,
+    TimelonlinelonsSharelondFelonaturelons.COLOR_1_RelonD,
+    TimelonlinelonsSharelondFelonaturelons.FACelon_ARelonAS,
+    TimelonlinelonsSharelondFelonaturelons.HAS_APP_INSTALL_CALL_TO_ACTION,
+    TimelonlinelonsSharelondFelonaturelons.HAS_DelonSCRIPTION,
+    TimelonlinelonsSharelondFelonaturelons.HAS_QUelonSTION,
+    TimelonlinelonsSharelondFelonaturelons.HAS_SelonLelonCTelonD_PRelonVIelonW_IMAGelon,
+    TimelonlinelonsSharelondFelonaturelons.HAS_TITLelon,
+    TimelonlinelonsSharelondFelonaturelons.HAS_VISIT_SITelon_CALL_TO_ACTION,
+    TimelonlinelonsSharelondFelonaturelons.HAS_WATCH_NOW_CALL_TO_ACTION,
+    TimelonlinelonsSharelondFelonaturelons.HelonIGHT_1,
+    TimelonlinelonsSharelondFelonaturelons.HelonIGHT_2,
+    TimelonlinelonsSharelondFelonaturelons.HelonIGHT_3,
+    TimelonlinelonsSharelondFelonaturelons.HelonIGHT_4,
+    TimelonlinelonsSharelondFelonaturelons.IS_360,
+    TimelonlinelonsSharelondFelonaturelons.IS_elonMBelonDDABLelon,
+    TimelonlinelonsSharelondFelonaturelons.IS_MANAGelonD,
+    TimelonlinelonsSharelondFelonaturelons.IS_MONelonTIZABLelon,
+    TimelonlinelonsSharelondFelonaturelons.MelonDIA_PROVIDelonRS,
+    TimelonlinelonsSharelondFelonaturelons.NUM_CAPS,
+    TimelonlinelonsSharelondFelonaturelons.NUM_COLOR_PALLelonTTelon_ITelonMS,
+    TimelonlinelonsSharelondFelonaturelons.NUM_FACelonS,
+    TimelonlinelonsSharelondFelonaturelons.NUM_MelonDIA_TAGS,
+    TimelonlinelonsSharelondFelonaturelons.NUM_NelonWLINelonS,
+    TimelonlinelonsSharelondFelonaturelons.NUM_STICKelonRS,
+    TimelonlinelonsSharelondFelonaturelons.NUM_WHITelonSPACelonS,
+    TimelonlinelonsSharelondFelonaturelons.RelonSIZelon_MelonTHOD_1,
+    TimelonlinelonsSharelondFelonaturelons.RelonSIZelon_MelonTHOD_2,
+    TimelonlinelonsSharelondFelonaturelons.RelonSIZelon_MelonTHOD_3,
+    TimelonlinelonsSharelondFelonaturelons.RelonSIZelon_MelonTHOD_4,
+    TimelonlinelonsSharelondFelonaturelons.TWelonelonT_LelonNGTH,
+    TimelonlinelonsSharelondFelonaturelons.TWelonelonT_LelonNGTH_TYPelon,
+    TimelonlinelonsSharelondFelonaturelons.VIDelonO_DURATION,
+    TimelonlinelonsSharelondFelonaturelons.VIelonW_COUNT,
+    TimelonlinelonsSharelondFelonaturelons.WIDTH_1,
+    TimelonlinelonsSharelondFelonaturelons.WIDTH_2,
+    TimelonlinelonsSharelondFelonaturelons.WIDTH_3,
+    TimelonlinelonsSharelondFelonaturelons.WIDTH_4,
   )
 
-  override val commonFeatures: Set[Feature[_]] = Set.empty
+  ovelonrridelon val commonFelonaturelons: Selont[Felonaturelon[_]] = Selont.elonmpty
 
-  private def getTweetLengthType(tweetLength: Int): Long = {
-    tweetLength match {
-      case x if 0 > x || 280 < x => TweetLengthType.INVALID
-      case x if 0 <= x && x <= 30 => TweetLengthType.VERY_SHORT
-      case x if 30 < x && x <= 60 => TweetLengthType.SHORT
-      case x if 60 < x && x <= 90 => TweetLengthType.MEDIUM
-      case x if 90 < x && x <= 140 => TweetLengthType.LENGTHY
-      case x if 140 < x && x <= 210 => TweetLengthType.VERY_LENGTHY
-      case x if x > 210 => TweetLengthType.MAXIMUM_LENGTH
+  privatelon delonf gelontTwelonelontLelonngthTypelon(twelonelontLelonngth: Int): Long = {
+    twelonelontLelonngth match {
+      caselon x if 0 > x || 280 < x => TwelonelontLelonngthTypelon.INVALID
+      caselon x if 0 <= x && x <= 30 => TwelonelontLelonngthTypelon.VelonRY_SHORT
+      caselon x if 30 < x && x <= 60 => TwelonelontLelonngthTypelon.SHORT
+      caselon x if 60 < x && x <= 90 => TwelonelontLelonngthTypelon.MelonDIUM
+      caselon x if 90 < x && x <= 140 => TwelonelontLelonngthTypelon.LelonNGTHY
+      caselon x if 140 < x && x <= 210 => TwelonelontLelonngthTypelon.VelonRY_LelonNGTHY
+      caselon x if x > 210 => TwelonelontLelonngthTypelon.MAXIMUM_LelonNGTH
     }
   }
 
-  override def setFeatures(
-    contentFeatures: Option[ContentFeatures],
-    richDataRecord: RichDataRecord
+  ovelonrridelon delonf selontFelonaturelons(
+    contelonntFelonaturelons: Option[ContelonntFelonaturelons],
+    richDataReloncord: RichDataReloncord
   ): Unit = {
-    if (contentFeatures.nonEmpty) {
-      val features = contentFeatures.get
-      // Media Features
-      richDataRecord.setFeatureValueFromOption(
-        TimelinesSharedFeatures.ASPECT_RATIO_DEN,
-        features.aspectRatioDen.map(_.toDouble)
+    if (contelonntFelonaturelons.nonelonmpty) {
+      val felonaturelons = contelonntFelonaturelons.gelont
+      // Melondia Felonaturelons
+      richDataReloncord.selontFelonaturelonValuelonFromOption(
+        TimelonlinelonsSharelondFelonaturelons.ASPelonCT_RATIO_DelonN,
+        felonaturelons.aspelonctRatioDelonn.map(_.toDoublelon)
       )
-      richDataRecord.setFeatureValueFromOption(
-        TimelinesSharedFeatures.ASPECT_RATIO_NUM,
-        features.aspectRatioNum.map(_.toDouble)
+      richDataReloncord.selontFelonaturelonValuelonFromOption(
+        TimelonlinelonsSharelondFelonaturelons.ASPelonCT_RATIO_NUM,
+        felonaturelons.aspelonctRatioNum.map(_.toDoublelon)
       )
-      richDataRecord.setFeatureValueFromOption(
-        TimelinesSharedFeatures.BIT_RATE,
-        features.bitRate.map(_.toDouble)
+      richDataReloncord.selontFelonaturelonValuelonFromOption(
+        TimelonlinelonsSharelondFelonaturelons.BIT_RATelon,
+        felonaturelons.bitRatelon.map(_.toDoublelon)
       )
-      richDataRecord.setFeatureValueFromOption(
-        TimelinesSharedFeatures.HEIGHT_1,
-        features.heights.flatMap(_.lift(0)).map(_.toDouble)
+      richDataReloncord.selontFelonaturelonValuelonFromOption(
+        TimelonlinelonsSharelondFelonaturelons.HelonIGHT_1,
+        felonaturelons.helonights.flatMap(_.lift(0)).map(_.toDoublelon)
       )
-      richDataRecord.setFeatureValueFromOption(
-        TimelinesSharedFeatures.HEIGHT_2,
-        features.heights.flatMap(_.lift(1)).map(_.toDouble)
+      richDataReloncord.selontFelonaturelonValuelonFromOption(
+        TimelonlinelonsSharelondFelonaturelons.HelonIGHT_2,
+        felonaturelons.helonights.flatMap(_.lift(1)).map(_.toDoublelon)
       )
-      richDataRecord.setFeatureValueFromOption(
-        TimelinesSharedFeatures.HEIGHT_3,
-        features.heights.flatMap(_.lift(2)).map(_.toDouble)
+      richDataReloncord.selontFelonaturelonValuelonFromOption(
+        TimelonlinelonsSharelondFelonaturelons.HelonIGHT_3,
+        felonaturelons.helonights.flatMap(_.lift(2)).map(_.toDoublelon)
       )
-      richDataRecord.setFeatureValueFromOption(
-        TimelinesSharedFeatures.HEIGHT_4,
-        features.heights.flatMap(_.lift(3)).map(_.toDouble)
+      richDataReloncord.selontFelonaturelonValuelonFromOption(
+        TimelonlinelonsSharelondFelonaturelons.HelonIGHT_4,
+        felonaturelons.helonights.flatMap(_.lift(3)).map(_.toDoublelon)
       )
-      richDataRecord.setFeatureValueFromOption(
-        TimelinesSharedFeatures.NUM_MEDIA_TAGS,
-        features.numMediaTags.map(_.toDouble)
+      richDataReloncord.selontFelonaturelonValuelonFromOption(
+        TimelonlinelonsSharelondFelonaturelons.NUM_MelonDIA_TAGS,
+        felonaturelons.numMelondiaTags.map(_.toDoublelon)
       )
-      richDataRecord.setFeatureValueFromOption(
-        TimelinesSharedFeatures.RESIZE_METHOD_1,
-        features.resizeMethods.flatMap(_.lift(0)).map(_.toLong)
+      richDataReloncord.selontFelonaturelonValuelonFromOption(
+        TimelonlinelonsSharelondFelonaturelons.RelonSIZelon_MelonTHOD_1,
+        felonaturelons.relonsizelonMelonthods.flatMap(_.lift(0)).map(_.toLong)
       )
-      richDataRecord.setFeatureValueFromOption(
-        TimelinesSharedFeatures.RESIZE_METHOD_2,
-        features.resizeMethods.flatMap(_.lift(1)).map(_.toLong)
+      richDataReloncord.selontFelonaturelonValuelonFromOption(
+        TimelonlinelonsSharelondFelonaturelons.RelonSIZelon_MelonTHOD_2,
+        felonaturelons.relonsizelonMelonthods.flatMap(_.lift(1)).map(_.toLong)
       )
-      richDataRecord.setFeatureValueFromOption(
-        TimelinesSharedFeatures.RESIZE_METHOD_3,
-        features.resizeMethods.flatMap(_.lift(2)).map(_.toLong)
+      richDataReloncord.selontFelonaturelonValuelonFromOption(
+        TimelonlinelonsSharelondFelonaturelons.RelonSIZelon_MelonTHOD_3,
+        felonaturelons.relonsizelonMelonthods.flatMap(_.lift(2)).map(_.toLong)
       )
-      richDataRecord.setFeatureValueFromOption(
-        TimelinesSharedFeatures.RESIZE_METHOD_4,
-        features.resizeMethods.flatMap(_.lift(3)).map(_.toLong)
+      richDataReloncord.selontFelonaturelonValuelonFromOption(
+        TimelonlinelonsSharelondFelonaturelons.RelonSIZelon_MelonTHOD_4,
+        felonaturelons.relonsizelonMelonthods.flatMap(_.lift(3)).map(_.toLong)
       )
-      richDataRecord.setFeatureValueFromOption(
-        TimelinesSharedFeatures.VIDEO_DURATION,
-        features.videoDurationMs.map(_.toDouble)
+      richDataReloncord.selontFelonaturelonValuelonFromOption(
+        TimelonlinelonsSharelondFelonaturelons.VIDelonO_DURATION,
+        felonaturelons.videlonoDurationMs.map(_.toDoublelon)
       )
-      richDataRecord.setFeatureValueFromOption(
-        TimelinesSharedFeatures.WIDTH_1,
-        features.widths.flatMap(_.lift(0)).map(_.toDouble)
+      richDataReloncord.selontFelonaturelonValuelonFromOption(
+        TimelonlinelonsSharelondFelonaturelons.WIDTH_1,
+        felonaturelons.widths.flatMap(_.lift(0)).map(_.toDoublelon)
       )
-      richDataRecord.setFeatureValueFromOption(
-        TimelinesSharedFeatures.WIDTH_2,
-        features.widths.flatMap(_.lift(1)).map(_.toDouble)
+      richDataReloncord.selontFelonaturelonValuelonFromOption(
+        TimelonlinelonsSharelondFelonaturelons.WIDTH_2,
+        felonaturelons.widths.flatMap(_.lift(1)).map(_.toDoublelon)
       )
-      richDataRecord.setFeatureValueFromOption(
-        TimelinesSharedFeatures.WIDTH_3,
-        features.widths.flatMap(_.lift(2)).map(_.toDouble)
+      richDataReloncord.selontFelonaturelonValuelonFromOption(
+        TimelonlinelonsSharelondFelonaturelons.WIDTH_3,
+        felonaturelons.widths.flatMap(_.lift(2)).map(_.toDoublelon)
       )
-      richDataRecord.setFeatureValueFromOption(
-        TimelinesSharedFeatures.WIDTH_4,
-        features.widths.flatMap(_.lift(3)).map(_.toDouble)
+      richDataReloncord.selontFelonaturelonValuelonFromOption(
+        TimelonlinelonsSharelondFelonaturelons.WIDTH_4,
+        felonaturelons.widths.flatMap(_.lift(3)).map(_.toDoublelon)
       )
-      richDataRecord.setFeatureValueFromOption(
-        TimelinesSharedFeatures.NUM_COLOR_PALLETTE_ITEMS,
-        features.numColors.map(_.toDouble)
+      richDataReloncord.selontFelonaturelonValuelonFromOption(
+        TimelonlinelonsSharelondFelonaturelons.NUM_COLOR_PALLelonTTelon_ITelonMS,
+        felonaturelons.numColors.map(_.toDoublelon)
       )
-      richDataRecord.setFeatureValueFromOption(
-        TimelinesSharedFeatures.COLOR_1_RED,
-        features.dominantColorRed.map(_.toDouble)
+      richDataReloncord.selontFelonaturelonValuelonFromOption(
+        TimelonlinelonsSharelondFelonaturelons.COLOR_1_RelonD,
+        felonaturelons.dominantColorRelond.map(_.toDoublelon)
       )
-      richDataRecord.setFeatureValueFromOption(
-        TimelinesSharedFeatures.COLOR_1_BLUE,
-        features.dominantColorBlue.map(_.toDouble)
+      richDataReloncord.selontFelonaturelonValuelonFromOption(
+        TimelonlinelonsSharelondFelonaturelons.COLOR_1_BLUelon,
+        felonaturelons.dominantColorBluelon.map(_.toDoublelon)
       )
-      richDataRecord.setFeatureValueFromOption(
-        TimelinesSharedFeatures.COLOR_1_GREEN,
-        features.dominantColorGreen.map(_.toDouble)
+      richDataReloncord.selontFelonaturelonValuelonFromOption(
+        TimelonlinelonsSharelondFelonaturelons.COLOR_1_GRelonelonN,
+        felonaturelons.dominantColorGrelonelonn.map(_.toDoublelon)
       )
-      richDataRecord.setFeatureValueFromOption(
-        TimelinesSharedFeatures.COLOR_1_PERCENTAGE,
-        features.dominantColorPercentage
+      richDataReloncord.selontFelonaturelonValuelonFromOption(
+        TimelonlinelonsSharelondFelonaturelons.COLOR_1_PelonRCelonNTAGelon,
+        felonaturelons.dominantColorPelonrcelonntagelon
       )
-      richDataRecord.setFeatureValueFromOption(
-        TimelinesSharedFeatures.MEDIA_PROVIDERS,
-        features.mediaOriginProviders.map(_.toSet.asJava)
+      richDataReloncord.selontFelonaturelonValuelonFromOption(
+        TimelonlinelonsSharelondFelonaturelons.MelonDIA_PROVIDelonRS,
+        felonaturelons.melondiaOriginProvidelonrs.map(_.toSelont.asJava)
       )
-      richDataRecord.setFeatureValueFromOption(
-        TimelinesSharedFeatures.IS_360,
-        features.is360
+      richDataReloncord.selontFelonaturelonValuelonFromOption(
+        TimelonlinelonsSharelondFelonaturelons.IS_360,
+        felonaturelons.is360
       )
-      richDataRecord.setFeatureValueFromOption(
-        TimelinesSharedFeatures.VIEW_COUNT,
-        features.viewCount.map(_.toDouble)
+      richDataReloncord.selontFelonaturelonValuelonFromOption(
+        TimelonlinelonsSharelondFelonaturelons.VIelonW_COUNT,
+        felonaturelons.vielonwCount.map(_.toDoublelon)
       )
-      richDataRecord.setFeatureValueFromOption(
-        TimelinesSharedFeatures.IS_MANAGED,
-        features.isManaged
+      richDataReloncord.selontFelonaturelonValuelonFromOption(
+        TimelonlinelonsSharelondFelonaturelons.IS_MANAGelonD,
+        felonaturelons.isManagelond
       )
-      richDataRecord.setFeatureValueFromOption(
-        TimelinesSharedFeatures.IS_MONETIZABLE,
-        features.isMonetizable
+      richDataReloncord.selontFelonaturelonValuelonFromOption(
+        TimelonlinelonsSharelondFelonaturelons.IS_MONelonTIZABLelon,
+        felonaturelons.isMonelontizablelon
       )
-      richDataRecord.setFeatureValueFromOption(
-        TimelinesSharedFeatures.IS_EMBEDDABLE,
-        features.isEmbeddable
+      richDataReloncord.selontFelonaturelonValuelonFromOption(
+        TimelonlinelonsSharelondFelonaturelons.IS_elonMBelonDDABLelon,
+        felonaturelons.iselonmbelonddablelon
       )
-      richDataRecord.setFeatureValueFromOption(
-        TimelinesSharedFeatures.NUM_STICKERS,
-        features.stickerIds.map(_.length.toDouble)
+      richDataReloncord.selontFelonaturelonValuelonFromOption(
+        TimelonlinelonsSharelondFelonaturelons.NUM_STICKelonRS,
+        felonaturelons.stickelonrIds.map(_.lelonngth.toDoublelon)
       )
-      richDataRecord.setFeatureValueFromOption(
-        TimelinesSharedFeatures.NUM_FACES,
-        features.faceAreas.map(_.length.toDouble)
+      richDataReloncord.selontFelonaturelonValuelonFromOption(
+        TimelonlinelonsSharelondFelonaturelons.NUM_FACelonS,
+        felonaturelons.facelonArelonas.map(_.lelonngth.toDoublelon)
       )
-      richDataRecord.setFeatureValueFromOption(
-        TimelinesSharedFeatures.FACE_AREAS,
-        // guard for exception from max on empty seq
-        features.faceAreas.map(faceAreas =>
-          faceAreas.map(_.toDouble).reduceOption(_ max _).getOrElse(0.0))
+      richDataReloncord.selontFelonaturelonValuelonFromOption(
+        TimelonlinelonsSharelondFelonaturelons.FACelon_ARelonAS,
+        // guard for elonxcelonption from max on elonmpty selonq
+        felonaturelons.facelonArelonas.map(facelonArelonas =>
+          facelonArelonas.map(_.toDoublelon).relonducelonOption(_ max _).gelontOrelonlselon(0.0))
       )
-      richDataRecord.setFeatureValueFromOption(
-        TimelinesSharedFeatures.HAS_SELECTED_PREVIEW_IMAGE,
-        features.hasSelectedPreviewImage
+      richDataReloncord.selontFelonaturelonValuelonFromOption(
+        TimelonlinelonsSharelondFelonaturelons.HAS_SelonLelonCTelonD_PRelonVIelonW_IMAGelon,
+        felonaturelons.hasSelonlelonctelondPrelonvielonwImagelon
       )
-      richDataRecord.setFeatureValueFromOption(
-        TimelinesSharedFeatures.HAS_TITLE,
-        features.hasTitle
+      richDataReloncord.selontFelonaturelonValuelonFromOption(
+        TimelonlinelonsSharelondFelonaturelons.HAS_TITLelon,
+        felonaturelons.hasTitlelon
       )
-      richDataRecord.setFeatureValueFromOption(
-        TimelinesSharedFeatures.HAS_DESCRIPTION,
-        features.hasDescription
+      richDataReloncord.selontFelonaturelonValuelonFromOption(
+        TimelonlinelonsSharelondFelonaturelons.HAS_DelonSCRIPTION,
+        felonaturelons.hasDelonscription
       )
-      richDataRecord.setFeatureValueFromOption(
-        TimelinesSharedFeatures.HAS_VISIT_SITE_CALL_TO_ACTION,
-        features.hasVisitSiteCallToAction
+      richDataReloncord.selontFelonaturelonValuelonFromOption(
+        TimelonlinelonsSharelondFelonaturelons.HAS_VISIT_SITelon_CALL_TO_ACTION,
+        felonaturelons.hasVisitSitelonCallToAction
       )
-      richDataRecord.setFeatureValueFromOption(
-        TimelinesSharedFeatures.HAS_APP_INSTALL_CALL_TO_ACTION,
-        features.hasAppInstallCallToAction
+      richDataReloncord.selontFelonaturelonValuelonFromOption(
+        TimelonlinelonsSharelondFelonaturelons.HAS_APP_INSTALL_CALL_TO_ACTION,
+        felonaturelons.hasAppInstallCallToAction
       )
-      richDataRecord.setFeatureValueFromOption(
-        TimelinesSharedFeatures.HAS_WATCH_NOW_CALL_TO_ACTION,
-        features.hasWatchNowCallToAction
+      richDataReloncord.selontFelonaturelonValuelonFromOption(
+        TimelonlinelonsSharelondFelonaturelons.HAS_WATCH_NOW_CALL_TO_ACTION,
+        felonaturelons.hasWatchNowCallToAction
       )
-      // text features
-      richDataRecord.setFeatureValueFromOption(
-        TimelinesSharedFeatures.NUM_CAPS,
-        Some(features.numCaps.toDouble)
+      // telonxt felonaturelons
+      richDataReloncord.selontFelonaturelonValuelonFromOption(
+        TimelonlinelonsSharelondFelonaturelons.NUM_CAPS,
+        Somelon(felonaturelons.numCaps.toDoublelon)
       )
-      richDataRecord.setFeatureValueFromOption(
-        TimelinesSharedFeatures.TWEET_LENGTH,
-        Some(features.length.toDouble)
+      richDataReloncord.selontFelonaturelonValuelonFromOption(
+        TimelonlinelonsSharelondFelonaturelons.TWelonelonT_LelonNGTH,
+        Somelon(felonaturelons.lelonngth.toDoublelon)
       )
-      richDataRecord.setFeatureValueFromOption(
-        TimelinesSharedFeatures.TWEET_LENGTH_TYPE,
-        Some(getTweetLengthType(features.length.toInt))
+      richDataReloncord.selontFelonaturelonValuelonFromOption(
+        TimelonlinelonsSharelondFelonaturelons.TWelonelonT_LelonNGTH_TYPelon,
+        Somelon(gelontTwelonelontLelonngthTypelon(felonaturelons.lelonngth.toInt))
       )
-      richDataRecord.setFeatureValueFromOption(
-        TimelinesSharedFeatures.NUM_WHITESPACES,
-        Some(features.numWhiteSpaces.toDouble)
+      richDataReloncord.selontFelonaturelonValuelonFromOption(
+        TimelonlinelonsSharelondFelonaturelons.NUM_WHITelonSPACelonS,
+        Somelon(felonaturelons.numWhitelonSpacelons.toDoublelon)
       )
-      richDataRecord.setFeatureValueFromOption(
-        TimelinesSharedFeatures.HAS_QUESTION,
-        Some(features.hasQuestion)
+      richDataReloncord.selontFelonaturelonValuelonFromOption(
+        TimelonlinelonsSharelondFelonaturelons.HAS_QUelonSTION,
+        Somelon(felonaturelons.hasQuelonstion)
       )
-      richDataRecord.setFeatureValueFromOption(
-        TimelinesSharedFeatures.NUM_NEWLINES,
-        features.numNewlines.map(_.toDouble)
+      richDataReloncord.selontFelonaturelonValuelonFromOption(
+        TimelonlinelonsSharelondFelonaturelons.NUM_NelonWLINelonS,
+        felonaturelons.numNelonwlinelons.map(_.toDoublelon)
       )
     }
   }

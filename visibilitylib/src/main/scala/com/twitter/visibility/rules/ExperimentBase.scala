@@ -1,18 +1,18 @@
-package com.twitter.visibility.rules
+packagelon com.twittelonr.visibility.rulelons
 
-import com.twitter.timelines.configapi.Params
-import com.twitter.visibility.configapi.params.LabelSourceParam
-import com.twitter.visibility.models.LabelSource
+import com.twittelonr.timelonlinelons.configapi.Params
+import com.twittelonr.visibility.configapi.params.LabelonlSourcelonParam
+import com.twittelonr.visibility.modelonls.LabelonlSourcelon
 
-object ExperimentBase {
-  val sourceToParamMap: Map[LabelSource, LabelSourceParam] = Map.empty
+objelonct elonxpelonrimelonntBaselon {
+  val sourcelonToParamMap: Map[LabelonlSourcelon, LabelonlSourcelonParam] = Map.elonmpty
 
-  final def shouldFilterForSource(params: Params, labelSourceOpt: Option[LabelSource]): Boolean = {
-    labelSourceOpt
-      .map { source =>
-        val param = ExperimentBase.sourceToParamMap.get(source)
-        param.map(params.apply).getOrElse(true)
+  final delonf shouldFiltelonrForSourcelon(params: Params, labelonlSourcelonOpt: Option[LabelonlSourcelon]): Boolelonan = {
+    labelonlSourcelonOpt
+      .map { sourcelon =>
+        val param = elonxpelonrimelonntBaselon.sourcelonToParamMap.gelont(sourcelon)
+        param.map(params.apply).gelontOrelonlselon(truelon)
       }
-      .getOrElse(true)
+      .gelontOrelonlselon(truelon)
   }
 }

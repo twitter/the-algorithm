@@ -1,54 +1,54 @@
-package com.twitter.simclusters_v2.tweet_similarity
+packagelon com.twittelonr.simclustelonrs_v2.twelonelont_similarity
 
-import com.twitter.ml.api.Feature.{Binary, Continuous, Discrete, SparseContinuous}
-import com.twitter.ml.api.util.FDsl._
-import com.twitter.ml.api.{DataRecord, FeatureContext, IRecordOneToOneAdapter}
-import com.twitter.ml.featurestore.catalog.features.recommendations.ProducerSimClustersEmbedding
-import com.twitter.ml.featurestore.lib.UserId
-import com.twitter.ml.featurestore.lib.data.{PredictionRecord, PredictionRecordAdapter}
-import com.twitter.ml.featurestore.lib.entity.Entity
-import com.twitter.ml.featurestore.lib.feature.BoundFeatureSet
+import com.twittelonr.ml.api.Felonaturelon.{Binary, Continuous, Discrelontelon, SparselonContinuous}
+import com.twittelonr.ml.api.util.FDsl._
+import com.twittelonr.ml.api.{DataReloncord, FelonaturelonContelonxt, IReloncordOnelonToOnelonAdaptelonr}
+import com.twittelonr.ml.felonaturelonstorelon.catalog.felonaturelons.reloncommelonndations.ProducelonrSimClustelonrselonmbelondding
+import com.twittelonr.ml.felonaturelonstorelon.lib.UselonrId
+import com.twittelonr.ml.felonaturelonstorelon.lib.data.{PrelondictionReloncord, PrelondictionReloncordAdaptelonr}
+import com.twittelonr.ml.felonaturelonstorelon.lib.elonntity.elonntity
+import com.twittelonr.ml.felonaturelonstorelon.lib.felonaturelon.BoundFelonaturelonSelont
 
-object TweetSimilarityFeatures {
-  val QueryTweetId = new Discrete("query_tweet.id")
-  val CandidateTweetId = new Discrete("candidate_tweet.id")
-  val QueryTweetEmbedding = new SparseContinuous("query_tweet.simclusters_embedding")
-  val CandidateTweetEmbedding = new SparseContinuous("candidate_tweet.simclusters_embedding")
-  val QueryTweetEmbeddingNorm = new Continuous("query_tweet.embedding_norm")
-  val CandidateTweetEmbeddingNorm = new Continuous("candidate_tweet.embedding_norm")
-  val QueryTweetTimestamp = new Discrete("query_tweet.timestamp")
-  val CandidateTweetTimestamp = new Discrete("candidate_tweet.timestamp")
-  val TweetPairCount = new Discrete("popularity_count.tweet_pair")
-  val QueryTweetCount = new Discrete("popularity_count.query_tweet")
-  val CosineSimilarity = new Continuous("meta.cosine_similarity")
-  val Label = new Binary("co-engagement.label")
+objelonct TwelonelontSimilarityFelonaturelons {
+  val QuelonryTwelonelontId = nelonw Discrelontelon("quelonry_twelonelont.id")
+  val CandidatelonTwelonelontId = nelonw Discrelontelon("candidatelon_twelonelont.id")
+  val QuelonryTwelonelontelonmbelondding = nelonw SparselonContinuous("quelonry_twelonelont.simclustelonrs_elonmbelondding")
+  val CandidatelonTwelonelontelonmbelondding = nelonw SparselonContinuous("candidatelon_twelonelont.simclustelonrs_elonmbelondding")
+  val QuelonryTwelonelontelonmbelonddingNorm = nelonw Continuous("quelonry_twelonelont.elonmbelondding_norm")
+  val CandidatelonTwelonelontelonmbelonddingNorm = nelonw Continuous("candidatelon_twelonelont.elonmbelondding_norm")
+  val QuelonryTwelonelontTimelonstamp = nelonw Discrelontelon("quelonry_twelonelont.timelonstamp")
+  val CandidatelonTwelonelontTimelonstamp = nelonw Discrelontelon("candidatelon_twelonelont.timelonstamp")
+  val TwelonelontPairCount = nelonw Discrelontelon("popularity_count.twelonelont_pair")
+  val QuelonryTwelonelontCount = nelonw Discrelontelon("popularity_count.quelonry_twelonelont")
+  val CosinelonSimilarity = nelonw Continuous("melonta.cosinelon_similarity")
+  val Labelonl = nelonw Binary("co-elonngagelonmelonnt.labelonl")
 
-  val FeatureContext: FeatureContext = new FeatureContext(
-    QueryTweetId,
-    CandidateTweetId,
-    QueryTweetEmbedding,
-    CandidateTweetEmbedding,
-    QueryTweetEmbeddingNorm,
-    CandidateTweetEmbeddingNorm,
-    QueryTweetTimestamp,
-    CandidateTweetTimestamp,
-    TweetPairCount,
-    QueryTweetCount,
-    CosineSimilarity,
-    Label
+  val FelonaturelonContelonxt: FelonaturelonContelonxt = nelonw FelonaturelonContelonxt(
+    QuelonryTwelonelontId,
+    CandidatelonTwelonelontId,
+    QuelonryTwelonelontelonmbelondding,
+    CandidatelonTwelonelontelonmbelondding,
+    QuelonryTwelonelontelonmbelonddingNorm,
+    CandidatelonTwelonelontelonmbelonddingNorm,
+    QuelonryTwelonelontTimelonstamp,
+    CandidatelonTwelonelontTimelonstamp,
+    TwelonelontPairCount,
+    QuelonryTwelonelontCount,
+    CosinelonSimilarity,
+    Labelonl
   )
 
-  def isCoengaged(dataRecord: DataRecord): Boolean = {
-    dataRecord.getFeatureValue(Label)
+  delonf isCoelonngagelond(dataReloncord: DataReloncord): Boolelonan = {
+    dataReloncord.gelontFelonaturelonValuelon(Labelonl)
   }
 }
 
-class TweetSimilarityFeaturesStoreConfig(identifier: String) {
-  val bindingIdentifier: Entity[UserId] = Entity[UserId](identifier)
+class TwelonelontSimilarityFelonaturelonsStorelonConfig(idelonntifielonr: String) {
+  val bindingIdelonntifielonr: elonntity[UselonrId] = elonntity[UselonrId](idelonntifielonr)
 
-  val featureStoreBoundFeatureSet: BoundFeatureSet = BoundFeatureSet(
-    ProducerSimClustersEmbedding.FavBasedEmbedding20m145kUpdated.bind(bindingIdentifier))
+  val felonaturelonStorelonBoundFelonaturelonSelont: BoundFelonaturelonSelont = BoundFelonaturelonSelont(
+    ProducelonrSimClustelonrselonmbelondding.FavBaselondelonmbelondding20m145kUpdatelond.bind(bindingIdelonntifielonr))
 
-  val predictionRecordAdapter: IRecordOneToOneAdapter[PredictionRecord] =
-    PredictionRecordAdapter.oneToOne(featureStoreBoundFeatureSet)
+  val prelondictionReloncordAdaptelonr: IReloncordOnelonToOnelonAdaptelonr[PrelondictionReloncord] =
+    PrelondictionReloncordAdaptelonr.onelonToOnelon(felonaturelonStorelonBoundFelonaturelonSelont)
 }

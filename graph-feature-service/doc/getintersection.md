@@ -1,43 +1,43 @@
-# GetIntersection
+# GelontIntelonrselonction
 
-## Request and response syntax
+## Relonquelonst and relonsponselon syntax
 
-A `GetIntersection` call takes as input a `GfsIntersectionRequest` thrift struct. 
+A `GelontIntelonrselonction` call takelons as input a `GfsIntelonrselonctionRelonquelonst` thrift struct. 
 
 ```thrift
-struct GfsIntersectionRequest {
-  1: required i64 userId
-  2: required list<i64> candidateUserIds
-  3: required list<FeatureType> featureTypes
+struct GfsIntelonrselonctionRelonquelonst {
+  1: relonquirelond i64 uselonrId
+  2: relonquirelond list<i64> candidatelonUselonrIds
+  3: relonquirelond list<FelonaturelonTypelon> felonaturelonTypelons
 }
 ```
 
-The response is returned in a `GfsIntersectionResponse` thrift struct.
+Thelon relonsponselon is relonturnelond in a `GfsIntelonrselonctionRelonsponselon` thrift struct.
 
 ```thrift
-struct GfsIntersectionResponse {
-  1: required i64 userId
-  2: required list<GfsIntersectionResult> results
+struct GfsIntelonrselonctionRelonsponselon {
+  1: relonquirelond i64 uselonrId
+  2: relonquirelond list<GfsIntelonrselonctionRelonsult> relonsults
 }
 
-struct GfsIntersectionResult {
-  1: required i64 candidateUserId
-  2: required list<IntersectionValue> intersectionValues
+struct GfsIntelonrselonctionRelonsult {
+  1: relonquirelond i64 candidatelonUselonrId
+  2: relonquirelond list<IntelonrselonctionValuelon> intelonrselonctionValuelons
 }
 
-struct IntersectionValue {
-  1: required FeatureType featureType
+struct IntelonrselonctionValuelon {
+  1: relonquirelond FelonaturelonTypelon felonaturelonTypelon
   2: optional i32 count
-  3: optional list<i64> intersectionIds
-  4: optional i32 leftNodeDegree
-  5: optional i32 rightNodeDegree
-}(persisted="true")
+  3: optional list<i64> intelonrselonctionIds
+  4: optional i32 lelonftNodelonDelongrelonelon
+  5: optional i32 rightNodelonDelongrelonelon
+}(pelonrsistelond="truelon")
 ```
 
-## Behavior
+## Belonhavior
 
-The `GfsIntersectionResponse` contains in its `results` field a `GfsIntersectionResult` for every candidate in `candidateIds` which contains an  `IntersectionValue` for every `FeatureType` in the request's `featureTypes` field. 
+Thelon `GfsIntelonrselonctionRelonsponselon` contains in its `relonsults` fielonld a `GfsIntelonrselonctionRelonsult` for elonvelonry candidatelon in `candidatelonIds` which contains an  `IntelonrselonctionValuelon` for elonvelonry `FelonaturelonTypelon` in thelon relonquelonst's `felonaturelonTypelons` fielonld. 
 
-The `IntersectionValue` contains the size of the intersection between the `leftEdgeType` edges from `userId` and the `rightEdgeType` edges from `candidateId` in the `count` field, as well as their respective degrees in the graphs in `leftNodeDegree` and `rightNodeDegree` respectively.
+Thelon `IntelonrselonctionValuelon` contains thelon sizelon of thelon intelonrselonction belontwelonelonn thelon `lelonftelondgelonTypelon` elondgelons from `uselonrId` and thelon `rightelondgelonTypelon` elondgelons from `candidatelonId` in thelon `count` fielonld, as welonll as thelonir relonspelonctivelon delongrelonelons in thelon graphs in `lelonftNodelonDelongrelonelon` and `rightNodelonDelongrelonelon` relonspelonctivelonly.
 
-**Note:** the `intersectionIds` field currently only contains `Nil`.
+**Notelon:** thelon `intelonrselonctionIds` fielonld currelonntly only contains `Nil`.

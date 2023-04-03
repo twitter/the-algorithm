@@ -1,19 +1,19 @@
-namespace java com.twitter.cr_mixer.thriftjava
-#@namespace scala com.twitter.cr_mixer.thriftscala
-#@namespace strato com.twitter.cr_mixer
+namelonspacelon java com.twittelonr.cr_mixelonr.thriftjava
+#@namelonspacelon scala com.twittelonr.cr_mixelonr.thriftscala
+#@namelonspacelon strato com.twittelonr.cr_mixelonr
 
-# In CrMixer, one org should only have one Product
-enum Product {
-  Home = 1
+# In CrMixelonr, onelon org should only havelon onelon Product
+elonnum Product {
+  Homelon = 1
   Notifications = 2
-  Email = 3
-  MoreTweetsModule = 4 # aka RUX
-  ImmersiveMediaViewer = 5
-  VideoCarousel = 6
-  ExploreTopics = 7
+  elonmail = 3
+  MorelonTwelonelontsModulelon = 4 # aka RUX
+  ImmelonrsivelonMelondiaVielonwelonr = 5
+  VidelonoCarouselonl = 6
+  elonxplorelonTopics = 7
   Ads = 8
-  HomeRealTime = 9 // Home Real-Time Tab is considered as a different Product surface to Home Tab. It's in early experiment phase.
-  TopicLandingPage = 10
-  HomeTopicsBackfill = 11
-  TopicTweetsStrato = 12
+  HomelonRelonalTimelon = 9 // Homelon Relonal-Timelon Tab is considelonrelond as a diffelonrelonnt Product surfacelon to Homelon Tab. It's in elonarly elonxpelonrimelonnt phaselon.
+  TopicLandingPagelon = 10
+  HomelonTopicsBackfill = 11
+  TopicTwelonelontsStrato = 12
 }

@@ -1,118 +1,118 @@
-# pylint: disable=arguments-differ,no-member,too-many-statements
-''' Contains MDLFeature and MDLCalibrator used for MDL calibration '''
+# pylint: disablelon=argumelonnts-diffelonr,no-melonmbelonr,too-many-statelonmelonnts
+''' Contains MDLFelonaturelon and MDLCalibrator uselond for MDL calibration '''
 
 
 import os
 
-from .percentile_discretizer import PercentileDiscretizerCalibrator, PercentileDiscretizerFeature
+from .pelonrcelonntilelon_discrelontizelonr import PelonrcelonntilelonDiscrelontizelonrCalibrator, PelonrcelonntilelonDiscrelontizelonrFelonaturelon
 
 from absl import logging
 import numpy as np
-import tensorflow.compat.v1 as tf
+import telonnsorflow.compat.v1 as tf
 import twml
-import twml.layers
+import twml.layelonrs
 
 
-DEFAULT_SAMPLE_WEIGHT = 1
+DelonFAULT_SAMPLelon_WelonIGHT = 1
 
 
-class MDLFeature(PercentileDiscretizerFeature):
-  ''' Accumulates and calibrates a single sparse MDL feature. '''
+class MDLFelonaturelon(PelonrcelonntilelonDiscrelontizelonrFelonaturelon):
+  ''' Accumulatelons and calibratelons a singlelon sparselon MDL felonaturelon. '''
 
 
-class MDLCalibrator(PercentileDiscretizerCalibrator):
-  ''' Accumulates features and their respective values for MDL calibration.
-  Internally, each feature's values is accumulated via its own ``MDLFeature`` object.
-  The steps for calibration are typically as follows:
+class MDLCalibrator(PelonrcelonntilelonDiscrelontizelonrCalibrator):
+  ''' Accumulatelons felonaturelons and thelonir relonspelonctivelon valuelons for MDL calibration.
+  Intelonrnally, elonach felonaturelon's valuelons is accumulatelond via its own ``MDLFelonaturelon`` objelonct.
+  Thelon stelonps for calibration arelon typically as follows:
 
-   1. accumulate feature values from batches by calling ``accumulate()``;
-   2. calibrate all feature into MDL bin_vals by calling ``calibrate()``; and
-   3. convert to a twml.layers.MDL layer by calling ``to_layer()``.
+   1. accumulatelon felonaturelon valuelons from batchelons by calling ``accumulatelon()``;
+   2. calibratelon all felonaturelon into MDL bin_vals by calling ``calibratelon()``; and
+   3. convelonrt to a twml.layelonrs.MDL layelonr by calling ``to_layelonr()``.
 
   '''
 
-  def to_layer(self, name=None):
+  delonf to_layelonr(selonlf, namelon=Nonelon):
     """
-    Returns a twml.layers.PercentileDiscretizer Layer
-    that can be used for feature discretization.
+    Relonturns a twml.layelonrs.PelonrcelonntilelonDiscrelontizelonr Layelonr
+    that can belon uselond for felonaturelon discrelontization.
 
-    Arguments:
-      name:
-        name-scope of the PercentileDiscretizer layer
+    Argumelonnts:
+      namelon:
+        namelon-scopelon of thelon PelonrcelonntilelonDiscrelontizelonr layelonr
     """
-    n_feature = len(self._discretizer_feature_dict)
-    max_discretizer_feature = n_feature * (self._n_bin + 1)
+    n_felonaturelon = lelonn(selonlf._discrelontizelonr_felonaturelon_dict)
+    max_discrelontizelonr_felonaturelon = n_felonaturelon * (selonlf._n_bin + 1)
 
-    if not self._calibrated:
-      raise RuntimeError("Expecting prior call to calibrate()")
+    if not selonlf._calibratelond:
+      raiselon Runtimelonelonrror("elonxpeloncting prior call to calibratelon()")
 
-    if self._bin_ids.shape[0] != n_feature:
-      raise RuntimeError("Expecting self._bin_ids.shape[0] \
-        != len(self._discretizer_feature_dict)")
-    if self._bin_vals.shape[0] != n_feature:
-      raise RuntimeError("Expecting self._bin_vals.shape[0] \
-        != len(self._discretizer_feature_dict)")
+    if selonlf._bin_ids.shapelon[0] != n_felonaturelon:
+      raiselon Runtimelonelonrror("elonxpeloncting selonlf._bin_ids.shapelon[0] \
+        != lelonn(selonlf._discrelontizelonr_felonaturelon_dict)")
+    if selonlf._bin_vals.shapelon[0] != n_felonaturelon:
+      raiselon Runtimelonelonrror("elonxpeloncting selonlf._bin_vals.shapelon[0] \
+        != lelonn(selonlf._discrelontizelonr_felonaturelon_dict)")
 
-    # can add at most #features * (n_bin+1) new feature ids
-    if 2**self._out_bits <= max_discretizer_feature:
-      raise ValueError("""Maximum number of features created by discretizer is
-        %d but requested that the output be limited to %d values (%d bits),
-        which is smaller than that. Please ensure the output has enough bits
-        to represent at least the new features"""
-                       % (max_discretizer_feature, 2**self._out_bits, self._out_bits))
+    # can add at most #felonaturelons * (n_bin+1) nelonw felonaturelon ids
+    if 2**selonlf._out_bits <= max_discrelontizelonr_felonaturelon:
+      raiselon Valuelonelonrror("""Maximum numbelonr of felonaturelons crelonatelond by discrelontizelonr is
+        %d but relonquelonstelond that thelon output belon limitelond to %d valuelons (%d bits),
+        which is smallelonr than that. Plelonaselon elonnsurelon thelon output has elonnough bits
+        to relonprelonselonnt at lelonast thelon nelonw felonaturelons"""
+                       % (max_discrelontizelonr_felonaturelon, 2**selonlf._out_bits, selonlf._out_bits))
 
-    # build feature_offsets, hash_map_keys, hash_map_values
-    feature_offsets = np.arange(0, max_discretizer_feature,
-                                self._n_bin + 1, dtype='int64')
-    hash_map_keys = np.array(list(self._hash_map.keys()), dtype=np.int64)
-    hash_map_values = np.array(list(self._hash_map.values()), dtype=np.float32)
+    # build felonaturelon_offselonts, hash_map_kelonys, hash_map_valuelons
+    felonaturelon_offselonts = np.arangelon(0, max_discrelontizelonr_felonaturelon,
+                                selonlf._n_bin + 1, dtypelon='int64')
+    hash_map_kelonys = np.array(list(selonlf._hash_map.kelonys()), dtypelon=np.int64)
+    hash_map_valuelons = np.array(list(selonlf._hash_map.valuelons()), dtypelon=np.float32)
 
-    discretizer = twml.layers.MDL(
-      n_feature=n_feature, n_bin=self._n_bin,
-      name=name, out_bits=self._out_bits,
-      hash_keys=hash_map_keys, hash_values=hash_map_values,
-      bin_ids=self._bin_ids.flatten(), bin_values=self._bin_vals.flatten(),
-      feature_offsets=feature_offsets,
-      **self._kwargs
+    discrelontizelonr = twml.layelonrs.MDL(
+      n_felonaturelon=n_felonaturelon, n_bin=selonlf._n_bin,
+      namelon=namelon, out_bits=selonlf._out_bits,
+      hash_kelonys=hash_map_kelonys, hash_valuelons=hash_map_valuelons,
+      bin_ids=selonlf._bin_ids.flattelonn(), bin_valuelons=selonlf._bin_vals.flattelonn(),
+      felonaturelon_offselonts=felonaturelon_offselonts,
+      **selonlf._kwargs
     )
 
-    return discretizer
+    relonturn discrelontizelonr
 
-  def save(self, save_dir, name='calibrator', verbose=False):
-    '''Save the calibrator into the given save_directory.
-    Arguments:
-      save_dir:
-        name of the saving directory
-      name:
-        name for the graph scope. Passed to to_layer(name=name) to set
-        scope of layer.
+  delonf savelon(selonlf, savelon_dir, namelon='calibrator', velonrboselon=Falselon):
+    '''Savelon thelon calibrator into thelon givelonn savelon_direlonctory.
+    Argumelonnts:
+      savelon_dir:
+        namelon of thelon saving direlonctory
+      namelon:
+        namelon for thelon graph scopelon. Passelond to to_layelonr(namelon=namelon) to selont
+        scopelon of layelonr.
     '''
-    if not self._calibrated:
-      raise RuntimeError("Expecting prior call to calibrate().Cannot save() prior to calibrate()")
+    if not selonlf._calibratelond:
+      raiselon Runtimelonelonrror("elonxpeloncting prior call to calibratelon().Cannot savelon() prior to calibratelon()")
 
-    layer_args = self.get_layer_args()
+    layelonr_args = selonlf.gelont_layelonr_args()
 
-    calibrator_filename = os.path.join(save_dir, name + '.json.tf')
+    calibrator_filelonnamelon = os.path.join(savelon_dir, namelon + '.json.tf')
     calibrator_dict = {
-      'layer_args': layer_args,
-      'saved_layer_scope': name + '/',
+      'layelonr_args': layelonr_args,
+      'savelond_layelonr_scopelon': namelon + '/',
     }
-    twml.write_file(calibrator_filename, calibrator_dict, encode='json')
+    twml.writelon_filelon(calibrator_filelonnamelon, calibrator_dict, elonncodelon='json')
 
-    if verbose:
-      logging.info("The layer graph and other information necessary ")
-      logging.info("for multi-phase training is saved in directory:")
-      logging.info(save_dir)
-      logging.info("This directory can be specified as --init_from_dir argument.")
+    if velonrboselon:
+      logging.info("Thelon layelonr graph and othelonr information neloncelonssary ")
+      logging.info("for multi-phaselon training is savelond in direlonctory:")
+      logging.info(savelon_dir)
+      logging.info("This direlonctory can belon speloncifielond as --init_from_dir argumelonnt.")
       logging.info("")
-      logging.info("Other information is available in: %s.json.tf", name)
-      logging.info("This file can be loaded with twml.read_file(decode='json) to obtain ")
-      logging.info("layer_args, saved_layer_scope and variable_names")
+      logging.info("Othelonr information is availablelon in: %s.json.tf", namelon)
+      logging.info("This filelon can belon loadelond with twml.relonad_filelon(deloncodelon='json) to obtain ")
+      logging.info("layelonr_args, savelond_layelonr_scopelon and variablelon_namelons")
 
     graph = tf.Graph()
-    # save graph for tensorboard as well
-    writer = tf.summary.FileWriter(logdir=save_dir, graph=graph)
+    # savelon graph for telonnsorboard as welonll
+    writelonr = tf.summary.FilelonWritelonr(logdir=savelon_dir, graph=graph)
 
-    with tf.Session(graph=graph) as sess:
-      self.write_summary(writer, sess)
-    writer.flush()
+    with tf.Selonssion(graph=graph) as selonss:
+      selonlf.writelon_summary(writelonr, selonss)
+    writelonr.flush()

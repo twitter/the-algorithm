@@ -1,16 +1,16 @@
-package com.twitter.follow_recommendations.common.clients.adserver
+packagelon com.twittelonr.follow_reloncommelonndations.common.clielonnts.adselonrvelonr
 
-import com.twitter.adserver.thriftscala.NewAdServer
-import com.twitter.adserver.{thriftscala => t}
-import com.twitter.stitch.Stitch
-import javax.inject.{Inject, Singleton}
+import com.twittelonr.adselonrvelonr.thriftscala.NelonwAdSelonrvelonr
+import com.twittelonr.adselonrvelonr.{thriftscala => t}
+import com.twittelonr.stitch.Stitch
+import javax.injelonct.{Injelonct, Singlelonton}
 
-@Singleton
-class AdserverClient @Inject() (adserverService: NewAdServer.MethodPerEndpoint) {
-  def getAdImpressions(adRequest: AdRequest): Stitch[Seq[t.AdImpression]] = {
+@Singlelonton
+class AdselonrvelonrClielonnt @Injelonct() (adselonrvelonrSelonrvicelon: NelonwAdSelonrvelonr.MelonthodPelonrelonndpoint) {
+  delonf gelontAdImprelonssions(adRelonquelonst: AdRelonquelonst): Stitch[Selonq[t.AdImprelonssion]] = {
     Stitch
-      .callFuture(
-        adserverService.makeAdRequest(adRequest.toThrift)
-      ).map(_.impressions)
+      .callFuturelon(
+        adselonrvelonrSelonrvicelon.makelonAdRelonquelonst(adRelonquelonst.toThrift)
+      ).map(_.imprelonssions)
   }
 }

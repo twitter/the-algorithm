@@ -1,17 +1,17 @@
-package com.twitter.cr_mixer.module
+packagelon com.twittelonr.cr_mixelonr.modulelon
 
-import com.google.inject.Provides
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.inject.TwitterModule
-import com.twitter.storage.client.manhattan.kv.ManhattanKVClientMtlsParams
-import javax.inject.Singleton
+import com.googlelon.injelonct.Providelons
+import com.twittelonr.finaglelon.mtls.authelonntication.SelonrvicelonIdelonntifielonr
+import com.twittelonr.injelonct.TwittelonrModulelon
+import com.twittelonr.storagelon.clielonnt.manhattan.kv.ManhattanKVClielonntMtlsParams
+import javax.injelonct.Singlelonton
 
-object MHMtlsParamsModule extends TwitterModule {
-  @Singleton
-  @Provides
-  def providesManhattanMtlsParams(
-    serviceIdentifier: ServiceIdentifier
-  ): ManhattanKVClientMtlsParams = {
-    ManhattanKVClientMtlsParams(serviceIdentifier)
+objelonct MHMtlsParamsModulelon elonxtelonnds TwittelonrModulelon {
+  @Singlelonton
+  @Providelons
+  delonf providelonsManhattanMtlsParams(
+    selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr
+  ): ManhattanKVClielonntMtlsParams = {
+    ManhattanKVClielonntMtlsParams(selonrvicelonIdelonntifielonr)
   }
 }

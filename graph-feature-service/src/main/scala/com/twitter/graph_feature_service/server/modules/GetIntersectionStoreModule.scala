@@ -1,90 +1,90 @@
-package com.twitter.graph_feature_service.server.modules
+packagelon com.twittelonr.graph_felonaturelon_selonrvicelon.selonrvelonr.modulelons
 
-import com.google.inject.Provides
-import com.twitter.bijection.scrooge.CompactScalaCodec
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.graph_feature_service.common.Configs._
-import com.twitter.graph_feature_service.server.stores.GetIntersectionStore
-import com.twitter.graph_feature_service.server.stores.GetIntersectionStore.GetIntersectionQuery
-import com.twitter.graph_feature_service.thriftscala.CachedIntersectionResult
-import com.twitter.hermit.store.common.ObservedMemcachedReadableStore
-import com.twitter.inject.TwitterModule
-import com.twitter.inject.annotations.Flag
-import com.twitter.storehaus.ReadableStore
-import com.twitter.storehaus_internal.memcache.MemcacheStore
-import com.twitter.storehaus_internal.util.{ClientName, ZkEndPoint}
-import com.twitter.util.Duration
-import javax.inject.{Named, Singleton}
+import com.googlelon.injelonct.Providelons
+import com.twittelonr.bijelonction.scroogelon.CompactScalaCodelonc
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.finaglelon.mtls.authelonntication.SelonrvicelonIdelonntifielonr
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.graph_felonaturelon_selonrvicelon.common.Configs._
+import com.twittelonr.graph_felonaturelon_selonrvicelon.selonrvelonr.storelons.GelontIntelonrselonctionStorelon
+import com.twittelonr.graph_felonaturelon_selonrvicelon.selonrvelonr.storelons.GelontIntelonrselonctionStorelon.GelontIntelonrselonctionQuelonry
+import com.twittelonr.graph_felonaturelon_selonrvicelon.thriftscala.CachelondIntelonrselonctionRelonsult
+import com.twittelonr.helonrmit.storelon.common.ObselonrvelondMelonmcachelondRelonadablelonStorelon
+import com.twittelonr.injelonct.TwittelonrModulelon
+import com.twittelonr.injelonct.annotations.Flag
+import com.twittelonr.storelonhaus.RelonadablelonStorelon
+import com.twittelonr.storelonhaus_intelonrnal.melonmcachelon.MelonmcachelonStorelon
+import com.twittelonr.storelonhaus_intelonrnal.util.{ClielonntNamelon, ZkelonndPoint}
+import com.twittelonr.util.Duration
+import javax.injelonct.{Namelond, Singlelonton}
 
 /**
- * Initialize the MemCache based GetIntersectionStore.
- * The Key of MemCache is UserId~CandidateId~FeatureTypes~IntersectionIdLimit.
+ * Initializelon thelon MelonmCachelon baselond GelontIntelonrselonctionStorelon.
+ * Thelon Kelony of MelonmCachelon is UselonrId~CandidatelonId~FelonaturelonTypelons~IntelonrselonctionIdLimit.
  */
-object GetIntersectionStoreModule extends TwitterModule {
+objelonct GelontIntelonrselonctionStorelonModulelon elonxtelonnds TwittelonrModulelon {
 
-  private[this] val requestTimeout: Duration = 25.millis
-  private[this] val retries: Int = 0
+  privatelon[this] val relonquelonstTimelonout: Duration = 25.millis
+  privatelon[this] val relontrielons: Int = 0
 
-  @Provides
-  @Named("ReadThroughGetIntersectionStore")
-  @Singleton
-  def provideReadThroughGetIntersectionStore(
-    graphFeatureServiceWorkerClients: GraphFeatureServiceWorkerClients,
-    serviceIdentifier: ServiceIdentifier,
-    @Flag(ServerFlagNames.MemCacheClientName) memCacheName: String,
-    @Flag(ServerFlagNames.MemCachePath) memCachePath: String
+  @Providelons
+  @Namelond("RelonadThroughGelontIntelonrselonctionStorelon")
+  @Singlelonton
+  delonf providelonRelonadThroughGelontIntelonrselonctionStorelon(
+    graphFelonaturelonSelonrvicelonWorkelonrClielonnts: GraphFelonaturelonSelonrvicelonWorkelonrClielonnts,
+    selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr,
+    @Flag(SelonrvelonrFlagNamelons.MelonmCachelonClielonntNamelon) melonmCachelonNamelon: String,
+    @Flag(SelonrvelonrFlagNamelons.MelonmCachelonPath) melonmCachelonPath: String
   )(
-    implicit statsReceiver: StatsReceiver
-  ): ReadableStore[GetIntersectionQuery, CachedIntersectionResult] = {
-    buildMemcacheStore(
-      graphFeatureServiceWorkerClients,
-      memCacheName,
-      memCachePath,
-      serviceIdentifier)
+    implicit statsReloncelonivelonr: StatsReloncelonivelonr
+  ): RelonadablelonStorelon[GelontIntelonrselonctionQuelonry, CachelondIntelonrselonctionRelonsult] = {
+    buildMelonmcachelonStorelon(
+      graphFelonaturelonSelonrvicelonWorkelonrClielonnts,
+      melonmCachelonNamelon,
+      melonmCachelonPath,
+      selonrvicelonIdelonntifielonr)
   }
 
-  @Provides
-  @Named("BypassCacheGetIntersectionStore")
-  @Singleton
-  def provideReadOnlyGetIntersectionStore(
-    graphFeatureServiceWorkerClients: GraphFeatureServiceWorkerClients,
+  @Providelons
+  @Namelond("BypassCachelonGelontIntelonrselonctionStorelon")
+  @Singlelonton
+  delonf providelonRelonadOnlyGelontIntelonrselonctionStorelon(
+    graphFelonaturelonSelonrvicelonWorkelonrClielonnts: GraphFelonaturelonSelonrvicelonWorkelonrClielonnts,
   )(
-    implicit statsReceiver: StatsReceiver
-  ): ReadableStore[GetIntersectionQuery, CachedIntersectionResult] = {
-    // Bypass the Memcache.
-    GetIntersectionStore(graphFeatureServiceWorkerClients, statsReceiver)
+    implicit statsReloncelonivelonr: StatsReloncelonivelonr
+  ): RelonadablelonStorelon[GelontIntelonrselonctionQuelonry, CachelondIntelonrselonctionRelonsult] = {
+    // Bypass thelon Melonmcachelon.
+    GelontIntelonrselonctionStorelon(graphFelonaturelonSelonrvicelonWorkelonrClielonnts, statsReloncelonivelonr)
   }
 
-  private[this] def buildMemcacheStore(
-    graphFeatureServiceWorkerClients: GraphFeatureServiceWorkerClients,
-    memCacheName: String,
-    memCachePath: String,
-    serviceIdentifier: ServiceIdentifier,
+  privatelon[this] delonf buildMelonmcachelonStorelon(
+    graphFelonaturelonSelonrvicelonWorkelonrClielonnts: GraphFelonaturelonSelonrvicelonWorkelonrClielonnts,
+    melonmCachelonNamelon: String,
+    melonmCachelonPath: String,
+    selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr,
   )(
-    implicit statsReceiver: StatsReceiver
-  ): ReadableStore[GetIntersectionQuery, CachedIntersectionResult] = {
-    val backingStore = GetIntersectionStore(graphFeatureServiceWorkerClients, statsReceiver)
+    implicit statsReloncelonivelonr: StatsReloncelonivelonr
+  ): RelonadablelonStorelon[GelontIntelonrselonctionQuelonry, CachelondIntelonrselonctionRelonsult] = {
+    val backingStorelon = GelontIntelonrselonctionStorelon(graphFelonaturelonSelonrvicelonWorkelonrClielonnts, statsReloncelonivelonr)
 
-    val cacheClient = MemcacheStore.memcachedClient(
-      name = ClientName(memCacheName),
-      dest = ZkEndPoint(memCachePath),
-      timeout = requestTimeout,
-      retries = retries,
-      serviceIdentifier = serviceIdentifier,
-      statsReceiver = statsReceiver
+    val cachelonClielonnt = MelonmcachelonStorelon.melonmcachelondClielonnt(
+      namelon = ClielonntNamelon(melonmCachelonNamelon),
+      delonst = ZkelonndPoint(melonmCachelonPath),
+      timelonout = relonquelonstTimelonout,
+      relontrielons = relontrielons,
+      selonrvicelonIdelonntifielonr = selonrvicelonIdelonntifielonr,
+      statsReloncelonivelonr = statsReloncelonivelonr
     )
 
-    ObservedMemcachedReadableStore.fromCacheClient[GetIntersectionQuery, CachedIntersectionResult](
-      backingStore = backingStore,
-      cacheClient = cacheClient,
-      ttl = MemCacheTTL
+    ObselonrvelondMelonmcachelondRelonadablelonStorelon.fromCachelonClielonnt[GelontIntelonrselonctionQuelonry, CachelondIntelonrselonctionRelonsult](
+      backingStorelon = backingStorelon,
+      cachelonClielonnt = cachelonClielonnt,
+      ttl = MelonmCachelonTTL
     )(
-      valueInjection = LZ4Injection.compose(CompactScalaCodec(CachedIntersectionResult)),
-      statsReceiver = statsReceiver.scope("mem_cache"),
-      keyToString = { key =>
-        s"L~${key.userId}~${key.candidateId}~${key.featureTypesString}~${key.intersectionIdLimit}"
+      valuelonInjelonction = LZ4Injelonction.composelon(CompactScalaCodelonc(CachelondIntelonrselonctionRelonsult)),
+      statsReloncelonivelonr = statsReloncelonivelonr.scopelon("melonm_cachelon"),
+      kelonyToString = { kelony =>
+        s"L~${kelony.uselonrId}~${kelony.candidatelonId}~${kelony.felonaturelonTypelonsString}~${kelony.intelonrselonctionIdLimit}"
       }
     )
   }

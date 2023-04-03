@@ -1,21 +1,21 @@
-package com.twitter.home_mixer.product.list_tweets.param
+packagelon com.twittelonr.homelon_mixelonr.product.list_twelonelonts.param
 
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSParam
+import com.twittelonr.timelonlinelons.configapi.FSBoundelondParam
+import com.twittelonr.timelonlinelons.configapi.FSParam
 
-object ListTweetsParam {
-  val SupportedClientFSName = "list_tweets_supported_client"
+objelonct ListTwelonelontsParam {
+  val SupportelondClielonntFSNamelon = "list_twelonelonts_supportelond_clielonnt"
 
-  object EnableAdsCandidatePipelineParam
-      extends FSParam[Boolean](
-        name = "list_tweets_enable_ads",
-        default = false
+  objelonct elonnablelonAdsCandidatelonPipelonlinelonParam
+      elonxtelonnds FSParam[Boolelonan](
+        namelon = "list_twelonelonts_elonnablelon_ads",
+        delonfault = falselon
       )
 
-  object ServerMaxResultsParam
-      extends FSBoundedParam[Int](
-        name = "list_tweets_server_max_results",
-        default = 100,
+  objelonct SelonrvelonrMaxRelonsultsParam
+      elonxtelonnds FSBoundelondParam[Int](
+        namelon = "list_twelonelonts_selonrvelonr_max_relonsults",
+        delonfault = 100,
         min = 1,
         max = 500
       )

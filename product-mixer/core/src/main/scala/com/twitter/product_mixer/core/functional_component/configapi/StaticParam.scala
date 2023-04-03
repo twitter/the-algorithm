@@ -1,6 +1,6 @@
-package com.twitter.product_mixer.core.functional_component.configapi
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.configapi
 
-import com.twitter.timelines.configapi.Param
+import com.twittelonr.timelonlinelons.configapi.Param
 
-/** A [[Param]] used for constant values where we do not require backing by feature switches or deciders */
-case class StaticParam[ValueType](value: ValueType) extends Param[ValueType](value)
+/** A [[Param]] uselond for constant valuelons whelonrelon welon do not relonquirelon backing by felonaturelon switchelons or deloncidelonrs */
+caselon class StaticParam[ValuelonTypelon](valuelon: ValuelonTypelon) elonxtelonnds Param[ValuelonTypelon](valuelon)

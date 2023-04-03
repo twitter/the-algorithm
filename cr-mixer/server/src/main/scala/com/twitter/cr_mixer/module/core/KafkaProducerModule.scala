@@ -1,70 +1,70 @@
-package com.twitter.cr_mixer.module.core
+packagelon com.twittelonr.cr_mixelonr.modulelon.corelon
 
-import com.google.inject.Provides
-import com.twitter.cr_mixer.thriftscala.GetTweetsRecommendationsScribe
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finatra.kafka.producers.FinagleKafkaProducerBuilder
-import com.twitter.finatra.kafka.producers.KafkaProducerBase
-import com.twitter.finatra.kafka.producers.NullKafkaProducer
-import com.twitter.finatra.kafka.serde.ScalaSerdes
-import com.twitter.inject.TwitterModule
-import javax.inject.Singleton
-import org.apache.kafka.clients.CommonClientConfigs
-import org.apache.kafka.common.config.SaslConfigs
-import org.apache.kafka.common.config.SslConfigs
-import org.apache.kafka.common.record.CompressionType
-import org.apache.kafka.common.security.auth.SecurityProtocol
-import org.apache.kafka.common.serialization.Serdes
+import com.googlelon.injelonct.Providelons
+import com.twittelonr.cr_mixelonr.thriftscala.GelontTwelonelontsReloncommelonndationsScribelon
+import com.twittelonr.finaglelon.mtls.authelonntication.SelonrvicelonIdelonntifielonr
+import com.twittelonr.finatra.kafka.producelonrs.FinaglelonKafkaProducelonrBuildelonr
+import com.twittelonr.finatra.kafka.producelonrs.KafkaProducelonrBaselon
+import com.twittelonr.finatra.kafka.producelonrs.NullKafkaProducelonr
+import com.twittelonr.finatra.kafka.selonrdelon.ScalaSelonrdelons
+import com.twittelonr.injelonct.TwittelonrModulelon
+import javax.injelonct.Singlelonton
+import org.apachelon.kafka.clielonnts.CommonClielonntConfigs
+import org.apachelon.kafka.common.config.SaslConfigs
+import org.apachelon.kafka.common.config.SslConfigs
+import org.apachelon.kafka.common.reloncord.ComprelonssionTypelon
+import org.apachelon.kafka.common.seloncurity.auth.SeloncurityProtocol
+import org.apachelon.kafka.common.selonrialization.Selonrdelons
 
-object KafkaProducerModule extends TwitterModule {
+objelonct KafkaProducelonrModulelon elonxtelonnds TwittelonrModulelon {
 
-  @Provides
-  @Singleton
-  def provideTweetRecsLoggerFactory(
-    serviceIdentifier: ServiceIdentifier,
-  ): KafkaProducerBase[String, GetTweetsRecommendationsScribe] = {
-    KafkaProducerFactory.getKafkaProducer(serviceIdentifier.environment)
+  @Providelons
+  @Singlelonton
+  delonf providelonTwelonelontReloncsLoggelonrFactory(
+    selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr,
+  ): KafkaProducelonrBaselon[String, GelontTwelonelontsReloncommelonndationsScribelon] = {
+    KafkaProducelonrFactory.gelontKafkaProducelonr(selonrvicelonIdelonntifielonr.elonnvironmelonnt)
   }
 }
 
-object KafkaProducerFactory {
-  private val jaasConfig =
-    """com.sun.security.auth.module.Krb5LoginModule
-      |required 
-      |principal="cr-mixer@TWITTER.BIZ" 
-      |debug=true 
-      |useKeyTab=true 
-      |storeKey=true 
-      |keyTab="/var/lib/tss/keys/fluffy/keytabs/client/cr-mixer.keytab" 
-      |doNotPrompt=true;
-    """.stripMargin.replaceAll("\n", " ")
+objelonct KafkaProducelonrFactory {
+  privatelon val jaasConfig =
+    """com.sun.seloncurity.auth.modulelon.Krb5LoginModulelon
+      |relonquirelond
+      |principal="cr-mixelonr@TWITTelonR.BIZ"
+      |delonbug=truelon
+      |uselonKelonyTab=truelon
+      |storelonKelony=truelon
+      |kelonyTab="/var/lib/tss/kelonys/fluffy/kelonytabs/clielonnt/cr-mixelonr.kelonytab"
+      |doNotPrompt=truelon;
+    """.stripMargin.relonplacelonAll("\n", " ")
 
-  private val trustStoreLocation = "/etc/tw_truststore/messaging/kafka/client.truststore.jks"
+  privatelon val trustStorelonLocation = "/elontc/tw_truststorelon/melonssaging/kafka/clielonnt.truststorelon.jks"
 
-  def getKafkaProducer(
-    environment: String
-  ): KafkaProducerBase[String, GetTweetsRecommendationsScribe] = {
-    if (environment == "prod") {
-      FinagleKafkaProducerBuilder()
-        .dest("/s/kafka/recommendations:kafka-tls")
-        // kerberos params
+  delonf gelontKafkaProducelonr(
+    elonnvironmelonnt: String
+  ): KafkaProducelonrBaselon[String, GelontTwelonelontsReloncommelonndationsScribelon] = {
+    if (elonnvironmelonnt == "prod") {
+      FinaglelonKafkaProducelonrBuildelonr()
+        .delonst("/s/kafka/reloncommelonndations:kafka-tls")
+        // kelonrbelonros params
         .withConfig(SaslConfigs.SASL_JAAS_CONFIG, jaasConfig)
         .withConfig(
-          CommonClientConfigs.SECURITY_PROTOCOL_CONFIG,
-          SecurityProtocol.SASL_SSL.toString)
-        .withConfig(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, trustStoreLocation)
-        .withConfig(SaslConfigs.SASL_MECHANISM, SaslConfigs.GSSAPI_MECHANISM)
-        .withConfig(SaslConfigs.SASL_KERBEROS_SERVICE_NAME, "kafka")
-        .withConfig(SaslConfigs.SASL_KERBEROS_SERVER_NAME, "kafka")
+          CommonClielonntConfigs.SelonCURITY_PROTOCOL_CONFIG,
+          SeloncurityProtocol.SASL_SSL.toString)
+        .withConfig(SslConfigs.SSL_TRUSTSTORelon_LOCATION_CONFIG, trustStorelonLocation)
+        .withConfig(SaslConfigs.SASL_MelonCHANISM, SaslConfigs.GSSAPI_MelonCHANISM)
+        .withConfig(SaslConfigs.SASL_KelonRBelonROS_SelonRVICelon_NAMelon, "kafka")
+        .withConfig(SaslConfigs.SASL_KelonRBelonROS_SelonRVelonR_NAMelon, "kafka")
         // Kafka params
-        .keySerializer(Serdes.String.serializer)
-        .valueSerializer(ScalaSerdes.CompactThrift[GetTweetsRecommendationsScribe].serializer())
-        .clientId("cr-mixer")
-        .enableIdempotence(true)
-        .compressionType(CompressionType.LZ4)
+        .kelonySelonrializelonr(Selonrdelons.String.selonrializelonr)
+        .valuelonSelonrializelonr(ScalaSelonrdelons.CompactThrift[GelontTwelonelontsReloncommelonndationsScribelon].selonrializelonr())
+        .clielonntId("cr-mixelonr")
+        .elonnablelonIdelonmpotelonncelon(truelon)
+        .comprelonssionTypelon(ComprelonssionTypelon.LZ4)
         .build()
-    } else {
-      new NullKafkaProducer[String, GetTweetsRecommendationsScribe]
+    } elonlselon {
+      nelonw NullKafkaProducelonr[String, GelontTwelonelontsReloncommelonndationsScribelon]
     }
   }
 }

@@ -1,67 +1,67 @@
--- date_labels is 1 day after date_candidates (which is the current batch run's start date)
-DECLARE date_candidates, date_labels DATE;
-DECLARE positive_rate FLOAT64;
-SET date_candidates = (SELECT DATE(TIMESTAMP_MILLIS($start_time$)));
-SET date_labels = DATE_ADD(date_candidates, INTERVAL 1 DAY);
+-- datelon_labelonls is 1 day aftelonr datelon_candidatelons (which is thelon currelonnt batch run's start datelon)
+DelonCLARelon datelon_candidatelons, datelon_labelonls DATelon;
+DelonCLARelon positivelon_ratelon FLOAT64;
+SelonT datelon_candidatelons = (SelonLelonCT DATelon(TIMelonSTAMP_MILLIS($start_timelon$)));
+SelonT datelon_labelonls = DATelon_ADD(datelon_candidatelons, INTelonRVAL 1 DAY);
 
-CREATE TABLE IF NOT EXISTS `twttr-recos-ml-prod.realgraph.labeled_candidates$table_suffix$` AS
-SELECT
-  0 AS source_id,
-  1 AS destination_id,
-  1 AS label,
+CRelonATelon TABLelon IF NOT elonXISTS `twttr-reloncos-ml-prod.relonalgraph.labelonlelond_candidatelons$tablelon_suffix$` AS
+SelonLelonCT
+  0 AS sourcelon_id,
+  1 AS delonstination_id,
+  1 AS labelonl,
   1 AS num_days,
-  1 AS num_tweets,
+  1 AS num_twelonelonts,
   1 AS num_follows,
-  1 AS num_favorites,
-  1 AS num_tweet_clicks,
-  1 AS num_profile_views,
-  1 AS days_since_last_interaction,
-  1 AS label_types,
-  DATE("2023-01-08") AS ds;
+  1 AS num_favoritelons,
+  1 AS num_twelonelont_clicks,
+  1 AS num_profilelon_vielonws,
+  1 AS days_sincelon_last_intelonraction,
+  1 AS labelonl_typelons,
+  DATelon("2023-01-08") AS ds;
 
--- delete any prior data to avoid double writing
-DELETE
-FROM `twttr-recos-ml-prod.realgraph.labeled_candidates$table_suffix$`
-WHERE ds = date_candidates;
+-- delonlelontelon any prior data to avoid doublelon writing
+DelonLelonTelon
+FROM `twttr-reloncos-ml-prod.relonalgraph.labelonlelond_candidatelons$tablelon_suffix$`
+WHelonRelon ds = datelon_candidatelons;
 
--- join labels with candidates with 1 day attribution delay and insert new segment
-INSERT INTO `twttr-recos-ml-prod.realgraph.labeled_candidates$table_suffix$` 
-WITH label_positive AS (
-  SELECT source_id, destination_id
-  FROM `twttr-bq-cassowary-prod.user.interaction_graph_labels_daily`
-  WHERE DATE(dateHour)=date_labels
-), label_negative AS (
-  SELECT source_id, destination_id
-  FROM `twttr-bq-cassowary-prod.user.interaction_graph_agg_negative_edge_snapshot`
-) SELECT 
-  F.source_id,
-  F.destination_id,
-  CASE WHEN P.source_id IS NULL THEN 0 ELSE 1 END AS label,
+-- join labelonls with candidatelons with 1 day attribution delonlay and inselonrt nelonw selongmelonnt
+INSelonRT INTO `twttr-reloncos-ml-prod.relonalgraph.labelonlelond_candidatelons$tablelon_suffix$`
+WITH labelonl_positivelon AS (
+  SelonLelonCT sourcelon_id, delonstination_id
+  FROM `twttr-bq-cassowary-prod.uselonr.intelonraction_graph_labelonls_daily`
+  WHelonRelon DATelon(datelonHour)=datelon_labelonls
+), labelonl_nelongativelon AS (
+  SelonLelonCT sourcelon_id, delonstination_id
+  FROM `twttr-bq-cassowary-prod.uselonr.intelonraction_graph_agg_nelongativelon_elondgelon_snapshot`
+) SelonLelonCT
+  F.sourcelon_id,
+  F.delonstination_id,
+  CASelon WHelonN P.sourcelon_id IS NULL THelonN 0 elonLSelon 1 elonND AS labelonl,
   num_days,
-  num_tweets,
+  num_twelonelonts,
   num_follows,
-  num_favorites,
-  num_tweet_clicks,
-  num_profile_views,
-  days_since_last_interaction,
-  label_types,
-  date_candidates AS ds
-FROM `twttr-recos-ml-prod.realgraph.candidates_sampled` F
-LEFT JOIN label_positive P USING(source_id, destination_id)
-LEFT JOIN label_negative N USING(source_id, destination_id)
-WHERE N.source_id IS NULL AND N.destination_id IS NULL
-AND F.ds=date_candidates
+  num_favoritelons,
+  num_twelonelont_clicks,
+  num_profilelon_vielonws,
+  days_sincelon_last_intelonraction,
+  labelonl_typelons,
+  datelon_candidatelons AS ds
+FROM `twttr-reloncos-ml-prod.relonalgraph.candidatelons_samplelond` F
+LelonFT JOIN labelonl_positivelon P USING(sourcelon_id, delonstination_id)
+LelonFT JOIN labelonl_nelongativelon N USING(sourcelon_id, delonstination_id)
+WHelonRelon N.sourcelon_id IS NULL AND N.delonstination_id IS NULL
+AND F.ds=datelon_candidatelons
 ;
 
--- get positive rate 
-SET positive_rate = 
-(SELECT SUM(label)/COUNT(label) AS pct_positive
-FROM `twttr-recos-ml-prod.realgraph.labeled_candidates$table_suffix$`
+-- gelont positivelon ratelon
+SelonT positivelon_ratelon =
+(SelonLelonCT SUM(labelonl)/COUNT(labelonl) AS pct_positivelon
+FROM `twttr-reloncos-ml-prod.relonalgraph.labelonlelond_candidatelons$tablelon_suffix$`
 );
 
--- create training dataset with negative downsampling (should get ~50-50 split)
--- this spans over the cumulative date range of the labeled candidates table.
-CREATE OR REPLACE TABLE `twttr-recos-ml-prod.realgraph.train$table_suffix$` AS
-SELECT * FROM `twttr-recos-ml-prod.realgraph.labeled_candidates$table_suffix$`
-WHERE CASE WHEN label = 0 AND RAND() < positive_rate THEN true WHEN label = 1 AND RAND() < (1-positive_rate) THEN true ELSE false END
+-- crelonatelon training dataselont with nelongativelon downsampling (should gelont ~50-50 split)
+-- this spans ovelonr thelon cumulativelon datelon rangelon of thelon labelonlelond candidatelons tablelon.
+CRelonATelon OR RelonPLACelon TABLelon `twttr-reloncos-ml-prod.relonalgraph.train$tablelon_suffix$` AS
+SelonLelonCT * FROM `twttr-reloncos-ml-prod.relonalgraph.labelonlelond_candidatelons$tablelon_suffix$`
+WHelonRelon CASelon WHelonN labelonl = 0 AND RAND() < positivelon_ratelon THelonN truelon WHelonN labelonl = 1 AND RAND() < (1-positivelon_ratelon) THelonN truelon elonLSelon falselon elonND
 ;

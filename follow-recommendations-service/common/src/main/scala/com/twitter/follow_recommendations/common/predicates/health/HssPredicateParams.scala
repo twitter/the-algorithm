@@ -1,34 +1,34 @@
-package com.twitter.follow_recommendations.common.predicates.hss
+packagelon com.twittelonr.follow_reloncommelonndations.common.prelondicatelons.hss
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.timelines.configapi.DurationConversion
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.HasDurationConversion
-import com.twitter.util.Duration
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.timelonlinelons.configapi.DurationConvelonrsion
+import com.twittelonr.timelonlinelons.configapi.FSBoundelondParam
+import com.twittelonr.timelonlinelons.configapi.HasDurationConvelonrsion
+import com.twittelonr.util.Duration
 
-object HssPredicateParams {
-  object HssCseScoreThreshold
-      extends FSBoundedParam[Double](
-        "hss_predicate_cse_score_threshold",
-        default = 0.992d,
+objelonct HssPrelondicatelonParams {
+  objelonct HssCselonScorelonThrelonshold
+      elonxtelonnds FSBoundelondParam[Doublelon](
+        "hss_prelondicatelon_cselon_scorelon_threlonshold",
+        delonfault = 0.992d,
         min = 0.0d,
         max = 1.0d)
 
-  object HssNsfwScoreThreshold
-      extends FSBoundedParam[Double](
-        "hss_predicate_nsfw_score_threshold",
-        default = 1.5d,
+  objelonct HssNsfwScorelonThrelonshold
+      elonxtelonnds FSBoundelondParam[Doublelon](
+        "hss_prelondicatelon_nsfw_scorelon_threlonshold",
+        delonfault = 1.5d,
         min = -100.0d,
         max = 100.0d)
 
-  object HssApiTimeout
-      extends FSBoundedParam[Duration](
-        name = "hss_predicate_timeout_in_millis",
-        default = 200.millisecond,
-        min = 1.millisecond,
-        max = 500.millisecond)
-      with HasDurationConversion {
-    override def durationConversion: DurationConversion = DurationConversion.FromMillis
+  objelonct HssApiTimelonout
+      elonxtelonnds FSBoundelondParam[Duration](
+        namelon = "hss_prelondicatelon_timelonout_in_millis",
+        delonfault = 200.milliseloncond,
+        min = 1.milliseloncond,
+        max = 500.milliseloncond)
+      with HasDurationConvelonrsion {
+    ovelonrridelon delonf durationConvelonrsion: DurationConvelonrsion = DurationConvelonrsion.FromMillis
   }
 
 }

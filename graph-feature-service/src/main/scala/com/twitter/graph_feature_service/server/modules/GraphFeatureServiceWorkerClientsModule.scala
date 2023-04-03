@@ -1,51 +1,51 @@
-package com.twitter.graph_feature_service.server.modules
+packagelon com.twittelonr.graph_felonaturelon_selonrvicelon.selonrvelonr.modulelons
 
-import com.google.inject.Provides
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.mtls.client.MtlsStackClient._
-import com.twitter.finagle.ThriftMux
-import com.twitter.finagle.service.RetryBudget
-import com.twitter.graph_feature_service.thriftscala
-import com.twitter.inject.TwitterModule
-import com.twitter.inject.annotations.Flag
-import com.twitter.util.{Await, Duration}
-import javax.inject.Singleton
+import com.googlelon.injelonct.Providelons
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.finaglelon.mtls.authelonntication.SelonrvicelonIdelonntifielonr
+import com.twittelonr.finaglelon.mtls.clielonnt.MtlsStackClielonnt._
+import com.twittelonr.finaglelon.ThriftMux
+import com.twittelonr.finaglelon.selonrvicelon.RelontryBudgelont
+import com.twittelonr.graph_felonaturelon_selonrvicelon.thriftscala
+import com.twittelonr.injelonct.TwittelonrModulelon
+import com.twittelonr.injelonct.annotations.Flag
+import com.twittelonr.util.{Await, Duration}
+import javax.injelonct.Singlelonton
 
-case class GraphFeatureServiceWorkerClients(
-  workers: Seq[thriftscala.Worker.MethodPerEndpoint])
+caselon class GraphFelonaturelonSelonrvicelonWorkelonrClielonnts(
+  workelonrs: Selonq[thriftscala.Workelonr.MelonthodPelonrelonndpoint])
 
-object GraphFeatureServiceWorkerClientsModule extends TwitterModule {
-  private[this] val closeableGracePeriod: Duration = 1.second
-  private[this] val requestTimeout: Duration = 25.millis
+objelonct GraphFelonaturelonSelonrvicelonWorkelonrClielonntsModulelon elonxtelonnds TwittelonrModulelon {
+  privatelon[this] val closelonablelonGracelonPelonriod: Duration = 1.seloncond
+  privatelon[this] val relonquelonstTimelonout: Duration = 25.millis
 
-  @Provides
-  @Singleton
-  def provideGraphFeatureServiceWorkerClient(
-    @Flag(ServerFlagNames.NumWorkers) numWorkers: Int,
-    @Flag(ServerFlagNames.ServiceRole) serviceRole: String,
-    @Flag(ServerFlagNames.ServiceEnv) serviceEnv: String,
-    serviceIdentifier: ServiceIdentifier
-  ): GraphFeatureServiceWorkerClients = {
+  @Providelons
+  @Singlelonton
+  delonf providelonGraphFelonaturelonSelonrvicelonWorkelonrClielonnt(
+    @Flag(SelonrvelonrFlagNamelons.NumWorkelonrs) numWorkelonrs: Int,
+    @Flag(SelonrvelonrFlagNamelons.SelonrvicelonRolelon) selonrvicelonRolelon: String,
+    @Flag(SelonrvelonrFlagNamelons.Selonrvicelonelonnv) selonrvicelonelonnv: String,
+    selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr
+  ): GraphFelonaturelonSelonrvicelonWorkelonrClielonnts = {
 
-    val workers: Seq[thriftscala.Worker.MethodPerEndpoint] =
-      (0 until numWorkers).map { id =>
-        val dest = s"/srv#/$serviceEnv/local/$serviceRole/graph_feature_service-worker-$id"
+    val workelonrs: Selonq[thriftscala.Workelonr.MelonthodPelonrelonndpoint] =
+      (0 until numWorkelonrs).map { id =>
+        val delonst = s"/srv#/$selonrvicelonelonnv/local/$selonrvicelonRolelon/graph_felonaturelon_selonrvicelon-workelonr-$id"
 
-        val client = ThriftMux.client
-          .withRequestTimeout(requestTimeout)
-          .withRetryBudget(RetryBudget.Empty)
-          .withMutualTls(serviceIdentifier)
-          .build[thriftscala.Worker.MethodPerEndpoint](dest, s"worker-$id")
+        val clielonnt = ThriftMux.clielonnt
+          .withRelonquelonstTimelonout(relonquelonstTimelonout)
+          .withRelontryBudgelont(RelontryBudgelont.elonmpty)
+          .withMutualTls(selonrvicelonIdelonntifielonr)
+          .build[thriftscala.Workelonr.MelonthodPelonrelonndpoint](delonst, s"workelonr-$id")
 
-        onExit {
-          val closeable = client.asClosable
-          Await.result(closeable.close(closeableGracePeriod), closeableGracePeriod)
+        onelonxit {
+          val closelonablelon = clielonnt.asClosablelon
+          Await.relonsult(closelonablelon.closelon(closelonablelonGracelonPelonriod), closelonablelonGracelonPelonriod)
         }
 
-        client
+        clielonnt
       }
 
-    GraphFeatureServiceWorkerClients(workers)
+    GraphFelonaturelonSelonrvicelonWorkelonrClielonnts(workelonrs)
   }
 }

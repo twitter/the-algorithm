@@ -1,74 +1,74 @@
-# checkstyle: noqa
-from twml.feature_config import FeatureConfigBuilder
+# chelonckstylelon: noqa
+from twml.felonaturelon_config import FelonaturelonConfigBuildelonr
 
 
-def get_feature_config(data_spec_path, label):
-  return FeatureConfigBuilder(data_spec_path=data_spec_path, debug=True) \
-    .batch_add_features(
+delonf gelont_felonaturelon_config(data_spelonc_path, labelonl):
+  relonturn FelonaturelonConfigBuildelonr(data_spelonc_path=data_spelonc_path, delonbug=Truelon) \
+    .batch_add_felonaturelons(
     [
-      ("ebd.has_diff_lang", "A"),
-      ("ebd.tweet_age_in_secs", "A"),
-      ("encoded_tweet_features.composer_source_is_camera_flag", "A"),
-      ("encoded_tweet_features.favorite_count", "A"),
-      ("encoded_tweet_features.has_card_flag", "A"),
-      ("encoded_tweet_features.has_image_url_flag", "A"),
-      ("encoded_tweet_features.has_native_image_flag", "A"),
-      ("encoded_tweet_features.has_news_url_flag", "A"),
-      ("encoded_tweet_features.has_periscope_flag", "A"),
-      ("encoded_tweet_features.has_pro_video_flag", "A"),
-      ("encoded_tweet_features.has_quote_flag", "A"),
-      ("encoded_tweet_features.has_video_url_flag", "A"),
-      ("encoded_tweet_features.has_vine_flag", "A"),
-      ("encoded_tweet_features.has_visible_link_flag", "A"),
-      ("encoded_tweet_features.is_sensitive_content", "A"),
-      ("encoded_tweet_features.is_user_spam_flag", "A"),
-      ("encoded_tweet_features.link_language", "A"),
-      ("encoded_tweet_features.num_hashtags", "A"),
-      ("encoded_tweet_features.num_mentions", "A"),
-      ("encoded_tweet_features.reply_count", "A"),
-      ("encoded_tweet_features.retweet_count", "A"),
-      ("encoded_tweet_features.text_score", "A"),
-      ("encoded_tweet_features.user_reputation", "A"),
-      ("extended_encoded_tweet_features.decayed_favorite_count", "A"),
-      ("extended_encoded_tweet_features.decayed_quote_count", "A"),
-      ("extended_encoded_tweet_features.decayed_reply_count", "A"),
-      ("extended_encoded_tweet_features.decayed_retweet_count", "A"),
-      ("extended_encoded_tweet_features.embeds_impression_count_v2", "A"),
-      ("extended_encoded_tweet_features.embeds_url_count_v2", "A"),
-      ("extended_encoded_tweet_features.fake_favorite_count", "A"),
-      ("extended_encoded_tweet_features.fake_quote_count", "A"),
-      ("extended_encoded_tweet_features.fake_reply_count", "A"),
-      ("extended_encoded_tweet_features.fake_retweet_count", "A"),
-      ("extended_encoded_tweet_features.favorite_count_v2", "A"),
-      ("extended_encoded_tweet_features.label_dup_content_flag", "A"),
-      ("extended_encoded_tweet_features.label_nsfw_hi_prc_flag", "A"),
-      ("extended_encoded_tweet_features.label_nsfw_hi_rcl_flag", "A"),
-      ("extended_encoded_tweet_features.label_spam_hi_rcl_flag", "A"),
-      ("extended_encoded_tweet_features.periscope_exists", "A"),
-      ("extended_encoded_tweet_features.periscope_has_been_featured", "A"),
-      ("extended_encoded_tweet_features.periscope_is_currently_featured", "A"),
-      ("extended_encoded_tweet_features.periscope_is_from_quality_source", "A"),
-      ("extended_encoded_tweet_features.periscope_is_live", "A"),
-      ("extended_encoded_tweet_features.quote_count", "A"),
-      ("extended_encoded_tweet_features.reply_count_v2", "A"),
-      ("extended_encoded_tweet_features.retweet_count_v2", "A"),
-      ("extended_encoded_tweet_features.weighted_favorite_count", "A"),
-      ("extended_encoded_tweet_features.weighted_quote_count", "A"),
-      ("extended_encoded_tweet_features.weighted_reply_count", "A"),
-      ("extended_encoded_tweet_features.weighted_retweet_count", "A"),
-      ("timelines.earlybird.visible_token_ratio", "A")
+      ("elonbd.has_diff_lang", "A"),
+      ("elonbd.twelonelont_agelon_in_seloncs", "A"),
+      ("elonncodelond_twelonelont_felonaturelons.composelonr_sourcelon_is_camelonra_flag", "A"),
+      ("elonncodelond_twelonelont_felonaturelons.favoritelon_count", "A"),
+      ("elonncodelond_twelonelont_felonaturelons.has_card_flag", "A"),
+      ("elonncodelond_twelonelont_felonaturelons.has_imagelon_url_flag", "A"),
+      ("elonncodelond_twelonelont_felonaturelons.has_nativelon_imagelon_flag", "A"),
+      ("elonncodelond_twelonelont_felonaturelons.has_nelonws_url_flag", "A"),
+      ("elonncodelond_twelonelont_felonaturelons.has_pelonriscopelon_flag", "A"),
+      ("elonncodelond_twelonelont_felonaturelons.has_pro_videlono_flag", "A"),
+      ("elonncodelond_twelonelont_felonaturelons.has_quotelon_flag", "A"),
+      ("elonncodelond_twelonelont_felonaturelons.has_videlono_url_flag", "A"),
+      ("elonncodelond_twelonelont_felonaturelons.has_vinelon_flag", "A"),
+      ("elonncodelond_twelonelont_felonaturelons.has_visiblelon_link_flag", "A"),
+      ("elonncodelond_twelonelont_felonaturelons.is_selonnsitivelon_contelonnt", "A"),
+      ("elonncodelond_twelonelont_felonaturelons.is_uselonr_spam_flag", "A"),
+      ("elonncodelond_twelonelont_felonaturelons.link_languagelon", "A"),
+      ("elonncodelond_twelonelont_felonaturelons.num_hashtags", "A"),
+      ("elonncodelond_twelonelont_felonaturelons.num_melonntions", "A"),
+      ("elonncodelond_twelonelont_felonaturelons.relonply_count", "A"),
+      ("elonncodelond_twelonelont_felonaturelons.relontwelonelont_count", "A"),
+      ("elonncodelond_twelonelont_felonaturelons.telonxt_scorelon", "A"),
+      ("elonncodelond_twelonelont_felonaturelons.uselonr_relonputation", "A"),
+      ("elonxtelonndelond_elonncodelond_twelonelont_felonaturelons.deloncayelond_favoritelon_count", "A"),
+      ("elonxtelonndelond_elonncodelond_twelonelont_felonaturelons.deloncayelond_quotelon_count", "A"),
+      ("elonxtelonndelond_elonncodelond_twelonelont_felonaturelons.deloncayelond_relonply_count", "A"),
+      ("elonxtelonndelond_elonncodelond_twelonelont_felonaturelons.deloncayelond_relontwelonelont_count", "A"),
+      ("elonxtelonndelond_elonncodelond_twelonelont_felonaturelons.elonmbelonds_imprelonssion_count_v2", "A"),
+      ("elonxtelonndelond_elonncodelond_twelonelont_felonaturelons.elonmbelonds_url_count_v2", "A"),
+      ("elonxtelonndelond_elonncodelond_twelonelont_felonaturelons.fakelon_favoritelon_count", "A"),
+      ("elonxtelonndelond_elonncodelond_twelonelont_felonaturelons.fakelon_quotelon_count", "A"),
+      ("elonxtelonndelond_elonncodelond_twelonelont_felonaturelons.fakelon_relonply_count", "A"),
+      ("elonxtelonndelond_elonncodelond_twelonelont_felonaturelons.fakelon_relontwelonelont_count", "A"),
+      ("elonxtelonndelond_elonncodelond_twelonelont_felonaturelons.favoritelon_count_v2", "A"),
+      ("elonxtelonndelond_elonncodelond_twelonelont_felonaturelons.labelonl_dup_contelonnt_flag", "A"),
+      ("elonxtelonndelond_elonncodelond_twelonelont_felonaturelons.labelonl_nsfw_hi_prc_flag", "A"),
+      ("elonxtelonndelond_elonncodelond_twelonelont_felonaturelons.labelonl_nsfw_hi_rcl_flag", "A"),
+      ("elonxtelonndelond_elonncodelond_twelonelont_felonaturelons.labelonl_spam_hi_rcl_flag", "A"),
+      ("elonxtelonndelond_elonncodelond_twelonelont_felonaturelons.pelonriscopelon_elonxists", "A"),
+      ("elonxtelonndelond_elonncodelond_twelonelont_felonaturelons.pelonriscopelon_has_belonelonn_felonaturelond", "A"),
+      ("elonxtelonndelond_elonncodelond_twelonelont_felonaturelons.pelonriscopelon_is_currelonntly_felonaturelond", "A"),
+      ("elonxtelonndelond_elonncodelond_twelonelont_felonaturelons.pelonriscopelon_is_from_quality_sourcelon", "A"),
+      ("elonxtelonndelond_elonncodelond_twelonelont_felonaturelons.pelonriscopelon_is_livelon", "A"),
+      ("elonxtelonndelond_elonncodelond_twelonelont_felonaturelons.quotelon_count", "A"),
+      ("elonxtelonndelond_elonncodelond_twelonelont_felonaturelons.relonply_count_v2", "A"),
+      ("elonxtelonndelond_elonncodelond_twelonelont_felonaturelons.relontwelonelont_count_v2", "A"),
+      ("elonxtelonndelond_elonncodelond_twelonelont_felonaturelons.welonightelond_favoritelon_count", "A"),
+      ("elonxtelonndelond_elonncodelond_twelonelont_felonaturelons.welonightelond_quotelon_count", "A"),
+      ("elonxtelonndelond_elonncodelond_twelonelont_felonaturelons.welonightelond_relonply_count", "A"),
+      ("elonxtelonndelond_elonncodelond_twelonelont_felonaturelons.welonightelond_relontwelonelont_count", "A"),
+      ("timelonlinelons.elonarlybird.visiblelon_tokelonn_ratio", "A")
     ]
-  ).add_labels([
-    label,                                 # Tensor index: 0
-    "itl.engagement.is_clicked",           # Tensor index: 1
-    "itl.engagement.is_favorited",         # Tensor index: 2
-    "itl.engagement.is_open_linked",       # Tensor index: 3
-    "itl.engagement.is_photo_expanded",    # Tensor index: 4
-    "itl.engagement.is_profile_clicked",   # Tensor index: 5
-    "itl.engagement.is_replied",           # Tensor index: 6
-    "itl.engagement.is_retweeted",         # Tensor index: 7
-    "itl.engagement.is_video_playback_50",  # Tensor index: 8
-    "timelines.earlybird_score",           # Tensor index: 9
+  ).add_labelonls([
+    labelonl,                                 # Telonnsor indelonx: 0
+    "itl.elonngagelonmelonnt.is_clickelond",           # Telonnsor indelonx: 1
+    "itl.elonngagelonmelonnt.is_favoritelond",         # Telonnsor indelonx: 2
+    "itl.elonngagelonmelonnt.is_opelonn_linkelond",       # Telonnsor indelonx: 3
+    "itl.elonngagelonmelonnt.is_photo_elonxpandelond",    # Telonnsor indelonx: 4
+    "itl.elonngagelonmelonnt.is_profilelon_clickelond",   # Telonnsor indelonx: 5
+    "itl.elonngagelonmelonnt.is_relonplielond",           # Telonnsor indelonx: 6
+    "itl.elonngagelonmelonnt.is_relontwelonelontelond",         # Telonnsor indelonx: 7
+    "itl.elonngagelonmelonnt.is_videlono_playback_50",  # Telonnsor indelonx: 8
+    "timelonlinelons.elonarlybird_scorelon",           # Telonnsor indelonx: 9
   ]) \
-    .define_weight("meta.record_weight/type=earlybird") \
+    .delonfinelon_welonight("melonta.reloncord_welonight/typelon=elonarlybird") \
     .build()

@@ -1,18 +1,18 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urp
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urp
 
-import com.twitter.pages.render.{thriftscala => urp}
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.UrlMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urp.TopicPageHeaderFacepile
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.pagelons.relonndelonr.{thriftscala => urp}
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.melontadata.UrlMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urp.TopicPagelonHelonadelonrFacelonpilelon
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class TopicPageHeaderFacepileMarshaller @Inject() (
-  urlMarshaller: UrlMarshaller) {
+@Singlelonton
+class TopicPagelonHelonadelonrFacelonpilelonMarshallelonr @Injelonct() (
+  urlMarshallelonr: UrlMarshallelonr) {
 
-  def apply(topicPageHeaderFacepile: TopicPageHeaderFacepile): urp.TopicPageHeaderFacepile =
-    urp.TopicPageHeaderFacepile(
-      userIds = topicPageHeaderFacepile.userIds,
-      facepileUrl = topicPageHeaderFacepile.facepileUrl.map(urlMarshaller(_))
+  delonf apply(topicPagelonHelonadelonrFacelonpilelon: TopicPagelonHelonadelonrFacelonpilelon): urp.TopicPagelonHelonadelonrFacelonpilelon =
+    urp.TopicPagelonHelonadelonrFacelonpilelon(
+      uselonrIds = topicPagelonHelonadelonrFacelonpilelon.uselonrIds,
+      facelonpilelonUrl = topicPagelonHelonadelonrFacelonpilelon.facelonpilelonUrl.map(urlMarshallelonr(_))
     )
 }

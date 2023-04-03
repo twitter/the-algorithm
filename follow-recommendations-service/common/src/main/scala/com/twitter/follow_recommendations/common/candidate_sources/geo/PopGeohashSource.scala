@@ -1,36 +1,36 @@
-package com.twitter.follow_recommendations.common.candidate_sources.geo
+packagelon com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.gelono
 
-import com.google.inject.Singleton
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import javax.inject.Inject
+import com.googlelon.injelonct.Singlelonton
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.helonrmit.modelonl.Algorithm
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonSourcelonIdelonntifielonr
+import javax.injelonct.Injelonct
 
-@Singleton
-class PopGeohashSource @Inject() (
-  popGeoSource: PopGeoSource,
-  statsReceiver: StatsReceiver)
-    extends BasePopGeohashSource(
-      popGeoSource = popGeoSource,
-      statsReceiver = statsReceiver.scope("PopGeohashSource"),
+@Singlelonton
+class PopGelonohashSourcelon @Injelonct() (
+  popGelonoSourcelon: PopGelonoSourcelon,
+  statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds BaselonPopGelonohashSourcelon(
+      popGelonoSourcelon = popGelonoSourcelon,
+      statsReloncelonivelonr = statsReloncelonivelonr.scopelon("PopGelonohashSourcelon"),
     ) {
-  override def candidateSourceEnabled(target: Target): Boolean = true
-  override val identifier: CandidateSourceIdentifier = PopGeohashSource.Identifier
-  override def minGeohashLength(target: Target): Int = {
-    target.params(PopGeoSourceParams.PopGeoSourceGeoHashMinPrecision)
+  ovelonrridelon delonf candidatelonSourcelonelonnablelond(targelont: Targelont): Boolelonan = truelon
+  ovelonrridelon val idelonntifielonr: CandidatelonSourcelonIdelonntifielonr = PopGelonohashSourcelon.Idelonntifielonr
+  ovelonrridelon delonf minGelonohashLelonngth(targelont: Targelont): Int = {
+    targelont.params(PopGelonoSourcelonParams.PopGelonoSourcelonGelonoHashMinPreloncision)
   }
-  override def maxResults(target: Target): Int = {
-    target.params(PopGeoSourceParams.PopGeoSourceMaxResultsPerPrecision)
+  ovelonrridelon delonf maxRelonsults(targelont: Targelont): Int = {
+    targelont.params(PopGelonoSourcelonParams.PopGelonoSourcelonMaxRelonsultsPelonrPreloncision)
   }
-  override def maxGeohashLength(target: Target): Int = {
-    target.params(PopGeoSourceParams.PopGeoSourceGeoHashMaxPrecision)
+  ovelonrridelon delonf maxGelonohashLelonngth(targelont: Targelont): Int = {
+    targelont.params(PopGelonoSourcelonParams.PopGelonoSourcelonGelonoHashMaxPreloncision)
   }
-  override def returnResultFromAllPrecision(target: Target): Boolean = {
-    target.params(PopGeoSourceParams.PopGeoSourceReturnFromAllPrecisions)
+  ovelonrridelon delonf relonturnRelonsultFromAllPreloncision(targelont: Targelont): Boolelonan = {
+    targelont.params(PopGelonoSourcelonParams.PopGelonoSourcelonRelonturnFromAllPreloncisions)
   }
 }
 
-object PopGeohashSource {
-  val Identifier: CandidateSourceIdentifier = CandidateSourceIdentifier(
-    Algorithm.PopGeohash.toString)
+objelonct PopGelonohashSourcelon {
+  val Idelonntifielonr: CandidatelonSourcelonIdelonntifielonr = CandidatelonSourcelonIdelonntifielonr(
+    Algorithm.PopGelonohash.toString)
 }

@@ -1,8 +1,8 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.metadata
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata
 
-sealed trait ConversationSection
+selonalelond trait ConvelonrsationSelonction
 
-case object HighQuality extends ConversationSection
-case object LowQuality extends ConversationSection
-case object AbusiveQuality extends ConversationSection
-case object RelatedTweet extends ConversationSection
+caselon objelonct HighQuality elonxtelonnds ConvelonrsationSelonction
+caselon objelonct LowQuality elonxtelonnds ConvelonrsationSelonction
+caselon objelonct AbusivelonQuality elonxtelonnds ConvelonrsationSelonction
+caselon objelonct RelonlatelondTwelonelont elonxtelonnds ConvelonrsationSelonction

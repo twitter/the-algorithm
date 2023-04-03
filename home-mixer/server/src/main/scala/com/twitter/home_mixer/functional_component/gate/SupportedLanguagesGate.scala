@@ -1,68 +1,68 @@
-package com.twitter.home_mixer.functional_component.gate
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.gatelon
 
-import com.twitter.product_mixer.core.functional_component.gate.Gate
-import com.twitter.product_mixer.core.model.common.identifier.GateIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.gatelon.Gatelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.GatelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stitch.Stitch
 
-object SupportedLanguagesGate extends Gate[PipelineQuery] {
+objelonct SupportelondLanguagelonsGatelon elonxtelonnds Gatelon[PipelonlinelonQuelonry] {
 
-  override val identifier: GateIdentifier = GateIdentifier("SupportedLanguages")
+  ovelonrridelon val idelonntifielonr: GatelonIdelonntifielonr = GatelonIdelonntifielonr("SupportelondLanguagelons")
 
-  // Production languages which have high translation coverage for strings used in Home Timeline.
-  private val supportedLanguages: Set[String] = Set(
+  // Production languagelons which havelon high translation covelonragelon for strings uselond in Homelon Timelonlinelon.
+  privatelon val supportelondLanguagelons: Selont[String] = Selont(
     "ar", // Arabic
-    "ar-x-fm", // Arabic (Female)
+    "ar-x-fm", // Arabic (Felonmalelon)
     "bg", // Bulgarian
-    "bn", // Bengali
+    "bn", // Belonngali
     "ca", // Catalan
-    "cs", // Czech
+    "cs", // Czelonch
     "da", // Danish
-    "de", // German
-    "el", // Greek
-    "en", // English
-    "en-gb", // British English
-    "en-ss", // English Screen shot
-    "en-xx", // English Pseudo
-    "es", // Spanish
-    "eu", // Basque
-    "fa", // Farsi (Persian)
+    "delon", // Gelonrman
+    "elonl", // Grelonelonk
+    "elonn", // elonnglish
+    "elonn-gb", // British elonnglish
+    "elonn-ss", // elonnglish Screlonelonn shot
+    "elonn-xx", // elonnglish Pselonudo
+    "elons", // Spanish
+    "elonu", // Basquelon
+    "fa", // Farsi (Pelonrsian)
     "fi", // Finnish
     "fil", // Filipino
-    "fr", // French
+    "fr", // Frelonnch
     "ga", // Irish
     "gl", // Galician
     "gu", // Gujarati
-    "he", // Hebrew
+    "helon", // Helonbrelonw
     "hi", // Hindi
     "hr", // Croatian
     "hu", // Hungarian
-    "id", // Indonesian
+    "id", // Indonelonsian
     "it", // Italian
-    "ja", // Japanese
+    "ja", // Japanelonselon
     "kn", // Kannada
-    "ko", // Korean
+    "ko", // Korelonan
     "mr", // Marathi
     "msa", // Malay
     "nl", // Dutch
-    "no", // Norwegian
+    "no", // Norwelongian
     "pl", // Polish
-    "pt", // Portuguese
+    "pt", // Portuguelonselon
     "ro", // Romanian
     "ru", // Russian
     "sk", // Slovak
-    "sr", // Serbian
-    "sv", // Swedish
+    "sr", // Selonrbian
+    "sv", // Swelondish
     "ta", // Tamil
     "th", // Thai
     "tr", // Turkish
     "uk", // Ukrainian
     "ur", // Urdu
-    "vi", // Vietnamese
-    "zh-cn", // Simplified Chinese
-    "zh-tw" // Traditional Chinese
+    "vi", // Vielontnamelonselon
+    "zh-cn", // Simplifielond Chinelonselon
+    "zh-tw" // Traditional Chinelonselon
   )
 
-  override def shouldContinue(query: PipelineQuery): Stitch[Boolean] =
-    Stitch.value(query.getLanguageCode.forall(supportedLanguages.contains))
+  ovelonrridelon delonf shouldContinuelon(quelonry: PipelonlinelonQuelonry): Stitch[Boolelonan] =
+    Stitch.valuelon(quelonry.gelontLanguagelonCodelon.forall(supportelondLanguagelons.contains))
 }

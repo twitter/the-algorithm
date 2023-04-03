@@ -1,228 +1,228 @@
-package com.twitter.search.common.schema;
+packagelon com.twittelonr.selonarch.common.schelonma;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.logging.Lelonvelonl;
+import java.util.logging.Loggelonr;
 
-import javax.annotation.Nullable;
+import javax.annotation.Nullablelon;
 
-import com.twitter.common.text.util.PositionIncrementAttributeSerializer;
-import com.twitter.common.text.util.TokenStreamSerializer;
-import com.twitter.search.common.schema.base.FieldNameToIdMapping;
-import com.twitter.search.common.schema.thriftjava.ThriftDocument;
-import com.twitter.search.common.schema.thriftjava.ThriftField;
-import com.twitter.search.common.schema.thriftjava.ThriftFieldData;
-import com.twitter.search.common.schema.thriftjava.ThriftGeoCoordinate;
-import com.twitter.search.common.util.analysis.CharTermAttributeSerializer;
-import com.twitter.search.common.util.analysis.LongTermAttributeSerializer;
-import com.twitter.search.common.util.analysis.LongTermsTokenStream;
-import com.twitter.search.common.util.analysis.PayloadAttributeSerializer;
-import com.twitter.search.common.util.analysis.PayloadWeightedTokenizer;
-import com.twitter.search.common.util.spatial.GeoUtil;
+import com.twittelonr.common.telonxt.util.PositionIncrelonmelonntAttributelonSelonrializelonr;
+import com.twittelonr.common.telonxt.util.TokelonnStrelonamSelonrializelonr;
+import com.twittelonr.selonarch.common.schelonma.baselon.FielonldNamelonToIdMapping;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftDocumelonnt;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftFielonld;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftFielonldData;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftGelonoCoordinatelon;
+import com.twittelonr.selonarch.common.util.analysis.CharTelonrmAttributelonSelonrializelonr;
+import com.twittelonr.selonarch.common.util.analysis.LongTelonrmAttributelonSelonrializelonr;
+import com.twittelonr.selonarch.common.util.analysis.LongTelonrmsTokelonnStrelonam;
+import com.twittelonr.selonarch.common.util.analysis.PayloadAttributelonSelonrializelonr;
+import com.twittelonr.selonarch.common.util.analysis.PayloadWelonightelondTokelonnizelonr;
+import com.twittelonr.selonarch.common.util.spatial.GelonoUtil;
 
 /**
- * Builder class for building ThriftDocuments.
+ * Buildelonr class for building ThriftDocumelonnts.
  */
-public class ThriftDocumentBuilder {
-  private static final Logger LOG = Logger.getLogger(ThriftDocumentBuilder.class.getName());
+public class ThriftDocumelonntBuildelonr {
+  privatelon static final Loggelonr LOG = Loggelonr.gelontLoggelonr(ThriftDocumelonntBuildelonr.class.gelontNamelon());
 
-  protected final ThriftDocument doc = new ThriftDocument();
-  protected final FieldNameToIdMapping idMapping;
+  protelonctelond final ThriftDocumelonnt doc = nelonw ThriftDocumelonnt();
+  protelonctelond final FielonldNamelonToIdMapping idMapping;
 
-  private static final ThreadLocal<TokenStreamSerializer> PAYLOAD_WEIGHTED_SERIALIZER_PER_THREAD =
-      new ThreadLocal<TokenStreamSerializer>() {
-        @Override
-        protected TokenStreamSerializer initialValue() {
-          return TokenStreamSerializer.builder()
-              .add(new CharTermAttributeSerializer())
-              .add(new PositionIncrementAttributeSerializer())
-              .add(new PayloadAttributeSerializer())
+  privatelon static final ThrelonadLocal<TokelonnStrelonamSelonrializelonr> PAYLOAD_WelonIGHTelonD_SelonRIALIZelonR_PelonR_THRelonAD =
+      nelonw ThrelonadLocal<TokelonnStrelonamSelonrializelonr>() {
+        @Ovelonrridelon
+        protelonctelond TokelonnStrelonamSelonrializelonr initialValuelon() {
+          relonturn TokelonnStrelonamSelonrializelonr.buildelonr()
+              .add(nelonw CharTelonrmAttributelonSelonrializelonr())
+              .add(nelonw PositionIncrelonmelonntAttributelonSelonrializelonr())
+              .add(nelonw PayloadAttributelonSelonrializelonr())
               .build();
         }
       };
 
-  private static final ThreadLocal<TokenStreamSerializer> LONG_TERM_SERIALIZER_PER_THREAD =
-          new ThreadLocal<TokenStreamSerializer>() {
-            @Override
-            protected TokenStreamSerializer initialValue() {
-              return TokenStreamSerializer.builder()
-                  .add(new LongTermAttributeSerializer())
+  privatelon static final ThrelonadLocal<TokelonnStrelonamSelonrializelonr> LONG_TelonRM_SelonRIALIZelonR_PelonR_THRelonAD =
+          nelonw ThrelonadLocal<TokelonnStrelonamSelonrializelonr>() {
+            @Ovelonrridelon
+            protelonctelond TokelonnStrelonamSelonrializelonr initialValuelon() {
+              relonturn TokelonnStrelonamSelonrializelonr.buildelonr()
+                  .add(nelonw LongTelonrmAttributelonSelonrializelonr())
                   .build();
             }
           };
 
-  public ThriftDocumentBuilder(FieldNameToIdMapping idMapping) {
+  public ThriftDocumelonntBuildelonr(FielonldNamelonToIdMapping idMapping) {
     this.idMapping = idMapping;
   }
 
-  protected void prepareToBuild() {
-    // left empty, subclass can override this.
+  protelonctelond void prelonparelonToBuild() {
+    // lelonft elonmpty, subclass can ovelonrridelon this.
   }
 
-  public ThriftDocument build() {
-    prepareToBuild();
-    return doc;
-  }
-
-  /**
-   * Add a long field. This is indexed as a
-   * {@link com.twitter.search.common.util.analysis.LongTermAttribute}
-   */
-  public final ThriftDocumentBuilder withLongField(String fieldName, long value) {
-    ThriftFieldData fieldData = new ThriftFieldData().setLongValue(value);
-    ThriftField field = new ThriftField()
-        .setFieldConfigId(idMapping.getFieldID(fieldName)).setFieldData(fieldData);
-    doc.addToFields(field);
-    return this;
+  public ThriftDocumelonnt build() {
+    prelonparelonToBuild();
+    relonturn doc;
   }
 
   /**
-   * Add an int field. This is indexed as a
-   * {@link com.twitter.search.common.util.analysis.IntTermAttribute}
+   * Add a long fielonld. This is indelonxelond as a
+   * {@link com.twittelonr.selonarch.common.util.analysis.LongTelonrmAttributelon}
    */
-  public final ThriftDocumentBuilder withIntField(String fieldName, int value) {
-    ThriftFieldData fieldData = new ThriftFieldData().setIntValue(value);
-    ThriftField field = new ThriftField()
-        .setFieldConfigId(idMapping.getFieldID(fieldName)).setFieldData(fieldData);
-    doc.addToFields(field);
-    return this;
+  public final ThriftDocumelonntBuildelonr withLongFielonld(String fielonldNamelon, long valuelon) {
+    ThriftFielonldData fielonldData = nelonw ThriftFielonldData().selontLongValuelon(valuelon);
+    ThriftFielonld fielonld = nelonw ThriftFielonld()
+        .selontFielonldConfigId(idMapping.gelontFielonldID(fielonldNamelon)).selontFielonldData(fielonldData);
+    doc.addToFielonlds(fielonld);
+    relonturn this;
   }
 
   /**
-   * Add a field whose value is a single byte.
+   * Add an int fielonld. This is indelonxelond as a
+   * {@link com.twittelonr.selonarch.common.util.analysis.IntTelonrmAttributelon}
    */
-  public final ThriftDocumentBuilder withByteField(String fieldName, byte value) {
-    ThriftFieldData fieldData = new ThriftFieldData().setByteValue(value);
-    ThriftField field = new ThriftField()
-        .setFieldConfigId(idMapping.getFieldID(fieldName)).setFieldData(fieldData);
-    doc.addToFields(field);
-    return this;
+  public final ThriftDocumelonntBuildelonr withIntFielonld(String fielonldNamelon, int valuelon) {
+    ThriftFielonldData fielonldData = nelonw ThriftFielonldData().selontIntValuelon(valuelon);
+    ThriftFielonld fielonld = nelonw ThriftFielonld()
+        .selontFielonldConfigId(idMapping.gelontFielonldID(fielonldNamelon)).selontFielonldData(fielonldData);
+    doc.addToFielonlds(fielonld);
+    relonturn this;
   }
 
   /**
-   * Add a field whose value is a byte array.
+   * Add a fielonld whoselon valuelon is a singlelon bytelon.
    */
-  public final ThriftDocumentBuilder withBytesField(String fieldName, byte[] value) {
-    ThriftFieldData fieldData = new ThriftFieldData().setBytesValue(value);
-    ThriftField field = new ThriftField()
-        .setFieldConfigId(idMapping.getFieldID(fieldName)).setFieldData(fieldData);
-    doc.addToFields(field);
-    return this;
+  public final ThriftDocumelonntBuildelonr withBytelonFielonld(String fielonldNamelon, bytelon valuelon) {
+    ThriftFielonldData fielonldData = nelonw ThriftFielonldData().selontBytelonValuelon(valuelon);
+    ThriftFielonld fielonld = nelonw ThriftFielonld()
+        .selontFielonldConfigId(idMapping.gelontFielonldID(fielonldNamelon)).selontFielonldData(fielonldData);
+    doc.addToFielonlds(fielonld);
+    relonturn this;
   }
 
   /**
-   * Add a field whose value is a float.
+   * Add a fielonld whoselon valuelon is a bytelon array.
    */
-  public final ThriftDocumentBuilder withFloatField(String fieldName, float value) {
-    ThriftFieldData fieldData = new ThriftFieldData().setFloatValue(value);
-    ThriftField field = new ThriftField()
-        .setFieldConfigId(idMapping.getFieldID(fieldName)).setFieldData(fieldData);
-    doc.addToFields(field);
-    return this;
+  public final ThriftDocumelonntBuildelonr withBytelonsFielonld(String fielonldNamelon, bytelon[] valuelon) {
+    ThriftFielonldData fielonldData = nelonw ThriftFielonldData().selontBytelonsValuelon(valuelon);
+    ThriftFielonld fielonld = nelonw ThriftFielonld()
+        .selontFielonldConfigId(idMapping.gelontFielonldID(fielonldNamelon)).selontFielonldData(fielonldData);
+    doc.addToFielonlds(fielonld);
+    relonturn this;
   }
 
   /**
-   * Added a field whose value is a Lucene TokenStream.
-   * The Lucene TokenStream is serialized using Twitter's
-   * {@link com.twitter.common.text.util.TokenStreamSerializer}
+   * Add a fielonld whoselon valuelon is a float.
    */
-  public final ThriftDocumentBuilder withTokenStreamField(String fieldName,
-                                                          @Nullable String tokenStreamText,
-                                                          byte[] tokenStream) {
-    if (tokenStream == null) {
-      return this;
+  public final ThriftDocumelonntBuildelonr withFloatFielonld(String fielonldNamelon, float valuelon) {
+    ThriftFielonldData fielonldData = nelonw ThriftFielonldData().selontFloatValuelon(valuelon);
+    ThriftFielonld fielonld = nelonw ThriftFielonld()
+        .selontFielonldConfigId(idMapping.gelontFielonldID(fielonldNamelon)).selontFielonldData(fielonldData);
+    doc.addToFielonlds(fielonld);
+    relonturn this;
+  }
+
+  /**
+   * Addelond a fielonld whoselon valuelon is a Lucelonnelon TokelonnStrelonam.
+   * Thelon Lucelonnelon TokelonnStrelonam is selonrializelond using Twittelonr's
+   * {@link com.twittelonr.common.telonxt.util.TokelonnStrelonamSelonrializelonr}
+   */
+  public final ThriftDocumelonntBuildelonr withTokelonnStrelonamFielonld(String fielonldNamelon,
+                                                          @Nullablelon String tokelonnStrelonamTelonxt,
+                                                          bytelon[] tokelonnStrelonam) {
+    if (tokelonnStrelonam == null) {
+      relonturn this;
     }
-    ThriftFieldData fieldData = new ThriftFieldData()
-        .setStringValue(tokenStreamText).setTokenStreamValue(tokenStream);
-    ThriftField field = new ThriftField()
-        .setFieldConfigId(idMapping.getFieldID(fieldName)).setFieldData(fieldData);
-    doc.addToFields(field);
-    return this;
+    ThriftFielonldData fielonldData = nelonw ThriftFielonldData()
+        .selontStringValuelon(tokelonnStrelonamTelonxt).selontTokelonnStrelonamValuelon(tokelonnStrelonam);
+    ThriftFielonld fielonld = nelonw ThriftFielonld()
+        .selontFielonldConfigId(idMapping.gelontFielonldID(fielonldNamelon)).selontFielonldData(fielonldData);
+    doc.addToFielonlds(fielonld);
+    relonturn this;
   }
 
   /**
-   * Add a field whose value is a String.
-   * @param fieldName Name of the field where the string will be added.
-   * @param text This string is indexed as is (not analyzed).
+   * Add a fielonld whoselon valuelon is a String.
+   * @param fielonldNamelon Namelon of thelon fielonld whelonrelon thelon string will belon addelond.
+   * @param telonxt This string is indelonxelond as is (not analyzelond).
    */
-  public final ThriftDocumentBuilder withStringField(String fieldName, String text) {
-    if (text == null || text.isEmpty()) {
-      return this;
+  public final ThriftDocumelonntBuildelonr withStringFielonld(String fielonldNamelon, String telonxt) {
+    if (telonxt == null || telonxt.iselonmpty()) {
+      relonturn this;
     }
 
-    ThriftFieldData fieldData = new ThriftFieldData().setStringValue(text);
-    ThriftField field = new ThriftField()
-        .setFieldConfigId(idMapping.getFieldID(fieldName)).setFieldData(fieldData);
-    doc.addToFields(field);
-    return this;
+    ThriftFielonldData fielonldData = nelonw ThriftFielonldData().selontStringValuelon(telonxt);
+    ThriftFielonld fielonld = nelonw ThriftFielonld()
+        .selontFielonldConfigId(idMapping.gelontFielonldID(fielonldNamelon)).selontFielonldData(fielonldData);
+    doc.addToFielonlds(fielonld);
+    relonturn this;
   }
 
   /**
-   * Add a field whose value is a geo coordinate.
-   * Earlybird will process the coordinates into geo hashes before indexing.
+   * Add a fielonld whoselon valuelon is a gelono coordinatelon.
+   * elonarlybird will procelonss thelon coordinatelons into gelono hashelons belonforelon indelonxing.
    */
-  public final ThriftDocumentBuilder withGeoField(String fieldName,
-                                                  double lat, double lon, int acc) {
-    if (!GeoUtil.validateGeoCoordinates(lat, lon)) {
-      // If the geo coordinates are invalid, don't add any field.
-      return this;
+  public final ThriftDocumelonntBuildelonr withGelonoFielonld(String fielonldNamelon,
+                                                  doublelon lat, doublelon lon, int acc) {
+    if (!GelonoUtil.validatelonGelonoCoordinatelons(lat, lon)) {
+      // If thelon gelono coordinatelons arelon invalid, don't add any fielonld.
+      relonturn this;
     }
-    ThriftGeoCoordinate coord = new ThriftGeoCoordinate();
-    coord.setLat(lat);
-    coord.setLon(lon);
-    coord.setAccuracy(acc);
+    ThriftGelonoCoordinatelon coord = nelonw ThriftGelonoCoordinatelon();
+    coord.selontLat(lat);
+    coord.selontLon(lon);
+    coord.selontAccuracy(acc);
 
-    ThriftFieldData fieldData = new ThriftFieldData().setGeoCoordinate(coord);
-    ThriftField field = new ThriftField()
-        .setFieldConfigId(idMapping.getFieldID(fieldName)).setFieldData(fieldData);
-    doc.addToFields(field);
-    return this;
+    ThriftFielonldData fielonldData = nelonw ThriftFielonldData().selontGelonoCoordinatelon(coord);
+    ThriftFielonld fielonld = nelonw ThriftFielonld()
+        .selontFielonldConfigId(idMapping.gelontFielonldID(fielonldNamelon)).selontFielonldData(fielonldData);
+    doc.addToFielonlds(fielonld);
+    relonturn this;
   }
 
   /**
-   * Added a list of tokens that are weighted. The weights are stored inside payload.
-   * See {@link com.twitter.search.common.util.analysis.PayloadWeightedTokenizer} for more details.
+   * Addelond a list of tokelonns that arelon welonightelond. Thelon welonights arelon storelond insidelon payload.
+   * Selonelon {@link com.twittelonr.selonarch.common.util.analysis.PayloadWelonightelondTokelonnizelonr} for morelon delontails.
    */
-  public final ThriftDocumentBuilder withPayloadWeightTokenStreamField(String fieldName,
-                                                                       String tokens) {
-    byte[] serialized;
+  public final ThriftDocumelonntBuildelonr withPayloadWelonightTokelonnStrelonamFielonld(String fielonldNamelon,
+                                                                       String tokelonns) {
+    bytelon[] selonrializelond;
     try {
-      PayloadWeightedTokenizer tokenizer = new PayloadWeightedTokenizer(tokens);
-      serialized = PAYLOAD_WEIGHTED_SERIALIZER_PER_THREAD.get().serialize(tokenizer);
-      tokenizer.close();
-    } catch (IOException e) {
-      LOG.log(Level.WARNING,
-          "Failed to add PayloadWeightedTokenizer field. Bad token weight list: " + tokens, e);
-      return this;
-    } catch (NumberFormatException e) {
-      LOG.log(Level.WARNING,
-          "Failed to add PayloadWeightedTokenizer field. Cannot parse token weight: " + tokens, e);
-      return this;
+      PayloadWelonightelondTokelonnizelonr tokelonnizelonr = nelonw PayloadWelonightelondTokelonnizelonr(tokelonns);
+      selonrializelond = PAYLOAD_WelonIGHTelonD_SelonRIALIZelonR_PelonR_THRelonAD.gelont().selonrializelon(tokelonnizelonr);
+      tokelonnizelonr.closelon();
+    } catch (IOelonxcelonption elon) {
+      LOG.log(Lelonvelonl.WARNING,
+          "Failelond to add PayloadWelonightelondTokelonnizelonr fielonld. Bad tokelonn welonight list: " + tokelonns, elon);
+      relonturn this;
+    } catch (NumbelonrFormatelonxcelonption elon) {
+      LOG.log(Lelonvelonl.WARNING,
+          "Failelond to add PayloadWelonightelondTokelonnizelonr fielonld. Cannot parselon tokelonn welonight: " + tokelonns, elon);
+      relonturn this;
     }
-    withTokenStreamField(fieldName, tokens, serialized);
-    return this;
+    withTokelonnStrelonamFielonld(fielonldNamelon, tokelonns, selonrializelond);
+    relonturn this;
   }
 
   /**
-   * Add a field whose value is a list of longs.
-   * Each long is encoded into a LongTermAttribute.
-   * The field will contain a LongTermTokenStream.
+   * Add a fielonld whoselon valuelon is a list of longs.
+   * elonach long is elonncodelond into a LongTelonrmAttributelon.
+   * Thelon fielonld will contain a LongTelonrmTokelonnStrelonam.
    */
-  public final ThriftDocumentBuilder withLongIDsField(String fieldName,
-      List<Long> longList)  throws IOException {
+  public final ThriftDocumelonntBuildelonr withLongIDsFielonld(String fielonldNamelon,
+      List<Long> longList)  throws IOelonxcelonption {
 
-    if (longList == null || longList.isEmpty()) {
-        return this;
+    if (longList == null || longList.iselonmpty()) {
+        relonturn this;
     }
-    LongTermsTokenStream stream = new LongTermsTokenStream(longList);
-    stream.reset();
-    byte[] serializedStream = LONG_TERM_SERIALIZER_PER_THREAD.get().serialize(stream);
+    LongTelonrmsTokelonnStrelonam strelonam = nelonw LongTelonrmsTokelonnStrelonam(longList);
+    strelonam.relonselont();
+    bytelon[] selonrializelondStrelonam = LONG_TelonRM_SelonRIALIZelonR_PelonR_THRelonAD.gelont().selonrializelon(strelonam);
 
-    ThriftFieldData fieldData = new ThriftFieldData().setTokenStreamValue(serializedStream);
-    ThriftField field = new ThriftField()
-        .setFieldConfigId(idMapping.getFieldID(fieldName)).setFieldData(fieldData);
-    doc.addToFields(field);
-    return this;
+    ThriftFielonldData fielonldData = nelonw ThriftFielonldData().selontTokelonnStrelonamValuelon(selonrializelondStrelonam);
+    ThriftFielonld fielonld = nelonw ThriftFielonld()
+        .selontFielonldConfigId(idMapping.gelontFielonldID(fielonldNamelon)).selontFielonldData(fielonldData);
+    doc.addToFielonlds(fielonld);
+    relonturn this;
   }
 }

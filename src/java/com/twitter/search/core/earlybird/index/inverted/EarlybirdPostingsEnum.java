@@ -1,26 +1,26 @@
-package com.twitter.search.core.earlybird.index.inverted;
+packagelon com.twittelonr.selonarch.corelon.elonarlybird.indelonx.invelonrtelond;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 
-import org.apache.lucene.index.PostingsEnum;
+import org.apachelon.lucelonnelon.indelonx.Postingselonnum;
 
 /**
- * Extension of Lucene's PostingsEnum interface that adds additional funcionality.
+ * elonxtelonnsion of Lucelonnelon's Postingselonnum intelonrfacelon that adds additional funcionality.
  */
-public abstract class EarlybirdPostingsEnum extends PostingsEnum {
-  @Override
-  public final int nextDoc() throws IOException {
-    // SEARCH-7008
-    return nextDocNoDel();
+public abstract class elonarlybirdPostingselonnum elonxtelonnds Postingselonnum {
+  @Ovelonrridelon
+  public final int nelonxtDoc() throws IOelonxcelonption {
+    // SelonARCH-7008
+    relonturn nelonxtDocNoDelonl();
   }
 
   /**
-   * Advances to the next doc without paying attention to liveDocs.
+   * Advancelons to thelon nelonxt doc without paying attelonntion to livelonDocs.
    */
-  protected abstract int nextDocNoDel() throws IOException;
+  protelonctelond abstract int nelonxtDocNoDelonl() throws IOelonxcelonption;
 
   /**
-   * Returns the largest docID contained in this posting list.
+   * Relonturns thelon largelonst docID containelond in this posting list.
    */
-  public abstract int getLargestDocID() throws IOException;
+  public abstract int gelontLargelonstDocID() throws IOelonxcelonption;
 }

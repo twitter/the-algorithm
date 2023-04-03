@@ -1,6 +1,6 @@
-package com.twitter.follow_recommendations.common.models
+packagelon com.twittelonr.follow_reloncommelonndations.common.modelonls
 
-case class TweetCandidate(
-  tweetId: Long,
+caselon class TwelonelontCandidatelon(
+  twelonelontId: Long,
   authorId: Long,
-  score: Option[Double])
+  scorelon: Option[Doublelon])

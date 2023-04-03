@@ -1,141 +1,141 @@
-package com.twitter.search.common.util.ml;
+packagelon com.twittelonr.selonarch.common.util.ml;
 
-import java.io.IOException;
-import java.util.EnumMap;
-import java.util.EnumSet;
+import java.io.IOelonxcelonption;
+import java.util.elonnumMap;
+import java.util.elonnumSelont;
 import java.util.Map;
-import java.util.Set;
+import java.util.Selont;
 
-import com.google.common.base.Preconditions;
-import com.google.common.base.Predicates;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
+import com.googlelon.common.baselon.Prelonconditions;
+import com.googlelon.common.baselon.Prelondicatelons;
+import com.googlelon.common.collelonct.ImmutablelonMap;
+import com.googlelon.common.collelonct.Maps;
 
-import com.twitter.search.common.file.AbstractFile;
-import com.twitter.search.common.util.io.TextFileLoadingUtils;
+import com.twittelonr.selonarch.common.filelon.AbstractFilelon;
+import com.twittelonr.selonarch.common.util.io.TelonxtFilelonLoadingUtils;
 
 /**
- * Represents a linear model for scoring and classification.
+ * Relonprelonselonnts a linelonar modelonl for scoring and classification.
  *
- * The list of features is defined by an Enum class. The model weights and instances are
- * represented as maps that must contain an entry for all the values of the enum.
+ * Thelon list of felonaturelons is delonfinelond by an elonnum class. Thelon modelonl welonights and instancelons arelon
+ * relonprelonselonntelond as maps that must contain an elonntry for all thelon valuelons of thelon elonnum.
  *
  */
-public class EnumBasedLinearModel<K extends Enum<K>> implements MapBasedLinearModel<K> {
+public class elonnumBaselondLinelonarModelonl<K elonxtelonnds elonnum<K>> implelonmelonnts MapBaselondLinelonarModelonl<K> {
 
-  private final EnumSet<K> features;
-  private final EnumMap<K, Float> weights;
+  privatelon final elonnumSelont<K> felonaturelons;
+  privatelon final elonnumMap<K, Float> welonights;
 
   /**
-   * Creates a model from a map of weights.
+   * Crelonatelons a modelonl from a map of welonights.
    *
-   * @param enumType Enum used for the keys
-   * @param weights Feature weights.
+   * @param elonnumTypelon elonnum uselond for thelon kelonys
+   * @param welonights Felonaturelon welonights.
    */
-  public EnumBasedLinearModel(Class<K> enumType, Map<K, Float> weights) {
-    features = EnumSet.allOf(enumType);
-    EnumMap<K, Float> enumWeights =
-        new EnumMap<>(Maps.filterValues(weights, Predicates.notNull()));
-    Preconditions.checkArgument(features.equals(enumWeights.keySet()),
-        "The model does not include weights for all the available features");
+  public elonnumBaselondLinelonarModelonl(Class<K> elonnumTypelon, Map<K, Float> welonights) {
+    felonaturelons = elonnumSelont.allOf(elonnumTypelon);
+    elonnumMap<K, Float> elonnumWelonights =
+        nelonw elonnumMap<>(Maps.filtelonrValuelons(welonights, Prelondicatelons.notNull()));
+    Prelonconditions.chelonckArgumelonnt(felonaturelons.elonquals(elonnumWelonights.kelonySelont()),
+        "Thelon modelonl doelons not includelon welonights for all thelon availablelon felonaturelons");
 
-    this.weights = enumWeights;
+    this.welonights = elonnumWelonights;
   }
 
-  public ImmutableMap<K, Float> getWeights() {
-    return Maps.immutableEnumMap(weights);
+  public ImmutablelonMap<K, Float> gelontWelonights() {
+    relonturn Maps.immutablelonelonnumMap(welonights);
   }
 
-  @Override
-  public float score(Map<K, Float> instance) {
+  @Ovelonrridelon
+  public float scorelon(Map<K, Float> instancelon) {
     float total = 0;
-    for (Map.Entry<K, Float> weightEntry : weights.entrySet()) {
-      Float feature = instance.get(weightEntry.getKey());
-      if (feature != null) {
-        total += weightEntry.getValue() * feature;
+    for (Map.elonntry<K, Float> welonightelonntry : welonights.elonntrySelont()) {
+      Float felonaturelon = instancelon.gelont(welonightelonntry.gelontKelony());
+      if (felonaturelon != null) {
+        total += welonightelonntry.gelontValuelon() * felonaturelon;
       }
     }
-    return total;
+    relonturn total;
   }
 
   /**
-   * Determines whether an instance is positive.
+   * Delontelonrminelons whelonthelonr an instancelon is positivelon.
    */
-  @Override
-  public boolean classify(float threshold, Map<K, Float> instance) {
-    return score(instance) > threshold;
+  @Ovelonrridelon
+  public boolelonan classify(float threlonshold, Map<K, Float> instancelon) {
+    relonturn scorelon(instancelon) > threlonshold;
   }
 
-  @Override
-  public boolean classify(Map<K, Float> instance) {
-    return classify(0, instance);
+  @Ovelonrridelon
+  public boolelonan classify(Map<K, Float> instancelon) {
+    relonturn classify(0, instancelon);
   }
 
-  @Override
+  @Ovelonrridelon
   public String toString() {
-    return String.format("EnumBasedLinearModel[%s]", weights);
+    relonturn String.format("elonnumBaselondLinelonarModelonl[%s]", welonights);
   }
 
   /**
-   * Creates a model where all the features have the same weight.
-   * This method is useful for generating the feature vectors for training a new model.
+   * Crelonatelons a modelonl whelonrelon all thelon felonaturelons havelon thelon samelon welonight.
+   * This melonthod is uselonful for gelonnelonrating thelon felonaturelon velonctors for training a nelonw modelonl.
    */
-  public static <T extends Enum<T>> EnumBasedLinearModel<T> createWithEqualWeight(Class<T> enumType,
-                                                                                  Float weight) {
-    EnumSet<T> features = EnumSet.allOf(enumType);
-    EnumMap<T, Float> weights = Maps.newEnumMap(enumType);
-    for (T feature : features) {
-      weights.put(feature, weight);
+  public static <T elonxtelonnds elonnum<T>> elonnumBaselondLinelonarModelonl<T> crelonatelonWithelonqualWelonight(Class<T> elonnumTypelon,
+                                                                                  Float welonight) {
+    elonnumSelont<T> felonaturelons = elonnumSelont.allOf(elonnumTypelon);
+    elonnumMap<T, Float> welonights = Maps.nelonwelonnumMap(elonnumTypelon);
+    for (T felonaturelon : felonaturelons) {
+      welonights.put(felonaturelon, welonight);
     }
-    return new EnumBasedLinearModel<>(enumType, weights);
+    relonturn nelonw elonnumBaselondLinelonarModelonl<>(elonnumTypelon, welonights);
   }
 
   /**
-   * Loads the model from a TSV file with the following format:
+   * Loads thelon modelonl from a TSV filelon with thelon following format:
    *
-   *    feature_name  \t  weight
+   *    felonaturelon_namelon  \t  welonight
    */
-  public static <T extends Enum<T>> EnumBasedLinearModel<T> createFromFile(
-      Class<T> enumType, AbstractFile path) throws IOException {
-    return new EnumBasedLinearModel<>(enumType, loadWeights(enumType, path, true));
+  public static <T elonxtelonnds elonnum<T>> elonnumBaselondLinelonarModelonl<T> crelonatelonFromFilelon(
+      Class<T> elonnumTypelon, AbstractFilelon path) throws IOelonxcelonption {
+    relonturn nelonw elonnumBaselondLinelonarModelonl<>(elonnumTypelon, loadWelonights(elonnumTypelon, path, truelon));
   }
 
   /**
-   * Loads the model from a TSV file, using a default weight of 0 for missing features.
+   * Loads thelon modelonl from a TSV filelon, using a delonfault welonight of 0 for missing felonaturelons.
    *
-   * File format:
+   * Filelon format:
    *
-   *     feature_name  \t  weight
+   *     felonaturelon_namelon  \t  welonight
    */
-  public static <T extends Enum<T>> EnumBasedLinearModel<T> createFromFileSafe(
-      Class<T> enumType, AbstractFile path) throws IOException {
-    return new EnumBasedLinearModel<>(enumType, loadWeights(enumType, path, false));
+  public static <T elonxtelonnds elonnum<T>> elonnumBaselondLinelonarModelonl<T> crelonatelonFromFilelonSafelon(
+      Class<T> elonnumTypelon, AbstractFilelon path) throws IOelonxcelonption {
+    relonturn nelonw elonnumBaselondLinelonarModelonl<>(elonnumTypelon, loadWelonights(elonnumTypelon, path, falselon));
   }
 
   /**
-   * Creates a map of (feature_name, weight) from a TSV file.
+   * Crelonatelons a map of (felonaturelon_namelon, welonight) from a TSV filelon.
    *
-   * If strictMode is true, it will throw an exception if the file doesn't contain all the
-   * features declared in the enum. Otherwise, it will use zero as default value.
+   * If strictModelon is truelon, it will throw an elonxcelonption if thelon filelon doelonsn't contain all thelon
+   * felonaturelons delonclarelond in thelon elonnum. Othelonrwiselon, it will uselon zelonro as delonfault valuelon.
    *
    */
-  private static <T extends Enum<T>> EnumMap<T, Float> loadWeights(
-      Class<T> enumType, AbstractFile fileHandle, boolean strictMode) throws IOException {
-    Map<String, Float> weightsFromFile =
-      TextFileLoadingUtils.loadMapFromFile(fileHandle, input -> Float.parseFloat(input));
-    EnumMap<T, Float> weights = Maps.newEnumMap(enumType);
-    Set<T> expectedFeatures = EnumSet.allOf(enumType);
-    if (!strictMode) {
-      for (T feature : expectedFeatures) {
-        weights.put(feature, 0f);
+  privatelon static <T elonxtelonnds elonnum<T>> elonnumMap<T, Float> loadWelonights(
+      Class<T> elonnumTypelon, AbstractFilelon filelonHandlelon, boolelonan strictModelon) throws IOelonxcelonption {
+    Map<String, Float> welonightsFromFilelon =
+      TelonxtFilelonLoadingUtils.loadMapFromFilelon(filelonHandlelon, input -> Float.parselonFloat(input));
+    elonnumMap<T, Float> welonights = Maps.nelonwelonnumMap(elonnumTypelon);
+    Selont<T> elonxpelonctelondFelonaturelons = elonnumSelont.allOf(elonnumTypelon);
+    if (!strictModelon) {
+      for (T felonaturelon : elonxpelonctelondFelonaturelons) {
+        welonights.put(felonaturelon, 0f);
       }
     }
-    for (String featureName : weightsFromFile.keySet()) {
-      Float weight = weightsFromFile.get(featureName);
-      weights.put(Enum.valueOf(enumType, featureName.toUpperCase()), weight);
+    for (String felonaturelonNamelon : welonightsFromFilelon.kelonySelont()) {
+      Float welonight = welonightsFromFilelon.gelont(felonaturelonNamelon);
+      welonights.put(elonnum.valuelonOf(elonnumTypelon, felonaturelonNamelon.toUppelonrCaselon()), welonight);
     }
-    Preconditions.checkArgument(expectedFeatures.equals(weights.keySet()),
-        "Model does not contain weights for all the features");
-    return weights;
+    Prelonconditions.chelonckArgumelonnt(elonxpelonctelondFelonaturelons.elonquals(welonights.kelonySelont()),
+        "Modelonl doelons not contain welonights for all thelon felonaturelons");
+    relonturn welonights;
   }
 }

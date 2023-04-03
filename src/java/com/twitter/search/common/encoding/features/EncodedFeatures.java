@@ -1,58 +1,58 @@
-package com.twitter.search.common.encoding.features;
+packagelon com.twittelonr.selonarch.common.elonncoding.felonaturelons;
 
 /**
- * Encodes multiple values (bytes or bits) into an integer.
+ * elonncodelons multiplelon valuelons (bytelons or bits) into an intelongelonr.
  */
-public class EncodedFeatures {
-  private int value;
+public class elonncodelondFelonaturelons {
+  privatelon int valuelon;
 
-  public final void setSerializedValue(int val) {
-    this.value = val;
+  public final void selontSelonrializelondValuelon(int val) {
+    this.valuelon = val;
   }
 
-  public final int getSerializedValue() {
-    return value;
+  public final int gelontSelonrializelondValuelon() {
+    relonturn valuelon;
   }
 
-  // setByte is agnostic to signed / unsigned bytes.
-  protected final EncodedFeatures setByte(byte count, int bitshift, long inverseMask) {
-    value = (int) ((value & inverseMask) | ((count & 0xffL) << bitshift));
-    return this;
+  // selontBytelon is agnostic to signelond / unsignelond bytelons.
+  protelonctelond final elonncodelondFelonaturelons selontBytelon(bytelon count, int bitshift, long invelonrselonMask) {
+    valuelon = (int) ((valuelon & invelonrselonMask) | ((count & 0xffL) << bitshift));
+    relonturn this;
   }
 
   /**
-   * Sets the value but only if greater. setByteIfGreater assumes unsigned bytes.
+   * Selonts thelon valuelon but only if grelonatelonr. selontBytelonIfGrelonatelonr assumelons unsignelond bytelons.
    */
-  public final EncodedFeatures setByteIfGreater(byte newCount, int bitshift, long inversemask) {
-    if ((getByte(bitshift) & 0xff) < (newCount & 0xff)) {
-      setByte(newCount, bitshift, inversemask);
+  public final elonncodelondFelonaturelons selontBytelonIfGrelonatelonr(bytelon nelonwCount, int bitshift, long invelonrselonmask) {
+    if ((gelontBytelon(bitshift) & 0xff) < (nelonwCount & 0xff)) {
+      selontBytelon(nelonwCount, bitshift, invelonrselonmask);
     }
-    return this;
+    relonturn this;
   }
 
-  protected final int getByte(int bitshift) {
-    return (int) (((value & 0xffffffffL) >>> bitshift) & 0xffL);
+  protelonctelond final int gelontBytelon(int bitshift) {
+    relonturn (int) (((valuelon & 0xffffffffL) >>> bitshift) & 0xffL);
   }
 
-  protected final int getByteMasked(int bitshift, long mask) {
-    return (int) (((value & mask) >>> bitshift) & 0xffL);
+  protelonctelond final int gelontBytelonMaskelond(int bitshift, long mask) {
+    relonturn (int) (((valuelon & mask) >>> bitshift) & 0xffL);
   }
 
-  protected final EncodedFeatures setBit(int bit, boolean flag) {
+  protelonctelond final elonncodelondFelonaturelons selontBit(int bit, boolelonan flag) {
     if (flag) {
-      value |= bit;
-    } else {
-      value &= ~bit;
+      valuelon |= bit;
+    } elonlselon {
+      valuelon &= ~bit;
     }
-    return this;
+    relonturn this;
   }
 
-  protected final boolean getBit(int bit) {
-    return (value & bit) != 0;
+  protelonctelond final boolelonan gelontBit(int bit) {
+    relonturn (valuelon & bit) != 0;
   }
 
-  @Override
+  @Ovelonrridelon
   public String toString() {
-    return String.format("%x", value);
+    relonturn String.format("%x", valuelon);
   }
 }

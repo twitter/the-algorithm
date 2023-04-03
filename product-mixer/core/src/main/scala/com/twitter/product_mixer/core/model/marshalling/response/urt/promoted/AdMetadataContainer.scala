@@ -1,11 +1,11 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.promoted
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.promotelond
 
-case class AdMetadataContainer(
-  removePromotedAttributionForPreroll: Option[Boolean],
-  sponsorshipCandidate: Option[String],
+caselon class AdMelontadataContainelonr(
+  relonmovelonPromotelondAttributionForPrelonroll: Option[Boolelonan],
+  sponsorshipCandidatelon: Option[String],
   sponsorshipOrganization: Option[String],
-  sponsorshipOrganizationWebsite: Option[String],
-  sponsorshipType: Option[SponsorshipType],
-  disclaimerType: Option[DisclaimerType],
-  skAdNetworkDataList: Option[Seq[SkAdNetworkData]],
-  unifiedCardOverride: Option[String])
+  sponsorshipOrganizationWelonbsitelon: Option[String],
+  sponsorshipTypelon: Option[SponsorshipTypelon],
+  disclaimelonrTypelon: Option[DisclaimelonrTypelon],
+  skAdNelontworkDataList: Option[Selonq[SkAdNelontworkData]],
+  unifielondCardOvelonrridelon: Option[String])

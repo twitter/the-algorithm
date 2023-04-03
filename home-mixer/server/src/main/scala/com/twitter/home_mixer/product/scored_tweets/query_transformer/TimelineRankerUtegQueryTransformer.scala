@@ -1,59 +1,59 @@
-package com.twitter.home_mixer.product.scored_tweets.query_transformer
+packagelon com.twittelonr.homelon_mixelonr.product.scorelond_twelonelonts.quelonry_transformelonr
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.home_mixer.model.HomeFeatures.RealGraphInNetworkScoresFeature
-import com.twitter.home_mixer.model.request.HasDeviceContext
-import com.twitter.home_mixer.product.scored_tweets.query_transformer.TimelineRankerUtegQueryTransformer._
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.quality_factor.HasQualityFactorStatus
-import com.twitter.timelinemixer.clients.timelineranker.EarlybirdScoringModels
-import com.twitter.timelinemixer.clients.timelineranker.EarlybirdScoringModelsId
-import com.twitter.timelineranker.{model => tlr}
-import com.twitter.timelineranker.{thriftscala => t}
-import com.twitter.timelines.common.model.TweetKindOption
-import com.twitter.timelines.model.UserId
-import com.twitter.timelines.model.candidate.CandidateTweetSourceId
-import com.twitter.util.Duration
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.RelonalGraphInNelontworkScorelonsFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.relonquelonst.HasDelonvicelonContelonxt
+import com.twittelonr.homelon_mixelonr.product.scorelond_twelonelonts.quelonry_transformelonr.TimelonlinelonRankelonrUtelongQuelonryTransformelonr._
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.transformelonr.CandidatelonPipelonlinelonQuelonryTransformelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonPipelonlinelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.product_mixelonr.corelon.quality_factor.HasQualityFactorStatus
+import com.twittelonr.timelonlinelonmixelonr.clielonnts.timelonlinelonrankelonr.elonarlybirdScoringModelonls
+import com.twittelonr.timelonlinelonmixelonr.clielonnts.timelonlinelonrankelonr.elonarlybirdScoringModelonlsId
+import com.twittelonr.timelonlinelonrankelonr.{modelonl => tlr}
+import com.twittelonr.timelonlinelonrankelonr.{thriftscala => t}
+import com.twittelonr.timelonlinelons.common.modelonl.TwelonelontKindOption
+import com.twittelonr.timelonlinelons.modelonl.UselonrId
+import com.twittelonr.timelonlinelons.modelonl.candidatelon.CandidatelonTwelonelontSourcelonId
+import com.twittelonr.util.Duration
 
-object TimelineRankerUtegQueryTransformer {
-  private val SinceDuration = 24.hours
-  private val MaxTweetsToFetch = 500
-  private val MaxUtegCandidates = 800
+objelonct TimelonlinelonRankelonrUtelongQuelonryTransformelonr {
+  privatelon val SincelonDuration = 24.hours
+  privatelon val MaxTwelonelontsToFelontch = 500
+  privatelon val MaxUtelongCandidatelons = 800
 
-  private val TensorflowModel = "timelines_rectweet_replica"
+  privatelon val TelonnsorflowModelonl = "timelonlinelons_relonctwelonelont_relonplica"
 
-  private val tweetKindOptions = TweetKindOption(includeReplies = true)
+  privatelon val twelonelontKindOptions = TwelonelontKindOption(includelonRelonplielons = truelon)
 
-  def utegEarlybirdModels =
-    EarlybirdScoringModels.fromEnum(EarlybirdScoringModelsId.UnifiedEngagementRectweet)
+  delonf utelongelonarlybirdModelonls =
+    elonarlybirdScoringModelonls.fromelonnum(elonarlybirdScoringModelonlsId.UnifielondelonngagelonmelonntRelonctwelonelont)
 }
 
-case class TimelineRankerUtegQueryTransformer[
-  Query <: PipelineQuery with HasQualityFactorStatus with HasDeviceContext
+caselon class TimelonlinelonRankelonrUtelongQuelonryTransformelonr[
+  Quelonry <: PipelonlinelonQuelonry with HasQualityFactorStatus with HasDelonvicelonContelonxt
 ](
-  override val candidatePipelineIdentifier: CandidatePipelineIdentifier,
-  override val maxTweetsToFetch: Int = MaxTweetsToFetch,
-  override val sinceDuration: Duration = SinceDuration)
-    extends CandidatePipelineQueryTransformer[Query, t.UtegLikedByTweetsQuery]
-    with TimelineRankerQueryTransformer[Query] {
+  ovelonrridelon val candidatelonPipelonlinelonIdelonntifielonr: CandidatelonPipelonlinelonIdelonntifielonr,
+  ovelonrridelon val maxTwelonelontsToFelontch: Int = MaxTwelonelontsToFelontch,
+  ovelonrridelon val sincelonDuration: Duration = SincelonDuration)
+    elonxtelonnds CandidatelonPipelonlinelonQuelonryTransformelonr[Quelonry, t.UtelongLikelondByTwelonelontsQuelonry]
+    with TimelonlinelonRankelonrQuelonryTransformelonr[Quelonry] {
 
-  override val candidateTweetSourceId = CandidateTweetSourceId.RecommendedTweet
-  override val skipVeryRecentTweets = true
-  override val earlybirdModels = utegEarlybirdModels
-  override val tensorflowModel = Some(TensorflowModel)
+  ovelonrridelon val candidatelonTwelonelontSourcelonId = CandidatelonTwelonelontSourcelonId.ReloncommelonndelondTwelonelont
+  ovelonrridelon val skipVelonryReloncelonntTwelonelonts = truelon
+  ovelonrridelon val elonarlybirdModelonls = utelongelonarlybirdModelonls
+  ovelonrridelon val telonnsorflowModelonl = Somelon(TelonnsorflowModelonl)
 
-  override def utegLikedByTweetsOptions(input: Query): Option[tlr.UtegLikedByTweetsOptions] = Some(
-    tlr.UtegLikedByTweetsOptions(
-      utegCount = MaxUtegCandidates,
-      isInNetwork = false,
-      weightedFollowings = input.features
-        .map(_.getOrElse(RealGraphInNetworkScoresFeature, Map.empty[UserId, Double]))
-        .getOrElse(Map.empty)
+  ovelonrridelon delonf utelongLikelondByTwelonelontsOptions(input: Quelonry): Option[tlr.UtelongLikelondByTwelonelontsOptions] = Somelon(
+    tlr.UtelongLikelondByTwelonelontsOptions(
+      utelongCount = MaxUtelongCandidatelons,
+      isInNelontwork = falselon,
+      welonightelondFollowings = input.felonaturelons
+        .map(_.gelontOrelonlselon(RelonalGraphInNelontworkScorelonsFelonaturelon, Map.elonmpty[UselonrId, Doublelon]))
+        .gelontOrelonlselon(Map.elonmpty)
     )
   )
 
-  override def transform(input: Query): t.UtegLikedByTweetsQuery =
-    buildTimelineRankerQuery(input).toThriftUtegLikedByTweetsQuery
+  ovelonrridelon delonf transform(input: Quelonry): t.UtelongLikelondByTwelonelontsQuelonry =
+    buildTimelonlinelonRankelonrQuelonry(input).toThriftUtelongLikelondByTwelonelontsQuelonry
 }

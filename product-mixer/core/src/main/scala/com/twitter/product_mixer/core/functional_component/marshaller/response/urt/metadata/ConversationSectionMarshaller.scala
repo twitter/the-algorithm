@@ -1,21 +1,21 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.melontadata
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.AbusiveQuality
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ConversationSection
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.HighQuality
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.LowQuality
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.RelatedTweet
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.AbusivelonQuality
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.ConvelonrsationSelonction
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.HighQuality
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.LowQuality
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.RelonlatelondTwelonelont
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class ConversationSectionMarshaller @Inject() () {
+@Singlelonton
+class ConvelonrsationSelonctionMarshallelonr @Injelonct() () {
 
-  def apply(section: ConversationSection): urt.ConversationSection = section match {
-    case HighQuality => urt.ConversationSection.HighQuality
-    case LowQuality => urt.ConversationSection.LowQuality
-    case AbusiveQuality => urt.ConversationSection.AbusiveQuality
-    case RelatedTweet => urt.ConversationSection.RelatedTweet
+  delonf apply(selonction: ConvelonrsationSelonction): urt.ConvelonrsationSelonction = selonction match {
+    caselon HighQuality => urt.ConvelonrsationSelonction.HighQuality
+    caselon LowQuality => urt.ConvelonrsationSelonction.LowQuality
+    caselon AbusivelonQuality => urt.ConvelonrsationSelonction.AbusivelonQuality
+    caselon RelonlatelondTwelonelont => urt.ConvelonrsationSelonction.RelonlatelondTwelonelont
   }
 }

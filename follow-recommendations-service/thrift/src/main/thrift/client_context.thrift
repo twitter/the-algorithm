@@ -1,19 +1,19 @@
-namespace java com.twitter.follow_recommendations.thriftjava
-#@namespace scala com.twitter.follow_recommendations.thriftscala
-#@namespace strato com.twitter.follow_recommendations
+namelonspacelon java com.twittelonr.follow_reloncommelonndations.thriftjava
+#@namelonspacelon scala com.twittelonr.follow_reloncommelonndations.thriftscala
+#@namelonspacelon strato com.twittelonr.follow_reloncommelonndations
 
-// Caller/Client level specific context (e.g, user id/guest id/app id).
-struct ClientContext {
-  1: optional i64 userId(personalDataType='UserId')
-  2: optional i64 guestId(personalDataType='GuestId')
-  3: optional i64 appId(personalDataType='AppId')
-  4: optional string ipAddress(personalDataType='IpAddress')
-  5: optional string userAgent(personalDataType='UserAgent')
-  6: optional string countryCode(personalDataType='InferredCountry')
-  7: optional string languageCode(personalDataType='InferredLanguage')
-  9: optional bool isTwoffice(personalDataType='InferredLocation')
-  10: optional set<string> userRoles
-  11: optional string deviceId(personalDataType='DeviceId')
-  12: optional i64 guestIdAds(personalDataType='GuestId')
-  13: optional i64 guestIdMarketing(personalDataType='GuestId')
-}(hasPersonalData='true')
+// Callelonr/Clielonnt lelonvelonl speloncific contelonxt (elon.g, uselonr id/guelonst id/app id).
+struct ClielonntContelonxt {
+  1: optional i64 uselonrId(pelonrsonalDataTypelon='UselonrId')
+  2: optional i64 guelonstId(pelonrsonalDataTypelon='GuelonstId')
+  3: optional i64 appId(pelonrsonalDataTypelon='AppId')
+  4: optional string ipAddrelonss(pelonrsonalDataTypelon='IpAddrelonss')
+  5: optional string uselonrAgelonnt(pelonrsonalDataTypelon='UselonrAgelonnt')
+  6: optional string countryCodelon(pelonrsonalDataTypelon='InfelonrrelondCountry')
+  7: optional string languagelonCodelon(pelonrsonalDataTypelon='InfelonrrelondLanguagelon')
+  9: optional bool isTwofficelon(pelonrsonalDataTypelon='InfelonrrelondLocation')
+  10: optional selont<string> uselonrRolelons
+  11: optional string delonvicelonId(pelonrsonalDataTypelon='DelonvicelonId')
+  12: optional i64 guelonstIdAds(pelonrsonalDataTypelon='GuelonstId')
+  13: optional i64 guelonstIdMarkelonting(pelonrsonalDataTypelon='GuelonstId')
+}(hasPelonrsonalData='truelon')

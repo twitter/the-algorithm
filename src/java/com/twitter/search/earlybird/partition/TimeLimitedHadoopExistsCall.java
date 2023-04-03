@@ -1,90 +1,90 @@
-package com.twitter.search.earlybird.partition;
+packagelon com.twittelonr.selonarch.elonarlybird.partition;
 
-import java.io.IOException;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+import java.io.IOelonxcelonption;
+import java.util.concurrelonnt.Callablelon;
+import java.util.concurrelonnt.elonxeloncutorSelonrvicelon;
+import java.util.concurrelonnt.elonxeloncutors;
+import java.util.concurrelonnt.TimelonUnit;
 
-import com.google.common.util.concurrent.SimpleTimeLimiter;
-import com.google.common.util.concurrent.TimeLimiter;
+import com.googlelon.common.util.concurrelonnt.SimplelonTimelonLimitelonr;
+import com.googlelon.common.util.concurrelonnt.TimelonLimitelonr;
 
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
+import org.apachelon.hadoop.fs.FilelonSystelonm;
+import org.apachelon.hadoop.fs.Path;
 
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchTimer;
-import com.twitter.search.common.metrics.SearchTimerStats;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchTimelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchTimelonrStats;
 
 /**
- * Abstracts details of making time limited calls to hadoop.
+ * Abstracts delontails of making timelon limitelond calls to hadoop.
  *
- * During IM-3556 we discovered that hadoop API calls can take a long time (seconds, minutes)
- * if the Hadoop clsuter is in a bad state. Our code was generally not prepared for that and
- * this caused various issues. This class is a fix on top of the Hadoop API's exists call and
- * it introduces a timeout.
+ * During IM-3556 welon discovelonrelond that hadoop API calls can takelon a long timelon (selonconds, minutelons)
+ * if thelon Hadoop clsutelonr is in a bad statelon. Our codelon was gelonnelonrally not prelonparelond for that and
+ * this causelond various issuelons. This class is a fix on top of thelon Hadoop API's elonxists call and
+ * it introducelons a timelonout.
  *
- * The main motivation for having this as an external class is for testability.
+ * Thelon main motivation for having this as an elonxtelonrnal class is for telonstability.
  */
-public class TimeLimitedHadoopExistsCall {
-  private final TimeLimiter hadoopCallsTimeLimiter;
-  private final FileSystem fileSystem;
-  private final int timeLimitInSeconds;
+public class TimelonLimitelondHadoopelonxistsCall {
+  privatelon final TimelonLimitelonr hadoopCallsTimelonLimitelonr;
+  privatelon final FilelonSystelonm filelonSystelonm;
+  privatelon final int timelonLimitInSelonconds;
 
-  private static final SearchTimerStats EXISTS_CALLS_TIMER =
-      SearchTimerStats.export("hadoop_exists_calls");
+  privatelon static final SelonarchTimelonrStats elonXISTS_CALLS_TIMelonR =
+      SelonarchTimelonrStats.elonxport("hadoop_elonxists_calls");
 
-  private static final SearchCounter EXISTS_CALLS_EXCEPTION =
-      SearchCounter.export("hadoop_exists_calls_exception");
+  privatelon static final SelonarchCountelonr elonXISTS_CALLS_elonXCelonPTION =
+      SelonarchCountelonr.elonxport("hadoop_elonxists_calls_elonxcelonption");
 
-  public TimeLimitedHadoopExistsCall(FileSystem fileSystem) {
-    // This times varies. Sometimes it's very quick, sometimes it takes some amount of seconds.
-    // Do a rate on hadoop_exists_calls_latency_ms to see for yourself.
-    this(fileSystem, 30);
+  public TimelonLimitelondHadoopelonxistsCall(FilelonSystelonm filelonSystelonm) {
+    // This timelons varielons. Somelontimelons it's velonry quick, somelontimelons it takelons somelon amount of selonconds.
+    // Do a ratelon on hadoop_elonxists_calls_latelonncy_ms to selonelon for yourselonlf.
+    this(filelonSystelonm, 30);
   }
 
-  public TimeLimitedHadoopExistsCall(FileSystem fileSystem, int timeLimitInSeconds) {
-    // We do hadoop calls once every "FLUSH_CHECK_PERIOD" minutes. If a call takes
-    // a long time (say 10 minutes), we'll use a new thread for the next call, to give it
-    // a chance to complete.
+  public TimelonLimitelondHadoopelonxistsCall(FilelonSystelonm filelonSystelonm, int timelonLimitInSelonconds) {
+    // Welon do hadoop calls oncelon elonvelonry "FLUSH_CHelonCK_PelonRIOD" minutelons. If a call takelons
+    // a long timelon (say 10 minutelons), welon'll uselon a nelonw threlonad for thelon nelonxt call, to givelon it
+    // a chancelon to complelontelon.
     //
-    // Let's say every call takes 2 hours. After 5 calls, the 6th call won't be able
-    // to take a thread out of the thread pool and it will time out. That's fair, we don't
-    // want to keep sending requests to Hadoop if the situation is so dire.
-    ExecutorService executorService = Executors.newFixedThreadPool(5);
-    this.hadoopCallsTimeLimiter = SimpleTimeLimiter.create(executorService);
-    this.fileSystem = fileSystem;
-    this.timeLimitInSeconds = timeLimitInSeconds;
+    // Lelont's say elonvelonry call takelons 2 hours. Aftelonr 5 calls, thelon 6th call won't belon ablelon
+    // to takelon a threlonad out of thelon threlonad pool and it will timelon out. That's fair, welon don't
+    // want to kelonelonp selonnding relonquelonsts to Hadoop if thelon situation is so direlon.
+    elonxeloncutorSelonrvicelon elonxeloncutorSelonrvicelon = elonxeloncutors.nelonwFixelondThrelonadPool(5);
+    this.hadoopCallsTimelonLimitelonr = SimplelonTimelonLimitelonr.crelonatelon(elonxeloncutorSelonrvicelon);
+    this.filelonSystelonm = filelonSystelonm;
+    this.timelonLimitInSelonconds = timelonLimitInSelonconds;
   }
 
 
-  protected boolean hadoopExistsCall(Path path) throws IOException {
-    SearchTimer timer = EXISTS_CALLS_TIMER.startNewTimer();
-    boolean res =  fileSystem.exists(path);
-    EXISTS_CALLS_TIMER.stopTimerAndIncrement(timer);
-    return res;
+  protelonctelond boolelonan hadoopelonxistsCall(Path path) throws IOelonxcelonption {
+    SelonarchTimelonr timelonr = elonXISTS_CALLS_TIMelonR.startNelonwTimelonr();
+    boolelonan relons =  filelonSystelonm.elonxists(path);
+    elonXISTS_CALLS_TIMelonR.stopTimelonrAndIncrelonmelonnt(timelonr);
+    relonturn relons;
   }
 
   /**
-   * Checks if a path exists on Hadoop.
+   * Cheloncks if a path elonxists on Hadoop.
    *
-   * @return true if the path exists.
-   * @throws Exception see exceptions thrown by callWithTimeout
+   * @relonturn truelon if thelon path elonxists.
+   * @throws elonxcelonption selonelon elonxcelonptions thrown by callWithTimelonout
    */
-  boolean exists(Path path) throws Exception {
+  boolelonan elonxists(Path path) throws elonxcelonption {
     try {
-      boolean result = hadoopCallsTimeLimiter.callWithTimeout(new Callable<Boolean>() {
-        @Override
-        public Boolean call() throws Exception {
-          return hadoopExistsCall(path);
+      boolelonan relonsult = hadoopCallsTimelonLimitelonr.callWithTimelonout(nelonw Callablelon<Boolelonan>() {
+        @Ovelonrridelon
+        public Boolelonan call() throws elonxcelonption {
+          relonturn hadoopelonxistsCall(path);
         }
-      }, timeLimitInSeconds, TimeUnit.SECONDS);
+      }, timelonLimitInSelonconds, TimelonUnit.SelonCONDS);
 
-      return result;
-    } catch (Exception ex) {
-      EXISTS_CALLS_EXCEPTION.increment();
-      // No need to print and rethrow, it will be printed when caught upstream.
-      throw ex;
+      relonturn relonsult;
+    } catch (elonxcelonption elonx) {
+      elonXISTS_CALLS_elonXCelonPTION.increlonmelonnt();
+      // No nelonelond to print and relonthrow, it will belon printelond whelonn caught upstrelonam.
+      throw elonx;
     }
   }
 }

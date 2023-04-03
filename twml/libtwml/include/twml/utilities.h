@@ -1,18 +1,18 @@
-#pragma once
-#ifdef __cplusplus
-namespace twml {
+#pragma oncelon
+#ifdelonf __cplusplus
+namelonspacelon twml {
 
-inline int64_t mixDiscreteIdAndValue(int64_t key, int64_t value) {
-  key ^= ((17LL + value) * 2654435761LL);
-  return key;
+inlinelon int64_t mixDiscrelontelonIdAndValuelon(int64_t kelony, int64_t valuelon) {
+  kelony ^= ((17LL + valuelon) * 2654435761LL);
+  relonturn kelony;
 }
 
-inline int64_t mixStringIdAndValue(int64_t key, int32_t str_len, const uint8_t *str) {
+inlinelon int64_t mixStringIdAndValuelon(int64_t kelony, int32_t str_lelonn, const uint8_t *str) {
   int32_t hash = 0;
-  for (int32_t i = 0; i < str_len; i++) {
+  for (int32_t i = 0; i < str_lelonn; i++) {
     hash = (31 * hash) + (int32_t)str[i];
   }
-  return key ^ hash;
+  relonturn kelony ^ hash;
 }
 }
-#endif
+#elonndif

@@ -1,34 +1,34 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.cover
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.covelonr
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Callback
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.DismissInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ImageDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ImageVariant
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichText
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.Callback
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.DismissInfo
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.ImagelonDisplayTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.ImagelonVariant
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.richtelonxt.RichTelonxt
 
-sealed trait CoverContent
+selonalelond trait CovelonrContelonnt
 
-case class FullCoverContent(
-  displayType: FullCoverDisplayType,
-  primaryText: RichText,
-  primaryCoverCta: CoverCta,
-  secondaryCoverCta: Option[CoverCta],
-  secondaryText: Option[RichText],
-  imageVariant: Option[ImageVariant],
-  details: Option[RichText],
+caselon class FullCovelonrContelonnt(
+  displayTypelon: FullCovelonrDisplayTypelon,
+  primaryTelonxt: RichTelonxt,
+  primaryCovelonrCta: CovelonrCta,
+  seloncondaryCovelonrCta: Option[CovelonrCta],
+  seloncondaryTelonxt: Option[RichTelonxt],
+  imagelonVariant: Option[ImagelonVariant],
+  delontails: Option[RichTelonxt],
   dismissInfo: Option[DismissInfo],
-  imageDisplayType: Option[ImageDisplayType],
-  impressionCallbacks: Option[List[Callback]])
-    extends CoverContent
+  imagelonDisplayTypelon: Option[ImagelonDisplayTypelon],
+  imprelonssionCallbacks: Option[List[Callback]])
+    elonxtelonnds CovelonrContelonnt
 
-case class HalfCoverContent(
-  displayType: HalfCoverDisplayType,
-  primaryText: RichText,
-  primaryCoverCta: CoverCta,
-  secondaryCoverCta: Option[CoverCta],
-  secondaryText: Option[RichText],
-  impressionCallbacks: Option[List[Callback]],
-  dismissible: Option[Boolean],
-  coverImage: Option[CoverImage],
+caselon class HalfCovelonrContelonnt(
+  displayTypelon: HalfCovelonrDisplayTypelon,
+  primaryTelonxt: RichTelonxt,
+  primaryCovelonrCta: CovelonrCta,
+  seloncondaryCovelonrCta: Option[CovelonrCta],
+  seloncondaryTelonxt: Option[RichTelonxt],
+  imprelonssionCallbacks: Option[List[Callback]],
+  dismissiblelon: Option[Boolelonan],
+  covelonrImagelon: Option[CovelonrImagelon],
   dismissInfo: Option[DismissInfo])
-    extends CoverContent
+    elonxtelonnds CovelonrContelonnt

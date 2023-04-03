@@ -1,124 +1,124 @@
 <configuration>
-  <shutdownHook class="ch.qos.logback.core.hook.DelayingShutdownHook"/>
-  <property name="async_queue_size" value="${queue.size:-50000}"/>
-  <property name="async_max_flush_time" value="${max.flush.time:-0}"/>
-  <property name="SERVICE_OUTPUT" value="${log.service.output:-server.log}"/>
-  <property name="DEBUG_TRANSCRIPTS_OUTPUT"
-            value="${log.debug_transcripts.output:-debug_transcripts.log}"/>
-  <property name="DEFAULT_SERVICE_PATTERN"
-            value="%5p [%d{yyyyMMdd-HH:mm:ss.SSS}] %logger{0}: %m%n"/>
-  <!-- JUL/JDK14 to Logback bridge -->
-  <contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator">
-    <resetJUL>true</resetJUL>
-  </contextListener>
+  <shutdownHook class="ch.qos.logback.corelon.hook.DelonlayingShutdownHook"/>
+  <propelonrty namelon="async_quelonuelon_sizelon" valuelon="${quelonuelon.sizelon:-50000}"/>
+  <propelonrty namelon="async_max_flush_timelon" valuelon="${max.flush.timelon:-0}"/>
+  <propelonrty namelon="SelonRVICelon_OUTPUT" valuelon="${log.selonrvicelon.output:-selonrvelonr.log}"/>
+  <propelonrty namelon="DelonBUG_TRANSCRIPTS_OUTPUT"
+            valuelon="${log.delonbug_transcripts.output:-delonbug_transcripts.log}"/>
+  <propelonrty namelon="DelonFAULT_SelonRVICelon_PATTelonRN"
+            valuelon="%5p [%d{yyyyMMdd-HH:mm:ss.SSS}] %loggelonr{0}: %m%n"/>
+  <!-- JUL/JDK14 to Logback bridgelon -->
+  <contelonxtListelonnelonr class="ch.qos.logback.classic.jul.LelonvelonlChangelonPropagator">
+    <relonselontJUL>truelon</relonselontJUL>
+  </contelonxtListelonnelonr>
 
-  <!-- Service Log -->
-  <appender name="SERVICE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-    <file>${SERVICE_OUTPUT}</file>
-    <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-      <!-- daily rollover -->
-      <fileNamePattern>${SERVICE_OUTPUT}.%d.%i.gz</fileNamePattern>
-      <maxFileSize>500MB</maxFileSize>
-      <!-- keep 21 days' worth of history -->
+  <!-- Selonrvicelon Log -->
+  <appelonndelonr namelon="SelonRVICelon" class="ch.qos.logback.corelon.rolling.RollingFilelonAppelonndelonr">
+    <filelon>${SelonRVICelon_OUTPUT}</filelon>
+    <rollingPolicy class="ch.qos.logback.corelon.rolling.SizelonAndTimelonBaselondRollingPolicy">
+      <!-- daily rollovelonr -->
+      <filelonNamelonPattelonrn>${SelonRVICelon_OUTPUT}.%d.%i.gz</filelonNamelonPattelonrn>
+      <maxFilelonSizelon>500MB</maxFilelonSizelon>
+      <!-- kelonelonp 21 days' worth of history -->
       <maxHistory>21</maxHistory>
-      <cleanHistoryOnStart>true</cleanHistoryOnStart>
+      <clelonanHistoryOnStart>truelon</clelonanHistoryOnStart>
     </rollingPolicy>
-    <encoder>
-      <pattern>${DEFAULT_SERVICE_PATTERN}</pattern>
-    </encoder>
-  </appender>
+    <elonncodelonr>
+      <pattelonrn>${DelonFAULT_SelonRVICelon_PATTelonRN}</pattelonrn>
+    </elonncodelonr>
+  </appelonndelonr>
 
-  <!-- debug transcripts -->
-  <appender name="DEBUG-TRANSCRIPTS" class="ch.qos.logback.core.rolling.RollingFileAppender">
-    <file>${DEBUG_TRANSCRIPTS_OUTPUT}</file>
-    <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-      <!-- daily rollover -->
-      <fileNamePattern>${DEBUG_TRANSCRIPTS_OUTPUT}.%d.%i.gz</fileNamePattern>
-      <maxFileSize>500MB</maxFileSize>
-      <!-- keep 21 days' worth of history -->
+  <!-- delonbug transcripts -->
+  <appelonndelonr namelon="DelonBUG-TRANSCRIPTS" class="ch.qos.logback.corelon.rolling.RollingFilelonAppelonndelonr">
+    <filelon>${DelonBUG_TRANSCRIPTS_OUTPUT}</filelon>
+    <rollingPolicy class="ch.qos.logback.corelon.rolling.SizelonAndTimelonBaselondRollingPolicy">
+      <!-- daily rollovelonr -->
+      <filelonNamelonPattelonrn>${DelonBUG_TRANSCRIPTS_OUTPUT}.%d.%i.gz</filelonNamelonPattelonrn>
+      <maxFilelonSizelon>500MB</maxFilelonSizelon>
+      <!-- kelonelonp 21 days' worth of history -->
       <maxHistory>21</maxHistory>
-      <cleanHistoryOnStart>true</cleanHistoryOnStart>
+      <clelonanHistoryOnStart>truelon</clelonanHistoryOnStart>
     </rollingPolicy>
-    <encoder>
-      <pattern>${DEFAULT_SERVICE_PATTERN}</pattern>
-    </encoder>
-  </appender>
+    <elonncodelonr>
+      <pattelonrn>${DelonFAULT_SelonRVICelon_PATTelonRN}</pattelonrn>
+    </elonncodelonr>
+  </appelonndelonr>
 
-  <!-- LogLens/splunk -->
-  <appender name="LOGLENS" class="com.twitter.loglens.logback.LoglensAppender">
-    <mdcAdditionalContext>true</mdcAdditionalContext>
-    <category>loglens</category>
-    <index>${log.lens.index:-timelineranker}</index>
-    <tag>${log.lens.tag}</tag>
-    <encoder>
-      <pattern>%msg%n</pattern>
-    </encoder>
-    <filter class="com.twitter.strato.logging.logback.RegexFilter">
-      <forLogger>manhattan-client</forLogger>
-      <excludeRegex>.*InvalidRequest.*</excludeRegex>
-    </filter>
-  </appender>
-
-  <!-- ===================================================== -->
-  <!-- Primary Async Appenders -->
-  <!-- ===================================================== -->
-
-  <appender name="ASYNC-SERVICE" class="ch.qos.logback.classic.AsyncAppender">
-    <queueSize>${async_queue_size}</queueSize>
-    <maxFlushTime>${async_max_flush_time}</maxFlushTime>
-    <appender-ref ref="SERVICE"/>
-  </appender>
-
-  <appender name="ASYNC-DEBUG-TRANSCRIPTS" class="ch.qos.logback.classic.AsyncAppender">
-    <queueSize>${async_queue_size}</queueSize>
-    <maxFlushTime>${async_max_flush_time}</maxFlushTime>
-    <appender-ref ref="DEBUG-TRANSCRIPTS"/>
-  </appender>
-
-  <appender name="ASYNC-LOGLENS" class="ch.qos.logback.classic.AsyncAppender">
-    <queueSize>${async_queue_size}</queueSize>
-    <maxFlushTime>${async_max_flush_time}</maxFlushTime>
-    <appender-ref ref="LOGLENS"/>
-  </appender>
+  <!-- LogLelonns/splunk -->
+  <appelonndelonr namelon="LOGLelonNS" class="com.twittelonr.loglelonns.logback.LoglelonnsAppelonndelonr">
+    <mdcAdditionalContelonxt>truelon</mdcAdditionalContelonxt>
+    <catelongory>loglelonns</catelongory>
+    <indelonx>${log.lelonns.indelonx:-timelonlinelonrankelonr}</indelonx>
+    <tag>${log.lelonns.tag}</tag>
+    <elonncodelonr>
+      <pattelonrn>%msg%n</pattelonrn>
+    </elonncodelonr>
+    <filtelonr class="com.twittelonr.strato.logging.logback.RelongelonxFiltelonr">
+      <forLoggelonr>manhattan-clielonnt</forLoggelonr>
+      <elonxcludelonRelongelonx>.*InvalidRelonquelonst.*</elonxcludelonRelongelonx>
+    </filtelonr>
+  </appelonndelonr>
 
   <!-- ===================================================== -->
-  <!-- Package Config -->
+  <!-- Primary Async Appelonndelonrs -->
   <!-- ===================================================== -->
 
-  <!-- Per-Package Config -->
-  <logger name="OptimisticLockingCache" level="off"/>
-  <logger name="ZkSession" level="info"/>
-  <logger name="com.twitter" level="info"/>
-  <logger name="com.twitter.decider.StoreDecider" level="warn"/>
-  <logger name="com.twitter.distributedlog.client" level="warn"/>
-  <logger name="com.twitter.finagle.liveness" level="warn"/>
-  <logger name="com.twitter.finagle.mtls.authorization.config.AccessControlListConfiguration" level="warn"/>
-  <logger name="com.twitter.finagle.mux" level="warn"/>
-  <logger name="com.twitter.finagle.serverset2" level="warn"/>
-  <logger name="com.twitter.finatra.kafka.common.kerberoshelpers" level="warn"/>
-  <logger name="com.twitter.finatra.kafka.utils.BootstrapServerUtils" level="warn"/>
-  <logger name="com.twitter.logging.ScribeHandler" level="warn"/>
-  <logger name="com.twitter.server.coordinate" level="error"/>
-  <logger name="com.twitter.wilyns" level="warn"/>
-  <logger name="com.twitter.zookeeper.client" level="info"/>
-  <logger name="com.twitter.zookeeper.client.internal" level="warn"/>
-  <logger name="manhattan-client" level="warn"/>
-  <logger name="org.apache.kafka.clients.NetworkClient" level="error"/>
-  <logger name="org.apache.kafka.clients.consumer.internals" level="error"/>
-  <logger name="org.apache.kafka.clients.producer.internals" level="error"/>
-  <logger name="org.apache.kafka.common.network" level="warn"/>
-  <logger name="org.apache.zookeeper" level="error"/>
-  <logger name="org.apache.zookeeper.ClientCnxn" level="warn"/>
+  <appelonndelonr namelon="ASYNC-SelonRVICelon" class="ch.qos.logback.classic.AsyncAppelonndelonr">
+    <quelonuelonSizelon>${async_quelonuelon_sizelon}</quelonuelonSizelon>
+    <maxFlushTimelon>${async_max_flush_timelon}</maxFlushTimelon>
+    <appelonndelonr-relonf relonf="SelonRVICelon"/>
+  </appelonndelonr>
+
+  <appelonndelonr namelon="ASYNC-DelonBUG-TRANSCRIPTS" class="ch.qos.logback.classic.AsyncAppelonndelonr">
+    <quelonuelonSizelon>${async_quelonuelon_sizelon}</quelonuelonSizelon>
+    <maxFlushTimelon>${async_max_flush_timelon}</maxFlushTimelon>
+    <appelonndelonr-relonf relonf="DelonBUG-TRANSCRIPTS"/>
+  </appelonndelonr>
+
+  <appelonndelonr namelon="ASYNC-LOGLelonNS" class="ch.qos.logback.classic.AsyncAppelonndelonr">
+    <quelonuelonSizelon>${async_quelonuelon_sizelon}</quelonuelonSizelon>
+    <maxFlushTimelon>${async_max_flush_timelon}</maxFlushTimelon>
+    <appelonndelonr-relonf relonf="LOGLelonNS"/>
+  </appelonndelonr>
+
+  <!-- ===================================================== -->
+  <!-- Packagelon Config -->
+  <!-- ===================================================== -->
+
+  <!-- Pelonr-Packagelon Config -->
+  <loggelonr namelon="OptimisticLockingCachelon" lelonvelonl="off"/>
+  <loggelonr namelon="ZkSelonssion" lelonvelonl="info"/>
+  <loggelonr namelon="com.twittelonr" lelonvelonl="info"/>
+  <loggelonr namelon="com.twittelonr.deloncidelonr.StorelonDeloncidelonr" lelonvelonl="warn"/>
+  <loggelonr namelon="com.twittelonr.distributelondlog.clielonnt" lelonvelonl="warn"/>
+  <loggelonr namelon="com.twittelonr.finaglelon.livelonnelonss" lelonvelonl="warn"/>
+  <loggelonr namelon="com.twittelonr.finaglelon.mtls.authorization.config.AccelonssControlListConfiguration" lelonvelonl="warn"/>
+  <loggelonr namelon="com.twittelonr.finaglelon.mux" lelonvelonl="warn"/>
+  <loggelonr namelon="com.twittelonr.finaglelon.selonrvelonrselont2" lelonvelonl="warn"/>
+  <loggelonr namelon="com.twittelonr.finatra.kafka.common.kelonrbelonroshelonlpelonrs" lelonvelonl="warn"/>
+  <loggelonr namelon="com.twittelonr.finatra.kafka.utils.BootstrapSelonrvelonrUtils" lelonvelonl="warn"/>
+  <loggelonr namelon="com.twittelonr.logging.ScribelonHandlelonr" lelonvelonl="warn"/>
+  <loggelonr namelon="com.twittelonr.selonrvelonr.coordinatelon" lelonvelonl="elonrror"/>
+  <loggelonr namelon="com.twittelonr.wilyns" lelonvelonl="warn"/>
+  <loggelonr namelon="com.twittelonr.zookelonelonpelonr.clielonnt" lelonvelonl="info"/>
+  <loggelonr namelon="com.twittelonr.zookelonelonpelonr.clielonnt.intelonrnal" lelonvelonl="warn"/>
+  <loggelonr namelon="manhattan-clielonnt" lelonvelonl="warn"/>
+  <loggelonr namelon="org.apachelon.kafka.clielonnts.NelontworkClielonnt" lelonvelonl="elonrror"/>
+  <loggelonr namelon="org.apachelon.kafka.clielonnts.consumelonr.intelonrnals" lelonvelonl="elonrror"/>
+  <loggelonr namelon="org.apachelon.kafka.clielonnts.producelonr.intelonrnals" lelonvelonl="elonrror"/>
+  <loggelonr namelon="org.apachelon.kafka.common.nelontwork" lelonvelonl="warn"/>
+  <loggelonr namelon="org.apachelon.zookelonelonpelonr" lelonvelonl="elonrror"/>
+  <loggelonr namelon="org.apachelon.zookelonelonpelonr.ClielonntCnxn" lelonvelonl="warn"/>
 
   <!-- Root Config -->
-  <root level="${log_level:-INFO}">
-    <appender-ref ref="ASYNC-SERVICE"/>
-    <appender-ref ref="ASYNC-LOGLENS"/>
+  <root lelonvelonl="${log_lelonvelonl:-INFO}">
+    <appelonndelonr-relonf relonf="ASYNC-SelonRVICelon"/>
+    <appelonndelonr-relonf relonf="ASYNC-LOGLelonNS"/>
   </root>
 
-  <!-- debug transcripts: logger name MUST be c.t.timelines.util.debuglog.DebugLog.DebugTranscriptsLog -->
-  <logger name="DebugTranscripts" level="info">
-    <appender-ref ref="ASYNC-DEBUG-TRANSCRIPTS"/>
-    <appender-ref ref="ASYNC-LOGLENS"/>
-  </logger>
+  <!-- delonbug transcripts: loggelonr namelon MUST belon c.t.timelonlinelons.util.delonbuglog.DelonbugLog.DelonbugTranscriptsLog -->
+  <loggelonr namelon="DelonbugTranscripts" lelonvelonl="info">
+    <appelonndelonr-relonf relonf="ASYNC-DelonBUG-TRANSCRIPTS"/>
+    <appelonndelonr-relonf relonf="ASYNC-LOGLelonNS"/>
+  </loggelonr>
 </configuration>

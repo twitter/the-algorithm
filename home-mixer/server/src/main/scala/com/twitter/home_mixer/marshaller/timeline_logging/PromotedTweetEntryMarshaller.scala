@@ -1,17 +1,17 @@
-package com.twitter.home_mixer.marshaller.timeline_logging
+packagelon com.twittelonr.homelon_mixelonr.marshallelonr.timelonlinelon_logging
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet.TweetItem
-import com.twitter.timelines.timeline_logging.{thriftscala => thriftlog}
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.twelonelont.TwelonelontItelonm
+import com.twittelonr.timelonlinelons.timelonlinelon_logging.{thriftscala => thriftlog}
 
-object PromotedTweetEntryMarshaller {
+objelonct PromotelondTwelonelontelonntryMarshallelonr {
 
-  def apply(entry: TweetItem, position: Int): thriftlog.PromotedTweetEntry = {
-    thriftlog.PromotedTweetEntry(
-      id = entry.id,
-      advertiserId = entry.promotedMetadata.map(_.advertiserId).getOrElse(0L),
-      insertPosition = position,
-      impressionId = entry.promotedMetadata.flatMap(_.impressionString),
-      displayType = Some(entry.displayType.toString)
+  delonf apply(elonntry: TwelonelontItelonm, position: Int): thriftlog.PromotelondTwelonelontelonntry = {
+    thriftlog.PromotelondTwelonelontelonntry(
+      id = elonntry.id,
+      advelonrtiselonrId = elonntry.promotelondMelontadata.map(_.advelonrtiselonrId).gelontOrelonlselon(0L),
+      inselonrtPosition = position,
+      imprelonssionId = elonntry.promotelondMelontadata.flatMap(_.imprelonssionString),
+      displayTypelon = Somelon(elonntry.displayTypelon.toString)
     )
   }
 }

@@ -1,10 +1,10 @@
-package com.twitter.product_mixer.core.pipeline.state
+packagelon com.twittelonr.product_mixelonr.corelon.pipelonlinelon.statelon
 
 /**
- * Defines how to build a result from a pipeline state. Pipeline States should extend this and
- * implement [[buildResult]] which computes the final result from their current state.
- * @tparam Result Type of result
+ * Delonfinelons how to build a relonsult from a pipelonlinelon statelon. Pipelonlinelon Statelons should elonxtelonnd this and
+ * implelonmelonnt [[buildRelonsult]] which computelons thelon final relonsult from thelonir currelonnt statelon.
+ * @tparam Relonsult Typelon of relonsult
  */
-trait HasResult[+Result] {
-  def buildResult(): Result
+trait HasRelonsult[+Relonsult] {
+  delonf buildRelonsult(): Relonsult
 }

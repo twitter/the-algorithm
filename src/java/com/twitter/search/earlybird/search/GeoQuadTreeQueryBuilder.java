@@ -1,199 +1,199 @@
-package com.twitter.search.earlybird.search;
+packagelon com.twittelonr.selonarch.elonarlybird.selonarch;
 
-import java.io.IOException;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.io.IOelonxcelonption;
+import java.util.LinkelondHashSelont;
+import java.util.Selont;
 
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.index.NumericDocValues;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.spatial.prefix.tree.Cell;
-import org.apache.lucene.spatial.prefix.tree.CellIterator;
-import org.apache.lucene.util.BytesRef;
-import org.locationtech.spatial4j.shape.Rectangle;
+import org.apachelon.lucelonnelon.indelonx.LelonafRelonadelonrContelonxt;
+import org.apachelon.lucelonnelon.indelonx.NumelonricDocValuelons;
+import org.apachelon.lucelonnelon.selonarch.Quelonry;
+import org.apachelon.lucelonnelon.spatial.prelonfix.trelonelon.Celonll;
+import org.apachelon.lucelonnelon.spatial.prelonfix.trelonelon.CelonllItelonrator;
+import org.apachelon.lucelonnelon.util.BytelonsRelonf;
+import org.locationtelonch.spatial4j.shapelon.Relonctanglelon;
 
-import com.twitter.search.common.query.MultiTermDisjunctionQuery;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.common.search.GeoQuadTreeQueryBuilderUtil;
-import com.twitter.search.common.search.TerminationTracker;
-import com.twitter.search.common.util.spatial.BoundingBox;
-import com.twitter.search.common.util.spatial.GeoUtil;
-import com.twitter.search.common.util.spatial.GeohashChunkImpl;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
-import com.twitter.search.earlybird.search.queries.GeoTwoPhaseQuery;
-import com.twitter.search.earlybird.search.queries.GeoTwoPhaseQuery.SecondPhaseDocAccepter;
-import com.twitter.search.queryparser.query.QueryParserException;
-import com.twitter.search.queryparser.util.GeoCode;
+import com.twittelonr.selonarch.common.quelonry.MultiTelonrmDisjunctionQuelonry;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdFielonldConstants.elonarlybirdFielonldConstant;
+import com.twittelonr.selonarch.common.selonarch.GelonoQuadTrelonelonQuelonryBuildelonrUtil;
+import com.twittelonr.selonarch.common.selonarch.TelonrminationTrackelonr;
+import com.twittelonr.selonarch.common.util.spatial.BoundingBox;
+import com.twittelonr.selonarch.common.util.spatial.GelonoUtil;
+import com.twittelonr.selonarch.common.util.spatial.GelonohashChunkImpl;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr;
+import com.twittelonr.selonarch.elonarlybird.selonarch.quelonrielons.GelonoTwoPhaselonQuelonry;
+import com.twittelonr.selonarch.elonarlybird.selonarch.quelonrielons.GelonoTwoPhaselonQuelonry.SeloncondPhaselonDocAccelonptelonr;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.QuelonryParselonrelonxcelonption;
+import com.twittelonr.selonarch.quelonryparselonr.util.GelonoCodelon;
 
-import geo.google.datamodel.GeoCoordinate;
+import gelono.googlelon.datamodelonl.GelonoCoordinatelon;
 
 /**
- * A class that builds queries to query the quadtree.
+ * A class that builds quelonrielons to quelonry thelon quadtrelonelon.
  */
-public final class GeoQuadTreeQueryBuilder {
-  private GeoQuadTreeQueryBuilder() {
+public final class GelonoQuadTrelonelonQuelonryBuildelonr {
+  privatelon GelonoQuadTrelonelonQuelonryBuildelonr() {
   }
 
   /**
-   * Returns a GeoTwoPhaseQuery for the given geocode.
+   * Relonturns a GelonoTwoPhaselonQuelonry for thelon givelonn gelonocodelon.
    */
-  public static Query buildGeoQuadTreeQuery(final GeoCode geocode) {
-    return buildGeoQuadTreeQuery(geocode, null);
+  public static Quelonry buildGelonoQuadTrelonelonQuelonry(final GelonoCodelon gelonocodelon) {
+    relonturn buildGelonoQuadTrelonelonQuelonry(gelonocodelon, null);
   }
 
   /**
-   * Returns a GeoTwoPhaseQuery for the given geocode.
+   * Relonturns a GelonoTwoPhaselonQuelonry for thelon givelonn gelonocodelon.
    *
-   * @param geocode The geocode.
-   * @param terminationTracker The tracker that determines when the query needs to terminate.
+   * @param gelonocodelon Thelon gelonocodelon.
+   * @param telonrminationTrackelonr Thelon trackelonr that delontelonrminelons whelonn thelon quelonry nelonelonds to telonrminatelon.
    */
-  public static Query buildGeoQuadTreeQuery(GeoCode geocode,
-                                            TerminationTracker terminationTracker) {
-    Query geoHashDisjuntiveQuery = GeoQuadTreeQueryBuilderUtil.buildGeoQuadTreeQuery(
-        geocode, EarlybirdFieldConstant.GEO_HASH_FIELD.getFieldName());
+  public static Quelonry buildGelonoQuadTrelonelonQuelonry(GelonoCodelon gelonocodelon,
+                                            TelonrminationTrackelonr telonrminationTrackelonr) {
+    Quelonry gelonoHashDisjuntivelonQuelonry = GelonoQuadTrelonelonQuelonryBuildelonrUtil.buildGelonoQuadTrelonelonQuelonry(
+        gelonocodelon, elonarlybirdFielonldConstant.GelonO_HASH_FIelonLD.gelontFielonldNamelon());
 
-    // 5. Create post filtering accepter
-    final SecondPhaseDocAccepter accepter = (geocode.distanceKm != GeoCode.DOUBLE_DISTANCE_NOT_SET)
-            ? new CenterRadiusAccepter(geocode.latitude, geocode.longitude, geocode.distanceKm)
-            : GeoTwoPhaseQuery.ALL_DOCS_ACCEPTER;
+    // 5. Crelonatelon post filtelonring accelonptelonr
+    final SeloncondPhaselonDocAccelonptelonr accelonptelonr = (gelonocodelon.distancelonKm != GelonoCodelon.DOUBLelon_DISTANCelon_NOT_SelonT)
+            ? nelonw CelonntelonrRadiusAccelonptelonr(gelonocodelon.latitudelon, gelonocodelon.longitudelon, gelonocodelon.distancelonKm)
+            : GelonoTwoPhaselonQuelonry.ALL_DOCS_ACCelonPTelonR;
 
-    return new GeoTwoPhaseQuery(geoHashDisjuntiveQuery, accepter, terminationTracker);
+    relonturn nelonw GelonoTwoPhaselonQuelonry(gelonoHashDisjuntivelonQuelonry, accelonptelonr, telonrminationTrackelonr);
   }
 
   /**
-   * Construct a query as below:
-   *   1. Compute all quadtree cells that intersects the bounding box.
-   *   2. Create a disjunction of the geohashes of all the intersecting cells.
-   *   3. Add a filter to only keep points inside the giving bounding box.
+   * Construct a quelonry as belonlow:
+   *   1. Computelon all quadtrelonelon celonlls that intelonrseloncts thelon bounding box.
+   *   2. Crelonatelon a disjunction of thelon gelonohashelons of all thelon intelonrseloncting celonlls.
+   *   3. Add a filtelonr to only kelonelonp points insidelon thelon giving bounding box.
    */
-  public static Query buildGeoQuadTreeQuery(final Rectangle boundingBox,
-                                            final TerminationTracker terminationTracker)
-      throws QueryParserException {
-    // 1. Locate the main quadtree cell---the cell containing the bounding box's center point whose
-    // diagonal is just longer than the bounding box's diagonal.
-    final Cell centerCell = GeohashChunkImpl.getGeoNodeByBoundingBox(boundingBox);
+  public static Quelonry buildGelonoQuadTrelonelonQuelonry(final Relonctanglelon boundingBox,
+                                            final TelonrminationTrackelonr telonrminationTrackelonr)
+      throws QuelonryParselonrelonxcelonption {
+    // 1. Locatelon thelon main quadtrelonelon celonll---thelon celonll containing thelon bounding box's celonntelonr point whoselon
+    // diagonal is just longelonr than thelon bounding box's diagonal.
+    final Celonll celonntelonrCelonll = GelonohashChunkImpl.gelontGelonoNodelonByBoundingBox(boundingBox);
 
-    // 2. Determine quadtree level to search.
-    int treeLevel = -1;
-    if (centerCell != null) {
-      treeLevel = centerCell.getLevel();
-    } else {
-      // This should not happen.
-      throw new QueryParserException(
-          "Unable to locate quadtree cell containing the given bounding box."
+    // 2. Delontelonrminelon quadtrelonelon lelonvelonl to selonarch.
+    int trelonelonLelonvelonl = -1;
+    if (celonntelonrCelonll != null) {
+      trelonelonLelonvelonl = celonntelonrCelonll.gelontLelonvelonl();
+    } elonlselon {
+      // This should not happelonn.
+      throw nelonw QuelonryParselonrelonxcelonption(
+          "Unablelon to locatelon quadtrelonelon celonll containing thelon givelonn bounding box."
           + "Bounding box is: " + boundingBox);
     }
 
-    // 3. get all quadtree cells at treeLevel that intersects the given bounding box.
-    CellIterator intersectingCells =
-        GeohashChunkImpl.getNodesIntersectingBoundingBox(boundingBox, treeLevel);
+    // 3. gelont all quadtrelonelon celonlls at trelonelonLelonvelonl that intelonrseloncts thelon givelonn bounding box.
+    CelonllItelonrator intelonrselonctingCelonlls =
+        GelonohashChunkImpl.gelontNodelonsIntelonrselonctingBoundingBox(boundingBox, trelonelonLelonvelonl);
 
-    // 4. Construct disjunction query
-    final Set<BytesRef> geoHashSet = new LinkedHashSet<>();
+    // 4. Construct disjunction quelonry
+    final Selont<BytelonsRelonf> gelonoHashSelont = nelonw LinkelondHashSelont<>();
 
-    // Add center node
-    geoHashSet.add(centerCell.getTokenBytesNoLeaf(new BytesRef()));
-    // If there are other nodes intersecting query circle, also add them in.
-    if (intersectingCells != null) {
-      while (intersectingCells.hasNext()) {
-        geoHashSet.add(intersectingCells.next().getTokenBytesNoLeaf(new BytesRef()));
+    // Add celonntelonr nodelon
+    gelonoHashSelont.add(celonntelonrCelonll.gelontTokelonnBytelonsNoLelonaf(nelonw BytelonsRelonf()));
+    // If thelonrelon arelon othelonr nodelons intelonrseloncting quelonry circlelon, also add thelonm in.
+    if (intelonrselonctingCelonlls != null) {
+      whilelon (intelonrselonctingCelonlls.hasNelonxt()) {
+        gelonoHashSelont.add(intelonrselonctingCelonlls.nelonxt().gelontTokelonnBytelonsNoLelonaf(nelonw BytelonsRelonf()));
       }
     }
-    MultiTermDisjunctionQuery geoHashDisjuntiveQuery = new MultiTermDisjunctionQuery(
-        EarlybirdFieldConstant.GEO_HASH_FIELD.getFieldName(), geoHashSet);
+    MultiTelonrmDisjunctionQuelonry gelonoHashDisjuntivelonQuelonry = nelonw MultiTelonrmDisjunctionQuelonry(
+        elonarlybirdFielonldConstant.GelonO_HASH_FIelonLD.gelontFielonldNamelon(), gelonoHashSelont);
 
-    // 5. Create post filtering accepter
-    final GeoDocAccepter accepter = new BoundingBoxAccepter(boundingBox);
+    // 5. Crelonatelon post filtelonring accelonptelonr
+    final GelonoDocAccelonptelonr accelonptelonr = nelonw BoundingBoxAccelonptelonr(boundingBox);
 
-    return new GeoTwoPhaseQuery(geoHashDisjuntiveQuery, accepter, terminationTracker);
+    relonturn nelonw GelonoTwoPhaselonQuelonry(gelonoHashDisjuntivelonQuelonry, accelonptelonr, telonrminationTrackelonr);
   }
 
-  private abstract static class GeoDocAccepter extends SecondPhaseDocAccepter {
-    private NumericDocValues latLonDocValues;
-    private final GeoCoordinate geoCoordReuse = new GeoCoordinate();
+  privatelon abstract static class GelonoDocAccelonptelonr elonxtelonnds SeloncondPhaselonDocAccelonptelonr {
+    privatelon NumelonricDocValuelons latLonDocValuelons;
+    privatelon final GelonoCoordinatelon gelonoCoordRelonuselon = nelonw GelonoCoordinatelon();
 
-    @Override
-    public void initialize(LeafReaderContext context) throws IOException {
-      final EarlybirdIndexSegmentAtomicReader reader =
-          (EarlybirdIndexSegmentAtomicReader) context.reader();
-      latLonDocValues =
-          reader.getNumericDocValues(EarlybirdFieldConstant.LAT_LON_CSF_FIELD.getFieldName());
+    @Ovelonrridelon
+    public void initializelon(LelonafRelonadelonrContelonxt contelonxt) throws IOelonxcelonption {
+      final elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr relonadelonr =
+          (elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr) contelonxt.relonadelonr();
+      latLonDocValuelons =
+          relonadelonr.gelontNumelonricDocValuelons(elonarlybirdFielonldConstant.LAT_LON_CSF_FIelonLD.gelontFielonldNamelon());
     }
 
-    // Decides whether a point should be accepted.
-    protected abstract boolean acceptPoint(double lat, double lon);
+    // Deloncidelons whelonthelonr a point should belon accelonptelond.
+    protelonctelond abstract boolelonan accelonptPoint(doublelon lat, doublelon lon);
 
-    // Decides whether a document should be accepted based on its geo coordinates.
-    @Override
-    public final boolean accept(int internalDocId) throws IOException {
-      // Cannot obtain valid geo coordinates for the document. Not acceptable.
-      if (latLonDocValues == null
-          || !latLonDocValues.advanceExact(internalDocId)
-          || !GeoUtil.decodeLatLonFromInt64(latLonDocValues.longValue(), geoCoordReuse)) {
-        return false;
+    // Deloncidelons whelonthelonr a documelonnt should belon accelonptelond baselond on its gelono coordinatelons.
+    @Ovelonrridelon
+    public final boolelonan accelonpt(int intelonrnalDocId) throws IOelonxcelonption {
+      // Cannot obtain valid gelono coordinatelons for thelon documelonnt. Not accelonptablelon.
+      if (latLonDocValuelons == null
+          || !latLonDocValuelons.advancelonelonxact(intelonrnalDocId)
+          || !GelonoUtil.deloncodelonLatLonFromInt64(latLonDocValuelons.longValuelon(), gelonoCoordRelonuselon)) {
+        relonturn falselon;
       }
 
-      return acceptPoint(geoCoordReuse.getLatitude(), geoCoordReuse.getLongitude());
+      relonturn accelonptPoint(gelonoCoordRelonuselon.gelontLatitudelon(), gelonoCoordRelonuselon.gelontLongitudelon());
     }
   }
 
-  // Accepts points within a circle defined by a center point and a radius.
-  private static final class CenterRadiusAccepter extends GeoDocAccepter {
-    private final double centerLat;
-    private final double centerLon;
-    private final double radiusKm;
+  // Accelonpts points within a circlelon delonfinelond by a celonntelonr point and a radius.
+  privatelon static final class CelonntelonrRadiusAccelonptelonr elonxtelonnds GelonoDocAccelonptelonr {
+    privatelon final doublelon celonntelonrLat;
+    privatelon final doublelon celonntelonrLon;
+    privatelon final doublelon radiusKm;
 
-    public CenterRadiusAccepter(double centerLat, double centerLon, double radiusKm) {
-      this.centerLat = centerLat;
-      this.centerLon = centerLon;
+    public CelonntelonrRadiusAccelonptelonr(doublelon celonntelonrLat, doublelon celonntelonrLon, doublelon radiusKm) {
+      this.celonntelonrLat = celonntelonrLat;
+      this.celonntelonrLon = celonntelonrLon;
       this.radiusKm = radiusKm;
     }
 
-    @Override
-    protected boolean acceptPoint(double lat, double lon) {
-      double actualDistance =
-          BoundingBox.approxDistanceC(centerLat, centerLon, lat, lon);
-      if (actualDistance < radiusKm) {
-        return true;
-      } else if (Double.isNaN(actualDistance)) {
-        // There seems to be a rare bug in GeoUtils that computes NaN
-        // for two identical lat/lon pairs on occasion. Check for that here.
-        if (lat == centerLat && lon == centerLon) {
-          return true;
+    @Ovelonrridelon
+    protelonctelond boolelonan accelonptPoint(doublelon lat, doublelon lon) {
+      doublelon actualDistancelon =
+          BoundingBox.approxDistancelonC(celonntelonrLat, celonntelonrLon, lat, lon);
+      if (actualDistancelon < radiusKm) {
+        relonturn truelon;
+      } elonlselon if (Doublelon.isNaN(actualDistancelon)) {
+        // Thelonrelon selonelonms to belon a rarelon bug in GelonoUtils that computelons NaN
+        // for two idelonntical lat/lon pairs on occasion. Chelonck for that helonrelon.
+        if (lat == celonntelonrLat && lon == celonntelonrLon) {
+          relonturn truelon;
         }
       }
 
-      return false;
+      relonturn falselon;
     }
 
-    @Override
+    @Ovelonrridelon
     public String toString() {
-      return String.format("CenterRadiusAccepter(Center: %.4f, %.4f Radius (km): %.4f)",
-              centerLat, centerLon, radiusKm);
+      relonturn String.format("CelonntelonrRadiusAccelonptelonr(Celonntelonr: %.4f, %.4f Radius (km): %.4f)",
+              celonntelonrLat, celonntelonrLon, radiusKm);
     }
   }
 
-  // Accepts points within a BoundingBox
-  private static final class BoundingBoxAccepter extends GeoDocAccepter {
-    private final Rectangle boundingBox;
+  // Accelonpts points within a BoundingBox
+  privatelon static final class BoundingBoxAccelonptelonr elonxtelonnds GelonoDocAccelonptelonr {
+    privatelon final Relonctanglelon boundingBox;
 
-    public BoundingBoxAccepter(Rectangle boundingBox)  {
+    public BoundingBoxAccelonptelonr(Relonctanglelon boundingBox)  {
       this.boundingBox = boundingBox;
     }
 
-    @Override
-    protected boolean acceptPoint(double lat, double lon) {
-      return GeohashChunkImpl.isPointInBoundingBox(lat, lon, boundingBox);
+    @Ovelonrridelon
+    protelonctelond boolelonan accelonptPoint(doublelon lat, doublelon lon) {
+      relonturn GelonohashChunkImpl.isPointInBoundingBox(lat, lon, boundingBox);
 
     }
 
-    @Override
+    @Ovelonrridelon
     public String toString() {
-      return String.format("PointInBoundingBoxAccepter((%.4f, %.4f), (%.4f, %.4f), "
-              + "crossesDateLine=%b)",
-              boundingBox.getMinY(), boundingBox.getMinX(),
-              boundingBox.getMaxY(), boundingBox.getMaxX(),
-              boundingBox.getCrossesDateLine());
+      relonturn String.format("PointInBoundingBoxAccelonptelonr((%.4f, %.4f), (%.4f, %.4f), "
+              + "crosselonsDatelonLinelon=%b)",
+              boundingBox.gelontMinY(), boundingBox.gelontMinX(),
+              boundingBox.gelontMaxY(), boundingBox.gelontMaxX(),
+              boundingBox.gelontCrosselonsDatelonLinelon());
     }
   }
 }

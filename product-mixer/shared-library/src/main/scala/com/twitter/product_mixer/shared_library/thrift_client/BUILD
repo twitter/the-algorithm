@@ -1,20 +1,20 @@
 scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "finagle/finagle-core/src/main",
-        "finagle/finagle-thriftmux/src/main/scala",
-        "finatra-internal/mtls-http/src/main/scala",
-        "finatra-internal/mtls-thriftmux/src/main/scala",
-        "util/util-core",
+    sourcelons = ["*.scala"],
+    compilelonr_option_selonts = ["fatal_warnings"],
+    strict_delonps = Truelon,
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        "finaglelon/finaglelon-corelon/src/main",
+        "finaglelon/finaglelon-thriftmux/src/main/scala",
+        "finatra-intelonrnal/mtls-http/src/main/scala",
+        "finatra-intelonrnal/mtls-thriftmux/src/main/scala",
+        "util/util-corelon",
     ],
-    exports = [
-        "finagle/finagle-core/src/main",
-        "finagle/finagle-thriftmux/src/main/scala",
-        "finatra-internal/mtls-http/src/main/scala",
-        "finatra-internal/mtls-thriftmux/src/main/scala",
-        "util/util-core",
+    elonxports = [
+        "finaglelon/finaglelon-corelon/src/main",
+        "finaglelon/finaglelon-thriftmux/src/main/scala",
+        "finatra-intelonrnal/mtls-http/src/main/scala",
+        "finatra-intelonrnal/mtls-thriftmux/src/main/scala",
+        "util/util-corelon",
     ],
 )

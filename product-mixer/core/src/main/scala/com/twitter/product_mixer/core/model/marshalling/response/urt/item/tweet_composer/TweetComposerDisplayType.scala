@@ -1,6 +1,6 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet_composer
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.twelonelont_composelonr
 
-sealed trait TweetComposerDisplayType
+selonalelond trait TwelonelontComposelonrDisplayTypelon
 
-case object TweetComposerSelfThread extends TweetComposerDisplayType
-case object Reply extends TweetComposerDisplayType
+caselon objelonct TwelonelontComposelonrSelonlfThrelonad elonxtelonnds TwelonelontComposelonrDisplayTypelon
+caselon objelonct Relonply elonxtelonnds TwelonelontComposelonrDisplayTypelon

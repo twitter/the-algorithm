@@ -1,8 +1,8 @@
-package com.twitter.product_mixer.core.service.pipeline_executor
+packagelon com.twittelonr.product_mixelonr.corelon.selonrvicelon.pipelonlinelon_elonxeloncutor
 
-import com.twitter.product_mixer.core.pipeline.PipelineResult
-import com.twitter.product_mixer.core.service.ExecutorResult
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonRelonsult
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.elonxeloncutorRelonsult
 
-case class PipelineExecutorResult[ResultType](
-  pipelineResult: PipelineResult[ResultType])
-    extends ExecutorResult
+caselon class PipelonlinelonelonxeloncutorRelonsult[RelonsultTypelon](
+  pipelonlinelonRelonsult: PipelonlinelonRelonsult[RelonsultTypelon])
+    elonxtelonnds elonxeloncutorRelonsult

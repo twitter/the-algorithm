@@ -1,862 +1,862 @@
-package com.twitter.visibility.rules
+packagelon com.twittelonr.visibility.rulelons
 
-import com.twitter.visibility.common.ModelScoreThresholds
-import com.twitter.visibility.common.actions.AvoidReason
-import com.twitter.visibility.common.actions.AvoidReason.MightNotBeSuitableForAds
-import com.twitter.visibility.common.actions.LimitedEngagementReason
-import com.twitter.visibility.common.actions.TweetVisibilityNudgeReason
-import com.twitter.visibility.configapi.configs.DeciderKey
-import com.twitter.visibility.configapi.params.FSRuleParams.HighSpammyTweetContentScoreSearchLatestProdTweetLabelDropRuleThresholdParam
-import com.twitter.visibility.configapi.params.FSRuleParams.HighSpammyTweetContentScoreSearchTopProdTweetLabelDropRuleThresholdParam
-import com.twitter.visibility.configapi.params.FSRuleParams.HighSpammyTweetContentScoreTrendLatestTweetLabelDropRuleThresholdParam
-import com.twitter.visibility.configapi.params.FSRuleParams.HighSpammyTweetContentScoreTrendTopTweetLabelDropRuleThresholdParam
-import com.twitter.visibility.configapi.params.FSRuleParams.SkipTweetDetailLimitedEngagementRuleEnabledParam
-import com.twitter.visibility.configapi.params.RuleParam
-import com.twitter.visibility.configapi.params.RuleParams._
-import com.twitter.visibility.models.TweetSafetyLabelType
-import com.twitter.visibility.rules.Condition._
-import com.twitter.visibility.rules.Condition.{True => TrueCondition}
-import com.twitter.visibility.rules.Reason._
-import com.twitter.visibility.rules.RuleActionSourceBuilder.TweetSafetyLabelSourceBuilder
+import com.twittelonr.visibility.common.ModelonlScorelonThrelonsholds
+import com.twittelonr.visibility.common.actions.AvoidRelonason
+import com.twittelonr.visibility.common.actions.AvoidRelonason.MightNotBelonSuitablelonForAds
+import com.twittelonr.visibility.common.actions.LimitelondelonngagelonmelonntRelonason
+import com.twittelonr.visibility.common.actions.TwelonelontVisibilityNudgelonRelonason
+import com.twittelonr.visibility.configapi.configs.DeloncidelonrKelony
+import com.twittelonr.visibility.configapi.params.FSRulelonParams.HighSpammyTwelonelontContelonntScorelonSelonarchLatelonstProdTwelonelontLabelonlDropRulelonThrelonsholdParam
+import com.twittelonr.visibility.configapi.params.FSRulelonParams.HighSpammyTwelonelontContelonntScorelonSelonarchTopProdTwelonelontLabelonlDropRulelonThrelonsholdParam
+import com.twittelonr.visibility.configapi.params.FSRulelonParams.HighSpammyTwelonelontContelonntScorelonTrelonndLatelonstTwelonelontLabelonlDropRulelonThrelonsholdParam
+import com.twittelonr.visibility.configapi.params.FSRulelonParams.HighSpammyTwelonelontContelonntScorelonTrelonndTopTwelonelontLabelonlDropRulelonThrelonsholdParam
+import com.twittelonr.visibility.configapi.params.FSRulelonParams.SkipTwelonelontDelontailLimitelondelonngagelonmelonntRulelonelonnablelondParam
+import com.twittelonr.visibility.configapi.params.RulelonParam
+import com.twittelonr.visibility.configapi.params.RulelonParams._
+import com.twittelonr.visibility.modelonls.TwelonelontSafelontyLabelonlTypelon
+import com.twittelonr.visibility.rulelons.Condition._
+import com.twittelonr.visibility.rulelons.Condition.{Truelon => TruelonCondition}
+import com.twittelonr.visibility.rulelons.Relonason._
+import com.twittelonr.visibility.rulelons.RulelonActionSourcelonBuildelonr.TwelonelontSafelontyLabelonlSourcelonBuildelonr
 
-object AbusiveTweetLabelRule
-    extends NonAuthorWithTweetLabelRule(
-      Drop(Unspecified),
-      TweetSafetyLabelType.Abusive
+objelonct AbusivelonTwelonelontLabelonlRulelon
+    elonxtelonnds NonAuthorWithTwelonelontLabelonlRulelon(
+      Drop(Unspeloncifielond),
+      TwelonelontSafelontyLabelonlTypelon.Abusivelon
     )
-    with DoesLogVerdict
+    with DoelonsLogVelonrdict
 
-object AbusiveNonFollowerTweetLabelRule
-    extends NonFollowerWithTweetLabelRule(
+objelonct AbusivelonNonFollowelonrTwelonelontLabelonlRulelon
+    elonxtelonnds NonFollowelonrWithTwelonelontLabelonlRulelon(
       Drop(Toxicity),
-      TweetSafetyLabelType.Abusive
+      TwelonelontSafelontyLabelonlTypelon.Abusivelon
     )
 
-object AbusiveUqfNonFollowerTweetLabelRule
-    extends NonFollowerWithUqfTweetLabelRule(
+objelonct AbusivelonUqfNonFollowelonrTwelonelontLabelonlRulelon
+    elonxtelonnds NonFollowelonrWithUqfTwelonelontLabelonlRulelon(
       Drop(Toxicity),
-      TweetSafetyLabelType.Abusive
+      TwelonelontSafelontyLabelonlTypelon.Abusivelon
     )
 
-object AbusiveHighRecallTweetLabelRule
-    extends NonAuthorWithTweetLabelRule(
-      Drop(Unspecified),
-      TweetSafetyLabelType.AbusiveHighRecall
+objelonct AbusivelonHighReloncallTwelonelontLabelonlRulelon
+    elonxtelonnds NonAuthorWithTwelonelontLabelonlRulelon(
+      Drop(Unspeloncifielond),
+      TwelonelontSafelontyLabelonlTypelon.AbusivelonHighReloncall
     )
 
-object AbusiveHighRecallNonFollowerTweetLabelRule
-    extends NonFollowerWithTweetLabelRule(
-      Interstitial(PossiblyUndesirable),
-      TweetSafetyLabelType.AbusiveHighRecall
+objelonct AbusivelonHighReloncallNonFollowelonrTwelonelontLabelonlRulelon
+    elonxtelonnds NonFollowelonrWithTwelonelontLabelonlRulelon(
+      Intelonrstitial(PossiblyUndelonsirablelon),
+      TwelonelontSafelontyLabelonlTypelon.AbusivelonHighReloncall
     )
 
-object AutomationTweetLabelRule
-    extends NonFollowerWithTweetLabelRule(
-      Drop(Unspecified),
-      TweetSafetyLabelType.Automation
+objelonct AutomationTwelonelontLabelonlRulelon
+    elonxtelonnds NonFollowelonrWithTwelonelontLabelonlRulelon(
+      Drop(Unspeloncifielond),
+      TwelonelontSafelontyLabelonlTypelon.Automation
     )
 
-object BystanderAbusiveTweetLabelRule
-    extends NonAuthorWithTweetLabelRule(
-      Drop(Unspecified),
-      TweetSafetyLabelType.BystanderAbusive
+objelonct BystandelonrAbusivelonTwelonelontLabelonlRulelon
+    elonxtelonnds NonAuthorWithTwelonelontLabelonlRulelon(
+      Drop(Unspeloncifielond),
+      TwelonelontSafelontyLabelonlTypelon.BystandelonrAbusivelon
     )
 
-object BystanderAbusiveNonFollowerTweetLabelRule
-    extends NonFollowerWithTweetLabelRule(
-      Drop(Unspecified),
-      TweetSafetyLabelType.BystanderAbusive
+objelonct BystandelonrAbusivelonNonFollowelonrTwelonelontLabelonlRulelon
+    elonxtelonnds NonFollowelonrWithTwelonelontLabelonlRulelon(
+      Drop(Unspeloncifielond),
+      TwelonelontSafelontyLabelonlTypelon.BystandelonrAbusivelon
     )
 
-abstract class DuplicateContentTweetLabelRule(action: Action)
-    extends NonAuthorWithTweetLabelRule(
+abstract class DuplicatelonContelonntTwelonelontLabelonlRulelon(action: Action)
+    elonxtelonnds NonAuthorWithTwelonelontLabelonlRulelon(
       action,
-      TweetSafetyLabelType.DuplicateContent
+      TwelonelontSafelontyLabelonlTypelon.DuplicatelonContelonnt
     )
 
-object DuplicateContentTweetLabelDropRule
-    extends DuplicateContentTweetLabelRule(Drop(TweetLabelDuplicateContent))
+objelonct DuplicatelonContelonntTwelonelontLabelonlDropRulelon
+    elonxtelonnds DuplicatelonContelonntTwelonelontLabelonlRulelon(Drop(TwelonelontLabelonlDuplicatelonContelonnt))
 
-object DuplicateContentTweetLabelTombstoneRule
-    extends DuplicateContentTweetLabelRule(Tombstone(Epitaph.Unavailable))
+objelonct DuplicatelonContelonntTwelonelontLabelonlTombstonelonRulelon
+    elonxtelonnds DuplicatelonContelonntTwelonelontLabelonlRulelon(Tombstonelon(elonpitaph.Unavailablelon))
 
-object DuplicateMentionTweetLabelRule
-    extends NonFollowerWithTweetLabelRule(
-      Drop(Unspecified),
-      TweetSafetyLabelType.DuplicateMention
+objelonct DuplicatelonMelonntionTwelonelontLabelonlRulelon
+    elonxtelonnds NonFollowelonrWithTwelonelontLabelonlRulelon(
+      Drop(Unspeloncifielond),
+      TwelonelontSafelontyLabelonlTypelon.DuplicatelonMelonntion
     )
 
-object DuplicateMentionUqfTweetLabelRule
-    extends NonFollowerWithUqfTweetLabelRule(
-      Drop(TweetLabelDuplicateMention),
-      TweetSafetyLabelType.DuplicateMention
+objelonct DuplicatelonMelonntionUqfTwelonelontLabelonlRulelon
+    elonxtelonnds NonFollowelonrWithUqfTwelonelontLabelonlRulelon(
+      Drop(TwelonelontLabelonlDuplicatelonMelonntion),
+      TwelonelontSafelontyLabelonlTypelon.DuplicatelonMelonntion
     )
 
-object GoreAndViolenceTweetLabelRule
-    extends ConditionWithTweetLabelRule(
-      Drop(Unspecified),
+objelonct GorelonAndViolelonncelonTwelonelontLabelonlRulelon
+    elonxtelonnds ConditionWithTwelonelontLabelonlRulelon(
+      Drop(Unspeloncifielond),
       And(
-        NonAuthorViewer,
-        TweetComposedBefore(TweetSafetyLabelType.GoreAndViolence.DeprecatedAt)
+        NonAuthorVielonwelonr,
+        TwelonelontComposelondBelonforelon(TwelonelontSafelontyLabelonlTypelon.GorelonAndViolelonncelon.DelonpreloncatelondAt)
       ),
-      TweetSafetyLabelType.GoreAndViolence
+      TwelonelontSafelontyLabelonlTypelon.GorelonAndViolelonncelon
     )
 
-object LiveLowQualityTweetLabelRule
-    extends NonAuthorWithTweetLabelRule(
-      Drop(Unspecified),
-      TweetSafetyLabelType.LiveLowQuality
+objelonct LivelonLowQualityTwelonelontLabelonlRulelon
+    elonxtelonnds NonAuthorWithTwelonelontLabelonlRulelon(
+      Drop(Unspeloncifielond),
+      TwelonelontSafelontyLabelonlTypelon.LivelonLowQuality
     )
 
-object LowQualityMentionTweetLabelRule
-    extends RuleWithConstantAction(
-      Drop(LowQualityMention),
+objelonct LowQualityMelonntionTwelonelontLabelonlRulelon
+    elonxtelonnds RulelonWithConstantAction(
+      Drop(LowQualityMelonntion),
       And(
-        TweetHasLabelForPerspectivalUser(TweetSafetyLabelType.LowQualityMention),
-        ViewerHasUqfEnabled
+        TwelonelontHasLabelonlForPelonrspelonctivalUselonr(TwelonelontSafelontyLabelonlTypelon.LowQualityMelonntion),
+        VielonwelonrHasUqfelonnablelond
       )
     )
 
-abstract class NsfwCardImageTweetLabelBaseRule(
-  override val action: Action,
-  val additionalCondition: Condition = TrueCondition,
-) extends RuleWithConstantAction(
+abstract class NsfwCardImagelonTwelonelontLabelonlBaselonRulelon(
+  ovelonrridelon val action: Action,
+  val additionalCondition: Condition = TruelonCondition,
+) elonxtelonnds RulelonWithConstantAction(
       action,
       And(
         additionalCondition,
-        TweetHasLabel(TweetSafetyLabelType.NsfwCardImage)
+        TwelonelontHasLabelonl(TwelonelontSafelontyLabelonlTypelon.NsfwCardImagelon)
       )
     )
 
-object NsfwCardImageTweetLabelRule
-    extends NsfwCardImageTweetLabelBaseRule(
+objelonct NsfwCardImagelonTwelonelontLabelonlRulelon
+    elonxtelonnds NsfwCardImagelonTwelonelontLabelonlBaselonRulelon(
       action = Drop(Nsfw),
-      additionalCondition = NonAuthorViewer,
+      additionalCondition = NonAuthorVielonwelonr,
     )
 
-object NsfwCardImageAllUsersTweetLabelRule
-    extends NsfwCardImageTweetLabelBaseRule(
-      action = Interstitial(Nsfw)
+objelonct NsfwCardImagelonAllUselonrsTwelonelontLabelonlRulelon
+    elonxtelonnds NsfwCardImagelonTwelonelontLabelonlBaselonRulelon(
+      action = Intelonrstitial(Nsfw)
     )
 
-object NsfwCardImageAvoidAllUsersTweetLabelRule
-    extends NsfwCardImageTweetLabelBaseRule(
-      action = Avoid(Some(AvoidReason.ContainsNsfwMedia)),
+objelonct NsfwCardImagelonAvoidAllUselonrsTwelonelontLabelonlRulelon
+    elonxtelonnds NsfwCardImagelonTwelonelontLabelonlBaselonRulelon(
+      action = Avoid(Somelon(AvoidRelonason.ContainsNsfwMelondia)),
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableAvoidNsfwRulesParam)
+  ovelonrridelon delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] = Selonq(elonnablelonAvoidNsfwRulelonsParam)
 }
 
-object NsfwCardImageAvoidAdPlacementAllUsersTweetLabelRule
-    extends NsfwCardImageTweetLabelBaseRule(
-      action = Avoid(Some(AvoidReason.ContainsNsfwMedia)),
+objelonct NsfwCardImagelonAvoidAdPlacelonmelonntAllUselonrsTwelonelontLabelonlRulelon
+    elonxtelonnds NsfwCardImagelonTwelonelontLabelonlBaselonRulelon(
+      action = Avoid(Somelon(AvoidRelonason.ContainsNsfwMelondia)),
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableAvoidNsfwRulesParam)
+  ovelonrridelon delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] = Selonq(elonnablelonAvoidNsfwRulelonsParam)
 }
 
-object SearchAvoidTweetNsfwAdminRule
-    extends RuleWithConstantAction(
-      Avoid(Some(AvoidReason.ContainsNsfwMedia)),
-      TweetHasNsfwAdminAuthor
+objelonct SelonarchAvoidTwelonelontNsfwAdminRulelon
+    elonxtelonnds RulelonWithConstantAction(
+      Avoid(Somelon(AvoidRelonason.ContainsNsfwMelondia)),
+      TwelonelontHasNsfwAdminAuthor
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableAvoidNsfwRulesParam)
+  ovelonrridelon delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] = Selonq(elonnablelonAvoidNsfwRulelonsParam)
 }
 
-object SearchAvoidTweetNsfwUserRule
-    extends RuleWithConstantAction(
-      Avoid(Some(AvoidReason.ContainsNsfwMedia)),
-      TweetHasNsfwUserAuthor
+objelonct SelonarchAvoidTwelonelontNsfwUselonrRulelon
+    elonxtelonnds RulelonWithConstantAction(
+      Avoid(Somelon(AvoidRelonason.ContainsNsfwMelondia)),
+      TwelonelontHasNsfwUselonrAuthor
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableAvoidNsfwRulesParam)
+  ovelonrridelon delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] = Selonq(elonnablelonAvoidNsfwRulelonsParam)
 }
 
-object NsfwCardImageAllUsersTweetLabelDropRule
-    extends NsfwCardImageTweetLabelBaseRule(
+objelonct NsfwCardImagelonAllUselonrsTwelonelontLabelonlDropRulelon
+    elonxtelonnds NsfwCardImagelonTwelonelontLabelonlBaselonRulelon(
       action = Drop(Nsfw),
     )
 
-object HighProactiveTosScoreTweetLabelDropRule
-    extends NonAuthorWithTweetLabelRule(
-      Drop(Unspecified),
-      TweetSafetyLabelType.HighProactiveTosScore
+objelonct HighProactivelonTosScorelonTwelonelontLabelonlDropRulelon
+    elonxtelonnds NonAuthorWithTwelonelontLabelonlRulelon(
+      Drop(Unspeloncifielond),
+      TwelonelontSafelontyLabelonlTypelon.HighProactivelonTosScorelon
     )
 
-object HighProactiveTosScoreTweetLabelDropSearchRule
-    extends NonAuthorAndNonFollowerWithTweetLabelRule(
-      Drop(Unspecified),
-      TweetSafetyLabelType.HighProactiveTosScore
+objelonct HighProactivelonTosScorelonTwelonelontLabelonlDropSelonarchRulelon
+    elonxtelonnds NonAuthorAndNonFollowelonrWithTwelonelontLabelonlRulelon(
+      Drop(Unspeloncifielond),
+      TwelonelontSafelontyLabelonlTypelon.HighProactivelonTosScorelon
     )
 
-object NsfwHighPrecisionTweetLabelRule
-    extends NonAuthorWithTweetLabelRule(
+objelonct NsfwHighPreloncisionTwelonelontLabelonlRulelon
+    elonxtelonnds NonAuthorWithTwelonelontLabelonlRulelon(
       Drop(Nsfw),
-      TweetSafetyLabelType.NsfwHighPrecision
+      TwelonelontSafelontyLabelonlTypelon.NsfwHighPreloncision
     )
 
-object NsfwHighPrecisionAllUsersTweetLabelDropRule
-    extends TweetHasLabelRule(
+objelonct NsfwHighPreloncisionAllUselonrsTwelonelontLabelonlDropRulelon
+    elonxtelonnds TwelonelontHasLabelonlRulelon(
       Drop(Nsfw),
-      TweetSafetyLabelType.NsfwHighPrecision
+      TwelonelontSafelontyLabelonlTypelon.NsfwHighPreloncision
     )
 
-object NsfwHighPrecisionInnerQuotedTweetLabelRule
-    extends ConditionWithTweetLabelRule(
+objelonct NsfwHighPreloncisionInnelonrQuotelondTwelonelontLabelonlRulelon
+    elonxtelonnds ConditionWithTwelonelontLabelonlRulelon(
       Drop(Nsfw),
-      And(IsQuotedInnerTweet, NonAuthorViewer),
-      TweetSafetyLabelType.NsfwHighPrecision
+      And(IsQuotelondInnelonrTwelonelont, NonAuthorVielonwelonr),
+      TwelonelontSafelontyLabelonlTypelon.NsfwHighPreloncision
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableNsfwHpQuotedTweetDropRuleParam)
+  ovelonrridelon delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] = Selonq(elonnablelonNsfwHpQuotelondTwelonelontDropRulelonParam)
 }
 
-object NsfwHighPrecisionTombstoneInnerQuotedTweetLabelRule
-    extends ConditionWithTweetLabelRule(
-      Tombstone(Epitaph.Unavailable),
-      And(IsQuotedInnerTweet, NonAuthorViewer),
-      TweetSafetyLabelType.NsfwHighPrecision
+objelonct NsfwHighPreloncisionTombstonelonInnelonrQuotelondTwelonelontLabelonlRulelon
+    elonxtelonnds ConditionWithTwelonelontLabelonlRulelon(
+      Tombstonelon(elonpitaph.Unavailablelon),
+      And(IsQuotelondInnelonrTwelonelont, NonAuthorVielonwelonr),
+      TwelonelontSafelontyLabelonlTypelon.NsfwHighPreloncision
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableNsfwHpQuotedTweetTombstoneRuleParam)
+  ovelonrridelon delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] = Selonq(elonnablelonNsfwHpQuotelondTwelonelontTombstonelonRulelonParam)
 }
 
-object GoreAndViolenceHighPrecisionTweetLabelRule
-    extends NonAuthorWithTweetLabelRule(
+objelonct GorelonAndViolelonncelonHighPreloncisionTwelonelontLabelonlRulelon
+    elonxtelonnds NonAuthorWithTwelonelontLabelonlRulelon(
       Drop(Nsfw),
-      TweetSafetyLabelType.GoreAndViolenceHighPrecision
+      TwelonelontSafelontyLabelonlTypelon.GorelonAndViolelonncelonHighPreloncision
     )
 
-object NsfwReportedHeuristicsTweetLabelRule
-    extends NonAuthorWithTweetLabelRule(
+objelonct NsfwRelonportelondHelonuristicsTwelonelontLabelonlRulelon
+    elonxtelonnds NonAuthorWithTwelonelontLabelonlRulelon(
       Drop(Nsfw),
-      TweetSafetyLabelType.NsfwReportedHeuristics
+      TwelonelontSafelontyLabelonlTypelon.NsfwRelonportelondHelonuristics
     )
 
-object GoreAndViolenceReportedHeuristicsTweetLabelRule
-    extends NonAuthorWithTweetLabelRule(
+objelonct GorelonAndViolelonncelonRelonportelondHelonuristicsTwelonelontLabelonlRulelon
+    elonxtelonnds NonAuthorWithTwelonelontLabelonlRulelon(
       Drop(Nsfw),
-      TweetSafetyLabelType.GoreAndViolenceReportedHeuristics
+      TwelonelontSafelontyLabelonlTypelon.GorelonAndViolelonncelonRelonportelondHelonuristics
     )
 
-object NsfwHighPrecisionInterstitialAllUsersTweetLabelRule
-    extends TweetHasLabelRule(
-      Interstitial(Nsfw),
-      TweetSafetyLabelType.NsfwHighPrecision
+objelonct NsfwHighPreloncisionIntelonrstitialAllUselonrsTwelonelontLabelonlRulelon
+    elonxtelonnds TwelonelontHasLabelonlRulelon(
+      Intelonrstitial(Nsfw),
+      TwelonelontSafelontyLabelonlTypelon.NsfwHighPreloncision
     )
-    with DoesLogVerdict
+    with DoelonsLogVelonrdict
 
-object GoreAndViolenceHighPrecisionAvoidAllUsersTweetLabelRule
-    extends TweetHasLabelRule(
-      Avoid(Some(AvoidReason.ContainsNsfwMedia)),
-      TweetSafetyLabelType.GoreAndViolenceHighPrecision
+objelonct GorelonAndViolelonncelonHighPreloncisionAvoidAllUselonrsTwelonelontLabelonlRulelon
+    elonxtelonnds TwelonelontHasLabelonlRulelon(
+      Avoid(Somelon(AvoidRelonason.ContainsNsfwMelondia)),
+      TwelonelontSafelontyLabelonlTypelon.GorelonAndViolelonncelonHighPreloncision
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableAvoidNsfwRulesParam)
+  ovelonrridelon delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] = Selonq(elonnablelonAvoidNsfwRulelonsParam)
 }
 
-object GoreAndViolenceHighPrecisionAllUsersTweetLabelRule
-    extends TweetHasLabelRule(
-      Interstitial(Nsfw),
-      TweetSafetyLabelType.GoreAndViolenceHighPrecision
+objelonct GorelonAndViolelonncelonHighPreloncisionAllUselonrsTwelonelontLabelonlRulelon
+    elonxtelonnds TwelonelontHasLabelonlRulelon(
+      Intelonrstitial(Nsfw),
+      TwelonelontSafelontyLabelonlTypelon.GorelonAndViolelonncelonHighPreloncision
     )
-    with DoesLogVerdict {
-  override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
-    TweetSafetyLabelSourceBuilder(TweetSafetyLabelType.GoreAndViolenceHighPrecision)
+    with DoelonsLogVelonrdict {
+  ovelonrridelon delonf actionSourcelonBuildelonr: Option[RulelonActionSourcelonBuildelonr] = Somelon(
+    TwelonelontSafelontyLabelonlSourcelonBuildelonr(TwelonelontSafelontyLabelonlTypelon.GorelonAndViolelonncelonHighPreloncision)
   )
 }
 
-object NsfwReportedHeuristicsAvoidAllUsersTweetLabelRule
-    extends TweetHasLabelRule(
-      Avoid(Some(AvoidReason.ContainsNsfwMedia)),
-      TweetSafetyLabelType.NsfwReportedHeuristics
+objelonct NsfwRelonportelondHelonuristicsAvoidAllUselonrsTwelonelontLabelonlRulelon
+    elonxtelonnds TwelonelontHasLabelonlRulelon(
+      Avoid(Somelon(AvoidRelonason.ContainsNsfwMelondia)),
+      TwelonelontSafelontyLabelonlTypelon.NsfwRelonportelondHelonuristics
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableAvoidNsfwRulesParam)
+  ovelonrridelon delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] = Selonq(elonnablelonAvoidNsfwRulelonsParam)
 }
 
-object NsfwReportedHeuristicsAvoidAdPlacementAllUsersTweetLabelRule
-    extends TweetHasLabelRule(
-      Avoid(Some(AvoidReason.ContainsNsfwMedia)),
-      TweetSafetyLabelType.NsfwReportedHeuristics
+objelonct NsfwRelonportelondHelonuristicsAvoidAdPlacelonmelonntAllUselonrsTwelonelontLabelonlRulelon
+    elonxtelonnds TwelonelontHasLabelonlRulelon(
+      Avoid(Somelon(AvoidRelonason.ContainsNsfwMelondia)),
+      TwelonelontSafelontyLabelonlTypelon.NsfwRelonportelondHelonuristics
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableAvoidNsfwRulesParam)
+  ovelonrridelon delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] = Selonq(elonnablelonAvoidNsfwRulelonsParam)
 }
 
-object NsfwReportedHeuristicsAllUsersTweetLabelRule
-    extends TweetHasLabelRule(
-      Interstitial(Nsfw),
-      TweetSafetyLabelType.NsfwReportedHeuristics
+objelonct NsfwRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlRulelon
+    elonxtelonnds TwelonelontHasLabelonlRulelon(
+      Intelonrstitial(Nsfw),
+      TwelonelontSafelontyLabelonlTypelon.NsfwRelonportelondHelonuristics
     )
 
-object GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule
-    extends TweetHasLabelRule(
-      Interstitial(Nsfw),
-      TweetSafetyLabelType.GoreAndViolenceReportedHeuristics
+objelonct GorelonAndViolelonncelonRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlRulelon
+    elonxtelonnds TwelonelontHasLabelonlRulelon(
+      Intelonrstitial(Nsfw),
+      TwelonelontSafelontyLabelonlTypelon.GorelonAndViolelonncelonRelonportelondHelonuristics
     )
 
-object GoreAndViolenceReportedHeuristicsAvoidAllUsersTweetLabelRule
-    extends TweetHasLabelRule(
-      Avoid(Some(AvoidReason.ContainsNsfwMedia)),
-      TweetSafetyLabelType.GoreAndViolenceReportedHeuristics
+objelonct GorelonAndViolelonncelonRelonportelondHelonuristicsAvoidAllUselonrsTwelonelontLabelonlRulelon
+    elonxtelonnds TwelonelontHasLabelonlRulelon(
+      Avoid(Somelon(AvoidRelonason.ContainsNsfwMelondia)),
+      TwelonelontSafelontyLabelonlTypelon.GorelonAndViolelonncelonRelonportelondHelonuristics
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableAvoidNsfwRulesParam)
+  ovelonrridelon delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] = Selonq(elonnablelonAvoidNsfwRulelonsParam)
 }
 
-object GoreAndViolenceReportedHeuristicsAvoidAdPlacementAllUsersTweetLabelRule
-    extends TweetHasLabelRule(
-      Avoid(Some(AvoidReason.ContainsNsfwMedia)),
-      TweetSafetyLabelType.GoreAndViolenceReportedHeuristics
+objelonct GorelonAndViolelonncelonRelonportelondHelonuristicsAvoidAdPlacelonmelonntAllUselonrsTwelonelontLabelonlRulelon
+    elonxtelonnds TwelonelontHasLabelonlRulelon(
+      Avoid(Somelon(AvoidRelonason.ContainsNsfwMelondia)),
+      TwelonelontSafelontyLabelonlTypelon.GorelonAndViolelonncelonRelonportelondHelonuristics
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableAvoidNsfwRulesParam)
+  ovelonrridelon delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] = Selonq(elonnablelonAvoidNsfwRulelonsParam)
 }
 
-object GoreAndViolenceHighPrecisionAllUsersTweetLabelDropRule
-    extends TweetHasLabelRule(
+objelonct GorelonAndViolelonncelonHighPreloncisionAllUselonrsTwelonelontLabelonlDropRulelon
+    elonxtelonnds TwelonelontHasLabelonlRulelon(
       Drop(Nsfw),
-      TweetSafetyLabelType.GoreAndViolenceHighPrecision
+      TwelonelontSafelontyLabelonlTypelon.GorelonAndViolelonncelonHighPreloncision
     )
 
-object NsfwReportedHeuristicsAllUsersTweetLabelDropRule
-    extends TweetHasLabelRule(
+objelonct NsfwRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlDropRulelon
+    elonxtelonnds TwelonelontHasLabelonlRulelon(
       Drop(Nsfw),
-      TweetSafetyLabelType.NsfwReportedHeuristics
+      TwelonelontSafelontyLabelonlTypelon.NsfwRelonportelondHelonuristics
     )
 
-object GoreAndViolenceReportedHeuristicsAllUsersTweetLabelDropRule
-    extends TweetHasLabelRule(
+objelonct GorelonAndViolelonncelonRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlDropRulelon
+    elonxtelonnds TwelonelontHasLabelonlRulelon(
       Drop(Nsfw),
-      TweetSafetyLabelType.GoreAndViolenceReportedHeuristics
+      TwelonelontSafelontyLabelonlTypelon.GorelonAndViolelonncelonRelonportelondHelonuristics
     )
 
-object NsfwHighRecallTweetLabelRule
-    extends NonAuthorWithTweetLabelRule(
+objelonct NsfwHighReloncallTwelonelontLabelonlRulelon
+    elonxtelonnds NonAuthorWithTwelonelontLabelonlRulelon(
       Drop(Nsfw),
-      TweetSafetyLabelType.NsfwHighRecall
+      TwelonelontSafelontyLabelonlTypelon.NsfwHighReloncall
     )
 
-object NsfwHighRecallAllUsersTweetLabelDropRule
-    extends TweetHasLabelRule(
+objelonct NsfwHighReloncallAllUselonrsTwelonelontLabelonlDropRulelon
+    elonxtelonnds TwelonelontHasLabelonlRulelon(
       Drop(Nsfw),
-      TweetSafetyLabelType.NsfwHighRecall
+      TwelonelontSafelontyLabelonlTypelon.NsfwHighReloncall
     )
 
-abstract class PdnaTweetLabelRule(
-  override val action: Action,
+abstract class PdnaTwelonelontLabelonlRulelon(
+  ovelonrridelon val action: Action,
   val additionalCondition: Condition)
-    extends ConditionWithTweetLabelRule(
+    elonxtelonnds ConditionWithTwelonelontLabelonlRulelon(
       action,
-      And(NonAuthorViewer, additionalCondition),
-      TweetSafetyLabelType.Pdna
+      And(NonAuthorVielonwelonr, additionalCondition),
+      TwelonelontSafelontyLabelonlTypelon.Pdna
     )
 
-object PdnaTweetLabelRule extends PdnaTweetLabelRule(Drop(PdnaTweet), Condition.True)
+objelonct PdnaTwelonelontLabelonlRulelon elonxtelonnds PdnaTwelonelontLabelonlRulelon(Drop(PdnaTwelonelont), Condition.Truelon)
 
-object PdnaTweetLabelTombstoneRule
-    extends PdnaTweetLabelRule(Tombstone(Epitaph.Unavailable), Condition.True)
+objelonct PdnaTwelonelontLabelonlTombstonelonRulelon
+    elonxtelonnds PdnaTwelonelontLabelonlRulelon(Tombstonelon(elonpitaph.Unavailablelon), Condition.Truelon)
 
-object PdnaQuotedTweetLabelTombstoneRule
-    extends PdnaTweetLabelRule(Tombstone(Epitaph.Unavailable), Condition.IsQuotedInnerTweet) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnablePdnaQuotedTweetTombstoneRuleParam)
+objelonct PdnaQuotelondTwelonelontLabelonlTombstonelonRulelon
+    elonxtelonnds PdnaTwelonelontLabelonlRulelon(Tombstonelon(elonpitaph.Unavailablelon), Condition.IsQuotelondInnelonrTwelonelont) {
+  ovelonrridelon delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] = Selonq(elonnablelonPdnaQuotelondTwelonelontTombstonelonRulelonParam)
 }
 
-object PdnaAllUsersTweetLabelRule
-    extends TweetHasLabelRule(
-      Drop(Unspecified),
-      TweetSafetyLabelType.Pdna
+objelonct PdnaAllUselonrsTwelonelontLabelonlRulelon
+    elonxtelonnds TwelonelontHasLabelonlRulelon(
+      Drop(Unspeloncifielond),
+      TwelonelontSafelontyLabelonlTypelon.Pdna
     )
 
-object SearchBlacklistTweetLabelRule
-    extends NonAuthorWithTweetLabelRule(
-      Drop(Unspecified),
-      TweetSafetyLabelType.SearchBlacklist
+objelonct SelonarchBlacklistTwelonelontLabelonlRulelon
+    elonxtelonnds NonAuthorWithTwelonelontLabelonlRulelon(
+      Drop(Unspeloncifielond),
+      TwelonelontSafelontyLabelonlTypelon.SelonarchBlacklist
     )
 
-object SearchBlacklistHighRecallTweetLabelDropRule
-    extends NonAuthorAndNonFollowerWithTweetLabelRule(
-      Drop(Unspecified),
-      TweetSafetyLabelType.SearchBlacklistHighRecall
+objelonct SelonarchBlacklistHighReloncallTwelonelontLabelonlDropRulelon
+    elonxtelonnds NonAuthorAndNonFollowelonrWithTwelonelontLabelonlRulelon(
+      Drop(Unspeloncifielond),
+      TwelonelontSafelontyLabelonlTypelon.SelonarchBlacklistHighReloncall
     )
 
-abstract class SpamTweetLabelRule(
-  override val action: Action,
+abstract class SpamTwelonelontLabelonlRulelon(
+  ovelonrridelon val action: Action,
   val additionalCondition: Condition)
-    extends ConditionWithTweetLabelRule(
+    elonxtelonnds ConditionWithTwelonelontLabelonlRulelon(
       action,
-      And(NonAuthorViewer, additionalCondition),
-      TweetSafetyLabelType.Spam
+      And(NonAuthorVielonwelonr, additionalCondition),
+      TwelonelontSafelontyLabelonlTypelon.Spam
     )
-    with DoesLogVerdict
+    with DoelonsLogVelonrdict
 
-object SpamTweetLabelRule extends SpamTweetLabelRule(Drop(TweetLabeledSpam), Condition.True)
+objelonct SpamTwelonelontLabelonlRulelon elonxtelonnds SpamTwelonelontLabelonlRulelon(Drop(TwelonelontLabelonlelondSpam), Condition.Truelon)
 
-object SpamTweetLabelTombstoneRule
-    extends SpamTweetLabelRule(Tombstone(Epitaph.Unavailable), Condition.True)
+objelonct SpamTwelonelontLabelonlTombstonelonRulelon
+    elonxtelonnds SpamTwelonelontLabelonlRulelon(Tombstonelon(elonpitaph.Unavailablelon), Condition.Truelon)
 
-object SpamQuotedTweetLabelTombstoneRule
-    extends SpamTweetLabelRule(Tombstone(Epitaph.Unavailable), Condition.IsQuotedInnerTweet) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableSpamQuotedTweetTombstoneRuleParam)
+objelonct SpamQuotelondTwelonelontLabelonlTombstonelonRulelon
+    elonxtelonnds SpamTwelonelontLabelonlRulelon(Tombstonelon(elonpitaph.Unavailablelon), Condition.IsQuotelondInnelonrTwelonelont) {
+  ovelonrridelon delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] = Selonq(elonnablelonSpamQuotelondTwelonelontTombstonelonRulelonParam)
 }
 
-object SpamAllUsersTweetLabelRule
-    extends TweetHasLabelRule(
-      Drop(Unspecified),
-      TweetSafetyLabelType.Spam
+objelonct SpamAllUselonrsTwelonelontLabelonlRulelon
+    elonxtelonnds TwelonelontHasLabelonlRulelon(
+      Drop(Unspeloncifielond),
+      TwelonelontSafelontyLabelonlTypelon.Spam
     )
 
-abstract class BounceTweetLabelRule(override val action: Action)
-    extends NonAuthorWithTweetLabelRule(
+abstract class BouncelonTwelonelontLabelonlRulelon(ovelonrridelon val action: Action)
+    elonxtelonnds NonAuthorWithTwelonelontLabelonlRulelon(
       action,
-      TweetSafetyLabelType.Bounce
+      TwelonelontSafelontyLabelonlTypelon.Bouncelon
     )
 
-object BounceTweetLabelRule extends BounceTweetLabelRule(Drop(Bounce))
+objelonct BouncelonTwelonelontLabelonlRulelon elonxtelonnds BouncelonTwelonelontLabelonlRulelon(Drop(Bouncelon))
 
-object BounceTweetLabelTombstoneRule extends BounceTweetLabelRule(Tombstone(Epitaph.Bounced))
+objelonct BouncelonTwelonelontLabelonlTombstonelonRulelon elonxtelonnds BouncelonTwelonelontLabelonlRulelon(Tombstonelon(elonpitaph.Bouncelond))
 
-abstract class BounceOuterTweetLabelRule(override val action: Action)
-    extends ConditionWithTweetLabelRule(
+abstract class BouncelonOutelonrTwelonelontLabelonlRulelon(ovelonrridelon val action: Action)
+    elonxtelonnds ConditionWithTwelonelontLabelonlRulelon(
       action,
-      And(Not(Condition.IsQuotedInnerTweet), NonAuthorViewer),
-      TweetSafetyLabelType.Bounce
+      And(Not(Condition.IsQuotelondInnelonrTwelonelont), NonAuthorVielonwelonr),
+      TwelonelontSafelontyLabelonlTypelon.Bouncelon
     )
 
-object BounceOuterTweetTombstoneRule extends BounceOuterTweetLabelRule(Tombstone(Epitaph.Bounced))
+objelonct BouncelonOutelonrTwelonelontTombstonelonRulelon elonxtelonnds BouncelonOutelonrTwelonelontLabelonlRulelon(Tombstonelon(elonpitaph.Bouncelond))
 
-object BounceQuotedTweetTombstoneRule
-    extends ConditionWithTweetLabelRule(
-      Tombstone(Epitaph.Bounced),
-      Condition.IsQuotedInnerTweet,
-      TweetSafetyLabelType.Bounce
+objelonct BouncelonQuotelondTwelonelontTombstonelonRulelon
+    elonxtelonnds ConditionWithTwelonelontLabelonlRulelon(
+      Tombstonelon(elonpitaph.Bouncelond),
+      Condition.IsQuotelondInnelonrTwelonelont,
+      TwelonelontSafelontyLabelonlTypelon.Bouncelon
     )
 
-object BounceAllUsersTweetLabelRule
-    extends TweetHasLabelRule(
-      Drop(Bounce),
-      TweetSafetyLabelType.Bounce
+objelonct BouncelonAllUselonrsTwelonelontLabelonlRulelon
+    elonxtelonnds TwelonelontHasLabelonlRulelon(
+      Drop(Bouncelon),
+      TwelonelontSafelontyLabelonlTypelon.Bouncelon
     )
 
 
-abstract class SpamHighRecallTweetLabelRule(action: Action)
-    extends NonAuthorWithTweetLabelRule(
+abstract class SpamHighReloncallTwelonelontLabelonlRulelon(action: Action)
+    elonxtelonnds NonAuthorWithTwelonelontLabelonlRulelon(
       action,
-      TweetSafetyLabelType.SpamHighRecall
+      TwelonelontSafelontyLabelonlTypelon.SpamHighReloncall
     )
 
-object SpamHighRecallTweetLabelDropRule
-    extends SpamHighRecallTweetLabelRule(Drop(SpamHighRecallTweet))
+objelonct SpamHighReloncallTwelonelontLabelonlDropRulelon
+    elonxtelonnds SpamHighReloncallTwelonelontLabelonlRulelon(Drop(SpamHighReloncallTwelonelont))
 
-object SpamHighRecallTweetLabelTombstoneRule
-    extends SpamHighRecallTweetLabelRule(Tombstone(Epitaph.Unavailable))
+objelonct SpamHighReloncallTwelonelontLabelonlTombstonelonRulelon
+    elonxtelonnds SpamHighReloncallTwelonelontLabelonlRulelon(Tombstonelon(elonpitaph.Unavailablelon))
 
-object UntrustedUrlAllViewersTweetLabelRule
-    extends TweetHasLabelRule(
-      Drop(Unspecified),
-      TweetSafetyLabelType.UntrustedUrl
+objelonct UntrustelondUrlAllVielonwelonrsTwelonelontLabelonlRulelon
+    elonxtelonnds TwelonelontHasLabelonlRulelon(
+      Drop(Unspeloncifielond),
+      TwelonelontSafelontyLabelonlTypelon.UntrustelondUrl
     )
 
-object DownrankSpamReplyAllViewersTweetLabelRule
-    extends TweetHasLabelRule(
-      Drop(Unspecified),
-      TweetSafetyLabelType.DownrankSpamReply
+objelonct DownrankSpamRelonplyAllVielonwelonrsTwelonelontLabelonlRulelon
+    elonxtelonnds TwelonelontHasLabelonlRulelon(
+      Drop(Unspeloncifielond),
+      TwelonelontSafelontyLabelonlTypelon.DownrankSpamRelonply
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] =
-    Seq(EnableDownrankSpamReplySectioningRuleParam)
+  ovelonrridelon delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] =
+    Selonq(elonnablelonDownrankSpamRelonplySelonctioningRulelonParam)
 }
 
-object UntrustedUrlTweetLabelRule
-    extends NonAuthorWithTweetLabelRule(
-      Drop(Unspecified),
-      TweetSafetyLabelType.UntrustedUrl
+objelonct UntrustelondUrlTwelonelontLabelonlRulelon
+    elonxtelonnds NonAuthorWithTwelonelontLabelonlRulelon(
+      Drop(Unspeloncifielond),
+      TwelonelontSafelontyLabelonlTypelon.UntrustelondUrl
     )
 
-object DownrankSpamReplyTweetLabelRule
-    extends NonAuthorWithTweetLabelRule(
-      Drop(Unspecified),
-      TweetSafetyLabelType.DownrankSpamReply
+objelonct DownrankSpamRelonplyTwelonelontLabelonlRulelon
+    elonxtelonnds NonAuthorWithTwelonelontLabelonlRulelon(
+      Drop(Unspeloncifielond),
+      TwelonelontSafelontyLabelonlTypelon.DownrankSpamRelonply
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] =
-    Seq(EnableDownrankSpamReplySectioningRuleParam)
+  ovelonrridelon delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] =
+    Selonq(elonnablelonDownrankSpamRelonplySelonctioningRulelonParam)
 }
 
-object UntrustedUrlUqfNonFollowerTweetLabelRule
-    extends NonFollowerWithUqfTweetLabelRule(
-      Drop(UntrustedUrl),
-      TweetSafetyLabelType.UntrustedUrl
+objelonct UntrustelondUrlUqfNonFollowelonrTwelonelontLabelonlRulelon
+    elonxtelonnds NonFollowelonrWithUqfTwelonelontLabelonlRulelon(
+      Drop(UntrustelondUrl),
+      TwelonelontSafelontyLabelonlTypelon.UntrustelondUrl
     )
 
-object DownrankSpamReplyUqfNonFollowerTweetLabelRule
-    extends NonFollowerWithUqfTweetLabelRule(
-      Drop(SpamReplyDownRank),
-      TweetSafetyLabelType.DownrankSpamReply
+objelonct DownrankSpamRelonplyUqfNonFollowelonrTwelonelontLabelonlRulelon
+    elonxtelonnds NonFollowelonrWithUqfTwelonelontLabelonlRulelon(
+      Drop(SpamRelonplyDownRank),
+      TwelonelontSafelontyLabelonlTypelon.DownrankSpamRelonply
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] =
-    Seq(EnableDownrankSpamReplySectioningRuleParam)
+  ovelonrridelon delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] =
+    Selonq(elonnablelonDownrankSpamRelonplySelonctioningRulelonParam)
 }
 
-object NsfaHighRecallTweetLabelRule
-    extends RuleWithConstantAction(
-      Drop(Unspecified),
+objelonct NsfaHighReloncallTwelonelontLabelonlRulelon
+    elonxtelonnds RulelonWithConstantAction(
+      Drop(Unspeloncifielond),
       And(
-        NonAuthorViewer,
-        TweetHasLabel(TweetSafetyLabelType.NsfaHighRecall)
+        NonAuthorVielonwelonr,
+        TwelonelontHasLabelonl(TwelonelontSafelontyLabelonlTypelon.NsfaHighReloncall)
       )
     )
 
-object NsfaHighRecallTweetLabelInterstitialRule
-    extends RuleWithConstantAction(
-      Interstitial(Unspecified),
+objelonct NsfaHighReloncallTwelonelontLabelonlIntelonrstitialRulelon
+    elonxtelonnds RulelonWithConstantAction(
+      Intelonrstitial(Unspeloncifielond),
       And(
-        NonAuthorViewer,
-        TweetHasLabel(TweetSafetyLabelType.NsfaHighRecall)
+        NonAuthorVielonwelonr,
+        TwelonelontHasLabelonl(TwelonelontSafelontyLabelonlTypelon.NsfaHighReloncall)
       )
     )
 
-object NsfwVideoTweetLabelDropRule
-    extends NonAuthorWithTweetLabelRule(
+objelonct NsfwVidelonoTwelonelontLabelonlDropRulelon
+    elonxtelonnds NonAuthorWithTwelonelontLabelonlRulelon(
       Drop(Nsfw),
-      TweetSafetyLabelType.NsfwVideo
+      TwelonelontSafelontyLabelonlTypelon.NsfwVidelono
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableNsfwTextSectioningRuleParam)
+  ovelonrridelon delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] = Selonq(elonnablelonNsfwTelonxtSelonctioningRulelonParam)
 }
 
-object NsfwTextTweetLabelDropRule
-    extends NonAuthorWithTweetLabelRule(
+objelonct NsfwTelonxtTwelonelontLabelonlDropRulelon
+    elonxtelonnds NonAuthorWithTwelonelontLabelonlRulelon(
       Drop(Nsfw),
-      TweetSafetyLabelType.NsfwText
+      TwelonelontSafelontyLabelonlTypelon.NsfwTelonxt
     )
 
-object NsfwVideoAllUsersTweetLabelDropRule
-    extends TweetHasLabelRule(
+objelonct NsfwVidelonoAllUselonrsTwelonelontLabelonlDropRulelon
+    elonxtelonnds TwelonelontHasLabelonlRulelon(
       Drop(Nsfw),
-      TweetSafetyLabelType.NsfwVideo
+      TwelonelontSafelontyLabelonlTypelon.NsfwVidelono
     )
 
-object NsfwTextAllUsersTweetLabelDropRule
-    extends TweetHasLabelRule(
+objelonct NsfwTelonxtAllUselonrsTwelonelontLabelonlDropRulelon
+    elonxtelonnds TwelonelontHasLabelonlRulelon(
       Drop(Nsfw),
-      TweetSafetyLabelType.NsfwText
+      TwelonelontSafelontyLabelonlTypelon.NsfwTelonxt
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableNsfwTextSectioningRuleParam)
+  ovelonrridelon delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] = Selonq(elonnablelonNsfwTelonxtSelonctioningRulelonParam)
 }
 
-abstract class BaseLowQualityTweetLabelRule(action: Action)
-    extends RuleWithConstantAction(
+abstract class BaselonLowQualityTwelonelontLabelonlRulelon(action: Action)
+    elonxtelonnds RulelonWithConstantAction(
       action,
       And(
-        TweetHasLabel(TweetSafetyLabelType.LowQuality),
-        TweetComposedBefore(PublicInterest.PolicyConfig.LowQualityProxyLabelStart),
-        NonAuthorViewer
+        TwelonelontHasLabelonl(TwelonelontSafelontyLabelonlTypelon.LowQuality),
+        TwelonelontComposelondBelonforelon(PublicIntelonrelonst.PolicyConfig.LowQualityProxyLabelonlStart),
+        NonAuthorVielonwelonr
       )
     )
-    with DoesLogVerdict {
-  override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
-    TweetSafetyLabelSourceBuilder(TweetSafetyLabelType.LowQuality))
+    with DoelonsLogVelonrdict {
+  ovelonrridelon delonf actionSourcelonBuildelonr: Option[RulelonActionSourcelonBuildelonr] = Somelon(
+    TwelonelontSafelontyLabelonlSourcelonBuildelonr(TwelonelontSafelontyLabelonlTypelon.LowQuality))
 }
 
-object LowQualityTweetLabelDropRule extends BaseLowQualityTweetLabelRule(Drop(LowQualityTweet))
+objelonct LowQualityTwelonelontLabelonlDropRulelon elonxtelonnds BaselonLowQualityTwelonelontLabelonlRulelon(Drop(LowQualityTwelonelont))
 
-object LowQualityTweetLabelTombstoneRule
-    extends BaseLowQualityTweetLabelRule(Tombstone(Epitaph.Unavailable))
+objelonct LowQualityTwelonelontLabelonlTombstonelonRulelon
+    elonxtelonnds BaselonLowQualityTwelonelontLabelonlRulelon(Tombstonelon(elonpitaph.Unavailablelon))
 
-abstract class SafetyCrisisLevelDropRule(level: Int, condition: Condition = TrueCondition)
-    extends ConditionWithTweetLabelRule(
-      Drop(Unspecified),
+abstract class SafelontyCrisisLelonvelonlDropRulelon(lelonvelonl: Int, condition: Condition = TruelonCondition)
+    elonxtelonnds ConditionWithTwelonelontLabelonlRulelon(
+      Drop(Unspeloncifielond),
       And(
-        NonAuthorViewer,
+        NonAuthorVielonwelonr,
         condition,
-        TweetHasSafetyLabelWithScoreEqInt(TweetSafetyLabelType.SafetyCrisis, level)
+        TwelonelontHasSafelontyLabelonlWithScorelonelonqInt(TwelonelontSafelontyLabelonlTypelon.SafelontyCrisis, lelonvelonl)
       ),
-      TweetSafetyLabelType.SafetyCrisis
+      TwelonelontSafelontyLabelonlTypelon.SafelontyCrisis
     )
 
-object SafetyCrisisAnyLevelDropRule
-    extends NonAuthorWithTweetLabelRule(
-      Drop(Unspecified),
-      TweetSafetyLabelType.SafetyCrisis
+objelonct SafelontyCrisisAnyLelonvelonlDropRulelon
+    elonxtelonnds NonAuthorWithTwelonelontLabelonlRulelon(
+      Drop(Unspeloncifielond),
+      TwelonelontSafelontyLabelonlTypelon.SafelontyCrisis
     )
 
-object SafetyCrisisLevel2DropRule extends SafetyCrisisLevelDropRule(2, Not(ViewerDoesFollowAuthor))
+objelonct SafelontyCrisisLelonvelonl2DropRulelon elonxtelonnds SafelontyCrisisLelonvelonlDropRulelon(2, Not(VielonwelonrDoelonsFollowAuthor))
 
-object SafetyCrisisLevel3DropRule extends SafetyCrisisLevelDropRule(3, Not(ViewerDoesFollowAuthor))
+objelonct SafelontyCrisisLelonvelonl3DropRulelon elonxtelonnds SafelontyCrisisLelonvelonlDropRulelon(3, Not(VielonwelonrDoelonsFollowAuthor))
 
-object SafetyCrisisLevel4DropRule extends SafetyCrisisLevelDropRule(4)
+objelonct SafelontyCrisisLelonvelonl4DropRulelon elonxtelonnds SafelontyCrisisLelonvelonlDropRulelon(4)
 
-abstract class SafetyCrisisLevelSectionRule(level: Int)
-    extends ConditionWithNotInnerCircleOfFriendsRule(
-      ConversationSectionAbusiveQuality,
+abstract class SafelontyCrisisLelonvelonlSelonctionRulelon(lelonvelonl: Int)
+    elonxtelonnds ConditionWithNotInnelonrCirclelonOfFrielonndsRulelon(
+      ConvelonrsationSelonctionAbusivelonQuality,
       And(
-        TweetHasLabel(TweetSafetyLabelType.SafetyCrisis),
-        TweetHasSafetyLabelWithScoreEqInt(TweetSafetyLabelType.SafetyCrisis, level))
+        TwelonelontHasLabelonl(TwelonelontSafelontyLabelonlTypelon.SafelontyCrisis),
+        TwelonelontHasSafelontyLabelonlWithScorelonelonqInt(TwelonelontSafelontyLabelonlTypelon.SafelontyCrisis, lelonvelonl))
     ) {
-  override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
-    TweetSafetyLabelSourceBuilder(TweetSafetyLabelType.SafetyCrisis))
+  ovelonrridelon delonf actionSourcelonBuildelonr: Option[RulelonActionSourcelonBuildelonr] = Somelon(
+    TwelonelontSafelontyLabelonlSourcelonBuildelonr(TwelonelontSafelontyLabelonlTypelon.SafelontyCrisis))
 }
 
-object SafetyCrisisLevel3SectionRule
-    extends SafetyCrisisLevelSectionRule(3)
-    with DoesLogVerdictDecidered {
-  override def verdictLogDeciderKey = DeciderKey.EnableDownlevelRuleVerdictLogging
+objelonct SafelontyCrisisLelonvelonl3SelonctionRulelon
+    elonxtelonnds SafelontyCrisisLelonvelonlSelonctionRulelon(3)
+    with DoelonsLogVelonrdictDeloncidelonrelond {
+  ovelonrridelon delonf velonrdictLogDeloncidelonrKelony = DeloncidelonrKelony.elonnablelonDownlelonvelonlRulelonVelonrdictLogging
 }
 
-object SafetyCrisisLevel4SectionRule
-    extends SafetyCrisisLevelSectionRule(4)
-    with DoesLogVerdictDecidered {
-  override def verdictLogDeciderKey = DeciderKey.EnableDownlevelRuleVerdictLogging
+objelonct SafelontyCrisisLelonvelonl4SelonctionRulelon
+    elonxtelonnds SafelontyCrisisLelonvelonlSelonctionRulelon(4)
+    with DoelonsLogVelonrdictDeloncidelonrelond {
+  ovelonrridelon delonf velonrdictLogDeloncidelonrKelony = DeloncidelonrKelony.elonnablelonDownlelonvelonlRulelonVelonrdictLogging
 }
 
-object DoNotAmplifyDropRule
-    extends NonFollowerWithTweetLabelRule(Drop(Unspecified), TweetSafetyLabelType.DoNotAmplify)
+objelonct DoNotAmplifyDropRulelon
+    elonxtelonnds NonFollowelonrWithTwelonelontLabelonlRulelon(Drop(Unspeloncifielond), TwelonelontSafelontyLabelonlTypelon.DoNotAmplify)
 
-object DoNotAmplifyAllViewersDropRule
-    extends TweetHasLabelRule(Drop(Unspecified), TweetSafetyLabelType.DoNotAmplify)
+objelonct DoNotAmplifyAllVielonwelonrsDropRulelon
+    elonxtelonnds TwelonelontHasLabelonlRulelon(Drop(Unspeloncifielond), TwelonelontSafelontyLabelonlTypelon.DoNotAmplify)
 
-object DoNotAmplifySectionRule
-    extends ConditionWithNotInnerCircleOfFriendsRule(
-      ConversationSectionAbusiveQuality,
-      TweetHasLabel(TweetSafetyLabelType.DoNotAmplify))
+objelonct DoNotAmplifySelonctionRulelon
+    elonxtelonnds ConditionWithNotInnelonrCirclelonOfFrielonndsRulelon(
+      ConvelonrsationSelonctionAbusivelonQuality,
+      TwelonelontHasLabelonl(TwelonelontSafelontyLabelonlTypelon.DoNotAmplify))
 
-object HighPSpammyScoreAllViewerDropRule
-    extends TweetHasLabelRule(Drop(Unspecified), TweetSafetyLabelType.HighPSpammyTweetScore)
+objelonct HighPSpammyScorelonAllVielonwelonrDropRulelon
+    elonxtelonnds TwelonelontHasLabelonlRulelon(Drop(Unspeloncifielond), TwelonelontSafelontyLabelonlTypelon.HighPSpammyTwelonelontScorelon)
 
-object HighPSpammyTweetScoreSearchTweetLabelDropRule
-    extends RuleWithConstantAction(
-      action = Drop(Unspecified),
+objelonct HighPSpammyTwelonelontScorelonSelonarchTwelonelontLabelonlDropRulelon
+    elonxtelonnds RulelonWithConstantAction(
+      action = Drop(Unspeloncifielond),
       condition = And(
-        LoggedOutOrViewerNotFollowingAuthor,
-        TweetHasLabelWithScoreAboveThreshold(
-          TweetSafetyLabelType.HighPSpammyTweetScore,
-          ModelScoreThresholds.HighPSpammyTweetScoreThreshold)
+        LoggelondOutOrVielonwelonrNotFollowingAuthor,
+        TwelonelontHasLabelonlWithScorelonAbovelonThrelonshold(
+          TwelonelontSafelontyLabelonlTypelon.HighPSpammyTwelonelontScorelon,
+          ModelonlScorelonThrelonsholds.HighPSpammyTwelonelontScorelonThrelonshold)
       )
     )
-    with DoesLogVerdictDecidered {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(
-    EnableHighPSpammyTweetScoreSearchTweetLabelDropRuleParam)
-  override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
-    TweetSafetyLabelSourceBuilder(TweetSafetyLabelType.HighPSpammyTweetScore))
-  override def verdictLogDeciderKey: DeciderKey.Value =
-    DeciderKey.EnableSpammyTweetRuleVerdictLogging
+    with DoelonsLogVelonrdictDeloncidelonrelond {
+  ovelonrridelon delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] = Selonq(
+    elonnablelonHighPSpammyTwelonelontScorelonSelonarchTwelonelontLabelonlDropRulelonParam)
+  ovelonrridelon delonf actionSourcelonBuildelonr: Option[RulelonActionSourcelonBuildelonr] = Somelon(
+    TwelonelontSafelontyLabelonlSourcelonBuildelonr(TwelonelontSafelontyLabelonlTypelon.HighPSpammyTwelonelontScorelon))
+  ovelonrridelon delonf velonrdictLogDeloncidelonrKelony: DeloncidelonrKelony.Valuelon =
+    DeloncidelonrKelony.elonnablelonSpammyTwelonelontRulelonVelonrdictLogging
 }
 
-object AdsManagerDenyListAllUsersTweetLabelRule
-    extends TweetHasLabelRule(
-      Drop(Unspecified),
-      TweetSafetyLabelType.AdsManagerDenyList
+objelonct AdsManagelonrDelonnyListAllUselonrsTwelonelontLabelonlRulelon
+    elonxtelonnds TwelonelontHasLabelonlRulelon(
+      Drop(Unspeloncifielond),
+      TwelonelontSafelontyLabelonlTypelon.AdsManagelonrDelonnyList
     )
 
-abstract class SmyteSpamTweetLabelRule(action: Action)
-    extends NonAuthorWithTweetLabelRule(
+abstract class SmytelonSpamTwelonelontLabelonlRulelon(action: Action)
+    elonxtelonnds NonAuthorWithTwelonelontLabelonlRulelon(
       action,
-      TweetSafetyLabelType.SmyteSpamTweet
+      TwelonelontSafelontyLabelonlTypelon.SmytelonSpamTwelonelont
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableSmyteSpamTweetRuleParam)
+  ovelonrridelon delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] = Selonq(elonnablelonSmytelonSpamTwelonelontRulelonParam)
 }
 
-object SmyteSpamTweetLabelDropRule extends SmyteSpamTweetLabelRule(Drop(TweetLabeledSpam))
+objelonct SmytelonSpamTwelonelontLabelonlDropRulelon elonxtelonnds SmytelonSpamTwelonelontLabelonlRulelon(Drop(TwelonelontLabelonlelondSpam))
 
-object SmyteSpamTweetLabelTombstoneRule
-    extends SmyteSpamTweetLabelRule(Tombstone(Epitaph.Unavailable))
+objelonct SmytelonSpamTwelonelontLabelonlTombstonelonRulelon
+    elonxtelonnds SmytelonSpamTwelonelontLabelonlRulelon(Tombstonelon(elonpitaph.Unavailablelon))
 
-object SmyteSpamTweetLabelDropSearchRule extends SmyteSpamTweetLabelRule(Drop(Unspecified))
+objelonct SmytelonSpamTwelonelontLabelonlDropSelonarchRulelon elonxtelonnds SmytelonSpamTwelonelontLabelonlRulelon(Drop(Unspeloncifielond))
 
-object HighSpammyTweetContentScoreSearchLatestTweetLabelDropRule
-    extends RuleWithConstantAction(
-      action = Drop(Unspecified),
+objelonct HighSpammyTwelonelontContelonntScorelonSelonarchLatelonstTwelonelontLabelonlDropRulelon
+    elonxtelonnds RulelonWithConstantAction(
+      action = Drop(Unspeloncifielond),
       condition = And(
-        Not(IsTweetInTweetLevelStcmHoldback),
-        LoggedOutOrViewerNotFollowingAuthor,
-        TweetHasLabelWithScoreAboveThresholdWithParam(
-          TweetSafetyLabelType.HighSpammyTweetContentScore,
-          HighSpammyTweetContentScoreSearchLatestProdTweetLabelDropRuleThresholdParam)
+        Not(IsTwelonelontInTwelonelontLelonvelonlStcmHoldback),
+        LoggelondOutOrVielonwelonrNotFollowingAuthor,
+        TwelonelontHasLabelonlWithScorelonAbovelonThrelonsholdWithParam(
+          TwelonelontSafelontyLabelonlTypelon.HighSpammyTwelonelontContelonntScorelon,
+          HighSpammyTwelonelontContelonntScorelonSelonarchLatelonstProdTwelonelontLabelonlDropRulelonThrelonsholdParam)
       )
     )
-    with DoesLogVerdictDecidered {
-  override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
-    TweetSafetyLabelSourceBuilder(TweetSafetyLabelType.HighSpammyTweetContentScore))
-  override def verdictLogDeciderKey: DeciderKey.Value =
-    DeciderKey.EnableSpammyTweetRuleVerdictLogging
+    with DoelonsLogVelonrdictDeloncidelonrelond {
+  ovelonrridelon delonf actionSourcelonBuildelonr: Option[RulelonActionSourcelonBuildelonr] = Somelon(
+    TwelonelontSafelontyLabelonlSourcelonBuildelonr(TwelonelontSafelontyLabelonlTypelon.HighSpammyTwelonelontContelonntScorelon))
+  ovelonrridelon delonf velonrdictLogDeloncidelonrKelony: DeloncidelonrKelony.Valuelon =
+    DeloncidelonrKelony.elonnablelonSpammyTwelonelontRulelonVelonrdictLogging
 }
 
-object HighSpammyTweetContentScoreSearchTopTweetLabelDropRule
-    extends RuleWithConstantAction(
-      action = Drop(Unspecified),
+objelonct HighSpammyTwelonelontContelonntScorelonSelonarchTopTwelonelontLabelonlDropRulelon
+    elonxtelonnds RulelonWithConstantAction(
+      action = Drop(Unspeloncifielond),
       condition = And(
-        Not(IsTweetInTweetLevelStcmHoldback),
-        LoggedOutOrViewerNotFollowingAuthor,
-        TweetHasLabelWithScoreAboveThresholdWithParam(
-          TweetSafetyLabelType.HighSpammyTweetContentScore,
-          HighSpammyTweetContentScoreSearchTopProdTweetLabelDropRuleThresholdParam)
+        Not(IsTwelonelontInTwelonelontLelonvelonlStcmHoldback),
+        LoggelondOutOrVielonwelonrNotFollowingAuthor,
+        TwelonelontHasLabelonlWithScorelonAbovelonThrelonsholdWithParam(
+          TwelonelontSafelontyLabelonlTypelon.HighSpammyTwelonelontContelonntScorelon,
+          HighSpammyTwelonelontContelonntScorelonSelonarchTopProdTwelonelontLabelonlDropRulelonThrelonsholdParam)
       )
     )
-    with DoesLogVerdictDecidered {
-  override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
-    TweetSafetyLabelSourceBuilder(TweetSafetyLabelType.HighSpammyTweetContentScore))
-  override def verdictLogDeciderKey: DeciderKey.Value =
-    DeciderKey.EnableSpammyTweetRuleVerdictLogging
+    with DoelonsLogVelonrdictDeloncidelonrelond {
+  ovelonrridelon delonf actionSourcelonBuildelonr: Option[RulelonActionSourcelonBuildelonr] = Somelon(
+    TwelonelontSafelontyLabelonlSourcelonBuildelonr(TwelonelontSafelontyLabelonlTypelon.HighSpammyTwelonelontContelonntScorelon))
+  ovelonrridelon delonf velonrdictLogDeloncidelonrKelony: DeloncidelonrKelony.Valuelon =
+    DeloncidelonrKelony.elonnablelonSpammyTwelonelontRulelonVelonrdictLogging
 
 }
 
-object HighSpammyTweetContentScoreTrendsTopTweetLabelDropRule
-    extends RuleWithConstantAction(
-      action = Drop(Unspecified),
+objelonct HighSpammyTwelonelontContelonntScorelonTrelonndsTopTwelonelontLabelonlDropRulelon
+    elonxtelonnds RulelonWithConstantAction(
+      action = Drop(Unspeloncifielond),
       condition = And(
-        Not(IsTweetInTweetLevelStcmHoldback),
-        LoggedOutOrViewerNotFollowingAuthor,
-        IsTrendClickSourceSearchResult,
-        TweetHasLabelWithScoreAboveThresholdWithParam(
-          TweetSafetyLabelType.HighSpammyTweetContentScore,
-          HighSpammyTweetContentScoreTrendTopTweetLabelDropRuleThresholdParam)
+        Not(IsTwelonelontInTwelonelontLelonvelonlStcmHoldback),
+        LoggelondOutOrVielonwelonrNotFollowingAuthor,
+        IsTrelonndClickSourcelonSelonarchRelonsult,
+        TwelonelontHasLabelonlWithScorelonAbovelonThrelonsholdWithParam(
+          TwelonelontSafelontyLabelonlTypelon.HighSpammyTwelonelontContelonntScorelon,
+          HighSpammyTwelonelontContelonntScorelonTrelonndTopTwelonelontLabelonlDropRulelonThrelonsholdParam)
       )
     )
-    with DoesLogVerdictDecidered {
-  override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
-    TweetSafetyLabelSourceBuilder(TweetSafetyLabelType.HighSpammyTweetContentScore))
-  override def verdictLogDeciderKey: DeciderKey.Value =
-    DeciderKey.EnableSpammyTweetRuleVerdictLogging
+    with DoelonsLogVelonrdictDeloncidelonrelond {
+  ovelonrridelon delonf actionSourcelonBuildelonr: Option[RulelonActionSourcelonBuildelonr] = Somelon(
+    TwelonelontSafelontyLabelonlSourcelonBuildelonr(TwelonelontSafelontyLabelonlTypelon.HighSpammyTwelonelontContelonntScorelon))
+  ovelonrridelon delonf velonrdictLogDeloncidelonrKelony: DeloncidelonrKelony.Valuelon =
+    DeloncidelonrKelony.elonnablelonSpammyTwelonelontRulelonVelonrdictLogging
 
 }
 
-object HighSpammyTweetContentScoreTrendsLatestTweetLabelDropRule
-    extends RuleWithConstantAction(
-      action = Drop(Unspecified),
+objelonct HighSpammyTwelonelontContelonntScorelonTrelonndsLatelonstTwelonelontLabelonlDropRulelon
+    elonxtelonnds RulelonWithConstantAction(
+      action = Drop(Unspeloncifielond),
       condition = And(
-        Not(IsTweetInTweetLevelStcmHoldback),
-        LoggedOutOrViewerNotFollowingAuthor,
-        IsTrendClickSourceSearchResult,
-        TweetHasLabelWithScoreAboveThresholdWithParam(
-          TweetSafetyLabelType.HighSpammyTweetContentScore,
-          HighSpammyTweetContentScoreTrendLatestTweetLabelDropRuleThresholdParam)
+        Not(IsTwelonelontInTwelonelontLelonvelonlStcmHoldback),
+        LoggelondOutOrVielonwelonrNotFollowingAuthor,
+        IsTrelonndClickSourcelonSelonarchRelonsult,
+        TwelonelontHasLabelonlWithScorelonAbovelonThrelonsholdWithParam(
+          TwelonelontSafelontyLabelonlTypelon.HighSpammyTwelonelontContelonntScorelon,
+          HighSpammyTwelonelontContelonntScorelonTrelonndLatelonstTwelonelontLabelonlDropRulelonThrelonsholdParam)
       )
     )
-    with DoesLogVerdictDecidered {
-  override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
-    TweetSafetyLabelSourceBuilder(TweetSafetyLabelType.HighSpammyTweetContentScore))
-  override def verdictLogDeciderKey: DeciderKey.Value =
-    DeciderKey.EnableSpammyTweetRuleVerdictLogging
+    with DoelonsLogVelonrdictDeloncidelonrelond {
+  ovelonrridelon delonf actionSourcelonBuildelonr: Option[RulelonActionSourcelonBuildelonr] = Somelon(
+    TwelonelontSafelontyLabelonlSourcelonBuildelonr(TwelonelontSafelontyLabelonlTypelon.HighSpammyTwelonelontContelonntScorelon))
+  ovelonrridelon delonf velonrdictLogDeloncidelonrKelony: DeloncidelonrKelony.Valuelon =
+    DeloncidelonrKelony.elonnablelonSpammyTwelonelontRulelonVelonrdictLogging
 }
 
-object GoreAndViolenceTopicHighRecallTweetLabelRule
-    extends NonAuthorWithTweetLabelRule(
-      Drop(Unspecified),
-      TweetSafetyLabelType.GoreAndViolenceTopicHighRecall
+objelonct GorelonAndViolelonncelonTopicHighReloncallTwelonelontLabelonlRulelon
+    elonxtelonnds NonAuthorWithTwelonelontLabelonlRulelon(
+      Drop(Unspeloncifielond),
+      TwelonelontSafelontyLabelonlTypelon.GorelonAndViolelonncelonTopicHighReloncall
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(
-    EnableGoreAndViolenceTopicHighRecallTweetLabelRule)
+  ovelonrridelon delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] = Selonq(
+    elonnablelonGorelonAndViolelonncelonTopicHighReloncallTwelonelontLabelonlRulelon)
 }
 
-object CopypastaSpamAllViewersTweetLabelRule
-    extends TweetHasLabelRule(
-      Drop(Unspecified),
-      TweetSafetyLabelType.CopypastaSpam
+objelonct CopypastaSpamAllVielonwelonrsTwelonelontLabelonlRulelon
+    elonxtelonnds TwelonelontHasLabelonlRulelon(
+      Drop(Unspeloncifielond),
+      TwelonelontSafelontyLabelonlTypelon.CopypastaSpam
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] =
-    Seq(EnableCopypastaSpamSearchDropRule)
+  ovelonrridelon delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] =
+    Selonq(elonnablelonCopypastaSpamSelonarchDropRulelon)
 }
 
-object CopypastaSpamAllViewersSearchTweetLabelRule
-    extends TweetHasLabelRule(
-      Drop(Unspecified),
-      TweetSafetyLabelType.CopypastaSpam
+objelonct CopypastaSpamAllVielonwelonrsSelonarchTwelonelontLabelonlRulelon
+    elonxtelonnds TwelonelontHasLabelonlRulelon(
+      Drop(Unspeloncifielond),
+      TwelonelontSafelontyLabelonlTypelon.CopypastaSpam
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] =
-    Seq(EnableCopypastaSpamSearchDropRule)
+  ovelonrridelon delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] =
+    Selonq(elonnablelonCopypastaSpamSelonarchDropRulelon)
 }
 
-object CopypastaSpamNonFollowerSearchTweetLabelRule
-    extends NonFollowerWithTweetLabelRule(
-      Drop(Unspecified),
-      TweetSafetyLabelType.CopypastaSpam
+objelonct CopypastaSpamNonFollowelonrSelonarchTwelonelontLabelonlRulelon
+    elonxtelonnds NonFollowelonrWithTwelonelontLabelonlRulelon(
+      Drop(Unspeloncifielond),
+      TwelonelontSafelontyLabelonlTypelon.CopypastaSpam
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] =
-    Seq(EnableCopypastaSpamSearchDropRule)
+  ovelonrridelon delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] =
+    Selonq(elonnablelonCopypastaSpamSelonarchDropRulelon)
 }
 
-object CopypastaSpamAbusiveQualityTweetLabelRule
-    extends ConditionWithNotInnerCircleOfFriendsRule(
-      ConversationSectionAbusiveQuality,
-      TweetHasLabel(TweetSafetyLabelType.CopypastaSpam)
+objelonct CopypastaSpamAbusivelonQualityTwelonelontLabelonlRulelon
+    elonxtelonnds ConditionWithNotInnelonrCirclelonOfFrielonndsRulelon(
+      ConvelonrsationSelonctionAbusivelonQuality,
+      TwelonelontHasLabelonl(TwelonelontSafelontyLabelonlTypelon.CopypastaSpam)
     )
-    with DoesLogVerdictDecidered {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(
-    EnableCopypastaSpamDownrankConvosAbusiveQualityRule)
-  override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
-    TweetSafetyLabelSourceBuilder(TweetSafetyLabelType.CopypastaSpam))
-  override def verdictLogDeciderKey = DeciderKey.EnableDownlevelRuleVerdictLogging
+    with DoelonsLogVelonrdictDeloncidelonrelond {
+  ovelonrridelon delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] = Selonq(
+    elonnablelonCopypastaSpamDownrankConvosAbusivelonQualityRulelon)
+  ovelonrridelon delonf actionSourcelonBuildelonr: Option[RulelonActionSourcelonBuildelonr] = Somelon(
+    TwelonelontSafelontyLabelonlSourcelonBuildelonr(TwelonelontSafelontyLabelonlTypelon.CopypastaSpam))
+  ovelonrridelon delonf velonrdictLogDeloncidelonrKelony = DeloncidelonrKelony.elonnablelonDownlelonvelonlRulelonVelonrdictLogging
 }
 
-object DynamicProductAdLimitedEngagementTweetLabelRule
-    extends TweetHasLabelRule(
-      LimitedEngagements(LimitedEngagementReason.DynamicProductAd),
-      TweetSafetyLabelType.DynamicProductAd)
+objelonct DynamicProductAdLimitelondelonngagelonmelonntTwelonelontLabelonlRulelon
+    elonxtelonnds TwelonelontHasLabelonlRulelon(
+      Limitelondelonngagelonmelonnts(LimitelondelonngagelonmelonntRelonason.DynamicProductAd),
+      TwelonelontSafelontyLabelonlTypelon.DynamicProductAd)
 
-object SkipTweetDetailLimitedEngagementTweetLabelRule
-    extends AlwaysActRule(LimitedEngagements(LimitedEngagementReason.SkipTweetDetail)) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(
-    SkipTweetDetailLimitedEngagementRuleEnabledParam)
+objelonct SkipTwelonelontDelontailLimitelondelonngagelonmelonntTwelonelontLabelonlRulelon
+    elonxtelonnds AlwaysActRulelon(Limitelondelonngagelonmelonnts(LimitelondelonngagelonmelonntRelonason.SkipTwelonelontDelontail)) {
+  ovelonrridelon delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] = Selonq(
+    SkipTwelonelontDelontailLimitelondelonngagelonmelonntRulelonelonnablelondParam)
 }
 
-object DynamicProductAdDropTweetLabelRule
-    extends TweetHasLabelRule(Drop(Unspecified), TweetSafetyLabelType.DynamicProductAd)
+objelonct DynamicProductAdDropTwelonelontLabelonlRulelon
+    elonxtelonnds TwelonelontHasLabelonlRulelon(Drop(Unspeloncifielond), TwelonelontSafelontyLabelonlTypelon.DynamicProductAd)
 
-object NsfwTextTweetLabelTopicsDropRule
-    extends RuleWithConstantAction(
-      Drop(Reason.Nsfw),
+objelonct NsfwTelonxtTwelonelontLabelonlTopicsDropRulelon
+    elonxtelonnds RulelonWithConstantAction(
+      Drop(Relonason.Nsfw),
       And(
-        NonAuthorViewer,
+        NonAuthorVielonwelonr,
         Or(
-          TweetHasLabel(TweetSafetyLabelType.ExperimentalSensitiveIllegal2),
-          TweetHasLabel(TweetSafetyLabelType.NsfwTextHighPrecision)
+          TwelonelontHasLabelonl(TwelonelontSafelontyLabelonlTypelon.elonxpelonrimelonntalSelonnsitivelonIllelongal2),
+          TwelonelontHasLabelonl(TwelonelontSafelontyLabelonlTypelon.NsfwTelonxtHighPreloncision)
         )
       )
     )
-    with DoesLogVerdict {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableNsfwTextTopicsDropRuleParam)
-  override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
-    TweetSafetyLabelSourceBuilder(TweetSafetyLabelType.NsfwTextHighPrecision))
+    with DoelonsLogVelonrdict {
+  ovelonrridelon delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] = Selonq(elonnablelonNsfwTelonxtTopicsDropRulelonParam)
+  ovelonrridelon delonf actionSourcelonBuildelonr: Option[RulelonActionSourcelonBuildelonr] = Somelon(
+    TwelonelontSafelontyLabelonlSourcelonBuildelonr(TwelonelontSafelontyLabelonlTypelon.NsfwTelonxtHighPreloncision))
 }
 
 
-object ExperimentalNudgeLabelRule
-    extends TweetHasLabelRule(
-      TweetVisibilityNudge(TweetVisibilityNudgeReason.ExperimentalNudgeSafetyLabelReason),
-      TweetSafetyLabelType.ExperimentalNudge) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableExperimentalNudgeEnabledParam)
+objelonct elonxpelonrimelonntalNudgelonLabelonlRulelon
+    elonxtelonnds TwelonelontHasLabelonlRulelon(
+      TwelonelontVisibilityNudgelon(TwelonelontVisibilityNudgelonRelonason.elonxpelonrimelonntalNudgelonSafelontyLabelonlRelonason),
+      TwelonelontSafelontyLabelonlTypelon.elonxpelonrimelonntalNudgelon) {
+  ovelonrridelon delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] = Selonq(elonnablelonelonxpelonrimelonntalNudgelonelonnablelondParam)
 }
 
-object NsfwTextTweetLabelAvoidRule
-    extends RuleWithConstantAction(
+objelonct NsfwTelonxtTwelonelontLabelonlAvoidRulelon
+    elonxtelonnds RulelonWithConstantAction(
       Avoid(),
       Or(
-        TweetHasLabel(TweetSafetyLabelType.ExperimentalSensitiveIllegal2),
-        TweetHasLabel(TweetSafetyLabelType.NsfwTextHighPrecision)
+        TwelonelontHasLabelonl(TwelonelontSafelontyLabelonlTypelon.elonxpelonrimelonntalSelonnsitivelonIllelongal2),
+        TwelonelontHasLabelonl(TwelonelontSafelontyLabelonlTypelon.NsfwTelonxtHighPreloncision)
       )
     ) {
-  override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
-    TweetSafetyLabelSourceBuilder(TweetSafetyLabelType.NsfwTextHighPrecision))
+  ovelonrridelon delonf actionSourcelonBuildelonr: Option[RulelonActionSourcelonBuildelonr] = Somelon(
+    TwelonelontSafelontyLabelonlSourcelonBuildelonr(TwelonelontSafelontyLabelonlTypelon.NsfwTelonxtHighPreloncision))
 }
 
-object DoNotAmplifyTweetLabelAvoidRule
-    extends TweetHasLabelRule(
+objelonct DoNotAmplifyTwelonelontLabelonlAvoidRulelon
+    elonxtelonnds TwelonelontHasLabelonlRulelon(
       Avoid(),
-      TweetSafetyLabelType.DoNotAmplify
+      TwelonelontSafelontyLabelonlTypelon.DoNotAmplify
     )
 
-object NsfaHighPrecisionTweetLabelAvoidRule
-    extends TweetHasLabelRule(
+objelonct NsfaHighPreloncisionTwelonelontLabelonlAvoidRulelon
+    elonxtelonnds TwelonelontHasLabelonlRulelon(
       Avoid(),
-      TweetSafetyLabelType.NsfaHighPrecision
+      TwelonelontSafelontyLabelonlTypelon.NsfaHighPreloncision
     ) {
-  override val fallbackActionBuilder: Option[ActionBuilder[_ <: Action]] = Some(
-    new ConstantActionBuilder(Avoid(Some(MightNotBeSuitableForAds))))
+  ovelonrridelon val fallbackActionBuildelonr: Option[ActionBuildelonr[_ <: Action]] = Somelon(
+    nelonw ConstantActionBuildelonr(Avoid(Somelon(MightNotBelonSuitablelonForAds))))
 }
 
-object NsfwHighPrecisionTweetLabelAvoidRule
-    extends TweetHasLabelRule(
-      Avoid(Some(AvoidReason.ContainsNsfwMedia)),
-      TweetSafetyLabelType.NsfwHighPrecision
+objelonct NsfwHighPreloncisionTwelonelontLabelonlAvoidRulelon
+    elonxtelonnds TwelonelontHasLabelonlRulelon(
+      Avoid(Somelon(AvoidRelonason.ContainsNsfwMelondia)),
+      TwelonelontSafelontyLabelonlTypelon.NsfwHighPreloncision
     ) {
-  override val fallbackActionBuilder: Option[ActionBuilder[_ <: Action]] = Some(
-    new ConstantActionBuilder(Avoid(Some(MightNotBeSuitableForAds))))
+  ovelonrridelon val fallbackActionBuildelonr: Option[ActionBuildelonr[_ <: Action]] = Somelon(
+    nelonw ConstantActionBuildelonr(Avoid(Somelon(MightNotBelonSuitablelonForAds))))
 }
 
-object NsfwHighRecallTweetLabelAvoidRule
-    extends TweetHasLabelRule(
-      Avoid(Some(AvoidReason.ContainsNsfwMedia)),
-      TweetSafetyLabelType.NsfwHighRecall
+objelonct NsfwHighReloncallTwelonelontLabelonlAvoidRulelon
+    elonxtelonnds TwelonelontHasLabelonlRulelon(
+      Avoid(Somelon(AvoidRelonason.ContainsNsfwMelondia)),
+      TwelonelontSafelontyLabelonlTypelon.NsfwHighReloncall
     ) {
-  override val fallbackActionBuilder: Option[ActionBuilder[_ <: Action]] = Some(
-    new ConstantActionBuilder(Avoid(Some(MightNotBeSuitableForAds))))
+  ovelonrridelon val fallbackActionBuildelonr: Option[ActionBuildelonr[_ <: Action]] = Somelon(
+    nelonw ConstantActionBuildelonr(Avoid(Somelon(MightNotBelonSuitablelonForAds))))
 }

@@ -1,49 +1,49 @@
-package com.twitter.search.earlybird.util;
+packagelon com.twittelonr.selonarch.elonarlybird.util;
 
-import java.util.concurrent.Callable;
+import java.util.concurrelonnt.Callablelon;
 
-import com.google.common.base.Stopwatch;
+import com.googlelon.common.baselon.Stopwatch;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-public final class ActionLogger {
-  private static final Logger LOG = LoggerFactory.getLogger(ActionLogger.class);
+public final class ActionLoggelonr {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(ActionLoggelonr.class);
 
-  private ActionLogger() {
+  privatelon ActionLoggelonr() {
   }
 
   /**
-   * Run a function, logging a message at the start and end, and the time it took.
+   * Run a function, logging a melonssagelon at thelon start and elonnd, and thelon timelon it took.
    */
-  public static <T> T call(String message, Callable<T> fn) throws Exception {
-    LOG.info("Action starting: '{}'.", message);
-    Stopwatch stopwatch = Stopwatch.createStarted();
+  public static <T> T call(String melonssagelon, Callablelon<T> fn) throws elonxcelonption {
+    LOG.info("Action starting: '{}'.", melonssagelon);
+    Stopwatch stopwatch = Stopwatch.crelonatelonStartelond();
     try {
-      return fn.call();
-    } catch (Throwable e) {
-      LOG.error("Action failed: '{}'.", message, e);
-      throw e;
+      relonturn fn.call();
+    } catch (Throwablelon elon) {
+      LOG.elonrror("Action failelond: '{}'.", melonssagelon, elon);
+      throw elon;
     } finally {
-      LOG.info("Action finished in {} '{}'.", stopwatch, message);
+      LOG.info("Action finishelond in {} '{}'.", stopwatch, melonssagelon);
     }
   }
 
   /**
-   * Run a function, logging a message at the start and end, and the time it took.
+   * Run a function, logging a melonssagelon at thelon start and elonnd, and thelon timelon it took.
    */
-  public static void run(String message, CheckedRunnable fn) throws Exception {
-    call(message, () -> {
+  public static void run(String melonssagelon, ChelonckelondRunnablelon fn) throws elonxcelonption {
+    call(melonssagelon, () -> {
       fn.run();
-      return null;
+      relonturn null;
     });
   }
 
-  @FunctionalInterface
-  public interface CheckedRunnable {
+  @FunctionalIntelonrfacelon
+  public intelonrfacelon ChelonckelondRunnablelon {
     /**
-     * A nullary function that throws checked exceptions.
+     * A nullary function that throws chelonckelond elonxcelonptions.
      */
-    void run() throws Exception;
+    void run() throws elonxcelonption;
   }
 }

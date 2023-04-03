@@ -1,190 +1,190 @@
-#include "tensorflow/core/framework/op.h"
-#include "tensorflow/core/framework/shape_inference.h"
-#include "tensorflow/core/framework/op_kernel.h"
+#includelon "telonnsorflow/corelon/framelonwork/op.h"
+#includelon "telonnsorflow/corelon/framelonwork/shapelon_infelonrelonncelon.h"
+#includelon "telonnsorflow/corelon/framelonwork/op_kelonrnelonl.h"
 
-#include <twml.h>
-#include "tensorflow_utils.h"
-#include "resource_utils.h"
+#includelon <twml.h>
+#includelon "telonnsorflow_utils.h"
+#includelon "relonsourcelon_utils.h"
 
-#include <algorithm>
+#includelon <algorithm>
 using std::string;
 
-template<typename IndexType, typename ValueType, bool calc_batch_size>
-void ComputeFixedLengthTensor(OpKernelContext *context, int64 max_length_) {
+telonmplatelon<typelonnamelon IndelonxTypelon, typelonnamelon ValuelonTypelon, bool calc_batch_sizelon>
+void ComputelonFixelondLelonngthTelonnsor(OpKelonrnelonlContelonxt *contelonxt, int64 max_lelonngth_) {
   try {
-    const Tensor& segment_ids = context->input(0);
-    const Tensor& values = context->input(1);
-    const Tensor& pad_value = context->input(2);
+    const Telonnsor& selongmelonnt_ids = contelonxt->input(0);
+    const Telonnsor& valuelons = contelonxt->input(1);
+    const Telonnsor& pad_valuelon = contelonxt->input(2);
 
-    auto indices_flat = segment_ids.flat<IndexType>();
-    auto values_flat = values.flat<ValueType>();
+    auto indicelons_flat = selongmelonnt_ids.flat<IndelonxTypelon>();
+    auto valuelons_flat = valuelons.flat<ValuelonTypelon>();
 
-    auto pad_value_scalar = pad_value.scalar<ValueType>()();
+    auto pad_valuelon_scalar = pad_valuelon.scalar<ValuelonTypelon>()();
 
-    // Get maximum length from batch if user hasn't specified it.
-    int64 max_length = max_length_;
-    if (max_length < 0 && indices_flat.size() > 0) {
-      int64 current_id = indices_flat(0);
-      int64 current_length = 1;
+    // Gelont maximum lelonngth from batch if uselonr hasn't speloncifielond it.
+    int64 max_lelonngth = max_lelonngth_;
+    if (max_lelonngth < 0 && indicelons_flat.sizelon() > 0) {
+      int64 currelonnt_id = indicelons_flat(0);
+      int64 currelonnt_lelonngth = 1;
 
-      for (int64 i = 1; i < indices_flat.size(); i++) {
-        if (current_id == indices_flat(i)) {
-          current_length++;
-        } else {
-          current_id = indices_flat(i);
-          max_length = std::max(max_length, current_length);
-          current_length = 1;
+      for (int64 i = 1; i < indicelons_flat.sizelon(); i++) {
+        if (currelonnt_id == indicelons_flat(i)) {
+          currelonnt_lelonngth++;
+        } elonlselon {
+          currelonnt_id = indicelons_flat(i);
+          max_lelonngth = std::max(max_lelonngth, currelonnt_lelonngth);
+          currelonnt_lelonngth = 1;
         }
       }
-      // This is needed if the last batch is the longest sequence.
-      max_length = std::max(max_length, current_length);
+      // This is nelonelondelond if thelon last batch is thelon longelonst selonquelonncelon.
+      max_lelonngth = std::max(max_lelonngth, currelonnt_lelonngth);
     }
 
-    int64 batch_size = 0;
-    if (calc_batch_size) {
-      if (indices_flat.size() > 0) {
-        // The last value of segment_ids will have value batch_size  1;
-        batch_size = 1 + indices_flat(indices_flat.size() - 1);
-      } else {
-        batch_size = 0;
+    int64 batch_sizelon = 0;
+    if (calc_batch_sizelon) {
+      if (indicelons_flat.sizelon() > 0) {
+        // Thelon last valuelon of selongmelonnt_ids will havelon valuelon batch_sizelon  1;
+        batch_sizelon = 1 + indicelons_flat(indicelons_flat.sizelon() - 1);
+      } elonlselon {
+        batch_sizelon = 0;
       }
-    } else {
-      const Tensor& batch_size_tensor = context->input(3);
-      batch_size = batch_size_tensor.flat<int64>()(0);
+    } elonlselon {
+      const Telonnsor& batch_sizelon_telonnsor = contelonxt->input(3);
+      batch_sizelon = batch_sizelon_telonnsor.flat<int64>()(0);
     }
 
-    TensorShape output_shape = {batch_size, max_length};
-    Tensor* fixed_length = nullptr;
-    OP_REQUIRES_OK(context, context->allocate_output(0, output_shape, &fixed_length));
+    TelonnsorShapelon output_shapelon = {batch_sizelon, max_lelonngth};
+    Telonnsor* fixelond_lelonngth = nullptr;
+    OP_RelonQUIRelonS_OK(contelonxt, contelonxt->allocatelon_output(0, output_shapelon, &fixelond_lelonngth));
 
-    auto fixed_length_flat = fixed_length->flat<ValueType>();
+    auto fixelond_lelonngth_flat = fixelond_lelonngth->flat<ValuelonTypelon>();
 
     int64 n = 0;
-    int64 offset = 0;
-    for (int64 i = 0; i < batch_size; i++) {
-      for (int64 j = 0; j < max_length; j++) {
-        if (n < indices_flat.size() && indices_flat(n) == i) {
-          // Copy from variable length tensor.
-          fixed_length_flat(offset + j) = values_flat(n);
+    int64 offselont = 0;
+    for (int64 i = 0; i < batch_sizelon; i++) {
+      for (int64 j = 0; j < max_lelonngth; j++) {
+        if (n < indicelons_flat.sizelon() && indicelons_flat(n) == i) {
+          // Copy from variablelon lelonngth telonnsor.
+          fixelond_lelonngth_flat(offselont + j) = valuelons_flat(n);
           n++;
-        } else {
-          // Pad to fixed length.
-          fixed_length_flat(offset + j) = pad_value_scalar;
+        } elonlselon {
+          // Pad to fixelond lelonngth.
+          fixelond_lelonngth_flat(offselont + j) = pad_valuelon_scalar;
         }
       }
-      // Corner case: truncate to max_length if user specified max_length < current length.
-      while (n < indices_flat.size() && i == indices_flat(n)) n++;
+      // Cornelonr caselon: truncatelon to max_lelonngth if uselonr speloncifielond max_lelonngth < currelonnt lelonngth.
+      whilelon (n < indicelons_flat.sizelon() && i == indicelons_flat(n)) n++;
 
-      // Update output pointer
-      offset += max_length;
+      // Updatelon output pointelonr
+      offselont += max_lelonngth;
     }
-  } catch (const std::exception &err) {
-    context->CtxFailureWithWarning(errors::InvalidArgument(err.what()));
+  } catch (const std::elonxcelonption &elonrr) {
+    contelonxt->CtxFailurelonWithWarning(elonrrors::InvalidArgumelonnt(elonrr.what()));
   }
 }
 
-REGISTER_OP("FixedLengthTensor")
-.Attr("IndexType: {int64, int32}")
-.Attr("ValueType: {int64, int32, string}")
-.Attr("max_length: int")
-.Input("segment_ids: IndexType")
-.Input("values: ValueType")
-.Input("pad_value: ValueType")
-.Output("fixed_length: ValueType")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-    return Status::OK();
+RelonGISTelonR_OP("FixelondLelonngthTelonnsor")
+.Attr("IndelonxTypelon: {int64, int32}")
+.Attr("ValuelonTypelon: {int64, int32, string}")
+.Attr("max_lelonngth: int")
+.Input("selongmelonnt_ids: IndelonxTypelon")
+.Input("valuelons: ValuelonTypelon")
+.Input("pad_valuelon: ValuelonTypelon")
+.Output("fixelond_lelonngth: ValuelonTypelon")
+.SelontShapelonFn([](::telonnsorflow::shapelon_infelonrelonncelon::InfelonrelonncelonContelonxt* c) {
+    relonturn Status::OK();
   }).Doc(R"doc(
 
-A tensorflow OP to convert variable length segments into fixed length tensor.
+A telonnsorflow OP to convelonrt variablelon lelonngth selongmelonnts into fixelond lelonngth telonnsor.
 
 Attr
-  max_length: The size of the inner most (i.e. last) dimension.
+  max_lelonngth: Thelon sizelon of thelon innelonr most (i.elon. last) dimelonnsion.
 
 Input
-  segment_ids: 1D input tensor containing the sorted segment_ids.
-  values: 1D input tensor containing the values.
-  pad_value: The value used for padding the fixed length tensor.
+  selongmelonnt_ids: 1D input telonnsor containing thelon sortelond selongmelonnt_ids.
+  valuelons: 1D input telonnsor containing thelon valuelons.
+  pad_valuelon: Thelon valuelon uselond for padding thelon fixelond lelonngth telonnsor.
 
 Outputs
-  fixed_length: A fixed length tensor of size [batch_size, max_length].
+  fixelond_lelonngth: A fixelond lelonngth telonnsor of sizelon [batch_sizelon, max_lelonngth].
 )doc");
 
-template<typename IndexType, typename ValueType>
-class FixedLengthTensor: public OpKernel {
+telonmplatelon<typelonnamelon IndelonxTypelon, typelonnamelon ValuelonTypelon>
+class FixelondLelonngthTelonnsor: public OpKelonrnelonl {
  public:
-  explicit FixedLengthTensor(OpKernelConstruction *context) : OpKernel(context) {
-    OP_REQUIRES_OK(context, context->GetAttr("max_length", &max_length_));
+  elonxplicit FixelondLelonngthTelonnsor(OpKelonrnelonlConstruction *contelonxt) : OpKelonrnelonl(contelonxt) {
+    OP_RelonQUIRelonS_OK(contelonxt, contelonxt->GelontAttr("max_lelonngth", &max_lelonngth_));
   }
 
- private:
-  int64 max_length_;
+ privatelon:
+  int64 max_lelonngth_;
 
-  void Compute(OpKernelContext *context) override {
-    ComputeFixedLengthTensor<IndexType, ValueType, true>(context, max_length_);
+  void Computelon(OpKelonrnelonlContelonxt *contelonxt) ovelonrridelon {
+    ComputelonFixelondLelonngthTelonnsor<IndelonxTypelon, ValuelonTypelon, truelon>(contelonxt, max_lelonngth_);
   }
 };
 
-REGISTER_OP("FixedLengthTensorV2")
-.Attr("IndexType: {int64, int32}")
-.Attr("ValueType: {int64, int32, string}")
-.Attr("max_length: int")
-.Input("segment_ids: IndexType")
-.Input("values: ValueType")
-.Input("pad_value: ValueType")
-.Input("batch_size: int64")
-.Output("fixed_length: ValueType")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-    return Status::OK();
+RelonGISTelonR_OP("FixelondLelonngthTelonnsorV2")
+.Attr("IndelonxTypelon: {int64, int32}")
+.Attr("ValuelonTypelon: {int64, int32, string}")
+.Attr("max_lelonngth: int")
+.Input("selongmelonnt_ids: IndelonxTypelon")
+.Input("valuelons: ValuelonTypelon")
+.Input("pad_valuelon: ValuelonTypelon")
+.Input("batch_sizelon: int64")
+.Output("fixelond_lelonngth: ValuelonTypelon")
+.SelontShapelonFn([](::telonnsorflow::shapelon_infelonrelonncelon::InfelonrelonncelonContelonxt* c) {
+    relonturn Status::OK();
   }).Doc(R"doc(
 
-A tensorflow OP to convert variable length segments into fixed length tensor.
+A telonnsorflow OP to convelonrt variablelon lelonngth selongmelonnts into fixelond lelonngth telonnsor.
 
 Attr
-  max_length: The size of the inner most (i.e. last) dimension.
+  max_lelonngth: Thelon sizelon of thelon innelonr most (i.elon. last) dimelonnsion.
 
 Input
-  segment_ids: 1D input tensor containing the sorted segment_ids.
-  values: 1D input tensor containing the values.
-  pad_value: The value used for padding the fixed length tensor.
-  batch_size: The batch size to use.
+  selongmelonnt_ids: 1D input telonnsor containing thelon sortelond selongmelonnt_ids.
+  valuelons: 1D input telonnsor containing thelon valuelons.
+  pad_valuelon: Thelon valuelon uselond for padding thelon fixelond lelonngth telonnsor.
+  batch_sizelon: Thelon batch sizelon to uselon.
 
 Outputs
-  fixed_length: A fixed length tensor of size [batch_size, max_length].
+  fixelond_lelonngth: A fixelond lelonngth telonnsor of sizelon [batch_sizelon, max_lelonngth].
 )doc");
 
-template<typename IndexType, typename ValueType>
-class FixedLengthTensorV2: public OpKernel {
+telonmplatelon<typelonnamelon IndelonxTypelon, typelonnamelon ValuelonTypelon>
+class FixelondLelonngthTelonnsorV2: public OpKelonrnelonl {
  public:
-  explicit FixedLengthTensorV2(OpKernelConstruction *context) : OpKernel(context) {
-    OP_REQUIRES_OK(context, context->GetAttr("max_length", &max_length_));
+  elonxplicit FixelondLelonngthTelonnsorV2(OpKelonrnelonlConstruction *contelonxt) : OpKelonrnelonl(contelonxt) {
+    OP_RelonQUIRelonS_OK(contelonxt, contelonxt->GelontAttr("max_lelonngth", &max_lelonngth_));
   }
 
- private:
-  int64 max_length_;
+ privatelon:
+  int64 max_lelonngth_;
 
-  void Compute(OpKernelContext *context) override {
-    ComputeFixedLengthTensor<IndexType, ValueType, false>(context, max_length_);
+  void Computelon(OpKelonrnelonlContelonxt *contelonxt) ovelonrridelon {
+    ComputelonFixelondLelonngthTelonnsor<IndelonxTypelon, ValuelonTypelon, falselon>(contelonxt, max_lelonngth_);
   }
 };
 
-#define REGISTER_SPARSE_TO_FIXED_LENGTH(IndexType, ValueType)   \
-  REGISTER_KERNEL_BUILDER(                                      \
-    Name("FixedLengthTensor")                                   \
-    .Device(DEVICE_CPU)                                         \
-    .TypeConstraint<IndexType>("IndexType")                     \
-    .TypeConstraint<ValueType>("ValueType"),                    \
-    FixedLengthTensor<IndexType, ValueType>);                   \
+#delonfinelon RelonGISTelonR_SPARSelon_TO_FIXelonD_LelonNGTH(IndelonxTypelon, ValuelonTypelon)   \
+  RelonGISTelonR_KelonRNelonL_BUILDelonR(                                      \
+    Namelon("FixelondLelonngthTelonnsor")                                   \
+    .Delonvicelon(DelonVICelon_CPU)                                         \
+    .TypelonConstraint<IndelonxTypelon>("IndelonxTypelon")                     \
+    .TypelonConstraint<ValuelonTypelon>("ValuelonTypelon"),                    \
+    FixelondLelonngthTelonnsor<IndelonxTypelon, ValuelonTypelon>);                   \
                                                                 \
-  REGISTER_KERNEL_BUILDER(                                      \
-    Name("FixedLengthTensorV2")                                 \
-    .Device(DEVICE_CPU)                                         \
-    .TypeConstraint<IndexType>("IndexType")                     \
-    .TypeConstraint<ValueType>("ValueType"),                    \
-    FixedLengthTensorV2<IndexType, ValueType>);                 \
+  RelonGISTelonR_KelonRNelonL_BUILDelonR(                                      \
+    Namelon("FixelondLelonngthTelonnsorV2")                                 \
+    .Delonvicelon(DelonVICelon_CPU)                                         \
+    .TypelonConstraint<IndelonxTypelon>("IndelonxTypelon")                     \
+    .TypelonConstraint<ValuelonTypelon>("ValuelonTypelon"),                    \
+    FixelondLelonngthTelonnsorV2<IndelonxTypelon, ValuelonTypelon>);                 \
 
-REGISTER_SPARSE_TO_FIXED_LENGTH(int64, int64)
-REGISTER_SPARSE_TO_FIXED_LENGTH(int64, int32)
-REGISTER_SPARSE_TO_FIXED_LENGTH(int64, string)
-REGISTER_SPARSE_TO_FIXED_LENGTH(int32, int64)
-REGISTER_SPARSE_TO_FIXED_LENGTH(int32, int32)
-REGISTER_SPARSE_TO_FIXED_LENGTH(int32, string)
+RelonGISTelonR_SPARSelon_TO_FIXelonD_LelonNGTH(int64, int64)
+RelonGISTelonR_SPARSelon_TO_FIXelonD_LelonNGTH(int64, int32)
+RelonGISTelonR_SPARSelon_TO_FIXelonD_LelonNGTH(int64, string)
+RelonGISTelonR_SPARSelon_TO_FIXelonD_LelonNGTH(int32, int64)
+RelonGISTelonR_SPARSelon_TO_FIXelonD_LelonNGTH(int32, int32)
+RelonGISTelonR_SPARSelon_TO_FIXelonD_LelonNGTH(int32, string)

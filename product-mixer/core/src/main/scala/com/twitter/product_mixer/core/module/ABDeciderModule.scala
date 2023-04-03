@@ -1,51 +1,51 @@
-package com.twitter.product_mixer.core.module
+packagelon com.twittelonr.product_mixelonr.corelon.modulelon
 
-import com.google.inject.Provides
-import com.twitter.abdecider.ABDeciderFactory
-import com.twitter.abdecider.LoggingABDecider
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
-import com.twitter.inject.annotations.Flag
-import com.twitter.logging._
-import com.twitter.product_mixer.core.module.product_mixer_flags.ProductMixerFlagModule.ScribeABImpressions
-import javax.inject.Singleton
+import com.googlelon.injelonct.Providelons
+import com.twittelonr.abdeloncidelonr.ABDeloncidelonrFactory
+import com.twittelonr.abdeloncidelonr.LoggingABDeloncidelonr
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.injelonct.TwittelonrModulelon
+import com.twittelonr.injelonct.annotations.Flag
+import com.twittelonr.logging._
+import com.twittelonr.product_mixelonr.corelon.modulelon.product_mixelonr_flags.ProductMixelonrFlagModulelon.ScribelonABImprelonssions
+import javax.injelonct.Singlelonton
 
-object ABDeciderModule extends TwitterModule {
-  private val YmlPath = "/usr/local/config/abdecider/abdecider.yml"
+objelonct ABDeloncidelonrModulelon elonxtelonnds TwittelonrModulelon {
+  privatelon val YmlPath = "/usr/local/config/abdeloncidelonr/abdeloncidelonr.yml"
 
-  @Provides
-  @Singleton
-  def provideLoggingABDecider(
-    @Flag(ScribeABImpressions) isScribeAbImpressions: Boolean,
-    stats: StatsReceiver
-  ): LoggingABDecider = {
-    val clientEventsHandler: HandlerFactory =
-      if (isScribeAbImpressions) {
-        QueueingHandler(
-          maxQueueSize = 10000,
-          handler = ScribeHandler(
-            category = "client_event",
-            formatter = BareFormatter,
-            level = Some(Level.INFO),
-            statsReceiver = stats.scope("abdecider"))
+  @Providelons
+  @Singlelonton
+  delonf providelonLoggingABDeloncidelonr(
+    @Flag(ScribelonABImprelonssions) isScribelonAbImprelonssions: Boolelonan,
+    stats: StatsReloncelonivelonr
+  ): LoggingABDeloncidelonr = {
+    val clielonntelonvelonntsHandlelonr: HandlelonrFactory =
+      if (isScribelonAbImprelonssions) {
+        QuelonueloningHandlelonr(
+          maxQuelonuelonSizelon = 10000,
+          handlelonr = ScribelonHandlelonr(
+            catelongory = "clielonnt_elonvelonnt",
+            formattelonr = BarelonFormattelonr,
+            lelonvelonl = Somelon(Lelonvelonl.INFO),
+            statsReloncelonivelonr = stats.scopelon("abdeloncidelonr"))
         )
-      } else { () =>
-        NullHandler
+      } elonlselon { () =>
+        NullHandlelonr
       }
 
-    val factory = LoggerFactory(
-      node = "abdecider",
-      level = Some(Level.INFO),
-      useParents = false,
-      handlers = clientEventsHandler :: Nil
+    val factory = LoggelonrFactory(
+      nodelon = "abdeloncidelonr",
+      lelonvelonl = Somelon(Lelonvelonl.INFO),
+      uselonParelonnts = falselon,
+      handlelonrs = clielonntelonvelonntsHandlelonr :: Nil
     )
 
-    val abDeciderFactory = ABDeciderFactory(
-      abDeciderYmlPath = YmlPath,
-      scribeLogger = Some(factory()),
-      environment = Some("production")
+    val abDeloncidelonrFactory = ABDeloncidelonrFactory(
+      abDeloncidelonrYmlPath = YmlPath,
+      scribelonLoggelonr = Somelon(factory()),
+      elonnvironmelonnt = Somelon("production")
     )
 
-    abDeciderFactory.buildWithLogging()
+    abDeloncidelonrFactory.buildWithLogging()
   }
 }

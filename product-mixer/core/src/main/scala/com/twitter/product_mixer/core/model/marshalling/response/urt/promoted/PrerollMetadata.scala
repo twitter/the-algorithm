@@ -1,5 +1,5 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.promoted
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.promotelond
 
-case class PrerollMetadata(
-  preroll: Option[Preroll],
-  videoAnalyticsScribePassthrough: Option[String])
+caselon class PrelonrollMelontadata(
+  prelonroll: Option[Prelonroll],
+  videlonoAnalyticsScribelonPassthrough: Option[String])

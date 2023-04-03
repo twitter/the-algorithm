@@ -1,34 +1,34 @@
-package com.twitter.timelineranker.core
+packagelon com.twittelonr.timelonlinelonrankelonr.corelon
 
-import com.twitter.timelines.model.UserId
+import com.twittelonr.timelonlinelons.modelonl.UselonrId
 
 /**
- * Follow graph details of a given user. Includes users followed, but also followed users in various
- * states of mute.
+ * Follow graph delontails of a givelonn uselonr. Includelons uselonrs followelond, but also followelond uselonrs in various
+ * statelons of mutelon.
  *
- * @param userId ID of a given user.
- * @param followedUserIds IDs of users who the given user follows.
- * @param mutuallyFollowingUserIds A subset of followedUserIds where followed users follow back the given user.
- * @param mutedUserIds A subset of followedUserIds that the given user has muted.
- * @param retweetsMutedUserIds A subset of followedUserIds whose retweets are muted by the given user.
+ * @param uselonrId ID of a givelonn uselonr.
+ * @param followelondUselonrIds IDs of uselonrs who thelon givelonn uselonr follows.
+ * @param mutuallyFollowingUselonrIds A subselont of followelondUselonrIds whelonrelon followelond uselonrs follow back thelon givelonn uselonr.
+ * @param mutelondUselonrIds A subselont of followelondUselonrIds that thelon givelonn uselonr has mutelond.
+ * @param relontwelonelontsMutelondUselonrIds A subselont of followelondUselonrIds whoselon relontwelonelonts arelon mutelond by thelon givelonn uselonr.
  */
-case class FollowGraphData(
-  userId: UserId,
-  followedUserIds: Seq[UserId],
-  mutuallyFollowingUserIds: Set[UserId],
-  mutedUserIds: Set[UserId],
-  retweetsMutedUserIds: Set[UserId]) {
-  val filteredFollowedUserIds: Seq[UserId] = followedUserIds.filterNot(mutedUserIds)
-  val allUserIds: Seq[UserId] = filteredFollowedUserIds :+ userId
-  val inNetworkUserIds: Seq[UserId] = followedUserIds :+ userId
+caselon class FollowGraphData(
+  uselonrId: UselonrId,
+  followelondUselonrIds: Selonq[UselonrId],
+  mutuallyFollowingUselonrIds: Selont[UselonrId],
+  mutelondUselonrIds: Selont[UselonrId],
+  relontwelonelontsMutelondUselonrIds: Selont[UselonrId]) {
+  val filtelonrelondFollowelondUselonrIds: Selonq[UselonrId] = followelondUselonrIds.filtelonrNot(mutelondUselonrIds)
+  val allUselonrIds: Selonq[UselonrId] = filtelonrelondFollowelondUselonrIds :+ uselonrId
+  val inNelontworkUselonrIds: Selonq[UselonrId] = followelondUselonrIds :+ uselonrId
 }
 
-object FollowGraphData {
-  val Empty: FollowGraphData = FollowGraphData(
+objelonct FollowGraphData {
+  val elonmpty: FollowGraphData = FollowGraphData(
     0L,
-    Seq.empty[UserId],
-    Set.empty[UserId],
-    Set.empty[UserId],
-    Set.empty[UserId]
+    Selonq.elonmpty[UselonrId],
+    Selont.elonmpty[UselonrId],
+    Selont.elonmpty[UselonrId],
+    Selont.elonmpty[UselonrId]
   )
 }

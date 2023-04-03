@@ -1,12 +1,12 @@
-package com.twitter.visibility.interfaces
+packagelon com.twittelonr.visibility.intelonrfacelons
 
-import com.twitter.stitch.Stitch
-import com.twitter.visibility.common.DmId
-import com.twitter.visibility.safety_label_store.thriftscala.DmSafetyLabelMap
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.visibility.common.DmId
+import com.twittelonr.visibility.safelonty_labelonl_storelon.thriftscala.DmSafelontyLabelonlMap
 
-package object dms {
-  type DmSafetyLabelMapFetcherType = DmId => Stitch[Option[DmSafetyLabelMap]]
+packagelon objelonct dms {
+  typelon DmSafelontyLabelonlMapFelontchelonrTypelon = DmId => Stitch[Option[DmSafelontyLabelonlMap]]
 
-  val DmSafetyLabelMapFetcherStratoColumn =
-    "visibility/safety-label-store/vflib/dm/safetyLabelMap.Dm"
+  val DmSafelontyLabelonlMapFelontchelonrStratoColumn =
+    "visibility/safelonty-labelonl-storelon/vflib/dm/safelontyLabelonlMap.Dm"
 }

@@ -1,36 +1,36 @@
-package com.twitter.product_mixer.core.product
+packagelon com.twittelonr.product_mixelonr.corelon.product
 
-import com.twitter.product_mixer.core.functional_component.configapi.registry.ParamConfig
-import com.twitter.servo.decider.DeciderKeyName
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.decider.BooleanDeciderParam
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.configapi.relongistry.ParamConfig
+import com.twittelonr.selonrvo.deloncidelonr.DeloncidelonrKelonyNamelon
+import com.twittelonr.timelonlinelons.configapi.FSParam
+import com.twittelonr.timelonlinelons.configapi.deloncidelonr.BoolelonanDeloncidelonrParam
 
-trait ProductParamConfig extends ParamConfig with ProductParamConfigBuilder {
-
-  /**
-   * This enabled decider param can to be used to quickly disable a Product via Decider
-   *
-   * This value must correspond to the deciders configured in the `resources/config/decider.yml` file
-   */
-  val enabledDeciderKey: DeciderKeyName
+trait ProductParamConfig elonxtelonnds ParamConfig with ProductParamConfigBuildelonr {
 
   /**
-   * This supported client feature switch param can be used with a Feature Switch to control the
-   * rollout of a new Product from dogfood to experiment to production
+   * This elonnablelond deloncidelonr param can to belon uselond to quickly disablelon a Product via Deloncidelonr
    *
-   * FeatureSwitches are configured by defining both a [[com.twitter.timelines.configapi.Param]] in code
-   * and in an associated `.yml` file in the __config repo__.
-   *
-   * The `.yml` file path is determined by the `feature_switches_path` in your aurora file and tge Product name
-   * so the resulting path in the __config repo__ is essentially `s"{feature_switches_path}/{snakeCase(Product.identifier)}"`
+   * This valuelon must correlonspond to thelon deloncidelonrs configurelond in thelon `relonsourcelons/config/deloncidelonr.yml` filelon
    */
-  val supportedClientFSName: String
+  val elonnablelondDeloncidelonrKelony: DeloncidelonrKelonyNamelon
 
-  object EnabledDeciderParam extends BooleanDeciderParam(enabledDeciderKey)
+  /**
+   * This supportelond clielonnt felonaturelon switch param can belon uselond with a Felonaturelon Switch to control thelon
+   * rollout of a nelonw Product from dogfood to elonxpelonrimelonnt to production
+   *
+   * FelonaturelonSwitchelons arelon configurelond by delonfining both a [[com.twittelonr.timelonlinelons.configapi.Param]] in codelon
+   * and in an associatelond `.yml` filelon in thelon __config relonpo__.
+   *
+   * Thelon `.yml` filelon path is delontelonrminelond by thelon `felonaturelon_switchelons_path` in your aurora filelon and tgelon Product namelon
+   * so thelon relonsulting path in thelon __config relonpo__ is elonsselonntially `s"{felonaturelon_switchelons_path}/{snakelonCaselon(Product.idelonntifielonr)}"`
+   */
+  val supportelondClielonntFSNamelon: String
 
-  object SupportedClientParam
-      extends FSParam(
-        name = supportedClientFSName,
-        default = false
+  objelonct elonnablelondDeloncidelonrParam elonxtelonnds BoolelonanDeloncidelonrParam(elonnablelondDeloncidelonrKelony)
+
+  objelonct SupportelondClielonntParam
+      elonxtelonnds FSParam(
+        namelon = supportelondClielonntFSNamelon,
+        delonfault = falselon
       )
 }

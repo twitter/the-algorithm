@@ -1,24 +1,24 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.event
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.itelonm.elonvelonnt
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.event.EventSummaryDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.event.CellEventSummaryDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.event.HeroEventSummaryDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.event.CellWithProminentSocialContextEventSummaryDisplayType
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.elonvelonnt.elonvelonntSummaryDisplayTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.elonvelonnt.CelonllelonvelonntSummaryDisplayTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.elonvelonnt.HelonroelonvelonntSummaryDisplayTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.elonvelonnt.CelonllWithProminelonntSocialContelonxtelonvelonntSummaryDisplayTypelon
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class EventSummaryDisplayTypeMarshaller @Inject() () {
+@Singlelonton
+class elonvelonntSummaryDisplayTypelonMarshallelonr @Injelonct() () {
 
-  def apply(
-    eventSummaryDisplayType: EventSummaryDisplayType
-  ): urt.EventSummaryDisplayType = eventSummaryDisplayType match {
-    case CellEventSummaryDisplayType =>
-      urt.EventSummaryDisplayType.Cell
-    case HeroEventSummaryDisplayType =>
-      urt.EventSummaryDisplayType.Hero
-    case CellWithProminentSocialContextEventSummaryDisplayType =>
-      urt.EventSummaryDisplayType.CellWithProminentSocialContext
+  delonf apply(
+    elonvelonntSummaryDisplayTypelon: elonvelonntSummaryDisplayTypelon
+  ): urt.elonvelonntSummaryDisplayTypelon = elonvelonntSummaryDisplayTypelon match {
+    caselon CelonllelonvelonntSummaryDisplayTypelon =>
+      urt.elonvelonntSummaryDisplayTypelon.Celonll
+    caselon HelonroelonvelonntSummaryDisplayTypelon =>
+      urt.elonvelonntSummaryDisplayTypelon.Helonro
+    caselon CelonllWithProminelonntSocialContelonxtelonvelonntSummaryDisplayTypelon =>
+      urt.elonvelonntSummaryDisplayTypelon.CelonllWithProminelonntSocialContelonxt
   }
 }

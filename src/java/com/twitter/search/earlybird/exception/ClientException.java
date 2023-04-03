@@ -1,11 +1,11 @@
-package com.twitter.search.earlybird.exception;
+packagelon com.twittelonr.selonarch.elonarlybird.elonxcelonption;
 
-public class ClientException extends Exception {
-  public ClientException(Throwable t) {
-    super(t);
+public class Clielonntelonxcelonption elonxtelonnds elonxcelonption {
+  public Clielonntelonxcelonption(Throwablelon t) {
+    supelonr(t);
   }
 
-  public ClientException(String message) {
-    super(message);
+  public Clielonntelonxcelonption(String melonssagelon) {
+    supelonr(melonssagelon);
   }
 }

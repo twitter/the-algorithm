@@ -1,101 +1,101 @@
-package com.twitter.search.common.query;
+packagelon com.twittelonr.selonarch.common.quelonry;
 
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+import com.googlelon.common.collelonct.Lists;
+import com.googlelon.common.collelonct.Maps;
 
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.search.Query;
+import org.apachelon.lucelonnelon.indelonx.LelonafRelonadelonrContelonxt;
+import org.apachelon.lucelonnelon.selonarch.Quelonry;
 
 /**
- * Not threadsafe, but should be reused across different queries unless the size of the existing
- * one is too small for a new huge serialized query.
+ * Not threlonadsafelon, but should belon relonuselond across diffelonrelonnt quelonrielons unlelonss thelon sizelon of thelon elonxisting
+ * onelon is too small for a nelonw hugelon selonrializelond quelonry.
  */
-public class HitAttributeCollector {
-  private final List<FieldRankHitInfo> hitInfos = Lists.newArrayList();
-  private final BiFunction<Integer, Integer, FieldRankHitInfo> hitInfoSupplier;
+public class HitAttributelonCollelonctor {
+  privatelon final List<FielonldRankHitInfo> hitInfos = Lists.nelonwArrayList();
+  privatelon final BiFunction<Intelongelonr, Intelongelonr, FielonldRankHitInfo> hitInfoSupplielonr;
 
-  private int docBase = 0;
+  privatelon int docBaselon = 0;
 
-  public HitAttributeCollector() {
-    this.hitInfoSupplier = FieldRankHitInfo::new;
+  public HitAttributelonCollelonctor() {
+    this.hitInfoSupplielonr = FielonldRankHitInfo::nelonw;
   }
 
   /**
-   * Constructs a new {@code HitAttributionCollector} with the specified {@code FieldRankHitInfo}
-   * supplier.
+   * Constructs a nelonw {@codelon HitAttributionCollelonctor} with thelon speloncifielond {@codelon FielonldRankHitInfo}
+   * supplielonr.
    *
-   * @param hitInfoSupplier function to supply a {@code FieldRankHitInfo} instance
+   * @param hitInfoSupplielonr function to supply a {@codelon FielonldRankHitInfo} instancelon
    */
-  public HitAttributeCollector(BiFunction<Integer, Integer, FieldRankHitInfo> hitInfoSupplier) {
-    this.hitInfoSupplier = hitInfoSupplier;
+  public HitAttributelonCollelonctor(BiFunction<Intelongelonr, Intelongelonr, FielonldRankHitInfo> hitInfoSupplielonr) {
+    this.hitInfoSupplielonr = hitInfoSupplielonr;
   }
 
   /**
-   * Creates a new IdentifiableQuery for the given query, fieldId and rank, and "registers"
-   * the fieldId and the rank with this collector.
+   * Crelonatelons a nelonw IdelonntifiablelonQuelonry for thelon givelonn quelonry, fielonldId and rank, and "relongistelonrs"
+   * thelon fielonldId and thelon rank with this collelonctor.
    *
-   * @param query the query to be wrapped.
-   * @param fieldId the ID of the field to be searched.
-   * @param rank The rank of this query.
-   * @return A new IdentifiableQuery instance for the given query, fieldId and rank.
+   * @param quelonry thelon quelonry to belon wrappelond.
+   * @param fielonldId thelon ID of thelon fielonld to belon selonarchelond.
+   * @param rank Thelon rank of this quelonry.
+   * @relonturn A nelonw IdelonntifiablelonQuelonry instancelon for thelon givelonn quelonry, fielonldId and rank.
    */
-  public IdentifiableQuery newIdentifiableQuery(Query query, int fieldId, int rank) {
-    FieldRankHitInfo fieldRankHitInfo = hitInfoSupplier.apply(fieldId, rank);
-    hitInfos.add(fieldRankHitInfo);
-    return new IdentifiableQuery(query, fieldRankHitInfo, this);
+  public IdelonntifiablelonQuelonry nelonwIdelonntifiablelonQuelonry(Quelonry quelonry, int fielonldId, int rank) {
+    FielonldRankHitInfo fielonldRankHitInfo = hitInfoSupplielonr.apply(fielonldId, rank);
+    hitInfos.add(fielonldRankHitInfo);
+    relonturn nelonw IdelonntifiablelonQuelonry(quelonry, fielonldRankHitInfo, this);
   }
 
-  public void clearHitAttributions(LeafReaderContext ctx, FieldRankHitInfo hitInfo) {
-    docBase = ctx.docBase;
-    hitInfo.resetDocId();
+  public void clelonarHitAttributions(LelonafRelonadelonrContelonxt ctx, FielonldRankHitInfo hitInfo) {
+    docBaselon = ctx.docBaselon;
+    hitInfo.relonselontDocId();
   }
 
-  public void collectScorerAttribution(int docId, FieldRankHitInfo hitInfo) {
-    hitInfo.setDocId(docId + docBase);
+  public void collelonctScorelonrAttribution(int docId, FielonldRankHitInfo hitInfo) {
+    hitInfo.selontDocId(docId + docBaselon);
   }
 
   /**
-   * This method should be called when a global hit occurs.
-   * This method returns hit attribution summary for the whole query tree.
-   * This supports getting hit attribution for only the curDoc.
+   * This melonthod should belon callelond whelonn a global hit occurs.
+   * This melonthod relonturns hit attribution summary for thelon wholelon quelonry trelonelon.
+   * This supports gelontting hit attribution for only thelon curDoc.
    *
-   * @param docId docId passed in for checking against curDoc.
-   * @return Returns a map from node rank to a set of matching field IDs. This map does not contain
-   *         entries for ranks that did not hit at all.
+   * @param docId docId passelond in for cheloncking against curDoc.
+   * @relonturn Relonturns a map from nodelon rank to a selont of matching fielonld IDs. This map doelons not contain
+   *         elonntrielons for ranks that did not hit at all.
    */
-  public Map<Integer, List<Integer>> getHitAttribution(int docId) {
-    return getHitAttribution(docId, (fieldId) -> fieldId);
+  public Map<Intelongelonr, List<Intelongelonr>> gelontHitAttribution(int docId) {
+    relonturn gelontHitAttribution(docId, (fielonldId) -> fielonldId);
   }
 
   /**
-   * This method should be called when a global hit occurs.
-   * This method returns hit attribution summary for the whole query tree.
-   * This supports getting hit attribution for only the curDoc.
+   * This melonthod should belon callelond whelonn a global hit occurs.
+   * This melonthod relonturns hit attribution summary for thelon wholelon quelonry trelonelon.
+   * This supports gelontting hit attribution for only thelon curDoc.
    *
-   * @param docId docId passed in for checking against curDoc.
-   * @param fieldIdFunc The mapping of field IDs to objects of type T.
-   * @return Returns a map from node rank to a set of matching objects (usually field IDs or names).
-   *         This map does not contain entries for ranks that did not hit at all.
+   * @param docId docId passelond in for cheloncking against curDoc.
+   * @param fielonldIdFunc Thelon mapping of fielonld IDs to objeloncts of typelon T.
+   * @relonturn Relonturns a map from nodelon rank to a selont of matching objeloncts (usually fielonld IDs or namelons).
+   *         This map doelons not contain elonntrielons for ranks that did not hit at all.
    */
-  public <T> Map<Integer, List<T>> getHitAttribution(int docId, Function<Integer, T> fieldIdFunc) {
-    int key = docId + docBase;
-    Map<Integer, List<T>> hitMap = Maps.newHashMap();
+  public <T> Map<Intelongelonr, List<T>> gelontHitAttribution(int docId, Function<Intelongelonr, T> fielonldIdFunc) {
+    int kelony = docId + docBaselon;
+    Map<Intelongelonr, List<T>> hitMap = Maps.nelonwHashMap();
 
-    // Manually iterate through all hitInfos elements. It's slightly faster than using an Iterator.
-    for (FieldRankHitInfo hitInfo : hitInfos) {
-      if (hitInfo.getDocId() == key) {
-        int rank = hitInfo.getRank();
-        List<T> rankHits = hitMap.computeIfAbsent(rank, k -> Lists.newArrayList());
-        T fieldDescription = fieldIdFunc.apply(hitInfo.getFieldId());
-        rankHits.add(fieldDescription);
+    // Manually itelonratelon through all hitInfos elonlelonmelonnts. It's slightly fastelonr than using an Itelonrator.
+    for (FielonldRankHitInfo hitInfo : hitInfos) {
+      if (hitInfo.gelontDocId() == kelony) {
+        int rank = hitInfo.gelontRank();
+        List<T> rankHits = hitMap.computelonIfAbselonnt(rank, k -> Lists.nelonwArrayList());
+        T fielonldDelonscription = fielonldIdFunc.apply(hitInfo.gelontFielonldId());
+        rankHits.add(fielonldDelonscription);
       }
     }
 
-    return hitMap;
+    relonturn hitMap;
   }
 }

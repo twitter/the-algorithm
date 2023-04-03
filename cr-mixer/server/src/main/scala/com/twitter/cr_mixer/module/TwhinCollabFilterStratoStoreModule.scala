@@ -1,67 +1,67 @@
-package com.twitter.cr_mixer.module
+packagelon com.twittelonr.cr_mixelonr.modulelon
 
-import com.google.inject.Provides
-import com.google.inject.Singleton
-import com.twitter.inject.TwitterModule
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.frigate.common.store.strato.StratoFetchableStore
-import com.twitter.cr_mixer.similarity_engine.TwhinCollabFilterSimilarityEngine.TwhinCollabFilterView
-import com.twitter.strato.client.{Client => StratoClient}
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.storehaus.ReadableStore
-import javax.inject.Named
+import com.googlelon.injelonct.Providelons
+import com.googlelon.injelonct.Singlelonton
+import com.twittelonr.injelonct.TwittelonrModulelon
+import com.twittelonr.cr_mixelonr.modelonl.ModulelonNamelons
+import com.twittelonr.frigatelon.common.storelon.strato.StratoFelontchablelonStorelon
+import com.twittelonr.cr_mixelonr.similarity_elonnginelon.TwhinCollabFiltelonrSimilarityelonnginelon.TwhinCollabFiltelonrVielonw
+import com.twittelonr.strato.clielonnt.{Clielonnt => StratoClielonnt}
+import com.twittelonr.simclustelonrs_v2.common.TwelonelontId
+import com.twittelonr.storelonhaus.RelonadablelonStorelon
+import javax.injelonct.Namelond
 
-object TwhinCollabFilterStratoStoreModule extends TwitterModule {
+objelonct TwhinCollabFiltelonrStratoStorelonModulelon elonxtelonnds TwittelonrModulelon {
 
-  val stratoColumnPath: String = "cuad/twhin/getCollabFilterTweetCandidatesProd.User"
+  val stratoColumnPath: String = "cuad/twhin/gelontCollabFiltelonrTwelonelontCandidatelonsProd.Uselonr"
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.TwhinCollabFilterStratoStoreForFollow)
-  def providesTwhinCollabFilterStratoStoreForFollow(
-    stratoClient: StratoClient
-  ): ReadableStore[Long, Seq[TweetId]] = {
-    StratoFetchableStore.withView[Long, TwhinCollabFilterView, Seq[TweetId]](
-      stratoClient,
+  @Providelons
+  @Singlelonton
+  @Namelond(ModulelonNamelons.TwhinCollabFiltelonrStratoStorelonForFollow)
+  delonf providelonsTwhinCollabFiltelonrStratoStorelonForFollow(
+    stratoClielonnt: StratoClielonnt
+  ): RelonadablelonStorelon[Long, Selonq[TwelonelontId]] = {
+    StratoFelontchablelonStorelon.withVielonw[Long, TwhinCollabFiltelonrVielonw, Selonq[TwelonelontId]](
+      stratoClielonnt,
       column = stratoColumnPath,
-      view = TwhinCollabFilterView("follow_2022_03_10_c_500K")
+      vielonw = TwhinCollabFiltelonrVielonw("follow_2022_03_10_c_500K")
     )
   }
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.TwhinCollabFilterStratoStoreForEngagement)
-  def providesTwhinCollabFilterStratoStoreForEngagement(
-    stratoClient: StratoClient
-  ): ReadableStore[Long, Seq[TweetId]] = {
-    StratoFetchableStore.withView[Long, TwhinCollabFilterView, Seq[TweetId]](
-      stratoClient,
+  @Providelons
+  @Singlelonton
+  @Namelond(ModulelonNamelons.TwhinCollabFiltelonrStratoStorelonForelonngagelonmelonnt)
+  delonf providelonsTwhinCollabFiltelonrStratoStorelonForelonngagelonmelonnt(
+    stratoClielonnt: StratoClielonnt
+  ): RelonadablelonStorelon[Long, Selonq[TwelonelontId]] = {
+    StratoFelontchablelonStorelon.withVielonw[Long, TwhinCollabFiltelonrVielonw, Selonq[TwelonelontId]](
+      stratoClielonnt,
       column = stratoColumnPath,
-      view = TwhinCollabFilterView("engagement_2022_04_10_c_500K"))
+      vielonw = TwhinCollabFiltelonrVielonw("elonngagelonmelonnt_2022_04_10_c_500K"))
   }
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.TwhinMultiClusterStratoStoreForFollow)
-  def providesTwhinMultiClusterStratoStoreForFollow(
-    stratoClient: StratoClient
-  ): ReadableStore[Long, Seq[TweetId]] = {
-    StratoFetchableStore.withView[Long, TwhinCollabFilterView, Seq[TweetId]](
-      stratoClient,
+  @Providelons
+  @Singlelonton
+  @Namelond(ModulelonNamelons.TwhinMultiClustelonrStratoStorelonForFollow)
+  delonf providelonsTwhinMultiClustelonrStratoStorelonForFollow(
+    stratoClielonnt: StratoClielonnt
+  ): RelonadablelonStorelon[Long, Selonq[TwelonelontId]] = {
+    StratoFelontchablelonStorelon.withVielonw[Long, TwhinCollabFiltelonrVielonw, Selonq[TwelonelontId]](
+      stratoClielonnt,
       column = stratoColumnPath,
-      view = TwhinCollabFilterView("multiclusterFollow20220921")
+      vielonw = TwhinCollabFiltelonrVielonw("multiclustelonrFollow20220921")
     )
   }
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.TwhinMultiClusterStratoStoreForEngagement)
-  def providesTwhinMultiClusterStratoStoreForEngagement(
-    stratoClient: StratoClient
-  ): ReadableStore[Long, Seq[TweetId]] = {
-    StratoFetchableStore.withView[Long, TwhinCollabFilterView, Seq[TweetId]](
-      stratoClient,
+  @Providelons
+  @Singlelonton
+  @Namelond(ModulelonNamelons.TwhinMultiClustelonrStratoStorelonForelonngagelonmelonnt)
+  delonf providelonsTwhinMultiClustelonrStratoStorelonForelonngagelonmelonnt(
+    stratoClielonnt: StratoClielonnt
+  ): RelonadablelonStorelon[Long, Selonq[TwelonelontId]] = {
+    StratoFelontchablelonStorelon.withVielonw[Long, TwhinCollabFiltelonrVielonw, Selonq[TwelonelontId]](
+      stratoClielonnt,
       column = stratoColumnPath,
-      view = TwhinCollabFilterView("multiclusterEng20220921"))
+      vielonw = TwhinCollabFiltelonrVielonw("multiclustelonrelonng20220921"))
   }
 }

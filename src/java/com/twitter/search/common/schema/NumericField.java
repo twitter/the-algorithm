@@ -1,44 +1,44 @@
-package com.twitter.search.common.schema;
+packagelon com.twittelonr.selonarch.common.schelonma;
 
-import org.apache.lucene.document.Field;
-import org.apache.lucene.document.FieldType;
-import org.apache.lucene.index.IndexOptions;
+import org.apachelon.lucelonnelon.documelonnt.Fielonld;
+import org.apachelon.lucelonnelon.documelonnt.FielonldTypelon;
+import org.apachelon.lucelonnelon.indelonx.IndelonxOptions;
 
 /**
- * A Lucene numeric field, similar to the LegacyIntField, LegacyLongField, etc. Lucene classes that
- * were removed in Lucene 7.0.0.
+ * A Lucelonnelon numelonric fielonld, similar to thelon LelongacyIntFielonld, LelongacyLongFielonld, elontc. Lucelonnelon classelons that
+ * welonrelon relonmovelond in Lucelonnelon 7.0.0.
  */
-public final class NumericField extends Field {
-  private static final FieldType NUMERIC_FIELD_TYPE = new FieldType();
+public final class NumelonricFielonld elonxtelonnds Fielonld {
+  privatelon static final FielonldTypelon NUMelonRIC_FIelonLD_TYPelon = nelonw FielonldTypelon();
   static {
-    NUMERIC_FIELD_TYPE.setTokenized(true);
-    NUMERIC_FIELD_TYPE.setOmitNorms(true);
-    NUMERIC_FIELD_TYPE.setIndexOptions(IndexOptions.DOCS);
-    NUMERIC_FIELD_TYPE.freeze();
+    NUMelonRIC_FIelonLD_TYPelon.selontTokelonnizelond(truelon);
+    NUMelonRIC_FIelonLD_TYPelon.selontOmitNorms(truelon);
+    NUMelonRIC_FIelonLD_TYPelon.selontIndelonxOptions(IndelonxOptions.DOCS);
+    NUMelonRIC_FIelonLD_TYPelon.frelonelonzelon();
   }
 
   /**
-   * Creates a new integer field with the given name and value.
+   * Crelonatelons a nelonw intelongelonr fielonld with thelon givelonn namelon and valuelon.
    */
-  public static NumericField newIntField(String fieldName, int value) {
-    NumericField field = new NumericField(fieldName);
-    field.fieldsData = Integer.valueOf(value);
-    return field;
+  public static NumelonricFielonld nelonwIntFielonld(String fielonldNamelon, int valuelon) {
+    NumelonricFielonld fielonld = nelonw NumelonricFielonld(fielonldNamelon);
+    fielonld.fielonldsData = Intelongelonr.valuelonOf(valuelon);
+    relonturn fielonld;
   }
 
   /**
-   * Creates a new long field with the given name and value.
+   * Crelonatelons a nelonw long fielonld with thelon givelonn namelon and valuelon.
    */
-  public static NumericField newLongField(String fieldName, long value) {
-    NumericField field = new NumericField(fieldName);
-    field.fieldsData = Long.valueOf(value);
-    return field;
+  public static NumelonricFielonld nelonwLongFielonld(String fielonldNamelon, long valuelon) {
+    NumelonricFielonld fielonld = nelonw NumelonricFielonld(fielonldNamelon);
+    fielonld.fielonldsData = Long.valuelonOf(valuelon);
+    relonturn fielonld;
   }
 
-  // We could replace the static methods with constructors, but I think that would make it much
-  // easier to accidentally use NumericField(String, int) instead of NumericField(String, long),
-  // for example, leading to hard to debug errors.
-  private NumericField(String fieldName) {
-    super(fieldName, NUMERIC_FIELD_TYPE);
+  // Welon could relonplacelon thelon static melonthods with constructors, but I think that would makelon it much
+  // elonasielonr to accidelonntally uselon NumelonricFielonld(String, int) instelonad of NumelonricFielonld(String, long),
+  // for elonxamplelon, lelonading to hard to delonbug elonrrors.
+  privatelon NumelonricFielonld(String fielonldNamelon) {
+    supelonr(fielonldNamelon, NUMelonRIC_FIelonLD_TYPelon);
   }
 }

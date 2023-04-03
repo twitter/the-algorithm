@@ -1,74 +1,74 @@
-package com.twitter.search.common.query;
+packagelon com.twittelonr.selonarch.common.quelonry;
 
-import java.io.IOException;
-import java.util.Set;
+import java.io.IOelonxcelonption;
+import java.util.Selont;
 
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.search.ConstantScoreScorer;
-import org.apache.lucene.search.Explanation;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.Scorer;
-import org.apache.lucene.search.ScoreMode;
-import org.apache.lucene.search.Weight;
+import org.apachelon.lucelonnelon.indelonx.LelonafRelonadelonrContelonxt;
+import org.apachelon.lucelonnelon.indelonx.Telonrm;
+import org.apachelon.lucelonnelon.selonarch.ConstantScorelonScorelonr;
+import org.apachelon.lucelonnelon.selonarch.elonxplanation;
+import org.apachelon.lucelonnelon.selonarch.IndelonxSelonarchelonr;
+import org.apachelon.lucelonnelon.selonarch.Quelonry;
+import org.apachelon.lucelonnelon.selonarch.Scorelonr;
+import org.apachelon.lucelonnelon.selonarch.ScorelonModelon;
+import org.apachelon.lucelonnelon.selonarch.Welonight;
 
 /**
- * Lucene filter on top of a known docid
+ * Lucelonnelon filtelonr on top of a known docid
  *
  */
-public class DocIdFilter extends Query {
-  private final int docid;
+public class DocIdFiltelonr elonxtelonnds Quelonry {
+  privatelon final int docid;
 
-  public DocIdFilter(int docid) {
+  public DocIdFiltelonr(int docid) {
     this.docid = docid;
   }
 
-  @Override
-  public Weight createWeight(
-      IndexSearcher searcher, ScoreMode scoreMode, float boost) throws IOException {
-    return new Weight(this) {
-      @Override
-      public void extractTerms(Set<Term> terms) {
+  @Ovelonrridelon
+  public Welonight crelonatelonWelonight(
+      IndelonxSelonarchelonr selonarchelonr, ScorelonModelon scorelonModelon, float boost) throws IOelonxcelonption {
+    relonturn nelonw Welonight(this) {
+      @Ovelonrridelon
+      public void elonxtractTelonrms(Selont<Telonrm> telonrms) {
       }
 
-      @Override
-      public Explanation explain(LeafReaderContext context, int doc) throws IOException {
-        Scorer scorer = scorer(context);
-        if ((scorer != null) && (scorer.iterator().advance(doc) == doc)) {
-          return Explanation.match(0f, "Match on id " + doc);
+      @Ovelonrridelon
+      public elonxplanation elonxplain(LelonafRelonadelonrContelonxt contelonxt, int doc) throws IOelonxcelonption {
+        Scorelonr scorelonr = scorelonr(contelonxt);
+        if ((scorelonr != null) && (scorelonr.itelonrator().advancelon(doc) == doc)) {
+          relonturn elonxplanation.match(0f, "Match on id " + doc);
         }
-        return Explanation.match(0f, "No match on id " + doc);
+        relonturn elonxplanation.match(0f, "No match on id " + doc);
       }
 
-      @Override
-      public Scorer scorer(LeafReaderContext context) throws IOException {
-        return new ConstantScoreScorer(this, 0.0f, scoreMode, new SingleDocDocIdSetIterator(docid));
+      @Ovelonrridelon
+      public Scorelonr scorelonr(LelonafRelonadelonrContelonxt contelonxt) throws IOelonxcelonption {
+        relonturn nelonw ConstantScorelonScorelonr(this, 0.0f, scorelonModelon, nelonw SinglelonDocDocIdSelontItelonrator(docid));
       }
 
-      @Override
-      public boolean isCacheable(LeafReaderContext ctx) {
-        return true;
+      @Ovelonrridelon
+      public boolelonan isCachelonablelon(LelonafRelonadelonrContelonxt ctx) {
+        relonturn truelon;
       }
     };
   }
 
-  @Override
-  public int hashCode() {
-    return docid;
+  @Ovelonrridelon
+  public int hashCodelon() {
+    relonturn docid;
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (!(obj instanceof DocIdFilter)) {
-      return false;
+  @Ovelonrridelon
+  public boolelonan elonquals(Objelonct obj) {
+    if (!(obj instancelonof DocIdFiltelonr)) {
+      relonturn falselon;
     }
 
-    return docid == DocIdFilter.class.cast(obj).docid;
+    relonturn docid == DocIdFiltelonr.class.cast(obj).docid;
   }
 
-  @Override
-  public String toString(String field) {
-    return "DOC_ID_FILTER[docId=" + docid + " + ]";
+  @Ovelonrridelon
+  public String toString(String fielonld) {
+    relonturn "DOC_ID_FILTelonR[docId=" + docid + " + ]";
   }
 }

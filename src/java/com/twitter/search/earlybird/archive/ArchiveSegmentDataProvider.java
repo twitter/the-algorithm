@@ -1,83 +1,83 @@
-package com.twitter.search.earlybird.archive;
+packagelon com.twittelonr.selonarch.elonarlybird.archivelon;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 import java.util.List;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
+import com.googlelon.common.baselon.Prelonconditions;
+import com.googlelon.common.collelonct.Lists;
 
-import com.twitter.search.common.partitioning.base.Segment;
-import com.twitter.search.common.schema.thriftjava.ThriftIndexingEvent;
-import com.twitter.search.common.util.io.recordreader.RecordReader;
-import com.twitter.search.earlybird.EarlybirdIndexConfig;
-import com.twitter.search.earlybird.archive.ArchiveTimeSlicer.ArchiveTimeSlice;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.document.DocumentFactory;
-import com.twitter.search.earlybird.document.TweetDocument;
-import com.twitter.search.earlybird.partition.DynamicPartitionConfig;
-import com.twitter.search.earlybird.partition.SegmentInfo;
-import com.twitter.search.earlybird.segment.EmptySegmentDataReaderSet;
-import com.twitter.search.earlybird.segment.SegmentDataProvider;
-import com.twitter.search.earlybird.segment.SegmentDataReaderSet;
+import com.twittelonr.selonarch.common.partitioning.baselon.Selongmelonnt;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftIndelonxingelonvelonnt;
+import com.twittelonr.selonarch.common.util.io.reloncordrelonadelonr.ReloncordRelonadelonr;
+import com.twittelonr.selonarch.elonarlybird.elonarlybirdIndelonxConfig;
+import com.twittelonr.selonarch.elonarlybird.archivelon.ArchivelonTimelonSlicelonr.ArchivelonTimelonSlicelon;
+import com.twittelonr.selonarch.elonarlybird.common.config.elonarlybirdConfig;
+import com.twittelonr.selonarch.elonarlybird.documelonnt.DocumelonntFactory;
+import com.twittelonr.selonarch.elonarlybird.documelonnt.TwelonelontDocumelonnt;
+import com.twittelonr.selonarch.elonarlybird.partition.DynamicPartitionConfig;
+import com.twittelonr.selonarch.elonarlybird.partition.SelongmelonntInfo;
+import com.twittelonr.selonarch.elonarlybird.selongmelonnt.elonmptySelongmelonntDataRelonadelonrSelont;
+import com.twittelonr.selonarch.elonarlybird.selongmelonnt.SelongmelonntDataProvidelonr;
+import com.twittelonr.selonarch.elonarlybird.selongmelonnt.SelongmelonntDataRelonadelonrSelont;
 
-public class ArchiveSegmentDataProvider implements SegmentDataProvider {
-  private static final org.slf4j.Logger LOG =
-      org.slf4j.LoggerFactory.getLogger(ArchiveSegmentDataProvider.class);
+public class ArchivelonSelongmelonntDataProvidelonr implelonmelonnts SelongmelonntDataProvidelonr {
+  privatelon static final org.slf4j.Loggelonr LOG =
+      org.slf4j.LoggelonrFactory.gelontLoggelonr(ArchivelonSelongmelonntDataProvidelonr.class);
 
-  private DynamicPartitionConfig dynamicPartitionConfig;
-  private final ArchiveTimeSlicer timeSlicer;
+  privatelon DynamicPartitionConfig dynamicPartitionConfig;
+  privatelon final ArchivelonTimelonSlicelonr timelonSlicelonr;
 
-  private final DocumentFactory<ThriftIndexingEvent> documentFactory;
+  privatelon final DocumelonntFactory<ThriftIndelonxingelonvelonnt> documelonntFactory;
 
-  private final SegmentDataReaderSet readerSet;
+  privatelon final SelongmelonntDataRelonadelonrSelont relonadelonrSelont;
 
-  public ArchiveSegmentDataProvider(
+  public ArchivelonSelongmelonntDataProvidelonr(
       DynamicPartitionConfig dynamicPartitionConfig,
-      ArchiveTimeSlicer timeSlicer,
-      EarlybirdIndexConfig earlybirdIndexConfig) throws IOException {
+      ArchivelonTimelonSlicelonr timelonSlicelonr,
+      elonarlybirdIndelonxConfig elonarlybirdIndelonxConfig) throws IOelonxcelonption {
     this.dynamicPartitionConfig = dynamicPartitionConfig;
-    this.timeSlicer = timeSlicer;
-    this.readerSet = createSegmentDataReaderSet();
-    this.documentFactory = earlybirdIndexConfig.createDocumentFactory();
+    this.timelonSlicelonr = timelonSlicelonr;
+    this.relonadelonrSelont = crelonatelonSelongmelonntDataRelonadelonrSelont();
+    this.documelonntFactory = elonarlybirdIndelonxConfig.crelonatelonDocumelonntFactory();
   }
 
-  @Override
-  public List<Segment> newSegmentList() throws IOException {
-    List<ArchiveTimeSlice> timeSlices = timeSlicer.getTimeSlicesInTierRange();
-    if (timeSlices == null || timeSlices.isEmpty()) {
-      return Lists.newArrayList();
+  @Ovelonrridelon
+  public List<Selongmelonnt> nelonwSelongmelonntList() throws IOelonxcelonption {
+    List<ArchivelonTimelonSlicelon> timelonSlicelons = timelonSlicelonr.gelontTimelonSlicelonsInTielonrRangelon();
+    if (timelonSlicelons == null || timelonSlicelons.iselonmpty()) {
+      relonturn Lists.nelonwArrayList();
     }
-    List<Segment> segments = Lists.newArrayListWithCapacity(timeSlices.size());
-    for (ArchiveTimeSlice timeSlice : timeSlices) {
-      segments.add(newArchiveSegment(timeSlice));
+    List<Selongmelonnt> selongmelonnts = Lists.nelonwArrayListWithCapacity(timelonSlicelons.sizelon());
+    for (ArchivelonTimelonSlicelon timelonSlicelon : timelonSlicelons) {
+      selongmelonnts.add(nelonwArchivelonSelongmelonnt(timelonSlicelon));
     }
-    return segments;
+    relonturn selongmelonnts;
   }
 
   /**
-   * Creates a new Segment instance for the given timeslice.
+   * Crelonatelons a nelonw Selongmelonnt instancelon for thelon givelonn timelonslicelon.
    */
-  public ArchiveSegment newArchiveSegment(ArchiveTimeSlice archiveTimeSlice) {
-    return new ArchiveSegment(
-        archiveTimeSlice,
-        dynamicPartitionConfig.getCurrentPartitionConfig().getIndexingHashPartitionID(),
-        EarlybirdConfig.getMaxSegmentSize());
+  public ArchivelonSelongmelonnt nelonwArchivelonSelongmelonnt(ArchivelonTimelonSlicelon archivelonTimelonSlicelon) {
+    relonturn nelonw ArchivelonSelongmelonnt(
+        archivelonTimelonSlicelon,
+        dynamicPartitionConfig.gelontCurrelonntPartitionConfig().gelontIndelonxingHashPartitionID(),
+        elonarlybirdConfig.gelontMaxSelongmelonntSizelon());
   }
 
-  @Override
-  public SegmentDataReaderSet getSegmentDataReaderSet() {
-    return readerSet;
+  @Ovelonrridelon
+  public SelongmelonntDataRelonadelonrSelont gelontSelongmelonntDataRelonadelonrSelont() {
+    relonturn relonadelonrSelont;
   }
 
-  private EmptySegmentDataReaderSet createSegmentDataReaderSet() throws IOException {
-    return new EmptySegmentDataReaderSet() {
+  privatelon elonmptySelongmelonntDataRelonadelonrSelont crelonatelonSelongmelonntDataRelonadelonrSelont() throws IOelonxcelonption {
+    relonturn nelonw elonmptySelongmelonntDataRelonadelonrSelont() {
 
-      @Override
-      public RecordReader<TweetDocument> newDocumentReader(SegmentInfo segmentInfo)
-          throws IOException {
-        Segment segment = segmentInfo.getSegment();
-        Preconditions.checkArgument(segment instanceof ArchiveSegment);
-        return ((ArchiveSegment) segment).getStatusRecordReader(documentFactory);
+      @Ovelonrridelon
+      public ReloncordRelonadelonr<TwelonelontDocumelonnt> nelonwDocumelonntRelonadelonr(SelongmelonntInfo selongmelonntInfo)
+          throws IOelonxcelonption {
+        Selongmelonnt selongmelonnt = selongmelonntInfo.gelontSelongmelonnt();
+        Prelonconditions.chelonckArgumelonnt(selongmelonnt instancelonof ArchivelonSelongmelonnt);
+        relonturn ((ArchivelonSelongmelonnt) selongmelonnt).gelontStatusReloncordRelonadelonr(documelonntFactory);
       }
     };
   }

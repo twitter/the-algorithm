@@ -1,90 +1,90 @@
-/* Copyright 2016 The TensorFlow Authors. All Rights Reserved.
+/* Copyright 2016 Thelon TelonnsorFlow Authors. All Rights Relonselonrvelond.
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+Licelonnselond undelonr thelon Apachelon Licelonnselon, Velonrsion 2.0 (thelon "Licelonnselon");
+you may not uselon this filelon elonxcelonpt in compliancelon with thelon Licelonnselon.
+You may obtain a copy of thelon Licelonnselon at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+    http://www.apachelon.org/licelonnselons/LICelonNSelon-2.0
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+Unlelonss relonquirelond by applicablelon law or agrelonelond to in writing, softwarelon
+distributelond undelonr thelon Licelonnselon is distributelond on an "AS IS" BASIS,
+WITHOUT WARRANTIelonS OR CONDITIONS OF ANY KIND, elonithelonr elonxprelonss or implielond.
+Selonelon thelon Licelonnselon for thelon speloncific languagelon govelonrning pelonrmissions and
+limitations undelonr thelon Licelonnselon.
 ==============================================================================*/
 
 syntax = "proto3";
 
-package tensorflow.grpc;
+packagelon telonnsorflow.grpc;
 
-import "tensorflow/core/protobuf/worker.proto";
+import "telonnsorflow/corelon/protobuf/workelonr.proto";
 
-option java_outer_classname = "WorkerServiceProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.distruntime";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+option java_outelonr_classnamelon = "WorkelonrSelonrvicelonProtos";
+option java_multiplelon_filelons = truelon;
+option java_packagelon = "org.telonnsorflow.distruntimelon";
+option go_packagelon = "github.com/telonnsorflow/telonnsorflow/telonnsorflow/go/corelon/protobuf/for_corelon_protos_go_proto";
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-// WorkerService defines a TensorFlow service that executes dataflow
-// graphs on a set of local devices, on behalf of a MasterService.
+// WorkelonrSelonrvicelon delonfinelons a TelonnsorFlow selonrvicelon that elonxeloncutelons dataflow
+// graphs on a selont of local delonvicelons, on belonhalf of a MastelonrSelonrvicelon.
 //
-// A worker service keeps track of multiple "registered graphs". Each
-// registered graph is a subgraph of a client's graph, corresponding to
-// only the nodes that should execute on this worker (and any
-// additional nodes necessary for inter-process communication using
-// the `RecvTensor` method).
+// A workelonr selonrvicelon kelonelonps track of multiplelon "relongistelonrelond graphs". elonach
+// relongistelonrelond graph is a subgraph of a clielonnt's graph, correlonsponding to
+// only thelon nodelons that should elonxeloncutelon on this workelonr (and any
+// additional nodelons neloncelonssary for intelonr-procelonss communication using
+// thelon `ReloncvTelonnsor` melonthod).
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-service WorkerService {
-  // See worker.proto for details.
-  rpc GetStatus(GetStatusRequest) returns (GetStatusResponse);
+selonrvicelon WorkelonrSelonrvicelon {
+  // Selonelon workelonr.proto for delontails.
+  rpc GelontStatus(GelontStatusRelonquelonst) relonturns (GelontStatusRelonsponselon);
 
-  // See worker.proto for details.
-  rpc CreateWorkerSession(CreateWorkerSessionRequest)
-      returns (CreateWorkerSessionResponse);
+  // Selonelon workelonr.proto for delontails.
+  rpc CrelonatelonWorkelonrSelonssion(CrelonatelonWorkelonrSelonssionRelonquelonst)
+      relonturns (CrelonatelonWorkelonrSelonssionRelonsponselon);
 
-  // See worker.proto for details.
-  rpc DeleteWorkerSession(DeleteWorkerSessionRequest)
-      returns (DeleteWorkerSessionResponse);
+  // Selonelon workelonr.proto for delontails.
+  rpc DelonlelontelonWorkelonrSelonssion(DelonlelontelonWorkelonrSelonssionRelonquelonst)
+      relonturns (DelonlelontelonWorkelonrSelonssionRelonsponselon);
 
-  // See worker.proto for details.
-  rpc RegisterGraph(RegisterGraphRequest) returns (RegisterGraphResponse);
+  // Selonelon workelonr.proto for delontails.
+  rpc RelongistelonrGraph(RelongistelonrGraphRelonquelonst) relonturns (RelongistelonrGraphRelonsponselon);
 
-  // See worker.proto for details.
-  rpc DeregisterGraph(DeregisterGraphRequest) returns (DeregisterGraphResponse);
+  // Selonelon workelonr.proto for delontails.
+  rpc DelonrelongistelonrGraph(DelonrelongistelonrGraphRelonquelonst) relonturns (DelonrelongistelonrGraphRelonsponselon);
 
-  // See worker.proto for details.
-  rpc RunGraph(RunGraphRequest) returns (RunGraphResponse);
+  // Selonelon workelonr.proto for delontails.
+  rpc RunGraph(RunGraphRelonquelonst) relonturns (RunGraphRelonsponselon);
 
-  // See worker.proto for details.
-  rpc CleanupGraph(CleanupGraphRequest) returns (CleanupGraphResponse);
+  // Selonelon workelonr.proto for delontails.
+  rpc ClelonanupGraph(ClelonanupGraphRelonquelonst) relonturns (ClelonanupGraphRelonsponselon);
 
-  // See worker.proto for details.
-  rpc CleanupAll(CleanupAllRequest) returns (CleanupAllResponse);
+  // Selonelon workelonr.proto for delontails.
+  rpc ClelonanupAll(ClelonanupAllRelonquelonst) relonturns (ClelonanupAllRelonsponselon);
 
-  // See worker.proto for details.
-  rpc RecvTensor(RecvTensorRequest) returns (RecvTensorResponse) {
-    // RecvTensor Method
+  // Selonelon workelonr.proto for delontails.
+  rpc ReloncvTelonnsor(ReloncvTelonnsorRelonquelonst) relonturns (ReloncvTelonnsorRelonsponselon) {
+    // ReloncvTelonnsor Melonthod
   }
 
-  // See worker.proto for details.
-  rpc Logging(LoggingRequest) returns (LoggingResponse);
+  // Selonelon workelonr.proto for delontails.
+  rpc Logging(LoggingRelonquelonst) relonturns (LoggingRelonsponselon);
 
-  // See worker.proto for details.
-  rpc Tracing(TracingRequest) returns (TracingResponse);
+  // Selonelon workelonr.proto for delontails.
+  rpc Tracing(TracingRelonquelonst) relonturns (TracingRelonsponselon);
 
-  // See worker.proto for details.
-  rpc RecvBuf(RecvBufRequest) returns (RecvBufResponse) {}
+  // Selonelon workelonr.proto for delontails.
+  rpc ReloncvBuf(ReloncvBufRelonquelonst) relonturns (ReloncvBufRelonsponselon) {}
 
-  // See worker.proto for details.
-  rpc GetStepSequence(GetStepSequenceRequest) returns (GetStepSequenceResponse);
+  // Selonelon workelonr.proto for delontails.
+  rpc GelontStelonpSelonquelonncelon(GelontStelonpSelonquelonncelonRelonquelonst) relonturns (GelontStelonpSelonquelonncelonRelonsponselon);
 
-  // See worker.proto for details.
-  rpc CompleteGroup(CompleteGroupRequest) returns (CompleteGroupResponse);
+  // Selonelon workelonr.proto for delontails.
+  rpc ComplelontelonGroup(ComplelontelonGroupRelonquelonst) relonturns (ComplelontelonGroupRelonsponselon);
 
-  // See worker.proto for details.
-  rpc CompleteInstance(CompleteInstanceRequest)
-      returns (CompleteInstanceResponse);
+  // Selonelon workelonr.proto for delontails.
+  rpc ComplelontelonInstancelon(ComplelontelonInstancelonRelonquelonst)
+      relonturns (ComplelontelonInstancelonRelonsponselon);
 }

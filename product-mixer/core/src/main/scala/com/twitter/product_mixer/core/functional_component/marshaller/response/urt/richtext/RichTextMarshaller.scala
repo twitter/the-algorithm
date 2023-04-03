@@ -1,19 +1,19 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.richtext
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.richtelonxt
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichText
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.richtelonxt.RichTelonxt
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class RichTextMarshaller @Inject() (
-  richTextEntityMarshaller: RichTextEntityMarshaller,
-  richTextAlignmentMarshaller: RichTextAlignmentMarshaller) {
+@Singlelonton
+class RichTelonxtMarshallelonr @Injelonct() (
+  richTelonxtelonntityMarshallelonr: RichTelonxtelonntityMarshallelonr,
+  richTelonxtAlignmelonntMarshallelonr: RichTelonxtAlignmelonntMarshallelonr) {
 
-  def apply(richText: RichText): urt.RichText = urt.RichText(
-    text = richText.text,
-    entities = richText.entities.map(richTextEntityMarshaller(_)),
-    rtl = richText.rtl,
-    alignment = richText.alignment.map(richTextAlignmentMarshaller(_))
+  delonf apply(richTelonxt: RichTelonxt): urt.RichTelonxt = urt.RichTelonxt(
+    telonxt = richTelonxt.telonxt,
+    elonntitielons = richTelonxt.elonntitielons.map(richTelonxtelonntityMarshallelonr(_)),
+    rtl = richTelonxt.rtl,
+    alignmelonnt = richTelonxt.alignmelonnt.map(richTelonxtAlignmelonntMarshallelonr(_))
   )
 }

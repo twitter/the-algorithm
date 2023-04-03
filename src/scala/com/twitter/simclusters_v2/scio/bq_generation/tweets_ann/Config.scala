@@ -1,33 +1,33 @@
-package com.twitter.simclusters_v2.scio.bq_generation.tweets_ann
+packagelon com.twittelonr.simclustelonrs_v2.scio.bq_gelonnelonration.twelonelonts_ann
 
-object Config {
+objelonct Config {
   /*
    * Common root path
    */
-  val RootMHPath: String = "manhattan_sequence_files/offline_sann/"
-  val RootThriftPath: String = "processed/offline_sann/"
-  val AdhocRootPath = "adhoc/offline_sann/"
+  val RootMHPath: String = "manhattan_selonquelonncelon_filelons/offlinelon_sann/"
+  val RootThriftPath: String = "procelonsselond/offlinelon_sann/"
+  val AdhocRootPath = "adhoc/offlinelon_sann/"
 
   /*
-   * Variables for MH output path
+   * Variablelons for MH output path
    */
-  val IIKFANNOutputPath: String = "tweets_ann/iikf"
-  val IIKFHL0EL15ANNOutputPath: String = "tweets_ann/iikf_hl_0_el_15"
-  val IIKFHL2EL15ANNOutputPath: String = "tweets_ann/iikf_hl_2_el_15"
-  val IIKFHL2EL50ANNOutputPath: String = "tweets_ann/iikf_hl_2_el_50"
-  val IIKFHL8EL50ANNOutputPath: String = "tweets_ann/iikf_hl_8_el_50"
-  val MTSConsumerEmbeddingsANNOutputPath: String = "tweets_ann/mts_consumer_embeddings"
+  val IIKFANNOutputPath: String = "twelonelonts_ann/iikf"
+  val IIKFHL0elonL15ANNOutputPath: String = "twelonelonts_ann/iikf_hl_0_elonl_15"
+  val IIKFHL2elonL15ANNOutputPath: String = "twelonelonts_ann/iikf_hl_2_elonl_15"
+  val IIKFHL2elonL50ANNOutputPath: String = "twelonelonts_ann/iikf_hl_2_elonl_50"
+  val IIKFHL8elonL50ANNOutputPath: String = "twelonelonts_ann/iikf_hl_8_elonl_50"
+  val MTSConsumelonrelonmbelonddingsANNOutputPath: String = "twelonelonts_ann/mts_consumelonr_elonmbelonddings"
 
   /*
-   * Variables for tweet embeddings generation
+   * Variablelons for twelonelont elonmbelonddings gelonnelonration
    */
-  val SimClustersTweetEmbeddingsGenerationHalfLife: Int = 28800000 // 8hrs in ms
-  val SimClustersTweetEmbeddingsGenerationEmbeddingLength: Int = 15
+  val SimClustelonrsTwelonelontelonmbelonddingsGelonnelonrationHalfLifelon: Int = 28800000 // 8hrs in ms
+  val SimClustelonrsTwelonelontelonmbelonddingsGelonnelonrationelonmbelonddingLelonngth: Int = 15
 
   /*
-   * Variables for ANN
+   * Variablelons for ANN
    */
-  val SimClustersANNTopNClustersPerSourceEmbedding: Int = 20
-  val SimClustersANNTopMTweetsPerCluster: Int = 50
-  val SimClustersANNTopKTweetsPerUserRequest: Int = 200
+  val SimClustelonrsANNTopNClustelonrsPelonrSourcelonelonmbelondding: Int = 20
+  val SimClustelonrsANNTopMTwelonelontsPelonrClustelonr: Int = 50
+  val SimClustelonrsANNTopKTwelonelontsPelonrUselonrRelonquelonst: Int = 200
 }

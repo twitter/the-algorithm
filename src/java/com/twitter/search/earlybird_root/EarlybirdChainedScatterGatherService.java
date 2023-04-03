@@ -1,58 +1,58 @@
-package com.twitter.search.earlybird_root;
+packagelon com.twittelonr.selonarch.elonarlybird_root;
 
 import java.util.List;
 
-import javax.inject.Inject;
+import javax.injelonct.Injelonct;
 
-import com.google.common.collect.Lists;
+import com.googlelon.common.collelonct.Lists;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.finagle.Service;
-import com.twitter.search.common.root.PartitionLoggingSupport;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.util.Future;
+import com.twittelonr.finaglelon.Selonrvicelon;
+import com.twittelonr.selonarch.common.root.PartitionLoggingSupport;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
+import com.twittelonr.selonarch.elonarlybird_root.common.elonarlybirdRelonquelonstContelonxt;
+import com.twittelonr.util.Futurelon;
 
 /**
- * A chain of scatter gather services.
- * Regular roots use ScatterGatherService directly. This class is only used by multi-tier roots.
+ * A chain of scattelonr gathelonr selonrvicelons.
+ * Relongular roots uselon ScattelonrGathelonrSelonrvicelon direlonctly. This class is only uselond by multi-tielonr roots.
  */
-public class EarlybirdChainedScatterGatherService extends
-    Service<EarlybirdRequestContext, List<Future<EarlybirdResponse>>> {
+public class elonarlybirdChainelondScattelonrGathelonrSelonrvicelon elonxtelonnds
+    Selonrvicelon<elonarlybirdRelonquelonstContelonxt, List<Futurelon<elonarlybirdRelonsponselon>>> {
 
-  private static final Logger LOG =
-    LoggerFactory.getLogger(EarlybirdChainedScatterGatherService.class);
+  privatelon static final Loggelonr LOG =
+    LoggelonrFactory.gelontLoggelonr(elonarlybirdChainelondScattelonrGathelonrSelonrvicelon.class);
 
-  private final List<Service<EarlybirdRequestContext, EarlybirdResponse>> serviceChain;
+  privatelon final List<Selonrvicelon<elonarlybirdRelonquelonstContelonxt, elonarlybirdRelonsponselon>> selonrvicelonChain;
 
   /**
-   * Construct a ScatterGatherServiceChain, by loading configurations from earlybird-tiers.yml.
+   * Construct a ScattelonrGathelonrSelonrvicelonChain, by loading configurations from elonarlybird-tielonrs.yml.
    */
-  @Inject
-  public EarlybirdChainedScatterGatherService(
-      EarlybirdServiceChainBuilder serviceChainBuilder,
-      EarlybirdServiceScatterGatherSupport scatterGatherSupport,
-      PartitionLoggingSupport<EarlybirdRequestContext> partitionLoggingSupport) {
+  @Injelonct
+  public elonarlybirdChainelondScattelonrGathelonrSelonrvicelon(
+      elonarlybirdSelonrvicelonChainBuildelonr selonrvicelonChainBuildelonr,
+      elonarlybirdSelonrvicelonScattelonrGathelonrSupport scattelonrGathelonrSupport,
+      PartitionLoggingSupport<elonarlybirdRelonquelonstContelonxt> partitionLoggingSupport) {
 
-    serviceChain =
-        serviceChainBuilder.buildServiceChain(scatterGatherSupport, partitionLoggingSupport);
+    selonrvicelonChain =
+        selonrvicelonChainBuildelonr.buildSelonrvicelonChain(scattelonrGathelonrSupport, partitionLoggingSupport);
 
-    if (serviceChain.isEmpty()) {
-      LOG.error("At least one tier has to be enabled.");
-      throw new RuntimeException("Root does not work with all tiers disabled.");
+    if (selonrvicelonChain.iselonmpty()) {
+      LOG.elonrror("At lelonast onelon tielonr has to belon elonnablelond.");
+      throw nelonw Runtimelonelonxcelonption("Root doelons not work with all tielonrs disablelond.");
     }
   }
 
-  @Override
-  public Future<List<Future<EarlybirdResponse>>> apply(EarlybirdRequestContext requestContext) {
-    // Hit all tiers in parallel.
-    List<Future<EarlybirdResponse>> resultList =
-        Lists.newArrayListWithCapacity(serviceChain.size());
-    for (final Service<EarlybirdRequestContext, EarlybirdResponse> service : serviceChain) {
-      resultList.add(service.apply(requestContext));
+  @Ovelonrridelon
+  public Futurelon<List<Futurelon<elonarlybirdRelonsponselon>>> apply(elonarlybirdRelonquelonstContelonxt relonquelonstContelonxt) {
+    // Hit all tielonrs in parallelonl.
+    List<Futurelon<elonarlybirdRelonsponselon>> relonsultList =
+        Lists.nelonwArrayListWithCapacity(selonrvicelonChain.sizelon());
+    for (final Selonrvicelon<elonarlybirdRelonquelonstContelonxt, elonarlybirdRelonsponselon> selonrvicelon : selonrvicelonChain) {
+      relonsultList.add(selonrvicelon.apply(relonquelonstContelonxt));
     }
-    return Future.value(resultList);
+    relonturn Futurelon.valuelon(relonsultList);
   }
 }

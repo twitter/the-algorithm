@@ -1,35 +1,35 @@
-package com.twitter.ann.file_store
+packagelon com.twittelonr.ann.filelon_storelon
 
-import com.twitter.ann.common.thriftscala.FileBasedIndexIdStore
-import com.twitter.bijection.Injection
-import com.twitter.mediaservices.commons.codec.{ArrayByteBufferCodec, ThriftByteBufferCodec}
-import com.twitter.search.common.file.AbstractFile
-import com.twitter.storehaus.ReadableStore
-import java.nio.ByteBuffer
+import com.twittelonr.ann.common.thriftscala.FilelonBaselondIndelonxIdStorelon
+import com.twittelonr.bijelonction.Injelonction
+import com.twittelonr.melondiaselonrvicelons.commons.codelonc.{ArrayBytelonBuffelonrCodelonc, ThriftBytelonBuffelonrCodelonc}
+import com.twittelonr.selonarch.common.filelon.AbstractFilelon
+import com.twittelonr.storelonhaus.RelonadablelonStorelon
+import java.nio.BytelonBuffelonr
 
-object ReadableIndexIdFileStore {
+objelonct RelonadablelonIndelonxIdFilelonStorelon {
 
   /**
-   * @param file : File path to read serialized long indexId <-> Id mapping from.
-   * @param injection: Injection to convert bytes to Id.
-   * @tparam V: Type of Id
-   * @return File based Readable Store
+   * @param filelon : Filelon path to relonad selonrializelond long indelonxId <-> Id mapping from.
+   * @param injelonction: Injelonction to convelonrt bytelons to Id.
+   * @tparam V: Typelon of Id
+   * @relonturn Filelon baselond Relonadablelon Storelon
    */
-  def apply[V](
-    file: AbstractFile,
-    injection: Injection[V, Array[Byte]]
-  ): ReadableStore[Long, V] = {
-    val codec = new ThriftByteBufferCodec(FileBasedIndexIdStore)
-    val store: Map[Long, V] = codec
-      .decode(loadFile(file))
-      .indexIdMap
-      .getOrElse(Map.empty[Long, ByteBuffer])
+  delonf apply[V](
+    filelon: AbstractFilelon,
+    injelonction: Injelonction[V, Array[Bytelon]]
+  ): RelonadablelonStorelon[Long, V] = {
+    val codelonc = nelonw ThriftBytelonBuffelonrCodelonc(FilelonBaselondIndelonxIdStorelon)
+    val storelon: Map[Long, V] = codelonc
+      .deloncodelon(loadFilelon(filelon))
+      .indelonxIdMap
+      .gelontOrelonlselon(Map.elonmpty[Long, BytelonBuffelonr])
       .toMap
-      .mapValues(value => injection.invert(ArrayByteBufferCodec.decode(value)).get)
-    ReadableStore.fromMap[Long, V](store)
+      .mapValuelons(valuelon => injelonction.invelonrt(ArrayBytelonBuffelonrCodelonc.deloncodelon(valuelon)).gelont)
+    RelonadablelonStorelon.fromMap[Long, V](storelon)
   }
 
-  private[this] def loadFile(file: AbstractFile): ByteBuffer = {
-    ArrayByteBufferCodec.encode(file.getByteSource.read())
+  privatelon[this] delonf loadFilelon(filelon: AbstractFilelon): BytelonBuffelonr = {
+    ArrayBytelonBuffelonrCodelonc.elonncodelon(filelon.gelontBytelonSourcelon.relonad())
   }
 }

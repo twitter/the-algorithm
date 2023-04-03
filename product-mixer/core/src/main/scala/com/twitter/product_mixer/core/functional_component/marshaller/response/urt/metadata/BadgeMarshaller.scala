@@ -1,18 +1,18 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.melontadata
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.color.RosettaColorMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Badge
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.color.RoselonttaColorMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.Badgelon
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class BadgeMarshaller @Inject() (
-  rosettaColorMarshaller: RosettaColorMarshaller) {
+@Singlelonton
+class BadgelonMarshallelonr @Injelonct() (
+  roselonttaColorMarshallelonr: RoselonttaColorMarshallelonr) {
 
-  def apply(badge: Badge): urt.Badge = urt.Badge(
-    text = badge.text,
-    textColorName = badge.textColorName.map(rosettaColorMarshaller(_)),
-    backgroundColorName = badge.backgroundColorName.map(rosettaColorMarshaller(_))
+  delonf apply(badgelon: Badgelon): urt.Badgelon = urt.Badgelon(
+    telonxt = badgelon.telonxt,
+    telonxtColorNamelon = badgelon.telonxtColorNamelon.map(roselonttaColorMarshallelonr(_)),
+    backgroundColorNamelon = badgelon.backgroundColorNamelon.map(roselonttaColorMarshallelonr(_))
   )
 }

@@ -1,104 +1,104 @@
-package com.twitter.search.ingester.pipeline.util;
+packagelon com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.util;
 
-import java.util.HashSet;
+import java.util.HashSelont;
 import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Selont;
+import java.util.concurrelonnt.ConcurrelonntHashMap;
 
-import com.google.common.collect.Sets;
+import com.googlelon.common.collelonct.Selonts;
 
-import com.twitter.util.Future;
-import com.twitter.util.Promise;
+import com.twittelonr.util.Futurelon;
+import com.twittelonr.util.Promiselon;
 
 /**
- * Batches single requests of type RQ -> Future<RP> to an underlying client that supports batch
- * calls with multiple values of type RQ. Threadsafe.
+ * Batchelons singlelon relonquelonsts of typelon RQ -> Futurelon<RP> to an undelonrlying clielonnt that supports batch
+ * calls with multiplelon valuelons of typelon RQ. Threlonadsafelon.
  */
-public class BatchingClient<RQ, RP> {
-  @FunctionalInterface
-  public interface BatchClient<RQ, RP> {
+public class BatchingClielonnt<RQ, RP> {
+  @FunctionalIntelonrfacelon
+  public intelonrfacelon BatchClielonnt<RQ, RP> {
     /**
-     * Issue a request to the underlying store which supports batches of requests.
+     * Issuelon a relonquelonst to thelon undelonrlying storelon which supports batchelons of relonquelonsts.
      */
-    Future<Map<RQ, RP>> batchGet(Set<RQ> requests);
+    Futurelon<Map<RQ, RP>> batchGelont(Selont<RQ> relonquelonsts);
   }
 
   /**
-   * unsentRequests is not threadsafe, and so it must be externally synchronized.
+   * unselonntRelonquelonsts is not threlonadsafelon, and so it must belon elonxtelonrnally synchronizelond.
    */
-  private final HashSet<RQ> unsentRequests = new HashSet<>();
+  privatelon final HashSelont<RQ> unselonntRelonquelonsts = nelonw HashSelont<>();
 
-  private final ConcurrentHashMap<RQ, Promise<RP>> promises = new ConcurrentHashMap<>();
+  privatelon final ConcurrelonntHashMap<RQ, Promiselon<RP>> promiselons = nelonw ConcurrelonntHashMap<>();
 
-  private final BatchClient<RQ, RP> batchClient;
-  private final int batchSize;
+  privatelon final BatchClielonnt<RQ, RP> batchClielonnt;
+  privatelon final int batchSizelon;
 
-  public BatchingClient(
-      BatchClient<RQ, RP> batchClient,
-      int batchSize
+  public BatchingClielonnt(
+      BatchClielonnt<RQ, RP> batchClielonnt,
+      int batchSizelon
   ) {
-    this.batchClient = batchClient;
-    this.batchSize = batchSize;
+    this.batchClielonnt = batchClielonnt;
+    this.batchSizelon = batchSizelon;
   }
 
   /**
-   * Send a request and receive a Future<RP>. The future will not be resolved until at there at
-   * least batchSize requests ready to send.
+   * Selonnd a relonquelonst and reloncelonivelon a Futurelon<RP>. Thelon futurelon will not belon relonsolvelond until at thelonrelon at
+   * lelonast batchSizelon relonquelonsts relonady to selonnd.
    */
-  public Future<RP> call(RQ request) {
-    Promise<RP> promise = promises.computeIfAbsent(request, r -> new Promise<>());
+  public Futurelon<RP> call(RQ relonquelonst) {
+    Promiselon<RP> promiselon = promiselons.computelonIfAbselonnt(relonquelonst, r -> nelonw Promiselon<>());
 
-    maybeBatchCall(request);
+    maybelonBatchCall(relonquelonst);
 
-    return promise;
+    relonturn promiselon;
   }
 
-  private void maybeBatchCall(RQ request) {
-    Set<RQ> frozenRequests;
-    synchronized (unsentRequests) {
-      unsentRequests.add(request);
-      if (unsentRequests.size() < batchSize) {
-        return;
+  privatelon void maybelonBatchCall(RQ relonquelonst) {
+    Selont<RQ> frozelonnRelonquelonsts;
+    synchronizelond (unselonntRelonquelonsts) {
+      unselonntRelonquelonsts.add(relonquelonst);
+      if (unselonntRelonquelonsts.sizelon() < batchSizelon) {
+        relonturn;
       }
 
-      // Make a copy of requests so we can modify it inside executeBatchCall without additional
+      // Makelon a copy of relonquelonsts so welon can modify it insidelon elonxeloncutelonBatchCall without additional
       // synchronization.
-      frozenRequests = new HashSet<>(unsentRequests);
-      unsentRequests.clear();
+      frozelonnRelonquelonsts = nelonw HashSelont<>(unselonntRelonquelonsts);
+      unselonntRelonquelonsts.clelonar();
     }
 
-    executeBatchCall(frozenRequests);
+    elonxeloncutelonBatchCall(frozelonnRelonquelonsts);
   }
 
-  private void executeBatchCall(Set<RQ> requests) {
-    batchClient.batchGet(requests)
-        .onSuccess(responseMap -> {
-          for (Map.Entry<RQ, RP> entry : responseMap.entrySet()) {
-            Promise<RP> promise = promises.remove(entry.getKey());
-            if (promise != null) {
-              promise.become(Future.value(entry.getValue()));
+  privatelon void elonxeloncutelonBatchCall(Selont<RQ> relonquelonsts) {
+    batchClielonnt.batchGelont(relonquelonsts)
+        .onSuccelonss(relonsponselonMap -> {
+          for (Map.elonntry<RQ, RP> elonntry : relonsponselonMap.elonntrySelont()) {
+            Promiselon<RP> promiselon = promiselons.relonmovelon(elonntry.gelontKelony());
+            if (promiselon != null) {
+              promiselon.beloncomelon(Futurelon.valuelon(elonntry.gelontValuelon()));
             }
           }
 
-          Set<RQ> outstandingRequests = Sets.difference(requests, responseMap.keySet());
-          for (RQ request : outstandingRequests) {
-            Promise<RP> promise = promises.remove(request);
-            if (promise != null) {
-              promise.become(Future.exception(new ResponseNotReturnedException(request)));
+          Selont<RQ> outstandingRelonquelonsts = Selonts.diffelonrelonncelon(relonquelonsts, relonsponselonMap.kelonySelont());
+          for (RQ relonquelonst : outstandingRelonquelonsts) {
+            Promiselon<RP> promiselon = promiselons.relonmovelon(relonquelonst);
+            if (promiselon != null) {
+              promiselon.beloncomelon(Futurelon.elonxcelonption(nelonw RelonsponselonNotRelonturnelondelonxcelonption(relonquelonst)));
             }
           }
 
-          return null;
+          relonturn null;
         })
-        .onFailure(exception -> {
-          for (RQ request : requests) {
-            Promise<RP> promise = promises.remove(request);
-            if (promise != null) {
-              promise.become(Future.exception(exception));
+        .onFailurelon(elonxcelonption -> {
+          for (RQ relonquelonst : relonquelonsts) {
+            Promiselon<RP> promiselon = promiselons.relonmovelon(relonquelonst);
+            if (promiselon != null) {
+              promiselon.beloncomelon(Futurelon.elonxcelonption(elonxcelonption));
             }
           }
 
-          return null;
+          relonturn null;
         });
   }
 }

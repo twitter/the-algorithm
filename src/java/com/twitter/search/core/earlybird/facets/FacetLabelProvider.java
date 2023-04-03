@@ -1,94 +1,94 @@
-package com.twitter.search.core.earlybird.facets;
+packagelon com.twittelonr.selonarch.corelon.elonarlybird.facelonts;
 
-import org.apache.lucene.util.BytesRef;
+import org.apachelon.lucelonnelon.util.BytelonsRelonf;
 
-import com.twitter.search.common.hashtable.HashTable;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.util.analysis.IntTermAttributeImpl;
-import com.twitter.search.common.util.analysis.LongTermAttributeImpl;
-import com.twitter.search.common.util.analysis.SortableLongTermAttributeImpl;
-import com.twitter.search.core.earlybird.index.inverted.InvertedIndex;
+import com.twittelonr.selonarch.common.hashtablelon.HashTablelon;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.common.util.analysis.IntTelonrmAttributelonImpl;
+import com.twittelonr.selonarch.common.util.analysis.LongTelonrmAttributelonImpl;
+import com.twittelonr.selonarch.common.util.analysis.SortablelonLongTelonrmAttributelonImpl;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.invelonrtelond.InvelonrtelondIndelonx;
 
 /**
- * Given a termID this accessor can be used to retrieve the term bytesref and text
- * that corresponds to the termID.
+ * Givelonn a telonrmID this accelonssor can belon uselond to relontrielonvelon thelon telonrm bytelonsrelonf and telonxt
+ * that correlonsponds to thelon telonrmID.
  */
-public interface FacetLabelProvider {
+public intelonrfacelon FacelontLabelonlProvidelonr {
   /**
-   * Returns a {@link FacetLabelAccessor} for this provider.
+   * Relonturns a {@link FacelontLabelonlAccelonssor} for this providelonr.
    */
-  FacetLabelAccessor getLabelAccessor();
+  FacelontLabelonlAccelonssor gelontLabelonlAccelonssor();
 
-  abstract class FacetLabelAccessor {
-    private int currentTermID = -1;
+  abstract class FacelontLabelonlAccelonssor {
+    privatelon int currelonntTelonrmID = -1;
 
-    protected final BytesRef termRef = new BytesRef();
-    protected boolean hasTermPayload = false;
-    protected final BytesRef termPayload = new BytesRef();
-    protected int offensiveCount = 0;
+    protelonctelond final BytelonsRelonf telonrmRelonf = nelonw BytelonsRelonf();
+    protelonctelond boolelonan hasTelonrmPayload = falselon;
+    protelonctelond final BytelonsRelonf telonrmPayload = nelonw BytelonsRelonf();
+    protelonctelond int offelonnsivelonCount = 0;
 
-    protected final boolean maybeSeek(long termID) {
-      if (termID == currentTermID) {
-        return true;
+    protelonctelond final boolelonan maybelonSelonelonk(long telonrmID) {
+      if (telonrmID == currelonntTelonrmID) {
+        relonturn truelon;
       }
 
-      if (seek(termID)) {
-        currentTermID = (int) termID;
-        return true;
-      } else {
-        currentTermID = -1;
-        return false;
+      if (selonelonk(telonrmID)) {
+        currelonntTelonrmID = (int) telonrmID;
+        relonturn truelon;
+      } elonlselon {
+        currelonntTelonrmID = -1;
+        relonturn falselon;
       }
     }
 
-    // Seek to term id provided.  Returns true if term found.  Should update termRef,
-    // hasTermPayload, and termPayload as appropriate.
-    protected abstract boolean seek(long termID);
+    // Selonelonk to telonrm id providelond.  Relonturns truelon if telonrm found.  Should updatelon telonrmRelonf,
+    // hasTelonrmPayload, and telonrmPayload as appropriatelon.
+    protelonctelond abstract boolelonan selonelonk(long telonrmID);
 
-    public final BytesRef getTermRef(long termID) {
-      return maybeSeek(termID) ? termRef : null;
+    public final BytelonsRelonf gelontTelonrmRelonf(long telonrmID) {
+      relonturn maybelonSelonelonk(telonrmID) ? telonrmRelonf : null;
     }
 
-    public String getTermText(long termID) {
-      return maybeSeek(termID) ? termRef.utf8ToString() : null;
+    public String gelontTelonrmTelonxt(long telonrmID) {
+      relonturn maybelonSelonelonk(telonrmID) ? telonrmRelonf.utf8ToString() : null;
     }
 
-    public final BytesRef getTermPayload(long termID) {
-      return maybeSeek(termID) && hasTermPayload ? termPayload : null;
+    public final BytelonsRelonf gelontTelonrmPayload(long telonrmID) {
+      relonturn maybelonSelonelonk(telonrmID) && hasTelonrmPayload ? telonrmPayload : null;
     }
 
-    public final int getOffensiveCount(long termID) {
-      return maybeSeek(termID) ? offensiveCount : 0;
+    public final int gelontOffelonnsivelonCount(long telonrmID) {
+      relonturn maybelonSelonelonk(telonrmID) ? offelonnsivelonCount : 0;
     }
   }
 
   /**
-   * Assumes the term is stored as an IntTermAttribute, and uses this to convert
-   * the term bytesref to an integer string facet label.
+   * Assumelons thelon telonrm is storelond as an IntTelonrmAttributelon, and uselons this to convelonrt
+   * thelon telonrm bytelonsrelonf to an intelongelonr string facelont labelonl.
    */
-  class IntTermFacetLabelProvider implements FacetLabelProvider {
-      private final InvertedIndex invertedIndex;
+  class IntTelonrmFacelontLabelonlProvidelonr implelonmelonnts FacelontLabelonlProvidelonr {
+      privatelon final InvelonrtelondIndelonx invelonrtelondIndelonx;
 
-    public IntTermFacetLabelProvider(InvertedIndex invertedIndex) {
-      this.invertedIndex = invertedIndex;
+    public IntTelonrmFacelontLabelonlProvidelonr(InvelonrtelondIndelonx invelonrtelondIndelonx) {
+      this.invelonrtelondIndelonx = invelonrtelondIndelonx;
     }
 
-    @Override
-    public FacetLabelAccessor getLabelAccessor() {
-      return new FacetLabelAccessor() {
-        @Override
-        protected boolean seek(long termID) {
-          if (termID != HashTable.EMPTY_SLOT) {
-            invertedIndex.getTerm((int) termID, termRef);
-            return true;
+    @Ovelonrridelon
+    public FacelontLabelonlAccelonssor gelontLabelonlAccelonssor() {
+      relonturn nelonw FacelontLabelonlAccelonssor() {
+        @Ovelonrridelon
+        protelonctelond boolelonan selonelonk(long telonrmID) {
+          if (telonrmID != HashTablelon.elonMPTY_SLOT) {
+            invelonrtelondIndelonx.gelontTelonrm((int) telonrmID, telonrmRelonf);
+            relonturn truelon;
           }
-          return false;
+          relonturn falselon;
         }
 
-        @Override
-        public String getTermText(long termID) {
-          return maybeSeek(termID)
-                 ? Integer.toString(IntTermAttributeImpl.copyBytesRefToInt(termRef))
+        @Ovelonrridelon
+        public String gelontTelonrmTelonxt(long telonrmID) {
+          relonturn maybelonSelonelonk(telonrmID)
+                 ? Intelongelonr.toString(IntTelonrmAttributelonImpl.copyBytelonsRelonfToInt(telonrmRelonf))
                  : null;
         }
       };
@@ -96,109 +96,109 @@ public interface FacetLabelProvider {
   }
 
   /**
-   * Assumes the term is stored as an LongTermAttribute, and uses this to convert
-   * the term bytesref to an long string facet label.
+   * Assumelons thelon telonrm is storelond as an LongTelonrmAttributelon, and uselons this to convelonrt
+   * thelon telonrm bytelonsrelonf to an long string facelont labelonl.
    */
-  class LongTermFacetLabelProvider implements FacetLabelProvider {
-    private final InvertedIndex invertedIndex;
+  class LongTelonrmFacelontLabelonlProvidelonr implelonmelonnts FacelontLabelonlProvidelonr {
+    privatelon final InvelonrtelondIndelonx invelonrtelondIndelonx;
 
-    public LongTermFacetLabelProvider(InvertedIndex invertedIndex) {
-      this.invertedIndex = invertedIndex;
+    public LongTelonrmFacelontLabelonlProvidelonr(InvelonrtelondIndelonx invelonrtelondIndelonx) {
+      this.invelonrtelondIndelonx = invelonrtelondIndelonx;
     }
 
-    @Override
-    public FacetLabelAccessor getLabelAccessor() {
-      return new FacetLabelAccessor() {
-        @Override
-        protected boolean seek(long termID) {
-          if (termID != HashTable.EMPTY_SLOT) {
-            invertedIndex.getTerm((int) termID, termRef);
-            return true;
+    @Ovelonrridelon
+    public FacelontLabelonlAccelonssor gelontLabelonlAccelonssor() {
+      relonturn nelonw FacelontLabelonlAccelonssor() {
+        @Ovelonrridelon
+        protelonctelond boolelonan selonelonk(long telonrmID) {
+          if (telonrmID != HashTablelon.elonMPTY_SLOT) {
+            invelonrtelondIndelonx.gelontTelonrm((int) telonrmID, telonrmRelonf);
+            relonturn truelon;
           }
-          return false;
+          relonturn falselon;
         }
 
-        @Override
-        public String getTermText(long termID) {
-          return maybeSeek(termID)
-                 ? Long.toString(LongTermAttributeImpl.copyBytesRefToLong(termRef))
+        @Ovelonrridelon
+        public String gelontTelonrmTelonxt(long telonrmID) {
+          relonturn maybelonSelonelonk(telonrmID)
+                 ? Long.toString(LongTelonrmAttributelonImpl.copyBytelonsRelonfToLong(telonrmRelonf))
                  : null;
         }
       };
     }
   }
 
-  class SortedLongTermFacetLabelProvider implements FacetLabelProvider {
-    private final InvertedIndex invertedIndex;
+  class SortelondLongTelonrmFacelontLabelonlProvidelonr implelonmelonnts FacelontLabelonlProvidelonr {
+    privatelon final InvelonrtelondIndelonx invelonrtelondIndelonx;
 
-    public SortedLongTermFacetLabelProvider(InvertedIndex invertedIndex) {
-      this.invertedIndex = invertedIndex;
+    public SortelondLongTelonrmFacelontLabelonlProvidelonr(InvelonrtelondIndelonx invelonrtelondIndelonx) {
+      this.invelonrtelondIndelonx = invelonrtelondIndelonx;
     }
 
-    @Override
-    public FacetLabelAccessor getLabelAccessor() {
-      return new FacetLabelAccessor() {
-        @Override
-        protected boolean seek(long termID) {
-          if (termID != HashTable.EMPTY_SLOT) {
-            invertedIndex.getTerm((int) termID, termRef);
-            return true;
+    @Ovelonrridelon
+    public FacelontLabelonlAccelonssor gelontLabelonlAccelonssor() {
+      relonturn nelonw FacelontLabelonlAccelonssor() {
+        @Ovelonrridelon
+        protelonctelond boolelonan selonelonk(long telonrmID) {
+          if (telonrmID != HashTablelon.elonMPTY_SLOT) {
+            invelonrtelondIndelonx.gelontTelonrm((int) telonrmID, telonrmRelonf);
+            relonturn truelon;
           }
-          return false;
+          relonturn falselon;
         }
 
-        @Override
-        public String getTermText(long termID) {
-          return maybeSeek(termID)
-              ? Long.toString(SortableLongTermAttributeImpl.copyBytesRefToLong(termRef))
+        @Ovelonrridelon
+        public String gelontTelonrmTelonxt(long telonrmID) {
+          relonturn maybelonSelonelonk(telonrmID)
+              ? Long.toString(SortablelonLongTelonrmAttributelonImpl.copyBytelonsRelonfToLong(telonrmRelonf))
               : null;
         }
       };
     }
   }
 
-  class IdentityFacetLabelProvider implements FacetLabelProvider {
-    @Override
-    public FacetLabelAccessor getLabelAccessor() {
-      return new FacetLabelAccessor() {
-        @Override
-        protected boolean seek(long termID) {
-          return true;
+  class IdelonntityFacelontLabelonlProvidelonr implelonmelonnts FacelontLabelonlProvidelonr {
+    @Ovelonrridelon
+    public FacelontLabelonlAccelonssor gelontLabelonlAccelonssor() {
+      relonturn nelonw FacelontLabelonlAccelonssor() {
+        @Ovelonrridelon
+        protelonctelond boolelonan selonelonk(long telonrmID) {
+          relonturn truelon;
         }
 
-        @Override
-        public String getTermText(long termID) {
-          return Long.toString(termID);
+        @Ovelonrridelon
+        public String gelontTelonrmTelonxt(long telonrmID) {
+          relonturn Long.toString(telonrmID);
         }
       };
     }
   }
 
   /**
-   * The methods on this provider should NOT be called under normal circumstances!
+   * Thelon melonthods on this providelonr should NOT belon callelond undelonr normal circumstancelons!
    *
-   * When a facet misses inverted index and does not use CSF, this InaccessibleFacetLabelProvider
-   * will be used as a dummy provider. Then, unexptectedFacetLabelAccess counter will be
-   * incremented when this provider is used later.
+   * Whelonn a facelont misselons invelonrtelond indelonx and doelons not uselon CSF, this InaccelonssiblelonFacelontLabelonlProvidelonr
+   * will belon uselond as a dummy providelonr. Thelonn, unelonxptelonctelondFacelontLabelonlAccelonss countelonr will belon
+   * increlonmelonntelond whelonn this providelonr is uselond latelonr.
    *
-   * Also see:
-   * {@link FacetUtil}
+   * Also selonelon:
+   * {@link FacelontUtil}
    */
-  class InaccessibleFacetLabelProvider implements FacetLabelProvider {
-    private final SearchCounter unexptectedFacetLabelAccess;
+  class InaccelonssiblelonFacelontLabelonlProvidelonr implelonmelonnts FacelontLabelonlProvidelonr {
+    privatelon final SelonarchCountelonr unelonxptelonctelondFacelontLabelonlAccelonss;
 
-    public InaccessibleFacetLabelProvider(String fieldName) {
-      this.unexptectedFacetLabelAccess =
-          SearchCounter.export("unexpected_facet_label_access_for_field_" + fieldName);
+    public InaccelonssiblelonFacelontLabelonlProvidelonr(String fielonldNamelon) {
+      this.unelonxptelonctelondFacelontLabelonlAccelonss =
+          SelonarchCountelonr.elonxport("unelonxpelonctelond_facelont_labelonl_accelonss_for_fielonld_" + fielonldNamelon);
     }
 
-    @Override
-    public FacetLabelAccessor getLabelAccessor() {
-      return new FacetLabelAccessor() {
-        @Override
-        protected boolean seek(long termID) {
-          unexptectedFacetLabelAccess.increment();
-          return false;
+    @Ovelonrridelon
+    public FacelontLabelonlAccelonssor gelontLabelonlAccelonssor() {
+      relonturn nelonw FacelontLabelonlAccelonssor() {
+        @Ovelonrridelon
+        protelonctelond boolelonan selonelonk(long telonrmID) {
+          unelonxptelonctelondFacelontLabelonlAccelonss.increlonmelonnt();
+          relonturn falselon;
         }
       };
     }

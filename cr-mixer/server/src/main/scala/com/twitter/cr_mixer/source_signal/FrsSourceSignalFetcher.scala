@@ -1,64 +1,64 @@
-package com.twitter.cr_mixer.source_signal
+packagelon com.twittelonr.cr_mixelonr.sourcelon_signal
 
-import com.twitter.cr_mixer.config.TimeoutConfig
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.cr_mixer.model.SourceInfo
-import com.twitter.cr_mixer.param.FrsParams
-import com.twitter.cr_mixer.param.GlobalParams
-import com.twitter.cr_mixer.source_signal.FrsStore.FrsQueryResult
-import com.twitter.cr_mixer.source_signal.SourceFetcher.FetcherQuery
-import com.twitter.cr_mixer.thriftscala.SourceType
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
-import javax.inject.Singleton
-import javax.inject.Inject
-import javax.inject.Named
+import com.twittelonr.cr_mixelonr.config.TimelonoutConfig
+import com.twittelonr.cr_mixelonr.modelonl.ModulelonNamelons
+import com.twittelonr.cr_mixelonr.modelonl.SourcelonInfo
+import com.twittelonr.cr_mixelonr.param.FrsParams
+import com.twittelonr.cr_mixelonr.param.GlobalParams
+import com.twittelonr.cr_mixelonr.sourcelon_signal.FrsStorelon.FrsQuelonryRelonsult
+import com.twittelonr.cr_mixelonr.sourcelon_signal.SourcelonFelontchelonr.FelontchelonrQuelonry
+import com.twittelonr.cr_mixelonr.thriftscala.SourcelonTypelon
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.simclustelonrs_v2.common.UselonrId
+import com.twittelonr.simclustelonrs_v2.thriftscala.IntelonrnalId
+import com.twittelonr.storelonhaus.RelonadablelonStorelon
+import com.twittelonr.util.Futurelon
+import javax.injelonct.Singlelonton
+import javax.injelonct.Injelonct
+import javax.injelonct.Namelond
 
-@Singleton
-case class FrsSourceSignalFetcher @Inject() (
-  @Named(ModuleNames.FrsStore) frsStore: ReadableStore[FrsStore.Query, Seq[FrsQueryResult]],
-  override val timeoutConfig: TimeoutConfig,
-  globalStats: StatsReceiver)
-    extends SourceSignalFetcher {
+@Singlelonton
+caselon class FrsSourcelonSignalFelontchelonr @Injelonct() (
+  @Namelond(ModulelonNamelons.FrsStorelon) frsStorelon: RelonadablelonStorelon[FrsStorelon.Quelonry, Selonq[FrsQuelonryRelonsult]],
+  ovelonrridelon val timelonoutConfig: TimelonoutConfig,
+  globalStats: StatsReloncelonivelonr)
+    elonxtelonnds SourcelonSignalFelontchelonr {
 
-  override protected val stats: StatsReceiver = globalStats.scope(identifier)
-  override type SignalConvertType = UserId
+  ovelonrridelon protelonctelond val stats: StatsReloncelonivelonr = globalStats.scopelon(idelonntifielonr)
+  ovelonrridelon typelon SignalConvelonrtTypelon = UselonrId
 
-  override def isEnabled(query: FetcherQuery): Boolean = {
-    query.params(FrsParams.EnableSourceParam)
+  ovelonrridelon delonf iselonnablelond(quelonry: FelontchelonrQuelonry): Boolelonan = {
+    quelonry.params(FrsParams.elonnablelonSourcelonParam)
   }
 
-  override def fetchAndProcess(query: FetcherQuery): Future[Option[Seq[SourceInfo]]] = {
-    // Fetch raw signals
-    val rawSignals = frsStore
-      .get(FrsStore.Query(query.userId, query.params(GlobalParams.UnifiedMaxSourceKeyNum)))
+  ovelonrridelon delonf felontchAndProcelonss(quelonry: FelontchelonrQuelonry): Futurelon[Option[Selonq[SourcelonInfo]]] = {
+    // Felontch raw signals
+    val rawSignals = frsStorelon
+      .gelont(FrsStorelon.Quelonry(quelonry.uselonrId, quelonry.params(GlobalParams.UnifielondMaxSourcelonKelonyNum)))
       .map {
         _.map {
           _.map {
-            _.userId
+            _.uselonrId
           }
         }
       }
-    // Process signals
+    // Procelonss signals
     rawSignals.map {
-      _.map { frsUsers =>
-        convertSourceInfo(SourceType.FollowRecommendation, frsUsers)
+      _.map { frsUselonrs =>
+        convelonrtSourcelonInfo(SourcelonTypelon.FollowReloncommelonndation, frsUselonrs)
       }
     }
   }
 
-  override def convertSourceInfo(
-    sourceType: SourceType,
-    signals: Seq[SignalConvertType]
-  ): Seq[SourceInfo] = {
+  ovelonrridelon delonf convelonrtSourcelonInfo(
+    sourcelonTypelon: SourcelonTypelon,
+    signals: Selonq[SignalConvelonrtTypelon]
+  ): Selonq[SourcelonInfo] = {
     signals.map { signal =>
-      SourceInfo(
-        sourceType = sourceType,
-        internalId = InternalId.UserId(signal),
-        sourceEventTime = None
+      SourcelonInfo(
+        sourcelonTypelon = sourcelonTypelon,
+        intelonrnalId = IntelonrnalId.UselonrId(signal),
+        sourcelonelonvelonntTimelon = Nonelon
       )
     }
   }

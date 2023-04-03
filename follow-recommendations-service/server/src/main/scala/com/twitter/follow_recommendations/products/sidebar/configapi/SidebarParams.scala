@@ -1,9 +1,9 @@
-package com.twitter.follow_recommendations.products.sidebar.configapi
+packagelon com.twittelonr.follow_reloncommelonndations.products.sidelonbar.configapi
 
-import com.twitter.timelines.configapi.Param
+import com.twittelonr.timelonlinelons.configapi.Param
 
-object SidebarParams {
-  object EnableProduct extends Param[Boolean](false)
+objelonct SidelonbarParams {
+  objelonct elonnablelonProduct elonxtelonnds Param[Boolelonan](falselon)
 
-  object DefaultMaxResults extends Param[Int](20)
+  objelonct DelonfaultMaxRelonsults elonxtelonnds Param[Int](20)
 }

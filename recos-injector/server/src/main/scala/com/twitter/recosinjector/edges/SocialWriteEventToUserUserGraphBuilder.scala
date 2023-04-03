@@ -1,73 +1,73 @@
-package com.twitter.recosinjector.edges
+packagelon com.twittelonr.reloncosinjelonctor.elondgelons
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.recos.util.Action
-import com.twitter.socialgraph.thriftscala.{
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.reloncos.util.Action
+import com.twittelonr.socialgraph.thriftscala.{
   Action => SocialGraphAction,
-  FollowGraphEvent,
-  FollowType,
-  WriteEvent
+  FollowGraphelonvelonnt,
+  FollowTypelon,
+  Writelonelonvelonnt
 }
-import com.twitter.util.Future
+import com.twittelonr.util.Futurelon
 
 /**
- * Converts a WriteEvent to UserUserGraph's messages, including Mention and Mediatag messages
+ * Convelonrts a Writelonelonvelonnt to UselonrUselonrGraph's melonssagelons, including Melonntion and Melondiatag melonssagelons
  */
-class SocialWriteEventToUserUserGraphBuilder()(override implicit val statsReceiver: StatsReceiver)
-    extends EventToMessageBuilder[WriteEvent, UserUserEdge] {
-  private val followOrFrictionlessFollowCounter =
-    statsReceiver.counter("num_follow_or_frictionless")
-  private val notFollowOrFrictionlessFollowCounter =
-    statsReceiver.counter("num_not_follow_or_frictionless")
-  private val followEdgeCounter = statsReceiver.counter("num_follow_edge")
+class SocialWritelonelonvelonntToUselonrUselonrGraphBuildelonr()(ovelonrridelon implicit val statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds elonvelonntToMelonssagelonBuildelonr[Writelonelonvelonnt, UselonrUselonrelondgelon] {
+  privatelon val followOrFrictionlelonssFollowCountelonr =
+    statsReloncelonivelonr.countelonr("num_follow_or_frictionlelonss")
+  privatelon val notFollowOrFrictionlelonssFollowCountelonr =
+    statsReloncelonivelonr.countelonr("num_not_follow_or_frictionlelonss")
+  privatelon val followelondgelonCountelonr = statsReloncelonivelonr.countelonr("num_follow_elondgelon")
 
   /**
-   * For now, we are only interested in Follow events
+   * For now, welon arelon only intelonrelonstelond in Follow elonvelonnts
    */
-  override def shouldProcessEvent(event: WriteEvent): Future[Boolean] = {
-    event.action match {
-      case SocialGraphAction.Follow | SocialGraphAction.FrictionlessFollow =>
-        followOrFrictionlessFollowCounter.incr()
-        Future(true)
-      case _ =>
-        notFollowOrFrictionlessFollowCounter.incr()
-        Future(false)
+  ovelonrridelon delonf shouldProcelonsselonvelonnt(elonvelonnt: Writelonelonvelonnt): Futurelon[Boolelonan] = {
+    elonvelonnt.action match {
+      caselon SocialGraphAction.Follow | SocialGraphAction.FrictionlelonssFollow =>
+        followOrFrictionlelonssFollowCountelonr.incr()
+        Futurelon(truelon)
+      caselon _ =>
+        notFollowOrFrictionlelonssFollowCountelonr.incr()
+        Futurelon(falselon)
     }
   }
 
   /**
-   * Determine whether a Follow event is valid/error free.
+   * Delontelonrminelon whelonthelonr a Follow elonvelonnt is valid/elonrror frelonelon.
    */
-  private def isValidFollowEvent(followEvent: FollowGraphEvent): Boolean = {
-    followEvent.followType match {
-      case Some(FollowType.NormalFollow) | Some(FollowType.FrictionlessFollow) =>
-        followEvent.result.validationError.isEmpty
-      case _ =>
-        false
+  privatelon delonf isValidFollowelonvelonnt(followelonvelonnt: FollowGraphelonvelonnt): Boolelonan = {
+    followelonvelonnt.followTypelon match {
+      caselon Somelon(FollowTypelon.NormalFollow) | Somelon(FollowTypelon.FrictionlelonssFollow) =>
+        followelonvelonnt.relonsult.validationelonrror.iselonmpty
+      caselon _ =>
+        falselon
     }
   }
 
-  override def buildEdges(event: WriteEvent): Future[Seq[UserUserEdge]] = {
-    val userUserEdges = event.follow
-      .map(_.collect {
-        case followEvent if isValidFollowEvent(followEvent) =>
-          val sourceUserId = followEvent.result.request.source
-          val targetUserId = followEvent.result.request.target
-          followEdgeCounter.incr()
-          UserUserEdge(
-            sourceUserId,
-            targetUserId,
+  ovelonrridelon delonf buildelondgelons(elonvelonnt: Writelonelonvelonnt): Futurelon[Selonq[UselonrUselonrelondgelon]] = {
+    val uselonrUselonrelondgelons = elonvelonnt.follow
+      .map(_.collelonct {
+        caselon followelonvelonnt if isValidFollowelonvelonnt(followelonvelonnt) =>
+          val sourcelonUselonrId = followelonvelonnt.relonsult.relonquelonst.sourcelon
+          val targelontUselonrId = followelonvelonnt.relonsult.relonquelonst.targelont
+          followelondgelonCountelonr.incr()
+          UselonrUselonrelondgelon(
+            sourcelonUselonrId,
+            targelontUselonrId,
             Action.Follow,
-            Some(System.currentTimeMillis())
+            Somelon(Systelonm.currelonntTimelonMillis())
           )
-      }).getOrElse(Nil)
-    Future(userUserEdges)
+      }).gelontOrelonlselon(Nil)
+    Futurelon(uselonrUselonrelondgelons)
   }
 
-  override def filterEdges(
-    event: WriteEvent,
-    edges: Seq[UserUserEdge]
-  ): Future[Seq[UserUserEdge]] = {
-    Future(edges)
+  ovelonrridelon delonf filtelonrelondgelons(
+    elonvelonnt: Writelonelonvelonnt,
+    elondgelons: Selonq[UselonrUselonrelondgelon]
+  ): Futurelon[Selonq[UselonrUselonrelondgelon]] = {
+    Futurelon(elondgelons)
   }
 }

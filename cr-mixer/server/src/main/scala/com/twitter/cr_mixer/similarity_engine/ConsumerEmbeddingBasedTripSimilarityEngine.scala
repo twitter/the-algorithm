@@ -1,117 +1,117 @@
-package com.twitter.cr_mixer.similarity_engine
+packagelon com.twittelonr.cr_mixelonr.similarity_elonnginelon
 
-import com.twitter.cr_mixer.model.TripTweetWithScore
-import com.twitter.cr_mixer.param.ConsumerEmbeddingBasedTripParams
-import com.twitter.cr_mixer.util.InterleaveUtil
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.util.StatsUtil
-import com.twitter.simclusters_v2.common.ClusterId
-import com.twitter.simclusters_v2.common.SimClustersEmbedding
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.timelines.configapi
-import com.twitter.timelines.configapi.Params
-import com.twitter.trends.trip_v1.trip_tweets.thriftscala.Cluster
-import com.twitter.trends.trip_v1.trip_tweets.thriftscala.ClusterDomain
-import com.twitter.trends.trip_v1.trip_tweets.thriftscala.TripTweet
-import com.twitter.trends.trip_v1.trip_tweets.thriftscala.TripDomain
-import com.twitter.util.Future
+import com.twittelonr.cr_mixelonr.modelonl.TripTwelonelontWithScorelon
+import com.twittelonr.cr_mixelonr.param.ConsumelonrelonmbelonddingBaselondTripParams
+import com.twittelonr.cr_mixelonr.util.IntelonrlelonavelonUtil
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.frigatelon.common.util.StatsUtil
+import com.twittelonr.simclustelonrs_v2.common.ClustelonrId
+import com.twittelonr.simclustelonrs_v2.common.SimClustelonrselonmbelondding
+import com.twittelonr.simclustelonrs_v2.common.UselonrId
+import com.twittelonr.simclustelonrs_v2.thriftscala.IntelonrnalId
+import com.twittelonr.storelonhaus.RelonadablelonStorelon
+import com.twittelonr.timelonlinelons.configapi
+import com.twittelonr.timelonlinelons.configapi.Params
+import com.twittelonr.trelonnds.trip_v1.trip_twelonelonts.thriftscala.Clustelonr
+import com.twittelonr.trelonnds.trip_v1.trip_twelonelonts.thriftscala.ClustelonrDomain
+import com.twittelonr.trelonnds.trip_v1.trip_twelonelonts.thriftscala.TripTwelonelont
+import com.twittelonr.trelonnds.trip_v1.trip_twelonelonts.thriftscala.TripDomain
+import com.twittelonr.util.Futurelon
 
-case class TripEngineQuery(
-  modelId: String,
-  sourceId: InternalId,
-  tripSourceId: String,
-  maxResult: Int,
+caselon class TripelonnginelonQuelonry(
+  modelonlId: String,
+  sourcelonId: IntelonrnalId,
+  tripSourcelonId: String,
+  maxRelonsult: Int,
   params: Params)
 
-case class ConsumerEmbeddingBasedTripSimilarityEngine(
-  embeddingStoreLookUpMap: Map[String, ReadableStore[UserId, SimClustersEmbedding]],
-  tripCandidateSource: ReadableStore[TripDomain, Seq[TripTweet]],
-  statsReceiver: StatsReceiver,
-) extends ReadableStore[TripEngineQuery, Seq[TripTweetWithScore]] {
-  import ConsumerEmbeddingBasedTripSimilarityEngine._
+caselon class ConsumelonrelonmbelonddingBaselondTripSimilarityelonnginelon(
+  elonmbelonddingStorelonLookUpMap: Map[String, RelonadablelonStorelon[UselonrId, SimClustelonrselonmbelondding]],
+  tripCandidatelonSourcelon: RelonadablelonStorelon[TripDomain, Selonq[TripTwelonelont]],
+  statsReloncelonivelonr: StatsReloncelonivelonr,
+) elonxtelonnds RelonadablelonStorelon[TripelonnginelonQuelonry, Selonq[TripTwelonelontWithScorelon]] {
+  import ConsumelonrelonmbelonddingBaselondTripSimilarityelonnginelon._
 
-  private val scopedStats = statsReceiver.scope(name)
-  private def fetchTopClusters(query: TripEngineQuery): Future[Option[Seq[ClusterId]]] = {
-    query.sourceId match {
-      case InternalId.UserId(userId) =>
-        val embeddingStore = embeddingStoreLookUpMap.getOrElse(
-          query.modelId,
-          throw new IllegalArgumentException(
-            s"${this.getClass.getSimpleName}: " +
-              s"ModelId ${query.modelId} does not exist for embeddingStore"
+  privatelon val scopelondStats = statsReloncelonivelonr.scopelon(namelon)
+  privatelon delonf felontchTopClustelonrs(quelonry: TripelonnginelonQuelonry): Futurelon[Option[Selonq[ClustelonrId]]] = {
+    quelonry.sourcelonId match {
+      caselon IntelonrnalId.UselonrId(uselonrId) =>
+        val elonmbelonddingStorelon = elonmbelonddingStorelonLookUpMap.gelontOrelonlselon(
+          quelonry.modelonlId,
+          throw nelonw IllelongalArgumelonntelonxcelonption(
+            s"${this.gelontClass.gelontSimplelonNamelon}: " +
+              s"ModelonlId ${quelonry.modelonlId} doelons not elonxist for elonmbelonddingStorelon"
           )
         )
-        embeddingStore.get(userId).map(_.map(_.topClusterIds(MaxClusters)))
-      case _ =>
-        Future.None
+        elonmbelonddingStorelon.gelont(uselonrId).map(_.map(_.topClustelonrIds(MaxClustelonrs)))
+      caselon _ =>
+        Futurelon.Nonelon
     }
   }
-  private def fetchCandidates(
-    topClusters: Seq[ClusterId],
-    tripSourceId: String
-  ): Future[Seq[Seq[TripTweetWithScore]]] = {
-    Future
-      .collect {
-        topClusters.map { clusterId =>
-          tripCandidateSource
-            .get(
+  privatelon delonf felontchCandidatelons(
+    topClustelonrs: Selonq[ClustelonrId],
+    tripSourcelonId: String
+  ): Futurelon[Selonq[Selonq[TripTwelonelontWithScorelon]]] = {
+    Futurelon
+      .collelonct {
+        topClustelonrs.map { clustelonrId =>
+          tripCandidatelonSourcelon
+            .gelont(
               TripDomain(
-                sourceId = tripSourceId,
-                clusterDomain = Some(
-                  ClusterDomain(simCluster = Some(Cluster(clusterIntId = Some(clusterId))))))).map {
+                sourcelonId = tripSourcelonId,
+                clustelonrDomain = Somelon(
+                  ClustelonrDomain(simClustelonr = Somelon(Clustelonr(clustelonrIntId = Somelon(clustelonrId))))))).map {
               _.map {
-                _.collect {
-                  case TripTweet(tweetId, score) =>
-                    TripTweetWithScore(tweetId, score)
+                _.collelonct {
+                  caselon TripTwelonelont(twelonelontId, scorelon) =>
+                    TripTwelonelontWithScorelon(twelonelontId, scorelon)
                 }
-              }.getOrElse(Seq.empty).take(MaxNumResultsPerCluster)
+              }.gelontOrelonlselon(Selonq.elonmpty).takelon(MaxNumRelonsultsPelonrClustelonr)
             }
         }
       }
   }
 
-  override def get(engineQuery: TripEngineQuery): Future[Option[Seq[TripTweetWithScore]]] = {
-    val fetchTopClustersStat = scopedStats.scope(engineQuery.modelId).scope("fetchTopClusters")
-    val fetchCandidatesStat = scopedStats.scope(engineQuery.modelId).scope("fetchCandidates")
+  ovelonrridelon delonf gelont(elonnginelonQuelonry: TripelonnginelonQuelonry): Futurelon[Option[Selonq[TripTwelonelontWithScorelon]]] = {
+    val felontchTopClustelonrsStat = scopelondStats.scopelon(elonnginelonQuelonry.modelonlId).scopelon("felontchTopClustelonrs")
+    val felontchCandidatelonsStat = scopelondStats.scopelon(elonnginelonQuelonry.modelonlId).scopelon("felontchCandidatelons")
 
     for {
-      topClustersOpt <- StatsUtil.trackOptionStats(fetchTopClustersStat) {
-        fetchTopClusters(engineQuery)
+      topClustelonrsOpt <- StatsUtil.trackOptionStats(felontchTopClustelonrsStat) {
+        felontchTopClustelonrs(elonnginelonQuelonry)
       }
-      candidates <- StatsUtil.trackItemsStats(fetchCandidatesStat) {
-        topClustersOpt match {
-          case Some(topClusters) => fetchCandidates(topClusters, engineQuery.tripSourceId)
-          case None => Future.Nil
+      candidatelons <- StatsUtil.trackItelonmsStats(felontchCandidatelonsStat) {
+        topClustelonrsOpt match {
+          caselon Somelon(topClustelonrs) => felontchCandidatelons(topClustelonrs, elonnginelonQuelonry.tripSourcelonId)
+          caselon Nonelon => Futurelon.Nil
         }
       }
-    } yield {
-      val interleavedTweets = InterleaveUtil.interleave(candidates)
-      val dedupCandidates = interleavedTweets
-        .groupBy(_.tweetId).flatMap {
-          case (_, tweetWithScoreSeq) => tweetWithScoreSeq.sortBy(-_.score).take(1)
-        }.toSeq.take(engineQuery.maxResult)
-      Some(dedupCandidates)
+    } yielonld {
+      val intelonrlelonavelondTwelonelonts = IntelonrlelonavelonUtil.intelonrlelonavelon(candidatelons)
+      val delondupCandidatelons = intelonrlelonavelondTwelonelonts
+        .groupBy(_.twelonelontId).flatMap {
+          caselon (_, twelonelontWithScorelonSelonq) => twelonelontWithScorelonSelonq.sortBy(-_.scorelon).takelon(1)
+        }.toSelonq.takelon(elonnginelonQuelonry.maxRelonsult)
+      Somelon(delondupCandidatelons)
     }
   }
 }
 
-object ConsumerEmbeddingBasedTripSimilarityEngine {
-  private val MaxClusters: Int = 8
-  private val MaxNumResultsPerCluster: Int = 25
-  private val name: String = this.getClass.getSimpleName
+objelonct ConsumelonrelonmbelonddingBaselondTripSimilarityelonnginelon {
+  privatelon val MaxClustelonrs: Int = 8
+  privatelon val MaxNumRelonsultsPelonrClustelonr: Int = 25
+  privatelon val namelon: String = this.gelontClass.gelontSimplelonNamelon
 
-  def fromParams(
-    modelId: String,
-    sourceId: InternalId,
+  delonf fromParams(
+    modelonlId: String,
+    sourcelonId: IntelonrnalId,
     params: configapi.Params
-  ): TripEngineQuery = {
-    TripEngineQuery(
-      modelId = modelId,
-      sourceId = sourceId,
-      tripSourceId = params(ConsumerEmbeddingBasedTripParams.SourceIdParam),
-      maxResult = params(ConsumerEmbeddingBasedTripParams.MaxNumCandidatesParam),
+  ): TripelonnginelonQuelonry = {
+    TripelonnginelonQuelonry(
+      modelonlId = modelonlId,
+      sourcelonId = sourcelonId,
+      tripSourcelonId = params(ConsumelonrelonmbelonddingBaselondTripParams.SourcelonIdParam),
+      maxRelonsult = params(ConsumelonrelonmbelonddingBaselondTripParams.MaxNumCandidatelonsParam),
       params = params
     )
   }

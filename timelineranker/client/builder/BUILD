@@ -1,6 +1,6 @@
-target(
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "timelineranker/client/builder/src/main/scala",
+targelont(
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        "timelonlinelonrankelonr/clielonnt/buildelonr/src/main/scala",
     ],
 )

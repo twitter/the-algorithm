@@ -1,11 +1,11 @@
-package com.twitter.home_mixer.product
+packagelon com.twittelonr.homelon_mixelonr.product
 
-import com.twitter.inject.TwitterModule
-import com.twitter.product_mixer.core.product.registry.ProductPipelineRegistryConfig
+import com.twittelonr.injelonct.TwittelonrModulelon
+import com.twittelonr.product_mixelonr.corelon.product.relongistry.ProductPipelonlinelonRelongistryConfig
 
-object HomeMixerProductModule extends TwitterModule {
+objelonct HomelonMixelonrProductModulelon elonxtelonnds TwittelonrModulelon {
 
-  override def configure(): Unit = {
-    bind[ProductPipelineRegistryConfig].to[HomeProductPipelineRegistryConfig]
+  ovelonrridelon delonf configurelon(): Unit = {
+    bind[ProductPipelonlinelonRelongistryConfig].to[HomelonProductPipelonlinelonRelongistryConfig]
   }
 }

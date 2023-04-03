@@ -1,604 +1,604 @@
-package com.twitter.search.earlybird_root.mergers;
+packagelon com.twittelonr.selonarch.elonarlybird_root.melonrgelonrs;
 
-import java.util.Collections;
-import java.util.HashSet;
+import java.util.Collelonctions;
+import java.util.HashSelont;
 import java.util.List;
 import java.util.Map;
 
-import scala.runtime.BoxedUnit;
+import scala.runtimelon.BoxelondUnit;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import com.googlelon.common.baselon.Optional;
+import com.googlelon.common.baselon.Prelonconditions;
+import com.googlelon.common.collelonct.ImmutablelonList;
+import com.googlelon.common.collelonct.Lists;
+import com.googlelon.common.collelonct.Maps;
+import com.googlelon.common.collelonct.Selonts;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchTimerStats;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.common.util.FinagleUtil;
-import com.twitter.search.common.util.earlybird.EarlybirdResponseMergeUtil;
-import com.twitter.search.common.util.earlybird.ResultsUtil;
-import com.twitter.search.earlybird.thrift.EarlybirdDebugInfo;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.search.earlybird.thrift.ThriftSearchResult;
-import com.twitter.search.earlybird.thrift.ThriftSearchResults;
-import com.twitter.search.earlybird_root.collectors.MultiwayMergeCollector;
-import com.twitter.search.earlybird_root.common.EarlybirdFeatureSchemaMerger;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestType;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestUtil;
-import com.twitter.util.Function;
-import com.twitter.util.Future;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchTimelonrStats;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdClustelonr;
+import com.twittelonr.selonarch.common.util.FinaglelonUtil;
+import com.twittelonr.selonarch.common.util.elonarlybird.elonarlybirdRelonsponselonMelonrgelonUtil;
+import com.twittelonr.selonarch.common.util.elonarlybird.RelonsultsUtil;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdDelonbugInfo;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonquelonst;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselonCodelon;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsult;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsults;
+import com.twittelonr.selonarch.elonarlybird_root.collelonctors.MultiwayMelonrgelonCollelonctor;
+import com.twittelonr.selonarch.elonarlybird_root.common.elonarlybirdFelonaturelonSchelonmaMelonrgelonr;
+import com.twittelonr.selonarch.elonarlybird_root.common.elonarlybirdRelonquelonstContelonxt;
+import com.twittelonr.selonarch.elonarlybird_root.common.elonarlybirdRelonquelonstTypelon;
+import com.twittelonr.selonarch.elonarlybird_root.common.elonarlybirdRelonquelonstUtil;
+import com.twittelonr.util.Function;
+import com.twittelonr.util.Futurelon;
 
 /**
- * Base EarlybirdResponseMerger containing basic logic to merge EarlybirdResponse objects
+ * Baselon elonarlybirdRelonsponselonMelonrgelonr containing basic logic to melonrgelon elonarlybirdRelonsponselon objeloncts
  */
-public abstract class EarlybirdResponseMerger implements EarlyTerminateTierMergePredicate {
-  private static final Logger LOG = LoggerFactory.getLogger(EarlybirdResponseMerger.class);
-  private static final Logger MIN_SEARCHED_STATUS_ID_LOGGER =
-      LoggerFactory.getLogger("MinSearchedStatusIdLogger");
+public abstract class elonarlybirdRelonsponselonMelonrgelonr implelonmelonnts elonarlyTelonrminatelonTielonrMelonrgelonPrelondicatelon {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(elonarlybirdRelonsponselonMelonrgelonr.class);
+  privatelon static final Loggelonr MIN_SelonARCHelonD_STATUS_ID_LOGGelonR =
+      LoggelonrFactory.gelontLoggelonr("MinSelonarchelondStatusIdLoggelonr");
 
-  private static final SearchCounter NO_SEARCH_RESULT_COUNTER =
-      SearchCounter.export("no_search_result_count");
-  private static final SearchCounter NO_RESPONSES_TO_MERGE =
-      SearchCounter.export("no_responses_to_merge");
-  private static final SearchCounter EARLYBIRD_RESPONSE_NO_MORE_RESULTS =
-      SearchCounter.export("merger_earlybird_response_no_more_results");
-  private static final String PARTITION_OR_TIER_COUNTER_NAME_FORMAT =
-      "merger_waited_for_response_from_%s_counter";
-  private static final String PARTITION_OR_TIER_ERROR_COUNTER_NAME_FORMAT =
-      "merger_num_error_responses_from_%s";
-  private static final String PARTITION_OR_TIER_RESPONSE_CODE_COUNTER_NAME_FORMAT =
-      "merger_earlybird_response_code_from_%s_%s";
+  privatelon static final SelonarchCountelonr NO_SelonARCH_RelonSULT_COUNTelonR =
+      SelonarchCountelonr.elonxport("no_selonarch_relonsult_count");
+  privatelon static final SelonarchCountelonr NO_RelonSPONSelonS_TO_MelonRGelon =
+      SelonarchCountelonr.elonxport("no_relonsponselons_to_melonrgelon");
+  privatelon static final SelonarchCountelonr elonARLYBIRD_RelonSPONSelon_NO_MORelon_RelonSULTS =
+      SelonarchCountelonr.elonxport("melonrgelonr_elonarlybird_relonsponselon_no_morelon_relonsults");
+  privatelon static final String PARTITION_OR_TIelonR_COUNTelonR_NAMelon_FORMAT =
+      "melonrgelonr_waitelond_for_relonsponselon_from_%s_countelonr";
+  privatelon static final String PARTITION_OR_TIelonR_elonRROR_COUNTelonR_NAMelon_FORMAT =
+      "melonrgelonr_num_elonrror_relonsponselons_from_%s";
+  privatelon static final String PARTITION_OR_TIelonR_RelonSPONSelon_CODelon_COUNTelonR_NAMelon_FORMAT =
+      "melonrgelonr_elonarlybird_relonsponselon_codelon_from_%s_%s";
 
-  protected final EarlybirdResponseDebugMessageBuilder responseMessageBuilder;
-  protected final EarlybirdRequestContext requestContext;
-  protected final ImmutableList<Future<EarlybirdResponse>> responses;
-  protected AccumulatedResponses accumulatedResponses;
+  protelonctelond final elonarlybirdRelonsponselonDelonbugMelonssagelonBuildelonr relonsponselonMelonssagelonBuildelonr;
+  protelonctelond final elonarlybirdRelonquelonstContelonxt relonquelonstContelonxt;
+  protelonctelond final ImmutablelonList<Futurelon<elonarlybirdRelonsponselon>> relonsponselons;
+  protelonctelond AccumulatelondRelonsponselons accumulatelondRelonsponselons;
 
 
-  @VisibleForTesting
-  static final Map<EarlybirdRequestType, SearchCounter> MERGER_CREATED_STATS =
-      perRequestTypeCounterImmutableMap("earlybird_response_merger_%s_created_count");
+  @VisiblelonForTelonsting
+  static final Map<elonarlybirdRelonquelonstTypelon, SelonarchCountelonr> MelonRGelonR_CRelonATelonD_STATS =
+      pelonrRelonquelonstTypelonCountelonrImmutablelonMap("elonarlybird_relonsponselon_melonrgelonr_%s_crelonatelond_count");
 
-  @VisibleForTesting
-  static final Map<EarlybirdRequestType, SearchCounter>
-    MIN_SEARCHED_STATUS_ID_LARGER_THAN_REQUEST_MAX_ID = perRequestTypeCounterImmutableMap(
-        "merger_%s_min_searched_status_id_larger_than_request_max_id");
+  @VisiblelonForTelonsting
+  static final Map<elonarlybirdRelonquelonstTypelon, SelonarchCountelonr>
+    MIN_SelonARCHelonD_STATUS_ID_LARGelonR_THAN_RelonQUelonST_MAX_ID = pelonrRelonquelonstTypelonCountelonrImmutablelonMap(
+        "melonrgelonr_%s_min_selonarchelond_status_id_largelonr_than_relonquelonst_max_id");
 
-  @VisibleForTesting
-  static final Map<EarlybirdRequestType, SearchCounter>
-    MIN_SEARCHED_STATUS_ID_LARGER_THAN_REQUEST_UNTIL_TIME = perRequestTypeCounterImmutableMap(
-        "merger_%s_min_searched_status_id_larger_than_request_until_time");
+  @VisiblelonForTelonsting
+  static final Map<elonarlybirdRelonquelonstTypelon, SelonarchCountelonr>
+    MIN_SelonARCHelonD_STATUS_ID_LARGelonR_THAN_RelonQUelonST_UNTIL_TIMelon = pelonrRelonquelonstTypelonCountelonrImmutablelonMap(
+        "melonrgelonr_%s_min_selonarchelond_status_id_largelonr_than_relonquelonst_until_timelon");
 
-  private static Map<EarlybirdRequestType, SearchCounter> perRequestTypeCounterImmutableMap(
-      String statPattern) {
-    Map<EarlybirdRequestType, SearchCounter> statsMap = Maps.newEnumMap(EarlybirdRequestType.class);
-    for (EarlybirdRequestType earlybirdRequestType : EarlybirdRequestType.values()) {
-      String statName = String.format(statPattern, earlybirdRequestType.getNormalizedName());
-      statsMap.put(earlybirdRequestType, SearchCounter.export(statName));
+  privatelon static Map<elonarlybirdRelonquelonstTypelon, SelonarchCountelonr> pelonrRelonquelonstTypelonCountelonrImmutablelonMap(
+      String statPattelonrn) {
+    Map<elonarlybirdRelonquelonstTypelon, SelonarchCountelonr> statsMap = Maps.nelonwelonnumMap(elonarlybirdRelonquelonstTypelon.class);
+    for (elonarlybirdRelonquelonstTypelon elonarlybirdRelonquelonstTypelon : elonarlybirdRelonquelonstTypelon.valuelons()) {
+      String statNamelon = String.format(statPattelonrn, elonarlybirdRelonquelonstTypelon.gelontNormalizelondNamelon());
+      statsMap.put(elonarlybirdRelonquelonstTypelon, SelonarchCountelonr.elonxport(statNamelon));
     }
 
-    return Maps.immutableEnumMap(statsMap);
+    relonturn Maps.immutablelonelonnumMap(statsMap);
   }
 
-  public static final com.google.common.base.Function<EarlybirdResponse, Map<Long, Integer>>
-    HIT_COUNT_GETTER =
-      response -> response.getSearchResults() == null
+  public static final com.googlelon.common.baselon.Function<elonarlybirdRelonsponselon, Map<Long, Intelongelonr>>
+    HIT_COUNT_GelonTTelonR =
+      relonsponselon -> relonsponselon.gelontSelonarchRelonsults() == null
         ? null
-        : response.getSearchResults().getHitCounts();
+        : relonsponselon.gelontSelonarchRelonsults().gelontHitCounts();
 
-  private final ChainMerger chainMerger;
+  privatelon final ChainMelonrgelonr chainMelonrgelonr;
 
-  private class ChainMerger {
-    private final EarlybirdRequestContext requestContext;
-    private final ResponseAccumulator responseAccumulator;
-    private final List<Future<EarlybirdResponse>> responses;
-    private final EarlybirdResponseDebugMessageBuilder responseMessageBuilder;
-    private int currentFutureIndex = -1;
+  privatelon class ChainMelonrgelonr {
+    privatelon final elonarlybirdRelonquelonstContelonxt relonquelonstContelonxt;
+    privatelon final RelonsponselonAccumulator relonsponselonAccumulator;
+    privatelon final List<Futurelon<elonarlybirdRelonsponselon>> relonsponselons;
+    privatelon final elonarlybirdRelonsponselonDelonbugMelonssagelonBuildelonr relonsponselonMelonssagelonBuildelonr;
+    privatelon int currelonntFuturelonIndelonx = -1;
 
-    public ChainMerger(EarlybirdRequestContext requestContext,
-                       ResponseAccumulator responseAccumulator,
-                       List<Future<EarlybirdResponse>> responses,
-                       EarlybirdResponseDebugMessageBuilder responseMessageBuilder) {
-      this.requestContext = requestContext;
-      this.responseAccumulator = responseAccumulator;
-      this.responses = responses;
-      this.responseMessageBuilder = responseMessageBuilder;
+    public ChainMelonrgelonr(elonarlybirdRelonquelonstContelonxt relonquelonstContelonxt,
+                       RelonsponselonAccumulator relonsponselonAccumulator,
+                       List<Futurelon<elonarlybirdRelonsponselon>> relonsponselons,
+                       elonarlybirdRelonsponselonDelonbugMelonssagelonBuildelonr relonsponselonMelonssagelonBuildelonr) {
+      this.relonquelonstContelonxt = relonquelonstContelonxt;
+      this.relonsponselonAccumulator = relonsponselonAccumulator;
+      this.relonsponselons = relonsponselons;
+      this.relonsponselonMelonssagelonBuildelonr = relonsponselonMelonssagelonBuildelonr;
     }
 
-    public Future<EarlybirdResponse> merge() {
-      // 'responseFutures' should always be sorted.
-      // When returned by EarlybirdScatterGather service, the responses are sorted by partition ID.
-      // When returned by EarlybirdChainedScatterGatherService,
-      // responses are sorted descending by tier start date. See:
-      // com.twitter.search.earlybird_root.EarlybirdChainedScatterGatherService.TIER_COMPARATOR.
+    public Futurelon<elonarlybirdRelonsponselon> melonrgelon() {
+      // 'relonsponselonFuturelons' should always belon sortelond.
+      // Whelonn relonturnelond by elonarlybirdScattelonrGathelonr selonrvicelon, thelon relonsponselons arelon sortelond by partition ID.
+      // Whelonn relonturnelond by elonarlybirdChainelondScattelonrGathelonrSelonrvicelon,
+      // relonsponselons arelon sortelond delonscelonnding by tielonr start datelon. Selonelon:
+      // com.twittelonr.selonarch.elonarlybird_root.elonarlybirdChainelondScattelonrGathelonrSelonrvicelon.TIelonR_COMPARATOR.
       //
-      // When merging responses from partitions, we want to wait for responses from all partitions,
-      // so the order in which we wait for those results does not matter. When merging responses
-      // from tiers, we want to wait for the response from the latest. If we don't need any more
-      // responses to compute the final response, then we don't need to wait for the responses from
-      // other tiers. If we cannot terminate early, then we want to wait for the responses from the
-      // second tier, and so on.
+      // Whelonn melonrging relonsponselons from partitions, welon want to wait for relonsponselons from all partitions,
+      // so thelon ordelonr in which welon wait for thoselon relonsults doelons not mattelonr. Whelonn melonrging relonsponselons
+      // from tielonrs, welon want to wait for thelon relonsponselon from thelon latelonst. If welon don't nelonelond any morelon
+      // relonsponselons to computelon thelon final relonsponselon, thelonn welon don't nelonelond to wait for thelon relonsponselons from
+      // othelonr tielonrs. If welon cannot telonrminatelon elonarly, thelonn welon want to wait for thelon relonsponselons from thelon
+      // seloncond tielonr, and so on.
       //
-      // We do not need to have any explicit synchronization, because:
-      //   1. The callbacks for future_i are set by the flatMap() callback on future_{i-1} (when
-      //      recursively calling merge() inside the flatMap()).
-      //   2. Before setting the callbacks on future_i, future_{i-1}.flatMap() adds the response
-      //      results to mergeHelper.
-      //   3. When the callbacks on future_i are set, the memory barrier between
-      //      thread_running_future_{i-1} and thread_running_future_i is crossed. This guarantees
-      //      that thread_running_future_i will see the updates to mergeHelper before it sees the
-      //      callbacks. (Or thread_running_future_{i-1} == thread_running_future_i, in which case
-      //      synchronization is not an issue, and correctness is guarateed by the order in which
+      // Welon do not nelonelond to havelon any elonxplicit synchronization, beloncauselon:
+      //   1. Thelon callbacks for futurelon_i arelon selont by thelon flatMap() callback on futurelon_{i-1} (whelonn
+      //      reloncursivelonly calling melonrgelon() insidelon thelon flatMap()).
+      //   2. Belonforelon selontting thelon callbacks on futurelon_i, futurelon_{i-1}.flatMap() adds thelon relonsponselon
+      //      relonsults to melonrgelonHelonlpelonr.
+      //   3. Whelonn thelon callbacks on futurelon_i arelon selont, thelon melonmory barrielonr belontwelonelonn
+      //      threlonad_running_futurelon_{i-1} and threlonad_running_futurelon_i is crosselond. This guarantelonelons
+      //      that threlonad_running_futurelon_i will selonelon thelon updatelons to melonrgelonHelonlpelonr belonforelon it selonelons thelon
+      //      callbacks. (Or threlonad_running_futurelon_{i-1} == threlonad_running_futurelon_i, in which caselon
+      //      synchronization is not an issuelon, and correlonctnelonss is guaratelonelond by thelon ordelonr in which
       //      things will run.)
-      //   4. The same reasoning applies to currentFutureIndex.
+      //   4. Thelon samelon relonasoning applielons to currelonntFuturelonIndelonx.
 
-      ++currentFutureIndex;
-      if (currentFutureIndex >= responses.size()) {
-        return Future.value(getTimedMergedResponse(responseAccumulator.getAccumulatedResults()));
+      ++currelonntFuturelonIndelonx;
+      if (currelonntFuturelonIndelonx >= relonsponselons.sizelon()) {
+        relonturn Futurelon.valuelon(gelontTimelondMelonrgelondRelonsponselon(relonsponselonAccumulator.gelontAccumulatelondRelonsults()));
       }
 
-      final String partitionTierName =
-          responseAccumulator.getNameForLogging(currentFutureIndex, responses.size());
-      final String nameForEarlybirdResponseCodeStats =
-          responseAccumulator.getNameForEarlybirdResponseCodeStats(
-              currentFutureIndex, responses.size());
+      final String partitionTielonrNamelon =
+          relonsponselonAccumulator.gelontNamelonForLogging(currelonntFuturelonIndelonx, relonsponselons.sizelon());
+      final String namelonForelonarlybirdRelonsponselonCodelonStats =
+          relonsponselonAccumulator.gelontNamelonForelonarlybirdRelonsponselonCodelonStats(
+              currelonntFuturelonIndelonx, relonsponselons.sizelon());
 
-      // If a tier in the chain throws an exception, convert it to a null response, and let the
-      // mergeHelper handle it appropriately.
-      return responses.get(currentFutureIndex)
-        .handle(Function.func(t -> {
-          if (FinagleUtil.isCancelException(t)) {
-            return new EarlybirdResponse()
-                .setResponseCode(EarlybirdResponseCode.CLIENT_CANCEL_ERROR);
-          } else if (FinagleUtil.isTimeoutException(t)) {
-            return new EarlybirdResponse()
-                .setResponseCode(EarlybirdResponseCode.SERVER_TIMEOUT_ERROR);
-          } else {
-            SearchCounter.export(
-                String.format(PARTITION_OR_TIER_ERROR_COUNTER_NAME_FORMAT, partitionTierName))
-                .increment();
-            if (responseMessageBuilder.isDebugMode()) {
-              responseMessageBuilder.debugAndLogWarning(
-                  String.format("[%s] failed, exception [%s]",
-                      partitionTierName, t.toString()));
+      // If a tielonr in thelon chain throws an elonxcelonption, convelonrt it to a null relonsponselon, and lelont thelon
+      // melonrgelonHelonlpelonr handlelon it appropriatelonly.
+      relonturn relonsponselons.gelont(currelonntFuturelonIndelonx)
+        .handlelon(Function.func(t -> {
+          if (FinaglelonUtil.isCancelonlelonxcelonption(t)) {
+            relonturn nelonw elonarlybirdRelonsponselon()
+                .selontRelonsponselonCodelon(elonarlybirdRelonsponselonCodelon.CLIelonNT_CANCelonL_elonRROR);
+          } elonlselon if (FinaglelonUtil.isTimelonoutelonxcelonption(t)) {
+            relonturn nelonw elonarlybirdRelonsponselon()
+                .selontRelonsponselonCodelon(elonarlybirdRelonsponselonCodelon.SelonRVelonR_TIMelonOUT_elonRROR);
+          } elonlselon {
+            SelonarchCountelonr.elonxport(
+                String.format(PARTITION_OR_TIelonR_elonRROR_COUNTelonR_NAMelon_FORMAT, partitionTielonrNamelon))
+                .increlonmelonnt();
+            if (relonsponselonMelonssagelonBuildelonr.isDelonbugModelon()) {
+              relonsponselonMelonssagelonBuildelonr.delonbugAndLogWarning(
+                  String.format("[%s] failelond, elonxcelonption [%s]",
+                      partitionTielonrNamelon, t.toString()));
             }
-            LOG.warn("exception response from: " + partitionTierName, t);
-            return new EarlybirdResponse()
-                .setResponseCode(EarlybirdResponseCode.TRANSIENT_ERROR);
+            LOG.warn("elonxcelonption relonsponselon from: " + partitionTielonrNamelon, t);
+            relonturn nelonw elonarlybirdRelonsponselon()
+                .selontRelonsponselonCodelon(elonarlybirdRelonsponselonCodelon.TRANSIelonNT_elonRROR);
           }
         }))
-        .flatMap(Function.func(response -> {
-          Preconditions.checkNotNull(response);
+        .flatMap(Function.func(relonsponselon -> {
+          Prelonconditions.chelonckNotNull(relonsponselon);
 
-          SearchCounter.export(
-              String.format(PARTITION_OR_TIER_RESPONSE_CODE_COUNTER_NAME_FORMAT,
-                            nameForEarlybirdResponseCodeStats,
-                            response.getResponseCode().name().toLowerCase()))
-              .increment();
+          SelonarchCountelonr.elonxport(
+              String.format(PARTITION_OR_TIelonR_RelonSPONSelon_CODelon_COUNTelonR_NAMelon_FORMAT,
+                            namelonForelonarlybirdRelonsponselonCodelonStats,
+                            relonsponselon.gelontRelonsponselonCodelon().namelon().toLowelonrCaselon()))
+              .increlonmelonnt();
 
-          if ((response.getResponseCode() != EarlybirdResponseCode.PARTITION_SKIPPED)
-              && (response.getResponseCode() != EarlybirdResponseCode.TIER_SKIPPED)) {
-            SearchCounter.export(
-                String.format(PARTITION_OR_TIER_COUNTER_NAME_FORMAT, partitionTierName))
-              .increment();
+          if ((relonsponselon.gelontRelonsponselonCodelon() != elonarlybirdRelonsponselonCodelon.PARTITION_SKIPPelonD)
+              && (relonsponselon.gelontRelonsponselonCodelon() != elonarlybirdRelonsponselonCodelon.TIelonR_SKIPPelonD)) {
+            SelonarchCountelonr.elonxport(
+                String.format(PARTITION_OR_TIelonR_COUNTelonR_NAMelon_FORMAT, partitionTielonrNamelon))
+              .increlonmelonnt();
           }
 
-          if (response.getResponseCode() == EarlybirdResponseCode.CLIENT_CANCEL_ERROR) {
-            // the request has been cancelled, no need to proceed
-            return Future.value(response);
+          if (relonsponselon.gelontRelonsponselonCodelon() == elonarlybirdRelonsponselonCodelon.CLIelonNT_CANCelonL_elonRROR) {
+            // thelon relonquelonst has belonelonn cancelonllelond, no nelonelond to procelonelond
+            relonturn Futurelon.valuelon(relonsponselon);
           }
 
-          rewriteResponseCodeIfSearchResultsMissing(requestContext, partitionTierName, response);
-          responseMessageBuilder.logResponseDebugInfo(
-              requestContext.getRequest(),
-              partitionTierName,
-              response);
-          responseAccumulator.addResponse(
-              responseMessageBuilder,
-              requestContext.getRequest(),
-              response);
+          relonwritelonRelonsponselonCodelonIfSelonarchRelonsultsMissing(relonquelonstContelonxt, partitionTielonrNamelon, relonsponselon);
+          relonsponselonMelonssagelonBuildelonr.logRelonsponselonDelonbugInfo(
+              relonquelonstContelonxt.gelontRelonquelonst(),
+              partitionTielonrNamelon,
+              relonsponselon);
+          relonsponselonAccumulator.addRelonsponselon(
+              relonsponselonMelonssagelonBuildelonr,
+              relonquelonstContelonxt.gelontRelonquelonst(),
+              relonsponselon);
 
-          if (responseAccumulator.shouldEarlyTerminateMerge(EarlybirdResponseMerger.this)) {
-            return Future.value(getTimedMergedResponse(
-                responseAccumulator.getAccumulatedResults()));
+          if (relonsponselonAccumulator.shouldelonarlyTelonrminatelonMelonrgelon(elonarlybirdRelonsponselonMelonrgelonr.this)) {
+            relonturn Futurelon.valuelon(gelontTimelondMelonrgelondRelonsponselon(
+                relonsponselonAccumulator.gelontAccumulatelondRelonsults()));
           }
-          return merge();
+          relonturn melonrgelon();
         }));
     }
   }
 
-  private void rewriteResponseCodeIfSearchResultsMissing(
-      EarlybirdRequestContext earlybirdRequestContext,
-      String partitionTierName,
-      EarlybirdResponse response) {
-    // We always require searchResults to be set, even for term stats and facet requests.
-    // This is because searchResults contains important info such as pagination cursors
-    // like minSearchStatusId and minSearchedTimeSinceEpoch.
-    // We expect all successful responses to have searchResults set.
-    if (response.isSetResponseCode()
-        && response.getResponseCode() == EarlybirdResponseCode.SUCCESS
-        && response.getSearchResults() == null) {
-      NO_SEARCH_RESULT_COUNTER.increment();
-      LOG.warn("Received Earlybird response with null searchResults from [{}]"
-               + " EarlybirdRequest [{}] EarlybirdResponse [{}] ",
-               partitionTierName, earlybirdRequestContext.getRequest(), response);
-      response.setResponseCode(EarlybirdResponseCode.TRANSIENT_ERROR);
+  privatelon void relonwritelonRelonsponselonCodelonIfSelonarchRelonsultsMissing(
+      elonarlybirdRelonquelonstContelonxt elonarlybirdRelonquelonstContelonxt,
+      String partitionTielonrNamelon,
+      elonarlybirdRelonsponselon relonsponselon) {
+    // Welon always relonquirelon selonarchRelonsults to belon selont, elonvelonn for telonrm stats and facelont relonquelonsts.
+    // This is beloncauselon selonarchRelonsults contains important info such as pagination cursors
+    // likelon minSelonarchStatusId and minSelonarchelondTimelonSincelonelonpoch.
+    // Welon elonxpelonct all succelonssful relonsponselons to havelon selonarchRelonsults selont.
+    if (relonsponselon.isSelontRelonsponselonCodelon()
+        && relonsponselon.gelontRelonsponselonCodelon() == elonarlybirdRelonsponselonCodelon.SUCCelonSS
+        && relonsponselon.gelontSelonarchRelonsults() == null) {
+      NO_SelonARCH_RelonSULT_COUNTelonR.increlonmelonnt();
+      LOG.warn("Reloncelonivelond elonarlybird relonsponselon with null selonarchRelonsults from [{}]"
+               + " elonarlybirdRelonquelonst [{}] elonarlybirdRelonsponselon [{}] ",
+               partitionTielonrNamelon, elonarlybirdRelonquelonstContelonxt.gelontRelonquelonst(), relonsponselon);
+      relonsponselon.selontRelonsponselonCodelon(elonarlybirdRelonsponselonCodelon.TRANSIelonNT_elonRROR);
     }
   }
 
   /**
-   * Construct a EarlybirdResponseMerger to merge responses from multiple partitions or tiers
-   * based on mode.
+   * Construct a elonarlybirdRelonsponselonMelonrgelonr to melonrgelon relonsponselons from multiplelon partitions or tielonrs
+   * baselond on modelon.
    */
-  EarlybirdResponseMerger(EarlybirdRequestContext requestContext,
-                          List<Future<EarlybirdResponse>> responses,
-                          ResponseAccumulator responseAccumulator) {
-    this.requestContext = requestContext;
-    this.responses = ImmutableList.copyOf(responses);
-    this.responseMessageBuilder =
-        new EarlybirdResponseDebugMessageBuilder(requestContext.getRequest());
-    this.chainMerger = new ChainMerger(requestContext, responseAccumulator, responses,
-        responseMessageBuilder);
+  elonarlybirdRelonsponselonMelonrgelonr(elonarlybirdRelonquelonstContelonxt relonquelonstContelonxt,
+                          List<Futurelon<elonarlybirdRelonsponselon>> relonsponselons,
+                          RelonsponselonAccumulator relonsponselonAccumulator) {
+    this.relonquelonstContelonxt = relonquelonstContelonxt;
+    this.relonsponselons = ImmutablelonList.copyOf(relonsponselons);
+    this.relonsponselonMelonssagelonBuildelonr =
+        nelonw elonarlybirdRelonsponselonDelonbugMelonssagelonBuildelonr(relonquelonstContelonxt.gelontRelonquelonst());
+    this.chainMelonrgelonr = nelonw ChainMelonrgelonr(relonquelonstContelonxt, relonsponselonAccumulator, relonsponselons,
+        relonsponselonMelonssagelonBuildelonr);
   }
 
   /**
-   * Get a response merger to merge the given responses.
+   * Gelont a relonsponselon melonrgelonr to melonrgelon thelon givelonn relonsponselons.
    */
-  public static EarlybirdResponseMerger getResponseMerger(
-      EarlybirdRequestContext requestContext,
-      List<Future<EarlybirdResponse>> responses,
-      ResponseAccumulator helper,
-      EarlybirdCluster cluster,
-      EarlybirdFeatureSchemaMerger featureSchemaMerger,
+  public static elonarlybirdRelonsponselonMelonrgelonr gelontRelonsponselonMelonrgelonr(
+      elonarlybirdRelonquelonstContelonxt relonquelonstContelonxt,
+      List<Futurelon<elonarlybirdRelonsponselon>> relonsponselons,
+      RelonsponselonAccumulator helonlpelonr,
+      elonarlybirdClustelonr clustelonr,
+      elonarlybirdFelonaturelonSchelonmaMelonrgelonr felonaturelonSchelonmaMelonrgelonr,
       int numPartitions) {
-    EarlybirdRequestType type = requestContext.getEarlybirdRequestType();
-    MERGER_CREATED_STATS.get(type).increment();
-    switch (type) {
-      case FACETS:
-        return new FacetResponseMerger(requestContext, responses, helper);
-      case TERM_STATS:
-        return new TermStatisticsResponseMerger(requestContext, responses, helper);
-      case RECENCY:
-        return new RecencyResponseMerger(requestContext, responses, helper, featureSchemaMerger);
-      case STRICT_RECENCY:
-        return new StrictRecencyResponseMerger(
-            requestContext, responses, helper, featureSchemaMerger, cluster);
-      case RELEVANCE:
-        return new RelevanceResponseMerger(
-            requestContext, responses, helper, featureSchemaMerger, numPartitions);
-      case TOP_TWEETS:
-        return new TopTweetsResponseMerger(requestContext, responses, helper);
-      default:
-        throw new RuntimeException("EarlybirdRequestType " + type + "is not supported by merge");
+    elonarlybirdRelonquelonstTypelon typelon = relonquelonstContelonxt.gelontelonarlybirdRelonquelonstTypelon();
+    MelonRGelonR_CRelonATelonD_STATS.gelont(typelon).increlonmelonnt();
+    switch (typelon) {
+      caselon FACelonTS:
+        relonturn nelonw FacelontRelonsponselonMelonrgelonr(relonquelonstContelonxt, relonsponselons, helonlpelonr);
+      caselon TelonRM_STATS:
+        relonturn nelonw TelonrmStatisticsRelonsponselonMelonrgelonr(relonquelonstContelonxt, relonsponselons, helonlpelonr);
+      caselon RelonCelonNCY:
+        relonturn nelonw ReloncelonncyRelonsponselonMelonrgelonr(relonquelonstContelonxt, relonsponselons, helonlpelonr, felonaturelonSchelonmaMelonrgelonr);
+      caselon STRICT_RelonCelonNCY:
+        relonturn nelonw StrictReloncelonncyRelonsponselonMelonrgelonr(
+            relonquelonstContelonxt, relonsponselons, helonlpelonr, felonaturelonSchelonmaMelonrgelonr, clustelonr);
+      caselon RelonLelonVANCelon:
+        relonturn nelonw RelonlelonvancelonRelonsponselonMelonrgelonr(
+            relonquelonstContelonxt, relonsponselons, helonlpelonr, felonaturelonSchelonmaMelonrgelonr, numPartitions);
+      caselon TOP_TWelonelonTS:
+        relonturn nelonw TopTwelonelontsRelonsponselonMelonrgelonr(relonquelonstContelonxt, relonsponselons, helonlpelonr);
+      delonfault:
+        throw nelonw Runtimelonelonxcelonption("elonarlybirdRelonquelonstTypelon " + typelon + "is not supportelond by melonrgelon");
     }
   }
 
   /**
-   * This method can perform two types of merges:
-   *   1. merge responses within a tier from different partitions.
-   *   2. merge responses from multiple tiers.
+   * This melonthod can pelonrform two typelons of melonrgelons:
+   *   1. melonrgelon relonsponselons within a tielonr from diffelonrelonnt partitions.
+   *   2. melonrgelon relonsponselons from multiplelon tielonrs.
    */
-  public final Future<EarlybirdResponse> merge() {
-    return chainMerger.merge()
-        .onSuccess(checkMinSearchedStatusIdFunction(
+  public final Futurelon<elonarlybirdRelonsponselon> melonrgelon() {
+    relonturn chainMelonrgelonr.melonrgelon()
+        .onSuccelonss(chelonckMinSelonarchelondStatusIdFunction(
                  "max_id",
-                 EarlybirdRequestUtil.getRequestMaxId(requestContext.getParsedQuery()),
-                 MIN_SEARCHED_STATUS_ID_LARGER_THAN_REQUEST_MAX_ID.get(
-                     requestContext.getEarlybirdRequestType())))
-        .onSuccess(checkMinSearchedStatusIdFunction(
-                 "until_time",
-                 EarlybirdRequestUtil.getRequestMaxIdFromUntilTime(requestContext.getParsedQuery()),
-                 MIN_SEARCHED_STATUS_ID_LARGER_THAN_REQUEST_UNTIL_TIME.get(
-                     requestContext.getEarlybirdRequestType())));
+                 elonarlybirdRelonquelonstUtil.gelontRelonquelonstMaxId(relonquelonstContelonxt.gelontParselondQuelonry()),
+                 MIN_SelonARCHelonD_STATUS_ID_LARGelonR_THAN_RelonQUelonST_MAX_ID.gelont(
+                     relonquelonstContelonxt.gelontelonarlybirdRelonquelonstTypelon())))
+        .onSuccelonss(chelonckMinSelonarchelondStatusIdFunction(
+                 "until_timelon",
+                 elonarlybirdRelonquelonstUtil.gelontRelonquelonstMaxIdFromUntilTimelon(relonquelonstContelonxt.gelontParselondQuelonry()),
+                 MIN_SelonARCHelonD_STATUS_ID_LARGelonR_THAN_RelonQUelonST_UNTIL_TIMelon.gelont(
+                     relonquelonstContelonxt.gelontelonarlybirdRelonquelonstTypelon())));
   }
 
   /**
-   * Returns the function that checks if the minSearchedStatusID on the merged response is higher
-   * than the max ID in the request.
+   * Relonturns thelon function that cheloncks if thelon minSelonarchelondStatusID on thelon melonrgelond relonsponselon is highelonr
+   * than thelon max ID in thelon relonquelonst.
    */
-  private Function<EarlybirdResponse, BoxedUnit> checkMinSearchedStatusIdFunction(
-      final String operator, final Optional<Long> requestMaxId, final SearchCounter stat) {
-    return Function.cons(mergedResponse -> {
-      if (requestMaxId.isPresent()
-          && requestMaxId.get() != Long.MAX_VALUE
-          && (mergedResponse.getResponseCode() == EarlybirdResponseCode.SUCCESS)
-          && mergedResponse.isSetSearchResults()
-          && mergedResponse.getSearchResults().isSetMinSearchedStatusID()) {
-        long minSearchedStatusId = mergedResponse.getSearchResults().getMinSearchedStatusID();
-        // We sometimes set minSearchedStatusId = max_id + 1 when a request times out even
-        // before any search happens.
-        // Check SEARCH-10134 for more details.
-        if (minSearchedStatusId > requestMaxId.get() + 1) {
-          stat.increment();
-          String logMessage = "Response has a minSearchedStatusID ({}) larger than request "
-              + operator + " ({})."
-              + "\nrequest type: {}"
-              + "\nrequest: {}"
-              + "\nmerged response: {}"
-              + "\nSuccessful accumulated responses:";
-          List<Object> logMessageParams = Lists.newArrayList();
-          logMessageParams.add(minSearchedStatusId);
-          logMessageParams.add(requestMaxId.get());
-          logMessageParams.add(requestContext.getEarlybirdRequestType());
-          logMessageParams.add(requestContext.getRequest());
-          logMessageParams.add(mergedResponse);
-          for (EarlybirdResponse response : accumulatedResponses.getSuccessResponses()) {
-            logMessage += "\naccumulated response: {}";
-            logMessageParams.add(response);
+  privatelon Function<elonarlybirdRelonsponselon, BoxelondUnit> chelonckMinSelonarchelondStatusIdFunction(
+      final String opelonrator, final Optional<Long> relonquelonstMaxId, final SelonarchCountelonr stat) {
+    relonturn Function.cons(melonrgelondRelonsponselon -> {
+      if (relonquelonstMaxId.isPrelonselonnt()
+          && relonquelonstMaxId.gelont() != Long.MAX_VALUelon
+          && (melonrgelondRelonsponselon.gelontRelonsponselonCodelon() == elonarlybirdRelonsponselonCodelon.SUCCelonSS)
+          && melonrgelondRelonsponselon.isSelontSelonarchRelonsults()
+          && melonrgelondRelonsponselon.gelontSelonarchRelonsults().isSelontMinSelonarchelondStatusID()) {
+        long minSelonarchelondStatusId = melonrgelondRelonsponselon.gelontSelonarchRelonsults().gelontMinSelonarchelondStatusID();
+        // Welon somelontimelons selont minSelonarchelondStatusId = max_id + 1 whelonn a relonquelonst timelons out elonvelonn
+        // belonforelon any selonarch happelonns.
+        // Chelonck SelonARCH-10134 for morelon delontails.
+        if (minSelonarchelondStatusId > relonquelonstMaxId.gelont() + 1) {
+          stat.increlonmelonnt();
+          String logMelonssagelon = "Relonsponselon has a minSelonarchelondStatusID ({}) largelonr than relonquelonst "
+              + opelonrator + " ({})."
+              + "\nrelonquelonst typelon: {}"
+              + "\nrelonquelonst: {}"
+              + "\nmelonrgelond relonsponselon: {}"
+              + "\nSuccelonssful accumulatelond relonsponselons:";
+          List<Objelonct> logMelonssagelonParams = Lists.nelonwArrayList();
+          logMelonssagelonParams.add(minSelonarchelondStatusId);
+          logMelonssagelonParams.add(relonquelonstMaxId.gelont());
+          logMelonssagelonParams.add(relonquelonstContelonxt.gelontelonarlybirdRelonquelonstTypelon());
+          logMelonssagelonParams.add(relonquelonstContelonxt.gelontRelonquelonst());
+          logMelonssagelonParams.add(melonrgelondRelonsponselon);
+          for (elonarlybirdRelonsponselon relonsponselon : accumulatelondRelonsponselons.gelontSuccelonssRelonsponselons()) {
+            logMelonssagelon += "\naccumulatelond relonsponselon: {}";
+            logMelonssagelonParams.add(relonsponselon);
           }
-          MIN_SEARCHED_STATUS_ID_LOGGER.warn(logMessage, logMessageParams.toArray());
+          MIN_SelonARCHelonD_STATUS_ID_LOGGelonR.warn(logMelonssagelon, logMelonssagelonParams.toArray());
         }
       }
     });
   }
 
-  private EarlybirdResponse getTimedMergedResponse(AccumulatedResponses accResponses) {
-    long start = System.nanoTime();
+  privatelon elonarlybirdRelonsponselon gelontTimelondMelonrgelondRelonsponselon(AccumulatelondRelonsponselons accRelonsponselons) {
+    long start = Systelonm.nanoTimelon();
     try {
-      return getMergedResponse(accResponses);
+      relonturn gelontMelonrgelondRelonsponselon(accRelonsponselons);
     } finally {
-      long totalTime = System.nanoTime() - start;
-      getMergedResponseTimer().timerIncrement(totalTime);
+      long totalTimelon = Systelonm.nanoTimelon() - start;
+      gelontMelonrgelondRelonsponselonTimelonr().timelonrIncrelonmelonnt(totalTimelon);
     }
   }
 
-  private EarlybirdResponse initializeMergedSuccessResponseFromAccumulatedResponses() {
-    EarlybirdResponse mergedResponse = new EarlybirdResponse();
+  privatelon elonarlybirdRelonsponselon initializelonMelonrgelondSuccelonssRelonsponselonFromAccumulatelondRelonsponselons() {
+    elonarlybirdRelonsponselon melonrgelondRelonsponselon = nelonw elonarlybirdRelonsponselon();
 
-    AccumulatedResponses.PartitionCounts partitionCounts =
-        accumulatedResponses.getPartitionCounts();
+    AccumulatelondRelonsponselons.PartitionCounts partitionCounts =
+        accumulatelondRelonsponselons.gelontPartitionCounts();
 
-    mergedResponse.setNumPartitions(partitionCounts.getNumPartitions())
-        .setNumSuccessfulPartitions(partitionCounts.getNumSuccessfulPartitions())
-        .setPerTierResponse(partitionCounts.getPerTierResponse())
-        .setNumSearchedSegments(accumulatedResponses.getNumSearchedSegments());
+    melonrgelondRelonsponselon.selontNumPartitions(partitionCounts.gelontNumPartitions())
+        .selontNumSuccelonssfulPartitions(partitionCounts.gelontNumSuccelonssfulPartitions())
+        .selontPelonrTielonrRelonsponselon(partitionCounts.gelontPelonrTielonrRelonsponselon())
+        .selontNumSelonarchelondSelongmelonnts(accumulatelondRelonsponselons.gelontNumSelonarchelondSelongmelonnts());
 
-    mergedResponse.setEarlyTerminationInfo(accumulatedResponses.getMergedEarlyTerminationInfo());
-    mergedResponse.setResponseCode(EarlybirdResponseCode.SUCCESS);
+    melonrgelondRelonsponselon.selontelonarlyTelonrminationInfo(accumulatelondRelonsponselons.gelontMelonrgelondelonarlyTelonrminationInfo());
+    melonrgelondRelonsponselon.selontRelonsponselonCodelon(elonarlybirdRelonsponselonCodelon.SUCCelonSS);
 
-    return mergedResponse;
+    relonturn melonrgelondRelonsponselon;
   }
 
-  private EarlybirdResponse getMergedResponse(AccumulatedResponses accResponses) {
-    accumulatedResponses = accResponses;
-    EarlybirdResponse mergedResponse;
+  privatelon elonarlybirdRelonsponselon gelontMelonrgelondRelonsponselon(AccumulatelondRelonsponselons accRelonsponselons) {
+    accumulatelondRelonsponselons = accRelonsponselons;
+    elonarlybirdRelonsponselon melonrgelondRelonsponselon;
 
-    if (accumulatedResponses.getSuccessResponses().isEmpty()
-        && !accumulatedResponses.foundError()) {
-      // No successful or error responses. This means that all tiers / partitions are intentionally
-      // skipped. Return a blank successful response.
-      NO_RESPONSES_TO_MERGE.increment();
-      mergedResponse = new EarlybirdResponse()
-          .setResponseCode(EarlybirdResponseCode.SUCCESS)
-          .setSearchResults(new ThriftSearchResults())
-          .setDebugString("No responses to merge, probably because all tiers/partitions "
-              + "were skipped.");
-    } else if (accumulatedResponses.isMergingAcrossTiers()) {
-      mergedResponse = getMergedResponseAcrossTiers();
-    } else {
-      mergedResponse = getMergedResponseAcrossPartitions();
+    if (accumulatelondRelonsponselons.gelontSuccelonssRelonsponselons().iselonmpty()
+        && !accumulatelondRelonsponselons.foundelonrror()) {
+      // No succelonssful or elonrror relonsponselons. This melonans that all tielonrs / partitions arelon intelonntionally
+      // skippelond. Relonturn a blank succelonssful relonsponselon.
+      NO_RelonSPONSelonS_TO_MelonRGelon.increlonmelonnt();
+      melonrgelondRelonsponselon = nelonw elonarlybirdRelonsponselon()
+          .selontRelonsponselonCodelon(elonarlybirdRelonsponselonCodelon.SUCCelonSS)
+          .selontSelonarchRelonsults(nelonw ThriftSelonarchRelonsults())
+          .selontDelonbugString("No relonsponselons to melonrgelon, probably beloncauselon all tielonrs/partitions "
+              + "welonrelon skippelond.");
+    } elonlselon if (accumulatelondRelonsponselons.isMelonrgingAcrossTielonrs()) {
+      melonrgelondRelonsponselon = gelontMelonrgelondRelonsponselonAcrossTielonrs();
+    } elonlselon {
+      melonrgelondRelonsponselon = gelontMelonrgelondRelonsponselonAcrossPartitions();
     }
 
-    saveMergedDebugString(mergedResponse);
-    return mergedResponse;
+    savelonMelonrgelondDelonbugString(melonrgelondRelonsponselon);
+    relonturn melonrgelondRelonsponselon;
   }
 
-  private EarlybirdResponse getMergedResponseAcrossTiers() {
-    Preconditions.checkState(
-        !accumulatedResponses.getSuccessResponses().isEmpty()
-            || accumulatedResponses.foundError());
+  privatelon elonarlybirdRelonsponselon gelontMelonrgelondRelonsponselonAcrossTielonrs() {
+    Prelonconditions.chelonckStatelon(
+        !accumulatelondRelonsponselons.gelontSuccelonssRelonsponselons().iselonmpty()
+            || accumulatelondRelonsponselons.foundelonrror());
 
-    // When merging across tiers, if we have one failed tier, we should fail the whole
-    // response. Note that due to early termination, if a tier that is old fails
-    // but the newer tiers return enough results, the failed tier won't show up
-    // here in accumulatedResponses -- the only tiers that show up here
-    // will be successful.
-    if (accumulatedResponses.foundError()) {
-      // The TierResponseAccumulator early terminates on the first error, so we should
-      // never get more than one error. This means that the getMergedErrorResponse will
-      // return an error response with the error code of that one error, and will never
-      // have to decide which error response to return if the error responses are all
-      // different.
+    // Whelonn melonrging across tielonrs, if welon havelon onelon failelond tielonr, welon should fail thelon wholelon
+    // relonsponselon. Notelon that duelon to elonarly telonrmination, if a tielonr that is old fails
+    // but thelon nelonwelonr tielonrs relonturn elonnough relonsults, thelon failelond tielonr won't show up
+    // helonrelon in accumulatelondRelonsponselons -- thelon only tielonrs that show up helonrelon
+    // will belon succelonssful.
+    if (accumulatelondRelonsponselons.foundelonrror()) {
+      // Thelon TielonrRelonsponselonAccumulator elonarly telonrminatelons on thelon first elonrror, so welon should
+      // nelonvelonr gelont morelon than onelon elonrror. This melonans that thelon gelontMelonrgelondelonrrorRelonsponselon will
+      // relonturn an elonrror relonsponselon with thelon elonrror codelon of that onelon elonrror, and will nelonvelonr
+      // havelon to deloncidelon which elonrror relonsponselon to relonturn if thelon elonrror relonsponselons arelon all
+      // diffelonrelonnt.
 
-      // Perhaps we should just return accumulatedResponses.getErrorResponses().get(0);
-      Preconditions.checkState(accumulatedResponses.getErrorResponses().size() == 1);
-      return accumulatedResponses.getMergedErrorResponse();
-    } else {
-      EarlybirdResponse mergedResponse = initializeMergedSuccessResponseFromAccumulatedResponses();
-      return internalMerge(mergedResponse);
+      // Pelonrhaps welon should just relonturn accumulatelondRelonsponselons.gelontelonrrorRelonsponselons().gelont(0);
+      Prelonconditions.chelonckStatelon(accumulatelondRelonsponselons.gelontelonrrorRelonsponselons().sizelon() == 1);
+      relonturn accumulatelondRelonsponselons.gelontMelonrgelondelonrrorRelonsponselon();
+    } elonlselon {
+      elonarlybirdRelonsponselon melonrgelondRelonsponselon = initializelonMelonrgelondSuccelonssRelonsponselonFromAccumulatelondRelonsponselons();
+      relonturn intelonrnalMelonrgelon(melonrgelondRelonsponselon);
     }
   }
 
-  private EarlybirdResponse getMergedResponseAcrossPartitions() {
-    Preconditions.checkState(
-        !accumulatedResponses.getSuccessResponses().isEmpty()
-            || accumulatedResponses.foundError());
+  privatelon elonarlybirdRelonsponselon gelontMelonrgelondRelonsponselonAcrossPartitions() {
+    Prelonconditions.chelonckStatelon(
+        !accumulatelondRelonsponselons.gelontSuccelonssRelonsponselons().iselonmpty()
+            || accumulatelondRelonsponselons.foundelonrror());
 
-    EarlybirdResponse mergedResponse;
+    elonarlybirdRelonsponselon melonrgelondRelonsponselon;
 
-    // Unlike tier merging, one failed response doesn't mean the merged response should
-    // fail. If we have successful responses we can check the success ratio and if its
-    // good we can still return a successful merge.
-    if (!accumulatedResponses.getSuccessResponses().isEmpty()) {
-      // We have at least one successful response, but still need to check the success ratio.
-      // mergedResponse is a SUCCESS response after this call, but we will
-      // set it to failure below if necessary.
-      mergedResponse = initializeMergedSuccessResponseFromAccumulatedResponses();
+    // Unlikelon tielonr melonrging, onelon failelond relonsponselon doelonsn't melonan thelon melonrgelond relonsponselon should
+    // fail. If welon havelon succelonssful relonsponselons welon can chelonck thelon succelonss ratio and if its
+    // good welon can still relonturn a succelonssful melonrgelon.
+    if (!accumulatelondRelonsponselons.gelontSuccelonssRelonsponselons().iselonmpty()) {
+      // Welon havelon at lelonast onelon succelonssful relonsponselon, but still nelonelond to chelonck thelon succelonss ratio.
+      // melonrgelondRelonsponselon is a SUCCelonSS relonsponselon aftelonr this call, but welon will
+      // selont it to failurelon belonlow if neloncelonssary.
+      melonrgelondRelonsponselon = initializelonMelonrgelondSuccelonssRelonsponselonFromAccumulatelondRelonsponselons();
 
-      int numSuccessResponses = mergedResponse.getNumSuccessfulPartitions();
-      int numPartitions = mergedResponse.getNumPartitions();
-      double successThreshold = getSuccessResponseThreshold();
-      if (checkSuccessPartitionRatio(numSuccessResponses, numPartitions, successThreshold)) {
-        // Success! Proceed with merging.
-        mergedResponse.setResponseCode(EarlybirdResponseCode.SUCCESS);
-        mergedResponse = internalMerge(mergedResponse);
-      } else {
-        responseMessageBuilder.logBelowSuccessThreshold(
-            requestContext.getRequest().getSearchQuery(), numSuccessResponses, numPartitions,
-            successThreshold);
-        mergedResponse.setResponseCode(EarlybirdResponseCode.TOO_MANY_PARTITIONS_FAILED_ERROR);
+      int numSuccelonssRelonsponselons = melonrgelondRelonsponselon.gelontNumSuccelonssfulPartitions();
+      int numPartitions = melonrgelondRelonsponselon.gelontNumPartitions();
+      doublelon succelonssThrelonshold = gelontSuccelonssRelonsponselonThrelonshold();
+      if (chelonckSuccelonssPartitionRatio(numSuccelonssRelonsponselons, numPartitions, succelonssThrelonshold)) {
+        // Succelonss! Procelonelond with melonrging.
+        melonrgelondRelonsponselon.selontRelonsponselonCodelon(elonarlybirdRelonsponselonCodelon.SUCCelonSS);
+        melonrgelondRelonsponselon = intelonrnalMelonrgelon(melonrgelondRelonsponselon);
+      } elonlselon {
+        relonsponselonMelonssagelonBuildelonr.logBelonlowSuccelonssThrelonshold(
+            relonquelonstContelonxt.gelontRelonquelonst().gelontSelonarchQuelonry(), numSuccelonssRelonsponselons, numPartitions,
+            succelonssThrelonshold);
+        melonrgelondRelonsponselon.selontRelonsponselonCodelon(elonarlybirdRelonsponselonCodelon.TOO_MANY_PARTITIONS_FAILelonD_elonRROR);
       }
-    } else {
-      mergedResponse = accumulatedResponses.getMergedErrorResponse();
+    } elonlselon {
+      melonrgelondRelonsponselon = accumulatelondRelonsponselons.gelontMelonrgelondelonrrorRelonsponselon();
     }
 
-    return mergedResponse;
+    relonturn melonrgelondRelonsponselon;
   }
 
   /**
-   * Derive class should implement the logic to merge the specific type of results (recency,
-   * relevance, Top Tweets, etc..)
+   * Delonrivelon class should implelonmelonnt thelon logic to melonrgelon thelon speloncific typelon of relonsults (reloncelonncy,
+   * relonlelonvancelon, Top Twelonelonts, elontc..)
    */
-  protected abstract EarlybirdResponse internalMerge(EarlybirdResponse response);
+  protelonctelond abstract elonarlybirdRelonsponselon intelonrnalMelonrgelon(elonarlybirdRelonsponselon relonsponselon);
 
-  protected abstract SearchTimerStats getMergedResponseTimer();
+  protelonctelond abstract SelonarchTimelonrStats gelontMelonrgelondRelonsponselonTimelonr();
 
   /**
-   * Do we have enough results so far that we can early terminate and not continue onto next tier?
+   * Do welon havelon elonnough relonsults so far that welon can elonarly telonrminatelon and not continuelon onto nelonxt tielonr?
    */
-  public boolean shouldEarlyTerminateTierMerge(int totalResultsFromSuccessfulShards,
-                                                  boolean foundEarlyTermination) {
-    // We are taking the most conservative tier response merging.
-    // This is the most conservative merge logic --- as long as we have some results, we should
-    // not return anything from the next tier. This may cause not ideal experience where a
-    // page is not full, but the use can still scroll further.
+  public boolelonan shouldelonarlyTelonrminatelonTielonrMelonrgelon(int totalRelonsultsFromSuccelonssfulShards,
+                                                  boolelonan foundelonarlyTelonrmination) {
+    // Welon arelon taking thelon most conselonrvativelon tielonr relonsponselon melonrging.
+    // This is thelon most conselonrvativelon melonrgelon logic --- as long as welon havelon somelon relonsults, welon should
+    // not relonturn anything from thelon nelonxt tielonr. This may causelon not idelonal elonxpelonrielonncelon whelonrelon a
+    // pagelon is not full, but thelon uselon can still scroll furthelonr.
 
-    return foundEarlyTermination || totalResultsFromSuccessfulShards >= 1;
+    relonturn foundelonarlyTelonrmination || totalRelonsultsFromSuccelonssfulShards >= 1;
   }
 
-  private void saveMergedDebugString(EarlybirdResponse mergedResponse) {
-    if (responseMessageBuilder.isDebugMode()) {
-      String message = responseMessageBuilder.debugString();
-      mergedResponse.setDebugString(message);
-      if (!accumulatedResponses.getSuccessResponses().isEmpty()
-          && accumulatedResponses.getSuccessResponses().get(0).isSetDebugInfo()) {
+  privatelon void savelonMelonrgelondDelonbugString(elonarlybirdRelonsponselon melonrgelondRelonsponselon) {
+    if (relonsponselonMelonssagelonBuildelonr.isDelonbugModelon()) {
+      String melonssagelon = relonsponselonMelonssagelonBuildelonr.delonbugString();
+      melonrgelondRelonsponselon.selontDelonbugString(melonssagelon);
+      if (!accumulatelondRelonsponselons.gelontSuccelonssRelonsponselons().iselonmpty()
+          && accumulatelondRelonsponselons.gelontSuccelonssRelonsponselons().gelont(0).isSelontDelonbugInfo()) {
 
-        EarlybirdDebugInfo debugInfo =
-            accumulatedResponses.getSuccessResponses().get(0).getDebugInfo();
-        mergedResponse.setDebugInfo(debugInfo);
+        elonarlybirdDelonbugInfo delonbugInfo =
+            accumulatelondRelonsponselons.gelontSuccelonssRelonsponselons().gelont(0).gelontDelonbugInfo();
+        melonrgelondRelonsponselon.selontDelonbugInfo(delonbugInfo);
       }
     }
   }
 
-  private double getSuccessResponseThreshold() {
-    EarlybirdRequest request = requestContext.getRequest();
-    if (request.isSetSuccessfulResponseThreshold()) {
-      double successfulResponseThreshold = request.getSuccessfulResponseThreshold();
-      Preconditions.checkArgument(successfulResponseThreshold > 0,
-          "Invalid successfulResponseThreshold %s", successfulResponseThreshold);
-      Preconditions.checkArgument(successfulResponseThreshold <= 1.0,
-          "Invalid successfulResponseThreshold %s", successfulResponseThreshold);
-      return successfulResponseThreshold;
-    } else {
-      return getDefaultSuccessResponseThreshold();
+  privatelon doublelon gelontSuccelonssRelonsponselonThrelonshold() {
+    elonarlybirdRelonquelonst relonquelonst = relonquelonstContelonxt.gelontRelonquelonst();
+    if (relonquelonst.isSelontSuccelonssfulRelonsponselonThrelonshold()) {
+      doublelon succelonssfulRelonsponselonThrelonshold = relonquelonst.gelontSuccelonssfulRelonsponselonThrelonshold();
+      Prelonconditions.chelonckArgumelonnt(succelonssfulRelonsponselonThrelonshold > 0,
+          "Invalid succelonssfulRelonsponselonThrelonshold %s", succelonssfulRelonsponselonThrelonshold);
+      Prelonconditions.chelonckArgumelonnt(succelonssfulRelonsponselonThrelonshold <= 1.0,
+          "Invalid succelonssfulRelonsponselonThrelonshold %s", succelonssfulRelonsponselonThrelonshold);
+      relonturn succelonssfulRelonsponselonThrelonshold;
+    } elonlselon {
+      relonturn gelontDelonfaultSuccelonssRelonsponselonThrelonshold();
     }
   }
 
-  protected abstract double getDefaultSuccessResponseThreshold();
+  protelonctelond abstract doublelon gelontDelonfaultSuccelonssRelonsponselonThrelonshold();
 
-  private static boolean checkSuccessPartitionRatio(
-      int numSuccessResponses,
+  privatelon static boolelonan chelonckSuccelonssPartitionRatio(
+      int numSuccelonssRelonsponselons,
       int numPartitions,
-      double goodResponseThreshold) {
-    Preconditions.checkArgument(goodResponseThreshold > 0.0,
-        "Invalid goodResponseThreshold %s", goodResponseThreshold);
-    return numSuccessResponses >= (numPartitions * goodResponseThreshold);
+      doublelon goodRelonsponselonThrelonshold) {
+    Prelonconditions.chelonckArgumelonnt(goodRelonsponselonThrelonshold > 0.0,
+        "Invalid goodRelonsponselonThrelonshold %s", goodRelonsponselonThrelonshold);
+    relonturn numSuccelonssRelonsponselons >= (numPartitions * goodRelonsponselonThrelonshold);
   }
 
   /**
-   * Merge hit counts from all results.
+   * Melonrgelon hit counts from all relonsults.
    */
-  protected Map<Long, Integer> aggregateHitCountMap() {
-    Map<Long, Integer> hitCounts = ResultsUtil
-        .aggregateCountMap(accumulatedResponses.getSuccessResponses(), HIT_COUNT_GETTER);
-    if (hitCounts.size() > 0) {
-      if (responseMessageBuilder.isDebugMode()) {
-        responseMessageBuilder.append("Hit counts:\n");
-        for (Map.Entry<Long, Integer> entry : hitCounts.entrySet()) {
-          responseMessageBuilder.append(String.format("  %10s seconds: %d hits\n",
-              entry.getKey() / 1000, entry.getValue()));
+  protelonctelond Map<Long, Intelongelonr> aggrelongatelonHitCountMap() {
+    Map<Long, Intelongelonr> hitCounts = RelonsultsUtil
+        .aggrelongatelonCountMap(accumulatelondRelonsponselons.gelontSuccelonssRelonsponselons(), HIT_COUNT_GelonTTelonR);
+    if (hitCounts.sizelon() > 0) {
+      if (relonsponselonMelonssagelonBuildelonr.isDelonbugModelon()) {
+        relonsponselonMelonssagelonBuildelonr.appelonnd("Hit counts:\n");
+        for (Map.elonntry<Long, Intelongelonr> elonntry : hitCounts.elonntrySelont()) {
+          relonsponselonMelonssagelonBuildelonr.appelonnd(String.format("  %10s selonconds: %d hits\n",
+              elonntry.gelontKelony() / 1000, elonntry.gelontValuelon()));
         }
       }
-      return hitCounts;
+      relonturn hitCounts;
     }
-    return null;
+    relonturn null;
   }
 
   /**
-   * Returns the number of results to keep as part of merge-collection.
+   * Relonturns thelon numbelonr of relonsults to kelonelonp as part of melonrgelon-collelonction.
    */
-  protected final int computeNumResultsToKeep() {
-    return EarlybirdResponseMergeUtil.computeNumResultsToKeep(requestContext.getRequest());
+  protelonctelond final int computelonNumRelonsultsToKelonelonp() {
+    relonturn elonarlybirdRelonsponselonMelonrgelonUtil.computelonNumRelonsultsToKelonelonp(relonquelonstContelonxt.gelontRelonquelonst());
   }
 
   /**
-   * Remove exact duplicates (same id) from the result set.
+   * Relonmovelon elonxact duplicatelons (samelon id) from thelon relonsult selont.
    */
-  protected static void trimExactDups(ThriftSearchResults searchResults, TrimStats trimStats) {
-    int numResults = searchResults.getResultsSize();
-    List<ThriftSearchResult> oldResults = searchResults.getResults();
-    List<ThriftSearchResult> newResults = Lists.newArrayListWithCapacity(numResults);
-    HashSet<Long> resultSet = Sets.newHashSetWithExpectedSize(numResults);
+  protelonctelond static void trimelonxactDups(ThriftSelonarchRelonsults selonarchRelonsults, TrimStats trimStats) {
+    int numRelonsults = selonarchRelonsults.gelontRelonsultsSizelon();
+    List<ThriftSelonarchRelonsult> oldRelonsults = selonarchRelonsults.gelontRelonsults();
+    List<ThriftSelonarchRelonsult> nelonwRelonsults = Lists.nelonwArrayListWithCapacity(numRelonsults);
+    HashSelont<Long> relonsultSelont = Selonts.nelonwHashSelontWithelonxpelonctelondSizelon(numRelonsults);
 
-    for (ThriftSearchResult result : oldResults) {
-      if (resultSet.contains(result.getId())) {
-        trimStats.increaseRemovedDupsCount();
-        continue;
+    for (ThriftSelonarchRelonsult relonsult : oldRelonsults) {
+      if (relonsultSelont.contains(relonsult.gelontId())) {
+        trimStats.increlonaselonRelonmovelondDupsCount();
+        continuelon;
       }
 
-      newResults.add(result);
-      resultSet.add(result.getId());
+      nelonwRelonsults.add(relonsult);
+      relonsultSelont.add(relonsult.gelontId());
     }
 
-    searchResults.setResults(newResults);
+    selonarchRelonsults.selontRelonsults(nelonwRelonsults);
   }
 
-  protected final int addResponsesToCollector(MultiwayMergeCollector collector) {
-    int totalResultSize = 0;
-    for (EarlybirdResponse response : accumulatedResponses.getSuccessResponses()) {
-      if (response.isSetSearchResults()) {
-        totalResultSize += response.getSearchResults().getResultsSize();
+  protelonctelond final int addRelonsponselonsToCollelonctor(MultiwayMelonrgelonCollelonctor collelonctor) {
+    int totalRelonsultSizelon = 0;
+    for (elonarlybirdRelonsponselon relonsponselon : accumulatelondRelonsponselons.gelontSuccelonssRelonsponselons()) {
+      if (relonsponselon.isSelontSelonarchRelonsults()) {
+        totalRelonsultSizelon += relonsponselon.gelontSelonarchRelonsults().gelontRelonsultsSizelon();
       }
-      collector.addResponse(response);
+      collelonctor.addRelonsponselon(relonsponselon);
     }
-    return totalResultSize;
+    relonturn totalRelonsultSizelon;
   }
 
   /**
-   * Given a sorted searchResults (for recency, sorted by ID; for relevance, sorted by score),
-   * returns the first 'computeNumResultsToKeep()' number of results.
+   * Givelonn a sortelond selonarchRelonsults (for reloncelonncy, sortelond by ID; for relonlelonvancelon, sortelond by scorelon),
+   * relonturns thelon first 'computelonNumRelonsultsToKelonelonp()' numbelonr of relonsults.
    *
-   * @param searchResults the searchResults to be truncated.
+   * @param selonarchRelonsults thelon selonarchRelonsults to belon truncatelond.
    */
-  protected final void truncateResults(ThriftSearchResults searchResults, TrimStats trimStats) {
-    int numResultsRequested = computeNumResultsToKeep();
+  protelonctelond final void truncatelonRelonsults(ThriftSelonarchRelonsults selonarchRelonsults, TrimStats trimStats) {
+    int numRelonsultsRelonquelonstelond = computelonNumRelonsultsToKelonelonp();
 
-    int to = numResultsRequested == Integer.MAX_VALUE ? searchResults.getResultsSize()
-        : Math.min(numResultsRequested, searchResults.getResultsSize());
-    if (searchResults.getResultsSize() > to) {
-      trimStats.setResultsTruncatedFromTailCount(searchResults.getResultsSize() - to);
+    int to = numRelonsultsRelonquelonstelond == Intelongelonr.MAX_VALUelon ? selonarchRelonsults.gelontRelonsultsSizelon()
+        : Math.min(numRelonsultsRelonquelonstelond, selonarchRelonsults.gelontRelonsultsSizelon());
+    if (selonarchRelonsults.gelontRelonsultsSizelon() > to) {
+      trimStats.selontRelonsultsTruncatelondFromTailCount(selonarchRelonsults.gelontRelonsultsSizelon() - to);
 
       if (to > 0) {
-        searchResults.setResults(searchResults.getResults().subList(0, to));
-      } else {
-        // No more results for the next page
-        EARLYBIRD_RESPONSE_NO_MORE_RESULTS.increment();
-        searchResults.setResults(Collections.<ThriftSearchResult>emptyList());
+        selonarchRelonsults.selontRelonsults(selonarchRelonsults.gelontRelonsults().subList(0, to));
+      } elonlselon {
+        // No morelon relonsults for thelon nelonxt pagelon
+        elonARLYBIRD_RelonSPONSelon_NO_MORelon_RelonSULTS.increlonmelonnt();
+        selonarchRelonsults.selontRelonsults(Collelonctions.<ThriftSelonarchRelonsult>elonmptyList());
       }
     }
   }
 
-  EarlybirdRequest getEarlybirdRequest() {
-    return requestContext.getRequest();
+  elonarlybirdRelonquelonst gelontelonarlybirdRelonquelonst() {
+    relonturn relonquelonstContelonxt.gelontRelonquelonst();
   }
 }

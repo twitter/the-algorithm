@@ -1,98 +1,98 @@
-package com.twitter.product_mixer.core.functional_component.common
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common
 
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.CandidatePipelines
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonPipelonlinelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonPipelonlinelons
 
 /**
- * Specifies whether a function component (e.g, [[Gate]] or [[Selector]])
- * should apply to a given [[CandidateWithDetails]]
+ * Speloncifielons whelonthelonr a function componelonnt (elon.g, [[Gatelon]] or [[Selonlelonctor]])
+ * should apply to a givelonn [[CandidatelonWithDelontails]]
  */
-sealed trait CandidateScope {
+selonalelond trait CandidatelonScopelon {
 
   /**
-   * returns True if the provided `candidate` is in scope
+   * relonturns Truelon if thelon providelond `candidatelon` is in scopelon
    */
-  def contains(candidate: CandidateWithDetails): Boolean
+  delonf contains(candidatelon: CandidatelonWithDelontails): Boolelonan
 
-  /** partitions `candidates` into those that this scope [[contains]] and those it does not */
-  final def partition(
-    candidates: Seq[CandidateWithDetails]
-  ): CandidateScope.PartitionedCandidates = {
-    val (candidatesInScope, candidatesOutOfScope) = candidates.partition(contains)
-    CandidateScope.PartitionedCandidates(candidatesInScope, candidatesOutOfScope)
+  /** partitions `candidatelons` into thoselon that this scopelon [[contains]] and thoselon it doelons not */
+  final delonf partition(
+    candidatelons: Selonq[CandidatelonWithDelontails]
+  ): CandidatelonScopelon.PartitionelondCandidatelons = {
+    val (candidatelonsInScopelon, candidatelonsOutOfScopelon) = candidatelons.partition(contains)
+    CandidatelonScopelon.PartitionelondCandidatelons(candidatelonsInScopelon, candidatelonsOutOfScopelon)
   }
 }
 
-object CandidateScope {
-  case class PartitionedCandidates(
-    candidatesInScope: Seq[CandidateWithDetails],
-    candidatesOutOfScope: Seq[CandidateWithDetails])
+objelonct CandidatelonScopelon {
+  caselon class PartitionelondCandidatelons(
+    candidatelonsInScopelon: Selonq[CandidatelonWithDelontails],
+    candidatelonsOutOfScopelon: Selonq[CandidatelonWithDelontails])
 }
 
 /**
- * A [[CandidateScope]] that applies the given functional component
- * to all candidates regardless of which pipeline is their [[com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails.source]].
+ * A [[CandidatelonScopelon]] that applielons thelon givelonn functional componelonnt
+ * to all candidatelons relongardlelonss of which pipelonlinelon is thelonir [[com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonWithDelontails.sourcelon]].
  */
-case object AllPipelines extends CandidateScope {
-  override def contains(candidate: CandidateWithDetails): Boolean = true
+caselon objelonct AllPipelonlinelons elonxtelonnds CandidatelonScopelon {
+  ovelonrridelon delonf contains(candidatelon: CandidatelonWithDelontails): Boolelonan = truelon
 }
 
 /**
- * A [[CandidateScope]] that applies the given [[com.twitter.product_mixer.core.functional_component.selector.Selector]]
- * only to candidates whose [[com.twitter.product_mixer.core.model.common.presentation.CandidatePipelines]]
- * has an Identifier in the [[pipelines]] Set.
- * In most cases where candidates are not pre-merged, the Set contains the candidate pipeline identifier the candidate
- * came from. In the case where a candidate's feature maps were merged using [[CombineFeatureMapsCandidateMerger]], the
- * set contains all candidate pipelines the merged candidate came from and this scope will include the candidate if any
- * of the pipelines match.
+ * A [[CandidatelonScopelon]] that applielons thelon givelonn [[com.twittelonr.product_mixelonr.corelon.functional_componelonnt.selonlelonctor.Selonlelonctor]]
+ * only to candidatelons whoselon [[com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonPipelonlinelons]]
+ * has an Idelonntifielonr in thelon [[pipelonlinelons]] Selont.
+ * In most caselons whelonrelon candidatelons arelon not prelon-melonrgelond, thelon Selont contains thelon candidatelon pipelonlinelon idelonntifielonr thelon candidatelon
+ * camelon from. In thelon caselon whelonrelon a candidatelon's felonaturelon maps welonrelon melonrgelond using [[CombinelonFelonaturelonMapsCandidatelonMelonrgelonr]], thelon
+ * selont contains all candidatelon pipelonlinelons thelon melonrgelond candidatelon camelon from and this scopelon will includelon thelon candidatelon if any
+ * of thelon pipelonlinelons match.
  */
-case class SpecificPipelines(pipelines: Set[CandidatePipelineIdentifier]) extends CandidateScope {
+caselon class SpeloncificPipelonlinelons(pipelonlinelons: Selont[CandidatelonPipelonlinelonIdelonntifielonr]) elonxtelonnds CandidatelonScopelon {
 
-  require(
-    pipelines.nonEmpty,
-    "Expected `SpecificPipelines` have a non-empty Set of CandidatePipelineIdentifiers.")
+  relonquirelon(
+    pipelonlinelons.nonelonmpty,
+    "elonxpelonctelond `SpeloncificPipelonlinelons` havelon a non-elonmpty Selont of CandidatelonPipelonlinelonIdelonntifielonrs.")
 
-  override def contains(candidate: CandidateWithDetails): Boolean = {
-    candidate.features.get(CandidatePipelines).exists(pipelines.contains)
-  }
-}
-
-/**
- * A [[CandidateScope]] that applies the given [[com.twitter.product_mixer.core.functional_component.selector.Selector]]
- * only to candidates whose [[com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails.source]]
- * is [[pipeline]].
- */
-case class SpecificPipeline(pipeline: CandidatePipelineIdentifier) extends CandidateScope {
-
-  override def contains(candidate: CandidateWithDetails): Boolean = candidate.features
-    .get(CandidatePipelines).contains(pipeline)
-}
-
-object SpecificPipelines {
-  def apply(
-    pipeline: CandidatePipelineIdentifier,
-    pipelines: CandidatePipelineIdentifier*
-  ): CandidateScope = {
-    if (pipelines.isEmpty)
-      SpecificPipeline(pipeline)
-    else
-      SpecificPipelines((pipeline +: pipelines).toSet)
+  ovelonrridelon delonf contains(candidatelon: CandidatelonWithDelontails): Boolelonan = {
+    candidatelon.felonaturelons.gelont(CandidatelonPipelonlinelons).elonxists(pipelonlinelons.contains)
   }
 }
 
 /**
- * A [[CandidateScope]] that applies the given [[com.twitter.product_mixer.core.functional_component.selector.Selector]]
- * to all candidates except for the candidates whose [[com.twitter.product_mixer.core.model.common.presentation.CandidatePipelines]]
- * has an Identifier in the [[pipelinesToExclude]] Set.
- * In most cases where candidates are not pre-merged, the Set contains the candidate pipeline identifier the candidate
- * came from. In the case where a candidate's feature maps were merged using [[CombineFeatureMapsCandidateMerger]], the
- * set contains all candidate pipelines the merged candidate came from and this scope will include the candidate if any
- * of the pipelines match.
+ * A [[CandidatelonScopelon]] that applielons thelon givelonn [[com.twittelonr.product_mixelonr.corelon.functional_componelonnt.selonlelonctor.Selonlelonctor]]
+ * only to candidatelons whoselon [[com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonWithDelontails.sourcelon]]
+ * is [[pipelonlinelon]].
  */
-case class AllExceptPipelines(
-  pipelinesToExclude: Set[CandidatePipelineIdentifier])
-    extends CandidateScope {
-  override def contains(candidate: CandidateWithDetails): Boolean = !candidate.features
-    .get(CandidatePipelines).exists(pipelinesToExclude.contains)
+caselon class SpeloncificPipelonlinelon(pipelonlinelon: CandidatelonPipelonlinelonIdelonntifielonr) elonxtelonnds CandidatelonScopelon {
+
+  ovelonrridelon delonf contains(candidatelon: CandidatelonWithDelontails): Boolelonan = candidatelon.felonaturelons
+    .gelont(CandidatelonPipelonlinelons).contains(pipelonlinelon)
+}
+
+objelonct SpeloncificPipelonlinelons {
+  delonf apply(
+    pipelonlinelon: CandidatelonPipelonlinelonIdelonntifielonr,
+    pipelonlinelons: CandidatelonPipelonlinelonIdelonntifielonr*
+  ): CandidatelonScopelon = {
+    if (pipelonlinelons.iselonmpty)
+      SpeloncificPipelonlinelon(pipelonlinelon)
+    elonlselon
+      SpeloncificPipelonlinelons((pipelonlinelon +: pipelonlinelons).toSelont)
+  }
+}
+
+/**
+ * A [[CandidatelonScopelon]] that applielons thelon givelonn [[com.twittelonr.product_mixelonr.corelon.functional_componelonnt.selonlelonctor.Selonlelonctor]]
+ * to all candidatelons elonxcelonpt for thelon candidatelons whoselon [[com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonPipelonlinelons]]
+ * has an Idelonntifielonr in thelon [[pipelonlinelonsToelonxcludelon]] Selont.
+ * In most caselons whelonrelon candidatelons arelon not prelon-melonrgelond, thelon Selont contains thelon candidatelon pipelonlinelon idelonntifielonr thelon candidatelon
+ * camelon from. In thelon caselon whelonrelon a candidatelon's felonaturelon maps welonrelon melonrgelond using [[CombinelonFelonaturelonMapsCandidatelonMelonrgelonr]], thelon
+ * selont contains all candidatelon pipelonlinelons thelon melonrgelond candidatelon camelon from and this scopelon will includelon thelon candidatelon if any
+ * of thelon pipelonlinelons match.
+ */
+caselon class AllelonxcelonptPipelonlinelons(
+  pipelonlinelonsToelonxcludelon: Selont[CandidatelonPipelonlinelonIdelonntifielonr])
+    elonxtelonnds CandidatelonScopelon {
+  ovelonrridelon delonf contains(candidatelon: CandidatelonWithDelontails): Boolelonan = !candidatelon.felonaturelons
+    .gelont(CandidatelonPipelonlinelons).elonxists(pipelonlinelonsToelonxcludelon.contains)
 }

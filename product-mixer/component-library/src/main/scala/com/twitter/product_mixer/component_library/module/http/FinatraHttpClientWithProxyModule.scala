@@ -1,89 +1,89 @@
-package com.twitter.product_mixer.component_library.module.http
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.modulelon.http
 
-import com.google.inject.Provides
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finatra.httpclient.HttpClient
-import com.twitter.inject.TwitterModule
-import com.twitter.inject.annotations.Flag
-import com.twitter.product_mixer.component_library.module.http.FinagleHttpClientModule.HttpClientAcquisitionTimeout
-import com.twitter.product_mixer.component_library.module.http.FinagleHttpClientModule.HttpClientConnectTimeout
-import com.twitter.product_mixer.component_library.module.http.FinagleHttpClientModule.HttpClientRequestTimeout
-import com.twitter.product_mixer.component_library.module.http.FinagleHttpClientWithProxyModule.HttpClientWithProxyRemoteHost
-import com.twitter.product_mixer.component_library.module.http.FinagleHttpClientWithProxyModule.HttpClientWithProxyRemotePort
-import com.twitter.product_mixer.component_library.module.http.FinagleHttpClientWithProxyModule.HttpClientWithProxyTwitterHost
-import com.twitter.product_mixer.component_library.module.http.FinagleHttpClientWithProxyModule.HttpClientWithProxyTwitterPort
-import com.twitter.product_mixer.core.module.product_mixer_flags.ProductMixerFlagModule.ServiceLocal
-import com.twitter.product_mixer.shared_library.http_client.FinagleHttpClientWithProxyBuilder.buildFinagleHttpClientWithProxy
-import com.twitter.product_mixer.shared_library.http_client.FinagleHttpClientWithProxyBuilder.buildFinagleHttpServiceWithProxy
-import com.twitter.product_mixer.shared_library.http_client.HttpHostPort
-import com.twitter.util.Duration
-import com.twitter.util.jackson.ScalaObjectMapper
-import javax.inject.Named
-import javax.inject.Singleton
+import com.googlelon.injelonct.Providelons
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.finatra.httpclielonnt.HttpClielonnt
+import com.twittelonr.injelonct.TwittelonrModulelon
+import com.twittelonr.injelonct.annotations.Flag
+import com.twittelonr.product_mixelonr.componelonnt_library.modulelon.http.FinaglelonHttpClielonntModulelon.HttpClielonntAcquisitionTimelonout
+import com.twittelonr.product_mixelonr.componelonnt_library.modulelon.http.FinaglelonHttpClielonntModulelon.HttpClielonntConnelonctTimelonout
+import com.twittelonr.product_mixelonr.componelonnt_library.modulelon.http.FinaglelonHttpClielonntModulelon.HttpClielonntRelonquelonstTimelonout
+import com.twittelonr.product_mixelonr.componelonnt_library.modulelon.http.FinaglelonHttpClielonntWithProxyModulelon.HttpClielonntWithProxyRelonmotelonHost
+import com.twittelonr.product_mixelonr.componelonnt_library.modulelon.http.FinaglelonHttpClielonntWithProxyModulelon.HttpClielonntWithProxyRelonmotelonPort
+import com.twittelonr.product_mixelonr.componelonnt_library.modulelon.http.FinaglelonHttpClielonntWithProxyModulelon.HttpClielonntWithProxyTwittelonrHost
+import com.twittelonr.product_mixelonr.componelonnt_library.modulelon.http.FinaglelonHttpClielonntWithProxyModulelon.HttpClielonntWithProxyTwittelonrPort
+import com.twittelonr.product_mixelonr.corelon.modulelon.product_mixelonr_flags.ProductMixelonrFlagModulelon.SelonrvicelonLocal
+import com.twittelonr.product_mixelonr.sharelond_library.http_clielonnt.FinaglelonHttpClielonntWithProxyBuildelonr.buildFinaglelonHttpClielonntWithProxy
+import com.twittelonr.product_mixelonr.sharelond_library.http_clielonnt.FinaglelonHttpClielonntWithProxyBuildelonr.buildFinaglelonHttpSelonrvicelonWithProxy
+import com.twittelonr.product_mixelonr.sharelond_library.http_clielonnt.HttpHostPort
+import com.twittelonr.util.Duration
+import com.twittelonr.util.jackson.ScalaObjelonctMappelonr
+import javax.injelonct.Namelond
+import javax.injelonct.Singlelonton
 
-object FinatraHttpClientWithProxyModule extends TwitterModule {
+objelonct FinatraHttpClielonntWithProxyModulelon elonxtelonnds TwittelonrModulelon {
 
-  final val FinatraHttpClientWithProxy = "FinagleHttpClientWithProxy"
+  final val FinatraHttpClielonntWithProxy = "FinaglelonHttpClielonntWithProxy"
 
   /**
-   * Build a Finatra HTTP client with Egress Proxy support for a host. The Finatra HTTP client can
-   * be helpful (as opposed to the base Finagle HTTP Client), as it provides built-in JSON response
-   * parsing and other convenience methods
+   * Build a Finatra HTTP clielonnt with elongrelonss Proxy support for a host. Thelon Finatra HTTP clielonnt can
+   * belon helonlpful (as opposelond to thelon baselon Finaglelon HTTP Clielonnt), as it providelons built-in JSON relonsponselon
+   * parsing and othelonr convelonnielonncelon melonthods
    *
-   * Note that the timeouts configured in this module are meant to be a reasonable starting point
-   * only. To further tuning the settings, either override the flags or create local copy of the module.
+   * Notelon that thelon timelonouts configurelond in this modulelon arelon melonant to belon a relonasonablelon starting point
+   * only. To furthelonr tuning thelon selonttings, elonithelonr ovelonrridelon thelon flags or crelonatelon local copy of thelon modulelon.
    *
-   * @param proxyTwitterHost       Twitter egress proxy host
-   * @param proxyTwitterPort       Twitter egress proxy port
-   * @param proxyRemoteHost        Remote proxy host
-   * @param proxyRemotePort        Remote proxy port
-   * @param requestTimeout         HTTP client request timeout
-   * @param connectTimeout         HTTP client transport connect timeout
-   * @param acquisitionTimeout     HTTP client session acquisition timeout
-   * @param isServiceLocal         Local deployment for testing
-   * @param scalaObjectMapper      Object mapper used by the built-in JSON response parsing
-   * @param statsReceiver          Stats
+   * @param proxyTwittelonrHost       Twittelonr elongrelonss proxy host
+   * @param proxyTwittelonrPort       Twittelonr elongrelonss proxy port
+   * @param proxyRelonmotelonHost        Relonmotelon proxy host
+   * @param proxyRelonmotelonPort        Relonmotelon proxy port
+   * @param relonquelonstTimelonout         HTTP clielonnt relonquelonst timelonout
+   * @param connelonctTimelonout         HTTP clielonnt transport connelonct timelonout
+   * @param acquisitionTimelonout     HTTP clielonnt selonssion acquisition timelonout
+   * @param isSelonrvicelonLocal         Local delonploymelonnt for telonsting
+   * @param scalaObjelonctMappelonr      Objelonct mappelonr uselond by thelon built-in JSON relonsponselon parsing
+   * @param statsReloncelonivelonr          Stats
    *
-   * @return Finatra HTTP client with Egress Proxy support for a host
+   * @relonturn Finatra HTTP clielonnt with elongrelonss Proxy support for a host
    */
-  @Provides
-  @Singleton
-  @Named(FinatraHttpClientWithProxy)
-  def providesFinatraHttpClientWithProxy(
-    @Flag(HttpClientWithProxyTwitterHost) proxyTwitterHost: String,
-    @Flag(HttpClientWithProxyTwitterPort) proxyTwitterPort: Int,
-    @Flag(HttpClientWithProxyRemoteHost) proxyRemoteHost: String,
-    @Flag(HttpClientWithProxyRemotePort) proxyRemotePort: Int,
-    @Flag(HttpClientRequestTimeout) requestTimeout: Duration,
-    @Flag(HttpClientConnectTimeout) connectTimeout: Duration,
-    @Flag(HttpClientAcquisitionTimeout) acquisitionTimeout: Duration,
-    @Flag(ServiceLocal) isServiceLocal: Boolean,
-    scalaObjectMapper: ScalaObjectMapper,
-    statsReceiver: StatsReceiver
-  ): HttpClient = {
-    val twitterProxyHostPort = HttpHostPort(proxyTwitterHost, proxyTwitterPort)
-    val proxyRemoteHostPort = HttpHostPort(proxyRemoteHost, proxyRemotePort)
+  @Providelons
+  @Singlelonton
+  @Namelond(FinatraHttpClielonntWithProxy)
+  delonf providelonsFinatraHttpClielonntWithProxy(
+    @Flag(HttpClielonntWithProxyTwittelonrHost) proxyTwittelonrHost: String,
+    @Flag(HttpClielonntWithProxyTwittelonrPort) proxyTwittelonrPort: Int,
+    @Flag(HttpClielonntWithProxyRelonmotelonHost) proxyRelonmotelonHost: String,
+    @Flag(HttpClielonntWithProxyRelonmotelonPort) proxyRelonmotelonPort: Int,
+    @Flag(HttpClielonntRelonquelonstTimelonout) relonquelonstTimelonout: Duration,
+    @Flag(HttpClielonntConnelonctTimelonout) connelonctTimelonout: Duration,
+    @Flag(HttpClielonntAcquisitionTimelonout) acquisitionTimelonout: Duration,
+    @Flag(SelonrvicelonLocal) isSelonrvicelonLocal: Boolelonan,
+    scalaObjelonctMappelonr: ScalaObjelonctMappelonr,
+    statsReloncelonivelonr: StatsReloncelonivelonr
+  ): HttpClielonnt = {
+    val twittelonrProxyHostPort = HttpHostPort(proxyTwittelonrHost, proxyTwittelonrPort)
+    val proxyRelonmotelonHostPort = HttpHostPort(proxyRelonmotelonHost, proxyRelonmotelonPort)
 
-    val finagleHttpClientWithProxy =
-      buildFinagleHttpClientWithProxy(
-        twitterProxyHostPort = twitterProxyHostPort,
-        remoteProxyHostPort = proxyRemoteHostPort,
-        requestTimeout = requestTimeout,
-        connectTimeout = connectTimeout,
-        acquisitionTimeout = acquisitionTimeout,
-        statsReceiver = statsReceiver
+    val finaglelonHttpClielonntWithProxy =
+      buildFinaglelonHttpClielonntWithProxy(
+        twittelonrProxyHostPort = twittelonrProxyHostPort,
+        relonmotelonProxyHostPort = proxyRelonmotelonHostPort,
+        relonquelonstTimelonout = relonquelonstTimelonout,
+        connelonctTimelonout = connelonctTimelonout,
+        acquisitionTimelonout = acquisitionTimelonout,
+        statsReloncelonivelonr = statsReloncelonivelonr
       )
 
-    val finagleHttpServiceWithProxy =
-      buildFinagleHttpServiceWithProxy(
-        finagleHttpClientWithProxy = finagleHttpClientWithProxy,
-        twitterProxyHostPort = twitterProxyHostPort
+    val finaglelonHttpSelonrvicelonWithProxy =
+      buildFinaglelonHttpSelonrvicelonWithProxy(
+        finaglelonHttpClielonntWithProxy = finaglelonHttpClielonntWithProxy,
+        twittelonrProxyHostPort = twittelonrProxyHostPort
       )
 
-    new HttpClient(
-      hostname = twitterProxyHostPort.host,
-      httpService = finagleHttpServiceWithProxy,
-      mapper = scalaObjectMapper
+    nelonw HttpClielonnt(
+      hostnamelon = twittelonrProxyHostPort.host,
+      httpSelonrvicelon = finaglelonHttpSelonrvicelonWithProxy,
+      mappelonr = scalaObjelonctMappelonr
     )
   }
 }

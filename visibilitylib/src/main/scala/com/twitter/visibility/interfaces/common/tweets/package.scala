@@ -1,13 +1,13 @@
-package com.twitter.visibility.interfaces.common
+packagelon com.twittelonr.visibility.intelonrfacelons.common
 
-import com.twitter.search.blender.services.strato.UserSearchSafetySettings
-import com.twitter.spam.rtf.thriftscala.SafetyLabel
-import com.twitter.spam.rtf.thriftscala.SafetyLabelMap
-import com.twitter.spam.rtf.thriftscala.SafetyLabelType
-import com.twitter.stitch.Stitch
+import com.twittelonr.selonarch.blelonndelonr.selonrvicelons.strato.UselonrSelonarchSafelontySelonttings
+import com.twittelonr.spam.rtf.thriftscala.SafelontyLabelonl
+import com.twittelonr.spam.rtf.thriftscala.SafelontyLabelonlMap
+import com.twittelonr.spam.rtf.thriftscala.SafelontyLabelonlTypelon
+import com.twittelonr.stitch.Stitch
 
-package object tweets {
-  type SafetyLabelFetcherType = (Long, SafetyLabelType) => Stitch[Option[SafetyLabel]]
-  type SafetyLabelMapFetcherType = Long => Stitch[Option[SafetyLabelMap]]
-  type UserSearchSafetySettingsFetcherType = Long => Stitch[UserSearchSafetySettings]
+packagelon objelonct twelonelonts {
+  typelon SafelontyLabelonlFelontchelonrTypelon = (Long, SafelontyLabelonlTypelon) => Stitch[Option[SafelontyLabelonl]]
+  typelon SafelontyLabelonlMapFelontchelonrTypelon = Long => Stitch[Option[SafelontyLabelonlMap]]
+  typelon UselonrSelonarchSafelontySelonttingsFelontchelonrTypelon = Long => Stitch[UselonrSelonarchSafelontySelonttings]
 }

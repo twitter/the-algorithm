@@ -1,8 +1,8 @@
-package com.twitter.product_mixer.core.model.common.presentation.slice
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.slicelon
 
-import com.twitter.product_mixer.core.model.common.presentation.ItemPresentation
-import com.twitter.product_mixer.core.model.marshalling.response.slice.SliceItem
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.ItelonmPrelonselonntation
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.slicelon.SlicelonItelonm
 
-trait BaseSliceItemPresentation extends ItemPresentation {
-  def sliceItem: SliceItem
+trait BaselonSlicelonItelonmPrelonselonntation elonxtelonnds ItelonmPrelonselonntation {
+  delonf slicelonItelonm: SlicelonItelonm
 }

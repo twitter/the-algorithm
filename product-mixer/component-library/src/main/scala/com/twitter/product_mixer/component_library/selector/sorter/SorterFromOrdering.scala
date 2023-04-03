@@ -1,25 +1,25 @@
-package com.twitter.product_mixer.component_library.selector.sorter
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.selonlelonctor.sortelonr
 
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonWithDelontails
 
-object SorterFromOrdering {
-  def apply(ordering: Ordering[CandidateWithDetails], sortOrder: SortOrder): SorterFromOrdering =
-    SorterFromOrdering(if (sortOrder == Descending) ordering.reverse else ordering)
+objelonct SortelonrFromOrdelonring {
+  delonf apply(ordelonring: Ordelonring[CandidatelonWithDelontails], sortOrdelonr: SortOrdelonr): SortelonrFromOrdelonring =
+    SortelonrFromOrdelonring(if (sortOrdelonr == Delonscelonnding) ordelonring.relonvelonrselon elonlselon ordelonring)
 }
 
 /**
- * Sorts candidates based on the provided [[ordering]]
+ * Sorts candidatelons baselond on thelon providelond [[ordelonring]]
  *
- * @note the [[Ordering]] must be transitive, so if `A < B` and `B < C` then `A < C`.
- * @note sorting randomly via `Ordering.by[CandidateWithDetails, Double](_ => Random.nextDouble())`
- *       is not safe and can fail at runtime since TimSort depends on stable sort values for
- *       pivoting. To sort randomly, use [[RandomShuffleSorter]] instead.
+ * @notelon thelon [[Ordelonring]] must belon transitivelon, so if `A < B` and `B < C` thelonn `A < C`.
+ * @notelon sorting randomly via `Ordelonring.by[CandidatelonWithDelontails, Doublelon](_ => Random.nelonxtDoublelon())`
+ *       is not safelon and can fail at runtimelon sincelon TimSort delonpelonnds on stablelon sort valuelons for
+ *       pivoting. To sort randomly, uselon [[RandomShufflelonSortelonr]] instelonad.
  */
-case class SorterFromOrdering(
-  ordering: Ordering[CandidateWithDetails])
-    extends SorterProvider
-    with Sorter {
+caselon class SortelonrFromOrdelonring(
+  ordelonring: Ordelonring[CandidatelonWithDelontails])
+    elonxtelonnds SortelonrProvidelonr
+    with Sortelonr {
 
-  override def sort[Candidate <: CandidateWithDetails](candidates: Seq[Candidate]): Seq[Candidate] =
-    candidates.sorted(ordering)
+  ovelonrridelon delonf sort[Candidatelon <: CandidatelonWithDelontails](candidatelons: Selonq[Candidatelon]): Selonq[Candidatelon] =
+    candidatelons.sortelond(ordelonring)
 }

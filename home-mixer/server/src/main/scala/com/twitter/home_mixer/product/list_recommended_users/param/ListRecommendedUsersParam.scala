@@ -1,22 +1,22 @@
-package com.twitter.home_mixer.product.list_recommended_users.param
+packagelon com.twittelonr.homelon_mixelonr.product.list_reloncommelonndelond_uselonrs.param
 
-import com.twitter.timelines.configapi.FSBoundedParam
+import com.twittelonr.timelonlinelons.configapi.FSBoundelondParam
 
-object ListRecommendedUsersParam {
-  val SupportedClientFSName = "list_recommended_users_supported_client"
+objelonct ListReloncommelonndelondUselonrsParam {
+  val SupportelondClielonntFSNamelon = "list_reloncommelonndelond_uselonrs_supportelond_clielonnt"
 
-  object ServerMaxResultsParam
-      extends FSBoundedParam[Int](
-        name = "list_recommended_users_server_max_results",
-        default = 10,
+  objelonct SelonrvelonrMaxRelonsultsParam
+      elonxtelonnds FSBoundelondParam[Int](
+        namelon = "list_reloncommelonndelond_uselonrs_selonrvelonr_max_relonsults",
+        delonfault = 10,
         min = 1,
         max = 500
       )
 
-  object ExcludedIdsMaxLengthParam
-      extends FSBoundedParam[Int](
-        name = "list_recommended_users_excluded_ids_max_length",
-        default = 2000,
+  objelonct elonxcludelondIdsMaxLelonngthParam
+      elonxtelonnds FSBoundelondParam[Int](
+        namelon = "list_reloncommelonndelond_uselonrs_elonxcludelond_ids_max_lelonngth",
+        delonfault = 2000,
         min = 0,
         max = 5000
       )

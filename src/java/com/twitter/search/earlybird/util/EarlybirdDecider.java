@@ -1,128 +1,128 @@
-package com.twitter.search.earlybird.util;
+packagelon com.twittelonr.selonarch.elonarlybird.util;
 
-import scala.Some;
+import scala.Somelon;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import com.twitter.decider.Decider;
-import com.twitter.decider.Decider$;
-import com.twitter.decider.RandomRecipient$;
-import com.twitter.decider.Recipient;
-import com.twitter.decider.decisionmaker.MutableDecisionMaker;
-import com.twitter.search.common.decider.DeciderUtil;
-import com.twitter.search.common.decider.SearchDeciderFactory;
-import com.twitter.search.earlybird.common.config.EarlybirdProperty;
+import com.twittelonr.deloncidelonr.Deloncidelonr;
+import com.twittelonr.deloncidelonr.Deloncidelonr$;
+import com.twittelonr.deloncidelonr.RandomReloncipielonnt$;
+import com.twittelonr.deloncidelonr.Reloncipielonnt;
+import com.twittelonr.deloncidelonr.deloncisionmakelonr.MutablelonDeloncisionMakelonr;
+import com.twittelonr.selonarch.common.deloncidelonr.DeloncidelonrUtil;
+import com.twittelonr.selonarch.common.deloncidelonr.SelonarchDeloncidelonrFactory;
+import com.twittelonr.selonarch.elonarlybird.common.config.elonarlybirdPropelonrty;
 
 /**
- * A Singleton to let any code in Earlybird have the ability to be guarded by a decider key.
+ * A Singlelonton to lelont any codelon in elonarlybird havelon thelon ability to belon guardelond by a deloncidelonr kelony.
  *
- * EarlybirdDecider is a thin wrapper around the Twitter Decider library to provide global access to a single
- * decider configuration. This way any code anywhere can easily be guarded by a Decider key. The initializer requires
- * EarlybirdConfig to be initialized already. Defaults to a NullDecider, which causes all requests for keys to return
- * false.
+ * elonarlybirdDeloncidelonr is a thin wrappelonr around thelon Twittelonr Deloncidelonr library to providelon global accelonss to a singlelon
+ * deloncidelonr configuration. This way any codelon anywhelonrelon can elonasily belon guardelond by a Deloncidelonr kelony. Thelon initializelonr relonquirelons
+ * elonarlybirdConfig to belon initializelond alrelonady. Delonfaults to a NullDeloncidelonr, which causelons all relonquelonsts for kelonys to relonturn
+ * falselon.
  */
-public final class EarlybirdDecider {
-  public static final org.slf4j.Logger LOG =
-      org.slf4j.LoggerFactory.getLogger(EarlybirdDecider.class);
-  public static final String DECIDER_CONFIG = "./config/earlybird-decider.yml";
+public final class elonarlybirdDeloncidelonr {
+  public static final org.slf4j.Loggelonr LOG =
+      org.slf4j.LoggelonrFactory.gelontLoggelonr(elonarlybirdDeloncidelonr.class);
+  public static final String DelonCIDelonR_CONFIG = "./config/elonarlybird-deloncidelonr.yml";
 
-  private static volatile Decider earlybirdDecider = Decider$.MODULE$.NullDecider();
-  private static volatile MutableDecisionMaker mutableDecisionMaker;
+  privatelon static volatilelon Deloncidelonr elonarlybirdDeloncidelonr = Deloncidelonr$.MODULelon$.NullDeloncidelonr();
+  privatelon static volatilelon MutablelonDeloncisionMakelonr mutablelonDeloncisionMakelonr;
 
-  private EarlybirdDecider() { }
+  privatelon elonarlybirdDeloncidelonr() { }
 
   /**
-   * Initializes the global decider accessor. Requires EarlybirdConfig to be initialized.
+   * Initializelons thelon global deloncidelonr accelonssor. Relonquirelons elonarlybirdConfig to belon initializelond.
    *
-   * @return the new decider interface.
+   * @relonturn thelon nelonw deloncidelonr intelonrfacelon.
    */
-  public static Decider initialize() {
-    return initialize(DECIDER_CONFIG);
+  public static Deloncidelonr initializelon() {
+    relonturn initializelon(DelonCIDelonR_CONFIG);
   }
 
   /**
-   * Initializes the global decider accessor. Requires EarlybirdConfig to be initialized.
+   * Initializelons thelon global deloncidelonr accelonssor. Relonquirelons elonarlybirdConfig to belon initializelond.
    *
-   * @param configPath path to the base decider config file.
-   * @return the new decider interface.
+   * @param configPath path to thelon baselon deloncidelonr config filelon.
+   * @relonturn thelon nelonw deloncidelonr intelonrfacelon.
    */
-  @VisibleForTesting public static Decider initialize(String configPath) {
-    synchronized (EarlybirdDecider.class) {
-      Preconditions.checkState(earlybirdDecider == Decider$.MODULE$.NullDecider(),
-                               "EarlybirdDecider can be initialized only once.");
+  @VisiblelonForTelonsting public static Deloncidelonr initializelon(String configPath) {
+    synchronizelond (elonarlybirdDeloncidelonr.class) {
+      Prelonconditions.chelonckStatelon(elonarlybirdDeloncidelonr == Deloncidelonr$.MODULelon$.NullDeloncidelonr(),
+                               "elonarlybirdDeloncidelonr can belon initializelond only oncelon.");
 
-      mutableDecisionMaker = new MutableDecisionMaker();
+      mutablelonDeloncisionMakelonr = nelonw MutablelonDeloncisionMakelonr();
 
-      if (EarlybirdProperty.USE_DECIDER_OVERLAY.get(false)) {
-        String category = EarlybirdProperty.DECIDER_OVERLAY_CONFIG.get();
-        earlybirdDecider =
-            SearchDeciderFactory.createDeciderWithoutRefreshBaseWithOverlay(
-                configPath, category, mutableDecisionMaker);
-        LOG.info("EarlybirdDecider set to use the decider overlay " + category);
-      } else {
-        earlybirdDecider =
-            SearchDeciderFactory.createDeciderWithRefreshBaseWithoutOverlay(
-                configPath, mutableDecisionMaker);
-        LOG.info("EarlybirdDecider set to only use the base config");
+      if (elonarlybirdPropelonrty.USelon_DelonCIDelonR_OVelonRLAY.gelont(falselon)) {
+        String catelongory = elonarlybirdPropelonrty.DelonCIDelonR_OVelonRLAY_CONFIG.gelont();
+        elonarlybirdDeloncidelonr =
+            SelonarchDeloncidelonrFactory.crelonatelonDeloncidelonrWithoutRelonfrelonshBaselonWithOvelonrlay(
+                configPath, catelongory, mutablelonDeloncisionMakelonr);
+        LOG.info("elonarlybirdDeloncidelonr selont to uselon thelon deloncidelonr ovelonrlay " + catelongory);
+      } elonlselon {
+        elonarlybirdDeloncidelonr =
+            SelonarchDeloncidelonrFactory.crelonatelonDeloncidelonrWithRelonfrelonshBaselonWithoutOvelonrlay(
+                configPath, mutablelonDeloncisionMakelonr);
+        LOG.info("elonarlybirdDeloncidelonr selont to only uselon thelon baselon config");
       }
-      return earlybirdDecider;
+      relonturn elonarlybirdDeloncidelonr;
     }
   }
 
   /**
-   * Check if feature is available based on randomness
+   * Chelonck if felonaturelon is availablelon baselond on randomnelonss
    *
-   * @param feature the feature name to test
-   * @return true if the feature is available, false otherwise
+   * @param felonaturelon thelon felonaturelon namelon to telonst
+   * @relonturn truelon if thelon felonaturelon is availablelon, falselon othelonrwiselon
    */
-  public static boolean isFeatureAvailable(String feature) {
-    return isFeatureAvailable(feature, RandomRecipient$.MODULE$);
+  public static boolelonan isFelonaturelonAvailablelon(String felonaturelon) {
+    relonturn isFelonaturelonAvailablelon(felonaturelon, RandomReloncipielonnt$.MODULelon$);
   }
 
   /**
-   * Check if the feature is available based on the user
+   * Chelonck if thelon felonaturelon is availablelon baselond on thelon uselonr
    *
-   * The recipient'd id is hashed and used as the value to compare with the decider percentage. Therefore, the same user
-   * will always get the same result for a given percentage, and higher percentages should always be a superset of the
-   * lower percentage users.
+   * Thelon reloncipielonnt'd id is hashelond and uselond as thelon valuelon to comparelon with thelon deloncidelonr pelonrcelonntagelon. Thelonrelonforelon, thelon samelon uselonr
+   * will always gelont thelon samelon relonsult for a givelonn pelonrcelonntagelon, and highelonr pelonrcelonntagelons should always belon a supelonrselont of thelon
+   * lowelonr pelonrcelonntagelon uselonrs.
    *
-   * RandomRecipient can be used to get a random value for every call.
+   * RandomReloncipielonnt can belon uselond to gelont a random valuelon for elonvelonry call.
    *
-   * @param feature the feature name to test
-   * @param recipient the recipient to base a decision on
-   * @return true if the feature is available, false otherwise
+   * @param felonaturelon thelon felonaturelon namelon to telonst
+   * @param reloncipielonnt thelon reloncipielonnt to baselon a deloncision on
+   * @relonturn truelon if thelon felonaturelon is availablelon, falselon othelonrwiselon
    */
-  public static boolean isFeatureAvailable(String feature, Recipient recipient) {
-    if (earlybirdDecider == Decider$.MODULE$.NullDecider()) {
-      LOG.warn("EarlybirdDecider is uninitialized but requested feature " + feature);
+  public static boolelonan isFelonaturelonAvailablelon(String felonaturelon, Reloncipielonnt reloncipielonnt) {
+    if (elonarlybirdDeloncidelonr == Deloncidelonr$.MODULelon$.NullDeloncidelonr()) {
+      LOG.warn("elonarlybirdDeloncidelonr is uninitializelond but relonquelonstelond felonaturelon " + felonaturelon);
     }
 
-    return earlybirdDecider.isAvailable(feature, Some.apply(recipient));
+    relonturn elonarlybirdDeloncidelonr.isAvailablelon(felonaturelon, Somelon.apply(reloncipielonnt));
   }
 
   /**
-   * Get the raw decider value for a given feature.
+   * Gelont thelon raw deloncidelonr valuelon for a givelonn felonaturelon.
    *
-   * @param feature the feature name
-   * @return the integer value of the decider
+   * @param felonaturelon thelon felonaturelon namelon
+   * @relonturn thelon intelongelonr valuelon of thelon deloncidelonr
    */
-  public static int getAvailability(String feature) {
-    return DeciderUtil.getAvailability(earlybirdDecider, feature);
+  public static int gelontAvailability(String felonaturelon) {
+    relonturn DeloncidelonrUtil.gelontAvailability(elonarlybirdDeloncidelonr, felonaturelon);
   }
 
-  public static Decider getDecider() {
-    checkInitialized();
-    return earlybirdDecider;
+  public static Deloncidelonr gelontDeloncidelonr() {
+    chelonckInitializelond();
+    relonturn elonarlybirdDeloncidelonr;
   }
 
-  public static MutableDecisionMaker getMutableDecisionMaker() {
-    checkInitialized();
-    return mutableDecisionMaker;
+  public static MutablelonDeloncisionMakelonr gelontMutablelonDeloncisionMakelonr() {
+    chelonckInitializelond();
+    relonturn mutablelonDeloncisionMakelonr;
   }
 
-  private static void checkInitialized() {
-    Preconditions.checkState(earlybirdDecider != Decider$.MODULE$.NullDecider(),
-        "EarlybirdDecider is not initialized.");
+  privatelon static void chelonckInitializelond() {
+    Prelonconditions.chelonckStatelon(elonarlybirdDeloncidelonr != Deloncidelonr$.MODULelon$.NullDeloncidelonr(),
+        "elonarlybirdDeloncidelonr is not initializelond.");
   }
 }

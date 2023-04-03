@@ -1,176 +1,176 @@
-package com.twitter.home_mixer.product.scored_tweets.param
+packagelon com.twittelonr.homelon_mixelonr.product.scorelond_twelonelonts.param
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.home_mixer.param.decider.DeciderKey
-import com.twitter.timelines.configapi.DurationConversion
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.HasDurationConversion
-import com.twitter.timelines.configapi.decider.BooleanDeciderParam
-import com.twitter.util.Duration
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.homelon_mixelonr.param.deloncidelonr.DeloncidelonrKelony
+import com.twittelonr.timelonlinelons.configapi.DurationConvelonrsion
+import com.twittelonr.timelonlinelons.configapi.FSBoundelondParam
+import com.twittelonr.timelonlinelons.configapi.FSParam
+import com.twittelonr.timelonlinelons.configapi.HasDurationConvelonrsion
+import com.twittelonr.timelonlinelons.configapi.deloncidelonr.BoolelonanDeloncidelonrParam
+import com.twittelonr.util.Duration
 
-object ScoredTweetsParam {
-  val SupportedClientFSName = "scored_tweets_supported_client"
+objelonct ScorelondTwelonelontsParam {
+  val SupportelondClielonntFSNamelon = "scorelond_twelonelonts_supportelond_clielonnt"
 
-  object CrMixerSource {
-    object EnableCandidatePipelineParam
-        extends BooleanDeciderParam(DeciderKey.EnableScoredTweetsCrMixerCandidatePipeline)
+  objelonct CrMixelonrSourcelon {
+    objelonct elonnablelonCandidatelonPipelonlinelonParam
+        elonxtelonnds BoolelonanDeloncidelonrParam(DeloncidelonrKelony.elonnablelonScorelondTwelonelontsCrMixelonrCandidatelonPipelonlinelon)
   }
 
-  object FrsTweetSource {
-    object EnableCandidatePipelineParam
-        extends BooleanDeciderParam(DeciderKey.EnableScoredTweetsFrsCandidatePipeline)
+  objelonct FrsTwelonelontSourcelon {
+    objelonct elonnablelonCandidatelonPipelonlinelonParam
+        elonxtelonnds BoolelonanDeloncidelonrParam(DeloncidelonrKelony.elonnablelonScorelondTwelonelontsFrsCandidatelonPipelonlinelon)
   }
 
-  object InNetworkSource {
-    object EnableCandidatePipelineParam
-        extends BooleanDeciderParam(DeciderKey.EnableScoredTweetsInNetworkCandidatePipeline)
+  objelonct InNelontworkSourcelon {
+    objelonct elonnablelonCandidatelonPipelonlinelonParam
+        elonxtelonnds BoolelonanDeloncidelonrParam(DeloncidelonrKelony.elonnablelonScorelondTwelonelontsInNelontworkCandidatelonPipelonlinelon)
   }
 
-  object QualityFactor {
-    object MaxTweetsToScoreParam
-        extends FSBoundedParam[Int](
-          name = "scored_tweets_quality_factor_max_tweets_to_score",
-          default = 1100,
+  objelonct QualityFactor {
+    objelonct MaxTwelonelontsToScorelonParam
+        elonxtelonnds FSBoundelondParam[Int](
+          namelon = "scorelond_twelonelonts_quality_factor_max_twelonelonts_to_scorelon",
+          delonfault = 1100,
           min = 0,
           max = 10000
         )
 
-    object CrMixerMaxTweetsToScoreParam
-        extends FSBoundedParam[Int](
-          name = "scored_tweets_quality_factor_cr_mixer_max_tweets_to_score",
-          default = 500,
+    objelonct CrMixelonrMaxTwelonelontsToScorelonParam
+        elonxtelonnds FSBoundelondParam[Int](
+          namelon = "scorelond_twelonelonts_quality_factor_cr_mixelonr_max_twelonelonts_to_scorelon",
+          delonfault = 500,
           min = 0,
           max = 10000
         )
   }
-  object ServerMaxResultsParam
-      extends FSBoundedParam[Int](
-        name = "scored_tweets_server_max_results",
-        default = 120,
+  objelonct SelonrvelonrMaxRelonsultsParam
+      elonxtelonnds FSBoundelondParam[Int](
+        namelon = "scorelond_twelonelonts_selonrvelonr_max_relonsults",
+        delonfault = 120,
         min = 1,
         max = 500
       )
-  object UtegSource {
-    object EnableCandidatePipelineParam
-        extends BooleanDeciderParam(DeciderKey.EnableScoredTweetsUtegCandidatePipeline)
+  objelonct UtelongSourcelon {
+    objelonct elonnablelonCandidatelonPipelonlinelonParam
+        elonxtelonnds BoolelonanDeloncidelonrParam(DeloncidelonrKelony.elonnablelonScorelondTwelonelontsUtelongCandidatelonPipelonlinelon)
   }
 
-  object CachedScoredTweets {
-    object TTLParam
-        extends FSBoundedParam[Duration](
-          name = "scored_tweets_cached_scored_tweets_ttl_minutes",
-          default = 3.minutes,
-          min = 0.minute,
-          max = 60.minutes
+  objelonct CachelondScorelondTwelonelonts {
+    objelonct TTLParam
+        elonxtelonnds FSBoundelondParam[Duration](
+          namelon = "scorelond_twelonelonts_cachelond_scorelond_twelonelonts_ttl_minutelons",
+          delonfault = 3.minutelons,
+          min = 0.minutelon,
+          max = 60.minutelons
         )
-        with HasDurationConversion {
-      override val durationConversion: DurationConversion = DurationConversion.FromMinutes
+        with HasDurationConvelonrsion {
+      ovelonrridelon val durationConvelonrsion: DurationConvelonrsion = DurationConvelonrsion.FromMinutelons
     }
 
-    object MinCachedTweetsParam
-        extends FSBoundedParam[Int](
-          name = "scored_tweets_cached_scored_tweets_min_cached_tweets",
-          default = 30,
+    objelonct MinCachelondTwelonelontsParam
+        elonxtelonnds FSBoundelondParam[Int](
+          namelon = "scorelond_twelonelonts_cachelond_scorelond_twelonelonts_min_cachelond_twelonelonts",
+          delonfault = 30,
           min = 0,
           max = 1000
         )
   }
 
-  object Scoring {
-    object HomeModelParam
-        extends FSParam[String](name = "scored_tweets_home_model", default = "Home")
+  objelonct Scoring {
+    objelonct HomelonModelonlParam
+        elonxtelonnds FSParam[String](namelon = "scorelond_twelonelonts_homelon_modelonl", delonfault = "Homelon")
 
-    object ModelWeights {
+    objelonct ModelonlWelonights {
 
-      object FavParam
-          extends FSBoundedParam[Double](
-            name = "scored_tweets_model_weight_fav",
-            default = 1.0,
+      objelonct FavParam
+          elonxtelonnds FSBoundelondParam[Doublelon](
+            namelon = "scorelond_twelonelonts_modelonl_welonight_fav",
+            delonfault = 1.0,
             min = 0.0,
             max = 100.0
           )
 
-      object RetweetParam
-          extends FSBoundedParam[Double](
-            name = "scored_tweets_model_weight_retweet",
-            default = 1.0,
+      objelonct RelontwelonelontParam
+          elonxtelonnds FSBoundelondParam[Doublelon](
+            namelon = "scorelond_twelonelonts_modelonl_welonight_relontwelonelont",
+            delonfault = 1.0,
             min = 0.0,
             max = 100.0
           )
 
-      object ReplyParam
-          extends FSBoundedParam[Double](
-            name = "scored_tweets_model_weight_reply",
-            default = 1.0,
+      objelonct RelonplyParam
+          elonxtelonnds FSBoundelondParam[Doublelon](
+            namelon = "scorelond_twelonelonts_modelonl_welonight_relonply",
+            delonfault = 1.0,
             min = 0.0,
             max = 100.0
           )
 
-      object GoodProfileClickParam
-          extends FSBoundedParam[Double](
-            name = "scored_tweets_model_weight_good_profile_click",
-            default = 1.0,
+      objelonct GoodProfilelonClickParam
+          elonxtelonnds FSBoundelondParam[Doublelon](
+            namelon = "scorelond_twelonelonts_modelonl_welonight_good_profilelon_click",
+            delonfault = 1.0,
             min = 0.0,
             max = 1000000.0
           )
 
-      object VideoPlayback50Param
-          extends FSBoundedParam[Double](
-            name = "scored_tweets_model_weight_video_playback50",
-            default = 1.0,
+      objelonct VidelonoPlayback50Param
+          elonxtelonnds FSBoundelondParam[Doublelon](
+            namelon = "scorelond_twelonelonts_modelonl_welonight_videlono_playback50",
+            delonfault = 1.0,
             min = 0.0,
             max = 100.0
           )
 
-      object ReplyEngagedByAuthorParam
-          extends FSBoundedParam[Double](
-            name = "scored_tweets_model_weight_reply_engaged_by_author",
-            default = 1.0,
+      objelonct RelonplyelonngagelondByAuthorParam
+          elonxtelonnds FSBoundelondParam[Doublelon](
+            namelon = "scorelond_twelonelonts_modelonl_welonight_relonply_elonngagelond_by_author",
+            delonfault = 1.0,
             min = 0.0,
             max = 200.0
           )
 
-      object GoodClickParam
-          extends FSBoundedParam[Double](
-            name = "scored_tweets_model_weight_good_click",
-            default = 1.0,
+      objelonct GoodClickParam
+          elonxtelonnds FSBoundelondParam[Doublelon](
+            namelon = "scorelond_twelonelonts_modelonl_welonight_good_click",
+            delonfault = 1.0,
             min = 0.0,
             max = 1000000.0
           )
 
-      object GoodClickV2Param
-          extends FSBoundedParam[Double](
-            name = "scored_tweets_model_weight_good_click_v2",
-            default = 1.0,
+      objelonct GoodClickV2Param
+          elonxtelonnds FSBoundelondParam[Doublelon](
+            namelon = "scorelond_twelonelonts_modelonl_welonight_good_click_v2",
+            delonfault = 1.0,
             min = 0.0,
             max = 1000000.0
           )
 
-      object NegativeFeedbackV2Param
-          extends FSBoundedParam[Double](
-            name = "scored_tweets_model_weight_negative_feedback_v2",
-            default = 1.0,
+      objelonct NelongativelonFelonelondbackV2Param
+          elonxtelonnds FSBoundelondParam[Doublelon](
+            namelon = "scorelond_twelonelonts_modelonl_welonight_nelongativelon_felonelondback_v2",
+            delonfault = 1.0,
             min = -1000.0,
             max = 0.0
           )
 
-      object ReportParam
-          extends FSBoundedParam[Double](
-            name = "scored_tweets_model_weight_report",
-            default = 1.0,
+      objelonct RelonportParam
+          elonxtelonnds FSBoundelondParam[Doublelon](
+            namelon = "scorelond_twelonelonts_modelonl_welonight_relonport",
+            delonfault = 1.0,
             min = -20000.0,
             max = 0.0
           )
     }
   }
 
-  object EnableSimClustersSimilarityFeatureHydrationDeciderParam
-      extends BooleanDeciderParam(decider = DeciderKey.EnableSimClustersSimilarityFeatureHydration)
+  objelonct elonnablelonSimClustelonrsSimilarityFelonaturelonHydrationDeloncidelonrParam
+      elonxtelonnds BoolelonanDeloncidelonrParam(deloncidelonr = DeloncidelonrKelony.elonnablelonSimClustelonrsSimilarityFelonaturelonHydration)
 
-  object CompetitorSetParam
-      extends FSParam[Set[Long]](name = "scored_tweets_competitor_list", default = Set.empty)
+  objelonct CompelontitorSelontParam
+      elonxtelonnds FSParam[Selont[Long]](namelon = "scorelond_twelonelonts_compelontitor_list", delonfault = Selont.elonmpty)
 
-  object CompetitorURLSeqParam
-      extends FSParam[Seq[String]](name = "scored_tweets_competitor_url_list", default = Seq.empty)
+  objelonct CompelontitorURLSelonqParam
+      elonxtelonnds FSParam[Selonq[String]](namelon = "scorelond_twelonelonts_compelontitor_url_list", delonfault = Selonq.elonmpty)
 }

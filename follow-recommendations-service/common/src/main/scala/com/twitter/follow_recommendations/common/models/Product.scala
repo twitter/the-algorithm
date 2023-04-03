@@ -1,15 +1,15 @@
-package com.twitter.follow_recommendations.common.models
+packagelon com.twittelonr.follow_reloncommelonndations.common.modelonls
 
-import com.twitter.product_mixer.core.model.common.identifier.ProductIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.{Product => ProductMixerProduct}
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.ProductIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.{Product => ProductMixelonrProduct}
 
-object Product {
-  case object MagicRecs extends ProductMixerProduct {
-    override val identifier: ProductIdentifier = ProductIdentifier("MagicRecs")
-    override val stringCenterProject: Option[String] = Some("people-discovery")
+objelonct Product {
+  caselon objelonct MagicReloncs elonxtelonnds ProductMixelonrProduct {
+    ovelonrridelon val idelonntifielonr: ProductIdelonntifielonr = ProductIdelonntifielonr("MagicReloncs")
+    ovelonrridelon val stringCelonntelonrProjelonct: Option[String] = Somelon("pelonoplelon-discovelonry")
   }
 
-  case object PlaceholderProductMixerProduct extends ProductMixerProduct {
-    override val identifier: ProductIdentifier = ProductIdentifier("PlaceholderProductMixerProduct")
+  caselon objelonct PlacelonholdelonrProductMixelonrProduct elonxtelonnds ProductMixelonrProduct {
+    ovelonrridelon val idelonntifielonr: ProductIdelonntifielonr = ProductIdelonntifielonr("PlacelonholdelonrProductMixelonrProduct")
   }
 }

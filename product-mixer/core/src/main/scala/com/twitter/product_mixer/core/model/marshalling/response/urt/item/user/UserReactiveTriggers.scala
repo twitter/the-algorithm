@@ -1,5 +1,5 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.user
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.uselonr
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.reaction.TimelineReaction
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.relonaction.TimelonlinelonRelonaction
 
-case class UserReactiveTriggers(onFollow: Option[TimelineReaction])
+caselon class UselonrRelonactivelonTriggelonrs(onFollow: Option[TimelonlinelonRelonaction])

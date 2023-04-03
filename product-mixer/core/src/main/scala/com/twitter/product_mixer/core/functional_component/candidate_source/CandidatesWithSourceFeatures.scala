@@ -1,16 +1,16 @@
-package com.twitter.product_mixer.core.functional_component.candidate_source
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon
 
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
 
 /**
- * Results from a candidate source, optionally carrying extracted query level features to add
- * to the query's feature map (e.g, extracting reusable features from the thrift response of thrift
+ * Relonsults from a candidatelon sourcelon, optionally carrying elonxtractelond quelonry lelonvelonl felonaturelons to add
+ * to thelon quelonry's felonaturelon map (elon.g, elonxtracting relonusablelon felonaturelons from thelon thrift relonsponselon of thrift
  * call).
- * @param candidates The candidates returned from the underlying CandidateSoure
- * @param features [[FeatureMap]] containing the features from the candidate source
- *                                    to merge back into the PipelineQuery FeatureMap.
- * @tparam Candidate The type of result
+ * @param candidatelons Thelon candidatelons relonturnelond from thelon undelonrlying CandidatelonSourelon
+ * @param felonaturelons [[FelonaturelonMap]] containing thelon felonaturelons from thelon candidatelon sourcelon
+ *                                    to melonrgelon back into thelon PipelonlinelonQuelonry FelonaturelonMap.
+ * @tparam Candidatelon Thelon typelon of relonsult
  */
-case class CandidatesWithSourceFeatures[+Candidate](
-  candidates: Seq[Candidate],
-  features: FeatureMap)
+caselon class CandidatelonsWithSourcelonFelonaturelons[+Candidatelon](
+  candidatelons: Selonq[Candidatelon],
+  felonaturelons: FelonaturelonMap)

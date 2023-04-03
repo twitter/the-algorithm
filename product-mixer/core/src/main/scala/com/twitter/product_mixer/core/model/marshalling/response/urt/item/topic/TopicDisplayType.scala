@@ -1,8 +1,8 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.topic
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.topic
 
-sealed trait TopicDisplayType
+selonalelond trait TopicDisplayTypelon
 
-case object BasicTopicDisplayType extends TopicDisplayType
-case object PillTopicDisplayType extends TopicDisplayType
-case object NoIconTopicDisplayType extends TopicDisplayType
-case object PillWithoutActionIconDisplayType extends TopicDisplayType
+caselon objelonct BasicTopicDisplayTypelon elonxtelonnds TopicDisplayTypelon
+caselon objelonct PillTopicDisplayTypelon elonxtelonnds TopicDisplayTypelon
+caselon objelonct NoIconTopicDisplayTypelon elonxtelonnds TopicDisplayTypelon
+caselon objelonct PillWithoutActionIconDisplayTypelon elonxtelonnds TopicDisplayTypelon

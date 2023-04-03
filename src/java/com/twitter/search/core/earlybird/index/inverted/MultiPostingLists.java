@@ -1,135 +1,135 @@
-package com.twitter.search.core.earlybird.index.inverted;
+packagelon com.twittelonr.selonarch.corelon.elonarlybird.indelonx.invelonrtelond;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 
-import com.google.common.annotations.VisibleForTesting;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
 
-import org.apache.lucene.index.PostingsEnum;
+import org.apachelon.lucelonnelon.indelonx.Postingselonnum;
 
-import com.twitter.search.common.util.io.flushable.DataDeserializer;
-import com.twitter.search.common.util.io.flushable.DataSerializer;
-import com.twitter.search.common.util.io.flushable.FlushInfo;
-import com.twitter.search.common.util.io.flushable.Flushable;
+import com.twittelonr.selonarch.common.util.io.flushablelon.DataDelonselonrializelonr;
+import com.twittelonr.selonarch.common.util.io.flushablelon.DataSelonrializelonr;
+import com.twittelonr.selonarch.common.util.io.flushablelon.FlushInfo;
+import com.twittelonr.selonarch.common.util.io.flushablelon.Flushablelon;
 
-public class MultiPostingLists extends OptimizedPostingLists {
+public class MultiPostingLists elonxtelonnds OptimizelondPostingLists {
 
-  @VisibleForTesting
-  public static final int DEFAULT_DF_THRESHOLD = 1000;
+  @VisiblelonForTelonsting
+  public static final int DelonFAULT_DF_THRelonSHOLD = 1000;
 
-  private final OptimizedPostingLists lowDF;
-  private final OptimizedPostingLists highDF;
+  privatelon final OptimizelondPostingLists lowDF;
+  privatelon final OptimizelondPostingLists highDF;
 
-  private final int dfThreshold;
+  privatelon final int dfThrelonshold;
 
   /**
-   * Given the number of postings in each term (in this field), sum up the number of postings in
-   * the low df fields.
-   * @param numPostingsPerTerm number of postings in each term in this field.
-   * @param dfThreshold the low/high df threshold.
+   * Givelonn thelon numbelonr of postings in elonach telonrm (in this fielonld), sum up thelon numbelonr of postings in
+   * thelon low df fielonlds.
+   * @param numPostingsPelonrTelonrm numbelonr of postings in elonach telonrm in this fielonld.
+   * @param dfThrelonshold thelon low/high df threlonshold.
    */
-  private static int numPostingsInLowDfTerms(int[] numPostingsPerTerm, int dfThreshold) {
+  privatelon static int numPostingsInLowDfTelonrms(int[] numPostingsPelonrTelonrm, int dfThrelonshold) {
     int sumOfAllPostings = 0;
-    for (int numPostingsInATerm : numPostingsPerTerm) {
-      if (numPostingsInATerm < dfThreshold) {
-        sumOfAllPostings += numPostingsInATerm;
+    for (int numPostingsInATelonrm : numPostingsPelonrTelonrm) {
+      if (numPostingsInATelonrm < dfThrelonshold) {
+        sumOfAllPostings += numPostingsInATelonrm;
       }
     }
-    return sumOfAllPostings;
+    relonturn sumOfAllPostings;
   }
 
   /**
-   * Creates a new posting list delegating to either lowDF or highDF posting list.
-   * @param omitPositions whether positions should be omitted or not.
-   * @param numPostingsPerTerm number of postings in each term in this field.
-   * @param maxPosition the largest position used in all the postings for this field.
+   * Crelonatelons a nelonw posting list delonlelongating to elonithelonr lowDF or highDF posting list.
+   * @param omitPositions whelonthelonr positions should belon omittelond or not.
+   * @param numPostingsPelonrTelonrm numbelonr of postings in elonach telonrm in this fielonld.
+   * @param maxPosition thelon largelonst position uselond in all thelon postings for this fielonld.
    */
   public MultiPostingLists(
-      boolean omitPositions,
-      int[] numPostingsPerTerm,
+      boolelonan omitPositions,
+      int[] numPostingsPelonrTelonrm,
       int maxPosition) {
     this(
-        new LowDFPackedIntsPostingLists(
+        nelonw LowDFPackelondIntsPostingLists(
             omitPositions,
-            numPostingsInLowDfTerms(numPostingsPerTerm, DEFAULT_DF_THRESHOLD),
+            numPostingsInLowDfTelonrms(numPostingsPelonrTelonrm, DelonFAULT_DF_THRelonSHOLD),
             maxPosition),
-        new HighDFPackedIntsPostingLists(omitPositions),
-        DEFAULT_DF_THRESHOLD);
+        nelonw HighDFPackelondIntsPostingLists(omitPositions),
+        DelonFAULT_DF_THRelonSHOLD);
   }
 
-  private MultiPostingLists(
-      OptimizedPostingLists lowDF,
-      OptimizedPostingLists highDF,
-      int dfThreshold) {
+  privatelon MultiPostingLists(
+      OptimizelondPostingLists lowDF,
+      OptimizelondPostingLists highDF,
+      int dfThrelonshold) {
     this.lowDF = lowDF;
     this.highDF = highDF;
-    this.dfThreshold = dfThreshold;
+    this.dfThrelonshold = dfThrelonshold;
   }
 
-  @Override
-  public int copyPostingList(PostingsEnum postingsEnum, int numPostings)
-      throws IOException {
-    return numPostings < dfThreshold
-          ? lowDF.copyPostingList(postingsEnum, numPostings)
-          : highDF.copyPostingList(postingsEnum, numPostings);
+  @Ovelonrridelon
+  public int copyPostingList(Postingselonnum postingselonnum, int numPostings)
+      throws IOelonxcelonption {
+    relonturn numPostings < dfThrelonshold
+          ? lowDF.copyPostingList(postingselonnum, numPostings)
+          : highDF.copyPostingList(postingselonnum, numPostings);
   }
 
-  @Override
-  public EarlybirdPostingsEnum postings(int postingsPointer, int numPostings, int flags)
-      throws IOException {
-    return numPostings < dfThreshold
-        ? lowDF.postings(postingsPointer, numPostings, flags)
-        : highDF.postings(postingsPointer, numPostings, flags);
+  @Ovelonrridelon
+  public elonarlybirdPostingselonnum postings(int postingsPointelonr, int numPostings, int flags)
+      throws IOelonxcelonption {
+    relonturn numPostings < dfThrelonshold
+        ? lowDF.postings(postingsPointelonr, numPostings, flags)
+        : highDF.postings(postingsPointelonr, numPostings, flags);
   }
 
-  @SuppressWarnings("unchecked")
-  @Override
-  public FlushHandler getFlushHandler() {
-    return new FlushHandler(this);
+  @SupprelonssWarnings("unchelonckelond")
+  @Ovelonrridelon
+  public FlushHandlelonr gelontFlushHandlelonr() {
+    relonturn nelonw FlushHandlelonr(this);
   }
 
-  @VisibleForTesting
-  OptimizedPostingLists getLowDfPostingsList() {
-    return lowDF;
+  @VisiblelonForTelonsting
+  OptimizelondPostingLists gelontLowDfPostingsList() {
+    relonturn lowDF;
   }
 
-  @VisibleForTesting
-  OptimizedPostingLists getHighDfPostingsList() {
-    return highDF;
+  @VisiblelonForTelonsting
+  OptimizelondPostingLists gelontHighDfPostingsList() {
+    relonturn highDF;
   }
 
-  public static class FlushHandler extends Flushable.Handler<MultiPostingLists> {
-    private static final String DF_THRESHOLD_PROP_NAME = "dfThresHold";
+  public static class FlushHandlelonr elonxtelonnds Flushablelon.Handlelonr<MultiPostingLists> {
+    privatelon static final String DF_THRelonSHOLD_PROP_NAMelon = "dfThrelonsHold";
 
-    public FlushHandler() {
-      super();
+    public FlushHandlelonr() {
+      supelonr();
     }
 
-    public FlushHandler(MultiPostingLists objectToFlush) {
-      super(objectToFlush);
+    public FlushHandlelonr(MultiPostingLists objelonctToFlush) {
+      supelonr(objelonctToFlush);
     }
 
-    @Override
-    protected void doFlush(FlushInfo flushInfo, DataSerializer out)
-        throws IOException {
-      MultiPostingLists objectToFlush = getObjectToFlush();
-      flushInfo.addIntProperty(DF_THRESHOLD_PROP_NAME, objectToFlush.dfThreshold);
-      objectToFlush.lowDF.getFlushHandler().flush(
-              flushInfo.newSubProperties("lowDFPostinglists"), out);
-      objectToFlush.highDF.getFlushHandler().flush(
-              flushInfo.newSubProperties("highDFPostinglists"), out);
+    @Ovelonrridelon
+    protelonctelond void doFlush(FlushInfo flushInfo, DataSelonrializelonr out)
+        throws IOelonxcelonption {
+      MultiPostingLists objelonctToFlush = gelontObjelonctToFlush();
+      flushInfo.addIntPropelonrty(DF_THRelonSHOLD_PROP_NAMelon, objelonctToFlush.dfThrelonshold);
+      objelonctToFlush.lowDF.gelontFlushHandlelonr().flush(
+              flushInfo.nelonwSubPropelonrtielons("lowDFPostinglists"), out);
+      objelonctToFlush.highDF.gelontFlushHandlelonr().flush(
+              flushInfo.nelonwSubPropelonrtielons("highDFPostinglists"), out);
     }
 
-    @Override
-    protected MultiPostingLists doLoad(FlushInfo flushInfo,
-        DataDeserializer in) throws IOException {
-      OptimizedPostingLists lowDF = new LowDFPackedIntsPostingLists.FlushHandler()
-            .load(flushInfo.getSubProperties("lowDFPostinglists"), in);
-      OptimizedPostingLists highDF = new HighDFPackedIntsPostingLists.FlushHandler()
-          .load(flushInfo.getSubProperties("highDFPostinglists"), in);
-      return new MultiPostingLists(
+    @Ovelonrridelon
+    protelonctelond MultiPostingLists doLoad(FlushInfo flushInfo,
+        DataDelonselonrializelonr in) throws IOelonxcelonption {
+      OptimizelondPostingLists lowDF = nelonw LowDFPackelondIntsPostingLists.FlushHandlelonr()
+            .load(flushInfo.gelontSubPropelonrtielons("lowDFPostinglists"), in);
+      OptimizelondPostingLists highDF = nelonw HighDFPackelondIntsPostingLists.FlushHandlelonr()
+          .load(flushInfo.gelontSubPropelonrtielons("highDFPostinglists"), in);
+      relonturn nelonw MultiPostingLists(
           lowDF,
           highDF,
-          flushInfo.getIntProperty(DF_THRESHOLD_PROP_NAME));
+          flushInfo.gelontIntPropelonrty(DF_THRelonSHOLD_PROP_NAMelon));
     }
   }
 }

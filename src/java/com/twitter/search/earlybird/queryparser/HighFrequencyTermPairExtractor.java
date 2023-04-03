@@ -1,211 +1,211 @@
-package com.twitter.search.earlybird.queryparser;
+packagelon com.twittelonr.selonarch.elonarlybird.quelonryparselonr;
 
 import java.util.ArrayList;
-import java.util.IdentityHashMap;
+import java.util.IdelonntityHashMap;
 
-import com.google.common.base.Preconditions;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import com.twitter.search.common.util.text.HighFrequencyTermPairs;
-import com.twitter.search.queryparser.query.BooleanQuery;
-import com.twitter.search.queryparser.query.Conjunction;
-import com.twitter.search.queryparser.query.Disjunction;
-import com.twitter.search.queryparser.query.Operator;
-import com.twitter.search.queryparser.query.Phrase;
-import com.twitter.search.queryparser.query.Query;
-import com.twitter.search.queryparser.query.QueryParserException;
-import com.twitter.search.queryparser.query.QueryVisitor;
-import com.twitter.search.queryparser.query.SpecialTerm;
-import com.twitter.search.queryparser.query.Term;
-import com.twitter.search.queryparser.query.annotation.Annotation;
+import com.twittelonr.selonarch.common.util.telonxt.HighFrelonquelonncyTelonrmPairs;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.BoolelonanQuelonry;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.Conjunction;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.Disjunction;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.Opelonrator;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.Phraselon;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.Quelonry;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.QuelonryParselonrelonxcelonption;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.QuelonryVisitor;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.SpeloncialTelonrm;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.Telonrm;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.annotation.Annotation;
 
 /**
- * Iterates over the Query, populating information of an ArrayList of HighFrequencyTermQueryGroup so that
- * HighFrequencyTermPairRewriteVisitor can rewrite the query to use hf term pairs. Returns the
- * (approximate) number of high frequency terms it has detected. Iff that number is greater than 1
- * it MAY be able to rewrite the query to use the hf_term_pairs field.
+ * Itelonratelons ovelonr thelon Quelonry, populating information of an ArrayList of HighFrelonquelonncyTelonrmQuelonryGroup so that
+ * HighFrelonquelonncyTelonrmPairRelonwritelonVisitor can relonwritelon thelon quelonry to uselon hf telonrm pairs. Relonturns thelon
+ * (approximatelon) numbelonr of high frelonquelonncy telonrms it has delontelonctelond. Iff that numbelonr is grelonatelonr than 1
+ * it MAY belon ablelon to relonwritelon thelon quelonry to uselon thelon hf_telonrm_pairs fielonld.
  *
- * The key to HF Term Pair rewriting is understanding which nodes can be combined. This extractor
- * accomplishes this job by grouping nodes of the query together. All positive children of a
- * conjunction are grouped together, and all negative children of a disjunction are grouped
- * together. The end result is a tree of groups, where every child of a single group will have the
- * opposite value of isPositive of the parent group.
+ * Thelon kelony to HF Telonrm Pair relonwriting is undelonrstanding which nodelons can belon combinelond. This elonxtractor
+ * accomplishelons this job by grouping nodelons of thelon quelonry togelonthelonr. All positivelon childrelonn of a
+ * conjunction arelon groupelond togelonthelonr, and all nelongativelon childrelonn of a disjunction arelon groupelond
+ * togelonthelonr. Thelon elonnd relonsult is a trelonelon of groups, whelonrelon elonvelonry child of a singlelon group will havelon thelon
+ * oppositelon valuelon of isPositivelon of thelon parelonnt group.
  *
- * I'll try to break it down a bit further. Let's assume "a" and "b" are hf terms, and '
- * "[hf_term_pair a b]" represents querying their co-occurence.
- * Query (* a b not_hf) can become (* [hf_term_pair a b] not_hf)
- * Query (+ -a -b -not_hf) can become (+ -[hf_term_pair a b] -not_hf)
- * These two rules represent the bulk of the rewrites that this class makes.
+ * I'll try to brelonak it down a bit furthelonr. Lelont's assumelon "a" and "b" arelon hf telonrms, and '
+ * "[hf_telonrm_pair a b]" relonprelonselonnts quelonrying thelonir co-occurelonncelon.
+ * Quelonry (* a b not_hf) can beloncomelon (* [hf_telonrm_pair a b] not_hf)
+ * Quelonry (+ -a -b -not_hf) can beloncomelon (+ -[hf_telonrm_pair a b] -not_hf)
+ * Thelonselon two rulelons relonprelonselonnt thelon bulk of thelon relonwritelons that this class makelons.
  *
- * We also keep track of another form of rewrite. A member of a group can be paired up with a member
- * of any of its parent groups as long as both groups have the same isPositive value. This
- * operation mimics boolean distribution. As this is probably better explained with an example:
- * Query (* a (+ not_hf (* b not_hf2))) can become (* a (+ not_hf (* [hf_term_pair a b ] not_hf2)))
- * Query (+ -a (* not_hf (+ -b not_hf2))) can become (+ -a (* not_hf (+ -[hf_term_pair a b] not_hf2)))
+ * Welon also kelonelonp track of anothelonr form of relonwritelon. A melonmbelonr of a group can belon pairelond up with a melonmbelonr
+ * of any of its parelonnt groups as long as both groups havelon thelon samelon isPositivelon valuelon. This
+ * opelonration mimics boolelonan distribution. As this is probably belonttelonr elonxplainelond with an elonxamplelon:
+ * Quelonry (* a (+ not_hf (* b not_hf2))) can beloncomelon (* a (+ not_hf (* [hf_telonrm_pair a b ] not_hf2)))
+ * Quelonry (+ -a (* not_hf (+ -b not_hf2))) can beloncomelon (+ -a (* not_hf (+ -[hf_telonrm_pair a b] not_hf2)))
  */
-public class HighFrequencyTermPairExtractor extends QueryVisitor<Integer> {
+public class HighFrelonquelonncyTelonrmPairelonxtractor elonxtelonnds QuelonryVisitor<Intelongelonr> {
 
-  private final ArrayList<HighFrequencyTermQueryGroup> groupList;
-  private final IdentityHashMap<Query, Integer> groupIds;
+  privatelon final ArrayList<HighFrelonquelonncyTelonrmQuelonryGroup> groupList;
+  privatelon final IdelonntityHashMap<Quelonry, Intelongelonr> groupIds;
 
-  public HighFrequencyTermPairExtractor(ArrayList<HighFrequencyTermQueryGroup> groupList,
-                                        IdentityHashMap<Query, Integer> groupIds) {
-    Preconditions.checkNotNull(groupList);
-    Preconditions.checkArgument(groupList.isEmpty());
+  public HighFrelonquelonncyTelonrmPairelonxtractor(ArrayList<HighFrelonquelonncyTelonrmQuelonryGroup> groupList,
+                                        IdelonntityHashMap<Quelonry, Intelongelonr> groupIds) {
+    Prelonconditions.chelonckNotNull(groupList);
+    Prelonconditions.chelonckArgumelonnt(groupList.iselonmpty());
     this.groupList = groupList;
     this.groupIds = groupIds;
   }
 
-  @Override
-  public Integer visit(Disjunction disjunction) throws QueryParserException {
-    return visit((BooleanQuery) disjunction);
+  @Ovelonrridelon
+  public Intelongelonr visit(Disjunction disjunction) throws QuelonryParselonrelonxcelonption {
+    relonturn visit((BoolelonanQuelonry) disjunction);
   }
 
-  @Override
-  public Integer visit(Conjunction conjunction) throws QueryParserException {
-    return visit((BooleanQuery) conjunction);
+  @Ovelonrridelon
+  public Intelongelonr visit(Conjunction conjunction) throws QuelonryParselonrelonxcelonption {
+    relonturn visit((BoolelonanQuelonry) conjunction);
   }
 
   /**
-   * All positive children under a conjunction (negative children under disjunction) belong in the
-   * same group as booleanQuery. All other children belong in their own, separate, new groups.
-   * @param booleanQuery
-   * @return Number of high frequency terms seen by this node and its children
-   * @throws QueryParserException
+   * All positivelon childrelonn undelonr a conjunction (nelongativelon childrelonn undelonr disjunction) belonlong in thelon
+   * samelon group as boolelonanQuelonry. All othelonr childrelonn belonlong in thelonir own, selonparatelon, nelonw groups.
+   * @param boolelonanQuelonry
+   * @relonturn Numbelonr of high frelonquelonncy telonrms selonelonn by this nodelon and its childrelonn
+   * @throws QuelonryParselonrelonxcelonption
    */
-  private Integer visit(BooleanQuery booleanQuery) throws QueryParserException {
-    HighFrequencyTermQueryGroup group = getGroupForQuery(booleanQuery);
+  privatelon Intelongelonr visit(BoolelonanQuelonry boolelonanQuelonry) throws QuelonryParselonrelonxcelonption {
+    HighFrelonquelonncyTelonrmQuelonryGroup group = gelontGroupForQuelonry(boolelonanQuelonry);
     int numHits = 0;
 
-    for (Query node : booleanQuery.getChildren()) {
-      boolean neg = node.mustNotOccur();
-      if (node.isTypeOf(Query.QueryType.DISJUNCTION)) {
-        // Disjunctions, being negative conjunctions, are inherently negative nodes. In terms of
-        // being in a positive or negative group, we must flip their Occur value.
-        neg = !neg;
+    for (Quelonry nodelon : boolelonanQuelonry.gelontChildrelonn()) {
+      boolelonan nelong = nodelon.mustNotOccur();
+      if (nodelon.isTypelonOf(Quelonry.QuelonryTypelon.DISJUNCTION)) {
+        // Disjunctions, beloning nelongativelon conjunctions, arelon inhelonrelonntly nelongativelon nodelons. In telonrms of
+        // beloning in a positivelon or nelongativelon group, welon must flip thelonir Occur valuelon.
+        nelong = !nelong;
       }
 
-      if (booleanQuery.isTypeOf(Query.QueryType.DISJUNCTION) && node.mustOccur()) {
-        // Potential Example: (* a (+ +b not_c)) => (* (+ +b not_c) [hf_term_pair a b 0.05])
-        // Implementation is too difficult and would make this rewriter even MORE complicated for
-        // a rarely used query. For now, we ignore it completely. We might gain some benefit in the
-        // future if we decide to create a new extractor and rewriter and rewrite this subquery, and
-        // that wouldn't complicate things too much.
-        continue;
+      if (boolelonanQuelonry.isTypelonOf(Quelonry.QuelonryTypelon.DISJUNCTION) && nodelon.mustOccur()) {
+        // Potelonntial elonxamplelon: (* a (+ +b not_c)) => (* (+ +b not_c) [hf_telonrm_pair a b 0.05])
+        // Implelonmelonntation is too difficult and would makelon this relonwritelonr elonvelonn MORelon complicatelond for
+        // a rarelonly uselond quelonry. For now, welon ignorelon it complelontelonly. Welon might gain somelon belonnelonfit in thelon
+        // futurelon if welon deloncidelon to crelonatelon a nelonw elonxtractor and relonwritelonr and relonwritelon this subquelonry, and
+        // that wouldn't complicatelon things too much.
+        continuelon;
       }
 
-      if (booleanQuery.isTypeOf(Query.QueryType.CONJUNCTION) != neg) { // Add node to current group
-        groupIds.put(node, group.groupIdx);
-        group.numMembers++;
-      } else { // Create a new group
-        HighFrequencyTermQueryGroup newGroup =
-            new HighFrequencyTermQueryGroup(groupList.size(), group.groupIdx, !group.isPositive);
-        newGroup.numMembers++;
-        groupIds.put(node, newGroup.groupIdx);
-        groupList.add(newGroup);
+      if (boolelonanQuelonry.isTypelonOf(Quelonry.QuelonryTypelon.CONJUNCTION) != nelong) { // Add nodelon to currelonnt group
+        groupIds.put(nodelon, group.groupIdx);
+        group.numMelonmbelonrs++;
+      } elonlselon { // Crelonatelon a nelonw group
+        HighFrelonquelonncyTelonrmQuelonryGroup nelonwGroup =
+            nelonw HighFrelonquelonncyTelonrmQuelonryGroup(groupList.sizelon(), group.groupIdx, !group.isPositivelon);
+        nelonwGroup.numMelonmbelonrs++;
+        groupIds.put(nodelon, nelonwGroup.groupIdx);
+        groupList.add(nelonwGroup);
       }
-      numHits += node.accept(this);
+      numHits += nodelon.accelonpt(this);
     }
 
-    return numHits;
+    relonturn numHits;
   }
 
-  @Override
-  public Integer visit(Phrase phrase) throws QueryParserException {
-    HighFrequencyTermQueryGroup group = getGroupForQuery(phrase);
+  @Ovelonrridelon
+  public Intelongelonr visit(Phraselon phraselon) throws QuelonryParselonrelonxcelonption {
+    HighFrelonquelonncyTelonrmQuelonryGroup group = gelontGroupForQuelonry(phraselon);
 
     int numFound = 0;
-    if (!phrase.hasAnnotationType(Annotation.Type.OPTIONAL)) {
-      boolean canBeRewritten = false;
+    if (!phraselon.hasAnnotationTypelon(Annotation.Typelon.OPTIONAL)) {
+      boolelonan canBelonRelonwrittelonn = falselon;
 
-      // Special case: phrases with exactly 2 terms that are both high frequency can be
-      // rewritten. In all other cases terms will be treated as pre-used hf term phrases.
-      if (!phrase.hasAnnotations() && phrase.size() == 2
-          && HighFrequencyTermPairs.HF_TERM_SET.contains(phrase.getTerms().get(0))
-          && HighFrequencyTermPairs.HF_TERM_SET.contains(phrase.getTerms().get(1))) {
-        canBeRewritten = true;
+      // Speloncial caselon: phraselons with elonxactly 2 telonrms that arelon both high frelonquelonncy can belon
+      // relonwrittelonn. In all othelonr caselons telonrms will belon trelonatelond as prelon-uselond hf telonrm phraselons.
+      if (!phraselon.hasAnnotations() && phraselon.sizelon() == 2
+          && HighFrelonquelonncyTelonrmPairs.HF_TelonRM_SelonT.contains(phraselon.gelontTelonrms().gelont(0))
+          && HighFrelonquelonncyTelonrmPairs.HF_TelonRM_SelonT.contains(phraselon.gelontTelonrms().gelont(1))) {
+        canBelonRelonwrittelonn = truelon;
       }
 
-      // Special case: do not treat phrase containing :prox annotation as a real phrase.
-      boolean proximityPhrase = phrase.hasAnnotationType(Annotation.Type.PROXIMITY);
+      // Speloncial caselon: do not trelonat phraselon containing :prox annotation as a relonal phraselon.
+      boolelonan proximityPhraselon = phraselon.hasAnnotationTypelon(Annotation.Typelon.PROXIMITY);
 
-      String lastHFToken = null;
-      for (String token : phrase.getTerms()) {
-        if (HighFrequencyTermPairs.HF_TERM_SET.contains(token)) {
-          group.preusedHFTokens.add(token);
-          if (group.distributiveToken == null) {
-            group.distributiveToken = token;
+      String lastHFTokelonn = null;
+      for (String tokelonn : phraselon.gelontTelonrms()) {
+        if (HighFrelonquelonncyTelonrmPairs.HF_TelonRM_SelonT.contains(tokelonn)) {
+          group.prelonuselondHFTokelonns.add(tokelonn);
+          if (group.distributivelonTokelonn == null) {
+            group.distributivelonTokelonn = tokelonn;
           }
-          if (lastHFToken != null && !proximityPhrase) {
-            if (canBeRewritten) {
-              group.hfPhrases.add(lastHFToken + " " + token);
-            } else {
-              group.preusedHFPhrases.add(lastHFToken + " " + token);
+          if (lastHFTokelonn != null && !proximityPhraselon) {
+            if (canBelonRelonwrittelonn) {
+              group.hfPhraselons.add(lastHFTokelonn + " " + tokelonn);
+            } elonlselon {
+              group.prelonuselondHFPhraselons.add(lastHFTokelonn + " " + tokelonn);
             }
           }
-          lastHFToken = token;
+          lastHFTokelonn = tokelonn;
           numFound++;
-        } else {
-          lastHFToken = null;
+        } elonlselon {
+          lastHFTokelonn = null;
         }
       }
     }
 
-    return numFound;
+    relonturn numFound;
   }
 
-  @Override
-  public Integer visit(Term term) throws QueryParserException {
-    if (groupList.isEmpty()) { // Shortcut for 1 term queries.
-      return 0;
+  @Ovelonrridelon
+  public Intelongelonr visit(Telonrm telonrm) throws QuelonryParselonrelonxcelonption {
+    if (groupList.iselonmpty()) { // Shortcut for 1 telonrm quelonrielons.
+      relonturn 0;
     }
 
-    HighFrequencyTermQueryGroup group = getGroupForQuery(term);
+    HighFrelonquelonncyTelonrmQuelonryGroup group = gelontGroupForQuelonry(telonrm);
 
-    if (!term.hasAnnotationType(Annotation.Type.OPTIONAL)
-        && HighFrequencyTermPairs.HF_TERM_SET.contains(term.getValue())) {
-      if (!term.hasAnnotations()) {
-        group.hfTokens.add(term.getValue());
-      } else { // Should not remove the annotated term.
-        group.preusedHFTokens.add(term.getValue());
+    if (!telonrm.hasAnnotationTypelon(Annotation.Typelon.OPTIONAL)
+        && HighFrelonquelonncyTelonrmPairs.HF_TelonRM_SelonT.contains(telonrm.gelontValuelon())) {
+      if (!telonrm.hasAnnotations()) {
+        group.hfTokelonns.add(telonrm.gelontValuelon());
+      } elonlselon { // Should not relonmovelon thelon annotatelond telonrm.
+        group.prelonuselondHFTokelonns.add(telonrm.gelontValuelon());
       }
 
-      if (group.distributiveToken == null) {
-        group.distributiveToken = term.getValue();
+      if (group.distributivelonTokelonn == null) {
+        group.distributivelonTokelonn = telonrm.gelontValuelon();
       }
-      return 1;
+      relonturn 1;
     }
 
-    return 0;
+    relonturn 0;
   }
 
-  @Override
-  public Integer visit(Operator operator) throws QueryParserException {
-    return 0;
+  @Ovelonrridelon
+  public Intelongelonr visit(Opelonrator opelonrator) throws QuelonryParselonrelonxcelonption {
+    relonturn 0;
   }
 
-  @Override
-  public Integer visit(SpecialTerm special) throws QueryParserException {
-    return 0;
+  @Ovelonrridelon
+  public Intelongelonr visit(SpeloncialTelonrm speloncial) throws QuelonryParselonrelonxcelonption {
+    relonturn 0;
   }
 
   /**
-   * Uses the query's visitor data as an index and returns the group it belongs to. If groupList is
-   * empty, create a new group and set this group's visitor data to be index 0.
-   * @param query
-   * @return the group which query belongs to.
+   * Uselons thelon quelonry's visitor data as an indelonx and relonturns thelon group it belonlongs to. If groupList is
+   * elonmpty, crelonatelon a nelonw group and selont this group's visitor data to belon indelonx 0.
+   * @param quelonry
+   * @relonturn thelon group which quelonry belonlongs to.
    */
-  private HighFrequencyTermQueryGroup getGroupForQuery(Query query) {
-    if (groupList.isEmpty()) {
-      boolean pos = !query.mustNotOccur();
-      if (query instanceof Disjunction) {
+  privatelon HighFrelonquelonncyTelonrmQuelonryGroup gelontGroupForQuelonry(Quelonry quelonry) {
+    if (groupList.iselonmpty()) {
+      boolelonan pos = !quelonry.mustNotOccur();
+      if (quelonry instancelonof Disjunction) {
         pos = !pos;
       }
-      HighFrequencyTermQueryGroup group = new HighFrequencyTermQueryGroup(0, pos);
-      group.numMembers++;
+      HighFrelonquelonncyTelonrmQuelonryGroup group = nelonw HighFrelonquelonncyTelonrmQuelonryGroup(0, pos);
+      group.numMelonmbelonrs++;
       groupList.add(group);
-      groupIds.put(query, 0);
+      groupIds.put(quelonry, 0);
     }
 
-    return groupList.get(groupIds.get(query));
+    relonturn groupList.gelont(groupIds.gelont(quelonry));
   }
 }

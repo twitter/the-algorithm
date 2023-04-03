@@ -1,63 +1,63 @@
-package com.twitter.cr_mixer.filter
+packagelon com.twittelonr.cr_mixelonr.filtelonr
 
-import com.twitter.cr_mixer.model.CandidateGeneratorQuery
-import com.twitter.cr_mixer.model.InitialCandidate
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.util.Future
-import javax.inject.Singleton
+import com.twittelonr.cr_mixelonr.modelonl.CandidatelonGelonnelonratorQuelonry
+import com.twittelonr.cr_mixelonr.modelonl.InitialCandidatelon
+import com.twittelonr.simclustelonrs_v2.common.TwelonelontId
+import com.twittelonr.simclustelonrs_v2.thriftscala.IntelonrnalId
+import com.twittelonr.util.Futurelon
+import javax.injelonct.Singlelonton
 
-@Singleton
-case class ImpressedTweetlistFilter() extends FilterBase {
-  import ImpressedTweetlistFilter._
+@Singlelonton
+caselon class ImprelonsselondTwelonelontlistFiltelonr() elonxtelonnds FiltelonrBaselon {
+  import ImprelonsselondTwelonelontlistFiltelonr._
 
-  override val name: String = this.getClass.getCanonicalName
+  ovelonrridelon val namelon: String = this.gelontClass.gelontCanonicalNamelon
 
-  override type ConfigType = FilterConfig
+  ovelonrridelon typelon ConfigTypelon = FiltelonrConfig
 
   /*
-   Filtering removes some candidates based on configurable criteria.
+   Filtelonring relonmovelons somelon candidatelons baselond on configurablelon critelonria.
    */
-  override def filter(
-    candidates: Seq[Seq[InitialCandidate]],
-    config: FilterConfig
-  ): Future[Seq[Seq[InitialCandidate]]] = {
-    // Remove candidates which match a source tweet, or which are passed in impressedTweetList
-    val sourceTweetsMatch = candidates
+  ovelonrridelon delonf filtelonr(
+    candidatelons: Selonq[Selonq[InitialCandidatelon]],
+    config: FiltelonrConfig
+  ): Futurelon[Selonq[Selonq[InitialCandidatelon]]] = {
+    // Relonmovelon candidatelons which match a sourcelon twelonelont, or which arelon passelond in imprelonsselondTwelonelontList
+    val sourcelonTwelonelontsMatch = candidatelons
       .flatMap {
 
         /***
-         * Within a Seq[Seq[InitialCandidate]], all candidates within a inner Seq
-         * are guaranteed to have the same sourceInfo. Hence, we can pick .headOption
-         * to represent the whole list when filtering by the internalId of the sourceInfoOpt.
-         * But of course the similarityEngineInfo could be different.
+         * Within a Selonq[Selonq[InitialCandidatelon]], all candidatelons within a innelonr Selonq
+         * arelon guarantelonelond to havelon thelon samelon sourcelonInfo. Helonncelon, welon can pick .helonadOption
+         * to relonprelonselonnt thelon wholelon list whelonn filtelonring by thelon intelonrnalId of thelon sourcelonInfoOpt.
+         * But of courselon thelon similarityelonnginelonInfo could belon diffelonrelonnt.
          */
-        _.headOption.flatMap { candidate =>
-          candidate.candidateGenerationInfo.sourceInfoOpt.map(_.internalId)
+        _.helonadOption.flatMap { candidatelon =>
+          candidatelon.candidatelonGelonnelonrationInfo.sourcelonInfoOpt.map(_.intelonrnalId)
         }
-      }.collect {
-        case InternalId.TweetId(id) => id
+      }.collelonct {
+        caselon IntelonrnalId.TwelonelontId(id) => id
       }
 
-    val impressedTweetList: Set[TweetId] =
-      config.impressedTweetList ++ sourceTweetsMatch
+    val imprelonsselondTwelonelontList: Selont[TwelonelontId] =
+      config.imprelonsselondTwelonelontList ++ sourcelonTwelonelontsMatch
 
-    val filteredCandidateMap: Seq[Seq[InitialCandidate]] =
-      candidates.map {
-        _.filterNot { candidate =>
-          impressedTweetList.contains(candidate.tweetId)
+    val filtelonrelondCandidatelonMap: Selonq[Selonq[InitialCandidatelon]] =
+      candidatelons.map {
+        _.filtelonrNot { candidatelon =>
+          imprelonsselondTwelonelontList.contains(candidatelon.twelonelontId)
         }
       }
-    Future.value(filteredCandidateMap)
+    Futurelon.valuelon(filtelonrelondCandidatelonMap)
   }
 
-  override def requestToConfig[CGQueryType <: CandidateGeneratorQuery](
-    request: CGQueryType
-  ): FilterConfig = {
-    FilterConfig(request.impressedTweetList)
+  ovelonrridelon delonf relonquelonstToConfig[CGQuelonryTypelon <: CandidatelonGelonnelonratorQuelonry](
+    relonquelonst: CGQuelonryTypelon
+  ): FiltelonrConfig = {
+    FiltelonrConfig(relonquelonst.imprelonsselondTwelonelontList)
   }
 }
 
-object ImpressedTweetlistFilter {
-  case class FilterConfig(impressedTweetList: Set[TweetId])
+objelonct ImprelonsselondTwelonelontlistFiltelonr {
+  caselon class FiltelonrConfig(imprelonsselondTwelonelontList: Selont[TwelonelontId])
 }

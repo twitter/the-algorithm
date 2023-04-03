@@ -1,39 +1,39 @@
-package com.twitter.product_mixer.component_library.pipeline.candidate.ads
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.pipelonlinelon.candidatelon.ads
 
-import com.twitter.adserver.thriftscala.AdImpression
-import com.twitter.product_mixer.component_library.model.candidate.ads.AdsCandidate
-import com.twitter.product_mixer.component_library.model.candidate.ads.AdsTweetCandidate
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineResultsTransformer
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.UnexpectedCandidateResult
+import com.twittelonr.adselonrvelonr.thriftscala.AdImprelonssion
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.ads.AdsCandidatelon
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.ads.AdsTwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.transformelonr.CandidatelonPipelonlinelonRelonsultsTransformelonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.PipelonlinelonFailurelon
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.UnelonxpelonctelondCandidatelonRelonsult
 
-object AdsCandidatePipelineResultsTransformer
-    extends CandidatePipelineResultsTransformer[AdImpression, AdsCandidate] {
+objelonct AdsCandidatelonPipelonlinelonRelonsultsTransformelonr
+    elonxtelonnds CandidatelonPipelonlinelonRelonsultsTransformelonr[AdImprelonssion, AdsCandidatelon] {
 
-  override def transform(sourceResult: AdImpression): AdsCandidate =
-    (sourceResult.nativeRtbCreative, sourceResult.promotedTweetId) match {
-      case (None, Some(promotedTweetId)) =>
-        AdsTweetCandidate(
-          id = promotedTweetId,
-          adImpression = sourceResult
+  ovelonrridelon delonf transform(sourcelonRelonsult: AdImprelonssion): AdsCandidatelon =
+    (sourcelonRelonsult.nativelonRtbCrelonativelon, sourcelonRelonsult.promotelondTwelonelontId) match {
+      caselon (Nonelon, Somelon(promotelondTwelonelontId)) =>
+        AdsTwelonelontCandidatelon(
+          id = promotelondTwelonelontId,
+          adImprelonssion = sourcelonRelonsult
         )
-      case (Some(_), None) =>
-        throw unsupportedAdImpressionPipelineFailure(
-          impression = sourceResult,
-          reason = "Received ad impression with rtbCreative")
-      case (Some(_), Some(_)) =>
-        throw unsupportedAdImpressionPipelineFailure(
-          impression = sourceResult,
-          reason = "Received ad impression with both rtbCreative and promoted tweetId")
-      case (None, None) =>
-        throw unsupportedAdImpressionPipelineFailure(
-          impression = sourceResult,
-          reason = "Received ad impression with neither rtbCreative nor promoted tweetId")
+      caselon (Somelon(_), Nonelon) =>
+        throw unsupportelondAdImprelonssionPipelonlinelonFailurelon(
+          imprelonssion = sourcelonRelonsult,
+          relonason = "Reloncelonivelond ad imprelonssion with rtbCrelonativelon")
+      caselon (Somelon(_), Somelon(_)) =>
+        throw unsupportelondAdImprelonssionPipelonlinelonFailurelon(
+          imprelonssion = sourcelonRelonsult,
+          relonason = "Reloncelonivelond ad imprelonssion with both rtbCrelonativelon and promotelond twelonelontId")
+      caselon (Nonelon, Nonelon) =>
+        throw unsupportelondAdImprelonssionPipelonlinelonFailurelon(
+          imprelonssion = sourcelonRelonsult,
+          relonason = "Reloncelonivelond ad imprelonssion with nelonithelonr rtbCrelonativelon nor promotelond twelonelontId")
     }
 
-  private def unsupportedAdImpressionPipelineFailure(impression: AdImpression, reason: String) =
-    PipelineFailure(
-      UnexpectedCandidateResult,
-      reason =
-        s"Unsupported AdImpression ($reason). impressionString: ${impression.impressionString}")
+  privatelon delonf unsupportelondAdImprelonssionPipelonlinelonFailurelon(imprelonssion: AdImprelonssion, relonason: String) =
+    PipelonlinelonFailurelon(
+      UnelonxpelonctelondCandidatelonRelonsult,
+      relonason =
+        s"Unsupportelond AdImprelonssion ($relonason). imprelonssionString: ${imprelonssion.imprelonssionString}")
 }

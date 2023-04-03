@@ -1,81 +1,81 @@
-package com.twitter.follow_recommendations.common.clients.gizmoduck
+packagelon com.twittelonr.follow_reloncommelonndations.common.clielonnts.gizmoduck
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.base.StatsUtil
-import com.twitter.gizmoduck.thriftscala.LookupContext
-import com.twitter.gizmoduck.thriftscala.PerspectiveEdge
-import com.twitter.gizmoduck.thriftscala.QueryFields
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.gizmoduck.Gizmoduck
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.follow_reloncommelonndations.common.baselon.StatsUtil
+import com.twittelonr.gizmoduck.thriftscala.LookupContelonxt
+import com.twittelonr.gizmoduck.thriftscala.Pelonrspelonctivelonelondgelon
+import com.twittelonr.gizmoduck.thriftscala.QuelonryFielonlds
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.stitch.gizmoduck.Gizmoduck
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class GizmoduckClient @Inject() (gizmoduckStitchClient: Gizmoduck, statsReceiver: StatsReceiver) {
-  val stats = statsReceiver.scope("gizmoduck_client")
-  val getByIdStats = stats.scope("get_by_id")
-  val getUserById = stats.scope("get_user_by_id")
+@Singlelonton
+class GizmoduckClielonnt @Injelonct() (gizmoduckStitchClielonnt: Gizmoduck, statsReloncelonivelonr: StatsReloncelonivelonr) {
+  val stats = statsReloncelonivelonr.scopelon("gizmoduck_clielonnt")
+  val gelontByIdStats = stats.scopelon("gelont_by_id")
+  val gelontUselonrById = stats.scopelon("gelont_uselonr_by_id")
 
-  def isProtected(userId: Long): Stitch[Boolean] = {
-    // get latency metrics with StatsUtil.profileStitch when calling .getById
-    val response = StatsUtil.profileStitch(
-      gizmoduckStitchClient.getById(userId, Set(QueryFields.Safety)),
-      getByIdStats
+  delonf isProtelonctelond(uselonrId: Long): Stitch[Boolelonan] = {
+    // gelont latelonncy melontrics with StatsUtil.profilelonStitch whelonn calling .gelontById
+    val relonsponselon = StatsUtil.profilelonStitch(
+      gizmoduckStitchClielonnt.gelontById(uselonrId, Selont(QuelonryFielonlds.Safelonty)),
+      gelontByIdStats
     )
-    response.map { result =>
-      result.user.flatMap(_.safety).map(_.isProtected).getOrElse(true)
+    relonsponselon.map { relonsult =>
+      relonsult.uselonr.flatMap(_.safelonty).map(_.isProtelonctelond).gelontOrelonlselon(truelon)
     }
   }
 
-  def getUserName(userId: Long, forUserId: Long): Stitch[Option[String]] = {
-    val queryFields = GizmoduckClient.GetUserByIdUserNameQueryFields
-    val lookupContext = LookupContext(
-      forUserId = Some(forUserId),
-      perspectiveEdges = Some(GizmoduckClient.DefaultPerspectiveEdges)
+  delonf gelontUselonrNamelon(uselonrId: Long, forUselonrId: Long): Stitch[Option[String]] = {
+    val quelonryFielonlds = GizmoduckClielonnt.GelontUselonrByIdUselonrNamelonQuelonryFielonlds
+    val lookupContelonxt = LookupContelonxt(
+      forUselonrId = Somelon(forUselonrId),
+      pelonrspelonctivelonelondgelons = Somelon(GizmoduckClielonnt.DelonfaultPelonrspelonctivelonelondgelons)
     )
-    // get latency metrics with StatsUtil.profileStitch when calling .getUserById
-    val response = StatsUtil.profileStitch(
-      gizmoduckStitchClient.getUserById(userId, queryFields, lookupContext),
-      getUserById
+    // gelont latelonncy melontrics with StatsUtil.profilelonStitch whelonn calling .gelontUselonrById
+    val relonsponselon = StatsUtil.profilelonStitch(
+      gizmoduckStitchClielonnt.gelontUselonrById(uselonrId, quelonryFielonlds, lookupContelonxt),
+      gelontUselonrById
     )
-    response.map(_.profile.map(_.name))
+    relonsponselon.map(_.profilelon.map(_.namelon))
   }
 }
 
-object GizmoduckClient {
-  // Similar to GizmoduckUserRepository.DefaultPerspectiveEdges
-  val DefaultPerspectiveEdges: Set[PerspectiveEdge] =
-    Set(
-      PerspectiveEdge.Blocking,
-      PerspectiveEdge.BlockedBy,
-      PerspectiveEdge.DeviceFollowing,
-      PerspectiveEdge.FollowRequestSent,
-      PerspectiveEdge.Following,
-      PerspectiveEdge.FollowedBy,
-      PerspectiveEdge.LifelineFollowing,
-      PerspectiveEdge.LifelineFollowedBy,
-      PerspectiveEdge.Muting,
-      PerspectiveEdge.NoRetweetsFrom
+objelonct GizmoduckClielonnt {
+  // Similar to GizmoduckUselonrRelonpository.DelonfaultPelonrspelonctivelonelondgelons
+  val DelonfaultPelonrspelonctivelonelondgelons: Selont[Pelonrspelonctivelonelondgelon] =
+    Selont(
+      Pelonrspelonctivelonelondgelon.Blocking,
+      Pelonrspelonctivelonelondgelon.BlockelondBy,
+      Pelonrspelonctivelonelondgelon.DelonvicelonFollowing,
+      Pelonrspelonctivelonelondgelon.FollowRelonquelonstSelonnt,
+      Pelonrspelonctivelonelondgelon.Following,
+      Pelonrspelonctivelonelondgelon.FollowelondBy,
+      Pelonrspelonctivelonelondgelon.LifelonlinelonFollowing,
+      Pelonrspelonctivelonelondgelon.LifelonlinelonFollowelondBy,
+      Pelonrspelonctivelonelondgelon.Muting,
+      Pelonrspelonctivelonelondgelon.NoRelontwelonelontsFrom
     )
 
-  // From GizmoduckUserRepository.DefaultQueryFields
-  val GetUserByIdQueryFields: Set[QueryFields] = Set(
-    QueryFields.Account,
-    QueryFields.Counts,
-    QueryFields.ExtendedProfile,
-    QueryFields.Perspective,
-    QueryFields.Profile,
-    QueryFields.ProfileDesign,
-    QueryFields.ProfileLocation,
-    QueryFields.Safety,
-    QueryFields.Roles,
-    QueryFields.Takedowns,
-    QueryFields.UrlEntities,
-    QueryFields.DirectMessageView,
-    QueryFields.MediaView
+  // From GizmoduckUselonrRelonpository.DelonfaultQuelonryFielonlds
+  val GelontUselonrByIdQuelonryFielonlds: Selont[QuelonryFielonlds] = Selont(
+    QuelonryFielonlds.Account,
+    QuelonryFielonlds.Counts,
+    QuelonryFielonlds.elonxtelonndelondProfilelon,
+    QuelonryFielonlds.Pelonrspelonctivelon,
+    QuelonryFielonlds.Profilelon,
+    QuelonryFielonlds.ProfilelonDelonsign,
+    QuelonryFielonlds.ProfilelonLocation,
+    QuelonryFielonlds.Safelonty,
+    QuelonryFielonlds.Rolelons,
+    QuelonryFielonlds.Takelondowns,
+    QuelonryFielonlds.Urlelonntitielons,
+    QuelonryFielonlds.DirelonctMelonssagelonVielonw,
+    QuelonryFielonlds.MelondiaVielonw
   )
 
-  val GetUserByIdUserNameQueryFields: Set[QueryFields] = Set(
-    QueryFields.Profile
+  val GelontUselonrByIdUselonrNamelonQuelonryFielonlds: Selont[QuelonryFielonlds] = Selont(
+    QuelonryFielonlds.Profilelon
   )
 }

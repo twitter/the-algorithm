@@ -1,42 +1,42 @@
-package com.twitter.cr_mixer.module
+packagelon com.twittelonr.cr_mixelonr.modulelon
 
-import com.google.inject.Provides
-import com.google.inject.Singleton
-import com.twitter.app.Flag
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.store.strato.StratoFetchableStore
-import com.twitter.hermit.store.common.ObservedReadableStore
-import com.twitter.inject.TwitterModule
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.strato.client.{Client => StratoClient}
-import com.twitter.simclusters_v2.thriftscala.OrderedClustersAndMembers
-import javax.inject.Named
+import com.googlelon.injelonct.Providelons
+import com.googlelon.injelonct.Singlelonton
+import com.twittelonr.app.Flag
+import com.twittelonr.cr_mixelonr.modelonl.ModulelonNamelons
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.frigatelon.common.storelon.strato.StratoFelontchablelonStorelon
+import com.twittelonr.helonrmit.storelon.common.ObselonrvelondRelonadablelonStorelon
+import com.twittelonr.injelonct.TwittelonrModulelon
+import com.twittelonr.simclustelonrs_v2.common.UselonrId
+import com.twittelonr.storelonhaus.RelonadablelonStorelon
+import com.twittelonr.strato.clielonnt.{Clielonnt => StratoClielonnt}
+import com.twittelonr.simclustelonrs_v2.thriftscala.OrdelonrelondClustelonrsAndMelonmbelonrs
+import javax.injelonct.Namelond
 
-object TwiceClustersMembersStoreModule extends TwitterModule {
+objelonct TwicelonClustelonrsMelonmbelonrsStorelonModulelon elonxtelonnds TwittelonrModulelon {
 
-  private val twiceClustersMembersColumnPath: Flag[String] = flag[String](
-    name = "crMixer.twiceClustersMembersColumnPath",
-    default =
-      "recommendations/simclusters_v2/embeddings/TwiceClustersMembersLargestDimApeSimilarity",
-    help = "Strato column path for TweetRecentEngagedUsersStore"
+  privatelon val twicelonClustelonrsMelonmbelonrsColumnPath: Flag[String] = flag[String](
+    namelon = "crMixelonr.twicelonClustelonrsMelonmbelonrsColumnPath",
+    delonfault =
+      "reloncommelonndations/simclustelonrs_v2/elonmbelonddings/TwicelonClustelonrsMelonmbelonrsLargelonstDimApelonSimilarity",
+    helonlp = "Strato column path for TwelonelontReloncelonntelonngagelondUselonrsStorelon"
   )
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.TwiceClustersMembersStore)
-  def providesTweetRecentEngagedUserStore(
-    statsReceiver: StatsReceiver,
-    stratoClient: StratoClient,
-  ): ReadableStore[UserId, OrderedClustersAndMembers] = {
-    val twiceClustersMembersStratoFetchableStore = StratoFetchableStore
-      .withUnitView[UserId, OrderedClustersAndMembers](
-        stratoClient,
-        twiceClustersMembersColumnPath())
+  @Providelons
+  @Singlelonton
+  @Namelond(ModulelonNamelons.TwicelonClustelonrsMelonmbelonrsStorelon)
+  delonf providelonsTwelonelontReloncelonntelonngagelondUselonrStorelon(
+    statsReloncelonivelonr: StatsReloncelonivelonr,
+    stratoClielonnt: StratoClielonnt,
+  ): RelonadablelonStorelon[UselonrId, OrdelonrelondClustelonrsAndMelonmbelonrs] = {
+    val twicelonClustelonrsMelonmbelonrsStratoFelontchablelonStorelon = StratoFelontchablelonStorelon
+      .withUnitVielonw[UselonrId, OrdelonrelondClustelonrsAndMelonmbelonrs](
+        stratoClielonnt,
+        twicelonClustelonrsMelonmbelonrsColumnPath())
 
-    ObservedReadableStore(
-      twiceClustersMembersStratoFetchableStore
-    )(statsReceiver.scope("twice_clusters_members_largestDimApe_similarity_store"))
+    ObselonrvelondRelonadablelonStorelon(
+      twicelonClustelonrsMelonmbelonrsStratoFelontchablelonStorelon
+    )(statsReloncelonivelonr.scopelon("twicelon_clustelonrs_melonmbelonrs_largelonstDimApelon_similarity_storelon"))
   }
 }

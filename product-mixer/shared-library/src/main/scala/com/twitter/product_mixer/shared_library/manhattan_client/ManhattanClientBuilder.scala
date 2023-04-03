@@ -1,116 +1,116 @@
-package com.twitter.product_mixer.shared_library.manhattan_client
+packagelon com.twittelonr.product_mixelonr.sharelond_library.manhattan_clielonnt
 
-import com.twitter.finagle.mtls.authentication.EmptyServiceIdentifier
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.ssl.OpportunisticTls
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.manhattan.v1.{thriftscala => mh}
-import com.twitter.storage.client.manhattan.kv.Experiments
-import com.twitter.storage.client.manhattan.kv.Experiments.Experiment
-import com.twitter.storage.client.manhattan.kv.Guarantee
-import com.twitter.storage.client.manhattan.kv.ManhattanKVClient
-import com.twitter.storage.client.manhattan.kv.ManhattanKVClientMtlsParams
-import com.twitter.storage.client.manhattan.kv.ManhattanKVEndpoint
-import com.twitter.storage.client.manhattan.kv.ManhattanKVEndpointBuilder
-import com.twitter.storage.client.manhattan.kv.NoMtlsParams
-import com.twitter.storehaus_internal.manhattan.ManhattanCluster
-import com.twitter.util.Duration
+import com.twittelonr.finaglelon.mtls.authelonntication.elonmptySelonrvicelonIdelonntifielonr
+import com.twittelonr.finaglelon.mtls.authelonntication.SelonrvicelonIdelonntifielonr
+import com.twittelonr.finaglelon.ssl.OpportunisticTls
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.manhattan.v1.{thriftscala => mh}
+import com.twittelonr.storagelon.clielonnt.manhattan.kv.elonxpelonrimelonnts
+import com.twittelonr.storagelon.clielonnt.manhattan.kv.elonxpelonrimelonnts.elonxpelonrimelonnt
+import com.twittelonr.storagelon.clielonnt.manhattan.kv.Guarantelonelon
+import com.twittelonr.storagelon.clielonnt.manhattan.kv.ManhattanKVClielonnt
+import com.twittelonr.storagelon.clielonnt.manhattan.kv.ManhattanKVClielonntMtlsParams
+import com.twittelonr.storagelon.clielonnt.manhattan.kv.ManhattanKVelonndpoint
+import com.twittelonr.storagelon.clielonnt.manhattan.kv.ManhattanKVelonndpointBuildelonr
+import com.twittelonr.storagelon.clielonnt.manhattan.kv.NoMtlsParams
+import com.twittelonr.storelonhaus_intelonrnal.manhattan.ManhattanClustelonr
+import com.twittelonr.util.Duration
 
-object ManhattanClientBuilder {
+objelonct ManhattanClielonntBuildelonr {
 
   /**
-   * Build a ManhattanKVClient/Endpoint [[ManhattanKVEndpoint]] / [[ManhattanKVClient]]
+   * Build a ManhattanKVClielonnt/elonndpoint [[ManhattanKVelonndpoint]] / [[ManhattanKVClielonnt]]
    *
-   * @param cluster Manhattan cluster
+   * @param clustelonr Manhattan clustelonr
    * @param appId Manhattan appid
-   * @param numTries Max number of times to try
-   * @param maxTimeout Max request timeout
-   * @param maxItemsPerRequest Max items per request
-   * @param guarantee Consistency guarantee
-   * @param serviceIdentifier Service ID used to S2S Auth
-   * @param statsReceiver Stats
-   * @param experiments MH client experiments to include
-   * @return ManhattanKVEndpoint
+   * @param numTrielons Max numbelonr of timelons to try
+   * @param maxTimelonout Max relonquelonst timelonout
+   * @param maxItelonmsPelonrRelonquelonst Max itelonms pelonr relonquelonst
+   * @param guarantelonelon Consistelonncy guarantelonelon
+   * @param selonrvicelonIdelonntifielonr Selonrvicelon ID uselond to S2S Auth
+   * @param statsReloncelonivelonr Stats
+   * @param elonxpelonrimelonnts MH clielonnt elonxpelonrimelonnts to includelon
+   * @relonturn ManhattanKVelonndpoint
    */
-  def buildManhattanEndpoint(
-    cluster: ManhattanCluster,
+  delonf buildManhattanelonndpoint(
+    clustelonr: ManhattanClustelonr,
     appId: String,
-    numTries: Int,
-    maxTimeout: Duration,
-    guarantee: Guarantee,
-    serviceIdentifier: ServiceIdentifier,
-    statsReceiver: StatsReceiver,
-    maxItemsPerRequest: Int = 100,
-    experiments: Seq[Experiment] = Seq(Experiments.ApertureLoadBalancer)
-  ): ManhattanKVEndpoint = {
-    val client = buildManhattanClient(
-      cluster,
+    numTrielons: Int,
+    maxTimelonout: Duration,
+    guarantelonelon: Guarantelonelon,
+    selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr,
+    statsReloncelonivelonr: StatsReloncelonivelonr,
+    maxItelonmsPelonrRelonquelonst: Int = 100,
+    elonxpelonrimelonnts: Selonq[elonxpelonrimelonnt] = Selonq(elonxpelonrimelonnts.ApelonrturelonLoadBalancelonr)
+  ): ManhattanKVelonndpoint = {
+    val clielonnt = buildManhattanClielonnt(
+      clustelonr,
       appId,
-      serviceIdentifier,
-      experiments
+      selonrvicelonIdelonntifielonr,
+      elonxpelonrimelonnts
     )
 
-    ManhattanKVEndpointBuilder(client)
-      .defaultGuarantee(guarantee)
-      .defaultMaxTimeout(maxTimeout)
-      .maxRetryCount(numTries)
-      .maxItemsPerRequest(maxItemsPerRequest)
-      .statsReceiver(statsReceiver)
+    ManhattanKVelonndpointBuildelonr(clielonnt)
+      .delonfaultGuarantelonelon(guarantelonelon)
+      .delonfaultMaxTimelonout(maxTimelonout)
+      .maxRelontryCount(numTrielons)
+      .maxItelonmsPelonrRelonquelonst(maxItelonmsPelonrRelonquelonst)
+      .statsReloncelonivelonr(statsReloncelonivelonr)
       .build()
   }
 
   /**
-   *  Build a ManhattanKVClient
+   *  Build a ManhattanKVClielonnt
    *
-   * @param cluster Manhattan cluster
+   * @param clustelonr Manhattan clustelonr
    * @param appId   Manhattan appid
-   * @param serviceIdentifier Service ID used to S2S Auth
-   * @param experiments MH client experiments to include
+   * @param selonrvicelonIdelonntifielonr Selonrvicelon ID uselond to S2S Auth
+   * @param elonxpelonrimelonnts MH clielonnt elonxpelonrimelonnts to includelon
    *
-   * @return ManhattanKVClient
+   * @relonturn ManhattanKVClielonnt
    */
-  def buildManhattanClient(
-    cluster: ManhattanCluster,
+  delonf buildManhattanClielonnt(
+    clustelonr: ManhattanClustelonr,
     appId: String,
-    serviceIdentifier: ServiceIdentifier,
-    experiments: Seq[Experiment] = Seq(Experiments.ApertureLoadBalancer)
-  ): ManhattanKVClient = {
-    val mtlsParams = serviceIdentifier match {
-      case EmptyServiceIdentifier => NoMtlsParams
-      case serviceIdentifier =>
-        ManhattanKVClientMtlsParams(
-          serviceIdentifier = serviceIdentifier,
-          opportunisticTls = OpportunisticTls.Required)
+    selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr,
+    elonxpelonrimelonnts: Selonq[elonxpelonrimelonnt] = Selonq(elonxpelonrimelonnts.ApelonrturelonLoadBalancelonr)
+  ): ManhattanKVClielonnt = {
+    val mtlsParams = selonrvicelonIdelonntifielonr match {
+      caselon elonmptySelonrvicelonIdelonntifielonr => NoMtlsParams
+      caselon selonrvicelonIdelonntifielonr =>
+        ManhattanKVClielonntMtlsParams(
+          selonrvicelonIdelonntifielonr = selonrvicelonIdelonntifielonr,
+          opportunisticTls = OpportunisticTls.Relonquirelond)
     }
 
-    val label = s"manhattan/${cluster.prefix}"
+    val labelonl = s"manhattan/${clustelonr.prelonfix}"
 
-    new ManhattanKVClient(
+    nelonw ManhattanKVClielonnt(
       appId = appId,
-      dest = cluster.wilyName,
+      delonst = clustelonr.wilyNamelon,
       mtlsParams = mtlsParams,
-      label = label,
-      experiments = experiments
+      labelonl = labelonl,
+      elonxpelonrimelonnts = elonxpelonrimelonnts
     )
   }
 
-  def buildManhattanV1FinagleClient(
-    cluster: ManhattanCluster,
-    serviceIdentifier: ServiceIdentifier,
-    experiments: Seq[Experiment] = Seq(Experiments.ApertureLoadBalancer)
-  ): mh.ManhattanCoordinator.MethodPerEndpoint = {
-    val mtlsParams = serviceIdentifier match {
-      case EmptyServiceIdentifier => NoMtlsParams
-      case serviceIdentifier =>
-        ManhattanKVClientMtlsParams(
-          serviceIdentifier = serviceIdentifier,
-          opportunisticTls = OpportunisticTls.Required)
+  delonf buildManhattanV1FinaglelonClielonnt(
+    clustelonr: ManhattanClustelonr,
+    selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr,
+    elonxpelonrimelonnts: Selonq[elonxpelonrimelonnt] = Selonq(elonxpelonrimelonnts.ApelonrturelonLoadBalancelonr)
+  ): mh.ManhattanCoordinator.MelonthodPelonrelonndpoint = {
+    val mtlsParams = selonrvicelonIdelonntifielonr match {
+      caselon elonmptySelonrvicelonIdelonntifielonr => NoMtlsParams
+      caselon selonrvicelonIdelonntifielonr =>
+        ManhattanKVClielonntMtlsParams(
+          selonrvicelonIdelonntifielonr = selonrvicelonIdelonntifielonr,
+          opportunisticTls = OpportunisticTls.Relonquirelond)
     }
 
-    val label = s"manhattan/${cluster.prefix}"
+    val labelonl = s"manhattan/${clustelonr.prelonfix}"
 
-    Experiments
-      .clientWithExperiments(experiments, mtlsParams)
-      .build[mh.ManhattanCoordinator.MethodPerEndpoint](cluster.wilyName, label)
+    elonxpelonrimelonnts
+      .clielonntWithelonxpelonrimelonnts(elonxpelonrimelonnts, mtlsParams)
+      .build[mh.ManhattanCoordinator.MelonthodPelonrelonndpoint](clustelonr.wilyNamelon, labelonl)
   }
 }

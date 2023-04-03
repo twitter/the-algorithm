@@ -1,19 +1,19 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.timeline_module
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.timelonlinelon_modulelon
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ModuleShowMoreBehavior
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ModuleShowMoreBehaviorRevealByCount
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.timelonlinelon_modulelon.ModulelonShowMorelonBelonhavior
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.timelonlinelon_modulelon.ModulelonShowMorelonBelonhaviorRelonvelonalByCount
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class ModuleShowMoreBehaviorMarshaller @Inject() (
-  moduleShowMoreBehaviorRevealByCountMarshaller: ModuleShowMoreBehaviorRevealByCountMarshaller) {
+@Singlelonton
+class ModulelonShowMorelonBelonhaviorMarshallelonr @Injelonct() (
+  modulelonShowMorelonBelonhaviorRelonvelonalByCountMarshallelonr: ModulelonShowMorelonBelonhaviorRelonvelonalByCountMarshallelonr) {
 
-  def apply(
-    moduleShowMoreBehavior: ModuleShowMoreBehavior
-  ): urt.ModuleShowMoreBehavior = moduleShowMoreBehavior match {
-    case moduleShowMoreBehaviorRevealByCount: ModuleShowMoreBehaviorRevealByCount =>
-      moduleShowMoreBehaviorRevealByCountMarshaller(moduleShowMoreBehaviorRevealByCount)
+  delonf apply(
+    modulelonShowMorelonBelonhavior: ModulelonShowMorelonBelonhavior
+  ): urt.ModulelonShowMorelonBelonhavior = modulelonShowMorelonBelonhavior match {
+    caselon modulelonShowMorelonBelonhaviorRelonvelonalByCount: ModulelonShowMorelonBelonhaviorRelonvelonalByCount =>
+      modulelonShowMorelonBelonhaviorRelonvelonalByCountMarshallelonr(modulelonShowMorelonBelonhaviorRelonvelonalByCount)
   }
 }

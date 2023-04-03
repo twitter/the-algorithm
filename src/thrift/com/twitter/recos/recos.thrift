@@ -1,176 +1,176 @@
-namespace java com.twitter.recos.thriftjava
-#@namespace scala com.twitter.recos.thriftscala
-namespace rb Recos
+namelonspacelon java com.twittelonr.reloncos.thriftjava
+#@namelonspacelon scala com.twittelonr.reloncos.thriftscala
+namelonspacelon rb Reloncos
 
-include "com/twitter/recos/features/tweet.thrift"
+includelon "com/twittelonr/reloncos/felonaturelons/twelonelont.thrift"
 
-enum RecommendTweetDisplayLocation {
-  HomeTimeline       = 0
-  Peek               = 1
-  WelcomeFlow        = 2
-  NetworkDigest      = 3
-  BackfillDigest     = 4
-  NetworkDigestExp1  = 5
-  NetworkDigestExp2  = 6 // deprecated
-  NetworkDigestExp3  = 7 // deprecated
-  HttpEndpoint       = 8
-  HomeTimeline1      = 9
-  HomeTimeline2      = 10
-  HomeTimeline3      = 11
-  HomeTimeline4      = 12
+elonnum ReloncommelonndTwelonelontDisplayLocation {
+  HomelonTimelonlinelon       = 0
+  Pelonelonk               = 1
+  WelonlcomelonFlow        = 2
+  NelontworkDigelonst      = 3
+  BackfillDigelonst     = 4
+  NelontworkDigelonstelonxp1  = 5
+  NelontworkDigelonstelonxp2  = 6 // delonpreloncatelond
+  NelontworkDigelonstelonxp3  = 7 // delonpreloncatelond
+  Httpelonndpoint       = 8
+  HomelonTimelonlinelon1      = 9
+  HomelonTimelonlinelon2      = 10
+  HomelonTimelonlinelon3      = 11
+  HomelonTimelonlinelon4      = 12
   Poptart            = 13
-  NetworkDigestExp4  = 14
-  NetworkDigestExp5  = 15
-  NetworkDigestExp6  = 16
-  NetworkDigestExp7  = 17
-  NetworkDigestExp8  = 18
-  NetworkDigestExp9  = 19
-  InstantTimeline1   = 20 // AB1 + whitelist
-  InstantTimeline2   = 21 // AB1 + !whitelist
-  InstantTimeline3   = 22 // AB2 + whitelist
-  InstantTimeline4   = 23 // AB2 + !whitelist
-  BackfillDigestActive  = 24 // deprecated
-  BackfillDigestDormant = 25 // deprecated
-  ExploreUS             = 26 // deprecated
-  ExploreBR             = 27 // deprecated
-  ExploreIN             = 28 // deprecated
-  ExploreES             = 29 // deprecated
-  ExploreJP             = 30 // deprecated
-  MagicRecs             = 31
-  MagicRecs1            = 32
-  MagicRecs2            = 33
-  MagicRecs3            = 34
-  SMSDiscover           = 35
-  FastFollower          = 36
-  InstantTimeline5      = 37 // for instant timeline experiment
-  InstantTimeline6      = 38 // for instant timeline experiment
-  InstantTimeline7      = 39 // for instant timeline experiment
-  InstantTimeline8      = 40 // for instant timeline experiment
-  LoggedOutProfile      = 41
-  LoggedOutPermalink    = 42
+  NelontworkDigelonstelonxp4  = 14
+  NelontworkDigelonstelonxp5  = 15
+  NelontworkDigelonstelonxp6  = 16
+  NelontworkDigelonstelonxp7  = 17
+  NelontworkDigelonstelonxp8  = 18
+  NelontworkDigelonstelonxp9  = 19
+  InstantTimelonlinelon1   = 20 // AB1 + whitelonlist
+  InstantTimelonlinelon2   = 21 // AB1 + !whitelonlist
+  InstantTimelonlinelon3   = 22 // AB2 + whitelonlist
+  InstantTimelonlinelon4   = 23 // AB2 + !whitelonlist
+  BackfillDigelonstActivelon  = 24 // delonpreloncatelond
+  BackfillDigelonstDormant = 25 // delonpreloncatelond
+  elonxplorelonUS             = 26 // delonpreloncatelond
+  elonxplorelonBR             = 27 // delonpreloncatelond
+  elonxplorelonIN             = 28 // delonpreloncatelond
+  elonxplorelonelonS             = 29 // delonpreloncatelond
+  elonxplorelonJP             = 30 // delonpreloncatelond
+  MagicReloncs             = 31
+  MagicReloncs1            = 32
+  MagicReloncs2            = 33
+  MagicReloncs3            = 34
+  SMSDiscovelonr           = 35
+  FastFollowelonr          = 36
+  InstantTimelonlinelon5      = 37 // for instant timelonlinelon elonxpelonrimelonnt
+  InstantTimelonlinelon6      = 38 // for instant timelonlinelon elonxpelonrimelonnt
+  InstantTimelonlinelon7      = 39 // for instant timelonlinelon elonxpelonrimelonnt
+  InstantTimelonlinelon8      = 40 // for instant timelonlinelon elonxpelonrimelonnt
+  LoggelondOutProfilelon      = 41
+  LoggelondOutPelonrmalink    = 42
   Poptart2              = 43
 }
 
-enum RelatedTweetDisplayLocation {
-  Permalink       = 0
-  Permalink1      = 1
-  MobilePermalink = 2
-  Permalink3      = 3
-  Permalink4      = 4
-  RelatedTweets   = 5
-  RelatedTweets1  = 6
-  RelatedTweets2  = 7
-  RelatedTweets3  = 8
-  RelatedTweets4  = 9
-  LoggedOutProfile = 10
-  LoggedOutPermalink = 11
+elonnum RelonlatelondTwelonelontDisplayLocation {
+  Pelonrmalink       = 0
+  Pelonrmalink1      = 1
+  MobilelonPelonrmalink = 2
+  Pelonrmalink3      = 3
+  Pelonrmalink4      = 4
+  RelonlatelondTwelonelonts   = 5
+  RelonlatelondTwelonelonts1  = 6
+  RelonlatelondTwelonelonts2  = 7
+  RelonlatelondTwelonelonts3  = 8
+  RelonlatelondTwelonelonts4  = 9
+  LoggelondOutProfilelon = 10
+  LoggelondOutPelonrmalink = 11
 }
 
-enum DDGBucket {
+elonnum DDGBuckelont {
   Control           = 0
-  Treatment         = 1
-  None              = 2
+  Trelonatmelonnt         = 1
+  Nonelon              = 2
 }
 
-struct RecommendTweetRequest {
-  1: required i64                                   requesterId           // user id of the requesting user
-  2: required RecommendTweetDisplayLocation         displayLocation       // display location from the client
-  3: optional i64                                   clientId              // twitter api client id
-  4: optional i32                                   maxResults            // number of suggested results to return
-  5: optional list<i64>                             excludedTweetIds      // list of tweet ids to exclude from response
-  6: optional list<i64>                             excludedAuthorIds     // list of author ids to exclude from response
-  7: optional i64                                   guestId               // guestId
-  8: optional string                                languageCode          // Language code
-  9: optional string                                countryCode           // Country code
-  10: optional string                               ipAddress             // ip address of the user
-  11: optional string                               deviceId              // udid/uuid of device
-  12: optional bool                                 populateTweetFeatures // whether to populate tweet features. RecommendedTweet.tweetFeatures in the response will only be populated if this is set.
+struct ReloncommelonndTwelonelontRelonquelonst {
+  1: relonquirelond i64                                   relonquelonstelonrId           // uselonr id of thelon relonquelonsting uselonr
+  2: relonquirelond ReloncommelonndTwelonelontDisplayLocation         displayLocation       // display location from thelon clielonnt
+  3: optional i64                                   clielonntId              // twittelonr api clielonnt id
+  4: optional i32                                   maxRelonsults            // numbelonr of suggelonstelond relonsults to relonturn
+  5: optional list<i64>                             elonxcludelondTwelonelontIds      // list of twelonelont ids to elonxcludelon from relonsponselon
+  6: optional list<i64>                             elonxcludelondAuthorIds     // list of author ids to elonxcludelon from relonsponselon
+  7: optional i64                                   guelonstId               // guelonstId
+  8: optional string                                languagelonCodelon          // Languagelon codelon
+  9: optional string                                countryCodelon           // Country codelon
+  10: optional string                               ipAddrelonss             // ip addrelonss of thelon uselonr
+  11: optional string                               delonvicelonId              // udid/uuid of delonvicelon
+  12: optional bool                                 populatelonTwelonelontFelonaturelons // whelonthelonr to populatelon twelonelont felonaturelons. ReloncommelonndelondTwelonelont.twelonelontFelonaturelons in thelon relonsponselon will only belon populatelond if this is selont.
 }
 
-struct Bucket {
-  1: required string                                experimentName        // name of experiment (or not). experiment could be production or whatever fits
-  2: required string                                bucket                // name of bucket (may or may not be a DDG bucket, e.g., production)
+struct Buckelont {
+  1: relonquirelond string                                elonxpelonrimelonntNamelon        // namelon of elonxpelonrimelonnt (or not). elonxpelonrimelonnt could belon production or whatelonvelonr fits
+  2: relonquirelond string                                buckelont                // namelon of buckelont (may or may not belon a DDG buckelont, elon.g., production)
 }
 
-struct RelatedTweetRequest {
-  1: required i64                                   tweetId               // original tweet id
-  2: required RelatedTweetDisplayLocation           displayLocation       // display location from the client
-  3: optional i64                                   clientId              // twitter api client id
-  4: optional i64                                   requesterId           // user id of the requesting user
-  5: optional i32                                   maxResults            // number of suggested results to return
-  6: optional list<i64>                             excludeTweetIds       // list of tweet ids to exclude from response
-  7: optional list<i64>                             excludedAuthorIds     // list of author ids to exclude from response
-  8: optional i64                                   guestId               // guestId
-  9: optional string                                languageCode          // Language code
-  10: optional string                               countryCode           // Country code
-  11: optional string                               ipAddress             // ip address of the user
-  12: optional string                               deviceId              // udid/uuid of device
-  13: optional string                               userAgent             // userAgent of the requesting user
+struct RelonlatelondTwelonelontRelonquelonst {
+  1: relonquirelond i64                                   twelonelontId               // original twelonelont id
+  2: relonquirelond RelonlatelondTwelonelontDisplayLocation           displayLocation       // display location from thelon clielonnt
+  3: optional i64                                   clielonntId              // twittelonr api clielonnt id
+  4: optional i64                                   relonquelonstelonrId           // uselonr id of thelon relonquelonsting uselonr
+  5: optional i32                                   maxRelonsults            // numbelonr of suggelonstelond relonsults to relonturn
+  6: optional list<i64>                             elonxcludelonTwelonelontIds       // list of twelonelont ids to elonxcludelon from relonsponselon
+  7: optional list<i64>                             elonxcludelondAuthorIds     // list of author ids to elonxcludelon from relonsponselon
+  8: optional i64                                   guelonstId               // guelonstId
+  9: optional string                                languagelonCodelon          // Languagelon codelon
+  10: optional string                               countryCodelon           // Country codelon
+  11: optional string                               ipAddrelonss             // ip addrelonss of thelon uselonr
+  12: optional string                               delonvicelonId              // udid/uuid of delonvicelon
+  13: optional string                               uselonrAgelonnt             // uselonrAgelonnt of thelon relonquelonsting uselonr
 }
 
-enum SocialProofType {
-  FollowedBy = 1,
-  FavoritedBy = 2,
-  RetweetedBy = 3,
+elonnum SocialProofTypelon {
+  FollowelondBy = 1,
+  FavoritelondBy = 2,
+  RelontwelonelontelondBy = 3,
   SimilarTo = 4,
-  RESERVED_2 = 5,
-  RESERVED_3 = 6,
-  RESERVED_4 = 7,
-  RESERVED_5 = 8,
-  RESERVED_6 = 9,
-  RESERVED_7 = 10
+  RelonSelonRVelonD_2 = 5,
+  RelonSelonRVelonD_3 = 6,
+  RelonSelonRVelonD_4 = 7,
+  RelonSelonRVelonD_5 = 8,
+  RelonSelonRVelonD_6 = 9,
+  RelonSelonRVelonD_7 = 10
 }
 
-enum Algorithm {
+elonnum Algorithm {
   Salsa = 1,
-  PastEmailClicks = 2,
-  SimilarToEmailClicks = 3,
-  PastClientEventClicks = 4,
-  VitNews = 5,
-  StrongTieScoring = 6,
+  PastelonmailClicks = 2,
+  SimilarToelonmailClicks = 3,
+  PastClielonntelonvelonntClicks = 4,
+  VitNelonws = 5,
+  StrongTielonScoring = 6,
   PollsFromGraph = 7,
-  PollsBasedOnGeo = 8,
-  RESERVED_9 = 9,
-  RESERVED_10 = 10,
-  RESERVED_11 = 11,
+  PollsBaselondOnGelono = 8,
+  RelonSelonRVelonD_9 = 9,
+  RelonSelonRVelonD_10 = 10,
+  RelonSelonRVelonD_11 = 11,
 }
 
-struct RecommendedTweet {
-  1: required i64                            tweetId
-  2: required i64                            authorId
-  3: required list<i64>                      socialProof
-  4: required string                         feedbackToken
-  5: optional list<i64>                      favBy          // optionally provide a list of users who fav'ed the tweet if exist
-  6: optional tweet.RecommendedTweetFeatures tweetFeatures  // the features of a recommended tweet
-  7: optional SocialProofType                socialProofType // type of social proof. favBy should be deprecated soon
-  8: optional string                         socialProofOverride // should be set only for DDGs, for en-only experiments. SocialProofType is ignored when this field is set
-  9: optional Algorithm                      algorithm // algorithm used 
-  10: optional double                        score     // score
-  11: optional bool                          isFollowingAuthor // true if the target user follows the author of the tweet 
+struct ReloncommelonndelondTwelonelont {
+  1: relonquirelond i64                            twelonelontId
+  2: relonquirelond i64                            authorId
+  3: relonquirelond list<i64>                      socialProof
+  4: relonquirelond string                         felonelondbackTokelonn
+  5: optional list<i64>                      favBy          // optionally providelon a list of uselonrs who fav'elond thelon twelonelont if elonxist
+  6: optional twelonelont.ReloncommelonndelondTwelonelontFelonaturelons twelonelontFelonaturelons  // thelon felonaturelons of a reloncommelonndelond twelonelont
+  7: optional SocialProofTypelon                socialProofTypelon // typelon of social proof. favBy should belon delonpreloncatelond soon
+  8: optional string                         socialProofOvelonrridelon // should belon selont only for DDGs, for elonn-only elonxpelonrimelonnts. SocialProofTypelon is ignorelond whelonn this fielonld is selont
+  9: optional Algorithm                      algorithm // algorithm uselond
+  10: optional doublelon                        scorelon     // scorelon
+  11: optional bool                          isFollowingAuthor // truelon if thelon targelont uselonr follows thelon author of thelon twelonelont
 }
 
-struct RelatedTweet {
-  1: required i64                  tweetId
-  2: required i64                  authorId
-  3: required double               score
-  4: required string               feedbackToken
+struct RelonlatelondTwelonelont {
+  1: relonquirelond i64                  twelonelontId
+  2: relonquirelond i64                  authorId
+  3: relonquirelond doublelon               scorelon
+  4: relonquirelond string               felonelondbackTokelonn
 }
 
-struct RecommendTweetResponse {
-  1: required list<RecommendedTweet> tweets
-  2: optional DDGBucket              bucket                // deprecated
-  3: optional Bucket                 assignedBucket        // for client-side experimentation
+struct ReloncommelonndTwelonelontRelonsponselon {
+  1: relonquirelond list<ReloncommelonndelondTwelonelont> twelonelonts
+  2: optional DDGBuckelont              buckelont                // delonpreloncatelond
+  3: optional Buckelont                 assignelondBuckelont        // for clielonnt-sidelon elonxpelonrimelonntation
 }
 
-struct RelatedTweetResponse {
-  1: required list<RelatedTweet>   tweets                                 // a list of related tweets
-  2: optional Bucket               assignedBucket                         // the bucket used for treatment
+struct RelonlatelondTwelonelontRelonsponselon {
+  1: relonquirelond list<RelonlatelondTwelonelont>   twelonelonts                                 // a list of relonlatelond twelonelonts
+  2: optional Buckelont               assignelondBuckelont                         // thelon buckelont uselond for trelonatmelonnt
 }
 
 /**
- * The main interface-definition for Recos.
+ * Thelon main intelonrfacelon-delonfinition for Reloncos.
  */
-service Recos {
-  RecommendTweetResponse recommendTweets  (RecommendTweetRequest request)
-  RelatedTweetResponse relatedTweets  (RelatedTweetRequest request)
+selonrvicelon Reloncos {
+  ReloncommelonndTwelonelontRelonsponselon reloncommelonndTwelonelonts  (ReloncommelonndTwelonelontRelonquelonst relonquelonst)
+  RelonlatelondTwelonelontRelonsponselon relonlatelondTwelonelonts  (RelonlatelondTwelonelontRelonquelonst relonquelonst)
 }

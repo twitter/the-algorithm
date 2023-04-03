@@ -1,7 +1,7 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.media
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melondia
 
-case class Media(
-  mediaEntity: Option[MediaEntity],
-  mediaKey: Option[MediaKey],
-  imagePossibleCropping: Option[List[Rect]],
-  aspectRatio: Option[AspectRatio])
+caselon class Melondia(
+  melondiaelonntity: Option[Melondiaelonntity],
+  melondiaKelony: Option[MelondiaKelony],
+  imagelonPossiblelonCropping: Option[List[Relonct]],
+  aspelonctRatio: Option[AspelonctRatio])

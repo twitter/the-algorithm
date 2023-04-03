@@ -1,90 +1,90 @@
-package com.twitter.search.earlybird_root;
+packagelon com.twittelonr.selonarch.elonarlybird_root;
 
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrelonnt.ConcurrelonntHashMap;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.finagle.client.BackupRequestFilter;
-import com.twitter.finagle.service.ResponseClassifier;
-import com.twitter.finagle.service.RetryBudgets;
-import com.twitter.finagle.stats.StatsReceiver;
-import com.twitter.finagle.util.DefaultTimer;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.common.metrics.SearchCustomGauge;
-import com.twitter.search.earlybird.common.ClientIdUtil;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.util.Future;
-import com.twitter.util.tunable.Tunable;
+import com.twittelonr.finaglelon.Selonrvicelon;
+import com.twittelonr.finaglelon.SimplelonFiltelonr;
+import com.twittelonr.finaglelon.clielonnt.BackupRelonquelonstFiltelonr;
+import com.twittelonr.finaglelon.selonrvicelon.RelonsponselonClassifielonr;
+import com.twittelonr.finaglelon.selonrvicelon.RelontryBudgelonts;
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr;
+import com.twittelonr.finaglelon.util.DelonfaultTimelonr;
+import com.twittelonr.selonarch.common.deloncidelonr.SelonarchDeloncidelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCustomGaugelon;
+import com.twittelonr.selonarch.elonarlybird.common.ClielonntIdUtil;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonquelonst;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
+import com.twittelonr.util.Futurelon;
+import com.twittelonr.util.tunablelon.Tunablelon;
 
-public class ClientBackupFilter extends SimpleFilter<EarlybirdRequest, EarlybirdResponse> {
-  private static final Logger LOG = LoggerFactory.getLogger(ClientBackupFilter.class);
+public class ClielonntBackupFiltelonr elonxtelonnds SimplelonFiltelonr<elonarlybirdRelonquelonst, elonarlybirdRelonsponselon> {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(ClielonntBackupFiltelonr.class);
 
-  private final Map<String, BackupRequestFilter<EarlybirdRequest, EarlybirdResponse>>
-      clientBackupFilters = new ConcurrentHashMap<>();
-  private final boolean sendInterupts = false;
-  private final String statPrefix;
-  private final Tunable.Mutable<Object> maxExtraLoad;
-  private final StatsReceiver statsReceiver;
-  private final SearchDecider decider;
-  private final String backupRequestPrecentExtraLoadDecider;
-  private final int minSendBackupAfterMs = 1;
+  privatelon final Map<String, BackupRelonquelonstFiltelonr<elonarlybirdRelonquelonst, elonarlybirdRelonsponselon>>
+      clielonntBackupFiltelonrs = nelonw ConcurrelonntHashMap<>();
+  privatelon final boolelonan selonndIntelonrupts = falselon;
+  privatelon final String statPrelonfix;
+  privatelon final Tunablelon.Mutablelon<Objelonct> maxelonxtraLoad;
+  privatelon final StatsReloncelonivelonr statsReloncelonivelonr;
+  privatelon final SelonarchDeloncidelonr deloncidelonr;
+  privatelon final String backupRelonquelonstPreloncelonntelonxtraLoadDeloncidelonr;
+  privatelon final int minSelonndBackupAftelonrMs = 1;
 
-  public ClientBackupFilter(String serviceName,
-                            String statPrefix,
-                            StatsReceiver statsReceiver,
-                            SearchDecider decider) {
-    this.statPrefix = statPrefix;
-    this.backupRequestPrecentExtraLoadDecider = serviceName + "_backup_request_percent_extra_load";
-    this.decider = decider;
-    this.maxExtraLoad = Tunable.mutable("backup_tunable", getMaxExtraLoadFromDecider());
-    this.statsReceiver = statsReceiver;
-    SearchCustomGauge.export(serviceName + "_backup_request_factor",
-        () -> (maxExtraLoad.apply().isDefined()) ? (double) maxExtraLoad.apply().get() : -1);
+  public ClielonntBackupFiltelonr(String selonrvicelonNamelon,
+                            String statPrelonfix,
+                            StatsReloncelonivelonr statsReloncelonivelonr,
+                            SelonarchDeloncidelonr deloncidelonr) {
+    this.statPrelonfix = statPrelonfix;
+    this.backupRelonquelonstPreloncelonntelonxtraLoadDeloncidelonr = selonrvicelonNamelon + "_backup_relonquelonst_pelonrcelonnt_elonxtra_load";
+    this.deloncidelonr = deloncidelonr;
+    this.maxelonxtraLoad = Tunablelon.mutablelon("backup_tunablelon", gelontMaxelonxtraLoadFromDeloncidelonr());
+    this.statsReloncelonivelonr = statsReloncelonivelonr;
+    SelonarchCustomGaugelon.elonxport(selonrvicelonNamelon + "_backup_relonquelonst_factor",
+        () -> (maxelonxtraLoad.apply().isDelonfinelond()) ? (doublelon) maxelonxtraLoad.apply().gelont() : -1);
   }
 
-  private double getMaxExtraLoadFromDecider() {
-    return ((double) decider.getAvailability(backupRequestPrecentExtraLoadDecider)) / 100 / 100;
+  privatelon doublelon gelontMaxelonxtraLoadFromDeloncidelonr() {
+    relonturn ((doublelon) deloncidelonr.gelontAvailability(backupRelonquelonstPreloncelonntelonxtraLoadDeloncidelonr)) / 100 / 100;
   }
 
-  private BackupRequestFilter<EarlybirdRequest, EarlybirdResponse> backupFilter(String client) {
-    return new BackupRequestFilter<EarlybirdRequest, EarlybirdResponse>(
-        maxExtraLoad,
-        sendInterupts,
-        minSendBackupAfterMs,
-        ResponseClassifier.Default(),
-        RetryBudgets.newRetryBudget(),
-        statsReceiver.scope(statPrefix, client, "backup_filter"),
-        DefaultTimer.getInstance(),
-        client);
+  privatelon BackupRelonquelonstFiltelonr<elonarlybirdRelonquelonst, elonarlybirdRelonsponselon> backupFiltelonr(String clielonnt) {
+    relonturn nelonw BackupRelonquelonstFiltelonr<elonarlybirdRelonquelonst, elonarlybirdRelonsponselon>(
+        maxelonxtraLoad,
+        selonndIntelonrupts,
+        minSelonndBackupAftelonrMs,
+        RelonsponselonClassifielonr.Delonfault(),
+        RelontryBudgelonts.nelonwRelontryBudgelont(),
+        statsReloncelonivelonr.scopelon(statPrelonfix, clielonnt, "backup_filtelonr"),
+        DelonfaultTimelonr.gelontInstancelon(),
+        clielonnt);
   }
 
-  private void updateMaxExtraLoadIfNecessary() {
-    double maxExtraLoadDeciderValue = getMaxExtraLoadFromDecider();
-    if (maxExtraLoad.apply().isDefined()
-        && !maxExtraLoad.apply().get().equals(maxExtraLoadDeciderValue)) {
-      LOG.info("Updating maxExtraLoad from {} to {}",
-          maxExtraLoad.apply().get(),
-          maxExtraLoadDeciderValue);
-      maxExtraLoad.set(maxExtraLoadDeciderValue);
+  privatelon void updatelonMaxelonxtraLoadIfNeloncelonssary() {
+    doublelon maxelonxtraLoadDeloncidelonrValuelon = gelontMaxelonxtraLoadFromDeloncidelonr();
+    if (maxelonxtraLoad.apply().isDelonfinelond()
+        && !maxelonxtraLoad.apply().gelont().elonquals(maxelonxtraLoadDeloncidelonrValuelon)) {
+      LOG.info("Updating maxelonxtraLoad from {} to {}",
+          maxelonxtraLoad.apply().gelont(),
+          maxelonxtraLoadDeloncidelonrValuelon);
+      maxelonxtraLoad.selont(maxelonxtraLoadDeloncidelonrValuelon);
     }
   }
 
-  @Override
-  public Future<EarlybirdResponse> apply(EarlybirdRequest request,
-                                         Service<EarlybirdRequest, EarlybirdResponse> service) {
-    updateMaxExtraLoadIfNecessary();
+  @Ovelonrridelon
+  public Futurelon<elonarlybirdRelonsponselon> apply(elonarlybirdRelonquelonst relonquelonst,
+                                         Selonrvicelon<elonarlybirdRelonquelonst, elonarlybirdRelonsponselon> selonrvicelon) {
+    updatelonMaxelonxtraLoadIfNeloncelonssary();
 
-    String clientID = ClientIdUtil.getClientIdFromRequest(request);
-    BackupRequestFilter<EarlybirdRequest, EarlybirdResponse> filter =
-        clientBackupFilters.computeIfAbsent(clientID, this::backupFilter);
+    String clielonntID = ClielonntIdUtil.gelontClielonntIdFromRelonquelonst(relonquelonst);
+    BackupRelonquelonstFiltelonr<elonarlybirdRelonquelonst, elonarlybirdRelonsponselon> filtelonr =
+        clielonntBackupFiltelonrs.computelonIfAbselonnt(clielonntID, this::backupFiltelonr);
 
-    return filter
-        .andThen(service)
-        .apply(request);
+    relonturn filtelonr
+        .andThelonn(selonrvicelon)
+        .apply(relonquelonst);
   }
 }

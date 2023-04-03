@@ -1,63 +1,63 @@
-package com.twitter.product_mixer.core.pipeline.step.decorator
+packagelon com.twittelonr.product_mixelonr.corelon.pipelonlinelon.stelonp.deloncorator
 
-import com.twitter.product_mixer.core.functional_component.decorator.CandidateDecorator
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.state.HasCandidatesWithDetails
-import com.twitter.product_mixer.core.pipeline.state.HasCandidatesWithFeatures
-import com.twitter.product_mixer.core.pipeline.state.HasQuery
-import com.twitter.product_mixer.core.pipeline.step.Step
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.product_mixer.core.service.candidate_decorator_executor.CandidateDecoratorExecutor
-import com.twitter.product_mixer.core.service.candidate_decorator_executor.CandidateDecoratorExecutorResult
-import com.twitter.stitch.Arrow
-import javax.inject.Inject
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.CandidatelonDeloncorator
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.statelon.HasCandidatelonsWithDelontails
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.statelon.HasCandidatelonsWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.statelon.HasQuelonry
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.stelonp.Stelonp
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.elonxeloncutor
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.candidatelon_deloncorator_elonxeloncutor.CandidatelonDeloncoratorelonxeloncutor
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.candidatelon_deloncorator_elonxeloncutor.CandidatelonDeloncoratorelonxeloncutorRelonsult
+import com.twittelonr.stitch.Arrow
+import javax.injelonct.Injelonct
 
 /**
- * A candidate decoration step, which takes the query and candidates and outputs decorations for them
+ * A candidatelon deloncoration stelonp, which takelons thelon quelonry and candidatelons and outputs deloncorations for thelonm
  *
- * @param candidateDecoratorExecutor Candidate Source Executor
- * @tparam Query Type of PipelineQuery domain model
- * @tparam Candidate Type of Candidates to filter
- * @tparam State The pipeline state domain model.
+ * @param candidatelonDeloncoratorelonxeloncutor Candidatelon Sourcelon elonxeloncutor
+ * @tparam Quelonry Typelon of PipelonlinelonQuelonry domain modelonl
+ * @tparam Candidatelon Typelon of Candidatelons to filtelonr
+ * @tparam Statelon Thelon pipelonlinelon statelon domain modelonl.
  */
-case class DecoratorStep[
-  Query <: PipelineQuery,
-  Candidate <: UniversalNoun[Any],
-  State <: HasQuery[Query, State] with HasCandidatesWithDetails[
-    State
-  ] with HasCandidatesWithFeatures[
-    Candidate,
-    State
-  ]] @Inject() (candidateDecoratorExecutor: CandidateDecoratorExecutor)
-    extends Step[
-      State,
-      Option[CandidateDecorator[Query, Candidate]],
-      (Query, Seq[CandidateWithFeatures[Candidate]]),
-      CandidateDecoratorExecutorResult
+caselon class DeloncoratorStelonp[
+  Quelonry <: PipelonlinelonQuelonry,
+  Candidatelon <: UnivelonrsalNoun[Any],
+  Statelon <: HasQuelonry[Quelonry, Statelon] with HasCandidatelonsWithDelontails[
+    Statelon
+  ] with HasCandidatelonsWithFelonaturelons[
+    Candidatelon,
+    Statelon
+  ]] @Injelonct() (candidatelonDeloncoratorelonxeloncutor: CandidatelonDeloncoratorelonxeloncutor)
+    elonxtelonnds Stelonp[
+      Statelon,
+      Option[CandidatelonDeloncorator[Quelonry, Candidatelon]],
+      (Quelonry, Selonq[CandidatelonWithFelonaturelons[Candidatelon]]),
+      CandidatelonDeloncoratorelonxeloncutorRelonsult
     ] {
 
-  override def isEmpty(config: Option[CandidateDecorator[Query, Candidate]]): Boolean =
-    config.isEmpty
+  ovelonrridelon delonf iselonmpty(config: Option[CandidatelonDeloncorator[Quelonry, Candidatelon]]): Boolelonan =
+    config.iselonmpty
 
-  override def adaptInput(
-    state: State,
-    config: Option[CandidateDecorator[Query, Candidate]]
-  ): (Query, Seq[CandidateWithFeatures[Candidate]]) =
-    (state.query, state.candidatesWithFeatures)
+  ovelonrridelon delonf adaptInput(
+    statelon: Statelon,
+    config: Option[CandidatelonDeloncorator[Quelonry, Candidatelon]]
+  ): (Quelonry, Selonq[CandidatelonWithFelonaturelons[Candidatelon]]) =
+    (statelon.quelonry, statelon.candidatelonsWithFelonaturelons)
 
-  override def arrow(
-    config: Option[CandidateDecorator[Query, Candidate]],
-    context: Executor.Context
-  ): Arrow[(Query, Seq[CandidateWithFeatures[Candidate]]), CandidateDecoratorExecutorResult] =
-    candidateDecoratorExecutor.arrow(config, context)
+  ovelonrridelon delonf arrow(
+    config: Option[CandidatelonDeloncorator[Quelonry, Candidatelon]],
+    contelonxt: elonxeloncutor.Contelonxt
+  ): Arrow[(Quelonry, Selonq[CandidatelonWithFelonaturelons[Candidatelon]]), CandidatelonDeloncoratorelonxeloncutorRelonsult] =
+    candidatelonDeloncoratorelonxeloncutor.arrow(config, contelonxt)
 
-  override def updateState(
-    state: State,
-    executorResult: CandidateDecoratorExecutorResult,
-    config: Option[CandidateDecorator[Query, Candidate]]
-  ): State = {
-    state.updateDecorations(executorResult.result)
+  ovelonrridelon delonf updatelonStatelon(
+    statelon: Statelon,
+    elonxeloncutorRelonsult: CandidatelonDeloncoratorelonxeloncutorRelonsult,
+    config: Option[CandidatelonDeloncorator[Quelonry, Candidatelon]]
+  ): Statelon = {
+    statelon.updatelonDeloncorations(elonxeloncutorRelonsult.relonsult)
   }
 }

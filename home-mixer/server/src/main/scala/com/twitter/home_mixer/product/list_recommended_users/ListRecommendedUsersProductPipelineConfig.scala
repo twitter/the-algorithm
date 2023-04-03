@@ -1,79 +1,79 @@
-package com.twitter.home_mixer.product.list_recommended_users
+packagelon com.twittelonr.homelon_mixelonr.product.list_reloncommelonndelond_uselonrs
 
-import com.twitter.home_mixer.marshaller.timelines.RecommendedUsersCursorUnmarshaller
-import com.twitter.home_mixer.model.request.HomeMixerRequest
-import com.twitter.home_mixer.model.request.ListRecommendedUsersProduct
-import com.twitter.home_mixer.model.request.ListRecommendedUsersProductContext
-import com.twitter.home_mixer.product.list_recommended_users.model.ListRecommendedUsersQuery
-import com.twitter.home_mixer.product.list_recommended_users.param.ListRecommendedUsersParam.ServerMaxResultsParam
-import com.twitter.home_mixer.product.list_recommended_users.param.ListRecommendedUsersParamConfig
-import com.twitter.home_mixer.service.HomeMixerAccessPolicy.DefaultHomeMixerAccessPolicy
-import com.twitter.product_mixer.component_library.premarshaller.cursor.UrtCursorSerializer
-import com.twitter.product_mixer.core.functional_component.common.access_policy.AccessPolicy
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.ProductPipelineIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request
-import com.twitter.product_mixer.core.pipeline.PipelineConfig
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.BadRequest
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.pipeline.product.ProductPipelineConfig
-import com.twitter.product_mixer.core.product.ProductParamConfig
-import com.twitter.timelines.configapi.Params
-import com.twitter.timelines.render.{thriftscala => urt}
-import com.twitter.timelines.util.RequestCursorSerializer
-import com.twitter.util.Try
+import com.twittelonr.homelon_mixelonr.marshallelonr.timelonlinelons.ReloncommelonndelondUselonrsCursorUnmarshallelonr
+import com.twittelonr.homelon_mixelonr.modelonl.relonquelonst.HomelonMixelonrRelonquelonst
+import com.twittelonr.homelon_mixelonr.modelonl.relonquelonst.ListReloncommelonndelondUselonrsProduct
+import com.twittelonr.homelon_mixelonr.modelonl.relonquelonst.ListReloncommelonndelondUselonrsProductContelonxt
+import com.twittelonr.homelon_mixelonr.product.list_reloncommelonndelond_uselonrs.modelonl.ListReloncommelonndelondUselonrsQuelonry
+import com.twittelonr.homelon_mixelonr.product.list_reloncommelonndelond_uselonrs.param.ListReloncommelonndelondUselonrsParam.SelonrvelonrMaxRelonsultsParam
+import com.twittelonr.homelon_mixelonr.product.list_reloncommelonndelond_uselonrs.param.ListReloncommelonndelondUselonrsParamConfig
+import com.twittelonr.homelon_mixelonr.selonrvicelon.HomelonMixelonrAccelonssPolicy.DelonfaultHomelonMixelonrAccelonssPolicy
+import com.twittelonr.product_mixelonr.componelonnt_library.prelonmarshallelonr.cursor.UrtCursorSelonrializelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.accelonss_policy.AccelonssPolicy
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.ComponelonntIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.ProductPipelonlinelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonConfig
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.BadRelonquelonst
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.PipelonlinelonFailurelon
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.product.ProductPipelonlinelonConfig
+import com.twittelonr.product_mixelonr.corelon.product.ProductParamConfig
+import com.twittelonr.timelonlinelons.configapi.Params
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import com.twittelonr.timelonlinelons.util.RelonquelonstCursorSelonrializelonr
+import com.twittelonr.util.Try
 
-import javax.inject.Inject
-import javax.inject.Singleton
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class ListRecommendedUsersProductPipelineConfig @Inject() (
-  listRecommendedUsersMixerPipelineConfig: ListRecommendedUsersMixerPipelineConfig,
-  listRecommendedUsersParamConfig: ListRecommendedUsersParamConfig)
-    extends ProductPipelineConfig[
-      HomeMixerRequest,
-      ListRecommendedUsersQuery,
-      urt.TimelineResponse
+@Singlelonton
+class ListReloncommelonndelondUselonrsProductPipelonlinelonConfig @Injelonct() (
+  listReloncommelonndelondUselonrsMixelonrPipelonlinelonConfig: ListReloncommelonndelondUselonrsMixelonrPipelonlinelonConfig,
+  listReloncommelonndelondUselonrsParamConfig: ListReloncommelonndelondUselonrsParamConfig)
+    elonxtelonnds ProductPipelonlinelonConfig[
+      HomelonMixelonrRelonquelonst,
+      ListReloncommelonndelondUselonrsQuelonry,
+      urt.TimelonlinelonRelonsponselon
     ] {
 
-  override val identifier: ProductPipelineIdentifier =
-    ProductPipelineIdentifier("ListRecommendedUsers")
-  override val product: request.Product = ListRecommendedUsersProduct
-  override val paramConfig: ProductParamConfig = listRecommendedUsersParamConfig
+  ovelonrridelon val idelonntifielonr: ProductPipelonlinelonIdelonntifielonr =
+    ProductPipelonlinelonIdelonntifielonr("ListReloncommelonndelondUselonrs")
+  ovelonrridelon val product: relonquelonst.Product = ListReloncommelonndelondUselonrsProduct
+  ovelonrridelon val paramConfig: ProductParamConfig = listReloncommelonndelondUselonrsParamConfig
 
-  override def pipelineQueryTransformer(
-    request: HomeMixerRequest,
+  ovelonrridelon delonf pipelonlinelonQuelonryTransformelonr(
+    relonquelonst: HomelonMixelonrRelonquelonst,
     params: Params
-  ): ListRecommendedUsersQuery = {
-    val context = request.productContext match {
-      case Some(context: ListRecommendedUsersProductContext) => context
-      case _ => throw PipelineFailure(BadRequest, "ListRecommendedUsersProductContext not found")
+  ): ListReloncommelonndelondUselonrsQuelonry = {
+    val contelonxt = relonquelonst.productContelonxt match {
+      caselon Somelon(contelonxt: ListReloncommelonndelondUselonrsProductContelonxt) => contelonxt
+      caselon _ => throw PipelonlinelonFailurelon(BadRelonquelonst, "ListReloncommelonndelondUselonrsProductContelonxt not found")
     }
 
-    val debugOptions = request.debugParams.flatMap(_.debugOptions)
+    val delonbugOptions = relonquelonst.delonbugParams.flatMap(_.delonbugOptions)
 
-    val pipelineCursor = request.serializedRequestCursor.flatMap { cursor =>
-      Try(UrtCursorSerializer.deserializeUnorderedExcludeIdsCursor(cursor))
-        .getOrElse(RecommendedUsersCursorUnmarshaller(RequestCursorSerializer.deserialize(cursor)))
+    val pipelonlinelonCursor = relonquelonst.selonrializelondRelonquelonstCursor.flatMap { cursor =>
+      Try(UrtCursorSelonrializelonr.delonselonrializelonUnordelonrelondelonxcludelonIdsCursor(cursor))
+        .gelontOrelonlselon(ReloncommelonndelondUselonrsCursorUnmarshallelonr(RelonquelonstCursorSelonrializelonr.delonselonrializelon(cursor)))
     }
 
-    ListRecommendedUsersQuery(
-      listId = context.listId,
+    ListReloncommelonndelondUselonrsQuelonry(
+      listId = contelonxt.listId,
       params = params,
-      clientContext = request.clientContext,
-      features = None,
-      pipelineCursor = pipelineCursor,
-      requestedMaxResults = Some(params(ServerMaxResultsParam)),
-      debugOptions = debugOptions,
-      selectedUserIds = context.selectedUserIds,
-      excludedUserIds = context.excludedUserIds
+      clielonntContelonxt = relonquelonst.clielonntContelonxt,
+      felonaturelons = Nonelon,
+      pipelonlinelonCursor = pipelonlinelonCursor,
+      relonquelonstelondMaxRelonsults = Somelon(params(SelonrvelonrMaxRelonsultsParam)),
+      delonbugOptions = delonbugOptions,
+      selonlelonctelondUselonrIds = contelonxt.selonlelonctelondUselonrIds,
+      elonxcludelondUselonrIds = contelonxt.elonxcludelondUselonrIds
     )
   }
 
-  override def pipelines: Seq[PipelineConfig] = Seq(listRecommendedUsersMixerPipelineConfig)
+  ovelonrridelon delonf pipelonlinelons: Selonq[PipelonlinelonConfig] = Selonq(listReloncommelonndelondUselonrsMixelonrPipelonlinelonConfig)
 
-  override def pipelineSelector(query: ListRecommendedUsersQuery): ComponentIdentifier =
-    listRecommendedUsersMixerPipelineConfig.identifier
+  ovelonrridelon delonf pipelonlinelonSelonlelonctor(quelonry: ListReloncommelonndelondUselonrsQuelonry): ComponelonntIdelonntifielonr =
+    listReloncommelonndelondUselonrsMixelonrPipelonlinelonConfig.idelonntifielonr
 
-  override val debugAccessPolicies: Set[AccessPolicy] = DefaultHomeMixerAccessPolicy
+  ovelonrridelon val delonbugAccelonssPolicielons: Selont[AccelonssPolicy] = DelonfaultHomelonMixelonrAccelonssPolicy
 }

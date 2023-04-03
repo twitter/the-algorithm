@@ -1,64 +1,64 @@
-package com.twitter.simclusters_v2.scalding.topic_recommendations.model_based_topic_recommendations
+packagelon com.twittelonr.simclustelonrs_v2.scalding.topic_reloncommelonndations.modelonl_baselond_topic_reloncommelonndations
 
-import com.twitter.ml.api.util.FDsl._
-import com.twitter.ml.api.{DataRecord, FeatureContext, IRecordOneToOneAdapter}
+import com.twittelonr.ml.api.util.FDsl._
+import com.twittelonr.ml.api.{DataReloncord, FelonaturelonContelonxt, IReloncordOnelonToOnelonAdaptelonr}
 
-case class UserTopicTrainingSample(
-  userId: Long,
-  followedTopics: Set[Long],
-  notInterestedTopics: Set[Long],
-  userCountry: String,
-  userLanguage: String,
-  targetTopicId: Int,
-  userInterestedInSimClusters: Map[Int, Double],
-  followedTopicsSimClusters: Map[Int, Double],
-  notInterestedTopicsSimClusters: Map[Int, Double])
+caselon class UselonrTopicTrainingSamplelon(
+  uselonrId: Long,
+  followelondTopics: Selont[Long],
+  notIntelonrelonstelondTopics: Selont[Long],
+  uselonrCountry: String,
+  uselonrLanguagelon: String,
+  targelontTopicId: Int,
+  uselonrIntelonrelonstelondInSimClustelonrs: Map[Int, Doublelon],
+  followelondTopicsSimClustelonrs: Map[Int, Doublelon],
+  notIntelonrelonstelondTopicsSimClustelonrs: Map[Int, Doublelon])
 
-class UserTopicDataRecordAdapter extends IRecordOneToOneAdapter[UserTopicTrainingSample] {
-  import UserFeatures._
-
-  /**
-   * Get its feature context used to annotate the data.
-   *
-   * @return feature context
-   */
-  override def getFeatureContext: FeatureContext = UserFeatures.FeatureContext
+class UselonrTopicDataReloncordAdaptelonr elonxtelonnds IReloncordOnelonToOnelonAdaptelonr[UselonrTopicTrainingSamplelon] {
+  import UselonrFelonaturelons._
 
   /**
-   * Adapt record of type T to DataRecord.
+   * Gelont its felonaturelon contelonxt uselond to annotatelon thelon data.
    *
-   * @param record raw record of type T
-   *
-   * @return a DataRecord
-   *
-   * @throws com.twitter.ml.api.InvalidFeatureException
+   * @relonturn felonaturelon contelonxt
    */
-  override def adaptToDataRecord(record: UserTopicTrainingSample): DataRecord = {
-    val dr = new DataRecord()
+  ovelonrridelon delonf gelontFelonaturelonContelonxt: FelonaturelonContelonxt = UselonrFelonaturelons.FelonaturelonContelonxt
 
-    dr.setFeatureValue(UserIdFeature, record.userId)
-    dr.setFeatureValue(
-      UserSimClusterFeatures,
-      record.userInterestedInSimClusters.map {
-        case (id, score) => id.toString -> score
-      })
-    dr.setFeatureValue(FollowedTopicIdFeatures, record.followedTopics.map(_.toString))
-    dr.setFeatureValue(NotInterestedTopicIdFeatures, record.notInterestedTopics.map(_.toString))
-    dr.setFeatureValue(UserCountryFeature, record.userCountry)
-    dr.setFeatureValue(UserLanguageFeature, record.userLanguage)
+  /**
+   * Adapt reloncord of typelon T to DataReloncord.
+   *
+   * @param reloncord raw reloncord of typelon T
+   *
+   * @relonturn a DataReloncord
+   *
+   * @throws com.twittelonr.ml.api.InvalidFelonaturelonelonxcelonption
+   */
+  ovelonrridelon delonf adaptToDataReloncord(reloncord: UselonrTopicTrainingSamplelon): DataReloncord = {
+    val dr = nelonw DataReloncord()
 
-    dr.setFeatureValue(
-      FollowedTopicSimClusterAvgFeatures,
-      record.followedTopicsSimClusters.map {
-        case (id, score) => id.toString -> score
+    dr.selontFelonaturelonValuelon(UselonrIdFelonaturelon, reloncord.uselonrId)
+    dr.selontFelonaturelonValuelon(
+      UselonrSimClustelonrFelonaturelons,
+      reloncord.uselonrIntelonrelonstelondInSimClustelonrs.map {
+        caselon (id, scorelon) => id.toString -> scorelon
+      })
+    dr.selontFelonaturelonValuelon(FollowelondTopicIdFelonaturelons, reloncord.followelondTopics.map(_.toString))
+    dr.selontFelonaturelonValuelon(NotIntelonrelonstelondTopicIdFelonaturelons, reloncord.notIntelonrelonstelondTopics.map(_.toString))
+    dr.selontFelonaturelonValuelon(UselonrCountryFelonaturelon, reloncord.uselonrCountry)
+    dr.selontFelonaturelonValuelon(UselonrLanguagelonFelonaturelon, reloncord.uselonrLanguagelon)
+
+    dr.selontFelonaturelonValuelon(
+      FollowelondTopicSimClustelonrAvgFelonaturelons,
+      reloncord.followelondTopicsSimClustelonrs.map {
+        caselon (id, scorelon) => id.toString -> scorelon
       })
 
-    dr.setFeatureValue(
-      NotInterestedTopicSimClusterAvgFeatures,
-      record.notInterestedTopicsSimClusters.map {
-        case (id, score) => id.toString -> score
+    dr.selontFelonaturelonValuelon(
+      NotIntelonrelonstelondTopicSimClustelonrAvgFelonaturelons,
+      reloncord.notIntelonrelonstelondTopicsSimClustelonrs.map {
+        caselon (id, scorelon) => id.toString -> scorelon
       })
-    dr.setFeatureValue(TargetTopicIdFeatures, record.targetTopicId.toLong)
-    dr.getRecord
+    dr.selontFelonaturelonValuelon(TargelontTopicIdFelonaturelons, reloncord.targelontTopicId.toLong)
+    dr.gelontReloncord
   }
 }

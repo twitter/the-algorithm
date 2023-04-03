@@ -1,65 +1,65 @@
-package com.twitter.cr_mixer.similarity_engine
+packagelon com.twittelonr.cr_mixelonr.similarity_elonnginelon
 
-import com.twitter.cr_mixer.similarity_engine.SimilarityEngine.MemCacheConfig
-import com.twitter.cr_mixer.similarity_engine.SimilarityEngine.SimilarityEngineConfig
-import com.twitter.cr_mixer.thriftscala.SimilarityEngineType
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.storehaus.ReadableStore
-import com.twitter.timelines.configapi.Params
-import com.twitter.util.Future
+import com.twittelonr.cr_mixelonr.similarity_elonnginelon.Similarityelonnginelon.MelonmCachelonConfig
+import com.twittelonr.cr_mixelonr.similarity_elonnginelon.Similarityelonnginelon.SimilarityelonnginelonConfig
+import com.twittelonr.cr_mixelonr.thriftscala.SimilarityelonnginelonTypelon
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.storelonhaus.RelonadablelonStorelon
+import com.twittelonr.timelonlinelons.configapi.Params
+import com.twittelonr.util.Futurelon
 
 /**
- * @tparam Query ReadableStore's input type.
+ * @tparam Quelonry RelonadablelonStorelon's input typelon.
  */
-case class EngineQuery[Query](
-  storeQuery: Query,
+caselon class elonnginelonQuelonry[Quelonry](
+  storelonQuelonry: Quelonry,
   params: Params,
 )
 
 /**
- * A straight forward SimilarityEngine implementation that wraps a ReadableStore
+ * A straight forward Similarityelonnginelon implelonmelonntation that wraps a RelonadablelonStorelon
  *
- * @param implementingStore   Provides the candidate retrieval's implementations
- * @param memCacheConfig      If specified, it will wrap the underlying store with a MemCache layer
- *                            You should only enable this for cacheable queries, e.x. TweetIds.
- *                            consumer based UserIds are generally not possible to cache.
- * @tparam Query              ReadableStore's input type
- * @tparam Candidate          ReadableStore's return type is Seq[[[Candidate]]]
+ * @param implelonmelonntingStorelon   Providelons thelon candidatelon relontrielonval's implelonmelonntations
+ * @param melonmCachelonConfig      If speloncifielond, it will wrap thelon undelonrlying storelon with a MelonmCachelon layelonr
+ *                            You should only elonnablelon this for cachelonablelon quelonrielons, elon.x. TwelonelontIds.
+ *                            consumelonr baselond UselonrIds arelon gelonnelonrally not possiblelon to cachelon.
+ * @tparam Quelonry              RelonadablelonStorelon's input typelon
+ * @tparam Candidatelon          RelonadablelonStorelon's relonturn typelon is Selonq[[[Candidatelon]]]
  */
-class StandardSimilarityEngine[Query, Candidate <: Serializable](
-  implementingStore: ReadableStore[Query, Seq[Candidate]],
-  override val identifier: SimilarityEngineType,
-  globalStats: StatsReceiver,
-  engineConfig: SimilarityEngineConfig,
-  memCacheConfig: Option[MemCacheConfig[Query]] = None)
-    extends SimilarityEngine[EngineQuery[Query], Candidate] {
+class StandardSimilarityelonnginelon[Quelonry, Candidatelon <: Selonrializablelon](
+  implelonmelonntingStorelon: RelonadablelonStorelon[Quelonry, Selonq[Candidatelon]],
+  ovelonrridelon val idelonntifielonr: SimilarityelonnginelonTypelon,
+  globalStats: StatsReloncelonivelonr,
+  elonnginelonConfig: SimilarityelonnginelonConfig,
+  melonmCachelonConfig: Option[MelonmCachelonConfig[Quelonry]] = Nonelon)
+    elonxtelonnds Similarityelonnginelon[elonnginelonQuelonry[Quelonry], Candidatelon] {
 
-  private val scopedStats = globalStats.scope("similarityEngine", identifier.toString)
+  privatelon val scopelondStats = globalStats.scopelon("similarityelonnginelon", idelonntifielonr.toString)
 
-  def getScopedStats: StatsReceiver = scopedStats
+  delonf gelontScopelondStats: StatsReloncelonivelonr = scopelondStats
 
-  // Add memcache wrapper, if specified
-  private val store = {
-    memCacheConfig match {
-      case Some(config) =>
-        SimilarityEngine.addMemCache(
-          underlyingStore = implementingStore,
-          memCacheConfig = config,
-          statsReceiver = scopedStats
+  // Add melonmcachelon wrappelonr, if speloncifielond
+  privatelon val storelon = {
+    melonmCachelonConfig match {
+      caselon Somelon(config) =>
+        Similarityelonnginelon.addMelonmCachelon(
+          undelonrlyingStorelon = implelonmelonntingStorelon,
+          melonmCachelonConfig = config,
+          statsReloncelonivelonr = scopelondStats
         )
-      case _ => implementingStore
+      caselon _ => implelonmelonntingStorelon
     }
   }
 
-  override def getCandidates(
-    engineQuery: EngineQuery[Query]
-  ): Future[Option[Seq[Candidate]]] = {
-    SimilarityEngine.getFromFn(
-      store.get,
-      engineQuery.storeQuery,
-      engineConfig,
-      engineQuery.params,
-      scopedStats
+  ovelonrridelon delonf gelontCandidatelons(
+    elonnginelonQuelonry: elonnginelonQuelonry[Quelonry]
+  ): Futurelon[Option[Selonq[Candidatelon]]] = {
+    Similarityelonnginelon.gelontFromFn(
+      storelon.gelont,
+      elonnginelonQuelonry.storelonQuelonry,
+      elonnginelonConfig,
+      elonnginelonQuelonry.params,
+      scopelondStats
     )
   }
 }

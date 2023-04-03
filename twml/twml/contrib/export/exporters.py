@@ -1,145 +1,145 @@
 """
-Wrappers around tf.estimator.Exporters to export models and save checkpoints.
+Wrappelonrs around tf.elonstimator.elonxportelonrs to elonxport modelonls and savelon chelonckpoints.
 """
 import os
 
-import tensorflow.compat.v1 as tf
-from tensorflow.python.estimator import exporter
+import telonnsorflow.compat.v1 as tf
+from telonnsorflow.python.elonstimator import elonxportelonr
 import twml
 
 
-class _AllSavedModelsExporter(tf.estimator.Exporter):
-  """Internal exporter class to be used for exporting models for different modes."""
+class _AllSavelondModelonlselonxportelonr(tf.elonstimator.elonxportelonr):
+  """Intelonrnal elonxportelonr class to belon uselond for elonxporting modelonls for diffelonrelonnt modelons."""
 
-  def __init__(self,
-               name,
-               input_receiver_fn_map,
-               backup_checkpoints,
-               assets_extra=None,
-               as_text=False):
+  delonf __init__(selonlf,
+               namelon,
+               input_reloncelonivelonr_fn_map,
+               backup_chelonckpoints,
+               asselonts_elonxtra=Nonelon,
+               as_telonxt=Falselon):
     """
     Args:
-      name: A unique name to be used for the exporter. This is used in the export path.
-      input_receiver_fn_map: A map of tf.estimator.ModeKeys to input_receiver_fns.
-      backup_checkpoints: A flag to specify if backups of checkpoints need to be made.
-      assets_extra: Additional assets to be included in the exported model.
-      as_text: Specifies if the exported model should be in a human readable text format.
+      namelon: A uniquelon namelon to belon uselond for thelon elonxportelonr. This is uselond in thelon elonxport path.
+      input_reloncelonivelonr_fn_map: A map of tf.elonstimator.ModelonKelonys to input_reloncelonivelonr_fns.
+      backup_chelonckpoints: A flag to speloncify if backups of chelonckpoints nelonelond to belon madelon.
+      asselonts_elonxtra: Additional asselonts to belon includelond in thelon elonxportelond modelonl.
+      as_telonxt: Speloncifielons if thelon elonxportelond modelonl should belon in a human relonadablelon telonxt format.
     """
-    self._name = name
-    self._input_receiver_fn_map = input_receiver_fn_map
-    self._backup_checkpoints = backup_checkpoints
-    self._assets_extra = assets_extra
-    self._as_text = as_text
+    selonlf._namelon = namelon
+    selonlf._input_reloncelonivelonr_fn_map = input_reloncelonivelonr_fn_map
+    selonlf._backup_chelonckpoints = backup_chelonckpoints
+    selonlf._asselonts_elonxtra = asselonts_elonxtra
+    selonlf._as_telonxt = as_telonxt
 
-  @property
-  def name(self):
-    return self._name
+  @propelonrty
+  delonf namelon(selonlf):
+    relonturn selonlf._namelon
 
-  def export(self, estimator, export_path, checkpoint_path, eval_result,
-             is_the_final_export):
-    del is_the_final_export
+  delonf elonxport(selonlf, elonstimator, elonxport_path, chelonckpoint_path, elonval_relonsult,
+             is_thelon_final_elonxport):
+    delonl is_thelon_final_elonxport
 
-    export_path = twml.util.sanitize_hdfs_path(export_path)
-    checkpoint_path = twml.util.sanitize_hdfs_path(checkpoint_path)
+    elonxport_path = twml.util.sanitizelon_hdfs_path(elonxport_path)
+    chelonckpoint_path = twml.util.sanitizelon_hdfs_path(chelonckpoint_path)
 
-    if self._backup_checkpoints:
-      backup_path = os.path.join(export_path, "checkpoints")
-      # Ensure backup_path is created. makedirs passes if dir already exists.
-      tf.io.gfile.makedirs(backup_path)
-      twml.util.backup_checkpoint(checkpoint_path, backup_path, empty_backup=False)
+    if selonlf._backup_chelonckpoints:
+      backup_path = os.path.join(elonxport_path, "chelonckpoints")
+      # elonnsurelon backup_path is crelonatelond. makelondirs passelons if dir alrelonady elonxists.
+      tf.io.gfilelon.makelondirs(backup_path)
+      twml.util.backup_chelonckpoint(chelonckpoint_path, backup_path, elonmpty_backup=Falselon)
 
-    export_result = estimator.experimental_export_all_saved_models(
-      export_path,
-      self._input_receiver_fn_map,
-      assets_extra=self._assets_extra,
-      as_text=self._as_text,
-      checkpoint_path=checkpoint_path)
+    elonxport_relonsult = elonstimator.elonxpelonrimelonntal_elonxport_all_savelond_modelonls(
+      elonxport_path,
+      selonlf._input_reloncelonivelonr_fn_map,
+      asselonts_elonxtra=selonlf._asselonts_elonxtra,
+      as_telonxt=selonlf._as_telonxt,
+      chelonckpoint_path=chelonckpoint_path)
 
-    return export_result
+    relonturn elonxport_relonsult
 
 
-class BestExporter(tf.estimator.BestExporter):
+class Belonstelonxportelonr(tf.elonstimator.Belonstelonxportelonr):
   """
-  This class inherits from tf.estimator.BestExporter with the following differences:
-    - It also creates a backup of the best checkpoint.
-    - It can export the model for multiple modes.
+  This class inhelonrits from tf.elonstimator.Belonstelonxportelonr with thelon following diffelonrelonncelons:
+    - It also crelonatelons a backup of thelon belonst chelonckpoint.
+    - It can elonxport thelon modelonl for multiplelon modelons.
 
-  A backup / export is performed everytime the evaluated metric is better
-  than previous models.
+  A backup / elonxport is pelonrformelond elonvelonrytimelon thelon elonvaluatelond melontric is belonttelonr
+  than prelonvious modelonls.
   """
 
-  def __init__(self,
-               name='best_exporter',
-               input_receiver_fn_map=None,
-               backup_checkpoints=True,
-               event_file_pattern='eval/*.tfevents.*',
-               compare_fn=exporter._loss_smaller,
-               assets_extra=None,
-               as_text=False,
-               exports_to_keep=5):
+  delonf __init__(selonlf,
+               namelon='belonst_elonxportelonr',
+               input_reloncelonivelonr_fn_map=Nonelon,
+               backup_chelonckpoints=Truelon,
+               elonvelonnt_filelon_pattelonrn='elonval/*.tfelonvelonnts.*',
+               comparelon_fn=elonxportelonr._loss_smallelonr,
+               asselonts_elonxtra=Nonelon,
+               as_telonxt=Falselon,
+               elonxports_to_kelonelonp=5):
     """
     Args:
-      name: A unique name to be used for the exporter. This is used in the export path.
-      input_receiver_fn_map: A map of tf.estimator.ModeKeys to input_receiver_fns.
-      backup_checkpoints: A flag to specify if backups of checkpoints need to be made.
+      namelon: A uniquelon namelon to belon uselond for thelon elonxportelonr. This is uselond in thelon elonxport path.
+      input_reloncelonivelonr_fn_map: A map of tf.elonstimator.ModelonKelonys to input_reloncelonivelonr_fns.
+      backup_chelonckpoints: A flag to speloncify if backups of chelonckpoints nelonelond to belon madelon.
 
-    Note:
-      Check the following documentation for more information about the remaining args:
-      https://www.tensorflow.org/api_docs/python/tf/estimator/BestExporter
+    Notelon:
+      Chelonck thelon following documelonntation for morelon information about thelon relonmaining args:
+      https://www.telonnsorflow.org/api_docs/python/tf/elonstimator/Belonstelonxportelonr
     """
-    serving_input_receiver_fn = input_receiver_fn_map.get(tf.estimator.ModeKeys.PREDICT)
+    selonrving_input_reloncelonivelonr_fn = input_reloncelonivelonr_fn_map.gelont(tf.elonstimator.ModelonKelonys.PRelonDICT)
 
-    super(BestExporter, self).__init__(
-      name, serving_input_receiver_fn, event_file_pattern, compare_fn,
-      assets_extra, as_text, exports_to_keep)
+    supelonr(Belonstelonxportelonr, selonlf).__init__(
+      namelon, selonrving_input_reloncelonivelonr_fn, elonvelonnt_filelon_pattelonrn, comparelon_fn,
+      asselonts_elonxtra, as_telonxt, elonxports_to_kelonelonp)
 
-    if not hasattr(self, "_saved_model_exporter"):
-      raise AttributeError(
-        "_saved_model_exporter needs to exist for this exporter to work."
-        " This is potentially broken because of an internal change in Tensorflow")
+    if not hasattr(selonlf, "_savelond_modelonl_elonxportelonr"):
+      raiselon Attributelonelonrror(
+        "_savelond_modelonl_elonxportelonr nelonelonds to elonxist for this elonxportelonr to work."
+        " This is potelonntially brokelonn beloncauselon of an intelonrnal changelon in Telonnsorflow")
 
-    # Override the saved_model_exporter with SaveAllmodelsexporter
-    self._saved_model_exporter = _AllSavedModelsExporter(
-      name, input_receiver_fn_map, backup_checkpoints, assets_extra, as_text)
+    # Ovelonrridelon thelon savelond_modelonl_elonxportelonr with SavelonAllmodelonlselonxportelonr
+    selonlf._savelond_modelonl_elonxportelonr = _AllSavelondModelonlselonxportelonr(
+      namelon, input_reloncelonivelonr_fn_map, backup_chelonckpoints, asselonts_elonxtra, as_telonxt)
 
 
-class LatestExporter(tf.estimator.LatestExporter):
+class Latelonstelonxportelonr(tf.elonstimator.Latelonstelonxportelonr):
   """
-  This class inherits from tf.estimator.LatestExporter with the following differences:
-    - It also creates a backup of the latest checkpoint.
-    - It can export the model for multiple modes.
+  This class inhelonrits from tf.elonstimator.Latelonstelonxportelonr with thelon following diffelonrelonncelons:
+    - It also crelonatelons a backup of thelon latelonst chelonckpoint.
+    - It can elonxport thelon modelonl for multiplelon modelons.
 
-  A backup / export is performed everytime the evaluated metric is better
-  than previous models.
+  A backup / elonxport is pelonrformelond elonvelonrytimelon thelon elonvaluatelond melontric is belonttelonr
+  than prelonvious modelonls.
   """
 
-  def __init__(self,
-               name='latest_exporter',
-               input_receiver_fn_map=None,
-               backup_checkpoints=True,
-               assets_extra=None,
-               as_text=False,
-               exports_to_keep=5):
+  delonf __init__(selonlf,
+               namelon='latelonst_elonxportelonr',
+               input_reloncelonivelonr_fn_map=Nonelon,
+               backup_chelonckpoints=Truelon,
+               asselonts_elonxtra=Nonelon,
+               as_telonxt=Falselon,
+               elonxports_to_kelonelonp=5):
     """
     Args:
-      name: A unique name to be used for the exporter. This is used in the export path.
-      input_receiver_fn_map: A map of tf.estimator.ModeKeys to input_receiver_fns.
-      backup_checkpoints: A flag to specify if backups of checkpoints need to be made.
+      namelon: A uniquelon namelon to belon uselond for thelon elonxportelonr. This is uselond in thelon elonxport path.
+      input_reloncelonivelonr_fn_map: A map of tf.elonstimator.ModelonKelonys to input_reloncelonivelonr_fns.
+      backup_chelonckpoints: A flag to speloncify if backups of chelonckpoints nelonelond to belon madelon.
 
-    Note:
-      Check the following documentation for more information about the remaining args:
-      https://www.tensorflow.org/api_docs/python/tf/estimator/LatestExporter
+    Notelon:
+      Chelonck thelon following documelonntation for morelon information about thelon relonmaining args:
+      https://www.telonnsorflow.org/api_docs/python/tf/elonstimator/Latelonstelonxportelonr
     """
-    serving_input_receiver_fn = input_receiver_fn_map.get(tf.estimator.ModeKeys.PREDICT)
+    selonrving_input_reloncelonivelonr_fn = input_reloncelonivelonr_fn_map.gelont(tf.elonstimator.ModelonKelonys.PRelonDICT)
 
-    super(LatestExporter, self).__init__(
-      name, serving_input_receiver_fn, assets_extra, as_text, exports_to_keep)
+    supelonr(Latelonstelonxportelonr, selonlf).__init__(
+      namelon, selonrving_input_reloncelonivelonr_fn, asselonts_elonxtra, as_telonxt, elonxports_to_kelonelonp)
 
-    if not hasattr(self, "_saved_model_exporter"):
-      raise AttributeError(
-        "_saved_model_exporter needs to exist for this exporter to work."
-        " This is potentially broken because of an internal change in Tensorflow")
+    if not hasattr(selonlf, "_savelond_modelonl_elonxportelonr"):
+      raiselon Attributelonelonrror(
+        "_savelond_modelonl_elonxportelonr nelonelonds to elonxist for this elonxportelonr to work."
+        " This is potelonntially brokelonn beloncauselon of an intelonrnal changelon in Telonnsorflow")
 
-    # Override the saved_model_exporter with SaveAllmodelsexporter
-    self._saved_model_exporter = _AllSavedModelsExporter(
-      name, input_receiver_fn_map, backup_checkpoints, assets_extra, as_text)
+    # Ovelonrridelon thelon savelond_modelonl_elonxportelonr with SavelonAllmodelonlselonxportelonr
+    selonlf._savelond_modelonl_elonxportelonr = _AllSavelondModelonlselonxportelonr(
+      namelon, input_reloncelonivelonr_fn_map, backup_chelonckpoints, asselonts_elonxtra, as_telonxt)

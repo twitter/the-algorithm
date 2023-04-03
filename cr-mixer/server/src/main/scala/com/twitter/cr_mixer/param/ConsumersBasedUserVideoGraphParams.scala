@@ -1,65 +1,65 @@
-package com.twitter.cr_mixer.param
+packagelon com.twittelonr.cr_mixelonr.param
 
-import com.twitter.timelines.configapi.BaseConfig
-import com.twitter.timelines.configapi.BaseConfigBuilder
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil
-import com.twitter.timelines.configapi.Param
+import com.twittelonr.timelonlinelons.configapi.BaselonConfig
+import com.twittelonr.timelonlinelons.configapi.BaselonConfigBuildelonr
+import com.twittelonr.timelonlinelons.configapi.FSBoundelondParam
+import com.twittelonr.timelonlinelons.configapi.FSNamelon
+import com.twittelonr.timelonlinelons.configapi.FSParam
+import com.twittelonr.timelonlinelons.configapi.FelonaturelonSwitchOvelonrridelonUtil
+import com.twittelonr.timelonlinelons.configapi.Param
 
 /**
- * ConsumersBasedUserVideoGraph Params: there are multiple ways (e.g. FRS, RealGraphIn) to generate consumersSeedSet for ConsumersBasedUserTweetGraph
- * for now we allow flexibility in tuning UVG params for different consumersSeedSet generation algo by giving the param name {consumerSeedSetAlgo}{ParamName}
+ * ConsumelonrsBaselondUselonrVidelonoGraph Params: thelonrelon arelon multiplelon ways (elon.g. FRS, RelonalGraphIn) to gelonnelonratelon consumelonrsSelonelondSelont for ConsumelonrsBaselondUselonrTwelonelontGraph
+ * for now welon allow flelonxibility in tuning UVG params for diffelonrelonnt consumelonrsSelonelondSelont gelonnelonration algo by giving thelon param namelon {consumelonrSelonelondSelontAlgo}{ParamNamelon}
  */
 
-object ConsumersBasedUserVideoGraphParams {
+objelonct ConsumelonrsBaselondUselonrVidelonoGraphParams {
 
-  object EnableSourceParam
-      extends FSParam[Boolean](
-        name = "consumers_based_user_video_graph_enable_source",
-        default = false
+  objelonct elonnablelonSourcelonParam
+      elonxtelonnds FSParam[Boolelonan](
+        namelon = "consumelonrs_baselond_uselonr_videlono_graph_elonnablelon_sourcelon",
+        delonfault = falselon
       )
 
-  // UTG-RealGraphIN
-  object RealGraphInMinCoOccurrenceParam
-      extends FSBoundedParam[Int](
-        name = "consumers_based_user_video_graph_real_graph_in_min_co_occurrence",
-        default = 3,
+  // UTG-RelonalGraphIN
+  objelonct RelonalGraphInMinCoOccurrelonncelonParam
+      elonxtelonnds FSBoundelondParam[Int](
+        namelon = "consumelonrs_baselond_uselonr_videlono_graph_relonal_graph_in_min_co_occurrelonncelon",
+        delonfault = 3,
         min = 0,
         max = 500
       )
 
-  object RealGraphInMinScoreParam
-      extends FSBoundedParam[Double](
-        name = "consumers_based_user_video_graph_real_graph_in_min_score",
-        default = 2.0,
+  objelonct RelonalGraphInMinScorelonParam
+      elonxtelonnds FSBoundelondParam[Doublelon](
+        namelon = "consumelonrs_baselond_uselonr_videlono_graph_relonal_graph_in_min_scorelon",
+        delonfault = 2.0,
         min = 0.0,
         max = 10.0
       )
 
-  val AllParams: Seq[Param[_] with FSName] = Seq(
-    EnableSourceParam,
-    RealGraphInMinCoOccurrenceParam,
-    RealGraphInMinScoreParam
+  val AllParams: Selonq[Param[_] with FSNamelon] = Selonq(
+    elonnablelonSourcelonParam,
+    RelonalGraphInMinCoOccurrelonncelonParam,
+    RelonalGraphInMinScorelonParam
   )
 
-  lazy val config: BaseConfig = {
+  lazy val config: BaselonConfig = {
 
-    val intOverrides =
-      FeatureSwitchOverrideUtil.getBoundedIntFSOverrides(RealGraphInMinCoOccurrenceParam)
+    val intOvelonrridelons =
+      FelonaturelonSwitchOvelonrridelonUtil.gelontBoundelondIntFSOvelonrridelons(RelonalGraphInMinCoOccurrelonncelonParam)
 
-    val doubleOverrides =
-      FeatureSwitchOverrideUtil.getBoundedDoubleFSOverrides(RealGraphInMinScoreParam)
+    val doublelonOvelonrridelons =
+      FelonaturelonSwitchOvelonrridelonUtil.gelontBoundelondDoublelonFSOvelonrridelons(RelonalGraphInMinScorelonParam)
 
-    val booleanOverrides = FeatureSwitchOverrideUtil.getBooleanFSOverrides(
-      EnableSourceParam
+    val boolelonanOvelonrridelons = FelonaturelonSwitchOvelonrridelonUtil.gelontBoolelonanFSOvelonrridelons(
+      elonnablelonSourcelonParam
     )
 
-    BaseConfigBuilder()
-      .set(intOverrides: _*)
-      .set(booleanOverrides: _*)
-      .set(doubleOverrides: _*)
+    BaselonConfigBuildelonr()
+      .selont(intOvelonrridelons: _*)
+      .selont(boolelonanOvelonrridelons: _*)
+      .selont(doublelonOvelonrridelons: _*)
       .build()
   }
 }

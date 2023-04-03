@@ -1,34 +1,34 @@
-package com.twitter.home_mixer.candidate_pipeline
+packagelon com.twittelonr.homelon_mixelonr.candidatelon_pipelonlinelon
 
-import com.twitter.product_mixer.component_library.candidate_source.tweetconvosvc.ConversationServiceCandidateSource
-import com.twitter.home_mixer.functional_component.feature_hydrator.NamesFeatureHydrator
-import com.twitter.home_mixer.functional_component.feature_hydrator.SocialGraphServiceFeatureHydrator
-import com.twitter.home_mixer.functional_component.feature_hydrator.TweetypieFeatureHydrator
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.functional_component.decorator.CandidateDecorator
-import com.twitter.product_mixer.core.functional_component.gate.BaseGate
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.componelonnt_library.candidatelon_sourcelon.twelonelontconvosvc.ConvelonrsationSelonrvicelonCandidatelonSourcelon
+import com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator.NamelonsFelonaturelonHydrator
+import com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator.SocialGraphSelonrvicelonFelonaturelonHydrator
+import com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator.TwelonelontypielonFelonaturelonHydrator
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.TwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.CandidatelonDeloncorator
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.gatelon.BaselonGatelon
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class ConversationServiceCandidatePipelineConfigBuilder[Query <: PipelineQuery] @Inject() (
-  conversationServiceCandidateSource: ConversationServiceCandidateSource,
-  tweetypieFeatureHydrator: TweetypieFeatureHydrator,
-  socialGraphServiceFeatureHydrator: SocialGraphServiceFeatureHydrator,
-  namesFeatureHydrator: NamesFeatureHydrator) {
+@Singlelonton
+class ConvelonrsationSelonrvicelonCandidatelonPipelonlinelonConfigBuildelonr[Quelonry <: PipelonlinelonQuelonry] @Injelonct() (
+  convelonrsationSelonrvicelonCandidatelonSourcelon: ConvelonrsationSelonrvicelonCandidatelonSourcelon,
+  twelonelontypielonFelonaturelonHydrator: TwelonelontypielonFelonaturelonHydrator,
+  socialGraphSelonrvicelonFelonaturelonHydrator: SocialGraphSelonrvicelonFelonaturelonHydrator,
+  namelonsFelonaturelonHydrator: NamelonsFelonaturelonHydrator) {
 
-  def build(
-    gates: Seq[BaseGate[Query]] = Seq.empty,
-    decorator: Option[CandidateDecorator[Query, TweetCandidate]] = None
-  ): ConversationServiceCandidatePipelineConfig[Query] = {
-    new ConversationServiceCandidatePipelineConfig(
-      conversationServiceCandidateSource,
-      tweetypieFeatureHydrator,
-      socialGraphServiceFeatureHydrator,
-      namesFeatureHydrator,
-      gates,
-      decorator
+  delonf build(
+    gatelons: Selonq[BaselonGatelon[Quelonry]] = Selonq.elonmpty,
+    deloncorator: Option[CandidatelonDeloncorator[Quelonry, TwelonelontCandidatelon]] = Nonelon
+  ): ConvelonrsationSelonrvicelonCandidatelonPipelonlinelonConfig[Quelonry] = {
+    nelonw ConvelonrsationSelonrvicelonCandidatelonPipelonlinelonConfig(
+      convelonrsationSelonrvicelonCandidatelonSourcelon,
+      twelonelontypielonFelonaturelonHydrator,
+      socialGraphSelonrvicelonFelonaturelonHydrator,
+      namelonsFelonaturelonHydrator,
+      gatelons,
+      deloncorator
     )
   }
 }

@@ -1,24 +1,24 @@
-package com.twitter.search.earlybird_root.caching;
+packagelon com.twittelonr.selonarch.elonarlybird_root.caching;
 
-import com.twitter.search.common.caching.filter.QueryCachePredicate;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.earlybird.common.EarlybirdRequestUtil;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestType;
+import com.twittelonr.selonarch.common.caching.filtelonr.QuelonryCachelonPrelondicatelon;
+import com.twittelonr.selonarch.common.deloncidelonr.SelonarchDeloncidelonr;
+import com.twittelonr.selonarch.elonarlybird.common.elonarlybirdRelonquelonstUtil;
+import com.twittelonr.selonarch.elonarlybird_root.common.elonarlybirdRelonquelonstContelonxt;
+import com.twittelonr.selonarch.elonarlybird_root.common.elonarlybirdRelonquelonstTypelon;
 
-public class TopTweetsQueryCachePredicate extends QueryCachePredicate<EarlybirdRequestContext> {
-  private final SearchDecider decider;
-  private final String toptweetsCacheEnabledDeciderKey;
+public class TopTwelonelontsQuelonryCachelonPrelondicatelon elonxtelonnds QuelonryCachelonPrelondicatelon<elonarlybirdRelonquelonstContelonxt> {
+  privatelon final SelonarchDeloncidelonr deloncidelonr;
+  privatelon final String toptwelonelontsCachelonelonnablelondDeloncidelonrKelony;
 
-  public TopTweetsQueryCachePredicate(SearchDecider decider, String normalizedSearchRootName) {
-    this.decider = decider;
-    this.toptweetsCacheEnabledDeciderKey = "toptweets_cache_enabled_" + normalizedSearchRootName;
+  public TopTwelonelontsQuelonryCachelonPrelondicatelon(SelonarchDeloncidelonr deloncidelonr, String normalizelondSelonarchRootNamelon) {
+    this.deloncidelonr = deloncidelonr;
+    this.toptwelonelontsCachelonelonnablelondDeloncidelonrKelony = "toptwelonelonts_cachelon_elonnablelond_" + normalizelondSelonarchRootNamelon;
   }
 
-  @Override
-  public Boolean shouldQueryCache(EarlybirdRequestContext requestContext) {
-    return EarlybirdRequestType.TOP_TWEETS == requestContext.getEarlybirdRequestType()
-        && EarlybirdRequestUtil.isCachingAllowed(requestContext.getRequest())
-        && decider.isAvailable(toptweetsCacheEnabledDeciderKey);
+  @Ovelonrridelon
+  public Boolelonan shouldQuelonryCachelon(elonarlybirdRelonquelonstContelonxt relonquelonstContelonxt) {
+    relonturn elonarlybirdRelonquelonstTypelon.TOP_TWelonelonTS == relonquelonstContelonxt.gelontelonarlybirdRelonquelonstTypelon()
+        && elonarlybirdRelonquelonstUtil.isCachingAllowelond(relonquelonstContelonxt.gelontRelonquelonst())
+        && deloncidelonr.isAvailablelon(toptwelonelontsCachelonelonnablelondDeloncidelonrKelony);
   }
 }

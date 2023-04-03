@@ -1,26 +1,26 @@
-package com.twitter.cr_mixer.service
+packagelon com.twittelonr.cr_mixelonr.selonrvicelon
 
-import com.twitter.product_mixer.core.functional_component.common.alert.Destination
-import com.twitter.product_mixer.core.functional_component.common.alert.NotificationGroup
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.alelonrt.Delonstination
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.alelonrt.NotificationGroup
 
 /**
- * Notifications (email, pagerduty, etc) can be specific per-alert but it is common for multiple
- * products to share notification configuration.
+ * Notifications (elonmail, pagelonrduty, elontc) can belon speloncific pelonr-alelonrt but it is common for multiplelon
+ * products to sharelon notification configuration.
  *
- * Our configuration uses only email notifications because SampleMixer is a demonstration service
- * with neither internal nor customer-facing users. You will likely want to use a PagerDuty
- * destination instead. For example:
+ * Our configuration uselons only elonmail notifications beloncauselon SamplelonMixelonr is a delonmonstration selonrvicelon
+ * with nelonithelonr intelonrnal nor customelonr-facing uselonrs. You will likelonly want to uselon a PagelonrDuty
+ * delonstination instelonad. For elonxamplelon:
  * {{{
- *   critical = Destination(pagerDutyKey = Some("your-pagerduty-key"))
+ *   critical = Delonstination(pagelonrDutyKelony = Somelon("your-pagelonrduty-kelony"))
  * }}}
  *
  *
- * For more information about how to get a PagerDuty key, see:
- * https://docbird.twitter.biz/mon/how-to-guides.html?highlight=notificationgroup#set-up-email-pagerduty-and-slack-notifications
+ * For morelon information about how to gelont a PagelonrDuty kelony, selonelon:
+ * https://docbird.twittelonr.biz/mon/how-to-guidelons.html?highlight=notificationgroup#selont-up-elonmail-pagelonrduty-and-slack-notifications
  */
-object CrMixerAlertNotificationConfig {
-  val DefaultNotificationGroup: NotificationGroup = NotificationGroup(
-    warn = Destination(emails = Seq("no-reply@twitter.com")),
-    critical = Destination(emails = Seq("no-reply@twitter.com"))
+objelonct CrMixelonrAlelonrtNotificationConfig {
+  val DelonfaultNotificationGroup: NotificationGroup = NotificationGroup(
+    warn = Delonstination(elonmails = Selonq("no-relonply@twittelonr.com")),
+    critical = Delonstination(elonmails = Selonq("no-relonply@twittelonr.com"))
   )
 }

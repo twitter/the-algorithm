@@ -1,61 +1,61 @@
-package com.twitter.timelineranker.util
+packagelon com.twittelonr.timelonlinelonrankelonr.util
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.search.earlybird.thriftscala.ThriftSearchResult
-import com.twitter.timelines.model.TweetId
-import com.twitter.timelines.model.UserId
-import com.twitter.timelines.visibility.model.CheckedUserActor
-import com.twitter.timelines.visibility.model.HasVisibilityActors
-import com.twitter.timelines.visibility.model.VisibilityCheckUser
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.selonarch.elonarlybird.thriftscala.ThriftSelonarchRelonsult
+import com.twittelonr.timelonlinelons.modelonl.TwelonelontId
+import com.twittelonr.timelonlinelons.modelonl.UselonrId
+import com.twittelonr.timelonlinelons.visibility.modelonl.ChelonckelondUselonrActor
+import com.twittelonr.timelonlinelons.visibility.modelonl.HasVisibilityActors
+import com.twittelonr.timelonlinelons.visibility.modelonl.VisibilityChelonckUselonr
 
-case class SearchResultWithVisibilityActors(
-  searchResult: ThriftSearchResult,
-  statsReceiver: StatsReceiver)
-    extends HasVisibilityActors {
+caselon class SelonarchRelonsultWithVisibilityActors(
+  selonarchRelonsult: ThriftSelonarchRelonsult,
+  statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds HasVisibilityActors {
 
-  private[this] val searchResultWithoutMetadata =
-    statsReceiver.counter("searchResultWithoutMetadata")
+  privatelon[this] val selonarchRelonsultWithoutMelontadata =
+    statsReloncelonivelonr.countelonr("selonarchRelonsultWithoutMelontadata")
 
-  val tweetId: TweetId = searchResult.id
-  val metadata = searchResult.metadata
-  val (userId, isRetweet, sourceUserId, sourceTweetId) = metadata match {
-    case Some(md) => {
+  val twelonelontId: TwelonelontId = selonarchRelonsult.id
+  val melontadata = selonarchRelonsult.melontadata
+  val (uselonrId, isRelontwelonelont, sourcelonUselonrId, sourcelonTwelonelontId) = melontadata match {
+    caselon Somelon(md) => {
       (
-        md.fromUserId,
-        md.isRetweet,
-        md.isRetweet.getOrElse(false) match {
-          case true => Some(md.referencedTweetAuthorId)
-          case false => None
+        md.fromUselonrId,
+        md.isRelontwelonelont,
+        md.isRelontwelonelont.gelontOrelonlselon(falselon) match {
+          caselon truelon => Somelon(md.relonfelonrelonncelondTwelonelontAuthorId)
+          caselon falselon => Nonelon
         },
-        // metadata.sharedStatusId is defaulting to 0 for tweets that don't have one
-        // 0 is not a valid tweet id so converting to None. Also disregarding sharedStatusId
-        // for non-retweets.
-        if (md.isRetweet.isDefined && md.isRetweet.get)
-          md.sharedStatusId match {
-            case 0 => None
-            case id => Some(id)
+        // melontadata.sharelondStatusId is delonfaulting to 0 for twelonelonts that don't havelon onelon
+        // 0 is not a valid twelonelont id so convelonrting to Nonelon. Also disrelongarding sharelondStatusId
+        // for non-relontwelonelonts.
+        if (md.isRelontwelonelont.isDelonfinelond && md.isRelontwelonelont.gelont)
+          md.sharelondStatusId match {
+            caselon 0 => Nonelon
+            caselon id => Somelon(id)
           }
-        else None
+        elonlselon Nonelon
       )
     }
-    case None => {
-      searchResultWithoutMetadata.incr()
-      throw new IllegalArgumentException(
-        "searchResult is missing metadata: " + searchResult.toString)
+    caselon Nonelon => {
+      selonarchRelonsultWithoutMelontadata.incr()
+      throw nelonw IllelongalArgumelonntelonxcelonption(
+        "selonarchRelonsult is missing melontadata: " + selonarchRelonsult.toString)
     }
   }
 
   /**
-   * Returns the set of users (or 'actors') relevant for Tweet visibility filtering. Usually the
-   * Tweet author, but if this is a Retweet, then the source Tweet author is also relevant.
+   * Relonturns thelon selont of uselonrs (or 'actors') relonlelonvant for Twelonelont visibility filtelonring. Usually thelon
+   * Twelonelont author, but if this is a Relontwelonelont, thelonn thelon sourcelon Twelonelont author is also relonlelonvant.
    */
-  def getVisibilityActors(viewerIdOpt: Option[UserId]): Seq[CheckedUserActor] = {
-    val isSelf = isViewerAlsoTweetAuthor(viewerIdOpt, Some(userId))
-    Seq(
-      Some(CheckedUserActor(isSelf, VisibilityCheckUser.Tweeter, userId)),
-      sourceUserId.map {
-        CheckedUserActor(isSelf, VisibilityCheckUser.SourceUser, _)
+  delonf gelontVisibilityActors(vielonwelonrIdOpt: Option[UselonrId]): Selonq[ChelonckelondUselonrActor] = {
+    val isSelonlf = isVielonwelonrAlsoTwelonelontAuthor(vielonwelonrIdOpt, Somelon(uselonrId))
+    Selonq(
+      Somelon(ChelonckelondUselonrActor(isSelonlf, VisibilityChelonckUselonr.Twelonelontelonr, uselonrId)),
+      sourcelonUselonrId.map {
+        ChelonckelondUselonrActor(isSelonlf, VisibilityChelonckUselonr.SourcelonUselonr, _)
       }
-    ).flatten
+    ).flattelonn
   }
 }

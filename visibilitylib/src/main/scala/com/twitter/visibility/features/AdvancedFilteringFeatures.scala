@@ -1,24 +1,24 @@
-package com.twitter.visibility.features
+packagelon com.twittelonr.visibility.felonaturelons
 
-import com.twitter.gizmoduck.thriftscala.MentionFilter
-import com.twitter.util.Duration
+import com.twittelonr.gizmoduck.thriftscala.MelonntionFiltelonr
+import com.twittelonr.util.Duration
 
-case object ViewerFiltersNoConfirmedEmail extends Feature[Boolean]
+caselon objelonct VielonwelonrFiltelonrsNoConfirmelondelonmail elonxtelonnds Felonaturelon[Boolelonan]
 
-case object ViewerFiltersNoConfirmedPhone extends Feature[Boolean]
+caselon objelonct VielonwelonrFiltelonrsNoConfirmelondPhonelon elonxtelonnds Felonaturelon[Boolelonan]
 
-case object ViewerFiltersDefaultProfileImage extends Feature[Boolean]
+caselon objelonct VielonwelonrFiltelonrsDelonfaultProfilelonImagelon elonxtelonnds Felonaturelon[Boolelonan]
 
-case object ViewerFiltersNewUsers extends Feature[Boolean]
+caselon objelonct VielonwelonrFiltelonrsNelonwUselonrs elonxtelonnds Felonaturelon[Boolelonan]
 
-case object ViewerFiltersNotFollowedBy extends Feature[Boolean]
+caselon objelonct VielonwelonrFiltelonrsNotFollowelondBy elonxtelonnds Felonaturelon[Boolelonan]
 
-case object ViewerMentionFilter extends Feature[MentionFilter]
+caselon objelonct VielonwelonrMelonntionFiltelonr elonxtelonnds Felonaturelon[MelonntionFiltelonr]
 
-case object AuthorHasConfirmedEmail extends Feature[Boolean]
+caselon objelonct AuthorHasConfirmelondelonmail elonxtelonnds Felonaturelon[Boolelonan]
 
-case object AuthorHasVerifiedPhone extends Feature[Boolean]
+caselon objelonct AuthorHasVelonrifielondPhonelon elonxtelonnds Felonaturelon[Boolelonan]
 
-case object AuthorHasDefaultProfileImage extends Feature[Boolean]
+caselon objelonct AuthorHasDelonfaultProfilelonImagelon elonxtelonnds Felonaturelon[Boolelonan]
 
-case object AuthorAccountAge extends Feature[Duration]
+caselon objelonct AuthorAccountAgelon elonxtelonnds Felonaturelon[Duration]

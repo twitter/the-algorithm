@@ -1,24 +1,24 @@
 jvm_binary(
-    name = "bin",
-    basename = "cr-mixer",
-    main = "com.twitter.cr_mixer.CrMixerServerMain",
-    runtime_platform = "java11",
-    tags = ["bazel-compatible"],
-    dependencies = [
+    namelon = "bin",
+    baselonnamelon = "cr-mixelonr",
+    main = "com.twittelonr.cr_mixelonr.CrMixelonrSelonrvelonrMain",
+    runtimelon_platform = "java11",
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
         "3rdparty/jvm/ch/qos/logback:logback-classic",
-        "cr-mixer/server/src/main/scala/com/twitter/cr_mixer",
-        "finagle/finagle-zipkin-scribe/src/main/scala",
-        "finatra/inject/inject-logback/src/main/scala",
-        "loglens/loglens-logback/src/main/scala/com/twitter/loglens/logback",
-        "twitter-server-internal/src/main/scala",
-        "twitter-server/logback-classic/src/main/scala",
+        "cr-mixelonr/selonrvelonr/src/main/scala/com/twittelonr/cr_mixelonr",
+        "finaglelon/finaglelon-zipkin-scribelon/src/main/scala",
+        "finatra/injelonct/injelonct-logback/src/main/scala",
+        "loglelonns/loglelonns-logback/src/main/scala/com/twittelonr/loglelonns/logback",
+        "twittelonr-selonrvelonr-intelonrnal/src/main/scala",
+        "twittelonr-selonrvelonr/logback-classic/src/main/scala",
     ],
 )
 
-#  Aurora Workflows build phase convention requires a jvm_app named with ${project-name}-app
+#  Aurora Workflows build phaselon convelonntion relonquirelons a jvm_app namelond with ${projelonct-namelon}-app
 jvm_app(
-    name = "cr-mixer-app",
-    archive = "zip",
+    namelon = "cr-mixelonr-app",
+    archivelon = "zip",
     binary = ":bin",
-    tags = ["bazel-compatible"],
+    tags = ["bazelonl-compatiblelon"],
 )

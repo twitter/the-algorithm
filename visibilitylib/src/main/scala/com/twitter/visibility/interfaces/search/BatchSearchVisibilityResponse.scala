@@ -1,5 +1,5 @@
-package com.twitter.visibility.interfaces.search
+packagelon com.twittelonr.visibility.intelonrfacelons.selonarch
 
-case class BatchSearchVisibilityResponse(
-  visibilityResults: Map[Long, CombinedVisibilityResult],
-  failedTweetIds: Seq[Long])
+caselon class BatchSelonarchVisibilityRelonsponselon(
+  visibilityRelonsults: Map[Long, CombinelondVisibilityRelonsult],
+  failelondTwelonelontIds: Selonq[Long])

@@ -1,24 +1,24 @@
-package com.twitter.cr_mixer.config
+packagelon com.twittelonr.cr_mixelonr.config
 
-import com.twitter.util.Duration
+import com.twittelonr.util.Duration
 
-case class TimeoutConfig(
-  /* Default timeouts for candidate generator */
-  serviceTimeout: Duration,
-  signalFetchTimeout: Duration,
-  similarityEngineTimeout: Duration,
-  annServiceClientTimeout: Duration,
-  /* For Uteg Candidate Generator */
-  utegSimilarityEngineTimeout: Duration,
-  /* For User State Store */
-  userStateUnderlyingStoreTimeout: Duration,
-  userStateStoreTimeout: Duration,
-  /* For FRS based tweets */
-  // Timeout passed to EarlyBird server
-  earlybirdServerTimeout: Duration,
-  // Timeout set on CrMixer side
-  earlybirdSimilarityEngineTimeout: Duration,
-  frsBasedTweetEndpointTimeout: Duration,
-  topicTweetEndpointTimeout: Duration,
-  // Timeout Settings for Navi gRPC Client
-  naviRequestTimeout: Duration)
+caselon class TimelonoutConfig(
+  /* Delonfault timelonouts for candidatelon gelonnelonrator */
+  selonrvicelonTimelonout: Duration,
+  signalFelontchTimelonout: Duration,
+  similarityelonnginelonTimelonout: Duration,
+  annSelonrvicelonClielonntTimelonout: Duration,
+  /* For Utelong Candidatelon Gelonnelonrator */
+  utelongSimilarityelonnginelonTimelonout: Duration,
+  /* For Uselonr Statelon Storelon */
+  uselonrStatelonUndelonrlyingStorelonTimelonout: Duration,
+  uselonrStatelonStorelonTimelonout: Duration,
+  /* For FRS baselond twelonelonts */
+  // Timelonout passelond to elonarlyBird selonrvelonr
+  elonarlybirdSelonrvelonrTimelonout: Duration,
+  // Timelonout selont on CrMixelonr sidelon
+  elonarlybirdSimilarityelonnginelonTimelonout: Duration,
+  frsBaselondTwelonelontelonndpointTimelonout: Duration,
+  topicTwelonelontelonndpointTimelonout: Duration,
+  // Timelonout Selonttings for Navi gRPC Clielonnt
+  naviRelonquelonstTimelonout: Duration)

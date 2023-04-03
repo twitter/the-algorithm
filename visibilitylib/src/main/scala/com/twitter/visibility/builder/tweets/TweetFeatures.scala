@@ -1,210 +1,210 @@
-package com.twitter.visibility.builder.tweets
+packagelon com.twittelonr.visibility.buildelonr.twelonelonts
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.thriftscala.CollabControl
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.util.Duration
-import com.twitter.util.Time
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.common.SafetyLabelMapSource
-import com.twitter.visibility.common.TweetId
-import com.twitter.visibility.common.UserId
-import com.twitter.visibility.features._
-import com.twitter.visibility.models.SemanticCoreAnnotation
-import com.twitter.visibility.models.TweetSafetyLabel
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.snowflakelon.id.SnowflakelonId
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.twelonelontypielon.thriftscala.CollabControl
+import com.twittelonr.twelonelontypielon.thriftscala.Twelonelont
+import com.twittelonr.util.Duration
+import com.twittelonr.util.Timelon
+import com.twittelonr.visibility.buildelonr.FelonaturelonMapBuildelonr
+import com.twittelonr.visibility.common.SafelontyLabelonlMapSourcelon
+import com.twittelonr.visibility.common.TwelonelontId
+import com.twittelonr.visibility.common.UselonrId
+import com.twittelonr.visibility.felonaturelons._
+import com.twittelonr.visibility.modelonls.SelonmanticCorelonAnnotation
+import com.twittelonr.visibility.modelonls.TwelonelontSafelontyLabelonl
 
-object TweetFeatures {
+objelonct TwelonelontFelonaturelons {
 
-  def FALLBACK_TIMESTAMP: Time = Time.epoch
+  delonf FALLBACK_TIMelonSTAMP: Timelon = Timelon.elonpoch
 
-  def tweetIsSelfReply(tweet: Tweet): Boolean = {
-    tweet.coreData match {
-      case Some(coreData) =>
-        coreData.reply match {
-          case Some(reply) =>
-            reply.inReplyToUserId == coreData.userId
+  delonf twelonelontIsSelonlfRelonply(twelonelont: Twelonelont): Boolelonan = {
+    twelonelont.corelonData match {
+      caselon Somelon(corelonData) =>
+        corelonData.relonply match {
+          caselon Somelon(relonply) =>
+            relonply.inRelonplyToUselonrId == corelonData.uselonrId
 
-          case None =>
-            false
+          caselon Nonelon =>
+            falselon
         }
 
-      case None =>
-        false
+      caselon Nonelon =>
+        falselon
     }
   }
 
-  def tweetReplyToParentTweetDuration(tweet: Tweet): Option[Duration] = for {
-    coreData <- tweet.coreData
-    reply <- coreData.reply
-    inReplyToStatusId <- reply.inReplyToStatusId
-    replyTime <- SnowflakeId.timeFromIdOpt(tweet.id)
-    repliedToTime <- SnowflakeId.timeFromIdOpt(inReplyToStatusId)
-  } yield {
-    replyTime.diff(repliedToTime)
+  delonf twelonelontRelonplyToParelonntTwelonelontDuration(twelonelont: Twelonelont): Option[Duration] = for {
+    corelonData <- twelonelont.corelonData
+    relonply <- corelonData.relonply
+    inRelonplyToStatusId <- relonply.inRelonplyToStatusId
+    relonplyTimelon <- SnowflakelonId.timelonFromIdOpt(twelonelont.id)
+    relonplielondToTimelon <- SnowflakelonId.timelonFromIdOpt(inRelonplyToStatusId)
+  } yielonld {
+    relonplyTimelon.diff(relonplielondToTimelon)
   }
 
-  def tweetReplyToRootTweetDuration(tweet: Tweet): Option[Duration] = for {
-    coreData <- tweet.coreData
-    if coreData.reply.isDefined
-    conversationId <- coreData.conversationId
-    replyTime <- SnowflakeId.timeFromIdOpt(tweet.id)
-    rootTime <- SnowflakeId.timeFromIdOpt(conversationId)
-  } yield {
-    replyTime.diff(rootTime)
+  delonf twelonelontRelonplyToRootTwelonelontDuration(twelonelont: Twelonelont): Option[Duration] = for {
+    corelonData <- twelonelont.corelonData
+    if corelonData.relonply.isDelonfinelond
+    convelonrsationId <- corelonData.convelonrsationId
+    relonplyTimelon <- SnowflakelonId.timelonFromIdOpt(twelonelont.id)
+    rootTimelon <- SnowflakelonId.timelonFromIdOpt(convelonrsationId)
+  } yielonld {
+    relonplyTimelon.diff(rootTimelon)
   }
 
-  def tweetTimestamp(tweetId: Long): Time =
-    SnowflakeId.timeFromIdOpt(tweetId).getOrElse(FALLBACK_TIMESTAMP)
+  delonf twelonelontTimelonstamp(twelonelontId: Long): Timelon =
+    SnowflakelonId.timelonFromIdOpt(twelonelontId).gelontOrelonlselon(FALLBACK_TIMelonSTAMP)
 
-  def tweetSemanticCoreAnnotations(tweet: Tweet): Seq[SemanticCoreAnnotation] = {
-    tweet.escherbirdEntityAnnotations
+  delonf twelonelontSelonmanticCorelonAnnotations(twelonelont: Twelonelont): Selonq[SelonmanticCorelonAnnotation] = {
+    twelonelont.elonschelonrbirdelonntityAnnotations
       .map(a =>
-        a.entityAnnotations.map { annotation =>
-          SemanticCoreAnnotation(
+        a.elonntityAnnotations.map { annotation =>
+          SelonmanticCorelonAnnotation(
             annotation.groupId,
             annotation.domainId,
-            annotation.entityId
+            annotation.elonntityId
           )
-        }).toSeq.flatten
+        }).toSelonq.flattelonn
   }
 
-  def tweetIsNullcast(tweet: Tweet): Boolean = {
-    tweet.coreData match {
-      case Some(coreData) =>
-        coreData.nullcast
-      case None =>
-        false
+  delonf twelonelontIsNullcast(twelonelont: Twelonelont): Boolelonan = {
+    twelonelont.corelonData match {
+      caselon Somelon(corelonData) =>
+        corelonData.nullcast
+      caselon Nonelon =>
+        falselon
     }
   }
 
-  def tweetAuthorUserId(tweet: Tweet): Option[UserId] = {
-    tweet.coreData.map(_.userId)
+  delonf twelonelontAuthorUselonrId(twelonelont: Twelonelont): Option[UselonrId] = {
+    twelonelont.corelonData.map(_.uselonrId)
   }
 }
 
-sealed trait TweetLabels {
-  def forTweet(tweet: Tweet): Stitch[Seq[TweetSafetyLabel]]
-  def forTweetId(tweetId: TweetId): Stitch[Seq[TweetSafetyLabel]]
+selonalelond trait TwelonelontLabelonls {
+  delonf forTwelonelont(twelonelont: Twelonelont): Stitch[Selonq[TwelonelontSafelontyLabelonl]]
+  delonf forTwelonelontId(twelonelontId: TwelonelontId): Stitch[Selonq[TwelonelontSafelontyLabelonl]]
 }
 
-class StratoTweetLabelMaps(safetyLabelSource: SafetyLabelMapSource) extends TweetLabels {
+class StratoTwelonelontLabelonlMaps(safelontyLabelonlSourcelon: SafelontyLabelonlMapSourcelon) elonxtelonnds TwelonelontLabelonls {
 
-  override def forTweet(tweet: Tweet): Stitch[Seq[TweetSafetyLabel]] = {
-    forTweetId(tweet.id)
+  ovelonrridelon delonf forTwelonelont(twelonelont: Twelonelont): Stitch[Selonq[TwelonelontSafelontyLabelonl]] = {
+    forTwelonelontId(twelonelont.id)
   }
 
-  def forTweetId(tweetId: TweetId): Stitch[Seq[TweetSafetyLabel]] = {
-    safetyLabelSource
-      .fetch(tweetId).map(
+  delonf forTwelonelontId(twelonelontId: TwelonelontId): Stitch[Selonq[TwelonelontSafelontyLabelonl]] = {
+    safelontyLabelonlSourcelon
+      .felontch(twelonelontId).map(
         _.map(
-          _.labels
+          _.labelonls
             .map(
-              _.map(sl => TweetSafetyLabel.fromTuple(sl._1, sl._2)).toSeq
-            ).getOrElse(Seq())
-        ).getOrElse(Seq()))
+              _.map(sl => TwelonelontSafelontyLabelonl.fromTuplelon(sl._1, sl._2)).toSelonq
+            ).gelontOrelonlselon(Selonq())
+        ).gelontOrelonlselon(Selonq()))
   }
 }
 
-object NilTweetLabelMaps extends TweetLabels {
-  override def forTweet(tweet: Tweet): Stitch[Seq[TweetSafetyLabel]] = Stitch.Nil
-  override def forTweetId(tweetId: TweetId): Stitch[Seq[TweetSafetyLabel]] = Stitch.Nil
+objelonct NilTwelonelontLabelonlMaps elonxtelonnds TwelonelontLabelonls {
+  ovelonrridelon delonf forTwelonelont(twelonelont: Twelonelont): Stitch[Selonq[TwelonelontSafelontyLabelonl]] = Stitch.Nil
+  ovelonrridelon delonf forTwelonelontId(twelonelontId: TwelonelontId): Stitch[Selonq[TwelonelontSafelontyLabelonl]] = Stitch.Nil
 }
 
-class TweetFeatures(tweetLabels: TweetLabels, statsReceiver: StatsReceiver) {
-  private[this] val scopedStatsReceiver = statsReceiver.scope("tweet_features")
+class TwelonelontFelonaturelons(twelonelontLabelonls: TwelonelontLabelonls, statsReloncelonivelonr: StatsReloncelonivelonr) {
+  privatelon[this] val scopelondStatsReloncelonivelonr = statsReloncelonivelonr.scopelon("twelonelont_felonaturelons")
 
-  private[this] val requests = scopedStatsReceiver.counter("requests")
-  private[this] val tweetSafetyLabels =
-    scopedStatsReceiver.scope(TweetSafetyLabels.name).counter("requests")
-  private[this] val tweetTakedownReasons =
-    scopedStatsReceiver.scope(TweetTakedownReasons.name).counter("requests")
-  private[this] val tweetIsSelfReply =
-    scopedStatsReceiver.scope(TweetIsSelfReply.name).counter("requests")
-  private[this] val tweetTimestamp =
-    scopedStatsReceiver.scope(TweetTimestamp.name).counter("requests")
-  private[this] val tweetReplyToParentTweetDuration =
-    scopedStatsReceiver.scope(TweetReplyToParentTweetDuration.name).counter("requests")
-  private[this] val tweetReplyToRootTweetDuration =
-    scopedStatsReceiver.scope(TweetReplyToRootTweetDuration.name).counter("requests")
-  private[this] val tweetSemanticCoreAnnotations =
-    scopedStatsReceiver.scope(TweetSemanticCoreAnnotations.name).counter("requests")
-  private[this] val tweetId =
-    scopedStatsReceiver.scope(TweetId.name).counter("requests")
-  private[this] val tweetHasNsfwUser =
-    scopedStatsReceiver.scope(TweetHasNsfwUser.name).counter("requests")
-  private[this] val tweetHasNsfwAdmin =
-    scopedStatsReceiver.scope(TweetHasNsfwAdmin.name).counter("requests")
-  private[this] val tweetIsNullcast =
-    scopedStatsReceiver.scope(TweetIsNullcast.name).counter("requests")
-  private[this] val tweetHasMedia =
-    scopedStatsReceiver.scope(TweetHasMedia.name).counter("requests")
-  private[this] val tweetIsCommunity =
-    scopedStatsReceiver.scope(TweetIsCommunityTweet.name).counter("requests")
-  private[this] val tweetIsCollabInvitation =
-    scopedStatsReceiver.scope(TweetIsCollabInvitationTweet.name).counter("requests")
+  privatelon[this] val relonquelonsts = scopelondStatsReloncelonivelonr.countelonr("relonquelonsts")
+  privatelon[this] val twelonelontSafelontyLabelonls =
+    scopelondStatsReloncelonivelonr.scopelon(TwelonelontSafelontyLabelonls.namelon).countelonr("relonquelonsts")
+  privatelon[this] val twelonelontTakelondownRelonasons =
+    scopelondStatsReloncelonivelonr.scopelon(TwelonelontTakelondownRelonasons.namelon).countelonr("relonquelonsts")
+  privatelon[this] val twelonelontIsSelonlfRelonply =
+    scopelondStatsReloncelonivelonr.scopelon(TwelonelontIsSelonlfRelonply.namelon).countelonr("relonquelonsts")
+  privatelon[this] val twelonelontTimelonstamp =
+    scopelondStatsReloncelonivelonr.scopelon(TwelonelontTimelonstamp.namelon).countelonr("relonquelonsts")
+  privatelon[this] val twelonelontRelonplyToParelonntTwelonelontDuration =
+    scopelondStatsReloncelonivelonr.scopelon(TwelonelontRelonplyToParelonntTwelonelontDuration.namelon).countelonr("relonquelonsts")
+  privatelon[this] val twelonelontRelonplyToRootTwelonelontDuration =
+    scopelondStatsReloncelonivelonr.scopelon(TwelonelontRelonplyToRootTwelonelontDuration.namelon).countelonr("relonquelonsts")
+  privatelon[this] val twelonelontSelonmanticCorelonAnnotations =
+    scopelondStatsReloncelonivelonr.scopelon(TwelonelontSelonmanticCorelonAnnotations.namelon).countelonr("relonquelonsts")
+  privatelon[this] val twelonelontId =
+    scopelondStatsReloncelonivelonr.scopelon(TwelonelontId.namelon).countelonr("relonquelonsts")
+  privatelon[this] val twelonelontHasNsfwUselonr =
+    scopelondStatsReloncelonivelonr.scopelon(TwelonelontHasNsfwUselonr.namelon).countelonr("relonquelonsts")
+  privatelon[this] val twelonelontHasNsfwAdmin =
+    scopelondStatsReloncelonivelonr.scopelon(TwelonelontHasNsfwAdmin.namelon).countelonr("relonquelonsts")
+  privatelon[this] val twelonelontIsNullcast =
+    scopelondStatsReloncelonivelonr.scopelon(TwelonelontIsNullcast.namelon).countelonr("relonquelonsts")
+  privatelon[this] val twelonelontHasMelondia =
+    scopelondStatsReloncelonivelonr.scopelon(TwelonelontHasMelondia.namelon).countelonr("relonquelonsts")
+  privatelon[this] val twelonelontIsCommunity =
+    scopelondStatsReloncelonivelonr.scopelon(TwelonelontIsCommunityTwelonelont.namelon).countelonr("relonquelonsts")
+  privatelon[this] val twelonelontIsCollabInvitation =
+    scopelondStatsReloncelonivelonr.scopelon(TwelonelontIsCollabInvitationTwelonelont.namelon).countelonr("relonquelonsts")
 
-  def forTweet(tweet: Tweet): FeatureMapBuilder => FeatureMapBuilder = {
-    forTweetWithoutSafetyLabels(tweet)
-      .andThen(_.withFeature(TweetSafetyLabels, tweetLabels.forTweet(tweet)))
+  delonf forTwelonelont(twelonelont: Twelonelont): FelonaturelonMapBuildelonr => FelonaturelonMapBuildelonr = {
+    forTwelonelontWithoutSafelontyLabelonls(twelonelont)
+      .andThelonn(_.withFelonaturelon(TwelonelontSafelontyLabelonls, twelonelontLabelonls.forTwelonelont(twelonelont)))
   }
 
-  def forTweetWithoutSafetyLabels(tweet: Tweet): FeatureMapBuilder => FeatureMapBuilder = {
-    requests.incr()
+  delonf forTwelonelontWithoutSafelontyLabelonls(twelonelont: Twelonelont): FelonaturelonMapBuildelonr => FelonaturelonMapBuildelonr = {
+    relonquelonsts.incr()
 
-    tweetTakedownReasons.incr()
-    tweetIsSelfReply.incr()
-    tweetTimestamp.incr()
-    tweetReplyToParentTweetDuration.incr()
-    tweetReplyToRootTweetDuration.incr()
-    tweetSemanticCoreAnnotations.incr()
-    tweetId.incr()
-    tweetHasNsfwUser.incr()
-    tweetHasNsfwAdmin.incr()
-    tweetIsNullcast.incr()
-    tweetHasMedia.incr()
-    tweetIsCommunity.incr()
-    tweetIsCollabInvitation.incr()
+    twelonelontTakelondownRelonasons.incr()
+    twelonelontIsSelonlfRelonply.incr()
+    twelonelontTimelonstamp.incr()
+    twelonelontRelonplyToParelonntTwelonelontDuration.incr()
+    twelonelontRelonplyToRootTwelonelontDuration.incr()
+    twelonelontSelonmanticCorelonAnnotations.incr()
+    twelonelontId.incr()
+    twelonelontHasNsfwUselonr.incr()
+    twelonelontHasNsfwAdmin.incr()
+    twelonelontIsNullcast.incr()
+    twelonelontHasMelondia.incr()
+    twelonelontIsCommunity.incr()
+    twelonelontIsCollabInvitation.incr()
 
-    _.withConstantFeature(TweetTakedownReasons, tweet.takedownReasons.getOrElse(Seq.empty))
-      .withConstantFeature(TweetIsSelfReply, TweetFeatures.tweetIsSelfReply(tweet))
-      .withConstantFeature(TweetTimestamp, TweetFeatures.tweetTimestamp(tweet.id))
-      .withConstantFeature(
-        TweetReplyToParentTweetDuration,
-        TweetFeatures.tweetReplyToParentTweetDuration(tweet))
-      .withConstantFeature(
-        TweetReplyToRootTweetDuration,
-        TweetFeatures.tweetReplyToRootTweetDuration(tweet))
-      .withConstantFeature(
-        TweetSemanticCoreAnnotations,
-        TweetFeatures.tweetSemanticCoreAnnotations(tweet))
-      .withConstantFeature(TweetId, tweet.id)
-      .withConstantFeature(TweetHasNsfwUser, tweetHasNsfwUser(tweet))
-      .withConstantFeature(TweetHasNsfwAdmin, tweetHasNsfwAdmin(tweet))
-      .withConstantFeature(TweetIsNullcast, TweetFeatures.tweetIsNullcast(tweet))
-      .withConstantFeature(TweetHasMedia, tweetHasMedia(tweet))
-      .withConstantFeature(TweetIsCommunityTweet, tweetHasCommunity(tweet))
-      .withConstantFeature(TweetIsCollabInvitationTweet, tweetIsCollabInvitation(tweet))
+    _.withConstantFelonaturelon(TwelonelontTakelondownRelonasons, twelonelont.takelondownRelonasons.gelontOrelonlselon(Selonq.elonmpty))
+      .withConstantFelonaturelon(TwelonelontIsSelonlfRelonply, TwelonelontFelonaturelons.twelonelontIsSelonlfRelonply(twelonelont))
+      .withConstantFelonaturelon(TwelonelontTimelonstamp, TwelonelontFelonaturelons.twelonelontTimelonstamp(twelonelont.id))
+      .withConstantFelonaturelon(
+        TwelonelontRelonplyToParelonntTwelonelontDuration,
+        TwelonelontFelonaturelons.twelonelontRelonplyToParelonntTwelonelontDuration(twelonelont))
+      .withConstantFelonaturelon(
+        TwelonelontRelonplyToRootTwelonelontDuration,
+        TwelonelontFelonaturelons.twelonelontRelonplyToRootTwelonelontDuration(twelonelont))
+      .withConstantFelonaturelon(
+        TwelonelontSelonmanticCorelonAnnotations,
+        TwelonelontFelonaturelons.twelonelontSelonmanticCorelonAnnotations(twelonelont))
+      .withConstantFelonaturelon(TwelonelontId, twelonelont.id)
+      .withConstantFelonaturelon(TwelonelontHasNsfwUselonr, twelonelontHasNsfwUselonr(twelonelont))
+      .withConstantFelonaturelon(TwelonelontHasNsfwAdmin, twelonelontHasNsfwAdmin(twelonelont))
+      .withConstantFelonaturelon(TwelonelontIsNullcast, TwelonelontFelonaturelons.twelonelontIsNullcast(twelonelont))
+      .withConstantFelonaturelon(TwelonelontHasMelondia, twelonelontHasMelondia(twelonelont))
+      .withConstantFelonaturelon(TwelonelontIsCommunityTwelonelont, twelonelontHasCommunity(twelonelont))
+      .withConstantFelonaturelon(TwelonelontIsCollabInvitationTwelonelont, twelonelontIsCollabInvitation(twelonelont))
   }
 
-  def tweetHasNsfwUser(tweet: Tweet): Boolean =
-    tweet.coreData.exists(_.nsfwUser)
+  delonf twelonelontHasNsfwUselonr(twelonelont: Twelonelont): Boolelonan =
+    twelonelont.corelonData.elonxists(_.nsfwUselonr)
 
-  def tweetHasNsfwAdmin(tweet: Tweet): Boolean =
-    tweet.coreData.exists(_.nsfwAdmin)
+  delonf twelonelontHasNsfwAdmin(twelonelont: Twelonelont): Boolelonan =
+    twelonelont.corelonData.elonxists(_.nsfwAdmin)
 
-  def tweetHasMedia(tweet: Tweet): Boolean =
-    tweet.coreData.exists(_.hasMedia.getOrElse(false))
+  delonf twelonelontHasMelondia(twelonelont: Twelonelont): Boolelonan =
+    twelonelont.corelonData.elonxists(_.hasMelondia.gelontOrelonlselon(falselon))
 
-  def tweetHasCommunity(tweet: Tweet): Boolean = {
-    tweet.communities.exists(_.communityIds.nonEmpty)
+  delonf twelonelontHasCommunity(twelonelont: Twelonelont): Boolelonan = {
+    twelonelont.communitielons.elonxists(_.communityIds.nonelonmpty)
   }
 
-  def tweetIsCollabInvitation(tweet: Tweet): Boolean = {
-    tweet.collabControl.exists(_ match {
-      case CollabControl.CollabInvitation(_) => true
-      case _ => false
+  delonf twelonelontIsCollabInvitation(twelonelont: Twelonelont): Boolelonan = {
+    twelonelont.collabControl.elonxists(_ match {
+      caselon CollabControl.CollabInvitation(_) => truelon
+      caselon _ => falselon
     })
   }
 }

@@ -1,19 +1,19 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.alert
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.alelonrt
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.color.RosettaColorMarshaller
-import javax.inject.Inject
-import javax.inject.Singleton
-import com.twitter.product_mixer.core.model.marshalling.response.urt.alert.ShowAlertColorConfiguration
-import com.twitter.timelines.render.{thriftscala => urt}
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.color.RoselonttaColorMarshallelonr
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.alelonrt.ShowAlelonrtColorConfiguration
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
 
-@Singleton
-class ShowAlertColorConfigurationMarshaller @Inject() (
-  rosettaColorMarshaller: RosettaColorMarshaller) {
+@Singlelonton
+class ShowAlelonrtColorConfigurationMarshallelonr @Injelonct() (
+  roselonttaColorMarshallelonr: RoselonttaColorMarshallelonr) {
 
-  def apply(colorConfiguration: ShowAlertColorConfiguration): urt.ShowAlertColorConfiguration =
-    urt.ShowAlertColorConfiguration(
-      background = rosettaColorMarshaller(colorConfiguration.background),
-      text = rosettaColorMarshaller(colorConfiguration.text),
-      border = colorConfiguration.border.map(rosettaColorMarshaller(_)),
+  delonf apply(colorConfiguration: ShowAlelonrtColorConfiguration): urt.ShowAlelonrtColorConfiguration =
+    urt.ShowAlelonrtColorConfiguration(
+      background = roselonttaColorMarshallelonr(colorConfiguration.background),
+      telonxt = roselonttaColorMarshallelonr(colorConfiguration.telonxt),
+      bordelonr = colorConfiguration.bordelonr.map(roselonttaColorMarshallelonr(_)),
     )
 }

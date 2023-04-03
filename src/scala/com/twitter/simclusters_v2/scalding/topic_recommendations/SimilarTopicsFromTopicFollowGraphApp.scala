@@ -1,222 +1,222 @@
-package com.twitter.simclusters_v2.scalding.topic_recommendations
+packagelon com.twittelonr.simclustelonrs_v2.scalding.topic_reloncommelonndations
 
-import com.twitter.escherbird.scalding.source.FullMetadataSource
-import com.twitter.interests_ds.jobs.interests_service.UserTopicRelationSnapshotScalaDataset
-import com.twitter.interests.thriftscala.InterestRelationType
-import com.twitter.interests.thriftscala.UserInterestsRelationSnapshot
-import com.twitter.recos.entities.thriftscala.SemanticCoreEntity
-import com.twitter.recos.entities.thriftscala.SemanticCoreEntityScoreList
-import com.twitter.recos.entities.thriftscala.SemanticEntityScore
-import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.scalding_internal.dalv2.remote_access.ExplicitLocation
-import com.twitter.scalding_internal.dalv2.remote_access.ProcAtla
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.SemanticCoreEntityId
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.hdfs_sources.SimilarTopicsFromTopicFollowGraphScalaDataset
-import com.twitter.simclusters_v2.scalding.common.matrix.SparseRowMatrix
-import com.twitter.wtf.scalding.jobs.common.AdhocExecutionApp
-import com.twitter.wtf.scalding.jobs.common.ScheduledExecutionApp
-import java.util.TimeZone
+import com.twittelonr.elonschelonrbird.scalding.sourcelon.FullMelontadataSourcelon
+import com.twittelonr.intelonrelonsts_ds.jobs.intelonrelonsts_selonrvicelon.UselonrTopicRelonlationSnapshotScalaDataselont
+import com.twittelonr.intelonrelonsts.thriftscala.IntelonrelonstRelonlationTypelon
+import com.twittelonr.intelonrelonsts.thriftscala.UselonrIntelonrelonstsRelonlationSnapshot
+import com.twittelonr.reloncos.elonntitielons.thriftscala.SelonmanticCorelonelonntity
+import com.twittelonr.reloncos.elonntitielons.thriftscala.SelonmanticCorelonelonntityScorelonList
+import com.twittelonr.reloncos.elonntitielons.thriftscala.SelonmanticelonntityScorelon
+import com.twittelonr.scalding._
+import com.twittelonr.scalding_intelonrnal.dalv2.DAL
+import com.twittelonr.scalding_intelonrnal.dalv2.DALWritelon._
+import com.twittelonr.scalding_intelonrnal.dalv2.relonmotelon_accelonss.elonxplicitLocation
+import com.twittelonr.scalding_intelonrnal.dalv2.relonmotelon_accelonss.ProcAtla
+import com.twittelonr.scalding_intelonrnal.multiformat.format.kelonyval.KelonyVal
+import com.twittelonr.simclustelonrs_v2.common.SelonmanticCorelonelonntityId
+import com.twittelonr.simclustelonrs_v2.common.UselonrId
+import com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.SimilarTopicsFromTopicFollowGraphScalaDataselont
+import com.twittelonr.simclustelonrs_v2.scalding.common.matrix.SparselonRowMatrix
+import com.twittelonr.wtf.scalding.jobs.common.AdhocelonxeloncutionApp
+import com.twittelonr.wtf.scalding.jobs.common.SchelondulelondelonxeloncutionApp
+import java.util.TimelonZonelon
 
 /**
- * In this file, we compute the similarities between topics based on how often they are co-followed
- * by users.
+ * In this filelon, welon computelon thelon similaritielons belontwelonelonn topics baselond on how oftelonn thelony arelon co-followelond
+ * by uselonrs.
  *
   * Similarity(i, j) = #co-follow(i,j) / sqrt(#follow(i) * #follow(j))
  *
   * It works as follows:
  *
-  *  1. it first reads the data set of user to topics follow graph, and construct a sparse matrix M with
- *    N rows and K columns, where N is the number of users, and K is the number of topics.
- *    In the matrix, M(u,i) = 1 if user u follows topic i; otherwise it is 0. In the sparse matrix,
- *    we only save non-zero elements.
+  *  1. it first relonads thelon data selont of uselonr to topics follow graph, and construct a sparselon matrix M with
+ *    N rows and K columns, whelonrelon N is thelon numbelonr of uselonrs, and K is thelon numbelonr of topics.
+ *    In thelon matrix, M(u,i) = 1 if uselonr u follows topic i; othelonrwiselon it is 0. In thelon sparselon matrix,
+ *    welon only savelon non-zelonro elonlelonmelonnts.
  *
-  *  2. we do l2-normalization for each column of the matrix M, to get a normalized version M'.
+  *  2. welon do l2-normalization for elonach column of thelon matrix M, to gelont a normalizelond velonrsion M'.
  *
-  *  3. we get topic-topic similarity matrix S = M'.transpose.multiply(M'). The resulting matrix will
- *    contain the similarities between all topics, i.e., S(i,j) is the similarity we mentioned above.
+  *  3. welon gelont topic-topic similarity matrix S = M'.transposelon.multiply(M'). Thelon relonsulting matrix will
+ *    contain thelon similaritielons belontwelonelonn all topics, i.elon., S(i,j) is thelon similarity welon melonntionelond abovelon.
  *
-  *  4. for each topic, we only keep its K similar topics with largest similarity scores, while not
- *   including those with scores lower than a threshold.
+  *  4. for elonach topic, welon only kelonelonp its K similar topics with largelonst similarity scorelons, whilelon not
+ *   including thoselon with scorelons lowelonr than a threlonshold.
  *
   */
 /**
- * capesospy-v2 update --build_locally \
+ * capelonsospy-v2 updatelon --build_locally \
  * --start_cron similar_topics_from_topic_follow_graph \
- * src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
+ * src/scala/com/twittelonr/simclustelonrs_v2/capelonsos_config/atla_proc3.yaml
  */
-object SimilarTopicsFromTopicFollowGraphScheduledApp extends ScheduledExecutionApp {
+objelonct SimilarTopicsFromTopicFollowGraphSchelondulelondApp elonxtelonnds SchelondulelondelonxeloncutionApp {
   import SimilarTopics._
 
-  private val outputPath: String =
-    "/user/cassowary/manhattan_sequence_files/similar_topics_from_topics_follow_graph"
+  privatelon val outputPath: String =
+    "/uselonr/cassowary/manhattan_selonquelonncelon_filelons/similar_topics_from_topics_follow_graph"
 
-  override def firstTime: RichDate = RichDate("2020-05-07")
+  ovelonrridelon delonf firstTimelon: RichDatelon = RichDatelon("2020-05-07")
 
-  override def batchIncrement: Duration = Days(7)
+  ovelonrridelon delonf batchIncrelonmelonnt: Duration = Days(7)
 
-  override def runOnDateRange(
+  ovelonrridelon delonf runOnDatelonRangelon(
     args: Args
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
-    val numSimilarTopics = args.int("numSimilarTopics", default = 100)
-    val scoreThreshold = args.double("scoreThreshold", default = 0.01)
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon,
+    uniquelonID: UniquelonID
+  ): elonxeloncution[Unit] = {
+    val numSimilarTopics = args.int("numSimilarTopics", delonfault = 100)
+    val scorelonThrelonshold = args.doublelon("scorelonThrelonshold", delonfault = 0.01)
 
     val numOutputTopics = Stat("NumOutputTopics")
 
-    computeSimilarTopics(
-      getExplicitFollowedTopics,
-      getFollowableTopics,
+    computelonSimilarTopics(
+      gelontelonxplicitFollowelondTopics,
+      gelontFollowablelonTopics,
       numSimilarTopics,
-      scoreThreshold)
+      scorelonThrelonshold)
       .map {
-        case (topicId, similarTopics) =>
+        caselon (topicId, similarTopics) =>
           numOutputTopics.inc()
-          KeyVal(
+          KelonyVal(
             topicId,
-            SemanticCoreEntityScoreList(similarTopics.map {
-              case (similarTopicId, score) =>
-                SemanticEntityScore(SemanticCoreEntity(similarTopicId), score)
+            SelonmanticCorelonelonntityScorelonList(similarTopics.map {
+              caselon (similarTopicId, scorelon) =>
+                SelonmanticelonntityScorelon(SelonmanticCorelonelonntity(similarTopicId), scorelon)
             }))
       }
-      .writeDALVersionedKeyValExecution(
-        SimilarTopicsFromTopicFollowGraphScalaDataset,
+      .writelonDALVelonrsionelondKelonyValelonxeloncution(
+        SimilarTopicsFromTopicFollowGraphScalaDataselont,
         D.Suffix(outputPath),
-        version = ExplicitEndTime(dateRange.end)
+        velonrsion = elonxplicitelonndTimelon(datelonRangelon.elonnd)
       )
   }
 
 }
 
 /**
- scalding remote run --user cassowary --reducers 2000 \
- --target src/scala/com/twitter/simclusters_v2/scalding/topic_recommendations:similar_topics_from_topic_follow_graph-adhoc \
- --main-class com.twitter.simclusters_v2.scalding.topic_recommendations.SimilarTopicsFromTopicFollowGraphAdhocApp \
- --submitter  hadoopnest1.atla.twitter.com  \
- --  --date 2020-04-28
+ scalding relonmotelon run --uselonr cassowary --relonducelonrs 2000 \
+ --targelont src/scala/com/twittelonr/simclustelonrs_v2/scalding/topic_reloncommelonndations:similar_topics_from_topic_follow_graph-adhoc \
+ --main-class com.twittelonr.simclustelonrs_v2.scalding.topic_reloncommelonndations.SimilarTopicsFromTopicFollowGraphAdhocApp \
+ --submittelonr  hadoopnelonst1.atla.twittelonr.com  \
+ --  --datelon 2020-04-28
  */
-object SimilarTopicsFromTopicFollowGraphAdhocApp extends AdhocExecutionApp {
+objelonct SimilarTopicsFromTopicFollowGraphAdhocApp elonxtelonnds AdhocelonxeloncutionApp {
   import SimilarTopics._
 
-  override def runOnDateRange(
+  ovelonrridelon delonf runOnDatelonRangelon(
     args: Args
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
-    val numSimilarTopics = args.int("numSimilarTopics", default = 100)
-    val scoreThreshold = args.double("scoreThreshold", default = 0.01)
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon,
+    uniquelonID: UniquelonID
+  ): elonxeloncution[Unit] = {
+    val numSimilarTopics = args.int("numSimilarTopics", delonfault = 100)
+    val scorelonThrelonshold = args.doublelon("scorelonThrelonshold", delonfault = 0.01)
 
     val numOutputTopics = Stat("NumOutputTopics")
 
-    computeSimilarTopics(
-      getExplicitFollowedTopics,
-      getFollowableTopics,
+    computelonSimilarTopics(
+      gelontelonxplicitFollowelondTopics,
+      gelontFollowablelonTopics,
       numSimilarTopics,
-      scoreThreshold)
+      scorelonThrelonshold)
       .map {
-        case (topicId, similarTopics) =>
+        caselon (topicId, similarTopics) =>
           numOutputTopics.inc()
           topicId -> similarTopics
-            .collect {
-              case (similarTopic, score) if similarTopic != topicId =>
-                s"$similarTopic:$score"
+            .collelonct {
+              caselon (similarTopic, scorelon) if similarTopic != topicId =>
+                s"$similarTopic:$scorelon"
             }
             .mkString(",")
       }
-      .writeExecution(
-        TypedTsv("/user/cassowary/adhoc/topic_recos/similar_topics")
+      .writelonelonxeloncution(
+        TypelondTsv("/uselonr/cassowary/adhoc/topic_reloncos/similar_topics")
       )
   }
 
 }
 
-object SimilarTopics {
+objelonct SimilarTopics {
 
   val UTTDomain: Long = 131L
 
-  val FollowableTag: String = "utt:followable_topic"
+  val FollowablelonTag: String = "utt:followablelon_topic"
 
-  def getFollowableTopics(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): TypedPipe[SemanticCoreEntityId] = {
-    val NumFollowableTopics = Stat("NumFollowableTopics")
+  delonf gelontFollowablelonTopics(
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon,
+    uniquelonID: UniquelonID
+  ): TypelondPipelon[SelonmanticCorelonelonntityId] = {
+    val NumFollowablelonTopics = Stat("NumFollowablelonTopics")
 
-    TypedPipe
+    TypelondPipelon
       .from(
-        new FullMetadataSource("/atla/proc" + FullMetadataSource.DefaultHdfsPath)()(
-          dateRange.embiggen(Days(7))))
+        nelonw FullMelontadataSourcelon("/atla/proc" + FullMelontadataSourcelon.DelonfaultHdfsPath)()(
+          datelonRangelon.elonmbiggelonn(Days(7))))
       .flatMap {
-        case fullMetadata if fullMetadata.domainId == UTTDomain =>
+        caselon fullMelontadata if fullMelontadata.domainId == UTTDomain =>
           for {
-            basicMetadata <- fullMetadata.basicMetadata
-            indexableFields <- basicMetadata.indexableFields
-            tags <- indexableFields.tags
-            if tags.contains(FollowableTag)
-          } yield {
-            NumFollowableTopics.inc()
-            fullMetadata.entityId
+            basicMelontadata <- fullMelontadata.basicMelontadata
+            indelonxablelonFielonlds <- basicMelontadata.indelonxablelonFielonlds
+            tags <- indelonxablelonFielonlds.tags
+            if tags.contains(FollowablelonTag)
+          } yielonld {
+            NumFollowablelonTopics.inc()
+            fullMelontadata.elonntityId
           }
-        case _ => None
+        caselon _ => Nonelon
       }
-      .forceToDisk
+      .forcelonToDisk
   }
 
-  def getExplicitFollowedTopics(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): TypedPipe[(UserId, Map[SemanticCoreEntityId, Double])] = {
+  delonf gelontelonxplicitFollowelondTopics(
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon,
+    uniquelonID: UniquelonID
+  ): TypelondPipelon[(UselonrId, Map[SelonmanticCorelonelonntityId, Doublelon])] = {
 
     DAL
-      .readMostRecentSnapshotNoOlderThan(UserTopicRelationSnapshotScalaDataset, Days(7))
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-      .toTypedPipe
-      .collect {
-        case userInterestsRelationSnapshot: UserInterestsRelationSnapshot
-            if userInterestsRelationSnapshot.interestType == "UTT" &&
-              userInterestsRelationSnapshot.relation == InterestRelationType.Followed =>
+      .relonadMostReloncelonntSnapshotNoOldelonrThan(UselonrTopicRelonlationSnapshotScalaDataselont, Days(7))
+      .withRelonmotelonRelonadPolicy(elonxplicitLocation(ProcAtla))
+      .toTypelondPipelon
+      .collelonct {
+        caselon uselonrIntelonrelonstsRelonlationSnapshot: UselonrIntelonrelonstsRelonlationSnapshot
+            if uselonrIntelonrelonstsRelonlationSnapshot.intelonrelonstTypelon == "UTT" &&
+              uselonrIntelonrelonstsRelonlationSnapshot.relonlation == IntelonrelonstRelonlationTypelon.Followelond =>
           (
-            userInterestsRelationSnapshot.userId,
-            Map(userInterestsRelationSnapshot.interestId -> 1.0))
+            uselonrIntelonrelonstsRelonlationSnapshot.uselonrId,
+            Map(uselonrIntelonrelonstsRelonlationSnapshot.intelonrelonstId -> 1.0))
       }
-      .sumByKey
+      .sumByKelony
   }
 
-  def computeSimilarTopics(
-    userTopicsFollowGraph: TypedPipe[(UserId, Map[SemanticCoreEntityId, Double])],
-    followableTopics: TypedPipe[SemanticCoreEntityId],
+  delonf computelonSimilarTopics(
+    uselonrTopicsFollowGraph: TypelondPipelon[(UselonrId, Map[SelonmanticCorelonelonntityId, Doublelon])],
+    followablelonTopics: TypelondPipelon[SelonmanticCorelonelonntityId],
     numSimilarTopics: Int,
-    scoreThreshold: Double
-  ): TypedPipe[(SemanticCoreEntityId, Seq[(SemanticCoreEntityId, Double)])] = {
-    val userTopicFollowGraph =
-      SparseRowMatrix[UserId, SemanticCoreEntityId, Double](
-        userTopicsFollowGraph,
-        isSkinnyMatrix = true)
-        .filterCols(followableTopics) // filter out unfollowable topics
-        .colL2Normalize // normalization
-        // due to the small number of the topics,
-        // Scalding only allocates 1-2 mappers for the next step which makes it take unnecessarily long time.
-        // Changing it to 10 to make it a bit faster
-        .forceToDisk(numShardsOpt = Some(10))
+    scorelonThrelonshold: Doublelon
+  ): TypelondPipelon[(SelonmanticCorelonelonntityId, Selonq[(SelonmanticCorelonelonntityId, Doublelon)])] = {
+    val uselonrTopicFollowGraph =
+      SparselonRowMatrix[UselonrId, SelonmanticCorelonelonntityId, Doublelon](
+        uselonrTopicsFollowGraph,
+        isSkinnyMatrix = truelon)
+        .filtelonrCols(followablelonTopics) // filtelonr out unfollowablelon topics
+        .colL2Normalizelon // normalization
+        // duelon to thelon small numbelonr of thelon topics,
+        // Scalding only allocatelons 1-2 mappelonrs for thelon nelonxt stelonp which makelons it takelon unneloncelonssarily long timelon.
+        // Changing it to 10 to makelon it a bit fastelonr
+        .forcelonToDisk(numShardsOpt = Somelon(10))
 
-    userTopicFollowGraph
-      .transposeAndMultiplySkinnySparseRowMatrix(userTopicFollowGraph)
-      .filter { (i, j, v) =>
-        // exclude topic itself from being considered as similar; also the similarity score should
-        // be larger than a threshold
-        i != j && v > scoreThreshold
+    uselonrTopicFollowGraph
+      .transposelonAndMultiplySkinnySparselonRowMatrix(uselonrTopicFollowGraph)
+      .filtelonr { (i, j, v) =>
+        // elonxcludelon topic itselonlf from beloning considelonrelond as similar; also thelon similarity scorelon should
+        // belon largelonr than a threlonshold
+        i != j && v > scorelonThrelonshold
       }
-      .sortWithTakePerRow(numSimilarTopics)(Ordering.by(-_._2))
+      .sortWithTakelonPelonrRow(numSimilarTopics)(Ordelonring.by(-_._2))
   }
 
 }

@@ -1,90 +1,90 @@
-package com.twitter.search.earlybird_root.mergers;
+packagelon com.twittelonr.selonarch.elonarlybird_root.melonrgelonrs;
 
-import java.util.Collection;
+import java.util.Collelonction;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrelonnt.TimelonUnit;
 
-import com.google.common.collect.Collections2;
+import com.googlelon.common.collelonct.Collelonctions2;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.search.common.metrics.SearchTimerStats;
-import com.twitter.search.common.util.earlybird.FacetsResultsUtils;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.ThriftTermStatisticsRequest;
-import com.twitter.search.earlybird.thrift.ThriftTermStatisticsResults;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.util.Future;
+import com.twittelonr.selonarch.common.melontrics.SelonarchTimelonrStats;
+import com.twittelonr.selonarch.common.util.elonarlybird.FacelontsRelonsultsUtils;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftTelonrmStatisticsRelonquelonst;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftTelonrmStatisticsRelonsults;
+import com.twittelonr.selonarch.elonarlybird_root.common.elonarlybirdRelonquelonstContelonxt;
+import com.twittelonr.util.Futurelon;
 
 /**
- * Merger class to merge termstats EarlybirdResponse objects
+ * Melonrgelonr class to melonrgelon telonrmstats elonarlybirdRelonsponselon objeloncts
  */
-public class TermStatisticsResponseMerger extends EarlybirdResponseMerger {
-  private static final Logger LOG = LoggerFactory.getLogger(TermStatisticsResponseMerger.class);
+public class TelonrmStatisticsRelonsponselonMelonrgelonr elonxtelonnds elonarlybirdRelonsponselonMelonrgelonr {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(TelonrmStatisticsRelonsponselonMelonrgelonr.class);
 
-  private static final SearchTimerStats TIMER =
-      SearchTimerStats.export("merge_term_stats", TimeUnit.NANOSECONDS, false, true);
+  privatelon static final SelonarchTimelonrStats TIMelonR =
+      SelonarchTimelonrStats.elonxport("melonrgelon_telonrm_stats", TimelonUnit.NANOSelonCONDS, falselon, truelon);
 
-  private static final double SUCCESSFUL_RESPONSE_THRESHOLD = 0.9;
+  privatelon static final doublelon SUCCelonSSFUL_RelonSPONSelon_THRelonSHOLD = 0.9;
 
-  public TermStatisticsResponseMerger(EarlybirdRequestContext requestContext,
-                                      List<Future<EarlybirdResponse>> responses,
-                                      ResponseAccumulator mode) {
-    super(requestContext, responses, mode);
+  public TelonrmStatisticsRelonsponselonMelonrgelonr(elonarlybirdRelonquelonstContelonxt relonquelonstContelonxt,
+                                      List<Futurelon<elonarlybirdRelonsponselon>> relonsponselons,
+                                      RelonsponselonAccumulator modelon) {
+    supelonr(relonquelonstContelonxt, relonsponselons, modelon);
   }
 
-  @Override
-  protected SearchTimerStats getMergedResponseTimer() {
-    return TIMER;
+  @Ovelonrridelon
+  protelonctelond SelonarchTimelonrStats gelontMelonrgelondRelonsponselonTimelonr() {
+    relonturn TIMelonR;
   }
 
-  @Override
-  protected double getDefaultSuccessResponseThreshold() {
-    return SUCCESSFUL_RESPONSE_THRESHOLD;
+  @Ovelonrridelon
+  protelonctelond doublelon gelontDelonfaultSuccelonssRelonsponselonThrelonshold() {
+    relonturn SUCCelonSSFUL_RelonSPONSelon_THRelonSHOLD;
   }
 
-  @Override
-  protected EarlybirdResponse internalMerge(EarlybirdResponse termStatsResponse) {
-    ThriftTermStatisticsRequest termStatisticsRequest =
-        requestContext.getRequest().getTermStatisticsRequest();
+  @Ovelonrridelon
+  protelonctelond elonarlybirdRelonsponselon intelonrnalMelonrgelon(elonarlybirdRelonsponselon telonrmStatsRelonsponselon) {
+    ThriftTelonrmStatisticsRelonquelonst telonrmStatisticsRelonquelonst =
+        relonquelonstContelonxt.gelontRelonquelonst().gelontTelonrmStatisticsRelonquelonst();
 
-    Collection<EarlybirdResponse> termStatsResults =
-        Collections2.filter(accumulatedResponses.getSuccessResponses(),
-            earlybirdResponse -> earlybirdResponse.isSetTermStatisticsResults());
+    Collelonction<elonarlybirdRelonsponselon> telonrmStatsRelonsults =
+        Collelonctions2.filtelonr(accumulatelondRelonsponselons.gelontSuccelonssRelonsponselons(),
+            elonarlybirdRelonsponselon -> elonarlybirdRelonsponselon.isSelontTelonrmStatisticsRelonsults());
 
-    ThriftTermStatisticsResults results =
-        new ThriftTermResultsMerger(
-            termStatsResults,
-            termStatisticsRequest.getHistogramSettings())
-        .merge();
+    ThriftTelonrmStatisticsRelonsults relonsults =
+        nelonw ThriftTelonrmRelonsultsMelonrgelonr(
+            telonrmStatsRelonsults,
+            telonrmStatisticsRelonquelonst.gelontHistogramSelonttings())
+        .melonrgelon();
 
-    if (results.getTermResults().isEmpty()) {
-      final String line = "No results returned from any backend for term statistics request: {}";
+    if (relonsults.gelontTelonrmRelonsults().iselonmpty()) {
+      final String linelon = "No relonsults relonturnelond from any backelonnd for telonrm statistics relonquelonst: {}";
 
-      // If the termstats request was not empty and we got empty results. log it as a warning
-      // otherwise log is as a debug.
-      if (termStatisticsRequest.getTermRequestsSize() > 0) {
-        LOG.warn(line, termStatisticsRequest);
-      } else {
-        LOG.debug(line, termStatisticsRequest);
+      // If thelon telonrmstats relonquelonst was not elonmpty and welon got elonmpty relonsults. log it as a warning
+      // othelonrwiselon log is as a delonbug.
+      if (telonrmStatisticsRelonquelonst.gelontTelonrmRelonquelonstsSizelon() > 0) {
+        LOG.warn(linelon, telonrmStatisticsRelonquelonst);
+      } elonlselon {
+        LOG.delonbug(linelon, telonrmStatisticsRelonquelonst);
       }
     }
 
-    termStatsResponse.setTermStatisticsResults(results);
-    termStatsResponse.setSearchResults(ThriftTermResultsMerger.mergeSearchStats(termStatsResults));
+    telonrmStatsRelonsponselon.selontTelonrmStatisticsRelonsults(relonsults);
+    telonrmStatsRelonsponselon.selontSelonarchRelonsults(ThriftTelonrmRelonsultsMelonrgelonr.melonrgelonSelonarchStats(telonrmStatsRelonsults));
 
-    FacetsResultsUtils.fixNativePhotoUrl(results.getTermResults().values());
+    FacelontsRelonsultsUtils.fixNativelonPhotoUrl(relonsults.gelontTelonrmRelonsults().valuelons());
 
-    LOG.debug("TermStats call completed successfully: {}", termStatsResponse);
+    LOG.delonbug("TelonrmStats call complelontelond succelonssfully: {}", telonrmStatsRelonsponselon);
 
-    return termStatsResponse;
+    relonturn telonrmStatsRelonsponselon;
   }
 
-  @Override
-  public boolean shouldEarlyTerminateTierMerge(int totalResultsFromSuccessfulShards,
-                                                  boolean foundEarlyTermination) {
-    // To get accurate term stats, must never early terminate
-    return false;
+  @Ovelonrridelon
+  public boolelonan shouldelonarlyTelonrminatelonTielonrMelonrgelon(int totalRelonsultsFromSuccelonssfulShards,
+                                                  boolelonan foundelonarlyTelonrmination) {
+    // To gelont accuratelon telonrm stats, must nelonvelonr elonarly telonrminatelon
+    relonturn falselon;
   }
 }

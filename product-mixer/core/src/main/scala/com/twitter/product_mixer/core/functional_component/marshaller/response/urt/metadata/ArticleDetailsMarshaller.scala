@@ -1,15 +1,15 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.melontadata
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ArticleDetails
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.ArticlelonDelontails
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class ArticleDetailsMarshaller @Inject() () {
+@Singlelonton
+class ArticlelonDelontailsMarshallelonr @Injelonct() () {
 
-  def apply(articleDetails: ArticleDetails): urt.ArticleDetails = urt.ArticleDetails(
-    articlePosition = articleDetails.articlePosition,
-    shareCount = articleDetails.shareCount
+  delonf apply(articlelonDelontails: ArticlelonDelontails): urt.ArticlelonDelontails = urt.ArticlelonDelontails(
+    articlelonPosition = articlelonDelontails.articlelonPosition,
+    sharelonCount = articlelonDelontails.sharelonCount
   )
 }

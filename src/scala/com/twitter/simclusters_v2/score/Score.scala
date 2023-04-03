@@ -1,22 +1,22 @@
-package com.twitter.simclusters_v2.score
+packagelon com.twittelonr.simclustelonrs_v2.scorelon
 
-import com.twitter.simclusters_v2.thriftscala.{Score => ThriftScore}
+import com.twittelonr.simclustelonrs_v2.thriftscala.{Scorelon => ThriftScorelon}
 
 /**
- * A uniform value type for all kinds of Calculation Score.
+ * A uniform valuelon typelon for all kinds of Calculation Scorelon.
  **/
-case class Score(score: Double) {
+caselon class Scorelon(scorelon: Doublelon) {
 
-  implicit lazy val toThrift: ThriftScore = {
-    ThriftScore(score)
+  implicit lazy val toThrift: ThriftScorelon = {
+    ThriftScorelon(scorelon)
   }
 }
 
-object Score {
+objelonct Scorelon {
 
   /**
-   * Only support Double Type Thrift score
+   * Only support Doublelon Typelon Thrift scorelon
    */
-  implicit val fromThriftScore: ThriftScore => Score = { thriftScore => Score(thriftScore.score) }
+  implicit val fromThriftScorelon: ThriftScorelon => Scorelon = { thriftScorelon => Scorelon(thriftScorelon.scorelon) }
 
 }

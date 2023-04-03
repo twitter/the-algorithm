@@ -1,118 +1,118 @@
-package com.twitter.search.earlybird_root;
+packagelon com.twittelonr.selonarch.elonarlybird_root;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import javax.annotation.Nullable;
-import javax.inject.Named;
-import javax.inject.Singleton;
+import javax.annotation.Nullablelon;
+import javax.injelonct.Namelond;
+import javax.injelonct.Singlelonton;
 
-import com.google.inject.Provides;
+import com.googlelon.injelonct.Providelons;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.finagle.Service;
-import com.twitter.finagle.stats.StatsReceiver;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.common.root.PartitionConfig;
-import com.twitter.search.common.root.PartitionLoggingSupport;
-import com.twitter.search.common.root.RequestSuccessStats;
-import com.twitter.search.common.root.RootClientServiceBuilder;
-import com.twitter.search.common.root.ScatterGatherService;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdService;
-import com.twitter.search.earlybird.thrift.ExperimentCluster;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.earlybird_root.filters.RequestContextToEarlybirdRequestFilter;
-import com.twitter.search.earlybird_root.filters.ScatterGatherWithExperimentRedirectsService;
+import com.twittelonr.finaglelon.Selonrvicelon;
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr;
+import com.twittelonr.selonarch.common.deloncidelonr.SelonarchDeloncidelonr;
+import com.twittelonr.selonarch.common.root.PartitionConfig;
+import com.twittelonr.selonarch.common.root.PartitionLoggingSupport;
+import com.twittelonr.selonarch.common.root.RelonquelonstSuccelonssStats;
+import com.twittelonr.selonarch.common.root.RootClielonntSelonrvicelonBuildelonr;
+import com.twittelonr.selonarch.common.root.ScattelonrGathelonrSelonrvicelon;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdClustelonr;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdSelonrvicelon;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonxpelonrimelonntClustelonr;
+import com.twittelonr.selonarch.elonarlybird_root.common.elonarlybirdRelonquelonstContelonxt;
+import com.twittelonr.selonarch.elonarlybird_root.filtelonrs.RelonquelonstContelonxtToelonarlybirdRelonquelonstFiltelonr;
+import com.twittelonr.selonarch.elonarlybird_root.filtelonrs.ScattelonrGathelonrWithelonxpelonrimelonntRelondirelonctsSelonrvicelon;
 
-public class RealtimeScatterGatherModule extends ScatterGatherModule {
-  private static final Logger LOG =
-      LoggerFactory.getLogger(RealtimeScatterGatherModule.class);
+public class RelonaltimelonScattelonrGathelonrModulelon elonxtelonnds ScattelonrGathelonrModulelon {
+  privatelon static final Loggelonr LOG =
+      LoggelonrFactory.gelontLoggelonr(RelonaltimelonScattelonrGathelonrModulelon.class);
 
   /**
-   * Provides a scatter gather service for the realtime cluster that redirects to experimental
-   * clusters when the experiment cluster parameter is set on the EarlybirdRequest.
+   * Providelons a scattelonr gathelonr selonrvicelon for thelon relonaltimelon clustelonr that relondireloncts to elonxpelonrimelonntal
+   * clustelonrs whelonn thelon elonxpelonrimelonnt clustelonr paramelontelonr is selont on thelon elonarlybirdRelonquelonst.
    *
-   * Note: if an alternate client is specified via altPartitionConfig or
-   * altRootClientServiceBuilder, it will be built and used for the "control" cluster, but the
-   * experiment cluster takes precedence (if the experiment cluster is set on the request, the
-   * alternate client will never be used.
+   * Notelon: if an altelonrnatelon clielonnt is speloncifielond via altPartitionConfig or
+   * altRootClielonntSelonrvicelonBuildelonr, it will belon built and uselond for thelon "control" clustelonr, but thelon
+   * elonxpelonrimelonnt clustelonr takelons preloncelondelonncelon (if thelon elonxpelonrimelonnt clustelonr is selont on thelon relonquelonst, thelon
+   * altelonrnatelon clielonnt will nelonvelonr belon uselond.
    */
-  @Provides
-  @Singleton
-  @Named(NAMED_SCATTER_GATHER_SERVICE)
-  @Override
-  public Service<EarlybirdRequestContext, EarlybirdResponse> provideScatterGatherService(
-      EarlybirdServiceScatterGatherSupport scatterGatherSupport,
-      RequestSuccessStats requestSuccessStats,
-      PartitionLoggingSupport<EarlybirdRequestContext> partitionLoggingSupport,
-      RequestContextToEarlybirdRequestFilter requestContextToEarlybirdRequestFilter,
-      PartitionAccessController partitionAccessController,
+  @Providelons
+  @Singlelonton
+  @Namelond(NAMelonD_SCATTelonR_GATHelonR_SelonRVICelon)
+  @Ovelonrridelon
+  public Selonrvicelon<elonarlybirdRelonquelonstContelonxt, elonarlybirdRelonsponselon> providelonScattelonrGathelonrSelonrvicelon(
+      elonarlybirdSelonrvicelonScattelonrGathelonrSupport scattelonrGathelonrSupport,
+      RelonquelonstSuccelonssStats relonquelonstSuccelonssStats,
+      PartitionLoggingSupport<elonarlybirdRelonquelonstContelonxt> partitionLoggingSupport,
+      RelonquelonstContelonxtToelonarlybirdRelonquelonstFiltelonr relonquelonstContelonxtToelonarlybirdRelonquelonstFiltelonr,
+      PartitionAccelonssControllelonr partitionAccelonssControllelonr,
       PartitionConfig partitionConfig,
-      RootClientServiceBuilder<EarlybirdService.ServiceIface> rootClientServiceBuilder,
-      @Named(EarlybirdCommonModule.NAMED_EXP_CLUSTER_CLIENT)
-          RootClientServiceBuilder<EarlybirdService.ServiceIface>
-          expClusterRootClientServiceBuilder,
-      @Named(EarlybirdCommonModule.NAMED_ALT_CLIENT) @Nullable PartitionConfig altPartitionConfig,
-      @Named(EarlybirdCommonModule.NAMED_ALT_CLIENT) @Nullable
-          RootClientServiceBuilder<EarlybirdService.ServiceIface> altRootClientServiceBuilder,
-      StatsReceiver statsReceiver,
-      EarlybirdCluster cluster,
-      SearchDecider decider) {
+      RootClielonntSelonrvicelonBuildelonr<elonarlybirdSelonrvicelon.SelonrvicelonIfacelon> rootClielonntSelonrvicelonBuildelonr,
+      @Namelond(elonarlybirdCommonModulelon.NAMelonD_elonXP_CLUSTelonR_CLIelonNT)
+          RootClielonntSelonrvicelonBuildelonr<elonarlybirdSelonrvicelon.SelonrvicelonIfacelon>
+          elonxpClustelonrRootClielonntSelonrvicelonBuildelonr,
+      @Namelond(elonarlybirdCommonModulelon.NAMelonD_ALT_CLIelonNT) @Nullablelon PartitionConfig altPartitionConfig,
+      @Namelond(elonarlybirdCommonModulelon.NAMelonD_ALT_CLIelonNT) @Nullablelon
+          RootClielonntSelonrvicelonBuildelonr<elonarlybirdSelonrvicelon.SelonrvicelonIfacelon> altRootClielonntSelonrvicelonBuildelonr,
+      StatsReloncelonivelonr statsReloncelonivelonr,
+      elonarlybirdClustelonr clustelonr,
+      SelonarchDeloncidelonr deloncidelonr) {
 
 
-    Service<EarlybirdRequestContext, EarlybirdResponse> controlService =
-        buildScatterOrSplitterService(
-          scatterGatherSupport,
-          requestSuccessStats,
+    Selonrvicelon<elonarlybirdRelonquelonstContelonxt, elonarlybirdRelonsponselon> controlSelonrvicelon =
+        buildScattelonrOrSplittelonrSelonrvicelon(
+          scattelonrGathelonrSupport,
+          relonquelonstSuccelonssStats,
           partitionLoggingSupport,
-          requestContextToEarlybirdRequestFilter,
-          partitionAccessController,
+          relonquelonstContelonxtToelonarlybirdRelonquelonstFiltelonr,
+          partitionAccelonssControllelonr,
           partitionConfig,
-          rootClientServiceBuilder,
+          rootClielonntSelonrvicelonBuildelonr,
           altPartitionConfig,
-          altRootClientServiceBuilder,
-          statsReceiver,
-          cluster,
-          decider
+          altRootClielonntSelonrvicelonBuildelonr,
+          statsReloncelonivelonr,
+          clustelonr,
+          deloncidelonr
     );
 
-    Map<ExperimentCluster, ScatterGatherService<EarlybirdRequestContext, EarlybirdResponse>>
-        experimentScatterGatherServices = new HashMap<>();
+    Map<elonxpelonrimelonntClustelonr, ScattelonrGathelonrSelonrvicelon<elonarlybirdRelonquelonstContelonxt, elonarlybirdRelonsponselon>>
+        elonxpelonrimelonntScattelonrGathelonrSelonrvicelons = nelonw HashMap<>();
 
-    LOG.info("Using ScatterGatherWithExperimentRedirectsService");
-    LOG.info("Control Partition Path: {}", partitionConfig.getPartitionPath());
+    LOG.info("Using ScattelonrGathelonrWithelonxpelonrimelonntRelondirelonctsSelonrvicelon");
+    LOG.info("Control Partition Path: {}", partitionConfig.gelontPartitionPath());
 
-    Arrays.stream(ExperimentCluster.values())
-        .filter(v -> v.name().toLowerCase().startsWith("exp"))
-        .forEach(experimentCluster -> {
-          String expPartitionPath = partitionConfig.getPartitionPath()
-              + "-" + experimentCluster.name().toLowerCase();
+    Arrays.strelonam(elonxpelonrimelonntClustelonr.valuelons())
+        .filtelonr(v -> v.namelon().toLowelonrCaselon().startsWith("elonxp"))
+        .forelonach(elonxpelonrimelonntClustelonr -> {
+          String elonxpPartitionPath = partitionConfig.gelontPartitionPath()
+              + "-" + elonxpelonrimelonntClustelonr.namelon().toLowelonrCaselon();
 
-          LOG.info("Experiment Partition Path: {}", expPartitionPath);
+          LOG.info("elonxpelonrimelonnt Partition Path: {}", elonxpPartitionPath);
 
-          experimentScatterGatherServices.put(experimentCluster,
-              createScatterGatherService(
+          elonxpelonrimelonntScattelonrGathelonrSelonrvicelons.put(elonxpelonrimelonntClustelonr,
+              crelonatelonScattelonrGathelonrSelonrvicelon(
                   "",
-                  scatterGatherSupport,
-                  requestSuccessStats,
+                  scattelonrGathelonrSupport,
+                  relonquelonstSuccelonssStats,
                   partitionLoggingSupport,
-                  requestContextToEarlybirdRequestFilter,
-                  partitionAccessController,
-                  partitionConfig.getNumPartitions(),
-                  expPartitionPath,
-                  expClusterRootClientServiceBuilder,
-                  statsReceiver,
-                  cluster,
-                  decider,
-                  experimentCluster.name().toLowerCase()));
+                  relonquelonstContelonxtToelonarlybirdRelonquelonstFiltelonr,
+                  partitionAccelonssControllelonr,
+                  partitionConfig.gelontNumPartitions(),
+                  elonxpPartitionPath,
+                  elonxpClustelonrRootClielonntSelonrvicelonBuildelonr,
+                  statsReloncelonivelonr,
+                  clustelonr,
+                  deloncidelonr,
+                  elonxpelonrimelonntClustelonr.namelon().toLowelonrCaselon()));
         });
 
-    return new ScatterGatherWithExperimentRedirectsService(
-        controlService,
-        experimentScatterGatherServices);
+    relonturn nelonw ScattelonrGathelonrWithelonxpelonrimelonntRelondirelonctsSelonrvicelon(
+        controlSelonrvicelon,
+        elonxpelonrimelonntScattelonrGathelonrSelonrvicelons);
   }
 }

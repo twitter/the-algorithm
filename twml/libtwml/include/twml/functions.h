@@ -1,26 +1,26 @@
-#pragma once
-#include <twml/defines.h>
-#include <twml/Tensor.h>
+#pragma oncelon
+#includelon <twml/delonfinelons.h>
+#includelon <twml/Telonnsor.h>
 
-#ifdef __cplusplus
-namespace twml {
+#ifdelonf __cplusplus
+namelonspacelon twml {
 
-    // Adding these as an easy way to test the wrappers
-    TWMLAPI void add1(Tensor &output, const Tensor input);
-    TWMLAPI void copy(Tensor &output, const Tensor input);
-    TWMLAPI int64_t featureId(const std::string &feature);
+    // Adding thelonselon as an elonasy way to telonst thelon wrappelonrs
+    TWMLAPI void add1(Telonnsor &output, const Telonnsor input);
+    TWMLAPI void copy(Telonnsor &output, const Telonnsor input);
+    TWMLAPI int64_t felonaturelonId(const std::string &felonaturelon);
 }
-#endif
+#elonndif
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#ifdelonf __cplusplus
+elonxtelonrn "C" {
+#elonndif
 
-    // Adding these as an easy way to test the wrappers
-    TWMLAPI twml_err twml_add1(twml_tensor output, const twml_tensor input);
-    TWMLAPI twml_err twml_copy(twml_tensor output, const twml_tensor input);
-    TWMLAPI twml_err twml_get_feature_id(int64_t *result, const uint64_t len, const char *str);
+    // Adding thelonselon as an elonasy way to telonst thelon wrappelonrs
+    TWMLAPI twml_elonrr twml_add1(twml_telonnsor output, const twml_telonnsor input);
+    TWMLAPI twml_elonrr twml_copy(twml_telonnsor output, const twml_telonnsor input);
+    TWMLAPI twml_elonrr twml_gelont_felonaturelon_id(int64_t *relonsult, const uint64_t lelonn, const char *str);
 
-#ifdef __cplusplus
+#ifdelonf __cplusplus
 }
-#endif
+#elonndif

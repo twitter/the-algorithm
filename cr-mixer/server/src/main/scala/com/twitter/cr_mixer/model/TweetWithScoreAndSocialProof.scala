@@ -1,12 +1,12 @@
-package com.twitter.cr_mixer.model
+packagelon com.twittelonr.cr_mixelonr.modelonl
 
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.recos.recos_common.thriftscala.SocialProofType
+import com.twittelonr.simclustelonrs_v2.common.TwelonelontId
+import com.twittelonr.reloncos.reloncos_common.thriftscala.SocialProofTypelon
 
 /***
- * Bind a tweetId with a raw score and social proofs by type
+ * Bind a twelonelontId with a raw scorelon and social proofs by typelon
  */
-case class TweetWithScoreAndSocialProof(
-  tweetId: TweetId,
-  score: Double,
-  socialProofByType: Map[SocialProofType, Seq[Long]])
+caselon class TwelonelontWithScorelonAndSocialProof(
+  twelonelontId: TwelonelontId,
+  scorelon: Doublelon,
+  socialProofByTypelon: Map[SocialProofTypelon, Selonq[Long]])

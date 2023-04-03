@@ -1,58 +1,58 @@
-package com.twitter.simclusters_v2.scalding.mbcg
+packagelon com.twittelonr.simclustelonrs_v2.scalding.mbcg
 
-import com.google.common.collect.ImmutableSet
-import com.twitter.dal.personal_data.thriftjava.PersonalDataType._
-import com.twitter.ml.api.DataType
-import com.twitter.ml.api.Feature
-import com.twitter.ml.api.Feature.SparseContinuous
-import com.twitter.ml.api.Feature.Tensor
-import com.twitter.ml.api.FeatureContext
-import com.twitter.ml.api.constant.SharedFeatures
+import com.googlelon.common.collelonct.ImmutablelonSelont
+import com.twittelonr.dal.pelonrsonal_data.thriftjava.PelonrsonalDataTypelon._
+import com.twittelonr.ml.api.DataTypelon
+import com.twittelonr.ml.api.Felonaturelon
+import com.twittelonr.ml.api.Felonaturelon.SparselonContinuous
+import com.twittelonr.ml.api.Felonaturelon.Telonnsor
+import com.twittelonr.ml.api.FelonaturelonContelonxt
+import com.twittelonr.ml.api.constant.SharelondFelonaturelons
 import java.util.{Map => JMap}
 
 /*
-Features used for model-based candidate generation
+Felonaturelons uselond for modelonl-baselond candidatelon gelonnelonration
  */
-object TweetAllFeatures {
-  val tweetId = SharedFeatures.TWEET_ID
-  val tweetSimclusters =
-    new SparseContinuous(
-      "tweet.simcluster.log_fav_based_embedding.20m_145k_2020",
-      ImmutableSet.of(InferredInterests))
-      .asInstanceOf[Feature[JMap[String, Double]]]
-  val authorF2vProducerEmbedding =
-    new Tensor(
-      "tweet.author_follow2vec.producer_embedding_200",
-      DataType.FLOAT
+objelonct TwelonelontAllFelonaturelons {
+  val twelonelontId = SharelondFelonaturelons.TWelonelonT_ID
+  val twelonelontSimclustelonrs =
+    nelonw SparselonContinuous(
+      "twelonelont.simclustelonr.log_fav_baselond_elonmbelondding.20m_145k_2020",
+      ImmutablelonSelont.of(InfelonrrelondIntelonrelonsts))
+      .asInstancelonOf[Felonaturelon[JMap[String, Doublelon]]]
+  val authorF2vProducelonrelonmbelondding =
+    nelonw Telonnsor(
+      "twelonelont.author_follow2velonc.producelonr_elonmbelondding_200",
+      DataTypelon.FLOAT
     )
 
-  private val allFeatures: Seq[Feature[_]] = Seq(
-    tweetId,
-    tweetSimclusters,
-    authorF2vProducerEmbedding
+  privatelon val allFelonaturelons: Selonq[Felonaturelon[_]] = Selonq(
+    twelonelontId,
+    twelonelontSimclustelonrs,
+    authorF2vProducelonrelonmbelondding
   )
 
-  val featureContext = new FeatureContext(allFeatures: _*)
+  val felonaturelonContelonxt = nelonw FelonaturelonContelonxt(allFelonaturelons: _*)
 }
 
-object UserAllFeatures {
-  val userId = SharedFeatures.USER_ID
-  val userSimclusters =
-    new SparseContinuous(
-      "user.iiape.log_fav_based_embedding.20m_145k_2020",
-      ImmutableSet.of(InferredInterests))
-      .asInstanceOf[Feature[JMap[String, Double]]]
-  val userF2vConsumerEmbedding =
-    new Tensor(
-      "user.follow2vec.consumer_avg_fol_emb_200",
-      DataType.FLOAT
+objelonct UselonrAllFelonaturelons {
+  val uselonrId = SharelondFelonaturelons.USelonR_ID
+  val uselonrSimclustelonrs =
+    nelonw SparselonContinuous(
+      "uselonr.iiapelon.log_fav_baselond_elonmbelondding.20m_145k_2020",
+      ImmutablelonSelont.of(InfelonrrelondIntelonrelonsts))
+      .asInstancelonOf[Felonaturelon[JMap[String, Doublelon]]]
+  val uselonrF2vConsumelonrelonmbelondding =
+    nelonw Telonnsor(
+      "uselonr.follow2velonc.consumelonr_avg_fol_elonmb_200",
+      DataTypelon.FLOAT
     )
 
-  private val allFeatures: Seq[Feature[_]] = Seq(
-    userId,
-    userSimclusters,
-    userF2vConsumerEmbedding
+  privatelon val allFelonaturelons: Selonq[Felonaturelon[_]] = Selonq(
+    uselonrId,
+    uselonrSimclustelonrs,
+    uselonrF2vConsumelonrelonmbelondding
   )
 
-  val featureContext = new FeatureContext(allFeatures: _*)
+  val felonaturelonContelonxt = nelonw FelonaturelonContelonxt(allFelonaturelons: _*)
 }

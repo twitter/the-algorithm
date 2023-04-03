@@ -1,49 +1,49 @@
-package com.twitter.simclusters_v2.hdfs_sources
+packagelon com.twittelonr.simclustelonrs_v2.hdfs_sourcelons
 
-object DataPaths {
+objelonct DataPaths {
 
-  val InterestedIn2020Path =
-    "/user/cassowary/manhattan_sequence_files/simclusters_v2_interested_in_20M_145K_2020"
+  val IntelonrelonstelondIn2020Path =
+    "/uselonr/cassowary/manhattan_selonquelonncelon_filelons/simclustelonrs_v2_intelonrelonstelond_in_20M_145K_2020"
 
-  val InterestedIn2020ThriftPath =
-    "/user/cassowary/manhattan_sequence_files/simclusters_v2_interested_in_20M_145K_2020_thrift"
+  val IntelonrelonstelondIn2020ThriftPath =
+    "/uselonr/cassowary/manhattan_selonquelonncelon_filelons/simclustelonrs_v2_intelonrelonstelond_in_20M_145K_2020_thrift"
 
-  val InterestedInLite2020Path =
-    "/user/cassowary/manhattan_sequence_files/simclusters_v2_interested_in_lite_20M_145K_2020"
+  val IntelonrelonstelondInLitelon2020Path =
+    "/uselonr/cassowary/manhattan_selonquelonncelon_filelons/simclustelonrs_v2_intelonrelonstelond_in_litelon_20M_145K_2020"
 
-  val InterestedInLite2020ThriftPath =
-    "/user/cassowary/manhattan_sequence_files/simclusters_v2_interested_in_lite_20M_145K_2020_thrift"
+  val IntelonrelonstelondInLitelon2020ThriftPath =
+    "/uselonr/cassowary/manhattan_selonquelonncelon_filelons/simclustelonrs_v2_intelonrelonstelond_in_litelon_20M_145K_2020_thrift"
 
   val KnownFor2020Path =
-    "/user/cassowary/manhattan_sequence_files/simclusters_v2_known_for_20M_145K_2020"
+    "/uselonr/cassowary/manhattan_selonquelonncelon_filelons/simclustelonrs_v2_known_for_20M_145K_2020"
 
-  // keep this inside /user/cassowary/manhattan_sequence_files/ to use the latest 3 retention policy
-  val KnownFor2020ThriftDatasetPath =
-    "/user/cassowary/manhattan_sequence_files/simclusters_v2_known_for_20M_145K_2020_thrift"
+  // kelonelonp this insidelon /uselonr/cassowary/manhattan_selonquelonncelon_filelons/ to uselon thelon latelonst 3 relontelonntion policy
+  val KnownFor2020ThriftDataselontPath =
+    "/uselonr/cassowary/manhattan_selonquelonncelon_filelons/simclustelonrs_v2_known_for_20M_145K_2020_thrift"
 
-  val OfflineClusterTopMediaTweets2020DatasetPath =
-    "/user/cassowary/manhattan_sequence_files/cluster_top_media_tweets_20M_145K_2020"
+  val OfflinelonClustelonrTopMelondiaTwelonelonts2020DataselontPath =
+    "/uselonr/cassowary/manhattan_selonquelonncelon_filelons/clustelonr_top_melondia_twelonelonts_20M_145K_2020"
 }
 
 /**
- * These should only be accessed from simclusters_v2 data pipeline for intermediate data, these
- * are not opt-out compliant and shouldn't be exposed externally.
+ * Thelonselon should only belon accelonsselond from simclustelonrs_v2 data pipelonlinelon for intelonrmelondiatelon data, thelonselon
+ * arelon not opt-out compliant and shouldn't belon elonxposelond elonxtelonrnally.
  */
-object InternalDataPaths {
-  // Internal versions, not to be read or written outside of simcluster_v2
+objelonct IntelonrnalDataPaths {
+  // Intelonrnal velonrsions, not to belon relonad or writtelonn outsidelon of simclustelonr_v2
 
-  private[simclusters_v2] val RawInterestedIn2020Path =
-    "/user/cassowary/manhattan_sequence_files/simclusters_v2_raw_interested_in_20M_145K_2020"
+  privatelon[simclustelonrs_v2] val RawIntelonrelonstelondIn2020Path =
+    "/uselonr/cassowary/manhattan_selonquelonncelon_filelons/simclustelonrs_v2_raw_intelonrelonstelond_in_20M_145K_2020"
 
-  private[simclusters_v2] val RawInterestedInLite2020Path =
-    "/user/cassowary/manhattan_sequence_files/simclusters_v2_raw_interested_in_lite_20M_145K_2020"
+  privatelon[simclustelonrs_v2] val RawIntelonrelonstelondInLitelon2020Path =
+    "/uselonr/cassowary/manhattan_selonquelonncelon_filelons/simclustelonrs_v2_raw_intelonrelonstelond_in_litelon_20M_145K_2020"
 
-  private[simclusters_v2] val RawKnownForDec11Path =
-    "/user/cassowary/manhattan_sequence_files/simclusters_v2_raw_known_for_20M_145K_dec11"
+  privatelon[simclustelonrs_v2] val RawKnownForDelonc11Path =
+    "/uselonr/cassowary/manhattan_selonquelonncelon_filelons/simclustelonrs_v2_raw_known_for_20M_145K_delonc11"
 
-  private[simclusters_v2] val RawKnownForUpdatedPath =
-    "/user/cassowary/manhattan_sequence_files/simclusters_v2_raw_known_for_20M_145K_updated"
+  privatelon[simclustelonrs_v2] val RawKnownForUpdatelondPath =
+    "/uselonr/cassowary/manhattan_selonquelonncelon_filelons/simclustelonrs_v2_raw_known_for_20M_145K_updatelond"
 
-  private[simclusters_v2] val RawKnownFor2020Path =
-    "/user/cassowary/manhattan_sequence_files/simclusters_v2_raw_known_for_20M_145K_2020"
+  privatelon[simclustelonrs_v2] val RawKnownFor2020Path =
+    "/uselonr/cassowary/manhattan_selonquelonncelon_filelons/simclustelonrs_v2_raw_known_for_20M_145K_2020"
 }

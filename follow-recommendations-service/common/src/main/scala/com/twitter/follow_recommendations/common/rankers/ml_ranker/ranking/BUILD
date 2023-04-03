@@ -1,37 +1,37 @@
 scala_library(
-    compiler_option_sets = ["fatal_warnings"],
+    compilelonr_option_selonts = ["fatal_warnings"],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/com/google/inject:guice",
-        "3rdparty/jvm/com/google/inject/extensions:guice-assistedinject",
-        "3rdparty/jvm/net/codingwell:scala-guice",
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        "3rdparty/jvm/com/googlelon/injelonct:guicelon",
+        "3rdparty/jvm/com/googlelon/injelonct/elonxtelonnsions:guicelon-assistelondinjelonct",
+        "3rdparty/jvm/nelont/codingwelonll:scala-guicelon",
         "3rdparty/jvm/org/slf4j:slf4j-api",
-        "finatra/inject/inject-core/src/main/scala",
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/base",
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/clients/deepbirdv2",
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/constants",
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/feature_hydration/sources",
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/models",
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/rankers/common",
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/rankers/ml_ranker/scoring",
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/rankers/utils",
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/utils",
-        "src/java/com/twitter/ml/api:api-base",
+        "finatra/injelonct/injelonct-corelon/src/main/scala",
+        "follow-reloncommelonndations-selonrvicelon/common/src/main/scala/com/twittelonr/follow_reloncommelonndations/common/baselon",
+        "follow-reloncommelonndations-selonrvicelon/common/src/main/scala/com/twittelonr/follow_reloncommelonndations/common/clielonnts/delonelonpbirdv2",
+        "follow-reloncommelonndations-selonrvicelon/common/src/main/scala/com/twittelonr/follow_reloncommelonndations/common/constants",
+        "follow-reloncommelonndations-selonrvicelon/common/src/main/scala/com/twittelonr/follow_reloncommelonndations/common/felonaturelon_hydration/sourcelons",
+        "follow-reloncommelonndations-selonrvicelon/common/src/main/scala/com/twittelonr/follow_reloncommelonndations/common/modelonls",
+        "follow-reloncommelonndations-selonrvicelon/common/src/main/scala/com/twittelonr/follow_reloncommelonndations/common/rankelonrs/common",
+        "follow-reloncommelonndations-selonrvicelon/common/src/main/scala/com/twittelonr/follow_reloncommelonndations/common/rankelonrs/ml_rankelonr/scoring",
+        "follow-reloncommelonndations-selonrvicelon/common/src/main/scala/com/twittelonr/follow_reloncommelonndations/common/rankelonrs/utils",
+        "follow-reloncommelonndations-selonrvicelon/common/src/main/scala/com/twittelonr/follow_reloncommelonndations/common/utils",
+        "src/java/com/twittelonr/ml/api:api-baselon",
         "util/util-slf4j-api/src/main/scala",
     ],
 )
 
-# This is to import only the params from MlRanker, for instance to get request-level heavy ranker.
+# This is to import only thelon params from MlRankelonr, for instancelon to gelont relonquelonst-lelonvelonl helonavy rankelonr.
 scala_library(
-    name = "ml_ranker_params",
-    sources = [
-        "MlRankerParams.scala",
+    namelon = "ml_rankelonr_params",
+    sourcelons = [
+        "MlRankelonrParams.scala",
     ],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/rankers/common",
-        "timelines/src/main/scala/com/twitter/timelines/config/configapi",
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        "follow-reloncommelonndations-selonrvicelon/common/src/main/scala/com/twittelonr/follow_reloncommelonndations/common/rankelonrs/common",
+        "timelonlinelons/src/main/scala/com/twittelonr/timelonlinelons/config/configapi",
     ],
 )

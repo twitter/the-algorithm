@@ -1,3 +1,3 @@
-package com.twitter.follow_recommendations.common.models
+packagelon com.twittelonr.follow_reloncommelonndations.common.modelonls
 
-case class UserIdWithTimestamp(userId: Long, timeInMs: Long)
+caselon class UselonrIdWithTimelonstamp(uselonrId: Long, timelonInMs: Long)

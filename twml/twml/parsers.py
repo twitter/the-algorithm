@@ -1,20 +1,20 @@
 '''
-Contains implementations of functions to parse training and evaluation data.
+Contains implelonmelonntations of functions to parselon training and elonvaluation data.
 
-Modelers can use the functions in this module as the the train/eval_parse_fn of
-the DataRecordTrainer constructor to customize how to parse their datasets.
+Modelonlelonrs can uselon thelon functions in this modulelon as thelon thelon train/elonval_parselon_fn of
+thelon DataReloncordTrainelonr constructor to customizelon how to parselon thelonir dataselonts.
 
-Modelers may also provide custom implementations of train/eval_parse_fn using these as reference.
+Modelonlelonrs may also providelon custom implelonmelonntations of train/elonval_parselon_fn using thelonselon as relonfelonrelonncelon.
 '''
 
-from twitter.deepbird.io.legacy.parsers import (
-  convert_to_supervised_input_receiver_fn,  # noqa: F401
-  get_continuous_parse_fn,  # noqa: F401
-  get_default_parse_fn,  # noqa: F401
-  get_features_as_tensor_dict,  # noqa: F401
-  get_labels_in_features_parse_fn,  # noqa: F401
-  get_serving_input_receiver_fn_feature_dict,  # noqa: F401
-  get_sparse_parse_fn,  # noqa: F401
-  get_sparse_serving_input_receiver_fn,  # noqa: F401
-  get_tensor_parse_fn,  # noqa: F401
+from twittelonr.delonelonpbird.io.lelongacy.parselonrs import (
+  convelonrt_to_supelonrviselond_input_reloncelonivelonr_fn,  # noqa: F401
+  gelont_continuous_parselon_fn,  # noqa: F401
+  gelont_delonfault_parselon_fn,  # noqa: F401
+  gelont_felonaturelons_as_telonnsor_dict,  # noqa: F401
+  gelont_labelonls_in_felonaturelons_parselon_fn,  # noqa: F401
+  gelont_selonrving_input_reloncelonivelonr_fn_felonaturelon_dict,  # noqa: F401
+  gelont_sparselon_parselon_fn,  # noqa: F401
+  gelont_sparselon_selonrving_input_reloncelonivelonr_fn,  # noqa: F401
+  gelont_telonnsor_parselon_fn,  # noqa: F401
 )

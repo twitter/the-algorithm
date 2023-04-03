@@ -1,50 +1,50 @@
-package com.twitter.follow_recommendations.common.clients.graph_feature_service
+packagelon com.twittelonr.follow_reloncommelonndations.common.clielonnts.graph_felonaturelon_selonrvicelon
 
-import com.twitter.follow_recommendations.common.models.FollowProof
-import com.twitter.graph_feature_service.thriftscala.PresetFeatureTypes.WtfTwoHop
-import com.twitter.graph_feature_service.thriftscala.EdgeType
-import com.twitter.graph_feature_service.thriftscala.GfsIntersectionResponse
-import com.twitter.graph_feature_service.thriftscala.GfsPresetIntersectionRequest
-import com.twitter.graph_feature_service.thriftscala.{Server => GraphFeatureService}
-import com.twitter.stitch.Stitch
-import javax.inject.{Inject, Singleton}
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.FollowProof
+import com.twittelonr.graph_felonaturelon_selonrvicelon.thriftscala.PrelonselontFelonaturelonTypelons.WtfTwoHop
+import com.twittelonr.graph_felonaturelon_selonrvicelon.thriftscala.elondgelonTypelon
+import com.twittelonr.graph_felonaturelon_selonrvicelon.thriftscala.GfsIntelonrselonctionRelonsponselon
+import com.twittelonr.graph_felonaturelon_selonrvicelon.thriftscala.GfsPrelonselontIntelonrselonctionRelonquelonst
+import com.twittelonr.graph_felonaturelon_selonrvicelon.thriftscala.{Selonrvelonr => GraphFelonaturelonSelonrvicelon}
+import com.twittelonr.stitch.Stitch
+import javax.injelonct.{Injelonct, Singlelonton}
 
-@Singleton
-class GraphFeatureServiceClient @Inject() (
-  graphFeatureService: GraphFeatureService.MethodPerEndpoint) {
+@Singlelonton
+class GraphFelonaturelonSelonrvicelonClielonnt @Injelonct() (
+  graphFelonaturelonSelonrvicelon: GraphFelonaturelonSelonrvicelon.MelonthodPelonrelonndpoint) {
 
-  import GraphFeatureServiceClient._
-  def getIntersections(
-    userId: Long,
-    candidateIds: Seq[Long],
-    numIntersectionIds: Int
+  import GraphFelonaturelonSelonrvicelonClielonnt._
+  delonf gelontIntelonrselonctions(
+    uselonrId: Long,
+    candidatelonIds: Selonq[Long],
+    numIntelonrselonctionIds: Int
   ): Stitch[Map[Long, FollowProof]] = {
     Stitch
-      .callFuture(
-        graphFeatureService.getPresetIntersection(
-          GfsPresetIntersectionRequest(userId, candidateIds, WtfTwoHop, Some(numIntersectionIds))
+      .callFuturelon(
+        graphFelonaturelonSelonrvicelon.gelontPrelonselontIntelonrselonction(
+          GfsPrelonselontIntelonrselonctionRelonquelonst(uselonrId, candidatelonIds, WtfTwoHop, Somelon(numIntelonrselonctionIds))
         )
       ).map {
-        case GfsIntersectionResponse(gfsIntersectionResults) =>
+        caselon GfsIntelonrselonctionRelonsponselon(gfsIntelonrselonctionRelonsults) =>
           (for {
-            candidateId <- candidateIds
-            gfsIntersectionResultForCandidate =
-              gfsIntersectionResults.filter(_.candidateUserId == candidateId)
+            candidatelonId <- candidatelonIds
+            gfsIntelonrselonctionRelonsultForCandidatelon =
+              gfsIntelonrselonctionRelonsults.filtelonr(_.candidatelonUselonrId == candidatelonId)
             followProof <- for {
-              result <- gfsIntersectionResultForCandidate
-              intersection <- result.intersectionValues
-              if leftEdgeTypes.contains(intersection.featureType.leftEdgeType)
-              if rightEdgeTypes.contains(intersection.featureType.rightEdgeType)
-              intersectionIds <- intersection.intersectionIds.toSeq
-            } yield FollowProof(intersectionIds, intersection.count.getOrElse(0))
-          } yield {
-            candidateId -> followProof
+              relonsult <- gfsIntelonrselonctionRelonsultForCandidatelon
+              intelonrselonction <- relonsult.intelonrselonctionValuelons
+              if lelonftelondgelonTypelons.contains(intelonrselonction.felonaturelonTypelon.lelonftelondgelonTypelon)
+              if rightelondgelonTypelons.contains(intelonrselonction.felonaturelonTypelon.rightelondgelonTypelon)
+              intelonrselonctionIds <- intelonrselonction.intelonrselonctionIds.toSelonq
+            } yielonld FollowProof(intelonrselonctionIds, intelonrselonction.count.gelontOrelonlselon(0))
+          } yielonld {
+            candidatelonId -> followProof
           }).toMap
       }
   }
 }
 
-object GraphFeatureServiceClient {
-  val leftEdgeTypes: Set[EdgeType] = Set(EdgeType.Following)
-  val rightEdgeTypes: Set[EdgeType] = Set(EdgeType.FollowedBy)
+objelonct GraphFelonaturelonSelonrvicelonClielonnt {
+  val lelonftelondgelonTypelons: Selont[elondgelonTypelon] = Selont(elondgelonTypelon.Following)
+  val rightelondgelonTypelons: Selont[elondgelonTypelon] = Selont(elondgelonTypelon.FollowelondBy)
 }

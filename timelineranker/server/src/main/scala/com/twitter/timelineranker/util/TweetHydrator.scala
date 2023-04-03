@@ -1,75 +1,75 @@
-package com.twitter.timelineranker.util
+packagelon com.twittelonr.timelonlinelonrankelonr.util
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.logging.Logger
-import com.twitter.spam.rtf.thriftscala.SafetyLevel
-import com.twitter.timelineranker.core.HydratedTweets
-import com.twitter.timelines.clients.tweetypie.TweetyPieClient
-import com.twitter.timelines.model._
-import com.twitter.timelines.model.tweet.HydratedTweet
-import com.twitter.timelines.model.tweet.HydratedTweetUtils
-import com.twitter.timelines.util.stats.RequestStats
-import com.twitter.tweetypie.thriftscala.TweetInclude
-import com.twitter.util.Future
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.logging.Loggelonr
+import com.twittelonr.spam.rtf.thriftscala.SafelontyLelonvelonl
+import com.twittelonr.timelonlinelonrankelonr.corelon.HydratelondTwelonelonts
+import com.twittelonr.timelonlinelons.clielonnts.twelonelontypielon.TwelonelontyPielonClielonnt
+import com.twittelonr.timelonlinelons.modelonl._
+import com.twittelonr.timelonlinelons.modelonl.twelonelont.HydratelondTwelonelont
+import com.twittelonr.timelonlinelons.modelonl.twelonelont.HydratelondTwelonelontUtils
+import com.twittelonr.timelonlinelons.util.stats.RelonquelonstStats
+import com.twittelonr.twelonelontypielon.thriftscala.TwelonelontIncludelon
+import com.twittelonr.util.Futurelon
 
-object TweetHydrator {
-  val FieldsToHydrate: Set[TweetInclude] = TweetyPieClient.CoreTweetFields
-  val EmptyHydratedTweets: HydratedTweets =
-    HydratedTweets(Seq.empty[HydratedTweet], Seq.empty[HydratedTweet])
-  val EmptyHydratedTweetsFuture: Future[HydratedTweets] = Future.value(EmptyHydratedTweets)
+objelonct TwelonelontHydrator {
+  val FielonldsToHydratelon: Selont[TwelonelontIncludelon] = TwelonelontyPielonClielonnt.CorelonTwelonelontFielonlds
+  val elonmptyHydratelondTwelonelonts: HydratelondTwelonelonts =
+    HydratelondTwelonelonts(Selonq.elonmpty[HydratelondTwelonelont], Selonq.elonmpty[HydratelondTwelonelont])
+  val elonmptyHydratelondTwelonelontsFuturelon: Futurelon[HydratelondTwelonelonts] = Futurelon.valuelon(elonmptyHydratelondTwelonelonts)
 }
 
-class TweetHydrator(tweetyPieClient: TweetyPieClient, statsReceiver: StatsReceiver)
-    extends RequestStats {
+class TwelonelontHydrator(twelonelontyPielonClielonnt: TwelonelontyPielonClielonnt, statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds RelonquelonstStats {
 
-  private[this] val hydrateScope = statsReceiver.scope("tweetHydrator")
-  private[this] val outerTweetsScope = hydrateScope.scope("outerTweets")
-  private[this] val innerTweetsScope = hydrateScope.scope("innerTweets")
+  privatelon[this] val hydratelonScopelon = statsReloncelonivelonr.scopelon("twelonelontHydrator")
+  privatelon[this] val outelonrTwelonelontsScopelon = hydratelonScopelon.scopelon("outelonrTwelonelonts")
+  privatelon[this] val innelonrTwelonelontsScopelon = hydratelonScopelon.scopelon("innelonrTwelonelonts")
 
-  private[this] val totalCounter = outerTweetsScope.counter(Total)
-  private[this] val totalInnerCounter = innerTweetsScope.counter(Total)
+  privatelon[this] val totalCountelonr = outelonrTwelonelontsScopelon.countelonr(Total)
+  privatelon[this] val totalInnelonrCountelonr = innelonrTwelonelontsScopelon.countelonr(Total)
 
   /**
-   * Hydrates zero or more tweets from the given seq of tweet IDs. Returns requested tweets ordered
-   * by tweetIds and out of order inner tweet ids.
+   * Hydratelons zelonro or morelon twelonelonts from thelon givelonn selonq of twelonelont IDs. Relonturns relonquelonstelond twelonelonts ordelonrelond
+   * by twelonelontIds and out of ordelonr innelonr twelonelont ids.
    *
-   * Inner tweets that were also requested as outer tweets are returned as outer tweets.
+   * Innelonr twelonelonts that welonrelon also relonquelonstelond as outelonr twelonelonts arelon relonturnelond as outelonr twelonelonts.
    *
-   * Note that some tweet may not be hydrated due to hydration errors or because they are deleted.
-   * Consequently, the size of output is <= size of input. That is the intended usage pattern.
+   * Notelon that somelon twelonelont may not belon hydratelond duelon to hydration elonrrors or beloncauselon thelony arelon delonlelontelond.
+   * Conselonquelonntly, thelon sizelon of output is <= sizelon of input. That is thelon intelonndelond usagelon pattelonrn.
    */
-  def hydrate(
-    viewerId: Option[UserId],
-    tweetIds: Seq[TweetId],
-    fieldsToHydrate: Set[TweetInclude] = TweetyPieClient.CoreTweetFields,
-    includeQuotedTweets: Boolean = false
-  ): Future[HydratedTweets] = {
-    if (tweetIds.isEmpty) {
-      TweetHydrator.EmptyHydratedTweetsFuture
-    } else {
-      val tweetStateMapFuture = tweetyPieClient.getHydratedTweetFields(
-        tweetIds,
-        viewerId,
-        fieldsToHydrate,
-        safetyLevel = Some(SafetyLevel.FilterNone),
-        bypassVisibilityFiltering = true,
-        includeSourceTweets = false,
-        includeQuotedTweets = includeQuotedTweets,
-        ignoreTweetSuppression = true
+  delonf hydratelon(
+    vielonwelonrId: Option[UselonrId],
+    twelonelontIds: Selonq[TwelonelontId],
+    fielonldsToHydratelon: Selont[TwelonelontIncludelon] = TwelonelontyPielonClielonnt.CorelonTwelonelontFielonlds,
+    includelonQuotelondTwelonelonts: Boolelonan = falselon
+  ): Futurelon[HydratelondTwelonelonts] = {
+    if (twelonelontIds.iselonmpty) {
+      TwelonelontHydrator.elonmptyHydratelondTwelonelontsFuturelon
+    } elonlselon {
+      val twelonelontStatelonMapFuturelon = twelonelontyPielonClielonnt.gelontHydratelondTwelonelontFielonlds(
+        twelonelontIds,
+        vielonwelonrId,
+        fielonldsToHydratelon,
+        safelontyLelonvelonl = Somelon(SafelontyLelonvelonl.FiltelonrNonelon),
+        bypassVisibilityFiltelonring = truelon,
+        includelonSourcelonTwelonelonts = falselon,
+        includelonQuotelondTwelonelonts = includelonQuotelondTwelonelonts,
+        ignorelonTwelonelontSupprelonssion = truelon
       )
 
-      tweetStateMapFuture.map { tweetStateMap =>
-        val innerTweetIdSet = tweetStateMap.keySet -- tweetIds.toSet
+      twelonelontStatelonMapFuturelon.map { twelonelontStatelonMap =>
+        val innelonrTwelonelontIdSelont = twelonelontStatelonMap.kelonySelont -- twelonelontIds.toSelont
 
-        val hydratedTweets =
-          HydratedTweetUtils.extractAndOrder(tweetIds ++ innerTweetIdSet.toSeq, tweetStateMap)
-        val (outer, inner) = hydratedTweets.partition { tweet =>
-          !innerTweetIdSet.contains(tweet.tweetId)
+        val hydratelondTwelonelonts =
+          HydratelondTwelonelontUtils.elonxtractAndOrdelonr(twelonelontIds ++ innelonrTwelonelontIdSelont.toSelonq, twelonelontStatelonMap)
+        val (outelonr, innelonr) = hydratelondTwelonelonts.partition { twelonelont =>
+          !innelonrTwelonelontIdSelont.contains(twelonelont.twelonelontId)
         }
 
-        totalCounter.incr(outer.size)
-        totalInnerCounter.incr(inner.size)
-        HydratedTweets(outer, inner)
+        totalCountelonr.incr(outelonr.sizelon)
+        totalInnelonrCountelonr.incr(innelonr.sizelon)
+        HydratelondTwelonelonts(outelonr, innelonr)
       }
     }
   }

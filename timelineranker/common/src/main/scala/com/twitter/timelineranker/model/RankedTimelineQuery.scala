@@ -1,14 +1,14 @@
-package com.twitter.timelineranker.model
+packagelon com.twittelonr.timelonlinelonrankelonr.modelonl
 
-import com.twitter.timelineranker.{thriftscala => thrift}
-import com.twitter.timelineservice.model.TimelineId
+import com.twittelonr.timelonlinelonrankelonr.{thriftscala => thrift}
+import com.twittelonr.timelonlinelonselonrvicelon.modelonl.TimelonlinelonId
 
-case class RankedTimelineQuery(
-  override val id: TimelineId,
-  override val maxCount: Option[Int] = None,
-  override val range: Option[TimelineRange] = None,
-  override val options: Option[RankedTimelineQueryOptions] = None)
-    extends TimelineQuery(thrift.TimelineQueryType.Ranked, id, maxCount, range, options) {
+caselon class RankelondTimelonlinelonQuelonry(
+  ovelonrridelon val id: TimelonlinelonId,
+  ovelonrridelon val maxCount: Option[Int] = Nonelon,
+  ovelonrridelon val rangelon: Option[TimelonlinelonRangelon] = Nonelon,
+  ovelonrridelon val options: Option[RankelondTimelonlinelonQuelonryOptions] = Nonelon)
+    elonxtelonnds TimelonlinelonQuelonry(thrift.TimelonlinelonQuelonryTypelon.Rankelond, id, maxCount, rangelon, options) {
 
   throwIfInvalid()
 }

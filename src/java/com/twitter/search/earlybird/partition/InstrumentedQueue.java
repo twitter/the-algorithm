@@ -1,51 +1,51 @@
-package com.twitter.search.earlybird.partition;
+packagelon com.twittelonr.selonarch.elonarlybird.partition;
 
-import java.util.concurrent.ConcurrentLinkedDeque;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrelonnt.ConcurrelonntLinkelondDelonquelon;
+import java.util.concurrelonnt.atomic.AtomicLong;
 
-import com.twitter.search.common.metrics.SearchLongGauge;
-import com.twitter.search.common.metrics.SearchRateCounter;
+import com.twittelonr.selonarch.common.melontrics.SelonarchLongGaugelon;
+import com.twittelonr.selonarch.common.melontrics.SelonarchRatelonCountelonr;
 
 /**
- * A queue with metrics on size, enqueue rate and dequeue rate.
+ * A quelonuelon with melontrics on sizelon, elonnquelonuelon ratelon and delonquelonuelon ratelon.
  */
-public class InstrumentedQueue<T> {
-  private final SearchRateCounter enqueueRate;
-  private final SearchRateCounter dequeueRate;
-  private final AtomicLong queueSize = new AtomicLong();
+public class InstrumelonntelondQuelonuelon<T> {
+  privatelon final SelonarchRatelonCountelonr elonnquelonuelonRatelon;
+  privatelon final SelonarchRatelonCountelonr delonquelonuelonRatelon;
+  privatelon final AtomicLong quelonuelonSizelon = nelonw AtomicLong();
 
-  private final ConcurrentLinkedDeque<T> queue;
+  privatelon final ConcurrelonntLinkelondDelonquelon<T> quelonuelon;
 
-  public InstrumentedQueue(String statsPrefix) {
-    SearchLongGauge.export(statsPrefix + "_size", queueSize);
-    enqueueRate = SearchRateCounter.export(statsPrefix + "_enqueue");
-    dequeueRate = SearchRateCounter.export(statsPrefix + "_dequeue");
+  public InstrumelonntelondQuelonuelon(String statsPrelonfix) {
+    SelonarchLongGaugelon.elonxport(statsPrelonfix + "_sizelon", quelonuelonSizelon);
+    elonnquelonuelonRatelon = SelonarchRatelonCountelonr.elonxport(statsPrelonfix + "_elonnquelonuelon");
+    delonquelonuelonRatelon = SelonarchRatelonCountelonr.elonxport(statsPrelonfix + "_delonquelonuelon");
 
-    queue = new ConcurrentLinkedDeque<>();
+    quelonuelon = nelonw ConcurrelonntLinkelondDelonquelon<>();
   }
 
   /**
-   * Adds a new element to the queue.
+   * Adds a nelonw elonlelonmelonnt to thelon quelonuelon.
    */
-  public void add(T tve) {
-    queue.add(tve);
-    enqueueRate.increment();
-    queueSize.incrementAndGet();
+  public void add(T tvelon) {
+    quelonuelon.add(tvelon);
+    elonnquelonuelonRatelon.increlonmelonnt();
+    quelonuelonSizelon.increlonmelonntAndGelont();
   }
 
   /**
-   * Returns the first element in the queue. If the queue is empty, {@code null} is returned.
+   * Relonturns thelon first elonlelonmelonnt in thelon quelonuelon. If thelon quelonuelon is elonmpty, {@codelon null} is relonturnelond.
    */
   public T poll() {
-    T tve = queue.poll();
-    if (tve != null) {
-      dequeueRate.increment();
-      queueSize.decrementAndGet();
+    T tvelon = quelonuelon.poll();
+    if (tvelon != null) {
+      delonquelonuelonRatelon.increlonmelonnt();
+      quelonuelonSizelon.deloncrelonmelonntAndGelont();
     }
-    return tve;
+    relonturn tvelon;
   }
 
-  public long getQueueSize() {
-    return queueSize.get();
+  public long gelontQuelonuelonSizelon() {
+    relonturn quelonuelonSizelon.gelont();
   }
 }

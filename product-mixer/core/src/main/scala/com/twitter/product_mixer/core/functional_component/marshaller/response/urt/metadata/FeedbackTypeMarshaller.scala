@@ -1,27 +1,27 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.melontadata
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata._
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata._
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class FeedbackTypeMarshaller @Inject() () {
+@Singlelonton
+class FelonelondbackTypelonMarshallelonr @Injelonct() () {
 
-  def apply(feedbackType: FeedbackType): urt.FeedbackType = feedbackType match {
-    case Dismiss => urt.FeedbackType.Dismiss
-    case SeeFewer => urt.FeedbackType.SeeFewer
-    case DontLike => urt.FeedbackType.DontLike
-    case NotRelevant => urt.FeedbackType.NotRelevant
-    case SeeMore => urt.FeedbackType.SeeMore
-    case NotCredible => urt.FeedbackType.NotCredible
-    case GiveFeedback => urt.FeedbackType.GiveFeedback
-    case NotRecent => urt.FeedbackType.NotRecent
-    case UnfollowEntity => urt.FeedbackType.UnfollowEntity
-    case Relevant => urt.FeedbackType.Relevant
-    case Moderate => urt.FeedbackType.Moderate
-    case RichBehavior => urt.FeedbackType.RichBehavior
-    case NotAboutTopic => urt.FeedbackType.NotAboutTopic
-    case Generic => urt.FeedbackType.Generic
+  delonf apply(felonelondbackTypelon: FelonelondbackTypelon): urt.FelonelondbackTypelon = felonelondbackTypelon match {
+    caselon Dismiss => urt.FelonelondbackTypelon.Dismiss
+    caselon SelonelonFelonwelonr => urt.FelonelondbackTypelon.SelonelonFelonwelonr
+    caselon DontLikelon => urt.FelonelondbackTypelon.DontLikelon
+    caselon NotRelonlelonvant => urt.FelonelondbackTypelon.NotRelonlelonvant
+    caselon SelonelonMorelon => urt.FelonelondbackTypelon.SelonelonMorelon
+    caselon NotCrelondiblelon => urt.FelonelondbackTypelon.NotCrelondiblelon
+    caselon GivelonFelonelondback => urt.FelonelondbackTypelon.GivelonFelonelondback
+    caselon NotReloncelonnt => urt.FelonelondbackTypelon.NotReloncelonnt
+    caselon Unfollowelonntity => urt.FelonelondbackTypelon.Unfollowelonntity
+    caselon Relonlelonvant => urt.FelonelondbackTypelon.Relonlelonvant
+    caselon Modelonratelon => urt.FelonelondbackTypelon.Modelonratelon
+    caselon RichBelonhavior => urt.FelonelondbackTypelon.RichBelonhavior
+    caselon NotAboutTopic => urt.FelonelondbackTypelon.NotAboutTopic
+    caselon Gelonnelonric => urt.FelonelondbackTypelon.Gelonnelonric
   }
 }

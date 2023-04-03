@@ -1,9 +1,9 @@
 scala_library(
-    sources = ["*.scala"],
+    sourcelons = ["*.scala"],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "servo/decider",
-        "timelineranker/server/config",
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        "selonrvo/deloncidelonr",
+        "timelonlinelonrankelonr/selonrvelonr/config",
     ],
 )

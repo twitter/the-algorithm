@@ -1,23 +1,23 @@
-package com.twitter.follow_recommendations.common.models
+packagelon com.twittelonr.follow_reloncommelonndations.common.modelonls
 
-import com.twitter.adserver.{thriftscala => t}
+import com.twittelonr.adselonrvelonr.{thriftscala => t}
 
-case class AdMetadata(
-  insertPosition: Int,
-  // use original ad impression info to avoid losing data in domain model translations
-  adImpression: t.AdImpression)
+caselon class AdMelontadata(
+  inselonrtPosition: Int,
+  // uselon original ad imprelonssion info to avoid losing data in domain modelonl translations
+  adImprelonssion: t.AdImprelonssion)
 
-trait HasAdMetadata {
+trait HasAdMelontadata {
 
-  def adMetadata: Option[AdMetadata]
+  delonf adMelontadata: Option[AdMelontadata]
 
-  def adImpression: Option[t.AdImpression] = {
-    adMetadata.map(_.adImpression)
+  delonf adImprelonssion: Option[t.AdImprelonssion] = {
+    adMelontadata.map(_.adImprelonssion)
   }
 
-  def insertPosition: Option[Int] = {
-    adMetadata.map(_.insertPosition)
+  delonf inselonrtPosition: Option[Int] = {
+    adMelontadata.map(_.inselonrtPosition)
   }
 
-  def isPromotedAccount: Boolean = adMetadata.isDefined
+  delonf isPromotelondAccount: Boolelonan = adMelontadata.isDelonfinelond
 }

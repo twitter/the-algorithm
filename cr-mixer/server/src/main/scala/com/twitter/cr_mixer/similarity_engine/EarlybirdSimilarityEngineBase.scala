@@ -1,56 +1,56 @@
-package com.twitter.cr_mixer.similarity_engine
+packagelon com.twittelonr.cr_mixelonr.similarity_elonnginelon
 
-import com.twitter.cr_mixer.model.TweetWithAuthor
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.search.earlybird.thriftscala.EarlybirdRequest
-import com.twitter.search.earlybird.thriftscala.EarlybirdResponseCode
-import com.twitter.search.earlybird.thriftscala.EarlybirdService
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
+import com.twittelonr.cr_mixelonr.modelonl.TwelonelontWithAuthor
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.selonarch.elonarlybird.thriftscala.elonarlybirdRelonquelonst
+import com.twittelonr.selonarch.elonarlybird.thriftscala.elonarlybirdRelonsponselonCodelon
+import com.twittelonr.selonarch.elonarlybird.thriftscala.elonarlybirdSelonrvicelon
+import com.twittelonr.simclustelonrs_v2.common.UselonrId
+import com.twittelonr.storelonhaus.RelonadablelonStorelon
+import com.twittelonr.util.Futurelon
 
 /**
- * This trait is a base trait for Earlybird similarity engines. All Earlybird similarity
- * engines extend from it and override the construction method for EarlybirdRequest
+ * This trait is a baselon trait for elonarlybird similarity elonnginelons. All elonarlybird similarity
+ * elonnginelons elonxtelonnd from it and ovelonrridelon thelon construction melonthod for elonarlybirdRelonquelonst
  */
-trait EarlybirdSimilarityEngineBase[EarlybirdSearchQuery]
-    extends ReadableStore[EarlybirdSearchQuery, Seq[TweetWithAuthor]] {
-  def earlybirdSearchClient: EarlybirdService.MethodPerEndpoint
+trait elonarlybirdSimilarityelonnginelonBaselon[elonarlybirdSelonarchQuelonry]
+    elonxtelonnds RelonadablelonStorelon[elonarlybirdSelonarchQuelonry, Selonq[TwelonelontWithAuthor]] {
+  delonf elonarlybirdSelonarchClielonnt: elonarlybirdSelonrvicelon.MelonthodPelonrelonndpoint
 
-  def statsReceiver: StatsReceiver
+  delonf statsReloncelonivelonr: StatsReloncelonivelonr
 
-  def getEarlybirdRequest(query: EarlybirdSearchQuery): Option[EarlybirdRequest]
+  delonf gelontelonarlybirdRelonquelonst(quelonry: elonarlybirdSelonarchQuelonry): Option[elonarlybirdRelonquelonst]
 
-  override def get(query: EarlybirdSearchQuery): Future[Option[Seq[TweetWithAuthor]]] = {
-    getEarlybirdRequest(query)
-      .map { earlybirdRequest =>
-        earlybirdSearchClient
-          .search(earlybirdRequest).map { response =>
-            response.responseCode match {
-              case EarlybirdResponseCode.Success =>
-                val earlybirdSearchResult =
-                  response.searchResults
+  ovelonrridelon delonf gelont(quelonry: elonarlybirdSelonarchQuelonry): Futurelon[Option[Selonq[TwelonelontWithAuthor]]] = {
+    gelontelonarlybirdRelonquelonst(quelonry)
+      .map { elonarlybirdRelonquelonst =>
+        elonarlybirdSelonarchClielonnt
+          .selonarch(elonarlybirdRelonquelonst).map { relonsponselon =>
+            relonsponselon.relonsponselonCodelon match {
+              caselon elonarlybirdRelonsponselonCodelon.Succelonss =>
+                val elonarlybirdSelonarchRelonsult =
+                  relonsponselon.selonarchRelonsults
                     .map(
-                      _.results
-                        .map(searchResult =>
-                          TweetWithAuthor(
-                            searchResult.id,
-                            // fromUserId should be there since MetadataOptions.getFromUserId = true
-                            searchResult.metadata.map(_.fromUserId).getOrElse(0))).toSeq)
-                statsReceiver.scope("result").stat("size").add(earlybirdSearchResult.size)
-                earlybirdSearchResult
-              case e =>
-                statsReceiver.scope("failures").counter(e.getClass.getSimpleName).incr()
-                Some(Seq.empty)
+                      _.relonsults
+                        .map(selonarchRelonsult =>
+                          TwelonelontWithAuthor(
+                            selonarchRelonsult.id,
+                            // fromUselonrId should belon thelonrelon sincelon MelontadataOptions.gelontFromUselonrId = truelon
+                            selonarchRelonsult.melontadata.map(_.fromUselonrId).gelontOrelonlselon(0))).toSelonq)
+                statsReloncelonivelonr.scopelon("relonsult").stat("sizelon").add(elonarlybirdSelonarchRelonsult.sizelon)
+                elonarlybirdSelonarchRelonsult
+              caselon elon =>
+                statsReloncelonivelonr.scopelon("failurelons").countelonr(elon.gelontClass.gelontSimplelonNamelon).incr()
+                Somelon(Selonq.elonmpty)
             }
           }
-      }.getOrElse(Future.None)
+      }.gelontOrelonlselon(Futurelon.Nonelon)
   }
 }
 
-object EarlybirdSimilarityEngineBase {
-  trait EarlybirdSearchQuery {
-    def seedUserIds: Seq[UserId]
-    def maxNumTweets: Int
+objelonct elonarlybirdSimilarityelonnginelonBaselon {
+  trait elonarlybirdSelonarchQuelonry {
+    delonf selonelondUselonrIds: Selonq[UselonrId]
+    delonf maxNumTwelonelonts: Int
   }
 }

@@ -1,28 +1,28 @@
-package com.twitter.product_mixer.core.functional_component.side_effect
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.sidelon_elonffelonct
 
-import com.twitter.product_mixer.core.model.common.Component
-import com.twitter.product_mixer.core.model.common.identifier.SideEffectIdentifier
-import com.twitter.stitch.Stitch
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.Componelonnt
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.SidelonelonffelonctIdelonntifielonr
+import com.twittelonr.stitch.Stitch
 
 /**
- * A side-effect is a ancillary action that doesn't affect the result of execution directly.
+ * A sidelon-elonffelonct is a ancillary action that doelonsn't affelonct thelon relonsult of elonxeloncution direlonctly.
  *
- * For example: Logging, history stores
+ * For elonxamplelon: Logging, history storelons
  *
- * Implementing components can express failures by throwing an exception. These exceptions
- * will be caught and not affect the request processing.
+ * Implelonmelonnting componelonnts can elonxprelonss failurelons by throwing an elonxcelonption. Thelonselon elonxcelonptions
+ * will belon caught and not affelonct thelon relonquelonst procelonssing.
  *
- * @note Side effects execute asynchronously in a fire-and-forget way, it's important to add alerts
- *       to the [[SideEffect]] component itself since a failures wont show up in metrics
- *       that just monitor your pipeline as a whole.
+ * @notelon Sidelon elonffeloncts elonxeloncutelon asynchronously in a firelon-and-forgelont way, it's important to add alelonrts
+ *       to thelon [[Sidelonelonffelonct]] componelonnt itselonlf sincelon a failurelons wont show up in melontrics
+ *       that just monitor your pipelonlinelon as a wholelon.
  *
- * @see [[ExecuteSynchronously]] for modifying a [[SideEffect]] to execute with synchronously with
- *      the request waiting on the side effect to complete, this will impact the overall request's latency
+ * @selonelon [[elonxeloncutelonSynchronously]] for modifying a [[Sidelonelonffelonct]] to elonxeloncutelon with synchronously with
+ *      thelon relonquelonst waiting on thelon sidelon elonffelonct to complelontelon, this will impact thelon ovelonrall relonquelonst's latelonncy
  **/
-trait SideEffect[-Inputs] extends Component {
+trait Sidelonelonffelonct[-Inputs] elonxtelonnds Componelonnt {
 
-  /** @see [[SideEffectIdentifier]] */
-  override val identifier: SideEffectIdentifier
+  /** @selonelon [[SidelonelonffelonctIdelonntifielonr]] */
+  ovelonrridelon val idelonntifielonr: SidelonelonffelonctIdelonntifielonr
 
-  def apply(inputs: Inputs): Stitch[Unit]
+  delonf apply(inputs: Inputs): Stitch[Unit]
 }

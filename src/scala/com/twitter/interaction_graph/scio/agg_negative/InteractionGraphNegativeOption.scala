@@ -1,18 +1,18 @@
-package com.twitter.interaction_graph.scio.agg_negative
+packagelon com.twittelonr.intelonraction_graph.scio.agg_nelongativelon
 
-import com.twitter.beam.io.dal.DALOptions
-import com.twitter.beam.job.DateRangeOptions
-import org.apache.beam.sdk.options.Description
-import org.apache.beam.sdk.options.Validation.Required
+import com.twittelonr.belonam.io.dal.DALOptions
+import com.twittelonr.belonam.job.DatelonRangelonOptions
+import org.apachelon.belonam.sdk.options.Delonscription
+import org.apachelon.belonam.sdk.options.Validation.Relonquirelond
 
-trait InteractionGraphNegativeOption extends DALOptions with DateRangeOptions {
-  @Required
-  @Description("Output path for storing the final dataset")
-  def getOutputPath: String
-  def setOutputPath(value: String): Unit
+trait IntelonractionGraphNelongativelonOption elonxtelonnds DALOptions with DatelonRangelonOptions {
+  @Relonquirelond
+  @Delonscription("Output path for storing thelon final dataselont")
+  delonf gelontOutputPath: String
+  delonf selontOutputPath(valuelon: String): Unit
 
-  @Description("BQ dataset prefix")
-  def getBqDataset: String
-  def setBqDataset(value: String): Unit
+  @Delonscription("BQ dataselont prelonfix")
+  delonf gelontBqDataselont: String
+  delonf selontBqDataselont(valuelon: String): Unit
 
 }

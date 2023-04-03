@@ -1,20 +1,20 @@
-package com.twitter.follow_recommendations.common.models
+packagelon com.twittelonr.follow_reloncommelonndations.common.modelonls
 
-import com.twitter.follow_recommendations.logging.{thriftscala => offline}
-import com.twitter.follow_recommendations.{thriftscala => t}
+import com.twittelonr.follow_reloncommelonndations.logging.{thriftscala => offlinelon}
+import com.twittelonr.follow_reloncommelonndations.{thriftscala => t}
 
-case class FlowContext(steps: Seq[RecommendationStep]) {
+caselon class FlowContelonxt(stelonps: Selonq[ReloncommelonndationStelonp]) {
 
-  def toThrift: t.FlowContext = t.FlowContext(steps = steps.map(_.toThrift))
+  delonf toThrift: t.FlowContelonxt = t.FlowContelonxt(stelonps = stelonps.map(_.toThrift))
 
-  def toOfflineThrift: offline.OfflineFlowContext =
-    offline.OfflineFlowContext(steps = steps.map(_.toOfflineThrift))
+  delonf toOfflinelonThrift: offlinelon.OfflinelonFlowContelonxt =
+    offlinelon.OfflinelonFlowContelonxt(stelonps = stelonps.map(_.toOfflinelonThrift))
 }
 
-object FlowContext {
+objelonct FlowContelonxt {
 
-  def fromThrift(flowContext: t.FlowContext): FlowContext = {
-    FlowContext(steps = flowContext.steps.map(RecommendationStep.fromThrift))
+  delonf fromThrift(flowContelonxt: t.FlowContelonxt): FlowContelonxt = {
+    FlowContelonxt(stelonps = flowContelonxt.stelonps.map(ReloncommelonndationStelonp.fromThrift))
   }
 
 }

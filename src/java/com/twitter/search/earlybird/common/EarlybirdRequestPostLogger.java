@@ -1,37 +1,37 @@
-package com.twitter.search.earlybird.common;
+packagelon com.twittelonr.selonarch.elonarlybird.common;
 
-import com.twitter.decider.Decider;
-import com.twitter.search.common.metrics.Timer;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
+import com.twittelonr.deloncidelonr.Deloncidelonr;
+import com.twittelonr.selonarch.common.melontrics.Timelonr;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonquelonst;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
 
-public final class EarlybirdRequestPostLogger {
-  private final EarlybirdRequestLogger logger;
+public final class elonarlybirdRelonquelonstPostLoggelonr {
+  privatelon final elonarlybirdRelonquelonstLoggelonr loggelonr;
 
-  public static EarlybirdRequestPostLogger buildForRoot(
-      int latencyWarnThreshold, Decider decider) {
+  public static elonarlybirdRelonquelonstPostLoggelonr buildForRoot(
+      int latelonncyWarnThrelonshold, Deloncidelonr deloncidelonr) {
 
-    EarlybirdRequestLogger requestLogger = EarlybirdRequestLogger.buildForRoot(
-        EarlybirdRequestPostLogger.class.getName(), latencyWarnThreshold, decider);
+    elonarlybirdRelonquelonstLoggelonr relonquelonstLoggelonr = elonarlybirdRelonquelonstLoggelonr.buildForRoot(
+        elonarlybirdRelonquelonstPostLoggelonr.class.gelontNamelon(), latelonncyWarnThrelonshold, deloncidelonr);
 
-    return new EarlybirdRequestPostLogger(requestLogger);
+    relonturn nelonw elonarlybirdRelonquelonstPostLoggelonr(relonquelonstLoggelonr);
   }
 
-  public static EarlybirdRequestPostLogger buildForShard(
-      int latencyWarnThreshold, Decider decider) {
+  public static elonarlybirdRelonquelonstPostLoggelonr buildForShard(
+      int latelonncyWarnThrelonshold, Deloncidelonr deloncidelonr) {
 
-    EarlybirdRequestLogger requestLogger = EarlybirdRequestLogger.buildForShard(
-        EarlybirdRequestPostLogger.class.getName(), latencyWarnThreshold, decider);
+    elonarlybirdRelonquelonstLoggelonr relonquelonstLoggelonr = elonarlybirdRelonquelonstLoggelonr.buildForShard(
+        elonarlybirdRelonquelonstPostLoggelonr.class.gelontNamelon(), latelonncyWarnThrelonshold, deloncidelonr);
 
-    return new EarlybirdRequestPostLogger(requestLogger);
+    relonturn nelonw elonarlybirdRelonquelonstPostLoggelonr(relonquelonstLoggelonr);
   }
 
-  private EarlybirdRequestPostLogger(EarlybirdRequestLogger logger) {
-    this.logger = logger;
+  privatelon elonarlybirdRelonquelonstPostLoggelonr(elonarlybirdRelonquelonstLoggelonr loggelonr) {
+    this.loggelonr = loggelonr;
   }
 
-  public void logRequest(EarlybirdRequest request, EarlybirdResponse response, Timer timer) {
-    EarlybirdRequestUtil.updateHitsCounters(request);
-    logger.logRequest(request, response, timer);
+  public void logRelonquelonst(elonarlybirdRelonquelonst relonquelonst, elonarlybirdRelonsponselon relonsponselon, Timelonr timelonr) {
+    elonarlybirdRelonquelonstUtil.updatelonHitsCountelonrs(relonquelonst);
+    loggelonr.logRelonquelonst(relonquelonst, relonsponselon, timelonr);
   }
 }

@@ -1,21 +1,21 @@
-package com.twitter.cr_mixer.featureswitch
+packagelon com.twittelonr.cr_mixelonr.felonaturelonswitch
 
-import com.twitter.finagle.Filter
-import javax.inject.Inject
-import javax.inject.Singleton
-import scala.collection.concurrent.TrieMap
-import com.twitter.abdecider.Bucket
-import com.twitter.finagle.Service
+import com.twittelonr.finaglelon.Filtelonr
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
+import scala.collelonction.concurrelonnt.TrielonMap
+import com.twittelonr.abdeloncidelonr.Buckelont
+import com.twittelonr.finaglelon.Selonrvicelon
 
-@Singleton
-class SetImpressedBucketsLocalContextFilter @Inject() () extends Filter.TypeAgnostic {
-  override def toFilter[Req, Rep]: Filter[Req, Rep, Req, Rep] =
-    (request: Req, service: Service[Req, Rep]) => {
+@Singlelonton
+class SelontImprelonsselondBuckelontsLocalContelonxtFiltelonr @Injelonct() () elonxtelonnds Filtelonr.TypelonAgnostic {
+  ovelonrridelon delonf toFiltelonr[Relonq, Relonp]: Filtelonr[Relonq, Relonp, Relonq, Relonp] =
+    (relonquelonst: Relonq, selonrvicelon: Selonrvicelon[Relonq, Relonp]) => {
 
-      val concurrentTrieMap = TrieMap
-        .empty[Bucket, Boolean] // Trie map has no locks and O(1) inserts
-      CrMixerImpressedBuckets.localImpressedBucketsMap.let(concurrentTrieMap) {
-        service(request)
+      val concurrelonntTrielonMap = TrielonMap
+        .elonmpty[Buckelont, Boolelonan] // Trielon map has no locks and O(1) inselonrts
+      CrMixelonrImprelonsselondBuckelonts.localImprelonsselondBuckelontsMap.lelont(concurrelonntTrielonMap) {
+        selonrvicelon(relonquelonst)
       }
     }
 

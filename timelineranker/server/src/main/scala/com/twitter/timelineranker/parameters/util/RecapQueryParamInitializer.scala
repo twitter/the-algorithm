@@ -1,20 +1,20 @@
-package com.twitter.timelineranker.parameters.util
+packagelon com.twittelonr.timelonlinelonrankelonr.paramelontelonrs.util
 
-import com.twitter.servo.util.FunctionArrow
-import com.twitter.timelineranker.config.RuntimeConfiguration
-import com.twitter.timelineranker.model.RecapQuery
-import com.twitter.timelines.configapi.Config
-import com.twitter.util.Future
+import com.twittelonr.selonrvo.util.FunctionArrow
+import com.twittelonr.timelonlinelonrankelonr.config.RuntimelonConfiguration
+import com.twittelonr.timelonlinelonrankelonr.modelonl.ReloncapQuelonry
+import com.twittelonr.timelonlinelons.configapi.Config
+import com.twittelonr.util.Futurelon
 
-class RecapQueryParamInitializer(config: Config, runtimeConfig: RuntimeConfiguration)
-    extends FunctionArrow[RecapQuery, Future[RecapQuery]] {
-  private[this] val requestContextBuilder =
-    new RequestContextBuilderImpl(runtimeConfig.configApiConfiguration.requestContextFactory)
+class ReloncapQuelonryParamInitializelonr(config: Config, runtimelonConfig: RuntimelonConfiguration)
+    elonxtelonnds FunctionArrow[ReloncapQuelonry, Futurelon[ReloncapQuelonry]] {
+  privatelon[this] val relonquelonstContelonxtBuildelonr =
+    nelonw RelonquelonstContelonxtBuildelonrImpl(runtimelonConfig.configApiConfiguration.relonquelonstContelonxtFactory)
 
-  def apply(query: RecapQuery): Future[RecapQuery] = {
-    requestContextBuilder(Some(query.userId), query.deviceContext).map { baseContext =>
-      val params = config(baseContext, runtimeConfig.statsReceiver)
-      query.copy(params = params)
+  delonf apply(quelonry: ReloncapQuelonry): Futurelon[ReloncapQuelonry] = {
+    relonquelonstContelonxtBuildelonr(Somelon(quelonry.uselonrId), quelonry.delonvicelonContelonxt).map { baselonContelonxt =>
+      val params = config(baselonContelonxt, runtimelonConfig.statsReloncelonivelonr)
+      quelonry.copy(params = params)
     }
   }
 }

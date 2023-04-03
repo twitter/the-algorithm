@@ -1,38 +1,38 @@
-package com.twitter.product_mixer.core.functional_component.common.access_policy
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.accelonss_policy
 
-import com.fasterxml.jackson.annotation.JsonSubTypes
-import com.fasterxml.jackson.annotation.JsonTypeInfo
+import com.fastelonrxml.jackson.annotation.JsonSubTypelons
+import com.fastelonrxml.jackson.annotation.JsonTypelonInfo
 
 /**
- * The Access Policy to set for gating querying in the turntable tool.
+ * Thelon Accelonss Policy to selont for gating quelonrying in thelon turntablelon tool.
  *
- * @note implementations must be simple case classes with unique structures for serialization
+ * @notelon implelonmelonntations must belon simplelon caselon classelons with uniquelon structurelons for selonrialization
  */
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY)
-@JsonSubTypes(
+@JsonTypelonInfo(uselon = JsonTypelonInfo.Id.NAMelon, includelon = JsonTypelonInfo.As.PROPelonRTY)
+@JsonSubTypelons(
   Array(
-    new JsonSubTypes.Type(value = classOf[AllowedLdapGroups], name = "AllowedLdapGroups"),
-    new JsonSubTypes.Type(value = classOf[BlockEverything], name = "BlockEverything")
+    nelonw JsonSubTypelons.Typelon(valuelon = classOf[AllowelondLdapGroups], namelon = "AllowelondLdapGroups"),
+    nelonw JsonSubTypelons.Typelon(valuelon = classOf[Blockelonvelonrything], namelon = "Blockelonvelonrything")
   )
 )
-sealed trait AccessPolicy
+selonalelond trait AccelonssPolicy
 
 /**
- * Users must be in *at least* one of the provided LDAP groups in order to make a query.
+ * Uselonrs must belon in *at lelonast* onelon of thelon providelond LDAP groups in ordelonr to makelon a quelonry.
  *
- * @param groups LDAP groups allowed to access this product
+ * @param groups LDAP groups allowelond to accelonss this product
  */
-case class AllowedLdapGroups(groups: Set[String]) extends AccessPolicy
+caselon class AllowelondLdapGroups(groups: Selont[String]) elonxtelonnds AccelonssPolicy
 
-object AllowedLdapGroups {
-  def apply(group: String): AllowedLdapGroups = AllowedLdapGroups(Set(group))
+objelonct AllowelondLdapGroups {
+  delonf apply(group: String): AllowelondLdapGroups = AllowelondLdapGroups(Selont(group))
 }
 
 /**
- * Block all requests to a product.
+ * Block all relonquelonsts to a product.
  *
- * @note this needs to be a case class rather than an object because classOf doesn't work on objects
- *       and JsonSubTypes requires the annotation argument to be a constant (ruling out .getClass).
- *       This issue may be resolved in Scala 2.13: https://github.com/scala/scala/pull/9279
+ * @notelon this nelonelonds to belon a caselon class rathelonr than an objelonct beloncauselon classOf doelonsn't work on objeloncts
+ *       and JsonSubTypelons relonquirelons thelon annotation argumelonnt to belon a constant (ruling out .gelontClass).
+ *       This issuelon may belon relonsolvelond in Scala 2.13: https://github.com/scala/scala/pull/9279
  */
-case class BlockEverything() extends AccessPolicy
+caselon class Blockelonvelonrything() elonxtelonnds AccelonssPolicy

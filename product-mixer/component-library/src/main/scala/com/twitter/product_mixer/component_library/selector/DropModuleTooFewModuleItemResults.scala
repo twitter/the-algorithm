@@ -1,46 +1,46 @@
-package com.twitter.product_mixer.component_library.selector
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.selonlelonctor
 
-import com.twitter.product_mixer.component_library.model.candidate.CursorCandidate
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.functional_component.common.SpecificPipelines
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.functional_component.selector.SelectorResult
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ModuleCandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.configapi.Param
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.CursorCandidatelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.CandidatelonScopelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.SpeloncificPipelonlinelons
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.selonlelonctor.Selonlelonctor
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.selonlelonctor.SelonlelonctorRelonsult
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonPipelonlinelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.ModulelonCandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.timelonlinelons.configapi.Param
 
 /**
- * Drop the module from the `result` if it doesn't contain enough item candidates.
+ * Drop thelon modulelon from thelon `relonsult` if it doelonsn't contain elonnough itelonm candidatelons.
  *
- * For example, for a given module, if minResultsParam is 3, and the results contain 2 items,
- * then that module will be entirely dropped from the results.
+ * For elonxamplelon, for a givelonn modulelon, if minRelonsultsParam is 3, and thelon relonsults contain 2 itelonms,
+ * thelonn that modulelon will belon elonntirelonly droppelond from thelon relonsults.
  */
-case class DropModuleTooFewModuleItemResults(
-  candidatePipeline: CandidatePipelineIdentifier,
-  minModuleItemsParam: Param[Int])
-    extends Selector[PipelineQuery] {
+caselon class DropModulelonTooFelonwModulelonItelonmRelonsults(
+  candidatelonPipelonlinelon: CandidatelonPipelonlinelonIdelonntifielonr,
+  minModulelonItelonmsParam: Param[Int])
+    elonxtelonnds Selonlelonctor[PipelonlinelonQuelonry] {
 
-  override val pipelineScope: CandidateScope = SpecificPipelines(candidatePipeline)
+  ovelonrridelon val pipelonlinelonScopelon: CandidatelonScopelon = SpeloncificPipelonlinelons(candidatelonPipelonlinelon)
 
-  override def apply(
-    query: PipelineQuery,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
-  ): SelectorResult = {
-    val minModuleItemSelections = query.params(minModuleItemsParam)
-    assert(minModuleItemSelections > 0, "Min results must be greater than zero")
+  ovelonrridelon delonf apply(
+    quelonry: PipelonlinelonQuelonry,
+    relonmainingCandidatelons: Selonq[CandidatelonWithDelontails],
+    relonsult: Selonq[CandidatelonWithDelontails]
+  ): SelonlelonctorRelonsult = {
+    val minModulelonItelonmSelonlelonctions = quelonry.params(minModulelonItelonmsParam)
+    asselonrt(minModulelonItelonmSelonlelonctions > 0, "Min relonsults must belon grelonatelonr than zelonro")
 
-    val updatedResults = result.filter {
-      case module: ModuleCandidateWithDetails
-          if pipelineScope.contains(module) && module.candidates.count { candidateWithDetails =>
-            !candidateWithDetails.candidate.isInstanceOf[CursorCandidate]
-          } < minModuleItemSelections =>
-        false
-      case _ => true
+    val updatelondRelonsults = relonsult.filtelonr {
+      caselon modulelon: ModulelonCandidatelonWithDelontails
+          if pipelonlinelonScopelon.contains(modulelon) && modulelon.candidatelons.count { candidatelonWithDelontails =>
+            !candidatelonWithDelontails.candidatelon.isInstancelonOf[CursorCandidatelon]
+          } < minModulelonItelonmSelonlelonctions =>
+        falselon
+      caselon _ => truelon
     }
 
-    SelectorResult(remainingCandidates = remainingCandidates, result = updatedResults)
+    SelonlelonctorRelonsult(relonmainingCandidatelons = relonmainingCandidatelons, relonsult = updatelondRelonsults)
   }
 }

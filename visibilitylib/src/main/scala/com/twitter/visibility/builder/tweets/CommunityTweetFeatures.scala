@@ -1,70 +1,70 @@
-package com.twitter.visibility.builder.tweets
+packagelon com.twittelonr.visibility.buildelonr.twelonelonts
 
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.features.CommunityTweetAuthorIsRemoved
-import com.twitter.visibility.features.CommunityTweetCommunityNotFound
-import com.twitter.visibility.features.CommunityTweetCommunityDeleted
-import com.twitter.visibility.features.CommunityTweetCommunitySuspended
-import com.twitter.visibility.features.CommunityTweetCommunityVisible
-import com.twitter.visibility.features.CommunityTweetIsHidden
-import com.twitter.visibility.features.TweetIsCommunityTweet
-import com.twitter.visibility.features.ViewerIsCommunityAdmin
-import com.twitter.visibility.features.ViewerIsCommunityMember
-import com.twitter.visibility.features.ViewerIsCommunityModerator
-import com.twitter.visibility.features.ViewerIsInternalCommunitiesAdmin
-import com.twitter.visibility.models.CommunityTweet
-import com.twitter.visibility.models.ViewerContext
+import com.twittelonr.twelonelontypielon.thriftscala.Twelonelont
+import com.twittelonr.visibility.buildelonr.FelonaturelonMapBuildelonr
+import com.twittelonr.visibility.felonaturelons.CommunityTwelonelontAuthorIsRelonmovelond
+import com.twittelonr.visibility.felonaturelons.CommunityTwelonelontCommunityNotFound
+import com.twittelonr.visibility.felonaturelons.CommunityTwelonelontCommunityDelonlelontelond
+import com.twittelonr.visibility.felonaturelons.CommunityTwelonelontCommunitySuspelonndelond
+import com.twittelonr.visibility.felonaturelons.CommunityTwelonelontCommunityVisiblelon
+import com.twittelonr.visibility.felonaturelons.CommunityTwelonelontIsHiddelonn
+import com.twittelonr.visibility.felonaturelons.TwelonelontIsCommunityTwelonelont
+import com.twittelonr.visibility.felonaturelons.VielonwelonrIsCommunityAdmin
+import com.twittelonr.visibility.felonaturelons.VielonwelonrIsCommunityMelonmbelonr
+import com.twittelonr.visibility.felonaturelons.VielonwelonrIsCommunityModelonrator
+import com.twittelonr.visibility.felonaturelons.VielonwelonrIsIntelonrnalCommunitielonsAdmin
+import com.twittelonr.visibility.modelonls.CommunityTwelonelont
+import com.twittelonr.visibility.modelonls.VielonwelonrContelonxt
 
-trait CommunityTweetFeatures {
+trait CommunityTwelonelontFelonaturelons {
 
-  def forTweet(
-    tweet: Tweet,
-    viewerContext: ViewerContext
-  ): FeatureMapBuilder => FeatureMapBuilder
+  delonf forTwelonelont(
+    twelonelont: Twelonelont,
+    vielonwelonrContelonxt: VielonwelonrContelonxt
+  ): FelonaturelonMapBuildelonr => FelonaturelonMapBuildelonr
 
-  def forTweetOnly(tweet: Tweet): FeatureMapBuilder => FeatureMapBuilder = {
-    _.withConstantFeature(
-      TweetIsCommunityTweet,
-      CommunityTweet(tweet).isDefined
+  delonf forTwelonelontOnly(twelonelont: Twelonelont): FelonaturelonMapBuildelonr => FelonaturelonMapBuildelonr = {
+    _.withConstantFelonaturelon(
+      TwelonelontIsCommunityTwelonelont,
+      CommunityTwelonelont(twelonelont).isDelonfinelond
     )
   }
 
-  protected def forNonCommunityTweet(): FeatureMapBuilder => FeatureMapBuilder = { builder =>
-    builder
-      .withConstantFeature(
-        TweetIsCommunityTweet,
-        false
-      ).withConstantFeature(
-        CommunityTweetCommunityNotFound,
-        false
-      ).withConstantFeature(
-        CommunityTweetCommunitySuspended,
-        false
-      ).withConstantFeature(
-        CommunityTweetCommunityDeleted,
-        false
-      ).withConstantFeature(
-        CommunityTweetCommunityVisible,
-        false
-      ).withConstantFeature(
-        ViewerIsInternalCommunitiesAdmin,
-        false
-      ).withConstantFeature(
-        ViewerIsCommunityAdmin,
-        false
-      ).withConstantFeature(
-        ViewerIsCommunityModerator,
-        false
-      ).withConstantFeature(
-        ViewerIsCommunityMember,
-        false
-      ).withConstantFeature(
-        CommunityTweetIsHidden,
-        false
-      ).withConstantFeature(
-        CommunityTweetAuthorIsRemoved,
-        false
+  protelonctelond delonf forNonCommunityTwelonelont(): FelonaturelonMapBuildelonr => FelonaturelonMapBuildelonr = { buildelonr =>
+    buildelonr
+      .withConstantFelonaturelon(
+        TwelonelontIsCommunityTwelonelont,
+        falselon
+      ).withConstantFelonaturelon(
+        CommunityTwelonelontCommunityNotFound,
+        falselon
+      ).withConstantFelonaturelon(
+        CommunityTwelonelontCommunitySuspelonndelond,
+        falselon
+      ).withConstantFelonaturelon(
+        CommunityTwelonelontCommunityDelonlelontelond,
+        falselon
+      ).withConstantFelonaturelon(
+        CommunityTwelonelontCommunityVisiblelon,
+        falselon
+      ).withConstantFelonaturelon(
+        VielonwelonrIsIntelonrnalCommunitielonsAdmin,
+        falselon
+      ).withConstantFelonaturelon(
+        VielonwelonrIsCommunityAdmin,
+        falselon
+      ).withConstantFelonaturelon(
+        VielonwelonrIsCommunityModelonrator,
+        falselon
+      ).withConstantFelonaturelon(
+        VielonwelonrIsCommunityMelonmbelonr,
+        falselon
+      ).withConstantFelonaturelon(
+        CommunityTwelonelontIsHiddelonn,
+        falselon
+      ).withConstantFelonaturelon(
+        CommunityTwelonelontAuthorIsRelonmovelond,
+        falselon
       )
   }
 }

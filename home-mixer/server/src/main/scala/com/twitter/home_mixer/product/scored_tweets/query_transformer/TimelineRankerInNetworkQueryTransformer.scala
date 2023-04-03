@@ -1,42 +1,42 @@
-package com.twitter.home_mixer.product.scored_tweets.query_transformer
+packagelon com.twittelonr.homelon_mixelonr.product.scorelond_twelonelonts.quelonry_transformelonr
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.home_mixer.model.request.HasDeviceContext
-import com.twitter.home_mixer.product.scored_tweets.query_transformer.TimelineRankerInNetworkQueryTransformer._
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.quality_factor.HasQualityFactorStatus
-import com.twitter.timelineranker.{thriftscala => t}
-import com.twitter.timelines.common.model.TweetKindOption
-import com.twitter.timelines.model.candidate.CandidateTweetSourceId
-import com.twitter.util.Duration
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.homelon_mixelonr.modelonl.relonquelonst.HasDelonvicelonContelonxt
+import com.twittelonr.homelon_mixelonr.product.scorelond_twelonelonts.quelonry_transformelonr.TimelonlinelonRankelonrInNelontworkQuelonryTransformelonr._
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.transformelonr.CandidatelonPipelonlinelonQuelonryTransformelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonPipelonlinelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.product_mixelonr.corelon.quality_factor.HasQualityFactorStatus
+import com.twittelonr.timelonlinelonrankelonr.{thriftscala => t}
+import com.twittelonr.timelonlinelons.common.modelonl.TwelonelontKindOption
+import com.twittelonr.timelonlinelons.modelonl.candidatelon.CandidatelonTwelonelontSourcelonId
+import com.twittelonr.util.Duration
 
-object TimelineRankerInNetworkQueryTransformer {
-  private val SinceDuration = 24.hours
-  private val MaxTweetsToFetch = 500
+objelonct TimelonlinelonRankelonrInNelontworkQuelonryTransformelonr {
+  privatelon val SincelonDuration = 24.hours
+  privatelon val MaxTwelonelontsToFelontch = 500
 
-  private val tweetKindOptions: TweetKindOption.ValueSet = TweetKindOption(
-    includeReplies = true,
-    includeRetweets = true,
-    includeOriginalTweetsAndQuotes = true,
-    includeExtendedReplies = true
+  privatelon val twelonelontKindOptions: TwelonelontKindOption.ValuelonSelont = TwelonelontKindOption(
+    includelonRelonplielons = truelon,
+    includelonRelontwelonelonts = truelon,
+    includelonOriginalTwelonelontsAndQuotelons = truelon,
+    includelonelonxtelonndelondRelonplielons = truelon
   )
 }
 
-case class TimelineRankerInNetworkQueryTransformer[
-  Query <: PipelineQuery with HasQualityFactorStatus with HasDeviceContext
+caselon class TimelonlinelonRankelonrInNelontworkQuelonryTransformelonr[
+  Quelonry <: PipelonlinelonQuelonry with HasQualityFactorStatus with HasDelonvicelonContelonxt
 ](
-  override val candidatePipelineIdentifier: CandidatePipelineIdentifier,
-  override val maxTweetsToFetch: Int = MaxTweetsToFetch,
-  override val sinceDuration: Duration = SinceDuration)
-    extends CandidatePipelineQueryTransformer[Query, t.RecapQuery]
-    with TimelineRankerQueryTransformer[Query] {
+  ovelonrridelon val candidatelonPipelonlinelonIdelonntifielonr: CandidatelonPipelonlinelonIdelonntifielonr,
+  ovelonrridelon val maxTwelonelontsToFelontch: Int = MaxTwelonelontsToFelontch,
+  ovelonrridelon val sincelonDuration: Duration = SincelonDuration)
+    elonxtelonnds CandidatelonPipelonlinelonQuelonryTransformelonr[Quelonry, t.ReloncapQuelonry]
+    with TimelonlinelonRankelonrQuelonryTransformelonr[Quelonry] {
 
-  override val candidateTweetSourceId = CandidateTweetSourceId.RecycledTweet
-  override val skipVeryRecentTweets = false
-  override val options = tweetKindOptions
+  ovelonrridelon val candidatelonTwelonelontSourcelonId = CandidatelonTwelonelontSourcelonId.ReloncyclelondTwelonelont
+  ovelonrridelon val skipVelonryReloncelonntTwelonelonts = falselon
+  ovelonrridelon val options = twelonelontKindOptions
 
-  override def transform(input: Query): t.RecapQuery =
-    buildTimelineRankerQuery(input).toThriftRecapQuery
+  ovelonrridelon delonf transform(input: Quelonry): t.ReloncapQuelonry =
+    buildTimelonlinelonRankelonrQuelonry(input).toThriftReloncapQuelonry
 }

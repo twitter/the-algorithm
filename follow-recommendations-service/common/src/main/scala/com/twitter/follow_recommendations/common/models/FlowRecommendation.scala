@@ -1,22 +1,22 @@
-package com.twitter.follow_recommendations.common.models
+packagelon com.twittelonr.follow_reloncommelonndations.common.modelonls
 
-import com.twitter.follow_recommendations.logging.{thriftscala => offline}
-import com.twitter.follow_recommendations.{thriftscala => t}
+import com.twittelonr.follow_reloncommelonndations.logging.{thriftscala => offlinelon}
+import com.twittelonr.follow_reloncommelonndations.{thriftscala => t}
 
-case class FlowRecommendation(userId: Long) {
+caselon class FlowReloncommelonndation(uselonrId: Long) {
 
-  def toThrift: t.FlowRecommendation =
-    t.FlowRecommendation(userId = userId)
+  delonf toThrift: t.FlowReloncommelonndation =
+    t.FlowReloncommelonndation(uselonrId = uselonrId)
 
-  def toOfflineThrift: offline.OfflineFlowRecommendation =
-    offline.OfflineFlowRecommendation(userId = userId)
+  delonf toOfflinelonThrift: offlinelon.OfflinelonFlowReloncommelonndation =
+    offlinelon.OfflinelonFlowReloncommelonndation(uselonrId = uselonrId)
 
 }
 
-object FlowRecommendation {
-  def fromThrift(flowRecommendation: t.FlowRecommendation): FlowRecommendation = {
-    FlowRecommendation(
-      userId = flowRecommendation.userId
+objelonct FlowReloncommelonndation {
+  delonf fromThrift(flowReloncommelonndation: t.FlowReloncommelonndation): FlowReloncommelonndation = {
+    FlowReloncommelonndation(
+      uselonrId = flowReloncommelonndation.uselonrId
     )
   }
 

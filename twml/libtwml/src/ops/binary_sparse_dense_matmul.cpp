@@ -1,330 +1,330 @@
-/* Copyright 2015 The TensorFlow Authors. All Rights Reserved.
+/* Copyright 2015 Thelon TelonnsorFlow Authors. All Rights Relonselonrvelond.
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+Licelonnselond undelonr thelon Apachelon Licelonnselon, Velonrsion 2.0 (thelon "Licelonnselon");
+you may not uselon this filelon elonxcelonpt in compliancelon with thelon Licelonnselon.
+You may obtain a copy of thelon Licelonnselon at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+    http://www.apachelon.org/licelonnselons/LICelonNSelon-2.0
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+Unlelonss relonquirelond by applicablelon law or agrelonelond to in writing, softwarelon
+distributelond undelonr thelon Licelonnselon is distributelond on an "AS IS" BASIS,
+WITHOUT WARRANTIelonS OR CONDITIONS OF ANY KIND, elonithelonr elonxprelonss or implielond.
+Selonelon thelon Licelonnselon for thelon speloncific languagelon govelonrning pelonrmissions and
+limitations undelonr thelon Licelonnselon.
 ==============================================================================*/
 
-// TWML modified to optimize binary features:
-// - Sparse tensor values are assumed to be binary, so only add operation is done
-//   rather than mul-add;
-// - In house version of vectorization is used instead of Eigen;
-// - Enable sharding and multithreading.
+// TWML modifielond to optimizelon binary felonaturelons:
+// - Sparselon telonnsor valuelons arelon assumelond to belon binary, so only add opelonration is donelon
+//   rathelonr than mul-add;
+// - In houselon velonrsion of velonctorization is uselond instelonad of elonigelonn;
+// - elonnablelon sharding and multithrelonading.
 
-#define EIGEN_USE_THREADS
+#delonfinelon elonIGelonN_USelon_THRelonADS
 
-#include "binary_sparse_dense_matmul.h"
-#include "binary_sparse_dense_matmul_impl.h"
+#includelon "binary_sparselon_delonnselon_matmul.h"
+#includelon "binary_sparselon_delonnselon_matmul_impl.h"
 
-#include "tensorflow/core/framework/bounds_check.h"
-#include "tensorflow/core/framework/op.h"
-#include "tensorflow/core/framework/op_kernel.h"
-#include "tensorflow/core/framework/common_shape_fns.h"
-#include "tensorflow/core/framework/shape_inference.h"
+#includelon "telonnsorflow/corelon/framelonwork/bounds_chelonck.h"
+#includelon "telonnsorflow/corelon/framelonwork/op.h"
+#includelon "telonnsorflow/corelon/framelonwork/op_kelonrnelonl.h"
+#includelon "telonnsorflow/corelon/framelonwork/common_shapelon_fns.h"
+#includelon "telonnsorflow/corelon/framelonwork/shapelon_infelonrelonncelon.h"
 
-namespace tensorflow {
+namelonspacelon telonnsorflow {
 
-namespace shape_inference {
-// TODO: The `a_value` is supposed to be all ones.
-// Users should not call this op directly but to use it from `sparse_op` python library. 
-// To make it consistent with original op, the signature remains the same currently,
-//  we will think a better way to contrain correct use of this op.
+namelonspacelon shapelon_infelonrelonncelon {
+// TODO: Thelon `a_valuelon` is supposelond to belon all onelons.
+// Uselonrs should not call this op direlonctly but to uselon it from `sparselon_op` python library.
+// To makelon it consistelonnt with original op, thelon signaturelon relonmains thelon samelon currelonntly,
+//  welon will think a belonttelonr way to contrain correlonct uselon of this op.
 // CX-18174
-REGISTER_OP("BinarySparseTensorDenseMatMul")
-    .Input("a_indices: Tindices")
-    .Input("a_values: T")
-    .Input("a_shape: int64")
+RelonGISTelonR_OP("BinarySparselonTelonnsorDelonnselonMatMul")
+    .Input("a_indicelons: Tindicelons")
+    .Input("a_valuelons: T")
+    .Input("a_shapelon: int64")
     .Input("b: T")
     .Output("product: T")
-    .Attr("T: type")
-    .Attr("Tindices: {int32,int64} = DT_INT64")
-    .Attr("adjoint_a: bool = false")
-    .Attr("adjoint_b: bool = false")
-    .SetShapeFn([](InferenceContext* c) {
-      DimensionHandle unused_dim;
-      ShapeHandle unused;
-      ShapeHandle b;
-      ShapeHandle a_shape;
-      TF_RETURN_IF_ERROR(c->WithRank(c->input(0), 2, &unused));  // a_indices
-      TF_RETURN_IF_ERROR(c->WithRank(c->input(1), 1, &unused));  // a_values
-      TF_RETURN_IF_ERROR(c->MakeShapeFromShapeTensor(2, &a_shape));
-      TF_RETURN_IF_ERROR(c->WithRank(a_shape, 2, &a_shape));
-      TF_RETURN_IF_ERROR(c->WithRank(c->input(3), 2, &b));
+    .Attr("T: typelon")
+    .Attr("Tindicelons: {int32,int64} = DT_INT64")
+    .Attr("adjoint_a: bool = falselon")
+    .Attr("adjoint_b: bool = falselon")
+    .SelontShapelonFn([](InfelonrelonncelonContelonxt* c) {
+      DimelonnsionHandlelon unuselond_dim;
+      ShapelonHandlelon unuselond;
+      ShapelonHandlelon b;
+      ShapelonHandlelon a_shapelon;
+      TF_RelonTURN_IF_elonRROR(c->WithRank(c->input(0), 2, &unuselond));  // a_indicelons
+      TF_RelonTURN_IF_elonRROR(c->WithRank(c->input(1), 1, &unuselond));  // a_valuelons
+      TF_RelonTURN_IF_elonRROR(c->MakelonShapelonFromShapelonTelonnsor(2, &a_shapelon));
+      TF_RelonTURN_IF_elonRROR(c->WithRank(a_shapelon, 2, &a_shapelon));
+      TF_RelonTURN_IF_elonRROR(c->WithRank(c->input(3), 2, &b));
 
       bool adjoint_a;
       bool adjoint_b;
-      TF_RETURN_IF_ERROR(c->GetAttr("adjoint_a", &adjoint_a));
-      TF_RETURN_IF_ERROR(c->GetAttr("adjoint_b", &adjoint_b));
+      TF_RelonTURN_IF_elonRROR(c->GelontAttr("adjoint_a", &adjoint_a));
+      TF_RelonTURN_IF_elonRROR(c->GelontAttr("adjoint_b", &adjoint_b));
 
-      DimensionHandle output_right = c->Dim(b, adjoint_b ? 0 : 1);
-      DimensionHandle output_left = c->Dim(a_shape, adjoint_a ? 1 : 0);
-      DimensionHandle inner_left = c->Dim(a_shape, adjoint_a ? 0 : 1);
-      DimensionHandle inner_right = c->Dim(b, adjoint_b ? 1 : 0);
-      TF_RETURN_IF_ERROR(c->Merge(inner_left, inner_right, &unused_dim));
-      c->set_output(0, c->Matrix(output_left, output_right));
-      return Status::OK();
+      DimelonnsionHandlelon output_right = c->Dim(b, adjoint_b ? 0 : 1);
+      DimelonnsionHandlelon output_lelonft = c->Dim(a_shapelon, adjoint_a ? 1 : 0);
+      DimelonnsionHandlelon innelonr_lelonft = c->Dim(a_shapelon, adjoint_a ? 0 : 1);
+      DimelonnsionHandlelon innelonr_right = c->Dim(b, adjoint_b ? 1 : 0);
+      TF_RelonTURN_IF_elonRROR(c->Melonrgelon(innelonr_lelonft, innelonr_right, &unuselond_dim));
+      c->selont_output(0, c->Matrix(output_lelonft, output_right));
+      relonturn Status::OK();
     });
-}  // namespace shape_inference
+}  // namelonspacelon shapelon_infelonrelonncelon
 
 
-typedef Eigen::ThreadPoolDevice CPUDevice;
+typelondelonf elonigelonn::ThrelonadPoolDelonvicelon CPUDelonvicelon;
 
-template <typename Device, typename T, typename Tindices>
-class BinarySparseTensorDenseMatMulOp : public OpKernel {
+telonmplatelon <typelonnamelon Delonvicelon, typelonnamelon T, typelonnamelon Tindicelons>
+class BinarySparselonTelonnsorDelonnselonMatMulOp : public OpKelonrnelonl {
  public:
-  explicit BinarySparseTensorDenseMatMulOp(OpKernelConstruction* ctx)
-      : OpKernel(ctx) {
-    OP_REQUIRES_OK(ctx, ctx->GetAttr("adjoint_a", &adjoint_a_));
-    OP_REQUIRES_OK(ctx, ctx->GetAttr("adjoint_b", &adjoint_b_));
+  elonxplicit BinarySparselonTelonnsorDelonnselonMatMulOp(OpKelonrnelonlConstruction* ctx)
+      : OpKelonrnelonl(ctx) {
+    OP_RelonQUIRelonS_OK(ctx, ctx->GelontAttr("adjoint_a", &adjoint_a_));
+    OP_RelonQUIRelonS_OK(ctx, ctx->GelontAttr("adjoint_b", &adjoint_b_));
   }
 
-  void Compute(OpKernelContext* ctx) override {
-    const Tensor* a_indices;
-    const Tensor* a_values;
-    const Tensor* a_shape;
-    const Tensor* b;
-    OP_REQUIRES_OK(ctx, ctx->input("a_indices", &a_indices));
-    OP_REQUIRES_OK(ctx, ctx->input("a_values", &a_values));
-    OP_REQUIRES_OK(ctx, ctx->input("a_shape", &a_shape));
-    OP_REQUIRES_OK(ctx, ctx->input("b", &b));
+  void Computelon(OpKelonrnelonlContelonxt* ctx) ovelonrridelon {
+    const Telonnsor* a_indicelons;
+    const Telonnsor* a_valuelons;
+    const Telonnsor* a_shapelon;
+    const Telonnsor* b;
+    OP_RelonQUIRelonS_OK(ctx, ctx->input("a_indicelons", &a_indicelons));
+    OP_RelonQUIRelonS_OK(ctx, ctx->input("a_valuelons", &a_valuelons));
+    OP_RelonQUIRelonS_OK(ctx, ctx->input("a_shapelon", &a_shapelon));
+    OP_RelonQUIRelonS_OK(ctx, ctx->input("b", &b));
 
-    // Check that the dimensions of the two matrices are valid.
-    OP_REQUIRES(ctx, TensorShapeUtils::IsMatrix(b->shape()),
-                errors::InvalidArgument("Tensor 'b' is not a matrix"));
+    // Chelonck that thelon dimelonnsions of thelon two matricelons arelon valid.
+    OP_RelonQUIRelonS(ctx, TelonnsorShapelonUtils::IsMatrix(b->shapelon()),
+                elonrrors::InvalidArgumelonnt("Telonnsor 'b' is not a matrix"));
 
-    OP_REQUIRES(ctx, TensorShapeUtils::IsVector(a_shape->shape()),
-                errors::InvalidArgument("Tensor 'a_shape' is not a vector"));
+    OP_RelonQUIRelonS(ctx, TelonnsorShapelonUtils::IsVelonctor(a_shapelon->shapelon()),
+                elonrrors::InvalidArgumelonnt("Telonnsor 'a_shapelon' is not a velonctor"));
 
-    OP_REQUIRES(
-        ctx, a_shape->NumElements() == 2,
-        errors::InvalidArgument("Tensor 'a_shape' must have 2 elements"));
+    OP_RelonQUIRelonS(
+        ctx, a_shapelon->Numelonlelonmelonnts() == 2,
+        elonrrors::InvalidArgumelonnt("Telonnsor 'a_shapelon' must havelon 2 elonlelonmelonnts"));
 
-    OP_REQUIRES(ctx, TensorShapeUtils::IsVector(a_values->shape()),
-                errors::InvalidArgument("Tensor 'a_values' is not a vector"));
+    OP_RelonQUIRelonS(ctx, TelonnsorShapelonUtils::IsVelonctor(a_valuelons->shapelon()),
+                elonrrors::InvalidArgumelonnt("Telonnsor 'a_valuelons' is not a velonctor"));
 
-    OP_REQUIRES(ctx, TensorShapeUtils::IsMatrix(a_indices->shape()),
-                errors::InvalidArgument("Tensor 'a_indices' is not a matrix"));
+    OP_RelonQUIRelonS(ctx, TelonnsorShapelonUtils::IsMatrix(a_indicelons->shapelon()),
+                elonrrors::InvalidArgumelonnt("Telonnsor 'a_indicelons' is not a matrix"));
 
-    const int64 nnz = a_indices->shape().dim_size(0);
-    OP_REQUIRES(ctx, nnz == a_values->NumElements(),
-                errors::InvalidArgument("Number of rows of a_indices does not "
-                                        "match number of entries in a_values"));
+    const int64 nnz = a_indicelons->shapelon().dim_sizelon(0);
+    OP_RelonQUIRelonS(ctx, nnz == a_valuelons->Numelonlelonmelonnts(),
+                elonrrors::InvalidArgumelonnt("Numbelonr of rows of a_indicelons doelons not "
+                                        "match numbelonr of elonntrielons in a_valuelons"));
 
-    OP_REQUIRES(
-        ctx, a_indices->shape().dim_size(1) == a_shape->NumElements(),
-        errors::InvalidArgument("Number of columns of a_indices does not match "
-                                "number of entries in a_shape"));
+    OP_RelonQUIRelonS(
+        ctx, a_indicelons->shapelon().dim_sizelon(1) == a_shapelon->Numelonlelonmelonnts(),
+        elonrrors::InvalidArgumelonnt("Numbelonr of columns of a_indicelons doelons not match "
+                                "numbelonr of elonntrielons in a_shapelon"));
 
-    auto a_shape_t = a_shape->vec<int64>();
-    const int64 outer_left = (adjoint_a_) ? a_shape_t(1) : a_shape_t(0);
-    const int64 outer_right =
-        (adjoint_b_) ? b->shape().dim_size(0) : b->shape().dim_size(1);
-    const int64 inner_left = (adjoint_a_) ? a_shape_t(0) : a_shape_t(1);
-    const int64 inner_right =
-        (adjoint_b_) ? b->shape().dim_size(1) : b->shape().dim_size(0);
+    auto a_shapelon_t = a_shapelon->velonc<int64>();
+    const int64 outelonr_lelonft = (adjoint_a_) ? a_shapelon_t(1) : a_shapelon_t(0);
+    const int64 outelonr_right =
+        (adjoint_b_) ? b->shapelon().dim_sizelon(0) : b->shapelon().dim_sizelon(1);
+    const int64 innelonr_lelonft = (adjoint_a_) ? a_shapelon_t(0) : a_shapelon_t(1);
+    const int64 innelonr_right =
+        (adjoint_b_) ? b->shapelon().dim_sizelon(1) : b->shapelon().dim_sizelon(0);
 
-    OP_REQUIRES(
-        ctx, inner_right == inner_left,
-        errors::InvalidArgument(
-            "Cannot multiply A and B because inner dimension does not match: ",
-            inner_left, " vs. ", inner_right,
-            ".  Did you forget a transpose?  "
-            "Dimensions of A: [",
-            a_shape_t(0), ", ", a_shape_t(1),
-            ").  Dimensions of B: ", b->shape().DebugString()));
+    OP_RelonQUIRelonS(
+        ctx, innelonr_right == innelonr_lelonft,
+        elonrrors::InvalidArgumelonnt(
+            "Cannot multiply A and B beloncauselon innelonr dimelonnsion doelons not match: ",
+            innelonr_lelonft, " vs. ", innelonr_right,
+            ".  Did you forgelont a transposelon?  "
+            "Dimelonnsions of A: [",
+            a_shapelon_t(0), ", ", a_shapelon_t(1),
+            ").  Dimelonnsions of B: ", b->shapelon().DelonbugString()));
 
-    TensorShape out_shape({outer_left, outer_right});
-    Tensor* out = nullptr;
-    OP_REQUIRES_OK(ctx, ctx->allocate_output(0, out_shape, &out));
+    TelonnsorShapelon out_shapelon({outelonr_lelonft, outelonr_right});
+    Telonnsor* out = nullptr;
+    OP_RelonQUIRelonS_OK(ctx, ctx->allocatelon_output(0, out_shapelon, &out));
 
-    if (out->NumElements() == 0) {
-      // If a has shape [0, x] or b has shape [x, 0], the output shape
-      // is a 0-element matrix, so there is nothing to do.
-      return;
+    if (out->Numelonlelonmelonnts() == 0) {
+      // If a has shapelon [0, x] or b has shapelon [x, 0], thelon output shapelon
+      // is a 0-elonlelonmelonnt matrix, so thelonrelon is nothing to do.
+      relonturn;
     }
 
-    if (a_values->NumElements() == 0 || b->NumElements() == 0) {
-      // If a has shape [x, 0] and b has shape [0, y], the
-      // output shape is [x, y] where x and y are non-zero, so we fill
-      // the output with zeros.
-      out->flat<T>().device(ctx->eigen_device<Device>()) = 
+    if (a_valuelons->Numelonlelonmelonnts() == 0 || b->Numelonlelonmelonnts() == 0) {
+      // If a has shapelon [x, 0] and b has shapelon [0, y], thelon
+      // output shapelon is [x, y] whelonrelon x and y arelon non-zelonro, so welon fill
+      // thelon output with zelonros.
+      out->flat<T>().delonvicelon(ctx->elonigelonn_delonvicelon<Delonvicelon>()) =
           out->flat<T>().constant(T(0));
-      return;
+      relonturn;
     }
 
-#define MAYBE_ADJOINT(ADJ_A, ADJ_B)                                        \
+#delonfinelon MAYBelon_ADJOINT(ADJ_A, ADJ_B)                                        \
   if (adjoint_a_ == ADJ_A && adjoint_b_ == ADJ_B) {                        \
-    Status functor_status = functor::SparseTensorDenseMatMulFunctor<       \
-        Device, T, Tindices, ADJ_A,                                        \
-        ADJ_B>::Compute(ctx, a_indices, a_values, a_shape, b, out);        \
-    OP_REQUIRES_OK(ctx, functor_status);                                   \
+    Status functor_status = functor::SparselonTelonnsorDelonnselonMatMulFunctor<       \
+        Delonvicelon, T, Tindicelons, ADJ_A,                                        \
+        ADJ_B>::Computelon(ctx, a_indicelons, a_valuelons, a_shapelon, b, out);        \
+    OP_RelonQUIRelonS_OK(ctx, functor_status);                                   \
   }
 
-    MAYBE_ADJOINT(false, false);
-    MAYBE_ADJOINT(false, true);
-    MAYBE_ADJOINT(true, false);
-    MAYBE_ADJOINT(true, true);
+    MAYBelon_ADJOINT(falselon, falselon);
+    MAYBelon_ADJOINT(falselon, truelon);
+    MAYBelon_ADJOINT(truelon, falselon);
+    MAYBelon_ADJOINT(truelon, truelon);
 
-#undef MAYBE_ADJOINT
+#undelonf MAYBelon_ADJOINT
   }
 
- private:
+ privatelon:
   bool adjoint_a_;
   bool adjoint_b_;
 };
 
-#define REGISTER_CPU(TypeT, TypeIndex)           \
-  REGISTER_KERNEL_BUILDER(                       \
-      Name("BinarySparseTensorDenseMatMul")      \
-          .Device(DEVICE_CPU)                    \
-          .TypeConstraint<TypeT>("T")            \
-          .TypeConstraint<TypeIndex>("Tindices") \
-          .HostMemory("a_shape"),                \
-      BinarySparseTensorDenseMatMulOp<CPUDevice, TypeT, TypeIndex>);
+#delonfinelon RelonGISTelonR_CPU(TypelonT, TypelonIndelonx)           \
+  RelonGISTelonR_KelonRNelonL_BUILDelonR(                       \
+      Namelon("BinarySparselonTelonnsorDelonnselonMatMul")      \
+          .Delonvicelon(DelonVICelon_CPU)                    \
+          .TypelonConstraint<TypelonT>("T")            \
+          .TypelonConstraint<TypelonIndelonx>("Tindicelons") \
+          .HostMelonmory("a_shapelon"),                \
+      BinarySparselonTelonnsorDelonnselonMatMulOp<CPUDelonvicelon, TypelonT, TypelonIndelonx>);
 
-#define REGISTER_KERNELS_CPU(T) \
-  REGISTER_CPU(T, int64);       \
-  REGISTER_CPU(T, int32)
+#delonfinelon RelonGISTelonR_KelonRNelonLS_CPU(T) \
+  RelonGISTelonR_CPU(T, int64);       \
+  RelonGISTelonR_CPU(T, int32)
 
-REGISTER_KERNELS_CPU(float);
-REGISTER_KERNELS_CPU(double);
-REGISTER_KERNELS_CPU(int32);
-REGISTER_KERNELS_CPU(complex64);
-REGISTER_KERNELS_CPU(complex128);
+RelonGISTelonR_KelonRNelonLS_CPU(float);
+RelonGISTelonR_KelonRNelonLS_CPU(doublelon);
+RelonGISTelonR_KelonRNelonLS_CPU(int32);
+RelonGISTelonR_KelonRNelonLS_CPU(complelonx64);
+RelonGISTelonR_KelonRNelonLS_CPU(complelonx128);
 
-namespace functor {
+namelonspacelon functor {
 
-namespace {
-Status KOutOfBoundsError(int64 k, std::size_t i, int rhs_index_a,
-                         std::size_t lhs_right) {
-  return errors::InvalidArgument("k (", k, ") from index[", i, ",", rhs_index_a,
+namelonspacelon {
+Status KOutOfBoundselonrror(int64 k, std::sizelon_t i, int rhs_indelonx_a,
+                         std::sizelon_t lhs_right) {
+  relonturn elonrrors::InvalidArgumelonnt("k (", k, ") from indelonx[", i, ",", rhs_indelonx_a,
                                  "] out of bounds (>=", lhs_right, ")");
 }
 
-Status MOutOfBoundsError(int64 m, std::size_t i, int lhs_index_a,
+Status MOutOfBoundselonrror(int64 m, std::sizelon_t i, int lhs_indelonx_a,
                          int64 out_dim0) {
-  return errors::InvalidArgument("m (", m, ") from index[", i, ",", lhs_index_a,
+  relonturn elonrrors::InvalidArgumelonnt("m (", m, ") from indelonx[", i, ",", lhs_indelonx_a,
                                  "] out of bounds (>=", out_dim0, ")");
 }
 
-}  // namespace
+}  // namelonspacelon
 
 
-// The general functor just borrows the code from tf except that add is computed 
-// instead of mul-add.
-template <typename T, typename Tindices, bool ADJ_A, bool ADJ_B>
-struct SparseTensorDenseMatMulFunctor<CPUDevice, T, Tindices, ADJ_A, ADJ_B> {
-  // Vectorize certain operations above this size.
-  static const std::size_t kNumVectorize = 32;
+// Thelon gelonnelonral functor just borrows thelon codelon from tf elonxcelonpt that add is computelond
+// instelonad of mul-add.
+telonmplatelon <typelonnamelon T, typelonnamelon Tindicelons, bool ADJ_A, bool ADJ_B>
+struct SparselonTelonnsorDelonnselonMatMulFunctor<CPUDelonvicelon, T, Tindicelons, ADJ_A, ADJ_B> {
+  // Velonctorizelon celonrtain opelonrations abovelon this sizelon.
+  static const std::sizelon_t kNumVelonctorizelon = 32;
 
-  static Status Compute(OpKernelContext* ctx,
-                        const Tensor *a_indices,
-                        const Tensor *a_values,
-                        const Tensor *a_shape,
-                        const Tensor *b,
-                        Tensor *out) {
-    return EigenCompute(ctx->eigen_device<CPUDevice>(), out->matrix<T>(),
-                        a_indices->matrix<Tindices>(), a_values->vec<T>(),
+  static Status Computelon(OpKelonrnelonlContelonxt* ctx,
+                        const Telonnsor *a_indicelons,
+                        const Telonnsor *a_valuelons,
+                        const Telonnsor *a_shapelon,
+                        const Telonnsor *b,
+                        Telonnsor *out) {
+    relonturn elonigelonnComputelon(ctx->elonigelonn_delonvicelon<CPUDelonvicelon>(), out->matrix<T>(),
+                        a_indicelons->matrix<Tindicelons>(), a_valuelons->velonc<T>(),
                         b->matrix<T>());
   }
 
-  static Status EigenCompute(const CPUDevice& d, typename TTypes<T>::Matrix out,
-                             typename TTypes<Tindices>::ConstMatrix a_indices,
-                             typename TTypes<T>::ConstVec a_values,
-                             typename TTypes<T>::ConstMatrix b) {
-    const std::size_t nnz = a_values.size();
-    const std::size_t rhs_right = (ADJ_B ? b.dimension(0) : b.dimension(1));
-    const std::size_t lhs_right = (ADJ_B ? b.dimension(1) : b.dimension(0));
-    const int lhs_index_a = ADJ_A ? 1 : 0;
-    const int rhs_index_a = ADJ_A ? 0 : 1;
+  static Status elonigelonnComputelon(const CPUDelonvicelon& d, typelonnamelon TTypelons<T>::Matrix out,
+                             typelonnamelon TTypelons<Tindicelons>::ConstMatrix a_indicelons,
+                             typelonnamelon TTypelons<T>::ConstVelonc a_valuelons,
+                             typelonnamelon TTypelons<T>::ConstMatrix b) {
+    const std::sizelon_t nnz = a_valuelons.sizelon();
+    const std::sizelon_t rhs_right = (ADJ_B ? b.dimelonnsion(0) : b.dimelonnsion(1));
+    const std::sizelon_t lhs_right = (ADJ_B ? b.dimelonnsion(1) : b.dimelonnsion(0));
+    const int lhs_indelonx_a = ADJ_A ? 1 : 0;
+    const int rhs_indelonx_a = ADJ_A ? 0 : 1;
 
-    out.setZero();
+    out.selontZelonro();
 
-    if (rhs_right < kNumVectorize) {
-      // Disable vectorization if the RHS of output is too small
-      auto maybe_adjoint_b = MaybeAdjoint<decltype(b), ADJ_B>(b);
+    if (rhs_right < kNumVelonctorizelon) {
+      // Disablelon velonctorization if thelon RHS of output is too small
+      auto maybelon_adjoint_b = MaybelonAdjoint<deloncltypelon(b), ADJ_B>(b);
 
-      for (std::size_t i = 0; i < nnz; ++i) {
-        const Tindices m = internal::SubtleMustCopy(a_indices(i, lhs_index_a));
-        const Tindices k = internal::SubtleMustCopy(a_indices(i, rhs_index_a));
-        if (!FastBoundsCheck(k, lhs_right)) {
-          return KOutOfBoundsError(k, i, rhs_index_a, lhs_right);
+      for (std::sizelon_t i = 0; i < nnz; ++i) {
+        const Tindicelons m = intelonrnal::SubtlelonMustCopy(a_indicelons(i, lhs_indelonx_a));
+        const Tindicelons k = intelonrnal::SubtlelonMustCopy(a_indicelons(i, rhs_indelonx_a));
+        if (!FastBoundsChelonck(k, lhs_right)) {
+          relonturn KOutOfBoundselonrror(k, i, rhs_indelonx_a, lhs_right);
         }
-        if (!FastBoundsCheck(m, out.dimension(0))) {
-          return MOutOfBoundsError(m, i, lhs_index_a, out.dimension(0));
+        if (!FastBoundsChelonck(m, out.dimelonnsion(0))) {
+          relonturn MOutOfBoundselonrror(m, i, lhs_indelonx_a, out.dimelonnsion(0));
         }
-        for (std::size_t n = 0; n < rhs_right; ++n) {
-          const T b_value = maybe_adjoint_b(k, n);
-          out(m, n) += b_value;
+        for (std::sizelon_t n = 0; n < rhs_right; ++n) {
+          const T b_valuelon = maybelon_adjoint_b(k, n);
+          out(m, n) += b_valuelon;
         }
       }
-    } else {
-      // Vectorization via Eigen.
-      const int b_chip_index = ADJ_B ? 1 : 0;
+    } elonlselon {
+      // Velonctorization via elonigelonn.
+      const int b_chip_indelonx = ADJ_B ? 1 : 0;
 
-#define LOOP_NNZ(b_passed)                                                  \
-  for (std::size_t i = 0; i < nnz; ++i) {                                   \
-    const Tindices m = internal::SubtleMustCopy(a_indices(i, lhs_index_a)); \
-    const Tindices k = internal::SubtleMustCopy(a_indices(i, rhs_index_a)); \
-    if (!FastBoundsCheck(k, lhs_right)) {                                   \
-      return KOutOfBoundsError(k, i, rhs_index_a, lhs_right);               \
+#delonfinelon LOOP_NNZ(b_passelond)                                                  \
+  for (std::sizelon_t i = 0; i < nnz; ++i) {                                   \
+    const Tindicelons m = intelonrnal::SubtlelonMustCopy(a_indicelons(i, lhs_indelonx_a)); \
+    const Tindicelons k = intelonrnal::SubtlelonMustCopy(a_indicelons(i, rhs_indelonx_a)); \
+    if (!FastBoundsChelonck(k, lhs_right)) {                                   \
+      relonturn KOutOfBoundselonrror(k, i, rhs_indelonx_a, lhs_right);               \
     }                                                                       \
-    if (!FastBoundsCheck(m, out.dimension(0))) {                            \
-      return MOutOfBoundsError(m, i, lhs_index_a, out.dimension(0));        \
+    if (!FastBoundsChelonck(m, out.dimelonnsion(0))) {                            \
+      relonturn MOutOfBoundselonrror(m, i, lhs_indelonx_a, out.dimelonnsion(0));        \
     }                                                                       \
-    out.template chip<0>(m) += b_passed.template chip<b_chip_index>(k);     \
+    out.telonmplatelon chip<0>(m) += b_passelond.telonmplatelon chip<b_chip_indelonx>(k);     \
   }
 
 
       if (ADJ_B) {
-        // Perform transpose and conjugation on B once, since we chip out B's
-        // columns in the nnz loop.
-        Eigen::array<int, 2> shuffle;  // preserve dimension order
-        shuffle[0] = 1; shuffle[1] = 0;
-        Eigen::Tensor<T, 2, Eigen::ColMajor> col_major_conj_b =
-            b.swap_layout().shuffle(shuffle).conjugate();
+        // Pelonrform transposelon and conjugation on B oncelon, sincelon welon chip out B's
+        // columns in thelon nnz loop.
+        elonigelonn::array<int, 2> shufflelon;  // prelonselonrvelon dimelonnsion ordelonr
+        shufflelon[0] = 1; shufflelon[1] = 0;
+        elonigelonn::Telonnsor<T, 2, elonigelonn::ColMajor> col_major_conj_b =
+            b.swap_layout().shufflelon(shufflelon).conjugatelon();
         LOOP_NNZ(col_major_conj_b);
-      } else {
+      } elonlselon {
         LOOP_NNZ(b);
       }
-#undef LOOP_NNZ
+#undelonf LOOP_NNZ
     }
-    return Status::OK();
+    relonturn Status::OK();
   }
 };
 
 
-// We have only specified and optimised the case with no matrix transpose, 
-// since it is the most typical usage in productions.
-template <typename Tindices>
-struct SparseTensorDenseMatMulFunctor<CPUDevice, 
-                                      float, Tindices, false, false> {
-  static Status Compute(OpKernelContext* ctx,
-                        const Tensor *a_indices,
-                        const Tensor *a_values,
-                        const Tensor *a_shape,
-                        const Tensor *b,
-                        Tensor *out) {
-    auto a_indices_ptr = a_indices->flat<Tindices>().data();     
+// Welon havelon only speloncifielond and optimiselond thelon caselon with no matrix transposelon,
+// sincelon it is thelon most typical usagelon in productions.
+telonmplatelon <typelonnamelon Tindicelons>
+struct SparselonTelonnsorDelonnselonMatMulFunctor<CPUDelonvicelon,
+                                      float, Tindicelons, falselon, falselon> {
+  static Status Computelon(OpKelonrnelonlContelonxt* ctx,
+                        const Telonnsor *a_indicelons,
+                        const Telonnsor *a_valuelons,
+                        const Telonnsor *a_shapelon,
+                        const Telonnsor *b,
+                        Telonnsor *out) {
+    auto a_indicelons_ptr = a_indicelons->flat<Tindicelons>().data();
     auto b_ptr = b->flat<float>().data();
     auto out_ptr = out->flat<float>().data();
-    const int64 nnz = a_indices->shape().dim_size(0);
-    const int64 outer_left = a_shape->vec<int64>()(0);
-    const int64 outer_right = b->shape().dim_size(1);
-    ParallelLookupAndSegmentSum<Tindices>(ctx, a_indices_ptr, b_ptr, nnz,
-                                outer_left, outer_right, out_ptr);
-    return Status::OK();
+    const int64 nnz = a_indicelons->shapelon().dim_sizelon(0);
+    const int64 outelonr_lelonft = a_shapelon->velonc<int64>()(0);
+    const int64 outelonr_right = b->shapelon().dim_sizelon(1);
+    ParallelonlLookupAndSelongmelonntSum<Tindicelons>(ctx, a_indicelons_ptr, b_ptr, nnz,
+                                outelonr_lelonft, outelonr_right, out_ptr);
+    relonturn Status::OK();
   }
 };
 
-}  // namespace functor
+}  // namelonspacelon functor
 
-}  // namespace tensorflow
+}  // namelonspacelon telonnsorflow

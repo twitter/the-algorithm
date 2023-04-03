@@ -1,12 +1,12 @@
-package com.twitter.product_mixer.core.feature.featuremap
+packagelon com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap
 
-import com.twitter.product_mixer.core.feature.Feature
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
 
-case class MissingFeatureException(feature: Feature[_, _])
-    extends Exception("Missing value for " + feature) {
-  override def toString: String = getMessage
+caselon class MissingFelonaturelonelonxcelonption(felonaturelon: Felonaturelon[_, _])
+    elonxtelonnds elonxcelonption("Missing valuelon for " + felonaturelon) {
+  ovelonrridelon delonf toString: String = gelontMelonssagelon
 }
 
-class InvalidPredictionRecordMergeException
-    extends Exception(
-      "Use FeatureMap.plusPlusOptimized instead of FeatureMap.++ when the FeatureMaps on both sides of the merge contain PredictionRecords")
+class InvalidPrelondictionReloncordMelonrgelonelonxcelonption
+    elonxtelonnds elonxcelonption(
+      "Uselon FelonaturelonMap.plusPlusOptimizelond instelonad of FelonaturelonMap.++ whelonn thelon FelonaturelonMaps on both sidelons of thelon melonrgelon contain PrelondictionReloncords")

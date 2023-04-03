@@ -1,29 +1,29 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.vertical_grid_item
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.velonrtical_grid_itelonm
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackActionInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Url
-import com.twitter.product_mixer.core.model.marshalling.response.urt.EntryNamespace
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineItem
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.ClielonntelonvelonntInfo
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.FelonelondbackActionInfo
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.Url
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.elonntryNamelonspacelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.Timelonlinelonelonntry
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.TimelonlinelonItelonm
 
-sealed trait VerticalGridItem extends TimelineItem
+selonalelond trait VelonrticalGridItelonm elonxtelonnds TimelonlinelonItelonm
 
-object VerticalGridItemTopicTile {
-  val VerticalGridItemTopicTileEntryNamespace = EntryNamespace("verticalgriditemtopictile")
+objelonct VelonrticalGridItelonmTopicTilelon {
+  val VelonrticalGridItelonmTopicTilelonelonntryNamelonspacelon = elonntryNamelonspacelon("velonrticalgriditelonmtopictilelon")
 }
 
-case class VerticalGridItemTopicTile(
-  override val id: Long,
-  override val sortIndex: Option[Long],
-  override val clientEventInfo: Option[ClientEventInfo],
-  override val feedbackActionInfo: Option[FeedbackActionInfo],
-  style: Option[VerticalGridItemTileStyle],
-  functionalityType: Option[VerticalGridItemTopicFunctionalityType],
+caselon class VelonrticalGridItelonmTopicTilelon(
+  ovelonrridelon val id: Long,
+  ovelonrridelon val sortIndelonx: Option[Long],
+  ovelonrridelon val clielonntelonvelonntInfo: Option[ClielonntelonvelonntInfo],
+  ovelonrridelon val felonelondbackActionInfo: Option[FelonelondbackActionInfo],
+  stylelon: Option[VelonrticalGridItelonmTilelonStylelon],
+  functionalityTypelon: Option[VelonrticalGridItelonmTopicFunctionalityTypelon],
   url: Option[Url])
-    extends VerticalGridItem {
-  override val entryNamespace: EntryNamespace =
-    VerticalGridItemTopicTile.VerticalGridItemTopicTileEntryNamespace
+    elonxtelonnds VelonrticalGridItelonm {
+  ovelonrridelon val elonntryNamelonspacelon: elonntryNamelonspacelon =
+    VelonrticalGridItelonmTopicTilelon.VelonrticalGridItelonmTopicTilelonelonntryNamelonspacelon
 
-  override def withSortIndex(sortIndex: Long): TimelineEntry = copy(sortIndex = Some(sortIndex))
+  ovelonrridelon delonf withSortIndelonx(sortIndelonx: Long): Timelonlinelonelonntry = copy(sortIndelonx = Somelon(sortIndelonx))
 }

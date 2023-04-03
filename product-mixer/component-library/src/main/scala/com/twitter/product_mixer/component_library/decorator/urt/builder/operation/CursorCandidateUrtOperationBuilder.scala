@@ -1,29 +1,29 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.operation
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.opelonration
 
-import com.twitter.product_mixer.component_library.model.candidate.CursorCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.CursorDisplayTreatment
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.CursorOperation
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.CursorType
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.CursorCandidatelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.CandidatelonUrtelonntryBuildelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.opelonration.CursorDisplayTrelonatmelonnt
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.opelonration.CursorOpelonration
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.opelonration.CursorTypelon
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
-case class CursorCandidateUrtOperationBuilder[-Query <: PipelineQuery](
-  cursorType: CursorType,
-  displayTreatment: Option[CursorDisplayTreatment] = None,
-  idToReplace: Option[Long] = None)
-    extends CandidateUrtEntryBuilder[Query, CursorCandidate, CursorOperation] {
+caselon class CursorCandidatelonUrtOpelonrationBuildelonr[-Quelonry <: PipelonlinelonQuelonry](
+  cursorTypelon: CursorTypelon,
+  displayTrelonatmelonnt: Option[CursorDisplayTrelonatmelonnt] = Nonelon,
+  idToRelonplacelon: Option[Long] = Nonelon)
+    elonxtelonnds CandidatelonUrtelonntryBuildelonr[Quelonry, CursorCandidatelon, CursorOpelonration] {
 
-  override def apply(
-    query: Query,
-    cursorCandidate: CursorCandidate,
-    candidateFeatures: FeatureMap
-  ): CursorOperation = CursorOperation(
-    id = cursorCandidate.id,
-    sortIndex = None, // Sort indexes are automatically set in the domain marshaller phase
-    value = cursorCandidate.value,
-    cursorType = cursorType,
-    displayTreatment = displayTreatment,
-    idToReplace = idToReplace
+  ovelonrridelon delonf apply(
+    quelonry: Quelonry,
+    cursorCandidatelon: CursorCandidatelon,
+    candidatelonFelonaturelons: FelonaturelonMap
+  ): CursorOpelonration = CursorOpelonration(
+    id = cursorCandidatelon.id,
+    sortIndelonx = Nonelon, // Sort indelonxelons arelon automatically selont in thelon domain marshallelonr phaselon
+    valuelon = cursorCandidatelon.valuelon,
+    cursorTypelon = cursorTypelon,
+    displayTrelonatmelonnt = displayTrelonatmelonnt,
+    idToRelonplacelon = idToRelonplacelon
   )
 }

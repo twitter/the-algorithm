@@ -1,32 +1,32 @@
-package com.twitter.product_mixer.component_library.filter
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.filtelonr
 
-import com.twitter.product_mixer.component_library.model.cursor.UrtUnorderedExcludeIdsCursor
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.filter.FilterResult
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline.HasPipelineCursor
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.cursor.UrtUnordelonrelondelonxcludelonIdsCursor
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.filtelonr.Filtelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.filtelonr.FiltelonrRelonsult
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.FiltelonrIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.HasPipelonlinelonCursor
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stitch.Stitch
 
-case class UrtUnorderedExcludeIdsCursorFilter[
-  Candidate <: UniversalNoun[Long],
-  Query <: PipelineQuery with HasPipelineCursor[UrtUnorderedExcludeIdsCursor]
-]() extends Filter[Query, Candidate] {
+caselon class UrtUnordelonrelondelonxcludelonIdsCursorFiltelonr[
+  Candidatelon <: UnivelonrsalNoun[Long],
+  Quelonry <: PipelonlinelonQuelonry with HasPipelonlinelonCursor[UrtUnordelonrelondelonxcludelonIdsCursor]
+]() elonxtelonnds Filtelonr[Quelonry, Candidatelon] {
 
-  override val identifier: FilterIdentifier = FilterIdentifier("UnorderedExcludeIdsCursor")
+  ovelonrridelon val idelonntifielonr: FiltelonrIdelonntifielonr = FiltelonrIdelonntifielonr("UnordelonrelondelonxcludelonIdsCursor")
 
-  override def apply(
-    query: Query,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): Stitch[FilterResult[Candidate]] = {
+  ovelonrridelon delonf apply(
+    quelonry: Quelonry,
+    candidatelons: Selonq[CandidatelonWithFelonaturelons[Candidatelon]]
+  ): Stitch[FiltelonrRelonsult[Candidatelon]] = {
 
-    val excludeIds = query.pipelineCursor.map(_.excludedIds.toSet).getOrElse(Set.empty)
-    val (kept, removed) =
-      candidates.map(_.candidate).partition(candidate => !excludeIds.contains(candidate.id))
+    val elonxcludelonIds = quelonry.pipelonlinelonCursor.map(_.elonxcludelondIds.toSelont).gelontOrelonlselon(Selont.elonmpty)
+    val (kelonpt, relonmovelond) =
+      candidatelons.map(_.candidatelon).partition(candidatelon => !elonxcludelonIds.contains(candidatelon.id))
 
-    val filterResult = FilterResult(kept = kept, removed = removed)
-    Stitch.value(filterResult)
+    val filtelonrRelonsult = FiltelonrRelonsult(kelonpt = kelonpt, relonmovelond = relonmovelond)
+    Stitch.valuelon(filtelonrRelonsult)
   }
 }

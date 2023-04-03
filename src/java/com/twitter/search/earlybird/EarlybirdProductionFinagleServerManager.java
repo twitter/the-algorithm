@@ -1,151 +1,151 @@
-package com.twitter.search.earlybird;
+packagelon com.twittelonr.selonarch.elonarlybird;
 
-import java.net.InetSocketAddress;
-import java.util.concurrent.atomic.AtomicReference;
+import java.nelont.InelontSockelontAddrelonss;
+import java.util.concurrelonnt.atomic.AtomicRelonfelonrelonncelon;
 
-import org.apache.thrift.protocol.TCompactProtocol;
-import org.apache.thrift.protocol.TProtocolFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apachelon.thrift.protocol.TCompactProtocol;
+import org.apachelon.thrift.protocol.TProtocolFactory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.finagle.ListeningServer;
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SslException;
-import com.twitter.finagle.ThriftMux;
-import com.twitter.finagle.mtls.server.MtlsThriftMuxServer;
-import com.twitter.finagle.mux.transport.OpportunisticTls;
-import com.twitter.finagle.stats.MetricsStatsReceiver;
-import com.twitter.finagle.thrift.ThriftClientRequest;
-import com.twitter.finagle.util.ExitGuard;
-import com.twitter.finagle.zipkin.thrift.ZipkinTracer;
-import com.twitter.search.common.dark.DarkProxy;
-import com.twitter.search.earlybird.common.config.EarlybirdProperty;
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
-import com.twitter.search.earlybird.exception.EarlybirdFinagleServerMonitor;
-import com.twitter.search.earlybird.thrift.EarlybirdService;
-import com.twitter.server.filter.AdmissionControl;
-import com.twitter.server.filter.cpuAdmissionControl;
-import com.twitter.util.Await;
-import com.twitter.util.Duration;
-import com.twitter.util.TimeoutException;
+import com.twittelonr.finaglelon.ListelonningSelonrvelonr;
+import com.twittelonr.finaglelon.Selonrvicelon;
+import com.twittelonr.finaglelon.Sslelonxcelonption;
+import com.twittelonr.finaglelon.ThriftMux;
+import com.twittelonr.finaglelon.mtls.selonrvelonr.MtlsThriftMuxSelonrvelonr;
+import com.twittelonr.finaglelon.mux.transport.OpportunisticTls;
+import com.twittelonr.finaglelon.stats.MelontricsStatsReloncelonivelonr;
+import com.twittelonr.finaglelon.thrift.ThriftClielonntRelonquelonst;
+import com.twittelonr.finaglelon.util.elonxitGuard;
+import com.twittelonr.finaglelon.zipkin.thrift.ZipkinTracelonr;
+import com.twittelonr.selonarch.common.dark.DarkProxy;
+import com.twittelonr.selonarch.elonarlybird.common.config.elonarlybirdPropelonrty;
+import com.twittelonr.selonarch.elonarlybird.elonxcelonption.CriticalelonxcelonptionHandlelonr;
+import com.twittelonr.selonarch.elonarlybird.elonxcelonption.elonarlybirdFinaglelonSelonrvelonrMonitor;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdSelonrvicelon;
+import com.twittelonr.selonrvelonr.filtelonr.AdmissionControl;
+import com.twittelonr.selonrvelonr.filtelonr.cpuAdmissionControl;
+import com.twittelonr.util.Await;
+import com.twittelonr.util.Duration;
+import com.twittelonr.util.Timelonoutelonxcelonption;
 
-public class EarlybirdProductionFinagleServerManager implements EarlybirdFinagleServerManager {
-  private static final Logger LOG =
-      LoggerFactory.getLogger(EarlybirdProductionFinagleServerManager.class);
+public class elonarlybirdProductionFinaglelonSelonrvelonrManagelonr implelonmelonnts elonarlybirdFinaglelonSelonrvelonrManagelonr {
+  privatelon static final Loggelonr LOG =
+      LoggelonrFactory.gelontLoggelonr(elonarlybirdProductionFinaglelonSelonrvelonrManagelonr.class);
 
-  private final AtomicReference<ListeningServer> warmUpFinagleServer = new AtomicReference<>();
-  private final AtomicReference<ListeningServer> productionFinagleServer = new AtomicReference<>();
-  private final EarlybirdFinagleServerMonitor unhandledExceptionMonitor;
+  privatelon final AtomicRelonfelonrelonncelon<ListelonningSelonrvelonr> warmUpFinaglelonSelonrvelonr = nelonw AtomicRelonfelonrelonncelon<>();
+  privatelon final AtomicRelonfelonrelonncelon<ListelonningSelonrvelonr> productionFinaglelonSelonrvelonr = nelonw AtomicRelonfelonrelonncelon<>();
+  privatelon final elonarlybirdFinaglelonSelonrvelonrMonitor unhandlelondelonxcelonptionMonitor;
 
-  public EarlybirdProductionFinagleServerManager(
-      CriticalExceptionHandler criticalExceptionHandler) {
-    this.unhandledExceptionMonitor =
-        new EarlybirdFinagleServerMonitor(criticalExceptionHandler);
+  public elonarlybirdProductionFinaglelonSelonrvelonrManagelonr(
+      CriticalelonxcelonptionHandlelonr criticalelonxcelonptionHandlelonr) {
+    this.unhandlelondelonxcelonptionMonitor =
+        nelonw elonarlybirdFinaglelonSelonrvelonrMonitor(criticalelonxcelonptionHandlelonr);
   }
 
-  @Override
-  public boolean isWarmUpServerRunning() {
-    return warmUpFinagleServer.get() != null;
+  @Ovelonrridelon
+  public boolelonan isWarmUpSelonrvelonrRunning() {
+    relonturn warmUpFinaglelonSelonrvelonr.gelont() != null;
   }
 
-  @Override
-  public void startWarmUpFinagleServer(EarlybirdService.ServiceIface serviceIface,
-                                       String serviceName,
+  @Ovelonrridelon
+  public void startWarmUpFinaglelonSelonrvelonr(elonarlybirdSelonrvicelon.SelonrvicelonIfacelon selonrvicelonIfacelon,
+                                       String selonrvicelonNamelon,
                                        int port) {
-    TProtocolFactory protocolFactory = new TCompactProtocol.Factory();
-    startFinagleServer(warmUpFinagleServer, "warmup",
-      new EarlybirdService.Service(serviceIface, protocolFactory),
-      protocolFactory, serviceName, port);
+    TProtocolFactory protocolFactory = nelonw TCompactProtocol.Factory();
+    startFinaglelonSelonrvelonr(warmUpFinaglelonSelonrvelonr, "warmup",
+      nelonw elonarlybirdSelonrvicelon.Selonrvicelon(selonrvicelonIfacelon, protocolFactory),
+      protocolFactory, selonrvicelonNamelon, port);
   }
 
-  @Override
-  public void stopWarmUpFinagleServer(Duration serverCloseWaitTime) throws InterruptedException {
-    stopFinagleServer(warmUpFinagleServer, serverCloseWaitTime, "Warm up");
+  @Ovelonrridelon
+  public void stopWarmUpFinaglelonSelonrvelonr(Duration selonrvelonrCloselonWaitTimelon) throws Intelonrruptelondelonxcelonption {
+    stopFinaglelonSelonrvelonr(warmUpFinaglelonSelonrvelonr, selonrvelonrCloselonWaitTimelon, "Warm up");
   }
 
-  @Override
-  public boolean isProductionServerRunning() {
-    return productionFinagleServer.get() != null;
+  @Ovelonrridelon
+  public boolelonan isProductionSelonrvelonrRunning() {
+    relonturn productionFinaglelonSelonrvelonr.gelont() != null;
   }
 
-  @Override
-  public void startProductionFinagleServer(DarkProxy<ThriftClientRequest, byte[]> darkProxy,
-                                           EarlybirdService.ServiceIface serviceIface,
-                                           String serviceName,
+  @Ovelonrridelon
+  public void startProductionFinaglelonSelonrvelonr(DarkProxy<ThriftClielonntRelonquelonst, bytelon[]> darkProxy,
+                                           elonarlybirdSelonrvicelon.SelonrvicelonIfacelon selonrvicelonIfacelon,
+                                           String selonrvicelonNamelon,
                                            int port) {
-    TProtocolFactory protocolFactory = new TCompactProtocol.Factory();
-    startFinagleServer(productionFinagleServer, "production",
-      darkProxy.toFilter().andThen(new EarlybirdService.Service(serviceIface, protocolFactory)),
-      protocolFactory, serviceName, port);
+    TProtocolFactory protocolFactory = nelonw TCompactProtocol.Factory();
+    startFinaglelonSelonrvelonr(productionFinaglelonSelonrvelonr, "production",
+      darkProxy.toFiltelonr().andThelonn(nelonw elonarlybirdSelonrvicelon.Selonrvicelon(selonrvicelonIfacelon, protocolFactory)),
+      protocolFactory, selonrvicelonNamelon, port);
   }
 
-  @Override
-  public void stopProductionFinagleServer(Duration serverCloseWaitTime)
-      throws InterruptedException {
-    stopFinagleServer(productionFinagleServer, serverCloseWaitTime, "Production");
+  @Ovelonrridelon
+  public void stopProductionFinaglelonSelonrvelonr(Duration selonrvelonrCloselonWaitTimelon)
+      throws Intelonrruptelondelonxcelonption {
+    stopFinaglelonSelonrvelonr(productionFinaglelonSelonrvelonr, selonrvelonrCloselonWaitTimelon, "Production");
   }
 
-  private void startFinagleServer(AtomicReference target, String serverDescription,
-      Service<byte[], byte[]> service, TProtocolFactory protocolFactory, String serviceName,
+  privatelon void startFinaglelonSelonrvelonr(AtomicRelonfelonrelonncelon targelont, String selonrvelonrDelonscription,
+      Selonrvicelon<bytelon[], bytelon[]> selonrvicelon, TProtocolFactory protocolFactory, String selonrvicelonNamelon,
       int port) {
-    target.set(getServer(service, serviceName, port, protocolFactory));
-    LOG.info("Started EarlybirdServer " + serverDescription + " finagle server on port " + port);
+    targelont.selont(gelontSelonrvelonr(selonrvicelon, selonrvicelonNamelon, port, protocolFactory));
+    LOG.info("Startelond elonarlybirdSelonrvelonr " + selonrvelonrDelonscription + " finaglelon selonrvelonr on port " + port);
   }
 
-  private ListeningServer getServer(
-      Service<byte[], byte[]> service, String serviceName, int port,
+  privatelon ListelonningSelonrvelonr gelontSelonrvelonr(
+      Selonrvicelon<bytelon[], bytelon[]> selonrvicelon, String selonrvicelonNamelon, int port,
       TProtocolFactory protocolFactory) {
-    MetricsStatsReceiver statsReceiver = new MetricsStatsReceiver();
-    ThriftMux.Server server = new MtlsThriftMuxServer(ThriftMux.server())
-        .withMutualTls(EarlybirdProperty.getServiceIdentifier())
-        .withServiceClass(EarlybirdService.class)
-        .withOpportunisticTls(OpportunisticTls.Required())
-        .withLabel(serviceName)
-        .withStatsReceiver(statsReceiver)
-        .withTracer(ZipkinTracer.mk(statsReceiver))
-        .withMonitor(unhandledExceptionMonitor)
+    MelontricsStatsReloncelonivelonr statsReloncelonivelonr = nelonw MelontricsStatsReloncelonivelonr();
+    ThriftMux.Selonrvelonr selonrvelonr = nelonw MtlsThriftMuxSelonrvelonr(ThriftMux.selonrvelonr())
+        .withMutualTls(elonarlybirdPropelonrty.gelontSelonrvicelonIdelonntifielonr())
+        .withSelonrvicelonClass(elonarlybirdSelonrvicelon.class)
+        .withOpportunisticTls(OpportunisticTls.Relonquirelond())
+        .withLabelonl(selonrvicelonNamelon)
+        .withStatsReloncelonivelonr(statsReloncelonivelonr)
+        .withTracelonr(ZipkinTracelonr.mk(statsReloncelonivelonr))
+        .withMonitor(unhandlelondelonxcelonptionMonitor)
         .withProtocolFactory(protocolFactory);
 
-    if (cpuAdmissionControl.isDefined()) {
-      LOG.info("cpuAdmissionControl flag is set, replacing AuroraThrottlingAdmissionFilter"
-          + " with LinuxCpuAdmissionFilter");
-      server = server
-          .configured(AdmissionControl.auroraThrottling().off().mk())
-          .configured(AdmissionControl.linuxCpu().useGlobalFlag().mk());
+    if (cpuAdmissionControl.isDelonfinelond()) {
+      LOG.info("cpuAdmissionControl flag is selont, relonplacing AuroraThrottlingAdmissionFiltelonr"
+          + " with LinuxCpuAdmissionFiltelonr");
+      selonrvelonr = selonrvelonr
+          .configurelond(AdmissionControl.auroraThrottling().off().mk())
+          .configurelond(AdmissionControl.linuxCpu().uselonGlobalFlag().mk());
     }
 
-    return server.serve(new InetSocketAddress(port), service);
+    relonturn selonrvelonr.selonrvelon(nelonw InelontSockelontAddrelonss(port), selonrvicelon);
   }
 
-  private void stopFinagleServer(AtomicReference<ListeningServer> finagleServer,
-                                 Duration serverCloseWaitTime,
-                                 String serverDescription) throws InterruptedException {
+  privatelon void stopFinaglelonSelonrvelonr(AtomicRelonfelonrelonncelon<ListelonningSelonrvelonr> finaglelonSelonrvelonr,
+                                 Duration selonrvelonrCloselonWaitTimelon,
+                                 String selonrvelonrDelonscription) throws Intelonrruptelondelonxcelonption {
     try {
-      LOG.info("Waiting for " + serverDescription + " finagle server to close. "
-               + "Current time is " + System.currentTimeMillis());
-      Await.result(finagleServer.get().close(), serverCloseWaitTime);
-      LOG.info("Stopped " + serverDescription + " finagle server. Current time is "
-               + System.currentTimeMillis());
-      finagleServer.set(null);
-    } catch (TimeoutException e) {
-      LOG.warn(serverDescription + " finagle server did not shutdown cleanly.", e);
-    } catch (SslException e) {
-      // Closing the Thrift port seems to throw an SSLException (SSLEngine closed already).
-      // See SEARCH-29449. Log the exception and reset finagleServer, so that future calls to
-      // startProductionFinagleServer() succeed.
-      LOG.warn("Got a SSLException while trying to close the Thrift port.", e);
-      finagleServer.set(null);
-    } catch (InterruptedException e) {
-      // If we catch an InterruptedException here, it means that we're probably shutting down.
-      // We should propagate this exception, and rely on EarlybirdServer.stopThriftService()
-      // to do the right thing.
-      throw e;
-    } catch (Exception e) {
-      LOG.error(e.getMessage(), e);
+      LOG.info("Waiting for " + selonrvelonrDelonscription + " finaglelon selonrvelonr to closelon. "
+               + "Currelonnt timelon is " + Systelonm.currelonntTimelonMillis());
+      Await.relonsult(finaglelonSelonrvelonr.gelont().closelon(), selonrvelonrCloselonWaitTimelon);
+      LOG.info("Stoppelond " + selonrvelonrDelonscription + " finaglelon selonrvelonr. Currelonnt timelon is "
+               + Systelonm.currelonntTimelonMillis());
+      finaglelonSelonrvelonr.selont(null);
+    } catch (Timelonoutelonxcelonption elon) {
+      LOG.warn(selonrvelonrDelonscription + " finaglelon selonrvelonr did not shutdown clelonanly.", elon);
+    } catch (Sslelonxcelonption elon) {
+      // Closing thelon Thrift port selonelonms to throw an SSLelonxcelonption (SSLelonnginelon closelond alrelonady).
+      // Selonelon SelonARCH-29449. Log thelon elonxcelonption and relonselont finaglelonSelonrvelonr, so that futurelon calls to
+      // startProductionFinaglelonSelonrvelonr() succelonelond.
+      LOG.warn("Got a SSLelonxcelonption whilelon trying to closelon thelon Thrift port.", elon);
+      finaglelonSelonrvelonr.selont(null);
+    } catch (Intelonrruptelondelonxcelonption elon) {
+      // If welon catch an Intelonrruptelondelonxcelonption helonrelon, it melonans that welon'relon probably shutting down.
+      // Welon should propagatelon this elonxcelonption, and relonly on elonarlybirdSelonrvelonr.stopThriftSelonrvicelon()
+      // to do thelon right thing.
+      throw elon;
+    } catch (elonxcelonption elon) {
+      LOG.elonrror(elon.gelontMelonssagelon(), elon);
     } finally {
-      // If the finagle server does not close cleanly, this line prints details about
-      // the ExitGuards.
-      LOG.info(serverDescription + " server ExitGuard explanation: " + ExitGuard.explainGuards());
+      // If thelon finaglelon selonrvelonr doelons not closelon clelonanly, this linelon prints delontails about
+      // thelon elonxitGuards.
+      LOG.info(selonrvelonrDelonscription + " selonrvelonr elonxitGuard elonxplanation: " + elonxitGuard.elonxplainGuards());
     }
   }
 }

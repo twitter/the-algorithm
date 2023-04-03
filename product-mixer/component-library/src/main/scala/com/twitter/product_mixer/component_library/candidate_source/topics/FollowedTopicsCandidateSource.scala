@@ -1,21 +1,21 @@
-package com.twitter.product_mixer.component_library.candidate_source.topics
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.candidatelon_sourcelon.topics
 
-import com.twitter.product_mixer.core.functional_component.candidate_source.strato.StratoKeyViewFetcherSeqSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.strato.client.Fetcher
-import com.twitter.strato.generated.client.interests.FollowedTopicsGetterClientColumn
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.strato.StratoKelonyVielonwFelontchelonrSelonqSourcelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonSourcelonIdelonntifielonr
+import com.twittelonr.strato.clielonnt.Felontchelonr
+import com.twittelonr.strato.gelonnelonratelond.clielonnt.intelonrelonsts.FollowelondTopicsGelonttelonrClielonntColumn
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class FollowedTopicsCandidateSource @Inject() (
-  column: FollowedTopicsGetterClientColumn)
-    extends StratoKeyViewFetcherSeqSource[
+@Singlelonton
+class FollowelondTopicsCandidatelonSourcelon @Injelonct() (
+  column: FollowelondTopicsGelonttelonrClielonntColumn)
+    elonxtelonnds StratoKelonyVielonwFelontchelonrSelonqSourcelon[
       Long,
       Unit,
       Long
     ] {
-  override val identifier: CandidateSourceIdentifier = CandidateSourceIdentifier("FollowedTopics")
+  ovelonrridelon val idelonntifielonr: CandidatelonSourcelonIdelonntifielonr = CandidatelonSourcelonIdelonntifielonr("FollowelondTopics")
 
-  override val fetcher: Fetcher[Long, Unit, Seq[Long]] = column.fetcher
+  ovelonrridelon val felontchelonr: Felontchelonr[Long, Unit, Selonq[Long]] = column.felontchelonr
 }

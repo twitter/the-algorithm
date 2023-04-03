@@ -1,18 +1,18 @@
-package com.twitter.recos.user_user_graph
+packagelon com.twittelonr.reloncos.uselonr_uselonr_graph
 
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.finagle.tracing.{Trace, TraceId}
-import com.twitter.recos.user_user_graph.thriftscala._
-import com.twitter.util.Future
+import com.twittelonr.finaglelon.thrift.ClielonntId
+import com.twittelonr.finaglelon.tracing.{Tracelon, TracelonId}
+import com.twittelonr.reloncos.uselonr_uselonr_graph.thriftscala._
+import com.twittelonr.util.Futurelon
 
-object UserUserGraph {
-  def traceId: TraceId = Trace.id
-  def clientId: Option[ClientId] = ClientId.current
+objelonct UselonrUselonrGraph {
+  delonf tracelonId: TracelonId = Tracelon.id
+  delonf clielonntId: Option[ClielonntId] = ClielonntId.currelonnt
 }
 
-class UserUserGraph(recommendUsersHandler: RecommendUsersHandler)
-    extends thriftscala.UserUserGraph.MethodPerEndpoint {
+class UselonrUselonrGraph(reloncommelonndUselonrsHandlelonr: ReloncommelonndUselonrsHandlelonr)
+    elonxtelonnds thriftscala.UselonrUselonrGraph.MelonthodPelonrelonndpoint {
 
-  override def recommendUsers(request: RecommendUserRequest): Future[RecommendUserResponse] =
-    recommendUsersHandler(request)
+  ovelonrridelon delonf reloncommelonndUselonrs(relonquelonst: ReloncommelonndUselonrRelonquelonst): Futurelon[ReloncommelonndUselonrRelonsponselon] =
+    reloncommelonndUselonrsHandlelonr(relonquelonst)
 }

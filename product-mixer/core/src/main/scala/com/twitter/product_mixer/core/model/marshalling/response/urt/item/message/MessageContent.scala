@@ -1,38 +1,38 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.message
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.melonssagelon
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.SocialContext
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichText
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.SocialContelonxt
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.richtelonxt.RichTelonxt
 
-sealed trait MessageContent
+selonalelond trait MelonssagelonContelonnt
 
-case class InlinePromptMessageContent(
-  headerText: String,
-  bodyText: Option[String],
-  primaryButtonAction: Option[MessageTextAction],
-  secondaryButtonAction: Option[MessageTextAction],
-  headerRichText: Option[RichText],
-  bodyRichText: Option[RichText],
-  socialContext: Option[SocialContext],
-  userFacepile: Option[UserFacepile])
-    extends MessageContent
+caselon class InlinelonPromptMelonssagelonContelonnt(
+  helonadelonrTelonxt: String,
+  bodyTelonxt: Option[String],
+  primaryButtonAction: Option[MelonssagelonTelonxtAction],
+  seloncondaryButtonAction: Option[MelonssagelonTelonxtAction],
+  helonadelonrRichTelonxt: Option[RichTelonxt],
+  bodyRichTelonxt: Option[RichTelonxt],
+  socialContelonxt: Option[SocialContelonxt],
+  uselonrFacelonpilelon: Option[UselonrFacelonpilelon])
+    elonxtelonnds MelonssagelonContelonnt
 
-case class HeaderImagePromptMessageContent(
-  headerImage: MessageImage,
-  headerText: Option[String],
-  bodyText: Option[String],
-  primaryButtonAction: Option[MessageTextAction],
-  secondaryButtonAction: Option[MessageTextAction],
-  action: Option[MessageAction],
-  headerRichText: Option[RichText],
-  bodyRichText: Option[RichText])
-    extends MessageContent
+caselon class HelonadelonrImagelonPromptMelonssagelonContelonnt(
+  helonadelonrImagelon: MelonssagelonImagelon,
+  helonadelonrTelonxt: Option[String],
+  bodyTelonxt: Option[String],
+  primaryButtonAction: Option[MelonssagelonTelonxtAction],
+  seloncondaryButtonAction: Option[MelonssagelonTelonxtAction],
+  action: Option[MelonssagelonAction],
+  helonadelonrRichTelonxt: Option[RichTelonxt],
+  bodyRichTelonxt: Option[RichTelonxt])
+    elonxtelonnds MelonssagelonContelonnt
 
-case class CompactPromptMessageContent(
-  headerText: String,
-  bodyText: Option[String],
-  primaryButtonAction: Option[MessageTextAction],
-  secondaryButtonAction: Option[MessageTextAction],
-  action: Option[MessageAction],
-  headerRichText: Option[RichText],
-  bodyRichText: Option[RichText])
-    extends MessageContent
+caselon class CompactPromptMelonssagelonContelonnt(
+  helonadelonrTelonxt: String,
+  bodyTelonxt: Option[String],
+  primaryButtonAction: Option[MelonssagelonTelonxtAction],
+  seloncondaryButtonAction: Option[MelonssagelonTelonxtAction],
+  action: Option[MelonssagelonAction],
+  helonadelonrRichTelonxt: Option[RichTelonxt],
+  bodyRichTelonxt: Option[RichTelonxt])
+    elonxtelonnds MelonssagelonContelonnt

@@ -1,18 +1,18 @@
 scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/javax/inject:javax.inject",
-        "finatra/inject/inject-core/src/main/scala/com/twitter/inject",
-        "interests-service/thrift/src/main/thrift:thrift-scala",
-        "interests_discovery/thrift/src/main/thrift:service-thrift-scala",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/candidate_source",
-        "stitch/stitch-core",
+    sourcelons = ["*.scala"],
+    compilelonr_option_selonts = ["fatal_warnings"],
+    strict_delonps = Truelon,
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        "3rdparty/jvm/javax/injelonct:javax.injelonct",
+        "finatra/injelonct/injelonct-corelon/src/main/scala/com/twittelonr/injelonct",
+        "intelonrelonsts-selonrvicelon/thrift/src/main/thrift:thrift-scala",
+        "intelonrelonsts_discovelonry/thrift/src/main/thrift:selonrvicelon-thrift-scala",
+        "product-mixelonr/corelon/src/main/scala/com/twittelonr/product_mixelonr/corelon/functional_componelonnt/candidatelon_sourcelon",
+        "stitch/stitch-corelon",
     ],
-    exports = [
-        "interests-service/thrift/src/main/thrift:thrift-scala",
-        "interests_discovery/thrift/src/main/thrift:service-thrift-scala",
+    elonxports = [
+        "intelonrelonsts-selonrvicelon/thrift/src/main/thrift:thrift-scala",
+        "intelonrelonsts_discovelonry/thrift/src/main/thrift:selonrvicelon-thrift-scala",
     ],
 )

@@ -1,28 +1,28 @@
-package com.twitter.follow_recommendations.flows.ads
-import com.twitter.follow_recommendations.common.candidate_sources.promoted_accounts.PromotedCandidateUser
-import com.twitter.follow_recommendations.common.models.AccountProof
-import com.twitter.follow_recommendations.common.models.AdMetadata
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.Reason
-import com.twitter.follow_recommendations.common.models.UserCandidateSourceDetails
+packagelon com.twittelonr.follow_reloncommelonndations.flows.ads
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.promotelond_accounts.PromotelondCandidatelonUselonr
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.AccountProof
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.AdMelontadata
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.CandidatelonUselonr
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.Relonason
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.UselonrCandidatelonSourcelonDelontails
 
-object PromotedAccountsUtil {
-  def toCandidateUser(promotedCandidateUser: PromotedCandidateUser): CandidateUser = {
-    CandidateUser(
-      id = promotedCandidateUser.id,
-      score = None,
-      adMetadata =
-        Some(AdMetadata(promotedCandidateUser.position, promotedCandidateUser.adImpression)),
-      reason = Some(
-        Reason(
-          accountProof = Some(AccountProof(followProof = Some(promotedCandidateUser.followProof))))
+objelonct PromotelondAccountsUtil {
+  delonf toCandidatelonUselonr(promotelondCandidatelonUselonr: PromotelondCandidatelonUselonr): CandidatelonUselonr = {
+    CandidatelonUselonr(
+      id = promotelondCandidatelonUselonr.id,
+      scorelon = Nonelon,
+      adMelontadata =
+        Somelon(AdMelontadata(promotelondCandidatelonUselonr.position, promotelondCandidatelonUselonr.adImprelonssion)),
+      relonason = Somelon(
+        Relonason(
+          accountProof = Somelon(AccountProof(followProof = Somelon(promotelondCandidatelonUselonr.followProof))))
       ),
-      userCandidateSourceDetails = Some(
-        UserCandidateSourceDetails(
-          promotedCandidateUser.primaryCandidateSource,
-          Map.empty,
-          Map.empty,
-          None))
+      uselonrCandidatelonSourcelonDelontails = Somelon(
+        UselonrCandidatelonSourcelonDelontails(
+          promotelondCandidatelonUselonr.primaryCandidatelonSourcelon,
+          Map.elonmpty,
+          Map.elonmpty,
+          Nonelon))
     )
   }
 }

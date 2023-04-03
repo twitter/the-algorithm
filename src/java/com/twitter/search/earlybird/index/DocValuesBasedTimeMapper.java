@@ -1,146 +1,146 @@
-package com.twitter.search.earlybird.index;
+packagelon com.twittelonr.selonarch.elonarlybird.indelonx;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 
-import com.google.common.base.Preconditions;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import org.apache.lucene.index.LeafReader;
-import org.apache.lucene.index.NumericDocValues;
-import org.apache.lucene.search.DocIdSetIterator;
+import org.apachelon.lucelonnelon.indelonx.LelonafRelonadelonr;
+import org.apachelon.lucelonnelon.indelonx.NumelonricDocValuelons;
+import org.apachelon.lucelonnelon.selonarch.DocIdSelontItelonrator;
 
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants;
-import com.twitter.search.common.util.analysis.IntTermAttributeImpl;
-import com.twitter.search.common.util.io.flushable.DataDeserializer;
-import com.twitter.search.common.util.io.flushable.DataSerializer;
-import com.twitter.search.common.util.io.flushable.FlushInfo;
-import com.twitter.search.common.util.io.flushable.Flushable;
-import com.twitter.search.core.earlybird.index.DocIDToTweetIDMapper;
-import com.twitter.search.core.earlybird.index.TimeMapper;
-import com.twitter.search.core.earlybird.index.column.ColumnStrideFieldIndex;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdFielonldConstants;
+import com.twittelonr.selonarch.common.util.analysis.IntTelonrmAttributelonImpl;
+import com.twittelonr.selonarch.common.util.io.flushablelon.DataDelonselonrializelonr;
+import com.twittelonr.selonarch.common.util.io.flushablelon.DataSelonrializelonr;
+import com.twittelonr.selonarch.common.util.io.flushablelon.FlushInfo;
+import com.twittelonr.selonarch.common.util.io.flushablelon.Flushablelon;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.DocIDToTwelonelontIDMappelonr;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.TimelonMappelonr;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.column.ColumnStridelonFielonldIndelonx;
 
 /**
- * A few caveats when using this class:
- *   - This class only supports in-order createdAt!
- *   - Before actually using this class, one must call prepareToRead() with a Lucene AtomicReader
- *   - prepareToRead() will load docID to createdAt mapping into memory, if not already done.
+ * A felonw cavelonats whelonn using this class:
+ *   - This class only supports in-ordelonr crelonatelondAt!
+ *   - Belonforelon actually using this class, onelon must call prelonparelonToRelonad() with a Lucelonnelon AtomicRelonadelonr
+ *   - prelonparelonToRelonad() will load docID to crelonatelondAt mapping into melonmory, if not alrelonady donelon.
  */
-public class DocValuesBasedTimeMapper implements TimeMapper {
-  private LeafReader reader;
-  private ColumnStrideFieldIndex docValues;
+public class DocValuelonsBaselondTimelonMappelonr implelonmelonnts TimelonMappelonr {
+  privatelon LelonafRelonadelonr relonadelonr;
+  privatelon ColumnStridelonFielonldIndelonx docValuelons;
 
-  protected int minTimestamp = ILLEGAL_TIME;
-  protected int maxTimestamp = ILLEGAL_TIME;
+  protelonctelond int minTimelonstamp = ILLelonGAL_TIMelon;
+  protelonctelond int maxTimelonstamp = ILLelonGAL_TIMelon;
 
   /**
-   * When indexing finishes, this method should be called with a index reader that
-   * can see all documents.
-   * @param leafReader Lucene index reader used to access "TweetID" to "createdAt" mapping.
+   * Whelonn indelonxing finishelons, this melonthod should belon callelond with a indelonx relonadelonr that
+   * can selonelon all documelonnts.
+   * @param lelonafRelonadelonr Lucelonnelon indelonx relonadelonr uselond to accelonss "TwelonelontID" to "crelonatelondAt" mapping.
    */
-  public void initializeWithLuceneReader(LeafReader leafReader, ColumnStrideFieldIndex csf)
-      throws IOException {
-    reader = Preconditions.checkNotNull(leafReader);
-    docValues = Preconditions.checkNotNull(csf);
+  public void initializelonWithLucelonnelonRelonadelonr(LelonafRelonadelonr lelonafRelonadelonr, ColumnStridelonFielonldIndelonx csf)
+      throws IOelonxcelonption {
+    relonadelonr = Prelonconditions.chelonckNotNull(lelonafRelonadelonr);
+    docValuelons = Prelonconditions.chelonckNotNull(csf);
 
-    // Find the min and max timestamps.
-    // See SEARCH-5534
-    // In the archive, tweets are always sorted in descending order by tweet ID, but
-    // that does not mean that the documents are necessarily sorted by time. We've observed tweet ID
-    // generation be decoupled from timestamp creation (i.e. a larger tweet ID having a smaller
-    // created_at time).
-    minTimestamp = Integer.MAX_VALUE;
-    maxTimestamp = Integer.MIN_VALUE;
+    // Find thelon min and max timelonstamps.
+    // Selonelon SelonARCH-5534
+    // In thelon archivelon, twelonelonts arelon always sortelond in delonscelonnding ordelonr by twelonelont ID, but
+    // that doelons not melonan that thelon documelonnts arelon neloncelonssarily sortelond by timelon. Welon'velon obselonrvelond twelonelont ID
+    // gelonnelonration belon deloncouplelond from timelonstamp crelonation (i.elon. a largelonr twelonelont ID having a smallelonr
+    // crelonatelond_at timelon).
+    minTimelonstamp = Intelongelonr.MAX_VALUelon;
+    maxTimelonstamp = Intelongelonr.MIN_VALUelon;
 
-    NumericDocValues onDiskDocValues = reader.getNumericDocValues(
-        EarlybirdFieldConstants.EarlybirdFieldConstant.CREATED_AT_CSF_FIELD.getFieldName());
-    for (int i = 0; i < reader.maxDoc(); ++i) {
-      Preconditions.checkArgument(onDiskDocValues.advanceExact(i));
-      int timestamp = (int) onDiskDocValues.longValue();
-      docValues.setValue(i, timestamp);
+    NumelonricDocValuelons onDiskDocValuelons = relonadelonr.gelontNumelonricDocValuelons(
+        elonarlybirdFielonldConstants.elonarlybirdFielonldConstant.CRelonATelonD_AT_CSF_FIelonLD.gelontFielonldNamelon());
+    for (int i = 0; i < relonadelonr.maxDoc(); ++i) {
+      Prelonconditions.chelonckArgumelonnt(onDiskDocValuelons.advancelonelonxact(i));
+      int timelonstamp = (int) onDiskDocValuelons.longValuelon();
+      docValuelons.selontValuelon(i, timelonstamp);
 
-      if (timestamp < minTimestamp) {
-        minTimestamp = timestamp;
+      if (timelonstamp < minTimelonstamp) {
+        minTimelonstamp = timelonstamp;
       }
-      if (timestamp > maxTimestamp) {
-        maxTimestamp = timestamp;
+      if (timelonstamp > maxTimelonstamp) {
+        maxTimelonstamp = timelonstamp;
       }
     }
   }
 
-  @Override
-  public int getLastTime() {
-    return maxTimestamp;
+  @Ovelonrridelon
+  public int gelontLastTimelon() {
+    relonturn maxTimelonstamp;
   }
 
-  @Override
-  public int getFirstTime() {
-    return minTimestamp;
+  @Ovelonrridelon
+  public int gelontFirstTimelon() {
+    relonturn minTimelonstamp;
   }
 
-  @Override
-  public int getTime(int docID) {
-    if (docID < 0 || docID > reader.maxDoc()) {
-      return ILLEGAL_TIME;
+  @Ovelonrridelon
+  public int gelontTimelon(int docID) {
+    if (docID < 0 || docID > relonadelonr.maxDoc()) {
+      relonturn ILLelonGAL_TIMelon;
     }
-    return (int) docValues.get(docID);
+    relonturn (int) docValuelons.gelont(docID);
   }
 
-  @Override
-  public int findFirstDocId(int timeSeconds, int smallestDocID) throws IOException {
-    // In the full archive, the smallest doc id corresponds to largest timestamp.
-    if (timeSeconds > maxTimestamp) {
-      return smallestDocID;
+  @Ovelonrridelon
+  public int findFirstDocId(int timelonSelonconds, int smallelonstDocID) throws IOelonxcelonption {
+    // In thelon full archivelon, thelon smallelonst doc id correlonsponds to largelonst timelonstamp.
+    if (timelonSelonconds > maxTimelonstamp) {
+      relonturn smallelonstDocID;
     }
-    if (timeSeconds < minTimestamp) {
-      return reader.maxDoc() - 1;
-    }
-
-    int docId = DocValuesHelper.getLargestDocIdWithCeilOfValue(
-        reader,
-        EarlybirdFieldConstants.EarlybirdFieldConstant.CREATED_AT_FIELD.getFieldName(),
-        IntTermAttributeImpl.copyIntoNewBytesRef(timeSeconds));
-    if (docId == DocIdSetIterator.NO_MORE_DOCS) {
-      return ILLEGAL_TIME;
+    if (timelonSelonconds < minTimelonstamp) {
+      relonturn relonadelonr.maxDoc() - 1;
     }
 
-    return docId;
+    int docId = DocValuelonsHelonlpelonr.gelontLargelonstDocIdWithCelonilOfValuelon(
+        relonadelonr,
+        elonarlybirdFielonldConstants.elonarlybirdFielonldConstant.CRelonATelonD_AT_FIelonLD.gelontFielonldNamelon(),
+        IntTelonrmAttributelonImpl.copyIntoNelonwBytelonsRelonf(timelonSelonconds));
+    if (docId == DocIdSelontItelonrator.NO_MORelon_DOCS) {
+      relonturn ILLelonGAL_TIMelon;
+    }
+
+    relonturn docId;
   }
 
-  @Override
-  public TimeMapper optimize(DocIDToTweetIDMapper originalTweetIdMapper,
-                             DocIDToTweetIDMapper optimizedTweetIdMapper) {
-    // DocValuesBasedTimerMapper instances are not flushed or loaded,
-    // so their optimization is a no-op.
-    return this;
+  @Ovelonrridelon
+  public TimelonMappelonr optimizelon(DocIDToTwelonelontIDMappelonr originalTwelonelontIdMappelonr,
+                             DocIDToTwelonelontIDMappelonr optimizelondTwelonelontIdMappelonr) {
+    // DocValuelonsBaselondTimelonrMappelonr instancelons arelon not flushelond or loadelond,
+    // so thelonir optimization is a no-op.
+    relonturn this;
   }
 
-  @Override
-  public Flushable.Handler<DocValuesBasedTimeMapper> getFlushHandler() {
-    // EarlybirdIndexSegmentData will still try to flush the DocValuesBasedTimeMapper for the
-    // respective segment, so we need to pass in a DocValuesBasedTimeMapper instance to this
-    // flusher: otherwise, Flushable.Handler.flush() will throw a NullPointerException.
-    return new FlushHandler(new DocValuesBasedTimeMapper());
+  @Ovelonrridelon
+  public Flushablelon.Handlelonr<DocValuelonsBaselondTimelonMappelonr> gelontFlushHandlelonr() {
+    // elonarlybirdIndelonxSelongmelonntData will still try to flush thelon DocValuelonsBaselondTimelonMappelonr for thelon
+    // relonspelonctivelon selongmelonnt, so welon nelonelond to pass in a DocValuelonsBaselondTimelonMappelonr instancelon to this
+    // flushelonr: othelonrwiselon, Flushablelon.Handlelonr.flush() will throw a NullPointelonrelonxcelonption.
+    relonturn nelonw FlushHandlelonr(nelonw DocValuelonsBaselondTimelonMappelonr());
   }
 
-  // Full archive earlybirds don't actually flush or load the DocValuesBasedTimeMapper. This is
-  // why doFlush() is a no-op, and doLoad() returns a new DocValuesBasedTimeMapper instance
-  // (initializeWithLuceneReader() will be called at load time to initialize this new
-  // DocValuesBasedTimeMapper instance).
-  public static class FlushHandler extends Flushable.Handler<DocValuesBasedTimeMapper> {
-    public FlushHandler() {
-      super();
+  // Full archivelon elonarlybirds don't actually flush or load thelon DocValuelonsBaselondTimelonMappelonr. This is
+  // why doFlush() is a no-op, and doLoad() relonturns a nelonw DocValuelonsBaselondTimelonMappelonr instancelon
+  // (initializelonWithLucelonnelonRelonadelonr() will belon callelond at load timelon to initializelon this nelonw
+  // DocValuelonsBaselondTimelonMappelonr instancelon).
+  public static class FlushHandlelonr elonxtelonnds Flushablelon.Handlelonr<DocValuelonsBaselondTimelonMappelonr> {
+    public FlushHandlelonr() {
+      supelonr();
     }
 
-    public FlushHandler(DocValuesBasedTimeMapper objectToFlush) {
-      super(objectToFlush);
+    public FlushHandlelonr(DocValuelonsBaselondTimelonMappelonr objelonctToFlush) {
+      supelonr(objelonctToFlush);
     }
 
-    @Override
-    protected void doFlush(FlushInfo flushInfo, DataSerializer out) {
+    @Ovelonrridelon
+    protelonctelond void doFlush(FlushInfo flushInfo, DataSelonrializelonr out) {
     }
 
-    @Override
-    protected DocValuesBasedTimeMapper doLoad(FlushInfo flushInfo, DataDeserializer in) {
-      return new DocValuesBasedTimeMapper();
+    @Ovelonrridelon
+    protelonctelond DocValuelonsBaselondTimelonMappelonr doLoad(FlushInfo flushInfo, DataDelonselonrializelonr in) {
+      relonturn nelonw DocValuelonsBaselondTimelonMappelonr();
     }
   }
 }

@@ -1,851 +1,851 @@
-package com.twitter.visibility.models
+packagelon com.twittelonr.visibility.modelonls
 
-import com.twitter.spam.rtf.thriftscala.{SafetyLevel => ThriftSafetyLevel}
-import com.twitter.visibility.configapi.params.SafetyLevelParam
-import com.twitter.visibility.configapi.params.SafetyLevelParams._
+import com.twittelonr.spam.rtf.thriftscala.{SafelontyLelonvelonl => ThriftSafelontyLelonvelonl}
+import com.twittelonr.visibility.configapi.params.SafelontyLelonvelonlParam
+import com.twittelonr.visibility.configapi.params.SafelontyLelonvelonlParams._
 
-sealed trait SafetyLevel {
-  val name: String = this.getClass.getSimpleName.dropRight(1)
-  def enabledParam: SafetyLevelParam
+selonalelond trait SafelontyLelonvelonl {
+  val namelon: String = this.gelontClass.gelontSimplelonNamelon.dropRight(1)
+  delonf elonnablelondParam: SafelontyLelonvelonlParam
 }
 
-object SafetyLevel {
-  private lazy val nameToSafetyLevelMap: Map[String, SafetyLevel] =
-    SafetyLevel.List.map(s => s.name.toLowerCase -> s).toMap
-  def fromName(name: String): Option[SafetyLevel] = {
-    nameToSafetyLevelMap.get(name.toLowerCase)
+objelonct SafelontyLelonvelonl {
+  privatelon lazy val namelonToSafelontyLelonvelonlMap: Map[String, SafelontyLelonvelonl] =
+    SafelontyLelonvelonl.List.map(s => s.namelon.toLowelonrCaselon -> s).toMap
+  delonf fromNamelon(namelon: String): Option[SafelontyLelonvelonl] = {
+    namelonToSafelontyLelonvelonlMap.gelont(namelon.toLowelonrCaselon)
   }
 
-  private val DeprecatedEnumValue = -1
+  privatelon val DelonpreloncatelondelonnumValuelon = -1
 
-  private lazy val thriftToModelMap: Map[ThriftSafetyLevel, SafetyLevel] = Map(
-    ThriftSafetyLevel.AccessInternalPromotedContent -> AccessInternalPromotedContent,
-    ThriftSafetyLevel.AdsBusinessSettings -> AdsBusinessSettings,
-    ThriftSafetyLevel.AdsCampaign -> AdsCampaign,
-    ThriftSafetyLevel.AdsManager -> AdsManager,
-    ThriftSafetyLevel.AdsReportingDashboard -> AdsReportingDashboard,
-    ThriftSafetyLevel.AllSubscribedLists -> AllSubscribedLists,
-    ThriftSafetyLevel.Appeals -> Appeals,
-    ThriftSafetyLevel.ArticleTweetTimeline -> ArticleTweetTimeline,
-    ThriftSafetyLevel.BaseQig -> BaseQig,
-    ThriftSafetyLevel.BirdwatchNoteAuthor -> BirdwatchNoteAuthor,
-    ThriftSafetyLevel.BirdwatchNoteTweetsTimeline -> BirdwatchNoteTweetsTimeline,
-    ThriftSafetyLevel.BirdwatchNeedsYourHelpNotifications -> BirdwatchNeedsYourHelpNotifications,
-    ThriftSafetyLevel.BlockMuteUsersTimeline -> BlockMuteUsersTimeline,
-    ThriftSafetyLevel.BrandSafety -> BrandSafety,
-    ThriftSafetyLevel.CardPollVoting -> CardPollVoting,
-    ThriftSafetyLevel.CardsService -> CardsService,
-    ThriftSafetyLevel.Communities -> Communities,
-    ThriftSafetyLevel.ContentControlToolInstall -> ContentControlToolInstall,
-    ThriftSafetyLevel.ConversationFocalPrehydration -> ConversationFocalPrehydration,
-    ThriftSafetyLevel.ConversationFocalTweet -> ConversationFocalTweet,
-    ThriftSafetyLevel.ConversationInjectedTweet -> ConversationInjectedTweet,
-    ThriftSafetyLevel.ConversationReply -> ConversationReply,
-    ThriftSafetyLevel.CuratedTrendsRepresentativeTweet -> CuratedTrendsRepresentativeTweet,
-    ThriftSafetyLevel.CurationPolicyViolations -> CurationPolicyViolations,
-    ThriftSafetyLevel.DevPlatformGetListTweets -> DevPlatformGetListTweets,
-    ThriftSafetyLevel.DesFollowingAndFollowersUserList -> DesFollowingAndFollowersUserList,
-    ThriftSafetyLevel.DesHomeTimeline -> DesHomeTimeline,
-    ThriftSafetyLevel.DesQuoteTweetTimeline -> DesQuoteTweetTimeline,
-    ThriftSafetyLevel.DesRealtime -> DesRealtime,
-    ThriftSafetyLevel.DesRealtimeSpamEnrichment -> DesRealtimeSpamEnrichment,
-    ThriftSafetyLevel.DesRealtimeTweetFilter -> DesRealtimeTweetFilter,
-    ThriftSafetyLevel.DesRetweetingUsers -> DesRetweetingUsers,
-    ThriftSafetyLevel.DesTweetDetail -> DesTweetDetail,
-    ThriftSafetyLevel.DesTweetLikingUsers -> DesTweetLikingUsers,
-    ThriftSafetyLevel.DesUserBookmarks -> DesUserBookmarks,
-    ThriftSafetyLevel.DesUserLikedTweets -> DesUserLikedTweets,
-    ThriftSafetyLevel.DesUserMentions -> DesUserMentions,
-    ThriftSafetyLevel.DesUserTweets -> DesUserTweets,
-    ThriftSafetyLevel.DevPlatformComplianceStream -> DevPlatformComplianceStream,
-    ThriftSafetyLevel.DirectMessages -> DirectMessages,
-    ThriftSafetyLevel.DirectMessagesConversationList -> DirectMessagesConversationList,
-    ThriftSafetyLevel.DirectMessagesConversationTimeline -> DirectMessagesConversationTimeline,
-    ThriftSafetyLevel.DirectMessagesInbox -> DirectMessagesInbox,
-    ThriftSafetyLevel.DirectMessagesMutedUsers -> DirectMessagesMutedUsers,
-    ThriftSafetyLevel.DirectMessagesPinned -> DirectMessagesPinned,
-    ThriftSafetyLevel.DirectMessagesSearch -> DirectMessagesSearch,
-    ThriftSafetyLevel.EditHistoryTimeline -> EditHistoryTimeline,
-    ThriftSafetyLevel.ElevatedQuoteTweetTimeline -> ElevatedQuoteTweetTimeline,
-    ThriftSafetyLevel.EmbeddedTweet -> EmbeddedTweet,
-    ThriftSafetyLevel.EmbedsPublicInterestNotice -> EmbedsPublicInterestNotice,
-    ThriftSafetyLevel.EmbedTweetMarkup -> EmbedTweetMarkup,
-    ThriftSafetyLevel.ExploreRecommendations -> ExploreRecommendations,
-    ThriftSafetyLevel.WritePathLimitedActionsEnforcement -> WritePathLimitedActionsEnforcement,
-    ThriftSafetyLevel.FilterAll -> FilterAll,
-    ThriftSafetyLevel.FilterAllPlaceholder -> FilterAllPlaceholder,
-    ThriftSafetyLevel.FilterDefault -> FilterDefault,
-    ThriftSafetyLevel.FilterNone -> FilterNone,
-    ThriftSafetyLevel.FollowedTopicsTimeline -> FollowedTopicsTimeline,
-    ThriftSafetyLevel.FollowerConnections -> FollowerConnections,
-    ThriftSafetyLevel.FollowingAndFollowersUserList -> FollowingAndFollowersUserList,
-    ThriftSafetyLevel.ForDevelopmentOnly -> ForDevelopmentOnly,
-    ThriftSafetyLevel.FriendsFollowingList -> FriendsFollowingList,
-    ThriftSafetyLevel.GraphqlDefault -> GraphqlDefault,
-    ThriftSafetyLevel.HumanizationNudge -> HumanizationNudge,
-    ThriftSafetyLevel.KitchenSinkDevelopment -> KitchenSinkDevelopment,
-    ThriftSafetyLevel.ListHeader -> ListHeader,
-    ThriftSafetyLevel.ListMemberships -> ListMemberships,
-    ThriftSafetyLevel.ListOwnerships -> ListOwnerships,
-    ThriftSafetyLevel.ListRecommendations -> ListRecommendations,
-    ThriftSafetyLevel.ListSearch -> ListSearch,
-    ThriftSafetyLevel.ListSubscriptions -> ListSubscriptions,
-    ThriftSafetyLevel.LivePipelineEngagementCounts -> LivePipelineEngagementCounts,
-    ThriftSafetyLevel.LiveVideoTimeline -> LiveVideoTimeline,
-    ThriftSafetyLevel.MagicRecs -> MagicRecs,
-    ThriftSafetyLevel.MagicRecsV2 -> MagicRecsV2,
-    ThriftSafetyLevel.MagicRecsAggressive -> MagicRecsAggressive,
-    ThriftSafetyLevel.MagicRecsAggressiveV2 -> MagicRecsAggressiveV2,
-    ThriftSafetyLevel.Minimal -> Minimal,
-    ThriftSafetyLevel.ModeratedTweetsTimeline -> ModeratedTweetsTimeline,
-    ThriftSafetyLevel.Moments -> Moments,
-    ThriftSafetyLevel.NearbyTimeline -> NearbyTimeline,
-    ThriftSafetyLevel.NewUserExperience -> NewUserExperience,
-    ThriftSafetyLevel.NotificationsIbis -> NotificationsIbis,
-    ThriftSafetyLevel.NotificationsPlatform -> NotificationsPlatform,
-    ThriftSafetyLevel.NotificationsPlatformPush -> NotificationsPlatformPush,
-    ThriftSafetyLevel.NotificationsQig -> NotificationsQig,
-    ThriftSafetyLevel.NotificationsRead -> NotificationsRead,
-    ThriftSafetyLevel.NotificationsTimelineDeviceFollow -> NotificationsTimelineDeviceFollow,
-    ThriftSafetyLevel.NotificationsWrite -> NotificationsWrite,
-    ThriftSafetyLevel.NotificationsWriterTweetHydrator -> NotificationsWriterTweetHydrator,
-    ThriftSafetyLevel.NotificationsWriterV2 -> NotificationsWriterV2,
-    ThriftSafetyLevel.ProfileMixerMedia -> ProfileMixerMedia,
-    ThriftSafetyLevel.ProfileMixerFavorites -> ProfileMixerFavorites,
-    ThriftSafetyLevel.QuickPromoteTweetEligibility -> QuickPromoteTweetEligibility,
-    ThriftSafetyLevel.QuoteTweetTimeline -> QuoteTweetTimeline,
-    ThriftSafetyLevel.QuotedTweetRules -> QuotedTweetRules,
-    ThriftSafetyLevel.Recommendations -> Recommendations,
-    ThriftSafetyLevel.RecosVideo -> RecosVideo,
-    ThriftSafetyLevel.RecosWritePath -> RecosWritePath,
-    ThriftSafetyLevel.RepliesGrouping -> RepliesGrouping,
-    ThriftSafetyLevel.ReportCenter -> ReportCenter,
-    ThriftSafetyLevel.ReturningUserExperience -> ReturningUserExperience,
-    ThriftSafetyLevel.ReturningUserExperienceFocalTweet -> ReturningUserExperienceFocalTweet,
-    ThriftSafetyLevel.Revenue -> Revenue,
-    ThriftSafetyLevel.RitoActionedTweetTimeline -> RitoActionedTweetTimeline,
-    ThriftSafetyLevel.SafeSearchMinimal -> SafeSearchMinimal,
-    ThriftSafetyLevel.SafeSearchStrict -> SafeSearchStrict,
-    ThriftSafetyLevel.SearchHydration -> SearchHydration,
-    ThriftSafetyLevel.SearchLatest -> SearchLatest,
-    ThriftSafetyLevel.SearchTop -> SearchTop,
-    ThriftSafetyLevel.SearchTopQig -> SearchTopQig,
-    ThriftSafetyLevel.SearchMixerSrpMinimal -> SearchMixerSrpMinimal,
-    ThriftSafetyLevel.SearchMixerSrpStrict -> SearchMixerSrpStrict,
-    ThriftSafetyLevel.SearchPeopleSrp -> SearchPeopleSrp,
-    ThriftSafetyLevel.SearchPeopleTypeahead -> SearchPeopleTypeahead,
-    ThriftSafetyLevel.SearchPhoto -> SearchPhoto,
-    ThriftSafetyLevel.SearchTrendTakeoverPromotedTweet -> SearchTrendTakeoverPromotedTweet,
-    ThriftSafetyLevel.SearchVideo -> SearchVideo,
-    ThriftSafetyLevel.SearchBlenderUserRules -> SearchBlenderUserRules,
-    ThriftSafetyLevel.SearchLatestUserRules -> SearchLatestUserRules,
-    ThriftSafetyLevel.ShoppingManagerSpyMode -> ShoppingManagerSpyMode,
-    ThriftSafetyLevel.SignalsReactions -> SignalsReactions,
-    ThriftSafetyLevel.SignalsTweetReactingUsers -> SignalsTweetReactingUsers,
-    ThriftSafetyLevel.SocialProof -> SocialProof,
-    ThriftSafetyLevel.SoftInterventionPivot -> SoftInterventionPivot,
-    ThriftSafetyLevel.SpaceFleetline -> SpaceFleetline,
-    ThriftSafetyLevel.SpaceHomeTimelineUpranking -> SpaceHomeTimelineUpranking,
-    ThriftSafetyLevel.SpaceJoinScreen -> SpaceJoinScreen,
-    ThriftSafetyLevel.SpaceNotifications -> SpaceNotifications,
-    ThriftSafetyLevel.Spaces -> Spaces,
-    ThriftSafetyLevel.SpacesParticipants -> SpacesParticipants,
-    ThriftSafetyLevel.SpacesSellerApplicationStatus -> SpacesSellerApplicationStatus,
-    ThriftSafetyLevel.SpacesSharing -> SpacesSharing,
-    ThriftSafetyLevel.SpaceTweetAvatarHomeTimeline -> SpaceTweetAvatarHomeTimeline,
-    ThriftSafetyLevel.StickersTimeline -> StickersTimeline,
-    ThriftSafetyLevel.StratoExtLimitedEngagements -> StratoExtLimitedEngagements,
-    ThriftSafetyLevel.StreamServices -> StreamServices,
-    ThriftSafetyLevel.SuperFollowerConnections -> SuperFollowerConnections,
-    ThriftSafetyLevel.SuperLike -> SuperLike,
-    ThriftSafetyLevel.Test -> Test,
-    ThriftSafetyLevel.TimelineBookmark -> TimelineBookmark,
-    ThriftSafetyLevel.TimelineContentControls -> TimelineContentControls,
-    ThriftSafetyLevel.TimelineConversations -> TimelineConversations,
-    ThriftSafetyLevel.TimelineConversationsDownranking -> TimelineConversationsDownranking,
-    ThriftSafetyLevel.TimelineConversationsDownrankingMinimal -> TimelineConversationsDownrankingMinimal,
-    ThriftSafetyLevel.TimelineFavorites -> TimelineFavorites,
-    ThriftSafetyLevel.TimelineFavoritesSelfView -> TimelineFavoritesSelfView,
-    ThriftSafetyLevel.TimelineFocalTweet -> TimelineFocalTweet,
-    ThriftSafetyLevel.TimelineFollowingActivity -> TimelineFollowingActivity,
-    ThriftSafetyLevel.TimelineHome -> TimelineHome,
-    ThriftSafetyLevel.TimelineHomeCommunities -> TimelineHomeCommunities,
-    ThriftSafetyLevel.TimelineHomeHydration -> TimelineHomeHydration,
-    ThriftSafetyLevel.TimelineHomeLatest -> TimelineHomeLatest,
-    ThriftSafetyLevel.TimelineHomePromotedHydration -> TimelineHomePromotedHydration,
-    ThriftSafetyLevel.TimelineHomeRecommendations -> TimelineHomeRecommendations,
-    ThriftSafetyLevel.TimelineHomeTopicFollowRecommendations -> TimelineHomeTopicFollowRecommendations,
-    ThriftSafetyLevel.TimelineScorer -> TimelineScorer,
-    ThriftSafetyLevel.TimelineInjection -> TimelineInjection,
-    ThriftSafetyLevel.TimelineLikedBy -> TimelineLikedBy,
-    ThriftSafetyLevel.TimelineLists -> TimelineLists,
-    ThriftSafetyLevel.TimelineMedia -> TimelineMedia,
-    ThriftSafetyLevel.TimelineMentions -> TimelineMentions,
-    ThriftSafetyLevel.TimelineModeratedTweetsHydration -> TimelineModeratedTweetsHydration,
-    ThriftSafetyLevel.TimelineProfile -> TimelineProfile,
-    ThriftSafetyLevel.TimelineProfileAll -> TimelineProfileAll,
-    ThriftSafetyLevel.TimelineProfileSpaces -> TimelineProfileSpaces,
-    ThriftSafetyLevel.TimelineProfileSuperFollows -> TimelineProfileSuperFollows,
-    ThriftSafetyLevel.TimelineReactiveBlending -> TimelineReactiveBlending,
-    ThriftSafetyLevel.TimelineRetweetedBy -> TimelineRetweetedBy,
-    ThriftSafetyLevel.TimelineSuperLikedBy -> TimelineSuperLikedBy,
-    ThriftSafetyLevel.Tombstoning -> Tombstoning,
-    ThriftSafetyLevel.TopicRecommendations -> TopicRecommendations,
-    ThriftSafetyLevel.TopicsLandingPageTopicRecommendations -> TopicsLandingPageTopicRecommendations,
-    ThriftSafetyLevel.TrendsRepresentativeTweet -> TrendsRepresentativeTweet,
-    ThriftSafetyLevel.TrustedFriendsUserList -> TrustedFriendsUserList,
-    ThriftSafetyLevel.GryphonDecksAndColumns -> GryphonDecksAndColumns,
-    ThriftSafetyLevel.TweetDetail -> TweetDetail,
-    ThriftSafetyLevel.TweetDetailNonToo -> TweetDetailNonToo,
-    ThriftSafetyLevel.TweetDetailWithInjectionsHydration -> TweetDetailWithInjectionsHydration,
-    ThriftSafetyLevel.TweetEngagers -> TweetEngagers,
-    ThriftSafetyLevel.TweetReplyNudge -> TweetReplyNudge,
-    ThriftSafetyLevel.TweetScopedTimeline -> TweetScopedTimeline,
-    ThriftSafetyLevel.TweetWritesApi -> TweetWritesApi,
-    ThriftSafetyLevel.TwitterArticleCompose -> TwitterArticleCompose,
-    ThriftSafetyLevel.TwitterArticleProfileTab -> TwitterArticleProfileTab,
-    ThriftSafetyLevel.TwitterArticleRead -> TwitterArticleRead,
-    ThriftSafetyLevel.UserProfileHeader -> UserProfileHeader,
-    ThriftSafetyLevel.UserMilestoneRecommendation -> UserMilestoneRecommendation,
-    ThriftSafetyLevel.UserScopedTimeline -> UserScopedTimeline,
-    ThriftSafetyLevel.UserSearchSrp -> UserSearchSrp,
-    ThriftSafetyLevel.UserSearchTypeahead -> UserSearchTypeahead,
-    ThriftSafetyLevel.UserSelfViewOnly -> UserSelfViewOnly,
-    ThriftSafetyLevel.UserSettings -> UserSettings,
-    ThriftSafetyLevel.VideoAds -> VideoAds,
-    ThriftSafetyLevel.ZipbirdConsumerArchives -> ZipbirdConsumerArchives,
-    ThriftSafetyLevel.TweetAward -> TweetAward,
+  privatelon lazy val thriftToModelonlMap: Map[ThriftSafelontyLelonvelonl, SafelontyLelonvelonl] = Map(
+    ThriftSafelontyLelonvelonl.AccelonssIntelonrnalPromotelondContelonnt -> AccelonssIntelonrnalPromotelondContelonnt,
+    ThriftSafelontyLelonvelonl.AdsBusinelonssSelonttings -> AdsBusinelonssSelonttings,
+    ThriftSafelontyLelonvelonl.AdsCampaign -> AdsCampaign,
+    ThriftSafelontyLelonvelonl.AdsManagelonr -> AdsManagelonr,
+    ThriftSafelontyLelonvelonl.AdsRelonportingDashboard -> AdsRelonportingDashboard,
+    ThriftSafelontyLelonvelonl.AllSubscribelondLists -> AllSubscribelondLists,
+    ThriftSafelontyLelonvelonl.Appelonals -> Appelonals,
+    ThriftSafelontyLelonvelonl.ArticlelonTwelonelontTimelonlinelon -> ArticlelonTwelonelontTimelonlinelon,
+    ThriftSafelontyLelonvelonl.BaselonQig -> BaselonQig,
+    ThriftSafelontyLelonvelonl.BirdwatchNotelonAuthor -> BirdwatchNotelonAuthor,
+    ThriftSafelontyLelonvelonl.BirdwatchNotelonTwelonelontsTimelonlinelon -> BirdwatchNotelonTwelonelontsTimelonlinelon,
+    ThriftSafelontyLelonvelonl.BirdwatchNelonelondsYourHelonlpNotifications -> BirdwatchNelonelondsYourHelonlpNotifications,
+    ThriftSafelontyLelonvelonl.BlockMutelonUselonrsTimelonlinelon -> BlockMutelonUselonrsTimelonlinelon,
+    ThriftSafelontyLelonvelonl.BrandSafelonty -> BrandSafelonty,
+    ThriftSafelontyLelonvelonl.CardPollVoting -> CardPollVoting,
+    ThriftSafelontyLelonvelonl.CardsSelonrvicelon -> CardsSelonrvicelon,
+    ThriftSafelontyLelonvelonl.Communitielons -> Communitielons,
+    ThriftSafelontyLelonvelonl.ContelonntControlToolInstall -> ContelonntControlToolInstall,
+    ThriftSafelontyLelonvelonl.ConvelonrsationFocalPrelonhydration -> ConvelonrsationFocalPrelonhydration,
+    ThriftSafelontyLelonvelonl.ConvelonrsationFocalTwelonelont -> ConvelonrsationFocalTwelonelont,
+    ThriftSafelontyLelonvelonl.ConvelonrsationInjelonctelondTwelonelont -> ConvelonrsationInjelonctelondTwelonelont,
+    ThriftSafelontyLelonvelonl.ConvelonrsationRelonply -> ConvelonrsationRelonply,
+    ThriftSafelontyLelonvelonl.CuratelondTrelonndsRelonprelonselonntativelonTwelonelont -> CuratelondTrelonndsRelonprelonselonntativelonTwelonelont,
+    ThriftSafelontyLelonvelonl.CurationPolicyViolations -> CurationPolicyViolations,
+    ThriftSafelontyLelonvelonl.DelonvPlatformGelontListTwelonelonts -> DelonvPlatformGelontListTwelonelonts,
+    ThriftSafelontyLelonvelonl.DelonsFollowingAndFollowelonrsUselonrList -> DelonsFollowingAndFollowelonrsUselonrList,
+    ThriftSafelontyLelonvelonl.DelonsHomelonTimelonlinelon -> DelonsHomelonTimelonlinelon,
+    ThriftSafelontyLelonvelonl.DelonsQuotelonTwelonelontTimelonlinelon -> DelonsQuotelonTwelonelontTimelonlinelon,
+    ThriftSafelontyLelonvelonl.DelonsRelonaltimelon -> DelonsRelonaltimelon,
+    ThriftSafelontyLelonvelonl.DelonsRelonaltimelonSpamelonnrichmelonnt -> DelonsRelonaltimelonSpamelonnrichmelonnt,
+    ThriftSafelontyLelonvelonl.DelonsRelonaltimelonTwelonelontFiltelonr -> DelonsRelonaltimelonTwelonelontFiltelonr,
+    ThriftSafelontyLelonvelonl.DelonsRelontwelonelontingUselonrs -> DelonsRelontwelonelontingUselonrs,
+    ThriftSafelontyLelonvelonl.DelonsTwelonelontDelontail -> DelonsTwelonelontDelontail,
+    ThriftSafelontyLelonvelonl.DelonsTwelonelontLikingUselonrs -> DelonsTwelonelontLikingUselonrs,
+    ThriftSafelontyLelonvelonl.DelonsUselonrBookmarks -> DelonsUselonrBookmarks,
+    ThriftSafelontyLelonvelonl.DelonsUselonrLikelondTwelonelonts -> DelonsUselonrLikelondTwelonelonts,
+    ThriftSafelontyLelonvelonl.DelonsUselonrMelonntions -> DelonsUselonrMelonntions,
+    ThriftSafelontyLelonvelonl.DelonsUselonrTwelonelonts -> DelonsUselonrTwelonelonts,
+    ThriftSafelontyLelonvelonl.DelonvPlatformCompliancelonStrelonam -> DelonvPlatformCompliancelonStrelonam,
+    ThriftSafelontyLelonvelonl.DirelonctMelonssagelons -> DirelonctMelonssagelons,
+    ThriftSafelontyLelonvelonl.DirelonctMelonssagelonsConvelonrsationList -> DirelonctMelonssagelonsConvelonrsationList,
+    ThriftSafelontyLelonvelonl.DirelonctMelonssagelonsConvelonrsationTimelonlinelon -> DirelonctMelonssagelonsConvelonrsationTimelonlinelon,
+    ThriftSafelontyLelonvelonl.DirelonctMelonssagelonsInbox -> DirelonctMelonssagelonsInbox,
+    ThriftSafelontyLelonvelonl.DirelonctMelonssagelonsMutelondUselonrs -> DirelonctMelonssagelonsMutelondUselonrs,
+    ThriftSafelontyLelonvelonl.DirelonctMelonssagelonsPinnelond -> DirelonctMelonssagelonsPinnelond,
+    ThriftSafelontyLelonvelonl.DirelonctMelonssagelonsSelonarch -> DirelonctMelonssagelonsSelonarch,
+    ThriftSafelontyLelonvelonl.elonditHistoryTimelonlinelon -> elonditHistoryTimelonlinelon,
+    ThriftSafelontyLelonvelonl.elonlelonvatelondQuotelonTwelonelontTimelonlinelon -> elonlelonvatelondQuotelonTwelonelontTimelonlinelon,
+    ThriftSafelontyLelonvelonl.elonmbelonddelondTwelonelont -> elonmbelonddelondTwelonelont,
+    ThriftSafelontyLelonvelonl.elonmbelondsPublicIntelonrelonstNoticelon -> elonmbelondsPublicIntelonrelonstNoticelon,
+    ThriftSafelontyLelonvelonl.elonmbelondTwelonelontMarkup -> elonmbelondTwelonelontMarkup,
+    ThriftSafelontyLelonvelonl.elonxplorelonReloncommelonndations -> elonxplorelonReloncommelonndations,
+    ThriftSafelontyLelonvelonl.WritelonPathLimitelondActionselonnforcelonmelonnt -> WritelonPathLimitelondActionselonnforcelonmelonnt,
+    ThriftSafelontyLelonvelonl.FiltelonrAll -> FiltelonrAll,
+    ThriftSafelontyLelonvelonl.FiltelonrAllPlacelonholdelonr -> FiltelonrAllPlacelonholdelonr,
+    ThriftSafelontyLelonvelonl.FiltelonrDelonfault -> FiltelonrDelonfault,
+    ThriftSafelontyLelonvelonl.FiltelonrNonelon -> FiltelonrNonelon,
+    ThriftSafelontyLelonvelonl.FollowelondTopicsTimelonlinelon -> FollowelondTopicsTimelonlinelon,
+    ThriftSafelontyLelonvelonl.FollowelonrConnelonctions -> FollowelonrConnelonctions,
+    ThriftSafelontyLelonvelonl.FollowingAndFollowelonrsUselonrList -> FollowingAndFollowelonrsUselonrList,
+    ThriftSafelontyLelonvelonl.ForDelonvelonlopmelonntOnly -> ForDelonvelonlopmelonntOnly,
+    ThriftSafelontyLelonvelonl.FrielonndsFollowingList -> FrielonndsFollowingList,
+    ThriftSafelontyLelonvelonl.GraphqlDelonfault -> GraphqlDelonfault,
+    ThriftSafelontyLelonvelonl.HumanizationNudgelon -> HumanizationNudgelon,
+    ThriftSafelontyLelonvelonl.KitchelonnSinkDelonvelonlopmelonnt -> KitchelonnSinkDelonvelonlopmelonnt,
+    ThriftSafelontyLelonvelonl.ListHelonadelonr -> ListHelonadelonr,
+    ThriftSafelontyLelonvelonl.ListMelonmbelonrships -> ListMelonmbelonrships,
+    ThriftSafelontyLelonvelonl.ListOwnelonrships -> ListOwnelonrships,
+    ThriftSafelontyLelonvelonl.ListReloncommelonndations -> ListReloncommelonndations,
+    ThriftSafelontyLelonvelonl.ListSelonarch -> ListSelonarch,
+    ThriftSafelontyLelonvelonl.ListSubscriptions -> ListSubscriptions,
+    ThriftSafelontyLelonvelonl.LivelonPipelonlinelonelonngagelonmelonntCounts -> LivelonPipelonlinelonelonngagelonmelonntCounts,
+    ThriftSafelontyLelonvelonl.LivelonVidelonoTimelonlinelon -> LivelonVidelonoTimelonlinelon,
+    ThriftSafelontyLelonvelonl.MagicReloncs -> MagicReloncs,
+    ThriftSafelontyLelonvelonl.MagicReloncsV2 -> MagicReloncsV2,
+    ThriftSafelontyLelonvelonl.MagicReloncsAggrelonssivelon -> MagicReloncsAggrelonssivelon,
+    ThriftSafelontyLelonvelonl.MagicReloncsAggrelonssivelonV2 -> MagicReloncsAggrelonssivelonV2,
+    ThriftSafelontyLelonvelonl.Minimal -> Minimal,
+    ThriftSafelontyLelonvelonl.ModelonratelondTwelonelontsTimelonlinelon -> ModelonratelondTwelonelontsTimelonlinelon,
+    ThriftSafelontyLelonvelonl.Momelonnts -> Momelonnts,
+    ThriftSafelontyLelonvelonl.NelonarbyTimelonlinelon -> NelonarbyTimelonlinelon,
+    ThriftSafelontyLelonvelonl.NelonwUselonrelonxpelonrielonncelon -> NelonwUselonrelonxpelonrielonncelon,
+    ThriftSafelontyLelonvelonl.NotificationsIbis -> NotificationsIbis,
+    ThriftSafelontyLelonvelonl.NotificationsPlatform -> NotificationsPlatform,
+    ThriftSafelontyLelonvelonl.NotificationsPlatformPush -> NotificationsPlatformPush,
+    ThriftSafelontyLelonvelonl.NotificationsQig -> NotificationsQig,
+    ThriftSafelontyLelonvelonl.NotificationsRelonad -> NotificationsRelonad,
+    ThriftSafelontyLelonvelonl.NotificationsTimelonlinelonDelonvicelonFollow -> NotificationsTimelonlinelonDelonvicelonFollow,
+    ThriftSafelontyLelonvelonl.NotificationsWritelon -> NotificationsWritelon,
+    ThriftSafelontyLelonvelonl.NotificationsWritelonrTwelonelontHydrator -> NotificationsWritelonrTwelonelontHydrator,
+    ThriftSafelontyLelonvelonl.NotificationsWritelonrV2 -> NotificationsWritelonrV2,
+    ThriftSafelontyLelonvelonl.ProfilelonMixelonrMelondia -> ProfilelonMixelonrMelondia,
+    ThriftSafelontyLelonvelonl.ProfilelonMixelonrFavoritelons -> ProfilelonMixelonrFavoritelons,
+    ThriftSafelontyLelonvelonl.QuickPromotelonTwelonelontelonligibility -> QuickPromotelonTwelonelontelonligibility,
+    ThriftSafelontyLelonvelonl.QuotelonTwelonelontTimelonlinelon -> QuotelonTwelonelontTimelonlinelon,
+    ThriftSafelontyLelonvelonl.QuotelondTwelonelontRulelons -> QuotelondTwelonelontRulelons,
+    ThriftSafelontyLelonvelonl.Reloncommelonndations -> Reloncommelonndations,
+    ThriftSafelontyLelonvelonl.ReloncosVidelono -> ReloncosVidelono,
+    ThriftSafelontyLelonvelonl.ReloncosWritelonPath -> ReloncosWritelonPath,
+    ThriftSafelontyLelonvelonl.RelonplielonsGrouping -> RelonplielonsGrouping,
+    ThriftSafelontyLelonvelonl.RelonportCelonntelonr -> RelonportCelonntelonr,
+    ThriftSafelontyLelonvelonl.RelonturningUselonrelonxpelonrielonncelon -> RelonturningUselonrelonxpelonrielonncelon,
+    ThriftSafelontyLelonvelonl.RelonturningUselonrelonxpelonrielonncelonFocalTwelonelont -> RelonturningUselonrelonxpelonrielonncelonFocalTwelonelont,
+    ThriftSafelontyLelonvelonl.Relonvelonnuelon -> Relonvelonnuelon,
+    ThriftSafelontyLelonvelonl.RitoActionelondTwelonelontTimelonlinelon -> RitoActionelondTwelonelontTimelonlinelon,
+    ThriftSafelontyLelonvelonl.SafelonSelonarchMinimal -> SafelonSelonarchMinimal,
+    ThriftSafelontyLelonvelonl.SafelonSelonarchStrict -> SafelonSelonarchStrict,
+    ThriftSafelontyLelonvelonl.SelonarchHydration -> SelonarchHydration,
+    ThriftSafelontyLelonvelonl.SelonarchLatelonst -> SelonarchLatelonst,
+    ThriftSafelontyLelonvelonl.SelonarchTop -> SelonarchTop,
+    ThriftSafelontyLelonvelonl.SelonarchTopQig -> SelonarchTopQig,
+    ThriftSafelontyLelonvelonl.SelonarchMixelonrSrpMinimal -> SelonarchMixelonrSrpMinimal,
+    ThriftSafelontyLelonvelonl.SelonarchMixelonrSrpStrict -> SelonarchMixelonrSrpStrict,
+    ThriftSafelontyLelonvelonl.SelonarchPelonoplelonSrp -> SelonarchPelonoplelonSrp,
+    ThriftSafelontyLelonvelonl.SelonarchPelonoplelonTypelonahelonad -> SelonarchPelonoplelonTypelonahelonad,
+    ThriftSafelontyLelonvelonl.SelonarchPhoto -> SelonarchPhoto,
+    ThriftSafelontyLelonvelonl.SelonarchTrelonndTakelonovelonrPromotelondTwelonelont -> SelonarchTrelonndTakelonovelonrPromotelondTwelonelont,
+    ThriftSafelontyLelonvelonl.SelonarchVidelono -> SelonarchVidelono,
+    ThriftSafelontyLelonvelonl.SelonarchBlelonndelonrUselonrRulelons -> SelonarchBlelonndelonrUselonrRulelons,
+    ThriftSafelontyLelonvelonl.SelonarchLatelonstUselonrRulelons -> SelonarchLatelonstUselonrRulelons,
+    ThriftSafelontyLelonvelonl.ShoppingManagelonrSpyModelon -> ShoppingManagelonrSpyModelon,
+    ThriftSafelontyLelonvelonl.SignalsRelonactions -> SignalsRelonactions,
+    ThriftSafelontyLelonvelonl.SignalsTwelonelontRelonactingUselonrs -> SignalsTwelonelontRelonactingUselonrs,
+    ThriftSafelontyLelonvelonl.SocialProof -> SocialProof,
+    ThriftSafelontyLelonvelonl.SoftIntelonrvelonntionPivot -> SoftIntelonrvelonntionPivot,
+    ThriftSafelontyLelonvelonl.SpacelonFlelonelontlinelon -> SpacelonFlelonelontlinelon,
+    ThriftSafelontyLelonvelonl.SpacelonHomelonTimelonlinelonUpranking -> SpacelonHomelonTimelonlinelonUpranking,
+    ThriftSafelontyLelonvelonl.SpacelonJoinScrelonelonn -> SpacelonJoinScrelonelonn,
+    ThriftSafelontyLelonvelonl.SpacelonNotifications -> SpacelonNotifications,
+    ThriftSafelontyLelonvelonl.Spacelons -> Spacelons,
+    ThriftSafelontyLelonvelonl.SpacelonsParticipants -> SpacelonsParticipants,
+    ThriftSafelontyLelonvelonl.SpacelonsSelonllelonrApplicationStatus -> SpacelonsSelonllelonrApplicationStatus,
+    ThriftSafelontyLelonvelonl.SpacelonsSharing -> SpacelonsSharing,
+    ThriftSafelontyLelonvelonl.SpacelonTwelonelontAvatarHomelonTimelonlinelon -> SpacelonTwelonelontAvatarHomelonTimelonlinelon,
+    ThriftSafelontyLelonvelonl.StickelonrsTimelonlinelon -> StickelonrsTimelonlinelon,
+    ThriftSafelontyLelonvelonl.StratoelonxtLimitelondelonngagelonmelonnts -> StratoelonxtLimitelondelonngagelonmelonnts,
+    ThriftSafelontyLelonvelonl.StrelonamSelonrvicelons -> StrelonamSelonrvicelons,
+    ThriftSafelontyLelonvelonl.SupelonrFollowelonrConnelonctions -> SupelonrFollowelonrConnelonctions,
+    ThriftSafelontyLelonvelonl.SupelonrLikelon -> SupelonrLikelon,
+    ThriftSafelontyLelonvelonl.Telonst -> Telonst,
+    ThriftSafelontyLelonvelonl.TimelonlinelonBookmark -> TimelonlinelonBookmark,
+    ThriftSafelontyLelonvelonl.TimelonlinelonContelonntControls -> TimelonlinelonContelonntControls,
+    ThriftSafelontyLelonvelonl.TimelonlinelonConvelonrsations -> TimelonlinelonConvelonrsations,
+    ThriftSafelontyLelonvelonl.TimelonlinelonConvelonrsationsDownranking -> TimelonlinelonConvelonrsationsDownranking,
+    ThriftSafelontyLelonvelonl.TimelonlinelonConvelonrsationsDownrankingMinimal -> TimelonlinelonConvelonrsationsDownrankingMinimal,
+    ThriftSafelontyLelonvelonl.TimelonlinelonFavoritelons -> TimelonlinelonFavoritelons,
+    ThriftSafelontyLelonvelonl.TimelonlinelonFavoritelonsSelonlfVielonw -> TimelonlinelonFavoritelonsSelonlfVielonw,
+    ThriftSafelontyLelonvelonl.TimelonlinelonFocalTwelonelont -> TimelonlinelonFocalTwelonelont,
+    ThriftSafelontyLelonvelonl.TimelonlinelonFollowingActivity -> TimelonlinelonFollowingActivity,
+    ThriftSafelontyLelonvelonl.TimelonlinelonHomelon -> TimelonlinelonHomelon,
+    ThriftSafelontyLelonvelonl.TimelonlinelonHomelonCommunitielons -> TimelonlinelonHomelonCommunitielons,
+    ThriftSafelontyLelonvelonl.TimelonlinelonHomelonHydration -> TimelonlinelonHomelonHydration,
+    ThriftSafelontyLelonvelonl.TimelonlinelonHomelonLatelonst -> TimelonlinelonHomelonLatelonst,
+    ThriftSafelontyLelonvelonl.TimelonlinelonHomelonPromotelondHydration -> TimelonlinelonHomelonPromotelondHydration,
+    ThriftSafelontyLelonvelonl.TimelonlinelonHomelonReloncommelonndations -> TimelonlinelonHomelonReloncommelonndations,
+    ThriftSafelontyLelonvelonl.TimelonlinelonHomelonTopicFollowReloncommelonndations -> TimelonlinelonHomelonTopicFollowReloncommelonndations,
+    ThriftSafelontyLelonvelonl.TimelonlinelonScorelonr -> TimelonlinelonScorelonr,
+    ThriftSafelontyLelonvelonl.TimelonlinelonInjelonction -> TimelonlinelonInjelonction,
+    ThriftSafelontyLelonvelonl.TimelonlinelonLikelondBy -> TimelonlinelonLikelondBy,
+    ThriftSafelontyLelonvelonl.TimelonlinelonLists -> TimelonlinelonLists,
+    ThriftSafelontyLelonvelonl.TimelonlinelonMelondia -> TimelonlinelonMelondia,
+    ThriftSafelontyLelonvelonl.TimelonlinelonMelonntions -> TimelonlinelonMelonntions,
+    ThriftSafelontyLelonvelonl.TimelonlinelonModelonratelondTwelonelontsHydration -> TimelonlinelonModelonratelondTwelonelontsHydration,
+    ThriftSafelontyLelonvelonl.TimelonlinelonProfilelon -> TimelonlinelonProfilelon,
+    ThriftSafelontyLelonvelonl.TimelonlinelonProfilelonAll -> TimelonlinelonProfilelonAll,
+    ThriftSafelontyLelonvelonl.TimelonlinelonProfilelonSpacelons -> TimelonlinelonProfilelonSpacelons,
+    ThriftSafelontyLelonvelonl.TimelonlinelonProfilelonSupelonrFollows -> TimelonlinelonProfilelonSupelonrFollows,
+    ThriftSafelontyLelonvelonl.TimelonlinelonRelonactivelonBlelonnding -> TimelonlinelonRelonactivelonBlelonnding,
+    ThriftSafelontyLelonvelonl.TimelonlinelonRelontwelonelontelondBy -> TimelonlinelonRelontwelonelontelondBy,
+    ThriftSafelontyLelonvelonl.TimelonlinelonSupelonrLikelondBy -> TimelonlinelonSupelonrLikelondBy,
+    ThriftSafelontyLelonvelonl.Tombstoning -> Tombstoning,
+    ThriftSafelontyLelonvelonl.TopicReloncommelonndations -> TopicReloncommelonndations,
+    ThriftSafelontyLelonvelonl.TopicsLandingPagelonTopicReloncommelonndations -> TopicsLandingPagelonTopicReloncommelonndations,
+    ThriftSafelontyLelonvelonl.TrelonndsRelonprelonselonntativelonTwelonelont -> TrelonndsRelonprelonselonntativelonTwelonelont,
+    ThriftSafelontyLelonvelonl.TrustelondFrielonndsUselonrList -> TrustelondFrielonndsUselonrList,
+    ThriftSafelontyLelonvelonl.GryphonDeloncksAndColumns -> GryphonDeloncksAndColumns,
+    ThriftSafelontyLelonvelonl.TwelonelontDelontail -> TwelonelontDelontail,
+    ThriftSafelontyLelonvelonl.TwelonelontDelontailNonToo -> TwelonelontDelontailNonToo,
+    ThriftSafelontyLelonvelonl.TwelonelontDelontailWithInjelonctionsHydration -> TwelonelontDelontailWithInjelonctionsHydration,
+    ThriftSafelontyLelonvelonl.Twelonelontelonngagelonrs -> Twelonelontelonngagelonrs,
+    ThriftSafelontyLelonvelonl.TwelonelontRelonplyNudgelon -> TwelonelontRelonplyNudgelon,
+    ThriftSafelontyLelonvelonl.TwelonelontScopelondTimelonlinelon -> TwelonelontScopelondTimelonlinelon,
+    ThriftSafelontyLelonvelonl.TwelonelontWritelonsApi -> TwelonelontWritelonsApi,
+    ThriftSafelontyLelonvelonl.TwittelonrArticlelonComposelon -> TwittelonrArticlelonComposelon,
+    ThriftSafelontyLelonvelonl.TwittelonrArticlelonProfilelonTab -> TwittelonrArticlelonProfilelonTab,
+    ThriftSafelontyLelonvelonl.TwittelonrArticlelonRelonad -> TwittelonrArticlelonRelonad,
+    ThriftSafelontyLelonvelonl.UselonrProfilelonHelonadelonr -> UselonrProfilelonHelonadelonr,
+    ThriftSafelontyLelonvelonl.UselonrMilelonstonelonReloncommelonndation -> UselonrMilelonstonelonReloncommelonndation,
+    ThriftSafelontyLelonvelonl.UselonrScopelondTimelonlinelon -> UselonrScopelondTimelonlinelon,
+    ThriftSafelontyLelonvelonl.UselonrSelonarchSrp -> UselonrSelonarchSrp,
+    ThriftSafelontyLelonvelonl.UselonrSelonarchTypelonahelonad -> UselonrSelonarchTypelonahelonad,
+    ThriftSafelontyLelonvelonl.UselonrSelonlfVielonwOnly -> UselonrSelonlfVielonwOnly,
+    ThriftSafelontyLelonvelonl.UselonrSelonttings -> UselonrSelonttings,
+    ThriftSafelontyLelonvelonl.VidelonoAds -> VidelonoAds,
+    ThriftSafelontyLelonvelonl.ZipbirdConsumelonrArchivelons -> ZipbirdConsumelonrArchivelons,
+    ThriftSafelontyLelonvelonl.TwelonelontAward -> TwelonelontAward,
   )
 
-  private lazy val modelToThriftMap: Map[SafetyLevel, ThriftSafetyLevel] =
-    for ((k, v) <- thriftToModelMap) yield (v, k)
+  privatelon lazy val modelonlToThriftMap: Map[SafelontyLelonvelonl, ThriftSafelontyLelonvelonl] =
+    for ((k, v) <- thriftToModelonlMap) yielonld (v, k)
 
-  case object AdsBusinessSettings extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableAdsBusinessSettingsSafetyLevelParam
+  caselon objelonct AdsBusinelonssSelonttings elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonAdsBusinelonssSelonttingsSafelontyLelonvelonlParam
   }
-  case object AdsCampaign extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableAdsCampaignSafetyLevelParam
+  caselon objelonct AdsCampaign elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonAdsCampaignSafelontyLelonvelonlParam
   }
-  case object AdsManager extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableAdsManagerSafetyLevelParam
+  caselon objelonct AdsManagelonr elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonAdsManagelonrSafelontyLelonvelonlParam
   }
-  case object AdsReportingDashboard extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableAdsReportingDashboardSafetyLevelParam
+  caselon objelonct AdsRelonportingDashboard elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonAdsRelonportingDashboardSafelontyLelonvelonlParam
   }
-  case object AllSubscribedLists extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableAllSubscribedListsSafetyLevelParam
+  caselon objelonct AllSubscribelondLists elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonAllSubscribelondListsSafelontyLelonvelonlParam
   }
-  case object Appeals extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableAppealsSafetyLevelParam
+  caselon objelonct Appelonals elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonAppelonalsSafelontyLelonvelonlParam
   }
-  case object ArticleTweetTimeline extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableArticleTweetTimelineSafetyLevelParam
+  caselon objelonct ArticlelonTwelonelontTimelonlinelon elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonArticlelonTwelonelontTimelonlinelonSafelontyLelonvelonlParam
   }
-  case object BaseQig extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableBaseQigSafetyLevelParam
+  caselon objelonct BaselonQig elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonBaselonQigSafelontyLelonvelonlParam
   }
-  case object BirdwatchNoteAuthor extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableBirdwatchNoteAuthorSafetyLevel
+  caselon objelonct BirdwatchNotelonAuthor elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonBirdwatchNotelonAuthorSafelontyLelonvelonl
   }
-  case object BirdwatchNoteTweetsTimeline extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableBirdwatchNoteTweetsTimelineSafetyLevel
+  caselon objelonct BirdwatchNotelonTwelonelontsTimelonlinelon elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonBirdwatchNotelonTwelonelontsTimelonlinelonSafelontyLelonvelonl
   }
-  case object BirdwatchNeedsYourHelpNotifications extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam =
-      EnableBirdwatchNeedsYourHelpNotificationsSafetyLevel
+  caselon objelonct BirdwatchNelonelondsYourHelonlpNotifications elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam =
+      elonnablelonBirdwatchNelonelondsYourHelonlpNotificationsSafelontyLelonvelonl
   }
-  case object BlockMuteUsersTimeline extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableBlockMuteUsersTimelineSafetyLevelParam
+  caselon objelonct BlockMutelonUselonrsTimelonlinelon elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonBlockMutelonUselonrsTimelonlinelonSafelontyLelonvelonlParam
   }
-  case object BrandSafety extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableBrandSafetySafetyLevelParam
+  caselon objelonct BrandSafelonty elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonBrandSafelontySafelontyLelonvelonlParam
   }
-  case object CardPollVoting extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableCardPollVotingSafetyLevelParam
+  caselon objelonct CardPollVoting elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonCardPollVotingSafelontyLelonvelonlParam
   }
-  case object CardsService extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableCardsServiceSafetyLevelParam
+  caselon objelonct CardsSelonrvicelon elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonCardsSelonrvicelonSafelontyLelonvelonlParam
   }
-  case object Communities extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableCommunitiesSafetyLevelParam
+  caselon objelonct Communitielons elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonCommunitielonsSafelontyLelonvelonlParam
   }
-  case object ContentControlToolInstall extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableContentControlToolInstallSafetyLevelParam
+  caselon objelonct ContelonntControlToolInstall elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonContelonntControlToolInstallSafelontyLelonvelonlParam
   }
-  case object ConversationFocalPrehydration extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam =
-      EnableConversationFocalPrehydrationSafetyLevelParam
+  caselon objelonct ConvelonrsationFocalPrelonhydration elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam =
+      elonnablelonConvelonrsationFocalPrelonhydrationSafelontyLelonvelonlParam
   }
-  case object ConversationFocalTweet extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableConversationFocalTweetSafetyLevelParam
+  caselon objelonct ConvelonrsationFocalTwelonelont elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonConvelonrsationFocalTwelonelontSafelontyLelonvelonlParam
   }
-  case object ConversationInjectedTweet extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableConversationInjectedTweetSafetyLevelParam
+  caselon objelonct ConvelonrsationInjelonctelondTwelonelont elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonConvelonrsationInjelonctelondTwelonelontSafelontyLelonvelonlParam
   }
-  case object ConversationReply extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableConversationReplySafetyLevelParam
+  caselon objelonct ConvelonrsationRelonply elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonConvelonrsationRelonplySafelontyLelonvelonlParam
   }
-  case object AccessInternalPromotedContent extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam =
-      EnableAccessInternalPromotedContentSafetyLevelParam
+  caselon objelonct AccelonssIntelonrnalPromotelondContelonnt elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam =
+      elonnablelonAccelonssIntelonrnalPromotelondContelonntSafelontyLelonvelonlParam
   }
-  case object CuratedTrendsRepresentativeTweet extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableCuratedTrendsRepresentativeTweet
+  caselon objelonct CuratelondTrelonndsRelonprelonselonntativelonTwelonelont elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonCuratelondTrelonndsRelonprelonselonntativelonTwelonelont
   }
-  case object CurationPolicyViolations extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableCurationPolicyViolations
+  caselon objelonct CurationPolicyViolations elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonCurationPolicyViolations
   }
-  case object DevPlatformGetListTweets extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableDevPlatformGetListTweetsSafetyLevelParam
+  caselon objelonct DelonvPlatformGelontListTwelonelonts elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonDelonvPlatformGelontListTwelonelontsSafelontyLelonvelonlParam
   }
-  case object DesFollowingAndFollowersUserList extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam =
-      EnableDESFollowingAndFollowersUserListSafetyLevelParam
+  caselon objelonct DelonsFollowingAndFollowelonrsUselonrList elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam =
+      elonnablelonDelonSFollowingAndFollowelonrsUselonrListSafelontyLelonvelonlParam
   }
-  case object DesHomeTimeline extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableDESHomeTimelineSafetyLevelParam
+  caselon objelonct DelonsHomelonTimelonlinelon elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonDelonSHomelonTimelonlinelonSafelontyLelonvelonlParam
   }
-  case object DesQuoteTweetTimeline extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableDESQuoteTweetTimelineSafetyLevelParam
+  caselon objelonct DelonsQuotelonTwelonelontTimelonlinelon elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonDelonSQuotelonTwelonelontTimelonlinelonSafelontyLelonvelonlParam
   }
-  case object DesRealtime extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableDESRealtimeSafetyLevelParam
+  caselon objelonct DelonsRelonaltimelon elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonDelonSRelonaltimelonSafelontyLelonvelonlParam
   }
-  case object DesRealtimeSpamEnrichment extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableDESRealtimeSpamEnrichmentSafetyLevelParam
+  caselon objelonct DelonsRelonaltimelonSpamelonnrichmelonnt elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonDelonSRelonaltimelonSpamelonnrichmelonntSafelontyLelonvelonlParam
   }
-  case object DesRealtimeTweetFilter extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableDESRealtimeTweetFilterSafetyLevelParam
+  caselon objelonct DelonsRelonaltimelonTwelonelontFiltelonr elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonDelonSRelonaltimelonTwelonelontFiltelonrSafelontyLelonvelonlParam
   }
-  case object DesRetweetingUsers extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableDESRetweetingUsersSafetyLevelParam
+  caselon objelonct DelonsRelontwelonelontingUselonrs elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonDelonSRelontwelonelontingUselonrsSafelontyLelonvelonlParam
   }
-  case object DesTweetDetail extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableDesTweetDetailSafetyLevelParam
+  caselon objelonct DelonsTwelonelontDelontail elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonDelonsTwelonelontDelontailSafelontyLelonvelonlParam
   }
-  case object DesTweetLikingUsers extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableDESTweetLikingUsersSafetyLevelParam
+  caselon objelonct DelonsTwelonelontLikingUselonrs elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonDelonSTwelonelontLikingUselonrsSafelontyLelonvelonlParam
   }
-  case object DesUserBookmarks extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableDESUserBookmarksSafetyLevelParam
+  caselon objelonct DelonsUselonrBookmarks elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonDelonSUselonrBookmarksSafelontyLelonvelonlParam
   }
-  case object DesUserLikedTweets extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableDESUserLikedTweetSafetyLevelParam
+  caselon objelonct DelonsUselonrLikelondTwelonelonts elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonDelonSUselonrLikelondTwelonelontSafelontyLelonvelonlParam
   }
-  case object DesUserMentions extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableDESUserMentionsSafetyLevelParam
+  caselon objelonct DelonsUselonrMelonntions elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonDelonSUselonrMelonntionsSafelontyLelonvelonlParam
   }
-  case object DesUserTweets extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableDESUserTweetsSafetyLevelParam
+  caselon objelonct DelonsUselonrTwelonelonts elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonDelonSUselonrTwelonelontsSafelontyLelonvelonlParam
   }
-  case object DevPlatformComplianceStream extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableDevPlatformComplianceStreamSafetyLevelParam
+  caselon objelonct DelonvPlatformCompliancelonStrelonam elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonDelonvPlatformCompliancelonStrelonamSafelontyLelonvelonlParam
   }
-  case object DirectMessages extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableDirectMessagesSafetyLevelParam
+  caselon objelonct DirelonctMelonssagelons elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonDirelonctMelonssagelonsSafelontyLelonvelonlParam
   }
-  case object DirectMessagesConversationList extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam =
-      EnableDirectMessagesConversationListSafetyLevelParam
+  caselon objelonct DirelonctMelonssagelonsConvelonrsationList elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam =
+      elonnablelonDirelonctMelonssagelonsConvelonrsationListSafelontyLelonvelonlParam
   }
-  case object DirectMessagesConversationTimeline extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam =
-      EnableDirectMessagesConversationTimelineSafetyLevelParam
+  caselon objelonct DirelonctMelonssagelonsConvelonrsationTimelonlinelon elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam =
+      elonnablelonDirelonctMelonssagelonsConvelonrsationTimelonlinelonSafelontyLelonvelonlParam
   }
-  case object DirectMessagesInbox extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam =
-      EnableDirectMessagesInboxSafetyLevelParam
+  caselon objelonct DirelonctMelonssagelonsInbox elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam =
+      elonnablelonDirelonctMelonssagelonsInboxSafelontyLelonvelonlParam
   }
-  case object DirectMessagesMutedUsers extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableDirectMessagesMutedUsersSafetyLevelParam
+  caselon objelonct DirelonctMelonssagelonsMutelondUselonrs elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonDirelonctMelonssagelonsMutelondUselonrsSafelontyLelonvelonlParam
   }
-  case object DirectMessagesPinned extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableDirectMessagesPinnedSafetyLevelParam
+  caselon objelonct DirelonctMelonssagelonsPinnelond elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonDirelonctMelonssagelonsPinnelondSafelontyLelonvelonlParam
   }
-  case object DirectMessagesSearch extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableDirectMessagesSearchSafetyLevelParam
+  caselon objelonct DirelonctMelonssagelonsSelonarch elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonDirelonctMelonssagelonsSelonarchSafelontyLelonvelonlParam
   }
-  case object EditHistoryTimeline extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableEditHistoryTimelineSafetyLevelParam
+  caselon objelonct elonditHistoryTimelonlinelon elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonelonditHistoryTimelonlinelonSafelontyLelonvelonlParam
   }
-  case object ElevatedQuoteTweetTimeline extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableElevatedQuoteTweetTimelineSafetyLevelParam
+  caselon objelonct elonlelonvatelondQuotelonTwelonelontTimelonlinelon elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonelonlelonvatelondQuotelonTwelonelontTimelonlinelonSafelontyLelonvelonlParam
   }
-  case object EmbeddedTweet extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableEmbeddedTweetSafetyLevelParam
+  caselon objelonct elonmbelonddelondTwelonelont elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonelonmbelonddelondTwelonelontSafelontyLelonvelonlParam
   }
-  case object EmbedsPublicInterestNotice extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableEmbedsPublicInterestNoticeSafetyLevelParam
+  caselon objelonct elonmbelondsPublicIntelonrelonstNoticelon elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonelonmbelondsPublicIntelonrelonstNoticelonSafelontyLelonvelonlParam
   }
-  case object EmbedTweetMarkup extends SafetyLevel {
-    override def enabledParam: SafetyLevelParam = EnableEmbedTweetMarkupSafetyLevelParam
+  caselon objelonct elonmbelondTwelonelontMarkup elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon delonf elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonelonmbelondTwelonelontMarkupSafelontyLelonvelonlParam
   }
-  case object WritePathLimitedActionsEnforcement extends SafetyLevel {
-    override def enabledParam: SafetyLevelParam =
-      EnableWritePathLimitedActionsEnforcementSafetyLevelParam
+  caselon objelonct WritelonPathLimitelondActionselonnforcelonmelonnt elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon delonf elonnablelondParam: SafelontyLelonvelonlParam =
+      elonnablelonWritelonPathLimitelondActionselonnforcelonmelonntSafelontyLelonvelonlParam
   }
-  case object FilterNone extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableFilterNoneSafetyLevelParam
+  caselon objelonct FiltelonrNonelon elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonFiltelonrNonelonSafelontyLelonvelonlParam
   }
-  case object FilterAll extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableFilterAllSafetyLevelParam
+  caselon objelonct FiltelonrAll elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonFiltelonrAllSafelontyLelonvelonlParam
   }
-  case object FilterAllPlaceholder extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableFilterDefaultSafetyLevelParam
+  caselon objelonct FiltelonrAllPlacelonholdelonr elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonFiltelonrDelonfaultSafelontyLelonvelonlParam
   }
-  case object FilterDefault extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableFilterDefaultSafetyLevelParam
+  caselon objelonct FiltelonrDelonfault elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonFiltelonrDelonfaultSafelontyLelonvelonlParam
   }
-  case object FollowedTopicsTimeline extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableFollowedTopicsTimelineSafetyLevelParam
+  caselon objelonct FollowelondTopicsTimelonlinelon elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonFollowelondTopicsTimelonlinelonSafelontyLelonvelonlParam
   }
-  case object FollowerConnections extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableFollowerConnectionsSafetyLevelParam
+  caselon objelonct FollowelonrConnelonctions elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonFollowelonrConnelonctionsSafelontyLelonvelonlParam
   }
-  case object FollowingAndFollowersUserList extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam =
-      EnableFollowingAndFollowersUserListSafetyLevelParam
+  caselon objelonct FollowingAndFollowelonrsUselonrList elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam =
+      elonnablelonFollowingAndFollowelonrsUselonrListSafelontyLelonvelonlParam
   }
-  case object ForDevelopmentOnly extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableForDevelopmentOnlySafetyLevelParam
+  caselon objelonct ForDelonvelonlopmelonntOnly elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonForDelonvelonlopmelonntOnlySafelontyLelonvelonlParam
   }
-  case object FriendsFollowingList extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableFriendsFollowingListSafetyLevelParam
+  caselon objelonct FrielonndsFollowingList elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonFrielonndsFollowingListSafelontyLelonvelonlParam
   }
-  case object GraphqlDefault extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableGraphqlDefaultSafetyLevelParam
+  caselon objelonct GraphqlDelonfault elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonGraphqlDelonfaultSafelontyLelonvelonlParam
   }
-  case object GryphonDecksAndColumns extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableGryphonDecksAndColumnsSafetyLevelParam
+  caselon objelonct GryphonDeloncksAndColumns elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonGryphonDeloncksAndColumnsSafelontyLelonvelonlParam
   }
-  case object HumanizationNudge extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableHumanizationNudgeSafetyLevelParam
+  caselon objelonct HumanizationNudgelon elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonHumanizationNudgelonSafelontyLelonvelonlParam
   }
-  case object KitchenSinkDevelopment extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableKitchenSinkDevelopmentSafetyLevelParam
+  caselon objelonct KitchelonnSinkDelonvelonlopmelonnt elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonKitchelonnSinkDelonvelonlopmelonntSafelontyLelonvelonlParam
   }
-  case object ListHeader extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableListHeaderSafetyLevelParam
+  caselon objelonct ListHelonadelonr elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonListHelonadelonrSafelontyLelonvelonlParam
   }
-  case object ListMemberships extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableListMembershipsSafetyLevelParam
+  caselon objelonct ListMelonmbelonrships elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonListMelonmbelonrshipsSafelontyLelonvelonlParam
   }
-  case object ListOwnerships extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableListOwnershipsSafetyLevelParam
+  caselon objelonct ListOwnelonrships elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonListOwnelonrshipsSafelontyLelonvelonlParam
   }
-  case object ListRecommendations extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableListRecommendationsSafetyLevelParam
+  caselon objelonct ListReloncommelonndations elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonListReloncommelonndationsSafelontyLelonvelonlParam
   }
-  case object ListSearch extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableListSearchSafetyLevelParam
+  caselon objelonct ListSelonarch elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonListSelonarchSafelontyLelonvelonlParam
   }
-  case object ListSubscriptions extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableListSubscriptionsSafetyLevelParam
+  caselon objelonct ListSubscriptions elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonListSubscriptionsSafelontyLelonvelonlParam
   }
-  case object LivePipelineEngagementCounts extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableLivePipelineEngagementCountsSafetyLevelParam
+  caselon objelonct LivelonPipelonlinelonelonngagelonmelonntCounts elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonLivelonPipelonlinelonelonngagelonmelonntCountsSafelontyLelonvelonlParam
   }
-  case object LiveVideoTimeline extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableLiveVideoTimelineSafetyLevelParam
+  caselon objelonct LivelonVidelonoTimelonlinelon elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonLivelonVidelonoTimelonlinelonSafelontyLelonvelonlParam
   }
-  case object MagicRecs extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableMagicRecsSafetyLevelParam
+  caselon objelonct MagicReloncs elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonMagicReloncsSafelontyLelonvelonlParam
   }
-  case object MagicRecsAggressive extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableMagicRecsAggressiveSafetyLevelParam
+  caselon objelonct MagicReloncsAggrelonssivelon elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonMagicReloncsAggrelonssivelonSafelontyLelonvelonlParam
   }
-  case object MagicRecsAggressiveV2 extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableMagicRecsAggressiveV2SafetyLevelParam
+  caselon objelonct MagicReloncsAggrelonssivelonV2 elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonMagicReloncsAggrelonssivelonV2SafelontyLelonvelonlParam
   }
-  case object MagicRecsV2 extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableMagicRecsV2SafetyLevelParam
+  caselon objelonct MagicReloncsV2 elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonMagicReloncsV2SafelontyLelonvelonlParam
   }
-  case object Minimal extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableMinimalSafetyLevelParam
+  caselon objelonct Minimal elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonMinimalSafelontyLelonvelonlParam
   }
-  case object ModeratedTweetsTimeline extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableModeratedTweetsTimelineSafetyLevelParam
+  caselon objelonct ModelonratelondTwelonelontsTimelonlinelon elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonModelonratelondTwelonelontsTimelonlinelonSafelontyLelonvelonlParam
   }
-  case object Moments extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableMomentsSafetyLevelParam
+  caselon objelonct Momelonnts elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonMomelonntsSafelontyLelonvelonlParam
   }
-  case object NearbyTimeline extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableNearbySafetyLevelParam
+  caselon objelonct NelonarbyTimelonlinelon elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonNelonarbySafelontyLelonvelonlParam
   }
-  case object NewUserExperience extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableNewUserExperienceSafetyLevelParam
+  caselon objelonct NelonwUselonrelonxpelonrielonncelon elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonNelonwUselonrelonxpelonrielonncelonSafelontyLelonvelonlParam
   }
-  case object NotificationsIbis extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableNotificationsIbisSafetyLevelParam
+  caselon objelonct NotificationsIbis elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonNotificationsIbisSafelontyLelonvelonlParam
   }
-  case object NotificationsPlatform extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableNotificationsPlatformSafetyLevelParam
+  caselon objelonct NotificationsPlatform elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonNotificationsPlatformSafelontyLelonvelonlParam
   }
-  case object NotificationsPlatformPush extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableNotificationsPlatformPushSafetyLevelParam
+  caselon objelonct NotificationsPlatformPush elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonNotificationsPlatformPushSafelontyLelonvelonlParam
   }
-  case object NotificationsQig extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableNotificationsQigSafetyLevelParam
+  caselon objelonct NotificationsQig elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonNotificationsQigSafelontyLelonvelonlParam
   }
-  case object NotificationsRead extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableNotificationsReadSafetyLevelParam
+  caselon objelonct NotificationsRelonad elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonNotificationsRelonadSafelontyLelonvelonlParam
   }
-  case object NotificationsTimelineDeviceFollow extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam =
-      EnableNotificationsTimelineDeviceFollowSafetyLevelParam
+  caselon objelonct NotificationsTimelonlinelonDelonvicelonFollow elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam =
+      elonnablelonNotificationsTimelonlinelonDelonvicelonFollowSafelontyLelonvelonlParam
   }
-  case object NotificationsWrite extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableNotificationsWriteSafetyLevelParam
+  caselon objelonct NotificationsWritelon elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonNotificationsWritelonSafelontyLelonvelonlParam
   }
-  case object NotificationsWriterV2 extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableNotificationsWriterV2SafetyLevelParam
+  caselon objelonct NotificationsWritelonrV2 elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonNotificationsWritelonrV2SafelontyLelonvelonlParam
   }
-  case object NotificationsWriterTweetHydrator extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam =
-      EnableNotificationsWriterTweetHydratorSafetyLevelParam
+  caselon objelonct NotificationsWritelonrTwelonelontHydrator elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam =
+      elonnablelonNotificationsWritelonrTwelonelontHydratorSafelontyLelonvelonlParam
   }
-  case object ProfileMixerMedia extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableProfileMixerMediaSafetyLevelParam
+  caselon objelonct ProfilelonMixelonrMelondia elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonProfilelonMixelonrMelondiaSafelontyLelonvelonlParam
   }
-  case object ProfileMixerFavorites extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableProfileMixerFavoritesSafetyLevelParam
+  caselon objelonct ProfilelonMixelonrFavoritelons elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonProfilelonMixelonrFavoritelonsSafelontyLelonvelonlParam
   }
-  case object QuickPromoteTweetEligibility extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableQuickPromoteTweetEligibilitySafetyLevelParam
+  caselon objelonct QuickPromotelonTwelonelontelonligibility elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonQuickPromotelonTwelonelontelonligibilitySafelontyLelonvelonlParam
   }
-  case object QuoteTweetTimeline extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableQuoteTweetTimelineSafetyLevelParam
+  caselon objelonct QuotelonTwelonelontTimelonlinelon elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonQuotelonTwelonelontTimelonlinelonSafelontyLelonvelonlParam
   }
-  case object QuotedTweetRules extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableQuotedTweetRulesParam
+  caselon objelonct QuotelondTwelonelontRulelons elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonQuotelondTwelonelontRulelonsParam
   }
-  case object Recommendations extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableRecommendationsSafetyLevelParam
+  caselon objelonct Reloncommelonndations elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonReloncommelonndationsSafelontyLelonvelonlParam
   }
-  case object RecosVideo extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableRecosVideoSafetyLevelParam
+  caselon objelonct ReloncosVidelono elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonReloncosVidelonoSafelontyLelonvelonlParam
   }
-  case object RecosWritePath extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableRecosWritePathSafetyLevelParam
+  caselon objelonct ReloncosWritelonPath elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonReloncosWritelonPathSafelontyLelonvelonlParam
   }
-  case object RepliesGrouping extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableRepliesGroupingSafetyLevelParam
+  caselon objelonct RelonplielonsGrouping elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonRelonplielonsGroupingSafelontyLelonvelonlParam
   }
-  case object ReportCenter extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableReportCenterSafetyLevelParam
+  caselon objelonct RelonportCelonntelonr elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonRelonportCelonntelonrSafelontyLelonvelonlParam
   }
-  case object ReturningUserExperience extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableReturningUserExperienceSafetyLevelParam
+  caselon objelonct RelonturningUselonrelonxpelonrielonncelon elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonRelonturningUselonrelonxpelonrielonncelonSafelontyLelonvelonlParam
   }
-  case object ReturningUserExperienceFocalTweet extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam =
-      EnableReturningUserExperienceFocalTweetSafetyLevelParam
+  caselon objelonct RelonturningUselonrelonxpelonrielonncelonFocalTwelonelont elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam =
+      elonnablelonRelonturningUselonrelonxpelonrielonncelonFocalTwelonelontSafelontyLelonvelonlParam
   }
-  case object Revenue extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableRevenueSafetyLevelParam
+  caselon objelonct Relonvelonnuelon elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonRelonvelonnuelonSafelontyLelonvelonlParam
   }
-  case object RitoActionedTweetTimeline extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableRitoActionedTweetTimelineParam
+  caselon objelonct RitoActionelondTwelonelontTimelonlinelon elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonRitoActionelondTwelonelontTimelonlinelonParam
   }
-  case object SafeSearchMinimal extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableSafeSearchMinimalSafetyLevelParam
+  caselon objelonct SafelonSelonarchMinimal elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonSafelonSelonarchMinimalSafelontyLelonvelonlParam
   }
-  case object SafeSearchStrict extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableSafeSearchStrictSafetyLevelParam
+  caselon objelonct SafelonSelonarchStrict elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonSafelonSelonarchStrictSafelontyLelonvelonlParam
   }
-  case object SearchHydration extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableSearchHydrationSafetyLevelParam
+  caselon objelonct SelonarchHydration elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonSelonarchHydrationSafelontyLelonvelonlParam
   }
-  case object SearchLatest extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableSearchLatestSafetyLevelParam
+  caselon objelonct SelonarchLatelonst elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonSelonarchLatelonstSafelontyLelonvelonlParam
   }
-  case object SearchMixerSrpMinimal extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableSearchMixerSrpMinimalSafetyLevelParam
+  caselon objelonct SelonarchMixelonrSrpMinimal elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonSelonarchMixelonrSrpMinimalSafelontyLelonvelonlParam
   }
-  case object SearchMixerSrpStrict extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableSearchMixerSrpStrictSafetyLevelParam
+  caselon objelonct SelonarchMixelonrSrpStrict elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonSelonarchMixelonrSrpStrictSafelontyLelonvelonlParam
   }
-  case object SearchPeopleSrp extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableSearchPeopleSearchResultPageSafetyLevelParam
+  caselon objelonct SelonarchPelonoplelonSrp elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonSelonarchPelonoplelonSelonarchRelonsultPagelonSafelontyLelonvelonlParam
   }
-  case object SearchPeopleTypeahead extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableSearchPeopleTypeaheadSafetyLevelParam
+  caselon objelonct SelonarchPelonoplelonTypelonahelonad elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonSelonarchPelonoplelonTypelonahelonadSafelontyLelonvelonlParam
   }
-  case object SearchPhoto extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableSearchPhotoSafetyLevelParam
+  caselon objelonct SelonarchPhoto elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonSelonarchPhotoSafelontyLelonvelonlParam
   }
-  case object ShoppingManagerSpyMode extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableShoppingManagerSpyModeSafetyLevelParam
+  caselon objelonct ShoppingManagelonrSpyModelon elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonShoppingManagelonrSpyModelonSafelontyLelonvelonlParam
   }
-  case object StratoExtLimitedEngagements extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam =
-      EnableStratoExtLimitedEngagementsSafetyLevelParam
+  caselon objelonct StratoelonxtLimitelondelonngagelonmelonnts elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam =
+      elonnablelonStratoelonxtLimitelondelonngagelonmelonntsSafelontyLelonvelonlParam
   }
-  case object SearchTop extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableSearchTopSafetyLevelParam
+  caselon objelonct SelonarchTop elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonSelonarchTopSafelontyLelonvelonlParam
   }
-  case object SearchTopQig extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableSearchTopQigSafetyLevelParam
+  caselon objelonct SelonarchTopQig elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonSelonarchTopQigSafelontyLelonvelonlParam
   }
-  case object SearchTrendTakeoverPromotedTweet extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = SearchTrendTakeoverPromotedTweetSafetyLevelParam
+  caselon objelonct SelonarchTrelonndTakelonovelonrPromotelondTwelonelont elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = SelonarchTrelonndTakelonovelonrPromotelondTwelonelontSafelontyLelonvelonlParam
   }
-  case object SearchVideo extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableSearchVideoSafetyLevelParam
+  caselon objelonct SelonarchVidelono elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonSelonarchVidelonoSafelontyLelonvelonlParam
   }
-  case object SearchBlenderUserRules extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableSearchBlenderUserRulesSafetyLevelParam
+  caselon objelonct SelonarchBlelonndelonrUselonrRulelons elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonSelonarchBlelonndelonrUselonrRulelonsSafelontyLelonvelonlParam
   }
-  case object SearchLatestUserRules extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableSearchLatestUserRulesSafetyLevelParam
+  caselon objelonct SelonarchLatelonstUselonrRulelons elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonSelonarchLatelonstUselonrRulelonsSafelontyLelonvelonlParam
   }
-  case object SignalsReactions extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableSignalsReactionsSafetyLevelParam
+  caselon objelonct SignalsRelonactions elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonSignalsRelonactionsSafelontyLelonvelonlParam
   }
-  case object SignalsTweetReactingUsers extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableSignalsTweetReactingUsersSafetyLevelParam
+  caselon objelonct SignalsTwelonelontRelonactingUselonrs elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonSignalsTwelonelontRelonactingUselonrsSafelontyLelonvelonlParam
   }
-  case object SocialProof extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableSocialProofSafetyLevelParam
+  caselon objelonct SocialProof elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonSocialProofSafelontyLelonvelonlParam
   }
-  case object SoftInterventionPivot extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableSoftInterventionPivotSafetyLevelParam
+  caselon objelonct SoftIntelonrvelonntionPivot elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonSoftIntelonrvelonntionPivotSafelontyLelonvelonlParam
   }
-  case object SpaceFleetline extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableSpaceFleetlineSafetyLevelParam
+  caselon objelonct SpacelonFlelonelontlinelon elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonSpacelonFlelonelontlinelonSafelontyLelonvelonlParam
   }
-  case object SpaceHomeTimelineUpranking extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableSpaceHomeTimelineUprankingSafetyLevelParam
+  caselon objelonct SpacelonHomelonTimelonlinelonUpranking elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonSpacelonHomelonTimelonlinelonUprankingSafelontyLelonvelonlParam
   }
-  case object SpaceJoinScreen extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableSpaceJoinScreenSafetyLevelParam
+  caselon objelonct SpacelonJoinScrelonelonn elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonSpacelonJoinScrelonelonnSafelontyLelonvelonlParam
   }
-  case object SpaceNotifications extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableSpaceNotificationSafetyLevelParam
+  caselon objelonct SpacelonNotifications elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonSpacelonNotificationSafelontyLelonvelonlParam
   }
-  case object Spaces extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableSpacesSafetyLevelParam
+  caselon objelonct Spacelons elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonSpacelonsSafelontyLelonvelonlParam
   }
-  case object SpacesParticipants extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableSpacesParticipantsSafetyLevelParam
+  caselon objelonct SpacelonsParticipants elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonSpacelonsParticipantsSafelontyLelonvelonlParam
   }
-  case object SpacesSellerApplicationStatus extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam =
-      EnableSpacesSellerApplicationStatusSafetyLevelParam
+  caselon objelonct SpacelonsSelonllelonrApplicationStatus elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam =
+      elonnablelonSpacelonsSelonllelonrApplicationStatusSafelontyLelonvelonlParam
   }
-  case object SpacesSharing extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableSpacesSharingSafetyLevelParam
+  caselon objelonct SpacelonsSharing elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonSpacelonsSharingSafelontyLelonvelonlParam
   }
-  case object SpaceTweetAvatarHomeTimeline extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableSpaceTweetAvatarHomeTimelineSafetyLevelParam
+  caselon objelonct SpacelonTwelonelontAvatarHomelonTimelonlinelon elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonSpacelonTwelonelontAvatarHomelonTimelonlinelonSafelontyLelonvelonlParam
   }
-  case object StickersTimeline extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableStickersTimelineSafetyLevelParam
+  caselon objelonct StickelonrsTimelonlinelon elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonStickelonrsTimelonlinelonSafelontyLelonvelonlParam
   }
-  case object StreamServices extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableStreamServicesSafetyLevelParam
+  caselon objelonct StrelonamSelonrvicelons elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonStrelonamSelonrvicelonsSafelontyLelonvelonlParam
   }
-  case object SuperFollowerConnections extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableSuperFollowerConnectionsSafetyLevelParam
+  caselon objelonct SupelonrFollowelonrConnelonctions elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonSupelonrFollowelonrConnelonctionsSafelontyLelonvelonlParam
   }
-  case object SuperLike extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableSuperLikeSafetyLevelParam
+  caselon objelonct SupelonrLikelon elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonSupelonrLikelonSafelontyLelonvelonlParam
   }
-  case object Test extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableTestSafetyLevelParam
+  caselon objelonct Telonst elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonTelonstSafelontyLelonvelonlParam
   }
-  case object TimelineConversations extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableTimelineConversationsSafetyLevelParam
+  caselon objelonct TimelonlinelonConvelonrsations elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonTimelonlinelonConvelonrsationsSafelontyLelonvelonlParam
   }
-  case object TimelineConversationsDownranking extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam =
-      EnableTimelineConversationsDownrankingSafetyLevelParam
+  caselon objelonct TimelonlinelonConvelonrsationsDownranking elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam =
+      elonnablelonTimelonlinelonConvelonrsationsDownrankingSafelontyLelonvelonlParam
   }
-  case object TimelineConversationsDownrankingMinimal extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam =
-      EnableTimelineConversationsDownrankingMinimalSafetyLevelParam
+  caselon objelonct TimelonlinelonConvelonrsationsDownrankingMinimal elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam =
+      elonnablelonTimelonlinelonConvelonrsationsDownrankingMinimalSafelontyLelonvelonlParam
   }
-  case object TimelineFollowingActivity extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableTimelineFollowingActivitySafetyLevelParam
+  caselon objelonct TimelonlinelonFollowingActivity elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonTimelonlinelonFollowingActivitySafelontyLelonvelonlParam
   }
-  case object TimelineHome extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableTimelineHomeSafetyLevelParam
+  caselon objelonct TimelonlinelonHomelon elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonTimelonlinelonHomelonSafelontyLelonvelonlParam
   }
-  case object TimelineHomeCommunities extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableTimelineHomeCommunitiesSafetyLevelParam
+  caselon objelonct TimelonlinelonHomelonCommunitielons elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonTimelonlinelonHomelonCommunitielonsSafelontyLelonvelonlParam
   }
-  case object TimelineHomeHydration extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableTimelineHomeHydrationSafetyLevelParam
+  caselon objelonct TimelonlinelonHomelonHydration elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonTimelonlinelonHomelonHydrationSafelontyLelonvelonlParam
   }
-  case object TimelineHomePromotedHydration extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam =
-      EnableTimelineHomePromotedHydrationSafetyLevelParam
+  caselon objelonct TimelonlinelonHomelonPromotelondHydration elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam =
+      elonnablelonTimelonlinelonHomelonPromotelondHydrationSafelontyLelonvelonlParam
   }
-  case object TimelineHomeRecommendations extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableTimelineHomeRecommendationsSafetyLevelParam
+  caselon objelonct TimelonlinelonHomelonReloncommelonndations elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonTimelonlinelonHomelonReloncommelonndationsSafelontyLelonvelonlParam
   }
-  case object TimelineHomeTopicFollowRecommendations extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam =
-      EnableTimelineHomeTopicFollowRecommendationsSafetyLevelParam
+  caselon objelonct TimelonlinelonHomelonTopicFollowReloncommelonndations elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam =
+      elonnablelonTimelonlinelonHomelonTopicFollowReloncommelonndationsSafelontyLelonvelonlParam
   }
-  case object TimelineScorer extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam =
-      EnableTimelineScorerSafetyLevelParam
+  caselon objelonct TimelonlinelonScorelonr elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam =
+      elonnablelonTimelonlinelonScorelonrSafelontyLelonvelonlParam
   }
-  case object TopicsLandingPageTopicRecommendations extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam =
-      EnableTopicsLandingPageTopicRecommendationsSafetyLevelParam
+  caselon objelonct TopicsLandingPagelonTopicReloncommelonndations elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam =
+      elonnablelonTopicsLandingPagelonTopicReloncommelonndationsSafelontyLelonvelonlParam
   }
-  case object ExploreRecommendations extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam =
-      EnableExploreRecommendationsSafetyLevelParam
+  caselon objelonct elonxplorelonReloncommelonndations elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam =
+      elonnablelonelonxplorelonReloncommelonndationsSafelontyLelonvelonlParam
   }
-  case object TimelineModeratedTweetsHydration extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam =
-      EnableTimelineModeratedTweetsHydrationSafetyLevelParam
+  caselon objelonct TimelonlinelonModelonratelondTwelonelontsHydration elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam =
+      elonnablelonTimelonlinelonModelonratelondTwelonelontsHydrationSafelontyLelonvelonlParam
   }
-  case object TimelineInjection extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableTimelineInjectionSafetyLevelParam
+  caselon objelonct TimelonlinelonInjelonction elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonTimelonlinelonInjelonctionSafelontyLelonvelonlParam
   }
-  case object TimelineMentions extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableTimelineMentionsSafetyLevelParam
+  caselon objelonct TimelonlinelonMelonntions elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonTimelonlinelonMelonntionsSafelontyLelonvelonlParam
   }
-  case object TimelineHomeLatest extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableTimelineHomeLatestSafetyLevelParam
+  caselon objelonct TimelonlinelonHomelonLatelonst elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonTimelonlinelonHomelonLatelonstSafelontyLelonvelonlParam
   }
-  case object TimelineLikedBy extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableTimelineLikedBySafetyLevelParam
+  caselon objelonct TimelonlinelonLikelondBy elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonTimelonlinelonLikelondBySafelontyLelonvelonlParam
   }
-  case object TimelineRetweetedBy extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableTimelineRetweetedBySafetyLevelParam
+  caselon objelonct TimelonlinelonRelontwelonelontelondBy elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonTimelonlinelonRelontwelonelontelondBySafelontyLelonvelonlParam
   }
-  case object TimelineSuperLikedBy extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableTimelineLikedBySafetyLevelParam
+  caselon objelonct TimelonlinelonSupelonrLikelondBy elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonTimelonlinelonLikelondBySafelontyLelonvelonlParam
   }
-  case object TimelineBookmark extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableTimelineBookmarkSafetyLevelParam
+  caselon objelonct TimelonlinelonBookmark elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonTimelonlinelonBookmarkSafelontyLelonvelonlParam
   }
-  case object TimelineContentControls extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableTimelineContentControlsSafetyLevelParam
+  caselon objelonct TimelonlinelonContelonntControls elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonTimelonlinelonContelonntControlsSafelontyLelonvelonlParam
   }
-  case object TimelineMedia extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableTimelineMediaSafetyLevelParam
+  caselon objelonct TimelonlinelonMelondia elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonTimelonlinelonMelondiaSafelontyLelonvelonlParam
   }
-  case object TimelineReactiveBlending extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableTimelineReactiveBlendingSafetyLevelParam
+  caselon objelonct TimelonlinelonRelonactivelonBlelonnding elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonTimelonlinelonRelonactivelonBlelonndingSafelontyLelonvelonlParam
   }
-  case object TimelineFavorites extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableTimelineFavoritesSafetyLevelParam
+  caselon objelonct TimelonlinelonFavoritelons elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonTimelonlinelonFavoritelonsSafelontyLelonvelonlParam
   }
-  case object TimelineFavoritesSelfView extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableTimelineFavoritesSelfViewSafetyLevelParam
+  caselon objelonct TimelonlinelonFavoritelonsSelonlfVielonw elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonTimelonlinelonFavoritelonsSelonlfVielonwSafelontyLelonvelonlParam
   }
-  case object TimelineLists extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableTimelineListsSafetyLevelParam
+  caselon objelonct TimelonlinelonLists elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonTimelonlinelonListsSafelontyLelonvelonlParam
   }
-  case object TimelineProfile extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableTimelineProfileSafetyLevelParam
+  caselon objelonct TimelonlinelonProfilelon elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonTimelonlinelonProfilelonSafelontyLelonvelonlParam
   }
-  case object TimelineProfileAll extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableTimelineProfileAllSafetyLevelParam
-  }
-
-  case object TimelineProfileSpaces extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableTimelineProfileSpacesSafetyLevelParam
+  caselon objelonct TimelonlinelonProfilelonAll elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonTimelonlinelonProfilelonAllSafelontyLelonvelonlParam
   }
 
-  case object TimelineProfileSuperFollows extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableTimelineProfileSuperFollowsSafetyLevelParam
-  }
-  case object TimelineFocalTweet extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableTimelineFocalTweetSafetyLevelParam
-  }
-  case object Tombstoning extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableTombstoningSafetyLevelParam
-  }
-  case object TopicRecommendations extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableTopicRecommendationsSafetyLevelParam
-  }
-  case object TrendsRepresentativeTweet extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableTrendsRepresentativeTweetSafetyLevelParam
-  }
-  case object TrustedFriendsUserList extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableTrustedFriendsUserListSafetyLevelParam
-  }
-  case object TweetDetail extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableTweetDetailSafetyLevelParam
-  }
-  case object TweetDetailNonToo extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableTweetDetailNonTooSafetyLevelParam
-  }
-  case object TweetDetailWithInjectionsHydration extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam =
-      EnableTweetDetailWithInjectionsHydrationSafetyLevelParam
-  }
-  case object TweetEngagers extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableTweetEngagersSafetyLevelParam
-  }
-  case object TweetReplyNudge extends SafetyLevel {
-    override def enabledParam: SafetyLevelParam = EnableTweetReplyNudgeParam
-  }
-  case object TweetScopedTimeline extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableTweetScopedTimelineSafetyLevelParam
-  }
-  case object TweetWritesApi extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableTweetWritesApiSafetyLevelParam
-  }
-  case object TwitterArticleCompose extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableTwitterArticleComposeSafetyLevelParam
-  }
-  case object TwitterArticleProfileTab extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableTwitterArticleProfileTabSafetyLevelParam
-  }
-  case object TwitterArticleRead extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableTwitterArticleReadSafetyLevelParam
-  }
-  case object UserProfileHeader extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableUserProfileHeaderSafetyLevelParam
-  }
-  case object UserMilestoneRecommendation extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableUserMilestoneRecommendationSafetyLevelParam
-  }
-  case object UserScopedTimeline extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableUserScopedTimelineSafetyLevelParam
-  }
-  case object UserSearchSrp extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableUserSearchSrpSafetyLevelParam
-  }
-  case object UserSearchTypeahead extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableUserSearchTypeaheadSafetyLevelParam
-  }
-  case object UserSelfViewOnly extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableUserSelfViewOnlySafetyLevelParam
-  }
-  case object UserSettings extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableUserSettingsSafetyLevelParam
-  }
-  case object VideoAds extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableVideoAdsSafetyLevelParam
-  }
-  case object ZipbirdConsumerArchives extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableZipbirdConsumerArchivesSafetyLevelParam
-  }
-  case object TweetAward extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableTweetAwardSafetyLevelParam
+  caselon objelonct TimelonlinelonProfilelonSpacelons elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonTimelonlinelonProfilelonSpacelonsSafelontyLelonvelonlParam
   }
 
-  case object DeprecatedSafetyLevel extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableDeprecatedSafetyLevel
+  caselon objelonct TimelonlinelonProfilelonSupelonrFollows elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonTimelonlinelonProfilelonSupelonrFollowsSafelontyLelonvelonlParam
+  }
+  caselon objelonct TimelonlinelonFocalTwelonelont elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonTimelonlinelonFocalTwelonelontSafelontyLelonvelonlParam
+  }
+  caselon objelonct Tombstoning elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonTombstoningSafelontyLelonvelonlParam
+  }
+  caselon objelonct TopicReloncommelonndations elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonTopicReloncommelonndationsSafelontyLelonvelonlParam
+  }
+  caselon objelonct TrelonndsRelonprelonselonntativelonTwelonelont elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonTrelonndsRelonprelonselonntativelonTwelonelontSafelontyLelonvelonlParam
+  }
+  caselon objelonct TrustelondFrielonndsUselonrList elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonTrustelondFrielonndsUselonrListSafelontyLelonvelonlParam
+  }
+  caselon objelonct TwelonelontDelontail elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonTwelonelontDelontailSafelontyLelonvelonlParam
+  }
+  caselon objelonct TwelonelontDelontailNonToo elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonTwelonelontDelontailNonTooSafelontyLelonvelonlParam
+  }
+  caselon objelonct TwelonelontDelontailWithInjelonctionsHydration elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam =
+      elonnablelonTwelonelontDelontailWithInjelonctionsHydrationSafelontyLelonvelonlParam
+  }
+  caselon objelonct Twelonelontelonngagelonrs elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonTwelonelontelonngagelonrsSafelontyLelonvelonlParam
+  }
+  caselon objelonct TwelonelontRelonplyNudgelon elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon delonf elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonTwelonelontRelonplyNudgelonParam
+  }
+  caselon objelonct TwelonelontScopelondTimelonlinelon elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonTwelonelontScopelondTimelonlinelonSafelontyLelonvelonlParam
+  }
+  caselon objelonct TwelonelontWritelonsApi elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonTwelonelontWritelonsApiSafelontyLelonvelonlParam
+  }
+  caselon objelonct TwittelonrArticlelonComposelon elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonTwittelonrArticlelonComposelonSafelontyLelonvelonlParam
+  }
+  caselon objelonct TwittelonrArticlelonProfilelonTab elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonTwittelonrArticlelonProfilelonTabSafelontyLelonvelonlParam
+  }
+  caselon objelonct TwittelonrArticlelonRelonad elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonTwittelonrArticlelonRelonadSafelontyLelonvelonlParam
+  }
+  caselon objelonct UselonrProfilelonHelonadelonr elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonUselonrProfilelonHelonadelonrSafelontyLelonvelonlParam
+  }
+  caselon objelonct UselonrMilelonstonelonReloncommelonndation elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonUselonrMilelonstonelonReloncommelonndationSafelontyLelonvelonlParam
+  }
+  caselon objelonct UselonrScopelondTimelonlinelon elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonUselonrScopelondTimelonlinelonSafelontyLelonvelonlParam
+  }
+  caselon objelonct UselonrSelonarchSrp elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonUselonrSelonarchSrpSafelontyLelonvelonlParam
+  }
+  caselon objelonct UselonrSelonarchTypelonahelonad elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonUselonrSelonarchTypelonahelonadSafelontyLelonvelonlParam
+  }
+  caselon objelonct UselonrSelonlfVielonwOnly elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonUselonrSelonlfVielonwOnlySafelontyLelonvelonlParam
+  }
+  caselon objelonct UselonrSelonttings elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonUselonrSelonttingsSafelontyLelonvelonlParam
+  }
+  caselon objelonct VidelonoAds elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonVidelonoAdsSafelontyLelonvelonlParam
+  }
+  caselon objelonct ZipbirdConsumelonrArchivelons elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonZipbirdConsumelonrArchivelonsSafelontyLelonvelonlParam
+  }
+  caselon objelonct TwelonelontAward elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonTwelonelontAwardSafelontyLelonvelonlParam
+  }
+
+  caselon objelonct DelonpreloncatelondSafelontyLelonvelonl elonxtelonnds SafelontyLelonvelonl {
+    ovelonrridelon val elonnablelondParam: SafelontyLelonvelonlParam = elonnablelonDelonpreloncatelondSafelontyLelonvelonl
   }
 
 
-  def fromThrift(safetyLevel: ThriftSafetyLevel): SafetyLevel =
-    thriftToModelMap.get(safetyLevel).getOrElse(DeprecatedSafetyLevel)
+  delonf fromThrift(safelontyLelonvelonl: ThriftSafelontyLelonvelonl): SafelontyLelonvelonl =
+    thriftToModelonlMap.gelont(safelontyLelonvelonl).gelontOrelonlselon(DelonpreloncatelondSafelontyLelonvelonl)
 
-  def toThrift(safetyLevel: SafetyLevel): ThriftSafetyLevel =
-    modelToThriftMap
-      .get(safetyLevel).getOrElse(ThriftSafetyLevel.EnumUnknownSafetyLevel(DeprecatedEnumValue))
+  delonf toThrift(safelontyLelonvelonl: SafelontyLelonvelonl): ThriftSafelontyLelonvelonl =
+    modelonlToThriftMap
+      .gelont(safelontyLelonvelonl).gelontOrelonlselon(ThriftSafelontyLelonvelonl.elonnumUnknownSafelontyLelonvelonl(DelonpreloncatelondelonnumValuelon))
 
-  val List: Seq[SafetyLevel] =
-    ThriftSafetyLevel.list.map(fromThrift).filter(_ != DeprecatedSafetyLevel)
+  val List: Selonq[SafelontyLelonvelonl] =
+    ThriftSafelontyLelonvelonl.list.map(fromThrift).filtelonr(_ != DelonpreloncatelondSafelontyLelonvelonl)
 }

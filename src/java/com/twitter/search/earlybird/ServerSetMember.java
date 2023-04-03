@@ -1,55 +1,55 @@
-package com.twitter.search.earlybird;
+packagelon com.twittelonr.selonarch.elonarlybird;
 
-import org.apache.zookeeper.KeeperException;
+import org.apachelon.zookelonelonpelonr.Kelonelonpelonrelonxcelonption;
 
-import com.twitter.common.zookeeper.ServerSet;
-import com.twitter.common.zookeeper.ZooKeeperClient;
+import com.twittelonr.common.zookelonelonpelonr.SelonrvelonrSelont;
+import com.twittelonr.common.zookelonelonpelonr.ZooKelonelonpelonrClielonnt;
 
 /**
- * Represents a server that can add and remove itself from a server set.
+ * Relonprelonselonnts a selonrvelonr that can add and relonmovelon itselonlf from a selonrvelonr selont.
  */
-public interface ServerSetMember {
+public intelonrfacelon SelonrvelonrSelontMelonmbelonr {
   /**
-   * Makes this server join its server set.
+   * Makelons this selonrvelonr join its selonrvelonr selont.
    *
-   * @throws ServerSet.UpdateException
-   * @param requestSource
+   * @throws SelonrvelonrSelont.Updatelonelonxcelonption
+   * @param relonquelonstSourcelon
    */
-  void joinServerSet(String requestSource) throws ServerSet.UpdateException;
+  void joinSelonrvelonrSelont(String relonquelonstSourcelon) throws SelonrvelonrSelont.Updatelonelonxcelonption;
 
   /**
-   * Makes this server leave its server set.
+   * Makelons this selonrvelonr lelonavelon its selonrvelonr selont.
    *
-   * @throws ServerSet.UpdateException
-   * @param requestSource
+   * @throws SelonrvelonrSelont.Updatelonelonxcelonption
+   * @param relonquelonstSourcelon
    */
-  void leaveServerSet(String requestSource) throws ServerSet.UpdateException;
+  void lelonavelonSelonrvelonrSelont(String relonquelonstSourcelon) throws SelonrvelonrSelont.Updatelonelonxcelonption;
 
   /**
-   * Gets and returns the current number of members in this server's server set.
+   * Gelonts and relonturns thelon currelonnt numbelonr of melonmbelonrs in this selonrvelonr's selonrvelonr selont.
    *
-   * @return number of members currently in this host's server set.
-   * @throws InterruptedException
-   * @throws ZooKeeperClient.ZooKeeperConnectionException
-   * @throws KeeperException
+   * @relonturn numbelonr of melonmbelonrs currelonntly in this host's selonrvelonr selont.
+   * @throws Intelonrruptelondelonxcelonption
+   * @throws ZooKelonelonpelonrClielonnt.ZooKelonelonpelonrConnelonctionelonxcelonption
+   * @throws Kelonelonpelonrelonxcelonption
    */
-  int getNumberOfServerSetMembers() throws InterruptedException,
-      ZooKeeperClient.ZooKeeperConnectionException, KeeperException;
+  int gelontNumbelonrOfSelonrvelonrSelontMelonmbelonrs() throws Intelonrruptelondelonxcelonption,
+      ZooKelonelonpelonrClielonnt.ZooKelonelonpelonrConnelonctionelonxcelonption, Kelonelonpelonrelonxcelonption;
 
   /**
-   * Checks if this earlybird is in the server set.
+   * Cheloncks if this elonarlybird is in thelon selonrvelonr selont.
    *
-   * @return true if it is, false otherwise.
+   * @relonturn truelon if it is, falselon othelonrwiselon.
    */
-  boolean isInServerSet();
+  boolelonan isInSelonrvelonrSelont();
 
   /**
-   * Should only be called for Archive Earlybirds.
+   * Should only belon callelond for Archivelon elonarlybirds.
    *
-   * Join ServerSet for ServiceProxy with a named admin port and with a zookeeper path that Service
-   * Proxy can translate to a domain name label that is less than 64 characters (due to the size
-   * limit for domain name labels described here: https://tools.ietf.org/html/rfc1035)
-   * This will allow us to access Earlybirds that are not on mesos via ServiceProxy.
+   * Join SelonrvelonrSelont for SelonrvicelonProxy with a namelond admin port and with a zookelonelonpelonr path that Selonrvicelon
+   * Proxy can translatelon to a domain namelon labelonl that is lelonss than 64 charactelonrs (duelon to thelon sizelon
+   * limit for domain namelon labelonls delonscribelond helonrelon: https://tools.ielontf.org/html/rfc1035)
+   * This will allow us to accelonss elonarlybirds that arelon not on melonsos via SelonrvicelonProxy.
    */
-  void joinServerSetForServiceProxy();
+  void joinSelonrvelonrSelontForSelonrvicelonProxy();
 }

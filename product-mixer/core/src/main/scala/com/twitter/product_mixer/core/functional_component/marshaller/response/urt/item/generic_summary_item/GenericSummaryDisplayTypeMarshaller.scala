@@ -1,18 +1,18 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.generic_summary_item
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.itelonm.gelonnelonric_summary_itelonm
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.generic_summary.GenericSummaryItemDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.generic_summary.HeroDisplayType
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.gelonnelonric_summary.GelonnelonricSummaryItelonmDisplayTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.gelonnelonric_summary.HelonroDisplayTypelon
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class GenericSummaryDisplayTypeMarshaller @Inject() () {
+@Singlelonton
+class GelonnelonricSummaryDisplayTypelonMarshallelonr @Injelonct() () {
 
-  def apply(
-    genericSummaryItemDisplayType: GenericSummaryItemDisplayType
-  ): urt.GenericSummaryDisplayType =
-    genericSummaryItemDisplayType match {
-      case HeroDisplayType => urt.GenericSummaryDisplayType.Hero
+  delonf apply(
+    gelonnelonricSummaryItelonmDisplayTypelon: GelonnelonricSummaryItelonmDisplayTypelon
+  ): urt.GelonnelonricSummaryDisplayTypelon =
+    gelonnelonricSummaryItelonmDisplayTypelon match {
+      caselon HelonroDisplayTypelon => urt.GelonnelonricSummaryDisplayTypelon.Helonro
     }
 }

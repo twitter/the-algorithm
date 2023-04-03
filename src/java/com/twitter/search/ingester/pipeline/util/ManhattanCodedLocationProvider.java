@@ -1,110 +1,110 @@
-package com.twitter.search.ingester.pipeline.util;
+packagelon com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.util;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
+import java.util.Collelonction;
+import java.util.Itelonrator;
 import java.util.List;
 import java.util.Optional;
 
-import com.google.common.base.Preconditions;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import com.twitter.search.common.indexing.thriftjava.ThriftGeoLocationSource;
-import com.twitter.search.common.indexing.thriftjava.ThriftGeoPoint;
-import com.twitter.search.common.indexing.thriftjava.ThriftGeocodeRecord;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.relevance.entities.GeoObject;
-import com.twitter.search.common.util.geocoding.ManhattanGeocodeRecordStore;
-import com.twitter.search.ingester.model.IngesterTwitterMessage;
-import com.twitter.stitch.Stitch;
-import com.twitter.storage.client.manhattan.kv.JavaManhattanKVEndpoint;
-import com.twitter.storage.client.manhattan.kv.ManhattanValue;
-import com.twitter.util.Function;
-import com.twitter.util.Future;
+import com.twittelonr.selonarch.common.indelonxing.thriftjava.ThriftGelonoLocationSourcelon;
+import com.twittelonr.selonarch.common.indelonxing.thriftjava.ThriftGelonoPoint;
+import com.twittelonr.selonarch.common.indelonxing.thriftjava.ThriftGelonocodelonReloncord;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.common.relonlelonvancelon.elonntitielons.GelonoObjelonct;
+import com.twittelonr.selonarch.common.util.gelonocoding.ManhattanGelonocodelonReloncordStorelon;
+import com.twittelonr.selonarch.ingelonstelonr.modelonl.IngelonstelonrTwittelonrMelonssagelon;
+import com.twittelonr.stitch.Stitch;
+import com.twittelonr.storagelon.clielonnt.manhattan.kv.JavaManhattanKVelonndpoint;
+import com.twittelonr.storagelon.clielonnt.manhattan.kv.ManhattanValuelon;
+import com.twittelonr.util.Function;
+import com.twittelonr.util.Futurelon;
 
 
-public final class ManhattanCodedLocationProvider {
+public final class ManhattanCodelondLocationProvidelonr {
 
-  private final ManhattanGeocodeRecordStore store;
-  private final SearchCounter locationsCounter;
+  privatelon final ManhattanGelonocodelonReloncordStorelon storelon;
+  privatelon final SelonarchCountelonr locationsCountelonr;
 
-  private static final String LOCATIONS_POPULATED_STAT_NAME = "_locations_populated_count";
+  privatelon static final String LOCATIONS_POPULATelonD_STAT_NAMelon = "_locations_populatelond_count";
 
-  public static ManhattanCodedLocationProvider createWithEndpoint(
-      JavaManhattanKVEndpoint endpoint, String metricsPrefix, String datasetName) {
-    return new ManhattanCodedLocationProvider(
-        ManhattanGeocodeRecordStore.create(endpoint, datasetName), metricsPrefix);
+  public static ManhattanCodelondLocationProvidelonr crelonatelonWithelonndpoint(
+      JavaManhattanKVelonndpoint elonndpoint, String melontricsPrelonfix, String dataselontNamelon) {
+    relonturn nelonw ManhattanCodelondLocationProvidelonr(
+        ManhattanGelonocodelonReloncordStorelon.crelonatelon(elonndpoint, dataselontNamelon), melontricsPrelonfix);
   }
 
-  private ManhattanCodedLocationProvider(ManhattanGeocodeRecordStore store, String metricPrefix) {
-    this.locationsCounter = SearchCounter.export(metricPrefix + LOCATIONS_POPULATED_STAT_NAME);
-    this.store = store;
+  privatelon ManhattanCodelondLocationProvidelonr(ManhattanGelonocodelonReloncordStorelon storelon, String melontricPrelonfix) {
+    this.locationsCountelonr = SelonarchCountelonr.elonxport(melontricPrelonfix + LOCATIONS_POPULATelonD_STAT_NAMelon);
+    this.storelon = storelon;
   }
 
   /**
-   * Iterates through all given messages, and for each message that has a location set, retrieves
-   * the coordinates of that location from Manhattan and sets them back on that message.
+   * Itelonratelons through all givelonn melonssagelons, and for elonach melonssagelon that has a location selont, relontrielonvelons
+   * thelon coordinatelons of that location from Manhattan and selonts thelonm back on that melonssagelon.
    */
-  public Future<Collection<IngesterTwitterMessage>> populateCodedLatLon(
-      Collection<IngesterTwitterMessage> messages) {
-    if (messages.isEmpty()) {
-      return Future.value(messages);
+  public Futurelon<Collelonction<IngelonstelonrTwittelonrMelonssagelon>> populatelonCodelondLatLon(
+      Collelonction<IngelonstelonrTwittelonrMelonssagelon> melonssagelons) {
+    if (melonssagelons.iselonmpty()) {
+      relonturn Futurelon.valuelon(melonssagelons);
     }
 
-    // Batch read requests
-    List<Stitch<Optional<ManhattanValue<ThriftGeocodeRecord>>>> readRequests =
-        new ArrayList<>(messages.size());
-    for (IngesterTwitterMessage message : messages) {
-      readRequests.add(store.asyncReadFromManhattan(message.getLocation()));
+    // Batch relonad relonquelonsts
+    List<Stitch<Optional<ManhattanValuelon<ThriftGelonocodelonReloncord>>>> relonadRelonquelonsts =
+        nelonw ArrayList<>(melonssagelons.sizelon());
+    for (IngelonstelonrTwittelonrMelonssagelon melonssagelon : melonssagelons) {
+      relonadRelonquelonsts.add(storelon.asyncRelonadFromManhattan(melonssagelon.gelontLocation()));
     }
-    Future<List<Optional<ManhattanValue<ThriftGeocodeRecord>>>> batchedRequest =
-        Stitch.run(Stitch.collect(readRequests));
+    Futurelon<List<Optional<ManhattanValuelon<ThriftGelonocodelonReloncord>>>> batchelondRelonquelonst =
+        Stitch.run(Stitch.collelonct(relonadRelonquelonsts));
 
-    return batchedRequest.map(Function.func(optGeoLocations -> {
-      // Iterate over messages and responses simultaneously
-      Preconditions.checkState(messages.size() == optGeoLocations.size());
-      Iterator<IngesterTwitterMessage> messageIterator = messages.iterator();
-      Iterator<Optional<ManhattanValue<ThriftGeocodeRecord>>> optGeoLocationIterator =
-          optGeoLocations.iterator();
-      while (messageIterator.hasNext() && optGeoLocationIterator.hasNext()) {
-        IngesterTwitterMessage message = messageIterator.next();
-        Optional<ManhattanValue<ThriftGeocodeRecord>> optGeoLocation =
-            optGeoLocationIterator.next();
-        if (setGeoLocationForMessage(message, optGeoLocation)) {
-          locationsCounter.increment();
+    relonturn batchelondRelonquelonst.map(Function.func(optGelonoLocations -> {
+      // Itelonratelon ovelonr melonssagelons and relonsponselons simultanelonously
+      Prelonconditions.chelonckStatelon(melonssagelons.sizelon() == optGelonoLocations.sizelon());
+      Itelonrator<IngelonstelonrTwittelonrMelonssagelon> melonssagelonItelonrator = melonssagelons.itelonrator();
+      Itelonrator<Optional<ManhattanValuelon<ThriftGelonocodelonReloncord>>> optGelonoLocationItelonrator =
+          optGelonoLocations.itelonrator();
+      whilelon (melonssagelonItelonrator.hasNelonxt() && optGelonoLocationItelonrator.hasNelonxt()) {
+        IngelonstelonrTwittelonrMelonssagelon melonssagelon = melonssagelonItelonrator.nelonxt();
+        Optional<ManhattanValuelon<ThriftGelonocodelonReloncord>> optGelonoLocation =
+            optGelonoLocationItelonrator.nelonxt();
+        if (selontGelonoLocationForMelonssagelon(melonssagelon, optGelonoLocation)) {
+          locationsCountelonr.increlonmelonnt();
         }
       }
-      return messages;
+      relonturn melonssagelons;
     }));
   }
 
   /**
-   * Returns whether a valid geolocation was successfully found and saved in the message.
+   * Relonturns whelonthelonr a valid gelonolocation was succelonssfully found and savelond in thelon melonssagelon.
    */
-  private boolean setGeoLocationForMessage(
-      IngesterTwitterMessage message,
-      Optional<ManhattanValue<ThriftGeocodeRecord>> optGeoLocation) {
-    if (optGeoLocation.isPresent()) {
-      ThriftGeocodeRecord geoLocation = optGeoLocation.get().contents();
-      ThriftGeoPoint geoTags = geoLocation.getGeoPoint();
+  privatelon boolelonan selontGelonoLocationForMelonssagelon(
+      IngelonstelonrTwittelonrMelonssagelon melonssagelon,
+      Optional<ManhattanValuelon<ThriftGelonocodelonReloncord>> optGelonoLocation) {
+    if (optGelonoLocation.isPrelonselonnt()) {
+      ThriftGelonocodelonReloncord gelonoLocation = optGelonoLocation.gelont().contelonnts();
+      ThriftGelonoPoint gelonoTags = gelonoLocation.gelontGelonoPoint();
 
-      if ((geoTags.getLatitude() == GeoObject.DOUBLE_FIELD_NOT_PRESENT)
-          && (geoTags.getLongitude() == GeoObject.DOUBLE_FIELD_NOT_PRESENT)) {
-        // This case indicates that we have "negative cache" in coded_locations table, so
-        // don't try to geocode again.
-        message.setUncodeableLocation();
-        return false;
-      } else {
-        GeoObject code = new GeoObject(
-            geoTags.getLatitude(),
-            geoTags.getLongitude(),
-            geoTags.getAccuracy(),
-            ThriftGeoLocationSource.USER_PROFILE);
-        message.setGeoLocation(code);
-        return true;
+      if ((gelonoTags.gelontLatitudelon() == GelonoObjelonct.DOUBLelon_FIelonLD_NOT_PRelonSelonNT)
+          && (gelonoTags.gelontLongitudelon() == GelonoObjelonct.DOUBLelon_FIelonLD_NOT_PRelonSelonNT)) {
+        // This caselon indicatelons that welon havelon "nelongativelon cachelon" in codelond_locations tablelon, so
+        // don't try to gelonocodelon again.
+        melonssagelon.selontUncodelonablelonLocation();
+        relonturn falselon;
+      } elonlselon {
+        GelonoObjelonct codelon = nelonw GelonoObjelonct(
+            gelonoTags.gelontLatitudelon(),
+            gelonoTags.gelontLongitudelon(),
+            gelonoTags.gelontAccuracy(),
+            ThriftGelonoLocationSourcelon.USelonR_PROFILelon);
+        melonssagelon.selontGelonoLocation(codelon);
+        relonturn truelon;
       }
-    } else {
-      message.setGeocodeRequired();
-      return false;
+    } elonlselon {
+      melonssagelon.selontGelonocodelonRelonquirelond();
+      relonturn falselon;
     }
   }
 }
